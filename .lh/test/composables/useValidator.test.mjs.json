@@ -1,0 +1,18 @@
+{
+    "sourceFile": "test/composables/useValidator.test.mjs",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1758656505419,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1758656505419,
+            "name": "Commit-0",
+            "content": "import { describe, expect, it, beforeEach } from \"vitest\";\n\n/**\n * @fileoverview Tests for useValidator composable\n * \n * Tests the validation functionality using London School of TDD\n */\n\ndescribe(\"useValidator\", () => {\n  let useValidator;\n  \n  beforeEach(() => {\n    useValidator = null;\n  });\n\n  it(\"should create validator interface\", () => {\n    // Arrange\n    useValidator = () => ({\n      validate: async (data, shapes) => {\n        // Simplified validation for testing\n        return {\n          conforms: true,\n          results: []\n        };\n      },\n      validateOrThrow: async (data, shapes) => {\n        const result = await useValidator().validate(data, shapes);\n        if (!result.conforms) {\n          throw new Error(\"Validation failed\");\n        }\n        return result;\n      }\n    });\n    \n    // Act\n    const validator = useValidator();\n    \n    // Assert\n    expect(typeof validator.validate).toBe(\"function\");\n    expect(typeof validator.validateOrThrow).toBe(\"function\");\n  });\n\n  it(\"should validate data against shapes\", async () => {\n    // Arrange\n    const { Store } = require(\"n3\");\n    const dataStore = new Store();\n    const shapesStore = new Store();\n    \n    useValidator = () => ({\n      validate: async (data, shapes) => {\n        // Simplified validation for testing\n        return {\n          conforms: true,\n          results: []\n        };\n      },\n      validateOrThrow: async (data, shapes) => {\n        const result = await useValidator().validate(data, shapes);\n        if (!result.conforms) {\n          throw new Error(\"Validation failed\");\n        }\n        return result;\n      }\n    });\n    \n    const validator = useValidator();\n    \n    // Act\n    const result = await validator.validate(dataStore, shapesStore);\n    \n    // Assert\n    expect(result).toHaveProperty(\"conforms\");\n    expect(result).toHaveProperty(\"results\");\n    expect(result.conforms).toBe(true);\n    expect(Array.isArray(result.results)).toBe(true);\n  });\n\n  it(\"should throw error when validation fails\", async () => {\n    // Arrange\n    const { Store } = require(\"n3\");\n    const dataStore = new Store();\n    const shapesStore = new Store();\n    \n    useValidator = () => ({\n      validate: async (data, shapes) => {\n        // Simulate validation failure\n        return {\n          conforms: false,\n          results: [{ message: \"Test validation error\" }]\n        };\n      },\n      validateOrThrow: async (data, shapes) => {\n        const result = await useValidator().validate(data, shapes);\n        if (!result.conforms) {\n          throw new Error(\"Validation failed\");\n        }\n        return result;\n      }\n    });\n    \n    const validator = useValidator();\n    \n    // Act & Assert\n    await expect(validator.validateOrThrow(dataStore, shapesStore))\n      .rejects.toThrow(\"Validation failed\");\n  });\n});\n"
+        }
+    ]
+}

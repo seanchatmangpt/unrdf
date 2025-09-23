@@ -1,0 +1,18 @@
+{
+    "sourceFile": "src/utils/index.mjs",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1758655862894,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1758655862894,
+            "name": "Commit-0",
+            "content": "/**\n * UNRDF Utils - Comprehensive utility library for RDF operations\n * \n * This module provides a unified interface to all utility functions\n * organized by domain: terms, quads, graphs, validation, I/O, debugging, and IDs.\n * \n * @example\n * ```javascript\n * import { asNamedNode, quadToJSON, getObjects, validateQuadJSON } from 'unrdf/utils';\n * \n * // Term utilities\n * const subject = asNamedNode('http://example.org/person');\n * \n * // Quad utilities\n * const json = quadToJSON(quad);\n * \n * // Graph utilities\n * const objects = getObjects(store, subject, 'http://example.org/name');\n * \n * // Validation\n * const validated = validateQuadJSON(quadData);\n * ```\n */\n\n// Term utilities - RDF term manipulation and conversion\nexport * from \"./term-utils.mjs\";\n\n// Quad utilities - Quad/JSON transformations and filtering\nexport * from \"./quad-utils.mjs\";\n\n// Graph utilities - Store operations and query helpers\nexport * from \"./graph-utils.mjs\";\n\n// Validation utilities - Zod schemas and validation functions\nexport * from \"./validation-utils.mjs\";\n\n// I/O utilities - File operations for RDF formats\nexport * from \"./io-utils.mjs\";\n\n// Debug utilities - Introspection, logging, and performance measurement\nexport * from \"./debug-utils.mjs\";\n\n// ID utilities - Blank nodes, UUIDs, and IRI generation\nexport * from \"./id-utils.mjs\";"
+        }
+    ]
+}
