@@ -7,8 +7,12 @@ const { namedNode, literal, blankNode } = DataFactory;
  * @param {string|import('n3').NamedNode} iri - IRI string or NamedNode
  * @returns {import('n3').NamedNode} NamedNode instance
  */
-export const asNamedNode = (iri) =>
-  iri?.termType === "NamedNode" ? iri : namedNode(String(iri));
+export const asNamedNode = (iri) => {
+  if (iri == null) {
+    throw new Error("asNamedNode: IRI cannot be null or undefined");
+  }
+  return iri?.termType === "NamedNode" ? iri : namedNode(String(iri));
+};
 
 /**
  * Ensure any input is a Literal
@@ -16,8 +20,12 @@ export const asNamedNode = (iri) =>
  * @param {string} [datatype="http://www.w3.org/2001/XMLSchema#string"] - The datatype IRI
  * @returns {import('n3').Literal} Literal instance
  */
-export const asLiteral = (value, datatype = "http://www.w3.org/2001/XMLSchema#string") =>
-  literal(String(value), datatype);
+export const asLiteral = (value, datatype = "http://www.w3.org/2001/XMLSchema#string") => {
+  if (value == null) {
+    throw new Error("asLiteral: value cannot be null or undefined");
+  }
+  return literal(String(value), datatype);
+};
 
 /**
  * Ensure any input is a BlankNode
@@ -77,6 +85,9 @@ export const smartLiteral = (value) => {
   }
   if (value instanceof Date) {
     return literal(value.toISOString(), "http://www.w3.org/2001/XMLSchema#dateTime");
+  }
+  if (typeof value === "object" && value !== null) {
+    return literal(JSON.stringify(value), "http://www.w3.org/2001/XMLSchema#string");
   }
   return asLiteral(value);
 };

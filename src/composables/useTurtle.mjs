@@ -282,9 +282,9 @@ export async function useTurtle(graphDir = "./graph", options = {}) {
      * Parse a Turtle string into a new store
      * @param {string} ttl - Turtle string
      * @param {Object} [options] - Parse options
-     * @returns {Store} Parsed store
+     * @returns {Promise<Store>} Parsed store
      */
-    parse(ttl, options = {}) {
+    async parse(ttl, options = {}) {
       return engine.parseTurtle(ttl, { baseIRI, ...options });
     },
 

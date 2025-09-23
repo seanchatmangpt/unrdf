@@ -75,6 +75,21 @@ export function useReasoner(options = {}) {
         ? engine.parseTurtle(rulesInput)
         : rulesInput.store || rulesInput;
       
+      // Handle empty stores gracefully
+      if (dataStoreInstance.size === 0 && rulesStore.size === 0) {
+        return useGraph(engine.createStore());
+      }
+      
+      // Handle empty rules store
+      if (rulesStore.size === 0) {
+        return useGraph(dataStoreInstance);
+      }
+      
+      // Handle empty data store
+      if (dataStoreInstance.size === 0) {
+        return useGraph(engine.createStore());
+      }
+      
       const inferredStore = await engine.reason(dataStoreInstance, rulesStore);
       return useGraph(inferredStore);
     },

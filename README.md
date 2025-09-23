@@ -69,6 +69,59 @@ const stats = store.stats();
 const turtle = await store.serialize();
 ```
 
+### useTerms
+RDF term creation and manipulation. Enforces the "One Terms Rule" - N3 DataFactory is the only term creation method.
+
+```javascript
+const terms = useTerms();
+const subject = terms.iri("http://example.org/person");
+const name = terms.lit("John Doe");
+const age = terms.lit(30, "http://www.w3.org/2001/XMLSchema#integer");
+const bnode = terms.bnode("person1");
+const statement = terms.quad(subject, terms.iri("http://example.org/name"), name);
+```
+
+### usePrefixes
+Prefix management and CURIE operations. Enforces the "One Prefix Rule" - centralized prefix management.
+
+```javascript
+const prefixes = usePrefixes({
+  "ex": "http://example.org/",
+  "foaf": "http://xmlns.com/foaf/0.1/"
+});
+
+// Register new prefixes
+prefixes.register({ "dc": "http://purl.org/dc/terms/" });
+
+// Expand CURIEs
+const fullIRI = prefixes.expand("ex:Person");
+
+// Shrink IRIs
+const curie = prefixes.shrink("http://example.org/Person");
+
+// List all prefixes
+const allPrefixes = prefixes.list();
+```
+
+### useLists
+RDF list operations for reading and writing linked lists in RDF. Enforces the "One List Rule" - standard rdf:List format.
+
+```javascript
+const lists = useLists();
+
+// Read a list
+const items = lists.read(store, listHead);
+
+// Write a list
+const head = lists.write(store, ["item1", "item2", "item3"]);
+
+// Convert to strings
+const strings = lists.toStrings(store, listHead);
+
+// Create from strings
+const head = lists.fromStrings(store, ["item1", "item2", "item3"]);
+```
+
 ### useGraph
 High-level RDF operations including SPARQL queries and set operations.
 
@@ -76,6 +129,66 @@ High-level RDF operations including SPARQL queries and set operations.
 const graph = useGraph(store.store);
 const results = await graph.select("SELECT ?s ?p ?o WHERE { ?s ?p ?o }");
 const exists = await graph.ask("ASK WHERE { ?s a ex:Person }");
+```
+
+### useTurtle
+File system operations for Turtle files.
+
+```javascript
+const turtle = await useTurtle('./graph');
+await turtle.loadAll();
+await turtle.save('my-graph', store);
+```
+
+### useNQuads
+N-Quads parsing and serialization. Enforces the "One N-Quads Rule" - standard N-Quads format only.
+
+```javascript
+const nquads = useNQuads();
+
+// Parse N-Quads
+const store = nquads.parse(nquadsString);
+
+// Serialize to N-Quads
+const nquadsString = await nquads.serialize(store);
+
+// Validate N-Quads
+const validation = nquads.validate(nquadsString);
+```
+
+### useJsonLd
+JSON-LD operations. Enforces the "One JSON-LD Rule" - standard JSON-LD format only.
+
+```javascript
+const jsonld = useJsonLd();
+
+// Convert store to JSON-LD
+const doc = await jsonld.toJSONLD(store, { 
+  context: { "@vocab": "http://example.org/" } 
+});
+
+// Convert JSON-LD to store
+const store = await jsonld.fromJSONLD(doc);
+
+// Compact JSON-LD
+const compacted = await jsonld.compact(doc, context);
+```
+
+### usePointer
+Clownface-based graph traversal. Enforces the "One Pointer Rule" - Clownface is the only traversal method.
+
+```javascript
+const pointer = usePointer(store);
+
+// Traverse the graph
+const name = pointer.node("ex:person").out("foaf:name").value;
+const friends = pointer.node("ex:person").out("foaf:knows").toArray();
+
+// Get nodes of a specific type
+const persons = pointer.ofType("foaf:Person");
+
+// Get nodes with a specific property
+const namedNodes = pointer.withProperty("foaf:name");
 ```
 
 ### useValidator
@@ -110,15 +223,6 @@ Runtime validation for RDF-derived data.
 ```javascript
 const zod = useZod();
 const validation = await zod.validateResults(sparqlResults, schema);
-```
-
-### useTurtle
-File system operations for Turtle files.
-
-```javascript
-const turtle = await useTurtle('./graph');
-await turtle.loadAll();
-await turtle.save('my-graph', store);
 ```
 
 ## Utilities
@@ -172,11 +276,16 @@ const result = validateStore(store);
 unrdf enforces a single, opinionated path through the RDF universe:
 
 - **One Store**: N3.Store is the only memory model
+- **One Terms**: N3 DataFactory is the only term creation method
+- **One Prefixes**: Centralized prefix management
+- **One Lists**: Standard rdf:List format
 - **One Query Engine**: Comunica is the only SPARQL engine
 - **One Validator**: SHACL is the only validation method
 - **One Reasoner**: EYE is the only reasoning engine
 - **One Canonicalization**: URDNA2015 is the only canonicalization method
 - **One Serialization**: Turtle and N-Quads are the primary formats
+- **One JSON-LD**: Standard JSON-LD format only
+- **One Pointer**: Clownface is the only traversal method
 - **One Validation**: Zod is the only runtime validation
 
 This eliminates choice paralysis and ensures consistency across all RDF operations.

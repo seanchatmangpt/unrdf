@@ -10,7 +10,8 @@
  */
 
 import { DataFactory } from "n3";
-import { asNamedNode, createNamespaceId } from "./term-utils.mjs";
+import { asNamedNode } from "./term-utils.mjs";
+import { createNamespaceId } from "./id-utils.mjs";
 
 const { namedNode } = DataFactory;
 

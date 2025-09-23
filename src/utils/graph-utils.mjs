@@ -8,7 +8,7 @@ import { asNamedNode, asLiteral, getIRI } from "./term-utils.mjs";
  * @returns {import('n3').Term[]} Array of object terms
  */
 export const getObjects = (store, subject, predicate) =>
-  store.getObjects(subject, asNamedNode(predicate), null);
+  store.getObjects(asNamedNode(subject), asNamedNode(predicate), null);
 
 /**
  * Get all subjects for predicate+object
@@ -28,7 +28,7 @@ export const getSubjects = (store, predicate, object) =>
  * @returns {import('n3').Term[]} Array of predicate terms
  */
 export const getPredicates = (store, subject, object) =>
-  store.getPredicates(subject, null, object);
+  store.getPredicates(asNamedNode(subject), object, null);
 
 /**
  * Does subject have rdf:type of typeIRI
@@ -157,7 +157,7 @@ export const getAllObjects = (store) => {
  * @returns {string[]} Array of subject IRIs
  */
 export const findByProperty = (store, predicate, value) =>
-  getSubjects(store, predicate, asLiteral(value))
+  getSubjects(store, predicate, value)
     .map(term => getIRI(term));
 
 /**

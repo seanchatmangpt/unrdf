@@ -41,7 +41,7 @@ export function useTerms(options = {}) {
   const {
     baseIRI = "http://example.org/",
     defaultDatatype = "http://www.w3.org/2001/XMLSchema#string"
-  } = options;
+  } = options || {};
 
   return {
     /**
@@ -55,7 +55,7 @@ export function useTerms(options = {}) {
       }
       
       // Handle relative IRIs
-      if (iri.startsWith("#") || iri.startsWith("/")) {
+      if (!iri.startsWith("http://") && !iri.startsWith("https://") && !iri.startsWith("urn:")) {
         iri = baseIRI + iri;
       }
       
@@ -82,13 +82,13 @@ export function useTerms(options = {}) {
         return literal(stringValue, language);
       }
       
-      // Handle datatypes
-      if (datatype) {
-        return literal(stringValue, datatype);
+      // Handle datatypes - check for null/undefined explicitly
+      if (datatype !== null && datatype !== undefined) {
+        return literal(stringValue, namedNode(datatype));
       }
       
       // Use default datatype
-      return literal(stringValue, defaultDatatype);
+      return literal(stringValue, namedNode(defaultDatatype));
     },
 
     /**
@@ -97,11 +97,12 @@ export function useTerms(options = {}) {
      * @returns {BlankNode} Blank node term
      */
     bnode(id) {
-      if (id !== undefined && typeof id !== "string") {
+      if (id !== undefined && id !== null && typeof id !== "string") {
         throw new Error("[useTerms] Blank node ID must be a string");
       }
       
-      return blankNode(id);
+      // Allow null/undefined to generate automatic ID
+      return blankNode(id || undefined);
     },
 
     /**
@@ -117,7 +118,8 @@ export function useTerms(options = {}) {
         throw new Error("[useTerms] Subject, predicate, and object are required");
       }
       
-      return quad(subject, predicate, object, graph || defaultGraph());
+      // Handle null/undefined graph as null (not defaultGraph)
+      return quad(subject, predicate, object, graph === null || graph === undefined ? null : graph);
     },
 
     /**

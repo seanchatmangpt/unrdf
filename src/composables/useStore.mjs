@@ -56,7 +56,9 @@ export function useStore(initialQuads = [], options = {}) {
      */
     add(...quads) {
       for (const q of quads) {
-        store.add(q);
+        if (q && typeof q === 'object' && q.termType) {
+          store.add(q);
+        }
       }
     },
 
@@ -67,7 +69,9 @@ export function useStore(initialQuads = [], options = {}) {
      */
     remove(...quads) {
       for (const q of quads) {
-        store.delete(q);
+        if (q && typeof q === 'object' && q.termType) {
+          store.delete(q);
+        }
       }
     },
 
