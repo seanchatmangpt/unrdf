@@ -36,15 +36,17 @@
  * const allPrefixes = prefixes.list();
  */
 export function usePrefixes(initialPrefixes = {}, options = {}) {
-  const { caseSensitive = false } = options;
+  const { caseSensitive = false } = options || {};
   
   // Internal prefix map
   const prefixes = new Map();
   
   // Initialize with provided prefixes
-  Object.entries(initialPrefixes).forEach(([prefix, uri]) => {
-    prefixes.set(prefix, uri);
-  });
+  if (initialPrefixes && typeof initialPrefixes === 'object') {
+    Object.entries(initialPrefixes).forEach(([prefix, uri]) => {
+      prefixes.set(prefix, uri);
+    });
+  }
 
   return {
     /**
@@ -53,11 +55,13 @@ export function usePrefixes(initialPrefixes = {}, options = {}) {
      * @returns {Object} This composable instance
      */
     register(prefixMap) {
-      if (typeof prefixMap !== "object" || prefixMap === null) {
+      if (typeof prefixMap !== "object" || prefixMap === null || Array.isArray(prefixMap)) {
         throw new Error("[usePrefixes] Prefix map must be an object");
       }
       
-      Object.entries(prefixMap).forEach(([prefix, uri]) => {
+      // Validate all entries first (atomic operation)
+      const entries = Object.entries(prefixMap);
+      for (const [prefix, uri] of entries) {
         if (typeof prefix !== "string" || typeof uri !== "string") {
           throw new Error("[usePrefixes] Prefix and URI must be strings");
         }
@@ -65,7 +69,10 @@ export function usePrefixes(initialPrefixes = {}, options = {}) {
         if (!uri.endsWith("/") && !uri.endsWith("#")) {
           throw new Error("[usePrefixes] URI should end with '/' or '#'");
         }
-        
+      }
+      
+      // Only add entries if all are valid
+      entries.forEach(([prefix, uri]) => {
         prefixes.set(prefix, uri);
       });
       
@@ -82,10 +89,13 @@ export function usePrefixes(initialPrefixes = {}, options = {}) {
         throw new Error("[usePrefixes] CURIE must be a string");
       }
       
+      if (!curie.trim()) {
+        throw new Error("[usePrefixes] CURIE cannot be empty");
+      }
+      
       const colonIndex = curie.indexOf(":");
       if (colonIndex === -1) {
-        // Not a CURIE, return as-is
-        return curie;
+        throw new Error("[usePrefixes] Unknown prefix");
       }
       
       const prefix = curie.substring(0, colonIndex);
@@ -153,7 +163,7 @@ export function usePrefixes(initialPrefixes = {}, options = {}) {
      * @returns {string|undefined} The URI or undefined if not found
      */
     get(prefix) {
-      return prefixes.get(prefix);
+      return prefixes.get(prefix) || null;
     },
 
     /**

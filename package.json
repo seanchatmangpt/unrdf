@@ -2,7 +2,15 @@
   "name": "unrdf",
   "version": "1.0.0",
   "description": "Opinionated composable framework for RDF knowledge operations",
-  "repository": "gitvan/unrdf",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gitvan/unrdf.git"
+  },
+  "homepage": "https://github.com/gitvan/unrdf#readme",
+  "bugs": {
+    "url": "https://github.com/gitvan/unrdf/issues"
+  },
+  "author": "GitVan Team",
   "license": "MIT",
   "sideEffects": false,
   "type": "module",
@@ -26,7 +34,14 @@
     "semantic-web",
     "zod",
     "n3",
-    "comunica"
+    "comunica",
+    "json-ld",
+    "n-quads",
+    "eyereasoner",
+    "rdf-canonize",
+    "clownface",
+    "opinionated",
+    "framework"
   ],
   "scripts": {
     "build": "obuild",
@@ -64,5 +79,8 @@
     "prettier": "^3.6.2",
     "vitest": "^3.2.4"
   },
-  "packageManager": "pnpm@10.15.0"
+  "packageManager": "pnpm@10.15.0",
+  "engines": {
+    "node": ">=18.0.0"
+  }
 }

@@ -13,6 +13,18 @@
 export { useStore } from "./useStore.mjs";
 export { useGraph } from "./useGraph.mjs";
 export { useTurtle } from "./useTurtle.mjs";
+export { useTerms } from "./useTerms.mjs";
+export { usePrefixes } from "./usePrefixes.mjs";
+export { useIRIs } from "./useIRIs.mjs";
+export { useLists } from "./useLists.mjs";
+
+// I/O composables
+export { useTurtleFS } from "./useTurtleFS.mjs";
+export { useNQuads } from "./useNQuads.mjs";
+export { useJsonLd } from "./useJsonLd.mjs";
+
+// Query and traversal
+export { usePointer } from "./usePointer.mjs";
 
 // Validation and reasoning
 export { useValidator } from "./useValidator.mjs";
@@ -21,3 +33,10 @@ export { useCanon } from "./useCanon.mjs";
 
 // Type safety and validation
 export { useZod } from "./useZod.mjs";
+
+// Change and provenance
+export { useDelta } from "./useDelta.mjs";
+
+// Performance and caching
+export { useMetrics } from "./useMetrics.mjs";
+export { useCache } from "./useCache.mjs";

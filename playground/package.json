@@ -1,0 +1,30 @@
+{
+  "name": "unrdf-playground",
+  "version": "1.0.0",
+  "description": "Playground for UNRDF - Opinionated composable framework for RDF knowledge operations",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "node --watch examples/basic-usage.mjs",
+    "examples": "node examples/basic-usage.mjs",
+    "sparql": "node examples/sparql-queries.mjs",
+    "validation": "node examples/validation.mjs",
+    "reasoning": "node examples/reasoning.mjs",
+    "turtle": "node examples/turtle-parsing.mjs",
+    "zod": "node examples/zod-integration.mjs",
+    "cli-test": "node examples/cli-testing.mjs",
+    "cli-scenarios": "node examples/cli-scenarios.mjs",
+    "test": "vitest run --config vitest.config.mjs",
+    "test:watch": "vitest --config vitest.config.mjs --watch",
+    "test:ui": "vitest --config vitest.config.mjs --ui"
+  },
+  "dependencies": {
+    "unrdf": "file:../",
+    "citty-test-utils": "^1.0.0",
+    "vitest": "^3.2.4"
+  },
+  "devDependencies": {
+    "@vitest/ui": "^3.2.4"
+  },
+  "packageManager": "pnpm@10.15.0"
+}
