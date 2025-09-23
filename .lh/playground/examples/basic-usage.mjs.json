@@ -1,0 +1,18 @@
+{
+    "sourceFile": "playground/examples/basic-usage.mjs",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1758658176143,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1758658176143,
+            "name": "Commit-0",
+            "content": "#!/usr/bin/env node\n\n/**\n * Basic UNRDF Usage Example\n * \n * This example demonstrates the core functionality of UNRDF:\n * - Creating a knowledge graph\n * - Adding triples\n * - Querying with SPARQL\n * - Working with different RDF formats\n */\n\nimport { useStore, useGraph, useTurtle, useZod } from 'unrdf';\n\nconsole.log('🚀 UNRDF Basic Usage Example\\n');\n\nasync function main() {\n  try {\n    // Initialize the RDF store\n    const store = useStore();\n    console.log('✅ RDF Store initialized');\n\n    // Create a simple knowledge graph\n    const graph = useGraph(store);\n    console.log('✅ Knowledge graph created');\n\n    // Add some sample triples about a person\n    const personData = `\n      @prefix foaf: <http://xmlns.com/foaf/0.1/> .\n      @prefix ex: <http://example.org/> .\n      \n      ex:john a foaf:Person ;\n        foaf:name \"John Doe\" ;\n        foaf:age 30 ;\n        foaf:knows ex:jane .\n      \n      ex:jane a foaf:Person ;\n        foaf:name \"Jane Smith\" ;\n        foaf:age 28 .\n    `;\n\n    // Parse and add Turtle data\n    const turtle = useTurtle();\n    const quads = await turtle.parse(personData);\n    await graph.addQuads(quads);\n    console.log('✅ Sample data added to graph');\n\n    // Query the data with SPARQL\n    const query = `\n      PREFIX foaf: <http://xmlns.com/foaf/0.1/>\n      PREFIX ex: <http://example.org/>\n      \n      SELECT ?name ?age WHERE {\n        ?person a foaf:Person ;\n          foaf:name ?name ;\n          foaf:age ?age .\n      }\n    `;\n\n    const results = await graph.query(query);\n    console.log('\\n📊 Query Results:');\n    for await (const binding of results) {\n      console.log(`  - ${binding.get('name').value} (age: ${binding.get('age').value})`);\n    }\n\n    // Serialize back to Turtle\n    const serialized = await turtle.serialize(graph.getQuads());\n    console.log('\\n📝 Serialized Turtle:');\n    console.log(serialized);\n\n    // Demonstrate Zod integration for validation\n    const PersonSchema = useZod().createSchema({\n      name: 'string',\n      age: 'number',\n      knows: 'array'\n    });\n\n    console.log('\\n🔍 Zod Schema created for validation');\n    console.log('Schema structure:', PersonSchema.shape);\n\n  } catch (error) {\n    console.error('❌ Error:', error.message);\n    console.error(error.stack);\n  }\n}\n\nmain();\n"
+        }
+    ]
+}

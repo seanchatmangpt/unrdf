@@ -1,0 +1,58 @@
+# zod-to-from Project Rules
+
+## Package Manager
+- **PNPM ONLY**: Use pnpm exclusively for all package management operations
+- Never use npm, yarn, or other package managers
+- All scripts and commands must use pnpm
+
+## File Format
+- **MJS ONLY**: All source files must use `.mjs` extension
+- **NO TYPESCRIPT**: Do not write TypeScript files (.ts, .tsx)
+- Use JavaScript with JSDoc for type safety and documentation
+
+## Code Style
+- **JSDoc ONLY**: Use JSDoc comments for all type annotations and documentation
+- No TypeScript type annotations in code
+- Use JSDoc `@param`, `@returns`, `@typedef`, etc. for type information
+- Follow JSDoc best practices for comprehensive documentation
+
+## Build System
+- Build-less by design - use `.mjs` files directly
+- No TypeScript compilation step required
+- Use JSDoc for type checking and IDE support
+
+## Examples
+
+### ✅ Correct JSDoc Usage
+```javascript
+/**
+ * Parse input from a specified format into a Zod-validated object
+ * @param {import('zod').ZodSchema} schema - The Zod schema to validate against
+ * @param {string} format - The input format (e.g., 'json', 'yaml', 'toml')
+ * @param {string} input - The input string to parse
+ * @param {Object} [opts] - Optional configuration
+ * @returns {Promise<any>} The parsed and validated object
+ */
+export async function parseFrom(schema, format, input, opts = {}) {
+  // implementation
+}
+```
+
+### ❌ Incorrect TypeScript Usage
+```typescript
+export async function parseFrom<T>(
+  schema: ZodSchema<T>,
+  format: string,
+  input: string,
+  opts: ZTFOptions = {}
+): Promise<T> {
+  // implementation
+}
+```
+
+## Commands
+- `pnpm install` - Install dependencies
+- `pnpm dev` - Run development server/tests
+- `pnpm build` - Build project (if needed)
+- `pnpm test` - Run tests
+- `pnpm lint` - Run linting

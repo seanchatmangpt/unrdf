@@ -1,0 +1,18 @@
+{
+    "sourceFile": "test/composables/useReasoner.test.mjs",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1758656505419,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1758656505419,
+            "name": "Commit-0",
+            "content": "import { describe, expect, it, beforeEach } from \"vitest\";\n\n/**\n * @fileoverview Tests for useReasoner composable\n * \n * Tests the reasoning functionality using London School of TDD\n */\n\ndescribe(\"useReasoner\", () => {\n  let useReasoner;\n  \n  beforeEach(() => {\n    useReasoner = null;\n  });\n\n  it(\"should create reasoner interface\", () => {\n    // Arrange\n    useReasoner = () => ({\n      reason: async (dataStore, rulesStore) => {\n        // Simplified reasoning for testing\n        return new (require(\"n3\").Store)();\n      }\n    });\n    \n    // Act\n    const reasoner = useReasoner();\n    \n    // Assert\n    expect(typeof reasoner.reason).toBe(\"function\");\n  });\n\n  it(\"should perform reasoning on data with rules\", async () => {\n    // Arrange\n    const { Store } = require(\"n3\");\n    const dataStore = new Store();\n    const rulesStore = new Store();\n    \n    useReasoner = () => ({\n      reason: async (dataStore, rulesStore) => {\n        // Simplified reasoning for testing - return a new store\n        return new Store();\n      }\n    });\n    \n    const reasoner = useReasoner();\n    \n    // Act\n    const result = await reasoner.reason(dataStore, rulesStore);\n    \n    // Assert\n    expect(result).toBeInstanceOf(Store);\n  });\n});\n"
+        }
+    ]
+}

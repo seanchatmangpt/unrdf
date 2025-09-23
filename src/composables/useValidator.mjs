@@ -1,0 +1,215 @@
+/**
+ * @fileoverview useValidator composable - SHACL validation operations
+ * 
+ * This composable provides SHACL validation capabilities for RDF graphs.
+ * It enforces the "One Validator Rule" - SHACL is the only validation method.
+ * 
+ * @version 1.0.0
+ * @author GitVan Team
+ * @license MIT
+ */
+
+import { RdfEngine } from "../engines/RdfEngine.mjs";
+
+// Create a single, shared instance of the engine for efficiency
+const rdfEngine = new RdfEngine();
+
+/**
+ * Create a SHACL validator composable
+ * 
+ * @param {Object} [options] - Validator options
+ * @param {number} [options.timeoutMs=30000] - Validation timeout
+ * @param {Function} [options.onMetric] - Metrics callback
+ * @returns {Object} Validator interface
+ * 
+ * @example
+ * const validator = useValidator();
+ * 
+ * // Validate a store against SHACL shapes
+ * const report = await validator.validate(dataStore, shapesStore);
+ * 
+ * // Validate and throw on failure
+ * await validator.validateOrThrow(dataStore, shapesTurtle);
+ * 
+ * // Validate with custom timeout
+ * const validator = useValidator({ timeoutMs: 60000 });
+ */
+export function useValidator(options = {}) {
+  const {
+    timeoutMs = 30000,
+    onMetric
+  } = options;
+
+  const engine = new RdfEngine({ 
+    timeoutMs,
+    onMetric 
+  });
+
+  return {
+    /**
+     * The underlying RDF engine
+     * @type {RdfEngine}
+     */
+    get engine() {
+      return engine;
+    },
+
+    /**
+     * Validate a data store against SHACL shapes
+     * @param {Store|Object} dataStore - Data store to validate
+     * @param {string|Store|Object} shapesInput - SHACL shapes as Turtle string or Store
+     * @returns {Promise<Object>} Validation report
+     * 
+     * @example
+     * const report = await validator.validate(dataStore, shapesStore);
+     * if (report.conforms) {
+     *   console.log("✅ Validation passed");
+     * } else {
+     *   console.log("❌ Validation failed:", report.results);
+     * }
+     */
+    async validate(dataStore, shapesInput) {
+      const store = dataStore.store || dataStore;
+      return engine.validateShacl(store, shapesInput);
+    },
+
+    /**
+     * Validate a data store against SHACL shapes, throw on failure
+     * @param {Store|Object} dataStore - Data store to validate
+     * @param {string|Store|Object} shapesInput - SHACL shapes
+     * @returns {Promise<Object>} Validation report
+     * @throws {Error} If validation fails
+     * 
+     * @example
+     * try {
+     *   await validator.validateOrThrow(dataStore, shapesStore);
+     *   console.log("✅ Validation passed");
+     * } catch (error) {
+     *   console.log("❌ Validation failed:", error.message);
+     * }
+     */
+    async validateOrThrow(dataStore, shapesInput) {
+      const store = dataStore.store || dataStore;
+      return engine.validateShaclOrThrow(store, shapesInput);
+    },
+
+    /**
+     * Validate multiple stores against the same shapes
+     * @param {Array<Store|Object>} dataStores - Array of data stores
+     * @param {string|Store|Object} shapesInput - SHACL shapes
+     * @returns {Promise<Array<Object>>} Array of validation reports
+     * 
+     * @example
+     * const reports = await validator.validateMany([store1, store2], shapes);
+     * const allConform = reports.every(r => r.conforms);
+     */
+    async validateMany(dataStores, shapesInput) {
+      const promises = dataStores.map(store => this.validate(store, shapesInput));
+      return Promise.all(promises);
+    },
+
+    /**
+     * Validate a store against multiple shape sets
+     * @param {Store|Object} dataStore - Data store to validate
+     * @param {Array<string|Store|Object>} shapesInputs - Array of SHACL shape sets
+     * @returns {Promise<Array<Object>>} Array of validation reports
+     * 
+     * @example
+     * const reports = await validator.validateAgainstMany(store, [shapes1, shapes2]);
+     * const allConform = reports.every(r => r.conforms);
+     */
+    async validateAgainstMany(dataStore, shapesInputs) {
+      const promises = shapesInputs.map(shapes => this.validate(dataStore, shapes));
+      return Promise.all(promises);
+    },
+
+    /**
+     * Get a summary of validation results
+     * @param {Object} report - Validation report
+     * @returns {Object} Summary object
+     * 
+     * @example
+     * const report = await validator.validate(store, shapes);
+     * const summary = validator.summarize(report);
+     * console.log(`Conforms: ${summary.conforms}, Errors: ${summary.errorCount}`);
+     */
+    summarize(report) {
+      const errorCount = report.results.filter(r => r.severity === "http://www.w3.org/ns/shacl#Violation").length;
+      const warningCount = report.results.filter(r => r.severity === "http://www.w3.org/ns/shacl#Warning").length;
+      const infoCount = report.results.filter(r => r.severity === "http://www.w3.org/ns/shacl#Info").length;
+      
+      return {
+        conforms: report.conforms,
+        totalResults: report.results.length,
+        errorCount,
+        warningCount,
+        infoCount,
+        hasErrors: errorCount > 0,
+        hasWarnings: warningCount > 0,
+        hasInfo: infoCount > 0
+      };
+    },
+
+    /**
+     * Filter validation results by severity
+     * @param {Object} report - Validation report
+     * @param {string} severity - Severity level to filter by
+     * @returns {Array<Object>} Filtered results
+     * 
+     * @example
+     * const report = await validator.validate(store, shapes);
+     * const errors = validator.filterBySeverity(report, "http://www.w3.org/ns/shacl#Violation");
+     */
+    filterBySeverity(report, severity) {
+      return report.results.filter(r => r.severity === severity);
+    },
+
+    /**
+     * Get validation results grouped by focus node
+     * @param {Object} report - Validation report
+     * @returns {Map<string, Array<Object>>} Results grouped by focus node
+     * 
+     * @example
+     * const report = await validator.validate(store, shapes);
+     * const grouped = validator.groupByFocusNode(report);
+     * for (const [node, results] of grouped) {
+     *   console.log(`Node ${node} has ${results.length} violations`);
+     * }
+     */
+    groupByFocusNode(report) {
+      const grouped = new Map();
+      for (const result of report.results) {
+        const node = result.focusNode || "unknown";
+        if (!grouped.has(node)) {
+          grouped.set(node, []);
+        }
+        grouped.get(node).push(result);
+      }
+      return grouped;
+    },
+
+    /**
+     * Get validation results grouped by property path
+     * @param {Object} report - Validation report
+     * @returns {Map<string, Array<Object>>} Results grouped by property path
+     * 
+     * @example
+     * const report = await validator.validate(store, shapes);
+     * const grouped = validator.groupByPath(report);
+     * for (const [path, results] of grouped) {
+     *   console.log(`Path ${path} has ${results.length} violations`);
+     * }
+     */
+    groupByPath(report) {
+      const grouped = new Map();
+      for (const result of report.results) {
+        const path = result.path || "unknown";
+        if (!grouped.has(path)) {
+          grouped.set(path, []);
+        }
+        grouped.get(path).push(result);
+      }
+      return grouped;
+    }
+  };
+}

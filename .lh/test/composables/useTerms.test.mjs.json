@@ -1,0 +1,18 @@
+{
+    "sourceFile": "test/composables/useTerms.test.mjs",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1758656505419,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1758656505419,
+            "name": "Commit-0",
+            "content": "import { describe, expect, it, beforeEach } from \"vitest\";\n\n/**\n * @fileoverview Tests for useTerms composable\n * \n * Tests the RDF term creation functionality using London School of TDD\n */\n\ndescribe(\"useTerms\", () => {\n  let useTerms;\n  \n  beforeEach(() => {\n    useTerms = null;\n  });\n\n  it(\"should create named nodes from strings\", () => {\n    // Arrange\n    const { DataFactory } = require(\"n3\");\n    const { namedNode } = DataFactory;\n    \n    // Act\n    useTerms = () => ({\n      iri: (str) => namedNode(str),\n      lit: (val, dt) => DataFactory.literal(val, dt),\n      bnode: (id) => DataFactory.blankNode(id),\n      quad: (s, p, o, g) => DataFactory.quad(s, p, o, g)\n    });\n    \n    const terms = useTerms();\n    const result = terms.iri(\"http://example.org/test\");\n    \n    // Assert\n    expect(result.termType).toBe(\"NamedNode\");\n    expect(result.value).toBe(\"http://example.org/test\");\n  });\n\n  it(\"should create literals with datatypes\", () => {\n    // Arrange\n    const { DataFactory } = require(\"n3\");\n    \n    // Act\n    useTerms = () => ({\n      iri: (str) => DataFactory.namedNode(str),\n      lit: (val, dt) => DataFactory.literal(val, dt),\n      bnode: (id) => DataFactory.blankNode(id),\n      quad: (s, p, o, g) => DataFactory.quad(s, p, o, g)\n    });\n    \n    const terms = useTerms();\n    const result = terms.lit(\"42\", \"http://www.w3.org/2001/XMLSchema#integer\");\n    \n    // Assert\n    expect(result.termType).toBe(\"Literal\");\n    expect(result.value).toBe(\"42\");\n    expect(result.datatype.value).toBe(\"http://www.w3.org/2001/XMLSchema#integer\");\n  });\n\n  it(\"should create blank nodes\", () => {\n    // Arrange\n    const { DataFactory } = require(\"n3\");\n    \n    // Act\n    useTerms = () => ({\n      iri: (str) => DataFactory.namedNode(str),\n      lit: (val, dt) => DataFactory.literal(val, dt),\n      bnode: (id) => DataFactory.blankNode(id),\n      quad: (s, p, o, g) => DataFactory.quad(s, p, o, g)\n    });\n    \n    const terms = useTerms();\n    const result = terms.bnode(\"test123\");\n    \n    // Assert\n    expect(result.termType).toBe(\"BlankNode\");\n    expect(result.value).toBe(\"test123\");\n  });\n\n  it(\"should create quads from terms\", () => {\n    // Arrange\n    const { DataFactory } = require(\"n3\");\n    const { namedNode, literal } = DataFactory;\n    \n    // Act\n    useTerms = () => ({\n      iri: (str) => DataFactory.namedNode(str),\n      lit: (val, dt) => DataFactory.literal(val, dt),\n      bnode: (id) => DataFactory.blankNode(id),\n      quad: (s, p, o, g) => DataFactory.quad(s, p, o, g)\n    });\n    \n    const terms = useTerms();\n    const subject = terms.iri(\"http://example.org/subject\");\n    const predicate = terms.iri(\"http://example.org/predicate\");\n    const object = terms.lit(\"object value\");\n    \n    const result = terms.quad(subject, predicate, object);\n    \n    // Assert\n    expect(result.termType).toBe(\"Quad\");\n    expect(result.subject.value).toBe(\"http://example.org/subject\");\n    expect(result.predicate.value).toBe(\"http://example.org/predicate\");\n    expect(result.object.value).toBe(\"object value\");\n  });\n});\n"
+        }
+    ]
+}

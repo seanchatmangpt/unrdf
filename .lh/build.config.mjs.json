@@ -1,0 +1,22 @@
+{
+    "sourceFile": "build.config.mjs",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 1,
+            "patches": [
+                {
+                    "date": 1758655166536,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1758656015528,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,5 +1,10 @@\n import { defineBuildConfig } from \"obuild/config\";\n \n export default defineBuildConfig({\n-  entries: [\"./src/index.mjs\"],\n+  entries: [\n+    \"./src/index.mjs\",\n+    \"./src/composables/index.mjs\",\n+    \"./src/utils/index.mjs\", \n+    \"./src/engines/index.mjs\"\n+  ],\n });\n"
+                }
+            ],
+            "date": 1758655166536,
+            "name": "Commit-0",
+            "content": "import { defineBuildConfig } from \"obuild/config\";\n\nexport default defineBuildConfig({\n  entries: [\"./src/index.mjs\"],\n});\n"
+        }
+    ]
+}

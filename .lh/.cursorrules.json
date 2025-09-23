@@ -1,0 +1,18 @@
+{
+    "sourceFile": ".cursorrules",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1758655111236,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1758655111236,
+            "name": "Commit-0",
+            "content": "# zod-to-from Project Rules\n\n## Package Manager\n- **PNPM ONLY**: Use pnpm exclusively for all package management operations\n- Never use npm, yarn, or other package managers\n- All scripts and commands must use pnpm\n\n## File Format\n- **MJS ONLY**: All source files must use `.mjs` extension\n- **NO TYPESCRIPT**: Do not write TypeScript files (.ts, .tsx)\n- Use JavaScript with JSDoc for type safety and documentation\n\n## Code Style\n- **JSDoc ONLY**: Use JSDoc comments for all type annotations and documentation\n- No TypeScript type annotations in code\n- Use JSDoc `@param`, `@returns`, `@typedef`, etc. for type information\n- Follow JSDoc best practices for comprehensive documentation\n\n## Build System\n- Build-less by design - use `.mjs` files directly\n- No TypeScript compilation step required\n- Use JSDoc for type checking and IDE support\n\n## Examples\n\n### ✅ Correct JSDoc Usage\n```javascript\n/**\n * Parse input from a specified format into a Zod-validated object\n * @param {import('zod').ZodSchema} schema - The Zod schema to validate against\n * @param {string} format - The input format (e.g., 'json', 'yaml', 'toml')\n * @param {string} input - The input string to parse\n * @param {Object} [opts] - Optional configuration\n * @returns {Promise<any>} The parsed and validated object\n */\nexport async function parseFrom(schema, format, input, opts = {}) {\n  // implementation\n}\n```\n\n### ❌ Incorrect TypeScript Usage\n```typescript\nexport async function parseFrom<T>(\n  schema: ZodSchema<T>,\n  format: string,\n  input: string,\n  opts: ZTFOptions = {}\n): Promise<T> {\n  // implementation\n}\n```\n\n## Commands\n- `pnpm install` - Install dependencies\n- `pnpm dev` - Run development server/tests\n- `pnpm build` - Build project (if needed)\n- `pnpm test` - Run tests\n- `pnpm lint` - Run linting\n"
+        }
+    ]
+}

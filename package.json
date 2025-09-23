@@ -1,30 +1,60 @@
 {
-  "name": "packageName",
-  "version": "0.0.0",
-  "description": "",
-  "repository": "unjs/packageName",
+  "name": "unrdf",
+  "version": "1.0.0",
+  "description": "Opinionated composable framework for RDF knowledge operations",
+  "repository": "gitvan/unrdf",
   "license": "MIT",
   "sideEffects": false,
   "type": "module",
+  "main": "./dist/index.mjs",
   "exports": {
-    ".": "./dist/index.mjs"
+    ".": "./dist/index.mjs",
+    "./composables": "./dist/composables/index.mjs",
+    "./utils": "./dist/utils/index.mjs",
+    "./engines": "./dist/engines/index.mjs"
   },
-  "types": "./dist/index.d.mts",
   "files": [
     "dist"
   ],
+  "keywords": [
+    "rdf",
+    "sparql",
+    "turtle",
+    "shacl",
+    "composable",
+    "knowledge-graph",
+    "semantic-web",
+    "zod",
+    "n3",
+    "comunica"
+  ],
   "scripts": {
     "build": "obuild",
-    "dev": "vitest dev",
+    "dev": "vitest dev --config vitest.config.mjs",
+    "test": "vitest run --config vitest.config.mjs --coverage --reporter=verbose",
+    "test:watch": "vitest --config vitest.config.mjs --watch --reporter=verbose",
+    "test:ui": "vitest --config vitest.config.mjs --ui",
+    "test:run": "vitest run --config vitest.config.mjs --reporter=verbose",
+    "test:coverage": "vitest run --config vitest.config.mjs --coverage --reporter=verbose",
+    "test:bench": "vitest run --config vitest.config.mjs --bench --reporter=verbose",
     "lint": "eslint . && prettier -c .",
     "lint:fix": "automd && eslint . --fix && prettier -w .",
     "prepack": "pnpm build",
-    "release": "pnpm test && changelogen --release && npm publish && git push --follow-tags",
-    "test": "pnpm lint && pnpm test:types && vitest run --coverage",
-    "test:types": "tsc --noEmit --skipLibCheck"
+    "release": "pnpm test && changelogen --release && npm publish && git push --follow-tags"
+  },
+  "dependencies": {
+    "@comunica/query-sparql": "^4.4.0",
+    "@rdfjs/types": "^2.0.1",
+    "@zazuko/env": "^3.0.1",
+    "eyereasoner": "^18.20.0",
+    "jsonld": "^8.3.3",
+    "n3": "^1.26.0",
+    "rdf-canonize": "^4.0.1",
+    "rdf-ext": "^2.6.0",
+    "rdf-validate-shacl": "^0.6.5",
+    "zod": "^4.1.9"
   },
   "devDependencies": {
-    "@types/node": "^24.3.0",
     "@vitest/coverage-v8": "^3.2.4",
     "automd": "^0.4.0",
     "changelogen": "^0.6.2",
@@ -32,7 +62,6 @@
     "eslint-config-unjs": "^0.5.0",
     "obuild": "^0.2.1",
     "prettier": "^3.6.2",
-    "typescript": "^5.9.2",
     "vitest": "^3.2.4"
   },
   "packageManager": "pnpm@10.15.0"
