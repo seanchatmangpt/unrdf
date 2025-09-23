@@ -12,7 +12,7 @@
 
 import { readdir, readFile, writeFile, mkdir, stat } from "node:fs/promises";
 import { join, dirname, basename, extname } from "node:path";
-import { RdfEngine } from "../engines/RdfEngine.mjs";
+import { RdfEngine } from "../engines/rdf-engine.mjs";
 import { useStore } from "./useStore.mjs";
 
 /**
@@ -116,12 +116,10 @@ export async function useTurtleFS(graphDir = "./graph", options = {}) {
         const content = await readFile(filePath, 'utf-8');
         const store = await engine.parseTurtle(content, fileBaseIRI || baseIRI);
         
-        if (validateOnLoad) {
-          // Basic validation - check for parse errors
-          if (store.size === 0 && content.trim().length > 0) {
+        if (validateOnLoad && // Basic validation - check for parse errors
+          store.size === 0 && content.trim().length > 0) {
             throw new Error(`[useTurtleFS] File appears to be empty or invalid: ${filename}`);
           }
-        }
         
         return store;
       } catch (error) {
@@ -187,7 +185,7 @@ export async function useTurtleFS(graphDir = "./graph", options = {}) {
         const filePath = join(graphDir, filename);
         await stat(filePath);
         return true;
-      } catch (error) {
+      } catch {
         return false;
       }
     },

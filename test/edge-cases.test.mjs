@@ -138,7 +138,7 @@ describe("Edge Cases", () => {
 
     test("should handle very long literals", () => {
       const store = useStore();
-      const longString = "a".repeat(10000);
+      const longString = "a".repeat(10_000);
       
       const quad = store.quad(
         store.namedNode("http://example.org/s"),
@@ -552,7 +552,7 @@ describe("Edge Cases", () => {
     });
 
     test("should handle very long strings", () => {
-      const longString = "a".repeat(10000);
+      const longString = "a".repeat(10_000);
       
       const longNode = asNamedNode(longString);
       expect(longNode.value).toBe(longString);
@@ -743,7 +743,7 @@ describe("Edge Cases", () => {
       const store = useStore();
       
       // Create large dataset
-      for (let i = 0; i < 10000; i++) {
+      for (let i = 0; i < 10_000; i++) {
         const quad = store.quad(
           store.namedNode(`http://example.org/s${i}`),
           store.namedNode("http://example.org/p"),
@@ -752,7 +752,7 @@ describe("Edge Cases", () => {
         store.add(quad);
       }
       
-      expect(store.stats().quads).toBe(10000);
+      expect(store.stats().quads).toBe(10_000);
       
       // Clear and verify memory is freed
       store.clear();

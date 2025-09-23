@@ -13,7 +13,7 @@
 
 import { createCommand, runMain } from 'citty';
 import { useStore, useGraph, useTurtle, useValidator, useReasoner, useZod } from 'unrdf';
-import { readFile, writeFile } from 'fs/promises';
+import { readFile, writeFile } from 'node:fs/promises';
 import { z } from 'zod';
 
 // Initialize the main command
@@ -79,11 +79,13 @@ const parseCommand = createCommand({
       let quads;
       switch (args.format.toLowerCase()) {
         case 'turtle':
-        case 'ttl':
+        case 'ttl': {
           quads = await turtle.parse(inputData);
           break;
-        default:
+        }
+        default: {
           throw new Error(`Unsupported format: ${args.format}`);
+        }
       }
       
       await graph.addQuads(quads);
@@ -169,7 +171,7 @@ const queryCommand = createCommand({
       
       // Format output
       switch (args.format.toLowerCase()) {
-        case 'json':
+        case 'json': {
           const jsonResults = [];
           for await (const binding of results) {
             const obj = {};
@@ -180,8 +182,9 @@ const queryCommand = createCommand({
           }
           console.log(JSON.stringify(jsonResults, null, 2));
           break;
+        }
           
-        case 'table':
+        case 'table': {
           const tableResults = [];
           for await (const binding of results) {
             const row = {};
@@ -202,12 +205,14 @@ const queryCommand = createCommand({
             console.log('No results found');
           }
           break;
+        }
           
-        default:
+        default: {
           console.log('Query results:');
           for await (const binding of results) {
             console.log(binding.toString());
           }
+        }
       }
       
     } catch (error) {
@@ -455,14 +460,15 @@ const helpCommand = createCommand({
     if (args.command) {
       // Show specific command help
       switch (args.command) {
-        case 'parse':
+        case 'parse': {
           console.log('Parse RDF data from various formats\n');
           console.log('Usage: unrdf-cli parse <input> [options]\n');
           console.log('Options:');
           console.log('  --format <format>    Input format (turtle, n3, json-ld)');
           console.log('  -o, --output <file>  Output file path');
           break;
-        case 'query':
+        }
+        case 'query': {
           console.log('Query RDF data with SPARQL\n');
           console.log('Usage: unrdf-cli query <input> [options]\n');
           console.log('Options:');
@@ -470,8 +476,10 @@ const helpCommand = createCommand({
           console.log('  -f, --query-file <file> SPARQL query file path');
           console.log('  --format <format>       Output format (json, table, turtle)');
           break;
-        default:
+        }
+        default: {
           console.log(`Unknown command: ${args.command}`);
+        }
       }
     } else {
       // Show general help

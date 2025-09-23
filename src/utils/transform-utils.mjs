@@ -80,7 +80,7 @@ export const storeToJSONLD = (store, options = {}) => {
   }
   
   // Convert to array format
-  const graph = Array.from(subjects.values());
+  const graph = [...subjects.values()];
   
   // Build JSON-LD document
   const jsonld = {
@@ -166,11 +166,7 @@ export const storeToRDFXML = (store, options = {}) => {
       const predicate = q.predicate.value;
       const object = q.object;
       
-      if (object.termType === 'Literal') {
-        xml += `    <${predicate}>${object.value}</${predicate}>\n`;
-      } else {
-        xml += `    <${predicate} rdf:resource="${object.value}"/>\n`;
-      }
+      xml += object.termType === 'Literal' ? `    <${predicate}>${object.value}</${predicate}>\n` : `    <${predicate} rdf:resource="${object.value}"/>\n`;
     }
     
     xml += '  </rdf:Description>\n';
@@ -192,7 +188,7 @@ export const storeToNTriples = (store) => {
     const subject = formatNTriplesTerm(q.subject);
     const predicate = formatNTriplesTerm(q.predicate);
     const object = formatNTriplesTerm(q.object);
-    const graph = q.graph.termType !== 'DefaultGraph' ? formatNTriplesTerm(q.graph) : '';
+    const graph = q.graph.termType === 'DefaultGraph' ? '' : formatNTriplesTerm(q.graph);
     
     const line = `${subject} ${predicate} ${object}${graph ? ` ${graph}` : ''} .`;
     lines.push(line);
@@ -207,13 +203,18 @@ export const storeToNTriples = (store) => {
  * @returns {string} Formatted term
  */
 const formatNTriplesTerm = (term) => {
-  if (term.termType === 'NamedNode') {
+  switch (term.termType) {
+  case 'NamedNode': {
     return `<${term.value}>`;
-  } else if (term.termType === 'Literal') {
-    const value = term.value.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+  }
+  case 'Literal': {
+    const value = term.value.replace(/\\/g, '\\\\').replace(/"/g, String.raw`\"`);
     return `"${value}"`;
-  } else if (term.termType === 'BlankNode') {
+  }
+  case 'BlankNode': {
     return `_:${term.value}`;
+  }
+  // No default
   }
   return term.value;
 };
@@ -238,7 +239,7 @@ export const storeToCSV = (store, options = {}) => {
       q.subject.value,
       q.predicate.value,
       q.object.value,
-      q.graph.termType !== 'DefaultGraph' ? q.graph.value : ''
+      q.graph.termType === 'DefaultGraph' ? '' : q.graph.value
     ];
     rows.push(row.join(','));
   }
@@ -275,7 +276,7 @@ export const csvToStore = (csv, options = {}) => {
       const object = values[objectIndex].startsWith('http') || values[objectIndex].startsWith('urn:')
         ? asNamedNode(values[objectIndex])
         : asLiteral(values[objectIndex]);
-      const graph = graphIndex >= 0 && values[graphIndex] ? asNamedNode(values[graphIndex]) : undefined;
+      const graph = graphIndex !== -1 && values[graphIndex] ? asNamedNode(values[graphIndex]) : undefined;
       
       store.add(quad(subject, predicate, object, graph));
     }
@@ -368,11 +369,7 @@ export const denormalizeStore = (store, options = {}) => {
     
     // Flatten properties
     for (const [predicate, values] of Object.entries(subject.properties)) {
-      if (values.length === 1) {
-        obj[predicate] = values[0];
-      } else {
-        obj[predicate] = values;
-      }
+      obj[predicate] = values.length === 1 ? values[0] : values;
     }
     
     denormalized.push(obj);
@@ -478,15 +475,20 @@ export const convertFormat = async (input, inputFormat, outputFormat, options = 
   
   // Serialize store to output format
   switch (outputFormat) {
-    case 'jsonld':
+    case 'jsonld': {
       return JSON.stringify(storeToJSONLD(store, options), null, 2);
-    case 'ntriples':
+    }
+    case 'ntriples': {
       return storeToNTriples(store);
-    case 'rdfxml':
+    }
+    case 'rdfxml': {
       return storeToRDFXML(store, options);
-    case 'csv':
+    }
+    case 'csv': {
       return storeToCSV(store, options);
-    default:
+    }
+    default: {
       throw new Error(`Output format ${outputFormat} not yet supported`);
+    }
   }
 };

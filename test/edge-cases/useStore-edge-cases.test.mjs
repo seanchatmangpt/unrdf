@@ -10,20 +10,20 @@ const useStore = (initialQuads = [], options = {}) => {
     store,
     add: (quads) => {
       if (!Array.isArray(quads)) {
-        throw new Error("[useStore] Quads must be an array");
+        throw new TypeError("[useStore] Quads must be an array");
       }
-      quads.forEach(q => {
+      for (const q of quads) {
         if (!q || typeof q !== "object") {
           throw new Error("[useStore] Invalid quad");
         }
         store.add(q);
-      });
+      }
     },
     remove: (quads) => {
       if (!Array.isArray(quads)) {
-        throw new Error("[useStore] Quads must be an array");
+        throw new TypeError("[useStore] Quads must be an array");
       }
-      quads.forEach(q => store.removeQuads([q]));
+      for (const q of quads) store.removeQuads([q]);
     },
     clear: () => store.removeQuads(store.getQuads(null, null, null, null)),
     stats: () => ({ quads: store.size }),
@@ -84,9 +84,9 @@ describe("useStore Edge Cases", () => {
       ];
 
       // Act & Assert
-      invalidQuads.forEach(invalidQuad => {
+      for (const invalidQuad of invalidQuads) {
         expect(() => storeComposable.add([invalidQuad])).toThrow("[useStore] Invalid quad");
-      });
+      }
     });
 
     it("should handle quads with null components", () => {
@@ -110,7 +110,7 @@ describe("useStore Edge Cases", () => {
     it("should handle very large number of quads", () => {
       // Arrange
       const largeQuads = [];
-      for (let i = 0; i < 10000; i++) {
+      for (let i = 0; i < 10_000; i++) {
         largeQuads.push(quad(
           namedNode(`ex:s${i}`),
           namedNode("ex:p"),
@@ -122,12 +122,12 @@ describe("useStore Edge Cases", () => {
       storeComposable.add(largeQuads);
 
       // Assert
-      expect(storeComposable.stats().quads).toBe(10000);
+      expect(storeComposable.stats().quads).toBe(10_000);
     });
 
     it("should handle quads with very long IRIs", () => {
       // Arrange
-      const longIRI = "http://example.org/" + "a".repeat(10000);
+      const longIRI = "http://example.org/" + "a".repeat(10_000);
       const longQuad = quad(namedNode(longIRI), namedNode("ex:p"), literal("value"));
 
       // Act & Assert
@@ -136,7 +136,7 @@ describe("useStore Edge Cases", () => {
 
     it("should handle quads with very long literal values", () => {
       // Arrange
-      const longValue = "value".repeat(10000);
+      const longValue = "value".repeat(10_000);
       const longQuad = quad(namedNode("ex:s"), namedNode("ex:p"), literal(longValue));
 
       // Act & Assert
@@ -240,7 +240,7 @@ describe("useStore Edge Cases", () => {
       // Act
       try {
         storeComposable.add([null]);
-      } catch (error) {
+      } catch {
         // Expected error
       }
 
@@ -259,7 +259,7 @@ describe("useStore Edge Cases", () => {
       // Act
       try {
         storeComposable.add(invalidQuads);
-      } catch (error) {
+      } catch {
         // Expected error
       }
 

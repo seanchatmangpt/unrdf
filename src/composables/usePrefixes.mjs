@@ -43,9 +43,9 @@ export function usePrefixes(initialPrefixes = {}, options = {}) {
   
   // Initialize with provided prefixes
   if (initialPrefixes && typeof initialPrefixes === 'object') {
-    Object.entries(initialPrefixes).forEach(([prefix, uri]) => {
+    for (const [prefix, uri] of Object.entries(initialPrefixes)) {
       prefixes.set(prefix, uri);
-    });
+    }
   }
 
   return {
@@ -63,7 +63,7 @@ export function usePrefixes(initialPrefixes = {}, options = {}) {
       const entries = Object.entries(prefixMap);
       for (const [prefix, uri] of entries) {
         if (typeof prefix !== "string" || typeof uri !== "string") {
-          throw new Error("[usePrefixes] Prefix and URI must be strings");
+          throw new TypeError("[usePrefixes] Prefix and URI must be strings");
         }
         
         if (!uri.endsWith("/") && !uri.endsWith("#")) {
@@ -72,9 +72,9 @@ export function usePrefixes(initialPrefixes = {}, options = {}) {
       }
       
       // Only add entries if all are valid
-      entries.forEach(([prefix, uri]) => {
+      for (const [prefix, uri] of entries) {
         prefixes.set(prefix, uri);
-      });
+      }
       
       return this;
     },
@@ -86,7 +86,7 @@ export function usePrefixes(initialPrefixes = {}, options = {}) {
      */
     expand(curie) {
       if (typeof curie !== "string") {
-        throw new Error("[usePrefixes] CURIE must be a string");
+        throw new TypeError("[usePrefixes] CURIE must be a string");
       }
       
       if (!curie.trim()) {
@@ -98,8 +98,8 @@ export function usePrefixes(initialPrefixes = {}, options = {}) {
         throw new Error("[usePrefixes] Unknown prefix");
       }
       
-      const prefix = curie.substring(0, colonIndex);
-      const localName = curie.substring(colonIndex + 1);
+      const prefix = curie.slice(0, Math.max(0, colonIndex));
+      const localName = curie.slice(Math.max(0, colonIndex + 1));
       
       if (!prefix || !localName) {
         throw new Error("[usePrefixes] Invalid CURIE format");
@@ -120,7 +120,7 @@ export function usePrefixes(initialPrefixes = {}, options = {}) {
      */
     shrink(iri) {
       if (typeof iri !== "string") {
-        throw new Error("[usePrefixes] IRI must be a string");
+        throw new TypeError("[usePrefixes] IRI must be a string");
       }
       
       // Find the longest matching prefix
@@ -133,7 +133,7 @@ export function usePrefixes(initialPrefixes = {}, options = {}) {
       }
       
       if (bestMatch.prefix) {
-        const localName = iri.substring(bestMatch.length);
+        const localName = iri.slice(bestMatch.length);
         return `${bestMatch.prefix}:${localName}`;
       }
       

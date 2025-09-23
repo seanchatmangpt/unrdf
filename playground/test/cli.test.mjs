@@ -14,7 +14,7 @@ import {
   scenarios,
   testUtils
 } from 'citty-test-utils';
-import { readFile, writeFile, mkdir } from 'fs/promises';
+import { readFile, writeFile, mkdir } from 'node:fs/promises';
 
 describe('UNRDF CLI Tests', () => {
   beforeAll(async () => {
@@ -359,7 +359,7 @@ async function setupTestData() {
  */
 async function cleanupTestData() {
   try {
-    const { rm } = await import('fs/promises');
+    const { rm } = await import('node:fs/promises');
     await rm('./test-data', { recursive: true, force: true });
   } catch (error) {
     console.log('⚠️  Could not clean up test data:', error.message);

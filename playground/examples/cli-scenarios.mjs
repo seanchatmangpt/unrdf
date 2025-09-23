@@ -20,7 +20,7 @@ import {
   teardownCleanroom,
   testUtils
 } from 'citty-test-utils';
-import { readFile, writeFile, mkdir } from 'fs/promises';
+import { readFile, writeFile, mkdir } from 'node:fs/promises';
 
 console.log('🎭 UNRDF CLI Scenarios Example\n');
 
@@ -126,7 +126,7 @@ async function main() {
       .expectOutput('Custom Person')
       .step('Cleanup custom data', async ({ context }) => {
         if (context.customDataCreated) {
-          const { rm } = await import('fs/promises');
+          const { rm } = await import('node:fs/promises');
           await rm('./test-data/custom.ttl', { force: true });
           return { success: true, message: 'Custom data cleaned up' };
         }
@@ -163,7 +163,7 @@ async function main() {
           results.push(result.success);
         }
         
-        context.allQueriesSuccessful = results.every(r => r);
+        context.allQueriesSuccessful = results.every(Boolean);
         return { 
           success: context.allQueriesSuccessful, 
           message: `Executed ${queries.length} queries successfully` 
@@ -273,7 +273,7 @@ async function main() {
       .expectSuccess()
       .step('Cleanup workflow files', async () => {
         try {
-          const { rm } = await import('fs/promises');
+          const { rm } = await import('node:fs/promises');
           await rm('./test-data/workflow-output.ttl', { force: true });
           return { success: true, message: 'Workflow files cleaned up' };
         } catch (error) {
@@ -367,7 +367,7 @@ async function setupTestData() {
  */
 async function cleanupTestData() {
   try {
-    const { rm } = await import('fs/promises');
+    const { rm } = await import('node:fs/promises');
     await rm('./test-data', { recursive: true, force: true });
     console.log('🧹 Test data cleaned up');
   } catch (error) {

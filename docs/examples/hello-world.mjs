@@ -51,9 +51,9 @@ async function main() {
     `);
     
     console.log('   📊 Query results:');
-    results.results.forEach(row => {
+    for (const row of results.results) {
       console.log(`      - ${row.name} (age: ${row.age})`);
-    });
+    }
 
     // 3. Serialize to Turtle
     console.log('\n3. Serializing to Turtle...');
@@ -87,9 +87,9 @@ async function main() {
         console.log('   ✅ SHACL validation passed!');
       } else {
         console.log('   ❌ SHACL validation failed:');
-        report.results.forEach(result => {
+        for (const result of report.results) {
           console.log(`      - ${result.message}`);
-        });
+        }
       }
     } catch (error) {
       console.log('   ⚠️  SHACL validation skipped:', error.message);
@@ -152,14 +152,14 @@ async function main() {
       if (validation.validated) {
         console.log('   ✅ Zod validation passed!');
         console.log('   📊 Validated data:');
-        validation.data.forEach(person => {
+        for (const person of validation.data) {
           console.log(`      - ${person.name} (${person.age})`);
-        });
+        }
       } else {
         console.log('   ❌ Zod validation failed:');
-        validation.errors.forEach(error => {
+        for (const error of validation.errors) {
           console.log(`      - ${error.message}`);
-        });
+        }
       }
     } catch (error) {
       console.log('   ⚠️  Zod validation skipped:', error.message);

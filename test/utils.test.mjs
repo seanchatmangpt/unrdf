@@ -85,7 +85,7 @@ describe("UNRDF Utils Test Suite", () => {
     // Clean up temp directory
     try {
       await fs.rm(tempDir, { recursive: true, force: true });
-    } catch (error) {
+    } catch {
       // Ignore cleanup errors
     }
   });

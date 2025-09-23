@@ -9,4 +9,4 @@
  * @license MIT
  */
 
-export { RdfEngine } from "./RdfEngine.mjs";
+export { RdfEngine } from "./rdf-engine.mjs";

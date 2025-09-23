@@ -12,8 +12,8 @@
 
 import { readdir, readFile, writeFile, mkdir, stat } from "node:fs/promises";
 import { join, dirname } from "node:path";
-import { RdfEngine } from "../engines/RdfEngine.mjs";
-import { useStore } from "./useStore.mjs";
+import { RdfEngine } from "../engines/rdf-engine.mjs";
+import { useStoreContext } from "../context/index.mjs";
 
 /**
  * Create a Turtle file system composable
@@ -55,7 +55,8 @@ export async function useTurtle(graphDir = "./graph", options = {}) {
     }
   }
 
-  const store = useStore();
+  // Get the store from context
+  const storeContext = useStoreContext();
 
   return {
     /**
@@ -63,7 +64,7 @@ export async function useTurtle(graphDir = "./graph", options = {}) {
      * @type {Object}
      */
     get store() {
-      return store;
+      return storeContext;
     },
 
     /**
@@ -200,7 +201,7 @@ export async function useTurtle(graphDir = "./graph", options = {}) {
             const content = await readFile(filePath, "utf8");
             await writeFile(backupPath, content, "utf8");
             console.log(`📋 Created backup: ${fileName}.ttl.backup`);
-          } catch (error) {
+          } catch {
             // File doesn't exist, no backup needed
           }
         }

@@ -51,7 +51,7 @@ export function useTerms(options = {}) {
      */
     iri(iri) {
       if (typeof iri !== "string") {
-        throw new Error("[useTerms] IRI must be a string");
+        throw new TypeError("[useTerms] IRI must be a string");
       }
       
       // Handle relative IRIs

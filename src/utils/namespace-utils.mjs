@@ -181,7 +181,7 @@ export class NamespaceManager {
   contractIRI(fullIRI) {
     for (const [namespace, prefix] of this.prefixes.entries()) {
       if (fullIRI.startsWith(namespace)) {
-        const localName = fullIRI.substring(namespace.length);
+        const localName = fullIRI.slice(namespace.length);
         return `${prefix}:${localName}`;
       }
     }
@@ -352,7 +352,7 @@ export const validateNamespaces = (store) => {
           const index = Math.max(hashIndex, slashIndex);
           
           if (index > 0) {
-            const namespace = iri.substring(0, index + 1);
+            const namespace = iri.slice(0, Math.max(0, index + 1));
             unknownNamespaces.add(namespace);
           }
         }
@@ -392,5 +392,53 @@ export const generateSPARQLPrefixes = (prefixes) => {
     lines.push(`PREFIX ${prefix}: <${namespace}>`);
   }
   return lines.join('\n') + '\n';
+};
+
+/**
+ * Create a namespace function
+ * @param {string} namespace - Base namespace IRI
+ * @returns {Function} Function that creates IRIs in the namespace
+ */
+export const createNamespace = (namespace) => {
+  return (localName) => `${namespace}${localName}`;
+};
+
+/**
+ * Expand a CURIE to full IRI
+ * @param {string} curie - CURIE to expand (e.g., "foaf:Person")
+ * @param {Object} prefixes - Prefix mappings
+ * @returns {string} Full IRI
+ */
+export const expandCurie = (curie, prefixes) => {
+  const colonIndex = curie.indexOf(':');
+  if (colonIndex === -1) {
+    return curie; // Not a CURIE
+  }
+  
+  const prefix = curie.slice(0, Math.max(0, colonIndex));
+  const localName = curie.slice(Math.max(0, colonIndex + 1));
+  
+  if (prefixes[prefix]) {
+    return `${prefixes[prefix]}${localName}`;
+  }
+  
+  return curie; // Unknown prefix, return as-is
+};
+
+/**
+ * Shrink a full IRI to CURIE if possible
+ * @param {string} iri - Full IRI to shrink
+ * @param {Object} prefixes - Prefix mappings
+ * @returns {string} CURIE or original IRI if no match
+ */
+export const shrinkIri = (iri, prefixes) => {
+  for (const [prefix, namespace] of Object.entries(prefixes)) {
+    if (iri.startsWith(namespace)) {
+      const localName = iri.slice(namespace.length);
+      return `${prefix}:${localName}`;
+    }
+  }
+  
+  return iri; // No matching prefix found
 };
 

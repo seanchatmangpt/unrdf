@@ -36,7 +36,7 @@ const useLists = (store) => {
     },
     write: (items, listId) => {
       if (!Array.isArray(items)) {
-        throw new Error("[useLists] Items must be an array");
+        throw new TypeError("[useLists] Items must be an array");
       }
 
       if (items.length === 0) {

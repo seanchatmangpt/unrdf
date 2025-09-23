@@ -9,7 +9,7 @@
  * @license MIT
  */
 
-import { RdfEngine } from "../engines/RdfEngine.mjs";
+import { RdfEngine } from "../engines/rdf-engine.mjs";
 
 // Create a single, shared instance of the engine for efficiency
 const rdfEngine = new RdfEngine();
@@ -33,7 +33,7 @@ const rdfEngine = new RdfEngine();
  */
 export function useCanon(options = {}) {
   const {
-    timeoutMs = 30000,
+    timeoutMs = 30_000,
     onMetric
   } = options;
 
@@ -142,10 +142,10 @@ export function useCanon(options = {}) {
       const reference = referenceStore.store || referenceStore;
       const results = [];
       
-      for (let i = 0; i < stores.length; i++) {
-        const current = stores[i].store || stores[i];
+      for (const [i, store] of stores.entries()) {
+        const current = store.store || store;
         if (await engine.isIsomorphic(reference, current)) {
-          results.push({ store: stores[i], index: i });
+          results.push({ store: store, index: i });
         }
       }
       

@@ -66,7 +66,7 @@ describe("useNQuads", () => {
 
   it("should parse N-Quads from file", async () => {
     // Arrange
-    const fs = await import("fs");
+    const fs = await import("node:fs");
     const testContent = "<http://example.org/s> <http://example.org/p> <http://example.org/o> .\n";
     fs.writeFileSync("./test.nq", testContent);
 
@@ -85,7 +85,7 @@ describe("useNQuads", () => {
 
   it("should parse file with custom base IRI", async () => {
     // Arrange
-    const fs = await import("fs");
+    const fs = await import("node:fs");
     const testContent = "<http://example.org/s> <http://example.org/p> <http://example.org/o> .\n";
     fs.writeFileSync("./test.nq", testContent);
     const customNQuads = useNQuads({ baseIRI: "http://my.org/" });

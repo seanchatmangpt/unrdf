@@ -53,7 +53,7 @@ export function useMetrics(options = {}) {
      * @returns {Function} Wrapped function
      */
     wrap(label, fn) {
-      if (fn == null || typeof fn !== "function") {
+      if (fn == undefined || typeof fn !== "function") {
         throw new Error("[useMetrics] Function is required");
       }
       
@@ -69,9 +69,9 @@ export function useMetrics(options = {}) {
         try {
           result = await fn(...args);
           return result;
-        } catch (err) {
-          error = err;
-          throw err;
+        } catch (error_) {
+          error = error_;
+          throw error_;
         } finally {
           const end = performance.now();
           const duration = end - start;
@@ -175,7 +175,7 @@ export function useMetrics(options = {}) {
      * @returns {Object|null} Last metric or null
      */
     last() {
-      return history.length > 0 ? history[history.length - 1] : null;
+      return history.length > 0 ? history.at(-1) : null;
     },
 
     /**

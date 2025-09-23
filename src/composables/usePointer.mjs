@@ -1,35 +1,43 @@
 /**
- * @fileoverview usePointer composable - Clownface graph traversal
+ * @fileoverview usePointer composable - Clownface graph traversal with context
  * 
  * This composable provides Clownface-based graph traversal capabilities.
  * It enforces the "One Pointer Rule" - Clownface is the only traversal method.
+ * Now uses unctx for store access.
  * 
  * @version 1.0.0
  * @author GitVan Team
  * @license MIT
  */
 
-import { RdfEngine } from "../engines/RdfEngine.mjs";
+import { RdfEngine } from "../engines/rdf-engine.mjs";
+import { useStoreContext } from "../context/index.mjs";
 
 /**
  * Create a pointer composable for graph traversal
  * 
- * @param {Store} store - N3.Store to traverse
  * @param {Object} [options] - Pointer options
  * @param {string} [options.baseIRI] - Base IRI for operations
  * @returns {Object} Pointer composable interface
  * 
  * @example
- * const pointer = usePointer(store);
+ * // Initialize store context first
+ * const runApp = initStore();
  * 
- * // Traverse the graph
- * const name = pointer.node("ex:person").out("foaf:name").value;
- * const friends = pointer.node("ex:person").out("foaf:knows").toArray();
+ * runApp(() => {
+ *   const pointer = usePointer();
+ *   
+ *   // Traverse the graph
+ *   const name = pointer.node("ex:person").out("foaf:name").value;
+ *   const friends = pointer.node("ex:person").out("foaf:knows").toArray();
+ * });
+ * 
+ * @throws {Error} If store context is not initialized
  */
-export function usePointer(store, options = {}) {
-  if (!store || typeof store.getQuads !== "function") {
-    throw new Error("[usePointer] Store is required");
-  }
+export function usePointer(options = {}) {
+  // Get the store from context
+  const storeContext = useStoreContext();
+  const store = storeContext.store;
 
   const { baseIRI = "http://example.org/" } = options || {};
   const engine = new RdfEngine({ baseIRI });
@@ -63,14 +71,18 @@ export function usePointer(store, options = {}) {
       // Handle RDF terms
       if (node && node.termType) {
         switch (node.termType) {
-          case "NamedNode":
+          case "NamedNode": {
             return clownface.namedNode(node.value);
-          case "BlankNode":
+          }
+          case "BlankNode": {
             return clownface.blankNode(node.value);
-          case "Literal":
+          }
+          case "Literal": {
             return clownface.literal(node.value, node.datatype, node.language);
-          default:
+          }
+          default: {
             throw new Error(`[usePointer] Unsupported term type: ${node.termType}`);
+          }
         }
       }
       

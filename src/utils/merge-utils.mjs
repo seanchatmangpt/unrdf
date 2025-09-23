@@ -213,21 +213,27 @@ export const mergeStoresWithStrategy = (store1, store2, options = {}) => {
   const { strategy = 'union', conflictResolver } = options;
   
   switch (strategy) {
-    case 'union':
+    case 'union': {
       return unionStores(store1, store2);
-    case 'intersection':
+    }
+    case 'intersection': {
       return intersectStores(store1, store2);
-    case 'store1':
+    }
+    case 'store1': {
       return new Store(store1);
-    case 'store2':
+    }
+    case 'store2': {
       return new Store(store2);
-    case 'custom':
+    }
+    case 'custom': {
       if (!conflictResolver) {
         throw new Error('Conflict resolver required for custom strategy');
       }
       return conflictResolver(store1, store2);
-    default:
+    }
+    default: {
       throw new Error(`Unknown merge strategy: ${strategy}`);
+    }
   }
 };
 

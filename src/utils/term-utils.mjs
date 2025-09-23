@@ -8,7 +8,7 @@ const { namedNode, literal, blankNode } = DataFactory;
  * @returns {import('n3').NamedNode} NamedNode instance
  */
 export const asNamedNode = (iri) => {
-  if (iri == null) {
+  if (iri == undefined) {
     throw new Error("asNamedNode: IRI cannot be null or undefined");
   }
   return iri?.termType === "NamedNode" ? iri : namedNode(String(iri));
@@ -21,7 +21,7 @@ export const asNamedNode = (iri) => {
  * @returns {import('n3').Literal} Literal instance
  */
 export const asLiteral = (value, datatype = "http://www.w3.org/2001/XMLSchema#string") => {
-  if (value == null) {
+  if (value == undefined) {
     throw new Error("asLiteral: value cannot be null or undefined");
   }
   return literal(String(value), datatype);

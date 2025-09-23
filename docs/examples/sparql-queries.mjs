@@ -83,9 +83,9 @@ async function main() {
       }
     `);
     
-    basicResults.results.forEach(row => {
+    for (const row of basicResults.results) {
       console.log(`      - ${row.name} (age: ${row.age})`);
-    });
+    }
 
     // SELECT with FILTER
     console.log('\n   📊 SELECT with FILTER (age > 25):');
@@ -101,9 +101,9 @@ async function main() {
       }
     `);
     
-    filteredResults.results.forEach(row => {
+    for (const row of filteredResults.results) {
       console.log(`      - ${row.name} (age: ${row.age})`);
-    });
+    }
 
     // SELECT with OPTIONAL
     console.log('\n   📊 SELECT with OPTIONAL (who knows whom):');
@@ -120,10 +120,10 @@ async function main() {
       }
     `);
     
-    optionalResults.results.forEach(row => {
+    for (const row of optionalResults.results) {
       const knows = row.knowsName ? ` (knows ${row.knowsName})` : '';
       console.log(`      - ${row.name}${knows}`);
-    });
+    }
 
     // SELECT with LIMIT and OFFSET
     console.log('\n   📊 SELECT with LIMIT and OFFSET:');
@@ -140,9 +140,9 @@ async function main() {
       LIMIT 2
     `);
     
-    limitedResults.results.forEach(row => {
+    for (const row of limitedResults.results) {
       console.log(`      - ${row.name} (age: ${row.age})`);
-    });
+    }
 
     // 3. ASK queries
     console.log('\n3. ASK queries...');
@@ -271,9 +271,9 @@ async function main() {
       }
     `);
     
-    complexResults.results.forEach(row => {
+    for (const row of complexResults.results) {
       console.log(`      - ${row.name1} and ${row.name2} both work at ${row.company}`);
-    });
+    }
 
     // 9. Query statistics
     console.log('\n9. Query statistics...');

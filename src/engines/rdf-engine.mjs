@@ -22,6 +22,7 @@ import rdfCanonize from "rdf-canonize";
 import jsonld from "jsonld";
 import { n3reasoner } from "eyereasoner";
 import $rdf from "@zazuko/env";
+import { useStoreContext } from "../context/index.mjs";
 
 const { namedNode, literal, quad, blankNode, defaultGraph, variable } = DataFactory;
 
@@ -52,12 +53,22 @@ export class RdfEngine {
   // ============== Terms & Store ==============
 
   /**
-   * Create a new N3.Store instance
-   * @param {Array} [quads=[]] - Initial quads
-   * @returns {Store} New N3.Store instance
+   * Get the global store from context
+   * @returns {Store} The global store instance
+   * @throws {Error} If store context is not initialized
    */
-  createStore(quads = []) {
-    return new Store(quads);
+  getStore() {
+    const storeContext = useStoreContext();
+    return storeContext.store;
+  }
+
+  /**
+   * Get the store context
+   * @returns {Object} Store context
+   * @throws {Error} If store context is not initialized
+   */
+  getStoreContext() {
+    return useStoreContext();
   }
 
   /**
@@ -103,11 +114,11 @@ export class RdfEngine {
   // ============== Parse & Serialize (deterministic) ==============
 
   /**
-   * Parse Turtle into N3.Store
+   * Parse Turtle into the global store
    * @param {string} ttl - Turtle string
    * @param {Object} [options] - Parse options
    * @param {string} [options.baseIRI] - Base IRI for parsing
-   * @returns {Store} Parsed store
+   * @returns {Store} The global store with parsed quads
    */
   parseTurtle(ttl, options = {}) {
     if (typeof ttl !== "string" || !ttl.trim()) {
@@ -116,30 +127,40 @@ export class RdfEngine {
     const parser = new Parser({
       baseIRI: options.baseIRI || this.baseIRI
     });
-    return new Store(parser.parse(ttl));
+    const quads = parser.parse(ttl);
+    
+    // Add quads to the global store
+    const store = this.getStore();
+    store.addQuads(quads);
+    return store;
   }
 
   /**
-   * Parse N-Quads into N3.Store
+   * Parse N-Quads into the global store
    * @param {string} nq - N-Quads string
-   * @returns {Store} Parsed store
+   * @returns {Store} The global store with parsed quads
    */
   parseNQuads(nq) {
-    if (typeof nq !== "string" || !nq.length) {
+    if (typeof nq !== "string" || nq.length === 0) {
       throw new Error("parseNQuads: non-empty string required");
     }
     const parser = new Parser({ format: "N-Quads" });
-    return new Store(parser.parse(nq));
+    const quads = parser.parse(nq);
+    
+    // Add quads to the global store
+    const store = this.getStore();
+    store.addQuads(quads);
+    return store;
   }
 
   /**
-   * Serialize store to Turtle
-   * @param {Store} store - N3.Store to serialize
+   * Serialize the global store to Turtle
    * @param {Object} [options] - Serialization options
    * @param {Object} [options.prefixes] - Prefix mappings
    * @returns {Promise<string>} Turtle string
    */
-  async serializeTurtle(store, options = {}) {
+  async serializeTurtle(options = {}) {
+    const store = this.getStore();
     const prefixes = options.prefixes || this._extractPrefixes(store);
     const writer = new Writer({
       format: "Turtle",
@@ -153,11 +174,11 @@ export class RdfEngine {
   }
 
   /**
-   * Serialize store to N-Quads
-   * @param {Store} store - N3.Store to serialize
+   * Serialize the global store to N-Quads
    * @returns {Promise<string>} N-Quads string
    */
-  async serializeNQuads(store) {
+  async serializeNQuads() {
+    const store = this.getStore();
     const writer = new Writer({ format: "N-Quads" });
     const quads = this._maybeSort([...store]);
     writer.addQuads(quads);
@@ -169,12 +190,11 @@ export class RdfEngine {
   // ============== Canonicalization & Isomorphism ==============
 
   /**
-   * Canonicalize store using URDNA2015
-   * @param {Store} store - Store to canonicalize
+   * Canonicalize the global store using URDNA2015
    * @returns {Promise<string>} Canonical N-Quads string
    */
-  async canonicalize(store) {
-    const nquads = await this.serializeNQuads(store);
+  async canonicalize() {
+    const nquads = await this.serializeNQuads();
     if (!nquads.trim()) {
       return "";
     }
@@ -266,8 +286,7 @@ export class RdfEngine {
   // ============== SPARQL Query & Update ==============
 
   /**
-   * Execute SPARQL query with streaming, paging, and timeout
-   * @param {Store} store - Store to query
+   * Execute SPARQL query on the global store
    * @param {string} sparql - SPARQL query string
    * @param {Object} [opts] - Query options
    * @param {number} [opts.limit] - Result limit
@@ -275,7 +294,7 @@ export class RdfEngine {
    * @param {boolean} [opts.deterministic] - Enable deterministic results
    * @returns {Promise<Object>} Query result
    */
-  async query(store, sparql, opts = {}) {
+  async query(sparql, opts = {}) {
     if (typeof sparql !== "string" || !sparql.trim()) {
       throw new Error("query: non-empty SPARQL required");
     }
@@ -287,6 +306,7 @@ export class RdfEngine {
     
     const limit = Number.isFinite(opts.limit) ? opts.limit : Infinity;
     const deterministic = opts.deterministic ?? this.deterministic;
+    const store = this.getStore();
     const ctx = { sources: [store] };
     
     const kind = q
@@ -345,11 +365,11 @@ export class RdfEngine {
   // ============== Graph Manipulation ==============
 
   /**
-   * Get Clownface pointer over an rdf-ext dataset view of the store
-   * @param {Store} store - Store to create pointer for
+   * Get Clownface pointer over the global store
    * @returns {Clownface} Clownface pointer
    */
-  getClownface(store) {
+  getClownface() {
+    const store = this.getStore();
     const dataset = this.$rdf.dataset();
     for (const quad of store) {
       dataset.add(
@@ -358,17 +378,17 @@ export class RdfEngine {
           this.$rdf.namedNode(quad.predicate.value),
           quad.object.termType === "NamedNode" 
             ? this.$rdf.namedNode(quad.object.value)
-            : quad.object.termType === "Literal"
+            : (quad.object.termType === "Literal"
             ? this.$rdf.literal(
                 quad.object.value,
                 quad.object.language || quad.object.datatype
               )
-            : this.$rdf.blankNode(quad.object.value),
+            : this.$rdf.blankNode(quad.object.value)),
           quad.graph.termType === "DefaultGraph"
             ? this.$rdf.defaultGraph()
-            : quad.graph.termType === "NamedNode"
+            : (quad.graph.termType === "NamedNode"
             ? this.$rdf.namedNode(quad.graph.value)
-            : this.$rdf.blankNode(quad.graph.value)
+            : this.$rdf.blankNode(quad.graph.value))
         )
       );
     }
@@ -441,9 +461,9 @@ export class RdfEngine {
   }
 
   /**
-   * Convert JSON-LD to store
+   * Convert JSON-LD to the global store
    * @param {Object} jsonldDoc - JSON-LD document
-   * @returns {Promise<Store>} N3.Store
+   * @returns {Promise<Store>} The global store with converted quads
    */
   async fromJSONLD(jsonldDoc) {
     const nquads = await jsonld.toRDF(jsonldDoc, {
@@ -451,6 +471,7 @@ export class RdfEngine {
     });
     return this.parseNQuads(nquads);
   }
+
 
   // ============== Set Operations & Utilities ==============
 
@@ -523,11 +544,11 @@ export class RdfEngine {
   }
 
   /**
-   * Get statistics about a store
-   * @param {Store} store - Store to analyze
+   * Get statistics about the global store
    * @returns {Object} Statistics object
    */
-  getStats(store) {
+  getStats() {
+    const store = this.getStore();
     const S = new Set(), P = new Set(), O = new Set(), G = new Set();
     for (const q of store) {
       S.add(q.subject.value);
@@ -664,7 +685,7 @@ export class RdfEngine {
     }
     
     // Add example.org prefix if present
-    const exampleUris = Array.from(uris).filter(uri => 
+    const exampleUris = [...uris].filter(uri => 
       uri.startsWith("http://example.org/")
     );
     if (exampleUris.length > 0) {

@@ -22,6 +22,82 @@ pnpm add unrdf
 
 ## Quick Start
 
+### CLI Usage
+
+```bash
+# Install globally
+pnpm install -g unrdf
+
+# Initialize a new project
+unrdf init my-knowledge-graph
+
+# Parse RDF data
+unrdf parse data.ttl --stats
+
+# Query with SPARQL  
+unrdf query data.ttl --query "SELECT * WHERE { ?s ?p ?o } LIMIT 10"
+
+# Validate against SHACL shapes
+unrdf validate data.ttl shapes.ttl
+
+# Convert between formats
+unrdf convert data.ttl --to json-ld
+```
+
+### Programmatic Usage
+
+#### Context-Based Approach (Recommended)
+
+unrdf now uses [unctx](https://github.com/unjs/unctx) for global store management, ensuring there's only one store by default:
+
+```javascript
+import { initStore, useStore, useGraph, useValidator, useZod } from 'unrdf';
+
+// Initialize the store context at the root of your application
+const runApp = initStore([], { baseIRI: 'http://example.org/' });
+
+runApp(() => {
+  // All composables now share the same store automatically
+  const store = useStore();
+  const graph = useGraph();
+  const validator = useValidator();
+  const zod = useZod();
+  
+  // Create RDF data
+  const subject = store.namedNode('http://example.org/person1');
+  const predicate = store.namedNode('http://example.org/name');
+  const object = store.literal('John Doe');
+  const quad = store.quad(subject, predicate, object);
+  
+  // Add to the shared store
+  store.add(quad);
+  
+  // Query the data
+  const results = await graph.select(`
+    PREFIX ex: <http://example.org/>
+    SELECT ?s ?p ?o WHERE { ?s ?p ?o }
+  `);
+  
+  console.log('Query results:', results);
+  
+  // Validate with SHACL
+  const report = await validator.validate(store, shapesStore);
+  console.log('Validation report:', report);
+  
+  // Type-safe validation with Zod
+  const PersonSchema = z.object({
+    id: z.string().url(),
+    name: z.string(),
+    age: z.number().int().min(0)
+  });
+  
+  const validation = await zod.validateResults(results, PersonSchema);
+  console.log('Zod validation:', validation);
+});
+```
+
+#### Legacy Approach (Still Supported)
+
 ```javascript
 import { useStore, useGraph, useValidator, useZod } from 'unrdf';
 

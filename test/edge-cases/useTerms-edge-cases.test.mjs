@@ -13,7 +13,7 @@ const useTerms = (options = {}) => {
   return {
     iri: (iri) => {
       if (typeof iri !== "string") {
-        throw new Error("[useTerms] IRI must be a string");
+        throw new TypeError("[useTerms] IRI must be a string");
       }
       
       if (iri.startsWith("#") || iri.startsWith("/")) {
@@ -183,12 +183,12 @@ describe("useTerms Edge Cases", () => {
       ];
 
       // Act & Assert
-      specialIRIs.forEach(iri => {
+      for (const iri of specialIRIs) {
         expect(() => terms.iri(iri)).not.toThrow();
         const result = terms.iri(iri);
         expect(result.termType).toBe("NamedNode");
         expect(result.value).toBe(iri);
-      });
+      }
     });
 
     it("should handle literals with special characters", () => {
@@ -200,16 +200,16 @@ describe("useTerms Edge Cases", () => {
         "value with unicode 测试",
         "value with emoji 🚀",
         "value with quotes \"double\" and 'single'",
-        "value with backslashes \\ and forward slashes /"
+        String.raw`value with backslashes \ and forward slashes /`
       ];
 
       // Act & Assert
-      specialValues.forEach(value => {
+      for (const value of specialValues) {
         expect(() => terms.lit(value)).not.toThrow();
         const result = terms.lit(value);
         expect(result.termType).toBe("Literal");
         expect(result.value).toBe(value);
-      });
+      }
     });
 
     it("should handle blank node IDs with special characters", () => {
@@ -225,19 +225,19 @@ describe("useTerms Edge Cases", () => {
       ];
 
       // Act & Assert
-      specialIDs.forEach(id => {
+      for (const id of specialIDs) {
         expect(() => terms.bnode(id)).not.toThrow();
         const result = terms.bnode(id);
         expect(result.termType).toBe("BlankNode");
         expect(result.value).toBe(id);
-      });
+      }
     });
   });
 
   describe("Boundary Values", () => {
     it("should handle very long IRIs", () => {
       // Arrange
-      const longIRI = "http://example.org/" + "a".repeat(10000);
+      const longIRI = "http://example.org/" + "a".repeat(10_000);
 
       // Act & Assert
       expect(() => terms.iri(longIRI)).not.toThrow();
@@ -248,7 +248,7 @@ describe("useTerms Edge Cases", () => {
 
     it("should handle very long literal values", () => {
       // Arrange
-      const longValue = "value".repeat(10000);
+      const longValue = "value".repeat(10_000);
 
       // Act & Assert
       expect(() => terms.lit(longValue)).not.toThrow();
@@ -259,7 +259,7 @@ describe("useTerms Edge Cases", () => {
 
     it("should handle very long blank node IDs", () => {
       // Arrange
-      const longID = "id".repeat(10000);
+      const longID = "id".repeat(10_000);
 
       // Act & Assert
       expect(() => terms.bnode(longID)).not.toThrow();

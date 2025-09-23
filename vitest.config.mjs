@@ -25,10 +25,10 @@ export default defineConfig({
     maxConcurrency: 10,
     
     // Test timeout - generous for RDF operations
-    testTimeout: 30000,
+    testTimeout: 30_000,
     
     // Hook timeout
-    hookTimeout: 30000,
+    hookTimeout: 30_000,
     
     // Coverage configuration
     coverage: {

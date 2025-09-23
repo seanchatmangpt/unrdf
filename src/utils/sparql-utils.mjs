@@ -171,19 +171,33 @@ export class SPARQLBuilder {
     }
     
     // Add query type and variables
-    if (this.queryType === 'SELECT') {
+    switch (this.queryType) {
+    case 'SELECT': {
       const distinctStr = this.distinct ? 'DISTINCT ' : '';
       const selectVars = this.selectVars.length > 0 ? this.selectVars.join(' ') : '*';
       query += `SELECT ${distinctStr}${selectVars}\n`;
-    } else if (this.queryType === 'CONSTRUCT') {
+    
+    break;
+    }
+    case 'CONSTRUCT': {
       query += 'CONSTRUCT {\n';
       // Add construct template here if needed
       query += '}\n';
-    } else if (this.queryType === 'ASK') {
+    
+    break;
+    }
+    case 'ASK': {
       query += 'ASK\n';
-    } else if (this.queryType === 'DESCRIBE') {
+    
+    break;
+    }
+    case 'DESCRIBE': {
       const describeVars = this.selectVars.length > 0 ? this.selectVars.join(' ') : '*';
       query += `DESCRIBE ${describeVars}\n`;
+    
+    break;
+    }
+    // No default
     }
     
     // Add WHERE clause
@@ -481,7 +495,7 @@ export const analyzeSPARQLQuery = (query) => {
     if (line.includes('?')) {
       const variables = line.match(/\?(\w+)/g);
       if (variables) {
-        analysis.variables.push(...variables.map(v => v.substring(1)));
+        analysis.variables.push(...variables.map(v => v.slice(1)));
       }
     }
     
@@ -527,11 +541,10 @@ export const validateSPARQLQuery = (query) => {
   let hasQueryType = false;
   let hasWhere = false;
   
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
+  for (const [i, line] of lines.entries()) {
     
     // Check for query type
-    if (line.match(/^(SELECT|CONSTRUCT|ASK|DESCRIBE)/)) {
+    if (/^(SELECT|CONSTRUCT|ASK|DESCRIBE)/.test(line)) {
       hasQueryType = true;
     }
     
@@ -590,7 +603,7 @@ export const extractVariables = (query) => {
   
   if (matches) {
     for (const match of matches) {
-      variables.add(match.substring(1));
+      variables.add(match.slice(1));
     }
   }
   
