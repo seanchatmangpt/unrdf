@@ -4,7 +4,7 @@ import { describe, expect, it, beforeEach } from "vitest";
 const useCache = (options = {}) => {
   const {
     maxSize = 1000,
-    defaultTTL = 300000,
+    defaultTTL = 300_000,
     enabled = true
   } = options;
 
@@ -107,7 +107,7 @@ const useCache = (options = {}) => {
       hitRate: 0.85,
       memoryUsage: 1024
     }),
-    keys: () => Array.from(cache.keys()),
+    keys: () => [...cache.keys()],
     entries: () => {
       const now = Date.now();
       const entries = [];
@@ -357,7 +357,7 @@ describe("useCache Edge Cases", () => {
         "key/with/unicode/测试",
         "key/with/emoji/🚀",
         "key with quotes \"double\" and 'single'",
-        "key with backslashes \\ and forward slashes /"
+        String.raw`key with backslashes \ and forward slashes /`
       ];
 
       const testFn = async () => "test result";
@@ -378,7 +378,7 @@ describe("useCache Edge Cases", () => {
         "value with unicode 测试",
         "value with emoji 🚀",
         "value with quotes \"double\" and 'single'",
-        "value with backslashes \\ and forward slashes /"
+        String.raw`value with backslashes \ and forward slashes /`
       ];
 
       // Act & Assert
@@ -391,7 +391,7 @@ describe("useCache Edge Cases", () => {
   describe("Boundary Values", () => {
     it("should handle very long keys", async () => {
       // Arrange
-      const longKey = "a".repeat(10000);
+      const longKey = "a".repeat(10_000);
       const testFn = async () => "test result";
 
       // Act
@@ -403,7 +403,7 @@ describe("useCache Edge Cases", () => {
 
     it("should handle very long values", () => {
       // Arrange
-      const longValue = "value".repeat(10000);
+      const longValue = "value".repeat(10_000);
 
       // Act & Assert
       expect(() => cache.set("test", longValue)).not.toThrow();
@@ -456,7 +456,7 @@ describe("useCache Edge Cases", () => {
 
     it("should handle very large maxSize", () => {
       // Arrange
-      const largeSizeCache = useCache({ maxSize: 100000 });
+      const largeSizeCache = useCache({ maxSize: 100_000 });
 
       // Act
       for (let i = 0; i < 1000; i++) {
@@ -589,7 +589,7 @@ describe("useCache Edge Cases", () => {
       const result = await cache.get("test", multiArgFn);
 
       // Assert
-      expect(result).toBe(NaN); // No arguments passed
+      expect(result).toBe(Number.NaN); // No arguments passed
     });
   });
 
@@ -793,7 +793,7 @@ describe("useCache Edge Cases", () => {
       // Act
       try {
         await cache.get("test", null);
-      } catch (error) {
+      } catch {
         // Expected error
       }
 
@@ -808,7 +808,7 @@ describe("useCache Edge Cases", () => {
       // Act
       try {
         cache.set("test", "value", { ttl: "invalid" });
-      } catch (error) {
+      } catch {
         // Expected error
       }
 

@@ -103,11 +103,11 @@ console.log(`   Conforms: ${validationReport.conforms}`);
 
 if (!validationReport.conforms) {
   console.log('   Violations:');
-  validationReport.results.forEach((violation, index) => {
+  for (const [index, violation] of validationReport.results.entries()) {
     console.log(`     ${index + 1}. ${violation.message[0].value}`);
     console.log(`        Focus node: ${violation.focusNode.value}`);
     console.log(`        Path: ${violation.resultPath?.value || 'N/A'}`);
-  });
+  }
 }
 
 // ============================================================================
@@ -185,9 +185,9 @@ const adultResults = await reasoningGraph.select(`
 `);
 
 console.log('\n   Inferred adults:');
-adultResults.forEach((result, index) => {
+for (const [index, result] of adultResults.entries()) {
   console.log(`     ${index + 1}. ${result.name.value} (${result.person.value})`);
-});
+}
 
 const votingResults = await reasoningGraph.select(`
   PREFIX ex: <http://example.org/>
@@ -199,9 +199,9 @@ const votingResults = await reasoningGraph.select(`
 `);
 
 console.log('\n   People who can vote:');
-votingResults.forEach((result, index) => {
+for (const [index, result] of votingResults.entries()) {
   console.log(`     ${index + 1}. ${result.name.value} (${result.person.value})`);
-});
+}
 
 const transitiveResults = await reasoningGraph.select(`
   PREFIX ex: <http://example.org/>
@@ -212,9 +212,9 @@ const transitiveResults = await reasoningGraph.select(`
 `);
 
 console.log('\n   All known relationships (including inferred):');
-transitiveResults.forEach((result, index) => {
+for (const [index, result] of transitiveResults.entries()) {
   console.log(`     ${index + 1}. ${result.person1.value} knows ${result.person2.value}`);
-});
+}
 
 // ============================================================================
 // 3. Zod Runtime Validation
@@ -259,17 +259,17 @@ console.log(`   Validated records: ${zodValidation.validated.length}`);
 
 if (zodValidation.valid) {
   console.log('\n   Validated data:');
-  zodValidation.validated.forEach((person, index) => {
+  for (const [index, person] of zodValidation.validated.entries()) {
     console.log(`     ${index + 1}. ${person.name} (age: ${person.age})`);
     if (person.email) console.log(`        Email: ${person.email}`);
     if (person.isAdult) console.log(`        Adult: ${person.isAdult}`);
     if (person.canVote) console.log(`        Can vote: ${person.canVote}`);
-  });
+  }
 } else {
   console.log('\n   Validation errors:');
-  zodValidation.errors.forEach((error, index) => {
+  for (const [index, error] of zodValidation.errors.entries()) {
     console.log(`     ${index + 1}. ${error.message}`);
-  });
+  }
 }
 
 // ============================================================================
@@ -323,8 +323,8 @@ const canonical1 = await canon.canonicalize(store1);
 const canonical2 = await canon.canonicalize(store2);
 
 console.log('\n✅ Canonicalization Results:');
-console.log(`   Store 1 canonical: ${canonical1.substring(0, 100)}...`);
-console.log(`   Store 2 canonical: ${canonical2.substring(0, 100)}...`);
+console.log(`   Store 1 canonical: ${canonical1.slice(0, 100)}...`);
+console.log(`   Store 2 canonical: ${canonical2.slice(0, 100)}...`);
 
 // Check if stores are isomorphic
 const isIsomorphic = await canon.isIsomorphic(store1, store2);
@@ -412,7 +412,7 @@ function assessDataQuality(store) {
   const personsWithInvalidAges = persons.filter(p => {
     const age = getOne(store, p, "foaf:age");
     if (!age || age.termType !== "Literal") return true;
-    const ageValue = parseInt(age.value);
+    const ageValue = Number.parseInt(age.value);
     return isNaN(ageValue) || ageValue < 0 || ageValue > 150;
   });
   
@@ -481,9 +481,9 @@ console.log(`   Name completeness: ${(qualityAssessment.completeness.names * 100
 console.log(`   Email completeness: ${(qualityAssessment.completeness.emails * 100).toFixed(1)}%`);
 
 console.log('\n   Quality issues:');
-qualityAssessment.issues.forEach((issue, index) => {
+for (const [index, issue] of qualityAssessment.issues.entries()) {
   console.log(`     ${index + 1}. ${issue.message} (${issue.count} instances)`);
-});
+}
 
 // ============================================================================
 // 6. Combined Validation Pipeline

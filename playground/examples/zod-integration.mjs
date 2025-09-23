@@ -98,19 +98,19 @@ async function main() {
           id: 'http://example.org/ceo',
           name: 'CEO Name',
           position: 'Chief Executive Officer',
-          salary: 200000,
+          salary: 200_000,
           startDate: '2020-01-01T00:00:00Z'
         },
         {
           id: 'http://example.org/cto',
           name: 'CTO Name',
           position: 'Chief Technology Officer',
-          salary: 180000,
+          salary: 180_000,
           startDate: '2020-02-01T00:00:00Z'
         }
       ],
       founded: '2015-01-01T00:00:00Z',
-      revenue: 10000000
+      revenue: 10_000_000
     };
 
     // Validate and convert to RDF
@@ -141,7 +141,7 @@ async function main() {
       personBindings.push({
         id: binding.get('person').value,
         name: binding.get('name').value,
-        age: binding.get('age') ? parseInt(binding.get('age').value) : undefined,
+        age: binding.get('age') ? Number.parseInt(binding.get('age').value) : undefined,
         email: binding.get('email')?.value
       });
     }

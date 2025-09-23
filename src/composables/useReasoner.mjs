@@ -9,7 +9,7 @@
  * @license MIT
  */
 
-import { RdfEngine } from "../engines/RdfEngine.mjs";
+import { RdfEngine } from "../engines/rdf-engine.mjs";
 import { useGraph } from "./useGraph.mjs";
 
 // Create a single, shared instance of the engine for efficiency
@@ -34,7 +34,7 @@ const rdfEngine = new RdfEngine();
  */
 export function useReasoner(options = {}) {
   const {
-    timeoutMs = 30000,
+    timeoutMs = 30_000,
     onMetric
   } = options;
 

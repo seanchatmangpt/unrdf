@@ -418,9 +418,9 @@ describe("useDelta Edge Cases", () => {
       const largeStore1 = new Store();
       const largeStore2 = new Store();
 
-      for (let i = 0; i < 10000; i++) {
+      for (let i = 0; i < 10_000; i++) {
         const q1 = quad(namedNode(`ex:s${i}`), namedNode("ex:p"), literal(`o${i}`));
-        const q2 = quad(namedNode(`ex:s${i}`), namedNode("ex:p"), literal(`o${i + 10000}`));
+        const q2 = quad(namedNode(`ex:s${i}`), namedNode("ex:p"), literal(`o${i + 10_000}`));
         
         largeStore1.add(q1);
         largeStore2.add(q2);
@@ -432,8 +432,8 @@ describe("useDelta Edge Cases", () => {
       // Assert
       expect(result).toHaveProperty("added");
       expect(result).toHaveProperty("removed");
-      expect(result.added.size).toBe(10000);
-      expect(result.removed.size).toBe(10000);
+      expect(result.added.size).toBe(10_000);
+      expect(result.removed.size).toBe(10_000);
     });
 
     it("should handle very large changes", () => {
@@ -441,9 +441,9 @@ describe("useDelta Edge Cases", () => {
       const largeAdded = new Store();
       const largeRemoved = new Store();
 
-      for (let i = 0; i < 10000; i++) {
+      for (let i = 0; i < 10_000; i++) {
         const q1 = quad(namedNode(`ex:s${i}`), namedNode("ex:p"), literal(`o${i}`));
-        const q2 = quad(namedNode(`ex:s${i + 10000}`), namedNode("ex:p"), literal(`o${i + 10000}`));
+        const q2 = quad(namedNode(`ex:s${i + 10_000}`), namedNode("ex:p"), literal(`o${i + 10_000}`));
         
         largeAdded.add(q1);
         largeRemoved.add(q2);
@@ -455,7 +455,7 @@ describe("useDelta Edge Cases", () => {
       const result = delta.patch(store1, largeChanges);
 
       // Assert
-      expect(result.size).toBe(10002); // Original 2 + 10000 added - 0 removed
+      expect(result.size).toBe(10_002); // Original 2 + 10000 added - 0 removed
     });
   });
 
@@ -784,7 +784,7 @@ describe("useDelta Edge Cases", () => {
       // Act
       try {
         delta.diff(null, store2);
-      } catch (error) {
+      } catch {
         // Expected error
       }
 
@@ -800,7 +800,7 @@ describe("useDelta Edge Cases", () => {
       // Act
       try {
         delta.patch(null, { added: new Store(), removed: new Store() });
-      } catch (error) {
+      } catch {
         // Expected error
       }
 

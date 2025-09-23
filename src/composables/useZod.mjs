@@ -68,15 +68,14 @@ export function useZod(options = {}) {
      */
     async validateResults(results, schema, options = {}) {
       const { partial = false, strict: strictOverride } = options;
-      const useStrict = strictOverride !== undefined ? strictOverride : strict;
+      const useStrict = strictOverride === undefined ? strict : strictOverride;
       
       const validationSchema = partial ? schema.partial() : schema;
       const validated = [];
       const errors = [];
       
-      for (let i = 0; i < results.length; i++) {
+      for (const [i, result] of results.entries()) {
         try {
-          const result = results[i];
           const validatedResult = useStrict 
             ? validationSchema.parse(result)
             : validationSchema.safeParse(result);
@@ -89,7 +88,7 @@ export function useZod(options = {}) {
             errors.push({ index: i, error: validatedResult.error, data: result });
           }
         } catch (error) {
-          errors.push({ index: i, error, data: results[i] });
+          errors.push({ index: i, error, data: result });
         }
       }
       
@@ -118,7 +117,7 @@ export function useZod(options = {}) {
      */
     async validateResult(result, schema, options = {}) {
       const { strict: strictOverride } = options;
-      const useStrict = strictOverride !== undefined ? strictOverride : strict;
+      const useStrict = strictOverride === undefined ? strict : strictOverride;
       
       try {
         if (useStrict) {
@@ -244,14 +243,13 @@ export function useZod(options = {}) {
      */
     async transformResults(results, schema, options = {}) {
       const { strict: strictOverride } = options;
-      const useStrict = strictOverride !== undefined ? strictOverride : strict;
+      const useStrict = strictOverride === undefined ? strict : strictOverride;
       
       const transformed = [];
       const errors = [];
       
-      for (let i = 0; i < results.length; i++) {
+      for (const [i, result] of results.entries()) {
         try {
-          const result = results[i];
           const transformedResult = useStrict 
             ? schema.parse(result)
             : schema.safeParse(result);
@@ -264,7 +262,7 @@ export function useZod(options = {}) {
             errors.push({ index: i, error: transformedResult.error, data: result });
           }
         } catch (error) {
-          errors.push({ index: i, error, data: results[i] });
+          errors.push({ index: i, error, data: result });
         }
       }
       

@@ -7,7 +7,7 @@ const useCache = () => {
 
   return {
     get: async (key, fn, opts = {}) => {
-      const { ttl = 300000 } = opts;
+      const { ttl = 300_000 } = opts;
       const now = Date.now();
 
       if (cache.has(key)) {
@@ -27,7 +27,7 @@ const useCache = () => {
       return value;
     },
     set: (key, value, opts = {}) => {
-      const { ttl = 300000 } = opts;
+      const { ttl = 300_000 } = opts;
       const now = Date.now();
       cache.set(key, { value, expires: now + ttl });
       accessTimes.set(key, now);
@@ -68,7 +68,7 @@ const useCache = () => {
       hitRate: 0.85,
       memoryUsage: 1024
     }),
-    keys: () => Array.from(cache.keys()),
+    keys: () => [...cache.keys()],
     entries: () => {
       const now = Date.now();
       const entries = [];

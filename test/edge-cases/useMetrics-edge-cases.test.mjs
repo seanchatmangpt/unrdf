@@ -12,7 +12,7 @@ const useMetrics = (options = {}) => {
 
   return {
     wrap: (label, fn) => {
-      if (fn == null || typeof fn !== "function") {
+      if (fn == undefined || typeof fn !== "function") {
         throw new Error("[useMetrics] Function is required");
       }
       
@@ -28,9 +28,9 @@ const useMetrics = (options = {}) => {
         try {
           result = await fn(...args);
           return result;
-        } catch (err) {
-          error = err;
-          throw err;
+        } catch (error_) {
+          error = error_;
+          throw error_;
         } finally {
           const end = performance.now();
           const duration = end - start;
@@ -115,7 +115,7 @@ const useMetrics = (options = {}) => {
       }
     },
     last: () => {
-      return history.length > 0 ? history[history.length - 1] : null;
+      return history.length > 0 ? history.at(-1) : null;
     },
     timeline: () => {
       return [...history];
@@ -440,7 +440,7 @@ describe("useMetrics Edge Cases", () => {
         "label/with/unicode/测试",
         "label/with/emoji/🚀",
         "label with quotes \"double\" and 'single'",
-        "label with backslashes \\ and forward slashes /"
+        String.raw`label with backslashes \ and forward slashes /`
       ];
 
       const testFn = async () => "test result";
@@ -493,7 +493,7 @@ describe("useMetrics Edge Cases", () => {
   describe("Boundary Values", () => {
     it("should handle very long labels", async () => {
       // Arrange
-      const longLabel = "a".repeat(10000);
+      const longLabel = "a".repeat(10_000);
       const testFn = async () => "test result";
 
       // Act
@@ -506,7 +506,7 @@ describe("useMetrics Edge Cases", () => {
 
     it("should handle very long timer labels", () => {
       // Arrange
-      const longLabel = "a".repeat(10000);
+      const longLabel = "a".repeat(10_000);
 
       // Act
       const timer = metrics.timer(longLabel);
@@ -518,7 +518,7 @@ describe("useMetrics Edge Cases", () => {
 
     it("should handle very long record labels", () => {
       // Arrange
-      const longLabel = "a".repeat(10000);
+      const longLabel = "a".repeat(10_000);
 
       // Act & Assert
       expect(() => metrics.record(longLabel, 100)).not.toThrow();
@@ -716,7 +716,7 @@ describe("useMetrics Edge Cases", () => {
 
     it("should handle very large maxHistory", () => {
       // Arrange
-      const largeHistoryMetrics = useMetrics({ maxHistory: 100000 });
+      const largeHistoryMetrics = useMetrics({ maxHistory: 100_000 });
 
       // Act
       for (let i = 0; i < 1000; i++) {
@@ -907,10 +907,10 @@ describe("useMetrics Edge Cases", () => {
 
       // Assert
       expect(timers).toHaveLength(100);
-      timers.forEach(timer => {
+      for (const timer of timers) {
         expect(timer).toHaveProperty("end");
         expect(timer).toHaveProperty("elapsed");
-      });
+      }
     });
 
     it("should handle rapid record operations", () => {
@@ -929,7 +929,7 @@ describe("useMetrics Edge Cases", () => {
       // Act
       try {
         metrics.wrap("test", null);
-      } catch (error) {
+      } catch {
         // Expected error
       }
 

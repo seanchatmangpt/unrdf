@@ -8,7 +8,7 @@ import { inspect } from "node:util";
  */
 export const previewQuads = (store, n = 5) =>
   [...store].slice(0, n).map((q) => 
-    `${q.subject.value} ${q.predicate.value} ${q.object.value}${q.graph.termType !== "DefaultGraph" ? ` ${q.graph.value}` : ""}`
+    `${q.subject.value} ${q.predicate.value} ${q.object.value}${q.graph.termType === "DefaultGraph" ? "" : ` ${q.graph.value}`}`
   );
 
 /**

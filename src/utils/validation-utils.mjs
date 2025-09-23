@@ -176,7 +176,7 @@ export function validateQuad(quad) {
  */
 export async function validateTurtle(turtle, options = {}) {
   try {
-    const { RdfEngine } = await import("../engines/RdfEngine.mjs");
+    const { RdfEngine } = await import("../engines/rdf-engine.mjs");
     const engine = new RdfEngine();
     engine.parseTurtle(turtle, options);
     return true;
@@ -195,7 +195,7 @@ export async function validateTurtle(turtle, options = {}) {
  */
 export async function validateNQuads(nquads) {
   try {
-    const { RdfEngine } = await import("../engines/RdfEngine.mjs");
+    const { RdfEngine } = await import("../engines/rdf-engine.mjs");
     const engine = new RdfEngine();
     engine.parseNQuads(nquads);
     return true;
@@ -214,7 +214,7 @@ export async function validateNQuads(nquads) {
  */
 export async function validateJSONLD(jsonld) {
   try {
-    const { RdfEngine } = await import("../engines/RdfEngine.mjs");
+    const { RdfEngine } = await import("../engines/rdf-engine.mjs");
     const engine = new RdfEngine();
     await engine.fromJSONLD(jsonld);
     return true;
@@ -233,7 +233,7 @@ export async function validateJSONLD(jsonld) {
  */
 export async function validateSPARQL(sparql) {
   try {
-    const { RdfEngine } = await import("../engines/RdfEngine.mjs");
+    const { RdfEngine } = await import("../engines/rdf-engine.mjs");
     const engine = new RdfEngine();
     const store = engine.createStore();
     await engine.query(store, sparql);
@@ -253,7 +253,7 @@ export async function validateSPARQL(sparql) {
  */
 export async function validateSHACL(shapes) {
   try {
-    const { RdfEngine } = await import("../engines/RdfEngine.mjs");
+    const { RdfEngine } = await import("../engines/rdf-engine.mjs");
     const engine = new RdfEngine();
     const shapesStore = engine.parseTurtle(shapes);
     const dataStore = engine.createStore();

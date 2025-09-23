@@ -6,10 +6,10 @@ export default defineConfig({
     environment: 'node',
     include: ['**/*.test.mjs', '**/*.spec.mjs'],
     exclude: ['node_modules/**', 'dist/**'],
-    timeout: 30000, // 30 seconds for CLI operations
-    testTimeout: 30000,
-    hookTimeout: 30000,
-    teardownTimeout: 30000,
+    timeout: 30_000, // 30 seconds for CLI operations
+    testTimeout: 30_000,
+    hookTimeout: 30_000,
+    teardownTimeout: 30_000,
     reporter: ['verbose', 'json', 'html'],
     outputFile: {
       json: './test-results.json',

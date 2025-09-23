@@ -52,13 +52,13 @@ export function useIRIs(options = {}) {
      */
     resolve(uri) {
       if (typeof uri !== "string") {
-        throw new Error("[useIRIs] URI must be a string");
+        throw new TypeError("[useIRIs] URI must be a string");
       }
 
       // Check for custom URI schemes
       for (const [scheme, path] of mappings.entries()) {
         if (uri.startsWith(scheme)) {
-          return path + uri.substring(scheme.length);
+          return path + uri.slice(scheme.length);
         }
       }
 
@@ -84,7 +84,7 @@ export function useIRIs(options = {}) {
      */
     map(prefix, path) {
       if (typeof prefix !== "string" || typeof path !== "string") {
-        throw new Error("[useIRIs] Prefix and path must be strings");
+        throw new TypeError("[useIRIs] Prefix and path must be strings");
       }
 
       // Ensure prefix ends with ://
@@ -159,7 +159,7 @@ export function useIRIs(options = {}) {
      */
     setBaseIRI(newBaseIRI) {
       if (typeof newBaseIRI !== "string") {
-        throw new Error("[useIRIs] Base IRI must be a string");
+        throw new TypeError("[useIRIs] Base IRI must be a string");
       }
 
       if (!newBaseIRI.endsWith("/") && !newBaseIRI.endsWith("#")) {
@@ -210,7 +210,7 @@ export function useIRIs(options = {}) {
         return undefined;
       }
 
-      return uri.substring(0, colonIndex);
+      return uri.slice(0, Math.max(0, colonIndex));
     },
 
     /**
@@ -228,7 +228,7 @@ export function useIRIs(options = {}) {
         return uri;
       }
 
-      return uri.substring(colonIndex + 1);
+      return uri.slice(Math.max(0, colonIndex + 1));
     },
 
     /**

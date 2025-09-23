@@ -78,7 +78,7 @@ describe("New Utils Test Suite", () => {
   afterEach(async () => {
     try {
       await fs.rm(tempDir, { recursive: true, force: true });
-    } catch (error) {
+    } catch {
       // Ignore cleanup errors
     }
   });

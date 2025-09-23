@@ -9,7 +9,7 @@
  * @license MIT
  */
 
-import { RdfEngine } from "../engines/RdfEngine.mjs";
+import { RdfEngine } from "../engines/rdf-engine.mjs";
 
 /**
  * Create an N-Quads composable for N-Quads operations
@@ -52,7 +52,7 @@ export function useNQuads(options = {}) {
      */
     parse(nquads, parseOptions = {}) {
       if (typeof nquads !== "string") {
-        throw new Error("[useNQuads] N-Quads content must be a string");
+        throw new TypeError("[useNQuads] N-Quads content must be a string");
       }
 
       try {
@@ -104,7 +104,7 @@ export function useNQuads(options = {}) {
       const { encoding = 'utf8' } = options;
       
       if (typeof filePath !== "string") {
-        throw new Error("[useNQuads] File path must be a string");
+        throw new TypeError("[useNQuads] File path must be a string");
       }
 
       try {
@@ -139,7 +139,7 @@ export function useNQuads(options = {}) {
       }
       
       if (typeof filePath !== "string") {
-        throw new Error("[useNQuads] File path must be a string");
+        throw new TypeError("[useNQuads] File path must be a string");
       }
 
       try {
@@ -220,7 +220,7 @@ export function useNQuads(options = {}) {
      */
     getStats(nquads) {
       if (typeof nquads !== "string") {
-        throw new Error("[useNQuads] N-Quads content must be a string");
+        throw new TypeError("[useNQuads] N-Quads content must be a string");
       }
 
       const lines = nquads.split('\n').filter(line => line.trim().length > 0);
@@ -298,7 +298,7 @@ export function useNQuads(options = {}) {
      */
     setBaseIRI(newBaseIRI) {
       if (typeof newBaseIRI !== "string") {
-        throw new Error("[useNQuads] Base IRI must be a string");
+        throw new TypeError("[useNQuads] Base IRI must be a string");
       }
       baseIRI = newBaseIRI;
       engine = new RdfEngine({ baseIRI });

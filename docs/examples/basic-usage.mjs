@@ -107,9 +107,9 @@ prefixes.register({
 
 console.log('✅ Registered prefixes:');
 const allPrefixes = prefixes.list();
-Object.entries(allPrefixes).forEach(([prefix, uri]) => {
+for (const [prefix, uri] of Object.entries(allPrefixes)) {
   console.log(`   ${prefix}: ${uri}`);
-});
+}
 
 // Expand CURIEs
 const expandedIRI = prefixes.expand("ex:person1");
@@ -139,12 +139,12 @@ const selectResults = await graph.select(`
 `);
 
 console.log('✅ SELECT query results:');
-selectResults.forEach((result, index) => {
+for (const [index, result] of selectResults.entries()) {
   console.log(`   Result ${index + 1}:`);
   console.log(`     Name: ${result.name.value}`);
   console.log(`     Age: ${result.age.value}`);
   console.log(`     Email: ${result.email.value}`);
-});
+}
 
 // ASK query
 const askResult = await graph.ask(`
@@ -210,12 +210,12 @@ const parsedResults = await parsedGraph.select(`
 `);
 
 console.log('   Parsed data results:');
-parsedResults.forEach((result, index) => {
+for (const [index, result] of parsedResults.entries()) {
   console.log(`     Person ${index + 1}:`);
   console.log(`       Name: ${result.name.value}`);
   console.log(`       Age: ${result.age.value}`);
   console.log(`       Email: ${result.email.value}`);
-});
+}
 
 // ============================================================================
 // 8. Error Handling
@@ -335,9 +335,9 @@ const employeeResults = await advancedGraph.select(`
 `);
 
 console.log('   Employees of Acme Corp:');
-employeeResults.forEach((result, index) => {
+for (const [index, result] of employeeResults.entries()) {
   console.log(`     ${index + 1}. ${result.employeeName.value}`);
-});
+}
 
 // ============================================================================
 // Summary

@@ -330,7 +330,7 @@ describe("useJsonLd Edge Cases", () => {
         "description": "Test with unicode 测试",
         "emoji": "Test with emoji 🚀",
         "quotes": "Test with \"double\" and 'single' quotes",
-        "backslashes": "Test with \\ backslashes"
+        "backslashes": String.raw`Test with \ backslashes`
       };
 
       // Act & Assert
@@ -371,7 +371,7 @@ describe("useJsonLd Edge Cases", () => {
       // Arrange
       const largeDoc = {
         "@context": { "ex": "http://example.org/" },
-        "@graph": Array.from({ length: 10000 }, (_, i) => ({
+        "@graph": Array.from({ length: 10_000 }, (_, i) => ({
           "@id": `ex:item${i}`,
           "name": `Item ${i}`,
           "value": i
@@ -400,7 +400,7 @@ describe("useJsonLd Edge Cases", () => {
 
     it("should handle very long property names", async () => {
       // Arrange
-      const longPropertyName = "a".repeat(10000);
+      const longPropertyName = "a".repeat(10_000);
       const longDoc = {
         "@context": { "ex": "http://example.org/" },
         "@id": "ex:test",
@@ -414,7 +414,7 @@ describe("useJsonLd Edge Cases", () => {
 
     it("should handle very long property values", async () => {
       // Arrange
-      const longValue = "value".repeat(10000);
+      const longValue = "value".repeat(10_000);
       const longDoc = {
         "@context": { "ex": "http://example.org/" },
         "@id": "ex:test",
@@ -708,7 +708,7 @@ describe("useJsonLd Edge Cases", () => {
       // Act
       try {
         await jsonld.toJSONLD(null);
-      } catch (error) {
+      } catch {
         // Expected error
       }
 
@@ -724,7 +724,7 @@ describe("useJsonLd Edge Cases", () => {
       // Act
       try {
         await jsonld.fromJSONLD(null);
-      } catch (error) {
+      } catch {
         // Expected error
       }
 

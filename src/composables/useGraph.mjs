@@ -1,51 +1,49 @@
 /**
- * @fileoverview useGraph composable - high-level RDF graph operations
+ * @fileoverview useGraph composable - high-level RDF graph operations with context
  * 
  * This composable provides the main interface for RDF operations.
  * It wraps a store with common graph operations like SPARQL queries,
- * set operations, and traversal utilities.
+ * set operations, and traversal utilities. Now uses unctx for store access.
  * 
  * @version 1.0.0
  * @author GitVan Team
  * @license MIT
  */
 
-import { RdfEngine } from "../engines/RdfEngine.mjs";
-
-// Create a single, shared instance of the engine for efficiency
-const rdfEngine = new RdfEngine();
+import { useStoreContext } from "../context/index.mjs";
 
 /**
- * Create a graph composable for operating on an RDF store
+ * Create a graph composable for operating on the global RDF store
  * 
- * @param {Store} store - N3.Store instance to operate on
  * @returns {Object} Graph operations interface
  * 
  * @example
- * const store = useStore();
- * const graph = useGraph(store);
+ * // Initialize store context first
+ * const runApp = initStore();
  * 
- * // SPARQL SELECT query
- * const results = await graph.select(`
- *   PREFIX ex: <http://example.org/>
- *   SELECT ?s ?p ?o WHERE { ?s ?p ?o }
- * `);
+ * runApp(() => {
+ *   const graph = useGraph();
+ *   
+ *   // SPARQL SELECT query
+ *   const results = await graph.select(`
+ *     PREFIX ex: <http://example.org/>
+ *     SELECT ?s ?p ?o WHERE { ?s ?p ?o }
+ *   `);
+ *   
+ *   // SPARQL ASK query
+ *   const exists = await graph.ask(`
+ *     PREFIX ex: <http://example.org/>
+ *     ASK { ex:subject ex:predicate ?o }
+ *   `);
+ * });
  * 
- * // SPARQL ASK query
- * const exists = await graph.ask(`
- *   PREFIX ex: <http://example.org/>
- *   ASK { ex:subject ex:predicate ?o }
- * `);
- * 
- * // Set operations
- * const otherGraph = useGraph(otherStore);
- * const union = graph.union(otherGraph);
- * const diff = graph.difference(otherGraph);
+ * @throws {Error} If store context is not initialized
  */
-export function useGraph(store) {
-  if (!store || typeof store.getQuads !== "function") {
-    throw new Error("[useGraph] An N3.Store instance must be provided.");
-  }
+export function useGraph() {
+  // Get the store and engine from context
+  const storeContext = useStoreContext();
+  const storeInstance = storeContext.store;
+  const rdfEngine = storeContext.engine;
 
   return {
     /**
@@ -53,7 +51,7 @@ export function useGraph(store) {
      * @type {Store}
      */
     get store() {
-      return store;
+      return storeInstance;
     },
 
     /**
@@ -71,20 +69,31 @@ export function useGraph(store) {
      * @param {number} [options.limit] - Result limit
      * @param {AbortSignal} [options.signal] - Abort signal
      * @returns {Promise<Object>} Query result object
+     * 
+     * @throws {TypeError} If sparql is not a string
      */
     async query(sparql, options) {
-      return rdfEngine.query(store, sparql, options);
+      if (typeof sparql !== 'string') {
+        throw new TypeError("[useGraph] SPARQL query must be a string");
+      }
+      return rdfEngine.query(storeInstance, sparql, options);
     },
 
     /**
      * Execute a SPARQL SELECT query
      * @param {string} sparql - SPARQL SELECT query string
      * @returns {Promise<Array<Object>>} Array of result bindings
+     * 
+     * @throws {TypeError} If sparql is not a string
+     * @throws {Error} If query is not a SELECT query
      */
     async select(sparql) {
-      const res = await rdfEngine.query(store, sparql);
+      if (typeof sparql !== 'string') {
+        throw new TypeError("[useGraph] SPARQL query must be a string");
+      }
+      const res = await rdfEngine.query(storeInstance, sparql);
       if (res.type !== "select") {
-        throw new Error("Query is not a SELECT query.");
+        throw new Error("[useGraph] Query is not a SELECT query");
       }
       return res.results;
     },
@@ -93,11 +102,17 @@ export function useGraph(store) {
      * Execute a SPARQL ASK query
      * @param {string} sparql - SPARQL ASK query string
      * @returns {Promise<boolean>} Boolean result
+     * 
+     * @throws {TypeError} If sparql is not a string
+     * @throws {Error} If query is not an ASK query
      */
     async ask(sparql) {
-      const res = await rdfEngine.query(store, sparql);
+      if (typeof sparql !== 'string') {
+        throw new TypeError("[useGraph] SPARQL query must be a string");
+      }
+      const res = await rdfEngine.query(storeInstance, sparql);
       if (res.type !== "ask") {
-        throw new Error("Query is not an ASK query.");
+        throw new Error("[useGraph] Query is not an ASK query");
       }
       return res.boolean;
     },
@@ -106,11 +121,17 @@ export function useGraph(store) {
      * Execute a SPARQL CONSTRUCT query
      * @param {string} sparql - SPARQL CONSTRUCT query string
      * @returns {Promise<Store>} New store with constructed triples
+     * 
+     * @throws {TypeError} If sparql is not a string
+     * @throws {Error} If query is not a CONSTRUCT query
      */
     async construct(sparql) {
-      const res = await rdfEngine.query(store, sparql);
+      if (typeof sparql !== 'string') {
+        throw new TypeError("[useGraph] SPARQL query must be a string");
+      }
+      const res = await rdfEngine.query(storeInstance, sparql);
       if (res.type !== "construct") {
-        throw new Error("Query is not a CONSTRUCT query.");
+        throw new Error("[useGraph] Query is not a CONSTRUCT query");
       }
       return res.store;
     },
@@ -119,11 +140,17 @@ export function useGraph(store) {
      * Execute a SPARQL UPDATE query
      * @param {string} sparql - SPARQL UPDATE query string
      * @returns {Promise<Object>} Update result
+     * 
+     * @throws {TypeError} If sparql is not a string
+     * @throws {Error} If query is not an UPDATE query
      */
     async update(sparql) {
-      const res = await rdfEngine.query(store, sparql);
+      if (typeof sparql !== 'string') {
+        throw new TypeError("[useGraph] SPARQL query must be a string");
+      }
+      const res = await rdfEngine.query(storeInstance, sparql);
       if (res.type !== "update") {
-        throw new Error("Query is not an UPDATE query.");
+        throw new Error("[useGraph] Query is not an UPDATE query");
       }
       return res;
     },
@@ -134,7 +161,7 @@ export function useGraph(store) {
      * @returns {Promise<Object>} Validation report
      */
     async validate(shapesInput) {
-      return rdfEngine.validateShacl(store, shapesInput);
+      return rdfEngine.validateShacl(storeInstance, shapesInput);
     },
 
     /**
@@ -144,7 +171,7 @@ export function useGraph(store) {
      * @throws {Error} If validation fails
      */
     async validateOrThrow(shapesInput) {
-      return rdfEngine.validateShaclOrThrow(store, shapesInput);
+      return rdfEngine.validateShaclOrThrow(storeInstance, shapesInput);
     },
 
     /**
@@ -153,18 +180,25 @@ export function useGraph(store) {
      * @param {string} [options.format='Turtle'] - Output format
      * @param {Object} [options.prefixes] - Prefix mappings
      * @returns {Promise<string>} Serialized string
+     * 
+     * @throws {TypeError} If options is not an object
+     * @throws {Error} If format is unsupported
      */
     async serialize(options = {}) {
+      if (options && typeof options !== 'object') {
+        throw new TypeError("[useGraph] serialize options must be an object");
+      }
+      
       const { format = "Turtle", prefixes } = options;
       
       if (format === "Turtle") {
-        return await rdfEngine.serializeTurtle(store, { prefixes });
+        return await rdfEngine.serializeTurtle(storeInstance, { prefixes });
       }
       if (format === "N-Quads") {
-        return await rdfEngine.serializeNQuads(store);
+        return await rdfEngine.serializeNQuads(storeInstance);
       }
       
-      throw new Error(`Unsupported serialization format: ${format}`);
+      throw new Error(`[useGraph] Unsupported serialization format: ${format}`);
     },
 
     /**
@@ -172,15 +206,15 @@ export function useGraph(store) {
      * @returns {Clownface} Clownface pointer
      */
     pointer() {
-      return rdfEngine.getClownface(store);
+      return rdfEngine.getClownface(storeInstance);
     },
 
     /**
      * Get basic statistics about the graph
-     * @type {Object}
+     * @returns {Object} Graph statistics
      */
-    get stats() {
-      return rdfEngine.getStats(store);
+    stats() {
+      return rdfEngine.getStats(storeInstance);
     },
 
     /**
@@ -190,7 +224,7 @@ export function useGraph(store) {
      */
     async isIsomorphic(otherGraph) {
       const otherStore = otherGraph.store || otherGraph;
-      return rdfEngine.isIsomorphic(store, otherStore);
+      return rdfEngine.isIsomorphic(storeInstance, otherStore);
     },
 
     /**
@@ -200,8 +234,9 @@ export function useGraph(store) {
      */
     union(...otherGraphs) {
       const otherStores = otherGraphs.map(g => g.store || g);
-      const resultStore = rdfEngine.union(store, ...otherStores);
-      return useGraph(resultStore);
+      const resultStore = rdfEngine.union(storeInstance, ...otherStores);
+      // Create a temporary context for the result
+      return createTemporaryGraph(resultStore, rdfEngine);
     },
 
     /**
@@ -211,8 +246,8 @@ export function useGraph(store) {
      */
     difference(otherGraph) {
       const otherStore = otherGraph.store || otherGraph;
-      const resultStore = rdfEngine.difference(store, otherStore);
-      return useGraph(resultStore);
+      const resultStore = rdfEngine.difference(storeInstance, otherStore);
+      return createTemporaryGraph(resultStore, rdfEngine);
     },
 
     /**
@@ -222,8 +257,8 @@ export function useGraph(store) {
      */
     intersection(otherGraph) {
       const otherStore = otherGraph.store || otherGraph;
-      const resultStore = rdfEngine.intersection(store, otherStore);
-      return useGraph(resultStore);
+      const resultStore = rdfEngine.intersection(storeInstance, otherStore);
+      return createTemporaryGraph(resultStore, rdfEngine);
     },
 
     /**
@@ -232,8 +267,8 @@ export function useGraph(store) {
      * @returns {Object} New useGraph instance with skolemized nodes
      */
     skolemize(baseIRI) {
-      const resultStore = rdfEngine.skolemize(store, baseIRI);
-      return useGraph(resultStore);
+      const resultStore = rdfEngine.skolemize(storeInstance, baseIRI);
+      return createTemporaryGraph(resultStore, rdfEngine);
     },
 
     /**
@@ -244,13 +279,153 @@ export function useGraph(store) {
      * @returns {Promise<Object>} JSON-LD document
      */
     async toJSONLD(options = {}) {
-      return rdfEngine.toJSONLD(store, options);
+      return rdfEngine.toJSONLD(storeInstance, options);
     },
 
     /**
      * Get the size of the graph
      * @returns {number} Number of quads
      */
+    get size() {
+      return storeInstance.size;
+    }
+  };
+}
+
+/**
+ * Create a temporary graph interface for a specific store
+ * Used for operations that return new stores (union, difference, etc.)
+ * @param {Store} store - The store to wrap
+ * @param {RdfEngine} engine - The RDF engine to use
+ * @returns {Object} Graph interface
+ * @private
+ */
+function createTemporaryGraph(store, engine) {
+  return {
+    get store() {
+      return store;
+    },
+    
+    get engine() {
+      return engine;
+    },
+    
+    async query(sparql, options) {
+      if (typeof sparql !== 'string') {
+        throw new TypeError("[useGraph] SPARQL query must be a string");
+      }
+      return engine.query(store, sparql, options);
+    },
+    
+    async select(sparql) {
+      if (typeof sparql !== 'string') {
+        throw new TypeError("[useGraph] SPARQL query must be a string");
+      }
+      const res = await engine.query(store, sparql);
+      if (res.type !== "select") {
+        throw new Error("[useGraph] Query is not a SELECT query");
+      }
+      return res.results;
+    },
+    
+    async ask(sparql) {
+      if (typeof sparql !== 'string') {
+        throw new TypeError("[useGraph] SPARQL query must be a string");
+      }
+      const res = await engine.query(store, sparql);
+      if (res.type !== "ask") {
+        throw new Error("[useGraph] Query is not an ASK query");
+      }
+      return res.boolean;
+    },
+    
+    async construct(sparql) {
+      if (typeof sparql !== 'string') {
+        throw new TypeError("[useGraph] SPARQL query must be a string");
+      }
+      const res = await engine.query(store, sparql);
+      if (res.type !== "construct") {
+        throw new Error("[useGraph] Query is not a CONSTRUCT query");
+      }
+      return res.store;
+    },
+    
+    async update(sparql) {
+      if (typeof sparql !== 'string') {
+        throw new TypeError("[useGraph] SPARQL query must be a string");
+      }
+      const res = await engine.query(store, sparql);
+      if (res.type !== "update") {
+        throw new Error("[useGraph] Query is not an UPDATE query");
+      }
+      return res;
+    },
+    
+    async validate(shapesInput) {
+      return engine.validateShacl(store, shapesInput);
+    },
+    
+    async validateOrThrow(shapesInput) {
+      return engine.validateShaclOrThrow(store, shapesInput);
+    },
+    
+    async serialize(options = {}) {
+      if (options && typeof options !== 'object') {
+        throw new TypeError("[useGraph] serialize options must be an object");
+      }
+      
+      const { format = "Turtle", prefixes } = options;
+      
+      if (format === "Turtle") {
+        return await engine.serializeTurtle(store, { prefixes });
+      }
+      if (format === "N-Quads") {
+        return await engine.serializeNQuads(store);
+      }
+      
+      throw new Error(`[useGraph] Unsupported serialization format: ${format}`);
+    },
+    
+    pointer() {
+      return engine.getClownface(store);
+    },
+    
+    stats() {
+      return engine.getStats(store);
+    },
+    
+    async isIsomorphic(otherGraph) {
+      const otherStore = otherGraph.store || otherGraph;
+      return engine.isIsomorphic(store, otherStore);
+    },
+    
+    union(...otherGraphs) {
+      const otherStores = otherGraphs.map(g => g.store || g);
+      const resultStore = engine.union(store, ...otherStores);
+      return createTemporaryGraph(resultStore, engine);
+    },
+    
+    difference(otherGraph) {
+      const otherStore = otherGraph.store || otherGraph;
+      const resultStore = engine.difference(store, otherStore);
+      return createTemporaryGraph(resultStore, engine);
+    },
+    
+    intersection(otherGraph) {
+      const otherStore = otherGraph.store || otherGraph;
+      const resultStore = engine.intersection(store, otherStore);
+      return createTemporaryGraph(resultStore, engine);
+    },
+    
+    skolemize(baseIRI) {
+      const resultStore = engine.skolemize(store, baseIRI);
+      return createTemporaryGraph(resultStore, engine);
+    },
+    
+    async toJSONLD(options = {}) {
+      return engine.toJSONLD(store, options);
+    },
+    
     get size() {
       return store.size;
     }

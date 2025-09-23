@@ -29,7 +29,7 @@ export const skolemize = (id, baseIRI = "http://example.org/.well-known/genid/")
  */
 export const generateRandomBNodeId = (length = 16) => {
   const bytes = randomBytes(Math.ceil(length / 2));
-  return bytes.toString("hex").substring(0, length);
+  return bytes.toString("hex").slice(0, Math.max(0, length));
 };
 
 /**
@@ -41,7 +41,7 @@ export const generateRandomBNodeId = (length = 16) => {
 export const generateDeterministicBNodeId = (content, length = 16) => {
   const hash = createHash("sha256");
   hash.update(content);
-  return hash.digest("hex").substring(0, length);
+  return hash.digest("hex").slice(0, Math.max(0, length));
 };
 
 /**
@@ -76,11 +76,32 @@ export const generateUUID = () => {
 };
 
 /**
+ * Generate a generic ID with optional prefix
+ * @param {string} [prefix="id"] - Prefix for the ID
+ * @returns {string} Generated ID
+ */
+export const generateId = (prefix = "id") => {
+  const uuid = generateUUID();
+  return `${prefix}-${uuid}`;
+};
+
+/**
+ * Generate a hash-based ID from input
+ * @param {string} input - Input string to hash
+ * @returns {string} Hash-based ID
+ */
+export const generateHashId = (input) => {
+  const hash = createHash("sha256");
+  hash.update(input);
+  return hash.digest("hex");
+};
+
+/**
  * Generate a short UUID (base36)
  * @returns {string} Short UUID string
  */
 export const generateShortUUID = () => {
-  return Math.random().toString(36).substring(2) + Date.now().toString(36);
+  return Math.random().toString(36).slice(2) + Date.now().toString(36);
 };
 
 /**
@@ -175,7 +196,7 @@ export const extractLocalName = (iri) => {
   const hashIndex = iri.lastIndexOf("#");
   const slashIndex = iri.lastIndexOf("/");
   const index = Math.max(hashIndex, slashIndex);
-  return index >= 0 ? iri.substring(index + 1) : iri;
+  return index >= 0 ? iri.slice(Math.max(0, index + 1)) : iri;
 };
 
 /**
@@ -187,7 +208,7 @@ export const extractNamespace = (iri) => {
   const hashIndex = iri.lastIndexOf("#");
   const slashIndex = iri.lastIndexOf("/");
   const index = Math.max(hashIndex, slashIndex);
-  return index >= 0 ? iri.substring(0, index + 1) : "";
+  return index >= 0 ? iri.slice(0, Math.max(0, index + 1)) : "";
 };
 
 /**
@@ -206,7 +227,7 @@ export const isBlankNodeIRI = (iri) => {
  */
 export const iriToBlankNodeId = (iri) => {
   if (iri.startsWith("_:")) {
-    return iri.substring(2);
+    return iri.slice(2);
   }
   if (iri.includes(".well-known/genid/")) {
     return iri.split(".well-known/genid/")[1];
@@ -230,7 +251,7 @@ export const blankNodeIdToIRI = (id, baseIRI = "http://example.org/.well-known/g
  * @returns {string} Stable ID
  */
 export const generateStableId = (...values) => {
-  const content = values.map(v => String(v)).join("|");
+  const content = values.map(String).join("|");
   return generateDeterministicBNodeId(content);
 };
 

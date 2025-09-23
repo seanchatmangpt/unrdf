@@ -1,8 +1,8 @@
 /**
- * @fileoverview useLists composable - RDF list operations
+ * @fileoverview useLists composable - RDF list operations with context
  * 
  * This composable provides RDF list (rdf:List) operations for reading
- * and writing linked lists in RDF graphs.
+ * and writing linked lists in RDF graphs. Now uses unctx for store access.
  * 
  * @version 1.0.0
  * @author GitVan Team
@@ -10,34 +10,40 @@
  */
 
 import { Store, DataFactory } from "n3";
+import { useStoreContext } from "../context/index.mjs";
 
 const { namedNode, blankNode, quad } = DataFactory;
 
 /**
  * Create a lists composable for RDF list operations
  * 
- * @param {Store} store - The RDF store to operate on
  * @param {Object} [options] - List options
  * @param {string} [options.baseIRI] - Base IRI for new lists
  * @returns {Object} List operations interface
  * 
  * @example
- * const store = useStore();
- * const lists = useLists(store);
+ * // Initialize store context first
+ * const runApp = initStore();
  * 
- * // Read a list
- * const items = lists.read(namedNode('ex:myList'));
+ * runApp(() => {
+ *   const lists = useLists();
+ *   
+ *   // Read a list
+ *   const items = lists.read(namedNode('ex:myList'));
+ *   
+ *   // Write a list
+ *   const listHead = lists.write(['item1', 'item2', 'item3']);
+ *   
+ *   // Check if a node is a list
+ *   const isList = lists.isList(namedNode('ex:myList'));
+ * });
  * 
- * // Write a list
- * const listHead = lists.write(['item1', 'item2', 'item3']);
- * 
- * // Check if a node is a list
- * const isList = lists.isList(namedNode('ex:myList'));
+ * @throws {Error} If store context is not initialized
  */
-export function useLists(store, options = {}) {
-  if (!store || typeof store.getQuads !== "function") {
-    throw new Error("[useLists] A valid store is required");
-  }
+export function useLists(options = {}) {
+  // Get the store from context
+  const storeContext = useStoreContext();
+  const store = storeContext.store;
 
   const { baseIRI = "http://example.org/" } = options;
 
@@ -87,7 +93,7 @@ export function useLists(store, options = {}) {
      */
     write(items, listId) {
       if (!Array.isArray(items)) {
-        throw new Error("[useLists] Items must be an array");
+        throw new TypeError("[useLists] Items must be an array");
       }
 
       if (items.length === 0) {

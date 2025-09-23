@@ -378,7 +378,7 @@ describe("usePrefixes Edge Cases", () => {
       // Act
       try {
         prefixes.register({ "invalid": "invalid-uri" });
-      } catch (e) {
+      } catch {
         // Expected error
       }
 
@@ -397,7 +397,7 @@ describe("usePrefixes Edge Cases", () => {
           "ex2": "http://example2.org/",
           "invalid": "invalid-uri"
         });
-      } catch (e) {
+      } catch {
         // Expected error for invalid URI
       }
 

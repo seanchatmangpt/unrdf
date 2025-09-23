@@ -40,7 +40,7 @@
 export function useCache(options = {}) {
   const {
     maxSize = 1000,
-    defaultTTL = 300000, // 5 minutes
+    defaultTTL = 300_000, // 5 minutes
     enabled = true
   } = options || {};
 
@@ -212,7 +212,7 @@ export function useCache(options = {}) {
      * @returns {Array} Array of cache keys
      */
     keys() {
-      return Array.from(cache.keys());
+      return [...cache.keys()];
     },
 
     /**

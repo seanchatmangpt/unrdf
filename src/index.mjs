@@ -22,6 +22,9 @@
  * @license MIT
  */
 
+// Store context
+export * from "./context/index.mjs";
+
 // Core composables
 export { useStore } from "./composables/useStore.mjs";
 export { useGraph } from "./composables/useGraph.mjs";
@@ -55,7 +58,7 @@ export { useMetrics } from "./composables/useMetrics.mjs";
 export { useCache } from "./composables/useCache.mjs";
 
 // Engines
-export { RdfEngine } from "./engines/RdfEngine.mjs";
+export { RdfEngine } from "./engines/rdf-engine.mjs";
 
 // Utilities
 export * from "./utils/index.mjs";

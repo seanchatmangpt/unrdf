@@ -9,7 +9,7 @@
  * @license MIT
  */
 
-import { RdfEngine } from "../engines/RdfEngine.mjs";
+import { RdfEngine } from "../engines/rdf-engine.mjs";
 
 /**
  * Create a JSON-LD composable for JSON-LD operations

@@ -24,14 +24,18 @@ const usePointer = (store, options = {}) => {
       
       if (node && node.termType) {
         switch (node.termType) {
-          case "NamedNode":
+          case "NamedNode": {
             return { node: node.value, type: "pointer" };
-          case "BlankNode":
+          }
+          case "BlankNode": {
             return { node: node.value, type: "pointer" };
-          case "Literal":
+          }
+          case "Literal": {
             return { node: node.value, type: "pointer" };
-          default:
+          }
+          default: {
             throw new Error(`[usePointer] Unsupported term type: ${node.termType}`);
+          }
         }
       }
       
@@ -230,12 +234,12 @@ describe("usePointer Edge Cases", () => {
       ];
 
       // Act & Assert
-      specialNodes.forEach(node => {
+      for (const node of specialNodes) {
         expect(() => pointer.node(node)).not.toThrow();
         const result = pointer.node(node);
         expect(result).toHaveProperty("node");
         expect(result).toHaveProperty("type");
-      });
+      }
     });
 
     it("should handle CURIEs with special characters", () => {
@@ -250,12 +254,12 @@ describe("usePointer Edge Cases", () => {
       ];
 
       // Act & Assert
-      specialCURIEs.forEach(curie => {
+      for (const curie of specialCURIEs) {
         expect(() => pointer.node(curie)).not.toThrow();
         const result = pointer.node(curie);
         expect(result).toHaveProperty("node");
         expect(result).toHaveProperty("type");
-      });
+      }
     });
 
     it("should handle literals with special characters", () => {
@@ -267,23 +271,23 @@ describe("usePointer Edge Cases", () => {
         "value with unicode 测试",
         "value with emoji 🚀",
         "value with quotes \"double\" and 'single'",
-        "value with backslashes \\ and forward slashes /"
+        String.raw`value with backslashes \ and forward slashes /`
       ];
 
       // Act & Assert
-      specialValues.forEach(value => {
+      for (const value of specialValues) {
         expect(() => pointer.literal(value)).not.toThrow();
         const result = pointer.literal(value);
         expect(result).toHaveProperty("node");
         expect(result).toHaveProperty("type");
-      });
+      }
     });
   });
 
   describe("Boundary Values", () => {
     it("should handle very long node identifiers", () => {
       // Arrange
-      const longNode = "a".repeat(10000);
+      const longNode = "a".repeat(10_000);
 
       // Act & Assert
       expect(() => pointer.node(longNode)).not.toThrow();
@@ -294,7 +298,7 @@ describe("usePointer Edge Cases", () => {
 
     it("should handle very long CURIEs", () => {
       // Arrange
-      const longCURIE = "ex:" + "a".repeat(10000);
+      const longCURIE = "ex:" + "a".repeat(10_000);
 
       // Act & Assert
       expect(() => pointer.node(longCURIE)).not.toThrow();
@@ -305,7 +309,7 @@ describe("usePointer Edge Cases", () => {
 
     it("should handle very long literal values", () => {
       // Arrange
-      const longValue = "value".repeat(10000);
+      const longValue = "value".repeat(10_000);
 
       // Act & Assert
       expect(() => pointer.literal(longValue)).not.toThrow();
@@ -316,7 +320,7 @@ describe("usePointer Edge Cases", () => {
 
     it("should handle very long blank node IDs", () => {
       // Arrange
-      const longID = "id".repeat(10000);
+      const longID = "id".repeat(10_000);
 
       // Act & Assert
       expect(() => pointer.blankNode(longID)).not.toThrow();
@@ -670,7 +674,7 @@ describe("usePointer Edge Cases", () => {
       // Act
       try {
         pointer.node(null);
-      } catch (error) {
+      } catch {
         // Expected error
       }
 
@@ -686,7 +690,7 @@ describe("usePointer Edge Cases", () => {
       // Act
       try {
         pointer.node({ termType: "Unsupported" });
-      } catch (error) {
+      } catch {
         // Expected error
       }
 

@@ -1,168 +1,91 @@
 import { describe, expect, it, beforeEach } from "vitest";
+import { useStore, initStore } from "../../src/index.mjs";
 
 /**
  * @fileoverview Tests for useStore composable
  * 
- * Tests the core store management functionality using London School of TDD
+ * Tests the core store management functionality with context support
  */
 
 describe("useStore", () => {
-  let useStore;
-  
-  beforeEach(() => {
-    // Reset the composable for each test
-    useStore = null;
+  it("should create a store from context", async () => {
+    const runApp = initStore([], { baseIRI: "http://example.org/" });
+    
+    await runApp(async () => {
+      const store = useStore();
+      
+      // Assert - verify the store is created
+      expect(store.store).toBeDefined();
+      expect(store.store.size).toBe(0);
+      expect(typeof store.add).toBe("function");
+      expect(typeof store.remove).toBe("function");
+      expect(typeof store.clear).toBe("function");
+      expect(typeof store.stats).toBe("function");
+      expect(typeof store.serialize).toBe("function");
+    });
   });
 
-  it("should create a new N3 store when called", () => {
-    // Arrange - minimal setup
-    const { Store } = require("n3");
+  it("should add quads to the store", async () => {
+    const runApp = initStore([], { baseIRI: "http://example.org/" });
     
-    // Act - call the composable
-    useStore = () => {
-      return {
-        store: new Store(),
-        add: (quads) => quads.forEach(q => useStore.store.add(q)),
-        remove: (quads) => quads.forEach(q => useStore.store.delete(q)),
-        clear: () => {
-          // N3 Store doesn't have clear(), so we remove all quads
-          const quads = [...useStore.store];
-          for (const quad of quads) {
-            useStore.store.delete(quad);
-          }
-        },
-        stats: () => ({ quads: useStore.store.size }),
-        serialize: ({ format = "Turtle" }) => format
-      };
-    };
-    
-    const result = useStore();
-    
-    // Assert - verify the store is created
-    expect(result.store).toBeDefined();
-    expect(result.store.size).toBe(0);
-    expect(typeof result.add).toBe("function");
-    expect(typeof result.remove).toBe("function");
-    expect(typeof result.clear).toBe("function");
-    expect(typeof result.stats).toBe("function");
-    expect(typeof result.serialize).toBe("function");
+    await runApp(async () => {
+      const store = useStore();
+      const testQuad = store.quad(
+        store.namedNode("http://example.org/subject"),
+        store.namedNode("http://example.org/predicate"),
+        store.literal("object")
+      );
+      
+      // Act
+      store.add(testQuad);
+      
+      // Assert
+      expect(store.stats().quads).toBe(1);
+      expect(store.store.has(testQuad)).toBe(true);
+    });
   });
 
-  it("should add quads to the store", () => {
-    // Arrange
-    const { Store, DataFactory } = require("n3");
-    const { namedNode, literal, quad } = DataFactory;
+  it("should remove quads from the store", async () => {
+    const runApp = initStore([], { baseIRI: "http://example.org/" });
     
-    useStore = () => {
-      const store = new Store();
-      return {
-        store,
-        add: (quads) => quads.forEach(q => store.add(q)),
-        remove: (quads) => quads.forEach(q => store.delete(q)),
-        clear: () => {
-          // N3 Store doesn't have clear(), so we remove all quads
-          const quads = [...store];
-          for (const quad of quads) {
-            store.delete(quad);
-          }
-        },
-        stats: () => ({ quads: store.size }),
-        serialize: ({ format = "Turtle" }) => format
-      };
-    };
-    
-    const storeComposable = useStore();
-    const testQuad = quad(
-      namedNode("http://example.org/subject"),
-      namedNode("http://example.org/predicate"),
-      literal("object")
-    );
-    
-    // Act
-    storeComposable.add([testQuad]);
-    
-    // Assert
-    expect(storeComposable.stats().quads).toBe(1);
-    expect(storeComposable.store.has(testQuad)).toBe(true);
+    await runApp(async () => {
+      const store = useStore();
+      const testQuad = store.quad(
+        store.namedNode("http://example.org/subject"),
+        store.namedNode("http://example.org/predicate"),
+        store.literal("object")
+      );
+      
+      // Act
+      store.add(testQuad);
+      expect(store.stats().quads).toBe(1);
+      
+      store.remove(testQuad);
+      
+      // Assert
+      expect(store.stats().quads).toBe(0);
+      expect(store.store.has(testQuad)).toBe(false);
+    });
   });
 
-  it("should remove quads from the store", () => {
-    // Arrange
-    const { Store, DataFactory } = require("n3");
-    const { namedNode, literal, quad } = DataFactory;
+  it("should clear all quads from the store", async () => {
+    const runApp = initStore([], { baseIRI: "http://example.org/" });
     
-    useStore = () => {
-      const store = new Store();
-      return {
-        store,
-        add: (quads) => quads.forEach(q => store.add(q)),
-        remove: (quads) => quads.forEach(q => store.delete(q)),
-        clear: () => {
-          // N3 Store doesn't have clear(), so we remove all quads
-          const quads = [...store];
-          for (const quad of quads) {
-            store.delete(quad);
-          }
-        },
-        stats: () => ({ quads: store.size }),
-        serialize: ({ format = "Turtle" }) => format
-      };
-    };
-    
-    const storeComposable = useStore();
-    const testQuad = quad(
-      namedNode("http://example.org/subject"),
-      namedNode("http://example.org/predicate"),
-      literal("object")
-    );
-    
-    // Act
-    storeComposable.add([testQuad]);
-    expect(storeComposable.stats().quads).toBe(1);
-    
-    storeComposable.remove([testQuad]);
-    
-    // Assert
-    expect(storeComposable.stats().quads).toBe(0);
-    expect(storeComposable.store.has(testQuad)).toBe(false);
-  });
-
-  it("should clear all quads from the store", () => {
-    // Arrange
-    const { Store, DataFactory } = require("n3");
-    const { namedNode, literal, quad } = DataFactory;
-    
-    useStore = () => {
-      const store = new Store();
-      return {
-        store,
-        add: (quads) => quads.forEach(q => store.add(q)),
-        remove: (quads) => quads.forEach(q => store.delete(q)),
-        clear: () => {
-          // N3 Store doesn't have clear(), so we remove all quads
-          const quads = [...store];
-          for (const quad of quads) {
-            store.delete(quad);
-          }
-        },
-        stats: () => ({ quads: store.size }),
-        serialize: ({ format = "Turtle" }) => format
-      };
-    };
-    
-    const storeComposable = useStore();
-    const testQuads = [
-      quad(namedNode("http://example.org/s1"), namedNode("http://example.org/p1"), literal("o1")),
-      quad(namedNode("http://example.org/s2"), namedNode("http://example.org/p2"), literal("o2"))
-    ];
-    
-    // Act
-    storeComposable.add(testQuads);
-    expect(storeComposable.stats().quads).toBe(2);
-    
-    storeComposable.clear();
-    
-    // Assert
-    expect(storeComposable.stats().quads).toBe(0);
+    await runApp(async () => {
+      const store = useStore();
+      const testQuads = [
+        store.quad(store.namedNode("http://example.org/s1"), store.namedNode("http://example.org/p1"), store.literal("o1")),
+        store.quad(store.namedNode("http://example.org/s2"), store.namedNode("http://example.org/p2"), store.literal("o2"))
+      ];
+      
+      // Act
+      store.add(...testQuads);
+      expect(store.stats().quads).toBe(2);
+      
+      store.clear();
+      
+      // Assert
+      expect(store.stats().quads).toBe(0);
+    });
   });
 });

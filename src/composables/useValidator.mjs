@@ -1,15 +1,17 @@
 /**
- * @fileoverview useValidator composable - SHACL validation operations
+ * @fileoverview useValidator composable - SHACL validation operations with context
  * 
  * This composable provides SHACL validation capabilities for RDF graphs.
  * It enforces the "One Validator Rule" - SHACL is the only validation method.
+ * Now uses unctx for default store access.
  * 
  * @version 1.0.0
  * @author GitVan Team
  * @license MIT
  */
 
-import { RdfEngine } from "../engines/RdfEngine.mjs";
+import { RdfEngine } from "../engines/rdf-engine.mjs";
+import { useStoreContext } from "../context/index.mjs";
 
 // Create a single, shared instance of the engine for efficiency
 const rdfEngine = new RdfEngine();
@@ -23,20 +25,22 @@ const rdfEngine = new RdfEngine();
  * @returns {Object} Validator interface
  * 
  * @example
- * const validator = useValidator();
+ * // Initialize store context first
+ * const runApp = initStore();
  * 
- * // Validate a store against SHACL shapes
- * const report = await validator.validate(dataStore, shapesStore);
- * 
- * // Validate and throw on failure
- * await validator.validateOrThrow(dataStore, shapesTurtle);
- * 
- * // Validate with custom timeout
- * const validator = useValidator({ timeoutMs: 60000 });
+ * runApp(() => {
+ *   const validator = useValidator();
+ *   
+ *   // Validate the context store against SHACL shapes
+ *   const report = await validator.validate(shapesStore);
+ *   
+ *   // Validate and throw on failure
+ *   await validator.validateOrThrow(shapesTurtle);
+ * });
  */
 export function useValidator(options = {}) {
   const {
-    timeoutMs = 30000,
+    timeoutMs = 30_000,
     onMetric
   } = options;
 
@@ -55,72 +59,68 @@ export function useValidator(options = {}) {
     },
 
     /**
-     * Validate a data store against SHACL shapes
-     * @param {Store|Object} dataStore - Data store to validate
+     * Validate the context store against SHACL shapes
      * @param {string|Store|Object} shapesInput - SHACL shapes as Turtle string or Store
      * @returns {Promise<Object>} Validation report
      * 
      * @example
-     * const report = await validator.validate(dataStore, shapesStore);
+     * const report = await validator.validate(shapesStore);
      * if (report.conforms) {
      *   console.log("✅ Validation passed");
      * } else {
      *   console.log("❌ Validation failed:", report.results);
      * }
      */
-    async validate(dataStore, shapesInput) {
-      const store = dataStore.store || dataStore;
+    async validate(shapesInput) {
+      const storeContext = useStoreContext();
+      const store = storeContext.store;
       return engine.validateShacl(store, shapesInput);
     },
 
     /**
-     * Validate a data store against SHACL shapes, throw on failure
-     * @param {Store|Object} dataStore - Data store to validate
+     * Validate the context store against SHACL shapes, throw on failure
      * @param {string|Store|Object} shapesInput - SHACL shapes
      * @returns {Promise<Object>} Validation report
      * @throws {Error} If validation fails
      * 
      * @example
      * try {
-     *   await validator.validateOrThrow(dataStore, shapesStore);
+     *   await validator.validateOrThrow(shapesStore);
      *   console.log("✅ Validation passed");
      * } catch (error) {
      *   console.log("❌ Validation failed:", error.message);
      * }
      */
-    async validateOrThrow(dataStore, shapesInput) {
-      const store = dataStore.store || dataStore;
+    async validateOrThrow(shapesInput) {
+      const storeContext = useStoreContext();
+      const store = storeContext.store;
       return engine.validateShaclOrThrow(store, shapesInput);
     },
 
     /**
-     * Validate multiple stores against the same shapes
-     * @param {Array<Store|Object>} dataStores - Array of data stores
-     * @param {string|Store|Object} shapesInput - SHACL shapes
-     * @returns {Promise<Array<Object>>} Array of validation reports
+     * Validate a specific data store against SHACL shapes
+     * @param {Store|Object} dataStore - Data store to validate
+     * @param {string|Store|Object} shapesInput - SHACL shapes as Turtle string or Store
+     * @returns {Promise<Object>} Validation report
      * 
      * @example
-     * const reports = await validator.validateMany([store1, store2], shapes);
-     * const allConform = reports.every(r => r.conforms);
+     * const report = await validator.validateStore(dataStore, shapesStore);
      */
-    async validateMany(dataStores, shapesInput) {
-      const promises = dataStores.map(store => this.validate(store, shapesInput));
-      return Promise.all(promises);
+    async validateStore(dataStore, shapesInput) {
+      const store = dataStore.store || dataStore;
+      return engine.validateShacl(store, shapesInput);
     },
 
     /**
-     * Validate a store against multiple shape sets
+     * Validate a specific data store against SHACL shapes, throw on failure
      * @param {Store|Object} dataStore - Data store to validate
-     * @param {Array<string|Store|Object>} shapesInputs - Array of SHACL shape sets
-     * @returns {Promise<Array<Object>>} Array of validation reports
-     * 
-     * @example
-     * const reports = await validator.validateAgainstMany(store, [shapes1, shapes2]);
-     * const allConform = reports.every(r => r.conforms);
+     * @param {string|Store|Object} shapesInput - SHACL shapes
+     * @returns {Promise<Object>} Validation report
+     * @throws {Error} If validation fails
      */
-    async validateAgainstMany(dataStore, shapesInputs) {
-      const promises = shapesInputs.map(shapes => this.validate(dataStore, shapes));
-      return Promise.all(promises);
+    async validateStoreOrThrow(dataStore, shapesInput) {
+      const store = dataStore.store || dataStore;
+      return engine.validateShaclOrThrow(store, shapesInput);
     },
 
     /**

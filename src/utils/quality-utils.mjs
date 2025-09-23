@@ -298,11 +298,9 @@ const assessAccuracy = (store, assessment) => {
         if (!/^-?\d+$/.test(value)) {
           malformedLiterals.push({ quad, issue: 'invalid integer' });
         }
-      } else if (datatype === 'http://www.w3.org/2001/XMLSchema#boolean') {
-        if (!/^(true|false)$/.test(value)) {
+      } else if (datatype === 'http://www.w3.org/2001/XMLSchema#boolean' && !/^(true|false)$/.test(value)) {
           malformedLiterals.push({ quad, issue: 'invalid boolean' });
         }
-      }
     }
   }
   
@@ -472,16 +470,16 @@ const assessTimeliness = (store, assessment) => {
   let score = 100;
   
   // Check for temporal information
-  const temporalProperties = [
+  const temporalProperties = new Set([
     'http://purl.org/dc/terms/created',
     'http://purl.org/dc/terms/modified',
     'http://purl.org/dc/terms/date',
     'http://www.w3.org/2002/07/owl#versionInfo'
-  ];
+  ]);
   
   const temporalQuads = [];
   for (const quad of store) {
-    if (temporalProperties.includes(quad.predicate.value)) {
+    if (temporalProperties.has(quad.predicate.value)) {
       temporalQuads.push(quad);
     }
   }
