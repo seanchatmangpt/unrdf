@@ -1,0 +1,61 @@
+graph TD
+    subgraph "Composable Categories & Context Usage"
+        subgraph "Core Context Composables"
+            StoreCore["useStore()<br/>🔗 Direct Context Access<br/>Returns StoreContext"]
+            GraphCore["useGraph()<br/>🔗 Context Store + Engine<br/>SPARQL Operations"]
+            TurtleCore["useTurtle()<br/>🔗 Context Engine<br/>File I/O Operations"]
+        end
+        
+        subgraph "Context-Dependent Composables"
+            ListsDep["useLists()<br/>🔗 Context Store<br/>RDF List Operations"]
+            TurtleFSDep["useTurtleFS()<br/>🔗 Context Engine<br/>File System Operations"]
+            NQuadsDep["useNQuads()<br/>🔗 Context Engine<br/>N-Quads Operations"]
+            PointerDep["usePointer()<br/>🔗 Context Engine<br/>Clownface Traversal"]
+            ValidatorDep["useValidator()<br/>🔗 Context Engine<br/>SHACL Validation"]
+            ReasonerDep["useReasoner()<br/>🔗 Context Store<br/>EYE Reasoning"]
+            CanonDep["useCanon()<br/>🔗 Context Engine<br/>URDNA2015 Canonicalization"]
+        end
+        
+        subgraph "Pure Utility Composables"
+            TermsUtil["useTerms()<br/>⚡ Pure Utility<br/>RDF Term Creation"]
+            PrefixesUtil["usePrefixes()<br/>⚡ Pure Utility<br/>CURIE Operations"]
+            IRIsUtil["useIRIs()<br/>⚡ Pure Utility<br/>IRI Resolution"]
+            ZodUtil["useZod()<br/>⚡ Pure Utility<br/>Type Validation"]
+            DeltaUtil["useDelta()<br/>⚡ Pure Utility<br/>Graph Diff Operations"]
+            MetricsUtil["useMetrics()<br/>⚡ Pure Utility<br/>Performance Monitoring"]
+            CacheUtil["useCache()<br/>⚡ Pure Utility<br/>Query Result Caching"]
+        end
+        
+        subgraph "Context System"
+            Context["Context System<br/>(unctx + AsyncLocalStorage)"]
+            StoreCtx["StoreContext<br/>(store + engine)"]
+            Engine["RdfEngine<br/>(Single Instance)"]
+            Store["N3.Store<br/>(Single Instance)"]
+        end
+    end
+    
+    Context --> StoreCtx
+    StoreCtx --> Engine
+    StoreCtx --> Store
+    
+    StoreCore --> StoreCtx
+    GraphCore --> StoreCtx
+    TurtleCore --> StoreCtx
+    
+    ListsDep --> StoreCtx
+    TurtleFSDep --> StoreCtx
+    NQuadsDep --> StoreCtx
+    PointerDep --> StoreCtx
+    ValidatorDep --> StoreCtx
+    ReasonerDep --> StoreCtx
+    CanonDep --> StoreCtx
+    
+    classDef core fill:#e3f2fd,stroke:#1565c0,stroke-width:3px
+    classDef dependent fill:#fff3e0,stroke:#ef6c00,stroke-width:2px
+    classDef utility fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    classDef context fill:#e8f5e8,stroke:#2e7d32,stroke-width:3px
+    
+    class StoreCore,GraphCore,TurtleCore core
+    class ListsDep,TurtleFSDep,NQuadsDep,PointerDep,ValidatorDep,ReasonerDep,CanonDep dependent
+    class TermsUtil,PrefixesUtil,IRIsUtil,ZodUtil,DeltaUtil,MetricsUtil,CacheUtil utility
+    class Context,StoreCtx,Engine,Store context

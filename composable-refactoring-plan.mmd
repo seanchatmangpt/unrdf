@@ -1,0 +1,47 @@
+graph TD
+    subgraph "Refactoring Action Plan"
+        subgraph "Phase 1: Remove Problematic Composable"
+            Remove["❌ REMOVE useJsonLD()<br/>Complete context violation<br/>Creates isolated engine"]
+        end
+        
+        subgraph "Phase 2: Critical Refactoring"
+            CanonRefactor["🔧 REFACTOR useCanon()<br/>• Remove: const engine = new RdfEngine()<br/>• Add: const storeContext = useStoreContext()<br/>• Use: storeContext.engine"]
+            
+            ReasonerRefactor["🔧 REFACTOR useReasoner()<br/>• Fix: return useGraph(engine.createStore())<br/>• Use: context store for all operations<br/>• Ensure: consistent store access"]
+            
+            ValidatorRefactor["🔧 REFACTOR useValidator()<br/>• Remove: const engine = new RdfEngine()<br/>• Add: const storeContext = useStoreContext()<br/>• Use: storeContext.engine"]
+        end
+        
+        subgraph "Phase 3: Moderate Refactoring"
+            TurtleFSRefactor["🔧 REFACTOR useTurtleFS()<br/>• Fix: const store = useStore()<br/>• Change: const storeContext = useStoreContext()<br/>• Use: storeContext.store"]
+            
+            NQuadsRefactor["🔧 REFACTOR useNQuads()<br/>• Remove: engine = new RdfEngine()<br/>• Use: context engine consistently<br/>• Fix: engine reassignment"]
+            
+            PointerRefactor["🔧 REFACTOR usePointer()<br/>• Remove: const engine = new RdfEngine()<br/>• Add: const storeContext = useStoreContext()<br/>• Use: storeContext.engine"]
+        end
+        
+        subgraph "Phase 4: Validation & Testing"
+            Test["✅ TEST All Composables<br/>• Verify context integration<br/>• Test store consistency<br/>• Validate engine sharing"]
+            
+            Docs["📚 UPDATE Documentation<br/>• Context usage patterns<br/>• Architecture guidelines<br/>• Migration examples"]
+        end
+    end
+    
+    Remove --> CanonRefactor
+    CanonRefactor --> ReasonerRefactor
+    ReasonerRefactor --> ValidatorRefactor
+    ValidatorRefactor --> TurtleFSRefactor
+    TurtleFSRefactor --> NQuadsRefactor
+    NQuadsRefactor --> PointerRefactor
+    PointerRefactor --> Test
+    Test --> Docs
+    
+    classDef remove fill:#ffebee,stroke:#c62828,stroke-width:3px
+    classDef critical fill:#fff3e0,stroke:#ef6c00,stroke-width:2px
+    classDef moderate fill:#fff8e1,stroke:#f57f17,stroke-width:2px
+    classDef validation fill:#e8f5e8,stroke:#2e7d32,stroke-width:2px
+    
+    class Remove remove
+    class CanonRefactor,ReasonerRefactor,ValidatorRefactor critical
+    class TurtleFSRefactor,NQuadsRefactor,PointerRefactor moderate
+    class Test,Docs validation

@@ -12,6 +12,8 @@ unrdf is the opinionated RDF framework for JavaScript. It makes the RDF universe
 
 **Zod is the contract.** Runtime validation ensures that what you think your data is, and what it actually is, are always in sync.
 
+**Context is everything.** unrdf enforces the "One Store Rule" through a global context system that ensures all composables share the same RDF engine and store instance.
+
 **Composables everywhere.** Every aspect of RDF — graphs, queries, validation, reasoning, serialization — is accessible through consistent composable functions.
 
 ## Installation
@@ -22,33 +24,9 @@ pnpm add unrdf
 
 ## Quick Start
 
-### CLI Usage
+### Context-Based Architecture (The unrdf Way)
 
-```bash
-# Install globally
-pnpm install -g unrdf
-
-# Initialize a new project
-unrdf init my-knowledge-graph
-
-# Parse RDF data
-unrdf parse data.ttl --stats
-
-# Query with SPARQL  
-unrdf query data.ttl --query "SELECT * WHERE { ?s ?p ?o } LIMIT 10"
-
-# Validate against SHACL shapes
-unrdf validate data.ttl shapes.ttl
-
-# Convert between formats
-unrdf convert data.ttl --to json-ld
-```
-
-### Programmatic Usage
-
-#### Context-Based Approach (Recommended)
-
-unrdf now uses [unctx](https://github.com/unjs/unctx) for global store management, ensuring there's only one store by default:
+unrdf uses [unctx](https://github.com/unjs/unctx) for global store management, ensuring there's only one store by default:
 
 ```javascript
 import { initStore, useStore, useGraph, useValidator, useZod } from 'unrdf';
@@ -81,7 +59,7 @@ runApp(() => {
   console.log('Query results:', results);
   
   // Validate with SHACL
-  const report = await validator.validate(store, shapesStore);
+  const report = await validator.validate(shapesStore);
   console.log('Validation report:', report);
   
   // Type-safe validation with Zod
@@ -96,56 +74,72 @@ runApp(() => {
 });
 ```
 
-#### Legacy Approach (Still Supported)
+### CLI Usage
 
-```javascript
-import { useStore, useGraph, useValidator, useZod } from 'unrdf';
+```bash
+# Install globally
+pnpm install -g unrdf
 
-// Create a store
-const store = useStore();
+# Initialize a new project
+unrdf init my-knowledge-graph
 
-// Add some data
-const quad = store.quad(
-  store.namedNode("http://example.org/Person"),
-  store.namedNode("http://xmlns.com/foaf/0.1/name"),
-  store.literal("John Doe")
-);
-store.add(quad);
+# Parse RDF data
+unrdf parse data.ttl --stats
 
-// Create a graph interface
-const graph = useGraph(store.store);
+# Query with SPARQL  
+unrdf query data.ttl --query "SELECT * WHERE { ?s ?p ?o } LIMIT 10"
 
-// Query with SPARQL
-const results = await graph.select(`
-  PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-  SELECT ?name WHERE {
-    ?person foaf:name ?name .
-  }
-`);
+# Validate against SHACL shapes
+unrdf validate data.ttl shapes.ttl
 
-// Validate with Zod
-const zod = useZod();
-const PersonSchema = z.object({
-  name: z.string()
-});
-
-const validation = await zod.validateResults(results, PersonSchema);
-console.log(validation.validated); // [{ name: "John Doe" }]
+# Convert between formats
+unrdf convert data.ttl --to json-ld
 ```
 
 ## Core Composables
 
-### useStore
-The foundation of all unrdf operations. Creates and manages N3.Store instances.
+### Context Management
+
+#### initStore
+Initialize the global store context for your application.
+
+```javascript
+import { initStore } from 'unrdf';
+
+// Initialize with empty store
+const runApp = initStore();
+
+// Initialize with existing data
+const runApp = initStore(quads, { baseIRI: 'http://example.org/' });
+
+// Run your application code
+runApp(() => {
+  // All composables share the same context here
+  const store = useStore();
+  const graph = useGraph();
+  // ... rest of your code
+});
+```
+
+#### useStore
+Access the shared store instance from context.
 
 ```javascript
 const store = useStore();
+
+// Add quads
 store.add(quad);
+
+// Get statistics
 const stats = store.stats();
+
+// Serialize to Turtle
 const turtle = await store.serialize();
 ```
 
-### useTerms
+### RDF Operations
+
+#### useTerms
 RDF term creation and manipulation. Enforces the "One Terms Rule" - N3 DataFactory is the only term creation method.
 
 ```javascript
@@ -157,7 +151,7 @@ const bnode = terms.bnode("person1");
 const statement = terms.quad(subject, terms.iri("http://example.org/name"), name);
 ```
 
-### usePrefixes
+#### usePrefixes
 Prefix management and CURIE operations. Enforces the "One Prefix Rule" - centralized prefix management.
 
 ```javascript
@@ -179,7 +173,7 @@ const curie = prefixes.shrink("http://example.org/Person");
 const allPrefixes = prefixes.list();
 ```
 
-### useLists
+#### useLists
 RDF list operations for reading and writing linked lists in RDF. Enforces the "One List Rule" - standard rdf:List format.
 
 ```javascript
@@ -198,25 +192,122 @@ const strings = lists.toStrings(store, listHead);
 const head = lists.fromStrings(store, ["item1", "item2", "item3"]);
 ```
 
-### useGraph
+### Query & Reasoning
+
+#### useGraph
 High-level RDF operations including SPARQL queries and set operations.
 
 ```javascript
-const graph = useGraph(store.store);
-const results = await graph.select("SELECT ?s ?p ?o WHERE { ?s ?p ?o }");
-const exists = await graph.ask("ASK WHERE { ?s a ex:Person }");
+const graph = useGraph();
+
+// SPARQL SELECT queries
+const results = await graph.select(`
+  PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+  SELECT ?name WHERE {
+    ?person foaf:name ?name .
+  }
+`);
+
+// SPARQL ASK queries
+const exists = await graph.ask(`
+  PREFIX ex: <http://example.org/>
+  ASK WHERE { ?s a ex:Person }
+`);
+
+// Get store statistics
+const stats = graph.getStats();
 ```
 
-### useTurtle
+#### useReasoner
+EYE-based reasoning over RDF data.
+
+```javascript
+const reasoner = useReasoner();
+
+// Reason over data with rules
+const inferred = await reasoner.reason(dataStore, rulesStore);
+
+// Check if reasoning would produce new triples
+const wouldProduceNew = await reasoner.wouldProduceNewTriples(dataStore, rulesStore);
+
+// Get reasoning statistics
+const stats = reasoner.getStats(originalStore, inferredStore);
+```
+
+### Validation & Canonicalization
+
+#### useValidator
+SHACL validation for RDF graphs.
+
+```javascript
+const validator = useValidator();
+
+// Validate against SHACL shapes
+const report = await validator.validate(shapesStore);
+
+// Validate and throw on failure
+await validator.validateOrThrow(shapesTurtle);
+
+// Summarize validation results
+const summary = validator.summarize(report);
+
+// Filter by severity
+const violations = validator.filterBySeverity(report, "http://www.w3.org/ns/shacl#Violation");
+```
+
+#### useCanon
+Canonicalization and isomorphism checking using URDNA2015.
+
+```javascript
+const canon = useCanon();
+
+// Canonicalize a store
+const canonical = await canon.canonicalize(store);
+
+// Check if two stores are isomorphic
+const isIsomorphic = await canon.isIsomorphic(store1, store2);
+
+// Generate canonical hash
+const hash = await canon.hash(store);
+```
+
+#### useZod
+Runtime validation for RDF-derived data.
+
+```javascript
+const zod = useZod();
+
+const PersonSchema = z.object({
+  name: z.string(),
+  age: z.number().int().min(0)
+});
+
+const validation = await zod.validateResults(sparqlResults, PersonSchema);
+console.log(validation.validated); // [{ name: "John Doe", age: 30 }]
+```
+
+### I/O Operations
+
+#### useTurtleFS
 File system operations for Turtle files.
 
 ```javascript
-const turtle = await useTurtle('./graph');
-await turtle.loadAll();
-await turtle.save('my-graph', store);
+const turtleFS = await useTurtleFS('./graph');
+
+// Load all .ttl files
+await turtleFS.loadAll();
+
+// Save a specific graph
+await turtleFS.save('my-graph', store);
+
+// Load a specific file
+const store = await turtleFS.load('my-graph');
+
+// List all files
+const files = await turtleFS.list();
 ```
 
-### useNQuads
+#### useNQuads
 N-Quads parsing and serialization. Enforces the "One N-Quads Rule" - standard N-Quads format only.
 
 ```javascript
@@ -230,128 +321,168 @@ const nquadsString = await nquads.serialize(store);
 
 // Validate N-Quads
 const validation = nquads.validate(nquadsString);
+
+// Convert to Turtle
+const turtle = await nquads.toTurtle(nquadsString);
 ```
 
-### useJsonLd
-JSON-LD operations. Enforces the "One JSON-LD Rule" - standard JSON-LD format only.
+### Graph Traversal
 
-```javascript
-const jsonld = useJsonLd();
-
-// Convert store to JSON-LD
-const doc = await jsonld.toJSONLD(store, { 
-  context: { "@vocab": "http://example.org/" } 
-});
-
-// Convert JSON-LD to store
-const store = await jsonld.fromJSONLD(doc);
-
-// Compact JSON-LD
-const compacted = await jsonld.compact(doc, context);
-```
-
-### usePointer
+#### usePointer
 Clownface-based graph traversal. Enforces the "One Pointer Rule" - Clownface is the only traversal method.
 
 ```javascript
-const pointer = usePointer(store);
+const pointer = usePointer();
 
-// Traverse the graph
-const name = pointer.node("ex:person").out("foaf:name").value;
-const friends = pointer.node("ex:person").out("foaf:knows").toArray();
+// Get pointer to specific node
+const nodePointer = pointer.node("person1");
 
-// Get nodes of a specific type
+// Get nodes of specific type
 const persons = pointer.ofType("foaf:Person");
 
-// Get nodes with a specific property
+// Get nodes with specific property
 const namedNodes = pointer.withProperty("foaf:name");
+
+// Get nodes with specific property value
+const johnNodes = pointer.withValue("foaf:name", "John Doe");
+
+// Get underlying Clownface instance
+const clownface = pointer.getClownface();
 ```
 
-### useValidator
-SHACL validation for RDF graphs.
+### Utility Composables
+
+#### useIRIs
+IRI resolution and management.
 
 ```javascript
-const validator = useValidator();
-const report = await validator.validate(dataStore, shapesStore);
-await validator.validateOrThrow(dataStore, shapesStore);
+const iris = useIRIs();
+
+// Resolve relative IRIs
+const absolute = iris.resolve("person1", "http://example.org/");
+
+// Map prefixes to paths
+iris.map("ex", "/api/");
+
+// Check if URI is absolute
+const isAbsolute = iris.isAbsolute("http://example.org/foo");
 ```
 
-### useReasoner
-EYE-based reasoning over RDF data.
+#### useCache
+Caching for expensive operations.
 
 ```javascript
-const reasoner = useReasoner();
-const inferred = await reasoner.reason(dataStore, rulesStore);
+const cache = useCache();
+
+// Cache function results
+const cachedFunction = cache.wrap(expensiveFunction);
+
+// Set and get cached values
+cache.set("key", value, { ttl: 60000 });
+const value = cache.get("key");
+
+// Get cache statistics
+const stats = cache.getStats();
 ```
 
-### useCanon
-Canonicalization and isomorphism checking using URDNA2015.
+#### useMetrics
+Performance metrics and timing.
 
 ```javascript
-const canon = useCanon();
-const canonical = await canon.canonicalize(store);
-const isIsomorphic = await canon.isIsomorphic(store1, store2);
+const metrics = useMetrics();
+
+// Wrap functions with metrics
+const timedFunction = metrics.wrap(myFunction, "operation-name");
+
+// Create timers
+const timer = metrics.timer("operation");
+// ... do work
+timer.end();
+
+// Get metrics
+const allMetrics = metrics.getAll();
+const summary = metrics.getSummary();
 ```
 
-### useZod
-Runtime validation for RDF-derived data.
+#### useDelta
+Change tracking and diff operations.
 
 ```javascript
-const zod = useZod();
-const validation = await zod.validateResults(sparqlResults, schema);
+const delta = useDelta();
+
+// Calculate difference between stores
+const changes = delta.diff(store1, store2);
+
+// Apply changes to a store
+const patchedStore = delta.patch(store, changes);
+
+// Get statistics about changes
+const stats = delta.getStats(changes);
 ```
 
-## Utilities
+## The Context Architecture
 
-unrdf includes comprehensive utility functions that cover the 80/20 "dark matter" of RDF operations:
+unrdf enforces the "One Store Rule" through a sophisticated context system:
 
-### Term Utilities
+### How It Works
+
+1. **Initialize Context**: `initStore()` creates a global context with a single RDF engine and store
+2. **Run Application**: `runApp()` executes your code within the context
+3. **Access Composables**: All composables automatically use the shared context
+4. **Consistent State**: Every operation works on the same store instance
+
+### Benefits
+
+- **No Store Confusion**: Impossible to accidentally work with different stores
+- **Automatic Sharing**: All composables share the same engine configuration
+- **Clean APIs**: No need to pass stores between composables
+- **Testable**: Easy to isolate tests with fresh contexts
+
+### Example: Multiple Composables Working Together
+
 ```javascript
-import { asNamedNode, asLiteral, asBlankNode, quadToJSON, jsonToQuad } from 'unrdf';
+const runApp = initStore([], { baseIRI: 'http://example.org/' });
 
-const node = asNamedNode("http://example.org/foo");
-const lit = asLiteral("hello");
-const bnode = asBlankNode();
-const json = quadToJSON(quad);
-const quad = jsonToQuad(json);
-```
-
-### Graph Utilities
-```javascript
-import { pluck, indexByPredicate, getSubjectsByType, hasType, getOne, getAll } from 'unrdf';
-
-const labels = pluck(store, "http://www.w3.org/2000/01/rdf-schema#label");
-const labelMap = indexByPredicate(store, "http://www.w3.org/2000/01/rdf-schema#label");
-const persons = getSubjectsByType(store, "http://xmlns.com/foaf/0.1/Person");
-const isPerson = hasType(store, "http://example.org/foo", "http://xmlns.com/foaf/0.1/Person");
-const name = getOne(store, "http://example.org/foo", "http://xmlns.com/foaf/0.1/name");
-const names = getAll(store, "http://example.org/foo", "http://xmlns.com/foaf/0.1/name");
-```
-
-### Serialization Utilities
-```javascript
-import { debugTurtle, debugNQuads, debugJSONLD } from 'unrdf';
-
-const turtle = await debugTurtle(store);
-const nquads = await debugNQuads(store);
-const jsonld = await debugJSONLD(store);
-```
-
-### Validation Utilities
-```javascript
-import { validateIRI, validateTerm, validateQuad, validateStore } from 'unrdf';
-
-const isValidIRI = validateIRI("http://example.org/foo");
-const isValidTerm = validateTerm(term);
-const isValidQuad = validateQuad(quad);
-const result = validateStore(store);
+runApp(async () => {
+  // All these composables share the same store automatically
+  const store = useStore();
+  const graph = useGraph();
+  const validator = useValidator();
+  const reasoner = useReasoner();
+  const canon = useCanon();
+  
+  // Load data
+  const turtleFS = await useTurtleFS('./data');
+  await turtleFS.loadAll();
+  
+  // Query the data
+  const results = await graph.select(`
+    PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+    SELECT ?person ?name WHERE {
+      ?person a foaf:Person ;
+               foaf:name ?name .
+    }
+  `);
+  
+  // Validate against shapes
+  const report = await validator.validate(shapesStore);
+  
+  // Reason over the data
+  const inferred = await reasoner.reason(null, rulesStore);
+  
+  // Canonicalize for comparison
+  const canonical = await canon.canonicalize(store);
+  
+  console.log('All operations completed on the same store!');
+});
 ```
 
 ## Opinionated Design
 
 unrdf enforces a single, opinionated path through the RDF universe:
 
-- **One Store**: N3.Store is the only memory model
+- **One Store**: N3.Store is the only memory model, managed through context
+- **One Engine**: Single RdfEngine instance shared across all composables
 - **One Terms**: N3 DataFactory is the only term creation method
 - **One Prefixes**: Centralized prefix management
 - **One Lists**: Standard rdf:List format
@@ -360,9 +491,9 @@ unrdf enforces a single, opinionated path through the RDF universe:
 - **One Reasoner**: EYE is the only reasoning engine
 - **One Canonicalization**: URDNA2015 is the only canonicalization method
 - **One Serialization**: Turtle and N-Quads are the primary formats
-- **One JSON-LD**: Standard JSON-LD format only
 - **One Pointer**: Clownface is the only traversal method
 - **One Validation**: Zod is the only runtime validation
+- **One Context**: Global context system ensures consistency
 
 This eliminates choice paralysis and ensures consistency across all RDF operations.
 
@@ -370,7 +501,30 @@ This eliminates choice paralysis and ensures consistency across all RDF operatio
 
 The RDF ecosystem has matured into a diverse set of libraries, but this diversity has created fragmentation. A typical project may mix N3 for parsing, Comunica for SPARQL, rdf-ext for datasets, rdf-validate-shacl for constraints, and eyereasoner for inference. Each library is useful in isolation, but together they form a patchwork of styles, APIs, and stores.
 
-unrdf addresses this by enforcing a single opinionated path. The framework selects a canonical implementation for each layer and wraps them in a composable API pattern. The result is not a new ontology language or reasoner but a reduction of cognitive overhead for practitioners.
+unrdf addresses this by enforcing a single opinionated path with a context-based architecture. The framework selects a canonical implementation for each layer, wraps them in a composable API pattern, and ensures they all work together through a shared context system. The result is not a new ontology language or reasoner but a reduction of cognitive overhead for practitioners.
+
+## Migration from v0.x
+
+If you're upgrading from unrdf v0.x, the main change is the introduction of the context system:
+
+### Before (v0.x)
+```javascript
+const store = useStore();
+const graph = useGraph(store.store);
+const validator = useValidator();
+```
+
+### After (v1.0)
+```javascript
+const runApp = initStore();
+runApp(() => {
+  const store = useStore();
+  const graph = useGraph();
+  const validator = useValidator();
+});
+```
+
+The context system ensures all composables work together seamlessly while maintaining the same API surface.
 
 ## License
 
@@ -378,4 +532,4 @@ MIT
 
 ## Contributing
 
-This project follows the opinionated design philosophy. Contributions should align with the single-path approach and maintain the composable API pattern.
+This project follows the opinionated design philosophy. Contributions should align with the single-path approach, maintain the composable API pattern, and respect the context-based architecture.

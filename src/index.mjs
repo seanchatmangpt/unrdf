@@ -26,36 +26,35 @@
 export * from "./context/index.mjs";
 
 // Core composables
-export { useStore } from "./composables/useStore.mjs";
-export { useGraph } from "./composables/useGraph.mjs";
-export { useTurtle } from "./composables/useTurtle.mjs";
-export { useTerms } from "./composables/useTerms.mjs";
-export { usePrefixes } from "./composables/usePrefixes.mjs";
-export { useIRIs } from "./composables/useIRIs.mjs";
-export { useLists } from "./composables/useLists.mjs";
+export { useStore } from "./composables/use-store.mjs";
+export { useGraph } from "./composables/use-graph.mjs";
+export { useTurtle } from "./composables/use-turtle.mjs";
+export { useTerms } from "./composables/use-terms.mjs";
+export { usePrefixes } from "./composables/use-prefixes.mjs";
+export { useIRIs } from "./composables/use-iris.mjs";
+export { useLists } from "./composables/use-lists.mjs";
 
 // I/O composables
-export { useTurtleFS } from "./composables/useTurtleFS.mjs";
-export { useNQuads } from "./composables/useNQuads.mjs";
-export { useJsonLd } from "./composables/useJsonLd.mjs";
+export { useTurtleFS } from "./composables/use-turtle-fs.mjs";
+export { useNQuads } from "./composables/use-n-quads.mjs";
 
 // Query and traversal
-export { usePointer } from "./composables/usePointer.mjs";
+export { usePointer } from "./composables/use-pointer.mjs";
 
 // Validation and reasoning
-export { useValidator } from "./composables/useValidator.mjs";
-export { useReasoner } from "./composables/useReasoner.mjs";
-export { useCanon } from "./composables/useCanon.mjs";
+export { useValidator } from "./composables/use-validator.mjs";
+export { useReasoner } from "./composables/use-reasoner.mjs";
+export { useCanon } from "./composables/use-canon.mjs";
 
 // Type safety and validation
-export { useZod } from "./composables/useZod.mjs";
+export { useZod } from "./composables/use-zod.mjs";
 
 // Change and provenance
-export { useDelta } from "./composables/useDelta.mjs";
+export { useDelta } from "./composables/use-delta.mjs";
 
 // Performance and caching
-export { useMetrics } from "./composables/useMetrics.mjs";
-export { useCache } from "./composables/useCache.mjs";
+export { useMetrics } from "./composables/use-metrics.mjs";
+export { useCache } from "./composables/use-cache.mjs";
 
 // Engines
 export { RdfEngine } from "./engines/rdf-engine.mjs";
