@@ -1,0 +1,20 @@
+{
+  "id": "ex:ConfigDrift",
+  "name": "Configuration Drift Detection",
+  "description": "Detects changes in configuration parameters",
+  "select": "SELECT ?config ?value ?environment WHERE {\n  ?config ex:value ?value .\n  ?config ex:environment ?environment .\n  ?config ex:monitored true\n}",
+  "predicates": [
+    {
+      "kind": "DELTA",
+      "spec": {
+        "change": "any",
+        "key": ["config", "environment"]
+      }
+    }
+  ],
+  "combine": "AND",
+  "output": {
+    "format": "json",
+    "destination": "webhook"
+  }
+}

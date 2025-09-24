@@ -10,6 +10,7 @@
  */
 
 import rdf from "rdf-ext";
+import { Store, DataFactory } from "n3";
 import { useStoreContext } from "../context/index.mjs";
 
 /**
@@ -78,12 +79,12 @@ export function useRDFExt(options = {}) {
      */
     createDataset(quads = []) {
       try {
-        return rdf.dataset(quads);
+        return rdf.DatasetFactory.dataset(quads);
       } catch (error) {
         if (strict) {
           throw new Error(`Dataset creation failed: ${error.message}`);
         }
-        return rdf.dataset();
+        return rdf.DatasetFactory.dataset();
       }
     },
 
@@ -98,12 +99,12 @@ export function useRDFExt(options = {}) {
      */
     createGraph(quads = []) {
       try {
-        return rdf.graph(quads);
+        return rdf.DatasetFactory.graph(quads);
       } catch (error) {
         if (strict) {
           throw new Error(`Graph creation failed: ${error.message}`);
         }
-        return rdf.graph();
+        return rdf.DatasetFactory.graph();
       }
     },
 
@@ -118,12 +119,12 @@ export function useRDFExt(options = {}) {
      */
     createNamespace(baseIRI) {
       try {
-        return rdf.namespace(baseIRI);
+        return rdf.NamespaceFactory.namespace(baseIRI);
       } catch (error) {
         if (strict) {
           throw new Error(`Namespace creation failed: ${error.message}`);
         }
-        return (localName) => rdf.namedNode(baseIRI + localName);
+        return (localName) => rdf.DataFactory.namedNode(baseIRI + localName);
       }
     },
 
@@ -138,12 +139,12 @@ export function useRDFExt(options = {}) {
      */
     createFactory() {
       return {
-        namedNode: (iri) => rdf.namedNode(iri),
-        literal: (value, datatype, language) => rdf.literal(value, datatype, language),
-        blankNode: (id) => rdf.blankNode(id),
-        defaultGraph: () => rdf.defaultGraph(),
-        variable: (name) => rdf.variable(name),
-        quad: (subject, predicate, object, graph) => rdf.quad(subject, predicate, object, graph)
+        namedNode: (iri) => rdf.DataFactory.namedNode(iri),
+        literal: (value, datatype, language) => rdf.DataFactory.literal(value, datatype, language),
+        blankNode: (id) => rdf.DataFactory.blankNode(id),
+        defaultGraph: () => rdf.DataFactory.defaultGraph(),
+        variable: (name) => rdf.DataFactory.variable(name),
+        quad: (subject, predicate, object, graph) => rdf.DataFactory.quad(subject, predicate, object, graph)
       };
     },
 
@@ -182,7 +183,6 @@ export function useRDFExt(options = {}) {
      * const store = rdfExt.datasetToStore(dataset);
      */
     datasetToStore(dataset) {
-      const { Store, DataFactory } = await import('n3');
       const store = new Store();
       
       for (const quad of dataset) {
@@ -210,20 +210,23 @@ export function useRDFExt(options = {}) {
     union(...datasets) {
       try {
         if (datasets.length === 0) {
-          return rdf.dataset();
+          return rdf.DatasetFactory.dataset();
         }
         
-        let result = datasets[0];
-        for (let i = 1; i < datasets.length; i++) {
-          result = result.union(datasets[i]);
+        // Combine all quads from all datasets
+        const allQuads = [];
+        for (const dataset of datasets) {
+          for (const quad of dataset) {
+            allQuads.push(quad);
+          }
         }
         
-        return result;
+        return rdf.DatasetFactory.dataset(allQuads);
       } catch (error) {
         if (strict) {
           throw new Error(`Dataset union failed: ${error.message}`);
         }
-        return rdf.dataset();
+        return rdf.DatasetFactory.dataset();
       }
     },
 
@@ -238,20 +241,39 @@ export function useRDFExt(options = {}) {
     intersection(...datasets) {
       try {
         if (datasets.length === 0) {
-          return rdf.dataset();
+          return rdf.DatasetFactory.dataset();
         }
         
-        let result = datasets[0];
-        for (let i = 1; i < datasets.length; i++) {
-          result = result.intersection(datasets[i]);
+        // Find quads that exist in all datasets
+        const firstDataset = datasets[0];
+        const intersectionQuads = [];
+        
+        for (const quad of firstDataset) {
+          let existsInAll = true;
+          for (let i = 1; i < datasets.length; i++) {
+            let found = false;
+            for (const otherQuad of datasets[i]) {
+              if (this.equals(quad, otherQuad)) {
+                found = true;
+                break;
+              }
+            }
+            if (!found) {
+              existsInAll = false;
+              break;
+            }
+          }
+          if (existsInAll) {
+            intersectionQuads.push(quad);
+          }
         }
         
-        return result;
+        return rdf.DatasetFactory.dataset(intersectionQuads);
       } catch (error) {
         if (strict) {
           throw new Error(`Dataset intersection failed: ${error.message}`);
         }
-        return rdf.dataset();
+        return rdf.DatasetFactory.dataset();
       }
     },
 
@@ -266,12 +288,27 @@ export function useRDFExt(options = {}) {
      */
     difference(dataset1, dataset2) {
       try {
-        return dataset1.difference(dataset2);
+        const differenceQuads = [];
+        
+        for (const quad of dataset1) {
+          let found = false;
+          for (const otherQuad of dataset2) {
+            if (this.equals(quad, otherQuad)) {
+              found = true;
+              break;
+            }
+          }
+          if (!found) {
+            differenceQuads.push(quad);
+          }
+        }
+        
+        return rdf.DatasetFactory.dataset(differenceQuads);
       } catch (error) {
         if (strict) {
           throw new Error(`Dataset difference failed: ${error.message}`);
         }
-        return rdf.dataset();
+        return rdf.DatasetFactory.dataset();
       }
     },
 

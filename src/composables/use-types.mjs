@@ -9,6 +9,7 @@
  * @license MIT
  */
 
+import { DataFactory } from "n3";
 import { useStoreContext } from "../context/index.mjs";
 
 /**
@@ -357,7 +358,6 @@ export function useTypes(options = {}) {
      * const node = factory.namedNode('http://example.org/');
      */
     createFactory() {
-      const { DataFactory } = await import('n3');
       
       return {
         namedNode: (iri) => {

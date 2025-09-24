@@ -1,0 +1,20 @@
+{
+  "id": "ex:ComplianceCheck",
+  "name": "Compliance Validation",
+  "description": "Validates data against SHACL shapes for compliance",
+  "select": "SELECT ?resource ?type WHERE {\n  ?resource a ?type .\n  ?resource ex:sensitive true\n}",
+  "predicates": [
+    {
+      "kind": "SHACL",
+      "spec": {
+        "shape": "ex:SensitiveDataShape",
+        "strict": true
+      }
+    }
+  ],
+  "combine": "AND",
+  "output": {
+    "format": "json",
+    "destination": "file"
+  }
+}
