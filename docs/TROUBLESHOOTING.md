@@ -261,7 +261,7 @@ describe('useStore', () => {
 pnpm lint:fix
 
 # Check specific files
-pnpm lint src/composables/useStore.mjs
+pnpm lint src/composables/use-store.mjs
 ```
 
 ### Build Failures
@@ -477,7 +477,7 @@ store.add(quad); // Error here
 **Error Message**:
 ```
 Error: [useStore] Quads must be an array
-    at Store.add (/path/to/unrdf/src/composables/useStore.mjs:45:11)
+    at Store.add (/path/to/unrdf/src/composables/use-store.mjs:45:11)
 ```
 ```
 

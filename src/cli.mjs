@@ -127,7 +127,7 @@ const main = defineCommand({
               quads = await jsonLd.fromJSONLD(JSON.parse(inputData));
               break;
             case 'n-quads':
-              const nquads = await import('./composables/useNQuads.mjs');
+              const nquads = await import('./composables/use-n-quads.mjs');
               quads = await nquads.useNQuads().parse(inputData);
               break;
             default:
@@ -370,7 +370,7 @@ const main = defineCommand({
               output = JSON.stringify(await jsonLd.toJSONLD(store.store), null, 2);
               break;
             case 'n-quads':
-              const nquads = await import('./composables/useNQuads.mjs');
+              const nquads = await import('./composables/use-n-quads.mjs');
               output = await nquads.useNQuads().serialize(store.store);
               break;
             default:

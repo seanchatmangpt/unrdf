@@ -10,33 +10,37 @@
  */
 
 // Core composables
-export { useStore } from "./useStore.mjs";
-export { useGraph } from "./useGraph.mjs";
-export { useTurtle } from "./useTurtle.mjs";
-export { useTerms } from "./useTerms.mjs";
-export { usePrefixes } from "./usePrefixes.mjs";
-export { useIRIs } from "./useIRIs.mjs";
-export { useLists } from "./useLists.mjs";
+export { useStore } from "./use-store.mjs";
+export { useGraph } from "./use-graph.mjs";
+export { useTurtle } from "./use-turtle.mjs";
+export { useTerms } from "./use-terms.mjs";
+export { usePrefixes } from "./use-prefixes.mjs";
+export { useIRIs } from "./use-iris.mjs";
+export { useLists } from "./use-lists.mjs";
 
 // I/O composables
-export { useTurtleFS } from "./useTurtleFS.mjs";
-export { useNQuads } from "./useNQuads.mjs";
-export { useJsonLd } from "./useJsonLd.mjs";
+export { useTurtleFS } from "./use-turtle-fs.mjs";
+export { useNQuads } from "./use-n-quads.mjs";
 
 // Query and traversal
-export { usePointer } from "./usePointer.mjs";
+export { usePointer } from "./use-pointer.mjs";
 
 // Validation and reasoning
-export { useValidator } from "./useValidator.mjs";
-export { useReasoner } from "./useReasoner.mjs";
-export { useCanon } from "./useCanon.mjs";
+export { useValidator } from "./use-validator.mjs";
+export { useReasoner } from "./use-reasoner.mjs";
+export { useCanon } from "./use-canon.mjs";
 
 // Type safety and validation
-export { useZod } from "./useZod.mjs";
+export { useZod } from "./use-zod.mjs";
+export { useTypes } from "./use-types.mjs";
+
+// Advanced RDF operations
+export { useJSONLD } from "./use-jsonld.mjs";
+export { useRDFExt } from "./use-rdfext.mjs";
 
 // Change and provenance
-export { useDelta } from "./useDelta.mjs";
+export { useDelta } from "./use-delta.mjs";
 
 // Performance and caching
-export { useMetrics } from "./useMetrics.mjs";
-export { useCache } from "./useCache.mjs";
+export { useMetrics } from "./use-metrics.mjs";
+export { useCache } from "./use-cache.mjs";
