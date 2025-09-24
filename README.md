@@ -1,10 +1,121 @@
 # unrdf
 
-**Opinionated composable framework for RDF knowledge operations**
+**Opinionated composable framework for RDF knowledge operations with Knowledge Hooks**
 
-unrdf is the opinionated RDF framework for JavaScript. It makes the RDF universe accessible through a single composable surface — powered by N3.js, Comunica, SHACL, and Zod.
+unrdf is the opinionated RDF framework for JavaScript that transforms knowledge graphs into intelligent, reactive systems. Built on N3.js, Comunica, SHACL, and Zod, unrdf provides **Knowledge Hooks** — deterministic, auditable triggers that detect meaningful changes in RDF graphs and respond with precise actions.
 
-## Philosophy
+## 🎯 **Knowledge Hooks: The Game Changer**
+
+**Knowledge Hooks** are pure data + pure functions that evaluate knowledge change and emit signed receipts. They turn SPARQL results and SHACL conformance into deterministic, auditable actions — without glue code or bespoke pipelines.
+
+### **What Knowledge Hooks Do**
+
+- **ASK predicates** (true/false intent detection)
+- **SHACL predicates** (shape conformance/violations)  
+- **DELTA predicates** (stable row digests, added/removed quads)
+- **THRESHOLD predicates** (counts, metrics, cohort checks)
+- **WINDOW predicates** (tumbling/hopping time windows)
+
+Every evaluation emits a **Receipt** (why it fired, what changed, hashes/provenance, durations), enabling compliance-grade audit trails.
+
+### **Why Knowledge Hooks Are Different**
+
+- **One Store Rule.** A single **N3.Store** context; no multiple models, no confusion.
+- **Functional core.** Hooks are pure; evaluation is referentially transparent.
+- **Provenance by default.** URDNA2015 canonical hashes for data, queries, shapes, rules, and Zod schemas.
+- **JSDoc, not TypeScript.** Runtime truth, minimal surface, explicit contracts via Zod.
+- **80/20 dark matter.** Covers the high-value cases: compliance gates, config drift, KPI thresholds, doc→knowledge sync, CI guardrails.
+
+## 🚀 **Quick Start: Knowledge Hooks**
+
+```javascript
+import { initStore, defineHook, evaluateHook } from 'unrdf';
+
+// Initialize the knowledge base
+const runApp = initStore();
+
+runApp(async () => {
+  // Define a service health monitoring hook
+  const healthHook = defineHook({
+    id: 'ex:ServiceHealth',
+    select: 'SELECT ?service ?errorRate WHERE { ?service ex:errorRate ?errorRate }',
+    predicates: [
+      { kind: 'THRESHOLD', spec: { var: 'errorRate', op: '>', value: 0.02 } },
+      { kind: 'DELTA', spec: { change: 'increase', key: ['service'] } }
+    ],
+    combine: 'AND'
+  });
+
+  // Evaluate the hook
+  const receipt = await evaluateHook(healthHook, { persist: true });
+  
+  if (receipt.fired) {
+    console.log('🔥 Service health alert!');
+    console.log('Evidence:', receipt.predicates);
+    console.log('Provenance:', receipt.provenance);
+  } else {
+    console.log('✅ All services healthy');
+  }
+});
+```
+
+### **CLI Usage**
+
+```bash
+# Install globally
+pnpm install -g unrdf
+
+# Evaluate a knowledge hook
+unrdf hook eval --hook hooks/service-health.json --graph ./data/
+
+# Plan hook evaluation (show predicate tree)
+unrdf hook plan --hook ex:ServiceHealth
+
+# View hook receipts
+unrdf hook receipts --hook ex:ServiceHealth --tail
+```
+
+## 📋 **Knowledge Hooks Examples**
+
+### **Service Health Monitoring**
+```javascript
+const serviceHealthHook = defineHook({
+  id: 'ex:ServiceHealth',
+  select: 'SELECT ?service ?errorRate WHERE { ?service ex:errorRate ?errorRate }',
+  predicates: [
+    { kind: 'THRESHOLD', spec: { var: 'errorRate', op: '>', value: 0.02 } }
+  ],
+  combine: 'AND'
+});
+```
+
+### **Compliance Validation**
+```javascript
+const complianceHook = defineHook({
+  id: 'ex:ComplianceCheck',
+  select: 'SELECT ?resource WHERE { ?resource ex:sensitive true }',
+  predicates: [
+    { kind: 'SHACL', spec: { shape: 'ex:SensitiveDataShape', strict: true } }
+  ],
+  combine: 'AND'
+});
+```
+
+### **Configuration Drift Detection**
+```javascript
+const configDriftHook = defineHook({
+  id: 'ex:ConfigDrift',
+  select: 'SELECT ?config ?value WHERE { ?config ex:currentValue ?value }',
+  predicates: [
+    { kind: 'DELTA', spec: { change: 'any', key: ['config'] } }
+  ],
+  combine: 'AND'
+});
+```
+
+## 🏗️ **Core Architecture**
+
+### **Philosophy**
 
 **No TypeScript. Ever.** TypeScript is an illusion of safety that collapses at runtime. unrdf guarantees correctness at the only level that matters: execution.
 
@@ -16,15 +127,7 @@ unrdf is the opinionated RDF framework for JavaScript. It makes the RDF universe
 
 **Composables everywhere.** Every aspect of RDF — graphs, queries, validation, reasoning, serialization — is accessible through consistent composable functions.
 
-## Installation
-
-```bash
-pnpm add unrdf
-```
-
-## Quick Start
-
-### Context-Based Architecture (The unrdf Way)
+### **Context-Based Architecture**
 
 unrdf uses [unctx](https://github.com/unjs/unctx) for global store management, ensuring there's only one store by default:
 
@@ -74,31 +177,36 @@ runApp(() => {
 });
 ```
 
-### CLI Usage
+## 🔧 **Core Composables**
 
-```bash
-# Install globally
-pnpm install -g unrdf
+### **Knowledge Hooks**
 
-# Initialize a new project
-unrdf init my-knowledge-graph
+#### defineHook
+Define a Knowledge Hook with predicates and combination logic.
 
-# Parse RDF data
-unrdf parse data.ttl --stats
-
-# Query with SPARQL  
-unrdf query data.ttl --query "SELECT * WHERE { ?s ?p ?o } LIMIT 10"
-
-# Validate against SHACL shapes
-unrdf validate data.ttl shapes.ttl
-
-# Convert between formats
-unrdf convert data.ttl --to json-ld
+```javascript
+const hook = defineHook({
+  id: 'ex:MyHook',
+  select: 'SELECT ?s ?p ?o WHERE { ?s ?p ?o }',
+  predicates: [
+    { kind: 'THRESHOLD', spec: { var: 'o', op: '>', value: 100 } },
+    { kind: 'ASK', spec: { query: 'ASK WHERE { ?s a ex:Important }' } }
+  ],
+  combine: 'AND'
+});
 ```
 
-## Core Composables
+#### evaluateHook
+Evaluate a hook and return a receipt with provenance.
 
-### Context Management
+```javascript
+const receipt = await evaluateHook(hook, { persist: true });
+console.log('Fired:', receipt.fired);
+console.log('Evidence:', receipt.predicates);
+console.log('Provenance:', receipt.provenance);
+```
+
+### **Context Management**
 
 #### initStore
 Initialize the global store context for your application.
@@ -137,7 +245,7 @@ const stats = store.stats();
 const turtle = await store.serialize();
 ```
 
-### RDF Operations
+### **RDF Operations**
 
 #### useTerms
 RDF term creation and manipulation. Enforces the "One Terms Rule" - N3 DataFactory is the only term creation method.
@@ -150,49 +258,6 @@ const age = terms.lit(30, "http://www.w3.org/2001/XMLSchema#integer");
 const bnode = terms.bnode("person1");
 const statement = terms.quad(subject, terms.iri("http://example.org/name"), name);
 ```
-
-#### usePrefixes
-Prefix management and CURIE operations. Enforces the "One Prefix Rule" - centralized prefix management.
-
-```javascript
-const prefixes = usePrefixes({
-  "ex": "http://example.org/",
-  "foaf": "http://xmlns.com/foaf/0.1/"
-});
-
-// Register new prefixes
-prefixes.register({ "dc": "http://purl.org/dc/terms/" });
-
-// Expand CURIEs
-const fullIRI = prefixes.expand("ex:Person");
-
-// Shrink IRIs
-const curie = prefixes.shrink("http://example.org/Person");
-
-// List all prefixes
-const allPrefixes = prefixes.list();
-```
-
-#### useLists
-RDF list operations for reading and writing linked lists in RDF. Enforces the "One List Rule" - standard rdf:List format.
-
-```javascript
-const lists = useLists();
-
-// Read a list
-const items = lists.read(store, listHead);
-
-// Write a list
-const head = lists.write(store, ["item1", "item2", "item3"]);
-
-// Convert to strings
-const strings = lists.toStrings(store, listHead);
-
-// Create from strings
-const head = lists.fromStrings(store, ["item1", "item2", "item3"]);
-```
-
-### Query & Reasoning
 
 #### useGraph
 High-level RDF operations including SPARQL queries and set operations.
@@ -218,23 +283,7 @@ const exists = await graph.ask(`
 const stats = graph.getStats();
 ```
 
-#### useReasoner
-EYE-based reasoning over RDF data.
-
-```javascript
-const reasoner = useReasoner();
-
-// Reason over data with rules
-const inferred = await reasoner.reason(dataStore, rulesStore);
-
-// Check if reasoning would produce new triples
-const wouldProduceNew = await reasoner.wouldProduceNewTriples(dataStore, rulesStore);
-
-// Get reasoning statistics
-const stats = reasoner.getStats(originalStore, inferredStore);
-```
-
-### Validation & Canonicalization
+### **Validation & Canonicalization**
 
 #### useValidator
 SHACL validation for RDF graphs.
@@ -286,250 +335,99 @@ const validation = await zod.validateResults(sparqlResults, PersonSchema);
 console.log(validation.validated); // [{ name: "John Doe", age: 30 }]
 ```
 
-### I/O Operations
+### **Advanced Composables**
 
-#### useTurtleFS
-File system operations for Turtle files.
-
-```javascript
-const turtleFS = await useTurtleFS('./graph');
-
-// Load all .ttl files
-await turtleFS.loadAll();
-
-// Save a specific graph
-await turtleFS.save('my-graph', store);
-
-// Load a specific file
-const store = await turtleFS.load('my-graph');
-
-// List all files
-const files = await turtleFS.list();
-```
-
-#### useNQuads
-N-Quads parsing and serialization. Enforces the "One N-Quads Rule" - standard N-Quads format only.
+#### useTypes
+Comprehensive RDF term type checking and validation using `@rdfjs/types`.
 
 ```javascript
-const nquads = useNQuads();
+const types = useTypes();
 
-// Parse N-Quads
-const store = nquads.parse(nquadsString);
+// Type checking
+const isNamedNode = types.isNamedNode(term);
+const termType = types.getTermType(term);
 
-// Serialize to N-Quads
-const nquadsString = await nquads.serialize(store);
+// Type-safe term creation
+const factory = types.createFactory();
+const node = factory.namedNode('http://example.org/test');
 
-// Validate N-Quads
-const validation = nquads.validate(nquadsString);
-
-// Convert to Turtle
-const turtle = await nquads.toTurtle(nquadsString);
+// Store analysis
+const stats = types.getTermStats(store);
 ```
 
-### Graph Traversal
-
-#### usePointer
-Clownface-based graph traversal. Enforces the "One Pointer Rule" - Clownface is the only traversal method.
+#### useJSONLD
+Full JSON-LD processing capabilities using the `jsonld` library.
 
 ```javascript
-const pointer = usePointer();
+const jsonld = useJSONLD();
 
-// Get pointer to specific node
-const nodePointer = pointer.node("person1");
+// Expand JSON-LD
+const expanded = await jsonld.expand(jsonldData);
 
-// Get nodes of specific type
-const persons = pointer.ofType("foaf:Person");
+// Compact JSON-LD
+const compacted = await jsonld.compact(expanded, context);
 
-// Get nodes with specific property
-const namedNodes = pointer.withProperty("foaf:name");
+// Convert to RDF
+const rdfStore = await jsonld.toRDF(jsonldData);
 
-// Get nodes with specific property value
-const johnNodes = pointer.withValue("foaf:name", "John Doe");
-
-// Get underlying Clownface instance
-const clownface = pointer.getClownface();
+// Convert from RDF
+const jsonldData = await jsonld.fromRDF(rdfStore);
 ```
 
-### Utility Composables
-
-#### useIRIs
-IRI resolution and management.
+#### useRDFExt
+Advanced RDF dataset and graph operations using `rdf-ext`.
 
 ```javascript
-const iris = useIRIs();
+const rdfExt = useRDFExt();
 
-// Resolve relative IRIs
-const absolute = iris.resolve("person1", "http://example.org/");
+// Create datasets
+const dataset = rdfExt.createDataset();
+const graph = rdfExt.createGraph();
 
-// Map prefixes to paths
-iris.map("ex", "/api/");
+// Dataset operations
+const union = rdfExt.union(dataset1, dataset2);
+const intersection = rdfExt.intersection(dataset1, dataset2);
+const difference = rdfExt.difference(dataset1, dataset2);
 
-// Check if URI is absolute
-const isAbsolute = iris.isAbsolute("http://example.org/foo");
+// Convert between stores and datasets
+const dataset = rdfExt.storeToDataset(store);
+const store = rdfExt.datasetToStore(dataset);
 ```
 
-#### useCache
-Caching for expensive operations.
-
-```javascript
-const cache = useCache();
-
-// Cache function results
-const cachedFunction = cache.wrap(expensiveFunction);
-
-// Set and get cached values
-cache.set("key", value, { ttl: 60000 });
-const value = cache.get("key");
-
-// Get cache statistics
-const stats = cache.getStats();
-```
-
-#### useMetrics
-Performance metrics and timing.
-
-```javascript
-const metrics = useMetrics();
-
-// Wrap functions with metrics
-const timedFunction = metrics.wrap(myFunction, "operation-name");
-
-// Create timers
-const timer = metrics.timer("operation");
-// ... do work
-timer.end();
-
-// Get metrics
-const allMetrics = metrics.getAll();
-const summary = metrics.getSummary();
-```
-
-#### useDelta
-Change tracking and diff operations.
-
-```javascript
-const delta = useDelta();
-
-// Calculate difference between stores
-const changes = delta.diff(store1, store2);
-
-// Apply changes to a store
-const patchedStore = delta.patch(store, changes);
-
-// Get statistics about changes
-const stats = delta.getStats(changes);
-```
-
-## The Context Architecture
-
-unrdf enforces the "One Store Rule" through a sophisticated context system:
-
-### How It Works
-
-1. **Initialize Context**: `initStore()` creates a global context with a single RDF engine and store
-2. **Run Application**: `runApp()` executes your code within the context
-3. **Access Composables**: All composables automatically use the shared context
-4. **Consistent State**: Every operation works on the same store instance
-
-### Benefits
-
-- **No Store Confusion**: Impossible to accidentally work with different stores
-- **Automatic Sharing**: All composables share the same engine configuration
-- **Clean APIs**: No need to pass stores between composables
-- **Testable**: Easy to isolate tests with fresh contexts
-
-### Example: Multiple Composables Working Together
-
-```javascript
-const runApp = initStore([], { baseIRI: 'http://example.org/' });
-
-runApp(async () => {
-  // All these composables share the same store automatically
-  const store = useStore();
-  const graph = useGraph();
-  const validator = useValidator();
-  const reasoner = useReasoner();
-  const canon = useCanon();
-  
-  // Load data
-  const turtleFS = await useTurtleFS('./data');
-  await turtleFS.loadAll();
-  
-  // Query the data
-  const results = await graph.select(`
-    PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-    SELECT ?person ?name WHERE {
-      ?person a foaf:Person ;
-               foaf:name ?name .
-    }
-  `);
-  
-  // Validate against shapes
-  const report = await validator.validate(shapesStore);
-  
-  // Reason over the data
-  const inferred = await reasoner.reason(null, rulesStore);
-  
-  // Canonicalize for comparison
-  const canonical = await canon.canonicalize(store);
-  
-  console.log('All operations completed on the same store!');
-});
-```
-
-## Opinionated Design
+## 🎯 **Opinionated Design**
 
 unrdf enforces a single, opinionated path through the RDF universe:
 
 - **One Store**: N3.Store is the only memory model, managed through context
 - **One Engine**: Single RdfEngine instance shared across all composables
 - **One Terms**: N3 DataFactory is the only term creation method
-- **One Prefixes**: Centralized prefix management
-- **One Lists**: Standard rdf:List format
 - **One Query Engine**: Comunica is the only SPARQL engine
 - **One Validator**: SHACL is the only validation method
-- **One Reasoner**: EYE is the only reasoning engine
 - **One Canonicalization**: URDNA2015 is the only canonicalization method
-- **One Serialization**: Turtle and N-Quads are the primary formats
-- **One Pointer**: Clownface is the only traversal method
 - **One Validation**: Zod is the only runtime validation
 - **One Context**: Global context system ensures consistency
+- **One Hooks**: Knowledge Hooks are the only trigger system
 
 This eliminates choice paralysis and ensures consistency across all RDF operations.
 
-## Why unrdf?
+## 🚀 **Why unrdf?**
 
 The RDF ecosystem has matured into a diverse set of libraries, but this diversity has created fragmentation. A typical project may mix N3 for parsing, Comunica for SPARQL, rdf-ext for datasets, rdf-validate-shacl for constraints, and eyereasoner for inference. Each library is useful in isolation, but together they form a patchwork of styles, APIs, and stores.
 
-unrdf addresses this by enforcing a single opinionated path with a context-based architecture. The framework selects a canonical implementation for each layer, wraps them in a composable API pattern, and ensures they all work together through a shared context system. The result is not a new ontology language or reasoner but a reduction of cognitive overhead for practitioners.
+unrdf addresses this by enforcing a single opinionated path with a context-based architecture. The framework selects a canonical implementation for each layer, wraps them in a composable API pattern, and ensures they all work together through a shared context system. **Knowledge Hooks** add intelligent, reactive capabilities that transform static knowledge graphs into dynamic, responsive systems.
 
-## Migration from v0.x
+The result is not a new ontology language or reasoner but a reduction of cognitive overhead for practitioners, with the added power of deterministic, auditable knowledge triggers.
 
-If you're upgrading from unrdf v0.x, the main change is the introduction of the context system:
+## 📦 **Installation**
 
-### Before (v0.x)
-```javascript
-const store = useStore();
-const graph = useGraph(store.store);
-const validator = useValidator();
+```bash
+pnpm add unrdf
 ```
 
-### After (v1.0)
-```javascript
-const runApp = initStore();
-runApp(() => {
-  const store = useStore();
-  const graph = useGraph();
-  const validator = useValidator();
-});
-```
-
-The context system ensures all composables work together seamlessly while maintaining the same API surface.
-
-## License
+## 📄 **License**
 
 MIT
 
-## Contributing
+## 🤝 **Contributing**
 
-This project follows the opinionated design philosophy. Contributions should align with the single-path approach, maintain the composable API pattern, and respect the context-based architecture.
+This project follows the opinionated design philosophy. Contributions should align with the single-path approach, maintain the composable API pattern, respect the context-based architecture, and enhance the Knowledge Hooks system.

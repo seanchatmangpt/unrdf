@@ -76,9 +76,9 @@ export function useCanon(options = {}) {
       
       try {
         if (synchronous) {
-          return rdfCanonize.canonicalizeSync(storeInstance, { algorithm });
+          return rdfCanonize._canonizeSync(storeInstance, { algorithm });
         } else {
-          return await rdfCanonize.canonicalize(storeInstance, { algorithm });
+          return await rdfCanonize.canonize(storeInstance, { algorithm });
         }
       } catch (error) {
         // Fallback to engine canonicalization
@@ -305,7 +305,7 @@ export function useCanon(options = {}) {
       const { algorithm = 'URDNA2015' } = options;
       
       try {
-        return rdfCanonize.canonicalizeSync(storeInstance, { algorithm });
+        return rdfCanonize._canonizeSync(storeInstance, { algorithm });
       } catch (error) {
         // Fallback to engine canonicalization
         console.warn(`Synchronous canonicalization failed, using fallback: ${error.message}`);
@@ -336,7 +336,7 @@ export function useCanon(options = {}) {
      */
     isSupported() {
       try {
-        return typeof rdfCanonize.canonicalize === 'function';
+        return typeof rdfCanonize.canonize === 'function';
       } catch (error) {
         return false;
       }

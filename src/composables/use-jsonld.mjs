@@ -241,7 +241,7 @@ export function useJSONLD(options = {}) {
       try {
         // Convert JSON-LD to N-Quads
         const nquads = await jsonld.toRDF(doc, {
-          format: format,
+          format: 'application/n-quads',
           base: engine.baseIRI,
           ...options
         });

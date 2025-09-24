@@ -38,6 +38,9 @@ export { useTypes } from "./use-types.mjs";
 export { useJSONLD } from "./use-jsonld.mjs";
 export { useRDFExt } from "./use-rdfext.mjs";
 
+// Knowledge Hooks
+export { useKnowledgeHooks, defineHook, evaluateHook } from "./use-knowledge-hooks.mjs";
+
 // Change and provenance
 export { useDelta } from "./use-delta.mjs";
 

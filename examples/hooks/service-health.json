@@ -1,0 +1,31 @@
+{
+  "id": "ex:ServiceHealth",
+  "name": "Service Health Monitor",
+  "description": "Monitors service error rates and detects anomalies",
+  "select": "SELECT ?service ?errorRate ?latency WHERE {\n  ?service ex:errorRate ?errorRate .\n  ?service ex:latency ?latency .\n  ?service ex:status ex:active\n}",
+  "predicates": [
+    {
+      "kind": "THRESHOLD",
+      "spec": {
+        "var": "errorRate",
+        "op": ">",
+        "value": 0.02,
+        "aggregate": "avg"
+      }
+    },
+    {
+      "kind": "THRESHOLD",
+      "spec": {
+        "var": "latency",
+        "op": ">",
+        "value": 1000,
+        "aggregate": "avg"
+      }
+    }
+  ],
+  "combine": "OR",
+  "output": {
+    "format": "json",
+    "destination": "stdout"
+  }
+}
