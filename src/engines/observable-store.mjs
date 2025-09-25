@@ -95,7 +95,7 @@ export class ObservableStore extends Store {
    * @param {Quad} quad - Quad to add
    * @returns {Quad} The added quad
    */
-  addQuad(s, p, o, g) {
+  async addQuad(s, p, o, g) {
     if (!this.enabled) {
       return super.addQuad(s, p, o, g);
     }
@@ -107,7 +107,7 @@ export class ObservableStore extends Store {
       return quad;
     }
 
-    return this._addQuadWithEvents(quad);
+    return await this._addQuadWithEvents(quad);
   }
 
   /**
@@ -373,7 +373,7 @@ export class ObservableStore extends Store {
     }
 
     // Perform the operation
-    const result = super.clear();
+    super.clear();
 
     // Emit after event
     const afterPayload = {
@@ -386,7 +386,7 @@ export class ObservableStore extends Store {
 
     this.eventBus.emit(EVENTS.AFTER_CLEAR, afterPayload);
 
-    return result;
+    return this;
   }
 
   /**

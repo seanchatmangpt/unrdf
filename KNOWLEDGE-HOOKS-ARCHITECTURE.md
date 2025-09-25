@@ -83,3 +83,4 @@
 - **Context-Aware**: All operations work with the global store context
 - **Extensible**: Easy to add new predicate types
 - **Testable**: Clear separation of concerns for testing
+

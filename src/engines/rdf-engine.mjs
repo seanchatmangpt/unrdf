@@ -136,46 +136,38 @@ export class RdfEngine {
   }
 
   async serializeTurtle(store = null, options = {}) {
-    const targetStore = store || this.store;
+    const target = store || this.store;
     
-    const context = this.eventBus.createContext('export', {
-      operation: 'serializeTurtle',
-      format: 'Turtle',
-      quadCount: targetStore.size
-    });
-
-    const payload = {
-      event: EVENTS.BEFORE_SERIALIZE,
-      quad: null,
-      context,
-      store: targetStore,
-      engine: this
-    };
-
     // Emit before serialize event
-    await this.eventBus.emit(EVENTS.BEFORE_SERIALIZE, payload);
+    this.eventBus.emit(EVENTS.BEFORE_SERIALIZE, { 
+      data: null, 
+      store: this.store, 
+      engine: this, 
+      context: { timestamp: new Date().toISOString() } 
+    }, true);
+    
+    const out = await this._serializeTurtle(target, options);
+    
+    // Emit after serialize event
+    this.eventBus.emit(EVENTS.AFTER_SERIALIZE, { 
+      data: out, 
+      store: this.store, 
+      engine: this, 
+      context: { timestamp: new Date().toISOString() } 
+    });
+    
+    return out;
+  }
 
+  /**
+   * Internal Turtle serialization method
+   * @private
+   */
+  async _serializeTurtle(store, options = {}) {
     return new Promise((resolve, reject) => {
       const writer = new Writer(options);
-      writer.addQuads(targetStore.getQuads(null, null, null, null));
-      writer.end(async (err, result) => {
-        if (err) {
-          reject(err);
-          return;
-        }
-
-        // Emit after serialize event
-        const afterPayload = {
-          event: EVENTS.AFTER_SERIALIZE,
-          quad: null,
-          context: { ...context, completed: true, size: result.length },
-          store: targetStore,
-          engine: this
-        };
-
-        await this.eventBus.emit(EVENTS.AFTER_SERIALIZE, afterPayload);
-        resolve(result);
-      });
+      writer.addQuads(store.getQuads(null, null, null, null));
+      writer.end((err, result) => (err ? reject(err) : resolve(result)));
     });
   }
 
@@ -243,6 +235,24 @@ export class RdfEngine {
 
   // ============== SHACL Validation ==============
   async validateShacl(dataStore, shapesInput) {
+    const res = await this._validate(dataStore, shapesInput);
+    
+    // Emit after validate event
+    this.eventBus.emit(EVENTS.AFTER_VALIDATE, { 
+      data: res, 
+      store: this.store, 
+      engine: this, 
+      context: { timestamp: new Date().toISOString() } 
+    });
+    
+    return res;
+  }
+
+  /**
+   * Internal SHACL validation method
+   * @private
+   */
+  async _validate(dataStore, shapesInput) {
     const shapesStore =
       typeof shapesInput === "string"
         ? this.parseTurtle(shapesInput)
@@ -283,36 +293,40 @@ export class RdfEngine {
   async query(sparql, opts = {}) {
     const store = this.getStore();
     const ctx = { sources: [store] };
-    const q = sparql.trim().toUpperCase();
+    const upper = sparql.trim().toUpperCase();
+    
+    if (upper.startsWith('INSERT') || upper.startsWith('DELETE') || upper.includes('WITH')) {
+      // Emit before UPDATE event
+      this.eventBus.emit(EVENTS.BEFORE_UPDATE, { 
+        data: sparql, 
+        store: this.store, 
+        engine: this, 
+        context: { timestamp: new Date().toISOString() } 
+      }, true);
+      
+      const res = await this.engine.queryVoid(sparql, { ...ctx, destination: this.store });
+      
+      // Emit after UPDATE event
+      this.eventBus.emit(EVENTS.AFTER_UPDATE, { 
+        data: sparql, 
+        store: this.store, 
+        engine: this, 
+        context: { timestamp: new Date().toISOString() } 
+      });
+      
+      return { type: 'update', ok: true };
+    }
 
-    const context = this.eventBus.createContext('query', {
-      operation: 'query',
-      queryType: this._getQueryType(q),
-      queryLength: sparql.length
-    });
-
-    const payload = {
-      event: EVENTS.BEFORE_QUERY,
-      quad: null,
-      context,
-      store,
-      engine: this
-    };
-
-    // Emit before query event
-    await this.eventBus.emit(EVENTS.BEFORE_QUERY, payload);
-
-    let result;
-
-    if (q.startsWith("ASK")) {
+    // Handle other query types (ASK, SELECT, CONSTRUCT, DESCRIBE)
+    if (upper.startsWith("ASK")) {
       const boolean = await this.engine.queryBoolean(sparql, ctx);
-      result = { type: "ask", boolean };
-    } else if (q.startsWith("CONSTRUCT") || q.startsWith("DESCRIBE")) {
+      return { type: "ask", boolean };
+    } else if (upper.startsWith("CONSTRUCT") || upper.startsWith("DESCRIBE")) {
       const quadStream = await this.engine.queryQuads(sparql, ctx);
       const out = new Store();
       for await (const qq of quadStream) out.add(qq);
-      result = { type: "construct", store: out };
-    } else if (q.startsWith("SELECT")) {
+      return { type: "construct", store: out };
+    } else if (upper.startsWith("SELECT")) {
       const bindings = await this.engine.queryBindings(sparql, ctx);
       const rows = [];
       for await (const b of bindings) {
@@ -322,84 +336,36 @@ export class RdfEngine {
         }
         rows.push(row);
       }
-      result = { type: "select", results: rows };
-    } else {
-      // Updates - emit before/after UPDATE events
-      const updatePayload = {
-        event: EVENTS.BEFORE_UPDATE,
-        quad: null,
-        context: { ...context, operation: 'update' },
-        store,
-        engine: this
-      };
-
-      await this.eventBus.emit(EVENTS.BEFORE_UPDATE, updatePayload);
-
-      await this.engine.queryVoid(sparql, { ...ctx, destination: store });
-      result = { type: "update", ok: true };
-
-      const afterUpdatePayload = {
-        event: EVENTS.AFTER_UPDATE,
-        quad: null,
-        context: { ...context, operation: 'update', completed: true },
-        store,
-        engine: this
-      };
-
-      await this.eventBus.emit(EVENTS.AFTER_UPDATE, afterUpdatePayload);
+      return { type: "select", results: rows };
     }
 
-    // Emit after query event
-    const afterPayload = {
-      event: EVENTS.AFTER_QUERY,
-      quad: null,
-      context: { ...context, completed: true, resultType: result.type },
-      store,
-      engine: this
-    };
-
-    await this.eventBus.emit(EVENTS.AFTER_QUERY, afterPayload);
-
-    return result;
+    throw new Error(`Unknown query type: ${sparql.substring(0, 50)}...`);
   }
 
   // ============== Reasoning ==============
   async reason(dataStore, rulesStore) {
-    const context = this.eventBus.createContext('reasoning', {
-      operation: 'reason',
-      dataQuadCount: dataStore.size,
-      rulesQuadCount: rulesStore.size
+    const out = await this._reason(dataStore, rulesStore);
+    
+    // Emit after reason event
+    this.eventBus.emit(EVENTS.AFTER_REASON, { 
+      data: out, 
+      store: this.store, 
+      engine: this, 
+      context: { timestamp: new Date().toISOString() } 
     });
+    
+    return out;
+  }
 
-    const payload = {
-      event: EVENTS.BEFORE_REASON,
-      quad: null,
-      context,
-      store: dataStore,
-      engine: this
-    };
-
-    // Emit before reason event
-    await this.eventBus.emit(EVENTS.BEFORE_REASON, payload);
-
+  /**
+   * Internal reasoning method
+   * @private
+   */
+  async _reason(dataStore, rulesStore) {
     const dataN3 = await this.serializeNQuadsFromStore(dataStore);
     const rulesN3 = await this.serializeNQuadsFromStore(rulesStore);
     const out = await n3reasoner(dataN3, rulesN3);
-    
-    const result = this.parseTurtle(out);
-
-    // Emit after reason event
-    const afterPayload = {
-      event: EVENTS.AFTER_REASON,
-      quad: null,
-      context: { ...context, completed: true, newQuadCount: result.size - dataStore.size },
-      store: result,
-      engine: this
-    };
-
-    await this.eventBus.emit(EVENTS.AFTER_REASON, afterPayload);
-
-    return result;
+    return this.parseTurtle(out);
   }
 
   // ============== JSON-LD I/O ==============

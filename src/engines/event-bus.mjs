@@ -232,6 +232,8 @@ export class EventBus {
         }
       } catch (error) {
         this._handleHookError(error, registration, event, payload);
+        // Re-throw errors from before hooks so they can veto operations
+        throw error;
       }
     }
 
