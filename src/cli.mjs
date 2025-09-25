@@ -13,7 +13,7 @@ import { defineCommand, runMain } from 'citty';
 import { initStore } from './index.mjs';
 import { 
   useStore, useGraph, useTurtle, useValidator, 
-  useZod, useJsonLd, useMetrics, useDelta, usePrefixes
+  useZod, useJSONLD, useMetrics, useDelta, usePrefixes
 } from './composables/index.mjs';
 import { 
   generateId, generateUUID, generateHashId,
@@ -123,7 +123,7 @@ const main = defineCommand({
                 quads = await turtle.parse(inputData);
                 break;
             case 'json-ld':
-              const jsonLd = useJsonLd();
+              const jsonLd = useJSONLD();
               quads = await jsonLd.fromJSONLD(JSON.parse(inputData));
               break;
             case 'n-quads':
