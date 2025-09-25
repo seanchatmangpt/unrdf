@@ -1,14 +1,14 @@
 {
   "name": "unrdf",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Opinionated composable framework for RDF knowledge operations",
   "repository": {
     "type": "git",
-    "url": "https://github.com/gitvan/unrdf.git"
+    "url": "https://github.com/seanchatmangpt/unrdf.git"
   },
-  "homepage": "https://github.com/gitvan/unrdf#readme",
+  "homepage": "https://github.com/seanchatmangpt/unrdf#readme",
   "bugs": {
-    "url": "https://github.com/gitvan/unrdf/issues"
+    "url": "https://github.com/seanchatmangpt/unrdf/issues"
   },
   "author": "GitVan Team",
   "license": "MIT",
@@ -68,6 +68,7 @@
     "citty": "^0.1.6",
     "citty-test-utils": "^0.5.1",
     "eyereasoner": "^18.20.0",
+    "gray-matter": "^4.0.3",
     "jsonld": "^8.3.3",
     "n3": "^1.26.0",
     "rdf-canonize": "^4.0.1",

@@ -56,3 +56,8 @@ export async function parseFrom<T>(
 - `pnpm build` - Build project (if needed)
 - `pnpm test` - Run tests
 - `pnpm lint` - Run linting
+
+DO NOT ADD OR REMOVE DEPENDENCIES DIRECTLY IN THE package.json FILE.
+
+ALWAYS USE pnpm add <package> to add dependencies.
+ALWAYS USE pnpm remove <package> to remove dependencies.

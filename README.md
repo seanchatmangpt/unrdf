@@ -63,7 +63,7 @@ runApp(async () => {
 
 ```bash
 # Install globally
-pnpm install -g unrdf
+npm install -g unrdf
 
 # Evaluate a knowledge hook
 unrdf hook eval --hook hooks/service-health.json --graph ./data/
@@ -421,7 +421,7 @@ The result is not a new ontology language or reasoner but a reduction of cogniti
 ## 📦 **Installation**
 
 ```bash
-pnpm add unrdf
+npm install unrdf
 ```
 
 ## 📄 **License**
