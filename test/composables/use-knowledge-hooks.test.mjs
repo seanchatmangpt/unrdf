@@ -1,11 +1,12 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { useKnowledgeHooks, defineHook, evaluateHook } from "../../src/composables/use-knowledge-hooks.mjs";
 import { initStore, useStoreContext } from "../../src/context/index.mjs";
-import { DataFactory } from "n3";
+import { DataFactory, Store } from "n3";
+import { z } from "zod";
 
 const { namedNode, literal, quad } = DataFactory;
 
-describe("useKnowledgeHooks - Comprehensive Implementation", () => {
+describe("useKnowledgeHooks - Composable-First Implementation", () => {
   let runApp;
 
   beforeEach(() => {
@@ -25,17 +26,17 @@ describe("useKnowledgeHooks - Comprehensive Implementation", () => {
     });
   });
 
-  it("defines hooks with SPARQL queries", async () => {
+  it("defines hooks with COUNT predicates", async () => {
     await runApp(async () => {
       const hook = defineHook({
-        id: 'test-sparql',
+        id: 'test-count',
         query: 'SELECT ?s WHERE { ?s ex:type ex:Error }',
         predicates: [
           { kind: 'COUNT', spec: { operator: '>', value: 2 } }
         ]
       });
 
-      expect(hook.id).toBe('test-sparql');
+      expect(hook.id).toBe('test-count');
       expect(hook.query).toBe('SELECT ?s WHERE { ?s ex:type ex:Error }');
       expect(hook.predicates).toHaveLength(1);
       expect(hook.predicates[0].kind).toBe('COUNT');
@@ -61,20 +62,20 @@ describe("useKnowledgeHooks - Comprehensive Implementation", () => {
     });
   });
 
-  it("defines hooks with SHACL predicates", async () => {
+  it("defines hooks with ASK predicates", async () => {
     await runApp(async () => {
       const hook = defineHook({
-        id: 'test-shacl',
-        query: 'SELECT ?person WHERE { ?person rdf:type ex:Person }',
+        id: 'test-ask',
+        query: 'SELECT ?s WHERE { ?s ex:type ex:Error }',
         predicates: [
-          { kind: 'SHACL', spec: { shape: 'ex:PersonShape', strict: true } }
+          { kind: 'ASK', spec: { query: 'ASK WHERE { ?s ex:type ex:Error }', expected: true } }
         ]
       });
 
-      expect(hook.id).toBe('test-shacl');
-      expect(hook.predicates[0].kind).toBe('SHACL');
-      expect(hook.predicates[0].spec.shape).toBe('ex:PersonShape');
-      expect(hook.predicates[0].spec.strict).toBe(true);
+      expect(hook.id).toBe('test-ask');
+      expect(hook.predicates[0].kind).toBe('ASK');
+      expect(hook.predicates[0].spec.query).toContain('ASK WHERE');
+      expect(hook.predicates[0].spec.expected).toBe(true);
     });
   });
 
@@ -94,20 +95,39 @@ describe("useKnowledgeHooks - Comprehensive Implementation", () => {
     });
   });
 
-  it("defines hooks with ASK predicates", async () => {
+  it("defines hooks with DELTA predicates", async () => {
     await runApp(async () => {
+      const newStore = new Store();
       const hook = defineHook({
-        id: 'test-ask',
-        query: 'SELECT ?s WHERE { ?s ex:type ex:Error }',
+        id: 'test-delta',
+        query: 'SELECT ?s WHERE { ?s ex:modified ?date }',
         predicates: [
-          { kind: 'ASK', spec: { query: 'ASK WHERE { ?s ex:type ex:Error }', expected: true } }
+          { kind: 'DELTA', spec: { compareWith: newStore, operator: '>', value: 0 } }
         ]
       });
 
-      expect(hook.id).toBe('test-ask');
-      expect(hook.predicates[0].kind).toBe('ASK');
-      expect(hook.predicates[0].spec.query).toContain('ASK WHERE');
-      expect(hook.predicates[0].spec.expected).toBe(true);
+      expect(hook.id).toBe('test-delta');
+      expect(hook.predicates[0].kind).toBe('DELTA');
+      expect(hook.predicates[0].spec.compareWith).toBe(newStore);
+      expect(hook.predicates[0].spec.operator).toBe('>');
+      expect(hook.predicates[0].spec.value).toBe(0);
+    });
+  });
+
+  it("defines hooks with ZOD predicates", async () => {
+    await runApp(async () => {
+      const schema = z.object({ name: z.string(), age: z.number() });
+      const hook = defineHook({
+        id: 'test-zod',
+        query: 'SELECT ?person ?name ?age WHERE { ?person ex:name ?name ; ex:age ?age }',
+        predicates: [
+          { kind: 'ZOD', spec: { schema } }
+        ]
+      });
+
+      expect(hook.id).toBe('test-zod');
+      expect(hook.predicates[0].kind).toBe('ZOD');
+      expect(hook.predicates[0].spec.schema).toBe(schema);
     });
   });
 
@@ -178,13 +198,6 @@ describe("useKnowledgeHooks - Comprehensive Implementation", () => {
         predicates: [{ kind: 'COUNT' }]
       })).toThrow('Predicate must have a spec object');
       
-      // Invalid THRESHOLD predicate
-      expect(() => defineHook({ 
-        id: 'test',
-        query: 'SELECT ?s WHERE { ?s ?p ?o }',
-        predicates: [{ kind: 'THRESHOLD', spec: { operator: '>', value: 5 } }]
-      })).toThrow('THRESHOLD predicate requires a variable');
-      
       // Invalid COUNT predicate
       expect(() => defineHook({ 
         id: 'test',
@@ -192,12 +205,19 @@ describe("useKnowledgeHooks - Comprehensive Implementation", () => {
         predicates: [{ kind: 'COUNT', spec: { operator: 'INVALID', value: 5 } }]
       })).toThrow('COUNT predicate requires a valid operator');
       
-      // Invalid SHACL predicate
+      // Invalid THRESHOLD predicate
       expect(() => defineHook({ 
         id: 'test',
         query: 'SELECT ?s WHERE { ?s ?p ?o }',
-        predicates: [{ kind: 'SHACL', spec: {} }]
-      })).toThrow('SHACL predicate requires a shape IRI');
+        predicates: [{ kind: 'THRESHOLD', spec: { operator: '>', value: 5 } }]
+      })).toThrow('THRESHOLD predicate requires a variable');
+      
+      // Invalid ASK predicate
+      expect(() => defineHook({ 
+        id: 'test',
+        query: 'SELECT ?s WHERE { ?s ?p ?o }',
+        predicates: [{ kind: 'ASK', spec: {} }]
+      })).toThrow('ASK predicate requires a query');
       
       // Invalid OWL predicate
       expect(() => defineHook({ 
@@ -206,12 +226,19 @@ describe("useKnowledgeHooks - Comprehensive Implementation", () => {
         predicates: [{ kind: 'OWL', spec: {} }]
       })).toThrow('OWL predicate requires rules');
       
-      // Invalid ASK predicate
+      // Invalid DELTA predicate
       expect(() => defineHook({ 
         id: 'test',
         query: 'SELECT ?s WHERE { ?s ?p ?o }',
-        predicates: [{ kind: 'ASK', spec: {} }]
-      })).toThrow('ASK predicate requires a query');
+        predicates: [{ kind: 'DELTA', spec: {} }]
+      })).toThrow('DELTA predicate requires compareWith store');
+      
+      // Invalid ZOD predicate
+      expect(() => defineHook({ 
+        id: 'test',
+        query: 'SELECT ?s WHERE { ?s ?p ?o }',
+        predicates: [{ kind: 'ZOD', spec: {} }]
+      })).toThrow('ZOD predicate requires a schema');
     });
   });
 
@@ -219,10 +246,22 @@ describe("useKnowledgeHooks - Comprehensive Implementation", () => {
     await runApp(async () => {
       const storeContext = useStoreContext();
       
-      // Add test data
-      storeContext.add(quad(namedNode('http://example.org/error1'), namedNode('http://example.org/type'), namedNode('http://example.org/Error')));
-      storeContext.add(quad(namedNode('http://example.org/error2'), namedNode('http://example.org/type'), namedNode('http://example.org/Error')));
-      storeContext.add(quad(namedNode('http://example.org/error3'), namedNode('http://example.org/type'), namedNode('http://example.org/Error')));
+      // Add test data with proper IRIs
+      storeContext.add(quad(
+        namedNode('http://example.org/error1'), 
+        namedNode('http://example.org/type'), 
+        namedNode('http://example.org/Error')
+      ));
+      storeContext.add(quad(
+        namedNode('http://example.org/error2'), 
+        namedNode('http://example.org/type'), 
+        namedNode('http://example.org/Error')
+      ));
+      storeContext.add(quad(
+        namedNode('http://example.org/error3'), 
+        namedNode('http://example.org/type'), 
+        namedNode('http://example.org/Error')
+      ));
       
       const hook = defineHook({
         id: 'error-count',
@@ -277,6 +316,35 @@ describe("useKnowledgeHooks - Comprehensive Implementation", () => {
       expect(result.data.predicateResults[0].kind).toBe('THRESHOLD');
       expect(result.data.predicateResults[0].fired).toBe(false);
       expect(result.data.predicateResults[0].data.averageValue).toBeCloseTo(1600, 0);
+    });
+  });
+
+  it("evaluates ASK predicates", async () => {
+    await runApp(async () => {
+      const storeContext = useStoreContext();
+      
+      // Add test data
+      storeContext.add(quad(namedNode('http://example.org/error1'), namedNode('http://example.org/type'), namedNode('http://example.org/Error')));
+      
+      const hook = defineHook({
+        id: 'existence-check',
+        query: `
+          PREFIX ex: <http://example.org/>
+          SELECT ?s WHERE { ?s ex:type ex:Error }
+        `,
+        predicates: [
+          { kind: 'ASK', spec: { query: 'ASK WHERE { ?s ex:type ex:Error }', expected: true } }
+        ]
+      });
+
+      const result = await evaluateHook(hook);
+
+      expect(result.hookId).toBe('existence-check');
+      expect(result.fired).toBe(true);
+      expect(result.data.count).toBe(1);
+      expect(result.data.predicateResults).toHaveLength(1);
+      expect(result.data.predicateResults[0].kind).toBe('ASK');
+      expect(result.data.predicateResults[0].fired).toBe(true);
     });
   });
 
@@ -407,7 +475,7 @@ describe("useKnowledgeHooks - Comprehensive Implementation", () => {
           duration: 200,
           data: {
             predicateResults: [
-              { kind: 'SHACL', fired: false }
+              { kind: 'ASK', fired: false }
             ]
           }
         },
@@ -440,7 +508,7 @@ describe("useKnowledgeHooks - Comprehensive Implementation", () => {
       expect(stats.errorRate).toBe(0.25);
       expect(stats.predicates.COUNT).toBe(1);
       expect(stats.predicates.THRESHOLD).toBe(1);
-      expect(stats.predicates.SHACL).toBe(1);
+      expect(stats.predicates.ASK).toBe(1);
       expect(stats.predicates.OWL).toBe(1);
     });
   });
