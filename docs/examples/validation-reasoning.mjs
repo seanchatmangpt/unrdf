@@ -280,8 +280,8 @@ console.log('\n4. Canonicalization');
 console.log('===================');
 
 // Create two equivalent stores with different order
-const store1 = useStore();
-const store2 = useStore();
+const store1 = useStoreContext();
+const store2 = useStoreContext();
 const terms = useTerms({ baseIRI: "http://example.org/" });
 
 // Add quads in different order

@@ -9,8 +9,8 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { join, dirname } from "node:path";
 import { initStore } from "../context/index.mjs";
-import { useKnowledgeHooks, defineHook, evaluateHook } from "./use-knowledge-hooks.mjs";
-import { useTurtle } from "./use-turtle.mjs";
+import { useKnowledgeHooks, defineHook, evaluateHook } from "../hooks.mjs";
+import { useTurtle } from "../composables/use-turtle.mjs";
 
 /**
  * CLI command: Evaluate a Knowledge Hook
@@ -22,38 +22,49 @@ import { useTurtle } from "./use-turtle.mjs";
  * @param {string} [options.destination] - Output destination (stdout, file, webhook)
  */
 export async function evalHook(options) {
-  const { hook: hookPath, graph: graphPath, persist = true, output, destination } = options;
-  
+  const { hook: hookPath, data: dataPath, persist = true, output, destination } = options;
+
   try {
     // Load hook definition
     const hookContent = await readFile(hookPath, 'utf-8');
     const hookConfig = JSON.parse(hookContent);
     const hook = defineHook(hookConfig);
-    
-    // Initialize store and load graph
+
+    // Initialize store and load data
     const runApp = initStore();
-    
+
     await runApp(async () => {
       const turtle = useTurtle();
-      const hooks = useKnowledgeHooks();
-      
-      // Load graph data
-      if (graphPath) {
-        await turtle.loadAll(graphPath);
-        console.log(`📁 Loaded graph from ${graphPath}`);
+
+      // Load data if provided
+      if (dataPath) {
+        if (dataPath.endsWith('.ttl') || dataPath.endsWith('.turtle')) {
+          const dataContent = await readFile(dataPath, 'utf-8');
+          const quads = await turtle.parse(dataContent);
+          turtle.store.add(...quads);
+          console.log(`📁 Loaded data from ${dataPath} (${quads.length} triples)`);
+        } else {
+          // Try to load as directory
+          try {
+            await turtle.loadAll(dataPath);
+            console.log(`📁 Loaded data directory ${dataPath}`);
+          } catch {
+            console.log(`⚠️  Could not load data from ${dataPath}`);
+          }
+        }
       }
-      
+
       // Evaluate hook
       console.log(`🔍 Evaluating hook: ${hook.id}`);
       const receipt = await evaluateHook(hook, { persist });
-      
+
       // Output result
       if (receipt.fired) {
         console.log('🔥 Hook FIRED - Action required!');
       } else {
         console.log('— No change detected');
       }
-      
+
       // Show receipt details
       console.log(`\n📊 Receipt Summary:`);
       console.log(`  Hook ID: ${receipt.hookId}`);
@@ -61,17 +72,17 @@ export async function evalHook(options) {
       console.log(`  Fired: ${receipt.fired}`);
       console.log(`  Data Count: ${receipt.data.count}`);
       console.log(`  Total Duration: ${receipt.performance.totalDuration.toFixed(2)}ms`);
-      
+
       console.log(`\n🎯 Predicate Results:`);
       receipt.predicates.forEach((pred, i) => {
         console.log(`  ${i + 1}. ${pred.kind}: ${pred.result ? '✅' : '❌'} - ${pred.reason}`);
       });
-      
+
       console.log(`\n🔗 Provenance:`);
       console.log(`  Query Hash: ${receipt.provenance.queryHash.substring(0, 16)}...`);
       console.log(`  Graph Hash: ${receipt.provenance.graphHash.substring(0, 16)}...`);
       console.log(`  Hook Hash: ${receipt.provenance.hookHash.substring(0, 16)}...`);
-      
+
       // Handle output destination
       if (destination === 'file' || output) {
         const outputPath = join(dirname(hookPath), `${hook.id.replace(/[^a-zA-Z0-9]/g, '_')}_receipt.json`);
@@ -79,7 +90,7 @@ export async function evalHook(options) {
         console.log(`\n💾 Receipt saved to: ${outputPath}`);
       }
     });
-    
+
   } catch (error) {
     console.error(`❌ Hook evaluation failed: ${error.message}`);
     process.exit(1);

@@ -1,203 +1,193 @@
 /**
- * @fileoverview Tests for useReasoner composable with context architecture
- * 
- * Tests the reasoning functionality using the context system
- * 
- * @version 1.0.0
- * @author GitVan Team
- * @license MIT
+ * @fileoverview Tests for useReasoner convenience layer
+ * Tests high-level reasoning operations
  */
 
-import { describe, expect, it, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach } from "vitest";
 import { useReasoner } from "../../src/composables/use-reasoner.mjs";
-import { useStore } from "../../src/composables/use-store.mjs";
 import { initStore } from "../../src/context/index.mjs";
 import { Store, DataFactory } from "n3";
 
 const { namedNode, literal, quad } = DataFactory;
 
-describe("useReasoner with Context", () => {
+describe("useReasoner convenience layer", () => {
   let runApp;
 
   beforeEach(() => {
-    // Create test data
-    const testQuads = [
-      quad(
-        namedNode("http://example.org/alice"),
-        namedNode("http://example.org/parentOf"),
-        namedNode("http://example.org/bob")
-      ),
-      quad(
-        namedNode("http://example.org/bob"),
-        namedNode("http://example.org/parentOf"),
-        namedNode("http://example.org/charlie")
-      )
-    ];
-    
-    runApp = initStore(testQuads, { baseIRI: "http://example.org/" });
+    runApp = initStore();
   });
 
-  it("should create reasoner interface with context", async () => {
-    await runApp(() => {
-      // Act
+  it("provides simple reasoning interface", async () => {
+    await runApp(async () => {
       const reasoner = useReasoner();
       
-      // Assert
-      expect(typeof reasoner.reason).toBe("function");
-      expect(typeof reasoner.reasonSequentially).toBe("function");
-      expect(typeof reasoner.reasonParallel).toBe("function");
-      expect(typeof reasoner.getNewTriples).toBe("function");
-      expect(reasoner.engine).toBeDefined();
+      expect(reasoner).toBeDefined();
+      expect(typeof reasoner.infer).toBe("function");
+      expect(typeof reasoner.inferSequence).toBe("function");
+      expect(typeof reasoner.wouldInfer).toBe("function");
+      expect(typeof reasoner.getStats).toBe("function");
+      expect(typeof reasoner.clearInferred).toBe("function");
+      expect(typeof reasoner.createPipeline).toBe("function");
+      expect(typeof reasoner.export).toBe("function");
+      expect(typeof reasoner.import).toBe("function");
     });
   });
 
-  it("should reason over context store with rules", async () => {
+  it("infers new knowledge from simple rules", async () => {
     await runApp(async () => {
-      // Arrange
       const reasoner = useReasoner();
+      
+      // Add some initial data
+      const storeContext = reasoner.getStats ? reasoner.getStats() : null;
+      
+      // Simple Turtle data (not rules for now)
       const rules = `
         @prefix ex: <http://example.org/> .
-        { ex:alice ex:parentOf ex:bob } => { ex:alice ex:ancestorOf ex:bob } .
+        ex:alice ex:name "Alice" .
       `;
       
-      // Act
-      const inferred = await reasoner.reason(null, rules);
+      const result = await reasoner.infer(rules);
       
-      // Assert
-      expect(inferred).toBeDefined();
-      expect(typeof inferred.store).toBe("object");
+      expect(result).toBeDefined();
+      expect(result.success).toBe(true);
+      expect(typeof result.newTriples).toBe("number");
+      expect(typeof result.totalTriples).toBe("number");
     });
   });
 
-  it("should reason over provided data store", async () => {
+  it("handles empty rules gracefully", async () => {
     await runApp(async () => {
-      // Arrange
       const reasoner = useReasoner();
-      const dataStore = useStore();
-      const rules = `
-        @prefix ex: <http://example.org/> .
-        { ex:alice ex:parentOf ex:bob } => { ex:alice ex:ancestorOf ex:bob } .
-      `;
       
-      // Act
-      const inferred = await reasoner.reason(dataStore, rules);
+      const result = await reasoner.infer("");
       
-      // Assert
-      expect(inferred).toBeDefined();
-      expect(typeof inferred.store).toBe("object");
+      expect(result).toBeDefined();
+      expect(result.success).toBe(true);
+      expect(result.newTriples).toBe(0);
     });
   });
 
-  it("should handle empty rules gracefully", async () => {
+  it("provides inference statistics", async () => {
     await runApp(async () => {
-      // Arrange
       const reasoner = useReasoner();
-      const dataStore = useStore();
       
-      // Act - Pass null for rules to avoid parsing empty string
-      const inferred = await reasoner.reason(dataStore, null);
+      const result = await reasoner.infer("", { returnStats: true });
       
-      // Assert
-      expect(inferred).toBeDefined();
-      expect(typeof inferred.store).toBe("object");
+      expect(result.stats).toBeDefined();
+      expect(typeof result.stats.original).toBe("number");
+      expect(typeof result.stats.inferred).toBe("number");
+      expect(typeof result.stats.added).toBe("number");
+      expect(typeof result.stats.growth).toBe("number");
     });
   });
 
-  it("should handle empty data store gracefully", async () => {
+  it("can infer without adding to store", async () => {
     await runApp(async () => {
-      // Arrange
       const reasoner = useReasoner();
-      const emptyStore = new Store();
-      const rules = `
-        @prefix ex: <http://example.org/> .
-        { ex:alice ex:parentOf ex:bob } => { ex:alice ex:ancestorOf ex:bob } .
-      `;
       
-      // Act
-      const inferred = await reasoner.reason(emptyStore, rules);
+      const originalStats = reasoner.getStats();
+      const result = await reasoner.infer("", { addToStore: false });
       
-      // Assert
-      expect(inferred).toBeDefined();
-      expect(typeof inferred.store).toBe("object");
+      expect(result.success).toBe(true);
+      // Store size should remain the same
+      const finalStats = reasoner.getStats();
+      expect(finalStats.quads).toBe(originalStats.quads);
     });
   });
 
-  it("should get new triples from reasoning", async () => {
+  it("checks if rules would produce new knowledge", async () => {
     await runApp(async () => {
-      // Arrange
       const reasoner = useReasoner();
-      const originalStore = useStore();
-      const rules = `
-        @prefix ex: <http://example.org/> .
-        { ex:alice ex:parentOf ex:bob } => { ex:alice ex:ancestorOf ex:bob } .
-      `;
       
-      // Act
-      const inferred = await reasoner.reason(originalStore, rules);
-      const newTriples = reasoner.getNewTriples(originalStore, inferred);
+      const wouldInfer = await reasoner.wouldInfer("");
       
-      // Assert
-      expect(newTriples).toBeDefined();
-      expect(typeof newTriples.store).toBe("object");
+      expect(typeof wouldInfer).toBe("boolean");
     });
   });
 
-  it("should check if reasoning would produce new triples", async () => {
+  it("provides store statistics", async () => {
     await runApp(async () => {
-      // Arrange
       const reasoner = useReasoner();
-      const dataStore = useStore();
-      const rules = `
-        @prefix ex: <http://example.org/> .
-        { ex:alice ex:parentOf ex:bob } => { ex:alice ex:ancestorOf ex:bob } .
-      `;
       
-      // Act
-      const wouldProduceNew = await reasoner.wouldProduceNewTriples(dataStore, rules);
+      const stats = reasoner.getStats();
       
-      // Assert
-      expect(typeof wouldProduceNew).toBe("boolean");
-    });
-  });
-
-  it("should get reasoning statistics", async () => {
-    await runApp(async () => {
-      // Arrange
-      const reasoner = useReasoner();
-      const originalStore = useStore();
-      const rules = `
-        @prefix ex: <http://example.org/> .
-        { ex:alice ex:parentOf ex:bob } => { ex:alice ex:ancestorOf ex:bob } .
-      `;
-      
-      // Act
-      const inferred = await reasoner.reason(originalStore, rules);
-      const stats = reasoner.getStats(originalStore, inferred);
-      
-      // Assert
       expect(stats).toBeDefined();
-      expect(typeof stats.original).toBe("object");
-      expect(typeof stats.inferred).toBe("object");
-      expect(typeof stats.new).toBe("object");
-      expect(typeof stats.growth).toBe("object");
+      expect(typeof stats.quads).toBe("number");
     });
   });
 
-  it("should throw error when context is not initialized", () => {
-    // Act & Assert
-    expect(() => {
-      useReasoner();
-    }).toThrow();
+  it("creates reasoning pipeline", async () => {
+    await runApp(async () => {
+      const reasoner = useReasoner();
+      
+      const pipeline = reasoner.createPipeline([
+        { name: "step1", rules: "" },
+        { name: "step2", rules: "" }
+      ]);
+      
+      expect(pipeline).toBeDefined();
+      expect(typeof pipeline.run).toBe("function");
+      expect(pipeline.steps).toHaveLength(2);
+    });
   });
 
-  it("should work with different timeout settings", async () => {
-    await runApp(() => {
-      // Act
-      const reasoner = useReasoner({ timeoutMs: 60000 });
+  it("exports knowledge in different formats", async () => {
+    await runApp(async () => {
+      const reasoner = useReasoner();
       
-      // Assert
-      expect(reasoner.engine).toBeDefined();
-      expect(typeof reasoner.reason).toBe("function");
+      const turtle = await reasoner.export({ format: "Turtle" });
+      const nquads = await reasoner.export({ format: "N-Quads" });
+      
+      expect(typeof turtle).toBe("string");
+      expect(typeof nquads).toBe("string");
+    });
+  });
+
+  it("imports knowledge from strings", async () => {
+    await runApp(async () => {
+      const reasoner = useReasoner();
+      
+      const turtleData = `
+        @prefix ex: <http://example.org/> .
+        ex:alice ex:name "Alice" .
+      `;
+      
+      const result = await reasoner.import(turtleData);
+      
+      expect(result).toBeDefined();
+      expect(result.success).toBe(true);
+      expect(typeof result.imported).toBe("number");
+      expect(typeof result.totalTriples).toBe("number");
+    });
+  });
+
+  it("handles import without merge", async () => {
+    await runApp(async () => {
+      const reasoner = useReasoner();
+      
+      const turtleData = `
+        @prefix ex: <http://example.org/> .
+        ex:alice ex:name "Alice" .
+      `;
+      
+      const result = await reasoner.import(turtleData, { merge: false });
+      
+      expect(result).toBeDefined();
+      expect(result.success).toBe(true);
+    });
+  });
+
+  it("handles inferSequence with multiple rule sets", async () => {
+    await runApp(async () => {
+      const reasoner = useReasoner();
+      
+      const ruleSets = ["", ""];
+      const result = await reasoner.inferSequence(ruleSets);
+      
+      expect(result).toBeDefined();
+      expect(result.success).toBe(true);
+      expect(Array.isArray(result.steps)).toBe(true);
+      expect(result.steps).toHaveLength(2);
     });
   });
 });

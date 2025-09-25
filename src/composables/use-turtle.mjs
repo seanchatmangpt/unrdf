@@ -161,7 +161,7 @@ export async function useTurtle(graphDir = "./graph", options = {}) {
         const parsedStore = engine.parseTurtle(content, { baseIRI });
         
         if (!merge) {
-          storeContext.store.clear();
+          storeContext.clear();
         }
         
         for (const quad of parsedStore) {
@@ -281,10 +281,20 @@ export async function useTurtle(graphDir = "./graph", options = {}) {
      * Parse a Turtle string into a new store
      * @param {string} ttl - Turtle string
      * @param {Object} [options] - Parse options
+     * @param {boolean} [options.addToStore=false] - Add parsed data to context store
      * @returns {Promise<Store>} Parsed store
      */
     async parse(ttl, options = {}) {
-      return engine.parseTurtle(ttl, { baseIRI, ...options });
+      const { addToStore = false, ...parseOptions } = options;
+      const parsedStore = engine.parseTurtle(ttl, { baseIRI, ...parseOptions });
+      
+      if (addToStore) {
+        for (const quad of parsedStore) {
+          storeContext.store.add(quad);
+        }
+      }
+      
+      return parsedStore;
     },
 
     /**

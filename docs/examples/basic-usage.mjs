@@ -12,7 +12,7 @@
  */
 
 import { 
-  useStore, 
+  useStoreContext, 
   useTerms, 
   usePrefixes, 
   useGraph, 
@@ -29,7 +29,7 @@ console.log('🚀 unrdf Basic Usage Examples\n');
 console.log('1. Store Creation and Management');
 console.log('================================');
 
-const store = useStore();
+const store = useStoreContext();
 console.log('✅ Created empty store');
 console.log(`   Store size: ${store.size()}`);
 
@@ -275,7 +275,7 @@ console.log('\n10. Advanced Term Operations');
 console.log('============================');
 
 // Create a new store for advanced operations
-const advancedStore = useStore();
+const advancedStore = useStoreContext();
 const advancedTerms = useTerms({ baseIRI: "http://advanced.example.org/" });
 
 // Create complex data structure

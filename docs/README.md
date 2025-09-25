@@ -146,7 +146,6 @@ console.log(validation.validated); // [{ name: "John Doe" }]
 - **`useRDFExt`** - Advanced RDF dataset operations
 
 ### Utilities (Secondary)
-- **`useIRIs`** - IRI management and resolution
 - **`useCache`** - Caching operations
 - **`useDelta`** - Delta operations for RDF stores
 - **`useMetrics`** - Metrics and analytics

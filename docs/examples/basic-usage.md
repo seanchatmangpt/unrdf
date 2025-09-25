@@ -18,7 +18,7 @@ This guide provides practical examples of using UNRDF for common RDF operations.
 import { useStore, useGraph, useTurtle } from 'unrdf';
 
 // Initialize components
-const store = useStore();
+const store = useStoreContext();
 const graph = useGraph(store);
 const turtle = useTurtle();
 

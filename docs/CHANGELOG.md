@@ -20,7 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Initial release of unrdf
 - Core composables: useStore, useGraph, useTurtle, useValidator, useReasoner, useCanon, useZod
-- Extended composables: usePrefixes, useTerms, usePointer, useJsonLd, useNQuads, useTurtleFS, useCache, useDelta, useMetrics, useIRIs, useLists
+- Extended composables: usePrefixes, useTerms, usePointer, useJsonLd, useNQuads, useTurtleFS, useCache, useDelta, useMetrics, useLists
 - RdfEngine with N3.js, Comunica, SHACL, EYE, rdf-canonize, jsonld, and Clownface integration
 - Comprehensive utility functions for term manipulation, graph operations, validation, ID management, namespace operations, SPARQL building, data transformation, quality assessment, debugging, I/O operations, and quad utilities
 - JSDoc + Zod only approach (no TypeScript)
