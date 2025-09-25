@@ -28,9 +28,12 @@
     "test:integration:ui": "vitest --config test/integration.config.mjs --ui"
   },
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "citty-test-utils": "^0.5.1",
     "cors": "^2.8.5",
     "express": "^5.1.0",
+    "express-rate-limit": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
     "nitro": "^2.2.28",
     "unrdf": "file:../",
     "vitest": "^3.2.4",

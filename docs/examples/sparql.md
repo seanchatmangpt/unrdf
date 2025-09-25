@@ -18,7 +18,7 @@ This guide provides comprehensive examples of SPARQL queries using UNRDF, coveri
 ```javascript
 import { useStore, useGraph, useTurtle } from 'unrdf';
 
-const store = useStore();
+const store = useStoreContext();
 const graph = useGraph(store);
 const turtle = useTurtle();
 

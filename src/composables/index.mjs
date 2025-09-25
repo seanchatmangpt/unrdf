@@ -10,20 +10,14 @@
  */
 
 // Core composables
-export { useStore } from "./use-store.mjs";
 export { useGraph } from "./use-graph.mjs";
 export { useTurtle } from "./use-turtle.mjs";
 export { useTerms } from "./use-terms.mjs";
 export { usePrefixes } from "./use-prefixes.mjs";
-export { useIRIs } from "./use-iris.mjs";
 export { useLists } from "./use-lists.mjs";
 
 // I/O composables
-export { useTurtleFS } from "./use-turtle-fs.mjs";
 export { useNQuads } from "./use-n-quads.mjs";
-
-// Query and traversal
-export { usePointer } from "./use-pointer.mjs";
 
 // Validation and reasoning
 export { useValidator } from "./use-validator.mjs";
@@ -35,7 +29,6 @@ export { useZod } from "./use-zod.mjs";
 export { useTypes } from "./use-types.mjs";
 
 // Advanced RDF operations
-export { useJSONLD } from "./use-jsonld.mjs";
 export { useRDFExt } from "./use-rdfext.mjs";
 
 // Knowledge Hooks
@@ -43,7 +36,3 @@ export { useKnowledgeHooks, defineHook, evaluateHook } from "./use-knowledge-hoo
 
 // Change and provenance
 export { useDelta } from "./use-delta.mjs";
-
-// Performance and caching
-export { useMetrics } from "./use-metrics.mjs";
-export { useCache } from "./use-cache.mjs";

@@ -19,7 +19,7 @@ async function main() {
 
     // 1. Create a store with sample data
     console.log('1. Creating store with sample data...');
-    const store = useStore();
+    const store = useStoreContext();
     
     // Create sample data about people and their relationships
     const alice = store.namedNode('http://example.org/alice');

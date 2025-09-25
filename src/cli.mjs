@@ -12,9 +12,10 @@
 import { defineCommand, runMain } from 'citty';
 import { initStore } from './index.mjs';
 import { 
-  useStore, useGraph, useTurtle, useValidator, 
-  useZod, useJSONLD, useMetrics, useDelta, usePrefixes
+  useGraph, useTurtle, useValidator, 
+  useZod, useDelta, usePrefixes
 } from './composables/index.mjs';
+import { useStoreContext } from './context/index.mjs';
 import {
   generateId, generateUUID, generateHashId,
   expandCurie, shrinkIri
@@ -24,6 +25,7 @@ import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { defineHook, evaluateHook } from './hooks.mjs';
 import * as hookCommands from './cli/knowledge-hooks.mjs';
+import { defaultStorage } from './utils/storage-utils.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -102,9 +104,8 @@ const main = defineCommand({
           const runApp = initStore([], { baseIRI: config.baseIRI });
           
           await runApp(async () => {
-            const store = useStore();
+            const store = useStoreContext();
             const turtle = await useTurtle();
-            const metrics = await useMetrics();
             
             // Read input data
             let inputData;
@@ -121,12 +122,8 @@ const main = defineCommand({
             
             const format = ctx.args.format || 'turtle';
             switch (format) {
-              case 'turtle':
-                quads = await turtle.parse(inputData);
-                break;
-            case 'json-ld':
-              const jsonLd = useJSONLD();
-              quads = await jsonLd.fromJSONLD(JSON.parse(inputData));
+            case 'turtle':
+              quads = await turtle.parse(inputData);
               break;
             case 'n-quads':
               const nquads = await import('./composables/use-n-quads.mjs');
@@ -145,19 +142,7 @@ const main = defineCommand({
           
           console.log(`✅ Parsed ${quads.length} triples successfully in ${duration}ms`);
           
-          if (ctx.args.stats) {
-            const stats = metrics.analyzeQuads(quads);
-            console.log('📊 Parse Summary:');
-            console.log(`  - Triples: ${stats.tripleCount}`);
-            console.log(`  - Subjects: ${stats.subjectCount}`);
-            console.log(`  - Predicates: ${stats.predicateCount}`);
-            console.log(`  - Objects: ${stats.objectCount}`);
-            console.log(`  - Literals: ${stats.literalCount}`);
-            console.log(`  - IRIs: ${stats.iriCount}`);
-            console.log(`  - Blank nodes: ${stats.blankNodeCount}`);
-          }
-          
-            if (ctx.args.output) {
+          if (ctx.args.output) {
               const serialized = await turtle.serialize();
               await writeFile(ctx.args.output, serialized);
               console.log(`📄 Output written to ${ctx.args.output}`);
@@ -191,7 +176,7 @@ const main = defineCommand({
           const runApp = initStore([], { baseIRI: config.baseIRI });
           
           await runApp(async () => {
-            const store = useStore();
+            const store = useStoreContext();
             const graph = useGraph();
             const turtle = await useTurtle();
           
@@ -279,7 +264,7 @@ const main = defineCommand({
           const runApp = initStore([], { baseIRI: config.baseIRI });
           
           await runApp(async () => {
-            const store = useStore();
+            const store = useStoreContext();
             const turtle = await useTurtle();
             const validator = await useValidator();
           
@@ -338,9 +323,8 @@ const main = defineCommand({
           const runApp = initStore([], { baseIRI: config.baseIRI });
           
           await runApp(async () => {
-            const store = useStore();
+            const store = useStoreContext();
             const turtle = await useTurtle();
-            const jsonLd = useJsonLd();
           
           // Load input data
           const inputData = await readFile(ctx.args.input, 'utf-8');
@@ -350,9 +334,6 @@ const main = defineCommand({
           switch (fromFormat) {
             case 'turtle':
               quads = await turtle.parse(inputData);
-              break;
-            case 'json-ld':
-              quads = await jsonLd.fromJSONLD(JSON.parse(inputData));
               break;
             default:
               console.error(`❌ Unsupported source format: ${fromFormat}`);
@@ -367,9 +348,6 @@ const main = defineCommand({
           switch (toFormat) {
             case 'turtle':
               output = await turtle.serialize();
-              break;
-            case 'json-ld':
-              output = JSON.stringify(await jsonLd.toJSONLD(store.store), null, 2);
               break;
             case 'n-quads':
               const nquads = await import('./composables/use-n-quads.mjs');
@@ -548,22 +526,14 @@ ex:person2 a foaf:Person ;
             }
           },
           async run(ctx) {
-            const store = useStore();
+            const store = useStoreContext();
             const turtle = await useTurtle();
-            const metrics = await useMetrics();
             
             const data = await readFile(ctx.args.input, 'utf-8');
             const quads = await turtle.parse(data);
             
-            const stats = metrics.analyzeQuads(quads);
             console.log('📊 Store Statistics:');
-            console.log(`  - Total triples: ${stats.tripleCount}`);
-            console.log(`  - Unique subjects: ${stats.subjectCount}`);
-            console.log(`  - Unique predicates: ${stats.predicateCount}`);
-            console.log(`  - Unique objects: ${stats.objectCount}`);
-            console.log(`  - Literals: ${stats.literalCount}`);
-            console.log(`  - IRIs: ${stats.iriCount}`);
-            console.log(`  - Blank nodes: ${stats.blankNodeCount}`);
+            console.log(`  - Total triples: ${quads.length}`);
           }
         }),
 
@@ -573,7 +543,7 @@ ex:person2 a foaf:Person ;
             description: 'Clear store contents'
           },
           async run() {
-            const store = useStore();
+            const store = useStoreContext();
             store.removeMatches();
             console.log('✅ Store cleared');
           }
@@ -640,50 +610,6 @@ ex:person2 a foaf:Person ;
             console.log(`🔗 Shrunk: ${shrunk}`);
           }
         })
-      }
-    }),
-
-    metrics: defineCommand({
-      meta: {
-        name: 'metrics',
-        description: 'Analyze RDF metrics'
-      },
-      args: {
-        input: {
-          type: 'positional',
-          description: 'Input file path',
-          required: true
-        }
-      },
-      async run(ctx) {
-        const metrics = await useMetrics();
-        const turtle = await useTurtle();
-        
-        const data = await readFile(ctx.args.input, 'utf-8');
-        const quads = await turtle.parse(data);
-        
-        const analysis = metrics.analyzeQuads(quads);
-        
-        console.log('📊 RDF Metrics:');
-        console.log(`  - Total triples: ${analysis.tripleCount}`);
-        console.log(`  - Unique subjects: ${analysis.subjectCount}`);
-        console.log(`  - Unique predicates: ${analysis.predicateCount}`);
-        console.log(`  - Unique objects: ${analysis.objectCount}`);
-        console.log(`  - Literals: ${analysis.literalCount}`);
-        console.log(`  - IRIs: ${analysis.iriCount}`);
-        console.log(`  - Blank nodes: ${analysis.blankNodeCount}`);
-        
-        if (ctx.args.detailed) {
-          console.log('\n🔍 Detailed Analysis:');
-          console.log(`  - Average degree: ${analysis.averageDegree?.toFixed(2) || 'N/A'}`);
-          console.log(`  - Density: ${analysis.density?.toFixed(4) || 'N/A'}`);
-          if (analysis.topPredicates) {
-            console.log(`  - Most common predicates:`);
-            for (const [predicate, count] of analysis.topPredicates.slice(0, 5)) {
-              console.log(`    - ${predicate}: ${count}`);
-            }
-          }
-        }
       }
     }),
 
@@ -778,7 +704,7 @@ ex:person2 a foaf:Person ;
           },
           args: {
             hook: {
-              type: 'positional',
+              type: 'string',
               description: 'Path to hook definition file or hook ID',
               required: true
             },
@@ -808,15 +734,15 @@ ex:person2 a foaf:Person ;
             description: 'Create a new hook definition from template'
           },
           args: {
-            output: {
-              type: 'positional',
-              description: 'Output file path',
-              required: true
-            },
             template: {
               type: 'string',
               description: 'Template type (health, compliance, drift)',
               default: 'health'
+            },
+            output: {
+              type: 'string',
+              description: 'Output file path',
+              required: true
             }
           },
           async run(ctx) {
@@ -841,7 +767,7 @@ ex:person2 a foaf:Person ;
           },
           args: {
             hook: {
-              type: 'positional',
+              type: 'string',
               description: 'Path to hook definition file',
               required: true
             }
@@ -858,7 +784,7 @@ ex:person2 a foaf:Person ;
           },
           args: {
             hook: {
-              type: 'positional',
+              type: 'string',
               description: 'Path to hook definition file or hook ID',
               required: true
             }
@@ -909,6 +835,235 @@ ex:person2 a foaf:Person ;
           },
           async run(ctx) {
             await hookCommands.showStats(ctx.args);
+          }
+        }),
+
+        list: defineCommand({
+          meta: {
+            name: 'list',
+            description: 'List stored hooks'
+          },
+          async run() {
+            try {
+              const hooks = await defaultStorage.listHooks();
+              console.log('📋 Stored Hooks:\n');
+
+              if (hooks.length === 0) {
+                console.log('No hooks stored yet.');
+                console.log('Use "unrdf hook save <file>" to save a hook definition.');
+                return;
+              }
+
+              console.log('┌' + '─'.repeat(80) + '┐');
+              console.log('│ ID                                    │ Name                    │ Predicates │ Updated          │');
+              console.log('├' + '─'.repeat(80) + '┤');
+
+              for (const hook of hooks.slice(0, 20)) {
+                const id = (hook.id || '').substring(0, 37).padEnd(37);
+                const name = (hook.name || 'N/A').substring(0, 23).padEnd(23);
+                const predicates = String(hook.predicateCount).padStart(11);
+                const updated = hook.updated ? new Date(hook.updated).toLocaleDateString() : 'Unknown';
+                console.log(`│ ${id} │ ${name} │ ${predicates} │ ${updated.padEnd(16)} │`);
+              }
+
+              console.log('└' + '─'.repeat(80) + '┘');
+
+              if (hooks.length > 20) {
+                console.log(`\n... and ${hooks.length - 20} more hooks`);
+              }
+
+            } catch (error) {
+              console.error(`❌ Failed to list hooks: ${error.message}`);
+              process.exit(1);
+            }
+          }
+        }),
+
+        save: defineCommand({
+          meta: {
+            name: 'save',
+            description: 'Save a hook definition to persistent storage'
+          },
+          args: {
+            file: {
+              type: 'string',
+              description: 'Path to hook definition file',
+              required: true
+            }
+          },
+          async run(ctx) {
+            try {
+              const hookContent = await readFile(ctx.args.file, 'utf-8');
+              const hookConfig = JSON.parse(hookContent);
+              const hook = defineHook(hookConfig);
+
+              await defaultStorage.saveHook(hook);
+              console.log(`✅ Hook saved: ${hook.id}`);
+
+            } catch (error) {
+              console.error(`❌ Failed to save hook: ${error.message}`);
+              process.exit(1);
+            }
+          }
+        }),
+
+        load: defineCommand({
+          meta: {
+            name: 'load',
+            description: 'Load and evaluate a stored hook'
+          },
+          args: {
+            id: {
+              type: 'string',
+              description: 'Hook ID to load',
+              required: true
+            },
+            data: {
+              type: 'string',
+              description: 'Path to RDF data directory or file'
+            }
+          },
+          async run(ctx) {
+            try {
+              const hook = await defaultStorage.loadHook(ctx.args.id);
+
+              if (!hook) {
+                console.error(`❌ Hook not found: ${ctx.args.id}`);
+                process.exit(1);
+              }
+
+              console.log(`🔍 Loaded hook: ${hook.id}`);
+              console.log(`   Name: ${hook.name || 'N/A'}`);
+              console.log(`   Predicates: ${hook.predicates.length}`);
+
+              // Initialize store and load data if provided
+              const runApp = initStore();
+
+              await runApp(async () => {
+                const turtle = useTurtle();
+
+                // Load data if provided
+                if (ctx.args.data) {
+                  if (ctx.args.data.endsWith('.ttl') || ctx.args.data.endsWith('.turtle')) {
+                    const dataContent = await readFile(ctx.args.data, 'utf-8');
+                    const quads = await turtle.parse(dataContent);
+                    turtle.store.add(...quads);
+                    console.log(`📁 Loaded data from ${ctx.args.data} (${quads.length} triples)`);
+                  } else {
+                    // Try to load as directory
+                    try {
+                      await turtle.loadAll(ctx.args.data);
+                      console.log(`📁 Loaded data directory ${ctx.args.data}`);
+                    } catch {
+                      console.log(`⚠️  Could not load data from ${ctx.args.data}`);
+                    }
+                  }
+                }
+
+                // Evaluate hook
+                const receipt = await evaluateHook(hook);
+                console.log(`\n🔥 Evaluation Result: ${receipt.fired ? 'FIRED' : 'No Change'}`);
+                console.log(`📊 Duration: ${receipt.durations.totalMs.toFixed(2)}ms`);
+
+              });
+
+            } catch (error) {
+              console.error(`❌ Failed to load/evaluate hook: ${error.message}`);
+              process.exit(1);
+            }
+          }
+        }),
+
+        delete: defineCommand({
+          meta: {
+            name: 'delete',
+            description: 'Delete a stored hook'
+          },
+          args: {
+            id: {
+              type: 'string',
+              description: 'Hook ID to delete',
+              required: true
+            }
+          },
+          async run(ctx) {
+            try {
+              const deleted = await defaultStorage.deleteHook(ctx.args.id);
+              if (deleted) {
+                console.log(`✅ Hook deleted: ${ctx.args.id}`);
+              } else {
+                console.error(`❌ Hook not found: ${ctx.args.id}`);
+                process.exit(1);
+              }
+            } catch (error) {
+              console.error(`❌ Failed to delete hook: ${error.message}`);
+              process.exit(1);
+            }
+          }
+        }),
+
+        history: defineCommand({
+          meta: {
+            name: 'history',
+            description: 'Show evaluation history for a hook'
+          },
+          args: {
+            id: {
+              type: 'string',
+              description: 'Hook ID',
+              required: true
+            },
+            limit: {
+              type: 'string',
+              description: 'Maximum number of receipts to show',
+              default: '10'
+            }
+          },
+          async run(ctx) {
+            try {
+              const receipts = await defaultStorage.loadReceipts(ctx.args.id, parseInt(ctx.args.limit));
+
+              if (receipts.length === 0) {
+                console.log(`📋 No evaluation history found for hook: ${ctx.args.id}`);
+                return;
+              }
+
+              console.log(`📋 Evaluation History for ${ctx.args.id}:`);
+              console.log(`   Total evaluations: ${receipts.length}\n`);
+
+              for (const receipt of receipts) {
+                const timestamp = new Date(receipt.at).toLocaleString();
+                const status = receipt.fired ? '🔥 FIRED' : '— No Change';
+                console.log(`[${timestamp}] ${status} (${receipt.durations.totalMs.toFixed(2)}ms)`);
+              }
+
+            } catch (error) {
+              console.error(`❌ Failed to load history: ${error.message}`);
+              process.exit(1);
+            }
+          }
+        }),
+
+        storage: defineCommand({
+          meta: {
+            name: 'storage',
+            description: 'Show storage statistics and manage storage'
+          },
+          subCommands: {
+            stats: defineCommand({
+              meta: {
+                name: 'stats',
+                description: 'Show storage statistics'
+              },
+              async run() {
+                const stats = await defaultStorage.getStats();
+                console.log('📊 Storage Statistics:');
+                console.log(`  Hooks: ${stats.hooks}`);
+                console.log(`  Receipts: ${stats.receipts}`);
+                console.log(`  Baselines: ${stats.baselines}`);
+                console.log(`  Total files: ${stats.totalFiles}`);
+              }
+            })
           }
         })
       }

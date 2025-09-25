@@ -54,9 +54,6 @@ Delta operations for tracking changes between stores.
 ### [useMetrics](./useMetrics.md)
 Performance metrics and monitoring.
 
-### [useIRIs](./useIRIs.md)
-IRI manipulation and validation.
-
 ### [useLists](./useLists.md)
 RDF list operations and utilities.
 

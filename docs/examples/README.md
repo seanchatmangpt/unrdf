@@ -236,7 +236,7 @@ console.log(`Processed ${result.count} items`);
 ### 3. Resource Cleanup
 
 ```javascript
-const store = useStore();
+const store = useStoreContext();
 try {
   // Use store
 } finally {

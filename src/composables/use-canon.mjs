@@ -42,86 +42,64 @@ export function useCanon(options = {}) {
     onMetric
   } = options;
 
-  // Get the engine from context
+  // Get the store context - uses canonicalization methods
   const storeContext = useStoreContext();
-  const engine = storeContext.engine;
 
   return {
     /**
-     * The underlying RDF engine
-     * @type {RdfEngine}
-     */
-    get engine() {
-      return engine;
-    },
-
-    /**
-     * Canonicalize a store using URDNA2015
-     * @param {Store|Object} store - Store to canonicalize
+     * Canonicalize the context store using URDNA2015 (READER operation)
      * @param {Object} [options] - Canonicalization options
      * @param {string} [options.algorithm='URDNA2015'] - Canonicalization algorithm
-     * @param {boolean} [options.synchronous=false] - Use synchronous canonicalization
+     * @param {number} [options.timeoutMs=30000] - Canonicalization timeout
+     * @param {Function} [options.onMetric] - Metrics callback
      * @returns {Promise<string>} Canonical N-Quads string
-     * 
+     *
      * @example
-     * const canonical = await canon.canonicalize(store);
+     * const canon = useCanon();
+     * const canonical = await canon.canonicalize();
      * console.log("Canonical form:", canonical);
-     * 
-     * // With options
-     * const canonicalSync = await canon.canonicalize(store, { synchronous: true });
+     *
+     * @note This is a READER operation - use sparingly
      */
-    async canonicalize(store, options = {}) {
-      const storeInstance = store.store || store;
-      const { algorithm = 'URDNA2015', synchronous = false } = options;
-      
-      try {
-        if (synchronous) {
-          return rdfCanonize._canonizeSync(storeInstance, { algorithm });
-        } else {
-          return await rdfCanonize.canonize(storeInstance, { algorithm });
-        }
-      } catch (error) {
-        // Fallback to engine canonicalization
-        console.warn(`Advanced canonicalization failed, using fallback: ${error.message}`);
-        return engine.canonicalize(storeInstance);
-      }
+    async canonicalize(options = {}) {
+      return storeContext.canonicalize(options);
     },
 
     /**
-     * Check if two stores are isomorphic
+     * Check if two stores are isomorphic (READER operation)
      * @param {Store|Object} store1 - First store
      * @param {Store|Object} store2 - Second store
+     * @param {Object} [options] - Isomorphism options
      * @returns {Promise<boolean>} True if stores are isomorphic
-     * 
+     *
      * @example
+     * const canon = useCanon();
      * const isIsomorphic = await canon.isIsomorphic(store1, store2);
      * if (isIsomorphic) {
      *   console.log("Stores are logically equivalent");
      * }
+     *
+     * @note This is a READER operation - use sparingly
      */
-    async isIsomorphic(store1, store2) {
-      const s1 = store1.store || store1;
-      const s2 = store2.store || store2;
-      return engine.isIsomorphic(s1, s2);
+    async isIsomorphic(store1, store2, options = {}) {
+      return storeContext.isIsomorphic(store1, store2, options);
     },
 
     /**
-     * Get a canonical hash of a store using SHA-256
-     * @param {Store|Object} store - Store to hash
+     * Get a canonical hash of the context store using SHA-256 (READER operation)
+     * @param {Object} [options] - Hash options
+     * @param {string} [options.algorithm='SHA-256'] - Hash algorithm
      * @returns {Promise<string>} Canonical hash string
-     * 
+     *
      * @example
-     * const hash = await canon.hash(store);
+     * const canon = useCanon();
+     * const hash = await canon.hash();
      * console.log("Store hash:", hash);
+     *
+     * @note This is a READER operation - use sparingly
      */
-    async hash(store) {
-      const canonical = await this.canonicalize(store);
-      
-      // Use Node.js crypto module for cryptographic hashing
-      const { createHash } = await import('node:crypto');
-      const hash = createHash('sha256');
-      hash.update(canonical, 'utf8');
-      return hash.digest('hex');
+    async hash(options = {}) {
+      return storeContext.hash(options);
     },
 
     /**
