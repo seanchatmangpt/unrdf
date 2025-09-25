@@ -1,0 +1,276 @@
+@startuml Knowledge Hooks System - C4 Diagrams
+
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam componentStyle rectangle
+
+' ===========================================
+' C4 Level 1: System Context
+' ===========================================
+
+!define PERSON(name,desc) rectangle name as "desc"
+!define SYSTEM(name,desc) rectangle name as "desc"
+!define SYSTEM_BOUNDARY(name,desc) rectangle name as "desc"
+
+title Knowledge Hooks System - Context Diagram
+
+PERSON(developer, "Developer", "Builds applications that consume RDF knowledge")
+
+SYSTEM_BOUNDARY(knowledge_system, "Knowledge System") {
+  SYSTEM(rdf_engine, "RdfEngine", "Core RDF engine with parse, query, reason, validate")
+  SYSTEM(observable_store, "ObservableStore", "Event-emitting RDF store wrapper")
+  SYSTEM(knowledge_hooks, "Knowledge Hooks", "Reactive event system for graph mutations")
+  SYSTEM(composables, "Composables", "useGraph, useReasoner, useZod, etc.")
+}
+
+developer --> rdf_engine : "Executes RDF operations"
+developer --> knowledge_hooks : "Registers event hooks"
+developer --> composables : "Uses composable APIs"
+
+rdf_engine --> observable_store : "Wraps N3.Store"
+knowledge_hooks --> observable_store : "Listens to events"
+composables --> rdf_engine : "Delegates operations"
+
+@enduml
+
+' ===========================================
+' C4 Level 2: Container Diagram
+' ===========================================
+
+@startuml Knowledge Hooks System - Container Diagram
+
+title Knowledge Hooks System - Container Diagram
+
+SYSTEM_BOUNDARY(knowledge_system, "Knowledge System") {
+  container(rdf_engine, "RdfEngine", "Node.js Library", "Core RDF processing engine")
+  container(observable_store, "ObservableStore", "N3.Store Extension", "Event-emitting quad store")
+  container(hook_manager, "Hook Manager", "Event System", "Manages hook registration and execution")
+  container(context_system, "Store Context", "unctx", "Global store and engine context")
+  container(composables, "Composables", "JavaScript Modules", "High-level RDF operations")
+  
+  containerDb(n3_store, "N3.Store", "In-memory RDF quad store", "Core RDF data structure")
+  container(comunica, "Comunica Query Engine", "SPARQL 1.1 engine", "Query execution")
+  container(eye_reasoner, "Eye Reasoner", "N3 Reasoner", "Rule-based inference")
+  container(shacl_validator, "SHACL Validator", "rdf-validate-shacl", "Shape validation")
+}
+
+rdf_engine --> observable_store : "extends"
+observable_store --> n3_store : "wraps"
+hook_manager --> observable_store : "listens to events"
+context_system --> rdf_engine : "provides"
+composables --> context_system : "uses"
+rdf_engine --> comunica : "executes SPARQL"
+rdf_engine --> eye_reasoner : "performs reasoning"
+rdf_engine --> shacl_validator : "validates shapes"
+
+@enduml
+
+' ===========================================
+' C4 Level 3: Component Diagram
+' ===========================================
+
+@startuml Knowledge Hooks System - Component Diagram
+
+title Knowledge Hooks System - Component Diagram
+
+package "ObservableStore" {
+  component(store_wrapper, "Store Wrapper", "Extends N3.Store", "Event emission on mutations")
+  component(event_emitter, "Event Emitter", "Event System", "Emits before/after events")
+  component(hook_registry, "Hook Registry", "Event Management", "Manages hook subscriptions")
+}
+
+package "Hook Manager" {
+  component(hook_definition, "Hook Definition", "Configuration", "Defines hook behavior")
+  component(hook_evaluator, "Hook Evaluator", "Execution Engine", "Evaluates hook predicates")
+  component(event_dispatcher, "Event Dispatcher", "Event Routing", "Routes events to hooks")
+}
+
+package "RdfEngine" {
+  component(parser, "Parser", "Turtle/NQuads", "Parses RDF formats")
+  component(serializer, "Serializer", "Turtle/NQuads", "Serializes RDF formats")
+  component(query_engine, "Query Engine", "SPARQL", "Executes queries")
+  component(reasoner, "Reasoning", "Rule-based", "Applies inference rules")
+  component(validator, "SHACL Validation", "Shape constraints", "Validates against shapes")
+  component(store_ops, "Set Operations", "Union/Diff/Intersection", "Graph operations")
+}
+
+package "Composables" {
+  component(use_graph, "useGraph", "Graph Operations", "SPARQL and traversal")
+  component(use_reasoner, "useReasoner", "Inference", "OWL reasoning")
+  component(use_zod, "useZod", "Schema Validation", "Type safety")
+  component(use_delta, "useDelta", "Change Detection", "Graph diffs")
+  component(use_canon, "useCanon", "Canonicalization", "URDNA2015")
+}
+
+store_wrapper --> event_emitter : "triggers"
+event_emitter --> hook_registry : "notifies"
+hook_registry --> hook_evaluator : "executes"
+hook_evaluator --> hook_definition : "uses config"
+
+parser --> store_ops : "produces quads"
+serializer --> store_ops : "consumes quads"
+query_engine --> store_ops : "queries quads"
+reasoner --> store_ops : "adds inferred quads"
+validator --> store_ops : "validates quads"
+
+use_graph --> query_engine : "delegates"
+use_reasoner --> reasoner : "delegates"
+use_zod --> validator : "delegates"
+use_delta --> store_ops : "compares"
+use_canon --> store_ops : "canonicalizes"
+
+@enduml
+
+' ===========================================
+' C4 Level 4: Code Diagram (Excerpt)
+' ===========================================
+
+@startuml Knowledge Hooks System - Code Diagram
+
+title Knowledge Hooks System - Code Diagram (Excerpt)
+
+class ObservableStore {
+  - hooks: Map<string, Set<Function>>
+  - enabled: boolean
+  - batchMode: boolean
+  + on(event: string, handler: Function): Function
+  + off(event: string, handler: Function): void
+  + addQuad(s, p, o, g): Quad
+  + removeQuad(s, p, o, g): Quad
+  + clear(): void
+  - _emit(event: string, payload: Object): void
+  - _getContext(): Object
+}
+
+class HookManager {
+  - store: ObservableStore
+  - hooks: Map<string, HookDefinition>
+  + registerHook(hook: HookDefinition): Function
+  + unregisterHook(id: string): void
+  + batch(operations: Function): void
+  - _processBatchEvents(): void
+}
+
+class HookDefinition {
+  + id: string
+  + events: string[]
+  + query: string
+  + predicates: Predicate[]
+  + combine: 'AND' | 'OR'
+  + options: HookOptions
+  + _validate(): void
+}
+
+class HookEvaluator {
+  + evaluateHook(hook: HookDefinition, payload: EventPayload): Promise<HookResult>
+  + evaluatePredicate(predicate: Predicate, data: any): Promise<PredicateResult>
+  - _executeQuery(query: string): Promise<any>
+  - _compareValues(a: any, op: string, b: any): boolean
+}
+
+class EventPayload {
+  + event: string
+  + quad: Quad
+  + context: EventContext
+  + store: Store
+  + engine: RdfEngine
+}
+
+class EventContext {
+  + timestamp: Date
+  + source: 'manual' | 'import' | 'reasoning' | 'update'
+  + metadata: Object
+}
+
+ObservableStore --> HookManager : "emits events"
+HookManager --> HookDefinition : "manages"
+HookManager --> HookEvaluator : "executes"
+HookEvaluator --> EventPayload : "processes"
+EventPayload --> EventContext : "contains"
+
+@enduml
+
+' ===========================================
+' Event Flow Diagram
+' ===========================================
+
+@startuml Knowledge Hooks Event Flow
+
+title Knowledge Hooks Event Flow
+
+participant "Developer" as Dev
+participant "useKnowledgeHooks" as Hooks
+participant "ObservableStore" as Store
+participant "Hook Manager" as Manager
+participant "Hook Evaluator" as Evaluator
+participant "Hook Callback" as Callback
+
+Dev -> Hooks: registerHook(hook)
+Hooks -> Manager: registerHook(hook)
+Manager -> Store: on('afterAddQuad', handler)
+
+note over Dev, Callback: Graph Mutation Occurs
+
+Dev -> Store: addQuad(s, p, o, g)
+Store -> Store: super.addQuad(s, p, o, g)
+Store -> Manager: _emit('afterAddQuad', payload)
+Manager -> Evaluator: evaluateHook(hook, payload)
+Evaluator -> Evaluator: execute query
+Evaluator -> Evaluator: evaluate predicates
+Evaluator -> Callback: hook.options.callback(result, payload)
+Callback -> Dev: console.log('Hook fired!')
+
+@enduml
+
+' ===========================================
+' Hook Event Timeline
+' ===========================================
+
+@startuml Hook Event Timeline
+
+title Hook Event Timeline - Graph Mutation Lifecycle
+
+|Graph Operation|
+start
+:addQuad(s, p, o, g);
+note right: Developer calls addQuad
+
+|ObservableStore|
+:super.addQuad(s, p, o, g);
+note right: Call parent N3.Store method
+
+:quad = result;
+note right: Store the returned quad
+
+:_emit('afterAddQuad', payload);
+note right: Emit event with quad and context
+
+|Hook Manager|
+:for each registered hook;
+note right: Iterate through hooks listening to 'afterAddQuad'
+
+:if hook.options.filter matches;
+note right: Check if quad matches hook filter
+
+|Hook Evaluator|
+:evaluateHook(hook, payload);
+note right: Execute hook evaluation
+
+:execute SPARQL query;
+note right: Run hook.query against current store
+
+:evaluate predicates;
+note right: Check COUNT, THRESHOLD, ASK, etc.
+
+:if hook.fired;
+note right: Determine if hook should fire
+
+|Hook Callback|
+:hook.options.callback(result, payload);
+note right: Execute user-defined callback
+
+stop
+
+@enduml
+
+@enduml

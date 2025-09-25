@@ -1,13 +1,14 @@
 /**
- * @fileoverview useKnowledgeHooks - Reactive triggers for RDF graphs with OWL, SHACL, SPARQL support
+ * @fileoverview useKnowledgeHooks - Reactive triggers for RDF graphs using existing composables
  * 
- * A comprehensive implementation of knowledge hooks that supports:
- * - SPARQL queries for data selection
- * - OWL reasoning for inference
- * - SHACL validation for constraints
- * - Clean, predictable API
+ * A composable-first implementation that leverages existing unrdf composables:
+ * - useGraph for SPARQL queries
+ * - useReasoner for OWL reasoning
+ * - useDelta for change detection
+ * - useZod for schema validation
+ * - useCanon for canonicalization
  * 
- * @version 2.0.0
+ * @version 3.0.0
  * @author GitVan Team
  * @license MIT
  */
@@ -15,41 +16,40 @@
 import { useStoreContext } from "../context/index.mjs";
 import { useGraph } from "./use-graph.mjs";
 import { useReasoner } from "./use-reasoner.mjs";
-
-// Stub implementations for missing composables
-const useValidator = () => ({
-  async validateShape(shape) {
-    // Stub implementation - in real implementation would use rdf-validate-shacl
-    return {
-      conforms: true,
-      results: []
-    };
-  }
-});
+import { useDelta } from "./use-delta.mjs";
+import { useZod } from "./use-zod.mjs";
+import { useCanon } from "./use-canon.mjs";
+import { EVENTS } from "../engines/event-bus.mjs";
 
 /**
- * Define a knowledge hook
+ * Define a knowledge hook using existing composables
  * @param {Object} config - Hook configuration
  * @param {string} config.id - Unique hook identifier
  * @param {string} config.query - SPARQL query to execute
  * @param {Array<Object>} [config.predicates] - Array of predicate conditions
  * @param {string} [config.combine='AND'] - How to combine predicates ('AND', 'OR')
- * @param {Object} [config.output] - Output configuration
  * @returns {Object} Hook definition
  * 
  * @example
- * // SPARQL-based hook with SHACL validation
+ * // COUNT predicate using useGraph
  * const hook = defineHook({
- *   id: 'service-health-monitor',
- *   query: 'SELECT ?service ?errorRate WHERE { ?service ex:errorRate ?errorRate }',
+ *   id: 'error-count',
+ *   query: 'SELECT ?s WHERE { ?s ex:type ex:Error }',
  *   predicates: [
- *     { kind: 'THRESHOLD', spec: { variable: 'errorRate', operator: '>', value: 0.05 } },
- *     { kind: 'COUNT', spec: { operator: '>', value: 3 } }
- *   ],
- *   combine: 'OR'
+ *     { kind: 'COUNT', spec: { operator: '>', value: 5 } }
+ *   ]
  * });
  * 
- * // OWL reasoning hook
+ * // THRESHOLD predicate using useGraph results
+ * const hook = defineHook({
+ *   id: 'latency-threshold',
+ *   query: 'SELECT ?service ?latency WHERE { ?service ex:latency ?latency }',
+ *   predicates: [
+ *     { kind: 'THRESHOLD', spec: { variable: 'latency', operator: '>', value: 1000 } }
+ *   ]
+ * });
+ * 
+ * // OWL predicate using useReasoner
  * const hook = defineHook({
  *   id: 'inference-check',
  *   query: 'SELECT ?person WHERE { ?person rdf:type ex:Person }',
@@ -58,12 +58,30 @@ const useValidator = () => ({
  *   ]
  * });
  * 
- * // SHACL validation hook
+ * // DELTA predicate using useDelta
  * const hook = defineHook({
- *   id: 'data-quality',
- *   query: 'SELECT ?person WHERE { ?person rdf:type ex:Person }',
+ *   id: 'change-detection',
+ *   query: 'SELECT ?s WHERE { ?s ex:modified ?date }',
  *   predicates: [
- *     { kind: 'SHACL', spec: { shape: 'ex:PersonShape', strict: true } }
+ *     { kind: 'DELTA', spec: { compareWith: newStore, operator: '>', value: 0 } }
+ *   ]
+ * });
+ * 
+ * // ZOD predicate using useZod
+ * const hook = defineHook({
+ *   id: 'schema-validation',
+ *   query: 'SELECT ?person ?name ?age WHERE { ?person ex:name ?name ; ex:age ?age }',
+ *   predicates: [
+ *     { kind: 'ZOD', spec: { schema: z.object({ name: z.string(), age: z.number() }) } }
+ *   ]
+ * });
+ * 
+ * // ASK predicate using useGraph
+ * const hook = defineHook({
+ *   id: 'existence-check',
+ *   query: 'SELECT ?s WHERE { ?s ex:type ex:Error }',
+ *   predicates: [
+ *     { kind: 'ASK', spec: { query: 'ASK WHERE { ?s ex:type ex:Error }', expected: true } }
  *   ]
  * });
  */
@@ -72,8 +90,7 @@ export function defineHook(config) {
     id,
     query,
     predicates = [],
-    combine = 'AND',
-    output
+    combine = 'AND'
   } = config;
 
   const hook = {
@@ -81,7 +98,6 @@ export function defineHook(config) {
     query,
     predicates,
     combine,
-    output,
     _validate() {
       if (!id || typeof id !== 'string') {
         throw new Error('Hook id must be a non-empty string');
@@ -107,6 +123,14 @@ export function defineHook(config) {
         
         // Validate predicate-specific requirements
         switch (predicate.kind) {
+          case 'COUNT':
+            if (!predicate.spec.operator || !['>', '<', '>=', '<=', '==', '!='].includes(predicate.spec.operator)) {
+              throw new Error('COUNT predicate requires a valid operator');
+            }
+            if (typeof predicate.spec.value !== 'number') {
+              throw new Error('COUNT predicate requires a numeric value');
+            }
+            break;
           case 'THRESHOLD':
             if (!predicate.spec.variable || typeof predicate.spec.variable !== 'string') {
               throw new Error('THRESHOLD predicate requires a variable');
@@ -118,17 +142,9 @@ export function defineHook(config) {
               throw new Error('THRESHOLD predicate requires a numeric value');
             }
             break;
-          case 'COUNT':
-            if (!predicate.spec.operator || !['>', '<', '>=', '<=', '==', '!='].includes(predicate.spec.operator)) {
-              throw new Error('COUNT predicate requires a valid operator');
-            }
-            if (typeof predicate.spec.value !== 'number') {
-              throw new Error('COUNT predicate requires a numeric value');
-            }
-            break;
-          case 'SHACL':
-            if (!predicate.spec.shape || typeof predicate.spec.shape !== 'string') {
-              throw new Error('SHACL predicate requires a shape IRI');
+          case 'ASK':
+            if (!predicate.spec.query || typeof predicate.spec.query !== 'string') {
+              throw new Error('ASK predicate requires a query');
             }
             break;
           case 'OWL':
@@ -136,9 +152,20 @@ export function defineHook(config) {
               throw new Error('OWL predicate requires rules');
             }
             break;
-          case 'ASK':
-            if (!predicate.spec.query || typeof predicate.spec.query !== 'string') {
-              throw new Error('ASK predicate requires a query');
+          case 'DELTA':
+            if (!predicate.spec.compareWith) {
+              throw new Error('DELTA predicate requires compareWith store');
+            }
+            if (!predicate.spec.operator || !['>', '<', '>=', '<=', '==', '!='].includes(predicate.spec.operator)) {
+              throw new Error('DELTA predicate requires a valid operator');
+            }
+            if (typeof predicate.spec.value !== 'number') {
+              throw new Error('DELTA predicate requires a numeric value');
+            }
+            break;
+          case 'ZOD':
+            if (!predicate.spec.schema) {
+              throw new Error('ZOD predicate requires a schema');
             }
             break;
           default:
@@ -155,7 +182,7 @@ export function defineHook(config) {
 }
 
 /**
- * Evaluate a knowledge hook
+ * Evaluate a knowledge hook using existing composables
  * @param {Object} hook - Hook definition
  * @param {Object} [options] - Evaluation options
  * @returns {Promise<Object>} Evaluation result
@@ -169,29 +196,36 @@ export function defineHook(config) {
 export async function evaluateHook(hook, options = {}) {
   // Validate hook
   hook._validate();
-
+  
   // Get composables from context
   const storeContext = useStoreContext();
   const graph = useGraph();
-  const validator = useValidator();
   const reasoner = useReasoner();
+  const delta = useDelta();
+  const zod = useZod();
+  const canon = useCanon();
 
   const startTime = Date.now();
 
   try {
-    // Step 1: Execute SPARQL query
+    // Step 1: Execute SPARQL query using useGraph
+    console.log('DEBUG: Executing query:', hook.query);
     const queryResults = await graph.select(hook.query);
+    console.log('DEBUG: Query results:', queryResults);
+    console.log('DEBUG: Query results length:', queryResults.length);
     
-    // Step 2: Evaluate predicates
+    // Step 2: Evaluate predicates using appropriate composables
     const predicateResults = [];
     let fired = hook.combine === 'AND';
     
     for (const predicate of hook.predicates) {
       const predicateResult = await evaluatePredicate(predicate, queryResults, {
-        storeContext,
         graph,
-        validator,
-        reasoner
+        reasoner,
+        delta,
+        zod,
+        canon,
+        storeContext
       });
       
       predicateResults.push(predicateResult);
@@ -207,9 +241,9 @@ export async function evaluateHook(hook, options = {}) {
     const duration = Date.now() - startTime;
 
     return {
-      hookId: hook.id,
-      fired,
-      data: {
+    hookId: hook.id,
+    fired,
+    data: {
         queryResults,
         predicateResults,
         count: queryResults.length
@@ -234,30 +268,33 @@ export async function evaluateHook(hook, options = {}) {
 }
 
 /**
- * Evaluate a single predicate
+ * Evaluate a single predicate using the appropriate composable
  * @param {Object} predicate - Predicate definition
  * @param {Array} queryResults - SPARQL query results
  * @param {Object} composables - Available composables
  * @returns {Promise<Object>} Predicate result
  */
 async function evaluatePredicate(predicate, queryResults, composables) {
-  const { storeContext, graph, validator, reasoner } = composables;
+  const { graph, reasoner, delta, zod, canon, storeContext } = composables;
   
   switch (predicate.kind) {
-    case 'THRESHOLD':
-      return await evaluateThresholdPredicate(predicate, queryResults);
-      
     case 'COUNT':
       return await evaluateCountPredicate(predicate, queryResults);
       
-    case 'SHACL':
-      return await evaluateShaclPredicate(predicate, queryResults, validator);
+    case 'THRESHOLD':
+      return await evaluateThresholdPredicate(predicate, queryResults);
+      
+    case 'ASK':
+      return await evaluateAskPredicate(predicate, queryResults, graph);
       
     case 'OWL':
       return await evaluateOwlPredicate(predicate, queryResults, reasoner);
       
-    case 'ASK':
-      return await evaluateAskPredicate(predicate, queryResults, graph);
+    case 'DELTA':
+      return await evaluateDeltaPredicate(predicate, queryResults, delta);
+      
+    case 'ZOD':
+      return await evaluateZodPredicate(predicate, queryResults, zod);
       
     default:
       return {
@@ -270,7 +307,26 @@ async function evaluatePredicate(predicate, queryResults, composables) {
 }
 
 /**
- * Evaluate THRESHOLD predicate
+ * Evaluate COUNT predicate - count query results
+ */
+async function evaluateCountPredicate(predicate, queryResults) {
+  const startTime = Date.now();
+  const { operator, value } = predicate.spec;
+  
+  const count = queryResults.length;
+  const fired = compareValues(count, operator, value);
+    
+    return {
+    kind: 'COUNT',
+      fired,
+    reason: `COUNT ${count} ${operator} ${value} = ${fired}`,
+    duration: Date.now() - startTime,
+    data: { count }
+  };
+}
+
+/**
+ * Evaluate THRESHOLD predicate - extract numeric values from query results
  */
 async function evaluateThresholdPredicate(predicate, queryResults) {
   const startTime = Date.now();
@@ -310,84 +366,7 @@ async function evaluateThresholdPredicate(predicate, queryResults) {
 }
 
 /**
- * Evaluate COUNT predicate
- */
-async function evaluateCountPredicate(predicate, queryResults) {
-  const startTime = Date.now();
-  const { operator, value } = predicate.spec;
-  
-  const count = queryResults.length;
-  const fired = compareValues(count, operator, value);
-  
-  return {
-    kind: 'COUNT',
-    fired,
-    reason: `COUNT ${count} ${operator} ${value} = ${fired}`,
-    duration: Date.now() - startTime,
-    data: { count }
-  };
-}
-
-/**
- * Evaluate SHACL predicate
- */
-async function evaluateShaclPredicate(predicate, queryResults, validator) {
-  const startTime = Date.now();
-  const { shape, strict = false } = predicate.spec;
-  
-  try {
-    const validation = await validator.validateShape(shape);
-    
-    const fired = strict ? 
-      validation.conforms && validation.results.length === 0 :
-      !validation.conforms;
-    
-    return {
-      kind: 'SHACL',
-      fired,
-      reason: `SHACL validation ${fired ? 'failed' : 'passed'} (${validation.results.length} violations)`,
-      duration: Date.now() - startTime,
-      data: { violations: validation.results.length, conforms: validation.conforms }
-    };
-  } catch (error) {
-    return {
-      kind: 'SHACL',
-      fired: false,
-      reason: `SHACL predicate failed: ${error.message}`,
-      duration: Date.now() - startTime
-    };
-  }
-}
-
-/**
- * Evaluate OWL predicate
- */
-async function evaluateOwlPredicate(predicate, queryResults, reasoner) {
-  const startTime = Date.now();
-  const { rules } = predicate.spec;
-  
-  try {
-    const result = await reasoner.infer(rules);
-    
-    return {
-      kind: 'OWL',
-      fired: result.success && result.newTriples > 0,
-      reason: `OWL reasoning ${result.success ? 'succeeded' : 'failed'} (${result.newTriples} new triples)`,
-      duration: Date.now() - startTime,
-      data: { newTriples: result.newTriples, success: result.success }
-    };
-  } catch (error) {
-    return {
-      kind: 'OWL',
-      fired: false,
-      reason: `OWL predicate failed: ${error.message}`,
-      duration: Date.now() - startTime
-    };
-  }
-}
-
-/**
- * Evaluate ASK predicate
+ * Evaluate ASK predicate using useGraph
  */
 async function evaluateAskPredicate(predicate, queryResults, graph) {
   const startTime = Date.now();
@@ -415,6 +394,106 @@ async function evaluateAskPredicate(predicate, queryResults, graph) {
 }
 
 /**
+ * Evaluate OWL predicate using useReasoner
+ */
+async function evaluateOwlPredicate(predicate, queryResults, reasoner) {
+  const startTime = Date.now();
+  const { rules } = predicate.spec;
+  
+  try {
+    const result = await reasoner.infer(rules);
+    
+    return {
+      kind: 'OWL',
+      fired: result.success && result.newTriples > 0,
+      reason: `OWL reasoning ${result.success ? 'succeeded' : 'failed'} (${result.newTriples} new triples)`,
+      duration: Date.now() - startTime,
+      data: { newTriples: result.newTriples, success: result.success }
+    };
+  } catch (error) {
+    return {
+      kind: 'OWL',
+      fired: false,
+      reason: `OWL predicate failed: ${error.message}`,
+      duration: Date.now() - startTime
+    };
+  }
+}
+
+/**
+ * Evaluate DELTA predicate using useDelta
+ */
+async function evaluateDeltaPredicate(predicate, queryResults, delta) {
+  const startTime = Date.now();
+  const { compareWith, operator, value } = predicate.spec;
+  
+  try {
+    const changes = delta.compareWith(compareWith);
+    const changeCount = changes.addedCount + changes.removedCount;
+    const fired = compareValues(changeCount, operator, value);
+    
+    return {
+      kind: 'DELTA',
+      fired,
+      reason: `DELTA changes (${changeCount}) ${operator} ${value} = ${fired}`,
+      duration: Date.now() - startTime,
+      data: { changeCount, changes }
+    };
+  } catch (error) {
+    return {
+      kind: 'DELTA',
+      fired: false,
+      reason: `DELTA predicate failed: ${error.message}`,
+      duration: Date.now() - startTime
+    };
+  }
+}
+
+/**
+ * Evaluate ZOD predicate using useZod
+ */
+async function evaluateZodPredicate(predicate, queryResults, zod) {
+  const startTime = Date.now();
+  const { schema } = predicate.spec;
+  
+  try {
+    // Convert query results to plain objects for Zod validation
+    const plainResults = queryResults.map(row => {
+      const plainRow = {};
+      for (const [key, term] of Object.entries(row)) {
+        if (term && typeof term === 'object' && term.termType === 'Literal') {
+          plainRow[key] = term.value;
+        } else if (term && typeof term === 'object' && term.termType === 'NamedNode') {
+          plainRow[key] = term.value;
+        } else {
+          plainRow[key] = term;
+        }
+      }
+      return plainRow;
+    });
+    
+    // Validate each result
+    const validationResults = plainResults.map(result => zod.validate(result, schema));
+    const allValid = validationResults.every(vr => vr.success);
+    
+    return {
+      kind: 'ZOD',
+      fired: allValid,
+      reason: `ZOD validation ${allValid ? 'passed' : 'failed'} (${validationResults.filter(vr => !vr.success).length} failures)`,
+      duration: Date.now() - startTime,
+      data: { validationResults, allValid }
+    };
+  } catch (error) {
+    return {
+      kind: 'ZOD',
+      fired: false,
+      reason: `ZOD predicate failed: ${error.message}`,
+      duration: Date.now() - startTime
+    };
+  }
+}
+
+/**
  * Compare two values using the specified operator
  * @param {number} a - First value
  * @param {string} operator - Comparison operator
@@ -434,39 +513,40 @@ function compareValues(a, operator, b) {
 }
 
 /**
- * Create a knowledge hooks composable
+ * Create a knowledge hooks composable using existing composables
  * @param {Object} [options] - Options
  * @returns {Object} Knowledge hooks interface
  */
 export function useKnowledgeHooks(options = {}) {
   const storeContext = useStoreContext();
-
+  const engine = storeContext.engine;
+  
   return {
     /**
      * The underlying RDF engine
      * @type {RdfEngine}
      */
     get engine() {
-      return storeContext.engine;
+      return engine;
     },
-
+    
     /**
-     * Define a hook
+     * Define a hook (legacy query-based system)
      * @param {Object} config - Hook configuration
      * @returns {Object} Hook definition
      */
     defineHook,
-
+    
     /**
-     * Evaluate a hook
+     * Evaluate a hook (legacy query-based system)
      * @param {Object} hook - Hook definition
      * @param {Object} options - Evaluation options
      * @returns {Promise<Object>} Evaluation result
      */
     evaluateHook,
-
+    
     /**
-     * Evaluate multiple hooks
+     * Evaluate multiple hooks (legacy query-based system)
      * @param {Array<Object>} hooks - Hook definitions
      * @param {Object} options - Evaluation options
      * @returns {Promise<Array<Object>>} Evaluation results
@@ -474,9 +554,147 @@ export function useKnowledgeHooks(options = {}) {
     async evaluateHooks(hooks, options = {}) {
       return Promise.all(hooks.map(hook => evaluateHook(hook, options)));
     },
-
+    
     /**
-     * Get statistics from evaluation results
+     * Register an event-based hook
+     * @param {string|Array<string>} events - Event name(s) to listen to
+     * @param {Function} handler - Event handler function
+     * @param {Object} [hookOptions] - Hook options
+     * @returns {Object} Registration result with unregister function
+     * 
+     * @example
+     * // Register hook for quad additions
+     * const unregister = hooks.registerEventHook(
+     *   EVENTS.AFTER_ADD_QUAD,
+     *   async (payload) => {
+     *     console.log('Quad added:', payload.quad.subject.value);
+     *   },
+     *   { id: 'quad-monitor' }
+     * );
+     * 
+     * // Register hook for multiple events
+     * const unregister2 = hooks.registerEventHook(
+     *   [EVENTS.AFTER_ADD_QUAD, EVENTS.AFTER_REMOVE_QUAD],
+     *   async (payload) => {
+     *     console.log('Store modified:', payload.event);
+     *   }
+     * );
+     */
+    registerEventHook(events, handler, hookOptions = {}) {
+      const eventList = Array.isArray(events) ? events : [events];
+      const registrations = [];
+      
+      for (const event of eventList) {
+        const registration = engine.on(event, handler, hookOptions);
+        registrations.push(registration);
+      }
+      
+      return {
+        unregister: () => {
+          registrations.forEach(reg => reg.unregister());
+        }
+      };
+    },
+    
+    /**
+     * Register a knowledge hook with event triggers
+     * @param {Object} config - Hook configuration with events
+     * @returns {Object} Registration result with unregister function
+     * 
+     * @example
+     * const hook = defineHook({
+     *   id: 'error-monitor',
+     *   events: [EVENTS.AFTER_ADD_QUAD],
+     *   query: 'SELECT ?s WHERE { ?s ex:type ex:Error }',
+     *   predicates: [
+     *     { kind: 'COUNT', spec: { operator: '>', value: 5 } }
+     *   ],
+     *   options: {
+     *     callback: async (result, payload) => {
+     *       console.log('Error count exceeded threshold!');
+     *     }
+     *   }
+     * });
+     * 
+     * const unregister = hooks.registerKnowledgeHook(hook);
+     */
+    registerKnowledgeHook(hook) {
+      const eventList = hook.events || [];
+      const registrations = [];
+      
+      for (const event of eventList) {
+        const handler = async (payload) => {
+          try {
+            const result = await evaluateHook(hook, payload);
+            if (result.fired && hook.options?.callback) {
+              await hook.options.callback(result, payload);
+            }
+          } catch (error) {
+            console.error(`Knowledge hook ${hook.id} failed:`, error);
+          }
+        };
+        
+        const registration = engine.on(event, handler, {
+          id: hook.id,
+          ...hook.options
+        });
+        registrations.push(registration);
+      }
+      
+      return {
+        unregister: () => {
+          registrations.forEach(reg => reg.unregister());
+        }
+      };
+    },
+    
+    /**
+     * Start batch mode for multiple operations
+     * @param {Function} operations - Function containing operations
+     * @returns {Promise<boolean>} True if all operations were allowed
+     * 
+     * @example
+     * await hooks.batch(() => {
+     *   store.addQuad(s1, p1, o1);
+     *   store.addQuad(s2, p2, o2);
+     *   store.addQuad(s3, p3, o3);
+     *   // Only one batch event fired
+     * });
+     */
+    async batch(operations) {
+      engine.store.startBatch();
+      try {
+        operations();
+      } finally {
+        return await engine.store.endBatch();
+      }
+    },
+    
+    /**
+     * Get event statistics
+     * @returns {Object} Event bus statistics
+     */
+    getEventStats() {
+      return engine.getEventStats();
+    },
+    
+    /**
+     * Enable or disable event emission
+     * @param {boolean} enabled - Whether to enable events
+     */
+    setEventEnabled(enabled) {
+      engine.setEventEnabled(enabled);
+    },
+    
+    /**
+     * Clear all hooks and reset statistics
+     */
+    clearHooks() {
+      engine.clearHooks();
+    },
+    
+    /**
+     * Get statistics from evaluation results (legacy)
      * @param {Array<Object>} results - Evaluation results
      * @returns {Object} Statistics
      */
@@ -485,7 +703,7 @@ export function useKnowledgeHooks(options = {}) {
       const fired = results.filter(r => r.fired).length;
       const avgDuration = results.reduce((sum, r) => sum + r.duration, 0) / total;
       const errors = results.filter(r => r.error).length;
-
+      
       return {
         total,
         fired,
@@ -496,8 +714,8 @@ export function useKnowledgeHooks(options = {}) {
         predicates: results.reduce((acc, r) => {
           if (r.data && r.data.predicateResults) {
             r.data.predicateResults.forEach(p => {
-              acc[p.kind] = (acc[p.kind] || 0) + 1;
-            });
+            acc[p.kind] = (acc[p.kind] || 0) + 1;
+          });
           }
           return acc;
         }, {})
