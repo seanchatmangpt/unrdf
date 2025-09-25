@@ -2,24 +2,28 @@
 
 Understanding unrdf's philosophy and design principles.
 
-## The "One True Path" Philosophy
+## The "Reactive Knowledge Graphs" Philosophy
 
-unrdf is built on the principle of **opinionated simplicity**. Instead of providing multiple options and configurations, it makes one choice for each concern and sticks to it. This eliminates the "dark matter" of RDF development—the 80% of boilerplate glue code that developers typically write.
+unrdf is built on the principle of **reactive knowledge graphs**. Instead of providing multiple options and configurations, it makes one choice for each concern and sticks to it. This eliminates the "dark matter" of RDF development—the 80% of boilerplate glue code that developers typically write.
+
+**🎯 Knowledge Hooks** are the crown jewel of this philosophy - they transform static knowledge graphs into intelligent, reactive systems that respond to changes with deterministic, auditable actions.
 
 ### Why Opinionated?
 
-RDF development is plagued by choice paralysis:
+RDF development is plagued by choice paralysis and "dark matter" - the 80% of boilerplate glue code needed to connect different libraries:
 
 - Which RDF store to use? (rdf-ext, N3, rdflib, etc.)
 - Which query engine? (Comunica, SPARQL.js, etc.)
 - Which validator? (SHACL, ShEx, custom)
 - Which reasoner? (EYE, OWL reasoners, custom)
 - Which serialization format? (Turtle, JSON-LD, RDF/XML, etc.)
+- **How to build reactive triggers?** (Custom event systems, polling, etc.)
 
-unrdf eliminates these choices by making one decision for each concern:
+unrdf eliminates these choices by making one decision for each concern, with **Knowledge Hooks** as the crown jewel:
 
 | Concern | unrdf's Choice | Why |
 |---------|----------------|-----|
+| **🎯 Knowledge Hooks** | Built-in reactive triggers | Eliminates custom event systems, provides cryptographic provenance |
 | **Store** | N3.Store | Fast, memory-efficient, well-maintained |
 | **Query Engine** | @comunica/query-sparql | Standards-compliant, performant |
 | **Validator** | rdf-validate-shacl | Industry standard, comprehensive |
@@ -29,9 +33,67 @@ unrdf eliminates these choices by making one decision for each concern:
 | **Traversal** | Clownface | Bound to N3.Store, intuitive API |
 | **Config** | Turtle only | Human-readable, RDF-native |
 
-## Composables Pattern
+## Knowledge Hooks Philosophy
 
-unrdf uses a **composable architecture** where each concern is encapsulated in a focused function:
+**Knowledge Hooks** represent the pinnacle of unrdf's opinionated design. They solve the fundamental problem of RDF reactivity:
+
+### The Problem
+Traditional RDF applications are static - they require external event systems, polling mechanisms, or custom trigger logic to respond to changes. This creates:
+
+- **Fragmented architectures** with event buses, message queues, or polling loops
+- **Lost provenance** - changes aren't cryptographically tracked
+- **Complex state management** - maintaining change history and audit trails
+- **Inconsistent behavior** - different systems handle changes differently
+
+### The Solution
+Knowledge Hooks provide a **unified, declarative approach** to RDF reactivity:
+
+```javascript
+// Define what to monitor and how to respond
+const healthHook = defineHook({
+  id: 'ex:ServiceHealthMonitor',
+  select: 'SELECT ?service ?errorRate WHERE { ?service ex:errorRate ?errorRate }',
+  predicates: [
+    { kind: 'THRESHOLD', spec: { var: 'errorRate', op: '>', value: 0.02 } }
+  ],
+  combine: 'OR'
+});
+
+// Get cryptographically signed receipts for all evaluations
+const receipt = await evaluateHook(healthHook);
+```
+
+### Key Principles
+
+1. **Declarative Triggers**: Define *what* to monitor, not *how* to monitor it
+2. **Cryptographic Provenance**: Every evaluation is signed and auditable
+3. **Pure Functions**: Hooks are deterministic and side-effect free
+4. **Composable Logic**: Complex behaviors through simple predicate combination
+5. **Performance First**: Sub-millisecond evaluation with optimized SPARQL
+
+## Dual API Architecture
+
+unrdf provides **two complementary APIs** that work together:
+
+### 🎯 Knowledge Hooks (Primary API)
+The primary interface for **reactive knowledge graphs**:
+
+```javascript
+// Define reactive triggers declaratively
+const healthHook = defineHook({
+  id: 'ex:ServiceHealthMonitor',
+  select: 'SELECT ?service ?errorRate WHERE { ?service ex:errorRate ?errorRate }',
+  predicates: [
+    { kind: 'THRESHOLD', spec: { var: 'errorRate', op: '>', value: 0.02 } }
+  ]
+});
+
+// Get cryptographically signed receipts
+const receipt = await evaluateHook(healthHook);
+```
+
+### Foundation Composables (Secondary API)
+The underlying composable functions that power Knowledge Hooks:
 
 ```javascript
 // Each composable has a single responsibility
@@ -45,18 +107,19 @@ const jsonld = useJsonLd();         // JSON-LD operations
 const pointer = usePointer(store);  // Graph traversal
 ```
 
-### Benefits of Composables
+### Benefits of Dual Architecture
 
-1. **Single Responsibility**: Each composable does one thing well
-2. **Composability**: Mix and match as needed
-3. **Testability**: Easy to test in isolation
-4. **Reusability**: Use across different contexts
+1. **Knowledge Hooks**: High-level, declarative reactive programming
+2. **Composables**: Low-level, granular control when needed
+3. **Composability**: Mix and match as needed
+4. **Testability**: Easy to test in isolation
 5. **Maintainability**: Clear boundaries and interfaces
 
 ## The "Dark Matter" Problem
 
 RDF development typically involves writing a lot of boilerplate code:
 
+### Traditional Approach (80% "Dark Matter")
 ```javascript
 // Traditional RDF development - lots of "dark matter"
 import { Store } from 'n3';
@@ -74,20 +137,36 @@ const store = new Store();
 const engine = new QueryEngine();
 const parser = new Parser();
 const writer = new Writer();
+
+// Plus custom event system for reactivity...
+class RDFEventBus {
+  constructor() { /* complex event handling */ }
+  onChange(callback) { /* polling logic */ }
+}
 // ... more setup code
 ```
 
-unrdf eliminates this by providing a unified interface:
+### unrdf Solution (90% Less "Dark Matter")
+unrdf eliminates this by providing a unified interface with built-in reactivity:
 
 ```javascript
-// unrdf - minimal "dark matter"
-import { useStore, useTurtle, useGraph, useValidator } from 'unrdf';
+// unrdf - minimal "dark matter" with built-in reactivity
+import { initStore, defineHook, evaluateHook } from 'unrdf';
 
-const store = useStore();
-const turtle = useTurtle();
-const graph = useGraph(store);
-const validator = useValidator();
-// That's it - everything just works together
+// Initialize context once
+const runApp = initStore();
+
+// Define reactive hooks declaratively
+const healthHook = defineHook({
+  id: 'ex:ServiceHealthMonitor',
+  select: 'SELECT ?service ?errorRate WHERE { ?service ex:errorRate ?errorRate }',
+  predicates: [
+    { kind: 'THRESHOLD', spec: { var: 'errorRate', op: '>', value: 0.02 } }
+  ]
+});
+
+// That's it - everything just works together with cryptographic provenance
+const receipt = await evaluateHook(healthHook);
 ```
 
 ## Type Safety Strategy

@@ -4,10 +4,13 @@
 
 ## Philosophy
 
-unrdf is not a neutral toolkit—it's a **canon**. When you import unrdf, you're accepting its way. No escape hatches, no alternative backends, no configuration flexibility. This opinionated approach eliminates the 80/20 "dark matter" problem in RDF development.
+unrdf is not a neutral toolkit—it's a **canon** for **reactive knowledge graphs**. When you import unrdf, you're accepting its way. No escape hatches, no alternative backends, no configuration flexibility. This opinionated approach eliminates the 80/20 "dark matter" problem in RDF development.
+
+**🎯 Knowledge Hooks** are the crown jewel of unrdf - enterprise-grade triggers that transform static knowledge graphs into intelligent, reactive systems. They provide deterministic, auditable actions with cryptographic provenance tracking.
 
 ### Core Principles
 
+- **🎯 One Hooks**: Knowledge Hooks are the only trigger system
 - **One Store**: N3.Store is the only memory model
 - **One Terms**: N3 DataFactory is the only term creation method
 - **One Prefixes**: Centralized prefix management
@@ -22,6 +25,38 @@ unrdf is not a neutral toolkit—it's a **canon**. When you import unrdf, you're
 - **One Validation**: Zod is the only runtime validation
 
 ## Quick Start
+
+### Knowledge Hooks (Primary API)
+
+```javascript
+import { initStore, defineHook, evaluateHook } from 'unrdf';
+
+// Initialize store with your RDF data
+const runApp = initStore(turtleData);
+
+runApp(async () => {
+  // Define a service health monitoring hook
+  const healthHook = defineHook({
+    id: 'ex:ServiceHealthMonitor',
+    select: 'SELECT ?service ?errorRate WHERE { ?service ex:errorRate ?errorRate }',
+    predicates: [
+      { kind: 'THRESHOLD', spec: { var: 'errorRate', op: '>', value: 0.02 } }
+    ],
+    combine: 'OR'
+  });
+
+  // Evaluate with cryptographic receipt
+  const receipt = await evaluateHook(healthHook, { persist: true });
+
+  if (receipt.fired) {
+    console.log('🚨 Service health issue detected!');
+    console.log('Evidence:', receipt.predicates);
+    console.log('Provenance:', receipt.provenance);
+  }
+});
+```
+
+### Traditional Composables (Secondary API)
 
 ```javascript
 import { useStore, useTerms, useGraph, useValidator, useZod } from 'unrdf';
@@ -61,29 +96,39 @@ console.log(validation.validated); // [{ name: "John Doe" }]
 
 ## Documentation Structure
 
-### Getting Started
+### 🎯 Knowledge Hooks (Primary)
+- **[Knowledge Hooks Guide](./guides/knowledge-hooks.md)** - Complete guide to the primary API
 - **[Getting Started Guide](./guides/getting-started.md)** - Complete introduction to unrdf
 - **[Advanced Patterns](./guides/advanced-patterns.md)** - Best practices and advanced usage
 
 ### API Reference
-- **[Composables API](./api/composables.md)** - Complete reference for all composables
+- **[Knowledge Hooks API](./api/knowledge-hooks.md)** - Primary API reference
+- **[Composables API](./api/composables.md)** - Secondary composables reference
 - **[Utilities API](./api/utilities.md)** - Helper functions for common operations
 
 ### Examples and Tutorials
+- **[Knowledge Hooks Examples](./examples/knowledge-hooks/)** - Primary API examples
 - **[Basic Usage Examples](./examples/basic-usage.mjs)** - Fundamental operations
 - **[Validation and Reasoning](./examples/validation-reasoning.mjs)** - Advanced features
 
 ### CLI Documentation
 - **[CLI Reference](./cli/README.md)** - Command-line interface usage
+- **[Knowledge Hooks CLI](./cli/knowledge-hooks.md)** - Hook management commands
 
-## Core Composables
+## Core APIs
 
-### Foundation
+### 🎯 Knowledge Hooks (Primary)
+- **`defineHook`** - Define reactive knowledge hooks
+- **`evaluateHook`** - Evaluate hooks with cryptographic receipts
+- **`initStore`** - Context management for hooks
+- **`useKnowledgeHooks`** - Composable hook interface
+
+### Foundation Composables (Secondary)
 - **`useStore`** - N3.Store management and operations
 - **`useTerms`** - RDF term creation and manipulation
 - **`usePrefixes`** - Prefix management and CURIE operations
 
-### Data Operations
+### Data Operations (Secondary)
 - **`useLists`** - RDF list operations
 - **`useGraph`** - High-level RDF operations and SPARQL queries
 - **`useTurtle`** - Turtle parsing and serialization
@@ -91,14 +136,16 @@ console.log(validation.validated); // [{ name: "John Doe" }]
 - **`useJsonLd`** - JSON-LD operations
 - **`useTurtleFS`** - File system operations for Turtle files
 
-### Advanced Features
+### Advanced Features (Secondary)
 - **`usePointer`** - Clownface-based graph traversal
 - **`useValidator`** - SHACL validation
 - **`useReasoner`** - EYE-based reasoning
 - **`useCanon`** - Canonicalization and isomorphism checking
 - **`useZod`** - Runtime validation for RDF-derived data
+- **`useTypes`** - RDF term type checking
+- **`useRDFExt`** - Advanced RDF dataset operations
 
-### Utilities
+### Utilities (Secondary)
 - **`useIRIs`** - IRI management and resolution
 - **`useCache`** - Caching operations
 - **`useDelta`** - Delta operations for RDF stores
@@ -106,12 +153,14 @@ console.log(validation.validated); // [{ name: "John Doe" }]
 
 ## Key Features
 
+- **🎯 Knowledge Hooks**: Enterprise-grade reactive triggers with cryptographic provenance
 - **Composable Architecture**: Focused, single-responsibility functions
+- **Cryptographic Provenance**: URDNA2015 canonical hashes for all operations
 - **Type Safety**: JSDoc + Zod for runtime validation
-- **Performance**: Optimized for common RDF operations
+- **Performance**: Sub-millisecond hook evaluation with optimized SPARQL
 - **Developer Experience**: Minimal boilerplate, maximum productivity
 - **Testing**: Comprehensive test suite with edge case coverage
-- **CLI Tools**: Command-line interface for common operations
+- **CLI Tools**: Command-line interface for hook management
 - **Error Handling**: Comprehensive error handling with descriptive messages
 - **Documentation**: Extensive documentation with examples
 

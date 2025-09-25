@@ -30,6 +30,69 @@ export const dumpTurtle = async (store, engine, prefixes = {}) => {
 };
 
 /**
+ * Quick Turtle dump with minimal prefixes
+ * @param {import('n3').Store} store - RDF store to serialize
+ * @param {Object} [options={}] - Optional options
+ * @param {Object} [options.prefixes] - Optional prefix mappings
+ * @param {number} [options.maxTriples] - Maximum number of triples to show
+ * @returns {Promise<string>} Turtle string for debugging
+ *
+ * @example
+ * const turtle = await debugTurtle(store, {
+ *   prefixes: { ex: "http://example.org/" },
+ *   maxTriples: 100
+ * });
+ * console.log(turtle);
+ */
+export const debugTurtle = async (store, options = {}) => {
+  const { prefixes = { ex: "http://example.org/" }, maxTriples } = options;
+
+  try {
+    const engine = { serializeTurtle: async (s, opts) => {
+      // Simple turtle serialization for debugging
+      const turtleOptions = {
+        prefixes,
+        format: "text/turtle",
+        ...opts
+      };
+
+      // For now, return a simple representation
+      // In a real implementation, this would use proper Turtle serialization
+      let turtle = "";
+      const quads = [...store];
+      const limitedQuads = maxTriples ? quads.slice(0, maxTriples) : quads;
+
+      for (const quad of limitedQuads) {
+        const subject = quad.subject.termType === "BlankNode"
+          ? `_:${quad.subject.value}`
+          : `<${quad.subject.value}>`;
+        const predicate = `<${quad.predicate.value}>`;
+        const object = quad.object.termType === "Literal"
+          ? `"${quad.object.value}"`
+          : quad.object.termType === "BlankNode"
+          ? `_:${quad.object.value}`
+          : `<${quad.object.value}>`;
+        const graph = quad.graph.termType === "DefaultGraph"
+          ? ""
+          : ` <${quad.graph.value}>`;
+
+        turtle += `${subject} ${predicate} ${object}${graph} .\n`;
+      }
+
+      if (maxTriples && quads.length > maxTriples) {
+        turtle += `# ... ${quads.length - maxTriples} more triples\n`;
+      }
+
+      return turtle;
+    }};
+
+    return await engine.serializeTurtle(store, { prefixes });
+  } catch (error) {
+    return `Error serializing to Turtle: ${error.message}`;
+  }
+};
+
+/**
  * Get store statistics
  * @param {import('n3').Store} store - RDF store to analyze
  * @returns {Object} Store statistics

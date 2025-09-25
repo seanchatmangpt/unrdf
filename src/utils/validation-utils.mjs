@@ -59,6 +59,16 @@ export const QuadSchema = z.object({
 });
 
 /**
+ * Zod schema for validating quad JSON representation
+ */
+export const QuadJSONSchema = z.object({
+  subject: z.string().url(),
+  predicate: z.string().url(),
+  object: z.string(),
+  graph: z.string().url().nullable().optional(),
+});
+
+/**
  * Validate an RDF IRI
  * @param {string} iri - IRI to validate
  * @returns {boolean} True if valid IRI
@@ -147,7 +157,7 @@ export function validateTerm(term) {
  * Validate an RDF quad
  * @param {Object} quad - Quad to validate
  * @returns {boolean} True if valid quad
- * 
+ *
  * @example
  * const isValid = validateQuad({
  *   subject: { termType: "NamedNode", value: "http://example.org/s" },
@@ -158,6 +168,27 @@ export function validateTerm(term) {
 export function validateQuad(quad) {
   try {
     QuadSchema.parse(quad);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Validate a quad JSON representation
+ * @param {Object} obj - JSON object with quad data
+ * @returns {boolean} True if valid quad JSON
+ *
+ * @example
+ * const isValid = validateQuadJSON({
+ *   subject: "http://example.org/s",
+ *   predicate: "http://example.org/p",
+ *   object: "hello"
+ * });
+ */
+export function validateQuadJSON(obj) {
+  try {
+    QuadJSONSchema.parse(obj);
     return true;
   } catch {
     return false;

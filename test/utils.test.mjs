@@ -27,7 +27,7 @@ import {
   hasSubject, getAllSubjects, getAllPredicates, getAllObjects, findByProperty, getFirstObject,
   countQuadsForSubject, getQuadsForSubject,
   // Validation utils
-  validateIRI, validateLiteral, validateNamedNode, validateBlankNode, validateTerm, validateQuad,
+  validateIRI, validateLiteral, validateNamedNode, validateBlankNode, validateTerm, validateQuad, validateQuadJSON,
   validateTurtle, validateNQuads, validateJSONLD, validateSPARQL, validateSHACL,
   validateStore, validateRDFConstraints, validateCommonPatterns, createValidationPipeline,
   // I/O utils
@@ -35,7 +35,7 @@ import {
   fileExists, getFileStats, ensureDir, createFileReadStream, createFileWriteStream,
   streamFileLines, copyFile, moveFile, deleteFile, listFiles, getFileExtension, detectRDFFormat,
   // Debug utils
-  previewQuads, dumpTurtle, getStoreStats, printStoreStats, deepInspect, logDeep, timeExecution,
+  previewQuads, dumpTurtle, debugTurtle, getStoreStats, printStoreStats, deepInspect, logDeep, timeExecution,
   createTimer, logMemoryUsage, createDebugLogger, prettyJSON, logJSON, createProgressTracker,
   measureQuadProcessing,
   // ID utils
@@ -330,6 +330,30 @@ describe("UNRDF Utils Test Suite", () => {
       expect(validateQuad(invalidQuad)).toBe(false);
     });
 
+    it("should validate quad JSON representations", () => {
+      const validQuadJSON = {
+        subject: "http://example.org/s",
+        predicate: "http://example.org/p",
+        object: "o"
+      };
+
+      const invalidQuadJSON = {
+        subject: "not-a-url",
+        predicate: "http://example.org/p",
+        object: "o"
+      };
+
+      const incompleteQuadJSON = {
+        subject: "http://example.org/s",
+        predicate: "http://example.org/p"
+        // missing object
+      };
+
+      expect(validateQuadJSON(validQuadJSON)).toBe(true);
+      expect(validateQuadJSON(invalidQuadJSON)).toBe(false);
+      expect(validateQuadJSON(incompleteQuadJSON)).toBe(false);
+    });
+
     it("should validate store for issues", () => {
       const result = validateStore(testStore);
       expect(result).toHaveProperty("valid");
@@ -468,6 +492,14 @@ describe("UNRDF Utils Test Suite", () => {
       expect(typeof logger.info).toBe("function");
       expect(typeof logger.error).toBe("function");
       expect(typeof logger.setLevel).toBe("function");
+    });
+
+    it("should generate debug Turtle output", async () => {
+      const turtle = await debugTurtle(testStore, { maxTriples: 3 });
+      expect(typeof turtle).toBe("string");
+      // Should contain Turtle-like content
+      expect(turtle).toContain("http://example.org/person1");
+      expect(turtle).toContain("http://example.org/person2");
     });
 
     it("should pretty print JSON", () => {

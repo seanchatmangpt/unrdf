@@ -21,7 +21,11 @@
     "nitro:preview": "nitro preview",
     "test": "vitest run --config vitest.config.mjs",
     "test:watch": "vitest --config vitest.config.mjs --watch",
-    "test:ui": "vitest --config vitest.config.mjs --ui"
+    "test:ui": "vitest --config vitest.config.mjs --ui",
+    "test:integration": "vitest run --config test/integration.config.mjs",
+    "test:integration:watch": "vitest --config test/integration.config.mjs --watch",
+    "test:integration:coverage": "vitest run --config test/integration.config.mjs --coverage",
+    "test:integration:ui": "vitest --config test/integration.config.mjs --ui"
   },
   "dependencies": {
     "citty-test-utils": "^0.5.1",
@@ -29,7 +33,8 @@
     "express": "^5.1.0",
     "nitro": "^2.2.28",
     "unrdf": "file:../",
-    "vitest": "^3.2.4"
+    "vitest": "^3.2.4",
+    "ws": "^8.18.3"
   },
   "devDependencies": {
     "@vitest/ui": "^3.2.4"

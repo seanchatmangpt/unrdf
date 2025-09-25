@@ -15,13 +15,15 @@ import {
   useStore, useGraph, useTurtle, useValidator, 
   useZod, useJSONLD, useMetrics, useDelta, usePrefixes
 } from './composables/index.mjs';
-import { 
+import {
   generateId, generateUUID, generateHashId,
   expandCurie, shrinkIri
 } from './utils/index.mjs';
 import { readFile, writeFile, access } from 'node:fs/promises';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { defineHook, evaluateHook } from './hooks.mjs';
+import * as hookCommands from './cli/knowledge-hooks.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -705,20 +707,20 @@ ex:person2 a foaf:Person ;
       async run(ctx) {
         const delta = useDelta();
         const turtle = await useTurtle();
-        
+
         const sourceData = await readFile(ctx.args.source, 'utf-8');
         const targetData = await readFile(ctx.args.target, 'utf-8');
-        
+
         const sourceQuads = await turtle.parse(sourceData);
         const targetQuads = await turtle.parse(targetData);
-        
+
         const diff = delta.diff(sourceQuads, targetQuads);
-        
+
         console.log('📊 Dataset Comparison:');
         console.log(`  - Added triples: ${diff.added.length}`);
         console.log(`  - Removed triples: ${diff.removed.length}`);
         console.log(`  - Unchanged triples: ${diff.unchanged.length}`);
-        
+
         if (diff.added.length > 0) {
           console.log('\n➕ Added triples:');
           for (const quad of diff.added.slice(0, 5)) {
@@ -728,7 +730,7 @@ ex:person2 a foaf:Person ;
             console.log(`  ... and ${diff.added.length - 5} more`);
           }
         }
-        
+
         if (diff.removed.length > 0) {
           console.log('\n➖ Removed triples:');
           for (const quad of diff.removed.slice(0, 5)) {
@@ -738,7 +740,7 @@ ex:person2 a foaf:Person ;
             console.log(`  ... and ${diff.removed.length - 5} more`);
           }
         }
-        
+
         if (ctx.args.output) {
           const report = {
             summary: {
@@ -760,6 +762,155 @@ ex:person2 a foaf:Person ;
           await writeFile(ctx.args.output, JSON.stringify(report, null, 2));
           console.log(`\n📄 Delta report written to ${ctx.args.output}`);
         }
+      }
+    }),
+
+    hook: defineCommand({
+      meta: {
+        name: 'hook',
+        description: 'Knowledge Hooks management and evaluation'
+      },
+      subCommands: {
+        eval: defineCommand({
+          meta: {
+            name: 'eval',
+            description: 'Evaluate a Knowledge Hook'
+          },
+          args: {
+            hook: {
+              type: 'positional',
+              description: 'Path to hook definition file or hook ID',
+              required: true
+            },
+            data: {
+              type: 'string',
+              description: 'Path to RDF data directory or file'
+            },
+            persist: {
+              type: 'boolean',
+              description: 'Persist receipts and baselines',
+              default: true
+            },
+            output: {
+              type: 'string',
+              description: 'Output format (json, jsonld, nquads, turtle)',
+              default: 'json'
+            }
+          },
+          async run(ctx) {
+            await hookCommands.evalHook(ctx.args);
+          }
+        }),
+
+        create: defineCommand({
+          meta: {
+            name: 'create',
+            description: 'Create a new hook definition from template'
+          },
+          args: {
+            output: {
+              type: 'positional',
+              description: 'Output file path',
+              required: true
+            },
+            template: {
+              type: 'string',
+              description: 'Template type (health, compliance, drift)',
+              default: 'health'
+            }
+          },
+          async run(ctx) {
+            await hookCommands.createHook(ctx.args);
+          }
+        }),
+
+        templates: defineCommand({
+          meta: {
+            name: 'templates',
+            description: 'List available hook templates'
+          },
+          async run() {
+            hookCommands.listTemplates();
+          }
+        }),
+
+        validate: defineCommand({
+          meta: {
+            name: 'validate',
+            description: 'Validate a hook definition'
+          },
+          args: {
+            hook: {
+              type: 'positional',
+              description: 'Path to hook definition file',
+              required: true
+            }
+          },
+          async run(ctx) {
+            await hookCommands.validateHook(ctx.args);
+          }
+        }),
+
+        plan: defineCommand({
+          meta: {
+            name: 'plan',
+            description: 'Show evaluation plan for a hook (without execution)'
+          },
+          args: {
+            hook: {
+              type: 'positional',
+              description: 'Path to hook definition file or hook ID',
+              required: true
+            }
+          },
+          async run(ctx) {
+            try {
+              const hookContent = await readFile(ctx.args.hook, 'utf-8');
+              const hookConfig = JSON.parse(hookContent);
+              const hook = defineHook(hookConfig);
+
+              console.log('🔍 Hook Evaluation Plan:');
+              console.log(`  Hook ID: ${hook.id}`);
+              console.log(`  Name: ${hook.name || 'N/A'}`);
+              console.log(`  Description: ${hook.description || 'N/A'}`);
+              console.log(`  Combine Logic: ${hook.combine}`);
+              console.log(`  Predicates: ${hook.predicates.length}`);
+
+              console.log('\n🎯 Predicate Plan:');
+              hook.predicates.forEach((pred, i) => {
+                console.log(`  ${i + 1}. ${pred.kind}: ${JSON.stringify(pred.spec)}`);
+              });
+
+              console.log('\n📊 Query Plan:');
+              if (hook.select) {
+                console.log(`  Type: SPARQL SELECT`);
+                console.log(`  Query: ${hook.select.substring(0, 100)}${hook.select.length > 100 ? '...' : ''}`);
+              } else {
+                console.log(`  Type: Direct ASK (no base query)`);
+              }
+
+            } catch (error) {
+              console.error(`❌ Plan failed: ${error.message}`);
+              process.exit(1);
+            }
+          }
+        }),
+
+        stats: defineCommand({
+          meta: {
+            name: 'stats',
+            description: 'Show hook evaluation statistics'
+          },
+          args: {
+            receipts: {
+              type: 'string',
+              description: 'Path to receipts directory'
+            }
+          },
+          async run(ctx) {
+            await hookCommands.showStats(ctx.args);
+          }
+        })
       }
     })
   }
