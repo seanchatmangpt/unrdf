@@ -29,22 +29,13 @@ export * from "./context/index.mjs";
 export { useGraph } from "./composables/use-graph.mjs";
 export { useTurtle } from "./composables/use-turtle.mjs";
 export { useTerms } from "./composables/use-terms.mjs";
-export { usePrefixes } from "./composables/use-prefixes.mjs";
-export { useLists } from "./composables/use-lists.mjs";
-
-// I/O composables
-export { useNQuads } from "./composables/use-n-quads.mjs";
 
 // Validation and reasoning
-export { useValidator } from "./composables/use-validator.mjs";
 export { useReasoner } from "./composables/use-reasoner.mjs";
 export { useCanon } from "./composables/use-canon.mjs";
 
 // Type safety and validation
 export { useZod } from "./composables/use-zod.mjs";
-
-// Knowledge Hooks
-export { useKnowledgeHooks, defineHook, evaluateHook } from "./composables/use-knowledge-hooks.mjs";
 
 // Change and provenance
 export { useDelta } from "./composables/use-delta.mjs";

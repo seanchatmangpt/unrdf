@@ -1,0 +1,46 @@
+@startuml Knowledge Hook Evaluation Flow
+
+title Knowledge Hook Evaluation Flow
+
+participant "EventBus" as EventBus
+participant "KnowledgeHook" as KH
+participant "evaluateHook" as Eval
+participant "useGraph" as Graph
+participant "RdfEngine" as Engine
+participant "Test" as Test
+
+== Knowledge Hook Handler Execution ==
+EventBus -> KH: call handler(payload)
+KH -> Eval: evaluateHook(hook, payload)
+Eval -> Eval: hook._validate()
+Eval -> Graph: useGraph()
+Graph -> Engine: get engine instance
+Eval -> Graph: graph.select(hook.query)
+Graph -> Engine: engine.query(sparql, options)
+Engine -> Engine: _queryBindings(sparql, ctx)
+Engine -> Engine: _patternMatch(sparql, 'bindings')
+Engine -> Engine: parse WHERE clause
+Engine -> Engine: store.getQuads(subject, predicate, object)
+Engine -> Graph: return query results
+Graph -> Eval: return query results
+
+Eval -> Eval: evaluate predicates
+loop for each predicate
+    alt predicate.kind === 'COUNT'
+        Eval -> Eval: evaluateCountPredicate(predicate, queryResults)
+        Eval -> Eval: count = queryResults.length
+        Eval -> Eval: compareValues(count, operator, value)
+    else predicate.kind === 'THRESHOLD'
+        Eval -> Eval: evaluateThresholdPredicate(predicate, queryResults)
+        Eval -> Eval: extract numeric values
+        Eval -> Eval: calculate average
+        Eval -> Eval: compareValues(average, operator, value)
+    end
+end
+
+Eval -> Eval: combine results (AND/OR)
+Eval -> KH: return evaluation result
+KH -> Test: hook.options.callback(result, payload)
+Test -> Test: push to knowledgeEvents array
+
+@enduml

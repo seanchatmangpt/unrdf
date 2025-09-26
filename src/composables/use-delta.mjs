@@ -23,15 +23,15 @@ import { useStoreContext } from "../context/index.mjs";
  * // Initialize store context first
  * const runApp = initStore();
  * 
- * runApp(async () => {
+ * runApp(() => {
  *   const delta = useDelta();
  * 
  *   // Compare two graphs
- *   const result = await delta.compare(sourceData, targetData);
+ *   const result = delta.compare(sourceData, targetData);
  *   console.log(`Added: ${result.added}, Removed: ${result.removed}`);
  * 
  *   // Apply changes to current store
- *   await delta.apply(result);
+ *   delta.apply(result);
  * });
  */
 export function useDelta(options = {}) {
@@ -92,17 +92,17 @@ export function useDelta(options = {}) {
      * 
      * @example
      * const newStore = engine.parseTurtle(newTurtleData);
-     * const result = await delta.syncWith(newStore);
+     * const result = delta.syncWith(newStore);
      * console.log(`Synced: +${result.added} -${result.removed}`);
      */
-    async syncWith(newStore, options = {}) {
+    syncWith(newStore, options = {}) {
       const { dryRun = false } = options;
       
       // Get the differences
       const changes = this.compareWith(newStore);
       
       // Apply the changes
-      const result = await this.apply(changes, { dryRun });
+      const result = this.apply(changes, { dryRun });
       
       return {
         ...result,
@@ -117,13 +117,13 @@ export function useDelta(options = {}) {
      * @param {Store} changes.removed - Quads to remove
      * @param {Object} [options] - Apply options
      * @param {boolean} [options.dryRun=false] - Don't actually apply changes
-     * @returns {Promise<Object>} Apply result
+     * @returns {Object} Apply result
      * 
      * @example
-     * const result = await delta.apply(changes);
+     * const result = delta.apply(changes);
      * console.log(`Applied: +${result.added} -${result.removed}`);
      */
-    async apply(changes, options = {}) {
+    apply(changes, options = {}) {
       const { dryRun = false } = options;
       const { added, removed } = changes;
       
@@ -295,13 +295,13 @@ export function useDelta(options = {}) {
      * @param {Object} changes - Changes object
      * @param {Object} [options] - Patch options
      * @param {string} [options.format="Turtle"] - Output format
-     * @returns {Promise<Object>} Patch object
+     * @returns {Object} Patch object
      * 
      * @example
-     * const patch = await delta.createPatch(changes);
+     * const patch = delta.createPatch(changes);
      * console.log(`Patch: +${patch.addedCount} -${patch.removedCount}`);
      */
-    async createPatch(changes, options = {}) {
+    createPatch(changes, options = {}) {
       const { format = "Turtle" } = options;
       const { added, removed } = changes;
       
@@ -309,11 +309,11 @@ export function useDelta(options = {}) {
       let removedData = "";
       
       if (format === "Turtle") {
-        addedData = await engine.serializeTurtle(added);
-        removedData = await engine.serializeTurtle(removed);
+        addedData = engine.serializeTurtle(added);
+        removedData = engine.serializeTurtle(removed);
       } else if (format === "N-Quads") {
-        addedData = await engine.serializeNQuads(added);
-        removedData = await engine.serializeNQuads(removed);
+        addedData = engine.serializeNQuads(added);
+        removedData = engine.serializeNQuads(removed);
       } else {
         throw new Error(`Unsupported format: ${format}`);
       }
@@ -334,12 +334,12 @@ export function useDelta(options = {}) {
      * @param {string} patch.added - Added data
      * @param {string} patch.removed - Removed data
      * @param {Object} [options] - Apply options
-     * @returns {Promise<Object>} Apply result
+     * @returns {Object} Apply result
      * 
      * @example
-     * const result = await delta.applyPatch(patch);
+     * const result = delta.applyPatch(patch);
      */
-    async applyPatch(patch, options = {}) {
+    applyPatch(patch, options = {}) {
       const { added, removed, format = "Turtle" } = patch;
       
       // Parse patch data using the engine
@@ -352,7 +352,7 @@ export function useDelta(options = {}) {
         : engine.parseNQuads(removed);
       
       // Apply changes
-      return await this.apply({ added: addedStore, removed: removedStore }, options);
+      return this.apply({ added: addedStore, removed: removedStore }, options);
     },
 
     /**

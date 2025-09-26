@@ -28,10 +28,10 @@ import { useStoreContext } from "../context/index.mjs";
  *   const canon = useCanon();
  *   
  *   // Canonicalize the context store
- *   const canonical = await canon.canonicalize(store);
+ *   const canonical = canon.canonicalize(store);
  *   
  *   // Check if two stores are isomorphic
- *   const isIsomorphic = await canon.isIsomorphic(store1, store2);
+ *   const isIsomorphic = canon.isIsomorphic(store1, store2);
  * });
  * 
  * @throws {Error} If store context is not initialized
@@ -56,12 +56,12 @@ export function useCanon(options = {}) {
      *
      * @example
      * const canon = useCanon();
-     * const canonical = await canon.canonicalize();
+     * const canonical = canon.canonicalize();
      * console.log("Canonical form:", canonical);
      *
      * @note This is a READER operation - use sparingly
      */
-    async canonicalize(options = {}) {
+    canonicalize(options = {}) {
       return storeContext.canonicalize(options);
     },
 
@@ -74,14 +74,14 @@ export function useCanon(options = {}) {
      *
      * @example
      * const canon = useCanon();
-     * const isIsomorphic = await canon.isIsomorphic(store1, store2);
+     * const isIsomorphic = canon.isIsomorphic(store1, store2);
      * if (isIsomorphic) {
      *   console.log("Stores are logically equivalent");
      * }
      *
      * @note This is a READER operation - use sparingly
      */
-    async isIsomorphic(store1, store2, options = {}) {
+    isIsomorphic(store1, store2, options = {}) {
       return storeContext.isIsomorphic(store1, store2, options);
     },
 
@@ -93,33 +93,33 @@ export function useCanon(options = {}) {
      *
      * @example
      * const canon = useCanon();
-     * const hash = await canon.hash();
+     * const hash = canon.hash();
      * console.log("Store hash:", hash);
      *
      * @note This is a READER operation - use sparingly
      */
-    async hash(options = {}) {
+    hash(options = {}) {
       return storeContext.hash(options);
     },
 
     /**
      * Check if multiple stores are all isomorphic
      * @param {Array<Store|Object>} stores - Array of stores to check
-     * @returns {Promise<boolean>} True if all stores are isomorphic
+     * @returns {boolean} True if all stores are isomorphic
      * 
      * @example
-     * const allIsomorphic = await canon.allIsomorphic([store1, store2, store3]);
+     * const allIsomorphic = canon.allIsomorphic([store1, store2, store3]);
      * if (allIsomorphic) {
      *   console.log("All stores are equivalent");
      * }
      */
-    async allIsomorphic(stores) {
+    allIsomorphic(stores) {
       if (stores.length < 2) return true;
       
       const first = stores[0].store || stores[0];
       for (let i = 1; i < stores.length; i++) {
         const current = stores[i].store || stores[i];
-        if (!(await engine.isIsomorphic(first, current))) {
+        if (!engine.isIsomorphic(first, current)) {
           return false;
         }
       }
@@ -130,19 +130,19 @@ export function useCanon(options = {}) {
      * Find stores that are isomorphic to a reference store
      * @param {Store|Object} referenceStore - Reference store
      * @param {Array<Store|Object>} stores - Array of stores to check
-     * @returns {Promise<Array<{store: Store, index: number}>>} Array of isomorphic stores
+     * @returns {Array<{store: Store, index: number}>} Array of isomorphic stores
      * 
      * @example
-     * const isomorphic = await canon.findIsomorphic(referenceStore, [store1, store2, store3]);
+     * const isomorphic = canon.findIsomorphic(referenceStore, [store1, store2, store3]);
      * console.log(`Found ${isomorphic.length} isomorphic stores`);
      */
-    async findIsomorphic(referenceStore, stores) {
+    findIsomorphic(referenceStore, stores) {
       const reference = referenceStore.store || referenceStore;
       const results = [];
       
       for (const [i, store] of stores.entries()) {
         const current = store.store || store;
-        if (await engine.isIsomorphic(reference, current)) {
+        if (engine.isIsomorphic(reference, current)) {
           results.push({ store: store, index: i });
         }
       }
@@ -153,13 +153,13 @@ export function useCanon(options = {}) {
     /**
      * Group stores by isomorphism
      * @param {Array<Store|Object>} stores - Array of stores to group
-     * @returns {Promise<Array<Array<{store: Store, index: number}>>>} Groups of isomorphic stores
+     * @returns {Array<Array<{store: Store, index: number}>>} Groups of isomorphic stores
      * 
      * @example
-     * const groups = await canon.groupByIsomorphism([store1, store2, store3, store4]);
+     * const groups = canon.groupByIsomorphism([store1, store2, store3, store4]);
      * console.log(`Found ${groups.length} distinct groups`);
      */
-    async groupByIsomorphism(stores) {
+    groupByIsomorphism(stores) {
       const groups = [];
       const processed = new Set();
       
@@ -174,7 +174,7 @@ export function useCanon(options = {}) {
           if (processed.has(j)) continue;
           
           const other = stores[j].store || stores[j];
-          if (await engine.isIsomorphic(current, other)) {
+          if (engine.isIsomorphic(current, other)) {
             group.push({ store: stores[j], index: j });
             processed.add(j);
           }
@@ -189,16 +189,16 @@ export function useCanon(options = {}) {
     /**
      * Get canonical statistics for a store
      * @param {Store|Object} store - Store to analyze
-     * @returns {Promise<Object>} Canonical statistics
+     * @returns {Object} Canonical statistics
      * 
      * @example
-     * const stats = await canon.getStats(store);
+     * const stats = canon.getStats(store);
      * console.log(`Canonical size: ${stats.canonicalSize}, Hash: ${stats.hash}`);
      */
-    async getStats(store) {
+    getStats(store) {
       const storeInstance = store.store || store;
-      const canonical = await this.canonicalize(store);
-      const hash = await this.hash(store);
+      const canonical = this.canonicalize(store);
+      const hash = this.hash(store);
       
       return {
         originalSize: storeInstance.size,
@@ -212,22 +212,20 @@ export function useCanon(options = {}) {
      * Compare two stores and return detailed comparison
      * @param {Store|Object} store1 - First store
      * @param {Store|Object} store2 - Second store
-     * @returns {Promise<Object>} Detailed comparison result
+     * @returns {Object} Detailed comparison result
      * 
      * @example
-     * const comparison = await canon.compare(store1, store2);
+     * const comparison = canon.compare(store1, store2);
      * console.log(`Isomorphic: ${comparison.isomorphic}, Hash match: ${comparison.hashMatch}`);
      */
-    async compare(store1, store2) {
+    compare(store1, store2) {
       const s1 = store1.store || store1;
       const s2 = store2.store || store2;
       
-      const [canonical1, canonical2, hash1, hash2] = await Promise.all([
-        this.canonicalize(store1),
-        this.canonicalize(store2),
-        this.hash(store1),
-        this.hash(store2)
-      ]);
+      const canonical1 = this.canonicalize(store1);
+      const canonical2 = this.canonicalize(store2);
+      const hash1 = this.hash(store1);
+      const hash2 = this.hash(store2);
       
       const isomorphic = canonical1 === canonical2;
       const hashMatch = hash1 === hash2;
@@ -249,22 +247,22 @@ export function useCanon(options = {}) {
      * Create a canonical store from multiple stores (union + canonicalize)
      * @param {Array<Store|Object>} stores - Array of stores to merge
      * @param {Object} [options] - Canonicalization options
-     * @returns {Promise<Object>} New useGraph instance with canonical store
+     * @returns {Object} New useGraph instance with canonical store
      * 
      * @example
-     * const canonical = await canon.createCanonicalStore([store1, store2, store3]);
+     * const canonical = canon.createCanonicalStore([store1, store2, store3]);
      * console.log(`Canonical store has ${canonical.size} triples`);
      */
-    async createCanonicalStore(stores, options = {}) {
+    createCanonicalStore(stores, options = {}) {
       const storeInstances = stores.map(s => s.store || s);
       const unionStore = engine.union(...storeInstances);
-      const canonical = await this.canonicalize(unionStore, options);
+      const canonical = this.canonicalize(unionStore, options);
       const canonicalStore = engine.parseNQuads(canonical);
       
       return {
         store: canonicalStore,
         canonical,
-        hash: await this.hash(canonicalStore),
+        hash: this.hash(canonicalStore),
         size: canonicalStore.size
       };
     },
@@ -323,18 +321,18 @@ export function useCanon(options = {}) {
     /**
      * Get canonicalization statistics
      * @param {Store|Object} store - Store to analyze
-     * @returns {Promise<Object>} Canonicalization statistics
+     * @returns {Object} Canonicalization statistics
      * 
      * @example
-     * const stats = await canon.getCanonicalizationStats(store);
+     * const stats = canon.getCanonicalizationStats(store);
      * console.log(`Original size: ${stats.originalSize}, Canonical size: ${stats.canonicalSize}`);
      */
-    async getCanonicalizationStats(store) {
+    getCanonicalizationStats(store) {
       const storeInstance = store.store || store;
       const startTime = performance.now();
       
       try {
-        const canonical = await this.canonicalize(storeInstance);
+        const canonical = this.canonicalize(storeInstance);
         const endTime = performance.now();
         
         return {

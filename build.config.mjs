@@ -6,6 +6,7 @@ export default defineBuildConfig({
     "./src/composables/index.mjs",
     "./src/utils/index.mjs", 
     "./src/engines/index.mjs",
+    "./src/knowledge-engine.mjs",
     "./src/cli.mjs"
   ],
 });

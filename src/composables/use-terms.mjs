@@ -27,7 +27,7 @@ const { namedNode, literal, blankNode, quad, defaultGraph } = DataFactory;
  * // Initialize store context first
  * const runApp = initStore();
  * 
- * await runApp(async () => {
+ * runApp(() => {
  *   const terms = useTerms({ baseIRI: "https://example.org/" });
  * 
  *   // Create named nodes with base IRI resolution

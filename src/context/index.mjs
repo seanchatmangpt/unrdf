@@ -75,7 +75,12 @@ export function createStoreContext(initialQuads = [], options = {}) {
   }
 
   const engine = new RdfEngine(options);
-  const store = new Store(initialQuads);
+  const store = engine.getStore();
+  
+  // Add initial quads to the engine's store
+  if (initialQuads.length > 0) {
+    store.addQuads(initialQuads);
+  }
 
   const context = {
     engine,
@@ -207,10 +212,10 @@ export function createStoreContext(initialQuads = [], options = {}) {
       const { format = "Turtle", prefixes } = options;
 
       if (format === "Turtle") {
-        return await this.engine.serializeTurtle(store, { prefixes });
+        return this.engine.serializeTurtle(store, { prefixes });
       }
       if (format === "N-Quads") {
-        return await this.engine.serializeNQuads(store);
+        return this.engine.serializeNQuads(store);
       }
 
       throw new Error(`[StoreContext] Unsupported serialization format: ${format}`);
@@ -238,12 +243,12 @@ export function createStoreContext(initialQuads = [], options = {}) {
      * @param {number} [options.limit] - Result limit
      * @param {AbortSignal} [options.signal] - Abort signal
      * @param {boolean} [options.deterministic] - Enable deterministic results
-     * @returns {Promise<Object>} Query result
+     * @returns {Object} Query result
      *
      * @throws {Error} If sparql is not a valid query
      * @note This is a READER operation - use sparingly
      */
-    async query(sparql, options = {}) {
+    query(sparql, options = {}) {
       if (typeof sparql !== "string" || !sparql.trim()) {
         throw new Error("query: non-empty SPARQL required");
       }
@@ -272,7 +277,7 @@ export function createStoreContext(initialQuads = [], options = {}) {
       if (/^(WITH|INSERT|DELETE|LOAD|CREATE|DROP|CLEAR|MOVE|COPY|ADD)$/i.test(kind)) {
         // Execute UPDATE operations using the engine
         try {
-          const result = await this.engine.query(sparql, options);
+          const result = this.engine.query(sparql, options);
           return result;
         } catch (error) {
           throw new Error(`UPDATE operation failed: ${error.message}`);
@@ -286,7 +291,7 @@ export function createStoreContext(initialQuads = [], options = {}) {
 
       // Use the engine's query method - it handles all query types
       try {
-        const result = await this.engine.query(sparql, options);
+        const result = this.engine.query(sparql, options);
         
         // The engine returns results in a different format, so we need to adapt
         if (result.type === "select") {
@@ -379,10 +384,10 @@ export function createStoreContext(initialQuads = [], options = {}) {
         const canonize = rdfCanonize.canonize;
 
         // Convert store to N-Quads format for canonicalization
-        const nquads = await this.serialize({ format: 'N-Quads' });
+        const nquads = this.serialize({ format: 'N-Quads' });
 
         // Canonicalize the N-Quads
-        const canonical = await canonize(nquads, {
+        const canonical = canonize(nquads, {
           algorithm: 'URDNA2015',
           format: 'application/n-quads',
           produceGeneralizedRdf: false
@@ -416,16 +421,14 @@ export function createStoreContext(initialQuads = [], options = {}) {
         const canonize = rdfCanonize.canonize;
 
         // Canonicalize both stores
-        const [canonical1, canonical2] = await Promise.all([
-          canonize(await this.serialize({ format: 'N-Quads' }), {
-            algorithm: 'URDNA2015',
-            format: 'application/n-quads'
-          }),
-          canonize(store2 ? await this.serializeStore(store2, { format: 'N-Quads' }) : '', {
-            algorithm: 'URDNA2015',
-            format: 'application/n-quads'
-          })
-        ]);
+        const canonical1 = canonize(this.serialize({ format: 'N-Quads' }), {
+          algorithm: 'URDNA2015',
+          format: 'application/n-quads'
+        });
+        const canonical2 = canonize(store2 ? this.serializeStore(store2, { format: 'N-Quads' }) : '', {
+          algorithm: 'URDNA2015',
+          format: 'application/n-quads'
+        });
 
         return canonical1 === canonical2;
       } catch (error) {
@@ -446,7 +449,7 @@ export function createStoreContext(initialQuads = [], options = {}) {
       const { algorithm = 'SHA-256' } = options;
 
       try {
-        const canonical = await this.canonicalize();
+        const canonical = this.canonicalize();
         const hash = crypto.createHash(algorithm.toLowerCase());
         hash.update(canonical);
         return hash.digest('hex');
@@ -463,10 +466,10 @@ export function createStoreContext(initialQuads = [], options = {}) {
       const { format = "Turtle", prefixes } = options;
 
       if (format === "Turtle") {
-        return await this.engine.serializeTurtle(store, { prefixes });
+        return this.engine.serializeTurtle(store, { prefixes });
       }
       if (format === "N-Quads") {
-        return await this.engine.serializeNQuads(store);
+        return this.engine.serializeNQuads(store);
       }
 
       throw new Error(`Unsupported serialization format: ${format}`);
@@ -488,7 +491,7 @@ export function createStoreContext(initialQuads = [], options = {}) {
  * // At the root of your application
  * const runApp = initStore([], { baseIRI: 'http://example.org/' });
  * 
- * await runApp(async () => {
+ * runApp(() => {
  *   // Your application code here
  *   const store = useStoreContext();
  *   // All composables will use the same store

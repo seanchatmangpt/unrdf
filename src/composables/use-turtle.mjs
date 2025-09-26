@@ -10,7 +10,7 @@
  * @license MIT
  */
 
-import { readdir, readFile, writeFile, mkdir, stat } from "node:fs/promises";
+import { readdirSync, readFileSync, writeFileSync, mkdirSync, statSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { useStoreContext } from "../context/index.mjs";
 
@@ -22,21 +22,21 @@ import { useStoreContext } from "../context/index.mjs";
  * @param {string} [options.baseIRI] - Base IRI for parsing
  * @param {boolean} [options.autoLoad=true] - Automatically load all .ttl files
  * @param {boolean} [options.validateOnLoad=true] - Validate files on load
- * @returns {Promise<Object>} Turtle file system interface
+ * @returns {Object} Turtle file system interface
  * 
  * @example
- * const turtle = await useTurtle('./my-graph');
+ * const turtle = useTurtle('./my-graph');
  * 
  * // Load all .ttl files
- * await turtle.loadAll();
+ * turtle.loadAll();
  * 
  * // Save a specific graph
- * await turtle.save('my-graph', store);
+ * turtle.save('my-graph', store);
  * 
  * // Load a specific file
- * const store = await turtle.load('my-graph');
+ * const store = turtle.load('my-graph');
  */
-export async function useTurtle(graphDir = "./graph", options = {}) {
+export function useTurtle(graphDir = "./graph", options = {}) {
   const {
     baseIRI = "http://example.org/",
     autoLoad = true,
@@ -49,7 +49,7 @@ export async function useTurtle(graphDir = "./graph", options = {}) {
   
   // Ensure directory exists
   try {
-    await mkdir(graphDir, { recursive: true });
+    mkdirSync(graphDir, { recursive: true });
   } catch (error) {
     if (error.code !== "EEXIST") {
       throw error;
@@ -86,13 +86,13 @@ export async function useTurtle(graphDir = "./graph", options = {}) {
      * @param {Object} [options] - Load options
      * @param {boolean} [options.merge=true] - Merge with existing store
      * @param {boolean} [options.validate] - Validate files on load
-     * @returns {Promise<Object>} Load result
+     * @returns {Object} Load result
      */
-    async loadAll(options = {}) {
+    loadAll(options = {}) {
       const { merge = true, validate = validateOnLoad } = options;
       
       try {
-        const files = await readdir(graphDir);
+        const files = readdirSync(graphDir);
         const ttlFiles = files.filter(f => f.endsWith(".ttl"));
         
         if (ttlFiles.length === 0) {
@@ -105,7 +105,7 @@ export async function useTurtle(graphDir = "./graph", options = {}) {
         for (const fileName of ttlFiles) {
           try {
             const filePath = join(graphDir, fileName);
-            const content = await readFile(filePath, "utf8");
+            const content = readFileSync(filePath, "utf8");
             
             if (validate) {
               // Basic validation - try to parse
@@ -145,14 +145,14 @@ export async function useTurtle(graphDir = "./graph", options = {}) {
      * @param {Object} [options] - Load options
      * @param {boolean} [options.merge=true] - Merge with existing store
      * @param {boolean} [options.validate] - Validate file on load
-     * @returns {Promise<Store>} Loaded store
+     * @returns {Store} Loaded store
      */
-    async load(fileName, options = {}) {
+    load(fileName, options = {}) {
       const { merge = true, validate = validateOnLoad } = options;
       const filePath = join(graphDir, `${fileName}.ttl`);
       
       try {
-        const content = await readFile(filePath, "utf8");
+        const content = readFileSync(filePath, "utf8");
         
         if (validate) {
           engine.parseTurtle(content, { baseIRI });
@@ -184,9 +184,9 @@ export async function useTurtle(graphDir = "./graph", options = {}) {
      * @param {Object} [options] - Save options
      * @param {Object} [options.prefixes] - Prefix mappings
      * @param {boolean} [options.createBackup=false] - Create backup of existing file
-     * @returns {Promise<Object>} Save result
+     * @returns {Object} Save result
      */
-    async save(fileName, options = {}) {
+    save(fileName, options = {}) {
       const { prefixes, createBackup = false } = options;
       const filePath = join(graphDir, `${fileName}.ttl`);
       
@@ -194,20 +194,20 @@ export async function useTurtle(graphDir = "./graph", options = {}) {
         // Create backup if requested and file exists
         if (createBackup) {
           try {
-            await stat(filePath);
+            statSync(filePath);
             const backupPath = `${filePath}.backup`;
-            const content = await readFile(filePath, "utf8");
-            await writeFile(backupPath, content, "utf8");
+            const content = readFileSync(filePath, "utf8");
+            writeFileSync(backupPath, content, "utf8");
             console.log(`📋 Created backup: ${fileName}.ttl.backup`);
           } catch {
             // File doesn't exist, no backup needed
           }
         }
         
-        const turtleContent = await engine.serializeTurtle(storeContext.store, { prefixes });
-        await writeFile(filePath, turtleContent, "utf8");
+        const turtleContent = engine.serializeTurtle(storeContext.store, { prefixes });
+        writeFileSync(filePath, turtleContent, "utf8");
         
-        const stats = await stat(filePath);
+        const stats = statSync(filePath);
         console.log(`💾 Saved: ${fileName}.ttl (${stats.size} bytes)`);
         
         return { path: filePath, bytes: stats.size };
@@ -220,20 +220,20 @@ export async function useTurtle(graphDir = "./graph", options = {}) {
     /**
      * Save the current store to default.ttl
      * @param {Object} [options] - Save options
-     * @returns {Promise<Object>} Save result
+     * @returns {Object} Save result
      */
-    async saveDefault(options = {}) {
+    saveDefault(options = {}) {
       return this.save("default", { ...options, createBackup: true });
     },
 
     /**
      * Load default.ttl file
      * @param {Object} [options] - Load options
-     * @returns {Promise<Store|null>} Loaded store or null if not found
+     * @returns {Store|null} Loaded store or null if not found
      */
-    async loadDefault(options = {}) {
+    loadDefault(options = {}) {
       try {
-        return await this.load("default", options);
+        return this.load("default", options);
       } catch (error) {
         if (error.message.includes("File not found")) {
           console.log(`ℹ️ No default.ttl file found in ${graphDir}`);
@@ -245,11 +245,11 @@ export async function useTurtle(graphDir = "./graph", options = {}) {
 
     /**
      * List all .ttl files in the graph directory
-     * @returns {Promise<Array<string>>} Array of file names
+     * @returns {Array<string>} Array of file names
      */
-    async listFiles() {
+    listFiles() {
       try {
-        const files = await readdir(graphDir);
+        const files = readdirSync(graphDir);
         const ttlFiles = files.filter(f => f.endsWith(".ttl"));
         console.log(`📁 Found ${ttlFiles.length} .ttl files in ${graphDir}`);
         return ttlFiles;
@@ -282,9 +282,9 @@ export async function useTurtle(graphDir = "./graph", options = {}) {
      * @param {string} ttl - Turtle string
      * @param {Object} [options] - Parse options
      * @param {boolean} [options.addToStore=false] - Add parsed data to context store
-     * @returns {Promise<Store>} Parsed store
+     * @returns {Store} Parsed store
      */
-    async parse(ttl, options = {}) {
+    parse(ttl, options = {}) {
       const { addToStore = false, ...parseOptions } = options;
       const parsedStore = engine.parseTurtle(ttl, { baseIRI, ...parseOptions });
       
@@ -301,10 +301,10 @@ export async function useTurtle(graphDir = "./graph", options = {}) {
      * Serialize the current store to Turtle
      * @param {Object} [options] - Serialization options
      * @param {Object} [options.prefixes] - Prefix mappings
-     * @returns {Promise<string>} Turtle string
+     * @returns {string} Turtle string
      */
-    async serialize(options = {}) {
-      return await engine.serializeTurtle(storeContext.store, options);
+    serialize(options = {}) {
+      return engine.serializeTurtle(storeContext.store, options);
     }
   };
 }

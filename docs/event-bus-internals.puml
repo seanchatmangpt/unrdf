@@ -1,0 +1,34 @@
+@startuml Event Bus Internal Flow
+
+title Event Bus Internal Flow - Hook Registration and Emission
+
+participant "registerKnowledgeHook" as RegKH
+participant "registerHook" as RegGH
+participant "EventBus" as EventBus
+participant "ObservableStore" as Store
+
+== Hook Registration ==
+RegKH -> EventBus: engine.on('afterAddQuad', handler, {id: 'test:quality'})
+EventBus -> EventBus: create registration object
+EventBus -> EventBus: hooks.set('afterAddQuad', new Map())
+EventBus -> EventBus: eventHooks.set('test:quality', registration)
+Note over EventBus: Knowledge hook stored with string ID
+
+RegGH -> EventBus: engine.on('afterAddQuad', handler, {id: 'test:git-hook'})
+EventBus -> EventBus: create registration object
+EventBus -> EventBus: eventHooks.set('test:git-hook', registration)
+Note over EventBus: Git hook stored with string ID
+
+== Event Emission ==
+Store -> EventBus: emit('afterAddQuad', payload)
+EventBus -> EventBus: get eventHooks = hooks.get('afterAddQuad')
+EventBus -> EventBus: separate beforeHooks and afterHooks
+Note over EventBus: afterAddQuad -> afterHooks
+
+loop for each registration in afterHooks
+    EventBus -> EventBus: _executeHookSync(registration, payload)
+    EventBus -> EventBus: call registration.handler(payload)
+    Note over EventBus: Should call both git and knowledge handlers
+end
+
+@enduml
