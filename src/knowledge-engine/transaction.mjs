@@ -8,49 +8,99 @@ import { sha3_256 } from '@noble/hashes/sha3.js';
 import { blake3 } from '@noble/hashes/blake3.js';
 import { utf8ToBytes, bytesToHex } from '@noble/hashes/utils.js';
 import { canonicalize } from './canonicalize.mjs';
+import { randomUUID } from 'crypto';
+import { z } from 'zod';
+
+// Zod schemas for validation
+const QuadSchema = z.object({
+  subject: z.any(), // RDF/JS Term
+  predicate: z.any(), // RDF/JS Term
+  object: z.any(), // RDF/JS Term
+  graph: z.any().optional(), // RDF/JS Term
+  equals: z.function().optional()
+}).passthrough(); // Allow additional properties for RDF/JS Quad objects
+
+const DeltaSchema = z.object({
+  additions: z.array(QuadSchema),
+  removals: z.array(QuadSchema)
+});
+
+const HookSchema = z.object({
+  id: z.string().min(1),
+  mode: z.enum(['pre', 'post']),
+  condition: z.function(),
+  effect: z.union([z.literal('veto'), z.function()])
+});
+
+const HookResultSchema = z.object({
+  hookId: z.string(),
+  mode: z.enum(['pre', 'post']),
+  result: z.boolean(),
+  error: z.string().optional()
+});
+
+const HashSchema = z.object({
+  sha3: z.string(),
+  blake3: z.string()
+});
+
+const ReceiptSchema = z.object({
+  id: z.string(),
+  delta: DeltaSchema,
+  committed: z.boolean(),
+  hookResults: z.array(HookResultSchema),
+  beforeHash: HashSchema,
+  afterHash: HashSchema,
+  timestamp: z.number(),
+  durationMs: z.number(),
+  actor: z.string().optional(),
+  hookErrors: z.array(z.string()),
+  error: z.string().optional()
+});
+
+const TransactionOptionsSchema = z.object({
+  skipHooks: z.boolean().default(false),
+  timeoutMs: z.number().positive().default(30000),
+  actor: z.string().optional()
+});
+
+const ManagerOptionsSchema = z.object({
+  strictMode: z.boolean().default(false),
+  maxHooks: z.number().positive().default(100),
+  afterHashOnly: z.boolean().default(false)
+});
 
 /**
- * @typedef {object} Delta
- * @property {import('n3').Quad[]} additions - Quads to add
- * @property {import('n3').Quad[]} removals - Quads to remove
- */
-
-/**
- * @typedef {object} Hook
- * @property {string} id - Unique hook identifier
- * @property {'pre'|'post'} mode - Hook execution mode
- * @property {(store: Store, delta: Delta) => Promise<boolean>} condition - Condition function
- * @property {'veto'|((store: Store, delta: Delta) => Promise<void>)} effect - Effect function or 'veto'
- */
-
-/**
- * @typedef {object} HookResult
- * @property {string} hookId - Hook identifier
- * @property {'pre'|'post'} mode - Hook mode
- * @property {boolean} result - Condition result
- * @property {string} [error] - Error message if hook failed
- */
-
-/**
- * @typedef {object} Receipt
- * @property {Delta} delta - Applied delta
- * @property {boolean} committed - Whether transaction was committed
- * @property {HookResult[]} hookResults - Results from all hooks
- * @property {{ sha3: string, blake3: string }} beforeHash - Store hash before transaction
- * @property {{ sha3: string, blake3: string }} afterHash - Store hash after transaction
- * @property {number} timestamp - Transaction timestamp
- * @property {string} [error] - Error message if transaction failed
+ * @typedef {z.infer<typeof DeltaSchema>} Delta
+ * @typedef {z.infer<typeof HookSchema>} Hook
+ * @typedef {z.infer<typeof HookResultSchema>} HookResult
+ * @typedef {z.infer<typeof ReceiptSchema>} Receipt
+ * @typedef {z.infer<typeof TransactionOptionsSchema>} TransactionOptions
+ * @typedef {z.infer<typeof ManagerOptionsSchema>} ManagerOptions
  */
 
 /**
  * Hash a store canonically with SHA-3 and BLAKE3.
  * @param {Store} store - The store to hash
+ * @param {Object} [options] - Hashing options
+ * @param {boolean} [options.afterHashOnly=false] - Skip canonicalization for performance
  * @returns {Promise<{ sha3: string, blake3: string }>} Promise resolving to hash object
  * 
  * @throws {Error} If hashing fails
  */
-async function hashStore(store) {
+async function hashStore(store, options = {}) {
   try {
+    if (options.afterHashOnly) {
+      // Fast hash without canonicalization for performance
+      const quads = store.getQuads();
+      const content = quads.map(q => `${q.subject.value} ${q.predicate.value} ${q.object.value} ${q.graph.value}`).join('\n');
+      const bytes = utf8ToBytes(content);
+      return {
+        sha3: bytesToHex(sha3_256(bytes)),
+        blake3: bytesToHex(blake3(bytes)),
+      };
+    }
+    
     const c14n = await canonicalize(store);
     const bytes = utf8ToBytes(c14n);
     return {
@@ -69,18 +119,15 @@ async function hashStore(store) {
 export class TransactionManager {
   /**
    * Create a new transaction manager.
-   * @param {Object} [options] - Manager options
-   * @param {boolean} [options.strictMode=false] - Enable strict validation mode
-   * @param {number} [options.maxHooks=100] - Maximum number of hooks allowed
+   * @param {ManagerOptions} [options] - Manager options
    */
   constructor(options = {}) {
     /** @type {Hook[]} */
     this.hooks = [];
-    this.options = {
-      strictMode: false,
-      maxHooks: 100,
-      ...options
-    };
+    this.options = ManagerOptionsSchema.parse(options);
+    
+    // Simple mutex for concurrency control
+    this._applyMutex = Promise.resolve();
   }
 
   /**
@@ -97,25 +144,12 @@ export class TransactionManager {
    * });
    */
   addHook(hook) {
-    if (!hook || typeof hook !== 'object') {
-      throw new TypeError('addHook: hook must be an object');
-    }
-    if (!hook.id || typeof hook.id !== 'string') {
-      throw new TypeError('addHook: hook must have a string id');
-    }
-    if (!['pre', 'post'].includes(hook.mode)) {
-      throw new TypeError('addHook: hook mode must be "pre" or "post"');
-    }
-    if (typeof hook.condition !== 'function') {
-      throw new TypeError('addHook: hook condition must be a function');
-    }
-    if (hook.effect !== 'veto' && typeof hook.effect !== 'function') {
-      throw new TypeError('addHook: hook effect must be "veto" or a function');
-    }
+    // Validate hook with Zod
+    const validatedHook = HookSchema.parse(hook);
 
     // Check for duplicate IDs
-    if (this.hooks.some(h => h.id === hook.id)) {
-      throw new Error(`Hook with id "${hook.id}" already exists`);
+    if (this.hooks.some(h => h.id === validatedHook.id)) {
+      throw new Error(`Hook with id "${validatedHook.id}" already exists`);
     }
 
     // Check hook limit
@@ -123,7 +157,7 @@ export class TransactionManager {
       throw new Error(`Maximum number of hooks (${this.options.maxHooks}) exceeded`);
     }
 
-    this.hooks.push(hook);
+    this.hooks.push(validatedHook);
   }
 
   /**
@@ -136,11 +170,10 @@ export class TransactionManager {
    * console.log('Hook removed:', removed);
    */
   removeHook(hookId) {
-    if (typeof hookId !== 'string') {
-      throw new TypeError('removeHook: hookId must be a string');
-    }
+    // Validate hookId with Zod
+    const validatedHookId = z.string().parse(hookId);
 
-    const index = this.hooks.findIndex(h => h.id === hookId);
+    const index = this.hooks.findIndex(h => h.id === validatedHookId);
     if (index === -1) {
       return false;
     }
@@ -168,9 +201,7 @@ export class TransactionManager {
    * Apply a transaction.
    * @param {Store} store - The store to apply the transaction to
    * @param {Delta} delta - The delta to apply
-   * @param {Object} [options] - Transaction options
-   * @param {boolean} [options.skipHooks=false] - Skip hook execution
-   * @param {number} [options.timeoutMs=30000] - Transaction timeout
+   * @param {TransactionOptions} [options] - Transaction options
    * @returns {Promise<{store: Store, receipt: Receipt}>} Promise resolving to transaction result
    * 
    * @throws {Error} If transaction fails
@@ -186,65 +217,77 @@ export class TransactionManager {
    * console.log('New store size:', result.store.size);
    */
   async apply(store, delta, options = {}) {
+    // Validate inputs with Zod
     if (!store || typeof store.getQuads !== 'function') {
       throw new TypeError('apply: store must be a valid Store instance');
     }
-    if (!delta || typeof delta !== 'object') {
-      throw new TypeError('apply: delta must be an object');
-    }
-    if (!Array.isArray(delta.additions)) {
-      throw new TypeError('apply: delta.additions must be an array');
-    }
-    if (!Array.isArray(delta.removals)) {
-      throw new TypeError('apply: delta.removals must be an array');
-    }
-
-    const { skipHooks = false, timeoutMs = 30000 } = options;
+    
+    const validatedDelta = DeltaSchema.parse(delta);
+    const validatedOptions = TransactionOptionsSchema.parse(options);
     const startTime = Date.now();
+    const transactionId = randomUUID();
 
     /** @type {HookResult[]} */
     const hookResults = [];
+    /** @type {string[]} */
+    const hookErrors = [];
 
-    try {
-      // Set up timeout
-      const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('Transaction timeout')), timeoutMs);
-      });
+    // Use mutex for concurrency control
+    return new Promise((resolve, reject) => {
+      this._applyMutex = this._applyMutex.then(async () => {
+        try {
+          // Set up timeout with proper cleanup
+          let timeoutHandle;
+          const timeoutPromise = new Promise((_, timeoutReject) => {
+            timeoutHandle = setTimeout(() => timeoutReject(new Error('Transaction timeout')), validatedOptions.timeoutMs);
+          });
 
-      const transactionPromise = this._executeTransaction(store, delta, skipHooks, hookResults);
-      const result = await Promise.race([transactionPromise, timeoutPromise]);
-
-      return {
-        store: result.store,
-        receipt: {
-          ...result.receipt,
-          timestamp: startTime
+          const transactionPromise = this._executeTransaction(store, validatedDelta, validatedOptions.skipHooks, hookResults, hookErrors, transactionId, validatedOptions.actor);
+          
+          const result = await Promise.race([transactionPromise, timeoutPromise]);
+          clearTimeout(timeoutHandle);
+          
+          resolve({
+            store: result.store,
+            receipt: {
+              ...result.receipt,
+              id: transactionId,
+              timestamp: startTime,
+              durationMs: Date.now() - startTime,
+              actor: validatedOptions.actor,
+              hookErrors
+            }
+          });
+        } catch (error) {
+          const beforeHash = await hashStore(store, this.options).catch(() => ({ sha3: '', blake3: '' }));
+          
+          resolve({
+            store,
+            receipt: {
+              id: transactionId,
+              delta: validatedDelta,
+              committed: false,
+              hookResults,
+              beforeHash,
+              afterHash: beforeHash,
+              timestamp: startTime,
+              durationMs: Date.now() - startTime,
+              actor: validatedOptions.actor,
+              hookErrors,
+              error: error.message
+            }
+          });
         }
-      };
-    } catch (error) {
-      const beforeHash = await hashStore(store).catch(() => ({ sha3: '', blake3: '' }));
-      
-      return {
-        store,
-        receipt: {
-          delta,
-          committed: false,
-          hookResults,
-          beforeHash,
-          afterHash: beforeHash,
-          timestamp: startTime,
-          error: error.message
-        }
-      };
-    }
+      }).catch(reject);
+    });
   }
 
   /**
    * Execute the transaction with hooks.
    * @private
    */
-  async _executeTransaction(store, delta, skipHooks, hookResults) {
-    const beforeHash = await hashStore(store);
+  async _executeTransaction(store, delta, skipHooks, hookResults, hookErrors, transactionId, actor) {
+    const beforeHash = await hashStore(store, this.options);
 
     // Pre-hooks
     if (!skipHooks) {
@@ -266,6 +309,8 @@ export class TransactionManager {
             };
           }
         } catch (error) {
+          const errorMsg = `Pre-hook "${hook.id}" failed: ${error.message}`;
+          hookErrors.push(errorMsg);
           hookResults.push({ 
             hookId: hook.id, 
             mode: hook.mode, 
@@ -274,29 +319,37 @@ export class TransactionManager {
           });
           
           if (this.options.strictMode) {
-            throw new Error(`Pre-hook "${hook.id}" failed: ${error.message}`);
+            throw new Error(errorMsg);
           }
         }
       }
     }
 
-    // Commit transaction
-    const newStore = new Store([
-      ...store.getQuads().filter(q => !delta.removals.some(r => r.equals(q))),
-      ...delta.additions,
-    ]);
+    // Commit transaction - MUTATE IN PLACE for state accumulation
+    // Remove quads first
+    for (const quad of delta.removals) {
+      store.removeQuad(quad);
+    }
+    
+    // Add new quads
+    for (const quad of delta.additions) {
+      store.addQuad(quad);
+    }
 
     // Post-hooks
     if (!skipHooks) {
       for (const hook of this.hooks.filter(h => h.mode === 'post')) {
         try {
-          const ok = await hook.condition(newStore, delta);
+          const ok = await hook.condition(store, delta);
           hookResults.push({ hookId: hook.id, mode: hook.mode, result: ok });
           
+          // Post-hooks ignore veto effects - only execute function effects
           if (ok && typeof hook.effect === 'function') {
-            await hook.effect(newStore, delta);
+            await hook.effect(store, delta);
           }
         } catch (error) {
+          const errorMsg = `Post-hook "${hook.id}" failed: ${error.message}`;
+          hookErrors.push(errorMsg);
           hookResults.push({ 
             hookId: hook.id, 
             mode: hook.mode, 
@@ -305,16 +358,16 @@ export class TransactionManager {
           });
           
           if (this.options.strictMode) {
-            throw new Error(`Post-hook "${hook.id}" failed: ${error.message}`);
+            throw new Error(errorMsg);
           }
         }
       }
     }
 
-    const afterHash = await hashStore(newStore);
+    const afterHash = await hashStore(store, this.options);
 
     return {
-      store: newStore,
+      store,
       receipt: { 
         delta, 
         committed: true, 
@@ -359,22 +412,22 @@ export class TransactionManager {
        * @param {Delta} delta - Delta to add
        */
       addDelta(delta) {
-        if (!delta || typeof delta !== 'object') {
-          throw new TypeError('addDelta: delta must be an object');
-        }
-        deltas.push(delta);
+        const validatedDelta = DeltaSchema.parse(delta);
+        deltas.push(validatedDelta);
       },
 
       /**
        * Apply all deltas in the session.
-       * @param {Object} [options] - Apply options
+       * @param {TransactionOptions} [options] - Apply options
        * @returns {Promise<Array<Receipt>>} Promise resolving to array of receipts
        */
       async applyAll(options = {}) {
+        const validatedOptions = TransactionOptionsSchema.parse(options);
         const results = [];
         
         for (const delta of deltas) {
-          const result = await this.apply(currentStore, delta, options);
+          // Capture manager.apply to preserve this context
+          const result = await manager.apply(currentStore, delta, validatedOptions);
           currentStore = result.store;
           receipts.push(result.receipt);
           results.push(result.receipt);
@@ -440,7 +493,53 @@ export class TransactionManager {
       preHooks,
       postHooks,
       maxHooks: this.options.maxHooks,
-      strictMode: this.options.strictMode
+      strictMode: this.options.strictMode,
+      afterHashOnly: this.options.afterHashOnly
     };
   }
 }
+
+/**
+ * Print a receipt in a consistent format.
+ * @param {Receipt} receipt - The receipt to print
+ * @param {Object} [options] - Print options
+ * @param {boolean} [options.verbose=false] - Include detailed information
+ */
+export function printReceipt(receipt, options = {}) {
+  const { verbose = false } = options;
+  
+  console.log(`📋 Transaction Receipt ${receipt.id}`);
+  console.log(`   Status: ${receipt.committed ? '✅ Committed' : '❌ Failed'}`);
+  console.log(`   Duration: ${receipt.durationMs}ms`);
+  
+  if (receipt.actor) {
+    console.log(`   Actor: ${receipt.actor}`);
+  }
+  
+  if (receipt.error) {
+    console.log(`   Error: ${receipt.error}`);
+  }
+  
+  console.log(`   Hooks: ${receipt.hookResults.length} executed`);
+  receipt.hookResults.forEach(result => {
+    const status = result.result ? '✅' : '❌';
+    console.log(`     ${status} ${result.hookId} (${result.mode})`);
+    if (result.error) {
+      console.log(`       Error: ${result.error}`);
+    }
+  });
+  
+  if (receipt.hookErrors.length > 0) {
+    console.log(`   Hook Errors: ${receipt.hookErrors.length}`);
+    receipt.hookErrors.forEach(error => {
+      console.log(`     • ${error}`);
+    });
+  }
+  
+  if (verbose) {
+    console.log(`   Delta: ${receipt.delta.additions.length} additions, ${receipt.delta.removals.length} removals`);
+    console.log(`   Before Hash: ${receipt.beforeHash.sha3.substring(0, 16)}...`);
+    console.log(`   After Hash:  ${receipt.afterHash.sha3.substring(0, 16)}...`);
+  }
+}
+

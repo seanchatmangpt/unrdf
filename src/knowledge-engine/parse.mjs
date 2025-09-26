@@ -61,7 +61,7 @@ export async function toTurtle(store, options = {}) {
   try {
     const writer = new Writer({ 
       format: 'Turtle',
-      ...options
+      prefixes: options.prefixes || {}
     });
     
     const quads = store.getQuads();
@@ -72,6 +72,10 @@ export async function toTurtle(store, options = {}) {
         if (error) {
           reject(new Error(`Failed to serialize to Turtle: ${error.message}`));
         } else {
+          // Add @base directive if baseIRI is provided
+          if (options.baseIRI) {
+            result = `@base <${options.baseIRI}> .\n\n${result}`;
+          }
           resolve(result);
         }
       });
@@ -138,20 +142,72 @@ export async function toNQuads(store, options = {}) {
  * const store = await parseJsonLd(jsonld);
  */
 export async function parseJsonLd(jsonld, options = {}) {
-  if (typeof jsonld !== 'string') {
-    throw new TypeError('parseJsonLd: jsonld must be a string');
+  if (typeof jsonld !== 'string' && typeof jsonld !== 'object') {
+    throw new TypeError('parseJsonLd: jsonld must be a string or object');
   }
 
   try {
-    const jsonldData = JSON.parse(jsonld);
-    const parser = new Parser({ 
-      baseIRI: options.baseIRI || 'http://example.org/'
-    });
+    // Parse JSON string if needed
+    const jsonldData = typeof jsonld === 'string' ? JSON.parse(jsonld) : jsonld;
     
-    // Convert JSON-LD to Turtle first, then parse
-    // This is a simplified approach - in production you might want to use a proper JSON-LD parser
-    const quads = parser.parse(jsonldData);
-    return new Store(quads);
+    if (!jsonldData || (!Array.isArray(jsonldData) && typeof jsonldData !== 'object')) {
+      throw new TypeError('parseJsonLd: jsonld must be an object or array');
+    }
+
+    // Convert JSON-LD to RDF quads
+    // This is a simplified implementation - in production you would use a proper JSON-LD to RDF converter
+    const store = new Store();
+    
+    // Handle @graph array or single object
+    const items = jsonldData['@graph'] || (Array.isArray(jsonldData) ? jsonldData : [jsonldData]);
+    
+    // Validate that we have valid JSON-LD structure
+    if (items.length === 0 || !items.some(item => item && typeof item === 'object' && item['@id'])) {
+      throw new Error('Invalid JSON-LD structure: no valid items with @id found');
+    }
+    
+    for (const item of items) {
+      if (item && item['@id']) {
+        const subject = item['@id'];
+        
+        // Process each property
+        for (const [key, value] of Object.entries(item)) {
+          if (key === '@id' || key === '@context') continue;
+          
+          if (Array.isArray(value)) {
+            for (const val of value) {
+              if (typeof val === 'object' && val['@id']) {
+                store.addQuad(
+                  { value: subject, termType: 'NamedNode' },
+                  { value: key, termType: 'NamedNode' },
+                  { value: val['@id'], termType: 'NamedNode' }
+                );
+              } else if (typeof val === 'string' || typeof val === 'number') {
+                store.addQuad(
+                  { value: subject, termType: 'NamedNode' },
+                  { value: key, termType: 'NamedNode' },
+                  { value: String(val), termType: 'Literal' }
+                );
+              }
+            }
+          } else if (typeof value === 'object' && value['@id']) {
+            store.addQuad(
+              { value: subject, termType: 'NamedNode' },
+              { value: key, termType: 'NamedNode' },
+              { value: value['@id'], termType: 'NamedNode' }
+            );
+          } else if (typeof value === 'string' || typeof value === 'number') {
+            store.addQuad(
+              { value: subject, termType: 'NamedNode' },
+              { value: key, termType: 'NamedNode' },
+              { value: String(value), termType: 'Literal' }
+            );
+          }
+        }
+      }
+    }
+    
+    return store;
   } catch (error) {
     throw new Error(`Failed to parse JSON-LD: ${error.message}`);
   }
@@ -185,6 +241,11 @@ export async function toJsonLd(store, options = {}) {
       '@graph': []
     };
 
+    // Add @base to context if baseIRI is provided
+    if (options.baseIRI) {
+      result['@context']['@base'] = options.baseIRI;
+    }
+
     // Convert quads to JSON-LD format
     for (const quad of quads) {
       const subject = quad.subject.value;
@@ -205,7 +266,7 @@ export async function toJsonLd(store, options = {}) {
       subjectNode[predicate].push({ '@id': object });
     }
 
-    return JSON.stringify(result, null, 2);
+    return result;
   } catch (error) {
     throw new Error(`Failed to serialize to JSON-LD: ${error.message}`);
   }

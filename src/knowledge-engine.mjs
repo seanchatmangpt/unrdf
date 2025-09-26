@@ -67,7 +67,8 @@ export {
 
 // Transaction management
 export { 
-  TransactionManager
+  TransactionManager,
+  printReceipt
 } from './knowledge-engine/transaction.mjs';
 
 /**
