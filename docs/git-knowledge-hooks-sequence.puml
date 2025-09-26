@@ -1,0 +1,50 @@
+@startuml Git Knowledge Hooks Integration - Expected Flow
+
+title Git + Knowledge Hooks Integration - Expected Flow
+
+participant "Test" as Test
+participant "RdfEngine" as Engine
+participant "EventBus" as EventBus
+participant "ObservableStore" as Store
+participant "useKnowledgeHooks" as KnowledgeHooks
+participant "registerHook" as GitHooks
+
+== Setup Phase ==
+Test -> KnowledgeHooks: useKnowledgeHooks()
+KnowledgeHooks -> Engine: get engine instance
+Test -> KnowledgeHooks: registerKnowledgeHook(hook)
+KnowledgeHooks -> EventBus: engine.on('afterAddQuad', handler)
+EventBus -> EventBus: register handler with hook.id
+
+Test -> GitHooks: registerHook(engine, config)
+GitHooks -> EventBus: engine.on('afterAddQuad', handler)
+EventBus -> EventBus: register handler with config.id
+
+== Execution Phase ==
+Test -> Store: addQuad(subject, predicate, object)
+Store -> EventBus: emit('beforeAddQuad', payload)
+EventBus -> GitHooks: call beforeAddQuad handler
+GitHooks -> GitHooks: evaluate predicates
+GitHooks -> EventBus: return true/false (veto)
+
+alt Operation NOT vetoed
+    Store -> Store: actually add quad to N3.Store
+    Store -> EventBus: emit('afterAddQuad', payload)
+    EventBus -> GitHooks: call afterAddQuad handler
+    GitHooks -> GitHooks: evaluate predicates
+    GitHooks -> Test: push to lifecycleEvents array
+    
+    EventBus -> KnowledgeHooks: call afterAddQuad handler
+    KnowledgeHooks -> KnowledgeHooks: evaluateHook(hook, payload)
+    KnowledgeHooks -> Engine: graph.select(hook.query)
+    Engine -> Engine: execute SPARQL query
+    Engine -> KnowledgeHooks: return query results
+    KnowledgeHooks -> KnowledgeHooks: evaluate predicates
+    KnowledgeHooks -> Test: callback(result, payload)
+    Test -> Test: push to knowledgeEvents array
+else Operation vetoed
+    Store -> Store: skip adding quad
+    Note over EventBus: No afterAddQuad event emitted
+end
+
+@enduml

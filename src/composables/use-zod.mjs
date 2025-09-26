@@ -27,7 +27,7 @@ import { useStoreContext } from "../context/index.mjs";
  *   const zod = useZod();
  * 
  *   // Generate schema from SPARQL results
- *   const results = await graph.select(`
+ *   const results = graph.select(`
  *     PREFIX foaf: <http://xmlns.com/foaf/0.1/>
  *     SELECT ?id ?name ?age WHERE {
  *       ?id a foaf:Person ;

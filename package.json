@@ -23,6 +23,7 @@
     "./composables": "./dist/composables/index.mjs",
     "./utils": "./dist/utils/index.mjs",
     "./engines": "./dist/engines/index.mjs",
+    "./knowledge-engine": "./dist/knowledge-engine.mjs",
     "./cli": "./dist/cli.mjs"
   },
   "files": [
@@ -63,6 +64,8 @@
   },
   "dependencies": {
     "@comunica/query-sparql": "^4.4.0",
+    "@faker-js/faker": "^10.0.0",
+    "@noble/hashes": "^2.0.1",
     "@rdfjs/types": "^2.0.1",
     "@zazuko/env": "^3.0.1",
     "citty": "^0.1.6",
@@ -70,6 +73,7 @@
     "eyereasoner": "^18.20.0",
     "gray-matter": "^4.0.3",
     "jsonld": "^8.3.3",
+    "mitt": "^3.0.1",
     "n3": "^1.26.0",
     "rdf-canonize": "^4.0.1",
     "rdf-ext": "^2.6.0",

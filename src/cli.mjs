@@ -23,8 +23,8 @@ import {
 import { readFile, writeFile, access } from 'node:fs/promises';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { defineHook, evaluateHook } from './hooks.mjs';
-import * as hookCommands from './cli/knowledge-hooks.mjs';
+// import { defineHook, evaluateHook } from './hooks.mjs';
+// import * as hookCommands from './cli/knowledge-hooks.mjs';
 import { defaultStorage } from './utils/storage-utils.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -126,8 +126,8 @@ const main = defineCommand({
               quads = await turtle.parse(inputData);
               break;
             case 'n-quads':
-              const nquads = await import('./composables/use-n-quads.mjs');
-              quads = await nquads.useNQuads().parse(inputData);
+              console.error('❌ N-Quads parsing not yet implemented');
+              process.exit(1);
               break;
             default:
               console.error(`❌ Unsupported format: ${format}`);
@@ -350,8 +350,8 @@ const main = defineCommand({
               output = await turtle.serialize();
               break;
             case 'n-quads':
-              const nquads = await import('./composables/use-n-quads.mjs');
-              output = await nquads.useNQuads().serialize(store.store);
+              console.error('❌ N-Quads serialization not yet implemented');
+              process.exit(1);
               break;
             default:
               console.error(`❌ Unsupported target format: ${toFormat}`);

@@ -23,11 +23,11 @@ import { useStoreContext } from "../context/index.mjs";
  * // Initialize store context first
  * const runApp = initStore();
  * 
- * runApp(async () => {
+ * runApp(() => {
  *   const reasoner = useReasoner();
  *   
  *   // Simple reasoning with Turtle rules
- *   const result = await reasoner.infer(`
+ *   const result = reasoner.infer(`
  *     @prefix ex: <http://example.org/> .
  *     { ?s ex:parent ?p } => { ?s ex:ancestor ?p } .
  *   `);
@@ -48,19 +48,19 @@ export function useReasoner(options = {}) {
      * @param {Object} [options] - Inference options
      * @param {boolean} [options.addToStore=true] - Add inferred triples to context store
      * @param {boolean} [options.returnStats=true] - Return inference statistics
-     * @returns {Promise<Object>} Inference result
+     * @returns {Object} Inference result
      * 
      * @example
      * // Simple inference
-     * const result = await reasoner.infer(`
+     * const result = reasoner.infer(`
      *   @prefix ex: <http://example.org/> .
      *   { ?s ex:parent ?p } => { ?s ex:ancestor ?p } .
      * `);
      * 
      * // Inference without adding to store
-     * const result = await reasoner.infer(rules, { addToStore: false });
+     * const result = reasoner.infer(rules, { addToStore: false });
      */
-    async infer(rules, options = {}) {
+    infer(rules, options = {}) {
       const { addToStore = true, returnStats = true } = options;
       
       // Parse rules if string
@@ -72,7 +72,7 @@ export function useReasoner(options = {}) {
       const originalSize = storeContext.store.size;
       
       // Perform reasoning
-      const inferredStore = await engine.reason(storeContext.store, rulesStore);
+      const inferredStore = engine.reason(storeContext.store, rulesStore);
       
       // Calculate new triples
       const newTriples = engine.difference(inferredStore, storeContext.store);
@@ -108,16 +108,16 @@ export function useReasoner(options = {}) {
      * Apply multiple rule sets in sequence
      * @param {Array<string|Store>} ruleSets - Array of rule sets to apply
      * @param {Object} [options] - Inference options
-     * @returns {Promise<Object>} Combined inference result
+     * @returns {Object} Combined inference result
      * 
      * @example
-     * const result = await reasoner.inferSequence([
+     * const result = reasoner.inferSequence([
      *   transitiveRules,
      *   symmetricRules,
      *   inverseRules
      * ]);
      */
-    async inferSequence(ruleSets, options = {}) {
+    inferSequence(ruleSets, options = {}) {
       const { addToStore = true, returnStats = true } = options;
       const originalSize = storeContext.store.size;
       let totalNewTriples = 0;
@@ -125,7 +125,7 @@ export function useReasoner(options = {}) {
       
       for (let i = 0; i < ruleSets.length; i++) {
         const stepStartSize = storeContext.store.size;
-        const stepResult = await this.infer(ruleSets[i], { addToStore, returnStats: false });
+        const stepResult = this.infer(ruleSets[i], { addToStore, returnStats: false });
         const stepNewTriples = stepResult.newTriples;
         
         totalNewTriples += stepNewTriples;
@@ -160,16 +160,16 @@ export function useReasoner(options = {}) {
     /**
      * Check if rules would produce new knowledge
      * @param {string|Store} rules - Rules to test
-     * @returns {Promise<boolean>} True if rules would produce new triples
+     * @returns {boolean} True if rules would produce new triples
      * 
      * @example
-     * const wouldProduceNew = await reasoner.wouldInfer(rules);
+     * const wouldProduceNew = reasoner.wouldInfer(rules);
      * if (wouldProduceNew) {
      *   console.log("These rules would add new knowledge");
      * }
      */
-    async wouldInfer(rules) {
-      const result = await this.infer(rules, { addToStore: false, returnStats: false });
+    wouldInfer(rules) {
+      const result = this.infer(rules, { addToStore: false, returnStats: false });
       return result.newTriples > 0;
     },
 
@@ -192,10 +192,10 @@ export function useReasoner(options = {}) {
      * @returns {Object} Clear result
      * 
      * @example
-     * const result = await reasoner.clearInferred();
+     * const result = reasoner.clearInferred();
      * console.log(`Cleared ${result.cleared} inferred triples`);
      */
-    async clearInferred(options = {}) {
+    clearInferred(options = {}) {
       const { keepOriginal = true } = options;
       
       if (!keepOriginal) {
@@ -222,7 +222,7 @@ export function useReasoner(options = {}) {
      *   { name: "symmetric", rules: symmetricRules }
      * ]);
      * 
-     * const result = await pipeline.run();
+     * const result = pipeline.run();
      */
     createPipeline(steps) {
       return {
@@ -231,11 +231,11 @@ export function useReasoner(options = {}) {
         /**
          * Run the pipeline
          * @param {Object} [options] - Pipeline options
-         * @returns {Promise<Object>} Pipeline result
+         * @returns {Object} Pipeline result
          */
-        async run(options = {}) {
+        run(options = {}) {
           const ruleSets = this.steps.map(step => step.rules);
-          return await this.inferSequence(ruleSets, options);
+          return this.inferSequence(ruleSets, options);
         }
       };
     },
@@ -244,20 +244,20 @@ export function useReasoner(options = {}) {
      * Export current knowledge
      * @param {Object} [options] - Export options
      * @param {string} [options.format="Turtle"] - Export format
-     * @returns {Promise<string>} Exported knowledge
+     * @returns {string} Exported knowledge
      * 
      * @example
-     * const turtle = await reasoner.export();
-     * const nquads = await reasoner.export({ format: "N-Quads" });
+     * const turtle = reasoner.export();
+     * const nquads = reasoner.export({ format: "N-Quads" });
      */
-    async export(options = {}) {
+    export(options = {}) {
       const { format = "Turtle" } = options;
       
       if (format === "Turtle") {
-        return await engine.serializeTurtle(storeContext.store);
+        return engine.serializeTurtle(storeContext.store);
       }
       if (format === "N-Quads") {
-        return await engine.serializeNQuads(storeContext.store);
+        return engine.serializeNQuads(storeContext.store);
       }
       
       throw new Error(`Unsupported export format: ${format}`);
@@ -269,13 +269,13 @@ export function useReasoner(options = {}) {
      * @param {Object} [options] - Import options
      * @param {string} [options.format="Turtle"] - Input format
      * @param {boolean} [options.merge=true] - Merge with existing knowledge
-     * @returns {Promise<Object>} Import result
+     * @returns {Object} Import result
      * 
      * @example
-     * const result = await reasoner.import(turtleData);
+     * const result = reasoner.import(turtleData);
      * console.log(`Imported ${result.imported} triples`);
      */
-    async import(knowledge, options = {}) {
+    import(knowledge, options = {}) {
       const { format = "Turtle", merge = true } = options;
       
       if (!merge) {
