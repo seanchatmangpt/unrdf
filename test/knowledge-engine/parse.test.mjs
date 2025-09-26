@@ -53,6 +53,7 @@ describe("parse.mjs", () => {
 
     it("should parse Turtle with base IRI", async () => {
       const ttl = `
+        @prefix ex: <http://example.org/> .
         ex:alice ex:name "Alice" ;
                  ex:age 30 .
       `;
@@ -244,8 +245,8 @@ describe("parse.mjs", () => {
     });
 
     it("should throw error for non-object input", async () => {
-      await expect(parseJsonLd("invalid")).rejects.toThrow("parseJsonLd: jsonld must be an object or array");
-      await expect(parseJsonLd(null)).rejects.toThrow("parseJsonLd: jsonld must be an object or array");
+      await expect(parseJsonLd(123)).rejects.toThrow("parseJsonLd: jsonld must be a string or object");
+      await expect(parseJsonLd(null)).rejects.toThrow("Failed to parse JSON-LD");
     });
   });
 

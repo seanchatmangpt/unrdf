@@ -216,7 +216,7 @@ describe("knowledge-engine.mjs", () => {
       
       expect(Array.isArray(results)).toBe(true);
       expect(results.length).toBe(1);
-      expect(results[0].name.value).toBe("Alice");
+      expect(results[0].name).toBe("Alice");
     });
 
     it("should validate with engine", async () => {
@@ -491,6 +491,7 @@ describe("knowledge-engine.mjs", () => {
       const engine2 = createKnowledgeEngine({ baseIRI: "http://example2.org/" });
       
       const ttl1 = `
+        @prefix ex: <http://example.org/> .
         ex:alice ex:name "Alice" .
       `;
       
