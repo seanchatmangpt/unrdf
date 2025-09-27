@@ -6,7 +6,10 @@
 import { QueryEngine } from '@comunica/query-sparql';
 import { Store } from 'n3';
 
-const comunica = new QueryEngine();
+// Create a new QueryEngine instance for each query to prevent hanging
+function createQueryEngine() {
+  return new QueryEngine();
+}
 
 /**
  * Run a SPARQL query against a store.
@@ -45,6 +48,7 @@ export async function query(store, sparql, options = {}) {
       ...options
     };
 
+    const comunica = createQueryEngine();
     const res = await comunica.query(sparql, queryOptions);
     
     switch (res.resultType) {
@@ -202,6 +206,7 @@ export async function update(store, sparql, options = {}) {
       ...options
     };
 
+    const comunica = createQueryEngine();
     await comunica.query(sparql, updateOptions);
     
     // Return the updated store
