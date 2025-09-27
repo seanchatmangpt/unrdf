@@ -1,0 +1,51 @@
+{
+  "id": "a4284e20-c360-4b83-b9e8-ba4978490fa6",
+  "timestamp": 1759004170007,
+  "entries": [
+    {
+      "id": "9d1c5803-7cde-4e95-ba50-8443e77884d1",
+      "timestamp": 1759004170005,
+      "receipt": {
+        "id": "test-receipt-123",
+        "committed": true,
+        "delta": {
+          "additions": [
+            {
+              "subject": {
+                "value": "ex:alice"
+              },
+              "predicate": {
+                "value": "ex:knows"
+              },
+              "object": {
+                "value": "ex:bob"
+              }
+            }
+          ],
+          "removals": []
+        },
+        "hookResults": [],
+        "beforeHash": {
+          "sha3": "abc123",
+          "blake3": "def456"
+        },
+        "afterHash": {
+          "sha3": "ghi789",
+          "blake3": "jkl012"
+        },
+        "timestamp": 1759004170005,
+        "duration": 150,
+        "_serialized": true,
+        "_timestamp": 1759004170005
+      },
+      "signature": {
+        "algorithm": "sha3-256",
+        "value": "8909d89171288e2fa9b5ed096e8d087fda413a6e111d5c09562bfb9c4b32e98a",
+        "publicKey": "default"
+      },
+      "previousHash": ""
+    }
+  ],
+  "merkleRoot": "61c966420c52cec87a3a8b2fc76f471dd7956543a9f15c45a19a60dd956507c4",
+  "entryCount": 1
+}
