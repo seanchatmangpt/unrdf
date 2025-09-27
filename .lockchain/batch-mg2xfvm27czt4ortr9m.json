@@ -1,0 +1,12 @@
+{
+  "batchId": "mg2xfvm27czt4ortr9m",
+  "timestamp": 1759017227978,
+  "entryCount": 1,
+  "entries": [
+    {
+      "receiptId": "b9878f34-2468-4934-acb6-1bb43cc0958b",
+      "timestamp": 1759017227977,
+      "signature": "027a674dc20b1097812e1b8ae466162a0ff3dc356f43dc4056bde2e2f549ee86"
+    }
+  ]
+}
