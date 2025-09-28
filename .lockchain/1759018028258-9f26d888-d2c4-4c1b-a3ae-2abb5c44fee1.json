@@ -1,0 +1,8 @@
+{
+  "receiptId": "9f26d888-d2c4-4c1b-a3ae-2abb5c44fee1",
+  "timestamp": 1759018028258,
+  "receipt": "{\n  \"id\": \"9f26d888-d2c4-4c1b-a3ae-2abb5c44fee1\",\n  \"delta\": {\n    \"additions\": [\n      {\n        \"s\": \"ex:event-system-shutdown\",\n        \"p\": \"ex:type\",\n        \"o\": \"system-shutdown\"\n      },\n      {\n        \"s\": \"ex:event-system-shutdown\",\n        \"p\": \"ex:severity\",\n        \"o\": \"critical\"\n      },\n      {\n        \"s\": \"ex:event-system-shutdown\",\n        \"p\": \"ex:system\",\n        \"o\": \"core-engine\"\n      },\n      {\n        \"s\": \"ex:event-system-shutdown\",\n        \"p\": \"ex:timestamp\",\n        \"o\": \"1759018028253\"\n      }\n    ],\n    \"removals\": []\n  },\n  \"committed\": true,\n  \"hookResults\": [],\n  \"beforeHash\": {\n    \"sha3\": \"event-before\",\n    \"blake3\": \"event-before\"\n  },\n  \"afterHash\": {\n    \"sha3\": \"event-after\",\n    \"blake3\": \"event-after\"\n  },\n  \"timestamp\": 1759018028253,\n  \"durationMs\": 10,\n  \"actor\": \"system-logger\",\n  \"hookErrors\": [],\n  \"metadata\": {\n    \"eventType\": \"system-shutdown\",\n    \"severity\": \"critical\",\n    \"system\": \"core-engine\",\n    \"immutable\": true\n  }\n}",
+  "signature": "eb18d3f10aeb3050c04d84853fd832d77befbf701702b81d538722d4817a3e25",
+  "previousHash": null,
+  "merkleRoot": "00971d2811d71dfd09c82f206be67c99d00d13dfea1a1fa53c833f1872be13e7"
+}

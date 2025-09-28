@@ -1,0 +1,8 @@
+{
+  "receiptId": "a0553a24-07a0-41fc-ad7b-ca8ccbe5fea6",
+  "timestamp": 1759018028243,
+  "receipt": "{\n  \"id\": \"a0553a24-07a0-41fc-ad7b-ca8ccbe5fea6\",\n  \"delta\": {\n    \"additions\": [\n      {\n        \"s\": \"ex:event-user-authentication\",\n        \"p\": \"ex:type\",\n        \"o\": \"user-authentication\"\n      },\n      {\n        \"s\": \"ex:event-user-authentication\",\n        \"p\": \"ex:severity\",\n        \"o\": \"info\"\n      },\n      {\n        \"s\": \"ex:event-user-authentication\",\n        \"p\": \"ex:system\",\n        \"o\": \"auth-service\"\n      },\n      {\n        \"s\": \"ex:event-user-authentication\",\n        \"p\": \"ex:timestamp\",\n        \"o\": \"1759018028238\"\n      }\n    ],\n    \"removals\": []\n  },\n  \"committed\": true,\n  \"hookResults\": [],\n  \"beforeHash\": {\n    \"sha3\": \"event-before\",\n    \"blake3\": \"event-before\"\n  },\n  \"afterHash\": {\n    \"sha3\": \"event-after\",\n    \"blake3\": \"event-after\"\n  },\n  \"timestamp\": 1759018028238,\n  \"durationMs\": 10,\n  \"actor\": \"system-logger\",\n  \"hookErrors\": [],\n  \"metadata\": {\n    \"eventType\": \"user-authentication\",\n    \"severity\": \"info\",\n    \"system\": \"auth-service\",\n    \"immutable\": true\n  }\n}",
+  "signature": "716c1b756a5ace8f646f255dd32de6cf347f28ba7e70368bf2f2d38607ea3ea5",
+  "previousHash": null,
+  "merkleRoot": "3866802bd0229fda5530a58e975081e544f10655338349cec4253e46eb09087a"
+}
