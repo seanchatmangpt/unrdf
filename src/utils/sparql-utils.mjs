@@ -21,8 +21,8 @@ export class SPARQLBuilder {
     this.whereClauses = [];
     this.filters = [];
     this.optionalClauses = [];
-    this.groupBy = [];
-    this.orderBy = [];
+    this.groupByVars = [];
+    this.orderByVars = [];
     this.limit = null;
     this.offset = null;
     this.distinct = false;
@@ -112,7 +112,7 @@ export class SPARQLBuilder {
    * @returns {SPARQLBuilder} This builder instance
    */
   groupBy(...vars) {
-    this.groupBy.push(...vars);
+    this.groupByVars.push(...vars);
     return this;
   }
   
@@ -123,7 +123,7 @@ export class SPARQLBuilder {
    * @returns {SPARQLBuilder} This builder instance
    */
   orderBy(expression, direction = 'ASC') {
-    this.orderBy.push(`${expression} ${direction.toUpperCase()}`);
+    this.orderByVars.push(`${expression} ${direction.toUpperCase()}`);
     return this;
   }
   
@@ -210,13 +210,13 @@ export class SPARQLBuilder {
     }
     
     // Add GROUP BY
-    if (this.groupBy.length > 0) {
-      query += `GROUP BY ${this.groupBy.join(' ')}\n`;
+    if (this.groupByVars.length > 0) {
+      query += `GROUP BY ${this.groupByVars.join(' ')}\n`;
     }
     
     // Add ORDER BY
-    if (this.orderBy.length > 0) {
-      query += `ORDER BY ${this.orderBy.join(' ')}\n`;
+    if (this.orderByVars.length > 0) {
+      query += `ORDER BY ${this.orderByVars.join(' ')}\n`;
     }
     
     // Add LIMIT
@@ -242,8 +242,8 @@ export class SPARQLBuilder {
     this.whereClauses = [];
     this.filters = [];
     this.optionalClauses = [];
-    this.groupBy = [];
-    this.orderBy = [];
+    this.groupByVars = [];
+    this.orderByVars = [];
     this.limit = null;
     this.offset = null;
     this.distinct = false;
@@ -579,7 +579,7 @@ export const validateSPARQLQuery = (query) => {
     issues.push({ type: 'error', message: 'No query type found (SELECT, CONSTRUCT, ASK, or DESCRIBE)' });
   }
   
-  if (!hasWhere && query.includes('WHERE')) {
+  if (!hasWhere && query.includes('WHERE {')) {
     issues.push({ type: 'error', message: 'WHERE clause found but not properly formatted' });
   }
   

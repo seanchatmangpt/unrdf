@@ -1,0 +1,148 @@
+@startuml Detailed Test Architecture Design
+
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam componentStyle rectangle
+
+title Knowledge Engine Test Architecture - Detailed Design
+
+package "Test Infrastructure Layer" as Infrastructure {
+    class TestBase {
+        +tempDir: string
+        +manager: KnowledgeHookManager
+        +testStore: Store
+        +setup(): Promise<void>
+        +teardown(): Promise<void>
+        +createTempDir(): Promise<string>
+        +cleanup(): Promise<void>
+    }
+    
+    class MockFactory {
+        +createConditionEvaluatorMock(): Mock
+        +createFileResolverMock(): Mock
+        +createQueryEngineMock(): Mock
+        +createHookExecutorMock(): Mock
+        +resetAllMocks(): void
+    }
+    
+    class TestDataBuilder {
+        +buildHook(overrides?: object): KnowledgeHook
+        +buildEvent(overrides?: object): HookEvent
+        +buildStore(quads?: Quad[]): Store
+        +buildCondition(overrides?: object): Condition
+        +buildFileRef(overrides?: object): FileRef
+    }
+    
+    class AssertionHelpers {
+        +assertHookSuccess(result: HookResult): void
+        +assertHookFailure(result: HookResult, expectedError?: string): void
+        +assertHookExecutionTime(result: HookResult, maxTime: number): void
+        +assertStoreState(store: Store, expectedQuads: Quad[]): void
+    }
+}
+
+package "Test Categories" as Categories {
+    class UnitTests {
+        +testHookDefinition()
+        +testConditionEvaluation()
+        +testFileResolution()
+        +testQueryExecution()
+    }
+    
+    class IntegrationTests {
+        +testHookLifecycle()
+        +testTransactionFlow()
+        +testErrorPropagation()
+        +testResourceCleanup()
+    }
+    
+    class EdgeCaseTests {
+        +testFileSystemEdgeCases()
+        +testConcurrencyEdgeCases()
+        +testMemoryEdgeCases()
+        +testPerformanceEdgeCases()
+    }
+    
+    class SecurityTests {
+        +testInjectionAttacks()
+        +testPathTraversal()
+        +testPrivilegeEscalation()
+        +testResourceExhaustion()
+    }
+}
+
+package "Mocking Strategy" as Mocking {
+    class ModuleMocks {
+        +conditionEvaluator.mjs
+        +fileResolver.mjs
+        +queryEngine.mjs
+        +hookExecutor.mjs
+    }
+    
+    class MockImplementations {
+        +MockConditionEvaluator
+        +MockFileResolver
+        +MockQueryEngine
+        +MockHookExecutor
+    }
+    
+    class MockLifecycle {
+        +setup(): void
+        +configure(): void
+        +verify(): void
+        +cleanup(): void
+    }
+}
+
+package "Test Execution Flow" as Execution {
+    class TestRunner {
+        +runUnitTests(): Promise<TestResults>
+        +runIntegrationTests(): Promise<TestResults>
+        +runEdgeCaseTests(): Promise<TestResults>
+        +runSecurityTests(): Promise<TestResults>
+    }
+    
+    class TestReporter {
+        +reportResults(results: TestResults): void
+        +generateCoverageReport(): void
+        +identifyFlakyTests(): void
+    }
+}
+
+TestBase --> MockFactory : uses
+TestBase --> TestDataBuilder : uses
+TestBase --> AssertionHelpers : uses
+
+UnitTests --> TestBase : extends
+IntegrationTests --> TestBase : extends
+EdgeCaseTests --> TestBase : extends
+SecurityTests --> TestBase : extends
+
+MockFactory --> ModuleMocks : creates
+MockFactory --> MockImplementations : creates
+MockFactory --> MockLifecycle : manages
+
+TestRunner --> UnitTests : executes
+TestRunner --> IntegrationTests : executes
+TestRunner --> EdgeCaseTests : executes
+TestRunner --> SecurityTests : executes
+
+TestRunner --> TestReporter : reports to
+
+note top of Infrastructure
+    **Infrastructure Benefits:**
+    - Consistent test setup/teardown
+    - Reusable mock factories
+    - Standardized test data
+    - Common assertion patterns
+end note
+
+note top of Mocking
+    **Mocking Benefits:**
+    - ESM-compatible mocking
+    - Centralized mock management
+    - Lifecycle-aware mocks
+    - Easy mock configuration
+end note
+
+@enduml

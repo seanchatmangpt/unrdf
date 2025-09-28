@@ -9,8 +9,8 @@
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { writeFile, unlink } from 'fs/promises';
-import { defineHook } from '../../src/knowledge-engine/define-hook.mjs';
-import { KnowledgeHookManager } from '../../src/knowledge-engine/knowledge-hook-manager.mjs';
+import { defineHook } from '../../../src/knowledge-engine/define-hook.mjs';
+import { KnowledgeHookManager } from '../../../src/knowledge-engine/knowledge-hook-manager.mjs';
 import { Store } from 'n3';
 import { join } from 'path';
 import { tmpdir } from 'os';
@@ -22,14 +22,14 @@ describe('Concurrency and Race Conditions', () => {
 
   beforeEach(async () => {
     tempDir = join(tmpdir(), `unrdf-concurrency-test-${Date.now()}`);
-    await writeFile(tempDir, ''); // Create temp directory
+    await require('fs/promises').mkdir(tempDir, { recursive: true });
     manager = new KnowledgeHookManager({ basePath: tempDir });
     testStore = new Store();
   });
 
   afterEach(async () => {
     try {
-      await unlink(tempDir);
+      await require('fs/promises').rm(tempDir, { recursive: true, force: true });
     } catch (error) {
       // Ignore cleanup errors
     }
@@ -49,7 +49,7 @@ describe('Concurrency and Race Conditions', () => {
           kind: 'sparql-ask',
           ref: {
             uri: `file://${query1}`,
-            sha256: 'expected-hash',
+            sha256: 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',
             mediaType: 'application/sparql-query'
           }
         },
@@ -68,7 +68,7 @@ describe('Concurrency and Race Conditions', () => {
           kind: 'sparql-ask',
           ref: {
             uri: `file://${query2}`,
-            sha256: 'expected-hash',
+            sha256: 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',
             mediaType: 'application/sparql-query'
           }
         },
@@ -82,7 +82,10 @@ describe('Concurrency and Race Conditions', () => {
       manager.addKnowledgeHook(hook2);
 
       // Mock condition evaluation to return true
-      vi.spyOn(require('../../src/knowledge-engine/condition-evaluator.mjs'), 'evaluateCondition')
+      // Mock condition evaluator at module level instead of spying
+      vi.mock('../../../src/knowledge-engine/condition-evaluator.mjs', () => ({
+        evaluateCondition: vi.fn().mockResolvedValue(true)
+      }))
         .mockResolvedValue(true);
 
       const event = {
@@ -110,7 +113,7 @@ describe('Concurrency and Race Conditions', () => {
           kind: 'sparql-ask',
           ref: {
             uri: `file://${query1}`,
-            sha256: 'expected-hash',
+            sha256: 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',
             mediaType: 'application/sparql-query'
           }
         },
@@ -129,7 +132,7 @@ describe('Concurrency and Race Conditions', () => {
           kind: 'sparql-ask',
           ref: {
             uri: `file://${query2}`,
-            sha256: 'expected-hash',
+            sha256: 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',
             mediaType: 'application/sparql-query'
           }
         },
@@ -146,7 +149,10 @@ describe('Concurrency and Race Conditions', () => {
       manager.addKnowledgeHook(hook2);
 
       // Mock condition evaluation to return true
-      vi.spyOn(require('../../src/knowledge-engine/condition-evaluator.mjs'), 'evaluateCondition')
+      // Mock condition evaluator at module level instead of spying
+      vi.mock('../../../src/knowledge-engine/condition-evaluator.mjs', () => ({
+        evaluateCondition: vi.fn().mockResolvedValue(true)
+      }))
         .mockResolvedValue(true);
 
       const event = {
@@ -180,7 +186,7 @@ describe('Concurrency and Race Conditions', () => {
           kind: 'sparql-ask',
           ref: {
             uri: `file://${query1}`,
-            sha256: 'expected-hash',
+            sha256: 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',
             mediaType: 'application/sparql-query'
           }
         },
@@ -201,7 +207,7 @@ describe('Concurrency and Race Conditions', () => {
           kind: 'sparql-ask',
           ref: {
             uri: `file://${query2}`,
-            sha256: 'expected-hash',
+            sha256: 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',
             mediaType: 'application/sparql-query'
           }
         },
@@ -220,7 +226,10 @@ describe('Concurrency and Race Conditions', () => {
       manager.addKnowledgeHook(hook2);
 
       // Mock condition evaluation to return true
-      vi.spyOn(require('../../src/knowledge-engine/condition-evaluator.mjs'), 'evaluateCondition')
+      // Mock condition evaluator at module level instead of spying
+      vi.mock('../../../src/knowledge-engine/condition-evaluator.mjs', () => ({
+        evaluateCondition: vi.fn().mockResolvedValue(true)
+      }))
         .mockResolvedValue(true);
 
       const event = {
@@ -251,7 +260,7 @@ describe('Concurrency and Race Conditions', () => {
           kind: 'sparql-ask',
           ref: {
             uri: `file://${query1}`,
-            sha256: 'expected-hash',
+            sha256: 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',
             mediaType: 'application/sparql-query'
           }
         },
@@ -272,7 +281,7 @@ describe('Concurrency and Race Conditions', () => {
           kind: 'sparql-ask',
           ref: {
             uri: `file://${query2}`,
-            sha256: 'expected-hash',
+            sha256: 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',
             mediaType: 'application/sparql-query'
           }
         },
@@ -291,7 +300,10 @@ describe('Concurrency and Race Conditions', () => {
       manager.addKnowledgeHook(hook2);
 
       // Mock condition evaluation to return true
-      vi.spyOn(require('../../src/knowledge-engine/condition-evaluator.mjs'), 'evaluateCondition')
+      // Mock condition evaluator at module level instead of spying
+      vi.mock('../../../src/knowledge-engine/condition-evaluator.mjs', () => ({
+        evaluateCondition: vi.fn().mockResolvedValue(true)
+      }))
         .mockResolvedValue(true);
 
       const event = {
@@ -326,7 +338,7 @@ describe('Concurrency and Race Conditions', () => {
           kind: 'sparql-ask',
           ref: {
             uri: `file://${query1}`,
-            sha256: 'expected-hash',
+            sha256: 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',
             mediaType: 'application/sparql-query'
           }
         },
@@ -346,7 +358,7 @@ describe('Concurrency and Race Conditions', () => {
           kind: 'sparql-ask',
           ref: {
             uri: `file://${query2}`,
-            sha256: 'expected-hash',
+            sha256: 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',
             mediaType: 'application/sparql-query'
           }
         },
@@ -364,7 +376,10 @@ describe('Concurrency and Race Conditions', () => {
       manager.addKnowledgeHook(hook2);
 
       // Mock condition evaluation to return true
-      vi.spyOn(require('../../src/knowledge-engine/condition-evaluator.mjs'), 'evaluateCondition')
+      // Mock condition evaluator at module level instead of spying
+      vi.mock('../../../src/knowledge-engine/condition-evaluator.mjs', () => ({
+        evaluateCondition: vi.fn().mockResolvedValue(true)
+      }))
         .mockResolvedValue(true);
 
       const event = {
@@ -395,7 +410,7 @@ describe('Concurrency and Race Conditions', () => {
           kind: 'sparql-ask',
           ref: {
             uri: `file://${query1}`,
-            sha256: 'expected-hash',
+            sha256: 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',
             mediaType: 'application/sparql-query'
           }
         },
@@ -418,7 +433,7 @@ describe('Concurrency and Race Conditions', () => {
           kind: 'sparql-ask',
           ref: {
             uri: `file://${query2}`,
-            sha256: 'expected-hash',
+            sha256: 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',
             mediaType: 'application/sparql-query'
           }
         },
@@ -433,7 +448,10 @@ describe('Concurrency and Race Conditions', () => {
       manager.addKnowledgeHook(hook2);
 
       // Mock condition evaluation to return true
-      vi.spyOn(require('../../src/knowledge-engine/condition-evaluator.mjs'), 'evaluateCondition')
+      // Mock condition evaluator at module level instead of spying
+      vi.mock('../../../src/knowledge-engine/condition-evaluator.mjs', () => ({
+        evaluateCondition: vi.fn().mockResolvedValue(true)
+      }))
         .mockResolvedValue(true);
 
       const event = {
@@ -464,7 +482,7 @@ describe('Concurrency and Race Conditions', () => {
           kind: 'sparql-ask',
           ref: {
             uri: `file://${query1}`,
-            sha256: 'expected-hash',
+            sha256: 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',
             mediaType: 'application/sparql-query'
           }
         },
@@ -487,7 +505,7 @@ describe('Concurrency and Race Conditions', () => {
           kind: 'sparql-ask',
           ref: {
             uri: `file://${query2}`,
-            sha256: 'expected-hash',
+            sha256: 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',
             mediaType: 'application/sparql-query'
           }
         },
@@ -502,7 +520,10 @@ describe('Concurrency and Race Conditions', () => {
       manager.addKnowledgeHook(hook2);
 
       // Mock condition evaluation to return true
-      vi.spyOn(require('../../src/knowledge-engine/condition-evaluator.mjs'), 'evaluateCondition')
+      // Mock condition evaluator at module level instead of spying
+      vi.mock('../../../src/knowledge-engine/condition-evaluator.mjs', () => ({
+        evaluateCondition: vi.fn().mockResolvedValue(true)
+      }))
         .mockResolvedValue(true);
 
       const event = {
@@ -536,7 +557,7 @@ describe('Concurrency and Race Conditions', () => {
           kind: 'sparql-ask',
           ref: {
             uri: `file://${query1}`,
-            sha256: 'expected-hash',
+            sha256: 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',
             mediaType: 'application/sparql-query'
           }
         },
@@ -559,7 +580,7 @@ describe('Concurrency and Race Conditions', () => {
           kind: 'sparql-ask',
           ref: {
             uri: `file://${query2}`,
-            sha256: 'expected-hash',
+            sha256: 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',
             mediaType: 'application/sparql-query'
           }
         },
@@ -578,7 +599,10 @@ describe('Concurrency and Race Conditions', () => {
       manager.addKnowledgeHook(hook2);
 
       // Mock condition evaluation to return true
-      vi.spyOn(require('../../src/knowledge-engine/condition-evaluator.mjs'), 'evaluateCondition')
+      // Mock condition evaluator at module level instead of spying
+      vi.mock('../../../src/knowledge-engine/condition-evaluator.mjs', () => ({
+        evaluateCondition: vi.fn().mockResolvedValue(true)
+      }))
         .mockResolvedValue(true);
 
       const event = {
@@ -611,7 +635,7 @@ describe('Concurrency and Race Conditions', () => {
           kind: 'sparql-ask',
           ref: {
             uri: `file://${query1}`,
-            sha256: 'expected-hash',
+            sha256: 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',
             mediaType: 'application/sparql-query'
           }
         },
@@ -632,7 +656,7 @@ describe('Concurrency and Race Conditions', () => {
           kind: 'sparql-ask',
           ref: {
             uri: `file://${query2}`,
-            sha256: 'expected-hash',
+            sha256: 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',
             mediaType: 'application/sparql-query'
           }
         },
@@ -651,7 +675,10 @@ describe('Concurrency and Race Conditions', () => {
       manager.addKnowledgeHook(hook2);
 
       // Mock condition evaluation to return true
-      vi.spyOn(require('../../src/knowledge-engine/condition-evaluator.mjs'), 'evaluateCondition')
+      // Mock condition evaluator at module level instead of spying
+      vi.mock('../../../src/knowledge-engine/condition-evaluator.mjs', () => ({
+        evaluateCondition: vi.fn().mockResolvedValue(true)
+      }))
         .mockResolvedValue(true);
 
       const event = {

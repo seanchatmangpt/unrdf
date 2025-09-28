@@ -8,6 +8,8 @@ import { sha3_256 } from '@noble/hashes/sha3.js';
 import { blake3 } from '@noble/hashes/blake3.js';
 import { utf8ToBytes, bytesToHex } from '@noble/hashes/utils.js';
 import { canonicalize } from './canonicalize.mjs';
+import { createLockchainWriter } from './lockchain-writer.mjs';
+import { createResolutionLayer } from './resolution-layer.mjs';
 import { randomUUID } from 'crypto';
 import { z } from 'zod';
 
@@ -67,7 +69,22 @@ const TransactionOptionsSchema = z.object({
 const ManagerOptionsSchema = z.object({
   strictMode: z.boolean().default(false),
   maxHooks: z.number().positive().default(100),
-  afterHashOnly: z.boolean().default(false)
+  afterHashOnly: z.boolean().default(false),
+  enableLockchain: z.boolean().default(false),
+  lockchainConfig: z.object({
+    gitRepo: z.string().optional(),
+    refName: z.string().default('refs/notes/lockchain'),
+    signingKey: z.string().optional(),
+    batchSize: z.number().int().positive().default(10)
+  }).optional(),
+  enableResolution: z.boolean().default(false),
+  resolutionConfig: z.object({
+    defaultStrategy: z.string().default('voting'),
+    maxProposals: z.number().int().positive().default(100),
+    enableConflictDetection: z.boolean().default(true),
+    enableConsensus: z.boolean().default(true),
+    timeout: z.number().int().positive().default(30000)
+  }).optional()
 });
 
 /**
@@ -128,6 +145,33 @@ export class TransactionManager {
     
     // Simple mutex for concurrency control
     this._applyMutex = Promise.resolve();
+    
+    // Initialize lockchain writer if enabled
+    if (this.options.enableLockchain) {
+      const lockchainConfig = {
+        gitRepo: this.options.lockchainConfig?.gitRepo || process.cwd(),
+        refName: this.options.lockchainConfig?.refName || 'refs/notes/lockchain',
+        signingKey: this.options.lockchainConfig?.signingKey,
+        batchSize: this.options.lockchainConfig?.batchSize || 10
+      };
+      this.lockchainWriter = createLockchainWriter(lockchainConfig);
+    } else {
+      this.lockchainWriter = null;
+    }
+    
+    // Initialize resolution layer if enabled
+    if (this.options.enableResolution) {
+      const resolutionConfig = {
+        defaultStrategy: this.options.resolutionConfig?.defaultStrategy || 'voting',
+        maxProposals: this.options.resolutionConfig?.maxProposals || 100,
+        enableConflictDetection: this.options.resolutionConfig?.enableConflictDetection !== false,
+        enableConsensus: this.options.resolutionConfig?.enableConsensus !== false,
+        timeout: this.options.resolutionConfig?.timeout || 30000
+      };
+      this.resolutionLayer = createResolutionLayer(resolutionConfig);
+    } else {
+      this.resolutionLayer = null;
+    }
   }
 
   /**
@@ -247,16 +291,27 @@ export class TransactionManager {
           const result = await Promise.race([transactionPromise, timeoutPromise]);
           clearTimeout(timeoutHandle);
           
+          const finalReceipt = {
+            ...result.receipt,
+            id: transactionId,
+            timestamp: startTime,
+            durationMs: Date.now() - startTime,
+            actor: validatedOptions.actor,
+            hookErrors
+          };
+          
+          // Write to lockchain if enabled
+          if (this.lockchainWriter && result.receipt.committed) {
+            try {
+              await this.lockchainWriter.writeReceipt(finalReceipt);
+            } catch (lockchainError) {
+              console.warn('Failed to write receipt to lockchain:', lockchainError.message);
+            }
+          }
+          
           resolve({
             store: result.store,
-            receipt: {
-              ...result.receipt,
-              id: transactionId,
-              timestamp: startTime,
-              durationMs: Date.now() - startTime,
-              actor: validatedOptions.actor,
-              hookErrors
-            }
+            receipt: finalReceipt
           });
         } catch (error) {
           const beforeHash = await hashStore(store, this.options).catch(() => ({ sha3: '', blake3: '' }));
@@ -488,13 +543,77 @@ export class TransactionManager {
     const preHooks = this.hooks.filter(h => h.mode === 'pre').length;
     const postHooks = this.hooks.filter(h => h.mode === 'post').length;
     
-    return {
+    const stats = {
       totalHooks: this.hooks.length,
       preHooks,
       postHooks,
       maxHooks: this.options.maxHooks,
       strictMode: this.options.strictMode,
-      afterHashOnly: this.options.afterHashOnly
+      afterHashOnly: this.options.afterHashOnly,
+      lockchainEnabled: this.options.enableLockchain
+    };
+    
+    // Add lockchain stats if enabled
+    if (this.lockchainWriter) {
+      stats.lockchain = this.lockchainWriter.getStats();
+    }
+    
+    return stats;
+  }
+  
+  /**
+   * Commit pending lockchain entries
+   * @returns {Promise<Object>} Commit result
+   */
+  async commitLockchain() {
+    if (!this.lockchainWriter) {
+      throw new Error('Lockchain is not enabled');
+    }
+    
+    return this.lockchainWriter.commitBatch();
+  }
+
+  /**
+   * Submit a proposal to the resolution layer
+   * @param {string} agentId - Agent identifier
+   * @param {Object} delta - Proposed delta
+   * @param {Object} [options] - Proposal options
+   * @returns {Promise<string>} Proposal ID
+   */
+  async submitProposal(agentId, delta, options = {}) {
+    if (!this.resolutionLayer) {
+      throw new Error('Resolution layer is not enabled');
+    }
+    
+    return this.resolutionLayer.submitProposal(agentId, delta, options);
+  }
+
+  /**
+   * Resolve proposals using the resolution layer
+   * @param {Array<string>} proposalIds - Proposal IDs to resolve
+   * @param {Object} [strategy] - Resolution strategy
+   * @returns {Promise<Object>} Resolution result
+   */
+  async resolveProposals(proposalIds, strategy = {}) {
+    if (!this.resolutionLayer) {
+      throw new Error('Resolution layer is not enabled');
+    }
+    
+    return this.resolutionLayer.resolveProposals(proposalIds, strategy);
+  }
+
+  /**
+   * Get resolution layer statistics
+   * @returns {Object} Resolution statistics
+   */
+  getResolutionStats() {
+    if (!this.resolutionLayer) {
+      return { enabled: false };
+    }
+    
+    return {
+      enabled: true,
+      ...this.resolutionLayer.getStats()
     };
   }
 }
