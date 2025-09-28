@@ -1,0 +1,17 @@
+{
+  "batchId": "mg2xu72ccxmxr2dvg6s",
+  "timestamp": 1759017896004,
+  "entryCount": 2,
+  "entries": [
+    {
+      "receiptId": "277e46a5-ba19-417f-b451-0eb7d0d50c48",
+      "timestamp": 1759017895998,
+      "signature": "39f7027832c0b8e12529a54cfe114651223ac689adcf7a45d06ca4b196516317"
+    },
+    {
+      "receiptId": "9af8a849-c549-455e-b03a-04b19b82ec86",
+      "timestamp": 1759017896003,
+      "signature": "ee3affca65bf57000ef5e0e12c58ce49ed815893397e1b66941b97ef02ca5d08"
+    }
+  ]
+}
