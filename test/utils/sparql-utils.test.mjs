@@ -291,11 +291,12 @@ test('extractVariables extracts variables', () => {
   const query = 'SELECT ?s ?p ?o WHERE { ?s ?p ?o . ?s ?p2 ?o2 }';
   const variables = extractVariables(query);
   
-  if (variables.length !== 4) throw new Error('Should extract 4 variables');
+  if (variables.length !== 5) throw new Error('Should extract 5 variables');
   if (!variables.includes('s')) throw new Error('Should include s');
   if (!variables.includes('p')) throw new Error('Should include p');
   if (!variables.includes('o')) throw new Error('Should include o');
   if (!variables.includes('p2')) throw new Error('Should include p2');
+  if (!variables.includes('o2')) throw new Error('Should include o2');
 });
 
 // === extractIRIs tests ===

@@ -549,7 +549,7 @@ export const validateSPARQLQuery = (query) => {
     }
     
     // Check for WHERE clause
-    if (line === 'WHERE {') {
+    if (line.includes('WHERE {')) {
       hasWhere = true;
     }
     
