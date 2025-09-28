@@ -1,0 +1,8 @@
+{
+  "receiptId": "a4bb5d1d-e5c0-43b1-b566-dbad8fb96614",
+  "timestamp": 1759018028122,
+  "receipt": "{\n  \"id\": \"a4bb5d1d-e5c0-43b1-b566-dbad8fb96614\",\n  \"delta\": {\n    \"additions\": [\n      {\n        \"s\": \"ex:financial-transaction-001\",\n        \"p\": \"ex:type\",\n        \"o\": \"ex:revenue\"\n      },\n      {\n        \"s\": \"ex:financial-transaction-001\",\n        \"p\": \"ex:amount\",\n        \"o\": \"1000000\"\n      },\n      {\n        \"s\": \"ex:financial-transaction-001\",\n        \"p\": \"ex:approver\",\n        \"o\": \"ex:CFO\"\n      },\n      {\n        \"s\": \"ex:financial-transaction-001\",\n        \"p\": \"ex:compliance-check\",\n        \"o\": \"ex:passed\"\n      }\n    ],\n    \"removals\": []\n  },\n  \"committed\": true,\n  \"hookResults\": [\n    {\n      \"hookId\": \"sox-compliance-check\",\n      \"mode\": \"pre\",\n      \"result\": true\n    },\n    {\n      \"hookId\": \"financial-approval\",\n      \"mode\": \"pre\",\n      \"result\": true\n    }\n  ],\n  \"beforeHash\": {\n    \"sha3\": \"before-sox\",\n    \"blake3\": \"before-sox\"\n  },\n  \"afterHash\": {\n    \"sha3\": \"after-sox\",\n    \"blake3\": \"after-sox\"\n  },\n  \"timestamp\": 1759018028113,\n  \"durationMs\": 150,\n  \"actor\": \"compliance-officer\",\n  \"hookErrors\": [],\n  \"metadata\": {\n    \"compliance\": \"SOX\",\n    \"auditLevel\": \"critical\",\n    \"retentionPeriod\": \"7-years\"\n  }\n}",
+  "signature": "ef335f264cbbf51d56657c31039522b923fcd017dc641e2aa926b0b64d04a58a",
+  "previousHash": null,
+  "merkleRoot": "b15d4c9bf0ad94ea9fe1d3050aa3247e64c90cc91cbc3ca1301120305c6cbcc4"
+}
