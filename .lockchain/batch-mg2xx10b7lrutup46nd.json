@@ -1,0 +1,12 @@
+{
+  "batchId": "mg2xx10b7lrutup46nd",
+  "timestamp": 1759018028123,
+  "entryCount": 1,
+  "entries": [
+    {
+      "receiptId": "a4bb5d1d-e5c0-43b1-b566-dbad8fb96614",
+      "timestamp": 1759018028122,
+      "signature": "ef335f264cbbf51d56657c31039522b923fcd017dc641e2aa926b0b64d04a58a"
+    }
+  ]
+}
