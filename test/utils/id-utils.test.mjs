@@ -259,3 +259,4 @@ if (testsPassed === testsTotal) {
   console.log('❌ Some id-utils tests failed');
   process.exit(1);
 }
+

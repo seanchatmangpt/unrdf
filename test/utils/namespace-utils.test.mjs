@@ -234,3 +234,4 @@ if (testsPassed === testsTotal) {
   console.log('❌ Some namespace-utils tests failed');
   process.exit(1);
 }
+

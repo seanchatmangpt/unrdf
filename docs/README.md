@@ -1,68 +1,98 @@
 # unrdf Documentation
 
-**unrdf** is an opinionated, composable framework for RDF knowledge operations in JavaScript. It provides a "one true path" approach to RDF development, eliminating the "dark matter" of boilerplate glue code that typically plagues RDF workflows.
+**unrdf** is the world's first **autonomic RDF framework** that transforms static knowledge graphs into intelligent, reactive, self-governing systems. It provides a "one true path" approach to autonomic RDF development, eliminating the "dark matter" of boilerplate glue code that typically plagues RDF workflows.
 
 ## Philosophy
 
-unrdf is not a neutral toolkit—it's a **canon** for **reactive knowledge graphs**. When you import unrdf, you're accepting its way. No escape hatches, no alternative backends, no configuration flexibility. This opinionated approach eliminates the 80/20 "dark matter" problem in RDF development.
+unrdf is not a neutral toolkit—it's a **canon** for **autonomic knowledge graphs**. When you import unrdf, you're accepting its way. No escape hatches, no alternative backends, no configuration flexibility. This opinionated approach eliminates the 80/20 "dark matter" problem in RDF development.
 
-**🎯 Knowledge Hooks** are the crown jewel of unrdf - enterprise-grade triggers that transform static knowledge graphs into intelligent, reactive systems. They provide deterministic, auditable actions with cryptographic provenance tracking.
+**🌊 Blue Ocean Innovation: Autonomic Knowledge Hooks** are the crown jewel of unrdf - the world's first enterprise-grade triggers that enable reactive, self-governing knowledge systems with multi-agent coordination, policy pack governance, and cryptographic audit trails.
 
 ### Core Principles
 
-- **🎯 One Hooks**: Knowledge Hooks are the only trigger system
+- **🌊 Blue Ocean Innovation**: The world's first autonomic RDF framework
+- **🤖 Autonomic Knowledge Hooks**: Self-governing triggers with multi-agent coordination
+- **📦 Policy Pack Governance**: Versioned, portable governance units
+- **🛡️ Cryptographic Integrity**: URDNA2015 canonical hashes with Git-anchored lockchain
+- **⚡ Secure Execution**: VM2/worker thread sandboxing for safe hook execution
+- **🔍 Delta-Aware Optimization**: Query optimization with caching and indexing
 - **One Store**: N3.Store is the only memory model
 - **One Terms**: N3 DataFactory is the only term creation method
-- **One Prefixes**: Centralized prefix management
-- **One Lists**: Standard rdf:List format
 - **One Query Engine**: Comunica is the only SPARQL engine
 - **One Validator**: SHACL is the only validation method
-- **One Reasoner**: EYE is the only reasoning engine
 - **One Canonicalization**: URDNA2015 is the only canonicalization method
-- **One Serialization**: Turtle and N-Quads are the primary formats
-- **One JSON-LD**: Standard JSON-LD format only
-- **One Pointer**: Clownface is the only traversal method
 - **One Validation**: Zod is the only runtime validation
 
 ## Quick Start
 
-### Knowledge Hooks (Primary API)
+### Autonomic Knowledge Hooks (Primary API)
 
 ```javascript
-import { initStore, defineHook, evaluateHook } from 'unrdf';
+import { initStore, defineHook, evaluateHook, PolicyPackManager } from 'unrdf';
 
-// Initialize store with your RDF data
-const runApp = initStore(turtleData);
+// Initialize autonomic store with your RDF data
+const runApp = initStore(turtleData, {
+  enableLockchain: true,
+  enableResolution: true,
+  enablePolicyPacks: true
+});
 
 runApp(async () => {
-  // Define a service health monitoring hook
+  // Create policy pack manager
+  const policyManager = new PolicyPackManager();
+  await policyManager.loadPolicyPack('health-monitoring-v1');
+  
+  // Define an autonomic service health monitoring hook
   const healthHook = defineHook({
-    id: 'ex:ServiceHealthMonitor',
-    select: 'SELECT ?service ?errorRate WHERE { ?service ex:errorRate ?errorRate }',
-    predicates: [
-      { kind: 'THRESHOLD', spec: { var: 'errorRate', op: '>', value: 0.02 } }
-    ],
-    combine: 'OR'
+    meta: {
+      name: 'autonomic-health-monitor',
+      description: 'Self-governing service health monitoring with multi-agent coordination'
+    },
+    when: {
+      kind: 'sparql-ask',
+      ref: { 
+        uri: 'file://health-check.rq',
+        sha256: 'def456...',
+        mediaType: 'application/sparql-query'
+      }
+    },
+    run: async (event) => {
+      // Autonomic decision-making logic
+      return { 
+        healthy: true, 
+        actions: ['log-metrics', 'notify-ops'],
+        agentConsensus: 0.98
+      };
+    }
   });
 
-  // Evaluate with cryptographic receipt
-  const receipt = await evaluateHook(healthHook, { persist: true });
+  // Evaluate with full autonomic audit trail
+  const receipt = await evaluateHook(healthHook, { 
+    persist: true,
+    enableLockchain: true,
+    enableMultiAgent: true
+  });
 
   if (receipt.fired) {
-    console.log('🚨 Service health issue detected!');
-    console.log('Evidence:', receipt.predicates);
-    console.log('Provenance:', receipt.provenance);
+    console.log('🤖 Autonomic health check completed');
+    console.log('🔗 Lockchain Hash:', receipt.lockchainHash);
+    console.log('📋 Policy Pack:', receipt.policyPack);
+    console.log('🤝 Agent Consensus:', receipt.consensus);
+    console.log('🛡️ Cryptographic Proof:', receipt.canonicalHash);
   }
 });
 ```
 
-### Traditional Composables (Secondary API)
+### Autonomic Composables (Secondary API)
 
 ```javascript
-import { useStore, useTerms, useGraph, useValidator, useZod } from 'unrdf';
+import { useStore, useTerms, useGraph, useValidator, useZod, useLockchain, useResolution, usePolicyPacks } from 'unrdf';
 
-// Create a store
+// Create an autonomic store with multi-agent capabilities
 const store = useStore();
+const lockchain = useLockchain();
+const resolution = useResolution();
+const policyPacks = usePolicyPacks();
 
 // Add some data
 const terms = useTerms();
@@ -73,60 +103,94 @@ const quad = terms.quad(
 );
 store.add(quad);
 
-// Create a graph interface
+// Create an autonomic graph interface
 const graph = useGraph(store.store);
 
-// Query with SPARQL
+// Query with SPARQL and optimization
 const results = await graph.select(`
   PREFIX foaf: <http://xmlns.com/foaf/0.1/>
   SELECT ?name WHERE {
     ?person foaf:name ?name .
   }
-`);
+`, { enableCache: true, deltaAware: true });
 
-// Validate with Zod
+// Multi-agent coordination
+const proposal = await resolution.submitProposal('agent-1', {
+  additions: [quad],
+  removals: [],
+  metadata: { confidence: 0.95 }
+});
+
+// Lockchain audit trail
+const receipt = await lockchain.writeReceipt({
+  operation: 'data-addition',
+  hash: 'abc123...',
+  signature: 'def456...'
+});
+
+// Validate with Zod and policy packs
 const zod = useZod();
 const PersonSchema = z.object({
   name: z.string()
 });
 
-const validation = await zod.validateResults(results, PersonSchema);
+const validation = await zod.validateResults(results, PersonSchema, {
+  policyPack: 'compliance-v1'
+});
 console.log(validation.validated); // [{ name: "John Doe" }]
 ```
 
 ## Documentation Structure
 
-### 🎯 Knowledge Hooks (Primary)
-- **[Knowledge Hooks Guide](./guides/knowledge-hooks.md)** - Complete guide to the primary API
+### 🤖 Autonomic Knowledge Hooks (Primary)
+- **[Autonomic Knowledge Hooks Guide](./guides/knowledge-hooks.md)** - Complete guide to the primary API
 - **[Getting Started Guide](./guides/getting-started.md)** - Complete introduction to unrdf
 - **[Advanced Patterns](./guides/advanced-patterns.md)** - Best practices and advanced usage
+- **[Policy Pack Governance](./guides/policy-packs.md)** - Versioned governance units
+- **[Multi-Agent Coordination](./guides/multi-agent.md)** - Distributed decision-making
+- **[Lockchain Audit Trails](./guides/lockchain.md)** - Cryptographic provenance
 
 ### API Reference
-- **[Knowledge Hooks API](./api/knowledge-hooks.md)** - Primary API reference
+- **[Autonomic Knowledge Hooks API](./api/knowledge-hooks.md)** - Primary API reference
 - **[Composables API](./api/composables.md)** - Secondary composables reference
+- **[Policy Pack API](./api/policy-packs.md)** - Governance units API
+- **[Multi-Agent API](./api/multi-agent.md)** - Coordination and resolution API
+- **[Lockchain API](./api/lockchain.md)** - Audit trail and provenance API
 - **[Utilities API](./api/utilities.md)** - Helper functions for common operations
 
 ### Examples and Tutorials
-- **[Knowledge Hooks Examples](./examples/knowledge-hooks/)** - Primary API examples
+- **[Autonomic Knowledge Hooks Examples](./examples/knowledge-hooks/)** - Primary API examples
+- **[Policy Pack Examples](./examples/policy-packs/)** - Governance unit examples
+- **[Multi-Agent Examples](./examples/multi-agent/)** - Coordination examples
+- **[Lockchain Examples](./examples/lockchain/)** - Audit trail examples
 - **[Basic Usage Examples](./examples/basic-usage.mjs)** - Fundamental operations
 - **[Validation and Reasoning](./examples/validation-reasoning.mjs)** - Advanced features
 
 ### CLI Documentation
 - **[CLI Reference](./cli/README.md)** - Command-line interface usage
-- **[Knowledge Hooks CLI](./cli/knowledge-hooks.md)** - Hook management commands
+- **[Autonomic Knowledge Hooks CLI](./cli/knowledge-hooks.md)** - Hook management commands
+- **[Policy Pack CLI](./cli/policy-packs.md)** - Governance unit commands
+- **[Multi-Agent CLI](./cli/multi-agent.md)** - Coordination commands
+- **[Lockchain CLI](./cli/lockchain.md)** - Audit trail commands
 
 ## Core APIs
 
-### 🎯 Knowledge Hooks (Primary)
-- **`defineHook`** - Define reactive knowledge hooks
+### 🤖 Autonomic Knowledge Hooks (Primary)
+- **`defineHook`** - Define autonomic knowledge hooks
 - **`evaluateHook`** - Evaluate hooks with cryptographic receipts
 - **`initStore`** - Context management for hooks
 - **`useKnowledgeHooks`** - Composable hook interface
+- **`PolicyPackManager`** - Versioned governance units
+- **`ResolutionLayer`** - Multi-agent coordination
+- **`LockchainWriter`** - Cryptographic audit trails
 
 ### Foundation Composables (Secondary)
 - **`useStore`** - N3.Store management and operations
 - **`useTerms`** - RDF term creation and manipulation
 - **`usePrefixes`** - Prefix management and CURIE operations
+- **`useLockchain`** - Cryptographic audit trail operations
+- **`useResolution`** - Multi-agent coordination operations
+- **`usePolicyPacks`** - Governance unit operations
 
 ### Data Operations (Secondary)
 - **`useLists`** - RDF list operations

@@ -187,3 +187,4 @@ if (testsPassed === testsTotal) {
   console.log('❌ Some graph-utils tests failed');
   process.exit(1);
 }
+
