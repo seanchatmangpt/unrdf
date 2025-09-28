@@ -1,0 +1,8 @@
+{
+  "receiptId": "93572c0d-3793-477b-b9b8-9c3a0e420726",
+  "timestamp": 1759017896069,
+  "receipt": "{\n  \"id\": \"93572c0d-3793-477b-b9b8-9c3a0e420726\",\n  \"delta\": {\n    \"additions\": [\n      {\n        \"s\": \"ex:test-5\",\n        \"p\": \"ex:type\",\n        \"o\": \"ex:document\"\n      }\n    ],\n    \"removals\": []\n  },\n  \"committed\": true,\n  \"hookResults\": [],\n  \"beforeHash\": {\n    \"sha3\": \"before-5\",\n    \"blake3\": \"before-5\"\n  },\n  \"afterHash\": {\n    \"sha3\": \"after-5\",\n    \"blake3\": \"after-5\"\n  },\n  \"timestamp\": 1759017896068,\n  \"durationMs\": 150,\n  \"actor\": \"test-user-5\",\n  \"hookErrors\": []\n}",
+  "signature": "d01ba3dfedfe73c1248ecfbd3198d2e27bd093bbcaa0960380e2080523ca3829",
+  "previousHash": null,
+  "merkleRoot": "e6d7f4991a44039ea6af34a20dccda873c9e2c2af2222d7aa70810c9f4eac01b"
+}
