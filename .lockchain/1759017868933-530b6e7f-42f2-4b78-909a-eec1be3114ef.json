@@ -1,0 +1,8 @@
+{
+  "receiptId": "530b6e7f-42f2-4b78-909a-eec1be3114ef",
+  "timestamp": 1759017868933,
+  "receipt": "{\n  \"id\": \"530b6e7f-42f2-4b78-909a-eec1be3114ef\",\n  \"delta\": {\n    \"additions\": [\n      {\n        \"s\": \"ex:charlie\",\n        \"p\": \"ex:knows\",\n        \"o\": \"ex:alice\"\n      },\n      {\n        \"s\": \"ex:alice\",\n        \"p\": \"ex:age\",\n        \"o\": \"30\"\n      }\n    ],\n    \"removals\": [\n      {\n        \"s\": \"ex:bob\",\n        \"p\": \"ex:knows\",\n        \"o\": \"ex:charlie\"\n      }\n    ]\n  },\n  \"committed\": false,\n  \"hookResults\": [],\n  \"beforeHash\": {\n    \"sha3\": \"\",\n    \"blake3\": \"\"\n  },\n  \"afterHash\": {\n    \"sha3\": \"\",\n    \"blake3\": \"\"\n  },\n  \"timestamp\": 1759017868923,\n  \"durationMs\": 1,\n  \"actor\": \"real-test-user\",\n  \"hookErrors\": [],\n  \"error\": \"Store hashing failed: Canonicalization failed: N-Quads parse error on line 1.\"\n}",
+  "signature": "95c6544c26e8c9f6a3abf05b9f4fd551ff442e40335524162ba9d95b1a53896d",
+  "previousHash": null,
+  "merkleRoot": "75916213da2d78d423e44fec3ec197645ef946aefb322208b5c2ebd5cfb64440"
+}
