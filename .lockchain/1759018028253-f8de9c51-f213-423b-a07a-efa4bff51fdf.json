@@ -1,0 +1,8 @@
+{
+  "receiptId": "f8de9c51-f213-423b-a07a-efa4bff51fdf",
+  "timestamp": 1759018028253,
+  "receipt": "{\n  \"id\": \"f8de9c51-f213-423b-a07a-efa4bff51fdf\",\n  \"delta\": {\n    \"additions\": [\n      {\n        \"s\": \"ex:event-security-alert\",\n        \"p\": \"ex:type\",\n        \"o\": \"security-alert\"\n      },\n      {\n        \"s\": \"ex:event-security-alert\",\n        \"p\": \"ex:severity\",\n        \"o\": \"warning\"\n      },\n      {\n        \"s\": \"ex:event-security-alert\",\n        \"p\": \"ex:system\",\n        \"o\": \"security-monitor\"\n      },\n      {\n        \"s\": \"ex:event-security-alert\",\n        \"p\": \"ex:timestamp\",\n        \"o\": \"1759018028248\"\n      }\n    ],\n    \"removals\": []\n  },\n  \"committed\": true,\n  \"hookResults\": [],\n  \"beforeHash\": {\n    \"sha3\": \"event-before\",\n    \"blake3\": \"event-before\"\n  },\n  \"afterHash\": {\n    \"sha3\": \"event-after\",\n    \"blake3\": \"event-after\"\n  },\n  \"timestamp\": 1759018028248,\n  \"durationMs\": 10,\n  \"actor\": \"system-logger\",\n  \"hookErrors\": [],\n  \"metadata\": {\n    \"eventType\": \"security-alert\",\n    \"severity\": \"warning\",\n    \"system\": \"security-monitor\",\n    \"immutable\": true\n  }\n}",
+  "signature": "84f19472e2befb8983849d41b9c8ad90d8ac3841a455330a2a6ef8cba5f49cf3",
+  "previousHash": null,
+  "merkleRoot": "feb41afbc24a998dc16104382d3063df74c671a8d9befcc6163e3b78e514e3fc"
+}
