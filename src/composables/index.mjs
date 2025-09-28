@@ -23,3 +23,12 @@ export { useZod } from "./use-zod.mjs";
 
 // Change and provenance
 export { useDelta } from "./use-delta.mjs";
+
+// Validation and prefixes (placeholder exports for CLI compatibility)
+export const useValidator = () => {
+  throw new Error('useValidator not implemented yet');
+};
+
+export const usePrefixes = () => {
+  throw new Error('usePrefixes not implemented yet');
+};

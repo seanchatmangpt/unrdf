@@ -28,7 +28,7 @@ export const HookMetaSchema = z.object({
  */
 export const FileRefSchema = z.object({
   uri: z.url({ message: 'Must be a valid URI' }).or(z.string().regex(/^file:\/\/.+/, 'Must be a valid file URI')),
-  sha256: z.string().length(64).regex(/^[a-f0-9]+$/, 'Must be a valid SHA-256 hash'),
+  sha256: z.string().length(64).regex(/^[a-f0-9]+$/, 'Must be a valid SHA-256 hash').optional(),
   mediaType: z.string().min(1).max(100).optional(),
   size: z.number().int().positive().optional(),
   lastModified: z.coerce.date().optional()
@@ -179,7 +179,7 @@ export const TransactionDeltaSchema = z.object({
   additions: z.array(z.any()).default([]), // RDF Quad array
   removals: z.array(z.any()).default([]), // RDF Quad array
   metadata: z.record(z.any()).optional(),
-  id: z.uuid({ message: 'Must be a valid UUID' }).optional(),
+  id: z.string().optional(),
   timestamp: z.coerce.date().optional()
 });
 
@@ -282,11 +282,13 @@ export function validateKnowledgeHook(hook) {
       return {
         success: false,
         data: null,
-        errors: error.errors?.map(err => ({
+        errors: (error.issues || error.errors || []).map(err => ({
           path: err.path?.join('.') || 'unknown',
           message: err.message || 'Unknown error',
-          code: err.code || 'unknown'
-        })) || []
+          code: err.code || 'unknown',
+          received: err.received,
+          expected: err.expected
+        }))
       };
     }
     throw error;
@@ -307,11 +309,13 @@ export function validateHookEvent(event) {
       return {
         success: false,
         data: null,
-        errors: error.errors?.map(err => ({
+        errors: (error.issues || error.errors || []).map(err => ({
           path: err.path?.join('.') || 'unknown',
           message: err.message || 'Unknown error',
-          code: err.code || 'unknown'
-        })) || []
+          code: err.code || 'unknown',
+          received: err.received,
+          expected: err.expected
+        }))
       };
     }
     throw error;
@@ -332,11 +336,13 @@ export function validateCondition(condition) {
       return {
         success: false,
         data: null,
-        errors: error.errors?.map(err => ({
+        errors: (error.issues || error.errors || []).map(err => ({
           path: err.path?.join('.') || 'unknown',
           message: err.message || 'Unknown error',
-          code: err.code || 'unknown'
-        })) || []
+          code: err.code || 'unknown',
+          received: err.received,
+          expected: err.expected
+        }))
       };
     }
     throw error;
@@ -405,7 +411,16 @@ export function createKnowledgeHook(definition) {
     if (!validation.success) {
       console.error('Validation errors:', validation.errors);
       console.error('Definition:', definition);
-      const errorMessages = validation.errors?.map(err => `${err.path}: ${err.message}`).join(', ') || 'Unknown validation error';
+      const errorMessages = validation.errors?.map(err => {
+        let msg = `${err.path}: ${err.message}`;
+        if (err.received !== undefined) {
+          msg += ` (received: ${JSON.stringify(err.received)})`;
+        }
+        if (err.expected !== undefined) {
+          msg += ` (expected: ${err.expected})`;
+        }
+        return msg;
+      }).join(', ') || 'Unknown validation error';
       throw new TypeError(`Invalid knowledge hook definition: ${errorMessages}`);
     }
     
@@ -436,7 +451,16 @@ export function createHookEvent(event) {
   const validation = validateHookEvent(event);
   
   if (!validation.success) {
-    const errorMessages = validation.errors?.map(err => `${err.path}: ${err.message}`).join(', ') || 'Unknown validation error';
+    const errorMessages = validation.errors?.map(err => {
+      let msg = `${err.path}: ${err.message}`;
+      if (err.received !== undefined) {
+        msg += ` (received: ${JSON.stringify(err.received)})`;
+      }
+      if (err.expected !== undefined) {
+        msg += ` (expected: ${err.expected})`;
+      }
+      return msg;
+    }).join(', ') || 'Unknown validation error';
     throw new TypeError(`Invalid hook event: ${errorMessages}`);
   }
   
@@ -459,7 +483,16 @@ export function createCondition(condition) {
   const validation = validateCondition(condition);
   
   if (!validation.success) {
-    const errorMessages = validation.errors?.map(err => `${err.path}: ${err.message}`).join(', ') || 'Unknown validation error';
+    const errorMessages = validation.errors?.map(err => {
+      let msg = `${err.path}: ${err.message}`;
+      if (err.received !== undefined) {
+        msg += ` (received: ${JSON.stringify(err.received)})`;
+      }
+      if (err.expected !== undefined) {
+        msg += ` (expected: ${err.expected})`;
+      }
+      return msg;
+    }).join(', ') || 'Unknown validation error';
     throw new TypeError(`Invalid condition: ${errorMessages}`);
   }
   

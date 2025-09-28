@@ -8,6 +8,7 @@
  */
 
 import { createConditionEvaluator } from './condition-evaluator.mjs';
+import { createEffectSandbox } from './effect-sandbox.mjs';
 import { Store } from 'n3';
 
 /**
@@ -31,7 +32,9 @@ export async function executeHook(hook, event, options = {}) {
     basePath = process.cwd(),
     strictMode = false,
     timeoutMs = 30000,
-    enableConditionEvaluation = true
+    enableConditionEvaluation = true,
+    enableSandboxing = true,
+    sandboxConfig = {}
   } = options;
   
   const startTime = Date.now();
@@ -47,6 +50,8 @@ export async function executeHook(hook, event, options = {}) {
       basePath,
       strictMode,
       enableConditionEvaluation,
+      enableSandboxing,
+      sandboxConfig,
       executionId
     });
     
@@ -77,7 +82,7 @@ export async function executeHook(hook, event, options = {}) {
  * @returns {Promise<Object>} Lifecycle execution result
  */
 async function _executeHookLifecycle(hook, event, options) {
-  const { basePath, strictMode, enableConditionEvaluation, executionId } = options;
+  const { basePath, strictMode, enableConditionEvaluation, enableSandboxing, sandboxConfig, executionId } = options;
   
   let currentEvent = { ...event };
   let beforeResult = null;
@@ -90,7 +95,17 @@ async function _executeHookLifecycle(hook, event, options) {
   // Phase 1: Before
   if (hook.before) {
     try {
-      beforeResult = await hook.before(currentEvent);
+      if (enableSandboxing) {
+        const sandbox = createEffectSandbox(sandboxConfig);
+        beforeResult = await sandbox.executeEffect(hook.before, {
+          event: currentEvent,
+          store: currentEvent.context?.graph,
+          delta: currentEvent.payload?.delta,
+          metadata: currentEvent.context?.metadata || {}
+        });
+      } else {
+        beforeResult = await hook.before(currentEvent);
+      }
       
       if (beforeResult && beforeResult.cancel) {
         cancelled = true;
@@ -99,7 +114,8 @@ async function _executeHookLifecycle(hook, event, options) {
           beforeResult,
           cancelled: true,
           cancelReason,
-          phase: 'before'
+          phase: 'before',
+          success: false
         };
       }
       
@@ -150,7 +166,8 @@ async function _executeHookLifecycle(hook, event, options) {
         conditionResult: { error: error.message },
         cancelled: true,
         cancelReason: `Condition evaluation error: ${error.message}`,
-        phase: 'condition'
+        phase: 'condition',
+        success: false
       };
     }
   }
@@ -158,7 +175,17 @@ async function _executeHookLifecycle(hook, event, options) {
   // Phase 3: Run
   if (hook.run) {
     try {
-      runResult = await hook.run(currentEvent);
+      if (enableSandboxing) {
+        const sandbox = createEffectSandbox(sandboxConfig);
+        runResult = await sandbox.executeEffect(hook.run, {
+          event: currentEvent,
+          store: currentEvent.context?.graph,
+          delta: currentEvent.payload?.delta,
+          metadata: currentEvent.context?.metadata || {}
+        });
+      } else {
+        runResult = await hook.run(currentEvent);
+      }
     } catch (error) {
       if (strictMode) {
         throw new Error(`Run phase failed: ${error.message}`);
@@ -169,7 +196,8 @@ async function _executeHookLifecycle(hook, event, options) {
         runResult: { error: error.message },
         cancelled: true,
         cancelReason: `Run phase error: ${error.message}`,
-        phase: 'run'
+        phase: 'run',
+        success: false
       };
     }
   }
@@ -177,11 +205,25 @@ async function _executeHookLifecycle(hook, event, options) {
   // Phase 4: After
   if (hook.after) {
     try {
-      afterResult = await hook.after({
-        ...currentEvent,
-        result: runResult,
-        cancelled: false
-      });
+      if (enableSandboxing) {
+        const sandbox = createEffectSandbox(sandboxConfig);
+        afterResult = await sandbox.executeEffect(hook.after, {
+          event: {
+            ...currentEvent,
+            result: runResult,
+            cancelled: false
+          },
+          store: currentEvent.context?.graph,
+          delta: currentEvent.payload?.delta,
+          metadata: currentEvent.context?.metadata || {}
+        });
+      } else {
+        afterResult = await hook.after({
+          ...currentEvent,
+          result: runResult,
+          cancelled: false
+        });
+      }
     } catch (error) {
       if (strictMode) {
         throw new Error(`After phase failed: ${error.message}`);
@@ -197,7 +239,8 @@ async function _executeHookLifecycle(hook, event, options) {
     runResult,
     afterResult,
     cancelled: false,
-    phase: 'completed'
+    phase: 'completed',
+    success: !cancelled && (!runResult || !runResult.error)
   };
 }
 
@@ -217,7 +260,9 @@ export function createHookExecutor(options = {}) {
     strictMode = false,
     timeoutMs = 30000,
     enableConditionEvaluation = true,
-    enableMetrics = true
+    enableMetrics = true,
+    enableSandboxing = true,
+    sandboxConfig = {}
   } = options;
   
   const metrics = {
@@ -250,6 +295,8 @@ export function createHookExecutor(options = {}) {
         strictMode,
         timeoutMs,
         enableConditionEvaluation,
+        enableSandboxing,
+        sandboxConfig,
         ...executionOptions
       };
       
