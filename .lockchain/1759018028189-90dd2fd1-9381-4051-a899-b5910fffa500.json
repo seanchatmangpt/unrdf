@@ -1,0 +1,8 @@
+{
+  "receiptId": "90dd2fd1-9381-4051-a899-b5910fffa500",
+  "timestamp": 1759018028189,
+  "receipt": "{\n  \"id\": \"90dd2fd1-9381-4051-a899-b5910fffa500\",\n  \"delta\": {\n    \"additions\": [\n      {\n        \"s\": \"ex:data-integrity-check-2\",\n        \"p\": \"ex:type\",\n        \"o\": \"ex:checksum-verification\"\n      },\n      {\n        \"s\": \"ex:data-integrity-check-2\",\n        \"p\": \"ex:status\",\n        \"o\": \"ex:verified\"\n      },\n      {\n        \"s\": \"ex:data-integrity-check-2\",\n        \"p\": \"ex:hash\",\n        \"o\": \"sha256:8eb397d7cdc641bea8d00bfe8560a917\"\n      },\n      {\n        \"s\": \"ex:data-integrity-check-2\",\n        \"p\": \"ex:timestamp\",\n        \"o\": \"1759018028184\"\n      }\n    ],\n    \"removals\": []\n  },\n  \"committed\": true,\n  \"hookResults\": [\n    {\n      \"hookId\": \"integrity-verification\",\n      \"mode\": \"pre\",\n      \"result\": true\n    }\n  ],\n  \"beforeHash\": {\n    \"sha3\": \"before-2\",\n    \"blake3\": \"before-2\"\n  },\n  \"afterHash\": {\n    \"sha3\": \"after-2\",\n    \"blake3\": \"after-2\"\n  },\n  \"timestamp\": 1759018028186,\n  \"durationMs\": 50,\n  \"actor\": \"integrity-monitor\",\n  \"hookErrors\": [],\n  \"metadata\": {\n    \"system\": \"critical-database\",\n    \"integrityLevel\": \"high\",\n    \"verificationMethod\": \"cryptographic-hash\"\n  }\n}",
+  "signature": "11a447aaaf7e6062d3275a76ca78db0c3fe9566309c96817f14cb768667b528f",
+  "previousHash": null,
+  "merkleRoot": "27592a8e065a1cfab5c9850a1697036ed129fa2d4dae8ee35c34f37fdd1ada7b"
+}
