@@ -1,0 +1,8 @@
+{
+  "receiptId": "test-receipt-1",
+  "timestamp": 1759017872208,
+  "receipt": "{\n  \"id\": \"test-receipt-1\",\n  \"delta\": {\n    \"additions\": [],\n    \"removals\": []\n  },\n  \"committed\": true,\n  \"hookResults\": [],\n  \"beforeHash\": {\n    \"sha3\": \"test\",\n    \"blake3\": \"test\"\n  },\n  \"afterHash\": {\n    \"sha3\": \"test\",\n    \"blake3\": \"test\"\n  },\n  \"timestamp\": 1759017872203,\n  \"durationMs\": 100\n}",
+  "signature": "9e413bca82e0b4e734e52426f594589f8918570391d949519c382769af33dd7d",
+  "previousHash": null,
+  "merkleRoot": "11fb58e13043f421ea06d5b7224c519255f95ef01490345fe3749dc518f62340"
+}
