@@ -1,0 +1,22 @@
+{
+  "batchId": "mg2xsdvvmac7lagdqx",
+  "timestamp": 1759017811531,
+  "entryCount": 3,
+  "entries": [
+    {
+      "receiptId": "test-receipt-0",
+      "timestamp": 1759017811517,
+      "signature": "3c471d1d49ef646dcace0a1677e6d57dd9626bf23adbd0d850a568dee5babcdd"
+    },
+    {
+      "receiptId": "test-receipt-1",
+      "timestamp": 1759017811523,
+      "signature": "74a7aa98d24cb46859be5f54e8d90da4b47a90e520f6968b0f025f39444547f7"
+    },
+    {
+      "receiptId": "test-receipt-2",
+      "timestamp": 1759017811529,
+      "signature": "e0660b9b5d843501d41c50e7a1317d4e5e4e2d5fcde50c9a89c753d87ab1eead"
+    }
+  ]
+}
