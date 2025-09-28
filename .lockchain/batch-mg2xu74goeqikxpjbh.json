@@ -1,0 +1,22 @@
+{
+  "batchId": "mg2xu74goeqikxpjbh",
+  "timestamp": 1759017896080,
+  "entryCount": 3,
+  "entries": [
+    {
+      "receiptId": "93572c0d-3793-477b-b9b8-9c3a0e420726",
+      "timestamp": 1759017896069,
+      "signature": "d01ba3dfedfe73c1248ecfbd3198d2e27bd093bbcaa0960380e2080523ca3829"
+    },
+    {
+      "receiptId": "04d2a96c-625d-462f-8b69-cc6c153ef4a2",
+      "timestamp": 1759017896074,
+      "signature": "3d4541242f247abc61e3fcffeabf496e14e72fba2887ec75416912089f37ec70"
+    },
+    {
+      "receiptId": "a90f4ccd-fa99-4629-ace5-50c20864f4a2",
+      "timestamp": 1759017896079,
+      "signature": "f987f0bd61ebe6a70a043e38485a6fa03956fc016b8312337fa0ced800287cf5"
+    }
+  ]
+}

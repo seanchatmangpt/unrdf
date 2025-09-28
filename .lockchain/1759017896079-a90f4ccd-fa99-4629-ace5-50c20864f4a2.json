@@ -1,0 +1,8 @@
+{
+  "receiptId": "a90f4ccd-fa99-4629-ace5-50c20864f4a2",
+  "timestamp": 1759017896079,
+  "receipt": "{\n  \"id\": \"a90f4ccd-fa99-4629-ace5-50c20864f4a2\",\n  \"delta\": {\n    \"additions\": [\n      {\n        \"s\": \"ex:test-7\",\n        \"p\": \"ex:type\",\n        \"o\": \"ex:document\"\n      }\n    ],\n    \"removals\": []\n  },\n  \"committed\": true,\n  \"hookResults\": [],\n  \"beforeHash\": {\n    \"sha3\": \"before-7\",\n    \"blake3\": \"before-7\"\n  },\n  \"afterHash\": {\n    \"sha3\": \"after-7\",\n    \"blake3\": \"after-7\"\n  },\n  \"timestamp\": 1759017896081,\n  \"durationMs\": 170,\n  \"actor\": \"test-user-7\",\n  \"hookErrors\": []\n}",
+  "signature": "f987f0bd61ebe6a70a043e38485a6fa03956fc016b8312337fa0ced800287cf5",
+  "previousHash": null,
+  "merkleRoot": "68ca3fff50bbad861c9c92f633620a7fa35ed02c84c8eabc82090d1e434b973b"
+}
