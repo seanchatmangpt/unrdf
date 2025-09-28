@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UNRDF - Autonomic Knowledge Management System</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .badges {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            background: rgba(255,255,255,0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: rgba(255,255,255,0.95);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .feature-list {
+            list-style: none;
+        }
+
+        .feature-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+
+        .emoji {
+            font-size: 1.2rem;
+        }
+
+        .demo-section {
+            background: rgba(255,255,255,0.95);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
+            margin-bottom: 30px;
+        }
+
+        .demo-section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .code-block::before {
+            content: 'JavaScript';
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            background: #4a5568;
+            color: #e2e8f0;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+        }
+
+        .interactive-demo {
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin: 10px 5px;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .button:active {
+            transform: translateY(0);
+        }
+
+        .status {
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+
+        .status.success {
+            background: #c6f6d5;
+            color: #22543d;
+            border: 1px solid #9ae6b4;
+        }
+
+        .status.error {
+            background: #fed7d7;
+            color: #742a2a;
+            border: 1px solid #feb2b2;
+        }
+
+        .status.info {
+            background: #bee3f8;
+            color: #2a4365;
+            border: 1px solid #90cdf4;
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .metric {
+            background: #f7fafc;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+        }
+
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .metric-label {
+            font-size: 0.9rem;
+            color: #718096;
+            margin-top: 5px;
+        }
+
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 40px;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .badges {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .glow {
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="container">
+            <!-- Header -->
+            <div class="header">
+                <h1>🌊 UNRDF</h1>
+                <p>Blue Ocean Innovation: Autonomic Knowledge Management System</p>
+                <div class="badges">
+                    <span class="badge">v1.0.1</span>
+                    <span class="badge">Production Ready</span>
+                    <span class="badge">Autonomic Enabled</span>
+                    <span class="badge">MIT License</span>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="main-content">
+                <!-- Features Card -->
+                <div class="card">
+                    <h2>🤖 Revolutionary Features</h2>
+                    <ul class="feature-list">
+                        <li><span class="emoji">🌊</span> Blue Ocean Innovation</li>
+                        <li><span class="emoji">🤖</span> Multi-Agent Coordination</li>
+                        <li><span class="emoji">📦</span> Policy Pack Governance</li>
+                        <li><span class="emoji">🛡️</span> Cryptographic Audit Trails</li>
+                        <li><span class="emoji">⚡</span> Secure Effect Sandboxing</li>
+                        <li><span class="emoji">🔍</span> Delta-Aware Optimization</li>
+                        <li><span class="emoji">📊</span> Real-time Monitoring</li>
+                        <li><span class="emoji">🔄</span> Self-Governing Systems</li>
+                    </ul>
+                </div>
+
+                <!-- Architecture Card -->
+                <div class="card">
+                    <h2>🏗️ Autonomic Architecture</h2>
+                    <ul class="feature-list">
+                        <li><span class="emoji">🎯</span> Knowledge Hooks</li>
+                        <li><span class="emoji">🔗</span> Lockchain Writer</li>
+                        <li><span class="emoji">🤝</span> Resolution Layer</li>
+                        <li><span class="emoji">📋</span> Policy Pack Manager</li>
+                        <li><span class="emoji">⚡</span> Effect Sandbox</li>
+                        <li><span class="emoji">🔍</span> Query Optimizer</li>
+                        <li><span class="emoji">📊</span> Transaction Manager</li>
+                        <li><span class="emoji">🛡️</span> Cryptographic Provenance</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Interactive Demo -->
+            <div class="demo-section">
+                <h2>🚀 Interactive Autonomic Demo</h2>
+                
+                <div class="interactive-demo">
+                    <h3>Knowledge Hook Simulation</h3>
+                    <p>Simulate an autonomic compliance monitoring hook with multi-agent coordination:</p>
+                    
+                    <div class="code-block">
+// Autonomic Knowledge Hook
+const complianceHook = defineHook({
+  meta: {
+    name: 'autonomic-compliance-gate',
+    description: 'Self-governing compliance monitoring'
+  },
+  when: {
+    kind: 'sparql-ask',
+    ref: { 
+      uri: 'file://compliance-check.rq',
+      sha256: '{{ hookHash }}',
+      mediaType: 'application/sparql-query'
+    }
+  },
+  run: async (event) => {
+    return { 
+      compliant: {{ isCompliant }}, 
+      actions: ['log-audit', 'notify-compliance'],
+      agentConsensus: {{ consensus }}
+    };
+  }
+});
+                    </div>
+
+                    <div class="metrics">
+                        <div class="metric">
+                            <div class="metric-value">{{ hookHash }}</div>
+                            <div class="metric-label">Hook Hash</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">{{ consensus }}%</div>
+                            <div class="metric-label">Agent Consensus</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">{{ performance }}ms</div>
+                            <div class="metric-label">Execution Time</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">{{ lockchainHash }}</div>
+                            <div class="metric-label">Lockchain Hash</div>
+                        </div>
+                    </div>
+
+                    <button @click="simulateHook" class="button" :class="{ pulse: isRunning }">
+                        {{ isRunning ? '🔄 Running...' : '🤖 Simulate Hook' }}
+                    </button>
+                    
+                    <button @click="toggleCompliance" class="button">
+                        {{ isCompliant ? '✅ Compliant' : '❌ Non-Compliant' }}
+                    </button>
+
+                    <div v-if="lastResult" class="status" :class="lastResult.success ? 'success' : 'error'">
+                        <strong>🤖 Autonomic Result:</strong> {{ lastResult.message }}
+                        <br>
+                        <strong>🔗 Lockchain:</strong> {{ lastResult.lockchainHash }}
+                        <br>
+                        <strong>📋 Policy Pack:</strong> {{ lastResult.policyPack }}
+                        <br>
+                        <strong>🤝 Consensus:</strong> {{ lastResult.consensus }}%
+                    </div>
+                </div>
+            </div>
+
+            <!-- Code Example -->
+            <div class="demo-section">
+                <h2>💻 Quick Start Example</h2>
+                <div class="code-block">
+import { initStore, defineHook, evaluateHook, PolicyPackManager } from 'unrdf';
+
+// Initialize autonomic knowledge base
+const runApp = initStore([], {
+  baseIRI: 'https://production.example.org/',
+  enableLockchain: true,
+  enableResolution: true,
+  enablePolicyPacks: true
+});
+
+runApp(async () => {
+  // Create policy pack manager
+  const policyManager = new PolicyPackManager();
+  await policyManager.loadPolicyPack('compliance-v1');
+  
+  // Define autonomic compliance hook
+  const complianceHook = defineHook({
+    meta: {
+      name: 'autonomic-compliance-gate',
+      description: 'Self-governing compliance monitoring'
+    },
+    when: {
+      kind: 'sparql-ask',
+      ref: { 
+        uri: 'file://compliance-check.rq',
+        sha256: 'abc123...',
+        mediaType: 'application/sparql-query'
+      }
+    },
+    run: async (event) => {
+      return { 
+        compliant: true, 
+        actions: ['log-audit', 'notify-compliance'],
+        agentConsensus: 0.95
+      };
+    }
+  });
+
+  // Evaluate with full audit trail
+  const receipt = await evaluateHook(complianceHook, { 
+    persist: true,
+    enableLockchain: true,
+    enableMultiAgent: true
+  });
+
+  if (receipt.fired) {
+    console.log('🤖 Autonomic compliance check completed');
+    console.log('🔗 Lockchain Hash:', receipt.lockchainHash);
+    console.log('📋 Policy Pack:', receipt.policyPack);
+    console.log('🤝 Agent Consensus:', receipt.consensus);
+  }
+});
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="footer">
+                <p>Built with ❤️ by the GitVan Team</p>
+                <p>🌊 Blue Ocean Innovation: Transforming knowledge graphs into autonomic, self-governing systems since 2024 ⚡🤖</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const { createApp } = Vue;
+
+        createApp({
+            data() {
+                return {
+                    hookHash: 'abc123...',
+                    consensus: 95,
+                    performance: 42,
+                    lockchainHash: 'def456...',
+                    isCompliant: true,
+                    isRunning: false,
+                    lastResult: null
+                }
+            },
+            methods: {
+                async simulateHook() {
+                    this.isRunning = true;
+                    
+                    // Simulate hook execution
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                    
+                    // Generate random results
+                    const success = Math.random() > 0.2;
+                    const consensus = Math.floor(Math.random() * 20) + 80;
+                    const performance = Math.floor(Math.random() * 50) + 20;
+                    
+                    this.consensus = consensus;
+                    this.performance = performance;
+                    this.hookHash = this.generateHash();
+                    this.lockchainHash = this.generateHash();
+                    
+                    this.lastResult = {
+                        success: success,
+                        message: success ? 
+                            'Compliance check passed with autonomic decision-making' : 
+                            'Compliance violation detected - initiating remediation',
+                        lockchainHash: this.lockchainHash,
+                        policyPack: 'compliance-v1',
+                        consensus: consensus
+                    };
+                    
+                    this.isRunning = false;
+                },
+                
+                toggleCompliance() {
+                    this.isCompliant = !this.isCompliant;
+                },
+                
+                generateHash() {
+                    return Math.random().toString(36).substr(2, 8) + '...';
+                }
+            },
+            mounted() {
+                // Auto-update metrics every 5 seconds
+                setInterval(() => {
+                    if (!this.isRunning) {
+                        this.consensus = Math.floor(Math.random() * 10) + 90;
+                        this.performance = Math.floor(Math.random() * 20) + 30;
+                    }
+                }, 5000);
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
