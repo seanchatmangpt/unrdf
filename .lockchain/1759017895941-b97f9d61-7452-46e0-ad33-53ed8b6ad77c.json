@@ -1,0 +1,8 @@
+{
+  "receiptId": "b97f9d61-7452-46e0-ad33-53ed8b6ad77c",
+  "timestamp": 1759017895941,
+  "receipt": "{\n  \"id\": \"b97f9d61-7452-46e0-ad33-53ed8b6ad77c\",\n  \"delta\": {\n    \"additions\": [\n      {\n        \"s\": \"ex:test-1\",\n        \"p\": \"ex:type\",\n        \"o\": \"ex:document\"\n      },\n      {\n        \"s\": \"ex:test-1\",\n        \"p\": \"ex:status\",\n        \"o\": \"ex:active\"\n      }\n    ],\n    \"removals\": []\n  },\n  \"committed\": true,\n  \"hookResults\": [\n    {\n      \"hookId\": \"hook-1\",\n      \"mode\": \"pre\",\n      \"result\": true\n    }\n  ],\n  \"beforeHash\": {\n    \"sha3\": \"before-1\",\n    \"blake3\": \"before-1\"\n  },\n  \"afterHash\": {\n    \"sha3\": \"after-1\",\n    \"blake3\": \"after-1\"\n  },\n  \"timestamp\": 1759017895937,\n  \"durationMs\": 110,\n  \"actor\": \"test-user-1\",\n  \"hookErrors\": []\n}",
+  "signature": "f27a723207dafe4f367c983ae5021a2ad7f19f93613651a684f039606734ace1",
+  "previousHash": null,
+  "merkleRoot": "451d25151f97cdd95d5539d7149c2304ac9237660155a49485482523440b13f6"
+}
