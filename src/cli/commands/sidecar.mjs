@@ -25,7 +25,7 @@ export async function sidecarStatusCommand(ctx, config) {
 
     console.log('Sidecar Status');
     console.log('──────────────');
-    console.log(`Status:        ${health.status}`);
+    console.log(`Status:        ${health.status === 'SERVING' ? 'healthy' : health.status}`);
     console.log(`Uptime:        ${Math.floor((health.uptime_seconds || 0) / 60)}m`);
     console.log(`Protocol:      gRPC`);
     console.log(`Health:        ${health.status === 'SERVING' ? '✓ Healthy' : '✗ Unhealthy'}`);
@@ -47,6 +47,7 @@ export async function sidecarStatusCommand(ctx, config) {
   } catch (error) {
     // Gracefully handle unavailable sidecar - not an error condition
     if (error.code === 14 || error.code === 4) {
+      console.log('Status: unavailable');
       console.log('⚠️  Sidecar not available');
       console.log(`Run 'unrdf sidecar start' to start the sidecar process`);
       process.exit(0);  // Exit with success - unavailable is not an error

@@ -163,9 +163,20 @@ export async function hookListCommand(ctx, config) {
  */
 export async function hookCreateCommand(ctx, config) {
   const { args } = ctx;
-  validateRequiredArgs(args, ['name', 'type']);
 
-  console.log(`🔨 Creating hook: ${args.name} (${args.type})`);
+  // Extract positional arguments: name is first, type is second
+  const positionalArgs = args._.slice(2); // Skip 'hook' and 'create'
+  const name = positionalArgs[0] || args.name;
+  const type = positionalArgs[1] || args.type;
+
+  if (!name || !type) {
+    console.error('❌ Usage: hook create <name> <type> [options]');
+    console.error('   Example: hook create health-check sparql-ask --file=test.rq');
+    console.error('   Available types: sparql-ask, threshold, shacl');
+    process.exit(1);
+  }
+
+  console.log(`🔨 Creating hook: ${name} (${type})`);
 
   // Read SPARQL query from file or use inline query
   let queryContent;
@@ -185,17 +196,17 @@ export async function hookCreateCommand(ctx, config) {
       'sparql-ask': 'ASK { ?s ?p ?o }',
       'threshold': 'SELECT (COUNT(?s) AS ?count) WHERE { ?s ?p ?o }'
     };
-    queryContent = defaultQueries[args.type] || 'ASK { ?s ?p ?o }';
+    queryContent = defaultQueries[type] || 'ASK { ?s ?p ?o }';
     console.warn(`⚠️  No --file or --query provided, using default query`);
   }
 
   // Generate hook definition based on type
   let hookDefinition;
 
-  switch (args.type) {
+  switch (type) {
     case 'sparql-ask':
       hookDefinition = {
-        name: args.name,
+        name: name,
         kind: args.phase || 'before',
         condition: {
           type: 'sparql-ask',
@@ -207,7 +218,7 @@ export async function hookCreateCommand(ctx, config) {
 
     case 'threshold':
       hookDefinition = {
-        name: args.name,
+        name: name,
         kind: args.phase || 'before',
         condition: {
           type: 'threshold',
@@ -221,7 +232,7 @@ export async function hookCreateCommand(ctx, config) {
 
     case 'shacl':
       hookDefinition = {
-        name: args.name,
+        name: name,
         kind: args.phase || 'before',
         condition: {
           type: 'shacl',
@@ -232,7 +243,7 @@ export async function hookCreateCommand(ctx, config) {
       break;
 
     default:
-      console.error(`❌ Unknown hook type: ${args.type}`);
+      console.error(`❌ Unknown hook type: ${type}`);
       console.log(`Available types: sparql-ask, threshold, shacl`);
       process.exit(1);
   }
@@ -243,7 +254,7 @@ export async function hookCreateCommand(ctx, config) {
   }
 
   // Write hook file
-  let outputPath = args.output || `hooks/${args.name}.json`;
+  let outputPath = args.output || `hooks/${name}.json`;
 
   // If output is a directory, create subdirectory structure
   if (args.output) {
@@ -254,9 +265,9 @@ export async function hookCreateCommand(ctx, config) {
         // Create hooks subdirectory and name-specific directory
         const { join } = await import('node:path');
         const { mkdir } = await import('node:fs/promises');
-        const hookDir = join(args.output, 'hooks', args.name);
+        const hookDir = join(args.output, 'hooks', name);
         await mkdir(hookDir, { recursive: true });
-        outputPath = join(hookDir, `${args.name}.json`);
+        outputPath = join(hookDir, `${name}.json`);
       }
     } catch (error) {
       // If path doesn't exist, treat as file path

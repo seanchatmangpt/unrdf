@@ -84,7 +84,7 @@ export async function validatePolicy(store, policyPackName, options = {}) {
       span.setAttribute('validation.executionTime', executionTime);
       span.setStatus({ code: SpanStatusCode.OK });
 
-      return {
+      const result = {
         passed,
         policyPack: policyPackName,
         executionTime,
@@ -93,6 +93,14 @@ export async function validatePolicy(store, policyPackName, options = {}) {
         hookResults,
         timestamp: new Date().toISOString()
       };
+
+      // Log to audit trail
+      await logAuditEntry(result).catch(err => {
+        // Don't fail validation if audit logging fails
+        console.warn(`Warning: Failed to log audit entry: ${err.message}`);
+      });
+
+      return result;
     } catch (error) {
       span.recordException(error);
       span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
@@ -220,6 +228,43 @@ function formatMarkdownReport(result) {
   }
 
   return lines.join('\n');
+}
+
+/**
+ * Log validation result to audit trail
+ * @param {Object} validationResult - Validation result to log
+ * @returns {Promise<void>}
+ */
+async function logAuditEntry(validationResult) {
+  const { appendFile, mkdir } = await import('node:fs/promises');
+  const { join } = await import('node:path');
+
+  const auditDir = join(process.cwd(), '.unrdf');
+  const auditLogPath = join(auditDir, 'policy-audit.log');
+
+  // Ensure .unrdf directory exists
+  try {
+    await mkdir(auditDir, { recursive: true });
+  } catch (err) {
+    if (err.code !== 'EEXIST') throw err;
+  }
+
+  // Create simplified audit entry
+  const auditEntry = {
+    timestamp: validationResult.timestamp,
+    policyPack: validationResult.policyPack,
+    passed: validationResult.passed,
+    hooksEvaluated: validationResult.hooksEvaluated,
+    violations: validationResult.violations.map(v => ({
+      hook: v.hook,
+      severity: v.severity,
+      message: v.message
+    })),
+    executionTime: validationResult.executionTime
+  };
+
+  // Append as JSONL (one JSON object per line)
+  await appendFile(auditLogPath, JSON.stringify(auditEntry) + '\n', 'utf-8');
 }
 
 export default {

@@ -56,5 +56,7 @@ export {
   policyApplyCommand,
   policyListCommand,
   policyGetCommand,
+  policyValidateCommand,
+  policyAuditCommand,
   policyCommandMeta
 } from './policy.mjs';
