@@ -1,6 +1,6 @@
 {
   "name": "unrdf",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Autonomic RDF framework with Knowledge Hooks, policy pack governance, and cryptographic audit trails",
   "type": "module",
   "main": "src/index.mjs",
