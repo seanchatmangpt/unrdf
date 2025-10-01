@@ -3,7 +3,7 @@
  * @module dark-matter-core
  * 
  * @description
- * Implements the Dark Matter 80/20 framework for the KGC JavaScript Sidecar.
+ * Implements the Dark Matter 80/20 framework for the UNRDF Knowledge Engine.
  * This module contains the essential 20% of components that deliver 80% of the value.
  */
 
@@ -17,6 +17,7 @@ import { PolicyPackManager } from './policy-pack.mjs';
 import { ResolutionLayer } from './resolution-layer.mjs';
 import { Store } from 'n3';
 import { z } from 'zod';
+import crypto from 'node:crypto';
 
 /**
  * Dark Matter 80/20 Core Configuration Schema
@@ -36,11 +37,17 @@ const DarkMatterConfigSchema = z.object({
   
   // Performance targets (80/20 focused)
   performanceTargets: z.object({
-    p50PreHookPipeline: z.number().max(0.2).default(0.2), // 200µs
-    p99PreHookPipeline: z.number().max(2).default(2), // 2ms
-    receiptWriteMedian: z.number().max(5).default(5), // 5ms
-    hookEngineExecPerMin: z.number().min(10000).default(10000), // 10k/min
-    errorIsolation: z.number().min(1).max(1).default(1) // 100%
+    p50PreHookPipeline: z.number().max(0.2),
+    p99PreHookPipeline: z.number().max(2),
+    receiptWriteMedian: z.number().max(5),
+    hookEngineExecPerMin: z.number().min(10000),
+    errorIsolation: z.number().min(1).max(1)
+  }).default({
+    p50PreHookPipeline: 0.2, // 200µs
+    p99PreHookPipeline: 2, // 2ms
+    receiptWriteMedian: 5, // 5ms
+    hookEngineExecPerMin: 10000, // 10k/min
+    errorIsolation: 1 // 100%
   }),
   
   // Dark Matter optimization
@@ -57,7 +64,7 @@ const DarkMatterConfigSchema = z.object({
  * Dark Matter 80/20 Core Implementation
  * 
  * This class implements the essential 20% of components that deliver 80% of the value
- * in the KGC JavaScript Sidecar, following the Dark Matter 80/20 framework.
+ * in the UNRDF Knowledge Engine, following the Dark Matter 80/20 framework.
  */
 export class DarkMatterCore {
   /**
@@ -377,20 +384,67 @@ export class DarkMatterCore {
       throw new Error('Transaction manager not available');
     }
 
-    // Execute transaction with 80/20 optimized path
-    const startTime = Date.now();
-    const result = await transactionManager.apply(store, delta, options);
-    const duration = Date.now() - startTime;
+    // Get observability component for OTEL spans
+    const observability = this.getComponent('observability');
+    const transactionId = options.transactionId || crypto.randomUUID();
 
-    // Update performance metrics
-    const performanceOptimizer = this.getComponent('performanceOptimizer');
-    if (performanceOptimizer && typeof performanceOptimizer.updateMetrics === 'function') {
-      performanceOptimizer.updateMetrics({
-        transactionLatency: { duration, success: result.receipt.committed }
+    // Start OTEL transaction span
+    let spanContext;
+    if (observability && typeof observability.startTransactionSpan === 'function') {
+      spanContext = await observability.startTransactionSpan(transactionId, {
+        actor: options.actor || 'system',
+        deltaSize: delta?.size || 0
       });
     }
 
-    return result;
+    // Execute transaction with 80/20 optimized path - FAIL FAST
+    const startTime = Date.now();
+
+    try {
+      const result = await transactionManager.apply(store, delta, options);
+      const duration = Date.now() - startTime;
+
+      // End OTEL span with success
+      if (observability && spanContext && typeof observability.endTransactionSpan === 'function') {
+        await observability.endTransactionSpan(transactionId, {
+          success: true,
+          committed: result.receipt.committed,
+          duration
+        });
+      }
+
+      // Update performance metrics
+      const performanceOptimizer = this.getComponent('performanceOptimizer');
+      if (performanceOptimizer && typeof performanceOptimizer.updateMetrics === 'function') {
+        performanceOptimizer.updateMetrics({
+          transactionLatency: { duration, success: result.receipt.committed }
+        });
+      }
+
+      return result;
+    } catch (error) {
+      const duration = Date.now() - startTime;
+
+      // End OTEL span with error
+      if (observability && spanContext && typeof observability.endTransactionSpan === 'function') {
+        await observability.endTransactionSpan(transactionId, {
+          success: false,
+          error: error.message,
+          duration
+        });
+      }
+
+      // Update performance metrics with failure
+      const performanceOptimizer = this.getComponent('performanceOptimizer');
+      if (performanceOptimizer && typeof performanceOptimizer.updateMetrics === 'function') {
+        performanceOptimizer.updateMetrics({
+          transactionLatency: { duration, success: false }
+        });
+      }
+
+      // FAIL FAST - propagate error without fallback
+      throw error;
+    }
   }
 
   /**
@@ -410,26 +464,70 @@ export class DarkMatterCore {
       throw new Error('Knowledge hook manager not available');
     }
 
-    // Execute hook with 80/20 optimized path
-    const startTime = Date.now();
-    let result;
-    if (typeof knowledgeHookManager.executeHook === 'function') {
-      result = await knowledgeHookManager.executeHook(hook, event, options);
-    } else {
-      // Fallback for hook execution
-      result = { result: 'success', message: 'Hook executed via fallback' };
-    }
-    const duration = Date.now() - startTime;
+    // Get observability component for OTEL spans
+    const observability = this.getComponent('observability');
+    const hookId = hook?.meta?.name || 'unknown-hook';
+    const transactionId = event?.transactionId || 'no-transaction';
 
-    // Update performance metrics
-    const performanceOptimizer = this.getComponent('performanceOptimizer');
-    if (performanceOptimizer && typeof performanceOptimizer.updateMetrics === 'function') {
-      performanceOptimizer.updateMetrics({
-        hookExecutionLatency: { duration, success: !result.error }
+    // Start OTEL hook span
+    let spanContext;
+    if (observability && typeof observability.startHookSpan === 'function') {
+      spanContext = await observability.startHookSpan(hookId, transactionId, {
+        hookType: hook?.when?.kind || 'unknown'
       });
     }
 
-    return result;
+    // Execute hook with 80/20 optimized path - FAIL FAST
+    if (typeof knowledgeHookManager.executeHook !== 'function') {
+      throw new Error('Knowledge hook manager does not support executeHook method');
+    }
+
+    const startTime = Date.now();
+
+    try {
+      const result = await knowledgeHookManager.executeHook(hook, event, options);
+      const duration = Date.now() - startTime;
+
+      // End OTEL span with success
+      if (observability && spanContext && typeof observability.endHookSpan === 'function') {
+        await observability.endHookSpan(hookId, transactionId, {
+          success: true,
+          duration
+        });
+      }
+
+      // Update performance metrics
+      const performanceOptimizer = this.getComponent('performanceOptimizer');
+      if (performanceOptimizer && typeof performanceOptimizer.updateMetrics === 'function') {
+        performanceOptimizer.updateMetrics({
+          hookExecutionLatency: { duration, success: !result.error }
+        });
+      }
+
+      return result;
+    } catch (error) {
+      const duration = Date.now() - startTime;
+
+      // End OTEL span with error
+      if (observability && spanContext && typeof observability.endHookSpan === 'function') {
+        await observability.endHookSpan(hookId, transactionId, {
+          success: false,
+          error: error.message,
+          duration
+        });
+      }
+
+      // Update performance metrics with failure
+      const performanceOptimizer = this.getComponent('performanceOptimizer');
+      if (performanceOptimizer && typeof performanceOptimizer.updateMetrics === 'function') {
+        performanceOptimizer.updateMetrics({
+          hookExecutionLatency: { duration, success: false }
+        });
+      }
+
+      // FAIL FAST - propagate error without fallback
+      throw error;
+    }
   }
 
   /**

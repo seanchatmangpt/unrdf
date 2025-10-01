@@ -36,9 +36,20 @@ export async function canonicalize(store, options = {}) {
   } = options;
 
   try {
+    // Get quads from store and validate
+    const quads = store.getQuads();
+    if (!Array.isArray(quads)) {
+      throw new TypeError('store.getQuads() must return an array');
+    }
+
+    // If store is empty, return empty canonical form
+    if (quads.length === 0) {
+      return '';
+    }
+
     // Convert store to N-Quads format
     const writer = new Writer({ format: 'N-Quads' });
-    writer.addQuads(store.getQuads());
+    writer.addQuads(quads);
     const nquads = await new Promise((resolve, reject) => {
       writer.end((error, result) => {
         if (error) {
@@ -49,15 +60,23 @@ export async function canonicalize(store, options = {}) {
       });
     });
 
+    // Validate nquads output
+    if (typeof nquads !== 'string' || nquads.trim().length === 0) {
+      throw new TypeError('Serialization produced empty or invalid N-Quads');
+    }
+
+    // Parse N-Quads string to RDF.js dataset format
+    // rdf-canonize expects an array of quad objects, not a string
+    const parsedDataset = rdfCanonize.NQuads.parse(nquads);
+
     // Set up timeout
     const timeoutPromise = new Promise((_, reject) => {
       setTimeout(() => reject(new Error('Canonicalization timeout')), timeoutMs);
     });
 
-    // Perform canonicalization
-    const canonicalPromise = rdfCanonize.canonize(nquads, {
+    // Perform canonicalization with parsed dataset
+    const canonicalPromise = rdfCanonize.canonize(parsedDataset, {
       algorithm,
-      inputFormat: 'application/n-quads',
       produceGeneralizedRdf
     });
 

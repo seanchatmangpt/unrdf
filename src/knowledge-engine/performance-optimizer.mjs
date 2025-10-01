@@ -1,5 +1,5 @@
 /**
- * @file Performance Optimizer for KGC Sidecar
+ * @file Performance Optimizer for UNRDF
  * @module performance-optimizer
  * 
  * @description
@@ -47,7 +47,7 @@ const PerformanceMetrics = {
 };
 
 /**
- * Performance Optimizer for KGC Sidecar
+ * Performance Optimizer for UNRDF
  */
 export class PerformanceOptimizer {
   /**
@@ -671,3 +671,5 @@ export function createPerformanceOptimizer(config = {}) {
  * Default performance optimizer instance
  */
 export const defaultPerformanceOptimizer = createPerformanceOptimizer();
+
+

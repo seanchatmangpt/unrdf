@@ -160,13 +160,21 @@ export class TestcontainersManager {
     }
 
     console.log('🌐 Creating testcontainers network...');
-    this.network = await new Network().create({
-      name: testcontainersConfig.network.name,
-      driver: testcontainersConfig.network.driver
-    });
+    try {
+      // Create network using the correct testcontainers API
+      this.network = await new Network()
+        .withName(testcontainersConfig.network.name)
+        .withDriver(testcontainersConfig.network.driver)
+        .start();
 
-    console.log(`✅ Network created: ${this.network.getName()}`);
-    return this.network;
+      console.log(`✅ Network created: ${testcontainersConfig.network.name}`);
+      return this.network;
+    } catch (error) {
+      console.warn('⚠️ Failed to create custom network, using default network:', error.message);
+      // Containers will use default network
+      this.network = null;
+      return null;
+    }
   }
 
   /**
@@ -588,3 +596,6 @@ export function createTestcontainersManager() {
 export const testcontainersManager = createTestcontainersManager();
 
 export default TestcontainersManager;
+
+
+

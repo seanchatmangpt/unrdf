@@ -10,3 +10,6 @@ echo "Stopping E2E test services..."
 docker-compose -f test/e2e/docker-compose.yml down
 
 echo "Services stopped"
+
+
+

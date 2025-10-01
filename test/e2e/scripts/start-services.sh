@@ -57,3 +57,6 @@ echo "  Fuseki: http://localhost:3030"
 echo "  Fuseki SPARQL: http://localhost:3030/unrdf-test/sparql"
 echo ""
 echo "To stop services, run: docker-compose -f test/e2e/docker-compose.yml down"
+
+
+

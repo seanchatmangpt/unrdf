@@ -1378,3 +1378,6 @@ groups:
 This operational runbook provides comprehensive guidance for operating the KGC JavaScript Sidecar in production environments. Regular monitoring, proactive maintenance, and proper scaling strategies are essential for ensuring optimal performance and reliability.
 
 For additional support or questions, please refer to the project documentation or create an issue in the GitHub repository.
+
+
+

@@ -60,8 +60,8 @@ describe('Performance and Scalability', () => {
       manager.addKnowledgeHook(hook);
 
       // Mock condition evaluation to return true
-      vi.spyOn(require('../../../src/knowledge-engine/condition-evaluator.mjs'), 'evaluateCondition')
-        .mockResolvedValue(true);
+      const conditionEvaluator = await import('../../../src/knowledge-engine/condition-evaluator.mjs');
+      vi.spyOn(conditionEvaluator, 'evaluateCondition').mockResolvedValue(true);
 
       const event = {
         name: 'test-event',
@@ -140,8 +140,8 @@ describe('Performance and Scalability', () => {
       manager.addKnowledgeHook(hook3);
 
       // Mock condition evaluation to return true
-      vi.spyOn(require('../../../src/knowledge-engine/condition-evaluator.mjs'), 'evaluateCondition')
-        .mockResolvedValue(true);
+      const conditionEvaluator = await import('../../../src/knowledge-engine/condition-evaluator.mjs');
+      vi.spyOn(conditionEvaluator, 'evaluateCondition').mockResolvedValue(true);
 
       const event = {
         name: 'test-event',
@@ -186,8 +186,8 @@ describe('Performance and Scalability', () => {
       manager.addKnowledgeHook(hook);
 
       // Mock condition evaluation to return true
-      vi.spyOn(require('../../../src/knowledge-engine/condition-evaluator.mjs'), 'evaluateCondition')
-        .mockResolvedValue(true);
+      const conditionEvaluator = await import('../../../src/knowledge-engine/condition-evaluator.mjs');
+      vi.spyOn(conditionEvaluator, 'evaluateCondition').mockResolvedValue(true);
 
       const event = {
         name: 'test-event',
@@ -242,8 +242,8 @@ describe('Performance and Scalability', () => {
       manager.addKnowledgeHook(hook);
 
       // Mock condition evaluation to return true
-      vi.spyOn(require('../../../src/knowledge-engine/condition-evaluator.mjs'), 'evaluateCondition')
-        .mockResolvedValue(true);
+      const conditionEvaluator = await import('../../../src/knowledge-engine/condition-evaluator.mjs');
+      vi.spyOn(conditionEvaluator, 'evaluateCondition').mockResolvedValue(true);
 
       // Execute multiple times to test cache performance
       const results = [];
@@ -303,8 +303,8 @@ describe('Performance and Scalability', () => {
       manager.addKnowledgeHook(hook);
 
       // Mock condition evaluation to return true
-      vi.spyOn(require('../../../src/knowledge-engine/condition-evaluator.mjs'), 'evaluateCondition')
-        .mockResolvedValue(true);
+      const conditionEvaluator = await import('../../../src/knowledge-engine/condition-evaluator.mjs');
+      vi.spyOn(conditionEvaluator, 'evaluateCondition').mockResolvedValue(true);
 
       // Execute multiple times to test cache eviction
       const results = [];
@@ -363,8 +363,8 @@ describe('Performance and Scalability', () => {
       manager.addKnowledgeHook(hook);
 
       // Mock condition evaluation to return true
-      vi.spyOn(require('../../../src/knowledge-engine/condition-evaluator.mjs'), 'evaluateCondition')
-        .mockResolvedValue(true);
+      const conditionEvaluator = await import('../../../src/knowledge-engine/condition-evaluator.mjs');
+      vi.spyOn(conditionEvaluator, 'evaluateCondition').mockResolvedValue(true);
 
       const event = {
         name: 'test-event',
@@ -421,8 +421,8 @@ describe('Performance and Scalability', () => {
       manager.addKnowledgeHook(hook);
 
       // Mock condition evaluation to return true
-      vi.spyOn(require('../../../src/knowledge-engine/condition-evaluator.mjs'), 'evaluateCondition')
-        .mockResolvedValue(true);
+      const conditionEvaluator = await import('../../../src/knowledge-engine/condition-evaluator.mjs');
+      vi.spyOn(conditionEvaluator, 'evaluateCondition').mockResolvedValue(true);
 
       const event = {
         name: 'test-event',
@@ -473,8 +473,8 @@ describe('Performance and Scalability', () => {
       manager.addKnowledgeHook(hook);
 
       // Mock condition evaluation to return true
-      vi.spyOn(require('../../../src/knowledge-engine/condition-evaluator.mjs'), 'evaluateCondition')
-        .mockResolvedValue(true);
+      const conditionEvaluator = await import('../../../src/knowledge-engine/condition-evaluator.mjs');
+      vi.spyOn(conditionEvaluator, 'evaluateCondition').mockResolvedValue(true);
 
       const event = {
         name: 'test-event',
@@ -519,8 +519,8 @@ describe('Performance and Scalability', () => {
       manager.addKnowledgeHook(hook);
 
       // Mock condition evaluation to return true
-      vi.spyOn(require('../../../src/knowledge-engine/condition-evaluator.mjs'), 'evaluateCondition')
-        .mockResolvedValue(true);
+      const conditionEvaluator = await import('../../../src/knowledge-engine/condition-evaluator.mjs');
+      vi.spyOn(conditionEvaluator, 'evaluateCondition').mockResolvedValue(true);
 
       const event = {
         name: 'test-event',
@@ -563,8 +563,8 @@ describe('Performance and Scalability', () => {
       manager.addKnowledgeHook(hook);
 
       // Mock condition evaluation to return true
-      vi.spyOn(require('../../../src/knowledge-engine/condition-evaluator.mjs'), 'evaluateCondition')
-        .mockResolvedValue(true);
+      const conditionEvaluator = await import('../../../src/knowledge-engine/condition-evaluator.mjs');
+      vi.spyOn(conditionEvaluator, 'evaluateCondition').mockResolvedValue(true);
 
       const event = {
         name: 'test-event',
@@ -643,8 +643,8 @@ describe('Performance and Scalability', () => {
       manager.addKnowledgeHook(hook3);
 
       // Mock condition evaluation to return true
-      vi.spyOn(require('../../../src/knowledge-engine/condition-evaluator.mjs'), 'evaluateCondition')
-        .mockResolvedValue(true);
+      const conditionEvaluator = await import('../../../src/knowledge-engine/condition-evaluator.mjs');
+      vi.spyOn(conditionEvaluator, 'evaluateCondition').mockResolvedValue(true);
 
       const event = {
         name: 'test-event',
@@ -695,8 +695,8 @@ describe('Performance and Scalability', () => {
       }
 
       // Mock condition evaluation to return true
-      vi.spyOn(require('../../../src/knowledge-engine/condition-evaluator.mjs'), 'evaluateCondition')
-        .mockResolvedValue(true);
+      const conditionEvaluator = await import('../../../src/knowledge-engine/condition-evaluator.mjs');
+      vi.spyOn(conditionEvaluator, 'evaluateCondition').mockResolvedValue(true);
 
       const event = {
         name: 'test-event',
@@ -746,8 +746,8 @@ describe('Performance and Scalability', () => {
       manager.addKnowledgeHook(hook);
 
       // Mock condition evaluation to return true
-      vi.spyOn(require('../../../src/knowledge-engine/condition-evaluator.mjs'), 'evaluateCondition')
-        .mockResolvedValue(true);
+      const conditionEvaluator = await import('../../../src/knowledge-engine/condition-evaluator.mjs');
+      vi.spyOn(conditionEvaluator, 'evaluateCondition').mockResolvedValue(true);
 
       // Create large payload
       const largeData = new Array(1000000).fill(0).map((_, i) => ({
