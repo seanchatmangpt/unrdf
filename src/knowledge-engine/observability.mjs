@@ -1,10 +1,10 @@
 /**
- * @file OpenTelemetry Observability for KGC Sidecar
+ * @file OpenTelemetry Observability for UNRDF
  * @module observability
  * 
  * @description
  * Implements comprehensive observability with OpenTelemetry traces, metrics,
- * and logging for the KGC JavaScript sidecar. Provides backpressure monitoring,
+ * and logging for the UNRDF Knowledge Engine. Provides backpressure monitoring,
  * error isolation, and performance tracking.
  */
 
@@ -502,3 +502,5 @@ export function createObservabilityManager(config = {}) {
  * Default observability manager instance
  */
 export const defaultObservabilityManager = createObservabilityManager();
+
+

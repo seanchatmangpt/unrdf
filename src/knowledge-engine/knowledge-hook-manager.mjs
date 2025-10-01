@@ -11,6 +11,7 @@ import { TransactionManager } from './transaction.mjs';
 import { createHookExecutor } from './hook-executor.mjs';
 import { createConditionEvaluator } from './condition-evaluator.mjs';
 import { PolicyPackManager } from './policy-pack.mjs';
+import { createSecurityValidator } from './security-validator.mjs';
 import { Store } from 'n3';
 import { validateManagerConfig, validateTransactionDelta, validateHookEvent } from './schemas.mjs';
 
@@ -60,6 +61,11 @@ export class KnowledgeHookManager extends TransactionManager {
     
     // Policy pack manager
     this.policyPackManager = new PolicyPackManager(this.basePath);
+    
+    // Security validator
+    this.securityValidator = createSecurityValidator({
+      strictMode: this.strictMode
+    });
   }
 
   /**
@@ -97,6 +103,12 @@ export class KnowledgeHookManager extends TransactionManager {
     const conditionValidation = this.conditionEvaluator.validateCondition?.(hook.when);
     if (conditionValidation && !conditionValidation.valid) {
       throw new Error(`Invalid hook condition: ${conditionValidation.error}`);
+    }
+    
+    // Security validation
+    const securityValidation = this.securityValidator.validateKnowledgeHook(hook);
+    if (!securityValidation.valid) {
+      throw new Error(`Security validation failed: ${securityValidation.blockReason}`);
     }
     
     // Store the hook

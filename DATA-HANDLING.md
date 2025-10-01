@@ -326,3 +326,6 @@ This document is updated regularly to reflect changes in data handling practices
 ## Legal Disclaimer
 
 This document provides general guidance on data handling and privacy. It is not legal advice. Users should consult with legal counsel to ensure compliance with applicable laws and regulations.
+
+
+

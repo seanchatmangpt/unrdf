@@ -587,3 +587,6 @@ output "secret_name" {
   description = "Secret name"
   value       = kubernetes_secret.kgc_sidecar_secrets.metadata[0].name
 }
+
+
+
