@@ -1,0 +1,195 @@
+@startuml KGCJS_Schemas_Zod_ER
+!theme plain
+
+title UNRDF Knowledge Engine - Zod Schema Entity Relationships
+
+entity "TransactionDeltaSchema" as delta {
+  * add: Quad[]
+  * remove: Quad[]
+  --
+  metadata?: object
+  timestamp?: string
+  author?: string
+}
+
+entity "KnowledgeHookSchema" as hook {
+  * id: string
+  * name: string
+  * version: string
+  * channel: "before" | "after"
+  * effect: Function | string
+  --
+  conditions?: Condition[]
+  priority?: number (0-100)
+  timeout?: number (ms)
+  metadata?: object
+}
+
+entity "ConditionSchema" as condition {
+  * type: "sparql-ask" | "sparql-select" | "shacl"
+  --
+  query?: string
+  shapes?: string
+  fileRef?: string
+  expected?: any
+  negate?: boolean
+}
+
+entity "TransactionReceiptSchema" as receipt {
+  * id: string
+  * timestamp: string
+  * delta: TransactionDelta
+  * results: HookResult[]
+  --
+  canonicalHash?: string
+  previousHash?: string
+  lockchainId?: string
+  stats: object
+}
+
+entity "HookResultSchema" as hook_result {
+  * hookId: string
+  * success: boolean
+  * duration: number
+  --
+  result?: any
+  error?: string
+  logs?: string[]
+  metrics: object
+}
+
+entity "PolicyPackManifestSchema" as manifest {
+  * id: string
+  * name: string
+  * version: string
+  * hooks: KnowledgeHook[]
+  --
+  dependencies?: string[]
+  metadata: PolicyPackMeta
+  signature?: string
+}
+
+entity "PolicyPackMetaSchema" as meta {
+  * author: string
+  * description: string
+  * license: string
+  --
+  homepage?: string
+  repository?: string
+  keywords?: string[]
+}
+
+entity "AgentProposalSchema" as proposal {
+  * agentId: string
+  * proposal: TransactionDelta
+  * confidence: number (0-1)
+  --
+  reasoning?: string
+  metadata?: object
+  timestamp: string
+}
+
+entity "ResolutionResultSchema" as resolution {
+  * accepted: AgentProposal
+  * strategy: string
+  * votes: object
+  --
+  rejected?: AgentProposal[]
+  metadata?: object
+}
+
+entity "LockchainEntrySchema" as lockchain {
+  * id: string
+  * receiptHash: string
+  * previousHash: string
+  * timestamp: string
+  --
+  algorithm: "SHA3-256" | "BLAKE3"
+  signature?: string
+  metadata?: object
+}
+
+entity "TransactionOptionsSchema" as options {
+  * strictMode?: boolean
+  * maxHooks?: number
+  * timeout?: number
+  --
+  enableLockchain?: boolean
+  canonicalize?: boolean
+  validateDeltas?: boolean
+}
+
+entity "SandboxConfigSchema" as sandbox_config {
+  * timeout: number (ms)
+  * memoryLimit?: number (MB)
+  --
+  allowedGlobals?: string[]
+  mode: "vm2" | "worker"
+}
+
+entity "ExecutionMetrics" as metrics {
+  * duration: number
+  * memoryUsed?: number
+  * cpuTime?: number
+  --
+  conditionChecks: number
+  effectExecutions: number
+  errors: number
+}
+
+' Relationships
+delta "1" -- "1" receipt : generates
+hook "1" -- "0..*" condition : has
+hook "1" -- "0..*" hook_result : produces
+receipt "1" -- "0..*" hook_result : contains
+receipt "1" -- "0..1" lockchain : written to
+manifest "1" -- "1..*" hook : bundles
+manifest "1" -- "1" meta : described by
+proposal "1" -- "1" delta : proposes
+resolution "1" -- "1..*" proposal : evaluates
+options "1" -- "1" sandbox_config : configures
+hook_result "1" -- "1" metrics : tracked by
+
+note top of delta
+  **Core transaction data**
+  Validated before mutation
+  Supports add/remove quads
+end note
+
+note right of hook
+  **Hook definition**
+  Registered in manager
+  Executed by HookExecutor
+end note
+
+note right of condition
+  **Pre-execution checks**
+  SPARQL ASK/SELECT or SHACL
+  Evaluated before effect runs
+end note
+
+note bottom of receipt
+  **Immutable audit record**
+  Cryptographically hashed
+  Optionally written to lockchain
+end note
+
+note bottom of manifest
+  **Policy pack bundle**
+  Versioned hook collections
+  Can have dependencies
+end note
+
+note left of proposal
+  **Multi-agent input**
+  Used in consensus resolution
+  Confidence-weighted voting
+end note
+
+note left of lockchain
+  **Cryptographic chain**
+  Git-notes backed storage
+  SHA3-256 or BLAKE3 hashing
+end note
+
+@enduml

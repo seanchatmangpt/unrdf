@@ -1,0 +1,73 @@
+@startuml KGCJS_C3_Components
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+LAYOUT_WITH_LEGEND()
+
+title UNRDF Knowledge Engine - Component Diagram
+
+Container_Boundary(ke, "Knowledge Engine") {
+    Component(schemas, "schemas.mjs", "Zod", "Validates all data structures (Delta, Hook, Receipt, Options)")
+    Component(transaction, "transaction.mjs", "TransactionManager", "Orchestrates atomic transactions with hooks")
+    Component(hook_executor, "hook-executor.mjs", "HookExecutor", "Executes individual hooks with metrics")
+    Component(condition_eval, "condition-evaluator.mjs", "ConditionEvaluator", "Evaluates SPARQL/SHACL conditions")
+    Component(knowledge_hooks, "knowledge-hook-manager.mjs", "KnowledgeHookManager", "Manages hook registry and lifecycle")
+    Component(policy_pack, "policy-pack.mjs", "PolicyPackManager", "Manages policy pack activation/versioning")
+    Component(effect_sandbox, "effect-sandbox.mjs", "EffectSandbox", "Sandboxed effect execution")
+    Component(resolution, "resolution-layer.mjs", "ResolutionLayer", "Multi-agent consensus resolution")
+    Component(lockchain, "lockchain-writer.mjs", "LockchainWriter", "Cryptographic audit trail")
+    Component(canonicalize, "canonicalize.mjs", "Canonicalizer", "URDNA2015 canonicalization")
+    Component(query_opt, "query-optimizer.mjs", "QueryOptimizer", "Delta-aware query caching")
+    Component(file_resolver, "file-resolver.mjs", "FileResolver", "Resolves and caches file references")
+
+    Component(parse, "parse.mjs", "Parser", "Turtle/N-Quads/JSON-LD parsing")
+    Component(query, "query.mjs", "QueryEngine", "SPARQL query execution")
+    Component(validate, "validate.mjs", "Validator", "SHACL validation")
+    Component(reason, "reason.mjs", "Reasoner", "N3 reasoning")
+}
+
+Rel(transaction, schemas, "Validates with", "Zod")
+Rel(transaction, knowledge_hooks, "Triggers", "pre/post hooks")
+Rel(knowledge_hooks, hook_executor, "Executes", "individual hooks")
+Rel(hook_executor, condition_eval, "Checks", "conditions")
+Rel(hook_executor, effect_sandbox, "Runs", "effects")
+Rel(knowledge_hooks, policy_pack, "Loads", "policy packs")
+Rel(transaction, resolution, "Resolves", "conflicts")
+Rel(transaction, lockchain, "Writes", "receipts")
+Rel(lockchain, canonicalize, "Canonicalizes", "store")
+
+Rel(condition_eval, query, "Executes", "SPARQL")
+Rel(condition_eval, validate, "Validates", "SHACL")
+Rel(condition_eval, file_resolver, "Resolves", "file refs")
+
+Rel(query, query_opt, "Caches", "plans")
+
+note right of schemas
+  **Core Schemas:**
+  • TransactionDeltaSchema
+  • KnowledgeHookSchema
+  • ConditionSchema
+  • ReceiptSchema
+  • PolicyPackManifestSchema
+  • AgentProposalSchema
+end note
+
+note right of hook_executor
+  **Execution Phases:**
+  1. Validate input
+  2. Check conditions
+  3. Run effect (sandboxed)
+  4. Collect metrics
+  5. Handle errors
+  6. Return result
+end note
+
+note right of resolution
+  **Consensus Strategies:**
+  • Democracy (voting)
+  • Meritocracy (reputation)
+  • Anarchy (first valid)
+  • Quorum (threshold)
+  • Veto (any reject)
+end note
+
+@enduml

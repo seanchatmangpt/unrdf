@@ -43,6 +43,14 @@ export async function evaluateCondition(condition, graph, options = {}) {
         return await evaluateSparqlSelect(condition, graph, resolver, env);
       case 'shacl':
         return await evaluateShacl(condition, graph, resolver, env);
+      case 'delta':
+        return await evaluateDelta(condition, graph, resolver, env, options);
+      case 'threshold':
+        return await evaluateThreshold(condition, graph, resolver, env, options);
+      case 'count':
+        return await evaluateCount(condition, graph, resolver, env, options);
+      case 'window':
+        return await evaluateWindow(condition, graph, resolver, env, options);
       default:
         throw new Error(`Unsupported condition kind: ${condition.kind}`);
     }
@@ -421,4 +429,257 @@ export function addOptimizerMethods(evaluator, optimizer) {
       optimizer.clear();
     }
   };
+}
+
+/**
+ * Evaluate a DELTA predicate condition
+ * @param {Object} condition - The condition definition
+ * @param {Store} graph - The RDF graph
+ * @param {Object} resolver - File resolver instance
+ * @param {Object} env - Environment variables
+ * @param {Object} options - Evaluation options
+ * @returns {Promise<boolean>} Delta condition result
+ */
+async function evaluateDelta(condition, graph, resolver, env, options) {
+  const { spec } = condition;
+  const { change, key, threshold = 0.1, baseline } = spec;
+  
+  // Get current state hash
+  const currentHash = await hashStore(graph);
+  
+  // Get baseline hash if provided
+  let baselineHash = null;
+  if (baseline) {
+    try {
+      const baselineStore = new Store();
+      // Load baseline data
+      baselineHash = await hashStore(baselineStore);
+    } catch (error) {
+      console.warn(`Failed to load baseline: ${error.message}`);
+    }
+  }
+  
+  // Calculate change magnitude
+  let changeMagnitude = 0;
+  if (baselineHash && currentHash !== baselineHash) {
+    changeMagnitude = 1.0; // Full change detected
+  } else if (options.delta) {
+    // Calculate change based on delta size
+    const totalQuads = graph.size;
+    const deltaSize = (options.delta.additions?.length || 0) + (options.delta.removals?.length || 0);
+    changeMagnitude = totalQuads > 0 ? deltaSize / totalQuads : 0;
+  }
+  
+  // Evaluate change type
+  switch (change) {
+    case 'any':
+      return changeMagnitude > 0;
+    case 'increase':
+      return changeMagnitude > threshold;
+    case 'decrease':
+      return changeMagnitude < -threshold;
+    case 'modify':
+      return Math.abs(changeMagnitude) > threshold;
+    default:
+      return false;
+  }
+}
+
+/**
+ * Evaluate a THRESHOLD predicate condition
+ * @param {Object} condition - The condition definition
+ * @param {Store} graph - The RDF graph
+ * @param {Object} resolver - File resolver instance
+ * @param {Object} env - Environment variables
+ * @param {Object} options - Evaluation options
+ * @returns {Promise<boolean>} Threshold condition result
+ */
+async function evaluateThreshold(condition, graph, resolver, env, options) {
+  const { spec } = condition;
+  const { var: variable, op, value, aggregate = 'avg' } = spec;
+  
+  // Execute query to get values
+  const query = `
+    SELECT ?${variable} WHERE {
+      ?s ?p ?${variable}
+    }
+  `;
+  
+  const results = await select(graph, query);
+  
+  if (results.length === 0) {
+    return false;
+  }
+  
+  // Extract numeric values
+  const values = results
+    .map(r => r[variable]?.value)
+    .filter(v => v !== undefined)
+    .map(v => parseFloat(v))
+    .filter(v => !isNaN(v));
+  
+  if (values.length === 0) {
+    return false;
+  }
+  
+  // Calculate aggregate
+  let aggregateValue;
+  switch (aggregate) {
+    case 'sum':
+      aggregateValue = values.reduce((sum, v) => sum + v, 0);
+      break;
+    case 'avg':
+      aggregateValue = values.reduce((sum, v) => sum + v, 0) / values.length;
+      break;
+    case 'min':
+      aggregateValue = Math.min(...values);
+      break;
+    case 'max':
+      aggregateValue = Math.max(...values);
+      break;
+    case 'count':
+      aggregateValue = values.length;
+      break;
+    default:
+      aggregateValue = values[0];
+  }
+  
+  // Evaluate operator
+  switch (op) {
+    case '>':
+      return aggregateValue > value;
+    case '>=':
+      return aggregateValue >= value;
+    case '<':
+      return aggregateValue < value;
+    case '<=':
+      return aggregateValue <= value;
+    case '==':
+      return Math.abs(aggregateValue - value) < 0.0001;
+    case '!=':
+      return Math.abs(aggregateValue - value) >= 0.0001;
+    default:
+      return false;
+  }
+}
+
+/**
+ * Evaluate a COUNT predicate condition
+ * @param {Object} condition - The condition definition
+ * @param {Store} graph - The RDF graph
+ * @param {Object} resolver - File resolver instance
+ * @param {Object} env - Environment variables
+ * @param {Object} options - Evaluation options
+ * @returns {Promise<boolean>} Count condition result
+ */
+async function evaluateCount(condition, graph, resolver, env, options) {
+  const { spec } = condition;
+  const { op, value, query: countQuery } = spec;
+  
+  let count;
+  
+  if (countQuery) {
+    // Use custom query for counting
+    const results = await select(graph, countQuery);
+    count = results.length;
+  } else {
+    // Count all quads
+    count = graph.size;
+  }
+  
+  // Evaluate operator
+  switch (op) {
+    case '>':
+      return count > value;
+    case '>=':
+      return count >= value;
+    case '<':
+      return count < value;
+    case '<=':
+      return count <= value;
+    case '==':
+      return count === value;
+    case '!=':
+      return count !== value;
+    default:
+      return false;
+  }
+}
+
+/**
+ * Evaluate a WINDOW predicate condition
+ * @param {Object} condition - The condition definition
+ * @param {Store} graph - The RDF graph
+ * @param {Object} resolver - File resolver instance
+ * @param {Object} env - Environment variables
+ * @param {Object} options - Evaluation options
+ * @returns {Promise<boolean>} Window condition result
+ */
+async function evaluateWindow(condition, graph, resolver, env, options) {
+  const { spec } = condition;
+  const { size, slide = size, aggregate, query: windowQuery } = spec;
+  
+  // For now, implement a simple window evaluation
+  // In a full implementation, this would maintain sliding windows over time
+  
+  if (windowQuery) {
+    const results = await select(graph, windowQuery);
+    
+    // Calculate aggregate over results
+    let aggregateValue;
+    switch (aggregate) {
+      case 'sum':
+        aggregateValue = results.reduce((sum, r) => {
+          const val = parseFloat(Object.values(r)[0]?.value || 0);
+          return sum + (isNaN(val) ? 0 : val);
+        }, 0);
+        break;
+      case 'avg':
+        const sum = results.reduce((sum, r) => {
+          const val = parseFloat(Object.values(r)[0]?.value || 0);
+          return sum + (isNaN(val) ? 0 : val);
+        }, 0);
+        aggregateValue = results.length > 0 ? sum / results.length : 0;
+        break;
+      case 'min':
+        aggregateValue = Math.min(...results.map(r => {
+          const val = parseFloat(Object.values(r)[0]?.value || Infinity);
+          return isNaN(val) ? Infinity : val;
+        }));
+        break;
+      case 'max':
+        aggregateValue = Math.max(...results.map(r => {
+          const val = parseFloat(Object.values(r)[0]?.value || -Infinity);
+          return isNaN(val) ? -Infinity : val;
+        }));
+        break;
+      case 'count':
+        aggregateValue = results.length;
+        break;
+      default:
+        aggregateValue = results.length;
+    }
+    
+    // For window conditions, we typically check if aggregate exceeds threshold
+    // This is a simplified implementation
+    return aggregateValue > 0;
+  }
+  
+  // Default: check if graph has any data in the window
+  return graph.size > 0;
+}
+
+/**
+ * Hash a store for delta comparison
+ * @param {Store} store - RDF store
+ * @returns {Promise<string>} Store hash
+ */
+async function hashStore(store) {
+  // Simple hash implementation - in production, use proper canonicalization
+  const quads = Array.from(store);
+  const quadStrings = quads.map(q => 
+    `${q.subject?.value || ''}:${q.predicate?.value || ''}:${q.object?.value || ''}:${q.graph?.value || ''}`
+  ).sort();
+  
+  return quadStrings.join('|');
 }

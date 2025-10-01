@@ -1,0 +1,234 @@
+@startuml KGCJS_ClassDiagram_Core
+!theme plain
+skinparam linetype ortho
+
+title UNRDF Knowledge Engine - Core Class Diagram
+
+package "Transaction Management" {
+    class TransactionManager {
+        +config: TransactionOptionsSchema
+        +hookManager: KnowledgeHookManager
+        +lockchainWriter: LockchainWriter
+        -_sessions: Map
+        +apply(store, delta, options): Promise<Receipt>
+        +applyAll(store, deltas): Promise<Receipt[]>
+        +createSession(store): TransactionSession
+        +getStats(): TransactionStats
+    }
+
+    class TransactionSession {
+        +id: string
+        +store: Store
+        +deltas: Delta[]
+        +apply(delta): Promise<Receipt>
+        +commit(): Promise<Receipt[]>
+        +rollback(): void
+        +getStats(): SessionStats
+    }
+}
+
+package "Hook Management" {
+    class KnowledgeHookManager {
+        +config: ManagerConfigSchema
+        +hooks: Map<string, KnowledgeHook>
+        +executor: HookExecutor
+        +policyPackManager: PolicyPackManager
+        +addHook(hook): Promise<string>
+        +removeHook(id): void
+        +executeHooks(channel, context): Promise<HookResult[]>
+        +loadPolicyPack(manifest): Promise<string>
+    }
+
+    class HookExecutor {
+        +config: HookExecutorConfigSchema
+        +conditionEvaluator: ConditionEvaluator
+        +effectSandbox: EffectSandbox
+        +execute(hook, context): Promise<HookResult>
+        +executeAll(hooks, context): Promise<HookResult[]>
+        -_checkConditions(conditions, context): Promise<boolean>
+        -_runEffect(effect, context): Promise<any>
+        +getMetrics(): ExecutionMetrics
+    }
+
+    class KnowledgeHook {
+        +id: string
+        +name: string
+        +version: string
+        +conditions: Condition[]
+        +effect: Function | string
+        +channel: "before" | "after"
+        +priority: number
+        +timeout: number
+    }
+}
+
+package "Condition Evaluation" {
+    class ConditionEvaluator {
+        +config: ConditionEvaluatorConfigSchema
+        +queryEngine: QueryEngine
+        +validator: ShaclValidator
+        +fileResolver: FileResolver
+        +evaluate(condition, context): Promise<boolean>
+        +evaluateAll(conditions, context): Promise<boolean>
+        -_evaluateSparqlAsk(query, store): Promise<boolean>
+        -_evaluateSparqlSelect(query, store): Promise<boolean>
+        -_evaluateShacl(shapes, store): Promise<boolean>
+    }
+
+    class Condition {
+        +type: "sparql-ask" | "sparql-select" | "shacl"
+        +query?: string
+        +shapes?: string
+        +fileRef?: string
+        +expected?: any
+    }
+}
+
+package "Policy Governance" {
+    class PolicyPackManager {
+        +config: PolicyPackConfigSchema
+        +packs: Map<string, PolicyPack>
+        +loadPack(manifest): Promise<PolicyPack>
+        +activatePack(id): Promise<void>
+        +deactivatePack(id): void
+        +verifyPack(pack): Promise<boolean>
+        +getPackDependencies(id): string[]
+    }
+
+    class PolicyPack {
+        +id: string
+        +version: string
+        +hooks: KnowledgeHook[]
+        +dependencies: string[]
+        +meta: PolicyPackMetaSchema
+        +manifest: PolicyPackManifestSchema
+        +status: "active" | "deprecated" | "rolledback"
+    }
+}
+
+package "Effect Execution" {
+    class EffectSandbox {
+        +config: SandboxConfigSchema
+        +execute(effect, context): Promise<SandboxResult>
+        +executeAll(effects, contexts): Promise<SandboxResult[]>
+        -_executeInVM2(effect, context): Promise<any>
+        -_executeInWorker(effect, context): Promise<any>
+        +getStats(): SandboxStats
+    }
+
+    class SandboxResult {
+        +result: any
+        +logs: string[]
+        +metrics: ExecutionMetrics
+        +duration: number
+        +error?: Error
+    }
+}
+
+package "Consensus Resolution" {
+    class ResolutionLayer {
+        +config: ResolutionStrategySchema
+        +agents: Map<string, Agent>
+        +resolveConflict(proposals): Promise<Resolution>
+        +addAgent(agent): void
+        +removeAgent(id): void
+        -_democracyVote(proposals): Resolution
+        -_meritocracyVote(proposals): Resolution
+        -_anarchyFirst(proposals): Resolution
+    }
+
+    class AgentProposal {
+        +agentId: string
+        +proposal: Delta
+        +confidence: number
+        +reasoning: string
+        +metadata: object
+    }
+}
+
+package "Audit Trail" {
+    class LockchainWriter {
+        +config: LockchainConfigSchema
+        +writeReceipt(receipt): Promise<string>
+        +writeBatch(receipts): Promise<string>
+        +verifyChain(entries): Promise<boolean>
+        +getChain(filter): Promise<LockchainEntry[]>
+        -_hashReceipt(receipt): string
+        -_writeToGitNotes(entry): Promise<void>
+    }
+
+    class LockchainEntry {
+        +id: string
+        +previousHash: string
+        +receiptHash: string
+        +timestamp: string
+        +signature?: string
+        +metadata: object
+    }
+}
+
+package "Canonicalization" {
+    class Canonicalizer {
+        +canonicalize(store, options): Promise<string>
+        +isIsomorphic(storeA, storeB): Promise<boolean>
+        +getCanonicalHash(store): Promise<string>
+        +groupByIsomorphism(stores): Promise<Group[]>
+        +findDuplicates(stores): Promise<Duplicate[]>
+        +createSession(options): CanonicalizationSession
+    }
+
+    class CanonicalizationSession {
+        +canonicalize(store): Promise<string>
+        +isIsomorphic(storeA, storeB): Promise<boolean>
+        +getCanonicalHash(store): Promise<string>
+        +getStats(): SessionStats
+    }
+}
+
+' Relationships
+TransactionManager --> KnowledgeHookManager : uses
+TransactionManager --> LockchainWriter : writes to
+TransactionManager --> ResolutionLayer : resolves with
+TransactionManager *-- TransactionSession : creates
+
+KnowledgeHookManager --> HookExecutor : delegates to
+KnowledgeHookManager --> PolicyPackManager : loads packs from
+KnowledgeHookManager *-- KnowledgeHook : manages
+
+HookExecutor --> ConditionEvaluator : evaluates with
+HookExecutor --> EffectSandbox : executes in
+
+ConditionEvaluator --> Condition : evaluates
+
+PolicyPackManager *-- PolicyPack : manages
+
+EffectSandbox --> SandboxResult : produces
+
+ResolutionLayer --> AgentProposal : resolves
+
+LockchainWriter --> LockchainEntry : creates
+LockchainWriter --> Canonicalizer : canonicalizes with
+
+Canonicalizer --> CanonicalizationSession : creates
+
+note right of TransactionManager
+  **Central coordinator**
+  Orchestrates atomic transactions
+  with pre/post hooks, receipts,
+  and lockchain integration
+end note
+
+note right of EffectSandbox
+  **Security boundary**
+  Isolates untrusted code in
+  VM2 (Node) or Worker (Browser)
+  with timeout enforcement
+end note
+
+note right of ResolutionLayer
+  **Consensus mechanism**
+  Resolves conflicting proposals
+  from multiple autonomous agents
+end note
+
+@enduml

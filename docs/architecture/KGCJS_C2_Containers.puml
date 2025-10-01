@@ -1,0 +1,59 @@
+@startuml KGCJS_C2_Containers
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+LAYOUT_WITH_LEGEND()
+
+title UNRDF Knowledge Engine - Container Diagram
+
+Person(user, "Application Developer")
+
+System_Boundary(unrdf, "UNRDF Knowledge Engine") {
+    Container(tm, "TransactionManager", "Node.js", "Manages atomic transactions with pre/post hooks, delta tracking, and receipt generation")
+    Container(khm, "KnowledgeHookManager", "Node.js", "Registers and executes knowledge hooks (SPARQL ASK/SELECT, SHACL validation)")
+    Container(ce, "ConditionEvaluator", "Node.js", "Evaluates conditions (SPARQL/SHACL) before hook execution")
+    Container(ppm, "PolicyPackManager", "Node.js", "Loads, versions, and activates policy packs with governance rules")
+    Container(es, "EffectSandbox", "Node.js + Worker", "Executes untrusted effects in isolated VM2/Worker threads with timeouts")
+    Container(rl, "ResolutionLayer", "Node.js", "Multi-agent consensus for conflicting proposals (democracy/meritocracy/anarchy)")
+    Container(lw, "LockchainWriter", "Node.js + Git", "Writes cryptographic receipts to git-notes for immutable audit trail")
+    Container(store, "N3 Store", "N3.js", "In-memory RDF quad store with indexing and graph support")
+    Container(canon, "Canonicalizer", "rdf-canonize", "URDNA2015 canonicalization with SHA3/BLAKE3 hashing")
+}
+
+ContainerDb(git_repo, "Git Repository", "Git", "Stores lockchain receipts as git-notes")
+Container_Ext(comunica, "Comunica Engine", "SPARQL", "Query processor")
+Container_Ext(eye, "eyereasoner", "N3", "Reasoning engine")
+Container_Ext(shacl, "rdf-validate-shacl", "SHACL", "Shape validator")
+
+Rel(user, tm, "Creates transactions", "apply(store, delta)")
+Rel(tm, khm, "Executes hooks", "before/after")
+Rel(khm, ce, "Evaluates conditions", "check SPARQL/SHACL")
+Rel(khm, ppm, "Loads policies", "activate pack")
+Rel(khm, es, "Runs effects", "sandbox execution")
+Rel(tm, rl, "Resolves conflicts", "consensus vote")
+Rel(tm, lw, "Writes receipts", "git-notes")
+Rel(tm, store, "Mutates quads", "add/remove")
+Rel(lw, canon, "Canonicalizes", "URDNA2015")
+
+Rel(ce, comunica, "Executes SPARQL", "ASK/SELECT")
+Rel(ce, shacl, "Validates SHACL", "shapes")
+Rel(lw, git_repo, "Persists", "git-notes")
+
+note right of tm
+  **Transaction Flow:**
+  1. Pre-hooks (can veto)
+  2. Store mutation
+  3. Post-hooks (observe)
+  4. Receipt generation
+  5. Lockchain write (optional)
+end note
+
+note right of es
+  **Sandbox Security:**
+  • VM2 isolation (Node)
+  • Web Worker isolation (Browser)
+  • Timeout enforcement
+  • Resource limits
+  • No filesystem access
+end note
+
+@enduml

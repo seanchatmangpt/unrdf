@@ -10,6 +10,7 @@ import { utf8ToBytes, bytesToHex } from '@noble/hashes/utils.js';
 import { canonicalize } from './canonicalize.mjs';
 import { createLockchainWriter } from './lockchain-writer.mjs';
 import { createResolutionLayer } from './resolution-layer.mjs';
+import { createObservabilityManager } from './observability.mjs';
 import { randomUUID } from 'crypto';
 import { z } from 'zod';
 
@@ -93,6 +94,17 @@ export class TransactionManager {
     
     // Simple mutex for concurrency control
     this._applyMutex = Promise.resolve();
+    
+    // Initialize observability manager
+    this.observability = createObservabilityManager(this.options.observability || {});
+    
+    // Performance tracking
+    this.performanceMetrics = {
+      transactionLatency: [],
+      hookExecutionRate: 0,
+      errorCount: 0,
+      totalTransactions: 0
+    };
     
     // Initialize lockchain writer if enabled
     if (this.options.enableLockchain) {
@@ -224,6 +236,14 @@ export class TransactionManager {
     /** @type {string[]} */
     const hookErrors = [];
 
+    // Start observability span
+    const spanContext = this.observability.startTransactionSpan(transactionId, {
+      'kgc.delta.additions': validatedDelta.additions.length,
+      'kgc.delta.removals': validatedDelta.removals.length,
+      'kgc.actor': validatedOptions.actor || 'system',
+      'kgc.skipHooks': validatedOptions.skipHooks || false
+    });
+
     // Use mutex for concurrency control
     return new Promise((resolve, reject) => {
       this._applyMutex = this._applyMutex.then(async () => {
@@ -257,12 +277,36 @@ export class TransactionManager {
             }
           }
           
+          // Update performance metrics
+          const duration = Date.now() - startTime;
+          this._updatePerformanceMetrics(duration, true);
+          
+          // End observability span
+          this.observability.endTransactionSpan(transactionId, {
+            'kgc.transaction.committed': finalReceipt.committed,
+            'kgc.hook.results': hookResults.length,
+            'kgc.hook.errors': hookErrors.length
+          });
+          
           resolve({
             store: result.store,
             receipt: finalReceipt
           });
         } catch (error) {
           const beforeHash = await hashStore(store, this.options).catch(() => ({ sha3: '', blake3: '' }));
+          
+          // Update performance metrics
+          const duration = Date.now() - startTime;
+          this._updatePerformanceMetrics(duration, false);
+          
+          // Record error
+          this.observability.recordError(error, {
+            'kgc.transaction.id': transactionId,
+            'kgc.actor': validatedOptions.actor || 'system'
+          });
+          
+          // End observability span with error
+          this.observability.endTransactionSpan(transactionId, {}, error);
           
           resolve({
             store,
@@ -563,6 +607,45 @@ export class TransactionManager {
       enabled: true,
       ...this.resolutionLayer.getStats()
     };
+  }
+
+  /**
+   * Get manager statistics.
+   * @returns {Object} Statistics
+   */
+  getStats() {
+    return {
+      hooks: this.hooks.length,
+      lockchain: this.lockchainWriter ? this.lockchainWriter.getStats() : null,
+      resolution: this.resolutionLayer ? this.resolutionLayer.getStats() : null,
+      performance: this.performanceMetrics,
+      observability: this.observability.getPerformanceMetrics()
+    };
+  }
+
+  /**
+   * Update performance metrics
+   * @param {number} duration - Transaction duration
+   * @param {boolean} success - Whether transaction succeeded
+   * @private
+   */
+  _updatePerformanceMetrics(duration, success) {
+    this.performanceMetrics.transactionLatency.push({
+      timestamp: Date.now(),
+      duration,
+      success
+    });
+
+    // Keep only last 1000 measurements
+    if (this.performanceMetrics.transactionLatency.length > 1000) {
+      this.performanceMetrics.transactionLatency = this.performanceMetrics.transactionLatency.slice(-1000);
+    }
+
+    this.performanceMetrics.totalTransactions++;
+
+    if (!success) {
+      this.performanceMetrics.errorCount++;
+    }
   }
 }
 

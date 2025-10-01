@@ -15,7 +15,13 @@ export const isBrowser = typeof window !== 'undefined' && typeof window.document
 /**
  * Check if we're running in Node.js environment  
  */
-export const isNode = typeof process !== 'undefined' && process.versions?.node;
+export const isNode = (() => {
+  try {
+    return typeof process !== 'undefined' && process?.versions?.node;
+  } catch {
+    return false;
+  }
+})();
 
 // Random UUID generation - use crypto.randomUUID if available, otherwise fallback
 export function randomUUID() {
@@ -45,9 +51,21 @@ export const path = {
 
 // Process utilities
 export const process = {
-  cwd: () => isBrowser ? '/' : process.cwd(),
-  env: isBrowser ? {} : process.env,
-  versions: isBrowser ? {} : process.versions
+  cwd: () => '/',
+  env: isBrowser ? {} : (() => {
+    try {
+      return process.env;
+    } catch {
+      return {};
+    }
+  })(),
+  versions: isBrowser ? {} : (() => {
+    try {
+      return process.versions;
+    } catch {
+      return {};
+    }
+  })()
 };
 
 // File system operations - browser-compatible (no-ops or memory-based)

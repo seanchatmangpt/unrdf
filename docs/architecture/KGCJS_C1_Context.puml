@@ -1,0 +1,40 @@
+@startuml KGCJS_C1_Context
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+LAYOUT_WITH_LEGEND()
+
+title UNRDF Knowledge Graph Control JS - System Context
+
+Person(dev, "Developer", "Builds semantic applications")
+Person(ops, "Operator", "Manages deployments")
+
+System(unrdf, "UNRDF Knowledge Engine", "Autonomic RDF knowledge operations with transaction control, policy governance, and cryptographic audit trails")
+
+System_Ext(rdf_sources, "RDF Data Sources", "Turtle, N-Quads, JSON-LD, SPARQL endpoints")
+System_Ext(sparql, "SPARQL Engines", "Comunica query processor")
+System_Ext(reasoner, "N3 Reasoner", "eyereasoner for logical inference")
+System_Ext(validator, "SHACL Validator", "rdf-validate-shacl")
+System_Ext(git, "Git Repository", "Lockchain audit trail storage")
+System_Ext(observability, "Observability Platform", "Metrics, traces, logs (OpenTelemetry)")
+
+Rel(dev, unrdf, "Uses API", "ESM imports")
+Rel(ops, unrdf, "Deploys & monitors")
+
+Rel(unrdf, rdf_sources, "Parses & serializes", "Turtle/N-Quads/JSON-LD")
+Rel(unrdf, sparql, "Executes queries", "SPARQL")
+Rel(unrdf, reasoner, "Performs reasoning", "N3 rules")
+Rel(unrdf, validator, "Validates shapes", "SHACL")
+Rel(unrdf, git, "Writes receipts", "Git notes")
+Rel(unrdf, observability, "Exports telemetry", "OTel")
+
+note right of unrdf
+  **Core Capabilities:**
+  • Transaction management with hooks
+  • Policy pack governance
+  • Cryptographic canonicalization
+  • Effect sandboxing
+  • Multi-agent consensus
+  • Lockchain audit trails
+end note
+
+@enduml

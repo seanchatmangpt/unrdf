@@ -1,100 +1,216 @@
 {
   "name": "unrdf",
   "version": "1.0.1",
-  "description": "Opinionated composable framework for RDF knowledge operations",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/seanchatmangpt/unrdf.git"
-  },
-  "homepage": "https://github.com/seanchatmangpt/unrdf#readme",
-  "bugs": {
-    "url": "https://github.com/seanchatmangpt/unrdf/issues"
-  },
-  "author": "GitVan Team",
-  "license": "MIT",
-  "sideEffects": false,
+  "description": "Autonomic RDF framework with Knowledge Hooks, policy pack governance, and cryptographic audit trails",
   "type": "module",
-  "main": "./dist/index.mjs",
+  "main": "src/index.mjs",
   "bin": {
-    "unrdf": "./dist/cli.mjs"
+    "unrdf": "src/cli.mjs"
   },
-  "exports": {
-    ".": "./dist/index.mjs",
-    "./composables": "./dist/composables/index.mjs",
-    "./utils": "./dist/utils/index.mjs",
-    "./engines": "./dist/engines/index.mjs",
-    "./knowledge-engine": "./dist/knowledge-engine.mjs",
-    "./knowledge-engine/browser": "./dist/knowledge-engine-browser.mjs",
-    "./cli": "./dist/cli.mjs"
+  "scripts": {
+    "dev": "node src/cli.mjs dev",
+    "build": "node build.config.mjs",
+    "test": "vitest run --config vitest.config.mjs --coverage --reporter=verbose",
+    "test:watch": "vitest --config vitest.config.mjs --coverage --reporter=verbose",
+    "test:e2e": "vitest run --config vitest.config.mjs test/e2e/ --reporter=verbose",
+    "test:k8s": "vitest run --config vitest.config.mjs test/e2e/k8s-terraform-testcontainers.test.mjs --reporter=verbose",
+    "test:dark-matter": "vitest run --config vitest.config.mjs test/dark-matter-80-20.test.mjs --reporter=verbose",
+    "lint": "eslint src/ test/ examples/ --ext .mjs",
+    "lint:fix": "eslint src/ test/ examples/ --ext .mjs --fix",
+    "format": "prettier --write src/ test/ examples/",
+    "format:check": "prettier --check src/ test/ examples/",
+    "docs": "jsdoc -c jsdoc.conf.json",
+    "docs:serve": "jsdoc -c jsdoc.conf.json --serve",
+    "clean": "rm -rf dist/ node_modules/.cache/ .nyc_output/ coverage/",
+    "precommit": "pnpm lint && pnpm test",
+    "prepublishOnly": "pnpm build && pnpm test",
+    "docker:build": "docker build -t unrdf/kgc-sidecar:latest .",
+    "docker:run": "docker run -p 3000:3000 -p 8080:8080 unrdf/kgc-sidecar:latest",
+    "docker:push": "docker push unrdf/kgc-sidecar:latest",
+    "k8s:deploy": "kubectl apply -f k8s/",
+    "k8s:delete": "kubectl delete -f k8s/",
+    "k8s:logs": "kubectl logs -f deployment/kgc-sidecar",
+    "k8s:port-forward": "kubectl port-forward service/kgc-sidecar-service 3000:3000 8080:8080",
+    "terraform:init": "cd terraform && terraform init",
+    "terraform:plan": "cd terraform && terraform plan",
+    "terraform:apply": "cd terraform && terraform apply -auto-approve",
+    "terraform:destroy": "cd terraform && terraform destroy -auto-approve",
+    "terraform:output": "cd terraform && terraform output -json",
+    "testcontainers:start": "node test/e2e/testcontainers-setup.mjs",
+    "testcontainers:stop": "node test/e2e/testcontainers-setup.mjs --stop",
+    "e2e:setup": "node test/e2e/e2e-test-runner.mjs --setup",
+    "e2e:run": "node test/e2e/e2e-test-runner.mjs --run",
+    "e2e:cleanup": "node test/e2e/e2e-test-runner.mjs --cleanup",
+    "dark-matter:demo": "node examples/dark-matter-80-20.mjs",
+    "dark-matter:test": "node test/dark-matter-80-20.test.mjs",
+    "ci:test": "pnpm lint && pnpm test && pnpm test:e2e",
+    "ci:build": "pnpm build && pnpm docker:build",
+    "ci:deploy": "pnpm k8s:deploy && pnpm terraform:apply",
+    "release:patch": "npm version patch && npm publish",
+    "release:minor": "npm version minor && npm publish",
+    "release:major": "npm version major && npm publish"
   },
-  "files": [
-    "dist"
-  ],
   "keywords": [
     "rdf",
-    "sparql",
-    "turtle",
-    "shacl",
-    "composable",
     "knowledge-graph",
-    "semantic-web",
+    "autonomic",
+    "hooks",
+    "policy-pack",
+    "audit-trail",
+    "lockchain",
+    "sidecar",
+    "kubernetes",
+    "terraform",
+    "testcontainers",
+    "e2e",
+    "dark-matter",
+    "80-20",
+    "observability",
+    "opentelemetry",
     "zod",
-    "n3",
-    "comunica",
-    "json-ld",
-    "n-quads",
-    "eyereasoner",
-    "rdf-canonize",
-    "clownface",
-    "opinionated",
-    "framework"
+    "esm",
+    "jsdoc"
   ],
-  "scripts": {
-    "build": "obuild",
-    "dev": "vitest dev --config vitest.config.mjs",
-    "test": "vitest run --config vitest.config.mjs --coverage --reporter=verbose",
-    "test:watch": "vitest --config vitest.config.mjs --watch --reporter=verbose",
-    "test:ui": "vitest --config vitest.config.mjs --ui",
-    "test:run": "vitest run --config vitest.config.mjs --reporter=verbose",
-    "test:coverage": "vitest run --config vitest.config.mjs --coverage --reporter=verbose",
-    "test:bench": "vitest run --config vitest.config.mjs --bench --reporter=verbose",
-    "lint": "eslint . && prettier -c .",
-    "lint:fix": "automd && eslint . --fix && prettier -w .",
-    "browser:demo": "cd browser-demo && python3 -m http.server 8080 || python -m SimpleHTTPServer 8080 || npx serve . -p 8080",
-    "prepack": "pnpm build",
-    "release": "pnpm test && changelogen --release && npm publish && git push --follow-tags"
+  "author": "UNRDF Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/unrdf/unrdf.git"
+  },
+  "bugs": {
+    "url": "https://github.com/unrdf/unrdf/issues"
+  },
+  "homepage": "https://github.com/unrdf/unrdf#readme",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0",
+    "pnpm": ">=7.0.0"
   },
   "dependencies": {
-    "@comunica/query-sparql": "^4.4.0",
-    "@noble/hashes": "^2.0.1",
-    "@rdfjs/types": "^2.0.1",
-    "@zazuko/env": "^3.0.1",
-    "citty": "^0.1.6",
-    "citty-test-utils": "^0.5.1",
-    "eyereasoner": "^18.20.0",
-    "gray-matter": "^4.0.3",
-    "jsonld": "^8.3.3",
-    "mitt": "^3.0.1",
-    "n3": "^1.26.0",
-    "rdf-canonize": "^4.0.1",
-    "rdf-ext": "^2.6.0",
+    "@comunica/query-sparql": "^3.0.0",
+    "@noble/hashes": "^1.3.0",
+    "@opentelemetry/api": "^1.7.0",
+    "@opentelemetry/auto-instrumentations-node": "^0.40.0",
+    "@opentelemetry/exporter-jaeger": "^1.17.0",
+    "@opentelemetry/exporter-prometheus": "^0.45.0",
+    "@opentelemetry/instrumentation": "^0.45.0",
+    "@opentelemetry/resources": "^1.17.0",
+    "@opentelemetry/sdk-node": "^0.45.0",
+    "@opentelemetry/semantic-conventions": "^1.17.0",
+    "@rdfjs/data-model": "^2.0.0",
+    "@rdfjs/namespace": "^2.0.0",
+    "@rdfjs/serializer-jsonld": "^2.0.0",
+    "@rdfjs/serializer-turtle": "^1.1.5",
+    "@rdfjs/to-ntriples": "^2.0.0",
+    "@testcontainers/postgresql": "^10.0.0",
+    "@testcontainers/redis": "^10.0.0",
+    "eyereasoner": "^1.0.0",
+    "jsonld": "^8.2.0",
+    "n3": "^1.17.0",
+    "rdf-canonize": "^2.0.0",
+    "rdf-ext": "^2.0.0",
     "rdf-validate-shacl": "^0.6.5",
-    "unctx": "^2.4.1",
-    "zod": "^4.1.11"
+    "testcontainers": "^10.0.0",
+    "unctx": "^1.0.0",
+    "vm2": "^3.9.0",
+    "zod": "^3.22.0"
   },
   "devDependencies": {
-    "@faker-js/faker": "^10.0.0",
-    "@vitest/coverage-v8": "^3.2.4",
-    "automd": "^0.4.2",
-    "changelogen": "^0.6.2",
-    "eslint": "^9.36.0",
-    "eslint-config-unjs": "^0.5.0",
-    "obuild": "^0.2.1",
-    "prettier": "^3.6.2",
-    "vitest": "^3.2.4"
+    "@cdktf/provider-kubernetes": "^12.0.0",
+    "@kubernetes/client-node": "^0.20.0",
+    "@types/node": "^20.0.0",
+    "@vitest/coverage-v8": "^1.0.0",
+    "@vitest/ui": "^1.0.0",
+    "cdktf": "^0.20.0",
+    "eslint": "^8.0.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-jsdoc": "^48.0.0",
+    "jsdoc": "^4.0.0",
+    "prettier": "^3.0.0",
+    "terraform": "^1.0.0",
+    "vitest": "^1.0.0"
   },
-  "packageManager": "pnpm@10.15.0",
-  "engines": {
+  "peerDependencies": {
     "node": ">=18.0.0"
+  },
+  "peerDependenciesMeta": {
+    "node": {
+      "optional": false
+    }
+  },
+  "files": [
+    "src/",
+    "dist/",
+    "docs/",
+    "examples/",
+    "test/",
+    "terraform/",
+    "k8s/",
+    "*.md",
+    "*.json",
+    "*.mjs",
+    "*.yml",
+    "*.yaml"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pnpm precommit",
+      "pre-push": "pnpm test"
+    }
+  },
+  "lint-staged": {
+    "*.{mjs,js,ts,json,md}": [
+      "prettier --write",
+      "eslint --fix",
+      "git add"
+    ]
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testMatch": [
+      "**/test/**/*.test.mjs",
+      "**/test/**/*.spec.mjs"
+    ],
+    "collectCoverageFrom": [
+      "src/**/*.mjs",
+      "!src/**/*.test.mjs",
+      "!src/**/*.spec.mjs"
+    ],
+    "coverageDirectory": "coverage",
+    "coverageReporters": [
+      "text",
+      "lcov",
+      "html"
+    ]
+  },
+  "nyc": {
+    "reporter": [
+      "text",
+      "lcov",
+      "html"
+    ],
+    "exclude": [
+      "test/**",
+      "examples/**",
+      "docs/**",
+      "coverage/**"
+    ]
+  },
+  "browserslist": [
+    "node >= 18"
+  ],
+  "volta": {
+    "node": "18.19.0",
+    "npm": "10.2.3",
+    "pnpm": "8.15.0"
   }
 }
