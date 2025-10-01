@@ -8,7 +8,7 @@
  */
 
 import { Store } from 'n3';
-import { SparqlEngine } from '../../knowledge-engine/query.mjs';
+import { query as sparqlQuery } from '../../knowledge-engine/query.mjs';
 import { trace, context as otelContext, SpanStatusCode } from '@opentelemetry/api';
 import { readFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
@@ -84,9 +84,8 @@ async function evaluateSparqlAsk(hook, store, parentSpan) {
 
       span.setAttribute('query.length', query.length);
 
-      // Execute SPARQL ASK query
-      const engine = new SparqlEngine(store);
-      const bindings = await engine.query(query);
+      // Execute SPARQL ASK query using the query function
+      const bindings = await sparqlQuery(store, query);
 
       // ASK queries return single boolean binding
       const fired = bindings?._root?.entries?.[0]?.[1] === 'true' || false;
@@ -168,8 +167,7 @@ async function evaluateThresholdHook(hook, store, parentSpan) {
       }
 
       // Execute query to get metric value
-      const engine = new SparqlEngine(store);
-      const bindings = await engine.query(query);
+      const bindings = await sparqlQuery(store, query);
 
       // Extract first binding value (assumed to be count/metric)
       const value = parseInt(bindings?._root?.entries?.[0]?.[1] || '0', 10);

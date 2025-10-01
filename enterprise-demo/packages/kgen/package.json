@@ -11,10 +11,8 @@
     "lint": "eslint src --ext .mjs"
   },
   "dependencies": {
-    "@demo/unrdf": "workspace:*",
-    "commander": "^9.0.0",
-    "fs-extra": "^10.0.0",
-    "handlebars": "^4.7.0"
+    "unrdf": "2.1.1",
+    "commander": "^9.0.0"
   },
   "devDependencies": {
     "citty-test-utils": "git+https://github.com/seanchatmangpt/citty-test-utils.git",

@@ -1,8 +1,24 @@
 # KGC Sidecar Testcontainer E2E Tests
 
-## Overview
+## ⚠️ Status: Infrastructure Only (Test Implementation Pending)
 
-This directory contains comprehensive end-to-end tests for the KGC Sidecar using Docker-based testcontainers. The tests validate the entire CLI + Sidecar stack in a cleanroom environment with full OpenTelemetry observability.
+This directory contains the testcontainer infrastructure configuration for future KGC Sidecar E2E testing. **Test implementation is postponed pending HTTP API development.**
+
+## Current State
+
+- ✅ **Infrastructure**: Docker Compose stack with OTel, Jaeger, Prometheus, Grafana, Gitea
+- ✅ **Configuration**: All services properly configured and ready
+- ❌ **Tests**: Removed pending HTTP API implementation
+- ❌ **HTTP API**: Not yet implemented (src/index.mjs only exports library functions)
+
+## Why Tests Were Removed
+
+The testcontainer E2E tests were designed to validate a REST API that doesn't exist yet:
+- Expected endpoints: `/api/hooks/register`, `/api/transaction/apply`, `/api/policy/register`, etc.
+- Current state: Library-only implementation (no HTTP server)
+- Estimated API implementation effort: 2-3 days
+
+Tests will be re-implemented once the HTTP server wrapper is built.
 
 ## 80/20 Validation Strategy
 
@@ -75,43 +91,39 @@ docker pull node:20-alpine
 
 ## Running Tests
 
-### Quick Start
+### ⚠️ No Executable Tests Currently
+
+Test implementation is pending HTTP API development. The infrastructure can be tested manually:
 
 ```bash
-# Run all E2E testcontainer tests
-pnpm test:e2e:testcontainers
+# Start infrastructure manually for inspection
+cd test/e2e/testcontainers
+docker compose up -d
 
-# Run specific scenario
-pnpm test:e2e:testcontainers -- --grep "Scenario 1"
+# View logs
+docker compose logs -f
 
-# Run with verbose output
-pnpm test:e2e:testcontainers -- --reporter=verbose
+# Access UIs
+open http://localhost:16686  # Jaeger traces
+open http://localhost:9090   # Prometheus metrics
+open http://localhost:3001   # Grafana dashboards
+open http://localhost:3002   # Gitea
 
-# Run in watch mode (for development)
-pnpm test:e2e:testcontainers -- --watch
+# Stop infrastructure
+docker compose down -v
 ```
 
-### Individual Test Scenarios
+### Future Test Scenarios (Pending HTTP API)
 
-```bash
-# Scenario 1: Transaction Lifecycle + OTel Traces
-pnpm test:e2e:testcontainers -- --grep "Transaction Lifecycle"
+Once the HTTP API is implemented, these scenarios will be tested:
 
-# Scenario 2: Policy Pack Governance + Metrics
-pnpm test:e2e:testcontainers -- --grep "Policy Pack Governance"
+- Scenario 1: Transaction Lifecycle + OTel Traces (35%)
+- Scenario 2: Policy Pack Governance + Metrics (25%)
+- Scenario 3: Effect Sandbox Security (15%)
+- Scenario 4: Lockchain Audit Trail (15%)
+- Scenario 5: Multi-Agent Resolution (10%)
 
-# Scenario 3: Effect Sandbox Security
-pnpm test:e2e:testcontainers -- --grep "Effect Sandbox"
-
-# Scenario 4: Lockchain Audit Trail
-pnpm test:e2e:testcontainers -- --grep "Lockchain Audit Trail"
-
-# Scenario 5: Multi-Agent Resolution
-pnpm test:e2e:testcontainers -- --grep "Multi-Agent Resolution"
-
-# Infrastructure validation only
-pnpm test:e2e:testcontainers -- --grep "Infrastructure Validation"
-```
+See `80-20-scenarios.md` for detailed test specifications.
 
 ## Test Structure
 
@@ -365,13 +377,37 @@ When all scenarios pass, you have validated:
 
 ## Next Steps
 
-After validating the testcontainer environment:
+To implement the E2E test suite:
 
-1. **Implement KGC Sidecar API**: Build the HTTP API endpoints tested here
-2. **Integrate OpenTelemetry**: Wire up OTel SDK in observability.mjs
-3. **Add CI/CD Pipeline**: Run testcontainer tests on every PR
-4. **Performance Benchmarking**: Use Grafana dashboards to track performance over time
-5. **Production Deployment**: Replicate observability stack in production environment
+1. **Implement HTTP Sidecar API** (Priority 1):
+   - Create `src/sidecar/http-server.mjs` with Express/Fastify
+   - Implement 15+ REST API endpoints (see API specification below)
+   - Add OpenTelemetry instrumentation to HTTP layer
+   - Estimated effort: 2-3 days
+
+2. **Re-implement Tests** (Priority 2):
+   - Create test file based on `80-20-scenarios.md` specification
+   - Validate all 5 scenarios with OpenTelemetry weaver integration
+   - Ensure p99 latency < 2ms SLO is met
+
+3. **CI/CD Integration** (Priority 3):
+   - Add GitHub Actions workflow for testcontainer tests
+   - Run on every PR to validate API changes
+
+### Required API Endpoints
+
+The HTTP API must implement:
+
+- `POST /api/hooks/register` - Register knowledge hooks
+- `POST /api/transaction/apply` - Apply transactions
+- `POST /api/policy/register` - Register SHACL policy packs
+- `POST /api/effects/register` - Register JavaScript effects
+- `POST /api/lockchain/init` - Initialize Git lockchain
+- `GET /api/lockchain/receipt/:id` - Get transaction receipt
+- `POST /api/agents/register` - Register multi-agent entities
+- `GET /api/query` - SPARQL query endpoint
+- `GET /health` - Health check endpoint
+- And 6+ more endpoints (see test specifications)
 
 ## References
 

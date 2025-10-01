@@ -30,3 +30,19 @@ export {
   validateRequiredArgs,
   getArg
 } from './context-wrapper.mjs';
+
+// Hook and Policy utilities
+export { evaluateHook } from './hook-evaluator.mjs';
+export { validatePolicy, formatValidationReport } from './policy-validator.mjs';
+
+// OTEL utilities
+export { initializeTracer, shutdownTracer, getTracer, printTraceInfo } from './otel-tracer.mjs';
+
+// Sidecar utilities
+export {
+  withSidecar,
+  getSidecarClient,
+  closeSidecarClient,
+  isSidecarAvailable,
+  formatSidecarError
+} from './sidecar-helper.mjs';

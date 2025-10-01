@@ -47,6 +47,10 @@ processors:
         action: insert
         value: true
 
+extensions:
+  health_check:
+    endpoint: 0.0.0.0:13133
+
 exporters:
   # Export traces to Jaeger
   otlp/jaeger:
@@ -90,4 +94,4 @@ service:
     metrics:
       address: 0.0.0.0:8888
 
-  extensions: []
+  extensions: [health_check]

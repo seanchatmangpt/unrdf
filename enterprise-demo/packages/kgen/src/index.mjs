@@ -1,5 +1,4 @@
-// Direct import from unrdf package source
-import { parseTurtle, select } from '../../unrdf/src/index.mjs'
+import { parseTurtle, select } from 'unrdf'
 import { readFile, writeFile, mkdir } from 'fs/promises'
 import { dirname } from 'path'
 import { traced } from '../../../telemetry/tracer.mjs'

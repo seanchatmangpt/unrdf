@@ -22,6 +22,37 @@ _Opinionated RDF substrate (unrdf) + deterministic artifact generator (kgen) wit
 
 ---
 
+## 🕳 80/20 Dark Matter Eliminated
+
+- Choosing a store abstraction (alternatives: N3.Store, rdf-ext.Dataset, rdflib.Store)  
+- Parsing & serialization glue for Turtle, JSON-LD, N-Quads  
+- SPARQL engine adapters & result-mapping code  
+- SHACL validation setup and ad-hoc checks  
+- Inference engine integration (rules → result)  
+- Graph canonicalization & blank-node handling hacks  
+- Utility functions: lists, prefixes, traversal
+
+_unrdf + kgen eliminate this dark matter with one opinionated API_
+
+---
+
+## 🛠 Architecture Diagram
+
+```text
+[   Turtle (.ttl)  ]
+        │ parseTurtle()
+        ▼
+[        Store      ]
+        │ select()     
+        ▼
+[      Data Array    ]
+        │ generate()   
+        ▼             
+[      out.md        ]
+```
+
+---
+
 ## 🗂 Monorepo Layout
 
 ```
@@ -40,6 +71,31 @@ enterprise-demo/
 └── pnpm-workspaces.yaml
 ```
 
+---
+
+## 💻 Before vs After Developer Effort
+
+**Before (typical RDF glue code):**
+```js
+// ~200 LOC, multiple libs and adapters
+const ttl = fs.readFileSync('graph.ttl', 'utf8')
+const store = new N3.Store()
+new Parser().parse(ttl, quad => store.addQuad(quad))
+const results = await someEngine.queryBindings(query, { sources: [store] })
+// format bindings…
+```
+
+**After (unrdf + kgen):**
+```js
+import { parseTurtle, select } from 'unrdf'
+import { generate } from 'kgen'
+
+const store = parseTurtle(ttl)
+const data = await select(store, 'SELECT ?s WHERE { ?s ?p ?o }')
+await generate('graph.ttl', 'tpl.hbs', 'out.md')
+```
+
+---
 ---
 
 ## 🔧 Core Composables API (unrdf)
@@ -110,6 +166,11 @@ cat examples/demo/out.md
 
 ---
 
-# 🎉 Thank You!
+# 🎉 Thank You & Next Steps
+
+- Try it: `pnpm install && pnpm start:demo` → generate `examples/demo/out.md`
+- Preview slides: `npx slidev slides/presentation.md`
+- Explore policy-pack marketplace & template library
+- Contact us: you@yourorg.com | github.com/yourorg/unrdf
 
 _Ready for Fortune-5 POC & YC demo_
