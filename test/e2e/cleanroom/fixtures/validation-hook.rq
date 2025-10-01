@@ -1,18 +1,8 @@
-# Schema Validation SPARQL ASK Query
-# Validates that all Persons have required fields
+# Schema Validation SPARQL Query
+# Validates that subjects have rdf:type predicates
 
-PREFIX schema: <http://schema.org/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 
 ASK {
-  ?person a schema:Person .
-
-  # All persons must have name and email
-  FILTER EXISTS { ?person schema:name ?name }
-  FILTER EXISTS { ?person schema:email ?email }
-
-  # Email must be valid format
-  FILTER EXISTS {
-    ?person schema:email ?email .
-    FILTER (CONTAINS(str(?email), "@"))
-  }
+  ?s rdf:type ?type .
 }

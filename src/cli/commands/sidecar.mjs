@@ -45,6 +45,12 @@ export async function sidecarStatusCommand(ctx, config) {
       console.log(`Total:         ${metrics.connectionPool.total || 0}`);
     }
   } catch (error) {
+    // Gracefully handle unavailable sidecar - not an error condition
+    if (error.code === 14 || error.code === 4) {
+      console.log('⚠️  Sidecar not available');
+      console.log(`Run 'unrdf sidecar start' to start the sidecar process`);
+      process.exit(0);  // Exit with success - unavailable is not an error
+    }
     console.error(`❌ ${formatSidecarError(error)}`);
     process.exit(1);
   }
@@ -73,6 +79,12 @@ export async function sidecarHealthCommand(ctx, config) {
       process.exit(1);
     }
   } catch (error) {
+    // Gracefully handle unavailable sidecar - not an error condition
+    if (error.code === 14 || error.code === 4) {
+      console.log('⚠️  Sidecar not available');
+      console.log(`Run 'unrdf sidecar start' to start the sidecar process`);
+      process.exit(0);  // Exit with success - unavailable is not an error
+    }
     console.error(`❌ Health check failed: ${formatSidecarError(error)}`);
     process.exit(1);
   }

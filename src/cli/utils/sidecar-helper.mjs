@@ -73,11 +73,31 @@ export async function isSidecarAvailable(options = {}) {
  * @returns {string} Formatted error message
  */
 export function formatSidecarError(error) {
+  // gRPC error code 14 = UNAVAILABLE (connection failed)
   if (error.code === 14) {
     return 'Sidecar unavailable. Ensure sidecar is running: unrdf sidecar start';
   }
+
+  // gRPC error code 4 = DEADLINE_EXCEEDED (timeout)
   if (error.code === 4) {
-    return `Sidecar error: ${error.message}`;
+    return 'Sidecar unavailable (timeout). Ensure sidecar is running: unrdf sidecar start';
   }
+
+  // gRPC error code 12 = UNIMPLEMENTED (method not supported)
+  if (error.code === 12) {
+    return `Sidecar error: Method not implemented - ${error.message}`;
+  }
+
+  // gRPC error code 16 = UNAUTHENTICATED
+  if (error.code === 16) {
+    return `Sidecar error: Authentication required - ${error.message}`;
+  }
+
+  // Generic gRPC error
+  if (error.code) {
+    return `Sidecar error (code ${error.code}): ${error.message}`;
+  }
+
+  // Non-gRPC error
   return error.message;
 }

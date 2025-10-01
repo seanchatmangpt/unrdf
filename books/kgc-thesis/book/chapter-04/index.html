@@ -1,0 +1,812 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Chapter 4: Knowledge Hooks - Predicate Algebra - Knowledge Geometry Calculus: From Field Theory to the Autonomic Enterprise</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="A mathematical framework for autonomic knowledge graph systems that transforms static RDF into self-governing, reactive, and cryptographically verifiable substrates">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+        <!-- MathJax -->
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "ayu";
+            window.path_to_searchindex_js = "../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Knowledge Geometry Calculus: From Field Theory to the Autonomic Enterprise</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/gitvan/unrdf" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="chapter-4-knowledge-hooks--predicate-algebra-and-formal-semantics"><a class="header" href="#chapter-4-knowledge-hooks--predicate-algebra-and-formal-semantics">Chapter 4: Knowledge Hooks — Predicate Algebra and Formal Semantics</a></h1>
+<h2 id="abstract"><a class="header" href="#abstract">Abstract</a></h2>
+<p>This chapter formalizes Knowledge Hooks as a compositional predicate algebra over RDF graph bindings. We provide executable lambda calculus, denotational semantics, complexity bounds, and cryptographic provenance guarantees with formal proofs.</p>
+<h2 id="table-of-contents"><a class="header" href="#table-of-contents">Table of Contents</a></h2>
+<ol>
+<li><a href="#1-predicate-algebra-foundations">Predicate Algebra Foundations</a></li>
+<li><a href="#2-denotational-semantics">Denotational Semantics</a></li>
+<li><a href="#3-predicate-type-system">Predicate Type System</a></li>
+<li><a href="#4-complexity-analysis">Complexity Analysis</a></li>
+<li><a href="#5-receipt-provenance">Receipt Provenance</a></li>
+<li><a href="#6-algebraic-laws">Algebraic Laws</a></li>
+</ol>
+<hr />
+<h2 id="1-predicate-algebra-foundations"><a class="header" href="#1-predicate-algebra-foundations">1. Predicate Algebra Foundations</a></h2>
+<h3 id="11-core-type-definitions"><a class="header" href="#11-core-type-definitions">1.1 Core Type Definitions</a></h3>
+<p><strong>Definition 1.1</strong> (Binding Type)</p>
+<pre><code>Binding ≡ Var → Value
+Bindings ≡ Set[Binding]
+</code></pre>
+<p><strong>Definition 1.2</strong> (Predicate Type)</p>
+<pre><code>Π ≡ Bindings → Bool
+
+With monoid structure:
+  ε_Π : Π              // Identity: λb. ⊤
+  ∘_Π : Π → Π → Π     // Composition: conjunction
+</code></pre>
+<p><strong>Definition 1.3</strong> (Effect Type)</p>
+<pre><code>Effect ≡ Graph → Graph ⊎ Error
+ε : Effect              // No-op effect: λg. g
+</code></pre>
+<p><strong>Definition 1.4</strong> (Hook Type)</p>
+<pre><code>Hook ≡ {
+  query : SPARQL,
+  predicates : [Π],
+  combinator : [Bool] → Bool,
+  effect : Effect
+}
+</code></pre>
+<h3 id="12-predicate-algebra-operations"><a class="header" href="#12-predicate-algebra-operations">1.2 Predicate Algebra Operations</a></h3>
+<p><strong>Definition 1.5</strong> (Conjunction)</p>
+<pre><code>(π₁ ∧ π₂) : Π
+(π₁ ∧ π₂) = λb. π₁(b) ∧ π₂(b)
+</code></pre>
+<p><strong>Definition 1.6</strong> (Disjunction)</p>
+<pre><code>(π₁ ∨ π₂) : Π
+(π₁ ∨ π₂) = λb. π₁(b) ∨ π₂(b)
+</code></pre>
+<p><strong>Definition 1.7</strong> (Negation)</p>
+<pre><code>(¬π) : Π
+(¬π) = λb. ¬π(b)
+</code></pre>
+<p><strong>Definition 1.8</strong> (Threshold Combinator)</p>
+<pre><code>thresholdₖ : [Π] → Π
+thresholdₖ(π₁, ..., πₙ) = λb. (|{i | πᵢ(b) = ⊤}|) ≥ k
+</code></pre>
+<h3 id="13-monoid-laws"><a class="header" href="#13-monoid-laws">1.3 Monoid Laws</a></h3>
+<p><strong>Theorem 1.1</strong> (Π forms a monoid under ∧)</p>
+<pre><code>(Π, ∧, ε_Π) is a monoid with:
+  1. Identity:      π ∧ ε_Π = ε_Π ∧ π = π
+  2. Associativity: (π₁ ∧ π₂) ∧ π₃ = π₁ ∧ (π₂ ∧ π₃)
+  3. Commutativity: π₁ ∧ π₂ = π₂ ∧ π₁
+</code></pre>
+<p><strong>Proof</strong>: By λ-calculus reduction</p>
+<pre><code>(π₁ ∧ π₂)(b)
+  = (λb. π₁(b) ∧ π₂(b))(b)
+  → π₁(b) ∧ π₂(b)           [β-reduction]
+  = π₂(b) ∧ π₁(b)           [∧-commutativity]
+  = (π₂ ∧ π₁)(b)
+</code></pre>
+<p>∎</p>
+<hr />
+<h2 id="2-denotational-semantics"><a class="header" href="#2-denotational-semantics">2. Denotational Semantics</a></h2>
+<h3 id="21-semantic-domains"><a class="header" href="#21-semantic-domains">2.1 Semantic Domains</a></h3>
+<p><strong>Definition 2.1</strong> (Boolean Domain)</p>
+<pre><code>𝔹 = {⊤, ⊥}
+⟦_⟧_𝔹 : Π → (Bindings → 𝔹)
+</code></pre>
+<p><strong>Definition 2.2</strong> (Graph Domain)</p>
+<pre><code>𝔾 = Set[Triple]
+Triple = (Subject × Predicate × Object)
+</code></pre>
+<p><strong>Definition 2.3</strong> (Effect Domain)</p>
+<pre><code>ℰ = 𝔾 → (𝔾 ⊎ Error)
+Error = {TimeoutError, ValidationError, RuntimeError, ...}
+</code></pre>
+<h3 id="22-compositional-evaluation"><a class="header" href="#22-compositional-evaluation">2.2 Compositional Evaluation</a></h3>
+<p><strong>Definition 2.4</strong> (Predicate Denotation)</p>
+<pre><code>⟦π⟧ : Bindings → 𝔹
+
+Compositional rules:
+  ⟦π₁ ∧ π₂⟧(b) = ⟦π₁⟧(b) ∧_𝔹 ⟦π₂⟧(b)
+  ⟦π₁ ∨ π₂⟧(b) = ⟦π₁⟧(b) ∨_𝔹 ⟦π₂⟧(b)
+  ⟦¬π⟧(b)      = ¬_𝔹 ⟦π⟧(b)
+  ⟦ε_Π⟧(b)     = ⊤
+</code></pre>
+<p><strong>Definition 2.5</strong> (Effect Denotation)</p>
+<pre><code>⟦ε⟧ : 𝔾 → (𝔾 ⊎ Error)
+
+Effect composition:
+  ⟦ε₁ ; ε₂⟧(g) = match ⟦ε₁⟧(g) with
+    | Left(err)  → Left(err)
+    | Right(g')  → ⟦ε₂⟧(g')
+</code></pre>
+<p><strong>Theorem 2.1</strong> (Compositionality)</p>
+<pre><code>∀π₁, π₂ : Π, b : Bindings.
+  ⟦π₁ ∧ π₂⟧(b) = ⟦π₁⟧(b) ∧ ⟦π₂⟧(b)
+</code></pre>
+<p><strong>Proof</strong>: Direct from Definition 2.4 ∎</p>
+<hr />
+<h2 id="3-predicate-type-system"><a class="header" href="#3-predicate-type-system">3. Predicate Type System</a></h2>
+<h3 id="31-ask-predicates"><a class="header" href="#31-ask-predicates">3.1 ASK Predicates</a></h3>
+<p><strong>Type Signature</strong>:</p>
+<pre><code>πₐₛₖ : SPARQL → Option[Bool] → Π
+</code></pre>
+<p><strong>Lambda Definition</strong>:</p>
+<pre><code>πₐₛₖ(Q, expected) = λb : Bindings.
+  let result = ⟦Q⟧(G) in          // Execute ASK query
+  match expected with
+    | None         → result
+    | Some(exp)    → result = exp
+</code></pre>
+<p><strong>Denotational Semantics</strong>:</p>
+<pre><code>⟦πₐₛₖ(Q, expected)⟧ : Bindings → 𝔹
+
+⟦πₐₛₖ(Q, None)⟧(b) = ASK(Q, G)
+⟦πₐₛₖ(Q, Some(v))⟧(b) = ASK(Q, G) = v
+</code></pre>
+<p><strong>Selectivity Analysis</strong>:</p>
+<pre><code>selectivity(πₐₛₖ) = |{b ∈ B | ⟦πₐₛₖ⟧(b) = ⊤}| / |B|
+
+Optimization:
+  If selectivity &lt; 0.1, prefer indexed lookups
+  If selectivity &gt; 0.9, skip evaluation (always true)
+</code></pre>
+<h3 id="32-shacl-predicates"><a class="header" href="#32-shacl-predicates">3.2 SHACL Predicates</a></h3>
+<p><strong>Type Signature</strong>:</p>
+<pre><code>πₛₕₐᴄₗ : Shapes → Mode → Strict → Π
+
+where
+  Shapes = Set[Shape]
+  Mode   = Conforms | Violates
+  Strict = Bool
+</code></pre>
+<p><strong>Lambda Definition</strong>:</p>
+<pre><code>πₛₕₐᴄₗ(S, mode, strict) = λb : Bindings.
+  let report = validate(G, S) in
+  let violations = {v ∈ report | severity(v) ≥ threshold} in
+  match mode with
+    | Conforms  → |violations| = 0
+    | Violates  → |violations| &gt; 0 ∧ (strict ⟹ fail_fast)
+</code></pre>
+<p><strong>Denotational Semantics</strong>:</p>
+<pre><code>⟦πₛₕₐᴄₗ(S, Conforms, _)⟧(b) = conforms(G, S)
+⟦πₛₕₐᴄₗ(S, Violates, strict)⟧(b) = ¬conforms(G, S) ∧ (strict ⟹ ⊥)
+</code></pre>
+<p><strong>Pruning Strategy</strong>:</p>
+<pre><code>Early termination:
+  For Conforms mode: stop on first violation
+  For Violates mode: stop when k violations found
+</code></pre>
+<h3 id="33-delta-predicates"><a class="header" href="#33-delta-predicates">3.3 DELTA Predicates</a></h3>
+<p><strong>Type Signature</strong>:</p>
+<pre><code>πᴅₑₗₜₐ : Bindings → Baseline → Keys → ChangeMode → Threshold → Π
+
+where
+  Baseline   = Map[Key, Hash]
+  ChangeMode = Any | Increase | Decrease
+  Threshold  = ℝ
+</code></pre>
+<p><strong>Lambda Definition</strong>:</p>
+<pre><code>πᴅₑₗₜₐ(B, B_prev, K, change, δ) = λb : Bindings.
+  let key = project(b, K) in
+  let h_curr = H₂₅₆(canonical(b)) in
+  let h_prev = lookup(B_prev, key) in
+  match h_prev with
+    | None    → false
+    | Some(h) →
+        let diff = |h_curr - h| / h in
+        match change with
+          | Any       → h_curr ≠ h
+          | Increase  → diff &gt; δ
+          | Decrease  → diff &lt; -δ
+</code></pre>
+<p><strong>Hash Function Properties</strong>:</p>
+<pre><code>H₂₅₆ : Binding → {0,1}²⁵⁶
+
+Properties:
+  1. Deterministic: H(b) = H(b')  ⟺  b = b'
+  2. Pre-image resistance: ∀h. hard to find b s.t. H(b) = h
+  3. Collision resistance: hard to find b ≠ b' s.t. H(b) = H(b')
+</code></pre>
+<p><strong>Canonical Form</strong>:</p>
+<pre><code>canonical : Binding → String
+canonical(b) = sort([(k, v) | (k, v) ∈ b])
+</code></pre>
+<h3 id="34-threshold-predicates"><a class="header" href="#34-threshold-predicates">3.4 THRESHOLD Predicates</a></h3>
+<p><strong>Type Signature</strong>:</p>
+<pre><code>πₜₕᵣ : Bindings → Var → Op → Value → Option[Agg] → Π
+
+where
+  Op  = LT | LE | EQ | GE | GT
+  Agg = Sum | Avg | Count | Max | Min
+</code></pre>
+<p><strong>Lambda Definition</strong>:</p>
+<pre><code>πₜₕᵣ(B, var, op, θ, agg) = λb : Bindings.
+  let values = {b[var] | b ∈ B ∧ isNumeric(b[var])} in
+  let v = match agg with
+    | None        → ∃v ∈ values
+    | Some(Sum)   → Σ values
+    | Some(Avg)   → (Σ values) / |values|
+    | Some(Count) → |values|
+    | Some(Max)   → max(values)
+    | Some(Min)   → min(values)
+  in
+  compare(v, op, θ)
+</code></pre>
+<p><strong>Comparison Semantics</strong>:</p>
+<pre><code>compare : Value → Op → Value → Bool
+
+compare(v, LT, θ) = v &lt; θ
+compare(v, LE, θ) = v ≤ θ
+compare(v, EQ, θ) = v = θ
+compare(v, GE, θ) = v ≥ θ
+compare(v, GT, θ) = v &gt; θ
+</code></pre>
+<h3 id="35-count-predicates"><a class="header" href="#35-count-predicates">3.5 COUNT Predicates</a></h3>
+<p><strong>Type Signature</strong>:</p>
+<pre><code>πᴄₒᴜₙₜ : Bindings → Op → ℕ → Π
+</code></pre>
+<p><strong>Lambda Definition</strong>:</p>
+<pre><code>πᴄₒᴜₙₜ(B, op, n) = λb : Bindings.
+  compare(|B|, op, n)
+</code></pre>
+<p><strong>Denotational Semantics</strong>:</p>
+<pre><code>⟦πᴄₒᴜₙₜ(B, op, n)⟧(b) = compare(|B|, op, n)
+</code></pre>
+<h3 id="36-window-predicates"><a class="header" href="#36-window-predicates">3.6 WINDOW Predicates</a></h3>
+<p><strong>Type Signature</strong>:</p>
+<pre><code>πᴡɪɴᴅₒᴡ : Bindings → Var → Duration → Agg → Comparison → Π
+
+where
+  Duration   = Milliseconds
+  Comparison = {op: Op, value: Value}
+</code></pre>
+<p><strong>Lambda Definition</strong>:</p>
+<pre><code>πᴡɪɴᴅₒᴡ(B, var, size, agg, cmp) = λb : Bindings.
+  let t_now = now() in
+  let window = {b ∈ B | t_now - size ≤ b.timestamp &lt; t_now} in
+  let values = {b[var] | b ∈ window} in
+  let result = aggregate(values, agg) in
+  compare(result, cmp.op, cmp.value)
+</code></pre>
+<p><strong>Tumbling Window</strong>:</p>
+<pre><code>Window(t₀, Δt) = {b ∈ B | t₀ ≤ b.timestamp &lt; t₀ + Δt}
+
+Non-overlapping:
+  Window(t₀, Δt) ∩ Window(t₀ + Δt, Δt) = ∅
+</code></pre>
+<hr />
+<h2 id="4-complexity-analysis"><a class="header" href="#4-complexity-analysis">4. Complexity Analysis</a></h2>
+<h3 id="41-time-complexity-bounds"><a class="header" href="#41-time-complexity-bounds">4.1 Time Complexity Bounds</a></h3>
+<p><strong>Theorem 4.1</strong> (ASK Predicate Complexity)</p>
+<pre><code>T(πₐₛₖ) = O(|G|)
+
+With SPARQL optimizations:
+  - Index-based: O(log |G|)
+  - Selectivity-pruned: O(s·|G|) where s = selectivity
+</code></pre>
+<p><strong>Proof</strong>:
+ASK query requires full graph scan in worst case. With B-tree indexing on triple patterns, lookup reduces to O(log |G|). Selectivity pruning reduces effective graph size to s·|G|. ∎</p>
+<p><strong>Theorem 4.2</strong> (SHACL Predicate Complexity)</p>
+<pre><code>T(πₛₕₐᴄₗ) = O(|S| × |G|)
+
+With pruning:
+  - Early termination: O(k·|G|) where k = violations threshold
+  - Shape caching: O(|S| + |G|) amortized
+</code></pre>
+<p><strong>Proof</strong>:
+Each shape S_i validates against entire graph G, yielding |S| × |G| operations. Early termination stops after k violations, reducing to k·|G|. Shape caching stores validation results for reuse. ∎</p>
+<p><strong>Theorem 4.3</strong> (DELTA Predicate Complexity)</p>
+<pre><code>T(πᴅₑₗₜₐ) = O(|B| log |B|)
+
+Hash table implementation:
+  - Lookup: O(1) expected, O(log |B|) worst case
+  - Hash computation: O(|b|) per binding
+  - Total: O(|B| × |b| + |B| log |B|)
+</code></pre>
+<p><strong>Proof</strong>:
+For each binding b ∈ B:</p>
+<ol>
+<li>Project to key: O(|K|)</li>
+<li>Hash computation: O(|b|)</li>
+<li>Hash table lookup: O(1) expected
+Total: O(|B| × (|K| + |b|)) = O(|B| log |B|) ∎</li>
+</ol>
+<p><strong>Theorem 4.4</strong> (THRESHOLD Predicate Complexity)</p>
+<pre><code>T(πₜₕᵣ) = O(|B|)
+
+Aggregation analysis:
+  - Sum/Count: O(|B|)
+  - Avg: O(|B|)
+  - Max/Min: O(|B|) with linear scan, O(|B| log |B|) for sorted
+</code></pre>
+<p><strong>Theorem 4.5</strong> (COUNT Predicate Complexity)</p>
+<pre><code>T(πᴄₒᴜₙₜ) = O(1)
+
+Cardinality is pre-computed during binding evaluation.
+</code></pre>
+<p><strong>Theorem 4.6</strong> (WINDOW Predicate Complexity)</p>
+<pre><code>T(πᴡɪɴᴅₒᴡ) = O(|B|)
+
+With time-based indexing:
+  - Range query: O(log |B| + k) where k = window size
+  - Aggregation: O(k)
+  - Total: O(log |B| + k)
+</code></pre>
+<h3 id="42-space-complexity"><a class="header" href="#42-space-complexity">4.2 Space Complexity</a></h3>
+<p><strong>Theorem 4.7</strong> (Space Bounds)</p>
+<pre><code>S(πₐₛₖ)     = O(1)              // Boolean result
+S(πₛₕₐᴄₗ)   = O(|violations|)  // Validation report
+S(πᴅₑₗₜₐ)   = O(|B_prev|)      // Baseline storage
+S(πₜₕᵣ)     = O(|values|)      // Numeric values
+S(πᴄₒᴜₙₜ)   = O(1)              // Cardinality
+S(πᴡɪɴᴅₒᴡ)  = O(k)              // Window buffer
+</code></pre>
+<hr />
+<h2 id="5-receipt-provenance"><a class="header" href="#5-receipt-provenance">5. Receipt Provenance</a></h2>
+<h3 id="51-cryptographic-commitment-scheme"><a class="header" href="#51-cryptographic-commitment-scheme">5.1 Cryptographic Commitment Scheme</a></h3>
+<p><strong>Definition 5.1</strong> (Receipt Type)</p>
+<pre><code>Receipt ≡ {
+  id          : IRI,
+  fired       : Bool,
+  predicates  : [PredicateResult],
+  durations   : Metrics,
+  provenance  : Provenance,
+  timestamp   : Timestamp,
+  actor       : IRI
+}
+</code></pre>
+<p><strong>Definition 5.2</strong> (Provenance Type)</p>
+<pre><code>Provenance ≡ {
+  hook_hash      : Hash,
+  query_hash     : Hash,
+  graph_hash     : Hash,
+  baseline_hash  : Hash,
+  receipt_hash   : Hash
+}
+
+where Hash = {0,1}²⁵⁶
+</code></pre>
+<p><strong>Definition 5.3</strong> (Hash Commitment)</p>
+<pre><code>commit : Receipt → Hash
+commit(R) = H₂₅₆(canonical(R))
+
+Properties:
+  1. Binding: commit(R) uniquely identifies R
+  2. Hiding: R cannot be derived from commit(R)
+  3. Collision-resistant: hard to find R ≠ R' with commit(R) = commit(R')
+</code></pre>
+<h3 id="52-digital-signature-scheme"><a class="header" href="#52-digital-signature-scheme">5.2 Digital Signature Scheme</a></h3>
+<p><strong>Definition 5.4</strong> (Signature Type)</p>
+<pre><code>Signature ≡ {
+  receipt_hash : Hash,
+  signature    : {0,1}ᵏ,
+  public_key   : {0,1}ⁿ,
+  algorithm    : SignatureAlgorithm
+}
+
+where
+  SignatureAlgorithm = Ed25519 | ECDSA | RSA
+</code></pre>
+<p><strong>Definition 5.5</strong> (Signing Function)</p>
+<pre><code>sign : Receipt → PrivateKey → Signature
+sign(R, sk) = {
+  receipt_hash: commit(R),
+  signature:    Sign_sk(commit(R)),
+  public_key:   derive_pk(sk),
+  algorithm:    Ed25519
+}
+</code></pre>
+<p><strong>Definition 5.6</strong> (Verification Function)</p>
+<pre><code>verify : Receipt → Signature → Bool
+verify(R, σ) =
+  Verify_pk(commit(R), σ.signature)
+  ∧ commit(R) = σ.receipt_hash
+</code></pre>
+<p><strong>Theorem 5.1</strong> (Non-Repudiation)</p>
+<pre><code>∀R : Receipt, sk : PrivateKey.
+  let σ = sign(R, sk) in
+  verify(R, σ) = ⊤
+  ∧ ∀R' ≠ R. verify(R', σ) = ⊥
+</code></pre>
+<p><strong>Proof</strong>: By Ed25519 correctness and collision resistance of H₂₅₆</p>
+<pre><code>verify(R, sign(R, sk))
+  = Verify_pk(commit(R), Sign_sk(commit(R)))
+  = ⊤                                          [Ed25519 correctness]
+
+verify(R', sign(R, sk)) where R' ≠ R
+  = Verify_pk(commit(R'), Sign_sk(commit(R)))
+  = ⊥                                          [commit(R) ≠ commit(R')]
+</code></pre>
+<p>∎</p>
+<h3 id="53-tamper-evidence"><a class="header" href="#53-tamper-evidence">5.3 Tamper-Evidence</a></h3>
+<p><strong>Definition 5.7</strong> (Merkle Tree for Receipt Chain)</p>
+<pre><code>MerkleTree ≡ Tree[Hash]
+
+root : MerkleTree → Hash
+root(Leaf(h))         = h
+root(Branch(l, r))    = H₂₅₆(root(l) ∥ root(r))
+
+Receipt chain:
+  receipts = [R₁, R₂, ..., Rₙ]
+  tree     = build_merkle([commit(R₁), ..., commit(Rₙ)])
+  root_hash = root(tree)
+</code></pre>
+<p><strong>Theorem 5.2</strong> (Tamper Detection)</p>
+<pre><code>∀i. modify(receipts[i]) ⟹ root(tree) changes
+</code></pre>
+<p><strong>Proof</strong>:
+Modifying R_i changes commit(R_i), which propagates up the Merkle tree, changing root hash. ∎</p>
+<hr />
+<h2 id="6-algebraic-laws"><a class="header" href="#6-algebraic-laws">6. Algebraic Laws</a></h2>
+<h3 id="61-boolean-algebra"><a class="header" href="#61-boolean-algebra">6.1 Boolean Algebra</a></h3>
+<p><strong>Theorem 6.1</strong> (Distributivity)</p>
+<pre><code>π₁ ∧ (π₂ ∨ π₃) = (π₁ ∧ π₂) ∨ (π₁ ∧ π₃)
+</code></pre>
+<p><strong>Proof</strong>:</p>
+<pre><code>⟦π₁ ∧ (π₂ ∨ π₃)⟧(b)
+  = ⟦π₁⟧(b) ∧ ⟦π₂ ∨ π₃⟧(b)
+  = ⟦π₁⟧(b) ∧ (⟦π₂⟧(b) ∨ ⟦π₃⟧(b))
+  = (⟦π₁⟧(b) ∧ ⟦π₂⟧(b)) ∨ (⟦π₁⟧(b) ∧ ⟦π₃⟧(b))   [Boolean distributivity]
+  = ⟦(π₁ ∧ π₂) ∨ (π₁ ∧ π₃)⟧(b)
+</code></pre>
+<p>∎</p>
+<p><strong>Theorem 6.2</strong> (De Morgan's Laws)</p>
+<pre><code>¬(π₁ ∧ π₂) = (¬π₁) ∨ (¬π₂)
+¬(π₁ ∨ π₂) = (¬π₁) ∧ (¬π₂)
+</code></pre>
+<p><strong>Proof</strong>: By λ-reduction</p>
+<pre><code>⟦¬(π₁ ∧ π₂)⟧(b)
+  = ¬(⟦π₁⟧(b) ∧ ⟦π₂⟧(b))
+  = (¬⟦π₁⟧(b)) ∨ (¬⟦π₂⟧(b))        [De Morgan]
+  = ⟦(¬π₁) ∨ (¬π₂)⟧(b)
+</code></pre>
+<p>∎</p>
+<h3 id="62-combinator-laws"><a class="header" href="#62-combinator-laws">6.2 Combinator Laws</a></h3>
+<p><strong>Theorem 6.3</strong> (Threshold Monotonicity)</p>
+<pre><code>k₁ ≤ k₂ ⟹ thresholdₖ₂(π₁, ..., πₙ) ⟹ thresholdₖ₁(π₁, ..., πₙ)
+</code></pre>
+<p><strong>Proof</strong>:</p>
+<pre><code>If |{i | πᵢ(b) = ⊤}| ≥ k₂, then |{i | πᵢ(b) = ⊤}| ≥ k₁ since k₁ ≤ k₂
+</code></pre>
+<p>∎</p>
+<p><strong>Theorem 6.4</strong> (Threshold Equivalences)</p>
+<pre><code>threshold₀(π₁, ..., πₙ) ≡ ⊤
+threshold₁(π₁, ..., πₙ) ≡ π₁ ∨ ... ∨ πₙ
+thresholdₙ(π₁, ..., πₙ) ≡ π₁ ∧ ... ∧ πₙ
+</code></pre>
+<p><strong>Proof</strong>: By cardinality analysis</p>
+<pre><code>threshold₀: always satisfied (0 predicates needed)
+threshold₁: at least one predicate true (disjunction)
+thresholdₙ: all n predicates true (conjunction)
+</code></pre>
+<p>∎</p>
+<h3 id="63-effect-algebra"><a class="header" href="#63-effect-algebra">6.3 Effect Algebra</a></h3>
+<p><strong>Theorem 6.5</strong> (Effect Composition Associativity)</p>
+<pre><code>(ε₁ ; ε₂) ; ε₃ = ε₁ ; (ε₂ ; ε₃)
+</code></pre>
+<p><strong>Proof</strong>: By monadic bind associativity in (𝔾 ⊎ Error) ∎</p>
+<p><strong>Theorem 6.6</strong> (Effect Identity)</p>
+<pre><code>ε ; ε_id = ε_id ; ε = ε
+where ε_id = λg. Right(g)
+</code></pre>
+<p><strong>Proof</strong>:</p>
+<pre><code>⟦ε ; ε_id⟧(g)
+  = match ⟦ε⟧(g) with
+    | Left(e)   → Left(e)
+    | Right(g') → ⟦ε_id⟧(g')
+  = match ⟦ε⟧(g) with
+    | Left(e)   → Left(e)
+    | Right(g') → Right(g')
+  = ⟦ε⟧(g)
+</code></pre>
+<p>∎</p>
+<hr />
+<h2 id="7-executable-lambda-calculus"><a class="header" href="#7-executable-lambda-calculus">7. Executable Lambda Calculus</a></h2>
+<h3 id="71-implementation-in-λ-calculus"><a class="header" href="#71-implementation-in-λ-calculus">7.1 Implementation in λ-Calculus</a></h3>
+<p><strong>ASK Predicate (Church Encoding)</strong>:</p>
+<pre><code>πₐₛₖ = λQ. λexp. λb.
+  let result = ask(Q)(graph) in
+  if-then-else
+    (is-none exp)
+    result
+    (eq result (unwrap exp))
+</code></pre>
+<p><strong>SHACL Predicate</strong>:</p>
+<pre><code>πₛₕₐᴄₗ = λS. λmode. λstrict. λb.
+  let report = validate(graph)(S) in
+  let viols = filter(λv. severity(v) ≥ threshold)(report) in
+  if-then-else
+    (eq mode CONFORMS)
+    (eq (length viols) 0)
+    (and (gt (length viols) 0) (implies strict fail-fast))
+</code></pre>
+<p><strong>DELTA Predicate</strong>:</p>
+<pre><code>πᴅₑₗₜₐ = λB. λB_prev. λK. λchange. λδ. λb.
+  let key = project(b)(K) in
+  let h_curr = hash(canonical(b)) in
+  let h_prev = lookup(B_prev)(key) in
+  match h_prev with
+    | None   → false
+    | Some h →
+        let diff = div (abs (sub h_curr h)) h in
+        match change with
+          | ANY      → neq h_curr h
+          | INCREASE → gt diff δ
+          | DECREASE → lt diff (neg δ)
+</code></pre>
+<h3 id="72-y-combinator-for-recursive-predicates"><a class="header" href="#72-y-combinator-for-recursive-predicates">7.2 Y-Combinator for Recursive Predicates</a></h3>
+<p><strong>Definition 7.1</strong> (Fixed-Point Combinator)</p>
+<pre><code>Y = λf. (λx. f (x x)) (λx. f (x x))
+
+Recursive predicate:
+  πᵣₑc = Y (λf. λb. ... f ... )
+</code></pre>
+<p><strong>Example: Recursive SHACL Validation</strong>:</p>
+<pre><code>validate_recursive = Y (λvalidate. λshape. λnode.
+  if-then-else
+    (has-children shape)
+    (and
+      (validate shape node)
+      (all (λchild. validate child node) (children shape)))
+    (validate shape node))
+</code></pre>
+<hr />
+<h2 id="8-type-safety"><a class="header" href="#8-type-safety">8. Type Safety</a></h2>
+<h3 id="81-type-preservation"><a class="header" href="#81-type-preservation">8.1 Type Preservation</a></h3>
+<p><strong>Theorem 8.1</strong> (Type Preservation)</p>
+<pre><code>If ⊢ π : Π and ⊢ b : Bindings, then ⊢ π(b) : Bool
+</code></pre>
+<p><strong>Proof</strong>: By structural induction on π</p>
+<ul>
+<li>Base case: π = πₐₛₖ(Q, exp) has type Π by Definition 3.1</li>
+<li>Inductive case: If π₁, π₂ : Π, then (π₁ ∧ π₂) : Π by Definition 1.5
+∎</li>
+</ul>
+<p><strong>Theorem 8.2</strong> (Progress)</p>
+<pre><code>If ⊢ π : Π and ⊢ b : Bindings, then ∃v : Bool. π(b) ⇓ v
+</code></pre>
+<p><strong>Proof</strong>: By strong normalization of simply-typed λ-calculus ∎</p>
+<hr />
+<h2 id="9-summary"><a class="header" href="#9-summary">9. Summary</a></h2>
+<p>This chapter formalized Knowledge Hooks as:</p>
+<ol>
+<li><strong>Predicate Algebra</strong>: Monoid structure with compositional semantics</li>
+<li><strong>Type System</strong>: 6 predicate types with λ-calculus definitions</li>
+<li><strong>Complexity Bounds</strong>: Formal analysis with optimization strategies</li>
+<li><strong>Cryptographic Provenance</strong>: Non-repudiation via digital signatures</li>
+<li><strong>Algebraic Laws</strong>: Distributivity, De Morgan, effect composition</li>
+</ol>
+<p><strong>Key Results</strong>:</p>
+<ul>
+<li>Predicates form a Boolean algebra (Theorems 6.1-6.2)</li>
+<li>Type preservation and progress (Theorems 8.1-8.2)</li>
+<li>Non-repudiation via Ed25519 signatures (Theorem 5.1)</li>
+<li>Complexity bounds: O(|G|) to O(|B| log |B|) (Theorems 4.1-4.6)</li>
+</ul>
+<p><strong>Next Chapter</strong>: Chapter 5 formalizes the Dark Matter Engine with operational semantics and proof of correctness.</p>
+<hr />
+<h2 id="references"><a class="header" href="#references">References</a></h2>
+<ol>
+<li>Pierce, B. C. (2002). <em>Types and Programming Languages</em>. MIT Press.</li>
+<li>Baader, F., et al. (2003). <em>The Description Logic Handbook</em>. Cambridge.</li>
+<li>Knublauch, H., &amp; Kontokostas, D. (2017). <em>Shapes Constraint Language (SHACL)</em>. W3C Recommendation.</li>
+<li>Harris, S., &amp; Seaborne, A. (2013). <em>SPARQL 1.1 Query Language</em>. W3C Recommendation.</li>
+<li>Boneh, D., &amp; Shoup, V. (2020). <em>A Graduate Course in Applied Cryptography</em>. Cambridge.</li>
+</ol>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../chapter-hyperdimensional/index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../chapter-05/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../chapter-hyperdimensional/index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../chapter-05/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

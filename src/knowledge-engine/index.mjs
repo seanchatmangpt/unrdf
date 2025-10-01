@@ -1,39 +1,15 @@
 /**
  * @file Central Knowledge Engine Index
  * @module knowledge-engine
- * 
+ *
  * @description
  * Centralized export hub for the entire knowledge engine system.
- * This provides a single import point for all functionality with
- * automatic browser/Node.js compatibility detection.
+ * This provides a single import point for all functionality.
  */
 
-/**
- * Detect if we're running in a browser environment
- */
-const isBrowser = typeof window !== 'undefined' && typeof window.document !== 'undefined';
-
-// Conditionally export browser-compatible versions
-if (isBrowser) {
-  export {
-    BrowserKnowledgeHookManager as KnowledgeHookManager,
-    BrowserLockchainWriter as LockchainWriter,
-    EffectSandbox,
-    QueryEngine,
-    createBrowserLockchainWriter as createLockchainWriter,
-    createBrowserKnowledgeHookManager as createKnowledgeHookManager,
-    createEffectSandbox,
-    BrowserHookExecutor,
-    BrowserConditionEvaluator,
-    BrowserPolicyPackManager,
-    BrowserFileResolver,
-    BrowserResolutionLayer
-  } from './browser.mjs';
-} else {
-  // Core Engine Components (Node.js version)
-  export { KnowledgeHookManager } from './knowledge-hook-manager.mjs';
-  export { TransactionManager } from './transaction.mjs';
-}
+// Core Engine Components
+export { KnowledgeHookManager } from './knowledge-hook-manager.mjs';
+export { TransactionManager } from './transaction.mjs';
 
 // Hook System
 export { defineHook } from './define-hook.mjs';

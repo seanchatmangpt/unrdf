@@ -1,0 +1,354 @@
+# Implementation Priority Matrix
+## UNRDF Knowledge Engine - Missing Components
+
+Generated: 2025-10-01T15:20:00Z
+
+---
+
+## PRIORITY MATRIX
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│ P0 BLOCKERS - IMPLEMENT FIRST (Required for tests to pass)     │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  1. QA Analyzer                     [███████████] 5 test suites │
+│     Impact: HIGH | Complexity: MED  | LOC: 400 | Time: 3 days   │
+│     Files: src/knowledge-engine/qa-analyzer.mjs                 │
+│     Tests: testing-qa.test.mjs                                  │
+│                                                                 │
+│  2. Domain Validator                [████████████] 6 test suites│
+│     Impact: HIGH | Complexity: MED  | LOC: 500 | Time: 4 days   │
+│     Files: src/knowledge-engine/domain-validator.mjs            │
+│     Tests: business-logic-domain.test.mjs                       │
+│                                                                 │
+│  3. Integration Manager             [██████████] 5 test suites  │
+│     Impact: HIGH | Complexity: HIGH | LOC: 450 | Time: 3 days   │
+│     Files: src/knowledge-engine/integration-manager.mjs         │
+│     Tests: system-integration.test.mjs                          │
+│                                                                 │
+│  4. Graph Analyzer                  [████████] 8 test suites    │
+│     Impact: MED  | Complexity: HIGH | LOC: 350 | Time: 3 days   │
+│     Files: src/knowledge-engine/graph-analyzer.mjs              │
+│     Tests: edge-case-data-scenarios.test.mjs                    │
+│                                                                 │
+│  5. Config Validator                [██████] 4 test suites      │
+│     Impact: MED  | Complexity: LOW  | LOC: 300 | Time: 2 days   │
+│     Files: src/knowledge-engine/config-validator.mjs            │
+│     Tests: configuration-deployment.test.mjs                    │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│ P1 ENHANCEMENTS - IMPLEMENT SECOND (Improve observability)     │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  6. OTEL Weaver Integration         [█████████] All components  │
+│     Impact: HIGH | Complexity: MED  | LOC: 200 | Time: 5 days   │
+│     Files: All manager classes + observability.mjs              │
+│     Purpose: Add trace spans, metrics, performance tracking     │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│ P2 VALIDATION - IMPLEMENT THIRD (Ensure quality)               │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  7. Integration Testing             [████████████] Full suite   │
+│     Impact: CRIT | Complexity: LOW  | LOC: 0   | Time: 5 days   │
+│     Purpose: Validate all components work together              │
+│     Deliverable: 19/19 tests passing                            │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## IMPLEMENTATION SEQUENCE
+
+### Week 1: Core Components
+
+**Days 1-3**: QA Analyzer
+- Implement coverage gap detection
+- Add integration failure analysis
+- Implement performance bottleneck detection
+- Add security coverage assessment
+- Implement UAT analysis
+- **Validation**: testing-qa.test.mjs passes
+
+**Days 4-7**: Domain Validator
+- Implement financial rules validation
+- Add healthcare compliance checks
+- Implement business process validation
+- Add regulatory change detection
+- Implement industry standards validation
+- Add customer requirements validation
+- **Validation**: business-logic-domain.test.mjs passes
+
+### Week 2: Integration & Analysis
+
+**Days 8-10**: Integration Manager
+- Implement circuit breaker pattern
+- Add rate limiting strategies
+- Implement retry with backoff
+- Add external service handling
+- Implement database connection recovery
+- **Validation**: system-integration.test.mjs passes
+
+**Days 11-13**: Graph Analyzer
+- Implement empty graph analysis
+- Add cycle detection (DFS)
+- Implement SCC algorithm (Tarjan's)
+- Add self-reference detection
+- **Validation**: edge-case-data-scenarios.test.mjs passes
+
+**Days 14-15**: Config Validator
+- Implement conflict detection
+- Add schema validation
+- Implement environment variable handling
+- **Validation**: configuration-deployment.test.mjs passes
+
+### Week 3: OTEL Integration
+
+**Days 16-20**: OTEL Weaver Enhancement
+- Add spans to all managers
+- Implement trace context propagation
+- Add performance metrics collection
+- Implement error trace recording
+- Add CLI export commands
+- **Validation**: OTEL traces exported successfully
+
+### Week 4: Validation & Documentation
+
+**Days 21-25**: Integration Testing
+- Run full test suite
+- Fix integration issues
+- Validate OTEL coverage
+- Update documentation
+- **Validation**: 19/19 tests passing
+
+---
+
+## DEPENDENCY GRAPH
+
+```
+         ┌─────────────────┐
+         │  Test Suite     │
+         │  (19 tests)     │
+         └────────┬────────┘
+                  │
+         ┌────────▼────────────────────┐
+         │  All components must exist  │
+         └─┬──┬──┬──┬──┬──────────────┘
+           │  │  │  │  │
+    ┌──────┘  │  │  │  └──────┐
+    │  ┌──────┘  │  └──────┐  │
+    │  │  ┌──────┘         │  │
+    │  │  │                │  │
+┌───▼──▼──▼───┐  ┌────────▼──▼────────┐
+│ QA Analyzer │  │ Domain Validator    │
+│ (P0-1)      │  │ (P0-2)              │
+└─────────────┘  └─────────────────────┘
+    │                     │
+    └──────┬──────────────┘
+           │
+┌──────────▼─────────┐  ┌─────────────────┐
+│ Integration Mgr    │  │ Graph Analyzer  │
+│ (P0-3)             │  │ (P0-4)          │
+└────────────────────┘  └─────────────────┘
+           │                     │
+           └──────┬──────────────┘
+                  │
+         ┌────────▼────────┐
+         │ Config Validator│
+         │ (P0-5)          │
+         └────────┬────────┘
+                  │
+         ┌────────▼────────────────┐
+         │ OTEL Integration (P1-6) │
+         │ (Adds instrumentation)  │
+         └────────┬────────────────┘
+                  │
+         ┌────────▼────────────────┐
+         │ Integration Tests (P2-7)│
+         │ (Validates all)         │
+         └─────────────────────────┘
+```
+
+**Key**: No circular dependencies - can implement in parallel!
+
+---
+
+## PARALLEL EXECUTION STRATEGY
+
+### Concurrent Implementation (Optimal)
+
+```
+Thread 1: QA Analyzer           [Days 1-3]
+Thread 2: Domain Validator      [Days 1-4]
+Thread 3: Integration Manager   [Days 1-3]
+Thread 4: Graph Analyzer        [Days 1-3]
+Thread 5: Config Validator      [Days 1-2]
+
+All threads complete by Day 4
+Then: OTEL Integration (Days 5-9)
+Then: Validation (Days 10-14)
+
+Total Time: 14 days (vs 20 days sequential)
+Speedup: 1.4x
+```
+
+### Sequential Implementation (Conservative)
+
+```
+Week 1: QA Analyzer → Domain Validator
+Week 2: Integration Manager → Graph Analyzer → Config Validator
+Week 3: OTEL Integration
+Week 4: Validation
+
+Total Time: 20 days
+```
+
+---
+
+## FILE CREATION CHECKLIST
+
+### New Files to Create
+
+- [ ] `src/knowledge-engine/qa-analyzer.mjs` (400 LOC)
+- [ ] `src/knowledge-engine/domain-validator.mjs` (500 LOC)
+- [ ] `src/knowledge-engine/integration-manager.mjs` (450 LOC)
+- [ ] `src/knowledge-engine/graph-analyzer.mjs` (350 LOC)
+- [ ] `src/knowledge-engine/config-validator.mjs` (300 LOC)
+
+### Files to Modify (OTEL Integration)
+
+- [ ] `src/knowledge-engine/knowledge-hook-manager.mjs` (+50 LOC)
+- [ ] `src/knowledge-engine/transaction.mjs` (+40 LOC)
+- [ ] `src/knowledge-engine/dark-matter-core.mjs` (+60 LOC)
+- [ ] `src/knowledge-engine/observability.mjs` (+50 LOC)
+- [ ] `src/cli/commands/weaver.mjs` (+30 LOC)
+
+**Total New Code**: ~2,230 LOC
+**Total Modified**: ~230 LOC
+**Grand Total**: ~2,460 LOC
+
+---
+
+## VALIDATION GATES
+
+### Gate 1: Component Implementation
+**Criteria**:
+- [ ] All 5 P0 components implemented
+- [ ] Unit tests pass for each component
+- [ ] No TypeScript/ESLint errors
+- [ ] Code reviewed and documented
+
+### Gate 2: OTEL Integration
+**Criteria**:
+- [ ] Spans added to all critical paths
+- [ ] Metrics collection working
+- [ ] Trace export functional
+- [ ] Performance overhead < 5%
+
+### Gate 3: Integration Testing
+**Criteria**:
+- [ ] 19/19 tests passing
+- [ ] 0 undefined property errors
+- [ ] 0 null reference errors
+- [ ] Full OTEL trace coverage
+
+### Gate 4: Production Readiness
+**Criteria**:
+- [ ] Documentation complete
+- [ ] Performance benchmarks met
+- [ ] Security review passed
+- [ ] Ready for deployment
+
+---
+
+## RISK MITIGATION
+
+### Risk 1: Component Dependencies Unknown
+**Mitigation**: Analyze test expectations first
+**Contingency**: Start with simplest component (Config Validator)
+
+### Risk 2: OTEL Integration Breaks Code
+**Mitigation**: Add instrumentation incrementally
+**Contingency**: Feature flag OTEL instrumentation
+
+### Risk 3: Tests Still Fail After Implementation
+**Mitigation**: Validate each component independently
+**Contingency**: Debug with OTEL traces
+
+### Risk 4: Performance Degradation
+**Mitigation**: Benchmark before/after
+**Contingency**: Optimize critical paths
+
+---
+
+## SUCCESS CRITERIA
+
+### Phase 1 Success (P0 Components)
+✅ QA Analyzer returns expected data structures
+✅ Domain Validator validates all rule types
+✅ Integration Manager handles failures
+✅ Graph Analyzer detects cycles
+✅ Config Validator detects conflicts
+
+### Phase 2 Success (OTEL Integration)
+✅ Spans exported for all operations
+✅ Metrics collected for performance
+✅ Errors traced with context
+✅ Performance overhead acceptable
+
+### Phase 3 Success (Validation)
+✅ 19/19 tests passing
+✅ 100% test coverage
+✅ Production-ready documentation
+✅ Performance targets met
+
+---
+
+## PERFORMANCE TARGETS
+
+| Metric | Target | Measured By |
+|--------|--------|-------------|
+| p50 Pre-Hook Pipeline | < 0.2ms | OTEL metrics |
+| p99 Pre-Hook Pipeline | < 2ms | OTEL metrics |
+| Receipt Write Median | < 5ms | OTEL metrics |
+| Hook Engine Exec Rate | > 10k/min | OTEL metrics |
+| Error Isolation | 100% | Test validation |
+| Test Pass Rate | 100% | Test suite |
+| OTEL Overhead | < 5% | Benchmarks |
+
+---
+
+## NEXT ACTIONS
+
+**IMMEDIATE** (Today):
+1. Review this architecture design
+2. Confirm component specifications
+3. Assign agents to components
+4. Set up validation checkpoints
+
+**SHORT-TERM** (This Week):
+1. Implement QA Analyzer
+2. Implement Domain Validator
+3. Run first validation pass
+
+**MEDIUM-TERM** (Next 2 Weeks):
+1. Complete all P0 components
+2. Integrate OTEL instrumentation
+3. Run full test suite
+
+**LONG-TERM** (Week 4):
+1. Fix any integration issues
+2. Validate production readiness
+3. Deploy to production
+
+---
+
+**STATUS**: Architecture design complete ✅
+**READY FOR**: Agent assignment and implementation
+**ESTIMATED COMPLETION**: 14-20 days (parallel/sequential)

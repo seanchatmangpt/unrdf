@@ -1,0 +1,25 @@
+{
+  "name": "@demo/kgen",
+  "version": "1.0.0",
+  "bin": {
+    "kgen": "src/cli.mjs"
+  },
+  "main": "src/index.mjs",
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "lint": "eslint src --ext .mjs"
+  },
+  "dependencies": {
+    "@demo/unrdf": "workspace:*",
+    "commander": "^9.0.0",
+    "fs-extra": "^10.0.0",
+    "handlebars": "^4.7.0"
+  },
+  "devDependencies": {
+    "citty-test-utils": "git+https://github.com/seanchatmangpt/citty-test-utils.git",
+    "vitest": "^1.0.0",
+    "execa": "^5.1.1",
+    "testcontainers": "^10.0.0"
+  }
+}

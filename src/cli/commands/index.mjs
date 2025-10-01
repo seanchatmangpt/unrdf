@@ -42,3 +42,19 @@ export {
   sidecarConfigSetCommand,
   sidecarCommandMeta
 } from './sidecar.mjs';
+
+// Store commands
+export {
+  storeImportCommand,
+  storeExportCommand,
+  storeQueryCommand,
+  storeCommandMeta
+} from './store.mjs';
+
+// Policy commands
+export {
+  policyApplyCommand,
+  policyListCommand,
+  policyGetCommand,
+  policyCommandMeta
+} from './policy.mjs';

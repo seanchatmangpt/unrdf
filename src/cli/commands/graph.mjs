@@ -11,6 +11,11 @@ import { useStoreContext } from '../../context/index.mjs';
 import { useTurtle } from '../../composables/index.mjs';
 import { validateRequiredArgs, getArg } from '../utils/context-wrapper.mjs';
 import { withSidecar, formatSidecarError } from '../utils/sidecar-helper.mjs';
+import { validatePolicy, formatValidationReport } from '../utils/policy-validator.mjs';
+import { trace, SpanStatusCode } from '@opentelemetry/api';
+import { printTraceInfo } from '../utils/otel-tracer.mjs';
+
+const tracer = trace.getTracer('unrdf-cli-graph');
 
 /**
  * List graphs
@@ -233,49 +238,71 @@ export async function graphExportCommand(ctx, config) {
  * @returns {Promise<void>}
  */
 export async function graphValidateCommand(ctx, config) {
-  const { args } = ctx;
-  validateRequiredArgs(args, ['name']);
+  return await tracer.startActiveSpan('graph.validate', async (span) => {
+    try {
+      const { args } = ctx;
+      validateRequiredArgs(args, ['name']);
 
-  console.log(`🔍 Validating graph: ${args.name}`);
+      span.setAttribute('graph.name', args.name);
+      span.setAttribute('policy.pack', args.policyPack || 'default');
+      span.setAttribute('validation.strict', args.strict || false);
 
-  try {
-    const result = await withSidecar(async (client) => {
+      console.log(`🔍 Validating graph: ${args.name}`);
+      console.log(`   Policy Pack: ${args.policyPack || 'default'}`);
+
+      // Get store with RDF data
       const store = useStoreContext();
-      const quads = store.getQuads();
+      span.setAttribute('store.size', store.size);
 
-      return await client.validateGraph({
-        graphId: args.name,
-        quads: quads.map(q => ({
-          subject: q.subject.value,
-          predicate: q.predicate.value,
-          object: q.object.value,
-          graph: q.graph?.value
-        })),
-        policyPack: args.policyPack || 'default',
-        strictMode: args.strict || false
+      // Run policy validation
+      const result = await validatePolicy(store, args.policyPack || 'default', {
+        strict: args.strict || false,
+        basePath: process.cwd()
       });
-    });
 
-    if (result.valid) {
-      console.log('✅ Graph is valid');
-    } else {
-      console.log('❌ Validation failed');
-      if (result.violations) {
-        console.log(`Found ${result.violations.length} violations:`);
-        for (const violation of result.violations.slice(0, 10)) {
-          console.log(`  - ${violation.message}`);
-        }
+      // Format and display results
+      const format = args.report ? 'json' : 'text';
+      const report = formatValidationReport(result, format);
+
+      if (result.passed) {
+        console.log('✅ Validation PASSED');
+        span.setStatus({ code: SpanStatusCode.OK });
+      } else {
+        console.log('❌ Validation FAILED');
+        console.log(`   Violations: ${result.violations.length}`);
+        span.setStatus({ code: SpanStatusCode.ERROR, message: `${result.violations.length} violations` });
       }
-    }
 
-    if (args.report) {
-      await writeFile(args.report, JSON.stringify(result, null, 2));
-      console.log(`📄 Report written to: ${args.report}`);
+      // Display report
+      if (!args.report) {
+        console.log(report);
+      }
+
+      // Write report to file if requested
+      if (args.report) {
+        await writeFile(args.report, report);
+        console.log(`📄 Report written to: ${args.report}`);
+      }
+
+      // Print trace information
+      printTraceInfo('graph validate');
+
+      // Exit with error code if validation failed
+      if (!result.passed) {
+        process.exit(1);
+      }
+    } catch (error) {
+      span.recordException(error);
+      span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
+      console.error(`❌ Validation failed: ${error.message}`);
+      if (ctx.args.verbose) {
+        console.error(error.stack);
+      }
+      process.exit(1);
+    } finally {
+      span.end();
     }
-  } catch (error) {
-    console.error(`❌ Validation failed: ${formatSidecarError(error)}`);
-    process.exit(1);
-  }
+  });
 }
 
 /**

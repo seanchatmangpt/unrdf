@@ -253,7 +253,20 @@ export class SidecarClient extends EventEmitter {
         });
       }
 
-      client.channel[method](request, metadata, { deadline }, (error, response) => {
+      // Add OTEL trace context to metadata for distributed tracing
+      if (options.traceContext) {
+        metadata.set('x-trace-id', options.traceContext.traceId || '');
+        metadata.set('x-span-id', options.traceContext.spanId || '');
+        metadata.set('x-trace-flags', options.traceContext.traceFlags || '01');
+      }
+
+      // Call the method on the client directly, not client.channel
+      if (!client[method]) {
+        reject(new Error(`Method ${method} not found on gRPC client`));
+        return;
+      }
+
+      client[method](request, metadata, { deadline }, (error, response) => {
         if (error) {
           reject(this._transformError(error));
         } else {

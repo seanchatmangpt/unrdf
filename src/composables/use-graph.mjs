@@ -1,10 +1,10 @@
 /**
  * @fileoverview useGraph composable - high-level RDF graph operations with context
- * 
+ *
  * This composable provides the main interface for RDF operations.
  * It wraps a store with common graph operations like SPARQL queries,
  * set operations, and traversal utilities. Now uses unctx for store access.
- * 
+ *
  * @version 1.0.0
  * @author GitVan Team
  * @license MIT
@@ -14,29 +14,29 @@ import { useStoreContext } from "../context/index.mjs";
 
 /**
  * Create a graph composable for operating on the global RDF store
- * 
+ *
  * @returns {Object} Graph operations interface
- * 
+ *
  * @example
  * // Initialize store context first
  * const runApp = initStore();
- * 
+ *
  * runApp(() => {
  *   const graph = useGraph();
- *   
+ *
  *   // SPARQL SELECT query
  *   const results = graph.select(`
  *     PREFIX ex: <http://example.org/>
  *     SELECT ?s ?p ?o WHERE { ?s ?p ?o }
  *   `);
- *   
+ *
  *   // SPARQL ASK query
  *   const exists = graph.ask(`
  *     PREFIX ex: <http://example.org/>
  *     ASK { ex:subject ex:predicate ?o }
  *   `);
  * });
- * 
+ *
  * @throws {Error} If store context is not initialized
  */
 export function useGraph() {
@@ -46,7 +46,6 @@ export function useGraph() {
   const store = storeContext.store;
 
   return {
-
     /**
      * Execute any valid SPARQL 1.1 query
      * @param {string} sparql - SPARQL query string
@@ -59,7 +58,7 @@ export function useGraph() {
      * @note This is a READER operation - use sparingly
      */
     query(sparql, options) {
-      if (typeof sparql !== 'string') {
+      if (typeof sparql !== "string") {
         throw new TypeError("[useGraph] SPARQL query must be a string");
       }
       return storeContext.query(sparql, options);
@@ -75,7 +74,7 @@ export function useGraph() {
      * @note This is a READER operation - use sparingly
      */
     select(sparql) {
-      if (typeof sparql !== 'string') {
+      if (typeof sparql !== "string") {
         throw new TypeError("[useGraph] SPARQL query must be a string");
       }
       const res = storeContext.query(sparql);
@@ -97,12 +96,15 @@ export function useGraph() {
      * @note This is a READER operation - use sparingly
      */
     ask(sparql) {
-      if (typeof sparql !== 'string') {
+      if (typeof sparql !== "string") {
         throw new TypeError("[useGraph] SPARQL query must be a string");
       }
-      console.log('DEBUG: useGraph.ask called with:', sparql.substring(0, 50) + '...');
-      console.log('DEBUG: storeContext type:', typeof storeContext);
-      console.log('DEBUG: storeContext has query:', typeof storeContext.query);
+      console.log(
+        "DEBUG: useGraph.ask called with:",
+        sparql.substring(0, 50) + "...",
+      );
+      console.log("DEBUG: storeContext type:", typeof storeContext);
+      console.log("DEBUG: storeContext has query:", typeof storeContext.query);
       const res = storeContext.query(sparql);
       if (res.type !== "ask") {
         throw new Error("[useGraph] Query is not an ASK query");
@@ -122,7 +124,7 @@ export function useGraph() {
      * @note This is a READER operation - use sparingly
      */
     construct(sparql) {
-      if (typeof sparql !== 'string') {
+      if (typeof sparql !== "string") {
         throw new TypeError("[useGraph] SPARQL query must be a string");
       }
       const res = storeContext.query(sparql);
@@ -138,15 +140,15 @@ export function useGraph() {
      * Execute a SPARQL UPDATE query
      * @param {string} sparql - SPARQL UPDATE query string
      * @returns {Object} Update result
-     * 
+     *
      * @throws {TypeError} If sparql is not a string
      * @throws {Error} If query is not an UPDATE query
      */
-    update(sparql) {
-      if (typeof sparql !== 'string') {
+    async update(sparql) {
+      if (typeof sparql !== "string") {
         throw new TypeError("[useGraph] SPARQL query must be a string");
       }
-      const res = storeContext.query(sparql);
+      const res = await storeContext.query(sparql);
       if (res.type !== "update") {
         throw new Error("[useGraph] Query is not an UPDATE query");
       }
@@ -171,7 +173,9 @@ export function useGraph() {
     validateOrThrow(shapesInput) {
       const result = engine.validateShacl(store, shapesInput);
       if (!result.conforms) {
-        throw new Error(`SHACL validation failed: ${result.results.map(r => r.message).join(', ')}`);
+        throw new Error(
+          `SHACL validation failed: ${result.results.map((r) => r.message).join(", ")}`,
+        );
       }
       return result;
     },
@@ -182,24 +186,24 @@ export function useGraph() {
      * @param {string} [options.format='Turtle'] - Output format
      * @param {Object} [options.prefixes] - Prefix mappings
      * @returns {string} Serialized string
-     * 
+     *
      * @throws {TypeError} If options is not an object
      * @throws {Error} If format is unsupported
      */
     serialize(options = {}) {
-      if (options && typeof options !== 'object') {
+      if (options && typeof options !== "object") {
         throw new TypeError("[useGraph] serialize options must be an object");
       }
-      
+
       const { format = "Turtle", prefixes } = options;
-      
+
       if (format === "Turtle") {
         return engine.serializeTurtle(store, { prefixes });
       }
       if (format === "N-Quads") {
         return engine.serializeNQuads(store);
       }
-      
+
       throw new Error(`[useGraph] Unsupported serialization format: ${format}`);
     },
 
@@ -235,7 +239,7 @@ export function useGraph() {
      * @returns {Object} New useGraph instance with union
      */
     union(...otherGraphs) {
-      const otherStores = otherGraphs.map(g => g.store || g);
+      const otherStores = otherGraphs.map((g) => g.store || g);
       const resultStore = engine.union(store, ...otherStores);
       // Create a temporary context for the result
       return createTemporaryGraph(resultStore, engine);
@@ -290,7 +294,7 @@ export function useGraph() {
      */
     get size() {
       return store.size;
-    }
+    },
   };
 }
 
@@ -307,13 +311,13 @@ function createTemporaryGraph(store, engine) {
     get store() {
       return store;
     },
-    
+
     get engine() {
       return engine;
     },
-    
+
     query(sparql, options) {
-      if (typeof sparql !== 'string') {
+      if (typeof sparql !== "string") {
         throw new TypeError("[useGraph] SPARQL query must be a string");
       }
       try {
@@ -322,9 +326,9 @@ function createTemporaryGraph(store, engine) {
         throw new Error(`[useGraph] Query failed: ${error.message}`);
       }
     },
-    
+
     select(sparql) {
-      if (typeof sparql !== 'string') {
+      if (typeof sparql !== "string") {
         throw new TypeError("[useGraph] SPARQL query must be a string");
       }
       const res = engine.query(store, sparql);
@@ -333,9 +337,9 @@ function createTemporaryGraph(store, engine) {
       }
       return res.results;
     },
-    
+
     ask(sparql) {
-      if (typeof sparql !== 'string') {
+      if (typeof sparql !== "string") {
         throw new TypeError("[useGraph] SPARQL query must be a string");
       }
       const res = engine.query(store, sparql);
@@ -344,9 +348,9 @@ function createTemporaryGraph(store, engine) {
       }
       return res.boolean;
     },
-    
+
     construct(sparql) {
-      if (typeof sparql !== 'string') {
+      if (typeof sparql !== "string") {
         throw new TypeError("[useGraph] SPARQL query must be a string");
       }
       const res = engine.query(store, sparql);
@@ -355,9 +359,9 @@ function createTemporaryGraph(store, engine) {
       }
       return res.store;
     },
-    
+
     update(sparql) {
-      if (typeof sparql !== 'string') {
+      if (typeof sparql !== "string") {
         throw new TypeError("[useGraph] SPARQL query must be a string");
       }
       const res = engine.query(store, sparql);
@@ -366,74 +370,74 @@ function createTemporaryGraph(store, engine) {
       }
       return res;
     },
-    
+
     validate(shapesInput) {
       return engine.validateShacl(store, shapesInput);
     },
-    
+
     validateOrThrow(shapesInput) {
       return engine.validateShaclOrThrow(store, shapesInput);
     },
-    
+
     serialize(options = {}) {
-      if (options && typeof options !== 'object') {
+      if (options && typeof options !== "object") {
         throw new TypeError("[useGraph] serialize options must be an object");
       }
-      
+
       const { format = "Turtle", prefixes } = options;
-      
+
       if (format === "Turtle") {
         return engine.serializeTurtle(store, { prefixes });
       }
       if (format === "N-Quads") {
         return engine.serializeNQuads(store);
       }
-      
+
       throw new Error(`[useGraph] Unsupported serialization format: ${format}`);
     },
-    
+
     pointer() {
       return engine.getClownface(store);
     },
-    
+
     stats() {
       return engine.getStats(store);
     },
-    
+
     async isIsomorphic(otherGraph) {
       const otherStore = otherGraph.store || otherGraph;
       return engine.isIsomorphic(store, otherStore);
     },
-    
+
     union(...otherGraphs) {
-      const otherStores = otherGraphs.map(g => g.store || g);
+      const otherStores = otherGraphs.map((g) => g.store || g);
       const resultStore = engine.union(store, ...otherStores);
       return createTemporaryGraph(resultStore, engine);
     },
-    
+
     difference(otherGraph) {
       const otherStore = otherGraph.store || otherGraph;
       const resultStore = engine.difference(store, otherStore);
       return createTemporaryGraph(resultStore, engine);
     },
-    
+
     intersection(otherGraph) {
       const otherStore = otherGraph.store || otherGraph;
       const resultStore = engine.intersection(store, otherStore);
       return createTemporaryGraph(resultStore, engine);
     },
-    
+
     skolemize(baseIRI) {
       const resultStore = engine.skolemize(store, baseIRI);
       return createTemporaryGraph(resultStore, engine);
     },
-    
+
     toJSONLD(options = {}) {
       return engine.toJSONLD(store, options);
     },
-    
+
     get size() {
       return store.size;
-    }
+    },
   };
 }

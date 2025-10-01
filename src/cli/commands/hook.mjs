@@ -12,6 +12,11 @@ import { useStoreContext } from '../../context/index.mjs';
 import { useTurtle } from '../../composables/index.mjs';
 import { validateRequiredArgs, getArg } from '../utils/context-wrapper.mjs';
 import { withSidecar, formatSidecarError } from '../utils/sidecar-helper.mjs';
+import { evaluateHook } from '../utils/hook-evaluator.mjs';
+import { trace, SpanStatusCode } from '@opentelemetry/api';
+import { printTraceInfo } from '../utils/otel-tracer.mjs';
+
+const tracer = trace.getTracer('unrdf-cli-hook');
 
 /**
  * Evaluate knowledge hook
@@ -20,83 +25,86 @@ import { withSidecar, formatSidecarError } from '../utils/sidecar-helper.mjs';
  * @returns {Promise<void>}
  */
 export async function hookEvalCommand(ctx, config) {
-  const { args } = ctx;
-  validateRequiredArgs(args, ['hook']);
-
-  console.log(`🔍 Evaluating hook: ${args.hook}`);
-
-  try {
-    // Load hook definition
-    let hookDef;
+  return await tracer.startActiveSpan('hook.eval', async (span) => {
     try {
-      const hookJson = await readFile(args.hook, 'utf-8');
-      hookDef = JSON.parse(hookJson);
-    } catch (error) {
-      throw new Error(`Failed to load hook: ${error.message}`);
-    }
+      const { args } = ctx;
+      validateRequiredArgs(args, ['hook']);
 
-    // Load data if provided
-    const store = useStoreContext();
-    if (args.data) {
-      const turtle = await useTurtle();
-      const dataContent = await readFile(args.data, 'utf-8');
-      const quads = await turtle.parse(dataContent);
-      store.add(...quads);
-    }
+      span.setAttribute('hook.file', args.hook);
+      console.log(`🔍 Evaluating hook: ${args.hook}`);
 
-    // Try sidecar first, fallback to local
-    let result;
-    try {
-      result = await withSidecar(async (client) => {
-        return await client.evaluateHook({
-          hookId: hookDef.name || 'cli-hook',
-          hook: hookDef,
-          event: {
-            type: 'manual',
-            timestamp: new Date().toISOString(),
-            store: store
-          }
-        });
-      });
-    } catch (error) {
-      // Fallback to local evaluation
-      console.warn(`⚠️  Sidecar unavailable, using local evaluation`);
-
-      const manager = new KnowledgeHookManager({
-        observability: { enableTracing: false },
-        performance: { enableProfiling: args.verbose }
-      });
-
-      result = await manager.evaluateHook(hookDef, {
-        type: 'manual',
-        timestamp: new Date().toISOString()
-      });
-    }
-
-    // Format output
-    const format = getArg(args, 'format', 'json');
-    if (format === 'json') {
-      console.log(JSON.stringify(result, null, 2));
-    } else {
-      console.log(`\n🔥 Result: ${result.fired ? 'FIRED' : 'No Change'}`);
-      console.log(`⏱️  Duration: ${result.executionTime || 0}ms`);
-      if (result.effects && result.effects.length > 0) {
-        console.log(`✨ Effects executed: ${result.effects.length}`);
+      // Load hook definition
+      let hookDef;
+      try {
+        const hookJson = await readFile(args.hook, 'utf-8');
+        hookDef = JSON.parse(hookJson);
+        span.setAttribute('hook.name', hookDef.meta?.name || 'unnamed');
+        span.setAttribute('hook.kind', hookDef.when?.kind || 'unknown');
+      } catch (error) {
+        throw new Error(`Failed to load hook: ${error.message}`);
       }
-    }
 
-    // Write output if requested
-    if (args.output) {
-      await writeFile(args.output, JSON.stringify(result, null, 2));
-      console.log(`📄 Result written to ${args.output}`);
+      // Load data if provided
+      const store = useStoreContext();
+      if (args.data) {
+        const turtle = await useTurtle();
+        const dataContent = await readFile(args.data, 'utf-8');
+        const quads = await turtle.parse(dataContent);
+        store.addQuads(quads);
+        console.log(`📊 Loaded ${quads.length} triples from ${args.data}`);
+        span.setAttribute('data.triples', quads.length);
+      }
+
+      span.setAttribute('store.size', store.size);
+
+      // Use local hook evaluator with OTEL spans
+      const result = await evaluateHook(hookDef, store, {
+        verbose: args.verbose,
+        basePath: process.cwd()
+      });
+
+      // Format output
+      const format = getArg(args, 'format', 'table');
+      if (format === 'json') {
+        console.log(JSON.stringify(result, null, 2));
+      } else {
+        console.log(`\n🔥 Result: ${result.fired ? '✅ FIRED' : '❌ NOT FIRED'}`);
+        console.log(`   Type: ${result.type || 'unknown'}`);
+        console.log(`   Duration: ${result.executionTime || 0}ms`);
+
+        if (result.type === 'threshold') {
+          console.log(`   Value: ${result.value} ${result.operator} ${result.threshold}`);
+        }
+
+        if (result.type === 'shacl' && result.violations) {
+          console.log(`   Violations: ${result.violations.length}`);
+        }
+      }
+
+      // Write output if requested
+      if (args.output) {
+        await writeFile(args.output, JSON.stringify(result, null, 2));
+        console.log(`\n📄 Result written to ${args.output}`);
+      }
+
+      span.setAttribute('hook.fired', result.fired);
+      span.setAttribute('hook.executionTime', result.executionTime);
+      span.setStatus({ code: SpanStatusCode.OK });
+
+      // Print trace information
+      printTraceInfo('hook eval');
+    } catch (error) {
+      span.recordException(error);
+      span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
+      console.error(`❌ Hook evaluation failed: ${error.message}`);
+      if (ctx.args.verbose) {
+        console.error(error.stack);
+      }
+      process.exit(1);
+    } finally {
+      span.end();
     }
-  } catch (error) {
-    console.error(`❌ Hook evaluation failed: ${error.message}`);
-    if (args.verbose) {
-      console.error(error.stack);
-    }
-    process.exit(1);
-  }
+  });
 }
 
 /**
@@ -148,7 +156,7 @@ export async function hookListCommand(ctx, config) {
 }
 
 /**
- * Create knowledge hook from template
+ * Create knowledge hook from SPARQL query file or inline query
  * @param {Object} ctx - CLI context
  * @param {Object} config - Configuration
  * @returns {Promise<void>}
@@ -159,54 +167,111 @@ export async function hookCreateCommand(ctx, config) {
 
   console.log(`🔨 Creating hook: ${args.name} (${args.type})`);
 
-  const templates = {
-    'sparql-ask': {
-      name: args.name,
-      kind: 'before',
-      condition: {
-        type: 'sparql-ask',
-        query: args.query || 'ASK { ?s ?p ?o }'
-      },
-      effects: []
-    },
-    'shacl': {
-      name: args.name,
-      kind: 'before',
-      condition: {
-        type: 'shacl',
-        shapesFile: args.shapes || 'shapes.ttl'
-      },
-      effects: []
-    },
-    'threshold': {
-      name: args.name,
-      kind: 'before',
-      condition: {
-        type: 'threshold',
-        query: args.query || 'SELECT (COUNT(?s) AS ?count) WHERE { ?s ?p ?o }',
-        threshold: args.threshold || 1000,
-        operator: args.operator || 'gt'
-      },
-      effects: []
+  // Read SPARQL query from file or use inline query
+  let queryContent;
+  if (args.file) {
+    try {
+      queryContent = await readFile(args.file, 'utf-8');
+      console.log(`📖 Loaded SPARQL query from: ${args.file}`);
+    } catch (error) {
+      console.error(`❌ Failed to read SPARQL file: ${error.message}`);
+      process.exit(1);
     }
-  };
+  } else if (args.query) {
+    queryContent = args.query;
+  } else {
+    // Provide default queries based on type
+    const defaultQueries = {
+      'sparql-ask': 'ASK { ?s ?p ?o }',
+      'threshold': 'SELECT (COUNT(?s) AS ?count) WHERE { ?s ?p ?o }'
+    };
+    queryContent = defaultQueries[args.type] || 'ASK { ?s ?p ?o }';
+    console.warn(`⚠️  No --file or --query provided, using default query`);
+  }
 
-  const template = templates[args.type];
-  if (!template) {
-    console.error(`❌ Unknown hook type: ${args.type}`);
-    console.log(`Available types: ${Object.keys(templates).join(', ')}`);
-    process.exit(1);
+  // Generate hook definition based on type
+  let hookDefinition;
+
+  switch (args.type) {
+    case 'sparql-ask':
+      hookDefinition = {
+        name: args.name,
+        kind: args.phase || 'before',
+        condition: {
+          type: 'sparql-ask',
+          query: queryContent
+        },
+        effects: []
+      };
+      break;
+
+    case 'threshold':
+      hookDefinition = {
+        name: args.name,
+        kind: args.phase || 'before',
+        condition: {
+          type: 'threshold',
+          query: queryContent,
+          threshold: args.threshold || 1000,
+          operator: args.operator || 'gt'
+        },
+        effects: []
+      };
+      break;
+
+    case 'shacl':
+      hookDefinition = {
+        name: args.name,
+        kind: args.phase || 'before',
+        condition: {
+          type: 'shacl',
+          shapesFile: args.shapes || args.file || 'shapes.ttl'
+        },
+        effects: []
+      };
+      break;
+
+    default:
+      console.error(`❌ Unknown hook type: ${args.type}`);
+      console.log(`Available types: sparql-ask, threshold, shacl`);
+      process.exit(1);
   }
 
   // Add description if provided
   if (args.description) {
-    template.description = args.description;
+    hookDefinition.description = args.description;
   }
 
   // Write hook file
-  const outputPath = args.output || `hooks/${args.name}.json`;
-  await writeFile(outputPath, JSON.stringify(template, null, 2));
+  let outputPath = args.output || `hooks/${args.name}.json`;
+
+  // If output is a directory, create subdirectory structure
+  if (args.output) {
+    const { stat } = await import('node:fs/promises');
+    try {
+      const stats = await stat(args.output);
+      if (stats.isDirectory()) {
+        // Create hooks subdirectory and name-specific directory
+        const { join } = await import('node:path');
+        const { mkdir } = await import('node:fs/promises');
+        const hookDir = join(args.output, 'hooks', args.name);
+        await mkdir(hookDir, { recursive: true });
+        outputPath = join(hookDir, `${args.name}.json`);
+      }
+    } catch (error) {
+      // If path doesn't exist, treat as file path
+      if (error.code !== 'ENOENT') throw error;
+    }
+  }
+
+  await writeFile(outputPath, JSON.stringify(hookDefinition, null, 2));
   console.log(`✅ Hook created: ${outputPath}`);
+
+  // Display hook definition in verbose mode
+  if (args.verbose) {
+    console.log('\n📋 Hook Definition:');
+    console.log(JSON.stringify(hookDefinition, null, 2));
+  }
 }
 
 /**

@@ -1,0 +1,178 @@
+# KGC Sidecar Testcontainer Infrastructure
+# Provides cleanroom environment for E2E validation with OpenTelemetry weaver
+
+services:
+  # OpenTelemetry Collector (Central telemetry aggregation)
+  otel-collector:
+    image: otel/opentelemetry-collector:0.91.0
+    container_name: kgc-otel-collector
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml:ro
+    ports:
+      - "4317:4317"   # OTLP gRPC
+      - "4318:4318"   # OTLP HTTP
+      - "8888:8888"   # Prometheus metrics
+      - "8889:8889"   # Prometheus exporter metrics
+      - "13133:13133" # Health check
+    networks:
+      - kgc-test-network
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:13133/"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+
+  # Jaeger (Distributed tracing UI)
+  jaeger:
+    image: jaegertracing/all-in-one:1.52
+    container_name: kgc-jaeger
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+      - METRICS_STORAGE_TYPE=prometheus
+    ports:
+      - "16686:16686" # Jaeger UI
+      - "6831:6831/udp" # Jaeger agent
+      - "14268:14268" # Jaeger collector HTTP
+      - "14250:14250" # Jaeger collector gRPC
+    networks:
+      - kgc-test-network
+    depends_on:
+      otel-collector:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:14269/"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+
+  # Prometheus (Metrics storage and visualization)
+  prometheus:
+    image: prom/prometheus:v2.48.1
+    container_name: kgc-prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    ports:
+      - "9090:9090"
+    networks:
+      - kgc-test-network
+    depends_on:
+      otel-collector:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:9090/-/healthy"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+
+  # Grafana (Metrics dashboards)
+  grafana:
+    image: grafana/grafana:10.2.3
+    container_name: kgc-grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - ./grafana-datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml:ro
+      - ./grafana-dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml:ro
+      - ./grafana-kgc-dashboard.json:/var/lib/grafana/dashboards/kgc-dashboard.json:ro
+      - grafana-data:/var/lib/grafana
+    ports:
+      - "3001:3000"
+    networks:
+      - kgc-test-network
+    depends_on:
+      prometheus:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3000/api/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+
+  # Git Server (Lockchain repository)
+  gitea:
+    image: gitea/gitea:1.21-rootless
+    container_name: kgc-git-server
+    environment:
+      - USER_UID=1000
+      - USER_GID=1000
+      - GITEA__database__DB_TYPE=sqlite3
+      - GITEA__security__INSTALL_LOCK=true
+      - GITEA__service__DISABLE_REGISTRATION=true
+    volumes:
+      - gitea-data:/var/lib/gitea
+      - gitea-config:/etc/gitea
+    ports:
+      - "3002:3000" # Gitea UI
+      - "2222:2222" # Git SSH
+    networks:
+      - kgc-test-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/healthz"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+
+  # KGC Sidecar (System under test)
+  kgc-sidecar:
+    build:
+      context: ../../..
+      dockerfile: test/e2e/testcontainers/Dockerfile.sidecar
+    container_name: kgc-sidecar
+    environment:
+      - NODE_ENV=test
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4318
+      - OTEL_SERVICE_NAME=kgc-sidecar
+      - OTEL_SERVICE_VERSION=1.0.0-test
+      - KGC_ENABLE_TELEMETRY=true
+      - KGC_ENABLE_LOCKCHAIN=true
+      - KGC_GIT_REPO_URL=http://gitea:3000/kgc/lockchain.git
+      - KGC_SANDBOX_TYPE=worker
+      - KGC_SANDBOX_TIMEOUT=30000
+      - KGC_SANDBOX_MEMORY_LIMIT=67108864
+    volumes:
+      - ../../../src:/app/src:ro
+      - ../fixtures:/app/fixtures:ro
+      - ../config:/app/config:ro
+      - kgc-data:/app/data
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    networks:
+      - kgc-test-network
+    depends_on:
+      otel-collector:
+        condition: service_healthy
+      gitea:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "/app/healthcheck.mjs"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+
+networks:
+  kgc-test-network:
+    driver: bridge
+    name: testcontainers-kgc
+
+volumes:
+  prometheus-data:
+  grafana-data:
+  gitea-data:
+  gitea-config:
+  kgc-data:
