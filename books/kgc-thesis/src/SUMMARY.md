@@ -1,0 +1,17 @@
+# Summary
+
+- [Title & Abstract](01-title-abstract.md)
+- [Part I: The Theoretical Foundation](02-partI-theoretical-foundation.md)
+  - [1. The Limits of Newtonian Computation](03-section1-limits-of-newtonian-computation.md)
+  - [2. A Relativistic Paradigm: Field-Based Intelligence](04-section2-relativistic-paradigm.md)
+  - [3. The Geometry of Knowledge: Vector Space Models and Analogy](05-section3-geometry-of-knowledge.md)
+- [Part II: The Architectural Realization](06-partII-architectural-realization.md)
+  - [4. The Substrate: An Autonomic RDF Framework](07-section4-substrate-rdf-framework.md)
+  - [5. The Pillars of Autonomic Governance](08-section5-pillars-of-autonomic-governance.md)
+- [Part III: High-Performance Applications and Deterministic Execution](09-partIII-high-performance-applications.md)
+  - [6. Case Study: Ultra-High-Frequency Trading (UHFT)](10-section6-case-study-uhft.md)
+  - [7. The Mechanics of Determinism](11-section7-mechanics-of-determinism.md)
+- [Part IV: The Strategic Imperative](12-partIV-strategic-imperative.md)
+  - [8. The Dark Matter Thesis: Quantifying Reducible Work](13-section8-dark-matter-thesis.md)
+  - [9. The Blue Ocean Strategy: Making Competition Irrelevant](14-section9-blue-ocean-strategy.md)
+  - [10. Case Study: The Autonomic IPO Generator (KGEN)](15-section10-ipo-generator.md)

@@ -1,0 +1,3 @@
+Abstract
+We present a calculus for reactive knowledge systems that executes in bounded microtime. A knowledge state is a canonically hashed, typed graph; hooks are guarded, effectful morphisms on that state; deltas are elements of an idempotent semiring; windows provide temporal geometry; and policy packs form a complete lattice of constraints. Under a constant-time dispatch and an L1-cache cost model, we prove small-step determinism and an 8-primitive bound (“Chatman Constant”) per reaction, yielding microsecond-class closed-loop control. We give algebraic laws, operational semantics, and complexity bounds sufficient to justify branchless compilation without exhibiting any code.
+

@@ -1,0 +1,105 @@
+9. Provenance & Receipts
+Define receipt 
+R
+(
+K
+,
+H
+)
+=
+⟨
+i
+d
+(
+K
+)
+,
+i
+d
+(
+E
+(
+K
+)
+)
+⟩
+R(K,H)=⟨id(K),id(E(K))⟩.
+Integrity. If 
+h
+h is collision-resistant on canonical strings, then 
+R
+R binds pre/post states up to isomorphism.
+Composability. Receipts compose: 
+R
+2
+∘
+R
+1
+=
+⟨
+i
+d
+(
+K
+0
+)
+,
+i
+d
+(
+K
+2
+)
+⟩
+R 
+2
+​
+ ∘R 
+1
+​
+ =⟨id(K 
+0
+​
+ ),id(K 
+2
+​
+ )⟩ if 
+K
+1
+=
+E
+1
+(
+K
+0
+)
+K 
+1
+​
+ =E 
+1
+​
+ (K 
+0
+​
+ ), 
+K
+2
+=
+E
+2
+(
+K
+1
+)
+K 
+2
+​
+ =E 
+2
+​
+ (K 
+1
+​
+ ).
+
