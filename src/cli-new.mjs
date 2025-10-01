@@ -47,7 +47,9 @@ import {
   storeQueryCommand,
   policyApplyCommand,
   policyListCommand,
-  policyGetCommand
+  policyGetCommand,
+  policyValidateCommand,
+  policyAuditCommand
 } from './cli/commands/index.mjs';
 
 /**
@@ -116,14 +118,14 @@ const main = defineCommand({
           meta: { name: 'create', description: 'Create hook from SPARQL query file or template' },
           args: {
             name: {
-              type: 'positional',
-              description: 'Hook name',
-              required: true
+              type: 'string',
+              description: 'Hook name (positional or --name)',
+              required: false
             },
             type: {
-              type: 'positional',
-              description: 'Hook type (sparql-ask, shacl, threshold)',
-              required: true
+              type: 'string',
+              description: 'Hook type: sparql-ask, shacl, threshold (positional or --type)',
+              required: false
             },
             file: {
               type: 'string',
@@ -575,10 +577,10 @@ const main = defineCommand({
         query: defineCommand({
           meta: { name: 'query', description: 'Execute SPARQL query' },
           args: {
-            sparql: {
-              type: 'positional',
-              description: 'SPARQL query string',
-              required: true
+            query: {
+              type: 'string',
+              description: 'SPARQL query string (positional or --query)',
+              required: false
             },
             format: {
               type: 'string',
@@ -644,6 +646,55 @@ const main = defineCommand({
             }
           },
           run: withContext(policyGetCommand, 'policy get')
+        }),
+        validate: defineCommand({
+          meta: { name: 'validate', description: 'Validate store against policy pack' },
+          args: {
+            policy: {
+              type: 'string',
+              description: 'Policy pack name',
+              required: true
+            },
+            store: {
+              type: 'string',
+              description: 'RDF store file path'
+            },
+            strict: {
+              type: 'boolean',
+              description: 'Exit with error code on validation failure',
+              default: false
+            },
+            format: {
+              type: 'string',
+              description: 'Output format (text, json, markdown)',
+              default: 'text'
+            },
+            verbose: {
+              type: 'boolean',
+              default: false
+            }
+          },
+          run: withContext(policyValidateCommand, 'policy validate')
+        }),
+        audit: defineCommand({
+          meta: { name: 'audit', description: 'View policy violation audit log' },
+          args: {
+            'violations-only': {
+              type: 'boolean',
+              description: 'Show only violations',
+              default: false
+            },
+            format: {
+              type: 'string',
+              description: 'Output format (table, json)',
+              default: 'table'
+            },
+            verbose: {
+              type: 'boolean',
+              default: false
+            }
+          },
+          run: withContext(policyAuditCommand, 'policy audit')
         })
       }
     })

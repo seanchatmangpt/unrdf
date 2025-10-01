@@ -37,7 +37,13 @@ export async function storeImportCommand(ctx, config) {
     const graphName = getArg(args, 'graph', 'default');
 
     const store = useStoreContext();
-    const turtle = await useTurtle();
+
+    // Ensure store context is initialized
+    if (!store || !store.engine) {
+      throw new Error('Store context not initialized. Please initialize the store first.');
+    }
+
+    const turtle = useTurtle();
 
     // Read and parse data
     const dataContent = await readFile(args.file, 'utf-8');
@@ -109,7 +115,13 @@ export async function storeExportCommand(ctx, config) {
     console.log(`📤 Exporting graph: ${args.graph}`);
 
     const store = useStoreContext();
-    const turtle = await useTurtle();
+
+    // Ensure store context is initialized
+    if (!store || !store.engine) {
+      throw new Error('Store context not initialized. Please initialize the store first.');
+    }
+
+    const turtle = useTurtle();
 
     const serialized = await turtle.serialize();
     span.addEvent('data.serialized', { size: serialized.length });
@@ -159,13 +171,23 @@ export async function storeExportCommand(ctx, config) {
  */
 export async function storeQueryCommand(ctx, config) {
   const { args } = ctx;
-  validateRequiredArgs(args, ['sparql']);
+
+  // Get SPARQL query from positional argument or --query flag
+  const sparqlQuery = args._?.[0] || args.query;
+
+  if (!sparqlQuery) {
+    console.error('❌ Missing required argument: SPARQL query');
+    console.error('Usage: store query <sparql> [--format=json|table]');
+    console.error('   or: store query --query="<sparql>" [--format=json|table]');
+    console.error('Example: store query "SELECT * WHERE { ?s ?p ?o }" --format=table');
+    process.exit(1);
+  }
 
   const tracer = await getTracer();
   const span = tracer.startSpan('store.query', {
     attributes: {
       'cli.command': 'store query',
-      'query.length': args.sparql.length
+      'query.length': sparqlQuery.length
     }
   });
 
@@ -177,7 +199,7 @@ export async function storeQueryCommand(ctx, config) {
     const store = useStoreContext();
 
     // Execute query
-    const result = store.query(args.sparql);
+    const result = store.query(sparqlQuery);
     span.addEvent('query.executed');
 
     // Format output

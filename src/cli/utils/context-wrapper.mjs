@@ -7,7 +7,7 @@
  * and proper resource management.
  */
 
-import { initStore } from '../../index.mjs';
+import { setStoreContext } from '../../index.mjs';
 import { loadConfig } from './config-loader.mjs';
 import { handleError } from './error-handler.mjs';
 
@@ -21,9 +21,10 @@ export function withContext(commandFn, commandName = 'command') {
   return async (ctx) => {
     try {
       const config = await loadConfig();
-      const runApp = initStore([], { baseIRI: config.baseIRI });
+      // Initialize store context directly (more reliable than initStore for CLI usage)
+      setStoreContext([], { baseIRI: config.baseIRI || 'http://example.org/' });
 
-      await runApp(() => commandFn(ctx, config));
+      await commandFn(ctx, config);
     } catch (error) {
       handleError(error, commandName);
     }

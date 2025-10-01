@@ -262,10 +262,242 @@ export async function policyGetCommand(ctx, config) {
 }
 
 /**
+ * Validate current store against applied policy packs
+ * @param {Object} ctx - CLI context
+ * @param {Object} config - Configuration
+ * @returns {Promise<void>}
+ */
+export async function policyValidateCommand(ctx, config) {
+  const { args } = ctx;
+
+  const span = tracer.startSpan('policy.validate', {
+    attributes: {
+      'cli.command': 'policy validate',
+      'strict': args.strict || false
+    }
+  });
+
+  const startTime = Date.now();
+
+  try {
+    const { validatePolicy, formatValidationReport } = await import('../utils/policy-validator.mjs');
+    const { Store, Parser } = await import('n3');
+
+    // Get policy pack name (required)
+    const policyPackName = getArg(args, 'policy') || getArg(args, 'pack');
+    if (!policyPackName) {
+      console.error('❌ Error: --policy flag is required');
+      console.log('Usage: unrdf policy validate --policy <pack-name> [--store <file>] [--strict] [--format json|text|markdown]');
+      process.exit(1);
+    }
+
+    // Load RDF store
+    const store = new Store();
+    const storeFile = getArg(args, 'store');
+
+    if (storeFile) {
+      const { readFile: readFileAsync } = await import('node:fs/promises');
+      const rdfData = await readFileAsync(storeFile, 'utf-8');
+      const parser = new Parser();
+
+      const quads = parser.parse(rdfData);
+      store.addQuads(quads);
+
+      span.addEvent('store.loaded', {
+        file: storeFile,
+        size: store.size
+      });
+    } else {
+      console.warn('⚠️  No store file provided, validating against empty store');
+    }
+
+    span.addEvent('validation.starting', {
+      policy: policyPackName,
+      storeSize: store.size
+    });
+
+    // Run validation
+    const result = await validatePolicy(store, policyPackName, {
+      strict: args.strict || false,
+      basePath: process.cwd()
+    });
+
+    span.addEvent('validation.completed', {
+      passed: result.passed,
+      violations: result.violations.length
+    });
+
+    // Format and output report
+    const format = getArg(args, 'format', 'text');
+    const report = formatValidationReport(result, format);
+    console.log(report);
+
+    // Exit with error code if validation failed
+    if (!result.passed) {
+      const duration = Date.now() - startTime;
+      span.setAttributes({
+        'validation.passed': false,
+        'validation.violations': result.violations.length,
+        'validation.duration_ms': duration,
+        'validation.success': true
+      });
+      span.end();
+      process.exit(args.strict ? 1 : 0);
+    }
+
+    const duration = Date.now() - startTime;
+    span.setAttributes({
+      'validation.passed': true,
+      'validation.violations': 0,
+      'validation.duration_ms': duration,
+      'validation.success': true
+    });
+
+    span.end();
+  } catch (error) {
+    const duration = Date.now() - startTime;
+    console.error(`❌ Validation failed: ${error.message}`);
+
+    span.setAttributes({
+      'validation.success': false,
+      'validation.duration_ms': duration,
+      'error.message': error.message
+    });
+    span.recordException(error);
+    span.end();
+
+    if (args.verbose) {
+      console.error(error.stack);
+    }
+    process.exit(1);
+  }
+}
+
+/**
+ * View policy violation audit log
+ * @param {Object} ctx - CLI context
+ * @param {Object} config - Configuration
+ * @returns {Promise<void>}
+ */
+export async function policyAuditCommand(ctx, config) {
+  const { args } = ctx;
+
+  const span = tracer.startSpan('policy.audit', {
+    attributes: {
+      'cli.command': 'policy audit',
+      'violations-only': args['violations-only'] || false
+    }
+  });
+
+  const startTime = Date.now();
+
+  try {
+    console.log('📋 Policy Audit Log\n');
+
+    // Check if audit log exists
+    const { readFile: readFileAsync, access } = await import('node:fs/promises');
+    const { constants } = await import('node:fs');
+    const { join: joinPath } = await import('node:path');
+
+    const auditLogPath = joinPath(process.cwd(), '.unrdf', 'policy-audit.log');
+
+    try {
+      await access(auditLogPath, constants.R_OK);
+    } catch {
+      console.log('No audit log found. Run policy validations to generate audit history.');
+      span.end();
+      return;
+    }
+
+    // Read and parse audit log
+    const auditData = await readFileAsync(auditLogPath, 'utf-8');
+    const auditEntries = auditData
+      .trim()
+      .split('\n')
+      .filter(line => line.trim())
+      .map(line => {
+        try {
+          return JSON.parse(line);
+        } catch {
+          return null;
+        }
+      })
+      .filter(entry => entry !== null);
+
+    span.addEvent('audit.loaded', {
+      entries: auditEntries.length
+    });
+
+    if (auditEntries.length === 0) {
+      console.log('No audit entries found.');
+      span.end();
+      return;
+    }
+
+    // Filter for violations only if requested
+    let filteredEntries = auditEntries;
+    if (args['violations-only']) {
+      filteredEntries = auditEntries.filter(entry => !entry.passed);
+      span.addEvent('audit.filtered', {
+        violations: filteredEntries.length
+      });
+    }
+
+    // Format output
+    const format = getArg(args, 'format', 'table');
+
+    if (format === 'json') {
+      console.log(JSON.stringify(filteredEntries, null, 2));
+    } else {
+      // Table format
+      console.log('TIMESTAMP            POLICY                RESULT   VIOLATIONS');
+      console.log('───────────────────  ────────────────────  ───────  ──────────');
+
+      for (const entry of filteredEntries.slice(-50)) { // Last 50 entries
+        const timestamp = new Date(entry.timestamp).toLocaleString().padEnd(19);
+        const policy = (entry.policyPack || 'unknown').padEnd(20).substring(0, 20);
+        const result = (entry.passed ? '✅ PASS' : '❌ FAIL').padEnd(7);
+        const violations = `${entry.violations?.length || 0}`.padStart(10);
+
+        console.log(`${timestamp}  ${policy}  ${result}  ${violations}`);
+      }
+
+      console.log(`\nShowing ${Math.min(filteredEntries.length, 50)} of ${filteredEntries.length} entries`);
+    }
+
+    const duration = Date.now() - startTime;
+    span.setAttributes({
+      'audit.entries': auditEntries.length,
+      'audit.displayed': filteredEntries.length,
+      'audit.duration_ms': duration,
+      'audit.success': true
+    });
+
+    span.end();
+  } catch (error) {
+    const duration = Date.now() - startTime;
+    console.error(`❌ Failed to read audit log: ${error.message}`);
+
+    span.setAttributes({
+      'audit.success': false,
+      'audit.duration_ms': duration,
+      'error.message': error.message
+    });
+    span.recordException(error);
+    span.end();
+
+    if (args.verbose) {
+      console.error(error.stack);
+    }
+    process.exit(1);
+  }
+}
+
+/**
  * Export policy command metadata
  */
 export const policyCommandMeta = {
   name: 'policy',
   description: 'Manage policy packs',
-  subcommands: ['apply', 'list', 'get']
+  subcommands: ['apply', 'list', 'get', 'validate', 'audit']
 };
