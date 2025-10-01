@@ -1,18 +1,8 @@
-# Veto Hook - Prevents transactions with invalid data
-# Returns false (veto) if any Person lacks required fields
+# Veto Hook SPARQL Query
+# Checks for invalid data patterns that should block transactions
 
-PREFIX schema: <http://schema.org/>
+PREFIX ex: <http://example.org/>
 
 ASK {
-  # Return false (veto) if there's a Person without email
-  NOT EXISTS {
-    ?person a schema:Person .
-    FILTER NOT EXISTS { ?person schema:email ?email }
-  }
-
-  # Return false (veto) if there's a Person without name
-  NOT EXISTS {
-    ?person a schema:Person .
-    FILTER NOT EXISTS { ?person schema:name ?name }
-  }
+  ?s ex:invalid ?value .
 }

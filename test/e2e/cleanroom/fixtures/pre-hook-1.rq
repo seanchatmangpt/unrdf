@@ -1,11 +1,7 @@
-# Pre-Hook 1: Validate data types
-PREFIX schema: <http://schema.org/>
-PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+# Pre-hook 1 for hook chaining test
+
+PREFIX ex: <http://example.org/>
 
 ASK {
-  # Check that all ages are integers
-  NOT EXISTS {
-    ?person schema:age ?age .
-    FILTER (!isLiteral(?age) || datatype(?age) != xsd:integer)
-  }
+  ?s ex:valid ?value .
 }

@@ -1,9 +1,9 @@
 /**
  * @fileoverview Root context for unrdf using unctx
- * 
+ *
  * This module creates the root context that should be used at the application
  * level to provide store access to all composables.
- * 
+ *
  * @version 1.0.0
  * @author GitVan Team
  * @license MIT
@@ -53,7 +53,7 @@ export const storeContext = createContext({
 /**
  * Hook to access the store context
  * @returns {StoreContext} Current store context
- * 
+ *
  * @throws {Error} If store context is not initialized
  */
 export const useStoreContext = storeContext.use;
@@ -69,14 +69,14 @@ export function createStoreContext(initialQuads = [], options = {}) {
   if (!Array.isArray(initialQuads)) {
     throw new TypeError("[createStoreContext] initialQuads must be an array");
   }
-  
-  if (options && typeof options !== 'object') {
+
+  if (options && typeof options !== "object") {
     throw new TypeError("[createStoreContext] options must be an object");
   }
 
   const engine = new RdfEngine(options);
   const store = engine.getStore();
-  
+
   // Add initial quads to the engine's store
   if (initialQuads.length > 0) {
     store.addQuads(initialQuads);
@@ -89,16 +89,20 @@ export function createStoreContext(initialQuads = [], options = {}) {
      * Add quads to the store (SENDER operation)
      * @param {...Quad} quads - Quads to add
      * @returns {StoreContext} This context for chaining
-     * 
+     *
      * @throws {TypeError} If any quad is invalid
      */
     add(...quads) {
       for (const q of quads) {
         if (q === null || q === undefined) {
-          throw new TypeError("[StoreContext] Cannot add null or undefined quad");
+          throw new TypeError(
+            "[StoreContext] Cannot add null or undefined quad",
+          );
         }
-        if (typeof q !== 'object' || !q.termType) {
-          throw new TypeError("[StoreContext] Invalid quad: must have termType property");
+        if (typeof q !== "object" || !q.termType) {
+          throw new TypeError(
+            "[StoreContext] Invalid quad: must have termType property",
+          );
         }
         store.add(q);
       }
@@ -109,16 +113,20 @@ export function createStoreContext(initialQuads = [], options = {}) {
      * Remove quads from the store (SENDER operation)
      * @param {...Quad} quads - Quads to remove
      * @returns {StoreContext} This context for chaining
-     * 
+     *
      * @throws {TypeError} If any quad is invalid
      */
     remove(...quads) {
       for (const q of quads) {
         if (q === null || q === undefined) {
-          throw new TypeError("[StoreContext] Cannot remove null or undefined quad");
+          throw new TypeError(
+            "[StoreContext] Cannot remove null or undefined quad",
+          );
         }
-        if (typeof q !== 'object' || !q.termType) {
-          throw new TypeError("[StoreContext] Invalid quad: must have termType property");
+        if (typeof q !== "object" || !q.termType) {
+          throw new TypeError(
+            "[StoreContext] Invalid quad: must have termType property",
+          );
         }
         store.delete(q);
       }
@@ -138,11 +146,11 @@ export function createStoreContext(initialQuads = [], options = {}) {
      * Create a named node
      * @param {string} value - IRI value
      * @returns {NamedNode} Named node
-     * 
+     *
      * @throws {TypeError} If value is not a string
      */
     namedNode(value) {
-      if (typeof value !== 'string') {
+      if (typeof value !== "string") {
         throw new TypeError("[StoreContext] namedNode value must be a string");
       }
       return namedNode(value);
@@ -153,11 +161,11 @@ export function createStoreContext(initialQuads = [], options = {}) {
      * @param {string} value - Literal value
      * @param {string} [datatype] - Datatype IRI
      * @returns {Literal} Literal
-     * 
+     *
      * @throws {TypeError} If value is not a string
      */
     literal(value, datatype) {
-      if (typeof value !== 'string') {
+      if (typeof value !== "string") {
         throw new TypeError("[StoreContext] literal value must be a string");
       }
       return literal(value, datatype);
@@ -167,11 +175,11 @@ export function createStoreContext(initialQuads = [], options = {}) {
      * Create a blank node
      * @param {string} [value] - Blank node identifier
      * @returns {BlankNode} Blank node
-     * 
+     *
      * @throws {TypeError} If value is provided but not a string
      */
     blankNode(value) {
-      if (value !== undefined && typeof value !== 'string') {
+      if (value !== undefined && typeof value !== "string") {
         throw new TypeError("[StoreContext] blankNode value must be a string");
       }
       return blankNode(value);
@@ -184,12 +192,14 @@ export function createStoreContext(initialQuads = [], options = {}) {
      * @param {Term} o - Object
      * @param {Term} [g] - Graph
      * @returns {Quad} Quad
-     * 
+     *
      * @throws {TypeError} If any required parameter is missing or invalid
      */
     quad(s, p, o, g) {
       if (!s || !p || !o) {
-        throw new TypeError("[StoreContext] quad requires subject, predicate, and object");
+        throw new TypeError(
+          "[StoreContext] quad requires subject, predicate, and object",
+        );
       }
       return quad(s, p, o, g || defaultGraph());
     },
@@ -205,8 +215,10 @@ export function createStoreContext(initialQuads = [], options = {}) {
      * @throws {Error} If format is unsupported
      */
     async serialize(options = {}) {
-      if (options && typeof options !== 'object') {
-        throw new TypeError("[StoreContext] serialize options must be an object");
+      if (options && typeof options !== "object") {
+        throw new TypeError(
+          "[StoreContext] serialize options must be an object",
+        );
       }
 
       const { format = "Turtle", prefixes } = options;
@@ -218,7 +230,9 @@ export function createStoreContext(initialQuads = [], options = {}) {
         return this.engine.serializeNQuads(store);
       }
 
-      throw new Error(`[StoreContext] Unsupported serialization format: ${format}`);
+      throw new Error(
+        `[StoreContext] Unsupported serialization format: ${format}`,
+      );
     },
 
     /**
@@ -232,7 +246,7 @@ export function createStoreContext(initialQuads = [], options = {}) {
         subjects: 0,
         predicates: 0,
         objects: 0,
-        graphs: 0
+        graphs: 0,
       };
     },
 
@@ -248,7 +262,7 @@ export function createStoreContext(initialQuads = [], options = {}) {
      * @throws {Error} If sparql is not a valid query
      * @note This is a READER operation - use sparingly
      */
-    query(sparql, options = {}) {
+    async query(sparql, options = {}) {
       if (typeof sparql !== "string" || !sparql.trim()) {
         throw new Error("query: non-empty SPARQL required");
       }
@@ -258,26 +272,36 @@ export function createStoreContext(initialQuads = [], options = {}) {
         throw new Error("query: non-empty SPARQL required");
       }
 
-      console.log('DEBUG: storeContext query called with engine:', typeof this.engine, this.engine?.constructor?.name);
-      console.log('DEBUG: engine has queryBoolean:', typeof this.engine?.queryBoolean);
-
       // In sender-only mode, we can only support basic queries
       // For full SPARQL support, this would need to access the engine
       // Since we're in sender-only mode, we'll provide a simplified implementation
 
-      const kind = q
+      // Remove PREFIX declarations to find the actual query type
+      const queryWithoutPrefixes = q
+        .replace(/^PREFIX\s+[^\s]+\s+<[^>]+>\s*/gm, "")
+        .trim();
+      const kind = queryWithoutPrefixes
         .toUpperCase()
-        .match(/\b(SELECT|ASK|CONSTRUCT|DESCRIBE|WITH|INSERT|DELETE|LOAD|CREATE|DROP|CLEAR|MOVE|COPY|ADD)\b/)?.[1];
+        .match(
+          /\b(SELECT|ASK|CONSTRUCT|DESCRIBE|WITH|INSERT|DELETE|LOAD|CREATE|DROP|CLEAR|MOVE|COPY|ADD)\b/,
+        )?.[1];
 
       if (!kind) {
-        throw new Error("query: unknown query type - only SELECT, ASK, CONSTRUCT, DESCRIBE supported");
+        throw new Error(
+          "query: unknown query type - only SELECT, ASK, CONSTRUCT, DESCRIBE supported",
+        );
       }
 
       // SPARQL UPDATE operations (can modify store - SENDER)
-      if (/^(WITH|INSERT|DELETE|LOAD|CREATE|DROP|CLEAR|MOVE|COPY|ADD)$/i.test(kind)) {
-        // Execute UPDATE operations using the engine
+      if (
+        /^(WITH|INSERT|DELETE|LOAD|CREATE|DROP|CLEAR|MOVE|COPY|ADD)$/i.test(
+          kind,
+        )
+      ) {
+        // Execute UPDATE operations using the engine's update method
+        // Pass the original query (with PREFIXes) to the engine
         try {
-          const result = this.engine.query(sparql, options);
+          const result = await this.engine.update(q);
           return result;
         } catch (error) {
           throw new Error(`UPDATE operation failed: ${error.message}`);
@@ -292,16 +316,16 @@ export function createStoreContext(initialQuads = [], options = {}) {
       // Use the engine's query method - it handles all query types
       try {
         const result = this.engine.query(sparql, options);
-        
+
         // The engine returns results in a different format, so we need to adapt
         if (result.type === "select") {
           return {
             type: "select",
             variables: this._getColumns(sparql),
-            rows: result.results || []
+            rows: result.results || [],
           };
         }
-        
+
         return result;
       } catch (error) {
         throw new Error(`Query failed: ${error.message}`);
@@ -314,8 +338,8 @@ export function createStoreContext(initialQuads = [], options = {}) {
      */
     _sortQuads(quads) {
       return quads.sort((a, b) => {
-        const aStr = `${a.subject.value} ${a.predicate.value} ${a.object.value} ${a.graph.value || ''}`;
-        const bStr = `${b.subject.value} ${b.predicate.value} ${b.object.value} ${b.graph.value || ''}`;
+        const aStr = `${a.subject.value} ${a.predicate.value} ${a.object.value} ${a.graph.value || ""}`;
+        const bStr = `${b.subject.value} ${b.predicate.value} ${b.object.value} ${b.graph.value || ""}`;
         return aStr.localeCompare(bStr);
       });
     },
@@ -325,7 +349,9 @@ export function createStoreContext(initialQuads = [], options = {}) {
      * @private
      */
     _getColumns(query) {
-      const selectMatch = query.match(/SELECT\s+(?:\w+\s+)*(\?\w+(?:\s+\(\w+\([^)]*\)\s+as\s+\?\w+\))?)/i);
+      const selectMatch = query.match(
+        /SELECT\s+(?:\w+\s+)*(\?\w+(?:\s+\(\w+\([^)]*\)\s+as\s+\?\w+\))?)/i,
+      );
       if (selectMatch) {
         const selectClause = selectMatch[1];
         const columns = selectClause.match(/\?\w+/g);
@@ -343,10 +369,10 @@ export function createStoreContext(initialQuads = [], options = {}) {
 
       const termData = {
         type: term.termType,
-        value: term.value
+        value: term.value,
       };
 
-      if (term.termType === 'Literal') {
+      if (term.termType === "Literal") {
         if (term.language) {
           termData.language = term.language;
         }
@@ -384,17 +410,20 @@ export function createStoreContext(initialQuads = [], options = {}) {
         const canonize = rdfCanonize.canonize;
 
         // Convert store to N-Quads format for canonicalization
-        const nquads = this.serialize({ format: 'N-Quads' });
+        const nquads = this.serialize({ format: "N-Quads" });
 
         // Canonicalize the N-Quads
         const canonical = canonize(nquads, {
-          algorithm: 'URDNA2015',
-          format: 'application/n-quads',
-          produceGeneralizedRdf: false
+          algorithm: "URDNA2015",
+          format: "application/n-quads",
+          produceGeneralizedRdf: false,
         });
 
         if (onMetric) {
-          onMetric('canonicalization', { duration: Date.now() - Date.now(), size: nquads.length });
+          onMetric("canonicalization", {
+            duration: Date.now() - Date.now(),
+            size: nquads.length,
+          });
         }
 
         return canonical;
@@ -421,14 +450,17 @@ export function createStoreContext(initialQuads = [], options = {}) {
         const canonize = rdfCanonize.canonize;
 
         // Canonicalize both stores
-        const canonical1 = canonize(this.serialize({ format: 'N-Quads' }), {
-          algorithm: 'URDNA2015',
-          format: 'application/n-quads'
+        const canonical1 = canonize(this.serialize({ format: "N-Quads" }), {
+          algorithm: "URDNA2015",
+          format: "application/n-quads",
         });
-        const canonical2 = canonize(store2 ? this.serializeStore(store2, { format: 'N-Quads' }) : '', {
-          algorithm: 'URDNA2015',
-          format: 'application/n-quads'
-        });
+        const canonical2 = canonize(
+          store2 ? this.serializeStore(store2, { format: "N-Quads" }) : "",
+          {
+            algorithm: "URDNA2015",
+            format: "application/n-quads",
+          },
+        );
 
         return canonical1 === canonical2;
       } catch (error) {
@@ -446,13 +478,13 @@ export function createStoreContext(initialQuads = [], options = {}) {
      * @note This is a READER operation - use sparingly
      */
     async hash(options = {}) {
-      const { algorithm = 'SHA-256' } = options;
+      const { algorithm = "SHA-256" } = options;
 
       try {
         const canonical = this.canonicalize();
         const hash = crypto.createHash(algorithm.toLowerCase());
         hash.update(canonical);
-        return hash.digest('hex');
+        return hash.digest("hex");
       } catch (error) {
         throw new Error(`Hash generation failed: ${error.message}`);
       }
@@ -473,7 +505,7 @@ export function createStoreContext(initialQuads = [], options = {}) {
       }
 
       throw new Error(`Unsupported serialization format: ${format}`);
-    }
+    },
   };
 
   return context;
@@ -482,15 +514,15 @@ export function createStoreContext(initialQuads = [], options = {}) {
 /**
  * Initialize the root store context
  * This should be called at the root of your application
- * 
+ *
  * @param {Array<Quad>} [initialQuads=[]] - Initial quads
  * @param {Object} [options] - Store options
  * @returns {Function} Function to call with your application logic
- * 
+ *
  * @example
  * // At the root of your application
  * const runApp = initStore([], { baseIRI: 'http://example.org/' });
- * 
+ *
  * runApp(() => {
  *   // Your application code here
  *   const store = useStoreContext();
@@ -499,7 +531,7 @@ export function createStoreContext(initialQuads = [], options = {}) {
  */
 export function initStore(initialQuads = [], options = {}) {
   const context = createStoreContext(initialQuads, options);
-  
+
   return (fn) => {
     return storeContext.callAsync(context, fn);
   };
@@ -508,7 +540,7 @@ export function initStore(initialQuads = [], options = {}) {
 /**
  * Set the store context for the current execution context
  * This is useful when you need to set the context outside of initStore
- * 
+ *
  * @param {Array<Quad>} [initialQuads=[]] - Initial quads
  * @param {Object} [options] - Store options
  * @returns {StoreContext} The created context

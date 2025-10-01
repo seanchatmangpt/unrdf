@@ -1,0 +1,743 @@
+# OTEL Instrumentation Map
+## Complete Trace Coverage for UNRDF Knowledge Engine
+
+Generated: 2025-10-01T15:20:00Z
+
+---
+
+## OVERVIEW
+
+This document maps every location where OTEL spans must be created to achieve full trace coverage and performance monitoring.
+
+**Goals**:
+1. ✅ Trace every transaction from CLI to completion
+2. ✅ Measure performance at each critical path
+3. ✅ Correlate errors with execution context
+4. ✅ Export traces for analysis
+
+---
+
+## SPAN HIERARCHY
+
+```
+unrdf.transaction
+├── unrdf.transaction.validation
+│   ├── unrdf.hook.condition.evaluate
+│   │   ├── unrdf.sparql.ask
+│   │   ├── unrdf.sparql.select
+│   │   └── unrdf.shacl.validate
+│   └── unrdf.policy.check
+├── unrdf.hook.execution
+│   ├── unrdf.hook.pre-commit
+│   ├── unrdf.hook.effect.run
+│   │   └── unrdf.sandbox.execute
+│   └── unrdf.hook.post-commit
+├── unrdf.transaction.commit
+│   ├── unrdf.lockchain.write
+│   └── unrdf.receipt.generate
+└── unrdf.transaction.complete
+    └── unrdf.metrics.export
+```
+
+---
+
+## INSTRUMENTATION POINTS
+
+### 1. CLI Entry Points (`src/cli/commands/weaver.mjs`)
+
+**Current State**: No OTEL instrumentation
+**Required**: Root span creation for all CLI commands
+
+```javascript
+// BEFORE (No instrumentation):
+export async function weaverCommand(options) {
+  const result = await processTransaction(options);
+  return result;
+}
+
+// AFTER (Full instrumentation):
+import { trace, context } from '@opentelemetry/api';
+
+const tracer = trace.getTracer('unrdf-cli', '2.1.0');
+
+export async function weaverCommand(options) {
+  return tracer.startActiveSpan('unrdf.cli.weaver', async (span) => {
+    try {
+      span.setAttribute('command', 'weaver');
+      span.setAttribute('input.file', options.file);
+      span.setAttribute('actor', options.actor || 'anonymous');
+
+      const result = await processTransaction(options);
+
+      span.setAttribute('result.success', result.success);
+      span.setAttribute('result.committed', result.committed);
+      span.setStatus({ code: SpanStatusCode.OK });
+
+      return result;
+    } catch (error) {
+      span.recordException(error);
+      span.setStatus({
+        code: SpanStatusCode.ERROR,
+        message: error.message
+      });
+      throw error;
+    } finally {
+      span.end();
+    }
+  });
+}
+```
+
+**Commands to Instrument**:
+- ✅ `weaverCommand` - Main transaction command
+- ✅ `defineHookCommand` - Hook definition
+- ✅ `validateCommand` - Validation command
+- ✅ `queryCommand` - Query execution
+
+---
+
+### 2. Transaction Manager (`src/knowledge-engine/transaction.mjs`)
+
+**Current State**: Partial instrumentation
+**Required**: Add spans for transaction lifecycle
+
+```javascript
+import { trace, SpanStatusCode } from '@opentelemetry/api';
+
+const tracer = trace.getTracer('unrdf-transaction', '2.1.0');
+
+export class TransactionManager {
+  async apply(store, delta, options = {}) {
+    return tracer.startActiveSpan('unrdf.transaction', async (span) => {
+      try {
+        const transactionId = options.transactionId || randomUUID();
+
+        span.setAttribute('transaction.id', transactionId);
+        span.setAttribute('transaction.actor', options.actor || 'system');
+        span.setAttribute('delta.additions', delta.additions?.length || 0);
+        span.setAttribute('delta.removals', delta.removals?.length || 0);
+
+        // Validation phase
+        const validationSpan = tracer.startSpan('unrdf.transaction.validation');
+        const validationResult = await this.validateTransaction(store, delta);
+        validationSpan.setAttribute('validation.passed', validationResult.valid);
+        validationSpan.end();
+
+        if (!validationResult.valid) {
+          span.setAttribute('transaction.rejected', true);
+          span.setStatus({
+            code: SpanStatusCode.ERROR,
+            message: 'Validation failed'
+          });
+          return { committed: false, reason: 'validation_failed' };
+        }
+
+        // Hook execution phase
+        const hooksSpan = tracer.startSpan('unrdf.transaction.hooks');
+        hooksSpan.setAttribute('hooks.count', this.hooks.size);
+
+        const hookResults = await this.executeHooks(store, delta, options);
+
+        hooksSpan.setAttribute('hooks.executed', hookResults.length);
+        hooksSpan.setAttribute('hooks.failed', hookResults.filter(r => r.error).length);
+        hooksSpan.end();
+
+        // Commit phase
+        const commitSpan = tracer.startSpan('unrdf.transaction.commit');
+        const committed = await this._commitDelta(store, delta);
+        commitSpan.setAttribute('transaction.committed', committed);
+        commitSpan.end();
+
+        // Receipt generation
+        const receiptSpan = tracer.startSpan('unrdf.receipt.generate');
+        const receipt = await this.generateReceipt(transactionId, delta, hookResults);
+        receiptSpan.setAttribute('receipt.id', receipt.id);
+        receiptSpan.end();
+
+        span.setAttribute('transaction.success', true);
+        span.setStatus({ code: SpanStatusCode.OK });
+
+        return { committed, receipt };
+      } catch (error) {
+        span.recordException(error);
+        span.setStatus({
+          code: SpanStatusCode.ERROR,
+          message: error.message
+        });
+        throw error;
+      } finally {
+        span.end();
+      }
+    });
+  }
+}
+```
+
+**Methods to Instrument**:
+- ✅ `apply()` - Transaction execution
+- ✅ `validateTransaction()` - Validation phase
+- ✅ `executeHooks()` - Hook execution
+- ✅ `_commitDelta()` - Commit phase
+- ✅ `generateReceipt()` - Receipt generation
+
+---
+
+### 3. Knowledge Hook Manager (`src/knowledge-engine/knowledge-hook-manager.mjs`)
+
+**Current State**: No OTEL instrumentation
+**Required**: Add spans for hook evaluation
+
+```javascript
+import { trace, SpanStatusCode } from '@opentelemetry/api';
+
+const tracer = trace.getTracer('unrdf-hooks', '2.1.0');
+
+export class KnowledgeHookManager {
+  async executeKnowledgeHook(hook, event, options = {}) {
+    return tracer.startActiveSpan('unrdf.hook.execution', async (span) => {
+      try {
+        span.setAttribute('hook.name', hook.meta.name);
+        span.setAttribute('hook.type', hook.when.kind);
+        span.setAttribute('event.name', event.name);
+
+        // Condition evaluation
+        const conditionSpan = tracer.startSpan('unrdf.hook.condition.evaluate');
+        conditionSpan.setAttribute('condition.kind', hook.when.kind);
+
+        const conditionResult = await this.conditionEvaluator.evaluate(
+          hook.when,
+          event.context.graph
+        );
+
+        conditionSpan.setAttribute('condition.satisfied', Boolean(conditionResult));
+        conditionSpan.end();
+
+        if (!conditionResult) {
+          span.setAttribute('hook.skipped', true);
+          span.setStatus({ code: SpanStatusCode.OK });
+          return { skipped: true, reason: 'condition_not_satisfied' };
+        }
+
+        // Hook execution
+        const executionSpan = tracer.startSpan('unrdf.hook.run');
+        executionSpan.setAttribute('hook.name', hook.meta.name);
+
+        const startTime = performance.now();
+        const result = await hook.run(event, options);
+        const duration = performance.now() - startTime;
+
+        executionSpan.setAttribute('hook.duration_ms', duration);
+        executionSpan.setAttribute('hook.success', !result.error);
+
+        if (result.error) {
+          executionSpan.recordException(new Error(result.error));
+          executionSpan.setStatus({
+            code: SpanStatusCode.ERROR,
+            message: result.error
+          });
+        } else {
+          executionSpan.setStatus({ code: SpanStatusCode.OK });
+        }
+
+        executionSpan.end();
+
+        span.setAttribute('hook.executed', true);
+        span.setStatus({ code: SpanStatusCode.OK });
+
+        return result;
+      } catch (error) {
+        span.recordException(error);
+        span.setStatus({
+          code: SpanStatusCode.ERROR,
+          message: error.message
+        });
+        throw error;
+      } finally {
+        span.end();
+      }
+    });
+  }
+}
+```
+
+**Methods to Instrument**:
+- ✅ `addKnowledgeHook()` - Hook registration
+- ✅ `executeKnowledgeHook()` - Hook execution
+- ✅ `evaluateCondition()` - Condition evaluation
+- ✅ `validateHook()` - Hook validation
+
+---
+
+### 4. Condition Evaluator (`src/knowledge-engine/condition-evaluator.mjs`)
+
+**Current State**: No OTEL instrumentation
+**Required**: Add spans for query/validation execution
+
+```javascript
+import { trace, SpanStatusCode } from '@opentelemetry/api';
+
+const tracer = trace.getTracer('unrdf-conditions', '2.1.0');
+
+export async function evaluateCondition(condition, graph, options = {}) {
+  return tracer.startActiveSpan('unrdf.condition.evaluate', async (span) => {
+    try {
+      span.setAttribute('condition.kind', condition.kind);
+      span.setAttribute('graph.size', graph.size);
+
+      let result;
+
+      switch (condition.kind) {
+        case 'sparql-ask':
+          const askSpan = tracer.startSpan('unrdf.sparql.ask');
+          askSpan.setAttribute('query.uri', condition.ref.uri);
+
+          result = await evaluateSparqlAsk(condition, graph, resolver, env);
+
+          askSpan.setAttribute('result', result);
+          askSpan.setStatus({ code: SpanStatusCode.OK });
+          askSpan.end();
+          break;
+
+        case 'sparql-select':
+          const selectSpan = tracer.startSpan('unrdf.sparql.select');
+          selectSpan.setAttribute('query.uri', condition.ref.uri);
+
+          result = await evaluateSparqlSelect(condition, graph, resolver, env);
+
+          selectSpan.setAttribute('result.count', result.length);
+          selectSpan.setStatus({ code: SpanStatusCode.OK });
+          selectSpan.end();
+          break;
+
+        case 'shacl':
+          const shaclSpan = tracer.startSpan('unrdf.shacl.validate');
+          shaclSpan.setAttribute('shapes.uri', condition.ref.uri);
+
+          result = await evaluateShacl(condition, graph, resolver, env);
+
+          shaclSpan.setAttribute('conforms', result.conforms);
+          shaclSpan.setAttribute('violations.count', result.results?.length || 0);
+          shaclSpan.setStatus({ code: SpanStatusCode.OK });
+          shaclSpan.end();
+          break;
+      }
+
+      span.setAttribute('evaluation.result', JSON.stringify(result));
+      span.setStatus({ code: SpanStatusCode.OK });
+
+      return result;
+    } catch (error) {
+      span.recordException(error);
+      span.setStatus({
+        code: SpanStatusCode.ERROR,
+        message: error.message
+      });
+      throw error;
+    } finally {
+      span.end();
+    }
+  });
+}
+```
+
+**Functions to Instrument**:
+- ✅ `evaluateCondition()` - Main evaluation
+- ✅ `evaluateSparqlAsk()` - SPARQL ASK queries
+- ✅ `evaluateSparqlSelect()` - SPARQL SELECT queries
+- ✅ `evaluateShacl()` - SHACL validation
+
+---
+
+### 5. Dark Matter Core (`src/knowledge-engine/dark-matter-core.mjs`)
+
+**Current State**: Partial instrumentation (calls observability methods)
+**Required**: Ensure all critical paths create spans
+
+```javascript
+// Already instrumented in executeTransaction() and executeHook()
+// Verify these methods are called correctly:
+
+async executeTransaction(store, delta, options = {}) {
+  const observability = this.getComponent('observability');
+  const transactionId = options.transactionId || crypto.randomUUID();
+
+  // Start OTEL transaction span
+  let spanContext;
+  if (observability && typeof observability.startTransactionSpan === 'function') {
+    spanContext = await observability.startTransactionSpan(transactionId, {
+      actor: options.actor || 'system',
+      deltaSize: delta?.size || 0
+    });
+  }
+
+  try {
+    const result = await transactionManager.apply(store, delta, options);
+
+    // End OTEL span with success
+    if (observability && spanContext) {
+      await observability.endTransactionSpan(transactionId, {
+        success: true,
+        committed: result.receipt.committed,
+        duration: Date.now() - startTime
+      });
+    }
+
+    return result;
+  } catch (error) {
+    // End OTEL span with error
+    if (observability && spanContext) {
+      await observability.endTransactionSpan(transactionId, {
+        success: false,
+        error: error.message,
+        duration: Date.now() - startTime
+      });
+    }
+
+    throw error;
+  }
+}
+```
+
+**Status**: ✅ Already implemented (verify observability methods exist)
+
+---
+
+### 6. Observability Manager (`src/knowledge-engine/observability.mjs`)
+
+**Current State**: Partial implementation
+**Required**: Add missing span helper methods
+
+```javascript
+export class ObservabilityManager {
+  /**
+   * Start a transaction span
+   * @param {string} transactionId - Transaction identifier
+   * @param {Object} attributes - Span attributes
+   * @returns {Object} Span context
+   */
+  async startTransactionSpan(transactionId, attributes = {}) {
+    if (!this.tracer) {
+      console.warn('[OTEL] Tracer not initialized, skipping span creation');
+      return null;
+    }
+
+    const span = this.tracer.startSpan('unrdf.transaction', {
+      attributes: {
+        'transaction.id': transactionId,
+        'transaction.actor': attributes.actor || 'system',
+        'delta.size': attributes.deltaSize || 0,
+        ...attributes
+      }
+    });
+
+    this.activeSpans.set(transactionId, span);
+    return { transactionId, spanId: span.spanContext().spanId };
+  }
+
+  /**
+   * End a transaction span
+   * @param {string} transactionId - Transaction identifier
+   * @param {Object} attributes - Final attributes
+   */
+  async endTransactionSpan(transactionId, attributes = {}) {
+    const span = this.activeSpans.get(transactionId);
+    if (!span) {
+      console.warn(`[OTEL] No active span for transaction: ${transactionId}`);
+      return;
+    }
+
+    span.setAttribute('transaction.success', attributes.success);
+    span.setAttribute('transaction.committed', attributes.committed);
+    span.setAttribute('transaction.duration_ms', attributes.duration);
+
+    if (attributes.error) {
+      span.recordException(new Error(attributes.error));
+      span.setStatus({
+        code: SpanStatusCode.ERROR,
+        message: attributes.error
+      });
+    } else {
+      span.setStatus({ code: SpanStatusCode.OK });
+    }
+
+    span.end();
+    this.activeSpans.delete(transactionId);
+  }
+
+  /**
+   * Start a hook execution span
+   * @param {string} hookName - Hook name
+   * @param {string} transactionId - Parent transaction ID
+   * @param {Object} attributes - Span attributes
+   * @returns {Object} Span context
+   */
+  async startHookSpan(hookName, transactionId, attributes = {}) {
+    if (!this.tracer) return null;
+
+    const parentSpan = this.activeSpans.get(transactionId);
+    const span = this.tracer.startSpan('unrdf.hook.execution', {
+      parent: parentSpan,
+      attributes: {
+        'hook.name': hookName,
+        'hook.type': attributes.hookType || 'unknown',
+        'transaction.id': transactionId,
+        ...attributes
+      }
+    });
+
+    const spanKey = `${transactionId}:${hookName}`;
+    this.activeSpans.set(spanKey, span);
+
+    return { hookName, transactionId, spanId: span.spanContext().spanId };
+  }
+
+  /**
+   * End a hook execution span
+   * @param {string} hookName - Hook name
+   * @param {string} transactionId - Parent transaction ID
+   * @param {Object} attributes - Final attributes
+   */
+  async endHookSpan(hookName, transactionId, attributes = {}) {
+    const spanKey = `${transactionId}:${hookName}`;
+    const span = this.activeSpans.get(spanKey);
+
+    if (!span) {
+      console.warn(`[OTEL] No active span for hook: ${hookName}`);
+      return;
+    }
+
+    span.setAttribute('hook.success', attributes.success);
+    span.setAttribute('hook.duration_ms', attributes.duration);
+
+    if (attributes.error) {
+      span.recordException(new Error(attributes.error));
+      span.setStatus({
+        code: SpanStatusCode.ERROR,
+        message: attributes.error
+      });
+    } else {
+      span.setStatus({ code: SpanStatusCode.OK });
+    }
+
+    span.end();
+    this.activeSpans.delete(spanKey);
+  }
+
+  /**
+   * Export all traces to console/file
+   * @param {Object} options - Export options
+   */
+  async exportTraces(options = {}) {
+    const format = options.format || 'json';
+    const destination = options.destination || 'console';
+
+    const traces = Array.from(this.activeSpans.entries()).map(([key, span]) => ({
+      key,
+      spanId: span.spanContext().spanId,
+      traceId: span.spanContext().traceId,
+      attributes: span.attributes
+    }));
+
+    if (destination === 'console') {
+      console.log('[OTEL] Exported Traces:', JSON.stringify(traces, null, 2));
+    } else if (destination === 'file') {
+      const fs = await import('fs/promises');
+      await fs.writeFile(
+        options.file || 'otel-traces.json',
+        JSON.stringify(traces, null, 2)
+      );
+    }
+
+    return traces;
+  }
+
+  /**
+   * Get trace metrics
+   * @returns {Object} Trace statistics
+   */
+  getTraceMetrics() {
+    return {
+      activeSpans: this.activeSpans.size,
+      totalTransactions: this.metrics.totalTransactions,
+      totalHooks: this.metrics.hookExecutionRate,
+      errorRate: this.metrics.errorCount / this.metrics.totalTransactions,
+      avgLatency: this.metrics.transactionLatency.reduce((a, b) => a + b, 0) /
+                   this.metrics.transactionLatency.length || 0
+    };
+  }
+}
+```
+
+**Methods to Add**:
+- ✅ `startTransactionSpan()` - Create transaction span
+- ✅ `endTransactionSpan()` - Complete transaction span
+- ✅ `startHookSpan()` - Create hook span
+- ✅ `endHookSpan()` - Complete hook span
+- ✅ `exportTraces()` - Export traces to file/console
+- ✅ `getTraceMetrics()` - Get trace statistics
+
+---
+
+## TRACE CORRELATION
+
+### Parent-Child Relationships
+
+```
+ROOT: unrdf.cli.weaver
+  └─> unrdf.transaction [transactionId]
+      ├─> unrdf.transaction.validation
+      │   ├─> unrdf.policy.check
+      │   └─> unrdf.hook.condition.evaluate
+      │       └─> unrdf.sparql.ask
+      ├─> unrdf.hook.execution [hook-1]
+      │   ├─> unrdf.hook.condition.evaluate
+      │   │   └─> unrdf.shacl.validate
+      │   └─> unrdf.hook.run
+      │       └─> unrdf.sandbox.execute
+      ├─> unrdf.hook.execution [hook-2]
+      │   └─> unrdf.hook.run
+      ├─> unrdf.transaction.commit
+      │   └─> unrdf.lockchain.write
+      └─> unrdf.receipt.generate
+```
+
+**Key**: Each child span must reference parent `transactionId` for correlation
+
+---
+
+## PERFORMANCE MEASUREMENT POINTS
+
+### Critical Paths to Measure
+
+1. **Pre-Hook Pipeline** (Target: < 0.2ms p50, < 2ms p99)
+   - Span: `unrdf.hook.condition.evaluate`
+   - Metric: `hook.condition.duration_ms`
+
+2. **Hook Execution** (Target: < 5ms median)
+   - Span: `unrdf.hook.run`
+   - Metric: `hook.execution.duration_ms`
+
+3. **Receipt Write** (Target: < 5ms median)
+   - Span: `unrdf.receipt.generate`
+   - Metric: `receipt.write.duration_ms`
+
+4. **Transaction Commit** (Target: < 10ms)
+   - Span: `unrdf.transaction.commit`
+   - Metric: `transaction.commit.duration_ms`
+
+---
+
+## ERROR ISOLATION TRACKING
+
+### Error Recording
+
+```javascript
+// In every catch block:
+catch (error) {
+  span.recordException(error);
+  span.setStatus({
+    code: SpanStatusCode.ERROR,
+    message: error.message
+  });
+  span.setAttribute('error.type', error.constructor.name);
+  span.setAttribute('error.stack', error.stack);
+
+  // Record error metric
+  this.metrics.errorCount++;
+  this.metrics.errors.push({
+    timestamp: Date.now(),
+    transactionId,
+    error: error.message,
+    component: 'hook-manager'
+  });
+
+  throw error; // FAIL FAST
+}
+```
+
+**Goal**: 100% error isolation (errors don't cascade)
+
+---
+
+## EXPORT CONFIGURATION
+
+### Console Export (Development)
+
+```javascript
+// In observability.mjs:
+export async function exportToConsole() {
+  const traces = await this.exportTraces({ destination: 'console' });
+  console.log('[OTEL] Trace Summary:', {
+    totalTraces: traces.length,
+    activeSpans: this.activeSpans.size,
+    metrics: this.getTraceMetrics()
+  });
+}
+```
+
+### File Export (Production)
+
+```javascript
+// In observability.mjs:
+export async function exportToFile(filePath = 'otel-traces.json') {
+  await this.exportTraces({
+    destination: 'file',
+    file: filePath,
+    format: 'json'
+  });
+}
+```
+
+### OTLP Export (Production)
+
+```javascript
+// Already configured in ObservabilityManager constructor:
+const traceExporter = new OTLPTraceExporter({
+  url: this.config.endpoint ? `${this.config.endpoint}/v1/traces` : undefined,
+  headers: this.config.headers
+});
+```
+
+---
+
+## VALIDATION CHECKLIST
+
+### For Each Component:
+
+- [ ] Root span created at entry point
+- [ ] Child spans for major operations
+- [ ] Performance metrics recorded
+- [ ] Errors recorded with context
+- [ ] Spans ended in finally blocks
+- [ ] Parent-child relationships maintained
+- [ ] Attributes include transaction/hook IDs
+- [ ] Export functionality tested
+
+### For Full System:
+
+- [ ] CLI → Transaction spans linked
+- [ ] Transaction → Hook spans linked
+- [ ] Hook → Condition spans linked
+- [ ] Condition → Query spans linked
+- [ ] All critical paths measured
+- [ ] Error isolation 100%
+- [ ] Trace export working
+
+---
+
+## IMPLEMENTATION PRIORITY
+
+1. **Observability Manager** (Add missing methods) - 1 day
+2. **Transaction Manager** (Add spans) - 1 day
+3. **Knowledge Hook Manager** (Add spans) - 1 day
+4. **Condition Evaluator** (Add spans) - 1 day
+5. **CLI Commands** (Add root spans) - 1 day
+6. **Testing & Validation** (Export and verify) - 1 day
+
+**Total**: 6 days for complete OTEL coverage
+
+---
+
+**STATUS**: OTEL instrumentation map complete ✅
+**READY FOR**: Implementation and testing
+**DELIVERABLE**: Full trace coverage with performance metrics

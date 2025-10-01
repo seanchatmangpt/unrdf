@@ -1,0 +1,68 @@
+# Dockerfile for KGC Sidecar Testcontainer
+
+FROM node:20-alpine
+
+# Install system dependencies
+RUN apk add --no-cache \
+    git \
+    curl \
+    bash
+
+# Create app directory
+WORKDIR /app
+
+# Copy package files
+COPY package.json package-lock.json* pnpm-lock.yaml* ./
+
+# Install dependencies
+RUN if [ -f pnpm-lock.yaml ]; then \
+      npm install -g pnpm && pnpm install --frozen-lockfile; \
+    elif [ -f package-lock.json ]; then \
+      npm ci; \
+    else \
+      npm install; \
+    fi
+
+# Copy source code (will be overridden by volume mount in test)
+COPY src ./src
+
+# Create healthcheck script using printf to avoid heredoc parsing issues
+RUN printf '%s\n' \
+  "import http from 'http';" \
+  "" \
+  "const options = {" \
+  "  hostname: 'localhost'," \
+  "  port: 3000," \
+  "  path: '/health'," \
+  "  method: 'GET'," \
+  "  timeout: 2000" \
+  "};" \
+  "" \
+  "const req = http.request(options, (res) => {" \
+  "  if (res.statusCode === 200) {" \
+  "    process.exit(0);" \
+  "  } else {" \
+  "    process.exit(1);" \
+  "  }" \
+  "});" \
+  "" \
+  "req.on('error', () => {" \
+  "  process.exit(1);" \
+  "});" \
+  "" \
+  "req.on('timeout', () => {" \
+  "  req.destroy();" \
+  "  process.exit(1);" \
+  "});" \
+  "" \
+  "req.end();" \
+  > healthcheck.mjs
+
+# Expose ports
+EXPOSE 3000
+
+# Set environment
+ENV NODE_ENV=test
+
+# Start sidecar (override in docker-compose if needed)
+CMD ["node", "src/index.mjs"]

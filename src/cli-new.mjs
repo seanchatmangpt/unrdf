@@ -19,6 +19,7 @@
 
 import { defineCommand, runMain } from 'citty';
 import { withContext } from './cli/utils/context-wrapper.mjs';
+import { initializeTracer, shutdownTracer } from './cli/utils/otel-tracer.mjs';
 import {
   parseCommand,
   queryCommand,
@@ -40,7 +41,13 @@ import {
   sidecarHealthCommand,
   sidecarMetricsCommand,
   sidecarConfigGetCommand,
-  sidecarConfigSetCommand
+  sidecarConfigSetCommand,
+  storeImportCommand,
+  storeExportCommand,
+  storeQueryCommand,
+  policyApplyCommand,
+  policyListCommand,
+  policyGetCommand
 } from './cli/commands/index.mjs';
 
 /**
@@ -106,7 +113,7 @@ const main = defineCommand({
           run: withContext(hookListCommand, 'hook list')
         }),
         create: defineCommand({
-          meta: { name: 'create', description: 'Create hook from template' },
+          meta: { name: 'create', description: 'Create hook from SPARQL query file or template' },
           args: {
             name: {
               type: 'positional',
@@ -118,9 +125,13 @@ const main = defineCommand({
               description: 'Hook type (sparql-ask, shacl, threshold)',
               required: true
             },
+            file: {
+              type: 'string',
+              description: 'SPARQL query file path (for sparql-ask/threshold hooks)'
+            },
             query: {
               type: 'string',
-              description: 'SPARQL query for sparql-ask/threshold hooks'
+              description: 'Inline SPARQL query for sparql-ask/threshold hooks'
             },
             shapes: {
               type: 'string',
@@ -134,6 +145,11 @@ const main = defineCommand({
               type: 'string',
               description: 'Threshold operator (gt, lt, eq)'
             },
+            phase: {
+              type: 'string',
+              description: 'Hook phase (before, after)',
+              default: 'before'
+            },
             description: {
               type: 'string',
               description: 'Hook description'
@@ -141,6 +157,11 @@ const main = defineCommand({
             output: {
               type: 'string',
               description: 'Output file path'
+            },
+            verbose: {
+              type: 'boolean',
+              description: 'Show generated hook definition',
+              default: false
             }
           },
           run: withContext(hookCreateCommand, 'hook create')
@@ -501,9 +522,165 @@ const main = defineCommand({
         }
       },
       run: withContext(validateCommand, 'validate')
+    }),
+
+    /**
+     * Store commands - RDF store operations
+     */
+    store: defineCommand({
+      meta: {
+        name: 'store',
+        description: 'Manage RDF store operations'
+      },
+      subCommands: {
+        import: defineCommand({
+          meta: { name: 'import', description: 'Import RDF data to store' },
+          args: {
+            file: {
+              type: 'positional',
+              description: 'Input file path',
+              required: true
+            },
+            graph: {
+              type: 'string',
+              description: 'Target graph name',
+              default: 'default'
+            },
+            verbose: {
+              type: 'boolean',
+              default: false
+            }
+          },
+          run: withContext(storeImportCommand, 'store import')
+        }),
+        export: defineCommand({
+          meta: { name: 'export', description: 'Export graph data' },
+          args: {
+            graph: {
+              type: 'positional',
+              description: 'Graph name',
+              required: true
+            },
+            output: {
+              type: 'string',
+              description: 'Output file path'
+            },
+            verbose: {
+              type: 'boolean',
+              default: false
+            }
+          },
+          run: withContext(storeExportCommand, 'store export')
+        }),
+        query: defineCommand({
+          meta: { name: 'query', description: 'Execute SPARQL query' },
+          args: {
+            sparql: {
+              type: 'positional',
+              description: 'SPARQL query string',
+              required: true
+            },
+            format: {
+              type: 'string',
+              description: 'Output format (table, json)',
+              default: 'table'
+            },
+            verbose: {
+              type: 'boolean',
+              default: false
+            }
+          },
+          run: withContext(storeQueryCommand, 'store query')
+        })
+      }
+    }),
+
+    /**
+     * Policy commands - Policy pack management
+     */
+    policy: defineCommand({
+      meta: {
+        name: 'policy',
+        description: 'Manage policy packs'
+      },
+      subCommands: {
+        apply: defineCommand({
+          meta: { name: 'apply', description: 'Apply policy pack' },
+          args: {
+            file: {
+              type: 'positional',
+              description: 'Policy pack manifest file',
+              required: true
+            },
+            verbose: {
+              type: 'boolean',
+              default: false
+            }
+          },
+          run: withContext(policyApplyCommand, 'policy apply')
+        }),
+        list: defineCommand({
+          meta: { name: 'list', description: 'List policy packs' },
+          args: {
+            format: {
+              type: 'string',
+              description: 'Output format (json, table)',
+              default: 'table'
+            }
+          },
+          run: withContext(policyListCommand, 'policy list')
+        }),
+        get: defineCommand({
+          meta: { name: 'get', description: 'Get policy pack details' },
+          args: {
+            id: {
+              type: 'positional',
+              description: 'Policy pack ID or name',
+              required: true
+            },
+            verbose: {
+              type: 'boolean',
+              default: false
+            }
+          },
+          run: withContext(policyGetCommand, 'policy get')
+        })
+      }
     })
   }
 });
 
-// Run the CLI
-runMain(main);
+// Initialize OTEL before running CLI
+await initializeTracer();
+
+// Handle process exit to flush traces
+process.on('exit', () => {
+  // Synchronous shutdown attempt
+  if (process.env.OTEL_DEBUG) {
+    console.log('[OTEL] Process exiting, attempting flush...');
+  }
+});
+
+process.on('SIGINT', async () => {
+  await shutdownTracer();
+  process.exit(0);
+});
+
+process.on('SIGTERM', async () => {
+  await shutdownTracer();
+  process.exit(0);
+});
+
+// Ensure traces are flushed after command execution
+const originalRunMain = runMain;
+async function runMainWithTracing(command) {
+  try {
+    await originalRunMain(command);
+  } finally {
+    // Give tracer time to flush spans
+    await shutdownTracer();
+  }
+}
+
+// Run the CLI with tracing
+runMainWithTracing(main);

@@ -1,0 +1,1193 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Calculus Notation Reference for AI Swarms - Knowledge Geometry Calculus: From Field Theory to the Autonomic Enterprise</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="A mathematical framework for autonomic knowledge graph systems that transforms static RDF into self-governing, reactive, and cryptographically verifiable substrates">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+        <!-- MathJax -->
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "ayu";
+            window.path_to_searchindex_js = "searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Knowledge Geometry Calculus: From Field Theory to the Autonomic Enterprise</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/gitvan/unrdf" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="calculus-notation-reference-for-ai-swarms"><a class="header" href="#calculus-notation-reference-for-ai-swarms">Calculus Notation Reference for AI Swarms</a></h1>
+<p><strong>Master Mathematical Index for Knowledge Geometry Calculus</strong></p>
+<p>This reference catalogs ALL mathematical notation used throughout the KGC mdBook, organized for AI swarm execution and automated theorem proving.</p>
+<hr />
+<h2 id="quick-lookup-table"><a class="header" href="#quick-lookup-table">Quick Lookup Table</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>Symbol</th><th>Definition</th><th>Domain</th><th>Chapter</th></tr></thead><tbody>
+<tr><td>$\phi$</td><td>Knowledge field</td><td>$\Omega \to \mathbb{R}^m$</td><td>1.1</td></tr>
+<tr><td>$H_i$</td><td>Knowledge Hook operator</td><td>$\mathcal{F}(\Omega, \mathbb{R}^m) \to \mathbb{R}$</td><td>1.1</td></tr>
+<tr><td>$\Pi$</td><td>Predicate type</td><td>$\text{Bindings} \to \mathbb{B}$</td><td>4.1</td></tr>
+<tr><td>$\mathcal{H}[\phi]$</td><td>Hamiltonian functional</td><td>$\mathcal{F}(\Omega, \mathbb{R}^m) \to \mathbb{R}$</td><td>1.2</td></tr>
+<tr><td>$\mathbb{H}^d$</td><td>Hyperdimensional space</td><td>${v \in \mathbb{R}^d : |v| = 1}$</td><td>HD.1</td></tr>
+<tr><td>$\circledast$</td><td>Circular convolution</td><td>$\mathbb{H}^d \times \mathbb{H}^d \to \mathbb{H}^d$</td><td>HD.2</td></tr>
+<tr><td>$T[A]$</td><td>Transaction monad</td><td>$\mathcal{G} \to (\mathcal{G} \times A \times R) \sqcup \text{Error}$</td><td>3.1</td></tr>
+<tr><td>$O(b^d)$</td><td>Exponential complexity</td><td>Tree search</td><td>1.1</td></tr>
+<tr><td>$O(kd)$</td><td>Linear complexity</td><td>Field evaluation</td><td>1.1</td></tr>
+</tbody></table>
+</div>
+<hr />
+<h2 id="1-foundational-notation-chapter-1-field-theory"><a class="header" href="#1-foundational-notation-chapter-1-field-theory">1. Foundational Notation (Chapter 1: Field Theory)</a></h2>
+<h3 id="11-state-space-and-complexity"><a class="header" href="#11-state-space-and-complexity">1.1 State Space and Complexity</a></h3>
+<p><strong>Discrete Model:</strong></p>
+<ul>
+<li>$\mathcal{S}$: Finite state space</li>
+<li>$b \in \mathbb{N}$: Branching factor</li>
+<li>$d \in \mathbb{N}$: Search depth or dimension</li>
+<li>$\mathcal{T}_d$: State tree at depth $d$</li>
+<li>$|\mathcal{T}<em>d| = \sum</em>{i=0}^{d} b^i = \frac{b^{d+1} - 1}{b - 1}$</li>
+</ul>
+<p><strong>Complexity Bounds:</strong></p>
+<ul>
+<li>$O(b^d)$: Exponential lower bound for tree search (Theorem 1.1)</li>
+<li>$O(kd)$: Field evaluation complexity (Theorem 1.2)</li>
+<li>$\mathcal{S}(b, d, k) = \frac{b^d}{kd}$: Speedup factor (Theorem 1.3)</li>
+</ul>
+<h3 id="12-knowledge-fields"><a class="header" href="#12-knowledge-fields">1.2 Knowledge Fields</a></h3>
+<p><strong>Field Definition:</strong></p>
+<ul>
+<li>$\Omega \subset \mathbb{R}^n$: Problem domain manifold</li>
+<li>$\phi: \Omega \to \mathbb{R}^m$: Knowledge field (smooth map)</li>
+<li>$m$: Strategic feature dimension</li>
+<li>$\mathcal{F}(\Omega, \mathbb{R}^m)$: Space of smooth fields on $\Omega$</li>
+</ul>
+<p><strong>Hook Operators:</strong></p>
+<ul>
+<li>$H_i: \mathcal{F}(\Omega, \mathbb{R}^m) \to \mathbb{R}$: Linear functional</li>
+<li>$H_i(\phi(x)) = \langle w_i, \phi(x) \rangle = \sum_{j=1}^{d} w_{ij} \phi_j(x)$</li>
+<li>$k$: Number of hooks</li>
+</ul>
+<h3 id="13-information-field-theory"><a class="header" href="#13-information-field-theory">1.3 Information Field Theory</a></h3>
+<p><strong>Bayesian Formulation:</strong></p>
+<ul>
+<li>$P(\phi)$: Prior field distribution</li>
+<li>$P(\mathcal{D}|\phi)$: Data likelihood</li>
+<li>$P(\phi|\mathcal{D})$: Posterior distribution</li>
+<li>$\mathcal{H}[\phi]$: Hamiltonian functional</li>
+<li>$Z_0$: Partition function</li>
+</ul>
+<p><strong>Posterior:</strong>
+$$P(\phi|\mathcal{D}) \propto \exp(-\mathcal{H}[\phi])$$</p>
+<p><strong>Hamiltonian:</strong>
+$$\mathcal{H}[\phi] = \frac{1}{2} \int_\Omega |\nabla\phi(x)|^2 dx + \frac{1}{2\sigma^2} \sum_{i=1}^{N} |R_i(\phi) - d_i|^2$$</p>
+<p><strong>Operators:</strong></p>
+<ul>
+<li>$R_i: \mathcal{F}(\Omega, \mathbb{R}^m) \to \mathbb{R}$: Response operator</li>
+<li>$R_i^*$: Adjoint operator</li>
+<li>$\nabla^2$: Laplacian operator</li>
+</ul>
+<h3 id="14-vector-space-geometry"><a class="header" href="#14-vector-space-geometry">1.4 Vector Space Geometry</a></h3>
+<p><strong>Strategic Space:</strong></p>
+<ul>
+<li>$V$: Real vector space of dimension $d$</li>
+<li>${e_1, \ldots, e_d}$: Orthonormal basis</li>
+<li>$\langle v, u \rangle = v^T u = \sum_{i=1}^{d} v_i u_i$: Inner product</li>
+<li>$|v|_2 = \sqrt{\langle v, v \rangle}$: Euclidean norm</li>
+</ul>
+<p><strong>Projection:</strong></p>
+<ul>
+<li>$V_{sub} = \text{span}{h_1, \ldots, h_k}$: Hook subspace</li>
+<li>$\pi: V \to V_{sub}$: Projection operator</li>
+<li>$\pi(s) = \sum_{i=1}^{k} \langle s, h_i \rangle h_i$</li>
+</ul>
+<p><strong>Utility &amp; Action:</strong></p>
+<ul>
+<li>$u \in V$: Utility direction vector</li>
+<li>$\Delta s_a \in V$: Action-induced displacement</li>
+<li>$U(a) = \langle \Delta s_a, u \rangle$: Utility functional</li>
+<li>$\theta_a$: Angle between $\Delta s_a$ and $u$</li>
+</ul>
+<h3 id="15-field-superposition"><a class="header" href="#15-field-superposition">1.5 Field Superposition</a></h3>
+<p><strong>Hook Basis:</strong></p>
+<ul>
+<li>${\phi_1, \ldots, \phi_k}$: Orthonormal hook fields</li>
+<li>$\langle\phi_i, \phi_j\rangle_\mathcal{F} = \delta_{ij}$: Orthonormality</li>
+</ul>
+<p><strong>Decomposition:</strong>
+$$\Phi(x) = \sum_{i=1}^{k} \alpha_i \phi_i(x) + \epsilon(x)$$</p>
+<ul>
+<li>$\alpha_i = \langle\Phi, \phi_i\rangle_\mathcal{F}$: Coefficients</li>
+<li>$\epsilon \perp \text{span}{\phi_1, \ldots, \phi_k}$: Orthogonal residual</li>
+</ul>
+<p><strong>Interference:</strong>
+$$I(x) = \left|\sum_{i=1}^{k} \alpha_i \phi_i(x)\right|^2$$</p>
+<h3 id="16-hyperdimensional-capacity"><a class="header" href="#16-hyperdimensional-capacity">1.6 Hyperdimensional Capacity</a></h3>
+<p><strong>Concentration of Measure:</strong></p>
+<ul>
+<li>$P(|\langle u, v \rangle| &gt; \epsilon) \leq 2 \exp(-d\epsilon^2/2)$: Near-orthogonality (Theorem 1.9)</li>
+<li>$\mathbb{E}[\cos(\theta)] = 0$: Expected angle</li>
+<li>$\text{Var}[\cos(\theta)] = O(1/d)$: Variance</li>
+</ul>
+<p><strong>Memory Capacity:</strong>
+$$C(d) \approx \frac{d}{2\log_2 d}$$
+Patterns storable with error $\epsilon &lt; 0.01$ (Theorem 1.10)</p>
+<h3 id="17-autonomic-properties"><a class="header" href="#17-autonomic-properties">1.7 Autonomic Properties</a></h3>
+<p><strong>Self-Configuration:</strong></p>
+<ul>
+<li>$A: \Omega \to [0,1]^k$: Activation field</li>
+<li>$A_i(x) = \sigma(\langle\phi(x), h_i\rangle - \tau_i)$: Sigmoid activation</li>
+<li>$\mathcal{F}[A] = \mathbb{E}_A[\mathcal{H}[\phi]] - T \mathcal{S}[A]$: Free energy</li>
+<li>$\mathcal{S}[A] = -\sum_i A_i \log A_i$: Entropy</li>
+<li>$T$: Temperature</li>
+</ul>
+<p><strong>Self-Healing:</strong></p>
+<ul>
+<li>$\delta\phi$: Field perturbation</li>
+<li>$\frac{\partial\phi}{\partial t} = -\nabla_\phi\mathcal{H}[\phi]$: Gradient flow</li>
+<li>$\lambda_{\min}$: Minimum eigenvalue of Hessian</li>
+</ul>
+<p><strong>Self-Optimization:</strong></p>
+<ul>
+<li>$J[\phi]$: Performance functional</li>
+<li>$\frac{\delta J}{\delta\phi}[\phi^*] = 0$: Optimality condition</li>
+<li>$\frac{dw_i}{dt} = \eta \frac{\partial J}{\partial w_i}$: Gradient ascent</li>
+<li>$\eta$: Learning rate</li>
+</ul>
+<p><strong>Cryptographic Integrity:</strong></p>
+<ul>
+<li>$H_{crypto}(\phi) = \text{SHA-256}(\text{URDNA2015}(\phi))$: Hash</li>
+<li>$P_{\text{detect}} = 1 - 2^{-256}$: Tamper detection probability</li>
+</ul>
+<hr />
+<h2 id="2-type-theory-chapter-3-formal-foundations"><a class="header" href="#2-type-theory-chapter-3-formal-foundations">2. Type Theory (Chapter 3: Formal Foundations)</a></h2>
+<h3 id="21-rdf-term-types"><a class="header" href="#21-rdf-term-types">2.1 RDF Term Types</a></h3>
+<p><strong>Dependent Types:</strong></p>
+<pre><code>Term : Category → Type
+Category ::= IRI | BlankNode | Literal
+
+Term(IRI) = {u : URI | isValid(u)}
+Term(BlankNode) = {_:n | n ∈ ℕ}
+Term(Literal) = {(v, d) | v ∈ String, d ∈ Datatype}
+
+RDFTerm = Σ(c : Category). Term(c)
+</code></pre>
+<h3 id="22-graph-type-system"><a class="header" href="#22-graph-type-system">2.2 Graph Type System</a></h3>
+<p><strong>Graph Definition:</strong></p>
+<pre><code>Graph = 𝒫(Triple)
+Triple = {(s, p, o) : RDFTerm³ | constraints}
+WellFormed(G) ≝ ∀(s,p,o) ∈ G. isIRI(p) ∧ (isIRI(s) ∨ isBlank(s))
+</code></pre>
+<ul>
+<li>$\mathcal{G}$: RDF graph (power set of triples)</li>
+<li>$|G|$: Number of triples in graph</li>
+</ul>
+<h3 id="23-transaction-monad"><a class="header" href="#23-transaction-monad">2.3 Transaction Monad</a></h3>
+<p><strong>Monad Definition:</strong></p>
+<pre><code>T[A] = Graph → (Graph × A × Receipt) ⊎ Error
+
+Receipt = {prevHash, graphHash, delta, timestamp, actor, signature}
+Error = ValidationError | IntegrityError | AuthError
+</code></pre>
+<p><strong>Monad Operations:</strong></p>
+<ul>
+<li><code>return : A → T[A]</code>: Pure injection</li>
+<li><code>(&gt;&gt;=) : T[A] → (A → T[B]) → T[B]</code>: Bind (sequencing)</li>
+<li>$r_1 \oplus r_2$: Receipt chaining</li>
+</ul>
+<h3 id="24-operational-semantics"><a class="header" href="#24-operational-semantics">2.4 Operational Semantics</a></h3>
+<p><strong>Configuration:</strong></p>
+<pre><code>Config = HookState × Graph
+⟨H, G⟩ → ⟨H', G'⟩: Transition relation
+</code></pre>
+<p><strong>Reduction Rules:</strong></p>
+<ul>
+<li>[R-QUERY]: Query evaluation</li>
+<li>[R-PREDICATE]: Predicate evaluation</li>
+<li>[R-COMBINE]: Combinator application</li>
+<li>[R-EFFECT]: Effect execution</li>
+<li>[R-VETO]: Transaction veto</li>
+<li>[R-RECEIPT]: Receipt generation</li>
+</ul>
+<p><strong>Multi-Step:</strong></p>
+<ul>
+<li>$\to^*$: Reflexive transitive closure</li>
+<li>$\mu(\langle H, G \rangle)$: Complexity measure</li>
+</ul>
+<h3 id="25-complexity-analysis"><a class="header" href="#25-complexity-analysis">2.5 Complexity Analysis</a></h3>
+<p><strong>Evaluation Complexity:</strong>
+$$\text{Time}(E(H, G)) = O(|G| \times |Q| + |B| \times |\Pi| + |\Delta|)$$</p>
+<ul>
+<li>$|Q|$: Query complexity (triple patterns)</li>
+<li>$|B|$: Number of bindings</li>
+<li>$|\Pi|$: Number of predicates</li>
+<li>$|\Delta|$: Delta size</li>
+</ul>
+<p><strong>Space Complexity:</strong>
+$$\text{Space}(E(H, G)) = O(|G| + |B| + |\Pi|)$$</p>
+<p><strong>Amortized:</strong>
+$$\text{Amortized Time} = O(|\Delta| \times \log |G| + |\Pi|)$$</p>
+<h3 id="26-cryptographic-formalization"><a class="header" href="#26-cryptographic-formalization">2.6 Cryptographic Formalization</a></h3>
+<p><strong>Hash Function:</strong></p>
+<ul>
+<li>$H : {0,1}^* \to {0,1}^{256}$: SHA3-256</li>
+<li>Collision resistance: $\Pr[\text{collision}] \leq \text{negl}(n)$</li>
+<li>Preimage resistance</li>
+<li>Second preimage resistance</li>
+</ul>
+<p><strong>Canonicalization:</strong></p>
+<ul>
+<li>$\text{can} : \text{Graph} \to {0,1}^*$: URDNA2015</li>
+<li>Deterministic: $\text{can}(G) = \text{can}(G') \iff G \cong G'$</li>
+</ul>
+<p><strong>Merkle Tree:</strong></p>
+<ul>
+<li>$\text{MerkleTree}(R)$: Root hash</li>
+<li>$\text{MerkleProof} = {\text{index}, \text{receipt}, \text{siblings}}$</li>
+<li>Verification: $O(\log n)$ complexity</li>
+</ul>
+<hr />
+<h2 id="3-predicate-algebra-chapter-4-knowledge-hooks"><a class="header" href="#3-predicate-algebra-chapter-4-knowledge-hooks">3. Predicate Algebra (Chapter 4: Knowledge Hooks)</a></h2>
+<h3 id="31-core-types"><a class="header" href="#31-core-types">3.1 Core Types</a></h3>
+<p><strong>Binding &amp; Predicate:</strong></p>
+<ul>
+<li>$\text{Binding} \equiv \text{Var} \to \text{Value}$</li>
+<li>$\text{Bindings} \equiv \text{Set}[\text{Binding}]$</li>
+<li>$\Pi \equiv \text{Bindings} \to \mathbb{B}$: Predicate type</li>
+<li>$\mathbb{B} = {\top, \bot}$: Boolean domain</li>
+</ul>
+<p><strong>Monoid Structure:</strong></p>
+<ul>
+<li>$\epsilon_\Pi : \Pi$: Identity predicate ($\lambda b. \top$)</li>
+<li>$\circ_\Pi : \Pi \to \Pi \to \Pi$: Composition (conjunction)</li>
+</ul>
+<h3 id="32-boolean-combinators"><a class="header" href="#32-boolean-combinators">3.2 Boolean Combinators</a></h3>
+<p><strong>Operations:</strong></p>
+<ul>
+<li>$(\pi_1 \land \pi_2)(b) = \pi_1(b) \land \pi_2(b)$: Conjunction</li>
+<li>$(\pi_1 \lor \pi_2)(b) = \pi_1(b) \lor \pi_2(b)$: Disjunction</li>
+<li>$(\neg\pi)(b) = \neg\pi(b)$: Negation</li>
+</ul>
+<p><strong>Threshold:</strong>
+$$\text{threshold}_k(\pi_1, \ldots, \pi_n) = \lambda b. (|{i | \pi_i(b) = \top}|) \geq k$$</p>
+<h3 id="33-denotational-semantics"><a class="header" href="#33-denotational-semantics">3.3 Denotational Semantics</a></h3>
+<p><strong>Semantic Domains:</strong></p>
+<ul>
+<li>$\mathbb{B}$: Boolean domain</li>
+<li>$\mathbb{G} = \text{Set}[\text{Triple}]$: Graph domain</li>
+<li>$\mathcal{E} = \mathbb{G} \to (\mathbb{G} \sqcup \text{Error})$: Effect domain</li>
+</ul>
+<p><strong>Denotation:</strong>
+$$\llbracket \pi \rrbracket : \text{Bindings} \to \mathbb{B}$$</p>
+<p><strong>Compositional Rules:</strong></p>
+<ul>
+<li>$\llbracket \pi_1 \land \pi_2 \rrbracket(b) = \llbracket \pi_1 \rrbracket(b) \land_\mathbb{B} \llbracket \pi_2 \rrbracket(b)$</li>
+<li>$\llbracket \pi_1 \lor \pi_2 \rrbracket(b) = \llbracket \pi_1 \rrbracket(b) \lor_\mathbb{B} \llbracket \pi_2 \rrbracket(b)$</li>
+<li>$\llbracket \neg\pi \rrbracket(b) = \neg_\mathbb{B} \llbracket \pi \rrbracket(b)$</li>
+</ul>
+<h3 id="34-predicate-types"><a class="header" href="#34-predicate-types">3.4 Predicate Types</a></h3>
+<p><strong>ASK:</strong></p>
+<ul>
+<li>$\pi_{ask}(Q, \text{expected})$</li>
+<li>Time: $O(|G|)$ with indexing: $O(\log |G|)$</li>
+</ul>
+<p><strong>SHACL:</strong></p>
+<ul>
+<li>$\pi_{shacl}(S, \text{mode}, \text{strict})$</li>
+<li>Time: $O(|S| \times |G|)$</li>
+</ul>
+<p><strong>DELTA:</strong></p>
+<ul>
+<li>$\pi_{delta}(B, B_{prev}, K, \text{change}, \delta)$</li>
+<li>Time: $O(|B| \log |B|)$</li>
+<li>Hash: $H_{256} : \text{Binding} \to {0,1}^{256}$</li>
+</ul>
+<p><strong>THRESHOLD:</strong></p>
+<ul>
+<li>$\pi_{thr}(\text{var}, \text{op}, \theta, \text{agg})$</li>
+<li>Ops: $\text{LT} | \text{LE} | \text{EQ} | \text{GE} | \text{GT}$</li>
+<li>Agg: $\text{Sum} | \text{Avg} | \text{Count} | \text{Max} | \text{Min}$</li>
+<li>Time: $O(|B|)$</li>
+</ul>
+<p><strong>COUNT:</strong></p>
+<ul>
+<li>$\pi_{count}(B, \text{op}, n)$</li>
+<li>Time: $O(1)$</li>
+</ul>
+<p><strong>WINDOW:</strong></p>
+<ul>
+<li>$\pi_{window}(\text{var}, \text{size}, \text{agg}, \text{cmp})$</li>
+<li>Time: $O(\log |B| + k)$ with indexing</li>
+</ul>
+<h3 id="35-provenance"><a class="header" href="#35-provenance">3.5 Provenance</a></h3>
+<p><strong>Receipt Type:</strong></p>
+<pre><code>Receipt ≡ {id, fired, predicates, durations, provenance, timestamp, actor}
+Provenance ≡ {hook_hash, query_hash, graph_hash, baseline_hash, receipt_hash}
+Hash = {0,1}²⁵⁶
+</code></pre>
+<p><strong>Commitment:</strong></p>
+<ul>
+<li>$\text{commit}(R) = H_{256}(\text{canonical}(R))$</li>
+<li>Binding property</li>
+<li>Hiding property</li>
+<li>Collision resistance</li>
+</ul>
+<p><strong>Signature:</strong></p>
+<pre><code>Signature ≡ {receipt_hash, signature, public_key, algorithm}
+sign : Receipt → PrivateKey → Signature
+verify : Receipt → Signature → Bool
+</code></pre>
+<p><strong>Non-Repudiation (Theorem 5.1):</strong>
+$$\forall R, sk. \text{verify}(R, \text{sign}(R, sk)) = \top \land \forall R' \neq R. \text{verify}(R', \text{sign}(R, sk)) = \bot$$</p>
+<h3 id="36-algebraic-laws"><a class="header" href="#36-algebraic-laws">3.6 Algebraic Laws</a></h3>
+<p><strong>Distributivity:</strong>
+$$\pi_1 \land (\pi_2 \lor \pi_3) = (\pi_1 \land \pi_2) \lor (\pi_1 \land \pi_3)$$</p>
+<p><strong>De Morgan:</strong></p>
+<ul>
+<li>$\neg(\pi_1 \land \pi_2) = (\neg\pi_1) \lor (\neg\pi_2)$</li>
+<li>$\neg(\pi_1 \lor \pi_2) = (\neg\pi_1) \land (\neg\pi_2)$</li>
+</ul>
+<p><strong>Threshold Properties:</strong></p>
+<ul>
+<li>$\text{threshold}_0(\pi_1, \ldots, \pi_n) \equiv \top$</li>
+<li>$\text{threshold}_1(\pi_1, \ldots, \pi_n) \equiv \pi_1 \lor \cdots \lor \pi_n$</li>
+<li>$\text{threshold}_n(\pi_1, \ldots, \pi_n) \equiv \pi_1 \land \cdots \land \pi_n$</li>
+</ul>
+<hr />
+<h2 id="4-hyperdimensional-computing-hd-chapter"><a class="header" href="#4-hyperdimensional-computing-hd-chapter">4. Hyperdimensional Computing (HD Chapter)</a></h2>
+<h3 id="41-hyperdimensional-space"><a class="header" href="#41-hyperdimensional-space">4.1 Hyperdimensional Space</a></h3>
+<p><strong>Space Definition:</strong>
+$$\mathbb{H}^d = {v \in \mathbb{R}^d : |v|_2 = 1}$$</p>
+<ul>
+<li>$d \geq 10{,}000$: Dimensionality</li>
+<li>$|v|_2 = \sqrt{\sum_i v_i^2}$: Euclidean norm</li>
+</ul>
+<p><strong>Concentration of Measure:</strong>
+$$P(|\langle u, v \rangle| &gt; \epsilon) \leq 2 \exp(-d\epsilon^2/2)$$</p>
+<p>For $d = 10{,}000$, $\epsilon = 0.1$:
+$$P(|\langle u, v \rangle| &gt; 0.1) \leq 2 \exp(-50) \approx 3.8 \times 10^{-22}$$</p>
+<h3 id="42-binding-operators"><a class="header" href="#42-binding-operators">4.2 Binding Operators</a></h3>
+<p><strong>Circular Convolution:</strong>
+$$(v \circledast w)<em>i = \sum</em>{j=0}^{d-1} v_j \cdot w_{(i-j) \bmod d}$$</p>
+<p>Frequency domain:
+$$v \circledast w = \mathcal{F}^{-1}(\mathcal{F}(v) \odot \mathcal{F}(w))$$</p>
+<ul>
+<li>$\mathcal{F}$: Discrete Fourier Transform</li>
+<li>$\odot$: Element-wise multiplication</li>
+<li>Time: $O(d \log d)$ via FFT</li>
+</ul>
+<p><strong>Properties:</strong></p>
+<ul>
+<li>$\mathbb{E}[\langle u \circledast v, w \rangle] = 0$</li>
+<li>$\text{Var}[\langle u \circledast v, w \rangle] = 1/d$</li>
+<li>$\sigma = 1/\sqrt{d} \approx 0.01$ for $d = 10{,}000$</li>
+</ul>
+<p><strong>Element-wise Product:</strong>
+$$(v \odot w)_i = v_i \cdot w_i$$
+Time: $O(d)$</p>
+<p><strong>Permutation:</strong>
+$$\Pi(v) = (v_{p(0)}, v_{p(1)}, \ldots, v_{p(d-1)})$$</p>
+<p><strong>Unbinding:</strong>
+$$w \approx (u \circledast v) \circledast u^{-1}$$
+$$|w - v|_2 \leq C/\sqrt{d}$$</p>
+<h3 id="43-similarity-metrics"><a class="header" href="#43-similarity-metrics">4.3 Similarity Metrics</a></h3>
+<p><strong>Cosine Similarity:</strong>
+$$\text{sim}(v, w) = \frac{\langle v, w \rangle}{|v|_2 \cdot |w|_2}$$</p>
+<p>For unit vectors: $\text{sim}(v, w) = \langle v, w \rangle \in [-1, 1]$</p>
+<p><strong>Threshold Matching:</strong>
+$$\text{match}(v, w) = \begin{cases} \text{true} &amp; \text{if } \text{sim}(v, w) \geq \tau \ \text{false} &amp; \text{otherwise} \end{cases}$$</p>
+<p>Recommended: $\tau \in [0.7, 0.9]$</p>
+<p><strong>Accuracy (Theorem 3.1):</strong>
+For noise $|ε|_2 = \sigma$:
+$$P(\text{sim}(v, v+ε) \geq \tau) = \Phi\left(\frac{1-\tau}{\sigma}\right)$$</p>
+<p>Example: $\sigma = 0.1$, $\tau = 0.7 \Rightarrow P \approx 99.87%$</p>
+<p><strong>Hamming Distance:</strong>
+$$\text{dist}_H(v, w) = \frac{1}{d} \sum_i \mathbb{1}[v_i \neq w_i]$$</p>
+<p>Relationship: $\text{sim}(v, w) = 1 - 2 \cdot \text{dist}_H(v, w)$</p>
+<h3 id="44-cleanup-memory"><a class="header" href="#44-cleanup-memory">4.4 Cleanup Memory</a></h3>
+<p><strong>Item Memory:</strong>
+$$I = {v_1, v_2, \ldots, v_n} \subset \mathbb{H}^d$$</p>
+<p><strong>Cleanup Operation:</strong>
+$$M(v) = \arg\max_{v_i \in I} \text{sim}(v, v_i) = \arg\max_{v_i \in I} \langle v, v_i \rangle$$</p>
+<p><strong>Complexity:</strong></p>
+<ul>
+<li>Naive: $O(nd)$</li>
+<li>LSH: $O(d \log n)$ expected</li>
+<li>ANN: $O(\log n)$ with preprocessing</li>
+</ul>
+<p><strong>Bounded Error (Theorem 4.1):</strong>
+For separation $\delta = \min_{v_i \neq v^<em>} |v^</em> - v_i|_2$:
+$$\sigma &lt; \frac{\delta}{2\sqrt{2}} \Rightarrow M(v + ε) = v^*$$</p>
+<p><strong>LSH:</strong>
+$$h(v) = \text{sign}(\langle v, r \rangle)$$
+Multi-hash: $H(v) = (h_1(v), h_2(v), \ldots, h_k(v))$</p>
+<h3 id="45-compositional-semantics"><a class="header" href="#45-compositional-semantics">4.5 Compositional Semantics</a></h3>
+<p><strong>Role-Filler Binding:</strong>
+$$\text{encode}(\text{role}, \text{filler}) = r \circledast f$$</p>
+<p><strong>Superposition:</strong>
+$$\text{aggregate} = \frac{\sum_i w_i v_i}{|\sum_i w_i v_i|_2}$$</p>
+<p><strong>Capacity (Theorem 5.1):</strong>
+For equal weights:
+$$\mathbb{E}[\text{sim}(\text{aggregate}, v_j)] = \frac{1}{\sqrt{n}}$$</p>
+<p>Capacity: $n_{\max} \approx (1/\tau)^2$</p>
+<p><strong>Hierarchical Composition:</strong>
+$$\text{tree} = \text{root} \circledast (\text{left} \circledast \text{subtree}_1 + \text{right} \circledast \text{subtree}_2)$$</p>
+<p><strong>Error Accumulation (Theorem 5.2):</strong>
+For depth $k$:
+$$|\text{extracted} - \text{base}|_2 \leq k \cdot C/\sqrt{d}$$</p>
+<h3 id="46-application-to-knowledge-hooks"><a class="header" href="#46-application-to-knowledge-hooks">4.6 Application to Knowledge Hooks</a></h3>
+<p><strong>Hook Encoding:</strong>
+$$h_{\text{vec}} = \text{query}<em>{\text{vec}} \circledast \sum_i (\text{predicate}</em>{\text{vec}, i} \odot \pi_i)$$</p>
+<p><strong>State Vector:</strong>
+$$s = \frac{\sum_i \alpha_i h_{\text{vec}, i}}{|\sum_i \alpha_i h_{\text{vec}, i}|_2}$$</p>
+<p><strong>Geometric Decision (Theorem 6.1):</strong>
+$$a^* = \arg\max_{a \in A} \langle \Delta s(a), u \rangle$$</p>
+<p>Complexity: $O(|A| \cdot kd)$ vs $O(b^d)$ tree search</p>
+<p><strong>Field Complexity (Theorem 6.2):</strong>
+$$T_{\text{field}}(k, n, d) = O(kd + nd)$$
+vs $T_{\text{direct}}(k, n) = O(kn \cdot C_{\text{hook}})$</p>
+<hr />
+<h2 id="5-algorithms--implementation-chapter-5"><a class="header" href="#5-algorithms--implementation-chapter-5">5. Algorithms &amp; Implementation (Chapter 5)</a></h2>
+<h3 id="51-state-machine"><a class="header" href="#51-state-machine">5.1 State Machine</a></h3>
+<p><strong>States:</strong>
+$$\text{States} = {\text{INIT}, \text{PRE_HOOK}, \text{APPLY}, \text{POST_HOOK}, \text{COMMIT}, \text{VETO}, \text{ERROR}}$$</p>
+<p><strong>Transition Function:</strong>
+$$\delta: \text{States} \times \text{Events} \to \text{States}$$</p>
+<h3 id="52-transaction-complexity"><a class="header" href="#52-transaction-complexity">5.2 Transaction Complexity</a></h3>
+<p><strong>Algorithm 1 Complexity:</strong>
+$$T_{\text{apply}} = O(|H| \cdot T_{\text{hook}} + |\Delta| + T_{\text{hash}})$$</p>
+<ul>
+<li>$|H|$: Number of hooks</li>
+<li>$T_{\text{hook}}$: Hook evaluation time</li>
+<li>$|\Delta| = |A| + |R|$: Delta size</li>
+<li>$T_{\text{hash}} = O(|G| \log |G|)$ canonical, $O(|G|)$ fast path</li>
+</ul>
+<p><strong>Best Case:</strong>
+$$T_{\text{best}} = O(|H| \cdot T_{\text{hook}} + |\Delta|)$$</p>
+<p><strong>Worst Case:</strong>
+$$T_{\text{worst}} = O(|H| \cdot T_{\text{hook}} + |\Delta| + |G| \log |G|)$$</p>
+<h3 id="53-hash-functions"><a class="header" href="#53-hash-functions">5.3 Hash Functions</a></h3>
+<p><strong>SHA3-256:</strong></p>
+<ul>
+<li>$H : {0,1}^* \to {0,1}^{256}$</li>
+<li>Collision: $\Pr[\text{collision}] \leq 2^{-256}$</li>
+<li>Birthday bound: $n \leq 2^{128}$ for security</li>
+</ul>
+<p><strong>BLAKE3 Merkle:</strong></p>
+<ul>
+<li>Construction: $O(n)$ time</li>
+<li>Verification: $O(\log n)$ time</li>
+<li>Space: $O(n)$</li>
+</ul>
+<p><strong>URDNA2015:</strong></p>
+<ul>
+<li>Best case: $O(|E| \log |E|)$ (no blank nodes)</li>
+<li>Average: $O(|E| \log |E|)$</li>
+<li>Worst case: $O(|V|! \cdot |E| \log |E|)$ (high symmetry)</li>
+<li>Space: $O(|V| + |E|)$</li>
+</ul>
+<h3 id="54-hook-evaluation-pipeline"><a class="header" href="#54-hook-evaluation-pipeline">5.4 Hook Evaluation Pipeline</a></h3>
+<p><strong>Total Latency:</strong>
+$$R_{\text{total}} = \sum_i (C_i + J_i + B_i)$$</p>
+<ul>
+<li>$C_i$: WCET of task $i$</li>
+<li>$J_i$: Maximum jitter</li>
+<li>$B_i$: Blocking time</li>
+</ul>
+<p><strong>Complexity:</strong>
+$$\text{Time}(E(H, G)) = O(T_{\text{query}} + |P| \cdot T_{\text{pred}} + T_{\text{canon}})$$</p>
+<h3 id="55-sandbox-isolation"><a class="header" href="#55-sandbox-isolation">5.5 Sandbox Isolation</a></h3>
+<p><strong>Capability Lattice:</strong>
+$$\text{Cap} = {\text{Network}, \text{FileSystem}, \text{Memory}, \text{Process}}$$</p>
+<p>Operations: $c_1 \lor c_2$, $c_1 \land c_2$, $\neg c$</p>
+<p><strong>Timeout Guarantee (Theorem 7):</strong>
+$$T_{\text{exec}} \leq T_{\text{max}} + \epsilon$$
+where $\epsilon &lt; 10\text{ms}$ (termination overhead)</p>
+<p><strong>Memory Limit (Theorem 8):</strong>
+$$P(M_{\text{used}} \leq M_{\text{limit}}) &gt; 0.999$$</p>
+<h3 id="56-lockchain-merkle"><a class="header" href="#56-lockchain-merkle">5.6 Lockchain Merkle</a></h3>
+<p><strong>Construction:</strong></p>
+<ul>
+<li>Leaf generation: $O(n \cdot |r|)$</li>
+<li>Tree building: $O(n)$</li>
+<li>Total: $O(n \cdot |r|)$</li>
+</ul>
+<p><strong>Verification (Theorem 9):</strong>
+$$\text{Time}(\text{verify}) = O(\log n)$$</p>
+<p><strong>Security (Theorem 10):</strong>
+Forging proof requires collision: $P(\text{forge}) \leq 2^{-256}$</p>
+<h3 id="57-git-anchoring"><a class="header" href="#57-git-anchoring">5.7 Git Anchoring</a></h3>
+<p><strong>Tamper Evidence (Theorem 11):</strong>
+$$P(\text{tamper detected}) &gt; 1 - 2^{-160}$$
+(SHA-1, migrating to SHA-256: $&gt; 1 - 2^{-256}$)</p>
+<hr />
+<h2 id="6-statistics-chapter-6-empirical-evaluation"><a class="header" href="#6-statistics-chapter-6-empirical-evaluation">6. Statistics (Chapter 6: Empirical Evaluation)</a></h2>
+<h3 id="61-latency-distribution"><a class="header" href="#61-latency-distribution">6.1 Latency Distribution</a></h3>
+<p><strong>CDF:</strong>
+$$F_L(x) = P(L \leq x)$$</p>
+<p><strong>Percentiles:</strong>
+$$p_\alpha = \inf{x : F_L(x) \geq \alpha}$$</p>
+<ul>
+<li>$p_{0.50}$: Median</li>
+<li>$p_{0.99}$: 99th percentile (tail latency)</li>
+</ul>
+<p><strong>Log-Normal Model:</strong>
+$$L \sim \text{LogNormal}(\mu, \sigma^2)$$</p>
+<h3 id="62-hypothesis-testing"><a class="header" href="#62-hypothesis-testing">6.2 Hypothesis Testing</a></h3>
+<p><strong>t-statistic:</strong>
+$$t = \frac{\bar{x} - \mu_0}{s/\sqrt{n}}$$</p>
+<p><strong>Welch's t-test:</strong>
+$$t = \frac{\bar{x}_c - \bar{x}_f}{\sqrt{s_c^2/n_c + s_f^2/n_f}}$$</p>
+<p><strong>Effect Size (Cohen's d):</strong>
+$$d = \frac{\mu_c - \mu_f}{\sqrt{(s_c^2 + s_f^2)/2}}$$</p>
+<h3 id="63-queuing-theory"><a class="header" href="#63-queuing-theory">6.3 Queuing Theory</a></h3>
+<p><strong>M/M/c Queue:</strong></p>
+<ul>
+<li>Arrival: Poisson($\lambda$)</li>
+<li>Service: Exponential($\mu$)</li>
+<li>Servers: $c$</li>
+</ul>
+<p><strong>Utilization:</strong>
+$$\rho = \frac{\lambda}{c \times \mu}$$</p>
+<p><strong>Little's Law:</strong>
+$$L = \lambda \times W$$</p>
+<ul>
+<li>$L$: Avg number in system</li>
+<li>$W$: Avg time in system</li>
+</ul>
+<p><strong>Queue Length:</strong>
+$$L_q = L - \lambda/\mu$$</p>
+<p><strong>Wait Time:</strong>
+$$W_q = L_q/\lambda$$</p>
+<h3 id="64-regression-analysis"><a class="header" href="#64-regression-analysis">6.4 Regression Analysis</a></h3>
+<p><strong>Log-Log Model:</strong>
+$$\log(T) = \log(\beta_0) + \beta_1 \log(n)$$</p>
+<p><strong>Complexity Class:</strong>
+$$T(n) \approx \beta_0 \cdot n^{\beta_1}$$</p>
+<p><strong>Goodness of Fit:</strong>
+$$R^2 = \frac{\text{SSR}}{\text{SST}} = \frac{\sum(\hat{y}_i - \bar{y})^2}{\sum(y_i - \bar{y})^2}$$</p>
+<p><strong>Prediction Interval:</strong>
+$$\text{PI} = \hat{T} \pm t_{\alpha/2, n-2} \times \text{SE}_{\text{pred}}$$</p>
+<h3 id="65-binomial-analysis"><a class="header" href="#65-binomial-analysis">6.5 Binomial Analysis</a></h3>
+<p><strong>Binomial Test:</strong>
+$$P(X \geq k | n, p) = \sum_{i=k}^{n} \binom{n}{i} p^i (1-p)^{n-i}$$</p>
+<p><strong>Wilson Score Interval:</strong>
+$$\hat{p}_{\text{lower/upper}} = \frac{\hat{p} + z^2/(2n) \pm z\sqrt{\hat{p}(1-\hat{p})/n + z^2/(4n^2)}}{1 + z^2/n}$$</p>
+<h3 id="66-chi-square-test"><a class="header" href="#66-chi-square-test">6.6 Chi-Square Test</a></h3>
+<p><strong>Goodness of Fit:</strong>
+$$\chi^2 = \sum_i \frac{(O_i - E_i)^2}{E_i}$$</p>
+<p><strong>Degrees of Freedom:</strong> $\text{df} = k - 1$</p>
+<hr />
+<h2 id="7-real-time-systems-chapter-7-uhft"><a class="header" href="#7-real-time-systems-chapter-7-uhft">7. Real-Time Systems (Chapter 7: UHFT)</a></h2>
+<h3 id="71-task-model"><a class="header" href="#71-task-model">7.1 Task Model</a></h3>
+<p><strong>Task Tuple:</strong>
+$$\tau_i = (C_i, T_i, D_i, J_i, P_i)$$</p>
+<ul>
+<li>$C_i$: WCET (Worst-Case Execution Time)</li>
+<li>$T_i$: Period</li>
+<li>$D_i$: Deadline</li>
+<li>$J_i$: Jitter</li>
+<li>$P_i$: Priority</li>
+</ul>
+<h3 id="72-schedulability"><a class="header" href="#72-schedulability">7.2 Schedulability</a></h3>
+<p><strong>Utilization:</strong>
+$$U = \sum_i \frac{C_i}{T_i}$$</p>
+<p><strong>RMS Bound:</strong>
+$$U \leq n(2^{1/n} - 1)$$</p>
+<p>For $n = 5$: $U_{\text{bound}} = 0.7435$</p>
+<p><strong>WCRT:</strong>
+$$R_{\text{total}} = \sum_i (C_i + J_i + B_i)$$</p>
+<h3 id="73-tail-latency"><a class="header" href="#73-tail-latency">7.3 Tail Latency</a></h3>
+<p><strong>Chernoff Bound:</strong>
+$$P(X \geq (1 + \delta)\mu) \leq \exp\left(-\frac{\delta^2 \mu}{2 + \delta}\right)$$</p>
+<p><strong>Jitter:</strong>
+$$J = \max(L) - \min(L)$$</p>
+<p><strong>Variance:</strong></p>
+<ul>
+<li>Mean: $\mu$</li>
+<li>Variance: $\sigma^2$</li>
+<li>Std dev: $\sigma$</li>
+</ul>
+<h3 id="74-fpga-timing"><a class="header" href="#74-fpga-timing">7.4 FPGA Timing</a></h3>
+<p><strong>Pipeline Latency:</strong>
+$$T_{\text{total}} = \sum_i \tau_i + \tau_{\text{setup}}$$</p>
+<p><strong>Pipeline Depth:</strong>
+$$N_{\text{stages}} = T_{\text{total}}/T_{\text{clk}}$$</p>
+<p><strong>Throughput:</strong>
+$$f_{\text{max}} = 1/\max(\tau_i)$$</p>
+<p><strong>Static Timing:</strong></p>
+<ul>
+<li>Setup slack: $&gt; 0$ (timing met)</li>
+<li>Hold slack: $&gt; 0$ (no violations)</li>
+</ul>
+<h3 id="75-queuing-md1"><a class="header" href="#75-queuing-md1">7.5 Queuing (M/D/1)</a></h3>
+<p><strong>Pollaczek-Khinchine:</strong>
+$$W = \frac{\lambda \times S^2}{2(1 - \rho)}$$</p>
+<ul>
+<li>$\lambda$: Arrival rate</li>
+<li>$S$: Service time (deterministic)</li>
+<li>$\rho = \lambda \times S$: Utilization</li>
+</ul>
+<hr />
+<h2 id="8-economics-chapter-8-dark-matter"><a class="header" href="#8-economics-chapter-8-dark-matter">8. Economics (Chapter 8: Dark Matter)</a></h2>
+<h3 id="81-cost-functions"><a class="header" href="#81-cost-functions">8.1 Cost Functions</a></h3>
+<p><strong>Traditional:</strong>
+$$C_{\text{traditional}}(n, m, t) = C_{\text{base}} + \alpha \cdot n \cdot m \cdot t + \beta \cdot n^2 \cdot t + \gamma \cdot e^{\lambda t}$$</p>
+<p><strong>Autonomic:</strong>
+$$C_{\text{autonomic}}(n, q, t) = C_{\text{setup}} + \delta \cdot \log(n) \cdot q \cdot t + \epsilon \cdot |G| \cdot t$$</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li>$n$: Number of systems</li>
+<li>$m$: Integration points per system</li>
+<li>$q$: Query complexity</li>
+<li>$t$: Time (years)</li>
+<li>$|G|$: Graph size (triples)</li>
+<li>$\alpha$: Integration cost ($50K-200K/yr)</li>
+<li>$\beta$: Complexity penalty ($10K-50K/yr)</li>
+<li>$\gamma$: Tech debt base ($100K)</li>
+<li>$\lambda$: Debt growth (0.15-0.25/yr)</li>
+<li>$\delta$: Query cost ($5K-20K/yr)</li>
+<li>$\epsilon$: Maintenance ($0.001-0.01/triple/yr)</li>
+</ul>
+<h3 id="82-pareto-distribution"><a class="header" href="#82-pareto-distribution">8.2 Pareto Distribution</a></h3>
+<p><strong>Probability:</strong>
+$$P(X &gt; x) = \left(\frac{x_{\min}}{x}\right)^\alpha \quad \text{for } x \geq x_{\min}$$</p>
+<p><strong>80/20 Rule:</strong>
+$$\alpha = \log_4(5) \approx 1.161$$</p>
+<p><strong>Lorenz Curve:</strong>
+$$L(F) = 1 - (1-F)^{(\alpha-1)/\alpha}$$</p>
+<p><strong>Gini Coefficient:</strong>
+$$G = \frac{1}{2\alpha - 1}$$</p>
+<p>For $\alpha = 1.16$: $G = 0.758$</p>
+<p><strong>Dark Matter:</strong>
+$$D = \int_{x_{\min}}^{x_{80}} f(x)dx = 1 - \left(\frac{x_{80}}{x_{\min}}\right)^{-\alpha} \approx 0.80$$</p>
+<h3 id="83-roi-metrics"><a class="header" href="#83-roi-metrics">8.3 ROI Metrics</a></h3>
+<p><strong>NPV:</strong>
+$$\text{NPV} = \sum_{t=0}^{T} \frac{\text{Benefits}_t - \text{Costs}<em>t}{(1+r)^t} - C</em>{\text{setup}}$$</p>
+<p><strong>Payback Period:</strong>
+$$\text{Payback} = \min\left{t : \sum_{s=1}^{t} (\text{Benefits}_s - \text{Costs}<em>s) \geq C</em>{\text{setup}}\right}$$</p>
+<p><strong>IRR:</strong>
+Solve: $0 = \sum_{t=0}^{T} \frac{\text{Benefits}_t - \text{Costs}<em>t}{(1+\text{IRR})^t} - C</em>{\text{setup}}$</p>
+<h3 id="84-production-function"><a class="header" href="#84-production-function">8.4 Production Function</a></h3>
+<p><strong>Cobb-Douglas:</strong>
+$$P(L, K, A) = \gamma \cdot L^\alpha \cdot K^\beta \cdot A^\theta$$</p>
+<ul>
+<li>$L$: Labor</li>
+<li>$K$: Capital</li>
+<li>$A$: Automation level</li>
+<li>$\alpha + \beta + \theta = 1$: Constant returns</li>
+</ul>
+<p><strong>Marginal Product:</strong>
+$$\text{MP}_A = \frac{\partial P}{\partial A} = \theta \cdot \gamma \cdot L^\alpha \cdot K^\beta \cdot A^{\theta-1}$$</p>
+<p><strong>Labor Reduction:</strong>
+$$\frac{\Delta L}{L} = 1 - \frac{L_{\text{curator}}}{L} \approx 95%-98%$$</p>
+<p><strong>Wage Effect:</strong>
+$$\frac{w_{\text{curator}}}{w} = \left(\frac{L}{L_{\text{curator}}}\right)^{1-\alpha} \cdot A^\theta \approx 10\times - 50\times$$</p>
+<h3 id="85-market-sizing"><a class="header" href="#85-market-sizing">8.5 Market Sizing</a></h3>
+<p><strong>TAM:</strong>
+$$\text{TAM} = N_{\text{enterprises}} \times \mathbb{E}[\text{IT_spend}] \times 0.80$$</p>
+<p><strong>SAM:</strong>
+$$\text{SAM} = 0.60 \times \text{TAM}$$</p>
+<p><strong>SOM:</strong>
+$$\text{SOM}(t) = \text{SAM} \times (1 - e^{-\rho t})$$</p>
+<hr />
+<h2 id="9-cross-chapter-symbol-index"><a class="header" href="#9-cross-chapter-symbol-index">9. Cross-Chapter Symbol Index</a></h2>
+<h3 id="greek-alphabet"><a class="header" href="#greek-alphabet">Greek Alphabet</a></h3>
+<div class="table-wrapper"><table><thead><tr><th>Symbol</th><th>Name</th><th>Usage</th></tr></thead><tbody>
+<tr><td>$\alpha$</td><td>alpha</td><td>Pareto index, elasticity, integration cost</td></tr>
+<tr><td>$\beta$</td><td>beta</td><td>Output elasticity, complexity penalty</td></tr>
+<tr><td>$\gamma$</td><td>gamma</td><td>Scale parameter, tech debt base</td></tr>
+<tr><td>$\delta$</td><td>delta</td><td>Kronecker delta, query cost</td></tr>
+<tr><td>$\epsilon$</td><td>epsilon</td><td>Error term, maintenance cost</td></tr>
+<tr><td>$\zeta$</td><td>zeta</td><td>(reserved)</td></tr>
+<tr><td>$\eta$</td><td>eta</td><td>Learning rate, efficiency</td></tr>
+<tr><td>$\theta$</td><td>theta</td><td>Angle, automation elasticity</td></tr>
+<tr><td>$\lambda$</td><td>lambda</td><td>Rate parameter, eigenvalue</td></tr>
+<tr><td>$\mu$</td><td>mu</td><td>Mean, service rate</td></tr>
+<tr><td>$\nu$</td><td>nu</td><td>(reserved)</td></tr>
+<tr><td>$\rho$</td><td>rho</td><td>Utilization, correlation</td></tr>
+<tr><td>$\sigma$</td><td>sigma</td><td>Standard deviation, sigmoid</td></tr>
+<tr><td>$\tau$</td><td>tau</td><td>Threshold, task</td></tr>
+<tr><td>$\phi$</td><td>phi</td><td>Knowledge field, angle</td></tr>
+<tr><td>$\chi$</td><td>chi</td><td>Chi-square statistic</td></tr>
+<tr><td>$\psi$</td><td>psi</td><td>(reserved)</td></tr>
+<tr><td>$\omega$</td><td>omega</td><td>Angular frequency</td></tr>
+<tr><td>$\Omega$</td><td>Omega</td><td>Domain manifold</td></tr>
+<tr><td>$\Phi$</td><td>Phi</td><td>Aggregate field, CDF</td></tr>
+<tr><td>$\Pi$</td><td>Pi</td><td>Predicate type, product</td></tr>
+<tr><td>$\Sigma$</td><td>Sigma</td><td>Summation, covariance</td></tr>
+</tbody></table>
+</div>
+<h3 id="operators"><a class="header" href="#operators">Operators</a></h3>
+<div class="table-wrapper"><table><thead><tr><th>Symbol</th><th>Name</th><th>Definition</th></tr></thead><tbody>
+<tr><td>$\nabla$</td><td>Nabla</td><td>Gradient operator</td></tr>
+<tr><td>$\nabla^2$</td><td>Laplacian</td><td>Second derivative</td></tr>
+<tr><td>$\partial$</td><td>Partial</td><td>Partial derivative</td></tr>
+<tr><td>$\int$</td><td>Integral</td><td>Integration</td></tr>
+<tr><td>$\sum$</td><td>Sum</td><td>Summation</td></tr>
+<tr><td>$\prod$</td><td>Product</td><td>Product</td></tr>
+<tr><td>$\circledast$</td><td>Convolution</td><td>Circular convolution</td></tr>
+<tr><td>$\odot$</td><td>Hadamard</td><td>Element-wise product</td></tr>
+<tr><td>$\otimes$</td><td>Tensor</td><td>Tensor product</td></tr>
+<tr><td>$\oplus$</td><td>Direct sum</td><td>Receipt chaining</td></tr>
+<tr><td>$\sqcup$</td><td>Disjoint union</td><td>Coproduct</td></tr>
+<tr><td>$\langle \cdot, \cdot \rangle$</td><td>Inner product</td><td>Dot product</td></tr>
+<tr><td>$| \cdot |$</td><td>Norm</td><td>Euclidean norm</td></tr>
+<tr><td>$\llbracket \cdot \rrbracket$</td><td>Denotation</td><td>Semantic brackets</td></tr>
+</tbody></table>
+</div>
+<h3 id="relations"><a class="header" href="#relations">Relations</a></h3>
+<div class="table-wrapper"><table><thead><tr><th>Symbol</th><th>Name</th><th>Meaning</th></tr></thead><tbody>
+<tr><td>$\in$</td><td>Element of</td><td>Set membership</td></tr>
+<tr><td>$\subset$</td><td>Subset</td><td>Proper subset</td></tr>
+<tr><td>$\subseteq$</td><td>Subset or equal</td><td>Subset (possibly equal)</td></tr>
+<tr><td>$\cup$</td><td>Union</td><td>Set union</td></tr>
+<tr><td>$\cap$</td><td>Intersection</td><td>Set intersection</td></tr>
+<tr><td>$\to$</td><td>Maps to</td><td>Function arrow</td></tr>
+<tr><td>$\Rightarrow$</td><td>Implies</td><td>Logical implication</td></tr>
+<tr><td>$\iff$</td><td>If and only if</td><td>Equivalence</td></tr>
+<tr><td>$\approx$</td><td>Approximately</td><td>Approximation</td></tr>
+<tr><td>$\equiv$</td><td>Equivalent</td><td>Definition/equivalence</td></tr>
+<tr><td>$\preceq$</td><td>Precedes</td><td>Partial order</td></tr>
+<tr><td>$\perp$</td><td>Orthogonal</td><td>Perpendicular</td></tr>
+<tr><td>$\cong$</td><td>Isomorphic</td><td>Graph isomorphism</td></tr>
+</tbody></table>
+</div>
+<h3 id="complexity-classes"><a class="header" href="#complexity-classes">Complexity Classes</a></h3>
+<div class="table-wrapper"><table><thead><tr><th>Notation</th><th>Name</th><th>Example</th></tr></thead><tbody>
+<tr><td>$O(f(n))$</td><td>Big-O</td><td>Upper bound</td></tr>
+<tr><td>$\Omega(f(n))$</td><td>Big-Omega</td><td>Lower bound</td></tr>
+<tr><td>$\Theta(f(n))$</td><td>Big-Theta</td><td>Tight bound</td></tr>
+<tr><td>$o(f(n))$</td><td>Little-o</td><td>Strict upper bound</td></tr>
+<tr><td>$\omega(f(n))$</td><td>Little-omega</td><td>Strict lower bound</td></tr>
+</tbody></table>
+</div>
+<p><strong>Common Complexities:</strong></p>
+<ul>
+<li>$O(1)$: Constant</li>
+<li>$O(\log n)$: Logarithmic</li>
+<li>$O(n)$: Linear</li>
+<li>$O(n \log n)$: Linearithmic</li>
+<li>$O(n^2)$: Quadratic</li>
+<li>$O(b^d)$: Exponential</li>
+<li>$O(kd)$: Bilinear</li>
+</ul>
+<hr />
+<h2 id="10-theorem-reference"><a class="header" href="#10-theorem-reference">10. Theorem Reference</a></h2>
+<h3 id="chapter-1-field-theory"><a class="header" href="#chapter-1-field-theory">Chapter 1 (Field Theory)</a></h3>
+<div class="table-wrapper"><table><thead><tr><th>Theorem</th><th>Statement</th><th>Complexity</th></tr></thead><tbody>
+<tr><td>1.1</td><td>Exponential complexity lower bound</td><td>$\Omega(b^d)$</td></tr>
+<tr><td>1.2</td><td>Field computation complexity</td><td>$O(kd)$</td></tr>
+<tr><td>1.3</td><td>Speedup bound</td><td>$\mathcal{S} = b^d/(kd)$</td></tr>
+<tr><td>1.4</td><td>Posterior inference</td><td>$P(\phi|\mathcal{D}) \propto \exp(-\mathcal{H}[\phi])$</td></tr>
+<tr><td>1.6</td><td>Projection minimizes distance</td><td>$|\pi(s) - s|^2 = \min$</td></tr>
+<tr><td>1.9</td><td>High-dimensional near-orthogonality</td><td>$\mathbb{E}[\cos\theta] = 0$</td></tr>
+<tr><td>1.10</td><td>Hyperdimensional capacity</td><td>$C(d) \approx d/(2\log_2 d)$</td></tr>
+</tbody></table>
+</div>
+<h3 id="chapter-3-formal-foundations"><a class="header" href="#chapter-3-formal-foundations">Chapter 3 (Formal Foundations)</a></h3>
+<div class="table-wrapper"><table><thead><tr><th>Theorem</th><th>Statement</th><th>Property</th></tr></thead><tbody>
+<tr><td>3.2.1</td><td>Confluence (Diamond)</td><td>Deterministic reduction</td></tr>
+<tr><td>3.2.2</td><td>Strong normalization</td><td>All reductions terminate</td></tr>
+<tr><td>3.3.1</td><td>Lockchain integrity</td><td>Tamper detection</td></tr>
+<tr><td>3.4.1</td><td>Hook evaluation time</td><td>$O(|G| \times |Q| + |B| \times |\Pi| + |\Delta|)$</td></tr>
+<tr><td>3.5.1</td><td>Atomicity</td><td>All-or-nothing</td></tr>
+<tr><td>3.5.2</td><td>Consistency</td><td>Well-formed graphs</td></tr>
+<tr><td>3.5.3</td><td>Isolation</td><td>Serializable</td></tr>
+<tr><td>3.5.4</td><td>Durability</td><td>Git immutability</td></tr>
+</tbody></table>
+</div>
+<h3 id="chapter-4-predicate-algebra"><a class="header" href="#chapter-4-predicate-algebra">Chapter 4 (Predicate Algebra)</a></h3>
+<div class="table-wrapper"><table><thead><tr><th>Theorem</th><th>Statement</th><th>Property</th></tr></thead><tbody>
+<tr><td>1.1</td><td>Π forms monoid</td><td>Identity, associativity</td></tr>
+<tr><td>2.1</td><td>Compositionality</td><td>$\llbracket \pi_1 \land \pi_2 \rrbracket = \llbracket \pi_1 \rrbracket \land \llbracket \pi_2 \rrbracket$</td></tr>
+<tr><td>4.1-4.6</td><td>Predicate complexity</td><td>ASK: $O(|G|)$, etc.</td></tr>
+<tr><td>5.1</td><td>Non-repudiation</td><td>Ed25519 correctness</td></tr>
+<tr><td>6.1-6.2</td><td>Boolean algebra</td><td>Distributivity, De Morgan</td></tr>
+<tr><td>8.1-8.2</td><td>Type safety</td><td>Preservation, progress</td></tr>
+</tbody></table>
+</div>
+<h3 id="hyperdimensional-chapter"><a class="header" href="#hyperdimensional-chapter">Hyperdimensional Chapter</a></h3>
+<div class="table-wrapper"><table><thead><tr><th>Theorem</th><th>Statement</th><th>Property</th></tr></thead><tbody>
+<tr><td>1.1</td><td>Concentration of measure</td><td>$P(|\langle u,v \rangle| &gt; \epsilon) \leq 2e^{-d\epsilon^2/2}$</td></tr>
+<tr><td>1.2</td><td>Johnson-Lindenstrauss</td><td>$d \geq 8\log n/\epsilon^2$</td></tr>
+<tr><td>2.1</td><td>Binding preserves orthogonality</td><td>$\mathbb{E}[\langle u \circledast v, w \rangle] = 0$</td></tr>
+<tr><td>2.2</td><td>Approximate unbinding</td><td>$|w - v|_2 \leq C/\sqrt{d}$</td></tr>
+<tr><td>3.1</td><td>Similarity threshold accuracy</td><td>$P(\text{sim} \geq \tau) = \Phi((1-\tau)/\sigma)$</td></tr>
+<tr><td>4.1</td><td>Bounded error in cleanup</td><td>$\sigma &lt; \delta/(2\sqrt{2})$</td></tr>
+<tr><td>4.2</td><td>LSH retrieval accuracy</td><td>$P(\text{retrieve}) = 1 - (1-p_1^k)^L$</td></tr>
+<tr><td>5.1</td><td>Superposition capacity</td><td>$\mathbb{E}[\text{sim}] = 1/\sqrt{n}$</td></tr>
+<tr><td>5.2</td><td>Approximate invertibility</td><td>Error $\leq k \cdot C/\sqrt{d}$</td></tr>
+<tr><td>6.1</td><td>Strategic decision</td><td>$a^* = \arg\max \langle \Delta s(a), u \rangle$</td></tr>
+<tr><td>6.2</td><td>Field complexity reduction</td><td>$O(kd + nd)$ vs $O(kn \cdot C_{\text{hook}})$</td></tr>
+</tbody></table>
+</div>
+<h3 id="chapter-5-algorithms"><a class="header" href="#chapter-5-algorithms">Chapter 5 (Algorithms)</a></h3>
+<div class="table-wrapper"><table><thead><tr><th>Theorem</th><th>Statement</th><th>Complexity</th></tr></thead><tbody>
+<tr><td>1 (SHA3)</td><td>Collision resistance</td><td>$P \leq 2^{-256}$</td></tr>
+<tr><td>2 (WCET)</td><td>Total latency bound</td><td>$T \leq T_{\text{query}} + \sum T_{\text{pred}} + T_{\text{canon}}$</td></tr>
+<tr><td>3</td><td>Fast path speedup</td><td>$O(\log |S|)$ factor</td></tr>
+<tr><td>4</td><td>LRU hit rate</td><td>$\eta \approx 1 - (C/N)^{1-\alpha}$</td></tr>
+<tr><td>5</td><td>LRU amortized</td><td>$O(1)$</td></tr>
+<tr><td>6</td><td>Sandbox isolation</td><td>$\text{accessible}(c) \subseteq \text{granted}$</td></tr>
+<tr><td>7</td><td>Timeout guarantee</td><td>$T_{\text{exec}} \leq T_{\text{max}} + \epsilon$</td></tr>
+<tr><td>8</td><td>Memory limit</td><td>$P(M \leq M_{\text{limit}}) &gt; 0.999$</td></tr>
+<tr><td>9</td><td>Merkle verification</td><td>$O(\log n)$</td></tr>
+<tr><td>10</td><td>Merkle security</td><td>Requires collision</td></tr>
+<tr><td>11</td><td>Git anchoring</td><td>$P(\text{detect}) &gt; 1 - 2^{-160}$</td></tr>
+</tbody></table>
+</div>
+<h3 id="chapter-7-real-time"><a class="header" href="#chapter-7-real-time">Chapter 7 (Real-Time)</a></h3>
+<div class="table-wrapper"><table><thead><tr><th>Result</th><th>Statement</th><th>Value</th></tr></thead><tbody>
+<tr><td>RMS bound</td><td>$U \leq n(2^{1/n} - 1)$</td><td>0.7435 for $n=5$</td></tr>
+<tr><td>Chernoff</td><td>$P(L &gt; 2\mu s) &lt; \epsilon$</td><td>$&lt; 10^{-158}$</td></tr>
+<tr><td>FPGA timing</td><td>STA verified</td><td>120ns deterministic</td></tr>
+<tr><td>Determinism</td><td>Bit-for-bit reproducibility</td><td>Proven</td></tr>
+</tbody></table>
+</div>
+<hr />
+<h2 id="11-location-cross-reference"><a class="header" href="#11-location-cross-reference">11. Location Cross-Reference</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>Notation</th><th>Primary Definition</th><th>Also Used In</th></tr></thead><tbody>
+<tr><td>$\phi$</td><td>Ch 1.1 (Field)</td><td>Ch 3, 4, HD</td></tr>
+<tr><td>$\Pi$</td><td>Ch 4.1 (Predicate)</td><td>Ch 3, 5</td></tr>
+<tr><td>$\mathcal{H}[\phi]$</td><td>Ch 1.2 (IFT)</td><td>Ch 1.6 (self-*)</td></tr>
+<tr><td>$O(kd)$</td><td>Ch 1.1 (Complexity)</td><td>Ch 5, 6, HD</td></tr>
+<tr><td>$\circledast$</td><td>HD.2 (Binding)</td><td>HD.6 (hooks)</td></tr>
+<tr><td>$T[A]$</td><td>Ch 3.1 (Monad)</td><td>Ch 5.1 (ACID)</td></tr>
+<tr><td>$C_{\text{traditional}}$</td><td>Ch 8.1 (Cost)</td><td>Ch 8.3 (ROI)</td></tr>
+<tr><td>$\tau_i$</td><td>Ch 7.1 (Task)</td><td>Ch 7.2 (WCET)</td></tr>
+</tbody></table>
+</div>
+<hr />
+<h2 id="12-usage-examples-from-theorems"><a class="header" href="#12-usage-examples-from-theorems">12. Usage Examples from Theorems</a></h2>
+<h3 id="example-1-speedup-calculation"><a class="header" href="#example-1-speedup-calculation">Example 1: Speedup Calculation</a></h3>
+<p><strong>From Theorem 1.3:</strong>
+$$\mathcal{S}(35, 10, 100) = \frac{35^{10}}{100 \times 512} \approx 314\times$$</p>
+<p>Chess with 100 hooks, 512 dimensions achieves 314× speedup over tree search at depth 10.</p>
+<h3 id="example-2-hook-evaluation"><a class="header" href="#example-2-hook-evaluation">Example 2: Hook Evaluation</a></h3>
+<p><strong>From Theorem 3.4.1:</strong>
+$$\text{Time}(E(H, G)) = O(|G| \times |Q| + |B| \times |\Pi| + |\Delta|)$$</p>
+<p>For graph with 10k triples, 5 triple patterns, 100 bindings, 3 predicates:
+$$T \approx 10{,}000 \times 5 + 100 \times 3 + 10 = 50{,}310 \text{ ops}$$</p>
+<h3 id="example-3-hyperdimensional-similarity"><a class="header" href="#example-3-hyperdimensional-similarity">Example 3: Hyperdimensional Similarity</a></h3>
+<p><strong>From Theorem 3.1:</strong>
+For $\sigma = 0.1$, $\tau = 0.7$:
+$$P(\text{sim}(v, v+\epsilon) \geq 0.7) = \Phi(3) \approx 99.87%$$</p>
+<h3 id="example-4-economic-crossover"><a class="header" href="#example-4-economic-crossover">Example 4: Economic Crossover</a></h3>
+<p><strong>From Section 8.1.3:</strong>
+For $n = 50$ systems, $t = 5$ years:
+$$\text{Payback} = \frac{$3M}{$51.88M/\text{yr}} \approx 21 \text{ days}$$</p>
+<h3 id="example-5-real-time-wcrt"><a class="header" href="#example-5-real-time-wcrt">Example 5: Real-Time WCRT</a></h3>
+<p><strong>From Section 7.1.3:</strong>
+$$R_{\text{total}} = 225 + 95 + 440 + 50 + 475 = 1{,}285\text{ns} &lt; 2{,}000\text{ns}$$</p>
+<p>Tick-to-trade latency meets 2μs deadline at p99.</p>
+<hr />
+<h2 id="13-ai-swarm-execution-notes"><a class="header" href="#13-ai-swarm-execution-notes">13. AI Swarm Execution Notes</a></h2>
+<h3 id="parsing-guidelines"><a class="header" href="#parsing-guidelines">Parsing Guidelines</a></h3>
+<ol>
+<li>
+<p><strong>LaTeX/MathJax Compatibility:</strong></p>
+<ul>
+<li>All notation uses standard LaTeX syntax</li>
+<li>Inline math: <code>$...$</code></li>
+<li>Display math: <code>$$...$$</code></li>
+<li>Compatible with MathJax, KaTeX, pandoc</li>
+</ul>
+</li>
+<li>
+<p><strong>Symbol Disambiguation:</strong></p>
+<ul>
+<li>$\Pi$ (capital pi): Predicate type (Ch 4) vs product (Ch 8)</li>
+<li>$\pi$ (lowercase pi): Projection operator (Ch 1) vs predicate instance (Ch 4)</li>
+<li>Context determines meaning</li>
+</ul>
+</li>
+<li>
+<p><strong>Complexity Notation:</strong></p>
+<ul>
+<li>Always use Big-O family: $O(\cdot)$, $\Omega(\cdot)$, $\Theta(\cdot)$</li>
+<li>Specify variables: $O(n)$ vs $O(kd)$</li>
+</ul>
+</li>
+<li>
+<p><strong>Probability Notation:</strong></p>
+<ul>
+<li>$P(\text{event})$: Probability</li>
+<li>$\mathbb{E}[X]$: Expected value</li>
+<li>$\text{Var}[X]$: Variance</li>
+<li>$\Pr[\text{event}]$: Alternative probability notation</li>
+</ul>
+</li>
+<li>
+<p><strong>Set Theory:</strong></p>
+<ul>
+<li>$\in$: Element of</li>
+<li>$\subset$: Proper subset</li>
+<li>$\sqcup$: Disjoint union</li>
+<li>$\mathcal{P}(S)$: Power set</li>
+</ul>
+</li>
+</ol>
+<h3 id="theorem-verification"><a class="header" href="#theorem-verification">Theorem Verification</a></h3>
+<p>When verifying theorems:</p>
+<ol>
+<li>Locate theorem number (e.g., Theorem 3.4.1)</li>
+<li>Check preconditions (domain constraints)</li>
+<li>Apply proof steps sequentially</li>
+<li>Verify complexity bounds empirically if needed</li>
+</ol>
+<h3 id="cross-validation"><a class="header" href="#cross-validation">Cross-Validation</a></h3>
+<p>For multi-chapter notation:</p>
+<ol>
+<li>Check primary definition (this reference)</li>
+<li>Verify usage in target chapter</li>
+<li>Ensure dimensional consistency</li>
+<li>Validate units (time: ns/ms, memory: MB/GB, etc.)</li>
+</ol>
+<hr />
+<h2 id="14-notation-change-log"><a class="header" href="#14-notation-change-log">14. Notation Change Log</a></h2>
+<p><strong>Version 1.0 (2025-10-01):</strong></p>
+<ul>
+<li>Initial comprehensive reference</li>
+<li>Covers Chapters 1, 3, 4, HD, 5, 6, 7, 8</li>
+<li>200+ symbols indexed</li>
+<li>30+ theorems cross-referenced</li>
+</ul>
+<p><strong>Future Additions:</strong></p>
+<ul>
+<li>Chapter 2 (Related Work) comparative notation</li>
+<li>Chapter 9 (Blue Ocean) strategic positioning metrics</li>
+<li>Chapter 10 (KGEN) IPO generator economics</li>
+<li>Chapters 11-13 (Enterprise applications)</li>
+<li>Appendix A (Complete proofs) detailed derivations</li>
+</ul>
+<hr />
+<h2 id="15-bibliography-for-notation-standards"><a class="header" href="#15-bibliography-for-notation-standards">15. Bibliography for Notation Standards</a></h2>
+<ol>
+<li><strong>W3C RDF 1.1</strong>: Triple notation $(s, p, o)$</li>
+<li><strong>SPARQL 1.1</strong>: Query notation $Q$, bindings $B$</li>
+<li><strong>SHACL</strong>: Shape validation $S$</li>
+<li><strong>Category Theory</strong>: Monad $T[A]$, functor notation</li>
+<li><strong>Type Theory</strong>: Dependent types $\Sigma$, $\Pi$</li>
+<li><strong>Probability Theory</strong>: Standard notation $P$, $\mathbb{E}$, $\text{Var}$</li>
+<li><strong>Information Theory</strong>: Enßlin IFT Hamiltonian $\mathcal{H}[\phi]$</li>
+<li><strong>Vector Symbolic Architectures</strong>: Kanerva HDC $\circledast$, $\odot$</li>
+<li><strong>Real-Time Systems</strong>: Liu &amp; Layland task model $\tau_i$</li>
+<li><strong>Economics</strong>: Cobb-Douglas production function</li>
+</ol>
+<hr />
+<p><strong>End of Notation Reference</strong></p>
+<p>This master index ensures AI swarms can parse, verify, and execute all mathematical notation in the KGC mdBook with zero ambiguity. For implementation details, consult the corresponding chapter sections referenced in each entry.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="appendix-c-metrics.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="glossary.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="appendix-c-metrics.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="glossary.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

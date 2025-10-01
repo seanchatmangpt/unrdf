@@ -1,0 +1,101 @@
+{
+  "validation_date": "2025-10-01",
+  "test_suite": "test/e2e/cleanroom/integration.test.mjs",
+  "validation_protocol": "Agent Validation Protocol (OTEL + Tests)",
+  "results": {
+    "overall": {
+      "test_files": 1,
+      "tests_total": 19,
+      "tests_passed": 6,
+      "tests_failed": 13,
+      "pass_rate": "31.6%",
+      "duration_seconds": 120
+    },
+    "by_priority": {
+      "p0_critical": {
+        "total": 4,
+        "passed": 0,
+        "failed": 4,
+        "pass_rate": "0%",
+        "status": "FAILING"
+      },
+      "p1_enhanced": {
+        "total": 9,
+        "passed": 0,
+        "failed": 9,
+        "pass_rate": "0%",
+        "status": "FAILING"
+      },
+      "p2_edge_cases": {
+        "total": 6,
+        "passed": 0,
+        "failed": 6,
+        "pass_rate": "0%",
+        "status": "FAILING"
+      }
+    },
+    "80_20_evaluation": {
+      "p0_target": "100%",
+      "p0_actual": "0%",
+      "total_target": "60%+",
+      "total_actual": "31.6%",
+      "otel_infrastructure": "Ready",
+      "otel_traces": "Not verified",
+      "status": "FAILING"
+    }
+  },
+  "blockers": [
+    {
+      "id": "blocker-1",
+      "priority": "HIGH",
+      "title": "Missing SPARQL Hook Fixtures",
+      "impact": "58% of failures",
+      "required_files": [
+        "test/e2e/cleanroom/fixtures/health-check.rq",
+        "test/e2e/cleanroom/fixtures/validation-hook.rq",
+        "test/e2e/cleanroom/fixtures/veto-hook.rq"
+      ]
+    },
+    {
+      "id": "blocker-2",
+      "priority": "MEDIUM",
+      "title": "Policy Pack Schema Mismatch",
+      "impact": "26% of failures",
+      "required_fields": ["id", "meta", "config", "hooks"]
+    },
+    {
+      "id": "blocker-3",
+      "priority": "LOW",
+      "title": "Sidecar Integration Gap",
+      "impact": "16% of failures",
+      "options": ["Start sidecar in test setup", "Mock sidecar", "Skip sidecar tests"]
+    }
+  ],
+  "otel_status": {
+    "jaeger_container": "Started successfully",
+    "jaeger_ports": [14268, 16686, 14250],
+    "jaeger_health": "OK",
+    "spans_generated": 0,
+    "trace_export": "Unknown",
+    "instrumentation": "Present in CLI code"
+  },
+  "evidence": {
+    "test_log": "/tmp/otel-validation.log",
+    "report": "hive/tester/otel-final-validation.md",
+    "successful_steps": 41,
+    "failed_steps": 109,
+    "step_success_ratio": "27.3%"
+  },
+  "final_verdict": {
+    "status": "VALIDATION FAILED",
+    "recommendation": "DO NOT PROCEED to production",
+    "reason": "P0: 0/4 (0%), Total: 6/19 (31.6%), below 60% target"
+  },
+  "next_steps": [
+    "Create missing SPARQL fixture files",
+    "Fix policy pack schema",
+    "Address sidecar integration",
+    "Re-run validation",
+    "Achieve 60%+ pass rate"
+  ]
+}

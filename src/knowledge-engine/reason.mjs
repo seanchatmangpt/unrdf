@@ -4,7 +4,9 @@
  */
 
 import { Parser, Store, Writer } from 'n3';
-import { n3reasoner } from 'eyereasoner';
+// CommonJS module compatibility
+import eyereasonerPkg from 'eyereasoner';
+const { n3reasoner } = eyereasonerPkg;
 
 /**
  * Run forward-chaining reasoning with N3 rules.

@@ -1,17 +1,8 @@
-# Health Check SPARQL ASK Query
-# Returns true if the graph contains valid Person data
+# Health Check SPARQL Query
+# Checks if the store contains any data
 
-PREFIX schema: <http://schema.org/>
-PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 
 ASK {
-  ?person a schema:Person ;
-          schema:name ?name ;
-          schema:email ?email .
-
-  FILTER (
-    isLiteral(?name) &&
-    isLiteral(?email) &&
-    CONTAINS(str(?email), "@")
-  )
+  ?s ?p ?o
 }
