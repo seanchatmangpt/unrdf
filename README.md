@@ -1,8 +1,8 @@
-# unrdf v2.0.0
+# unrdf v2.1.0
 
 **🌊 Blue Ocean Innovation: Autonomic Knowledge Management System**
 
-![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)
+![Version](https://img.shields.io/badge/version-2.1.0-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Node](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)
 ![Production](https://img.shields.io/badge/production-ready-green.svg)
