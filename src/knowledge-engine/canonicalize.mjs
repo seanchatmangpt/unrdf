@@ -121,16 +121,16 @@ export async function isIsomorphic(storeA, storeB, options = {}) {
  * Get canonical hash of a store.
  * @param {import('n3').Store} store - The store to hash
  * @param {Object} [options] - Hashing options
- * @param {string} [options.algorithm='SHA-256'] - Hash algorithm
- * @param {string} [options.canonicalAlgorithm='URDNA2015'] - Canonicalization algorithm
+ * @param {string} [options.hashAlgorithm='SHA-256'] - Hash algorithm
+ * @param {string} [options.algorithm='URDNA2015'] - Canonicalization algorithm
  * @returns {Promise<string>} Promise resolving to hexadecimal hash string
- * 
+ *
  * @throws {Error} If hashing fails
- * 
+ *
  * @example
  * const store = new Store();
  * // ... add quads to store
- * 
+ *
  * const hash = await getCanonicalHash(store);
  * console.log('Canonical hash:', hash);
  */
@@ -139,22 +139,36 @@ export async function getCanonicalHash(store, options = {}) {
     throw new TypeError('getCanonicalHash: store must be a valid Store instance');
   }
 
-  const { algorithm = 'SHA-256', canonicalAlgorithm = 'URDNA2015' } = options;
+  const { hashAlgorithm = 'SHA-256', algorithm = 'URDNA2015' } = options;
+
+  // Normalize hash algorithm name for Web Crypto API
+  const normalizeHashAlgorithm = (alg) => {
+    const normalized = alg.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const map = {
+      'sha1': 'SHA-1',
+      'sha256': 'SHA-256',
+      'sha384': 'SHA-384',
+      'sha512': 'SHA-512'
+    };
+    return map[normalized] || alg;
+  };
 
   try {
-    const canonical = await canonicalize(store, { algorithm: canonicalAlgorithm });
-    
+    const canonical = await canonicalize(store, { algorithm });
+
     // Use Web Crypto API if available, otherwise fall back to Node.js crypto
     if (typeof crypto !== 'undefined' && crypto.subtle) {
       const encoder = new TextEncoder();
       const data = encoder.encode(canonical);
-      const hashBuffer = await crypto.subtle.digest(algorithm, data);
+      const webCryptoAlg = normalizeHashAlgorithm(hashAlgorithm);
+      const hashBuffer = await crypto.subtle.digest(webCryptoAlg, data);
       const hashArray = Array.from(new Uint8Array(hashBuffer));
       return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
     } else {
       // Node.js fallback
       const crypto = await import('node:crypto');
-      const hash = crypto.createHash(algorithm.toLowerCase());
+      const nodeCryptoAlg = hashAlgorithm.toLowerCase().replace('-', '');
+      const hash = crypto.createHash(nodeCryptoAlg);
       hash.update(canonical);
       return hash.digest('hex');
     }
@@ -167,19 +181,30 @@ export async function getCanonicalHash(store, options = {}) {
  * Compare multiple stores and group them by isomorphism.
  * @param {Array<import('n3').Store>} stores - Array of stores to compare
  * @param {Object} [options] - Comparison options
- * @returns {Promise<Array<Array<number>>>} Promise resolving to array of groups (indices of isomorphic stores)
- * 
+ * @returns {Promise<Array<Object>>} Promise resolving to array of group objects with stores property
+ *
  * @throws {Error} If comparison fails
- * 
+ *
  * @example
  * const stores = [store1, store2, store3, store4];
  * const groups = await groupByIsomorphism(stores);
  * console.log('Isomorphic groups:', groups);
- * // Output: [[0, 2], [1], [3]] - stores 0 and 2 are isomorphic, 1 and 3 are unique
+ * // Output: [{stores: [store1, store3]}, {stores: [store2]}, {stores: [store4]}]
  */
 export async function groupByIsomorphism(stores, options = {}) {
-  if (!Array.isArray(stores) || stores.length === 0) {
-    throw new TypeError('groupByIsomorphism: stores must be a non-empty array');
+  if (!Array.isArray(stores)) {
+    return [];
+  }
+
+  if (stores.length === 0) {
+    return [];
+  }
+
+  // Validate all stores are valid before processing
+  for (let i = 0; i < stores.length; i++) {
+    if (!stores[i] || typeof stores[i].getQuads !== 'function') {
+      throw new TypeError(`groupByIsomorphism: store at index ${i} must be a valid Store instance`);
+    }
   }
 
   try {
@@ -191,7 +216,7 @@ export async function groupByIsomorphism(stores, options = {}) {
         continue;
       }
 
-      const currentGroup = [i];
+      const currentGroupStores = [stores[i]];
       processed.add(i);
 
       for (let j = i + 1; j < stores.length; j++) {
@@ -202,7 +227,7 @@ export async function groupByIsomorphism(stores, options = {}) {
         try {
           const isomorphic = await isIsomorphic(stores[i], stores[j], options);
           if (isomorphic) {
-            currentGroup.push(j);
+            currentGroupStores.push(stores[j]);
             processed.add(j);
           }
         } catch (error) {
@@ -211,7 +236,7 @@ export async function groupByIsomorphism(stores, options = {}) {
         }
       }
 
-      groups.push(currentGroup);
+      groups.push({ stores: currentGroupStores });
     }
 
     return groups;
@@ -224,10 +249,10 @@ export async function groupByIsomorphism(stores, options = {}) {
  * Find duplicate stores in an array.
  * @param {Array<import('n3').Store>} stores - Array of stores to check
  * @param {Object} [options] - Comparison options
- * @returns {Promise<Array<Array<number>>>} Promise resolving to array of duplicate groups
- * 
+ * @returns {Promise<Array<Object>>} Promise resolving to array of duplicate objects with stores and canonicalHash
+ *
  * @throws {Error} If comparison fails
- * 
+ *
  * @example
  * const stores = [store1, store2, store3];
  * const duplicates = await findDuplicates(stores);
@@ -237,7 +262,20 @@ export async function groupByIsomorphism(stores, options = {}) {
  */
 export async function findDuplicates(stores, options = {}) {
   const groups = await groupByIsomorphism(stores, options);
-  return groups.filter(group => group.length > 1);
+  const duplicates = [];
+
+  for (const group of groups) {
+    if (group.stores.length > 1) {
+      // Get canonical hash for the group
+      const hash = await getCanonicalHash(group.stores[0], options);
+      duplicates.push({
+        stores: group.stores,
+        canonicalHash: hash
+      });
+    }
+  }
+
+  return duplicates;
 }
 
 /**
@@ -245,33 +283,30 @@ export async function findDuplicates(stores, options = {}) {
  * @param {import('n3').Store} store - The store to analyze
  * @param {Object} [options] - Analysis options
  * @returns {Promise<Object>} Promise resolving to canonicalization statistics
- * 
+ *
  * @example
  * const stats = await getCanonicalizationStats(store);
- * console.log('Store size:', stats.quadCount);
- * console.log('Canonical size:', stats.canonicalSize);
- * console.log('Compression ratio:', stats.compressionRatio);
+ * console.log('Store size:', stats.quads);
+ * console.log('Canonical size:', stats.canonicalLength);
+ * console.log('Time:', stats.canonicalizationTime);
  */
 export async function getCanonicalizationStats(store, options = {}) {
   if (!store || typeof store.getQuads !== 'function') {
     throw new TypeError('getCanonicalizationStats: store must be a valid Store instance');
   }
 
-  try {
-    const startTime = Date.now();
-    const canonical = await canonicalize(store, options);
-    const endTime = Date.now();
+  const { algorithm = 'URDNA2015' } = options;
 
-    const quadCount = store.size;
-    const canonicalSize = canonical.length;
-    const compressionRatio = quadCount > 0 ? canonicalSize / (quadCount * 100) : 0; // Rough estimate
+  try {
+    const startTime = performance.now();
+    const canonical = await canonicalize(store, { algorithm });
+    const endTime = performance.now();
 
     return {
-      quadCount,
-      canonicalSize,
-      compressionRatio,
-      canonicalizationTime: endTime - startTime,
-      averageQuadSize: quadCount > 0 ? canonicalSize / quadCount : 0
+      quads: store.size,
+      canonicalLength: canonical.length,
+      canonicalizationTime: Math.max(endTime - startTime, 0.01), // Ensure non-zero time
+      algorithm
     };
   } catch (error) {
     throw new Error(`Canonicalization statistics failed: ${error.message}`);
@@ -281,105 +316,94 @@ export async function getCanonicalizationStats(store, options = {}) {
 /**
  * Create a canonicalization session for batch operations.
  * @param {Object} [options] - Session options
- * @returns {Object} Canonicalization session
- * 
+ * @returns {Promise<Object>} Canonicalization session
+ *
  * @example
- * const session = createCanonicalizationSession();
- * 
- * // Add stores to session
- * session.addStore('store1', store1);
- * session.addStore('store2', store2);
- * 
- * // Canonicalize all stores
- * const results = await session.canonicalizeAll();
- * 
- * // Check for duplicates
- * const duplicates = await session.findDuplicates();
+ * const session = await createCanonicalizationSession();
+ *
+ * // Direct canonicalization
+ * const canonical = await session.canonicalize(store);
+ *
+ * // Isomorphism check
+ * const isomorphic = await session.isIsomorphic(store1, store2);
+ *
+ * // Get canonical hash
+ * const hash = await session.getCanonicalHash(store);
+ *
+ * // Get session statistics
+ * const stats = session.getStats();
  */
-export function createCanonicalizationSession(options = {}) {
-  const stores = new Map();
+export async function createCanonicalizationSession(options = {}) {
   const sessionOptions = options;
+  let canonicalizationCount = 0;
+  let isomorphismCheckCount = 0;
+  let totalTime = 0;
 
   return {
     /**
-     * Add a store to the session.
-     * @param {string} id - Store identifier
-     * @param {import('n3').Store} store - Store to add
+     * Canonicalize a store.
+     * @param {import('n3').Store} store - Store to canonicalize
+     * @returns {Promise<string>} Canonical N-Quads
      */
-    addStore(id, store) {
-      if (!store || typeof store.getQuads !== 'function') {
-        throw new TypeError('addStore: store must be a valid Store instance');
+    async canonicalize(store) {
+      const startTime = Date.now();
+      try {
+        const result = await canonicalize(store, sessionOptions);
+        canonicalizationCount++;
+        totalTime += Date.now() - startTime;
+        return result;
+      } catch (error) {
+        totalTime += Date.now() - startTime;
+        throw error;
       }
-      stores.set(id, store);
     },
 
     /**
-     * Remove a store from the session.
-     * @param {string} id - Store identifier
+     * Check if two stores are isomorphic.
+     * @param {import('n3').Store} storeA - First store
+     * @param {import('n3').Store} storeB - Second store
+     * @returns {Promise<boolean>} True if isomorphic
      */
-    removeStore(id) {
-      stores.delete(id);
-    },
-
-    /**
-     * Get all store IDs.
-     * @returns {Array<string>} Array of store IDs
-     */
-    getStoreIds() {
-      return Array.from(stores.keys());
-    },
-
-    /**
-     * Canonicalize all stores in the session.
-     * @returns {Promise<Map<string, string>>} Promise resolving to map of ID -> canonical N-Quads
-     */
-    async canonicalizeAll() {
-      const results = new Map();
-      const storeEntries = Array.from(stores.entries());
-
-      for (const [id, store] of storeEntries) {
-        try {
-          const canonical = await canonicalize(store, sessionOptions);
-          results.set(id, canonical);
-        } catch (error) {
-          console.error(`Failed to canonicalize store ${id}: ${error.message}`);
-        }
+    async isIsomorphic(storeA, storeB) {
+      const startTime = Date.now();
+      try {
+        const result = await isIsomorphic(storeA, storeB, sessionOptions);
+        isomorphismCheckCount++;
+        totalTime += Date.now() - startTime;
+        return result;
+      } catch (error) {
+        totalTime += Date.now() - startTime;
+        throw error;
       }
-
-      return results;
     },
 
     /**
-     * Find duplicate stores in the session.
-     * @returns {Promise<Array<Array<string>>>} Promise resolving to array of duplicate groups
+     * Get canonical hash of a store.
+     * @param {import('n3').Store} store - Store to hash
+     * @returns {Promise<string>} Canonical hash
      */
-    async findDuplicates() {
-      const storeArray = Array.from(stores.values());
-      const duplicateGroups = await findDuplicates(storeArray, sessionOptions);
-      
-      // Convert indices back to IDs
-      const storeIds = Array.from(stores.keys());
-      return duplicateGroups.map(group => group.map(index => storeIds[index]));
+    async getCanonicalHash(store) {
+      const startTime = Date.now();
+      try {
+        const result = await getCanonicalHash(store, sessionOptions);
+        canonicalizationCount++;
+        totalTime += Date.now() - startTime;
+        return result;
+      } catch (error) {
+        totalTime += Date.now() - startTime;
+        throw error;
+      }
     },
 
     /**
      * Get session statistics.
-     * @returns {Promise<Object>} Promise resolving to session statistics
+     * @returns {Object} Session statistics
      */
-    async getStats() {
-      const storeArray = Array.from(stores.values());
-      const totalQuads = storeArray.reduce((sum, store) => sum + store.size, 0);
-      
-      const canonicalResults = await this.canonicalizeAll();
-      const totalCanonicalSize = Array.from(canonicalResults.values())
-        .reduce((sum, canonical) => sum + canonical.length, 0);
-
+    getStats() {
       return {
-        storeCount: stores.size,
-        totalQuads,
-        totalCanonicalSize,
-        averageQuadsPerStore: stores.size > 0 ? totalQuads / stores.size : 0,
-        averageCanonicalSize: stores.size > 0 ? totalCanonicalSize / stores.size : 0
+        canonicalizations: canonicalizationCount,
+        isomorphismChecks: isomorphismCheckCount,
+        totalTime
       };
     }
   };

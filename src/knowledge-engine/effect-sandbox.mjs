@@ -188,9 +188,15 @@ export class EffectSandbox {
    */
   async _executeInVM2(effect, context, executionId, options) {
     try {
-      // Dynamic import of vm2
-      const { VM } = await import('vm2');
-      
+      // Dynamic import of vm2 (wrapped in try-catch for browser compatibility)
+      let VM;
+      try {
+        const vm2Module = await import('vm2');
+        VM = vm2Module.VM;
+      } catch (err) {
+        throw new Error('vm2 not available - use Worker-based execution instead');
+      }
+
       const vm = new VM({
         timeout: this.config.timeout,
         sandbox: {

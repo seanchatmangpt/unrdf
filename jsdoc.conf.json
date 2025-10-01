@@ -1,0 +1,51 @@
+{
+  "source": {
+    "include": [
+      "./src/",
+      "./README.md"
+    ],
+    "includePattern": "\\.(mjs|js)$",
+    "excludePattern": "(node_modules/|dist/|coverage/|test/)"
+  },
+  "opts": {
+    "destination": "./docs/api/",
+    "recurse": true,
+    "template": "node_modules/docdash"
+  },
+  "plugins": [
+    "plugins/markdown"
+  ],
+  "templates": {
+    "cleverLinks": false,
+    "monospaceLinks": false,
+    "default": {
+      "outputSourceFiles": true,
+      "includeDate": true,
+      "useLongnameInNav": true
+    }
+  },
+  "docdash": {
+    "static": true,
+    "sort": true,
+    "search": true,
+    "collapse": false,
+    "wrap": true,
+    "typedefs": true,
+    "removeQuotes": "none",
+    "menu": {
+      "KGC Sidecar": {
+        "href": "https://github.com/seanchatmangpt/unrdf",
+        "class": "menu-item",
+        "id": "home_link"
+      }
+    }
+  },
+  "tags": {
+    "allowUnknownTags": true,
+    "dictionaries": ["jsdoc", "closure"]
+  },
+  "sourceType": "module",
+  "recurseDepth": 10,
+  "readme": "./README.md",
+  "package": "./package.json"
+}

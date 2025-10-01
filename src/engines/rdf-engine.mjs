@@ -9,7 +9,7 @@ import { QueryEngine } from '@comunica/query-sparql';
 import rdf from 'rdf-ext';
 import SHACLValidator from 'rdf-validate-shacl';
 import rdfCanonize from 'rdf-canonize';
-import { n3reasoner } from 'eyereasoner';
+import eyereasoner from 'eyereasoner';
 import jsonld from 'jsonld';
 
 const { namedNode, literal, quad, blankNode, defaultGraph } = DataFactory;
@@ -105,18 +105,28 @@ export class RdfEngine {
   async query(sparql) {
     const queryType = sparql.trim().toUpperCase().split(/\s+/)[0];
     const source = { type: 'rdfjsSource', value: this.store };
+    const context = { sources: [source] };
 
     switch (queryType) {
       case 'SELECT':
-        const bindingsStream = await this.comunicaEngine.queryBindings(sparql, { sources: [source] });
+        const bindingsStream = await this.comunicaEngine.queryBindings(sparql, context);
         const bindings = await bindingsStream.toArray();
         // Convert from RDF/JS terms to simple values
         return bindings.map(b => Object.fromEntries([...b].map(([k, v]) => [k.value, v.value])));
       case 'ASK':
-        return this.comunicaEngine.queryBoolean(sparql, { sources: [source] });
+        return this.comunicaEngine.queryBoolean(sparql, context);
       case 'CONSTRUCT':
-        const quadStream = await this.comunicaEngine.queryQuads(sparql, { sources: [source] });
+        const quadStream = await this.comunicaEngine.queryQuads(sparql, context);
         return new Store(await quadStream.toArray());
+      case 'PREFIX':
+        // Handle PREFIX declarations by treating as SELECT query
+        const selectQuery = sparql.replace(/^PREFIX\s+[^\s]+\s+<[^>]+>\s*/g, '').trim();
+        if (selectQuery.toUpperCase().startsWith('SELECT')) {
+          const bindingsStream = await this.comunicaEngine.queryBindings(sparql, context);
+          const bindings = await bindingsStream.toArray();
+          return bindings.map(b => Object.fromEntries([...b].map(([k, v]) => [k.value, v.value])));
+        }
+        throw new Error(`Query type "${queryType}" is not supported. Use the TransactionManager for writes.`);
       default:
         throw new Error(`Query type "${queryType}" is not supported. Use the TransactionManager for writes.`);
     }
@@ -163,7 +173,7 @@ export class RdfEngine {
   async reason(dataStore, rules) {
     const rulesN3 = typeof rules === "string" ? rules : this.serializeTurtle(rules);
     const dataN3 = this.serializeTurtle(dataStore);
-    const inferredN3 = await n3reasoner(dataN3, rulesN3);
+    const inferredN3 = await eyereasoner.queryOnce(dataN3, rulesN3);
     return new Store(new Parser().parse(inferredN3));
   }
 
