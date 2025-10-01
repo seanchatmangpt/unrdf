@@ -59,6 +59,9 @@ importers:
       '@testcontainers/redis':
         specifier: ^10.0.0
         version: 10.28.0
+      citty:
+        specifier: ^0.1.6
+        version: 0.1.6
       eyereasoner:
         specifier: ^1.0.0
         version: 1.14.1(@rdfjs/types@2.0.1)

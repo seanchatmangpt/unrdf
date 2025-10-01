@@ -1,0 +1,10 @@
+# Pre-Hook 2: Validate email format
+PREFIX schema: <http://schema.org/>
+
+ASK {
+  # All emails must contain @ symbol
+  NOT EXISTS {
+    ?person schema:email ?email .
+    FILTER (!CONTAINS(str(?email), "@"))
+  }
+}

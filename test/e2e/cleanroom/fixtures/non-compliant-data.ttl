@@ -1,0 +1,7 @@
+@prefix ex: <http://example.org/> .
+@prefix schema: <http://schema.org/> .
+
+# Non-compliant: Missing required fields for policy
+ex:badPerson a schema:Person ;
+    schema:name "Bad Data" .
+    # Missing email, age, jobTitle - violates compliance policy

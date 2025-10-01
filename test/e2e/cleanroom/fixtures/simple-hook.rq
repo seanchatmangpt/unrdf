@@ -1,0 +1,8 @@
+# Simple Hook for Performance Testing
+# Just checks if any data exists
+
+PREFIX schema: <http://schema.org/>
+
+ASK {
+  ?s ?p ?o .
+}

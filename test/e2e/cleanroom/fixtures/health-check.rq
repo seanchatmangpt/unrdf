@@ -1,0 +1,17 @@
+# Health Check SPARQL ASK Query
+# Returns true if the graph contains valid Person data
+
+PREFIX schema: <http://schema.org/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+ASK {
+  ?person a schema:Person ;
+          schema:name ?name ;
+          schema:email ?email .
+
+  FILTER (
+    isLiteral(?name) &&
+    isLiteral(?email) &&
+    CONTAINS(str(?email), "@")
+  )
+}

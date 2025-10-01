@@ -103,6 +103,7 @@
     "@rdfjs/to-ntriples": "^2.0.0",
     "@testcontainers/postgresql": "^10.0.0",
     "@testcontainers/redis": "^10.0.0",
+    "citty": "^0.1.6",
     "eyereasoner": "^1.0.0",
     "jsonld": "^8.2.0",
     "n3": "^1.17.0",
