@@ -161,13 +161,11 @@ export class TestcontainersManager {
 
     console.log('🌐 Creating testcontainers network...');
     try {
-      // Create network using the correct testcontainers API
-      this.network = await new Network()
-        .withName(testcontainersConfig.network.name)
-        .withDriver(testcontainersConfig.network.driver)
-        .start();
+      // Create network using testcontainers v10 API
+      // Network constructor does not support .withName() or .withDriver() in v10
+      this.network = await new Network().start();
 
-      console.log(`✅ Network created: ${testcontainersConfig.network.name}`);
+      console.log(`✅ Network created successfully`);
       return this.network;
     } catch (error) {
       console.warn('⚠️ Failed to create custom network, using default network:', error.message);
@@ -186,15 +184,19 @@ export class TestcontainersManager {
     }
 
     console.log('🐘 Starting PostgreSQL container...');
-    const postgres = await new PostgreSqlContainer(testcontainersConfig.postgres.image)
+    let container = new PostgreSqlContainer(testcontainersConfig.postgres.image)
       .withDatabase(testcontainersConfig.postgres.database)
       .withUsername(testcontainersConfig.postgres.username)
       .withPassword(testcontainersConfig.postgres.password)
       .withExposedPorts(testcontainersConfig.postgres.port)
-      .withEnvironment(testcontainersConfig.postgres.environment)
-      .withNetwork(this.network)
-      .withNetworkAliases('postgres')
-      .start();
+      .withEnvironment(testcontainersConfig.postgres.environment);
+
+    // Only set network if it exists
+    if (this.network) {
+      container = container.withNetwork(this.network).withNetworkAliases('postgres');
+    }
+
+    const postgres = await container.start();
 
     this.containers.set('postgres', postgres);
     console.log(`✅ PostgreSQL started on port ${postgres.getMappedPort(5432)}`);
@@ -210,12 +212,16 @@ export class TestcontainersManager {
     }
 
     console.log('🔴 Starting Redis container...');
-    const redis = await new RedisContainer(testcontainersConfig.redis.image)
+    let container = new RedisContainer(testcontainersConfig.redis.image)
       .withExposedPorts(testcontainersConfig.redis.port)
-      .withCommand(testcontainersConfig.redis.command)
-      .withNetwork(this.network)
-      .withNetworkAliases('redis')
-      .start();
+      .withCommand(testcontainersConfig.redis.command);
+
+    // Only set network if it exists
+    if (this.network) {
+      container = container.withNetwork(this.network).withNetworkAliases('redis');
+    }
+
+    const redis = await container.start();
 
     this.containers.set('redis', redis);
     console.log(`✅ Redis started on port ${redis.getMappedPort(6379)}`);
@@ -231,12 +237,16 @@ export class TestcontainersManager {
     }
 
     console.log('🔍 Starting Jaeger container...');
-    const jaeger = await new GenericContainer(testcontainersConfig.jaeger.image)
+    let container = new GenericContainer(testcontainersConfig.jaeger.image)
       .withExposedPorts(...testcontainersConfig.jaeger.ports)
-      .withEnvironment(testcontainersConfig.jaeger.environment)
-      .withNetwork(this.network)
-      .withNetworkAliases('jaeger')
-      .start();
+      .withEnvironment(testcontainersConfig.jaeger.environment);
+
+    // Only set network if it exists
+    if (this.network) {
+      container = container.withNetwork(this.network).withNetworkAliases('jaeger');
+    }
+
+    const jaeger = await container.start();
 
     this.containers.set('jaeger', jaeger);
     console.log(`✅ Jaeger started on ports ${testcontainersConfig.jaeger.ports.join(', ')}`);
@@ -252,11 +262,15 @@ export class TestcontainersManager {
     }
 
     console.log('📊 Starting Prometheus container...');
-    const prometheus = await new GenericContainer(testcontainersConfig.prometheus.image)
-      .withExposedPorts(testcontainersConfig.prometheus.port)
-      .withNetwork(this.network)
-      .withNetworkAliases('prometheus')
-      .start();
+    let container = new GenericContainer(testcontainersConfig.prometheus.image)
+      .withExposedPorts(testcontainersConfig.prometheus.port);
+
+    // Only set network if it exists
+    if (this.network) {
+      container = container.withNetwork(this.network).withNetworkAliases('prometheus');
+    }
+
+    const prometheus = await container.start();
 
     this.containers.set('prometheus', prometheus);
     console.log(`✅ Prometheus started on port ${prometheus.getMappedPort(9090)}`);
@@ -272,12 +286,16 @@ export class TestcontainersManager {
     }
 
     console.log('📈 Starting Grafana container...');
-    const grafana = await new GenericContainer(testcontainersConfig.grafana.image)
+    let container = new GenericContainer(testcontainersConfig.grafana.image)
       .withExposedPorts(testcontainersConfig.grafana.port)
-      .withEnvironment(testcontainersConfig.grafana.environment)
-      .withNetwork(this.network)
-      .withNetworkAliases('grafana')
-      .start();
+      .withEnvironment(testcontainersConfig.grafana.environment);
+
+    // Only set network if it exists
+    if (this.network) {
+      container = container.withNetwork(this.network).withNetworkAliases('grafana');
+    }
+
+    const grafana = await container.start();
 
     this.containers.set('grafana', grafana);
     console.log(`✅ Grafana started on port ${grafana.getMappedPort(3000)}`);
@@ -293,13 +311,17 @@ export class TestcontainersManager {
     }
 
     console.log('🗄️ Starting MinIO container...');
-    const minio = await new GenericContainer(testcontainersConfig.minio.image)
+    let container = new GenericContainer(testcontainersConfig.minio.image)
       .withExposedPorts(...testcontainersConfig.minio.ports)
       .withEnvironment(testcontainersConfig.minio.environment)
-      .withCommand(testcontainersConfig.minio.command)
-      .withNetwork(this.network)
-      .withNetworkAliases('minio')
-      .start();
+      .withCommand(testcontainersConfig.minio.command);
+
+    // Only set network if it exists
+    if (this.network) {
+      container = container.withNetwork(this.network).withNetworkAliases('minio');
+    }
+
+    const minio = await container.start();
 
     this.containers.set('minio', minio);
     console.log(`✅ MinIO started on ports ${testcontainersConfig.minio.ports.join(', ')}`);
@@ -315,12 +337,16 @@ export class TestcontainersManager {
     }
 
     console.log('🔍 Starting Elasticsearch container...');
-    const elasticsearch = await new GenericContainer(testcontainersConfig.elasticsearch.image)
+    let container = new GenericContainer(testcontainersConfig.elasticsearch.image)
       .withExposedPorts(testcontainersConfig.elasticsearch.port)
-      .withEnvironment(testcontainersConfig.elasticsearch.environment)
-      .withNetwork(this.network)
-      .withNetworkAliases('elasticsearch')
-      .start();
+      .withEnvironment(testcontainersConfig.elasticsearch.environment);
+
+    // Only set network if it exists
+    if (this.network) {
+      container = container.withNetwork(this.network).withNetworkAliases('elasticsearch');
+    }
+
+    const elasticsearch = await container.start();
 
     this.containers.set('elasticsearch', elasticsearch);
     console.log(`✅ Elasticsearch started on port ${elasticsearch.getMappedPort(9200)}`);
@@ -336,12 +362,16 @@ export class TestcontainersManager {
     }
 
     console.log('📊 Starting Kibana container...');
-    const kibana = await new GenericContainer(testcontainersConfig.kibana.image)
+    let container = new GenericContainer(testcontainersConfig.kibana.image)
       .withExposedPorts(testcontainersConfig.kibana.port)
-      .withEnvironment(testcontainersConfig.kibana.environment)
-      .withNetwork(this.network)
-      .withNetworkAliases('kibana')
-      .start();
+      .withEnvironment(testcontainersConfig.kibana.environment);
+
+    // Only set network if it exists
+    if (this.network) {
+      container = container.withNetwork(this.network).withNetworkAliases('kibana');
+    }
+
+    const kibana = await container.start();
 
     this.containers.set('kibana', kibana);
     console.log(`✅ Kibana started on port ${kibana.getMappedPort(5601)}`);
@@ -422,15 +452,41 @@ export class TestcontainersManager {
    */
   getConnectionInfo() {
     const info = {};
-    
+
     for (const [name, container] of this.containers.entries()) {
+      // Get mapped ports based on container configuration
+      const ports = {};
+
+      // Map known ports for each service type
+      if (name === 'postgres') {
+        ports[5432] = container.getMappedPort(5432);
+      } else if (name === 'redis') {
+        ports[6379] = container.getMappedPort(6379);
+      } else if (name === 'jaeger') {
+        ports[14268] = container.getMappedPort(14268);
+        ports[16686] = container.getMappedPort(16686);
+        ports[14250] = container.getMappedPort(14250);
+      } else if (name === 'prometheus') {
+        ports[9090] = container.getMappedPort(9090);
+      } else if (name === 'grafana') {
+        ports[3000] = container.getMappedPort(3000);
+      } else if (name === 'minio') {
+        ports[9000] = container.getMappedPort(9000);
+        ports[9001] = container.getMappedPort(9001);
+      } else if (name === 'elasticsearch') {
+        ports[9200] = container.getMappedPort(9200);
+      } else if (name === 'kibana') {
+        ports[5601] = container.getMappedPort(5601);
+      }
+
       info[name] = {
         host: container.getHost(),
-        ports: container.getMappedPorts(),
-        networkAliases: container.getNetworkAliases()
+        ports: ports,
+        // Note: getNetworkAliases() may not be available in all container types
+        networkAliases: container.getNetworkAliases?.() || []
       };
     }
-    
+
     return info;
   }
 
@@ -511,6 +567,21 @@ export class TestcontainersManager {
     }
     
     return env;
+  }
+
+  /**
+   * Get OTEL collector endpoint (uses Jaeger OTLP endpoint)
+   * @returns {string} OTEL endpoint URL
+   */
+  getOtelEndpoint() {
+    const jaeger = this.containers.get('jaeger');
+    if (!jaeger) {
+      throw new Error('Jaeger container not started');
+    }
+
+    const host = jaeger.getHost();
+    const port = jaeger.getMappedPort(14250); // OTLP gRPC port
+    return `http://${host}:${port}`;
   }
 
   /**

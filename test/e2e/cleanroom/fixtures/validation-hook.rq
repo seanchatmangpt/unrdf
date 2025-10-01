@@ -1,0 +1,18 @@
+# Schema Validation SPARQL ASK Query
+# Validates that all Persons have required fields
+
+PREFIX schema: <http://schema.org/>
+
+ASK {
+  ?person a schema:Person .
+
+  # All persons must have name and email
+  FILTER EXISTS { ?person schema:name ?name }
+  FILTER EXISTS { ?person schema:email ?email }
+
+  # Email must be valid format
+  FILTER EXISTS {
+    ?person schema:email ?email .
+    FILTER (CONTAINS(str(?email), "@"))
+  }
+}
