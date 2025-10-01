@@ -7,6 +7,7 @@ export default defineBuildConfig({
     "./src/utils/index.mjs", 
     "./src/engines/index.mjs",
     "./src/knowledge-engine.mjs",
+    "./src/knowledge-engine/browser.mjs",
     "./src/cli.mjs"
   ],
 });

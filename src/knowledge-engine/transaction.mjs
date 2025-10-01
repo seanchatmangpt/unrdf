@@ -13,85 +13,33 @@ import { createResolutionLayer } from './resolution-layer.mjs';
 import { randomUUID } from 'crypto';
 import { z } from 'zod';
 
+// Import consolidated schemas
+import { 
+  QuadSchema, 
+  DeltaSchema, 
+  TransactionHookSchema, 
+  TransactionHookResultSchema, 
+  HashSchema, 
+  TransactionReceiptSchemaNew, 
+  TransactionOptionsSchema, 
+  ManagerOptionsSchema 
+} from './schemas.mjs';
+
+// Use alias for backward compatibility
+const HookSchema = TransactionHookSchema;
+const HookResultSchema = TransactionHookResultSchema;
+const ReceiptSchema = TransactionReceiptSchemaNew;
+
 // Zod schemas for validation
-const QuadSchema = z.object({
-  subject: z.any(), // RDF/JS Term
-  predicate: z.any(), // RDF/JS Term
-  object: z.any(), // RDF/JS Term
-  graph: z.any().optional(), // RDF/JS Term
-  equals: z.function().optional()
-}).passthrough(); // Allow additional properties for RDF/JS Quad objects
+// QuadSchema now imported from schemas.mjs
 
-const DeltaSchema = z.object({
-  additions: z.array(QuadSchema),
-  removals: z.array(QuadSchema)
-});
-
-const HookSchema = z.object({
-  id: z.string().min(1),
-  mode: z.enum(['pre', 'post']),
-  condition: z.function(),
-  effect: z.union([z.literal('veto'), z.function()])
-});
-
-const HookResultSchema = z.object({
-  hookId: z.string(),
-  mode: z.enum(['pre', 'post']),
-  result: z.boolean(),
-  error: z.string().optional()
-});
-
-const HashSchema = z.object({
-  sha3: z.string(),
-  blake3: z.string()
-});
-
-const ReceiptSchema = z.object({
-  id: z.string(),
-  delta: DeltaSchema,
-  committed: z.boolean(),
-  hookResults: z.array(HookResultSchema),
-  beforeHash: HashSchema,
-  afterHash: HashSchema,
-  timestamp: z.number(),
-  durationMs: z.number(),
-  actor: z.string().optional(),
-  hookErrors: z.array(z.string()),
-  error: z.string().optional()
-});
-
-const TransactionOptionsSchema = z.object({
-  skipHooks: z.boolean().default(false),
-  timeoutMs: z.number().positive().default(30000),
-  actor: z.string().optional()
-});
-
-const ManagerOptionsSchema = z.object({
-  strictMode: z.boolean().default(false),
-  maxHooks: z.number().positive().default(100),
-  afterHashOnly: z.boolean().default(false),
-  enableLockchain: z.boolean().default(false),
-  lockchainConfig: z.object({
-    gitRepo: z.string().optional(),
-    refName: z.string().default('refs/notes/lockchain'),
-    signingKey: z.string().optional(),
-    batchSize: z.number().int().positive().default(10)
-  }).optional(),
-  enableResolution: z.boolean().default(false),
-  resolutionConfig: z.object({
-    defaultStrategy: z.string().default('voting'),
-    maxProposals: z.number().int().positive().default(100),
-    enableConflictDetection: z.boolean().default(true),
-    enableConsensus: z.boolean().default(true),
-    timeout: z.number().int().positive().default(30000)
-  }).optional()
-});
+// All schemas now imported from schemas.mjs
 
 /**
  * @typedef {z.infer<typeof DeltaSchema>} Delta
- * @typedef {z.infer<typeof HookSchema>} Hook
- * @typedef {z.infer<typeof HookResultSchema>} HookResult
- * @typedef {z.infer<typeof ReceiptSchema>} Receipt
+ * @typedef {z.infer<typeof TransactionHookSchema>} Hook
+ * @typedef {z.infer<typeof TransactionHookResultSchema>} HookResult
+ * @typedef {z.infer<typeof TransactionReceiptSchemaNew>} Receipt
  * @typedef {z.infer<typeof TransactionOptionsSchema>} TransactionOptions
  * @typedef {z.infer<typeof ManagerOptionsSchema>} ManagerOptions
  */
@@ -189,7 +137,7 @@ export class TransactionManager {
    */
   addHook(hook) {
     // Validate hook with Zod
-    const validatedHook = HookSchema.parse(hook);
+    const validatedHook = TransactionHookSchema.parse(hook);
 
     // Check for duplicate IDs
     if (this.hooks.some(h => h.id === validatedHook.id)) {

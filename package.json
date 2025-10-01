@@ -24,6 +24,7 @@
     "./utils": "./dist/utils/index.mjs",
     "./engines": "./dist/engines/index.mjs",
     "./knowledge-engine": "./dist/knowledge-engine.mjs",
+    "./knowledge-engine/browser": "./dist/knowledge-engine-browser.mjs",
     "./cli": "./dist/cli.mjs"
   },
   "files": [
@@ -59,6 +60,7 @@
     "test:bench": "vitest run --config vitest.config.mjs --bench --reporter=verbose",
     "lint": "eslint . && prettier -c .",
     "lint:fix": "automd && eslint . --fix && prettier -w .",
+    "browser:demo": "cd browser-demo && python3 -m http.server 8080 || python -m SimpleHTTPServer 8080 || npx serve . -p 8080",
     "prepack": "pnpm build",
     "release": "pnpm test && changelogen --release && npm publish && git push --follow-tags"
   },

@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>NEAKO • Graph-Rendered UI & Autonomic Handlers</title>
+<script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+<style>
+  :root{
+    --bg:#0b0c0f; --card:#12141a; --muted:#9aa3b2; --text:#e6e9ef;
+    --primary:#0ea5e9; --accent:#22d3ee; --ok:#22c55e; --warn:#f59e0b;
+    --ring: rgba(34,211,238,.3);
+  }
+  *{box-sizing:border-box} body{margin:0;background:radial-gradient(1200px 800px at 70% -20%, #0b3044 0%, #0b0c0f 60%);color:var(--text);font:15px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Inter}
+  .wrap{max-width:900px;margin:40px auto;padding:0 16px}
+  .heading{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+  .logo{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--primary),var(--accent));box-shadow:0 0 0 6px var(--ring)}
+  h1{font-size:22px;margin:0}
+  .muted{color:var(--muted)}
+  .grid{display:grid;grid-template-columns:2fr 1fr;gap:16px}
+  .card{background:var(--card);border:1px solid #1b1e26;border-radius:14px;padding:16px}
+  .card h2{font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:#b8c1d1;margin:0 0 12px}
+  .row{display:flex;gap:8px;align-items:center}
+  input,textarea,select{width:100%;background:#0f1116;border:1px solid #1b1e26;color:var(--text);padding:10px;border-radius:10px;outline:none}
+  input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 4px var(--ring)}
+  .btn{background:linear-gradient(135deg,var(--primary),var(--accent));color:#01202a;border:0;padding:10px 14px;border-radius:10px;font-weight:700;cursor:pointer}
+  .btn:disabled{filter:grayscale(.7);opacity:.6;cursor:not-allowed}
+  .list{display:grid;gap:10px}
+  .item{padding:12px;border:1px solid #1b1e26;border-radius:12px;background:#0f1116}
+  .pill{display:inline-flex;align-items:center;gap:6px;border:1px solid #263141;background:#101521;color:#9bd5ff;padding:4px 8px;border-radius:999px;font-size:12px}
+  .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+  .kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .kpi .box{background:#0f1116;border:1px solid #1b1e26;border-radius:10px;padding:10px;text-align:center}
+  .box .v{font-size:18px;font-weight:800;color:#9bd5ff}
+  .ghost{opacity:.6}
+  .mono{font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;font-size:12px;color:#8ea3b7}
+  .hr{height:1px;background:#1b1e26;margin:12px 0}
+  .status{padding:8px 12px;border-radius:8px;margin:8px 0;font-size:14px}
+  .status.success{background:#1c2a1f;color:#c6f6d5;border:1px solid #22c55e}
+  .status.error{background:#2a1c1c;color:#fecaca;border:1px solid #ef4444}
+  @media(max-width:900px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div id="app" class="wrap">
+  <div class="heading">
+    <div class="logo"></div>
+    <div>
+      <h1>NEAKO • Graph-Native UI</h1>
+      <div class="muted">UI, events, and business effects inferred from a live knowledge graph.</div>
+    </div>
+  </div>
+
+  <!-- Rendered from graph -->
+  <div class="grid">
+    <section class="card">
+      <h2>{{ loading ? 'Loading...' : (uiRoot?.label || 'Interface') }}</h2>
+      
+      <!-- Loading state -->
+      <div v-if="loading" class="loading">
+        <p>Initializing knowledge graph...</p>
+      </div>
+      
+      <!-- Error state -->
+      <div v-if="error" class="error">
+        <p>Error: {{ error }}</p>
+      </div>
+
+      <!-- Dynamic Toolbar -->
+      <div v-if="!loading && !error" class="toolbar">
+        <span v-for="tag in state.tags" :key="tag" class="pill">#{{ tag }}</span>
+        <span class="pill" v-if="policies.allowCreate"><strong>policy:</strong> create:enabled</span>
+        <span class="pill" v-else class="ghost"><strong>policy:</strong> create:blocked</span>
+      </div>
+
+      <!-- Dynamic form (graph-driven) -->
+      <div v-if="!loading && !error">
+        <div v-for="field in formFields" :key="field.id" class="row" style="margin-bottom:8px">
+          <input v-if="field.kind==='text'" :placeholder="field.placeholder" v-model="form[field.bind]">
+          <textarea v-else-if="field.kind==='longtext'" rows="3" :placeholder="field.placeholder" v-model="form[field.bind]"></textarea>
+          <select v-else-if="field.kind==='select'" v-model="form[field.bind]">
+            <option v-for="opt in field.options" :key="opt" :value="opt">{{ opt }}</option>
+          </select>
+        </div>
+
+        <div class="row" style="justify-content:space-between;margin-top:8px">
+          <button v-for="control in uiControls" :key="control.id" 
+                  class="btn" 
+                  :style="control.style"
+                  :disabled="!can(control.intent)" 
+                  @click="fireControl(control.id)">
+            {{ control.label }}
+          </button>
+          <div class="muted mono">intent: {{ inferIntent('create') }}</div>
+        </div>
+      </div>
+
+      <div class="hr"></div>
+
+      <!-- Flash messages -->
+      <div v-if="!loading && !error && state.flash" class="status" :class="state.flash.type">
+        {{ state.flash.message }}
+      </div>
+
+      <!-- Dynamic list -->
+      <div v-if="!loading && !error" class="list">
+        <div class="item" v-for="n in needs" :key="n.id">
+          <div class="row" style="justify-content:space-between">
+            <div>
+              <div><strong>{{ n.title }}</strong></div>
+              <div class="muted">{{ n.description }}</div>
+              <div class="row" style="gap:6px;margin-top:6px">
+                <span class="pill">type: {{ n.type }}</span>
+                <span class="pill" v-if="n.status==='open'">status: open</span>
+                <span class="pill" v-else>status: resolved</span>
+              </div>
+            </div>
+            <div class="row">
+              <button v-for="control in getItemControls(n)" :key="control.id" 
+                      class="btn" 
+                      :style="control.style"
+                      :disabled="!can(control.intent)" 
+                      @click="fireControl(control.id, { id: n.id })">
+                {{ control.label }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Right column: live KPIs + Graph Inspector -->
+    <aside class="card">
+      <h2>Autonomic State</h2>
+      <div v-if="!loading && !error" class="kpi">
+        <div class="box"><div class="v">{{ needs.length }}</div><div class="muted">Active Needs</div></div>
+        <div class="box"><div class="v">{{ kpiMatchability }}%</div><div class="muted">Matchability</div></div>
+        <div class="box"><div class="v">{{ policies.allowCreate ? 'ON' : 'OFF' }}</div><div class="muted">Create Policy</div></div>
+      </div>
+      <div v-else class="kpi">
+        <div class="box"><div class="v">--</div><div class="muted">Loading...</div></div>
+        <div class="box"><div class="v">--</div><div class="muted">Loading...</div></div>
+        <div class="box"><div class="v">--</div><div class="muted">Loading...</div></div>
+      </div>
+      <div class="hr"></div>
+      <div>
+        <div v-if="!loading && !error" class="muted" style="margin-bottom:6px">Graph triples (subset)</div>
+        <div v-else class="muted" style="margin-bottom:6px">Loading graph data...</div>
+        <pre class="mono" style="max-height:260px;overflow:auto;padding:10px;background:#0b0e13;border-radius:10px;border:1px solid #1b1e26">{{ previewTriples }}</pre>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<script>
+const { createApp, reactive, computed } = Vue;
+
+/**
+ * Embedded RDF knowledge graph with live data capabilities
+ * Self-contained implementation with no external dependencies
+ */
+function createEmbeddedGraph(initialData = []) {
+  // Create a reactive store for the UI
+  const T = reactive(initialData.slice());
+  
+  // Knowledge hooks registry for live data processing
+  const hooks = new Map();
+  
+  // Helper functions for the embedded graph
+  const add = async (s, p, o) => {
+    const triple = {s, p, o};
+    T.push(triple);
+    
+    // Execute knowledge hooks for live data processing
+    try {
+      await executeHooks('triple_added', { triple, subject: s, predicate: p, object: o });
+    } catch (error) {
+      console.warn('Hook execution failed:', error);
+    }
+  };
+
+  const match = (s, p, o) => T.filter(t =>
+    (s ? t.s === s : true) && (p ? t.p === p : true) && (o ? t.o === o : true)
+  );
+
+  const objects = (s, p) => match(s, p, null).map(t => t.o);
+  const subjects = (p, o) => match(null, p, o).map(t => t.s);
+  const ask = (s, p, o) => match(s, p, o).length > 0;
+
+  // convenience: get first object value
+  const get1 = (s, p) => objects(s, p)[0];
+
+  // Knowledge hooks system
+  const registerHook = (event, handler) => {
+    if (!hooks.has(event)) {
+      hooks.set(event, []);
+    }
+    hooks.get(event).push(handler);
+  };
+
+  const executeHooks = async (event, data) => {
+    const eventHooks = hooks.get(event) || [];
+    for (const hook of eventHooks) {
+      try {
+        await hook(data);
+      } catch (error) {
+        console.error(`Hook execution failed for event ${event}:`, error);
+      }
+    }
+  };
+
+  // Live SPARQL-like query capability (simplified)
+  const sparqlQuery = async (queryString) => {
+    try {
+      // Simple SPARQL SELECT query parsing
+      if (queryString.includes('SELECT') && queryString.includes('WHERE')) {
+        const results = [];
+        // Extract basic patterns from query
+        const patterns = extractPatterns(queryString);
+        
+        for (const pattern of patterns) {
+          const matches = match(pattern.s, pattern.p, pattern.o);
+          results.push(...matches);
+        }
+        
+        return results;
+      }
+      
+      // Simple ASK query
+      if (queryString.includes('ASK') && queryString.includes('WHERE')) {
+        const patterns = extractPatterns(queryString);
+        for (const pattern of patterns) {
+          if (ask(pattern.s, pattern.p, pattern.o)) {
+            return true;
+          }
+        }
+        return false;
+      }
+      
+      return [];
+    } catch (error) {
+      console.warn('SPARQL query failed:', error);
+      return [];
+    }
+  };
+
+  // Simple pattern extraction from SPARQL
+  const extractPatterns = (query) => {
+    const patterns = [];
+    // Very basic pattern extraction - in real implementation would use proper SPARQL parser
+    const whereMatch = query.match(/WHERE\s*\{([^}]+)\}/i);
+    if (whereMatch) {
+      const whereClause = whereMatch[1];
+      const tripleMatches = whereClause.match(/(\?\w+|\w+:\w+)\s+(\?\w+|\w+:\w+)\s+(\?\w+|\w+:\w+)/g);
+      if (tripleMatches) {
+        for (const triple of tripleMatches) {
+          const parts = triple.trim().split(/\s+/);
+          if (parts.length >= 3) {
+            patterns.push({
+              s: parts[0].startsWith('?') ? null : parts[0],
+              p: parts[1].startsWith('?') ? null : parts[1],
+              o: parts[2].startsWith('?') ? null : parts[2]
+            });
+          }
+        }
+      }
+    }
+    return patterns;
+  };
+
+  return { 
+    T, 
+    add, 
+    match, 
+    objects, 
+    subjects, 
+    ask, 
+    get1, 
+    sparqlQuery,
+    registerHook,
+    executeHooks,
+    hooks
+  };
+}
+
+/**
+ * Seed embedded knowledge graph with live data
+ * Namespaces (informal): ui:, comp:, field:, need:, agent:, intent:, policy:
+ */
+async function seedEmbeddedGraph(g){
+  // UI Root
+  await g.add('ui:root','rdf:type','ui:View');
+  await g.add('ui:root','ui:label','Create & Resolve Needs');
+
+  // Form fields
+  await g.add('field:title','rdf:type','ui:Field');  
+  await g.add('field:title','ui:kind','text');
+  await g.add('field:title','ui:bind','title');      
+  await g.add('field:title','ui:placeholder','What do you need?');
+
+  await g.add('field:desc','rdf:type','ui:Field');   
+  await g.add('field:desc','ui:kind','longtext');
+  await g.add('field:desc','ui:bind','description'); 
+  await g.add('field:desc','ui:placeholder','Add detail to improve matching');
+
+  await g.add('field:type','rdf:type','ui:Field');   
+  await g.add('field:type','ui:kind','select');
+  await g.add('field:type','ui:bind','type');        
+  await g.add('field:type','ui:options','advice,mentorship,tools,space,funding');
+
+  // UI composition
+  await g.add('ui:root','ui:hasField','field:title');
+  await g.add('ui:root','ui:hasField','field:desc');
+  await g.add('ui:root','ui:hasField','field:type');
+
+  // UI Controls inferred from graph
+  await g.add('comp:create','rdf:type','ui:Control');
+  await g.add('comp:create','ui:role','create');
+  await g.add('comp:create','ui:intent','intent:create/Need');
+  await g.add('comp:create','ui:label','Add Need');
+  await g.add('comp:create','ui:style','background:linear-gradient(135deg,var(--primary),var(--accent));color:#01202a');
+  await g.add('comp:create','ui:parent','ui:root');
+  
+  await g.add('comp:toggle','rdf:type','ui:Control');
+  await g.add('comp:toggle','ui:role','toggle');
+  await g.add('comp:toggle','ui:intent','intent:toggle/AgentStatus');
+  await g.add('comp:toggle','ui:label','Toggle Agent Status');
+  await g.add('comp:toggle','ui:style','background:#2a1c1c;color:#fecaca');
+  await g.add('comp:toggle','ui:parent','ui:root');
+  
+  await g.add('comp:resolve','rdf:type','ui:Control');
+  await g.add('comp:resolve','ui:role','resolve');
+  await g.add('comp:resolve','ui:intent','intent:resolve/Need');
+  await g.add('comp:resolve','ui:label','Resolve');
+  await g.add('comp:resolve','ui:style','background:#1c2a1f;color:#c6f6d5');
+  await g.add('comp:resolve','ui:parent','ui:item');
+
+  // Policies
+  await g.add('policy:create','rdf:type','policy:Rule');
+  await g.add('policy:create','policy:grants','intent:create/Need');
+
+  await g.add('policy:resolve','rdf:type','policy:Rule');
+  await g.add('policy:resolve','policy:grants','intent:resolve/Need');
+
+  // Agent state (toggle to test)
+  await g.add('agent:self','rdf:type','agent:User');
+  await g.add('agent:self','agent:status','verified'); // set 'pending' to block create
+
+  // Example existing needs
+  const seedNeeds = [
+    {id:'need:001', title:'Find a mentor for iOS review', description:'30-min review this week', type:'mentorship', status:'open'},
+    {id:'need:002', title:'Quiet space to record demo', description:'2 hours in NYC', type:'space', status:'open'}
+  ];
+  
+  for (const n of seedNeeds) {
+    await g.add(n.id,'rdf:type','domain:Need');
+    await g.add(n.id,'need:title',n.title);
+    await g.add(n.id,'need:desc',n.description);
+    await g.add(n.id,'need:type',n.type);
+    await g.add(n.id,'need:status',n.status);
+  }
+
+  // Inference hints
+  await g.add('ui:root','ui:infersFrom','agent:self'); // view depends on agent state
+  await g.add('intent:create/Need','policy:requires','agent:verified');
+  await g.add('intent:resolve/Need','policy:requires','agent:verified');
+}
+
+/** Embedded inference & policy layer with live data processing */
+function createEmbeddedReasoner(g){
+  const parseCSV = s => (s||'').split(',').map(x=>x.trim()).filter(Boolean);
+
+  const getFormFields = (view) => {
+    const fields = g.objects(view,'ui:hasField').map(fid=>{
+      return {
+        id: fid,
+        kind: g.get1(fid,'ui:kind'),
+        bind: g.get1(fid,'ui:bind'),
+        placeholder: g.get1(fid,'ui:placeholder') || '',
+        options: parseCSV(g.get1(fid,'ui:options'))
+      };
+    });
+    return fields;
+  };
+
+  const getUIControls = (parent) => {
+    const controls = g.subjects('ui:parent', parent).filter(id => 
+      g.ask(id, 'rdf:type', 'ui:Control')
+    ).map(cid => {
+      return {
+        id: cid,
+        role: g.get1(cid, 'ui:role'),
+        intent: g.get1(cid, 'ui:intent'),
+        label: g.get1(cid, 'ui:label'),
+        style: g.get1(cid, 'ui:style') || ''
+      };
+    });
+    return controls;
+  };
+
+  const agentIsVerified = ()=> g.get1('agent:self','agent:status')==='verified';
+
+  const allowed = (intent) => {
+    // check policy grants and requirement
+    const granted = g.subjects('policy:grants', intent).length>0;
+    const req = g.get1(intent,'policy:requires'); // e.g., agent:verified
+    const ok = !req || (req==='agent:verified' ? agentIsVerified() : false);
+    return granted && ok;
+  };
+
+  const intentForControl = (control) => g.get1(control,'ui:intent');
+
+  const intentForAction = (action) => {
+    if(action==='create') return 'intent:create/Need';
+    if(action==='resolve') return 'intent:resolve/Need';
+    if(action==='toggle') return 'intent:toggle/AgentStatus';
+    return null;
+  };
+
+  const fire = async (intent, payload={}) => {
+    if(!allowed(intent)) return { ok:false, reason:'policy_denied' };
+
+    // effects with live knowledge engine integration
+    if(intent==='intent:create/Need'){
+      const id = 'need:' + Math.random().toString(36).slice(2,8);
+      await g.add(id,'rdf:type','domain:Need');
+      await g.add(id,'need:title', payload.title || 'Untitled');
+      await g.add(id,'need:desc', payload.description || '');
+      await g.add(id,'need:type', payload.type || 'advice');
+      await g.add(id,'need:status','open');
+      
+      // Trigger embedded knowledge hooks
+      try {
+        await g.executeHooks('need_created', { id, payload });
+      } catch (error) {
+        console.warn('Knowledge hook execution failed:', error);
+      }
+      
+      return { ok:true, effect:'need_created', id };
+    }
+
+    if(intent==='intent:resolve/Need'){
+      const id = payload.id;
+      // flip status by removing old triple and adding new
+      // naive mutation: remove old status triples
+      const existing = g.match(id,'need:status',null);
+      existing.forEach(t=>{
+        const idx = g.T.indexOf(t);
+        if(idx>-1) g.T.splice(idx,1);
+      });
+      await g.add(id,'need:status','resolved');
+      
+      // Trigger embedded knowledge hooks
+      try {
+        await g.executeHooks('need_resolved', { id });
+      } catch (error) {
+        console.warn('Knowledge hook execution failed:', error);
+      }
+      
+      return { ok:true, effect:'need_resolved', id };
+    }
+
+    if(intent==='intent:toggle/AgentStatus'){
+      const currentStatus = g.get1('agent:self','agent:status');
+      const newStatus = currentStatus === 'verified' ? 'pending' : 'verified';
+      
+      // Remove old status
+      const existing = g.match('agent:self','agent:status',null);
+      existing.forEach(t=>{
+        const idx = g.T.indexOf(t);
+        if(idx>-1) g.T.splice(idx,1);
+      });
+      
+      // Add new status
+      await g.add('agent:self','agent:status',newStatus);
+      
+      // Trigger embedded knowledge hooks
+      try {
+        await g.executeHooks('agent_status_changed', { newStatus });
+      } catch (error) {
+        console.warn('Knowledge hook execution failed:', error);
+      }
+      
+      return { ok:true, effect:'agent_status_toggled', newStatus };
+    }
+
+    return { ok:false, reason:'no_handler' };
+  };
+
+  return { getFormFields, getUIControls, allowed, intentForControl, intentForAction, fire };
+}
+
+createApp({
+  setup(){
+    // Embedded Graph + reasoner with live data processing
+    const graph = createEmbeddedGraph();
+    
+    // Initialize with a loading state first
+    const loading = reactive(true);
+    const error = reactive(null);
+    
+    // Async initialization
+    const initApp = async () => {
+      try {
+        await seedEmbeddedGraph(graph);
+        const R = createEmbeddedReasoner(graph);
+        loading.value = false;
+        return R;
+      } catch (err) {
+        error.value = err.message;
+        loading.value = false;
+        return null;
+      }
+    };
+    
+    // Start initialization
+    const R = initApp();
+
+    // UI root from graph
+    const uiRoot = computed(() => ({ label: graph.get1('ui:root','ui:label') || 'Loading...' }));
+
+    // Form fields inferred from graph
+    const formFields = computed(() => {
+      if (!R || loading.value) return [];
+      return R.getFormFields('ui:root');
+    });
+
+    // UI controls inferred from graph
+    const uiControls = computed(() => {
+      if (!R || loading.value) return [];
+      return R.getUIControls('ui:root');
+    });
+
+    // Local reactive state
+    const state = reactive({ tags:['graph','autonomic','policy'], flash:null });
+    const form = reactive({ title:'', description:'', type:'mentorship' });
+
+    // Derived view: needs read from graph
+    const needSubjects = () => graph.subjects('rdf:type','domain:Need');
+    const needs = computed(()=> {
+      if (loading.value) return [];
+      return needSubjects().map(id=>({
+        id,
+        title: graph.get1(id,'need:title'),
+        description: graph.get1(id,'need:desc'),
+        type: graph.get1(id,'need:type'),
+        status: graph.get1(id,'need:status')
+      }));
+    });
+
+    // Policy state
+    const policies = computed(()=> {
+      if (!R || loading.value) return { allowCreate: false, allowResolve: false };
+      return {
+        allowCreate: R.allowed('intent:create/Need'),
+        allowResolve: R.allowed('intent:resolve/Need')
+      };
+    });
+
+    // KPI
+    const kpiMatchability = computed(()=>{
+      if (loading.value) return 0;
+      const open = needs.value.filter(n=>n.status==='open').length;
+      const total = needs.value.length;
+      return total ? Math.round((open/total)*100) : 0;
+    });
+
+    // Graph preview
+    const previewTriples = computed(()=>
+      loading.value ? 'Loading...' : graph.T.slice(0,20).map(t=>`${t.s} ${t.p} ${t.o}`).join('\n')
+    );
+
+    // UI event handlers
+    const can = (intent) => R ? R.allowed(intent) : false;
+    const inferIntent = (action) => R ? R.intentForAction(action) : null;
+    
+    const getItemControls = (item) => {
+      if (!R) return [];
+      return R.getUIControls('ui:item');
+    };
+    
+    const fireControl = async (controlId, payload = {}) => {
+      if (!R) return;
+      
+      // Get control info from graph
+      const control = graph.subjects('rdf:type', 'ui:Control').find(id => id === controlId);
+      if (!control) return;
+      
+      const intent = graph.get1(controlId, 'ui:intent');
+      const role = graph.get1(controlId, 'ui:role');
+      
+      // Build payload based on role and form data
+      let finalPayload = { ...payload };
+      
+      if (role === 'create') {
+        finalPayload = {
+          title: form.title,
+          description: form.description,
+          type: form.type
+        };
+      }
+      
+      const result = await R.fire(intent, finalPayload);
+      if(result.ok){
+        // Clear form on success for create actions
+        if (role === 'create') {
+          form.title = '';
+          form.description = '';
+          form.type = 'mentorship';
+        }
+        
+        state.flash = { type:'success', message:`${role} action completed: ${result.effect}` };
+        setTimeout(()=> state.flash=null, 2000);
+      } else {
+        state.flash = { type:'error', message:`Failed: ${result.reason}` };
+        setTimeout(()=> state.flash=null, 2000);
+      }
+    };
+
+    return {
+      loading, error, uiRoot, formFields, uiControls, state, form, needs, policies, kpiMatchability, previewTriples,
+      can, inferIntent, getItemControls, fireControl
+    };
+  }
+}).mount('#app');
+</script>
+</body>
+</html>

@@ -43,5 +43,8 @@ export { useDelta } from "./composables/use-delta.mjs";
 // Engines
 export { RdfEngine } from "./engines/rdf-engine.mjs";
 
+// Knowledge Engine System
+export * from "./knowledge-engine/index.mjs";
+
 // Utilities
 export * from "./utils/index.mjs";
