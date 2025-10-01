@@ -477,15 +477,15 @@ export class DarkMatterCore {
       });
     }
 
-    // Execute hook with 80/20 optimized path - FAIL FAST
-    if (typeof knowledgeHookManager.executeHook !== 'function') {
-      throw new Error('Knowledge hook manager does not support executeHook method');
+    // Execute hook directly via hook.run() - FAIL FAST
+    if (!hook || typeof hook.run !== 'function') {
+      throw new Error('Hook must have a run function');
     }
 
     const startTime = Date.now();
 
     try {
-      const result = await knowledgeHookManager.executeHook(hook, event, options);
+      const result = await hook.run(event, options);
       const duration = Date.now() - startTime;
 
       // End OTEL span with success
