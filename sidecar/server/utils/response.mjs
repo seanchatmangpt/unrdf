@@ -1,7 +1,9 @@
 /**
  * @file Response Builders
- * @description Standardized response formatting utilities
+ * @description Standardized response formatting utilities with OpenAPI compliance
  */
+
+import { getTraceIdForLogging, getSpanIdForLogging } from './otel-context-propagation.mjs'
 
 /**
  * Send success response
@@ -14,12 +16,14 @@ export function sendSuccess(event, data, statusCode = 200) {
   event.node.res.statusCode = statusCode
   return {
     success: true,
-    data
+    data,
+    requestId: event.context.requestId,
+    timestamp: new Date().toISOString()
   }
 }
 
 /**
- * Send error response
+ * Send error response with OpenAPI compliance
  * @param {Object} event - H3 event
  * @param {Error} error - Error object
  * @returns {Object} Error response
@@ -34,7 +38,12 @@ export function sendError(event, error) {
     success: false,
     error: {
       code,
-      message: error.message
+      message: error.message,
+      requestId: event.context.requestId || 'unknown',
+      traceId: getTraceIdForLogging() || undefined,
+      spanId: getSpanIdForLogging() || undefined,
+      timestamp: new Date().toISOString(),
+      path: event.path
     }
   }
 

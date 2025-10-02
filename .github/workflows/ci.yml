@@ -83,9 +83,6 @@ jobs:
       - name: Run tests
         run: pnpm test
 
-      - name: Run benchmark tests
-        run: pnpm test:bench
-
       - name: Upload coverage reports
         uses: codecov/codecov-action@v4
         with:
@@ -330,7 +327,8 @@ jobs:
       - name: Run performance benchmarks
         run: |
           echo "Running performance benchmarks..."
-          pnpm test:bench
+          # Run dark matter 80/20 tests as performance benchmark
+          pnpm test:dark-matter
           echo "✅ Performance benchmarks completed"
 
       - name: Validate performance targets

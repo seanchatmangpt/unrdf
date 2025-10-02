@@ -210,6 +210,30 @@ const main = defineCommand({
           }
         })
       }
+    }),
+
+    // REPL (Interactive Mode)
+    repl: defineCommand({
+      meta: {
+        name: 'repl',
+        description: 'Start interactive SPARQL REPL'
+      },
+      args: {
+        endpoint: {
+          type: 'string',
+          description: 'SPARQL endpoint URL',
+          alias: 'e'
+        },
+        timeout: {
+          type: 'string',
+          description: 'Query timeout (ms)',
+          default: '30000'
+        }
+      },
+      async run(ctx) {
+        const { replCommand } = await import('./commands/repl.mjs');
+        await replCommand.run(ctx);
+      }
     })
   },
 

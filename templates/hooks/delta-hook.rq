@@ -1,0 +1,47 @@
+# Delta Detection Hook Template
+# This template provides a SPARQL query for detecting changes in graph deltas.
+# Delta hooks observe changes (additions/removals) and trigger when patterns emerge.
+#
+# Usage:
+# 1. Set channel.view to 'delta' in your Knowledge Hook definition
+# 2. Customize the pattern to detect specific changes
+# 3. Calculate the SHA-256 hash of this file
+# 4. Reference this file in your Knowledge Hook definition
+#
+# Example: Detect when high-value transactions are added
+
+PREFIX ex: <http://example.org/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+# TODO: Customize what delta patterns to detect
+# The delta graph contains only the changes (added or removed triples)
+ASK WHERE {
+  # Pattern 1: Detect additions of specific resource types
+  ?resource rdf:type ex:ImportantResource .
+
+  # Pattern 2: Detect high-value changes
+  # ?transaction rdf:type ex:Transaction ;
+  #              ex:amount ?amount .
+  # FILTER(?amount > 10000)
+
+  # Pattern 3: Detect status changes
+  # ?resource ex:status ?newStatus .
+  # FILTER(?newStatus = "critical")
+
+  # Pattern 4: Detect relationship changes
+  # ?source ex:linksTo ?target .
+  # FILTER(CONTAINS(STR(?target), "sensitive"))
+
+  # Pattern 5: Detect removal of required properties
+  # This pattern would typically be in a separate delta view
+  # ?resource rdf:type ex:MustHaveProperty .
+  # FILTER NOT EXISTS { ?resource ex:requiredProperty ?value }
+}
+
+# Alternative: SELECT query to return details about changes
+# SELECT ?resource ?changeType ?property ?value WHERE {
+#   ?resource rdf:type ex:MonitoredType .
+#   ?resource ?property ?value .
+#   BIND(IF(EXISTS { ?resource ex:wasAdded true }, "addition", "modification") AS ?changeType)
+# }

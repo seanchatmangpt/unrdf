@@ -1,9 +1,9 @@
 export default defineNuxtConfig({
   compatibilityDate: '2025-01-01',
 
-  // API-only mode (no pages/SSR overhead)
+  // Enable pages for observability dashboard
   ssr: false,
-  pages: false,
+  pages: true,
 
   // Runtime configuration
   runtimeConfig: {

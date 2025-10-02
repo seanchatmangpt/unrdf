@@ -1,0 +1,91 @@
+%% Hive Mind Agent Dependency Graph
+%% Generated: 2025-10-02
+%% Coordinator: collective-intelligence-coordinator
+%% Topology: mesh-adaptive (80-20 principle)
+
+graph TB
+    %% Agent Nodes
+    ARCH[🏗️ ARCHITECT<br/>Load: 0.22]
+    SEC[🛡️ SECURITY-MANAGER<br/>Load: 0.12]
+    BACK[⚙️ BACKEND-DEV<br/>Load: 0.18]
+    PERF[📊 PERFORMANCE-BENCHMARKER<br/>Load: 0.10]
+    ANALY[🔍 CODE-ANALYZER<br/>Load: 0.15]
+    TDD[🧪 TDD-LONDON-SWARM<br/>Load: 0.20]
+    TMPL[📝 TEMPLATE-GENERATOR<br/>Load: 0.08]
+    VAL[✅ VALIDATOR<br/>Load: 0.18]
+    INT[🔗 INTEGRATION-SPECIALIST<br/>Load: 0.12]
+
+    %% Critical Path (80-20 Principle)
+    ARCH -->|API specs| BACK
+    ARCH -->|Component specs| TMPL
+    ARCH -->|Design patterns| ANALY
+
+    SEC -->|Auth middleware| BACK
+    SEC -->|Security headers| BACK
+    SEC -->|RBAC logic| BACK
+
+    TDD -->|Test-first enforcement| ARCH
+    TDD -->|Quality gates| BACK
+    TDD -->|Coverage requirements| ANALY
+    TDD -->|Acceptance criteria| VAL
+
+    TMPL -->|Generated code| BACK
+    TMPL -->|Scaffolding| BACK
+
+    %% Implementation Flow
+    BACK -->|API contracts| INT
+    BACK -->|Code for review| ANALY
+    BACK -->|Performance data| PERF
+
+    ANALY -->|Quality feedback| BACK
+    ANALY -->|Pattern recommendations| TMPL
+    ANALY -->|Code metrics| VAL
+
+    PERF -->|Benchmarks| VAL
+    PERF -->|Optimization hints| ANALY
+
+    %% Validation & Deployment
+    VAL -->|Production gate| INT
+    VAL -->|Agent verification| ARCH
+    VAL -->|Agent verification| SEC
+    VAL -->|Agent verification| BACK
+    VAL -->|Agent verification| PERF
+    VAL -->|Agent verification| ANALY
+    VAL -->|Agent verification| TDD
+    VAL -->|Agent verification| TMPL
+    VAL -->|Agent verification| INT
+
+    INT -->|Deployment feedback| BACK
+    INT -->|Integration status| VAL
+
+    %% Consensus & Knowledge Sharing
+    ARCH -.->|Shared knowledge| SEC
+    ARCH -.->|Shared knowledge| PERF
+    SEC -.->|Security patterns| ANALY
+    PERF -.->|Performance patterns| ANALY
+    TDD -.->|Test patterns| ANALY
+
+    %% Styling
+    classDef critical fill:#ff6b6b,stroke:#c92a2a,stroke-width:3px,color:#fff
+    classDef important fill:#ffd93d,stroke:#f59f00,stroke-width:2px
+    classDef normal fill:#51cf66,stroke:#2f9e44,stroke-width:2px
+    classDef validator fill:#845ef7,stroke:#5f3dc4,stroke-width:3px,color:#fff
+
+    class ARCH critical
+    class TDD critical
+    class VAL validator
+    class SEC,BACK important
+    class PERF,ANALY,TMPL,INT normal
+
+    %% Legend
+    subgraph Legend
+        C1[Critical Path Agent]
+        C2[Important Agent]
+        C3[Normal Agent]
+        C4[Validator/Gatekeeper]
+    end
+
+    class C1 critical
+    class C2 important
+    class C3 normal
+    class C4 validator

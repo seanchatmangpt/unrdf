@@ -1,0 +1,939 @@
+openapi: 3.1.0
+info:
+  title: UNRDF Knowledge Hooks API
+  description: |
+    REST API for managing Knowledge Hooks, Policy Packs, and RDF data sources.
+
+    **Authentication**: JWT Bearer tokens (obtain via /api/auth/login)
+
+    **Rate Limiting**: 100 requests per 15 minutes (production)
+
+    **WebSocket**: Real-time updates available at ws://localhost:3000
+  version: 1.0.1
+  contact:
+    name: UNRDF Team
+    url: https://github.com/your-org/unrdf
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:3000
+    description: Development server
+  - url: https://api.unrdf.io
+    description: Production server
+
+tags:
+  - name: Authentication
+    description: User authentication and authorization
+  - name: Knowledge Hooks
+    description: CRUD operations for knowledge hooks
+  - name: Data Sources
+    description: Manage RDF data sources
+  - name: Runtime
+    description: Runtime status and management
+  - name: Logs
+    description: Audit and error logs
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token obtained from /api/auth/login
+
+  schemas:
+    # Authentication
+    LoginRequest:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+          example: admin
+        password:
+          type: string
+          format: password
+          example: password
+
+    LoginResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        token:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        user:
+          type: object
+          properties:
+            username:
+              type: string
+              example: admin
+            role:
+              type: string
+              enum: [admin, user, viewer]
+              example: admin
+        expiresIn:
+          type: string
+          example: 24h
+
+    # Knowledge Hooks
+    KnowledgeHook:
+      type: object
+      required:
+        - id
+        - select
+        - predicates
+        - combine
+      properties:
+        id:
+          type: string
+          description: Unique hook identifier
+          example: ex:ServiceHealthMonitor
+        name:
+          type: string
+          description: Human-readable hook name
+          example: Service Health Monitor
+        description:
+          type: string
+          description: Detailed hook description
+          example: Monitors service health based on error rate and latency
+        select:
+          type: string
+          description: SPARQL SELECT query to retrieve data
+          example: |
+            SELECT ?service ?errorRate ?latency
+            WHERE {
+              ?service a ex:Service ;
+                ex:errorRate ?errorRate ;
+                ex:latency ?latency .
+            }
+        predicates:
+          type: array
+          description: Predicates to evaluate
+          items:
+            $ref: '#/components/schemas/HookPredicate'
+        combine:
+          type: string
+          enum: [AND, OR]
+          description: Predicate combination logic
+          example: AND
+        phase:
+          type: string
+          enum: [pre, post]
+          description: Hook execution phase
+          example: pre
+        created:
+          type: string
+          format: date-time
+          description: Creation timestamp
+          example: 2025-10-01T12:00:00Z
+        creator:
+          type: string
+          description: Username of creator
+          example: admin
+        canonicalHash:
+          type: string
+          description: SHA-256 hash of hook definition
+          example: sha256:abc123...
+
+    HookPredicate:
+      type: object
+      required:
+        - kind
+      properties:
+        kind:
+          type: string
+          enum: [ASK, SHACL, DELTA, THRESHOLD, COUNT, WINDOW, HEALTH_SCORE]
+          description: Predicate type
+          example: THRESHOLD
+        spec:
+          type: object
+          description: Predicate-specific specification
+          properties:
+            var:
+              type: string
+              description: Variable name from SELECT query
+              example: errorRate
+            op:
+              type: string
+              enum: ['>', '<', '=', '>=', '<=']
+              description: Comparison operator
+              example: '>'
+            value:
+              type: number
+              description: Threshold value
+              example: 0.02
+            query:
+              type: string
+              description: ASK query (for ASK predicates)
+            shapes:
+              type: object
+              description: SHACL shapes (for SHACL predicates)
+
+    HookEvaluationResult:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        result:
+          type: object
+          properties:
+            id:
+              type: string
+              example: ex:ServiceHealthMonitor
+            fired:
+              type: boolean
+              description: Whether hook fired
+              example: true
+            predicates:
+              type: array
+              description: Predicate evaluation results
+              items:
+                type: object
+                properties:
+                  kind:
+                    type: string
+                    example: THRESHOLD
+                  ok:
+                    type: boolean
+                    example: false
+                  meta:
+                    type: object
+            at:
+              type: string
+              format: date-time
+              example: 2025-10-01T12:05:30Z
+            durations:
+              type: object
+              properties:
+                selectMs:
+                  type: number
+                  example: 12.5
+                evalMs:
+                  type: number
+                  example: 15.3
+                totalMs:
+                  type: number
+                  example: 28.7
+        timestamp:
+          type: string
+          format: date-time
+
+    # Data Sources
+    DataSource:
+      type: object
+      required:
+        - id
+        - content
+      properties:
+        id:
+          type: string
+          description: Unique data source identifier
+          example: sample-data
+        name:
+          type: string
+          description: Human-readable name
+          example: Sample Service Data
+        content:
+          type: string
+          description: RDF content in specified format
+          example: |
+            @prefix ex: <http://example.org/> .
+            ex:service1 a ex:Service ;
+              ex:errorRate 0.05 ;
+              ex:latency 1500 .
+        format:
+          type: string
+          enum: [Turtle, N-Triples, N-Quads, JSON-LD]
+          default: Turtle
+          example: Turtle
+        createdAt:
+          type: string
+          format: date-time
+
+    # Runtime Status
+    RuntimeStatus:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [running, stopped, error]
+          example: running
+        uptime:
+          type: number
+          description: Server uptime in seconds
+          example: 3600.5
+        version:
+          type: string
+          example: 1.0.1
+        environment:
+          type: string
+          enum: [development, production, test]
+          example: development
+        memory:
+          type: object
+          properties:
+            rss:
+              type: number
+            heapTotal:
+              type: number
+            heapUsed:
+              type: number
+            external:
+              type: number
+        hooks:
+          type: object
+          properties:
+            total:
+              type: number
+              example: 5
+            active:
+              type: number
+              example: 5
+            evaluations:
+              type: object
+              properties:
+                total:
+                  type: number
+                  example: 123
+                successful:
+                  type: number
+                  example: 120
+                failed:
+                  type: number
+                  example: 3
+                avgDuration:
+                  type: number
+                  example: 28.5
+        data:
+          type: object
+          properties:
+            total:
+              type: number
+              example: 3
+            totalTriples:
+              type: number
+              example: 156
+        recentActivity:
+          type: array
+          items:
+            type: object
+            properties:
+              hookId:
+                type: string
+              fired:
+                type: boolean
+              timestamp:
+                type: string
+                format: date-time
+              duration:
+                type: number
+
+    # Logs
+    AuditLogEntry:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        event:
+          type: string
+          enum: [LOGIN_SUCCESS, LOGIN_FAILED, HOOK_CREATED, HOOK_EVALUATED, RUNTIME_RESET]
+          example: HOOK_EVALUATED
+        user:
+          type: string
+          example: admin
+        userId:
+          type: string
+          example: admin
+        details:
+          type: object
+        ip:
+          type: string
+          example: 192.168.1.100
+        userAgent:
+          type: string
+        sessionId:
+          type: string
+        result:
+          type: string
+          enum: [success, failure]
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message
+          example: Invalid credentials
+        statusCode:
+          type: integer
+          example: 401
+
+paths:
+  # Authentication
+  /api/auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: User login
+      description: Authenticate user and receive JWT token
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '400':
+          description: Missing credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/auth/verify:
+    post:
+      tags:
+        - Authentication
+      summary: Verify JWT token
+      description: Verify token validity and get user info
+      operationId: verifyToken
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Token is valid
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  user:
+                    type: object
+                    properties:
+                      username:
+                        type: string
+                      role:
+                        type: string
+        '403':
+          description: Invalid or expired token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # Knowledge Hooks
+  /api/hooks:
+    get:
+      tags:
+        - Knowledge Hooks
+      summary: List all hooks
+      description: Retrieve all registered knowledge hooks
+      operationId: listHooks
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: List of hooks
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  hooks:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/KnowledgeHook'
+                  total:
+                    type: integer
+                  timestamp:
+                    type: string
+                    format: date-time
+                  user:
+                    type: object
+
+    post:
+      tags:
+        - Knowledge Hooks
+      summary: Create hook
+      description: Register a new knowledge hook
+      operationId: createHook
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KnowledgeHook'
+      responses:
+        '200':
+          description: Hook created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  hook:
+                    $ref: '#/components/schemas/KnowledgeHook'
+                  provenance:
+                    type: object
+                  timestamp:
+                    type: string
+                    format: date-time
+        '400':
+          description: Invalid hook definition
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/hooks/{id}:
+    get:
+      tags:
+        - Knowledge Hooks
+      summary: Get hook details
+      description: Retrieve specific hook by ID
+      operationId: getHook
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          example: ex:ServiceHealthMonitor
+      responses:
+        '200':
+          description: Hook details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  hook:
+                    $ref: '#/components/schemas/KnowledgeHook'
+                  recentResults:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/HookEvaluationResult'
+                  totalEvaluations:
+                    type: integer
+        '404':
+          description: Hook not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      tags:
+        - Knowledge Hooks
+      summary: Delete hook
+      description: Remove hook from registry
+      operationId: deleteHook
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Hook deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+        '404':
+          description: Hook not found
+
+  /api/hooks/{id}/evaluate:
+    post:
+      tags:
+        - Knowledge Hooks
+      summary: Evaluate hook
+      description: Execute hook against data
+      operationId: evaluateHook
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: string
+                  description: Optional RDF data (Turtle format)
+      responses:
+        '200':
+          description: Evaluation result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HookEvaluationResult'
+        '404':
+          description: Hook not found
+        '500':
+          description: Evaluation error
+
+  /api/hooks/{id}/plan:
+    post:
+      tags:
+        - Knowledge Hooks
+      summary: Plan hook execution
+      description: Generate execution plan without running
+      operationId: planHook
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Execution plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  plan:
+                    type: object
+
+  # Data Sources
+  /api/data:
+    get:
+      tags:
+        - Data Sources
+      summary: List data sources
+      description: Retrieve all registered RDF data sources
+      operationId: listDataSources
+      responses:
+        '200':
+          description: List of data sources
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  dataSources:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/DataSource'
+                  total:
+                    type: integer
+
+    post:
+      tags:
+        - Data Sources
+      summary: Create data source
+      description: Register a new RDF data source
+      operationId: createDataSource
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataSource'
+      responses:
+        '200':
+          description: Data source created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  dataSource:
+                    $ref: '#/components/schemas/DataSource'
+
+  /api/data/{id}/query:
+    post:
+      tags:
+        - Data Sources
+      summary: Query data source
+      description: Execute SPARQL query against data source
+      operationId: queryDataSource
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - query
+              properties:
+                query:
+                  type: string
+                  description: SPARQL SELECT or ASK query
+                  example: SELECT * WHERE { ?s ?p ?o } LIMIT 10
+      responses:
+        '200':
+          description: Query results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  query:
+                    type: string
+                  result:
+                    type: object
+
+  # Runtime
+  /api/runtime/status:
+    get:
+      tags:
+        - Runtime
+      summary: Get runtime status
+      description: Retrieve comprehensive runtime status
+      operationId: getRuntimeStatus
+      responses:
+        '200':
+          description: Runtime status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RuntimeStatus'
+
+    post:
+      tags:
+        - Runtime
+      summary: Execute runtime command
+      description: Execute management commands (reset, backup, diagnostics)
+      operationId: executeRuntimeCommand
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - command
+              properties:
+                command:
+                  type: string
+                  enum: [clear-results, reset-runtime, health-check, backup, restore, diagnostics]
+                  example: health-check
+                options:
+                  type: object
+      responses:
+        '200':
+          description: Command executed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+
+  /api/runtime/database:
+    post:
+      tags:
+        - Runtime
+      summary: Configure database
+      description: Configure database storage settings
+      operationId: configureDatabas
+e      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                type:
+                  type: string
+                  enum: [postgresql, sqlite, memory]
+                connection:
+                  type: object
+                options:
+                  type: object
+      responses:
+        '200':
+          description: Database configured
+
+  /api/runtime/performance:
+    post:
+      tags:
+        - Runtime
+      summary: Get performance metrics
+      description: Retrieve performance metrics
+      operationId: getPerformanceMetrics
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                metrics:
+                  type: array
+                  items:
+                    type: string
+                  example: [memory, cpu, hooks]
+      responses:
+        '200':
+          description: Performance metrics
+
+  # Logs
+  /api/logs/audit:
+    get:
+      tags:
+        - Logs
+      summary: Get audit logs
+      description: Retrieve audit log entries
+      operationId: getAuditLogs
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 100
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: event
+          in: query
+          schema:
+            type: string
+        - name: user
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Audit logs
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  logs:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AuditLogEntry'
+                  total:
+                    type: integer
+                  limit:
+                    type: integer
+                  offset:
+                    type: integer
+
+  /api/logs/errors:
+    get:
+      tags:
+        - Logs
+      summary: Get error logs
+      description: Retrieve error log entries
+      operationId: getErrorLogs
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: Error logs
+
+  /api/logs/export:
+    post:
+      tags:
+        - Logs
+      summary: Export logs
+      description: Export logs to file
+      operationId: exportLogs
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                type:
+                  type: string
+                  enum: [audit, error, access]
+                format:
+                  type: string
+                  enum: [json, csv]
+                startDate:
+                  type: string
+                  format: date-time
+                endDate:
+                  type: string
+                  format: date-time
+      responses:
+        '200':
+          description: Export successful
+
+security:
+  - BearerAuth: []

@@ -91,19 +91,21 @@ export class TransactionManager {
     /** @type {Hook[]} */
     this.hooks = [];
     this.options = ManagerOptionsSchema.parse(options);
-    
-    // Simple mutex for concurrency control
-    this._applyMutex = Promise.resolve();
-    
+
+    // Simple mutex for concurrency control - no circular ref accumulation
+    this._applyMutex = null;
+    this._resetMutex();
+
     // Initialize observability manager
     this.observability = createObservabilityManager(this.options.observability || {});
-    
-    // Performance tracking
+
+    // Performance tracking with bounded arrays
     this.performanceMetrics = {
       transactionLatency: [],
       hookExecutionRate: 0,
       errorCount: 0,
-      totalTransactions: 0
+      totalTransactions: 0,
+      _maxLatencyEntries: 1000
     };
     
     // Initialize lockchain writer if enabled
@@ -244,9 +246,11 @@ export class TransactionManager {
       'kgc.skipHooks': validatedOptions.skipHooks || false
     });
 
-    // Use mutex for concurrency control
+    // Use mutex for concurrency control - reset to prevent chain buildup
+    const currentMutex = this._applyMutex;
+
     return new Promise((resolve, reject) => {
-      this._applyMutex = this._applyMutex.then(async () => {
+      this._applyMutex = currentMutex.then(async () => {
         try {
           // Set up timeout with proper cleanup
           let timeoutHandle;
@@ -255,9 +259,12 @@ export class TransactionManager {
           });
 
           const transactionPromise = this._executeTransaction(store, validatedDelta, validatedOptions.skipHooks, hookResults, hookErrors, transactionId, validatedOptions.actor);
-          
+
           const result = await Promise.race([transactionPromise, timeoutPromise]);
           clearTimeout(timeoutHandle);
+
+          // Reset mutex chain to prevent circular reference buildup
+          this._resetMutex();
           
           const finalReceipt = {
             ...result.receipt,
@@ -630,22 +637,58 @@ export class TransactionManager {
    * @private
    */
   _updatePerformanceMetrics(duration, success) {
+    const maxEntries = this.performanceMetrics._maxLatencyEntries;
+
+    // Prevent unbounded array growth - remove oldest before adding
+    if (this.performanceMetrics.transactionLatency.length >= maxEntries) {
+      this.performanceMetrics.transactionLatency.shift();
+    }
+
     this.performanceMetrics.transactionLatency.push({
       timestamp: Date.now(),
       duration,
       success
     });
 
-    // Keep only last 1000 measurements
-    if (this.performanceMetrics.transactionLatency.length > 1000) {
-      this.performanceMetrics.transactionLatency = this.performanceMetrics.transactionLatency.slice(-1000);
-    }
-
     this.performanceMetrics.totalTransactions++;
 
     if (!success) {
       this.performanceMetrics.errorCount++;
     }
+  }
+
+  /**
+   * Reset mutex chain to prevent circular references
+   * @private
+   */
+  _resetMutex() {
+    this._applyMutex = Promise.resolve();
+  }
+
+  /**
+   * Cleanup transaction manager resources
+   */
+  async cleanup() {
+    // Clear hooks
+    this.hooks.length = 0;
+
+    // Clear performance metrics
+    this.performanceMetrics.transactionLatency.length = 0;
+    this.performanceMetrics.errorCount = 0;
+    this.performanceMetrics.totalTransactions = 0;
+
+    // Cleanup lockchain writer
+    if (this.lockchainWriter && typeof this.lockchainWriter.cleanup === 'function') {
+      await this.lockchainWriter.cleanup();
+    }
+
+    // Cleanup resolution layer
+    if (this.resolutionLayer && typeof this.resolutionLayer.cleanup === 'function') {
+      await this.resolutionLayer.cleanup();
+    }
+
+    // Reset mutex
+    this._resetMutex();
   }
 }
 

@@ -251,9 +251,26 @@ export class QueryOptimizer {
    * Clear all caches and indexes
    */
   clear() {
+    // Clear query plans with deep cleanup
+    for (const plan of this.queryPlans.values()) {
+      if (plan.plan && plan.plan.operations) {
+        plan.plan.operations.length = 0;
+      }
+    }
     this.queryPlans.clear();
+
+    // Clear indexes with deep cleanup
+    for (const index of this.indexes.values()) {
+      if (index.data && typeof index.data.clear === 'function') {
+        index.data.clear();
+      }
+    }
     this.indexes.clear();
+
+    // Clear cache
     this.cache.clear();
+
+    // Reset stats
     this.stats = {
       cacheHits: 0,
       cacheMisses: 0,
@@ -262,6 +279,13 @@ export class QueryOptimizer {
       deltaOptimizations: 0,
       totalQueries: 0
     };
+  }
+
+  /**
+   * Cleanup query optimizer resources
+   */
+  async cleanup() {
+    this.clear();
   }
 
   /**

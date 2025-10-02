@@ -78,9 +78,9 @@ export default defineConfig({
     
     // Global setup
     globalSetup: [],
-    
-    // Setup files
-    setupFiles: [],
+
+    // Setup files - automatic cleanup after each test
+    setupFiles: ['./test/setup/cleanup-hooks.mjs'],
     
     // Test file patterns
     globals: false,

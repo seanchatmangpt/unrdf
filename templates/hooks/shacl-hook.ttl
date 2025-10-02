@@ -1,0 +1,96 @@
+# SHACL Validation Hook Template
+# This template provides SHACL shapes for Knowledge Hook validation conditions.
+# SHACL shapes define structural and value constraints for RDF data.
+#
+# Usage:
+# 1. Define your NodeShape and target classes
+# 2. Add property constraints (cardinality, datatype, value ranges)
+# 3. Calculate the SHA-256 hash of this file
+# 4. Reference this file in your Knowledge Hook definition
+#
+# Example: Validate that all Person resources have required properties
+
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix ex: <http://example.org/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# TODO: Define your shape and target class
+# Example shape name: ex:PersonShape, ex:TransactionShape, ex:DataQualityShape
+ex:TemplateShape
+  a sh:NodeShape ;
+  # TODO: Specify which resources this shape validates
+  # Example: sh:targetClass ex:Person ;
+  sh:targetClass ex:YourResourceType ;
+
+  # TODO: Add property constraints below
+  # Example constraints:
+
+  # Required string property
+  sh:property [
+    sh:path ex:name ;
+    sh:minCount 1 ;        # Required (at least 1)
+    sh:maxCount 1 ;        # Single value only
+    sh:datatype xsd:string ;
+    sh:minLength 1 ;       # Non-empty
+    sh:message "Name is required and must be a non-empty string" ;
+  ] ;
+
+  # Required numeric property with range
+  # sh:property [
+  #   sh:path ex:age ;
+  #   sh:minCount 1 ;
+  #   sh:datatype xsd:integer ;
+  #   sh:minInclusive 0 ;
+  #   sh:maxInclusive 150 ;
+  #   sh:message "Age must be between 0 and 150" ;
+  # ] ;
+
+  # Email validation with regex
+  # sh:property [
+  #   sh:path ex:email ;
+  #   sh:minCount 1 ;
+  #   sh:datatype xsd:string ;
+  #   sh:pattern "^[^@]+@[^@]+\\.[^@]+$" ;
+  #   sh:message "Invalid email format" ;
+  # ] ;
+
+  # Reference to another resource (object property)
+  # sh:property [
+  #   sh:path ex:relatedTo ;
+  #   sh:minCount 1 ;
+  #   sh:class ex:RelatedType ;
+  #   sh:message "Must reference a valid RelatedType resource" ;
+  # ] ;
+
+  # Value must be from a specific set
+  # sh:property [
+  #   sh:path ex:status ;
+  #   sh:in ( "pending" "approved" "rejected" ) ;
+  #   sh:message "Status must be pending, approved, or rejected" ;
+  # ] ;
+
+  # Custom constraint using SPARQL
+  # sh:sparql [
+  #   sh:select """
+  #     PREFIX ex: <http://example.org/>
+  #     SELECT $this WHERE {
+  #       $this ex:amount ?amount .
+  #       FILTER(?amount < 0)
+  #     }
+  #   """ ;
+  #   sh:message "Amount cannot be negative" ;
+  # ] ;
+.
+
+# TODO: Add additional shapes as needed
+# Example: Shape for related resources
+# ex:RelatedTypeShape
+#   a sh:NodeShape ;
+#   sh:targetClass ex:RelatedType ;
+#   sh:property [
+#     sh:path ex:id ;
+#     sh:minCount 1 ;
+#     sh:nodeKind sh:IRI ;
+#   ] ;
+# .

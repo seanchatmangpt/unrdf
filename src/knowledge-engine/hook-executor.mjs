@@ -9,6 +9,8 @@
 
 import { createConditionEvaluator } from './condition-evaluator.mjs';
 import { createEffectSandbox } from './effect-sandbox.mjs';
+import { createErrorSanitizer } from './security/error-sanitizer.mjs';
+import { createSandboxRestrictions } from './security/sandbox-restrictions.mjs';
 import { Store } from 'n3';
 
 /**
@@ -64,11 +66,15 @@ export async function executeHook(hook, event, options = {}) {
       success: true
     };
   } catch (error) {
+    // Sanitize error message to prevent information disclosure
+    const errorSanitizer = createErrorSanitizer();
+    const sanitizedError = errorSanitizer.sanitize(error);
+
     return {
       executionId,
       durationMs: Date.now() - startTime,
       success: false,
-      error: error.message,
+      error: sanitizedError,
       cancelled: false
     };
   }
@@ -127,13 +133,17 @@ async function _executeHookLifecycle(hook, event, options) {
         };
       }
     } catch (error) {
+      // Sanitize error message
+      const errorSanitizer = createErrorSanitizer();
+      const sanitizedError = errorSanitizer.sanitize(error);
+
       if (strictMode) {
-        throw new Error(`Before phase failed: ${error.message}`);
+        throw new Error(`Before phase failed: ${sanitizedError}`);
       }
       return {
-        beforeResult: { error: error.message },
+        beforeResult: { error: sanitizedError },
         cancelled: true,
-        cancelReason: `Before phase error: ${error.message}`,
+        cancelReason: `Before phase error: ${sanitizedError}`,
         phase: 'before'
       };
     }
@@ -158,14 +168,18 @@ async function _executeHookLifecycle(hook, event, options) {
         };
       }
     } catch (error) {
+      // Sanitize error message
+      const errorSanitizer = createErrorSanitizer();
+      const sanitizedError = errorSanitizer.sanitize(error);
+
       if (strictMode) {
-        throw new Error(`Condition evaluation failed: ${error.message}`);
+        throw new Error(`Condition evaluation failed: ${sanitizedError}`);
       }
       return {
         beforeResult,
-        conditionResult: { error: error.message },
+        conditionResult: { error: sanitizedError },
         cancelled: true,
-        cancelReason: `Condition evaluation error: ${error.message}`,
+        cancelReason: `Condition evaluation error: ${sanitizedError}`,
         phase: 'condition',
         success: false
       };
@@ -176,26 +190,26 @@ async function _executeHookLifecycle(hook, event, options) {
   if (hook.run) {
     try {
       if (enableSandboxing) {
-        const sandbox = createEffectSandbox(sandboxConfig);
-        runResult = await sandbox.executeEffect(hook.run, {
-          event: currentEvent,
-          store: currentEvent.context?.graph,
-          delta: currentEvent.payload?.delta,
-          metadata: currentEvent.context?.metadata || {}
-        });
+        // Use security sandbox with restrictions
+        const sandboxRestrictions = createSandboxRestrictions(sandboxConfig);
+        runResult = await sandboxRestrictions.executeRestricted(hook.run, currentEvent);
       } else {
         runResult = await hook.run(currentEvent);
       }
     } catch (error) {
+      // Sanitize error message
+      const errorSanitizer = createErrorSanitizer();
+      const sanitizedError = errorSanitizer.sanitize(error);
+
       if (strictMode) {
-        throw new Error(`Run phase failed: ${error.message}`);
+        throw new Error(`Run phase failed: ${sanitizedError}`);
       }
       return {
         beforeResult,
         conditionResult,
-        runResult: { error: error.message },
+        runResult: { error: sanitizedError },
         cancelled: true,
-        cancelReason: `Run phase error: ${error.message}`,
+        cancelReason: `Run phase error: ${sanitizedError}`,
         phase: 'run',
         success: false
       };
@@ -225,11 +239,15 @@ async function _executeHookLifecycle(hook, event, options) {
         });
       }
     } catch (error) {
+      // Sanitize error message
+      const errorSanitizer = createErrorSanitizer();
+      const sanitizedError = errorSanitizer.sanitize(error);
+
       if (strictMode) {
-        throw new Error(`After phase failed: ${error.message}`);
+        throw new Error(`After phase failed: ${sanitizedError}`);
       }
       // After phase errors don't cancel the hook, just log them
-      afterResult = { error: error.message };
+      afterResult = { error: sanitizedError };
     }
   }
   

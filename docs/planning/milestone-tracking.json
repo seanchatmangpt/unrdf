@@ -1,0 +1,453 @@
+{
+  "meta": {
+    "version": "1.0.0",
+    "generated": "2025-10-01T00:00:00Z",
+    "agent": "CODE-GOAL-PLANNER",
+    "project": "UNRDF Dashboard Completion",
+    "tracking_mode": "real-time"
+  },
+  "milestones": [
+    {
+      "id": "M1",
+      "name": "Security Hardened",
+      "priority": 1,
+      "weight": 0.30,
+      "status": "not_started",
+      "start_date": null,
+      "target_date": "2025-10-02T23:59:59Z",
+      "completion_date": null,
+      "progress_pct": 0,
+      "success_criteria": [
+        {
+          "id": "M1-SC1",
+          "description": "OWASP ZAP scan shows 0 high/critical vulnerabilities",
+          "metric": "critical_vulns",
+          "target": 0,
+          "current": 3,
+          "unit": "count",
+          "validation": "automated",
+          "validation_command": "npm run security:scan",
+          "status": "failing"
+        },
+        {
+          "id": "M1-SC2",
+          "description": "Path traversal tests 100% passing",
+          "metric": "path_traversal_tests_pass_rate",
+          "target": 100,
+          "current": 0,
+          "unit": "percent",
+          "validation": "automated",
+          "validation_command": "npm run test:security:path-traversal",
+          "status": "failing"
+        },
+        {
+          "id": "M1-SC3",
+          "description": "Rate limiting tests 100% passing",
+          "metric": "rate_limit_tests_pass_rate",
+          "target": 100,
+          "current": 0,
+          "unit": "percent",
+          "validation": "automated",
+          "validation_command": "npm run test:security:rate-limit",
+          "status": "failing"
+        },
+        {
+          "id": "M1-SC4",
+          "description": "All user inputs validated with Zod schemas",
+          "metric": "input_validation_coverage",
+          "target": 100,
+          "current": 30,
+          "unit": "percent",
+          "validation": "code_review",
+          "validation_command": "grep -r 'z.object' src/",
+          "status": "failing"
+        }
+      ],
+      "actions": [
+        {
+          "id": "M1-A1",
+          "description": "Fix path traversal vulnerability",
+          "assigned_agent": "SEC-001",
+          "status": "pending",
+          "preconditions": ["Code security analysis complete"],
+          "effects": ["Path validation tests pass"],
+          "estimated_hours": 2,
+          "actual_hours": null,
+          "risk_level": "low",
+          "blocking": ["M3-A2"],
+          "start_time": null,
+          "end_time": null
+        },
+        {
+          "id": "M1-A2",
+          "description": "Implement rate limiting middleware",
+          "assigned_agent": "SEC-001",
+          "status": "pending",
+          "preconditions": ["API routes identified"],
+          "effects": ["Rate limit tests pass", "DOS protection active"],
+          "estimated_hours": 3,
+          "actual_hours": null,
+          "risk_level": "medium",
+          "blocking": [],
+          "start_time": null,
+          "end_time": null
+        },
+        {
+          "id": "M1-A3",
+          "description": "Sanitize error messages",
+          "assigned_agent": "SEC-001",
+          "status": "pending",
+          "preconditions": ["Error handling patterns documented"],
+          "effects": ["No stack traces in production logs"],
+          "estimated_hours": 2,
+          "actual_hours": null,
+          "risk_level": "low",
+          "blocking": [],
+          "start_time": null,
+          "end_time": null
+        },
+        {
+          "id": "M1-A4",
+          "description": "Implement comprehensive input validation with Zod",
+          "assigned_agent": "SEC-001",
+          "status": "pending",
+          "preconditions": ["Zod schemas defined for all endpoints"],
+          "effects": ["All inputs validated", "XSS/Injection prevented"],
+          "estimated_hours": 4,
+          "actual_hours": null,
+          "risk_level": "medium",
+          "blocking": ["M3-A2"],
+          "start_time": null,
+          "end_time": null
+        }
+      ],
+      "blockers": [],
+      "metrics": {
+        "security_score": 0,
+        "target_security_score": 95,
+        "critical_vulns": 3,
+        "high_vulns": 5,
+        "medium_vulns": 8,
+        "low_vulns": 12
+      }
+    },
+    {
+      "id": "M2",
+      "name": "Tests Passing",
+      "priority": 2,
+      "weight": 0.40,
+      "status": "not_started",
+      "start_date": null,
+      "target_date": "2025-10-03T23:59:59Z",
+      "completion_date": null,
+      "progress_pct": 0,
+      "success_criteria": [
+        {
+          "id": "M2-SC1",
+          "description": "npm test exits with code 0",
+          "metric": "test_suite_exit_code",
+          "target": 0,
+          "current": 1,
+          "unit": "exit_code",
+          "validation": "automated",
+          "validation_command": "npm test; echo $?",
+          "status": "failing"
+        },
+        {
+          "id": "M2-SC2",
+          "description": "Test failure rate below 5%",
+          "metric": "test_failure_rate",
+          "target": 5,
+          "current": 47.7,
+          "unit": "percent",
+          "validation": "automated",
+          "validation_command": "npm test 2>&1 | grep 'Tests:'",
+          "status": "failing"
+        },
+        {
+          "id": "M2-SC3",
+          "description": "Test coverage above 80%",
+          "metric": "code_coverage",
+          "target": 80,
+          "current": 0,
+          "unit": "percent",
+          "validation": "automated",
+          "validation_command": "npm test -- --coverage",
+          "status": "unknown"
+        },
+        {
+          "id": "M2-SC4",
+          "description": "E2E tests for critical paths passing",
+          "metric": "e2e_pass_rate",
+          "target": 100,
+          "current": 0,
+          "unit": "percent",
+          "validation": "automated",
+          "validation_command": "npm run test:e2e",
+          "status": "not_implemented"
+        }
+      ],
+      "actions": [
+        {
+          "id": "M2-A1",
+          "description": "Fix business logic hook tests (4 failing)",
+          "assigned_agent": "TEST-001",
+          "status": "pending",
+          "preconditions": ["Hook implementation reviewed"],
+          "effects": ["Business logic tests pass", "Core functionality validated"],
+          "estimated_hours": 4,
+          "actual_hours": null,
+          "risk_level": "high",
+          "blocking": ["M2-A3"],
+          "start_time": null,
+          "end_time": null
+        },
+        {
+          "id": "M2-A2",
+          "description": "Fix edge case data scenario tests (8 failing)",
+          "assigned_agent": "TEST-001",
+          "status": "pending",
+          "preconditions": ["SHA256 validation logic fixed"],
+          "effects": ["Edge case tests pass", "Unicode/special chars handled"],
+          "estimated_hours": 3,
+          "actual_hours": null,
+          "risk_level": "medium",
+          "blocking": [],
+          "start_time": null,
+          "end_time": null
+        },
+        {
+          "id": "M2-A3",
+          "description": "Implement TDD workflow for new features",
+          "assigned_agent": "TEST-001",
+          "status": "pending",
+          "preconditions": ["M2-A1 complete", "Testing framework validated"],
+          "effects": ["Coverage >80%", "TDD culture established"],
+          "estimated_hours": 8,
+          "actual_hours": null,
+          "risk_level": "medium",
+          "blocking": ["M2-A4"],
+          "start_time": null,
+          "end_time": null
+        },
+        {
+          "id": "M2-A4",
+          "description": "Create E2E test suite for critical user journeys",
+          "assigned_agent": "TEST-001",
+          "status": "pending",
+          "preconditions": ["M3-A1 complete", "M3-A2 complete", "Dashboard UI ready"],
+          "effects": ["Critical paths validated", "Integration bugs caught"],
+          "estimated_hours": 6,
+          "actual_hours": null,
+          "risk_level": "high",
+          "blocking": [],
+          "start_time": null,
+          "end_time": null
+        }
+      ],
+      "blockers": [],
+      "metrics": {
+        "total_tests": 250,
+        "passing_tests": 130,
+        "failing_tests": 120,
+        "test_pass_rate": 52.0,
+        "target_pass_rate": 95.0,
+        "coverage_pct": 0,
+        "target_coverage": 80
+      }
+    },
+    {
+      "id": "M3",
+      "name": "Dashboard Implemented",
+      "priority": 3,
+      "weight": 0.30,
+      "status": "not_started",
+      "start_date": null,
+      "target_date": "2025-10-04T23:59:59Z",
+      "completion_date": null,
+      "progress_pct": 0,
+      "success_criteria": [
+        {
+          "id": "M3-SC1",
+          "description": "Knowledge Hooks list view renders with data",
+          "metric": "hooks_list_functional",
+          "target": true,
+          "current": false,
+          "unit": "boolean",
+          "validation": "e2e_test",
+          "validation_command": "npm run test:e2e:hooks-list",
+          "status": "not_implemented"
+        },
+        {
+          "id": "M3-SC2",
+          "description": "Hook creation form validates with Zod",
+          "metric": "hook_creation_validation",
+          "target": true,
+          "current": false,
+          "unit": "boolean",
+          "validation": "e2e_test",
+          "validation_command": "npm run test:e2e:hook-create",
+          "status": "not_implemented"
+        },
+        {
+          "id": "M3-SC3",
+          "description": "OTEL dashboard shows real-time metrics",
+          "metric": "otel_dashboard_realtime",
+          "target": true,
+          "current": false,
+          "unit": "boolean",
+          "validation": "manual",
+          "validation_command": "Open http://localhost:3000/dashboard",
+          "status": "not_implemented"
+        },
+        {
+          "id": "M3-SC4",
+          "description": "Audit trail searchable and filterable",
+          "metric": "audit_trail_functional",
+          "target": true,
+          "current": false,
+          "unit": "boolean",
+          "validation": "e2e_test",
+          "validation_command": "npm run test:e2e:audit-trail",
+          "status": "not_implemented"
+        }
+      ],
+      "actions": [
+        {
+          "id": "M3-A1",
+          "description": "Build Knowledge Hooks list component",
+          "assigned_agent": "FE-001",
+          "status": "pending",
+          "preconditions": ["API endpoints available"],
+          "effects": ["Users can view all hooks", "List pagination works"],
+          "estimated_hours": 4,
+          "actual_hours": null,
+          "risk_level": "low",
+          "blocking": ["M2-A4"],
+          "start_time": null,
+          "end_time": null
+        },
+        {
+          "id": "M3-A2",
+          "description": "Build hook creation form with Zod validation",
+          "assigned_agent": "FE-001",
+          "status": "pending",
+          "preconditions": ["M1-A4 complete", "Zod schemas ready"],
+          "effects": ["Users can create hooks", "Input validation works"],
+          "estimated_hours": 5,
+          "actual_hours": null,
+          "risk_level": "medium",
+          "blocking": ["M2-A4"],
+          "start_time": null,
+          "end_time": null
+        },
+        {
+          "id": "M3-A3",
+          "description": "Build OTEL metrics dashboard",
+          "assigned_agent": "OPS-001",
+          "status": "pending",
+          "preconditions": ["OTEL instrumentation complete"],
+          "effects": ["Real-time monitoring", "Performance visibility"],
+          "estimated_hours": 6,
+          "actual_hours": null,
+          "risk_level": "high",
+          "blocking": [],
+          "start_time": null,
+          "end_time": null
+        },
+        {
+          "id": "M3-A4",
+          "description": "Build audit trail viewer",
+          "assigned_agent": "FE-001",
+          "status": "pending",
+          "preconditions": ["Lockchain API ready"],
+          "effects": ["Compliance reporting", "Debug capability"],
+          "estimated_hours": 5,
+          "actual_hours": null,
+          "risk_level": "medium",
+          "blocking": [],
+          "start_time": null,
+          "end_time": null
+        }
+      ],
+      "blockers": [],
+      "metrics": {
+        "components_total": 12,
+        "components_complete": 0,
+        "components_in_progress": 0,
+        "components_pending": 12,
+        "e2e_scenarios_passing": 0,
+        "e2e_scenarios_total": 8,
+        "performance_p50_ms": 0,
+        "performance_p95_ms": 0,
+        "performance_p99_ms": 0,
+        "target_p95_ms": 200
+      }
+    }
+  ],
+  "overall_metrics": {
+    "production_readiness_score": 0,
+    "target_readiness_score": 85,
+    "total_actions": 12,
+    "completed_actions": 0,
+    "in_progress_actions": 0,
+    "pending_actions": 12,
+    "total_estimated_hours": 50,
+    "total_actual_hours": 0,
+    "variance_pct": 0,
+    "critical_path_hours": 29,
+    "parallel_potential_hours": 15
+  },
+  "risk_assessment": {
+    "overall_risk": "high",
+    "security_risk": "critical",
+    "technical_risk": "high",
+    "timeline_risk": "medium",
+    "resource_risk": "low",
+    "mitigation_plan": "Parallel agent execution, continuous validation, incremental deployment"
+  },
+  "deployment_readiness": {
+    "go_no_go_score": 0,
+    "threshold": 85,
+    "status": "NO-GO",
+    "criteria": [
+      {
+        "name": "Security scan clean",
+        "weight": 30,
+        "status": "fail",
+        "score": 0
+      },
+      {
+        "name": "All tests passing",
+        "weight": 30,
+        "status": "fail",
+        "score": 0
+      },
+      {
+        "name": "Coverage >80%",
+        "weight": 15,
+        "status": "fail",
+        "score": 0
+      },
+      {
+        "name": "E2E tests passing",
+        "weight": 10,
+        "status": "fail",
+        "score": 0
+      },
+      {
+        "name": "Performance targets",
+        "weight": 10,
+        "status": "unknown",
+        "score": 0
+      },
+      {
+        "name": "Documentation complete",
+        "weight": 5,
+        "status": "fail",
+        "score": 0
+      }
+    ]
+  },
+  "updates": []
+}
