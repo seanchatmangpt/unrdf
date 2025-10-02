@@ -1,12 +1,9 @@
 {
   "name": "unrdf",
-  "version": "2.1.1",
-  "description": "Autonomic RDF framework with Knowledge Hooks, policy pack governance, and cryptographic audit trails",
+  "version": "3.0.0",
+  "description": "Production-ready RDF knowledge graph library with Knowledge Hooks, SPARC methodology, and Dark Matter 80/20 optimization",
   "type": "module",
   "main": "src/index.mjs",
-  "bin": {
-    "unrdf": "src/cli/index.mjs"
-  },
   "scripts": {
     "dev": "node src/cli/index.mjs dev",
     "build": "node build.config.mjs",
