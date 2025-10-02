@@ -41,7 +41,6 @@ const ValidationResultSchema = z.object({
 });
 
 const FeatureValidationConfigSchema = z.object({
-  feature: z.string(),
   expectedSpans: z.array(z.string()),
   requiredAttributes: z.array(z.string()),
   performanceThresholds: z.object({
@@ -336,6 +335,11 @@ export class OTELValidator {
           attributes: { "output.file": "result.ttl", triples: 100 },
           duration: 10,
         },
+        {
+          name: "parse.turtle",
+          attributes: { format: "turtle" },
+          duration: 15,
+        },
       ],
       "cli-query": [
         {
@@ -347,6 +351,64 @@ export class OTELValidator {
           name: "cli.format",
           attributes: { format: "json", size: 1024 },
           duration: 5,
+        },
+        {
+          name: "query.sparql",
+          attributes: { "query.type": "select" },
+          duration: 20,
+        },
+      ],
+      "cli-validate": [
+        {
+          name: "cli.validate",
+          attributes: { "input.file": "test.ttl", "shapes.file": "shapes.ttl" },
+          duration: 30,
+        },
+        {
+          name: "validate.shacl",
+          attributes: { conforms: true, violations: 0 },
+          duration: 40,
+        },
+        {
+          name: "cli.report",
+          attributes: { conforms: true },
+          duration: 10,
+        },
+      ],
+      "cli-hook": [
+        {
+          name: "cli.hook",
+          attributes: { "hook.name": "test-hook", "hook.kind": "sparql-ask" },
+          duration: 15,
+        },
+        {
+          name: "hook.evaluate",
+          attributes: { "hook.kind": "sparql-ask", "hook.fired": true },
+          duration: 20,
+        },
+        {
+          name: "hook.result",
+          attributes: { "execution.time": 20, result: true },
+          duration: 5,
+        },
+      ],
+      "transaction-manager": [
+        {
+          name: "transaction.start",
+          attributes: {
+            "transaction.id": "tx-123",
+            "transaction.type": "rdf",
+            "transaction.success": true,
+          },
+          duration: 10,
+        },
+        {
+          name: "transaction.commit",
+          attributes: {
+            "transaction.id": "tx-123",
+            "transaction.success": true,
+          },
+          duration: 15,
         },
       ],
     };
