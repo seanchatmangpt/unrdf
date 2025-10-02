@@ -122,33 +122,49 @@ export class RdfEngine {
     };
 
     switch (queryType) {
-      case "SELECT":
+      case "SELECT": {
         const bindingsStream = await this.comunicaEngine.queryBindings(
           sparql,
           context,
         );
         const bindings = await bindingsStream.toArray();
-        // Convert from RDF/JS terms to simple values
-        return bindings.map((b) =>
-          Object.fromEntries([...b].map(([k, v]) => [k.value, v.value])),
-        );
-      case "ASK":
-        return this.comunicaEngine.queryBoolean(sparql, context);
-      case "CONSTRUCT":
+        const rows = bindings.map((binding) => {
+          const entry = {};
+          for (const [variable, value] of binding) {
+            entry[variable.value] = value.value;
+          }
+          return entry;
+        });
+        const variables = rows.length > 0 ? Object.keys(rows[0]) : [];
+        return { type: "select", rows, variables };
+      }
+      case "ASK": {
+        const boolean = await this.comunicaEngine.queryBoolean(sparql, context);
+        return { type: "ask", boolean };
+      }
+      case "CONSTRUCT": {
         const quadStream = await this.comunicaEngine.queryQuads(
           sparql,
           context,
         );
-        return new Store(await quadStream.toArray());
+        return { type: "construct", store: new Store(await quadStream.toArray()) };
+      }
+      case "DESCRIBE": {
+        const quadStream = await this.comunicaEngine.queryQuads(
+          sparql,
+          context,
+        );
+        return { type: "describe", store: new Store(await quadStream.toArray()) };
+      }
       case "INSERT":
       case "UPDATE":
       case "DELETE":
         throw new Error(
-          `Query type "${queryType}" is not supported. Use the TransactionManager for writes.`,
+          `Query type "${queryType}" is not supported. Use the update() helper for writes.`,
         );
       default:
         throw new Error(
-          `Query type "${queryType}" is not supported. Use the TransactionManager for writes.`,
+          `Query type "${queryType}" is not supported by query().`,
         );
     }
   }

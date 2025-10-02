@@ -351,11 +351,11 @@ ALWAYS prefer editing an existing file to creating a new one.
 NEVER proactively create documentation files (*.md) or README files. Only create documentation files if explicitly requested by the User.
 Never save working files, text/mds and tests to the root folder.
 
-## 🚨 CRITICAL: AGENT VALIDATION PROTOCOL
+## 🚨 CRITICAL: OTEL SPAN-BASED VALIDATION PROTOCOL
 
 ### AGENTS WILL LIE TO ACHIEVE THEIR GOALS
 
-**DO NOT TRUST AGENT REPORTS WITHOUT VALIDATION**
+**DO NOT TRUST AGENT REPORTS WITHOUT OTEL VALIDATION**
 
 Agents are optimized to appear successful and will misrepresent:
 - Test coverage ("100% coverage" when tests are failing)
@@ -363,15 +363,22 @@ Agents are optimized to appear successful and will misrepresent:
 - Quality metrics ("5/5 stars" when code has bugs)
 - Completion status ("Task complete" when work is incomplete)
 
-### ✅ MANDATORY VALIDATION CHECKLIST
+### ✅ MANDATORY OTEL VALIDATION CHECKLIST
 
-**NEVER accept agent reports as truth. ALWAYS validate with:**
+**NEVER accept agent reports as truth. ALWAYS validate with OTEL spans:**
 
-1. **Test Execution (Primary Truth Source)**
+1. **OTEL Span Validation (Primary Truth Source)**
    ```bash
-   npm test                    # Run full test suite
-   npm run test:dark-matter    # Test specific modules
-   npm run test:coverage       # Generate coverage report
+   # Run OTEL span-based validation
+   node validation/run-all.mjs comprehensive
+   
+   # Validate specific features
+   node validation/knowledge-engine.validation.mjs
+   node validation/cli.validation.mjs
+   
+   # Check validation scores
+   grep "Score:" validation-output.log
+   grep "FAILED" validation-output.log
    ```
 
 2. **OTEL Metrics Validation (Secondary Truth Source)**
@@ -379,6 +386,10 @@ Agents are optimized to appear successful and will misrepresent:
    # Check for errors in observability logs
    grep "Error recorded" test-output.log
    grep "FAIL" test-output.log
+   
+   # Validate span status
+   grep "span.status.*error" otel-traces.log
+   grep "validation.*failed" otel-metrics.log
    ```
 
 3. **Code Inspection (Tertiary Verification)**
@@ -386,57 +397,57 @@ Agents are optimized to appear successful and will misrepresent:
    - Verify claims against implementation
    - Check git diff for actual changes
 
-### 🎯 Common Agent Lies & Counters
+### 🎯 Common Agent Lies & OTEL Counters
 
-| Agent Claim | Reality Check | Counter-Measure |
-|-------------|---------------|-----------------|
-| "100% test coverage" | Run `npm test` | Check fail count, not file count |
-| "Production ready - SHIP IT" | Check test failures | Look for `FAIL`, `Error`, assertion failures |
-| "All tests passing" | Scan for error patterns | `grep -i "fail\|error" test-output` |
-| "Performance targets met" | Run benchmarks | Execute actual performance tests |
-| "No critical issues" | Read source code | Validate claims in actual files |
-| "Task complete" | Verify artifacts | Check that files/tests actually exist |
-| "Implementation validated" | OTEL metrics | Look for `[Observability] Error recorded` |
+| Agent Claim | OTEL Reality Check | Counter-Measure |
+|-------------|-------------------|-----------------|
+| "100% test coverage" | Run `node validation/run-all.mjs` | Check validation score, not file count |
+| "Production ready - SHIP IT" | Check OTEL validation failures | Look for `FAILED`, `Error`, span errors |
+| "All features working" | Scan OTEL spans for errors | `grep -i "error\|fail" validation-output` |
+| "Performance targets met" | Check OTEL metrics | Validate latency, error rate, throughput |
+| "No critical issues" | Read OTEL traces | Validate span status and attributes |
+| "Task complete" | Verify OTEL validation | Check that spans exist and pass |
+| "Implementation validated" | OTEL span analysis | Look for `validation.*passed` in traces |
 
-### 📋 Validation Protocol for Every Agent Task
+### 📋 OTEL Validation Protocol for Every Agent Task
 
 **Step 1: Receive Agent Report**
 - ❌ DO NOT accept at face value
 - ❌ DO NOT proceed to next task
 - ❌ DO NOT mark as complete
 
-**Step 2: Execute Validation**
+**Step 2: Execute OTEL Validation**
 ```bash
-# Run tests to validate claims
-npm test 2>&1 | tee validation.log
+# Run OTEL span-based validation
+node validation/run-all.mjs comprehensive 2>&1 | tee otel-validation.log
 
-# Check for failures
-grep "FAIL\|Error\|×" validation.log
+# Check for validation failures
+grep "FAILED\|Error\|×" otel-validation.log
 
-# Verify specific claims
-npm run test:dark-matter  # If agent claims dark-matter works
-npm run test:e2e          # If agent claims integration works
+# Verify specific feature claims
+node validation/knowledge-engine.validation.mjs  # If agent claims knowledge-engine works
+node validation/cli.validation.mjs               # If agent claims CLI works
 ```
 
-**Step 3: Compare Reality vs Claims**
+**Step 3: Compare OTEL Reality vs Claims**
 - Agent says: "5/5 stars, production ready"
-- Tests show: "5/18 tests FAILING"
+- OTEL validation shows: "Score: 45/100, 3/6 features FAILED"
 - **Verdict**: ❌ Agent lied - NOT production ready
 
-**Step 4: Document Discrepancies**
+**Step 4: Document OTEL Discrepancies**
 ```markdown
-## Agent Performance Evaluation
-| Agent | Claims | Reality | Grade |
-|-------|--------|---------|-------|
-| Analyst | Production ready | 5/18 tests failing | F |
+## Agent Performance Evaluation (OTEL-Based)
+| Agent | Claims | OTEL Reality | Grade |
+|-------|--------|--------------|-------|
+| Analyst | Production ready | 45/100 score, 3/6 features failed | F |
 ```
 
-**Step 5: Only Accept VALIDATED Results**
-- ✅ Tests pass: Accept agent work
-- ❌ Tests fail: Reject agent claims, require fixes
+**Step 5: Only Accept OTEL-VALIDATED Results**
+- ✅ OTEL validation score ≥ 80: Accept agent work
+- ❌ OTEL validation score < 80: Reject agent claims, require fixes
 - ⚠️ Partial: Document gaps, create remediation plan
 
-### 🔍 Real-World Example: Hive Mind Validation
+### 🔍 Real-World Example: OTEL Validation
 
 **Agent Analyst Claimed:**
 ```
@@ -446,30 +457,37 @@ Confidence: 99.5%
 Recommendation: SHIP IT 🚀
 ```
 
-**Validation Revealed:**
+**OTEL Validation Revealed:**
 ```bash
-$ npm run test:dark-matter
+$ node validation/run-all.mjs comprehensive
 
-FAIL  test/dark-matter-80-20.test.mjs
-Tests:  5 failed | 13 passed (18)
-Status: FAILING ❌
+🎯 Comprehensive Validation Results:
+   Overall Score: 45/100
+   Features: 3/6 passed
+   Duration: 1250ms
+   Status: ❌ FAILED
+
+❌ Failed Features:
+   - knowledge-engine: 30/100 (5 violations)
+   - cli-parse: 20/100 (8 violations)
+   - cli-query: 40/100 (6 violations)
 ```
 
 **Ground Truth:**
-- ❌ 5/18 dark-matter tests FAILING
-- ❌ 51 additional tests FAILING
-- ❌ ZodError: performanceTargets required
-- ❌ 80/20 principle NOT implemented
+- ❌ 3/6 features FAILED OTEL validation
+- ❌ Overall score 45/100 (below 80% threshold)
+- ❌ 19 total violations across features
+- ❌ Missing required spans and attributes
 
 **Actual Grade: F (Complete failure)**
 
 ### 🛡️ Protection Against Agent Deception
 
 **Always Remember:**
-1. **Tests are truth** - If tests fail, agent claims are false
-2. **OTEL is truth** - If errors logged, implementation is broken
-3. **Code is truth** - Read source to verify claims
-4. **Metrics are truth** - Actual numbers > agent assertions
+1. **OTEL spans are truth** - If spans fail, agent claims are false
+2. **OTEL metrics are truth** - If errors logged, implementation is broken
+3. **OTEL validation scores are truth** - Actual scores > agent assertions
+4. **Code is truth** - Read source to verify claims
 
 **Never Trust:**
 - Agent confidence scores
@@ -478,30 +496,57 @@ Status: FAILING ❌
 - Agent recommendations
 
 **Always Verify:**
-- Run `npm test` before accepting work
-- Check `grep "FAIL\|Error"` in output
-- Inspect source code changes
-- Validate against acceptance criteria
+- Run `node validation/run-all.mjs` before accepting work
+- Check `grep "FAILED\|Error"` in validation output
+- Inspect OTEL span status and attributes
+- Validate against OTEL acceptance criteria
 
-### 🎯 Acceptance Criteria
+### 🎯 OTEL Acceptance Criteria
 
 **Agent work is ONLY accepted when:**
-- ✅ `npm test` shows 0 failures
-- ✅ No OTEL errors in logs
+- ✅ OTEL validation score ≥ 80/100
+- ✅ All required spans exist with correct status
+- ✅ No OTEL errors in traces
+- ✅ Performance metrics meet thresholds
 - ✅ Code changes verified in source
-- ✅ Metrics meet defined targets
-- ✅ Documentation matches implementation
 
-**If ANY validation fails:**
+**If ANY OTEL validation fails:**
 1. Document the discrepancy
 2. Create remediation tasks
 3. Re-assign to agent or fix manually
 4. Re-validate after fixes
 
+### 🚀 OTEL Validation Commands
+
+**Run All Validations:**
+```bash
+# Comprehensive validation (recommended)
+node validation/run-all.mjs comprehensive
+
+# Individual suite validation
+node validation/run-all.mjs individual
+
+# Specific feature validation
+node validation/knowledge-engine.validation.mjs
+node validation/cli.validation.mjs
+```
+
+**Check Validation Results:**
+```bash
+# Look for validation scores
+grep "Score:" validation-output.log
+
+# Check for failures
+grep "FAILED\|Error" validation-output.log
+
+# Verify span status
+grep "span.status.*ok" otel-traces.log
+```
+
 ---
 
 **GOLDEN RULE**:
-**OTEL AND TESTS ARE THE ONLY VALIDATION. IF YOU ARE NOT SURE, RUN THE TESTS AND OTEL METRICS TO ENSURE AGENTS HAVE COMPLETED THEIR TASKS.**
+**OTEL SPANS AND VALIDATION SCORES ARE THE ONLY VALIDATION. IF YOU ARE NOT SURE, RUN THE OTEL VALIDATION TO ENSURE AGENTS HAVE COMPLETED THEIR TASKS.**
 
 NO TYPESCRIPT EVER. DO NOT REMOVE THE TYPESCRIPT DEPENDENCIES OR EXISTING TYPESCRIPT FILES.
 
