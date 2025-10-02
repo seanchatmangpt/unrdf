@@ -12,7 +12,7 @@ import {
   validateNamedNode,
   mergeStores,
   createNamespaceManager
-} from '../../src/utils/index.mjs';
+} from 'unrdf/utils';
 import { DataFactory } from 'n3';
 
 const { namedNode, literal, quad } = DataFactory;

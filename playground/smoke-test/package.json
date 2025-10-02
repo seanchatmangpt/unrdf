@@ -1,18 +1,21 @@
 {
   "name": "unrdf-smoke-test",
   "version": "1.0.0",
-  "description": "Smoke test for UNRDF v3.0.1 knowledge engine",
+  "description": "Smoke test for UNRDF production package",
   "type": "module",
   "private": true,
   "scripts": {
-    "test": "node all-tests.mjs",
-    "test:engine": "node smoke-test.mjs",
-    "test:composables": "node composables-test.mjs",
-    "test:utils": "node utils-test.mjs",
-    "install-local": "npm install ../../",
-    "install-npm": "npm install unrdf@latest"
+    "test": "node readme-validation-test.mjs",
+    "test:gap-analysis": "node comprehensive-production-test.mjs",
+    "test:quick": "node production-smoke-test.mjs",
+    "test:production": "node 01-quick-start-production.mjs && node 02-knowledge-graph-production.mjs",
+    "test:all": "pnpm run test && pnpm run test:gap-analysis && pnpm run test:production",
+    "install-prod": "pnpm add unrdf@latest"
+  },
+  "devDependencies": {
+    "@rdfjs/data-model": "^2.0.1"
   },
   "dependencies": {
-    "unrdf": "file:../../"
+    "unrdf": "^3.0.1"
   }
 }

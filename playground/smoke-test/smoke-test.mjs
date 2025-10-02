@@ -8,8 +8,7 @@
 
 import { readFileSync } from 'fs';
 import { Parser, Store } from 'n3';
-import { createDarkMatterCore } from '../../src/knowledge-engine/dark-matter-core.mjs';
-import { defineHook } from '../../src/knowledge-engine/define-hook.mjs';
+import { createDarkMatterCore, defineHook } from 'unrdf';
 
 // ANSI colors
 const colors = {

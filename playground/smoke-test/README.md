@@ -13,20 +13,26 @@ Quick smoke test to verify UNRDF knowledge engine functionality.
 
 ## Quick Start
 
-### Using Local Version (Development)
+### Using Production Package (Recommended)
 
 ```bash
 cd playground/smoke-test
-npm install
-npm test
+pnpm install-prod
+pnpm test
 ```
 
-### Using npm Version (Production)
+### Using Different Test Sets
 
 ```bash
-cd playground/smoke-test
-npm run install-npm
-npm test
+# Test all README examples
+pnpm test:readme
+
+# Test engine core functionality
+pnpm test:engine
+
+# Test individual components
+pnpm test:composables
+pnpm test:utils
 ```
 
 ## Expected Output
@@ -108,7 +114,22 @@ See `data.ttl` for sample RDF data:
 
 ## Files
 
-- `smoke-test.mjs` - Main test script
+### Core Engine Tests
+- `smoke-test.mjs` - Main engine test script
+- `all-tests.mjs` - Runs all engine component tests
+- `composables-test.mjs` - Tests composable functions
+- `utils-test.mjs` - Tests utility functions
+
+### README Example Tests  
+- `01-quick-start.mjs` - Quick Start example (lines 64-100)
+- `02-simple-knowledge-graph.mjs` - Simple Knowledge Graph (lines 332-377)
+- `03-policy-driven-validation.mjs` - Policy-Driven Validation (lines 379-423)
+- `04-cryptographic-audit-trail.mjs` - Cryptographic Audit Trail (lines 426-460)
+- `05-dark-matter-optimization.mjs` - Dark Matter 80/20 Optimization (lines 268-283)
+- `06-opentelemetry-observability.mjs` - OpenTelemetry Observability (lines 285-302)
+
+### Test Infrastructure
+- `run-all.mjs` - Runs all README example tests
 - `data.ttl` - Sample RDF data in Turtle format
 - `package.json` - Dependencies and scripts
 - `README.md` - This file
@@ -117,23 +138,30 @@ See `data.ttl` for sample RDF data:
 
 ### Module not found
 
-Make sure you've installed dependencies:
+Make sure you've installed the production package:
 ```bash
-npm install
+pnpm install-prod
 ```
 
 ### Tests fail
 
 1. Check that you're using Node.js 18+
-2. Verify UNRDF is installed: `npm list unrdf`
-3. Try reinstalling: `npm clean-install`
+2. Verify UNRDF is installed: `pnpm list unrdf`
+3. Try reinstalling: `pnpm clean-install && pnpm install-prod`
 
-### Using published package
+### Package manager issues
 
-To test against the published npm version:
+This smoke test requires PNPM. Install it globally:
 ```bash
-npm run install-npm
-npm test
+npm install -g pnpm
+```
+
+### Testing different versions
+
+To test a specific version:
+```bash
+pnpm add unrdf@3.0.1
+pnpm test
 ```
 
 ## Next Steps
