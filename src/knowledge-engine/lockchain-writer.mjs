@@ -82,12 +82,15 @@ export class LockchainWriter {
     const entryId = randomUUID();
     const timestamp = Date.now();
 
+    // Serialize receipt first
+    const serializedReceipt = this._serializeReceipt(receipt);
+
     // Create lockchain entry (without merkleRoot first)
     const entry = {
       id: entryId,
       timestamp,
-      receipt: this._serializeReceipt(receipt),
-      signature: await this._signEntry(receipt, entryId, timestamp),
+      receipt: serializedReceipt,
+      signature: await this._signEntry(serializedReceipt, entryId, timestamp),
       previousHash: this._getPreviousHash() || ''
     };
 

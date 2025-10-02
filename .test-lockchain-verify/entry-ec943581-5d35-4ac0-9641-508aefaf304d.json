@@ -1,0 +1,22 @@
+{
+  "id": "ec943581-5d35-4ac0-9641-508aefaf304d",
+  "timestamp": 1759434034561,
+  "receipt": {
+    "actor": "verify@example.org",
+    "action": "verify-test",
+    "delta": {
+      "additions": [],
+      "removals": []
+    },
+    "timestamp": "2025-10-02T19:40:34.561Z",
+    "_serialized": true,
+    "_timestamp": 1759434034561
+  },
+  "signature": {
+    "algorithm": "sha3-256",
+    "value": "b3858f7f838594f23c869ff224c75f9b981e037292f5f97401fe55bb2e4a9683",
+    "publicKey": "default"
+  },
+  "previousHash": "",
+  "merkleRoot": "e9208860ce9ddcc02c1faee8614e7224542a13861ed3f2f5609049bc36bf9305"
+}

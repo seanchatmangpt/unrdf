@@ -8,34 +8,84 @@
  */
 
 // Core Engine Components
-export { KnowledgeHookManager } from './knowledge-hook-manager.mjs';
-export { TransactionManager } from './transaction.mjs';
+export { KnowledgeHookManager } from "./knowledge-hook-manager.mjs";
+export { TransactionManager } from "./transaction.mjs";
 
 // Hook System
-export { defineHook } from './define-hook.mjs';
-export { createHookExecutor } from './hook-executor.mjs';
-export { createConditionEvaluator } from './condition-evaluator.mjs';
+export { defineHook } from "./define-hook.mjs";
+export { createHookExecutor } from "./hook-executor.mjs";
+export { createConditionEvaluator } from "./condition-evaluator.mjs";
 
 // Storage & Persistence
-export { createLockchainWriter } from './lockchain-writer.mjs';
-export { ResolutionLayer } from './resolution-layer.mjs';
+export { LockchainWriter, createLockchainWriter } from "./lockchain-writer.mjs";
+export { ResolutionLayer } from "./resolution-layer.mjs";
 
 // Query & Optimization
-export { QueryOptimizer } from './query-optimizer.mjs';
-export { query } from './query.mjs';
+export { QueryOptimizer } from "./query-optimizer.mjs";
+export { query } from "./query.mjs";
 
 // Utilities
-export { parseTurtle, toTurtle, toNQuads, parseJsonLd, toJsonLd } from './parse.mjs';
-export { validateShacl, validateShaclMultiple, formatValidationReport, hasValidationErrors, getValidationErrors, getValidationWarnings } from './validate.mjs';
-export { canonicalize, isIsomorphic, getCanonicalHash, groupByIsomorphism, findDuplicates, getCanonicalizationStats, createCanonicalizationSession } from './canonicalize.mjs';
-export { reason, reasonMultiple, extractInferred, getReasoningStats, validateRules, createReasoningSession } from './reason.mjs';
-export { resolveFileUri, calculateFileHash, loadFileWithHash, loadSparqlFile } from './file-resolver.mjs';
+export {
+  parseTurtle,
+  toTurtle,
+  toNQuads,
+  parseJsonLd,
+  toJsonLd,
+} from "./parse.mjs";
+export {
+  validateShacl,
+  validateShaclMultiple,
+  formatValidationReport,
+  hasValidationErrors,
+  getValidationErrors,
+  getValidationWarnings,
+} from "./validate.mjs";
+export {
+  canonicalize,
+  isIsomorphic,
+  getCanonicalHash,
+  groupByIsomorphism,
+  findDuplicates,
+  getCanonicalizationStats,
+  createCanonicalizationSession,
+} from "./canonicalize.mjs";
+export {
+  reason,
+  reasonMultiple,
+  extractInferred,
+  getReasoningStats,
+  validateRules,
+  createReasoningSession,
+} from "./reason.mjs";
+export {
+  resolveFileUri,
+  calculateFileHash,
+  loadFileWithHash,
+  loadSparqlFile,
+} from "./file-resolver.mjs";
 
 // Security & Sandbox
-export { EffectSandbox } from './effect-sandbox.mjs';
+export { EffectSandbox } from "./effect-sandbox.mjs";
 
 // Policy Management
-export { PolicyPackManager, PolicyPack } from './policy-pack.mjs';
+export { PolicyPackManager, PolicyPack } from "./policy-pack.mjs";
+
+// Dark Matter Core System
+export {
+  DarkMatterCore,
+  createDarkMatterCore,
+  DarkMatterFactory,
+} from "./dark-matter-core.mjs";
+
+// Observability System
+export {
+  ObservabilityManager,
+  createObservabilityManager,
+  defaultObservabilityManager,
+} from "./observability.mjs";
+
+// N3 Re-exports (as documented in README)
+export { Store, Parser, Writer, DataFactory } from "n3";
 
 // Consolidated Schemas (single source of truth)
-export * from './schemas.mjs';
+export * from "./schemas.mjs";

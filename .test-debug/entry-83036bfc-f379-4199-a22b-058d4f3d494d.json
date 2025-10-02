@@ -1,0 +1,19 @@
+{
+  "id": "83036bfc-f379-4199-a22b-058d4f3d494d",
+  "timestamp": 1759434114180,
+  "receipt": {
+    "actor": "test",
+    "action": "test",
+    "delta": {},
+    "timestamp": "2025-10-02T19:41:54.180Z",
+    "_serialized": true,
+    "_timestamp": 1759434114180
+  },
+  "signature": {
+    "algorithm": "sha3-256",
+    "value": "1453f9f4e52e8a39677887190212e9c5b41e650aa006fd31f7c1ebec459cfdd8",
+    "publicKey": "default"
+  },
+  "previousHash": "",
+  "merkleRoot": "0286ed2569dbc1c3b82bcef6f1220dad1640701830758bc07beaeb406203315f"
+}
