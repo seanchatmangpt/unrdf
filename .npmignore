@@ -1,0 +1,184 @@
+# .npmignore - Controls what gets excluded from npm package
+# Files/directories listed here will NOT be published to npm
+
+# ====================
+# Development Files
+# ====================
+.git/
+.github/
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+.env
+.env.*
+
+# ====================
+# Test Files
+# ====================
+test/
+*.test.mjs
+*.spec.mjs
+coverage/
+.nyc_output/
+vitest.config.mjs
+
+# ====================
+# Build & CI/CD
+# ====================
+.eslintrc*
+.prettierrc*
+eslint.config.mjs
+.travis.yml
+.gitlab-ci.yml
+.circleci/
+terraform/
+k8s/
+docker-compose*.yml
+Dockerfile*
+
+# ====================
+# Internal Documentation
+# ====================
+docs/internal/
+docs/planning/
+docs/research/
+docs/hive-mind/
+docs/hive-reports/
+docs/handoff/
+docs/swarm/
+docs/sparc/
+docs/telemetry/
+docs/security/
+docs/deployment/
+docs/validation/
+docs/performance/
+docs/lean-six-sigma/
+docs/code-quality/
+docs/testing/
+docs/review/
+docs/v2.4.0-*.md
+docs/v3/
+docs/architecture/
+docs/analysis/
+docs/kgc-paper/
+
+# Specific internal docs
+docs/*-SUMMARY.md
+docs/*-REPORT.md
+docs/*-IMPLEMENTATION*.md
+docs/*-VALIDATION*.md
+docs/*-FINDINGS*.md
+docs/*-TESTING*.md
+docs/*-COMPLETE*.md
+docs/HANDOFF*.md
+docs/HIVE*.md
+docs/CHAOS*.md
+docs/CLEANROOM*.md
+docs/BYZANTINE*.md
+docs/E2E-*.md
+docs/ENTERPRISE*.md
+docs/FORTUNE*.md
+docs/INFRASTRUCTURE*.md
+docs/CONSENSUS*.md
+docs/COMPLIANCE*.md
+docs/FINAL-*.md
+docs/CLI-*.md
+docs/SIDECAR-*.md
+docs/VAULT-*.md
+docs/TLS-*.md
+
+# Log files and test artifacts
+docs/*.log
+docs/**/*.log
+docs/*.json
+docs/**/*.json
+docs/test-results.log
+docs/validation-full.log
+
+# ====================
+# Root Internal Docs
+# ====================
+# Keep: README.md, LICENSE, CONTRIBUTING.md, CHANGELOG.md
+# Exclude everything else
+
+# Internal planning and conversations
+KGC-CONVO.md
+PREV-CODE.md
+UNRDF-PLANNING.md
+OPERATIONAL-RUNBOOK.md
+NITRO-PLAYGROUND.md
+KGC-SIDECAR-*.md
+PRODUCTION-SIGN-OFF.md
+ACCEPTANCE-SIGN-OFF.md
+BLUE-OCEAN-SCOPE-IMPACT.md
+BROKEN-TESTS-REMOVAL-SUMMARY.md
+TEST-PRUNING-POLICY.md
+80-20-*.md
+PRODUCTION-READINESS-REPORT.md
+HYPER_SWARM_DEVELOPER_GUIDE.md
+DEVELOPER_GUIDE.md
+DATA-HANDLING.md
+AGENTS.md
+
+# ====================
+# Examples to Exclude
+# ====================
+# Exclude legacy/removed features
+examples/legacy-cli/
+examples/sidecar-*.mjs
+examples/cli-*.mjs
+examples/ken-*.mjs
+examples/git-*.mjs
+
+# ====================
+# Source Files to Exclude
+# ====================
+# Exclude CLI and sidecar (removed in v3)
+src/cli/
+src/sidecar/
+
+# ====================
+# Infrastructure
+# ====================
+terraform/
+k8s/
+playground/
+
+# ====================
+# Configuration Files
+# ====================
+.mcp.json
+hooks-cli.mjs
+weaver.config.mjs
+weaver.yaml
+custom-conventions.yaml
+build.config.mjs
+renovate.json
+jsdoc.conf.json
+
+# ====================
+# Source Maps (Optional)
+# ====================
+# Uncomment to exclude source maps and reduce size by ~1.1 MB
+# dist/**/*.map
+
+# ====================
+# Package Management
+# ====================
+node_modules/
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+.pnpm-store/
+
+# ====================
+# Temporary Files
+# ====================
+*.tmp
+*.temp
+.cache/
+dist/.cache/
+test-coverage-analysis.mjs
