@@ -2,7 +2,7 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-01-01',
 
   // Enable pages for observability dashboard
-  ssr: false,
+  ssr: true,
   pages: true,
 
   // Runtime configuration
@@ -50,5 +50,18 @@ export default defineNuxtConfig({
   // Module auto-imports
   imports: {
     dirs: ['types']
+  },
+
+  // Monaco Editor configuration
+  modules: ['nuxt-monaco-editor'],
+
+  monacoEditor: {
+    // Locale for Monaco Editor
+    locale: 'en',
+    // Component name (default: MonacoEditor)
+    componentName: {
+      codeEditor: 'MonacoEditor',
+      diffEditor: 'MonacoDiffEditor'
+    }
   }
 })
