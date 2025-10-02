@@ -1,0 +1,9 @@
+{
+  "name": "post-1",
+  "kind": "post",
+  "condition": {
+    "type": "sparql-ask",
+    "query": "# Post-Hook 1: Verify consistency after transaction\nPREFIX schema: <http://schema.org/>\n\nASK {\n  # All persons who work for org must have job title\n  NOT EXISTS {\n    ?person schema:worksFor ?org .\n    FILTER NOT EXISTS { ?person schema:jobTitle ?title }\n  }\n}\n"
+  },
+  "effects": []
+}

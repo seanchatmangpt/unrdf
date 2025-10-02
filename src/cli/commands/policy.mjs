@@ -6,13 +6,54 @@
  * Policy pack management with OTEL instrumentation.
  */
 
-import { readFile } from 'node:fs/promises';
+import { readFile, writeFile, mkdir } from 'node:fs/promises';
+import { join } from 'node:path';
 import { trace } from '@opentelemetry/api';
 import { PolicyPackManager } from '../../knowledge-engine/policy-pack.mjs';
 import { validateRequiredArgs, getArg } from '../utils/context-wrapper.mjs';
 
 // Get tracer for OTEL instrumentation
 const tracer = trace.getTracer('unrdf-cli-policy');
+
+/**
+ * Store the last applied policy name and file path
+ * @param {string} policyName - Policy pack name
+ * @param {string} filePath - Policy pack file path
+ * @returns {Promise<void>}
+ */
+async function storeLastAppliedPolicy(policyName, filePath) {
+  const unrdfDir = join(process.cwd(), '.unrdf');
+  const lastPolicyPath = join(unrdfDir, 'last-policy.json');
+
+  try {
+    await mkdir(unrdfDir, { recursive: true });
+    const data = {
+      name: policyName,
+      filePath: filePath,
+      appliedAt: new Date().toISOString()
+    };
+    await writeFile(lastPolicyPath, JSON.stringify(data, null, 2), 'utf-8');
+  } catch (error) {
+    // Non-critical - just log and continue
+    console.warn(`⚠️  Could not store last applied policy: ${error.message}`);
+  }
+}
+
+/**
+ * Get the last applied policy info
+ * @returns {Promise<{name: string, filePath: string}|null>} - Policy info or null if not found
+ */
+async function getLastAppliedPolicy() {
+  const lastPolicyPath = join(process.cwd(), '.unrdf', 'last-policy.json');
+
+  try {
+    const content = await readFile(lastPolicyPath, 'utf-8');
+    return JSON.parse(content);
+  } catch (error) {
+    // File doesn't exist or can't be read
+    return null;
+  }
+}
 
 /**
  * Apply policy pack
@@ -87,6 +128,10 @@ export async function policyApplyCommand(ctx, config) {
     span.addEvent('policy.activated');
 
     const stats = pack.getStats();
+
+    // Store last applied policy name and file path for future validation
+    await storeLastAppliedPolicy(stats.name, args.file);
+
     // Simple output for CLI compatibility
     console.log(`✅ Policy pack applied: ${stats.name}`);
 
@@ -283,12 +328,21 @@ export async function policyValidateCommand(ctx, config) {
     const { validatePolicy, formatValidationReport } = await import('../utils/policy-validator.mjs');
     const { Store, Parser } = await import('n3');
 
-    // Get policy pack name (required)
-    const policyPackName = getArg(args, 'policy') || getArg(args, 'pack');
+    // Get policy pack name - use last applied if not provided
+    let policyPackName = getArg(args, 'policy') || getArg(args, 'pack');
+    let policyFilePath = null;
+
     if (!policyPackName) {
-      console.error('❌ Error: --policy flag is required');
-      console.log('Usage: unrdf policy validate --policy <pack-name> [--store <file>] [--strict] [--format json|text|markdown]');
-      process.exit(1);
+      const lastPolicy = await getLastAppliedPolicy();
+      if (lastPolicy) {
+        policyPackName = lastPolicy.name;
+        policyFilePath = lastPolicy.filePath;
+        console.log(`ℹ️  Using last applied policy: ${policyPackName}`);
+      } else {
+        console.error('❌ Error: --policy flag is required (no previously applied policy found)');
+        console.log('Usage: unrdf policy validate --policy <pack-name> [--store <file>] [--strict] [--format json|text|markdown]');
+        process.exit(1);
+      }
     }
 
     // Load RDF store
@@ -319,7 +373,8 @@ export async function policyValidateCommand(ctx, config) {
     // Run validation
     const result = await validatePolicy(store, policyPackName, {
       strict: args.strict || false,
-      basePath: process.cwd()
+      basePath: process.cwd(),
+      policyFilePath: policyFilePath  // Pass file path for direct loading
     });
 
     span.addEvent('validation.completed', {

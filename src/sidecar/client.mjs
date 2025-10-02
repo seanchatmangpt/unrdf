@@ -233,7 +233,7 @@ export class SidecarClient extends EventEmitter {
   }
 
   /**
-   * Execute gRPC call
+   * Execute gRPC call with trace context propagation
    * @param {Object} client - gRPC client
    * @param {string} method - Method name
    * @param {Object} request - Request payload
@@ -241,26 +241,54 @@ export class SidecarClient extends EventEmitter {
    * @returns {Promise<Object>} Response
    * @private
    */
-  _call(client, method, request, options = {}) {
-    return new Promise((resolve, reject) => {
-      const deadline = Date.now() + (options.timeout || this.config.getTimeout());
-      const metadata = new grpc.Metadata();
+  async _call(client, method, request, options = {}) {
+    const deadline = Date.now() + (options.timeout || this.config.getTimeout());
+    const metadata = new grpc.Metadata();
 
-      // Add custom metadata
-      if (options.metadata) {
-        Object.entries(options.metadata).forEach(([key, value]) => {
-          metadata.set(key, value);
-        });
-      }
+    // Add custom metadata
+    if (options.metadata) {
+      Object.entries(options.metadata).forEach(([key, value]) => {
+        metadata.set(key, value);
+      });
+    }
 
-      // Add OTEL trace context to metadata for distributed tracing
-      if (options.traceContext) {
+    // Extract current OTEL trace context and inject into gRPC metadata
+    // This enables distributed tracing across CLI → Sidecar → Hooks
+    try {
+      const { trace, context } = await import('@opentelemetry/api');
+      const currentSpan = trace.getSpan(context.active());
+
+      if (currentSpan) {
+        const spanContext = currentSpan.spanContext();
+        metadata.set('x-trace-id', spanContext.traceId);
+        metadata.set('x-span-id', spanContext.spanId);
+        metadata.set('x-trace-flags', spanContext.traceFlags.toString(16).padStart(2, '0'));
+
+        // Add W3C traceparent header for standard propagation
+        const traceparent = `00-${spanContext.traceId}-${spanContext.spanId}-${spanContext.traceFlags.toString(16).padStart(2, '0')}`;
+        metadata.set('traceparent', traceparent);
+
+        // Add trace state if present
+        if (spanContext.traceState) {
+          metadata.set('tracestate', spanContext.traceState.serialize());
+        }
+      } else if (options.traceContext) {
+        // Fallback to provided trace context
         metadata.set('x-trace-id', options.traceContext.traceId || '');
         metadata.set('x-span-id', options.traceContext.spanId || '');
         metadata.set('x-trace-flags', options.traceContext.traceFlags || '01');
-      }
 
-      // Call the method on the client directly, not client.channel
+        // Add W3C traceparent
+        const traceparent = `00-${options.traceContext.traceId}-${options.traceContext.spanId}-${options.traceContext.traceFlags || '01'}`;
+        metadata.set('traceparent', traceparent);
+      }
+    } catch (error) {
+      // OTEL not available, continue without trace context
+      console.warn('[Sidecar Client] OpenTelemetry not available, skipping trace context propagation');
+    }
+
+    // Call the method on the client
+    return new Promise((resolve, reject) => {
       if (!client[method]) {
         reject(new Error(`Method ${method} not found on gRPC client`));
         return;

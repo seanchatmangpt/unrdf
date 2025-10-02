@@ -26,7 +26,7 @@ export const hookEvaluationScenario = new ScenarioBuilder()
     name: 'Create SPARQL ASK hook',
     command: 'node cli/unrdf.mjs hook create health-check --type=sparql-ask --file=test/e2e/cleanroom/fixtures/health-check.rq',
     expectedExitCode: 0,
-    expectedOutput: /Hook created: health-check/,
+    expectedOutput: /✅\s+Hook created:\s+health-check/,
   })
 
   // Step 2: Evaluate hook

@@ -1,0 +1,9 @@
+{
+  "name": "pre-2",
+  "kind": "pre",
+  "condition": {
+    "type": "sparql-ask",
+    "query": "# Pre-Hook 2: Validate email format\nPREFIX schema: <http://schema.org/>\n\nASK {\n  # All emails must contain @ symbol\n  NOT EXISTS {\n    ?person schema:email ?email .\n    FILTER (!CONTAINS(str(?email), \"@\"))\n  }\n}\n"
+  },
+  "effects": []
+}

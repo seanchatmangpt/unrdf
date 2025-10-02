@@ -871,8 +871,7 @@ describe('Security and Authorization', () => {
             }
           },
           run: async () => ({ success: true })
-        })
-      }));
+        });
 
         // Test that hook is added successfully (validation passes)
         expect(() => manager.addKnowledgeHook(hook)).not.toThrow();
@@ -891,7 +890,7 @@ describe('Security and Authorization', () => {
       for (const query of dangerousQueries) {
         const queryFile = join(tempDir, `dangerous-${Date.now()}.sparql`);
         await writeFile(queryFile, query);
-        
+
         const hook = defineHook({
           meta: { name: 'dangerous-query-test' },
           when: {
@@ -903,8 +902,7 @@ describe('Security and Authorization', () => {
             }
           },
           run: async () => ({ success: true })
-        })
-      }));
+        });
 
         // Test that hook is added successfully (validation passes)
         expect(() => manager.addKnowledgeHook(hook)).not.toThrow();

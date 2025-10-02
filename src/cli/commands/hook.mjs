@@ -164,14 +164,19 @@ export async function hookListCommand(ctx, config) {
 export async function hookCreateCommand(ctx, config) {
   const { args } = ctx;
 
-  // Extract positional arguments: name is first, type is second
-  const positionalArgs = args._.slice(2); // Skip 'hook' and 'create'
+  // Extract positional arguments: citty provides args._ without command names
+  // Support both positional and flag-based invocation:
+  // - Positional: hook create health-check sparql-ask --file=test.rq
+  // - Flags: hook create --name=health-check --type=sparql-ask --file=test.rq
+  const positionalArgs = args._ || [];
   const name = positionalArgs[0] || args.name;
   const type = positionalArgs[1] || args.type;
 
   if (!name || !type) {
     console.error('❌ Usage: hook create <name> <type> [options]');
+    console.error('   OR: hook create --name=<name> --type=<type> [options]');
     console.error('   Example: hook create health-check sparql-ask --file=test.rq');
+    console.error('   Example: hook create --name=health-check --type=sparql-ask --file=test.rq');
     console.error('   Available types: sparql-ask, threshold, shacl');
     process.exit(1);
   }
@@ -254,7 +259,10 @@ export async function hookCreateCommand(ctx, config) {
   }
 
   // Write hook file
-  let outputPath = args.output || `hooks/${name}.json`;
+  const { join } = await import('node:path');
+  const { mkdir } = await import('node:fs/promises');
+
+  let outputPath;
 
   // If output is a directory, create subdirectory structure
   if (args.output) {
@@ -263,20 +271,29 @@ export async function hookCreateCommand(ctx, config) {
       const stats = await stat(args.output);
       if (stats.isDirectory()) {
         // Create hooks subdirectory and name-specific directory
-        const { join } = await import('node:path');
-        const { mkdir } = await import('node:fs/promises');
         const hookDir = join(args.output, 'hooks', name);
         await mkdir(hookDir, { recursive: true });
         outputPath = join(hookDir, `${name}.json`);
+      } else {
+        outputPath = args.output;
       }
     } catch (error) {
       // If path doesn't exist, treat as file path
       if (error.code !== 'ENOENT') throw error;
+      outputPath = args.output;
     }
+  } else {
+    // Default to .unrdf/hooks/ directory
+    outputPath = join(process.cwd(), '.unrdf', 'hooks', `${name}.json`);
   }
 
+  // Ensure parent directory exists for the output path
+  const { dirname } = await import('node:path');
+  const parentDir = dirname(outputPath);
+  await mkdir(parentDir, { recursive: true });
+
   await writeFile(outputPath, JSON.stringify(hookDefinition, null, 2));
-  console.log(`✅ Hook created: ${outputPath}`);
+  console.log(`✅ Hook created: ${name}`);
 
   // Display hook definition in verbose mode
   if (args.verbose) {
@@ -359,6 +376,16 @@ export async function hookHistoryCommand(ctx, config) {
       console.log(`${timestamp}  ${fired}  ${duration}  ${effects}`);
     }
   } catch (error) {
+    // Gracefully handle unavailable sidecar - not an error condition
+    if (error.code === 14 || error.code === 4) {
+      console.log('\n⚠️  KGC Sidecar not available');
+      console.log('📋 Hook History (Local State Only):');
+      console.log('   No execution history available without sidecar connection.\n');
+      console.log('To enable full hook history tracking:');
+      console.log('  - Start the KGC sidecar: npm run sidecar:start');
+      console.log('  - Or connect to existing sidecar');
+      process.exit(0);  // Exit with success - unavailable is not an error
+    }
     console.error(`❌ Failed to get history: ${formatSidecarError(error)}`);
     process.exit(1);
   }

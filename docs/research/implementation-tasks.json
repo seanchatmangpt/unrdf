@@ -1,0 +1,317 @@
+{
+  "implementation_phases": {
+    "phase_1_foundation": {
+      "name": "Foundation Setup",
+      "owner": "architect",
+      "duration": "2-3 hours",
+      "tasks": [
+        {
+          "id": "F1",
+          "task": "Review research document and approve architecture",
+          "priority": "critical",
+          "time": "30min"
+        },
+        {
+          "id": "F2",
+          "task": "Design sidecar integration architecture",
+          "priority": "critical",
+          "time": "1h"
+        },
+        {
+          "id": "F3",
+          "task": "Define authentication/authorization model",
+          "priority": "high",
+          "time": "1h"
+        },
+        {
+          "id": "F4",
+          "task": "Create schemas directory structure",
+          "priority": "high",
+          "time": "15min",
+          "command": "mkdir -p sidecar/schemas"
+        }
+      ]
+    },
+    "phase_2_schemas": {
+      "name": "Zod Schema Conversion",
+      "owner": "coder",
+      "duration": "2-3 hours",
+      "tasks": [
+        {
+          "id": "S1",
+          "task": "Create sidecar/schemas/index.mjs with all Zod schemas",
+          "priority": "critical",
+          "time": "2h",
+          "template": "docs/research/zod-schemas-template.mjs",
+          "source": "app/types/index.d.ts"
+        },
+        {
+          "id": "S2",
+          "task": "Add validation helper functions",
+          "priority": "high",
+          "time": "30min"
+        },
+        {
+          "id": "S3",
+          "task": "Test schemas with sample data",
+          "priority": "high",
+          "time": "30min",
+          "assign_to": "tester"
+        }
+      ]
+    },
+    "phase_3_api_routes": {
+      "name": "Server API Routes Conversion",
+      "owner": "coder",
+      "duration": "2-3 hours",
+      "tasks": [
+        {
+          "id": "A1",
+          "task": "Convert server/api/customers.ts to .mjs",
+          "priority": "high",
+          "time": "30min",
+          "source": "https://raw.githubusercontent.com/nuxt-ui-templates/dashboard/main/server/api/customers.ts",
+          "target": "sidecar/server/api/customers.mjs"
+        },
+        {
+          "id": "A2",
+          "task": "Convert server/api/notifications.ts to .mjs",
+          "priority": "high",
+          "time": "30min",
+          "source": "https://raw.githubusercontent.com/nuxt-ui-templates/dashboard/main/server/api/notifications.ts",
+          "target": "sidecar/server/api/notifications.mjs"
+        },
+        {
+          "id": "A3",
+          "task": "Convert server/api/mails.ts to .mjs",
+          "priority": "medium",
+          "time": "30min",
+          "target": "sidecar/server/api/mails.mjs"
+        },
+        {
+          "id": "A4",
+          "task": "Convert server/api/members.ts to .mjs",
+          "priority": "medium",
+          "time": "30min",
+          "target": "sidecar/server/api/members.mjs"
+        },
+        {
+          "id": "A5",
+          "task": "Add OTEL observability to all API routes",
+          "priority": "medium",
+          "time": "1h"
+        }
+      ]
+    },
+    "phase_4_composables": {
+      "name": "Composables Conversion",
+      "owner": "coder",
+      "duration": "1-2 hours",
+      "tasks": [
+        {
+          "id": "C1",
+          "task": "Convert app/composables/useDashboard.ts to .mjs",
+          "priority": "high",
+          "time": "30min",
+          "source": "https://raw.githubusercontent.com/nuxt-ui-templates/dashboard/main/app/composables/useDashboard.ts",
+          "target": "sidecar/composables/useDashboard.mjs"
+        },
+        {
+          "id": "C2",
+          "task": "Convert app.config.ts to .mjs",
+          "priority": "high",
+          "time": "15min",
+          "target": "sidecar/app.config.mjs"
+        },
+        {
+          "id": "C3",
+          "task": "Create useSidecar.mjs for integration",
+          "priority": "high",
+          "time": "1h"
+        }
+      ]
+    },
+    "phase_5_components": {
+      "name": "Vue Components Conversion",
+      "owner": "coder",
+      "duration": "4-5 hours",
+      "tasks": [
+        {
+          "id": "V1",
+          "task": "Copy all component files to sidecar/app/components/",
+          "priority": "high",
+          "time": "30min",
+          "command": "cp -r nuxt-ui-dashboard/app/components/* sidecar/app/components/"
+        },
+        {
+          "id": "V2",
+          "task": "Convert NotificationsSlideover.vue script to MJS",
+          "priority": "high",
+          "time": "30min"
+        },
+        {
+          "id": "V3",
+          "task": "Convert TeamsMenu.vue and UserMenu.vue to MJS",
+          "priority": "medium",
+          "time": "30min"
+        },
+        {
+          "id": "V4",
+          "task": "Convert all home/* components to MJS",
+          "priority": "high",
+          "time": "2h"
+        },
+        {
+          "id": "V5",
+          "task": "Convert remaining component directories",
+          "priority": "medium",
+          "time": "1h"
+        }
+      ]
+    },
+    "phase_6_pages_layouts": {
+      "name": "Pages & Layouts Conversion",
+      "owner": "coder",
+      "duration": "3-4 hours",
+      "tasks": [
+        {
+          "id": "P1",
+          "task": "Convert app/app.vue to MJS script",
+          "priority": "critical",
+          "time": "30min"
+        },
+        {
+          "id": "P2",
+          "task": "Convert app/layouts/default.vue to MJS script",
+          "priority": "critical",
+          "time": "1h"
+        },
+        {
+          "id": "P3",
+          "task": "Convert app/pages/index.vue to MJS script",
+          "priority": "high",
+          "time": "1h"
+        },
+        {
+          "id": "P4",
+          "task": "Convert remaining page components to MJS",
+          "priority": "medium",
+          "time": "1h"
+        }
+      ]
+    },
+    "phase_7_configuration": {
+      "name": "Configuration & Dependencies",
+      "owner": "coder",
+      "duration": "1-2 hours",
+      "tasks": [
+        {
+          "id": "D1",
+          "task": "Add required dependencies to sidecar",
+          "priority": "critical",
+          "time": "15min",
+          "command": "pnpm add @nuxt/ui @iconify-json/lucide @iconify-json/simple-icons @unovis/ts @unovis/vue && pnpm add -D @nuxt/eslint"
+        },
+        {
+          "id": "D2",
+          "task": "Update sidecar/nuxt.config.mjs with dashboard modules",
+          "priority": "critical",
+          "time": "30min"
+        },
+        {
+          "id": "D3",
+          "task": "Add main.css to sidecar/assets/css/",
+          "priority": "high",
+          "time": "15min"
+        },
+        {
+          "id": "D4",
+          "task": "Remove TypeScript dependencies",
+          "priority": "low",
+          "time": "5min",
+          "command": "pnpm remove -D typescript vue-tsc"
+        }
+      ]
+    },
+    "phase_8_testing": {
+      "name": "Testing & Validation",
+      "owner": "tester",
+      "duration": "4-5 hours",
+      "tasks": [
+        {
+          "id": "T1",
+          "task": "Create Zod schema validation tests",
+          "priority": "critical",
+          "time": "1h"
+        },
+        {
+          "id": "T2",
+          "task": "Create API route tests",
+          "priority": "high",
+          "time": "1h"
+        },
+        {
+          "id": "T3",
+          "task": "Create composable tests",
+          "priority": "high",
+          "time": "1h"
+        },
+        {
+          "id": "T4",
+          "task": "Create component render tests",
+          "priority": "medium",
+          "time": "1h"
+        },
+        {
+          "id": "T5",
+          "task": "Create integration tests (navigation, data flow)",
+          "priority": "high",
+          "time": "1h"
+        }
+      ]
+    },
+    "phase_9_integration": {
+      "name": "Sidecar Integration",
+      "owner": "architect",
+      "duration": "3-4 hours",
+      "tasks": [
+        {
+          "id": "I1",
+          "task": "Create authentication layer (useAuth.mjs)",
+          "priority": "high",
+          "time": "1h"
+        },
+        {
+          "id": "I2",
+          "task": "Add RDF persistence for dashboard state",
+          "priority": "medium",
+          "time": "1h"
+        },
+        {
+          "id": "I3",
+          "task": "Add SHACL validation for user actions",
+          "priority": "medium",
+          "time": "1h"
+        },
+        {
+          "id": "I4",
+          "task": "Add cryptographic provenance hooks",
+          "priority": "low",
+          "time": "1h"
+        }
+      ]
+    }
+  },
+  "summary": {
+    "total_phases": 9,
+    "total_tasks": 41,
+    "estimated_duration": "22-31 hours",
+    "critical_path": [
+      "F1", "F2", "S1", "A1", "A2", "C1", "V1", "P1", "P2", "D1", "D2", "T1"
+    ],
+    "quick_win_path": [
+      "S1", "A1", "A2", "C1", "D1", "D2"
+    ],
+    "quick_win_duration": "5-6 hours"
+  }
+}

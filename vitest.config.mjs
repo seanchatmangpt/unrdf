@@ -61,10 +61,11 @@ export default defineConfig({
     
     // File patterns
     include: [
-      'test/**/*.test.mjs', 
+      'test/**/*.test.mjs',
       'test/**/*.spec.mjs',
       'test/composables/**/*.test.mjs',
-      'test/utils/**/*.test.mjs'
+      'test/utils/**/*.test.mjs',
+      'sidecar/test/**/*.test.mjs'
     ],
     exclude: ['node_modules/**', 'dist/**'],
     

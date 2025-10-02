@@ -30,9 +30,55 @@ export async function validatePolicy(store, policyPackName, options = {}) {
 
       const startTime = Date.now();
 
-      // Load policy pack
+      // Load policy pack - either from file path or from installed packs
       const policyPackManager = new PolicyPackManager(options.basePath || process.cwd());
-      const policyPack = await policyPackManager.loadPolicyPack({ name: policyPackName });
+      let policyPack;
+
+      if (options.policyFilePath) {
+        // Load directly from file path - handle both formats
+        const { readFile: readFileAsync } = await import('node:fs/promises');
+        const { writeFile: writeFileAsync } = await import('node:fs/promises');
+        const fileContent = await readFileAsync(options.policyFilePath, 'utf-8');
+        const policyData = JSON.parse(fileContent);
+
+        // Detect format: full policy pack vs simple policy
+        if (policyData.id && policyData.meta && policyData.config) {
+          // Full PolicyPack format - use as-is
+          policyPack = await policyPackManager.loadPolicyPack(options.policyFilePath);
+        } else if (policyData.policies || policyData.hooks) {
+          // Simple format - wrap it into a policy pack
+          const { randomUUID } = await import('crypto');
+          const wrapped = {
+            id: randomUUID(),
+            meta: {
+              name: policyData.name || 'applied-policy',
+              version: policyData.version || '1.0.0',
+              description: policyData.description || 'Applied policy'
+            },
+            config: {
+              enabled: true,
+              priority: 50,
+              strictMode: false,
+              timeout: 30000,
+              retries: 1
+            },
+            hooks: policyData.hooks || [],
+            conditions: policyData.conditions || [],
+            resources: policyData.resources || []
+          };
+
+          // Write temporary manifest
+          const tmpPath = `/tmp/policy-validate-${Date.now()}.json`;
+          await writeFileAsync(tmpPath, JSON.stringify(wrapped));
+          policyPack = await policyPackManager.loadPolicyPack(tmpPath);
+        } else {
+          throw new Error('Invalid policy format: must have id/meta/config or policies/hooks');
+        }
+      } else {
+        // Load from installed policy packs
+        await policyPackManager.loadAllPolicyPacks();
+        policyPack = policyPackManager.getPolicyPack(policyPackName);
+      }
 
       if (!policyPack) {
         throw new Error(`Policy pack not found: ${policyPackName}`);

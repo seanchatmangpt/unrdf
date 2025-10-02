@@ -1,0 +1,176 @@
+{
+  "conversion_checklist": {
+    "typescript_files": [
+      {
+        "source": "app/app.config.ts",
+        "target": "sidecar/app.config.mjs",
+        "priority": "high",
+        "complexity": "low",
+        "estimated_time": "15min"
+      },
+      {
+        "source": "app/composables/useDashboard.ts",
+        "target": "sidecar/composables/useDashboard.mjs",
+        "priority": "high",
+        "complexity": "medium",
+        "estimated_time": "30min"
+      },
+      {
+        "source": "app/types/index.d.ts",
+        "target": "sidecar/schemas/index.mjs",
+        "priority": "critical",
+        "complexity": "high",
+        "estimated_time": "2h",
+        "notes": "Convert to Zod schemas with JSDoc typedefs"
+      },
+      {
+        "source": "server/api/customers.ts",
+        "target": "sidecar/server/api/customers.mjs",
+        "priority": "high",
+        "complexity": "medium",
+        "estimated_time": "30min"
+      },
+      {
+        "source": "server/api/notifications.ts",
+        "target": "sidecar/server/api/notifications.mjs",
+        "priority": "high",
+        "complexity": "medium",
+        "estimated_time": "30min"
+      },
+      {
+        "source": "server/api/mails.ts",
+        "target": "sidecar/server/api/mails.mjs",
+        "priority": "medium",
+        "complexity": "medium",
+        "estimated_time": "30min"
+      },
+      {
+        "source": "server/api/members.ts",
+        "target": "sidecar/server/api/members.mjs",
+        "priority": "medium",
+        "complexity": "medium",
+        "estimated_time": "30min"
+      },
+      {
+        "source": "nuxt.config.ts",
+        "target": "sidecar/nuxt.config.mjs",
+        "priority": "high",
+        "complexity": "medium",
+        "estimated_time": "1h",
+        "notes": "Merge with existing config, add @nuxt/ui module"
+      }
+    ],
+    "vue_components": [
+      {
+        "file": "app/app.vue",
+        "priority": "critical",
+        "complexity": "low",
+        "task": "Remove lang='ts', add JSDoc"
+      },
+      {
+        "file": "app/layouts/default.vue",
+        "priority": "critical",
+        "complexity": "high",
+        "task": "Remove lang='ts', add JSDoc, convert type imports"
+      },
+      {
+        "file": "app/pages/index.vue",
+        "priority": "high",
+        "complexity": "medium",
+        "task": "Remove lang='ts', add JSDoc, convert type imports"
+      },
+      {
+        "file": "app/pages/customers.vue",
+        "priority": "medium",
+        "complexity": "medium",
+        "task": "Remove lang='ts', add JSDoc"
+      },
+      {
+        "file": "app/pages/inbox.vue",
+        "priority": "medium",
+        "complexity": "medium",
+        "task": "Remove lang='ts', add JSDoc"
+      },
+      {
+        "file": "app/pages/settings.vue",
+        "priority": "medium",
+        "complexity": "medium",
+        "task": "Remove lang='ts', add JSDoc"
+      },
+      {
+        "file": "app/components/NotificationsSlideover.vue",
+        "priority": "high",
+        "complexity": "medium",
+        "task": "Remove lang='ts', add JSDoc, convert Notification type"
+      },
+      {
+        "file": "app/components/TeamsMenu.vue",
+        "priority": "medium",
+        "complexity": "low",
+        "task": "Remove lang='ts', add JSDoc"
+      },
+      {
+        "file": "app/components/UserMenu.vue",
+        "priority": "medium",
+        "complexity": "low",
+        "task": "Remove lang='ts', add JSDoc"
+      },
+      {
+        "file": "app/components/home/HomeStats.vue",
+        "priority": "high",
+        "complexity": "medium",
+        "task": "Remove lang='ts', convert Stat type"
+      },
+      {
+        "file": "app/components/home/HomeSales.vue",
+        "priority": "high",
+        "complexity": "medium",
+        "task": "Remove lang='ts', convert Sale type"
+      },
+      {
+        "file": "app/components/home/HomeChart.client.vue",
+        "priority": "medium",
+        "complexity": "high",
+        "task": "Remove lang='ts', handle @unovis types"
+      },
+      {
+        "file": "app/components/home/HomeChart.server.vue",
+        "priority": "medium",
+        "complexity": "medium",
+        "task": "Remove lang='ts', add JSDoc"
+      },
+      {
+        "file": "app/components/home/HomeDateRangePicker.vue",
+        "priority": "medium",
+        "complexity": "medium",
+        "task": "Remove lang='ts', convert Range type"
+      },
+      {
+        "file": "app/components/home/HomePeriodSelect.vue",
+        "priority": "medium",
+        "complexity": "low",
+        "task": "Remove lang='ts', convert Period type"
+      }
+    ],
+    "dependencies_to_add": [
+      "@nuxt/ui@^4.0.0",
+      "@iconify-json/lucide@^1.2.68",
+      "@iconify-json/simple-icons@^1.2.53",
+      "@unovis/ts@^1.6.1",
+      "@unovis/vue@^1.6.1",
+      "@nuxt/eslint@^1.9.0 -D"
+    ],
+    "dependencies_to_remove": [
+      "typescript -D",
+      "vue-tsc -D"
+    ],
+    "total_files": 23,
+    "estimated_total_time": "12-15 hours",
+    "complexity_breakdown": {
+      "critical": 3,
+      "high": 9,
+      "medium": 10,
+      "low": 1
+    }
+  }
+}

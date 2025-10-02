@@ -116,9 +116,9 @@ export class RdfEngine {
       .replace(/^PREFIX\s+[^\s]+\s+<[^>]+>\s*/gm, "")
       .trim();
     const queryType = queryWithoutPrefixes.toUpperCase().split(/\s+/)[0];
-    const source = { type: "rdfjsSource", value: this.store };
+    // Comunica expects the store directly in sources array
     const context = {
-      sources: [source],
+      sources: [this.store],
     };
 
     switch (queryType) {

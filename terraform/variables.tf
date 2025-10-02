@@ -90,18 +90,77 @@ variable "database_url" {
   default     = "postgresql://test:test@postgres:5432/kgc_test"
 }
 
-variable "api_key" {
-  description = "API key for authentication"
+# Vault configuration variables
+variable "vault_address" {
+  description = "HashiCorp Vault server address"
   type        = string
-  default     = "test-api-key"
-  sensitive   = true
+  default     = "http://vault:8200"
 }
 
-variable "encryption_key" {
-  description = "Encryption key for sensitive data"
+variable "vault_token" {
+  description = "Vault authentication token (use root token for dev, AppRole for prod)"
   type        = string
-  default     = "test-encryption-key"
   sensitive   = true
+  default     = ""
+}
+
+variable "vault_api_key" {
+  description = "Pre-generated API key to store in Vault (auto-generated if empty)"
+  type        = string
+  sensitive   = true
+  default     = ""
+}
+
+variable "vault_encryption_key" {
+  description = "Pre-generated encryption key to store in Vault (auto-generated if empty)"
+  type        = string
+  sensitive   = true
+  default     = ""
+}
+
+variable "vault_db_username" {
+  description = "Database username to store in Vault"
+  type        = string
+  default     = ""
+}
+
+variable "vault_db_password" {
+  description = "Database password to store in Vault (auto-generated if empty)"
+  type        = string
+  sensitive   = true
+  default     = ""
+}
+
+variable "enable_vault_audit" {
+  description = "Enable Vault audit logging for secret access"
+  type        = bool
+  default     = true
+}
+
+variable "enable_auto_rotation" {
+  description = "Enable automatic secret rotation (30 days)"
+  type        = bool
+  default     = true
+}
+
+variable "vault_quorum_shares" {
+  description = "Number of Shamir secret shares for Vault unsealing"
+  type        = number
+  default     = 5
+  validation {
+    condition     = var.vault_quorum_shares >= 3 && var.vault_quorum_shares <= 10
+    error_message = "Quorum shares must be between 3 and 10."
+  }
+}
+
+variable "vault_quorum_threshold" {
+  description = "Number of shares required to unseal Vault (3-of-5 quorum)"
+  type        = number
+  default     = 3
+  validation {
+    condition     = var.vault_quorum_threshold >= 2 && var.vault_quorum_threshold <= var.vault_quorum_shares
+    error_message = "Quorum threshold must be between 2 and total shares."
+  }
 }
 
 variable "log_level" {

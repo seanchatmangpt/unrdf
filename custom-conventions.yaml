@@ -1,0 +1,351 @@
+# UNRDF-Specific Semantic Conventions
+# Custom attributes for Knowledge Graph, RDF, and Cryptographic Provenance
+
+groups:
+  # Knowledge Hook Attributes
+  - id: knowledge_hook
+    prefix: knowledge_hook
+    brief: Attributes for Knowledge Hook execution
+    attributes:
+      - id: hook_id
+        type: string
+        brief: Unique identifier for the knowledge hook
+        requirement_level: required
+        examples:
+          - "hook-validate-entity"
+          - "hook-enrich-context"
+
+      - id: hook_type
+        type:
+          members:
+            - id: pre_commit
+              value: "pre_commit"
+            - id: post_commit
+              value: "post_commit"
+            - id: validation
+              value: "validation"
+            - id: transformation
+              value: "transformation"
+        brief: Type of knowledge hook
+        requirement_level: required
+
+      - id: hook_stage
+        type: string
+        brief: Execution stage of the hook
+        requirement_level: recommended
+        examples:
+          - "before_validation"
+          - "after_transaction"
+
+      - id: hook_result
+        type:
+          members:
+            - id: success
+              value: "success"
+            - id: failure
+              value: "failure"
+            - id: skipped
+              value: "skipped"
+        brief: Result of hook execution
+        requirement_level: required
+
+      - id: hook_duration_ms
+        type: int
+        brief: Duration of hook execution in milliseconds
+        requirement_level: recommended
+
+      - id: hook_error_count
+        type: int
+        brief: Number of errors encountered during hook execution
+        requirement_level: recommended
+
+  # Policy Pack Attributes
+  - id: policy_pack
+    prefix: policy_pack
+    brief: Attributes for Policy Pack validation
+    attributes:
+      - id: pack_name
+        type: string
+        brief: Name of the policy pack
+        requirement_level: required
+        examples:
+          - "core-validation"
+          - "custom-rules"
+
+      - id: pack_version
+        type: string
+        brief: Version of the policy pack
+        requirement_level: recommended
+        examples:
+          - "1.0.0"
+          - "2.1.3"
+
+      - id: rule_count
+        type: int
+        brief: Number of rules in the policy pack
+        requirement_level: recommended
+
+      - id: validation_result
+        type:
+          members:
+            - id: valid
+              value: "valid"
+            - id: invalid
+              value: "invalid"
+            - id: error
+              value: "error"
+        brief: Overall validation result
+        requirement_level: required
+
+      - id: violation_count
+        type: int
+        brief: Number of policy violations detected
+        requirement_level: required
+
+      - id: strict_mode
+        type: boolean
+        brief: Whether strict validation mode is enabled
+        requirement_level: recommended
+
+  # RDF Graph Attributes
+  - id: rdf_graph
+    prefix: rdf
+    brief: Attributes for RDF graph operations
+    attributes:
+      - id: graph_id
+        type: string
+        brief: Unique identifier for the RDF graph
+        requirement_level: required
+
+      - id: quad_count
+        type: int
+        brief: Number of RDF quads in the operation
+        requirement_level: recommended
+
+      - id: operation_type
+        type:
+          members:
+            - id: insert
+              value: "insert"
+            - id: delete
+              value: "delete"
+            - id: update
+              value: "update"
+            - id: query
+              value: "query"
+        brief: Type of RDF operation
+        requirement_level: required
+
+      - id: query_type
+        type: string
+        brief: SPARQL query type (SELECT, CONSTRUCT, ASK, DESCRIBE)
+        requirement_level: recommended
+        examples:
+          - "SELECT"
+          - "CONSTRUCT"
+
+      - id: store_backend
+        type: string
+        brief: RDF store backend being used
+        requirement_level: recommended
+        examples:
+          - "oxigraph"
+          - "n3"
+          - "rdflib"
+
+  # Effect Sandbox Attributes
+  - id: effect_sandbox
+    prefix: effect
+    brief: Attributes for Effect-TS sandbox execution
+    attributes:
+      - id: sandbox_id
+        type: string
+        brief: Unique identifier for the effect sandbox
+        requirement_level: required
+
+      - id: effect_type
+        type: string
+        brief: Type of effect being executed
+        requirement_level: recommended
+        examples:
+          - "validation"
+          - "transformation"
+          - "enrichment"
+
+      - id: execution_mode
+        type:
+          members:
+            - id: sync
+              value: "sync"
+            - id: async
+              value: "async"
+        brief: Execution mode of the effect
+        requirement_level: recommended
+
+      - id: fiber_count
+        type: int
+        brief: Number of fibers spawned during execution
+        requirement_level: optional
+
+  # Cryptographic Provenance Attributes
+  - id: crypto_provenance
+    prefix: crypto
+    brief: Attributes for cryptographic provenance tracking
+    attributes:
+      - id: signature_algorithm
+        type: string
+        brief: Cryptographic signature algorithm used
+        requirement_level: required
+        examples:
+          - "Ed25519"
+          - "ECDSA-P256"
+
+      - id: verification_result
+        type:
+          members:
+            - id: verified
+              value: "verified"
+            - id: failed
+              value: "failed"
+            - id: unknown
+              value: "unknown"
+        brief: Signature verification result
+        requirement_level: required
+
+      - id: signer_identity
+        type: string
+        brief: Identity of the signer (DID or public key fingerprint)
+        requirement_level: recommended
+
+      - id: timestamp
+        type: int
+        brief: Unix timestamp of signature creation
+        requirement_level: required
+
+  # Transaction Attributes
+  - id: kgc_transaction
+    prefix: transaction
+    brief: Attributes for KGC transaction processing
+    attributes:
+      - id: transaction_id
+        type: string
+        brief: Unique identifier for the transaction
+        requirement_level: required
+
+      - id: actor
+        type: string
+        brief: Actor performing the transaction
+        requirement_level: required
+
+      - id: delta_size
+        type: int
+        brief: Size of transaction delta in bytes
+        requirement_level: recommended
+
+      - id: conflict_detected
+        type: boolean
+        brief: Whether conflicts were detected during transaction
+        requirement_level: recommended
+
+      - id: resolution_strategy
+        type: string
+        brief: Conflict resolution strategy used
+        requirement_level: optional
+        examples:
+          - "last_write_wins"
+          - "manual_merge"
+
+  # gRPC Sidecar Attributes
+  - id: grpc_sidecar
+    prefix: sidecar
+    brief: Attributes for gRPC sidecar communication
+    attributes:
+      - id: method
+        type: string
+        brief: gRPC method being invoked
+        requirement_level: required
+        examples:
+          - "ApplyTransaction"
+          - "ValidateGraph"
+          - "EvaluateHook"
+
+      - id: retry_count
+        type: int
+        brief: Number of retry attempts made
+        requirement_level: recommended
+
+      - id: circuit_breaker_state
+        type:
+          members:
+            - id: closed
+              value: "closed"
+            - id: open
+              value: "open"
+            - id: half_open
+              value: "half_open"
+        brief: State of circuit breaker
+        requirement_level: recommended
+
+      - id: connection_pool_size
+        type: int
+        brief: Current size of connection pool
+        requirement_level: optional
+
+# Metric Conventions
+metrics:
+  - name: knowledge_hook_duration
+    brief: Duration of knowledge hook execution
+    instrument: histogram
+    unit: ms
+    attributes:
+      - knowledge_hook.hook_id
+      - knowledge_hook.hook_type
+      - knowledge_hook.hook_result
+
+  - name: policy_pack_violations
+    brief: Count of policy pack violations
+    instrument: counter
+    unit: "{violation}"
+    attributes:
+      - policy_pack.pack_name
+      - policy_pack.validation_result
+
+  - name: rdf_quad_operations
+    brief: Count of RDF quad operations
+    instrument: counter
+    unit: "{quad}"
+    attributes:
+      - rdf.operation_type
+      - rdf.store_backend
+
+  - name: effect_sandbox_executions
+    brief: Count of effect sandbox executions
+    instrument: counter
+    unit: "{execution}"
+    attributes:
+      - effect.effect_type
+      - effect.execution_mode
+
+  - name: crypto_signature_verifications
+    brief: Count of cryptographic signature verifications
+    instrument: counter
+    unit: "{verification}"
+    attributes:
+      - crypto.signature_algorithm
+      - crypto.verification_result
+
+  - name: transaction_latency
+    brief: Latency of transaction processing
+    instrument: histogram
+    unit: ms
+    attributes:
+      - transaction.actor
+      - sidecar.method
+
+  - name: sidecar_requests_total
+    brief: Total gRPC requests to sidecar
+    instrument: counter
+    unit: "{request}"
+    attributes:
+      - sidecar.method
+      - sidecar.circuit_breaker_state

@@ -40,13 +40,22 @@ export async function initializeTracer() {
     });
 
     // Configure Jaeger exporter
-    const jaegerEndpoint = process.env.JAEGER_ENDPOINT || 'http://localhost:14268/api/traces';
+    // Use gRPC endpoint (14250) for better performance and reliability
+    // Support environment variable override for testing/deployment flexibility
+    const jaegerEndpoint = process.env.OTEL_EXPORTER_JAEGER_ENDPOINT ||
+                          process.env.JAEGER_ENDPOINT ||
+                          'http://localhost:14250';
+
     const exporter = new JaegerExporter({
       endpoint: jaegerEndpoint,
       // Agent host/port for UDP transport (alternative to HTTP)
       host: process.env.JAEGER_AGENT_HOST || 'localhost',
       port: parseInt(process.env.JAEGER_AGENT_PORT || '6832', 10)
     });
+
+    console.log('[OTEL] Initializing Jaeger exporter');
+    console.log(`[OTEL] Exporter endpoint: ${jaegerEndpoint}`);
+    console.log(`[OTEL] Service name: unrdf-cli`);
 
     // Initialize NodeSDK with Jaeger exporter
     // NodeSDK will automatically create a BatchSpanProcessor
@@ -61,10 +70,14 @@ export async function initializeTracer() {
     tracer = trace.getTracer('unrdf-cli', '2.1.0');
     initialized = true;
 
+    console.log('[OTEL] ✅ Tracer initialized successfully');
+    console.log(`[OTEL] ✅ Exporting traces to Jaeger at: ${jaegerEndpoint}`);
+    console.log(`[OTEL] ✅ Service: unrdf-cli (version 2.1.0)`);
+
     if (process.env.OTEL_DEBUG) {
-      console.log('[OTEL] Tracer initialized');
-      console.log(`[OTEL] Exporting to Jaeger: ${jaegerEndpoint}`);
-      console.log(`[OTEL] Service: unrdf-cli`);
+      console.log('[OTEL] Debug mode enabled');
+      console.log(`[OTEL] Agent host: ${process.env.JAEGER_AGENT_HOST || 'localhost'}`);
+      console.log(`[OTEL] Agent port: ${process.env.JAEGER_AGENT_PORT || '6832'}`);
     }
 
     return tracer;
