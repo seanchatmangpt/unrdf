@@ -108,6 +108,7 @@
     "citty": "^0.1.6",
     "eyereasoner": "^1.0.0",
     "jsonld": "^8.2.0",
+    "lru-cache": "^11.2.2",
     "n3": "^1.17.0",
     "rdf-canonize": "^2.0.0",
     "rdf-ext": "^2.0.0",

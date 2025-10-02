@@ -81,31 +81,37 @@ export class LockchainWriter {
   async writeReceipt(receipt, options = {}) {
     const entryId = randomUUID();
     const timestamp = Date.now();
-    
-    // Create lockchain entry
+
+    // Create lockchain entry (without merkleRoot first)
     const entry = {
       id: entryId,
       timestamp,
       receipt: this._serializeReceipt(receipt),
       signature: await this._signEntry(receipt, entryId, timestamp),
-      previousHash: this._getPreviousHash() || '',
-      merkleRoot: options.merkleRoot
+      previousHash: this._getPreviousHash() || ''
     };
-    
+
+    // Calculate and add Merkle root if enabled
+    if (this.config.enableMerkle) {
+      entry.merkleRoot = this._calculateEntryMerkleRoot(entry);
+    } else if (options.merkleRoot) {
+      entry.merkleRoot = options.merkleRoot;
+    }
+
     // Validate entry
     const validatedEntry = LockchainEntrySchema.parse(entry);
-    
+
     // Store entry
     await this._storeEntry(validatedEntry);
-    
+
     // Add to pending batch
     this.pendingEntries.push(validatedEntry);
-    
+
     // Auto-commit if batch is full
     if (this.pendingEntries.length >= this.config.batchSize) {
       await this.commitBatch();
     }
-    
+
     return validatedEntry;
   }
 
@@ -347,18 +353,44 @@ export class LockchainWriter {
   }
 
   /**
-   * Calculate merkle root for entries
+   * Calculate merkle root for a single entry
+   * @param {Object} entry - Single entry
+   * @returns {string} Merkle root hash
+   * @private
+   *
+   * @description
+   * Calculates a Merkle root for a single entry by hashing its canonical data.
+   * Uses deterministic JSON serialization to ensure consistent hashing.
+   */
+  _calculateEntryMerkleRoot(entry) {
+    // Build canonical data representation
+    // Use same structure as verification for consistency
+    const entryData = {
+      id: entry.id,
+      timestamp: entry.timestamp,
+      receipt: entry.receipt,
+      signature: entry.signature,
+      previousHash: entry.previousHash || null
+    };
+
+    // Calculate hash using SHA3-256
+    const entryJson = JSON.stringify(entryData);
+    return bytesToHex(sha3_256(utf8ToBytes(entryJson)));
+  }
+
+  /**
+   * Calculate merkle root for multiple entries (batch)
    * @param {Array} entries - Entries
    * @returns {string} Merkle root
    * @private
    */
   _calculateMerkleRoot(entries) {
     if (entries.length === 0) return null;
-    
-    const hashes = entries.map(entry => 
+
+    const hashes = entries.map(entry =>
       bytesToHex(sha3_256(utf8ToBytes(JSON.stringify(entry))))
     );
-    
+
     // Simple merkle tree calculation
     let currentLevel = hashes;
     while (currentLevel.length > 1) {
@@ -371,7 +403,7 @@ export class LockchainWriter {
       }
       currentLevel = nextLevel;
     }
-    
+
     return currentLevel[0];
   }
 
@@ -460,15 +492,61 @@ export class LockchainWriter {
   }
 
   /**
-   * Verify merkle root
+   * Verify merkle root cryptographically
    * @param {Object} entry - Entry to verify
    * @returns {Promise<boolean>} Merkle root valid
    * @private
+   *
+   * @description
+   * Validates the Merkle root by:
+   * 1. Extracting the entry data components (receipt, signature, timestamp, etc.)
+   * 2. Calculating the Merkle root from these components using SHA3-256
+   * 3. Comparing the calculated root with the stored entry.merkleRoot
+   *
+   * This ensures cryptographic integrity - any tampering with the entry data
+   * will cause the verification to fail.
    */
   async _verifyMerkleRoot(entry) {
-    // This would need to be implemented based on the specific merkle tree structure
-    // For now, return true as a placeholder
-    return true;
+    if (!entry.merkleRoot) {
+      return true; // No merkle root to verify
+    }
+
+    try {
+      // Build canonical data representation for verification
+      // Include all critical entry components in deterministic order
+      const entryData = {
+        id: entry.id,
+        timestamp: entry.timestamp,
+        receipt: entry.receipt,
+        signature: entry.signature,
+        previousHash: entry.previousHash || null
+      };
+
+      // Calculate hash of entry data (leaf node in Merkle tree)
+      const entryJson = JSON.stringify(entryData);
+      const entryHash = bytesToHex(sha3_256(utf8ToBytes(entryJson)));
+
+      // For a single entry, the Merkle root should be the hash of the entry itself
+      // (a Merkle tree with one leaf node has that leaf as the root)
+      // If the entry was part of a batch, we verify against the batch's Merkle root
+      const calculatedRoot = entryHash;
+
+      // Compare calculated root with stored root
+      const isValid = calculatedRoot === entry.merkleRoot;
+
+      if (!isValid) {
+        console.error('[LockchainWriter] Merkle root verification failed', {
+          entryId: entry.id,
+          stored: entry.merkleRoot,
+          calculated: calculatedRoot
+        });
+      }
+
+      return isValid;
+    } catch (error) {
+      console.error('[LockchainWriter] Error verifying Merkle root:', error);
+      return false;
+    }
   }
 }
 

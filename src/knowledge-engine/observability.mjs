@@ -182,8 +182,9 @@ export class ObservabilityManager {
       }
     });
 
-    this.activeSpans.set(transactionId, span);
-    return { transactionId, span, startTime: Date.now() };
+    const spanContext = { transactionId, span, startTime: Date.now() };
+    this.activeSpans.set(transactionId, spanContext);
+    return spanContext;
   }
 
   /**
@@ -245,8 +246,9 @@ export class ObservabilityManager {
     });
 
     const spanKey = `${transactionId}:${hookId}`;
-    this.activeSpans.set(spanKey, span);
-    return { hookId, span, startTime: Date.now() };
+    const spanContext = { hookId, span, startTime: Date.now() };
+    this.activeSpans.set(spanKey, spanContext);
+    return spanContext;
   }
 
   /**

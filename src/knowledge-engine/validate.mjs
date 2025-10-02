@@ -6,6 +6,9 @@
 import { Parser, Store } from 'n3';
 import rdf from 'rdf-ext';
 import SHACLValidator from 'rdf-validate-shacl';
+import { trace, SpanStatusCode } from '@opentelemetry/api';
+
+const tracer = trace.getTracer('unrdf');
 
 /**
  * Validate a store against SHACL shapes.
@@ -46,47 +49,79 @@ export function validateShacl(store, shapes, options = {}) {
     throw new TypeError('validateShacl: shapes must be provided');
   }
 
-  try {
-    const shapesStore = typeof shapes === 'string'
-      ? new Store(new Parser().parse(shapes))
-      : shapes;
+  return tracer.startActiveSpan('validate.shacl', (span) => {
+    try {
+      const shapesType = typeof shapes === 'string' ? 'turtle' : 'store';
+      span.setAttributes({
+        'validate.shapes_type': shapesType,
+        'validate.data_size': store.size,
+        'validate.include_details': options.includeDetails || false
+      });
 
-    if (!shapesStore || typeof shapesStore.getQuads !== 'function') {
-      throw new TypeError('validateShacl: shapes must be a valid Store or Turtle string');
+      const shapesStore = typeof shapes === 'string'
+        ? new Store(new Parser().parse(shapes))
+        : shapes;
+
+      if (!shapesStore || typeof shapesStore.getQuads !== 'function') {
+        throw new TypeError('validateShacl: shapes must be a valid Store or Turtle string');
+      }
+
+      span.setAttribute('validate.shapes_size', shapesStore.size);
+
+      const validator = new SHACLValidator(rdf.dataset(shapesStore.getQuads()));
+      const report = validator.validate(rdf.dataset(store.getQuads()));
+
+      const results = (report.results || []).map(r => ({
+        message: r.message?.[0]?.value || null,
+        path: r.path?.value || null,
+        focusNode: r.focusNode?.value || null,
+        severity: r.severity?.value || null,
+        sourceConstraint: r.sourceConstraint?.value || null,
+        sourceConstraintComponent: r.sourceConstraintComponent?.value || null,
+        sourceShape: r.sourceShape?.value || null,
+        value: r.value?.value || null,
+        ...(options.includeDetails && {
+          detail: r.detail || null,
+          resultPath: r.resultPath?.value || null,
+          resultSeverity: r.resultSeverity?.value || null
+        })
+      }));
+
+      const errorCount = results.filter(r => r.severity === 'http://www.w3.org/ns/shacl#Violation').length;
+      const warningCount = results.filter(r => r.severity === 'http://www.w3.org/ns/shacl#Warning').length;
+
+      span.setAttributes({
+        'validate.conforms': report.conforms,
+        'validate.total_results': results.length,
+        'validate.error_count': errorCount,
+        'validate.warning_count': warningCount
+      });
+
+      span.setStatus({ code: SpanStatusCode.OK });
+
+      const validationResult = {
+        conforms: report.conforms,
+        results,
+        ...(options.includeDetails && {
+          totalResults: results.length,
+          errorCount: errorCount,
+          warningCount: warningCount,
+          infoCount: results.filter(r => r.severity === 'http://www.w3.org/ns/shacl#Info').length
+        })
+      };
+
+      span.end();
+      return validationResult;
+    } catch (error) {
+      span.recordException(error);
+      span.setStatus({
+        code: SpanStatusCode.ERROR,
+        message: error.message
+      });
+      span.end();
+      throw new Error(`SHACL validation failed: ${error.message}`);
     }
-
-    const validator = new SHACLValidator(rdf.dataset(shapesStore.getQuads()));
-    const report = validator.validate(rdf.dataset(store.getQuads()));
-
-    const results = (report.results || []).map(r => ({
-      message: r.message?.[0]?.value || null,
-      path: r.path?.value || null,
-      focusNode: r.focusNode?.value || null,
-      severity: r.severity?.value || null,
-      sourceConstraint: r.sourceConstraint?.value || null,
-      sourceConstraintComponent: r.sourceConstraintComponent?.value || null,
-      sourceShape: r.sourceShape?.value || null,
-      value: r.value?.value || null,
-      ...(options.includeDetails && {
-        detail: r.detail || null,
-        resultPath: r.resultPath?.value || null,
-        resultSeverity: r.resultSeverity?.value || null
-      })
-    }));
-
-    return {
-      conforms: report.conforms,
-      results,
-      ...(options.includeDetails && {
-        totalResults: results.length,
-        errorCount: results.filter(r => r.severity === 'http://www.w3.org/ns/shacl#Violation').length,
-        warningCount: results.filter(r => r.severity === 'http://www.w3.org/ns/shacl#Warning').length,
-        infoCount: results.filter(r => r.severity === 'http://www.w3.org/ns/shacl#Info').length
-      })
-    };
-  } catch (error) {
-    throw new Error(`SHACL validation failed: ${error.message}`);
-  }
+  });
 }
 
 /**
