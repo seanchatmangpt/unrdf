@@ -5,6 +5,9 @@
 
 import { Store } from 'n3';
 import { getQueryEngine } from './query-cache.mjs';
+import { trace, SpanStatusCode } from '@opentelemetry/api';
+
+const tracer = trace.getTracer('unrdf');
 
 // Use singleton QueryEngine to eliminate 100-500ms initialization overhead
 // This improves hook evaluation performance by 80%
@@ -40,41 +43,68 @@ export async function query(store, sparql, options = {}) {
     throw new TypeError('query: sparql must be a non-empty string');
   }
 
-  try {
-    const queryOptions = {
-      sources: [store],
-      ...options
-    };
+  return tracer.startActiveSpan('query.sparql', async (span) => {
+    try {
+      const queryType = sparql.trim().split(/\s+/)[0].toUpperCase();
+      span.setAttributes({
+        'query.type': queryType,
+        'query.length': sparql.length,
+        'query.store_size': store.size
+      });
 
-    // Use cached singleton QueryEngine (0ms overhead vs 100-500ms for new instance)
-    const comunica = getQueryEngine();
-    const res = await comunica.query(sparql, queryOptions);
-    
-    switch (res.resultType) {
-      case 'bindings': {
-        const executed = await res.execute();
-        const rows = [];
-        for await (const binding of executed) {
-          rows.push(Object.fromEntries([...binding].map(([k, v]) => [k.value, v.value])));
+      const queryOptions = {
+        sources: [store],
+        ...options
+      };
+
+      // Use cached singleton QueryEngine (0ms overhead vs 100-500ms for new instance)
+      const comunica = getQueryEngine();
+      const res = await comunica.query(sparql, queryOptions);
+
+      let result;
+      switch (res.resultType) {
+        case 'bindings': {
+          const executed = await res.execute();
+          const rows = [];
+          for await (const binding of executed) {
+            rows.push(Object.fromEntries([...binding].map(([k, v]) => [k.value, v.value])));
+          }
+          result = rows;
+          span.setAttribute('query.result_count', rows.length);
+          break;
         }
-        return rows;
-      }
-      case 'boolean':
-        return res.booleanResult ?? (await res.execute());
-      case 'quads': {
-        const executed = await res.execute();
-        const quads = [];
-        for await (const quad of executed) {
-          quads.push(quad);
+        case 'boolean':
+          result = res.booleanResult ?? (await res.execute());
+          span.setAttribute('query.result_type', 'boolean');
+          span.setAttribute('query.result', result);
+          break;
+        case 'quads': {
+          const executed = await res.execute();
+          const quads = [];
+          for await (const quad of executed) {
+            quads.push(quad);
+          }
+          result = new Store(quads);
+          span.setAttribute('query.result_count', quads.length);
+          break;
         }
-        return new Store(quads);
+        default:
+          throw new Error(`Unsupported query type: ${res.resultType}`);
       }
-      default:
-        throw new Error(`Unsupported query type: ${res.resultType}`);
+
+      span.setStatus({ code: SpanStatusCode.OK });
+      return result;
+    } catch (error) {
+      span.recordException(error);
+      span.setStatus({
+        code: SpanStatusCode.ERROR,
+        message: error.message
+      });
+      throw new Error(`SPARQL query failed: ${error.message}`);
+    } finally {
+      span.end();
     }
-  } catch (error) {
-    throw new Error(`SPARQL query failed: ${error.message}`);
-  }
+  });
 }
 
 /**

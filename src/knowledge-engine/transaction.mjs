@@ -13,6 +13,9 @@ import { createResolutionLayer } from './resolution-layer.mjs';
 import { createObservabilityManager } from './observability.mjs';
 import { randomUUID } from 'crypto';
 import { z } from 'zod';
+import { trace, SpanStatusCode } from '@opentelemetry/api';
+
+const tracer = trace.getTracer('unrdf');
 
 // Import consolidated schemas
 import { 
@@ -341,7 +344,55 @@ export class TransactionManager {
    * @private
    */
   async _executeTransaction(store, delta, skipHooks, hookResults, hookErrors, transactionId, actor) {
-    const beforeHash = await hashStore(store, this.options);
+    return tracer.startActiveSpan('transaction.commit', async (span) => {
+      try {
+        span.setAttributes({
+          'transaction.id': transactionId,
+          'transaction.actor': actor || 'system',
+          'transaction.skip_hooks': skipHooks,
+          'transaction.additions_count': delta.additions.length,
+          'transaction.removals_count': delta.removals.length,
+          'transaction.store_size_before': store.size
+        });
+
+        const beforeHash = await hashStore(store, this.options);
+
+        const result = await this._executeTransactionWithHooks(
+          store,
+          delta,
+          skipHooks,
+          hookResults,
+          hookErrors,
+          beforeHash
+        );
+
+        span.setAttributes({
+          'transaction.committed': result.receipt.committed,
+          'transaction.hook_results': hookResults.length,
+          'transaction.hook_errors': hookErrors.length,
+          'transaction.store_size_after': store.size
+        });
+
+        span.setStatus({ code: SpanStatusCode.OK });
+        return result;
+      } catch (error) {
+        span.recordException(error);
+        span.setStatus({
+          code: SpanStatusCode.ERROR,
+          message: error.message
+        });
+        throw error;
+      } finally {
+        span.end();
+      }
+    });
+  }
+
+  /**
+   * Execute transaction with hooks
+   * @private
+   */
+  async _executeTransactionWithHooks(store, delta, skipHooks, hookResults, hookErrors, beforeHash) {
 
     // Pre-hooks
     if (!skipHooks) {

@@ -4,6 +4,9 @@
  */
 
 import { Parser, Writer, Store } from 'n3';
+import { trace, SpanStatusCode } from '@opentelemetry/api';
+
+const tracer = trace.getTracer('unrdf');
 
 /**
  * Parse a Turtle string into a Store.
@@ -28,13 +31,33 @@ export async function parseTurtle(ttl, baseIRI = 'http://example.org/') {
     throw new TypeError('parseTurtle: baseIRI must be a string');
   }
 
-  try {
-    const parser = new Parser({ baseIRI });
-    const quads = parser.parse(ttl);
-    return new Store(quads);
-  } catch (error) {
-    throw new Error(`Failed to parse Turtle: ${error.message}`);
-  }
+  return tracer.startActiveSpan('parse.turtle', async (span) => {
+    try {
+      span.setAttributes({
+        'parse.format': 'turtle',
+        'parse.base_iri': baseIRI,
+        'parse.input_length': ttl.length
+      });
+
+      const parser = new Parser({ baseIRI });
+      const quads = parser.parse(ttl);
+      const store = new Store(quads);
+
+      span.setAttribute('parse.quads_count', store.size);
+      span.setStatus({ code: SpanStatusCode.OK });
+
+      return store;
+    } catch (error) {
+      span.recordException(error);
+      span.setStatus({
+        code: SpanStatusCode.ERROR,
+        message: error.message
+      });
+      throw new Error(`Failed to parse Turtle: ${error.message}`);
+    } finally {
+      span.end();
+    }
+  });
 }
 
 /**

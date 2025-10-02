@@ -12,6 +12,9 @@ import { createEffectSandbox } from './effect-sandbox.mjs';
 import { createErrorSanitizer } from './security/error-sanitizer.mjs';
 import { createSandboxRestrictions } from './security/sandbox-restrictions.mjs';
 import { Store } from 'n3';
+import { trace, SpanStatusCode } from '@opentelemetry/api';
+
+const tracer = trace.getTracer('unrdf');
 
 /**
  * Execute a knowledge hook with full lifecycle management.
@@ -89,14 +92,62 @@ export async function executeHook(hook, event, options = {}) {
  */
 async function _executeHookLifecycle(hook, event, options) {
   const { basePath, strictMode, enableConditionEvaluation, enableSandboxing, sandboxConfig, executionId } = options;
-  
-  let currentEvent = { ...event };
-  let beforeResult = null;
-  let runResult = null;
-  let afterResult = null;
-  let conditionResult = null;
-  let cancelled = false;
-  let cancelReason = null;
+
+  return tracer.startActiveSpan('hook.evaluate', async (span) => {
+    try {
+      span.setAttributes({
+        'hook.execution_id': executionId,
+        'hook.has_before': !!hook.before,
+        'hook.has_when': !!hook.when,
+        'hook.has_run': !!hook.run,
+        'hook.has_after': !!hook.after,
+        'hook.strict_mode': strictMode,
+        'hook.sandboxing_enabled': enableSandboxing
+      });
+
+      let currentEvent = { ...event };
+      let beforeResult = null;
+      let runResult = null;
+      let afterResult = null;
+      let conditionResult = null;
+      let cancelled = false;
+      let cancelReason = null;
+
+      const result = await _executeHookPhases(
+        hook,
+        currentEvent,
+        beforeResult,
+        runResult,
+        afterResult,
+        conditionResult,
+        cancelled,
+        cancelReason,
+        options
+      );
+
+      span.setAttributes({
+        'hook.cancelled': result.cancelled || false,
+        'hook.success': result.success || false,
+        'hook.phase': result.phase || 'unknown'
+      });
+
+      span.setStatus({ code: SpanStatusCode.OK });
+      return result;
+    } catch (error) {
+      span.recordException(error);
+      span.setStatus({
+        code: SpanStatusCode.ERROR,
+        message: error.message
+      });
+      throw error;
+    } finally {
+      span.end();
+    }
+  });
+}
+
+async function _executeHookPhases(hook, currentEvent, beforeResult, runResult, afterResult, conditionResult, cancelled, cancelReason, options) {
+  const { basePath, strictMode, enableConditionEvaluation, enableSandboxing, sandboxConfig, executionId } = options;
   
   // Phase 1: Before
   if (hook.before) {
@@ -250,8 +301,8 @@ async function _executeHookLifecycle(hook, event, options) {
       afterResult = { error: sanitizedError };
     }
   }
-  
-  return {
+
+  const finalResult = {
     beforeResult,
     conditionResult,
     runResult,
@@ -260,6 +311,33 @@ async function _executeHookLifecycle(hook, event, options) {
     phase: 'completed',
     success: !cancelled && (!runResult || !runResult.error)
   };
+
+  // Record hook result span
+  return tracer.startActiveSpan('hook.result', (resultSpan) => {
+    try {
+      resultSpan.setAttributes({
+        'hook.result.success': finalResult.success,
+        'hook.result.cancelled': finalResult.cancelled,
+        'hook.result.phase': finalResult.phase,
+        'hook.result.has_before': !!beforeResult,
+        'hook.result.has_condition': !!conditionResult,
+        'hook.result.has_run': !!runResult,
+        'hook.result.has_after': !!afterResult
+      });
+
+      resultSpan.setStatus({ code: SpanStatusCode.OK });
+      resultSpan.end();
+      return finalResult;
+    } catch (error) {
+      resultSpan.recordException(error);
+      resultSpan.setStatus({
+        code: SpanStatusCode.ERROR,
+        message: error.message
+      });
+      resultSpan.end();
+      throw error;
+    }
+  });
 }
 
 /**
