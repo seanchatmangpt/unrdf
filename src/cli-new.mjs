@@ -652,8 +652,8 @@ const main = defineCommand({
           args: {
             policy: {
               type: 'string',
-              description: 'Policy pack name',
-              required: true
+              description: 'Policy pack name (optional, uses last applied)',
+              required: false
             },
             store: {
               type: 'string',

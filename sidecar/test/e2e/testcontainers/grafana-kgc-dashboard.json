@@ -1,0 +1,55 @@
+{
+  "dashboard": {
+    "title": "KGC Sidecar - Testcontainer Metrics",
+    "tags": ["kgc", "testcontainers"],
+    "timezone": "browser",
+    "panels": [
+      {
+        "title": "Transaction Latency (p50, p99)",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.50, rate(kgc_transaction_duration_ms_bucket[1m]))",
+            "legendFormat": "p50"
+          },
+          {
+            "expr": "histogram_quantile(0.99, rate(kgc_transaction_duration_ms_bucket[1m]))",
+            "legendFormat": "p99"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0}
+      },
+      {
+        "title": "Hook Execution Rate",
+        "targets": [
+          {
+            "expr": "rate(kgc_hooks_executed_total[1m])",
+            "legendFormat": "{{success}}"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0}
+      },
+      {
+        "title": "Error Rate",
+        "targets": [
+          {
+            "expr": "rate(kgc_errors_total[1m])",
+            "legendFormat": "{{type}}"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8}
+      },
+      {
+        "title": "Cache Hit Rate",
+        "targets": [
+          {
+            "expr": "rate(kgc_cache_hits_total[1m]) / (rate(kgc_cache_hits_total[1m]) + rate(kgc_cache_misses_total[1m]))",
+            "legendFormat": "Hit Rate"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8}
+      }
+    ],
+    "refresh": "5s",
+    "time": {"from": "now-5m", "to": "now"}
+  }
+}

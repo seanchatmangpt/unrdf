@@ -1,0 +1,9 @@
+{
+  "name": "health-check",
+  "kind": "before",
+  "condition": {
+    "type": "sparql-ask",
+    "query": "# Health Check SPARQL Query\n# Checks if the store contains any data\n\nPREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n\nASK {\n  ?s ?p ?o\n}\n"
+  },
+  "effects": []
+}

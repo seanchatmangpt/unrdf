@@ -1,0 +1,170 @@
+# OpenTelemetry Weaver Configuration for UNRDF
+# Semantic convention registry and code generation settings
+
+version: 1.0.0
+project_name: unrdf-kgc-sidecar
+
+# Semantic Convention Registry
+registry:
+  # Import standard OTEL conventions
+  imports:
+    - https://github.com/open-telemetry/semantic-conventions/blob/main/model/registry/
+
+  # Custom UNRDF conventions
+  local:
+    - ./custom-conventions.yaml
+
+# Code Generation Settings
+generation:
+  # Target languages for instrumentation
+  targets:
+    - language: javascript
+      output_dir: ./generated/otel
+      template: esm
+      include_docs: true
+
+    - language: markdown
+      output_dir: ./docs/telemetry
+      template: full
+
+  # Generate type definitions
+  typescript:
+    enabled: true
+    output_dir: ./generated/otel/types
+    strict: true
+
+  # Attribute validation
+  validation:
+    strict_mode: true
+    fail_on_unknown: false
+    warn_on_experimental: true
+
+# Instrumentation Configuration
+instrumentation:
+  # Auto-instrumentation settings
+  auto_instrument:
+    - http
+    - grpc
+    - database
+    - messaging
+
+  # Custom instrumentation hooks
+  hooks:
+    pre_span_start:
+      - validate_attributes
+      - enrich_context
+
+    post_span_end:
+      - emit_metrics
+      - update_exemplars
+
+# Semantic Convention Enforcement
+enforcement:
+  # Required attributes for all spans
+  required_attributes:
+    - service.name
+    - service.version
+    - deployment.environment
+
+  # Validation rules
+  rules:
+    - name: trace_context_propagation
+      severity: error
+      description: All outgoing requests must propagate trace context
+
+    - name: error_recording
+      severity: warning
+      description: All error spans must record exception details
+
+    - name: metric_exemplars
+      severity: info
+      description: All metrics should include trace exemplars
+
+# Export Configuration
+export:
+  # Metric exemplar settings
+  exemplars:
+    enabled: true
+    max_per_metric: 10
+    filter: sampled_traces
+
+  # Span event settings
+  events:
+    max_per_span: 128
+    max_attribute_count: 128
+
+  # Attribute limits
+  attributes:
+    max_length: 1024
+    max_count: 128
+
+# Performance Settings
+performance:
+  # Sampling strategy
+  sampling:
+    default_rate: 0.1  # 10% sampling
+    error_rate: 1.0    # 100% error sampling
+    slow_rate: 1.0     # 100% slow request sampling (>1s)
+
+  # Batch processing
+  batch:
+    max_queue_size: 2048
+    max_export_batch_size: 512
+    scheduled_delay_millis: 5000
+
+# Context Propagation
+context:
+  # Propagation formats
+  propagators:
+    - w3c_trace_context
+    - w3c_baggage
+
+  # Cross-process correlation
+  correlation:
+    enabled: true
+    fields:
+      - trace_id
+      - span_id
+      - trace_flags
+      - trace_state
+
+# SLO Tracking
+slo:
+  # Service Level Objectives
+  objectives:
+    - name: api_latency
+      target: 0.95  # 95th percentile
+      threshold_ms: 100
+      error_budget: 0.01  # 1% error budget
+
+    - name: availability
+      target: 0.999  # 99.9% uptime
+      error_budget: 0.001
+
+    - name: error_rate
+      target: 0.99  # 99% success rate
+      threshold: 0.01  # <1% errors
+
+  # Alert on SLO violations
+  alerts:
+    enabled: true
+    channels:
+      - console
+      - metrics
+
+# Grafana Integration
+grafana:
+  # Dashboard generation
+  dashboards:
+    enabled: true
+    output_dir: ./grafana/dashboards
+    templates:
+      - overview
+      - service_mesh
+      - slo_compliance
+
+  # Prometheus exemplar linking
+  exemplar_links:
+    enabled: true
+    trace_backend: tempo
+    trace_url_template: "http://localhost:3000/explore?left={\"datasource\":\"tempo\",\"queries\":[{\"query\":\"{{traceId}}\"}]}"

@@ -7,10 +7,24 @@
  */
 
 import { readFile, writeFile } from 'node:fs/promises';
+import { Writer } from 'n3';
+import { QueryEngine } from '@comunica/query-sparql';
 import { useStoreContext } from '../../context/index.mjs';
 import { useTurtle } from '../../composables/index.mjs';
 import { validateRequiredArgs, getArg } from '../utils/context-wrapper.mjs';
 import { getTracer, printTraceInfo } from '../utils/otel-tracer.mjs';
+
+/**
+ * Persist store to disk
+ * @param {Object} store - Store context
+ * @returns {Promise<void>}
+ */
+async function persistStore(store) {
+  const writer = new Writer({ format: 'N-Quads' });
+  const quads = Array.from(store.store.getQuads());
+  const serialized = writer.quadsToString(quads);
+  await writeFile('.unrdf-store.nq', serialized);
+}
 
 /**
  * Import RDF data to store
@@ -57,6 +71,9 @@ export async function storeImportCommand(ctx, config) {
 
     // Add to store
     store.add(...quads);
+
+    // Persist store to disk for subsequent commands
+    await persistStore(store);
 
     const duration = Date.now() - startTime;
     // Simple output for CLI compatibility
@@ -198,45 +215,112 @@ export async function storeQueryCommand(ctx, config) {
 
     const store = useStoreContext();
 
-    // Execute query
-    const result = store.query(sparqlQuery);
+    // Check if store is empty
+    if (store.store.size === 0) {
+      console.error('⚠️  Store is empty. Did you run "store import" first?');
+      process.exit(1);
+    }
+
+    // Execute query using Comunica directly
+    // Note: Comunica expects the store directly in sources array, not wrapped in an object
+    const queryEngine = new QueryEngine();
+    const comunicaContext = {
+      sources: [store.store]
+    };
+
+    // Determine query type
+    const queryType = sparqlQuery.replace(/^PREFIX\s+[^\s]+\s+<[^>]+>\s*/gm, '').trim().toUpperCase().split(/\s+/)[0];
+
+    let result;
+    if (queryType === 'SELECT') {
+      const bindingsStream = await queryEngine.queryBindings(sparqlQuery, comunicaContext);
+      const bindings = await bindingsStream.toArray();
+      // Convert bindings to simple objects
+      result = bindings.map((b) =>
+        Object.fromEntries([...b].map(([k, v]) => [k.value, v.value]))
+      );
+    } else if (queryType === 'ASK') {
+      result = await queryEngine.queryBoolean(sparqlQuery, comunicaContext);
+    } else if (queryType === 'CONSTRUCT') {
+      const quadStream = await queryEngine.queryQuads(sparqlQuery, comunicaContext);
+      const quads = await quadStream.toArray();
+      result = { quads, isConstructQuery: true };
+    } else {
+      throw new Error(`Unsupported query type: ${queryType}`);
+    }
+
     span.addEvent('query.executed');
 
     // Format output
     const format = getArg(args, 'format', 'table');
+
+    // Determine query type from result
+    const isSelectQuery = Array.isArray(result);
+    const isBooleanQuery = typeof result === 'boolean';
+    const isConstructQuery = result && result.isConstructQuery;
+
     if (format === 'json') {
-      console.log(JSON.stringify(result, null, 2));
-    } else if (result.type === 'select') {
-      // Table format for SELECT
+      if (isSelectQuery) {
+        console.log(JSON.stringify(result, null, 2));
+      } else if (isBooleanQuery) {
+        console.log(JSON.stringify({ result }, null, 2));
+      } else if (isConstructQuery) {
+        // Serialize the constructed quads
+        const writer = new Writer({ format: 'Turtle' });
+        const serialized = writer.quadsToString(result.quads);
+        console.log(serialized);
+      } else {
+        console.log(JSON.stringify(result, null, 2));
+      }
+    } else if (isSelectQuery) {
+      // Table format for SELECT results
       console.log('\nResults:');
       console.log('─'.repeat(80));
 
-      if (result.rows && result.rows.length > 0) {
+      if (result.length > 0) {
         // Print header
-        const vars = result.variables || Object.keys(result.rows[0]);
+        const vars = Object.keys(result[0]);
         console.log(vars.join('\t'));
         console.log('─'.repeat(80));
 
         // Print rows
-        for (const row of result.rows) {
-          const values = vars.map(v => row[v]?.value || '');
+        for (const row of result) {
+          const values = vars.map(v => row[v] || '');
           console.log(values.join('\t'));
         }
 
-        console.log(`\n${result.rows.length} results`);
+        console.log(`\n${result.length} results`);
       } else {
         console.log('No results');
       }
-    } else if (result.type === 'ask') {
-      console.log(`Result: ${result.result ? 'true' : 'false'}`);
+    } else if (isBooleanQuery) {
+      console.log(`Result: ${result ? 'true' : 'false'}`);
+    } else if (isConstructQuery) {
+      // Table format for CONSTRUCT - show quads
+      const writer = new Writer({ format: 'Turtle' });
+      const serialized = writer.quadsToString(result.quads);
+      console.log('\nConstructed graph:');
+      console.log('─'.repeat(80));
+      console.log(serialized);
     } else {
       console.log(JSON.stringify(result, null, 2));
     }
 
     const duration = Date.now() - startTime;
+
+    // Determine result count for metrics
+    let resultCount = 0;
+    if (isSelectQuery) {
+      resultCount = result.length;
+    } else if (isBooleanQuery) {
+      resultCount = 1;
+    } else if (isConstructQuery) {
+      resultCount = result.quads.length;
+    }
+
     span.setAttributes({
-      'query.type': result.type,
-      'query.results': result.rows?.length || 0,
+      'query.type': queryType.toLowerCase(),
+      'query.results': resultCount,
       'query.duration_ms': duration,
       'query.success': true
     });

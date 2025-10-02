@@ -21,7 +21,19 @@ let sidecarClient = null;
 export async function getSidecarClient(options = {}) {
   if (!sidecarClient || !sidecarClient.connected) {
     sidecarClient = new SidecarClient(options);
-    await sidecarClient.connect(options.address);
+
+    // Add timeout to prevent hanging indefinitely (default 3 seconds)
+    const timeout = options.timeout || 3000;
+    const connectPromise = sidecarClient.connect(options.address);
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => {
+        const error = new Error('Connection timeout');
+        error.code = 4; // DEADLINE_EXCEEDED
+        reject(error);
+      }, timeout)
+    );
+
+    await Promise.race([connectPromise, timeoutPromise]);
   }
   return sidecarClient;
 }
@@ -48,7 +60,11 @@ export async function withSidecar(fn, options = {}) {
     const client = await getSidecarClient(options);
     return await fn(client);
   } catch (error) {
-    throw new Error(`Sidecar operation failed: ${error.message}`);
+    // Preserve gRPC error codes for graceful degradation
+    const wrappedError = new Error(`Sidecar operation failed: ${error.message}`);
+    wrappedError.code = error.code; // Preserve error code (14=UNAVAILABLE, 4=DEADLINE_EXCEEDED)
+    wrappedError.originalError = error;
+    throw wrappedError;
   }
 }
 

@@ -26,7 +26,7 @@ export const policyEnforcementScenario = new ScenarioBuilder()
     name: 'Apply policy pack',
     command: 'node cli/unrdf.mjs policy apply test/e2e/cleanroom/fixtures/compliance-pack.json',
     expectedExitCode: 0,
-    expectedOutput: /Policy pack applied|Activated/,
+    expectedOutput: /✅\s+Policy pack applied:/,
   })
 
   // Step 2: Validate compliance
@@ -34,7 +34,7 @@ export const policyEnforcementScenario = new ScenarioBuilder()
     name: 'Validate compliance',
     command: 'node cli/unrdf.mjs policy validate --strict',
     expectedExitCode: 0,
-    expectedOutput: /Compliant|Passed/,
+    expectedOutput: /Status:.*✅\s+PASSED|Validation\s+PASSED/,
   })
 
   // Step 3: Test policy (dry run)

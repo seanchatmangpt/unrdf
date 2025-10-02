@@ -12,6 +12,7 @@ import { query as sparqlQuery } from '../../knowledge-engine/query.mjs';
 import { trace, context as otelContext, SpanStatusCode } from '@opentelemetry/api';
 import { readFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
+import { getCachedFileContent, cacheFileContent } from '../../knowledge-engine/query-cache.mjs';
 
 const tracer = trace.getTracer('unrdf-hook-evaluator');
 
@@ -239,7 +240,22 @@ async function loadQueryFromRef(ref, parentSpan) {
       }
 
       const filePath = uri.substring(7); // Remove 'file://'
-      const content = await readFile(filePath, 'utf-8');
+
+      // Try cache first if SHA-256 is provided (content-addressed)
+      let content;
+      if (ref.sha256) {
+        content = getCachedFileContent(ref.sha256);
+        if (content) {
+          span.setAttribute('query.cached', true);
+          span.setAttribute('query.path', filePath);
+          span.setAttribute('query.size', content.length);
+          span.setStatus({ code: SpanStatusCode.OK });
+          return content;
+        }
+      }
+
+      // Cache miss: Read from file
+      content = await readFile(filePath, 'utf-8');
 
       // Verify content hash if provided
       if (ref.sha256) {
@@ -248,8 +264,12 @@ async function loadQueryFromRef(ref, parentSpan) {
           throw new Error(`Content hash mismatch for ${filePath}: expected ${ref.sha256}, got ${hash}`);
         }
         span.setAttribute('query.verified', true);
+
+        // Cache the content by hash
+        cacheFileContent(ref.sha256, content);
       }
 
+      span.setAttribute('query.cached', false);
       span.setAttribute('query.path', filePath);
       span.setAttribute('query.size', content.length);
       span.setStatus({ code: SpanStatusCode.OK });
@@ -281,15 +301,33 @@ async function loadShapesFromRef(ref, parentSpan) {
       }
 
       const filePath = uri.substring(7); // Remove 'file://'
-      const content = await readFile(filePath, 'utf-8');
 
-      // Verify content hash if provided
+      // Try cache first if SHA-256 is provided
+      let content;
       if (ref.sha256) {
-        const hash = createHash('sha256').update(content).digest('hex');
-        if (hash !== ref.sha256) {
-          throw new Error(`Content hash mismatch for ${filePath}: expected ${ref.sha256}, got ${hash}`);
+        content = getCachedFileContent(ref.sha256);
+        if (content) {
+          span.setAttribute('shapes.cached', true);
         }
-        span.setAttribute('shapes.verified', true);
+      }
+
+      if (!content) {
+        // Cache miss: Read from file
+        content = await readFile(filePath, 'utf-8');
+
+        // Verify content hash if provided
+        if (ref.sha256) {
+          const hash = createHash('sha256').update(content).digest('hex');
+          if (hash !== ref.sha256) {
+            throw new Error(`Content hash mismatch for ${filePath}: expected ${ref.sha256}, got ${hash}`);
+          }
+          span.setAttribute('shapes.verified', true);
+
+          // Cache the content by hash
+          cacheFileContent(ref.sha256, content);
+        }
+
+        span.setAttribute('shapes.cached', false);
       }
 
       // Parse Turtle into store

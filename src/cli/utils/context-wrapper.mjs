@@ -10,6 +10,54 @@
 import { setStoreContext } from '../../index.mjs';
 import { loadConfig } from './config-loader.mjs';
 import { handleError } from './error-handler.mjs';
+import { existsSync } from 'node:fs';
+import { readFile, mkdir } from 'node:fs/promises';
+import { join } from 'node:path';
+import { Parser } from 'n3';
+
+/**
+ * Get path to persistent store file
+ * @returns {string} Store file path
+ */
+function getStoreFilePath() {
+  return '.unrdf-store.nq';
+}
+
+/**
+ * Load persisted store data if exists
+ * @returns {Promise<Array>} Array of quads
+ */
+async function loadPersistedStore() {
+  const storePath = getStoreFilePath();
+  if (!existsSync(storePath)) {
+    return [];
+  }
+
+  try {
+    const content = await readFile(storePath, 'utf-8');
+    const parser = new Parser({ format: 'N-Quads' });
+    return parser.parse(content);
+  } catch (error) {
+    // If store file is corrupted or empty, start fresh
+    return [];
+  }
+}
+
+/**
+ * Initialize .unrdf directory structure
+ * @returns {Promise<void>}
+ */
+async function initUnrdfDirectory() {
+  const unrdfDir = join(process.cwd(), '.unrdf');
+
+  // Create subdirectories
+  const subdirs = ['hooks', 'policies', 'cache'];
+
+  for (const subdir of subdirs) {
+    const dirPath = join(unrdfDir, subdir);
+    await mkdir(dirPath, { recursive: true });
+  }
+}
 
 /**
  * Wrap command function with store context
@@ -20,9 +68,16 @@ import { handleError } from './error-handler.mjs';
 export function withContext(commandFn, commandName = 'command') {
   return async (ctx) => {
     try {
+      // Initialize .unrdf directory structure early
+      await initUnrdfDirectory();
+
       const config = await loadConfig();
-      // Initialize store context directly (more reliable than initStore for CLI usage)
-      setStoreContext([], { baseIRI: config.baseIRI || 'http://example.org/' });
+
+      // Load persisted store data for store commands
+      const initialQuads = commandName.startsWith('store') ? await loadPersistedStore() : [];
+
+      // Initialize store context with persisted data
+      setStoreContext(initialQuads, { baseIRI: config.baseIRI || 'http://example.org/' });
 
       await commandFn(ctx, config);
     } catch (error) {
