@@ -11,6 +11,7 @@ import { readFile } from 'fs/promises';
 import { createHash } from 'crypto';
 import { fileURLToPath } from 'url';
 import { dirname, join, resolve } from 'path';
+import { createPathValidator } from './security/path-validator.mjs';
 
 /**
  * Resolve a file URI to an absolute path.
@@ -24,16 +25,21 @@ export function resolveFileUri(uri, basePath = process.cwd()) {
   if (!uri || typeof uri !== 'string') {
     throw new TypeError('resolveFileUri: uri must be a non-empty string');
   }
-  
+
   if (!uri.startsWith('file://')) {
     throw new Error(`resolveFileUri: URI must start with 'file://', got: ${uri}`);
   }
-  
-  // Remove file:// prefix and resolve path
-  const relativePath = uri.substring(7); // Remove 'file://'
-  const absolutePath = resolve(basePath, relativePath);
-  
-  return absolutePath;
+
+  // Validate path for security vulnerabilities
+  const pathValidator = createPathValidator({ basePath });
+  const validation = pathValidator.validateFileUri(uri);
+
+  if (!validation.valid) {
+    throw new Error(`Security validation failed: ${validation.violations.join(', ')}`);
+  }
+
+  // Use sanitized path from validator
+  return validation.sanitizedPath;
 }
 
 /**

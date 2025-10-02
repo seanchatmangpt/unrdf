@@ -1,0 +1,117 @@
+%%{init: {'theme':'dark', 'themeVariables': { 'primaryColor':'#ff6b6b','primaryTextColor':'#fff','primaryBorderColor':'#7C0000','lineColor':'#F8B229','secondaryColor':'#006100','tertiaryColor':'#fff'}}}%%
+graph TB
+    %% Root Goal
+    ROOT[🎯 Production-Ready Dashboard<br/>Target: 85/100 Score<br/>Status: 0/100]
+
+    %% Milestones
+    M1[🛡️ M1: Security Hardened<br/>Priority: 1 | Weight: 30%<br/>Status: NOT STARTED]
+    M2[🧪 M2: Tests Passing<br/>Priority: 2 | Weight: 40%<br/>Status: NOT STARTED]
+    M3[📊 M3: Dashboard Implemented<br/>Priority: 3 | Weight: 30%<br/>Status: NOT STARTED]
+
+    %% Security Actions
+    A1_1[🔒 A1.1: Fix Path Traversal<br/>Agent: SEC-001<br/>Effort: 2h | Risk: LOW]
+    A1_2[⏱️ A1.2: Rate Limiting<br/>Agent: SEC-001<br/>Effort: 3h | Risk: MEDIUM]
+    A1_3[🚫 A1.3: Error Sanitization<br/>Agent: SEC-001<br/>Effort: 2h | Risk: LOW]
+    A1_4[✅ A1.4: Input Validation Zod<br/>Agent: SEC-001<br/>Effort: 4h | Risk: MEDIUM]
+
+    %% Test Actions
+    A2_1[🐛 A2.1: Fix Business Logic Tests<br/>Agent: TEST-001<br/>Effort: 4h | Risk: HIGH]
+    A2_2[🔍 A2.2: Fix Edge Case Tests<br/>Agent: TEST-001<br/>Effort: 3h | Risk: MEDIUM]
+    A2_3[🧪 A2.3: TDD Implementation<br/>Agent: TEST-001<br/>Effort: 8h | Risk: MEDIUM]
+    A2_4[🎭 A2.4: E2E Test Suite<br/>Agent: TEST-001<br/>Effort: 6h | Risk: HIGH]
+
+    %% Dashboard Actions
+    A3_1[📋 A3.1: Hooks List Component<br/>Agent: FE-001<br/>Effort: 4h | Risk: LOW]
+    A3_2[📝 A3.2: Hook Creation Form<br/>Agent: FE-001<br/>Effort: 5h | Risk: MEDIUM]
+    A3_3[📈 A3.3: OTEL Dashboard<br/>Agent: OPS-001<br/>Effort: 6h | Risk: HIGH]
+    A3_4[📜 A3.4: Audit Trail Viewer<br/>Agent: FE-001<br/>Effort: 5h | Risk: MEDIUM]
+
+    %% Success Criteria
+    SC1_1[✓ SC1.1: 0 Critical Vulns<br/>Current: 3 | Target: 0]
+    SC1_2[✓ SC1.2: Path Tests Pass<br/>Current: 0% | Target: 100%]
+    SC1_3[✓ SC1.3: Rate Limit Tests<br/>Current: 0% | Target: 100%]
+    SC1_4[✓ SC1.4: Input Validation<br/>Current: 30% | Target: 100%]
+
+    SC2_1[✓ SC2.1: Test Exit Code 0<br/>Current: 1 | Target: 0]
+    SC2_2[✓ SC2.2: Failure Rate <5%<br/>Current: 47.7% | Target: 5%]
+    SC2_3[✓ SC2.3: Coverage >80%<br/>Current: 0% | Target: 80%]
+    SC2_4[✓ SC2.4: E2E Tests Pass<br/>Current: 0% | Target: 100%]
+
+    SC3_1[✓ SC3.1: Hooks List Works<br/>Current: false | Target: true]
+    SC3_2[✓ SC3.2: Hook Create Works<br/>Current: false | Target: true]
+    SC3_3[✓ SC3.3: OTEL Real-time<br/>Current: false | Target: true]
+    SC3_4[✓ SC3.4: Audit Searchable<br/>Current: false | Target: true]
+
+    %% Root Dependencies
+    ROOT --> M1
+    ROOT --> M2
+    ROOT --> M3
+
+    %% Milestone to Action Dependencies
+    M1 --> A1_1
+    M1 --> A1_2
+    M1 --> A1_3
+    M1 --> A1_4
+
+    M2 --> A2_1
+    M2 --> A2_2
+    M2 --> A2_3
+    M2 --> A2_4
+
+    M3 --> A3_1
+    M3 --> A3_2
+    M3 --> A3_3
+    M3 --> A3_4
+
+    %% Critical Path Dependencies (Sequential)
+    A1_1 -.->|blocks| A3_2
+    A1_4 -.->|blocks| A3_2
+    A2_1 -.->|blocks| A2_3
+    A2_3 -.->|blocks| A2_4
+    A3_1 -.->|blocks| A2_4
+    A3_2 -.->|blocks| A2_4
+
+    %% Action to Success Criteria
+    A1_1 --> SC1_2
+    A1_2 --> SC1_3
+    A1_3 --> SC1_1
+    A1_4 --> SC1_4
+
+    A2_1 --> SC2_1
+    A2_2 --> SC2_2
+    A2_3 --> SC2_3
+    A2_4 --> SC2_4
+
+    A3_1 --> SC3_1
+    A3_2 --> SC3_2
+    A3_3 --> SC3_3
+    A3_4 --> SC3_4
+
+    %% Success Criteria to Milestones
+    SC1_1 --> M1
+    SC1_2 --> M1
+    SC1_3 --> M1
+    SC1_4 --> M1
+
+    SC2_1 --> M2
+    SC2_2 --> M2
+    SC2_3 --> M2
+    SC2_4 --> M2
+
+    SC3_1 --> M3
+    SC3_2 --> M3
+    SC3_3 --> M3
+    SC3_4 --> M3
+
+    %% Styling
+    classDef rootStyle fill:#ff6b6b,stroke:#c92a2a,stroke-width:3px,color:#fff
+    classDef milestoneStyle fill:#4ecdc4,stroke:#0d7377,stroke-width:2px,color:#fff
+    classDef actionStyle fill:#ffe66d,stroke:#f4a261,stroke-width:2px,color:#000
+    classDef criteriaStyle fill:#95e1d3,stroke:#38ada9,stroke-width:1px,color:#000
+    classDef criticalPathStyle fill:#ff6b6b,stroke:#c92a2a,stroke-width:3px,color:#fff
+
+    class ROOT rootStyle
+    class M1,M2,M3 milestoneStyle
+    class A1_1,A1_2,A1_3,A1_4,A2_1,A2_2,A2_3,A2_4,A3_1,A3_2,A3_3,A3_4 actionStyle
+    class SC1_1,SC1_2,SC1_3,SC1_4,SC2_1,SC2_2,SC2_3,SC2_4,SC3_1,SC3_2,SC3_3,SC3_4 criteriaStyle
+    class A1_1,A1_4,A2_1,A2_3,A3_2,A2_4 criticalPathStyle

@@ -4,9 +4,16 @@
  */
 
 import { Parser, Store, Writer } from 'n3';
-// CommonJS module compatibility
-import eyereasonerPkg from 'eyereasoner';
-const { n3reasoner } = eyereasonerPkg;
+
+// Dynamic import to avoid top-level await issues
+let basicQuery;
+const loadBasicQuery = async () => {
+  if (!basicQuery) {
+    const eyereasoner = await import('eyereasoner');
+    basicQuery = eyereasoner.basicQuery;
+  }
+  return basicQuery;
+};
 
 /**
  * Run forward-chaining reasoning with N3 rules.
@@ -46,59 +53,49 @@ export async function reason(store, rules, options = {}) {
   const { includeOriginal = true, maxIterations = 100, debug = false } = options;
 
   try {
-    // Convert store to Turtle
-    const writer = new Writer({ format: 'Turtle' });
-    writer.addQuads(store.getQuads());
-    const dataTurtle = await new Promise((resolve, reject) => {
-      writer.end((error, result) => {
-        if (error) {
-          reject(new Error(`Failed to serialize data to Turtle: ${error.message}`));
-        } else {
-          resolve(result);
-        }
-      });
-    });
+    // Get data quads from store
+    const dataQuads = store.getQuads();
 
-    // Convert rules to Turtle if needed
-    let rulesTurtle;
+    // Convert rules to quads if needed
+    let rulesQuads;
     if (typeof rules === 'string') {
-      rulesTurtle = rules;
+      // Parse Turtle rules to quads
+      const parser = new Parser();
+      rulesQuads = parser.parse(rules);
     } else if (rules && typeof rules.getQuads === 'function') {
-      const rulesWriter = new Writer({ format: 'Turtle' });
-      rulesWriter.addQuads(rules.getQuads());
-      rulesTurtle = await new Promise((resolve, reject) => {
-        rulesWriter.end((error, result) => {
-          if (error) {
-            reject(new Error(`Failed to serialize rules to Turtle: ${error.message}`));
-          } else {
-            resolve(result);
-          }
-        });
-      });
+      rulesQuads = rules.getQuads();
     } else {
       throw new TypeError('reason: rules must be a Store or Turtle string');
     }
 
     if (debug) {
-      console.log('Data Turtle:', dataTurtle);
-      console.log('Rules Turtle:', rulesTurtle);
+      console.log('Data quads:', dataQuads.length);
+      console.log('Rules quads:', rulesQuads.length);
     }
 
-    // Run reasoning
-    const inferredTurtle = await n3reasoner(dataTurtle, rulesTurtle);
-    
+    // Run reasoning using EYE reasoner
+    // Load basicQuery dynamically to avoid top-level await issues
+    const query = await loadBasicQuery();
+
+    // Combine data and rules as EYE expects
+    const combinedQuads = [...dataQuads, ...rulesQuads];
+    const { result } = await query(combinedQuads, []);
+
     if (debug) {
-      console.log('Inferred Turtle:', inferredTurtle);
+      console.log('Result quads:', result.length);
     }
 
-    // Parse inferred results
-    const inferredStore = new Store(new Parser().parse(inferredTurtle));
+    // Create result store
+    const resultStore = new Store(result);
 
     // Combine original and inferred data if requested
     if (includeOriginal) {
-      return new Store([...store.getQuads(), ...inferredStore.getQuads()]);
+      return new Store([...dataQuads, ...result]);
     } else {
-      return inferredStore;
+      // Extract only inferred quads (not in original data)
+      const originalQuadSet = new Set(dataQuads.map(q => q.toString()));
+      const inferredQuads = result.filter(q => !originalQuadSet.has(q.toString()));
+      return new Store(inferredQuads);
     }
   } catch (error) {
     throw new Error(`N3 reasoning failed: ${error.message}`);

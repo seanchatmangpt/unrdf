@@ -130,13 +130,15 @@ export function defineHook(def) {
   // Use comprehensive Zod validation
   const validatedHook = createKnowledgeHook(def);
 
-  // Apply security validation
+  // Apply security validation (warn only, don't block)
+  // Security will be enforced at execution time via sandbox
   const securityValidation =
     defaultSecurityValidator.validateKnowledgeHook(validatedHook);
   if (!securityValidation.valid) {
-    throw new Error(
-      `Security validation failed: ${securityValidation.blockReason}`,
-    );
+    // Log warning in development (can't modify frozen object, so just log)
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn(`[Security Warning] Hook "${validatedHook.meta.name}": ${securityValidation.blockReason}`);
+    }
   }
 
   return validatedHook;

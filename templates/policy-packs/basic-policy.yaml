@@ -1,0 +1,120 @@
+# Basic Policy Pack Template
+# This template provides a simple policy pack structure for common governance needs.
+#
+# Usage:
+# 1. Update metadata with your policy pack information
+# 2. Add hooks by referencing hook definition files
+# 3. Configure compliance requirements
+# 4. Load via PolicyPackManager
+
+# Policy Pack Metadata
+metadata:
+  name: "basic-policy-pack"
+  version: "1.0.0"
+  description: "Basic policy pack for fundamental governance and compliance"
+  author: "your-organization"
+  license: "MIT"
+  tags:
+    - "governance"
+    - "compliance"
+    - "basic"
+  created: "2025-01-01T00:00:00Z"
+  updated: "2025-01-01T00:00:00Z"
+
+# Ontologies referenced by this policy pack
+ontologies:
+  - "http://www.w3.org/ns/prov#"        # Provenance
+  - "http://www.w3.org/ns/shacl#"       # SHACL
+  - "http://example.org/policy#"        # Your custom policy ontology
+
+# Configuration
+config:
+  enabled: true
+  priority: 50                           # 0-100, higher runs first
+  strictMode: false                      # true = fail on validation errors
+  auditTrail: true                       # Enable audit trail logging
+  receiptAnchor: "git-notes"            # Options: "git-notes", "none"
+
+# Hooks
+# List all Knowledge Hooks that are part of this policy pack
+hooks:
+  # Data Quality Hook
+  - path: "./hooks/data-quality-validation.mjs"
+    enabled: true
+    priority: 100                        # Higher priority hooks run first
+    description: "Validates basic data quality requirements"
+
+  # Access Control Hook
+  # - path: "./hooks/access-control.mjs"
+  #   enabled: true
+  #   priority: 90
+  #   description: "Enforces access control policies"
+
+  # Audit Trail Hook
+  # - path: "./hooks/audit-trail.mjs"
+  #   enabled: true
+  #   priority: 80
+  #   description: "Creates audit trail for changes"
+
+# Compliance Requirements
+compliance:
+  # Define what compliance standards this pack helps meet
+  standards:
+    - name: "Data Quality Standards"
+      version: "1.0"
+      requirements:
+        - "All resources must have valid identifiers"
+        - "Required fields must be present"
+        - "Data types must match schema"
+
+  # Reporting configuration
+  reporting:
+    enabled: true
+    format: "json"                       # Options: "json", "turtle", "jsonld"
+    destination: "./reports/compliance"
+
+# Dependencies
+# Other policy packs this pack depends on
+dependencies: []
+  # - name: "foundation-policy-pack"
+  #   version: ">=1.0.0"
+
+# Environment-specific overrides
+environments:
+  development:
+    config:
+      strictMode: false
+      auditTrail: false
+
+  staging:
+    config:
+      strictMode: true
+      auditTrail: true
+
+  production:
+    config:
+      strictMode: true
+      auditTrail: true
+      receiptAnchor: "git-notes"
+
+# Hooks lifecycle events
+lifecycle:
+  # Commands to run before loading the policy pack
+  beforeLoad: []
+    # - "npm run validate-schemas"
+
+  # Commands to run after loading the policy pack
+  afterLoad: []
+    # - "npm run generate-docs"
+
+  # Commands to run before unloading
+  beforeUnload: []
+    # - "npm run cleanup"
+
+# Resources
+# Additional files and resources needed by this policy pack
+resources:
+  schemas: "./schemas"
+  queries: "./queries"
+  shapes: "./shapes"
+  documentation: "./docs"

@@ -1,0 +1,32 @@
+{
+  "name": "unrdf-starter-project",
+  "version": "1.0.0",
+  "description": "UNRDF starter project for knowledge graph development",
+  "type": "module",
+  "main": "src/index.mjs",
+  "scripts": {
+    "dev": "node src/index.mjs",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint src/ test/ --ext .mjs",
+    "format": "prettier --write src/ test/",
+    "validate": "unrdf validate data/sample.ttl --shape shapes/sample-shape.ttl",
+    "query": "unrdf query data/sample.ttl --query queries/sample.rq"
+  },
+  "keywords": [
+    "unrdf",
+    "rdf",
+    "knowledge-graph",
+    "semantic-web"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "unrdf": "^2.1.0"
+  },
+  "devDependencies": {
+    "vitest": "^1.0.0",
+    "eslint": "^8.0.0",
+    "prettier": "^3.0.0"
+  }
+}

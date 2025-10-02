@@ -1,0 +1,81 @@
+{{!--
+  @file templates/composables/use-composable.mjs.hbs
+  @description Handlebars template for generating Vue composables
+  @usage Called by composable-generator.mjs with context: { composable: { name, description, imports, state, computed, methods, shortcuts } }
+--}}
+/**
+ * @file composables/{{composable.filename}}
+ * @description {{composable.description}}
+ */
+
+{{#each composable.imports}}
+import { {{symbols}} } from '{{path}}'
+{{/each}}
+
+/**
+ * {{composable.description}} - Internal implementation
+{{#each composable.returns}}
+ * @returns {{ {{name}}: {{type}} }}
+{{/each}}
+ */
+const _{{composable.name}} = () => {
+{{#if composable.hooks}}
+  const route = useRoute()
+  const router = useRouter()
+{{/if}}
+
+{{#each composable.state}}
+  /** @type {import('vue').Ref<{{type}}>} */
+  const {{name}} = ref({{initial}})
+{{/each}}
+
+{{#each composable.computed}}
+  /** @type {import('vue').ComputedRef<{{type}}>} */
+  const {{name}} = computed(() => {{expression}})
+{{/each}}
+
+{{#if composable.shortcuts}}
+  // Keyboard shortcuts
+  defineShortcuts({
+{{#each composable.shortcuts}}
+    '{{key}}': () => {{action}}{{#unless @last}},{{/unless}}
+{{/each}}
+  })
+{{/if}}
+
+{{#if composable.watchers}}
+  // Watchers
+{{#each composable.watchers}}
+  watch(() => {{source}}, () => {
+    {{action}}
+  })
+{{/each}}
+{{/if}}
+
+{{#each composable.methods}}
+  /**
+   * {{description}}
+{{#each params}}
+   * @param { {{type}} } {{name}} - {{description}}
+{{/each}}
+{{#if returns}}
+   * @returns { {{returns}} }
+{{/if}}
+   */
+  {{#if async}}async {{/if}}function {{name}}({{#each params}}{{name}}{{#unless @last}}, {{/unless}}{{/each}}) {
+    {{body}}
+  }
+{{/each}}
+
+  return {
+{{#each composable.returns}}
+    {{name}}{{#unless @last}},{{/unless}}
+{{/each}}
+  }
+}
+
+/**
+ * {{composable.description}}
+ * @type {() => { {{#each composable.returns}}{{name}}: {{type}}{{#unless @last}}, {{/unless}}{{/each}} }}
+ */
+export const {{composable.name}} = createSharedComposable(_{{composable.name}})

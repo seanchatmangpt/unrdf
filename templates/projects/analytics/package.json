@@ -1,0 +1,35 @@
+{
+  "name": "unrdf-analytics-project",
+  "version": "1.0.0",
+  "description": "UNRDF analytics project for knowledge graph analysis and insights",
+  "type": "module",
+  "main": "src/index.mjs",
+  "scripts": {
+    "dev": "node src/index.mjs",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:analytics": "vitest run test/analytics/",
+    "lint": "eslint src/ test/ --ext .mjs",
+    "format": "prettier --write src/ test/",
+    "analyze": "node src/analytics/run-analysis.mjs",
+    "metrics": "node src/analytics/metrics-collector.mjs",
+    "dashboard": "node src/analytics/dashboard.mjs"
+  },
+  "keywords": [
+    "unrdf",
+    "analytics",
+    "knowledge-graph",
+    "metrics",
+    "insights"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "unrdf": "^2.1.0"
+  },
+  "devDependencies": {
+    "vitest": "^1.0.0",
+    "eslint": "^8.0.0",
+    "prettier": "^3.0.0"
+  }
+}

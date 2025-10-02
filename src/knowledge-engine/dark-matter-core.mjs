@@ -551,18 +551,35 @@ export class DarkMatterCore {
   async cleanup() {
     console.log('🧹 Cleaning up Dark Matter 80/20 Core...');
 
+    // Cleanup all components
     for (const [name, { instance }] of this.components.entries()) {
       try {
         if (typeof instance.cleanup === 'function') {
           await instance.cleanup();
         }
+
+        // Clear any internal caches/maps
+        if (instance.cache && typeof instance.cache.clear === 'function') {
+          instance.cache.clear();
+        }
+        if (instance.components && typeof instance.components.clear === 'function') {
+          instance.components.clear();
+        }
+
         console.log(`✅ ${name} cleaned up`);
       } catch (error) {
         console.warn(`⚠️ Failed to cleanup ${name}:`, error.message);
       }
     }
 
+    // Clear component registry to prevent circular refs
     this.components.clear();
+
+    // Reset metrics
+    this.metrics.valueDelivery = 0;
+    this.metrics.performanceImpact = 0;
+    this.metrics.developmentEfficiency = 0;
+
     this.initialized = false;
     console.log('✅ Dark Matter 80/20 Core cleaned up');
   }

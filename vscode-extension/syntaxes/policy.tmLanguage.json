@@ -1,0 +1,110 @@
+{
+  "name": "UNRDF Policy",
+  "scopeName": "source.policy",
+  "fileTypes": ["policy", "policy.js", "policy.mjs"],
+  "patterns": [
+    {
+      "include": "#comments"
+    },
+    {
+      "include": "#strings"
+    },
+    {
+      "include": "#keywords"
+    },
+    {
+      "include": "#policy-keywords"
+    },
+    {
+      "include": "#functions"
+    },
+    {
+      "include": "#rules"
+    }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.double-slash.policy",
+          "match": "//.*$"
+        },
+        {
+          "name": "comment.block.policy",
+          "begin": "/\\*",
+          "end": "\\*/"
+        }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.policy",
+          "begin": "\"",
+          "end": "\"",
+          "patterns": [
+            {
+              "name": "constant.character.escape.policy",
+              "match": "\\\\."
+            }
+          ]
+        },
+        {
+          "name": "string.quoted.single.policy",
+          "begin": "'",
+          "end": "'",
+          "patterns": [
+            {
+              "name": "constant.character.escape.policy",
+              "match": "\\\\."
+            }
+          ]
+        }
+      ]
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.control.policy",
+          "match": "\\b(if|else|switch|case|default|for|while|do|break|continue|return)\\b"
+        },
+        {
+          "name": "storage.type.policy",
+          "match": "\\b(const|let|var|function)\\b"
+        }
+      ]
+    },
+    "policy-keywords": {
+      "patterns": [
+        {
+          "name": "keyword.other.policy",
+          "match": "\\b(policy|pack|rule|enforce|validate|allow|deny|audit|remediate)\\b"
+        },
+        {
+          "name": "storage.modifier.policy",
+          "match": "\\b(mandatory|advisory|disabled|severity|priority)\\b"
+        },
+        {
+          "name": "constant.language.severity.policy",
+          "match": "\\b(critical|high|medium|low|info)\\b"
+        }
+      ]
+    },
+    "functions": {
+      "patterns": [
+        {
+          "name": "entity.name.function.policy",
+          "match": "\\b(definePolicy|createPolicyPack|addRule|enforcementAction|validatePolicy)\\b"
+        }
+      ]
+    },
+    "rules": {
+      "patterns": [
+        {
+          "name": "entity.name.type.rule.policy",
+          "match": "\\b(Rule|PolicyPack|EnforcementAction|ValidationRule)\\b"
+        }
+      ]
+    }
+  }
+}

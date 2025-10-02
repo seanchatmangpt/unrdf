@@ -1,0 +1,23 @@
+{{!--
+  @file templates/schemas/object.mjs.hbs
+  @description Handlebars template for generating Zod object schemas from TypeScript interfaces
+  @usage Called by schema-generator.mjs with context: { schema: { name, description, fields, refinements } }
+--}}
+/**
+ * {{schema.description}}
+ * @type {z.ZodObject}
+ */
+export const {{schema.name}}Schema = z.object({
+{{#each schema.fields}}
+  {{name}}: {{zodType}}{{#if validations}}{{#each validations}}.{{this}}(){{/each}}{{/if}}{{#if optional}}.optional(){{/if}}{{#unless @last}},{{/unless}}
+{{/each}}
+}){{#if schema.refinements}}{{#each schema.refinements}}
+  .refine(
+    (data) => {{condition}},
+    { message: '{{message}}' }
+  ){{/each}}{{/if}}
+
+/**
+ * {{schema.description}}
+ * @typedef {z.infer<typeof {{schema.name}}Schema>} {{schema.name}}
+ */

@@ -1,0 +1,166 @@
+{
+  "name": "UNRDF Hook",
+  "scopeName": "source.hook",
+  "fileTypes": ["hook", "hook.js", "hook.mjs"],
+  "patterns": [
+    {
+      "include": "#comments"
+    },
+    {
+      "include": "#strings"
+    },
+    {
+      "include": "#keywords"
+    },
+    {
+      "include": "#functions"
+    },
+    {
+      "include": "#variables"
+    },
+    {
+      "include": "#sparql"
+    },
+    {
+      "include": "#rdf-terms"
+    }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.double-slash.hook",
+          "match": "//.*$"
+        },
+        {
+          "name": "comment.block.hook",
+          "begin": "/\\*",
+          "end": "\\*/"
+        }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.hook",
+          "begin": "\"",
+          "end": "\"",
+          "patterns": [
+            {
+              "name": "constant.character.escape.hook",
+              "match": "\\\\."
+            }
+          ]
+        },
+        {
+          "name": "string.quoted.single.hook",
+          "begin": "'",
+          "end": "'",
+          "patterns": [
+            {
+              "name": "constant.character.escape.hook",
+              "match": "\\\\."
+            }
+          ]
+        },
+        {
+          "name": "string.template.hook",
+          "begin": "`",
+          "end": "`",
+          "patterns": [
+            {
+              "name": "constant.character.escape.hook",
+              "match": "\\\\."
+            },
+            {
+              "name": "meta.template.expression.hook",
+              "begin": "\\$\\{",
+              "end": "\\}",
+              "patterns": [
+                {
+                  "include": "$self"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.control.hook",
+          "match": "\\b(if|else|switch|case|default|for|while|do|break|continue|return|try|catch|finally|throw|async|await|yield)\\b"
+        },
+        {
+          "name": "storage.type.hook",
+          "match": "\\b(const|let|var|function|class|extends|implements|interface|type|enum)\\b"
+        },
+        {
+          "name": "keyword.operator.hook",
+          "match": "\\b(typeof|instanceof|new|delete|in|of|void)\\b"
+        },
+        {
+          "name": "storage.modifier.hook",
+          "match": "\\b(static|public|private|protected|readonly|abstract)\\b"
+        },
+        {
+          "name": "keyword.other.hook",
+          "match": "\\b(import|export|from|default|as)\\b"
+        }
+      ]
+    },
+    "functions": {
+      "patterns": [
+        {
+          "name": "entity.name.function.hook",
+          "match": "\\b(defineHook|createHook|registerHook|executeHook|validateHook)\\b"
+        },
+        {
+          "name": "support.function.hook",
+          "match": "\\b(console\\.log|console\\.error|console\\.warn|console\\.info)\\b"
+        }
+      ]
+    },
+    "variables": {
+      "patterns": [
+        {
+          "name": "variable.language.hook",
+          "match": "\\b(this|super|arguments)\\b"
+        },
+        {
+          "name": "constant.language.hook",
+          "match": "\\b(true|false|null|undefined|NaN|Infinity)\\b"
+        }
+      ]
+    },
+    "sparql": {
+      "patterns": [
+        {
+          "name": "keyword.other.sparql.hook",
+          "match": "\\b(SELECT|CONSTRUCT|ASK|DESCRIBE|WHERE|FROM|FILTER|OPTIONAL|UNION|LIMIT|OFFSET|ORDER|BY|GROUP|HAVING|BIND|VALUES|PREFIX|BASE)\\b"
+        },
+        {
+          "name": "variable.other.sparql.hook",
+          "match": "\\?\\w+"
+        },
+        {
+          "name": "entity.name.tag.sparql.hook",
+          "match": "<[^>]+>"
+        }
+      ]
+    },
+    "rdf-terms": {
+      "patterns": [
+        {
+          "name": "support.type.rdf.hook",
+          "match": "\\b(rdf|rdfs|owl|xsd|foaf|dc|dcterms|skos|unrdf):"
+        },
+        {
+          "name": "entity.name.type.rdf.hook",
+          "match": "\\w+:\\w+"
+        }
+      ]
+    }
+  }
+}
