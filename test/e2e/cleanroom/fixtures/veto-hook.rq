@@ -1,8 +1,0 @@
-# Veto Hook SPARQL Query
-# Checks for invalid data patterns that should block transactions
-
-PREFIX ex: <http://example.org/>
-
-ASK {
-  ?s ex:invalid ?value .
-}

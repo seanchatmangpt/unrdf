@@ -5,10 +5,10 @@
   "type": "module",
   "main": "src/index.mjs",
   "bin": {
-    "unrdf": "src/cli.mjs"
+    "unrdf": "src/cli/index.mjs"
   },
   "scripts": {
-    "dev": "node src/cli.mjs dev",
+    "dev": "node src/cli/index.mjs dev",
     "build": "node build.config.mjs",
     "test": "vitest run --config vitest.config.mjs --coverage --reporter=verbose",
     "test:watch": "vitest --config vitest.config.mjs --coverage --reporter=verbose",
@@ -124,6 +124,7 @@
     "@vitest/coverage-v8": "^1.0.0",
     "@vitest/ui": "^1.0.0",
     "cdktf": "^0.20.0",
+    "citty-test-utils": "^0.5.1",
     "eslint": "^8.0.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-jsdoc": "^48.0.0",

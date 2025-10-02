@@ -186,7 +186,7 @@ async function handleSave(content, hookId) {
 
     currentView.value = 'list'
     hookListRef.value?.loadHooks()
-  } catch (error: any) {
+  } catch (error) {
     console.error('Failed to save hook:', error)
     alert(`Failed to save hook: ${error.message}`)
   }
@@ -232,7 +232,7 @@ async function executeHook() {
 
     const data = await response.json()
     executionResult.value = data.data
-  } catch (error: any) {
+  } catch (error) {
     executionError.value = error.message
     console.error('Hook execution failed:', error)
   } finally {
@@ -240,7 +240,7 @@ async function executeHook() {
   }
 }
 
-function parseHookContent(content: string): any {
+function parseHookContent(content) {
   // Simplified parser - extract basic hook metadata
   // In production, use a proper JavaScript parser like @babel/parser
 
@@ -256,7 +256,7 @@ function parseHookContent(content: string): any {
   }
 }
 
-function generateHookSource(hook: any): string {
+function generateHookSource(hook) {
   // Generate source code from hook data structure
   return `import { defineHook } from '@unrdf/knowledge-engine'
 

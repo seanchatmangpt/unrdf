@@ -10,6 +10,7 @@
  * @license MIT
  */
 
+import { Store } from "n3";
 import { useStoreContext } from "../context/index.mjs";
 
 /**
@@ -57,7 +58,7 @@ export function useGraph() {
      * @throws {TypeError} If sparql is not a string
      * @note This is a READER operation - use sparingly
      */
-    query(sparql, options) {
+    async query(sparql, options) {
       if (typeof sparql !== "string") {
         throw new TypeError("[useGraph] SPARQL query must be a string");
       }
@@ -73,17 +74,15 @@ export function useGraph() {
      * @throws {Error} If query is not a SELECT query
      * @note This is a READER operation - use sparingly
      */
-    select(sparql) {
+    async select(sparql) {
       if (typeof sparql !== "string") {
         throw new TypeError("[useGraph] SPARQL query must be a string");
       }
-      const res = storeContext.query(sparql);
+      const res = await storeContext.query(sparql);
       if (res.type !== "select") {
         throw new Error("[useGraph] Query is not a SELECT query");
       }
-      // In sender-only mode, queries return empty results
-      // This is expected behavior for reader operations
-      return res.results || [];
+      return res.rows || [];
     },
 
     /**
@@ -95,22 +94,14 @@ export function useGraph() {
      * @throws {Error} If query is not an ASK query
      * @note This is a READER operation - use sparingly
      */
-    ask(sparql) {
+    async ask(sparql) {
       if (typeof sparql !== "string") {
         throw new TypeError("[useGraph] SPARQL query must be a string");
       }
-      console.log(
-        "DEBUG: useGraph.ask called with:",
-        sparql.substring(0, 50) + "...",
-      );
-      console.log("DEBUG: storeContext type:", typeof storeContext);
-      console.log("DEBUG: storeContext has query:", typeof storeContext.query);
-      const res = storeContext.query(sparql);
+      const res = await storeContext.query(sparql);
       if (res.type !== "ask") {
         throw new Error("[useGraph] Query is not an ASK query");
       }
-      // In sender-only mode, ASK queries return false
-      // This is expected behavior for reader operations
       return res.boolean || false;
     },
 
@@ -123,16 +114,14 @@ export function useGraph() {
      * @throws {Error} If query is not a CONSTRUCT query
      * @note This is a READER operation - use sparingly
      */
-    construct(sparql) {
+    async construct(sparql) {
       if (typeof sparql !== "string") {
         throw new TypeError("[useGraph] SPARQL query must be a string");
       }
-      const res = storeContext.query(sparql);
-      if (res.type !== "construct") {
-        throw new Error("[useGraph] Query is not a CONSTRUCT query");
+      const res = await storeContext.query(sparql);
+      if (res.type !== "construct" && res.type !== "describe") {
+        throw new Error("[useGraph] Query is not a CONSTRUCT/DESCRIBE query");
       }
-      // In sender-only mode, CONSTRUCT queries return empty store
-      // This is expected behavior for reader operations
       return res.store || new Store();
     },
 

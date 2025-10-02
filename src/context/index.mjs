@@ -12,9 +12,21 @@
 import { createContext } from "unctx";
 import { AsyncLocalStorage } from "node:async_hooks";
 import { Store, DataFactory } from "n3";
-import rdfCanonize from "rdf-canonize";
 import crypto from "node:crypto";
-import { RdfEngine } from "../engines/rdf-engine.mjs";
+import {
+  query as keQuery,
+  select as keSelect,
+  ask as keAsk,
+  construct as keConstruct,
+  describe as keDescribe,
+  update as keUpdate,
+} from "../knowledge-engine/query.mjs";
+import { toTurtle, toNQuads } from "../knowledge-engine/parse.mjs";
+import {
+  canonicalize as keCanonicalize,
+  isIsomorphic as keIsomorphic,
+  getCanonicalHash,
+} from "../knowledge-engine/canonicalize.mjs";
 
 const { namedNode, literal, blankNode, quad, defaultGraph } = DataFactory;
 
@@ -74,8 +86,8 @@ export function createStoreContext(initialQuads = [], options = {}) {
     throw new TypeError("[createStoreContext] options must be an object");
   }
 
-  const engine = new RdfEngine(options);
-  const store = engine.getStore();
+  const store = new Store();
+  const prefixRegistry = new Map();
 
   // Add initial quads to the engine's store
   if (initialQuads.length > 0) {
@@ -83,8 +95,8 @@ export function createStoreContext(initialQuads = [], options = {}) {
   }
 
   const context = {
-    engine,
     store,
+    prefixRegistry,
     /**
      * Add quads to the store (SENDER operation)
      * @param {...Quad} quads - Quads to add
@@ -214,7 +226,7 @@ export function createStoreContext(initialQuads = [], options = {}) {
      * @throws {TypeError} If options is not an object
      * @throws {Error} If format is unsupported
      */
-    async serialize(options = {}) {
+    serialize(options = {}) {
       if (options && typeof options !== "object") {
         throw new TypeError(
           "[StoreContext] serialize options must be an object",
@@ -240,13 +252,27 @@ export function createStoreContext(initialQuads = [], options = {}) {
      * @returns {Object} Store statistics
      */
     stats() {
-      // Return basic stats without accessing engine to avoid circular dependency
+      const quads = store.getQuads(null, null, null, null);
+      const subjects = new Set();
+      const predicates = new Set();
+      const objects = new Set();
+      const graphs = new Set();
+
+      for (const quad of quads) {
+        subjects.add(quad.subject.value);
+        predicates.add(quad.predicate.value);
+        objects.add(quad.object.value);
+        if (quad.graph && quad.graph.value) {
+          graphs.add(quad.graph.value);
+        }
+      }
+
       return {
-        quads: 0, // Cannot determine without reading store
-        subjects: 0,
-        predicates: 0,
-        objects: 0,
-        graphs: 0,
+        quads: quads.length,
+        subjects: subjects.size,
+        predicates: predicates.size,
+        objects: objects.size,
+        graphs: graphs.size,
       };
     },
 
@@ -315,81 +341,10 @@ export function createStoreContext(initialQuads = [], options = {}) {
 
       // Use the engine's query method - it handles all query types
       try {
-        const result = this.engine.query(sparql, options);
-
-        // The engine returns results in a different format, so we need to adapt
-        if (result.type === "select") {
-          return {
-            type: "select",
-            variables: this._getColumns(sparql),
-            rows: result.results || [],
-          };
-        }
-
-        return result;
+        return await this.engine.query(sparql, options);
       } catch (error) {
         throw new Error(`Query failed: ${error.message}`);
       }
-    },
-
-    /**
-     * Helper method to sort quads deterministically
-     * @private
-     */
-    _sortQuads(quads) {
-      return quads.sort((a, b) => {
-        const aStr = `${a.subject.value} ${a.predicate.value} ${a.object.value} ${a.graph.value || ""}`;
-        const bStr = `${b.subject.value} ${b.predicate.value} ${b.object.value} ${b.graph.value || ""}`;
-        return aStr.localeCompare(bStr);
-      });
-    },
-
-    /**
-     * Extract column names from SELECT query
-     * @private
-     */
-    _getColumns(query) {
-      const selectMatch = query.match(
-        /SELECT\s+(?:\w+\s+)*(\?\w+(?:\s+\(\w+\([^)]*\)\s+as\s+\?\w+\))?)/i,
-      );
-      if (selectMatch) {
-        const selectClause = selectMatch[1];
-        const columns = selectClause.match(/\?\w+/g);
-        return columns || [];
-      }
-      return [];
-    },
-
-    /**
-     * Convert RDF term to JSON representation
-     * @private
-     */
-    _termToJSON(term) {
-      if (!term) return null;
-
-      const termData = {
-        type: term.termType,
-        value: term.value,
-      };
-
-      if (term.termType === "Literal") {
-        if (term.language) {
-          termData.language = term.language;
-        }
-        if (term.datatype) {
-          termData.datatype = term.datatype.value;
-        }
-      }
-
-      return termData;
-    },
-
-    /**
-     * Create a variable term for SPARQL queries
-     * @private
-     */
-    _variable(name) {
-      return engine.variable ? engine.variable(name) : { value: name };
     },
 
     /**
@@ -403,17 +358,13 @@ export function createStoreContext(initialQuads = [], options = {}) {
      * @note This is a READER operation - use sparingly
      */
     async canonicalize(options = {}) {
-      const { timeoutMs = 30_000, onMetric } = options;
+      const { onMetric } = options;
+      const start = Date.now();
 
       try {
-        // Use rdf-canonize directly on the store
         const canonize = rdfCanonize.canonize;
-
-        // Convert store to N-Quads format for canonicalization
         const nquads = this.serialize({ format: "N-Quads" });
-
-        // Canonicalize the N-Quads
-        const canonical = canonize(nquads, {
+        const canonical = await canonize(nquads, {
           algorithm: "URDNA2015",
           format: "application/n-quads",
           produceGeneralizedRdf: false,
@@ -421,7 +372,7 @@ export function createStoreContext(initialQuads = [], options = {}) {
 
         if (onMetric) {
           onMetric("canonicalization", {
-            duration: Date.now() - Date.now(),
+            duration: Date.now() - start,
             size: nquads.length,
           });
         }
@@ -442,30 +393,20 @@ export function createStoreContext(initialQuads = [], options = {}) {
      * @throws {Error} If isomorphism check fails
      * @note This is a READER operation - use sparingly
      */
-    async isIsomorphic(store1, store2, options = {}) {
-      const { timeoutMs = 30_000 } = options;
-
-      try {
-        // Use rdf-canonize isomorphism check
-        const canonize = rdfCanonize.canonize;
-
-        // Canonicalize both stores
-        const canonical1 = canonize(this.serialize({ format: "N-Quads" }), {
-          algorithm: "URDNA2015",
-          format: "application/n-quads",
-        });
-        const canonical2 = canonize(
-          store2 ? this.serializeStore(store2, { format: "N-Quads" }) : "",
-          {
-            algorithm: "URDNA2015",
-            format: "application/n-quads",
-          },
-        );
-
-        return canonical1 === canonical2;
-      } catch (error) {
-        throw new Error(`Isomorphism check failed: ${error.message}`);
+    async isIsomorphic(store1, store2) {
+      if (!store1 || !store2) {
+        throw new TypeError("[StoreContext] isIsomorphic requires two stores");
       }
+
+      const canonize = rdfCanonize.canonize;
+      const canonical1 = await canonize(store1.getQuads(), {
+        algorithm: "URDNA2015",
+      });
+      const canonical2 = await canonize(store2.getQuads(), {
+        algorithm: "URDNA2015",
+      });
+
+      return canonical1 === canonical2;
     },
 
     /**
@@ -481,7 +422,7 @@ export function createStoreContext(initialQuads = [], options = {}) {
       const { algorithm = "SHA-256" } = options;
 
       try {
-        const canonical = this.canonicalize();
+        const canonical = await this.canonicalize();
         const hash = crypto.createHash(algorithm.toLowerCase());
         hash.update(canonical);
         return hash.digest("hex");
@@ -494,7 +435,7 @@ export function createStoreContext(initialQuads = [], options = {}) {
      * Helper to serialize a different store
      * @private
      */
-    async serializeStore(store, options = {}) {
+    serializeStore(store, options = {}) {
       const { format = "Turtle", prefixes } = options;
 
       if (format === "Turtle") {

@@ -10,8 +10,8 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "test": "vitest run",
-    "test:unit": "vitest run --project unit",
-    "test:nuxt": "vitest run --project nuxt",
+    "test:unit": "vitest run --config vitest.config.mjs",
+    "test:nuxt": "vitest run --config vitest.config.nuxt.mjs",
     "test:e2e": "vitest run --project e2e",
     "test:watch": "vitest watch",
     "test:coverage": "vitest run --coverage",
@@ -55,6 +55,7 @@
   "devDependencies": {
     "@nuxt/test-utils": "^3.11.0",
     "@types/node": "^20.0.0",
+    "@vitejs/plugin-vue": "^6.0.1",
     "@vitest/coverage-v8": "^3.2.4",
     "@vue/test-utils": "^2.4.0",
     "dockerode": "^4.0.9",

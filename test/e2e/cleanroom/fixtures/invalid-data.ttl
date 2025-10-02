@@ -1,7 +1,0 @@
-@prefix ex: <http://example.org/> .
-@prefix schema: <http://schema.org/> .
-
-# Invalid: Person without required email field
-ex:invalidPerson a schema:Person ;
-    schema:name "Invalid User" ;
-    schema:age "25" .

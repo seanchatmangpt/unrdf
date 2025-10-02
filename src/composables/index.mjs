@@ -17,18 +17,11 @@ export { useTerms } from "./use-terms.mjs";
 // Validation and reasoning
 export { useReasoner } from "./use-reasoner.mjs";
 export { useCanon } from "./use-canon.mjs";
+export { useValidator } from "./use-validator.mjs";
+export { usePrefixes } from "./use-prefixes.mjs";
 
 // Type safety and validation
 export { useZod } from "./use-zod.mjs";
 
 // Change and provenance
 export { useDelta } from "./use-delta.mjs";
-
-// Validation and prefixes (placeholder exports for CLI compatibility)
-export const useValidator = () => {
-  throw new Error('useValidator not implemented yet');
-};
-
-export const usePrefixes = () => {
-  throw new Error('usePrefixes not implemented yet');
-};

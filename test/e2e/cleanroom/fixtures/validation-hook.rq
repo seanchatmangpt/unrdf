@@ -1,8 +1,0 @@
-# Schema Validation SPARQL Query
-# Validates that subjects have rdf:type predicates
-
-PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-
-ASK {
-  ?s rdf:type ?type .
-}
