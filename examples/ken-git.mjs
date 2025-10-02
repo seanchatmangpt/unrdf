@@ -16,11 +16,11 @@ import {
   reason,
   canonicalize,
   isIsomorphic,
-  TransactionManager
-} from './knowledge-engine.mjs';
+  TransactionManager,
+} from "../src/knowledge-engine.mjs";
 
-import { DataFactory, Store } from 'n3';
-import assert from 'assert';
+import { DataFactory, Store } from "n3";
+import assert from "assert";
 const { namedNode, literal, quad } = DataFactory;
 
 // ---------------------------------------------------------------------------
@@ -58,10 +58,10 @@ async function main() {
     mode: "pre",
     condition: async (_store, delta) => {
       const addedLibs = delta.additions
-        .filter(q => q.predicate.value.endsWith("addsLibrary"))
-        .map(q => q.object.value);
+        .filter((q) => q.predicate.value.endsWith("addsLibrary"))
+        .map((q) => q.object.value);
 
-      const unapproved = addedLibs.filter(lib => !approvedLibs.includes(lib));
+      const unapproved = addedLibs.filter((lib) => !approvedLibs.includes(lib));
       if (unapproved.length > 0) {
         console.log("❌ Found unapproved libraries:", unapproved);
         return false; // veto
@@ -69,7 +69,7 @@ async function main() {
       console.log("✅ All libraries approved.");
       return true;
     },
-    effect: "veto"
+    effect: "veto",
   });
 
   tx.addHook({
@@ -78,12 +78,12 @@ async function main() {
     condition: async () => true,
     effect: async (_store, delta) => {
       const libs = delta.additions
-        .filter(q => q.predicate.value.endsWith("addsLibrary"))
-        .map(q => q.object.value);
+        .filter((q) => q.predicate.value.endsWith("addsLibrary"))
+        .map((q) => q.object.value);
       if (libs.length > 0) {
         console.log(`🪵 Audit: Commit added libraries: ${libs.join(", ")}`);
       }
-    }
+    },
   });
 
   // STEP 4: Mock commits and apply them under governance
@@ -91,26 +91,28 @@ async function main() {
     { id: "commit-1", author: "alice", addsLibrary: "lodash" }, // approved
     { id: "commit-2", author: "bob", addsLibrary: "malware-lib" }, // unapproved
     { id: "commit-3", author: "carol", addsLibrary: "express" }, // approved
-    { id: "commit-4", author: "dave", addsLibrary: "crypto-miner-lib" } // unapproved
+    { id: "commit-4", author: "dave", addsLibrary: "crypto-miner-lib" }, // unapproved
   ];
 
   for (const commit of commits) {
-    console.log(`📝 Processing ${commit.id}: ${commit.author} adds '${commit.addsLibrary}'`);
+    console.log(
+      `📝 Processing ${commit.id}: ${commit.author} adds '${commit.addsLibrary}'`,
+    );
     await benchmark("Governance check", async () => {
       const delta = {
         additions: [
           quad(
             namedNode(`http://example.org/${commit.id}`),
             namedNode("http://example.org/author"),
-            literal(commit.author)
+            literal(commit.author),
           ),
           quad(
             namedNode(`http://example.org/${commit.id}`),
             namedNode("http://example.org/addsLibrary"),
-            literal(commit.addsLibrary)
-          )
+            literal(commit.addsLibrary),
+          ),
         ],
-        removals: []
+        removals: [],
       };
 
       const { store: newStore, receipt } = await tx.apply(store, delta);
@@ -124,10 +126,16 @@ async function main() {
       // Detailed receipt log for audit
       console.log("🧾 Receipt:");
       console.log("- Committed:", receipt.committed);
-      console.log("- Additions:", receipt.delta.additions.map(q => q.object.value));
-      console.log("- Removals:", receipt.delta.removals.map(q => q.object.value));
+      console.log(
+        "- Additions:",
+        receipt.delta.additions.map((q) => q.object.value),
+      );
+      console.log(
+        "- Removals:",
+        receipt.delta.removals.map((q) => q.object.value),
+      );
       console.log("- Hook results:");
-      receipt.hookResults.forEach(r => {
+      receipt.hookResults.forEach((r) => {
         console.log(`   • Hook '${r.hookId}' => ${r.result}`);
       });
       console.log();
@@ -135,10 +143,12 @@ async function main() {
   }
 
   console.log("✅ Governance demo complete.");
-  console.log("This process could run automatically as part of Git lifecycle hooks (pre-commit or pre-push).");
+  console.log(
+    "This process could run automatically as part of Git lifecycle hooks (pre-commit or pre-push).",
+  );
 }
 
-main().catch(err => {
+main().catch((err) => {
   console.error("❌ Example failed:", err.message);
   process.exit(1);
 });

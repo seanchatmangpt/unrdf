@@ -6,11 +6,9 @@
  * governance, validation, and audit receipts.
  */
 
-import {
-  TransactionManager,
-} from './knowledge-engine.mjs';
+import { TransactionManager } from "../src/knowledge-engine.mjs";
 
-import { DataFactory, Store } from 'n3';
+import { DataFactory, Store } from "n3";
 const { namedNode, literal, quad } = DataFactory;
 
 // ---------------------------------------------------------------------------
@@ -28,12 +26,17 @@ tx.addHook({
   id: "no-deadline-conflicts",
   mode: "pre",
   condition: async (store, delta) => {
-    return !delta.additions.some(add =>
-      add.predicate.value.endsWith("deadline") &&
-      store.getQuads(add.subject, namedNode("http://example.org/deadline"), null).length > 0
+    return !delta.additions.some(
+      (add) =>
+        add.predicate.value.endsWith("deadline") &&
+        store.getQuads(
+          add.subject,
+          namedNode("http://example.org/deadline"),
+          null,
+        ).length > 0,
     );
   },
-  effect: "veto"
+  effect: "veto",
 });
 
 // 2. Trigger fact-checking whenever a claim is added
@@ -41,12 +44,14 @@ tx.addHook({
   id: "fact-check",
   mode: "post",
   condition: async (_store, delta) =>
-    delta.additions.some(a => a.predicate.value.endsWith("claims")),
+    delta.additions.some((a) => a.predicate.value.endsWith("claims")),
   effect: async (_store, delta) => {
-    const claims = delta.additions.filter(a => a.predicate.value.endsWith("claims"));
+    const claims = delta.additions.filter((a) =>
+      a.predicate.value.endsWith("claims"),
+    );
     console.log("🔎 Fact-check agent triggered for claims:");
-    claims.forEach(c => console.log(`   - ${c.object.value}`));
-  }
+    claims.forEach((c) => console.log(`   - ${c.object.value}`));
+  },
 });
 
 // 3. Log all successful commits
@@ -56,10 +61,12 @@ tx.addHook({
   condition: async () => true,
   effect: async (_store, delta) => {
     console.log("🪵 Audit: Commit additions:");
-    delta.additions.forEach(a => {
-      console.log(`   ${a.subject.value} ${a.predicate.value} ${a.object.value}`);
+    delta.additions.forEach((a) => {
+      console.log(
+        `   ${a.subject.value} ${a.predicate.value} ${a.object.value}`,
+      );
     });
-  }
+  },
 });
 
 // ---------------------------------------------------------------------------
@@ -81,9 +88,12 @@ async function agentAction(agent, description, additions) {
   // Show detailed receipt
   console.log("🧾 Receipt:");
   console.log("- Committed:", receipt.committed);
-  console.log("- Additions:", receipt.delta.additions.map(q => q.object.value));
+  console.log(
+    "- Additions:",
+    receipt.delta.additions.map((q) => q.object.value),
+  );
   console.log("- Hook results:");
-  receipt.hookResults.forEach(r => {
+  receipt.hookResults.forEach((r) => {
     console.log(`   • Hook '${r.hookId}' => ${r.result}`);
   });
 }
@@ -102,23 +112,19 @@ async function main() {
       quad(
         namedNode("http://example.org/claim1"),
         namedNode("http://example.org/claims"),
-        literal("AI improves protein folding accuracy")
-      )
-    ]
+        literal("AI improves protein folding accuracy"),
+      ),
+    ],
   );
 
   // PlannerAgent sets a deadline for task1
-  await agentAction(
-    "PlannerAgent",
-    `Set deadline for task1 = 2025-12-01`,
-    [
-      quad(
-        namedNode("http://example.org/task1"),
-        namedNode("http://example.org/deadline"),
-        literal("2025-12-01")
-      )
-    ]
-  );
+  await agentAction("PlannerAgent", `Set deadline for task1 = 2025-12-01`, [
+    quad(
+      namedNode("http://example.org/task1"),
+      namedNode("http://example.org/deadline"),
+      literal("2025-12-01"),
+    ),
+  ]);
 
   // CoderAgent tries to set a conflicting deadline (should be vetoed)
   await agentAction(
@@ -128,15 +134,15 @@ async function main() {
       quad(
         namedNode("http://example.org/task1"),
         namedNode("http://example.org/deadline"),
-        literal("2025-10-01")
-      )
-    ]
+        literal("2025-10-01"),
+      ),
+    ],
   );
 
   console.log("\n✅ Swarm governance demo complete.");
 }
 
-main().catch(err => {
+main().catch((err) => {
   console.error("❌ Demo failed:", err.message);
   process.exit(1);
 });
