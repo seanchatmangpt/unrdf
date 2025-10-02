@@ -7,5 +7,3 @@ export * from './import.mjs';
 export * from './export.mjs';
 export * from './query.mjs';
 export * from './stats.mjs';
-export * from './backup.mjs';
-export * from './restore.mjs';

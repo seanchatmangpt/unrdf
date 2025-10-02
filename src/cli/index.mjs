@@ -124,27 +124,6 @@ const main = defineCommand({
     graph: defineCommand({
       meta: { name: "graph", description: "Manage RDF graphs" },
       subCommands: {
-        list: defineCommand({
-          meta: { name: "list", description: "List all RDF graphs" },
-          async run(ctx) {
-            const [graphCommands] = await getCommandModules();
-            return graphCommands.listCommand.run(ctx);
-          },
-        }),
-        get: defineCommand({
-          meta: { name: "get", description: "Get graph details" },
-          async run(ctx) {
-            const [graphCommands] = await getCommandModules();
-            return graphCommands.getCommand.run(ctx);
-          },
-        }),
-        create: defineCommand({
-          meta: { name: "create", description: "Create a new graph" },
-          async run(ctx) {
-            const [graphCommands] = await getCommandModules();
-            return graphCommands.createCommand.run(ctx);
-          },
-        }),
         update: defineCommand({
           meta: { name: "update", description: "Update graph" },
           async run(ctx) {
@@ -157,20 +136,6 @@ const main = defineCommand({
           async run(ctx) {
             const [graphCommands] = await getCommandModules();
             return graphCommands.deleteCommand.run(ctx);
-          },
-        }),
-        validate: defineCommand({
-          meta: { name: "validate", description: "Validate graph" },
-          async run(ctx) {
-            const [graphCommands] = await getCommandModules();
-            return graphCommands.validateCommand.run(ctx);
-          },
-        }),
-        export: defineCommand({
-          meta: { name: "export", description: "Export graph" },
-          async run(ctx) {
-            const [graphCommands] = await getCommandModules();
-            return graphCommands.exportCommand.run(ctx);
           },
         }),
         describe: defineCommand({
@@ -220,13 +185,6 @@ const main = defineCommand({
           async run(ctx) {
             const [, hookCommands] = await getCommandModules();
             return hookCommands.deleteCommand.run(ctx);
-          },
-        }),
-        eval: defineCommand({
-          meta: { name: "eval", description: "Evaluate hook" },
-          async run(ctx) {
-            const [, hookCommands] = await getCommandModules();
-            return hookCommands.evalCommand.run(ctx);
           },
         }),
         history: defineCommand({
@@ -367,20 +325,6 @@ const main = defineCommand({
           async run(ctx) {
             const [, , , , storeCommands] = await getCommandModules();
             return storeCommands.statsCommand.run(ctx);
-          },
-        }),
-        backup: defineCommand({
-          meta: { name: "backup", description: "Backup store" },
-          async run(ctx) {
-            const [, , , , storeCommands] = await getCommandModules();
-            return storeCommands.backupCommand.run(ctx);
-          },
-        }),
-        restore: defineCommand({
-          meta: { name: "restore", description: "Restore store" },
-          async run(ctx) {
-            const [, , , , storeCommands] = await getCommandModules();
-            return storeCommands.restoreCommand.run(ctx);
           },
         }),
       },
