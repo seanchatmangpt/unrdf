@@ -83,6 +83,7 @@ func TestPlanCache_LRU(t *testing.T) {
 	cache.Put("query3", plan3)
 
 	// Check that query2 was evicted
+	// query2 should have been evicted (Get returns nil for evicted entries)
 	if cache.Get("query2") != nil {
 		t.Error("LRU eviction failed, query2 should have been evicted")
 	}
@@ -166,15 +167,18 @@ func TestPlanCache_CapacityExceeded(t *testing.T) {
 	}
 
 	// Check which items remain (query1 and query3, query2 evicted)
-	if cache.Get("query1") == nil {
+	retrieved1 := cache.Get("query1")
+	if retrieved1 == nil {
 		t.Error("Capacity exceeded, query1 should still be in cache")
 	}
 
-	if cache.Get("query2") != nil {
+	retrieved2 := cache.Get("query2")
+	if retrieved2 != nil {
 		t.Error("Capacity exceeded, query2 should have been evicted")
 	}
 
-	if cache.Get("query3") == nil {
+	retrieved3 := cache.Get("query3")
+	if retrieved3 == nil {
 		t.Error("Capacity exceeded, query3 should be in cache")
 	}
 }

@@ -4,8 +4,6 @@ package engine
 
 import (
 	"context"
-	"crypto/rand"
-	"fmt"
 
 	"github.com/google/uuid"
 	"github.com/unrdf/knowd/internal/hooks"

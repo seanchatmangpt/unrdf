@@ -23,11 +23,11 @@ func NewSearchServer(index *ReceiptIndex) *SearchServer {
 
 // SearchReceiptsRequest represents a search request.
 type SearchReceiptsRequest struct {
-	Actor  string    `json:"actor"`
-	Since  time.Time `json:"since"`
-	Until  time.Time `json:"until"`
-	Tags   []string  `json:"tags"`
-	Limit  int       `json:"limit"`
+	Actor string    `json:"actor"`
+	Since time.Time `json:"since"`
+	Until time.Time `json:"until"`
+	Tags  []string  `json:"tags"`
+	Limit int       `json:"limit"`
 }
 
 // SearchReceiptsResponse represents a search response.

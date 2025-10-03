@@ -226,16 +226,11 @@ func (a *Algebra) executeBGP(ctx context.Context, executor *Executor, store stor
 		return nil, fmt.Errorf("invalid BGP patterns")
 	}
 
-	// Create a simple plan for BGP execution
-	plan := &Plan{
-		Type:     "SELECT",
-		Patterns: []BasicGraphPattern{{}}, // Empty pattern for now
-	}
-	result, err := executor.Execute(ctx, store, "SELECT", plan)
-	if err != nil {
-		return nil, err
-	}
-	return result, nil
+	// For now, return empty result - BGP execution should be handled by the main executor
+	return &QueryResponse{
+		Rows: []map[string]interface{}{},
+		Kind: "sparql-select",
+	}, nil
 }
 
 // executeJoin executes a join operation.
@@ -380,7 +375,12 @@ func (a *Algebra) evaluateFilterExpression(expression string, row map[string]int
 			right := strings.TrimSpace(parts[1])
 
 			if value, exists := row[left]; exists {
-				return fmt.Sprintf("%v", value) == right
+				// Handle quoted strings in the right side
+				rightValue := right
+				if strings.HasPrefix(right, "\"") && strings.HasSuffix(right, "\"") {
+					rightValue = right[1 : len(right)-1]
+				}
+				return fmt.Sprintf("%v", value) == rightValue
 			}
 		}
 	}

@@ -22,8 +22,8 @@ type PackValidator struct {
 
 // ValidationError represents a validation error.
 type ValidationError struct {
-	Field   string `json:"field"`
-	Message string `json:"message"`
+	Field   string      `json:"field"`
+	Message string      `json:"message"`
 	Value   interface{} `json:"value,omitempty"`
 }
 
@@ -132,11 +132,11 @@ func (v *PackValidator) CheckPack(packPath string) (*PackCheckResult, error) {
 	}
 
 	result := &PackCheckResult{
-		Path:      packPath,
-		Valid:     validationResult.Valid,
-		Errors:    validationResult.Errors,
-		Warnings:  []ValidationError{},
-		Info:      []ValidationError{},
+		Path:     packPath,
+		Valid:    validationResult.Valid,
+		Errors:   validationResult.Errors,
+		Warnings: []ValidationError{},
+		Info:     []ValidationError{},
 	}
 
 	// Additional checks for pack structure

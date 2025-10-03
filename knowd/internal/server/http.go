@@ -3,22 +3,66 @@ package server
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"time"
 
 	"github.com/gorilla/mux"
+	"github.com/sirupsen/logrus"
 	"github.com/unrdf/knowd/internal/lockchain"
 	"github.com/unrdf/knowd/internal/sparql"
 	"github.com/unrdf/knowd/internal/store"
 	"github.com/unrdf/knowd/internal/version"
 )
 
+// Configuration represents the server configuration.
+type Configuration struct {
+	// Basic server configuration
+	Addr    string
+	DataDir string
+
+	// Store configuration
+	Store      string
+	Packs      string
+	WatchPacks bool
+
+	// Planner / stats configuration
+	PlannerCBO    bool
+	AnalyzeSample int
+	AnalyzeTTL    int
+
+	// SHACL configuration
+	SHACLEnabled bool
+
+	// Streaming / prepare configuration
+	QueryStreamMaxBytes int
+	PlanCacheSize       int
+	PlanCachePersist    bool
+
+	// Namespace configuration
+	NamespaceDefault string
+
+	// Cluster configuration
+	ClusterMode string
+	PeerAddrs   string
+	MTLSCert    string
+	MTLSKey     string
+	MTLSCA      string
+
+	// Receipts / signing configuration
+	ReceiptsDir string
+	SigningKey  string
+	SigningPub  string
+
+	// Vector / WASM configuration
+	VecEnabled  bool
+	WASMEnabled bool
+}
+
 // Server represents the HTTP server instance.
 type Server struct {
-	addr      string
-	dataDir   string
-	coreURL   string
+	config    *Configuration
 	router    *mux.Router
 	executor  *sparql.Executor
 	store     store.Interface
@@ -26,42 +70,64 @@ type Server struct {
 }
 
 // New creates a new HTTP server instance.
-func New(addr, dataDir, coreURL string) *Server {
-	// Initialize in-memory store for now
+func New(config *Configuration) *Server {
+	// Initialize store based on configuration
+	var storeInstance store.Interface
+	var err error
+
 	storeConfig := store.Config{MaxQuads: 1000000}
-	storeInstance, err := store.NewMemoryStore(storeConfig)
+
+	switch config.Store {
+	case "mem":
+		storeInstance, err = store.NewMemoryStore(storeConfig)
+	case "disk":
+		// For disk store, would need additional configuration
+		storeInstance, err = store.NewMemoryStore(storeConfig) // Simplified for now
+	default:
+		storeInstance, err = store.NewMemoryStore(storeConfig)
+	}
+
 	if err != nil {
-		log.Fatalf("Failed to create memory store: %v", err)
+		log.Fatalf("Failed to create store: %v", err)
 	}
 
-	// Initialize SPARQL executor
-	executor := sparql.NewExecutor()
+	// Create SPARQL executor with plan cache
+	cacheConfig := sparql.CacheConfig{Capacity: config.PlanCacheSize}
+	planCache := sparql.NewPlanCache(cacheConfig)
+	executor := sparql.NewExecutorWithCache(planCache)
 
-	// Initialize lockchain
+	// Create lockchain for receipts (simplified)
 	lockchainConfig := lockchain.Config{
-		ReceiptsDir: "./receipts",
+		ReceiptsDir:    config.ReceiptsDir,
+		SigningKeyFile: config.SigningKey,
+		PublicKeyFile:  config.SigningPub,
 	}
-	lc, err := lockchain.New(lockchainConfig)
+	lockchainInstance, err := lockchain.New(lockchainConfig)
 	if err != nil {
 		log.Fatalf("Failed to create lockchain: %v", err)
 	}
 
-	router := mux.NewRouter()
-	s := &Server{
-		addr:      addr,
-		dataDir:   dataDir,
-		coreURL:   coreURL,
-		router:    router,
+	// Create server
+	server := &Server{
+		config:    config,
+		router:    mux.NewRouter(),
 		executor:  executor,
 		store:     storeInstance,
-		lockchain: lc,
+		lockchain: lockchainInstance,
 	}
-	s.setupRoutes()
-	return s
+
+	// Setup routes
+	server.setupRoutes()
+
+	return server
 }
 
 // setupRoutes configures HTTP routes for the server.
 func (s *Server) setupRoutes() {
+	// Add middleware
+	s.router.Use(s.loggingMiddleware)
+	s.router.Use(s.recoveryMiddleware)
+
 	// Health check
 	s.router.HandleFunc("/healthz", s.handleHealth).Methods("GET")
 
@@ -79,9 +145,69 @@ func (s *Server) setupRoutes() {
 	s.router.HandleFunc("/v1/admin/namespaces", s.handleAdminNamespaces).Methods("GET", "POST")
 	s.router.HandleFunc("/v1/admin/rollout", s.handleAdminRollout).Methods("GET", "POST")
 	s.router.HandleFunc("/v1/admin/analyze", s.handleAdminAnalyze).Methods("POST")
+	
+	// Admin convenience endpoints
+	s.router.HandleFunc("/v1/packs/reload", s.handlePacksReload).Methods("POST")
+	s.router.HandleFunc("/v1/store/stats", s.handleStoreStats).Methods("GET")
+	s.router.HandleFunc("/v1/admin/promote-follower", s.handleAdminPromoteFollower).Methods("POST")
+	
+	// Additional unrdf-compatible endpoints
+	s.router.HandleFunc("/v1/similar", s.handleSimilar).Methods("POST")
+	s.router.HandleFunc("/v1/vector/upsert", s.handleVectorUpsert).Methods("POST")
+	s.router.HandleFunc("/v1/admin/replay", s.handleAdminReplay).Methods("POST")
 
 	// Version endpoint
 	s.router.HandleFunc("/version", s.handleVersion).Methods("GET")
+}
+
+// loggingMiddleware logs HTTP requests
+func (s *Server) loggingMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		start := time.Now()
+
+		// Create a response writer that captures the status code
+		rw := &responseWriter{ResponseWriter: w, statusCode: http.StatusOK}
+
+		next.ServeHTTP(rw, r)
+
+		duration := time.Since(start)
+		logrus.WithFields(logrus.Fields{
+			"method":      r.Method,
+			"path":        r.URL.Path,
+			"status":      rw.statusCode,
+			"duration_ms": duration.Milliseconds(),
+			"remote_addr": r.RemoteAddr,
+		}).Info("HTTP request")
+	})
+}
+
+// recoveryMiddleware recovers from panics and logs them
+func (s *Server) recoveryMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		defer func() {
+			if err := recover(); err != nil {
+				logrus.WithFields(logrus.Fields{
+					"error": fmt.Sprintf("%v", err),
+					"path":  r.URL.Path,
+				}).Error("Panic recovered in HTTP handler")
+
+				http.Error(w, "Internal server error", http.StatusInternalServerError)
+			}
+		}()
+
+		next.ServeHTTP(w, r)
+	})
+}
+
+// responseWriter wraps http.ResponseWriter to capture status code
+type responseWriter struct {
+	http.ResponseWriter
+	statusCode int
+}
+
+func (rw *responseWriter) WriteHeader(code int) {
+	rw.statusCode = code
+	rw.ResponseWriter.WriteHeader(code)
 }
 
 // handleHealth handles health check requests.
@@ -121,10 +247,18 @@ func (s *Server) handleTransaction(w http.ResponseWriter, r *http.Request) {
 	// Create signed receipt using lockchain
 	receipt, err := s.lockchain.WriteReceipt(req.Actor, req.Delta)
 	if err != nil {
-		log.Printf("Failed to create receipt: %v", err)
+		logrus.WithFields(logrus.Fields{
+			"actor": req.Actor,
+			"error": err.Error(),
+		}).Error("Failed to create receipt")
 		http.Error(w, "Failed to process transaction", http.StatusInternalServerError)
 		return
 	}
+
+	logrus.WithFields(logrus.Fields{
+		"receiptID": receipt.ID,
+		"actor":     req.Actor,
+	}).Info("Transaction processed successfully")
 
 	response := TxResponse{
 		ReceiptID:  receipt.ID,
@@ -149,7 +283,7 @@ type QueryResponse struct {
 
 // handleQuery handles query requests (placeholder implementation).
 func (s *Server) handleQuery(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
+	if r.Method != "POST" {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
@@ -175,13 +309,21 @@ func (s *Server) handleQuery(w http.ResponseWriter, r *http.Request) {
 	parser := sparql.NewParser()
 	plan, err := parser.Parse(req.Query)
 	if err != nil {
-		log.Printf("Query parsing error: %v", err)
+		logrus.WithFields(logrus.Fields{
+			"query": req.Query,
+			"error": err.Error(),
+		}).Error("Query parsing failed")
 		http.Error(w, "Query parsing failed", http.StatusBadRequest)
 		return
 	}
 
 	result, err := s.executor.Execute(r.Context(), s.store, req.Kind, plan)
 	if err != nil {
+		logrus.WithFields(logrus.Fields{
+			"query": req.Query,
+			"kind":  req.Kind,
+			"error": err.Error(),
+		}).Error("Query execution failed")
 		http.Error(w, "Query execution failed", http.StatusInternalServerError)
 		return
 	}
@@ -209,7 +351,7 @@ type HookResponse struct {
 
 // handleHookEvaluate handles hook evaluation requests (placeholder implementation).
 func (s *Server) handleHookEvaluate(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
+	if r.Method != "POST" {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
@@ -252,7 +394,7 @@ type ValidationViolation struct {
 
 // handleValidate handles SHACL validation requests.
 func (s *Server) handleValidate(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
+	if r.Method != "POST" {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
@@ -276,7 +418,7 @@ func (s *Server) handleValidate(w http.ResponseWriter, r *http.Request) {
 
 // handleQueryStream handles streaming query requests.
 func (s *Server) handleQueryStream(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
+	if r.Method != "POST" {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
@@ -291,14 +433,14 @@ func (s *Server) handleQueryStream(w http.ResponseWriter, r *http.Request) {
 	parser := sparql.NewParser()
 	plan, err := parser.Parse(req.Query)
 	if err != nil {
-		log.Printf("Query parsing error: %v", err)
+		logrus.WithError(err).Error("Query parsing failed")
 		http.Error(w, "Query parsing failed", http.StatusBadRequest)
 		return
 	}
 
 	result, err := s.executor.Execute(r.Context(), s.store, req.Kind, plan)
 	if err != nil {
-		log.Printf("Query execution error: %v", err)
+		logrus.WithError(err).Error("Query execution failed")
 		http.Error(w, "Query execution failed", http.StatusInternalServerError)
 		return
 	}
@@ -323,7 +465,7 @@ type Receipt struct {
 // handleReceipts handles receipt-related requests.
 func (s *Server) handleReceipts(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
-	case http.MethodGet:
+	case "GET":
 		// List receipts or get specific receipt
 		receiptID := r.URL.Path[len("/v1/receipts/"):]
 		if receiptID != "" {
@@ -343,7 +485,7 @@ func (s *Server) handleReceipts(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/json")
 			json.NewEncoder(w).Encode(receipts)
 		}
-	case http.MethodPost:
+	case "POST":
 		// Create new receipt (should be handled by /v1/tx)
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 	default:
@@ -361,7 +503,7 @@ type Namespace struct {
 // handleAdminNamespaces handles namespace administration.
 func (s *Server) handleAdminNamespaces(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
-	case http.MethodGet:
+	case "GET":
 		// List namespaces
 		namespaces := []Namespace{
 			{
@@ -372,7 +514,7 @@ func (s *Server) handleAdminNamespaces(w http.ResponseWriter, r *http.Request) {
 		}
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(namespaces)
-	case http.MethodPost:
+	case "POST":
 		// Create namespace
 		var ns Namespace
 		if err := json.NewDecoder(r.Body).Decode(&ns); err != nil {
@@ -407,7 +549,7 @@ type RolloutResponse struct {
 // handleAdminRollout handles rollout administration.
 func (s *Server) handleAdminRollout(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
-	case http.MethodGet:
+	case "GET":
 		// Get rollout configuration
 		namespace := r.URL.Query().Get("ns")
 		if namespace == "" {
@@ -422,7 +564,7 @@ func (s *Server) handleAdminRollout(w http.ResponseWriter, r *http.Request) {
 		}
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(response)
-	case http.MethodPost:
+	case "POST":
 		// Set rollout configuration
 		var req RolloutRequest
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -459,7 +601,7 @@ type QueryAtRequest struct {
 
 // handleQueryAt handles time-travel query requests.
 func (s *Server) handleQueryAt(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
+	if r.Method != "POST" {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
@@ -474,7 +616,7 @@ func (s *Server) handleQueryAt(w http.ResponseWriter, r *http.Request) {
 	// For now, execute as regular query
 	result, err := s.executor.Query(r.Context(), req.Query, s.store)
 	if err != nil {
-		log.Printf("Query execution error: %v", err)
+		logrus.WithError(err).Error("Query execution failed")
 		http.Error(w, "Query execution failed", http.StatusInternalServerError)
 		return
 	}
@@ -509,7 +651,7 @@ type AnalyzeResponse struct {
 
 // handleAdminAnalyze handles analyze requests.
 func (s *Server) handleAdminAnalyze(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
+	if r.Method != "POST" {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
@@ -539,11 +681,10 @@ func (s *Server) handleAdminAnalyze(w http.ResponseWriter, r *http.Request) {
 
 // Start starts the HTTP server.
 func (s *Server) Start() error {
-	return http.ListenAndServe(s.addr, s.router)
+	return http.ListenAndServe(s.config.Addr, s.router)
 }
 
 // ServeHTTP implements http.Handler interface for compatibility.
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	s.router.ServeHTTP(w, r)
 }
-

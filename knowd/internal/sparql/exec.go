@@ -16,11 +16,20 @@ type QueryResponse struct {
 }
 
 // Executor executes compiled SPARQL plans against a store.
-type Executor struct{}
+type Executor struct {
+	cache *PlanCache
+}
 
 // NewExecutor creates a new SPARQL executor.
 func NewExecutor() *Executor {
 	return &Executor{}
+}
+
+// NewExecutorWithCache creates a new SPARQL executor with a plan cache.
+func NewExecutorWithCache(cache *PlanCache) *Executor {
+	return &Executor{
+		cache: cache,
+	}
 }
 
 // Query executes a SPARQL query string against a store, using caching when possible.
@@ -87,7 +96,7 @@ func (e *Executor) executeSelect(ctx context.Context, storeInstance store.Interf
 				}
 
 				// Apply filters if any
-				if e.applyFilters(row, plan.Filters) {
+				if len(plan.Filters) == 0 || e.applyFilters(row, plan.Filters) {
 					rows = append(rows, row)
 				}
 			}
@@ -228,7 +237,36 @@ func (e *Executor) applyFilters(row map[string]interface{}, filters []Filter) bo
 
 // evaluateFilter evaluates a FILTER expression (simplified implementation).
 func (e *Executor) evaluateFilter(expression string, row map[string]interface{}) bool {
-	// Simple equality check
+	expression = strings.TrimSpace(expression)
+
+	// Handle greater than
+	if strings.Contains(expression, ">") {
+		parts := strings.Split(expression, ">")
+		if len(parts) == 2 {
+			left := strings.TrimSpace(parts[0])
+			right := strings.TrimSpace(parts[1])
+
+			if value, exists := row[left]; exists {
+				rightValue := right
+				if strings.HasPrefix(right, "\"") && strings.HasSuffix(right, "\"") {
+					rightValue = right[1 : len(right)-1]
+				}
+
+				// Try to parse as numbers
+				leftNum, leftErr := parseNumber(fmt.Sprintf("%v", value))
+				rightNum, rightErr := parseNumber(rightValue)
+
+				if leftErr == nil && rightErr == nil {
+					return leftNum > rightNum
+				}
+
+				// Fallback to string comparison
+				return fmt.Sprintf("%v", value) > rightValue
+			}
+		}
+	}
+
+	// Handle equality
 	if strings.Contains(expression, "=") {
 		parts := strings.Split(expression, "=")
 		if len(parts) == 2 {
@@ -236,13 +274,31 @@ func (e *Executor) evaluateFilter(expression string, row map[string]interface{})
 			right := strings.TrimSpace(parts[1])
 
 			if value, exists := row[left]; exists {
-				return fmt.Sprintf("%v", value) == right
+				// Handle quoted strings in the right side
+				rightValue := right
+				if strings.HasPrefix(right, "\"") && strings.HasSuffix(right, "\"") {
+					rightValue = right[1 : len(right)-1]
+				}
+				return fmt.Sprintf("%v", value) == rightValue
 			}
 		}
 	}
 
 	// Default to true for unsupported filters
 	return true
+}
+
+// parseNumber attempts to parse a string as a number.
+func parseNumber(s string) (float64, error) {
+	// Simple number parsing (could be enhanced)
+	if s == "" {
+		return 0, fmt.Errorf("empty string")
+	}
+
+	// Try to parse as float
+	var result float64
+	_, err := fmt.Sscanf(s, "%f", &result)
+	return result, err
 }
 
 // applyGroupBy applies GROUP BY clause to results.
@@ -328,7 +384,7 @@ func (e *Executor) applyOrderBy(rows []map[string]interface{}, orderBy []OrderBy
 func (e *Executor) applyHaving(rows []map[string]interface{}, having []Filter) []map[string]interface{} {
 	var filtered []map[string]interface{}
 	for _, row := range rows {
-		if e.applyFilters(row, having) {
+		if e.evaluateFilter(having[0].Expression, row) {
 			filtered = append(filtered, row)
 		}
 	}

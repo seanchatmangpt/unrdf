@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"regexp"
 	"strings"
+
+	"github.com/pkg/errors"
 )
 
 // Parser handles SPARQL query parsing.
@@ -97,6 +99,9 @@ func NewParser() *Parser {
 // Parse parses a SPARQL query string and returns a plan.
 func (p *Parser) Parse(query string) (*Plan, error) {
 	query = strings.TrimSpace(query)
+	if query == "" {
+		return nil, errors.New("empty query")
+	}
 
 	// Try SELECT query
 	if p.selectPattern.MatchString(query) {
@@ -113,14 +118,14 @@ func (p *Parser) Parse(query string) (*Plan, error) {
 		return p.parseConstruct(query)
 	}
 
-	return nil, fmt.Errorf("unsupported query type: %s", query[:min(50, len(query))])
+	return nil, errors.Errorf("unsupported query type: %s", query[:min(50, len(query))])
 }
 
 // parseSelect parses a SELECT query.
 func (p *Parser) parseSelect(query string) (*Plan, error) {
 	matches := p.selectPattern.FindStringSubmatch(query)
 	if len(matches) < 2 {
-		return nil, fmt.Errorf("invalid SELECT query")
+		return nil, errors.New("invalid SELECT query format")
 	}
 
 	columns := p.parseColumns(matches[1])
@@ -141,6 +146,9 @@ func (p *Parser) parseSelect(query string) (*Plan, error) {
 	// Parse advanced constructs from WHERE clause
 	patterns, unions, optionals, minuses, binds, values := p.parseAdvancedConstructs(whereClause)
 
+	// Parse filters from WHERE clause
+	filters := p.parseFilters(whereClause)
+
 	// Parse LIMIT and OFFSET
 	limit := p.parseLimit(query[whereEnd+1:])
 	offset := p.parseOffset(query[whereEnd+1:])
@@ -154,6 +162,7 @@ func (p *Parser) parseSelect(query string) (*Plan, error) {
 		Minus:    minuses,
 		Bind:     binds,
 		Values:   values,
+		Filters:  filters,
 		Limit:    limit,
 		Offset:   offset,
 	}, nil
@@ -243,20 +252,21 @@ func (p *Parser) parseColumns(columnsStr string) []string {
 	return columns
 }
 
-
 // parseBasicGraphPattern parses a basic graph pattern from SPARQL query text.
 // It handles simple triple patterns but delegates advanced constructs to parseAdvancedConstructs.
 func (p *Parser) parseBasicGraphPattern(clause string) BasicGraphPattern {
 	var triples []Triple
 
-	lines := strings.Split(clause, "\n")
-	for _, line := range lines {
-		line = strings.TrimSpace(line)
-		if line == "" || strings.HasPrefix(line, "#") {
+	// Split the clause into individual statements (separated by dots)
+	statements := p.splitOnDots(clause)
+
+	for _, statement := range statements {
+		statement = strings.TrimSpace(statement)
+		if statement == "" || strings.HasPrefix(statement, "#") {
 			continue
 		}
 
-		linesUpper := strings.ToUpper(line)
+		linesUpper := strings.ToUpper(statement)
 
 		// Skip advanced constructs - they are handled by parseAdvancedConstructs
 		if p.isAdvancedConstruct(linesUpper) {
@@ -264,7 +274,7 @@ func (p *Parser) parseBasicGraphPattern(clause string) BasicGraphPattern {
 		}
 
 		// Parse simple triple pattern
-		if triple := p.parseTriplePattern(line); triple != nil {
+		if triple := p.parseTriplePattern(statement); triple != nil {
 			triples = append(triples, *triple)
 		}
 	}
@@ -272,9 +282,48 @@ func (p *Parser) parseBasicGraphPattern(clause string) BasicGraphPattern {
 	return BasicGraphPattern{Triples: triples}
 }
 
+// splitOnDots splits a clause into individual statements separated by dots.
+func (p *Parser) splitOnDots(clause string) []string {
+	var statements []string
+	var current strings.Builder
+	inBraces := 0
+
+	for _, char := range clause {
+		switch char {
+		case '{':
+			inBraces++
+			current.WriteRune(char)
+		case '}':
+			inBraces--
+			current.WriteRune(char)
+		case '.':
+			if inBraces == 0 {
+				// Check if this dot separates statements or is part of a triple
+				statement := strings.TrimSpace(current.String())
+				if statement != "" {
+					statements = append(statements, statement)
+				}
+				current.Reset()
+			} else {
+				current.WriteRune(char)
+			}
+		default:
+			current.WriteRune(char)
+		}
+	}
+
+	// Add the last statement if any
+	lastStatement := strings.TrimSpace(current.String())
+	if lastStatement != "" {
+		statements = append(statements, lastStatement)
+	}
+
+	return statements
+}
+
 // isAdvancedConstruct checks if a line contains advanced SPARQL constructs.
 func (p *Parser) isAdvancedConstruct(line string) bool {
-	advancedKeywords := []string{"UNION", "OPTIONAL", "MINUS", "BIND", "VALUES"}
+	advancedKeywords := []string{"UNION", "OPTIONAL", "MINUS", "BIND", "VALUES", "FILTER"}
 	for _, keyword := range advancedKeywords {
 		if strings.Contains(line, keyword) {
 			return true
@@ -283,8 +332,42 @@ func (p *Parser) isAdvancedConstruct(line string) bool {
 	return false
 }
 
+// parseFilters extracts FILTER expressions from the WHERE clause.
+func (p *Parser) parseFilters(clause string) []Filter {
+	var filters []Filter
+
+	// Split the clause into individual statements
+	statements := p.splitOnDots(clause)
+
+	for _, statement := range statements {
+		statement = strings.TrimSpace(statement)
+		if statement == "" || strings.HasPrefix(statement, "#") {
+			continue
+		}
+
+		linesUpper := strings.ToUpper(statement)
+		if strings.Contains(linesUpper, "FILTER") {
+			// Extract the filter expression
+			start := strings.Index(statement, "FILTER(") + 7
+			end := strings.LastIndex(statement, ")")
+			if start > 0 && end > start {
+				expression := strings.TrimSpace(statement[start:end])
+				filters = append(filters, Filter{Expression: expression})
+			}
+		}
+	}
+
+	return filters
+}
+
 // parseTriplePattern parses a single triple pattern from a line of SPARQL.
 func (p *Parser) parseTriplePattern(line string) *Triple {
+	// Check if line contains advanced constructs first
+	linesUpper := strings.ToUpper(line)
+	if p.isAdvancedConstruct(linesUpper) {
+		return nil // This line contains advanced constructs, not a simple triple
+	}
+
 	// Remove trailing period if present
 	line = strings.TrimSuffix(line, ".")
 
