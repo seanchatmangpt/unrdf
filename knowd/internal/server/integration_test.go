@@ -55,8 +55,10 @@ func setupTestServer(t *testing.T) (*httptest.Server, *Server) {
 	}
 
 	server := &Server{
-		config:    config,
-		Router:    mux.NewRouter(),
+		addr:      config.Addr,
+		dataDir:   config.DataDir,
+		coreURL:   "native://",
+		router:    mux.NewRouter(),
 		executor:  executor,
 		store:     testStore,
 		lockchain: testLockchain,
@@ -66,7 +68,7 @@ func setupTestServer(t *testing.T) (*httptest.Server, *Server) {
 	server.setupRoutes()
 
 	// Create test server
-	testServer := httptest.NewServer(server.Router)
+	testServer := httptest.NewServer(server.router)
 	t.Cleanup(testServer.Close)
 
 	return testServer, server

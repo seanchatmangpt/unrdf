@@ -32,21 +32,43 @@ func main() {
 	flag.StringVar(&config.coreURL, "core-url", "native://", "Core URL")
 	flag.StringVar(&config.store, "store", "mem", "Store type (mem|disk)")
 
-	// Check for environment variable overrides if flags are not explicitly set
-	if config.addr == ":8090" && os.Getenv("KNOWD_ADDR") != "" {
-		config.addr = os.Getenv("KNOWD_ADDR")
-	}
-	if config.dataDir == "./data" && os.Getenv("KNOWD_DATA_DIR") != "" {
-		config.dataDir = os.Getenv("KNOWD_DATA_DIR")
-	}
-	if config.coreURL == "native://" && os.Getenv("KNOWD_CORE_URL") != "" {
-		config.coreURL = os.Getenv("KNOWD_CORE_URL")
-	}
-	if config.store == "mem" && os.Getenv("KNOWD_STORE") != "" {
-		config.store = os.Getenv("KNOWD_STORE")
-	}
+	// JIRA command flags
+	jiraValidate := flag.Bool("jira-validate", false, "Validate JIRA feature parity")
+	jiraReport := flag.Bool("jira-report", false, "Generate JIRA feature parity report")
+	jiraUpdate := flag.String("jira-update", "", "Update JIRA ticket status (format: TICKET_ID:STATUS:NOTES)")
+
+	// Benchmark command flags
+	benchmarkRun := flag.Bool("benchmark", false, "Run comprehensive performance benchmarks")
+	benchmarkReport := flag.Bool("benchmark-report", false, "Generate benchmark report")
+	benchmarkCompare := flag.String("benchmark-compare", "", "Compare with baseline file")
 
 	flag.Parse()
+
+	// Apply environment variable overrides
+	if val := os.Getenv("KNOWD_ADDR"); val != "" {
+		config.addr = val
+	}
+	if val := os.Getenv("KNOWD_DATA_DIR"); val != "" {
+		config.dataDir = val
+	}
+	if val := os.Getenv("KNOWD_CORE_URL"); val != "" {
+		config.coreURL = val
+	}
+	if val := os.Getenv("KNOWD_STORE"); val != "" {
+		config.store = val
+	}
+
+	// Handle benchmark and JIRA commands if specified
+	if *benchmarkRun || *benchmarkReport || *benchmarkCompare != "" {
+		handleBenchmarkCommand(benchmarkRun, benchmarkReport, nil, *benchmarkCompare)
+		return
+	}
+
+	// Handle JIRA commands if specified
+	if *jiraValidate || *jiraReport || *jiraUpdate != "" {
+		log.Printf("JIRA commands not yet implemented")
+		return
+	}
 
 	// Log startup information
 	log.Printf("Starting %s", version.BuildInfo())
@@ -75,13 +97,6 @@ func main() {
 	select {
 	case sig := <-sigChan:
 		log.Printf("Received signal %s, shutting down gracefully...", sig)
-
-		// Gracefully shutdown OpenTelemetry
-		shutdownCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-		defer cancel()
-		if err := telemetry.Shutdown(shutdownCtx); err != nil {
-			log.Printf("Error shutting down telemetry: %v", err)
-		}
 
 	case err := <-serverErr:
 		log.Fatalf("Server error: %v", err)

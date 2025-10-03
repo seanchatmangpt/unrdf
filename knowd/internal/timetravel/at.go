@@ -87,34 +87,34 @@ type QueryStats struct {
 func (sb *SnapshotBinder) ExecuteQueryAt(ctx context.Context, req QueryAtRequest) (*QueryAtResponse, error) {
 	// Implement time-travel query execution
 	startTime := time.Now()
-	
-	// For this implementation, we'll execute the query normally but 
+
+	// For this implementation, we'll execute the query normally but
 	// add snapshot metadata to indicate the temporal context
-	
+
 	// Parse timestamp to validate timing
 	at, err := time.Parse(time.RFC3339, req.At)
 	if err != nil {
 		return nil, fmt.Errorf("invalid timestamp format: %v", err)
 	}
-	
+
 	// Validate snapshot time
 	if at.After(time.Now()) {
 		return nil, fmt.Errorf("cannot query future snapshots: %s", req.At)
 	}
-	
+
 	// For now, execute as regular query but with snapshot context
 	// In a production system, this would use MVCC or timestamp-based store snapshots
-	
+
 	result := map[string]interface{}{
-		"snapshot_time": at.Format(time.RFC3339),
-		"query_time": time.Now().Format(time.RFC3339),
+		"snapshot_time":      at.Format(time.RFC3339),
+		"query_time":         time.Now().Format(time.RFC3339),
 		"time_travel_offset": fmt.Sprintf("%.2fs", time.Since(at).Seconds()),
-		"notice": "Time-travel query executed against current store state",
+		"notice":             "Time-travel query executed against current store state",
 	}
-	
+
 	executionTime := int(time.Since(startTime).Milliseconds())
 	snapshotAge := int(time.Since(at).Seconds())
-	
+
 	stats := QueryStats{
 		RowsReturned:   1,
 		ExecutionTime:  executionTime,

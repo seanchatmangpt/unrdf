@@ -209,7 +209,15 @@ func (e *Engine) Query(ctx context.Context, req QueryRequest) (*QueryResponse, e
 // EvaluateHooks evaluates all registered hooks.
 func (e *Engine) EvaluateHooks(ctx context.Context, req HookEvalRequest) (*HookEvalResponse, error) {
 
-	results, err := e.hooks.Evaluate(ctx, req.Hook["actor"].(string))
+	// Extract actor from request, default to "api-user"
+	actor := "api-user"
+	if actorInterface, ok := req.Hook["actor"]; ok {
+		if actorStr, ok := actorInterface.(string); ok {
+			actor = actorStr
+		}
+	}
+
+	results, err := e.hooks.Evaluate(ctx, actor)
 	if err != nil {
 		return &HookEvalResponse{Fired: false}, err
 	}

@@ -55,23 +55,23 @@ func (c *PlanCache) Get(query string) *Plan {
 func (c *PlanCache) Put(query string, plan *Plan) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	
+
 	if element, found := c.cache[query]; found {
 		// Update existing entry
 		element.Value.(*cacheEntry).plan = plan
 		c.order.MoveToFront(element)
 		return
 	}
-	
+
 	// Create new entry
 	entry := &cacheEntry{
 		query: query,
 		plan:  plan,
 	}
-	
+
 	element := c.order.PushFront(entry)
 	c.cache[query] = element
-	
+
 	// Evict if over capacity
 	if len(c.cache) > c.capacity {
 		c.evictLeastRecentlyUsed()
@@ -98,7 +98,7 @@ func (c *PlanCache) Size() int {
 func (c *PlanCache) Clear() {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	
+
 	c.cache = make(map[string]*list.Element)
 	c.order = list.New()
 }

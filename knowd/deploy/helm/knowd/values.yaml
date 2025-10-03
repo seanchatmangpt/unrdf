@@ -1,0 +1,202 @@
+# Default values for knowd.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 3
+
+image:
+  registry: docker.io
+  repository: knowd/knowd
+  tag: "1.0.0"
+  pullPolicy: IfNotPresent
+
+# Image pull secrets
+imagePullSecrets: []
+
+# Pod security context
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  fsGroup: 2000
+
+# Security context for containers
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 1000
+  capabilities:
+    drop:
+    - ALL
+
+service:
+  type: LoadBalancer
+  port: 80
+  targetPort: 8090
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
+    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "tcp"
+
+# Resource limits and requests
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 256Mi
+
+# Node selector for pod placement
+nodeSelector: {}
+
+# Tolerations for pod placement
+tolerations: []
+
+# Affinity for pod placement
+affinity: {}
+
+# Persistent volume configuration
+persistence:
+  enabled: true
+  storageClass: "fast-ssd"
+  size: 10Gi
+  accessModes:
+    - ReadWriteOnce
+
+# Configuration for knowd
+config:
+  # Server configuration
+  server:
+    addr: ":8090"
+    dataDir: "/data"
+    coreURL: "native://"
+    store: "disk"
+    packs: "/data/packs"
+    watchPacks: true
+
+  # Telemetry configuration
+  telemetry:
+    serviceName: "knowd"
+    serviceVersion: "1.0.0"
+    environment: "production"
+    traceEnabled: true
+    metricsEnabled: true
+    sampleRatio: 1.0
+
+  # Policy configuration
+  policy:
+    hotReload: true
+    validateOnLoad: true
+
+  # Hooks configuration
+  hooks:
+    enabled: true
+    maxConcurrency: 10
+    timeout: "30s"
+
+  # Cluster configuration
+  cluster:
+    mode: "follower"
+    peerAddrs: ""
+    mTLSCert: ""
+    mTLSKey: ""
+    mTLSCA: ""
+
+  # Vector search configuration
+  vector:
+    enabled: true
+    dimensions: 384
+    indexType: "hnsw"
+
+  # WASM execution configuration
+  wasm:
+    enabled: true
+    maxMemoryMB: 128
+    enableWASI: true
+
+  # Security configuration
+  security:
+    mTLSEnabled: false
+    jwtEnabled: false
+    corsEnabled: true
+    corsOrigins: ["*"]
+
+  # Logging configuration
+  logging:
+    level: "info"
+    format: "json"
+    output: "stdout"
+
+# Observability configuration
+observability:
+  # Prometheus metrics
+  prometheus:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+      namespace: monitoring
+      interval: 30s
+
+  # Jaeger tracing
+  jaeger:
+    enabled: true
+    agent:
+      enabled: true
+    collector:
+      enabled: true
+
+# Ingress configuration
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: knowd.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+# Service account configuration
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+# Pod disruption budget
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 2
+
+# Horizontal Pod Autoscaler
+autoscaling:
+  enabled: false
+  minReplicas: 3
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
+
+# Additional volumes
+extraVolumes: []
+
+# Additional volume mounts
+extraVolumeMounts: []
+
+# Init containers
+initContainers: []
+
+# Sidecar containers
+sidecars: []
+
+# Environment variables
+extraEnvVars: []
+
+# Environment variables from secrets or configmaps
+extraEnvVarsCM: ""
+extraEnvVarsSecret: ""
+
+# Additional labels
+commonLabels: {}
+
+# Additional annotations
+commonAnnotations: {}

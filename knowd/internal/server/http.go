@@ -11,14 +11,15 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
+	"github.com/rs/cors"
 	"github.com/sirupsen/logrus"
-	tm "github.com/unrdf/knowd/internal/timetravel"
 	"github.com/unrdf/knowd/internal/hooks"
 	"github.com/unrdf/knowd/internal/lockchain"
 	"github.com/unrdf/knowd/internal/shacl"
 	"github.com/unrdf/knowd/internal/sparql"
 	"github.com/unrdf/knowd/internal/store"
 	"github.com/unrdf/knowd/internal/telemetry"
+	tm "github.com/unrdf/knowd/internal/timetravel"
 	"github.com/unrdf/knowd/internal/types"
 	"github.com/unrdf/knowd/internal/version"
 	"go.opentelemetry.io/otel/attribute"
@@ -222,9 +223,16 @@ func (s *Server) recoveryMiddleware(next http.Handler) http.Handler {
 
 // handleHealth handles health check requests.
 func (s *Server) handleHealth(w http.ResponseWriter, r *http.Request) {
+	ctx, span := telemetry.StartSpan(r.Context(), "handleHealth")
+	defer span.End()
+
+	telemetry.AddEvent(ctx, "health_check_requested")
+
 	w.Header().Set("Content-Type", "text/plain")
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("ok"))
+
+	span.SetStatus(200, "OK")
 }
 
 // TxRequest represents a transaction request structure.
@@ -243,9 +251,17 @@ type TxResponse struct {
 
 // handleTransaction handles transaction requests.
 func (s *Server) handleTransaction(w http.ResponseWriter, r *http.Request) {
+	ctx, span := telemetry.StartSpan(r.Context(), "handleTransaction")
+	defer span.End()
+
+	telemetry.AddEvent(ctx, "transaction_requested",
+		attribute.String("method", r.Method),
+		attribute.String("actor", r.Header.Get("X-Actor")))
 
 	var req TxRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		span.RecordError(err)
+		span.SetStatus(http.StatusBadRequest, "Invalid JSON")
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(map[string]string{
@@ -256,7 +272,10 @@ func (s *Server) handleTransaction(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Process transaction through store
-	ctx := r.Context()
+	telemetry.AddEvent(ctx, "transaction_processing_started",
+		attribute.String("actor", req.Actor),
+		attribute.Int("delta_add_count", len(req.Delta["add"].([]interface{}))),
+		attribute.Int("delta_rem_count", len(req.Delta["rem"].([]interface{}))))
 
 	// Add quads to store
 	added := 0
@@ -294,7 +313,12 @@ func (s *Server) handleTransaction(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	telemetry.AddEvent(ctx, "transaction_store_operations_completed",
+		attribute.Int("quads_added", added),
+		attribute.Int("quads_removed", removed))
+
 	// Create signed receipt using lockchain
+	telemetry.AddEvent(ctx, "receipt_creation_started")
 	var receipt interface{}
 	var receiptID, merkleRoot string
 
@@ -302,6 +326,8 @@ func (s *Server) handleTransaction(w http.ResponseWriter, r *http.Request) {
 		var err error
 		receipt, err = s.lockchain.WriteReceipt(req.Actor, req.Delta)
 		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(http.StatusInternalServerError, "Failed to create receipt")
 			logrus.WithFields(logrus.Fields{
 				"actor": req.Actor,
 				"error": err.Error(),
@@ -318,11 +344,25 @@ func (s *Server) handleTransaction(w http.ResponseWriter, r *http.Request) {
 				merkleRoot = fmt.Sprintf("%v", root)
 			}
 		}
+		telemetry.AddEvent(ctx, "receipt_created",
+			attribute.String("receipt_id", receiptID),
+			attribute.String("merkle_root", merkleRoot))
 	} else {
 		// Mock receipt for testing
 		receiptID = fmt.Sprintf("test-receipt-%d", time.Now().Unix())
 		merkleRoot = "mock-merkle-root"
+		telemetry.AddEvent(ctx, "mock_receipt_created",
+			attribute.String("receipt_id", receiptID))
 	}
+
+	telemetry.AddEvent(ctx, "transaction_completed",
+		attribute.String("receipt_id", receiptID),
+		attribute.String("actor", req.Actor),
+		attribute.Int("quads_added", added),
+		attribute.Int("quads_removed", removed),
+		attribute.Int("total_quads", s.store.GetQuadCount()))
+
+	span.SetStatus(http.StatusOK, "Transaction processed successfully")
 
 	logrus.WithFields(logrus.Fields{
 		"receiptID": receiptID,
@@ -356,13 +396,23 @@ type QueryResponse struct {
 
 // handleQuery handles query requests (placeholder implementation).
 func (s *Server) handleQuery(w http.ResponseWriter, r *http.Request) {
+	ctx, span := telemetry.StartSpan(r.Context(), "handleQuery")
+	defer span.End()
+
+	telemetry.AddEvent(ctx, "query_requested",
+		attribute.String("method", r.Method),
+		attribute.String("path", r.URL.Path))
+
 	if r.Method != "POST" {
+		span.SetStatus(http.StatusMethodNotAllowed, "Method not allowed")
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
 	var req QueryRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		span.RecordError(err)
+		span.SetStatus(http.StatusBadRequest, "Invalid JSON")
 		http.Error(w, "Invalid JSON", http.StatusBadRequest)
 		return
 	}
@@ -374,14 +424,18 @@ func (s *Server) handleQuery(w http.ResponseWriter, r *http.Request) {
 		"sparql-construct": true,
 	}
 	if !validKinds[req.Kind] {
+		span.SetStatus(http.StatusBadRequest, "Invalid query kind")
 		http.Error(w, "Invalid query kind", http.StatusBadRequest)
 		return
 	}
 
 	// Parse and execute the query using SPARQL executor
+	telemetry.AddEvent(ctx, "query_parsing_started")
 	parser := sparql.NewParser()
 	plan, err := parser.Parse(req.Query)
 	if err != nil {
+		span.RecordError(err)
+		span.SetStatus(http.StatusBadRequest, "Query parsing failed")
 		logrus.WithFields(logrus.Fields{
 			"query": req.Query,
 			"error": err.Error(),
@@ -389,9 +443,14 @@ func (s *Server) handleQuery(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Query parsing failed", http.StatusBadRequest)
 		return
 	}
+	telemetry.AddEvent(ctx, "query_parsing_completed")
 
-	result, err := s.executor.Execute(r.Context(), s.store, req.Kind, plan)
+	// Execute the query
+	telemetry.AddEvent(ctx, "query_execution_started")
+	result, err := s.executor.Execute(ctx, s.store, req.Kind, plan)
 	if err != nil {
+		span.RecordError(err)
+		span.SetStatus(http.StatusInternalServerError, "Query execution failed")
 		logrus.WithFields(logrus.Fields{
 			"query": req.Query,
 			"kind":  req.Kind,
@@ -400,12 +459,15 @@ func (s *Server) handleQuery(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Query execution failed", http.StatusInternalServerError)
 		return
 	}
+	telemetry.AddEvent(ctx, "query_execution_completed",
+		attribute.Int("result_rows", len(result.Rows)))
 
 	// Convert to expected response format
 	resp := QueryResponse{
 		JSON: result,
 	}
 
+	span.SetStatus(http.StatusOK, "Query executed successfully")
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(resp)
 }
@@ -424,7 +486,13 @@ type HookResponse struct {
 
 // handleHookEvaluate handles hook evaluation requests (placeholder implementation).
 func (s *Server) handleHookEvaluate(w http.ResponseWriter, r *http.Request) {
+	ctx, span := telemetry.StartSpan(r.Context(), "handleHookEvaluate")
+	defer span.End()
+
+	telemetry.AddEvent(ctx, "hook_evaluation_requested")
+
 	if r.Method != "POST" {
+		span.SetStatus(http.StatusMethodNotAllowed, "Method not allowed")
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
@@ -710,9 +778,15 @@ func (s *Server) handleAdminRollout(w http.ResponseWriter, r *http.Request) {
 
 // handleVersion handles version information requests.
 func (s *Server) handleVersion(w http.ResponseWriter, r *http.Request) {
+	ctx, span := telemetry.StartSpan(r.Context(), "handleVersion")
+	defer span.End()
+
+	telemetry.AddEvent(ctx, "version_check_requested")
 
 	w.Header().Set("Content-Type", "text/plain")
 	w.Write([]byte(version.FullVersion()))
+
+	span.SetStatus(http.StatusOK, "Version returned")
 }
 
 // QueryAtRequest represents a time-travel query request.
@@ -736,7 +810,7 @@ func (s *Server) handleQueryAt(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Implement time-travel query logic using snapshot manager
-	
+
 	snapshotManager := tm.NewSnapshotManager(s.store)
 	snapshotBinder, err := snapshotManager.BindToSnapshot(r.Context(), time.Now())
 	if err != nil {
@@ -754,7 +828,13 @@ func (s *Server) handleQueryAt(w http.ResponseWriter, r *http.Request) {
 	})
 	if err != nil {
 		logrus.WithError(err).Error("Time-travel query execution failed")
-		http.Error(w, "Query execution failed", http.StatusBadRequest)
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"error":   "Time-travel query execution failed",
+			"message": err.Error(),
+		})
 		return
 	}
 
@@ -826,7 +906,7 @@ func (s *Server) handleReceiptsSearch(w http.ResponseWriter, r *http.Request) {
 		if sinceTime != nil && receipt.Timestamp.Before(*sinceTime) {
 			continue
 		}
-		
+
 		receipts = append(receipts, receipt)
 	}
 
@@ -877,38 +957,30 @@ func (s *Server) handleAdminAnalyze(w http.ResponseWriter, r *http.Request) {
 
 	// Implement actual analysis engine
 	quadCount := s.store.GetQuadCount()
-	
+
 	// Basic store analysis
 	tables := []map[string]interface{}{
 		{
-			"name":         "triples",
-			"count":        quadCount,
-			"cardinality":  quadCount, // Simplified cardinality estimation
-			"storage_size": fmt.Sprintf("%dkB", quadCount/2), // Rough estimate
-			"avg_query_time": "45ms", // Placeholder metric
+			"name":           "triples",
+			"count":          quadCount,
+			"cardinality":    quadCount,                        // Simplified cardinality estimation
+			"storage_size":   fmt.Sprintf("%dKB", quadCount/2), // Rough estimate
+			"avg_query_time": "45ms",                           // Placeholder metric
 		},
 		{
-			"name":         "indexes",
-			"count":        3, // SPO, POS, OSP indexes
-			"cardinality":  1,
-			"storage_size": fmt.Sprintf("%dkB", quadCount/5),
+			"name":           "indexes",
+			"count":          3, // SPO, POS, OSP indexes
+			"cardinality":    1,
+			"storage_size":   fmt.Sprintf("%dKB", quadCount/5),
 			"avg_query_time": "12ms",
 		},
 	}
-	
-	// Generate analysis summary
-	summary := map[string]interface{}{
-		"total_quads":      quadCount,
-		"index_count":      len(tables),
-		"namespace":        req.Namespace,
-		"analysis_time":    time.Now().Format(time.RFC3339),
-		"health_score":     int(calculateHealthScore(quadCount)),
-	}
-	
+
+	// Analysis completed
+
 	response := AnalyzeResponse{
 		StatsVersion: "v1.0.0",
 		Tables:       tables,
-		Summary:      summary,
 	}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -939,7 +1011,17 @@ func (s *Server) Start() error {
 	telemetry.AddEvent(ctx, "server.starting", attribute.String("addr", s.addr))
 
 	log.Printf("Starting HTTP server on %s", s.addr)
-	err := http.ListenAndServe(s.addr, s.router)
+
+	// Wrap router with CORS middleware for cross-origin requests
+	c := cors.New(cors.Options{
+		AllowedOrigins:   []string{"*"}, // Configure appropriately for production
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"*"},
+		AllowCredentials: true,
+	})
+
+	handler := c.Handler(s.router)
+	err := http.ListenAndServe(s.addr, handler)
 
 	if err != nil {
 		telemetry.RecordError(ctx, err)

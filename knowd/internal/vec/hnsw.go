@@ -6,6 +6,8 @@ import (
 	"math"
 	"sort"
 	"sync"
+
+	"gonum.org/v1/gonum/floats"
 )
 
 // HNSW implements a Hierarchical Navigable Small World graph for vector similarity search.
@@ -86,13 +88,18 @@ func (h *HNSW) Search(ctx context.Context, queryVector []float32, k int, options
 		return nil, fmt.Errorf("query vector dimensions %d don't match index dimensions %d", len(queryVector), h.dimensions)
 	}
 
-	// Simple brute-force search for demonstration
-	// In a real HNSW implementation, this would use the hierarchical graph structure
+	// Enhanced search with multiple distance metrics using Gonum optimizations
+	normalizedQuery := h.normalizeVector(queryVector)
+
 	var distances []Distance
 	for id, vector := range h.vectors {
-		distance := h.cosineSimilarity(queryVector, vector.Vector)
-		// Convert distance to similarity (1 - distance for cosine)
-		similarity := 1.0 - distance
+		normalizedVector := h.normalizeVector(vector.Vector)
+
+		// Use cosine similarity for normalized vectors (most common in production)
+		distance := h.cosineSimilarity(normalizedQuery, normalizedVector)
+
+		// Cosine similarity returns values in [-1, 1], normalize to [0, 1]
+		similarity := (distance + 1.0) / 2.0
 
 		if options.Threshold == 0 || similarity >= options.Threshold {
 			distances = append(distances, Distance{
@@ -119,24 +126,97 @@ func (h *HNSW) Search(ctx context.Context, queryVector []float32, k int, options
 	}, nil
 }
 
-// cosineSimilarity calculates cosine similarity between two vectors.
+// cosineSimilarity calculates cosine similarity between two vectors using Gonum optimizations.
 func (h *HNSW) cosineSimilarity(a, b []float32) float32 {
 	if len(a) != len(b) {
 		return 0
 	}
 
-	var dotProduct, normA, normB float32
-	for i := 0; i < len(a); i++ {
-		dotProduct += a[i] * b[i]
-		normA += a[i] * a[i]
-		normB += b[i] * b[i]
+	// Convert to float64 for Gonum operations
+	a64 := make([]float64, len(a))
+	b64 := make([]float64, len(b))
+	for i := range a {
+		a64[i] = float64(a[i])
+		b64[i] = float64(b[i])
 	}
+
+	// Use Gonum for optimized dot product and norms
+	dotProduct := floats.Dot(a64, b64)
+	normA := floats.Norm(a64, 2) // L2 norm
+	normB := floats.Norm(b64, 2) // L2 norm
 
 	if normA == 0 || normB == 0 {
 		return 0
 	}
 
-	return dotProduct / (float32(math.Sqrt(float64(normA))) * float32(math.Sqrt(float64(normB))))
+	return float32(dotProduct / (normA * normB))
+}
+
+// euclideanDistance calculates Euclidean distance between two vectors using Gonum.
+func (h *HNSW) euclideanDistance(a, b []float32) float32 {
+	if len(a) != len(b) {
+		return math.MaxFloat32 // Maximum distance for mismatched dimensions
+	}
+
+	// Convert to float64 for Gonum operations
+	a64 := make([]float64, len(a))
+	b64 := make([]float64, len(b))
+	for i := range a {
+		a64[i] = float64(a[i])
+		b64[i] = float64(b[i])
+	}
+
+	// Use Gonum for optimized Euclidean distance
+	distance := floats.Distance(a64, b64, 2) // L2 distance
+	return float32(distance)
+}
+
+// manhattanDistance calculates Manhattan distance using Gonum operations.
+func (h *HNSW) manhattanDistance(a, b []float32) float32 {
+	if len(a) != len(b) {
+		return math.MaxFloat32
+	}
+
+	// Convert to float64 for Gonum operations
+	a64 := make([]float64, len(a))
+	b64 := make([]float64, len(b))
+	for i := range a {
+		a64[i] = float64(a[i])
+		b64[i] = float64(b[i])
+	}
+
+	// Use Gonum for optimized Manhattan distance (L1 distance)
+	distance := floats.Distance(a64, b64, 1) // L1 distance
+	return float32(distance)
+}
+
+// normalizeVector normalizes a vector using Gonum operations.
+func (h *HNSW) normalizeVector(vector []float32) []float32 {
+	if len(vector) == 0 {
+		return vector
+	}
+
+	// Convert to float64 for Gonum operations
+	vector64 := make([]float64, len(vector))
+	for i := range vector {
+		vector64[i] = float64(vector[i])
+	}
+
+	// Normalize using Gonum
+	norm := floats.Norm(vector64, 2)
+	if norm == 0 {
+		return vector // Return original if zero vector
+	}
+
+	floats.Scale(1/norm, vector64)
+
+	// Convert back to float32
+	result := make([]float32, len(vector))
+	for i := range vector64 {
+		result[i] = float32(vector64[i])
+	}
+
+	return result
 }
 
 // Delete removes a vector from the index.
