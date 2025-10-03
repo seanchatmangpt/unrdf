@@ -152,6 +152,10 @@ func (e *Executor) executeSelect(ctx context.Context, storeInstance store.Interf
 
 // executeAsk executes an ASK query.
 func (e *Executor) executeAsk(ctx context.Context, storeInstance store.Interface, plan *Plan) (*QueryResponse, error) {
+	ctx, span := telemetry.StartSpan(ctx, "sparql.execute.ask")
+	defer span.End()
+
+	telemetry.AddEvent(ctx, "ask.started")
 	// ASK queries check if the pattern has any matches
 	for _, bgp := range plan.Patterns {
 		for _, triple := range bgp.Triples {
@@ -188,6 +192,10 @@ func (e *Executor) executeAsk(ctx context.Context, storeInstance store.Interface
 
 // executeConstruct executes a CONSTRUCT query.
 func (e *Executor) executeConstruct(ctx context.Context, storeInstance store.Interface, plan *Plan) (*QueryResponse, error) {
+	ctx, span := telemetry.StartSpan(ctx, "sparql.execute.construct")
+	defer span.End()
+
+	telemetry.AddEvent(ctx, "construct.started")
 	var constructed []map[string]interface{}
 
 	// Find all matching triples for the WHERE clause

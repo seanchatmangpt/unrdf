@@ -272,24 +272,41 @@ func (s *Server) handleTransaction(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Process transaction through store
+	addCount := 0
+	remCount := 0
+
+	if add, ok := req.Delta["add"]; ok {
+		if addSlice, ok := add.([]interface{}); ok {
+			addCount = len(addSlice)
+		}
+	}
+
+	if rem, ok := req.Delta["rem"]; ok {
+		if remSlice, ok := rem.([]interface{}); ok {
+			remCount = len(remSlice)
+		}
+	}
+
 	telemetry.AddEvent(ctx, "transaction_processing_started",
 		attribute.String("actor", req.Actor),
-		attribute.Int("delta_add_count", len(req.Delta["add"].([]interface{}))),
-		attribute.Int("delta_rem_count", len(req.Delta["rem"].([]interface{}))))
+		attribute.Int("delta_add_count", addCount),
+		attribute.Int("delta_rem_count", remCount))
 
 	// Add quads to store
 	added := 0
-	if add, ok := req.Delta["add"].([]interface{}); ok {
-		for _, item := range add {
-			if quad, ok := item.(map[string]interface{}); ok {
-				storeQuad := store.Quad{
-					Subject:   quad["subject"].(string),
-					Predicate: quad["predicate"].(string),
-					Object:    quad["object"].(string),
-					Graph:     quad["graph"].(string),
-				}
-				if err := s.store.AddQuad(ctx, storeQuad); err == nil {
-					added++
+	if add, ok := req.Delta["add"]; ok {
+		if addSlice, ok := add.([]interface{}); ok {
+			for _, item := range addSlice {
+				if quad, ok := item.(map[string]interface{}); ok {
+					storeQuad := store.Quad{
+						Subject:   quad["subject"].(string),
+						Predicate: quad["predicate"].(string),
+						Object:    quad["object"].(string),
+						Graph:     quad["graph"].(string),
+					}
+					if err := s.store.AddQuad(ctx, storeQuad); err == nil {
+						added++
+					}
 				}
 			}
 		}
@@ -297,17 +314,19 @@ func (s *Server) handleTransaction(w http.ResponseWriter, r *http.Request) {
 
 	// Remove quads from store
 	removed := 0
-	if rem, ok := req.Delta["rem"].([]interface{}); ok {
-		for _, item := range rem {
-			if quad, ok := item.(map[string]interface{}); ok {
-				storeQuad := store.Quad{
-					Subject:   quad["subject"].(string),
-					Predicate: quad["predicate"].(string),
-					Object:    quad["object"].(string),
-					Graph:     quad["graph"].(string),
-				}
-				if err := s.store.RemoveQuad(ctx, storeQuad); err == nil {
-					removed++
+	if rem, ok := req.Delta["rem"]; ok {
+		if remSlice, ok := rem.([]interface{}); ok {
+			for _, item := range remSlice {
+				if quad, ok := item.(map[string]interface{}); ok {
+					storeQuad := store.Quad{
+						Subject:   quad["subject"].(string),
+						Predicate: quad["predicate"].(string),
+						Object:    quad["object"].(string),
+						Graph:     quad["graph"].(string),
+					}
+					if err := s.store.RemoveQuad(ctx, storeQuad); err == nil {
+						removed++
+					}
 				}
 			}
 		}

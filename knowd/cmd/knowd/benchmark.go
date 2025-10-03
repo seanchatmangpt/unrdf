@@ -284,12 +284,6 @@ func (bs *BenchmarkSuite) benchmarkTransactions(ctx context.Context) error {
 	return err
 }
 
-// benchmarkHookExecution benchmarks hook execution performance
-func (bs *BenchmarkSuite) benchmarkHookExecution(ctx context.Context) error {
-	// Skip hook execution for now - requires complex setup
-	// In a real implementation, this would benchmark actual hook evaluation
-	return nil
-}
 
 // benchmarkSHACLValidation benchmarks SHACL validation performance
 func (bs *BenchmarkSuite) benchmarkSHACLValidation(ctx context.Context) error {

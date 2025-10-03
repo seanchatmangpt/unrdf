@@ -7,6 +7,8 @@ import (
 	"strings"
 
 	"github.com/unrdf/knowd/internal/store"
+	"github.com/unrdf/knowd/internal/telemetry"
+	"go.opentelemetry.io/otel/attribute"
 )
 
 // Algebra is a compiled SPARQL query.
@@ -202,6 +204,13 @@ func algebraFromBGP(bgp BasicGraphPattern) *Algebra {
 
 // Execute executes the algebra against a store.
 func (a *Algebra) Execute(ctx context.Context, executor *Executor, store store.Interface) (*QueryResponse, error) {
+	ctx, span := telemetry.StartSpan(ctx, fmt.Sprintf("sparql.algebra.%s", a.Op))
+	defer span.End()
+
+	telemetry.AddEvent(ctx, "algebra.execute",
+		attribute.String("operation", string(a.Op)),
+		attribute.Int("children.count", len(a.Children)))
+
 	switch a.Op {
 	case OpBGP:
 		return a.executeBGP(ctx, executor, store)

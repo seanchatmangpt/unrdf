@@ -438,11 +438,7 @@ func TestIntegration_ComponentIsolation(t *testing.T) {
 // from HTTP API calls through receipt verification
 func TestEndToEnd_CompleteWorkflow(t *testing.T) {
 	// Create a test server
-	config := &server.Configuration{
-		Addr:    ":8090", // Use fixed port for testing
-		DataDir: "./test-data",
-	}
-	testServer := server.New(config)
+	testServer := server.New(":8090", "./test-data", "native://", "mem")
 
 	// Start server in background
 	serverErr := make(chan error, 1)
@@ -460,7 +456,7 @@ func TestEndToEnd_CompleteWorkflow(t *testing.T) {
 	// Cleanup function
 	cleanup := func() {
 		// Stop the server by setting router to nil (simplified cleanup)
-		testServer.Router = nil
+		// Note: This is a simplified approach for testing
 		time.Sleep(100 * time.Millisecond)
 	}
 
