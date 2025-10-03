@@ -1,0 +1,306 @@
+name: Cloud Deploy
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - "internal/**"
+      - "cmd/**"
+      - "deploy/**"
+      - "go.mod"
+      - "go.sum"
+  pull_request:
+    branches: [main]
+    paths:
+      - "internal/**"
+      - "cmd/**"
+      - "deploy/**"
+      - "go.mod"
+      - "go.sum"
+
+env:
+  REGISTRY: docker.io
+  IMAGE_NAME: knowd/knowd
+  HELM_CHART_PATH: deploy/helm/knowd
+  TERRAFORM_AWS_PATH: deploy/terraform/aws
+  TERRAFORM_GCP_PATH: deploy/terraform/gcp
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: "1.22"
+
+      - name: Cache Go modules
+        uses: actions/cache@v3
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Download dependencies
+        run: go mod download
+
+      - name: Run tests
+        run: go test -v ./...
+
+      - name: Run integration tests
+        run: go test -v ./internal/server -run TestIntegration
+
+      - name: Run vector tests
+        run: go test -v ./internal/vec
+
+  build:
+    name: Build and Push Docker Image
+    runs-on: ubuntu-latest
+    needs: test
+    outputs:
+      image-tag: ${{ steps.meta.outputs.tags }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=sha,prefix={{branch}}-
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  deploy-dev:
+    name: Deploy to Development
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/develop'
+    environment: development
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-west-2
+
+      - name: Set up kubectl
+        uses: azure/k8s-set-context@v3
+        with:
+          method: kubeconfig
+          kubeconfig: ${{ secrets.KUBE_CONFIG_DEV }}
+
+      - name: Deploy to development
+        run: |
+          # Update Helm values with new image tag
+          sed -i 's|tag:.*|tag: "${{ needs.build.outputs.image-tag }}"|g' $HELM_CHART_PATH/values-dev.yaml
+
+          # Deploy to development cluster
+          helm upgrade --install knowd $HELM_CHART_PATH \
+            --namespace knowd-dev \
+            --create-namespace \
+            -f $HELM_CHART_PATH/values-dev.yaml \
+            --wait
+
+      - name: Run smoke tests
+        run: |
+          # Wait for deployment to be ready
+          kubectl wait --for=condition=available --timeout=300s deployment/knowd -n knowd-dev
+
+          # Run basic health check
+          kubectl run test-pod --image=curlimages/curl --rm -i --restart=Never \
+            -- curl -f http://knowd-service.knowd-dev.svc.cluster.local:8090/healthz
+
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: [build, deploy-dev]
+    if: github.ref == 'refs/heads/main'
+    environment: staging
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-west-2
+
+      - name: Set up kubectl
+        uses: azure/k8s-set-context@v3
+        with:
+          method: kubeconfig
+          kubeconfig: ${{ secrets.KUBE_CONFIG_STAGING }}
+
+      - name: Deploy to staging
+        run: |
+          # Update Helm values with new image tag
+          sed -i 's|tag:.*|tag: "${{ needs.build.outputs.image-tag }}"|g' $HELM_CHART_PATH/values-staging.yaml
+
+          # Deploy to staging cluster
+          helm upgrade --install knowd $HELM_CHART_PATH \
+            --namespace knowd-staging \
+            --create-namespace \
+            -f $HELM_CHART_PATH/values-staging.yaml \
+            --wait
+
+      - name: Run integration tests
+        run: |
+          # Wait for deployment to be ready
+          kubectl wait --for=condition=available --timeout=300s deployment/knowd -n knowd-staging
+
+          # Run integration tests against staging
+          kubectl run test-pod --image=curlimages/curl --rm -i --restart=Never \
+            -- curl -f http://knowd-service.knowd-staging.svc.cluster.local:8090/v1/query \
+            --data '{"query": "SELECT ?s ?p ?o WHERE { ?s ?p ?o } LIMIT 10"}' \
+            -H "Content-Type: application/json"
+
+  deploy-prod:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [build, deploy-staging]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-west-2
+
+      - name: Set up kubectl
+        uses: azure/k8s-set-context@v3
+        with:
+          method: kubeconfig
+          kubeconfig: ${{ secrets.KUBE_CONFIG_PROD }}
+
+      - name: Deploy to production
+        run: |
+          # Update Helm values with new image tag
+          sed -i 's|tag:.*|tag: "${{ needs.build.outputs.image-tag }}"|g' $HELM_CHART_PATH/values-production.yaml
+
+          # Deploy to production cluster
+          helm upgrade --install knowd $HELM_CHART_PATH \
+            --namespace knowd-prod \
+            --create-namespace \
+            -f $HELM_CHART_PATH/values-production.yaml \
+            --wait
+
+      - name: Verify production deployment
+        run: |
+          # Wait for deployment to be ready
+          kubectl wait --for=condition=available --timeout=600s deployment/knowd -n knowd-prod
+
+          # Verify all replicas are running
+          kubectl get pods -n knowd-prod -l app=knowd
+
+          # Run production health checks
+          kubectl run test-pod --image=curlimages/curl --rm -i --restart=Never \
+            -- curl -f http://knowd-service.knowd-prod.svc.cluster.local:8090/healthz
+
+      - name: Notify deployment success
+        run: |
+          echo "Production deployment completed successfully"
+          echo "Image: ${{ needs.build.outputs.image-tag }}"
+          echo "Environment: production"
+
+  terraform-plan:
+    name: Terraform Plan
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-west-2
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        run: |
+          cd $TERRAFORM_AWS_PATH
+          terraform init
+
+      - name: Terraform Plan
+        run: |
+          cd $TERRAFORM_AWS_PATH
+          terraform plan -no-color
+
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.build.outputs.image-tag }}
+          format: "sarif"
+          output: "trivy-results.sarif"
+
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: "trivy-results.sarif"
+
+  performance-test:
+    name: Performance Test
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run k6 performance tests
+        uses: grafana/k6-action@v0.3.0
+        with:
+          filename: tests/performance/load-test.js
+          flags: --vus 100 --duration 60s
+
+      - name: Upload performance results
+        uses: actions/upload-artifact@v4
+        with:
+          name: performance-results
+          path: |
+            tests/performance/results.json
+            tests/performance/summary.json
