@@ -163,13 +163,6 @@ func (s *Signer) SaveKeyPair(privateKeyPath, publicKeyPath string) error {
 	return nil
 }
 
-// JWSHeader represents a JWS header.
-type JWSHeader struct {
-	Algorithm string `json:"alg"`
-	Curve     string `json:"crv,omitempty"`
-	KeyID     string `json:"kid,omitempty"`
-	Type      string `json:"typ,omitempty"`
-}
 
 // JSONWebSignature represents a complete JWS structure.
 type JSONWebSignature struct {

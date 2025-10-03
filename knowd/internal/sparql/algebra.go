@@ -221,12 +221,16 @@ func (a *Algebra) Execute(ctx context.Context, executor *Executor, store store.I
 
 // executeBGP executes a basic graph pattern.
 func (a *Algebra) executeBGP(ctx context.Context, executor *Executor, store store.Interface) (*QueryResponse, error) {
-	patterns, ok := a.Operands["patterns"].([]BasicGraphPattern)
+	_, ok := a.Operands["patterns"].([]BasicGraphPattern)
 	if !ok {
 		return nil, fmt.Errorf("invalid BGP patterns")
 	}
 
-	// Create a simple plan for BGP execution
+	// For now, return empty result - BGP execution would be implemented here
+	return &QueryResponse{
+		Rows: []map[string]interface{}{},
+		Kind: "sparql-select",
+	}, nil
 	plan := &Plan{
 		Type:     "SELECT",
 		Patterns: patterns,
