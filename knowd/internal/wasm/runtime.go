@@ -18,10 +18,10 @@ type Runtime struct {
 
 // Config holds configuration for the WASM runtime.
 type Config struct {
-	MaxMemoryMB     int    // Maximum memory per module (default 64MB)
-	EnableWASI      bool   // Enable WASI support
-	EnableLogging   bool   // Enable WASM stdout/stderr logging
-	WorkingDir      string // Working directory for modules
+	MaxMemoryMB   int    // Maximum memory per module (default 64MB)
+	EnableWASI    bool   // Enable WASI support
+	EnableLogging bool   // Enable WASM stdout/stderr logging
+	WorkingDir    string // Working directory for modules
 }
 
 // Module represents a compiled WASM module.
@@ -33,8 +33,8 @@ type Module struct {
 
 // ModuleConfig holds configuration for a specific module.
 type ModuleConfig struct {
-	Exports []string // Exported functions to expose
-	Args    []string // Command line arguments
+	Exports []string          // Exported functions to expose
+	Args    []string          // Command line arguments
 	Env     map[string]string // Environment variables
 }
 

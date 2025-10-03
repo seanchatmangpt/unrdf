@@ -74,8 +74,8 @@ func (h *HashEmbedder) GetModelName() string {
 
 // Vector represents a vector in the embedding space.
 type Vector struct {
-	ID       string    `json:"id"`
-	Vector   []float32 `json:"vector"`
+	ID       string                 `json:"id"`
+	Vector   []float32              `json:"vector"`
 	Metadata map[string]interface{} `json:"metadata,omitempty"`
 }
 
@@ -87,14 +87,14 @@ type Distance struct {
 
 // VectorSearchResult represents the result of a vector search.
 type VectorSearchResult struct {
-	QueryVector []float32   `json:"query_vector"`
-	Results     []Distance  `json:"results"`
-	Total       int         `json:"total"`
+	QueryVector []float32  `json:"query_vector"`
+	Results     []Distance `json:"results"`
+	Total       int        `json:"total"`
 }
 
 // SearchOptions configures vector search parameters.
 type SearchOptions struct {
-	TopK       int     `json:"top_k"`        // Number of results to return
-	Threshold  float32 `json:"threshold"`    // Minimum similarity threshold
-	IncludeVector bool  `json:"include_vector"` // Include vectors in results
+	TopK          int     `json:"top_k"`          // Number of results to return
+	Threshold     float32 `json:"threshold"`      // Minimum similarity threshold
+	IncludeVector bool    `json:"include_vector"` // Include vectors in results
 }

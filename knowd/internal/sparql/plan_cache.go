@@ -35,16 +35,20 @@ func NewPlanCache(config CacheConfig) *PlanCache {
 
 // Get retrieves a plan from the cache.
 func (c *PlanCache) Get(query string) *Plan {
-	c.mu.Lock()
-	defer c.mu.Unlock()
-	
-	if element, found := c.cache[query]; found {
-		// Move to front (most recently used)
-		c.order.MoveToFront(element)
-		return element.Value.(*cacheEntry).plan
+	c.mu.RLock()
+	element, found := c.cache[query]
+	c.mu.RUnlock()
+
+	if !found {
+		return nil
 	}
-	
-	return nil
+
+	// Move to front (most recently used) - need write lock for this
+	c.mu.Lock()
+	c.order.MoveToFront(element)
+	c.mu.Unlock()
+
+	return element.Value.(*cacheEntry).plan
 }
 
 // Put stores a plan in the cache.

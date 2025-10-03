@@ -15,6 +15,9 @@ type Parser struct {
 	selectPattern    *regexp.Regexp
 	askPattern       *regexp.Regexp
 	constructPattern *regexp.Regexp
+	// Namespace prefix mappings
+	namespaces map[string]string
+	prefixes   map[string]string
 }
 
 // Plan represents a compiled SPARQL query plan.
@@ -90,10 +93,51 @@ type BindClause struct {
 // NewParser creates a new SPARQL parser.
 func NewParser() *Parser {
 	return &Parser{
-		selectPattern:    regexp.MustCompile(`(?i)^\s*SELECT\s+(.+?)\s+WHERE\s*\{`),
-		askPattern:       regexp.MustCompile(`(?i)^\s*ASK\s+WHERE\s*\{`),
-		constructPattern: regexp.MustCompile(`(?i)^\s*CONSTRUCT\s*\{`),
+		selectPattern:    regexp.MustCompile(`(?i)(?:PREFIX\s+\w+:\s*<[^>]+>\s*)*SELECT\s+(.+?)\s+WHERE\s*\{`),
+		askPattern:       regexp.MustCompile(`(?i)(?:PREFIX\s+\w+:\s*<[^>]+>\s*)*ASK\s+WHERE\s*\{`),
+		constructPattern: regexp.MustCompile(`(?i)(?:PREFIX\s+\w+:\s*<[^>]+>\s*)*CONSTRUCT\s*\{`),
+		namespaces:       make(map[string]string),
 	}
+}
+
+// parsePrefixes extracts PREFIX declarations from the query.
+func (p *Parser) parsePrefixes(query string) {
+	// Simple regex to find PREFIX declarations
+	prefixRegex := regexp.MustCompile(`(?i)PREFIX\s+(\w+):\s*<([^>]+)>`)
+	matches := prefixRegex.FindAllStringSubmatch(query, -1)
+
+	for _, match := range matches {
+		if len(match) >= 3 {
+			prefix := match[1]
+			uri := match[2]
+			p.namespaces[prefix] = uri
+		}
+	}
+}
+
+// expandPrefixes expands prefixed names in the query using the namespace map.
+func (p *Parser) expandPrefixes(term string) string {
+	// Handle prefixed names like foaf:name
+	if strings.Contains(term, ":") {
+		parts := strings.SplitN(term, ":", 2)
+		if len(parts) == 2 {
+			prefix := parts[0]
+			localName := parts[1]
+
+			if namespace, exists := p.namespaces[prefix]; exists {
+				// Return full URI with angle brackets
+				return fmt.Sprintf("<%s%s>", namespace, localName)
+			}
+		}
+	}
+
+	// Handle full URIs already in angle brackets
+	if strings.HasPrefix(term, "<") && strings.HasSuffix(term, ">") {
+		return term
+	}
+
+	// Handle variables and literals
+	return term
 }
 
 // Parse parses a SPARQL query string and returns a plan.
@@ -102,6 +146,9 @@ func (p *Parser) Parse(query string) (*Plan, error) {
 	if query == "" {
 		return nil, errors.New("empty query")
 	}
+
+	// Extract PREFIX declarations
+	p.parsePrefixes(query)
 
 	// Try SELECT query
 	if p.selectPattern.MatchString(query) {
@@ -239,9 +286,9 @@ func (p *Parser) parseColumns(columnsStr string) []string {
 		return []string{"*"}
 	}
 
-	// Simple variable parsing
+	// Simple variable parsing - split on whitespace
 	columns := []string{}
-	parts := strings.Split(columnsStr, ",")
+	parts := strings.Fields(columnsStr)
 	for _, part := range parts {
 		column := strings.TrimSpace(part)
 		if strings.HasPrefix(column, "?") {
@@ -378,9 +425,9 @@ func (p *Parser) parseTriplePattern(line string) *Triple {
 	}
 
 	return &Triple{
-		Subject:   parts[0],
-		Predicate: parts[1],
-		Object:    strings.Join(parts[2:], " "),
+		Subject:   p.expandPrefixes(parts[0]),
+		Predicate: p.expandPrefixes(parts[1]),
+		Object:    p.expandPrefixes(strings.Join(parts[2:], " ")),
 	}
 }
 

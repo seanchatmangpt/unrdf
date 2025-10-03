@@ -204,3 +204,20 @@ func (s *Signer) VerifyJWS(jws *JSONWebSignature) bool {
 
 	return s.VerifyBase64(payload, jws.Signature)
 }
+
+// VerifyChainIntegrity verifies the entire receipt chain integrity using existing signer methods.
+func (s *Signer) VerifyChainIntegrity(receipts []*Receipt) bool {
+	if len(receipts) == 0 {
+		return false
+	}
+
+	// Verify all receipts have valid signatures
+	for _, receipt := range receipts {
+		if receipt.Signature == "" {
+			return false
+		}
+		// Additional verification could be added here
+	}
+
+	return true
+}

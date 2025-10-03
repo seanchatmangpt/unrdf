@@ -16,7 +16,6 @@ This documentation is organized as follows:
 - [SPARQL Queries](./user-guide/sparql-queries.md) - SPARQL query examples and best practices
 - [SHACL Validation](./user-guide/shacl-validation.md) - Using SHACL for data validation
 - [Hooks](./user-guide/hooks.md) - Event-driven processing with hooks
-- [Transactions](./user-guide/transactions.md) - Transaction handling and receipts
 
 ### 🏗️ **[Architecture](./architecture/)**
 - [Overview](./architecture/overview.md) - High-level architecture overview
