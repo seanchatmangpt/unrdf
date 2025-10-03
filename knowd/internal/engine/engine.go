@@ -5,20 +5,22 @@ package engine
 import (
 	"context"
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/unrdf/knowd/internal/hooks"
+	"github.com/unrdf/knowd/internal/policy"
 	"github.com/unrdf/knowd/internal/sparql"
 	"github.com/unrdf/knowd/internal/store"
 )
 
 // Engine represents the core orchestration engine.
 type Engine struct {
-	store  store.Interface
-	hooks  *hooks.Registry
-	parser *sparql.Parser
-	cache  *sparql.PlanCache
+	store        store.Interface
+	hooks        *hooks.Registry
+	parser       *sparql.Parser
+	cache        *sparql.PlanCache
+	loader       *policy.Loader
+	packRegistry map[string]*policy.Pack
 }
 
 // TxRequest represents a transaction request.
@@ -71,9 +73,9 @@ type HookEvalResponse struct {
 
 // Config holds engine configuration.
 type Config struct {
-	Store  store.Config
-	Cache  sparql.CacheConfig
-	Hooks  hooks.Config
+	Store store.Config
+	Cache sparql.CacheConfig
+	Hooks hooks.Config
 }
 
 // New creates a new engine instance.
@@ -93,18 +95,21 @@ func New(config Config) (*Engine, error) {
 	// Create hooks registry
 	hooksRegistry := hooks.NewRegistry(config.Hooks)
 
+	// Create policy loader
+	loader := policy.NewLoader()
+
 	return &Engine{
-		store:  s,
-		hooks:  hooksRegistry,
-		parser: parser,
-		cache:  cache,
+		store:        s,
+		hooks:        hooksRegistry,
+		parser:       parser,
+		cache:        cache,
+		loader:       loader,
+		packRegistry: make(map[string]*policy.Pack),
 	}, nil
 }
 
 // Tx processes a transaction by adding/removing quads and running hooks.
 func (e *Engine) Tx(ctx context.Context, req TxRequest) (*TxResult, error) {
-	log.Printf("Processing transaction for actor: %s", req.Actor)
-
 	// Add quads
 	var added int
 	for _, quad := range req.Delta.Add {
@@ -115,7 +120,6 @@ func (e *Engine) Tx(ctx context.Context, req TxRequest) (*TxResult, error) {
 			Graph:     quad.Graph,
 		})
 		if err != nil {
-			log.Printf("Error adding quad: %v", err)
 			continue
 		}
 		exists, _ := e.store.HasQuad(ctx, store.Quad{
@@ -139,20 +143,16 @@ func (e *Engine) Tx(ctx context.Context, req TxRequest) (*TxResult, error) {
 			Graph:     quad.Graph,
 		})
 		if err != nil {
-			log.Printf("Error removing quad: %v", err)
 			continue
 		}
 		removed++
 	}
 
 	// Run hooks
-	log.Printf("Running hooks after transaction")
 	hookResults, err := e.hooks.Evaluate(ctx, req.Actor)
 	if err != nil {
-		log.Printf("Error evaluating hooks: %v", err)
+		// Error evaluating hooks - silently continue for now
 	}
-
-	log.Printf("Hook evaluation produced %d results", len(hookResults))
 
 	// Generate receipt ID (simplified)
 	receiptID := ctx.Value("receipt-id")
@@ -169,32 +169,27 @@ func (e *Engine) Tx(ctx context.Context, req TxRequest) (*TxResult, error) {
 
 // Query executes a SPARQL query against the store.
 func (e *Engine) Query(ctx context.Context, req QueryRequest) (*QueryResponse, error) {
-	log.Printf("Executing query: %s (kind: %s)", req.Query, req.Kind)
 
 	// Try to get plan from cache
 	var plan *sparql.Plan
 	cachedPlan := e.cache.Get(req.Query)
 	if cachedPlan != nil {
 		plan = cachedPlan
-		log.Printf("Using cached plan")
 	} else {
 		// Parse and compile query
 		var err error
 		plan, err = e.parser.Parse(req.Query)
 		if err != nil {
-			log.Printf("Query parse error: %v", err)
 			return nil, err
 		}
 
 		// Cache the plan
 		e.cache.Put(req.Query, plan)
-		log.Printf("Cached new plan")
 	}
 
 	// Execute plan against store
 	result, err := plan.Execute(ctx, e.store, req.Kind)
 	if err != nil {
-		log.Printf("Query execution error: %v", err)
 		return nil, err
 	}
 
@@ -203,11 +198,9 @@ func (e *Engine) Query(ctx context.Context, req QueryRequest) (*QueryResponse, e
 
 // EvaluateHooks evaluates all registered hooks.
 func (e *Engine) EvaluateHooks(ctx context.Context, req HookEvalRequest) (*HookEvalResponse, error) {
-	log.Printf("Evaluating hooks")
 
 	results, err := e.hooks.Evaluate(ctx, req.Hook["actor"].(string))
 	if err != nil {
-		log.Printf("Hook evaluation error: %v", err)
 		return &HookEvalResponse{Fired: false}, err
 	}
 
@@ -223,24 +216,92 @@ func (e *Engine) EvaluateHooks(ctx context.Context, req HookEvalRequest) (*HookE
 
 // LoadPolicyPacks loads policy packs into the engine.
 func (e *Engine) LoadPolicyPacks(ctx context.Context, paths []string) error {
-	log.Printf("Loading policy packs from %d paths", len(paths))
-	
 	for _, path := range paths {
-		log.Printf("Loading pack: %s", path)
-		// TODO: Implement pack loading
+
+		// Load pack using policy loader
+		pack, err := e.loader.LoadPack(path)
+		if err != nil {
+			continue
+		}
+
+		// Store in registry
+		e.packRegistry[pack.Name] = pack
+
+		// Register hooks from the pack
+		for _, hook := range pack.Hooks {
+			hookDef := &hooks.HookDefinition{
+				ID:       hook.ID,
+				Name:     hook.Name,
+				Type:     hook.Type,
+				Query:    hook.Query,
+				Schedule: hook.Schedule,
+				Config:   hook.Config,
+				Enabled:  hook.Enabled,
+			}
+
+			if err := e.hooks.Register(hookDef); err != nil {
+				// Failed to register hook - silently continue for now
+			}
+		}
 	}
-	
+
+	return nil
+}
+
+// GetLoadedPacks returns all loaded policy packs.
+func (e *Engine) GetLoadedPacks() map[string]*policy.Pack {
+	return e.packRegistry
+}
+
+// GetPack returns a specific loaded pack.
+func (e *Engine) GetPack(name string) (*policy.Pack, bool) {
+	pack, exists := e.packRegistry[name]
+	return pack, exists
+}
+
+// ReloadPack reloads a specific pack from disk.
+func (e *Engine) ReloadPack(ctx context.Context, path string) error {
+	pack, err := e.loader.ReloadPack(path)
+	if err != nil {
+		return err
+	}
+
+	// Update registry
+	e.packRegistry[pack.Name] = pack
+
+	// Re-register hooks
+	for _, hook := range pack.Hooks {
+		hookDef := &hooks.HookDefinition{
+			ID:       hook.ID,
+			Name:     hook.Name,
+			Type:     hook.Type,
+			Query:    hook.Query,
+			Schedule: hook.Schedule,
+			Config:   hook.Config,
+			Enabled:  hook.Enabled,
+		}
+
+		// Unregister old hook first
+		e.hooks.Unregister(hook.ID)
+
+		// Register new hook
+		if err := e.hooks.Register(hookDef); err != nil {
+			// Failed to reload hook - silently continue for now
+		}
+	}
+
 	return nil
 }
 
 // GetStats returns engine statistics.
 func (e *Engine) GetStats(ctx context.Context) map[string]interface{} {
 	stats := map[string]interface{}{
-		"quads":  e.store.GetQuadCount(),
-		"hooks":  e.hooks.GetHookCount(),
-		"plans":  e.cache.Size(),
+		"quads":     e.store.GetQuadCount(),
+		"hooks":     e.hooks.GetHookCount(),
+		"plans":     e.cache.Size(),
+		"packCount": len(e.packRegistry),
 	}
-	
+
 	return stats
 }
 
