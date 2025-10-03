@@ -29,8 +29,9 @@ type ValidationError struct {
 
 // ValidationResult represents the result of pack validation.
 type ValidationResult struct {
-	Valid  bool              `json:"valid"`
-	Errors []ValidationError `json:"errors,omitempty"`
+	Valid    bool              `json:"valid"`
+	Errors   []ValidationError `json:"errors,omitempty"`
+	Warnings []ValidationError `json:"warnings,omitempty"`
 }
 
 // NewPackValidator creates a new pack validator with the given schema path.
@@ -98,8 +99,16 @@ func (v *PackValidator) ValidatePackData(packData []byte) (*ValidationResult, er
 		return nil, fmt.Errorf("validation failed: %w", err)
 	}
 
+	validationResult := &ValidationResult{
+		Valid:    result.Valid(),
+		Errors:   []ValidationError{},
+		Warnings: []ValidationError{},
+	}
+
 	if result.Valid() {
-		return &ValidationResult{Valid: true}, nil
+		// Perform additional semantic validation
+		v.performSemanticValidation(packData, validationResult)
+		return validationResult, nil
 	}
 
 	// Convert validation errors
@@ -112,10 +121,172 @@ func (v *PackValidator) ValidatePackData(packData []byte) (*ValidationResult, er
 		})
 	}
 
-	return &ValidationResult{
-		Valid:  false,
-		Errors: errors,
-	}, nil
+	validationResult.Errors = errors
+	return validationResult, nil
+}
+
+// performSemanticValidation performs additional semantic validation beyond JSON schema.
+func (v *PackValidator) performSemanticValidation(packData []byte, result *ValidationResult) {
+	var pack map[string]interface{}
+	if err := json.Unmarshal(packData, &pack); err != nil {
+		return
+	}
+
+	// Validate version format
+	if version, exists := pack["version"]; exists {
+		versionStr := fmt.Sprintf("%v", version)
+		if !strings.HasPrefix(versionStr, "v") || !strings.Contains(versionStr[1:], ".") {
+			result.Errors = append(result.Errors, ValidationError{
+				Field:   "version",
+				Message: "Version must follow pattern vX.Y.Z",
+				Value:   version,
+			})
+		}
+	}
+
+	// Validate queries
+	if queries, exists := pack["queries"]; exists {
+		queriesMap, ok := queries.(map[string]interface{})
+		if ok {
+			v.validateQueries(queriesMap, result)
+		}
+	}
+
+	// Validate hooks
+	if hooks, exists := pack["hooks"]; exists {
+		hooksMap, ok := hooks.(map[string]interface{})
+		if ok {
+			v.validateHooks(hooksMap, result)
+		}
+	}
+
+	// Validate shapes
+	if shapes, exists := pack["shapes"]; exists {
+		shapesMap, ok := shapes.(map[string]interface{})
+		if ok {
+			v.validateShapes(shapesMap, result)
+		}
+	}
+}
+
+// validateQueries validates query definitions.
+func (v *PackValidator) validateQueries(queries map[string]interface{}, result *ValidationResult) {
+	for queryName, queryData := range queries {
+		queryMap, ok := queryData.(map[string]interface{})
+		if !ok {
+			continue
+		}
+
+		// Check required fields
+		if _, hasQuery := queryMap["query"]; !hasQuery {
+			result.Errors = append(result.Errors, ValidationError{
+				Field:   fmt.Sprintf("queries.%s", queryName),
+				Message: "Query field is required",
+				Value:   queryData,
+			})
+		}
+
+		// Validate query kind
+		if kind, hasKind := queryMap["kind"]; hasKind {
+			kindStr := fmt.Sprintf("%v", kind)
+			validKinds := []string{"sparql-select", "sparql-ask", "sparql-construct"}
+			valid := false
+			for _, validKind := range validKinds {
+				if kindStr == validKind {
+					valid = true
+					break
+				}
+			}
+			if !valid {
+				result.Errors = append(result.Errors, ValidationError{
+					Field:   fmt.Sprintf("queries.%s.kind", queryName),
+					Message: fmt.Sprintf("Invalid query kind '%s'", kindStr),
+					Value:   kind,
+				})
+			}
+		}
+	}
+}
+
+// validateHooks validates hook definitions.
+func (v *PackValidator) validateHooks(hooks map[string]interface{}, result *ValidationResult) {
+	for hookName, hookData := range hooks {
+		hookMap, ok := hookData.(map[string]interface{})
+		if !ok {
+			continue
+		}
+
+		// Check required fields
+		if _, hasKind := hookMap["kind"]; !hasKind {
+			result.Errors = append(result.Errors, ValidationError{
+				Field:   fmt.Sprintf("hooks.%s", hookName),
+				Message: "Kind field is required",
+				Value:   hookData,
+			})
+		}
+
+		// Validate hook kind
+		if kind, hasKind := hookMap["kind"]; hasKind {
+			kindStr := fmt.Sprintf("%v", kind)
+			validKinds := []string{"ask", "shacl", "delta", "threshold", "count", "window"}
+			valid := false
+			for _, validKind := range validKinds {
+				if kindStr == validKind {
+					valid = true
+					break
+				}
+			}
+			if !valid {
+				result.Errors = append(result.Errors, ValidationError{
+					Field:   fmt.Sprintf("hooks.%s.kind", hookName),
+					Message: fmt.Sprintf("Invalid hook kind '%s'", kindStr),
+					Value:   kind,
+				})
+			}
+		}
+
+		// Validate WASM effects
+		if effect, hasEffect := hookMap["effect"]; hasEffect {
+			effectMap, ok := effect.(map[string]interface{})
+			if ok {
+				if wasmPath, hasWASM := effectMap["wasm"]; hasWASM {
+					wasmStr := fmt.Sprintf("%v", wasmPath)
+					if !strings.HasSuffix(wasmStr, ".wasm") {
+						result.Errors = append(result.Errors, ValidationError{
+							Field:   fmt.Sprintf("hooks.%s.effect.wasm", hookName),
+							Message: "WASM file must have .wasm extension",
+							Value:   wasmPath,
+						})
+					}
+				}
+			}
+		}
+	}
+}
+
+// validateShapes validates SHACL shapes.
+func (v *PackValidator) validateShapes(shapes map[string]interface{}, result *ValidationResult) {
+	for shapeName, shapeData := range shapes {
+		shapeStr := fmt.Sprintf("%v", shapeData)
+
+		// Basic validation - check for SHACL vocabulary
+		if !strings.Contains(shapeStr, "sh:") {
+			result.Warnings = append(result.Warnings, ValidationError{
+				Field:   fmt.Sprintf("shapes.%s", shapeName),
+				Message: "Shape doesn't appear to contain SHACL vocabulary",
+				Value:   shapeData,
+			})
+		}
+
+		// Check for prefix declarations
+		if !strings.Contains(shapeStr, "@prefix") && !strings.Contains(shapeStr, "PREFIX") {
+			result.Warnings = append(result.Warnings, ValidationError{
+				Field:   fmt.Sprintf("shapes.%s", shapeName),
+				Message: "Shape doesn't contain prefix declarations",
+				Value:   shapeData,
+			})
+		}
+	}
 }
 
 // ValidatePackString validates a policy pack from a JSON string.

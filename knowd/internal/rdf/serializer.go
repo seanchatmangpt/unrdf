@@ -31,7 +31,7 @@ func (s *Serializer) AddNamespace(prefix, namespace string) {
 // ToTurtle serializes RDF triples to Turtle format.
 func (s *Serializer) ToTurtle(triples []rdf.Triple) string {
 	var result strings.Builder
-	
+
 	// Output namespace declarations
 	if len(s.namespaces) > 0 {
 		for _, prefix := range s.sortedPrefixes() {
@@ -40,60 +40,60 @@ func (s *Serializer) ToTurtle(triples []rdf.Triple) string {
 		}
 		result.WriteString("\n")
 	}
-	
+
 	// Group triples by subject for compact Turtle output
 	subjectGroups := s.groupBySubject(triples)
-	
+
 	for _, subject := range s.sortedSubjects(subjectGroups) {
 		triplets := subjectGroups[subject]
 		if len(triplets) == 0 {
 			continue
 		}
-		
+
 		result.WriteString(subject + " ")
-		
+
 		// Output predicates and objects
 		for i, triple := range triplets {
 			predicate := s.shortenPredicate(triple.Pred.String())
 			object := s.shortenObject(triple.Obj.String())
-			
+
 			result.WriteString(predicate + " " + object)
-			
+
 			if i < len(triplets)-1 {
 				result.WriteString(" ;")
 			}
 			result.WriteString("\n")
 		}
-		
+
 		result.WriteString(" .\n\n")
 	}
-	
+
 	return result.String()
 }
 
 // ToNTriples serializes RDF triples to N-Triples format.
 func (s *Serializer) ToNTriples(triples []rdf.Triple) string {
 	var result strings.Builder
-	
+
 	for _, triple := range triples {
 		result.WriteString(triple.Subj.String() + " ")
 		result.WriteString(triple.Pred.String() + " ")
 		result.WriteString(triple.Obj.String() + " .\n")
 	}
-	
+
 	return result.String()
 }
 
 // ToNQuads serializes RDF triples to N-Quads format.
 func (s *Serializer) ToNQuads(triples []rdf.Triple) string {
 	var result strings.Builder
-	
+
 	for _, triple := range triples {
 		result.WriteString(triple.Subj.String() + " ")
 		result.WriteString(triple.Pred.String() + " ")
 		result.WriteString(triple.Obj.String() + " <" + s.getGraph(triple) + "> .\n")
 	}
-	
+
 	return result.String()
 }
 
@@ -101,11 +101,11 @@ func (s *Serializer) ToNQuads(triples []rdf.Triple) string {
 func (s *Serializer) ToJsonLd(triples []rdf.Triple) string {
 	// Create a simple JSON-LD representation
 	var result strings.Builder
-	
+
 	result.WriteString("[\n")
 	result.WriteString("  {\n")
 	result.WriteString("    \"@context\": {\n")
-	
+
 	// Add context mappings
 	for _, prefix := range s.sortedPrefixes() {
 		namespace := s.prefixes[prefix]
@@ -115,33 +115,33 @@ func (s *Serializer) ToJsonLd(triples []rdf.Triple) string {
 		}
 		result.WriteString("\n")
 	}
-	
+
 	result.WriteString("    },\n")
 	result.WriteString("    \"@graph\": [\n")
-	
+
 	// Group by subject for clean JSON-LD output
 	subjectGroups := s.groupBySubject(triples)
 	tripleCount := 0
-	
+
 	for _, subject := range s.sortedSubjects(subjectGroups) {
 		triplets := subjectGroups[subject]
 		if len(triplets) == 0 {
 			continue
 		}
-		
+
 		result.WriteString("      {\n")
 		result.WriteString("        \"@id\": \"" + s.shortenSubject(subject) + "\",\n")
-		
+
 		// Group predicates and objects
 		predicateGroups := s.groupByPredicate(triplets)
 		propCount := 0
-		
+
 		for _, predicate := range s.sortedPredicates(predicateGroups) {
 			objects := predicateGroups[predicate]
 			predShort := s.shortenPredicateForJson(predicate)
-			
+
 			result.WriteString("        \"" + predShort + "\": ")
-			
+
 			if len(objects) == 1 {
 				result.WriteString("\"" + s.shortenObjectForJson(objects[0].Obj.String()) + "\"")
 			} else {
@@ -155,14 +155,14 @@ func (s *Serializer) ToJsonLd(triples []rdf.Triple) string {
 				}
 				result.WriteString("        ]")
 			}
-			
+
 			propCount++
 			if propCount < len(predicateGroups) {
 				result.WriteString(",")
 			}
 			result.WriteString("\n")
 		}
-		
+
 		result.WriteString("      }")
 		tripleCount++
 		if tripleCount < len(subjectGroups) {
@@ -170,11 +170,11 @@ func (s *Serializer) ToJsonLd(triples []rdf.Triple) string {
 		}
 		result.WriteString("\n")
 	}
-	
+
 	result.WriteString("    ]\n")
 	result.WriteString("  }\n")
 	result.WriteString("]\n")
-	
+
 	return result.String()
 }
 
@@ -253,7 +253,7 @@ func (s *Serializer) shortenIRI(iri string) string {
 	if strings.HasPrefix(iri, "<") && strings.HasSuffix(iri, ">") {
 		iri = iri[1 : len(iri)-1]
 	}
-	
+
 	// Try to match against known namespaces
 	for namespace, prefix := range s.namespaces {
 		if strings.HasPrefix(iri, namespace) {
@@ -261,7 +261,7 @@ func (s *Serializer) shortenIRI(iri string) string {
 			return prefix + ":" + localName
 		}
 	}
-	
+
 	return "<" + iri + ">"
 }
 

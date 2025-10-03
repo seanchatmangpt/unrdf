@@ -288,18 +288,6 @@ func (e *Executor) evaluateFilter(expression string, row map[string]interface{})
 	return true
 }
 
-// parseNumber attempts to parse a string as a number.
-func parseNumber(s string) (float64, error) {
-	// Simple number parsing (could be enhanced)
-	if s == "" {
-		return 0, fmt.Errorf("empty string")
-	}
-
-	// Try to parse as float
-	var result float64
-	_, err := fmt.Sscanf(s, "%f", &result)
-	return result, err
-}
 
 // applyGroupBy applies GROUP BY clause to results.
 func (e *Executor) applyGroupBy(rows []map[string]interface{}, groupBy []string) []map[string]interface{} {

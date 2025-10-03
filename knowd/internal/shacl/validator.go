@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"regexp"
 	"strings"
-	
+
 	"github.com/knakk/rdf"
 )
 
@@ -143,7 +143,7 @@ func (v *Validator) parseData(data string) ([][]string, error) {
 	if strings.TrimSpace(data)[0] == '{' || strings.TrimSpace(data)[0] == '[' {
 		return v.parseJsonLd(data)
 	}
-	
+
 	// Use knakk/rdf library to parse Turtle/N-Triples
 	triples, err := rdf.NewTripleDecoder(strings.NewReader(data), rdf.Turtle).DecodeAll()
 	if err != nil {
@@ -173,12 +173,12 @@ func (v *Validator) parseJsonLd(data string) ([][]string, error) {
 	if err := json.Unmarshal([]byte(data), &jsonld); err != nil {
 		return nil, fmt.Errorf("failed to parse JSON-LD: %w", err)
 	}
-	
+
 	var graph [][]string
-	
+
 	// Simple JSON-LD to N-Triples conversion
 	var jsonObjects []map[string]interface{}
-	
+
 	switch obj := jsonld.(type) {
 	case []interface{}:
 		for _, item := range obj {
@@ -191,17 +191,17 @@ func (v *Validator) parseJsonLd(data string) ([][]string, error) {
 	default:
 		return nil, fmt.Errorf("unsupported JSON-LD format")
 	}
-	
+
 	for _, obj := range jsonObjects {
 		for key, value := range obj {
 			if key == "@context" {
 				continue // Skip context
 			}
-			
+
 			if id, hasId := obj["@id"]; hasId {
 				// Extract subject
 				subject := v.jsonToRdfTerm(id)
-				
+
 				// Handle @type
 				if types, hasType := obj["@type"]; hasType {
 					graph = append(graph, []string{
@@ -210,7 +210,7 @@ func (v *Validator) parseJsonLd(data string) ([][]string, error) {
 						v.jsonToRdfTerm(types),
 					})
 				}
-				
+
 				// Handle other properties
 				if key != "@id" && key != "@type" && key != "@context" {
 					predicate := key
@@ -219,7 +219,7 @@ func (v *Validator) parseJsonLd(data string) ([][]string, error) {
 					} else {
 						predicate = "<" + predicate + ">"
 					}
-					
+
 					graph = append(graph, []string{
 						subject,
 						predicate,
@@ -229,7 +229,7 @@ func (v *Validator) parseJsonLd(data string) ([][]string, error) {
 			}
 		}
 	}
-	
+
 	return graph, nil
 }
 
@@ -441,6 +441,32 @@ func (v *Validator) validateProperty(ctx context.Context, node string, prop *Pro
 		}
 	}
 
+	// Check OR constraints (any of the conditions must be satisfied)
+	if len(prop.Or) > 0 {
+		if !v.validateOrConstraint(node, values, prop.Or, graph) {
+			violations = append(violations, &Violation{
+				FocusNode:   node,
+				ResultPath:  prop.Path,
+				SourceShape: prop.ID,
+				Message:     fmt.Sprintf("Values do not satisfy any OR constraint"),
+				Severity:    "Violation",
+			})
+		}
+	}
+
+	// Check XONE constraints (exactly one of the conditions must be satisfied)
+	if len(prop.Xone) > 0 {
+		if !v.validateXoneConstraint(node, values, prop.Xone, graph) {
+			violations = append(violations, &Violation{
+				FocusNode:   node,
+				ResultPath:  prop.Path,
+				SourceShape: prop.ID,
+				Message:     fmt.Sprintf("Values do not satisfy XONE constraint (exactly one required)"),
+				Severity:    "Violation",
+			})
+		}
+	}
+
 	return violations
 }
 
@@ -515,4 +541,90 @@ func extractID(line string) string {
 		}
 	}
 	return "unknown"
+}
+
+// validateOrConstraint validates that at least one of the OR constraints is satisfied.
+func (v *Validator) validateOrConstraint(node string, values []string, orConstraints []*Shape, graph [][]string) bool {
+	if len(orConstraints) == 0 {
+		return true // No constraints to validate
+	}
+
+	for _, constraint := range orConstraints {
+		// Check if this constraint is satisfied for any value
+		constraintSatisfied := false
+		for _, value := range values {
+			if v.validateShapeForValue(node, value, constraint, graph) {
+				constraintSatisfied = true
+				break
+			}
+		}
+		if constraintSatisfied {
+			return true // At least one OR constraint is satisfied
+		}
+	}
+
+	return false // None of the OR constraints are satisfied
+}
+
+// validateXoneConstraint validates that exactly one of the XONE constraints is satisfied.
+func (v *Validator) validateXoneConstraint(node string, values []string, xoneConstraints []*Shape, graph [][]string) bool {
+	if len(xoneConstraints) == 0 {
+		return true // No constraints to validate
+	}
+
+	satisfiedCount := 0
+	for _, constraint := range xoneConstraints {
+		// Check if this constraint is satisfied for any value
+		constraintSatisfied := false
+		for _, value := range values {
+			if v.validateShapeForValue(node, value, constraint, graph) {
+				constraintSatisfied = true
+				break
+			}
+		}
+		if constraintSatisfied {
+			satisfiedCount++
+		}
+	}
+
+	return satisfiedCount == 1 // Exactly one XONE constraint must be satisfied
+}
+
+// validateShapeForValue validates that a value satisfies a shape.
+func (v *Validator) validateShapeForValue(node, value string, shape *Shape, graph [][]string) bool {
+	if shape == nil {
+		return true
+	}
+
+	// Check if shape has property constraints
+	for _, prop := range shape.Properties {
+		// Simple validation - check if property value exists and matches constraints
+		values := v.GetPropertyValues(node, prop.Path, graph)
+		for _, val := range values {
+			if val == value {
+				// Value matches - check additional constraints
+				if prop.Datatype != "" && !v.validateDatatype(val, prop.Datatype) {
+					return false
+				}
+				if prop.Pattern != "" && !v.validatePattern(val, prop.Pattern) {
+					return false
+				}
+				if len(prop.In) > 0 {
+					inList := false
+					for _, allowed := range prop.In {
+						if val == allowed {
+							inList = true
+							break
+						}
+					}
+					if !inList {
+						return false
+					}
+				}
+				return true // Value found and constraints satisfied
+			}
+		}
+	}
+
+	return false // Value not found or constraints not satisfied
 }

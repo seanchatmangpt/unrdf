@@ -3,6 +3,7 @@ package sparql
 import (
 	"context"
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/unrdf/knowd/internal/store"
@@ -367,7 +368,36 @@ func (a *Algebra) executeFilter(ctx context.Context, executor *Executor, store s
 
 // evaluateFilterExpression evaluates a filter expression against a row.
 func (a *Algebra) evaluateFilterExpression(expression string, row map[string]interface{}) bool {
-	// Simple equality check - could be enhanced
+	expression = strings.TrimSpace(expression)
+
+	// Handle greater than
+	if strings.Contains(expression, ">") {
+		parts := strings.Split(expression, ">")
+		if len(parts) == 2 {
+			left := strings.TrimSpace(parts[0])
+			right := strings.TrimSpace(parts[1])
+
+			if value, exists := row[left]; exists {
+				rightValue := right
+				if strings.HasPrefix(right, "\"") && strings.HasSuffix(right, "\"") {
+					rightValue = right[1 : len(right)-1]
+				}
+
+				// Try to parse as numbers
+				leftNum, leftErr := parseNumber(fmt.Sprintf("%v", value))
+				rightNum, rightErr := parseNumber(rightValue)
+
+				if leftErr == nil && rightErr == nil {
+					return leftNum > rightNum
+				}
+
+				// Fallback to string comparison
+				return fmt.Sprintf("%v", value) > rightValue
+			}
+		}
+	}
+
+	// Handle equality
 	if strings.Contains(expression, "=") {
 		parts := strings.Split(expression, "=")
 		if len(parts) == 2 {
@@ -385,7 +415,20 @@ func (a *Algebra) evaluateFilterExpression(expression string, row map[string]int
 		}
 	}
 
+	// Default to true for unsupported filters
 	return true
+}
+
+// parseNumber attempts to parse a string as a number.
+func parseNumber(s string) (float64, error) {
+	// Simple number parsing (could be enhanced)
+	if s == "" {
+		return 0, fmt.Errorf("empty string")
+	}
+
+	// Try to parse as float
+	result, err := strconv.ParseFloat(s, 64)
+	return result, err
 }
 
 // String returns a string representation of the algebra.

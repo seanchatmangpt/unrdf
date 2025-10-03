@@ -31,9 +31,9 @@ func (m *MockStore) HasQuad(ctx context.Context, quad store.Quad) (bool, error) 
 	for _, q := range m.quads {
 		// Check if the pattern matches (empty strings in pattern match any value)
 		if (quad.Subject == "" || quad.Subject == q.Subject) &&
-		   (quad.Predicate == "" || quad.Predicate == q.Predicate) &&
-		   (quad.Object == "" || quad.Object == q.Object) &&
-		   (quad.Graph == "" || quad.Graph == q.Graph) {
+			(quad.Predicate == "" || quad.Predicate == q.Predicate) &&
+			(quad.Object == "" || quad.Object == q.Object) &&
+			(quad.Graph == "" || quad.Graph == q.Graph) {
 			return true, nil
 		}
 	}

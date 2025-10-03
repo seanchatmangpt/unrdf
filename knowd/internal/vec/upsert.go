@@ -12,31 +12,31 @@ type Upsert struct {
 
 // UpsertRequest represents a request to upsert vectors.
 type UpsertRequest struct {
-	Namespace string                   `json:"namespace"`
-	Vectors   []VectorUpsert           `json:"vectors"`
-	Options   UpsertOptions           `json:"options"`
+	Namespace string         `json:"namespace"`
+	Vectors   []VectorUpsert `json:"vectors"`
+	Options   UpsertOptions  `json:"options"`
 }
 
 // VectorUpsert represents a single vector to upsert.
 type VectorUpsert struct {
 	ID       string                 `json:"id"`
-	Text     string                 `json:"text,omitempty"`     // Text to embed
-	Vector   []float32              `json:"vector,omitempty"`   // Pre-computed vector
+	Text     string                 `json:"text,omitempty"`   // Text to embed
+	Vector   []float32              `json:"vector,omitempty"` // Pre-computed vector
 	Metadata map[string]interface{} `json:"metadata,omitempty"`
 }
 
 // UpsertOptions configures upsert behavior.
 type UpsertOptions struct {
-	EmbedTexts    bool    `json:"embed_texts"`     // Whether to embed text fields
-	SkipExisting  bool    `json:"skip_existing"`   // Skip vectors that already exist
-	BatchSize     int     `json:"batch_size"`      // Batch size for processing
+	EmbedTexts   bool `json:"embed_texts"`   // Whether to embed text fields
+	SkipExisting bool `json:"skip_existing"` // Skip vectors that already exist
+	BatchSize    int  `json:"batch_size"`    // Batch size for processing
 }
 
 // UpsertResponse represents the response from an upsert operation.
 type UpsertResponse struct {
 	Upserted   int                    `json:"upserted"`
 	Skipped    int                    `json:"skipped"`
-	Errors     []string              `json:"errors"`
+	Errors     []string               `json:"errors"`
 	Namespaces map[string]interface{} `json:"namespaces"`
 }
 

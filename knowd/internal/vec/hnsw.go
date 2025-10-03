@@ -10,22 +10,22 @@ import (
 
 // HNSW implements a Hierarchical Navigable Small World graph for vector similarity search.
 type HNSW struct {
-	mu           sync.RWMutex
-	vectors      map[string]*Vector
-	entryPoint   string // ID of the entry point vector
-	maxLevel     int
-	M            int    // Max number of connections per node
-	ef           int    // Size of dynamic candidate list
-	embedder     Embedder
-	dimensions   int
+	mu         sync.RWMutex
+	vectors    map[string]*Vector
+	entryPoint string // ID of the entry point vector
+	maxLevel   int
+	M          int // Max number of connections per node
+	ef         int // Size of dynamic candidate list
+	embedder   Embedder
+	dimensions int
 }
 
 // HNSWConfig configures HNSW index parameters.
 type HNSWConfig struct {
-	M          int // Max connections per node (default: 16)
-	ef         int // Dynamic candidate list size (default: 200)
-	MaxLevel   int // Maximum level (default: -1 for auto)
-	Embedder   Embedder
+	M        int // Max connections per node (default: 16)
+	ef       int // Dynamic candidate list size (default: 200)
+	MaxLevel int // Maximum level (default: -1 for auto)
+	Embedder Embedder
 }
 
 // NewHNSW creates a new HNSW index.
