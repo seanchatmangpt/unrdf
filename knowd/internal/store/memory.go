@@ -16,7 +16,7 @@ type MemoryStore struct {
 }
 
 // NewMemoryStore creates a new in-memory store.
-func NewMemoryStore(config store.Config) (store.Interface, error) {
+func NewMemoryStore(config Config) (Interface, error) {
 	return &MemoryStore{
 		quads:  make(map[string]*Quad),
 		config: Config{MaxQuads: config.MaxQuads},
@@ -35,7 +35,7 @@ func (m *MemoryStore) AddQuad(ctx context.Context, quad Quad) error {
 
 	// Generate a unique ID for the quad
 	quadID := m.quadID(&quad)
-	
+
 	// Create a copy to store
 	quadCopy := &Quad{
 		Subject:   quad.Subject,
@@ -69,19 +69,19 @@ func (m *MemoryStore) HasQuad(ctx context.Context, quad Quad) (bool, error) {
 }
 
 // FindQuads finds quads matching a pattern.
-func (m *MemoryStore) FindQuads(ctx context.Context, pattern Quad) []Quad {
+func (m *MemoryStore) FindQuads(ctx context.Context, pattern Quad) ([]Quad, error) {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
 
 	var results []Quad
-	
+
 	for _, quad := range m.quads {
 		if m.matchesPattern(quad, &pattern) {
 			results = append(results, *quad)
 		}
 	}
-	
-	return results
+
+	return results, nil
 }
 
 // GetQuadCount returns the total number of quads in the store.

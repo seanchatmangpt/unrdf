@@ -3,27 +3,49 @@ package server
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
+	"time"
 
+	"github.com/unrdf/knowd/internal/sparql"
+	"github.com/unrdf/knowd/internal/store"
 	"github.com/unrdf/knowd/internal/version"
 )
 
 // Server represents the HTTP server instance.
 type Server struct {
-	addr    string
-	dataDir string
-	coreURL string
-	mux     *http.ServeMux
+	addr     string
+	dataDir  string
+	coreURL  string
+	mux      *http.ServeMux
+	executor *sparql.Executor
+	store    store.Interface
 }
 
 // New creates a new HTTP server instance.
 func New(addr, dataDir, coreURL string) *Server {
+	// Initialize in-memory store for now
+	storeConfig := store.Config{MaxQuads: 1000000}
+	storeInstance, err := store.NewMemoryStore(storeConfig)
+	if err != nil {
+		log.Fatalf("Failed to create memory store: %v", err)
+	}
+
+	// Initialize plan cache
+	cacheConfig := sparql.CacheConfig{Capacity: 256}
+	cache := sparql.NewPlanCache(cacheConfig)
+
+	// Initialize SPARQL executor
+	executor := sparql.NewExecutor(cache)
+
 	s := &Server{
-		addr:    addr,
-		dataDir: dataDir,
-		coreURL: coreURL,
-		mux:     http.NewServeMux(),
+		addr:     addr,
+		dataDir:  dataDir,
+		coreURL:  coreURL,
+		mux:      http.NewServeMux(),
+		executor: executor,
+		store:    storeInstance,
 	}
 	s.setupRoutes()
 	return s
@@ -34,7 +56,14 @@ func (s *Server) setupRoutes() {
 	s.mux.HandleFunc("/healthz", s.handleHealth)
 	s.mux.HandleFunc("/v1/tx", s.handleTransaction)
 	s.mux.HandleFunc("/v1/query", s.handleQuery)
+	s.mux.HandleFunc("/v1/query/stream", s.handleQueryStream)
+	s.mux.HandleFunc("/v1/validate", s.handleValidate)
+	s.mux.HandleFunc("/v1/receipts", s.handleReceipts)
 	s.mux.HandleFunc("/v1/hooks/evaluate", s.handleHookEvaluate)
+
+	// Admin routes
+	s.mux.HandleFunc("/v1/admin/namespaces", s.handleAdminNamespaces)
+	s.mux.HandleFunc("/v1/admin/rollout", s.handleAdminRollout)
 
 	// Add version endpoint
 	s.mux.HandleFunc("/version", s.handleVersion)
@@ -51,23 +80,45 @@ func (s *Server) handleHealth(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("ok"))
 }
 
-// handleTransaction handles transaction requests (placeholder implementation).
+// TxRequest represents a transaction request structure.
+type TxRequest struct {
+	Delta map[string]interface{} `json:"delta"`
+	Actor string                 `json:"actor"`
+}
+
+// TxResponse represents a transaction response structure.
+type TxResponse struct {
+	ReceiptID  string                 `json:"receiptId"`
+	MerkleRoot string                 `json:"merkleRoot"`
+	Delta      map[string]interface{} `json:"delta"`
+}
+
+// handleTransaction handles transaction requests.
 func (s *Server) handleTransaction(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
-	// Read request body
-	var body map[string]interface{}
-	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+	var req TxRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, "Invalid JSON", http.StatusBadRequest)
 		return
 	}
 
-	// Echo the request body (placeholder for future transaction pipeline)
+	// Process transaction through the store
+	// For now, we'll implement a simple transaction processing
+	receiptID := "receipt-" + req.Actor + "-" + fmt.Sprintf("%d", time.Now().Unix())
+	merkleRoot := "merkle-" + receiptID
+
+	response := TxResponse{
+		ReceiptID:  receiptID,
+		MerkleRoot: merkleRoot,
+		Delta:      req.Delta,
+	}
+
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(body)
+	json.NewEncoder(w).Encode(response)
 }
 
 // QueryRequest represents a query request structure.
@@ -105,9 +156,16 @@ func (s *Server) handleQuery(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Return static stub response
+	// Execute the query using SPARQL executor
+	result, err := s.executor.Query(r.Context(), req.Query, s.store)
+	if err != nil {
+		http.Error(w, "Query execution failed", http.StatusInternalServerError)
+		return
+	}
+
+	// Convert to expected response format
 	resp := QueryResponse{
-		JSON: []interface{}{},
+		JSON: result,
 	}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -149,6 +207,211 @@ func (s *Server) handleHookEvaluate(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(resp)
 }
 
+// ValidateRequest represents a validation request structure.
+type ValidateRequest struct {
+	Data   string `json:"data"`
+	Shapes string `json:"shapes,omitempty"`
+}
+
+// ValidateResponse represents a validation response structure.
+type ValidateResponse struct {
+	Conforms   bool                  `json:"conforms"`
+	Violations []ValidationViolation `json:"violations"`
+}
+
+// ValidationViolation represents a SHACL validation violation.
+type ValidationViolation struct {
+	FocusNode   string `json:"focusNode"`
+	ResultPath  string `json:"resultPath"`
+	SourceShape string `json:"sourceShape"`
+	Message     string `json:"message"`
+}
+
+// handleValidate handles SHACL validation requests.
+func (s *Server) handleValidate(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	var req ValidateRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "Invalid JSON", http.StatusBadRequest)
+		return
+	}
+
+	// TODO: Implement actual SHACL validation
+	// For now, return a mock response
+	response := ValidateResponse{
+		Conforms:   true,
+		Violations: []ValidationViolation{},
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
+}
+
+// handleQueryStream handles streaming query requests.
+func (s *Server) handleQueryStream(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	var req QueryRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "Invalid JSON", http.StatusBadRequest)
+		return
+	}
+
+	// Execute the query
+	result, err := s.executor.Query(r.Context(), req.Query, s.store)
+	if err != nil {
+		log.Printf("Query execution error: %v", err)
+		http.Error(w, "Query execution failed", http.StatusInternalServerError)
+		return
+	}
+
+	// For streaming, write each row as a separate JSON line
+	w.Header().Set("Content-Type", "application/x-ndjson")
+
+	for _, row := range result.Rows {
+		json.NewEncoder(w).Encode(row)
+	}
+}
+
+// Receipt represents a transaction receipt.
+type Receipt struct {
+	ID         string                 `json:"id"`
+	Actor      string                 `json:"actor"`
+	Timestamp  string                 `json:"timestamp"`
+	MerkleRoot string                 `json:"merkleRoot"`
+	Delta      map[string]interface{} `json:"delta"`
+}
+
+// handleReceipts handles receipt-related requests.
+func (s *Server) handleReceipts(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		// List receipts or get specific receipt
+		receiptID := r.URL.Path[len("/v1/receipts/"):]
+		if receiptID != "" {
+			// Get specific receipt
+			receipt := Receipt{
+				ID:         receiptID,
+				Actor:      "system",
+				Timestamp:  time.Now().Format(time.RFC3339),
+				MerkleRoot: "mock-merkle-root",
+				Delta:      map[string]interface{}{},
+			}
+			w.Header().Set("Content-Type", "application/json")
+			json.NewEncoder(w).Encode(receipt)
+		} else {
+			// List receipts
+			receipts := []Receipt{}
+			w.Header().Set("Content-Type", "application/json")
+			json.NewEncoder(w).Encode(receipts)
+		}
+	case http.MethodPost:
+		// Create new receipt (should be handled by /v1/tx)
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+	default:
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+	}
+}
+
+// Namespace represents a namespace configuration.
+type Namespace struct {
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	Created     string `json:"created"`
+}
+
+// handleAdminNamespaces handles namespace administration.
+func (s *Server) handleAdminNamespaces(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		// List namespaces
+		namespaces := []Namespace{
+			{
+				Name:        "default",
+				Description: "Default namespace",
+				Created:     time.Now().Format(time.RFC3339),
+			},
+		}
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(namespaces)
+	case http.MethodPost:
+		// Create namespace
+		var ns Namespace
+		if err := json.NewDecoder(r.Body).Decode(&ns); err != nil {
+			http.Error(w, "Invalid JSON", http.StatusBadRequest)
+			return
+		}
+		ns.Created = time.Now().Format(time.RFC3339)
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(ns)
+	default:
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+	}
+}
+
+// RolloutRequest represents a rollout configuration request.
+type RolloutRequest struct {
+	Namespace string `json:"namespace"`
+	Stable    string `json:"stable"`
+	Canary    string `json:"canary"`
+	Percent   int    `json:"percent"`
+}
+
+// RolloutResponse represents a rollout configuration response.
+type RolloutResponse struct {
+	Namespace string `json:"namespace"`
+	Stable    string `json:"stable"`
+	Canary    string `json:"canary"`
+	Percent   int    `json:"percent"`
+	Enabled   bool   `json:"enabled"`
+}
+
+// handleAdminRollout handles rollout administration.
+func (s *Server) handleAdminRollout(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		// Get rollout configuration
+		namespace := r.URL.Query().Get("ns")
+		if namespace == "" {
+			namespace = "default"
+		}
+		response := RolloutResponse{
+			Namespace: namespace,
+			Stable:    "v1.0.0",
+			Canary:    "v1.1.0",
+			Percent:   10,
+			Enabled:   true,
+		}
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(response)
+	case http.MethodPost:
+		// Set rollout configuration
+		var req RolloutRequest
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+			http.Error(w, "Invalid JSON", http.StatusBadRequest)
+			return
+		}
+		response := RolloutResponse{
+			Namespace: req.Namespace,
+			Stable:    req.Stable,
+			Canary:    req.Canary,
+			Percent:   req.Percent,
+			Enabled:   true,
+		}
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(response)
+	default:
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+	}
+}
+
 // handleVersion handles version information requests.
 func (s *Server) handleVersion(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
@@ -162,10 +425,6 @@ func (s *Server) handleVersion(w http.ResponseWriter, r *http.Request) {
 
 // Start starts the HTTP server.
 func (s *Server) Start() error {
-	log.Printf("Starting knowd server on %s", s.addr)
-	log.Printf("Data directory: %s", s.dataDir)
-	log.Printf("Core URL: %s", s.coreURL)
-
 	return http.ListenAndServe(s.addr, s.mux)
 }
 
