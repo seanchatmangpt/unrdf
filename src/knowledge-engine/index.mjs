@@ -15,6 +15,24 @@ export { TransactionManager } from "./transaction.mjs";
 export { defineHook } from "./define-hook.mjs";
 export { createHookExecutor } from "./hook-executor.mjs";
 export { createConditionEvaluator } from "./condition-evaluator.mjs";
+export {
+  registerHook,
+  deregisterHook,
+  evaluateHook,
+  getRegisteredHooks,
+  resetGlobalHookManager,
+} from "./hook-management.mjs";
+
+// Knowledge Substrate Core (80/20 Framework)
+export {
+  KnowledgeSubstrateCore,
+  createKnowledgeSubstrateCore,
+  KnowledgeSubstrateFactory,
+  // Legacy compatibility
+  DarkMatterCore,
+  createDarkMatterCore,
+  DarkMatterFactory,
+} from "./knowledge-substrate-core.mjs";
 
 // Storage & Persistence
 export { LockchainWriter, createLockchainWriter } from "./lockchain-writer.mjs";
@@ -70,12 +88,16 @@ export { EffectSandbox } from "./effect-sandbox.mjs";
 // Policy Management
 export { PolicyPackManager, PolicyPack } from "./policy-pack.mjs";
 
-// Dark Matter Core System
+// Knowledge Substrate Core System
 export {
+  KnowledgeSubstrateCore,
+  createKnowledgeSubstrateCore,
+  KnowledgeSubstrateFactory,
+  // Legacy exports (deprecated but maintained for compatibility)
   DarkMatterCore,
   createDarkMatterCore,
   DarkMatterFactory,
-} from "./dark-matter-core.mjs";
+} from "./knowledge-substrate-core.mjs";
 
 // Observability System
 export {

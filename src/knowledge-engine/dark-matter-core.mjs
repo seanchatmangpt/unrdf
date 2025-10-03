@@ -1,26 +1,26 @@
 /**
- * @file Dark Matter 80/20 Core Implementation
- * @module dark-matter-core
- * 
+ * @file Knowledge Substrate Core Implementation
+ * @module knowledge-substrate-core
+ *
  * @description
- * Implements the Dark Matter 80/20 framework for the UNRDF Knowledge Engine.
- * This module contains the essential 20% of components that deliver 80% of the value.
+ * Implements the Knowledge Substrate 80/20 framework for the UNRDF Knowledge Engine.
+ * This module contains the essential foundational components that deliver core knowledge processing capabilities.
  */
 
-import { TransactionManager } from './transaction.mjs';
-import { KnowledgeHookManager } from './knowledge-hook-manager.mjs';
-import { EffectSandbox } from './effect-sandbox.mjs';
-import { createObservabilityManager } from './observability.mjs';
-import { createPerformanceOptimizer } from './performance-optimizer.mjs';
-import { LockchainWriter } from './lockchain-writer.mjs';
-import { PolicyPackManager } from './policy-pack.mjs';
-import { ResolutionLayer } from './resolution-layer.mjs';
-import { Store } from 'n3';
-import { z } from 'zod';
-import crypto from 'node:crypto';
+import { TransactionManager } from "./transaction.mjs";
+import { KnowledgeHookManager } from "./knowledge-hook-manager.mjs";
+import { EffectSandbox } from "./effect-sandbox.mjs";
+import { createObservabilityManager } from "./observability.mjs";
+import { createPerformanceOptimizer } from "./performance-optimizer.mjs";
+import { LockchainWriter } from "./lockchain-writer.mjs";
+import { PolicyPackManager } from "./policy-pack.mjs";
+import { ResolutionLayer } from "./resolution-layer.mjs";
+import { Store } from "n3";
+import { z } from "zod";
+import crypto from "node:crypto";
 
 /**
- * Dark Matter 80/20 Core Configuration Schema
+ * Knowledge Substrate Core Configuration Schema
  */
 const DarkMatterConfigSchema = z.object({
   // Core components (20% that deliver 80% of value)
@@ -30,26 +30,28 @@ const DarkMatterConfigSchema = z.object({
   enableObservability: z.boolean().default(true),
   enablePerformanceOptimizer: z.boolean().default(true),
   enableLockchainWriter: z.boolean().default(true),
-  
+
   // Optional components (80% that deliver 20% of value)
   enablePolicyPackManager: z.boolean().default(false),
   enableResolutionLayer: z.boolean().default(false),
-  
+
   // Performance targets (80/20 focused)
-  performanceTargets: z.object({
-    p50PreHookPipeline: z.number().max(0.2),
-    p99PreHookPipeline: z.number().max(2),
-    receiptWriteMedian: z.number().max(5),
-    hookEngineExecPerMin: z.number().min(10000),
-    errorIsolation: z.number().min(1).max(1)
-  }).default({
-    p50PreHookPipeline: 0.2, // 200µs
-    p99PreHookPipeline: 2, // 2ms
-    receiptWriteMedian: 5, // 5ms
-    hookEngineExecPerMin: 10000, // 10k/min
-    errorIsolation: 1 // 100%
-  }),
-  
+  performanceTargets: z
+    .object({
+      p50PreHookPipeline: z.number().max(0.2),
+      p99PreHookPipeline: z.number().max(2),
+      receiptWriteMedian: z.number().max(5),
+      hookEngineExecPerMin: z.number().min(10000),
+      errorIsolation: z.number().min(1).max(1),
+    })
+    .default({
+      p50PreHookPipeline: 0.2, // 200µs
+      p99PreHookPipeline: 2, // 2ms
+      receiptWriteMedian: 5, // 5ms
+      hookEngineExecPerMin: 10000, // 10k/min
+      errorIsolation: 1, // 100%
+    }),
+
   // Dark Matter optimization
   enableFastPath: z.boolean().default(true),
   enableCaching: z.boolean().default(true),
@@ -57,16 +59,16 @@ const DarkMatterConfigSchema = z.object({
   maxConcurrency: z.number().int().positive().default(10),
   cacheSize: z.number().int().positive().default(10000),
   batchSize: z.number().int().positive().default(1000),
-  timeoutMs: z.number().int().positive().default(2000)
+  timeoutMs: z.number().int().positive().default(2000),
 });
 
 /**
  * Dark Matter 80/20 Core Implementation
- * 
+ *
  * This class implements the essential 20% of components that deliver 80% of the value
  * in the UNRDF Knowledge Engine, following the Dark Matter 80/20 framework.
  */
-export class DarkMatterCore {
+export class KnowledgeSubstrateCore {
   /**
    * Create a new Dark Matter core instance
    * @param {Object} [config] - Dark Matter configuration
@@ -77,7 +79,7 @@ export class DarkMatterCore {
     this.metrics = {
       valueDelivery: 0,
       performanceImpact: 0,
-      developmentEfficiency: 0
+      developmentEfficiency: 0,
     };
     this.initialized = false;
   }
@@ -91,22 +93,22 @@ export class DarkMatterCore {
       return;
     }
 
-    console.log('🌌 Initializing Dark Matter 80/20 Core...');
+    console.log("🌌 Initializing Dark Matter 80/20 Core...");
 
     // Initialize core components (20% that deliver 80% of value)
     await this._initializeCoreComponents();
-    
+
     // Initialize optional components (80% that deliver 20% of value)
     await this._initializeOptionalComponents();
-    
+
     // Optimize critical paths
     await this._optimizeCriticalPaths();
-    
+
     // Validate 80/20 targets
     await this._validate8020Targets();
-    
+
     this.initialized = true;
-    console.log('✅ Dark Matter 80/20 Core initialized successfully');
+    console.log("✅ Dark Matter 80/20 Core initialized successfully");
   }
 
   /**
@@ -115,24 +117,46 @@ export class DarkMatterCore {
    */
   async _initializeCoreComponents() {
     const coreComponents = [
-      { name: 'transactionManager', weight: 0.25, component: TransactionManager },
-      { name: 'knowledgeHookManager', weight: 0.20, component: KnowledgeHookManager },
-      { name: 'effectSandbox', weight: 0.15, component: EffectSandbox },
-      { name: 'observability', weight: 0.10, component: createObservabilityManager },
-      { name: 'performanceOptimizer', weight: 0.10, component: createPerformanceOptimizer },
-      { name: 'lockchainWriter', weight: 0.05, component: LockchainWriter }
+      {
+        name: "transactionManager",
+        weight: 0.25,
+        component: TransactionManager,
+      },
+      {
+        name: "knowledgeHookManager",
+        weight: 0.2,
+        component: KnowledgeHookManager,
+      },
+      { name: "effectSandbox", weight: 0.15, component: EffectSandbox },
+      {
+        name: "observability",
+        weight: 0.1,
+        component: createObservabilityManager,
+      },
+      {
+        name: "performanceOptimizer",
+        weight: 0.1,
+        component: createPerformanceOptimizer,
+      },
+      { name: "lockchainWriter", weight: 0.05, component: LockchainWriter },
     ];
 
     for (const { name, weight, component } of coreComponents) {
-      if (this.config[`enable${name.charAt(0).toUpperCase() + name.slice(1)}`]) {
-        console.log(`🔧 Initializing ${name} (${(weight * 100).toFixed(0)}% value weight)...`);
-        
+      if (
+        this.config[`enable${name.charAt(0).toUpperCase() + name.slice(1)}`]
+      ) {
+        console.log(
+          `🔧 Initializing ${name} (${(weight * 100).toFixed(0)}% value weight)...`,
+        );
+
         try {
           const instance = new component(this.config);
-          this.components.set(name, { instance, weight, type: 'core' });
+          this.components.set(name, { instance, weight, type: "core" });
           this.metrics.valueDelivery += weight;
-          
-          console.log(`✅ ${name} initialized (contributes ${(weight * 100).toFixed(0)}% of system value)`);
+
+          console.log(
+            `✅ ${name} initialized (contributes ${(weight * 100).toFixed(0)}% of system value)`,
+          );
         } catch (error) {
           console.error(`❌ Failed to initialize ${name}:`, error.message);
           throw error;
@@ -147,22 +171,31 @@ export class DarkMatterCore {
    */
   async _initializeOptionalComponents() {
     const optionalComponents = [
-      { name: 'policyPackManager', weight: 0.10, component: PolicyPackManager },
-      { name: 'resolutionLayer', weight: 0.10, component: ResolutionLayer }
+      { name: "policyPackManager", weight: 0.1, component: PolicyPackManager },
+      { name: "resolutionLayer", weight: 0.1, component: ResolutionLayer },
     ];
 
     for (const { name, weight, component } of optionalComponents) {
-      if (this.config[`enable${name.charAt(0).toUpperCase() + name.slice(1)}`]) {
-        console.log(`🔧 Initializing ${name} (${(weight * 100).toFixed(0)}% value weight)...`);
-        
+      if (
+        this.config[`enable${name.charAt(0).toUpperCase() + name.slice(1)}`]
+      ) {
+        console.log(
+          `🔧 Initializing ${name} (${(weight * 100).toFixed(0)}% value weight)...`,
+        );
+
         try {
           const instance = new component(this.config);
-          this.components.set(name, { instance, weight, type: 'optional' });
+          this.components.set(name, { instance, weight, type: "optional" });
           this.metrics.valueDelivery += weight;
-          
-          console.log(`✅ ${name} initialized (contributes ${(weight * 100).toFixed(0)}% of system value)`);
+
+          console.log(
+            `✅ ${name} initialized (contributes ${(weight * 100).toFixed(0)}% of system value)`,
+          );
         } catch (error) {
-          console.warn(`⚠️ Optional component ${name} failed to initialize:`, error.message);
+          console.warn(
+            `⚠️ Optional component ${name} failed to initialize:`,
+            error.message,
+          );
         }
       }
     }
@@ -173,34 +206,34 @@ export class DarkMatterCore {
    * @private
    */
   async _optimizeCriticalPaths() {
-    console.log('⚡ Optimizing critical paths for 80/20 performance...');
+    console.log("⚡ Optimizing critical paths for 80/20 performance...");
 
     // Optimize transaction manager (25% value weight)
-    const transactionManager = this.components.get('transactionManager');
+    const transactionManager = this.components.get("transactionManager");
     if (transactionManager) {
       await this._optimizeTransactionManager(transactionManager.instance);
     }
 
     // Optimize knowledge hook manager (20% value weight)
-    const knowledgeHookManager = this.components.get('knowledgeHookManager');
+    const knowledgeHookManager = this.components.get("knowledgeHookManager");
     if (knowledgeHookManager) {
       await this._optimizeKnowledgeHookManager(knowledgeHookManager.instance);
     }
 
     // Optimize effect sandbox (15% value weight)
-    const effectSandbox = this.components.get('effectSandbox');
+    const effectSandbox = this.components.get("effectSandbox");
     if (effectSandbox) {
       await this._optimizeEffectSandbox(effectSandbox.instance);
     }
 
     // Optimize performance optimizer (10% value weight)
-    const performanceOptimizer = this.components.get('performanceOptimizer');
+    const performanceOptimizer = this.components.get("performanceOptimizer");
     if (performanceOptimizer) {
       await this._optimizePerformanceOptimizer(performanceOptimizer.instance);
     }
 
     this.metrics.performanceImpact = 0.8; // 80% of performance from 20% of optimizations
-    console.log('✅ Critical paths optimized for 80/20 performance');
+    console.log("✅ Critical paths optimized for 80/20 performance");
   }
 
   /**
@@ -277,7 +310,7 @@ export class DarkMatterCore {
       maxConcurrency: this.config.maxConcurrency,
       cacheSize: this.config.cacheSize,
       batchSize: this.config.batchSize,
-      timeoutMs: this.config.timeoutMs
+      timeoutMs: this.config.timeoutMs,
     };
   }
 
@@ -286,31 +319,45 @@ export class DarkMatterCore {
    * @private
    */
   async _validate8020Targets() {
-    console.log('🎯 Validating 80/20 targets...');
+    console.log("🎯 Validating 80/20 targets...");
 
     // Validate value delivery (80% from 20% of components)
-    const coreComponents = Array.from(this.components.values())
-      .filter(c => c.type === 'core');
-    const coreValueDelivery = coreComponents.reduce((sum, c) => sum + c.weight, 0);
-    
+    const coreComponents = Array.from(this.components.values()).filter(
+      (c) => c.type === "core",
+    );
+    const coreValueDelivery = coreComponents.reduce(
+      (sum, c) => sum + c.weight,
+      0,
+    );
+
     if (coreValueDelivery >= 0.8) {
-      console.log(`✅ Value delivery target met: ${(coreValueDelivery * 100).toFixed(1)}% from core components`);
+      console.log(
+        `✅ Value delivery target met: ${(coreValueDelivery * 100).toFixed(1)}% from core components`,
+      );
     } else {
-      console.warn(`⚠️ Value delivery target not met: ${(coreValueDelivery * 100).toFixed(1)}% from core components`);
+      console.warn(
+        `⚠️ Value delivery target not met: ${(coreValueDelivery * 100).toFixed(1)}% from core components`,
+      );
     }
 
     // Validate performance impact (80% from 20% of optimizations)
     if (this.metrics.performanceImpact >= 0.8) {
-      console.log(`✅ Performance impact target met: ${(this.metrics.performanceImpact * 100).toFixed(1)}% from critical optimizations`);
+      console.log(
+        `✅ Performance impact target met: ${(this.metrics.performanceImpact * 100).toFixed(1)}% from critical optimizations`,
+      );
     } else {
-      console.warn(`⚠️ Performance impact target not met: ${(this.metrics.performanceImpact * 100).toFixed(1)}% from critical optimizations`);
+      console.warn(
+        `⚠️ Performance impact target not met: ${(this.metrics.performanceImpact * 100).toFixed(1)}% from critical optimizations`,
+      );
     }
 
     // Validate development efficiency (80% from 20% of effort)
     this.metrics.developmentEfficiency = 0.8; // Achieved through focused development
-    console.log(`✅ Development efficiency target met: ${(this.metrics.developmentEfficiency * 100).toFixed(1)}% from focused effort`);
+    console.log(
+      `✅ Development efficiency target met: ${(this.metrics.developmentEfficiency * 100).toFixed(1)}% from focused effort`,
+    );
 
-    console.log('✅ 80/20 targets validated successfully');
+    console.log("✅ 80/20 targets validated successfully");
   }
 
   /**
@@ -330,7 +377,7 @@ export class DarkMatterCore {
   getCoreComponents() {
     const coreComponents = {};
     for (const [name, { instance, weight }] of this.components.entries()) {
-      if (this.components.get(name)?.type === 'core') {
+      if (this.components.get(name)?.type === "core") {
         coreComponents[name] = { instance, weight };
       }
     }
@@ -344,7 +391,7 @@ export class DarkMatterCore {
   getOptionalComponents() {
     const optionalComponents = {};
     for (const [name, { instance, weight }] of this.components.entries()) {
-      if (this.components.get(name)?.type === 'optional') {
+      if (this.components.get(name)?.type === "optional") {
         optionalComponents[name] = { instance, weight };
       }
     }
@@ -359,11 +406,15 @@ export class DarkMatterCore {
     return {
       ...this.metrics,
       componentCount: this.components.size,
-      coreComponentCount: Array.from(this.components.values()).filter(c => c.type === 'core').length,
-      optionalComponentCount: Array.from(this.components.values()).filter(c => c.type === 'optional').length,
+      coreComponentCount: Array.from(this.components.values()).filter(
+        (c) => c.type === "core",
+      ).length,
+      optionalComponentCount: Array.from(this.components.values()).filter(
+        (c) => c.type === "optional",
+      ).length,
       valueDeliveryRatio: this.metrics.valueDelivery,
       performanceImpactRatio: this.metrics.performanceImpact,
-      developmentEfficiencyRatio: this.metrics.developmentEfficiency
+      developmentEfficiencyRatio: this.metrics.developmentEfficiency,
     };
   }
 
@@ -376,24 +427,27 @@ export class DarkMatterCore {
    */
   async executeTransaction(store, delta, options = {}) {
     if (!this.initialized) {
-      throw new Error('Dark Matter core not initialized');
+      throw new Error("Dark Matter core not initialized");
     }
 
-    const transactionManager = this.getComponent('transactionManager');
+    const transactionManager = this.getComponent("transactionManager");
     if (!transactionManager) {
-      throw new Error('Transaction manager not available');
+      throw new Error("Transaction manager not available");
     }
 
     // Get observability component for OTEL spans
-    const observability = this.getComponent('observability');
+    const observability = this.getComponent("observability");
     const transactionId = options.transactionId || crypto.randomUUID();
 
     // Start OTEL transaction span
     let spanContext;
-    if (observability && typeof observability.startTransactionSpan === 'function') {
+    if (
+      observability &&
+      typeof observability.startTransactionSpan === "function"
+    ) {
       spanContext = await observability.startTransactionSpan(transactionId, {
-        actor: options.actor || 'system',
-        deltaSize: delta?.size || 0
+        actor: options.actor || "system",
+        deltaSize: delta?.size || 0,
       });
     }
 
@@ -405,19 +459,26 @@ export class DarkMatterCore {
       const duration = Date.now() - startTime;
 
       // End OTEL span with success
-      if (observability && spanContext && typeof observability.endTransactionSpan === 'function') {
+      if (
+        observability &&
+        spanContext &&
+        typeof observability.endTransactionSpan === "function"
+      ) {
         await observability.endTransactionSpan(transactionId, {
           success: true,
           committed: result.receipt.committed,
-          duration
+          duration,
         });
       }
 
       // Update performance metrics
-      const performanceOptimizer = this.getComponent('performanceOptimizer');
-      if (performanceOptimizer && typeof performanceOptimizer.updateMetrics === 'function') {
+      const performanceOptimizer = this.getComponent("performanceOptimizer");
+      if (
+        performanceOptimizer &&
+        typeof performanceOptimizer.updateMetrics === "function"
+      ) {
         performanceOptimizer.updateMetrics({
-          transactionLatency: { duration, success: result.receipt.committed }
+          transactionLatency: { duration, success: result.receipt.committed },
         });
       }
 
@@ -426,19 +487,26 @@ export class DarkMatterCore {
       const duration = Date.now() - startTime;
 
       // End OTEL span with error
-      if (observability && spanContext && typeof observability.endTransactionSpan === 'function') {
+      if (
+        observability &&
+        spanContext &&
+        typeof observability.endTransactionSpan === "function"
+      ) {
         await observability.endTransactionSpan(transactionId, {
           success: false,
           error: error.message,
-          duration
+          duration,
         });
       }
 
       // Update performance metrics with failure
-      const performanceOptimizer = this.getComponent('performanceOptimizer');
-      if (performanceOptimizer && typeof performanceOptimizer.updateMetrics === 'function') {
+      const performanceOptimizer = this.getComponent("performanceOptimizer");
+      if (
+        performanceOptimizer &&
+        typeof performanceOptimizer.updateMetrics === "function"
+      ) {
         performanceOptimizer.updateMetrics({
-          transactionLatency: { duration, success: false }
+          transactionLatency: { duration, success: false },
         });
       }
 
@@ -456,30 +524,30 @@ export class DarkMatterCore {
    */
   async executeHook(hook, event, options = {}) {
     if (!this.initialized) {
-      throw new Error('Dark Matter core not initialized');
+      throw new Error("Dark Matter core not initialized");
     }
 
-    const knowledgeHookManager = this.getComponent('knowledgeHookManager');
+    const knowledgeHookManager = this.getComponent("knowledgeHookManager");
     if (!knowledgeHookManager) {
-      throw new Error('Knowledge hook manager not available');
+      throw new Error("Knowledge hook manager not available");
     }
 
     // Get observability component for OTEL spans
-    const observability = this.getComponent('observability');
-    const hookId = hook?.meta?.name || 'unknown-hook';
-    const transactionId = event?.transactionId || 'no-transaction';
+    const observability = this.getComponent("observability");
+    const hookId = hook?.meta?.name || "unknown-hook";
+    const transactionId = event?.transactionId || "no-transaction";
 
     // Start OTEL hook span
     let spanContext;
-    if (observability && typeof observability.startHookSpan === 'function') {
+    if (observability && typeof observability.startHookSpan === "function") {
       spanContext = await observability.startHookSpan(hookId, transactionId, {
-        hookType: hook?.when?.kind || 'unknown'
+        hookType: hook?.when?.kind || "unknown",
       });
     }
 
     // Execute hook directly via hook.run() - FAIL FAST
-    if (!hook || typeof hook.run !== 'function') {
-      throw new Error('Hook must have a run function');
+    if (!hook || typeof hook.run !== "function") {
+      throw new Error("Hook must have a run function");
     }
 
     const startTime = Date.now();
@@ -489,18 +557,25 @@ export class DarkMatterCore {
       const duration = Date.now() - startTime;
 
       // End OTEL span with success
-      if (observability && spanContext && typeof observability.endHookSpan === 'function') {
+      if (
+        observability &&
+        spanContext &&
+        typeof observability.endHookSpan === "function"
+      ) {
         await observability.endHookSpan(hookId, transactionId, {
           success: true,
-          duration
+          duration,
         });
       }
 
       // Update performance metrics
-      const performanceOptimizer = this.getComponent('performanceOptimizer');
-      if (performanceOptimizer && typeof performanceOptimizer.updateMetrics === 'function') {
+      const performanceOptimizer = this.getComponent("performanceOptimizer");
+      if (
+        performanceOptimizer &&
+        typeof performanceOptimizer.updateMetrics === "function"
+      ) {
         performanceOptimizer.updateMetrics({
-          hookExecutionLatency: { duration, success: !result.error }
+          hookExecutionLatency: { duration, success: !result.error },
         });
       }
 
@@ -509,19 +584,26 @@ export class DarkMatterCore {
       const duration = Date.now() - startTime;
 
       // End OTEL span with error
-      if (observability && spanContext && typeof observability.endHookSpan === 'function') {
+      if (
+        observability &&
+        spanContext &&
+        typeof observability.endHookSpan === "function"
+      ) {
         await observability.endHookSpan(hookId, transactionId, {
           success: false,
           error: error.message,
-          duration
+          duration,
         });
       }
 
       // Update performance metrics with failure
-      const performanceOptimizer = this.getComponent('performanceOptimizer');
-      if (performanceOptimizer && typeof performanceOptimizer.updateMetrics === 'function') {
+      const performanceOptimizer = this.getComponent("performanceOptimizer");
+      if (
+        performanceOptimizer &&
+        typeof performanceOptimizer.updateMetrics === "function"
+      ) {
         performanceOptimizer.updateMetrics({
-          hookExecutionLatency: { duration, success: false }
+          hookExecutionLatency: { duration, success: false },
         });
       }
 
@@ -540,7 +622,7 @@ export class DarkMatterCore {
       components: Array.from(this.components.keys()),
       metrics: this.getMetrics(),
       config: this.config,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 
@@ -549,20 +631,23 @@ export class DarkMatterCore {
    * @returns {Promise<void>}
    */
   async cleanup() {
-    console.log('🧹 Cleaning up Dark Matter 80/20 Core...');
+    console.log("🧹 Cleaning up Dark Matter 80/20 Core...");
 
     // Cleanup all components
     for (const [name, { instance }] of this.components.entries()) {
       try {
-        if (typeof instance.cleanup === 'function') {
+        if (typeof instance.cleanup === "function") {
           await instance.cleanup();
         }
 
         // Clear any internal caches/maps
-        if (instance.cache && typeof instance.cache.clear === 'function') {
+        if (instance.cache && typeof instance.cache.clear === "function") {
           instance.cache.clear();
         }
-        if (instance.components && typeof instance.components.clear === 'function') {
+        if (
+          instance.components &&
+          typeof instance.components.clear === "function"
+        ) {
           instance.components.clear();
         }
 
@@ -581,33 +666,43 @@ export class DarkMatterCore {
     this.metrics.developmentEfficiency = 0;
 
     this.initialized = false;
-    console.log('✅ Dark Matter 80/20 Core cleaned up');
+    console.log("✅ Dark Matter 80/20 Core cleaned up");
   }
 }
 
 /**
- * Create a Dark Matter core instance
- * @param {Object} [config] - Dark Matter configuration
- * @returns {DarkMatterCore} Dark Matter core instance
+ * Create a Knowledge Substrate core instance
+ * @param {Object} [config] - Knowledge Substrate configuration
+ * @returns {KnowledgeSubstrateCore} Knowledge Substrate core instance
  */
-export function createDarkMatterCore(config = {}) {
-  return new DarkMatterCore(config);
+export function createKnowledgeSubstrateCore(config = {}) {
+  return new KnowledgeSubstrateCore(config);
 }
 
 /**
- * Dark Matter 80/20 Factory
- * 
- * Creates and configures a complete Dark Matter 80/20 system
- * with all core components optimized for maximum value delivery.
+ * @deprecated Use createKnowledgeSubstrateCore instead
+ * Create a Dark Matter core instance (legacy name)
+ * @param {Object} [config] - Dark Matter configuration
+ * @returns {KnowledgeSubstrateCore} Knowledge Substrate core instance
  */
-export class DarkMatterFactory {
+export function createDarkMatterCore(config = {}) {
+  return new KnowledgeSubstrateCore(config);
+}
+
+/**
+ * Knowledge Substrate Factory
+ *
+ * Creates and configures a complete Knowledge Substrate system
+ * with all core components optimized for maximum knowledge processing capability.
+ */
+export class KnowledgeSubstrateFactory {
   /**
-   * Create a complete Dark Matter 80/20 system
+   * Create a complete Knowledge Substrate system
    * @param {Object} [config] - System configuration
-   * @returns {Promise<DarkMatterCore>} Configured Dark Matter core
+   * @returns {Promise<KnowledgeSubstrateCore>} Configured Knowledge Substrate core
    */
   static async createSystem(config = {}) {
-    const darkMatterConfig = {
+    const substrateConfig = {
       // Enable all core components (20% that deliver 80% of value)
       enableTransactionManager: true,
       enableKnowledgeHookManager: true,
@@ -615,21 +710,21 @@ export class DarkMatterFactory {
       enableObservability: true,
       enablePerformanceOptimizer: true,
       enableLockchainWriter: true,
-      
+
       // Disable optional components by default (80% that deliver 20% of value)
       enablePolicyPackManager: false,
       enableResolutionLayer: false,
-      
+
       // 80/20 performance targets
       performanceTargets: {
         p50PreHookPipeline: 0.2, // 200µs
         p99PreHookPipeline: 2, // 2ms
         receiptWriteMedian: 5, // 5ms
         hookEngineExecPerMin: 10000, // 10k/min
-        errorIsolation: 1 // 100%
+        errorIsolation: 1, // 100%
       },
-      
-      // Dark Matter optimization
+
+      // Knowledge Substrate optimization
       enableFastPath: true,
       enableCaching: true,
       enableBatchProcessing: true,
@@ -637,20 +732,20 @@ export class DarkMatterFactory {
       cacheSize: 10000,
       batchSize: 1000,
       timeoutMs: 2000,
-      
-      ...config
+
+      ...config,
     };
 
-    const core = new DarkMatterCore(darkMatterConfig);
+    const core = new KnowledgeSubstrateCore(substrateConfig);
     await core.initialize();
-    
+
     return core;
   }
 
   /**
-   * Create a minimal Dark Matter 80/20 system
+   * Create a minimal Knowledge Substrate system
    * @param {Object} [config] - System configuration
-   * @returns {Promise<DarkMatterCore>} Minimal Dark Matter core
+   * @returns {Promise<KnowledgeSubstrateCore>} Minimal Knowledge Substrate core
    */
   static async createMinimalSystem(config = {}) {
     const minimalConfig = {
@@ -663,17 +758,17 @@ export class DarkMatterFactory {
       enableLockchainWriter: false,
       enablePolicyPackManager: false,
       enableResolutionLayer: false,
-      
-      ...config
+
+      ...config,
     };
 
     return this.createSystem(minimalConfig);
   }
 
   /**
-   * Create a full Dark Matter 80/20 system
+   * Create a full Knowledge Substrate system
    * @param {Object} [config] - System configuration
-   * @returns {Promise<DarkMatterCore>} Full Dark Matter core
+   * @returns {Promise<KnowledgeSubstrateCore>} Full Knowledge Substrate core
    */
   static async createFullSystem(config = {}) {
     const fullConfig = {
@@ -686,12 +781,12 @@ export class DarkMatterFactory {
       enableLockchainWriter: true,
       enablePolicyPackManager: true,
       enableResolutionLayer: true,
-      
-      ...config
+
+      ...config,
     };
 
     return this.createSystem(fullConfig);
   }
 }
 
-export default DarkMatterCore;
+export default KnowledgeSubstrateCore;
