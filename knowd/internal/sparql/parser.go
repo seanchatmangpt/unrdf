@@ -382,7 +382,7 @@ func (p *Parser) parseMinusBlock(lines []string, start int) (BasicGraphPattern, 
 // parseBindBlock parses a BIND clause.
 func (p *Parser) parseBindBlock(lines []string, start int) (BindBlock, int) {
 	// Simple BIND parsing: BIND(?var AS ?expression)
-	line := strings.TrimSpace(lines[start])
+	_ = strings.TrimSpace(lines[start])
 	// For now, return a simple stub
 	return BindBlock{
 		Variable:   "?bound",
@@ -393,7 +393,7 @@ func (p *Parser) parseBindBlock(lines []string, start int) (BindBlock, int) {
 // parseValuesBlock parses a VALUES clause.
 func (p *Parser) parseValuesBlock(lines []string, start int) (ValuesBlock, int) {
 	// Simple VALUES parsing: VALUES ?var { "val1" "val2" }
-	line := strings.TrimSpace(lines[start])
+	_ = strings.TrimSpace(lines[start])
 	// For now, return a simple stub
 	return ValuesBlock{
 		Variables: []string{"?var"},

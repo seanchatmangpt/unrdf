@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/go-jose/go-jose/v3"
-	"github.com/go-jose/go-jose/v3/jwt"
 )
 
 // JWSSigner handles detached JWS signing for receipts.

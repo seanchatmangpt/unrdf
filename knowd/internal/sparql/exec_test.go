@@ -7,6 +7,13 @@ import (
 	"github.com/unrdf/knowd/internal/store"
 )
 
+func TestExecutor_NewExecutor(t *testing.T) {
+	executor := NewExecutor()
+	if executor == nil {
+		t.Error("NewExecutor() returned nil")
+	}
+}
+
 func TestExecutor_ExecuteSelect(t *testing.T) {
 	store := &MockStore{
 		quads: []store.Quad{
