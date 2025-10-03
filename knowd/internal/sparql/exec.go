@@ -7,6 +7,8 @@ import (
 	"strings"
 
 	"github.com/unrdf/knowd/internal/store"
+	"github.com/unrdf/knowd/internal/telemetry"
+	"go.opentelemetry.io/otel/attribute"
 )
 
 // QueryResponse represents a query response.
@@ -46,6 +48,15 @@ func (e *Executor) Query(ctx context.Context, queryStr string, store store.Inter
 
 // Execute executes a plan against a store.
 func (e *Executor) Execute(ctx context.Context, storeInstance store.Interface, queryKind string, plan *Plan) (*QueryResponse, error) {
+	ctx, span := telemetry.StartSpan(ctx, "sparql.execute")
+	defer span.End()
+
+	telemetry.AddEvent(ctx, "execute.started",
+		attribute.String("query.type", plan.Type),
+		attribute.String("query.kind", queryKind),
+		attribute.Int("patterns.count", len(plan.Patterns)),
+		attribute.Int("filters.count", len(plan.Filters)))
+
 	switch plan.Type {
 	case "SELECT":
 		return e.executeSelect(ctx, storeInstance, plan)
@@ -60,6 +71,13 @@ func (e *Executor) Execute(ctx context.Context, storeInstance store.Interface, q
 
 // executeSelect executes a SELECT query.
 func (e *Executor) executeSelect(ctx context.Context, storeInstance store.Interface, plan *Plan) (*QueryResponse, error) {
+	ctx, span := telemetry.StartSpan(ctx, "sparql.execute.select")
+	defer span.End()
+
+	telemetry.AddEvent(ctx, "select.started",
+		attribute.Int("columns.count", len(plan.Columns)),
+		attribute.Int("patterns.count", len(plan.Patterns)))
+
 	var rows []map[string]interface{}
 
 	// For each basic graph pattern
@@ -287,7 +305,6 @@ func (e *Executor) evaluateFilter(expression string, row map[string]interface{})
 	// Default to true for unsupported filters
 	return true
 }
-
 
 // applyGroupBy applies GROUP BY clause to results.
 func (e *Executor) applyGroupBy(rows []map[string]interface{}, groupBy []string) []map[string]interface{} {

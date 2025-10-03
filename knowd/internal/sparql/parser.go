@@ -2,11 +2,14 @@
 package sparql
 
 import (
+	"context"
 	"fmt"
 	"regexp"
 	"strings"
 
 	"github.com/pkg/errors"
+	"github.com/unrdf/knowd/internal/telemetry"
+	"go.opentelemetry.io/otel/attribute"
 )
 
 // Parser handles SPARQL query parsing.
@@ -142,8 +145,14 @@ func (p *Parser) expandPrefixes(term string) string {
 
 // Parse parses a SPARQL query string and returns a plan.
 func (p *Parser) Parse(query string) (*Plan, error) {
+	ctx, span := telemetry.StartSpan(context.Background(), "sparql.parse")
+	defer span.End()
+
+	telemetry.AddEvent(ctx, "parse.started", attribute.String("query.length", fmt.Sprintf("%d", len(query))))
+
 	query = strings.TrimSpace(query)
 	if query == "" {
+		telemetry.RecordError(ctx, errors.New("empty query"))
 		return nil, errors.New("empty query")
 	}
 
@@ -170,6 +179,10 @@ func (p *Parser) Parse(query string) (*Plan, error) {
 
 // parseSelect parses a SELECT query.
 func (p *Parser) parseSelect(query string) (*Plan, error) {
+	ctx, span := telemetry.StartSpan(context.Background(), "sparql.parse.select")
+	defer span.End()
+
+	telemetry.AddEvent(ctx, "parse.select.started")
 	matches := p.selectPattern.FindStringSubmatch(query)
 	if len(matches) < 2 {
 		return nil, errors.New("invalid SELECT query format")

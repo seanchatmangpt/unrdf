@@ -48,17 +48,24 @@ func (p *Prepare) extractPlaceholders() error {
 	// Simple placeholder extraction - look for patterns like :param
 	placeholderRe := regexp.MustCompile(`:([a-zA-Z][a-zA-Z0-9_]*)`)
 
+	// Use a map to deduplicate placeholders
+	placeholderMap := make(map[string]*Placeholder)
+	variableSet := make(map[string]bool)
+
 	// Process SELECT columns
 	for _, column := range p.plan.Columns {
 		matches := placeholderRe.FindAllStringSubmatch(column, -1)
-		for i, match := range matches {
-			p.placeholders = append(p.placeholders, Placeholder{
-				Name:   match[1],
-				Index:  i,
-				Type:   "variable",
-				Column: column,
-			})
-			p.variables = append(p.variables, match[1])
+		for _, match := range matches {
+			placeholderName := match[1]
+			if _, exists := placeholderMap[placeholderName]; !exists {
+				placeholderMap[placeholderName] = &Placeholder{
+					Name:   placeholderName,
+					Index:  len(p.placeholders),
+					Type:   "variable",
+					Column: column,
+				}
+				variableSet[placeholderName] = true
+			}
 		}
 	}
 
@@ -78,6 +85,15 @@ func (p *Prepare) extractPlaceholders() error {
 		}
 	}
 
+	// Convert map to slice
+	for _, placeholder := range placeholderMap {
+		p.placeholders = append(p.placeholders, *placeholder)
+	}
+
+	for variable := range variableSet {
+		p.variables = append(p.variables, variable)
+	}
+
 	return nil
 }
 
@@ -86,14 +102,25 @@ func (p *Prepare) checkPlaceholder(term string) {
 	placeholderRe := regexp.MustCompile(`:([a-zA-Z][a-zA-Z0-9_]*)`)
 	matches := placeholderRe.FindAllStringSubmatch(term, -1)
 
-	for i, match := range matches {
-		p.placeholders = append(p.placeholders, Placeholder{
-			Name:   match[1],
-			Index:  i,
-			Type:   "variable",
-			Column: term,
-		})
-		p.variables = append(p.variables, match[1])
+	for _, match := range matches {
+		placeholderName := match[1]
+		// Check if we already have this placeholder
+		found := false
+		for _, existing := range p.placeholders {
+			if existing.Name == placeholderName {
+				found = true
+				break
+			}
+		}
+		if !found {
+			p.placeholders = append(p.placeholders, Placeholder{
+				Name:   placeholderName,
+				Index:  len(p.placeholders),
+				Type:   "variable",
+				Column: term,
+			})
+			p.variables = append(p.variables, placeholderName)
+		}
 	}
 }
 
@@ -117,7 +144,7 @@ func (p *Prepare) applyBindings(plan *Plan, bindings PreparedBinding) error {
 	// Apply bindings to SELECT columns
 	for i, column := range plan.Columns {
 		for varName, value := range bindings {
-			placeholderRe := regexp.MustCompile(fmt.Sprintf("\\b:%s\\b", varName))
+			placeholderRe := regexp.MustCompile(fmt.Sprintf(":%s", varName))
 			if placeholderRe.MatchString(column) {
 				// Replace placeholder with bound value
 				newColumn := placeholderRe.ReplaceAllString(column, fmt.Sprintf("\"%v\"", value))
@@ -142,15 +169,18 @@ func (p *Prepare) applyBindingToTriple(triple Triple, bindings PreparedBinding) 
 	newTriple := triple
 
 	for varName, value := range bindings {
-		if placeholderRe := regexp.MustCompile(fmt.Sprintf("\\b:%s\\b", varName)); placeholderRe.MatchString(triple.Subject) {
+		placeholderRe := regexp.MustCompile(fmt.Sprintf(":%s", varName))
+		if placeholderRe.MatchString(triple.Subject) {
 			newTriple.Subject = placeholderRe.ReplaceAllString(triple.Subject, fmt.Sprintf("\"%v\"", value))
 		}
 
-		if placeholderRe := regexp.MustCompile(fmt.Sprintf("\\b:%s\\b", varName)); placeholderRe.MatchString(triple.Predicate) {
+		placeholderRe = regexp.MustCompile(fmt.Sprintf(":%s", varName))
+		if placeholderRe.MatchString(triple.Predicate) {
 			newTriple.Predicate = placeholderRe.ReplaceAllString(triple.Predicate, fmt.Sprintf("\"%v\"", value))
 		}
 
-		if placeholderRe := regexp.MustCompile(fmt.Sprintf("\\b:%s\\b", varName)); placeholderRe.MatchString(triple.Object) {
+		placeholderRe = regexp.MustCompile(fmt.Sprintf(":%s", varName))
+		if placeholderRe.MatchString(triple.Object) {
 			newTriple.Object = placeholderRe.ReplaceAllString(triple.Object, fmt.Sprintf("\"%v\"", value))
 		}
 	}

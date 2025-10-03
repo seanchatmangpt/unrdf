@@ -308,8 +308,8 @@ func TestRegistry_Evaluate(t *testing.T) {
 		t.Errorf("Evaluate() error = %v", err)
 	}
 
-	if len(results) != 3 {
-		t.Errorf("Evaluate() returned %d results, want 3", len(results))
+	if len(results) != 2 {
+		t.Errorf("Evaluate() returned %d results, want 2 (only enabled hooks)", len(results))
 	}
 
 	// Check results

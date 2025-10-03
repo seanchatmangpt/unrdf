@@ -471,15 +471,15 @@ func TestEndToEnd_CompleteWorkflow(t *testing.T) {
 			"delta": map[string]interface{}{
 				"add": []map[string]interface{}{
 					{
-						"subject":   "<http://example.org/alice>",
-						"predicate": "<http://xmlns.com/foaf/0.1/name>",
-						"object":    "\"Alice\"",
+						"subject":   "<http://example.org/s1>",
+						"predicate": "<http://example.org/p1>",
+						"object":    "\"o1\"",
 						"graph":     "default",
 					},
 					{
-						"subject":   "<http://example.org/alice>",
-						"predicate": "<http://xmlns.com/foaf/0.1/age>",
-						"object":    "\"30\"",
+						"subject":   "<http://example.org/s1>",
+						"predicate": "<http://example.org/p2>",
+						"object":    "\"o2\"",
 						"graph":     "default",
 					},
 				},
@@ -513,7 +513,7 @@ func TestEndToEnd_CompleteWorkflow(t *testing.T) {
 
 		// 2. Query the data with simpler query first
 		queryData := map[string]interface{}{
-			"query": "SELECT ?s ?p ?o WHERE { ?s ?p ?o }",
+			"query": "SELECT * WHERE { ?s ?p ?o }",
 			"kind":  "sparql-select",
 		}
 
@@ -568,7 +568,7 @@ func TestEndToEnd_CompleteWorkflow(t *testing.T) {
 
 		// 4. Test SHACL validation
 		validationData := map[string]interface{}{
-			"data": "@prefix ex: <http://example.org/> . @prefix foaf: <http://xmlns.com/foaf/0.1/> . ex:alice a foaf:Person ; foaf:name \"Alice\" ; foaf:age \"30\" .",
+			"data":   "@prefix ex: <http://example.org/> . @prefix foaf: <http://xmlns.com/foaf/0.1/> . ex:alice a foaf:Person ; foaf:name \"Alice\" ; foaf:age \"30\" .",
 			"shapes": "@prefix sh: <http://www.w3.org/ns/shacl#> . @prefix foaf: <http://xmlns.com/foaf/0.1/> . ex:PersonShape a sh:NodeShape ; sh:targetClass foaf:Person ; sh:property [ sh:path foaf:name ; sh:minCount 1 ] ; sh:property [ sh:path foaf:age ; sh:datatype xsd:integer ] .",
 		}
 
@@ -754,8 +754,8 @@ func TestEndToEnd_CompleteWorkflow(t *testing.T) {
 
 		// 9. Test vector upsert (if enabled)
 		vectorData := map[string]interface{}{
-			"id":       "test-doc-1",
-			"text":     "This is a test document for vector indexing",
+			"id":   "test-doc-1",
+			"text": "This is a test document for vector indexing",
 			"metadata": map[string]interface{}{
 				"title":     "Test Document",
 				"category":  "test",
