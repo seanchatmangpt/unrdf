@@ -24,7 +24,7 @@ func TestExecutor_ExecuteSelect(t *testing.T) {
 
 	executor := NewExecutor()
 	plan := &Plan{
-		Type: "SELECT",
+		Type:    "SELECT",
 		Columns: []string{"?s", "?p", "?o"},
 		Patterns: []BasicGraphPattern{
 			{Triples: []Triple{{Subject: "?s", Predicate: "?p", Object: "?o"}}},
@@ -192,11 +192,11 @@ func TestExecutor_ApplySlice(t *testing.T) {
 		limit  int
 		want   int
 	}{
-		{0, 0, 5},    // no limit/offset
-		{2, 0, 3},    // offset 2, no limit
-		{0, 3, 3},    // no offset, limit 3
-		{1, 2, 2},    // offset 1, limit 2
-		{10, 5, 0},   // offset beyond length
+		{0, 0, 5},  // no limit/offset
+		{2, 0, 3},  // offset 2, no limit
+		{0, 3, 3},  // no offset, limit 3
+		{1, 2, 2},  // offset 1, limit 2
+		{10, 5, 0}, // offset beyond length
 	}
 
 	for _, tt := range tests {

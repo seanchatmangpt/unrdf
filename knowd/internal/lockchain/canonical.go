@@ -1,11 +1,13 @@
 package lockchain
 
 import (
+	"bytes"
 	"fmt"
 	"sort"
 	"strings"
 
 	sha3ext "golang.org/x/crypto/sha3"
+	"github.com/knakk/rdf"
 )
 
 // URDNA2015 implements the URDNA2015 canonicalization algorithm for RDF/N-Quads.
@@ -129,8 +131,45 @@ func (urdna *URDNA2015) canonicalizeTerm(term string, labelMap map[string]string
 	return term
 }
 
-// parseNQuads converts N-Quads data into quad arrays.
+// parseNQuads converts N-Quads data into quad arrays using knakk/rdf library.
 func (urdna *URDNA2015) parseNQuads(data []byte) [][]string {
+	triples, err := rdf.NewTripleDecoder(bytes.NewReader(data), rdf.NTriples).DecodeAll()
+	if err != nil {
+		// Fallback to simple file-based N-Quads parsing
+		return urdna.parseNQuadsFallback(data)
+	}
+	
+	var quads [][]string
+	for _, triple := range triples {
+		quad := []string{
+			urdna.rdfTermToString(triple.Subj),
+			urdna.rdfTermToString(triple.Pred),
+			urdna.rdfTermToString(triple.Obj),
+			"<default>", // Default graph for canonicalization
+		}
+		quads = append(quads, quad)
+	}
+	
+	return quads
+}
+
+// rdfTermToString converts an RDF term to string representation.
+func (urdna *URDNA2015) rdfTermToString(term rdf.Term) string {
+	switch t := term.(type) {
+	case rdf.IRI:
+		return "<" + t.String() + ">"
+	case rdf.Blank:
+		return "_:" + t.String()
+	case rdf.Literal:
+		// Simple literal handling for canonicalization
+		return "\"" + t.String() + "\""
+	default:
+		return term.String()
+	}
+}
+
+// parseNQuadsFallback provides a fallback parser for N-Quads format.
+func (urdna *URDNA2015) parseNQuadsFallback(data []byte) [][]string {
 	lines := strings.Split(string(data), "\n")
 	var quads [][]string
 
@@ -198,8 +237,20 @@ func (urdna *URDNA2015) getTermPosition(term string) string {
 
 // establishSimpleNamedAdjacencyLists establishes simple adjacency lists.
 func (urdna *URDNA2015) establishSimpleNamedAdjacencyLists(nodeMap map[string]*Node) {
-	// Implementation would establish which blank nodes are connected
-	// This is a simplified version
+	// For each node, establish connections based on quads
+	for _, node := range nodeMap {
+		node.Labels = make(map[string]bool)
+
+		for _, quad := range node.Quads {
+			// Check if this quad connects to other blank nodes
+			if strings.HasPrefix(quad.Subject, "_:") {
+				node.Labels[quad.Subject] = true
+			}
+			if strings.HasPrefix(quad.Object, "_:") {
+				node.Labels[quad.Object] = true
+			}
+		}
+	}
 }
 
 // hashDirectNodes hashes direct nodes.

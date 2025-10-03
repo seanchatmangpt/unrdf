@@ -163,7 +163,6 @@ func (s *Signer) SaveKeyPair(privateKeyPath, publicKeyPath string) error {
 	return nil
 }
 
-
 // JSONWebSignature represents a complete JWS structure.
 type JSONWebSignature struct {
 	Header    map[string]interface{} `json:"header"`

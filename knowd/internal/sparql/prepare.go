@@ -107,9 +107,9 @@ func (p *Prepare) Execute(bindings PreparedBinding, executor *Executor, store st
 		return nil, err
 	}
 
-	// Execute the plan
-	executor := NewExecutor() // No cache for prepared execution
-	return executor.Execute(context.Background(), store, "sparql-select", p.plan)
+	// Execute the plan using the provided executor
+	result, err := executor.Execute(context.Background(), store, "sparql-select", p.plan)
+	return result, err
 }
 
 // applyBindings applies bindings to the execution plan.

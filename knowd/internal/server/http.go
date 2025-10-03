@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/gorilla/mux"
 	"github.com/unrdf/knowd/internal/lockchain"
 	"github.com/unrdf/knowd/internal/sparql"
 	"github.com/unrdf/knowd/internal/store"
@@ -18,7 +19,7 @@ type Server struct {
 	addr      string
 	dataDir   string
 	coreURL   string
-	mux       *http.ServeMux
+	router    *mux.Router
 	executor  *sparql.Executor
 	store     store.Interface
 	lockchain *lockchain.Lockchain
@@ -33,12 +34,8 @@ func New(addr, dataDir, coreURL string) *Server {
 		log.Fatalf("Failed to create memory store: %v", err)
 	}
 
-	// Initialize plan cache
-	cacheConfig := sparql.CacheConfig{Capacity: 256}
-	cache := sparql.NewPlanCache(cacheConfig)
-
 	// Initialize SPARQL executor
-	executor := sparql.NewExecutor(cache)
+	executor := sparql.NewExecutor()
 
 	// Initialize lockchain
 	lockchainConfig := lockchain.Config{
@@ -49,11 +46,12 @@ func New(addr, dataDir, coreURL string) *Server {
 		log.Fatalf("Failed to create lockchain: %v", err)
 	}
 
+	router := mux.NewRouter()
 	s := &Server{
 		addr:      addr,
 		dataDir:   dataDir,
 		coreURL:   coreURL,
-		mux:       http.NewServeMux(),
+		router:    router,
 		executor:  executor,
 		store:     storeInstance,
 		lockchain: lc,
@@ -64,32 +62,31 @@ func New(addr, dataDir, coreURL string) *Server {
 
 // setupRoutes configures HTTP routes for the server.
 func (s *Server) setupRoutes() {
-	s.mux.HandleFunc("/healthz", s.handleHealth)
-	s.mux.HandleFunc("/v1/tx", s.handleTransaction)
-	s.mux.HandleFunc("/v1/query", s.handleQuery)
-	s.mux.HandleFunc("/v1/query/stream", s.handleQueryStream)
-	s.mux.HandleFunc("/v1/query/at", s.handleQueryAt)
-	s.mux.HandleFunc("/v1/validate", s.handleValidate)
-	s.mux.HandleFunc("/v1/receipts", s.handleReceipts)
-	s.mux.HandleFunc("/v1/receipts/search", s.handleReceiptsSearch)
-	s.mux.HandleFunc("/v1/hooks/evaluate", s.handleHookEvaluate)
+	// Health check
+	s.router.HandleFunc("/healthz", s.handleHealth).Methods("GET")
+
+	// Core API routes
+	s.router.HandleFunc("/v1/tx", s.handleTransaction).Methods("POST")
+	s.router.HandleFunc("/v1/query", s.handleQuery).Methods("POST")
+	s.router.HandleFunc("/v1/query/stream", s.handleQueryStream).Methods("POST")
+	s.router.HandleFunc("/v1/query/at", s.handleQueryAt).Methods("POST")
+	s.router.HandleFunc("/v1/validate", s.handleValidate).Methods("POST")
+	s.router.HandleFunc("/v1/receipts", s.handleReceipts).Methods("GET", "POST")
+	s.router.HandleFunc("/v1/receipts/search", s.handleReceiptsSearch).Methods("GET")
+	s.router.HandleFunc("/v1/hooks/evaluate", s.handleHookEvaluate).Methods("POST")
 
 	// Admin routes
-	s.mux.HandleFunc("/v1/admin/namespaces", s.handleAdminNamespaces)
-	s.mux.HandleFunc("/v1/admin/rollout", s.handleAdminRollout)
-	s.mux.HandleFunc("/v1/admin/analyze", s.handleAdminAnalyze)
+	s.router.HandleFunc("/v1/admin/namespaces", s.handleAdminNamespaces).Methods("GET", "POST")
+	s.router.HandleFunc("/v1/admin/rollout", s.handleAdminRollout).Methods("GET", "POST")
+	s.router.HandleFunc("/v1/admin/analyze", s.handleAdminAnalyze).Methods("POST")
 
-	// Add version endpoint
-	s.mux.HandleFunc("/version", s.handleVersion)
+	// Version endpoint
+	s.router.HandleFunc("/version", s.handleVersion).Methods("GET")
 }
 
 // handleHealth handles health check requests.
 func (s *Server) handleHealth(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-
+	w.Header().Set("Content-Type", "text/plain")
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("ok"))
 }
@@ -109,14 +106,15 @@ type TxResponse struct {
 
 // handleTransaction handles transaction requests.
 func (s *Server) handleTransaction(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
 
 	var req TxRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "Invalid JSON", http.StatusBadRequest)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{
+			"error":   "Invalid JSON",
+			"message": err.Error(),
+		})
 		return
 	}
 
@@ -173,8 +171,16 @@ func (s *Server) handleQuery(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Execute the query using SPARQL executor
-	result, err := s.executor.Query(r.Context(), req.Query, s.store)
+	// Parse and execute the query using SPARQL executor
+	parser := sparql.NewParser()
+	plan, err := parser.Parse(req.Query)
+	if err != nil {
+		log.Printf("Query parsing error: %v", err)
+		http.Error(w, "Query parsing failed", http.StatusBadRequest)
+		return
+	}
+
+	result, err := s.executor.Execute(r.Context(), s.store, req.Kind, plan)
 	if err != nil {
 		http.Error(w, "Query execution failed", http.StatusInternalServerError)
 		return
@@ -281,8 +287,16 @@ func (s *Server) handleQueryStream(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Execute the query
-	result, err := s.executor.Query(r.Context(), req.Query, s.store)
+	// Parse and execute the query
+	parser := sparql.NewParser()
+	plan, err := parser.Parse(req.Query)
+	if err != nil {
+		log.Printf("Query parsing error: %v", err)
+		http.Error(w, "Query parsing failed", http.StatusBadRequest)
+		return
+	}
+
+	result, err := s.executor.Execute(r.Context(), s.store, req.Kind, plan)
 	if err != nil {
 		log.Printf("Query execution error: %v", err)
 		http.Error(w, "Query execution failed", http.StatusInternalServerError)
@@ -431,10 +445,6 @@ func (s *Server) handleAdminRollout(w http.ResponseWriter, r *http.Request) {
 
 // handleVersion handles version information requests.
 func (s *Server) handleVersion(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
 
 	w.Header().Set("Content-Type", "text/plain")
 	w.Write([]byte(version.FullVersion()))
@@ -475,15 +485,8 @@ func (s *Server) handleQueryAt(w http.ResponseWriter, r *http.Request) {
 
 // handleReceiptsSearch handles receipt search requests.
 func (s *Server) handleReceiptsSearch(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
 
-	// Parse query parameters for search
-	actor := r.URL.Query().Get("actor")
-	since := r.URL.Query().Get("since")
-	until := r.URL.Query().Get("until")
+	// TODO: Implement receipt search with query parameters
 
 	// TODO: Implement actual receipt search
 	// For now, return empty results
@@ -536,10 +539,11 @@ func (s *Server) handleAdminAnalyze(w http.ResponseWriter, r *http.Request) {
 
 // Start starts the HTTP server.
 func (s *Server) Start() error {
-	return http.ListenAndServe(s.addr, s.mux)
+	return http.ListenAndServe(s.addr, s.router)
 }
 
 // ServeHTTP implements http.Handler interface for compatibility.
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	s.mux.ServeHTTP(w, r)
+	s.router.ServeHTTP(w, r)
 }
+

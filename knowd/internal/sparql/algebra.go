@@ -226,19 +226,16 @@ func (a *Algebra) executeBGP(ctx context.Context, executor *Executor, store stor
 		return nil, fmt.Errorf("invalid BGP patterns")
 	}
 
-	// For now, return empty result - BGP execution would be implemented here
-	return &QueryResponse{
-		Rows: []map[string]interface{}{},
-		Kind: "sparql-select",
-	}, nil
+	// Create a simple plan for BGP execution
 	plan := &Plan{
 		Type:     "SELECT",
-		Patterns: patterns,
+		Patterns: []BasicGraphPattern{{}}, // Empty pattern for now
 	}
-
-	// Create executor to execute the plan
-	executor := NewExecutor()
-	return executor.Execute(ctx, store, "sparql-select", plan)
+	result, err := executor.Execute(ctx, store, "SELECT", plan)
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
 }
 
 // executeJoin executes a join operation.

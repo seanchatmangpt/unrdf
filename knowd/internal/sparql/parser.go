@@ -137,7 +137,9 @@ func (p *Parser) parseSelect(query string) (*Plan, error) {
 	}
 
 	whereClause := query[whereStart+1 : whereEnd]
-	pattern := p.parseBasicGraphPattern(whereClause)
+
+	// Parse advanced constructs from WHERE clause
+	patterns, unions, optionals, minuses, binds, values := p.parseAdvancedConstructs(whereClause)
 
 	// Parse LIMIT and OFFSET
 	limit := p.parseLimit(query[whereEnd+1:])
@@ -146,7 +148,12 @@ func (p *Parser) parseSelect(query string) (*Plan, error) {
 	return &Plan{
 		Type:     "SELECT",
 		Columns:  columns,
-		Patterns: []BasicGraphPattern{pattern},
+		Patterns: patterns,
+		Unions:   unions,
+		Optional: optionals,
+		Minus:    minuses,
+		Bind:     binds,
+		Values:   values,
 		Limit:    limit,
 		Offset:   offset,
 	}, nil
@@ -166,11 +173,18 @@ func (p *Parser) parseAsk(query string) (*Plan, error) {
 	}
 
 	whereClause := query[whereStart+1 : whereEnd]
-	pattern := p.parseBasicGraphPattern(whereClause)
+
+	// Parse advanced constructs from WHERE clause
+	patterns, unions, optionals, minuses, binds, values := p.parseAdvancedConstructs(whereClause)
 
 	return &Plan{
 		Type:     "ASK",
-		Patterns: []BasicGraphPattern{pattern},
+		Patterns: patterns,
+		Unions:   unions,
+		Optional: optionals,
+		Minus:    minuses,
+		Bind:     binds,
+		Values:   values,
 	}, nil
 }
 
@@ -195,11 +209,18 @@ func (p *Parser) parseConstruct(query string) (*Plan, error) {
 	}
 
 	whereClause := query[whereStart+1 : whereEnd]
-	pattern := p.parseBasicGraphPattern(whereClause)
+
+	// Parse advanced constructs from WHERE clause
+	patterns, unions, optionals, minuses, binds, values := p.parseAdvancedConstructs(whereClause)
 
 	return &Plan{
 		Type:     "CONSTRUCT",
-		Patterns: []BasicGraphPattern{pattern},
+		Patterns: patterns,
+		Unions:   unions,
+		Optional: optionals,
+		Minus:    minuses,
+		Bind:     binds,
+		Values:   values,
 	}, nil
 }
 
@@ -222,11 +243,12 @@ func (p *Parser) parseColumns(columnsStr string) []string {
 	return columns
 }
 
-// parseBasicGraphPattern parses the inner clause of WHERE.
+
+// parseBasicGraphPattern parses a basic graph pattern from SPARQL query text.
+// It handles simple triple patterns but delegates advanced constructs to parseAdvancedConstructs.
 func (p *Parser) parseBasicGraphPattern(clause string) BasicGraphPattern {
 	var triples []Triple
 
-	// Simple triple pattern parsing with enhanced construct support
 	lines := strings.Split(clause, "\n")
 	for _, line := range lines {
 		line = strings.TrimSpace(line)
@@ -236,44 +258,56 @@ func (p *Parser) parseBasicGraphPattern(clause string) BasicGraphPattern {
 
 		linesUpper := strings.ToUpper(line)
 
-		// Handle advanced constructs
-		if strings.Contains(linesUpper, "UNION") {
-			// UNION parsing would be handled at a higher level
-			continue
-		} else if strings.Contains(linesUpper, "OPTIONAL") {
-			// OPTIONAL parsing would be handled at a higher level
-			continue
-		} else if strings.Contains(linesUpper, "MINUS") {
-			// MINUS parsing would be handled at a higher level
-			continue
-		} else if strings.Contains(linesUpper, "BIND") {
-			// BIND parsing would be handled at a higher level
-			continue
-		} else if strings.Contains(linesUpper, "VALUES") {
-			// VALUES parsing would be handled at a higher level
+		// Skip advanced constructs - they are handled by parseAdvancedConstructs
+		if p.isAdvancedConstruct(linesUpper) {
 			continue
 		}
 
-		// Parse simple triple patterns
-		if parts := strings.Fields(line); len(parts) >= 3 {
-			triple := Triple{
-				Subject:   parts[0],
-				Predicate: parts[1],
-				Object:    strings.Join(parts[2:], " "),
-			}
-			triples = append(triples, triple)
+		// Parse simple triple pattern
+		if triple := p.parseTriplePattern(line); triple != nil {
+			triples = append(triples, *triple)
 		}
 	}
 
 	return BasicGraphPattern{Triples: triples}
 }
 
+// isAdvancedConstruct checks if a line contains advanced SPARQL constructs.
+func (p *Parser) isAdvancedConstruct(line string) bool {
+	advancedKeywords := []string{"UNION", "OPTIONAL", "MINUS", "BIND", "VALUES"}
+	for _, keyword := range advancedKeywords {
+		if strings.Contains(line, keyword) {
+			return true
+		}
+	}
+	return false
+}
+
+// parseTriplePattern parses a single triple pattern from a line of SPARQL.
+func (p *Parser) parseTriplePattern(line string) *Triple {
+	// Remove trailing period if present
+	line = strings.TrimSuffix(line, ".")
+
+	// Simple triple pattern parsing - split by whitespace
+	parts := strings.Fields(line)
+	if len(parts) < 3 {
+		return nil // Not a valid triple pattern
+	}
+
+	return &Triple{
+		Subject:   parts[0],
+		Predicate: parts[1],
+		Object:    strings.Join(parts[2:], " "),
+	}
+}
+
 // parseLimit parses LIMIT clause from query text.
+// Returns 0 if no valid LIMIT is found or if parsing fails.
 func (p *Parser) parseLimit(queryPart string) int {
 	limitRe := regexp.MustCompile(`(?i)\s+LIMIT\s+(\d+)`)
 	if matches := limitRe.FindStringSubmatch(queryPart); len(matches) > 1 {
 		var limit int
-		if _, err := fmt.Sscanf(matches[1], "%d", &limit); err == nil {
+		if n, err := fmt.Sscanf(matches[1], "%d", &limit); n == 1 && err == nil && limit >= 0 {
 			return limit
 		}
 	}
@@ -281,11 +315,12 @@ func (p *Parser) parseLimit(queryPart string) int {
 }
 
 // parseOffset parses OFFSET clause from query text.
+// Returns 0 if no valid OFFSET is found or if parsing fails.
 func (p *Parser) parseOffset(queryPart string) int {
 	offsetRe := regexp.MustCompile(`(?i)\s+OFFSET\s+(\d+)`)
 	if matches := offsetRe.FindStringSubmatch(queryPart); len(matches) > 1 {
 		var offset int
-		if _, err := fmt.Sscanf(matches[1], "%d", &offset); err == nil {
+		if n, err := fmt.Sscanf(matches[1], "%d", &offset); n == 1 && err == nil && offset >= 0 {
 			return offset
 		}
 	}
@@ -293,6 +328,7 @@ func (p *Parser) parseOffset(queryPart string) int {
 }
 
 // parseAdvancedConstructs parses advanced SPARQL constructs from WHERE clause.
+// Returns patterns, unions, optionals, minuses, binds, and values in that order.
 func (p *Parser) parseAdvancedConstructs(clause string) ([]BasicGraphPattern, []UnionBlock, []OptionalBlock, []BasicGraphPattern, []BindBlock, []ValuesBlock) {
 	var patterns []BasicGraphPattern
 	var unions []UnionBlock
@@ -313,33 +349,33 @@ func (p *Parser) parseAdvancedConstructs(clause string) ([]BasicGraphPattern, []
 
 		linesUpper := strings.ToUpper(line)
 
-		if strings.Contains(linesUpper, "UNION") {
-			// Parse UNION construct
-			leftPattern, newI := p.parseUnionBlock(lines, i)
-			rightPattern, newI := p.parseUnionBlock(lines, newI)
+		switch {
+		case strings.Contains(linesUpper, "UNION"):
+			leftPattern, rightPattern, newI := p.parseUnionBlock(lines, i)
 			unions = append(unions, UnionBlock{Left: leftPattern, Right: rightPattern})
 			i = newI
-		} else if strings.Contains(linesUpper, "OPTIONAL") {
-			// Parse OPTIONAL construct
+
+		case strings.Contains(linesUpper, "OPTIONAL"):
 			optionalPattern, newI := p.parseOptionalBlock(lines, i)
 			optionals = append(optionals, OptionalBlock{Pattern: optionalPattern})
 			i = newI
-		} else if strings.Contains(linesUpper, "MINUS") {
-			// Parse MINUS construct
+
+		case strings.Contains(linesUpper, "MINUS"):
 			minusPattern, newI := p.parseMinusBlock(lines, i)
 			minuses = append(minuses, minusPattern)
 			i = newI
-		} else if strings.Contains(linesUpper, "BIND") {
-			// Parse BIND construct
+
+		case strings.Contains(linesUpper, "BIND"):
 			bind, newI := p.parseBindBlock(lines, i)
 			binds = append(binds, bind)
 			i = newI
-		} else if strings.Contains(linesUpper, "VALUES") {
-			// Parse VALUES construct
+
+		case strings.Contains(linesUpper, "VALUES"):
 			valuesBlock, newI := p.parseValuesBlock(lines, i)
 			values = append(values, valuesBlock)
 			i = newI
-		} else {
+
+		default:
 			// Parse as basic graph pattern
 			bgp, newI := p.parseBasicGraphPatternFromLines(lines, i)
 			patterns = append(patterns, bgp)
@@ -351,10 +387,12 @@ func (p *Parser) parseAdvancedConstructs(clause string) ([]BasicGraphPattern, []
 }
 
 // parseUnionBlock parses a UNION block.
-func (p *Parser) parseUnionBlock(lines []string, start int) (BasicGraphPattern, int) {
+func (p *Parser) parseUnionBlock(lines []string, start int) (BasicGraphPattern, BasicGraphPattern, int) {
 	// Skip the UNION keyword
 	i := start + 1
-	return p.parseBasicGraphPatternFromLines(lines, i)
+	leftPattern, i := p.parseBasicGraphPatternFromLines(lines, i)
+	rightPattern, i := p.parseBasicGraphPatternFromLines(lines, i)
+	return leftPattern, rightPattern, i
 }
 
 // parseOptionalBlock parses an OPTIONAL block.
@@ -380,25 +418,74 @@ func (p *Parser) parseMinusBlock(lines []string, start int) (BasicGraphPattern, 
 }
 
 // parseBindBlock parses a BIND clause.
+// Expected format: BIND(?variable AS ?expression)
 func (p *Parser) parseBindBlock(lines []string, start int) (BindBlock, int) {
-	// Simple BIND parsing: BIND(?var AS ?expression)
-	_ = strings.TrimSpace(lines[start])
-	// For now, return a simple stub
+	line := strings.TrimSpace(lines[start])
+
+	var variable, expression string
+
+	// Look for BIND(?var AS ?expr) pattern
+	if strings.HasPrefix(line, "BIND(") && strings.Contains(line, " AS ") {
+		// Extract content inside parentheses
+		content := line[5 : len(line)-1] // Remove BIND( and )
+
+		// Split by AS
+		parts := strings.Split(content, " AS ")
+		if len(parts) == 2 {
+			variable = strings.TrimSpace(parts[0])
+			expression = strings.TrimSpace(parts[1])
+		}
+	}
+
 	return BindBlock{
-		Variable:   "?bound",
-		Expression: "?value",
+		Variable:   variable,
+		Expression: expression,
 	}, start + 1
 }
 
 // parseValuesBlock parses a VALUES clause.
+// Expected format: VALUES ?var1 ?var2 { ("val1" "val2") ("val3" "val4") }
 func (p *Parser) parseValuesBlock(lines []string, start int) (ValuesBlock, int) {
-	// Simple VALUES parsing: VALUES ?var { "val1" "val2" }
-	_ = strings.TrimSpace(lines[start])
-	// For now, return a simple stub
+	line := strings.TrimSpace(lines[start])
+
+	var variables []string
+	var values [][]string
+
+	// Look for VALUES ?vars { values } pattern
+	if strings.HasPrefix(line, "VALUES") && strings.Contains(line, "{") {
+		// Extract variables (between VALUES and {)
+		valuesStart := strings.Index(line, "VALUES") + 6
+		braceStart := strings.Index(line, "{")
+		if braceStart > valuesStart {
+			varStr := strings.TrimSpace(line[valuesStart:braceStart])
+			variables = strings.Fields(varStr)
+		}
+
+		// Extract values (inside braces)
+		braceEnd := strings.LastIndex(line, "}")
+		if braceEnd > braceStart {
+			valueStr := line[braceStart+1 : braceEnd]
+			values = p.parseValuesList(valueStr)
+		}
+	}
+
 	return ValuesBlock{
-		Variables: []string{"?var"},
-		Values:    [][]string{{"val1"}, {"val2"}},
+		Variables: variables,
+		Values:    values,
 	}, start + 1
+}
+
+// parseValuesList parses the list of values from a VALUES clause.
+func (p *Parser) parseValuesList(valueStr string) [][]string {
+	// This is a simplified parser for VALUES content
+	// In a real implementation, this would handle complex quoting and escaping
+	var result [][]string
+
+	// Split by spaces, but this is very basic
+	fields := strings.Fields(valueStr)
+	result = append(result, fields)
+
+	return result
 }
 
 // parseBasicGraphPatternFromLines parses a basic graph pattern starting from line index.

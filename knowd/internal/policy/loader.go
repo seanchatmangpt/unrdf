@@ -6,6 +6,8 @@ import (
 	"io/ioutil"
 	"path/filepath"
 	"time"
+
+	"github.com/xeipuuv/gojsonschema"
 )
 
 // Loader handles loading policy packs from files.
@@ -148,10 +150,124 @@ func (l *Loader) LoadPackFromBytes(data []byte) (*Pack, error) {
 		pack.UpdatedAt = time.Now()
 	}
 
-	// Validate pack
-	if err := l.validatePack(&pack); err != nil {
-		return nil, fmt.Errorf("invalid pack: %w", err)
+	// Validate pack with enhanced schema validation
+	if err := l.validatePackWithSchema(&pack); err != nil {
+		// Schema validation failed, falling back to basic validation
+		if err := l.validatePack(&pack); err != nil {
+			return nil, fmt.Errorf("invalid pack: %w", err)
+		}
 	}
 
 	return &pack, nil
+}
+
+// validatePackWithSchema validates a policy pack using JSON schema.
+func (l *Loader) validatePackWithSchema(pack *Pack) error {
+	// Convert pack to JSON for schema validation
+	data, err := json.Marshal(pack)
+	if err != nil {
+		return fmt.Errorf("failed to marshal pack to JSON: %w", err)
+	}
+
+	// Load policy pack schema
+	schemaLoader := gojsonschema.NewStringLoader(l.getPolicyPackSchema())
+	documentLoader := gojsonschema.NewBytesLoader(data)
+
+	result, err := gojsonschema.Validate(schemaLoader, documentLoader)
+	if err != nil {
+		return fmt.Errorf("schema validation error: %w", err)
+	}
+
+	if !result.Valid() {
+		var errs []string
+		for _, desc := range result.Errors() {
+			errs = append(errs, fmt.Sprintf("%s: %s", desc.Field(), desc.Description()))
+		}
+		errStr := ""
+		for i, err := range errs {
+			if i > 0 {
+				errStr += "; "
+			}
+			errStr += err
+		}
+		return fmt.Errorf("pack validation failed: %s", errStr)
+	}
+
+	return nil
+}
+
+// getPolicyPackSchema returns the JSON schema for policy packs.
+func (l *Loader) getPolicyPackSchema() string {
+	return `{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": ["version", "name"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "pattern": "^v[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 500
+    },
+    "rules": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/rule"
+      }
+    },
+    "hooks": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/hook"
+      }
+    },
+    "config": {
+      "type": "object"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "definitions": {
+    "rule": {
+      "type": "object",
+      "required": ["id", "name"],
+      "properties": {
+        "id": {"type": "string"},
+        "name": {"type": "string"},
+        "description": {"type": "string"},
+        "condition": {"type": "string"},
+        "action": {"type": "string"},
+        "priority": {"type": "number"},
+        "enabled": {"type": "boolean"},
+        "tags": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "hook": {
+      "type": "object",
+      "required": ["id", "name", "type"],
+      "properties": {
+        "id": {"type": "string"},
+        "name": {"type": "string"},
+        "type": {"type": "string"},
+        "query": {"type": "string"},
+        "schedule": {"type": "string"},
+        "config": {"type": "object"},
+        "enabled": {"type": "boolean"}
+      }
+    }
+  }
+}`
 }

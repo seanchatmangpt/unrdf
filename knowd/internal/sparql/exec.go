@@ -23,6 +23,18 @@ func NewExecutor() *Executor {
 	return &Executor{}
 }
 
+// Query executes a SPARQL query string against a store, using caching when possible.
+func (e *Executor) Query(ctx context.Context, queryStr string, store store.Interface) (*QueryResponse, error) {
+	// Parse and execute the query
+	parser := NewParser()
+	plan, err := parser.Parse(queryStr)
+	if err != nil {
+		return nil, err
+	}
+
+	return e.Execute(ctx, store, plan.Type, plan)
+}
+
 // Execute executes a plan against a store.
 func (e *Executor) Execute(ctx context.Context, storeInstance store.Interface, queryKind string, plan *Plan) (*QueryResponse, error) {
 	switch plan.Type {

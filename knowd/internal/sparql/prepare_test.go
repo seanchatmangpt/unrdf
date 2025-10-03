@@ -8,7 +8,7 @@ import (
 
 func TestPrepare_NewPrepare(t *testing.T) {
 	plan := &Plan{
-		Type: "SELECT",
+		Type:    "SELECT",
 		Columns: []string{"?s", ":param"},
 		Patterns: []BasicGraphPattern{
 			{Triples: []Triple{{Subject: "?s", Predicate: ":param", Object: "?o"}}},
@@ -32,7 +32,7 @@ func TestPrepare_NewPrepare(t *testing.T) {
 
 func TestPrepare_Execute(t *testing.T) {
 	plan := &Plan{
-		Type: "SELECT",
+		Type:    "SELECT",
 		Columns: []string{"?s", "?o"},
 		Patterns: []BasicGraphPattern{
 			{Triples: []Triple{{Subject: "?s", Predicate: ":param", Object: "?o"}}},
@@ -69,7 +69,7 @@ func TestPrepare_Execute(t *testing.T) {
 
 func TestPrepare_ApplyBindings(t *testing.T) {
 	plan := &Plan{
-		Type: "SELECT",
+		Type:    "SELECT",
 		Columns: []string{"?s", ":param"},
 		Patterns: []BasicGraphPattern{
 			{Triples: []Triple{{Subject: "?s", Predicate: ":param", Object: "?o"}}},
@@ -101,7 +101,7 @@ func TestPrepare_ApplyBindings(t *testing.T) {
 
 func TestPrepare_ExtractPlaceholders(t *testing.T) {
 	plan := &Plan{
-		Type: "SELECT",
+		Type:    "SELECT",
 		Columns: []string{":param1", "?s"},
 		Patterns: []BasicGraphPattern{
 			{Triples: []Triple{{Subject: "?s", Predicate: ":param2", Object: ":param3"}}},
@@ -134,7 +134,7 @@ func TestPrepare_ExtractPlaceholders(t *testing.T) {
 
 func TestPrepare_CopyPlan(t *testing.T) {
 	original := &Plan{
-		Type: "SELECT",
+		Type:    "SELECT",
 		Columns: []string{"?s", "?p"},
 		Patterns: []BasicGraphPattern{
 			{Triples: []Triple{{Subject: "?s", Predicate: "?p", Object: "?o"}}},
@@ -188,7 +188,7 @@ func TestPrepare_GetVariables(t *testing.T) {
 func TestPrepare_MarshalUnmarshal(t *testing.T) {
 	original := &Prepare{
 		plan: &Plan{
-			Type: "SELECT",
+			Type:    "SELECT",
 			Columns: []string{"?s", ":param"},
 		},
 		variables:    []string{"param"},

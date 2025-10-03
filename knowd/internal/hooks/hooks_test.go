@@ -62,10 +62,10 @@ func TestRegistry_Register(t *testing.T) {
 
 	t.Run("register hook with empty ID", func(t *testing.T) {
 		invalidHook := &HookDefinition{
-			Name:     "Invalid Hook",
-			Type:     "sparql-ask",
-			Query:    "ASK WHERE { ?s ?p ?o }",
-			Enabled:  true,
+			Name:    "Invalid Hook",
+			Type:    "sparql-ask",
+			Query:   "ASK WHERE { ?s ?p ?o }",
+			Enabled: true,
 		}
 
 		err := registry.Register(invalidHook)
@@ -76,10 +76,10 @@ func TestRegistry_Register(t *testing.T) {
 
 	t.Run("register hook with empty name", func(t *testing.T) {
 		invalidHook := &HookDefinition{
-			ID:       "test-hook-2",
-			Type:     "sparql-ask",
-			Query:    "ASK WHERE { ?s ?p ?o }",
-			Enabled:  true,
+			ID:      "test-hook-2",
+			Type:    "sparql-ask",
+			Query:   "ASK WHERE { ?s ?p ?o }",
+			Enabled: true,
 		}
 
 		err := registry.Register(invalidHook)
@@ -90,10 +90,10 @@ func TestRegistry_Register(t *testing.T) {
 
 	t.Run("register hook with empty type", func(t *testing.T) {
 		invalidHook := &HookDefinition{
-			ID:       "test-hook-3",
-			Name:     "Invalid Hook",
-			Query:    "ASK WHERE { ?s ?p ?o }",
-			Enabled:  true,
+			ID:      "test-hook-3",
+			Name:    "Invalid Hook",
+			Query:   "ASK WHERE { ?s ?p ?o }",
+			Enabled: true,
 		}
 
 		err := registry.Register(invalidHook)
@@ -107,19 +107,19 @@ func TestRegistry_Register(t *testing.T) {
 		smallRegistry := NewRegistry(smallConfig)
 
 		hook1 := &HookDefinition{
-			ID:       "hook-1",
-			Name:     "Hook 1",
-			Type:     "sparql-ask",
-			Query:    "ASK WHERE { ?s ?p ?o }",
-			Enabled:  true,
+			ID:      "hook-1",
+			Name:    "Hook 1",
+			Type:    "sparql-ask",
+			Query:   "ASK WHERE { ?s ?p ?o }",
+			Enabled: true,
 		}
 
 		hook2 := &HookDefinition{
-			ID:       "hook-2",
-			Name:     "Hook 2",
-			Type:     "sparql-ask",
-			Query:    "ASK WHERE { ?s ?p ?o }",
-			Enabled:  true,
+			ID:      "hook-2",
+			Name:    "Hook 2",
+			Type:    "sparql-ask",
+			Query:   "ASK WHERE { ?s ?p ?o }",
+			Enabled: true,
 		}
 
 		err := smallRegistry.Register(hook1)
@@ -139,11 +139,11 @@ func TestRegistry_Unregister(t *testing.T) {
 	registry := NewRegistry(config)
 
 	hook := &HookDefinition{
-		ID:       "test-hook",
-		Name:     "Test Hook",
-		Type:     "sparql-ask",
-		Query:    "ASK WHERE { ?s ?p ?o }",
-		Enabled:  true,
+		ID:      "test-hook",
+		Name:    "Test Hook",
+		Type:    "sparql-ask",
+		Query:   "ASK WHERE { ?s ?p ?o }",
+		Enabled: true,
 	}
 
 	// Register hook first
@@ -173,11 +173,11 @@ func TestRegistry_GetHook(t *testing.T) {
 	registry := NewRegistry(config)
 
 	hook := &HookDefinition{
-		ID:       "test-hook",
-		Name:     "Test Hook",
-		Type:     "sparql-ask",
-		Query:    "ASK WHERE { ?s ?p ?o }",
-		Enabled:  true,
+		ID:      "test-hook",
+		Name:    "Test Hook",
+		Type:    "sparql-ask",
+		Query:   "ASK WHERE { ?s ?p ?o }",
+		Enabled: true,
 	}
 
 	// Register hook first
@@ -223,18 +223,18 @@ func TestRegistry_ListHooks(t *testing.T) {
 
 	hooks := []*HookDefinition{
 		{
-			ID:       "hook-1",
-			Name:     "Hook 1",
-			Type:     "sparql-ask",
-			Query:    "ASK WHERE { ?s ?p ?o }",
-			Enabled:  true,
+			ID:      "hook-1",
+			Name:    "Hook 1",
+			Type:    "sparql-ask",
+			Query:   "ASK WHERE { ?s ?p ?o }",
+			Enabled: true,
 		},
 		{
-			ID:       "hook-2",
-			Name:     "Hook 2",
-			Type:     "threshold",
-			Query:    "SELECT (COUNT(?s) AS ?count) WHERE { ?s ?p ?o }",
-			Enabled:  true,
+			ID:      "hook-2",
+			Name:    "Hook 2",
+			Type:    "threshold",
+			Query:   "SELECT (COUNT(?s) AS ?count) WHERE { ?s ?p ?o }",
+			Enabled: true,
 		},
 	}
 
@@ -272,24 +272,24 @@ func TestRegistry_Evaluate(t *testing.T) {
 
 	hooks := []*HookDefinition{
 		{
-			ID:       "sparql-hook",
-			Name:     "SPARQL Hook",
-			Type:     "sparql-ask",
-			Query:    "ASK WHERE { ?s ?p ?o }",
-			Enabled:  true,
+			ID:      "sparql-hook",
+			Name:    "SPARQL Hook",
+			Type:    "sparql-ask",
+			Query:   "ASK WHERE { ?s ?p ?o }",
+			Enabled: true,
 		},
 		{
-			ID:       "threshold-hook",
-			Name:     "Threshold Hook",
-			Type:     "threshold",
-			Config:   map[string]interface{}{"threshold": 5},
-			Enabled:  true,
+			ID:      "threshold-hook",
+			Name:    "Threshold Hook",
+			Type:    "threshold",
+			Config:  map[string]interface{}{"threshold": 5},
+			Enabled: true,
 		},
 		{
-			ID:       "disabled-hook",
-			Name:     "Disabled Hook",
-			Type:     "count",
-			Enabled:  false,
+			ID:      "disabled-hook",
+			Name:    "Disabled Hook",
+			Type:    "count",
+			Enabled: false,
 		},
 	}
 
@@ -342,11 +342,11 @@ func TestRegistry_Clear(t *testing.T) {
 	registry := NewRegistry(config)
 
 	hook := &HookDefinition{
-		ID:       "test-hook",
-		Name:     "Test Hook",
-		Type:     "sparql-ask",
-		Query:    "ASK WHERE { ?s ?p ?o }",
-		Enabled:  true,
+		ID:      "test-hook",
+		Name:    "Test Hook",
+		Type:    "sparql-ask",
+		Query:   "ASK WHERE { ?s ?p ?o }",
+		Enabled: true,
 	}
 
 	// Register hook first
@@ -380,11 +380,11 @@ func TestRegistry_GetHookCount(t *testing.T) {
 	}
 
 	hook := &HookDefinition{
-		ID:       "test-hook",
-		Name:     "Test Hook",
-		Type:     "sparql-ask",
-		Query:    "ASK WHERE { ?s ?p ?o }",
-		Enabled:  true,
+		ID:      "test-hook",
+		Name:    "Test Hook",
+		Type:    "sparql-ask",
+		Query:   "ASK WHERE { ?s ?p ?o }",
+		Enabled: true,
 	}
 
 	// Register hook
@@ -400,10 +400,10 @@ func TestRegistry_GetHookCount(t *testing.T) {
 
 	// Register another hook
 	hook2 := &HookDefinition{
-		ID:       "test-hook-2",
-		Name:     "Test Hook 2",
-		Type:     "threshold",
-		Enabled:  true,
+		ID:      "test-hook-2",
+		Name:    "Test Hook 2",
+		Type:    "threshold",
+		Enabled: true,
 	}
 
 	err = registry.Register(hook2)
@@ -422,8 +422,8 @@ func TestRegistry_EvaluateHook(t *testing.T) {
 	registry := NewRegistry(config)
 
 	tests := []struct {
-		name     string
-		hookType string
+		name      string
+		hookType  string
 		wantFired bool
 	}{
 		{"sparql-ask", "sparql-ask", true},
@@ -436,11 +436,11 @@ func TestRegistry_EvaluateHook(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			hook := &HookDefinition{
-				ID:       "test-hook",
-				Name:     "Test Hook",
-				Type:     tt.hookType,
-				Query:    "ASK WHERE { ?s ?p ?o }",
-				Enabled:  true,
+				ID:      "test-hook",
+				Name:    "Test Hook",
+				Type:    tt.hookType,
+				Query:   "ASK WHERE { ?s ?p ?o }",
+				Enabled: true,
 			}
 
 			result := registry.evaluateHook(context.Background(), hook, "test-actor")

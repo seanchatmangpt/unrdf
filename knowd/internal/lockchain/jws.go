@@ -110,11 +110,11 @@ func KeyIDFromPublicKey(pubKey ed25519.PublicKey) string {
 
 // JWSPayload represents the payload structure for JWS signing.
 type JWSPayload struct {
-	ReceiptID   string    `json:"receipt_id"`
-	Timestamp   time.Time `json:"timestamp"`
-	MerkleRoot  string    `json:"merkle_root"`
-	Actor       string    `json:"actor"`
-	Signature   string    `json:"signature,omitempty"` // For verification
+	ReceiptID  string    `json:"receipt_id"`
+	Timestamp  time.Time `json:"timestamp"`
+	MerkleRoot string    `json:"merkle_root"`
+	Actor      string    `json:"actor"`
+	Signature  string    `json:"signature,omitempty"` // For verification
 }
 
 // CreateJWSPayload creates a JWS payload from receipt data.
@@ -144,9 +144,9 @@ func DecodeJWSPayload(data []byte) (JWSPayload, error) {
 
 // DetachedJWS represents a detached JWS with separate payload and signature.
 type DetachedJWS struct {
-	Header  JWSHeader `json:"header"`
-	Payload string    `json:"payload"` // base64url encoded
-	Signature string  `json:"signature"`
+	Header    JWSHeader `json:"header"`
+	Payload   string    `json:"payload"` // base64url encoded
+	Signature string    `json:"signature"`
 }
 
 // CreateDetachedJWS creates a detached JWS structure.
