@@ -6,8 +6,8 @@ import (
 	"sort"
 	"strings"
 
-	sha3ext "golang.org/x/crypto/sha3"
 	"github.com/knakk/rdf"
+	sha3ext "golang.org/x/crypto/sha3"
 )
 
 // URDNA2015 implements the URDNA2015 canonicalization algorithm for RDF/N-Quads.
@@ -138,7 +138,7 @@ func (urdna *URDNA2015) parseNQuads(data []byte) [][]string {
 		// Fallback to simple file-based N-Quads parsing
 		return urdna.parseNQuadsFallback(data)
 	}
-	
+
 	var quads [][]string
 	for _, triple := range triples {
 		quad := []string{
@@ -149,7 +149,7 @@ func (urdna *URDNA2015) parseNQuads(data []byte) [][]string {
 		}
 		quads = append(quads, quad)
 	}
-	
+
 	return quads
 }
 

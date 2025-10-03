@@ -15,7 +15,7 @@ import (
 	"github.com/unrdf/knowd/internal/version"
 )
 
-// Configuration holds command-line flags and configuration.
+// Configuration holds command-line flags and configuration for v1.0.0 GA.
 type Configuration struct {
 	addr    string
 	dataDir string
@@ -50,8 +50,12 @@ func main() {
 	log.Printf("  Data Directory: %s", config.dataDir)
 	log.Printf("  Core URL: %s", config.coreURL)
 
-	// Create HTTP server
-	httpServer := server.New(config.addr, config.dataDir, config.coreURL)
+	// Create HTTP server with GA configuration
+	serverConfig := &server.Configuration{
+		Addr:    config.addr,
+		DataDir: config.dataDir,
+	}
+	httpServer := server.New(serverConfig)
 
 	// Start server in a goroutine
 	serverErr := make(chan error, 1)

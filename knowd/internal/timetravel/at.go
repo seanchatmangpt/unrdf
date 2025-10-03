@@ -69,10 +69,10 @@ type QueryAtRequest struct {
 
 // QueryAtResponse represents a time-travel query response.
 type QueryAtResponse struct {
-	Rows      []map[string]interface{} `json:"rows"`
-	Kind      string                   `json:"kind"`
-	Snapshot  Snapshot                 `json:"snapshot"`
-	Stats     QueryStats               `json:"stats"`
+	Rows     []map[string]interface{} `json:"rows"`
+	Kind     string                   `json:"kind"`
+	Snapshot Snapshot                 `json:"snapshot"`
+	Stats    QueryStats               `json:"stats"`
 }
 
 // QueryStats represents query execution statistics.
@@ -96,8 +96,8 @@ func (sb *SnapshotBinder) ExecuteQueryAt(ctx context.Context, req QueryAtRequest
 	}
 
 	return &QueryAtResponse{
-		Rows:     []map[string]interface{}{},
-		Kind:     req.Kind,
+		Rows: []map[string]interface{}{},
+		Kind: req.Kind,
 		Snapshot: Snapshot{
 			Timestamp: sb.snapshotTime,
 		},

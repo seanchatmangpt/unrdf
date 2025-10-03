@@ -17,8 +17,8 @@ type NamespaceQuota struct {
 
 // QuotaManager manages per-namespace quotas using token buckets.
 type QuotaManager struct {
-	mu      sync.RWMutex
-	quotas  map[string]*NamespaceQuota
+	mu       sync.RWMutex
+	quotas   map[string]*NamespaceQuota
 	limiters map[string]*rate.Limiter
 }
 
@@ -159,12 +159,12 @@ func (qm *QuotaManager) ClearQuota(namespace string) {
 
 // QuotaStats represents statistics about quota usage.
 type QuotaStats struct {
-	Namespace    string `json:"namespace"`
-	HasQuota     bool   `json:"has_quota"`
-	QPS          int    `json:"qps"`
-	RowsPS       int    `json:"rowsps"`
-	CurrentQPS   int    `json:"current_qps"`
-	CurrentRowsPS int   `json:"current_rowsps"`
+	Namespace     string `json:"namespace"`
+	HasQuota      bool   `json:"has_quota"`
+	QPS           int    `json:"qps"`
+	RowsPS        int    `json:"rowsps"`
+	CurrentQPS    int    `json:"current_qps"`
+	CurrentRowsPS int    `json:"current_rowsps"`
 }
 
 // SetQuotasRequest represents a request to set quotas.

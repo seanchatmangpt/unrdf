@@ -2,10 +2,11 @@ package shacl
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"regexp"
 	"strings"
-
+	
 	"github.com/knakk/rdf"
 )
 
@@ -136,8 +137,13 @@ func (v *Validator) parseShapes(shapes string) error {
 	return nil
 }
 
-// parseData parses RDF data using knakk/rdf library.
+// parseData parses RDF data using knakk/rdf library with JSON-LD support.
 func (v *Validator) parseData(data string) ([][]string, error) {
+	// Try JSON-LD first if data looks like JSON
+	if strings.TrimSpace(data)[0] == '{' || strings.TrimSpace(data)[0] == '[' {
+		return v.parseJsonLd(data)
+	}
+	
 	// Use knakk/rdf library to parse Turtle/N-Triples
 	triples, err := rdf.NewTripleDecoder(strings.NewReader(data), rdf.Turtle).DecodeAll()
 	if err != nil {
@@ -159,6 +165,96 @@ func (v *Validator) parseData(data string) ([][]string, error) {
 	}
 
 	return graph, nil
+}
+
+// parseJsonLd parses JSON-LD data and converts to RDF triples.
+func (v *Validator) parseJsonLd(data string) ([][]string, error) {
+	var jsonld interface{}
+	if err := json.Unmarshal([]byte(data), &jsonld); err != nil {
+		return nil, fmt.Errorf("failed to parse JSON-LD: %w", err)
+	}
+	
+	var graph [][]string
+	
+	// Simple JSON-LD to N-Triples conversion
+	var jsonObjects []map[string]interface{}
+	
+	switch obj := jsonld.(type) {
+	case []interface{}:
+		for _, item := range obj {
+			if itemMap, ok := item.(map[string]interface{}); ok {
+				jsonObjects = append(jsonObjects, itemMap)
+			}
+		}
+	case map[string]interface{}:
+		jsonObjects = append(jsonObjects, obj)
+	default:
+		return nil, fmt.Errorf("unsupported JSON-LD format")
+	}
+	
+	for _, obj := range jsonObjects {
+		for key, value := range obj {
+			if key == "@context" {
+				continue // Skip context
+			}
+			
+			if id, hasId := obj["@id"]; hasId {
+				// Extract subject
+				subject := v.jsonToRdfTerm(id)
+				
+				// Handle @type
+				if types, hasType := obj["@type"]; hasType {
+					graph = append(graph, []string{
+						subject,
+						"<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>",
+						v.jsonToRdfTerm(types),
+					})
+				}
+				
+				// Handle other properties
+				if key != "@id" && key != "@type" && key != "@context" {
+					predicate := key
+					if !strings.HasPrefix(predicate, "http") {
+						predicate = "<http://example.org/" + predicate + ">"
+					} else {
+						predicate = "<" + predicate + ">"
+					}
+					
+					graph = append(graph, []string{
+						subject,
+						predicate,
+						v.jsonToRdfTerm(value),
+					})
+				}
+			}
+		}
+	}
+	
+	return graph, nil
+}
+
+// jsonToRdfTerm converts a JSON value to RDF term string representation.
+func (v *Validator) jsonToRdfTerm(value interface{}) string {
+	switch val := value.(type) {
+	case string:
+		if strings.HasPrefix(val, "@") {
+			// JSON-LD keyword
+			return "\"" + val + "\""
+		} else if strings.HasPrefix(val, "http") {
+			return "<" + val + ">"
+		} else {
+			return "\"" + val + "\""
+		}
+	case []interface{}:
+		// Handle arrays (simplified as space-separated values)
+		var parts []string
+		for _, item := range val {
+			parts = append(parts, v.jsonToRdfTerm(item))
+		}
+		return "(" + strings.Join(parts, " ") + ")"
+	default:
+		return "\"" + fmt.Sprintf("%v", val) + "\""
+	}
 }
 
 // termToString converts an RDF term to string representation.

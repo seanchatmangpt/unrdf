@@ -14,9 +14,9 @@ import (
 type ReceiptIndex struct {
 	mu       sync.RWMutex
 	receipts map[string]*types.Receipt // receipt ID -> receipt
-	byActor  map[string][]string      // actor -> receipt IDs
-	byTime   []string                 // receipt IDs sorted by time
-	byTag    map[string][]string      // tag -> receipt IDs
+	byActor  map[string][]string       // actor -> receipt IDs
+	byTime   []string                  // receipt IDs sorted by time
+	byTag    map[string][]string       // tag -> receipt IDs
 }
 
 // NewReceiptIndex creates a new receipt index.
@@ -163,11 +163,11 @@ func (ri *ReceiptIndex) ListReceipts(limit int) []string {
 
 // ReceiptFilters defines filters for searching receipts.
 type ReceiptFilters struct {
-	Actor  string    `json:"actor"`
-	Since  time.Time `json:"since"`
-	Until  time.Time `json:"until"`
-	Tags   []string  `json:"tags"`
-	Limit  int       `json:"limit"`
+	Actor string    `json:"actor"`
+	Since time.Time `json:"since"`
+	Until time.Time `json:"until"`
+	Tags  []string  `json:"tags"`
+	Limit int       `json:"limit"`
 }
 
 // Helper methods
