@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"strings"
+
+	"github.com/unrdf/knowd/internal/store"
 )
 
 // Algebra is a compiled SPARQL query.
@@ -18,31 +20,31 @@ type Algebra struct {
 type Operator string
 
 const (
-	OpSelect          Operator = "SELECT"
-	OpAsk             Operator = "ASK"
-	OpConstruct       Operator = "CONSTRUCT"
-	OpFilter          Operator = "FILTER"
-	OpJoin            Operator = "JOIN"
-	OpLeftJoin        Operator = "LEFT_JOIN"
-	OpUnion           Operator = "UNION"
-	OpMinus           Operator = "MINUS"
-	OpGroup           Operator = "GROUP"
-	OpOrder           Operator = "ORDER"
-	OpLimit           Operator = "LIMIT"
-	OpOffset          Operator = "OFFSET"
-	OpBGP             Operator = "BGP"
-	OpBind            Operator = "BIND"
-	OpValues          Operator = "VALUES"
-	OpDistinct        Operator = "DISTINCT"
-	OpReduced         Operator = "REDUCED"
-	OpSlice           Operator = "SLICE"
-	OpProject         Operator = "PROJECT"
+	OpSelect    Operator = "SELECT"
+	OpAsk       Operator = "ASK"
+	OpConstruct Operator = "CONSTRUCT"
+	OpFilter    Operator = "FILTER"
+	OpJoin      Operator = "JOIN"
+	OpLeftJoin  Operator = "LEFT_JOIN"
+	OpUnion     Operator = "UNION"
+	OpMinus     Operator = "MINUS"
+	OpGroup     Operator = "GROUP"
+	OpOrder     Operator = "ORDER"
+	OpLimit     Operator = "LIMIT"
+	OpOffset    Operator = "OFFSET"
+	OpBGP       Operator = "BGP"
+	OpBind      Operator = "BIND"
+	OpValues    Operator = "VALUES"
+	OpDistinct  Operator = "DISTINCT"
+	OpReduced   Operator = "REDUCED"
+	OpSlice     Operator = "SLICE"
+	OpProject   Operator = "PROJECT"
 )
 
 // CompilePlan compiles a query plan into algebra.
 func CompilePlan(plan *Plan) (*Algebra, error) {
 	root := &Algebra{}
-	
+
 	switch plan.Type {
 	case "SELECT":
 		return compileSelect(plan, root)
@@ -59,7 +61,7 @@ func CompilePlan(plan *Plan) (*Algebra, error) {
 func compileSelect(plan *Plan, root *Algebra) (*Algebra, error) {
 	root.Op = OpSelect
 	root.ResultVars = plan.Columns
-	
+
 	// Create BGP operator for basic graph patterns
 	if len(plan.Patterns) > 0 {
 		bgpOp := &Algebra{
@@ -70,7 +72,7 @@ func compileSelect(plan *Plan, root *Algebra) (*Algebra, error) {
 		}
 		root.Children = append(root.Children, bgpOp)
 	}
-	
+
 	// Add filters
 	for _, filter := range plan.Filters {
 		filterOp := &Algebra{
@@ -81,7 +83,7 @@ func compileSelect(plan *Plan, root *Algebra) (*Algebra, error) {
 		}
 		root.Children = append(root.Children, filterOp)
 	}
-	
+
 	// Add unions if any
 	for _, union := range plan.Unions {
 		unionOp := &Algebra{
@@ -93,7 +95,7 @@ func compileSelect(plan *Plan, root *Algebra) (*Algebra, error) {
 		}
 		root.Children = append(root.Children, unionOp)
 	}
-	
+
 	// Add optional patterns
 	for _, optional := range plan.Optional {
 		optionalOp := &Algebra{
@@ -102,7 +104,7 @@ func compileSelect(plan *Plan, root *Algebra) (*Algebra, error) {
 		}
 		root.Children = append(root.Children, optionalOp)
 	}
-	
+
 	// Add minus patterns
 	for _, minus := range plan.Minus {
 		minusOp := &Algebra{
@@ -111,19 +113,19 @@ func compileSelect(plan *Plan, root *Algebra) (*Algebra, error) {
 		}
 		root.Children = append(root.Children, minusOp)
 	}
-	
+
 	// Add bind clauses
 	for _, bind := range plan.Bind {
 		bindOp := &Algebra{
 			Op: OpBind,
 			Operands: map[string]interface{}{
-				"variable": bind.Variable,
+				"variable":   bind.Variable,
 				"expression": bind.Expression,
 			},
 		}
 		root.Children = append(root.Children, bindOp)
 	}
-	
+
 	// Add values clauses
 	for _, values := range plan.Values {
 		valuesOp := &Algebra{
@@ -135,7 +137,7 @@ func compileSelect(plan *Plan, root *Algebra) (*Algebra, error) {
 		}
 		root.Children = append(root.Children, valuesOp)
 	}
-	
+
 	// Add limit and offset
 	if plan.Limit > 0 || plan.Offset > 0 {
 		sliceOp := &Algebra{
@@ -147,14 +149,14 @@ func compileSelect(plan *Plan, root *Algebra) (*Algebra, error) {
 		}
 		root.Children = append(root.Children, sliceOp)
 	}
-	
+
 	return root, nil
 }
 
 // compileAsk compiles an ASK query to algebra.
 func compileAsk(plan *Plan, root *Algebra) (*Algebra, error) {
 	root.Op = OpAsk
-	
+
 	// Process patterns similar to SELECT but without result variables
 	if len(plan.Patterns) > 0 {
 		bgpOp := &Algebra{
@@ -165,14 +167,14 @@ func compileAsk(plan *Plan, root *Algebra) (*Algebra, error) {
 		}
 		root.Children = append(root.Children, bgpOp)
 	}
-	
+
 	return root, nil
 }
 
 // compileConstruct compiles a CONSTRUCT query to algebra.
 func compileConstruct(plan *Plan, root *Algebra) (*Algebra, error) {
 	root.Op = OpConstruct
-	
+
 	// CONSTRUCT queries use similar patterns to SELECT
 	if len(plan.Patterns) > 0 {
 		bgpOp := &Algebra{
@@ -183,7 +185,7 @@ func compileConstruct(plan *Plan, root *Algebra) (*Algebra, error) {
 		}
 		root.Children = append(root.Children, bgpOp)
 	}
-	
+
 	return root, nil
 }
 
@@ -198,7 +200,7 @@ func algebraFromBGP(bgp BasicGraphPattern) *Algebra {
 }
 
 // Execute executes the algebra against a store.
-func (a *Algebra) Execute(ctx context.Context, executor *Executor, store Interface) (*QueryResponse, error) {
+func (a *Algebra) Execute(ctx context.Context, executor *Executor, store store.Interface) (*QueryResponse, error) {
 	switch a.Op {
 	case OpBGP:
 		return a.executeBGP(ctx, executor, store)
@@ -218,7 +220,7 @@ func (a *Algebra) Execute(ctx context.Context, executor *Executor, store Interfa
 }
 
 // executeBGP executes a basic graph pattern.
-func (a *Algebra) executeBGP(ctx context.Context, executor *Executor, store Interface) (*QueryResponse, error) {
+func (a *Algebra) executeBGP(ctx context.Context, executor *Executor, store store.Interface) (*QueryResponse, error) {
 	patterns, ok := a.Operands["patterns"].([]BasicGraphPattern)
 	if !ok {
 		return nil, fmt.Errorf("invalid BGP patterns")
@@ -231,26 +233,26 @@ func (a *Algebra) executeBGP(ctx context.Context, executor *Executor, store Inte
 	}
 
 	// Create executor to execute the plan
-	executor := NewExecutor(nil) // No cache for simple execution
+	executor := NewExecutor()
 	return executor.Execute(ctx, store, "sparql-select", plan)
 }
 
 // executeJoin executes a join operation.
-func (a *Algebra) executeJoin(ctx context.Context, executor *Executor, store Interface) (*QueryResponse, error) {
+func (a *Algebra) executeJoin(ctx context.Context, executor *Executor, store store.Interface) (*QueryResponse, error) {
 	if len(a.Children) != 2 {
 		return nil, fmt.Errorf("join requires exactly 2 children")
 	}
-	
+
 	leftResult, err := a.Children[0].Execute(ctx, executor, store)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	rightResult, err := a.Children[1].Execute(ctx, executor, store)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	// Simple nested loop join implementation
 	var joinedRows []map[string]interface{}
 	for _, leftRow := range leftResult.Rows {
@@ -266,7 +268,7 @@ func (a *Algebra) executeJoin(ctx context.Context, executor *Executor, store Int
 			joinedRows = append(joinedRows, mergedRow)
 		}
 	}
-	
+
 	return &QueryResponse{
 		Rows: joinedRows,
 		Kind: leftResult.Kind,
@@ -274,41 +276,41 @@ func (a *Algebra) executeJoin(ctx context.Context, executor *Executor, store Int
 }
 
 // executeLeftJoin executes a left join operation.
-func (a *Algebra) executeLeftJoin(ctx context.Context, executor *Executor, store Interface) (*QueryResponse, error) {
+func (a *Algebra) executeLeftJoin(ctx context.Context, executor *Executor, store store.Interface) (*QueryResponse, error) {
 	if len(a.Children) != 1 {
 		return nil, fmt.Errorf("left join requires exactly 1 child")
 	}
-	
+
 	result, err := a.Children[0].Execute(ctx, executor, store)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	// Left join preserves all left results, even if right side is empty
 	return result, nil
 }
 
 // executeUnion executes a union operation.
-func (a *Algebra) executeUnion(ctx context.Context, executor *Executor, store Interface) (*QueryResponse, error) {
+func (a *Algebra) executeUnion(ctx context.Context, executor *Executor, store store.Interface) (*QueryResponse, error) {
 	if len(a.Children) != 2 {
 		return nil, fmt.Errorf("union requires exactly 2 children")
 	}
-	
+
 	leftResult, err := a.Children[0].Execute(ctx, executor, store)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	rightResult, err := a.Children[1].Execute(ctx, executor, store)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	// Combine results (simple implementation - could dedupe)
 	var unionRows []map[string]interface{}
 	unionRows = append(unionRows, leftResult.Rows...)
 	unionRows = append(unionRows, rightResult.Rows...)
-	
+
 	return &QueryResponse{
 		Rows: unionRows,
 		Kind: leftResult.Kind,
@@ -316,18 +318,18 @@ func (a *Algebra) executeUnion(ctx context.Context, executor *Executor, store In
 }
 
 // executeMinus executes a minus operation.
-func (a *Algebra) executeMinus(ctx context.Context, executor *Executor, store Interface) (*QueryResponse, error) {
+func (a *Algebra) executeMinus(ctx context.Context, executor *Executor, store store.Interface) (*QueryResponse, error) {
 	if len(a.Children) != 1 {
 		return nil, fmt.Errorf("minus requires exactly 1 child")
 	}
-	
+
 	// For minus, we need a base pattern to subtract from
 	// This is a simplified implementation
 	result, err := a.Children[0].Execute(ctx, executor, store)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	// In a real implementation, this would subtract matching rows
 	// For now, return empty result
 	return &QueryResponse{
@@ -337,21 +339,21 @@ func (a *Algebra) executeMinus(ctx context.Context, executor *Executor, store In
 }
 
 // executeFilter executes a filter operation.
-func (a *Algebra) executeFilter(ctx context.Context, executor *Executor, store Interface) (*QueryResponse, error) {
+func (a *Algebra) executeFilter(ctx context.Context, executor *Executor, store store.Interface) (*QueryResponse, error) {
 	if len(a.Children) != 1 {
 		return nil, fmt.Errorf("filter requires exactly 1 child")
 	}
-	
+
 	result, err := a.Children[0].Execute(ctx, executor, store)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	expression, ok := a.Operands["expression"].(string)
 	if !ok {
 		return result, nil
 	}
-	
+
 	// Apply filter to results
 	var filteredRows []map[string]interface{}
 	for _, row := range result.Rows {
@@ -360,7 +362,7 @@ func (a *Algebra) executeFilter(ctx context.Context, executor *Executor, store I
 			filteredRows = append(filteredRows, row)
 		}
 	}
-	
+
 	return &QueryResponse{
 		Rows: filteredRows,
 		Kind: result.Kind,
@@ -375,13 +377,13 @@ func (a *Algebra) evaluateFilterExpression(expression string, row map[string]int
 		if len(parts) == 2 {
 			left := strings.TrimSpace(parts[0])
 			right := strings.TrimSpace(parts[1])
-			
+
 			if value, exists := row[left]; exists {
 				return fmt.Sprintf("%v", value) == right
 			}
 		}
 	}
-	
+
 	return true
 }
 
@@ -390,10 +392,10 @@ func (a *Algebra) String() string {
 	if a == nil {
 		return "nil"
 	}
-	
+
 	var buf strings.Builder
 	buf.WriteString(string(a.Op))
-	
+
 	if len(a.Children) > 0 {
 		buf.WriteString("(")
 		for i, child := range a.Children {
@@ -404,12 +406,12 @@ func (a *Algebra) String() string {
 		}
 		buf.WriteString(")")
 	}
-	
+
 	if len(a.ResultVars) > 0 {
 		buf.WriteString(" [")
 		buf.WriteString(strings.Join(a.ResultVars, ", "))
 		buf.WriteString("]")
 	}
-	
+
 	return buf.String()
 }

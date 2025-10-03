@@ -1,0 +1,340 @@
+syntax = "proto3";
+
+package knowd.v1;
+
+option go_package = "github.com/unrdf/knowd/api/proto/knowd/v1";
+
+// Core data types
+message Quad {
+  string subject = 1;
+  string predicate = 2;
+  string object = 3;
+  string graph = 4;
+}
+
+message TxDelta {
+  repeated string add = 1;
+  repeated string rem = 2;
+}
+
+// Query API
+message QueryRequest {
+  string query = 1;
+  string kind = 2; // sparql-select, sparql-ask, sparql-construct
+  map<string, string> params = 3;
+}
+
+message QueryRow {
+  map<string, string> columns = 1;
+}
+
+message QueryResponse {
+  repeated QueryRow rows = 1;
+  string kind = 2;
+  QueryStats stats = 3;
+}
+
+message QueryStats {
+  int64 rows_returned = 1;
+  int64 execution_time_ms = 2;
+  int64 bytes_scanned = 3;
+}
+
+message QueryAtRequest {
+  string query = 1;
+  string at = 2; // RFC3339 timestamp
+  map<string, string> params = 3;
+}
+
+// Transaction API
+message TxRequest {
+  TxDelta delta = 1;
+  string actor = 2;
+}
+
+message TxResponse {
+  string receipt_id = 1;
+  string merkle_root = 2;
+  TxDelta delta = 3;
+}
+
+// Hook evaluation API
+message HookEvalRequest {
+  HookDefinition hook = 1;
+  bool persist = 2;
+}
+
+message HookDefinition {
+  string kind = 1; // ask, shacl, delta, threshold, count, window
+  string query = 2;
+  map<string, string> config = 3;
+}
+
+message HookEvalResponse {
+  bool fired = 1;
+  bytes result = 2;
+}
+
+// SHACL validation API
+message ValidateRequest {
+  string data = 1;
+  string shapes = 2; // Optional
+}
+
+message Violation {
+  string focus_node = 1;
+  string property = 2;
+  string message = 3;
+  string severity = 4; // violation, warning, info
+}
+
+message ValidateResponse {
+  bool conforms = 1;
+  repeated Violation violations = 2;
+}
+
+// Receipt API
+message Receipt {
+  string version = 1;
+  string actor = 2;
+  string timestamp = 3; // RFC3339
+  TxDelta delta = 4;
+  string canonical = 5; // base64
+  string merkle_root = 6;
+  string signature = 7; // base64
+  string pub_key = 8; // base64
+  GitInfo git = 9;
+}
+
+message GitInfo {
+  string commit = 1;
+  string path = 2;
+}
+
+message VerifyResponse {
+  bool ok = 1;
+  string merkle_root = 2;
+  string signature = 3;
+}
+
+message ReceiptSearchRequest {
+  string actor = 1;
+  string since = 2; // RFC3339
+  string until = 3; // RFC3339
+  string tag = 4;
+}
+
+message ReceiptSearchResponse {
+  repeated Receipt receipts = 1;
+}
+
+// Store API
+message StoreStats {
+  int64 quads = 1;
+  int64 segments = 2;
+  int64 bytes = 3;
+  int64 snapshot_age_sec = 4;
+}
+
+// Pack management API
+message PackReloadRequest {}
+message PackReloadResponse {
+  bool reloaded = 1;
+}
+
+// Namespace management API
+message NamespaceRequest {
+  string name = 1;
+}
+
+message NamespaceResponse {
+  string name = 1;
+}
+
+message NamespaceListResponse {
+  repeated string names = 1;
+}
+
+// Rollout management API
+message RolloutRequest {
+  string namespace = 1;
+  string stable = 2;
+  string canary = 3;
+  int32 percent = 4;
+}
+
+message RolloutResponse {
+  string namespace = 1;
+  string stable = 2;
+  string canary = 3;
+  int32 percent = 4;
+}
+
+// Cluster management API
+message PromoteFollowerRequest {
+  string namespace = 1;
+}
+
+message PromoteFollowerResponse {
+  bool promoted = 1;
+  string new_leader = 2;
+}
+
+// Vector similarity API
+message SimilarRequest {
+  string text = 1;
+  int32 top_k = 2;
+}
+
+message SimilarItem {
+  string id = 1;
+  float score = 2;
+}
+
+message SimilarResponse {
+  repeated SimilarItem items = 1;
+}
+
+message VectorUpsertRequest {
+  string id = 1;
+  string text = 2;
+}
+
+message VectorUpsertResponse {
+  bool upserted = 1;
+}
+
+// Admin APIs
+message AnalyzeRequest {
+  string namespace = 1;
+}
+
+message AnalyzeResponse {
+  string stats_version = 1;
+  repeated TableStats tables = 2;
+}
+
+message TableStats {
+  string name = 1;
+  int64 cardinality = 2;
+  int64 ndv = 3; // number of distinct values
+  Histogram histogram = 4;
+}
+
+message Histogram {
+  repeated Bucket buckets = 1;
+}
+
+message Bucket {
+  string value = 1;
+  int64 count = 2;
+}
+
+message ViewsBuildRequest {
+  string namespace = 1;
+  repeated string names = 2;
+}
+
+message ViewsBuildResponse {
+  repeated ViewResult results = 1;
+}
+
+message ViewResult {
+  string name = 1;
+  bool success = 2;
+  string error = 3;
+}
+
+message ViewsStatusRequest {
+  string namespace = 1;
+}
+
+message ViewsStatusResponse {
+  repeated ViewInfo views = 1;
+}
+
+message ViewInfo {
+  string name = 1;
+  string status = 2; // building, ready, failed
+  string last_refresh = 3;
+}
+
+message SetQuotasRequest {
+  string namespace = 1;
+  int32 qps = 2;
+  int32 rowsps = 3;
+}
+
+message SetQuotasResponse {
+  bool applied = 1;
+}
+
+message ReplayRequest {
+  string namespace = 1;
+  repeated string receipt_ids = 2;
+}
+
+message ReplayResponse {
+  string namespace = 1;
+  int32 applied = 2;
+}
+
+// Main service definition
+service Knowd {
+  // Query APIs
+  rpc Query(QueryRequest) returns (QueryResponse);
+  rpc QueryStream(QueryRequest) returns (stream QueryRow);
+  rpc QueryAt(QueryAtRequest) returns (QueryResponse);
+
+  // Transaction API
+  rpc Tx(TxRequest) returns (TxResponse);
+
+  // Hook evaluation API
+  rpc EvaluateHooks(HookEvalRequest) returns (HookEvalResponse);
+
+  // Validation API
+  rpc Validate(ValidateRequest) returns (ValidateResponse);
+
+  // Receipt APIs
+  rpc GetReceipt(ReceiptRequest) returns (Receipt);
+  rpc VerifyReceipt(ReceiptRequest) returns (VerifyResponse);
+  rpc SearchReceipts(ReceiptSearchRequest) returns (ReceiptSearchResponse);
+
+  // Store API
+  rpc GetStoreStats(StoreStatsRequest) returns (StoreStats);
+
+  // Pack management API
+  rpc ReloadPacks(PackReloadRequest) returns (PackReloadResponse);
+
+  // Namespace management APIs
+  rpc CreateNamespace(NamespaceRequest) returns (NamespaceResponse);
+  rpc ListNamespaces(NamespaceListRequest) returns (NamespaceListResponse);
+
+  // Rollout management APIs
+  rpc SetRollout(RolloutRequest) returns (RolloutResponse);
+  rpc GetRollout(RolloutRequest) returns (RolloutResponse);
+
+  // Cluster management API
+  rpc PromoteFollower(PromoteFollowerRequest) returns (PromoteFollowerResponse);
+
+  // Vector similarity API
+  rpc Similar(SimilarRequest) returns (SimilarResponse);
+
+  // Vector management API
+  rpc VectorUpsert(VectorUpsertRequest) returns (VectorUpsertResponse);
+
+  // Admin APIs
+  rpc Analyze(AnalyzeRequest) returns (AnalyzeResponse);
+  rpc ViewsBuild(ViewsBuildRequest) returns (ViewsBuildResponse);
+  rpc ViewsStatus(ViewsStatusRequest) returns (ViewsStatusResponse);
+  rpc SetQuotas(SetQuotasRequest) returns (SetQuotasResponse);
+  rpc Replay(ReplayRequest) returns (ReplayResponse);
+}
+
+message ReceiptRequest {
+  string id = 1;
+}
+
+message StoreStatsRequest {}
+
+message NamespaceListRequest {}

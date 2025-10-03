@@ -104,29 +104,29 @@ func (cm *ClusterMetrics) GetMetrics() ClusterMetricsSnapshot {
 	defer cm.mu.RUnlock()
 
 	return ClusterMetricsSnapshot{
-		ReplicationLagSeconds:   cm.ReplicationLagSeconds,
-		WALApplyRateOpsPerSec:   cm.WALApplyRateOpsPerSec,
-		SnapshotShipBytesPerSec: cm.SnapshotShipBytesPerSec,
-		FollowerCount:          cm.FollowerCount,
+		ReplicationLagSeconds:    cm.ReplicationLagSeconds,
+		WALApplyRateOpsPerSec:    cm.WALApplyRateOpsPerSec,
+		SnapshotShipBytesPerSec:  cm.SnapshotShipBytesPerSec,
+		FollowerCount:            cm.FollowerCount,
 		LeaderWriteRateOpsPerSec: cm.LeaderWriteRateOpsPerSec,
-		LeaderCommitLatencyMs:   cm.LeaderCommitLatencyMs,
-		NetworkLatencyMs:        cm.NetworkLatencyMs,
-		NetworkErrors:          cm.NetworkErrors,
-		LastUpdate:             cm.LastUpdate,
+		LeaderCommitLatencyMs:    cm.LeaderCommitLatencyMs,
+		NetworkLatencyMs:         cm.NetworkLatencyMs,
+		NetworkErrors:            cm.NetworkErrors,
+		LastUpdate:               cm.LastUpdate,
 	}
 }
 
 // ClusterMetricsSnapshot represents a snapshot of cluster metrics (safe for concurrent access).
 type ClusterMetricsSnapshot struct {
-	ReplicationLagSeconds   float64
-	WALApplyRateOpsPerSec   float64
-	SnapshotShipBytesPerSec float64
-	FollowerCount           int
+	ReplicationLagSeconds    float64
+	WALApplyRateOpsPerSec    float64
+	SnapshotShipBytesPerSec  float64
+	FollowerCount            int
 	LeaderWriteRateOpsPerSec float64
 	LeaderCommitLatencyMs    float64
-	NetworkLatencyMs        float64
-	NetworkErrors           int64
-	LastUpdate              time.Time
+	NetworkLatencyMs         float64
+	NetworkErrors            int64
+	LastUpdate               time.Time
 }
 
 // IsHealthy returns true if the cluster appears healthy based on metrics.

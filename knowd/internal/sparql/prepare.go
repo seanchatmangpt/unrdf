@@ -11,8 +11,8 @@ import (
 
 // Prepare is a prepared SPARQL query.
 type Prepare struct {
-	plan        *Plan
-	variables   []string
+	plan         *Plan
+	variables    []string
 	placeholders []Placeholder
 }
 
@@ -30,16 +30,16 @@ type PreparedBinding map[string]interface{}
 // NewPrepare creates a new prepared query from a plan.
 func NewPrepare(plan *Plan) (*Prepare, error) {
 	p := &Prepare{
-		plan:        plan,
-		variables:   []string{},
+		plan:         plan,
+		variables:    []string{},
 		placeholders: []Placeholder{},
 	}
-	
+
 	// Extract placeholders from the query
 	if err := p.extractPlaceholders(); err != nil {
 		return nil, err
 	}
-	
+
 	return p, nil
 }
 
@@ -47,7 +47,7 @@ func NewPrepare(plan *Plan) (*Prepare, error) {
 func (p *Prepare) extractPlaceholders() error {
 	// Simple placeholder extraction - look for patterns like :param
 	placeholderRe := regexp.MustCompile(`:([a-zA-Z][a-zA-Z0-9_]*)`)
-	
+
 	// Process SELECT columns
 	for _, column := range p.plan.Columns {
 		matches := placeholderRe.FindAllStringSubmatch(column, -1)
@@ -61,7 +61,7 @@ func (p *Prepare) extractPlaceholders() error {
 			p.variables = append(p.variables, match[1])
 		}
 	}
-	
+
 	// Process basic graph patterns
 	for _, bgp := range p.plan.Patterns {
 		for _, triple := range bgp.Triples {
@@ -77,7 +77,7 @@ func (p *Prepare) extractPlaceholders() error {
 			}
 		}
 	}
-	
+
 	return nil
 }
 
@@ -85,7 +85,7 @@ func (p *Prepare) extractPlaceholders() error {
 func (p *Prepare) checkPlaceholder(term string) {
 	placeholderRe := regexp.MustCompile(`:([a-zA-Z][a-zA-Z0-9_]*)`)
 	matches := placeholderRe.FindAllStringSubmatch(term, -1)
-	
+
 	for i, match := range matches {
 		p.placeholders = append(p.placeholders, Placeholder{
 			Name:   match[1],
@@ -101,14 +101,14 @@ func (p *Prepare) checkPlaceholder(term string) {
 func (p *Prepare) Execute(bindings PreparedBinding, executor *Executor, store store.Interface) (*QueryResponse, error) {
 	// Create a copy of the plan for execution
 	executionPlan := p.copyPlan()
-	
+
 	// Apply bindings to placeholders
 	if err := p.applyBindings(executionPlan, bindings); err != nil {
 		return nil, err
 	}
-	
+
 	// Execute the plan
-	executor := NewExecutor(nil) // No cache for prepared execution
+	executor := NewExecutor() // No cache for prepared execution
 	return executor.Execute(context.Background(), store, "sparql-select", p.plan)
 }
 
@@ -116,16 +116,16 @@ func (p *Prepare) Execute(bindings PreparedBinding, executor *Executor, store st
 func (p *Prepare) applyBindings(plan *Plan, bindings PreparedBinding) error {
 	// Apply bindings to SELECT columns
 	for i, column := range plan.Columns {
-	for varName, value := range bindings {
-		placeholderRe := regexp.MustCompile(fmt.Sprintf("\\b:%s\\b", varName))
-		if placeholderRe.MatchString(column) {
-			// Replace placeholder with bound value
-			newColumn := placeholderRe.ReplaceAllString(column, fmt.Sprintf("\"%v\"", value))
-			plan.Columns[i] = newColumn
+		for varName, value := range bindings {
+			placeholderRe := regexp.MustCompile(fmt.Sprintf("\\b:%s\\b", varName))
+			if placeholderRe.MatchString(column) {
+				// Replace placeholder with bound value
+				newColumn := placeholderRe.ReplaceAllString(column, fmt.Sprintf("\"%v\"", value))
+				plan.Columns[i] = newColumn
+			}
 		}
 	}
-	}
-	
+
 	// Apply bindings to basic graph patterns
 	for bgpIndex, bgp := range plan.Patterns {
 		for tripleIndex, triple := range bgp.Triples {
@@ -133,28 +133,28 @@ func (p *Prepare) applyBindings(plan *Plan, bindings PreparedBinding) error {
 			plan.Patterns[bgpIndex].Triples[tripleIndex] = newTriple
 		}
 	}
-	
+
 	return nil
 }
 
 // applyBindingToTriple applies bindings to a triple.
 func (p *Prepare) applyBindingToTriple(triple Triple, bindings PreparedBinding) Triple {
 	newTriple := triple
-	
+
 	for varName, value := range bindings {
 		if placeholderRe := regexp.MustCompile(fmt.Sprintf("\\b:%s\\b", varName)); placeholderRe.MatchString(triple.Subject) {
 			newTriple.Subject = placeholderRe.ReplaceAllString(triple.Subject, fmt.Sprintf("\"%v\"", value))
 		}
-		
+
 		if placeholderRe := regexp.MustCompile(fmt.Sprintf("\\b:%s\\b", varName)); placeholderRe.MatchString(triple.Predicate) {
 			newTriple.Predicate = placeholderRe.ReplaceAllString(triple.Predicate, fmt.Sprintf("\"%v\"", value))
 		}
-		
+
 		if placeholderRe := regexp.MustCompile(fmt.Sprintf("\\b:%s\\b", varName)); placeholderRe.MatchString(triple.Object) {
 			newTriple.Object = placeholderRe.ReplaceAllString(triple.Object, fmt.Sprintf("\"%v\"", value))
 		}
 	}
-	
+
 	return newTriple
 }
 
@@ -169,11 +169,11 @@ func (p *Prepare) copyPlan() *Plan {
 		Limit:    p.plan.Limit,
 		Offset:   p.plan.Offset,
 	}
-	
+
 	copy(newPlan.Columns, p.plan.Columns)
 	copy(newPlan.Patterns, p.plan.Patterns)
 	copy(newPlan.Filters, p.plan.Filters)
-	
+
 	return newPlan
 }
 
@@ -185,11 +185,11 @@ func (p *Prepare) GetVariables() []string {
 // Marshal returns serialized form of the prepared query.
 func (p *Prepare) Marshal() ([]byte, error) {
 	data := map[string]interface{}{
-		"variables":   p.variables,
+		"variables":    p.variables,
 		"placeholders": p.placeholders,
-		"plan":        p.plan,
+		"plan":         p.plan,
 	}
-	
+
 	return json.Marshal(data)
 }
 
@@ -199,11 +199,11 @@ func UnmarshalPrepare(data []byte, parser *Parser) (*Prepare, error) {
 	if err := json.Unmarshal(data, &marshaled); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal prepared query: %w", err)
 	}
-	
+
 	// This is simplified - in production you'd want full restoration
 	return &Prepare{
-		plan:      &Plan{},
-		variables: []string{},
+		plan:         &Plan{},
+		variables:    []string{},
 		placeholders: []Placeholder{},
 	}, nil
 }

@@ -3,11 +3,11 @@ package server
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"time"
 
+	"github.com/unrdf/knowd/internal/lockchain"
 	"github.com/unrdf/knowd/internal/sparql"
 	"github.com/unrdf/knowd/internal/store"
 	"github.com/unrdf/knowd/internal/version"
@@ -15,12 +15,13 @@ import (
 
 // Server represents the HTTP server instance.
 type Server struct {
-	addr     string
-	dataDir  string
-	coreURL  string
-	mux      *http.ServeMux
-	executor *sparql.Executor
-	store    store.Interface
+	addr      string
+	dataDir   string
+	coreURL   string
+	mux       *http.ServeMux
+	executor  *sparql.Executor
+	store     store.Interface
+	lockchain *lockchain.Lockchain
 }
 
 // New creates a new HTTP server instance.
@@ -39,13 +40,23 @@ func New(addr, dataDir, coreURL string) *Server {
 	// Initialize SPARQL executor
 	executor := sparql.NewExecutor(cache)
 
+	// Initialize lockchain
+	lockchainConfig := lockchain.Config{
+		ReceiptsDir: "./receipts",
+	}
+	lc, err := lockchain.New(lockchainConfig)
+	if err != nil {
+		log.Fatalf("Failed to create lockchain: %v", err)
+	}
+
 	s := &Server{
-		addr:     addr,
-		dataDir:  dataDir,
-		coreURL:  coreURL,
-		mux:      http.NewServeMux(),
-		executor: executor,
-		store:    storeInstance,
+		addr:      addr,
+		dataDir:   dataDir,
+		coreURL:   coreURL,
+		mux:       http.NewServeMux(),
+		executor:  executor,
+		store:     storeInstance,
+		lockchain: lc,
 	}
 	s.setupRoutes()
 	return s
@@ -57,13 +68,16 @@ func (s *Server) setupRoutes() {
 	s.mux.HandleFunc("/v1/tx", s.handleTransaction)
 	s.mux.HandleFunc("/v1/query", s.handleQuery)
 	s.mux.HandleFunc("/v1/query/stream", s.handleQueryStream)
+	s.mux.HandleFunc("/v1/query/at", s.handleQueryAt)
 	s.mux.HandleFunc("/v1/validate", s.handleValidate)
 	s.mux.HandleFunc("/v1/receipts", s.handleReceipts)
+	s.mux.HandleFunc("/v1/receipts/search", s.handleReceiptsSearch)
 	s.mux.HandleFunc("/v1/hooks/evaluate", s.handleHookEvaluate)
 
 	// Admin routes
 	s.mux.HandleFunc("/v1/admin/namespaces", s.handleAdminNamespaces)
 	s.mux.HandleFunc("/v1/admin/rollout", s.handleAdminRollout)
+	s.mux.HandleFunc("/v1/admin/analyze", s.handleAdminAnalyze)
 
 	// Add version endpoint
 	s.mux.HandleFunc("/version", s.handleVersion)
@@ -106,14 +120,17 @@ func (s *Server) handleTransaction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Process transaction through the store
-	// For now, we'll implement a simple transaction processing
-	receiptID := "receipt-" + req.Actor + "-" + fmt.Sprintf("%d", time.Now().Unix())
-	merkleRoot := "merkle-" + receiptID
+	// Create signed receipt using lockchain
+	receipt, err := s.lockchain.WriteReceipt(req.Actor, req.Delta)
+	if err != nil {
+		log.Printf("Failed to create receipt: %v", err)
+		http.Error(w, "Failed to process transaction", http.StatusInternalServerError)
+		return
+	}
 
 	response := TxResponse{
-		ReceiptID:  receiptID,
-		MerkleRoot: merkleRoot,
+		ReceiptID:  receipt.ID,
+		MerkleRoot: receipt.MerkleRoot,
 		Delta:      req.Delta,
 	}
 
@@ -421,6 +438,100 @@ func (s *Server) handleVersion(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "text/plain")
 	w.Write([]byte(version.FullVersion()))
+}
+
+// QueryAtRequest represents a time-travel query request.
+type QueryAtRequest struct {
+	Query string `json:"query"`
+	At    string `json:"at"`
+	Kind  string `json:"kind"`
+}
+
+// handleQueryAt handles time-travel query requests.
+func (s *Server) handleQueryAt(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	var req QueryAtRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "Invalid JSON", http.StatusBadRequest)
+		return
+	}
+
+	// TODO: Implement time-travel query logic
+	// For now, execute as regular query
+	result, err := s.executor.Query(r.Context(), req.Query, s.store)
+	if err != nil {
+		log.Printf("Query execution error: %v", err)
+		http.Error(w, "Query execution failed", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(result)
+}
+
+// handleReceiptsSearch handles receipt search requests.
+func (s *Server) handleReceiptsSearch(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	// Parse query parameters for search
+	actor := r.URL.Query().Get("actor")
+	since := r.URL.Query().Get("since")
+	until := r.URL.Query().Get("until")
+
+	// TODO: Implement actual receipt search
+	// For now, return empty results
+	receipts := []Receipt{}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(receipts)
+}
+
+// AnalyzeRequest represents an analyze request.
+type AnalyzeRequest struct {
+	Namespace string `json:"namespace"`
+}
+
+// AnalyzeResponse represents an analyze response.
+type AnalyzeResponse struct {
+	StatsVersion string                   `json:"statsVersion"`
+	Tables       []map[string]interface{} `json:"tables"`
+}
+
+// handleAdminAnalyze handles analyze requests.
+func (s *Server) handleAdminAnalyze(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	var req AnalyzeRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "Invalid JSON", http.StatusBadRequest)
+		return
+	}
+
+	// TODO: Implement actual analysis
+	// For now, return mock response
+	response := AnalyzeResponse{
+		StatsVersion: "v1.0.0",
+		Tables: []map[string]interface{}{
+			{
+				"name":        "triples",
+				"count":       0,
+				"cardinality": 0,
+			},
+		},
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
 }
 
 // Start starts the HTTP server.
