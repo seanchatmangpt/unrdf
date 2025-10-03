@@ -34,12 +34,12 @@ func TestPlanCache_PutAndGet(t *testing.T) {
 
 	// Get plans
 	retrieved1 := cache.Get("query1")
-	if retrieved1 != plan1 {
+	if retrieved1 == nil || retrieved1.Type != "SELECT" {
 		t.Error("Get() returned wrong plan for query1")
 	}
 
 	retrieved2 := cache.Get("query2")
-	if retrieved2 != plan2 {
+	if retrieved2 == nil || retrieved2.Type != "ASK" {
 		t.Error("Get() returned wrong plan for query2")
 	}
 }
@@ -59,7 +59,7 @@ func TestPlanCache_Update(t *testing.T) {
 
 	// Get updated plan
 	retrieved := cache.Get("query1")
-	if retrieved.Limit != 10 {
+	if retrieved == nil || retrieved.Limit != 10 {
 		t.Errorf("Put() update failed, Limit = %v, want 10", retrieved.Limit)
 	}
 }

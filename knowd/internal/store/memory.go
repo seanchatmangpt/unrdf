@@ -3,7 +3,8 @@ package store
 
 import (
 	"context"
-	"encoding/json"
+	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
 	"sync"
 )
@@ -96,13 +97,16 @@ func (m *MemoryStore) Close() error {
 	return nil
 }
 
-// quadID generates a unique ID for a quad.
+// quadID generates a unique ID for a quad using SHA256 hashing.
 func (m *MemoryStore) quadID(quad *Quad) string {
-	data, _ := json.Marshal(quad)
-	return fmt.Sprintf("%x", data)
+	// Create a deterministic string representation of the quad
+	quadStr := fmt.Sprintf("%s|%s|%s|%s", quad.Subject, quad.Predicate, quad.Object, quad.Graph)
+	hash := sha256.Sum256([]byte(quadStr))
+	return hex.EncodeToString(hash[:])
 }
 
 // matchesPattern checks if a quad matches a pattern.
+// Empty pattern fields match any value.
 func (m *MemoryStore) matchesPattern(quad *Quad, pattern *Quad) bool {
 	if pattern.Subject != "" && pattern.Subject != quad.Subject {
 		return false

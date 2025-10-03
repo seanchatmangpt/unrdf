@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/unrdf/knowd/internal/hooks"
-	"github.com/unrdf/knowd/internal/policy"
 	"github.com/unrdf/knowd/internal/sparql"
 	"github.com/unrdf/knowd/internal/store"
 )
@@ -213,10 +212,10 @@ func TestEngine_Query(t *testing.T) {
 			wantRows: 1,
 		},
 		{
-			name:     "invalid query",
-			query:    "INVALID QUERY",
-			kind:     "sparql-select",
-			wantRows: 0,
+			name:      "invalid query",
+			query:     "INVALID QUERY",
+			kind:      "sparql-select",
+			wantRows:  0,
 			wantError: true,
 		},
 	}

@@ -6,7 +6,6 @@ import (
 
 	"github.com/unrdf/knowd/internal/hooks"
 	"github.com/unrdf/knowd/internal/policy"
-	"github.com/unrdf/knowd/internal/sparql"
 	"github.com/unrdf/knowd/internal/store"
 )
 
@@ -75,6 +74,7 @@ func TestIntegration_BasicWorkflow(t *testing.T) {
 func TestIntegration_HooksRegistry(t *testing.T) {
 	config := hooks.Config{MaxHooks: 10}
 	registry := hooks.NewRegistry(config)
+	ctx := context.Background()
 
 	t.Run("hook registration and evaluation", func(t *testing.T) {
 		hook := &hooks.HookDefinition{
@@ -264,6 +264,8 @@ func TestIntegration_PolicyLoading(t *testing.T) {
 
 // TestIntegration_ComponentIsolation tests that components work independently
 func TestIntegration_ComponentIsolation(t *testing.T) {
+	ctx := context.Background()
+
 	t.Run("store interface compliance", func(t *testing.T) {
 		config := store.Config{MaxQuads: 1000}
 		memStore, err := store.NewMemoryStore(config)
@@ -322,11 +324,11 @@ func TestIntegration_ComponentIsolation(t *testing.T) {
 
 		// Test that hooks registry works independently
 		hook := &hooks.HookDefinition{
-			ID:       "test-hook",
-			Name:     "Test Hook",
-			Type:     "sparql-ask",
-			Query:    "ASK WHERE { ?s ?p ?o }",
-			Enabled:  true,
+			ID:      "test-hook",
+			Name:    "Test Hook",
+			Type:    "sparql-ask",
+			Query:   "ASK WHERE { ?s ?p ?o }",
+			Enabled: true,
 		}
 
 		err := registry.Register(hook)
@@ -347,7 +349,7 @@ func TestIntegration_ComponentIsolation(t *testing.T) {
 			t.Errorf("ListHooks() returned %d hooks, want 1", len(hooks))
 		}
 
-		results, err := registry.Evaluate(context.Background(), "test-actor")
+		results, err := registry.Evaluate(ctx, "test-actor")
 		if err != nil {
 			t.Errorf("Evaluate() error = %v", err)
 		}

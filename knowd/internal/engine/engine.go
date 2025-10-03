@@ -4,9 +4,10 @@ package engine
 
 import (
 	"context"
+	"crypto/rand"
 	"fmt"
-	"time"
 
+	"github.com/google/uuid"
 	"github.com/unrdf/knowd/internal/hooks"
 	"github.com/unrdf/knowd/internal/policy"
 	"github.com/unrdf/knowd/internal/sparql"
@@ -19,6 +20,7 @@ type Engine struct {
 	hooks        *hooks.Registry
 	parser       *sparql.Parser
 	cache        *sparql.PlanCache
+	executor     *sparql.Executor
 	loader       *policy.Loader
 	packRegistry map[string]*policy.Pack
 }
@@ -92,6 +94,9 @@ func New(config Config) (*Engine, error) {
 	// Create plan cache
 	cache := sparql.NewPlanCache(config.Cache)
 
+	// Create executor
+	executor := sparql.NewExecutor()
+
 	// Create hooks registry
 	hooksRegistry := hooks.NewRegistry(config.Hooks)
 
@@ -103,6 +108,7 @@ func New(config Config) (*Engine, error) {
 		hooks:        hooksRegistry,
 		parser:       parser,
 		cache:        cache,
+		executor:     executor,
 		loader:       loader,
 		packRegistry: make(map[string]*policy.Pack),
 	}, nil
@@ -149,7 +155,7 @@ func (e *Engine) Tx(ctx context.Context, req TxRequest) (*TxResult, error) {
 	}
 
 	// Run hooks
-	hookResults, err := e.hooks.Evaluate(ctx, req.Actor)
+	_, err := e.hooks.Evaluate(ctx, req.Actor)
 	if err != nil {
 		// Error evaluating hooks - silently continue for now
 	}
@@ -187,10 +193,16 @@ func (e *Engine) Query(ctx context.Context, req QueryRequest) (*QueryResponse, e
 		e.cache.Put(req.Query, plan)
 	}
 
-	// Execute plan against store
-	result, err := plan.Execute(ctx, e.store, req.Kind)
+	// Execute plan against store using executor
+	sparqlResult, err := e.executor.Execute(ctx, e.store, req.Kind, plan)
 	if err != nil {
 		return nil, err
+	}
+
+	// Convert sparql.QueryResponse to engine.QueryResponse
+	result := &QueryResponse{
+		Rows: sparqlResult.Rows,
+		Kind: sparqlResult.Kind,
 	}
 
 	return result, nil
@@ -205,9 +217,16 @@ func (e *Engine) EvaluateHooks(ctx context.Context, req HookEvalRequest) (*HookE
 	}
 
 	if len(results) > 0 {
+		// Convert HookResult to map for JSON response
+		result := map[string]interface{}{
+			"hookId": results[0].HookID,
+			"name":   results[0].Name,
+			"fired":  results[0].Fired,
+			"data":   results[0].Data,
+		}
 		return &HookEvalResponse{
 			Fired:  true,
-			Result: results[0],
+			Result: result,
 		}, nil
 	}
 
@@ -305,8 +324,7 @@ func (e *Engine) GetStats(ctx context.Context) map[string]interface{} {
 	return stats
 }
 
-// generateID generates a simple unique ID (placeholder implementation).
+// generateID generates a unique ID using UUID v4.
 func generateID() string {
-	// Simple implementation - in real version would use proper UUID
-	return "id-" + fmt.Sprintf("%d", time.Now().UnixNano())
+	return uuid.New().String()
 }

@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"regexp"
 	"strings"
+
+	"github.com/knakk/rdf"
 )
 
 // Validator validates SHACL shapes against RDF data.
@@ -17,7 +19,6 @@ type ValidationResult struct {
 	Conforms   bool
 	Violations []*Violation
 }
-
 
 // NewValidator creates a new SHACL validator.
 func NewValidator() *Validator {
@@ -64,7 +65,7 @@ func (v *Validator) Validate(ctx context.Context, data []byte, shapes string) (*
 
 // ValidateStrict validates data with strict constraints.
 func (v *Validator) ValidateStrict(ctx context.Context, data []byte, shapeID string) (*ValidationResult, error) {
-	result, err := v.Validate(ctx, string(data), "ttl")
+	result, err := v.Validate(ctx, data, "ttl")
 	if err != nil {
 		return nil, err
 	}
@@ -79,7 +80,7 @@ func (v *Validator) ValidateStrict(ctx context.Context, data []byte, shapeID str
 				for _, quad := range dataGraph {
 					subject := quad[0]
 					predicate := quad[1]
-					
+
 					// Check if predicate is ignored or allowed
 					allowed := false
 					for _, prop := range shape.Properties {
@@ -88,7 +89,7 @@ func (v *Validator) ValidateStrict(ctx context.Context, data []byte, shapeID str
 							break
 						}
 					}
-					
+
 					// Check if predicate is in ignored list
 					for _, ignored := range shape.IgnoredProperties {
 						if ignored == predicate {
@@ -96,7 +97,7 @@ func (v *Validator) ValidateStrict(ctx context.Context, data []byte, shapeID str
 							break
 						}
 					}
-					
+
 					if !allowed && predicate != "rdf:type" {
 						result.Conforms = false
 						result.Violations = append(result.Violations, &Violation{
@@ -135,56 +136,44 @@ func (v *Validator) parseShapes(shapes string) error {
 	return nil
 }
 
-// parseData parses RDF data (simplified implementation).
+// parseData parses RDF data using knakk/rdf library.
 func (v *Validator) parseData(data string) ([][]string, error) {
-	// Simplified RDF graph representation
-	var graph [][]string
-	lines := strings.Split(data, "\n")
-	
-	for _, line := range lines {
-		line = strings.TrimSpace(line)
-		if line == "" || strings.HasPrefix(line, "#") || strings.HasPrefix(line, "@") {
-			continue
-		}
-		
-		// Simple pattern for RDF triples: subject predicate object .
-		if strings.Contains(line, " .") {
-			parts := strings.Fields(line)
-			if len(parts) >= 4 {
-				// Remove trailing period
-				triple := parts[:len(parts)-1]
-				if len(triple) >= 3 {
-					graph = append(graph, triple)
-				}
-			}
-		}
-		
-		// Handle semicolon-separated statements: subject pred1 obj1 ; pred2 obj2 .
-		if strings.Contains(line, " ;") {
-			parts := strings.Split(line, " ;")
-			if len(parts) >= 2 {
-				baseParts := strings.Fields(parts[0])
-				if len(baseParts) >= 2 {
-					subject := baseParts[0]
-					predicate1 := baseParts[1]
-					object1 := baseParts[2]
-					graph = append(graph, []string{subject, predicate1, object1})
-					
-					// Parse additional predicates
-					for _, part := range parts[1:] {
-						fields := strings.Fields(part)
-						if len(fields) >= 2 {
-							pred := fields[0]
-							obj := fields[1]
-							graph = append(graph, []string{subject, pred, obj})
-						}
-					}
-				}
-			}
+	// Use knakk/rdf library to parse Turtle/N-Triples
+	triples, err := rdf.NewTripleDecoder(strings.NewReader(data), rdf.Turtle).DecodeAll()
+	if err != nil {
+		// Fallback to N-Triples if Turtle fails
+		triples, err = rdf.NewTripleDecoder(strings.NewReader(data), rdf.NTriples).DecodeAll()
+		if err != nil {
+			return nil, fmt.Errorf("failed to parse RDF data: %w", err)
 		}
 	}
-	
+
+	// Convert to simple string array format for compatibility
+	var graph [][]string
+	for _, triple := range triples {
+		graph = append(graph, []string{
+			v.termToString(triple.Subj),
+			v.termToString(triple.Pred),
+			v.termToString(triple.Obj),
+		})
+	}
+
 	return graph, nil
+}
+
+// termToString converts an RDF term to string representation.
+func (v *Validator) termToString(term rdf.Term) string {
+	// For now, use the simple string representation
+	// This can be enhanced to properly format different RDF term types
+	result := term.String()
+
+	// Ensure IRIs are wrapped in angle brackets for compatibility
+	if len(result) > 0 && !strings.HasPrefix(result, "\"") &&
+		!strings.HasPrefix(result, "_:") && !strings.HasPrefix(result, "<") {
+		result = "<" + result + ">"
+	}
+
+	return result
 }
 
 // validateShape validates a single shape against the data graph.
@@ -192,7 +181,7 @@ func (v *Validator) validateShape(ctx context.Context, shape *Shape, graph [][]s
 	var violations []*Violation
 
 	// Get target nodes for this shape
-	targetNodes := v.getTargetNodes(shape, graph)
+	targetNodes := v.GetTargetNodes(shape, graph)
 
 	for _, node := range targetNodes {
 		// Validate each property constraint
@@ -211,8 +200,8 @@ func (v *Validator) validateShape(ctx context.Context, shape *Shape, graph [][]s
 	return violations
 }
 
-// getTargetNodes gets the nodes that this shape applies to.
-func (v *Validator) getTargetNodes(shape *Shape, graph [][]string) []string {
+// GetTargetNodes gets the nodes that this shape applies to.
+func (v *Validator) GetTargetNodes(shape *Shape, graph [][]string) []string {
 	var nodes []string
 
 	if shape.TargetClass != "" {
@@ -249,7 +238,7 @@ func (v *Validator) validateProperty(ctx context.Context, node string, prop *Pro
 	var violations []*Violation
 
 	// Get values for this property path
-	values := v.getPropertyValues(node, prop.Path, graph)
+	values := v.GetPropertyValues(node, prop.Path, graph)
 
 	// Check minCount
 	if prop.MinCount > 0 && len(values) < prop.MinCount {
@@ -275,10 +264,18 @@ func (v *Validator) validateProperty(ctx context.Context, node string, prop *Pro
 
 	// Check length constraints for string values
 	for _, value := range values {
-		// Check min/max length
+		// Check min/max length - extract actual string value from Turtle literal
 		if prop.MinLength > 0 || prop.MaxLength > 0 {
-			length := len(value)
-			
+			var actualValue string
+			if strings.HasPrefix(value, `"`) && strings.HasSuffix(value, `"`) {
+				// Remove quotes
+				actualValue = value[1 : len(value)-1]
+			} else {
+				actualValue = value
+			}
+
+			length := len(actualValue)
+
 			if prop.MinLength > 0 && length < prop.MinLength {
 				violations = append(violations, &Violation{
 					FocusNode:   node,
@@ -288,7 +285,7 @@ func (v *Validator) validateProperty(ctx context.Context, node string, prop *Pro
 					Severity:    "Violation",
 				})
 			}
-			
+
 			if prop.MaxLength > 0 && length > prop.MaxLength {
 				violations = append(violations, &Violation{
 					FocusNode:   node,
@@ -315,12 +312,20 @@ func (v *Validator) validateProperty(ctx context.Context, node string, prop *Pro
 
 		// Check pattern constraints
 		if prop.Pattern != "" {
-			if !v.validatePattern(value, prop.Pattern) {
+			var actualValue string
+			if strings.HasPrefix(value, `"`) && strings.HasSuffix(value, `"`) {
+				// Remove quotes
+				actualValue = value[1 : len(value)-1]
+			} else {
+				actualValue = value
+			}
+
+			if !v.validatePattern(actualValue, prop.Pattern) {
 				violations = append(violations, &Violation{
 					FocusNode:   node,
 					ResultPath:  prop.Path,
 					SourceShape: prop.ID,
-					Message:     fmt.Sprintf("Value %s does not match pattern %s", value, prop.Pattern),
+					Message:     fmt.Sprintf("Value %s does not match pattern %s", actualValue, prop.Pattern),
 					Severity:    "Violation",
 				})
 			}
@@ -343,16 +348,16 @@ func (v *Validator) validateProperty(ctx context.Context, node string, prop *Pro
 	return violations
 }
 
-// getPropertyValues gets all values for a property path from a node.
-func (v *Validator) getPropertyValues(node, path string, graph [][]string) []string {
+// GetPropertyValues gets all values for a property path from a node.
+func (v *Validator) GetPropertyValues(node, path string, graph [][]string) []string {
 	var values []string
-	
+
 	for _, quad := range graph {
 		if len(quad) >= 3 && quad[0] == node && quad[1] == path {
 			values = append(values, quad[2])
 		}
 	}
-	
+
 	return values
 }
 

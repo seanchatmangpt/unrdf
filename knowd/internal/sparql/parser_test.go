@@ -106,31 +106,31 @@ func TestParser_ParseAdvancedConstructs(t *testing.T) {
 	parser := NewParser()
 
 	tests := []struct {
-		name     string
-		clause   string
-		wantPatterns int
-		wantUnions   int
+		name          string
+		clause        string
+		wantPatterns  int
+		wantUnions    int
 		wantOptionals int
 	}{
 		{
-			name:     "simple pattern",
-			clause:   "?s ?p ?o . ?s ?p2 ?o2",
-			wantPatterns: 1,
-			wantUnions:   0,
+			name:          "simple pattern",
+			clause:        "?s ?p ?o . ?s ?p2 ?o2",
+			wantPatterns:  1,
+			wantUnions:    0,
 			wantOptionals: 0,
 		},
 		{
-			name:     "with UNION",
-			clause:   "?s ?p ?o . UNION ?s ?p2 ?o2",
-			wantPatterns: 0,
-			wantUnions:   1,
+			name:          "with UNION",
+			clause:        "?s ?p ?o . UNION ?s ?p2 ?o2",
+			wantPatterns:  0,
+			wantUnions:    1,
 			wantOptionals: 0,
 		},
 		{
-			name:     "with OPTIONAL",
-			clause:   "?s ?p ?o . OPTIONAL { ?s ?p2 ?o2 }",
-			wantPatterns: 0,
-			wantUnions:   0,
+			name:          "with OPTIONAL",
+			clause:        "?s ?p ?o . OPTIONAL { ?s ?p2 ?o2 }",
+			wantPatterns:  0,
+			wantUnions:    0,
 			wantOptionals: 1,
 		},
 	}
