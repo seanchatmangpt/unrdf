@@ -42,26 +42,26 @@ func (t *Tokens) GenerateToken(user, namespace string, duration time.Duration) (
 		ExpiresAt: time.Now().Add(duration),
 		Nonce:     fmt.Sprintf("%d", time.Now().UnixNano()),
 	}
-	
+
 	data, err := json.Marshal(token)
 	if err != nil {
 		return "", fmt.Errorf("failed to marshal token: %w", err)
 	}
-	
+
 	mac := hmac.New(sha256.New, t.secret)
 	mac.Write(data)
 	signature := mac.Sum(nil)
-	
+
 	tokenData := map[string]string{
 		"token":     base64.StdEncoding.EncodeToString(data),
 		"signature": base64.StdEncoding.EncodeToString(signature),
 	}
-	
+
 	encoded, err := json.Marshal(tokenData)
 	if err != nil {
 		return "", fmt.Errorf("failed to encode token: %w", err)
 	}
-	
+
 	return base64.StdEncoding.EncodeToString(encoded), nil
 }
 
@@ -71,48 +71,48 @@ func (t *Tokens) ValidateToken(tokenString string) (*Token, error) {
 	if err != nil {
 		return nil, fmt.Errorf("invalid token encoding: %w", err)
 	}
-	
+
 	var tokenData map[string]string
 	if err := json.Unmarshal(decoded, &tokenData); err != nil {
 		return nil, fmt.Errorf("invalid token format: %w", err)
 	}
-	
+
 	tokenB64, ok := tokenData["token"]
 	if !ok {
 		return nil, fmt.Errorf("missing token data")
 	}
-	
+
 	signatureB64, ok := tokenData["signature"]
 	if !ok {
 		return nil, fmt.Errorf("missing token signature")
 	}
-	
+
 	tokenDataBytes, err := base64.StdEncoding.DecodeString(tokenB64)
 	if err != nil {
 		return nil, fmt.Errorf("invalid token data encoding: %w", err)
 	}
-	
+
 	signature, err := base64.StdEncoding.DecodeString(signatureB64)
 	if err != nil {
 		return nil, fmt.Errorf("invalid signature encoding: %w", err)
 	}
-	
+
 	mac := hmac.New(sha256.New, t.secret)
 	mac.Write(tokenDataBytes)
 	expectedSignature := mac.Sum(nil)
-	
+
 	if !hmac.Equal(signature, expectedSignature) {
 		return nil, fmt.Errorf("invalid token signature")
 	}
-	
+
 	var token Token
 	if err := json.Unmarshal(tokenDataBytes, &token); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal token: %w", err)
 	}
-	
+
 	if time.Now().After(token.ExpiresAt) {
 		return nil, fmt.Errorf("token expired")
 	}
-	
+
 	return &token, nil
 }

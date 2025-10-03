@@ -88,17 +88,6 @@ export { EffectSandbox } from "./effect-sandbox.mjs";
 // Policy Management
 export { PolicyPackManager, PolicyPack } from "./policy-pack.mjs";
 
-// Knowledge Substrate Core System
-export {
-  KnowledgeSubstrateCore,
-  createKnowledgeSubstrateCore,
-  KnowledgeSubstrateFactory,
-  // Legacy exports (deprecated but maintained for compatibility)
-  DarkMatterCore,
-  createDarkMatterCore,
-  DarkMatterFactory,
-} from "./knowledge-substrate-core.mjs";
-
 // Observability System
 export {
   ObservabilityManager,
