@@ -1,3 +1,0 @@
-# Bazel workspace for knowd
-
-workspace(name = "knowd")

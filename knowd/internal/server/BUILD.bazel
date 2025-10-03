@@ -1,9 +1,0 @@
-load("@rules_go//go:def.bzl", "go_library")
-
-go_library(
-    name = "server",
-    srcs = ["http.go"],
-    importpath = "github.com/unrdf/knowd/internal/server",
-    deps = ["//internal/version"],
-    visibility = ["//visibility:public"],
-)
