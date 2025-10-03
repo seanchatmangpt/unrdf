@@ -1,7 +1,7 @@
 {
   "name": "unrdf",
-  "version": "3.0.1",
-  "description": "Production-ready RDF knowledge graph library with Knowledge Hooks, SPARC methodology, and Dark Matter 80/20 optimization",
+  "version": "3.0.3",
+  "description": "Production-ready RDF knowledge graph library with Knowledge Hooks, SPARC methodology, and Knowledge Substrate optimization",
   "type": "module",
   "main": "src/index.mjs",
   "scripts": {
@@ -59,8 +59,8 @@
     "terraform",
     "testcontainers",
     "e2e",
-    "dark-matter",
-    "80-20",
+    "knowledge-substrate",
+    "optimization",
     "observability",
     "opentelemetry",
     "zod",

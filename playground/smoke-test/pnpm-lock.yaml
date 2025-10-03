@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       unrdf:
-        specifier: ^3.0.1
-        version: 3.0.1(@rdfjs/types@2.0.1)(node@24.9.0)(web-streams-polyfill@3.3.3)
+        specifier: file:/Users/sac/unrdf
+        version: file:../..(@rdfjs/types@2.0.1)(node@24.9.0)(web-streams-polyfill@3.3.3)
     devDependencies:
       '@rdfjs/data-model':
         specifier: ^2.0.1
@@ -2766,8 +2766,8 @@ packages:
       webpack:
         optional: true
 
-  unrdf@3.0.1:
-    resolution: {integrity: sha512-dc9o8AuxiLbH/1ZFCMcOmIo3Qo2l6b9vexDrlMXz8/kapJ5BG87crhYlBkh9U8QrPxme+uHVigAL6/EcXVFC/Q==}
+  unrdf@file:../..:
+    resolution: {directory: ../.., type: directory}
     engines: {node: '>=18.0.0', npm: '>=8.0.0', pnpm: '>=7.0.0'}
     peerDependencies:
       node: '>=18.0.0'
@@ -7678,7 +7678,7 @@ snapshots:
       webpack-sources: 3.3.3
       webpack-virtual-modules: 0.4.6
 
-  unrdf@3.0.1(@rdfjs/types@2.0.1)(node@24.9.0)(web-streams-polyfill@3.3.3):
+  unrdf@file:../..(@rdfjs/types@2.0.1)(node@24.9.0)(web-streams-polyfill@3.3.3):
     dependencies:
       '@comunica/query-sparql': 3.3.0
       '@grpc/grpc-js': 1.14.0
