@@ -12,6 +12,9 @@
 
 import { defineCommand } from 'citty';
 import { z } from 'zod';
+import { readFile, writeFile, access, rename } from 'node:fs/promises';
+import { constants as fsConstants } from 'node:fs';
+import path from 'node:path';
 
 /**
  * Validation schema for update command arguments
@@ -46,7 +49,26 @@ export const updateCommand = defineCommand({
       // Validate arguments
       const args = updateArgsSchema.parse(ctx.args);
 
-      // TODO: Actual graph update logic would go here
+      const graphsDir = path.resolve(process.cwd(), 'graph');
+      const metaPath = path.join(graphsDir, `${args.name}.meta.json`);
+
+      // Ensure graph exists
+      try {
+        await access(metaPath, fsConstants.F_OK);
+      } catch {
+        throw new Error(`Graph not found: ${args.name}`);
+      }
+
+      const current = JSON.parse(await readFile(metaPath, 'utf8'));
+      const updated = {
+        ...current,
+        baseIri: args['base-iri'] ?? current.baseIri,
+        updatedAt: new Date().toISOString()
+      };
+
+      const tmpPath = metaPath + '.tmp';
+      await writeFile(tmpPath, JSON.stringify(updated, null, 2), 'utf8');
+      await rename(tmpPath, metaPath);
 
       console.log(`✅ Graph updated: ${args.name}`);
 

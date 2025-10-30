@@ -15,7 +15,7 @@
     "cli-test": "node examples/cli-testing.mjs",
     "cli-scenarios": "node examples/cli-scenarios.mjs",
     "hooks": "node examples/hooks-runtime.mjs",
-    "server": "node server.mjs",
+    "server": "nitro dev",
     "nitro:dev": "nitro dev",
     "nitro:build": "nitro build",
     "nitro:preview": "nitro preview",

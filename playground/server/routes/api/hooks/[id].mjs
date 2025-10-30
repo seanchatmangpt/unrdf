@@ -6,10 +6,11 @@
  * GET /api/hooks/[id] - Get specific hook
  */
 export default defineEventHandler(async (event) => {
+  const { requireAuth } = await import('../_auth.mjs')
+  requireAuth(event)
   const id = getRouterParam(event, 'id')
   
-  // Import the hook registry (this would be shared state in a real app)
-  const { hookRegistry, hookResults } = await import('./index.mjs')
+  const { hookRegistry, hookResults } = await import('./_shared.mjs')
   
   if (!hookRegistry.has(id)) {
     throw createError({
@@ -25,6 +26,30 @@ export default defineEventHandler(async (event) => {
     hook,
     recentResults: results.slice(-10), // Last 10 results
     totalEvaluations: results.length,
+    timestamp: new Date().toISOString()
+  }
+})
+
+// Also support DELETE /api/hooks/[id]
+export const del = defineEventHandler(async (event) => {
+  const { requireAuth } = await import('../_auth.mjs')
+  requireAuth(event)
+  const id = getRouterParam(event, 'id')
+  const { hookRegistry, hookResults } = await import('./_shared.mjs')
+
+  if (!hookRegistry.has(id)) {
+    throw createError({
+      statusCode: 404,
+      statusMessage: 'Hook not found'
+    })
+  }
+
+  hookRegistry.delete(id)
+  hookResults.delete(id)
+
+  return {
+    success: true,
+    message: `Hook ${id} deleted`,
     timestamp: new Date().toISOString()
   }
 })

@@ -2,19 +2,14 @@
  * @fileoverview Data management API for hooks runtime
  */
 
-import { initStore } from '../../../../src/context/index.mjs'
-import { useTurtle } from '../../../../src/composables/use-turtle.mjs'
-import { useGraph } from '../../../../src/composables/use-graph.mjs'
-import fs from 'node:fs/promises'
-import { join } from 'node:path'
-
-// In-memory data store
-const dataStore = new Map()
+import { dataStore } from './_shared.mjs'
+import { requireAuth } from '../../_auth.mjs'
 
 /**
  * GET /api/data - List all data sources
  */
 export default defineEventHandler(async (event) => {
+  requireAuth(event)
   const method = getMethod(event)
   
   switch (method) {
@@ -83,102 +78,3 @@ async function createDataSource(event) {
     })
   }
 }
-
-/**
- * GET /api/data/[id] - Get specific data source
- */
-export default defineEventHandler(async (event) => {
-  const id = getRouterParam(event, 'id')
-  
-  if (!dataStore.has(id)) {
-    throw createError({
-      statusCode: 404,
-      statusMessage: 'Data source not found'
-    })
-  }
-  
-  const dataSource = dataStore.get(id)
-  
-  return {
-    dataSource,
-    timestamp: new Date().toISOString()
-  }
-})
-
-/**
- * POST /api/data/[id]/query - Query data source
- */
-export default defineEventHandler(async (event) => {
-  const id = getRouterParam(event, 'id')
-  
-  if (!dataStore.has(id)) {
-    throw createError({
-      statusCode: 404,
-      statusMessage: 'Data source not found'
-    })
-  }
-  
-  try {
-    const body = await readBody(event)
-    const dataSource = dataStore.get(id)
-    
-    if (!body.query) {
-      throw createError({
-        statusCode: 400,
-        statusMessage: 'Query is required'
-      })
-    }
-    
-    // Initialize store with composable architecture
-    const runApp = initStore()
-    
-    const result = await runApp(async () => {
-      const turtle = await useTurtle()
-      await turtle.parse(dataSource.content)
-      
-      const graph = await useGraph()
-      
-      if (body.query.trim().toUpperCase().startsWith('SELECT')) {
-        return await graph.select(body.query)
-      } else if (body.query.trim().toUpperCase().startsWith('ASK')) {
-        return await graph.ask(body.query)
-      } else {
-        throw new Error('Only SELECT and ASK queries are supported')
-      }
-    })
-    
-    return {
-      success: true,
-      query: body.query,
-      result,
-      timestamp: new Date().toISOString()
-    }
-  } catch (error) {
-    throw createError({
-      statusCode: 500,
-      statusMessage: error.message
-    })
-  }
-})
-
-/**
- * DELETE /api/data/[id] - Delete data source
- */
-export default defineEventHandler(async (event) => {
-  const id = getRouterParam(event, 'id')
-  
-  if (!dataStore.has(id)) {
-    throw createError({
-      statusCode: 404,
-      statusMessage: 'Data source not found'
-    })
-  }
-  
-  dataStore.delete(id)
-  
-  return {
-    success: true,
-    message: `Data source ${id} deleted`,
-    timestamp: new Date().toISOString()
-  }
-})

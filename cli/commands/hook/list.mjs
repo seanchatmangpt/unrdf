@@ -5,7 +5,7 @@
 
 import { defineCommand } from 'citty';
 import { formatOutput } from '../../formatters/index.mjs';
-import { KnowledgeHookManager } from '../../../knowledge-engine/index.mjs';
+import { KnowledgeHookManager } from '../../../src/knowledge-engine/knowledge-hook-manager.mjs';
 
 export const listCommand = defineCommand({
   meta: {

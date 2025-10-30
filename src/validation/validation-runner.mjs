@@ -348,6 +348,18 @@ export class ValidationRunner {
           ),
         ]);
 
+        // Guard: fail if validator returned empty spans/zero throughput
+        if (!result || (Array.isArray(result.spans) && result.spans.length === 0)) {
+          throw new Error(
+            `Validator returned zero spans for '${feature.name}'. Treating as failure.`,
+          );
+        }
+        if (result.metrics && (result.metrics.throughput || 0) <= 0) {
+          throw new Error(
+            `Validator reported zero throughput for '${feature.name}'. Treating as failure.`,
+          );
+        }
+
         return result;
       } catch (error) {
         lastError = error;

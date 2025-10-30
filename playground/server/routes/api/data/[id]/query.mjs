@@ -10,10 +10,11 @@ import { useGraph } from '../../../../src/composables/use-graph.mjs'
  * POST /api/data/[id]/query - Query data source
  */
 export default defineEventHandler(async (event) => {
+  const { requireAuth } = await import('../../_auth.mjs')
+  requireAuth(event)
   const id = getRouterParam(event, 'id')
   
-  // Import the data store (this would be shared state in a real app)
-  const { dataStore } = await import('../index.mjs')
+  const { dataStore } = await import('../_shared.mjs')
   
   if (!dataStore.has(id)) {
     throw createError({

@@ -358,7 +358,8 @@ export function createHookExecutor(options = {}) {
     enableConditionEvaluation = true,
     enableMetrics = true,
     enableSandboxing = true,
-    sandboxConfig = {}
+    sandboxConfig = {},
+    missingDependencyPolicy = 'warn' // 'error' | 'warn' | 'ignore'
   } = options;
   
   const metrics = {
@@ -459,9 +460,73 @@ export function createHookExecutor(options = {}) {
         throw new TypeError('executeWithDependencies: hooks must be an array');
       }
       
-      // Simple dependency resolution - execute in order for now
-      // TODO: Implement proper dependency graph resolution
-      return this.executeSequential(hooks, event, executionOptions);
+      // Build dependency graph from hook.meta.dependencies
+      const nameOf = (hook, idx) => hook?.meta?.name || `hook-${idx}`;
+      const graph = new Map(); // name -> Set(dependencies)
+      const byName = new Map(); // name -> hook
+
+      for (let i = 0; i < hooks.length; i++) {
+        const hook = hooks[i];
+        const name = nameOf(hook, i);
+        byName.set(name, hook);
+        const deps = Array.isArray(hook?.meta?.dependencies) ? hook.meta.dependencies : [];
+        graph.set(name, new Set(deps));
+      }
+
+      // Kahn's algorithm for topological sort with cycle tolerance
+      const inDegree = new Map();
+      // Initialize in-degrees
+      for (const [name, deps] of graph.entries()) {
+        if (!inDegree.has(name)) inDegree.set(name, 0);
+        for (const dep of deps) {
+          if (!graph.has(dep)) {
+            const policy = executionOptions.missingDependencyPolicy || missingDependencyPolicy;
+            if (policy === 'error') {
+              throw new Error(`executeWithDependencies: missing dependency '${dep}' for hook '${name}'`);
+            }
+            if (policy === 'warn') {
+              console.warn(`executeWithDependencies: missing dependency '${dep}' for hook '${name}' (continuing)`);
+            }
+            continue; // ignore
+          }
+          inDegree.set(name, (inDegree.get(name) || 0) + 1);
+        }
+      }
+
+      const queue = [];
+      for (const [name, deg] of inDegree.entries()) {
+        if (deg === 0) queue.push(name);
+      }
+
+      const orderedNames = [];
+      while (queue.length > 0) {
+        const current = queue.shift();
+        orderedNames.push(current);
+        // Reduce in-degree of nodes that depend on current
+        for (const [name, deps] of graph.entries()) {
+          if (deps.has(current)) {
+            const newDeg = (inDegree.get(name) || 0) - 1;
+            inDegree.set(name, newDeg);
+            if (newDeg === 0) queue.push(name);
+          }
+        }
+      }
+
+      // Detect cycles or unresolved nodes
+      if (orderedNames.length < hooks.length) {
+        const unresolved = hooks
+          .map((h, i) => nameOf(h, i))
+          .filter(n => !orderedNames.includes(n));
+        const policy = executionOptions.missingDependencyPolicy || missingDependencyPolicy;
+        if (policy === 'error') {
+          throw new Error(`executeWithDependencies: cyclic or unresolved dependencies among: ${unresolved.join(', ')}`);
+        }
+        // Append unresolved in original order as a last resort
+        orderedNames.push(...unresolved);
+      }
+
+      const orderedHooks = orderedNames.map(n => byName.get(n));
+      return this.executeSequential(orderedHooks, event, executionOptions);
     },
     
     /**

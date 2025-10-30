@@ -39,7 +39,7 @@ const SENSITIVE_PATTERNS = {
 
   // Database connection strings
   credentials: [
-    /(?:postgres|mysql|mongodb):\/\/[^:]+:[^@]+@[^\s]+/gi, // DB URLs with passwords
+    /\b(?:postgres|mysql|mongodb):\/\/[^:\s]+:[^@\s]+@[^\s]+/gi, // DB URLs with passwords
     /password\s*[:=]\s*["']?[^"'\s]+["']?/gi, // password= or password:
     /api[_-]?key\s*[:=]\s*["']?[^"'\s]+["']?/gi, // API keys
     /secret\s*[:=]\s*["']?[^"'\s]+["']?/gi, // secrets
@@ -49,7 +49,7 @@ const SENSITIVE_PATTERNS = {
 
   // Environment variables
   environmentVars: [
-    /DATABASE_URL\s*=\s*[^\s]+/gi,
+    /\bDATABASE_URL\s*=\s*[^\s]+/gi,
     /API_KEY\s*=\s*[^\s]+/gi,
     /SECRET\s*=\s*[^\s]+/gi,
     /PASSWORD\s*=\s*[^\s]+/gi,
@@ -60,7 +60,7 @@ const SENSITIVE_PATTERNS = {
 
   // Stack trace patterns
   stackTraces: [
-    /at\s+[^\s]+\s+\([^)]+:\d+:\d+\)/g, // at Function (file:line:col)
+    /\bat\s+[^\s]+\s+\([^)]+:\d+:\d+\)/g, // at Function (file:line:col)
     /at\s+[^(]+\([^)]+\)/g, // at Function(...)
     /^\s*at\s.+$/gm, // Full stack trace lines
   ],

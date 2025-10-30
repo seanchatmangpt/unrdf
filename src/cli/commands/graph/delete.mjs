@@ -12,6 +12,9 @@
 
 import { defineCommand } from 'citty';
 import { z } from 'zod';
+import { unlink, access } from 'node:fs/promises';
+import { constants as fsConstants } from 'node:fs';
+import path from 'node:path';
 
 /**
  * Validation schema for delete command arguments
@@ -52,7 +55,16 @@ export const deleteCommand = defineCommand({
         return;
       }
 
-      // TODO: Actual graph deletion logic would go here
+      const graphsDir = path.resolve(process.cwd(), 'graph');
+      const metaPath = path.join(graphsDir, `${args.name}.meta.json`);
+
+      try {
+        await access(metaPath, fsConstants.F_OK);
+      } catch {
+        throw new Error(`Graph not found: ${args.name}`);
+      }
+
+      await unlink(metaPath);
 
       console.log(`✅ Graph deleted: ${args.name}`);
 

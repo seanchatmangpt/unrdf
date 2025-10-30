@@ -89,12 +89,14 @@ Successfully removed all broken tests from the UNRDF test suite, resulting in a 
 ### Short Term
 - Keep the current minimal test suite for fast development
 - Focus on fixing core dependencies (e.g., `src/core/config.mjs`)
-- Implement missing CLI functionality
+- Use OTEL validation as execution truth (`validation/run-all.mjs`) and persist artifacts (`coverage/otel-report.json`, `validation-output.log`)
+- Run sidecar integration tests via `sidecar/scripts/run-integration-tests.mjs` (see `sidecar/TESTING.md`)
 
 ### Long Term
 - Gradually reintroduce tests as dependencies are fixed
 - Prioritize tests that validate critical user workflows
 - Maintain 80/20 principle: 20% of tests covering 80% of functionality
+- Migrate sandbox to `isolated-vm` behind the new adapter (`src/security/sandbox-adapter.mjs`)
 
 ## Test Coverage Analysis
 

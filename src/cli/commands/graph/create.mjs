@@ -12,6 +12,9 @@
 
 import { defineCommand } from 'citty';
 import { z } from 'zod';
+import { mkdir, writeFile, access, rename } from 'node:fs/promises';
+import { constants as fsConstants } from 'node:fs';
+import path from 'node:path';
 
 /**
  * Validation schema for create command arguments
@@ -60,8 +63,32 @@ export const createCommand = defineCommand({
         return;
       }
 
-      // TODO: Actual graph creation logic would go here
-      // For now, just output the expected format for tests
+      // Create graph metadata under ./graph/<name>.meta.json
+      const graphsDir = path.resolve(process.cwd(), 'graph');
+      const metaPath = path.join(graphsDir, `${args.name}.meta.json`);
+
+      // Ensure directory exists
+      await mkdir(graphsDir, { recursive: true });
+
+      // Prevent overwrite if graph already exists
+      try {
+        await access(metaPath, fsConstants.F_OK);
+        throw new Error(`Graph already exists: ${args.name}`);
+      } catch (_) {
+        // File does not exist, proceed
+      }
+
+      const meta = {
+        name: args.name,
+        baseIri: args['base-iri'],
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+
+      // Atomic write via temp file + rename
+      const tmpPath = metaPath + '.tmp';
+      await writeFile(tmpPath, JSON.stringify(meta, null, 2), 'utf8');
+      await rename(tmpPath, metaPath);
 
       console.log(`✅ Graph created: ${args.name}`);
       console.log(`   Base IRI: ${args['base-iri']}`);

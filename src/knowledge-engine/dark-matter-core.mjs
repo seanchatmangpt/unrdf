@@ -789,4 +789,6 @@ export class KnowledgeSubstrateFactory {
   }
 }
 
-export default KnowledgeSubstrateCore;
+// Legacy compatibility exports
+export const DarkMatterCore = KnowledgeSubstrateCore;
+export const DarkMatterFactory = KnowledgeSubstrateFactory;

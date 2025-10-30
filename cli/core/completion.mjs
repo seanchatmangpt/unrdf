@@ -7,11 +7,30 @@
  * Reads completion files from the completions/ directory.
  */
 
-import { readFileSync } from 'fs';
-import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
+// Embedded completion templates to avoid filesystem dependencies
+const COMPLETION_TEMPLATES = {
+  bash: `# bash completion for unrdf
+_unrdf()
+{
+  local cur prev words cword
+  _init_completion || return
+  COMPREPLY=( $( compgen -W "graph hook policy sidecar store context plugin repl init completion --fast --help --version" -- "$cur" ) )
+}
+complete -F _unrdf unrdf
+`,
+  zsh: `#compdef unrdf
+_unrdf() {
+  local -a cmds
+  cmds=(graph hook policy sidecar store context plugin repl init completion)
+  _describe 'command' cmds
+}
+compdef _unrdf unrdf
+`,
+  fish: `complete -c unrdf -f -a "graph hook policy sidecar store context plugin repl init completion"
+complete -c unrdf -l fast -d "Fast mode"
+complete -c unrdf -l help -d "Show help"
+complete -c unrdf -l version -d "Show version"`
+};
 
 /**
  * Generate shell completion script
@@ -25,13 +44,7 @@ export function generateCompletion(shell) {
     throw new Error(`Unsupported shell: ${shell}. Supported: ${validShells.join(', ')}`);
   }
 
-  try {
-    // Read completion file from completions directory
-    const completionPath = join(__dirname, '..', '..', '..', 'completions', `${shell}-completion.${getExtension(shell)}`);
-    return readFileSync(completionPath, 'utf-8');
-  } catch (error) {
-    throw new Error(`Failed to load ${shell} completion: ${error.message}`);
-  }
+  return COMPLETION_TEMPLATES[shell];
 }
 
 /**
@@ -40,11 +53,7 @@ export function generateCompletion(shell) {
  * @returns {string} File extension
  */
 function getExtension(shell) {
-  const extensions = {
-    bash: 'sh',
-    zsh: 'zsh',
-    fish: 'fish'
-  };
+  const extensions = { bash: 'sh', zsh: 'zsh', fish: 'fish' };
   return extensions[shell];
 }
 

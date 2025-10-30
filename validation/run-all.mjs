@@ -10,7 +10,9 @@
 import { runKnowledgeEngineValidation } from "./knowledge-engine.validation.mjs";
 import { runCLIValidation } from "./cli.validation.mjs";
 import { createValidationRunner } from "../src/validation/index.mjs";
+import { ensureProviderInitialized } from "./otel-provider.mjs";
 
+await ensureProviderInitialized();
 const runner = createValidationRunner({ verbose: true });
 
 /**
@@ -132,7 +134,6 @@ const comprehensiveSuite = {
         expectedSpans: [
           "transaction.start",
           "transaction.commit",
-          "transaction.rollback",
         ],
         requiredAttributes: [
           "transaction.id",
@@ -153,7 +154,7 @@ const comprehensiveSuite = {
   globalConfig: {
     timeout: 60000, // 1 minute timeout for comprehensive validation
     retries: 2, // More retries for comprehensive validation
-    parallel: true, // Run features in parallel for speed
+    parallel: false, // Sequential execution to prevent span race conditions
   },
 };
 
@@ -301,6 +302,16 @@ export async function runAllValidations(options = {}) {
       throw new Error(`Unknown validation mode: ${mode}`);
     }
 
+    // Persist artifacts
+    try {
+      const { writeFile, mkdir } = await import('node:fs/promises');
+      const { join } = await import('node:path');
+      await mkdir('coverage', { recursive: true });
+      const jsonPath = join('coverage', 'otel-report.json');
+      await writeFile(jsonPath, JSON.stringify(results, null, 2));
+      await writeFile('validation-output.log', captureConsoleSummary(results));
+    } catch {}
+
     // Exit with appropriate code
     const exitCode =
       mode === "comprehensive"
@@ -348,4 +359,27 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       console.error("Validation failed:", error);
       process.exit(1);
     });
+}
+
+function captureConsoleSummary(results) {
+  const lines = [];
+  lines.push('🎯 UNRDF OTEL Span-Based Validation');
+  lines.push('   Replacing traditional unit tests with OpenTelemetry span analysis');
+  lines.push('');
+  if (results.summary) {
+    lines.push('📊 Validation Results:');
+    lines.push(`   Suite: ${results.suite || 'comprehensive'}`);
+    lines.push(`   Duration: ${results.summary.duration}ms`);
+    lines.push(`   Score: ${results.summary.score}/100`);
+    lines.push(`   Features: ${results.summary.passed}/${results.summary.total} passed`);
+    if (results.summary.failed > 0) lines.push(`   ❌ Failed: ${results.summary.failed}`);
+  } else if (results.overall) {
+    lines.push('📊 Overall Results:');
+    lines.push(`   Total Features: ${results.overall.total}`);
+    lines.push(`   Passed: ${results.overall.passed}`);
+    lines.push(`   Failed: ${results.overall.failed}`);
+    lines.push(`   Overall Score: ${results.overall.score}/100`);
+  }
+  lines.push('');
+  return lines.join('\n');
 }

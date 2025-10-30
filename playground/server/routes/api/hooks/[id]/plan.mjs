@@ -8,10 +8,11 @@ import { planHook } from '../../../../src/hooks.mjs'
  * POST /api/hooks/[id]/plan - Plan hook execution
  */
 export default defineEventHandler(async (event) => {
+  const { requireAuth } = await import('../../_auth.mjs')
+  requireAuth(event)
   const id = getRouterParam(event, 'id')
   
-  // Import the hook registry (this would be shared state in a real app)
-  const { hookRegistry } = await import('../index.mjs')
+  const { hookRegistry } = await import('../_shared.mjs')
   
   if (!hookRegistry.has(id)) {
     throw createError({

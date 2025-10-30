@@ -14,8 +14,9 @@ RUN apk add --no-cache \
 # Copy package files
 COPY package.json pnpm-lock.yaml ./
 
-# Install dependencies
-RUN npm install -g pnpm && pnpm install --frozen-lockfile
+# Enable pnpm via corepack and install dependencies
+RUN corepack enable && corepack prepare pnpm@latest --activate \
+  && pnpm install --frozen-lockfile
 
 # Copy application code
 COPY . .

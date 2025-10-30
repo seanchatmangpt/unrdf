@@ -289,7 +289,8 @@ export async function toJsonLd(store, options = {}) {
       subjectNode[predicate].push({ '@id': object });
     }
 
-    return result;
+    // Return as JSON string for compatibility
+    return JSON.stringify(result, null, 2);
   } catch (error) {
     throw new Error(`Failed to serialize to JSON-LD: ${error.message}`);
   }
