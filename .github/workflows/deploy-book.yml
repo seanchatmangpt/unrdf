@@ -2,7 +2,7 @@ name: Deploy mdBook to GitHub Pages
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   workflow_dispatch: {}
 
 permissions:
@@ -40,13 +40,13 @@ jobs:
           fi
           mdbook --version
 
-      - name: Build book
-        run: mdbook build book
+      - name: Build book (to public/)
+        run: mdbook build -d public book
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: book/book/html
+          path: public
 
   deploy:
     needs: build
@@ -58,4 +58,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-
