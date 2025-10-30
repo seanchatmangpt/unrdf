@@ -35,19 +35,24 @@ jobs:
 
       - name: Install mdBook
         run: |
+          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
           if ! command -v mdbook >/dev/null 2>&1; then
             cargo install mdbook --version 0.4.37
           fi
           mdbook --version
 
-      - name: Build book
-        working-directory: book
-        run: mdbook build
+      - name: Build book to _site
+        run: mdbook build book -d _site
+
+      - name: Inspect build output
+        run: |
+          ls -la
+          ls -la _site || true
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: book/book/html
+          path: _site
 
   deploy:
     needs: build
