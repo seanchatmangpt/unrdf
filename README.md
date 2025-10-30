@@ -2,10 +2,10 @@
 
 > Production-ready RDF knowledge graph library with autonomic hooks, cryptographic provenance, and Dark Matter 80/20 optimization.
 
-[![Version](https://img.shields.io/badge/version-3.0.0-blue.svg)](https://github.com/unrdf/unrdf)
+[![Version](https://img.shields.io/badge/version-3.0.3-blue.svg)](https://github.com/unrdf/unrdf)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Node](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org)
-[![Tests](https://img.shields.io/badge/tests-114%2F114-brightgreen.svg)](test/)
+<!-- Tests badge removed: rely on generated artifacts (coverage/test-results.*) -->
 
 **unrdf** is a composable RDF knowledge graph library that transforms static data into intelligent, reactive systems. Built on battle-tested foundations ([N3.js](https://github.com/rdfjs/N3.js), [Comunica](https://github.com/comunica/comunica), [SHACL](https://github.com/zazuko/rdf-validate-shacl)), unrdf adds **Knowledge Hooks** for policy-driven automation, **cryptographic provenance** with lockchains, and **performance optimization** through the Dark Matter 80/20 framework.
 
@@ -24,6 +24,8 @@
 - [Security](#security)
 - [Roadmap](#roadmap)
 - [Contributing](#contributing)
+- [FAQ](#faq)
+- [Troubleshooting](#troubleshooting)
 
 ---
 
@@ -31,10 +33,10 @@
 
 **v3.0.0 is a focused, production-ready release:**
 
-- ✅ **100% core test coverage** (114/114 tests passing)
-- ✅ **Production-grade observability** (62 OTEL validation tests)
-- ✅ **Security hardened** (SHA3-256 Merkle verification, cryptographic audit trails)
-- ✅ **Performance optimized** (30-60% faster through batching and caching)
+- ✅ **Core 80/20 tests green** (see coverage artifacts under `coverage/`)
+- ✅ **OTEL span-based validation runner included** (see `validation-output.log`)
+- ✅ **Security features enabled** (SHA3-256 Merkle verification, cryptographic audit trails)
+- ✅ **Performance optimizations enabled** (batching, caching, parallel execution)
 - ✅ **Composable architecture** (use only what you need)
 
 **What changed from v2.x:**
@@ -52,11 +54,7 @@
 ### Installation
 
 ```bash
-npm install unrdf
-# or
 pnpm add unrdf
-# or
-yarn add unrdf
 ```
 
 ### 5-Minute Tutorial
@@ -308,12 +306,12 @@ console.log(`Cache hit rate: ${metrics.cacheHitRate * 100}%`);
 ### Requirements
 
 - **Node.js** ≥ 18.0.0
-- **npm** ≥ 8.0.0 (or pnpm/yarn)
+- **pnpm** ≥ 8.0.0
 
-### Install from npm
+### Install from registry
 
 ```bash
-npm install unrdf
+pnpm add unrdf
 ```
 
 ### Install from source
@@ -710,11 +708,44 @@ pnpm test
 
 ## Documentation
 
+### Release Notes & Migration
 - [v3.0.0 Vision & Migration](docs/v3.0.0-VISION.md)
 - [v3.0.0 Release Notes](docs/v3.0.0-RELEASE-NOTES.md)
+- [Changelog](docs/CHANGELOG.md)
 - [v2.4.0 Release Summary](docs/v2.4.0-RELEASE-SUMMARY.md)
+
+### Architecture & Design
 - [Architecture Analysis](docs/v2.4.0-architecture-analysis.md)
 - [Test Strategy](docs/v2.4.0-test-strategy.md)
+
+### Support Resources
+- [FAQ](docs/FAQ.md) - Frequently asked questions
+- [Troubleshooting](docs/TROUBLESHOOTING.md) - Common issues and solutions
+
+---
+
+## FAQ
+
+**Where can I find answers to common questions?**
+
+See the [FAQ document](docs/FAQ.md) for detailed answers including:
+- What is unrdf and why use it?
+- How does it compare to other RDF libraries?
+- What does "opinionated" mean?
+- Core components and design decisions
+
+---
+
+## Troubleshooting
+
+**Having issues?**
+
+Check the [Troubleshooting guide](docs/TROUBLESHOOTING.md) for solutions to common problems:
+- Installation issues
+- Package manager conflicts
+- Node.js version compatibility
+- Performance optimization
+- Testing and validation errors
 
 ---
 

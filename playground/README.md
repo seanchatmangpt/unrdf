@@ -4,13 +4,13 @@ This playground provides a web-based runtime for managing and executing UNRDF Kn
 
 ## 🚀 Quick Start
 
-### Start the Server
+### Start the Server (Nitro)
 ```bash
 cd playground
 pnpm server
 ```
 
-The server will start on `http://localhost:3000`
+Nitro dev will start on `http://localhost:3000`.
 
 ### Web Interface
 Open `http://localhost:3000` in your browser to access the web interface for:
@@ -36,7 +36,6 @@ Open `http://localhost:3000` in your browser to access the web interface for:
 
 ### Runtime Status
 - `GET /api/runtime/status` - Get runtime status
-- `POST /api/runtime/status` - Execute runtime commands
 
 ## 📝 Example Usage
 

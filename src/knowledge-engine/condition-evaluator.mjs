@@ -68,21 +68,27 @@ export async function evaluateCondition(condition, graph, options = {}) {
  * @returns {Promise<boolean>} ASK query result
  */
 async function evaluateSparqlAsk(condition, graph, resolver, env) {
-  const { ref } = condition;
-  
-  if (!ref || !ref.uri || !ref.sha256) {
-    throw new Error('SPARQL ASK condition requires ref with uri and sha256');
+  const { ref, query: inlineQuery } = condition;
+
+  // Support both file reference (ref) and inline query (query)
+  let sparql;
+  if (ref && ref.uri && ref.sha256) {
+    // Load SPARQL query from file
+    const loaded = await resolver.loadSparql(ref.uri, ref.sha256);
+    sparql = loaded.sparql;
+  } else if (inlineQuery) {
+    // Use inline query string for convenience
+    sparql = inlineQuery;
+  } else {
+    throw new Error('SPARQL ASK condition requires either ref (file reference) or query (inline string)');
   }
-  
-  // Load SPARQL query file
-  const { sparql } = await resolver.loadSparql(ref.uri, ref.sha256);
-  
+
   // Execute ASK query
-  const result = await ask(graph, sparql, { 
+  const result = await ask(graph, sparql, {
     env,
-    deterministic: true 
+    deterministic: true
   });
-  
+
   return result;
 }
 
@@ -95,15 +101,21 @@ async function evaluateSparqlAsk(condition, graph, resolver, env) {
  * @returns {Promise<Array>} SELECT query results
  */
 async function evaluateSparqlSelect(condition, graph, resolver, env) {
-  const { ref } = condition;
-  
-  if (!ref || !ref.uri || !ref.sha256) {
-    throw new Error('SPARQL SELECT condition requires ref with uri and sha256');
+  const { ref, query: inlineQuery } = condition;
+
+  // Support both file reference (ref) and inline query (query)
+  let sparql;
+  if (ref && ref.uri && ref.sha256) {
+    // Load SPARQL query from file
+    const loaded = await resolver.loadSparql(ref.uri, ref.sha256);
+    sparql = loaded.sparql;
+  } else if (inlineQuery) {
+    // Use inline query string for convenience
+    sparql = inlineQuery;
+  } else {
+    throw new Error('SPARQL SELECT condition requires either ref (file reference) or query (inline string)');
   }
-  
-  // Load SPARQL query file
-  const { sparql } = await resolver.loadSparql(ref.uri, ref.sha256);
-  
+
   // Execute SELECT query
   const results = await select(graph, sparql, { 
     env,
@@ -343,25 +355,30 @@ export function validateCondition(condition) {
   if (!condition || typeof condition !== 'object') {
     return { valid: false, error: 'Condition must be an object' };
   }
-  
+
   if (!condition.kind) {
     return { valid: false, error: 'Condition must have a kind' };
   }
-  
-  if (!['sparql-ask', 'sparql-select', 'shacl'].includes(condition.kind)) {
+
+  if (!['sparql-ask', 'sparql-select', 'shacl', 'delta', 'threshold', 'count', 'window'].includes(condition.kind)) {
     return { valid: false, error: `Unsupported condition kind: ${condition.kind}` };
   }
-  
-  if (!condition.ref) {
-    return { valid: false, error: 'Condition must have a ref' };
+
+  // Support both file reference (ref) and inline content (query/shapes)
+  const hasRef = condition.ref && condition.ref.uri;
+  const hasInline = condition.query || condition.shapes;
+
+  if (!hasRef && !hasInline) {
+    return { valid: false, error: 'Condition must have either ref (file reference) or query/shapes (inline content)' };
   }
-  
-  if (!condition.ref.uri) {
+
+  // If ref is provided, validate it
+  if (condition.ref && !condition.ref.uri) {
     return { valid: false, error: 'Condition ref must have a uri' };
   }
-  
+
   // SHA-256 is optional for testing
-  // if (!condition.ref.sha256) {
+  // if (condition.ref && !condition.ref.sha256) {
   //   return { valid: false, error: 'Condition ref must have a sha256 hash' };
   // }
   

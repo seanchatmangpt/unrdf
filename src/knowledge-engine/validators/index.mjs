@@ -11,6 +11,8 @@
 
 import { z } from 'zod'
 import path from 'node:path'
+// Prefer consolidated schemas from ../schemas.mjs as source of truth
+export { QuadSchema, DeltaSchema, HookContextSchema, KnowledgeHookSchema } from '../schemas.mjs'
 
 /**
  * SHA-256 hash validator

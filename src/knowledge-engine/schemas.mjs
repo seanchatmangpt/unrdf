@@ -36,10 +36,12 @@ export const FileRefSchema = z.object({
 
 /**
  * Schema for SPARQL ASK conditions
+ * Supports EITHER file reference (ref) OR inline query (query) for convenience
  */
 export const SparqlAskConditionSchema = z.object({
   kind: z.literal('sparql-ask'),
-  ref: FileRefSchema,
+  ref: FileRefSchema.optional(),
+  query: z.string().min(1).optional(),
   options: z.object({
     timeout: z.number().int().positive().max(30000).optional(),
     strict: z.boolean().optional(),
@@ -49,10 +51,12 @@ export const SparqlAskConditionSchema = z.object({
 
 /**
  * Schema for SPARQL SELECT conditions
+ * Supports EITHER file reference (ref) OR inline query (query) for convenience
  */
 export const SparqlSelectConditionSchema = z.object({
   kind: z.literal('sparql-select'),
-  ref: FileRefSchema,
+  ref: FileRefSchema.optional(),
+  query: z.string().min(1).optional(),
   options: z.object({
     timeout: z.number().int().positive().max(30000).optional(),
     limit: z.number().int().positive().max(10000).optional(),
@@ -64,10 +68,12 @@ export const SparqlSelectConditionSchema = z.object({
 
 /**
  * Schema for SHACL validation conditions
+ * Supports EITHER file reference (ref) OR inline shapes (shapes) for convenience
  */
 export const ShaclConditionSchema = z.object({
   kind: z.literal('shacl'),
-  ref: FileRefSchema,
+  ref: FileRefSchema.optional(),
+  shapes: z.string().min(1).optional(), // Inline Turtle shapes for convenience
   options: z.object({
     strict: z.boolean().optional(),
     includeDetails: z.boolean().optional(),
@@ -286,8 +292,8 @@ export const ObservabilityConfigSchema = z.object({
   enableTracing: z.boolean().default(true),
   enableMetrics: z.boolean().default(true),
   enableLogging: z.boolean().default(true),
-  serviceName: z.string().min(1).default('unrdf-kgc'),
-  serviceVersion: z.string().min(1).default('1.0.0'),
+  serviceName: z.string().min(1).max(100).regex(/^[a-zA-Z0-9._-]+$/).default('unrdf-kgc'),
+  serviceVersion: z.string().min(1).max(50).default('1.0.0'),
   endpoint: z.string().url().optional(),
   headers: z.record(z.string()).optional(),
   resourceAttributes: z.record(z.string()).optional(),
@@ -295,7 +301,12 @@ export const ObservabilityConfigSchema = z.object({
   maxQueueSize: z.number().int().positive().default(2048),
   maxExportBatchSize: z.number().int().positive().default(512),
   exportTimeoutMillis: z.number().int().positive().default(30000),
-  scheduledDelayMillis: z.number().int().positive().default(5000)
+  scheduledDelayMillis: z.number().int().positive().default(5000),
+  // Optional: advertise the maximum cache size used by the runtime for metrics
+  cacheMaxSize: z.number().int().nonnegative().optional(),
+  // Smoothing to reduce false-positive alerts from low samples/spikes
+  minSamples: z.number().int().positive().default(20),
+  ewmaAlpha: z.number().min(0).max(1).default(0.3)
 });
 
 /**

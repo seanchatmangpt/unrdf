@@ -60,21 +60,13 @@ const getTelemetryMiddleware = async () => {
   return telemetryMiddleware;
 };
 
-// Command modules cache
-let commandModules;
-const getCommandModules = async () => {
-  if (!commandModules) {
-    commandModules = await Promise.all([
-      import("./commands/graph/index.mjs"),
-      import("./commands/hook/index.mjs"),
-      import("./commands/policy/index.mjs"),
-      import("./commands/sidecar/index.mjs"),
-      import("./commands/store/index.mjs"),
-      import("./commands/context/index.mjs"),
-    ]);
-  }
-  return commandModules;
-};
+// Lazy import helpers to avoid eager loading unrelated command trees
+const importGraph = () => import("./commands/graph/index.mjs");
+const importHook = () => import("./commands/hook/index.mjs");
+const importPolicy = () => import("./commands/policy/index.mjs");
+const importSidecar = () => import("./commands/sidecar/index.mjs");
+const importStore = () => import("./commands/store/index.mjs");
+const importContext = () => import("./commands/context/index.mjs");
 
 /**
  * Definitive CLI with optimal performance
@@ -127,21 +119,21 @@ const main = defineCommand({
         update: defineCommand({
           meta: { name: "update", description: "Update graph" },
           async run(ctx) {
-            const [graphCommands] = await getCommandModules();
+            const graphCommands = await importGraph();
             return graphCommands.updateCommand.run(ctx);
           },
         }),
         delete: defineCommand({
           meta: { name: "delete", description: "Delete graph" },
           async run(ctx) {
-            const [graphCommands] = await getCommandModules();
+            const graphCommands = await importGraph();
             return graphCommands.deleteCommand.run(ctx);
           },
         }),
         describe: defineCommand({
           meta: { name: "describe", description: "Describe graph" },
           async run(ctx) {
-            const [graphCommands] = await getCommandModules();
+            const graphCommands = await importGraph();
             return graphCommands.describeCommand.run(ctx);
           },
         }),
@@ -155,49 +147,49 @@ const main = defineCommand({
         list: defineCommand({
           meta: { name: "list", description: "List knowledge hooks" },
           async run(ctx) {
-            const [, hookCommands] = await getCommandModules();
+            const hookCommands = await importHook();
             return hookCommands.listCommand.run(ctx);
           },
         }),
         get: defineCommand({
           meta: { name: "get", description: "Get hook details" },
           async run(ctx) {
-            const [, hookCommands] = await getCommandModules();
+            const hookCommands = await importHook();
             return hookCommands.getCommand.run(ctx);
           },
         }),
         create: defineCommand({
           meta: { name: "create", description: "Create a hook" },
           async run(ctx) {
-            const [, hookCommands] = await getCommandModules();
+            const hookCommands = await importHook();
             return hookCommands.createCommand.run(ctx);
           },
         }),
         update: defineCommand({
           meta: { name: "update", description: "Update hook" },
           async run(ctx) {
-            const [, hookCommands] = await getCommandModules();
+            const hookCommands = await importHook();
             return hookCommands.updateCommand.run(ctx);
           },
         }),
         delete: defineCommand({
           meta: { name: "delete", description: "Delete hook" },
           async run(ctx) {
-            const [, hookCommands] = await getCommandModules();
+            const hookCommands = await importHook();
             return hookCommands.deleteCommand.run(ctx);
           },
         }),
         history: defineCommand({
           meta: { name: "history", description: "Show hook history" },
           async run(ctx) {
-            const [, hookCommands] = await getCommandModules();
+            const hookCommands = await importHook();
             return hookCommands.historyCommand.run(ctx);
           },
         }),
         describe: defineCommand({
           meta: { name: "describe", description: "Describe hook" },
           async run(ctx) {
-            const [, hookCommands] = await getCommandModules();
+            const hookCommands = await importHook();
             return hookCommands.describeCommand.run(ctx);
           },
         }),
@@ -211,42 +203,42 @@ const main = defineCommand({
         list: defineCommand({
           meta: { name: "list", description: "List policy packs" },
           async run(ctx) {
-            const [, , policyCommands] = await getCommandModules();
+            const policyCommands = await importPolicy();
             return policyCommands.listCommand.run(ctx);
           },
         }),
         get: defineCommand({
           meta: { name: "get", description: "Get policy details" },
           async run(ctx) {
-            const [, , policyCommands] = await getCommandModules();
+            const policyCommands = await importPolicy();
             return policyCommands.getCommand.run(ctx);
           },
         }),
         apply: defineCommand({
           meta: { name: "apply", description: "Apply policy" },
           async run(ctx) {
-            const [, , policyCommands] = await getCommandModules();
+            const policyCommands = await importPolicy();
             return policyCommands.applyCommand.run(ctx);
           },
         }),
         test: defineCommand({
           meta: { name: "test", description: "Test policy" },
           async run(ctx) {
-            const [, , policyCommands] = await getCommandModules();
+            const policyCommands = await importPolicy();
             return policyCommands.testCommand.run(ctx);
           },
         }),
         validate: defineCommand({
           meta: { name: "validate", description: "Validate policy" },
           async run(ctx) {
-            const [, , policyCommands] = await getCommandModules();
+            const policyCommands = await importPolicy();
             return policyCommands.validateCommand.run(ctx);
           },
         }),
         describe: defineCommand({
           meta: { name: "describe", description: "Describe policy" },
           async run(ctx) {
-            const [, , policyCommands] = await getCommandModules();
+            const policyCommands = await importPolicy();
             return policyCommands.describeCommand.run(ctx);
           },
         }),
@@ -260,35 +252,35 @@ const main = defineCommand({
         status: defineCommand({
           meta: { name: "status", description: "Get sidecar status" },
           async run(ctx) {
-            const [, , , sidecarCommands] = await getCommandModules();
+            const sidecarCommands = await importSidecar();
             return sidecarCommands.statusCommand.run(ctx);
           },
         }),
         health: defineCommand({
           meta: { name: "health", description: "Check sidecar health" },
           async run(ctx) {
-            const [, , , sidecarCommands] = await getCommandModules();
+            const sidecarCommands = await importSidecar();
             return sidecarCommands.healthCommand.run(ctx);
           },
         }),
         config: defineCommand({
           meta: { name: "config", description: "Manage sidecar config" },
           async run(ctx) {
-            const [, , , sidecarCommands] = await getCommandModules();
+            const sidecarCommands = await importSidecar();
             return sidecarCommands.configCommand.run(ctx);
           },
         }),
         logs: defineCommand({
           meta: { name: "logs", description: "View sidecar logs" },
           async run(ctx) {
-            const [, , , sidecarCommands] = await getCommandModules();
+            const sidecarCommands = await importSidecar();
             return sidecarCommands.logsCommand.run(ctx);
           },
         }),
         restart: defineCommand({
           meta: { name: "restart", description: "Restart sidecar" },
           async run(ctx) {
-            const [, , , sidecarCommands] = await getCommandModules();
+            const sidecarCommands = await importSidecar();
             return sidecarCommands.restartCommand.run(ctx);
           },
         }),
@@ -302,28 +294,28 @@ const main = defineCommand({
         import: defineCommand({
           meta: { name: "import", description: "Import data" },
           async run(ctx) {
-            const [, , , , storeCommands] = await getCommandModules();
+            const storeCommands = await importStore();
             return storeCommands.importCommand.run(ctx);
           },
         }),
         export: defineCommand({
           meta: { name: "export", description: "Export data" },
           async run(ctx) {
-            const [, , , , storeCommands] = await getCommandModules();
+            const storeCommands = await importStore();
             return storeCommands.exportCommand.run(ctx);
           },
         }),
         query: defineCommand({
           meta: { name: "query", description: "Query store" },
           async run(ctx) {
-            const [, , , , storeCommands] = await getCommandModules();
+            const storeCommands = await importStore();
             return storeCommands.queryCommand.run(ctx);
           },
         }),
         stats: defineCommand({
           meta: { name: "stats", description: "Show store stats" },
           async run(ctx) {
-            const [, , , , storeCommands] = await getCommandModules();
+            const storeCommands = await importStore();
             return storeCommands.statsCommand.run(ctx);
           },
         }),
@@ -337,42 +329,42 @@ const main = defineCommand({
         list: defineCommand({
           meta: { name: "list", description: "List contexts" },
           async run(ctx) {
-            const [, , , , , contextCommands] = await getCommandModules();
+            const contextCommands = await importContext();
             return contextCommands.listCommand.run(ctx);
           },
         }),
         create: defineCommand({
           meta: { name: "create", description: "Create context" },
           async run(ctx) {
-            const [, , , , , contextCommands] = await getCommandModules();
+            const contextCommands = await importContext();
             return contextCommands.createCommand.run(ctx);
           },
         }),
         delete: defineCommand({
           meta: { name: "delete", description: "Delete context" },
           async run(ctx) {
-            const [, , , , , contextCommands] = await getCommandModules();
+            const contextCommands = await importContext();
             return contextCommands.deleteCommand.run(ctx);
           },
         }),
         get: defineCommand({
           meta: { name: "get", description: "Get context" },
           async run(ctx) {
-            const [, , , , , contextCommands] = await getCommandModules();
+            const contextCommands = await importContext();
             return contextCommands.getCommand.run(ctx);
           },
         }),
         use: defineCommand({
           meta: { name: "use", description: "Use context" },
           async run(ctx) {
-            const [, , , , , contextCommands] = await getCommandModules();
+            const contextCommands = await importContext();
             return contextCommands.useCommand.run(ctx);
           },
         }),
         current: defineCommand({
           meta: { name: "current", description: "Show current context" },
           async run(ctx) {
-            const [, , , , , contextCommands] = await getCommandModules();
+            const contextCommands = await importContext();
             return contextCommands.currentCommand.run(ctx);
           },
         }),

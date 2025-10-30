@@ -82,6 +82,9 @@ export class KnowledgeSubstrateCore {
       developmentEfficiency: 0,
     };
     this.initialized = false;
+
+    // Create internal RDF store
+    this.store = new Store();
   }
 
   /**
@@ -420,12 +423,11 @@ export class KnowledgeSubstrateCore {
 
   /**
    * Execute a transaction using Dark Matter core
-   * @param {Store} store - RDF store
-   * @param {Object} delta - Transaction delta
+   * @param {Object} delta - Transaction delta with additions and removals
    * @param {Object} [options] - Transaction options
    * @returns {Promise<Object>} Transaction result
    */
-  async executeTransaction(store, delta, options = {}) {
+  async executeTransaction(delta, options = {}) {
     if (!this.initialized) {
       throw new Error("Dark Matter core not initialized");
     }
@@ -447,7 +449,8 @@ export class KnowledgeSubstrateCore {
     ) {
       spanContext = await observability.startTransactionSpan(transactionId, {
         actor: options.actor || "system",
-        deltaSize: delta?.size || 0,
+        additionsCount: delta?.additions?.length || 0,
+        removalsCount: delta?.removals?.length || 0,
       });
     }
 
@@ -455,7 +458,8 @@ export class KnowledgeSubstrateCore {
     const startTime = Date.now();
 
     try {
-      const result = await transactionManager.apply(store, delta, options);
+      // Use the core's internal store
+      const result = await transactionManager.apply(this.store, delta, options);
       const duration = Date.now() - startTime;
 
       // End OTEL span with success
@@ -613,6 +617,211 @@ export class KnowledgeSubstrateCore {
   }
 
   /**
+   * Execute a SPARQL query
+   * @param {Object} options - Query options
+   * @param {string} options.query - SPARQL query string
+   * @param {string} options.type - Query type (sparql-select, sparql-ask, sparql-construct)
+   * @param {number} [options.limit] - Maximum number of results
+   * @param {AbortSignal} [options.signal] - Abort signal for cancellation
+   * @returns {Promise<any>} Query results
+   */
+  async query(options = {}) {
+    if (!this.initialized) {
+      throw new Error("Dark Matter core not initialized");
+    }
+
+    const { query: sparql, type, ...queryOptions } = options;
+
+    if (!sparql || typeof sparql !== "string") {
+      throw new TypeError("query: sparql must be a non-empty string");
+    }
+
+    // Get observability for OTEL spans
+    const observability = this.getComponent("observability");
+    const queryId = crypto.randomUUID();
+
+    // Start OTEL query span
+    let spanContext;
+    if (observability && typeof observability.startQuerySpan === "function") {
+      spanContext = await observability.startQuerySpan(queryId, {
+        queryType: type,
+        queryLength: sparql.length,
+      });
+    }
+
+    const startTime = Date.now();
+
+    try {
+      // Import query module dynamically
+      const { query: executeQuery } = await import("./query.mjs");
+
+      // Execute SPARQL query on the core's internal store
+      const result = await executeQuery(this.store, sparql, queryOptions);
+      const duration = Date.now() - startTime;
+
+      // End OTEL span with success
+      if (
+        observability &&
+        spanContext &&
+        typeof observability.endQuerySpan === "function"
+      ) {
+        await observability.endQuerySpan(queryId, {
+          success: true,
+          duration,
+          resultCount: Array.isArray(result) ? result.length : 1,
+        });
+      }
+
+      // Update performance metrics
+      const performanceOptimizer = this.getComponent("performanceOptimizer");
+      if (
+        performanceOptimizer &&
+        typeof performanceOptimizer.updateMetrics === "function"
+      ) {
+        performanceOptimizer.updateMetrics({
+          queryLatency: { duration, success: true },
+        });
+      }
+
+      return result;
+    } catch (error) {
+      const duration = Date.now() - startTime;
+
+      // End OTEL span with error
+      if (
+        observability &&
+        spanContext &&
+        typeof observability.endQuerySpan === "function"
+      ) {
+        await observability.endQuerySpan(queryId, {
+          success: false,
+          error: error.message,
+          duration,
+        });
+      }
+
+      // Update performance metrics with failure
+      const performanceOptimizer = this.getComponent("performanceOptimizer");
+      if (
+        performanceOptimizer &&
+        typeof performanceOptimizer.updateMetrics === "function"
+      ) {
+        performanceOptimizer.updateMetrics({
+          queryLatency: { duration, success: false },
+        });
+      }
+
+      throw error;
+    }
+  }
+
+  /**
+   * Validate a data graph against SHACL shapes
+   * @param {Object} options - Validation options
+   * @param {Store} options.dataGraph - Data graph to validate
+   * @param {Store|string} options.shapesGraph - SHACL shapes graph
+   * @param {boolean} [options.strict] - Enable strict validation mode
+   * @param {boolean} [options.includeDetails] - Include detailed validation results
+   * @returns {Promise<{conforms: boolean, results: Array}>} Validation report
+   */
+  async validate(options = {}) {
+    if (!this.initialized) {
+      throw new Error("Dark Matter core not initialized");
+    }
+
+    const { dataGraph, shapesGraph, ...validateOptions } = options;
+
+    if (!dataGraph) {
+      throw new TypeError("validate: dataGraph is required");
+    }
+
+    if (!shapesGraph) {
+      throw new TypeError("validate: shapesGraph is required");
+    }
+
+    // Get observability for OTEL spans
+    const observability = this.getComponent("observability");
+    const validationId = crypto.randomUUID();
+
+    // Start OTEL validation span
+    let spanContext;
+    if (
+      observability &&
+      typeof observability.startValidationSpan === "function"
+    ) {
+      spanContext = await observability.startValidationSpan(validationId, {
+        dataGraphSize: dataGraph.size || 0,
+      });
+    }
+
+    const startTime = Date.now();
+
+    try {
+      // Import validate module dynamically
+      const { validateShacl } = await import("./validate.mjs");
+
+      // Execute SHACL validation
+      const report = validateShacl(dataGraph, shapesGraph, validateOptions);
+      const duration = Date.now() - startTime;
+
+      // End OTEL span with success
+      if (
+        observability &&
+        spanContext &&
+        typeof observability.endValidationSpan === "function"
+      ) {
+        await observability.endValidationSpan(validationId, {
+          success: true,
+          conforms: report.conforms,
+          violationCount: report.results?.length || 0,
+          duration,
+        });
+      }
+
+      // Update performance metrics
+      const performanceOptimizer = this.getComponent("performanceOptimizer");
+      if (
+        performanceOptimizer &&
+        typeof performanceOptimizer.updateMetrics === "function"
+      ) {
+        performanceOptimizer.updateMetrics({
+          validationLatency: { duration, success: true },
+        });
+      }
+
+      return report;
+    } catch (error) {
+      const duration = Date.now() - startTime;
+
+      // End OTEL span with error
+      if (
+        observability &&
+        spanContext &&
+        typeof observability.endValidationSpan === "function"
+      ) {
+        await observability.endValidationSpan(validationId, {
+          success: false,
+          error: error.message,
+          duration,
+        });
+      }
+
+      // Update performance metrics with failure
+      const performanceOptimizer = this.getComponent("performanceOptimizer");
+      if (
+        performanceOptimizer &&
+        typeof performanceOptimizer.updateMetrics === "function"
+      ) {
+        performanceOptimizer.updateMetrics({
+          validationLatency: { duration, success: false },
+        });
+      }
+
+      throw error;
+    }
+  }
+
+  /**
    * Get system status
    * @returns {Object} System status
    */
@@ -673,20 +882,24 @@ export class KnowledgeSubstrateCore {
 /**
  * Create a Knowledge Substrate core instance
  * @param {Object} [config] - Knowledge Substrate configuration
- * @returns {KnowledgeSubstrateCore} Knowledge Substrate core instance
+ * @returns {Promise<KnowledgeSubstrateCore>} Knowledge Substrate core instance
  */
-export function createKnowledgeSubstrateCore(config = {}) {
-  return new KnowledgeSubstrateCore(config);
+export async function createKnowledgeSubstrateCore(config = {}) {
+  const core = new KnowledgeSubstrateCore(config);
+  await core.initialize();
+  return core;
 }
 
 /**
  * @deprecated Use createKnowledgeSubstrateCore instead
  * Create a Dark Matter core instance (legacy name)
  * @param {Object} [config] - Dark Matter configuration
- * @returns {KnowledgeSubstrateCore} Knowledge Substrate core instance
+ * @returns {Promise<KnowledgeSubstrateCore>} Knowledge Substrate core instance
  */
-export function createDarkMatterCore(config = {}) {
-  return new KnowledgeSubstrateCore(config);
+export async function createDarkMatterCore(config = {}) {
+  const core = new KnowledgeSubstrateCore(config);
+  await core.initialize();
+  return core;
 }
 
 /**
@@ -789,7 +1002,7 @@ export class KnowledgeSubstrateFactory {
   }
 }
 
-export default KnowledgeSubstrateCore;
+// No default export to enforce named import usage
 
 // Legacy compatibility exports
 export const DarkMatterCore = KnowledgeSubstrateCore;

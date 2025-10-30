@@ -251,6 +251,8 @@
 
     <script>
         const API_BASE = '/api';
+        const AUTH_REQUIRED = (new URLSearchParams(location.search).get('auth') === '1') || (window.AUTH_REQUIRED === true);
+        let TOKEN = localStorage.getItem('AUTH_TOKEN') || '';
         
         // Create Hook
         document.getElementById('createHookForm').addEventListener('submit', async (e) => {
@@ -276,7 +278,7 @@
             try {
                 const response = await fetch(`${API_BASE}/hooks`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: withAuth({ 'Content-Type': 'application/json' }),
                     body: JSON.stringify(hookData)
                 });
                 
@@ -307,7 +309,7 @@
             try {
                 const response = await fetch(`${API_BASE}/data`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: withAuth({ 'Content-Type': 'application/json' }),
                     body: JSON.stringify(dataSource)
                 });
                 
@@ -326,7 +328,7 @@
         // Load Hooks
         async function loadHooks() {
             try {
-                const response = await fetch(`${API_BASE}/hooks`);
+                const response = await fetch(`${API_BASE}/hooks`, { headers: withAuth({}) });
                 const result = await response.json();
                 
                 const hooksList = document.getElementById('hooksList');
@@ -359,7 +361,7 @@
             try {
                 const response = await fetch(`${API_BASE}/hooks/${hookId}/evaluate`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: withAuth({ 'Content-Type': 'application/json' }),
                     body: JSON.stringify({})
                 });
                 
@@ -380,7 +382,7 @@
             try {
                 const response = await fetch(`${API_BASE}/hooks/${hookId}/plan`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: withAuth({ 'Content-Type': 'application/json' }),
                     body: JSON.stringify({})
                 });
                 
@@ -421,7 +423,7 @@
         // Load Runtime Status
         async function loadStatus() {
             try {
-                const response = await fetch(`${API_BASE}/runtime/status`);
+                const response = await fetch(`${API_BASE}/runtime/status`, { headers: withAuth({}) });
                 const result = await response.json();
                 
                 const statusDiv = document.getElementById('runtimeStatus');
@@ -444,7 +446,7 @@
             try {
                 const response = await fetch(`${API_BASE}/runtime/status`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: withAuth({ 'Content-Type': 'application/json' }),
                     body: JSON.stringify({ command: 'clear-results' })
                 });
                 
@@ -467,7 +469,7 @@
             try {
                 const response = await fetch(`${API_BASE}/runtime/status`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: withAuth({ 'Content-Type': 'application/json' }),
                     body: JSON.stringify({ command: 'reset-runtime' })
                 });
                 
@@ -507,6 +509,54 @@
             container.appendChild(resultDiv);
         }
         
+        // Real-time updates via WebSocket (optional)
+        try {
+          const wsUrl = (location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host + '/';
+          const ws = new WebSocket(wsUrl);
+          ws.onopen = () => {
+            // no auth channel on server; this is placeholder for future
+          };
+          ws.onmessage = (e) => {
+            try {
+              const msg = JSON.parse(e.data);
+              if (msg.type === 'runtime:status') {
+                // opportunistically refresh status panel
+                loadStatus();
+              }
+              if (msg.type === 'hook:evaluation') {
+                showResult(`Hook ${msg.hookId} Evaluation`, msg.result);
+              }
+            } catch {}
+          };
+        } catch {}
+
+        // Auth helpers
+        function withAuth(headers) {
+            const h = new Headers(headers || {});
+            if (AUTH_REQUIRED && TOKEN) h.set('Authorization', `Bearer ${TOKEN}`);
+            return h;
+        }
+
+        // Minimal login UI if auth required
+        if (AUTH_REQUIRED) {
+            const header = document.querySelector('.header');
+            const form = document.createElement('div');
+            form.style.marginTop = '10px';
+            form.innerHTML = `
+                <div class="form-group">
+                  <label for="tokenInput">Auth Token</label>
+                  <input type="text" id="tokenInput" placeholder="Paste Bearer token" value="${TOKEN}">
+                </div>
+                <button id="saveTokenBtn" class="btn">Save Token</button>
+            `;
+            header.appendChild(form);
+            document.getElementById('saveTokenBtn').addEventListener('click', () => {
+              TOKEN = document.getElementById('tokenInput').value.trim();
+              localStorage.setItem('AUTH_TOKEN', TOKEN);
+              showStatus('createStatus', 'success', 'Token saved');
+            });
+        }
+
         // Initialize
         loadHooks();
         loadStatus();

@@ -59,17 +59,32 @@ export class LockchainWriter {
   constructor(config = {}) {
     const validatedConfig = LockchainConfigSchema.parse(config);
     this.config = validatedConfig;
-    
+
     // Initialize storage
     this.storagePath = validatedConfig.storagePath || join(validatedConfig.gitRepo, '.lockchain');
-    this._ensureStorageExists();
-    
-    // Initialize Git repository if needed
-    this._initializeGitRepo();
-    
+    this.initialized = false;
+
     // Cache for pending entries
     this.pendingEntries = [];
     this.entryCache = new Map();
+  }
+
+  /**
+   * Initialize lockchain writer (async initialization pattern)
+   * @returns {Promise<void>}
+   */
+  async init() {
+    if (this.initialized) {
+      return; // Already initialized
+    }
+
+    // Initialize storage
+    this._ensureStorageExists();
+
+    // Initialize Git repository if needed
+    this._initializeGitRepo();
+
+    this.initialized = true;
   }
 
   /**
@@ -79,6 +94,11 @@ export class LockchainWriter {
    * @returns {Promise<Object>} Lockchain entry
    */
   async writeReceipt(receipt, options = {}) {
+    // Auto-initialize if not already initialized
+    if (!this.initialized) {
+      await this.init();
+    }
+
     const entryId = randomUUID();
     const timestamp = Date.now();
 
@@ -174,6 +194,17 @@ export class LockchainWriter {
     } catch (error) {
       throw new Error(`Failed to commit lockchain batch: ${error.message}`);
     }
+  }
+
+  /**
+   * Verify a receipt (alias for verifyEntry for README compatibility)
+   * @param {Object|string} receipt - Receipt object or entry ID
+   * @returns {Promise<boolean>} Verification result (true if valid)
+   */
+  async verifyReceipt(receipt) {
+    const entryId = typeof receipt === 'string' ? receipt : receipt.id;
+    const result = await this.verifyEntry(entryId);
+    return result.valid;
   }
 
   /**

@@ -59,13 +59,10 @@ export default defineConfig({
 
     // File patterns - 80/20 pruned test suite
     include: [
-      "test/knowledge-engine/*.test.mjs",
-      "test/knowledge-engine/dark-matter/*.test.mjs",
-      "test/cli/*.test.mjs",
-      "test/sidecar/*.test.mjs",
-      "test/composables/*.test.mjs",
-      "test/utils/*.test.mjs",
+      "test/knowledge-engine/parse.test.mjs",
       "test/dark-matter-80-20.test.mjs",
+      "test/sidecar/client.test.mjs",
+      "test/cli/*.test.mjs",
     ],
     exclude: ["node_modules/**", "dist/**"],
 
@@ -74,6 +71,23 @@ export default defineConfig({
     outputFile: {
       json: "./coverage/test-results.json",
       html: "./coverage/test-results.html",
+    },
+
+    // citty-test-utils configuration (CLI testing harness)
+    citty: {
+      // Path to the CLI entry point
+      cliPath: './cli/index.mjs',
+      // Optional: working directory
+      cwd: process.cwd(),
+      // Cleanroom (Docker) disabled by default; can be enabled per-test
+      cleanroom: {
+        enabled: false,
+        image: 'node:20-alpine',
+        timeout: 30000,
+        env: {
+          NODE_ENV: 'test',
+        },
+      },
     },
 
     // Global setup

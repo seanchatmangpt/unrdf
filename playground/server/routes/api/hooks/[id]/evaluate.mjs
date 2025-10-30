@@ -2,7 +2,7 @@
  * @fileoverview Hook evaluation API endpoint
  */
 
-import { defineHook, evaluateHook } from '../../../../src/hooks.mjs'
+import { evaluateHook } from '../../../../src/hooks.mjs'
 import { initStore } from '../../../../src/context/index.mjs'
 import { useTurtle } from '../../../../src/composables/use-turtle.mjs'
 
@@ -10,10 +10,11 @@ import { useTurtle } from '../../../../src/composables/use-turtle.mjs'
  * POST /api/hooks/[id]/evaluate - Evaluate a hook
  */
 export default defineEventHandler(async (event) => {
+  const { requireAuth } = await import('../../_auth.mjs')
+  requireAuth(event)
   const id = getRouterParam(event, 'id')
   
-  // Import the hook registry (this would be shared state in a real app)
-  const { hookRegistry, hookResults } = await import('../index.mjs')
+  const { hookRegistry, hookResults } = await import('../_shared.mjs')
   
   if (!hookRegistry.has(id)) {
     throw createError({

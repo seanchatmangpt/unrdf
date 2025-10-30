@@ -11,6 +11,7 @@
 import { randomUUID } from 'crypto';
 import { z } from 'zod';
 import { ObservabilityConfigSchema, PerformanceMetricsSchema } from './schemas.mjs';
+import { getRuntimeConfig } from '../context/config.mjs';
 
 /**
  * OpenTelemetry observability manager
@@ -36,6 +37,7 @@ export class ObservabilityManager {
     };
     this.activeSpans = new Map();
     this.initialized = false;
+    this._lastMetrics = null; // for smoothing fallback
   }
 
   /**
@@ -380,27 +382,41 @@ export class ObservabilityManager {
       .map(l => l.duration)
       .sort((a, b) => a - b);
 
-    const p50 = this._calculatePercentile(recentLatencies, 0.5);
-    const p95 = this._calculatePercentile(recentLatencies, 0.95);
-    const p99 = this._calculatePercentile(recentLatencies, 0.99);
-    const max = recentLatencies.length > 0 ? recentLatencies[recentLatencies.length - 1] : 0;
+    let p50 = this._calculatePercentile(recentLatencies, 0.5);
+    let p95 = this._calculatePercentile(recentLatencies, 0.95);
+    let p99 = this._calculatePercentile(recentLatencies, 0.99);
+    let max = recentLatencies.length > 0 ? recentLatencies[recentLatencies.length - 1] : 0;
 
     // Calculate hook execution rate (per minute)
     const recentHooks = this.metrics.hookExecutionRate;
-    const hookRate = recentHooks; // Already per minute
+    let hookRate = recentHooks; // Already per minute
 
     // Calculate error rate
     const totalTransactions = this.metrics.totalTransactions;
-    const errorRate = totalTransactions > 0 ? this.metrics.errorCount / totalTransactions : 0;
+    let errorRate = totalTransactions > 0 ? this.metrics.errorCount / totalTransactions : 0;
 
     // Get current memory usage
     const currentMemory = process.memoryUsage();
 
     // Calculate cache hit rate
     const totalCacheOps = this.metrics.cacheStats.hits + this.metrics.cacheStats.misses;
-    const cacheHitRate = totalCacheOps > 0 ? this.metrics.cacheStats.hits / totalCacheOps : 0;
+    let cacheHitRate = totalCacheOps > 0 ? this.metrics.cacheStats.hits / totalCacheOps : 0;
 
-    return PerformanceMetricsSchema.parse({
+    // Apply min-sample gate and EWMA smoothing to reduce noise/false positives
+    const minSamples = this.config.minSamples;
+    const alpha = this.config.ewmaAlpha;
+    if (recentLatencies.length < minSamples && this._lastMetrics) {
+      // Fall back partially to previous metrics
+      p50 = alpha * p50 + (1 - alpha) * this._lastMetrics.transactionLatency.p50;
+      p95 = alpha * p95 + (1 - alpha) * this._lastMetrics.transactionLatency.p95;
+      p99 = alpha * p99 + (1 - alpha) * this._lastMetrics.transactionLatency.p99;
+      max = Math.max(max, this._lastMetrics.transactionLatency.max);
+      hookRate = alpha * hookRate + (1 - alpha) * this._lastMetrics.hookExecutionRate;
+      errorRate = alpha * errorRate + (1 - alpha) * this._lastMetrics.errorRate;
+      cacheHitRate = alpha * cacheHitRate + (1 - alpha) * this._lastMetrics.cacheStats.hitRate;
+    }
+
+    const computed = PerformanceMetricsSchema.parse({
       transactionLatency: { p50, p95, p99, max },
       hookExecutionRate: hookRate,
       errorRate,
@@ -408,10 +424,15 @@ export class ObservabilityManager {
       cacheStats: {
         hitRate: cacheHitRate,
         size: this.metrics.cacheStats.size,
-        maxSize: 1000 // TODO: Get from cache implementation
+        maxSize: typeof this.config.cacheMaxSize === 'number'
+          ? this.config.cacheMaxSize
+          : (getRuntimeConfig().cacheMaxSize ?? this.metrics.cacheStats.size)
       },
       backpressure: this.metrics.backpressure
     });
+
+    this._lastMetrics = computed;
+    return computed;
   }
 
   /**
