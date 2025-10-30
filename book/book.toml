@@ -1,0 +1,38 @@
+[book]
+title = "UNRDF - Universal RDF Framework"
+authors = ["UNRDF Team"]
+description = "Production-ready RDF knowledge graph library with Knowledge Hooks and autonomic capabilities"
+language = "en"
+multilingual = false
+src = "src"
+
+[output.html]
+default-theme = "navy"
+preferred-dark-theme = "navy"
+git-repository-url = "https://github.com/seanchatmangpt/unrdf"
+edit-url-template = "https://github.com/seanchatmangpt/unrdf/edit/main/book/{path}"
+site-url = "https://seanchatmangpt.github.io/unrdf/"
+
+[output.html.fold]
+enable = true
+level = 1
+
+[output.html.search]
+enable = true
+limit-results = 30
+teaser-word-count = 30
+use-boolean-and = true
+boost-title = 2
+boost-hierarchy = 1
+boost-paragraph = 1
+expand = true
+heading-split-level = 3
+
+[output.html.playground]
+editable = true
+copyable = true
+line-numbers = true
+
+[preprocessor.index]
+
+[preprocessor.links]

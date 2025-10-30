@@ -1,0 +1,50 @@
+name: Deploy mdBook to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Rust (for mdBook)
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache cargo registry
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/bin
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/book.toml') }}
+
+      - name: Install mdBook
+        run: |
+          if ! command -v mdbook >/dev/null 2>&1; then
+            cargo install mdbook --version 0.4.37
+          fi
+          mdbook --version
+
+      - name: Build book
+        run: |
+          mdbook build book
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: book/book/html
+          allow_empty_commit: true
+
