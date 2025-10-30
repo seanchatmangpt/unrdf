@@ -40,13 +40,14 @@ jobs:
           fi
           mdbook --version
 
-      - name: Build book (to public/)
-        run: mdbook build -d public book
+      - name: Build book
+        working-directory: book
+        run: mdbook build
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: public
+          path: book/book/html
 
   deploy:
     needs: build
