@@ -202,7 +202,6 @@ describe("Knowledge Substrate Core", () => {
       };
 
       const result = await knowledgeSubstrateCore.executeTransaction(
-        mockStore,
         delta,
       );
 
@@ -219,7 +218,7 @@ describe("Knowledge Substrate Core", () => {
       };
 
       await expect(
-        knowledgeSubstrateCore.executeTransaction(mockStore, invalidDelta),
+        knowledgeSubstrateCore.executeTransaction(invalidDelta),
       ).rejects.toThrow();
     });
   });

@@ -241,7 +241,7 @@ export async function parseJsonLd(jsonld, options = {}) {
  * @param {Store} store - The store to serialize
  * @param {Object} [options] - Serialization options
  * @param {Object} [options.context] - JSON-LD context
- * @returns {Promise<string>} Promise resolving to the JSON-LD string
+ * @returns {Promise<Object>} Promise resolving to the JSON-LD object
  * 
  * @throws {Error} If serialization fails
  * 
@@ -289,8 +289,8 @@ export async function toJsonLd(store, options = {}) {
       subjectNode[predicate].push({ '@id': object });
     }
 
-    // Return as JSON string for compatibility
-    return JSON.stringify(result, null, 2);
+    // Return as object (users can call JSON.stringify if they need a string)
+    return result;
   } catch (error) {
     throw new Error(`Failed to serialize to JSON-LD: ${error.message}`);
   }
