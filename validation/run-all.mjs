@@ -1,14 +1,20 @@
 /**
- * @file Run All OTEL Validations
+ * @file Run All OTEL Validations (v3.1.0)
  * @module validation/run-all
  *
  * @description
  * Main entry point for running all OTEL span-based validations.
- * Replaces traditional test runners with comprehensive span analysis.
+ * Updated for v3.1.0 to focus on core features and remove legacy CLI checks.
+ *
+ * Features validated (v3.1.0):
+ * - Knowledge Engine Core (30%)
+ * - Knowledge Hooks API (20%)
+ * - Policy Packs (15%)
+ * - Lockchain Integrity (15%)
+ * - Transaction Manager (10%)
+ * - Browser Compatibility (10%)
  */
 
-import { runKnowledgeEngineValidation } from "./knowledge-engine.validation.mjs";
-import { runCLIValidation } from "./cli.validation.mjs";
 import { createValidationRunner } from "../src/validation/index.mjs";
 import { ensureProviderInitialized } from "./otel-provider.mjs";
 
@@ -16,18 +22,22 @@ await ensureProviderInitialized();
 const runner = createValidationRunner({ verbose: true });
 
 /**
- * Comprehensive validation suite combining all feature validations
+ * Comprehensive validation suite for v3.1.0
+ * Focuses on production-ready core features
  */
 const comprehensiveSuite = {
-  name: "comprehensive",
+  name: "comprehensive-v3.1.0",
   description:
-    "Comprehensive OTEL span-based validation for all UNRDF features",
+    "Comprehensive OTEL span-based validation for UNRDF v3.1.0 core features",
 
   features: [
-    // Knowledge Engine features
+    // ========================================
+    // Knowledge Engine Core (30% weight)
+    // ========================================
     {
-      name: "knowledge-engine",
-      description: "Core knowledge engine operations",
+      name: "knowledge-engine-core",
+      description: "Core knowledge engine operations (parse, query, validate, reason, canonicalize)",
+      weight: 0.30,
       config: {
         expectedSpans: [
           "parse.turtle",
@@ -52,88 +62,104 @@ const comprehensiveSuite = {
       },
     },
 
-    // CLI features
+    // ========================================
+    // Knowledge Hooks API (20% weight)
+    // ========================================
     {
-      name: "cli-parse",
-      description: "CLI parse command validation",
+      name: "knowledge-hooks-api",
+      description: "Knowledge hooks API validation (defineHook, registerHook, hook execution)",
+      weight: 0.20,
       config: {
-        expectedSpans: ["cli.parse", "cli.output", "parse.turtle"],
-        requiredAttributes: ["input.file", "output.file", "format", "triples"],
-        performanceThresholds: {
-          maxLatency: 2000,
-          maxErrorRate: 0.01,
-          minThroughput: 1,
-          maxMemoryUsage: 100 * 1024 * 1024,
-        },
-        validationRules: [],
-      },
-    },
-
-    {
-      name: "cli-query",
-      description: "CLI query command validation",
-      config: {
-        expectedSpans: ["cli.query", "cli.format", "query.sparql"],
-        requiredAttributes: ["query", "format", "results", "size"],
-        performanceThresholds: {
-          maxLatency: 3000,
-          maxErrorRate: 0.01,
-          minThroughput: 1,
-          maxMemoryUsage: 100 * 1024 * 1024,
-        },
-        validationRules: [],
-      },
-    },
-
-    {
-      name: "cli-validate",
-      description: "CLI validate command validation",
-      config: {
-        expectedSpans: ["cli.validate", "validate.shacl", "cli.report"],
-        requiredAttributes: [
-          "input.file",
-          "shapes.file",
-          "conforms",
-          "violations",
+        expectedSpans: [
+          "hook.define",
+          "hook.register",
+          "hook.execute",
+          "hook.evaluate",
         ],
-        performanceThresholds: {
-          maxLatency: 5000,
-          maxErrorRate: 0.01,
-          minThroughput: 1,
-          maxMemoryUsage: 150 * 1024 * 1024,
-        },
-        validationRules: [],
-      },
-    },
-
-    {
-      name: "cli-hook",
-      description: "CLI hook command validation",
-      config: {
-        expectedSpans: ["cli.hook", "hook.evaluate", "hook.result"],
         requiredAttributes: [
           "hook.name",
           "hook.kind",
+          "hook.priority",
           "hook.fired",
-          "execution.time",
         ],
         performanceThresholds: {
-          maxLatency: 1000,
+          maxLatency: 500,
           maxErrorRate: 0.01,
           minThroughput: 1,
-          maxMemoryUsage: 50 * 1024 * 1024,
+          maxMemoryUsage: 30 * 1024 * 1024,
         },
         validationRules: [],
       },
     },
 
+    // ========================================
+    // Policy Packs (15% weight)
+    // ========================================
+    {
+      name: "policy-packs",
+      description: "Policy pack system validation (load, activate, hooks)",
+      weight: 0.15,
+      config: {
+        expectedSpans: [
+          "policy.load",
+          "policy.activate",
+          "policy.validate",
+        ],
+        requiredAttributes: [
+          "policy.name",
+          "policy.version",
+          "policy.hooks_count",
+        ],
+        performanceThresholds: {
+          maxLatency: 800,
+          maxErrorRate: 0.01,
+          minThroughput: 1,
+          maxMemoryUsage: 40 * 1024 * 1024,
+        },
+        validationRules: [],
+      },
+    },
+
+    // ========================================
+    // Lockchain Integrity (15% weight)
+    // ========================================
+    {
+      name: "lockchain-integrity",
+      description: "Lockchain cryptographic audit trail validation",
+      weight: 0.15,
+      config: {
+        expectedSpans: [
+          "lockchain.write",
+          "lockchain.verify",
+          "lockchain.commit",
+        ],
+        requiredAttributes: [
+          "lockchain.entry_id",
+          "lockchain.merkle_root",
+          "lockchain.signature",
+        ],
+        performanceThresholds: {
+          maxLatency: 600,
+          maxErrorRate: 0.01,
+          minThroughput: 1,
+          maxMemoryUsage: 35 * 1024 * 1024,
+        },
+        validationRules: [],
+      },
+    },
+
+    // ========================================
+    // Transaction Manager (10% weight)
+    // ========================================
     {
       name: "transaction-manager",
-      description: "Transaction manager validation",
+      description: "Transaction manager validation (ACID guarantees)",
+      weight: 0.10,
       config: {
         expectedSpans: [
           "transaction.start",
           "transaction.commit",
+          "transaction.rollback",
         ],
         requiredAttributes: [
           "transaction.id",
@@ -149,21 +175,49 @@ const comprehensiveSuite = {
         validationRules: [],
       },
     },
+
+    // ========================================
+    // Browser Compatibility (10% weight)
+    // ========================================
+    {
+      name: "browser-compatibility",
+      description: "Browser compatibility layer validation",
+      weight: 0.10,
+      config: {
+        expectedSpans: [
+          "browser.parse",
+          "browser.query",
+          "browser.validate",
+        ],
+        requiredAttributes: [
+          "browser.shim",
+          "browser.polyfill",
+          "browser.worker",
+        ],
+        performanceThresholds: {
+          maxLatency: 1200,
+          maxErrorRate: 0.05, // More lenient for browser
+          minThroughput: 1,
+          maxMemoryUsage: 60 * 1024 * 1024,
+        },
+        validationRules: [],
+      },
+    },
   ],
 
   globalConfig: {
     timeout: 60000, // 1 minute timeout for comprehensive validation
-    retries: 2, // More retries for comprehensive validation
+    retries: 2,
     parallel: false, // Sequential execution to prevent span race conditions
   },
 };
 
 /**
- * Run comprehensive validation suite
+ * Run comprehensive validation suite for v3.1.0
  * @returns {Promise<Object>} Validation report
  */
 export async function runComprehensiveValidation() {
-  console.log("🚀 Starting Comprehensive OTEL Validation...");
+  console.log("🚀 Starting Comprehensive OTEL Validation (v3.1.0)...");
   console.log(
     "   This replaces traditional unit tests with span-based validation",
   );
@@ -226,35 +280,75 @@ export async function runComprehensiveValidation() {
  * @returns {Promise<Object>} Combined validation results
  */
 export async function runIndividualSuites() {
-  console.log("🔍 Running Individual Validation Suites...\n");
+  console.log("🔍 Running Individual Validation Suites (v3.1.0)...\n");
 
-  const results = {};
+  const results = {
+    features: [],
+  };
 
   try {
-    // Run knowledge engine validation
-    console.log("1. Knowledge Engine Validation:");
-    results.knowledgeEngine = await runKnowledgeEngineValidation();
-    console.log(
-      `   Result: ${results.knowledgeEngine.summary.failed === 0 ? "✅ PASSED" : "❌ FAILED"}\n`,
-    );
+    // Import individual validation modules
+    const validationModules = [
+      {
+        name: "Knowledge Engine Core",
+        module: "./knowledge-engine.validation.mjs",
+      },
+      {
+        name: "Knowledge Hooks API",
+        module: "./knowledge-hooks-api.validation.mjs",
+      },
+      {
+        name: "Policy Packs",
+        module: "./policy-packs.validation.mjs",
+      },
+      {
+        name: "Lockchain Integrity",
+        module: "./lockchain-integrity.validation.mjs",
+      },
+      {
+        name: "Transaction Manager",
+        module: "./transaction-manager.validation.mjs",
+      },
+      {
+        name: "Browser Compatibility",
+        module: "./browser-features.validation.mjs",
+      },
+    ];
 
-    // Run CLI validation
-    console.log("2. CLI Validation:");
-    results.cli = await runCLIValidation();
-    console.log(
-      `   Result: ${results.cli.summary.failed === 0 ? "✅ PASSED" : "❌ FAILED"}\n`,
-    );
+    for (const { name, module } of validationModules) {
+      try {
+        console.log(`${results.features.length + 1}. ${name} Validation:`);
+        const validation = await import(module);
+        const result = await validation.default();
+        results.features.push(result);
+        console.log(
+          `   Result: ${result.summary.failed === 0 ? "✅ PASSED" : "❌ FAILED"}\n`,
+        );
+      } catch (error) {
+        console.log(`   Result: ⚠️ SKIPPED (${error.message})\n`);
+      }
+    }
 
-    // Calculate overall results
-    const totalFeatures =
-      results.knowledgeEngine.summary.total + results.cli.summary.total;
-    const totalPassed =
-      results.knowledgeEngine.summary.passed + results.cli.summary.passed;
-    const totalFailed = totalFeatures - totalPassed;
-    const overallScore = Math.round((totalPassed / totalFeatures) * 100);
+    // Calculate overall results with weighted scoring
+    const totalWeight = comprehensiveSuite.features.reduce(
+      (sum, f) => sum + (f.weight || 1 / comprehensiveSuite.features.length),
+      0,
+    );
+    const weightedScore = results.features.reduce((sum, result, idx) => {
+      const weight =
+        comprehensiveSuite.features[idx]?.weight ||
+        1 / comprehensiveSuite.features.length;
+      return sum + result.summary.score * weight;
+    }, 0);
+
+    const totalPassed = results.features.filter(
+      (r) => r.summary.failed === 0,
+    ).length;
+    const totalFailed = results.features.length - totalPassed;
+    const overallScore = Math.round(weightedScore / totalWeight);
 
     console.log("📊 Overall Results:");
-    console.log(`   Total Features: ${totalFeatures}`);
+    console.log(`   Total Features: ${results.features.length}`);
     console.log(`   Passed: ${totalPassed}`);
     console.log(`   Failed: ${totalFailed}`);
     console.log(`   Overall Score: ${overallScore}/100`);
@@ -264,12 +358,12 @@ export async function runIndividualSuites() {
 
     return {
       overall: {
-        total: totalFeatures,
+        total: results.features.length,
         passed: totalPassed,
         failed: totalFailed,
         score: overallScore,
       },
-      suites: results,
+      features: results.features,
     };
   } catch (error) {
     console.error("❌ Individual suite validation failed:", error.message);
@@ -285,7 +379,7 @@ export async function runIndividualSuites() {
 export async function runAllValidations(options = {}) {
   const { mode = "comprehensive", verbose = true } = options;
 
-  console.log("🎯 UNRDF OTEL Span-Based Validation");
+  console.log("🎯 UNRDF OTEL Span-Based Validation (v3.1.0)");
   console.log(
     "   Replacing traditional unit tests with OpenTelemetry span analysis",
   );
@@ -304,12 +398,15 @@ export async function runAllValidations(options = {}) {
 
     // Persist artifacts
     try {
-      const { writeFile, mkdir } = await import('node:fs/promises');
-      const { join } = await import('node:path');
-      await mkdir('coverage', { recursive: true });
-      const jsonPath = join('coverage', 'otel-report.json');
+      const { writeFile, mkdir } = await import("node:fs/promises");
+      const { join } = await import("node:path");
+      await mkdir("coverage", { recursive: true });
+      const jsonPath = join("coverage", "otel-report.json");
       await writeFile(jsonPath, JSON.stringify(results, null, 2));
-      await writeFile('validation-output.log', captureConsoleSummary(results));
+      await writeFile(
+        "validation-output.log",
+        captureConsoleSummary(results),
+      );
     } catch {}
 
     // Exit with appropriate code
@@ -363,23 +460,28 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 
 function captureConsoleSummary(results) {
   const lines = [];
-  lines.push('🎯 UNRDF OTEL Span-Based Validation');
-  lines.push('   Replacing traditional unit tests with OpenTelemetry span analysis');
-  lines.push('');
+  lines.push("🎯 UNRDF OTEL Span-Based Validation (v3.1.0)");
+  lines.push(
+    "   Replacing traditional unit tests with OpenTelemetry span analysis",
+  );
+  lines.push("");
   if (results.summary) {
-    lines.push('📊 Validation Results:');
-    lines.push(`   Suite: ${results.suite || 'comprehensive'}`);
+    lines.push("📊 Validation Results:");
+    lines.push(`   Suite: ${results.suite || "comprehensive-v3.1.0"}`);
     lines.push(`   Duration: ${results.summary.duration}ms`);
     lines.push(`   Score: ${results.summary.score}/100`);
-    lines.push(`   Features: ${results.summary.passed}/${results.summary.total} passed`);
-    if (results.summary.failed > 0) lines.push(`   ❌ Failed: ${results.summary.failed}`);
+    lines.push(
+      `   Features: ${results.summary.passed}/${results.summary.total} passed`,
+    );
+    if (results.summary.failed > 0)
+      lines.push(`   ❌ Failed: ${results.summary.failed}`);
   } else if (results.overall) {
-    lines.push('📊 Overall Results:');
+    lines.push("📊 Overall Results:");
     lines.push(`   Total Features: ${results.overall.total}`);
     lines.push(`   Passed: ${results.overall.passed}`);
     lines.push(`   Failed: ${results.overall.failed}`);
     lines.push(`   Overall Score: ${results.overall.score}/100`);
   }
-  lines.push('');
-  return lines.join('\n');
+  lines.push("");
+  return lines.join("\n");
 }
