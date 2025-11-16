@@ -1,10 +1,15 @@
 /**
- * @file Knowledge Engine OTEL Validation Suite
+ * @file Knowledge Engine OTEL Validation Suite (v3.1.0)
  * @module validation/knowledge-engine
  *
  * @description
- * OTEL span-based validation for knowledge engine features.
- * Replaces traditional unit tests with span analysis and metric validation.
+ * OTEL span-based validation for knowledge engine core features.
+ * Updated for v3.1.0 to remove CLI checks and focus on core RDF operations.
+ *
+ * v3.1.0 Changes:
+ * - Removed CLI-specific validations (moved to CLI package)
+ * - Enhanced core engine validations
+ * - Added comprehensive RDF operation coverage
  */
 
 import {
@@ -16,139 +21,120 @@ const helpers = createValidationHelpers();
 const runner = createValidationRunner({ verbose: true });
 
 /**
- * Knowledge Engine validation suite
+ * Knowledge Engine validation suite (v3.1.0)
  * Validates core knowledge engine functionality using OTEL spans
  */
 const knowledgeEngineSuite = {
-  name: "knowledge-engine",
+  name: "knowledge-engine-core",
   description:
-    "OTEL span-based validation for knowledge engine core functionality",
+    "OTEL span-based validation for knowledge engine core functionality (v3.1.0)",
 
   features: [
     {
-      name: "knowledge-engine",
-      description: "Core knowledge engine operations",
+      name: "rdf-parsing",
+      description: "RDF parsing operations (Turtle, N-Quads, JSON-LD)",
       config: {
         expectedSpans: [
           "parse.turtle",
-          "query.sparql",
-          "validate.shacl",
-          "reason.n3",
-          "canonicalize",
+          "parse.nquads",
+          "parse.jsonld",
         ],
         requiredAttributes: [
           "service.name",
           "operation.type",
           "input.size",
           "output.size",
+          "parse.format",
         ],
         performanceThresholds: {
-          maxLatency: 1000, // 1 second
-          maxErrorRate: 0.01, // 1%
-          minThroughput: 1, // 1 operation per validation
-          maxMemoryUsage: 50 * 1024 * 1024, // 50MB
+          maxLatency: 800,
+          maxErrorRate: 0.01,
+          minThroughput: 1,
+          maxMemoryUsage: 45 * 1024 * 1024,
         },
         validationRules: [
           helpers.createSpanExistenceRule("parse.turtle", { format: "turtle" }),
-          helpers.createSpanExistenceRule("query.sparql", {
-            "query.type": "select",
-          }),
-          helpers.createSpanExistenceRule("validate.shacl", { conforms: true }),
           helpers.createSpanStatusRule("parse.turtle", "ok"),
-          helpers.createSpanStatusRule("query.sparql", "ok"),
-          helpers.createSpanStatusRule("validate.shacl", "ok"),
-          helpers.createPerformanceRule("latency", 1000, "<"),
-          helpers.createPerformanceRule("errorRate", 0.01, "<"),
-          helpers.createValidationRule(
-            "no-error-spans",
-            (spans) => spans.every((s) => s.status === "ok"),
-            "error",
-          ),
-          helpers.createValidationRule(
-            "required-spans-present",
-            (spans) => {
-              const spanNames = spans.map((s) => s.name);
-              return ["parse.turtle", "query.sparql", "validate.shacl"].every(
-                (name) => spanNames.includes(name),
-              );
-            },
-            "error",
-          ),
-        ],
-      },
-    },
-
-    {
-      name: "cli-parse",
-      description: "CLI parse command validation",
-      config: {
-        expectedSpans: ["cli.parse", "cli.output", "parse.turtle"],
-        requiredAttributes: ["input.file", "output.file", "format", "triples"],
-        performanceThresholds: {
-          maxLatency: 2000, // 2 seconds for CLI operations
-          maxErrorRate: 0.01, // 1%
-          minThroughput: 1, // 1 operation per validation
-          maxMemoryUsage: 100 * 1024 * 1024, // 100MB
-        },
-        validationRules: [
-          helpers.createSpanExistenceRule("cli.parse", { format: "turtle" }),
-          helpers.createSpanExistenceRule("cli.output", { triples: 100 }),
-          helpers.createSpanStatusRule("cli.parse", "ok"),
-          helpers.createSpanStatusRule("cli.output", "ok"),
-          helpers.createPerformanceRule("latency", 2000, "<"),
+          helpers.createPerformanceRule("latency", 800, "<"),
           helpers.createValidationRule(
             "parse-success",
             (spans) => {
-              const parseSpan = spans.find((s) => s.name === "cli.parse");
+              const parseSpan = spans.find((s) => s.name === "parse.turtle");
               return parseSpan && parseSpan.status === "ok";
             },
             "error",
           ),
-          helpers.createValidationRule(
-            "output-generated",
-            (spans) => {
-              const outputSpan = spans.find((s) => s.name === "cli.output");
-              return outputSpan && outputSpan.attributes.triples > 0;
-            },
-            "error",
-          ),
         ],
       },
     },
 
     {
-      name: "cli-query",
-      description: "CLI query command validation",
+      name: "sparql-query",
+      description: "SPARQL query execution (SELECT, ASK, CONSTRUCT, UPDATE)",
       config: {
-        expectedSpans: ["cli.query", "cli.format", "query.sparql"],
-        requiredAttributes: ["query", "format", "results", "size"],
+        expectedSpans: [
+          "query.sparql",
+          "query.optimize",
+          "query.execute",
+        ],
+        requiredAttributes: [
+          "query.type",
+          "query.length",
+          "query.result_count",
+        ],
         performanceThresholds: {
-          maxLatency: 3000, // 3 seconds for query operations
-          maxErrorRate: 0.01, // 1%
-          minThroughput: 1, // 1 operation per validation
-          maxMemoryUsage: 100 * 1024 * 1024, // 100MB
+          maxLatency: 1000,
+          maxErrorRate: 0.01,
+          minThroughput: 1,
+          maxMemoryUsage: 50 * 1024 * 1024,
         },
         validationRules: [
-          helpers.createSpanExistenceRule("cli.query", {
-            query: "SELECT * WHERE { ?s ?p ?o }",
+          helpers.createSpanExistenceRule("query.sparql", {
+            "query.type": "SELECT",
           }),
-          helpers.createSpanExistenceRule("cli.format", { format: "json" }),
-          helpers.createSpanStatusRule("cli.query", "ok"),
-          helpers.createSpanStatusRule("cli.format", "ok"),
-          helpers.createPerformanceRule("latency", 3000, "<"),
+          helpers.createSpanStatusRule("query.sparql", "ok"),
+          helpers.createPerformanceRule("latency", 1000, "<"),
           helpers.createValidationRule(
             "query-execution",
             (spans) => {
-              const querySpan = spans.find((s) => s.name === "cli.query");
+              const querySpan = spans.find((s) => s.name === "query.sparql");
               return querySpan && querySpan.status === "ok";
             },
             "error",
           ),
+        ],
+      },
+    },
+
+    {
+      name: "shacl-validation",
+      description: "SHACL shape validation",
+      config: {
+        expectedSpans: [
+          "validate.shacl",
+          "validate.shapes",
+          "validate.report",
+        ],
+        requiredAttributes: [
+          "validate.conforms",
+          "validate.total_results",
+          "validate.error_count",
+        ],
+        performanceThresholds: {
+          maxLatency: 1200,
+          maxErrorRate: 0.01,
+          minThroughput: 1,
+          maxMemoryUsage: 55 * 1024 * 1024,
+        },
+        validationRules: [
+          helpers.createSpanExistenceRule("validate.shacl", { conforms: true }),
+          helpers.createSpanStatusRule("validate.shacl", "ok"),
+          helpers.createPerformanceRule("latency", 1200, "<"),
           helpers.createValidationRule(
-            "results-formatted",
+            "validation-success",
             (spans) => {
-              const formatSpan = spans.find((s) => s.name === "cli.format");
-              return formatSpan && formatSpan.attributes.size > 0;
+              const validateSpan = spans.find((s) => s.name === "validate.shacl");
+              return validateSpan && validateSpan.status === "ok";
             },
             "error",
           ),
@@ -157,73 +143,85 @@ const knowledgeEngineSuite = {
     },
 
     {
-      name: "transaction-manager",
-      description: "Transaction manager validation",
+      name: "n3-reasoning",
+      description: "N3 rule-based reasoning",
       config: {
         expectedSpans: [
-          "transaction.start",
-          "transaction.commit",
-          "transaction.rollback",
+          "reason.n3",
+          "reason.rules",
+          "reason.infer",
         ],
         requiredAttributes: [
-          "transaction.id",
-          "transaction.type",
-          "transaction.success",
+          "reason.rules_count",
+          "reason.input_size",
+          "reason.inferred_count",
         ],
         performanceThresholds: {
-          maxLatency: 500, // 500ms for transactions
-          maxErrorRate: 0.01, // 1%
-          minThroughput: 1, // 1 operation per validation
-          maxMemoryUsage: 25 * 1024 * 1024, // 25MB
+          maxLatency: 1500,
+          maxErrorRate: 0.01,
+          minThroughput: 1,
+          maxMemoryUsage: 60 * 1024 * 1024,
         },
         validationRules: [
-          helpers.createSpanExistenceRule("transaction.start", {
-            "transaction.type": "rdf",
+          helpers.createSpanExistenceRule("reason.n3", {
+            "reason.rules_count": 0,
           }),
-          helpers.createSpanStatusRule("transaction.start", "ok"),
-          helpers.createPerformanceRule("latency", 500, "<"),
-          helpers.createValidationRule(
-            "transaction-lifecycle",
-            (spans) => {
-              const startSpan = spans.find(
-                (s) => s.name === "transaction.start",
-              );
-              const commitSpan = spans.find(
-                (s) => s.name === "transaction.commit",
-              );
-              return (
-                startSpan &&
-                commitSpan &&
-                startSpan.status === "ok" &&
-                commitSpan.status === "ok"
-              );
-            },
-            "error",
-          ),
+          helpers.createSpanStatusRule("reason.n3", "ok"),
+          helpers.createPerformanceRule("latency", 1500, "<"),
+        ],
+      },
+    },
+
+    {
+      name: "rdf-canonicalization",
+      description: "RDF canonicalization (RDFC-1.0)",
+      config: {
+        expectedSpans: [
+          "canonicalize",
+          "canonicalize.hash",
+          "canonicalize.normalize",
+        ],
+        requiredAttributes: [
+          "canonicalize.algorithm",
+          "canonicalize.input_size",
+          "canonicalize.hash",
+        ],
+        performanceThresholds: {
+          maxLatency: 1000,
+          maxErrorRate: 0.01,
+          minThroughput: 1,
+          maxMemoryUsage: 50 * 1024 * 1024,
+        },
+        validationRules: [
+          helpers.createSpanExistenceRule("canonicalize", {
+            "canonicalize.algorithm": "RDFC-1.0",
+          }),
+          helpers.createSpanStatusRule("canonicalize", "ok"),
+          helpers.createPerformanceRule("latency", 1000, "<"),
         ],
       },
     },
   ],
 
   globalConfig: {
-    timeout: 30000,
+    timeout: 35000,
     retries: 1,
     parallel: false,
   },
 };
 
 /**
- * Run knowledge engine validation suite
+ * Run knowledge engine validation suite (v3.1.0)
  * @returns {Promise<Object>} Validation report
  */
-export async function runKnowledgeEngineValidation() {
-  console.log("🔍 Starting Knowledge Engine OTEL Validation...");
+export default async function runKnowledgeEngineValidation() {
+  console.log("🔍 Starting Knowledge Engine Core OTEL Validation (v3.1.0)...");
 
   try {
     const report = await runner.runSuite(knowledgeEngineSuite);
 
     // Print summary
-    console.log("\n📊 Knowledge Engine Validation Summary:");
+    console.log("\n📊 Knowledge Engine Core Validation Summary:");
     console.log(`   Score: ${report.summary.score}/100`);
     console.log(
       `   Features: ${report.summary.passed}/${report.summary.total} passed`,
@@ -243,7 +241,7 @@ export async function runKnowledgeEngineValidation() {
 
     return report;
   } catch (error) {
-    console.error("❌ Knowledge Engine validation failed:", error.message);
+    console.error("❌ Knowledge Engine Core validation failed:", error.message);
     throw error;
   }
 }

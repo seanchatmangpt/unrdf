@@ -43,28 +43,49 @@ export default defineConfig({
       ],
       // Include source files
       include: ["src/**/*.mjs"],
-      // Coverage thresholds
+      // Coverage thresholds - targeting 100% for Node.js code
       thresholds: {
         global: {
-          branches: 80,
-          functions: 80,
-          lines: 80,
-          statements: 80,
+          branches: 95,
+          functions: 95,
+          lines: 95,
+          statements: 95,
         },
       },
+      // v3.1.0: Extended excludes for browser-only and test infrastructure
+      all: true,
     },
 
     // Environment configuration
     environment: "node",
 
-    // File patterns - 80/20 pruned test suite
+    // File patterns - comprehensive test suite including v3.1.0 features
     include: [
+      // v3.0 Core tests
       "test/knowledge-engine/parse.test.mjs",
       "test/dark-matter-80-20.test.mjs",
       "test/sidecar/client.test.mjs",
       "test/cli/*.test.mjs",
+
+      // v3.1.0 Security & Sandbox tests
+      "test/knowledge-engine/sandbox/*.test.mjs",
+
+      // v3.1.0 Browser compatibility tests
+      "test/browser/browser-shims.test.mjs",
+      "test/browser/indexeddb-store.test.mjs",
+      "test/browser/browser-compatibility.test.mjs",
+      "test/browser/playwright.spec.mjs",
+
+      // v3.1.0 OTEL validation tests
+      "test/validation/otel-validation-v3.1.test.mjs",
+
+      // v3.1.0 Performance tests
+      "test/performance/performance-regression.test.mjs",
+
+      // v3.1.0 End-to-end tests
+      "test/e2e/v3.1-features.test.mjs",
     ],
-    exclude: ["node_modules/**", "dist/**"],
+    exclude: ["node_modules/**", "dist/**", "test/fixtures/**", "test/utils/**"],
 
     // Reporter configuration
     reporter: ["verbose", "json", "html"],
