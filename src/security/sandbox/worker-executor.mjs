@@ -78,12 +78,7 @@ export class WorkerExecutor {
 
         // Create worker promise
         const result = await new Promise((resolve, reject) => {
-          const timeout = setTimeout(() => {
-            worker.terminate();
-            this.workers.delete(executionId);
-            reject(new Error(`Worker execution timeout after ${this.config.timeout}ms`));
-          }, options.timeout || this.config.timeout);
-
+          // Create worker first
           const worker = new Worker(
             join(__dirname, 'worker-executor-runtime.mjs'),
             {
@@ -101,6 +96,13 @@ export class WorkerExecutor {
               }
             }
           );
+
+          // Then set up timeout that uses worker
+          const timeout = setTimeout(() => {
+            worker.terminate();
+            this.workers.delete(executionId);
+            reject(new Error(`Worker execution timeout after ${this.config.timeout}ms`));
+          }, options.timeout || this.config.timeout);
 
           this.workers.set(executionId, worker);
 

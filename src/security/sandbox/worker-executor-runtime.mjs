@@ -36,9 +36,14 @@ try {
   }
 
   // Execute code
+  // If code doesn't contain return, wrap it in return for expression evaluation
+  const wrappedCode = code.trim().includes('return') || code.trim().includes(';') || code.trim().includes('{')
+    ? code
+    : `return (${code})`;
+
   const func = new Function(...Object.keys(sandbox), `
     ${config.strictMode ? '"use strict";' : ''}
-    ${code}
+    ${wrappedCode}
   `);
 
   const result = func(...Object.values(sandbox));

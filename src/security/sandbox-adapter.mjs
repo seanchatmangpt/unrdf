@@ -55,21 +55,37 @@ export class SandboxAdapter {
 
   /**
    * Execute untrusted code and return result.
+   * For sync-style usage with simple executors (vm2), returns value directly.
+   * For async executors, returns a Promise.
    * @param {string} code
-   * @returns {Promise<any>}
+   * @returns {any|Promise<any>}
    */
-  async run(code) {
-    await this._initialize();
-
-    const result = await this.executor.run(code, this.options.sandbox, {
-      timeout: this.options.timeoutMs
-    });
-
-    if (!result.success) {
-      throw new Error(result.error || 'Sandbox execution failed');
+  run(code) {
+    // Try to use sync execution path if already initialized
+    if (this.initialized && this.executor && typeof this.executor.runSync === 'function') {
+      try {
+        return this.executor.runSync(code, this.options.sandbox, {
+          timeout: this.options.timeoutMs
+        });
+      } catch (error) {
+        throw error;
+      }
     }
 
-    return result.result;
+    // Async path - initialize if needed, then execute
+    return (async () => {
+      await this._initialize();
+
+      const result = await this.executor.run(code, this.options.sandbox, {
+        timeout: this.options.timeoutMs
+      });
+
+      if (!result || !result.success) {
+        throw new Error((result && result.error) || 'Sandbox execution failed');
+      }
+
+      return result.result;
+    })();
   }
 
   /**
@@ -77,6 +93,17 @@ export class SandboxAdapter {
    * @returns {string}
    */
   getEngine() {
+    if (!this.initialized && !this.engine) {
+      // Force synchronous initialization for getter
+      const result = detectBestExecutor({
+        preferIsolatedVm: false,
+        allowVm2: process.env.UNRDF_ALLOW_VM2 === '1',
+        allowBrowser: true
+      });
+      // If result is a promise, we can't wait for it in a sync getter
+      // Just return 'vm2' as default for now
+      return typeof result === 'string' ? result : 'vm2';
+    }
     return this.engine;
   }
 
