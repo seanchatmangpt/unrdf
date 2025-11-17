@@ -9,6 +9,7 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { tmpdir } from 'os';
 import {
   isBrowser,
   isNode,
@@ -23,6 +24,12 @@ import {
 } from '../../src/knowledge-engine/browser-shims.mjs';
 
 describe('Browser Shims', () => {
+  // Get test directory - use tmpdir in Node.js, root in browser
+  const getTestDir = () => {
+    const skipFsTests = typeof fs.clear !== 'function';
+    return skipFsTests ? tmpdir() : '/';
+  };
+
   // Clean up file system before each test
   beforeEach(() => {
     // In Node.js, fs is the real Node.js fs, not BrowserFileSystem
@@ -198,7 +205,8 @@ describe('Browser Shims', () => {
       });
 
       it('should handle binary data', () => {
-        const testPath = '/binary-file.bin';
+        const testDir = getTestDir();
+        const testPath = path.join(testDir, 'binary-file.bin');
         const data = 'test data';
 
         fs.writeFileSync(testPath, data, 'utf8');
@@ -465,7 +473,8 @@ describe('Browser Shims', () => {
     });
 
     it('should handle empty file content', () => {
-      const testPath = '/empty-file.txt';
+      const testDir = getTestDir();
+      const testPath = path.join(testDir, 'empty-file.txt');
 
       fs.writeFileSync(testPath, '');
       const content = fs.readFileSync(testPath, 'utf8');
@@ -474,7 +483,8 @@ describe('Browser Shims', () => {
     });
 
     it('should handle large file content', () => {
-      const testPath = '/large-file.txt';
+      const testDir = getTestDir();
+      const testPath = path.join(testDir, 'large-file.txt');
       const largeContent = 'x'.repeat(100000);
 
       fs.writeFileSync(testPath, largeContent);
@@ -484,11 +494,12 @@ describe('Browser Shims', () => {
     });
 
     it('should handle special characters in paths', () => {
+      const testDir = getTestDir();
       const specialPaths = [
-        '/file with spaces.txt',
-        '/file-with-dashes.txt',
-        '/file_with_underscores.txt',
-        '/file.multiple.dots.txt'
+        path.join(testDir, 'file with spaces.txt'),
+        path.join(testDir, 'file-with-dashes.txt'),
+        path.join(testDir, 'file_with_underscores.txt'),
+        path.join(testDir, 'file.multiple.dots.txt')
       ];
 
       for (const testPath of specialPaths) {
@@ -498,7 +509,8 @@ describe('Browser Shims', () => {
     });
 
     it('should handle unicode in file content', () => {
-      const testPath = '/unicode-file.txt';
+      const testDir = getTestDir();
+      const testPath = path.join(testDir, 'unicode-file.txt');
       const unicodeContent = 'Hello 世界 🌍';
 
       fs.writeFileSync(testPath, unicodeContent);
@@ -534,10 +546,12 @@ describe('Browser Shims', () => {
     });
 
     it('should handle many file operations', () => {
+      const testDir = getTestDir();
       const start = Date.now();
 
       for (let i = 0; i < 100; i++) {
-        fs.writeFileSync(`/perf-test-${i}.txt`, `content ${i}`);
+        const testPath = path.join(testDir, `perf-test-${i}.txt`);
+        fs.writeFileSync(testPath, `content ${i}`);
       }
 
       const duration = Date.now() - start;
