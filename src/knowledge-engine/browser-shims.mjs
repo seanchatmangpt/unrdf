@@ -13,11 +13,11 @@
 export const isBrowser = typeof window !== 'undefined' && typeof window.document !== 'undefined';
 
 /**
- * Check if we're running in Node.js environment  
+ * Check if we're running in Node.js environment
  */
 export const isNode = (() => {
   try {
-    return typeof process !== 'undefined' && process?.versions?.node;
+    return typeof process !== 'undefined' && !!process?.versions?.node;
   } catch {
     return false;
   }
@@ -80,6 +80,15 @@ class BrowserFileSystem {
     this.#directories.add('/examples');
   }
 
+  clear() {
+    this.#files.clear();
+    this.#directories.clear();
+    this.#directories.add('/');
+    this.#directories.add('/src');
+    this.#directories.add('/dist');
+    this.#directories.add('/examples');
+  }
+
   existsSync(path) {
     return this.#files.has(path) || this.#directories.has(path);
   }
@@ -104,6 +113,9 @@ class BrowserFileSystem {
   }
 
   mkdirSync(path, options = {}) {
+    if (this.#directories.has(path)) {
+      throw new Error(`EEXIST: file already exists, mkdir '${path}'`);
+    }
     this.#directories.add(path);
   }
 
@@ -133,12 +145,17 @@ export const fsPromises = isBrowser ? new BrowserFileSystem() : await import('no
 // Worker thread polyfill for browser
 export class BrowserWorker {
   constructor(source, options = {}) {
-    if (typeof source === 'string') {
-      // Convert string to blob URL
+    if (typeof source === 'string' && isBrowser) {
+      // Convert string to blob URL (browser only)
       const blob = new Blob([source], { type: 'application/javascript' });
       this.worker = new Worker(URL.createObjectURL(blob), options);
+    } else if (typeof source === 'string' && isNode) {
+      // In Node.js, can't create Worker from inline code - need a file
+      // Create a mock worker for testing purposes
+      this.worker = null;
+      this.mockMode = true;
     } else {
-      // Assume it's a file path - would need actual file handling in real browser
+      // Assume it's a file path
       this.worker = new Worker(source, options);
     }
     
@@ -146,24 +163,30 @@ export class BrowserWorker {
     this.errorHandlers = [];
     this.exitHandlers = [];
     this.terminated = false;
-    
-    this.worker.onmessage = (event) => {
-      this.messageHandlers.forEach(handler => handler(event.data));
-    };
-    
-    this.worker.onerror = (error) => {
-      this.errorHandlers.forEach(handler => handler(error));
-    };
+
+    if (this.worker) {
+      this.worker.onmessage = (event) => {
+        this.messageHandlers.forEach(handler => handler(event.data));
+      };
+
+      this.worker.onerror = (error) => {
+        this.errorHandlers.forEach(handler => handler(error));
+      };
+    }
   }
 
   postMessage(data) {
     if (this.terminated) return;
-    this.worker.postMessage(data);
+    if (this.worker) {
+      this.worker.postMessage(data);
+    }
   }
 
   terminate() {
     this.terminated = true;
-    this.worker.terminate();
+    if (this.worker) {
+      this.worker.terminate();
+    }
   }
 
   on(event, handler) {
@@ -211,9 +234,11 @@ export async function execSync(command, options = {}) {
     console.warn(`[Browser] execSync not available in browser: ${command}`);
     return ''; // Return empty string as mock
   }
-  
+
   const { execSync: nodeExecSync } = await import('child_process');
-  return nodeExecSync(command, options);
+  const result = nodeExecSync(command, { encoding: 'utf8', ...options });
+  // Ensure we return a string, not a Buffer
+  return typeof result === 'string' ? result : result.toString('utf8');
 }
 
 // Hash utilities - use Web Crypto API in browser
