@@ -1,0 +1,231 @@
+@startuml UNRDF v3.1.0 Architecture
+!theme plain
+skinparam componentStyle rectangle
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+
+title UNRDF v3.1.0 System Architecture
+
+' ===== Core Layer =====
+package "UNRDF Core API" as CoreAPI {
+  component "Knowledge Engine" as KE
+  component "Knowledge Hooks" as KH
+  component "Policy Packs" as PP
+  component "Lockchain" as LC
+  component "Transaction Manager" as TM
+}
+
+' ===== Sandbox Layer =====
+package "Sandbox Layer" as Sandbox {
+  component "Sandbox Adapter\n(Unified API)" as SA
+  component "Sandbox Detector\n(Capability Detection)" as SD
+
+  package "Executors" as Executors {
+    component "Isolated-VM\n(Primary)" as IVM
+    component "Worker Threads\n(Fallback)" as WT
+    component "Web Workers\n(Browser)" as WW
+    component "VM2\n(Legacy)" as VM2
+  }
+}
+
+' ===== Storage Layer =====
+package "Storage Abstraction" as Storage {
+  component "FS Adapter\n(Unified API)" as FSA
+
+  package "Implementations" as FSImpl {
+    component "Node.js FS\n(Native)" as NodeFS
+    component "IndexedDB\n(Browser)" as IndexDB
+  }
+}
+
+' ===== Query Layer =====
+package "Query Engine" as Query {
+  component "Query Adapter\n(Unified API)" as QA
+
+  package "Implementations" as QueryImpl {
+    component "Comunica\n(Node.js)" as ComunicaNode
+    component "Comunica\n(Browser)" as ComunicaBrowser
+  }
+}
+
+' ===== Profiling Layer =====
+package "Performance Profiling" as Profiling {
+  component "Profiler API" as ProfilerAPI
+
+  package "Profilers" as Profilers {
+    component "Latency\nProfiler" as LatencyP
+    component "Memory\nProfiler" as MemoryP
+    component "CPU Profiler\n(Node only)" as CPUP
+  }
+
+  component "Metrics\nCollector" as MC
+
+  package "Reporters" as Reporters {
+    component "JSON\nReporter" as JSONR
+    component "HTML\nReporter" as HTMLR
+    component "Terminal\nReporter" as TermR
+  }
+}
+
+' ===== Validation Layer =====
+package "OTEL Validation v3" as Validation {
+  component "Validation\nRunner" as VR
+
+  package "Feature Validators" as Validators {
+    component "Knowledge Engine\nValidator" as KEV
+    component "Hooks API\nValidator" as HAV
+    component "Policy Packs\nValidator" as PPV
+    component "Lockchain\nValidator" as LCV
+    component "Browser\nValidator" as BV
+  }
+
+  component "Validation\nRules" as VRules
+  component "Report\nGenerator" as RG
+}
+
+' ===== Runtime Environments =====
+cloud "Node.js Runtime" as NodeRuntime {
+  node "Node 18+" as Node18
+  node "Isolated-VM" as IVMLib
+  node "Worker Threads" as WTLib
+  database "Native FS" as NativeFS
+}
+
+cloud "Browser Runtime" as BrowserRuntime {
+  node "Chrome/Firefox/Safari" as Browser
+  node "Web Workers" as WWLib
+  database "IndexedDB" as IndexDBLib
+  node "Service Workers" as SW
+}
+
+' ===== OTEL Infrastructure =====
+package "OpenTelemetry" as OTEL {
+  component "Tracer" as Tracer
+  component "Meter" as Meter
+  component "Span Collector" as SpanCollector
+}
+
+' ===== Relationships =====
+
+' Core uses Sandbox
+KE --> SA
+KH --> SA
+PP --> SA
+
+' Core uses Storage
+KE --> FSA
+LC --> FSA
+
+' Core uses Query
+KE --> QA
+
+' Sandbox Adapter uses Detector
+SA --> SD
+
+' Detector selects Executor
+SD --> IVM : "Node 18+"
+SD --> WT : "Node 14-17"
+SD --> WW : "Browser"
+SD --> VM2 : "Legacy"
+
+' FS Adapter selects Implementation
+FSA --> NodeFS : "Node.js"
+FSA --> IndexDB : "Browser"
+
+' Query Adapter selects Implementation
+QA --> ComunicaNode : "Node.js"
+QA --> ComunicaBrowser : "Browser"
+
+' Executors use Runtime
+IVM --> IVMLib
+WT --> WTLib
+WW --> WWLib
+
+' Storage uses Runtime
+NodeFS --> NativeFS
+IndexDB --> IndexDBLib
+
+' Profiler components
+ProfilerAPI --> LatencyP
+ProfilerAPI --> MemoryP
+ProfilerAPI --> CPUP
+
+LatencyP --> MC
+MemoryP --> MC
+CPUP --> MC
+
+MC --> JSONR
+MC --> HTMLR
+MC --> TermR
+
+' Validation components
+VR --> KEV
+VR --> HAV
+VR --> PPV
+VR --> LCV
+VR --> BV
+
+KEV --> VRules
+HAV --> VRules
+PPV --> VRules
+LCV --> VRules
+BV --> VRules
+
+VR --> RG
+
+' OTEL integration
+KE --> Tracer
+KH --> Tracer
+TM --> Tracer
+
+ProfilerAPI --> Meter
+MC --> Meter
+
+VR --> SpanCollector
+SpanCollector --> Tracer
+
+' Legend
+legend top left
+  |= Symbol |= Meaning |
+  | Component | Main system component |
+  | Package | Logical grouping |
+  | Cloud | Runtime environment |
+  | → | Dependency / Uses |
+
+  |= Color Code |
+  | Blue | Core API |
+  | Green | Runtime-specific |
+  | Yellow | New in v3.1.0 |
+endlegend
+
+note bottom of Sandbox
+  **v3.1.0 Enhancement**
+  - Isolated-VM for Node 18+
+  - Auto-detection & fallback
+  - Same API as v3.0.x
+end note
+
+note bottom of Storage
+  **v3.1.0 Enhancement**
+  - Browser support via IndexedDB
+  - Unified FS API
+  - Transparent runtime adaptation
+end note
+
+note bottom of Profiling
+  **v3.1.0 New Feature**
+  - Built-in profiler
+  - Zero external dependencies
+  - OTEL integration
+  - JSON/HTML reports
+end note
+
+note bottom of Validation
+  **v3.1.0 Enhancement**
+  - Target: 90+/100 score
+  - Remove CLI validation
+  - Add Hooks/Policy validation
+  - Weighted scoring
+end note
+
+@enduml

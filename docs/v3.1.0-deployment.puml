@@ -1,0 +1,240 @@
+@startuml UNRDF v3.1.0 Deployment Architecture
+!theme plain
+skinparam componentStyle rectangle
+
+title UNRDF v3.1.0 Deployment & Bundling Architecture
+
+' ===== Source Code =====
+package "Source Code (src/)" as Source {
+  folder "knowledge-engine/" as KE {
+    file "index.mjs"
+    file "browser.mjs" #LightGreen
+    file "parse.mjs"
+    file "query.mjs"
+    file "validate.mjs"
+    file "reason.mjs"
+
+    folder "storage/" #LightGreen {
+      file "fs-adapter.mjs" #Yellow
+      file "node-fs.mjs" #Yellow
+      file "indexeddb-fs.mjs" #Yellow
+    }
+
+    folder "profiling/" #Yellow {
+      file "index.mjs" #Yellow
+      file "latency-profiler.mjs" #Yellow
+      file "memory-profiler.mjs" #Yellow
+      file "cpu-profiler.mjs" #Yellow
+      file "metrics-collector.mjs" #Yellow
+    }
+  }
+
+  folder "security/" as Security {
+    file "sandbox-adapter.mjs"
+
+    folder "executors/" #Yellow {
+      file "isolated-vm-executor.mjs" #Yellow
+      file "worker-executor.mjs" #Yellow
+      file "vm2-executor.mjs" #Yellow
+      file "browser-executor.mjs" #Yellow
+    }
+
+    file "sandbox-detector.mjs" #Yellow
+  }
+
+  folder "validation/" as Validation {
+    file "index.mjs"
+    file "validation-runner.mjs"
+    file "otel-validator.mjs"
+
+    folder "features/" #Yellow {
+      file "knowledge-engine.validator.mjs"
+      file "knowledge-hooks.validator.mjs" #Yellow
+      file "policy-packs.validator.mjs" #Yellow
+      file "lockchain.validator.mjs" #Yellow
+      file "browser.validator.mjs" #Yellow
+    }
+  }
+}
+
+' ===== Build Pipeline =====
+package "Build Pipeline" as Build {
+  component "obuild\n(Bundler)" as Bundler
+  component "Environment\nDetection" as EnvDetect
+  component "Tree Shaking" as TreeShake
+  component "Minification" as Minify
+}
+
+' ===== Distribution =====
+package "Distribution (dist/)" as Dist {
+  artifact "unrdf.node.mjs" as NodeBundle #LightBlue {
+    note bottom
+      **Node.js Optimized**
+      - Isolated-VM executor
+      - Native FS
+      - Worker threads
+      - Full SPARQL engine
+      - Size: ~200KB
+    end note
+  }
+
+  artifact "unrdf.browser.mjs" as BrowserBundle #LightGreen {
+    note bottom
+      **Browser Optimized**
+      - Web Workers executor
+      - IndexedDB FS
+      - Comunica browser
+      - Minified
+      - Size: ~450KB
+    end note
+  }
+
+  artifact "unrdf.esm.mjs" as ESMBundle #LightYellow {
+    note bottom
+      **Universal Bundle**
+      - Conditional exports
+      - Runtime detection
+      - Both environments
+      - Size: ~300KB
+    end note
+  }
+}
+
+' ===== Package Exports =====
+package "Package Exports" as Exports {
+  file "package.json" {
+    note right
+      {
+        "exports": {
+          ".": {
+            "browser": "./dist/unrdf.browser.mjs",
+            "node": "./dist/unrdf.node.mjs",
+            "import": "./dist/unrdf.esm.mjs"
+          },
+          "./profiling": {
+            "browser": "./src/profiling/browser.mjs",
+            "node": "./src/profiling/index.mjs"
+          },
+          "./validation": "./src/validation/index.mjs"
+        }
+      }
+    end note
+  }
+}
+
+' ===== Deployment Targets =====
+cloud "Node.js Deployment" as NodeDeploy {
+  node "npm install unrdf" as NPM
+  file "node_modules/unrdf/" as NodeModules
+  artifact "unrdf.node.mjs" as NodeArtifact
+}
+
+cloud "Browser Deployment" as BrowserDeploy {
+  node "CDN / npm" as CDN
+  file "<script type='module'>" as ScriptTag
+  artifact "unrdf.browser.mjs" as BrowserArtifact
+}
+
+cloud "Universal Deployment" as UniversalDeploy {
+  node "Bundler (Vite/Webpack)" as BundlerDeploy
+  artifact "unrdf.esm.mjs" as UniversalArtifact
+}
+
+' ===== Relationships =====
+
+' Build process
+Source --> Bundler
+Bundler --> EnvDetect
+EnvDetect --> TreeShake
+TreeShake --> Minify
+
+' Build outputs
+Minify --> NodeBundle : "Node.js target"
+Minify --> BrowserBundle : "Browser target"
+Minify --> ESMBundle : "Universal target"
+
+' Package exports
+NodeBundle --> Exports
+BrowserBundle --> Exports
+ESMBundle --> Exports
+
+' Deployment
+Exports --> NPM
+NPM --> NodeModules
+NodeModules --> NodeArtifact
+
+Exports --> CDN
+CDN --> ScriptTag
+ScriptTag --> BrowserArtifact
+
+Exports --> BundlerDeploy
+BundlerDeploy --> UniversalArtifact
+
+' ===== Module Dependencies =====
+package "Dependencies" as Deps {
+  rectangle "Production" as ProdDeps {
+    artifact "zod\n(Validation)" as Zod
+    artifact "n3\n(RDF Parser)" as N3
+    artifact "@comunica/query-sparql\n(SPARQL Engine)" as Comunica
+    artifact "@opentelemetry/api\n(Observability)" as OTEL
+    artifact "isolated-vm\n(Sandbox)" as IsolatedVM #Yellow
+    artifact "vm2\n(Legacy Sandbox)" as VM2 #Orange
+  }
+
+  rectangle "Development" as DevDeps {
+    artifact "vitest\n(Testing)" as Vitest
+    artifact "obuild\n(Bundler)" as Obuild
+    artifact "eslint\n(Linting)" as ESLint
+  }
+}
+
+' ===== Dependency resolution by target =====
+
+NodeBundle ..> Zod : "include"
+NodeBundle ..> N3 : "include"
+NodeBundle ..> Comunica : "include"
+NodeBundle ..> OTEL : "include"
+NodeBundle ..> IsolatedVM : "optional"
+NodeBundle ..> VM2 : "fallback"
+
+BrowserBundle ..> Zod : "bundle"
+BrowserBundle ..> OTEL : "bundle"
+BrowserBundle .up.> N3 : "exclude (use browser version)"
+BrowserBundle .up.> Comunica : "exclude (use browser bundle)"
+BrowserBundle .up.> IsolatedVM : "exclude"
+BrowserBundle .up.> VM2 : "exclude"
+
+' ===== Size breakdown =====
+package "Bundle Size Analysis" as BundleSize {
+  card "Node.js Bundle" as NodeSize {
+    rectangle "Core Engine: 80KB"
+    rectangle "SPARQL (external): 0KB"
+    rectangle "N3 (external): 0KB"
+    rectangle "Sandbox: 50KB"
+    rectangle "Validation: 40KB"
+    rectangle "Profiling: 30KB"
+    note bottom: Total: ~200KB
+  }
+
+  card "Browser Bundle" as BrowserSize {
+    rectangle "Core Engine: 100KB"
+    rectangle "SPARQL (bundled): 200KB"
+    rectangle "N3 (bundled): 80KB"
+    rectangle "Sandbox: 30KB"
+    rectangle "Validation: 20KB"
+    rectangle "Profiling: 20KB"
+    note bottom: Total: ~450KB (minified)
+  }
+}
+
+' ===== Legend =====
+legend bottom left
+  |= Color |= Meaning |
+  | #LightBlue | Node.js specific |
+  | #LightGreen | Browser specific |
+  | #LightYellow | Universal |
+  | #Yellow | New in v3.1.0 |
+  | #Orange | Deprecated |
+endlegend
+
+@enduml

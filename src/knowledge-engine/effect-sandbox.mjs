@@ -178,46 +178,35 @@ export class EffectSandbox {
   }
 
   /**
-   * Execute effect in VM2 (if available)
+   * Execute effect in VM2 (if available) - DEPRECATED
    * @param {Function} effect - Effect function
    * @param {Object} context - Execution context
    * @param {string} executionId - Execution ID
    * @param {Object} options - Execution options
    * @returns {Promise<Object>} Execution result
    * @private
+   * @deprecated Use isolated-vm or worker executors instead
    */
   async _executeInVM2(effect, context, executionId, options) {
     try {
-      // Dynamic import of vm2 (wrapped in try-catch for browser compatibility)
-      let VM;
-      try {
-        const vm2Module = await import('vm2');
-        VM = vm2Module.VM;
-      } catch (err) {
-        throw new Error('vm2 not available - use Worker-based execution instead');
-      }
-
-      const vm = new VM({
+      // Use new executor pattern
+      const { createExecutor } = await import('../security/sandbox/detector.mjs');
+      const executor = await createExecutor('vm2', {
         timeout: this.config.timeout,
-        sandbox: {
-          ...this._createSandboxGlobals(context),
-          console: this._createSafeConsole(),
-          require: this._createSafeRequire()
-        }
+        strictMode: this.config.strictMode
       });
-      
+
       // Create safe effect function
       const safeEffect = this._createSafeEffect(effect, context);
-      
-      const result = vm.run(`
-        (function() {
-          ${safeEffect}
-          return effect(context);
-        })()
-      `);
-      
+
+      const executionResult = await executor.run(safeEffect, context, options);
+
+      if (!executionResult.success) {
+        throw new Error(executionResult.error || 'VM2 execution failed');
+      }
+
       return {
-        result,
+        result: executionResult.result,
         assertions: context.assertions || [],
         events: context.events || []
       };
@@ -230,7 +219,7 @@ export class EffectSandbox {
   }
 
   /**
-   * Execute effect in isolate (placeholder for future implementation)
+   * Execute effect in isolate (isolated-vm)
    * @param {Function} effect - Effect function
    * @param {Object} context - Execution context
    * @param {string} executionId - Execution ID
@@ -239,9 +228,39 @@ export class EffectSandbox {
    * @private
    */
   async _executeInIsolate(effect, context, executionId, options) {
-    // Placeholder for isolate-based execution
-    // This would use Node.js isolates when available
-    throw new Error('Isolate execution not yet implemented');
+    try {
+      // Use isolated-vm executor
+      const { createExecutor } = await import('../security/sandbox/detector.mjs');
+      const executor = await createExecutor('isolated-vm', {
+        memoryLimit: this.config.memoryLimit / (1024 * 1024), // Convert bytes to MB
+        timeout: this.config.timeout,
+        enableAsync: true,
+        enableThreatDetection: true,
+        strictMode: this.config.strictMode
+      });
+
+      // Create safe effect function
+      const safeEffect = this._createSafeEffect(effect, context);
+
+      const executionResult = await executor.run(safeEffect, context, options);
+
+      if (!executionResult.success) {
+        throw new Error(executionResult.error || 'Isolate execution failed');
+      }
+
+      // Cleanup executor
+      await executor.cleanup();
+
+      return {
+        result: executionResult.result,
+        assertions: context.assertions || [],
+        events: context.events || [],
+        memoryUsed: executionResult.memoryUsed,
+        codeHash: executionResult.codeHash
+      };
+    } catch (error) {
+      throw new Error(`Isolate execution failed: ${error.message}`);
+    }
   }
 
   /**
