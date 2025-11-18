@@ -163,7 +163,7 @@ export function usePiProfile(shards = [], options = {}) {
   /**
    * Adjust weight of a shard to influence merge
    */
-  const setShard Weight = useCallback((shardId, weight) => {
+  const setShardWeight = useCallback((shardId, weight) => {
     setWeights(prev => ({
       ...prev,
       [shardId]: Math.max(0, Math.min(1, weight))
