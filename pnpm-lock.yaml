@@ -104,6 +104,9 @@ importers:
       vm2:
         specifier: ^3.9.0
         version: 3.9.19
+      ws:
+        specifier: ^8.18.3
+        version: 8.18.3
       zod:
         specifier: ^3.22.0
         version: 3.25.76

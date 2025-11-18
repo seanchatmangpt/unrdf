@@ -118,6 +118,7 @@
     "testcontainers": "^10.0.0",
     "unctx": "^1.0.0",
     "vm2": "^3.9.0",
+    "ws": "^8.18.3",
     "zod": "^3.22.0"
   },
   "devDependencies": {
