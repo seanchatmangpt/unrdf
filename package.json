@@ -126,6 +126,8 @@
     "@opentelemetry/sdk-metrics": "^2.2.0",
     "@opentelemetry/sdk-trace-base": "^2.2.0",
     "@playwright/test": "^1.56.1",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/react-hooks": "^8.0.1",
     "@types/node": "^20.0.0",
     "@vitest/coverage-v8": "^1.0.0",
     "@vitest/ui": "^1.0.0",
@@ -139,12 +141,17 @@
     "jsdoc": "^4.0.0",
     "obuild": "^0.2.1",
     "prettier": "^3.0.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-test-renderer": "^19.2.0",
     "redis": "^5.8.2",
     "terraform": "^1.0.0",
     "vitest": "^1.0.0"
   },
   "peerDependencies": {
-    "node": ">=18.0.0"
+    "node": ">=18.0.0",
+    "react": ">=16.8.0",
+    "react-dom": ">=16.8.0"
   },
   "peerDependenciesMeta": {
     "node": {
