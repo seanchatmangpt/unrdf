@@ -1,17 +1,21 @@
 [book]
-title = "UNRDF - Universal RDF Framework"
+title = "UNRDF for Enterprise Next.js: The Complete Guide"
 authors = ["UNRDF Team"]
-description = "Production-ready RDF knowledge graph library with Knowledge Hooks and autonomic capabilities"
+description = "Master UNRDF in Next.js: Enterprise patterns, breakthrough innovations, and 80/20 dark matter management for production RDF knowledge graphs"
 language = "en"
 multilingual = false
 src = "src"
 
+[build]
+build-dir = "book"
+create-missing = true
+
 [output.html]
 default-theme = "navy"
 preferred-dark-theme = "navy"
-git-repository-url = "https://github.com/seanchatmangpt/unrdf"
-edit-url-template = "https://github.com/seanchatmangpt/unrdf/edit/main/book/{path}"
-site-url = "https://seanchatmangpt.github.io/unrdf/"
+git-repository-url = "https://github.com/unrdf/unrdf"
+git-repository-icon = "fa-github"
+edit-url-template = "https://github.com/unrdf/unrdf/edit/main/book/{path}"
 
 [output.html.fold]
 enable = true
@@ -20,19 +24,9 @@ level = 1
 [output.html.search]
 enable = true
 limit-results = 30
-teaser-word-count = 30
 use-boolean-and = true
-boost-title = 2
-boost-hierarchy = 1
-boost-paragraph = 1
-expand = true
-heading-split-level = 3
 
 [output.html.playground]
 editable = true
 copyable = true
 line-numbers = true
-
-[preprocessor.index]
-
-[preprocessor.links]
