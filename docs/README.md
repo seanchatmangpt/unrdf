@@ -1,323 +1,333 @@
-# unrdf Documentation
+# UNRDF Documentation
 
-**unrdf** is the world's first **autonomic RDF framework** that transforms static knowledge graphs into intelligent, reactive, self-governing systems. It provides a "one true path" approach to autonomic RDF development, eliminating the "dark matter" of boilerplate glue code that typically plagues RDF workflows.
+**Production-ready RDF Knowledge Graph Library**
 
-## Philosophy
+Welcome to the UNRDF documentation! We use the [Diátaxis framework](https://diataxis.fr/) to organize our documentation into four distinct categories based on your needs.
 
-unrdf is not a neutral toolkit—it's a **canon** for **autonomic knowledge graphs**. When you import unrdf, you're accepting its way. No escape hatches, no alternative backends, no configuration flexibility. This opinionated approach eliminates the 80/20 "dark matter" problem in RDF development.
+---
 
-**🌊 Blue Ocean Innovation: Autonomic Knowledge Hooks** are the crown jewel of unrdf - the world's first enterprise-grade triggers that enable reactive, self-governing knowledge systems with multi-agent coordination, policy pack governance, and cryptographic audit trails.
+## 📚 Documentation Structure
 
-### Core Principles
+<table>
+<tr>
+<td width="50%">
 
-- **🌊 Blue Ocean Innovation**: The world's first autonomic RDF framework
-- **🤖 Autonomic Knowledge Hooks**: Self-governing triggers with multi-agent coordination
-- **📦 Policy Pack Governance**: Versioned, portable governance units
-- **🛡️ Cryptographic Integrity**: URDNA2015 canonical hashes with Git-anchored lockchain
-- **⚡ Secure Execution**: VM2/worker thread sandboxing for safe hook execution
-- **🔍 Delta-Aware Optimization**: Query optimization with caching and indexing
-- **One Store**: N3.Store is the only memory model
-- **One Terms**: N3 DataFactory is the only term creation method
-- **One Query Engine**: Comunica is the only SPARQL engine
-- **One Validator**: SHACL is the only validation method
-- **One Canonicalization**: URDNA2015 is the only canonicalization method
-- **One Validation**: Zod is the only runtime validation
+### 🎓 [Tutorials](./tutorials/README.md)
+**Learning-oriented** • **Hands-on lessons**
 
-## Quick Start
+Step-by-step guides to learn UNRDF by building practical applications.
 
-### Autonomic Knowledge Hooks (Primary API)
+**Best for:**
+- Newcomers to UNRDF
+- Learning new features
+- Getting started quickly
 
-```javascript
-import { initStore, defineHook, evaluateHook, PolicyPackManager } from 'unrdf';
+**Popular tutorials:**
+- [Quick Start (15 min)](./tutorials/01-quick-start.md)
+- [First Knowledge Hook (30 min)](./tutorials/02-first-knowledge-hook.md)
+- [Browser Integration (45 min)](./tutorials/03-browser-integration.md)
 
-// Initialize autonomic store with your RDF data
-const runApp = initStore(turtleData, {
-  enableLockchain: true,
-  enableResolution: true,
-  enablePolicyPacks: true
-});
+</td>
+<td width="50%">
 
-runApp(async () => {
-  // Create policy pack manager
-  const policyManager = new PolicyPackManager();
-  await policyManager.loadPolicyPack('health-monitoring-v1');
-  
-  // Define an autonomic service health monitoring hook
-  const healthHook = defineHook({
-    meta: {
-      name: 'autonomic-health-monitor',
-      description: 'Self-governing service health monitoring with multi-agent coordination'
-    },
-    when: {
-      kind: 'sparql-ask',
-      ref: { 
-        uri: 'file://health-check.rq',
-        sha256: 'def456...',
-        mediaType: 'application/sparql-query'
-      }
-    },
-    run: async (event) => {
-      // Autonomic decision-making logic
-      return { 
-        healthy: true, 
-        actions: ['log-metrics', 'notify-ops'],
-        agentConsensus: 0.98
-      };
-    }
-  });
+### 🔧 [How-to Guides](./how-to/README.md)
+**Task-oriented** • **Problem solutions**
 
-  // Evaluate with full autonomic audit trail
-  const receipt = await evaluateHook(healthHook, { 
-    persist: true,
-    enableLockchain: true,
-    enableMultiAgent: true
-  });
+Recipes for accomplishing specific tasks and solving real-world problems.
 
-  if (receipt.fired) {
-    console.log('🤖 Autonomic health check completed');
-    console.log('🔗 Lockchain Hash:', receipt.lockchainHash);
-    console.log('📋 Policy Pack:', receipt.policyPack);
-    console.log('🤝 Agent Consensus:', receipt.consensus);
-    console.log('🛡️ Cryptographic Proof:', receipt.canonicalHash);
-  }
-});
-```
+**Best for:**
+- Experienced users
+- Specific task solutions
+- Quick reference
 
-### Autonomic Composables (Secondary API)
+**Popular guides:**
+- [Optimize SPARQL Queries](./how-to/optimize-sparql-queries.md)
+- [Deploy with Docker](./how-to/deploy-with-docker.md)
+- [Create Validation Hooks](./how-to/create-validation-hooks.md)
 
-```javascript
-import { useStore, useTerms, useGraph, useValidator, useZod, useLockchain, useResolution, usePolicyPacks } from 'unrdf';
+</td>
+</tr>
+<tr>
+<td width="50%">
 
-// Create an autonomic store with multi-agent capabilities
-const store = useStore();
-const lockchain = useLockchain();
-const resolution = useResolution();
-const policyPacks = usePolicyPacks();
+### 📖 [Reference](./reference/README.md)
+**Information-oriented** • **Technical specs**
 
-// Add some data
-const terms = useTerms();
-const quad = terms.quad(
-  terms.iri("http://example.org/Person"),
-  terms.iri("http://xmlns.com/foaf/0.1/name"),
-  terms.lit("John Doe")
-);
-store.add(quad);
+Complete API documentation, configuration options, and technical specifications.
 
-// Create an autonomic graph interface
-const graph = useGraph(store.store);
+**Best for:**
+- API lookups
+- Configuration details
+- Technical specifications
 
-// Query with SPARQL and optimization
-const results = await graph.select(`
-  PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-  SELECT ?name WHERE {
-    ?person foaf:name ?name .
-  }
-`, { enableCache: true, deltaAware: true });
+**Key sections:**
+- [Core API](./reference/README.md#core-api)
+- [CLI Reference](./reference/README.md#cli-reference)
+- [Type Definitions](./reference/README.md#type-definitions)
+- [Error Catalog](./reference/errors/error-catalog.md)
 
-// Multi-agent coordination
-const proposal = await resolution.submitProposal('agent-1', {
-  additions: [quad],
-  removals: [],
-  metadata: { confidence: 0.95 }
-});
+</td>
+<td width="50%">
 
-// Lockchain audit trail
-const receipt = await lockchain.writeReceipt({
-  operation: 'data-addition',
-  hash: 'abc123...',
-  signature: 'def456...'
-});
+### 💡 [Explanation](./explanation/README.md)
+**Understanding-oriented** • **Deep dives**
 
-// Validate with Zod and policy packs
-const zod = useZod();
-const PersonSchema = z.object({
-  name: z.string()
-});
+Conceptual guides explaining the "why" behind UNRDF's design and architecture.
 
-const validation = await zod.validateResults(results, PersonSchema, {
-  policyPack: 'compliance-v1'
-});
-console.log(validation.validated); // [{ name: "John Doe" }]
-```
+**Best for:**
+- Understanding concepts
+- Architecture insights
+- Design decisions
 
-## Documentation Structure
+**Popular topics:**
+- [Knowledge Hooks Philosophy](./explanation/knowledge-hooks-philosophy.md)
+- [Architecture Overview](./explanation/architecture-overview.md)
+- [80/20 Principle](./explanation/80-20-principle.md)
 
-### 🤖 Autonomic Knowledge Hooks (Primary)
-- **[Autonomic Knowledge Hooks Guide](./guides/knowledge-hooks.md)** - Complete guide to the primary API
-- **[Getting Started Guide](./guides/getting-started.md)** - Complete introduction to unrdf
-- **[Advanced Patterns](./guides/advanced-patterns.md)** - Best practices and advanced usage
-- **[Policy Pack Governance](./guides/policy-packs.md)** - Versioned governance units
-- **[Multi-Agent Coordination](./guides/multi-agent.md)** - Distributed decision-making
-- **[Lockchain Audit Trails](./guides/lockchain.md)** - Cryptographic provenance
+</td>
+</tr>
+</table>
 
-### API Reference
-- **[Autonomic Knowledge Hooks API](./api/knowledge-hooks.md)** - Primary API reference
-- **[Composables API](./api/composables.md)** - Secondary composables reference
-- **[Policy Pack API](./api/policy-packs.md)** - Governance units API
-- **[Multi-Agent API](./api/multi-agent.md)** - Coordination and resolution API
-- **[Lockchain API](./api/lockchain.md)** - Audit trail and provenance API
-- **[Utilities API](./api/utilities.md)** - Helper functions for common operations
+---
 
-### Examples and Tutorials
-- **[Autonomic Knowledge Hooks Examples](./examples/knowledge-hooks/)** - Primary API examples
-- **[Policy Pack Examples](./examples/policy-packs/)** - Governance unit examples
-- **[Multi-Agent Examples](./examples/multi-agent/)** - Coordination examples
-- **[Lockchain Examples](./examples/lockchain/)** - Audit trail examples
-- **[Basic Usage Examples](./examples/basic-usage.mjs)** - Fundamental operations
-- **[Validation and Reasoning](./examples/validation-reasoning.mjs)** - Advanced features
+## 🚀 Quick Start
 
-### CLI Documentation
-- **[CLI Reference](./cli/README.md)** - Command-line interface usage
-- **[Autonomic Knowledge Hooks CLI](./cli/knowledge-hooks.md)** - Hook management commands
-- **[Policy Pack CLI](./cli/policy-packs.md)** - Governance unit commands
-- **[Multi-Agent CLI](./cli/multi-agent.md)** - Coordination commands
-- **[Lockchain CLI](./cli/lockchain.md)** - Audit trail commands
-
-## Core APIs
-
-### 🤖 Autonomic Knowledge Hooks (Primary)
-- **`defineHook`** - Define autonomic knowledge hooks
-- **`evaluateHook`** - Evaluate hooks with cryptographic receipts
-- **`initStore`** - Context management for hooks
-- **`useKnowledgeHooks`** - Composable hook interface
-- **`PolicyPackManager`** - Versioned governance units
-- **`ResolutionLayer`** - Multi-agent coordination
-- **`LockchainWriter`** - Cryptographic audit trails
-
-### Foundation Composables (Secondary)
-- **`useStore`** - N3.Store management and operations
-- **`useTerms`** - RDF term creation and manipulation
-- **`usePrefixes`** - Prefix management and CURIE operations
-- **`useLockchain`** - Cryptographic audit trail operations
-- **`useResolution`** - Multi-agent coordination operations
-- **`usePolicyPacks`** - Governance unit operations
-
-### Data Operations (Secondary)
-- **`useLists`** - RDF list operations
-- **`useGraph`** - High-level RDF operations and SPARQL queries
-- **`useTurtle`** - Turtle parsing and serialization
-- **`useNQuads`** - N-Quads parsing and serialization
-- **`useJsonLd`** - JSON-LD operations
-- **`useTurtleFS`** - File system operations for Turtle files
-
-### Advanced Features (Secondary)
-- **`usePointer`** - Clownface-based graph traversal
-- **`useValidator`** - SHACL validation
-- **`useReasoner`** - EYE-based reasoning
-- **`useCanon`** - Canonicalization and isomorphism checking
-- **`useZod`** - Runtime validation for RDF-derived data
-- **`useTypes`** - RDF term type checking
-- **`useRDFExt`** - Advanced RDF dataset operations
-
-### Utilities (Secondary)
-- **`useCache`** - Caching operations
-- **`useDelta`** - Delta operations for RDF stores
-- **`useMetrics`** - Metrics and analytics
-
-## Key Features
-
-- **🎯 Knowledge Hooks**: Enterprise-grade reactive triggers with cryptographic provenance
-- **Composable Architecture**: Focused, single-responsibility functions
-- **Cryptographic Provenance**: URDNA2015 canonical hashes for all operations
-- **Type Safety**: JSDoc + Zod for runtime validation
-- **Performance**: Sub-millisecond hook evaluation with optimized SPARQL
-- **Developer Experience**: Minimal boilerplate, maximum productivity
-- **Testing**: Comprehensive test suite with edge case coverage
-- **CLI Tools**: Command-line interface for hook management
-- **Error Handling**: Comprehensive error handling with descriptive messages
-- **Documentation**: Extensive documentation with examples
-
-## Installation
-
+### Installation
 ```bash
-# Using pnpm (recommended)
-pnpm add unrdf
-
-# Using npm
 npm install unrdf
-
-# Using yarn
-yarn add unrdf
+# or
+pnpm add unrdf
 ```
 
-## Why unrdf?
-
-The RDF ecosystem has matured into a diverse set of libraries, but this diversity has created fragmentation. A typical project may mix N3 for parsing, Comunica for SPARQL, rdf-ext for datasets, rdf-validate-shacl for constraints, and eyereasoner for inference. Each library is useful in isolation, but together they form a patchwork of styles, APIs, and stores.
-
-unrdf addresses this by enforcing a single opinionated path. The framework selects a canonical implementation for each layer and wraps them in a composable API pattern. The result is not a new ontology language or reasoner but a reduction of cognitive overhead for practitioners.
-
-## Examples
-
-### Basic Usage
+### Your First Knowledge Graph
 ```javascript
-import { useStore, useTerms, useGraph } from 'unrdf';
+import { createKnowledgeEngine } from 'unrdf';
+import { namedNode, literal } from '@rdfjs/data-model';
 
-const store = useStore();
-const terms = useTerms();
+// Create engine
+const engine = await createKnowledgeEngine();
 
-// Add data
-const person = terms.iri("http://example.org/person1");
-const name = terms.lit("John Doe");
-store.add(terms.quad(person, terms.iri("name"), name));
+// Insert triples
+await engine.insert([
+  {
+    subject: namedNode('http://example.org/alice'),
+    predicate: namedNode('http://xmlns.com/foaf/0.1/name'),
+    object: literal('Alice'),
+    graph: namedNode('http://example.org/graph1')
+  }
+]);
 
-// Query data
-const graph = useGraph(store.store);
-const results = await graph.select(`
+// Query with SPARQL
+const results = await engine.query(`
   SELECT ?name WHERE {
-    ?person <http://example.org/name> ?name .
+    ?person <http://xmlns.com/foaf/0.1/name> ?name .
   }
 `);
+
+console.log(results); // [{ name: 'Alice' }]
 ```
 
-### Validation
-```javascript
-import { useValidator, useZod } from 'unrdf';
-import { z } from 'zod';
+👉 **Next:** [Complete the Quick Start Tutorial](./tutorials/01-quick-start.md)
 
-// SHACL validation
-const validator = useValidator();
-const report = await validator.validate(dataStore, shapesStore);
+---
 
-// Zod validation
-const zod = useZod();
-const schema = z.object({ name: z.string() });
-const validation = await zod.validateResults(results, schema);
+## 🎯 Find What You Need
+
+### I want to...
+
+**Learn UNRDF from scratch**
+→ Start with [Tutorials](./tutorials/README.md)
+
+**Solve a specific problem**
+→ Check [How-to Guides](./how-to/README.md)
+
+**Look up API details**
+→ Browse [Reference Documentation](./reference/README.md)
+
+**Understand concepts deeply**
+→ Read [Explanation Guides](./explanation/README.md)
+
+**Fix an issue**
+→ See [Troubleshooting Guide](./TROUBLESHOOTING.md)
+
+**Get answers quickly**
+→ Check [FAQ](./FAQ.md)
+
+---
+
+## 🌟 Key Features
+
+### Knowledge Hooks
+Reactive hooks that execute effects when RDF data changes. Perfect for validation, transformation, and audit trails.
+
+**Learn more:** [Knowledge Hooks Tutorial](./tutorials/02-first-knowledge-hook.md) • [Philosophy](./explanation/knowledge-hooks-philosophy.md)
+
+### Browser Support
+Run UNRDF in the browser with IndexedDB storage and React hooks integration.
+
+**Learn more:** [Browser Integration Tutorial](./tutorials/03-browser-integration.md) • [Architecture](./explanation/browser-integration-design.md)
+
+### Policy Packs
+Composable validation policies with SHACL constraints and custom rules for data governance.
+
+**Learn more:** [Policy Packs Tutorial](./tutorials/04-policy-packs.md) • [Design](./explanation/policy-pack-design.md)
+
+### Real-time Streaming
+Process change feeds, implement windowing, and build reactive data pipelines.
+
+**Learn more:** [Streaming Tutorial](./tutorials/05-real-time-streaming.md) • [Architecture](./explanation/change-feed-architecture.md)
+
+### Distributed Federation
+Scale across multiple nodes with consensus protocols and federated queries.
+
+**Learn more:** [Federation Tutorial](./tutorials/06-distributed-federation.md) • [Architecture](./explanation/federation-architecture.md)
+
+### AI Integration
+NLP query builders, semantic analyzers, and embedding managers for semantic search.
+
+**Learn more:** [AI Integration Tutorial](./tutorials/07-ai-semantic-integration.md)
+
+### Production-Ready
+OpenTelemetry observability, Docker/Kubernetes deployment, and comprehensive testing.
+
+**Learn more:** [Production Deployment Tutorial](./tutorials/08-production-deployment.md) • [Best Practices](./explanation/monitoring-alerting.md)
+
+---
+
+## 📦 What's in the Box
+
+- **Core Engine:** ACID transactions, SPARQL 1.1, RDF 1.1 support
+- **Knowledge Hooks:** Pre/post transaction hooks with isolated-VM sandboxing
+- **Policy Packs:** SHACL validation and custom rules
+- **Browser Support:** IndexedDB storage, React hooks, offline-first
+- **Streaming:** Change feeds, windowing, real-time validation
+- **Federation:** Multi-node consensus, distributed queries
+- **AI/Semantic:** NLP, embeddings, semantic search
+- **Observability:** OpenTelemetry spans, metrics, distributed tracing
+- **Deployment:** Docker, Kubernetes, Terraform, Testcontainers
+- **CLI:** Query execution, data loading, validation
+
+---
+
+## 🎓 Learning Paths
+
+### Beginner (2-3 hours)
+1. [Quick Start Tutorial](./tutorials/01-quick-start.md) (15 min)
+2. [First Knowledge Hook](./tutorials/02-first-knowledge-hook.md) (30 min)
+3. [Browser Integration](./tutorials/03-browser-integration.md) (45 min)
+
+### Intermediate (4-5 hours)
+1. All beginner tutorials
+2. [Policy Packs](./tutorials/04-policy-packs.md) (40 min)
+3. [Real-time Streaming](./tutorials/05-real-time-streaming.md) (50 min)
+4. [How-to Guides](./how-to/README.md) for your use case
+
+### Advanced (6-8 hours)
+1. All intermediate tutorials
+2. [Distributed Federation](./tutorials/06-distributed-federation.md) (60 min)
+3. [AI Integration](./tutorials/07-ai-semantic-integration.md) (55 min)
+4. [Production Deployment](./tutorials/08-production-deployment.md) (90 min)
+5. Deep dive into [Explanation Guides](./explanation/README.md)
+
+---
+
+## 🤝 Getting Help
+
+### Community Support
+- **[GitHub Discussions](https://github.com/unrdf/unrdf/discussions)** - Ask questions, share ideas
+- **[Stack Overflow](https://stackoverflow.com/questions/tagged/unrdf)** - Search existing Q&A
+- **[GitHub Issues](https://github.com/unrdf/unrdf/issues)** - Report bugs, request features
+
+### Documentation Resources
+- **[FAQ](./FAQ.md)** - Frequently asked questions
+- **[Troubleshooting](./TROUBLESHOOTING.md)** - Common problems and solutions
+- **[Migration Guide](./migration-v3-to-v4.md)** - Upgrading from v3.x
+- **[Changelog](../CHANGELOG.md)** - Version history
+
+---
+
+## 📊 Project Status
+
+- **Version:** 4.0.0 (Latest)
+- **Status:** Production Ready ✅
+- **Test Coverage:** 100% (349/349 tests passing)
+- **OTEL Validation:** 94/100 (Production Ready)
+- **License:** MIT
+- **Node:** ≥18.0.0
+- **Browser:** Modern browsers with IndexedDB support
+
+---
+
+## 🗺️ Documentation Map
+
+```
+docs/
+├── README.md                    ← You are here
+│
+├── tutorials/                   ← 🎓 Learning-oriented
+│   ├── 01-quick-start.md
+│   ├── 02-first-knowledge-hook.md
+│   ├── 03-browser-integration.md
+│   ├── 04-policy-packs.md
+│   ├── 05-real-time-streaming.md
+│   ├── 06-distributed-federation.md
+│   ├── 07-ai-semantic-integration.md
+│   └── 08-production-deployment.md
+│
+├── how-to/                      ← 🔧 Task-oriented
+│   ├── Core Operations/
+│   ├── Knowledge Hooks/
+│   ├── Browser & Client-Side/
+│   ├── Policy & Validation/
+│   ├── Streaming & Real-time/
+│   ├── Distributed Systems/
+│   ├── Observability & Monitoring/
+│   └── Deployment & Production/
+│
+├── reference/                   ← 📖 Information-oriented
+│   ├── api/                    (API documentation)
+│   ├── config/                 (Configuration)
+│   ├── cli/                    (CLI reference)
+│   ├── types/                  (Type definitions)
+│   ├── errors/                 (Error catalog)
+│   └── benchmarks/             (Performance data)
+│
+├── explanation/                 ← 💡 Understanding-oriented
+│   ├── Core Concepts/
+│   ├── Architecture/
+│   ├── Design Decisions/
+│   ├── Best Practices/
+│   └── Advanced Topics/
+│
+├── FAQ.md                       ← Quick answers
+├── TROUBLESHOOTING.md          ← Problem solving
+├── ROADMAP.md                  ← Future plans
+└── migration-v3-to-v4.md       ← Upgrade guide
 ```
 
-### Reasoning
-```javascript
-import { useReasoner } from 'unrdf';
+---
 
-const reasoner = useReasoner();
-const inferred = await reasoner.reason(dataStore, rulesStore);
-```
+## 🚢 Ready to Start?
 
-## CLI Usage
+Choose your path:
 
-```bash
-# Convert between formats
-npx unrdf convert input.ttl output.nq --from turtle --to nquads
+**New to UNRDF?** → [Quick Start Tutorial](./tutorials/01-quick-start.md)
 
-# Validate data
-npx unrdf validate data.ttl --shapes shapes.ttl
+**Need something specific?** → [How-to Guides](./how-to/README.md)
 
-# Query data
-npx unrdf query data.ttl "SELECT ?s ?p ?o WHERE { ?s ?p ?o }"
+**Looking for API details?** → [Reference](./reference/README.md)
 
-# Apply reasoning
-npx unrdf reason data.ttl --rules rules.n3 --output inferred.ttl
-```
+**Want to understand deeply?** → [Explanations](./explanation/README.md)
 
-## License
+---
 
-MIT License - see [LICENSE](../LICENSE) for details.
+<p align="center">
+  <strong>Built with SPARC methodology • Powered by 80/20 principle • Production-ready</strong>
+</p>
 
-## Contributing
-
-This project follows the opinionated design philosophy. Contributions should align with the single-path approach and maintain the composable API pattern.
-
-## Support
-
-- **[GitHub Issues](https://github.com/gitvan/unrdf/issues)** - Report bugs or request features
-- **[Discussions](https://github.com/gitvan/unrdf/discussions)** - Ask questions or share ideas
-- **[Documentation](https://github.com/gitvan/unrdf#readme)** - Complete API reference
+<p align="center">
+  <a href="https://github.com/unrdf/unrdf">GitHub</a> •
+  <a href="https://www.npmjs.com/package/unrdf">npm</a> •
+  <a href="https://github.com/unrdf/unrdf/discussions">Discussions</a> •
+  <a href="../CONTRIBUTING.md">Contributing</a>
+</p>
