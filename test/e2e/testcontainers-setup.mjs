@@ -145,6 +145,9 @@ export const testcontainersConfig = {
  * Testcontainers manager for KGC sidecar E2E tests
  */
 export class TestcontainersManager {
+  /**
+   *
+   */
   constructor() {
     this.containers = new Map();
     this.network = null;

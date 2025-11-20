@@ -26,6 +26,9 @@ import { IndexedDBQuadStore } from './indexeddb-store.mjs';
  * `);
  */
 export class BrowserQueryExecutor {
+  /**
+   *
+   */
   constructor(store = null) {
     this.store = store || new IndexedDBQuadStore();
     this.engine = new QueryEngine();

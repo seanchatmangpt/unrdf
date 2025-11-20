@@ -31,6 +31,9 @@ const METADATA_STORE = 'metadata';
  * });
  */
 export class BrowserLockchainWriter {
+  /**
+   *
+   */
   constructor(options = {}) {
     this.db = null;
     this.fs = new IndexedDBFileSystem();

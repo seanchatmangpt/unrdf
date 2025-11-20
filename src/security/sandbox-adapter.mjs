@@ -4,6 +4,9 @@
  */
 import { detectBestExecutor, createExecutor } from './sandbox/detector.mjs';
 
+/**
+ *
+ */
 export class SandboxAdapter {
   /**
    * @param {Object} [options]

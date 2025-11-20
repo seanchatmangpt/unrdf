@@ -16,6 +16,9 @@ const METADATA_STORE = 'metadata';
  * IndexedDB-based file system implementation
  */
 export class IndexedDBFileSystem {
+  /**
+   *
+   */
   constructor() {
     this.db = null;
     this.initPromise = this.init();

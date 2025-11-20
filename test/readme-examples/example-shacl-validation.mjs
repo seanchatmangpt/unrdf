@@ -6,6 +6,9 @@
 import { createDarkMatterCore, parseTurtle, DataFactory } from '../../src/knowledge-engine/index.mjs';
 const { namedNode, quad, literal } = DataFactory;
 
+/**
+ *
+ */
 async function testShaclValidation() {
   console.log('🧪 Testing SHACL Validation Example...');
 

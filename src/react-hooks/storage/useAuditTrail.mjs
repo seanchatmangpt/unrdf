@@ -6,6 +6,9 @@
 import { useState, useCallback } from 'react';
 import { useKnowledgeEngineContext } from '../context/useKnowledgeEngineContext.mjs';
 
+/**
+ *
+ */
 export function useAuditTrail() {
   const { engine } = useKnowledgeEngineContext();
   const [trail, setTrail] = useState([]);

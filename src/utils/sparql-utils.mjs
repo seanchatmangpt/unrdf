@@ -15,6 +15,9 @@ import { generateSPARQLPrefixes } from "./namespace-utils.mjs";
  * SPARQL query builder class
  */
 export class SPARQLBuilder {
+  /**
+   *
+   */
   constructor() {
     this.prefixes = new Map();
     this.selectVars = [];

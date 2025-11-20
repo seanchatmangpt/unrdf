@@ -37,6 +37,9 @@ export const TEST_CONFIG = {
  * Base container manager for E2E tests
  */
 export class E2ETestContainer {
+  /**
+   *
+   */
   constructor() {
     this.containers = new Map();
     this.cleanup = [];
@@ -92,6 +95,9 @@ export class E2ETestContainer {
  * PostgreSQL container for RDF storage testing
  */
 export class PostgresContainer {
+  /**
+   *
+   */
   constructor() {
     this.container = new GenericContainer('postgres:15-alpine')
       .withExposedPorts(TEST_CONFIG.PORTS.POSTGRES)
@@ -103,10 +109,16 @@ export class PostgresContainer {
       .withStartupTimeout(TEST_CONFIG.STARTUP_TIMEOUT);
   }
 
+  /**
+   *
+   */
   async start() {
     return await this.container.start();
   }
 
+  /**
+   *
+   */
   getConnectionString(container) {
     const host = container.getHost();
     const port = container.getMappedPort(TEST_CONFIG.PORTS.POSTGRES);
@@ -118,16 +130,25 @@ export class PostgresContainer {
  * Redis container for caching and session storage
  */
 export class RedisContainer {
+  /**
+   *
+   */
   constructor() {
     this.container = new GenericContainer('redis:7-alpine')
       .withExposedPorts(TEST_CONFIG.PORTS.REDIS)
       .withStartupTimeout(TEST_CONFIG.STARTUP_TIMEOUT);
   }
 
+  /**
+   *
+   */
   async start() {
     return await this.container.start();
   }
 
+  /**
+   *
+   */
   getConnectionString(container) {
     const host = container.getHost();
     const port = container.getMappedPort(TEST_CONFIG.PORTS.REDIS);
@@ -139,6 +160,9 @@ export class RedisContainer {
  * MinIO container for S3-compatible object storage
  */
 export class MinioContainer {
+  /**
+   *
+   */
   constructor() {
     this.container = new GenericContainer('minio/minio:latest')
       .withExposedPorts(TEST_CONFIG.PORTS.MINIO, TEST_CONFIG.PORTS.MINIO_CONSOLE)
@@ -150,10 +174,16 @@ export class MinioContainer {
       .withStartupTimeout(TEST_CONFIG.STARTUP_TIMEOUT);
   }
 
+  /**
+   *
+   */
   async start() {
     return await this.container.start();
   }
 
+  /**
+   *
+   */
   getConnectionConfig(container) {
     const host = container.getHost();
     const port = container.getMappedPort(TEST_CONFIG.PORTS.MINIO);
@@ -173,6 +203,9 @@ export class MinioContainer {
  * Apache Jena Fuseki container for SPARQL endpoint testing
  */
 export class FusekiContainer {
+  /**
+   *
+   */
   constructor() {
     this.container = new GenericContainer('stain/jena-fuseki:4.9.0')
       .withExposedPorts(TEST_CONFIG.PORTS.FUSEKI)
@@ -183,16 +216,25 @@ export class FusekiContainer {
       .withStartupTimeout(TEST_CONFIG.STARTUP_TIMEOUT);
   }
 
+  /**
+   *
+   */
   async start() {
     return await this.container.start();
   }
 
+  /**
+   *
+   */
   getSparqlEndpoint(container) {
     const host = container.getHost();
     const port = container.getMappedPort(TEST_CONFIG.PORTS.FUSEKI);
     return `http://${host}:${port}/unrdf-test/sparql`;
   }
 
+  /**
+   *
+   */
   getUpdateEndpoint(container) {
     const host = container.getHost();
     const port = container.getMappedPort(TEST_CONFIG.PORTS.FUSEKI);
@@ -204,6 +246,9 @@ export class FusekiContainer {
  * Node.js container for testing the KGC sidecar
  */
 export class NodeContainer {
+  /**
+   *
+   */
   constructor() {
     this.container = new GenericContainer('node:18-alpine')
       .withExposedPorts(3000)
@@ -226,10 +271,16 @@ export class NodeContainer {
       .withStartupTimeout(TEST_CONFIG.STARTUP_TIMEOUT);
   }
 
+  /**
+   *
+   */
   async start() {
     return await this.container.start();
   }
 
+  /**
+   *
+   */
   getApiEndpoint(container) {
     const host = container.getHost();
     const port = container.getMappedPort(3000);
@@ -241,6 +292,9 @@ export class NodeContainer {
  * Test data management utilities
  */
 export class TestDataManager {
+  /**
+   *
+   */
   constructor() {
     this.testData = new Map();
   }
@@ -353,6 +407,9 @@ export class TestDataManager {
  * E2E test environment setup
  */
 export class E2ETestEnvironment {
+  /**
+   *
+   */
   constructor() {
     this.containerManager = new E2ETestContainer();
     this.dataManager = new TestDataManager();

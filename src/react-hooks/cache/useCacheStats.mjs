@@ -6,6 +6,9 @@
 import { useState, useEffect } from 'react';
 import { useKnowledgeEngineContext } from '../context/useKnowledgeEngineContext.mjs';
 
+/**
+ *
+ */
 export function useCacheStats() {
   const { engine } = useKnowledgeEngineContext();
   const [stats, setStats] = useState({});

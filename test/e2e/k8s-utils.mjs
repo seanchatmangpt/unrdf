@@ -15,6 +15,9 @@ import { randomUUID } from 'crypto';
  * Kubernetes utilities for KGC sidecar E2E tests
  */
 export class KubernetesManager {
+  /**
+   *
+   */
   constructor(options = {}) {
     this.kubeConfig = new k8s.KubeConfig();
     this.kubeConfig.loadFromDefault();

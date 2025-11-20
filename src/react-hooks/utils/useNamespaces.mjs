@@ -5,6 +5,9 @@
 
 import { useState, useCallback } from 'react';
 
+/**
+ *
+ */
 export function useNamespaces(initialPrefixes = {}) {
   const [prefixes, setPrefixes] = useState(initialPrefixes);
 

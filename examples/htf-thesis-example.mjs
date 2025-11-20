@@ -275,6 +275,9 @@ const thesisShards = [
 
 console.log('\n=== EXAMPLE 1: Λ-SCHEDULING (Chapter Planning) ===\n');
 
+/**
+ *
+ */
 function exampleLambdaScheduling() {
   // Create scheduler
   const deadline = new Date('2025-03-01');
@@ -309,6 +312,9 @@ function exampleLambdaScheduling() {
 
 console.log('\n=== EXAMPLE 2: Π-PROFILE (Coherence Analysis) ===\n');
 
+/**
+ *
+ */
 function examplePiProfile() {
   const profiler = usePiProfile(thesisShards, {
     onMergeChange: (event) => console.log('Merge changed:', event)
@@ -350,6 +356,9 @@ function examplePiProfile() {
 
 console.log('\n=== EXAMPLE 3: Γ-VALIDATION (Convergence Checking) ===\n');
 
+/**
+ *
+ */
 function exampleGammaChecker() {
   const validator = useGammaChecker(thesisShards, [], {
     autoCheck: true,
@@ -390,6 +399,9 @@ function exampleGammaChecker() {
 
 console.log('\n=== EXAMPLE 4: COMPLETE HTF FRAMEWORK ===\n');
 
+/**
+ *
+ */
 function exampleCompleteFramework() {
   const framework = useHTFFramework({
     shards: thesisShards,

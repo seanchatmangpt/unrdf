@@ -8,6 +8,9 @@ import { mkdirSync, rmSync } from 'fs';
 import { join } from 'path';
 const { namedNode, quad, literal } = DataFactory;
 
+/**
+ *
+ */
 async function testAuditTrail() {
   console.log('🧪 Testing Cryptographic Audit Trail Example...');
 

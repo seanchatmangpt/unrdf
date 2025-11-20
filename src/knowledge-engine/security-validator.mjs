@@ -24,6 +24,9 @@ const SecurityValidationResultSchema = z.object({
  * Security Validator for Knowledge Hooks
  */
 export class SecurityValidator {
+  /**
+   *
+   */
   constructor(options = {}) {
     this.strictMode = options.strictMode ?? true;
     this.enablePathTraversalCheck = options.enablePathTraversalCheck ?? true;

@@ -5,6 +5,9 @@
 
 import { defineHook, registerHook } from '../../src/knowledge-engine/index.mjs';
 
+/**
+ *
+ */
 async function testKnowledgeHooks() {
   console.log('🧪 Testing Knowledge Hooks Example...');
 

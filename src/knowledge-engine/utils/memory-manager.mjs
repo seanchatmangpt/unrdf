@@ -13,6 +13,9 @@ import { EventEmitter } from 'node:events';
  * Memory Manager - Prevents circular references and unbounded growth
  */
 export class MemoryManager {
+  /**
+   *
+   */
   constructor(config = {}) {
     this.config = {
       maxArraySize: config.maxArraySize || 1000,
@@ -290,6 +293,9 @@ export class MemoryManager {
  * Prevents connection leaks and manages resource limits
  */
 export class ConnectionPool {
+  /**
+   *
+   */
   constructor(config = {}) {
     this.config = {
       maxConnections: config.maxConnections || 10,

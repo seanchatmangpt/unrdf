@@ -6,6 +6,9 @@
 import { useState, useEffect, useRef } from 'react';
 import { useKnowledgeEngineContext } from '../context/useKnowledgeEngineContext.mjs';
 
+/**
+ *
+ */
 export function useDeltaTracking(callback) {
   const { store } = useKnowledgeEngineContext();
   const [deltas, setDeltas] = useState([]);

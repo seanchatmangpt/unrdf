@@ -13,6 +13,9 @@ import { Store } from 'n3';
  * Test event factory class
  */
 export class TestEventFactory {
+  /**
+   *
+   */
   constructor() {
     this.defaultEvent = {
       name: 'test-event',

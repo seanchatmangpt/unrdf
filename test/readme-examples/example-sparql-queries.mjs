@@ -6,6 +6,9 @@
 import { createDarkMatterCore, DataFactory } from '../../src/knowledge-engine/index.mjs';
 const { namedNode, quad, literal } = DataFactory;
 
+/**
+ *
+ */
 async function testSparqlQueries() {
   console.log('🧪 Testing SPARQL Queries Example...');
 

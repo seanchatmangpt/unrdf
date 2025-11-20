@@ -5,6 +5,9 @@
 
 import { useEffect, useRef } from 'react';
 
+/**
+ *
+ */
 export function useDebug(componentName, props) {
   const renderCount = useRef(0);
   const prevProps = useRef(props);

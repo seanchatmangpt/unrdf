@@ -6,6 +6,9 @@
 import { useEffect, useRef } from 'react';
 import { useKnowledgeEngineContext } from '../context/useKnowledgeEngineContext.mjs';
 
+/**
+ *
+ */
 export function useKnowledgeEffect(effect, dependencies = []) {
   const { store, engine } = useKnowledgeEngineContext();
   const cleanupRef = useRef(null);

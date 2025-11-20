@@ -47,6 +47,9 @@ const SandboxResultSchema = z.object({
  * Browser-compatible Effect Sandbox
  */
 export class EffectSandbox {
+  /**
+   *
+   */
   constructor(config = {}) {
     this.config = SandboxConfigSchema.parse(config);
     this.workers = new Map();

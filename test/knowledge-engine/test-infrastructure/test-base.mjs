@@ -17,6 +17,9 @@ import { mkdir, rm } from 'fs/promises';
  * Base class for knowledge engine tests
  */
 export class TestBase {
+  /**
+   *
+   */
   constructor() {
     this.tempDir = null;
     this.manager = null;

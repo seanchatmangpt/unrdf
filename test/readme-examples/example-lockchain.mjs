@@ -7,6 +7,9 @@ import { LockchainWriter } from '../../src/knowledge-engine/index.mjs';
 import { mkdirSync, rmSync } from 'fs';
 import { join } from 'path';
 
+/**
+ *
+ */
 async function testLockchain() {
   console.log('🧪 Testing Lockchain Example...');
 

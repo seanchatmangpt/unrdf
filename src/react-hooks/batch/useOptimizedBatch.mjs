@@ -6,6 +6,9 @@
 import { useState, useCallback } from 'react';
 import { useKnowledgeEngineContext } from '../context/useKnowledgeEngineContext.mjs';
 
+/**
+ *
+ */
 export function useOptimizedBatch() {
   const { engine, store } = useKnowledgeEngineContext();
   const [pending, setPending] = useState(false);

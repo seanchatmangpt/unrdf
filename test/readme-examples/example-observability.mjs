@@ -6,6 +6,9 @@
 import { ObservabilityManager } from '../../src/knowledge-engine/index.mjs';
 import { trace } from '@opentelemetry/api';
 
+/**
+ *
+ */
 async function testObservability() {
   console.log('🧪 Testing Observability Example...');
 

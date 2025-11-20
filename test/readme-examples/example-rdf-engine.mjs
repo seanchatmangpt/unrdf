@@ -5,6 +5,9 @@
 
 import { parseTurtle, toJsonLd, toNQuads } from '../../src/knowledge-engine/index.mjs';
 
+/**
+ *
+ */
 async function testRdfEngine() {
   console.log('🧪 Testing RDF Engine Example...');
 

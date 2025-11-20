@@ -88,6 +88,9 @@ export const COMMON_PREFIXES = {
  * Namespace manager class
  */
 export class NamespaceManager {
+  /**
+   *
+   */
   constructor() {
     this.namespaces = new Map();
     this.prefixes = new Map();

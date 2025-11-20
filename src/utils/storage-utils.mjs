@@ -31,6 +31,9 @@ async function hashString(input) {
  * Hook storage manager
  */
 export class HookStorage {
+  /**
+   *
+   */
   constructor(storagePath = './.unrdf') {
     this.storagePath = storagePath;
     this.hooksPath = join(storagePath, 'hooks');
