@@ -1,0 +1,838 @@
+<!DOCTYPE HTML>
+<html lang="en" class="navy" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>SHACL - UNRDF - Universal RDF Framework</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="Production-ready RDF knowledge graph library with Knowledge Hooks and autonomic capabilities">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon.svg">
+        <link rel="shortcut icon" href="../../favicon.png">
+        <link rel="stylesheet" href="../../css/variables.css">
+        <link rel="stylesheet" href="../../css/general.css">
+        <link rel="stylesheet" href="../../css/chrome.css">
+        <link rel="stylesheet" href="../../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../../highlight.css">
+        <link rel="stylesheet" href="../../tomorrow-night.css">
+        <link rel="stylesheet" href="../../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "navy";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('navy')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../../introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="../../getting-started/quick-start.html"><strong aria-hidden="true">2.</strong> Getting Started</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../getting-started/quick-start.html"><strong aria-hidden="true">2.1.</strong> Quick Start</a></li><li class="chapter-item "><a href="../../getting-started/installation.html"><strong aria-hidden="true">2.2.</strong> Installation</a></li><li class="chapter-item "><a href="../../getting-started/basic-usage.html"><strong aria-hidden="true">2.3.</strong> Basic Usage</a></li><li class="chapter-item "><a href="../../getting-started/first-hook.html"><strong aria-hidden="true">2.4.</strong> Your First Hook</a></li></ol></li><li class="chapter-item expanded "><a href="../../concepts/rdf-fundamentals.html"><strong aria-hidden="true">3.</strong> Concepts</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../concepts/rdf-fundamentals.html"><strong aria-hidden="true">3.1.</strong> RDF Fundamentals</a></li><li class="chapter-item "><a href="../../concepts/composables.html"><strong aria-hidden="true">3.2.</strong> Composables</a></li><li class="chapter-item "><a href="../../concepts/store-context.html"><strong aria-hidden="true">3.3.</strong> Store & Context</a></li><li class="chapter-item "><a href="../../concepts/transactions.html"><strong aria-hidden="true">3.4.</strong> Transactions</a></li></ol></li><li class="chapter-item expanded "><a href="../../hooks/introduction.html"><strong aria-hidden="true">4.</strong> Hooks</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../hooks/introduction.html"><strong aria-hidden="true">4.1.</strong> Introduction</a></li><li class="chapter-item "><a href="../../hooks/lifecycle.html"><strong aria-hidden="true">4.2.</strong> Lifecycle</a></li><li class="chapter-item "><a href="../../hooks/effects.html"><strong aria-hidden="true">4.3.</strong> Effects</a></li><li class="chapter-item expanded "><a href="../../hooks/predicates.html"><strong aria-hidden="true">4.4.</strong> Predicates</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../hooks/predicates/ask.html"><strong aria-hidden="true">4.4.1.</strong> ASK</a></li><li class="chapter-item expanded "><a href="../../hooks/predicates/shacl.html" class="active"><strong aria-hidden="true">4.4.2.</strong> SHACL</a></li><li class="chapter-item "><a href="../../hooks/predicates/delta.html"><strong aria-hidden="true">4.4.3.</strong> Delta</a></li><li class="chapter-item "><a href="../../hooks/predicates/threshold.html"><strong aria-hidden="true">4.4.4.</strong> Threshold</a></li><li class="chapter-item "><a href="../../hooks/predicates/custom.html"><strong aria-hidden="true">4.4.5.</strong> Custom</a></li></ol></li></ol></li><li class="chapter-item expanded "><a href="../../api/core.html"><strong aria-hidden="true">5.</strong> API Reference</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../api/cli.html"><strong aria-hidden="true">5.1.</strong> CLI</a></li><li class="chapter-item "><a href="../../api/core.html"><strong aria-hidden="true">5.2.</strong> Core</a></li><li class="chapter-item "><a href="../../api/knowledge-engine.html"><strong aria-hidden="true">5.3.</strong> Knowledge Engine</a></li><li class="chapter-item "><a href="../../api/composables.html"><strong aria-hidden="true">5.4.</strong> Composables</a></li><li class="chapter-item "><a href="../../api/utilities.html"><strong aria-hidden="true">5.5.</strong> Utilities</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">UNRDF - Universal RDF Framework</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/seanchatmangpt/unrdf" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <a href="https://github.com/seanchatmangpt/unrdf/edit/main/book/src/hooks/predicates/shacl.md" title="Suggest an edit" aria-label="Suggest an edit">
+                            <i id="git-edit-button" class="fa fa-edit"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="shacl-predicates"><a class="header" href="#shacl-predicates">SHACL Predicates</a></h1>
+<p><strong>SHACL predicates</strong> use SHACL (Shapes Constraint Language) shapes to validate RDF data structure and constraints. They're perfect for schema validation and data quality enforcement.</p>
+<h2 id="when-to-use-shacl-predicates"><a class="header" href="#when-to-use-shacl-predicates">When to Use SHACL Predicates</a></h2>
+<p>Use SHACL predicates for:</p>
+<ul>
+<li>✅ <strong>Schema validation</strong> - "Does data match the expected shape?"</li>
+<li>✅ <strong>Structural constraints</strong> - "Required properties, cardinality, datatypes"</li>
+<li>✅ <strong>Data quality</strong> - "Value ranges, patterns, uniqueness"</li>
+<li>✅ <strong>Complex validation</strong> - "Multi-property constraints, dependencies"</li>
+</ul>
+<h2 id="basic-syntax"><a class="header" href="#basic-syntax">Basic Syntax</a></h2>
+<pre><code class="language-javascript">import { defineHook } from 'unrdf';
+import { parseTurtle } from 'unrdf';
+
+// Define SHACL shape
+const personShape = await parseTurtle(`
+  @prefix sh: &lt;http://www.w3.org/ns/shacl#&gt; .
+  @prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+  @prefix ex: &lt;http://example.org/&gt; .
+
+  ex:PersonShape
+    a sh:NodeShape ;
+    sh:targetClass foaf:Person ;
+    sh:property [
+      sh:path foaf:name ;
+      sh:minCount 1 ;
+      sh:maxCount 1 ;
+      sh:datatype xsd:string ;
+    ] ;
+    sh:property [
+      sh:path foaf:mbox ;
+      sh:minCount 1 ;
+      sh:pattern "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$" ;
+    ] .
+`);
+
+defineHook({
+  meta: {
+    name: 'person-shape-validation',
+    description: 'Validate person data against SHACL shape'
+  },
+  when: {
+    kind: 'shacl',
+    shapes: personShape
+  },
+  run: async (event) =&gt; {
+    if (!event.result.conforms) {
+      const violations = event.result.results.map(r =&gt;
+        `${r.path}: ${r.message}`
+      ).join(', ');
+
+      throw new Error(`SHACL validation failed: ${violations}`);
+    }
+  }
+});
+</code></pre>
+<h2 id="event-structure"><a class="header" href="#event-structure">Event Structure</a></h2>
+<p>SHACL predicates provide this structure to the <code>run</code> function:</p>
+<pre><code class="language-javascript">{
+  result: {
+    conforms: false,      // Whether data conforms to shapes
+    results: [            // Validation results (if !conforms)
+      {
+        path: 'foaf:name',
+        message: 'Property needs to have at least 1 value',
+        severity: 'Violation',
+        focusNode: 'http://example.org/alice',
+        sourceConstraintComponent: 'MinCountConstraintComponent'
+      }
+    ]
+  },
+  payload: {
+    additions: [...],
+    removals: [...],
+    actor: 'user@example.org'
+  },
+  context: {
+    graph: Store,
+    env: {...}
+  },
+  name: 'hook-name'
+}
+</code></pre>
+<h2 id="complete-examples"><a class="header" href="#complete-examples">Complete Examples</a></h2>
+<h3 id="example-1-person-profile-validation"><a class="header" href="#example-1-person-profile-validation">Example 1: Person Profile Validation</a></h3>
+<p>Validate complete person profiles:</p>
+<pre><code class="language-javascript">const personProfileShape = await parseTurtle(`
+  @prefix sh: &lt;http://www.w3.org/ns/shacl#&gt; .
+  @prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+  @prefix ex: &lt;http://example.org/&gt; .
+  @prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+
+  ex:PersonProfileShape
+    a sh:NodeShape ;
+    sh:targetClass foaf:Person ;
+
+    # Name (required, string, 1-100 chars)
+    sh:property [
+      sh:path foaf:name ;
+      sh:minCount 1 ;
+      sh:maxCount 1 ;
+      sh:datatype xsd:string ;
+      sh:minLength 1 ;
+      sh:maxLength 100 ;
+    ] ;
+
+    # Email (required, valid format)
+    sh:property [
+      sh:path foaf:mbox ;
+      sh:minCount 1 ;
+      sh:pattern "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$" ;
+    ] ;
+
+    # Age (optional, 0-150)
+    sh:property [
+      sh:path ex:age ;
+      sh:maxCount 1 ;
+      sh:datatype xsd:integer ;
+      sh:minInclusive 0 ;
+      sh:maxInclusive 150 ;
+    ] ;
+
+    # Phone (optional, E.164 format)
+    sh:property [
+      sh:path foaf:phone ;
+      sh:maxCount 1 ;
+      sh:pattern "^\\+[1-9]\\d{1,14}$" ;
+    ] .
+`);
+
+defineHook({
+  meta: {
+    name: 'person-profile-validation',
+    description: 'Validate person profile completeness and correctness'
+  },
+  when: {
+    kind: 'shacl',
+    shapes: personProfileShape
+  },
+  run: async (event) =&gt; {
+    if (!event.result.conforms) {
+      const violations = event.result.results.map(r =&gt;
+        `  - ${r.path || 'unknown'}: ${r.message} (focus: ${r.focusNode})`
+      ).join('\n');
+
+      throw new Error(
+        `Person profile validation failed:\n${violations}`
+      );
+    }
+
+    return { result: 'valid', violations: 0 };
+  }
+});
+</code></pre>
+<h3 id="example-2-organization-structure-validation"><a class="header" href="#example-2-organization-structure-validation">Example 2: Organization Structure Validation</a></h3>
+<p>Validate organizational hierarchy:</p>
+<pre><code class="language-javascript">const orgStructureShape = await parseTurtle(`
+  @prefix sh: &lt;http://www.w3.org/ns/shacl#&gt; .
+  @prefix org: &lt;http://www.w3.org/ns/org#&gt; .
+  @prefix ex: &lt;http://example.org/&gt; .
+
+  ex:OrganizationShape
+    a sh:NodeShape ;
+    sh:targetClass org:Organization ;
+
+    # Every organization must have a name
+    sh:property [
+      sh:path org:identifier ;
+      sh:minCount 1 ;
+      sh:maxCount 1 ;
+      sh:datatype xsd:string ;
+    ] ;
+
+    # Organizations can have members
+    sh:property [
+      sh:path org:hasMember ;
+      sh:class foaf:Person ;
+    ] ;
+
+    # Organizations can have sub-organizations
+    sh:property [
+      sh:path org:hasSubOrganization ;
+      sh:class org:Organization ;
+    ] .
+
+  ex:EmployeeShape
+    a sh:NodeShape ;
+    sh:targetClass ex:Employee ;
+
+    # Every employee must belong to exactly one organization
+    sh:property [
+      sh:path org:memberOf ;
+      sh:minCount 1 ;
+      sh:maxCount 1 ;
+      sh:class org:Organization ;
+    ] ;
+
+    # Every employee must have an employee ID
+    sh:property [
+      sh:path ex:employeeId ;
+      sh:minCount 1 ;
+      sh:maxCount 1 ;
+      sh:datatype xsd:string ;
+      sh:pattern "^EMP\\d{6}$" ;
+    ] .
+`);
+
+defineHook({
+  meta: {
+    name: 'org-structure-validation',
+    description: 'Validate organizational structure and employee data'
+  },
+  when: {
+    kind: 'shacl',
+    shapes: orgStructureShape
+  },
+  run: async (event) =&gt; {
+    if (!event.result.conforms) {
+      const violations = event.result.results;
+
+      throw new Error(
+        `Organization structure validation failed: ${violations.length} violations`
+      );
+    }
+  }
+});
+</code></pre>
+<h3 id="example-3-product-catalog-validation"><a class="header" href="#example-3-product-catalog-validation">Example 3: Product Catalog Validation</a></h3>
+<p>Validate product data:</p>
+<pre><code class="language-javascript">const productShape = await parseTurtle(`
+  @prefix sh: &lt;http://www.w3.org/ns/shacl#&gt; .
+  @prefix ex: &lt;http://example.org/&gt; .
+  @prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+
+  ex:ProductShape
+    a sh:NodeShape ;
+    sh:targetClass ex:Product ;
+
+    # Product name
+    sh:property [
+      sh:path ex:name ;
+      sh:minCount 1 ;
+      sh:datatype xsd:string ;
+      sh:minLength 1 ;
+      sh:maxLength 200 ;
+    ] ;
+
+    # SKU (unique identifier)
+    sh:property [
+      sh:path ex:sku ;
+      sh:minCount 1 ;
+      sh:maxCount 1 ;
+      sh:datatype xsd:string ;
+      sh:pattern "^[A-Z]{3}-\\d{6}$" ;
+    ] ;
+
+    # Price (must be positive)
+    sh:property [
+      sh:path ex:price ;
+      sh:minCount 1 ;
+      sh:maxCount 1 ;
+      sh:datatype xsd:decimal ;
+      sh:minExclusive 0 ;
+    ] ;
+
+    # Stock quantity (non-negative integer)
+    sh:property [
+      sh:path ex:stock ;
+      sh:minCount 1 ;
+      sh:maxCount 1 ;
+      sh:datatype xsd:integer ;
+      sh:minInclusive 0 ;
+    ] ;
+
+    # Category (must be IRI)
+    sh:property [
+      sh:path ex:category ;
+      sh:minCount 1 ;
+      sh:nodeKind sh:IRI ;
+    ] .
+`);
+
+defineHook({
+  meta: {
+    name: 'product-catalog-validation',
+    description: 'Validate product data for catalog integrity'
+  },
+  when: {
+    kind: 'shacl',
+    shapes: productShape
+  },
+  run: async (event) =&gt; {
+    if (!event.result.conforms) {
+      const violationsByProduct = new Map();
+
+      for (const violation of event.result.results) {
+        const product = violation.focusNode;
+        if (!violationsByProduct.has(product)) {
+          violationsByProduct.set(product, []);
+        }
+        violationsByProduct.get(product).push(violation);
+      }
+
+      const details = Array.from(violationsByProduct.entries())
+        .map(([product, violations]) =&gt;
+          `${product}:\n${violations.map(v =&gt; `  - ${v.path}: ${v.message}`).join('\n')}`
+        )
+        .join('\n\n');
+
+      throw new Error(
+        `Product catalog validation failed:\n${details}`
+      );
+    }
+  }
+});
+</code></pre>
+<h2 id="shacl-constraint-types"><a class="header" href="#shacl-constraint-types">SHACL Constraint Types</a></h2>
+<h3 id="property-constraints"><a class="header" href="#property-constraints">Property Constraints</a></h3>
+<pre><code class="language-turtle"># Cardinality
+sh:minCount 1 ;
+sh:maxCount 1 ;
+
+# Datatype
+sh:datatype xsd:string ;
+
+# Value range
+sh:minInclusive 0 ;
+sh:maxInclusive 100 ;
+sh:minExclusive 0 ;
+sh:maxExclusive 100 ;
+
+# String length
+sh:minLength 1 ;
+sh:maxLength 100 ;
+
+# Pattern matching
+sh:pattern "^[A-Z]{3}-\\d{6}$" ;
+
+# Value constraints
+sh:in ( "active" "inactive" "pending" ) ;
+
+# Node kind
+sh:nodeKind sh:IRI ;
+sh:nodeKind sh:Literal ;
+sh:nodeKind sh:BlankNode ;
+
+# Class constraint
+sh:class foaf:Person ;
+</code></pre>
+<h3 id="property-pair-constraints"><a class="header" href="#property-pair-constraints">Property Pair Constraints</a></h3>
+<pre><code class="language-turtle"># Less than
+sh:property [
+  sh:path ex:startDate ;
+  sh:lessThan ex:endDate ;
+] ;
+
+# Less than or equal
+sh:property [
+  sh:path ex:minAge ;
+  sh:lessThanOrEquals ex:maxAge ;
+] ;
+
+# Equals
+sh:property [
+  sh:path ex:primaryEmail ;
+  sh:equals ex:contactEmail ;
+] ;
+
+# Disjoint
+sh:property [
+  sh:path ex:firstName ;
+  sh:disjoint ex:lastName ;
+] ;
+</code></pre>
+<h3 id="logical-constraints"><a class="header" href="#logical-constraints">Logical Constraints</a></h3>
+<pre><code class="language-turtle"># AND (all must conform)
+sh:and (
+  ex:PersonShape
+  ex:EmployeeShape
+) ;
+
+# OR (at least one must conform)
+sh:or (
+  ex:EmailContactShape
+  ex:PhoneContactShape
+) ;
+
+# XOR (exactly one must conform)
+sh:xone (
+  ex:IndividualShape
+  ex:OrganizationShape
+) ;
+
+# NOT (must not conform)
+sh:not ex:BannedUserShape ;
+</code></pre>
+<h3 id="qualified-value-shapes"><a class="header" href="#qualified-value-shapes">Qualified Value Shapes</a></h3>
+<pre><code class="language-turtle"># At least 2 friends who are also Persons
+sh:property [
+  sh:path foaf:knows ;
+  sh:qualifiedMinCount 2 ;
+  sh:qualifiedValueShape [
+    sh:class foaf:Person ;
+  ] ;
+] ;
+</code></pre>
+<h2 id="advanced-patterns"><a class="header" href="#advanced-patterns">Advanced Patterns</a></h2>
+<h3 id="pattern-1-conditional-validation"><a class="header" href="#pattern-1-conditional-validation">Pattern 1: Conditional Validation</a></h3>
+<pre><code class="language-turtle"># Validate email only if person is an employee
+ex:ConditionalEmailShape
+  a sh:NodeShape ;
+  sh:targetClass foaf:Person ;
+  sh:property [
+    sh:path ex:role ;
+    sh:equals "employee" ;
+    sh:property [
+      sh:path foaf:mbox ;
+      sh:minCount 1 ;
+    ] ;
+  ] .
+</code></pre>
+<h3 id="pattern-2-custom-sparql-constraints"><a class="header" href="#pattern-2-custom-sparql-constraints">Pattern 2: Custom SPARQL Constraints</a></h3>
+<pre><code class="language-turtle">ex:UniqueEmailShape
+  a sh:NodeShape ;
+  sh:targetClass foaf:Person ;
+  sh:sparql [
+    sh:message "Email must be unique" ;
+    sh:select """
+      SELECT $this
+      WHERE {
+        $this foaf:mbox ?email .
+        ?other foaf:mbox ?email .
+        FILTER ($this != ?other)
+      }
+    """ ;
+  ] .
+</code></pre>
+<h3 id="pattern-3-multi-language-support"><a class="header" href="#pattern-3-multi-language-support">Pattern 3: Multi-Language Support</a></h3>
+<pre><code class="language-turtle">ex:MultilingualNameShape
+  a sh:NodeShape ;
+  sh:targetClass ex:Product ;
+  sh:property [
+    sh:path ex:name ;
+    sh:minCount 1 ;
+    sh:uniqueLang true ;
+  ] .
+</code></pre>
+<h2 id="performance-optimization"><a class="header" href="#performance-optimization">Performance Optimization</a></h2>
+<h3 id="scope-shapes-narrowly"><a class="header" href="#scope-shapes-narrowly">Scope Shapes Narrowly</a></h3>
+<pre><code class="language-turtle"># ✅ Good: Specific target
+sh:targetClass foaf:Person ;
+
+# ❌ Slow: Validates everything
+sh:targetSubjectsOf foaf:name ;
+</code></pre>
+<h3 id="use-simple-constraints-first"><a class="header" href="#use-simple-constraints-first">Use Simple Constraints First</a></h3>
+<pre><code class="language-javascript">before: async ({ payload }) =&gt; {
+  // Quick check before SHACL
+  const hasPerson = payload.additions.some(
+    q =&gt; q.predicate.value === 'rdf:type' &amp;&amp;
+         q.object.value === 'foaf:Person'
+  );
+
+  if (!hasPerson) {
+    return { cancel: true, reason: 'No persons to validate' };
+  }
+
+  return payload;
+}
+</code></pre>
+<h2 id="error-handling"><a class="header" href="#error-handling">Error Handling</a></h2>
+<h3 id="provide-detailed-error-reports"><a class="header" href="#provide-detailed-error-reports">Provide Detailed Error Reports</a></h3>
+<pre><code class="language-javascript">run: async (event) =&gt; {
+  if (!event.result.conforms) {
+    const report = {
+      totalViolations: event.result.results.length,
+      violations: event.result.results.map(v =&gt; ({
+        focusNode: v.focusNode,
+        path: v.path,
+        message: v.message,
+        severity: v.severity,
+        value: v.value
+      }))
+    };
+
+    console.error('SHACL Validation Report:', JSON.stringify(report, null, 2));
+
+    throw new Error(
+      `SHACL validation failed with ${report.totalViolations} violations`
+    );
+  }
+}
+</code></pre>
+<h2 id="testing-shacl-predicates"><a class="header" href="#testing-shacl-predicates">Testing SHACL Predicates</a></h2>
+<pre><code class="language-javascript">import { createDarkMatterCore, defineHook, registerHook, parseTurtle } from 'unrdf';
+import { namedNode, quad, literal } from '@rdfjs/data-model';
+import { describe, it, expect } from 'vitest';
+
+describe('SHACL Predicate: person-shape-validation', () =&gt; {
+  it('should reject person without required name', async () =&gt; {
+    const system = await createDarkMatterCore();
+
+    const shapes = await parseTurtle(`
+      @prefix sh: &lt;http://www.w3.org/ns/shacl#&gt; .
+      @prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+      @prefix ex: &lt;http://example.org/&gt; .
+
+      ex:PersonShape
+        a sh:NodeShape ;
+        sh:targetClass foaf:Person ;
+        sh:property [
+          sh:path foaf:name ;
+          sh:minCount 1 ;
+        ] .
+    `);
+
+    const hook = defineHook({
+      meta: { name: 'person-shape-validation' },
+      when: {
+        kind: 'shacl',
+        shapes
+      },
+      run: async (event) =&gt; {
+        if (!event.result.conforms) {
+          throw new Error('SHACL validation failed');
+        }
+      }
+    });
+
+    await registerHook(hook);
+
+    await expect(
+      system.executeTransaction({
+        additions: [
+          quad(
+            namedNode('http://example.org/alice'),
+            namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+            namedNode('http://xmlns.com/foaf/0.1/Person')
+          )
+        ],
+        removals: [],
+        actor: 'test'
+      })
+    ).rejects.toThrow('SHACL validation failed');
+
+    await system.cleanup();
+  });
+});
+</code></pre>
+<h2 id="best-practices"><a class="header" href="#best-practices">Best Practices</a></h2>
+<h3 id="-dos"><a class="header" href="#-dos">✅ Do's</a></h3>
+<pre><code class="language-turtle"># ✅ Use descriptive shape names
+ex:PersonShape
+
+# ✅ Add helpful messages
+sh:message "Name must be between 1 and 100 characters" ;
+
+# ✅ Use appropriate severity
+sh:severity sh:Violation ;  # Blocks transaction
+sh:severity sh:Warning ;    # Logs warning
+
+# ✅ Scope shapes appropriately
+sh:targetClass foaf:Person ;
+</code></pre>
+<h3 id="-donts"><a class="header" href="#-donts">❌ Don'ts</a></h3>
+<pre><code class="language-turtle"># ❌ Don't use vague messages
+sh:message "Invalid" ;
+
+# ❌ Don't over-constrain
+sh:minLength 1 ;
+sh:maxLength 10000 ;  # Too restrictive
+
+# ❌ Don't validate everything
+# (Use specific target classes)
+</code></pre>
+<h2 id="next-steps"><a class="header" href="#next-steps">Next Steps</a></h2>
+<ul>
+<li><strong><a href="custom.html">Custom Predicates</a></strong> - Build your own predicate types</li>
+<li><strong><a href="../effects.html">Effects</a></strong> - What hooks can do with validation results</li>
+<li><strong><a href="../policy-packs.html">Policy Packs</a></strong> - Bundle SHACL shapes with hooks</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../hooks/predicates/ask.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../../hooks/predicates/delta.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../hooks/predicates/ask.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../../hooks/predicates/delta.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <!-- Livereload script (if served using the cli tool) -->
+        <script>
+            const wsProtocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsAddress = wsProtocol + "//" + location.host + "/" + "__livereload";
+            const socket = new WebSocket(wsAddress);
+            socket.onmessage = function (event) {
+                if (event.data === "reload") {
+                    socket.close();
+                    location.reload();
+                }
+            };
+
+            window.onbeforeunload = function() {
+                socket.close();
+            }
+        </script>
+
+
+        <script>
+            window.playground_line_numbers = true;
+        </script>
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+        <script src="../../ace.js"></script>
+        <script src="../../editor.js"></script>
+        <script src="../../mode-rust.js"></script>
+        <script src="../../theme-dawn.js"></script>
+        <script src="../../theme-tomorrow_night.js"></script>
+
+        <script src="../../elasticlunr.min.js"></script>
+        <script src="../../mark.min.js"></script>
+        <script src="../../searcher.js"></script>
+
+        <script src="../../clipboard.min.js"></script>
+        <script src="../../highlight.js"></script>
+        <script src="../../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

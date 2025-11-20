@@ -1,0 +1,830 @@
+<!DOCTYPE HTML>
+<html lang="en" class="navy" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Lifecycle - UNRDF - Universal RDF Framework</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="Production-ready RDF knowledge graph library with Knowledge Hooks and autonomic capabilities">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "navy";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('navy')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="../getting-started/quick-start.html"><strong aria-hidden="true">2.</strong> Getting Started</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../getting-started/quick-start.html"><strong aria-hidden="true">2.1.</strong> Quick Start</a></li><li class="chapter-item "><a href="../getting-started/installation.html"><strong aria-hidden="true">2.2.</strong> Installation</a></li><li class="chapter-item "><a href="../getting-started/basic-usage.html"><strong aria-hidden="true">2.3.</strong> Basic Usage</a></li><li class="chapter-item "><a href="../getting-started/first-hook.html"><strong aria-hidden="true">2.4.</strong> Your First Hook</a></li></ol></li><li class="chapter-item expanded "><a href="../concepts/rdf-fundamentals.html"><strong aria-hidden="true">3.</strong> Concepts</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../concepts/rdf-fundamentals.html"><strong aria-hidden="true">3.1.</strong> RDF Fundamentals</a></li><li class="chapter-item "><a href="../concepts/composables.html"><strong aria-hidden="true">3.2.</strong> Composables</a></li><li class="chapter-item "><a href="../concepts/store-context.html"><strong aria-hidden="true">3.3.</strong> Store & Context</a></li><li class="chapter-item "><a href="../concepts/transactions.html"><strong aria-hidden="true">3.4.</strong> Transactions</a></li></ol></li><li class="chapter-item expanded "><a href="../hooks/introduction.html"><strong aria-hidden="true">4.</strong> Hooks</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../hooks/introduction.html"><strong aria-hidden="true">4.1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="../hooks/lifecycle.html" class="active"><strong aria-hidden="true">4.2.</strong> Lifecycle</a></li><li class="chapter-item "><a href="../hooks/effects.html"><strong aria-hidden="true">4.3.</strong> Effects</a></li><li class="chapter-item "><a href="../hooks/predicates.html"><strong aria-hidden="true">4.4.</strong> Predicates</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../hooks/predicates/ask.html"><strong aria-hidden="true">4.4.1.</strong> ASK</a></li><li class="chapter-item "><a href="../hooks/predicates/shacl.html"><strong aria-hidden="true">4.4.2.</strong> SHACL</a></li><li class="chapter-item "><a href="../hooks/predicates/delta.html"><strong aria-hidden="true">4.4.3.</strong> Delta</a></li><li class="chapter-item "><a href="../hooks/predicates/threshold.html"><strong aria-hidden="true">4.4.4.</strong> Threshold</a></li><li class="chapter-item "><a href="../hooks/predicates/custom.html"><strong aria-hidden="true">4.4.5.</strong> Custom</a></li></ol></li></ol></li><li class="chapter-item expanded "><a href="../api/core.html"><strong aria-hidden="true">5.</strong> API Reference</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../api/cli.html"><strong aria-hidden="true">5.1.</strong> CLI</a></li><li class="chapter-item "><a href="../api/core.html"><strong aria-hidden="true">5.2.</strong> Core</a></li><li class="chapter-item "><a href="../api/knowledge-engine.html"><strong aria-hidden="true">5.3.</strong> Knowledge Engine</a></li><li class="chapter-item "><a href="../api/composables.html"><strong aria-hidden="true">5.4.</strong> Composables</a></li><li class="chapter-item "><a href="../api/utilities.html"><strong aria-hidden="true">5.5.</strong> Utilities</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">UNRDF - Universal RDF Framework</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/seanchatmangpt/unrdf" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <a href="https://github.com/seanchatmangpt/unrdf/edit/main/book/src/hooks/lifecycle.md" title="Suggest an edit" aria-label="Suggest an edit">
+                            <i id="git-edit-button" class="fa fa-edit"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="hook-lifecycle"><a class="header" href="#hook-lifecycle">Hook Lifecycle</a></h1>
+<p>Knowledge Hooks follow a three-phase lifecycle inspired by biological reflex arcs: <strong>Before → Run → After</strong>. This chapter explains each phase in detail.</p>
+<h2 id="lifecycle-overview"><a class="header" href="#lifecycle-overview">Lifecycle Overview</a></h2>
+<pre><code>┌─────────────────────────────────────────────┐
+│             Hook Execution Flow             │
+└─────────────────────────────────────────────┘
+
+   Transaction Request
+          ↓
+   ┌─────────────┐
+   │   BEFORE    │  Gate/Normalize
+   │   Phase     │  • Validate payload
+   └──────┬──────┘  • Normalize data
+          │         • Early cancellation
+          ↓
+   ┌─────────────┐
+   │  CONDITION  │  Evaluate
+   │  Evaluation │  • SPARQL ASK/SELECT
+   └──────┬──────┘  • SHACL validation
+          │         • Custom predicates
+          ↓
+          ?
+      Satisfied?
+          │
+         Yes
+          ↓
+   ┌─────────────┐
+   │     RUN     │  Main Effect
+   │    Phase    │  • Core logic
+   └──────┬──────┘  • Assertions
+          │         • Transformations
+          ↓
+   ┌─────────────┐
+   │    AFTER    │  Cleanup/Audit
+   │    Phase    │  • Metrics
+   └──────┬──────┘  • Logging
+          │         • Receipts
+          ↓
+   Transaction Complete
+</code></pre>
+<h2 id="phase-1-before-optional"><a class="header" href="#phase-1-before-optional">Phase 1: Before (Optional)</a></h2>
+<p>The <strong>before</strong> phase is a pre-condition gate for:</p>
+<ul>
+<li>Payload validation and normalization</li>
+<li>Early cancellation (avoid expensive condition evaluation)</li>
+<li>Context enrichment</li>
+</ul>
+<h3 id="function-signature"><a class="header" href="#function-signature">Function Signature</a></h3>
+<pre><code class="language-javascript">async before({ payload, context, name }) {
+  // Return modified payload OR cancellation signal
+  return {
+    ...payload,
+    normalized: true
+  };
+  // OR
+  return {
+    cancel: true,
+    reason: 'Invalid payload'
+  };
+}
+</code></pre>
+<h3 id="example-payload-validation"><a class="header" href="#example-payload-validation">Example: Payload Validation</a></h3>
+<pre><code class="language-javascript">defineHook({
+  meta: { name: 'validate-transaction' },
+  when: { kind: 'sparql-ask', query: '...' },
+
+  async before({ payload }) {
+    // Validate required fields
+    if (!payload.actor) {
+      return {
+        cancel: true,
+        reason: 'Transaction requires an actor'
+      };
+    }
+
+    if (!payload.additions || payload.additions.length === 0) {
+      return {
+        cancel: true,
+        reason: 'Transaction requires at least one addition'
+      };
+    }
+
+    // Normalize payload
+    return {
+      ...payload,
+      timestamp: new Date().toISOString(),
+      validated: true
+    };
+  },
+
+  run: async (event) =&gt; {
+    // Payload now has timestamp and validated flag
+    console.log(`Processing transaction at ${event.payload.timestamp}`);
+  }
+});
+</code></pre>
+<h3 id="example-early-cancellation"><a class="header" href="#example-early-cancellation">Example: Early Cancellation</a></h3>
+<pre><code class="language-javascript">defineHook({
+  meta: { name: 'rate-limiter' },
+  when: { kind: 'window', duration: '1m' },
+
+  async before({ payload, context }) {
+    // Check rate limit before expensive SPARQL evaluation
+    const actorRequestCount = context.rateLimitCache?.get(payload.actor) || 0;
+
+    if (actorRequestCount &gt; 100) {
+      return {
+        cancel: true,
+        reason: `Rate limit exceeded for actor ${payload.actor}`
+      };
+    }
+
+    // Update cache
+    context.rateLimitCache?.set(payload.actor, actorRequestCount + 1);
+
+    return payload;
+  },
+
+  run: async (event) =&gt; {
+    // Only runs if rate limit not exceeded
+    console.log('Processing allowed transaction');
+  }
+});
+</code></pre>
+<h3 id="when-to-use-before"><a class="header" href="#when-to-use-before">When to Use Before</a></h3>
+<p>✅ <strong>Use before when:</strong></p>
+<ul>
+<li>Validating payload structure</li>
+<li>Normalizing data formats</li>
+<li>Checking simple conditions (avoid SPARQL for basic checks)</li>
+<li>Enriching context</li>
+<li>Implementing fast-path cancellation</li>
+</ul>
+<p>❌ <strong>Don't use before for:</strong></p>
+<ul>
+<li>Complex business logic (belongs in <code>run</code>)</li>
+<li>SPARQL queries (use <code>when</code> condition)</li>
+<li>Side effects (belongs in <code>run</code> or <code>after</code>)</li>
+</ul>
+<h2 id="phase-2-condition-evaluation-required"><a class="header" href="#phase-2-condition-evaluation-required">Phase 2: Condition Evaluation (Required)</a></h2>
+<p>The <strong>when</strong> clause defines the trigger condition. This phase evaluates the condition against the knowledge graph.</p>
+<h3 id="condition-types"><a class="header" href="#condition-types">Condition Types</a></h3>
+<p>UNRDF supports multiple condition types (detailed in <a href="predicates.html">Predicates</a>):</p>
+<ol>
+<li><strong>sparql-ask</strong> - Boolean queries</li>
+<li><strong>sparql-select</strong> - Result set queries</li>
+<li><strong>shacl</strong> - Shape validation</li>
+<li><strong>delta</strong> - Change pattern detection</li>
+<li><strong>threshold</strong> - Numeric comparisons</li>
+<li><strong>count</strong> - Cardinality constraints</li>
+<li><strong>window</strong> - Time-based aggregations</li>
+</ol>
+<h3 id="evaluation-process"><a class="header" href="#evaluation-process">Evaluation Process</a></h3>
+<pre><code class="language-javascript">// Condition evaluation happens automatically between before and run
+const hook = defineHook({
+  when: {
+    kind: 'sparql-ask',
+    query: `
+      ASK {
+        ?person a foaf:Person .
+        FILTER NOT EXISTS { ?person foaf:name ?name }
+      }
+    `
+  },
+  run: async (event) =&gt; {
+    // event.result contains the ASK query result (true/false)
+    if (event.result === true) {
+      throw new Error('Person without name detected');
+    }
+  }
+});
+</code></pre>
+<h3 id="condition-result-structure"><a class="header" href="#condition-result-structure">Condition Result Structure</a></h3>
+<p>The <code>event.result</code> passed to <code>run</code> contains:</p>
+<pre><code class="language-javascript">// For sparql-ask
+event.result = true | false
+
+// For sparql-select
+event.result = [
+  { name: 'Alice', age: 30 },
+  { name: 'Bob', age: 25 }
+]
+
+// For shacl
+event.result = {
+  conforms: false,
+  results: [
+    {
+      path: 'ex:name',
+      message: 'Name is required',
+      severity: 'Violation'
+    }
+  ]
+}
+
+// For threshold
+event.result = {
+  value: 15000,
+  threshold: 10000,
+  operator: 'gt',
+  satisfied: true
+}
+</code></pre>
+<h2 id="phase-3-run-required"><a class="header" href="#phase-3-run-required">Phase 3: Run (Required)</a></h2>
+<p>The <strong>run</strong> phase executes the main hook logic. This is where you:</p>
+<ul>
+<li>Enforce business rules</li>
+<li>Transform data</li>
+<li>Generate new assertions</li>
+<li>Trigger external actions</li>
+</ul>
+<h3 id="function-signature-1"><a class="header" href="#function-signature-1">Function Signature</a></h3>
+<pre><code class="language-javascript">async run({ result, payload, context, name }) {
+  // Perform main logic
+  // Return result object
+  return {
+    result: 'processed',
+    assertions: [/* RDF quads */],
+    deltas: { additions: [], removals: [] }
+  };
+}
+</code></pre>
+<h3 id="example-data-validation"><a class="header" href="#example-data-validation">Example: Data Validation</a></h3>
+<pre><code class="language-javascript">defineHook({
+  meta: { name: 'age-validation' },
+  when: {
+    kind: 'sparql-ask',
+    query: `
+      ASK {
+        ?person ex:age ?age .
+        FILTER (?age &lt; 18)
+      }
+    `
+  },
+
+  run: async (event) =&gt; {
+    if (event.result === true) {
+      // Throw error to reject transaction
+      throw new Error('All persons must be 18 or older');
+    }
+
+    return { result: 'valid' };
+  }
+});
+</code></pre>
+<h3 id="example-data-transformation"><a class="header" href="#example-data-transformation">Example: Data Transformation</a></h3>
+<pre><code class="language-javascript">defineHook({
+  meta: { name: 'auto-generate-id' },
+  when: {
+    kind: 'delta',
+    pattern: { predicate: 'rdf:type', object: 'foaf:Person' }
+  },
+
+  run: async (event) =&gt; {
+    const newPersons = event.delta.additions.filter(
+      quad =&gt; quad.predicate.value === 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type'
+    );
+
+    const assertions = [];
+    for (const quad of newPersons) {
+      const personIri = quad.subject;
+      const id = generateUUID();
+
+      assertions.push(
+        quad(personIri, namedNode('ex:id'), literal(id))
+      );
+    }
+
+    return {
+      result: `Generated ${assertions.length} IDs`,
+      assertions
+    };
+  }
+});
+</code></pre>
+<h3 id="example-external-notification"><a class="header" href="#example-external-notification">Example: External Notification</a></h3>
+<pre><code class="language-javascript">defineHook({
+  meta: { name: 'webhook-notification' },
+  when: {
+    kind: 'threshold',
+    value: 10000,
+    operator: 'gte'
+  },
+
+  run: async (event) =&gt; {
+    await fetch('https://api.example.com/webhooks/large-transaction', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        value: event.result.value,
+        timestamp: new Date().toISOString()
+      })
+    });
+
+    return {
+      result: 'notification-sent',
+      timestamp: new Date().toISOString()
+    };
+  }
+});
+</code></pre>
+<h3 id="veto-pattern"><a class="header" href="#veto-pattern">Veto Pattern</a></h3>
+<p>Throwing an error in <code>run</code> <strong>vetoes</strong> the transaction:</p>
+<pre><code class="language-javascript">run: async (event) =&gt; {
+  if (event.result === true) {
+    // Veto: reject the entire transaction
+    throw new Error('Validation failed');
+  }
+
+  // Allow: transaction proceeds
+  return { result: 'valid' };
+}
+</code></pre>
+<h2 id="phase-4-after-optional"><a class="header" href="#phase-4-after-optional">Phase 4: After (Optional)</a></h2>
+<p>The <strong>after</strong> phase is for cleanup, auditing, and metrics. It runs <strong>after</strong> the <code>run</code> phase completes, regardless of success or cancellation.</p>
+<h3 id="function-signature-2"><a class="header" href="#function-signature-2">Function Signature</a></h3>
+<pre><code class="language-javascript">async after({ result, cancelled, reason, payload, context, name }) {
+  // Cleanup and audit logic
+  // Return final result
+  return {
+    finalStatus: cancelled ? 'cancelled' : 'completed'
+  };
+}
+</code></pre>
+<h3 id="example-metrics-collection"><a class="header" href="#example-metrics-collection">Example: Metrics Collection</a></h3>
+<pre><code class="language-javascript">defineHook({
+  meta: { name: 'performance-tracking' },
+  when: { kind: 'sparql-ask', query: '...' },
+
+  run: async (event) =&gt; {
+    const startTime = Date.now();
+    // Main logic
+    const result = await processTransaction(event);
+    const duration = Date.now() - startTime;
+
+    return { result, duration };
+  },
+
+  async after({ result, cancelled, reason }) {
+    if (cancelled) {
+      console.log(`❌ Hook cancelled: ${reason}`);
+      await metrics.increment('hook.cancelled');
+    } else {
+      console.log(`✅ Hook completed in ${result.duration}ms`);
+      await metrics.histogram('hook.duration', result.duration);
+    }
+
+    return {
+      finalStatus: cancelled ? 'cancelled' : 'completed',
+      timestamp: new Date().toISOString()
+    };
+  }
+});
+</code></pre>
+<h3 id="example-audit-logging"><a class="header" href="#example-audit-logging">Example: Audit Logging</a></h3>
+<pre><code class="language-javascript">defineHook({
+  meta: { name: 'audit-trail' },
+  when: { kind: 'delta', pattern: {} },
+
+  run: async (event) =&gt; {
+    // Main processing
+    return {
+      result: 'processed',
+      affectedTriples: event.delta.additions.length
+    };
+  },
+
+  async after({ result, cancelled, payload }) {
+    const auditEntry = {
+      hookName: 'audit-trail',
+      actor: payload.actor,
+      timestamp: new Date().toISOString(),
+      status: cancelled ? 'cancelled' : 'completed',
+      affectedTriples: result?.affectedTriples || 0
+    };
+
+    await auditLog.write(auditEntry);
+
+    return { auditRecorded: true };
+  }
+});
+</code></pre>
+<h3 id="when-to-use-after"><a class="header" href="#when-to-use-after">When to Use After</a></h3>
+<p>✅ <strong>Use after when:</strong></p>
+<ul>
+<li>Recording metrics</li>
+<li>Writing audit logs</li>
+<li>Cleanup operations</li>
+<li>Final notifications</li>
+<li>Collecting execution metadata</li>
+</ul>
+<p>❌ <strong>Don't use after for:</strong></p>
+<ul>
+<li>Main business logic (belongs in <code>run</code>)</li>
+<li>Transaction validation (belongs in <code>run</code>)</li>
+<li>Expensive operations (after runs even on failure)</li>
+</ul>
+<h2 id="context-isolation"><a class="header" href="#context-isolation">Context Isolation</a></h2>
+<p>Each hook execution has an isolated context:</p>
+<pre><code class="language-javascript">{
+  name: 'hook-name',           // Hook identifier
+  payload: {                   // Transaction data
+    additions: [...],
+    removals: [...],
+    actor: 'user@example.org'
+  },
+  context: {                   // Execution context
+    graph: Store,              // RDF graph
+    env: {...},                // Environment variables
+    metadata: {...}            // Custom metadata
+  },
+  result: ...,                 // Condition evaluation result
+  cancelled: false,            // Cancellation flag
+  reason: null                 // Cancellation reason
+}
+</code></pre>
+<h2 id="error-handling"><a class="header" href="#error-handling">Error Handling</a></h2>
+<h3 id="in-before-phase"><a class="header" href="#in-before-phase">In Before Phase</a></h3>
+<pre><code class="language-javascript">before: async ({ payload }) =&gt; {
+  try {
+    validate(payload);
+    return payload;
+  } catch (error) {
+    return {
+      cancel: true,
+      reason: error.message
+    };
+  }
+}
+</code></pre>
+<h3 id="in-run-phase"><a class="header" href="#in-run-phase">In Run Phase</a></h3>
+<pre><code class="language-javascript">run: async (event) =&gt; {
+  try {
+    if (event.result === true) {
+      throw new Error('Validation failed');
+    }
+    return { result: 'valid' };
+  } catch (error) {
+    // Error propagates to transaction (veto)
+    throw error;
+  }
+}
+</code></pre>
+<h3 id="in-after-phase"><a class="header" href="#in-after-phase">In After Phase</a></h3>
+<pre><code class="language-javascript">after: async ({ result, cancelled }) =&gt; {
+  try {
+    await recordMetrics(result);
+  } catch (error) {
+    // Errors in after don't fail the transaction
+    console.error('Metrics recording failed:', error);
+  }
+
+  return { finalStatus: 'completed' };
+}
+</code></pre>
+<h2 id="performance-considerations"><a class="header" href="#performance-considerations">Performance Considerations</a></h2>
+<h3 id="optimize-before-phase"><a class="header" href="#optimize-before-phase">Optimize Before Phase</a></h3>
+<pre><code class="language-javascript">// ✅ Good: Fast checks in before
+before: async ({ payload }) =&gt; {
+  if (!payload.actor) {
+    return { cancel: true, reason: 'Missing actor' };
+  }
+  return payload;
+}
+
+// ❌ Bad: Slow operations in before
+before: async ({ payload }) =&gt; {
+  await complexDatabaseQuery(); // Slow!
+  return payload;
+}
+</code></pre>
+<h3 id="minimize-after-phase-work"><a class="header" href="#minimize-after-phase-work">Minimize After Phase Work</a></h3>
+<pre><code class="language-javascript">// ✅ Good: Async fire-and-forget
+after: async ({ result }) =&gt; {
+  // Fire and forget (don't await)
+  sendNotification(result).catch(console.error);
+  return { status: 'completed' };
+}
+
+// ❌ Bad: Blocking operations
+after: async ({ result }) =&gt; {
+  await slowExternalAPI(result); // Blocks transaction!
+  return { status: 'completed' };
+}
+</code></pre>
+<h2 id="complete-lifecycle-example"><a class="header" href="#complete-lifecycle-example">Complete Lifecycle Example</a></h2>
+<pre><code class="language-javascript">import { defineHook } from 'unrdf';
+
+const comprehensiveHook = defineHook({
+  meta: {
+    name: 'comprehensive-example',
+    description: 'Demonstrates full lifecycle'
+  },
+
+  when: {
+    kind: 'sparql-ask',
+    query: `
+      ASK {
+        ?person a foaf:Person .
+        FILTER NOT EXISTS { ?person foaf:name ?name }
+      }
+    `
+  },
+
+  // Phase 1: Before
+  async before({ payload }) {
+    // Validate payload
+    if (!payload || !payload.actor) {
+      return {
+        cancel: true,
+        reason: 'Transaction requires an actor'
+      };
+    }
+
+    // Normalize payload
+    return {
+      ...payload,
+      validatedAt: new Date().toISOString(),
+      normalizedActor: payload.actor.toLowerCase()
+    };
+  },
+
+  // Phase 2: When (automatic)
+  // SPARQL ASK query evaluates automatically
+
+  // Phase 3: Run
+  async run({ result, payload }) {
+    console.log(`Validating transaction by ${payload.normalizedActor}`);
+
+    if (result === true) {
+      // Veto: person without name detected
+      throw new Error('All persons must have a name');
+    }
+
+    return {
+      result: 'valid',
+      validatedAt: payload.validatedAt,
+      validator: 'comprehensive-example'
+    };
+  },
+
+  // Phase 4: After
+  async after({ result, cancelled, reason, payload }) {
+    if (cancelled) {
+      console.log(`❌ Validation cancelled: ${reason}`);
+      await metrics.increment('validation.cancelled');
+    } else {
+      console.log(`✅ Validation passed at ${result.validatedAt}`);
+      await metrics.increment('validation.passed');
+    }
+
+    // Record audit trail
+    await auditLog.write({
+      hook: 'comprehensive-example',
+      actor: payload.normalizedActor,
+      status: cancelled ? 'cancelled' : 'completed',
+      timestamp: new Date().toISOString()
+    });
+
+    return {
+      finalStatus: cancelled ? 'cancelled' : 'completed',
+      auditRecorded: true
+    };
+  }
+});
+</code></pre>
+<h2 id="next-steps"><a class="header" href="#next-steps">Next Steps</a></h2>
+<p>Continue to learn about:</p>
+<ul>
+<li><strong><a href="predicates.html">Predicates</a></strong> - Different condition types (ASK, THRESHOLD, DELTA, SHACL, etc.)</li>
+<li><strong><a href="effects.html">Effects</a></strong> - What hooks can do (veto, log, notify, transform)</li>
+<li><strong><a href="policy-packs.html">Policy Packs</a></strong> - Organizing hooks into reusable packages</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../hooks/introduction.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../hooks/effects.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../hooks/introduction.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../hooks/effects.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <!-- Livereload script (if served using the cli tool) -->
+        <script>
+            const wsProtocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsAddress = wsProtocol + "//" + location.host + "/" + "__livereload";
+            const socket = new WebSocket(wsAddress);
+            socket.onmessage = function (event) {
+                if (event.data === "reload") {
+                    socket.close();
+                    location.reload();
+                }
+            };
+
+            window.onbeforeunload = function() {
+                socket.close();
+            }
+        </script>
+
+
+        <script>
+            window.playground_line_numbers = true;
+        </script>
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+        <script src="../ace.js"></script>
+        <script src="../editor.js"></script>
+        <script src="../mode-rust.js"></script>
+        <script src="../theme-dawn.js"></script>
+        <script src="../theme-tomorrow_night.js"></script>
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>
