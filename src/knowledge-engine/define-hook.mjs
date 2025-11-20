@@ -126,6 +126,9 @@
 import { createKnowledgeHook } from "./schemas.mjs";
 import { defaultSecurityValidator } from "./security-validator.mjs";
 
+/**
+ *
+ */
 export function defineHook(def) {
   // Use comprehensive Zod validation
   const validatedHook = createKnowledgeHook(def);

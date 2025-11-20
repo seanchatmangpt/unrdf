@@ -11,6 +11,9 @@
  * Mock query engine implementation
  */
 export class MockQueryEngine {
+  /**
+   *
+   */
   constructor() {
     this.askResults = new Map();
     this.selectResults = new Map();
@@ -172,6 +175,9 @@ export class MockQueryEngine {
  * Mock file resolver implementation
  */
 export class MockFileResolver {
+  /**
+   *
+   */
   constructor() {
     this.files = new Map();
     this.accessResults = new Map();
@@ -260,6 +266,9 @@ export class MockFileResolver {
  * Mock condition evaluator implementation
  */
 export class MockConditionEvaluator {
+  /**
+   *
+   */
   constructor() {
     this.evaluationResults = new Map();
     this.callCounts = {

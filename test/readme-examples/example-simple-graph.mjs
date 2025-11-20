@@ -5,6 +5,9 @@
 
 import { createDarkMatterCore, parseTurtle } from '../../src/knowledge-engine/index.mjs';
 
+/**
+ *
+ */
 async function testSimpleGraph() {
   console.log('🧪 Testing Simple Knowledge Graph Example...');
 

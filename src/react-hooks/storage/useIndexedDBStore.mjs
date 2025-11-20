@@ -6,6 +6,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import { IndexedDBQuadStore } from '../../../browser/indexeddb-store.mjs';
 
+/**
+ *
+ */
 export function useIndexedDBStore(options = {}) {
   const [store, setStore] = useState(null);
   const [loading, setLoading] = useState(true);

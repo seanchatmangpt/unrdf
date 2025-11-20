@@ -7,6 +7,9 @@ import { useState, useEffect, useMemo } from 'react';
 import { useQueryCache } from './useQueryCache.mjs';
 import { useKnowledgeEngineContext } from '../context/useKnowledgeEngineContext.mjs';
 
+/**
+ *
+ */
 export function useMemoizedQuery(query, dependencies = []) {
   const { engine, store } = useKnowledgeEngineContext();
   const { get, set } = useQueryCache();

@@ -55,7 +55,13 @@ class BrowserTransactionManager {
 }
 
 // Browser-compatible hook executor
+/**
+ *
+ */
 export class BrowserHookExecutor {
+  /**
+   *
+   */
   constructor(config = {}) {
     this.config = {
       basePath: config.basePath || '/',
@@ -77,6 +83,9 @@ export class BrowserHookExecutor {
     this.cache = new Map();
   }
 
+  /**
+   *
+   */
   async execute(hook, event, options = {}) {
     const startTime = Date.now();
     this.metrics.executions++;
@@ -113,6 +122,9 @@ export class BrowserHookExecutor {
     }
   }
 
+  /**
+   *
+   */
   async executeAll(hooks, event, options = {}) {
     const results = [];
     
@@ -132,17 +144,29 @@ export class BrowserHookExecutor {
     return results;
   }
 
+  /**
+   *
+   */
   getMetrics() {
     return { ...this.metrics };
   }
 
+  /**
+   *
+   */
   clearCache() {
     this.cache.clear();
   }
 }
 
 // Browser-compatible condition evaluator
+/**
+ *
+ */
 export class BrowserConditionEvaluator {
+  /**
+   *
+   */
   constructor(config = {}) {
     this.config = {
       basePath: config.basePath || '/',
@@ -160,6 +184,9 @@ export class BrowserConditionEvaluator {
     };
   }
 
+  /**
+   *
+   */
   async evaluateCondition(condition, graph, options = {}) {
     const cacheKey = `${JSON.stringify(condition)}_${graph.size || 0}`;
     
@@ -203,10 +230,16 @@ export class BrowserConditionEvaluator {
     }
   }
 
+  /**
+   *
+   */
   getCacheStats() {
     return { ...this.cacheStats };
   }
 
+  /**
+   *
+   */
   clearCache() {
     this.cache.clear();
     this.cacheStats = { hits: 0, misses: 0 };
@@ -214,13 +247,22 @@ export class BrowserConditionEvaluator {
 }
 
 // Browser-compatible policy pack manager
+/**
+ *
+ */
 export class BrowserPolicyPackManager {
+  /**
+   *
+   */
   constructor(basePath = '/') {
     this.basePath = basePath;
     this.policyPacks = new Map();
     this.activePacks = new Set();
   }
 
+  /**
+   *
+   */
   async loadPolicyPack(packName, manifest) {
     this.policyPacks.set(packName, {
       name: packName,
@@ -232,6 +274,9 @@ export class BrowserPolicyPackManager {
     });
   }
 
+  /**
+   *
+   */
   activatePolicyPack(packName) {
     const pack = this.policyPacks.get(packName);
     if (pack) {
@@ -242,6 +287,9 @@ export class BrowserPolicyPackManager {
     return false;
   }
 
+  /**
+   *
+   */
   deactivatePolicyPack(packName) {
     const pack = this.policyPacks.get(packName);
     if (pack) {
@@ -252,21 +300,36 @@ export class BrowserPolicyPackManager {
     return false;
   }
 
+  /**
+   *
+   */
   getPolicyPack(packName) {
     return this.policyPacks.get(packName);
   }
 
+  /**
+   *
+   */
   getActivePolicyPacks() {
     return Array.from(this.activePacks).map(name => this.policyPacks.get(name)).filter(Boolean);
   }
 
+  /**
+   *
+   */
   getActiveHooks() {
     return this.getActivePolicyPacks().flatMap(pack => pack.hooks);
   }
 }
 
 // Browser-compatible file resolver
+/**
+ *
+ */
 export class BrowserFileResolver {
+  /**
+   *
+   */
   constructor(config = {}) {
     this.config = {
       basePath: config.basePath || '/',
@@ -286,6 +349,9 @@ export class BrowserFileResolver {
     this.cache = new Map();
   }
 
+  /**
+   *
+   */
   async resolveFileUri(uri, basePath = this.config.basePath) {
     if (uri.startsWith('file://')) {
       return uri.replace('file://', '');
@@ -296,11 +362,17 @@ export class BrowserFileResolver {
     }
   }
 
+  /**
+   *
+   */
   async calculateFileHash(filePath) {
     // Mock hash calculation for browser
     return 'mock-hash-' + randomUUID().slice(0, 16);
   }
 
+  /**
+   *
+   */
   async loadFileWithHash(uri, expectedHash, basePath = this.config.basePath) {
     const filePath = await this.resolveFileUri(uri, basePath);
     const cacheKey = `${filePath}:${expectedHash}`;
@@ -322,6 +394,9 @@ export class BrowserFileResolver {
     return content;
   }
 
+  /**
+   *
+   */
   async loadSparqlFile(uri, expectedHash, basePath = this.config.basePath) {
     const file = await this.loadFileWithHash(uri, expectedHash, basePath);
     return file.content;
@@ -329,7 +404,13 @@ export class BrowserFileResolver {
 }
 
 // Browser-compatible resolution layer
+/**
+ *
+ */
 export class BrowserResolutionLayer {
+  /**
+   *
+   */
   constructor(config = {}) {
     this.config = {
       defaultStrategy: config.defaultStrategy || 'voting',
@@ -346,6 +427,9 @@ export class BrowserResolutionLayer {
     this.strategies = new Map();
   }
 
+  /**
+   *
+   */
   registerAgent(agentId, metadata = {}) {
     this.agents.set(agentId, {
       id: agentId,
@@ -354,11 +438,17 @@ export class BrowserResolutionLayer {
     });
   }
 
+  /**
+   *
+   */
   submitProposal(proposal) {
     this.proposals.set(proposal.id, proposal);
     return proposal.id;
   }
 
+  /**
+   *
+   */
   async resolveProposals(strategy = this.config.defaultStrategy) {
     const pendingProposals = Array.from(this.proposals.values());
     if (pendingProposals.length === 0) {
@@ -385,6 +475,9 @@ export class BrowserResolutionLayer {
     return resolution;
   }
 
+  /**
+   *
+   */
   _mergeProposals(proposals) {
     const additions = [];
     const removals = [];
@@ -401,15 +494,24 @@ export class BrowserResolutionLayer {
     };
   }
 
+  /**
+   *
+   */
   _calculateConsensus(proposals) {
     return proposals.length > 0 ? Math.min(0.8, proposals.length * 0.2) : 0;
   }
 
+  /**
+   *
+   */
   _detectConflicts(proposals) {
     // Simple conflict detection
     return [];
   }
 
+  /**
+   *
+   */
   getStats() {
     return {
       agents: this.agents.size,
@@ -421,7 +523,13 @@ export class BrowserResolutionLayer {
 }
 
 // Browser-compatible knowledge hook manager
+/**
+ *
+ */
 export class BrowserKnowledgeHookManager extends BrowserTransactionManager {
+  /**
+   *
+   */
   constructor(options = {}) {
     super(options);
     
@@ -446,6 +554,9 @@ export class BrowserKnowledgeHookManager extends BrowserTransactionManager {
     this.knowledgeHooks = new Map();
   }
 
+  /**
+   *
+   */
   async addKnowledgeHook(hook) {
     if (!this.enableKnowledgeHooks) {
       throw new Error('Knowledge hooks are disabled');
@@ -471,6 +582,9 @@ export class BrowserKnowledgeHookManager extends BrowserTransactionManager {
     return hook;
   }
 
+  /**
+   *
+   */
   removeKnowledgeHook(hookName) {
     const existed = this.knowledgeHooks.has(hookName);
     if (existed) {
@@ -479,10 +593,16 @@ export class BrowserKnowledgeHookManager extends BrowserTransactionManager {
     return existed;
   }
 
+  /**
+   *
+   */
   getKnowledgeHooks() {
     return Array.from(this.knowledgeHooks.values());
   }
 
+  /**
+   *
+   */
   async executeKnowledgeHook(hookName, event, options = {}) {
     const hook = this.knowledgeHooks.get(hookName);
     if (!hook) {
@@ -492,11 +612,17 @@ export class BrowserKnowledgeHookManager extends BrowserTransactionManager {
     return this.hookExecutor.execute(hook, event, options);
   }
 
+  /**
+   *
+   */
   async executeAllKnowledgeHooks(event, options = {}) {
     const hooks = this.getKnowledgeHooks();
     return this.hookExecutor.executeAll(hooks, event, options);
   }
 
+  /**
+   *
+   */
   getStats() {
     const baseStats = super.getStats();
     const hookExecutorStats = this.hookExecutor.getMetrics();
@@ -516,26 +642,44 @@ export class BrowserKnowledgeHookManager extends BrowserTransactionManager {
 }
 
 // Export factory functions for browser compatibility
+/**
+ *
+ */
 export function createBrowserHookExecutor(config = {}) {
   return new BrowserHookExecutor(config);
 }
 
+/**
+ *
+ */
 export function createBrowserConditionEvaluator(config = {}) {
   return new BrowserConditionEvaluator(config);
 }
 
+/**
+ *
+ */
 export function createBrowserPolicyPackManager(basePath = '/') {
   return new BrowserPolicyPackManager(basePath);
 }
 
+/**
+ *
+ */
 export function createBrowserFileResolver(config = {}) {
   return new BrowserFileResolver(config);
 }
 
+/**
+ *
+ */
 export function createBrowserResolutionLayer(config = {}) {
   return new BrowserResolutionLayer(config);
 }
 
+/**
+ *
+ */
 export function createBrowserKnowledgeHookManager(options = {}) {
   return new BrowserKnowledgeHookManager(options);
 }

@@ -24,6 +24,9 @@ export const isNode = (() => {
 })();
 
 // Random UUID generation - use crypto.randomUUID if available, otherwise fallback
+/**
+ *
+ */
 export function randomUUID() {
   if (typeof crypto !== 'undefined' && crypto.randomUUID) {
     return crypto.randomUUID();
@@ -143,7 +146,13 @@ export const fs = isBrowser ? new BrowserFileSystem() : await import('node:fs').
 export const fsPromises = isBrowser ? new BrowserFileSystem() : await import('node:fs/promises').then(m => m.default);
 
 // Worker thread polyfill for browser
+/**
+ *
+ */
 export class BrowserWorker {
+  /**
+   *
+   */
   constructor(source, options = {}) {
     if (typeof source === 'string' && isBrowser) {
       // Convert string to blob URL (browser only)
@@ -175,6 +184,9 @@ export class BrowserWorker {
     }
   }
 
+  /**
+   *
+   */
   postMessage(data) {
     if (this.terminated) return;
     if (this.worker) {
@@ -182,6 +194,9 @@ export class BrowserWorker {
     }
   }
 
+  /**
+   *
+   */
   terminate() {
     this.terminated = true;
     if (this.worker) {
@@ -189,6 +204,9 @@ export class BrowserWorker {
     }
   }
 
+  /**
+   *
+   */
   on(event, handler) {
     switch (event) {
       case 'message':
@@ -203,6 +221,9 @@ export class BrowserWorker {
     }
   }
 
+  /**
+   *
+   */
   once(event, handler) {
     const wrappedHandler = (data) => {
       handler(data);
@@ -211,6 +232,9 @@ export class BrowserWorker {
     this.on(event, wrappedHandler);
   }
 
+  /**
+   *
+   */
   removeListener(event, handler) {
     switch (event) {
       case 'message':
@@ -229,6 +253,9 @@ export class BrowserWorker {
 export const Worker = isBrowser ? BrowserWorker : await import('node:worker_threads').then(m => m.Worker);
 
 // Mock child_process.execSync - browser-compatible
+/**
+ *
+ */
 export async function execSync(command, options = {}) {
   if (isBrowser) {
     console.warn(`[Browser] execSync not available in browser: ${command}`);
@@ -242,16 +269,28 @@ export async function execSync(command, options = {}) {
 }
 
 // Hash utilities - use Web Crypto API in browser
+/**
+ *
+ */
 export class BrowserHash {
+  /**
+   *
+   */
   constructor(algorithm = 'SHA-256') {
     this.algorithm = algorithm.toLowerCase().replace(/[^a-z0-9]/g, '');
   }
 
+  /**
+   *
+   */
   update(data) {
     this.data = typeof data === 'string' ? new TextEncoder().encode(data) : new Uint8Array(data);
     return this;
   }
 
+  /**
+   *
+   */
   async digest(encoding = 'hex') {
     const hashBuffer = await crypto.subtle.digest(this.algorithm, this.data);
     const hashArray = new Uint8Array(hashBuffer);
@@ -266,6 +305,9 @@ export class BrowserHash {
   }
 }
 
+/**
+ *
+ */
 export async function createHash(algorithm) {
   if (isBrowser) {
     return new BrowserHash(algorithm);

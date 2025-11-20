@@ -6,6 +6,9 @@
 import { useState, useCallback, useRef } from 'react';
 import { LRUCache } from 'lru-cache';
 
+/**
+ *
+ */
 export function useQueryCache(options = {}) {
   const { max = 100, ttl = 300000 } = options;
   const cacheRef = useRef(new LRUCache({ max, ttl }));

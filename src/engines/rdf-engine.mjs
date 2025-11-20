@@ -52,15 +52,27 @@ export class RdfEngine {
   // == Term Creation
   // =================================================================
 
+  /**
+   *
+   */
   namedNode(value) {
     return namedNode(value);
   }
+  /**
+   *
+   */
   literal(value, langOrDt) {
     return literal(value, langOrDt);
   }
+  /**
+   *
+   */
   blankNode(value) {
     return blankNode(value);
   }
+  /**
+   *
+   */
   quad(s, p, o, g = defaultGraph()) {
     return quad(s, p, o, g);
   }

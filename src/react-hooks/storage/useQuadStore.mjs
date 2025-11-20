@@ -6,6 +6,9 @@
 import { useState, useCallback, useMemo } from 'react';
 import { Store } from 'n3';
 
+/**
+ *
+ */
 export function useQuadStore(initialQuads = []) {
   const [store] = useState(() => {
     const s = new Store();

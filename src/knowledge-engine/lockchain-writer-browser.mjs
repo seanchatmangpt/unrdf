@@ -49,6 +49,9 @@ const LockchainConfigSchema = z.object({
  * Browser-compatible Lockchain Writer
  */
 export class BrowserLockchainWriter {
+  /**
+   *
+   */
   constructor(config = {}) {
     const validatedConfig = LockchainConfigSchema.parse({
       ...config,

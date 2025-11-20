@@ -11,6 +11,9 @@
  * Hook builder class for creating test hooks
  */
 export class HookBuilder {
+  /**
+   *
+   */
   constructor() {
     this.hook = {
       meta: {

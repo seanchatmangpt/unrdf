@@ -31,6 +31,9 @@
  * Memory Profiler with leak detection
  */
 export class MemoryProfiler {
+  /**
+   *
+   */
   constructor() {
     this.activeSessions = new Map();
     this.snapshotInterval = 100; // ms between snapshots

@@ -19,6 +19,9 @@ const { namedNode, literal, blankNode } = DataFactory;
  * Data quality assessment result
  */
 export class QualityAssessment {
+  /**
+   *
+   */
   constructor() {
     this.overallScore = 0;
     this.dimensions = {};

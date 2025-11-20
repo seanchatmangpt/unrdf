@@ -30,6 +30,9 @@ import { join } from 'node:path';
  * Note: Only works in Node.js environment
  */
 export class CpuProfiler {
+  /**
+   *
+   */
   constructor(options = {}) {
     this.options = {
       sampleInterval: 100, // microseconds

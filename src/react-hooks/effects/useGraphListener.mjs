@@ -6,6 +6,9 @@
 import { useEffect } from 'react';
 import { useKnowledgeEngineContext } from '../context/useKnowledgeEngineContext.mjs';
 
+/**
+ *
+ */
 export function useGraphListener(eventType, handler) {
   const { engine } = useKnowledgeEngineContext();
 

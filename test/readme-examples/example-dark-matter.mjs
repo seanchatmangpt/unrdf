@@ -5,6 +5,9 @@
 
 import { createDarkMatterCore } from '../../src/knowledge-engine/index.mjs';
 
+/**
+ *
+ */
 async function testDarkMatter() {
   console.log('🧪 Testing Dark Matter Example...');
 

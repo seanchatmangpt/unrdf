@@ -16,6 +16,9 @@ import { randomUUID } from 'crypto';
  * Terraform utilities for KGC sidecar E2E tests
  */
 export class TerraformManager {
+  /**
+   *
+   */
   constructor(terraformDir, options = {}) {
     this.terraformDir = terraformDir;
     this.options = {

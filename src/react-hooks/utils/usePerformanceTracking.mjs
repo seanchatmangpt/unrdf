@@ -5,6 +5,9 @@
 
 import { useState, useCallback } from 'react';
 
+/**
+ *
+ */
 export function usePerformanceTracking() {
   const [metrics, setMetrics] = useState([]);
 

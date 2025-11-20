@@ -18,6 +18,9 @@ const { namedNode, quad } = DataFactory;
  * Builder for creating test data objects
  */
 export class TestDataBuilder {
+  /**
+   *
+   */
   constructor() {
     this.counter = 0;
   }

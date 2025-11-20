@@ -41,6 +41,9 @@ function quadKey(quad) {
  * const quads = await store.match({ subject: namedNode('http://example.org/alice') });
  */
 export class IndexedDBQuadStore {
+  /**
+   *
+   */
   constructor() {
     this.db = null;
     this.initPromise = null;

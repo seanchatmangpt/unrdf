@@ -11,6 +11,9 @@
  * Factory for creating mocks for knowledge engine components
  */
 export class MockFactory {
+  /**
+   *
+   */
   constructor(vi) {
     this.vi = vi;
     this.mocks = new Map();

@@ -6,6 +6,9 @@
 import { createDarkMatterCore, defineHook, registerHook, DataFactory } from '../../src/knowledge-engine/index.mjs';
 const { namedNode, quad, literal } = DataFactory;
 
+/**
+ *
+ */
 async function testPolicyValidation() {
   console.log('🧪 Testing Policy-Driven Validation Example...');
 

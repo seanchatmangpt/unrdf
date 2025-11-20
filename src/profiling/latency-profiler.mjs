@@ -34,6 +34,9 @@ import { performance } from 'node:perf_hooks';
  * Latency Profiler with high-resolution timing
  */
 export class LatencyProfiler {
+  /**
+   *
+   */
   constructor() {
     this.activeSessions = new Map();
     this.histogramBuckets = [1, 5, 10, 25, 50, 100, 250, 500, 1000, 2500, 5000, 10000];
