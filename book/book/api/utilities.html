@@ -1,0 +1,971 @@
+<!DOCTYPE HTML>
+<html lang="en" class="navy" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Utilities - UNRDF - Universal RDF Framework</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="Production-ready RDF knowledge graph library with Knowledge Hooks and autonomic capabilities">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "navy";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('navy')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="../getting-started/quick-start.html"><strong aria-hidden="true">2.</strong> Getting Started</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../getting-started/quick-start.html"><strong aria-hidden="true">2.1.</strong> Quick Start</a></li><li class="chapter-item "><a href="../getting-started/installation.html"><strong aria-hidden="true">2.2.</strong> Installation</a></li><li class="chapter-item "><a href="../getting-started/basic-usage.html"><strong aria-hidden="true">2.3.</strong> Basic Usage</a></li><li class="chapter-item "><a href="../getting-started/first-hook.html"><strong aria-hidden="true">2.4.</strong> Your First Hook</a></li></ol></li><li class="chapter-item expanded "><a href="../concepts/rdf-fundamentals.html"><strong aria-hidden="true">3.</strong> Concepts</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../concepts/rdf-fundamentals.html"><strong aria-hidden="true">3.1.</strong> RDF Fundamentals</a></li><li class="chapter-item "><a href="../concepts/composables.html"><strong aria-hidden="true">3.2.</strong> Composables</a></li><li class="chapter-item "><a href="../concepts/store-context.html"><strong aria-hidden="true">3.3.</strong> Store & Context</a></li><li class="chapter-item "><a href="../concepts/transactions.html"><strong aria-hidden="true">3.4.</strong> Transactions</a></li></ol></li><li class="chapter-item expanded "><a href="../hooks/introduction.html"><strong aria-hidden="true">4.</strong> Hooks</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../hooks/introduction.html"><strong aria-hidden="true">4.1.</strong> Introduction</a></li><li class="chapter-item "><a href="../hooks/lifecycle.html"><strong aria-hidden="true">4.2.</strong> Lifecycle</a></li><li class="chapter-item "><a href="../hooks/effects.html"><strong aria-hidden="true">4.3.</strong> Effects</a></li><li class="chapter-item "><a href="../hooks/predicates.html"><strong aria-hidden="true">4.4.</strong> Predicates</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../hooks/predicates/ask.html"><strong aria-hidden="true">4.4.1.</strong> ASK</a></li><li class="chapter-item "><a href="../hooks/predicates/shacl.html"><strong aria-hidden="true">4.4.2.</strong> SHACL</a></li><li class="chapter-item "><a href="../hooks/predicates/delta.html"><strong aria-hidden="true">4.4.3.</strong> Delta</a></li><li class="chapter-item "><a href="../hooks/predicates/threshold.html"><strong aria-hidden="true">4.4.4.</strong> Threshold</a></li><li class="chapter-item "><a href="../hooks/predicates/custom.html"><strong aria-hidden="true">4.4.5.</strong> Custom</a></li></ol></li></ol></li><li class="chapter-item expanded "><a href="../api/core.html"><strong aria-hidden="true">5.</strong> API Reference</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../api/cli.html"><strong aria-hidden="true">5.1.</strong> CLI</a></li><li class="chapter-item "><a href="../api/core.html"><strong aria-hidden="true">5.2.</strong> Core</a></li><li class="chapter-item "><a href="../api/knowledge-engine.html"><strong aria-hidden="true">5.3.</strong> Knowledge Engine</a></li><li class="chapter-item "><a href="../api/composables.html"><strong aria-hidden="true">5.4.</strong> Composables</a></li><li class="chapter-item expanded "><a href="../api/utilities.html" class="active"><strong aria-hidden="true">5.5.</strong> Utilities</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">UNRDF - Universal RDF Framework</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/seanchatmangpt/unrdf" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <a href="https://github.com/seanchatmangpt/unrdf/edit/main/book/src/api/utilities.md" title="Suggest an edit" aria-label="Suggest an edit">
+                            <i id="git-edit-button" class="fa fa-edit"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="utilities-api-reference"><a class="header" href="#utilities-api-reference">Utilities API Reference</a></h1>
+<p>UNRDF provides utility functions for common RDF operations, error handling, validation, and debugging.</p>
+<h2 id="parsing--serialization"><a class="header" href="#parsing--serialization">Parsing &amp; Serialization</a></h2>
+<h3 id="parseturtlettl-options"><a class="header" href="#parseturtlettl-options"><code>parseTurtle(ttl, options)</code></a></h3>
+<p>Parse Turtle string into RDF quads.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>ttl</code> (string): Turtle/TriG string (required)</li>
+<li><code>options</code> (Object, optional): Parse options
+<ul>
+<li><code>baseIRI</code> (string): Base IRI for resolving relative URIs</li>
+<li><code>blankNodePrefix</code> (string): Prefix for blank node identifiers</li>
+<li><code>format</code> (string): Format ('Turtle', 'TriG', 'N-Triples', 'N-Quads')</li>
+</ul>
+</li>
+</ul>
+<p><strong>Returns:</strong> <code>Store</code> - N3 Store containing parsed quads</p>
+<p><strong>Throws:</strong> <code>Error</code> - If parsing fails</p>
+<p><strong>Example:</strong></p>
+<pre><code class="language-javascript">import { parseTurtle } from 'unrdf/utils';
+
+const ttl = `
+  @prefix ex: &lt;http://example.org/&gt; .
+  ex:alice ex:knows ex:bob .
+`;
+
+const store = parseTurtle(ttl, {
+  baseIRI: 'http://example.org/'
+});
+
+console.log('Parsed', store.size, 'quads');
+</code></pre>
+<hr />
+<h3 id="serializeturtlestore-options"><a class="header" href="#serializeturtlestore-options"><code>serializeTurtle(store, options)</code></a></h3>
+<p>Serialize RDF quads to Turtle string.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>store</code> (Store|Array): N3 Store or array of quads (required)</li>
+<li><code>options</code> (Object, optional): Serialization options
+<ul>
+<li><code>prefixes</code> (Object): Namespace prefix mappings</li>
+<li><code>format</code> (string): Output format ('Turtle', 'TriG', 'N-Triples', 'N-Quads')</li>
+</ul>
+</li>
+</ul>
+<p><strong>Returns:</strong> <code>string</code> - Serialized Turtle/TriG string</p>
+<p><strong>Example:</strong></p>
+<pre><code class="language-javascript">import { serializeTurtle } from 'unrdf/utils';
+
+const turtle = serializeTurtle(store, {
+  prefixes: {
+    ex: 'http://example.org/',
+    foaf: 'http://xmlns.com/foaf/0.1/'
+  },
+  format: 'Turtle'
+});
+
+console.log(turtle);
+</code></pre>
+<p><strong>Output:</strong></p>
+<pre><code class="language-turtle">@prefix ex: &lt;http://example.org/&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+
+ex:alice foaf:knows ex:bob .
+</code></pre>
+<hr />
+<h3 id="parsenquadsnquads-options"><a class="header" href="#parsenquadsnquads-options"><code>parseNQuads(nquads, options)</code></a></h3>
+<p>Parse N-Quads string into RDF quads.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>nquads</code> (string): N-Quads string (required)</li>
+<li><code>options</code> (Object, optional): Parse options</li>
+</ul>
+<p><strong>Returns:</strong> <code>Store</code> - N3 Store containing parsed quads</p>
+<p><strong>Example:</strong></p>
+<pre><code class="language-javascript">import { parseNQuads } from 'unrdf/utils';
+
+const nquads = `
+  &lt;http://example.org/alice&gt; &lt;http://xmlns.com/foaf/0.1/knows&gt; &lt;http://example.org/bob&gt; .
+`;
+
+const store = parseNQuads(nquads);
+</code></pre>
+<hr />
+<h3 id="serializenquadsstore"><a class="header" href="#serializenquadsstore"><code>serializeNQuads(store)</code></a></h3>
+<p>Serialize RDF quads to N-Quads string.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>store</code> (Store|Array): N3 Store or array of quads (required)</li>
+</ul>
+<p><strong>Returns:</strong> <code>string</code> - Serialized N-Quads string</p>
+<p><strong>Example:</strong></p>
+<pre><code class="language-javascript">import { serializeNQuads } from 'unrdf/utils';
+
+const nquads = serializeNQuads(store);
+console.log(nquads);
+</code></pre>
+<hr />
+<h2 id="validation"><a class="header" href="#validation">Validation</a></h2>
+<h3 id="validatequadquad"><a class="header" href="#validatequadquad"><code>validateQuad(quad)</code></a></h3>
+<p>Validate that an object is a valid RDF quad.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>quad</code> (Object): Object to validate (required)</li>
+</ul>
+<p><strong>Returns:</strong> <code>Object</code> - Validation result</p>
+<ul>
+<li><code>valid</code> (boolean): Is valid quad</li>
+<li><code>errors</code> (Array<string>): Validation errors</li>
+</ul>
+<p><strong>Example:</strong></p>
+<pre><code class="language-javascript">import { validateQuad } from 'unrdf/utils';
+import { DataFactory } from 'n3';
+
+const { namedNode, literal, quad } = DataFactory;
+
+const q = quad(
+  namedNode('http://example.org/alice'),
+  namedNode('http://xmlns.com/foaf/0.1/name'),
+  literal('Alice')
+);
+
+const result = validateQuad(q);
+console.log('Valid:', result.valid);
+console.log('Errors:', result.errors);
+</code></pre>
+<hr />
+<h3 id="validatestorestore"><a class="header" href="#validatestorestore"><code>validateStore(store)</code></a></h3>
+<p>Validate that a store is properly formatted.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>store</code> (Store): N3 Store to validate (required)</li>
+</ul>
+<p><strong>Returns:</strong> <code>Object</code> - Validation result</p>
+<ul>
+<li><code>valid</code> (boolean): Is valid store</li>
+<li><code>errors</code> (Array<string>): Validation errors</li>
+<li><code>warnings</code> (Array<string>): Validation warnings</li>
+<li><code>stats</code> (Object): Store statistics</li>
+</ul>
+<p><strong>Example:</strong></p>
+<pre><code class="language-javascript">import { validateStore } from 'unrdf/utils';
+
+const result = validateStore(store);
+
+if (!result.valid) {
+  console.error('Invalid store:', result.errors);
+} else {
+  console.log('Valid store with', result.stats.quads, 'quads');
+}
+</code></pre>
+<hr />
+<h3 id="validateturtlettl"><a class="header" href="#validateturtlettl"><code>validateTurtle(ttl)</code></a></h3>
+<p>Validate Turtle syntax without parsing.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>ttl</code> (string): Turtle string to validate (required)</li>
+</ul>
+<p><strong>Returns:</strong> <code>Object</code> - Validation result</p>
+<ul>
+<li><code>valid</code> (boolean): Is valid Turtle</li>
+<li><code>errors</code> (Array<Object>): Syntax errors with line/column info</li>
+</ul>
+<p><strong>Example:</strong></p>
+<pre><code class="language-javascript">import { validateTurtle } from 'unrdf/utils';
+
+const ttl = `
+  @prefix ex: &lt;http://example.org/&gt; .
+  ex:alice ex:knows ex:bob .
+`;
+
+const result = validateTurtle(ttl);
+
+if (!result.valid) {
+  result.errors.forEach(err =&gt; {
+    console.error(`Line ${err.line}, column ${err.column}: ${err.message}`);
+  });
+}
+</code></pre>
+<hr />
+<h2 id="term-utilities"><a class="header" href="#term-utilities">Term Utilities</a></h2>
+<h3 id="isnamednodeterm"><a class="header" href="#isnamednodeterm"><code>isNamedNode(term)</code></a></h3>
+<p>Check if a term is a named node.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>term</code> (Term): RDF term to check (required)</li>
+</ul>
+<p><strong>Returns:</strong> <code>boolean</code> - True if named node</p>
+<p><strong>Example:</strong></p>
+<pre><code class="language-javascript">import { isNamedNode } from 'unrdf/utils';
+import { DataFactory } from 'n3';
+
+const { namedNode, literal } = DataFactory;
+
+console.log(isNamedNode(namedNode('http://example.org/alice'))); // true
+console.log(isNamedNode(literal('Alice'))); // false
+</code></pre>
+<hr />
+<h3 id="isliteralterm"><a class="header" href="#isliteralterm"><code>isLiteral(term)</code></a></h3>
+<p>Check if a term is a literal.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>term</code> (Term): RDF term to check (required)</li>
+</ul>
+<p><strong>Returns:</strong> <code>boolean</code> - True if literal</p>
+<p><strong>Example:</strong></p>
+<pre><code class="language-javascript">import { isLiteral } from 'unrdf/utils';
+
+console.log(isLiteral(literal('Alice'))); // true
+console.log(isLiteral(namedNode('http://example.org/alice'))); // false
+</code></pre>
+<hr />
+<h3 id="isblanknodeterm"><a class="header" href="#isblanknodeterm"><code>isBlankNode(term)</code></a></h3>
+<p>Check if a term is a blank node.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>term</code> (Term): RDF term to check (required)</li>
+</ul>
+<p><strong>Returns:</strong> <code>boolean</code> - True if blank node</p>
+<p><strong>Example:</strong></p>
+<pre><code class="language-javascript">import { isBlankNode } from 'unrdf/utils';
+import { DataFactory } from 'n3';
+
+const { blankNode } = DataFactory;
+
+console.log(isBlankNode(blankNode('b1'))); // true
+</code></pre>
+<hr />
+<h3 id="termequalsterm1-term2"><a class="header" href="#termequalsterm1-term2"><code>termEquals(term1, term2)</code></a></h3>
+<p>Check if two terms are equal.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>term1</code> (Term): First term (required)</li>
+<li><code>term2</code> (Term): Second term (required)</li>
+</ul>
+<p><strong>Returns:</strong> <code>boolean</code> - True if terms are equal</p>
+<p><strong>Example:</strong></p>
+<pre><code class="language-javascript">import { termEquals } from 'unrdf/utils';
+import { DataFactory } from 'n3';
+
+const { namedNode } = DataFactory;
+
+const alice1 = namedNode('http://example.org/alice');
+const alice2 = namedNode('http://example.org/alice');
+const bob = namedNode('http://example.org/bob');
+
+console.log(termEquals(alice1, alice2)); // true
+console.log(termEquals(alice1, bob)); // false
+</code></pre>
+<hr />
+<h3 id="getliteralvalueliteral"><a class="header" href="#getliteralvalueliteral"><code>getLiteralValue(literal)</code></a></h3>
+<p>Get the string value of a literal.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>literal</code> (Literal): Literal term (required)</li>
+</ul>
+<p><strong>Returns:</strong> <code>string</code> - Literal value</p>
+<p><strong>Example:</strong></p>
+<pre><code class="language-javascript">import { getLiteralValue } from 'unrdf/utils';
+import { DataFactory } from 'n3';
+
+const { literal } = DataFactory;
+
+const name = literal('Alice');
+console.log(getLiteralValue(name)); // "Alice"
+
+const age = literal('30', 'http://www.w3.org/2001/XMLSchema#integer');
+console.log(getLiteralValue(age)); // "30"
+</code></pre>
+<hr />
+<h3 id="getliteraldatatypeliteral"><a class="header" href="#getliteraldatatypeliteral"><code>getLiteralDatatype(literal)</code></a></h3>
+<p>Get the datatype IRI of a literal.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>literal</code> (Literal): Literal term (required)</li>
+</ul>
+<p><strong>Returns:</strong> <code>string</code> - Datatype IRI</p>
+<p><strong>Example:</strong></p>
+<pre><code class="language-javascript">import { getLiteralDatatype } from 'unrdf/utils';
+
+const age = literal('30', 'http://www.w3.org/2001/XMLSchema#integer');
+console.log(getLiteralDatatype(age));
+// =&gt; "http://www.w3.org/2001/XMLSchema#integer"
+</code></pre>
+<hr />
+<h2 id="quad-utilities"><a class="header" href="#quad-utilities">Quad Utilities</a></h2>
+<h3 id="quadequalsquad1-quad2"><a class="header" href="#quadequalsquad1-quad2"><code>quadEquals(quad1, quad2)</code></a></h3>
+<p>Check if two quads are equal.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>quad1</code> (Quad): First quad (required)</li>
+<li><code>quad2</code> (Quad): Second quad (required)</li>
+</ul>
+<p><strong>Returns:</strong> <code>boolean</code> - True if quads are equal</p>
+<p><strong>Example:</strong></p>
+<pre><code class="language-javascript">import { quadEquals } from 'unrdf/utils';
+
+const q1 = quad(alice, knows, bob);
+const q2 = quad(alice, knows, bob);
+
+console.log(quadEquals(q1, q2)); // true
+</code></pre>
+<hr />
+<h3 id="clonequadquad"><a class="header" href="#clonequadquad"><code>cloneQuad(quad)</code></a></h3>
+<p>Create a deep copy of a quad.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>quad</code> (Quad): Quad to clone (required)</li>
+</ul>
+<p><strong>Returns:</strong> <code>Quad</code> - Cloned quad</p>
+<p><strong>Example:</strong></p>
+<pre><code class="language-javascript">import { cloneQuad } from 'unrdf/utils';
+
+const original = quad(alice, knows, bob);
+const copy = cloneQuad(original);
+
+console.log(quadEquals(original, copy)); // true
+console.log(original === copy); // false
+</code></pre>
+<hr />
+<h3 id="matchespatternquad-pattern"><a class="header" href="#matchespatternquad-pattern"><code>matchesPattern(quad, pattern)</code></a></h3>
+<p>Check if a quad matches a pattern.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>quad</code> (Quad): Quad to check (required)</li>
+<li><code>pattern</code> (Object): Pattern to match
+<ul>
+<li><code>subject</code> (Term|null): Subject pattern</li>
+<li><code>predicate</code> (Term|null): Predicate pattern</li>
+<li><code>object</code> (Term|null): Object pattern</li>
+<li><code>graph</code> (Term|null): Graph pattern</li>
+</ul>
+</li>
+</ul>
+<p><strong>Returns:</strong> <code>boolean</code> - True if quad matches pattern</p>
+<p><strong>Example:</strong></p>
+<pre><code class="language-javascript">import { matchesPattern } from 'unrdf/utils';
+
+const q = quad(alice, knows, bob);
+
+// Match specific predicate
+const matches = matchesPattern(q, {
+  subject: null,
+  predicate: knows,
+  object: null,
+  graph: null
+});
+
+console.log('Matches:', matches); // true
+</code></pre>
+<hr />
+<h2 id="store-utilities"><a class="header" href="#store-utilities">Store Utilities</a></h2>
+<h3 id="mergestoresstores"><a class="header" href="#mergestoresstores"><code>mergeStores(...stores)</code></a></h3>
+<p>Merge multiple stores into one.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>...stores</code> (Store[]): Stores to merge (required)</li>
+</ul>
+<p><strong>Returns:</strong> <code>Store</code> - New store containing all quads</p>
+<p><strong>Example:</strong></p>
+<pre><code class="language-javascript">import { mergeStores } from 'unrdf/utils';
+
+const store1 = new Store([quad1, quad2]);
+const store2 = new Store([quad3, quad4]);
+
+const merged = mergeStores(store1, store2);
+console.log('Merged size:', merged.size);
+</code></pre>
+<hr />
+<h3 id="clonestorestore"><a class="header" href="#clonestorestore"><code>cloneStore(store)</code></a></h3>
+<p>Create a deep copy of a store.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>store</code> (Store): Store to clone (required)</li>
+</ul>
+<p><strong>Returns:</strong> <code>Store</code> - Cloned store</p>
+<p><strong>Example:</strong></p>
+<pre><code class="language-javascript">import { cloneStore } from 'unrdf/utils';
+
+const original = new Store([quad1, quad2]);
+const copy = cloneStore(original);
+
+console.log('Copy size:', copy.size);
+console.log('Same reference:', original === copy); // false
+</code></pre>
+<hr />
+<h3 id="filterstorestore-predicate"><a class="header" href="#filterstorestore-predicate"><code>filterStore(store, predicate)</code></a></h3>
+<p>Filter a store based on a predicate function.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>store</code> (Store): Store to filter (required)</li>
+<li><code>predicate</code> (Function): Filter function <code>(quad) =&gt; boolean</code> (required)</li>
+</ul>
+<p><strong>Returns:</strong> <code>Store</code> - New store with filtered quads</p>
+<p><strong>Example:</strong></p>
+<pre><code class="language-javascript">import { filterStore } from 'unrdf/utils';
+
+const filtered = filterStore(store, quad =&gt; {
+  return quad.predicate.value === 'http://xmlns.com/foaf/0.1/knows';
+});
+
+console.log('Filtered size:', filtered.size);
+</code></pre>
+<hr />
+<h3 id="mapstorestore-mapper"><a class="header" href="#mapstorestore-mapper"><code>mapStore(store, mapper)</code></a></h3>
+<p>Map quads in a store using a mapper function.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>store</code> (Store): Store to map (required)</li>
+<li><code>mapper</code> (Function): Map function <code>(quad) =&gt; quad</code> (required)</li>
+</ul>
+<p><strong>Returns:</strong> <code>Store</code> - New store with mapped quads</p>
+<p><strong>Example:</strong></p>
+<pre><code class="language-javascript">import { mapStore } from 'unrdf/utils';
+
+// Replace all blank nodes with named nodes
+const mapped = mapStore(store, quad =&gt; {
+  if (quad.subject.termType === 'BlankNode') {
+    return quad({
+      subject: namedNode(`http://example.org/${quad.subject.value}`),
+      predicate: quad.predicate,
+      object: quad.object,
+      graph: quad.graph
+    });
+  }
+  return quad;
+});
+</code></pre>
+<hr />
+<h2 id="prefix-utilities"><a class="header" href="#prefix-utilities">Prefix Utilities</a></h2>
+<h3 id="expandprefixprefixed-prefixes"><a class="header" href="#expandprefixprefixed-prefixes"><code>expandPrefix(prefixed, prefixes)</code></a></h3>
+<p>Expand a prefixed URI to full IRI.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>prefixed</code> (string): Prefixed URI (e.g., 'ex:alice') (required)</li>
+<li><code>prefixes</code> (Object): Prefix mappings (required)</li>
+</ul>
+<p><strong>Returns:</strong> <code>string</code> - Expanded IRI</p>
+<p><strong>Example:</strong></p>
+<pre><code class="language-javascript">import { expandPrefix } from 'unrdf/utils';
+
+const prefixes = {
+  ex: 'http://example.org/',
+  foaf: 'http://xmlns.com/foaf/0.1/'
+};
+
+const expanded = expandPrefix('ex:alice', prefixes);
+console.log(expanded); // "http://example.org/alice"
+</code></pre>
+<hr />
+<h3 id="compactiriiri-prefixes"><a class="header" href="#compactiriiri-prefixes"><code>compactIRI(iri, prefixes)</code></a></h3>
+<p>Compact an IRI to prefixed form.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>iri</code> (string): Full IRI (required)</li>
+<li><code>prefixes</code> (Object): Prefix mappings (required)</li>
+</ul>
+<p><strong>Returns:</strong> <code>string</code> - Prefixed URI or original IRI</p>
+<p><strong>Example:</strong></p>
+<pre><code class="language-javascript">import { compactIRI } from 'unrdf/utils';
+
+const prefixes = {
+  ex: 'http://example.org/',
+  foaf: 'http://xmlns.com/foaf/0.1/'
+};
+
+const compacted = compactIRI('http://example.org/alice', prefixes);
+console.log(compacted); // "ex:alice"
+</code></pre>
+<hr />
+<h3 id="loadprefixesformat"><a class="header" href="#loadprefixesformat"><code>loadPrefixes(format)</code></a></h3>
+<p>Load common prefix mappings.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>format</code> (string, optional): Format ('rdf', 'rdfs', 'owl', 'foaf', 'schema', 'all')</li>
+</ul>
+<p><strong>Returns:</strong> <code>Object</code> - Prefix mappings</p>
+<p><strong>Example:</strong></p>
+<pre><code class="language-javascript">import { loadPrefixes } from 'unrdf/utils';
+
+// Load all common prefixes
+const prefixes = loadPrefixes('all');
+
+// Load specific ontology
+const rdfPrefixes = loadPrefixes('rdf');
+</code></pre>
+<hr />
+<h2 id="error-handling"><a class="header" href="#error-handling">Error Handling</a></h2>
+<h3 id="isrdferrorerror"><a class="header" href="#isrdferrorerror"><code>isRDFError(error)</code></a></h3>
+<p>Check if an error is an RDF-specific error.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>error</code> (Error): Error to check (required)</li>
+</ul>
+<p><strong>Returns:</strong> <code>boolean</code> - True if RDF error</p>
+<p><strong>Example:</strong></p>
+<pre><code class="language-javascript">import { isRDFError } from 'unrdf/utils';
+
+try {
+  parseTurtle('invalid turtle');
+} catch (error) {
+  if (isRDFError(error)) {
+    console.error('RDF Error:', error.message);
+  }
+}
+</code></pre>
+<hr />
+<h3 id="formaterrorerror-options"><a class="header" href="#formaterrorerror-options"><code>formatError(error, options)</code></a></h3>
+<p>Format an error for display.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>error</code> (Error): Error to format (required)</li>
+<li><code>options</code> (Object, optional): Format options
+<ul>
+<li><code>verbose</code> (boolean): Include stack trace</li>
+<li><code>color</code> (boolean): Use ANSI colors</li>
+</ul>
+</li>
+</ul>
+<p><strong>Returns:</strong> <code>string</code> - Formatted error message</p>
+<p><strong>Example:</strong></p>
+<pre><code class="language-javascript">import { formatError } from 'unrdf/utils';
+
+try {
+  // Some operation
+} catch (error) {
+  console.error(formatError(error, { verbose: true, color: true }));
+}
+</code></pre>
+<hr />
+<h2 id="debugging-utilities"><a class="header" href="#debugging-utilities">Debugging Utilities</a></h2>
+<h3 id="inspectquadquad-options"><a class="header" href="#inspectquadquad-options"><code>inspectQuad(quad, options)</code></a></h3>
+<p>Inspect a quad with detailed information.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>quad</code> (Quad): Quad to inspect (required)</li>
+<li><code>options</code> (Object, optional): Inspect options
+<ul>
+<li><code>depth</code> (number): Inspection depth</li>
+<li><code>colors</code> (boolean): Use colors</li>
+</ul>
+</li>
+</ul>
+<p><strong>Returns:</strong> <code>string</code> - Formatted quad information</p>
+<p><strong>Example:</strong></p>
+<pre><code class="language-javascript">import { inspectQuad } from 'unrdf/utils';
+
+const q = quad(alice, knows, bob);
+console.log(inspectQuad(q, { colors: true }));
+</code></pre>
+<p><strong>Output:</strong></p>
+<pre><code>Quad {
+  subject: NamedNode { value: 'http://example.org/alice' },
+  predicate: NamedNode { value: 'http://xmlns.com/foaf/0.1/knows' },
+  object: NamedNode { value: 'http://example.org/bob' },
+  graph: DefaultGraph {}
+}
+</code></pre>
+<hr />
+<h3 id="inspectstorestore-options"><a class="header" href="#inspectstorestore-options"><code>inspectStore(store, options)</code></a></h3>
+<p>Inspect a store with statistics and sample quads.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>store</code> (Store): Store to inspect (required)</li>
+<li><code>options</code> (Object, optional): Inspect options
+<ul>
+<li><code>sampleSize</code> (number): Number of sample quads to show. Default: 5</li>
+<li><code>showStats</code> (boolean): Show statistics. Default: true</li>
+</ul>
+</li>
+</ul>
+<p><strong>Returns:</strong> <code>string</code> - Formatted store information</p>
+<p><strong>Example:</strong></p>
+<pre><code class="language-javascript">import { inspectStore } from 'unrdf/utils';
+
+console.log(inspectStore(store, { sampleSize: 10 }));
+</code></pre>
+<p><strong>Output:</strong></p>
+<pre><code>Store {
+  size: 1,234 quads
+  subjects: 234
+  predicates: 12
+  objects: 456
+  graphs: 3
+
+  Sample quads:
+    1. ex:alice foaf:knows ex:bob
+    2. ex:bob foaf:name "Bob"
+    ...
+}
+</code></pre>
+<hr />
+<h3 id="diffstoresstore1-store2"><a class="header" href="#diffstoresstore1-store2"><code>diffStores(store1, store2)</code></a></h3>
+<p>Compare two stores and show differences.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>store1</code> (Store): First store (required)</li>
+<li><code>store2</code> (Store): Second store (required)</li>
+</ul>
+<p><strong>Returns:</strong> <code>Object</code> - Difference information</p>
+<ul>
+<li><code>added</code> (Store): Quads in store2 but not store1</li>
+<li><code>removed</code> (Store): Quads in store1 but not store2</li>
+<li><code>common</code> (Store): Quads in both stores</li>
+</ul>
+<p><strong>Example:</strong></p>
+<pre><code class="language-javascript">import { diffStores } from 'unrdf/utils';
+
+const diff = diffStores(store1, store2);
+
+console.log('Added:', diff.added.size);
+console.log('Removed:', diff.removed.size);
+console.log('Common:', diff.common.size);
+</code></pre>
+<hr />
+<h2 id="performance-utilities"><a class="header" href="#performance-utilities">Performance Utilities</a></h2>
+<h3 id="measureoperationfn-label"><a class="header" href="#measureoperationfn-label"><code>measureOperation(fn, label)</code></a></h3>
+<p>Measure the execution time of an operation.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>fn</code> (Function): Function to measure (required)</li>
+<li><code>label</code> (string, optional): Label for the operation</li>
+</ul>
+<p><strong>Returns:</strong> <code>Promise&lt;Object&gt;</code> - Result and timing</p>
+<ul>
+<li><code>result</code> (any): Function result</li>
+<li><code>duration</code> (number): Duration in milliseconds</li>
+</ul>
+<p><strong>Example:</strong></p>
+<pre><code class="language-javascript">import { measureOperation } from 'unrdf/utils';
+
+const { result, duration } = await measureOperation(
+  async () =&gt; {
+    return parseTurtle(largeTurtleData);
+  },
+  'Parse large Turtle file'
+);
+
+console.log(`Parsed in ${duration}ms`);
+</code></pre>
+<hr />
+<h3 id="benchmarkoperations-iterations"><a class="header" href="#benchmarkoperations-iterations"><code>benchmark(operations, iterations)</code></a></h3>
+<p>Benchmark multiple operations.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>operations</code> (Object): Operations to benchmark <code>{ name: function }</code> (required)</li>
+<li><code>iterations</code> (number, optional): Number of iterations. Default: 100</li>
+</ul>
+<p><strong>Returns:</strong> <code>Object</code> - Benchmark results</p>
+<p><strong>Example:</strong></p>
+<pre><code class="language-javascript">import { benchmark } from 'unrdf/utils';
+
+const results = await benchmark({
+  'Parse Turtle': () =&gt; parseTurtle(ttlData),
+  'Parse N-Quads': () =&gt; parseNQuads(nquadData),
+  'Serialize Turtle': () =&gt; serializeTurtle(store)
+}, 1000);
+
+console.table(results);
+</code></pre>
+<p><strong>Output:</strong></p>
+<pre><code>┌───────────────────┬──────────┬──────────┬──────────┐
+│ Operation         │ Average  │ Min      │ Max      │
+├───────────────────┼──────────┼──────────┼──────────┤
+│ Parse Turtle      │ 12.3ms   │ 10.1ms   │ 15.2ms   │
+│ Parse N-Quads     │ 8.7ms    │ 7.2ms    │ 11.3ms   │
+│ Serialize Turtle  │ 15.4ms   │ 13.8ms   │ 18.9ms   │
+└───────────────────┴──────────┴──────────┴──────────┘
+</code></pre>
+<hr />
+<h2 id="best-practices"><a class="header" href="#best-practices">Best Practices</a></h2>
+<h3 id="error-handling-pattern"><a class="header" href="#error-handling-pattern">Error Handling Pattern</a></h3>
+<pre><code class="language-javascript">import { parseTurtle, isRDFError, formatError } from 'unrdf/utils';
+
+try {
+  const store = parseTurtle(turtleData);
+} catch (error) {
+  if (isRDFError(error)) {
+    console.error('RDF parsing failed:', formatError(error));
+  } else {
+    console.error('Unexpected error:', error.message);
+  }
+}
+</code></pre>
+<h3 id="validation-pattern"><a class="header" href="#validation-pattern">Validation Pattern</a></h3>
+<pre><code class="language-javascript">import { validateStore, validateQuad } from 'unrdf/utils';
+
+// Validate before operations
+const storeValidation = validateStore(store);
+if (!storeValidation.valid) {
+  throw new Error(`Invalid store: ${storeValidation.errors.join(', ')}`);
+}
+
+// Validate individual quads
+for (const quad of quads) {
+  const quadValidation = validateQuad(quad);
+  if (!quadValidation.valid) {
+    console.warn(`Skipping invalid quad: ${quadValidation.errors.join(', ')}`);
+  }
+}
+</code></pre>
+<h3 id="performance-monitoring"><a class="header" href="#performance-monitoring">Performance Monitoring</a></h3>
+<pre><code class="language-javascript">import { measureOperation, benchmark } from 'unrdf/utils';
+
+// Measure critical operations
+const { result, duration } = await measureOperation(
+  () =&gt; complexOperation(),
+  'Complex Operation'
+);
+
+if (duration &gt; 1000) {
+  console.warn(`Operation took ${duration}ms - consider optimization`);
+}
+
+// Benchmark alternatives
+const results = await benchmark({
+  'Approach A': () =&gt; approachA(),
+  'Approach B': () =&gt; approachB()
+});
+</code></pre>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../api/composables.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../api/composables.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+            </nav>
+
+        </div>
+
+        <!-- Livereload script (if served using the cli tool) -->
+        <script>
+            const wsProtocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsAddress = wsProtocol + "//" + location.host + "/" + "__livereload";
+            const socket = new WebSocket(wsAddress);
+            socket.onmessage = function (event) {
+                if (event.data === "reload") {
+                    socket.close();
+                    location.reload();
+                }
+            };
+
+            window.onbeforeunload = function() {
+                socket.close();
+            }
+        </script>
+
+
+        <script>
+            window.playground_line_numbers = true;
+        </script>
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+        <script src="../ace.js"></script>
+        <script src="../editor.js"></script>
+        <script src="../mode-rust.js"></script>
+        <script src="../theme-dawn.js"></script>
+        <script src="../theme-tomorrow_night.js"></script>
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>
