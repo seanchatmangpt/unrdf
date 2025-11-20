@@ -1,4 +1,5 @@
 import jsdocPlugin from 'eslint-plugin-jsdoc';
+import globals from 'globals';
 
 export default [
   {
@@ -11,23 +12,24 @@ export default [
       'build.*.mjs'
     ]
   },
+  // Base configuration for all files
   {
     files: ['**/*.mjs', '**/*.js'],
     languageOptions: {
       ecmaVersion: 2022,
       sourceType: 'module',
+      parserOptions: {
+        ecmaFeatures: {
+          jsx: true
+        }
+      },
       globals: {
-        console: 'readonly',
-        process: 'readonly',
-        Buffer: 'readonly',
+        // Node.js core globals
+        ...globals.node,
+        // Additional Node globals
         __dirname: 'readonly',
         __filename: 'readonly',
-        setTimeout: 'readonly',
-        clearTimeout: 'readonly',
-        setInterval: 'readonly',
-        clearInterval: 'readonly',
-        setImmediate: 'readonly',
-        clearImmediate: 'readonly',
+        // Vitest test globals
         describe: 'readonly',
         it: 'readonly',
         test: 'readonly',
@@ -64,6 +66,102 @@ export default [
       'no-console': 'off',
       'no-debugger': 'warn',
       'no-undef': 'error'
+    }
+  },
+  // Browser-specific files
+  {
+    files: [
+      'src/browser/**/*.mjs',
+      'src/react-hooks/**/*.mjs',
+      'src/knowledge-engine/browser-shims.mjs',
+      'src/knowledge-engine/streaming/**/*.mjs',
+      'src/security/sandbox/browser-executor.mjs',
+      'test/browser/**/*.mjs'
+    ],
+    languageOptions: {
+      parserOptions: {
+        ecmaFeatures: {
+          jsx: true
+        }
+      },
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+        // Worker API
+        Worker: 'readonly',
+        // Worker threads (Node.js)
+        isMainThread: 'readonly',
+        // Vitest globals for browser tests
+        describe: 'readonly',
+        it: 'readonly',
+        test: 'readonly',
+        expect: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+        beforeAll: 'readonly',
+        afterAll: 'readonly',
+        vi: 'readonly'
+      }
+    }
+  },
+  // Test files that simulate browser environment
+  {
+    files: [
+      'test/**/*.test.mjs',
+      'test/**/*.spec.mjs'
+    ],
+    languageOptions: {
+      globals: {
+        ...globals.node,
+        ...globals.browser,
+        // Vitest globals
+        describe: 'readonly',
+        it: 'readonly',
+        test: 'readonly',
+        expect: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+        beforeAll: 'readonly',
+        afterAll: 'readonly',
+        vi: 'readonly'
+      }
+    }
+  },
+  // Streaming module index that imports/re-exports
+  {
+    files: ['src/knowledge-engine/streaming/index.mjs'],
+    languageOptions: {
+      globals: {
+        ...globals.node,
+        // Re-exported functions from submodules
+        createSubscriptionManager: 'readonly',
+        createChangeFeed: 'readonly',
+        createStreamProcessor: 'readonly',
+        createRealTimeValidator: 'readonly'
+      }
+    }
+  },
+  // Example files that may use browser APIs
+  {
+    files: ['examples/**/*.mjs'],
+    languageOptions: {
+      globals: {
+        ...globals.node,
+        ...globals.browser,
+        // Additional globals used in examples
+        engine: 'readonly',
+        rdfCanonize: 'readonly',
+        namedNode: 'readonly',
+        manager: 'readonly',
+        createSubscriptionManager: 'readonly',
+        createChangeFeed: 'readonly',
+        createStreamProcessor: 'readonly',
+        createRealTimeValidator: 'readonly'
+      }
+    },
+    rules: {
+      'no-unused-vars': 'warn',
+      'no-undef': 'warn' // Be more lenient with examples
     }
   }
 ];

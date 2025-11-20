@@ -526,18 +526,18 @@ export class TransactionManager {
        * @param {TransactionOptions} [options] - Apply options
        * @returns {Promise<Array<Receipt>>} Promise resolving to array of receipts
        */
-      async applyAll(options = {}) {
+      applyAll: async (options = {}) => {
         const validatedOptions = TransactionOptionsSchema.parse(options);
         const results = [];
-        
+
         for (const delta of deltas) {
-          // Capture manager.apply to preserve this context
-          const result = await manager.apply(currentStore, delta, validatedOptions);
+          // Use arrow function to preserve this context
+          const result = await this.apply(currentStore, delta, validatedOptions);
           currentStore = result.store;
           receipts.push(result.receipt);
           results.push(result.receipt);
         }
-        
+
         return results;
       },
 

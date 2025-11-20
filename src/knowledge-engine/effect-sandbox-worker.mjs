@@ -7,7 +7,7 @@
  * This file runs in a separate worker thread to isolate hook execution.
  */
 
-import { parentPort, workerData } from 'worker_threads';
+import { parentPort, workerData, isMainThread } from 'worker_threads';
 
 /**
  * Worker thread entry point
