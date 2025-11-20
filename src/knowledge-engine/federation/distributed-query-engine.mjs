@@ -480,18 +480,30 @@ export class DistributedQueryEngine {
     // In production, use HTTP client or gRPC to query the store
     // For now, simulate with timeout
     return new Promise((resolve, reject) => {
-      const timeout = setTimeout(() => {
-        reject(new Error(`Query timeout on store ${storeId}`));
+      // FIX: Store timeout handle so we can clean it up properly
+      let timeoutHandle = null;
+      let executionHandle = null;
+      let isResolved = false;
+
+      timeoutHandle = setTimeout(() => {
+        if (!isResolved) {
+          isResolved = true;
+          if (executionHandle) clearTimeout(executionHandle);
+          reject(new Error(`Query timeout on store ${storeId}`));
+        }
       }, config.timeout);
 
       // Simulate query execution
-      setTimeout(() => {
-        clearTimeout(timeout);
-        // Return mock results
-        resolve([
-          { s: `http://example.org/${storeId}/1`, p: 'http://example.org/name', o: 'Alice' },
-          { s: `http://example.org/${storeId}/2`, p: 'http://example.org/name', o: 'Bob' }
-        ]);
+      executionHandle = setTimeout(() => {
+        if (!isResolved) {
+          isResolved = true;
+          clearTimeout(timeoutHandle);
+          // Return mock results
+          resolve([
+            { s: `http://example.org/${storeId}/1`, p: 'http://example.org/name', o: 'Alice' },
+            { s: `http://example.org/${storeId}/2`, p: 'http://example.org/name', o: 'Bob' }
+          ]);
+        }
       }, Math.random() * 100 + 50);
     });
   }

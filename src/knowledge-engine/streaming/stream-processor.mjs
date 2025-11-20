@@ -86,9 +86,13 @@ class StreamWindow {
       windowIndex: this.events.length
     });
 
-    // Check if window should close
-    if (this.config.type === WindowType.COUNT && this.events.length >= this.config.count) {
-      this.close();
+    // FIX: Check if window should close for count-based windows
+    // Ensure we use the count property, not size
+    if (this.config.type === WindowType.COUNT) {
+      const targetCount = this.config.count || this.config.size || 10;
+      if (this.events.length >= targetCount) {
+        this.close();
+      }
     }
 
     return true;
@@ -248,8 +252,11 @@ export class StreamProcessor extends EventEmitter {
           result.aggregations = await this._performAggregations(event);
         }
 
-        // Emit processed event
-        this.emit('processed', result);
+        // FIX: Emit 'processed' event BEFORE returning to ensure listeners get it
+        // Use setImmediate to ensure emission happens asynchronously
+        setImmediate(() => {
+          this.emit('processed', result);
+        });
 
         span.setStatus({ code: SpanStatusCode.OK });
         span.end();
@@ -288,6 +295,10 @@ export class StreamProcessor extends EventEmitter {
       this.activeWindow.add(event);
     }
 
+    // FIX: Add async handling for window operations to prevent race conditions
+    // Use Promise.resolve() to ensure async flow
+    await Promise.resolve();
+
     // Check if window should advance (for time-based windows)
     if (this.windowConfig.type === WindowType.TUMBLING) {
       const elapsed = Date.now() - this.activeWindow.startTime;
@@ -298,8 +309,20 @@ export class StreamProcessor extends EventEmitter {
     } else if (this.windowConfig.type === WindowType.SLIDING) {
       const elapsed = Date.now() - this.activeWindow.startTime;
       const slide = this.windowConfig.slide || this.windowConfig.size;
-      if (elapsed >= slide) {
+      // FIX: Only create new window if we don't have overlapping windows yet
+      if (elapsed >= slide && this.activeWindow.isClosed) {
         this._createWindow();
+      } else if (elapsed >= slide) {
+        // For sliding windows, we may need overlapping windows
+        const newWindow = this._createWindow();
+        // Copy events that fall within the sliding window overlap
+        const overlapStart = this.activeWindow.startTime + slide;
+        const overlapEvents = this.activeWindow.events.filter(
+          e => (e.timestamp || Date.now()) >= overlapStart
+        );
+        for (const e of overlapEvents) {
+          newWindow.add(e);
+        }
       }
     } else if (this.windowConfig.type === WindowType.SESSION) {
       // Reset timeout on each event

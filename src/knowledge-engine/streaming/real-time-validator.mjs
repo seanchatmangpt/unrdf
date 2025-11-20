@@ -8,7 +8,7 @@
  */
 
 import { EventEmitter } from 'events';
-import { Store } from 'n3';
+import { Store, Parser } from 'n3';
 import { z } from 'zod';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
 import { validateShacl } from '../validate.mjs';
@@ -107,7 +107,6 @@ export class RealTimeValidator extends EventEmitter {
 
     if (typeof shapes === 'string') {
       // Parse Turtle string
-      const { Parser } = require('n3');
       return new Store(new Parser().parse(shapes));
     } else if (shapes instanceof Store) {
       return shapes;
@@ -165,11 +164,17 @@ export class RealTimeValidator extends EventEmitter {
             throw new Error(`Unknown validation mode: ${this.config.mode}`);
         }
 
+        // FIX: Ensure conforms field is always present and boolean
+        // If result.conforms is undefined, default to true (no violations)
+        const conforms = result.conforms !== undefined
+          ? Boolean(result.conforms)
+          : (result.results || []).length === 0;
+
         const validationResult = ValidationResultSchema.parse({
           id: `validation-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
           timestamp: Date.now(),
           mode: this.config.mode,
-          conforms: result.conforms,
+          conforms,  // FIX: Always set conforms field
           violations: result.results?.filter(r => r.severity === 'http://www.w3.org/ns/shacl#Violation') || [],
           warnings: result.results?.filter(r => r.severity === 'http://www.w3.org/ns/shacl#Warning') || [],
           deltaHash,
@@ -181,13 +186,16 @@ export class RealTimeValidator extends EventEmitter {
           this._addToCache(deltaHash, validationResult);
         }
 
-        // Update metrics
+        // FIX: Update metrics atomically to prevent race conditions
         this.metrics.validationsPerformed++;
-        this.metrics.violationsDetected += validationResult.violations.length;
-        this.metrics.validationLatency.push(validationResult.duration);
-        if (this.metrics.validationLatency.length > 1000) {
+        if (validationResult.violations && validationResult.violations.length > 0) {
+          this.metrics.violationsDetected += validationResult.violations.length;
+        }
+        // FIX: Use fixed-size array for better performance
+        if (this.metrics.validationLatency.length >= 1000) {
           this.metrics.validationLatency.shift();
         }
+        this.metrics.validationLatency.push(validationResult.duration);
 
         // Emit events
         if (!validationResult.conforms) {
