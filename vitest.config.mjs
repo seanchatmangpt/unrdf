@@ -81,6 +81,12 @@ export default defineConfig({
 
       // v3.1.0 End-to-end tests
       "test/e2e/v3.1-features.test.mjs",
+
+      // v3.2.0 Streaming tests (unrdf 2028)
+      "test/streaming/*.test.mjs",
+
+      // v3.2.0 Federation tests (unrdf 2028)
+      "test/federation/*.test.mjs",
     ],
     exclude: [
       "node_modules/**",

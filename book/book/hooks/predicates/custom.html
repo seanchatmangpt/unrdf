@@ -1,0 +1,944 @@
+<!DOCTYPE HTML>
+<html lang="en" class="navy" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Custom - UNRDF - Universal RDF Framework</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="Production-ready RDF knowledge graph library with Knowledge Hooks and autonomic capabilities">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon.svg">
+        <link rel="shortcut icon" href="../../favicon.png">
+        <link rel="stylesheet" href="../../css/variables.css">
+        <link rel="stylesheet" href="../../css/general.css">
+        <link rel="stylesheet" href="../../css/chrome.css">
+        <link rel="stylesheet" href="../../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../../highlight.css">
+        <link rel="stylesheet" href="../../tomorrow-night.css">
+        <link rel="stylesheet" href="../../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "navy";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('navy')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../../introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="../../getting-started/quick-start.html"><strong aria-hidden="true">2.</strong> Getting Started</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../getting-started/quick-start.html"><strong aria-hidden="true">2.1.</strong> Quick Start</a></li><li class="chapter-item "><a href="../../getting-started/installation.html"><strong aria-hidden="true">2.2.</strong> Installation</a></li><li class="chapter-item "><a href="../../getting-started/basic-usage.html"><strong aria-hidden="true">2.3.</strong> Basic Usage</a></li><li class="chapter-item "><a href="../../getting-started/first-hook.html"><strong aria-hidden="true">2.4.</strong> Your First Hook</a></li></ol></li><li class="chapter-item expanded "><a href="../../concepts/rdf-fundamentals.html"><strong aria-hidden="true">3.</strong> Concepts</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../concepts/rdf-fundamentals.html"><strong aria-hidden="true">3.1.</strong> RDF Fundamentals</a></li><li class="chapter-item "><a href="../../concepts/composables.html"><strong aria-hidden="true">3.2.</strong> Composables</a></li><li class="chapter-item "><a href="../../concepts/store-context.html"><strong aria-hidden="true">3.3.</strong> Store & Context</a></li><li class="chapter-item "><a href="../../concepts/transactions.html"><strong aria-hidden="true">3.4.</strong> Transactions</a></li></ol></li><li class="chapter-item expanded "><a href="../../hooks/introduction.html"><strong aria-hidden="true">4.</strong> Hooks</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../hooks/introduction.html"><strong aria-hidden="true">4.1.</strong> Introduction</a></li><li class="chapter-item "><a href="../../hooks/lifecycle.html"><strong aria-hidden="true">4.2.</strong> Lifecycle</a></li><li class="chapter-item "><a href="../../hooks/effects.html"><strong aria-hidden="true">4.3.</strong> Effects</a></li><li class="chapter-item expanded "><a href="../../hooks/predicates.html"><strong aria-hidden="true">4.4.</strong> Predicates</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../hooks/predicates/ask.html"><strong aria-hidden="true">4.4.1.</strong> ASK</a></li><li class="chapter-item "><a href="../../hooks/predicates/shacl.html"><strong aria-hidden="true">4.4.2.</strong> SHACL</a></li><li class="chapter-item "><a href="../../hooks/predicates/delta.html"><strong aria-hidden="true">4.4.3.</strong> Delta</a></li><li class="chapter-item "><a href="../../hooks/predicates/threshold.html"><strong aria-hidden="true">4.4.4.</strong> Threshold</a></li><li class="chapter-item expanded "><a href="../../hooks/predicates/custom.html" class="active"><strong aria-hidden="true">4.4.5.</strong> Custom</a></li></ol></li></ol></li><li class="chapter-item expanded "><a href="../../api/core.html"><strong aria-hidden="true">5.</strong> API Reference</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../api/cli.html"><strong aria-hidden="true">5.1.</strong> CLI</a></li><li class="chapter-item "><a href="../../api/core.html"><strong aria-hidden="true">5.2.</strong> Core</a></li><li class="chapter-item "><a href="../../api/knowledge-engine.html"><strong aria-hidden="true">5.3.</strong> Knowledge Engine</a></li><li class="chapter-item "><a href="../../api/composables.html"><strong aria-hidden="true">5.4.</strong> Composables</a></li><li class="chapter-item "><a href="../../api/utilities.html"><strong aria-hidden="true">5.5.</strong> Utilities</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">UNRDF - Universal RDF Framework</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/seanchatmangpt/unrdf" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <a href="https://github.com/seanchatmangpt/unrdf/edit/main/book/src/hooks/predicates/custom.md" title="Suggest an edit" aria-label="Suggest an edit">
+                            <i id="git-edit-button" class="fa fa-edit"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="custom-predicates"><a class="header" href="#custom-predicates">Custom Predicates</a></h1>
+<p>Build your own predicate types to extend UNRDF's knowledge hook system with domain-specific logic.</p>
+<h2 id="when-to-create-custom-predicates"><a class="header" href="#when-to-create-custom-predicates">When to Create Custom Predicates</a></h2>
+<p>Create custom predicates when:</p>
+<ul>
+<li>✅ Built-in predicates don't fit your use case</li>
+<li>✅ You need complex, reusable logic</li>
+<li>✅ Domain-specific validation is required</li>
+<li>✅ Integration with external systems is needed</li>
+</ul>
+<h2 id="predicate-interface"><a class="header" href="#predicate-interface">Predicate Interface</a></h2>
+<p>All predicates must implement this interface:</p>
+<pre><code class="language-javascript">{
+  kind: string,           // Predicate type identifier
+  evaluate: (graph, context) =&gt; Promise&lt;any&gt;, // Evaluation function
+  isSatisfied: (result) =&gt; boolean            // Satisfaction check
+}
+</code></pre>
+<h2 id="creating-a-basic-custom-predicate"><a class="header" href="#creating-a-basic-custom-predicate">Creating a Basic Custom Predicate</a></h2>
+<h3 id="example-word-count-predicate"><a class="header" href="#example-word-count-predicate">Example: Word Count Predicate</a></h3>
+<p>Check if text exceeds a word count:</p>
+<pre><code class="language-javascript">function createWordCountPredicate(minWords, maxWords) {
+  return {
+    kind: 'custom:word-count',
+
+    async evaluate(graph, context) {
+      const { select } = await import('unrdf');
+
+      // Query text content
+      const results = await select(graph, `
+        SELECT ?text
+        WHERE {
+          ?subject ex:description ?text
+        }
+      `);
+
+      const totalWords = results.reduce((sum, row) =&gt; {
+        const text = row.text.value;
+        const wordCount = text.trim().split(/\s+/).length;
+        return sum + wordCount;
+      }, 0);
+
+      return {
+        totalWords,
+        minWords,
+        maxWords,
+        satisfied: totalWords &gt;= minWords &amp;&amp; totalWords &lt;= maxWords
+      };
+    },
+
+    isSatisfied(result) {
+      return result.satisfied;
+    }
+  };
+}
+
+// Use the custom predicate
+defineHook({
+  meta: {
+    name: 'word-count-validation',
+    description: 'Ensure description has 100-500 words'
+  },
+  when: createWordCountPredicate(100, 500),
+  run: async (event) =&gt; {
+    if (!event.result.satisfied) {
+      throw new Error(
+        `Word count ${event.result.totalWords} outside range ${event.result.minWords}-${event.result.maxWords}`
+      );
+    }
+  }
+});
+</code></pre>
+<h2 id="complete-examples"><a class="header" href="#complete-examples">Complete Examples</a></h2>
+<h3 id="example-1-geographic-distance-predicate"><a class="header" href="#example-1-geographic-distance-predicate">Example 1: Geographic Distance Predicate</a></h3>
+<p>Check if locations are within a certain distance:</p>
+<pre><code class="language-javascript">import { distance } from 'geo-distance';
+
+function createGeoDistancePredicate(maxDistanceKm) {
+  return {
+    kind: 'custom:geo-distance',
+
+    async evaluate(graph, context) {
+      const { select } = await import('unrdf');
+
+      // Get all location pairs
+      const results = await select(graph, `
+        PREFIX geo: &lt;http://www.w3.org/2003/01/geo/wgs84_pos#&gt;
+
+        SELECT ?loc1 ?lat1 ?lon1 ?loc2 ?lat2 ?lon2
+        WHERE {
+          ?loc1 geo:lat ?lat1 ; geo:long ?lon1 .
+          ?loc2 geo:lat ?lat2 ; geo:long ?lon2 .
+          FILTER (?loc1 != ?loc2)
+        }
+      `);
+
+      const violations = [];
+
+      for (const row of results) {
+        const dist = distance(
+          { lat: row.lat1.value, lon: row.lon1.value },
+          { lat: row.lat2.value, lon: row.lon2.value }
+        );
+
+        if (dist &gt; maxDistanceKm) {
+          violations.push({
+            loc1: row.loc1.value,
+            loc2: row.loc2.value,
+            distance: dist
+          });
+        }
+      }
+
+      return {
+        violations,
+        satisfied: violations.length === 0
+      };
+    },
+
+    isSatisfied(result) {
+      return result.satisfied;
+    }
+  };
+}
+
+defineHook({
+  meta: {
+    name: 'geo-proximity-check',
+    description: 'Ensure related locations are within 100km'
+  },
+  when: createGeoDistancePredicate(100),
+  run: async (event) =&gt; {
+    if (!event.result.satisfied) {
+      const details = event.result.violations
+        .map(v =&gt; `${v.loc1} and ${v.loc2}: ${v.distance.toFixed(1)}km`)
+        .join('\n');
+
+      throw new Error(
+        `Locations exceed 100km limit:\n${details}`
+      );
+    }
+  }
+});
+</code></pre>
+<h3 id="example-2-time-based-predicate"><a class="header" href="#example-2-time-based-predicate">Example 2: Time-Based Predicate</a></h3>
+<p>Check if events occur within business hours:</p>
+<pre><code class="language-javascript">function createBusinessHoursPredicate() {
+  return {
+    kind: 'custom:business-hours',
+
+    async evaluate(graph, context) {
+      const { select } = await import('unrdf');
+
+      const results = await select(graph, `
+        PREFIX ex: &lt;http://example.org/&gt;
+
+        SELECT ?event ?timestamp
+        WHERE {
+          ?event ex:scheduledAt ?timestamp
+        }
+      `);
+
+      const violations = [];
+
+      for (const row of results) {
+        const timestamp = new Date(row.timestamp.value);
+        const hour = timestamp.getHours();
+        const day = timestamp.getDay();
+
+        // Business hours: Mon-Fri, 9am-5pm
+        if (day === 0 || day === 6 || hour &lt; 9 || hour &gt;= 17) {
+          violations.push({
+            event: row.event.value,
+            timestamp: row.timestamp.value,
+            reason: day === 0 || day === 6 ? 'weekend' : 'outside hours'
+          });
+        }
+      }
+
+      return {
+        violations,
+        satisfied: violations.length === 0
+      };
+    },
+
+    isSatisfied(result) {
+      return result.satisfied;
+    }
+  };
+}
+
+defineHook({
+  meta: {
+    name: 'business-hours-check',
+    description: 'Ensure events are scheduled during business hours'
+  },
+  when: createBusinessHoursPredicate(),
+  run: async (event) =&gt; {
+    if (!event.result.satisfied) {
+      throw new Error(
+        `${event.result.violations.length} events scheduled outside business hours`
+      );
+    }
+  }
+});
+</code></pre>
+<h3 id="example-3-external-api-validation"><a class="header" href="#example-3-external-api-validation">Example 3: External API Validation</a></h3>
+<p>Validate data against external service:</p>
+<pre><code class="language-javascript">function createEmailValidationPredicate(apiKey) {
+  return {
+    kind: 'custom:email-validation',
+
+    async evaluate(graph, context) {
+      const { select } = await import('unrdf');
+
+      const results = await select(graph, `
+        PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+
+        SELECT ?person ?email
+        WHERE {
+          ?person foaf:mbox ?email
+        }
+      `);
+
+      const invalidEmails = [];
+
+      for (const row of results) {
+        const email = row.email.value.replace('mailto:', '');
+
+        // Call external email validation API
+        const response = await fetch(
+          `https://api.emailvalidation.com/verify?email=${email}`,
+          { headers: { 'X-API-Key': apiKey } }
+        );
+
+        const data = await response.json();
+
+        if (!data.valid) {
+          invalidEmails.push({
+            person: row.person.value,
+            email,
+            reason: data.reason
+          });
+        }
+      }
+
+      return {
+        invalidEmails,
+        satisfied: invalidEmails.length === 0
+      };
+    },
+
+    isSatisfied(result) {
+      return result.satisfied;
+    }
+  };
+}
+
+defineHook({
+  meta: {
+    name: 'external-email-validation',
+    description: 'Validate emails via external API'
+  },
+  when: createEmailValidationPredicate(process.env.EMAIL_API_KEY),
+  run: async (event) =&gt; {
+    if (!event.result.satisfied) {
+      const details = event.result.invalidEmails
+        .map(e =&gt; `${e.email}: ${e.reason}`)
+        .join('\n');
+
+      throw new Error(
+        `Invalid emails detected:\n${details}`
+      );
+    }
+  }
+});
+</code></pre>
+<h3 id="example-4-graph-pattern-matching"><a class="header" href="#example-4-graph-pattern-matching">Example 4: Graph Pattern Matching</a></h3>
+<p>Complex pattern matching beyond SPARQL:</p>
+<pre><code class="language-javascript">function createCyclicDependencyPredicate() {
+  return {
+    kind: 'custom:cyclic-dependency',
+
+    async evaluate(graph, context) {
+      const { select } = await import('unrdf');
+
+      // Get all dependencies
+      const results = await select(graph, `
+        PREFIX ex: &lt;http://example.org/&gt;
+
+        SELECT ?from ?to
+        WHERE {
+          ?from ex:dependsOn ?to
+        }
+      `);
+
+      // Build dependency graph
+      const dependencies = new Map();
+
+      for (const row of results) {
+        const from = row.from.value;
+        const to = row.to.value;
+
+        if (!dependencies.has(from)) {
+          dependencies.set(from, new Set());
+        }
+        dependencies.get(from).add(to);
+      }
+
+      // Detect cycles using DFS
+      const cycles = [];
+      const visited = new Set();
+      const recStack = new Set();
+
+      function detectCycle(node, path = []) {
+        visited.add(node);
+        recStack.add(node);
+        path.push(node);
+
+        const deps = dependencies.get(node) || new Set();
+
+        for (const dep of deps) {
+          if (!visited.has(dep)) {
+            if (detectCycle(dep, [...path])) {
+              return true;
+            }
+          } else if (recStack.has(dep)) {
+            // Cycle detected
+            cycles.push([...path, dep]);
+            return true;
+          }
+        }
+
+        recStack.delete(node);
+        return false;
+      }
+
+      for (const node of dependencies.keys()) {
+        if (!visited.has(node)) {
+          detectCycle(node);
+        }
+      }
+
+      return {
+        cycles,
+        satisfied: cycles.length === 0
+      };
+    },
+
+    isSatisfied(result) {
+      return result.satisfied;
+    }
+  };
+}
+
+defineHook({
+  meta: {
+    name: 'prevent-cyclic-dependencies',
+    description: 'Detect and prevent cyclic dependencies'
+  },
+  when: createCyclicDependencyPredicate(),
+  run: async (event) =&gt; {
+    if (!event.result.satisfied) {
+      const cycleDetails = event.result.cycles
+        .map(cycle =&gt; cycle.join(' → '))
+        .join('\n');
+
+      throw new Error(
+        `Cyclic dependencies detected:\n${cycleDetails}`
+      );
+    }
+  }
+});
+</code></pre>
+<h2 id="advanced-patterns"><a class="header" href="#advanced-patterns">Advanced Patterns</a></h2>
+<h3 id="pattern-1-caching-predicate-results"><a class="header" href="#pattern-1-caching-predicate-results">Pattern 1: Caching Predicate Results</a></h3>
+<pre><code class="language-javascript">const predicateCache = new Map();
+
+function createCachedPredicate(basePredicate, ttl = 60000) {
+  return {
+    kind: `cached:${basePredicate.kind}`,
+
+    async evaluate(graph, context) {
+      const cacheKey = `${basePredicate.kind}:${graph.size}`;
+      const cached = predicateCache.get(cacheKey);
+
+      if (cached &amp;&amp; Date.now() - cached.timestamp &lt; ttl) {
+        return cached.result;
+      }
+
+      const result = await basePredicate.evaluate(graph, context);
+
+      predicateCache.set(cacheKey, {
+        result,
+        timestamp: Date.now()
+      });
+
+      return result;
+    },
+
+    isSatisfied(result) {
+      return basePredicate.isSatisfied(result);
+    }
+  };
+}
+
+// Use cached predicate
+const expensivePredicate = createExpensiveValidationPredicate();
+const cached = createCachedPredicate(expensivePredicate, 30000);
+
+defineHook({
+  meta: { name: 'cached-validation' },
+  when: cached,
+  run: async (event) =&gt; {
+    // Uses cached result if available
+  }
+});
+</code></pre>
+<h3 id="pattern-2-composable-predicates"><a class="header" href="#pattern-2-composable-predicates">Pattern 2: Composable Predicates</a></h3>
+<pre><code class="language-javascript">function createComposedPredicate(predicates, operator = 'AND') {
+  return {
+    kind: 'custom:composed',
+
+    async evaluate(graph, context) {
+      const results = await Promise.all(
+        predicates.map(p =&gt; p.evaluate(graph, context))
+      );
+
+      let satisfied;
+      if (operator === 'AND') {
+        satisfied = results.every(r =&gt; predicates[results.indexOf(r)].isSatisfied(r));
+      } else if (operator === 'OR') {
+        satisfied = results.some(r =&gt; predicates[results.indexOf(r)].isSatisfied(r));
+      }
+
+      return {
+        results,
+        operator,
+        satisfied
+      };
+    },
+
+    isSatisfied(result) {
+      return result.satisfied;
+    }
+  };
+}
+
+// Compose predicates
+const ageCheck = createAgePredicate(18);
+const emailCheck = createEmailPredicate();
+const combined = createComposedPredicate([ageCheck, emailCheck], 'AND');
+
+defineHook({
+  meta: { name: 'combined-validation' },
+  when: combined,
+  run: async (event) =&gt; {
+    if (!event.result.satisfied) {
+      throw new Error('Validation failed');
+    }
+  }
+});
+</code></pre>
+<h3 id="pattern-3-predicate-factory"><a class="header" href="#pattern-3-predicate-factory">Pattern 3: Predicate Factory</a></h3>
+<pre><code class="language-javascript">class PredicateFactory {
+  static threshold(property, operator, value) {
+    return {
+      kind: 'custom:threshold',
+      async evaluate(graph, context) {
+        const { select } = await import('unrdf');
+
+        const results = await select(graph, `
+          SELECT (${operator.toUpperCase()}(?value) AS ?result)
+          WHERE {
+            ?s &lt;${property}&gt; ?value
+          }
+        `);
+
+        const result = results[0]?.result?.value;
+        const passes = this._compare(result, operator, value);
+
+        return { result, operator, value, satisfied: passes };
+      },
+      isSatisfied(result) {
+        return result.satisfied;
+      },
+      _compare(a, op, b) {
+        switch (op) {
+          case 'gt': return a &gt; b;
+          case 'gte': return a &gt;= b;
+          case 'lt': return a &lt; b;
+          case 'lte': return a &lt;= b;
+          case 'eq': return a === b;
+          default: return false;
+        }
+      }
+    };
+  }
+
+  static pattern(subject, predicate, object) {
+    return {
+      kind: 'custom:pattern',
+      async evaluate(graph, context) {
+        const quads = graph.getQuads(subject, predicate, object, null);
+        return {
+          matches: quads.length,
+          satisfied: quads.length &gt; 0
+        };
+      },
+      isSatisfied(result) {
+        return result.satisfied;
+      }
+    };
+  }
+}
+
+// Use factory
+defineHook({
+  meta: { name: 'factory-predicate' },
+  when: PredicateFactory.threshold('ex:price', 'gt', 100),
+  run: async (event) =&gt; {
+    // ...
+  }
+});
+</code></pre>
+<h2 id="testing-custom-predicates"><a class="header" href="#testing-custom-predicates">Testing Custom Predicates</a></h2>
+<pre><code class="language-javascript">import { describe, it, expect } from 'vitest';
+import { Store } from 'n3';
+import { namedNode, quad, literal } from '@rdfjs/data-model';
+
+describe('Custom Predicate: word-count', () =&gt; {
+  it('should detect word count violations', async () =&gt; {
+    const predicate = createWordCountPredicate(10, 50);
+
+    const graph = new Store([
+      quad(
+        namedNode('http://example.org/doc1'),
+        namedNode('http://example.org/description'),
+        literal('This is a very short text')
+      )
+    ]);
+
+    const result = await predicate.evaluate(graph, {});
+
+    expect(result.totalWords).toBe(6);
+    expect(result.satisfied).toBe(false);
+  });
+
+  it('should pass for valid word count', async () =&gt; {
+    const predicate = createWordCountPredicate(5, 50);
+
+    const graph = new Store([
+      quad(
+        namedNode('http://example.org/doc1'),
+        namedNode('http://example.org/description'),
+        literal('This is a text with exactly twenty words that should pass the validation check successfully')
+      )
+    ]);
+
+    const result = await predicate.evaluate(graph, {});
+
+    expect(result.satisfied).toBe(true);
+  });
+});
+</code></pre>
+<h2 id="best-practices"><a class="header" href="#best-practices">Best Practices</a></h2>
+<h3 id="-dos"><a class="header" href="#-dos">✅ Do's</a></h3>
+<pre><code class="language-javascript">// ✅ Use descriptive kind identifiers
+kind: 'custom:word-count'
+
+// ✅ Handle errors gracefully
+async evaluate(graph, context) {
+  try {
+    // Evaluation logic
+  } catch (error) {
+    return {
+      error: error.message,
+      satisfied: false
+    };
+  }
+}
+
+// ✅ Provide detailed results
+return {
+  totalWords: 42,
+  minWords: 10,
+  maxWords: 50,
+  satisfied: true,
+  details: { /* additional info */ }
+};
+
+// ✅ Document parameters
+/**
+ * Creates a word count predicate
+ * @param {number} minWords - Minimum word count
+ * @param {number} maxWords - Maximum word count
+ * @returns {Predicate} Custom predicate
+ */
+function createWordCountPredicate(minWords, maxWords) {
+  // ...
+}
+</code></pre>
+<h3 id="-donts"><a class="header" href="#-donts">❌ Don'ts</a></h3>
+<pre><code class="language-javascript">// ❌ Don't use generic kind names
+kind: 'custom'
+
+// ❌ Don't swallow errors silently
+async evaluate(graph, context) {
+  try {
+    // ...
+  } catch (error) {
+    return { satisfied: true }; // Wrong!
+  }
+}
+
+// ❌ Don't return only booleans
+return true; // Should return detailed object
+
+// ❌ Don't block on expensive operations
+async evaluate(graph, context) {
+  await slowExternalAPI(); // Consider caching
+}
+</code></pre>
+<h2 id="integration-with-condition-evaluator"><a class="header" href="#integration-with-condition-evaluator">Integration with Condition Evaluator</a></h2>
+<p>Custom predicates integrate seamlessly:</p>
+<pre><code class="language-javascript">// condition-evaluator.mjs will call your predicate
+import { createConditionEvaluator } from 'unrdf';
+
+const evaluator = createConditionEvaluator();
+
+// Register custom predicate type
+evaluator.registerPredicateType('custom:word-count', createWordCountPredicate);
+
+// Now hooks can use it
+defineHook({
+  meta: { name: 'word-count-check' },
+  when: createWordCountPredicate(100, 500),
+  run: async (event) =&gt; {
+    // ...
+  }
+});
+</code></pre>
+<h2 id="performance-optimization"><a class="header" href="#performance-optimization">Performance Optimization</a></h2>
+<h3 id="use-incremental-evaluation"><a class="header" href="#use-incremental-evaluation">Use Incremental Evaluation</a></h3>
+<pre><code class="language-javascript">function createIncrementalPredicate() {
+  let previousResult = null;
+
+  return {
+    kind: 'custom:incremental',
+
+    async evaluate(graph, context) {
+      // Only re-evaluate changed data
+      if (previousResult &amp;&amp; !context.delta) {
+        return previousResult;
+      }
+
+      const result = await expensiveEvaluation(graph);
+      previousResult = result;
+      return result;
+    },
+
+    isSatisfied(result) {
+      return result.satisfied;
+    }
+  };
+}
+</code></pre>
+<h3 id="parallel-processing"><a class="header" href="#parallel-processing">Parallel Processing</a></h3>
+<pre><code class="language-javascript">async evaluate(graph, context) {
+  const [result1, result2, result3] = await Promise.all([
+    checkConstraint1(graph),
+    checkConstraint2(graph),
+    checkConstraint3(graph)
+  ]);
+
+  return {
+    results: [result1, result2, result3],
+    satisfied: result1 &amp;&amp; result2 &amp;&amp; result3
+  };
+}
+</code></pre>
+<h2 id="next-steps"><a class="header" href="#next-steps">Next Steps</a></h2>
+<ul>
+<li><strong><a href="../effects.html">Effects</a></strong> - What hooks can do with predicate results</li>
+<li><strong><a href="../policy-packs.html">Policy Packs</a></strong> - Package custom predicates for reuse</li>
+<li><strong><a href="../lifecycle.html">Lifecycle</a></strong> - Understand hook execution phases</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../hooks/predicates/threshold.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../../api/core.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../hooks/predicates/threshold.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../../api/core.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <!-- Livereload script (if served using the cli tool) -->
+        <script>
+            const wsProtocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsAddress = wsProtocol + "//" + location.host + "/" + "__livereload";
+            const socket = new WebSocket(wsAddress);
+            socket.onmessage = function (event) {
+                if (event.data === "reload") {
+                    socket.close();
+                    location.reload();
+                }
+            };
+
+            window.onbeforeunload = function() {
+                socket.close();
+            }
+        </script>
+
+
+        <script>
+            window.playground_line_numbers = true;
+        </script>
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+        <script src="../../ace.js"></script>
+        <script src="../../editor.js"></script>
+        <script src="../../mode-rust.js"></script>
+        <script src="../../theme-dawn.js"></script>
+        <script src="../../theme-tomorrow_night.js"></script>
+
+        <script src="../../elasticlunr.min.js"></script>
+        <script src="../../mark.min.js"></script>
+        <script src="../../searcher.js"></script>
+
+        <script src="../../clipboard.min.js"></script>
+        <script src="../../highlight.js"></script>
+        <script src="../../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

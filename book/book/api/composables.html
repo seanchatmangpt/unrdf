@@ -1,0 +1,893 @@
+<!DOCTYPE HTML>
+<html lang="en" class="navy" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Composables - UNRDF - Universal RDF Framework</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="Production-ready RDF knowledge graph library with Knowledge Hooks and autonomic capabilities">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "navy";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('navy')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="../getting-started/quick-start.html"><strong aria-hidden="true">2.</strong> Getting Started</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../getting-started/quick-start.html"><strong aria-hidden="true">2.1.</strong> Quick Start</a></li><li class="chapter-item "><a href="../getting-started/installation.html"><strong aria-hidden="true">2.2.</strong> Installation</a></li><li class="chapter-item "><a href="../getting-started/basic-usage.html"><strong aria-hidden="true">2.3.</strong> Basic Usage</a></li><li class="chapter-item "><a href="../getting-started/first-hook.html"><strong aria-hidden="true">2.4.</strong> Your First Hook</a></li></ol></li><li class="chapter-item expanded "><a href="../concepts/rdf-fundamentals.html"><strong aria-hidden="true">3.</strong> Concepts</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../concepts/rdf-fundamentals.html"><strong aria-hidden="true">3.1.</strong> RDF Fundamentals</a></li><li class="chapter-item "><a href="../concepts/composables.html"><strong aria-hidden="true">3.2.</strong> Composables</a></li><li class="chapter-item "><a href="../concepts/store-context.html"><strong aria-hidden="true">3.3.</strong> Store & Context</a></li><li class="chapter-item "><a href="../concepts/transactions.html"><strong aria-hidden="true">3.4.</strong> Transactions</a></li></ol></li><li class="chapter-item expanded "><a href="../hooks/introduction.html"><strong aria-hidden="true">4.</strong> Hooks</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../hooks/introduction.html"><strong aria-hidden="true">4.1.</strong> Introduction</a></li><li class="chapter-item "><a href="../hooks/lifecycle.html"><strong aria-hidden="true">4.2.</strong> Lifecycle</a></li><li class="chapter-item "><a href="../hooks/effects.html"><strong aria-hidden="true">4.3.</strong> Effects</a></li><li class="chapter-item "><a href="../hooks/predicates.html"><strong aria-hidden="true">4.4.</strong> Predicates</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../hooks/predicates/ask.html"><strong aria-hidden="true">4.4.1.</strong> ASK</a></li><li class="chapter-item "><a href="../hooks/predicates/shacl.html"><strong aria-hidden="true">4.4.2.</strong> SHACL</a></li><li class="chapter-item "><a href="../hooks/predicates/delta.html"><strong aria-hidden="true">4.4.3.</strong> Delta</a></li><li class="chapter-item "><a href="../hooks/predicates/threshold.html"><strong aria-hidden="true">4.4.4.</strong> Threshold</a></li><li class="chapter-item "><a href="../hooks/predicates/custom.html"><strong aria-hidden="true">4.4.5.</strong> Custom</a></li></ol></li></ol></li><li class="chapter-item expanded "><a href="../api/core.html"><strong aria-hidden="true">5.</strong> API Reference</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../api/cli.html"><strong aria-hidden="true">5.1.</strong> CLI</a></li><li class="chapter-item "><a href="../api/core.html"><strong aria-hidden="true">5.2.</strong> Core</a></li><li class="chapter-item "><a href="../api/knowledge-engine.html"><strong aria-hidden="true">5.3.</strong> Knowledge Engine</a></li><li class="chapter-item expanded "><a href="../api/composables.html" class="active"><strong aria-hidden="true">5.4.</strong> Composables</a></li><li class="chapter-item "><a href="../api/utilities.html"><strong aria-hidden="true">5.5.</strong> Utilities</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">UNRDF - Universal RDF Framework</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/seanchatmangpt/unrdf" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <a href="https://github.com/seanchatmangpt/unrdf/edit/main/book/src/api/composables.md" title="Suggest an edit" aria-label="Suggest an edit">
+                            <i id="git-edit-button" class="fa fa-edit"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="composables-api-reference"><a class="header" href="#composables-api-reference">Composables API Reference</a></h1>
+<p>UNRDF provides composable functions for common RDF operations. All composables use the store context established by <code>initStore()</code>.</p>
+<h2 id="graph-operations"><a class="header" href="#graph-operations">Graph Operations</a></h2>
+<h3 id="usegraph"><a class="header" href="#usegraph"><code>useGraph()</code></a></h3>
+<p>Access high-level RDF graph operations with SPARQL querying and graph transformations.</p>
+<p><strong>Returns:</strong> <code>Object</code> - Graph operations interface</p>
+<p><strong>Throws:</strong> <code>Error</code> - If store context is not initialized</p>
+<p><strong>Example:</strong></p>
+<pre><code class="language-javascript">import { initStore, useGraph } from 'unrdf';
+
+const runApp = initStore();
+
+runApp(async () =&gt; {
+  const graph = useGraph();
+
+  // Execute SPARQL queries
+  const results = await graph.select(`
+    SELECT ?s ?p ?o WHERE { ?s ?p ?o }
+  `);
+});
+</code></pre>
+<hr />
+<h3 id="graph-api-methods"><a class="header" href="#graph-api-methods">Graph API Methods</a></h3>
+<h4 id="querysparql-options"><a class="header" href="#querysparql-options"><code>query(sparql, options)</code></a></h4>
+<p>Execute any valid SPARQL 1.1 query.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>sparql</code> (string): SPARQL query string</li>
+<li><code>options</code> (Object, optional): Query options
+<ul>
+<li><code>limit</code> (number): Result limit</li>
+<li><code>signal</code> (AbortSignal): Abort signal</li>
+</ul>
+</li>
+</ul>
+<p><strong>Returns:</strong> <code>Promise&lt;Object&gt;</code> - Query result object</p>
+<p><strong>Throws:</strong> <code>TypeError</code> - If sparql is not a string</p>
+<p><strong>Example:</strong></p>
+<pre><code class="language-javascript">const result = await graph.query(`
+  PREFIX ex: &lt;http://example.org/&gt;
+  SELECT ?name WHERE {
+    ?person ex:name ?name .
+  }
+`, { limit: 10 });
+</code></pre>
+<hr />
+<h4 id="selectsparql"><a class="header" href="#selectsparql"><code>select(sparql)</code></a></h4>
+<p>Execute a SPARQL SELECT query.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>sparql</code> (string): SPARQL SELECT query string</li>
+</ul>
+<p><strong>Returns:</strong> <code>Promise&lt;Array&lt;Object&gt;&gt;</code> - Array of result bindings</p>
+<p><strong>Throws:</strong></p>
+<ul>
+<li><code>TypeError</code> - If sparql is not a string</li>
+<li><code>Error</code> - If query is not a SELECT query</li>
+</ul>
+<p><strong>Example:</strong></p>
+<pre><code class="language-javascript">const people = await graph.select(`
+  PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+  SELECT ?person ?name WHERE {
+    ?person foaf:name ?name .
+  }
+`);
+
+people.forEach(row =&gt; {
+  console.log(`${row.person.value}: ${row.name.value}`);
+});
+</code></pre>
+<hr />
+<h4 id="asksparql"><a class="header" href="#asksparql"><code>ask(sparql)</code></a></h4>
+<p>Execute a SPARQL ASK query.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>sparql</code> (string): SPARQL ASK query string</li>
+</ul>
+<p><strong>Returns:</strong> <code>Promise&lt;boolean&gt;</code> - Boolean result</p>
+<p><strong>Throws:</strong></p>
+<ul>
+<li><code>TypeError</code> - If sparql is not a string</li>
+<li><code>Error</code> - If query is not an ASK query</li>
+</ul>
+<p><strong>Example:</strong></p>
+<pre><code class="language-javascript">const hasAlice = await graph.ask(`
+  PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+  ASK {
+    ?person foaf:name "Alice" .
+  }
+`);
+
+console.log('Has Alice:', hasAlice);
+</code></pre>
+<hr />
+<h4 id="constructsparql"><a class="header" href="#constructsparql"><code>construct(sparql)</code></a></h4>
+<p>Execute a SPARQL CONSTRUCT query.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>sparql</code> (string): SPARQL CONSTRUCT query string</li>
+</ul>
+<p><strong>Returns:</strong> <code>Promise&lt;Store&gt;</code> - New store with constructed triples</p>
+<p><strong>Throws:</strong></p>
+<ul>
+<li><code>TypeError</code> - If sparql is not a string</li>
+<li><code>Error</code> - If query is not a CONSTRUCT query</li>
+</ul>
+<p><strong>Example:</strong></p>
+<pre><code class="language-javascript">const inferredStore = await graph.construct(`
+  PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+  PREFIX ex: &lt;http://example.org/&gt;
+  CONSTRUCT {
+    ?person1 ex:friend ?person2 .
+  }
+  WHERE {
+    ?person1 foaf:knows ?person2 .
+  }
+`);
+</code></pre>
+<hr />
+<h4 id="updatesparql"><a class="header" href="#updatesparql"><code>update(sparql)</code></a></h4>
+<p>Execute a SPARQL UPDATE query.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>sparql</code> (string): SPARQL UPDATE query string</li>
+</ul>
+<p><strong>Returns:</strong> <code>Promise&lt;Object&gt;</code> - Update result</p>
+<p><strong>Throws:</strong></p>
+<ul>
+<li><code>TypeError</code> - If sparql is not a string</li>
+<li><code>Error</code> - If query is not an UPDATE query</li>
+</ul>
+<p><strong>Example:</strong></p>
+<pre><code class="language-javascript">await graph.update(`
+  PREFIX ex: &lt;http://example.org/&gt;
+  INSERT DATA {
+    ex:alice ex:age "30" .
+    ex:alice ex:city "NYC" .
+  }
+`);
+</code></pre>
+<hr />
+<h4 id="serializeoptions"><a class="header" href="#serializeoptions"><code>serialize(options)</code></a></h4>
+<p>Serialize the graph to a string.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>options</code> (Object, optional): Serialization options
+<ul>
+<li><code>format</code> (string): Output format ('Turtle' or 'N-Quads'). Default: 'Turtle'</li>
+<li><code>prefixes</code> (Object): Prefix mappings</li>
+</ul>
+</li>
+</ul>
+<p><strong>Returns:</strong> <code>string</code> - Serialized string</p>
+<p><strong>Throws:</strong></p>
+<ul>
+<li><code>TypeError</code> - If options is not an object</li>
+<li><code>Error</code> - If format is unsupported</li>
+</ul>
+<p><strong>Example:</strong></p>
+<pre><code class="language-javascript">const turtle = graph.serialize({
+  format: 'Turtle',
+  prefixes: {
+    ex: 'http://example.org/',
+    foaf: 'http://xmlns.com/foaf/0.1/'
+  }
+});
+</code></pre>
+<hr />
+<h4 id="stats"><a class="header" href="#stats"><code>stats()</code></a></h4>
+<p>Get graph statistics.</p>
+<p><strong>Returns:</strong> <code>Object</code> - Graph statistics</p>
+<p><strong>Example:</strong></p>
+<pre><code class="language-javascript">const stats = graph.stats();
+console.log(`Quads: ${stats.quads}`);
+console.log(`Subjects: ${stats.subjects}`);
+</code></pre>
+<hr />
+<h4 id="unionothergraphs"><a class="header" href="#unionothergraphs"><code>union(...otherGraphs)</code></a></h4>
+<p>Create a new graph containing the union of this graph and others.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>...otherGraphs</code> (Object|Store): Other useGraph instances or Stores</li>
+</ul>
+<p><strong>Returns:</strong> <code>Object</code> - New useGraph instance with union</p>
+<p><strong>Example:</strong></p>
+<pre><code class="language-javascript">const graph1 = useGraph();
+const graph2 = createTemporaryGraph(store2);
+
+const combined = graph1.union(graph2);
+console.log('Combined size:', combined.size);
+</code></pre>
+<hr />
+<h4 id="differenceothergraph"><a class="header" href="#differenceothergraph"><code>difference(otherGraph)</code></a></h4>
+<p>Create a new graph containing quads in this graph but not in the other.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>otherGraph</code> (Object|Store): Another useGraph instance or Store</li>
+</ul>
+<p><strong>Returns:</strong> <code>Object</code> - New useGraph instance with difference</p>
+<p><strong>Example:</strong></p>
+<pre><code class="language-javascript">const diff = graph1.difference(graph2);
+</code></pre>
+<hr />
+<h4 id="intersectionothergraph"><a class="header" href="#intersectionothergraph"><code>intersection(otherGraph)</code></a></h4>
+<p>Create a new graph containing only quads that exist in both graphs.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>otherGraph</code> (Object|Store): Another useGraph instance or Store</li>
+</ul>
+<p><strong>Returns:</strong> <code>Object</code> - New useGraph instance with intersection</p>
+<p><strong>Example:</strong></p>
+<pre><code class="language-javascript">const common = graph1.intersection(graph2);
+</code></pre>
+<hr />
+<h2 id="turtle-operations"><a class="header" href="#turtle-operations">Turtle Operations</a></h2>
+<h3 id="useturtlegraphdir-options"><a class="header" href="#useturtlegraphdir-options"><code>useTurtle(graphDir, options)</code></a></h3>
+<p>File system operations for Turtle (.ttl) files.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>graphDir</code> (string, optional): Directory containing Turtle files. Default: './graph'</li>
+<li><code>options</code> (Object, optional): Turtle options
+<ul>
+<li><code>baseIRI</code> (string): Base IRI for parsing. Default: 'http://example.org/'</li>
+<li><code>autoLoad</code> (boolean): Automatically load all .ttl files. Default: true</li>
+<li><code>validateOnLoad</code> (boolean): Validate files on load. Default: true</li>
+</ul>
+</li>
+</ul>
+<p><strong>Returns:</strong> <code>Object</code> - Turtle file system interface</p>
+<p><strong>Example:</strong></p>
+<pre><code class="language-javascript">import { initStore, useTurtle } from 'unrdf';
+
+const runApp = initStore();
+
+runApp(() =&gt; {
+  const turtle = useTurtle('./my-data', {
+    baseIRI: 'http://example.org/',
+    autoLoad: true
+  });
+
+  // Load all .ttl files
+  turtle.loadAll();
+});
+</code></pre>
+<hr />
+<h3 id="turtle-api-methods"><a class="header" href="#turtle-api-methods">Turtle API Methods</a></h3>
+<h4 id="loadalloptions"><a class="header" href="#loadalloptions"><code>loadAll(options)</code></a></h4>
+<p>Load all .ttl files from the graph directory.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>options</code> (Object, optional): Load options
+<ul>
+<li><code>merge</code> (boolean): Merge with existing store. Default: true</li>
+<li><code>validate</code> (boolean): Validate files on load</li>
+</ul>
+</li>
+</ul>
+<p><strong>Returns:</strong> <code>Object</code> - Load result</p>
+<ul>
+<li><code>loaded</code> (number): Number of files loaded</li>
+<li><code>files</code> (Array<string>): Loaded file names</li>
+</ul>
+<p><strong>Example:</strong></p>
+<pre><code class="language-javascript">const result = turtle.loadAll({ merge: true, validate: true });
+console.log(`Loaded ${result.loaded} files:`, result.files);
+</code></pre>
+<hr />
+<h4 id="loadfilename-options"><a class="header" href="#loadfilename-options"><code>load(fileName, options)</code></a></h4>
+<p>Load a specific Turtle file.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>fileName</code> (string): Name of the file (without .ttl extension)</li>
+<li><code>options</code> (Object, optional): Load options
+<ul>
+<li><code>merge</code> (boolean): Merge with existing store. Default: true</li>
+<li><code>validate</code> (boolean): Validate file on load</li>
+</ul>
+</li>
+</ul>
+<p><strong>Returns:</strong> <code>Store</code> - Loaded store</p>
+<p><strong>Throws:</strong> <code>Error</code> - If file not found</p>
+<p><strong>Example:</strong></p>
+<pre><code class="language-javascript">const store = turtle.load('ontology', {
+  merge: true,
+  validate: true
+});
+</code></pre>
+<hr />
+<h4 id="savefilename-options"><a class="header" href="#savefilename-options"><code>save(fileName, options)</code></a></h4>
+<p>Save the current store to a Turtle file.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>fileName</code> (string): Name of the file (without .ttl extension)</li>
+<li><code>options</code> (Object, optional): Save options
+<ul>
+<li><code>prefixes</code> (Object): Prefix mappings</li>
+<li><code>createBackup</code> (boolean): Create backup of existing file. Default: false</li>
+</ul>
+</li>
+</ul>
+<p><strong>Returns:</strong> <code>Object</code> - Save result</p>
+<ul>
+<li><code>path</code> (string): File path</li>
+<li><code>bytes</code> (number): File size in bytes</li>
+</ul>
+<p><strong>Example:</strong></p>
+<pre><code class="language-javascript">const result = turtle.save('export', {
+  prefixes: {
+    ex: 'http://example.org/',
+    foaf: 'http://xmlns.com/foaf/0.1/'
+  },
+  createBackup: true
+});
+
+console.log(`Saved to ${result.path} (${result.bytes} bytes)`);
+</code></pre>
+<hr />
+<h4 id="listfiles"><a class="header" href="#listfiles"><code>listFiles()</code></a></h4>
+<p>List all .ttl files in the graph directory.</p>
+<p><strong>Returns:</strong> <code>Array&lt;string&gt;</code> - Array of file names</p>
+<p><strong>Example:</strong></p>
+<pre><code class="language-javascript">const files = turtle.listFiles();
+console.log('Available files:', files);
+</code></pre>
+<hr />
+<h4 id="parsettl-options"><a class="header" href="#parsettl-options"><code>parse(ttl, options)</code></a></h4>
+<p>Parse a Turtle string into a store.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>ttl</code> (string): Turtle string</li>
+<li><code>options</code> (Object, optional): Parse options
+<ul>
+<li><code>addToStore</code> (boolean): Add parsed data to context store. Default: false</li>
+</ul>
+</li>
+</ul>
+<p><strong>Returns:</strong> <code>Store</code> - Parsed store</p>
+<p><strong>Example:</strong></p>
+<pre><code class="language-javascript">const turtleData = `
+  @prefix ex: &lt;http://example.org/&gt; .
+  ex:alice ex:knows ex:bob .
+`;
+
+const store = turtle.parse(turtleData, { addToStore: true });
+</code></pre>
+<hr />
+<h2 id="delta-operations"><a class="header" href="#delta-operations">Delta Operations</a></h2>
+<h3 id="usedeltaoptions"><a class="header" href="#usedeltaoptions"><code>useDelta(options)</code></a></h3>
+<p>Track and apply graph changes (deltas).</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>options</code> (Object, optional): Delta options
+<ul>
+<li><code>deterministic</code> (boolean): Enable deterministic operations. Default: true</li>
+</ul>
+</li>
+</ul>
+<p><strong>Returns:</strong> <code>Object</code> - Delta interface</p>
+<p><strong>Example:</strong></p>
+<pre><code class="language-javascript">import { initStore, useDelta } from 'unrdf';
+
+const runApp = initStore();
+
+runApp(() =&gt; {
+  const delta = useDelta({ deterministic: true });
+
+  // Compare and sync stores
+  const changes = delta.compareWith(newStore);
+  delta.apply(changes);
+});
+</code></pre>
+<hr />
+<h3 id="delta-api-methods"><a class="header" href="#delta-api-methods">Delta API Methods</a></h3>
+<h4 id="comparewithnewstore"><a class="header" href="#comparewithnewstore"><code>compareWith(newStore)</code></a></h4>
+<p>Compare current context store with new data and return differences.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>newStore</code> (Store): New data store to compare against</li>
+</ul>
+<p><strong>Returns:</strong> <code>Object</code> - Comparison result</p>
+<ul>
+<li><code>added</code> (Store): Quads added in new store</li>
+<li><code>removed</code> (Store): Quads removed from context</li>
+<li><code>addedCount</code> (number): Number of added quads</li>
+<li><code>removedCount</code> (number): Number of removed quads</li>
+<li><code>unchangedCount</code> (number): Number of unchanged quads</li>
+<li><code>contextSize</code> (number): Size of context store</li>
+<li><code>newDataSize</code> (number): Size of new store</li>
+</ul>
+<p><strong>Example:</strong></p>
+<pre><code class="language-javascript">const newStore = engine.parseTurtle(newData);
+const changes = delta.compareWith(newStore);
+
+console.log(`Added: ${changes.addedCount}, Removed: ${changes.removedCount}`);
+</code></pre>
+<hr />
+<h4 id="syncwithnewstore-options"><a class="header" href="#syncwithnewstore-options"><code>syncWith(newStore, options)</code></a></h4>
+<p>Compare and apply changes in one operation.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>newStore</code> (Store): New data store</li>
+<li><code>options</code> (Object, optional): Sync options
+<ul>
+<li><code>dryRun</code> (boolean): Don't actually apply changes. Default: false</li>
+</ul>
+</li>
+</ul>
+<p><strong>Returns:</strong> <code>Object</code> - Apply result with comparison info</p>
+<p><strong>Example:</strong></p>
+<pre><code class="language-javascript">const result = delta.syncWith(newStore, { dryRun: false });
+console.log(`Synced: +${result.added} -${result.removed}`);
+</code></pre>
+<hr />
+<h4 id="applychanges-options"><a class="header" href="#applychanges-options"><code>apply(changes, options)</code></a></h4>
+<p>Apply changes to the current store.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>changes</code> (Object): Changes to apply
+<ul>
+<li><code>added</code> (Store): Quads to add</li>
+<li><code>removed</code> (Store): Quads to remove</li>
+</ul>
+</li>
+<li><code>options</code> (Object, optional): Apply options
+<ul>
+<li><code>dryRun</code> (boolean): Don't actually apply changes. Default: false</li>
+</ul>
+</li>
+</ul>
+<p><strong>Returns:</strong> <code>Object</code> - Apply result</p>
+<ul>
+<li><code>success</code> (boolean): Success flag</li>
+<li><code>added</code> (number): Number of quads added</li>
+<li><code>removed</code> (number): Number of quads removed</li>
+<li><code>originalSize</code> (number): Original store size</li>
+<li><code>finalSize</code> (number): Final store size</li>
+<li><code>dryRun</code> (boolean): Whether this was a dry run</li>
+</ul>
+<p><strong>Example:</strong></p>
+<pre><code class="language-javascript">const changes = delta.compareWith(newStore);
+const result = delta.apply(changes, { dryRun: false });
+
+console.log(`Applied: +${result.added} -${result.removed}`);
+console.log(`Store size: ${result.originalSize} → ${result.finalSize}`);
+</code></pre>
+<hr />
+<h4 id="getstatschanges"><a class="header" href="#getstatschanges"><code>getStats(changes)</code></a></h4>
+<p>Get statistics about changes.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>changes</code> (Object): Changes object</li>
+</ul>
+<p><strong>Returns:</strong> <code>Object</code> - Statistics</p>
+<ul>
+<li><code>added</code> (Object): Added statistics</li>
+<li><code>removed</code> (Object): Removed statistics</li>
+<li><code>total</code> (Object): Total statistics</li>
+<li><code>coverage</code> (Object): Coverage information</li>
+</ul>
+<p><strong>Example:</strong></p>
+<pre><code class="language-javascript">const stats = delta.getStats(changes);
+console.log('Net change:', stats.total.netChange);
+console.log('Affected subjects:', stats.coverage.addedSubjects);
+</code></pre>
+<hr />
+<h4 id="mergechangesets"><a class="header" href="#mergechangesets"><code>merge(...changeSets)</code></a></h4>
+<p>Merge multiple change sets.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>...changeSets</code> (Object): Change sets to merge</li>
+</ul>
+<p><strong>Returns:</strong> <code>Object</code> - Merged changes</p>
+<p><strong>Example:</strong></p>
+<pre><code class="language-javascript">const merged = delta.merge(changes1, changes2, changes3);
+</code></pre>
+<hr />
+<h4 id="invertchanges"><a class="header" href="#invertchanges"><code>invert(changes)</code></a></h4>
+<p>Invert changes (swap added and removed).</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>changes</code> (Object): Changes to invert</li>
+</ul>
+<p><strong>Returns:</strong> <code>Object</code> - Inverted changes</p>
+<p><strong>Example:</strong></p>
+<pre><code class="language-javascript">const inverted = delta.invert(changes);
+// Apply inverted to undo changes
+delta.apply(inverted);
+</code></pre>
+<hr />
+<h2 id="term-operations"><a class="header" href="#term-operations">Term Operations</a></h2>
+<h3 id="useterms"><a class="header" href="#useterms"><code>useTerms()</code></a></h3>
+<p>Create and manipulate RDF terms.</p>
+<p><strong>Returns:</strong> <code>Object</code> - Terms interface</p>
+<p><strong>Example:</strong></p>
+<pre><code class="language-javascript">import { initStore, useTerms } from 'unrdf';
+
+const runApp = initStore();
+
+runApp(() =&gt; {
+  const terms = useTerms();
+
+  const alice = terms.namedNode('http://example.org/alice');
+  const name = terms.literal('Alice');
+});
+</code></pre>
+<hr />
+<h2 id="prefix-operations"><a class="header" href="#prefix-operations">Prefix Operations</a></h2>
+<h3 id="useprefixes"><a class="header" href="#useprefixes"><code>usePrefixes()</code></a></h3>
+<p>Manage namespace prefixes.</p>
+<p><strong>Returns:</strong> <code>Object</code> - Prefixes interface</p>
+<p><strong>Example:</strong></p>
+<pre><code class="language-javascript">import { initStore, usePrefixes } from 'unrdf';
+
+const runApp = initStore();
+
+runApp(() =&gt; {
+  const prefixes = usePrefixes();
+
+  prefixes.register('ex', 'http://example.org/');
+  prefixes.register('foaf', 'http://xmlns.com/foaf/0.1/');
+
+  const expanded = prefixes.expand('ex:alice');
+  // =&gt; 'http://example.org/alice'
+});
+</code></pre>
+<hr />
+<h2 id="validation-operations"><a class="header" href="#validation-operations">Validation Operations</a></h2>
+<h3 id="usevalidator"><a class="header" href="#usevalidator"><code>useValidator()</code></a></h3>
+<p>SHACL validation operations.</p>
+<p><strong>Returns:</strong> <code>Object</code> - Validator interface</p>
+<p><strong>Example:</strong></p>
+<pre><code class="language-javascript">import { initStore, useValidator } from 'unrdf';
+
+const runApp = initStore();
+
+runApp(() =&gt; {
+  const validator = useValidator();
+
+  const report = validator.validate(shapesStore);
+  console.log('Valid:', report.conforms);
+});
+</code></pre>
+<hr />
+<h2 id="reasoning-operations"><a class="header" href="#reasoning-operations">Reasoning Operations</a></h2>
+<h3 id="usereasoner"><a class="header" href="#usereasoner"><code>useReasoner()</code></a></h3>
+<p>Inference and reasoning operations.</p>
+<p><strong>Returns:</strong> <code>Object</code> - Reasoner interface</p>
+<p><strong>Example:</strong></p>
+<pre><code class="language-javascript">import { initStore, useReasoner } from 'unrdf';
+
+const runApp = initStore();
+
+runApp(() =&gt; {
+  const reasoner = useReasoner();
+
+  const inferred = reasoner.inferTransitive(
+    'http://www.w3.org/2000/01/rdf-schema#subClassOf'
+  );
+});
+</code></pre>
+<hr />
+<h2 id="canonicalization-operations"><a class="header" href="#canonicalization-operations">Canonicalization Operations</a></h2>
+<h3 id="usecanon"><a class="header" href="#usecanon"><code>useCanon()</code></a></h3>
+<p>RDF canonicalization using URDNA2015.</p>
+<p><strong>Returns:</strong> <code>Object</code> - Canonicalization interface</p>
+<p><strong>Example:</strong></p>
+<pre><code class="language-javascript">import { initStore, useCanon } from 'unrdf';
+
+const runApp = initStore();
+
+runApp(async () =&gt; {
+  const canon = useCanon();
+
+  const canonical = await canon.canonicalize();
+  const hash = await canon.hash();
+
+  console.log('Canonical hash:', hash);
+});
+</code></pre>
+<hr />
+<h2 id="type-safety-operations"><a class="header" href="#type-safety-operations">Type Safety Operations</a></h2>
+<h3 id="usezod"><a class="header" href="#usezod"><code>useZod()</code></a></h3>
+<p>Zod-based type validation for RDF data.</p>
+<p><strong>Returns:</strong> <code>Object</code> - Zod validation interface</p>
+<p><strong>Example:</strong></p>
+<pre><code class="language-javascript">import { initStore, useZod } from 'unrdf';
+import { z } from 'zod';
+
+const runApp = initStore();
+
+runApp(() =&gt; {
+  const zodRdf = useZod();
+
+  const PersonSchema = z.object({
+    name: z.string(),
+    age: z.number(),
+    knows: z.array(z.string())
+  });
+
+  const person = zodRdf.validate('http://example.org/alice', PersonSchema);
+});
+</code></pre>
+<hr />
+<h2 id="best-practices"><a class="header" href="#best-practices">Best Practices</a></h2>
+<h3 id="composable-composition"><a class="header" href="#composable-composition">Composable Composition</a></h3>
+<p>Combine multiple composables for complex operations:</p>
+<pre><code class="language-javascript">const graph = useGraph();
+const delta = useDelta();
+const turtle = useTurtle();
+
+// Load data
+turtle.loadAll();
+
+// Query data
+const results = await graph.select('SELECT * WHERE { ?s ?p ?o }');
+
+// Track changes
+const newStore = turtle.load('updates');
+const changes = delta.compareWith(newStore);
+delta.apply(changes);
+</code></pre>
+<h3 id="error-handling"><a class="header" href="#error-handling">Error Handling</a></h3>
+<p>Always handle errors from async operations:</p>
+<pre><code class="language-javascript">try {
+  const results = await graph.select(sparqlQuery);
+} catch (error) {
+  console.error('Query failed:', error.message);
+}
+</code></pre>
+<h3 id="performance"><a class="header" href="#performance">Performance</a></h3>
+<p>Use deterministic mode for reproducible results:</p>
+<pre><code class="language-javascript">const delta = useDelta({ deterministic: true });
+const graph = useGraph();
+
+const results = await graph.query(sparql, { deterministic: true });
+</code></pre>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../api/knowledge-engine.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../api/utilities.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../api/knowledge-engine.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../api/utilities.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <!-- Livereload script (if served using the cli tool) -->
+        <script>
+            const wsProtocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsAddress = wsProtocol + "//" + location.host + "/" + "__livereload";
+            const socket = new WebSocket(wsAddress);
+            socket.onmessage = function (event) {
+                if (event.data === "reload") {
+                    socket.close();
+                    location.reload();
+                }
+            };
+
+            window.onbeforeunload = function() {
+                socket.close();
+            }
+        </script>
+
+
+        <script>
+            window.playground_line_numbers = true;
+        </script>
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+        <script src="../ace.js"></script>
+        <script src="../editor.js"></script>
+        <script src="../mode-rust.js"></script>
+        <script src="../theme-dawn.js"></script>
+        <script src="../theme-tomorrow_night.js"></script>
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>
