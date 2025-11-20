@@ -349,9 +349,9 @@ export function isBrowser() {
 
 /**
  * Get appropriate shims for current environment
- * @returns {Object} Environment shims
+ * @returns {Promise<Object>} Environment shims
  */
-export function getEnvironmentShims() {
+export async function getEnvironmentShims() {
   if (isBrowser()) {
     return {
       fs,

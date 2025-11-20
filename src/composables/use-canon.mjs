@@ -9,8 +9,11 @@
  * @license MIT
  */
 
-import rdfCanonize from "rdf-canonize";
+import * as rdfCanonizeModule from "rdf-canonize";
 import { useStoreContext } from "../context/index.mjs";
+import { Store } from "n3";
+
+const rdfCanonize = rdfCanonizeModule.default || rdfCanonizeModule;
 
 /**
  * Create a canonicalization composable
@@ -115,11 +118,14 @@ export function useCanon(options = {}) {
      */
     allIsomorphic(stores) {
       if (stores.length < 2) return true;
-      
+
       const first = stores[0].store || stores[0];
       for (let i = 1; i < stores.length; i++) {
         const current = stores[i].store || stores[i];
-        if (!engine.isIsomorphic(first, current)) {
+        // Use canonicalization to check isomorphism
+        const canon1 = this.canonicalize(first);
+        const canon2 = this.canonicalize(current);
+        if (canon1 !== canon2) {
           return false;
         }
       }
@@ -138,15 +144,17 @@ export function useCanon(options = {}) {
      */
     findIsomorphic(referenceStore, stores) {
       const reference = referenceStore.store || referenceStore;
+      const refCanon = this.canonicalize(reference);
       const results = [];
-      
+
       for (const [i, store] of stores.entries()) {
         const current = store.store || store;
-        if (engine.isIsomorphic(reference, current)) {
+        const currentCanon = this.canonicalize(current);
+        if (refCanon === currentCanon) {
           results.push({ store: store, index: i });
         }
       }
-      
+
       return results;
     },
 
@@ -162,27 +170,29 @@ export function useCanon(options = {}) {
     groupByIsomorphism(stores) {
       const groups = [];
       const processed = new Set();
-      
+
       for (let i = 0; i < stores.length; i++) {
         if (processed.has(i)) continue;
-        
+
         const current = stores[i].store || stores[i];
+        const currentCanon = this.canonicalize(current);
         const group = [{ store: stores[i], index: i }];
         processed.add(i);
-        
+
         for (let j = i + 1; j < stores.length; j++) {
           if (processed.has(j)) continue;
-          
+
           const other = stores[j].store || stores[j];
-          if (engine.isIsomorphic(current, other)) {
+          const otherCanon = this.canonicalize(other);
+          if (currentCanon === otherCanon) {
             group.push({ store: stores[j], index: j });
             processed.add(j);
           }
         }
-        
+
         groups.push(group);
       }
-      
+
       return groups;
     },
 
@@ -253,16 +263,25 @@ export function useCanon(options = {}) {
      * const canonical = canon.createCanonicalStore([store1, store2, store3]);
      * console.log(`Canonical store has ${canonical.size} triples`);
      */
-    createCanonicalStore(stores, options = {}) {
+    async createCanonicalStore(stores, options = {}) {
       const storeInstances = stores.map(s => s.store || s);
-      const unionStore = engine.union(...storeInstances);
-      const canonical = this.canonicalize(unionStore, options);
-      const canonicalStore = engine.parseNQuads(canonical);
-      
+      // Create union by merging all quads into a new store
+      const unionStore = new Store();
+      for (const store of storeInstances) {
+        unionStore.addQuads(store.getQuads());
+      }
+      const canonical = await this.canonicalize(unionStore, options);
+      // Parse canonical N-Quads back into a Store
+      const { Parser } = await import('n3');
+      const parser = new Parser({ format: 'N-Quads' });
+      const canonicalStore = new Store();
+      const quads = parser.parse(canonical);
+      canonicalStore.addQuads(quads);
+
       return {
         store: canonicalStore,
         canonical,
-        hash: this.hash(canonicalStore),
+        hash: await this.hash(canonicalStore),
         size: canonicalStore.size
       };
     },
@@ -279,13 +298,13 @@ export function useCanon(options = {}) {
     canonicalizeSync(store, options = {}) {
       const storeInstance = store.store || store;
       const { algorithm = 'URDNA2015' } = options;
-      
+
       try {
         return rdfCanonize._canonizeSync(storeInstance, { algorithm });
       } catch (error) {
-        // Fallback to engine canonicalization
-        console.warn(`Synchronous canonicalization failed, using fallback: ${error.message}`);
-        return engine.canonicalize(storeInstance);
+        // Fallback to async canonicalization (no sync alternative available)
+        console.warn(`Synchronous canonicalization not supported: ${error.message}`);
+        throw new Error('Synchronous canonicalization is not available. Use canonicalize() instead.');
       }
     },
 
@@ -327,14 +346,14 @@ export function useCanon(options = {}) {
      * const stats = canon.getCanonicalizationStats(store);
      * console.log(`Original size: ${stats.originalSize}, Canonical size: ${stats.canonicalSize}`);
      */
-    getCanonicalizationStats(store) {
+    async getCanonicalizationStats(store) {
       const storeInstance = store.store || store;
       const startTime = performance.now();
-      
+
       try {
-        const canonical = this.canonicalize(storeInstance);
+        const canonical = await this.canonicalize(storeInstance);
         const endTime = performance.now();
-        
+
         return {
           originalSize: storeInstance.size,
           canonicalSize: canonical.length,

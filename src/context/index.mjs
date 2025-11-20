@@ -13,6 +13,7 @@ import { createContext } from "unctx";
 import { AsyncLocalStorage } from "node:async_hooks";
 import { Store, DataFactory } from "n3";
 import crypto from "node:crypto";
+import * as rdfCanonizeModule from "rdf-canonize";
 import {
   query as keQuery,
   select as keSelect,
@@ -27,6 +28,8 @@ import {
   isIsomorphic as keIsomorphic,
   getCanonicalHash,
 } from "../knowledge-engine/canonicalize.mjs";
+
+const rdfCanonize = rdfCanonizeModule.default || rdfCanonizeModule;
 
 const { namedNode, literal, blankNode, quad, defaultGraph } = DataFactory;
 
