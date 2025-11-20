@@ -1,0 +1,526 @@
+<!DOCTYPE HTML>
+<html lang="en" class="navy" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Introduction - UNRDF - Universal RDF Framework</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="Production-ready RDF knowledge graph library with Knowledge Hooks and autonomic capabilities">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "navy";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('navy')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="../getting-started/quick-start.html"><strong aria-hidden="true">2.</strong> Getting Started</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../getting-started/quick-start.html"><strong aria-hidden="true">2.1.</strong> Quick Start</a></li><li class="chapter-item "><a href="../getting-started/installation.html"><strong aria-hidden="true">2.2.</strong> Installation</a></li><li class="chapter-item "><a href="../getting-started/basic-usage.html"><strong aria-hidden="true">2.3.</strong> Basic Usage</a></li><li class="chapter-item "><a href="../getting-started/first-hook.html"><strong aria-hidden="true">2.4.</strong> Your First Hook</a></li></ol></li><li class="chapter-item expanded "><a href="../concepts/rdf-fundamentals.html"><strong aria-hidden="true">3.</strong> Concepts</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../concepts/rdf-fundamentals.html"><strong aria-hidden="true">3.1.</strong> RDF Fundamentals</a></li><li class="chapter-item "><a href="../concepts/composables.html"><strong aria-hidden="true">3.2.</strong> Composables</a></li><li class="chapter-item "><a href="../concepts/store-context.html"><strong aria-hidden="true">3.3.</strong> Store & Context</a></li><li class="chapter-item "><a href="../concepts/transactions.html"><strong aria-hidden="true">3.4.</strong> Transactions</a></li></ol></li><li class="chapter-item expanded "><a href="../hooks/introduction.html" class="active"><strong aria-hidden="true">4.</strong> Hooks</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../hooks/introduction.html" class="active"><strong aria-hidden="true">4.1.</strong> Introduction</a></li><li class="chapter-item "><a href="../hooks/lifecycle.html"><strong aria-hidden="true">4.2.</strong> Lifecycle</a></li><li class="chapter-item "><a href="../hooks/effects.html"><strong aria-hidden="true">4.3.</strong> Effects</a></li><li class="chapter-item "><a href="../hooks/predicates.html"><strong aria-hidden="true">4.4.</strong> Predicates</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../hooks/predicates/ask.html"><strong aria-hidden="true">4.4.1.</strong> ASK</a></li><li class="chapter-item "><a href="../hooks/predicates/shacl.html"><strong aria-hidden="true">4.4.2.</strong> SHACL</a></li><li class="chapter-item "><a href="../hooks/predicates/delta.html"><strong aria-hidden="true">4.4.3.</strong> Delta</a></li><li class="chapter-item "><a href="../hooks/predicates/threshold.html"><strong aria-hidden="true">4.4.4.</strong> Threshold</a></li><li class="chapter-item "><a href="../hooks/predicates/custom.html"><strong aria-hidden="true">4.4.5.</strong> Custom</a></li></ol></li></ol></li><li class="chapter-item expanded "><a href="../api/core.html"><strong aria-hidden="true">5.</strong> API Reference</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../api/cli.html"><strong aria-hidden="true">5.1.</strong> CLI</a></li><li class="chapter-item "><a href="../api/core.html"><strong aria-hidden="true">5.2.</strong> Core</a></li><li class="chapter-item "><a href="../api/knowledge-engine.html"><strong aria-hidden="true">5.3.</strong> Knowledge Engine</a></li><li class="chapter-item "><a href="../api/composables.html"><strong aria-hidden="true">5.4.</strong> Composables</a></li><li class="chapter-item "><a href="../api/utilities.html"><strong aria-hidden="true">5.5.</strong> Utilities</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">UNRDF - Universal RDF Framework</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/seanchatmangpt/unrdf" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <a href="https://github.com/seanchatmangpt/unrdf/edit/main/book/src/hooks/introduction.md" title="Suggest an edit" aria-label="Suggest an edit">
+                            <i id="git-edit-button" class="fa fa-edit"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="knowledge-hooks-introduction"><a class="header" href="#knowledge-hooks-introduction">Knowledge Hooks Introduction</a></h1>
+<p>Knowledge Hooks are the heart of UNRDF's autonomic capabilities, transforming your knowledge graph from a passive data store into an intelligent, self-governing system.</p>
+<h2 id="what-are-knowledge-hooks"><a class="header" href="#what-are-knowledge-hooks">What are Knowledge Hooks?</a></h2>
+<p>A <strong>Knowledge Hook</strong> is a policy-driven trigger that:</p>
+<ol>
+<li><strong>Observes</strong> - Monitors the knowledge graph for specific conditions</li>
+<li><strong>Evaluates</strong> - Checks if a condition is met using SPARQL, SHACL, or custom logic</li>
+<li><strong>Reacts</strong> - Executes effects when triggered (validate, transform, notify, veto)</li>
+</ol>
+<pre><code class="language-javascript">import { defineHook, registerHook } from 'unrdf';
+
+const hook = defineHook({
+  meta: {
+    name: 'person-name-required',
+    description: 'Ensures all persons have names'
+  },
+  when: {
+    kind: 'sparql-ask',
+    query: `
+      PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+      ASK {
+        ?person a foaf:Person .
+        FILTER NOT EXISTS { ?person foaf:name ?name }
+      }
+    `
+  },
+  run: async (event) =&gt; {
+    if (event.result === true) {
+      throw new Error('All persons must have a name');
+    }
+  }
+});
+
+await registerHook(hook);
+</code></pre>
+<h2 id="why-use-knowledge-hooks"><a class="header" href="#why-use-knowledge-hooks">Why Use Knowledge Hooks?</a></h2>
+<h3 id="reactive-rdf"><a class="header" href="#reactive-rdf">Reactive RDF</a></h3>
+<p>Traditional RDF systems are <strong>passive</strong>:</p>
+<ul>
+<li>Store data</li>
+<li>Answer queries</li>
+<li>No proactive behavior</li>
+</ul>
+<p>UNRDF with Knowledge Hooks is <strong>reactive</strong>:</p>
+<ul>
+<li>Enforces business rules automatically</li>
+<li>Maintains data quality invariants</li>
+<li>Responds to graph changes in real-time</li>
+<li>Provides self-healing capabilities</li>
+</ul>
+<h3 id="benefits"><a class="header" href="#benefits">Benefits</a></h3>
+<p><strong>🛡️ Data Quality Enforcement</strong></p>
+<pre><code class="language-javascript">// Automatically reject invalid data
+defineHook({
+  meta: { name: 'age-validation' },
+  when: {
+    kind: 'sparql-ask',
+    query: 'ASK { ?person ex:age ?age . FILTER (?age &lt; 0 || ?age &gt; 150) }'
+  },
+  run: async (event) =&gt; {
+    if (event.result) throw new Error('Invalid age detected');
+  }
+});
+</code></pre>
+<p><strong>📊 Audit Trails</strong></p>
+<pre><code class="language-javascript">// Log all person changes
+defineHook({
+  meta: { name: 'audit-person-changes' },
+  when: {
+    kind: 'delta',
+    pattern: { predicate: 'rdf:type', object: 'foaf:Person' }
+  },
+  run: async (event) =&gt; {
+    console.log(`Person modified: ${event.delta.additions.length} additions`);
+  }
+});
+</code></pre>
+<p><strong>⚡ Real-Time Notifications</strong></p>
+<pre><code class="language-javascript">// Alert on large transactions
+defineHook({
+  meta: { name: 'large-transaction-alert' },
+  when: {
+    kind: 'threshold',
+    value: 10000,
+    operator: 'gt'
+  },
+  run: async (event) =&gt; {
+    await sendAlert(`Large transaction: ${event.value} triples`);
+  }
+});
+</code></pre>
+<p><strong>🔄 Automatic Transformations</strong></p>
+<pre><code class="language-javascript">// Normalize email addresses
+defineHook({
+  meta: { name: 'email-normalization' },
+  when: {
+    kind: 'delta',
+    pattern: { predicate: 'foaf:mbox' }
+  },
+  run: async (event) =&gt; {
+    // Transform email to lowercase
+    return {
+      result: 'normalized',
+      assertions: [/* normalized triples */]
+    };
+  }
+});
+</code></pre>
+<h2 id="hook-architecture"><a class="header" href="#hook-architecture">Hook Architecture</a></h2>
+<p>Knowledge Hooks follow a <strong>declarative, file-based</strong> contract:</p>
+<pre><code>┌─────────────────────────────────────┐
+│         Knowledge Hook              │
+├─────────────────────────────────────┤
+│  Meta                               │
+│  • name: "compliance:largeTx"       │
+│  • description: "..."               │
+│  • ontology: ["fibo"]               │
+├─────────────────────────────────────┤
+│  When (Condition)                   │
+│  • kind: "sparql-ask"               │
+│  • ref: file://hooks/largeTx.rq     │
+│  • sha256: "e3b0c44..."             │
+├─────────────────────────────────────┤
+│  Lifecycle                          │
+│  • before(): gate/normalize         │
+│  • run(): main effect               │
+│  • after(): cleanup/audit           │
+└─────────────────────────────────────┘
+</code></pre>
+<h3 id="core-principles"><a class="header" href="#core-principles">Core Principles</a></h3>
+<p><strong>1. Conditions are Addressed, Not Embedded</strong></p>
+<pre><code class="language-javascript">// ❌ Bad: Inline query string
+when: {
+  kind: 'sparql-ask',
+  query: 'ASK { ... }' // Hard to version and govern
+}
+
+// ✅ Good: Content-addressed file reference
+when: {
+  kind: 'sparql-ask',
+  ref: {
+    uri: 'file://hooks/compliance/largeTx.ask.rq',
+    sha256: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
+    mediaType: 'application/sparql-query'
+  }
+}
+</code></pre>
+<p><strong>2. Reflex Arc Lifecycle</strong></p>
+<p>Hooks follow a three-phase lifecycle inspired by biological reflexes:</p>
+<ul>
+<li><strong>Before</strong>: Pre-condition gate (normalize payload, early cancellation)</li>
+<li><strong>Run</strong>: Core effect execution</li>
+<li><strong>After</strong>: Post-execution cleanup (audit, metrics)</li>
+</ul>
+<p><strong>3. Effect Sandboxing</strong></p>
+<p>All hook effects run in isolated sandboxes for security:</p>
+<ul>
+<li>Limited filesystem access</li>
+<li>No network access by default</li>
+<li>Resource constraints (memory, CPU)</li>
+<li>Timeout enforcement</li>
+</ul>
+<p><strong>4. Cryptographic Provenance</strong></p>
+<p>Every hook execution is logged with cryptographic proof:</p>
+<ul>
+<li>SHA3-256 hashing of hook definitions</li>
+<li>Git-based immutable receipts</li>
+<li>Merkle tree verification</li>
+</ul>
+<h2 id="use-cases"><a class="header" href="#use-cases">Use Cases</a></h2>
+<h3 id="1-compliance-enforcement"><a class="header" href="#1-compliance-enforcement">1. Compliance Enforcement</a></h3>
+<pre><code class="language-javascript">// GDPR: Prevent storing personal data without consent
+defineHook({
+  meta: { name: 'gdpr:consent-required' },
+  when: {
+    kind: 'sparql-ask',
+    query: `
+      ASK {
+        ?person a foaf:Person ;
+                ex:personalData ?data .
+        FILTER NOT EXISTS { ?person ex:hasConsent true }
+      }
+    `
+  },
+  run: async (event) =&gt; {
+    if (event.result) {
+      throw new Error('GDPR violation: Personal data requires consent');
+    }
+  }
+});
+</code></pre>
+<h3 id="2-data-quality-gates"><a class="header" href="#2-data-quality-gates">2. Data Quality Gates</a></h3>
+<pre><code class="language-javascript">// Ensure data completeness
+defineHook({
+  meta: { name: 'completeness:person-profile' },
+  when: {
+    kind: 'sparql-ask',
+    query: `
+      ASK {
+        ?person a foaf:Person .
+        FILTER NOT EXISTS {
+          ?person foaf:name ?name ;
+                  foaf:mbox ?email
+        }
+      }
+    `
+  },
+  run: async (event) =&gt; {
+    if (event.result) {
+      throw new Error('Incomplete person profile: name and email required');
+    }
+  }
+});
+</code></pre>
+<h3 id="3-anomaly-detection"><a class="header" href="#3-anomaly-detection">3. Anomaly Detection</a></h3>
+<pre><code class="language-javascript">// Detect suspicious patterns
+defineHook({
+  meta: { name: 'security:unusual-activity' },
+  when: {
+    kind: 'window',
+    duration: '5m'
+  },
+  run: async (event) =&gt; {
+    if (event.count &gt; 1000) {
+      await sendSecurityAlert('Unusual activity detected');
+    }
+  }
+});
+</code></pre>
+<h3 id="4-business-rule-automation"><a class="header" href="#4-business-rule-automation">4. Business Rule Automation</a></h3>
+<pre><code class="language-javascript">// Auto-escalate high-value transactions
+defineHook({
+  meta: { name: 'business:auto-escalate' },
+  when: {
+    kind: 'threshold',
+    value: 100000,
+    operator: 'gte'
+  },
+  run: async (event) =&gt; {
+    return {
+      result: 'escalated',
+      assertions: [
+        quad(event.transaction, 'ex:requiresApproval', literal('true')),
+        quad(event.transaction, 'ex:escalatedAt', literal(new Date().toISOString()))
+      ]
+    };
+  }
+});
+</code></pre>
+<h2 id="comparison-with-traditional-event-systems"><a class="header" href="#comparison-with-traditional-event-systems">Comparison with Traditional Event Systems</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>Feature</th><th>Traditional Events</th><th>Knowledge Hooks</th></tr></thead><tbody>
+<tr><td><strong>Condition Logic</strong></td><td>Imperative code</td><td>Declarative SPARQL/SHACL</td></tr>
+<tr><td><strong>Provenance</strong></td><td>Manual logging</td><td>Cryptographic receipts</td></tr>
+<tr><td><strong>Sandboxing</strong></td><td>None</td><td>Built-in isolation</td></tr>
+<tr><td><strong>Graph-Native</strong></td><td>No</td><td>Yes (SPARQL queries)</td></tr>
+<tr><td><strong>Versioning</strong></td><td>Code versions</td><td>Content-addressed files</td></tr>
+<tr><td><strong>Audit Trails</strong></td><td>DIY</td><td>Automatic Merkle proofs</td></tr>
+</tbody></table>
+</div>
+<h2 id="getting-started"><a class="header" href="#getting-started">Getting Started</a></h2>
+<p>Continue to the next chapters to learn:</p>
+<ol>
+<li><strong><a href="lifecycle.html">Hook Lifecycle</a></strong> - Understanding before/run/after phases</li>
+<li><strong><a href="predicates.html">Predicates</a></strong> - Different condition types</li>
+<li><strong><a href="effects.html">Effects</a></strong> - What hooks can do</li>
+<li><strong><a href="policy-packs.html">Policy Packs</a></strong> - Organizing hooks into reusable packages</li>
+</ol>
+<pre><code class="language-admonish tip">For hands-on practice, see [Your First Hook](../getting-started/first-hook.md) to build a complete example.
+</code></pre>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../concepts/transactions.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../hooks/introduction.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../concepts/transactions.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../hooks/introduction.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <!-- Livereload script (if served using the cli tool) -->
+        <script>
+            const wsProtocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsAddress = wsProtocol + "//" + location.host + "/" + "__livereload";
+            const socket = new WebSocket(wsAddress);
+            socket.onmessage = function (event) {
+                if (event.data === "reload") {
+                    socket.close();
+                    location.reload();
+                }
+            };
+
+            window.onbeforeunload = function() {
+                socket.close();
+            }
+        </script>
+
+
+        <script>
+            window.playground_line_numbers = true;
+        </script>
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+        <script src="../ace.js"></script>
+        <script src="../editor.js"></script>
+        <script src="../mode-rust.js"></script>
+        <script src="../theme-dawn.js"></script>
+        <script src="../theme-tomorrow_night.js"></script>
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

@@ -1,0 +1,881 @@
+<!DOCTYPE HTML>
+<html lang="en" class="navy" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Threshold - UNRDF - Universal RDF Framework</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="Production-ready RDF knowledge graph library with Knowledge Hooks and autonomic capabilities">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon.svg">
+        <link rel="shortcut icon" href="../../favicon.png">
+        <link rel="stylesheet" href="../../css/variables.css">
+        <link rel="stylesheet" href="../../css/general.css">
+        <link rel="stylesheet" href="../../css/chrome.css">
+        <link rel="stylesheet" href="../../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../../highlight.css">
+        <link rel="stylesheet" href="../../tomorrow-night.css">
+        <link rel="stylesheet" href="../../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "navy";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('navy')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../../introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="../../getting-started/quick-start.html"><strong aria-hidden="true">2.</strong> Getting Started</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../getting-started/quick-start.html"><strong aria-hidden="true">2.1.</strong> Quick Start</a></li><li class="chapter-item "><a href="../../getting-started/installation.html"><strong aria-hidden="true">2.2.</strong> Installation</a></li><li class="chapter-item "><a href="../../getting-started/basic-usage.html"><strong aria-hidden="true">2.3.</strong> Basic Usage</a></li><li class="chapter-item "><a href="../../getting-started/first-hook.html"><strong aria-hidden="true">2.4.</strong> Your First Hook</a></li></ol></li><li class="chapter-item expanded "><a href="../../concepts/rdf-fundamentals.html"><strong aria-hidden="true">3.</strong> Concepts</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../concepts/rdf-fundamentals.html"><strong aria-hidden="true">3.1.</strong> RDF Fundamentals</a></li><li class="chapter-item "><a href="../../concepts/composables.html"><strong aria-hidden="true">3.2.</strong> Composables</a></li><li class="chapter-item "><a href="../../concepts/store-context.html"><strong aria-hidden="true">3.3.</strong> Store & Context</a></li><li class="chapter-item "><a href="../../concepts/transactions.html"><strong aria-hidden="true">3.4.</strong> Transactions</a></li></ol></li><li class="chapter-item expanded "><a href="../../hooks/introduction.html"><strong aria-hidden="true">4.</strong> Hooks</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../hooks/introduction.html"><strong aria-hidden="true">4.1.</strong> Introduction</a></li><li class="chapter-item "><a href="../../hooks/lifecycle.html"><strong aria-hidden="true">4.2.</strong> Lifecycle</a></li><li class="chapter-item "><a href="../../hooks/effects.html"><strong aria-hidden="true">4.3.</strong> Effects</a></li><li class="chapter-item expanded "><a href="../../hooks/predicates.html"><strong aria-hidden="true">4.4.</strong> Predicates</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../hooks/predicates/ask.html"><strong aria-hidden="true">4.4.1.</strong> ASK</a></li><li class="chapter-item "><a href="../../hooks/predicates/shacl.html"><strong aria-hidden="true">4.4.2.</strong> SHACL</a></li><li class="chapter-item "><a href="../../hooks/predicates/delta.html"><strong aria-hidden="true">4.4.3.</strong> Delta</a></li><li class="chapter-item expanded "><a href="../../hooks/predicates/threshold.html" class="active"><strong aria-hidden="true">4.4.4.</strong> Threshold</a></li><li class="chapter-item "><a href="../../hooks/predicates/custom.html"><strong aria-hidden="true">4.4.5.</strong> Custom</a></li></ol></li></ol></li><li class="chapter-item expanded "><a href="../../api/core.html"><strong aria-hidden="true">5.</strong> API Reference</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../api/cli.html"><strong aria-hidden="true">5.1.</strong> CLI</a></li><li class="chapter-item "><a href="../../api/core.html"><strong aria-hidden="true">5.2.</strong> Core</a></li><li class="chapter-item "><a href="../../api/knowledge-engine.html"><strong aria-hidden="true">5.3.</strong> Knowledge Engine</a></li><li class="chapter-item "><a href="../../api/composables.html"><strong aria-hidden="true">5.4.</strong> Composables</a></li><li class="chapter-item "><a href="../../api/utilities.html"><strong aria-hidden="true">5.5.</strong> Utilities</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">UNRDF - Universal RDF Framework</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/seanchatmangpt/unrdf" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <a href="https://github.com/seanchatmangpt/unrdf/edit/main/book/src/hooks/predicates/threshold.md" title="Suggest an edit" aria-label="Suggest an edit">
+                            <i id="git-edit-button" class="fa fa-edit"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="threshold-predicates"><a class="header" href="#threshold-predicates">THRESHOLD Predicates</a></h1>
+<p><strong>THRESHOLD predicates</strong> evaluate numeric conditions against values in your knowledge graph. They're perfect for enforcing limits, quotas, and business rules based on quantities.</p>
+<h2 id="when-to-use-threshold-predicates"><a class="header" href="#when-to-use-threshold-predicates">When to Use THRESHOLD Predicates</a></h2>
+<p>Use THRESHOLD predicates for:</p>
+<ul>
+<li>✅ <strong>Numeric limits</strong> - "Transaction amount exceeds $10,000"</li>
+<li>✅ <strong>Quotas</strong> - "Storage usage above 90%"</li>
+<li>✅ <strong>Business rules</strong> - "Discount only if purchases &gt; 100"</li>
+<li>✅ <strong>Monitoring</strong> - "CPU usage above threshold"</li>
+</ul>
+<h2 id="basic-syntax"><a class="header" href="#basic-syntax">Basic Syntax</a></h2>
+<pre><code class="language-javascript">import { defineHook } from 'unrdf';
+
+defineHook({
+  meta: {
+    name: 'large-transaction-alert',
+    description: 'Alert on transactions exceeding $10,000'
+  },
+  when: {
+    kind: 'threshold',
+    value: 10000,
+    operator: 'gt', // greater than
+    query: `
+      SELECT (SUM(?amount) AS ?total)
+      WHERE {
+        ?transaction ex:amount ?amount
+      }
+    `
+  },
+  run: async (event) =&gt; {
+    if (event.result.satisfied) {
+      console.log(`Large transaction alert: $${event.result.value}`);
+    }
+  }
+});
+</code></pre>
+<h2 id="operators"><a class="header" href="#operators">Operators</a></h2>
+<p>THRESHOLD predicates support these comparison operators:</p>
+<div class="table-wrapper"><table><thead><tr><th>Operator</th><th>Meaning</th><th>Example</th></tr></thead><tbody>
+<tr><td><code>gt</code></td><td>Greater than (<code>&gt;</code>)</td><td><code>value &gt; 1000</code></td></tr>
+<tr><td><code>gte</code></td><td>Greater than or equal (<code>&gt;=</code>)</td><td><code>value &gt;= 1000</code></td></tr>
+<tr><td><code>lt</code></td><td>Less than (<code>&lt;</code>)</td><td><code>value &lt; 100</code></td></tr>
+<tr><td><code>lte</code></td><td>Less than or equal (<code>&lt;=</code>)</td><td><code>value &lt;= 100</code></td></tr>
+<tr><td><code>eq</code></td><td>Equal (<code>==</code>)</td><td><code>value == 42</code></td></tr>
+<tr><td><code>neq</code></td><td>Not equal (<code>!=</code>)</td><td><code>value != 0</code></td></tr>
+</tbody></table>
+</div>
+<h2 id="event-structure"><a class="header" href="#event-structure">Event Structure</a></h2>
+<p>THRESHOLD predicates provide this structure to the <code>run</code> function:</p>
+<pre><code class="language-javascript">{
+  result: {
+    satisfied: true,     // Whether threshold condition is met
+    value: 15000,        // Actual value
+    threshold: 10000,    // Configured threshold
+    operator: 'gt'       // Comparison operator
+  },
+  payload: {
+    additions: [...],
+    removals: [...],
+    actor: 'user@example.org'
+  },
+  context: {
+    graph: Store,
+    env: {...}
+  },
+  name: 'hook-name'
+}
+</code></pre>
+<h2 id="complete-examples"><a class="header" href="#complete-examples">Complete Examples</a></h2>
+<h3 id="example-1-transaction-limit"><a class="header" href="#example-1-transaction-limit">Example 1: Transaction Limit</a></h3>
+<p>Reject transactions exceeding a limit:</p>
+<pre><code class="language-javascript">defineHook({
+  meta: {
+    name: 'transaction-limit',
+    description: 'Reject transactions over $50,000'
+  },
+  when: {
+    kind: 'threshold',
+    value: 50000,
+    operator: 'gt',
+    query: `
+      PREFIX ex: &lt;http://example.org/&gt;
+
+      SELECT (SUM(?amount) AS ?total)
+      WHERE {
+        ?transaction ex:amount ?amount
+      }
+    `
+  },
+  run: async (event) =&gt; {
+    if (event.result.satisfied) {
+      throw new Error(
+        `Transaction exceeds limit: $${event.result.value} &gt; $${event.result.threshold}`
+      );
+    }
+  }
+});
+</code></pre>
+<h3 id="example-2-storage-quota"><a class="header" href="#example-2-storage-quota">Example 2: Storage Quota</a></h3>
+<p>Alert when storage usage exceeds quota:</p>
+<pre><code class="language-javascript">defineHook({
+  meta: {
+    name: 'storage-quota-alert',
+    description: 'Alert when storage exceeds 90% capacity'
+  },
+  when: {
+    kind: 'threshold',
+    value: 0.9, // 90%
+    operator: 'gte',
+    query: `
+      PREFIX ex: &lt;http://example.org/&gt;
+
+      SELECT (?used / ?total AS ?usage)
+      WHERE {
+        ex:system ex:storageUsed ?used ;
+                  ex:storageTotal ?total
+      }
+    `
+  },
+  run: async (event) =&gt; {
+    if (event.result.satisfied) {
+      const percentage = (event.result.value * 100).toFixed(1);
+      await sendAlert(`Storage at ${percentage}% capacity`);
+    }
+  }
+});
+</code></pre>
+<h3 id="example-3-minimum-age-requirement"><a class="header" href="#example-3-minimum-age-requirement">Example 3: Minimum Age Requirement</a></h3>
+<p>Ensure minimum age:</p>
+<pre><code class="language-javascript">defineHook({
+  meta: {
+    name: 'minimum-age',
+    description: 'Ensure persons are at least 18 years old'
+  },
+  when: {
+    kind: 'threshold',
+    value: 18,
+    operator: 'lt',
+    query: `
+      PREFIX ex: &lt;http://example.org/&gt;
+
+      SELECT (MIN(?age) AS ?minAge)
+      WHERE {
+        ?person a foaf:Person ;
+                ex:age ?age
+      }
+    `
+  },
+  run: async (event) =&gt; {
+    if (event.result.satisfied) {
+      throw new Error(
+        `Minimum age not met: ${event.result.value} &lt; ${event.result.threshold}`
+      );
+    }
+  }
+});
+</code></pre>
+<h3 id="example-4-team-size-limit"><a class="header" href="#example-4-team-size-limit">Example 4: Team Size Limit</a></h3>
+<p>Enforce maximum team size:</p>
+<pre><code class="language-javascript">defineHook({
+  meta: {
+    name: 'max-team-size',
+    description: 'Limit teams to 20 members'
+  },
+  when: {
+    kind: 'threshold',
+    value: 20,
+    operator: 'gt',
+    query: `
+      PREFIX org: &lt;http://www.w3.org/ns/org#&gt;
+
+      SELECT (COUNT(?member) AS ?count)
+      WHERE {
+        ?team a org:Team .
+        ?member org:memberOf ?team
+      }
+    `
+  },
+  run: async (event) =&gt; {
+    if (event.result.satisfied) {
+      throw new Error(
+        `Team size limit exceeded: ${event.result.value} members (max ${event.result.threshold})`
+      );
+    }
+  }
+});
+</code></pre>
+<h3 id="example-5-price-range-validation"><a class="header" href="#example-5-price-range-validation">Example 5: Price Range Validation</a></h3>
+<p>Ensure prices are within acceptable range:</p>
+<pre><code class="language-javascript">defineHook({
+  meta: {
+    name: 'price-range-validation',
+    description: 'Ensure all prices are between $0.01 and $999,999.99'
+  },
+  when: {
+    kind: 'threshold',
+    value: 0,
+    operator: 'lte',
+    query: `
+      PREFIX ex: &lt;http://example.org/&gt;
+
+      SELECT (MIN(?price) AS ?minPrice)
+      WHERE {
+        ?product ex:price ?price
+      }
+    `
+  },
+  run: async (event) =&gt; {
+    // Check minimum price
+    if (event.result.satisfied) {
+      throw new Error('Price must be greater than $0');
+    }
+  }
+});
+
+// Companion hook for maximum price
+defineHook({
+  meta: {
+    name: 'max-price-validation',
+    description: 'Ensure prices do not exceed $999,999.99'
+  },
+  when: {
+    kind: 'threshold',
+    value: 999999.99,
+    operator: 'gt',
+    query: `
+      PREFIX ex: &lt;http://example.org/&gt;
+
+      SELECT (MAX(?price) AS ?maxPrice)
+      WHERE {
+        ?product ex:price ?price
+      }
+    `
+  },
+  run: async (event) =&gt; {
+    if (event.result.satisfied) {
+      throw new Error(
+        `Price exceeds maximum: $${event.result.value} &gt; $${event.result.threshold}`
+      );
+    }
+  }
+});
+</code></pre>
+<h2 id="aggregation-functions"><a class="header" href="#aggregation-functions">Aggregation Functions</a></h2>
+<p>THRESHOLD predicates work with SPARQL aggregation functions:</p>
+<h3 id="count"><a class="header" href="#count">COUNT</a></h3>
+<pre><code class="language-javascript">when: {
+  kind: 'threshold',
+  value: 1000,
+  operator: 'gt',
+  query: `
+    SELECT (COUNT(?person) AS ?count)
+    WHERE {
+      ?person a foaf:Person
+    }
+  `
+}
+</code></pre>
+<h3 id="sum"><a class="header" href="#sum">SUM</a></h3>
+<pre><code class="language-javascript">when: {
+  kind: 'threshold',
+  value: 100000,
+  operator: 'gte',
+  query: `
+    SELECT (SUM(?amount) AS ?total)
+    WHERE {
+      ?transaction ex:amount ?amount
+    }
+  `
+}
+</code></pre>
+<h3 id="avg"><a class="header" href="#avg">AVG</a></h3>
+<pre><code class="language-javascript">when: {
+  kind: 'threshold',
+  value: 3.5,
+  operator: 'lt',
+  query: `
+    SELECT (AVG(?rating) AS ?avgRating)
+    WHERE {
+      ?product ex:rating ?rating
+    }
+  `
+}
+</code></pre>
+<h3 id="min"><a class="header" href="#min">MIN</a></h3>
+<pre><code class="language-javascript">when: {
+  kind: 'threshold',
+  value: 18,
+  operator: 'lt',
+  query: `
+    SELECT (MIN(?age) AS ?minAge)
+    WHERE {
+      ?person ex:age ?age
+    }
+  `
+}
+</code></pre>
+<h3 id="max"><a class="header" href="#max">MAX</a></h3>
+<pre><code class="language-javascript">when: {
+  kind: 'threshold',
+  value: 65,
+  operator: 'gt',
+  query: `
+    SELECT (MAX(?age) AS ?maxAge)
+    WHERE {
+      ?person ex:age ?age
+    }
+  `
+}
+</code></pre>
+<h2 id="advanced-patterns"><a class="header" href="#advanced-patterns">Advanced Patterns</a></h2>
+<h3 id="pattern-1-dynamic-thresholds"><a class="header" href="#pattern-1-dynamic-thresholds">Pattern 1: Dynamic Thresholds</a></h3>
+<p>Use graph data for threshold values:</p>
+<pre><code class="language-javascript">defineHook({
+  meta: { name: 'dynamic-quota' },
+  when: {
+    kind: 'sparql-select',
+    query: `
+      PREFIX ex: &lt;http://example.org/&gt;
+
+      SELECT ?currentUsage ?limit
+      WHERE {
+        ex:system ex:currentUsage ?currentUsage ;
+                  ex:usageLimit ?limit
+      }
+    `
+  },
+  run: async (event) =&gt; {
+    const { currentUsage, limit } = event.result[0];
+
+    if (currentUsage.value &gt; limit.value) {
+      throw new Error(
+        `Usage ${currentUsage.value} exceeds limit ${limit.value}`
+      );
+    }
+  }
+});
+</code></pre>
+<h3 id="pattern-2-multi-threshold-alerts"><a class="header" href="#pattern-2-multi-threshold-alerts">Pattern 2: Multi-Threshold Alerts</a></h3>
+<p>Different actions at different thresholds:</p>
+<pre><code class="language-javascript">defineHook({
+  meta: { name: 'multi-level-alerts' },
+  when: {
+    kind: 'sparql-select',
+    query: `
+      SELECT (SUM(?amount) AS ?total)
+      WHERE {
+        ?transaction ex:amount ?amount
+      }
+    `
+  },
+  run: async (event) =&gt; {
+    const total = event.result[0]?.total?.value || 0;
+
+    if (total &gt; 100000) {
+      // Critical threshold
+      await sendCriticalAlert(`Critical: Transaction total $${total}`);
+      throw new Error('Transaction exceeds critical threshold');
+    } else if (total &gt; 50000) {
+      // Warning threshold
+      await sendWarning(`Warning: Transaction total $${total}`);
+    } else if (total &gt; 10000) {
+      // Info threshold
+      await log(`Info: Large transaction $${total}`);
+    }
+  }
+});
+</code></pre>
+<h3 id="pattern-3-percentage-based-thresholds"><a class="header" href="#pattern-3-percentage-based-thresholds">Pattern 3: Percentage-Based Thresholds</a></h3>
+<p>Calculate percentages for comparison:</p>
+<pre><code class="language-javascript">defineHook({
+  meta: { name: 'percentage-threshold' },
+  when: {
+    kind: 'threshold',
+    value: 0.8, // 80%
+    operator: 'gte',
+    query: `
+      PREFIX ex: &lt;http://example.org/&gt;
+
+      SELECT ((?active / ?total) AS ?percentage)
+      WHERE {
+        {
+          SELECT (COUNT(?active) AS ?active)
+          WHERE {
+            ?person a foaf:Person ;
+                    ex:status "active"
+          }
+        }
+        {
+          SELECT (COUNT(?person) AS ?total)
+          WHERE {
+            ?person a foaf:Person
+          }
+        }
+      }
+    `
+  },
+  run: async (event) =&gt; {
+    if (event.result.satisfied) {
+      const pct = (event.result.value * 100).toFixed(1);
+      console.log(`Active users at ${pct}%`);
+    }
+  }
+});
+</code></pre>
+<h2 id="time-series-monitoring"><a class="header" href="#time-series-monitoring">Time-Series Monitoring</a></h2>
+<p>Monitor values over time:</p>
+<pre><code class="language-javascript">defineHook({
+  meta: { name: 'cpu-usage-monitor' },
+  when: {
+    kind: 'threshold',
+    value: 80, // 80% CPU
+    operator: 'gt',
+    query: `
+      PREFIX ex: &lt;http://example.org/&gt;
+
+      SELECT (AVG(?cpu) AS ?avgCpu)
+      WHERE {
+        ?measurement ex:timestamp ?time ;
+                     ex:cpuUsage ?cpu .
+
+        # Last 5 minutes
+        FILTER (?time &gt; NOW() - "PT5M"^^xsd:duration)
+      }
+    `
+  },
+  run: async (event) =&gt; {
+    if (event.result.satisfied) {
+      await sendAlert(
+        `High CPU usage: ${event.result.value.toFixed(1)}% (5min avg)`
+      );
+    }
+  }
+});
+</code></pre>
+<h2 id="performance-optimization"><a class="header" href="#performance-optimization">Performance Optimization</a></h2>
+<h3 id="use-efficient-aggregations"><a class="header" href="#use-efficient-aggregations">Use Efficient Aggregations</a></h3>
+<pre><code class="language-javascript">// ✅ Good: Single aggregation
+SELECT (COUNT(?person) AS ?count)
+WHERE {
+  ?person a foaf:Person
+}
+
+// ❌ Slow: Multiple passes
+SELECT ?person
+WHERE {
+  ?person a foaf:Person
+}
+# Then count in application code
+</code></pre>
+<h3 id="cache-threshold-queries"><a class="header" href="#cache-threshold-queries">Cache Threshold Queries</a></h3>
+<pre><code class="language-javascript">const thresholdCache = new Map();
+const CACHE_TTL = 60000; // 60 seconds
+
+before: async ({ payload }) =&gt; {
+  const cacheKey = 'transaction-total';
+  const cached = thresholdCache.get(cacheKey);
+
+  if (cached &amp;&amp; Date.now() - cached.timestamp &lt; CACHE_TTL) {
+    // Use cached value, skip SPARQL query
+    return {
+      cancel: true,
+      reason: 'Using cached threshold result'
+    };
+  }
+
+  return payload;
+}
+</code></pre>
+<h3 id="use-incremental-calculations"><a class="header" href="#use-incremental-calculations">Use Incremental Calculations</a></h3>
+<pre><code class="language-javascript">// Track running total instead of recalculating
+let runningTotal = 0;
+
+before: async ({ payload }) =&gt; {
+  // Update running total
+  for (const quad of payload.additions) {
+    if (quad.predicate.value === 'ex:amount') {
+      runningTotal += parseFloat(quad.object.value);
+    }
+  }
+
+  return { ...payload, runningTotal };
+},
+
+run: async (event) =&gt; {
+  if (event.payload.runningTotal &gt; 10000) {
+    throw new Error('Total exceeds threshold');
+  }
+}
+</code></pre>
+<h2 id="error-handling"><a class="header" href="#error-handling">Error Handling</a></h2>
+<h3 id="provide-context-in-error-messages"><a class="header" href="#provide-context-in-error-messages">Provide Context in Error Messages</a></h3>
+<pre><code class="language-javascript">run: async (event) =&gt; {
+  if (event.result.satisfied) {
+    throw new Error(
+      `Threshold exceeded: ${event.result.value} ${event.result.operator} ${event.result.threshold}\n` +
+      `Transaction by: ${event.payload.actor}\n` +
+      `Timestamp: ${new Date().toISOString()}`
+    );
+  }
+}
+</code></pre>
+<h3 id="handle-missing-values"><a class="header" href="#handle-missing-values">Handle Missing Values</a></h3>
+<pre><code class="language-javascript">run: async (event) =&gt; {
+  // SPARQL might return undefined for aggregations with no data
+  const value = event.result[0]?.total?.value;
+
+  if (value === undefined) {
+    console.warn('No data available for threshold check');
+    return { result: 'skipped' };
+  }
+
+  if (value &gt; 10000) {
+    throw new Error(`Threshold exceeded: ${value}`);
+  }
+}
+</code></pre>
+<h2 id="testing-threshold-predicates"><a class="header" href="#testing-threshold-predicates">Testing THRESHOLD Predicates</a></h2>
+<pre><code class="language-javascript">import { createDarkMatterCore, defineHook, registerHook } from 'unrdf';
+import { namedNode, quad, literal } from '@rdfjs/data-model';
+import { describe, it, expect } from 'vitest';
+
+describe('THRESHOLD Predicate: transaction-limit', () =&gt; {
+  it('should reject transactions over $10,000', async () =&gt; {
+    const system = await createDarkMatterCore();
+
+    const hook = defineHook({
+      meta: { name: 'transaction-limit' },
+      when: {
+        kind: 'threshold',
+        value: 10000,
+        operator: 'gt',
+        query: `
+          SELECT (SUM(?amount) AS ?total)
+          WHERE {
+            ?transaction &lt;http://example.org/amount&gt; ?amount
+          }
+        `
+      },
+      run: async (event) =&gt; {
+        if (event.result.satisfied) {
+          throw new Error('Transaction exceeds limit');
+        }
+      }
+    });
+
+    await registerHook(hook);
+
+    await expect(
+      system.executeTransaction({
+        additions: [
+          quad(
+            namedNode('http://example.org/tx1'),
+            namedNode('http://example.org/amount'),
+            literal('15000', namedNode('http://www.w3.org/2001/XMLSchema#decimal'))
+          )
+        ],
+        removals: [],
+        actor: 'test'
+      })
+    ).rejects.toThrow('Transaction exceeds limit');
+
+    await system.cleanup();
+  });
+
+  it('should allow transactions under $10,000', async () =&gt; {
+    const system = await createDarkMatterCore();
+    // ... (register hook as above)
+
+    await system.executeTransaction({
+      additions: [
+        quad(
+          namedNode('http://example.org/tx2'),
+          namedNode('http://example.org/amount'),
+          literal('5000', namedNode('http://www.w3.org/2001/XMLSchema#decimal'))
+        )
+      ],
+      removals: [],
+      actor: 'test'
+    });
+
+    // Should not throw
+    await system.cleanup();
+  });
+});
+</code></pre>
+<h2 id="best-practices"><a class="header" href="#best-practices">Best Practices</a></h2>
+<h3 id="-dos"><a class="header" href="#-dos">✅ Do's</a></h3>
+<pre><code class="language-javascript">// ✅ Use meaningful threshold values
+value: 10000  // Clear business meaning
+
+// ✅ Document why threshold exists
+meta: {
+  name: 'transaction-limit',
+  description: 'Enforce regulatory limit of $10,000 per transaction'
+}
+
+// ✅ Provide detailed error messages
+throw new Error(
+  `Transaction $${event.result.value} exceeds limit $${event.result.threshold}`
+);
+
+// ✅ Use appropriate operators
+operator: 'gt'  // Explicit and correct
+</code></pre>
+<h3 id="-donts"><a class="header" href="#-donts">❌ Don'ts</a></h3>
+<pre><code class="language-javascript">// ❌ Don't use magic numbers
+value: 42  // What does this mean?
+
+// ❌ Don't use vague error messages
+throw new Error('Limit exceeded');
+
+// ❌ Don't forget to handle edge cases
+// Missing check for undefined values
+
+// ❌ Don't use wrong operators
+operator: '&gt;'  // Should be 'gt'
+</code></pre>
+<h2 id="next-steps"><a class="header" href="#next-steps">Next Steps</a></h2>
+<ul>
+<li><strong><a href="delta.html">DELTA Predicates</a></strong> - React to specific changes in the graph</li>
+<li><strong><a href="shacl.html">SHACL Predicates</a></strong> - Shape-based validation</li>
+<li><strong><a href="custom.html">Custom Predicates</a></strong> - Build your own predicate types</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../hooks/predicates/delta.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../../hooks/predicates/custom.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../hooks/predicates/delta.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../../hooks/predicates/custom.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <!-- Livereload script (if served using the cli tool) -->
+        <script>
+            const wsProtocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsAddress = wsProtocol + "//" + location.host + "/" + "__livereload";
+            const socket = new WebSocket(wsAddress);
+            socket.onmessage = function (event) {
+                if (event.data === "reload") {
+                    socket.close();
+                    location.reload();
+                }
+            };
+
+            window.onbeforeunload = function() {
+                socket.close();
+            }
+        </script>
+
+
+        <script>
+            window.playground_line_numbers = true;
+        </script>
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+        <script src="../../ace.js"></script>
+        <script src="../../editor.js"></script>
+        <script src="../../mode-rust.js"></script>
+        <script src="../../theme-dawn.js"></script>
+        <script src="../../theme-tomorrow_night.js"></script>
+
+        <script src="../../elasticlunr.min.js"></script>
+        <script src="../../mark.min.js"></script>
+        <script src="../../searcher.js"></script>
+
+        <script src="../../clipboard.min.js"></script>
+        <script src="../../highlight.js"></script>
+        <script src="../../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>
