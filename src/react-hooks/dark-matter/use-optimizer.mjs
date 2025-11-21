@@ -1,6 +1,7 @@
 /**
  * @file use-optimizer.mjs
  * @description React hook for performance optimization suggestions and automated tuning
+ * @since 3.2.0
  */
 
 import { useState, useCallback, useEffect, useRef } from 'react';
@@ -11,13 +12,20 @@ import { useQueryAnalyzer } from './use-query-analyzer.mjs';
  * Hook for automated performance optimization
  * Combines dark matter analysis with query optimization for comprehensive tuning
  *
+ * @since 3.2.0
  * @param {Object} config - Optimizer configuration
  * @param {boolean} [config.autoTune=false] - Auto-apply safe optimizations
  * @param {string[]} [config.targets] - Specific targets to optimize
  * @param {Function} [config.onOptimization] - Callback when optimization applied
  * @returns {Object} Optimizer state and operations
+ * @throws {Error} When recommendation not found for applyOptimization
+ * @throws {Error} When benchmark fails during optimization
+ * @performance Combines useDarkMatterCore and useQueryAnalyzer - cumulative overhead.
+ *   autoTune continuously applies optimizations - monitor for unintended changes.
+ *   Benchmarking adds latency to optimization application.
  *
  * @example
+ * // Auto-tuning optimizer
  * const {
  *   recommendations,
  *   applyOptimization,
@@ -30,6 +38,12 @@ import { useQueryAnalyzer } from './use-query-analyzer.mjs';
  *     console.log('Applied:', result.optimization, 'Gain:', result.gain);
  *   }
  * });
+ *
+ * @example
+ * // Manual optimization with benchmarking
+ * const { recommendations, applyOptimization, getTotalPotentialGain } = useOptimizer();
+ * console.log('Potential gain:', getTotalPotentialGain(), '%');
+ * const result = await applyOptimization(recommendations[0].id);
  */
 export function useOptimizer(config = {}) {
   const darkMatter = useDarkMatterCore({

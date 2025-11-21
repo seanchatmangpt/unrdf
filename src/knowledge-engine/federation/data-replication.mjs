@@ -86,7 +86,9 @@ const ReplicationConfigSchema = z.object({
   batchInterval: z.number().positive().default(1000),
   enableStreaming: z.boolean().default(false),
   maxRetries: z.number().int().nonnegative().default(3),
-  retryDelay: z.number().positive().default(1000)
+  retryDelay: z.number().positive().default(1000),
+  maxQueueSize: z.number().int().positive().default(10000), // Prevent unbounded queue growth
+  clockDriftThresholdMs: z.number().int().positive().default(60000) // 1 minute max drift
 });
 
 /**
@@ -134,6 +136,14 @@ export class DataReplicationManager extends EventEmitter {
     this.replicationQueue = [];
     this.batchTimer = null;
     this.conflictLog = [];
+    this.queueOverflowCount = 0;
+
+    // Hybrid Logical Clock (HLC) state for drift prevention
+    this.hlc = {
+      physicalTime: Date.now(),
+      logicalCounter: 0,
+      nodeId: randomUUID()
+    };
 
     // Metrics
     this.replicationCounter = meter.createCounter('federation.replication.total', {
@@ -203,6 +213,26 @@ export class DataReplicationManager extends EventEmitter {
         // Add to change log
         this.changeLog.push(operation);
 
+        // Check queue size before adding (backpressure)
+        if (this.replicationQueue.length >= this.config.maxQueueSize) {
+          this.queueOverflowCount++;
+          this.emit('queueOverflow', {
+            queueSize: this.replicationQueue.length,
+            maxSize: this.config.maxQueueSize,
+            droppedOperation: operation.changeId,
+            overflowCount: this.queueOverflowCount
+          });
+
+          // Drop oldest entries to make room (FIFO overflow handling)
+          const dropCount = Math.ceil(this.config.maxQueueSize * 0.1); // Drop 10%
+          const dropped = this.replicationQueue.splice(0, dropCount);
+          this.emit('queueEntriesDropped', {
+            count: dropped.length,
+            oldestDropped: dropped[0]?.changeId,
+            newestDropped: dropped[dropped.length - 1]?.changeId
+          });
+        }
+
         // Add to replication queue
         this.replicationQueue.push(operation);
 
@@ -241,17 +271,47 @@ export class DataReplicationManager extends EventEmitter {
         const targets = this.getReplicationTargets(operation.storeId);
         span.setAttribute('replication.targets', targets.length);
 
-        // Replicate to each target
+        // Replicate to each target using Promise.allSettled for partial failure handling
         const replicationPromises = targets.map(async (targetId) => {
-          try {
-            await this.replicateToStore(targetId, operation);
-          } catch (error) {
-            // Handle replication failure
-            this.emit('replicationError', { targetId, operation, error });
-          }
+          return this.replicateToStore(targetId, operation)
+            .then(() => ({ targetId, success: true }))
+            .catch((error) => ({ targetId, success: false, error }));
         });
 
-        await Promise.all(replicationPromises);
+        const results = await Promise.allSettled(replicationPromises);
+
+        // Aggregate results
+        const succeeded = [];
+        const failed = [];
+
+        for (const result of results) {
+          if (result.status === 'fulfilled') {
+            const value = result.value;
+            if (value.success) {
+              succeeded.push(value.targetId);
+            } else {
+              failed.push({ targetId: value.targetId, error: value.error });
+              this.emit('replicationError', {
+                targetId: value.targetId,
+                operation,
+                error: value.error
+              });
+            }
+          } else {
+            // Promise itself rejected (shouldn't happen with our wrapper, but handle it)
+            failed.push({ targetId: 'unknown', error: result.reason });
+          }
+        }
+
+        // Emit aggregated result
+        if (failed.length > 0) {
+          this.emit('partialReplicationFailure', {
+            operation: operation.changeId,
+            succeeded,
+            failed,
+            totalTargets: targets.length
+          });
+        }
 
         this.replicationCounter.add(1, {
           operation: operation.operation,
@@ -451,19 +511,105 @@ export class DataReplicationManager extends EventEmitter {
   }
 
   /**
-   * Merge version vectors
+   * Merge version vectors using Hybrid Logical Clock (HLC) with drift detection
    * @param {string} storeId - Store ID
    * @param {Object} incomingVector - Incoming version vector
+   * @throws {Error} If clock drift exceeds threshold
    * @private
    */
   mergeVersionVector(storeId, incomingVector) {
     const current = this.versionVectors.get(storeId) || {};
+    const now = Date.now();
 
-    for (const [id, version] of Object.entries(incomingVector)) {
-      current[id] = Math.max(current[id] || 0, version);
+    // HLC merge: update physical time and logical counter
+    const incomingPhysical = incomingVector._hlcPhysical || 0;
+    const incomingLogical = incomingVector._hlcLogical || 0;
+
+    // Detect suspicious clock drift
+    if (incomingPhysical > 0) {
+      const drift = Math.abs(incomingPhysical - now);
+      if (drift > this.config.clockDriftThresholdMs) {
+        const driftError = new Error(
+          `Version vector clock drift detected: ${drift}ms exceeds threshold of ${this.config.clockDriftThresholdMs}ms`
+        );
+        this.emit('clockDriftDetected', {
+          storeId,
+          drift,
+          threshold: this.config.clockDriftThresholdMs,
+          localTime: now,
+          remoteTime: incomingPhysical
+        });
+        // Don't throw - emit warning but continue with local time
+        console.warn(`[DataReplication] Clock drift warning for store ${storeId}: ${drift}ms`);
+      }
     }
 
+    // Update HLC
+    if (incomingPhysical > this.hlc.physicalTime) {
+      this.hlc.physicalTime = Math.min(incomingPhysical, now + this.config.clockDriftThresholdMs);
+      this.hlc.logicalCounter = incomingLogical;
+    } else if (incomingPhysical === this.hlc.physicalTime) {
+      this.hlc.logicalCounter = Math.max(this.hlc.logicalCounter, incomingLogical) + 1;
+    } else {
+      // Local time is ahead, just increment logical
+      if (now > this.hlc.physicalTime) {
+        this.hlc.physicalTime = now;
+        this.hlc.logicalCounter = 0;
+      } else {
+        this.hlc.logicalCounter++;
+      }
+    }
+
+    // Merge version entries with drift-corrected timestamps
+    for (const [id, version] of Object.entries(incomingVector)) {
+      // Skip HLC metadata entries
+      if (id.startsWith('_hlc')) continue;
+
+      const incomingVersion = typeof version === 'number' ? version : 0;
+      const currentVersion = current[id] || 0;
+
+      // Validate version is not from the future (beyond drift threshold)
+      if (incomingVersion > currentVersion + this.config.clockDriftThresholdMs) {
+        this.emit('suspiciousVersion', {
+          storeId,
+          versionKey: id,
+          incomingVersion,
+          currentVersion,
+          delta: incomingVersion - currentVersion
+        });
+        // Cap the version to prevent unbounded jumps
+        current[id] = currentVersion + Math.min(incomingVersion - currentVersion, 1000);
+      } else {
+        current[id] = Math.max(currentVersion, incomingVersion);
+      }
+    }
+
+    // Attach HLC metadata
+    current._hlcPhysical = this.hlc.physicalTime;
+    current._hlcLogical = this.hlc.logicalCounter;
+    current._hlcNodeId = this.hlc.nodeId;
+
     this.versionVectors.set(storeId, current);
+  }
+
+  /**
+   * Get current HLC timestamp
+   * @returns {Object} HLC timestamp with physical and logical components
+   */
+  getHLCTimestamp() {
+    const now = Date.now();
+    if (now > this.hlc.physicalTime) {
+      this.hlc.physicalTime = now;
+      this.hlc.logicalCounter = 0;
+    } else {
+      this.hlc.logicalCounter++;
+    }
+    return {
+      physical: this.hlc.physicalTime,
+      logical: this.hlc.logicalCounter,
+      nodeId: this.hlc.nodeId,
+      timestamp: `${this.hlc.physicalTime}.${this.hlc.logicalCounter}.${this.hlc.nodeId}`
+    };
   }
 
   /**
@@ -513,8 +659,16 @@ export class DataReplicationManager extends EventEmitter {
     return {
       changeLogSize: this.changeLog.length,
       queueSize: this.replicationQueue.length,
+      maxQueueSize: this.config.maxQueueSize,
+      queueUtilization: this.replicationQueue.length / this.config.maxQueueSize,
+      queueOverflowCount: this.queueOverflowCount,
       conflictCount: this.conflictLog.length,
       versionVectors: Object.fromEntries(this.versionVectors),
+      hlc: {
+        physical: this.hlc.physicalTime,
+        logical: this.hlc.logicalCounter,
+        nodeId: this.hlc.nodeId
+      },
       config: this.config
     };
   }

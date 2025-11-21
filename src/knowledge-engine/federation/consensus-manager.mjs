@@ -281,18 +281,64 @@ export class ConsensusManager extends EventEmitter {
   /**
    * Request vote from a peer
    * @param {Object} peer - Peer node
+   * @param {string} [requestId] - Optional request ID for deduplication
    * @returns {Promise<boolean>} True if vote was granted
    * @private
    */
-  async requestVote(peer) {
+  async requestVote(peer, requestId) {
+    // Generate request ID for deduplication if not provided
+    const voteRequestId = requestId || `vote-${this.currentTerm}-${this.config.nodeId}-${Date.now()}`;
+
+    // Check for duplicate vote request
+    if (!this.pendingVoteRequests) {
+      this.pendingVoteRequests = new Map();
+    }
+
+    if (this.pendingVoteRequests.has(voteRequestId)) {
+      // Return cached result for duplicate request
+      return this.pendingVoteRequests.get(voteRequestId);
+    }
+
     // In a real implementation, this would make an RPC call
-    // For now, simulate vote granting
-    return new Promise((resolve) => {
+    // For now, implement proper term validation logic
+    return new Promise((resolve, reject) => {
+      const voteTimeout = this.config.electionTimeoutMax || 300;
+
+      const timeoutId = setTimeout(() => {
+        this.pendingVoteRequests.delete(voteRequestId);
+        reject(new Error(`Vote request timeout for peer ${peer.nodeId}`));
+      }, voteTimeout);
+
+      // Simulate RPC response with proper RAFT term validation
       setTimeout(() => {
-        // Simulate vote decision based on term and log
-        const granted = Math.random() > 0.3; // 70% chance of granting vote
+        clearTimeout(timeoutId);
+
+        // Proper vote decision based on RAFT protocol:
+        // 1. Grant vote if candidate's term >= our term
+        // 2. Grant vote if we haven't voted in this term yet
+        // 3. Grant vote if candidate's log is at least as up-to-date
+        const lastLogIndex = this.log.length;
+        const lastLogTerm = this.log.length > 0 ? this.log[this.log.length - 1].term : 0;
+
+        // Check if candidate's log is at least as up-to-date as ours
+        const candidateLogUpToDate =
+          (this.currentTerm <= peer.term) ||
+          (lastLogTerm === this.currentTerm && lastLogIndex <= (peer.lastLogIndex || 0));
+
+        // Grant vote based on term validation and log comparison
+        const granted = candidateLogUpToDate && (
+          this.votedFor === null ||
+          this.votedFor === peer.nodeId
+        );
+
+        // Cache result for deduplication (TTL: election timeout)
+        this.pendingVoteRequests.set(voteRequestId, granted);
+        setTimeout(() => {
+          this.pendingVoteRequests.delete(voteRequestId);
+        }, this.config.electionTimeoutMax || 300);
+
         resolve(granted);
-      }, Math.random() * 10);
+      }, Math.min(10, voteTimeout / 10));
     });
   }
 

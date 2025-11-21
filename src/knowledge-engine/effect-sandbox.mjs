@@ -59,6 +59,15 @@ const SandboxResultSchema = z.object({
 });
 
 /**
+ * Extended sandbox configuration schema with worker pool settings
+ */
+const ExtendedSandboxConfigSchema = SandboxConfigSchema.extend({
+  maxWorkerPoolSize: z.number().int().positive().max(200).default(50),
+  workerTTL: z.number().int().positive().default(300000), // 5 minutes default TTL
+  cleanupInterval: z.number().int().positive().default(60000) // 1 minute cleanup interval
+});
+
+/**
  * Effect Sandbox for secure hook execution
  */
 export class EffectSandbox {
@@ -67,11 +76,51 @@ export class EffectSandbox {
    * @param {Object} [config] - Sandbox configuration
    */
   constructor(config = {}) {
-    this.config = SandboxConfigSchema.parse(config);
+    this.config = ExtendedSandboxConfigSchema.parse(config);
     this.workers = new Map();
+    this.workerTimestamps = new Map(); // Track worker creation time for TTL
     this.executionCount = 0;
     this.totalExecutions = 0;
     this.totalDuration = 0;
+
+    // Start periodic cleanup for stale workers
+    this._startWorkerCleanup();
+  }
+
+  /**
+   * Start periodic cleanup of stale workers
+   * @private
+   */
+  _startWorkerCleanup() {
+    this.cleanupTimer = setInterval(() => {
+      this._cleanupStaleWorkers();
+    }, this.config.cleanupInterval);
+
+    // Don't let cleanup timer prevent process exit
+    if (this.cleanupTimer.unref) {
+      this.cleanupTimer.unref();
+    }
+  }
+
+  /**
+   * Cleanup workers that have exceeded TTL
+   * @private
+   */
+  _cleanupStaleWorkers() {
+    const now = Date.now();
+    const ttl = this.config.workerTTL;
+
+    for (const [executionId, timestamp] of this.workerTimestamps) {
+      if (now - timestamp > ttl) {
+        const worker = this.workers.get(executionId);
+        if (worker) {
+          console.warn(`[EffectSandbox] Force terminating stale worker ${executionId} (exceeded TTL of ${ttl}ms)`);
+          worker.terminate();
+          this.workers.delete(executionId);
+        }
+        this.workerTimestamps.delete(executionId);
+      }
+    }
   }
 
   /**
@@ -138,11 +187,30 @@ export class EffectSandbox {
    * @private
    */
   async _executeInWorker(effect, context, executionId, options) {
+    // Check pool size limit before creating new worker
+    if (this.workers.size >= this.config.maxWorkerPoolSize) {
+      // Cleanup stale workers first
+      this._cleanupStaleWorkers();
+
+      // If still at limit, reject with clear error
+      if (this.workers.size >= this.config.maxWorkerPoolSize) {
+        throw new Error(`Worker pool exhausted: ${this.workers.size}/${this.config.maxWorkerPoolSize} workers active. Try again later.`);
+      }
+    }
+
     return new Promise((resolve, reject) => {
       const timeout = setTimeout(() => {
+        // Force terminate worker on timeout
+        const worker = this.workers.get(executionId);
+        if (worker) {
+          console.warn(`[EffectSandbox] Force terminating worker ${executionId} after timeout`);
+          worker.terminate();
+          this.workers.delete(executionId);
+          this.workerTimestamps.delete(executionId);
+        }
         reject(new Error(`Worker execution timeout after ${this.config.timeout}ms`));
       }, this.config.timeout);
-      
+
       const worker = new Worker(join(__dirname, 'effect-sandbox-worker.mjs'), {
         workerData: {
           effect: effect.toString(),
@@ -152,28 +220,32 @@ export class EffectSandbox {
           options
         }
       });
-      
+
       worker.on('message', (result) => {
         clearTimeout(timeout);
         this.workers.delete(executionId);
+        this.workerTimestamps.delete(executionId);
         resolve(result);
       });
-      
+
       worker.on('error', (error) => {
         clearTimeout(timeout);
         this.workers.delete(executionId);
+        this.workerTimestamps.delete(executionId);
         reject(error);
       });
-      
+
       worker.on('exit', (code) => {
         if (code !== 0) {
           clearTimeout(timeout);
           this.workers.delete(executionId);
+          this.workerTimestamps.delete(executionId);
           reject(new Error(`Worker exited with code ${code}`));
         }
       });
-      
+
       this.workers.set(executionId, worker);
+      this.workerTimestamps.set(executionId, Date.now());
     });
   }
 
@@ -382,15 +454,22 @@ export class EffectSandbox {
    * Terminate all workers
    */
   async terminate() {
+    // Stop cleanup timer
+    if (this.cleanupTimer) {
+      clearInterval(this.cleanupTimer);
+      this.cleanupTimer = null;
+    }
+
     const terminationPromises = Array.from(this.workers.values()).map(worker => {
       return new Promise((resolve) => {
         worker.terminate();
         resolve();
       });
     });
-    
+
     await Promise.all(terminationPromises);
     this.workers.clear();
+    this.workerTimestamps.clear();
   }
 }
 

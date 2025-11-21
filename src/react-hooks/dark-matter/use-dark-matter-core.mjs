@@ -1,6 +1,7 @@
 /**
  * @file use-dark-matter-core.mjs
  * @description React hook for 80/20 analysis - identifying critical code paths
+ * @since 3.2.0
  */
 
 import { useState, useCallback, useEffect, useRef } from 'react';
@@ -10,14 +11,21 @@ import { useKnowledgeEngineContext } from '../core/use-knowledge-engine-context.
  * Hook for analyzing and identifying "dark matter" code - the 80% that delivers 20% value
  * Focus optimization efforts on the critical 20% that delivers 80% of value
  *
+ * @since 3.2.0
  * @param {Object} config - Dark matter analysis configuration
  * @param {string[]} [config.targets] - Specific queries/operations to analyze
  * @param {number} [config.sampleSize=1000] - Number of operations to sample
  * @param {boolean} [config.autoAnalyze=true] - Auto-analyze on changes
  * @param {Function} [config.onCriticalPathFound] - Callback when critical path identified
  * @returns {Object} Analysis state and operations
+ * @throws {Error} When dark matter analyzer not initialized
+ * @throws {Error} When analyze is called with insufficient samples
+ * @throws {Error} When focusOnCritical called with unknown operationId
+ * @performance Analysis is CPU-intensive - increase sampleSize for accuracy at cost of time.
+ *   Pareto chart data generation is synchronous. Disable autoAnalyze for manual control.
  *
  * @example
+ * // Automatic 80/20 analysis
  * const {
  *   analysis,
  *   criticalPaths,
@@ -31,6 +39,12 @@ import { useKnowledgeEngineContext } from '../core/use-knowledge-engine-context.
  *     console.log('Critical path:', path, 'delivers', path.valuePercentage, '% of value');
  *   }
  * });
+ *
+ * @example
+ * // Get Pareto chart visualization data
+ * const { getParetoChartData, focusOnCritical } = useDarkMatterCore();
+ * const chartData = getParetoChartData();
+ * const topOp = focusOnCritical(criticalPaths[0].id);
  */
 export function useDarkMatterCore(config = {}) {
   const { engine } = useKnowledgeEngineContext();

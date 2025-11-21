@@ -1,6 +1,7 @@
 /**
  * @file use-offline-store.mjs
  * @description Offline-first IndexedDB persistence with sync queue
+ * @since 3.2.0
  *
  * Innovation: Enables knowledge graphs to work completely offline,
  * with automatic background sync when connectivity is restored.
@@ -34,10 +35,19 @@ import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 /**
  * Offline-first IndexedDB persistence hook
  *
+ * @since 3.2.0
  * @param {OfflineStoreConfig} config - Configuration
  * @returns {Object} Offline store interface
+ * @throws {Error} When IndexedDB not initialized (insert/delete called too early)
+ * @throws {Error} When IndexedDB is not available (SSR or unsupported browser)
+ * @throws {Error} When sync fails after exhausting retries
+ * @throws {Error} When conflict resolution callback throws
+ * @performance IndexedDB operations are async - batch inserts for throughput. Sync queue
+ *   grows with offline operations - monitor pendingCount. Auto-sync interval adds background
+ *   activity. Large datasets may cause memory pressure during loadFromDB.
  *
  * @example
+ * // Basic offline-first usage
  * const {
  *   quads,
  *   insert,
@@ -53,6 +63,15 @@ import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
  *
  * // Manual sync when needed
  * await sync();
+ *
+ * @example
+ * // Conflict resolution with server-wins strategy
+ * const { insert, sync } = useOfflineStore({
+ *   onConflict: async (item, serverData) => {
+ *     console.log('Conflict detected, accepting server version');
+ *     return 'server'; // or 'local' to force local version
+ *   }
+ * });
  */
 export function useOfflineStore(config = {}) {
   const {

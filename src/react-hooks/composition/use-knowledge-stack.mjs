@@ -1,6 +1,7 @@
 /**
  * @file use-knowledge-stack.mjs
  * @description Pre-configured hook composition for common use cases
+ * @since 3.2.0
  *
  * Innovation: Combines multiple hooks into cohesive "stacks" for specific patterns,
  * reducing boilerplate and ensuring best practices are followed automatically.
@@ -31,8 +32,15 @@ import { useRecovery } from '../error-recovery/use-recovery.mjs';
 /**
  * Pre-configured hook composition for common knowledge graph patterns
  *
+ * @since 3.2.0
  * @param {KnowledgeStackConfig} config - Stack configuration
  * @returns {Object} Combined hook interface
+ * @throws {Error} When underlying engine initialization fails
+ * @throws {Error} When query or insert operations fail (propagated from engine)
+ * @throws {Error} When recovery exhausts maxRetries (if enableRecovery=true)
+ * @performance Memory/CPU scales with enabled features. 'basic' has lowest overhead.
+ *   'full' combines all hooks - use only when all features needed. Change feed
+ *   runs continuously when realtime enabled - call stopLive() to free resources.
  *
  * @example
  * // Basic usage - just queries

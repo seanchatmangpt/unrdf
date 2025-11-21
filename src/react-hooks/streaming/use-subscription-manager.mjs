@@ -1,22 +1,32 @@
 /**
  * @file use-subscription-manager.mjs
  * @description React hook for managing pattern-based subscriptions to graph changes
+ * @since 3.2.0
  */
 
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useKnowledgeEngineContext } from '../core/use-knowledge-engine-context.mjs';
+import { RingBuffer } from '../../knowledge-engine/utils/ring-buffer.mjs';
 
 /**
  * Hook for managing pattern-based subscriptions to RDF graph changes
+ * Uses RingBuffer (TRIZ #10 Prior Action) for O(1) event buffering
  *
+ * @since 3.2.0
  * @param {Object} config - Subscription configuration
  * @param {string} [config.pattern] - SPARQL pattern to match
  * @param {Function} [config.filter] - Custom filter function
  * @param {boolean} [config.autoStart=true] - Auto-start subscription
  * @param {number} [config.bufferSize=100] - Max events to buffer
  * @returns {Object} Subscription state and operations
+ * @throws {Error} When subscription manager not initialized
+ * @throws {Error} When subscription ID not found for unsubscribe/pause/resume
+ * @throws {Error} When SPARQL pattern is invalid
+ * @performance Uses RingBuffer for O(1) push/clear operations. Events beyond bufferSize
+ *   are automatically discarded (oldest first). Multiple subscriptions increase memory linearly.
  *
  * @example
+ * // Pattern-based subscription with filtering
  * const {
  *   subscribe,
  *   unsubscribe,
@@ -32,6 +42,13 @@ import { useKnowledgeEngineContext } from '../core/use-knowledge-engine-context.
  *     return delta.added.some(q => parseFloat(q.object.value) > 100);
  *   }
  * });
+ *
+ * @example
+ * // Multiple subscriptions with manual control
+ * const { subscribe, unsubscribeAll, pause, resume } = useSubscriptionManager();
+ * const { subscriptionId } = await subscribe('?s rdf:type ?type');
+ * await pause(subscriptionId);
+ * await resume(subscriptionId);
  */
 export function useSubscriptionManager(config = {}) {
   const { engine } = useKnowledgeEngineContext();
@@ -41,13 +58,20 @@ export function useSubscriptionManager(config = {}) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const subscriptionRef = useRef(null);
-  const eventsRef = useRef([]);
+  // TRIZ #10 Prior Action: Use RingBuffer for O(1) event operations
+  const eventsRef = useRef(/** @type {RingBuffer<Object>|null} */ (null));
 
   // Initialize subscription manager
   useEffect(() => {
     if (!engine) return;
 
     let mounted = true;
+
+    // Initialize RingBuffer with configured size (TRIZ #10)
+    const bufferSize = config.bufferSize || 100;
+    if (!eventsRef.current || eventsRef.current.capacity !== bufferSize) {
+      eventsRef.current = new RingBuffer(bufferSize);
+    }
 
     async function initializeManager() {
       try {
@@ -69,7 +93,7 @@ export function useSubscriptionManager(config = {}) {
         if (config.autoStart && config.pattern) {
           await subscribe(config.pattern, {
             filter: config.filter,
-            bufferSize: config.bufferSize || 100
+            bufferSize: bufferSize
           });
         }
 
@@ -100,25 +124,27 @@ export function useSubscriptionManager(config = {}) {
     try {
       const subscriptionId = options.id || `sub-${Date.now()}`;
 
+      // Ensure RingBuffer is initialized with correct size
+      const maxBuffer = options.bufferSize || config.bufferSize || 100;
+      if (!eventsRef.current || eventsRef.current.capacity !== maxBuffer) {
+        eventsRef.current = new RingBuffer(maxBuffer);
+      }
+
       const subscription = await subscriptionRef.current.subscribe({
         pattern,
         filter: options.filter,
-        bufferSize: options.bufferSize || config.bufferSize || 100,
+        bufferSize: maxBuffer,
         onEvent: (event) => {
-          // Add to events buffer
+          // TRIZ #10 Prior Action: O(1) push with automatic overflow handling
+          // RingBuffer automatically discards oldest items when full
           eventsRef.current.push({
             ...event,
             subscriptionId,
             timestamp: new Date().toISOString()
           });
 
-          // Trim buffer if needed
-          const maxBuffer = options.bufferSize || config.bufferSize || 100;
-          if (eventsRef.current.length > maxBuffer) {
-            eventsRef.current = eventsRef.current.slice(-maxBuffer);
-          }
-
-          setEvents([...eventsRef.current]);
+          // Convert to array for React state (RingBuffer handles size limiting)
+          setEvents(eventsRef.current.toArray());
 
           // Custom callback
           options.onEvent?.(event);
@@ -196,7 +222,10 @@ export function useSubscriptionManager(config = {}) {
 
   // Clear events buffer
   const clear = useCallback(() => {
-    eventsRef.current = [];
+    // TRIZ #10: Use RingBuffer clear for O(1) reset
+    if (eventsRef.current) {
+      eventsRef.current.clear();
+    }
     setEvents([]);
   }, []);
 

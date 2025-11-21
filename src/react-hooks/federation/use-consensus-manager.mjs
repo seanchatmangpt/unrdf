@@ -1,6 +1,7 @@
 /**
  * @file use-consensus-manager.mjs
  * @description React hook for managing consensus protocols (RAFT, Gossip, Byzantine)
+ * @since 3.2.0
  */
 
 import { useState, useCallback, useEffect, useRef } from 'react';
@@ -9,6 +10,7 @@ import { useKnowledgeEngineContext } from '../core/use-knowledge-engine-context.
 /**
  * Hook for managing distributed consensus in federated systems
  *
+ * @since 3.2.0
  * @param {Object} config - Consensus configuration
  * @param {string} [config.protocol='raft'] - Consensus protocol
  * @param {string} config.nodeId - This node's identifier
@@ -16,14 +18,20 @@ import { useKnowledgeEngineContext } from '../core/use-knowledge-engine-context.
  * @param {number} [config.electionTimeout=5000] - Leader election timeout (ms)
  * @param {number} [config.heartbeatInterval=1000] - Heartbeat interval (ms)
  * @returns {Object} Consensus state and operations
+ * @throws {Error} When consensus manager not initialized
+ * @throws {Error} When propose is called on non-leader node
+ * @throws {Error} When stepDown is called on non-leader node
+ * @throws {Error} When proposal fails to reach quorum within timeout
+ * @performance Leader election and heartbeats create network overhead. Increase heartbeatInterval
+ *   for lower overhead, but slower failure detection. Log grows unbounded - implement compaction.
  *
  * @example
+ * // Basic RAFT consensus
  * const {
  *   state,          // 'follower', 'candidate', 'leader'
  *   leader,         // Current leader node ID
  *   term,           // Current election term
  *   propose,        // Propose a value for consensus
- *   vote,           // Vote in election
  *   commitIndex,    // Last committed log index
  *   loading
  * } = useConsensusManager({
@@ -31,6 +39,12 @@ import { useKnowledgeEngineContext } from '../core/use-knowledge-engine-context.
  *   nodeId: 'node-1',
  *   peers: ['node-2', 'node-3']
  * });
+ *
+ * @example
+ * // Propose value for consensus (leader only)
+ * if (state === 'leader') {
+ *   await propose({ type: 'update', data: newData });
+ * }
  */
 export function useConsensusManager(config = {}) {
   const { engine } = useKnowledgeEngineContext();

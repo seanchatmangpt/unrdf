@@ -1,6 +1,7 @@
 /**
  * @file use-real-time-validator.mjs
  * @description React hook for continuous SHACL validation stream
+ * @since 3.2.0
  */
 
 import { useState, useCallback, useEffect, useRef } from 'react';
@@ -9,14 +10,21 @@ import { useChangeFeed } from './use-change-feed.mjs';
 /**
  * Hook for real-time SHACL validation on streaming graph changes
  *
+ * @since 3.2.0
  * @param {Object} config - Validator configuration
  * @param {string} [config.shapeGraph] - SHACL shapes graph URI
  * @param {Function} [config.onViolation] - Callback for validation violations
  * @param {boolean} [config.autoValidate=true] - Auto-validate on changes
  * @param {number} [config.batchSize=5] - Validation batch size
  * @returns {Object} Validator state and operations
+ * @throws {Error} When validator not initialized and validate() is called
+ * @throws {Error} When SHACL shape graph fails to load
+ * @throws {Error} When validateBatch receives invalid change objects
+ * @performance SHACL validation is CPU-intensive - use larger batchSize for throughput,
+ *   smaller for latency. Disable autoValidate and batch manually for high-throughput scenarios.
  *
  * @example
+ * // Auto-validate with violation callback
  * const {
  *   violations,
  *   validChanges,
@@ -30,6 +38,14 @@ import { useChangeFeed } from './use-change-feed.mjs';
  *   },
  *   autoValidate: true
  * });
+ *
+ * @example
+ * // Manual batch validation for control
+ * const { validateBatch, stats } = useRealTimeValidator({
+ *   shapeGraph: 'http://example.org/shapes',
+ *   autoValidate: false
+ * });
+ * const results = await validateBatch(pendingChanges);
  */
 export function useRealTimeValidator(config = {}) {
   const { changes, start, stop, isRunning } = useChangeFeed(config.changeFeed || {});

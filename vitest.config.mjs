@@ -63,6 +63,7 @@ export default defineConfig({
     include: [
       // v3.0 Core tests
       "test/knowledge-engine/parse.test.mjs",
+      "test/knowledge-engine/utils/*.test.mjs",
       "test/dark-matter-80-20.test.mjs",
       "test/sidecar/client.test.mjs",
       "test/cli/*.test.mjs",

@@ -357,21 +357,59 @@ export class SubscriptionManager extends EventEmitter {
     // Stop heartbeat
     this._stopHeartbeat();
 
-    // Attempt reconnection
+    // Attempt reconnection with exponential backoff and jitter
     if (this.reconnectAttempts < this.config.maxReconnectAttempts) {
       this.reconnectAttempts++;
       this.metrics.reconnectCount++;
 
-      console.log(`[SubscriptionManager] Reconnecting in ${this.config.reconnectInterval}ms (attempt ${this.reconnectAttempts}/${this.config.maxReconnectAttempts})`);
+      // Exponential backoff: baseDelay * 2^attempt + random jitter
+      const baseDelay = this.config.reconnectInterval;
+      const exponentialDelay = baseDelay * Math.pow(2, this.reconnectAttempts - 1);
+      const jitter = Math.random() * baseDelay * 0.5; // Add up to 50% jitter
+      const totalDelay = Math.min(exponentialDelay + jitter, 60000); // Cap at 60 seconds
+
+      console.log(`[SubscriptionManager] Reconnecting in ${Math.round(totalDelay)}ms (attempt ${this.reconnectAttempts}/${this.config.maxReconnectAttempts})`);
 
       this.reconnectTimer = setTimeout(() => {
         this.connect(this.config.url).catch(err => {
           console.error('[SubscriptionManager] Reconnection failed:', err.message);
         });
-      }, this.config.reconnectInterval);
+      }, totalDelay);
     } else {
       console.error('[SubscriptionManager] Max reconnection attempts reached');
       this.emit('max-reconnects');
+      // Emit recoveryAvailable event to signal manual reconnection is possible
+      this.emit('recoveryAvailable', {
+        attempts: this.reconnectAttempts,
+        lastAttemptTime: Date.now(),
+        message: 'Manual reconnection available via reconnect() method'
+      });
+    }
+  }
+
+  /**
+   * Manually trigger reconnection after max attempts exhausted
+   * Resets reconnect counter and initiates fresh connection attempt
+   * @returns {Promise<void>}
+   */
+  async reconnect() {
+    // Clear any existing reconnect timer
+    if (this.reconnectTimer) {
+      clearTimeout(this.reconnectTimer);
+      this.reconnectTimer = null;
+    }
+
+    // Reset reconnect attempts to allow fresh connection cycle
+    this.reconnectAttempts = 0;
+
+    console.log('[SubscriptionManager] Manual reconnection initiated');
+    this.emit('reconnecting', { manual: true });
+
+    try {
+      await this.connect(this.config.url);
+    } catch (error) {
+      console.error('[SubscriptionManager] Manual reconnection failed:', error.message);
+      throw error;
     }
   }
 

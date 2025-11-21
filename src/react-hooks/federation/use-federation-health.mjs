@@ -1,6 +1,7 @@
 /**
  * @file use-federation-health.mjs
  * @description React hook for monitoring federation system health and metrics
+ * @since 3.2.0
  */
 
 import { useState, useCallback, useEffect, useRef } from 'react';
@@ -9,13 +10,18 @@ import { useFederatedSystem } from './use-federated-system.mjs';
 /**
  * Hook for monitoring federated system health, metrics, and diagnostics
  *
+ * @since 3.2.0
  * @param {Object} config - Health monitoring configuration
  * @param {number} [config.interval=5000] - Health check interval (ms)
- * @param {string[]} [config.metrics] - Specific metrics to track
+ * @param {string[]} [config.metrics] - Specific metrics to track: 'latency', 'throughput', 'availability'
  * @param {Function} [config.onUnhealthy] - Callback when system becomes unhealthy
  * @returns {Object} Health state and monitoring operations
+ * @throws {Error} When refresh fails due to network or system error
+ * @performance Health checks run on interval - increase interval to reduce monitoring overhead.
+ *   Score calculation is synchronous but lightweight. Store health checks may add network latency.
  *
  * @example
+ * // Continuous health monitoring with alerts
  * const {
  *   health,
  *   metrics,
@@ -31,6 +37,12 @@ import { useFederatedSystem } from './use-federated-system.mjs';
  *     console.warn('Federation unhealthy:', health);
  *   }
  * });
+ *
+ * @example
+ * // Manual health check with store details
+ * const { refresh, getStoreHealth } = useFederationHealth({ interval: 0 });
+ * await refresh();
+ * const store1Health = getStoreHealth('store-1');
  */
 export function useFederationHealth(config = {}) {
   const { system, health: federationHealth, refreshHealth } = useFederatedSystem(config.federation || {});

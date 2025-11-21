@@ -341,13 +341,26 @@ async function _executeHookPhases(hook, currentEvent, beforeResult, runResult, a
 }
 
 /**
+ * Circuit breaker states
+ * @enum {string}
+ */
+const CircuitBreakerState = {
+  CLOSED: 'closed',
+  OPEN: 'open',
+  HALF_OPEN: 'half-open'
+};
+
+/**
  * Create a hook executor with advanced features.
  * @param {Object} [options] - Executor options
  * @param {string} [options.basePath] - Base path for file resolution
  * @param {boolean} [options.strictMode] - Enable strict error handling
  * @param {number} [options.timeoutMs] - Default timeout in milliseconds
+ * @param {number} [options.totalBudgetMs] - Total timeout budget for batch execution (prevents N hooks * 30s cascade)
  * @param {boolean} [options.enableConditionEvaluation] - Enable condition evaluation
  * @param {boolean} [options.enableMetrics] - Enable execution metrics
+ * @param {number} [options.circuitBreakerThreshold] - Number of failures before circuit opens
+ * @param {number} [options.circuitBreakerResetMs] - Time before circuit half-opens
  * @returns {Object} Hook executor instance
  */
 export function createHookExecutor(options = {}) {
@@ -355,13 +368,16 @@ export function createHookExecutor(options = {}) {
     basePath = process.cwd(),
     strictMode = false,
     timeoutMs = 30000,
+    totalBudgetMs = 60000, // Total budget for batch execution (prevents cascade)
     enableConditionEvaluation = true,
     enableMetrics = true,
     enableSandboxing = true,
     sandboxConfig = {},
-    missingDependencyPolicy = 'warn' // 'error' | 'warn' | 'ignore'
+    missingDependencyPolicy = 'warn', // 'error' | 'warn' | 'ignore'
+    circuitBreakerThreshold = 5, // Open circuit after 5 consecutive failures
+    circuitBreakerResetMs = 30000 // Try again after 30s
   } = options;
-  
+
   const metrics = {
     totalExecutions: 0,
     successfulExecutions: 0,
@@ -376,6 +392,14 @@ export function createHookExecutor(options = {}) {
       after: 0,
       completed: 0
     }
+  };
+
+  // Circuit breaker state for timeout cascade prevention
+  const circuitBreaker = {
+    state: CircuitBreakerState.CLOSED,
+    failureCount: 0,
+    lastFailureTime: 0,
+    successCount: 0
   };
   
   return {
@@ -407,19 +431,177 @@ export function createHookExecutor(options = {}) {
     },
     
     /**
-     * Execute multiple hooks in parallel.
+     * Execute multiple hooks in parallel with budget tracking.
+     * Prevents timeout cascade where N hooks * 30s = N*30s total wait.
      * @param {Array} hooks - Array of hook definitions
      * @param {Object} event - The hook event
      * @param {Object} [executionOptions] - Execution-specific options
-     * @returns {Promise<Array>} Array of execution results
+     * @returns {Promise<Object>} Results with succeeded/failed arrays
      */
     async executeAll(hooks, event, executionOptions = {}) {
       if (!Array.isArray(hooks)) {
         throw new TypeError('executeAll: hooks must be an array');
       }
-      
-      const promises = hooks.map(hook => this.execute(hook, event, executionOptions));
-      return Promise.all(promises);
+
+      // Check circuit breaker before execution
+      if (this._isCircuitOpen()) {
+        return {
+          succeeded: [],
+          failed: hooks.map((hook, idx) => ({
+            hookIndex: idx,
+            hookName: hook?.meta?.name || `hook-${idx}`,
+            error: 'Circuit breaker open - too many recent failures',
+            circuitBreakerTripped: true
+          })),
+          circuitBreakerOpen: true
+        };
+      }
+
+      const budgetMs = executionOptions.totalBudgetMs || totalBudgetMs;
+      const perHookTimeout = Math.min(
+        executionOptions.timeoutMs || timeoutMs,
+        Math.floor(budgetMs / Math.max(hooks.length, 1))
+      );
+
+      const batchStartTime = Date.now();
+      const succeeded = [];
+      const failed = [];
+
+      // Use Promise.allSettled to handle partial failures
+      const promises = hooks.map((hook, idx) => {
+        // Calculate remaining budget for this hook
+        const elapsed = Date.now() - batchStartTime;
+        const remainingBudget = budgetMs - elapsed;
+
+        if (remainingBudget <= 0) {
+          return Promise.resolve({
+            status: 'rejected',
+            reason: new Error('Budget exhausted - hook skipped to prevent cascade')
+          });
+        }
+
+        const hookTimeout = Math.min(perHookTimeout, remainingBudget);
+
+        return this.execute(hook, event, {
+          ...executionOptions,
+          timeoutMs: hookTimeout
+        }).then(result => ({ status: 'fulfilled', value: result, hookIndex: idx }))
+          .catch(error => ({ status: 'rejected', reason: error, hookIndex: idx }));
+      });
+
+      const results = await Promise.allSettled(promises);
+
+      for (let i = 0; i < results.length; i++) {
+        const result = results[i];
+        const hook = hooks[i];
+        const hookName = hook?.meta?.name || `hook-${i}`;
+
+        if (result.status === 'fulfilled' && result.value?.status === 'fulfilled') {
+          succeeded.push({
+            hookIndex: i,
+            hookName,
+            result: result.value.value
+          });
+          this._recordCircuitSuccess();
+        } else {
+          const error = result.status === 'rejected'
+            ? result.reason
+            : (result.value?.reason || 'Unknown error');
+          failed.push({
+            hookIndex: i,
+            hookName,
+            error: error?.message || String(error)
+          });
+          this._recordCircuitFailure();
+        }
+      }
+
+      return {
+        succeeded,
+        failed,
+        totalBudgetMs: budgetMs,
+        actualDurationMs: Date.now() - batchStartTime,
+        circuitBreakerState: circuitBreaker.state
+      };
+    },
+
+    /**
+     * Check if circuit breaker is open
+     * @returns {boolean}
+     * @private
+     */
+    _isCircuitOpen() {
+      if (circuitBreaker.state === CircuitBreakerState.CLOSED) {
+        return false;
+      }
+
+      if (circuitBreaker.state === CircuitBreakerState.OPEN) {
+        // Check if enough time has passed to try again
+        const timeSinceFailure = Date.now() - circuitBreaker.lastFailureTime;
+        if (timeSinceFailure >= circuitBreakerResetMs) {
+          circuitBreaker.state = CircuitBreakerState.HALF_OPEN;
+          circuitBreaker.successCount = 0;
+          return false;
+        }
+        return true;
+      }
+
+      // HALF_OPEN - allow through to test
+      return false;
+    },
+
+    /**
+     * Record a circuit breaker success
+     * @private
+     */
+    _recordCircuitSuccess() {
+      if (circuitBreaker.state === CircuitBreakerState.HALF_OPEN) {
+        circuitBreaker.successCount++;
+        // After 3 successes in half-open, close the circuit
+        if (circuitBreaker.successCount >= 3) {
+          circuitBreaker.state = CircuitBreakerState.CLOSED;
+          circuitBreaker.failureCount = 0;
+        }
+      } else {
+        circuitBreaker.failureCount = 0;
+      }
+    },
+
+    /**
+     * Record a circuit breaker failure
+     * @private
+     */
+    _recordCircuitFailure() {
+      circuitBreaker.failureCount++;
+      circuitBreaker.lastFailureTime = Date.now();
+
+      if (circuitBreaker.failureCount >= circuitBreakerThreshold) {
+        circuitBreaker.state = CircuitBreakerState.OPEN;
+      }
+    },
+
+    /**
+     * Get circuit breaker status
+     * @returns {Object}
+     */
+    getCircuitBreakerStatus() {
+      return {
+        state: circuitBreaker.state,
+        failureCount: circuitBreaker.failureCount,
+        lastFailureTime: circuitBreaker.lastFailureTime,
+        threshold: circuitBreakerThreshold,
+        resetMs: circuitBreakerResetMs
+      };
+    },
+
+    /**
+     * Reset circuit breaker
+     */
+    resetCircuitBreaker() {
+      circuitBreaker.state = CircuitBreakerState.CLOSED;
+      circuitBreaker.failureCount = 0;
+      circuitBreaker.lastFailureTime = 0;
+      circuitBreaker.successCount = 0;
     },
     
     /**
