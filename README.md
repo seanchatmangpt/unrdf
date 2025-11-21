@@ -299,6 +299,67 @@ console.log(`Latency p95: ${metrics.latency.p95}ms`);
 console.log(`Cache hit rate: ${metrics.cacheHitRate * 100}%`);
 ```
 
+### 8. **React Hooks Library** ⚛️
+
+35 production-ready React hooks organized by the 80/20 principle:
+
+```javascript
+import {
+  // Tier 1: Essential (60% of usage)
+  useKnowledgeEngine,    // Basic CRUD operations
+  useChangeFeed,         // Real-time updates
+  useDarkMatterCore,     // Performance analysis
+  useQueryAnalyzer,      // Query optimization
+  useErrorBoundary,      // Error handling
+
+  // Tier 2: Important (20% of usage)
+  useGraphDiff,          // Version control
+  useSPARQLEditor,       // Query interface
+
+  // Tier 3: Standard (15% of usage)
+  useFederatedSystem,    // Distributed queries
+  useStreamProcessor,    // Windowing operations
+  useOptimizer,          // Auto-optimization
+  // ... 6 more
+
+  // Tier 4: Advanced via category imports
+  // import { useConsensusManager } from 'unrdf/react-hooks/federation';
+} from 'unrdf/react-hooks';
+
+// Example: Basic knowledge graph with real-time updates
+function ProductList() {
+  const { query, data, loading, error } = useKnowledgeEngine();
+  const { changes, start } = useChangeFeed();
+
+  useEffect(() => {
+    query('SELECT * WHERE { ?product a schema:Product ; schema:name ?name }');
+    start(); // Enable real-time updates
+  }, []);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
+
+  return (
+    <div>
+      <h2>Products ({data.length})</h2>
+      <p>Live updates: {changes.length}</p>
+      {data.map(p => <div key={p.product.value}>{p.name.value}</div>)}
+    </div>
+  );
+}
+```
+
+**Documentation:**
+- 📖 [Quick Start Guide](docs/HOOKS-QUICKSTART.md) - Master the essential 7 hooks (80% of use cases)
+- 📊 [80/20 Analysis](docs/HOOKS-80-20-ANALYSIS.md) - Usage patterns and prioritization
+- 📚 [Complete API Reference](docs/REACT-HOOKS-GUIDE.md) - All 35 hooks with examples
+
+**80/20 Organization:**
+- **Tier 1 (5 hooks):** 60% of usage - Essential for every app
+- **Tier 2 (2 hooks):** 20% of usage - Important features
+- **Tier 3 (9 hooks):** 15% of usage - Standard features
+- **Tier 4 (19 hooks):** 5% of usage - Advanced features
+
 ---
 
 ## Installation
