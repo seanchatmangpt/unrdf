@@ -87,6 +87,14 @@ export default defineConfig({
 
       // v3.2.0 Federation tests (unrdf 2028)
       "test/federation/*.test.mjs",
+
+      // v3.2.0 React Hooks tests - All categories
+      "test/react-hooks/dark-matter/*.test.mjs",
+      "test/react-hooks/advanced-utility/*.test.mjs",
+      "test/react-hooks/policy-security/*.test.mjs",
+      "test/react-hooks/error-recovery/*.test.mjs",
+      "test/react-hooks/form-ui/*.test.mjs",
+      "test/react-hooks/composition/*.test.mjs",
     ],
     exclude: [
       "node_modules/**",
