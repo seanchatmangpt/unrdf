@@ -14,6 +14,9 @@ import { FederationDemo } from "@/components/demos/federation-demo";
 import { CompositionDemo } from "@/components/demos/composition-demo";
 import { ErrorRecoveryDemo } from "@/components/demos/error-recovery-demo";
 import { FormUIDemo } from "@/components/demos/form-ui-demo";
+import { AISemanticDemo } from "@/components/demos/ai-semantic-demo";
+import { AdvancedUtilityDemo } from "@/components/demos/advanced-utility-demo";
+import { PolicySecurityDemo } from "@/components/demos/policy-security-demo";
 
 const HOOK_CATEGORIES = [
   {
@@ -78,6 +81,33 @@ const HOOK_CATEGORIES = [
     hooks: ["useSPARQLEditor", "useGraphVisualizer", "useResultsPaginator", "useQueryBuilder", "useFormValidation"],
     description: "Query interfaces and visualization",
     icon: "🎨"
+  },
+  {
+    id: "ai-semantic",
+    name: "AI & Semantic",
+    tier: 3,
+    usage: "5%",
+    hooks: ["useSemanticAnalyzer", "useNLPQueryBuilder", "useEmbeddingsManager", "useAnomalyDetector"],
+    description: "AI-powered semantic analysis and NLP",
+    icon: "🤖"
+  },
+  {
+    id: "advanced-utility",
+    name: "Advanced Utility",
+    tier: 4,
+    usage: "3%",
+    hooks: ["useGraphDiff", "useIsomorphism", "useReasoningSession", "useGraphMerge", "useQualityMetrics", "useObservabilityManager"],
+    description: "Graph comparison, reasoning, and observability",
+    icon: "🔧"
+  },
+  {
+    id: "policy-security",
+    name: "Policy & Security",
+    tier: 3,
+    usage: "5%",
+    hooks: ["usePolicyPack", "useSecurityValidator", "useSandbox"],
+    description: "SHACL policies, access control, and sandboxing",
+    icon: "🔐"
   }
 ];
 
@@ -101,7 +131,7 @@ export default function HooksShowcase() {
             <div className="flex gap-2">
               <Badge variant="success">v3.1.0</Badge>
               <Badge variant="secondary">40 Hooks</Badge>
-              <Badge variant="outline">9 Categories</Badge>
+              <Badge variant="outline">10 Categories</Badge>
             </div>
           </div>
         </div>
@@ -199,6 +229,9 @@ export default function HooksShowcase() {
                   {cat.id === "composition" && <CompositionDemo />}
                   {cat.id === "error-recovery" && <ErrorRecoveryDemo />}
                   {cat.id === "form-ui" && <FormUIDemo />}
+                  {cat.id === "ai-semantic" && <AISemanticDemo />}
+                  {cat.id === "advanced-utility" && <AdvancedUtilityDemo />}
+                  {cat.id === "policy-security" && <PolicySecurityDemo />}
                 </CardContent>
               </Card>
             </TabsContent>

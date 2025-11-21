@@ -132,27 +132,68 @@ export function DarkMatterDemo() {
         </>
       )}
 
+      {/* Additional Dark Matter Hooks */}
+      <div className="grid grid-cols-3 gap-4">
+        {/* useQueryAnalyzer */}
+        <div className="bg-slate-900 rounded-lg p-4">
+          <div className="text-sm font-medium text-slate-300 mb-2">useQueryAnalyzer</div>
+          <div className="text-xs text-slate-400 mb-2">Optimize slow SPARQL queries</div>
+          <div className="space-y-1 text-xs">
+            <div className="flex justify-between">
+              <span className="text-slate-500">Slow queries:</span>
+              <span className="text-yellow-400">3</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-slate-500">Optimizable:</span>
+              <span className="text-green-400">2</span>
+            </div>
+          </div>
+        </div>
+
+        {/* useOptimizer */}
+        <div className="bg-slate-900 rounded-lg p-4">
+          <div className="text-sm font-medium text-slate-300 mb-2">useOptimizer</div>
+          <div className="text-xs text-slate-400 mb-2">Auto-optimization engine</div>
+          <Badge variant="success">Auto-tuning ON</Badge>
+          <div className="text-xs text-slate-500 mt-1">Combines DarkMatter + QueryAnalyzer</div>
+        </div>
+
+        {/* useCriticalPath */}
+        <div className="bg-slate-900 rounded-lg p-4">
+          <div className="text-sm font-medium text-slate-300 mb-2">useCriticalPath</div>
+          <div className="text-xs text-slate-400 mb-2">Identify bottleneck operations</div>
+          <div className="text-xs">
+            <div className="text-red-400">Critical: query→filter (45ms)</div>
+            <div className="text-yellow-400">Warning: sort→limit (23ms)</div>
+          </div>
+        </div>
+      </div>
+
       {/* Code Example */}
       <div className="bg-slate-900 rounded-lg p-4">
-        <div className="text-xs text-slate-500 mb-2">Usage Example</div>
+        <div className="text-xs text-slate-500 mb-2">Usage Example - All Dark Matter Hooks</div>
         <pre className="text-xs text-slate-300 overflow-x-auto">
-{`import { useDarkMatterCore } from 'unrdf/react-hooks';
+{`import {
+  useDarkMatterCore,
+  useQueryAnalyzer,
+  useOptimizer,
+  useCriticalPath
+} from 'unrdf/react-hooks';
 
-function PerformanceAnalyzer() {
-  const { analysis, analyze, criticalPaths, suggestions } = useDarkMatterCore();
+// 80/20 Performance Analysis
+const { analysis, analyze, paretoScore } = useDarkMatterCore();
 
-  return (
-    <div>
-      <button onClick={analyze}>Analyze</button>
-      {analysis && (
-        <div>
-          <p>Pareto Score: {analysis.paretoScore}/100</p>
-          {suggestions.map(s => <div>{s.type}: {s.reason}</div>)}
-        </div>
-      )}
-    </div>
-  );
-}`}
+// Query-specific optimization
+const { optimizeQuery, slowQueries, suggestions } = useQueryAnalyzer({ slowThreshold: 100 });
+const optimized = await optimizeQuery('SELECT * WHERE { ?s ?p ?o }');
+console.log('Expected gain:', optimized.estimatedGain);
+
+// Auto-optimization (combines both)
+const { enable, disable, isOptimizing } = useOptimizer({ autoApply: true });
+
+// Find bottlenecks
+const { paths, analyze: analyzePath } = useCriticalPath();
+paths.forEach(p => console.log(p.operation, p.latency, p.impact));`}
         </pre>
       </div>
     </div>

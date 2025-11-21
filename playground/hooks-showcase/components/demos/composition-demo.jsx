@@ -130,33 +130,110 @@ export function CompositionDemo() {
         </div>
       </div>
 
+      {/* Stack Variants */}
+      <div className="grid grid-cols-3 gap-4">
+        {/* useCRUDStack */}
+        <div className="bg-slate-900 rounded-lg p-4">
+          <div className="text-sm font-medium text-slate-300 mb-2">useCRUDStack</div>
+          <div className="text-xs text-slate-400 mb-2">Optimized for data entry apps</div>
+          <div className="space-y-1 text-xs">
+            <div className="flex items-center gap-2">
+              <Badge variant="success">✓</Badge>
+              <span className="text-slate-300">Batch insert/update</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Badge variant="success">✓</Badge>
+              <span className="text-slate-300">Optimistic updates</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Badge variant="success">✓</Badge>
+              <span className="text-slate-300">Undo/Redo</span>
+            </div>
+          </div>
+        </div>
+
+        {/* useDashboardStack */}
+        <div className="bg-slate-900 rounded-lg p-4">
+          <div className="text-sm font-medium text-slate-300 mb-2">useDashboardStack</div>
+          <div className="text-xs text-slate-400 mb-2">Real-time analytics dashboards</div>
+          <div className="space-y-1 text-xs">
+            <div className="flex items-center gap-2">
+              <Badge variant="success">✓</Badge>
+              <span className="text-slate-300">Live change feed</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Badge variant="success">✓</Badge>
+              <span className="text-slate-300">Aggregation queries</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Badge variant="success">✓</Badge>
+              <span className="text-slate-300">Auto-refresh</span>
+            </div>
+          </div>
+        </div>
+
+        {/* useProductionStack */}
+        <div className="bg-slate-900 rounded-lg p-4">
+          <div className="text-sm font-medium text-slate-300 mb-2">useProductionStack</div>
+          <div className="text-xs text-slate-400 mb-2">Full production setup</div>
+          <div className="space-y-1 text-xs">
+            <div className="flex items-center gap-2">
+              <Badge variant="success">✓</Badge>
+              <span className="text-slate-300">Error boundaries</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Badge variant="success">✓</Badge>
+              <span className="text-slate-300">Auto-recovery</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Badge variant="success">✓</Badge>
+              <span className="text-slate-300">Telemetry</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Code Example */}
       <div className="bg-slate-900 rounded-lg p-4">
-        <div className="text-xs text-slate-500 mb-2">Usage Example</div>
+        <div className="text-xs text-slate-500 mb-2">Usage Example - All Composition Hooks</div>
         <pre className="text-xs text-slate-300 overflow-x-auto">
-{`// Hook Composition - Choose your preset
-import { useKnowledgeStack, useOfflineStore } from 'unrdf/react-hooks';
+{`import {
+  useKnowledgeStack,
+  useCRUDStack,
+  useDashboardStack,
+  useProductionStack,
+  useOfflineStore
+} from 'unrdf/react-hooks';
 
-// Basic CRUD app
+// Generic stack with presets
 const { query, data, loading } = useKnowledgeStack({ preset: 'basic' });
 
-// Real-time dashboard
-const { query, data, changes, startLive } = useKnowledgeStack({ preset: 'realtime' });
+// CRUD-optimized (forms, data entry)
+const { insert, update, delete: del, undo, redo, history } = useCRUDStack({
+  optimisticUpdates: true,
+  historySize: 50
+});
 
-// Production resilient
-const { query, data, retryCount, isRecovering } = useKnowledgeStack({ preset: 'full' });
+// Dashboard-optimized (analytics, real-time)
+const { data, subscribe, aggregate, refresh } = useDashboardStack({
+  refreshInterval: 5000,
+  aggregations: ['count', 'sum', 'avg']
+});
 
-// Offline-first storage
+// Production-ready (error handling, recovery, observability)
 const {
-  quads,
-  insert,
-  sync,
-  pendingCount,
-  isOnline
-} = useOfflineStore();
+  query, data,
+  hasError, error, recover,
+  retryCount, isRecovering,
+  metrics, trace
+} = useProductionStack({
+  maxRetries: 3,
+  enableTelemetry: true
+});
 
-// Insert works offline - automatically syncs when online
-await insert([{ subject, predicate, object }]);`}
+// Offline-first with IndexedDB
+const { quads, insert, sync, pendingCount, isOnline } = useOfflineStore();
+await insert([{ subject, predicate, object }]); // Works offline!`}
         </pre>
       </div>
     </div>

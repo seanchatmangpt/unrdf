@@ -205,34 +205,84 @@ LIMIT 10`);
         </div>
       </div>
 
+      {/* Additional Form Hooks */}
+      <div className="grid grid-cols-2 gap-4">
+        {/* useQueryBuilder */}
+        <div className="bg-slate-900 rounded-lg p-4">
+          <div className="text-sm font-medium text-slate-300 mb-2">useQueryBuilder</div>
+          <div className="text-xs text-slate-400 mb-3">Visual SPARQL query construction</div>
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <Badge variant="outline">Subject</Badge>
+              <span className="text-xs text-slate-300">?person</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Badge variant="outline">Predicate</Badge>
+              <span className="text-xs text-slate-300">foaf:name</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Badge variant="outline">Object</Badge>
+              <span className="text-xs text-slate-300">?name</span>
+            </div>
+          </div>
+          <div className="mt-2 text-xs text-green-400">→ SELECT ?person ?name WHERE ...</div>
+        </div>
+
+        {/* useFormValidation */}
+        <div className="bg-slate-900 rounded-lg p-4">
+          <div className="text-sm font-medium text-slate-300 mb-2">useFormValidation</div>
+          <div className="text-xs text-slate-400 mb-3">SHACL-based form validation</div>
+          <div className="space-y-2">
+            <div className="flex justify-between items-center">
+              <span className="text-xs text-slate-300">Name (required)</span>
+              <Badge variant="success">✓</Badge>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-xs text-slate-300">Email (pattern)</span>
+              <Badge variant="success">✓</Badge>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-xs text-slate-300">Age (minValue: 18)</span>
+              <Badge variant="destructive">✗ Must be ≥ 18</Badge>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Code Example */}
       <div className="bg-slate-900 rounded-lg p-4">
-        <div className="text-xs text-slate-500 mb-2">Usage Example</div>
+        <div className="text-xs text-slate-500 mb-2">Usage Example - All Form & UI Hooks</div>
         <pre className="text-xs text-slate-300 overflow-x-auto">
 {`import {
   useSPARQLEditor,
   useGraphVisualizer,
-  useResultsPaginator
+  useResultsPaginator,
+  useQueryBuilder,
+  useFormValidation
 } from 'unrdf/react-hooks';
 
-function QueryWorkbench() {
-  const { query, setQuery, validate, format, errors } = useSPARQLEditor();
-  const { visualize, nodes, edges } = useGraphVisualizer();
-  const { pageData, nextPage, prevPage, currentPage } = useResultsPaginator(results, {
-    pageSize: 10
-  });
+// SPARQL Editor with syntax highlighting
+const { query, setQuery, validate, format, errors } = useSPARQLEditor();
 
-  return (
-    <div>
-      <textarea value={query} onChange={e => setQuery(e.target.value)} />
-      <button onClick={format}>Format</button>
-      <button onClick={() => visualize(query)}>Visualize</button>
-      {pageData.map(row => <tr>...</tr>)}
-      <button onClick={prevPage}>Prev</button>
-      <button onClick={nextPage}>Next</button>
-    </div>
-  );
-}`}
+// Graph Visualization
+const { visualize, nodes, edges, layout } = useGraphVisualizer();
+
+// Paginated results
+const { pageData, nextPage, prevPage, currentPage } = useResultsPaginator(results, {
+  pageSize: 10
+});
+
+// Visual query builder (no SPARQL knowledge needed)
+const { addTriple, removeTriple, build, triples } = useQueryBuilder();
+addTriple({ subject: '?person', predicate: 'foaf:name', object: '?name' });
+const sparql = build(); // Returns valid SPARQL
+
+// SHACL-based form validation
+const { validate: validateForm, errors, isValid } = useFormValidation({
+  shapes: personShape // SHACL shapes graph
+});
+const result = await validateForm({ name: 'Alice', age: 17 });
+// result.errors = [{ path: 'age', message: 'Must be >= 18' }]`}
         </pre>
       </div>
     </div>
