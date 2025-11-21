@@ -11,6 +11,8 @@
   - [Performance Metrics](./_includes/patterns/performance-metrics.md)
   - [Migration Guide Template](./_includes/patterns/migration-guide-template.md)
   - [Comparison Table Template](./_includes/patterns/comparison-table-template.md)
+- [Abstraction Frameworks](./_includes/frameworks/README.md)
+  - [React Hooks Abstraction](./_includes/frameworks/react-hooks-abstraction.md)
 
 ---
 
