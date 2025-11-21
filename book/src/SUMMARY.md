@@ -2,6 +2,16 @@
 
 [Introduction](./introduction.md)
 
+# Shared Patterns & Examples
+
+- [Shared Content Overview](./_includes/README.md)
+  - [E-commerce Base Example](./_includes/examples/ecommerce-base.md)
+  - [Knowledge Hook Pattern](./_includes/patterns/knowledge-hook-base.md)
+  - [Testing Pattern](./_includes/patterns/testing-pattern.md)
+  - [Performance Metrics](./_includes/patterns/performance-metrics.md)
+  - [Migration Guide Template](./_includes/patterns/migration-guide-template.md)
+  - [Comparison Table Template](./_includes/patterns/comparison-table-template.md)
+
 ---
 
 # Part I: Foundations

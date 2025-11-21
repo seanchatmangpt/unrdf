@@ -575,10 +575,13 @@ effect: async (delta, context) => {
 
 ## Testing Knowledge Hooks
 
+See [Standard Testing Pattern](../_includes/patterns/testing-pattern.md) for base approach.
+
+**Hook-specific testing:**
+
 ```typescript
 import { describe, it, expect, beforeEach } from 'vitest';
 import { createKnowledgeEngine } from 'unrdf';
-import { mockKnowledgeHook } from 'unrdf/testing';
 
 describe('Product Price Validation Hook', () => {
   let engine;

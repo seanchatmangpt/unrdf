@@ -472,6 +472,10 @@ const ProductSchema = z.object({
 
 ## Testing with Type Safety
 
+See [Standard Testing Pattern](../_includes/patterns/testing-pattern.md) for base approach.
+
+**Type-specific testing:**
+
 ```typescript
 import { describe, it, expect } from 'vitest';
 
@@ -493,8 +497,8 @@ describe('Product Search', () => {
   it('validates invalid filters', () => {
     expect(() => {
       searchProducts({
-        category: 'invalid' as any,  // Invalid enum value
-        minPrice: -100  // Negative price
+        category: 'invalid' as any,
+        minPrice: -100
       });
     }).toThrow(ValidationError);
   });
@@ -518,45 +522,27 @@ describe('Product Search', () => {
 
 ## Migration from Untyped SPARQL
 
-### Step 1: Add Zod Schemas
+See [Migration Guide Template](../_includes/patterns/migration-guide-template.md) for general approach.
 
-Start by defining Zod schemas for your data:
+**Type-specific migration:**
+
+### Quick 3-Step Migration
 
 ```typescript
-// Before: Untyped results
-const results = await engine.query(sparql);
-
-// After: Define schema
+// Step 1: Define Zod schema
 const PersonSchema = z.object({
   name: z.string(),
   age: z.number()
 });
-```
 
-### Step 2: Use queryTyped
+// Step 2: Use queryTyped
+const results = await engine.queryTyped({
+  query: sparql,
+  schema: PersonSchema
+});
 
-Replace `query()` with `queryTyped()`:
-
-```typescript
-// Before
-const results = await engine.query(sparql);
-
-// After
-const results = await engine.queryTyped({ query: sparql, schema: PersonSchema });
-```
-
-### Step 3: Remove Manual Validation
-
-Delete all manual type checking and validation:
-
-```typescript
-// Before: Manual validation everywhere
-if (typeof result.name !== 'string') throw new Error('Invalid name');
-if (typeof result.age !== 'number') throw new Error('Invalid age');
-if (result.age < 0) throw new Error('Age must be positive');
-
-// After: Zod handles it automatically
-// (Nothing needed - schema validates automatically)
+// Step 3: Delete manual validation
+// All type checking and validation now automatic via Zod
 ```
 
 ---

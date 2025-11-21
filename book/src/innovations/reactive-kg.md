@@ -467,7 +467,9 @@ spec:
 
 ## Testing Reactive Components
 
-UNRDF provides test utilities for Knowledge Hooks:
+See [Standard Testing Pattern](../_includes/patterns/testing-pattern.md) for base testing approach.
+
+**Reactive-specific testing with mock utilities:**
 
 ```typescript
 import { renderHook, act } from '@testing-library/react';
@@ -501,26 +503,23 @@ describe('LiveProductPrice', () => {
 
 ## Migration from Traditional Approach
 
-Migrating from WebSocket-based real-time to UNRDF Reactive Knowledge Graphs:
+See [Migration Guide Template](../_includes/patterns/migration-guide-template.md) for general approach.
 
-### Step 1: Identify WebSocket Logic
-Find all WebSocket connection code, state management, and subscriptions.
+**Reactive-specific migration steps:**
 
-### Step 2: Create Knowledge Hooks
-Convert server-side broadcast logic to Knowledge Hooks:
+### Step 1: Convert WebSocket to Knowledge Hooks
 
 ```typescript
-// Before: WebSocket broadcast
+// Before: WebSocket broadcast (80+ lines)
 wss.clients.forEach(client => {
   client.send(JSON.stringify({ type: 'price-update', data }));
 });
 
-// After: Knowledge Hook effect
+// After: Knowledge Hook effect (3 lines)
 await context.emit('product-price-updates', data);
 ```
 
-### Step 3: Replace Client Subscriptions
-Replace custom hooks with `useKnowledgeHook`:
+### Step 2: Replace Client Subscriptions
 
 ```typescript
 // Before: Custom WebSocket hook
@@ -530,10 +529,11 @@ const { data } = useWebSocketSubscription('price-updates');
 const { data } = useKnowledgeHook({ hookId: 'product-price-updates' });
 ```
 
-### Step 4: Remove Infrastructure
-Delete WebSocket server code, reconnection logic, state management, and cache invalidation.
+### Step 3: Remove Infrastructure
 
-**Result:** 96% code reduction, instant real-time reactivity, zero configuration.
+Delete: WebSocket server, reconnection logic, state management, cache invalidation (500+ lines).
+
+**Result:** 96% code reduction, zero configuration.
 
 ---
 
