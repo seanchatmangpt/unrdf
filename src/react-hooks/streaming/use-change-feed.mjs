@@ -1,14 +1,36 @@
 /**
  * @file use-change-feed.mjs
  * @description React hook for real-time change stream with filtering
+ * @since 3.2.0
  */
 
 import { useState, useCallback, useEffect, useRef } from 'react';
+import { z } from 'zod';
 import { useKnowledgeEngineContext } from '../core/use-knowledge-engine-context.mjs';
+
+/**
+ * Zod schema for change feed configuration validation
+ * Prevents XSS/injection by validating all inputs
+ */
+const ChangeFeedConfigSchema = z.object({
+  /** Filter function must be a function type */
+  filter: z.function().optional(),
+  /** Operations must be valid operation types */
+  operations: z.array(
+    z.enum(['insert', 'delete', 'update'])
+  ).optional().default(['insert', 'delete']),
+  /** Include transaction metadata */
+  includeMetadata: z.boolean().optional().default(false),
+  /** Batch size must be positive integer, max 10000 */
+  batchSize: z.number().int().positive().max(10000).optional().default(10),
+  /** Batch interval must be positive, max 60000ms */
+  batchInterval: z.number().positive().max(60000).optional().default(1000)
+}).strict();
 
 /**
  * Hook for consuming real-time change feed from the knowledge graph
  *
+ * @since 3.2.0
  * @param {Object} config - Change feed configuration
  * @param {Function} [config.filter] - Filter function for changes
  * @param {string[]} [config.operations] - Operations to track: 'insert', 'delete'
@@ -16,8 +38,13 @@ import { useKnowledgeEngineContext } from '../core/use-knowledge-engine-context.
  * @param {number} [config.batchSize=10] - Batch size for change events
  * @param {number} [config.batchInterval=1000] - Batch interval (ms)
  * @returns {Object} Change feed state and operations
+ * @throws {Error} When change feed not initialized and start/stop is called
+ * @throws {Error} When replay is called with invalid timestamp range
+ * @performance Batching reduces render cycles; use larger batchSize for high-throughput scenarios.
+ *   Memory grows with changes array size - call clear() periodically for long-running feeds.
  *
  * @example
+ * // Basic usage with filtering
  * const {
  *   changes,
  *   start,
@@ -33,8 +60,19 @@ import { useKnowledgeEngineContext } from '../core/use-knowledge-engine-context.
  *   batchSize: 10,
  *   batchInterval: 1000
  * });
+ *
+ * @example
+ * // Real-time price monitoring
+ * const { changes, start, getChangesByPredicate } = useChangeFeed({
+ *   operations: ['insert'],
+ *   includeMetadata: true
+ * });
+ * const priceChanges = getChangesByPredicate('schema:price');
  */
 export function useChangeFeed(config = {}) {
+  // Validate config with Zod schema to prevent XSS/injection
+  const validatedConfig = ChangeFeedConfigSchema.parse(config);
+
   const { engine } = useKnowledgeEngineContext();
   const [changes, setChanges] = useState([]);
   const [isRunning, setIsRunning] = useState(false);
@@ -66,12 +104,12 @@ export function useChangeFeed(config = {}) {
           '../../knowledge-engine/streaming/change-feed.mjs'
         );
 
-        // Create change feed
+        // Create change feed with validated config
         const feed = new ChangeFeed({
           engine,
-          filter: config.filter,
-          operations: config.operations || ['insert', 'delete'],
-          includeMetadata: config.includeMetadata || false,
+          filter: validatedConfig.filter,
+          operations: validatedConfig.operations,
+          includeMetadata: validatedConfig.includeMetadata,
           onBatchReady: (batch) => {
             if (!mounted) return;
 
@@ -111,7 +149,7 @@ export function useChangeFeed(config = {}) {
         clearInterval(batchTimerRef.current);
       }
     };
-  }, [engine, config.includeMetadata]);
+  }, [engine, validatedConfig.includeMetadata]);
 
   // Start change feed
   const start = useCallback(async () => {
@@ -121,8 +159,8 @@ export function useChangeFeed(config = {}) {
 
     try {
       await feedRef.current.start({
-        batchSize: config.batchSize || 10,
-        batchInterval: config.batchInterval || 1000
+        batchSize: validatedConfig.batchSize,
+        batchInterval: validatedConfig.batchInterval
       });
 
       setIsRunning(true);
@@ -131,7 +169,7 @@ export function useChangeFeed(config = {}) {
       setError(err);
       throw err;
     }
-  }, [config.batchSize, config.batchInterval]);
+  }, [validatedConfig.batchSize, validatedConfig.batchInterval]);
 
   // Stop change feed
   const stop = useCallback(async () => {

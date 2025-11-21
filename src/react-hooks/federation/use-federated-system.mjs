@@ -1,6 +1,7 @@
 /**
  * @file use-federated-system.mjs
  * @description React hook for managing federated RDF systems across multiple stores
+ * @since 3.2.0
  */
 
 import { useState, useCallback, useEffect, useRef } from 'react';
@@ -9,14 +10,23 @@ import { useKnowledgeEngineContext } from '../core/use-knowledge-engine-context.
 /**
  * Hook for managing a federated RDF system with distributed stores
  *
+ * @since 3.2.0
  * @param {Object} config - Federation configuration
  * @param {string[]} config.stores - Array of store identifiers or URLs
  * @param {string} [config.consensusProtocol='raft'] - Consensus protocol (raft, gossip, byzantine)
  * @param {number} [config.replicationFactor=3] - Number of replicas
  * @param {Object} [config.syncStrategy] - Synchronization strategy
  * @returns {Object} Federation state and operations
+ * @throws {Error} When federation system not initialized
+ * @throws {Error} When store registration fails (invalid endpoint, network error)
+ * @throws {Error} When distributed query times out
+ * @throws {Error} When replication fails to reach quorum
+ * @performance Network latency dominates - use 'fastest' storeSelection for latency-sensitive queries.
+ *   Consensus protocol affects write latency: raft < gossip < byzantine.
+ *   Health checks run periodically - adjust interval for monitoring overhead.
  *
  * @example
+ * // Basic federation setup
  * const {
  *   system,
  *   registerStore,
@@ -28,6 +38,14 @@ import { useKnowledgeEngineContext } from '../core/use-knowledge-engine-context.
  *   stores: ['store1', 'store2', 'store3'],
  *   consensusProtocol: 'raft',
  *   replicationFactor: 2
+ * });
+ *
+ * @example
+ * // Distributed query with strategy
+ * const result = await query('SELECT * WHERE { ?s ?p ?o }', {
+ *   storeSelection: 'quorum',
+ *   aggregation: 'union',
+ *   timeout: 5000
  * });
  */
 export function useFederatedSystem(config = {}) {

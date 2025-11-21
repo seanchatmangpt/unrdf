@@ -1,6 +1,7 @@
 /**
  * @file use-stream-processor.mjs
  * @description React hook for window/aggregation operations on streams
+ * @since 3.2.0
  */
 
 import { useState, useCallback, useEffect, useRef } from 'react';
@@ -9,6 +10,7 @@ import { useChangeFeed } from './use-change-feed.mjs';
 /**
  * Hook for processing change streams with windowing and aggregation
  *
+ * @since 3.2.0
  * @param {Object} config - Stream processor configuration
  * @param {string} [config.windowType='tumbling'] - Window type: 'tumbling', 'sliding', 'session'
  * @param {number} [config.windowSize=5000] - Window size (ms)
@@ -16,8 +18,14 @@ import { useChangeFeed } from './use-change-feed.mjs';
  * @param {number} [config.sessionGap=30000] - Gap for session windows (ms)
  * @param {Function} [config.aggregator] - Custom aggregation function
  * @returns {Object} Stream processor state and operations
+ * @throws {Error} When underlying change feed fails to initialize
+ * @throws {Error} When aggregator function throws during window processing
+ * @performance Sliding windows maintain overlap buffer - use tumbling for lower memory.
+ *   Session windows use timers per-event - high event rates increase timer overhead.
+ *   Windows array grows unbounded - call clear() periodically for long-running processors.
  *
  * @example
+ * // Tumbling window for real-time analytics
  * const {
  *   windows,
  *   currentWindow,
@@ -36,6 +44,14 @@ import { useChangeFeed } from './use-change-feed.mjs';
  *       return sum + (price ? parseFloat(price.object.value) : 0);
  *     }, 0) / events.length
  *   })
+ * });
+ *
+ * @example
+ * // Sliding window for moving averages
+ * const { windows, stats } = useStreamProcessor({
+ *   windowType: 'sliding',
+ *   windowSize: 10000,
+ *   windowSlide: 2000
  * });
  */
 export function useStreamProcessor(config = {}) {

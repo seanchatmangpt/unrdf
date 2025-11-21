@@ -1,6 +1,7 @@
 /**
  * @file use-critical-path.mjs
  * @description React hook for critical path analysis and bottleneck identification
+ * @since 3.2.0
  */
 
 import { useState, useCallback, useEffect, useRef } from 'react';
@@ -10,13 +11,21 @@ import { useDarkMatterCore } from './use-dark-matter-core.mjs';
  * Hook for analyzing critical execution paths and identifying bottlenecks
  * Focus optimization on the path that delivers maximum value
  *
+ * @since 3.2.0
  * @param {Object} config - Critical path configuration
  * @param {string[]} [config.operations] - Operations to trace
  * @param {boolean} [config.autoTrace=true] - Auto-trace critical paths
  * @param {Function} [config.onBottleneck] - Callback when bottleneck found
  * @returns {Object} Critical path state and operations
+ * @throws {Error} When critical path tracer not initialized
+ * @throws {Error} When traceOperation called with unknown operationId
+ * @throws {Error} When optimizePath called without identified critical path
+ * @throws {Error} When getOperationImpact called with unknown operationId
+ * @performance Path analysis uses DFS which is O(V+E) for dependency graph. Bottleneck
+ *   identification is O(n log n) due to sorting. Visualization data generation is synchronous.
  *
  * @example
+ * // Automatic bottleneck detection
  * const {
  *   criticalPath,
  *   bottlenecks,
@@ -29,6 +38,12 @@ import { useDarkMatterCore } from './use-dark-matter-core.mjs';
  *     console.warn('Bottleneck:', bottleneck.operation, bottleneck.impact);
  *   }
  * });
+ *
+ * @example
+ * // Get optimization recommendations for critical path
+ * const { optimizePath, getBottlenecksBySeverity } = useCriticalPath();
+ * const highSeverity = getBottlenecksBySeverity('high');
+ * const { optimizations } = await optimizePath();
  */
 export function useCriticalPath(config = {}) {
   const darkMatter = useDarkMatterCore({

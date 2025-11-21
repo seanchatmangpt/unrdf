@@ -1,6 +1,7 @@
 /**
  * @file use-query-analyzer.mjs
  * @description React hook for SPARQL query optimization analysis
+ * @since 3.2.0
  */
 
 import { useState, useCallback, useEffect, useRef } from 'react';
@@ -10,13 +11,20 @@ import { useKnowledgeEngineContext } from '../core/use-knowledge-engine-context.
  * Hook for analyzing and optimizing SPARQL queries
  * Identifies slow queries, suggests optimizations, and tracks query patterns
  *
+ * @since 3.2.0
  * @param {Object} config - Query analyzer configuration
  * @param {boolean} [config.autoOptimize=false] - Auto-apply safe optimizations
  * @param {number} [config.slowThreshold=100] - Slow query threshold (ms)
  * @param {Function} [config.onSlowQuery] - Callback for slow queries
  * @returns {Object} Analyzer state and operations
+ * @throws {Error} When query analyzer not initialized
+ * @throws {Error} When analyzeQuery receives invalid SPARQL
+ * @throws {Error} When optimizeQuery strategies contain unknown strategy
+ * @performance Query analysis adds overhead to each query - use selectively in production.
+ *   History grows unbounded - call clear() periodically. Pattern analysis is O(n) over history.
  *
  * @example
+ * // Automatic slow query detection
  * const {
  *   analyzeQuery,
  *   optimizeQuery,
@@ -28,6 +36,13 @@ import { useKnowledgeEngineContext } from '../core/use-knowledge-engine-context.
  *   onSlowQuery: (query) => {
  *     console.warn('Slow query detected:', query.sparql, query.executionTime);
  *   }
+ * });
+ *
+ * @example
+ * // Manual query optimization
+ * const { optimizeQuery, getSuggestionsBySeverity } = useQueryAnalyzer();
+ * const { optimized, estimatedGain } = await optimizeQuery(sparql, {
+ *   strategies: ['add-limit', 'reorder-triples']
  * });
  */
 export function useQueryAnalyzer(config = {}) {

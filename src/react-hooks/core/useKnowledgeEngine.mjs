@@ -29,8 +29,62 @@
  */
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { z } from 'zod';
 import { KnowledgeHookManager } from '../../knowledge-engine/knowledge-hook-manager.mjs';
 import { Store } from 'n3';
+
+/**
+ * Zod schema for URL validation (endpoints)
+ * Validates URL format to prevent injection attacks
+ */
+const UrlSchema = z.string()
+  .url('Invalid URL format')
+  .max(2048, 'URL exceeds maximum length')
+  .optional();
+
+/**
+ * Zod schema for base path validation
+ * Validates file path to prevent path traversal attacks
+ */
+const BasePathSchema = z.string()
+  .max(4096, 'Base path exceeds maximum length')
+  .refine(
+    (path) => !path.includes('..'),
+    'Base path cannot contain path traversal sequences'
+  )
+  .optional();
+
+/**
+ * Zod schema for lockchain options validation
+ */
+const LockchainOptionsSchema = z.object({
+  enabled: z.boolean().optional(),
+  threshold: z.number().int().positive().max(1000).optional(),
+  timeout: z.number().positive().max(300000).optional()
+}).passthrough().optional();
+
+/**
+ * Zod schema for useKnowledgeEngine options validation
+ * Prevents XSS/injection by validating all configuration inputs
+ */
+const UseKnowledgeEngineOptionsSchema = z.object({
+  /** Base path for file resolution - validated for path traversal */
+  basePath: BasePathSchema,
+  /** Enable knowledge hook execution */
+  enableKnowledgeHooks: z.boolean().optional().default(true),
+  /** Enable OpenTelemetry observability */
+  enableObservability: z.boolean().optional().default(true),
+  /** Enable strict error handling */
+  strictMode: z.boolean().optional().default(false),
+  /** Initial RDF store (n3 Store instance) */
+  initialStore: z.instanceof(Store).nullable().optional(),
+  /** Lockchain configuration options */
+  lockchainOptions: LockchainOptionsSchema,
+  /** Automatically initialize engine on mount */
+  autoInit: z.boolean().optional().default(true),
+  /** Optional endpoint URL for remote knowledge engine */
+  endpoint: UrlSchema
+}).strict();
 
 /**
  * Configuration options for useKnowledgeEngine hook
@@ -66,6 +120,9 @@ import { Store } from 'n3';
  * @returns {UseKnowledgeEngineResult} Hook result with engine instance and operations
  */
 export function useKnowledgeEngine(options = {}) {
+  // Validate options with Zod schema to prevent XSS/injection
+  const validatedOptions = UseKnowledgeEngineOptionsSchema.parse(options);
+
   const {
     basePath = process.cwd(),
     enableKnowledgeHooks = true,
@@ -74,7 +131,7 @@ export function useKnowledgeEngine(options = {}) {
     initialStore = null,
     lockchainOptions = {},
     autoInit = true
-  } = options;
+  } = validatedOptions;
 
   // State
   const [engine, setEngine] = useState(null);

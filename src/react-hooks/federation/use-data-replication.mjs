@@ -1,6 +1,7 @@
 /**
  * @file use-data-replication.mjs
  * @description React hook for managing data replication and conflict resolution
+ * @since 3.2.0
  */
 
 import { useState, useCallback, useEffect, useRef } from 'react';
@@ -9,14 +10,22 @@ import { useFederatedSystem } from './use-federated-system.mjs';
 /**
  * Hook for managing distributed data replication with conflict resolution
  *
+ * @since 3.2.0
  * @param {Object} config - Replication configuration
- * @param {string} [config.strategy='eventual'] - Replication strategy
+ * @param {string} [config.strategy='eventual'] - Replication strategy: 'eventual', 'immediate'
  * @param {number} [config.replicationFactor=2] - Number of replicas
  * @param {Function} [config.conflictResolver] - Custom conflict resolution function
  * @param {boolean} [config.autoSync=true] - Enable automatic synchronization
  * @returns {Object} Replication state and operations
+ * @throws {Error} When federation system not initialized
+ * @throws {Error} When replication fails to reach replicationFactor nodes
+ * @throws {Error} When conflict resolution fails or resolver throws
+ * @throws {Error} When resolveConflict called with unknown conflictId
+ * @performance autoSync creates background sync interval - increases network traffic.
+ *   'immediate' strategy blocks until replication complete. Conflict detection adds overhead.
  *
  * @example
+ * // Eventual consistency with auto-sync
  * const {
  *   replicate,
  *   conflicts,
@@ -26,14 +35,15 @@ import { useFederatedSystem } from './use-federated-system.mjs';
  * } = useDataReplication({
  *   strategy: 'eventual',
  *   replicationFactor: 3,
- *   conflictResolver: (conflicts) => conflicts[0] // Last-write-wins
+ *   conflictResolver: (versions) => versions[0] // Last-write-wins
  * });
  *
- * // Replicate a change
+ * @example
+ * // Replicate with version vector
  * await replicate({
  *   operation: 'insert',
- *   quads: [/* ... *\/],
- *   vector: [1, 2, 3] // Version vector
+ *   quads: [{ subject, predicate, object }],
+ *   vector: [1, 2, 3]
  * });
  */
 export function useDataReplication(config = {}) {

@@ -1,6 +1,7 @@
 /**
  * @file use-streaming-pipeline.mjs
  * @description React hook for complete streaming orchestration pipeline
+ * @since 3.2.0
  */
 
 import { useState, useCallback, useEffect, useRef } from 'react';
@@ -13,6 +14,7 @@ import { useRealTimeValidator } from './use-real-time-validator.mjs';
  * Hook for orchestrating complete streaming pipeline with subscriptions,
  * change feeds, processing, and validation
  *
+ * @since 3.2.0
  * @param {Object} config - Pipeline configuration
  * @param {Object} [config.subscription] - Subscription config
  * @param {Object} [config.changeFeed] - Change feed config
@@ -22,8 +24,14 @@ import { useRealTimeValidator } from './use-real-time-validator.mjs';
  * @param {boolean} [config.enableProcessing=true] - Enable stream processing
  * @param {Function} [config.onPipelineEvent] - Pipeline event callback
  * @returns {Object} Pipeline state and operations
+ * @throws {Error} When any pipeline component fails to start
+ * @throws {Error} When stop is called while pipeline is not running
+ * @performance Combines 4 hooks with cumulative memory/CPU overhead. Disable unused
+ *   features via enableValidation/enableProcessing. Monitor health.status for degradation.
+ *   Use pause/resume for temporary stops without full teardown.
  *
  * @example
+ * // Full pipeline with all features
  * const {
  *   start,
  *   stop,
@@ -50,6 +58,13 @@ import { useRealTimeValidator } from './use-real-time-validator.mjs';
  *   },
  *   enableValidation: true,
  *   enableProcessing: true
+ * });
+ *
+ * @example
+ * // Minimal pipeline without validation
+ * const { start, changes, health } = useStreamingPipeline({
+ *   enableValidation: false,
+ *   enableProcessing: false
  * });
  */
 export function useStreamingPipeline(config = {}) {
