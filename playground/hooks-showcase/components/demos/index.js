@@ -5,3 +5,6 @@ export { FederationDemo } from './federation-demo';
 export { CompositionDemo } from './composition-demo';
 export { ErrorRecoveryDemo } from './error-recovery-demo';
 export { FormUIDemo } from './form-ui-demo';
+export { AISemanticDemo } from './ai-semantic-demo';
+export { AdvancedUtilityDemo } from './advanced-utility-demo';
+export { PolicySecurityDemo } from './policy-security-demo';
