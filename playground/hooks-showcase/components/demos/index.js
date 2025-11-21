@@ -1,0 +1,7 @@
+export { CoreDemo } from './core-demo';
+export { StreamingDemo } from './streaming-demo';
+export { DarkMatterDemo } from './dark-matter-demo';
+export { FederationDemo } from './federation-demo';
+export { CompositionDemo } from './composition-demo';
+export { ErrorRecoveryDemo } from './error-recovery-demo';
+export { FormUIDemo } from './form-ui-demo';
