@@ -142,6 +142,23 @@ export {
  * ```
  */
 
+// ============================================================================
+// INNOVATION: COMPOSITION HOOKS (Quick Wins)
+// ============================================================================
+
+// Hook Composition Helpers - Pre-configured bundles for common patterns
+export {
+  useKnowledgeStack,
+  useCRUDStack,
+  useDashboardStack,
+  useProductionStack
+} from './composition/use-knowledge-stack.mjs';
+
+// Offline-First Support - IndexedDB persistence with sync queue
+export {
+  useOfflineStore
+} from './composition/use-offline-store.mjs';
+
 // Category exports for advanced users
 export * as Federation from './federation/index.mjs';
 export * as Streaming from './streaming/index.mjs';
@@ -151,3 +168,4 @@ export * as AdvancedUtility from './advanced-utility/index.mjs';
 export * as PolicySecurity from './policy-security/index.mjs';
 export * as ErrorRecovery from './error-recovery/index.mjs';
 export * as FormUI from './form-ui/index.mjs';
+export * as Composition from './composition/index.mjs';
