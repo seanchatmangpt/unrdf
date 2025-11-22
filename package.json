@@ -135,6 +135,7 @@
     "rdf-ext": "^2.0.0",
     "rdf-validate-shacl": "^0.6.5",
     "table": "^6.9.0",
+    "typhonjs-escomplex": "^0.1.0",
     "unctx": "^1.0.0",
     "vm2": "^3.9.0",
     "ws": "^8.18.3",

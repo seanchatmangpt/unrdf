@@ -1,0 +1,248 @@
+{
+  "@context": {
+    "@vocab": "urn:unrdf:api:",
+    "schema": "http://schema.org/",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#"
+  },
+  "@id": "urn:unrdf:api-contracts:v4.0.0",
+  "@type": "api:ContractRegistry",
+  "version": "4.0.0",
+  "contracts": {
+    "mapek:runIteration": {
+      "@type": "api:FunctionContract",
+      "name": "runMapekIteration",
+      "module": "unrdf/project-engine",
+      "signature": {
+        "parameters": {
+          "projectStore": {
+            "type": "N3.Store",
+            "required": true,
+            "description": "RDF project structure from filesystem",
+            "validation": "Store with getQuads method"
+          },
+          "domainStore": {
+            "type": "N3.Store",
+            "required": true,
+            "description": "RDF domain model (entities, fields, relationships)",
+            "validation": "Store with getQuads method"
+          },
+          "projectRoot": {
+            "type": "string",
+            "required": true,
+            "description": "Filesystem root path",
+            "validation": "Valid filesystem path"
+          },
+          "stackProfile": {
+            "type": "object",
+            "required": false,
+            "description": "Framework detection result",
+            "schema": {
+              "webFramework": "string",
+              "testFramework": "string",
+              "buildTool": "string"
+            }
+          },
+          "baselineSnapshot": {
+            "type": "N3.Store",
+            "required": false,
+            "description": "Baseline snapshot for drift detection"
+          },
+          "knowledge": {
+            "type": "object",
+            "required": false,
+            "description": "Learned patterns from previous runs"
+          }
+        },
+        "returns": {
+          "type": "object",
+          "schema": {
+            "overallHealth": {
+              "type": "number",
+              "range": [0, 100],
+              "description": "Aggregate health score"
+            },
+            "phase": {
+              "type": "string",
+              "enum": ["monitor", "analyze", "plan", "execute", "knowledge"]
+            },
+            "metrics": {
+              "type": "object",
+              "properties": {
+                "gapScore": { "type": "number", "range": [0, 100] },
+                "typeScore": { "type": "number", "range": [0, 100] },
+                "hotspotScore": { "type": "number", "range": [0, 100] },
+                "driftSeverity": { "type": "string", "enum": ["none", "minor", "major"] }
+              }
+            },
+            "decisions": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "issue": { "type": "string" },
+                  "severity": { "type": "string", "enum": ["critical", "high", "medium", "low"] },
+                  "action": { "type": "string" },
+                  "autoFixable": { "type": "boolean" },
+                  "description": { "type": "string" }
+                }
+              }
+            },
+            "actions": { "type": "array" },
+            "shouldRepeat": { "type": "boolean" }
+          }
+        }
+      },
+      "errors": {
+        "INVALID_STORE": {
+          "code": "E_MAPEK_INVALID_STORE",
+          "message": "Store must have getQuads method",
+          "recovery": "Verify store is N3.Store instance"
+        },
+        "INVALID_PATH": {
+          "code": "E_MAPEK_INVALID_PATH",
+          "message": "Project root path is invalid",
+          "recovery": "Verify path exists and is accessible"
+        }
+      },
+      "slo": {
+        "p99Latency": 200,
+        "unit": "milliseconds"
+      }
+    },
+    "hook:define": {
+      "@type": "api:FunctionContract",
+      "name": "defineHook",
+      "module": "unrdf",
+      "signature": {
+        "parameters": {
+          "spec": {
+            "type": "object",
+            "required": true,
+            "schema": {
+              "meta": {
+                "type": "object",
+                "required": true,
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "required": true,
+                    "pattern": "^[a-zA-Z0-9:_-]+$",
+                    "minLength": 1,
+                    "maxLength": 100
+                  },
+                  "description": {
+                    "type": "string",
+                    "maxLength": 500
+                  },
+                  "version": {
+                    "type": "string",
+                    "pattern": "^\\d+\\.\\d+\\.\\d+$"
+                  },
+                  "tags": {
+                    "type": "array",
+                    "items": { "type": "string" },
+                    "maxItems": 10
+                  }
+                }
+              },
+              "when": {
+                "type": "object",
+                "required": true,
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "enum": ["sparql-ask", "sparql-select", "shacl"],
+                    "required": true
+                  },
+                  "query": { "type": "string" },
+                  "ref": {
+                    "type": "object",
+                    "properties": {
+                      "uri": { "type": "string", "required": true },
+                      "sha256": { "type": "string", "required": true },
+                      "mediaType": { "type": "string", "required": true }
+                    }
+                  }
+                },
+                "oneOf": ["query", "ref"]
+              },
+              "run": {
+                "type": "function",
+                "required": true,
+                "signature": "(event: HookEvent) => Promise<HookResult> | HookResult"
+              },
+              "before": {
+                "type": "function",
+                "signature": "(event: HookEvent) => Promise<HookPayload | {cancel: true, reason?: string}>"
+              },
+              "after": {
+                "type": "function",
+                "signature": "(event: HookEvent & {result: any}) => Promise<HookResult>"
+              }
+            }
+          }
+        },
+        "returns": {
+          "type": "Hook",
+          "description": "Validated hook definition"
+        }
+      },
+      "errors": {
+        "INVALID_NAME": {
+          "code": "E_HOOK_INVALID_NAME",
+          "message": "Hook name must match pattern ^[a-zA-Z0-9:_-]+$",
+          "recovery": "Use alphanumeric characters, colons, hyphens, underscores only"
+        },
+        "MISSING_CONDITION": {
+          "code": "E_HOOK_MISSING_CONDITION",
+          "message": "Either query or ref must be provided in when clause",
+          "recovery": "Provide either inline query or content-addressed reference"
+        },
+        "INVALID_RUN": {
+          "code": "E_HOOK_INVALID_RUN",
+          "message": "Hook must have a run function",
+          "recovery": "Provide run function that accepts HookEvent and returns HookResult"
+        }
+      },
+      "slo": {
+        "p99Latency": 1,
+        "unit": "milliseconds"
+      }
+    },
+    "system:createCore": {
+      "@type": "api:FunctionContract",
+      "name": "createDarkMatterCore",
+      "module": "unrdf",
+      "signature": {
+        "parameters": {
+          "config": {
+            "type": "object",
+            "required": false,
+            "properties": {
+              "enableKnowledgeHooks": { "type": "boolean", "default": true },
+              "strictMode": { "type": "boolean", "default": false },
+              "observability": { "type": "object" }
+            }
+          }
+        },
+        "returns": {
+          "type": "KnowledgeSubstrateCore",
+          "description": "Initialized knowledge engine core"
+        }
+      },
+      "errors": {
+        "INIT_FAILED": {
+          "code": "E_SYSTEM_INIT_FAILED",
+          "message": "Failed to initialize knowledge engine",
+          "recovery": "Check runtime environment and dependencies"
+        }
+      },
+      "slo": {
+        "p99Latency": 100,
+        "unit": "milliseconds"
+      }
+    }
+  }
+}
+

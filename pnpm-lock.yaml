@@ -95,6 +95,9 @@ importers:
       table:
         specifier: ^6.9.0
         version: 6.9.0
+      typhonjs-escomplex:
+        specifier: ^0.1.0
+        version: 0.1.0
       unctx:
         specifier: ^1.0.0
         version: 1.2.0(esbuild@0.27.0)
@@ -2958,6 +2961,9 @@ packages:
   '@types/yargs@17.0.33':
     resolution: {integrity: sha512-WpxBCKWPLr4xSsHgz511rFJAM+wS28w2zEO1QDNY5zM/S8ok70NNfztH0xwhqKyaK0OHCbN98LDAZuy1ctxDkA==}
 
+  '@typhonjs/babel-parser@0.2.0':
+    resolution: {integrity: sha512-YKqLZaQAVtOjMiqcJIqex1ezduMefBitoQZjsOqr4US+Yq+cOY/obyloOJ7Ee+XDPaaraVrxWkA3VZjOohtVjQ==}
+
   '@ungap/structured-clone@1.3.0':
     resolution: {integrity: sha512-WmoN8qaIAo7WTYWbAZuG8PYEhn5fkz7dZrqTBZ7dtt//lL2Gwms1IcnQ5yHqjDfX8Ft5j4YzDM23f87zBfDe9g==}
 
@@ -3132,6 +3138,12 @@ packages:
     peerDependenciesMeta:
       react-native-b4a:
         optional: true
+
+  babel-runtime@6.26.0:
+    resolution: {integrity: sha512-ITKNuq2wKlW1fJg9sSW52eepoYgZBggvOAHC0u/CYu/qxQ9EVzThCgR69BnSXLHjy2f7SY5zaQ4yt7H9ZVxY2g==}
+
+  backbone-esnext-events@0.3.5:
+    resolution: {integrity: sha512-n208qnhO6kARjSHLZIBs1w6ECpybIBzFE6X1x2XTIGx+U+6qlSctizq9bCh+Xf5XHsSyipIgoxc1grZG7nCxfw==}
 
   balanced-match@1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
@@ -3340,6 +3352,9 @@ packages:
     resolution: {integrity: sha512-FQN4MRfuJeHf7cBbBMJFXhKSDq+2kAArBlmRBvcvFE5BB1HZKXtSFASDhdlz9zOYwxh8lDdnvmMOe/+5cdoEdg==}
     engines: {node: '>= 0.8'}
 
+  commander@2.20.3:
+    resolution: {integrity: sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ==}
+
   commander@5.1.0:
     resolution: {integrity: sha512-P0CysNDQ7rtVw4QIQtm+MRxV66vKFSvlsQvGYXZWR3qFU0jlMKHZZZgw8e+8DSah4UDKMqnknRDQz+xuQXQ/Zg==}
     engines: {node: '>= 6'}
@@ -3371,6 +3386,10 @@ packages:
 
   constructs@10.4.2:
     resolution: {integrity: sha512-wsNxBlAott2qg8Zv87q3eYZYgheb9lchtBfjHzzLHtXbttwSrHPs1NNQbBrmbb1YZvYg2+Vh0Dor76w4mFxJkA==}
+
+  core-js@2.6.12:
+    resolution: {integrity: sha512-Kb2wC0fvsWfQrgk8HU5lW6U/Lcs8+9aaYcy4ZFc6DDlo4nZ7n70dEgE5rtR0oG6ufKDUnrwfWL1mXR5ljDatrQ==}
+    deprecated: core-js@<3.23.3 is no longer maintained and not recommended for usage due to the number of issues. Because of the V8 engine whims, feature detection in old core-js versions could cause a slowdown up to 100x even if nothing is polyfilled. Some versions have web compatibility issues. Please, upgrade your dependencies to the actual version of core-js.
 
   core-util-is@1.0.2:
     resolution: {integrity: sha512-3lqz5YjWTYnW6dlDa5TLaTCcShfar1e40rmcJVwCBJC6mWlFuj0eCHIElmG1g5kyuJ/GD+8Wn4FFCcz4gJPfaQ==}
@@ -3590,6 +3609,18 @@ packages:
   escape-string-regexp@4.0.0:
     resolution: {integrity: sha512-TtpcNJ3XAzx3Gq8sWRzJaVajRs0uVxA2YAkdb1jm2YkPz4G6egUFAyA3n5vtEIZefPk5Wa4UXbKuS5fKkJWdgA==}
     engines: {node: '>=10'}
+
+  escomplex-plugin-metrics-module@0.1.0:
+    resolution: {integrity: sha512-lEHGInx1gAfgIRJeSTXggTvfEtIG061G0Kzk4hIq0qN6nd2prXZihAPRuLB9DdxCmxXvLVFqi+Bnun9rDw1/zg==}
+
+  escomplex-plugin-metrics-project@0.1.0:
+    resolution: {integrity: sha512-/9Nf2UJ77qo3TBuWwvFnuNPziHC50nPOxldTZvCEzvwePp+BdI5whlDnJHV9rh3gT75CFODJDM80mBJI+px6/g==}
+
+  escomplex-plugin-syntax-babylon@0.1.0:
+    resolution: {integrity: sha512-KNjE0Rf1jNteb7zwFyv4G3+TIuHqUfnmXpRf5u9iJkrbVXjmbC7Fg5UEA1Net8gvoV9RLVImFFaLZxclaagqAA==}
+
+  escomplex-plugin-syntax-estree@0.1.0:
+    resolution: {integrity: sha512-uhgBgEhq91rq+1OStjDwpxpS5ehQdq1X/Y7DYCQHplczJN9ZzyoiHostZ4CqywLgDkyicvIyt/8LBYjBaNFc7w==}
 
   eslint-config-prettier@9.1.2:
     resolution: {integrity: sha512-iI1f+D2ViGn+uvv5HuHVUamg8ll4tN+JRHGc6IJi4TP9Kl976C57fzPXgseXNs8v0iA8aSJpHsTWjDb9QJamGQ==}
@@ -4870,6 +4901,9 @@ packages:
     resolution: {integrity: sha512-31vunZj07++Y1vcFGcnNWEf5jPoTkGARgfWI4+Tk55vdwHxhAvug8VEtW7Cx+/h47NuJTEg/JL77zAwC6E0OeA==}
     engines: {node: '>= 18'}
 
+  regenerator-runtime@0.11.1:
+    resolution: {integrity: sha512-MguG95oij0fC3QV3URf4V2SDYGJhJnJGqvIIgdECeODCT98wSWDAJ94SSuVpYQUoTcGUIL6L4yNB7j1DFFHSBg==}
+
   relative-to-absolute-iri@1.0.7:
     resolution: {integrity: sha512-Xjyl4HmIzg2jzK/Un2gELqbcE8Fxy85A/aLSHE6PE/3+OGsFwmKVA1vRyGaz6vLWSqLDMHA+5rjD/xbibSQN1Q==}
 
@@ -5280,6 +5314,27 @@ packages:
   type-fest@0.20.2:
     resolution: {integrity: sha512-Ne+eE4r0/iWnpAxD852z3A+N0Bt5RN//NjJwRd2VFHEmrywxf5vsZlh4R6lixl6B+wz/8d+maTSAkN1FIkI3LQ==}
     engines: {node: '>=10'}
+
+  typhonjs-ast-walker@0.2.1:
+    resolution: {integrity: sha512-CpnkW3kxunDwKW2y99jqHCAPqhUzY9T033TM/GOWvtSIP33xy7kOPzp8hPx+Ns2Z4Q7n7PkFqUGPy/ijs3Y3eA==}
+
+  typhonjs-escomplex-commons@0.1.1:
+    resolution: {integrity: sha512-nIeiokmcupP3t34KVhynHi0LrjMM6QzbHiwK8+Kl/GnAq4o/jK+cCiu4Zt9mZgJKUzUGRtW1kqoZI2RlAchkgg==}
+
+  typhonjs-escomplex-module@0.1.0:
+    resolution: {integrity: sha512-ViviuBg7Etrl8HeQcwQ9gui9s0rpnFPXltXUFAvOzeQScb+xrLijBq7Z0cveriKQegne/tGTn4ljZg0prwDyTw==}
+
+  typhonjs-escomplex-project@0.1.0:
+    resolution: {integrity: sha512-2NdkUsDmxcgsNFqn14CYl5Xfzlig7kKtU/ACOLRN6/nP9c3rlHizVr8YdBYRf2H1sOjmjfNmbC6i1RVnnJZxZQ==}
+
+  typhonjs-escomplex@0.1.0:
+    resolution: {integrity: sha512-B2r31mRH/ZuuogZADqOBP4NPnqBH2mzEP+Pjm+5R8/z0iHLwUTRadkDQL4yv33qsHdIHlvnpOHh6iUo69v2mPA==}
+
+  typhonjs-object-util@0.4.2:
+    resolution: {integrity: sha512-qs4Mn45ryJBNbXQ+QV1vvz4h0c0ED5my+XFo5Kp5iEIbA3KGuJZjI5AEAucfPLEX6VDZ2eJQqMkrstxLY5jTdw==}
+
+  typhonjs-plugin-manager@0.2.0:
+    resolution: {integrity: sha512-Plo2Z8jGLNlhoVOUFU5Dm2Vj/rjnaZycCSdklFeVXq3/+qo6k855Aya0WrkLTdjdj+spes60mRXyQnxHxXcHUQ==}
 
   uc.micro@2.1.0:
     resolution: {integrity: sha512-ARDJmphmdvUk6Glw7y9DQ2bFkKBHwQHLi2lsaH6PPmz/Ka9sFOBsBluozhDltWmnv9u/cF6Rt87znRTPV+yp/A==}
@@ -9669,6 +9724,11 @@ snapshots:
     dependencies:
       '@types/yargs-parser': 21.0.3
 
+  '@typhonjs/babel-parser@0.2.0':
+    dependencies:
+      '@babel/parser': 7.28.4
+      babel-runtime: 6.26.0
+
   '@ungap/structured-clone@1.3.0': {}
 
   '@vitest/coverage-v8@1.6.1(vitest@1.6.1)':
@@ -9859,6 +9919,15 @@ snapshots:
   aws4@1.13.2: {}
 
   b4a@1.7.2: {}
+
+  babel-runtime@6.26.0:
+    dependencies:
+      core-js: 2.6.12
+      regenerator-runtime: 0.11.1
+
+  backbone-esnext-events@0.3.5:
+    dependencies:
+      babel-runtime: 6.26.0
 
   balanced-match@1.0.2: {}
 
@@ -10097,6 +10166,8 @@ snapshots:
     dependencies:
       delayed-stream: 1.0.0
 
+  commander@2.20.3: {}
+
   commander@5.1.0: {}
 
   comment-parser@1.4.1: {}
@@ -10137,6 +10208,8 @@ snapshots:
   consola@3.4.2: {}
 
   constructs@10.4.2: {}
+
+  core-js@2.6.12: {}
 
   core-util-is@1.0.2: {}
 
@@ -10414,6 +10487,23 @@ snapshots:
   escape-string-regexp@2.0.0: {}
 
   escape-string-regexp@4.0.0: {}
+
+  escomplex-plugin-metrics-module@0.1.0:
+    dependencies:
+      typhonjs-escomplex-commons: 0.1.1
+
+  escomplex-plugin-metrics-project@0.1.0:
+    dependencies:
+      typhonjs-escomplex-commons: 0.1.1
+
+  escomplex-plugin-syntax-babylon@0.1.0:
+    dependencies:
+      escomplex-plugin-syntax-estree: 0.1.0
+      typhonjs-escomplex-commons: 0.1.1
+
+  escomplex-plugin-syntax-estree@0.1.0:
+    dependencies:
+      typhonjs-escomplex-commons: 0.1.1
 
   eslint-config-prettier@9.1.2(eslint@8.57.1):
     dependencies:
@@ -11991,6 +12081,8 @@ snapshots:
       '@redis/search': 5.8.2(@redis/client@5.8.2)
       '@redis/time-series': 5.8.2(@redis/client@5.8.2)
 
+  regenerator-runtime@0.11.1: {}
+
   relative-to-absolute-iri@1.0.7: {}
 
   request@2.88.2:
@@ -12532,6 +12624,42 @@ snapshots:
   type-detect@4.1.0: {}
 
   type-fest@0.20.2: {}
+
+  typhonjs-ast-walker@0.2.1: {}
+
+  typhonjs-escomplex-commons@0.1.1: {}
+
+  typhonjs-escomplex-module@0.1.0:
+    dependencies:
+      escomplex-plugin-metrics-module: 0.1.0
+      escomplex-plugin-syntax-babylon: 0.1.0
+      typhonjs-ast-walker: 0.2.1
+      typhonjs-escomplex-commons: 0.1.1
+      typhonjs-plugin-manager: 0.2.0
+
+  typhonjs-escomplex-project@0.1.0:
+    dependencies:
+      escomplex-plugin-metrics-project: 0.1.0
+      typhonjs-escomplex-commons: 0.1.1
+      typhonjs-escomplex-module: 0.1.0
+      typhonjs-plugin-manager: 0.2.0
+
+  typhonjs-escomplex@0.1.0:
+    dependencies:
+      '@typhonjs/babel-parser': 0.2.0
+      commander: 2.20.3
+      typhonjs-escomplex-module: 0.1.0
+      typhonjs-escomplex-project: 0.1.0
+
+  typhonjs-object-util@0.4.2:
+    dependencies:
+      babel-runtime: 6.26.0
+
+  typhonjs-plugin-manager@0.2.0:
+    dependencies:
+      babel-runtime: 6.26.0
+      backbone-esnext-events: 0.3.5
+      typhonjs-object-util: 0.4.2
 
   uc.micro@2.1.0: {}
 

@@ -1,18 +1,16 @@
-# UNRDF - Autonomous Discovery Manifest
+# UNRDF - Autonomic Knowledge Graph System
+
+**Autonomous RDF knowledge graph system with MAPEK autonomic loops and reactive Knowledge Hooks**
+
+UNRDF transforms static knowledge graphs into intelligent, self-managing systems through the **MAPEK autonomic loop** (Monitor-Analyze-Plan-Execute-Knowledge) and **Knowledge Hooks**—declarative, policy-driven triggers that react to graph changes in real-time.
 
 ```json
 {
   "@context": {
     "@vocab": "urn:unrdf:manifest:",
-    "schema": "http://schema.org/",
-    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
-    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
-    "sh": "http://www.w3.org/ns/shacl#",
-    "xsd": "http://www.w3.org/2001/XMLSchema#",
     "unrdf": "urn:unrdf:",
     "cap": "urn:unrdf:capability:",
-    "proto": "urn:unrdf:protocol:",
-    "slo": "urn:unrdf:slo:"
+    "proto": "urn:unrdf:protocol:"
   },
   "@id": "urn:unrdf:v4.0.0",
   "@type": "SystemManifest",
@@ -21,677 +19,982 @@
   "purpose": "Autonomous RDF knowledge graph system for distributed intelligence",
   "capabilities": [
     "cap:knowledge-hooks",
+    "cap:mapek-autonomic-loop",
     "cap:sparql-1.1",
     "cap:shacl-validation",
-    "cap:n3-reasoning",
     "cap:cryptographic-provenance",
-    "cap:opentelemetry-observability",
-    "cap:react-hooks-40",
-    "cap:dark-matter-optimization"
+    "cap:opentelemetry-observability"
   ],
-  "protocols": [
-    "proto:transaction-acid",
-    "proto:hook-lifecycle",
-    "proto:content-addressed-conditions",
-    "proto:merkle-anchoring"
-  ],
-  "dependencies": {
-    "runtime": { "node": ">=18.0.0", "pnpm": ">=7.0.0" },
-    "core": ["n3@^1.17.0", "comunica@^3.0.0", "zod@^3.22.0", "opentelemetry@^1.7.0"]
-  },
-  "slos": {
-    "p50_hook_latency_ms": 0.2,
-    "p99_hook_latency_ms": 2,
-    "receipt_write_median_ms": 5,
-    "hook_throughput_per_min": 10000,
-    "error_isolation_pct": 100,
-    "cache_hit_rate_min_pct": 50
-  },
   "entrypoints": {
     "main": "./src/index.mjs",
     "knowledge-engine": "./src/knowledge-engine/index.mjs",
     "react-hooks": "./src/react-hooks/index.mjs",
-    "cli": "./src/cli/index.mjs"
+    "cli": "./src/cli/index.mjs",
+    "project-engine": "./src/project-engine/index.mjs"
   }
 }
 ```
 
 ---
 
-## Agent Discovery Protocol
+## Quick Start
 
-### Capability Discovery via SPARQL
+```bash
+# Install
+pnpm add unrdf
 
-Agents discover relevant capabilities through semantic queries:
+# Initialize project with MAPEK
+npx unrdf init
 
-```sparql
-# Find all capabilities matching "validation" with latency < 10ms
-PREFIX cap: <urn:unrdf:capability:>
-PREFIX slo: <urn:unrdf:slo:>
-
-SELECT ?capability ?latency ?throughput WHERE {
-  ?capability a cap:Capability ;
-              rdfs:label ?label ;
-              slo:p99Latency ?latency ;
-              slo:throughput ?throughput .
-  FILTER(CONTAINS(LCASE(?label), "validation") && ?latency < 10)
-}
-ORDER BY ?latency
+# Run autonomic loop
+npx unrdf autonomic
 ```
-
-### Precondition Verification
-
-Before invoking any capability, agents verify preconditions:
 
 ```javascript
-// Machine-executable precondition check
-import { createDarkMatterCore, validateCondition } from 'unrdf';
+// Create a knowledge hook
+import { defineHook, createDarkMatterCore } from 'unrdf';
 
-const preconditions = {
-  runtime: typeof globalThis !== 'undefined',
-  nodeVersion: process.versions.node >= '18.0.0',
-  requiredModules: ['n3', 'zod', '@opentelemetry/api'],
-  memoryAvailable: process.memoryUsage().heapUsed < 512 * 1024 * 1024
-};
-
-const allSatisfied = Object.values(preconditions).every(Boolean);
-if (!allSatisfied) throw new Error('Preconditions not met');
-```
-
----
-
-## Core Capabilities (Tier System)
-
-### Tier 1: Foundation (60% of usage)
-
-Critical path operations with minimal overhead. Use these first.
-
-| Capability | Latency p99 | Throughput | Memory |
-|------------|-------------|------------|--------|
-| `parseTurtle` | <5ms | 10k quads/s | O(n) |
-| `query(sparql-select)` | <50ms | 1k q/s | O(log n) |
-| `executeTransaction` | <100ms | 500 tx/s | O(delta) |
-| `validateShacl` | <20ms | 2k shapes/s | O(shapes) |
-| `defineHook` | <1ms | 50k/s | O(1) |
-
-**Invocation Format:**
-
-```json
-{
-  "@type": "cap:Invocation",
-  "capability": "cap:parseTurtle",
-  "input": {
-    "@type": "xsd:string",
-    "value": "@prefix ex: <http://example.org/> .\nex:alice ex:knows ex:bob ."
-  },
-  "options": {
-    "baseIRI": "http://example.org/",
-    "timeout": 5000
-  }
-}
-```
-
-**JavaScript Execution:**
-
-```javascript
-import { parseTurtle, createDarkMatterCore } from 'unrdf';
-
-// Tier 1: Parse RDF
-const store = await parseTurtle(`
-  @prefix ex: <http://example.org/> .
-  @prefix foaf: <http://xmlns.com/foaf/0.1/> .
-  ex:alice a foaf:Person ; foaf:name "Alice" .
-`);
-
-// Tier 1: Query
 const system = await createDarkMatterCore();
-const results = await system.query({
-  query: 'SELECT ?s ?p ?o WHERE { ?s ?p ?o }',
-  type: 'sparql-select'
+const hook = defineHook({
+  meta: { name: 'person-name-required' },
+  when: {
+    kind: 'sparql-ask',
+    query: `
+      PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+      ASK {
+        ?person a foaf:Person .
+        FILTER NOT EXISTS { ?person foaf:name ?name }
+      }
+    `
+  },
+  run: async (event) => {
+    if (event.result === true) {
+      throw new Error('All persons must have a name');
+    }
+  }
 });
+
+await system.registerHook(hook);
 ```
-
-### Tier 2: Extended (20% of usage)
-
-Specialized operations for complex workflows.
-
-| Capability | Latency p99 | Throughput | Memory |
-|------------|-------------|------------|--------|
-| `registerHook` | <5ms | 10k/s | O(hooks) |
-| `reason` | <200ms | 100/s | O(rules * facts) |
-| `canonicalize` | <50ms | 500/s | O(n log n) |
-| `LockchainWriter.writeReceipt` | <10ms | 1k/s | O(delta) |
-
-### Tier 3: Advanced (15% of usage)
-
-Edge case handling and optimization.
-
-| Capability | Latency p99 | Throughput | Memory |
-|------------|-------------|------------|--------|
-| `ResolutionLayer.resolve` | <500ms | 50/s | O(proposals) |
-| `PolicyPackManager.loadPack` | <100ms | 100/s | O(hooks) |
-| `EffectSandbox.execute` | <1000ms | 20/s | O(isolated) |
-
-### Tier 4: Experimental (5% of usage)
-
-Bleeding-edge capabilities for specialized use cases.
-
-| Capability | Status | Notes |
-|------------|--------|-------|
-| `FederatedQuery` | Beta | Multi-node SPARQL |
-| `StreamProcessor` | Beta | Real-time windowing |
-| `ConsensusManager` | Alpha | Byzantine fault tolerance |
 
 ---
 
-## Knowledge Hook Declaration
+# Documentation Structure (Diataxis Framework)
 
-### Formal Definition (RDF/N3)
+This documentation follows the [Diataxis framework](https://diataxis.fr/) with four distinct types:
 
-```turtle
-@prefix unrdf: <urn:unrdf:> .
-@prefix hook: <urn:unrdf:hook:> .
-@prefix sh: <http://www.w3.org/ns/shacl#> .
-@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+- **[Tutorials](#tutorials)** - Step-by-step learning guides
+- **[How-To Guides](#how-to-guides)** - Task-focused problem solving
+- **[Reference](#reference)** - Complete technical specifications
+- **[Explanation](#explanation)** - Deep conceptual understanding
 
-hook:data-quality-gate a unrdf:KnowledgeHook ;
-  unrdf:name "data-quality-gate" ;
-  unrdf:description "Ensures all persons have names" ;
-  unrdf:priority 50 ;
-  unrdf:timeout "30000"^^xsd:integer ;
-  unrdf:condition [
-    a unrdf:SparqlAskCondition ;
-    unrdf:query """
-      ASK {
-        ?person a <http://xmlns.com/foaf/0.1/Person> .
-        FILTER NOT EXISTS { ?person <http://xmlns.com/foaf/0.1/name> ?name }
-      }
-    """ ;
-    unrdf:contentHash "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-  ] ;
-  unrdf:lifecycle [
-    unrdf:before hook:logStart ;
-    unrdf:run hook:validatePersons ;
-    unrdf:after hook:recordReceipt
-  ] .
-```
+---
 
-### JavaScript Declaration (Machine-Executable)
+## Tutorials
+
+*Learning-oriented guides that teach you how to use MAPEK and Knowledge Hooks*
+
+### Tutorial 1: Your First Knowledge Hook
+
+Learn how to create a reactive hook that enforces data quality rules.
+
+**Step 1: Set up the system**
 
 ```javascript
-import { defineHook, registerHook } from 'unrdf';
+import { createDarkMatterCore, defineHook } from 'unrdf';
 
-const hook = defineHook({
+const system = await createDarkMatterCore();
+```
+
+**Step 2: Define a hook**
+
+```javascript
+const validationHook = defineHook({
   meta: {
-    name: 'data-quality-gate',
-    description: 'Ensures all persons have names',
-    version: '1.0.0',
-    tags: ['validation', 'data-quality']
+    name: 'person-name-required',
+    description: 'Ensures all persons have names'
   },
   when: {
     kind: 'sparql-ask',
     query: `
+      PREFIX foaf: <http://xmlns.com/foaf/0.1/>
       ASK {
-        ?person a <http://xmlns.com/foaf/0.1/Person> .
-        FILTER NOT EXISTS { ?person <http://xmlns.com/foaf/0.1/name> ?name }
+        ?person a foaf:Person .
+        FILTER NOT EXISTS { ?person foaf:name ?name }
       }
-    `,
-    options: { timeout: 5000 }
+    `
   },
   run: async (event) => {
     if (event.result === true) {
       throw new Error('CONSTRAINT_VIOLATION: All persons must have names');
     }
-    return { validated: true, timestamp: Date.now() };
-  },
-  before: async (event) => {
-    console.log(`[HOOK:before] Evaluating ${event.name}`);
-  },
-  after: async (event, result) => {
-    console.log(`[HOOK:after] Completed in ${result.duration}ms`);
-  },
-  timeout: 30000,
-  priority: 50,
-  receipt: { anchor: 'merkle', format: 'jsonld' }
+    return { validated: true };
+  }
 });
-
-await registerHook(hook);
 ```
 
-### Success Criteria
+**Step 3: Register the hook**
 
-```json
-{
-  "@type": "unrdf:SuccessCriteria",
-  "hookId": "data-quality-gate",
-  "criteria": [
-    { "metric": "execution_success", "operator": "==", "value": true },
-    { "metric": "duration_ms", "operator": "<", "value": 30000 },
-    { "metric": "memory_delta_bytes", "operator": "<", "value": 10485760 }
+```javascript
+await system.registerHook(validationHook);
+```
+
+**Step 4: Execute a transaction**
+
+```javascript
+// This will trigger the hook
+const receipt = await system.executeTransaction({
+  additions: [
+    { subject: 'ex:alice', predicate: 'rdf:type', object: 'foaf:Person' }
+    // Missing foaf:name - hook will reject this
   ]
-}
-```
-
-### Failure Modes & Recovery
-
-| Failure Mode | Detection | Recovery Protocol |
-|--------------|-----------|-------------------|
-| `TIMEOUT` | `duration > timeout` | Retry with exponential backoff (max 3) |
-| `CONSTRAINT_VIOLATION` | `error.code === 'CONSTRAINT_VIOLATION'` | Rollback transaction, emit event |
-| `SANDBOX_ESCAPE` | Isolated VM trap | Terminate sandbox, log incident |
-| `HASH_MISMATCH` | `sha256(condition) !== expected` | Reject hook, require re-registration |
-
----
-
-## Type System
-
-### Ontology Reference
-
-```turtle
-@prefix unrdf: <urn:unrdf:> .
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix owl: <http://www.w3.org/2002/07/owl#> .
-
-unrdf:KnowledgeHook a owl:Class ;
-  rdfs:label "Knowledge Hook" ;
-  rdfs:comment "Autonomic policy-driven trigger for graph changes" .
-
-unrdf:Condition a owl:Class ;
-  rdfs:subClassOf [
-    owl:unionOf (
-      unrdf:SparqlAskCondition
-      unrdf:SparqlSelectCondition
-      unrdf:ShaclCondition
-      unrdf:DeltaCondition
-      unrdf:ThresholdCondition
-      unrdf:CountCondition
-      unrdf:WindowCondition
-    )
-  ] .
-
-unrdf:Transaction a owl:Class ;
-  rdfs:label "ACID Transaction" ;
-  rdfs:comment "Atomic graph modification with hook lifecycle" .
-```
-
-### SHACL Constraints
-
-```turtle
-@prefix sh: <http://www.w3.org/ns/shacl#> .
-@prefix unrdf: <urn:unrdf:> .
-@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-
-unrdf:KnowledgeHookShape a sh:NodeShape ;
-  sh:targetClass unrdf:KnowledgeHook ;
-  sh:property [
-    sh:path unrdf:name ;
-    sh:minCount 1 ;
-    sh:maxCount 1 ;
-    sh:datatype xsd:string ;
-    sh:minLength 1 ;
-    sh:maxLength 100 ;
-    sh:pattern "^[a-zA-Z0-9:_-]+$"
-  ] ;
-  sh:property [
-    sh:path unrdf:condition ;
-    sh:minCount 1 ;
-    sh:maxCount 1 ;
-    sh:class unrdf:Condition
-  ] ;
-  sh:property [
-    sh:path unrdf:priority ;
-    sh:datatype xsd:integer ;
-    sh:minInclusive 0 ;
-    sh:maxInclusive 100
-  ] ;
-  sh:property [
-    sh:path unrdf:timeout ;
-    sh:datatype xsd:integer ;
-    sh:minInclusive 1 ;
-    sh:maxInclusive 300000
-  ] .
-```
-
-### Zod Validators (Runtime)
-
-```javascript
-import { z } from 'zod';
-
-// Exported from 'unrdf/knowledge-engine'
-export const HookMetaSchema = z.object({
-  name: z.string().min(1).max(100).regex(/^[a-zA-Z0-9:_-]+$/),
-  description: z.string().max(500).optional(),
-  version: z.string().regex(/^\d+\.\d+\.\d+$/).optional(),
-  tags: z.array(z.string()).max(10).optional()
 });
-
-export const ConditionSchema = z.discriminatedUnion('kind', [
-  z.object({ kind: z.literal('sparql-ask'), query: z.string() }),
-  z.object({ kind: z.literal('sparql-select'), query: z.string() }),
-  z.object({ kind: z.literal('shacl'), shapes: z.string() }),
-  z.object({ kind: z.literal('delta'), spec: z.object({ change: z.enum(['any', 'increase', 'decrease']) }) }),
-  z.object({ kind: z.literal('threshold'), spec: z.object({ var: z.string(), op: z.enum(['>', '>=', '<', '<=', '==', '!=']), value: z.number() }) }),
-  z.object({ kind: z.literal('count'), spec: z.object({ op: z.enum(['>', '>=', '<', '<=', '==', '!=']), value: z.number() }) }),
-  z.object({ kind: z.literal('window'), spec: z.object({ size: z.number(), aggregate: z.enum(['sum', 'avg', 'min', 'max', 'count']) }) })
-]);
 ```
 
----
+**Result:** The transaction is rejected because the hook detected a person without a name.
 
-## Protocol Traces
+### Tutorial 2: Running Your First MAPEK Cycle
 
-### Transaction Lifecycle
+Learn how to use the MAPEK autonomic loop to continuously monitor and improve your system.
 
-```
-State Machine: Transaction
-Initial: PENDING
-Terminal: COMMITTED | ROLLED_BACK
-
-PENDING --(begin)--> ACTIVE
-ACTIVE --(pre-hooks pass)--> HOOKS_PASSED
-ACTIVE --(pre-hooks fail)--> ROLLING_BACK
-HOOKS_PASSED --(apply delta)--> APPLYING
-APPLYING --(success)--> POST_HOOKS
-APPLYING --(failure)--> ROLLING_BACK
-POST_HOOKS --(complete)--> COMMITTED
-ROLLING_BACK --(complete)--> ROLLED_BACK
-```
-
-```plantuml
-@startuml
-[*] --> PENDING
-PENDING --> ACTIVE : begin()
-ACTIVE --> HOOKS_PASSED : preHooks.allPass()
-ACTIVE --> ROLLING_BACK : preHooks.anyFail()
-HOOKS_PASSED --> APPLYING : applyDelta()
-APPLYING --> POST_HOOKS : success
-APPLYING --> ROLLING_BACK : failure
-POST_HOOKS --> COMMITTED : postHooks.complete()
-ROLLING_BACK --> ROLLED_BACK : rollback.complete()
-COMMITTED --> [*]
-ROLLED_BACK --> [*]
-@enduml
-```
-
-### Message Sequence: Hook Execution
-
-```
-Agent                 HookManager           ConditionEvaluator       EffectSandbox
-  |                        |                        |                      |
-  |-- registerHook(def) -->|                        |                      |
-  |                        |-- validate(schema) --->|                      |
-  |                        |<-- {valid: true} ------|                      |
-  |<-- {hookId} -----------|                        |                      |
-  |                        |                        |                      |
-  |-- executeTransaction ->|                        |                      |
-  |                        |-- evaluateCondition -->|                      |
-  |                        |                        |-- sparqlAsk() ------>|
-  |                        |<-- {triggered: true} --|                      |
-  |                        |-- executeEffect() -----|--------------------->|
-  |                        |                        |                      |-- sandbox.run()
-  |                        |<-- {result, receipt} --|<---------------------|
-  |<-- TransactionReceipt -|                        |                      |
-```
-
----
-
-## Performance Characteristics
-
-### Latency Profiles
-
-```json
-{
-  "@type": "slo:LatencyProfile",
-  "component": "KnowledgeHookManager",
-  "measurements": {
-    "registerHook": { "p50": 0.1, "p95": 0.5, "p99": 1.0, "max": 5.0, "unit": "ms" },
-    "evaluateCondition": { "p50": 0.2, "p95": 1.0, "p99": 2.0, "max": 10.0, "unit": "ms" },
-    "executeHook": { "p50": 1.0, "p95": 5.0, "p99": 10.0, "max": 100.0, "unit": "ms" },
-    "fullPipeline": { "p50": 2.0, "p95": 10.0, "p99": 50.0, "max": 500.0, "unit": "ms" }
-  },
-  "sampleSize": 10000,
-  "measurementWindow": "24h"
-}
-```
-
-### Throughput Limits
-
-| Operation | Sustained | Burst | Backpressure Threshold |
-|-----------|-----------|-------|------------------------|
-| Hook Executions | 10,000/min | 1,000/s | 5,000 queue depth |
-| Transactions | 500/s | 2,000/s | 1,000 pending |
-| SPARQL Queries | 1,000/s | 5,000/s | 500 concurrent |
-| SHACL Validations | 2,000/s | 10,000/s | 200 concurrent |
-
-### Memory Consumption
+**Step 1: Initialize project model**
 
 ```javascript
-// Memory model per component
-const memoryProfile = {
-  baseOverhead: '~20MB',      // Runtime baseline
-  perQuad: '~200 bytes',      // In-memory store
-  perHook: '~2KB',            // Hook registration
-  perCacheEntry: '~500 bytes', // LRU cache entry
-  sandboxIsolate: '~50MB',    // Per isolated VM
-  otelSpan: '~1KB'            // Per active span
-};
+import { runMapekIteration, reportMapekStatus } from 'unrdf/project-engine';
+import { buildProjectModelFromFs, inferDomainModel } from 'unrdf/project-engine';
+
+// Build RDF models from your codebase
+const projectStore = await buildProjectModelFromFs('/path/to/project');
+const domainStore = await inferDomainModel(projectStore);
 ```
 
-### Benchmarking
-
-```bash
-# Run performance benchmarks
-node validation/run-all.mjs comprehensive
-
-# Specific benchmark suites
-pnpm test:dark-matter
-pnpm test -- --grep "performance"
-```
-
----
-
-## Observability
-
-### OpenTelemetry Spans
+**Step 2: Run one MAPEK iteration**
 
 ```javascript
-// Span hierarchy for transaction
-{
-  "traceId": "abc123...",
-  "spans": [
-    {
-      "name": "unrdf.transaction.execute",
-      "attributes": {
-        "unrdf.transaction.id": "uuid",
-        "unrdf.delta.additions": 5,
-        "unrdf.delta.removals": 2,
-        "unrdf.actor": "system"
-      },
-      "children": [
-        { "name": "unrdf.hooks.pre.evaluate", "duration_ms": 1.2 },
-        { "name": "unrdf.store.apply_delta", "duration_ms": 0.5 },
-        { "name": "unrdf.hooks.post.execute", "duration_ms": 2.1 },
-        { "name": "unrdf.receipt.write", "duration_ms": 3.0 }
-      ]
+const result = await runMapekIteration({
+  projectStore,
+  domainStore,
+  projectRoot: '/path/to/project',
+  stackProfile: { webFramework: 'next' }
+});
+```
+
+**Step 3: View the status**
+
+```javascript
+console.log(reportMapekStatus(result));
+
+// Output:
+// ╔════════════════════════════════════════╗
+// ║         AUTONOMIC SYSTEM STATUS        ║
+// ╚════════════════════════════════════════╝
+// 
+// 🔄 Overall Health: 85%
+// 
+// 📊 Metrics:
+//    Gap Score: 30/100
+//    Type Score: 0/100
+//    Hotspot Score: 15/100
+//    Drift: minor
+// 
+// 📋 Decisions:
+//    ⚙️  Generate missing UserAPI
+```
+
+**Step 4: Enable continuous monitoring**
+
+```javascript
+import { runContinuousMapekLoop } from 'unrdf/project-engine';
+
+const result = await runContinuousMapekLoop({
+  getState: async () => ({
+    projectStore: await buildProjectModelFromFs('/path'),
+    domainStore: await inferDomainModel(projectStore),
+    projectRoot: '/path'
+  }),
+  applyActions: async (actions) => {
+    // Auto-fix issues
+    for (const action of actions) {
+      if (action.type === 'generate-files') {
+        await generateMissingFiles(action);
+      }
     }
-  ]
-}
-```
-
-### Metrics Available
-
-| Metric | Type | Labels | Unit |
-|--------|------|--------|------|
-| `unrdf_transaction_duration` | Histogram | `status`, `actor` | ms |
-| `unrdf_hook_executions_total` | Counter | `hook_name`, `result` | count |
-| `unrdf_cache_hit_ratio` | Gauge | `cache_type` | ratio |
-| `unrdf_store_size` | Gauge | `graph` | quads |
-| `unrdf_backpressure_queue_depth` | Gauge | - | count |
-
-### Debugging via SPARQL
-
-```sparql
-# Query recent transaction traces
-PREFIX otel: <urn:opentelemetry:>
-PREFIX unrdf: <urn:unrdf:>
-
-SELECT ?traceId ?spanName ?duration ?status WHERE {
-  ?span a otel:Span ;
-        otel:traceId ?traceId ;
-        otel:name ?spanName ;
-        otel:duration ?duration ;
-        otel:status ?status .
-  FILTER(STRSTARTS(?spanName, "unrdf."))
-}
-ORDER BY DESC(?duration)
-LIMIT 100
-```
-
----
-
-## Reasoning Capabilities
-
-### N3 Rules Example
-
-```n3
-@prefix ex: <http://example.org/> .
-@prefix foaf: <http://xmlns.com/foaf/0.1/> .
-@prefix log: <http://www.w3.org/2000/10/swap/log#> .
-
-# Transitivity rule: if A knows B and B knows C, then A knows C
-{ ?a foaf:knows ?b . ?b foaf:knows ?c . } => { ?a foaf:knows ?c . } .
-
-# Classification rule: if person has email, classify as ContactablePerson
-{ ?p a foaf:Person . ?p foaf:mbox ?email . } => { ?p a ex:ContactablePerson . } .
-```
-
-### Proof Generation
-
-```javascript
-import { reason, extractInferred } from 'unrdf/knowledge-engine';
-
-const { inferred, proof } = await reason({
-  store: dataStore,
-  rules: rulesStore,
-  generateProof: true
-});
-
-// Proof structure
-// { premises: [...], rule: "...", conclusion: {...}, depth: 2 }
-```
-
-### Inference Limits
-
-- **Max depth**: 100 rule applications (prevents infinite loops)
-- **Max facts**: 1,000,000 derived facts per session
-- **Timeout**: 30 seconds default, configurable
-
----
-
-## Distribution & Consensus
-
-### Federation Protocol
-
-```json
-{
-  "@type": "proto:FederationMessage",
-  "messageType": "QUERY_FORWARD",
-  "sourceNode": "urn:node:alpha",
-  "targetNode": "urn:node:beta",
-  "payload": {
-    "query": "SELECT * WHERE { ?s ?p ?o }",
-    "timeout": 5000,
-    "correlationId": "uuid"
   },
-  "signature": "ed25519:..."
+  intervalMs: 5000,
+  maxIterations: 10
+});
+
+console.log(`System converged after ${result.iterations} iterations`);
+```
+
+### Tutorial 3: Integrating MAPEK with Knowledge Hooks
+
+Learn how MAPEK's Execute phase creates and registers Knowledge Hooks automatically.
+
+**Step 1: Run MAPEK to detect issues**
+
+```javascript
+const mapekResult = await runMapekIteration({
+  projectStore,
+  domainStore,
+  projectRoot: '/path'
+});
+```
+
+**Step 2: Create autonomic hooks from findings**
+
+```javascript
+import { createAutonomicHooks } from 'unrdf/project-engine';
+
+const hooks = createAutonomicHooks(mapekResult, projectStore);
+
+// Hooks are automatically created for:
+// - Missing files (autonomic:auto-generate-missing-files)
+// - Type mismatches (autonomic:auto-sync-types)
+// - High-risk hotspots (autonomic:hotspot-alert)
+```
+
+**Step 3: Register hooks with the system**
+
+```javascript
+for (const hook of hooks) {
+  await system.registerHook(hook);
 }
 ```
 
-### Consensus Mechanism
+**Step 4: Hooks now monitor and auto-fix**
 
-| Strategy | Use Case | Latency | Fault Tolerance |
-|----------|----------|---------|-----------------|
-| `priority` | Single-leader | <10ms | None |
-| `voting` | Multi-agent | <100ms | f < n/2 |
-| `crdt` | Eventually consistent | <50ms | Partition tolerant |
-| `consensus` | Byzantine | <500ms | f < n/3 |
-
-### Conflict Resolution
-
-```javascript
-import { ResolutionLayer } from 'unrdf/knowledge-engine';
-
-const resolution = new ResolutionLayer({
-  strategy: { type: 'voting', quorum: 0.67 }
-});
-
-const result = await resolution.resolve([
-  { agentId: 'agent-1', delta: {...}, confidence: 0.9 },
-  { agentId: 'agent-2', delta: {...}, confidence: 0.8 }
-]);
-// result.consensus: true | false
-// result.resolvedDelta: merged changes
-```
+The registered hooks will automatically:
+- Detect when new entities are added without corresponding files
+- Alert on type mismatches
+- Warn about high-complexity features
 
 ---
 
-## Integration Points
+## How-To Guides
 
-### External System Hooks
+*Task-focused instructions for solving specific problems*
+
+### How-To: Enforce Data Quality with Hooks
+
+**Problem:** You need to ensure all entities in your graph meet certain quality criteria.
+
+**Solution:** Create validation hooks that run before transactions commit.
 
 ```javascript
-// Custom capability registration
-import { createDarkMatterCore } from 'unrdf';
+import { defineHook, createDarkMatterCore } from 'unrdf';
 
 const system = await createDarkMatterCore();
 
-// Register external capability
-system.registerCapability({
-  name: 'external:ml-classifier',
-  invoke: async (input) => {
-    const response = await fetch('http://ml-service/classify', {
-      method: 'POST',
-      body: JSON.stringify(input)
-    });
-    return response.json();
+// Hook 1: Require email format
+const emailHook = defineHook({
+  meta: { name: 'email-format-validation' },
+  channel: { view: 'before' }, // Run before transaction commits
+  when: {
+    kind: 'sparql-ask',
+    query: `
+      ASK {
+        ?entity ex:email ?email .
+        FILTER (!REGEX(?email, "^[^@]+@[^@]+\\.[^@]+$"))
+      }
+    `
   },
-  schema: {
-    input: z.object({ text: z.string() }),
-    output: z.object({ label: z.string(), confidence: z.number() })
-  },
-  slo: { p99Latency: 500, timeout: 5000 }
+  run: async (event) => {
+    if (event.result === true) {
+      throw new Error('Invalid email format detected');
+    }
+  }
 });
+
+// Hook 2: Require age to be positive
+const ageHook = defineHook({
+  meta: { name: 'age-validation' },
+  channel: { view: 'before' },
+  when: {
+    kind: 'sparql-ask',
+    query: 'ASK { ?person ex:age ?age . FILTER (?age < 0 || ?age > 150) }'
+  },
+  run: async (event) => {
+    if (event.result) {
+      throw new Error('Age must be between 0 and 150');
+    }
+  }
+});
+
+await system.registerHook(emailHook);
+await system.registerHook(ageHook);
 ```
 
-### Policy Injection
+### How-To: Monitor System Health with MAPEK
+
+**Problem:** You want to continuously monitor your codebase for gaps, type issues, and complexity.
+
+**Solution:** Set up a continuous MAPEK loop.
 
 ```javascript
-import { PolicyPackManager } from 'unrdf/knowledge-engine';
+import { runContinuousMapekLoop } from 'unrdf/project-engine';
 
-const policyManager = new PolicyPackManager({
-  basePath: './policies',
-  activateOnLoad: true
+const loop = await runContinuousMapekLoop({
+  getState: async () => {
+    const projectStore = await buildProjectModelFromFs(process.cwd());
+    const domainStore = await inferDomainModel(projectStore);
+    return { projectStore, domainStore, projectRoot: process.cwd() };
+  },
+  applyActions: async (actions) => {
+    console.log(`Applying ${actions.length} auto-fixes...`);
+    // Implement your auto-fix logic here
+  },
+  intervalMs: 10000, // Check every 10 seconds
+  maxIterations: 20
 });
 
-await policyManager.loadPack('./compliance-pack');
-// Hooks from pack are now active
+if (loop.converged) {
+  console.log(`✅ System healthy (${loop.finalHealth}% health)`);
+} else {
+  console.log(`⚠️  System needs attention (${loop.finalHealth}% health)`);
+}
 ```
 
-### Verification Requirements
+### How-To: Auto-Fix Missing Files with MAPEK
 
-All claims in this manifest are verifiable via:
+**Problem:** Your domain model defines entities, but corresponding files (APIs, components, tests) are missing.
 
-1. **OTEL Validation**: `node validation/run-all.mjs comprehensive`
-2. **SHACL Conformance**: `pnpm test -- --grep "shacl"`
-3. **Performance Benchmarks**: `pnpm test:dark-matter`
-4. **Type Safety**: Zod runtime validation on all inputs
+**Solution:** Use MAPEK to detect gaps and auto-generate files.
+
+```javascript
+import { runMapekIteration } from 'unrdf/project-engine';
+
+const result = await runMapekIteration({
+  projectStore,
+  domainStore,
+  projectRoot: '/path'
+});
+
+// Filter for gap-fixing decisions
+const gapDecisions = result.decisions.filter(d => d.issue === 'missing-roles');
+
+for (const decision of gapDecisions) {
+  for (const target of decision.targets) {
+    // Generate missing files
+    const plan = await planMaterialization(projectStore, templateGraph, {
+      entities: [target.entity],
+      roles: target.roles // e.g., ['Api', 'Component', 'Test']
+    });
+    await applyMaterializationPlan(plan);
+  }
+}
+```
+
+### How-To: Create Content-Addressed Hook Conditions
+
+**Problem:** You want hook conditions to be verifiable, shareable artifacts, not inline strings.
+
+**Solution:** Use content-addressed file references.
+
+```javascript
+import { defineHook } from 'unrdf';
+import { createHash } from 'crypto';
+import { readFileSync } from 'fs';
+
+// Store condition in a file
+const conditionFile = './hooks/compliance/large-transaction.ask.rq';
+const conditionContent = readFileSync(conditionFile, 'utf-8');
+const conditionHash = createHash('sha256').update(conditionContent).digest('hex');
+
+const hook = defineHook({
+  meta: { name: 'large-transaction-monitor' },
+  when: {
+    kind: 'sparql-ask',
+    ref: {
+      uri: `file://${conditionFile}`,
+      sha256: conditionHash,
+      mediaType: 'application/sparql-query'
+    }
+  },
+  run: async (event) => {
+    if (event.result === true) {
+      console.warn('Large transaction detected!');
+    }
+  }
+});
+```
+
+### How-To: Debug Hook Execution
+
+**Problem:** A hook isn't triggering when expected, or you need to trace execution.
+
+**Solution:** Use OpenTelemetry spans and SPARQL queries.
+
+```javascript
+// Query hook execution traces
+const traces = await system.query({
+  query: `
+    PREFIX otel: <urn:opentelemetry:>
+    PREFIX unrdf: <urn:unrdf:>
+    
+    SELECT ?traceId ?spanName ?duration ?status WHERE {
+      ?span a otel:Span ;
+            otel:traceId ?traceId ;
+            otel:name ?spanName ;
+            otel:duration ?duration ;
+            otel:status ?status .
+      FILTER(STRSTARTS(?spanName, "unrdf.hook."))
+    }
+    ORDER BY DESC(?duration)
+    LIMIT 100
+  `,
+  type: 'sparql-select'
+});
+
+console.table(traces);
+```
+
+---
+
+## Reference
+
+*Complete technical specifications and API documentation*
+
+### MAPEK API Reference
+
+#### `runMapekIteration(options)`
+
+Runs a single MAPEK cycle (Monitor → Analyze → Plan → Execute → Knowledge).
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `projectStore` | N3 Store | ✅ | RDF project structure from filesystem |
+| `domainStore` | N3 Store | ✅ | RDF domain model (entities, fields, relationships) |
+| `projectRoot` | string | ✅ | Filesystem root path |
+| `stackProfile` | object | ❌ | Framework detection result (e.g., `{ webFramework: 'next' }`) |
+| `baselineSnapshot` | Store | ❌ | Baseline snapshot for drift detection |
+| `knowledge` | object | ❌ | Learned patterns from previous runs |
+
+**Returns:**
+
+```javascript
+{
+  state: {
+    phase: 'monitor' | 'analyze' | 'plan' | 'execute' | 'knowledge',
+    timestamp: string, // ISO 8601
+    findings: {
+      gaps: { gaps: Array<GapFinding> },
+      typeIssues: { mismatches: Array<TypeMismatch> },
+      hotspots: { hotspots: Array<Hotspot>, topRisks: Array<Risk> },
+      drift: { driftSeverity: 'none' | 'minor' | 'major' }
+    },
+    metrics: {
+      gapScore: number, // 0-100
+      typeScore: number, // 0-100
+      hotspotScore: number, // 0-100
+      driftSeverity: string
+    },
+    decisions: Array<Decision>,
+    actions: Array<Action>
+  },
+  overallHealth: number, // 0-100
+  phase: string,
+  findings: object,
+  metrics: object,
+  decisions: Array<object>,
+  actions: Array<object>,
+  learnings: object,
+  shouldRepeat: boolean
+}
+```
+
+**Example:**
+
+```javascript
+import { runMapekIteration } from 'unrdf/project-engine';
+
+const result = await runMapekIteration({
+  projectStore: myProjectStore,
+  domainStore: myDomainStore,
+  projectRoot: '/path/to/project'
+});
+
+console.log(`Health: ${result.overallHealth}%`);
+console.log(`Decisions: ${result.decisions.length}`);
+```
+
+#### `runContinuousMapekLoop(options)`
+
+Runs MAPEK repeatedly until system converges or max iterations reached.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `getState` | Function | ✅ | Async function returning `{ projectStore, domainStore, projectRoot }` |
+| `applyActions` | Function | ✅ | Async function to apply auto-fixable actions |
+| `intervalMs` | number | ❌ | Polling interval in milliseconds (default: 5000) |
+| `maxIterations` | number | ❌ | Maximum iterations before stopping (default: 10) |
+
+**Returns:**
+
+```javascript
+{
+  converged: boolean,
+  iterations: number,
+  finalHealth: number, // 0-100
+  finalState: object
+}
+```
+
+#### `createAutonomicHooks(mapekFindings, projectStore)`
+
+Creates Knowledge Hooks from MAPEK findings for autonomous execution.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `mapekFindings` | object | ✅ | Result from `runMapekIteration` |
+| `projectStore` | Store | ✅ | Project RDF store |
+
+**Returns:** `Array<Hook>` - Array of hook definitions ready for registration
+
+**Generated Hooks:**
+
+- `autonomic:auto-generate-missing-files` - Triggers on gap detection
+- `autonomic:auto-sync-types` - Triggers on type mismatch
+- `autonomic:hotspot-alert` - Alerts on high-risk features
+
+### Knowledge Hooks API Reference
+
+#### `defineHook(spec)`
+
+Creates a new Knowledge Hook with validation.
+
+**Parameters:**
+
+```javascript
+{
+  meta: {
+    name: string, // Required: unique hook identifier
+    description?: string,
+    version?: string,
+    tags?: string[]
+  },
+  channel?: {
+    graphs?: string[], // Named graphs to observe
+    view?: 'before' | 'after' | 'delta' // Graph state view
+  },
+  when: {
+    kind: 'sparql-ask' | 'sparql-select' | 'shacl',
+    query?: string, // SPARQL query string
+    ref?: { // Content-addressed reference (preferred)
+      uri: string,
+      sha256: string,
+      mediaType: string
+    }
+  },
+  before?: (event: HookEvent) => Promise<HookPayload | {cancel: true, reason?: string}>,
+  run: (event: HookEvent) => Promise<HookResult>,
+  after?: (event: HookEvent & {result: any}) => Promise<HookResult>,
+  determinism?: { seed?: number },
+  receipt?: { anchor?: 'git-notes' | 'none' }
+}
+```
+
+**Returns:** `Hook` - Validated hook definition
+
+**Example:**
+
+```javascript
+import { defineHook } from 'unrdf';
+
+const hook = defineHook({
+  meta: { name: 'my-hook' },
+  when: {
+    kind: 'sparql-ask',
+    query: 'ASK { ?s ?p ?o }'
+  },
+  run: async (event) => {
+    return { result: 'success' };
+  }
+});
+```
+
+#### `KnowledgeHookManager`
+
+Manages hook registration, evaluation, and execution.
+
+**Methods:**
+
+- `registerHook(hook: Hook): Promise<void>` - Register a hook
+- `removeHook(name: string): Promise<void>` - Remove a hook
+- `executeKnowledgeHook(name: string, event: object, options?: object): Promise<object>` - Execute a specific hook
+- `executeAllHooks(event: object, options?: object): Promise<Array<object>>` - Execute all matching hooks
+
+**Example:**
+
+```javascript
+import { KnowledgeHookManager, createDarkMatterCore } from 'unrdf';
+
+const system = await createDarkMatterCore();
+const manager = system.getComponent('knowledgeHookManager');
+
+await manager.registerHook(myHook);
+const result = await manager.executeKnowledgeHook('my-hook', {
+  payload: { delta: myDelta },
+  context: { graph: myStore }
+});
+```
+
+### Hook Lifecycle
+
+Hooks execute in three phases:
+
+1. **`before`** - Pre-condition gate, can cancel execution
+2. **`run`** - Core effect execution
+3. **`after`** - Post-execution cleanup/auditing
+
+```javascript
+const hook = defineHook({
+  meta: { name: 'lifecycle-example' },
+  when: { kind: 'sparql-ask', query: 'ASK { ?s ?p ?o }' },
+  before: async (event) => {
+    // Can modify payload or cancel
+    if (shouldCancel) {
+      return { cancel: true, reason: 'Cancelled by before phase' };
+    }
+    return { ...event.payload, normalized: true };
+  },
+  run: async (event) => {
+    // Main execution
+    return { result: 'executed' };
+  },
+  after: async (event) => {
+    // Cleanup, logging, auditing
+    console.log(`Hook completed: ${event.result}`);
+    return {};
+  }
+});
+```
+
+### Condition Types
+
+**SPARQL ASK:** Boolean condition (true/false)
+
+```javascript
+when: {
+  kind: 'sparql-ask',
+  query: 'ASK { ?person ex:age ?age . FILTER (?age < 0) }'
+}
+```
+
+**SPARQL SELECT:** Returns bindings, hook runs if results exist
+
+```javascript
+when: {
+  kind: 'sparql-select',
+  query: 'SELECT ?person WHERE { ?person ex:status "inactive" }'
+}
+```
+
+**SHACL:** Shape-based validation
+
+```javascript
+when: {
+  kind: 'shacl',
+  ref: {
+    uri: 'file://shapes/person-shape.ttl',
+    sha256: '...',
+    mediaType: 'text/turtle'
+  }
+}
+```
+
+### Transaction Integration
+
+Hooks execute automatically during transactions:
+
+```javascript
+const receipt = await system.executeTransaction({
+  additions: [
+    { subject: 'ex:alice', predicate: 'rdf:type', object: 'foaf:Person' }
+  ]
+});
+
+// Hooks with channel.view='before' run before commit
+// Hooks with channel.view='after' run after commit
+// Hooks with channel.view='delta' run on delta only
+```
+
+### Performance SLOs
+
+| Metric | Target | Unit |
+|--------|--------|------|
+| Hook registration | p99 < 1ms | milliseconds |
+| Condition evaluation | p99 < 2ms | milliseconds |
+| Hook execution | p99 < 10ms | milliseconds |
+| Full pipeline | p99 < 50ms | milliseconds |
+| Hook throughput | 10,000/min | executions per minute |
+
+---
+
+## Explanation
+
+*Deep conceptual understanding of MAPEK and Knowledge Hooks*
+
+### What is MAPEK?
+
+**MAPEK** stands for **Monitor-Analyze-Plan-Execute-Knowledge**—a closed-loop autonomic system that continuously:
+
+1. **Monitors** - Observes system state (gaps, type issues, complexity, drift)
+2. **Analyzes** - Interprets findings and calculates health scores
+3. **Plans** - Decides what actions to take (auto-fixable vs. manual)
+4. **Executes** - Applies fixes through Knowledge Hooks
+5. **Learns** - Extracts patterns to improve future decisions
+
+**Why MAPEK Matters:**
+
+Traditional systems require manual intervention to maintain quality. MAPEK automates this through continuous monitoring and autonomous execution via Knowledge Hooks.
+
+| Traditional Approach | MAPEK Approach |
+|---------------------|----------------|
+| Manual code reviews | Automatic gap detection |
+| Type errors in production | Real-time type validation |
+| Refactoring fear | Safe, planned, auto-tracked |
+| Code decay over time | Continuous drift detection |
+| Best practices as guidelines | Best practices as enforced hooks |
+
+### The Five MAPEK Phases
+
+#### Phase 1: Monitor
+
+**Purpose:** Continuously observe system state
+
+**Tools:**
+- **Gap Finder** - Detects missing roles (APIs, components, tests) for entities
+- **Type Auditor** - Validates Zod schemas match TypeScript types
+- **Hotspot Analyzer** - Identifies high-complexity features
+- **Drift Detector** - Tracks divergence from baseline model
+
+**Output:** Raw findings (gaps, type mismatches, hotspots, drift)
+
+#### Phase 2: Analyze
+
+**Purpose:** Interpret findings and calculate health metrics
+
+**Metrics:**
+- **Gap Score (0-100)** - Missing critical functionality (higher = worse)
+- **Type Score (0-100)** - Dangerous type mismatches (higher = worse)
+- **Hotspot Score (0-100)** - Code complexity risk (higher = worse)
+- **Overall Health** - Weighted average: `(gapScore * 0.3 + typeScore * 0.3 + hotspotScore * 0.2 + driftPenalty * 0.2) / 100`
+
+**Output:** Health scores and prioritized issues
+
+#### Phase 3: Plan
+
+**Purpose:** Decide what actions to take
+
+**Decision Types:**
+- **Auto-fixable** - Can be executed automatically (e.g., generate missing files, sync types)
+- **Manual review** - Requires human decision (e.g., refactor high-complexity features)
+
+**Prioritization:** Type issues > gaps > complexity
+
+**Output:** Array of decisions with `autoFixable` flags
+
+#### Phase 4: Execute
+
+**Purpose:** Apply auto-fixable decisions
+
+**Execution Methods:**
+- **Knowledge Hooks** - Reactive triggers that auto-fix issues
+- **File Generation** - Create missing APIs, components, tests
+- **Type Synchronization** - Sync Zod schemas with TypeScript
+- **Refactoring Queue** - Queue recommendations for manual review
+
+**Integration:** MAPEK creates Knowledge Hooks via `createAutonomicHooks()`, which are then registered and executed automatically.
+
+**Output:** Applied actions and execution receipts
+
+#### Phase 5: Knowledge
+
+**Purpose:** Learn patterns from the cycle
+
+**Learning Types:**
+- **Gap Patterns** - Which entities consistently lack certain roles?
+- **Type Patterns** - Which fields are frequently mismatched?
+- **Hotspot Thresholds** - When does complexity become critical?
+- **Policy Updates** - Update thresholds based on successful fixes
+
+**Output:** Learned patterns stored for next iteration
+
+### What are Knowledge Hooks?
+
+**Knowledge Hooks** are declarative, policy-driven triggers that react to RDF graph changes. They transform passive knowledge graphs into reactive, self-governing systems.
+
+**Key Characteristics:**
+
+1. **Declarative Conditions** - Use SPARQL or SHACL to express *what* to monitor, not *how*
+2. **Content-Addressed** - Conditions are identified by hash, enabling verification and deduplication
+3. **Lifecycle Phases** - `before`, `run`, `after` provide complete execution control
+4. **Cryptographic Provenance** - Every execution creates a signed receipt
+5. **Transaction Integration** - Execute automatically during ACID transactions
+
+**Why Knowledge Hooks Matter:**
+
+Traditional RDF systems are **passive**—they store data and answer queries, but don't proactively enforce rules or react to changes. Knowledge Hooks make RDF **reactive**:
+
+- **Data Quality Enforcement** - Automatically reject invalid data
+- **Business Rule Automation** - Encode policies as hooks
+- **Real-Time Reactivity** - Respond to graph changes immediately
+- **Self-Healing** - Auto-fix issues detected by MAPEK
+
+### How MAPEK and Knowledge Hooks Work Together
+
+**The Integration Flow:**
+
+```
+1. MAPEK Monitor Phase
+   ↓
+   Detects gaps, type issues, hotspots
+   ↓
+2. MAPEK Analyze Phase
+   ↓
+   Calculates health scores, prioritizes issues
+   ↓
+3. MAPEK Plan Phase
+   ↓
+   Decides which issues are auto-fixable
+   ↓
+4. MAPEK Execute Phase
+   ↓
+   Creates Knowledge Hooks via createAutonomicHooks()
+   ↓
+5. Knowledge Hooks Registered
+   ↓
+   Hooks monitor graph for conditions
+   ↓
+6. Hooks Execute on Graph Changes
+   ↓
+   Auto-fix issues (generate files, sync types, alert)
+   ↓
+7. MAPEK Knowledge Phase
+   ↓
+   Learns from hook executions, updates policies
+```
+
+**Example: Auto-Generating Missing Files**
+
+1. **MAPEK detects:** Entity `User` exists in domain model but lacks `Api` role
+2. **MAPEK plans:** Decision to generate `UserAPI` file (auto-fixable)
+3. **MAPEK executes:** Creates hook `autonomic:auto-generate-missing-files`
+4. **Hook registered:** Hook monitors for new entities without APIs
+5. **Graph changes:** New entity added without API
+6. **Hook triggers:** Generates missing API file automatically
+7. **MAPEK learns:** Pattern: "Entities in domain model always need APIs"
+
+### Content-Addressed Conditions
+
+**Why Content-Addressed?**
+
+Hook conditions should be **verifiable artifacts**, not inline strings. Content-addressing enables:
+
+- **Verification** - Same condition = same hash = can verify integrity
+- **Deduplication** - Multiple hooks can reference the same condition
+- **Provenance** - Conditions are standalone, auditable artifacts
+- **Sharing** - Conditions can be shared across systems
+
+**Best Practice:**
+
+```javascript
+// ❌ Bad: Inline query
+when: {
+  kind: 'sparql-ask',
+  query: 'ASK { ?s ?p ?o }' // Not verifiable, not shareable
+}
+
+// ✅ Good: Content-addressed reference
+when: {
+  kind: 'sparql-ask',
+  ref: {
+    uri: 'file://hooks/compliance/large-tx.ask.rq',
+    sha256: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
+    mediaType: 'application/sparql-query'
+  }
+}
+```
+
+### Transaction Lifecycle with Hooks
+
+**State Machine:**
+
+```
+PENDING → ACTIVE → HOOKS_PASSED → APPLYING → POST_HOOKS → COMMITTED
+           ↓                              ↓
+        ROLLING_BACK ←───────────────────┘
+           ↓
+      ROLLED_BACK
+```
+
+**Hook Execution Points:**
+
+- **`before` hooks** - Run in `ACTIVE` state, can veto transaction
+- **`after` hooks** - Run in `POST_HOOKS` state, for auditing/cleanup
+- **`delta` hooks** - Run on delta graph (additions/removals only)
+
+**Example:**
+
+```javascript
+// Transaction with hooks
+const receipt = await system.executeTransaction({
+  additions: [
+    { subject: 'ex:alice', predicate: 'rdf:type', object: 'foaf:Person' }
+  ]
+});
+
+// Execution flow:
+// 1. State: PENDING → ACTIVE
+// 2. Run 'before' hooks (can cancel here)
+// 3. State: ACTIVE → HOOKS_PASSED (if all pass)
+// 4. Apply delta to graph
+// 5. State: HOOKS_PASSED → APPLYING → POST_HOOKS
+// 6. Run 'after' hooks
+// 7. State: POST_HOOKS → COMMITTED
+```
+
+### Autonomic Properties
+
+UNRDF achieves autonomic computing properties through MAPEK + Knowledge Hooks:
+
+| Property | Maturity | How It Works |
+|----------|----------|--------------|
+| **Self-Configuration** | 0.92 | Policy packs auto-apply, hooks auto-register |
+| **Self-Healing** | 0.87 | MAPEK detects issues, hooks auto-fix |
+| **Self-Optimization** | 0.78 | Query optimization, resource allocation |
+| **Self-Protection** | 0.95 | Lockchain provides cryptographic audit trail |
+
+**Maturity Score:** Weighted average of autonomic properties (0-1 scale)
+
+### The 80/20 Principle
+
+UNRDF follows the **80/20 rule** (Pareto Principle):
+
+- **20% of components** deliver 80% of value → Focus on Tier 1 capabilities
+- **20% of queries** take 80% of time → Optimize critical path
+- **20% of code paths** handle 80% of use cases → Implement those first
+
+**Tier System:**
+
+- **Tier 1 (60% usage):** `defineHook`, `executeTransaction`, `query` - Use these first
+- **Tier 2 (20% usage):** `registerHook`, `reason`, `canonicalize` - Specialized operations
+- **Tier 3 (15% usage):** `ResolutionLayer`, `PolicyPackManager` - Advanced features
+- **Tier 4 (5% usage):** `FederatedQuery`, `StreamProcessor` - Experimental
 
 ---
 
 ## Installation
 
 ```bash
-# Install from registry
+# Install from npm
 pnpm add unrdf
 
 # Verify installation
@@ -701,7 +1004,6 @@ node -e "import('unrdf').then(m => console.log('Version:', m.default?.version ||
 ## Quick Verification
 
 ```javascript
-// Verify system capabilities
 import { createDarkMatterCore, parseTurtle } from 'unrdf';
 
 const system = await createDarkMatterCore();
@@ -716,17 +1018,15 @@ console.assert(results === true, 'Basic capability verification');
 await system.cleanup();
 ```
 
----
-
 ## Links & Resources
 
 - **Repository**: https://github.com/unrdf/unrdf
 - **npm**: https://www.npmjs.com/package/unrdf
 - **Issues**: https://github.com/unrdf/unrdf/issues
 - **Documentation**: [docs/](./docs/)
+- **MAPEK Guide**: [docs/AUTONOMIC-MAPEK-README.md](./docs/AUTONOMIC-MAPEK-README.md)
+- **Knowledge Hooks Guide**: [docs/guides/knowledge-hooks.md](./docs/guides/knowledge-hooks.md)
 - **API Reference**: [docs/reference/api-reference.md](./docs/reference/api-reference.md)
-
----
 
 ## License
 

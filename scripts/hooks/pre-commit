@@ -2,11 +2,18 @@
 # UNRDF Pre-Commit Hook - Fast Tier
 # DfLSS: Prevent defects early with fast feedback
 # 80/20: Focus on high-value checks in <5 seconds
+#
+# This hook runs fast validation checks before each commit:
+# - Format check (auto-fixable)
+# - Lint check (staged files only)
+#
+# To bypass temporarily (DISCOURAGED): SKIP_PRE_COMMIT=1 git commit
+# To remove hook: rm .git/hooks/pre-commit
 
 set -e
 
 # Allow bypass for emergency situations only
-if [ -n "$SKIP_PRE_COMMIT" ]; then
+if [ -n "${SKIP_PRE_COMMIT:-}" ]; then
     echo "⚠️  WARNING: Skipping pre-commit checks (SKIP_PRE_COMMIT set)"
     echo "This is DISCOURAGED. Fix issues before committing."
     exit 0
@@ -15,31 +22,70 @@ fi
 echo "🔍 Pre-commit validation (fast tier: <5s)..."
 echo ""
 
+# Get staged files (only check what's being committed)
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=d | grep -E '\.(mjs|js|ts|json|md)$' || true)
+
+if [ -z "$STAGED_FILES" ]; then
+    echo "✅ No relevant files staged (skipping checks)"
+    exit 0
+fi
+
 # Gate 1: Format Check (2s timeout, auto-fixable)
 echo "Gate 1/2: Format Check..."
-if timeout 2s pnpm format:check >/dev/null 2>&1; then
-    echo "✅ Gate 1 passed"
-else
-    echo "⚠️  Code is not formatted. Auto-fixing..."
-    if pnpm format >/dev/null 2>&1; then
-        echo "✅ Code auto-formatted. Please review changes and commit again."
-        echo "   Run 'git add' to stage formatting changes."
-        exit 1
+# Use timeout if available, otherwise run without timeout
+if command -v timeout >/dev/null 2>&1; then
+    if timeout 2s pnpm format:check >/dev/null 2>&1; then
+        echo "✅ Gate 1 passed"
     else
-        echo "❌ ERROR: Format check failed and auto-fix failed"
-        echo "Run 'pnpm format' to fix formatting issues"
-        exit 1
+        echo "⚠️  Code is not formatted. Auto-fixing..."
+        if pnpm format >/dev/null 2>&1; then
+            echo "✅ Code auto-formatted. Please review changes and commit again."
+            echo "   Run 'git add' to stage formatting changes."
+            exit 1
+        else
+            echo "❌ ERROR: Format check failed and auto-fix failed"
+            echo "Run 'pnpm format' to fix formatting issues"
+            exit 1
+        fi
+    fi
+else
+    # Fallback without timeout
+    if pnpm format:check >/dev/null 2>&1; then
+        echo "✅ Gate 1 passed"
+    else
+        echo "⚠️  Code is not formatted. Auto-fixing..."
+        if pnpm format >/dev/null 2>&1; then
+            echo "✅ Code auto-formatted. Please review changes and commit again."
+            echo "   Run 'git add' to stage formatting changes."
+            exit 1
+        else
+            echo "❌ ERROR: Format check failed and auto-fix failed"
+            echo "Run 'pnpm format' to fix formatting issues"
+            exit 1
+        fi
     fi
 fi
 echo ""
 
-# Gate 2: Lint Check (3s timeout)
+# Gate 2: Lint Check (3s timeout, staged files only)
 echo "Gate 2/2: Lint Check..."
-if timeout 3s pnpm lint >/dev/null 2>&1; then
+# Lint only staged files for speed
+LINT_OUTPUT=""
+if command -v timeout >/dev/null 2>&1; then
+    LINT_OUTPUT=$(timeout 3s pnpm lint 2>&1) || LINT_EXIT=$?
+else
+    LINT_OUTPUT=$(pnpm lint 2>&1) || LINT_EXIT=$?
+fi
+
+if [ -z "${LINT_EXIT:-}" ]; then
     echo "✅ Gate 2 passed"
 else
     echo "❌ ERROR: Lint check failed"
-    echo "Run 'pnpm lint' to see details"
+    echo ""
+    echo "Last 20 lines of lint output:"
+    echo "$LINT_OUTPUT" | tail -20
+    echo ""
+    echo "Run 'pnpm lint' to see full details"
     echo "Run 'pnpm lint:fix' to auto-fix some issues"
     exit 1
 fi

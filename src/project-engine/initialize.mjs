@@ -10,6 +10,7 @@ import { scanFileSystemToStore } from './fs-scan.mjs';
 import { detectStackFromFs } from './stack-detect.mjs';
 import { buildProjectModelFromFs } from './project-model.mjs';
 import { classifyFiles } from './file-roles.mjs';
+import { analyzeJsComplexity } from './code-complexity-js.mjs';
 
 const { namedNode, literal } = DataFactory;
 
@@ -26,6 +27,7 @@ const { namedNode, literal } = DataFactory;
  * @property {Object} phases - Receipt for each phase
  * @property {number} totalDuration - Total duration in ms
  * @property {boolean} success - Overall success
+ * @property {Object} [metrics] - Code complexity metrics summary (from Phase 6.5)
  */
 
 /**
@@ -33,6 +35,7 @@ const { namedNode, literal } = DataFactory;
  * @property {Store} fsStore - Filesystem RDF store
  * @property {Store} projectStore - Project model store
  * @property {Store} domainStore - Domain inference store
+ * @property {Store} [complexityStore] - Code complexity analysis store
  * @property {Object} templateGraph - Template inference graph
  * @property {Object} snapshot - Baseline snapshot
  */
@@ -131,6 +134,19 @@ export async function createProjectInitializationPipeline(projectRoot, options =
     state.domainStore = phases.domainInference.data.store;
   }
 
+  // Phase 6.5: Analyze code complexity (JavaScript/TypeScript)
+  if (!skipPhases.has('codeComplexity')) {
+    phases.codeComplexity = await executeCodeComplexityPhase(
+      projectRoot,
+      state.domainStore,
+      validated
+    );
+    if (!phases.codeComplexity.success) {
+      return buildFailureResult(phases, startTime, 'codeComplexity', phases.codeComplexity.error);
+    }
+    state.complexityStore = phases.codeComplexity.data.store;
+  }
+
   // Phase 6: Infer templates
   if (!skipPhases.has('templateInference') && state.domainStore) {
     phases.templateInference = executeTemplateInferencePhase(state.domainStore, validated);
@@ -173,6 +189,7 @@ export async function createProjectInitializationPipeline(projectRoot, options =
       phases,
       totalDuration,
       success: true,
+      metrics: phases.codeComplexity?.data?.summary,
     },
     report: phases.report.data.report,
     state,
@@ -541,6 +558,45 @@ function executeSnapshotPhase(state, _options) {
         snapshot,
         hash: snapshot.hash,
         timestamp: snapshot.timestamp,
+      },
+    };
+  } catch (error) {
+    return {
+      duration: Date.now() - startTime,
+      success: false,
+      error: error.message,
+    };
+  }
+}
+
+/**
+ * Execute code complexity analysis phase
+ *
+ * @private
+ * @param {string} projectRoot
+ * @param {Store} [domainStore]
+ * @param {Object} options
+ * @returns {Promise<PhaseReceipt>}
+ */
+async function executeCodeComplexityPhase(projectRoot, domainStore, _options) {
+  const startTime = Date.now();
+
+  try {
+    const { store, summary } = await analyzeJsComplexity({
+      projectRoot,
+      baseStore: domainStore ? new Store(domainStore) : undefined,
+      mode: 'observe',
+    });
+
+    return {
+      duration: Date.now() - startTime,
+      success: true,
+      data: {
+        store,
+        summary,
+        filesAnalyzed: summary.filesAnalyzed,
+        averageComplexity: summary.averageCyclomatic,
+        topRisks: summary.topRisks?.length || 0,
       },
     };
   } catch (error) {

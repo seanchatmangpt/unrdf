@@ -1,0 +1,238 @@
+{
+  "@context": {
+    "@vocab": "urn:unrdf:capability:",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "slo": "urn:unrdf:slo:",
+    "schema": "http://schema.org/"
+  },
+  "@id": "urn:unrdf:capabilities:v4.0.0",
+  "@type": "cap:CapabilityRegistry",
+  "version": "4.0.0",
+  "capabilities": [
+    {
+      "@id": "cap:parseTurtle",
+      "@type": "cap:Capability",
+      "rdfs:label": "parseTurtle",
+      "rdfs:comment": "Parse RDF data from Turtle format",
+      "cap:module": "unrdf",
+      "cap:function": "parseTurtle",
+      "cap:tier": 1,
+      "cap:domain": "parsing",
+      "slo:p99Latency": 5,
+      "slo:throughput": 10000,
+      "slo:unit": "milliseconds",
+      "cap:precondition": [
+        {
+          "@type": "cap:Precondition",
+          "cap:type": "runtime",
+          "cap:value": "globalThis",
+          "cap:description": "GlobalThis must be available"
+        },
+        {
+          "@type": "cap:Precondition",
+          "cap:type": "module",
+          "cap:value": "n3",
+          "cap:description": "N3 library must be available"
+        }
+      ],
+      "cap:input": {
+        "@type": "schema:DataType",
+        "schema:name": "content",
+        "schema:valueType": "string",
+        "schema:description": "Turtle RDF content"
+      },
+      "cap:output": {
+        "@type": "schema:DataType",
+        "schema:name": "store",
+        "schema:valueType": "N3.Store",
+        "schema:description": "Parsed RDF store"
+      }
+    },
+    {
+      "@id": "cap:query",
+      "@type": "cap:Capability",
+      "rdfs:label": "query",
+      "rdfs:comment": "Execute SPARQL query",
+      "cap:module": "unrdf",
+      "cap:function": "query",
+      "cap:tier": 1,
+      "cap:domain": "query",
+      "slo:p99Latency": 50,
+      "slo:throughput": 1000,
+      "slo:unit": "milliseconds",
+      "cap:precondition": [
+        {
+          "@type": "cap:Precondition",
+          "cap:type": "runtime",
+          "cap:value": "globalThis",
+          "cap:description": "GlobalThis must be available"
+        }
+      ],
+      "cap:input": {
+        "@type": "schema:DataType",
+        "schema:name": "query",
+        "schema:valueType": "object",
+        "schema:properties": {
+          "query": { "type": "string" },
+          "type": { "type": "string", "enum": ["sparql-select", "sparql-ask", "sparql-construct", "sparql-update"] }
+        }
+      },
+      "cap:output": {
+        "@type": "schema:DataType",
+        "schema:name": "results",
+        "schema:valueType": "array|boolean",
+        "schema:description": "Query results (bindings for SELECT, boolean for ASK)"
+      }
+    },
+    {
+      "@id": "cap:defineHook",
+      "@type": "cap:Capability",
+      "rdfs:label": "defineHook",
+      "rdfs:comment": "Define a Knowledge Hook with validation",
+      "cap:module": "unrdf",
+      "cap:function": "defineHook",
+      "cap:tier": 1,
+      "cap:domain": "hook",
+      "slo:p99Latency": 1,
+      "slo:throughput": 50000,
+      "slo:unit": "milliseconds",
+      "cap:precondition": [
+        {
+          "@type": "cap:Precondition",
+          "cap:type": "module",
+          "cap:value": "zod",
+          "cap:description": "Zod library must be available for validation"
+        }
+      ],
+      "cap:input": {
+        "@type": "schema:DataType",
+        "schema:name": "spec",
+        "schema:valueType": "object",
+        "schema:description": "Hook specification with meta, when, run functions"
+      },
+      "cap:output": {
+        "@type": "schema:DataType",
+        "schema:name": "hook",
+        "schema:valueType": "Hook",
+        "schema:description": "Validated hook definition"
+      }
+    },
+    {
+      "@id": "cap:runMapekIteration",
+      "@type": "cap:Capability",
+      "rdfs:label": "runMapekIteration",
+      "rdfs:comment": "Run single MAPEK autonomic cycle",
+      "cap:module": "unrdf/project-engine",
+      "cap:function": "runMapekIteration",
+      "cap:tier": 2,
+      "cap:domain": "mapek",
+      "slo:p99Latency": 200,
+      "slo:throughput": 5,
+      "slo:unit": "milliseconds",
+      "cap:precondition": [
+        {
+          "@type": "cap:Precondition",
+          "cap:type": "module",
+          "cap:value": "n3",
+          "cap:description": "N3 library required for RDF stores"
+        },
+        {
+          "@type": "cap:Precondition",
+          "cap:type": "memory",
+          "cap:value": "104857600",
+          "cap:description": "At least 100MB memory available"
+        }
+      ],
+      "cap:input": {
+        "@type": "schema:DataType",
+        "schema:name": "options",
+        "schema:valueType": "object",
+        "schema:properties": {
+          "projectStore": { "type": "N3.Store", "required": true },
+          "domainStore": { "type": "N3.Store", "required": true },
+          "projectRoot": { "type": "string", "required": true },
+          "stackProfile": { "type": "object", "required": false },
+          "baselineSnapshot": { "type": "N3.Store", "required": false },
+          "knowledge": { "type": "object", "required": false }
+        }
+      },
+      "cap:output": {
+        "@type": "schema:DataType",
+        "schema:name": "result",
+        "schema:valueType": "object",
+        "schema:description": "MAPEK iteration result with health, decisions, actions"
+      }
+    },
+    {
+      "@id": "cap:createAutonomicHooks",
+      "@type": "cap:Capability",
+      "rdfs:label": "createAutonomicHooks",
+      "rdfs:comment": "Create Knowledge Hooks from MAPEK findings",
+      "cap:module": "unrdf/project-engine",
+      "cap:function": "createAutonomicHooks",
+      "cap:tier": 2,
+      "cap:domain": "mapek",
+      "slo:p99Latency": 10,
+      "slo:throughput": 100,
+      "slo:unit": "milliseconds",
+      "cap:precondition": [
+        {
+          "@type": "cap:Precondition",
+          "cap:type": "module",
+          "cap:value": "unrdf",
+          "cap:description": "UNRDF must be available"
+        }
+      ],
+      "cap:input": {
+        "@type": "schema:DataType",
+        "schema:name": "mapekFindings",
+        "schema:valueType": "object",
+        "schema:description": "Result from runMapekIteration"
+      },
+      "cap:output": {
+        "@type": "schema:DataType",
+        "schema:name": "hooks",
+        "schema:valueType": "array",
+        "schema:items": { "type": "Hook" },
+        "schema:description": "Array of hook definitions ready for registration"
+      }
+    },
+    {
+      "@id": "cap:executeTransaction",
+      "@type": "cap:Capability",
+      "rdfs:label": "executeTransaction",
+      "rdfs:comment": "Execute ACID transaction with hook lifecycle",
+      "cap:module": "unrdf",
+      "cap:function": "executeTransaction",
+      "cap:tier": 1,
+      "cap:domain": "transaction",
+      "slo:p99Latency": 100,
+      "slo:throughput": 500,
+      "slo:unit": "milliseconds",
+      "cap:precondition": [
+        {
+          "@type": "cap:Precondition",
+          "cap:type": "runtime",
+          "cap:value": "globalThis",
+          "cap:description": "GlobalThis must be available"
+        }
+      ],
+      "cap:input": {
+        "@type": "schema:DataType",
+        "schema:name": "delta",
+        "schema:valueType": "object",
+        "schema:properties": {
+          "additions": { "type": "array", "items": { "type": "object" } },
+          "removals": { "type": "array", "items": { "type": "object" } }
+        }
+      },
+      "cap:output": {
+        "@type": "schema:DataType",
+        "schema:name": "receipt",
+        "schema:valueType": "object",
+        "schema:description": "Transaction receipt with hooks executed"
+      }
+    }
+  ]
+}
+
