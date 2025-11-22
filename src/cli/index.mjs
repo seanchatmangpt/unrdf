@@ -16,6 +16,7 @@
 import { defineCommand, runMain } from 'citty';
 import { storeCommand } from './commands/store.mjs';
 import { initCommand } from './commands/init.mjs';
+import { autonomicCommand } from './commands/autonomic.mjs';
 
 /**
  * Main CLI application
@@ -28,6 +29,7 @@ const main = defineCommand({
   },
   subCommands: {
     init: initCommand,
+    autonomic: autonomicCommand,
     store: storeCommand
   }
 });
