@@ -99,6 +99,17 @@ export { deriveLinterRules, analyzeCodePatterns, generateESLintConfig } from './
 // JavaScript Code Complexity Analysis
 export { analyzeJsComplexity } from './code-complexity-js.mjs';
 
+// Capabilities Manifest - Feature flags and metadata
+export {
+  CODE_COMPLEXITY_JS,
+  CAPABILITIES,
+  FEATURE_FLAGS,
+  isCapabilityEnabled,
+  getCapabilityMetadata,
+  getEnabledCapabilities,
+  setCapabilityEnabled,
+} from './capabilities-manifest.mjs';
+
 // Feature Dependency Graph
 export {
   buildDependencyGraph,
