@@ -57,3 +57,34 @@ export {
   serializeSnapshot,
   deserializeSnapshot,
 } from './drift-snapshot.mjs'
+
+// Hotspot analysis
+export {
+  analyzeHotspots,
+  scoreFeature,
+} from './hotspot-analyzer.mjs'
+
+// Gap detection
+export {
+  findMissingRoles,
+  scoreMissingRole,
+} from './gap-finder.mjs'
+
+// Type-safety auditing
+export {
+  auditTypeConsistency,
+  auditEntityTypes,
+  compareTypes,
+  FieldInfoSchema,
+  MismatchSchema,
+  AuditResultSchema,
+  CompareTypesResultSchema,
+} from './type-auditor.mjs'
+
+// Autonomic MAPEK Loop - Full autonomics with Knowledge Hooks
+export {
+  runMapekIteration,
+  createAutonomicHooks,
+  runContinuousMapekLoop,
+  reportMapekStatus,
+} from './autonomic-mapek.mjs'
