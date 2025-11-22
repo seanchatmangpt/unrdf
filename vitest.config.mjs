@@ -61,6 +61,9 @@ export default defineConfig({
 
     // File patterns - comprehensive test suite including v3.1.0 features
     include: [
+      // v4.0 Diff utilities tests
+      "test/diff.test.mjs",
+
       // v3.0 Core tests
       "test/knowledge-engine/parse.test.mjs",
       "test/knowledge-engine/utils/*.test.mjs",
