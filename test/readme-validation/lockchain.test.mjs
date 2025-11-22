@@ -14,7 +14,7 @@ describe('README Lockchain Provenance Examples', () => {
       init: vi.fn().mockResolvedValue(undefined),
       writeReceipt: vi.fn(),
       verifyReceipt: vi.fn(),
-      cleanup: vi.fn().mockResolvedValue(undefined)
+      cleanup: vi.fn().mockResolvedValue(undefined),
     };
 
     mockLockchainWriter = vi.fn().mockReturnValue(mockLockchain);
@@ -24,12 +24,12 @@ describe('README Lockchain Provenance Examples', () => {
     it('should create lockchain with repo path', () => {
       const lockchain = mockLockchainWriter({
         repoPath: './lockchain-repo',
-        enableMerkle: true
+        enableMerkle: true,
       });
 
       expect(mockLockchainWriter).toHaveBeenCalledWith({
         repoPath: './lockchain-repo',
-        enableMerkle: true
+        enableMerkle: true,
       });
 
       expect(lockchain).toBeDefined();
@@ -38,7 +38,7 @@ describe('README Lockchain Provenance Examples', () => {
     it('should initialize lockchain repository', async () => {
       const lockchain = mockLockchainWriter({
         repoPath: './lockchain-repo',
-        enableMerkle: true
+        enableMerkle: true,
       });
 
       await lockchain.init();
@@ -47,9 +47,9 @@ describe('README Lockchain Provenance Examples', () => {
     });
 
     it('should support Merkle tree enablement', () => {
-      const lockchain = mockLockchainWriter({
+      const _lockchain = mockLockchainWriter({
         repoPath: './lockchain-repo',
-        enableMerkle: true
+        enableMerkle: true,
       });
 
       expect(mockLockchainWriter).toHaveBeenCalledWith(
@@ -58,9 +58,9 @@ describe('README Lockchain Provenance Examples', () => {
     });
 
     it('should allow disabling Merkle tree', () => {
-      const lockchain = mockLockchainWriter({
+      const _lockchain = mockLockchainWriter({
         repoPath: './lockchain-repo',
-        enableMerkle: false
+        enableMerkle: false,
       });
 
       expect(mockLockchainWriter).toHaveBeenCalledWith(
@@ -73,7 +73,7 @@ describe('README Lockchain Provenance Examples', () => {
     it('should write cryptographically signed receipt', async () => {
       const lockchain = mockLockchainWriter({
         repoPath: './lockchain-repo',
-        enableMerkle: true
+        enableMerkle: true,
       });
 
       await lockchain.init();
@@ -84,7 +84,7 @@ describe('README Lockchain Provenance Examples', () => {
         action: 'add-data',
         timestamp: new Date(),
         merkleRoot: 'abc123def456',
-        signature: 'sig789'
+        signature: 'sig789',
       };
 
       mockLockchain.writeReceipt.mockResolvedValue(mockReceipt);
@@ -94,14 +94,14 @@ describe('README Lockchain Provenance Examples', () => {
         action: 'add-data',
         delta: { additions: [], removals: [] },
         timestamp: new Date(),
-        metadata: { reason: 'User registration' }
+        metadata: { reason: 'User registration' },
       });
 
       expect(lockchain.writeReceipt).toHaveBeenCalledWith(
         expect.objectContaining({
           actor: 'alice@example.org',
           action: 'add-data',
-          metadata: expect.objectContaining({ reason: 'User registration' })
+          metadata: expect.objectContaining({ reason: 'User registration' }),
         })
       );
 
@@ -112,20 +112,20 @@ describe('README Lockchain Provenance Examples', () => {
     it('should include SHA3-256 Merkle root', async () => {
       const lockchain = mockLockchainWriter({
         repoPath: './lockchain-repo',
-        enableMerkle: true
+        enableMerkle: true,
       });
 
       await lockchain.init();
 
       mockLockchain.writeReceipt.mockResolvedValue({
-        merkleRoot: 'f7d8e9a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9'
+        merkleRoot: 'f7d8e9a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9',
       });
 
       const receipt = await lockchain.writeReceipt({
         actor: 'alice@example.org',
         action: 'add-data',
         delta: { additions: [], removals: [] },
-        timestamp: new Date()
+        timestamp: new Date(),
       });
 
       expect(receipt.merkleRoot).toBeDefined();
@@ -135,7 +135,7 @@ describe('README Lockchain Provenance Examples', () => {
     it('should handle metadata in receipt', async () => {
       const lockchain = mockLockchainWriter({
         repoPath: './lockchain-repo',
-        enableMerkle: true
+        enableMerkle: true,
       });
 
       await lockchain.init();
@@ -144,8 +144,8 @@ describe('README Lockchain Provenance Examples', () => {
         metadata: {
           reason: 'User registration',
           ip: '192.168.1.1',
-          userAgent: 'Mozilla/5.0'
-        }
+          userAgent: 'Mozilla/5.0',
+        },
       });
 
       const receipt = await lockchain.writeReceipt({
@@ -156,8 +156,8 @@ describe('README Lockchain Provenance Examples', () => {
         metadata: {
           reason: 'User registration',
           ip: '192.168.1.1',
-          userAgent: 'Mozilla/5.0'
-        }
+          userAgent: 'Mozilla/5.0',
+        },
       });
 
       expect(receipt.metadata).toHaveProperty('reason');
@@ -168,25 +168,25 @@ describe('README Lockchain Provenance Examples', () => {
     it('should store delta in receipt', async () => {
       const lockchain = mockLockchainWriter({
         repoPath: './lockchain-repo',
-        enableMerkle: true
+        enableMerkle: true,
       });
 
       await lockchain.init();
 
       const delta = {
         additions: [{ subject: 's', predicate: 'p', object: 'o' }],
-        removals: []
+        removals: [],
       };
 
       mockLockchain.writeReceipt.mockResolvedValue({
-        delta: delta
+        delta: delta,
       });
 
       const receipt = await lockchain.writeReceipt({
         actor: 'alice@example.org',
         action: 'add-data',
         delta: delta,
-        timestamp: new Date()
+        timestamp: new Date(),
       });
 
       expect(receipt.delta).toBeDefined();
@@ -199,7 +199,7 @@ describe('README Lockchain Provenance Examples', () => {
     it('should verify valid receipt', async () => {
       const lockchain = mockLockchainWriter({
         repoPath: './lockchain-repo',
-        enableMerkle: true
+        enableMerkle: true,
       });
 
       await lockchain.init();
@@ -207,7 +207,7 @@ describe('README Lockchain Provenance Examples', () => {
       const receipt = {
         id: 'receipt-123',
         merkleRoot: 'abc123',
-        signature: 'sig789'
+        signature: 'sig789',
       };
 
       mockLockchain.verifyReceipt.mockResolvedValue(true);
@@ -221,7 +221,7 @@ describe('README Lockchain Provenance Examples', () => {
     it('should detect tampered receipt', async () => {
       const lockchain = mockLockchainWriter({
         repoPath: './lockchain-repo',
-        enableMerkle: true
+        enableMerkle: true,
       });
 
       await lockchain.init();
@@ -229,7 +229,7 @@ describe('README Lockchain Provenance Examples', () => {
       const receipt = {
         id: 'receipt-123',
         merkleRoot: 'tampered',
-        signature: 'invalid'
+        signature: 'invalid',
       };
 
       mockLockchain.verifyReceipt.mockResolvedValue(false);
@@ -242,14 +242,14 @@ describe('README Lockchain Provenance Examples', () => {
     it('should verify Merkle root integrity', async () => {
       const lockchain = mockLockchainWriter({
         repoPath: './lockchain-repo',
-        enableMerkle: true
+        enableMerkle: true,
       });
 
       await lockchain.init();
 
       const validReceipt = {
         merkleRoot: 'f7d8e9a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9',
-        data: 'original-data'
+        data: 'original-data',
       };
 
       mockLockchain.verifyReceipt.mockResolvedValue(true);
@@ -262,14 +262,14 @@ describe('README Lockchain Provenance Examples', () => {
     it('should reject receipt with invalid Merkle root', async () => {
       const lockchain = mockLockchainWriter({
         repoPath: './lockchain-repo',
-        enableMerkle: true
+        enableMerkle: true,
       });
 
       await lockchain.init();
 
       const invalidReceipt = {
         merkleRoot: 'invalid-merkle-root',
-        data: 'tampered-data'
+        data: 'tampered-data',
       };
 
       mockLockchain.verifyReceipt.mockResolvedValue(false);
@@ -285,14 +285,14 @@ describe('README Lockchain Provenance Examples', () => {
       const mockSystem = {
         executeTransaction: vi.fn().mockResolvedValue({
           success: true,
-          delta: { additions: [], removals: [] }
-        })
+          delta: { additions: [], removals: [] },
+        }),
       };
 
       const result = await mockSystem.executeTransaction({
         additions: [],
         removals: [],
-        actor: 'alice@example.org'
+        actor: 'alice@example.org',
       });
 
       expect(result.success).toBe(true);
@@ -302,7 +302,7 @@ describe('README Lockchain Provenance Examples', () => {
     it('should write receipt after transaction', async () => {
       const lockchain = mockLockchainWriter({
         repoPath: './audit-trail',
-        enableMerkle: true
+        enableMerkle: true,
       });
 
       await lockchain.init();
@@ -313,7 +313,7 @@ describe('README Lockchain Provenance Examples', () => {
         actor: 'alice@example.org',
         action: 'add-user',
         delta: delta,
-        merkleRoot: 'abc123'
+        merkleRoot: 'abc123',
       });
 
       const receipt = await lockchain.writeReceipt({
@@ -321,7 +321,7 @@ describe('README Lockchain Provenance Examples', () => {
         action: 'add-user',
         delta: delta,
         timestamp: new Date(),
-        metadata: { ip: '192.168.1.1', reason: 'User registration' }
+        metadata: { ip: '192.168.1.1', reason: 'User registration' },
       });
 
       expect(receipt.actor).toBe('alice@example.org');
@@ -332,14 +332,14 @@ describe('README Lockchain Provenance Examples', () => {
     it('should verify audit trail integrity', async () => {
       const lockchain = mockLockchainWriter({
         repoPath: './audit-trail',
-        enableMerkle: true
+        enableMerkle: true,
       });
 
       await lockchain.init();
 
       const receipt = {
         merkleRoot: 'abc123',
-        actor: 'alice@example.org'
+        actor: 'alice@example.org',
       };
 
       mockLockchain.verifyReceipt.mockResolvedValue(true);
@@ -353,7 +353,7 @@ describe('README Lockchain Provenance Examples', () => {
       // Create lockchain
       const lockchain = mockLockchainWriter({
         repoPath: './audit-trail',
-        enableMerkle: true
+        enableMerkle: true,
       });
 
       await lockchain.init();
@@ -362,20 +362,20 @@ describe('README Lockchain Provenance Examples', () => {
       const mockSystem = {
         executeTransaction: vi.fn().mockResolvedValue({
           success: true,
-          delta: { additions: [], removals: [] }
-        })
+          delta: { additions: [], removals: [] },
+        }),
       };
 
       const result = await mockSystem.executeTransaction({
         additions: [],
         removals: [],
-        actor: 'alice@example.org'
+        actor: 'alice@example.org',
       });
 
       // Write receipt
       mockLockchain.writeReceipt.mockResolvedValue({
         merkleRoot: 'abc123',
-        delta: result.delta
+        delta: result.delta,
       });
 
       const receipt = await lockchain.writeReceipt({
@@ -383,7 +383,7 @@ describe('README Lockchain Provenance Examples', () => {
         action: 'add-user',
         delta: result.delta,
         timestamp: new Date(),
-        metadata: { ip: '192.168.1.1', reason: 'User registration' }
+        metadata: { ip: '192.168.1.1', reason: 'User registration' },
       });
 
       // Verify receipt
@@ -399,7 +399,7 @@ describe('README Lockchain Provenance Examples', () => {
     it('should detect data modification', async () => {
       const lockchain = mockLockchainWriter({
         repoPath: './lockchain-repo',
-        enableMerkle: true
+        enableMerkle: true,
       });
 
       await lockchain.init();
@@ -407,21 +407,21 @@ describe('README Lockchain Provenance Examples', () => {
       // Original receipt
       mockLockchain.writeReceipt.mockResolvedValue({
         data: 'original',
-        merkleRoot: 'original-hash'
+        merkleRoot: 'original-hash',
       });
 
       const originalReceipt = await lockchain.writeReceipt({
         actor: 'alice',
         action: 'add',
         delta: { additions: [], removals: [] },
-        timestamp: new Date()
+        timestamp: new Date(),
       });
 
       // Tampered receipt
       const tamperedReceipt = {
         ...originalReceipt,
         data: 'tampered',
-        merkleRoot: 'original-hash' // Same hash but different data
+        merkleRoot: 'original-hash', // Same hash but different data
       };
 
       mockLockchain.verifyReceipt.mockResolvedValue(false);
@@ -434,16 +434,16 @@ describe('README Lockchain Provenance Examples', () => {
     it('should detect missing receipt', async () => {
       const lockchain = mockLockchainWriter({
         repoPath: './lockchain-repo',
-        enableMerkle: true
+        enableMerkle: true,
       });
 
       await lockchain.init();
 
       mockLockchain.verifyReceipt.mockRejectedValue(new Error('Receipt not found'));
 
-      await expect(
-        lockchain.verifyReceipt({ id: 'non-existent' })
-      ).rejects.toThrow('Receipt not found');
+      await expect(lockchain.verifyReceipt({ id: 'non-existent' })).rejects.toThrow(
+        'Receipt not found'
+      );
     });
   });
 });

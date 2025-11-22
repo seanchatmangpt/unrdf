@@ -31,9 +31,7 @@ export function useKnowledgeEngineContext() {
   const context = useContext(KnowledgeEngineContext);
 
   if (!context) {
-    throw new Error(
-      '[useKnowledgeEngineContext] Must be used within KnowledgeEngineProvider'
-    );
+    throw new Error('[useKnowledgeEngineContext] Must be used within KnowledgeEngineProvider');
   }
 
   return context;

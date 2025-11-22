@@ -3,23 +3,24 @@
  * Tests validation modes, caching, and SHACL validation
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+/* eslint-disable no-undef */
+import { describe, it, expect, _beforeEach, vi } from 'vitest';
 
 describe('useRealTimeValidator', () => {
   describe('Validation Processing', () => {
     it('should validate conforming change', async () => {
-      const validateChange = async (change) => {
+      const validateChange = async _change => {
         // Simulate SHACL validation
         return {
           conforms: true,
-          violations: []
+          violations: [],
         };
       };
 
       const change = {
         id: 'change-1',
         operation: 'insert',
-        quads: [{ subject: { value: 'http://example.org/product1' } }]
+        quads: [{ subject: { value: 'http://example.org/product1' } }],
       };
 
       const result = await validateChange(change);
@@ -29,17 +30,19 @@ describe('useRealTimeValidator', () => {
     });
 
     it('should detect validation violations', async () => {
-      const validateChange = async (change) => {
+      const validateChange = async change => {
         // Simulate SHACL validation with violations
         if (change.quads.some(q => !q.object.value)) {
           return {
             conforms: false,
-            violations: [{
-              focusNode: change.quads[0].subject.value,
-              shape: 'http://example.org/shapes#ProductShape',
-              message: 'Missing required property',
-              severity: 'violation'
-            }]
+            violations: [
+              {
+                focusNode: change.quads[0].subject.value,
+                shape: 'http://example.org/shapes#ProductShape',
+                message: 'Missing required property',
+                severity: 'violation',
+              },
+            ],
           };
         }
         return { conforms: true, violations: [] };
@@ -47,7 +50,7 @@ describe('useRealTimeValidator', () => {
 
       const change = {
         id: 'change-1',
-        quads: [{ subject: { value: 'http://example.org/product1' }, object: {} }]
+        quads: [{ subject: { value: 'http://example.org/product1' }, object: {} }],
       };
 
       const result = await validateChange(change);
@@ -68,7 +71,7 @@ describe('useRealTimeValidator', () => {
           invalidChanges.push({
             change,
             violations: result.violations,
-            validatedAt: new Date().toISOString()
+            validatedAt: new Date().toISOString(),
           });
         }
       };
@@ -88,10 +91,10 @@ describe('useRealTimeValidator', () => {
         totalValidated: 0,
         passed: 0,
         failed: 0,
-        passRate: 0
+        passRate: 0,
       };
 
-      const updateStats = (conforms) => {
+      const updateStats = conforms => {
         const total = stats.totalValidated + 1;
         const passed = conforms ? stats.passed + 1 : stats.passed;
         const failed = conforms ? stats.failed : stats.failed + 1;
@@ -99,7 +102,7 @@ describe('useRealTimeValidator', () => {
           totalValidated: total,
           passed,
           failed,
-          passRate: Math.round((passed / total) * 100)
+          passRate: Math.round((passed / total) * 100),
         };
       };
 
@@ -137,7 +140,7 @@ describe('useRealTimeValidator', () => {
         totalValidated: 100,
         passed: 80,
         failed: 20,
-        passRate: 80
+        passRate: 80,
       };
 
       const clear = () => {
@@ -145,7 +148,7 @@ describe('useRealTimeValidator', () => {
           totalValidated: 0,
           passed: 0,
           failed: 0,
-          passRate: 0
+          passRate: 0,
         };
       };
 
@@ -160,18 +163,21 @@ describe('useRealTimeValidator', () => {
 
   describe('Batch Validation', () => {
     it('should validate batch of changes', async () => {
-      const validateChange = async (change) => {
-        return { conforms: change.valid, violations: change.valid ? [] : [{ message: 'Invalid' }] };
+      const validateChange = async change => {
+        return {
+          conforms: change.valid,
+          violations: change.valid ? [] : [{ message: 'Invalid' }],
+        };
       };
 
-      const validateBatch = async (changes) => {
+      const validateBatch = async changes => {
         return Promise.all(changes.map(c => validateChange(c)));
       };
 
       const batch = [
         { id: '1', valid: true },
         { id: '2', valid: false },
-        { id: '3', valid: true }
+        { id: '3', valid: true },
       ];
 
       const results = await validateBatch(batch);
@@ -184,7 +190,9 @@ describe('useRealTimeValidator', () => {
 
     it('should respect batch size configuration', () => {
       const batchSize = 5;
-      const queue = Array(12).fill(null).map((_, i) => ({ id: `change-${i}` }));
+      const queue = Array(12)
+        .fill(null)
+        .map((_, i) => ({ id: `change-${i}` }));
       const batches = [];
 
       while (queue.length > 0) {
@@ -201,7 +209,7 @@ describe('useRealTimeValidator', () => {
       const processed = [];
       let processing = false;
 
-      const processQueue = async (queue) => {
+      const processQueue = async queue => {
         if (processing || queue.length === 0) return;
         processing = true;
 
@@ -228,10 +236,10 @@ describe('useRealTimeValidator', () => {
         { id: 'v2', severity: 'warning' },
         { id: 'v3', severity: 'violation' },
         { id: 'v4', severity: 'info' },
-        { id: 'v5', severity: 'warning' }
+        { id: 'v5', severity: 'warning' },
       ];
 
-      const getViolationsBySeverity = (severity) => {
+      const getViolationsBySeverity = severity => {
         return violations.filter(v => v.severity === severity);
       };
 
@@ -246,10 +254,10 @@ describe('useRealTimeValidator', () => {
       const violations = [
         { id: 'v1', focusNode: 'http://example.org/product1' },
         { id: 'v2', focusNode: 'http://example.org/product2' },
-        { id: 'v3', focusNode: 'http://example.org/product1' }
+        { id: 'v3', focusNode: 'http://example.org/product1' },
       ];
 
-      const getViolationsByFocusNode = (focusNode) => {
+      const getViolationsByFocusNode = focusNode => {
         return violations.filter(v => v.focusNode === focusNode);
       };
 
@@ -262,10 +270,10 @@ describe('useRealTimeValidator', () => {
       const violations = [
         { id: 'v1', shape: 'http://example.org/shapes#ProductShape' },
         { id: 'v2', shape: 'http://example.org/shapes#PersonShape' },
-        { id: 'v3', shape: 'http://example.org/shapes#ProductShape' }
+        { id: 'v3', shape: 'http://example.org/shapes#ProductShape' },
       ];
 
-      const getViolationsByShape = (shape) => {
+      const getViolationsByShape = shape => {
         return violations.filter(v => v.shape === shape);
       };
 
@@ -322,7 +330,7 @@ describe('useRealTimeValidator', () => {
       const violation = {
         focusNode: 'http://example.org/product1',
         message: 'Invalid property value',
-        severity: 'violation'
+        severity: 'violation',
       };
 
       const handleViolation = (v, options) => {
@@ -339,7 +347,7 @@ describe('useRealTimeValidator', () => {
 
       const enrichedViolation = {
         ...violation,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
 
       expect(enrichedViolation.timestamp).toBeDefined();
@@ -349,11 +357,14 @@ describe('useRealTimeValidator', () => {
     it('should accumulate violations over time', () => {
       let violations = [];
 
-      const addViolation = (v) => {
-        violations = [...violations, {
-          ...v,
-          timestamp: new Date().toISOString()
-        }];
+      const addViolation = v => {
+        violations = [
+          ...violations,
+          {
+            ...v,
+            timestamp: new Date().toISOString(),
+          },
+        ];
       };
 
       addViolation({ id: 'v1', message: 'Error 1' });
@@ -389,7 +400,7 @@ describe('useRealTimeValidator', () => {
       const config = { shapeGraph: 'http://example.org/shapes' };
       let usedShapeGraph = null;
 
-      const initializeValidator = async (cfg) => {
+      const initializeValidator = async cfg => {
         usedShapeGraph = cfg.shapeGraph;
       };
 
@@ -402,7 +413,7 @@ describe('useRealTimeValidator', () => {
       const config = {};
       let usedShapeGraph = null;
 
-      const initializeValidator = async (cfg) => {
+      const initializeValidator = async cfg => {
         usedShapeGraph = cfg.shapeGraph || null;
       };
 
@@ -416,7 +427,7 @@ describe('useRealTimeValidator', () => {
     it('should queue changes for validation', () => {
       const queue = [];
 
-      const addToQueue = (change) => {
+      const addToQueue = change => {
         queue.push(change);
       };
 
@@ -481,7 +492,7 @@ describe('useRealTimeValidator', () => {
     it('should handle validation error', async () => {
       let error = null;
 
-      const validateChange = async (change) => {
+      const validateChange = async change => {
         if (!change.quads) {
           error = new Error('Invalid change: missing quads');
           throw error;
@@ -495,7 +506,7 @@ describe('useRealTimeValidator', () => {
     it('should throw when validator not initialized', async () => {
       const validatorRef = { current: null };
 
-      const validateChange = async (change) => {
+      const validateChange = async _change => {
         if (!validatorRef.current) {
           throw new Error('Validator not initialized');
         }
@@ -508,15 +519,12 @@ describe('useRealTimeValidator', () => {
   describe('Change Metadata', () => {
     it('should include change ID in violations', () => {
       const change = { id: 'change-123' };
-      const violations = [
-        { message: 'Error 1' },
-        { message: 'Error 2' }
-      ];
+      const violations = [{ message: 'Error 1' }, { message: 'Error 2' }];
 
       const enrichedViolations = violations.map(v => ({
         ...v,
         changeId: change.id,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }));
 
       expect(enrichedViolations[0].changeId).toBe('change-123');
@@ -528,7 +536,7 @@ describe('useRealTimeValidator', () => {
 
       const validatedChange = {
         change: { id: '1' },
-        validatedAt: new Date().toISOString()
+        validatedAt: new Date().toISOString(),
       };
 
       expect(validatedChange.validatedAt).toBeDefined();

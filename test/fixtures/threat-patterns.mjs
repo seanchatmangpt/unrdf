@@ -23,7 +23,7 @@ export const threatPatterns = [
     `,
     expectedBehavior: 'Should be blocked or return sanitized context',
     severity: 'critical',
-    category: 'constructor-manipulation'
+    category: 'constructor-manipulation',
   },
 
   {
@@ -36,7 +36,7 @@ export const threatPatterns = [
     `,
     expectedBehavior: 'Should prevent prototype modification or isolate prototypes',
     severity: 'high',
-    category: 'prototype-manipulation'
+    category: 'prototype-manipulation',
   },
 
   {
@@ -48,7 +48,7 @@ export const threatPatterns = [
     `,
     expectedBehavior: 'process should be undefined or sanitized',
     severity: 'critical',
-    category: 'global-access'
+    category: 'global-access',
   },
 
   {
@@ -60,7 +60,7 @@ export const threatPatterns = [
     `,
     expectedBehavior: 'require should be undefined',
     severity: 'critical',
-    category: 'module-loading'
+    category: 'module-loading',
   },
 
   {
@@ -72,7 +72,7 @@ export const threatPatterns = [
     `,
     expectedBehavior: 'import.meta should be sanitized or undefined',
     severity: 'medium',
-    category: 'module-loading'
+    category: 'module-loading',
   },
 
   {
@@ -84,7 +84,7 @@ export const threatPatterns = [
     `,
     expectedBehavior: 'Should not expose host process object',
     severity: 'critical',
-    category: 'global-access'
+    category: 'global-access',
   },
 
   {
@@ -97,7 +97,7 @@ export const threatPatterns = [
     `,
     expectedBehavior: 'Symbol registry should be isolated',
     severity: 'medium',
-    category: 'symbol-manipulation'
+    category: 'symbol-manipulation',
   },
 
   {
@@ -109,7 +109,7 @@ export const threatPatterns = [
     `,
     expectedBehavior: 'process.binding should be unavailable',
     severity: 'high',
-    category: 'internal-access'
+    category: 'internal-access',
   },
 
   {
@@ -124,7 +124,7 @@ export const threatPatterns = [
     `,
     expectedBehavior: 'Should enforce memory limits',
     severity: 'high',
-    category: 'resource-exhaustion'
+    category: 'resource-exhaustion',
   },
 
   {
@@ -136,7 +136,7 @@ export const threatPatterns = [
     `,
     expectedBehavior: 'Should timeout and terminate',
     severity: 'medium',
-    category: 'denial-of-service'
+    category: 'denial-of-service',
   },
 
   {
@@ -148,7 +148,7 @@ export const threatPatterns = [
     `,
     expectedBehavior: 'eval should be disabled or sanitized',
     severity: 'critical',
-    category: 'code-injection'
+    category: 'code-injection',
   },
 
   {
@@ -161,7 +161,7 @@ export const threatPatterns = [
     `,
     expectedBehavior: 'WebAssembly should be disabled',
     severity: 'high',
-    category: 'wasm-execution'
+    category: 'wasm-execution',
   },
 
   {
@@ -179,8 +179,8 @@ export const threatPatterns = [
     `,
     expectedBehavior: 'Proxy should be monitored or restricted',
     severity: 'medium',
-    category: 'proxy-manipulation'
-  }
+    category: 'proxy-manipulation',
+  },
 ];
 
 /**
@@ -196,7 +196,7 @@ export const benignPatterns = [
       result;
     `,
     expectedResult: 1036,
-    category: 'safe-operations'
+    category: 'safe-operations',
   },
 
   {
@@ -207,7 +207,7 @@ export const benignPatterns = [
       str.toUpperCase().split(' ').join('-');
     `,
     expectedResult: 'HELLO-WORLD',
-    category: 'safe-operations'
+    category: 'safe-operations',
   },
 
   {
@@ -218,7 +218,7 @@ export const benignPatterns = [
       arr.map(x => x * 2).filter(x => x > 5).reduce((a, b) => a + b, 0);
     `,
     expectedResult: 24,
-    category: 'safe-operations'
+    category: 'safe-operations',
   },
 
   {
@@ -229,7 +229,7 @@ export const benignPatterns = [
       Object.keys(obj).length;
     `,
     expectedResult: 3,
-    category: 'safe-operations'
+    category: 'safe-operations',
   },
 
   {
@@ -240,7 +240,7 @@ export const benignPatterns = [
       JSON.parse(JSON.stringify(data)).value;
     `,
     expectedResult: 42,
-    category: 'safe-operations'
+    category: 'safe-operations',
   },
 
   {
@@ -253,8 +253,8 @@ export const benignPatterns = [
       })();
     `,
     expectedResult: Promise.resolve(42),
-    category: 'safe-async'
-  }
+    category: 'safe-async',
+  },
 ];
 
 /**
@@ -273,7 +273,7 @@ export const performancePatterns = [
       fib(20);
     `,
     expectedMaxDuration: 1000, // ms
-    category: 'cpu-intensive'
+    category: 'cpu-intensive',
   },
 
   {
@@ -284,7 +284,7 @@ export const performancePatterns = [
       arr.reduce((sum, val) => sum + val, 0);
     `,
     expectedMaxDuration: 500,
-    category: 'memory-intensive'
+    category: 'memory-intensive',
   },
 
   {
@@ -298,8 +298,8 @@ export const performancePatterns = [
       str.length;
     `,
     expectedMaxDuration: 300,
-    category: 'string-intensive'
-  }
+    category: 'string-intensive',
+  },
 ];
 
 /**
@@ -317,7 +317,7 @@ export const memorySafetyPatterns = [
       JSON.stringify(obj1); // Should handle or error gracefully
     `,
     shouldThrow: true,
-    category: 'memory-safety'
+    category: 'memory-safety',
   },
 
   {
@@ -331,8 +331,8 @@ export const memorySafetyPatterns = [
       Object.keys(large).length;
     `,
     expectedMaxMemory: 50 * 1024 * 1024, // 50MB
-    category: 'memory-limits'
-  }
+    category: 'memory-limits',
+  },
 ];
 
 /**
@@ -381,7 +381,7 @@ export async function validateSandbox(executeCode) {
     blocked: 0,
     escaped: 0,
     errors: 0,
-    details: []
+    details: [],
   };
 
   for (const pattern of threatPatterns) {
@@ -389,12 +389,16 @@ export async function validateSandbox(executeCode) {
       const result = await executeCode(pattern.code);
 
       // Check if threat was properly neutralized
-      if (result === null || result === undefined || typeof result === 'object' && !result.constructor) {
+      if (
+        result === null ||
+        result === undefined ||
+        (typeof result === 'object' && !result.constructor)
+      ) {
         results.blocked++;
         results.details.push({
           pattern: pattern.id,
           status: 'blocked',
-          severity: pattern.severity
+          severity: pattern.severity,
         });
       } else {
         results.escaped++;
@@ -402,7 +406,7 @@ export async function validateSandbox(executeCode) {
           pattern: pattern.id,
           status: 'escaped',
           severity: pattern.severity,
-          result
+          result,
         });
       }
     } catch (error) {
@@ -411,7 +415,7 @@ export async function validateSandbox(executeCode) {
         pattern: pattern.id,
         status: 'error',
         severity: pattern.severity,
-        error: error.message
+        error: error.message,
       });
     }
   }
@@ -428,5 +432,5 @@ export default {
   getThreatPatternsByCategory,
   getThreatPatternsBySeverity,
   getCriticalThreats,
-  validateSandbox
+  validateSandbox,
 };

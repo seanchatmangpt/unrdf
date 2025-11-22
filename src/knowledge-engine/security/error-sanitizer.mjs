@@ -12,13 +12,15 @@ import { z } from 'zod';
 /**
  * Schema for sanitization options
  */
-const SanitizationOptionsSchema = z.object({
-  removeStackTraces: z.boolean().default(true),
-  removeFilePaths: z.boolean().default(true),
-  removeCredentials: z.boolean().default(true),
-  removeEnvironmentVars: z.boolean().default(true),
-  genericErrorMessage: z.string().default('An error occurred'),
-}).strict();
+const SanitizationOptionsSchema = z
+  .object({
+    removeStackTraces: z.boolean().default(true),
+    removeFilePaths: z.boolean().default(true),
+    removeCredentials: z.boolean().default(true),
+    removeEnvironmentVars: z.boolean().default(true),
+    genericErrorMessage: z.string().default('An error occurred'),
+  })
+  .strict();
 
 /**
  * Patterns to detect and sanitize sensitive information
@@ -145,7 +147,7 @@ export class ErrorSanitizer {
     let sanitized = text;
 
     for (const pattern of SENSITIVE_PATTERNS.credentials) {
-      sanitized = sanitized.replace(pattern, (match) => {
+      sanitized = sanitized.replace(pattern, match => {
         if (match.includes('://')) {
           // Replace password in connection string
           return match.replace(/:\/\/[^:]+:[^@]+@/, '://***:***@');
@@ -184,7 +186,7 @@ export class ErrorSanitizer {
     let sanitized = text;
 
     for (const pattern of SENSITIVE_PATTERNS.environmentVars) {
-      sanitized = sanitized.replace(pattern, (match) => {
+      sanitized = sanitized.replace(pattern, match => {
         return match.split('=')[0] + '=***';
       });
     }

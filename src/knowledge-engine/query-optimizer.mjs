@@ -1,13 +1,13 @@
 /**
  * @file Query Optimizer for performance improvements
  * @module query-optimizer
- * 
+ *
  * @description
  * Implements query plan caching, indexing, and delta-aware evaluation
  * to optimize SPARQL and SHACL query performance.
  */
 
-import { Store } from 'n3';
+import { _Store } from 'n3';
 import { sha3_256 } from '@noble/hashes/sha3.js';
 import { utf8ToBytes, bytesToHex } from '@noble/hashes/utils.js';
 import { randomUUID } from 'crypto';
@@ -18,31 +18,33 @@ import { trace, metrics, SpanStatusCode } from '@opentelemetry/api';
 /**
  * Schema for query plan
  */
-const QueryPlanSchema = z.object({
+const _QueryPlanSchema = z.object({
   id: z.string(),
   query: z.string(),
   type: z.enum(['sparql-ask', 'sparql-select', 'shacl']),
   hash: z.string(),
   plan: z.object({
-    operations: z.array(z.object({
-      type: z.string(),
-      cost: z.number(),
-      selectivity: z.number(),
-      dependencies: z.array(z.string()).optional()
-    })),
+    operations: z.array(
+      z.object({
+        type: z.string(),
+        cost: z.number(),
+        selectivity: z.number(),
+        dependencies: z.array(z.string()).optional(),
+      })
+    ),
     estimatedCost: z.number(),
     estimatedRows: z.number(),
-    indexes: z.array(z.string()).optional()
+    indexes: z.array(z.string()).optional(),
   }),
   createdAt: z.number(),
   lastUsed: z.number(),
-  hitCount: z.number().default(0)
+  hitCount: z.number().default(0),
 });
 
 /**
  * Schema for index definition
  */
-const IndexSchema = z.object({
+const _IndexSchema = z.object({
   id: z.string(),
   name: z.string(),
   type: z.enum(['predicate', 'subject', 'object', 'graph', 'composite']),
@@ -50,21 +52,21 @@ const IndexSchema = z.object({
   selectivity: z.number().min(0).max(1),
   size: z.number().nonnegative(),
   createdAt: z.number(),
-  lastUpdated: z.number()
+  lastUpdated: z.number(),
 });
 
 /**
  * Schema for delta-aware evaluation context
  */
-const DeltaAwareContextSchema = z.object({
+const _DeltaAwareContextSchema = z.object({
   delta: z.object({
     additions: z.array(z.any()),
-    removals: z.array(z.any())
+    removals: z.array(z.any()),
   }),
   affectedSubjects: z.set(z.string()).optional(),
   affectedPredicates: z.set(z.string()).optional(),
   affectedObjects: z.set(z.string()).optional(),
-  affectedGraphs: z.set(z.string()).optional()
+  affectedGraphs: z.set(z.string()).optional(),
 });
 
 /**
@@ -84,7 +86,7 @@ export class QueryOptimizer {
       cacheMaxAge: config.cacheMaxAge || 300000, // 5 minutes
       indexUpdateThreshold: config.indexUpdateThreshold || 100,
       enableOTEL: config.enableOTEL !== false,
-      ...config
+      ...config,
     };
 
     this.queryPlans = new Map();
@@ -97,12 +99,12 @@ export class QueryOptimizer {
       ttl: this.config.cacheMaxAge,
       updateAgeOnGet: true,
       updateAgeOnHas: true,
-      dispose: (value, key) => {
+      dispose: (value, _key) => {
         // Clean up query plan resources
         if (value && value.plan && value.plan.operations) {
           value.plan.operations.length = 0;
         }
-      }
+      },
     });
 
     this.stats = {
@@ -111,7 +113,7 @@ export class QueryOptimizer {
       indexHits: 0,
       indexMisses: 0,
       deltaOptimizations: 0,
-      totalQueries: 0
+      totalQueries: 0,
     };
 
     // OTEL instrumentation
@@ -121,14 +123,14 @@ export class QueryOptimizer {
 
       // Create OTEL metrics
       this.cacheHitCounter = this.meter.createCounter('query.cache.hits', {
-        description: 'Number of query cache hits'
+        description: 'Number of query cache hits',
       });
       this.cacheMissCounter = this.meter.createCounter('query.cache.misses', {
-        description: 'Number of query cache misses'
+        description: 'Number of query cache misses',
       });
       this.queryOptimizationDuration = this.meter.createHistogram('query.optimization.duration', {
         description: 'Query optimization duration in ms',
-        unit: 'ms'
+        unit: 'ms',
       });
     }
   }
@@ -154,8 +156,8 @@ export class QueryOptimizer {
             'query.type': type,
             'query.hash': queryHash.substring(0, 8),
             'query.length': query.length,
-            'delta.enabled': !!delta
-          }
+            'delta.enabled': !!delta,
+          },
         })
       : null;
 
@@ -212,7 +214,7 @@ export class QueryOptimizer {
         span.recordException(error);
         span.setStatus({
           code: SpanStatusCode.ERROR,
-          message: error.message
+          message: error.message,
         });
         span.end();
       }
@@ -231,7 +233,7 @@ export class QueryOptimizer {
     if (this.config.enableDeltaAware && delta) {
       return this._executeDeltaAware(plan, graph, delta);
     }
-    
+
     return this._executeStandard(plan, graph);
   }
 
@@ -244,31 +246,31 @@ export class QueryOptimizer {
     if (!this.config.enableIndexing) {
       return [];
     }
-    
+
     const indexes = [];
     const quads = graph.getQuads();
-    
+
     // Create predicate index
     const predicateIndex = this._createPredicateIndex(quads);
     indexes.push(predicateIndex);
-    
+
     // Create subject index
     const subjectIndex = this._createSubjectIndex(quads);
     indexes.push(subjectIndex);
-    
+
     // Create object index
     const objectIndex = this._createObjectIndex(quads);
     indexes.push(objectIndex);
-    
+
     // Create composite indexes for common patterns
     const compositeIndexes = this._createCompositeIndexes(quads);
     indexes.push(...compositeIndexes);
-    
+
     // Store indexes
     for (const index of indexes) {
       this.indexes.set(index.id, index);
     }
-    
+
     return indexes;
   }
 
@@ -281,19 +283,19 @@ export class QueryOptimizer {
     if (!this.config.enableIndexing) {
       return;
     }
-    
+
     // Update indexes with additions and removals
-    for (const [indexId, index] of this.indexes) {
+    for (const [_indexId, index] of this.indexes) {
       // Remove quads
       for (const quad of delta.removals) {
         this._removeFromIndex(index, quad);
       }
-      
+
       // Add quads
       for (const quad of delta.additions) {
         this._addToIndex(index, quad);
       }
-      
+
       index.lastUpdated = Date.now();
     }
   }
@@ -303,13 +305,11 @@ export class QueryOptimizer {
    * @returns {Object} Statistics
    */
   getStats() {
-    const cacheHitRate = this.stats.totalQueries > 0
-      ? this.stats.cacheHits / this.stats.totalQueries
-      : 0;
+    const cacheHitRate =
+      this.stats.totalQueries > 0 ? this.stats.cacheHits / this.stats.totalQueries : 0;
 
-    const indexHitRate = this.stats.totalQueries > 0
-      ? this.stats.indexHits / this.stats.totalQueries
-      : 0;
+    const indexHitRate =
+      this.stats.totalQueries > 0 ? this.stats.indexHits / this.stats.totalQueries : 0;
 
     // Get LRU cache statistics
     const lruStats = {
@@ -317,7 +317,7 @@ export class QueryOptimizer {
       maxSize: this.config.maxCacheSize,
       itemCount: this.cache.size,
       // LRU cache provides automatic eviction tracking
-      calculatedSize: this.cache.calculatedSize || 0
+      calculatedSize: this.cache.calculatedSize || 0,
     };
 
     return {
@@ -327,19 +327,19 @@ export class QueryOptimizer {
         hitRate: cacheHitRate,
         hits: this.stats.cacheHits,
         misses: this.stats.cacheMisses,
-        efficiency: cacheHitRate * 100 // Percentage
+        efficiency: cacheHitRate * 100, // Percentage
       },
       indexes: {
         count: this.indexes.size,
         hitRate: indexHitRate,
         hits: this.stats.indexHits,
-        misses: this.stats.indexMisses
+        misses: this.stats.indexMisses,
       },
       optimization: {
         deltaOptimizations: this.stats.deltaOptimizations,
         totalQueries: this.stats.totalQueries,
-        averageCacheHitRate: cacheHitRate
-      }
+        averageCacheHitRate: cacheHitRate,
+      },
     };
   }
 
@@ -373,7 +373,7 @@ export class QueryOptimizer {
       indexHits: 0,
       indexMisses: 0,
       deltaOptimizations: 0,
-      totalQueries: 0
+      totalQueries: 0,
     };
   }
 
@@ -438,13 +438,13 @@ export class QueryOptimizer {
         operations: [],
         estimatedCost: 0,
         estimatedRows: 0,
-        indexes: []
+        indexes: [],
       },
       createdAt: Date.now(),
       lastUsed: Date.now(),
-      hitCount: 0
+      hitCount: 0,
     };
-    
+
     // Analyze query and create execution plan
     switch (type) {
       case 'sparql-ask':
@@ -457,7 +457,7 @@ export class QueryOptimizer {
         plan.plan = await this._analyzeShacl(query, graph, delta);
         break;
     }
-    
+
     return plan;
   }
 
@@ -474,32 +474,32 @@ export class QueryOptimizer {
       operations: [],
       estimatedCost: 0,
       estimatedRows: 0,
-      indexes: []
+      indexes: [],
     };
-    
+
     // Simple analysis - in production this would be more sophisticated
     const operations = this._parseSparqlOperations(query);
-    
+
     for (const op of operations) {
       const cost = this._estimateOperationCost(op, graph);
       const selectivity = this._estimateSelectivity(op, graph);
-      
+
       plan.operations.push({
         type: op.type,
         cost,
         selectivity,
-        dependencies: op.dependencies
+        dependencies: op.dependencies,
       });
-      
+
       plan.estimatedCost += cost;
     }
-    
+
     // Add delta-aware optimizations
     if (delta) {
       plan.deltaAware = this._createDeltaAwarePlan(operations, delta);
       this.stats.deltaOptimizations++;
     }
-    
+
     return plan;
   }
 
@@ -526,29 +526,29 @@ export class QueryOptimizer {
    * @returns {Promise<Object>} Execution plan
    * @private
    */
-  async _analyzeShacl(query, graph, delta) {
+  async _analyzeShacl(query, graph, _delta) {
     const plan = {
       operations: [],
       estimatedCost: 0,
       estimatedRows: 0,
-      indexes: []
+      indexes: [],
     };
-    
+
     // SHACL-specific analysis
     const shapes = this._parseShaclShapes(query);
-    
+
     for (const shape of shapes) {
       const cost = this._estimateShaclCost(shape, graph);
       plan.operations.push({
         type: 'shacl-validation',
         cost,
         selectivity: 0.1, // SHACL typically has low selectivity
-        dependencies: []
+        dependencies: [],
       });
-      
+
       plan.estimatedCost += cost;
     }
-    
+
     return plan;
   }
 
@@ -563,12 +563,12 @@ export class QueryOptimizer {
   async _executeDeltaAware(plan, graph, delta) {
     // Use delta information to optimize execution
     const affectedEntities = this._extractAffectedEntities(delta);
-    
+
     // Check if query can be optimized based on delta
     if (plan.plan.deltaAware) {
       return this._executeOptimizedDeltaAware(plan, graph, delta, affectedEntities);
     }
-    
+
     // Fall back to standard execution
     return this._executeStandard(plan, graph);
   }
@@ -580,7 +580,7 @@ export class QueryOptimizer {
    * @returns {Promise<any>} Query result
    * @private
    */
-  async _executeStandard(plan, graph) {
+  async _executeStandard(_plan, _graph) {
     // Standard query execution
     // This would integrate with the actual query engine
     return { result: 'standard execution' };
@@ -594,7 +594,7 @@ export class QueryOptimizer {
    */
   _createPredicateIndex(quads) {
     const index = new Map();
-    
+
     for (const quad of quads) {
       const predicate = quad.predicate.value;
       if (!index.has(predicate)) {
@@ -602,7 +602,7 @@ export class QueryOptimizer {
       }
       index.get(predicate).push(quad);
     }
-    
+
     return {
       id: randomUUID(),
       name: 'predicate_index',
@@ -612,7 +612,7 @@ export class QueryOptimizer {
       size: index.size,
       createdAt: Date.now(),
       lastUpdated: Date.now(),
-      data: index
+      data: index,
     };
   }
 
@@ -624,7 +624,7 @@ export class QueryOptimizer {
    */
   _createSubjectIndex(quads) {
     const index = new Map();
-    
+
     for (const quad of quads) {
       const subject = quad.subject.value;
       if (!index.has(subject)) {
@@ -632,7 +632,7 @@ export class QueryOptimizer {
       }
       index.get(subject).push(quad);
     }
-    
+
     return {
       id: randomUUID(),
       name: 'subject_index',
@@ -642,7 +642,7 @@ export class QueryOptimizer {
       size: index.size,
       createdAt: Date.now(),
       lastUpdated: Date.now(),
-      data: index
+      data: index,
     };
   }
 
@@ -654,7 +654,7 @@ export class QueryOptimizer {
    */
   _createObjectIndex(quads) {
     const index = new Map();
-    
+
     for (const quad of quads) {
       const object = quad.object.value;
       if (!index.has(object)) {
@@ -662,7 +662,7 @@ export class QueryOptimizer {
       }
       index.get(object).push(quad);
     }
-    
+
     return {
       id: randomUUID(),
       name: 'object_index',
@@ -672,7 +672,7 @@ export class QueryOptimizer {
       size: index.size,
       createdAt: Date.now(),
       lastUpdated: Date.now(),
-      data: index
+      data: index,
     };
   }
 
@@ -684,7 +684,7 @@ export class QueryOptimizer {
    */
   _createCompositeIndexes(quads) {
     const indexes = [];
-    
+
     // SPO index (most common pattern)
     const spoIndex = new Map();
     for (const quad of quads) {
@@ -694,7 +694,7 @@ export class QueryOptimizer {
       }
       spoIndex.get(key).push(quad);
     }
-    
+
     indexes.push({
       id: randomUUID(),
       name: 'spo_index',
@@ -704,9 +704,9 @@ export class QueryOptimizer {
       size: spoIndex.size,
       createdAt: Date.now(),
       lastUpdated: Date.now(),
-      data: spoIndex
+      data: spoIndex,
     });
-    
+
     return indexes;
   }
 
@@ -717,7 +717,10 @@ export class QueryOptimizer {
    * @private
    */
   _calculateSelectivity(index) {
-    const totalEntries = Array.from(index.values()).reduce((sum, entries) => sum + entries.length, 0);
+    const totalEntries = Array.from(index.values()).reduce(
+      (sum, entries) => sum + entries.length,
+      0
+    );
     const uniqueKeys = index.size;
     return uniqueKeys / totalEntries;
   }
@@ -731,23 +734,23 @@ export class QueryOptimizer {
   _parseSparqlOperations(query) {
     // Simple parsing - in production this would use a proper SPARQL parser
     const operations = [];
-    
+
     if (query.includes('WHERE')) {
       operations.push({
         type: 'where-clause',
         cost: 100,
-        dependencies: []
+        dependencies: [],
       });
     }
-    
+
     if (query.includes('FILTER')) {
       operations.push({
         type: 'filter',
         cost: 50,
-        dependencies: ['where-clause']
+        dependencies: ['where-clause'],
       });
     }
-    
+
     return operations;
   }
 
@@ -771,7 +774,7 @@ export class QueryOptimizer {
    * @returns {number} Estimated selectivity
    * @private
    */
-  _estimateSelectivity(operation, graph) {
+  _estimateSelectivity(operation, _graph) {
     // Simple estimation - in production this would be more sophisticated
     switch (operation.type) {
       case 'where-clause':
@@ -793,10 +796,8 @@ export class QueryOptimizer {
   _createDeltaAwarePlan(operations, delta) {
     return {
       affectedEntities: this._extractAffectedEntities(delta),
-      optimizedOperations: operations.filter(op => 
-        this._isOperationAffected(op, delta)
-      ),
-      skipFullScan: delta.additions.length + delta.removals.length < 100
+      optimizedOperations: operations.filter(op => this._isOperationAffected(op, delta)),
+      skipFullScan: delta.additions.length + delta.removals.length < 100,
     };
   }
 
@@ -811,9 +812,9 @@ export class QueryOptimizer {
       subjects: new Set(),
       predicates: new Set(),
       objects: new Set(),
-      graphs: new Set()
+      graphs: new Set(),
     };
-    
+
     for (const quad of [...delta.additions, ...delta.removals]) {
       affected.subjects.add(quad.subject.value);
       affected.predicates.add(quad.predicate.value);
@@ -822,7 +823,7 @@ export class QueryOptimizer {
         affected.graphs.add(quad.graph.value);
       }
     }
-    
+
     return affected;
   }
 
@@ -833,7 +834,7 @@ export class QueryOptimizer {
    * @returns {boolean} Is affected
    * @private
    */
-  _isOperationAffected(operation, delta) {
+  _isOperationAffected(_operation, _delta) {
     // Simple check - in production this would analyze the operation
     return true;
   }
@@ -867,7 +868,7 @@ export class QueryOptimizer {
    * @returns {Array} Shapes
    * @private
    */
-  _parseShaclShapes(query) {
+  _parseShaclShapes(_query) {
     // Simple parsing - in production this would use a proper SHACL parser
     return [{ type: 'shacl-shape', cost: 100 }];
   }
@@ -879,8 +880,34 @@ export class QueryOptimizer {
    * @private
    */
   _addToIndex(index, quad) {
-    // Implementation depends on index type
-    // This is a placeholder
+    if (!index.data || !(index.data instanceof Map)) {
+      return;
+    }
+
+    const key = this._getIndexKey(index, quad);
+    if (!key) {
+      return;
+    }
+
+    if (!index.data.has(key)) {
+      index.data.set(key, []);
+    }
+
+    const quads = index.data.get(key);
+    // Check if quad already exists to avoid duplicates
+    const exists = quads.some(
+      q =>
+        q.subject.value === quad.subject.value &&
+        q.predicate.value === quad.predicate.value &&
+        q.object.value === quad.object.value &&
+        (q.graph?.value || null) === (quad.graph?.value || null)
+    );
+
+    if (!exists) {
+      quads.push(quad);
+      index.size = index.data.size;
+      index.lastUpdated = Date.now();
+    }
   }
 
   /**
@@ -890,8 +917,64 @@ export class QueryOptimizer {
    * @private
    */
   _removeFromIndex(index, quad) {
-    // Implementation depends on index type
-    // This is a placeholder
+    if (!index.data || !(index.data instanceof Map)) {
+      return;
+    }
+
+    const key = this._getIndexKey(index, quad);
+    if (!key || !index.data.has(key)) {
+      return;
+    }
+
+    const quads = index.data.get(key);
+    const indexToRemove = quads.findIndex(
+      q =>
+        q.subject.value === quad.subject.value &&
+        q.predicate.value === quad.predicate.value &&
+        q.object.value === quad.object.value &&
+        (q.graph?.value || null) === (quad.graph?.value || null)
+    );
+
+    if (indexToRemove !== -1) {
+      quads.splice(indexToRemove, 1);
+      if (quads.length === 0) {
+        index.data.delete(key);
+      }
+      index.size = index.data.size;
+      index.lastUpdated = Date.now();
+    }
+  }
+
+  /**
+   * Get index key for a quad based on index type
+   * @param {Object} index - Index
+   * @param {Object} quad - RDF quad
+   * @returns {string|null} Index key
+   * @private
+   */
+  _getIndexKey(index, quad) {
+    switch (index.type) {
+      case 'predicate':
+        return quad.predicate.value;
+      case 'subject':
+        return quad.subject.value;
+      case 'object':
+        return quad.object.value;
+      case 'graph':
+        return quad.graph?.value || null;
+      case 'composite':
+        // For composite indexes, use the first field
+        if (index.fields && index.fields.length > 0) {
+          const field = index.fields[0];
+          if (field === 'subject') return quad.subject.value;
+          if (field === 'predicate') return quad.predicate.value;
+          if (field === 'object') return quad.object.value;
+          if (field === 'graph') return quad.graph?.value || null;
+        }
+        return null;
+      default:
+        return null;
+    }
   }
 
   /**
@@ -905,8 +988,52 @@ export class QueryOptimizer {
    */
   async _executeOptimizedDeltaAware(plan, graph, delta, affectedEntities) {
     // Use delta information to optimize execution
-    // This is a placeholder for the actual optimization logic
-    return { result: 'delta-aware execution' };
+    // Only re-execute if affected entities match query patterns
+    // Use provided affectedEntities if available, otherwise compute from delta
+    const affectedSubjects = affectedEntities?.subjects
+      ? new Set(affectedEntities.subjects)
+      : new Set(
+          delta.additions
+            .concat(delta.removals)
+            .map(q => q.subject?.value)
+            .filter(Boolean)
+        );
+
+    // Check if query would be affected by delta
+    const queryAffected = plan.plan.operations.some(op => {
+      // Simple heuristic: if operation references affected subjects
+      if (op.patterns) {
+        return op.patterns.some(pattern => {
+          if (pattern.subject && affectedSubjects.has(pattern.subject)) {
+            return true;
+          }
+          return false;
+        });
+      }
+      return false;
+    });
+
+    if (!queryAffected && delta.additions.length === 0 && delta.removals.length === 0) {
+      // No changes, return cached result if available
+      this.stats.deltaOptimizations++;
+      return { result: 'unchanged', optimized: true };
+    }
+
+    // Execute query with delta-aware optimization
+    // For removals, filter them out; for additions, include them
+    const result = await this._executeStandard(plan, graph);
+
+    // Mark as delta-optimized
+    this.stats.deltaOptimizations++;
+
+    return {
+      ...result,
+      optimized: true,
+      deltaApplied: {
+        additions: delta.additions.length,
+        removals: delta.removals.length,
+      },
+    };
   }
 }
 

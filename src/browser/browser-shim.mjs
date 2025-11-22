@@ -22,10 +22,7 @@ export const path = {
    * @returns {string} Joined path
    */
   join(...segments) {
-    return segments
-      .join('/')
-      .replace(/\/+/g, '/')
-      .replace(/^\//, '');
+    return segments.join('/').replace(/\/+/g, '/').replace(/^\//, '');
   },
 
   /**
@@ -202,10 +199,10 @@ export const crypto = {
   createHash(algorithm) {
     const normalizedAlgo = algorithm.toLowerCase().replace('-', '');
     const algoMap = {
-      'sha256': 'SHA-256',
-      'sha384': 'SHA-384',
-      'sha512': 'SHA-512',
-      'sha1': 'SHA-1',
+      sha256: 'SHA-256',
+      sha384: 'SHA-384',
+      sha512: 'SHA-512',
+      sha1: 'SHA-1',
     };
 
     const webAlgo = algoMap[normalizedAlgo];
@@ -217,9 +214,7 @@ export const crypto = {
 
     return {
       update(chunk) {
-        const chunkBytes = typeof chunk === 'string'
-          ? new TextEncoder().encode(chunk)
-          : chunk;
+        const chunkBytes = typeof chunk === 'string' ? new TextEncoder().encode(chunk) : chunk;
 
         const newData = new Uint8Array(data.length + chunkBytes.length);
         newData.set(data);
@@ -265,12 +260,12 @@ export class BrowserWorker {
     this.exitHandlers = [];
 
     // Forward worker messages
-    this.worker.onmessage = (event) => {
+    this.worker.onmessage = event => {
       this.messageHandlers.forEach(handler => handler(event.data));
     };
 
     // Forward worker errors
-    this.worker.onerror = (event) => {
+    this.worker.onerror = event => {
       const error = new Error(event.message);
       error.filename = event.filename;
       error.lineno = event.lineno;
@@ -335,7 +330,7 @@ export class BrowserWorker {
    * @returns {number} Thread ID
    */
   get threadId() {
-    return Math.random() * 1000000 | 0;
+    return (Math.random() * 1000000) | 0;
   }
 }
 

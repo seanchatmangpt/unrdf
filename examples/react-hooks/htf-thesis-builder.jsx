@@ -38,7 +38,10 @@ export function HTFThesisBuilderApp() {
       <nav style={styles.nav}>
         <button
           onClick={() => setActiveTab('editor')}
-          style={{ ...styles.navButton, backgroundColor: activeTab === 'editor' ? '#3b82f6' : '#666' }}
+          style={{
+            ...styles.navButton,
+            backgroundColor: activeTab === 'editor' ? '#3b82f6' : '#666',
+          }}
         >
           Editor
         </button>
@@ -99,10 +102,13 @@ function ΔEditorTab({ thesis, setThesis }) {
   const [selectedShard, setSelectedShard] = useState(null);
   const [editContent, setEditContent] = useState('');
 
-  const handleEdit = useCallback((shardId) => {
-    updateShard(shardId, { content: editContent });
-    setEditContent('');
-  }, [updateShard, editContent]);
+  const handleEdit = useCallback(
+    shardId => {
+      updateShard(shardId, { content: editContent });
+      setEditContent('');
+    },
+    [updateShard, editContent]
+  );
 
   return (
     <div style={styles.tab}>
@@ -115,7 +121,7 @@ function ΔEditorTab({ thesis, setThesis }) {
             {shards.length === 0 ? (
               <p>No shards yet. Create one to start.</p>
             ) : (
-              shards.map((shard) => (
+              shards.map(shard => (
                 <div
                   key={shard.id}
                   onClick={() => {
@@ -149,7 +155,7 @@ function ΔEditorTab({ thesis, setThesis }) {
               </p>
               <textarea
                 value={editContent}
-                onChange={(e) => setEditContent(e.target.value)}
+                onChange={e => setEditContent(e.target.value)}
                 style={styles.textarea}
                 placeholder="Edit shard content..."
               />
@@ -212,7 +218,9 @@ function ΛSchedulerTab() {
               return (
                 <li key={shard.id}>
                   <strong>{shard.type}</strong> ({shard.family})
-                  {!pos.isCanonical && <span style={styles.warning}> ⚠ Not in canonical position</span>}
+                  {!pos.isCanonical && (
+                    <span style={styles.warning}> ⚠ Not in canonical position</span>
+                  )}
                 </li>
               );
             })}
@@ -221,7 +229,8 @@ function ΛSchedulerTab() {
       </div>
 
       <div style={styles.hint}>
-        <strong>Λ-Tip:</strong> The canonical order ensures optimal logical flow. Green indicates ideal positioning.
+        <strong>Λ-Tip:</strong> The canonical order ensures optimal logical flow. Green indicates
+        ideal positioning.
       </div>
     </div>
   );
@@ -236,9 +245,13 @@ function ΠProfilerTab() {
 
   const familyCoverage = {};
   for (const name of familyNames) {
-    const count = shards.filter((s) => s.family === name).length;
+    const count = shards.filter(s => s.family === name).length;
     const expected = families[name].length;
-    familyCoverage[name] = { count, expected, percent: (count / expected) * 100 };
+    familyCoverage[name] = {
+      count,
+      expected,
+      percent: (count / expected) * 100,
+    };
   }
 
   return (
@@ -259,7 +272,7 @@ function ΠProfilerTab() {
       </div>
 
       <div style={styles.familyGrid}>
-        {familyNames.map((family) => {
+        {familyNames.map(family => {
           const cov = familyCoverage[family];
           const color = cov.percent > 80 ? '#22c55e' : cov.percent > 50 ? '#f59e0b' : '#ef4444';
 
@@ -285,8 +298,8 @@ function ΠProfilerTab() {
       </div>
 
       <div style={styles.hint}>
-        <strong>Π-Tip:</strong> Aim for 100% coverage of each family for balanced thesis composition.
-        Found {connections.length} cross-shard connections.
+        <strong>Π-Tip:</strong> Aim for 100% coverage of each family for balanced thesis
+        composition. Found {connections.length} cross-shard connections.
       </div>
     </div>
   );
@@ -347,7 +360,8 @@ function ΓCheckerTab() {
       </div>
 
       <div style={styles.hint}>
-        <strong>Γ-Tip:</strong> Low drift indicates good conceptual coherence. Build glossaries to maintain consistency.
+        <strong>Γ-Tip:</strong> Low drift indicates good conceptual coherence. Build glossaries to
+        maintain consistency.
       </div>
     </div>
   );
@@ -409,14 +423,21 @@ function τDashboardTab() {
       </div>
 
       {atFinal && (
-        <div style={{ ...styles.successBox, backgroundColor: '#dcfce7', color: '#166534' }}>
+        <div
+          style={{
+            ...styles.successBox,
+            backgroundColor: '#dcfce7',
+            color: '#166534',
+          }}
+        >
           <h3>✓ Thesis Complete!</h3>
           <p>Your thesis has converged to μ(μ(HTF_O)). Ready for submission.</p>
         </div>
       )}
 
       <div style={styles.hint}>
-        <strong>τ-Tip:</strong> Monitor energy and completion percentage. Auto-advance when each metric crosses threshold.
+        <strong>τ-Tip:</strong> Monitor energy and completion percentage. Auto-advance when each
+        metric crosses threshold.
       </div>
     </div>
   );
@@ -442,15 +463,15 @@ function AddShardForm({ onAdd }) {
   return (
     <div>
       <h4>Add New Shard</h4>
-      <select value={family} onChange={(e) => setFamily(e.target.value)} style={styles.input}>
-        {Object.keys(families).map((f) => (
+      <select value={family} onChange={e => setFamily(e.target.value)} style={styles.input}>
+        {Object.keys(families).map(f => (
           <option key={f} value={f}>
             {f}
           </option>
         ))}
       </select>
-      <select value={type} onChange={(e) => setType(e.target.value)} style={styles.input}>
-        {families[family].map((t) => (
+      <select value={type} onChange={e => setType(e.target.value)} style={styles.input}>
+        {families[family].map(t => (
           <option key={t} value={t}>
             {t}
           </option>

@@ -3,7 +3,7 @@
  * Tests pipeline composition, orchestration, and health monitoring
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, _beforeEach, vi } from 'vitest';
 
 describe('useStreamingPipeline', () => {
   describe('Pipeline Lifecycle', () => {
@@ -16,8 +16,8 @@ describe('useStreamingPipeline', () => {
           eventsProcessed: 0,
           validationsPassed: 0,
           validationsFailed: 0,
-          windowsCompleted: 0
-        }
+          windowsCompleted: 0,
+        },
       };
 
       expect(state.isPipelineRunning).toBe(false);
@@ -109,7 +109,7 @@ describe('useStreamingPipeline', () => {
         eventsProcessed: changeFeedStats.totalChanges,
         validationsPassed: validatorStats.passed,
         validationsFailed: validatorStats.failed,
-        windowsCompleted: processorStats.windowsProcessed
+        windowsCompleted: processorStats.windowsProcessed,
       };
 
       expect(pipelineStats.eventsProcessed).toBe(100);
@@ -138,7 +138,7 @@ describe('useStreamingPipeline', () => {
         eventsProcessed: 1000,
         validationsPassed: 800,
         validationsFailed: 200,
-        windowsCompleted: 50
+        windowsCompleted: 50,
       };
 
       const clear = () => {
@@ -147,7 +147,7 @@ describe('useStreamingPipeline', () => {
           eventsProcessed: 0,
           validationsPassed: 0,
           validationsFailed: 0,
-          windowsCompleted: 0
+          windowsCompleted: 0,
         };
       };
 
@@ -191,7 +191,7 @@ describe('useStreamingPipeline', () => {
       const state = {
         changes: [1, 2, 3],
         windows: [{ id: 'w1' }],
-        violations: []
+        violations: [],
       };
 
       const pause = () => {
@@ -231,14 +231,14 @@ describe('useStreamingPipeline', () => {
     it('should emit clear event', () => {
       const events = [];
 
-      const clear = (onEvent) => {
+      const clear = onEvent => {
         onEvent({
           type: 'pipeline:cleared',
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
       };
 
-      clear((event) => events.push(event));
+      clear(event => events.push(event));
 
       expect(events).toHaveLength(1);
       expect(events[0].type).toBe('pipeline:cleared');
@@ -251,11 +251,12 @@ describe('useStreamingPipeline', () => {
         changeFeed: { isRunning: true },
         subscription: { isActive: true },
         processor: { isProcessing: true },
-        validator: { isRunning: true }
+        validator: { isRunning: true },
       };
 
       const getHealth = () => {
-        const isHealthy = components.changeFeed.isRunning &&
+        const isHealthy =
+          components.changeFeed.isRunning &&
           components.subscription.isActive &&
           components.processor.isProcessing &&
           components.validator.isRunning;
@@ -266,8 +267,8 @@ describe('useStreamingPipeline', () => {
             changeFeed: components.changeFeed.isRunning,
             subscriptions: components.subscription.isActive,
             processor: components.processor.isProcessing,
-            validator: components.validator.isRunning
-          }
+            validator: components.validator.isRunning,
+          },
         };
       };
 
@@ -282,11 +283,12 @@ describe('useStreamingPipeline', () => {
         changeFeed: { isRunning: true },
         subscription: { isActive: true },
         processor: { isProcessing: false }, // Failed
-        validator: { isRunning: true }
+        validator: { isRunning: true },
       };
 
       const getHealth = () => {
-        const isHealthy = components.changeFeed.isRunning &&
+        const isHealthy =
+          components.changeFeed.isRunning &&
           components.subscription.isActive &&
           components.processor.isProcessing &&
           components.validator.isRunning;
@@ -297,8 +299,8 @@ describe('useStreamingPipeline', () => {
             changeFeed: components.changeFeed.isRunning,
             subscriptions: components.subscription.isActive,
             processor: components.processor.isProcessing,
-            validator: components.validator.isRunning
-          }
+            validator: components.validator.isRunning,
+          },
         };
       };
 
@@ -311,9 +313,9 @@ describe('useStreamingPipeline', () => {
     it('should include error in health report', () => {
       const error = new Error('Connection lost');
 
-      const getHealth = (err) => ({
+      const getHealth = err => ({
         status: err ? 'unhealthy' : 'healthy',
-        error: err
+        error: err,
       });
 
       const health = getHealth(error);
@@ -325,26 +327,27 @@ describe('useStreamingPipeline', () => {
     it('should handle disabled components in health check', () => {
       const config = {
         enableProcessing: false,
-        enableValidation: false
+        enableValidation: false,
       };
 
       const components = {
         changeFeed: { isRunning: true },
         subscription: { isActive: true },
         processor: { isProcessing: false },
-        validator: { isRunning: false }
+        validator: { isRunning: false },
       };
 
       const getHealth = () => {
         const processorOk = config.enableProcessing === false || components.processor.isProcessing;
         const validatorOk = config.enableValidation === false || components.validator.isRunning;
-        const isHealthy = components.changeFeed.isRunning &&
+        const isHealthy =
+          components.changeFeed.isRunning &&
           components.subscription.isActive &&
           processorOk &&
           validatorOk;
 
         return {
-          status: isHealthy ? 'healthy' : 'unhealthy'
+          status: isHealthy ? 'healthy' : 'unhealthy',
         };
       };
 
@@ -358,15 +361,15 @@ describe('useStreamingPipeline', () => {
     it('should emit started event', async () => {
       const events = [];
 
-      const start = async (onEvent) => {
+      const start = async onEvent => {
         onEvent({
           type: 'pipeline:started',
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
         return { success: true };
       };
 
-      await start((event) => events.push(event));
+      await start(event => events.push(event));
 
       expect(events).toHaveLength(1);
       expect(events[0].type).toBe('pipeline:started');
@@ -376,16 +379,16 @@ describe('useStreamingPipeline', () => {
       const events = [];
       const stats = { uptime: 3600, eventsProcessed: 1000 };
 
-      const stop = async (onEvent) => {
+      const stop = async onEvent => {
         onEvent({
           type: 'pipeline:stopped',
           timestamp: new Date().toISOString(),
-          stats
+          stats,
         });
         return { success: true };
       };
 
-      await stop((event) => events.push(event));
+      await stop(event => events.push(event));
 
       expect(events).toHaveLength(1);
       expect(events[0].type).toBe('pipeline:stopped');
@@ -400,11 +403,11 @@ describe('useStreamingPipeline', () => {
         onEvent({
           type: 'pipeline:error',
           error: err,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
       };
 
-      handleError(error, (event) => events.push(event));
+      handleError(error, event => events.push(event));
 
       expect(events).toHaveLength(1);
       expect(events[0].type).toBe('pipeline:error');
@@ -414,16 +417,22 @@ describe('useStreamingPipeline', () => {
     it('should emit paused and resumed events', () => {
       const events = [];
 
-      const pause = (onEvent) => {
-        onEvent({ type: 'pipeline:paused', timestamp: new Date().toISOString() });
+      const pause = onEvent => {
+        onEvent({
+          type: 'pipeline:paused',
+          timestamp: new Date().toISOString(),
+        });
       };
 
-      const resume = (onEvent) => {
-        onEvent({ type: 'pipeline:resumed', timestamp: new Date().toISOString() });
+      const resume = onEvent => {
+        onEvent({
+          type: 'pipeline:resumed',
+          timestamp: new Date().toISOString(),
+        });
       };
 
-      pause((event) => events.push(event));
-      resume((event) => events.push(event));
+      pause(event => events.push(event));
+      resume(event => events.push(event));
 
       expect(events).toHaveLength(2);
       expect(events[0].type).toBe('pipeline:paused');
@@ -482,8 +491,8 @@ describe('useStreamingPipeline', () => {
       const config = {
         subscription: {
           pattern: '?s schema:price ?price',
-          filter: (e) => e.value > 100
-        }
+          filter: e => e.value > 100,
+        },
       };
       let subscribedPattern = null;
 
@@ -504,7 +513,11 @@ describe('useStreamingPipeline', () => {
     it('should aggregate all component stats', () => {
       const pipelineStats = { uptime: 100 };
       const changeFeedStats = { totalChanges: 50 };
-      const processorStats = { windowsProcessed: 5, eventsProcessed: 50, avgWindowSize: 10 };
+      const processorStats = {
+        windowsProcessed: 5,
+        eventsProcessed: 50,
+        avgWindowSize: 10,
+      };
       const validatorStats = { passed: 40, failed: 10 };
       const subscriptions = [{ id: 'sub-1' }, { id: 'sub-2' }];
       const events = [1, 2, 3, 4, 5];
@@ -516,8 +529,8 @@ describe('useStreamingPipeline', () => {
         validator: validatorStats,
         subscriptions: {
           active: subscriptions.length,
-          events: events.length
-        }
+          events: events.length,
+        },
       });
 
       const stats = getStats();
@@ -574,7 +587,7 @@ describe('useStreamingPipeline', () => {
       const subscription = {
         subscribe: vi.fn(),
         unsubscribe: vi.fn(),
-        events: [1, 2, 3]
+        events: [1, 2, 3],
       };
 
       expect(subscription.subscribe).toBeDefined();
@@ -586,7 +599,7 @@ describe('useStreamingPipeline', () => {
       const changeFeed = {
         start: vi.fn(),
         stop: vi.fn(),
-        changes: [1, 2, 3, 4]
+        changes: [1, 2, 3, 4],
       };
 
       expect(changeFeed.start).toBeDefined();
@@ -597,7 +610,7 @@ describe('useStreamingPipeline', () => {
     it('should expose processor component', () => {
       const processor = {
         windows: [{ id: 'w1' }, { id: 'w2' }],
-        currentWindow: { events: [1, 2] }
+        currentWindow: { events: [1, 2] },
       };
 
       expect(processor.windows).toHaveLength(2);
@@ -608,7 +621,7 @@ describe('useStreamingPipeline', () => {
       const validator = {
         violations: [{ id: 'v1' }],
         validChanges: [1, 2, 3],
-        invalidChanges: [4]
+        invalidChanges: [4],
       };
 
       expect(validator.violations).toHaveLength(1);
@@ -620,7 +633,7 @@ describe('useStreamingPipeline', () => {
   describe('Convenience Accessors', () => {
     it('should provide direct access to subscriptions', () => {
       const subscription = {
-        subscriptions: [{ id: 'sub-1' }, { id: 'sub-2' }]
+        subscriptions: [{ id: 'sub-1' }, { id: 'sub-2' }],
       };
 
       expect(subscription.subscriptions).toHaveLength(2);
@@ -628,7 +641,7 @@ describe('useStreamingPipeline', () => {
 
     it('should provide direct access to changes', () => {
       const changeFeed = {
-        changes: [{ id: 'c1' }, { id: 'c2' }, { id: 'c3' }]
+        changes: [{ id: 'c1' }, { id: 'c2' }, { id: 'c3' }],
       };
 
       expect(changeFeed.changes).toHaveLength(3);
@@ -636,7 +649,7 @@ describe('useStreamingPipeline', () => {
 
     it('should provide direct access to windows', () => {
       const processor = {
-        windows: [{ id: 'w1' }, { id: 'w2' }]
+        windows: [{ id: 'w1' }, { id: 'w2' }],
       };
 
       expect(processor.windows).toHaveLength(2);
@@ -644,7 +657,7 @@ describe('useStreamingPipeline', () => {
 
     it('should provide direct access to violations', () => {
       const validator = {
-        violations: [{ id: 'v1' }]
+        violations: [{ id: 'v1' }],
       };
 
       expect(validator.violations).toHaveLength(1);
@@ -653,7 +666,7 @@ describe('useStreamingPipeline', () => {
     it('should provide direct access to valid and invalid changes', () => {
       const validator = {
         validChanges: [1, 2, 3],
-        invalidChanges: [4, 5]
+        invalidChanges: [4, 5],
       };
 
       expect(validator.validChanges).toHaveLength(3);

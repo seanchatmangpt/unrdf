@@ -3,23 +3,26 @@
  * @module project-engine/stack-linter
  */
 
-import { DataFactory } from 'n3'
-import { z } from 'zod'
+import { DataFactory } from 'n3';
+import { z } from 'zod';
 
-const { namedNode } = DataFactory
+const { namedNode } = DataFactory;
 
-const NS = { fs: 'http://example.org/unrdf/filesystem#' }
+const NS = { fs: 'http://example.org/unrdf/filesystem#' };
 
 const StackLintOptionsSchema = z.object({
-  projectStore: z.custom((val) => val && typeof val.getQuads === 'function', {
+  projectStore: z.custom(val => val && typeof val.getQuads === 'function', {
     message: 'projectStore must be an RDF store with getQuads method',
   }),
-  stackProfile: z.object({
-    webFramework: z.string().nullable().optional(),
-    hasTypescript: z.boolean().optional(),
-  }).passthrough().optional(),
+  stackProfile: z
+    .object({
+      webFramework: z.string().nullable().optional(),
+      hasTypescript: z.boolean().optional(),
+    })
+    .passthrough()
+    .optional(),
   projectRoot: z.string().optional(),
-})
+});
 
 const StackLintIssueSchema = z.object({
   rule: z.string(),
@@ -28,7 +31,7 @@ const StackLintIssueSchema = z.object({
   files: z.array(z.string()),
   message: z.string(),
   fix: z.string().optional(),
-})
+});
 
 /**
  * Lint project for stack-specific best practices
@@ -38,42 +41,43 @@ const StackLintIssueSchema = z.object({
  * @returns {{ issues: Array, summary: string, score: number }}
  */
 export function lintStack(options) {
-  const validated = StackLintOptionsSchema.parse(options)
-  const { projectStore, stackProfile } = validated
+  const validated = StackLintOptionsSchema.parse(options);
+  const { projectStore, stackProfile } = validated;
 
-  const issues = []
-  const fileQuads = projectStore.getQuads(null, namedNode(`${NS.fs}relativePath`), null)
-  const allFiles = fileQuads.map(q => q.object.value)
+  const issues = [];
+  const fileQuads = projectStore.getQuads(null, namedNode(`${NS.fs}relativePath`), null);
+  const allFiles = fileQuads.map(q => q.object.value);
 
   // Framework-specific rules
   if (stackProfile?.webFramework?.includes('next')) {
-    issues.push(...lintNextJs(allFiles))
+    issues.push(...lintNextJs(allFiles));
   }
 
   // Universal rules
-  issues.push(...lintStructure(allFiles))
-  issues.push(...lintDependencies(allFiles))
-  issues.push(...lintConfig(allFiles, stackProfile))
-  issues.push(...lintSecurity(allFiles))
+  issues.push(...lintStructure(allFiles));
+  issues.push(...lintDependencies(allFiles));
+  issues.push(...lintConfig(allFiles, stackProfile));
+  issues.push(...lintSecurity(allFiles));
 
-  const severityOrder = { error: 0, warning: 1, info: 2 }
-  issues.sort((a, b) => severityOrder[a.severity] - severityOrder[b.severity])
+  const severityOrder = { error: 0, warning: 1, info: 2 };
+  issues.sort((a, b) => severityOrder[a.severity] - severityOrder[b.severity]);
 
-  const errorCount = issues.filter(i => i.severity === 'error').length
-  const warningCount = issues.filter(i => i.severity === 'warning').length
-  const score = Math.max(0, 100 - (errorCount * 10) - (warningCount * 3))
+  const errorCount = issues.filter(i => i.severity === 'error').length;
+  const warningCount = issues.filter(i => i.severity === 'warning').length;
+  const score = Math.max(0, 100 - errorCount * 10 - warningCount * 3);
 
-  const summary = issues.length > 0
-    ? `${issues.length} lint issues (${errorCount} errors, ${warningCount} warnings)`
-    : 'No lint issues found'
+  const summary =
+    issues.length > 0
+      ? `${issues.length} lint issues (${errorCount} errors, ${warningCount} warnings)`
+      : 'No lint issues found';
 
-  return { issues, summary, score }
+  return { issues, summary, score };
 }
 
 function lintNextJs(allFiles) {
-  const issues = []
-  const hasAppDir = allFiles.some(f => f.startsWith('app/') || f.includes('/app/'))
-  const hasPagesDir = allFiles.some(f => f.startsWith('pages/') || f.includes('/pages/'))
+  const issues = [];
+  const hasAppDir = allFiles.some(f => f.startsWith('app/') || f.includes('/app/'));
+  const hasPagesDir = allFiles.some(f => f.startsWith('pages/') || f.includes('/pages/'));
 
   if (hasAppDir && hasPagesDir) {
     issues.push({
@@ -83,11 +87,11 @@ function lintNextJs(allFiles) {
       files: ['app/', 'pages/'],
       message: 'Both app/ and pages/ directories exist',
       fix: 'Migrate to app router or keep consistent',
-    })
+    });
   }
 
   if (hasAppDir) {
-    const hasLayout = allFiles.some(f => f.includes('layout.'))
+    const hasLayout = allFiles.some(f => f.includes('layout.'));
     if (!hasLayout) {
       issues.push({
         rule: 'next/require-layout',
@@ -96,19 +100,23 @@ function lintNextJs(allFiles) {
         files: ['app/'],
         message: 'App router requires root layout.tsx',
         fix: 'Create app/layout.tsx',
-      })
+      });
     }
   }
-  return issues
+  return issues;
 }
 
 function lintStructure(allFiles) {
-  const issues = []
-  const hasSrcDir = allFiles.some(f => f.startsWith('src/'))
-  const hasRootSource = allFiles.some(f =>
-    !f.startsWith('src/') && !f.startsWith('test/') && !f.startsWith('docs/') &&
-    /\.(tsx?|jsx?|mjs)$/.test(f) && !f.includes('.config.')
-  )
+  const issues = [];
+  const hasSrcDir = allFiles.some(f => f.startsWith('src/'));
+  const hasRootSource = allFiles.some(
+    f =>
+      !f.startsWith('src/') &&
+      !f.startsWith('test/') &&
+      !f.startsWith('docs/') &&
+      /\.(tsx?|jsx?|mjs)$/.test(f) &&
+      !f.includes('.config.')
+  );
 
   if (!hasSrcDir && hasRootSource) {
     issues.push({
@@ -118,14 +126,16 @@ function lintStructure(allFiles) {
       files: ['./'],
       message: 'Source files should be in src/',
       fix: 'Move source files to src/',
-    })
+    });
   }
-  return issues
+  return issues;
 }
 
 function lintDependencies(allFiles) {
-  const issues = []
-  const lockfiles = ['package-lock.json', 'yarn.lock', 'pnpm-lock.yaml'].filter(f => allFiles.includes(f))
+  const issues = [];
+  const lockfiles = ['package-lock.json', 'yarn.lock', 'pnpm-lock.yaml'].filter(f =>
+    allFiles.includes(f)
+  );
   if (lockfiles.length > 1) {
     issues.push({
       rule: 'deps/single-lockfile',
@@ -134,14 +144,14 @@ function lintDependencies(allFiles) {
       files: lockfiles,
       message: 'Multiple lockfiles detected',
       fix: 'Remove extra lockfiles',
-    })
+    });
   }
-  return issues
+  return issues;
 }
 
 function lintConfig(allFiles, stackProfile) {
-  const issues = []
-  const hasEslint = allFiles.some(f => f.includes('.eslintrc') || f.includes('eslint.config'))
+  const issues = [];
+  const hasEslint = allFiles.some(f => f.includes('.eslintrc') || f.includes('eslint.config'));
   if (!hasEslint) {
     issues.push({
       rule: 'config/require-eslint',
@@ -150,11 +160,11 @@ function lintConfig(allFiles, stackProfile) {
       files: ['./'],
       message: 'No ESLint configuration found',
       fix: 'Add .eslintrc.json',
-    })
+    });
   }
 
   if (stackProfile?.hasTypescript) {
-    const hasTsConfig = allFiles.some(f => f.includes('tsconfig'))
+    const hasTsConfig = allFiles.some(f => f.includes('tsconfig'));
     if (!hasTsConfig) {
       issues.push({
         rule: 'config/require-tsconfig',
@@ -163,15 +173,15 @@ function lintConfig(allFiles, stackProfile) {
         files: ['./'],
         message: 'TypeScript project missing tsconfig.json',
         fix: 'Create tsconfig.json',
-      })
+      });
     }
   }
-  return issues
+  return issues;
 }
 
 function lintSecurity(allFiles) {
-  const issues = []
-  const envFiles = allFiles.filter(f => f.includes('.env') && !f.includes('.env.example'))
+  const issues = [];
+  const envFiles = allFiles.filter(f => f.includes('.env') && !f.includes('.env.example'));
   if (envFiles.length > 0) {
     issues.push({
       rule: 'security/no-env-files',
@@ -180,22 +190,24 @@ function lintSecurity(allFiles) {
       files: envFiles,
       message: 'Environment files should not be committed',
       fix: 'Add .env* to .gitignore',
-    })
+    });
   }
-  return issues
+  return issues;
 }
 
-export { StackLintIssueSchema }
+export { StackLintIssueSchema };
 
 // Alias exports for backwards compatibility with existing index.mjs
-export const deriveLinterRules = lintStack
-export const analyzeCodePatterns = (options) => {
-  const result = lintStack(options)
-  return result.issues.map(i => ({ pattern: i.rule, category: i.category }))
-}
-export const generateESLintConfig = (options) => {
-  const result = lintStack(options)
+export const deriveLinterRules = lintStack;
+export const analyzeCodePatterns = options => {
+  const result = lintStack(options);
+  return result.issues.map(i => ({ pattern: i.rule, category: i.category }));
+};
+export const generateESLintConfig = options => {
+  const result = lintStack(options);
   return {
-    rules: Object.fromEntries(result.issues.map(i => [i.rule, i.severity === "error" ? "error" : "warn"]))
-  }
-}
+    rules: Object.fromEntries(
+      result.issues.map(i => [i.rule, i.severity === 'error' ? 'error' : 'warn'])
+    ),
+  };
+};

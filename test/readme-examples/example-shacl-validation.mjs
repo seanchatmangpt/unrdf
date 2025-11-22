@@ -3,8 +3,12 @@
  * Tests SHACL shape validation
  */
 
-import { createDarkMatterCore, parseTurtle, DataFactory } from '../../src/knowledge-engine/index.mjs';
-const { namedNode, quad, literal } = DataFactory;
+import {
+  createDarkMatterCore,
+  parseTurtle,
+  DataFactory,
+} from '../../src/knowledge-engine/index.mjs';
+const { _namedNode, _quad, _literal } = DataFactory;
 
 /**
  *
@@ -44,7 +48,7 @@ async function testShaclValidation() {
     // Validate data
     const validation = await system.validate({
       dataGraph: validStore,
-      shapesGraph: shapes
+      shapesGraph: shapes,
     });
     console.log('✅ Validation executed');
 

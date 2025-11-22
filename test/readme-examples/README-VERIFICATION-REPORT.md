@@ -24,6 +24,7 @@ Manual verification of all README.md code examples reveals **significant discrep
 ### ✅ PASSED (1/11)
 
 #### 8. Observability (lines 291-304) ✅
+
 - **Status**: WORKING
 - **Notes**: Only example that works completely as documented
 - Class name mismatch (`Observability` → `ObservabilityManager`) is minor
@@ -33,6 +34,7 @@ Manual verification of all README.md code examples reveals **significant discrep
 ### ❌ FAILED (10/11)
 
 #### 1. Quick Start (lines 66-102) ❌
+
 **Error**: `Dark Matter core not initialized`
 **Root Cause**: Missing `await system.init()` call before usage
 **Fix Required**: Add initialization step to README example
@@ -49,6 +51,7 @@ Manual verification of all README.md code examples reveals **significant discrep
 ---
 
 #### 2. RDF Engine (lines 114-131) ❌
+
 **Error**: `JSON-LD conversion failed`
 **Root Cause**: `toJsonLd()` returns object, not string
 **Fix Required**: Update README to show actual return type
@@ -66,6 +69,7 @@ const jsonld = await toJsonLd(store); // Returns object, not string
 ---
 
 #### 3. Knowledge Hooks (lines 143-168) ❌
+
 **Error**: `when.ref: Required (received: "undefined") (expected: object)`
 **Root Cause**: Hook schema requires `when.ref` field that's undocumented
 **Fix Required**: README example missing required field
@@ -87,6 +91,7 @@ const jsonld = await toJsonLd(store); // Returns object, not string
 ---
 
 #### 4. SPARQL Queries (lines 182-208) ❌
+
 **Error**: `Dark Matter core not initialized`
 **Root Cause**: Same as #1 - missing init()
 **Fix Required**: Add `await system.init()`
@@ -96,9 +101,11 @@ const jsonld = await toJsonLd(store); // Returns object, not string
 ---
 
 #### 5. SHACL Validation (lines 214-241) ❌
+
 **Error**: `system.validate is not a function`
 **Root Cause**: DarkMatterCore doesn't expose `validate()` method
 **Fix Required**: Either:
+
 - Add `validate()` method to DarkMatterCore, OR
 - Update README to use correct API
 
@@ -106,7 +113,7 @@ const jsonld = await toJsonLd(store); // Returns object, not string
 // README shows:
 const validation = await system.validate({
   dataGraph: store,
-  shapesGraph: shapes
+  shapesGraph: shapes,
 });
 
 // Actual API (needs verification):
@@ -119,6 +126,7 @@ const validation = await validateShacl(store, shapes);
 ---
 
 #### 6. Lockchain (lines 247-268) ❌
+
 **Error**: `lockchain.init is not a function`
 **Root Cause**: LockchainWriter API mismatch
 **Fix Required**: Verify actual API and update README
@@ -135,6 +143,7 @@ await lockchain.init();
 ---
 
 #### 7. Dark Matter (lines 274-285) ❌
+
 **Error**: `System missing query`
 **Root Cause**: DarkMatterCore doesn't expose `query()` method
 **Fix Required**: Update README with correct API
@@ -144,6 +153,7 @@ await lockchain.init();
 ---
 
 #### 9. Simple Knowledge Graph (lines 336-379) ❌
+
 **Error**: `Dark Matter core not initialized`
 **Root Cause**: Same as #1 - missing init()
 **Fix Required**: Add `await system.init()`
@@ -153,6 +163,7 @@ await lockchain.init();
 ---
 
 #### 10. Policy-Driven Validation (lines 383-426) ❌
+
 **Error**: `when.ref: Required`
 **Root Cause**: Same as #3 - missing required field
 **Fix Required**: Update hook definition
@@ -162,6 +173,7 @@ await lockchain.init();
 ---
 
 #### 11. Cryptographic Audit Trail (lines 430-462) ❌
+
 **Error**: `lockchain.init is not a function`
 **Root Cause**: Same as #6
 **Fix Required**: Fix LockchainWriter API docs
@@ -173,11 +185,13 @@ await lockchain.init();
 ## Systematic Issues
 
 ### 1. Import Path Inconsistency (FIXED)
+
 **Issue**: README shows `import from 'unrdf'` but examples need specific paths
 **Status**: FIXED in test files
 **Action**: Update README to clarify import source
 
 ### 2. Initialization Protocol Missing
+
 **Issue**: DarkMatterCore requires `init()` but README omits it
 **Affected**: Examples 1, 4, 9
 **Fix**: Add initialization step to all examples
@@ -189,19 +203,23 @@ await system.init(); // ← REQUIRED but missing from README
 ```
 
 ### 3. Hook Schema Undocumented
+
 **Issue**: `when.ref` field required but not shown in examples
 **Affected**: Examples 3, 10
 **Fix**: Document complete hook schema
 
 ### 4. Method Availability
+
 **Issue**: Methods shown in README don't exist on DarkMatterCore
 **Missing Methods**:
+
 - `system.query()` - shown in examples 4, 7
 - `system.validate()` - shown in example 5
 
 **Fix**: Either implement these methods or update README to use correct API
 
 ### 5. LockchainWriter API
+
 **Issue**: `init()` method doesn't exist
 **Affected**: Examples 6, 11
 **Fix**: Document actual initialization pattern

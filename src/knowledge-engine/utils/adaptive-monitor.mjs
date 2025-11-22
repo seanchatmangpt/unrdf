@@ -61,7 +61,7 @@ export const DEFAULT_CONFIG = {
   /** Maximum health history entries */
   maxHistorySize: 100,
   /** Enable verbose logging */
-  verbose: false
+  verbose: false,
 };
 
 /**
@@ -80,7 +80,7 @@ export const HealthStatus = {
   /** System is in critical state (multiple unhealthy checks) */
   CRITICAL: 'critical',
   /** System is recovering */
-  RECOVERING: 'recovering'
+  RECOVERING: 'recovering',
 };
 
 /**
@@ -105,7 +105,7 @@ export const MonitorEvents = {
   /** Emitted when entering stable state */
   STABLE: 'stable',
   /** Emitted when recovery begins */
-  RECOVERY: 'recovery'
+  RECOVERY: 'recovery',
 };
 
 /**
@@ -193,7 +193,7 @@ export class AdaptiveMonitor extends EventEmitter {
     this._log(`Starting monitor with ${this.currentInterval}ms interval`);
     this.emit(MonitorEvents.START, {
       interval: this.currentInterval,
-      timestamp: this.startTime
+      timestamp: this.startTime,
     });
 
     // Execute first check immediately
@@ -224,7 +224,7 @@ export class AdaptiveMonitor extends EventEmitter {
     this.emit(MonitorEvents.STOP, {
       duration,
       totalChecks: this.totalChecks,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
 
     return this;
@@ -314,14 +314,15 @@ export class AdaptiveMonitor extends EventEmitter {
       totalChecks: this.totalChecks,
       totalHealthy: this.totalHealthy,
       totalUnhealthy: this.totalUnhealthy,
-      healthRate: this.totalChecks > 0
-        ? (this.totalHealthy / this.totalChecks * 100).toFixed(2) + '%'
-        : 'N/A',
+      healthRate:
+        this.totalChecks > 0
+          ? ((this.totalHealthy / this.totalChecks) * 100).toFixed(2) + '%'
+          : 'N/A',
       consecutiveHealthy: this.consecutiveHealthy,
       consecutiveUnhealthy: this.consecutiveUnhealthy,
       lastCheckTime: this.lastCheckTime,
       nextCheckTime: this.nextCheckTime,
-      historySize: this.healthHistory.length
+      historySize: this.healthHistory.length,
     };
   }
 
@@ -389,17 +390,16 @@ export class AdaptiveMonitor extends EventEmitter {
         healthy,
         timestamp: startTime,
         duration: Date.now() - startTime,
-        details
+        details,
       };
 
       this._recordResult(result);
-
     } catch (error) {
       result = {
         healthy: false,
         timestamp: startTime,
         duration: Date.now() - startTime,
-        error
+        error,
       };
 
       this._recordResult(result);
@@ -461,7 +461,7 @@ export class AdaptiveMonitor extends EventEmitter {
           this.status = HealthStatus.CRITICAL;
           this.emit(MonitorEvents.CRITICAL, {
             checks: this.consecutiveUnhealthy,
-            details: result.details || result.error
+            details: result.details || result.error,
           });
         }
       } else {
@@ -474,7 +474,7 @@ export class AdaptiveMonitor extends EventEmitter {
       this.emit(MonitorEvents.STATUS_CHANGE, {
         previous: previousStatus,
         current: this.status,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
     }
 
@@ -516,7 +516,7 @@ export class AdaptiveMonitor extends EventEmitter {
       this.emit(MonitorEvents.INTERVAL_CHANGE, {
         previous: previousInterval,
         current: this.currentInterval,
-        healthy: isHealthy
+        healthy: isHealthy,
       });
     }
   }
@@ -571,7 +571,7 @@ export function createMemoryMonitor(threshold = 0.8, config = {}) {
     baseInterval: 30000,
     minInterval: 5000,
     maxInterval: 120000,
-    ...config
+    ...config,
   });
 
   const checkFn = async () => {
@@ -585,8 +585,8 @@ export function createMemoryMonitor(threshold = 0.8, config = {}) {
         heapTotal: usage.heapTotal,
         heapUsage: `${(heapUsage * 100).toFixed(1)}%`,
         external: usage.external,
-        rss: usage.rss
-      }
+        rss: usage.rss,
+      },
     };
   };
 
@@ -604,7 +604,7 @@ export function createEventLoopMonitor(lagThreshold = 100, config = {}) {
     baseInterval: 10000,
     minInterval: 1000,
     maxInterval: 60000,
-    ...config
+    ...config,
   });
 
   const checkFn = async () => {
@@ -616,8 +616,8 @@ export function createEventLoopMonitor(lagThreshold = 100, config = {}) {
       healthy: lag < lagThreshold,
       details: {
         lag,
-        lagThreshold
-      }
+        lagThreshold,
+      },
     };
   };
 
@@ -647,12 +647,12 @@ export class MonitorOrchestrator extends EventEmitter {
     this.monitors.set(name, monitor);
 
     // Forward events
-    monitor.on(MonitorEvents.HEALTH, (result) => {
+    monitor.on(MonitorEvents.HEALTH, result => {
       this.emit(`${name}:health`, result);
       this._updateAggregatedStatus();
     });
 
-    monitor.on(MonitorEvents.CRITICAL, (data) => {
+    monitor.on(MonitorEvents.CRITICAL, data => {
       this.emit(`${name}:critical`, data);
       this.emit('critical', { monitor: name, ...data });
     });
@@ -708,7 +708,7 @@ export class MonitorOrchestrator extends EventEmitter {
     return {
       monitors: stats,
       aggregatedStatus: this.aggregatedStatus,
-      monitorCount: this.monitors.size
+      monitorCount: this.monitors.size,
     };
   }
 

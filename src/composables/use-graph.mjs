@@ -10,8 +10,8 @@
  * @license MIT
  */
 
-import { Store } from "n3";
-import { useStoreContext } from "../context/index.mjs";
+import { Store } from 'n3';
+import { useStoreContext } from '../context/index.mjs';
 
 /**
  * Create a graph composable for operating on the global RDF store
@@ -59,8 +59,8 @@ export function useGraph() {
      * @note This is a READER operation - use sparingly
      */
     async query(sparql, options) {
-      if (typeof sparql !== "string") {
-        throw new TypeError("[useGraph] SPARQL query must be a string");
+      if (typeof sparql !== 'string') {
+        throw new TypeError('[useGraph] SPARQL query must be a string');
       }
       return storeContext.query(sparql, options);
     },
@@ -75,12 +75,12 @@ export function useGraph() {
      * @note This is a READER operation - use sparingly
      */
     async select(sparql) {
-      if (typeof sparql !== "string") {
-        throw new TypeError("[useGraph] SPARQL query must be a string");
+      if (typeof sparql !== 'string') {
+        throw new TypeError('[useGraph] SPARQL query must be a string');
       }
       const res = await storeContext.query(sparql);
-      if (res.type !== "select") {
-        throw new Error("[useGraph] Query is not a SELECT query");
+      if (res.type !== 'select') {
+        throw new Error('[useGraph] Query is not a SELECT query');
       }
       return res.rows || [];
     },
@@ -95,12 +95,12 @@ export function useGraph() {
      * @note This is a READER operation - use sparingly
      */
     async ask(sparql) {
-      if (typeof sparql !== "string") {
-        throw new TypeError("[useGraph] SPARQL query must be a string");
+      if (typeof sparql !== 'string') {
+        throw new TypeError('[useGraph] SPARQL query must be a string');
       }
       const res = await storeContext.query(sparql);
-      if (res.type !== "ask") {
-        throw new Error("[useGraph] Query is not an ASK query");
+      if (res.type !== 'ask') {
+        throw new Error('[useGraph] Query is not an ASK query');
       }
       return res.boolean || false;
     },
@@ -115,12 +115,12 @@ export function useGraph() {
      * @note This is a READER operation - use sparingly
      */
     async construct(sparql) {
-      if (typeof sparql !== "string") {
-        throw new TypeError("[useGraph] SPARQL query must be a string");
+      if (typeof sparql !== 'string') {
+        throw new TypeError('[useGraph] SPARQL query must be a string');
       }
       const res = await storeContext.query(sparql);
-      if (res.type !== "construct" && res.type !== "describe") {
-        throw new Error("[useGraph] Query is not a CONSTRUCT/DESCRIBE query");
+      if (res.type !== 'construct' && res.type !== 'describe') {
+        throw new Error('[useGraph] Query is not a CONSTRUCT/DESCRIBE query');
       }
       return res.store || new Store();
     },
@@ -134,12 +134,12 @@ export function useGraph() {
      * @throws {Error} If query is not an UPDATE query
      */
     async update(sparql) {
-      if (typeof sparql !== "string") {
-        throw new TypeError("[useGraph] SPARQL query must be a string");
+      if (typeof sparql !== 'string') {
+        throw new TypeError('[useGraph] SPARQL query must be a string');
       }
       const res = await storeContext.query(sparql);
-      if (res.type !== "update") {
-        throw new Error("[useGraph] Query is not an UPDATE query");
+      if (res.type !== 'update') {
+        throw new Error('[useGraph] Query is not an UPDATE query');
       }
       return res;
     },
@@ -163,7 +163,7 @@ export function useGraph() {
       const result = engine.validateShacl(store, shapesInput);
       if (!result.conforms) {
         throw new Error(
-          `SHACL validation failed: ${result.results.map((r) => r.message).join(", ")}`,
+          `SHACL validation failed: ${result.results.map(r => r.message).join(', ')}`
         );
       }
       return result;
@@ -180,16 +180,16 @@ export function useGraph() {
      * @throws {Error} If format is unsupported
      */
     serialize(options = {}) {
-      if (options && typeof options !== "object") {
-        throw new TypeError("[useGraph] serialize options must be an object");
+      if (options && typeof options !== 'object') {
+        throw new TypeError('[useGraph] serialize options must be an object');
       }
 
-      const { format = "Turtle", prefixes } = options;
+      const { format = 'Turtle', prefixes } = options;
 
-      if (format === "Turtle") {
+      if (format === 'Turtle') {
         return engine.serializeTurtle(store, { prefixes });
       }
-      if (format === "N-Quads") {
+      if (format === 'N-Quads') {
         return engine.serializeNQuads(store);
       }
 
@@ -228,7 +228,7 @@ export function useGraph() {
      * @returns {Object} New useGraph instance with union
      */
     union(...otherGraphs) {
-      const otherStores = otherGraphs.map((g) => g.store || g);
+      const otherStores = otherGraphs.map(g => g.store || g);
       const resultStore = engine.union(store, ...otherStores);
       // Create a temporary context for the result
       return createTemporaryGraph(resultStore, engine);
@@ -306,8 +306,8 @@ function createTemporaryGraph(store, engine) {
     },
 
     query(sparql, options) {
-      if (typeof sparql !== "string") {
-        throw new TypeError("[useGraph] SPARQL query must be a string");
+      if (typeof sparql !== 'string') {
+        throw new TypeError('[useGraph] SPARQL query must be a string');
       }
       try {
         return engine.query(store, sparql, options);
@@ -317,45 +317,45 @@ function createTemporaryGraph(store, engine) {
     },
 
     select(sparql) {
-      if (typeof sparql !== "string") {
-        throw new TypeError("[useGraph] SPARQL query must be a string");
+      if (typeof sparql !== 'string') {
+        throw new TypeError('[useGraph] SPARQL query must be a string');
       }
       const res = engine.query(store, sparql);
-      if (res.type !== "select") {
-        throw new Error("[useGraph] Query is not a SELECT query");
+      if (res.type !== 'select') {
+        throw new Error('[useGraph] Query is not a SELECT query');
       }
       return res.results;
     },
 
     ask(sparql) {
-      if (typeof sparql !== "string") {
-        throw new TypeError("[useGraph] SPARQL query must be a string");
+      if (typeof sparql !== 'string') {
+        throw new TypeError('[useGraph] SPARQL query must be a string');
       }
       const res = engine.query(store, sparql);
-      if (res.type !== "ask") {
-        throw new Error("[useGraph] Query is not an ASK query");
+      if (res.type !== 'ask') {
+        throw new Error('[useGraph] Query is not an ASK query');
       }
       return res.boolean;
     },
 
     construct(sparql) {
-      if (typeof sparql !== "string") {
-        throw new TypeError("[useGraph] SPARQL query must be a string");
+      if (typeof sparql !== 'string') {
+        throw new TypeError('[useGraph] SPARQL query must be a string');
       }
       const res = engine.query(store, sparql);
-      if (res.type !== "construct") {
-        throw new Error("[useGraph] Query is not a CONSTRUCT query");
+      if (res.type !== 'construct') {
+        throw new Error('[useGraph] Query is not a CONSTRUCT query');
       }
       return res.store;
     },
 
     update(sparql) {
-      if (typeof sparql !== "string") {
-        throw new TypeError("[useGraph] SPARQL query must be a string");
+      if (typeof sparql !== 'string') {
+        throw new TypeError('[useGraph] SPARQL query must be a string');
       }
       const res = engine.query(store, sparql);
-      if (res.type !== "update") {
-        throw new Error("[useGraph] Query is not an UPDATE query");
+      if (res.type !== 'update') {
+        throw new Error('[useGraph] Query is not an UPDATE query');
       }
       return res;
     },
@@ -369,16 +369,16 @@ function createTemporaryGraph(store, engine) {
     },
 
     serialize(options = {}) {
-      if (options && typeof options !== "object") {
-        throw new TypeError("[useGraph] serialize options must be an object");
+      if (options && typeof options !== 'object') {
+        throw new TypeError('[useGraph] serialize options must be an object');
       }
 
-      const { format = "Turtle", prefixes } = options;
+      const { format = 'Turtle', prefixes } = options;
 
-      if (format === "Turtle") {
+      if (format === 'Turtle') {
         return engine.serializeTurtle(store, { prefixes });
       }
-      if (format === "N-Quads") {
+      if (format === 'N-Quads') {
         return engine.serializeNQuads(store);
       }
 
@@ -399,7 +399,7 @@ function createTemporaryGraph(store, engine) {
     },
 
     union(...otherGraphs) {
-      const otherStores = otherGraphs.map((g) => g.store || g);
+      const otherStores = otherGraphs.map(g => g.store || g);
       const resultStore = engine.union(store, ...otherStores);
       return createTemporaryGraph(resultStore, engine);
     },

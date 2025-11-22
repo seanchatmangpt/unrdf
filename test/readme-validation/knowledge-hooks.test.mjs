@@ -15,13 +15,14 @@ describe('README Knowledge Hooks Examples', () => {
     mockHook = {
       meta: {
         name: 'data-quality-gate',
-        description: 'Ensures all persons have names'
+        description: 'Ensures all persons have names',
       },
       when: {
         kind: 'sparql-ask',
-        query: 'ASK { ?person a <http://xmlns.com/foaf/0.1/Person> . FILTER NOT EXISTS { ?person <http://xmlns.com/foaf/0.1/name> ?name } }'
+        query:
+          'ASK { ?person a <http://xmlns.com/foaf/0.1/Person> . FILTER NOT EXISTS { ?person <http://xmlns.com/foaf/0.1/name> ?name } }',
       },
-      run: vi.fn()
+      run: vi.fn(),
     };
 
     mockDefineHook = vi.fn().mockReturnValue(mockHook);
@@ -34,13 +35,13 @@ describe('README Knowledge Hooks Examples', () => {
       const hook = mockDefineHook({
         meta: {
           name: 'data-quality-gate',
-          description: 'Ensures all persons have names'
+          description: 'Ensures all persons have names',
         },
         when: {
           kind: 'sparql-ask',
-          query: 'ASK { ?person a <http://xmlns.com/foaf/0.1/Person> . }'
+          query: 'ASK { ?person a <http://xmlns.com/foaf/0.1/Person> . }',
         },
-        run: async (event) => {}
+        run: async _event => {},
       });
 
       expect(mockDefineHook).toHaveBeenCalled();
@@ -53,9 +54,9 @@ describe('README Knowledge Hooks Examples', () => {
         meta: { name: 'test-hook', description: 'Test' },
         when: {
           kind: 'sparql-ask',
-          query: 'ASK { ?s ?p ?o }'
+          query: 'ASK { ?s ?p ?o }',
         },
-        run: async () => {}
+        run: async () => {},
       });
 
       expect(hook.when.kind).toBe('sparql-ask');
@@ -67,7 +68,7 @@ describe('README Knowledge Hooks Examples', () => {
       const hook = mockDefineHook({
         meta: { name: 'test-hook', description: 'Test' },
         when: { kind: 'sparql-ask', query: 'ASK { ?s ?p ?o }' },
-        run: runFn
+        run: runFn,
       });
 
       expect(hook.run).toBeDefined();
@@ -75,7 +76,7 @@ describe('README Knowledge Hooks Examples', () => {
     });
 
     it('should handle validation hook that throws on failure', async () => {
-      const runFn = vi.fn(async (event) => {
+      const runFn = vi.fn(async event => {
         if (event.result === true) {
           throw new Error('All persons must be 18 or older');
         }
@@ -85,28 +86,26 @@ describe('README Knowledge Hooks Examples', () => {
         meta: { name: 'age-validation', description: 'Ensure age >= 18' },
         when: {
           kind: 'sparql-ask',
-          query: 'ASK { ?person <http://example.org/age> ?age . FILTER (?age < 18) }'
+          query: 'ASK { ?person <http://example.org/age> ?age . FILTER (?age < 18) }',
         },
-        run: runFn
+        run: runFn,
       });
 
       const hook = mockDefineHook({
         meta: { name: 'age-validation', description: 'Ensure age >= 18' },
         when: {
           kind: 'sparql-ask',
-          query: 'ASK { ?person <http://example.org/age> ?age . FILTER (?age < 18) }'
+          query: 'ASK { ?person <http://example.org/age> ?age . FILTER (?age < 18) }',
         },
-        run: runFn
+        run: runFn,
       });
 
       // Simulate hook execution when condition is true
-      await expect(
-        hook.run({ result: true })
-      ).rejects.toThrow('All persons must be 18 or older');
+      await expect(hook.run({ result: true })).rejects.toThrow('All persons must be 18 or older');
     });
 
     it('should handle validation hook that passes', async () => {
-      const runFn = vi.fn(async (event) => {
+      const runFn = vi.fn(async event => {
         if (event.result === true) {
           throw new Error('All persons must be 18 or older');
         }
@@ -116,24 +115,22 @@ describe('README Knowledge Hooks Examples', () => {
         meta: { name: 'age-validation', description: 'Ensure age >= 18' },
         when: {
           kind: 'sparql-ask',
-          query: 'ASK { ?person <http://example.org/age> ?age . FILTER (?age < 18) }'
+          query: 'ASK { ?person <http://example.org/age> ?age . FILTER (?age < 18) }',
         },
-        run: runFn
+        run: runFn,
       });
 
       const hook = mockDefineHook({
         meta: { name: 'age-validation', description: 'Ensure age >= 18' },
         when: {
           kind: 'sparql-ask',
-          query: 'ASK { ?person <http://example.org/age> ?age . FILTER (?age < 18) }'
+          query: 'ASK { ?person <http://example.org/age> ?age . FILTER (?age < 18) }',
         },
-        run: runFn
+        run: runFn,
       });
 
       // Simulate hook execution when condition is false (valid data)
-      await expect(
-        hook.run({ result: false })
-      ).resolves.not.toThrow();
+      await expect(hook.run({ result: false })).resolves.not.toThrow();
     });
   });
 
@@ -142,7 +139,7 @@ describe('README Knowledge Hooks Examples', () => {
       const hook = mockDefineHook({
         meta: { name: 'test-hook', description: 'Test' },
         when: { kind: 'sparql-ask', query: 'ASK { ?s ?p ?o }' },
-        run: async () => {}
+        run: async () => {},
       });
 
       const result = await mockRegisterHook(hook);
@@ -158,25 +155,23 @@ describe('README Knowledge Hooks Examples', () => {
       const hook = mockDefineHook({
         meta: { name: 'invalid-hook', description: 'Invalid' },
         when: { kind: 'sparql-ask', query: 'INVALID' },
-        run: async () => {}
+        run: async () => {},
       });
 
-      await expect(
-        mockRegisterHook(hook)
-      ).rejects.toThrow('Hook registration failed');
+      await expect(mockRegisterHook(hook)).rejects.toThrow('Hook registration failed');
     });
 
     it('should register multiple hooks', async () => {
       const hook1 = mockDefineHook({
         meta: { name: 'hook1', description: 'First hook' },
         when: { kind: 'sparql-ask', query: 'ASK { ?s ?p ?o }' },
-        run: async () => {}
+        run: async () => {},
       });
 
       const hook2 = mockDefineHook({
         meta: { name: 'hook2', description: 'Second hook' },
         when: { kind: 'shacl', shapes: [] },
-        run: async () => {}
+        run: async () => {},
       });
 
       await mockRegisterHook(hook1);
@@ -192,9 +187,9 @@ describe('README Knowledge Hooks Examples', () => {
         meta: { name: 'ask-hook', description: 'ASK query hook' },
         when: {
           kind: 'sparql-ask',
-          query: 'ASK { ?s ?p ?o }'
+          query: 'ASK { ?s ?p ?o }',
         },
-        run: async () => {}
+        run: async () => {},
       });
 
       expect(hook.when.kind).toBe('sparql-ask');
@@ -204,13 +199,13 @@ describe('README Knowledge Hooks Examples', () => {
       mockDefineHook.mockReturnValue({
         meta: { name: 'shacl-hook', description: 'SHACL validation hook' },
         when: { kind: 'shacl', shapes: [] },
-        run: vi.fn()
+        run: vi.fn(),
       });
 
       const hook = mockDefineHook({
         meta: { name: 'shacl-hook', description: 'SHACL validation hook' },
         when: { kind: 'shacl', shapes: [] },
-        run: async () => {}
+        run: async () => {},
       });
 
       expect(hook.when.kind).toBe('shacl');
@@ -220,13 +215,13 @@ describe('README Knowledge Hooks Examples', () => {
       mockDefineHook.mockReturnValue({
         meta: { name: 'delta-hook', description: 'Change detection hook' },
         when: { kind: 'delta', pattern: {} },
-        run: vi.fn()
+        run: vi.fn(),
       });
 
       const hook = mockDefineHook({
         meta: { name: 'delta-hook', description: 'Change detection hook' },
         when: { kind: 'delta', pattern: {} },
-        run: async () => {}
+        run: async () => {},
       });
 
       expect(hook.when.kind).toBe('delta');
@@ -234,15 +229,21 @@ describe('README Knowledge Hooks Examples', () => {
 
     it('should support threshold hook type', () => {
       mockDefineHook.mockReturnValue({
-        meta: { name: 'threshold-hook', description: 'Numeric comparison hook' },
+        meta: {
+          name: 'threshold-hook',
+          description: 'Numeric comparison hook',
+        },
         when: { kind: 'threshold', value: 100, operator: 'gt' },
-        run: vi.fn()
+        run: vi.fn(),
       });
 
       const hook = mockDefineHook({
-        meta: { name: 'threshold-hook', description: 'Numeric comparison hook' },
+        meta: {
+          name: 'threshold-hook',
+          description: 'Numeric comparison hook',
+        },
         when: { kind: 'threshold', value: 100, operator: 'gt' },
-        run: async () => {}
+        run: async () => {},
       });
 
       expect(hook.when.kind).toBe('threshold');
@@ -252,13 +253,13 @@ describe('README Knowledge Hooks Examples', () => {
       mockDefineHook.mockReturnValue({
         meta: { name: 'count-hook', description: 'Cardinality check hook' },
         when: { kind: 'count', min: 1, max: 10 },
-        run: vi.fn()
+        run: vi.fn(),
       });
 
       const hook = mockDefineHook({
         meta: { name: 'count-hook', description: 'Cardinality check hook' },
         when: { kind: 'count', min: 1, max: 10 },
-        run: async () => {}
+        run: async () => {},
       });
 
       expect(hook.when.kind).toBe('count');
@@ -266,15 +267,21 @@ describe('README Knowledge Hooks Examples', () => {
 
     it('should support window hook type', () => {
       mockDefineHook.mockReturnValue({
-        meta: { name: 'window-hook', description: 'Time-based aggregation hook' },
+        meta: {
+          name: 'window-hook',
+          description: 'Time-based aggregation hook',
+        },
         when: { kind: 'window', duration: '5m' },
-        run: vi.fn()
+        run: vi.fn(),
       });
 
       const hook = mockDefineHook({
-        meta: { name: 'window-hook', description: 'Time-based aggregation hook' },
+        meta: {
+          name: 'window-hook',
+          description: 'Time-based aggregation hook',
+        },
         when: { kind: 'window', duration: '5m' },
-        run: async () => {}
+        run: async () => {},
       });
 
       expect(hook.when.kind).toBe('window');
@@ -283,7 +290,7 @@ describe('README Knowledge Hooks Examples', () => {
 
   describe('Policy-Driven Validation Example', () => {
     it('should define age validation hook', () => {
-      const runFn = vi.fn(async (event) => {
+      const runFn = vi.fn(async event => {
         if (event.result) {
           throw new Error('All persons must be 18 or older');
         }
@@ -293,18 +300,18 @@ describe('README Knowledge Hooks Examples', () => {
         meta: { name: 'age-validation', description: 'Ensure age is >= 18' },
         when: {
           kind: 'sparql-ask',
-          query: 'ASK { ?person <http://example.org/age> ?age . FILTER (?age < 18) }'
+          query: 'ASK { ?person <http://example.org/age> ?age . FILTER (?age < 18) }',
         },
-        run: runFn
+        run: runFn,
       });
 
       const validateAge = mockDefineHook({
         meta: { name: 'age-validation', description: 'Ensure age is >= 18' },
         when: {
           kind: 'sparql-ask',
-          query: 'ASK { ?person <http://example.org/age> ?age . FILTER (?age < 18) }'
+          query: 'ASK { ?person <http://example.org/age> ?age . FILTER (?age < 18) }',
         },
-        run: runFn
+        run: runFn,
       });
 
       expect(validateAge.meta.name).toBe('age-validation');
@@ -316,13 +323,13 @@ describe('README Knowledge Hooks Examples', () => {
         meta: { name: 'age-validation', description: 'Ensure age >= 18' },
         when: {
           kind: 'sparql-ask',
-          query: 'ASK { ?person <http://example.org/age> ?age . FILTER (?age < 18) }'
+          query: 'ASK { ?person <http://example.org/age> ?age . FILTER (?age < 18) }',
         },
-        run: async (event) => {
+        run: async event => {
           if (event.result) {
             throw new Error('All persons must be 18 or older');
           }
-        }
+        },
       });
 
       await mockRegisterHook(validateAge);
@@ -331,7 +338,7 @@ describe('README Knowledge Hooks Examples', () => {
     });
 
     it('should reject transaction when validation fails', async () => {
-      const runFn = vi.fn(async (event) => {
+      const runFn = vi.fn(async event => {
         if (event.result) {
           throw new Error('All persons must be 18 or older');
         }
@@ -341,28 +348,28 @@ describe('README Knowledge Hooks Examples', () => {
         meta: { name: 'age-validation', description: 'Ensure age >= 18' },
         when: {
           kind: 'sparql-ask',
-          query: 'ASK { ?person <http://example.org/age> ?age . FILTER (?age < 18) }'
+          query: 'ASK { ?person <http://example.org/age> ?age . FILTER (?age < 18) }',
         },
-        run: runFn
+        run: runFn,
       });
 
       const validateAge = mockDefineHook({
         meta: { name: 'age-validation', description: 'Ensure age >= 18' },
         when: {
           kind: 'sparql-ask',
-          query: 'ASK { ?person <http://example.org/age> ?age . FILTER (?age < 18) }'
+          query: 'ASK { ?person <http://example.org/age> ?age . FILTER (?age < 18) }',
         },
-        run: runFn
+        run: runFn,
       });
 
       // Simulate hook execution with underage person
-      await expect(
-        validateAge.run({ result: true })
-      ).rejects.toThrow('All persons must be 18 or older');
+      await expect(validateAge.run({ result: true })).rejects.toThrow(
+        'All persons must be 18 or older'
+      );
     });
 
     it('should allow transaction when validation passes', async () => {
-      const runFn = vi.fn(async (event) => {
+      const runFn = vi.fn(async event => {
         if (event.result) {
           throw new Error('All persons must be 18 or older');
         }
@@ -372,24 +379,22 @@ describe('README Knowledge Hooks Examples', () => {
         meta: { name: 'age-validation', description: 'Ensure age >= 18' },
         when: {
           kind: 'sparql-ask',
-          query: 'ASK { ?person <http://example.org/age> ?age . FILTER (?age < 18) }'
+          query: 'ASK { ?person <http://example.org/age> ?age . FILTER (?age < 18) }',
         },
-        run: runFn
+        run: runFn,
       });
 
       const validateAge = mockDefineHook({
         meta: { name: 'age-validation', description: 'Ensure age >= 18' },
         when: {
           kind: 'sparql-ask',
-          query: 'ASK { ?person <http://example.org/age> ?age . FILTER (?age < 18) }'
+          query: 'ASK { ?person <http://example.org/age> ?age . FILTER (?age < 18) }',
         },
-        run: runFn
+        run: runFn,
       });
 
       // Simulate hook execution with valid age
-      await expect(
-        validateAge.run({ result: false })
-      ).resolves.not.toThrow();
+      await expect(validateAge.run({ result: false })).resolves.not.toThrow();
     });
   });
 
@@ -404,9 +409,7 @@ describe('README Knowledge Hooks Examples', () => {
     it('should handle deregistration of non-existent hook', async () => {
       mockDeregisterHook.mockRejectedValue(new Error('Hook not found'));
 
-      await expect(
-        mockDeregisterHook('non-existent-hook')
-      ).rejects.toThrow('Hook not found');
+      await expect(mockDeregisterHook('non-existent-hook')).rejects.toThrow('Hook not found');
     });
   });
 });

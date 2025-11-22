@@ -37,7 +37,7 @@ export const createCommand = defineCommand({
     },
   },
   async run(ctx) {
-    return tracer.startActiveSpan('cli.context.create', async (span) => {
+    return tracer.startActiveSpan('cli.context.create', async span => {
       try {
         const { name, sidecar } = ctx.args;
 

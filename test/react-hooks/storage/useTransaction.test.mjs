@@ -2,7 +2,7 @@
  * @fileoverview Tests for useTransaction hook
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, _vi } from 'vitest';
 import { Store, DataFactory } from 'n3';
 
 const { quad, namedNode, literal } = DataFactory;
@@ -16,11 +16,11 @@ describe('useTransaction', () => {
 
   describe('Basic Transactions', () => {
     it('should commit transaction', () => {
-      const snapshot = new Store([...store]);
+      const _snapshot = new Store([...store]);
 
       const quadsToAdd = [
         quad(namedNode('http://s1'), namedNode('http://p'), literal('o1')),
-        quad(namedNode('http://s2'), namedNode('http://p'), literal('o2'))
+        quad(namedNode('http://s2'), namedNode('http://p'), literal('o2')),
       ];
 
       // Transaction
@@ -55,7 +55,9 @@ describe('useTransaction', () => {
       const operations = [
         () => store.add(quad(namedNode('http://s1'), namedNode('http://p'), literal('o1'))),
         () => store.add(quad(namedNode('http://s2'), namedNode('http://p'), literal('o2'))),
-        () => { throw new Error('Fail'); }
+        () => {
+          throw new Error('Fail');
+        },
       ];
 
       try {
@@ -88,17 +90,17 @@ describe('useTransaction', () => {
     });
 
     it('should ensure durability', async () => {
-      const quads = [
-        quad(namedNode('http://s'), namedNode('http://p'), literal('o'))
-      ];
+      const quads = [quad(namedNode('http://s'), namedNode('http://p'), literal('o'))];
 
       quads.forEach(q => store.add(q));
 
       // Simulate persistence
       const serialized = JSON.stringify([...store]);
-      const restored = new Store(JSON.parse(serialized).map(q =>
-        quad(namedNode(q.subject.value), namedNode(q.predicate.value), literal(q.object.value))
-      ));
+      const restored = new Store(
+        JSON.parse(serialized).map(q =>
+          quad(namedNode(q.subject.value), namedNode(q.predicate.value), literal(q.object.value))
+        )
+      );
 
       expect(restored.size).toBe(1);
     });
@@ -162,14 +164,10 @@ describe('useTransaction', () => {
     it('should handle large transactions efficiently', () => {
       const start = performance.now();
 
-      const snapshot = new Store([...store]);
+      const _snapshot = new Store([...store]);
 
       for (let i = 0; i < 10000; i++) {
-        store.add(quad(
-          namedNode(`http://s${i}`),
-          namedNode('http://p'),
-          literal(`o${i}`)
-        ));
+        store.add(quad(namedNode(`http://s${i}`), namedNode('http://p'), literal(`o${i}`)));
       }
 
       const duration = performance.now() - start;

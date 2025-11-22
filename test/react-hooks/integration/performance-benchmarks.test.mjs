@@ -2,8 +2,8 @@
  * @fileoverview Performance benchmark tests for React hooks
  */
 
-import { describe, it, expect, beforeEach } from 'vitest';
-import { renderHook } from '@testing-library/react';
+import { describe, it, expect, _beforeEach } from 'vitest';
+import { _renderHook } from '@testing-library/react';
 import { Store, DataFactory } from 'n3';
 
 const { quad, namedNode, literal } = DataFactory;
@@ -15,11 +15,7 @@ describe('Performance Benchmarks', () => {
       const start = performance.now();
 
       for (let i = 0; i < 10000; i++) {
-        store.add(quad(
-          namedNode(`http://s${i}`),
-          namedNode('http://p'),
-          literal(`o${i}`)
-        ));
+        store.add(quad(namedNode(`http://s${i}`), namedNode('http://p'), literal(`o${i}`)));
       }
 
       const duration = performance.now() - start;
@@ -31,11 +27,7 @@ describe('Performance Benchmarks', () => {
       const store = new Store();
 
       for (let i = 0; i < 10000; i++) {
-        store.add(quad(
-          namedNode(`http://s${i}`),
-          namedNode('http://p'),
-          literal(`o${i}`)
-        ));
+        store.add(quad(namedNode(`http://s${i}`), namedNode('http://p'), literal(`o${i}`)));
       }
 
       const start = performance.now();
@@ -51,11 +43,7 @@ describe('Performance Benchmarks', () => {
       const quads = [];
 
       for (let i = 0; i < 10000; i++) {
-        const q = quad(
-          namedNode(`http://s${i}`),
-          namedNode('http://p'),
-          literal(`o${i}`)
-        );
+        const q = quad(namedNode(`http://s${i}`), namedNode('http://p'), literal(`o${i}`));
         quads.push(q);
         store.add(q);
       }
@@ -101,12 +89,9 @@ describe('Performance Benchmarks', () => {
       for (let g = 0; g < 100; g++) {
         const graph = namedNode(`http://graph${g}`);
         for (let i = 0; i < 100; i++) {
-          store.add(quad(
-            namedNode(`http://s${i}`),
-            namedNode('http://p'),
-            literal(`o${i}`),
-            graph
-          ));
+          store.add(
+            quad(namedNode(`http://s${i}`), namedNode('http://p'), literal(`o${i}`), graph)
+          );
         }
       }
 
@@ -119,12 +104,14 @@ describe('Performance Benchmarks', () => {
       const store = new Store();
 
       for (let g = 0; g < 100; g++) {
-        store.add(quad(
-          namedNode('http://s'),
-          namedNode('http://p'),
-          literal('o'),
-          namedNode(`http://graph${g}`)
-        ));
+        store.add(
+          quad(
+            namedNode('http://s'),
+            namedNode('http://p'),
+            literal('o'),
+            namedNode(`http://graph${g}`)
+          )
+        );
       }
 
       const start = performance.now();
@@ -145,11 +132,7 @@ describe('Performance Benchmarks', () => {
       const initialMemory = process.memoryUsage().heapUsed;
 
       for (let i = 0; i < 100000; i++) {
-        store.add(quad(
-          namedNode(`http://s${i}`),
-          namedNode('http://p'),
-          literal(`o${i}`)
-        ));
+        store.add(quad(namedNode(`http://s${i}`), namedNode('http://p'), literal(`o${i}`)));
       }
 
       const finalMemory = process.memoryUsage().heapUsed;
@@ -167,11 +150,7 @@ describe('Performance Benchmarks', () => {
       // Simulate 100 hook renders
       for (let i = 0; i < 100; i++) {
         const store = new Store();
-        store.add(quad(
-          namedNode('http://s'),
-          namedNode('http://p'),
-          literal('o')
-        ));
+        store.add(quad(namedNode('http://s'), namedNode('http://p'), literal('o')));
       }
 
       const duration = performance.now() - start;
@@ -206,11 +185,7 @@ describe('Performance Benchmarks', () => {
       const store = new Store();
 
       for (let i = 0; i < 1000; i++) {
-        store.add(quad(
-          namedNode(`http://s${i}`),
-          namedNode('http://p'),
-          literal(`o${i}`)
-        ));
+        store.add(quad(namedNode(`http://s${i}`), namedNode('http://p'), literal(`o${i}`)));
       }
 
       const start = performance.now();

@@ -3,7 +3,7 @@
  * @description React hook for OWL reasoning sessions
  */
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, _useEffect } from 'react';
 import { useKnowledgeEngineContext } from '../core/use-knowledge-engine-context.mjs';
 
 /**
@@ -30,45 +30,48 @@ export function useReasoningSession(config = {}) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const infer = useCallback(async (subject) => {
-    try {
-      setLoading(true);
+  const infer = useCallback(
+    async subject => {
+      try {
+        setLoading(true);
 
-      const directTriples = await engine.query(`
+        const _directTriples = await engine.query(`
         SELECT * WHERE { <${subject}> ?p ?o }
       `);
 
-      const inferred = [];
+        const inferred = [];
 
-      for (const rule of rules) {
-        if (rule === 'rdfs:subClassOf') {
-          const subClass = await engine.query(`
+        for (const rule of rules) {
+          if (rule === 'rdfs:subClassOf') {
+            const subClass = await engine.query(`
             SELECT ?super WHERE {
               <${subject}> rdfs:subClassOf ?super
             }
           `);
-          inferred.push(...subClass);
-        }
+            inferred.push(...subClass);
+          }
 
-        if (rule === 'owl:sameAs') {
-          const sameAs = await engine.query(`
+          if (rule === 'owl:sameAs') {
+            const sameAs = await engine.query(`
             SELECT ?same WHERE {
               <${subject}> owl:sameAs ?same
             }
           `);
-          inferred.push(...sameAs);
+            inferred.push(...sameAs);
+          }
         }
-      }
 
-      setInferredTriples(inferred);
-      setLoading(false);
-      return inferred;
-    } catch (err) {
-      setError(err);
-      setLoading(false);
-      throw err;
-    }
-  }, [engine, rules]);
+        setInferredTriples(inferred);
+        setLoading(false);
+        return inferred;
+      } catch (err) {
+        setError(err);
+        setLoading(false);
+        throw err;
+      }
+    },
+    [engine, rules]
+  );
 
   const materialize = useCallback(async () => {
     try {
@@ -87,5 +90,13 @@ export function useReasoningSession(config = {}) {
     }
   }, [engine, inferredTriples]);
 
-  return { infer, materialize, inferredTriples, rules, setRules, loading, error };
+  return {
+    infer,
+    materialize,
+    inferredTriples,
+    rules,
+    setRules,
+    loading,
+    error,
+  };
 }

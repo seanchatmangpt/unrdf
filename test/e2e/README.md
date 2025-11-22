@@ -49,6 +49,7 @@ The E2E tests use Testcontainers to spin up real services (PostgreSQL, Redis, Mi
 ## Prerequisites
 
 ### Docker
+
 Testcontainers requires Docker to be running:
 
 ```bash
@@ -58,6 +59,7 @@ docker ps
 ```
 
 ### Node.js Dependencies
+
 ```bash
 pnpm install
 ```
@@ -65,11 +67,13 @@ pnpm install
 ## Running Tests
 
 ### Run All E2E Tests
+
 ```bash
 pnpm test test/e2e/
 ```
 
 ### Run Specific Test Suites
+
 ```bash
 # Knowledge engine E2E tests
 pnpm test test/e2e/knowledge-engine-e2e.test.mjs
@@ -82,6 +86,7 @@ pnpm test test/e2e/integration-e2e.test.mjs
 ```
 
 ### Run with Verbose Output
+
 ```bash
 pnpm test test/e2e/ --reporter=verbose
 ```
@@ -90,13 +95,13 @@ pnpm test test/e2e/ --reporter=verbose
 
 ### Services Used
 
-| Service | Container | Purpose | Port |
-|---------|-----------|---------|------|
-| PostgreSQL | `postgres:15-alpine` | RDF storage | 5432 |
-| Redis | `redis:7-alpine` | Caching | 6379 |
-| MinIO | `minio/minio:latest` | Object storage | 9000, 9001 |
-| Apache Jena Fuseki | `stain/jena-fuseki:4.9.0` | SPARQL endpoint | 3030 |
-| Node.js App | `node:18-alpine` | KGC sidecar | 3000 |
+| Service            | Container                 | Purpose         | Port       |
+| ------------------ | ------------------------- | --------------- | ---------- |
+| PostgreSQL         | `postgres:15-alpine`      | RDF storage     | 5432       |
+| Redis              | `redis:7-alpine`          | Caching         | 6379       |
+| MinIO              | `minio/minio:latest`      | Object storage  | 9000, 9001 |
+| Apache Jena Fuseki | `stain/jena-fuseki:4.9.0` | SPARQL endpoint | 3030       |
+| Node.js App        | `node:18-alpine`          | KGC sidecar     | 3000       |
 
 ### Configuration
 
@@ -112,14 +117,15 @@ export const TEST_CONFIG = {
     REDIS: 6379,
     MINIO: 9000,
     MINIO_CONSOLE: 9001,
-    FUSEKI: 3030
-  }
+    FUSEKI: 3030,
+  },
 };
 ```
 
 ## Test Data
 
 ### Sample Knowledge Graph
+
 ```javascript
 {
   '@context': {
@@ -145,6 +151,7 @@ export const TEST_CONFIG = {
 ```
 
 ### Sample Policy Pack
+
 ```javascript
 {
   meta: {
@@ -179,6 +186,7 @@ export const TEST_CONFIG = {
 ## Writing E2E Tests
 
 ### Basic Test Structure
+
 ```javascript
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { E2ETestEnvironment, TestDataManager } from './testcontainer-setup.mjs';
@@ -207,6 +215,7 @@ describe('My E2E Tests', () => {
 ```
 
 ### Accessing Services
+
 ```javascript
 // Get service configurations
 const postgres = testEnv.getService('postgres');
@@ -222,11 +231,14 @@ const sparqlEndpoint = fuseki.sparqlEndpoint;
 ```
 
 ### Creating Test Data
+
 ```javascript
 // Create sample data
 dataManager.createTestData('my-dataset', {
   '@context': { '@vocab': 'https://example.org/' },
-  '@graph': [/* your data */]
+  '@graph': [
+    /* your data */
+  ],
 });
 
 // Retrieve test data
@@ -238,21 +250,27 @@ const myData = dataManager.getTestData('my-dataset');
 ### Common Issues
 
 1. **Docker not running**
+
    ```
    Error: Docker is not running
    ```
+
    Solution: Start Docker Desktop or Docker daemon
 
 2. **Port conflicts**
+
    ```
    Error: Port 5432 is already in use
    ```
+
    Solution: Stop conflicting services or change ports in config
 
 3. **Container startup timeout**
+
    ```
    Error: Container did not start within timeout
    ```
+
    Solution: Increase `STARTUP_TIMEOUT` or check container logs
 
 4. **Memory issues**
@@ -264,11 +282,13 @@ const myData = dataManager.getTestData('my-dataset');
 ### Debugging
 
 Enable verbose logging:
+
 ```bash
 DEBUG=testcontainers* pnpm test test/e2e/
 ```
 
 Check container logs:
+
 ```javascript
 const container = testEnv.getService('postgres');
 console.log(await container.container.logs());
@@ -286,6 +306,7 @@ For faster test execution:
 ## CI/CD Integration
 
 ### GitHub Actions
+
 ```yaml
 name: E2E Tests
 on: [push, pull_request]
@@ -306,6 +327,7 @@ jobs:
 ```
 
 ### Local Development
+
 ```bash
 # Run E2E tests in watch mode
 pnpm test test/e2e/ --watch
@@ -334,9 +356,3 @@ When adding new E2E tests:
 4. Add documentation for new test scenarios
 5. Ensure tests are deterministic and repeatable
 6. Consider performance impact of new tests
-
-
-
-
-
-

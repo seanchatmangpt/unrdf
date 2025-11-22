@@ -66,12 +66,14 @@ export class IndexedDBQuadStore {
         resolve();
       };
 
-      request.onupgradeneeded = (event) => {
+      request.onupgradeneeded = event => {
         const db = event.target.result;
 
         // Create quads object store with composite indexes
         if (!db.objectStoreNames.contains(QUADS_STORE)) {
-          const quadsStore = db.createObjectStore(QUADS_STORE, { keyPath: 'key' });
+          const quadsStore = db.createObjectStore(QUADS_STORE, {
+            keyPath: 'key',
+          });
 
           // Create indexes for efficient quad pattern matching
           quadsStore.createIndex('subject', 'subject', { unique: false });
@@ -80,10 +82,18 @@ export class IndexedDBQuadStore {
           quadsStore.createIndex('graph', 'graph', { unique: false });
 
           // Composite indexes for common query patterns
-          quadsStore.createIndex('sp', ['subject', 'predicate'], { unique: false });
-          quadsStore.createIndex('so', ['subject', 'object'], { unique: false });
-          quadsStore.createIndex('po', ['predicate', 'object'], { unique: false });
-          quadsStore.createIndex('spo', ['subject', 'predicate', 'object'], { unique: false });
+          quadsStore.createIndex('sp', ['subject', 'predicate'], {
+            unique: false,
+          });
+          quadsStore.createIndex('so', ['subject', 'object'], {
+            unique: false,
+          });
+          quadsStore.createIndex('po', ['predicate', 'object'], {
+            unique: false,
+          });
+          quadsStore.createIndex('spo', ['subject', 'predicate', 'object'], {
+            unique: false,
+          });
         }
 
         // Create graphs metadata store
@@ -121,7 +131,10 @@ export class IndexedDBQuadStore {
       let result = `"${term.value}"`;
       if (term.language) {
         result += `@${term.language}`;
-      } else if (term.datatype && term.datatype.value !== 'http://www.w3.org/2001/XMLSchema#string') {
+      } else if (
+        term.datatype &&
+        term.datatype.value !== 'http://www.w3.org/2001/XMLSchema#string'
+      ) {
         result += `^^${term.datatype.value}`;
       }
       return result;
@@ -148,7 +161,10 @@ export class IndexedDBQuadStore {
       graph: this.serializeTerm(quad.graph) || 'default',
       quad: {
         subject: { termType: quad.subject.termType, value: quad.subject.value },
-        predicate: { termType: quad.predicate.termType, value: quad.predicate.value },
+        predicate: {
+          termType: quad.predicate.termType,
+          value: quad.predicate.value,
+        },
         object: {
           termType: quad.object.termType,
           value: quad.object.value,
@@ -208,15 +224,23 @@ export class IndexedDBQuadStore {
           object: this.serializeTerm(quad.object),
           graph: this.serializeTerm(quad.graph) || 'default',
           quad: {
-            subject: { termType: quad.subject.termType, value: quad.subject.value },
-            predicate: { termType: quad.predicate.termType, value: quad.predicate.value },
+            subject: {
+              termType: quad.subject.termType,
+              value: quad.subject.value,
+            },
+            predicate: {
+              termType: quad.predicate.termType,
+              value: quad.predicate.value,
+            },
             object: {
               termType: quad.object.termType,
               value: quad.object.value,
               language: quad.object.language,
               datatype: quad.object.datatype ? { value: quad.object.datatype.value } : undefined,
             },
-            graph: quad.graph ? { termType: quad.graph.termType, value: quad.graph.value } : undefined,
+            graph: quad.graph
+              ? { termType: quad.graph.termType, value: quad.graph.value }
+              : undefined,
           },
         };
 

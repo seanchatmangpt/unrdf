@@ -11,12 +11,12 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { createSandboxAdapter } from '../../../src/security/sandbox-adapter.mjs';
 
 describe('Executor Detection', () => {
-  let originalNodeVersion;
-  let originalPlatform;
+  let _originalNodeVersion;
+  let _originalPlatform;
 
   beforeEach(() => {
-    originalNodeVersion = process.version;
-    originalPlatform = process.platform;
+    _originalNodeVersion = process.version;
+    _originalPlatform = process.platform;
   });
 
   afterEach(() => {
@@ -80,7 +80,7 @@ describe('Executor Detection', () => {
 
     it('should support sandbox context configuration', async () => {
       const adapter = createSandboxAdapter({
-        sandbox: { customValue: 42 }
+        sandbox: { customValue: 42 },
       });
 
       const result = await adapter.run('customValue');
@@ -194,7 +194,7 @@ describe('Executor Detection', () => {
         { name: 'Template literals', code: '`test`' },
         { name: 'Destructuring', code: 'const {a} = {a:1}; a' },
         { name: 'Spread operator', code: '[...[1,2,3]]' },
-        { name: 'Classes', code: 'class A {}; new A()' }
+        { name: 'Classes', code: 'class A {}; new A()' },
       ];
 
       for (const test of tests) {
@@ -242,7 +242,7 @@ describe('Executor Detection', () => {
         'globalThis',
         'BigInt(42)',
         'Promise.allSettled([Promise.resolve(1)])',
-        'Object.fromEntries([["a", 1]])'
+        'Object.fromEntries([["a", 1]])',
       ];
 
       for (const test of tests) {
@@ -405,8 +405,8 @@ describe('Executor Detection', () => {
       const adapter = createSandboxAdapter({
         sandbox: {
           customValue: 42,
-          customFunction: () => 'test'
-        }
+          customFunction: () => 'test',
+        },
       });
 
       expect(await adapter.run('customValue')).toBe(42);

@@ -1,57 +1,53 @@
 /**
  * @fileoverview useTurtle composable - Turtle file I/O operations
- * 
+ *
  * This composable provides file system operations for Turtle files.
  * It handles loading, saving, and managing .ttl files with automatic
  * parsing and serialization to/from N3.Store.
- * 
+ *
  * @version 1.0.0
  * @author GitVan Team
  * @license MIT
  */
 
-import { readdirSync, readFileSync, writeFileSync, mkdirSync, statSync } from "node:fs";
-import { join, dirname } from "node:path";
-import { useStoreContext } from "../context/index.mjs";
+import { readdirSync, readFileSync, writeFileSync, mkdirSync, statSync } from 'node:fs';
+import { join, _dirname } from 'node:path';
+import { useStoreContext } from '../context/index.mjs';
 
 /**
  * Create a Turtle file system composable
- * 
+ *
  * @param {string} [graphDir='./graph'] - Directory containing Turtle files
  * @param {Object} [options] - Turtle options
  * @param {string} [options.baseIRI] - Base IRI for parsing
  * @param {boolean} [options.autoLoad=true] - Automatically load all .ttl files
  * @param {boolean} [options.validateOnLoad=true] - Validate files on load
  * @returns {Object} Turtle file system interface
- * 
+ *
  * @example
  * const turtle = useTurtle('./my-graph');
- * 
+ *
  * // Load all .ttl files
  * turtle.loadAll();
- * 
+ *
  * // Save a specific graph
  * turtle.save('my-graph', store);
- * 
+ *
  * // Load a specific file
  * const store = turtle.load('my-graph');
  */
-export function useTurtle(graphDir = "./graph", options = {}) {
-  const {
-    baseIRI = "http://example.org/",
-    autoLoad = true,
-    validateOnLoad = true
-  } = options;
+export function useTurtle(graphDir = './graph', options = {}) {
+  const { baseIRI = 'http://example.org/', _autoLoad = true, validateOnLoad = true } = options;
 
   // Get the engine from context
   const storeContext = useStoreContext();
   const engine = storeContext.engine;
-  
+
   // Ensure directory exists
   try {
     mkdirSync(graphDir, { recursive: true });
   } catch (error) {
-    if (error.code !== "EEXIST") {
+    if (error.code !== 'EEXIST') {
       throw error;
     }
   }
@@ -90,48 +86,48 @@ export function useTurtle(graphDir = "./graph", options = {}) {
      */
     loadAll(options = {}) {
       const { merge = true, validate = validateOnLoad } = options;
-      
+
       try {
         const files = readdirSync(graphDir);
-        const ttlFiles = files.filter(f => f.endsWith(".ttl"));
-        
+        const ttlFiles = files.filter(f => f.endsWith('.ttl'));
+
         if (ttlFiles.length === 0) {
           console.log(`No .ttl files found in ${graphDir}`);
           return { loaded: 0, files: [] };
         }
 
         const loadedFiles = [];
-        
+
         for (const fileName of ttlFiles) {
           try {
             const filePath = join(graphDir, fileName);
-            const content = readFileSync(filePath, "utf8");
-            
+            const content = readFileSync(filePath, 'utf8');
+
             if (validate) {
               // Basic validation - try to parse
               engine.parseTurtle(content, { baseIRI });
             }
-            
+
             if (!merge) {
               storeContext.store.clear();
             }
-            
+
             const parsedStore = engine.parseTurtle(content, { baseIRI });
             for (const quad of parsedStore) {
               storeContext.store.add(quad);
             }
-            
+
             loadedFiles.push(fileName);
             console.log(`✅ Loaded: ${fileName}`);
           } catch (error) {
             console.warn(`⚠️ Failed to load ${fileName}: ${error.message}`);
           }
         }
-        
+
         console.log(`📁 Loaded ${loadedFiles.length} files from ${graphDir}`);
         return { loaded: loadedFiles.length, files: loadedFiles };
       } catch (error) {
-        if (error.code === "ENOENT") {
+        if (error.code === 'ENOENT') {
           console.log(`📁 Graph directory ${graphDir} doesn't exist yet`);
           return { loaded: 0, files: [] };
         }
@@ -150,28 +146,28 @@ export function useTurtle(graphDir = "./graph", options = {}) {
     load(fileName, options = {}) {
       const { merge = true, validate = validateOnLoad } = options;
       const filePath = join(graphDir, `${fileName}.ttl`);
-      
+
       try {
-        const content = readFileSync(filePath, "utf8");
-        
+        const content = readFileSync(filePath, 'utf8');
+
         if (validate) {
           engine.parseTurtle(content, { baseIRI });
         }
-        
+
         const parsedStore = engine.parseTurtle(content, { baseIRI });
-        
+
         if (!merge) {
           storeContext.clear();
         }
-        
+
         for (const quad of parsedStore) {
           storeContext.store.add(quad);
         }
-        
+
         console.log(`✅ Loaded: ${fileName}.ttl`);
         return parsedStore;
       } catch (error) {
-        if (error.code === "ENOENT") {
+        if (error.code === 'ENOENT') {
           throw new Error(`File not found: ${fileName}.ttl`);
         }
         throw error;
@@ -189,27 +185,29 @@ export function useTurtle(graphDir = "./graph", options = {}) {
     save(fileName, options = {}) {
       const { prefixes, createBackup = false } = options;
       const filePath = join(graphDir, `${fileName}.ttl`);
-      
+
       try {
         // Create backup if requested and file exists
         if (createBackup) {
           try {
             statSync(filePath);
             const backupPath = `${filePath}.backup`;
-            const content = readFileSync(filePath, "utf8");
-            writeFileSync(backupPath, content, "utf8");
+            const content = readFileSync(filePath, 'utf8');
+            writeFileSync(backupPath, content, 'utf8');
             console.log(`📋 Created backup: ${fileName}.ttl.backup`);
           } catch {
             // File doesn't exist, no backup needed
           }
         }
-        
-        const turtleContent = engine.serializeTurtle(storeContext.store, { prefixes });
-        writeFileSync(filePath, turtleContent, "utf8");
-        
+
+        const turtleContent = engine.serializeTurtle(storeContext.store, {
+          prefixes,
+        });
+        writeFileSync(filePath, turtleContent, 'utf8');
+
         const stats = statSync(filePath);
         console.log(`💾 Saved: ${fileName}.ttl (${stats.size} bytes)`);
-        
+
         return { path: filePath, bytes: stats.size };
       } catch (error) {
         console.error(`❌ Failed to save ${fileName}.ttl:`, error.message);
@@ -223,7 +221,7 @@ export function useTurtle(graphDir = "./graph", options = {}) {
      * @returns {Object} Save result
      */
     saveDefault(options = {}) {
-      return this.save("default", { ...options, createBackup: true });
+      return this.save('default', { ...options, createBackup: true });
     },
 
     /**
@@ -233,9 +231,9 @@ export function useTurtle(graphDir = "./graph", options = {}) {
      */
     loadDefault(options = {}) {
       try {
-        return this.load("default", options);
+        return this.load('default', options);
       } catch (error) {
-        if (error.message.includes("File not found")) {
+        if (error.message.includes('File not found')) {
           console.log(`ℹ️ No default.ttl file found in ${graphDir}`);
           return null;
         }
@@ -250,11 +248,11 @@ export function useTurtle(graphDir = "./graph", options = {}) {
     listFiles() {
       try {
         const files = readdirSync(graphDir);
-        const ttlFiles = files.filter(f => f.endsWith(".ttl"));
+        const ttlFiles = files.filter(f => f.endsWith('.ttl'));
         console.log(`📁 Found ${ttlFiles.length} .ttl files in ${graphDir}`);
         return ttlFiles;
       } catch (error) {
-        if (error.code === "ENOENT") {
+        if (error.code === 'ENOENT') {
           return [];
         }
         throw error;
@@ -287,13 +285,13 @@ export function useTurtle(graphDir = "./graph", options = {}) {
     parse(ttl, options = {}) {
       const { addToStore = false, ...parseOptions } = options;
       const parsedStore = engine.parseTurtle(ttl, { baseIRI, ...parseOptions });
-      
+
       if (addToStore) {
         for (const quad of parsedStore) {
           storeContext.store.add(quad);
         }
       }
-      
+
       return parsedStore;
     },
 
@@ -305,6 +303,6 @@ export function useTurtle(graphDir = "./graph", options = {}) {
      */
     serialize(options = {}) {
       return engine.serializeTurtle(storeContext.store, options);
-    }
+    },
   };
 }

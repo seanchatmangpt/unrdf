@@ -27,7 +27,7 @@ async function testLockchain() {
 
     const lockchain = new LockchainWriter({
       repoPath: testDir,
-      enableMerkle: true
+      enableMerkle: true,
     });
 
     await lockchain.init();
@@ -39,7 +39,7 @@ async function testLockchain() {
       action: 'add-data',
       delta: { additions: [], removals: [] },
       timestamp: new Date(),
-      metadata: { reason: 'User registration' }
+      metadata: { reason: 'User registration' },
     });
     console.log('✅ Wrote receipt');
 

@@ -1,7 +1,7 @@
 /**
  * @file Assertion Helpers for Knowledge Engine Tests
  * @module assertion-helpers
- * 
+ *
  * @description
  * Common assertion helpers for knowledge engine tests providing
  * consistent and readable test assertions.
@@ -32,7 +32,7 @@ export class AssertionHelpers {
    */
   static assertHookFailure(result, expectedError = null, message = 'Expected hook to fail') {
     expect(result, message).toBeDefined();
-    
+
     if (result.success === false) {
       expect(result.success, `${message} - success should be false`).toBe(false);
       if (expectedError) {
@@ -41,7 +41,10 @@ export class AssertionHelpers {
     } else if (result.error) {
       expect(result.error, `${message} - should have error`).toBeDefined();
       if (expectedError) {
-        expect(result.error.message || result.error, `${message} - should have expected error`).toContain(expectedError);
+        expect(
+          result.error.message || result.error,
+          `${message} - should have expected error`
+        ).toContain(expectedError);
       }
     } else {
       throw new Error(`${message} - result should indicate failure`);
@@ -57,7 +60,9 @@ export class AssertionHelpers {
   static assertHookExecutionTime(result, maxTime, message = 'Hook execution time') {
     expect(result, message).toBeDefined();
     if (result.duration !== undefined) {
-      expect(result.duration, `${message} - should be within ${maxTime}ms`).toBeLessThanOrEqual(maxTime);
+      expect(result.duration, `${message} - should be within ${maxTime}ms`).toBeLessThanOrEqual(
+        maxTime
+      );
     }
   }
 
@@ -69,8 +74,10 @@ export class AssertionHelpers {
    */
   static assertStoreState(store, expectedQuads, message = 'Store state') {
     expect(store, message).toBeDefined();
-    expect(store.size, `${message} - should have ${expectedQuads.length} quads`).toBe(expectedQuads.length);
-    
+    expect(store.size, `${message} - should have ${expectedQuads.length} quads`).toBe(
+      expectedQuads.length
+    );
+
     for (const expectedQuad of expectedQuads) {
       expect(store.has(expectedQuad), `${message} - should contain quad`).toBe(true);
     }
@@ -143,7 +150,7 @@ export class AssertionHelpers {
   static assertAllHooksSucceeded(results, message = 'All hooks should succeed') {
     expect(results, message).toBeDefined();
     expect(Array.isArray(results), `${message} - should be an array`).toBe(true);
-    
+
     for (let i = 0; i < results.length; i++) {
       this.assertHookSuccess(results[i], `${message} - hook ${i} should succeed`);
     }
@@ -157,7 +164,7 @@ export class AssertionHelpers {
   static assertAllHooksFailed(results, message = 'All hooks should fail') {
     expect(results, message).toBeDefined();
     expect(Array.isArray(results), `${message} - should be an array`).toBe(true);
-    
+
     for (let i = 0; i < results.length; i++) {
       this.assertHookFailure(results[i], null, `${message} - hook ${i} should fail`);
     }
@@ -169,9 +176,13 @@ export class AssertionHelpers {
    * @param {Object} expectedData - Expected data to be present
    * @param {string} [message] - Custom assertion message
    */
-  static assertHookResultContains(result, expectedData, message = 'Hook result should contain data') {
+  static assertHookResultContains(
+    result,
+    expectedData,
+    message = 'Hook result should contain data'
+  ) {
     expect(result, message).toBeDefined();
-    
+
     for (const [key, value] of Object.entries(expectedData)) {
       expect(result[key], `${message} - should contain ${key}`).toBe(value);
     }
@@ -209,10 +220,16 @@ export class AssertionHelpers {
    * @param {number} expectedCount - Expected number of hooks
    * @param {string} [message] - Custom assertion message
    */
-  static assertManagerHookCount(manager, expectedCount, message = 'Manager should have expected hook count') {
+  static assertManagerHookCount(
+    manager,
+    expectedCount,
+    message = 'Manager should have expected hook count'
+  ) {
     expect(manager, message).toBeDefined();
     expect(manager.knowledgeHooks, `${message} - should have knowledgeHooks`).toBeDefined();
-    expect(manager.knowledgeHooks.size, `${message} - should have ${expectedCount} hooks`).toBe(expectedCount);
+    expect(manager.knowledgeHooks.size, `${message} - should have ${expectedCount} hooks`).toBe(
+      expectedCount
+    );
   }
 
   /**
@@ -227,9 +244,13 @@ export class AssertionHelpers {
       throw new Error(`${message} - promise should have rejected`);
     } catch (error) {
       if (typeof expectedError === 'string') {
-        expect(error.message, `${message} - should contain expected error`).toContain(expectedError);
+        expect(error.message, `${message} - should contain expected error`).toContain(
+          expectedError
+        );
       } else if (expectedError instanceof Error) {
-        expect(error.message, `${message} - should match expected error`).toBe(expectedError.message);
+        expect(error.message, `${message} - should match expected error`).toBe(
+          expectedError.message
+        );
       } else if (typeof expectedError === 'function') {
         expect(expectedError(error), `${message} - error should match predicate`).toBe(true);
       }

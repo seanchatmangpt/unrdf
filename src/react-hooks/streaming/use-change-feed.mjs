@@ -12,20 +12,23 @@ import { useKnowledgeEngineContext } from '../core/use-knowledge-engine-context.
  * Zod schema for change feed configuration validation
  * Prevents XSS/injection by validating all inputs
  */
-const ChangeFeedConfigSchema = z.object({
-  /** Filter function must be a function type */
-  filter: z.function().optional(),
-  /** Operations must be valid operation types */
-  operations: z.array(
-    z.enum(['insert', 'delete', 'update'])
-  ).optional().default(['insert', 'delete']),
-  /** Include transaction metadata */
-  includeMetadata: z.boolean().optional().default(false),
-  /** Batch size must be positive integer, max 10000 */
-  batchSize: z.number().int().positive().max(10000).optional().default(10),
-  /** Batch interval must be positive, max 60000ms */
-  batchInterval: z.number().positive().max(60000).optional().default(1000)
-}).strict();
+const ChangeFeedConfigSchema = z
+  .object({
+    /** Filter function must be a function type */
+    filter: z.function().optional(),
+    /** Operations must be valid operation types */
+    operations: z
+      .array(z.enum(['insert', 'delete', 'update']))
+      .optional()
+      .default(['insert', 'delete']),
+    /** Include transaction metadata */
+    includeMetadata: z.boolean().optional().default(false),
+    /** Batch size must be positive integer, max 10000 */
+    batchSize: z.number().int().positive().max(10000).optional().default(10),
+    /** Batch interval must be positive, max 60000ms */
+    batchInterval: z.number().positive().max(60000).optional().default(1000),
+  })
+  .strict();
 
 /**
  * Hook for consuming real-time change feed from the knowledge graph
@@ -80,13 +83,13 @@ export function useChangeFeed(config = {}) {
     totalChanges: 0,
     inserts: 0,
     deletes: 0,
-    filtered: 0
+    filtered: 0,
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const feedRef = useRef(null);
   const changesRef = useRef([]);
-  const batchRef = useRef([]);
+  const _batchRef = useRef([]);
   const batchTimerRef = useRef(null);
 
   // Initialize change feed
@@ -100,9 +103,7 @@ export function useChangeFeed(config = {}) {
         setLoading(true);
 
         // Import change feed module
-        const { ChangeFeed } = await import(
-          '../../knowledge-engine/streaming/change-feed.mjs'
-        );
+        const { ChangeFeed } = await import('../../knowledge-engine/streaming/change-feed.mjs');
 
         // Create change feed with validated config
         const feed = new ChangeFeed({
@@ -110,7 +111,7 @@ export function useChangeFeed(config = {}) {
           filter: validatedConfig.filter,
           operations: validatedConfig.operations,
           includeMetadata: validatedConfig.includeMetadata,
-          onBatchReady: (batch) => {
+          onBatchReady: batch => {
             if (!mounted) return;
 
             // Add to changes
@@ -122,9 +123,9 @@ export function useChangeFeed(config = {}) {
               totalChanges: prev.totalChanges + batch.length,
               inserts: prev.inserts + batch.filter(c => c.operation === 'insert').length,
               deletes: prev.deletes + batch.filter(c => c.operation === 'delete').length,
-              filtered: prev.filtered
+              filtered: prev.filtered,
             }));
-          }
+          },
         });
 
         if (!mounted) return;
@@ -160,7 +161,7 @@ export function useChangeFeed(config = {}) {
     try {
       await feedRef.current.start({
         batchSize: validatedConfig.batchSize,
-        batchInterval: validatedConfig.batchInterval
+        batchInterval: validatedConfig.batchInterval,
       });
 
       setIsRunning(true);
@@ -195,33 +196,41 @@ export function useChangeFeed(config = {}) {
       totalChanges: 0,
       inserts: 0,
       deletes: 0,
-      filtered: 0
+      filtered: 0,
     });
   }, []);
 
   // Get changes by operation
-  const getChangesByOperation = useCallback((operation) => {
-    return changes.filter(c => c.operation === operation);
-  }, [changes]);
+  const getChangesByOperation = useCallback(
+    operation => {
+      return changes.filter(c => c.operation === operation);
+    },
+    [changes]
+  );
 
   // Get changes by predicate
-  const getChangesByPredicate = useCallback((predicate) => {
-    return changes.filter(c =>
-      c.quads.some(q => q.predicate.value === predicate)
-    );
-  }, [changes]);
+  const getChangesByPredicate = useCallback(
+    predicate => {
+      return changes.filter(c => c.quads.some(q => q.predicate.value === predicate));
+    },
+    [changes]
+  );
 
   // Get changes by subject
-  const getChangesBySubject = useCallback((subject) => {
-    return changes.filter(c =>
-      c.quads.some(q => q.subject.value === subject)
-    );
-  }, [changes]);
+  const getChangesBySubject = useCallback(
+    subject => {
+      return changes.filter(c => c.quads.some(q => q.subject.value === subject));
+    },
+    [changes]
+  );
 
   // Get recent changes
-  const getRecentChanges = useCallback((count = 10) => {
-    return changes.slice(-count);
-  }, [changes]);
+  const getRecentChanges = useCallback(
+    (count = 10) => {
+      return changes.slice(-count);
+    },
+    [changes]
+  );
 
   // Replay changes
   const replay = useCallback(async (fromTimestamp, toTimestamp) => {
@@ -232,7 +241,7 @@ export function useChangeFeed(config = {}) {
     try {
       const historicalChanges = await feedRef.current.replay({
         from: fromTimestamp,
-        to: toTimestamp
+        to: toTimestamp,
       });
 
       return historicalChanges;
@@ -255,6 +264,6 @@ export function useChangeFeed(config = {}) {
     getChangesByPredicate,
     getChangesBySubject,
     getRecentChanges,
-    replay
+    replay,
   };
 }

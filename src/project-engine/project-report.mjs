@@ -3,15 +3,15 @@
  * @module project-engine/project-report
  */
 
-import { DataFactory } from 'n3'
-import { z } from 'zod'
+import { DataFactory } from 'n3';
+import { z } from 'zod';
 
-const { namedNode } = DataFactory
+const { namedNode } = DataFactory;
 
 const ProjectReportOptionsSchema = z.object({
   baseIri: z.string().optional(),
   includeFileList: z.boolean().optional(),
-})
+});
 
 /**
  * @typedef {Object} FeatureReport
@@ -53,7 +53,7 @@ const NS = {
   rdfs: 'http://www.w3.org/2000/01/rdf-schema#',
   fs: 'http://example.org/unrdf/filesystem#',
   proj: 'http://example.org/unrdf/project#',
-}
+};
 
 /**
  * Build human-readable project report from ontology store
@@ -63,15 +63,15 @@ const NS = {
  * @returns {ProjectReport}
  */
 export function buildProjectReport(projectStore, options = {}) {
-  const validatedOptions = ProjectReportOptionsSchema.parse(options)
-  const store = projectStore
-  const baseIri = validatedOptions.baseIri || 'http://example.org/unrdf/project#'
+  const validatedOptions = ProjectReportOptionsSchema.parse(options);
+  const store = projectStore;
+  const baseIri = validatedOptions.baseIri || 'http://example.org/unrdf/project#';
 
-  const features = extractFeatureReports(store, baseIri)
-  const stackProfile = buildStackProfile(store)
-  const stats = computeStats(store, features)
-  const domainEntities = extractDomainEntities(store, features)
-  const summary = generateSummary(features, stats, stackProfile)
+  const features = extractFeatureReports(store, baseIri);
+  const stackProfile = buildStackProfile(store);
+  const stats = computeStats(store, features);
+  const domainEntities = extractDomainEntities(store, features);
+  const summary = generateSummary(features, stats, stackProfile);
 
   return {
     features,
@@ -79,7 +79,7 @@ export function buildProjectReport(projectStore, options = {}) {
     stats,
     domainEntities,
     summary,
-  }
+  };
 }
 
 /**
@@ -89,34 +89,30 @@ export function buildProjectReport(projectStore, options = {}) {
  * @param {string} baseIri - Base IRI
  * @returns {FeatureReport[]}
  */
-function extractFeatureReports(store, baseIri) {
-  const features = []
+function extractFeatureReports(store, _baseIri) {
+  const features = [];
 
   const featureQuads = store.getQuads(
     null,
     namedNode(`${NS.rdf}type`),
     namedNode(`${NS.proj}Feature`)
-  )
+  );
 
   for (const quad of featureQuads) {
-    const featureIri = quad.subject.value
-    const labelQuads = store.getQuads(
-      quad.subject,
-      namedNode(`${NS.rdfs}label`),
-      null
-    )
-    const name = labelQuads.length > 0 ? labelQuads[0].object.value : extractNameFromIri(featureIri)
+    const featureIri = quad.subject.value;
+    const labelQuads = store.getQuads(quad.subject, namedNode(`${NS.rdfs}label`), null);
+    const name =
+      labelQuads.length > 0 ? labelQuads[0].object.value : extractNameFromIri(featureIri);
 
-    const fileQuads = store.getQuads(
-      null,
-      namedNode(`${NS.proj}belongsToFeature`),
-      quad.subject
-    )
-    const fileCount = fileQuads.length
+    const fileQuads = store.getQuads(null, namedNode(`${NS.proj}belongsToFeature`), quad.subject);
+    const fileCount = fileQuads.length;
 
-    const roles = countRolesForFeature(store, fileQuads)
-    const hasTests = roles.test > 0
-    const testCoverage = fileCount > 0 && hasTests ? Math.min(100, Math.round((roles.test / (fileCount - roles.test)) * 100)) : 0
+    const roles = countRolesForFeature(store, fileQuads);
+    const hasTests = roles.test > 0;
+    const testCoverage =
+      fileCount > 0 && hasTests
+        ? Math.min(100, Math.round((roles.test / (fileCount - roles.test)) * 100))
+        : 0;
 
     features.push({
       iri: featureIri,
@@ -131,10 +127,10 @@ function extractFeatureReports(store, baseIri) {
       fileCount,
       testCoverage,
       hasMissingTests: !hasTests && fileCount > 0,
-    })
+    });
   }
 
-  return features.sort((a, b) => a.name.localeCompare(b.name))
+  return features.sort((a, b) => a.name.localeCompare(b.name));
 }
 
 /**
@@ -157,26 +153,22 @@ function countRolesForFeature(store, fileQuads) {
     state: 0,
     config: 0,
     other: 0,
-  }
+  };
 
   for (const fq of fileQuads) {
-    const roleQuads = store.getQuads(
-      fq.subject,
-      namedNode(`${NS.proj}roleString`),
-      null
-    )
+    const roleQuads = store.getQuads(fq.subject, namedNode(`${NS.proj}roleString`), null);
 
     for (const rq of roleQuads) {
-      const role = rq.object.value.toLowerCase()
+      const role = rq.object.value.toLowerCase();
       if (counts[role] !== undefined) {
-        counts[role]++
+        counts[role]++;
       } else {
-        counts.other++
+        counts.other++;
       }
     }
   }
 
-  return counts
+  return counts;
 }
 
 /**
@@ -186,49 +178,41 @@ function countRolesForFeature(store, fileQuads) {
  * @returns {string}
  */
 function buildStackProfile(store) {
-  const parts = []
+  const parts = [];
 
-  const stackQuads = store.getQuads(
-    null,
-    namedNode(`${NS.proj}hasStack`),
-    null
-  )
+  const stackQuads = store.getQuads(null, namedNode(`${NS.proj}hasStack`), null);
 
   if (stackQuads.length > 0) {
     for (const sq of stackQuads) {
-      parts.push(sq.object.value)
+      parts.push(sq.object.value);
     }
   }
 
   if (parts.length === 0) {
-    const filePaths = new Set()
-    const pathQuads = store.getQuads(
-      null,
-      namedNode(`${NS.fs}relativePath`),
-      null
-    )
+    const filePaths = new Set();
+    const pathQuads = store.getQuads(null, namedNode(`${NS.fs}relativePath`), null);
     for (const pq of pathQuads) {
-      filePaths.add(pq.object.value)
+      filePaths.add(pq.object.value);
     }
 
     if (filePaths.has('next.config.js') || filePaths.has('next.config.mjs')) {
       if (filePaths.has('src/app') || [...filePaths].some(p => p.startsWith('src/app/'))) {
-        parts.push('react-next-app-router')
+        parts.push('react-next-app-router');
       } else {
-        parts.push('react-next-pages')
+        parts.push('react-next-pages');
       }
     }
     if (filePaths.has('nest-cli.json')) {
-      parts.push('nest')
+      parts.push('nest');
     }
     if (filePaths.has('vitest.config.js') || filePaths.has('vitest.config.mjs')) {
-      parts.push('vitest')
+      parts.push('vitest');
     } else if (filePaths.has('jest.config.js')) {
-      parts.push('jest')
+      parts.push('jest');
     }
   }
 
-  return parts.join(' + ') || 'unknown'
+  return parts.join(' + ') || 'unknown';
 }
 
 /**
@@ -239,36 +223,27 @@ function buildStackProfile(store) {
  * @returns {ProjectStats}
  */
 function computeStats(store, features) {
-  const roleQuads = store.getQuads(
-    null,
-    namedNode(`${NS.proj}roleString`),
-    null
-  )
+  const roleQuads = store.getQuads(null, namedNode(`${NS.proj}roleString`), null);
 
-  const filesByRole = {}
+  const filesByRole = {};
   for (const rq of roleQuads) {
-    const role = rq.object.value
-    filesByRole[role] = (filesByRole[role] || 0) + 1
+    const role = rq.object.value;
+    filesByRole[role] = (filesByRole[role] || 0) + 1;
   }
 
-  const pathQuads = store.getQuads(
-    null,
-    namedNode(`${NS.fs}relativePath`),
-    null
-  )
-  const totalFiles = pathQuads.length
+  const pathQuads = store.getQuads(null, namedNode(`${NS.fs}relativePath`), null);
+  const totalFiles = pathQuads.length;
 
-  const coverages = features.filter(f => f.fileCount > 0).map(f => f.testCoverage)
-  const testCoverageAverage = coverages.length > 0
-    ? Math.round(coverages.reduce((a, b) => a + b, 0) / coverages.length)
-    : 0
+  const coverages = features.filter(f => f.fileCount > 0).map(f => f.testCoverage);
+  const testCoverageAverage =
+    coverages.length > 0 ? Math.round(coverages.reduce((a, b) => a + b, 0) / coverages.length) : 0;
 
   return {
     featureCount: features.length,
     totalFiles,
     testCoverageAverage,
     filesByRole,
-  }
+  };
 }
 
 /**
@@ -279,46 +254,38 @@ function computeStats(store, features) {
  * @returns {DomainEntity[]}
  */
 function extractDomainEntities(store, features) {
-  const entities = []
+  const entities = [];
 
-  const allRoleQuads = store.getQuads(
-    null,
-    namedNode(`${NS.proj}roleString`),
-    null
-  )
-  const schemaQuads = allRoleQuads.filter(q => q.object.value === 'Schema')
+  const allRoleQuads = store.getQuads(null, namedNode(`${NS.proj}roleString`), null);
+  const schemaQuads = allRoleQuads.filter(q => q.object.value === 'Schema');
 
   for (const sq of schemaQuads) {
-    const pathQuads = store.getQuads(
-      sq.subject,
-      namedNode(`${NS.fs}relativePath`),
-      null
-    )
+    const pathQuads = store.getQuads(sq.subject, namedNode(`${NS.fs}relativePath`), null);
 
     if (pathQuads.length > 0) {
-      const filePath = pathQuads[0].object.value
-      const nameMatch = filePath.match(/([A-Z][a-z]+(?:[A-Z][a-z]+)*)/)
-      const name = nameMatch ? nameMatch[1] : extractNameFromPath(filePath)
+      const filePath = pathQuads[0].object.value;
+      const nameMatch = filePath.match(/([A-Z][a-z]+(?:[A-Z][a-z]+)*)/);
+      const name = nameMatch ? nameMatch[1] : extractNameFromPath(filePath);
 
-      const featureMatch = features.find(f =>
-        filePath.includes(f.name) || f.name.toLowerCase() === name.toLowerCase()
-      )
+      const featureMatch = features.find(
+        f => filePath.includes(f.name) || f.name.toLowerCase() === name.toLowerCase()
+      );
 
       entities.push({
         name,
         fieldCount: 8,
         hasView: featureMatch?.roles.view || false,
         hasApi: featureMatch?.roles.api || false,
-      })
+      });
     }
   }
 
-  const seen = new Set()
+  const seen = new Set();
   return entities.filter(e => {
-    if (seen.has(e.name)) return false
-    seen.add(e.name)
-    return true
-  })
+    if (seen.has(e.name)) return false;
+    seen.add(e.name);
+    return true;
+  });
 }
 
 /**
@@ -329,29 +296,32 @@ function extractDomainEntities(store, features) {
  * @param {string} stackProfile - Stack profile
  * @returns {string}
  */
-function generateSummary(features, stats, stackProfile) {
-  const parts = []
+function generateSummary(features, stats, _stackProfile) {
+  const parts = [];
 
-  const structure = stats.featureCount > 10 ? 'Large' : stats.featureCount > 5 ? 'Well-structured' : 'Compact'
-  parts.push(`${structure} ${stats.featureCount}-feature project`)
+  const structure =
+    stats.featureCount > 10 ? 'Large' : stats.featureCount > 5 ? 'Well-structured' : 'Compact';
+  parts.push(`${structure} ${stats.featureCount}-feature project`);
 
   if (stats.testCoverageAverage > 0) {
-    parts[0] += ` with ${stats.testCoverageAverage}% test coverage`
+    parts[0] += ` with ${stats.testCoverageAverage}% test coverage`;
   }
 
-  const missingTests = features.filter(f => f.hasMissingTests).map(f => f.name)
+  const missingTests = features.filter(f => f.hasMissingTests).map(f => f.name);
   if (missingTests.length > 0 && missingTests.length <= 3) {
-    parts.push(`Missing tests: ${missingTests.join(', ')}`)
+    parts.push(`Missing tests: ${missingTests.join(', ')}`);
   } else if (missingTests.length > 3) {
-    parts.push(`Missing tests: ${missingTests.slice(0, 2).join(', ')} and ${missingTests.length - 2} more`)
+    parts.push(
+      `Missing tests: ${missingTests.slice(0, 2).join(', ')} and ${missingTests.length - 2} more`
+    );
   }
 
-  const missingDocs = features.filter(f => !f.roles.doc && f.fileCount > 3).map(f => f.name)
+  const missingDocs = features.filter(f => !f.roles.doc && f.fileCount > 3).map(f => f.name);
   if (missingDocs.length > 0 && missingDocs.length <= 2) {
-    parts.push(`Consider docs for: ${missingDocs.join(', ')}`)
+    parts.push(`Consider docs for: ${missingDocs.join(', ')}`);
   }
 
-  return parts.join('. ') + '.'
+  return parts.join('. ') + '.';
 }
 
 /**
@@ -361,8 +331,8 @@ function generateSummary(features, stats, stackProfile) {
  * @returns {string}
  */
 function extractNameFromIri(iri) {
-  const match = iri.match(/\/([^/]+)$/)
-  return match ? decodeURIComponent(match[1]) : 'unknown'
+  const match = iri.match(/\/([^/]+)$/);
+  return match ? decodeURIComponent(match[1]) : 'unknown';
 }
 
 /**
@@ -372,7 +342,7 @@ function extractNameFromIri(iri) {
  * @returns {string}
  */
 function extractNameFromPath(filePath) {
-  const parts = filePath.split('/')
-  const fileName = parts[parts.length - 1]
-  return fileName.replace(/\.(tsx?|jsx?|mjs|json)$/, '')
+  const parts = filePath.split('/');
+  const fileName = parts[parts.length - 1];
+  return fileName.replace(/\.(tsx?|jsx?|mjs|json)$/, '');
 }

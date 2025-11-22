@@ -26,22 +26,22 @@ const tracer = trace.getTracer('vm2-executor');
 // Show deprecation warning on first import
 console.warn(
   '\n' +
-  '⚠️  ========================================= ⚠️\n' +
-  '⚠️  VM2 EXECUTOR DEPRECATION WARNING          ⚠️\n' +
-  '⚠️  ========================================= ⚠️\n' +
-  '\n' +
-  'The vm2 package is deprecated and contains critical security vulnerabilities.\n' +
-  'This executor should NOT be used in production environments.\n' +
-  '\n' +
-  'Migrate to:\n' +
-  '  - IsolatedVmExecutor (recommended): Full V8 isolation\n' +
-  '  - WorkerExecutor: Process-level isolation\n' +
-  '\n' +
-  'For more information:\n' +
-  '  https://github.com/patriksimek/vm2/issues/533\n' +
-  '\n' +
-  'To suppress this warning, set UNRDF_SUPPRESS_VM2_WARNING=1\n' +
-  '⚠️  ========================================= ⚠️\n'
+    '⚠️  ========================================= ⚠️\n' +
+    '⚠️  VM2 EXECUTOR DEPRECATION WARNING          ⚠️\n' +
+    '⚠️  ========================================= ⚠️\n' +
+    '\n' +
+    'The vm2 package is deprecated and contains critical security vulnerabilities.\n' +
+    'This executor should NOT be used in production environments.\n' +
+    '\n' +
+    'Migrate to:\n' +
+    '  - IsolatedVmExecutor (recommended): Full V8 isolation\n' +
+    '  - WorkerExecutor: Process-level isolation\n' +
+    '\n' +
+    'For more information:\n' +
+    '  https://github.com/patriksimek/vm2/issues/533\n' +
+    '\n' +
+    'To suppress this warning, set UNRDF_SUPPRESS_VM2_WARNING=1\n' +
+    '⚠️  ========================================= ⚠️\n'
 );
 
 /**
@@ -60,7 +60,7 @@ export class Vm2Executor {
       timeout: config.timeout || 5000,
       allowedModules: config.allowedModules || [],
       strictMode: config.strictMode !== false,
-      ...config
+      ...config,
     };
 
     this.executionCount = 0;
@@ -68,7 +68,9 @@ export class Vm2Executor {
 
     // Show warning on each instantiation unless suppressed
     if (!process.env.UNRDF_SUPPRESS_VM2_WARNING) {
-      console.warn('[DEPRECATION] Creating vm2 executor instance - consider migrating to isolated-vm');
+      console.warn(
+        '[DEPRECATION] Creating vm2 executor instance - consider migrating to isolated-vm'
+      );
     }
   }
 
@@ -80,7 +82,7 @@ export class Vm2Executor {
    * @returns {Promise<Object>} Execution result
    */
   async run(code, context = {}, options = {}) {
-    return tracer.startActiveSpan('security.vm2.execute', async (span) => {
+    return tracer.startActiveSpan('security.vm2.execute', async span => {
       const startTime = Date.now();
 
       try {
@@ -88,7 +90,7 @@ export class Vm2Executor {
           'security.executor.type': 'vm2',
           'security.executor.deprecated': true,
           'security.executor.security_level': 'low',
-          'security.timeout': options.timeout || this.config.timeout
+          'security.timeout': options.timeout || this.config.timeout,
         });
 
         // Dynamic import of vm2
@@ -108,10 +110,10 @@ export class Vm2Executor {
           timeout: options.timeout || this.config.timeout,
           sandbox: {
             ...this._createSandboxGlobals(context),
-            console: this._createSafeConsole()
+            console: this._createSafeConsole(),
           },
           eval: false,
-          wasm: false
+          wasm: false,
         });
 
         // Wrap code in strict mode if enabled
@@ -128,7 +130,7 @@ export class Vm2Executor {
 
         span.setAttributes({
           'security.execution.duration': duration,
-          'security.execution.success': true
+          'security.execution.success': true,
         });
         span.setStatus({ code: 1 }); // OK
 
@@ -137,9 +139,8 @@ export class Vm2Executor {
           result,
           duration,
           executorType: 'vm2',
-          deprecated: true
+          deprecated: true,
         };
-
       } catch (error) {
         const duration = Date.now() - startTime;
 
@@ -147,7 +148,7 @@ export class Vm2Executor {
         span.setAttributes({
           'security.execution.duration': duration,
           'security.execution.success': false,
-          'security.error.message': error.message
+          'security.error.message': error.message,
         });
         span.setStatus({ code: 2, message: error.message });
 
@@ -156,7 +157,7 @@ export class Vm2Executor {
           error: error.message,
           duration,
           executorType: 'vm2',
-          deprecated: true
+          deprecated: true,
         };
       } finally {
         span.end();
@@ -175,7 +176,7 @@ export class Vm2Executor {
       Date: { now: () => Date.now() },
       Math,
       JSON,
-      ...context
+      ...context,
     };
   }
 
@@ -189,7 +190,7 @@ export class Vm2Executor {
       log: (...args) => console.log('[VM2]', ...args),
       error: (...args) => console.error('[VM2]', ...args),
       warn: (...args) => console.warn('[VM2]', ...args),
-      info: (...args) => console.info('[VM2]', ...args)
+      info: (...args) => console.info('[VM2]', ...args),
     };
   }
 
@@ -203,7 +204,7 @@ export class Vm2Executor {
       deprecated: true,
       config: this.config,
       executionCount: this.executionCount,
-      averageDuration: this.executionCount > 0 ? this.totalDuration / this.executionCount : 0
+      averageDuration: this.executionCount > 0 ? this.totalDuration / this.executionCount : 0,
     };
   }
 

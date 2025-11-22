@@ -3,11 +3,11 @@
  * @module project-engine/materialize-plan
  */
 
-import { z } from 'zod'
-import { createHash } from 'crypto'
-import { DataFactory } from 'n3'
+import { z } from 'zod';
+import { createHash } from 'crypto';
+import { DataFactory } from 'n3';
 
-const { namedNode } = DataFactory
+const { namedNode } = DataFactory;
 
 /**
  * @typedef {import('n3').Store} Store
@@ -70,31 +70,39 @@ const { namedNode } = DataFactory
  * @property {MaterializationReceipt} receipt
  */
 
-const TemplateNodeSchema = z.object({
+const _TemplateNodeSchema = z.object({
   iri: z.string(),
   targetsClass: z.string(),
   outputPattern: z.string(),
   content: z.string(),
   extension: z.string().optional(),
-})
+});
 
 const PlanOptionsSchema = z.object({
   outputRoot: z.string().default('.'),
   dryRun: z.boolean().default(false),
   existingFiles: z.record(z.string(), z.string()).default({}),
-})
+});
 
 /**
  * Variable substitution patterns for templates
  * @type {Record<string, (name: string) => string>}
  */
 const VARIABLE_PATTERNS = {
-  '{{entity}}': (name) => name,
-  '{{Entity}}': (name) => name.charAt(0).toUpperCase() + name.slice(1),
-  '{{ENTITY}}': (name) => name.toUpperCase(),
-  '{{entity_snake}}': (name) => name.replace(/([A-Z])/g, '_$1').toLowerCase().replace(/^_/, ''),
-  '{{entity-kebab}}': (name) => name.replace(/([A-Z])/g, '-$1').toLowerCase().replace(/^-/, ''),
-}
+  '{{entity}}': name => name,
+  '{{Entity}}': name => name.charAt(0).toUpperCase() + name.slice(1),
+  '{{ENTITY}}': name => name.toUpperCase(),
+  '{{entity_snake}}': name =>
+    name
+      .replace(/([A-Z])/g, '_$1')
+      .toLowerCase()
+      .replace(/^_/, ''),
+  '{{entity-kebab}}': name =>
+    name
+      .replace(/([A-Z])/g, '-$1')
+      .toLowerCase()
+      .replace(/^-/, ''),
+};
 
 /**
  * Extract domain entities from ontology store
@@ -103,34 +111,32 @@ const VARIABLE_PATTERNS = {
  * @returns {Array<{iri: string, type: string, label: string}>}
  */
 function extractDomainEntities(store) {
-  const entities = []
-  const RDF_TYPE = namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type')
-  const RDFS_LABEL = namedNode('http://www.w3.org/2000/01/rdf-schema#label')
+  const entities = [];
+  const RDF_TYPE = namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type');
+  const RDFS_LABEL = namedNode('http://www.w3.org/2000/01/rdf-schema#label');
 
-  const typeQuads = store.getQuads(null, RDF_TYPE, null, null)
+  const typeQuads = store.getQuads(null, RDF_TYPE, null, null);
 
   for (const quad of typeQuads) {
-    const subjectIri = quad.subject.value
-    const typeIri = quad.object.value
+    const subjectIri = quad.subject.value;
+    const typeIri = quad.object.value;
 
     // Skip blank nodes and non-domain types
-    if (subjectIri.startsWith('_:')) continue
-    if (typeIri.includes('rdf-syntax-ns') || typeIri.includes('rdf-schema')) continue
+    if (subjectIri.startsWith('_:')) continue;
+    if (typeIri.includes('rdf-syntax-ns') || typeIri.includes('rdf-schema')) continue;
 
     // Get label if exists
-    const labelQuads = store.getQuads(quad.subject, RDFS_LABEL, null, null)
-    const label = labelQuads.length > 0
-      ? labelQuads[0].object.value
-      : extractLocalName(subjectIri)
+    const labelQuads = store.getQuads(quad.subject, RDFS_LABEL, null, null);
+    const label = labelQuads.length > 0 ? labelQuads[0].object.value : extractLocalName(subjectIri);
 
     entities.push({
       iri: subjectIri,
       type: typeIri,
       label,
-    })
+    });
   }
 
-  return entities
+  return entities;
 }
 
 /**
@@ -140,26 +146,26 @@ function extractDomainEntities(store) {
  * @returns {Array<z.infer<typeof TemplateNodeSchema>>}
  */
 function extractTemplates(store) {
-  const templates = []
-  const TEMPLATE_TYPE = namedNode('http://example.org/unrdf/template#Template')
-  const TARGETS_CLASS = namedNode('http://example.org/unrdf/template#targetsClass')
-  const OUTPUT_PATTERN = namedNode('http://example.org/unrdf/template#outputPattern')
-  const CONTENT = namedNode('http://example.org/unrdf/template#content')
-  const EXTENSION = namedNode('http://example.org/unrdf/template#extension')
-  const RDF_TYPE = namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type')
+  const templates = [];
+  const TEMPLATE_TYPE = namedNode('http://example.org/unrdf/template#Template');
+  const TARGETS_CLASS = namedNode('http://example.org/unrdf/template#targetsClass');
+  const OUTPUT_PATTERN = namedNode('http://example.org/unrdf/template#outputPattern');
+  const CONTENT = namedNode('http://example.org/unrdf/template#content');
+  const EXTENSION = namedNode('http://example.org/unrdf/template#extension');
+  const RDF_TYPE = namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type');
 
-  const templateQuads = store.getQuads(null, RDF_TYPE, TEMPLATE_TYPE, null)
+  const templateQuads = store.getQuads(null, RDF_TYPE, TEMPLATE_TYPE, null);
 
   for (const quad of templateQuads) {
-    const templateSubject = quad.subject
+    const templateSubject = quad.subject;
 
-    const targetsQuads = store.getQuads(templateSubject, TARGETS_CLASS, null, null)
-    const patternQuads = store.getQuads(templateSubject, OUTPUT_PATTERN, null, null)
-    const contentQuads = store.getQuads(templateSubject, CONTENT, null, null)
-    const extQuads = store.getQuads(templateSubject, EXTENSION, null, null)
+    const targetsQuads = store.getQuads(templateSubject, TARGETS_CLASS, null, null);
+    const patternQuads = store.getQuads(templateSubject, OUTPUT_PATTERN, null, null);
+    const contentQuads = store.getQuads(templateSubject, CONTENT, null, null);
+    const extQuads = store.getQuads(templateSubject, EXTENSION, null, null);
 
     if (targetsQuads.length === 0 || patternQuads.length === 0 || contentQuads.length === 0) {
-      continue
+      continue;
     }
 
     templates.push({
@@ -168,10 +174,10 @@ function extractTemplates(store) {
       outputPattern: patternQuads[0].object.value,
       content: contentQuads[0].object.value,
       extension: extQuads.length > 0 ? extQuads[0].object.value : undefined,
-    })
+    });
   }
 
-  return templates
+  return templates;
 }
 
 /**
@@ -181,11 +187,11 @@ function extractTemplates(store) {
  * @returns {string}
  */
 function extractLocalName(iri) {
-  const hashIdx = iri.lastIndexOf('#')
-  if (hashIdx !== -1) return iri.slice(hashIdx + 1)
-  const slashIdx = iri.lastIndexOf('/')
-  if (slashIdx !== -1) return iri.slice(slashIdx + 1)
-  return iri
+  const hashIdx = iri.lastIndexOf('#');
+  if (hashIdx !== -1) return iri.slice(hashIdx + 1);
+  const slashIdx = iri.lastIndexOf('/');
+  if (slashIdx !== -1) return iri.slice(slashIdx + 1);
+  return iri;
 }
 
 /**
@@ -196,13 +202,16 @@ function extractLocalName(iri) {
  * @returns {string}
  */
 function substituteVariables(pattern, entityName) {
-  let result = pattern
+  let result = pattern;
 
   for (const [placeholder, transform] of Object.entries(VARIABLE_PATTERNS)) {
-    result = result.replace(new RegExp(placeholder.replace(/[{}]/g, '\\$&'), 'g'), transform(entityName))
+    result = result.replace(
+      new RegExp(placeholder.replace(/[{}]/g, '\\$&'), 'g'),
+      transform(entityName)
+    );
   }
 
-  return result
+  return result;
 }
 
 /**
@@ -212,7 +221,7 @@ function substituteVariables(pattern, entityName) {
  * @returns {string}
  */
 function hashContent(content) {
-  return createHash('sha256').update(content).digest('hex')
+  return createHash('sha256').update(content).digest('hex');
 }
 
 /**
@@ -222,18 +231,18 @@ function hashContent(content) {
  * @returns {string}
  */
 function hashStore(store) {
-  const hash = createHash('sha256')
-  const size = store.size || 0
-  hash.update(`size:${size}`)
+  const hash = createHash('sha256');
+  const size = store.size || 0;
+  hash.update(`size:${size}`);
 
-  const quads = store.getQuads(null, null, null, null)
-  const sample = quads.slice(0, Math.min(10, quads.length))
+  const quads = store.getQuads(null, null, null, null);
+  const sample = quads.slice(0, Math.min(10, quads.length));
 
   for (const q of sample) {
-    hash.update(`${q.subject.value}|${q.predicate.value}|${q.object.value}`)
+    hash.update(`${q.subject.value}|${q.predicate.value}|${q.object.value}`);
   }
 
-  return hash.digest('hex').substring(0, 16)
+  return hash.digest('hex').substring(0, 16);
 }
 
 /**
@@ -254,36 +263,34 @@ function hashStore(store) {
  * @returns {PlanResult}
  */
 export function planMaterialization(ontologyStore, templateGraph, options = {}) {
-  const opts = PlanOptionsSchema.parse(options)
+  const opts = PlanOptionsSchema.parse(options);
 
-  const entities = extractDomainEntities(ontologyStore)
-  const templates = extractTemplates(templateGraph)
+  const entities = extractDomainEntities(ontologyStore);
+  const templates = extractTemplates(templateGraph);
 
   /** @type {WriteOperation[]} */
-  const writes = []
+  const writes = [];
   /** @type {UpdateOperation[]} */
-  const updates = []
+  const updates = [];
   /** @type {DeleteOperation[]} */
-  const deletes = []
+  const deletes = [];
   /** @type {MappingRecord[]} */
-  const mappings = []
+  const mappings = [];
 
   for (const entity of entities) {
     for (const template of templates) {
       // Check if template targets this entity type
       if (template.targetsClass !== entity.type) {
-        continue
+        continue;
       }
 
-      const entityName = entity.label
-      const outputPath = substituteVariables(template.outputPattern, entityName)
-      const fullPath = opts.outputRoot === '.'
-        ? outputPath
-        : `${opts.outputRoot}/${outputPath}`
+      const entityName = entity.label;
+      const outputPath = substituteVariables(template.outputPattern, entityName);
+      const fullPath = opts.outputRoot === '.' ? outputPath : `${opts.outputRoot}/${outputPath}`;
 
       // Substitute content variables
-      const content = substituteVariables(template.content, entityName)
-      const contentHash = hashContent(content)
+      const content = substituteVariables(template.content, entityName);
+      const contentHash = hashContent(content);
 
       // Create mapping record
       const mapping = {
@@ -291,11 +298,11 @@ export function planMaterialization(ontologyStore, templateGraph, options = {}) 
         entityIri: entity.iri,
         outputPath: fullPath,
         contentHash,
-      }
-      mappings.push(mapping)
+      };
+      mappings.push(mapping);
 
       // Check if file exists
-      const existingHash = opts.existingFiles[fullPath]
+      const existingHash = opts.existingFiles[fullPath];
 
       if (existingHash === undefined) {
         // New file - add to writes
@@ -306,7 +313,7 @@ export function planMaterialization(ontologyStore, templateGraph, options = {}) 
           templateIri: template.iri,
           entityIri: entity.iri,
           entityType: entity.type,
-        })
+        });
       } else if (existingHash !== contentHash) {
         // File changed - add to updates
         updates.push({
@@ -316,17 +323,23 @@ export function planMaterialization(ontologyStore, templateGraph, options = {}) 
           newHash: contentHash,
           templateIri: template.iri,
           entityIri: entity.iri,
-        })
+        });
       }
       // If hashes match, file is unchanged - no action needed
     }
   }
 
-  const plan = { writes, updates, deletes }
+  const plan = { writes, updates, deletes };
 
-  const ontologyHash = hashStore(ontologyStore)
-  const templateHash = hashStore(templateGraph)
-  const planHash = hashContent(JSON.stringify({ writes: writes.length, updates: updates.length, deletes: deletes.length }))
+  const ontologyHash = hashStore(ontologyStore);
+  const templateHash = hashStore(templateGraph);
+  const planHash = hashContent(
+    JSON.stringify({
+      writes: writes.length,
+      updates: updates.length,
+      deletes: deletes.length,
+    })
+  );
 
   const receipt = {
     ontologyHash,
@@ -334,9 +347,9 @@ export function planMaterialization(ontologyStore, templateGraph, options = {}) 
     planHash: planHash.substring(0, 16),
     mappings,
     timestamp: new Date().toISOString(),
-  }
+  };
 
-  return { plan, receipt }
+  return { plan, receipt };
 }
 
 /**
@@ -351,33 +364,33 @@ export function planMaterialization(ontologyStore, templateGraph, options = {}) 
  * @returns {{valid: boolean, errors: string[]}}
  */
 export function validatePlan(plan) {
-  const errors = []
-  const seenPaths = new Set()
+  const errors = [];
+  const seenPaths = new Set();
 
-  const allOps = [...plan.writes, ...plan.updates]
+  const allOps = [...plan.writes, ...plan.updates];
 
   for (const op of allOps) {
     // Check for duplicates
     if (seenPaths.has(op.path)) {
-      errors.push(`Duplicate output path: ${op.path}`)
+      errors.push(`Duplicate output path: ${op.path}`);
     }
-    seenPaths.add(op.path)
+    seenPaths.add(op.path);
 
     // Check for absolute paths
     if (op.path.startsWith('/')) {
-      errors.push(`Absolute path not allowed: ${op.path}`)
+      errors.push(`Absolute path not allowed: ${op.path}`);
     }
 
     // Check for path traversal
     if (op.path.includes('..')) {
-      errors.push(`Path traversal not allowed: ${op.path}`)
+      errors.push(`Path traversal not allowed: ${op.path}`);
     }
   }
 
   return {
     valid: errors.length === 0,
     errors,
-  }
+  };
 }
 
 /**
@@ -390,7 +403,7 @@ export function createEmptyPlan() {
     writes: [],
     updates: [],
     deletes: [],
-  }
+  };
 }
 
 /**
@@ -405,5 +418,5 @@ export function mergePlans(plan1, plan2) {
     writes: [...plan1.writes, ...plan2.writes],
     updates: [...plan1.updates, ...plan2.updates],
     deletes: [...plan1.deletes, ...plan2.deletes],
-  }
+  };
 }

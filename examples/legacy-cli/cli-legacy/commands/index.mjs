@@ -17,7 +17,7 @@ export {
   hookCreateCommand,
   hookGetCommand,
   hookHistoryCommand,
-  hookCommandMeta
+  hookCommandMeta,
 } from './hook.mjs';
 
 // Graph commands
@@ -30,7 +30,7 @@ export {
   graphExportCommand,
   graphValidateCommand,
   graphStatsCommand,
-  graphCommandMeta
+  graphCommandMeta,
 } from './graph.mjs';
 
 // Sidecar commands
@@ -40,7 +40,7 @@ export {
   sidecarMetricsCommand,
   sidecarConfigGetCommand,
   sidecarConfigSetCommand,
-  sidecarCommandMeta
+  sidecarCommandMeta,
 } from './sidecar.mjs';
 
 // Store commands
@@ -48,7 +48,7 @@ export {
   storeImportCommand,
   storeExportCommand,
   storeQueryCommand,
-  storeCommandMeta
+  storeCommandMeta,
 } from './store.mjs';
 
 // Policy commands
@@ -58,5 +58,5 @@ export {
   policyGetCommand,
   policyValidateCommand,
   policyAuditCommand,
-  policyCommandMeta
+  policyCommandMeta,
 } from './policy.mjs';

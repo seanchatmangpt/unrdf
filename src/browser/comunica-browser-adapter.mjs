@@ -185,8 +185,10 @@ export class BrowserQueryExecutor {
 
         if (datatype === 'http://www.w3.org/2001/XMLSchema#integer') {
           return parseInt(term.value, 10);
-        } else if (datatype === 'http://www.w3.org/2001/XMLSchema#decimal' ||
-                   datatype === 'http://www.w3.org/2001/XMLSchema#double') {
+        } else if (
+          datatype === 'http://www.w3.org/2001/XMLSchema#decimal' ||
+          datatype === 'http://www.w3.org/2001/XMLSchema#double'
+        ) {
           return parseFloat(term.value);
         } else if (datatype === 'http://www.w3.org/2001/XMLSchema#boolean') {
           return term.value === 'true';

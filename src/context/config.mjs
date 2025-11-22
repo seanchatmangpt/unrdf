@@ -17,8 +17,6 @@ export function getRuntimeConfig() {
   return {
     cacheMaxSize: toInt(env.UNRDF_CACHE_MAX_SIZE, undefined),
     serviceName: env.UNRDF_SERVICE_NAME,
-    serviceVersion: env.UNRDF_SERVICE_VERSION
+    serviceVersion: env.UNRDF_SERVICE_VERSION,
   };
 }
-
-

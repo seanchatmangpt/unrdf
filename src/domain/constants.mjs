@@ -26,17 +26,38 @@ export const PAPER_FAMILIES = Object.freeze([
   {
     name: 'DSR',
     label: 'Design Science Research',
-    sections: ['Problem Identification', 'Objectives', 'Design', 'Demonstration', 'Evaluation', 'Communication'],
+    sections: [
+      'Problem Identification',
+      'Objectives',
+      'Design',
+      'Demonstration',
+      'Evaluation',
+      'Communication',
+    ],
   },
   {
     name: 'Monograph',
     label: 'Monograph/Book Chapter',
-    sections: ['Abstract', 'Introduction', 'Literature Review', 'Analysis', 'Synthesis', 'Conclusion'],
+    sections: [
+      'Abstract',
+      'Introduction',
+      'Literature Review',
+      'Analysis',
+      'Synthesis',
+      'Conclusion',
+    ],
   },
   {
     name: 'Narrative',
     label: 'Narrative Review',
-    sections: ['Introduction', 'Background', 'Main Body', 'Critical Analysis', 'Summary', 'Future Directions'],
+    sections: [
+      'Introduction',
+      'Background',
+      'Main Body',
+      'Critical Analysis',
+      'Summary',
+      'Future Directions',
+    ],
   },
 ]);
 
@@ -47,28 +68,75 @@ export const PAPER_FAMILIES = Object.freeze([
 export const THESIS_TYPES = Object.freeze([
   {
     name: 'Masters',
-    label: 'Master\'s Thesis',
-    sections: ['Abstract', 'Introduction', 'Literature Review', 'Methodology', 'Results', 'Discussion', 'Conclusion', 'References', 'Appendices'],
+    label: "Master's Thesis",
+    sections: [
+      'Abstract',
+      'Introduction',
+      'Literature Review',
+      'Methodology',
+      'Results',
+      'Discussion',
+      'Conclusion',
+      'References',
+      'Appendices',
+    ],
   },
   {
     name: 'PhD',
     label: 'Doctoral Dissertation',
-    sections: ['Abstract', 'Introduction', 'Literature Review', 'Theoretical Framework', 'Methodology', 'Results', 'Discussion', 'Contributions', 'Conclusion', 'References', 'Appendices'],
+    sections: [
+      'Abstract',
+      'Introduction',
+      'Literature Review',
+      'Theoretical Framework',
+      'Methodology',
+      'Results',
+      'Discussion',
+      'Contributions',
+      'Conclusion',
+      'References',
+      'Appendices',
+    ],
   },
   {
     name: 'Postdoctoral',
     label: 'Postdoctoral Research',
-    sections: ['Executive Summary', 'Research Overview', 'Methodology', 'Findings', 'Impact Assessment', 'Future Research', 'Publications'],
+    sections: [
+      'Executive Summary',
+      'Research Overview',
+      'Methodology',
+      'Findings',
+      'Impact Assessment',
+      'Future Research',
+      'Publications',
+    ],
   },
   {
     name: 'MBA',
     label: 'MBA Thesis/Capstone',
-    sections: ['Executive Summary', 'Problem Statement', 'Industry Analysis', 'Strategic Framework', 'Recommendations', 'Implementation Plan', 'Conclusion'],
+    sections: [
+      'Executive Summary',
+      'Problem Statement',
+      'Industry Analysis',
+      'Strategic Framework',
+      'Recommendations',
+      'Implementation Plan',
+      'Conclusion',
+    ],
   },
   {
     name: 'Professional',
     label: 'Professional Doctorate',
-    sections: ['Abstract', 'Introduction', 'Problem of Practice', 'Literature Review', 'Methodology', 'Findings', 'Implications for Practice', 'Conclusion'],
+    sections: [
+      'Abstract',
+      'Introduction',
+      'Problem of Practice',
+      'Literature Review',
+      'Methodology',
+      'Findings',
+      'Implications for Practice',
+      'Conclusion',
+    ],
   },
 ]);
 
@@ -78,7 +146,11 @@ export const THESIS_TYPES = Object.freeze([
  */
 export const OUTPUT_FORMATS = Object.freeze([
   { name: 'json', label: 'JSON', description: 'Compact JSON output' },
-  { name: 'json-pretty', label: 'JSON Pretty', description: 'Formatted JSON with indentation' },
+  {
+    name: 'json-pretty',
+    label: 'JSON Pretty',
+    description: 'Formatted JSON with indentation',
+  },
   { name: 'yaml', label: 'YAML', description: 'YAML formatted output' },
   { name: 'table', label: 'Table', description: 'ASCII table format' },
 ]);
@@ -91,29 +163,33 @@ export const SHELL_TYPES = Object.freeze([
   { name: 'bash', label: 'Bash', description: 'GNU Bourne-Again Shell' },
   { name: 'zsh', label: 'Zsh', description: 'Z Shell' },
   { name: 'fish', label: 'Fish', description: 'Friendly Interactive Shell' },
-  { name: 'powershell', label: 'PowerShell', description: 'Microsoft PowerShell' },
+  {
+    name: 'powershell',
+    label: 'PowerShell',
+    description: 'Microsoft PowerShell',
+  },
 ]);
 
 /**
  * Paper family names as array
  * @type {Readonly<string[]>}
  */
-export const PAPER_FAMILY_NAMES = Object.freeze(PAPER_FAMILIES.map((f) => f.name));
+export const PAPER_FAMILY_NAMES = Object.freeze(PAPER_FAMILIES.map(f => f.name));
 
 /**
  * Thesis type names as array
  * @type {Readonly<string[]>}
  */
-export const THESIS_TYPE_NAMES = Object.freeze(THESIS_TYPES.map((t) => t.name));
+export const THESIS_TYPE_NAMES = Object.freeze(THESIS_TYPES.map(t => t.name));
 
 /**
  * Output format names as array
  * @type {Readonly<string[]>}
  */
-export const OUTPUT_FORMAT_NAMES = Object.freeze(OUTPUT_FORMATS.map((f) => f.name));
+export const OUTPUT_FORMAT_NAMES = Object.freeze(OUTPUT_FORMATS.map(f => f.name));
 
 /**
  * Shell type names as array
  * @type {Readonly<string[]>}
  */
-export const SHELL_TYPE_NAMES = Object.freeze(SHELL_TYPES.map((s) => s.name));
+export const SHELL_TYPE_NAMES = Object.freeze(SHELL_TYPES.map(s => s.name));

@@ -16,17 +16,17 @@ class UnrdfProfiler {
       enableMemory: true,
       enableCpu: false,
       enableOtel: true,
-      labels: ['unrdf', 'v3.1.0']
+      labels: ['unrdf', 'v3.1.0'],
     });
 
     // Performance budgets for UNRDF operations
     this.budgets = {
-      'parse': { p95: 50, p99: 100 },
-      'query': { p95: 100, p99: 200 },
+      parse: { p95: 50, p99: 100 },
+      query: { p95: 100, p99: 200 },
       'hook-execution': { p95: 80, p99: 150 },
       'transaction-commit': { p95: 120, p99: 250 },
       'sparql-query': { p95: 100, p99: 200 },
-      'shacl-validation': { p95: 80, p99: 150 }
+      'shacl-validation': { p95: 80, p99: 150 },
     };
   }
 
@@ -39,7 +39,7 @@ class UnrdfProfiler {
       await this.simulateWork(30, 50);
       return {
         triples: Math.floor(Math.random() * 1000),
-        format: options.format || 'turtle'
+        format: options.format || 'turtle',
       };
     });
   }
@@ -53,7 +53,7 @@ class UnrdfProfiler {
       await this.simulateWork(60, 100);
       return {
         results: Math.floor(Math.random() * 500),
-        queryType: options.type || 'SELECT'
+        queryType: options.type || 'SELECT',
       };
     });
   }
@@ -61,14 +61,14 @@ class UnrdfProfiler {
   /**
    * Profile hook execution
    */
-  async profileHook(hookName, context) {
+  async profileHook(hookName, _context) {
     return await this.profiler.profile('hook-execution', async () => {
       // Simulate hook execution
       await this.simulateWork(40, 80);
       return {
         hookName,
         executed: true,
-        changes: Math.floor(Math.random() * 10)
+        changes: Math.floor(Math.random() * 10),
       };
     });
   }
@@ -82,7 +82,7 @@ class UnrdfProfiler {
       await this.simulateWork(70, 120);
       return {
         committed: true,
-        operations: transaction.operations || 0
+        operations: transaction.operations || 0,
       };
     });
   }
@@ -90,12 +90,12 @@ class UnrdfProfiler {
   /**
    * Profile SPARQL query
    */
-  async profileSparqlQuery(sparql) {
+  async profileSparqlQuery(_sparql) {
     return await this.profiler.profile('sparql-query', async () => {
       // Simulate SPARQL query
       await this.simulateWork(50, 100);
       return {
-        bindings: Math.floor(Math.random() * 200)
+        bindings: Math.floor(Math.random() * 200),
       };
     });
   }
@@ -103,13 +103,13 @@ class UnrdfProfiler {
   /**
    * Profile SHACL validation
    */
-  async profileShaclValidation(shapes, data) {
+  async profileShaclValidation(_shapes, _data) {
     return await this.profiler.profile('shacl-validation', async () => {
       // Simulate SHACL validation
       await this.simulateWork(40, 80);
       return {
         conforms: Math.random() > 0.1,
-        violations: Math.floor(Math.random() * 5)
+        violations: Math.floor(Math.random() * 5),
       };
     });
   }
@@ -131,7 +131,7 @@ class UnrdfProfiler {
           passed: check.passed,
           p95: stats.latency.p95,
           budget: budget.p95,
-          violations: check.violations
+          violations: check.violations,
         });
       }
     }
@@ -146,7 +146,7 @@ class UnrdfProfiler {
     const operations = Object.keys(this.budgets);
     const report = {
       timestamp: new Date().toISOString(),
-      operations: {}
+      operations: {},
     };
 
     for (const operation of operations) {
@@ -155,7 +155,7 @@ class UnrdfProfiler {
         report.operations[operation] = {
           count: stats.count,
           latency: stats.latency,
-          memory: stats.memory
+          memory: stats.memory,
         };
       }
     }
@@ -187,8 +187,8 @@ async function exampleUnrdfProfiling() {
   // Profile parse operations
   console.log('1. Parse Operations:');
   for (let i = 0; i < 10; i++) {
-    const { result, profile } = await profiler.profileParse('<http://example.org/data>', {
-      format: 'turtle'
+    const { _result, _profile } = await profiler.profileParse('<http://example.org/data>', {
+      format: 'turtle',
     });
     process.stdout.write('.');
   }
@@ -197,8 +197,8 @@ async function exampleUnrdfProfiling() {
   // Profile query operations
   console.log('2. Query Operations:');
   for (let i = 0; i < 10; i++) {
-    const { result, profile } = await profiler.profileQuery('SELECT * WHERE { ?s ?p ?o }', {
-      type: 'SELECT'
+    const { _result, _profile } = await profiler.profileQuery('SELECT * WHERE { ?s ?p ?o }', {
+      type: 'SELECT',
     });
     process.stdout.write('.');
   }
@@ -207,8 +207,8 @@ async function exampleUnrdfProfiling() {
   // Profile hook executions
   console.log('3. Hook Executions:');
   for (let i = 0; i < 10; i++) {
-    const { result, profile } = await profiler.profileHook('validation-hook', {
-      data: 'test'
+    const { _result, _profile } = await profiler.profileHook('validation-hook', {
+      data: 'test',
     });
     process.stdout.write('.');
   }
@@ -217,8 +217,8 @@ async function exampleUnrdfProfiling() {
   // Profile transaction commits
   console.log('4. Transaction Commits:');
   for (let i = 0; i < 10; i++) {
-    const { result, profile } = await profiler.profileTransactionCommit({
-      operations: Math.floor(Math.random() * 10)
+    const { _result, _profile } = await profiler.profileTransactionCommit({
+      operations: Math.floor(Math.random() * 10),
     });
     process.stdout.write('.');
   }
@@ -227,7 +227,7 @@ async function exampleUnrdfProfiling() {
   // Profile SPARQL queries
   console.log('5. SPARQL Queries:');
   for (let i = 0; i < 10; i++) {
-    const { result, profile } = await profiler.profileSparqlQuery(
+    const { _result, _profile } = await profiler.profileSparqlQuery(
       'SELECT ?s WHERE { ?s a <http://example.org/Person> }'
     );
     process.stdout.write('.');
@@ -237,10 +237,9 @@ async function exampleUnrdfProfiling() {
   // Profile SHACL validations
   console.log('6. SHACL Validations:');
   for (let i = 0; i < 10; i++) {
-    const { result, profile } = await profiler.profileShaclValidation(
-      ['shape1', 'shape2'],
-      { data: 'test' }
-    );
+    const { _result, _profile } = await profiler.profileShaclValidation(['shape1', 'shape2'], {
+      data: 'test',
+    });
     process.stdout.write('.');
   }
   console.log(' ✓\n');
@@ -255,7 +254,9 @@ async function exampleUnrdfProfiling() {
     const status = check.passed ? '✓' : '✗';
     const symbol = check.passed ? '' : '⚠️ ';
 
-    console.log(`${symbol}${status} ${check.operation.padEnd(25)} p95: ${check.p95.toFixed(2).padStart(7)}ms (budget: ${check.budget}ms)`);
+    console.log(
+      `${symbol}${status} ${check.operation.padEnd(25)} p95: ${check.p95.toFixed(2).padStart(7)}ms (budget: ${check.budget}ms)`
+    );
 
     if (!check.passed) {
       allPassed = false;
@@ -302,7 +303,7 @@ async function exampleUnrdfProfiling() {
   try {
     Reporter.save(report, 'unrdf-performance-report.json', {
       format: 'json',
-      dir: '.'
+      dir: '.',
     });
     console.log('✓ Performance report saved: unrdf-performance-report.json\n');
   } catch (err) {
@@ -335,7 +336,9 @@ async function exampleContinuousMonitoring() {
     const budgetChecks = profiler.checkBudgets();
     const violations = budgetChecks.filter(c => !c.passed).length;
 
-    console.log(`  Iteration ${iteration}/10: ${totalOperations} operations, ${violations} budget violations`);
+    console.log(
+      `  Iteration ${iteration}/10: ${totalOperations} operations, ${violations} budget violations`
+    );
   }
 
   console.log('\nFinal Performance Summary:');
@@ -376,7 +379,7 @@ async function exampleRegressionDetection() {
   console.log('Simulating performance regression...');
 
   // Simulate regression by adding extra delay
-  currentProfiler.simulateWork = async function(minMs, maxMs) {
+  currentProfiler.simulateWork = async function (minMs, maxMs) {
     const delay = Math.random() * (maxMs - minMs) + minMs;
     await new Promise(resolve => setTimeout(resolve, delay * 1.3)); // 30% slower
   };
@@ -390,8 +393,8 @@ async function exampleRegressionDetection() {
   console.log(`  Current parse p95: ${currentStats.latency.p95.toFixed(2)}ms\n`);
 
   // Detect regression
-  const change = ((currentStats.latency.p95 - baselineStats.latency.p95) /
-                  baselineStats.latency.p95) * 100;
+  const change =
+    ((currentStats.latency.p95 - baselineStats.latency.p95) / baselineStats.latency.p95) * 100;
 
   if (change > 10) {
     console.log(`⚠️  REGRESSION DETECTED!`);

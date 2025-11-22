@@ -48,13 +48,19 @@ export function useHTFOntology() {
         { type: 'Intro', description: 'Context + Research Question + Thesis' },
         { type: 'Method', description: 'Design + Protocol + Implementation' },
         { type: 'Result', description: 'Data + Analysis + Tables/Figures' },
-        { type: 'Discussion', description: 'Interpretation + Comparison + Limits' },
+        {
+          type: 'Discussion',
+          description: 'Interpretation + Comparison + Limits',
+        },
       ],
       Papers: [
         { type: 'Paper1', description: 'Core contribution A' },
         { type: 'Paper2', description: 'Core contribution B' },
         { type: 'Paper3', description: 'Core contribution C' },
-        { type: 'Synthesis', description: 'Cross-paper synthesis + unified theory' },
+        {
+          type: 'Synthesis',
+          description: 'Cross-paper synthesis + unified theory',
+        },
       ],
       Argument: [
         { type: 'Claim', description: 'Main thesis statement' },
@@ -78,7 +84,10 @@ export function useHTFOntology() {
       ],
       DSR: [
         { type: 'Problem', description: 'Problem formulation + motivation' },
-        { type: 'Artifact', description: 'Artifact construction + instantiation' },
+        {
+          type: 'Artifact',
+          description: 'Artifact construction + instantiation',
+        },
         { type: 'Eval2', description: 'Rigorous evaluation + metrics' },
         { type: 'Theory', description: 'Theory building from artifact' },
       ],
@@ -100,7 +109,7 @@ export function useHTFOntology() {
    * @returns {Δ_Shard} Created shard
    */
   const addShard = useCallback(
-    (shardData) => {
+    shardData => {
       const newShard = {
         id: `shard-${nextId}`,
         position: shards.length + 1,
@@ -108,8 +117,8 @@ export function useHTFOntology() {
         lastModified: new Date(),
         ...shardData,
       };
-      setShards((prev) => [...prev, newShard]);
-      setNextId((prev) => prev + 1);
+      setShards(prev => [...prev, newShard]);
+      setNextId(prev => prev + 1);
       return newShard;
     },
     [shards.length, nextId]
@@ -119,8 +128,8 @@ export function useHTFOntology() {
    * Delete a shard by ID
    * @param {string} shardId - ID to remove
    */
-  const removeShard = useCallback((shardId) => {
-    setShards((prev) => prev.filter((s) => s.id !== shardId));
+  const removeShard = useCallback(shardId => {
+    setShards(prev => prev.filter(s => s.id !== shardId));
   }, []);
 
   /**
@@ -129,8 +138,8 @@ export function useHTFOntology() {
    * @param {Object} updates - Properties to change
    */
   const updateShard = useCallback((shardId, updates) => {
-    setShards((prev) =>
-      prev.map((s) =>
+    setShards(prev =>
+      prev.map(s =>
         s.id === shardId
           ? {
               ...s,
@@ -149,15 +158,15 @@ export function useHTFOntology() {
    * @param {number} newPosition - Target position (1-27)
    */
   const moveToPosition = useCallback((shardId, newPosition) => {
-    setShards((prev) => {
+    setShards(prev => {
       const newPosition2 = Math.max(1, Math.min(newPosition, 27));
-      const shard = prev.find((s) => s.id === shardId);
+      const shard = prev.find(s => s.id === shardId);
       if (!shard) return prev;
 
       const oldPos = shard.position;
       return prev
-        .filter((s) => s.id !== shardId)
-        .map((s) => {
+        .filter(s => s.id !== shardId)
+        .map(s => {
           if (oldPos < newPosition2) {
             if (s.position > oldPos && s.position <= newPosition2) {
               return { ...s, position: s.position - 1 };
@@ -181,7 +190,7 @@ export function useHTFOntology() {
    */
   const queryShards = useCallback(
     (criteria = {}) => {
-      return shards.filter((shard) => {
+      return shards.filter(shard => {
         if (criteria.type && shard.type !== criteria.type) return false;
         if (criteria.family && shard.family !== criteria.family) return false;
         if (criteria.position && shard.position !== criteria.position) return false;

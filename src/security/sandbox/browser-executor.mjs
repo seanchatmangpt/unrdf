@@ -30,7 +30,7 @@ export class BrowserExecutor {
       timeout: config.timeout || 5000,
       enableWasm: config.enableWasm !== false,
       strictMode: config.strictMode !== false,
-      ...config
+      ...config,
     };
 
     /** @type {Map<string, Worker>} */
@@ -48,7 +48,7 @@ export class BrowserExecutor {
    * @returns {Promise<Object>} Execution result
    */
   async run(code, context = {}, options = {}) {
-    return tracer.startActiveSpan('security.browser.execute', async (span) => {
+    return tracer.startActiveSpan('security.browser.execute', async span => {
       const startTime = Date.now();
       const executionId = `exec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
@@ -56,16 +56,14 @@ export class BrowserExecutor {
         span.setAttributes({
           'security.executor.type': 'browser',
           'security.execution.id': executionId,
-          'security.timeout': options.timeout || this.config.timeout
+          'security.timeout': options.timeout || this.config.timeout,
         });
 
         // Convert function to string if needed
         const codeString = typeof code === 'function' ? code.toString() : code;
 
         // Wrap code in strict mode if enabled
-        const wrappedCode = this.config.strictMode
-          ? `"use strict";\n${codeString}`
-          : codeString;
+        const wrappedCode = this.config.strictMode ? `"use strict";\n${codeString}` : codeString;
 
         // Create worker blob
         const workerCode = `
@@ -118,7 +116,7 @@ export class BrowserExecutor {
           const worker = new Worker(workerUrl);
           this.workers.set(executionId, worker);
 
-          worker.onmessage = (e) => {
+          worker.onmessage = e => {
             const { type, success, result, error, args } = e.data;
 
             if (type === 'log' || type === 'error' || type === 'warn' || type === 'info') {
@@ -140,7 +138,7 @@ export class BrowserExecutor {
             }
           };
 
-          worker.onerror = (error) => {
+          worker.onerror = error => {
             clearTimeout(timeout);
             worker.terminate();
             this.workers.delete(executionId);
@@ -158,7 +156,7 @@ export class BrowserExecutor {
 
         span.setAttributes({
           'security.execution.duration': duration,
-          'security.execution.success': true
+          'security.execution.success': true,
         });
         span.setStatus({ code: 1 }); // OK
 
@@ -166,9 +164,8 @@ export class BrowserExecutor {
           success: true,
           result: result.result,
           duration,
-          executionId
+          executionId,
         };
-
       } catch (error) {
         const duration = Date.now() - startTime;
 
@@ -176,7 +173,7 @@ export class BrowserExecutor {
         span.setAttributes({
           'security.execution.duration': duration,
           'security.execution.success': false,
-          'security.error.message': error.message
+          'security.error.message': error.message,
         });
         span.setStatus({ code: 2, message: error.message });
 
@@ -184,7 +181,7 @@ export class BrowserExecutor {
           success: false,
           error: error.message,
           duration,
-          executionId
+          executionId,
         };
       } finally {
         span.end();
@@ -202,7 +199,7 @@ export class BrowserExecutor {
       config: this.config,
       executionCount: this.executionCount,
       averageDuration: this.executionCount > 0 ? this.totalDuration / this.executionCount : 0,
-      activeWorkers: this.workers.size
+      activeWorkers: this.workers.size,
     };
   }
 

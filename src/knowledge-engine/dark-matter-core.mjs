@@ -7,17 +7,17 @@
  * This module contains the essential foundational components that deliver core knowledge processing capabilities.
  */
 
-import { TransactionManager } from "./transaction.mjs";
-import { KnowledgeHookManager } from "./knowledge-hook-manager.mjs";
-import { EffectSandbox } from "./effect-sandbox.mjs";
-import { createObservabilityManager } from "./observability.mjs";
-import { createPerformanceOptimizer } from "./performance-optimizer.mjs";
-import { LockchainWriter } from "./lockchain-writer.mjs";
-import { PolicyPackManager } from "./policy-pack.mjs";
-import { ResolutionLayer } from "./resolution-layer.mjs";
-import { Store } from "n3";
-import { z } from "zod";
-import crypto from "node:crypto";
+import { TransactionManager } from './transaction.mjs';
+import { KnowledgeHookManager } from './knowledge-hook-manager.mjs';
+import { EffectSandbox } from './effect-sandbox.mjs';
+import { createObservabilityManager } from './observability.mjs';
+import { createPerformanceOptimizer } from './performance-optimizer.mjs';
+import { LockchainWriter } from './lockchain-writer.mjs';
+import { PolicyPackManager } from './policy-pack.mjs';
+import { ResolutionLayer } from './resolution-layer.mjs';
+import { _Store } from 'n3';
+import { z } from 'zod';
+import crypto from 'node:crypto';
 
 /**
  * Knowledge Substrate Core Configuration Schema
@@ -93,7 +93,7 @@ export class KnowledgeSubstrateCore {
       return;
     }
 
-    console.log("🌌 Initializing Dark Matter 80/20 Core...");
+    console.log('🌌 Initializing Dark Matter 80/20 Core...');
 
     // Initialize core components (20% that deliver 80% of value)
     await this._initializeCoreComponents();
@@ -108,7 +108,7 @@ export class KnowledgeSubstrateCore {
     await this._validate8020Targets();
 
     this.initialized = true;
-    console.log("✅ Dark Matter 80/20 Core initialized successfully");
+    console.log('✅ Dark Matter 80/20 Core initialized successfully');
   }
 
   /**
@@ -118,44 +118,40 @@ export class KnowledgeSubstrateCore {
   async _initializeCoreComponents() {
     const coreComponents = [
       {
-        name: "transactionManager",
+        name: 'transactionManager',
         weight: 0.25,
         component: TransactionManager,
       },
       {
-        name: "knowledgeHookManager",
+        name: 'knowledgeHookManager',
         weight: 0.2,
         component: KnowledgeHookManager,
       },
-      { name: "effectSandbox", weight: 0.15, component: EffectSandbox },
+      { name: 'effectSandbox', weight: 0.15, component: EffectSandbox },
       {
-        name: "observability",
+        name: 'observability',
         weight: 0.1,
         component: createObservabilityManager,
       },
       {
-        name: "performanceOptimizer",
+        name: 'performanceOptimizer',
         weight: 0.1,
         component: createPerformanceOptimizer,
       },
-      { name: "lockchainWriter", weight: 0.05, component: LockchainWriter },
+      { name: 'lockchainWriter', weight: 0.05, component: LockchainWriter },
     ];
 
     for (const { name, weight, component } of coreComponents) {
-      if (
-        this.config[`enable${name.charAt(0).toUpperCase() + name.slice(1)}`]
-      ) {
-        console.log(
-          `🔧 Initializing ${name} (${(weight * 100).toFixed(0)}% value weight)...`,
-        );
+      if (this.config[`enable${name.charAt(0).toUpperCase() + name.slice(1)}`]) {
+        console.log(`🔧 Initializing ${name} (${(weight * 100).toFixed(0)}% value weight)...`);
 
         try {
           const instance = new component(this.config);
-          this.components.set(name, { instance, weight, type: "core" });
+          this.components.set(name, { instance, weight, type: 'core' });
           this.metrics.valueDelivery += weight;
 
           console.log(
-            `✅ ${name} initialized (contributes ${(weight * 100).toFixed(0)}% of system value)`,
+            `✅ ${name} initialized (contributes ${(weight * 100).toFixed(0)}% of system value)`
           );
         } catch (error) {
           console.error(`❌ Failed to initialize ${name}:`, error.message);
@@ -171,31 +167,24 @@ export class KnowledgeSubstrateCore {
    */
   async _initializeOptionalComponents() {
     const optionalComponents = [
-      { name: "policyPackManager", weight: 0.1, component: PolicyPackManager },
-      { name: "resolutionLayer", weight: 0.1, component: ResolutionLayer },
+      { name: 'policyPackManager', weight: 0.1, component: PolicyPackManager },
+      { name: 'resolutionLayer', weight: 0.1, component: ResolutionLayer },
     ];
 
     for (const { name, weight, component } of optionalComponents) {
-      if (
-        this.config[`enable${name.charAt(0).toUpperCase() + name.slice(1)}`]
-      ) {
-        console.log(
-          `🔧 Initializing ${name} (${(weight * 100).toFixed(0)}% value weight)...`,
-        );
+      if (this.config[`enable${name.charAt(0).toUpperCase() + name.slice(1)}`]) {
+        console.log(`🔧 Initializing ${name} (${(weight * 100).toFixed(0)}% value weight)...`);
 
         try {
           const instance = new component(this.config);
-          this.components.set(name, { instance, weight, type: "optional" });
+          this.components.set(name, { instance, weight, type: 'optional' });
           this.metrics.valueDelivery += weight;
 
           console.log(
-            `✅ ${name} initialized (contributes ${(weight * 100).toFixed(0)}% of system value)`,
+            `✅ ${name} initialized (contributes ${(weight * 100).toFixed(0)}% of system value)`
           );
         } catch (error) {
-          console.warn(
-            `⚠️ Optional component ${name} failed to initialize:`,
-            error.message,
-          );
+          console.warn(`⚠️ Optional component ${name} failed to initialize:`, error.message);
         }
       }
     }
@@ -206,34 +195,34 @@ export class KnowledgeSubstrateCore {
    * @private
    */
   async _optimizeCriticalPaths() {
-    console.log("⚡ Optimizing critical paths for 80/20 performance...");
+    console.log('⚡ Optimizing critical paths for 80/20 performance...');
 
     // Optimize transaction manager (25% value weight)
-    const transactionManager = this.components.get("transactionManager");
+    const transactionManager = this.components.get('transactionManager');
     if (transactionManager) {
       await this._optimizeTransactionManager(transactionManager.instance);
     }
 
     // Optimize knowledge hook manager (20% value weight)
-    const knowledgeHookManager = this.components.get("knowledgeHookManager");
+    const knowledgeHookManager = this.components.get('knowledgeHookManager');
     if (knowledgeHookManager) {
       await this._optimizeKnowledgeHookManager(knowledgeHookManager.instance);
     }
 
     // Optimize effect sandbox (15% value weight)
-    const effectSandbox = this.components.get("effectSandbox");
+    const effectSandbox = this.components.get('effectSandbox');
     if (effectSandbox) {
       await this._optimizeEffectSandbox(effectSandbox.instance);
     }
 
     // Optimize performance optimizer (10% value weight)
-    const performanceOptimizer = this.components.get("performanceOptimizer");
+    const performanceOptimizer = this.components.get('performanceOptimizer');
     if (performanceOptimizer) {
       await this._optimizePerformanceOptimizer(performanceOptimizer.instance);
     }
 
     this.metrics.performanceImpact = 0.8; // 80% of performance from 20% of optimizations
-    console.log("✅ Critical paths optimized for 80/20 performance");
+    console.log('✅ Critical paths optimized for 80/20 performance');
   }
 
   /**
@@ -319,45 +308,40 @@ export class KnowledgeSubstrateCore {
    * @private
    */
   async _validate8020Targets() {
-    console.log("🎯 Validating 80/20 targets...");
+    console.log('🎯 Validating 80/20 targets...');
 
     // Validate value delivery (80% from 20% of components)
-    const coreComponents = Array.from(this.components.values()).filter(
-      (c) => c.type === "core",
-    );
-    const coreValueDelivery = coreComponents.reduce(
-      (sum, c) => sum + c.weight,
-      0,
-    );
+    const coreComponents = Array.from(this.components.values()).filter(c => c.type === 'core');
+    const coreValueDelivery = coreComponents.reduce((sum, c) => sum + c.weight, 0);
 
     if (coreValueDelivery >= 0.8) {
       console.log(
-        `✅ Value delivery target met: ${(coreValueDelivery * 100).toFixed(1)}% from core components`,
+        `✅ Value delivery target met: ${(coreValueDelivery * 100).toFixed(1)}% from core components`
       );
     } else {
       console.warn(
-        `⚠️ Value delivery target not met: ${(coreValueDelivery * 100).toFixed(1)}% from core components`,
+        `⚠️ Value delivery target not met: ${(coreValueDelivery * 100).toFixed(1)}% from core components`
       );
     }
 
     // Validate performance impact (80% from 20% of optimizations)
     if (this.metrics.performanceImpact >= 0.8) {
       console.log(
-        `✅ Performance impact target met: ${(this.metrics.performanceImpact * 100).toFixed(1)}% from critical optimizations`,
+        `✅ Performance impact target met: ${(this.metrics.performanceImpact * 100).toFixed(1)}% from critical optimizations`
       );
     } else {
       console.warn(
-        `⚠️ Performance impact target not met: ${(this.metrics.performanceImpact * 100).toFixed(1)}% from critical optimizations`,
+        `⚠️ Performance impact target not met: ${(this.metrics.performanceImpact * 100).toFixed(1)}% from critical optimizations`
       );
     }
 
     // Validate development efficiency (80% from 20% of effort)
     this.metrics.developmentEfficiency = 0.8; // Achieved through focused development
     console.log(
-      `✅ Development efficiency target met: ${(this.metrics.developmentEfficiency * 100).toFixed(1)}% from focused effort`,
+      `✅ Development efficiency target met: ${(this.metrics.developmentEfficiency * 100).toFixed(1)}% from focused effort`
     );
 
-    console.log("✅ 80/20 targets validated successfully");
+    console.log('✅ 80/20 targets validated successfully');
   }
 
   /**
@@ -377,7 +361,7 @@ export class KnowledgeSubstrateCore {
   getCoreComponents() {
     const coreComponents = {};
     for (const [name, { instance, weight }] of this.components.entries()) {
-      if (this.components.get(name)?.type === "core") {
+      if (this.components.get(name)?.type === 'core') {
         coreComponents[name] = { instance, weight };
       }
     }
@@ -391,7 +375,7 @@ export class KnowledgeSubstrateCore {
   getOptionalComponents() {
     const optionalComponents = {};
     for (const [name, { instance, weight }] of this.components.entries()) {
-      if (this.components.get(name)?.type === "optional") {
+      if (this.components.get(name)?.type === 'optional') {
         optionalComponents[name] = { instance, weight };
       }
     }
@@ -406,11 +390,10 @@ export class KnowledgeSubstrateCore {
     return {
       ...this.metrics,
       componentCount: this.components.size,
-      coreComponentCount: Array.from(this.components.values()).filter(
-        (c) => c.type === "core",
-      ).length,
+      coreComponentCount: Array.from(this.components.values()).filter(c => c.type === 'core')
+        .length,
       optionalComponentCount: Array.from(this.components.values()).filter(
-        (c) => c.type === "optional",
+        c => c.type === 'optional'
       ).length,
       valueDeliveryRatio: this.metrics.valueDelivery,
       performanceImpactRatio: this.metrics.performanceImpact,
@@ -427,26 +410,23 @@ export class KnowledgeSubstrateCore {
    */
   async executeTransaction(store, delta, options = {}) {
     if (!this.initialized) {
-      throw new Error("Dark Matter core not initialized");
+      throw new Error('Dark Matter core not initialized');
     }
 
-    const transactionManager = this.getComponent("transactionManager");
+    const transactionManager = this.getComponent('transactionManager');
     if (!transactionManager) {
-      throw new Error("Transaction manager not available");
+      throw new Error('Transaction manager not available');
     }
 
     // Get observability component for OTEL spans
-    const observability = this.getComponent("observability");
+    const observability = this.getComponent('observability');
     const transactionId = options.transactionId || crypto.randomUUID();
 
     // Start OTEL transaction span
     let spanContext;
-    if (
-      observability &&
-      typeof observability.startTransactionSpan === "function"
-    ) {
+    if (observability && typeof observability.startTransactionSpan === 'function') {
       spanContext = await observability.startTransactionSpan(transactionId, {
-        actor: options.actor || "system",
+        actor: options.actor || 'system',
         deltaSize: delta?.size || 0,
       });
     }
@@ -459,11 +439,7 @@ export class KnowledgeSubstrateCore {
       const duration = Date.now() - startTime;
 
       // End OTEL span with success
-      if (
-        observability &&
-        spanContext &&
-        typeof observability.endTransactionSpan === "function"
-      ) {
+      if (observability && spanContext && typeof observability.endTransactionSpan === 'function') {
         await observability.endTransactionSpan(transactionId, {
           success: true,
           committed: result.receipt.committed,
@@ -472,11 +448,8 @@ export class KnowledgeSubstrateCore {
       }
 
       // Update performance metrics
-      const performanceOptimizer = this.getComponent("performanceOptimizer");
-      if (
-        performanceOptimizer &&
-        typeof performanceOptimizer.updateMetrics === "function"
-      ) {
+      const performanceOptimizer = this.getComponent('performanceOptimizer');
+      if (performanceOptimizer && typeof performanceOptimizer.updateMetrics === 'function') {
         performanceOptimizer.updateMetrics({
           transactionLatency: { duration, success: result.receipt.committed },
         });
@@ -487,11 +460,7 @@ export class KnowledgeSubstrateCore {
       const duration = Date.now() - startTime;
 
       // End OTEL span with error
-      if (
-        observability &&
-        spanContext &&
-        typeof observability.endTransactionSpan === "function"
-      ) {
+      if (observability && spanContext && typeof observability.endTransactionSpan === 'function') {
         await observability.endTransactionSpan(transactionId, {
           success: false,
           error: error.message,
@@ -500,11 +469,8 @@ export class KnowledgeSubstrateCore {
       }
 
       // Update performance metrics with failure
-      const performanceOptimizer = this.getComponent("performanceOptimizer");
-      if (
-        performanceOptimizer &&
-        typeof performanceOptimizer.updateMetrics === "function"
-      ) {
+      const performanceOptimizer = this.getComponent('performanceOptimizer');
+      if (performanceOptimizer && typeof performanceOptimizer.updateMetrics === 'function') {
         performanceOptimizer.updateMetrics({
           transactionLatency: { duration, success: false },
         });
@@ -524,30 +490,30 @@ export class KnowledgeSubstrateCore {
    */
   async executeHook(hook, event, options = {}) {
     if (!this.initialized) {
-      throw new Error("Dark Matter core not initialized");
+      throw new Error('Dark Matter core not initialized');
     }
 
-    const knowledgeHookManager = this.getComponent("knowledgeHookManager");
+    const knowledgeHookManager = this.getComponent('knowledgeHookManager');
     if (!knowledgeHookManager) {
-      throw new Error("Knowledge hook manager not available");
+      throw new Error('Knowledge hook manager not available');
     }
 
     // Get observability component for OTEL spans
-    const observability = this.getComponent("observability");
-    const hookId = hook?.meta?.name || "unknown-hook";
-    const transactionId = event?.transactionId || "no-transaction";
+    const observability = this.getComponent('observability');
+    const hookId = hook?.meta?.name || 'unknown-hook';
+    const transactionId = event?.transactionId || 'no-transaction';
 
     // Start OTEL hook span
     let spanContext;
-    if (observability && typeof observability.startHookSpan === "function") {
+    if (observability && typeof observability.startHookSpan === 'function') {
       spanContext = await observability.startHookSpan(hookId, transactionId, {
-        hookType: hook?.when?.kind || "unknown",
+        hookType: hook?.when?.kind || 'unknown',
       });
     }
 
     // Execute hook directly via hook.run() - FAIL FAST
-    if (!hook || typeof hook.run !== "function") {
-      throw new Error("Hook must have a run function");
+    if (!hook || typeof hook.run !== 'function') {
+      throw new Error('Hook must have a run function');
     }
 
     const startTime = Date.now();
@@ -557,11 +523,7 @@ export class KnowledgeSubstrateCore {
       const duration = Date.now() - startTime;
 
       // End OTEL span with success
-      if (
-        observability &&
-        spanContext &&
-        typeof observability.endHookSpan === "function"
-      ) {
+      if (observability && spanContext && typeof observability.endHookSpan === 'function') {
         await observability.endHookSpan(hookId, transactionId, {
           success: true,
           duration,
@@ -569,11 +531,8 @@ export class KnowledgeSubstrateCore {
       }
 
       // Update performance metrics
-      const performanceOptimizer = this.getComponent("performanceOptimizer");
-      if (
-        performanceOptimizer &&
-        typeof performanceOptimizer.updateMetrics === "function"
-      ) {
+      const performanceOptimizer = this.getComponent('performanceOptimizer');
+      if (performanceOptimizer && typeof performanceOptimizer.updateMetrics === 'function') {
         performanceOptimizer.updateMetrics({
           hookExecutionLatency: { duration, success: !result.error },
         });
@@ -584,11 +543,7 @@ export class KnowledgeSubstrateCore {
       const duration = Date.now() - startTime;
 
       // End OTEL span with error
-      if (
-        observability &&
-        spanContext &&
-        typeof observability.endHookSpan === "function"
-      ) {
+      if (observability && spanContext && typeof observability.endHookSpan === 'function') {
         await observability.endHookSpan(hookId, transactionId, {
           success: false,
           error: error.message,
@@ -597,11 +552,8 @@ export class KnowledgeSubstrateCore {
       }
 
       // Update performance metrics with failure
-      const performanceOptimizer = this.getComponent("performanceOptimizer");
-      if (
-        performanceOptimizer &&
-        typeof performanceOptimizer.updateMetrics === "function"
-      ) {
+      const performanceOptimizer = this.getComponent('performanceOptimizer');
+      if (performanceOptimizer && typeof performanceOptimizer.updateMetrics === 'function') {
         performanceOptimizer.updateMetrics({
           hookExecutionLatency: { duration, success: false },
         });
@@ -631,23 +583,20 @@ export class KnowledgeSubstrateCore {
    * @returns {Promise<void>}
    */
   async cleanup() {
-    console.log("🧹 Cleaning up Dark Matter 80/20 Core...");
+    console.log('🧹 Cleaning up Dark Matter 80/20 Core...');
 
     // Cleanup all components
     for (const [name, { instance }] of this.components.entries()) {
       try {
-        if (typeof instance.cleanup === "function") {
+        if (typeof instance.cleanup === 'function') {
           await instance.cleanup();
         }
 
         // Clear any internal caches/maps
-        if (instance.cache && typeof instance.cache.clear === "function") {
+        if (instance.cache && typeof instance.cache.clear === 'function') {
           instance.cache.clear();
         }
-        if (
-          instance.components &&
-          typeof instance.components.clear === "function"
-        ) {
+        if (instance.components && typeof instance.components.clear === 'function') {
           instance.components.clear();
         }
 
@@ -666,7 +615,7 @@ export class KnowledgeSubstrateCore {
     this.metrics.developmentEfficiency = 0;
 
     this.initialized = false;
-    console.log("✅ Dark Matter 80/20 Core cleaned up");
+    console.log('✅ Dark Matter 80/20 Core cleaned up');
   }
 }
 

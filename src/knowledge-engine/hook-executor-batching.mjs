@@ -16,10 +16,7 @@ import { trace, metrics as otelMetrics, SpanStatusCode } from '@opentelemetry/ap
  * @returns {Object} Extended executor with batching
  */
 export function addBatchingCapabilities(executor, options = {}) {
-  const {
-    enableOTEL = true,
-    enableBatching = true
-  } = options;
+  const { enableOTEL = true, enableBatching = true } = options;
 
   // OTEL instrumentation
   let tracer, meter, batchExecutionCounter, batchDurationHistogram, parallelizationGauge;
@@ -28,14 +25,14 @@ export function addBatchingCapabilities(executor, options = {}) {
     meter = otelMetrics.getMeter('hook-executor-batching');
 
     batchExecutionCounter = meter.createCounter('hook.batch.executions', {
-      description: 'Number of batched hook executions'
+      description: 'Number of batched hook executions',
     });
     batchDurationHistogram = meter.createHistogram('hook.batch.duration', {
       description: 'Batch execution duration in ms',
-      unit: 'ms'
+      unit: 'ms',
     });
     parallelizationGauge = meter.createUpDownCounter('hook.parallelization.ratio', {
-      description: 'Ratio of parallel to sequential executions'
+      description: 'Ratio of parallel to sequential executions',
     });
   }
 
@@ -45,7 +42,7 @@ export function addBatchingCapabilities(executor, options = {}) {
     parallelExecutions: 0,
     sequentialExecutions: 0,
     totalBatchDuration: 0,
-    averageBatchSize: 0
+    averageBatchSize: 0,
   };
 
   /**
@@ -149,8 +146,8 @@ export function addBatchingCapabilities(executor, options = {}) {
       ? tracer.startSpan('hook.batch.execute', {
           attributes: {
             'batch.size': hooks.length,
-            'batch.enableBatching': enableBatching
-          }
+            'batch.enableBatching': enableBatching,
+          },
         })
       : null;
 
@@ -183,15 +180,13 @@ export function addBatchingCapabilities(executor, options = {}) {
               attributes: {
                 'batch.index': i,
                 'batch.hookCount': batch.length,
-                'batch.parallelizable': batch.length > 1
-              }
+                'batch.parallelizable': batch.length > 1,
+              },
             })
           : null;
 
         // Execute all hooks in this batch in parallel
-        const batchPromises = batch.map(hook =>
-          executor.execute(hook, event, executionOptions)
-        );
+        const batchPromises = batch.map(hook => executor.execute(hook, event, executionOptions));
 
         const batchResults = await Promise.all(batchPromises);
         allResults.push(...batchResults);
@@ -210,14 +205,16 @@ export function addBatchingCapabilities(executor, options = {}) {
       batchMetrics.batchExecutions++;
       batchMetrics.parallelExecutions += hooks.length;
       batchMetrics.totalBatchDuration += duration;
-      batchMetrics.averageBatchSize = batchMetrics.parallelExecutions / batchMetrics.batchExecutions;
+      batchMetrics.averageBatchSize =
+        batchMetrics.parallelExecutions / batchMetrics.batchExecutions;
 
       // Record batch metrics
       if (enableOTEL) {
         batchExecutionCounter.add(1, { 'batch.count': batches.length });
         batchDurationHistogram.record(duration, { 'batch.size': hooks.length });
 
-        const parallelRatio = batchMetrics.parallelExecutions /
+        const parallelRatio =
+          batchMetrics.parallelExecutions /
           (batchMetrics.parallelExecutions + batchMetrics.sequentialExecutions);
         parallelizationGauge.add(parallelRatio * 100);
 
@@ -233,7 +230,7 @@ export function addBatchingCapabilities(executor, options = {}) {
         span.recordException(error);
         span.setStatus({
           code: SpanStatusCode.ERROR,
-          message: error.message
+          message: error.message,
         });
         span.end();
       }
@@ -246,15 +243,17 @@ export function addBatchingCapabilities(executor, options = {}) {
    * @returns {Object} Batching metrics
    */
   function getBatchingMetrics() {
-    const parallelizationRatio = batchMetrics.parallelExecutions /
+    const parallelizationRatio =
+      batchMetrics.parallelExecutions /
       (batchMetrics.parallelExecutions + batchMetrics.sequentialExecutions || 1);
 
     return {
       ...batchMetrics,
       parallelizationRatio,
-      averageBatchDuration: batchMetrics.batchExecutions > 0
-        ? batchMetrics.totalBatchDuration / batchMetrics.batchExecutions
-        : 0
+      averageBatchDuration:
+        batchMetrics.batchExecutions > 0
+          ? batchMetrics.totalBatchDuration / batchMetrics.batchExecutions
+          : 0,
     };
   }
 
@@ -263,7 +262,7 @@ export function addBatchingCapabilities(executor, options = {}) {
     ...executor,
     executeBatched,
     getBatchingMetrics,
-    executeWithDependencies: executeBatched // Override with batching implementation
+    executeWithDependencies: executeBatched, // Override with batching implementation
   };
 }
 

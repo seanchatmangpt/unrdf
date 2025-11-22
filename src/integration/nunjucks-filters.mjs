@@ -29,7 +29,7 @@ const LATEX_ESCAPE_MAP = new Map([
  * Characters that should not be escaped in math mode
  * @type {Set<string>}
  */
-const MATH_MODE_SAFE = new Set(['$', '^', '_', '\\', '{', '}']);
+const _MATH_MODE_SAFE = new Set(['$', '^', '_', '\\', '{', '}']);
 
 /**
  * Escape LaTeX special characters in text
@@ -50,11 +50,13 @@ export function texescape(text, options = { preserveMath: true }) {
   if (options.preserveMath) {
     // Split by math mode delimiters and only escape non-math parts
     const parts = str.split(/(\$[^$]+\$)/g);
-    return parts.map((part, i) => {
-      // Odd indices are math mode content
-      if (i % 2 === 1) return part;
-      return escapeLatexChars(part);
-    }).join('');
+    return parts
+      .map((part, i) => {
+        // Odd indices are math mode content
+        if (i % 2 === 1) return part;
+        return escapeLatexChars(part);
+      })
+      .join('');
   }
 
   return escapeLatexChars(str);
@@ -126,13 +128,33 @@ export function formatdate(date, format = 'long') {
   if (isNaN(d.getTime())) return '\\today';
 
   const months = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
   ];
 
   const shortMonths = [
-    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
   ];
 
   switch (format) {
@@ -234,7 +256,9 @@ export function cite(key, type = 'cite') {
  */
 export function label(text, prefix = 'sec') {
   if (text == null) return '';
-  const safeText = String(text).toLowerCase().replace(/[^a-z0-9]/g, '-');
+  const safeText = String(text)
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, '-');
   return `\\label{${prefix}:${safeText}}`;
 }
 
@@ -250,7 +274,9 @@ export function label(text, prefix = 'sec') {
  */
 export function ref(text, prefix = 'sec') {
   if (text == null) return '';
-  const safeText = String(text).toLowerCase().replace(/[^a-z0-9]/g, '-');
+  const safeText = String(text)
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, '-');
   return `\\ref{${prefix}:${safeText}}`;
 }
 

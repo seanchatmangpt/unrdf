@@ -1,7 +1,7 @@
 /**
  * @file Hook Builder Utility for Tests
  * @module test-utils/hook-builder
- * 
+ *
  * @description
  * Fluent API for creating test hooks with sensible defaults
  * and easy customization for edge cases.
@@ -18,17 +18,17 @@ export class HookBuilder {
     this.hook = {
       meta: {
         name: 'test-hook',
-        description: 'Test hook created by HookBuilder'
+        description: 'Test hook created by HookBuilder',
       },
       when: {
         kind: 'sparql-ask',
         ref: {
           uri: 'file://test.sparql',
           sha256: 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',
-          mediaType: 'application/sparql-query'
-        }
+          mediaType: 'application/sparql-query',
+        },
       },
-      run: async () => ({ success: true })
+      run: async () => ({ success: true }),
     };
   }
 
@@ -51,14 +51,19 @@ export class HookBuilder {
    * @param {string} [mediaType] - Media type
    * @returns {HookBuilder} This builder instance
    */
-  withCondition(kind, uri, sha256 = 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3', mediaType = 'application/sparql-query') {
+  withCondition(
+    kind,
+    uri,
+    sha256 = 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',
+    mediaType = 'application/sparql-query'
+  ) {
     this.hook.when = {
       kind,
       ref: {
         uri,
         sha256,
-        mediaType
-      }
+        mediaType,
+      },
     };
     return this;
   }
@@ -115,7 +120,7 @@ export class HookBuilder {
    */
   withMemoryConsumption(sizeMB = 10) {
     this.hook.run = async () => {
-      const buffer = Buffer.alloc(sizeMB * 1024 * 1024);
+      const _buffer = Buffer.alloc(sizeMB * 1024 * 1024);
       return { success: true, memoryUsed: sizeMB };
     };
     return this;
@@ -179,9 +184,7 @@ export function createHookBuilder() {
  * @returns {Object} Hook definition
  */
 export function createSuccessHook(name = 'success-hook') {
-  return new HookBuilder()
-    .withMeta(name)
-    .build();
+  return new HookBuilder().withMeta(name).build();
 }
 
 /**
@@ -191,10 +194,7 @@ export function createSuccessHook(name = 'success-hook') {
  * @returns {Object} Hook definition
  */
 export function createFailureHook(name = 'failure-hook', errorMessage = 'Hook failed') {
-  return new HookBuilder()
-    .withMeta(name)
-    .withFailure(errorMessage)
-    .build();
+  return new HookBuilder().withMeta(name).withFailure(errorMessage).build();
 }
 
 /**
@@ -204,8 +204,5 @@ export function createFailureHook(name = 'failure-hook', errorMessage = 'Hook fa
  * @returns {Object} Hook definition
  */
 export function createSlowHook(name = 'slow-hook', delayMs = 1000) {
-  return new HookBuilder()
-    .withMeta(name)
-    .withDelay(delayMs)
-    .build();
+  return new HookBuilder().withMeta(name).withDelay(delayMs).build();
 }

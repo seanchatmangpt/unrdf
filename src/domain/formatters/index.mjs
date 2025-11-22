@@ -7,8 +7,21 @@ import { jsonFormatter, jsonPrettyFormatter } from './json.mjs';
 import { yamlFormatter } from './yaml.mjs';
 import { tableFormatter } from './table.mjs';
 
-export { jsonFormatter, jsonPrettyFormatter, parseJSON, safeParseJSON, isValidJSON } from './json.mjs';
-export { yamlFormatter, parseYAML, safeParseYAML, isValidYAML, jsonToYAML, yamlToJSON } from './yaml.mjs';
+export {
+  jsonFormatter,
+  jsonPrettyFormatter,
+  parseJSON,
+  safeParseJSON,
+  isValidJSON,
+} from './json.mjs';
+export {
+  yamlFormatter,
+  parseYAML,
+  safeParseYAML,
+  isValidYAML,
+  jsonToYAML,
+  yamlToJSON,
+} from './yaml.mjs';
 export { tableFormatter, dataToRows, formatCell, keyValueTable, listTable } from './table.mjs';
 
 /**
@@ -34,7 +47,9 @@ export function formatOutput(data, format, options = {}) {
       return tableFormatter(data, options);
 
     default:
-      throw new Error(`Unknown output format: ${format}. Valid formats: json, json-pretty, yaml, table`);
+      throw new Error(
+        `Unknown output format: ${format}. Valid formats: json, json-pretty, yaml, table`
+      );
   }
 }
 
@@ -81,7 +96,10 @@ export function detectFormat(content) {
   const trimmed = content.trim();
 
   // Check for JSON
-  if ((trimmed.startsWith('{') && trimmed.endsWith('}')) || (trimmed.startsWith('[') && trimmed.endsWith(']'))) {
+  if (
+    (trimmed.startsWith('{') && trimmed.endsWith('}')) ||
+    (trimmed.startsWith('[') && trimmed.endsWith(']'))
+  ) {
     try {
       JSON.parse(trimmed);
       return 'json';

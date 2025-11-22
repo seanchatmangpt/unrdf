@@ -14,7 +14,7 @@ describe('Federation Performance Benchmarks', () => {
       federationId: 'perf-test-federation',
       enableConsensus: false, // Disable for faster testing
       replicationTopology: 'full-mesh',
-      executionStrategy: 'parallel'
+      executionStrategy: 'parallel',
     });
 
     // Register multiple stores
@@ -22,7 +22,7 @@ describe('Federation Performance Benchmarks', () => {
       await federation.registerStore({
         storeId: `store-${i}`,
         endpoint: `http://store${i}:3000`,
-        weight: 1.0
+        weight: 1.0,
       });
 
       federation.coordinator.storeHealth.set(`store-${i}`, StoreHealth.HEALTHY);
@@ -64,9 +64,7 @@ describe('Federation Performance Benchmarks', () => {
 
       const start = Date.now();
 
-      const promises = Array.from({ length: concurrency }, () =>
-        federation.query(query)
-      );
+      const promises = Array.from({ length: concurrency }, () => federation.query(query));
 
       await Promise.all(promises);
 
@@ -103,8 +101,8 @@ describe('Federation Performance Benchmarks', () => {
           quad: {
             subject: `http://example.org/entity-${i}`,
             predicate: 'http://example.org/value',
-            object: `"value-${i}"`
-          }
+            object: `"value-${i}"`,
+          },
         });
 
         const duration = Date.now() - start;
@@ -130,8 +128,8 @@ describe('Federation Performance Benchmarks', () => {
           quad: {
             subject: `http://example.org/batch-${i}`,
             predicate: 'http://example.org/value',
-            object: `"value-${i}"`
-          }
+            object: `"value-${i}"`,
+          },
         })
       );
 
@@ -153,7 +151,7 @@ describe('Federation Performance Benchmarks', () => {
       await federation.registerStore({
         storeId: 'perf-test-store',
         endpoint: 'http://perftest:3000',
-        weight: 1.0
+        weight: 1.0,
       });
 
       const duration = Date.now() - start;
@@ -174,7 +172,7 @@ describe('Federation Performance Benchmarks', () => {
         await federation.registerStore({
           storeId: `temp-store-${i}`,
           endpoint: `http://temp${i}:3000`,
-          weight: 1.0
+          weight: 1.0,
         });
 
         await federation.deregisterStore(`temp-store-${i}`);
@@ -203,8 +201,8 @@ describe('Federation Performance Benchmarks', () => {
           quad: {
             subject: `http://example.org/mem-${i}`,
             predicate: 'http://example.org/value',
-            object: `"value-${i}"`
-          }
+            object: `"value-${i}"`,
+          },
         });
       }
 
@@ -231,7 +229,7 @@ describe('Federation Performance Benchmarks', () => {
       expect(stats).toMatchObject({
         coordinator: expect.any(Object),
         queryEngine: expect.any(Object),
-        replication: expect.any(Object)
+        replication: expect.any(Object),
       });
 
       console.log('Federation statistics:', JSON.stringify(stats, null, 2));

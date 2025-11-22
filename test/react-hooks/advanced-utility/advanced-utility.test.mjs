@@ -3,35 +3,37 @@
  * Tests graph diff, isomorphism, reasoning, merge, quality metrics, and observability
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, _beforeEach, _vi } from 'vitest';
 
 describe('GraphDiff', () => {
   describe('Diff Computation', () => {
     it('should compute additions between graph versions', () => {
-      const graph1 = [
-        { subject: 'alice', predicate: 'knows', object: 'bob' }
-      ];
+      const graph1 = [{ subject: 'alice', predicate: 'knows', object: 'bob' }];
 
       const graph2 = [
         { subject: 'alice', predicate: 'knows', object: 'bob' },
-        { subject: 'alice', predicate: 'knows', object: 'charlie' }
+        { subject: 'alice', predicate: 'knows', object: 'charlie' },
       ];
 
       const diff = {
-        added: graph2.filter(t2 =>
-          !graph1.some(t1 =>
-            t1.subject === t2.subject &&
-            t1.predicate === t2.predicate &&
-            t1.object === t2.object
-          )
+        added: graph2.filter(
+          t2 =>
+            !graph1.some(
+              t1 =>
+                t1.subject === t2.subject &&
+                t1.predicate === t2.predicate &&
+                t1.object === t2.object
+            )
         ),
-        removed: graph1.filter(t1 =>
-          !graph2.some(t2 =>
-            t1.subject === t2.subject &&
-            t1.predicate === t2.predicate &&
-            t1.object === t2.object
-          )
-        )
+        removed: graph1.filter(
+          t1 =>
+            !graph2.some(
+              t2 =>
+                t1.subject === t2.subject &&
+                t1.predicate === t2.predicate &&
+                t1.object === t2.object
+            )
+        ),
       };
 
       expect(diff.added).toHaveLength(1);
@@ -42,19 +44,17 @@ describe('GraphDiff', () => {
     it('should compute removals between graph versions', () => {
       const graph1 = [
         { subject: 'alice', predicate: 'knows', object: 'bob' },
-        { subject: 'alice', predicate: 'knows', object: 'charlie' }
+        { subject: 'alice', predicate: 'knows', object: 'charlie' },
       ];
 
-      const graph2 = [
-        { subject: 'alice', predicate: 'knows', object: 'bob' }
-      ];
+      const graph2 = [{ subject: 'alice', predicate: 'knows', object: 'bob' }];
 
-      const removed = graph1.filter(t1 =>
-        !graph2.some(t2 =>
-          t1.subject === t2.subject &&
-          t1.predicate === t2.predicate &&
-          t1.object === t2.object
-        )
+      const removed = graph1.filter(
+        t1 =>
+          !graph2.some(
+            t2 =>
+              t1.subject === t2.subject && t1.predicate === t2.predicate && t1.object === t2.object
+          )
       );
 
       expect(removed).toHaveLength(1);
@@ -62,19 +62,15 @@ describe('GraphDiff', () => {
     });
 
     it('should compute modifications', () => {
-      const graph1 = [
-        { subject: 'alice', predicate: 'age', object: '30' }
-      ];
+      const graph1 = [{ subject: 'alice', predicate: 'age', object: '30' }];
 
-      const graph2 = [
-        { subject: 'alice', predicate: 'age', object: '31' }
-      ];
+      const graph2 = [{ subject: 'alice', predicate: 'age', object: '31' }];
 
-      const added = graph2.filter(t2 =>
-        !graph1.some(t1 => JSON.stringify(t1) === JSON.stringify(t2))
+      const added = graph2.filter(
+        t2 => !graph1.some(t1 => JSON.stringify(t1) === JSON.stringify(t2))
       );
-      const removed = graph1.filter(t1 =>
-        !graph2.some(t2 => JSON.stringify(t1) === JSON.stringify(t2))
+      const removed = graph1.filter(
+        t1 => !graph2.some(t2 => JSON.stringify(t1) === JSON.stringify(t2))
       );
 
       // A modification is both an add and remove for same subject+predicate
@@ -90,14 +86,14 @@ describe('GraphDiff', () => {
       const diff = {
         added: Array(12).fill(null),
         removed: Array(5).fill(null),
-        modified: Array(3).fill(null)
+        modified: Array(3).fill(null),
       };
 
       const stats = {
         totalChanges: diff.added.length + diff.removed.length + diff.modified.length,
         additions: diff.added.length,
         removals: diff.removed.length,
-        modifications: diff.modified.length
+        modifications: diff.modified.length,
       };
 
       expect(stats.totalChanges).toBe(20);
@@ -115,23 +111,25 @@ describe('Isomorphism', () => {
       const graph1 = [
         { subject: '_:b1', predicate: 'name', object: 'Alice' },
         { subject: '_:b1', predicate: 'knows', object: '_:b2' },
-        { subject: '_:b2', predicate: 'name', object: 'Bob' }
+        { subject: '_:b2', predicate: 'name', object: 'Bob' },
       ];
 
       const graph2 = [
         { subject: '_:x1', predicate: 'name', object: 'Alice' },
         { subject: '_:x1', predicate: 'knows', object: '_:x2' },
-        { subject: '_:x2', predicate: 'name', object: 'Bob' }
+        { subject: '_:x2', predicate: 'name', object: 'Bob' },
       ];
 
       // Canonical form ignores blank node labels
-      const canonicalize = (graph) => {
+      const canonicalize = graph => {
         return JSON.stringify(
-          graph.map(t => ({
-            ...t,
-            subject: t.subject.startsWith('_:') ? '_:bn' : t.subject,
-            object: t.object.startsWith('_:') ? '_:bn' : t.object
-          })).sort((a, b) => JSON.stringify(a).localeCompare(JSON.stringify(b)))
+          graph
+            .map(t => ({
+              ...t,
+              subject: t.subject.startsWith('_:') ? '_:bn' : t.subject,
+              object: t.object.startsWith('_:') ? '_:bn' : t.object,
+            }))
+            .sort((a, b) => JSON.stringify(a).localeCompare(JSON.stringify(b)))
         );
       };
 
@@ -142,13 +140,9 @@ describe('Isomorphism', () => {
     });
 
     it('should detect non-isomorphic graphs', () => {
-      const graph1 = [
-        { subject: 'alice', predicate: 'knows', object: 'bob' }
-      ];
+      const graph1 = [{ subject: 'alice', predicate: 'knows', object: 'bob' }];
 
-      const graph2 = [
-        { subject: 'alice', predicate: 'likes', object: 'bob' }
-      ];
+      const graph2 = [{ subject: 'alice', predicate: 'likes', object: 'bob' }];
 
       const sig1 = JSON.stringify(graph1);
       const sig2 = JSON.stringify(graph2);
@@ -161,17 +155,17 @@ describe('Isomorphism', () => {
     it('should generate consistent signatures', () => {
       const graph = [
         { subject: 'b', predicate: 'p', object: 'o' },
-        { subject: 'a', predicate: 'p', object: 'o' }
+        { subject: 'a', predicate: 'p', object: 'o' },
       ];
 
       // Signature should be independent of order
-      const signature1 = JSON.stringify([...graph].sort((a, b) =>
-        a.subject.localeCompare(b.subject)
-      ));
+      const signature1 = JSON.stringify(
+        [...graph].sort((a, b) => a.subject.localeCompare(b.subject))
+      );
 
-      const signature2 = JSON.stringify([...graph].reverse().sort((a, b) =>
-        a.subject.localeCompare(b.subject)
-      ));
+      const signature2 = JSON.stringify(
+        [...graph].reverse().sort((a, b) => a.subject.localeCompare(b.subject))
+      );
 
       expect(signature1).toBe(signature2);
     });
@@ -183,21 +177,21 @@ describe('ReasoningSession', () => {
     it('should infer subclass relationships', () => {
       const facts = [
         { subject: 'Student', predicate: 'rdfs:subClassOf', object: 'Person' },
-        { subject: 'alice', predicate: 'rdf:type', object: 'Student' }
+        { subject: 'alice', predicate: 'rdf:type', object: 'Student' },
       ];
 
       // RDFS rule: if X rdf:type Y and Y rdfs:subClassOf Z then X rdf:type Z
       const inferred = [];
       facts.forEach(fact => {
         if (fact.predicate === 'rdf:type') {
-          const subClassFact = facts.find(f =>
-            f.predicate === 'rdfs:subClassOf' && f.subject === fact.object
+          const subClassFact = facts.find(
+            f => f.predicate === 'rdfs:subClassOf' && f.subject === fact.object
           );
           if (subClassFact) {
             inferred.push({
               subject: fact.subject,
               predicate: 'rdf:type',
-              object: subClassFact.object
+              object: subClassFact.object,
             });
           }
         }
@@ -215,7 +209,7 @@ describe('ReasoningSession', () => {
       const stats = {
         inferredTriples,
         rulesApplied: rules,
-        ruleCount: rules.length
+        ruleCount: rules.length,
       };
 
       expect(stats.inferredTriples).toBe(156);
@@ -227,13 +221,9 @@ describe('ReasoningSession', () => {
 describe('GraphMerge', () => {
   describe('Merge Strategies', () => {
     it('should merge graphs with union strategy', () => {
-      const graph1 = [
-        { subject: 'alice', predicate: 'knows', object: 'bob' }
-      ];
+      const graph1 = [{ subject: 'alice', predicate: 'knows', object: 'bob' }];
 
-      const graph2 = [
-        { subject: 'alice', predicate: 'knows', object: 'charlie' }
-      ];
+      const graph2 = [{ subject: 'alice', predicate: 'knows', object: 'charlie' }];
 
       const merged = [...graph1, ...graph2];
 
@@ -241,21 +231,19 @@ describe('GraphMerge', () => {
     });
 
     it('should detect conflicts during merge', () => {
-      const graph1 = [
-        { subject: 'alice', predicate: 'age', object: '30' }
-      ];
+      const graph1 = [{ subject: 'alice', predicate: 'age', object: '30' }];
 
-      const graph2 = [
-        { subject: 'alice', predicate: 'age', object: '31' }
-      ];
+      const graph2 = [{ subject: 'alice', predicate: 'age', object: '31' }];
 
       // Conflict: same subject+predicate with different values
       const conflicts = [];
       graph1.forEach(t1 => {
         graph2.forEach(t2 => {
-          if (t1.subject === t2.subject &&
-              t1.predicate === t2.predicate &&
-              t1.object !== t2.object) {
+          if (
+            t1.subject === t2.subject &&
+            t1.predicate === t2.predicate &&
+            t1.object !== t2.object
+          ) {
             conflicts.push({ graph1: t1, graph2: t2 });
           }
         });
@@ -269,9 +257,19 @@ describe('GraphMerge', () => {
     it('should resolve conflicts with latest-wins strategy', () => {
       const conflicts = [
         {
-          graph1: { subject: 'alice', predicate: 'age', object: '30', timestamp: 1000 },
-          graph2: { subject: 'alice', predicate: 'age', object: '31', timestamp: 2000 }
-        }
+          graph1: {
+            subject: 'alice',
+            predicate: 'age',
+            object: '30',
+            timestamp: 1000,
+          },
+          graph2: {
+            subject: 'alice',
+            predicate: 'age',
+            object: '31',
+            timestamp: 2000,
+          },
+        },
       ];
 
       const resolved = conflicts.map(c =>
@@ -299,7 +297,7 @@ describe('QualityMetrics', () => {
         { field: 'age', valid: true },
         { field: 'email', valid: true },
         { field: 'date', valid: false },
-        { field: 'name', valid: true }
+        { field: 'name', valid: true },
       ];
 
       const validCount = validationResults.filter(r => r.valid).length;
@@ -313,11 +311,11 @@ describe('QualityMetrics', () => {
         completeness: 92,
         consistency: 85,
         accuracy: 88,
-        timeliness: 82
+        timeliness: 82,
       };
 
-      const overall = Object.values(metrics).reduce((sum, v) => sum + v, 0) /
-                      Object.values(metrics).length;
+      const overall =
+        Object.values(metrics).reduce((sum, v) => sum + v, 0) / Object.values(metrics).length;
 
       expect(overall).toBeCloseTo(86.75, 2);
     });
@@ -329,18 +327,18 @@ describe('ObservabilityManager', () => {
     it('should create trace spans', () => {
       const traces = [];
 
-      const startTrace = (operation) => {
+      const startTrace = operation => {
         const trace = {
           id: `trace-${Date.now()}`,
           operation,
           startTime: Date.now(),
-          status: 'in_progress'
+          status: 'in_progress',
         };
         traces.push(trace);
         return trace.id;
       };
 
-      const endTrace = (traceId) => {
+      const endTrace = traceId => {
         const trace = traces.find(t => t.id === traceId);
         if (trace) {
           trace.endTime = Date.now();
@@ -361,7 +359,7 @@ describe('ObservabilityManager', () => {
       const metrics = {
         latencies: [],
         errorCount: 0,
-        successCount: 0
+        successCount: 0,
       };
 
       const recordMetric = (name, value) => {
@@ -389,13 +387,13 @@ describe('ObservabilityManager', () => {
         { duration: 20, status: 'success' },
         { duration: 45, status: 'success' },
         { duration: 62, status: 'success' },
-        { duration: 100, status: 'error' }
+        { duration: 100, status: 'error' },
       ];
 
       const stats = {
         totalTraces: traces.length,
         successRate: traces.filter(t => t.status === 'success').length / traces.length,
-        avgDuration: traces.reduce((sum, t) => sum + t.duration, 0) / traces.length
+        avgDuration: traces.reduce((sum, t) => sum + t.duration, 0) / traces.length,
       };
 
       expect(stats.totalTraces).toBe(4);

@@ -1,7 +1,7 @@
 /**
  * @file Main entry point for the Knowledge Engine.
  * @module knowledge-engine
- * 
+ *
  * A comprehensive RDF processing engine that provides:
  * - Parsing and serialization (Turtle, N-Quads, JSON-LD)
  * - SPARQL querying with Comunica
@@ -9,67 +9,64 @@
  * - N3 reasoning with eyereasoner
  * - Canonicalization and isomorphism checks
  * - Transaction management with hooks and receipts
- * 
+ *
  * @version 1.0.0
  * @license MIT
  */
 
 // Core parsing and serialization
-export { 
-  parseTurtle, 
-  toTurtle, 
+export {
+  parseTurtle,
+  toTurtle,
   toNQuads,
   parseJsonLd,
-  toJsonLd
+  toJsonLd,
 } from './knowledge-engine/parse.mjs';
 
 // SPARQL querying
-export { 
+export {
   query,
   select,
   ask,
   construct,
   describe,
   update,
-  getQueryStats
+  getQueryStats,
 } from './knowledge-engine/query.mjs';
 
 // SHACL validation
-export { 
+export {
   validateShacl,
   validateShaclMultiple,
   formatValidationReport,
   hasValidationErrors,
   getValidationErrors,
-  getValidationWarnings
+  getValidationWarnings,
 } from './knowledge-engine/validate.mjs';
 
 // N3 reasoning
-export { 
+export {
   reason,
   reasonMultiple,
   extractInferred,
   getReasoningStats,
   validateRules,
-  createReasoningSession
+  createReasoningSession,
 } from './knowledge-engine/reason.mjs';
 
 // Canonicalization and isomorphism
-export { 
-  canonicalize, 
+export {
+  canonicalize,
   isIsomorphic,
   getCanonicalHash,
   groupByIsomorphism,
   findDuplicates,
   getCanonicalizationStats,
-  createCanonicalizationSession
+  createCanonicalizationSession,
 } from './knowledge-engine/canonicalize.mjs';
 
 // Transaction management
-export { 
-  TransactionManager,
-  printReceipt
-} from './knowledge-engine/transaction.mjs';
+export { TransactionManager, printReceipt } from './knowledge-engine/transaction.mjs';
 
 /**
  * Create a complete knowledge engine instance with all capabilities.
@@ -78,38 +75,34 @@ export {
  * @param {boolean} [options.strictMode] - Enable strict validation mode
  * @param {number} [options.maxHooks] - Maximum number of transaction hooks
  * @returns {Object} Knowledge engine instance
- * 
+ *
  * @example
  * const engine = createKnowledgeEngine({
  *   baseIRI: 'http://example.org/',
  *   strictMode: true
  * });
- * 
+ *
  * // Parse data
  * const store = await engine.parseTurtle(ttl);
- * 
+ *
  * // Query data
  * const results = await engine.query(store, 'SELECT ?s ?o WHERE { ?s ?p ?o }');
- * 
+ *
  * // Validate data
  * const report = engine.validateShacl(store, shapes);
- * 
+ *
  * // Reason over data
  * const reasoned = await engine.reason(store, rules);
- * 
+ *
  * // Canonicalize data
  * const canonical = await engine.canonicalize(store);
- * 
+ *
  * // Manage transactions
  * const tx = new engine.TransactionManager();
  * const result = await tx.apply(store, delta);
  */
 export function createKnowledgeEngine(options = {}) {
-  const {
-    baseIRI = 'http://example.org/',
-    strictMode = false,
-    maxHooks = 100
-  } = options;
+  const { baseIRI = 'http://example.org/', strictMode = false, maxHooks = 100 } = options;
 
   return {
     // Core options
@@ -288,9 +281,9 @@ export function createKnowledgeEngine(options = {}) {
       return new TransactionManager({
         strictMode,
         maxHooks,
-        ...options
+        ...options,
       });
-    }
+    },
   };
 }
 
@@ -298,7 +291,7 @@ export function createKnowledgeEngine(options = {}) {
  * Utility function to create a simple knowledge engine with default settings.
  * @param {string} [baseIRI] - Base IRI for parsing
  * @returns {Object} Simple knowledge engine instance
- * 
+ *
  * @example
  * const engine = createSimpleEngine('http://example.org/');
  * const store = await engine.parseTurtle(ttl);
@@ -312,15 +305,15 @@ export function createSimpleEngine(baseIRI = 'http://example.org/') {
  * Utility function to create a strict knowledge engine with validation enabled.
  * @param {string} [baseIRI] - Base IRI for parsing
  * @returns {Object} Strict knowledge engine instance
- * 
+ *
  * @example
  * const engine = createStrictEngine('http://example.org/');
  * // All operations will use strict validation
  */
 export function createStrictEngine(baseIRI = 'http://example.org/') {
-  return createKnowledgeEngine({ 
-    baseIRI, 
+  return createKnowledgeEngine({
+    baseIRI,
     strictMode: true,
-    maxHooks: 50
+    maxHooks: 50,
   });
 }

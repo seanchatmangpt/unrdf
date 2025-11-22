@@ -58,7 +58,7 @@ export class LatencyProfiler {
       startTime,
       startMark,
       measurements: [],
-      checkpoints: []
+      checkpoints: [],
     };
 
     this.activeSessions.set(sessionId, session);
@@ -81,7 +81,7 @@ export class LatencyProfiler {
     session.checkpoints.push({
       name: checkpointName,
       elapsed,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
 
     return elapsed;
@@ -145,7 +145,7 @@ export class LatencyProfiler {
       p90: this.calculatePercentile(sorted, 90),
       p95: this.calculatePercentile(sorted, 95),
       p99: this.calculatePercentile(sorted, 99),
-      p999: this.calculatePercentile(sorted, 99.9)
+      p999: this.calculatePercentile(sorted, 99.9),
     };
 
     // Build histogram
@@ -159,7 +159,7 @@ export class LatencyProfiler {
       mean,
       stddev,
       histogram,
-      sampleCount: sorted.length
+      sampleCount: sorted.length,
     };
   }
 
@@ -291,7 +291,7 @@ export class LatencyProfiler {
         metric: 'p50',
         actual: metrics.p50,
         budget: budget.p50,
-        exceeded: metrics.p50 - budget.p50
+        exceeded: metrics.p50 - budget.p50,
       });
     }
 
@@ -300,7 +300,7 @@ export class LatencyProfiler {
         metric: 'p95',
         actual: metrics.p95,
         budget: budget.p95,
-        exceeded: metrics.p95 - budget.p95
+        exceeded: metrics.p95 - budget.p95,
       });
     }
 
@@ -309,7 +309,7 @@ export class LatencyProfiler {
         metric: 'p99',
         actual: metrics.p99,
         budget: budget.p99,
-        exceeded: metrics.p99 - budget.p99
+        exceeded: metrics.p99 - budget.p99,
       });
     }
 
@@ -318,13 +318,13 @@ export class LatencyProfiler {
         metric: 'max',
         actual: metrics.max,
         budget: budget.max,
-        exceeded: metrics.max - budget.max
+        exceeded: metrics.max - budget.max,
       });
     }
 
     return {
       passed: violations.length === 0,
-      violations
+      violations,
     };
   }
 }

@@ -43,12 +43,7 @@ export function useτEvolution(shards = [], metrics = {}) {
     { timestamp: new Date(), draft: 0, energy: 1.0, reason: 'Started' },
   ]);
 
-  const {
-    overallScore = 0,
-    coherence = 0,
-    driftScore = 1,
-    flowScore = 0,
-  } = metrics;
+  const { overallScore = 0, coherence = 0, driftScore = 1, flowScore = 0 } = metrics;
 
   /**
    * Calculate energy: distance from current state to μ(HTF_O)
@@ -114,7 +109,7 @@ export function useτEvolution(shards = [], metrics = {}) {
     const newLevel = draftLevel < 5 ? draftLevel + 1 : 'final';
 
     setDraftLevel(newLevel);
-    setTimeline((prev) => [
+    setTimeline(prev => [
       ...prev,
       {
         timestamp: new Date(),

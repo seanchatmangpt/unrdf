@@ -14,7 +14,7 @@
  */
 
 import ivm from 'isolated-vm';
-import { trace, context } from '@opentelemetry/api';
+import { trace, _context } from '@opentelemetry/api';
 import { sha256 } from '@noble/hashes/sha256';
 import { bytesToHex } from '@noble/hashes/utils';
 
@@ -66,7 +66,7 @@ const THREAT_PATTERNS = [
   // Network access
   /fetch\s*\(/i,
   /XMLHttpRequest/i,
-  /WebSocket/i
+  /WebSocket/i,
 ];
 
 /**
@@ -83,7 +83,7 @@ function detectThreats(code) {
       threats.push({
         patternIndex: i,
         pattern: pattern.toString(),
-        severity: i < 4 ? 'critical' : i < 10 ? 'high' : 'medium'
+        severity: i < 4 ? 'critical' : i < 10 ? 'high' : 'medium',
       });
     }
   }
@@ -112,7 +112,7 @@ export class IsolatedVmExecutor {
       enableAsync: config.enableAsync !== false,
       enableThreatDetection: config.enableThreatDetection !== false,
       strictMode: config.strictMode !== false,
-      ...config
+      ...config,
     };
 
     /** @type {Map<string, ivm.Isolate>} */
@@ -136,7 +136,7 @@ export class IsolatedVmExecutor {
    * @returns {Promise<Object>} Execution result
    */
   async run(code, context = {}, options = {}) {
-    return tracer.startActiveSpan('security.isolate.execute', async (span) => {
+    return tracer.startActiveSpan('security.isolate.execute', async span => {
       const startTime = Date.now();
       const executionId = `exec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
@@ -145,7 +145,7 @@ export class IsolatedVmExecutor {
           'security.executor.type': 'isolated-vm',
           'security.execution.id': executionId,
           'security.memoryLimit': this.config.memoryLimit,
-          'security.timeout': options.timeout || this.config.timeout
+          'security.timeout': options.timeout || this.config.timeout,
         });
 
         // Convert function to string if needed
@@ -159,11 +159,13 @@ export class IsolatedVmExecutor {
             if (criticalThreats.length > 0) {
               span.setAttribute('security.threats.detected', threats.length);
               span.setAttribute('security.threats.critical', criticalThreats.length);
-              span.setStatus({ code: 2, message: 'Critical security threat detected' });
+              span.setStatus({
+                code: 2,
+                message: 'Critical security threat detected',
+              });
 
               throw new Error(
-                `Security threat detected: ${criticalThreats[0].pattern}. ` +
-                `Execution blocked.`
+                `Security threat detected: ${criticalThreats[0].pattern}. ` + `Execution blocked.`
               );
             }
           }
@@ -179,10 +181,10 @@ export class IsolatedVmExecutor {
         const isolate = new ivm.Isolate({
           memoryLimit: this.config.memoryLimit,
           inspector: false, // Disable debugging for security
-          onCatastrophicError: (msg) => {
+          onCatastrophicError: msg => {
             span.recordException(new Error(`Catastrophic error: ${msg}`));
             this.destroyIsolate(executionId);
-          }
+          },
         });
 
         this.isolates.set(executionId, isolate);
@@ -200,14 +202,14 @@ export class IsolatedVmExecutor {
           log: (...args) => console.log('[Sandbox]', ...args),
           error: (...args) => console.error('[Sandbox]', ...args),
           warn: (...args) => console.warn('[Sandbox]', ...args),
-          info: (...args) => console.info('[Sandbox]', ...args)
+          info: (...args) => console.info('[Sandbox]', ...args),
         });
         await jail.set('console', safeConsole);
 
         // Add JSON support
         const jsonRef = new ivm.Reference({
-          parse: (str) => JSON.parse(str),
-          stringify: (obj) => JSON.stringify(obj)
+          parse: str => JSON.parse(str),
+          stringify: obj => JSON.stringify(obj),
         });
         await jail.set('JSON', jsonRef);
 
@@ -217,7 +219,7 @@ export class IsolatedVmExecutor {
 
         // Add Date support (limited)
         const dateRef = new ivm.Reference({
-          now: () => Date.now()
+          now: () => Date.now(),
         });
         await jail.set('Date', dateRef);
 
@@ -230,9 +232,7 @@ export class IsolatedVmExecutor {
         }
 
         // Wrap code in strict mode if enabled
-        const wrappedCode = this.config.strictMode
-          ? `"use strict";\n${codeString}`
-          : codeString;
+        const wrappedCode = this.config.strictMode ? `"use strict";\n${codeString}` : codeString;
 
         // Compile and execute
         const script = await isolate.compileScript(wrappedCode);
@@ -241,7 +241,7 @@ export class IsolatedVmExecutor {
         const result = await script.run(ivmContext, {
           timeout,
           reference: true,
-          promise: this.config.enableAsync
+          promise: this.config.enableAsync,
         });
 
         // Copy result back to main isolate
@@ -256,7 +256,7 @@ export class IsolatedVmExecutor {
 
         span.setAttributes({
           'security.execution.duration': duration,
-          'security.execution.success': true
+          'security.execution.success': true,
         });
         span.setStatus({ code: 1 }); // OK
 
@@ -266,9 +266,10 @@ export class IsolatedVmExecutor {
           duration,
           executionId,
           codeHash,
-          memoryUsed: await this.getMemoryUsage(executionId).catch(() => ({ used: 0 }))
+          memoryUsed: await this.getMemoryUsage(executionId).catch(() => ({
+            used: 0,
+          })),
         };
-
       } catch (error) {
         const duration = Date.now() - startTime;
 
@@ -276,7 +277,7 @@ export class IsolatedVmExecutor {
         span.setAttributes({
           'security.execution.duration': duration,
           'security.execution.success': false,
-          'security.error.message': error.message
+          'security.error.message': error.message,
         });
         span.setStatus({ code: 2, message: error.message });
 
@@ -301,7 +302,7 @@ export class IsolatedVmExecutor {
           errorType,
           duration,
           executionId,
-          codeHash: this.codeHashes.get(executionId)
+          codeHash: this.codeHashes.get(executionId),
         };
       } finally {
         span.end();
@@ -325,7 +326,7 @@ export class IsolatedVmExecutor {
       used: heapStats.used_heap_size,
       total: heapStats.total_heap_size,
       limit: heapStats.heap_size_limit,
-      percentage: (heapStats.used_heap_size / heapStats.heap_size_limit) * 100
+      percentage: (heapStats.used_heap_size / heapStats.heap_size_limit) * 100,
     };
   }
 
@@ -357,7 +358,7 @@ export class IsolatedVmExecutor {
       config: this.config,
       executionCount: this.executionCount,
       averageDuration: this.executionCount > 0 ? this.totalDuration / this.executionCount : 0,
-      activeIsolates: this.isolates.size
+      activeIsolates: this.isolates.size,
     };
   }
 

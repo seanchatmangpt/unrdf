@@ -21,7 +21,7 @@ import path from 'node:path';
  */
 const updateArgsSchema = z.object({
   name: z.string().optional().default(''),
-  'base-iri': z.string().optional()
+  'base-iri': z.string().optional(),
 });
 
 /**
@@ -30,19 +30,19 @@ const updateArgsSchema = z.object({
 export const updateCommand = defineCommand({
   meta: {
     name: 'update',
-    description: 'Update graph properties'
+    description: 'Update graph properties',
   },
   args: {
     name: {
       type: 'positional',
       description: 'Name of the graph to update',
-      required: true
+      required: true,
     },
     'base-iri': {
       type: 'string',
       description: 'New base IRI for the graph',
-      alias: 'b'
-    }
+      alias: 'b',
+    },
   },
   async run(ctx) {
     try {
@@ -63,7 +63,7 @@ export const updateCommand = defineCommand({
       const updated = {
         ...current,
         baseIri: args['base-iri'] ?? current.baseIri,
-        updatedAt: new Date().toISOString()
+        updatedAt: new Date().toISOString(),
       };
 
       const tmpPath = metaPath + '.tmp';
@@ -75,10 +75,9 @@ export const updateCommand = defineCommand({
       if (args['base-iri']) {
         console.log(`   Base IRI: ${args['base-iri']}`);
       }
-
     } catch (error) {
       console.error('❌ Update failed:', error.message);
       throw error;
     }
-  }
+  },
 });

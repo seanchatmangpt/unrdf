@@ -21,8 +21,8 @@ const client = new SidecarClient({
   timeout: 30000,
   maxRetries: 3,
   tls: {
-    enabled: false  // Enable for production
-  }
+    enabled: false, // Enable for production
+  },
 });
 
 try {
@@ -39,26 +39,29 @@ try {
 
   // Apply transaction
   console.log('Applying transaction...');
-  const transactionResult = await client.applyTransaction({
-    additions: [
-      {
-        subject: 'http://example.org/Alice',
-        predicate: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type',
-        object: 'http://example.org/Person',
-        graph: 'http://example.org/graph/default'
-      },
-      {
-        subject: 'http://example.org/Alice',
-        predicate: 'http://example.org/name',
-        object: '"Alice Smith"',
-        graph: 'http://example.org/graph/default'
-      }
-    ],
-    removals: []
-  }, {
-    validate: true,
-    strictMode: true
-  });
+  const transactionResult = await client.applyTransaction(
+    {
+      additions: [
+        {
+          subject: 'http://example.org/Alice',
+          predicate: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type',
+          object: 'http://example.org/Person',
+          graph: 'http://example.org/graph/default',
+        },
+        {
+          subject: 'http://example.org/Alice',
+          predicate: 'http://example.org/name',
+          object: '"Alice Smith"',
+          graph: 'http://example.org/graph/default',
+        },
+      ],
+      removals: [],
+    },
+    {
+      validate: true,
+      strictMode: true,
+    }
+  );
 
   console.log('Transaction committed:', transactionResult.committed);
   console.log('Receipt hash:', transactionResult.receipt.hash);
@@ -67,23 +70,25 @@ try {
 
   // SPARQL query
   console.log('Executing SPARQL query...');
-  const queryResults = await client.query(`
+  const queryResults = await client.query(
+    `
     PREFIX ex: <http://example.org/>
     SELECT ?name WHERE {
       ?person a ex:Person ;
         ex:name ?name .
     }
-  `, {
-    limit: 10,
-    timeout: 5000
-  });
+  `,
+    {
+      limit: 10,
+      timeout: 5000,
+    }
+  );
 
   console.log('Query results:', queryResults);
   console.log();
 
   await client.disconnect();
   console.log('✓ Disconnected\n');
-
 } catch (error) {
   console.error('Error:', error.message);
 }
@@ -95,14 +100,14 @@ const pool = new ConnectionPool({
   minConnections: 2,
   maxConnections: 10,
   idleTimeout: 60000,
-  healthCheckInterval: 30000
+  healthCheckInterval: 30000,
 });
 
 try {
   console.log('Initializing connection pool...');
   await pool.initialize({
     address: 'localhost:50051',
-    timeout: 30000
+    timeout: 30000,
   });
 
   const poolStats = pool.getStats();
@@ -118,10 +123,7 @@ try {
   const conn2 = await pool.acquire();
 
   console.log('Performing operations with pooled connections...');
-  const [health1, health2] = await Promise.all([
-    conn1.healthCheck(),
-    conn2.healthCheck()
-  ]);
+  const [health1, health2] = await Promise.all([conn1.healthCheck(), conn2.healthCheck()]);
 
   console.log('Connection 1 health:', health1.status);
   console.log('Connection 2 health:', health2.status);
@@ -136,7 +138,6 @@ try {
   await pool.drain();
   await pool.clear();
   console.log('✓ Pool cleaned up\n');
-
 } catch (error) {
   console.error('Pool error:', error.message);
 }
@@ -145,9 +146,9 @@ try {
 console.log('3. Circuit Breaker\n');
 
 const breaker = new CircuitBreaker({
-  threshold: 5,           // Open after 5 failures
-  resetTimeout: 30000,    // Try again after 30s
-  monitoringPeriod: 60000
+  threshold: 5, // Open after 5 failures
+  resetTimeout: 30000, // Try again after 30s
+  monitoringPeriod: 60000,
 });
 
 async function callSidecarWithBreaker() {
@@ -187,7 +188,7 @@ const retry = new RetryStrategy({
   initialDelay: 1000,
   maxDelay: 30000,
   multiplier: 2,
-  jitter: true
+  jitter: true,
 });
 
 async function unreliableOperation() {
@@ -212,9 +213,9 @@ try {
 console.log('5. Health Monitoring\n');
 
 const healthMonitor = new HealthCheck({
-  checkInterval: 10000,       // Check every 10s
-  consecutiveFailures: 3,     // Mark unhealthy after 3 failures
-  startupGracePeriod: 5000    // Wait 5s before first check
+  checkInterval: 10000, // Check every 10s
+  consecutiveFailures: 3, // Mark unhealthy after 3 failures
+  startupGracePeriod: 5000, // Wait 5s before first check
 });
 
 // Define health check function
@@ -236,7 +237,7 @@ console.log('Starting health monitor...');
 await healthMonitor.start(checkSidecarHealth);
 
 // Listen for status changes
-healthMonitor.on('statusChange', (status) => {
+healthMonitor.on('statusChange', status => {
   console.log(`Health status changed: ${status}`);
 });
 
@@ -264,14 +265,13 @@ async function demonstrateErrorHandling() {
     await client.applyTransaction({
       additions: [
         {
-          subject: 'invalid',  // Invalid IRI
+          subject: 'invalid', // Invalid IRI
           predicate: 'invalid',
-          object: 'invalid'
-        }
+          object: 'invalid',
+        },
       ],
-      removals: []
+      removals: [],
     });
-
   } catch (error) {
     console.log('Caught error:', error.constructor.name);
     console.log('Message:', error.message);
@@ -302,25 +302,25 @@ const productionConfig = {
   circuitBreaker: {
     enabled: true,
     threshold: 5,
-    resetTimeout: 30000
+    resetTimeout: 30000,
   },
   tls: {
     enabled: true,
     ca: '/path/to/ca.crt',
     cert: '/path/to/client.crt',
-    key: '/path/to/client.key'
+    key: '/path/to/client.key',
   },
   retry: {
     initialDelay: 1000,
     maxDelay: 30000,
     multiplier: 2,
-    jitter: true
+    jitter: true,
   },
   observability: {
     serviceName: 'my-app',
     jaegerEndpoint: 'http://jaeger:14268/api/traces',
-    metricsPort: 9464
-  }
+    metricsPort: 9464,
+  },
 };
 
 console.log('Production configuration:');

@@ -2,8 +2,11 @@
  * @file Tests for WebSocket Subscription Manager
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { SubscriptionManager, SubscriptionPatternType } from '../../src/knowledge-engine/streaming/subscription-manager.mjs';
+import { describe, it, expect, beforeEach, afterEach, _vi } from 'vitest';
+import {
+  SubscriptionManager,
+  SubscriptionPatternType,
+} from '../../src/knowledge-engine/streaming/subscription-manager.mjs';
 
 describe('SubscriptionManager', () => {
   let manager;
@@ -12,7 +15,7 @@ describe('SubscriptionManager', () => {
     manager = new SubscriptionManager({
       reconnectInterval: 1000,
       maxReconnectAttempts: 3,
-      heartbeatInterval: 5000
+      heartbeatInterval: 5000,
     });
   });
 
@@ -25,7 +28,7 @@ describe('SubscriptionManager', () => {
       const config = {
         pattern: SubscriptionPatternType.PROPERTY_CHANGE,
         subject: 'http://example.org/alice',
-        predicate: 'http://example.org/name'
+        predicate: 'http://example.org/name',
       };
 
       const id = manager.subscribe(config);
@@ -37,11 +40,11 @@ describe('SubscriptionManager', () => {
 
     it('should create subscription with callback', async () => {
       const config = {
-        pattern: SubscriptionPatternType.WILDCARD
+        pattern: SubscriptionPatternType.WILDCARD,
       };
 
-      const eventPromise = new Promise((resolve) => {
-        const callback = (data) => {
+      const eventPromise = new Promise(resolve => {
+        const callback = data => {
           expect(data).toBeDefined();
           resolve();
         };
@@ -57,7 +60,7 @@ describe('SubscriptionManager', () => {
 
     it('should unsubscribe', () => {
       const config = {
-        pattern: SubscriptionPatternType.WILDCARD
+        pattern: SubscriptionPatternType.WILDCARD,
       };
 
       const id = manager.subscribe(config);
@@ -81,7 +84,7 @@ describe('SubscriptionManager', () => {
 
     it('should enforce subscription limit', () => {
       const limitedManager = new SubscriptionManager({
-        maxSubscriptions: 2
+        maxSubscriptions: 2,
       });
 
       limitedManager.subscribe({ pattern: SubscriptionPatternType.WILDCARD });
@@ -99,7 +102,7 @@ describe('SubscriptionManager', () => {
     it('should support SPARQL SELECT pattern', () => {
       const config = {
         pattern: SubscriptionPatternType.SPARQL_SELECT,
-        query: 'SELECT * WHERE { ?s ?p ?o }'
+        query: 'SELECT * WHERE { ?s ?p ?o }',
       };
 
       const id = manager.subscribe(config);
@@ -113,7 +116,7 @@ describe('SubscriptionManager', () => {
       const config = {
         pattern: SubscriptionPatternType.PROPERTY_CHANGE,
         subject: 'http://example.org/alice',
-        predicate: 'http://example.org/age'
+        predicate: 'http://example.org/age',
       };
 
       const id = manager.subscribe(config);
@@ -126,7 +129,7 @@ describe('SubscriptionManager', () => {
     it('should support entity update pattern', () => {
       const config = {
         pattern: SubscriptionPatternType.ENTITY_UPDATE,
-        subject: 'http://example.org/bob'
+        subject: 'http://example.org/bob',
       };
 
       const id = manager.subscribe(config);
@@ -137,7 +140,7 @@ describe('SubscriptionManager', () => {
 
     it('should support wildcard pattern', () => {
       const config = {
-        pattern: SubscriptionPatternType.WILDCARD
+        pattern: SubscriptionPatternType.WILDCARD,
       };
 
       const id = manager.subscribe(config);
@@ -150,7 +153,7 @@ describe('SubscriptionManager', () => {
   describe('Configuration', () => {
     it('should use default debounce', () => {
       const config = {
-        pattern: SubscriptionPatternType.WILDCARD
+        pattern: SubscriptionPatternType.WILDCARD,
       };
 
       const id = manager.subscribe(config);
@@ -162,7 +165,7 @@ describe('SubscriptionManager', () => {
     it('should use custom debounce', () => {
       const config = {
         pattern: SubscriptionPatternType.WILDCARD,
-        debounceMs: 500
+        debounceMs: 500,
       };
 
       const id = manager.subscribe(config);
@@ -173,7 +176,7 @@ describe('SubscriptionManager', () => {
 
     it('should use default batch size', () => {
       const config = {
-        pattern: SubscriptionPatternType.WILDCARD
+        pattern: SubscriptionPatternType.WILDCARD,
       };
 
       const id = manager.subscribe(config);
@@ -211,7 +214,7 @@ describe('SubscriptionManager', () => {
   describe('Query Methods', () => {
     it('should get subscription by ID', () => {
       const config = {
-        pattern: SubscriptionPatternType.WILDCARD
+        pattern: SubscriptionPatternType.WILDCARD,
       };
 
       const id = manager.subscribe(config);

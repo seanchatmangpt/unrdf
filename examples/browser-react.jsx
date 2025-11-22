@@ -85,35 +85,44 @@ export function useUnrdf() {
     }
   }, [isInitialized, store, lockchain]);
 
-  const parseAndStore = useCallback(async (turtleData) => {
-    if (!isInitialized) throw new Error('Not initialized');
+  const parseAndStore = useCallback(
+    async turtleData => {
+      if (!isInitialized) throw new Error('Not initialized');
 
-    const parser = new Parser();
-    const quads = parser.parse(turtleData);
-    await store.addQuads(quads);
+      const parser = new Parser();
+      const quads = parser.parse(turtleData);
+      await store.addQuads(quads);
 
-    await lockchain.recordChange({
-      type: 'add',
-      data: turtleData,
-      author: 'react-user',
-      message: `Added ${quads.length} quads`,
-    });
+      await lockchain.recordChange({
+        type: 'add',
+        data: turtleData,
+        author: 'react-user',
+        message: `Added ${quads.length} quads`,
+      });
 
-    await updateStats();
-    return quads.length;
-  }, [isInitialized, store, lockchain, updateStats]);
+      await updateStats();
+      return quads.length;
+    },
+    [isInitialized, store, lockchain, updateStats]
+  );
 
-  const executeQuery = useCallback(async (queryString) => {
-    if (!isInitialized) throw new Error('Not initialized');
+  const executeQuery = useCallback(
+    async queryString => {
+      if (!isInitialized) throw new Error('Not initialized');
 
-    return await queryExecutor.query(queryString);
-  }, [isInitialized, queryExecutor]);
+      return await queryExecutor.query(queryString);
+    },
+    [isInitialized, queryExecutor]
+  );
 
-  const getHistory = useCallback(async (limit = 10) => {
-    if (!isInitialized) throw new Error('Not initialized');
+  const getHistory = useCallback(
+    async (limit = 10) => {
+      if (!isInitialized) throw new Error('Not initialized');
 
-    return await lockchain.getHistory(limit);
-  }, [isInitialized, lockchain]);
+      return await lockchain.getHistory(limit);
+    },
+    [isInitialized, lockchain]
+  );
 
   const verifyChain = useCallback(async () => {
     if (!isInitialized) throw new Error('Not initialized');
@@ -144,15 +153,8 @@ export function useUnrdf() {
  * UNRDF Demo Component
  */
 export function UnrdfDemo() {
-  const {
-    isInitialized,
-    stats,
-    parseAndStore,
-    executeQuery,
-    getHistory,
-    verifyChain,
-    clearStore,
-  } = useUnrdf();
+  const { isInitialized, stats, parseAndStore, executeQuery, getHistory, verifyChain, clearStore } =
+    useUnrdf();
 
   const [turtleInput, setTurtleInput] = useState(SAMPLE_TURTLE);
   const [sparqlInput, setSparqlInput] = useState(SAMPLE_QUERY);
@@ -260,7 +262,7 @@ export function UnrdfDemo() {
         <textarea
           style={styles.textarea}
           value={turtleInput}
-          onChange={(e) => setTurtleInput(e.target.value)}
+          onChange={e => setTurtleInput(e.target.value)}
           rows={8}
         />
         <div style={styles.controls}>
@@ -279,7 +281,7 @@ export function UnrdfDemo() {
         <textarea
           style={styles.textarea}
           value={sparqlInput}
-          onChange={(e) => setSparqlInput(e.target.value)}
+          onChange={e => setSparqlInput(e.target.value)}
           rows={6}
         />
         <button style={styles.button} onClick={handleQuery}>
@@ -292,9 +294,7 @@ export function UnrdfDemo() {
               <p>⏳ Running query...</p>
             ) : queryResults.type === 'bindings' ? (
               <>
-                <p style={styles.success}>
-                  ✅ Found {queryResults.bindings.length} results:
-                </p>
+                <p style={styles.success}>✅ Found {queryResults.bindings.length} results:</p>
                 {queryResults.bindings.map((binding, i) => (
                   <div key={i} style={styles.resultRow}>
                     <strong>Result {i + 1}:</strong>{' '}
@@ -332,9 +332,7 @@ export function UnrdfDemo() {
                 <p>No commits yet</p>
               ) : (
                 <>
-                  <p style={styles.success}>
-                    ✅ {lockchainOutput.data.length} recent commits:
-                  </p>
+                  <p style={styles.success}>✅ {lockchainOutput.data.length} recent commits:</p>
                   {lockchainOutput.data.map((commit, i) => (
                     <div key={i} style={styles.resultRow}>
                       <strong>#{i + 1}</strong> {commit.hash.substring(0, 8)}... by{' '}
@@ -345,8 +343,8 @@ export function UnrdfDemo() {
               )
             ) : (
               <p style={lockchainOutput.data.valid ? styles.success : styles.error}>
-                {lockchainOutput.data.valid ? '✅' : '❌'}{' '}
-                {lockchainOutput.data.message} ({lockchainOutput.data.commits} commits)
+                {lockchainOutput.data.valid ? '✅' : '❌'} {lockchainOutput.data.message} (
+                {lockchainOutput.data.commits} commits)
               </p>
             )}
           </div>

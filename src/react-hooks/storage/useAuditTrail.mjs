@@ -25,15 +25,18 @@ export function useAuditTrail() {
     }
   }, [engine]);
 
-  const verify = useCallback(async (entryId) => {
-    if (!engine?.lockchainWriter) return false;
-    try {
-      return await engine.lockchainWriter.verify(entryId);
-    } catch (err) {
-      console.error('[useAuditTrail] verify failed:', err);
-      return false;
-    }
-  }, [engine]);
+  const verify = useCallback(
+    async entryId => {
+      if (!engine?.lockchainWriter) return false;
+      try {
+        return await engine.lockchainWriter.verify(entryId);
+      } catch (err) {
+        console.error('[useAuditTrail] verify failed:', err);
+        return false;
+      }
+    },
+    [engine]
+  );
 
   return { trail, fetch, verify };
 }

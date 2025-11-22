@@ -8,11 +8,11 @@
  * abstraction, Worker polyfills, and crypto utilities.
  */
 
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, _afterEach } from 'vitest';
 import { tmpdir } from 'os';
 import {
-  isBrowser,
-  isNode,
+  _isBrowser,
+  _isNode,
   randomUUID,
   path,
   process as shimProcess,
@@ -20,7 +20,7 @@ import {
   fsPromises,
   Worker as BrowserWorker,
   execSync,
-  createHash
+  createHash,
 } from '../../src/knowledge-engine/browser-shims.mjs';
 
 describe('Browser Shims', () => {
@@ -47,13 +47,15 @@ describe('Browser Shims', () => {
     });
 
     it('should detect non-browser environment', () => {
-      const actualIsBrowser = typeof window !== 'undefined' && typeof window.document !== 'undefined';
+      const actualIsBrowser =
+        typeof window !== 'undefined' && typeof window.document !== 'undefined';
       expect(actualIsBrowser).toBe(false);
     });
 
     it('should provide consistent environment flags', () => {
       const actualIsNode = typeof process !== 'undefined' && !!process?.versions?.node;
-      const actualIsBrowser = typeof window !== 'undefined' && typeof window.document !== 'undefined';
+      const actualIsBrowser =
+        typeof window !== 'undefined' && typeof window.document !== 'undefined';
       expect(actualIsNode).not.toBe(actualIsBrowser);
     });
   });
@@ -236,9 +238,7 @@ describe('Browser Shims', () => {
       });
 
       it.skipIf(skipFsTests)('should handle errors in async operations', async () => {
-        await expect(
-          fsPromises.readFile('/nonexistent-async.txt')
-        ).rejects.toThrow(/ENOENT/);
+        await expect(fsPromises.readFile('/nonexistent-async.txt')).rejects.toThrow(/ENOENT/);
       });
     });
   });
@@ -260,7 +260,7 @@ describe('Browser Shims', () => {
       expect(worker.worker).toBeDefined();
     });
 
-    it.skipIf(skipInNode)('should send and receive messages', (done) => {
+    it.skipIf(skipInNode)('should send and receive messages', done => {
       const workerCode = `
         self.onmessage = (event) => {
           self.postMessage({ result: event.data.value * 2 });
@@ -269,7 +269,7 @@ describe('Browser Shims', () => {
 
       const worker = new BrowserWorker(workerCode);
 
-      worker.on('message', (data) => {
+      worker.on('message', data => {
         expect(data.result).toBe(84);
         worker.terminate();
         done();
@@ -278,7 +278,7 @@ describe('Browser Shims', () => {
       worker.postMessage({ value: 42 });
     });
 
-    it.skipIf(skipInNode)('should handle worker errors', (done) => {
+    it.skipIf(skipInNode)('should handle worker errors', done => {
       const workerCode = `
         self.onmessage = (event) => {
           throw new Error('Worker error');
@@ -287,7 +287,7 @@ describe('Browser Shims', () => {
 
       const worker = new BrowserWorker(workerCode);
 
-      worker.on('error', (error) => {
+      worker.on('error', error => {
         expect(error).toBeDefined();
         worker.terminate();
         done();
@@ -296,7 +296,7 @@ describe('Browser Shims', () => {
       worker.postMessage({ test: true });
     });
 
-    it.skipIf(skipInNode)('should support once listener', (done) => {
+    it.skipIf(skipInNode)('should support once listener', done => {
       const workerCode = `
         self.onmessage = (event) => {
           self.postMessage({ count: 1 });
@@ -440,7 +440,7 @@ describe('Browser Shims', () => {
         fsPromises,
         BrowserWorker,
         execSync,
-        createHash
+        createHash,
       };
 
       for (const [name, api] of Object.entries(apis)) {
@@ -499,7 +499,7 @@ describe('Browser Shims', () => {
         path.join(testDir, 'file with spaces.txt'),
         path.join(testDir, 'file-with-dashes.txt'),
         path.join(testDir, 'file_with_underscores.txt'),
-        path.join(testDir, 'file.multiple.dots.txt')
+        path.join(testDir, 'file.multiple.dots.txt'),
       ];
 
       for (const testPath of specialPaths) {

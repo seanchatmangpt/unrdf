@@ -2,7 +2,7 @@
  * @fileoverview usePrefixes composable - opinionated prefix registry helpers
  */
 
-import { useStoreContext } from "../context/index.mjs";
+import { useStoreContext } from '../context/index.mjs';
 
 function normaliseEntries(entries) {
   if (!entries) return [];
@@ -15,11 +15,11 @@ function normaliseEntries(entries) {
     return entries.map(([prefix, iri]) => [prefix, iri]);
   }
 
-  if (typeof entries === "object") {
+  if (typeof entries === 'object') {
     return Object.entries(entries);
   }
 
-  throw new TypeError("[usePrefixes] Expected Map, array of tuples, or plain object");
+  throw new TypeError('[usePrefixes] Expected Map, array of tuples, or plain object');
 }
 
 /**
@@ -49,9 +49,9 @@ export function usePrefixes(initial) {
      * @param {string} [iri] - IRI when prefix is a string.
      */
     register(prefix, iri) {
-      if (typeof prefix === "string") {
+      if (typeof prefix === 'string') {
         if (!iri) {
-          throw new TypeError("[usePrefixes] IRI is required when prefix is a string");
+          throw new TypeError('[usePrefixes] IRI is required when prefix is a string');
         }
         registry.set(prefix, iri);
         return this;
@@ -69,10 +69,10 @@ export function usePrefixes(initial) {
      * @returns {string|null}
      */
     expand(curie) {
-      if (typeof curie !== "string") {
-        throw new TypeError("[usePrefixes] CURIE must be a string");
+      if (typeof curie !== 'string') {
+        throw new TypeError('[usePrefixes] CURIE must be a string');
       }
-      const [prefix, remainder] = curie.split(":");
+      const [prefix, remainder] = curie.split(':');
       if (!prefix || remainder === undefined) {
         return null;
       }
@@ -86,8 +86,8 @@ export function usePrefixes(initial) {
      * @returns {string|null}
      */
     shrink(iri) {
-      if (typeof iri !== "string") {
-        throw new TypeError("[usePrefixes] IRI must be a string");
+      if (typeof iri !== 'string') {
+        throw new TypeError('[usePrefixes] IRI must be a string');
       }
       for (const [prefix, base] of registry.entries()) {
         if (iri.startsWith(base)) {

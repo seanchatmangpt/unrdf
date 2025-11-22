@@ -29,17 +29,10 @@ export { IndexedDBFileSystem } from './indexeddb-fs.mjs';
 export { IndexedDBQuadStore } from './indexeddb-store.mjs';
 
 // File system adapter
-export {
-  FileSystemAdapter,
-  createFsAdapter,
-  getPath,
-} from './fs-adapter.mjs';
+export { FileSystemAdapter, createFsAdapter, getPath } from './fs-adapter.mjs';
 
 // Comunica browser adapter
-export {
-  BrowserQueryExecutor,
-  createBrowserQueryExecutor,
-} from './comunica-browser-adapter.mjs';
+export { BrowserQueryExecutor, createBrowserQueryExecutor } from './comunica-browser-adapter.mjs';
 
 // Browser lockchain writer
 export {

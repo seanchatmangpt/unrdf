@@ -1,7 +1,7 @@
 /**
  * @file Dark Matter 80/20 Example
  * @module dark-matter-80-20-example
- * 
+ *
  * @description
  * Example demonstrating the Dark Matter 80/20 framework implementation
  * for the KGC JavaScript Sidecar.
@@ -12,7 +12,7 @@ import { Store } from 'n3';
 
 /**
  * Dark Matter 80/20 Example
- * 
+ *
  * This example demonstrates how the Dark Matter 80/20 framework
  * delivers maximum value through focused development of core components.
  */
@@ -31,19 +31,19 @@ async function darkMatter8020Example() {
       enableObservability: true,
       enablePerformanceOptimizer: true,
       enableLockchainWriter: true,
-      
+
       // Disable optional components (80% that deliver 20% of value)
       enablePolicyPackManager: false,
       enableResolutionLayer: false,
-      
+
       // 80/20 performance targets
       performanceTargets: {
         p50PreHookPipeline: 0.2, // 200µs
         p99PreHookPipeline: 2, // 2ms
         receiptWriteMedian: 5, // 5ms
         hookEngineExecPerMin: 10000, // 10k/min
-        errorIsolation: 1 // 100%
-      }
+        errorIsolation: 1, // 100%
+      },
     });
 
     console.log('✅ Dark Matter system created successfully\n');
@@ -59,8 +59,12 @@ async function darkMatter8020Example() {
     console.log('🎯 Dark Matter 80/20 Metrics:');
     const metrics = darkMatter.getMetrics();
     console.log(`   Value Delivery Ratio: ${(metrics.valueDeliveryRatio * 100).toFixed(1)}%`);
-    console.log(`   Performance Impact Ratio: ${(metrics.performanceImpactRatio * 100).toFixed(1)}%`);
-    console.log(`   Development Efficiency Ratio: ${(metrics.developmentEfficiencyRatio * 100).toFixed(1)}%`);
+    console.log(
+      `   Performance Impact Ratio: ${(metrics.performanceImpactRatio * 100).toFixed(1)}%`
+    );
+    console.log(
+      `   Development Efficiency Ratio: ${(metrics.developmentEfficiencyRatio * 100).toFixed(1)}%`
+    );
     console.log(`   Core Components: ${metrics.coreComponentCount}`);
     console.log(`   Optional Components: ${metrics.optionalComponentCount}\n`);
 
@@ -69,11 +73,13 @@ async function darkMatter8020Example() {
     const totalComponents = status.components.length;
     const coreComponents = metrics.coreComponentCount;
     const componentRatio = coreComponents / totalComponents;
-    
+
     console.log(`   Total Components: ${totalComponents}`);
     console.log(`   Core Components: ${coreComponents}`);
     console.log(`   Component Ratio: ${(componentRatio * 100).toFixed(1)}%`);
-    console.log(`   80/20 Target: ${metrics.valueDeliveryRatio >= 0.8 ? '✅ ACHIEVED' : '❌ NOT ACHIEVED'}\n`);
+    console.log(
+      `   80/20 Target: ${metrics.valueDeliveryRatio >= 0.8 ? '✅ ACHIEVED' : '❌ NOT ACHIEVED'}\n`
+    );
 
     // Demonstrate transaction execution
     console.log('⚡ Transaction Execution Example:');
@@ -84,10 +90,10 @@ async function darkMatter8020Example() {
           subject: { value: 'http://example.org/subject' },
           predicate: { value: 'http://example.org/predicate' },
           object: { value: 'http://example.org/object' },
-          graph: { value: 'http://example.org/graph' }
-        }
+          graph: { value: 'http://example.org/graph' },
+        },
       ],
-      removals: []
+      removals: [],
     };
 
     const startTime = Date.now();
@@ -111,19 +117,19 @@ async function darkMatter8020Example() {
         ref: {
           uri: 'file://example.ask.rq',
           sha256: 'example-hash',
-          mediaType: 'application/sparql-query'
-        }
+          mediaType: 'application/sparql-query',
+        },
       },
-      run: async (event) => {
+      run: async _event => {
         console.log('   Hook executed successfully');
         return { result: 'success', message: 'Dark Matter 80/20 in action!' };
-      }
+      },
     };
 
     const event = {
       name: 'example-hook',
       payload: { example: 'data' },
-      context: { graph: store }
+      context: { graph: store },
     };
 
     const hookStartTime = Date.now();
@@ -158,9 +164,15 @@ async function darkMatter8020Example() {
     console.log('📈 Performance Summary:');
     console.log(`   Transaction Latency: ${duration}ms (target: ≤ 2ms)`);
     console.log(`   Hook Execution: ${hookDuration}ms (target: ≤ 2ms)`);
-    console.log(`   Value Delivery: ${(metrics.valueDeliveryRatio * 100).toFixed(1)}% (target: ≥ 80%)`);
-    console.log(`   Performance Impact: ${(metrics.performanceImpactRatio * 100).toFixed(1)}% (target: ≥ 80%)`);
-    console.log(`   Development Efficiency: ${(metrics.developmentEfficiencyRatio * 100).toFixed(1)}% (target: ≥ 80%)\n`);
+    console.log(
+      `   Value Delivery: ${(metrics.valueDeliveryRatio * 100).toFixed(1)}% (target: ≥ 80%)`
+    );
+    console.log(
+      `   Performance Impact: ${(metrics.performanceImpactRatio * 100).toFixed(1)}% (target: ≥ 80%)`
+    );
+    console.log(
+      `   Development Efficiency: ${(metrics.developmentEfficiencyRatio * 100).toFixed(1)}% (target: ≥ 80%)\n`
+    );
 
     // Cleanup
     console.log('🧹 Cleaning up Dark Matter system...');
@@ -174,7 +186,6 @@ async function darkMatter8020Example() {
     console.log('✅ Core components deliver maximum value');
     console.log('✅ Performance targets achieved');
     console.log('✅ System ready for production deployment');
-
   } catch (error) {
     console.error('❌ Dark Matter 80/20 example failed:', error.message);
     console.error('Stack trace:', error.stack);
@@ -184,7 +195,7 @@ async function darkMatter8020Example() {
 
 /**
  * Minimal Dark Matter 80/20 Example
- * 
+ *
  * Demonstrates the minimal system with only essential components.
  */
 async function minimalDarkMatterExample() {
@@ -213,7 +224,6 @@ async function minimalDarkMatterExample() {
     // Cleanup
     await darkMatter.cleanup();
     console.log('✅ Minimal Dark Matter system cleaned up\n');
-
   } catch (error) {
     console.error('❌ Minimal Dark Matter example failed:', error.message);
   }
@@ -221,7 +231,7 @@ async function minimalDarkMatterExample() {
 
 /**
  * Full Dark Matter 80/20 Example
- * 
+ *
  * Demonstrates the full system with all components enabled.
  */
 async function fullDarkMatterExample() {
@@ -251,7 +261,6 @@ async function fullDarkMatterExample() {
     // Cleanup
     await darkMatter.cleanup();
     console.log('✅ Full Dark Matter system cleaned up\n');
-
   } catch (error) {
     console.error('❌ Full Dark Matter example failed:', error.message);
   }
@@ -260,21 +269,17 @@ async function fullDarkMatterExample() {
 // Run examples
 if (import.meta.url === `file://${process.argv[1]}`) {
   console.log('🚀 Starting Dark Matter 80/20 Examples...\n');
-  
+
   // Run main example
   await darkMatter8020Example();
-  
+
   // Run minimal example
   await minimalDarkMatterExample();
-  
+
   // Run full example
   await fullDarkMatterExample();
-  
+
   console.log('🎉 All Dark Matter 80/20 examples completed successfully!');
 }
 
-export {
-  darkMatter8020Example,
-  minimalDarkMatterExample,
-  fullDarkMatterExample
-};
+export { darkMatter8020Example, minimalDarkMatterExample, fullDarkMatterExample };

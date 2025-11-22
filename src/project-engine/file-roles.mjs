@@ -3,22 +3,24 @@
  * @module project-engine/file-roles
  */
 
-import { DataFactory } from 'n3'
-import { z } from 'zod'
+import { DataFactory } from 'n3';
+import { z } from 'zod';
 
-const { namedNode, literal } = DataFactory
+const { namedNode, literal } = DataFactory;
 
 const FileRolesOptionsSchema = z.object({
-  fsStore: z.custom((val) => val && typeof val.getQuads === 'function', {
+  fsStore: z.custom(val => val && typeof val.getQuads === 'function', {
     message: 'fsStore must be an RDF store with getQuads method',
   }),
-  stackInfo: z.object({
-    uiFramework: z.string().nullable(),
-    webFramework: z.string().nullable(),
-    testFramework: z.string().nullable(),
-  }).optional(),
+  stackInfo: z
+    .object({
+      uiFramework: z.string().nullable(),
+      webFramework: z.string().nullable(),
+      testFramework: z.string().nullable(),
+    })
+    .optional(),
   baseIri: z.string().default('http://example.org/unrdf/project#'),
-})
+});
 
 const ROLE_PATTERNS = {
   Component: [/\.(tsx?|jsx?)$/, /(Component|View)\.tsx?$/],
@@ -33,7 +35,7 @@ const ROLE_PATTERNS = {
   Config: [/\.(json|yaml|yml|toml|conf)$/, /(package\.json|tsconfig|eslintrc|prettier)/],
   Build: [/(build|webpack|rollup|esbuild|vite|next\.config)/, /^scripts\//],
   Other: [],
-}
+};
 
 /**
  * Classify files with semantic roles
@@ -45,32 +47,36 @@ const ROLE_PATTERNS = {
  * @returns {Store} Store with role classifications
  */
 export function classifyFiles(options) {
-  const validated = FileRolesOptionsSchema.parse(options)
-  const { fsStore, baseIri } = validated
+  const validated = FileRolesOptionsSchema.parse(options);
+  const { fsStore, baseIri } = validated;
 
-  const store = fsStore
-  let roleCount = 0
+  const store = fsStore;
+  let _roleCount = 0;
 
   const fileQuads = store.getQuads(
     null,
     namedNode('http://example.org/unrdf/filesystem#relativePath'),
     null
-  )
+  );
 
   for (const quad of fileQuads) {
-    const filePath = quad.object.value
-    const fileIri = quad.subject
-    const role = classifyPath(filePath)
+    const filePath = quad.object.value;
+    const fileIri = quad.subject;
+    const role = classifyPath(filePath);
 
     if (role && role !== 'Other') {
-      const roleIri = namedNode(`${baseIri}${role}`)
-      store.addQuad(fileIri, namedNode('http://example.org/unrdf/project#hasRole'), roleIri)
-      store.addQuad(fileIri, namedNode('http://example.org/unrdf/project#roleString'), literal(role))
-      roleCount++
+      const roleIri = namedNode(`${baseIri}${role}`);
+      store.addQuad(fileIri, namedNode('http://example.org/unrdf/project#hasRole'), roleIri);
+      store.addQuad(
+        fileIri,
+        namedNode('http://example.org/unrdf/project#roleString'),
+        literal(role)
+      );
+      _roleCount++;
     }
   }
 
-  return store
+  return store;
 }
 
 /**
@@ -80,9 +86,9 @@ export function classifyFiles(options) {
  */
 function classifyPath(filePath) {
   for (const [role, patterns] of Object.entries(ROLE_PATTERNS)) {
-    if (patterns.some((pattern) => pattern.test(filePath))) {
-      return role
+    if (patterns.some(pattern => pattern.test(filePath))) {
+      return role;
     }
   }
-  return 'Other'
+  return 'Other';
 }

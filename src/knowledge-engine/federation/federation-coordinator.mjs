@@ -32,7 +32,7 @@ export const StoreHealth = {
   HEALTHY: 'healthy',
   DEGRADED: 'degraded',
   UNHEALTHY: 'unhealthy',
-  UNKNOWN: 'unknown'
+  UNKNOWN: 'unknown',
 };
 
 /**
@@ -45,7 +45,7 @@ const StoreMetadataSchema = z.object({
   capabilities: z.array(z.string()).default([]),
   priority: z.number().int().min(0).max(100).default(50),
   weight: z.number().min(0).max(1).default(1.0),
-  metadata: z.record(z.any()).optional()
+  metadata: z.record(z.any()).optional(),
 });
 
 /**
@@ -57,7 +57,7 @@ const FederationConfigSchema = z.object({
   healthCheckInterval: z.number().positive().default(5000),
   healthCheckTimeout: z.number().positive().default(2000),
   maxRetries: z.number().int().nonnegative().default(3),
-  loadBalancingStrategy: z.enum(['round-robin', 'weighted', 'least-loaded']).default('weighted')
+  loadBalancingStrategy: z.enum(['round-robin', 'weighted', 'least-loaded']).default('weighted'),
 });
 
 /**
@@ -113,24 +113,25 @@ export class FederationCoordinator extends EventEmitter {
 
     // Metrics
     this.storeCount = meter.createObservableGauge('federation.stores.count', {
-      description: 'Number of registered stores'
+      description: 'Number of registered stores',
     });
 
     this.healthyStoreCount = meter.createObservableGauge('federation.stores.healthy', {
-      description: 'Number of healthy stores'
+      description: 'Number of healthy stores',
     });
 
     this.queryCounter = meter.createCounter('federation.queries.total', {
-      description: 'Total number of federated queries'
+      description: 'Total number of federated queries',
     });
 
-    this.storeCount.addCallback((result) => {
+    this.storeCount.addCallback(result => {
       result.observe(this.stores.size);
     });
 
-    this.healthyStoreCount.addCallback((result) => {
-      const healthy = Array.from(this.storeHealth.values())
-        .filter(h => h === StoreHealth.HEALTHY).length;
+    this.healthyStoreCount.addCallback(result => {
+      const healthy = Array.from(this.storeHealth.values()).filter(
+        h => h === StoreHealth.HEALTHY
+      ).length;
       result.observe(healthy);
     });
   }
@@ -140,7 +141,7 @@ export class FederationCoordinator extends EventEmitter {
    * @returns {Promise<void>}
    */
   async initialize() {
-    return tracer.startActiveSpan('federation.initialize', async (span) => {
+    return tracer.startActiveSpan('federation.initialize', async span => {
       try {
         span.setAttribute('federation.id', this.config.federationId);
 
@@ -149,13 +150,13 @@ export class FederationCoordinator extends EventEmitter {
           this.consensus = createConsensusManager({
             nodeId: this.config.federationId,
             electionTimeoutMin: 150,
-            electionTimeoutMax: 300
+            electionTimeoutMax: 300,
           });
 
           await this.consensus.initialize();
 
           // Listen for consensus events
-          this.consensus.on('commandApplied', (command) => {
+          this.consensus.on('commandApplied', command => {
             this.handleConsensusCommand(command);
           });
         }
@@ -181,7 +182,7 @@ export class FederationCoordinator extends EventEmitter {
    * @returns {Promise<void>}
    */
   async registerStore(storeMetadata) {
-    return tracer.startActiveSpan('federation.registerStore', async (span) => {
+    return tracer.startActiveSpan('federation.registerStore', async span => {
       try {
         const metadata = StoreMetadataSchema.parse(storeMetadata);
         span.setAttribute('store.id', metadata.storeId);
@@ -196,7 +197,7 @@ export class FederationCoordinator extends EventEmitter {
           await this.consensus.replicate({
             type: 'REGISTER_STORE',
             storeId: metadata.storeId,
-            data: metadata
+            data: metadata,
           });
         }
 
@@ -221,7 +222,7 @@ export class FederationCoordinator extends EventEmitter {
    * @returns {Promise<void>}
    */
   async deregisterStore(storeId) {
-    return tracer.startActiveSpan('federation.deregisterStore', async (span) => {
+    return tracer.startActiveSpan('federation.deregisterStore', async span => {
       try {
         span.setAttribute('store.id', storeId);
 
@@ -237,7 +238,7 @@ export class FederationCoordinator extends EventEmitter {
         if (this.consensus) {
           await this.consensus.replicate({
             type: 'DEREGISTER_STORE',
-            storeId
+            storeId,
           });
         }
 
@@ -245,7 +246,10 @@ export class FederationCoordinator extends EventEmitter {
         span.setStatus({ code: SpanStatusCode.OK });
       } catch (error) {
         span.recordException(error);
-        span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
+        span.setStatus({
+          code: SpanStatusCode.ERROR,
+          message: error.message,
+        });
         throw error;
       } finally {
         span.end();
@@ -266,8 +270,8 @@ export class FederationCoordinator extends EventEmitter {
    * @returns {Array<Object>} Array of healthy store metadata
    */
   getHealthyStores() {
-    return Array.from(this.stores.values()).filter(store =>
-      this.storeHealth.get(store.storeId) === StoreHealth.HEALTHY
+    return Array.from(this.stores.values()).filter(
+      store => this.storeHealth.get(store.storeId) === StoreHealth.HEALTHY
     );
   }
 
@@ -276,7 +280,7 @@ export class FederationCoordinator extends EventEmitter {
    * @param {Object} options - Selection options
    * @returns {Object|null} Selected store metadata
    */
-  selectStore(options = {}) {
+  selectStore(_options = {}) {
     const healthyStores = this.getHealthyStores();
 
     if (healthyStores.length === 0) {
@@ -345,7 +349,7 @@ export class FederationCoordinator extends EventEmitter {
    * @returns {Promise<string>} Health status
    */
   async checkStoreHealth(storeId) {
-    return tracer.startActiveSpan('federation.healthCheck', async (span) => {
+    return tracer.startActiveSpan('federation.healthCheck', async span => {
       try {
         const store = this.stores.get(storeId);
         if (!store) {
@@ -413,7 +417,7 @@ export class FederationCoordinator extends EventEmitter {
         this.storeHealth.delete(command.storeId);
         break;
       default:
-        // Unknown command type
+      // Unknown command type
     }
   }
 
@@ -423,7 +427,7 @@ export class FederationCoordinator extends EventEmitter {
    */
   getStats() {
     const healthStats = {};
-    for (const [storeId, health] of this.storeHealth.entries()) {
+    for (const [_storeId, health] of this.storeHealth.entries()) {
       healthStats[health] = (healthStats[health] || 0) + 1;
     }
 
@@ -432,7 +436,7 @@ export class FederationCoordinator extends EventEmitter {
       totalStores: this.stores.size,
       healthStats,
       consensus: this.consensus ? this.consensus.getState() : null,
-      loadBalancingStrategy: this.config.loadBalancingStrategy
+      loadBalancingStrategy: this.config.loadBalancingStrategy,
     };
   }
 

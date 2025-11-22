@@ -1,15 +1,15 @@
 /**
  * @file Policy Pack abstraction for versioned governance units
  * @module policy-pack
- * 
+ *
  * @description
  * Policy packs bundle related knowledge hooks into versioned, portable
  * governance units that can be activated/deactivated as cohesive sets.
  */
 
-import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync } from 'fs';
-import { join, dirname, basename, extname } from 'path';
-import { createKnowledgeHook, validateKnowledgeHook } from './schemas.mjs';
+import { readFileSync, _writeFileSync, existsSync, _mkdirSync, readdirSync } from 'fs';
+import { join, dirname, _basename, _extname } from 'path';
+import { _createKnowledgeHook, validateKnowledgeHook } from './schemas.mjs';
 import { z } from 'zod';
 import { randomUUID } from 'crypto';
 
@@ -17,20 +17,32 @@ import { randomUUID } from 'crypto';
  * Schema for policy pack metadata
  */
 const PolicyPackMetaSchema = z.object({
-  name: z.string().min(1).max(100).regex(/^[a-zA-Z0-9:_-]+$/, 'Name must contain only alphanumeric characters, colons, hyphens, and underscores'),
+  name: z
+    .string()
+    .min(1)
+    .max(100)
+    .regex(
+      /^[a-zA-Z0-9:_-]+$/,
+      'Name must contain only alphanumeric characters, colons, hyphens, and underscores'
+    ),
   version: z.string().regex(/^\d+\.\d+\.\d+$/, 'Version must be semantic version format'),
   description: z.string().min(1).max(1000).optional(),
   author: z.string().min(1).max(100).optional(),
   license: z.string().min(1).max(100).optional(),
   tags: z.array(z.string().min(1).max(50)).max(20).optional(),
   ontology: z.array(z.string().min(1).max(100)).max(10).optional(),
-  dependencies: z.array(z.object({
-    name: z.string().min(1),
-    version: z.string().min(1),
-    required: z.boolean().default(true)
-  })).max(20).optional(),
+  dependencies: z
+    .array(
+      z.object({
+        name: z.string().min(1),
+        version: z.string().min(1),
+        required: z.boolean().default(true),
+      })
+    )
+    .max(20)
+    .optional(),
   createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().optional()
+  updatedAt: z.coerce.date().optional(),
 });
 
 /**
@@ -42,11 +54,13 @@ const PolicyPackConfigSchema = z.object({
   strictMode: z.boolean().default(false),
   timeout: z.number().int().positive().max(300000).default(30000),
   retries: z.number().int().nonnegative().max(5).default(1),
-  conditions: z.object({
-    environment: z.array(z.string()).optional(),
-    version: z.string().optional(),
-    features: z.array(z.string()).optional()
-  }).optional()
+  conditions: z
+    .object({
+      environment: z.array(z.string()).optional(),
+      version: z.string().optional(),
+      features: z.array(z.string()).optional(),
+    })
+    .optional(),
 });
 
 /**
@@ -56,22 +70,32 @@ const PolicyPackManifestSchema = z.object({
   id: z.string().uuid(),
   meta: PolicyPackMetaSchema,
   config: PolicyPackConfigSchema,
-  hooks: z.array(z.object({
-    name: z.string().min(1),
-    file: z.string().min(1),
-    enabled: z.boolean().default(true),
-    priority: z.number().int().min(0).max(100).default(50)
-  })),
-  conditions: z.array(z.object({
-    name: z.string().min(1),
-    file: z.string().min(1),
-    type: z.enum(['sparql-ask', 'sparql-select', 'shacl'])
-  })).optional(),
-  resources: z.array(z.object({
-    name: z.string().min(1),
-    file: z.string().min(1),
-    type: z.enum(['ontology', 'vocabulary', 'data', 'other'])
-  })).optional()
+  hooks: z.array(
+    z.object({
+      name: z.string().min(1),
+      file: z.string().min(1),
+      enabled: z.boolean().default(true),
+      priority: z.number().int().min(0).max(100).default(50),
+    })
+  ),
+  conditions: z
+    .array(
+      z.object({
+        name: z.string().min(1),
+        file: z.string().min(1),
+        type: z.enum(['sparql-ask', 'sparql-select', 'shacl']),
+      })
+    )
+    .optional(),
+  resources: z
+    .array(
+      z.object({
+        name: z.string().min(1),
+        file: z.string().min(1),
+        type: z.enum(['ontology', 'vocabulary', 'data', 'other']),
+      })
+    )
+    .optional(),
 });
 
 /**
@@ -98,33 +122,35 @@ export class PolicyPack {
    */
   async load() {
     if (this.loaded) return;
-    
+
     const packPath = join(this.basePath, 'policy-packs', this.manifest.meta.name);
-    
+
     // Load hooks
     for (const hookDef of this.manifest.hooks) {
       if (!hookDef.enabled) continue;
-      
+
       const hookFile = join(packPath, hookDef.file);
       if (!existsSync(hookFile)) {
         throw new Error(`Hook file not found: ${hookFile}`);
       }
-      
+
       const hookModule = await import(`file://${hookFile}`);
       const hook = hookModule.default || hookModule;
-      
+
       // Validate hook
       const validation = validateKnowledgeHook(hook);
       if (!validation.success) {
-        throw new Error(`Invalid hook ${hookDef.name}: ${validation.errors.map(e => e.message).join(', ')}`);
+        throw new Error(
+          `Invalid hook ${hookDef.name}: ${validation.errors.map(e => e.message).join(', ')}`
+        );
       }
-      
+
       // Set priority from manifest
       hook.priority = hookDef.priority;
-      
+
       this.hooks.set(hookDef.name, hook);
     }
-    
+
     // Load conditions
     if (this.manifest.conditions) {
       for (const conditionDef of this.manifest.conditions) {
@@ -132,16 +158,16 @@ export class PolicyPack {
         if (!existsSync(conditionFile)) {
           throw new Error(`Condition file not found: ${conditionFile}`);
         }
-        
+
         const conditionContent = readFileSync(conditionFile, 'utf8');
         this.conditions.set(conditionDef.name, {
           content: conditionContent,
           type: conditionDef.type,
-          file: conditionDef.file
+          file: conditionDef.file,
         });
       }
     }
-    
+
     // Load resources
     if (this.manifest.resources) {
       for (const resourceDef of this.manifest.resources) {
@@ -149,16 +175,16 @@ export class PolicyPack {
         if (!existsSync(resourceFile)) {
           throw new Error(`Resource file not found: ${resourceFile}`);
         }
-        
+
         const resourceContent = readFileSync(resourceFile, 'utf8');
         this.resources.set(resourceDef.name, {
           content: resourceContent,
           type: resourceDef.type,
-          file: resourceDef.file
+          file: resourceDef.file,
         });
       }
     }
-    
+
     this.loaded = true;
   }
 
@@ -170,7 +196,7 @@ export class PolicyPack {
     if (!this.loaded) {
       throw new Error('Policy pack not loaded. Call load() first.');
     }
-    
+
     return Array.from(this.hooks.values());
   }
 
@@ -183,7 +209,7 @@ export class PolicyPack {
     if (!this.loaded) {
       throw new Error('Policy pack not loaded. Call load() first.');
     }
-    
+
     return this.hooks.get(name) || null;
   }
 
@@ -195,7 +221,7 @@ export class PolicyPack {
     if (!this.loaded) {
       throw new Error('Policy pack not loaded. Call load() first.');
     }
-    
+
     return Array.from(this.conditions.values());
   }
 
@@ -208,7 +234,7 @@ export class PolicyPack {
     if (!this.loaded) {
       throw new Error('Policy pack not loaded. Call load() first.');
     }
-    
+
     return this.conditions.get(name) || null;
   }
 
@@ -220,7 +246,7 @@ export class PolicyPack {
     if (!this.loaded) {
       throw new Error('Policy pack not loaded. Call load() first.');
     }
-    
+
     return Array.from(this.resources.values());
   }
 
@@ -233,7 +259,7 @@ export class PolicyPack {
     if (!this.loaded) {
       throw new Error('Policy pack not loaded. Call load() first.');
     }
-    
+
     return this.resources.get(name) || null;
   }
 
@@ -246,35 +272,39 @@ export class PolicyPack {
     const result = {
       compatible: true,
       issues: [],
-      warnings: []
+      warnings: [],
     };
-    
+
     // Check version compatibility
     if (this.manifest.config.conditions?.version) {
       const requiredVersion = this.manifest.config.conditions.version;
       const currentVersion = environment.version || '1.0.0';
-      
+
       if (!this._isVersionCompatible(currentVersion, requiredVersion)) {
         result.compatible = false;
-        result.issues.push(`Version ${currentVersion} is not compatible with required ${requiredVersion}`);
+        result.issues.push(
+          `Version ${currentVersion} is not compatible with required ${requiredVersion}`
+        );
       }
     }
-    
+
     // Check environment compatibility
     if (this.manifest.config.conditions?.environment) {
       const requiredEnvs = this.manifest.config.conditions.environment;
       const currentEnv = environment.environment || 'development';
-      
+
       if (!requiredEnvs.includes(currentEnv)) {
-        result.warnings.push(`Environment ${currentEnv} not in required list: ${requiredEnvs.join(', ')}`);
+        result.warnings.push(
+          `Environment ${currentEnv} not in required list: ${requiredEnvs.join(', ')}`
+        );
       }
     }
-    
+
     // Check feature compatibility
     if (this.manifest.config.conditions?.features) {
       const requiredFeatures = this.manifest.config.conditions.features;
       const availableFeatures = environment.features || [];
-      
+
       for (const feature of requiredFeatures) {
         if (!availableFeatures.includes(feature)) {
           result.compatible = false;
@@ -282,7 +312,7 @@ export class PolicyPack {
         }
       }
     }
-    
+
     return result;
   }
 
@@ -299,17 +329,17 @@ export class PolicyPack {
       hooks: {
         total: this.manifest.hooks.length,
         enabled: this.manifest.hooks.filter(h => h.enabled).length,
-        loaded: this.hooks.size
+        loaded: this.hooks.size,
       },
       conditions: {
         total: this.manifest.conditions?.length || 0,
-        loaded: this.conditions.size
+        loaded: this.conditions.size,
       },
       resources: {
         total: this.manifest.resources?.length || 0,
-        loaded: this.resources.size
+        loaded: this.resources.size,
       },
-      config: this.manifest.config
+      config: this.manifest.config,
     };
   }
 
@@ -325,7 +355,7 @@ export class PolicyPack {
     // In production, this would use proper semver parsing
     const currentParts = current.split('.').map(Number);
     const requiredParts = required.split('.').map(Number);
-    
+
     // Check major version compatibility
     return currentParts[0] >= requiredParts[0];
   }
@@ -354,13 +384,13 @@ export class PolicyPackManager {
     if (!existsSync(manifestPath)) {
       throw new Error(`Manifest file not found: ${manifestPath}`);
     }
-    
+
     const manifestContent = readFileSync(manifestPath, 'utf8');
     const manifest = JSON.parse(manifestContent);
-    
+
     const pack = new PolicyPack(manifest, this.basePath);
     await pack.load();
-    
+
     this.packs.set(pack.manifest.meta.name, pack);
     return pack;
   }
@@ -374,10 +404,10 @@ export class PolicyPackManager {
     if (!existsSync(packsDir)) {
       return [];
     }
-    
+
     const packs = [];
     const entries = readdirSync(packsDir, { withFileTypes: true });
-    
+
     for (const entry of entries) {
       if (entry.isDirectory()) {
         const manifestPath = join(packsDir, entry.name, 'manifest.json');
@@ -391,7 +421,7 @@ export class PolicyPackManager {
         }
       }
     }
-    
+
     return packs;
   }
 
@@ -405,11 +435,11 @@ export class PolicyPackManager {
     if (!pack) {
       throw new Error(`Policy pack ${packName} not found`);
     }
-    
+
     if (!pack.manifest.config.enabled) {
       throw new Error(`Policy pack ${packName} is disabled`);
     }
-    
+
     this.activePacks.add(packName);
     return true;
   }
@@ -439,14 +469,14 @@ export class PolicyPackManager {
    */
   getActiveHooks() {
     const hooks = [];
-    
+
     for (const packName of this.activePacks) {
       const pack = this.packs.get(packName);
       if (pack) {
         hooks.push(...pack.getHooks());
       }
     }
-    
+
     // Sort by priority
     return hooks.sort((a, b) => (b.priority || 50) - (a.priority || 50));
   }
@@ -473,14 +503,14 @@ export class PolicyPackManager {
    * @returns {Object} Statistics
    */
   getStats() {
-    const activePacks = this.getActivePolicyPacks();
+    const _activePacks = this.getActivePolicyPacks();
     const allHooks = this.getActiveHooks();
-    
+
     return {
       totalPacks: this.packs.size,
       activePacks: this.activePacks.size,
       totalHooks: allHooks.length,
-      packs: Array.from(this.packs.values()).map(pack => pack.getStats())
+      packs: Array.from(this.packs.values()).map(pack => pack.getStats()),
     };
   }
 }
@@ -492,11 +522,11 @@ export class PolicyPackManager {
  */
 export async function createPolicyPackFromDirectory(packDir) {
   const manifestPath = join(packDir, 'manifest.json');
-  
+
   if (!existsSync(manifestPath)) {
     throw new Error(`Manifest file not found: ${manifestPath}`);
   }
-  
+
   const manager = new PolicyPackManager(dirname(packDir));
   return manager.loadPolicyPack(manifestPath);
 }
@@ -518,7 +548,7 @@ export function createPolicyPackManifest(name, hooks, options = {}) {
       tags: options.tags || [],
       ontology: options.ontology || [],
       dependencies: options.dependencies || [],
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
     },
     config: {
       enabled: options.enabled !== false,
@@ -526,17 +556,17 @@ export function createPolicyPackManifest(name, hooks, options = {}) {
       strictMode: options.strictMode || false,
       timeout: options.timeout || 30000,
       retries: options.retries || 1,
-      conditions: options.conditions || {}
+      conditions: options.conditions || {},
     },
     hooks: hooks.map(hook => ({
       name: hook.meta.name,
       file: `${hook.meta.name}.mjs`,
       enabled: true,
-      priority: hook.priority || 50
+      priority: hook.priority || 50,
     })),
     conditions: options.conditions || [],
-    resources: options.resources || []
+    resources: options.resources || [],
   };
-  
+
   return PolicyPackManifestSchema.parse(manifest);
 }

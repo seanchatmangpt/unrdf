@@ -3,28 +3,29 @@
  * @module project-engine/template-infer
  */
 
-import { Store, DataFactory } from 'n3'
-import { z } from 'zod'
+import { Store, DataFactory } from 'n3';
+import { z } from 'zod';
 
-const { namedNode, literal } = DataFactory
+const { namedNode, literal } = DataFactory;
 
 /* ========================================================================= */
 /* Zod Schemas                                                              */
 /* ========================================================================= */
 
 const InferOptionsSchema = z.object({
-  fsStore: z.any().refine(
-    (val) => val && typeof val.getQuads === 'function',
-    { message: 'fsStore must be an RDF store with getQuads method' }
-  ),
+  fsStore: z.any().refine(val => val && typeof val.getQuads === 'function', {
+    message: 'fsStore must be an RDF store with getQuads method',
+  }),
   domainStore: z.any().nullable().optional(),
-  stackProfile: z.object({
-    uiFramework: z.string().nullable().optional(),
-    webFramework: z.string().nullable().optional(),
-    testFramework: z.string().nullable().optional(),
-    language: z.string().nullable().optional(),
-  }).optional(),
-})
+  stackProfile: z
+    .object({
+      uiFramework: z.string().nullable().optional(),
+      webFramework: z.string().nullable().optional(),
+      testFramework: z.string().nullable().optional(),
+      language: z.string().nullable().optional(),
+    })
+    .optional(),
+});
 
 export const TemplateSchema = z.object({
   id: z.string(),
@@ -34,12 +35,12 @@ export const TemplateSchema = z.object({
   invariants: z.array(z.string()),
   variantCount: z.number(),
   examples: z.array(z.string()),
-})
+});
 
 export const InferSummarySchema = z.object({
   templateCount: z.number(),
   byKind: z.record(z.string(), z.number()),
-})
+});
 
 /* ========================================================================= */
 /* Namespaces                                                               */
@@ -53,7 +54,7 @@ const NS = {
   dom: 'http://example.org/unrdf/domain#',
   unproj: 'http://example.org/unrdf/project#',
   fs: 'http://example.org/unrdf/filesystem#',
-}
+};
 
 /* ========================================================================= */
 /* File Family Patterns                                                     */
@@ -72,7 +73,7 @@ const FILE_FAMILY_PATTERNS = [
       /^components\/([^/]+)\/(index|[A-Z][a-zA-Z]+)\.(tsx?|jsx?)$/,
     ],
     outputTemplate: 'src/features/{{entity}}/{{Entity}}{{suffix}}.{{ext}}',
-    extractVars: (match, path) => ({
+    extractVars: (match, _path) => ({
       entity: match[1],
       Entity: capitalize(match[1]),
       suffix: match[3] || '',
@@ -88,7 +89,7 @@ const FILE_FAMILY_PATTERNS = [
       /^app\/([^/]+)\/page\.(tsx?|jsx?)$/,
     ],
     outputTemplate: 'src/app/{{route}}/page.{{ext}}',
-    extractVars: (match, path) => ({
+    extractVars: (match, _path) => ({
       route: match[1],
       ext: match[2] || 'tsx',
     }),
@@ -101,7 +102,7 @@ const FILE_FAMILY_PATTERNS = [
       /^app\/api\/([^/]+)\/route\.(tsx?|ts)$/,
     ],
     outputTemplate: 'src/app/{{route}}/route.{{ext}}',
-    extractVars: (match, path) => ({
+    extractVars: (match, _path) => ({
       route: match[1],
       ext: match[2] || 'ts',
     }),
@@ -115,7 +116,7 @@ const FILE_FAMILY_PATTERNS = [
       /^([^/]+)\.(test|spec)\.(tsx?|jsx?)$/,
     ],
     outputTemplate: 'test/{{module}}/{{name}}.{{testType}}.{{ext}}',
-    extractVars: (match, path) => ({
+    extractVars: (match, _path) => ({
       module: match[1] || 'unit',
       name: match[2] || match[1],
       testType: match[3] || 'test',
@@ -130,7 +131,7 @@ const FILE_FAMILY_PATTERNS = [
       /^src\/server\/([^/]+)\.(tsx?|ts)$/,
     ],
     outputTemplate: 'src/api/{{endpoint}}/route.{{ext}}',
-    extractVars: (match, path) => ({
+    extractVars: (match, _path) => ({
       endpoint: match[1],
       ext: match[3] || match[2] || 'ts',
     }),
@@ -143,7 +144,7 @@ const FILE_FAMILY_PATTERNS = [
       /^src\/features\/([^/]+)\/hooks\/(use[A-Z][a-zA-Z]+)\.(tsx?|ts)$/,
     ],
     outputTemplate: 'src/hooks/{{hookName}}.{{ext}}',
-    extractVars: (match, path) => ({
+    extractVars: (match, _path) => ({
       hookName: match[1] || match[2],
       feature: match[1] && match[2] ? match[1] : null,
       ext: match[2] || match[3] || 'ts',
@@ -157,7 +158,7 @@ const FILE_FAMILY_PATTERNS = [
       /^lib\/([^/]+)\.(tsx?|ts)$/,
     ],
     outputTemplate: 'src/services/{{serviceName}}.service.{{ext}}',
-    extractVars: (match, path) => ({
+    extractVars: (match, _path) => ({
       serviceName: match[1],
       ext: match[3] || match[2] || 'ts',
     }),
@@ -170,7 +171,7 @@ const FILE_FAMILY_PATTERNS = [
       /^types\/([^/]+)\.(tsx?|ts)$/,
     ],
     outputTemplate: 'src/schemas/{{schemaName}}.schema.{{ext}}',
-    extractVars: (match, path) => ({
+    extractVars: (match, _path) => ({
       schemaName: match[1],
       ext: match[3] || match[2] || 'ts',
     }),
@@ -183,7 +184,7 @@ const FILE_FAMILY_PATTERNS = [
       /^([A-Z][A-Z_]+)\.(md|mdx)$/,
     ],
     outputTemplate: 'docs/{{docName}}.{{ext}}',
-    extractVars: (match, path) => ({
+    extractVars: (match, _path) => ({
       docName: match[1],
       ext: match[2] || 'md',
     }),
@@ -196,12 +197,12 @@ const FILE_FAMILY_PATTERNS = [
       /^config\/([^/]+)\.(json|yaml|yml)$/,
     ],
     outputTemplate: '{{configName}}.config.{{ext}}',
-    extractVars: (match, path) => ({
+    extractVars: (match, _path) => ({
       configName: match[1],
       ext: match[2] || 'js',
     }),
   },
-]
+];
 
 /* ========================================================================= */
 /* Helper Functions                                                         */
@@ -213,8 +214,8 @@ const FILE_FAMILY_PATTERNS = [
  * @returns {string}
  */
 function capitalize(str) {
-  if (!str) return ''
-  return str.charAt(0).toUpperCase() + str.slice(1)
+  if (!str) return '';
+  return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
 /**
@@ -222,8 +223,8 @@ function capitalize(str) {
  * @param {string} str
  * @returns {string}
  */
-function toKebabCase(str) {
-  return str.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase()
+function _toKebabCase(str) {
+  return str.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
 }
 
 /**
@@ -232,29 +233,25 @@ function toKebabCase(str) {
  * @returns {string[]}
  */
 function extractFilePathsFromStore(fsStore) {
-  const paths = []
+  const paths = [];
 
   // Validate fsStore has getQuads method
   if (!fsStore || typeof fsStore.getQuads !== 'function') {
-    return paths
+    return paths;
   }
 
   try {
-    const quads = fsStore.getQuads(
-      null,
-      namedNode(`${NS.fs}relativePath`),
-      null
-    )
+    const quads = fsStore.getQuads(null, namedNode(`${NS.fs}relativePath`), null);
 
     for (const quad of quads) {
-      paths.push(quad.object.value)
+      paths.push(quad.object.value);
     }
   } catch (e) {
     // Handle stores that don't support getQuads properly
-    return paths
+    return paths;
   }
 
-  return paths
+  return paths;
 }
 
 /**
@@ -263,30 +260,30 @@ function extractFilePathsFromStore(fsStore) {
  * @returns {Map<string, {pattern: Object, matches: Array<{path: string, match: RegExpMatchArray, vars: Object}>}>}
  */
 function groupFilesByFamily(paths) {
-  const groups = new Map()
+  const groups = new Map();
 
   for (const pattern of FILE_FAMILY_PATTERNS) {
     groups.set(pattern.kind, {
       pattern,
       matches: [],
-    })
+    });
   }
 
   for (const path of paths) {
     for (const familyPattern of FILE_FAMILY_PATTERNS) {
       for (const regex of familyPattern.patterns) {
-        const match = path.match(regex)
+        const match = path.match(regex);
         if (match) {
-          const vars = familyPattern.extractVars(match, path)
-          const group = groups.get(familyPattern.kind)
-          group.matches.push({ path, match, vars })
-          break
+          const vars = familyPattern.extractVars(match, path);
+          const group = groups.get(familyPattern.kind);
+          group.matches.push({ path, match, vars });
+          break;
         }
       }
     }
   }
 
-  return groups
+  return groups;
 }
 
 /**
@@ -295,42 +292,42 @@ function groupFilesByFamily(paths) {
  * @returns {string[]}
  */
 function extractInvariants(matches) {
-  if (matches.length < 2) return []
+  if (matches.length < 2) return [];
 
-  const invariants = []
+  const invariants = [];
 
   // Find common path prefixes
   const prefixes = matches.map(m => {
-    const parts = m.path.split('/')
-    return parts.slice(0, -1).join('/')
-  })
-  const commonPrefix = findCommonPrefix(prefixes)
+    const parts = m.path.split('/');
+    return parts.slice(0, -1).join('/');
+  });
+  const commonPrefix = findCommonPrefix(prefixes);
   if (commonPrefix) {
-    invariants.push(`path_prefix:${commonPrefix}`)
+    invariants.push(`path_prefix:${commonPrefix}`);
   }
 
   // Find common extensions
   const extensions = matches.map(m => {
-    const parts = m.path.split('.')
-    return parts[parts.length - 1]
-  })
-  const uniqueExts = [...new Set(extensions)]
+    const parts = m.path.split('.');
+    return parts[parts.length - 1];
+  });
+  const uniqueExts = [...new Set(extensions)];
   if (uniqueExts.length === 1) {
-    invariants.push(`extension:${uniqueExts[0]}`)
+    invariants.push(`extension:${uniqueExts[0]}`);
   }
 
   // Find common naming patterns
   const baseNames = matches.map(m => {
-    const parts = m.path.split('/')
-    const fileName = parts[parts.length - 1]
-    return fileName.split('.')[0]
-  })
-  const namingPattern = detectNamingPattern(baseNames)
+    const parts = m.path.split('/');
+    const fileName = parts[parts.length - 1];
+    return fileName.split('.')[0];
+  });
+  const namingPattern = detectNamingPattern(baseNames);
   if (namingPattern) {
-    invariants.push(`naming:${namingPattern}`)
+    invariants.push(`naming:${namingPattern}`);
   }
 
-  return invariants
+  return invariants;
 }
 
 /**
@@ -339,16 +336,16 @@ function extractInvariants(matches) {
  * @returns {string}
  */
 function findCommonPrefix(strings) {
-  if (strings.length === 0) return ''
-  if (strings.length === 1) return strings[0]
+  if (strings.length === 0) return '';
+  if (strings.length === 1) return strings[0];
 
-  let prefix = strings[0]
+  let prefix = strings[0];
   for (let i = 1; i < strings.length; i++) {
     while (!strings[i].startsWith(prefix) && prefix.length > 0) {
-      prefix = prefix.slice(0, -1)
+      prefix = prefix.slice(0, -1);
     }
   }
-  return prefix
+  return prefix;
 }
 
 /**
@@ -363,15 +360,15 @@ function detectNamingPattern(names) {
     'kebab-case': /^[a-z][a-z0-9-]*$/,
     snake_case: /^[a-z][a-z0-9_]*$/,
     index: /^index$/,
-  }
+  };
 
   for (const [name, regex] of Object.entries(patterns)) {
     if (names.every(n => regex.test(n))) {
-      return name
+      return name;
     }
   }
 
-  return null
+  return null;
 }
 
 /**
@@ -380,8 +377,8 @@ function detectNamingPattern(names) {
  * @returns {string[]}
  */
 function extractVariablesFromPattern(pattern) {
-  const matches = pattern.match(/\{\{(\w+)\}\}/g) || []
-  return matches.map(m => m.replace(/\{\{|\}\}/g, ''))
+  const matches = pattern.match(/\{\{(\w+)\}\}/g) || [];
+  return matches.map(m => m.replace(/\{\{|\}\}/g, ''));
 }
 
 /**
@@ -391,7 +388,7 @@ function extractVariablesFromPattern(pattern) {
  * @returns {string}
  */
 function generateTemplateId(kind, index) {
-  return `${kind}Template${index > 0 ? index + 1 : ''}`
+  return `${kind}Template${index > 0 ? index + 1 : ''}`;
 }
 
 /* ========================================================================= */
@@ -404,61 +401,37 @@ function generateTemplateId(kind, index) {
  * @param {Object} template
  */
 function addTemplateToStore(store, template) {
-  const templateIri = namedNode(`${NS.gen}${template.id}`)
+  const templateIri = namedNode(`${NS.gen}${template.id}`);
 
   // rdf:type gen:Template
-  store.addQuad(
-    templateIri,
-    namedNode(`${NS.rdf}type`),
-    namedNode(`${NS.gen}Template`)
-  )
+  store.addQuad(templateIri, namedNode(`${NS.rdf}type`), namedNode(`${NS.gen}Template`));
 
   // gen:templateKind
-  store.addQuad(
-    templateIri,
-    namedNode(`${NS.gen}templateKind`),
-    literal(template.kind)
-  )
+  store.addQuad(templateIri, namedNode(`${NS.gen}templateKind`), literal(template.kind));
 
   // gen:outputPattern
-  store.addQuad(
-    templateIri,
-    namedNode(`${NS.gen}outputPattern`),
-    literal(template.outputPattern)
-  )
+  store.addQuad(templateIri, namedNode(`${NS.gen}outputPattern`), literal(template.outputPattern));
 
   // gen:variantCount
   store.addQuad(
     templateIri,
     namedNode(`${NS.gen}variantCount`),
     literal(template.variantCount, namedNode(`${NS.xsd}integer`))
-  )
+  );
 
   // gen:variable (multiple)
   for (const variable of template.variables) {
-    store.addQuad(
-      templateIri,
-      namedNode(`${NS.gen}variable`),
-      literal(variable)
-    )
+    store.addQuad(templateIri, namedNode(`${NS.gen}variable`), literal(variable));
   }
 
   // gen:invariant (multiple)
   for (const invariant of template.invariants) {
-    store.addQuad(
-      templateIri,
-      namedNode(`${NS.gen}invariant`),
-      literal(invariant)
-    )
+    store.addQuad(templateIri, namedNode(`${NS.gen}invariant`), literal(invariant));
   }
 
   // gen:example (multiple, max 3)
   for (const example of template.examples.slice(0, 3)) {
-    store.addQuad(
-      templateIri,
-      namedNode(`${NS.gen}example`),
-      literal(example)
-    )
+    store.addQuad(templateIri, namedNode(`${NS.gen}example`), literal(example));
   }
 
   // gen:producesRole
@@ -466,7 +439,7 @@ function addTemplateToStore(store, template) {
     templateIri,
     namedNode(`${NS.gen}producesRole`),
     namedNode(`${NS.unproj}${template.kind}`)
-  )
+  );
 }
 
 /* ========================================================================= */
@@ -496,35 +469,35 @@ export function inferTemplatesFromProject(fsStore, domainStore, stackProfile) {
     fsStore,
     domainStore,
     stackProfile,
-  })
+  });
 
-  const store = new Store()
+  const store = new Store();
   const summary = {
     templateCount: 0,
     byKind: {},
-  }
+  };
 
   // Extract file paths from fsStore
-  const paths = extractFilePathsFromStore(validated.fsStore)
+  const paths = extractFilePathsFromStore(validated.fsStore);
 
   // Group files by family pattern
-  const groups = groupFilesByFamily(paths)
+  const groups = groupFilesByFamily(paths);
 
   // Process each family group
   for (const [kind, group] of groups) {
-    const { pattern, matches } = group
+    const { pattern, matches } = group;
 
     // Skip families with too few matches (need >= 2 for pattern detection)
-    if (matches.length < 2) continue
+    if (matches.length < 2) continue;
 
     // Extract invariants from the matched files
-    const invariants = extractInvariants(matches)
+    const invariants = extractInvariants(matches);
 
     // Extract variables from the output pattern
-    const variables = extractVariablesFromPattern(pattern.outputTemplate)
+    const variables = extractVariablesFromPattern(pattern.outputTemplate);
 
     // Create template
-    const templateId = generateTemplateId(kind, 0)
+    const templateId = generateTemplateId(kind, 0);
     const template = {
       id: templateId,
       kind,
@@ -533,20 +506,20 @@ export function inferTemplatesFromProject(fsStore, domainStore, stackProfile) {
       invariants,
       variantCount: matches.length,
       examples: matches.map(m => m.path),
-    }
+    };
 
     // Add to store
-    addTemplateToStore(store, template)
+    addTemplateToStore(store, template);
 
     // Update summary
-    summary.templateCount++
-    summary.byKind[kind] = (summary.byKind[kind] || 0) + 1
+    summary.templateCount++;
+    summary.byKind[kind] = (summary.byKind[kind] || 0) + 1;
   }
 
   // Validate summary
-  InferSummarySchema.parse(summary)
+  InferSummarySchema.parse(summary);
 
-  return { store, summary }
+  return { store, summary };
 }
 
 /**
@@ -561,9 +534,9 @@ export function inferTemplatesFromProject(fsStore, domainStore, stackProfile) {
  * @returns {{store: Store, summary: {templateCount: number, byKind: Record<string, number>, boundEntities: number}}}
  */
 export function inferTemplatesWithDomainBinding(fsStore, domainStore, stackProfile) {
-  const { store, summary } = inferTemplatesFromProject(fsStore, domainStore, stackProfile)
+  const { store, summary } = inferTemplatesFromProject(fsStore, domainStore, stackProfile);
 
-  let boundEntities = 0
+  let boundEntities = 0;
 
   // Try to bind templates to domain entities
   if (domainStore) {
@@ -573,43 +546,35 @@ export function inferTemplatesWithDomainBinding(fsStore, domainStore, stackProfi
         null,
         namedNode(`${NS.rdf}type`),
         namedNode(`${NS.rdfs}Class`)
-      )
+      );
 
-      const entities = entityQuads.map(q => q.subject.value)
+      const entities = entityQuads.map(q => q.subject.value);
 
       // Get all templates from store
       const templateQuads = store.getQuads(
         null,
         namedNode(`${NS.rdf}type`),
         namedNode(`${NS.gen}Template`)
-      )
+      );
 
       // For each template, try to find matching entities
       for (const templateQuad of templateQuads) {
-        const templateIri = templateQuad.subject
+        const templateIri = templateQuad.subject;
 
         // Get examples for this template
-        const exampleQuads = store.getQuads(
-          templateIri,
-          namedNode(`${NS.gen}example`),
-          null
-        )
+        const exampleQuads = store.getQuads(templateIri, namedNode(`${NS.gen}example`), null);
 
         for (const exampleQuad of exampleQuads) {
-          const examplePath = exampleQuad.object.value
+          const examplePath = exampleQuad.object.value;
 
           // Try to match entity names in the path
           for (const entityIri of entities) {
-            const entityName = entityIri.split(/[#/]/).pop()
+            const entityName = entityIri.split(/[#/]/).pop();
             if (entityName && examplePath.toLowerCase().includes(entityName.toLowerCase())) {
               // Add binding
-              store.addQuad(
-                templateIri,
-                namedNode(`${NS.gen}targetsClass`),
-                namedNode(entityIri)
-              )
-              boundEntities++
-              break
+              store.addQuad(templateIri, namedNode(`${NS.gen}targetsClass`), namedNode(entityIri));
+              boundEntities++;
+              break;
             }
           }
         }
@@ -625,7 +590,7 @@ export function inferTemplatesWithDomainBinding(fsStore, domainStore, stackProfi
       ...summary,
       boundEntities,
     },
-  }
+  };
 }
 
 /**
@@ -636,41 +601,29 @@ export function inferTemplatesWithDomainBinding(fsStore, domainStore, stackProfi
  * @returns {Array<{iri: string, outputPattern: string, variantCount: number}>}
  */
 export function getTemplatesByKind(store, kind) {
-  const templates = []
+  const templates = [];
 
-  const templateQuads = store.getQuads(
-    null,
-    namedNode(`${NS.gen}templateKind`),
-    literal(kind)
-  )
+  const templateQuads = store.getQuads(null, namedNode(`${NS.gen}templateKind`), literal(kind));
 
   for (const quad of templateQuads) {
-    const templateIri = quad.subject.value
+    const templateIri = quad.subject.value;
 
     // Get output pattern
-    const patternQuads = store.getQuads(
-      quad.subject,
-      namedNode(`${NS.gen}outputPattern`),
-      null
-    )
-    const outputPattern = patternQuads[0]?.object.value || ''
+    const patternQuads = store.getQuads(quad.subject, namedNode(`${NS.gen}outputPattern`), null);
+    const outputPattern = patternQuads[0]?.object.value || '';
 
     // Get variant count
-    const countQuads = store.getQuads(
-      quad.subject,
-      namedNode(`${NS.gen}variantCount`),
-      null
-    )
-    const variantCount = parseInt(countQuads[0]?.object.value || '0', 10)
+    const countQuads = store.getQuads(quad.subject, namedNode(`${NS.gen}variantCount`), null);
+    const variantCount = parseInt(countQuads[0]?.object.value || '0', 10);
 
     templates.push({
       iri: templateIri,
       outputPattern,
       variantCount,
-    })
+    });
   }
 
-  return templates
+  return templates;
 }
 
 /**
@@ -680,41 +633,41 @@ export function getTemplatesByKind(store, kind) {
  * @returns {Object[]}
  */
 export function serializeTemplates(store) {
-  const templates = []
+  const templates = [];
 
   const templateQuads = store.getQuads(
     null,
     namedNode(`${NS.rdf}type`),
     namedNode(`${NS.gen}Template`)
-  )
+  );
 
   for (const quad of templateQuads) {
-    const iri = quad.subject
+    const iri = quad.subject;
 
     const template = {
       id: iri.value.split('#').pop(),
       iri: iri.value,
-    }
+    };
 
     // Get all properties
-    const propQuads = store.getQuads(iri, null, null)
+    const propQuads = store.getQuads(iri, null, null);
 
     for (const pq of propQuads) {
-      const propName = pq.predicate.value.split('#').pop()
-      const value = pq.object.value
+      const propName = pq.predicate.value.split('#').pop();
+      const value = pq.object.value;
 
-      if (propName === 'type') continue
+      if (propName === 'type') continue;
 
       if (['variable', 'invariant', 'example'].includes(propName)) {
-        if (!template[propName]) template[propName] = []
-        template[propName].push(value)
+        if (!template[propName]) template[propName] = [];
+        template[propName].push(value);
       } else {
-        template[propName] = value
+        template[propName] = value;
       }
     }
 
-    templates.push(template)
+    templates.push(template);
   }
 
-  return templates
+  return templates;
 }

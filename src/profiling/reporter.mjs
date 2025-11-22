@@ -28,7 +28,7 @@ export class Reporter {
    * @param {Object} [options={}] - Format options
    * @returns {string} Terminal formatted string
    */
-  static toTerminal(profile, options = {}) {
+  static toTerminal(profile, _options = {}) {
     const lines = [];
     const { metadata, latency, memory, cpu } = profile;
 
@@ -73,9 +73,15 @@ export class Reporter {
       lines.push(`  RSS:         ${this.formatBytes(memory.rss)}`);
 
       if (memory.trend) {
-        const arrow = memory.trend.direction === 'growing' ? '↗' :
-                     memory.trend.direction === 'shrinking' ? '↘' : '→';
-        lines.push(`  Trend:       ${arrow} ${memory.trend.direction} (${this.formatBytes(memory.trend.growthRate)}/s)`);
+        const arrow =
+          memory.trend.direction === 'growing'
+            ? '↗'
+            : memory.trend.direction === 'shrinking'
+              ? '↘'
+              : '→';
+        lines.push(
+          `  Trend:       ${arrow} ${memory.trend.direction} (${this.formatBytes(memory.trend.growthRate)}/s)`
+        );
       }
 
       if (memory.leakDetected) {
@@ -89,7 +95,9 @@ export class Reporter {
       lines.push('🔥 CPU Hot Functions (Top 10):');
       cpu.hotFunctions.slice(0, 10).forEach((fn, index) => {
         lines.push(`  ${(index + 1).toString().padStart(2)}. ${fn.name.slice(0, 60)}`);
-        lines.push(`      ${fn.selfTimePercent.toFixed(2)}% | ${(fn.selfTime / 1000).toFixed(2)} ms | ${fn.hitCount} hits`);
+        lines.push(
+          `      ${fn.selfTimePercent.toFixed(2)}% | ${(fn.selfTime / 1000).toFixed(2)} ms | ${fn.hitCount} hits`
+        );
       });
       lines.push('');
     }
@@ -193,7 +201,9 @@ export class Reporter {
     <p>Profiled at: ${new Date(metadata.timestamp).toLocaleString()}</p>
   </div>
 
-  ${latency ? `
+  ${
+    latency
+      ? `
   <div class="section">
     <h2>📊 Latency Metrics</h2>
     <div class="metric">
@@ -222,9 +232,13 @@ export class Reporter {
     </div>
     ${latency.histogram ? this.renderHistogram(latency.histogram) : ''}
   </div>
-  ` : ''}
+  `
+      : ''
+  }
 
-  ${memory ? `
+  ${
+    memory
+      ? `
   <div class="section">
     <h2>💾 Memory Metrics</h2>
     <div class="metric">
@@ -239,27 +253,42 @@ export class Reporter {
       <span class="metric-label">RSS</span>
       <span class="metric-value">${this.formatBytes(memory.rss)}</span>
     </div>
-    ${memory.trend ? `
+    ${
+      memory.trend
+        ? `
     <div class="metric">
       <span class="metric-label">Trend</span>
       <span class="metric-value">${memory.trend.direction} (${this.formatBytes(memory.trend.growthRate)}/s)</span>
     </div>
-    ` : ''}
+    `
+        : ''
+    }
     ${memory.leakDetected ? '<div class="warning">⚠️ Potential memory leak detected!</div>' : ''}
   </div>
-  ` : ''}
+  `
+      : ''
+  }
 
-  ${cpu && cpu.hotFunctions ? `
+  ${
+    cpu && cpu.hotFunctions
+      ? `
   <div class="section">
     <h2>🔥 CPU Hot Functions</h2>
-    ${cpu.hotFunctions.slice(0, 10).map((fn, i) => `
+    ${cpu.hotFunctions
+      .slice(0, 10)
+      .map(
+        (fn, i) => `
       <div class="hot-function">
         <strong>${i + 1}. ${this.escapeHtml(fn.name)}</strong><br>
         ${fn.selfTimePercent.toFixed(2)}% | ${(fn.selfTime / 1000).toFixed(2)} ms | ${fn.hitCount} hits
       </div>
-    `).join('')}
+    `
+      )
+      .join('')}
   </div>
-  ` : ''}
+  `
+      : ''
+  }
 </body>
 </html>`;
 
@@ -277,16 +306,18 @@ export class Reporter {
     return `
     <div class="histogram">
       <h3>Distribution</h3>
-      ${buckets.map(([bucket, count]) => {
-        const width = (count / maxCount) * 100;
-        return `
+      ${buckets
+        .map(([bucket, count]) => {
+          const width = (count / maxCount) * 100;
+          return `
         <div class="histogram-bar">
           <span class="histogram-label">${bucket} ms</span>
           <div class="histogram-fill" style="width: ${width}%"></div>
           <span class="histogram-count">${count}</span>
         </div>
         `;
-      }).join('')}
+        })
+        .join('')}
     </div>
     `;
   }
@@ -348,7 +379,7 @@ export class Reporter {
       '<': '&lt;',
       '>': '&gt;',
       '"': '&quot;',
-      "'": '&#039;'
+      "'": '&#039;',
     };
     return text.replace(/[&<>"']/g, m => map[m]);
   }
@@ -364,12 +395,13 @@ export class Reporter {
       operationName: current.metadata.operationName,
       regression: false,
       improvements: [],
-      regressions: []
+      regressions: [],
     };
 
     // Compare latency
     if (baseline.latency && current.latency) {
-      const latencyChange = ((current.latency.p95 - baseline.latency.p95) / baseline.latency.p95) * 100;
+      const latencyChange =
+        ((current.latency.p95 - baseline.latency.p95) / baseline.latency.p95) * 100;
 
       if (latencyChange > 10) {
         comparison.regression = true;
@@ -377,22 +409,24 @@ export class Reporter {
           metric: 'latency.p95',
           baseline: baseline.latency.p95,
           current: current.latency.p95,
-          change: latencyChange
+          change: latencyChange,
         });
       } else if (latencyChange < -10) {
         comparison.improvements.push({
           metric: 'latency.p95',
           baseline: baseline.latency.p95,
           current: current.latency.p95,
-          change: latencyChange
+          change: latencyChange,
         });
       }
     }
 
     // Compare memory
     if (baseline.memory && current.memory) {
-      const memoryChange = ((current.memory.heapUsedDelta - baseline.memory.heapUsedDelta) /
-                           Math.abs(baseline.memory.heapUsedDelta)) * 100;
+      const memoryChange =
+        ((current.memory.heapUsedDelta - baseline.memory.heapUsedDelta) /
+          Math.abs(baseline.memory.heapUsedDelta)) *
+        100;
 
       if (memoryChange > 20) {
         comparison.regression = true;
@@ -400,7 +434,7 @@ export class Reporter {
           metric: 'memory.heapUsedDelta',
           baseline: baseline.memory.heapUsedDelta,
           current: current.memory.heapUsedDelta,
-          change: memoryChange
+          change: memoryChange,
         });
       }
     }

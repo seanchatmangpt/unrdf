@@ -123,7 +123,7 @@ describe('Profiler', () => {
 
       const budgetCheck = profiler.checkBudget(metrics, {
         p50: 50,
-        p95: 100
+        p95: 100,
       });
 
       assert.ok(budgetCheck.violations.length > 0);
@@ -149,7 +149,7 @@ describe('Profiler', () => {
       const profiler = new MemoryProfiler();
 
       const sessionId = profiler.start('memory-test');
-      const largeArray = new Array(100000).fill(0);
+      const _largeArray = new Array(100000).fill(0);
       await sleep(50);
       const metrics = profiler.stop(sessionId);
 
@@ -185,7 +185,7 @@ describe('Profiler', () => {
 
       const budgetCheck = profiler.checkBudget(metrics, {
         maxHeapDelta: 1024 * 1024, // 1 MB
-        maxGrowthRate: 1024 * 1024 // 1 MB/s
+        maxGrowthRate: 1024 * 1024, // 1 MB/s
       });
 
       assert.ok(typeof budgetCheck.passed === 'boolean');
@@ -208,7 +208,7 @@ describe('Profiler', () => {
       assert.ok(typeof available === 'boolean');
     });
 
-    it('should profile CPU usage when available', async function() {
+    it('should profile CPU usage when available', async function () {
       if (!CpuProfiler.isAvailable()) {
         this.skip();
         return;
@@ -229,7 +229,7 @@ describe('Profiler', () => {
       assert.ok(Array.isArray(metrics.hotFunctions));
     });
 
-    it('should check CPU budgets when available', async function() {
+    it('should check CPU budgets when available', async function () {
       if (!CpuProfiler.isAvailable()) {
         this.skip();
         return;
@@ -246,7 +246,7 @@ describe('Profiler', () => {
       });
 
       const budgetCheck = profiler.checkBudget(metrics, {
-        maxTotalTime: metrics.totalTime + 1000
+        maxTotalTime: metrics.totalTime + 1000,
       });
 
       assert.strictEqual(budgetCheck.passed, true);

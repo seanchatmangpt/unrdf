@@ -7,9 +7,7 @@ export {
   useKnowledgeStack,
   useCRUDStack,
   useDashboardStack,
-  useProductionStack
+  useProductionStack,
 } from './use-knowledge-stack.mjs';
 
-export {
-  useOfflineStore
-} from './use-offline-store.mjs';
+export { useOfflineStore } from './use-offline-store.mjs';

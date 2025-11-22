@@ -6,7 +6,7 @@
  * Metrics collection and validation utilities for OTEL-based validation.
  */
 
-import { metrics } from "@opentelemetry/api";
+import { metrics } from '@opentelemetry/api';
 
 /**
  * Metrics collector for validation
@@ -121,7 +121,7 @@ export class MetricsCollector {
    * @param {string} validationId - Validation ID
    * @param {Object} [attributes={}] - Additional attributes
    */
-  recordOperation(validationId, attributes = {}) {
+  recordOperation(validationId, _attributes = {}) {
     const collection = this.collections.get(validationId);
     if (collection) {
       collection.operations++;
@@ -162,19 +162,19 @@ export class MetricsCollector {
     const duration = Date.now() - collection.startTime;
 
     // Compute aggregates
-    const avgLatency = collection.latencies.length > 0
-      ? collection.latencies.reduce((a, b) => a + b, 0) / collection.latencies.length
-      : 0;
+    const avgLatency =
+      collection.latencies.length > 0
+        ? collection.latencies.reduce((a, b) => a + b, 0) / collection.latencies.length
+        : 0;
 
-    const errorRate = collection.operations > 0
-      ? collection.errors / collection.operations
-      : 0;
+    const errorRate = collection.operations > 0 ? collection.errors / collection.operations : 0;
 
     const throughput = collection.operations;
 
-    const memoryUsage = collection.memorySnapshots.length > 0
-      ? collection.memorySnapshots[collection.memorySnapshots.length - 1].heapUsed
-      : process.memoryUsage().heapUsed;
+    const memoryUsage =
+      collection.memorySnapshots.length > 0
+        ? collection.memorySnapshots[collection.memorySnapshots.length - 1].heapUsed
+        : process.memoryUsage().heapUsed;
 
     // Record final metrics
     this.histograms.duration.record(duration, { validation_id: validationId });

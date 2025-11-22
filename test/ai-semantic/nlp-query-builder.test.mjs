@@ -17,7 +17,7 @@ describe('NLPQueryBuilder', () => {
     store = new Store();
     builder = createNLPQueryBuilder({
       cacheSize: 100,
-      enableLLM: false // Disable LLM for tests
+      enableLLM: false, // Disable LLM for tests
     });
 
     // Add test data with labels

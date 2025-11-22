@@ -3,7 +3,7 @@
  * Tests connection state, subscriptions, and event handling
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, _beforeEach, vi } from 'vitest';
 
 describe('useSubscriptionManager', () => {
   describe('Subscription Creation', () => {
@@ -15,7 +15,7 @@ describe('useSubscriptionManager', () => {
         const subscriptionId = options.id || `sub-${Date.now()}`;
         subscriptions.set(subscriptionId, {
           pattern: ptrn,
-          options
+          options,
         });
         return { subscriptionId };
       };
@@ -61,16 +61,16 @@ describe('useSubscriptionManager', () => {
           pattern,
           options: {
             filter: options.filter,
-            bufferSize: options.bufferSize || 100
-          }
+            bufferSize: options.bufferSize || 100,
+          },
         });
         return { subscriptionId: id };
       };
 
       await subscribe('?s ?p ?o', {
         id: 'test',
-        filter: (e) => e.value > 100,
-        bufferSize: 50
+        filter: e => e.value > 100,
+        bufferSize: 50,
       });
 
       const sub = subscriptions.get('test');
@@ -83,10 +83,10 @@ describe('useSubscriptionManager', () => {
     it('should unsubscribe by ID', async () => {
       const subscriptions = new Map([
         ['sub-1', { pattern: '?s ?p ?o' }],
-        ['sub-2', { pattern: '?s schema:name ?name' }]
+        ['sub-2', { pattern: '?s schema:name ?name' }],
       ]);
 
-      const unsubscribe = async (subscriptionId) => {
+      const unsubscribe = async subscriptionId => {
         if (!subscriptions.has(subscriptionId)) {
           throw new Error(`Subscription ${subscriptionId} not found`);
         }
@@ -103,7 +103,7 @@ describe('useSubscriptionManager', () => {
     it('should throw error for non-existent subscription', async () => {
       const subscriptions = new Map();
 
-      const unsubscribe = async (subscriptionId) => {
+      const unsubscribe = async subscriptionId => {
         if (!subscriptions.has(subscriptionId)) {
           throw new Error(`Subscription ${subscriptionId} not found`);
         }
@@ -116,7 +116,7 @@ describe('useSubscriptionManager', () => {
       const subscriptions = new Map([
         ['sub-1', { pattern: '?s ?p ?o' }],
         ['sub-2', { pattern: '?s schema:name ?name' }],
-        ['sub-3', { pattern: '?s schema:price ?price' }]
+        ['sub-3', { pattern: '?s schema:price ?price' }],
       ]);
 
       const unsubscribeAll = async () => {
@@ -135,7 +135,7 @@ describe('useSubscriptionManager', () => {
       let isActive = false;
       const subscriptions = new Map();
 
-      const subscribe = (pattern) => {
+      const subscribe = pattern => {
         subscriptions.set(`sub-${Date.now()}`, { pattern });
         isActive = subscriptions.size > 0;
       };
@@ -149,7 +149,7 @@ describe('useSubscriptionManager', () => {
       let isActive = true;
       const subscriptions = new Map([['sub-1', {}]]);
 
-      const unsubscribe = (id) => {
+      const unsubscribe = id => {
         subscriptions.delete(id);
         isActive = subscriptions.size > 0;
       };
@@ -162,7 +162,7 @@ describe('useSubscriptionManager', () => {
     it('should remain active with multiple subscriptions', () => {
       const subscriptions = new Map([
         ['sub-1', {}],
-        ['sub-2', {}]
+        ['sub-2', {}],
       ]);
 
       subscriptions.delete('sub-1');
@@ -177,7 +177,7 @@ describe('useSubscriptionManager', () => {
       const maxBuffer = 100;
       let events = [];
 
-      const addEvent = (event) => {
+      const addEvent = event => {
         events.push(event);
         if (events.length > maxBuffer) {
           events = events.slice(-maxBuffer);
@@ -234,7 +234,7 @@ describe('useSubscriptionManager', () => {
       const enrichedEvent = {
         ...event,
         subscriptionId,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
 
       expect(enrichedEvent.subscriptionId).toBe('sub-123');
@@ -272,7 +272,9 @@ describe('useSubscriptionManager', () => {
     it('should pause subscription', async () => {
       let isPaused = false;
       const subscription = {
-        pause: async () => { isPaused = true; }
+        pause: async () => {
+          isPaused = true;
+        },
       };
 
       await subscription.pause();
@@ -283,7 +285,9 @@ describe('useSubscriptionManager', () => {
     it('should resume subscription', async () => {
       let isPaused = true;
       const subscription = {
-        resume: async () => { isPaused = false; }
+        resume: async () => {
+          isPaused = false;
+        },
       };
 
       await subscription.resume();
@@ -294,7 +298,7 @@ describe('useSubscriptionManager', () => {
     it('should throw error for non-existent subscription on pause', async () => {
       const subscriptions = new Map();
 
-      const pause = async (subscriptionId) => {
+      const pause = async subscriptionId => {
         const sub = subscriptions.get(subscriptionId);
         if (!sub) {
           throw new Error(`Subscription ${subscriptionId} not found`);
@@ -307,7 +311,7 @@ describe('useSubscriptionManager', () => {
     it('should throw error for non-existent subscription on resume', async () => {
       const subscriptions = new Map();
 
-      const resume = async (subscriptionId) => {
+      const resume = async subscriptionId => {
         const sub = subscriptions.get(subscriptionId);
         if (!sub) {
           throw new Error(`Subscription ${subscriptionId} not found`);
@@ -321,10 +325,10 @@ describe('useSubscriptionManager', () => {
   describe('Get Subscription', () => {
     it('should retrieve subscription by ID', () => {
       const subscriptions = new Map([
-        ['sub-1', { pattern: '?s ?p ?o', options: { bufferSize: 50 } }]
+        ['sub-1', { pattern: '?s ?p ?o', options: { bufferSize: 50 } }],
       ]);
 
-      const getSubscription = (id) => subscriptions.get(id);
+      const getSubscription = id => subscriptions.get(id);
 
       const result = getSubscription('sub-1');
 
@@ -335,7 +339,7 @@ describe('useSubscriptionManager', () => {
     it('should return undefined for non-existent subscription', () => {
       const subscriptions = new Map();
 
-      const getSubscription = (id) => subscriptions.get(id);
+      const getSubscription = id => subscriptions.get(id);
 
       const result = getSubscription('non-existent');
 
@@ -347,14 +351,14 @@ describe('useSubscriptionManager', () => {
     it('should return array of subscriptions', () => {
       const subscriptions = new Map([
         ['sub-1', { pattern: '?s ?p ?o', options: {} }],
-        ['sub-2', { pattern: '?s schema:name ?name', options: {} }]
+        ['sub-2', { pattern: '?s schema:name ?name', options: {} }],
       ]);
 
       const getList = () => {
         return Array.from(subscriptions.entries()).map(([id, sub]) => ({
           id,
           pattern: sub.pattern,
-          options: sub.options
+          options: sub.options,
         }));
       };
 
@@ -371,7 +375,7 @@ describe('useSubscriptionManager', () => {
       const getList = () => {
         return Array.from(subscriptions.entries()).map(([id, sub]) => ({
           id,
-          pattern: sub.pattern
+          pattern: sub.pattern,
         }));
       };
 
@@ -433,14 +437,14 @@ describe('useSubscriptionManager', () => {
 
   describe('Pattern Filtering', () => {
     it('should apply filter function to events', () => {
-      const filter = (delta) => {
+      const filter = delta => {
         return delta.added.some(q => parseFloat(q.object.value) > 100);
       };
 
       const events = [
         { added: [{ object: { value: '50' } }] },
         { added: [{ object: { value: '150' } }] },
-        { added: [{ object: { value: '200' } }] }
+        { added: [{ object: { value: '200' } }] },
       ];
 
       const filtered = events.filter(filter);

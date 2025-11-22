@@ -24,7 +24,9 @@ export class Paper {
     // Validate family
     const familyResult = PaperFamilySchema.safeParse(family);
     if (!familyResult.success) {
-      throw new Error(`Invalid paper family: ${family}. Valid families: ${PAPER_FAMILIES.map((f) => f.name).join(', ')}`);
+      throw new Error(
+        `Invalid paper family: ${family}. Valid families: ${PAPER_FAMILIES.map(f => f.name).join(', ')}`
+      );
     }
 
     /** @type {string} */
@@ -54,7 +56,7 @@ export class Paper {
    * @returns {string[]}
    */
   getDefaultSections() {
-    const familyDef = PAPER_FAMILIES.find((f) => f.name === this.family);
+    const familyDef = PAPER_FAMILIES.find(f => f.name === this.family);
     return familyDef ? [...familyDef.sections] : [];
   }
 
@@ -63,7 +65,7 @@ export class Paper {
    * @returns {{name: string, label: string, sections: string[]}|undefined}
    */
   getFamilyDefinition() {
-    return PAPER_FAMILIES.find((f) => f.name === this.family);
+    return PAPER_FAMILIES.find(f => f.name === this.family);
   }
 
   /**
@@ -165,7 +167,7 @@ export class Paper {
    * @returns {Array<{name: string, label: string, sections: string[]}>}
    */
   static all() {
-    return PAPER_FAMILIES.map((f) => ({ ...f, sections: [...f.sections] }));
+    return PAPER_FAMILIES.map(f => ({ ...f, sections: [...f.sections] }));
   }
 
   /**
@@ -174,7 +176,7 @@ export class Paper {
    * @returns {{name: string, label: string, sections: string[]}|undefined}
    */
   static getFamily(name) {
-    const family = PAPER_FAMILIES.find((f) => f.name === name);
+    const family = PAPER_FAMILIES.find(f => f.name === name);
     return family ? { ...family, sections: [...family.sections] } : undefined;
   }
 

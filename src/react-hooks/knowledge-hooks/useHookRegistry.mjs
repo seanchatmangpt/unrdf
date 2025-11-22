@@ -49,52 +49,67 @@ export function useHookRegistry() {
   /**
    * Get hooks by type
    */
-  const getByType = useCallback((type) => {
-    return hooks.filter(hook =>
-      hook.meta?.type === type || hook.when?.event?.includes(type)
-    );
-  }, [hooks]);
+  const getByType = useCallback(
+    type => {
+      return hooks.filter(hook => hook.meta?.type === type || hook.when?.event?.includes(type));
+    },
+    [hooks]
+  );
 
   /**
    * Get hooks by event
    */
-  const getByEvent = useCallback((event) => {
-    return hooks.filter(hook =>
-      hook.when?.event === event || hook.when?.event?.includes(event)
-    );
-  }, [hooks]);
+  const getByEvent = useCallback(
+    event => {
+      return hooks.filter(hook => hook.when?.event === event || hook.when?.event?.includes(event));
+    },
+    [hooks]
+  );
 
   /**
    * Search hooks by name or description
    */
-  const search = useCallback((query) => {
-    const lowerQuery = query.toLowerCase();
-    return hooks.filter(hook =>
-      hook.meta?.name?.toLowerCase().includes(lowerQuery) ||
-      hook.meta?.description?.toLowerCase().includes(lowerQuery)
-    );
-  }, [hooks]);
+  const search = useCallback(
+    query => {
+      const lowerQuery = query.toLowerCase();
+      return hooks.filter(
+        hook =>
+          hook.meta?.name?.toLowerCase().includes(lowerQuery) ||
+          hook.meta?.description?.toLowerCase().includes(lowerQuery)
+      );
+    },
+    [hooks]
+  );
 
   /**
    * Get hook by exact name
    */
-  const getByName = useCallback((name) => {
-    return hooks.find(hook => hook.meta?.name === name);
-  }, [hooks]);
+  const getByName = useCallback(
+    name => {
+      return hooks.find(hook => hook.meta?.name === name);
+    },
+    [hooks]
+  );
 
   /**
    * Get hooks by author
    */
-  const getByAuthor = useCallback((author) => {
-    return hooks.filter(hook => hook.meta?.author === author);
-  }, [hooks]);
+  const getByAuthor = useCallback(
+    author => {
+      return hooks.filter(hook => hook.meta?.author === author);
+    },
+    [hooks]
+  );
 
   /**
    * Get hooks by version
    */
-  const getByVersion = useCallback((version) => {
-    return hooks.filter(hook => hook.meta?.version === version);
-  }, [hooks]);
+  const getByVersion = useCallback(
+    version => {
+      return hooks.filter(hook => hook.meta?.version === version);
+    },
+    [hooks]
+  );
 
   /**
    * Get registry statistics
@@ -117,7 +132,7 @@ export function useHookRegistry() {
       authors: Array.from(authors),
       typeCount: types.size,
       eventCount: events.size,
-      authorCount: authors.size
+      authorCount: authors.size,
     };
   }, [hooks]);
 
@@ -129,6 +144,6 @@ export function useHookRegistry() {
     getByAuthor,
     getByVersion,
     search,
-    stats
+    stats,
   };
 }

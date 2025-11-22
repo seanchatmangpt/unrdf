@@ -15,18 +15,20 @@ import { z } from 'zod';
 const OptimizationResultSchema = z.object({
   original: z.string(),
   optimized: z.string(),
-  rules: z.array(z.object({
-    name: z.string(),
-    applied: z.boolean(),
-    impact: z.enum(['high', 'medium', 'low']),
-    description: z.string()
-  })),
+  rules: z.array(
+    z.object({
+      name: z.string(),
+      applied: z.boolean(),
+      impact: z.enum(['high', 'medium', 'low']),
+      description: z.string(),
+    })
+  ),
   estimatedImprovement: z.object({
     before: z.number(),
     after: z.number(),
-    percentageGain: z.number()
+    percentageGain: z.number(),
   }),
-  timestamp: z.number()
+  timestamp: z.number(),
 });
 
 /**
@@ -44,13 +46,13 @@ export class DarkMatterOptimizer {
       enableOptionalOptimization: config.enableOptionalOptimization !== false,
       enableUnionOptimization: config.enableUnionOptimization !== false,
       aggressiveOptimization: config.aggressiveOptimization || false,
-      ...config
+      ...config,
     };
 
     this.rules = this._initializeRules();
     this.stats = {
       totalOptimizations: 0,
-      rulesApplied: new Map()
+      rulesApplied: new Map(),
     };
   }
 
@@ -66,43 +68,43 @@ export class DarkMatterOptimizer {
         enabled: this.config.enableFilterPushdown,
         impact: 'high',
         description: 'Push filters down to reduce intermediate results',
-        apply: (query) => this._applyFilterPushdown(query)
+        apply: query => this._applyFilterPushdown(query),
       },
       {
         name: 'join-reordering',
         enabled: this.config.enableJoinReordering,
         impact: 'high',
         description: 'Reorder joins to minimize intermediate results',
-        apply: (query) => this._applyJoinReordering(query)
+        apply: query => this._applyJoinReordering(query),
       },
       {
         name: 'optional-to-filter',
         enabled: this.config.enableOptionalOptimization,
         impact: 'medium',
         description: 'Replace OPTIONAL with FILTER EXISTS when possible',
-        apply: (query) => this._applyOptionalOptimization(query)
+        apply: query => this._applyOptionalOptimization(query),
       },
       {
         name: 'union-optimization',
         enabled: this.config.enableUnionOptimization,
         impact: 'medium',
         description: 'Optimize UNION clauses',
-        apply: (query) => this._applyUnionOptimization(query)
+        apply: query => this._applyUnionOptimization(query),
       },
       {
         name: 'limit-early',
         enabled: true,
         impact: 'high',
         description: 'Add LIMIT early for queries without aggregation',
-        apply: (query) => this._applyEarlyLimit(query)
+        apply: query => this._applyEarlyLimit(query),
       },
       {
         name: 'index-hints',
         enabled: true,
         impact: 'medium',
         description: 'Add index hints for common patterns',
-        apply: (query) => this._applyIndexHints(query)
-      }
+        apply: query => this._applyIndexHints(query),
+      },
     ];
   }
 
@@ -112,7 +114,7 @@ export class DarkMatterOptimizer {
    * @param {Object} [analysis] - Optional query analysis
    * @returns {Object} Optimization result
    */
-  optimize(query, analysis = null) {
+  optimize(query, _analysis = null) {
     let optimized = query;
     const appliedRules = [];
     let costBefore = this._estimateCost(query);
@@ -131,7 +133,7 @@ export class DarkMatterOptimizer {
             name: rule.name,
             applied: true,
             impact: rule.impact,
-            description: rule.description
+            description: rule.description,
           });
 
           // Update stats
@@ -142,7 +144,7 @@ export class DarkMatterOptimizer {
             name: rule.name,
             applied: false,
             impact: rule.impact,
-            description: rule.description
+            description: rule.description,
           });
         }
       } catch (error) {
@@ -151,9 +153,7 @@ export class DarkMatterOptimizer {
     }
 
     const costAfter = this._estimateCost(optimized);
-    const percentageGain = costBefore > 0
-      ? ((costBefore - costAfter) / costBefore) * 100
-      : 0;
+    const percentageGain = costBefore > 0 ? ((costBefore - costAfter) / costBefore) * 100 : 0;
 
     this.stats.totalOptimizations++;
 
@@ -164,9 +164,9 @@ export class DarkMatterOptimizer {
       estimatedImprovement: {
         before: costBefore,
         after: costAfter,
-        percentageGain
+        percentageGain,
       },
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
@@ -248,7 +248,7 @@ export class DarkMatterOptimizer {
         subject,
         predicate,
         object,
-        selectivity
+        selectivity,
       });
     }
 
@@ -326,8 +326,12 @@ export class DarkMatterOptimizer {
    */
   _applyEarlyLimit(query) {
     // If query has no LIMIT and no aggregation, add a reasonable default
-    if (query.includes('LIMIT') || query.includes('COUNT') ||
-        query.includes('SUM') || query.includes('AVG')) {
+    if (
+      query.includes('LIMIT') ||
+      query.includes('COUNT') ||
+      query.includes('SUM') ||
+      query.includes('AVG')
+    ) {
       return { query, modified: false };
     }
 
@@ -395,7 +399,7 @@ export class DarkMatterOptimizer {
   getStats() {
     return {
       totalOptimizations: this.stats.totalOptimizations,
-      rulesApplied: Object.fromEntries(this.stats.rulesApplied)
+      rulesApplied: Object.fromEntries(this.stats.rulesApplied),
     };
   }
 
@@ -405,7 +409,7 @@ export class DarkMatterOptimizer {
   resetStats() {
     this.stats = {
       totalOptimizations: 0,
-      rulesApplied: new Map()
+      rulesApplied: new Map(),
     };
   }
 }

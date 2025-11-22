@@ -19,7 +19,7 @@ export const ConnectionState = {
   HEALTHY: 'HEALTHY',
   DEGRADED: 'DEGRADED',
   UNHEALTHY: 'UNHEALTHY',
-  CIRCUIT_OPEN: 'CIRCUIT_OPEN'
+  CIRCUIT_OPEN: 'CIRCUIT_OPEN',
 };
 
 /**
@@ -28,37 +28,39 @@ export const ConnectionState = {
 const SidecarClientV2ConfigSchema = z.object({
   enabled: z.boolean().default(true),
   endpoint: z.string().default('localhost:50051'),
-  tls: z.object({
-    enabled: z.boolean().default(false),
-    ca: z.string().optional(),
-    cert: z.string().optional(),
-    key: z.string().optional()
-  }).optional(),
+  tls: z
+    .object({
+      enabled: z.boolean().default(false),
+      ca: z.string().optional(),
+      cert: z.string().optional(),
+      key: z.string().optional(),
+    })
+    .optional(),
   healthCheck: z.object({
     interval: z.number().int().positive().default(5000),
     timeout: z.number().int().positive().default(100),
-    retries: z.number().int().min(1).max(10).default(3)
+    retries: z.number().int().min(1).max(10).default(3),
   }),
   circuitBreaker: z.object({
     threshold: z.number().int().positive().default(3),
     resetTimeout: z.number().int().positive().default(30000),
-    halfOpenRequests: z.number().int().positive().default(3)
+    halfOpenRequests: z.number().int().positive().default(3),
   }),
   fallback: z.object({
     mode: z.enum(['local', 'none']).default('local'),
-    autoRecover: z.boolean().default(true)
+    autoRecover: z.boolean().default(true),
   }),
   retry: z.object({
     maxAttempts: z.number().int().min(1).max(10).default(3),
     initialDelay: z.number().int().positive().default(100),
     maxDelay: z.number().int().positive().default(1600),
-    multiplier: z.number().min(1).default(2)
+    multiplier: z.number().min(1).default(2),
   }),
   pool: z.object({
     minConnections: z.number().int().min(1).default(2),
     maxConnections: z.number().int().min(1).default(10),
-    idleTimeout: z.number().int().positive().default(60000)
-  })
+    idleTimeout: z.number().int().positive().default(60000),
+  }),
 });
 
 /**
@@ -89,7 +91,7 @@ export class SidecarClientV2 extends EventEmitter {
       failures: 0,
       state: 'CLOSED',
       lastFailureTime: null,
-      resetTimer: null
+      resetTimer: null,
     };
 
     // Health check state
@@ -97,7 +99,7 @@ export class SidecarClientV2 extends EventEmitter {
       lastCheckTime: null,
       consecutiveFailures: 0,
       consecutiveSuccesses: 0,
-      timer: null
+      timer: null,
     };
 
     // Metrics
@@ -112,7 +114,7 @@ export class SidecarClientV2 extends EventEmitter {
       timeouts: 0,
       connectionFailures: 0,
       circuitOpenCount: 0,
-      lastStateTransition: null
+      lastStateTransition: null,
     };
 
     // Initialize connection
@@ -133,34 +135,36 @@ export class SidecarClientV2 extends EventEmitter {
         enabled: process.env.KGC_SIDECAR_TLS_ENABLED === 'true' || false,
         ca: process.env.KGC_SIDECAR_TLS_CA || options.tls?.ca,
         cert: process.env.KGC_SIDECAR_TLS_CERT || options.tls?.cert,
-        key: process.env.KGC_SIDECAR_TLS_KEY || options.tls?.key
+        key: process.env.KGC_SIDECAR_TLS_KEY || options.tls?.key,
       },
       healthCheck: {
         interval: parseInt(process.env.KGC_SIDECAR_HEALTH_CHECK_INTERVAL || '5000'),
         timeout: parseInt(process.env.KGC_SIDECAR_HEALTH_CHECK_TIMEOUT || '100'),
-        retries: parseInt(process.env.KGC_SIDECAR_HEALTH_CHECK_RETRIES || '3')
+        retries: parseInt(process.env.KGC_SIDECAR_HEALTH_CHECK_RETRIES || '3'),
       },
       circuitBreaker: {
         threshold: parseInt(process.env.KGC_SIDECAR_CIRCUIT_BREAKER_THRESHOLD || '3'),
         resetTimeout: parseInt(process.env.KGC_SIDECAR_CIRCUIT_BREAKER_TIMEOUT || '30000'),
-        halfOpenRequests: parseInt(process.env.KGC_SIDECAR_CIRCUIT_BREAKER_HALF_OPEN_REQUESTS || '3')
+        halfOpenRequests: parseInt(
+          process.env.KGC_SIDECAR_CIRCUIT_BREAKER_HALF_OPEN_REQUESTS || '3'
+        ),
       },
       fallback: {
         mode: process.env.KGC_SIDECAR_FALLBACK_MODE || 'local',
-        autoRecover: process.env.KGC_SIDECAR_FALLBACK_AUTO_RECOVER !== 'false'
+        autoRecover: process.env.KGC_SIDECAR_FALLBACK_AUTO_RECOVER !== 'false',
       },
       retry: {
         maxAttempts: parseInt(process.env.KGC_SIDECAR_RETRY_MAX_ATTEMPTS || '3'),
         initialDelay: parseInt(process.env.KGC_SIDECAR_RETRY_INITIAL_DELAY || '100'),
         maxDelay: parseInt(process.env.KGC_SIDECAR_RETRY_MAX_DELAY || '1600'),
-        multiplier: parseFloat(process.env.KGC_SIDECAR_RETRY_MULTIPLIER || '2')
+        multiplier: parseFloat(process.env.KGC_SIDECAR_RETRY_MULTIPLIER || '2'),
       },
       pool: {
         minConnections: parseInt(process.env.KGC_SIDECAR_POOL_MIN_CONNECTIONS || '2'),
         maxConnections: parseInt(process.env.KGC_SIDECAR_POOL_MAX_CONNECTIONS || '10'),
-        idleTimeout: parseInt(process.env.KGC_SIDECAR_POOL_IDLE_TIMEOUT || '60000')
+        idleTimeout: parseInt(process.env.KGC_SIDECAR_POOL_IDLE_TIMEOUT || '60000'),
       },
-      ...options
+      ...options,
     };
   }
 
@@ -218,7 +222,7 @@ export class SidecarClientV2 extends EventEmitter {
       // Execute health check with timeout
       const result = await Promise.race([
         this.grpcClient.healthCheck(),
-        this._timeout(timeout, 'Health check timeout')
+        this._timeout(timeout, 'Health check timeout'),
       ]);
 
       const latency = Date.now() - startTime;
@@ -230,7 +234,7 @@ export class SidecarClientV2 extends EventEmitter {
         return {
           status: 'HEALTHY',
           latency,
-          metadata: result
+          metadata: result,
         };
       } else {
         this.healthCheck.consecutiveFailures++;
@@ -239,7 +243,7 @@ export class SidecarClientV2 extends EventEmitter {
         return {
           status: 'UNHEALTHY',
           latency,
-          error: `Sidecar status: ${result.status}`
+          error: `Sidecar status: ${result.status}`,
         };
       }
     } catch (error) {
@@ -256,7 +260,7 @@ export class SidecarClientV2 extends EventEmitter {
         status: 'UNHEALTHY',
         latency,
         error: error.message,
-        code: error.code
+        code: error.code,
       };
     } finally {
       this.healthCheck.lastCheckTime = Date.now();
@@ -303,7 +307,7 @@ export class SidecarClientV2 extends EventEmitter {
         maxRetries: this.config.retry.maxAttempts,
         connectionPool: this.config.pool,
         circuitBreaker: this.config.circuitBreaker,
-        enableHealthCheck: false // We manage health checks ourselves
+        enableHealthCheck: false, // We manage health checks ourselves
       });
 
       await this.grpcClient.connect(this.config.endpoint);
@@ -318,10 +322,12 @@ export class SidecarClientV2 extends EventEmitter {
   async _ensureLocalManager() {
     if (!this.localManager && this.config.fallback.mode === 'local') {
       // Lazy load local knowledge hook manager
-      const { KnowledgeHookManager } = await import('../../knowledge-engine/knowledge-hook-manager.mjs');
+      const { KnowledgeHookManager } = await import(
+        '../../knowledge-engine/knowledge-hook-manager.mjs'
+      );
       this.localManager = new KnowledgeHookManager({
         mode: 'local',
-        observability: { enabled: false } // Local mode doesn't need OTEL
+        observability: { enabled: false }, // Local mode doesn't need OTEL
       });
     }
   }
@@ -436,7 +442,10 @@ export class SidecarClientV2 extends EventEmitter {
 
         // If UNAVAILABLE or timeout, fall back to local
         if (classified.shouldFallback) {
-          this.emit('fallbackToLocal', { operation, reason: classified.reason });
+          this.emit('fallbackToLocal', {
+            operation,
+            reason: classified.reason,
+          });
           return this._executeLocal(operation, params);
         }
 
@@ -554,12 +563,12 @@ export class SidecarClientV2 extends EventEmitter {
    */
   _mapOperationToMethod(operation) {
     const methodMap = {
-      'listHooks': 'queryPolicy',
-      'evaluateHook': 'evaluateHook',
-      'validateGraph': 'validateGraph',
-      'applyTransaction': 'applyTransaction',
-      'healthCheck': 'healthCheck',
-      'getMetrics': 'getMetrics'
+      listHooks: 'queryPolicy',
+      evaluateHook: 'evaluateHook',
+      validateGraph: 'validateGraph',
+      applyTransaction: 'applyTransaction',
+      healthCheck: 'healthCheck',
+      getMetrics: 'getMetrics',
     };
 
     return methodMap[operation] || operation;
@@ -580,7 +589,7 @@ export class SidecarClientV2 extends EventEmitter {
       return {
         shouldFallback: true,
         reason: 'timeout',
-        recoverable: true
+        recoverable: true,
       };
     }
 
@@ -590,7 +599,7 @@ export class SidecarClientV2 extends EventEmitter {
       return {
         shouldFallback: true,
         reason: 'unavailable',
-        recoverable: true
+        recoverable: true,
       };
     }
 
@@ -599,7 +608,7 @@ export class SidecarClientV2 extends EventEmitter {
       return {
         shouldFallback: true,
         reason: 'unimplemented',
-        recoverable: false
+        recoverable: false,
       };
     }
 
@@ -608,7 +617,7 @@ export class SidecarClientV2 extends EventEmitter {
       return {
         shouldFallback: false,
         reason: 'unauthenticated',
-        recoverable: false
+        recoverable: false,
       };
     }
 
@@ -616,7 +625,7 @@ export class SidecarClientV2 extends EventEmitter {
     return {
       shouldFallback: false,
       reason: 'unknown',
-      recoverable: false
+      recoverable: false,
     };
   }
 
@@ -647,12 +656,12 @@ export class SidecarClientV2 extends EventEmitter {
       circuitBreaker: {
         state: this.circuitBreaker.state,
         failures: this.circuitBreaker.failures,
-        openCount: this.metrics.circuitOpenCount
+        openCount: this.metrics.circuitOpenCount,
       },
       healthCheck: {
         lastCheckTime: this.healthCheck.lastCheckTime,
         consecutiveFailures: this.healthCheck.consecutiveFailures,
-        consecutiveSuccesses: this.healthCheck.consecutiveSuccesses
+        consecutiveSuccesses: this.healthCheck.consecutiveSuccesses,
       },
       requests: {
         total: this.metrics.totalRequests,
@@ -661,13 +670,13 @@ export class SidecarClientV2 extends EventEmitter {
         grpcFailures: this.metrics.grpcFailures,
         localFallbacks: this.metrics.localFallbacks,
         localSuccesses: this.metrics.localSuccesses,
-        localFailures: this.metrics.localFailures
+        localFailures: this.metrics.localFailures,
       },
       errors: {
         timeouts: this.metrics.timeouts,
-        connectionFailures: this.metrics.connectionFailures
+        connectionFailures: this.metrics.connectionFailures,
       },
-      lastStateTransition: this.metrics.lastStateTransition
+      lastStateTransition: this.metrics.lastStateTransition,
     };
   }
 
@@ -684,8 +693,7 @@ export class SidecarClientV2 extends EventEmitter {
    * @returns {boolean} True if using local fallback
    */
   isLocalMode() {
-    return this.state === ConnectionState.DEGRADED ||
-           this.state === ConnectionState.CIRCUIT_OPEN;
+    return this.state === ConnectionState.DEGRADED || this.state === ConnectionState.CIRCUIT_OPEN;
   }
 
   /**

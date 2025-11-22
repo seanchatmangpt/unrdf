@@ -2,7 +2,7 @@
  * @fileoverview Tests for useKnowledgeEngine hook
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, _beforeEach, _vi } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import { useKnowledgeEngine } from '../../../src/react-hooks/core/useKnowledgeEngine.mjs';
 import { createElement } from 'react';
@@ -22,9 +22,7 @@ describe('useKnowledgeEngine', () => {
     });
 
     it('should initialize with custom base IRI', async () => {
-      const { result } = renderHook(() =>
-        useKnowledgeEngine({ baseIRI: 'http://example.org/' })
-      );
+      const { result } = renderHook(() => useKnowledgeEngine({ baseIRI: 'http://example.org/' }));
 
       await waitFor(() => {
         expect(result.current.isReady).toBe(true);
@@ -34,9 +32,7 @@ describe('useKnowledgeEngine', () => {
     });
 
     it('should initialize with strict mode enabled', async () => {
-      const { result } = renderHook(() =>
-        useKnowledgeEngine({ strictMode: true })
-      );
+      const { result } = renderHook(() => useKnowledgeEngine({ strictMode: true }));
 
       await waitFor(() => {
         expect(result.current.isReady).toBe(true);
@@ -94,16 +90,15 @@ describe('useKnowledgeEngine', () => {
     });
 
     it('should update engine when options change', async () => {
-      const { result, rerender } = renderHook(
-        ({ options }) => useKnowledgeEngine(options),
-        { initialProps: { options: { baseIRI: 'http://example1.org/' } } }
-      );
+      const { result, rerender } = renderHook(({ options }) => useKnowledgeEngine(options), {
+        initialProps: { options: { baseIRI: 'http://example1.org/' } },
+      });
 
       await waitFor(() => {
         expect(result.current.isReady).toBe(true);
       });
 
-      const firstEngine = result.current.engine;
+      const _firstEngine = result.current.engine;
 
       rerender({ options: { baseIRI: 'http://example2.org/' } });
 

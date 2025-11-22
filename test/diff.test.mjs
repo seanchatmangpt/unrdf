@@ -4,8 +4,8 @@
  * @vitest-environment node
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { z } from 'zod'
+import { describe, it, expect, _beforeEach, vi } from 'vitest';
+import { z } from 'zod';
 import {
   diffGraphFromStores,
   diffGraphFromDelta,
@@ -22,7 +22,7 @@ import {
   OntologyChangeSchema,
   OntologyDiffSchema,
   DeltaLikeSchema,
-} from '../src/diff.mjs'
+} from '../src/diff.mjs';
 
 /* ========================================================================= */
 /* Test Fixtures & Mocks                                                    */
@@ -37,7 +37,7 @@ function createQuad(subjectValue, predicateValue, objectValue) {
     predicate: { value: predicateValue },
     object: { value: objectValue },
     graph: { value: '' },
-  }
+  };
 }
 
 /**
@@ -45,15 +45,15 @@ function createQuad(subjectValue, predicateValue, objectValue) {
  */
 function createMockStore(quads = []) {
   return {
-    getQuads: vi.fn((s, p, o, g) => quads),
-  }
+    getQuads: vi.fn((_s, _p, _o, _g) => quads),
+  };
 }
 
 /**
  * Simple ontology lens for testing
  */
 function testLens(triple, direction) {
-  const { subject, predicate, object } = triple
+  const { subject, predicate, object } = triple;
 
   // Rule 1: Feature additions/removals
   if (
@@ -63,7 +63,7 @@ function testLens(triple, direction) {
     return {
       kind: direction === 'added' ? 'FeatureAdded' : 'FeatureRemoved',
       entity: subject,
-    }
+    };
   }
 
   // Rule 2: Role assignments
@@ -72,17 +72,17 @@ function testLens(triple, direction) {
       kind: direction === 'added' ? 'RoleAdded' : 'RoleRemoved',
       entity: subject,
       role: object,
-    }
+    };
   }
 
-  return null
+  return null;
 }
 
 /**
  * Lens that ignores everything
  */
 function noOpLens() {
-  return null
+  return null;
 }
 
 /* ========================================================================= */
@@ -92,42 +92,46 @@ function noOpLens() {
 describe('diff.mjs - Internal Helpers', () => {
   describe('quadToDiffTriple', () => {
     it('converts a quad to DiffTriple with correct IRI values', () => {
-      const quad = createQuad('http://example.org/s', 'http://example.org/p', 'http://example.org/o')
-      const triple = quadToDiffTriple(quad)
+      const quad = createQuad(
+        'http://example.org/s',
+        'http://example.org/p',
+        'http://example.org/o'
+      );
+      const triple = quadToDiffTriple(quad);
 
       expect(triple).toEqual({
         subject: 'http://example.org/s',
         predicate: 'http://example.org/p',
         object: 'http://example.org/o',
-      })
-    })
+      });
+    });
 
     it('extracts values from nested RDF/JS structure', () => {
       const quad = {
         subject: { value: 'http://ex.org/alice' },
         predicate: { value: 'http://ex.org/knows' },
         object: { value: 'http://ex.org/bob' },
-      }
-      const triple = quadToDiffTriple(quad)
+      };
+      const triple = quadToDiffTriple(quad);
 
-      expect(triple.subject).toBe('http://ex.org/alice')
-      expect(triple.predicate).toBe('http://ex.org/knows')
-      expect(triple.object).toBe('http://ex.org/bob')
-    })
+      expect(triple.subject).toBe('http://ex.org/alice');
+      expect(triple.predicate).toBe('http://ex.org/knows');
+      expect(triple.object).toBe('http://ex.org/bob');
+    });
 
     it('preserves special characters in IRIs', () => {
       const quad = createQuad(
         'http://example.org/resource#123',
         'http://example.org/property-name',
         'http://example.org/value:456'
-      )
-      const triple = quadToDiffTriple(quad)
+      );
+      const triple = quadToDiffTriple(quad);
 
-      expect(triple.subject).toContain('#123')
-      expect(triple.predicate).toContain('-name')
-      expect(triple.object).toContain(':456')
-    })
-  })
+      expect(triple.subject).toContain('#123');
+      expect(triple.predicate).toContain('-name');
+      expect(triple.object).toContain(':456');
+    });
+  });
 
   describe('diffTripleKey', () => {
     it('creates stable key from DiffTriple components', () => {
@@ -135,101 +139,101 @@ describe('diff.mjs - Internal Helpers', () => {
         subject: 'http://example.org/s',
         predicate: 'http://example.org/p',
         object: 'http://example.org/o',
-      }
-      const key = diffTripleKey(triple)
+      };
+      const key = diffTripleKey(triple);
 
-      expect(key).toBe('http://example.org/s http://example.org/p http://example.org/o')
-    })
+      expect(key).toBe('http://example.org/s http://example.org/p http://example.org/o');
+    });
 
     it('creates different keys for different triples', () => {
       const triple1 = {
         subject: 'http://example.org/alice',
         predicate: 'http://example.org/knows',
         object: 'http://example.org/bob',
-      }
+      };
       const triple2 = {
         subject: 'http://example.org/alice',
         predicate: 'http://example.org/knows',
         object: 'http://example.org/charlie',
-      }
+      };
 
-      const key1 = diffTripleKey(triple1)
-      const key2 = diffTripleKey(triple2)
+      const key1 = diffTripleKey(triple1);
+      const key2 = diffTripleKey(triple2);
 
-      expect(key1).not.toBe(key2)
-    })
+      expect(key1).not.toBe(key2);
+    });
 
     it('creates identical keys for identical triples', () => {
       const triple = {
         subject: 'http://example.org/s',
         predicate: 'http://example.org/p',
         object: 'http://example.org/o',
-      }
+      };
 
-      const key1 = diffTripleKey(triple)
-      const key2 = diffTripleKey(triple)
+      const key1 = diffTripleKey(triple);
+      const key2 = diffTripleKey(triple);
 
-      expect(key1).toBe(key2)
-    })
+      expect(key1).toBe(key2);
+    });
 
     it('handles empty IRI values', () => {
       const triple = {
         subject: '',
         predicate: '',
         object: '',
-      }
-      const key = diffTripleKey(triple)
+      };
+      const key = diffTripleKey(triple);
 
-      expect(key).toBe('  ')
-    })
-  })
+      expect(key).toBe('  ');
+    });
+  });
 
   describe('collectDiffTriplesFromStore', () => {
     it('collects all quads from store as DiffTriples', () => {
       const quads = [
         createQuad('http://ex.org/alice', 'http://ex.org/name', 'Alice'),
         createQuad('http://ex.org/bob', 'http://ex.org/name', 'Bob'),
-      ]
-      const store = createMockStore(quads)
+      ];
+      const store = createMockStore(quads);
 
-      const triples = collectDiffTriplesFromStore(store)
+      const triples = collectDiffTriplesFromStore(store);
 
-      expect(triples).toHaveLength(2)
-      expect(triples[0].subject).toBe('http://ex.org/alice')
-      expect(triples[1].subject).toBe('http://ex.org/bob')
-    })
+      expect(triples).toHaveLength(2);
+      expect(triples[0].subject).toBe('http://ex.org/alice');
+      expect(triples[1].subject).toBe('http://ex.org/bob');
+    });
 
     it('returns empty array for empty store', () => {
-      const store = createMockStore([])
+      const store = createMockStore([]);
 
-      const triples = collectDiffTriplesFromStore(store)
+      const triples = collectDiffTriplesFromStore(store);
 
-      expect(triples).toEqual([])
-    })
+      expect(triples).toEqual([]);
+    });
 
     it('calls getQuads with all nulls to get all quads', () => {
-      const store = createMockStore([])
+      const store = createMockStore([]);
 
-      collectDiffTriplesFromStore(store)
+      collectDiffTriplesFromStore(store);
 
-      expect(store.getQuads).toHaveBeenCalledWith(null, null, null, null)
-    })
+      expect(store.getQuads).toHaveBeenCalledWith(null, null, null, null);
+    });
 
     it('throws error if store lacks getQuads method', () => {
-      const invalidStore = {}
+      const invalidStore = {};
 
       expect(() => {
-        collectDiffTriplesFromStore(invalidStore)
-      }).toThrow(TypeError)
-    })
+        collectDiffTriplesFromStore(invalidStore);
+      }).toThrow(TypeError);
+    });
 
     it('throws error if store is null', () => {
       expect(() => {
-        collectDiffTriplesFromStore(null)
-      }).toThrow(TypeError)
-    })
-  })
-})
+        collectDiffTriplesFromStore(null);
+      }).toThrow(TypeError);
+    });
+  });
+});
 
 /* ========================================================================= */
 /* Unit Tests: Graph Diff                                                   */
@@ -240,91 +244,95 @@ describe('diff.mjs - Graph Diff', () => {
     it('detects added triples', () => {
       const before = createMockStore([
         createQuad('http://ex.org/alice', 'http://ex.org/name', 'Alice'),
-      ])
+      ]);
       const after = createMockStore([
         createQuad('http://ex.org/alice', 'http://ex.org/name', 'Alice'),
         createQuad('http://ex.org/alice', 'http://ex.org/age', '30'),
-      ])
+      ]);
 
-      const diff = diffGraphFromStores(before, after)
+      const diff = diffGraphFromStores(before, after);
 
-      expect(diff.added).toHaveLength(1)
-      expect(diff.added[0].predicate).toBe('http://ex.org/age')
-      expect(diff.removed).toHaveLength(0)
-    })
+      expect(diff.added).toHaveLength(1);
+      expect(diff.added[0].predicate).toBe('http://ex.org/age');
+      expect(diff.removed).toHaveLength(0);
+    });
 
     it('detects removed triples', () => {
       const before = createMockStore([
         createQuad('http://ex.org/alice', 'http://ex.org/name', 'Alice'),
         createQuad('http://ex.org/alice', 'http://ex.org/age', '30'),
-      ])
+      ]);
       const after = createMockStore([
         createQuad('http://ex.org/alice', 'http://ex.org/name', 'Alice'),
-      ])
+      ]);
 
-      const diff = diffGraphFromStores(before, after)
+      const diff = diffGraphFromStores(before, after);
 
-      expect(diff.removed).toHaveLength(1)
-      expect(diff.removed[0].predicate).toBe('http://ex.org/age')
-      expect(diff.added).toHaveLength(0)
-    })
+      expect(diff.removed).toHaveLength(1);
+      expect(diff.removed[0].predicate).toBe('http://ex.org/age');
+      expect(diff.added).toHaveLength(0);
+    });
 
     it('detects both additions and removals simultaneously', () => {
       const before = createMockStore([
         createQuad('http://ex.org/alice', 'http://ex.org/name', 'Alice'),
         createQuad('http://ex.org/alice', 'http://ex.org/oldProp', 'oldValue'),
-      ])
+      ]);
       const after = createMockStore([
         createQuad('http://ex.org/alice', 'http://ex.org/name', 'Alice'),
         createQuad('http://ex.org/alice', 'http://ex.org/newProp', 'newValue'),
-      ])
+      ]);
 
-      const diff = diffGraphFromStores(before, after)
+      const diff = diffGraphFromStores(before, after);
 
-      expect(diff.added).toHaveLength(1)
-      expect(diff.removed).toHaveLength(1)
-      expect(diff.added[0].predicate).toBe('http://ex.org/newProp')
-      expect(diff.removed[0].predicate).toBe('http://ex.org/oldProp')
-    })
+      expect(diff.added).toHaveLength(1);
+      expect(diff.removed).toHaveLength(1);
+      expect(diff.added[0].predicate).toBe('http://ex.org/newProp');
+      expect(diff.removed[0].predicate).toBe('http://ex.org/oldProp');
+    });
 
     it('returns empty diff for identical graphs', () => {
-      const quads = [
-        createQuad('http://ex.org/alice', 'http://ex.org/name', 'Alice'),
-      ]
-      const before = createMockStore(quads)
-      const after = createMockStore(quads)
+      const quads = [createQuad('http://ex.org/alice', 'http://ex.org/name', 'Alice')];
+      const before = createMockStore(quads);
+      const after = createMockStore(quads);
 
-      const diff = diffGraphFromStores(before, after)
+      const diff = diffGraphFromStores(before, after);
 
-      expect(diff.added).toHaveLength(0)
-      expect(diff.removed).toHaveLength(0)
-    })
+      expect(diff.added).toHaveLength(0);
+      expect(diff.removed).toHaveLength(0);
+    });
 
     it('validates result against GraphDiffSchema', () => {
-      const before = createMockStore([])
-      const after = createMockStore([createQuad('http://ex.org/s', 'http://ex.org/p', 'http://ex.org/o')])
+      const before = createMockStore([]);
+      const after = createMockStore([
+        createQuad('http://ex.org/s', 'http://ex.org/p', 'http://ex.org/o'),
+      ]);
 
-      const diff = diffGraphFromStores(before, after)
+      const diff = diffGraphFromStores(before, after);
 
       // Should not throw
-      expect(() => GraphDiffSchema.parse(diff)).not.toThrow()
-    })
+      expect(() => GraphDiffSchema.parse(diff)).not.toThrow();
+    });
 
     it('preserves full triple information in diff', () => {
-      const before = createMockStore([])
+      const before = createMockStore([]);
       const after = createMockStore([
-        createQuad('http://example.org/subject', 'http://example.org/predicate', 'http://example.org/object'),
-      ])
+        createQuad(
+          'http://example.org/subject',
+          'http://example.org/predicate',
+          'http://example.org/object'
+        ),
+      ]);
 
-      const diff = diffGraphFromStores(before, after)
+      const diff = diffGraphFromStores(before, after);
 
       expect(diff.added[0]).toEqual({
         subject: 'http://example.org/subject',
         predicate: 'http://example.org/predicate',
         object: 'http://example.org/object',
-      })
-    })
-  })
+      });
+    });
+  });
 
   describe('diffGraphFromDelta', () => {
     it('creates diff from delta additions only', () => {
@@ -334,68 +342,62 @@ describe('diff.mjs - Graph Diff', () => {
           createQuad('http://ex.org/bob', 'http://ex.org/name', 'Bob'),
         ],
         removals: [],
-      }
+      };
 
-      const diff = diffGraphFromDelta(delta)
+      const diff = diffGraphFromDelta(delta);
 
-      expect(diff.added).toHaveLength(2)
-      expect(diff.removed).toHaveLength(0)
-    })
+      expect(diff.added).toHaveLength(2);
+      expect(diff.removed).toHaveLength(0);
+    });
 
     it('creates diff from delta removals only', () => {
       const delta = {
         additions: [],
-        removals: [
-          createQuad('http://ex.org/alice', 'http://ex.org/name', 'Alice'),
-        ],
-      }
+        removals: [createQuad('http://ex.org/alice', 'http://ex.org/name', 'Alice')],
+      };
 
-      const diff = diffGraphFromDelta(delta)
+      const diff = diffGraphFromDelta(delta);
 
-      expect(diff.added).toHaveLength(0)
-      expect(diff.removed).toHaveLength(1)
-    })
+      expect(diff.added).toHaveLength(0);
+      expect(diff.removed).toHaveLength(1);
+    });
 
     it('creates diff from delta with both additions and removals', () => {
       const delta = {
-        additions: [
-          createQuad('http://ex.org/alice', 'http://ex.org/newProp', 'newValue'),
-        ],
-        removals: [
-          createQuad('http://ex.org/alice', 'http://ex.org/oldProp', 'oldValue'),
-        ],
-      }
+        additions: [createQuad('http://ex.org/alice', 'http://ex.org/newProp', 'newValue')],
+        removals: [createQuad('http://ex.org/alice', 'http://ex.org/oldProp', 'oldValue')],
+      };
 
-      const diff = diffGraphFromDelta(delta)
+      const diff = diffGraphFromDelta(delta);
 
-      expect(diff.added).toHaveLength(1)
-      expect(diff.removed).toHaveLength(1)
-    })
+      expect(diff.added).toHaveLength(1);
+      expect(diff.removed).toHaveLength(1);
+    });
 
     it('validates delta schema before processing', () => {
       const invalidDelta = {
         additions: [{ incomplete: 'object' }],
         removals: [],
-      }
+      };
 
       expect(() => {
-        diffGraphFromDelta(invalidDelta)
-      }).toThrow(z.ZodError)
-    })
+        diffGraphFromDelta(invalidDelta);
+      }).toThrow(z.ZodError);
+    });
 
     it('validates result against GraphDiffSchema', () => {
       const delta = {
         additions: [createQuad('http://ex.org/s', 'http://ex.org/p', 'http://ex.org/o')],
         removals: [],
-      }
+      };
 
-      const diff = diffGraphFromDelta(delta)
+      const diff = diffGraphFromDelta(delta);
 
       // Should not throw
-      expect(() => GraphDiffSchema.parse(diff)).not.toThrow()
-    })
-  })
-})
+      expect(() => GraphDiffSchema.parse(diff)).not.toThrow();
+    });
+  });
+});
 
 /* ========================================================================= */
 /* Unit Tests: Ontology Diff                                                */
@@ -413,14 +415,14 @@ describe('diff.mjs - Ontology Diff', () => {
           },
         ],
         removed: [],
-      }
+      };
 
-      const ontologyDiff = diffOntologyFromGraphDiff(graphDiff, testLens)
+      const ontologyDiff = diffOntologyFromGraphDiff(graphDiff, testLens);
 
-      expect(ontologyDiff.changes).toHaveLength(1)
-      expect(ontologyDiff.changes[0].kind).toBe('FeatureAdded')
-      expect(ontologyDiff.changes[0].entity).toBe('http://ex.org/feature1')
-    })
+      expect(ontologyDiff.changes).toHaveLength(1);
+      expect(ontologyDiff.changes[0].kind).toBe('FeatureAdded');
+      expect(ontologyDiff.changes[0].entity).toBe('http://ex.org/feature1');
+    });
 
     it('applies lens to removed triples', () => {
       const graphDiff = {
@@ -432,13 +434,13 @@ describe('diff.mjs - Ontology Diff', () => {
             object: 'http://example.org/ontology#Feature',
           },
         ],
-      }
+      };
 
-      const ontologyDiff = diffOntologyFromGraphDiff(graphDiff, testLens)
+      const ontologyDiff = diffOntologyFromGraphDiff(graphDiff, testLens);
 
-      expect(ontologyDiff.changes).toHaveLength(1)
-      expect(ontologyDiff.changes[0].kind).toBe('FeatureRemoved')
-    })
+      expect(ontologyDiff.changes).toHaveLength(1);
+      expect(ontologyDiff.changes[0].kind).toBe('FeatureRemoved');
+    });
 
     it('filters triples that lens returns null for', () => {
       const graphDiff = {
@@ -450,12 +452,12 @@ describe('diff.mjs - Ontology Diff', () => {
           },
         ],
         removed: [],
-      }
+      };
 
-      const ontologyDiff = diffOntologyFromGraphDiff(graphDiff, noOpLens)
+      const ontologyDiff = diffOntologyFromGraphDiff(graphDiff, noOpLens);
 
-      expect(ontologyDiff.changes).toHaveLength(0)
-    })
+      expect(ontologyDiff.changes).toHaveLength(0);
+    });
 
     it('includes triples in ontology diff even when lens finds nothing', () => {
       const graphDiff = {
@@ -467,13 +469,13 @@ describe('diff.mjs - Ontology Diff', () => {
           },
         ],
         removed: [],
-      }
+      };
 
-      const ontologyDiff = diffOntologyFromGraphDiff(graphDiff, noOpLens)
+      const ontologyDiff = diffOntologyFromGraphDiff(graphDiff, noOpLens);
 
-      expect(ontologyDiff.triples.added).toHaveLength(1)
-      expect(ontologyDiff.changes).toHaveLength(0)
-    })
+      expect(ontologyDiff.triples.added).toHaveLength(1);
+      expect(ontologyDiff.changes).toHaveLength(0);
+    });
 
     it('processes both additions and removals with lens', () => {
       const graphDiff = {
@@ -491,34 +493,34 @@ describe('diff.mjs - Ontology Diff', () => {
             object: 'http://example.org/ontology#Feature',
           },
         ],
-      }
+      };
 
-      const ontologyDiff = diffOntologyFromGraphDiff(graphDiff, testLens)
+      const ontologyDiff = diffOntologyFromGraphDiff(graphDiff, testLens);
 
-      expect(ontologyDiff.changes).toHaveLength(2)
-      expect(ontologyDiff.changes[0].kind).toBe('FeatureAdded')
-      expect(ontologyDiff.changes[1].kind).toBe('FeatureRemoved')
-    })
+      expect(ontologyDiff.changes).toHaveLength(2);
+      expect(ontologyDiff.changes[0].kind).toBe('FeatureAdded');
+      expect(ontologyDiff.changes[1].kind).toBe('FeatureRemoved');
+    });
 
     it('validates result against OntologyDiffSchema', () => {
       const graphDiff = {
         added: [],
         removed: [],
-      }
+      };
 
-      const ontologyDiff = diffOntologyFromGraphDiff(graphDiff, noOpLens)
+      const ontologyDiff = diffOntologyFromGraphDiff(graphDiff, noOpLens);
 
       // Should not throw
-      expect(() => OntologyDiffSchema.parse(ontologyDiff)).not.toThrow()
-    })
+      expect(() => OntologyDiffSchema.parse(ontologyDiff)).not.toThrow();
+    });
 
     it('lens receives correct triple direction parameter', () => {
       const lensWithTracking = vi.fn((triple, direction) => {
         if (direction === 'added') {
-          return { kind: 'Tracked' }
+          return { kind: 'Tracked' };
         }
-        return null
-      })
+        return null;
+      });
 
       const graphDiff = {
         added: [
@@ -529,46 +531,44 @@ describe('diff.mjs - Ontology Diff', () => {
           },
         ],
         removed: [],
-      }
+      };
 
-      diffOntologyFromGraphDiff(graphDiff, lensWithTracking)
+      diffOntologyFromGraphDiff(graphDiff, lensWithTracking);
 
-      expect(lensWithTracking).toHaveBeenCalledWith(expect.any(Object), 'added')
-    })
-  })
+      expect(lensWithTracking).toHaveBeenCalledWith(expect.any(Object), 'added');
+    });
+  });
 
   describe('diffOntologyFromStores', () => {
     it('combines graph diff and ontology lens', () => {
-      const before = createMockStore([])
+      const before = createMockStore([]);
       const after = createMockStore([
         createQuad(
           'http://ex.org/feature1',
           'http://www.w3.org/1999/02/22-rdf-syntax-ns#type',
           'http://example.org/ontology#Feature'
         ),
-      ])
+      ]);
 
-      const ontologyDiff = diffOntologyFromStores(before, after, testLens)
+      const ontologyDiff = diffOntologyFromStores(before, after, testLens);
 
-      expect(ontologyDiff.triples.added).toHaveLength(1)
-      expect(ontologyDiff.changes).toHaveLength(1)
-      expect(ontologyDiff.changes[0].kind).toBe('FeatureAdded')
-    })
+      expect(ontologyDiff.triples.added).toHaveLength(1);
+      expect(ontologyDiff.changes).toHaveLength(1);
+      expect(ontologyDiff.changes[0].kind).toBe('FeatureAdded');
+    });
 
     it('applies lens after computing graph diff', () => {
-      const quads = [
-        createQuad('http://ex.org/alice', 'http://ex.org/knows', 'http://ex.org/bob'),
-      ]
-      const before = createMockStore([])
-      const after = createMockStore(quads)
+      const quads = [createQuad('http://ex.org/alice', 'http://ex.org/knows', 'http://ex.org/bob')];
+      const before = createMockStore([]);
+      const after = createMockStore(quads);
 
-      const ontologyDiff = diffOntologyFromStores(before, after, testLens)
+      const ontologyDiff = diffOntologyFromStores(before, after, testLens);
 
       // The triple is detected but lens returns null for it
-      expect(ontologyDiff.triples.added).toHaveLength(1)
-      expect(ontologyDiff.changes).toHaveLength(0)
-    })
-  })
+      expect(ontologyDiff.triples.added).toHaveLength(1);
+      expect(ontologyDiff.changes).toHaveLength(0);
+    });
+  });
 
   describe('diffOntologyFromDelta', () => {
     it('combines delta and ontology lens', () => {
@@ -581,14 +581,14 @@ describe('diff.mjs - Ontology Diff', () => {
           ),
         ],
         removals: [],
-      }
+      };
 
-      const ontologyDiff = diffOntologyFromDelta(delta, testLens)
+      const ontologyDiff = diffOntologyFromDelta(delta, testLens);
 
-      expect(ontologyDiff.triples.added).toHaveLength(1)
-      expect(ontologyDiff.changes).toHaveLength(1)
-      expect(ontologyDiff.changes[0].kind).toBe('FeatureAdded')
-    })
+      expect(ontologyDiff.triples.added).toHaveLength(1);
+      expect(ontologyDiff.changes).toHaveLength(1);
+      expect(ontologyDiff.changes[0].kind).toBe('FeatureAdded');
+    });
 
     it('processes delta without re-scanning store', () => {
       // This test verifies the efficiency benefit
@@ -598,15 +598,15 @@ describe('diff.mjs - Ontology Diff', () => {
           createQuad('http://ex.org/s2', 'http://ex.org/p2', 'http://ex.org/o2'),
         ],
         removals: [],
-      }
+      };
 
-      const ontologyDiff = diffOntologyFromDelta(delta, noOpLens)
+      const ontologyDiff = diffOntologyFromDelta(delta, noOpLens);
 
       // Should have 2 added triples
-      expect(ontologyDiff.triples.added).toHaveLength(2)
-    })
-  })
-})
+      expect(ontologyDiff.triples.added).toHaveLength(2);
+    });
+  });
+});
 
 /* ========================================================================= */
 /* Unit Tests: Summarization Functions                                      */
@@ -622,24 +622,24 @@ describe('diff.mjs - Summarization', () => {
           { kind: 'FeatureAdded', entity: 'f2' },
           { kind: 'FeatureRemoved', entity: 'f3' },
         ],
-      }
+      };
 
-      const summary = summarizeChangesByKind(ontologyDiff)
+      const summary = summarizeChangesByKind(ontologyDiff);
 
-      expect(summary.FeatureAdded).toBe(2)
-      expect(summary.FeatureRemoved).toBe(1)
-    })
+      expect(summary.FeatureAdded).toBe(2);
+      expect(summary.FeatureRemoved).toBe(1);
+    });
 
     it('returns empty object for no changes', () => {
       const ontologyDiff = {
         triples: { added: [], removed: [] },
         changes: [],
-      }
+      };
 
-      const summary = summarizeChangesByKind(ontologyDiff)
+      const summary = summarizeChangesByKind(ontologyDiff);
 
-      expect(summary).toEqual({})
-    })
+      expect(summary).toEqual({});
+    });
 
     it('handles multiple different change kinds', () => {
       const ontologyDiff = {
@@ -651,27 +651,27 @@ describe('diff.mjs - Summarization', () => {
           { kind: 'RoleAdded' },
           { kind: 'FeatureRemoved' },
         ],
-      }
+      };
 
-      const summary = summarizeChangesByKind(ontologyDiff)
+      const summary = summarizeChangesByKind(ontologyDiff);
 
-      expect(summary.FeatureAdded).toBe(1)
-      expect(summary.RoleAdded).toBe(2)
-      expect(summary.RoleRemoved).toBe(1)
-      expect(summary.FeatureRemoved).toBe(1)
-    })
+      expect(summary.FeatureAdded).toBe(1);
+      expect(summary.RoleAdded).toBe(2);
+      expect(summary.RoleRemoved).toBe(1);
+      expect(summary.FeatureRemoved).toBe(1);
+    });
 
     it('validates ontology diff before summarizing', () => {
       const invalidDiff = {
         triples: { added: [], removed: [] },
         changes: [{ incomplete: 'object' }],
-      }
+      };
 
       expect(() => {
-        summarizeChangesByKind(invalidDiff)
-      }).toThrow(z.ZodError)
-    })
-  })
+        summarizeChangesByKind(invalidDiff);
+      }).toThrow(z.ZodError);
+    });
+  });
 
   describe('changesForEntity', () => {
     it('filters changes for specific entity', () => {
@@ -682,24 +682,24 @@ describe('diff.mjs - Summarization', () => {
           { kind: 'RoleAdded', entity: 'http://ex.org/feature1' },
           { kind: 'FeatureRemoved', entity: 'http://ex.org/feature2' },
         ],
-      }
+      };
 
-      const changes = changesForEntity(ontologyDiff, 'http://ex.org/feature1')
+      const changes = changesForEntity(ontologyDiff, 'http://ex.org/feature1');
 
-      expect(changes).toHaveLength(2)
-      expect(changes.every((c) => c.entity === 'http://ex.org/feature1')).toBe(true)
-    })
+      expect(changes).toHaveLength(2);
+      expect(changes.every(c => c.entity === 'http://ex.org/feature1')).toBe(true);
+    });
 
     it('returns empty array for entity with no changes', () => {
       const ontologyDiff = {
         triples: { added: [], removed: [] },
         changes: [{ kind: 'FeatureAdded', entity: 'http://ex.org/feature1' }],
-      }
+      };
 
-      const changes = changesForEntity(ontologyDiff, 'http://ex.org/feature999')
+      const changes = changesForEntity(ontologyDiff, 'http://ex.org/feature999');
 
-      expect(changes).toEqual([])
-    })
+      expect(changes).toEqual([]);
+    });
 
     it('handles changes without entity property', () => {
       const ontologyDiff = {
@@ -708,26 +708,26 @@ describe('diff.mjs - Summarization', () => {
           { kind: 'GlobalChange' },
           { kind: 'FeatureAdded', entity: 'http://ex.org/feature1' },
         ],
-      }
+      };
 
-      const changes = changesForEntity(ontologyDiff, 'http://ex.org/feature1')
+      const changes = changesForEntity(ontologyDiff, 'http://ex.org/feature1');
 
-      expect(changes).toHaveLength(1)
-      expect(changes[0].entity).toBe('http://ex.org/feature1')
-    })
+      expect(changes).toHaveLength(1);
+      expect(changes[0].entity).toBe('http://ex.org/feature1');
+    });
 
     it('validates ontology diff before filtering', () => {
       const invalidDiff = {
         triples: { added: [], removed: [] },
         changes: [{ incomplete: 'object' }],
-      }
+      };
 
       expect(() => {
-        changesForEntity(invalidDiff, 'http://ex.org/entity')
-      }).toThrow(z.ZodError)
-    })
-  })
-})
+        changesForEntity(invalidDiff, 'http://ex.org/entity');
+      }).toThrow(z.ZodError);
+    });
+  });
+});
 
 /* ========================================================================= */
 /* Schema Validation Tests                                                   */
@@ -740,30 +740,30 @@ describe('diff.mjs - Schema Validation', () => {
         subject: 'http://ex.org/s',
         predicate: 'http://ex.org/p',
         object: 'http://ex.org/o',
-      }
+      };
 
-      expect(() => DiffTripleSchema.parse(triple)).not.toThrow()
-    })
+      expect(() => DiffTripleSchema.parse(triple)).not.toThrow();
+    });
 
     it('rejects missing subject', () => {
       const triple = {
         predicate: 'http://ex.org/p',
         object: 'http://ex.org/o',
-      }
+      };
 
-      expect(() => DiffTripleSchema.parse(triple)).toThrow(z.ZodError)
-    })
+      expect(() => DiffTripleSchema.parse(triple)).toThrow(z.ZodError);
+    });
 
     it('rejects non-string values', () => {
       const triple = {
         subject: 123,
         predicate: 'http://ex.org/p',
         object: 'http://ex.org/o',
-      }
+      };
 
-      expect(() => DiffTripleSchema.parse(triple)).toThrow(z.ZodError)
-    })
-  })
+      expect(() => DiffTripleSchema.parse(triple)).toThrow(z.ZodError);
+    });
+  });
 
   describe('GraphDiffSchema', () => {
     it('validates correct GraphDiff', () => {
@@ -776,27 +776,27 @@ describe('diff.mjs - Schema Validation', () => {
           },
         ],
         removed: [],
-      }
+      };
 
-      expect(() => GraphDiffSchema.parse(diff)).not.toThrow()
-    })
+      expect(() => GraphDiffSchema.parse(diff)).not.toThrow();
+    });
 
     it('rejects invalid triples in added array', () => {
       const diff = {
         added: [{ incomplete: 'triple' }],
         removed: [],
-      }
+      };
 
-      expect(() => GraphDiffSchema.parse(diff)).toThrow(z.ZodError)
-    })
-  })
+      expect(() => GraphDiffSchema.parse(diff)).toThrow(z.ZodError);
+    });
+  });
 
   describe('OntologyChangeSchema', () => {
     it('validates minimal change (kind only)', () => {
-      const change = { kind: 'FeatureAdded' }
+      const change = { kind: 'FeatureAdded' };
 
-      expect(() => OntologyChangeSchema.parse(change)).not.toThrow()
-    })
+      expect(() => OntologyChangeSchema.parse(change)).not.toThrow();
+    });
 
     it('validates change with all properties', () => {
       const change = {
@@ -804,30 +804,30 @@ describe('diff.mjs - Schema Validation', () => {
         entity: 'http://ex.org/feature1',
         role: 'http://ex.org/hasService',
         details: { extra: 'info' },
-      }
+      };
 
-      expect(() => OntologyChangeSchema.parse(change)).not.toThrow()
-    })
+      expect(() => OntologyChangeSchema.parse(change)).not.toThrow();
+    });
 
     it('allows extra properties via passthrough', () => {
       const change = {
         kind: 'FeatureAdded',
         customField: 'customValue',
-      }
+      };
 
-      expect(() => OntologyChangeSchema.parse(change)).not.toThrow()
-    })
-  })
+      expect(() => OntologyChangeSchema.parse(change)).not.toThrow();
+    });
+  });
 
   describe('DeltaLikeSchema', () => {
     it('validates correct Delta structure', () => {
       const delta = {
         additions: [createQuad('http://ex.org/s', 'http://ex.org/p', 'http://ex.org/o')],
         removals: [],
-      }
+      };
 
-      expect(() => DeltaLikeSchema.parse(delta)).not.toThrow()
-    })
+      expect(() => DeltaLikeSchema.parse(delta)).not.toThrow();
+    });
 
     it('rejects quads with missing subject.value', () => {
       const delta = {
@@ -839,12 +839,12 @@ describe('diff.mjs - Schema Validation', () => {
           },
         ],
         removals: [],
-      }
+      };
 
-      expect(() => DeltaLikeSchema.parse(delta)).toThrow(z.ZodError)
-    })
-  })
-})
+      expect(() => DeltaLikeSchema.parse(delta)).toThrow(z.ZodError);
+    });
+  });
+});
 
 /* ========================================================================= */
 /* Integration Tests: End-to-End Scenarios                                  */
@@ -854,7 +854,7 @@ describe('diff.mjs - Integration', () => {
   it('complete flow: stores -> graph diff -> ontology diff', () => {
     const before = createMockStore([
       createQuad('http://ex.org/feature1', 'http://ex.org/status', 'active'),
-    ])
+    ]);
     const after = createMockStore([
       createQuad('http://ex.org/feature1', 'http://ex.org/status', 'active'),
       createQuad(
@@ -862,14 +862,14 @@ describe('diff.mjs - Integration', () => {
         'http://www.w3.org/1999/02/22-rdf-syntax-ns#type',
         'http://example.org/ontology#Feature'
       ),
-    ])
+    ]);
 
-    const ontologyDiff = diffOntologyFromStores(before, after, testLens)
+    const ontologyDiff = diffOntologyFromStores(before, after, testLens);
 
-    expect(ontologyDiff.triples.added).toHaveLength(1)
-    expect(ontologyDiff.changes).toHaveLength(1)
-    expect(ontologyDiff.changes[0].kind).toBe('FeatureAdded')
-  })
+    expect(ontologyDiff.triples.added).toHaveLength(1);
+    expect(ontologyDiff.changes).toHaveLength(1);
+    expect(ontologyDiff.changes[0].kind).toBe('FeatureAdded');
+  });
 
   it('complete flow: delta -> ontology diff', () => {
     const delta = {
@@ -881,14 +881,14 @@ describe('diff.mjs - Integration', () => {
         ),
       ],
       removals: [],
-    }
+    };
 
-    const ontologyDiff = diffOntologyFromDelta(delta, testLens)
+    const ontologyDiff = diffOntologyFromDelta(delta, testLens);
 
-    expect(ontologyDiff.changes).toHaveLength(1)
-    expect(ontologyDiff.changes[0].kind).toBe('RoleAdded')
-    expect(ontologyDiff.changes[0].role).toBe('http://ex.org/admin')
-  })
+    expect(ontologyDiff.changes).toHaveLength(1);
+    expect(ontologyDiff.changes[0].kind).toBe('RoleAdded');
+    expect(ontologyDiff.changes[0].role).toBe('http://ex.org/admin');
+  });
 
   it('summarize and filter changes from ontology diff', () => {
     const delta = {
@@ -910,16 +910,16 @@ describe('diff.mjs - Integration', () => {
         ),
       ],
       removals: [],
-    }
+    };
 
-    const ontologyDiff = diffOntologyFromDelta(delta, testLens)
-    const summary = summarizeChangesByKind(ontologyDiff)
-    const feature1Changes = changesForEntity(ontologyDiff, 'http://ex.org/feature1')
+    const ontologyDiff = diffOntologyFromDelta(delta, testLens);
+    const summary = summarizeChangesByKind(ontologyDiff);
+    const feature1Changes = changesForEntity(ontologyDiff, 'http://ex.org/feature1');
 
-    expect(summary.FeatureAdded).toBe(2)
-    expect(summary.RoleAdded).toBe(1)
-    expect(feature1Changes).toHaveLength(2)
-  })
+    expect(summary.FeatureAdded).toBe(2);
+    expect(summary.RoleAdded).toBe(1);
+    expect(feature1Changes).toHaveLength(2);
+  });
 
   it('handles complex multi-entity diff with all operations', () => {
     const before = createMockStore([
@@ -929,7 +929,7 @@ describe('diff.mjs - Integration', () => {
         'http://example.org/ontology#Feature'
       ),
       createQuad('http://ex.org/feature1', 'http://ex.org/version', '1.0'),
-    ])
+    ]);
     const after = createMockStore([
       createQuad(
         'http://ex.org/feature1',
@@ -942,19 +942,19 @@ describe('diff.mjs - Integration', () => {
         'http://www.w3.org/1999/02/22-rdf-syntax-ns#type',
         'http://example.org/ontology#Feature'
       ),
-    ])
+    ]);
 
-    const ontologyDiff = diffOntologyFromStores(before, after, testLens)
+    const ontologyDiff = diffOntologyFromStores(before, after, testLens);
 
     // Triple-level: 2 added (new version + new feature type), 1 removed (old version)
     // Ontology-level: 1 FeatureAdded (only feature2 matches the lens, version properties don't)
-    expect(ontologyDiff.triples.added).toHaveLength(2)
-    expect(ontologyDiff.triples.removed).toHaveLength(1)
-    expect(ontologyDiff.changes).toHaveLength(1)
-    expect(ontologyDiff.changes[0].kind).toBe('FeatureAdded')
-    expect(ontologyDiff.changes[0].entity).toBe('http://ex.org/feature2')
-  })
-})
+    expect(ontologyDiff.triples.added).toHaveLength(2);
+    expect(ontologyDiff.triples.removed).toHaveLength(1);
+    expect(ontologyDiff.changes).toHaveLength(1);
+    expect(ontologyDiff.changes[0].kind).toBe('FeatureAdded');
+    expect(ontologyDiff.changes[0].entity).toBe('http://ex.org/feature2');
+  });
+});
 
 /* ========================================================================= */
 /* Edge Cases & Error Handling                                              */
@@ -962,68 +962,66 @@ describe('diff.mjs - Integration', () => {
 
 describe('diff.mjs - Edge Cases', () => {
   it('handles triples with blank nodes (treats as IRIs)', () => {
-    const before = createMockStore([])
-    const after = createMockStore([
-      createQuad('_:bn1', 'http://ex.org/pred', '_:bn2'),
-    ])
+    const before = createMockStore([]);
+    const after = createMockStore([createQuad('_:bn1', 'http://ex.org/pred', '_:bn2')]);
 
-    const diff = diffGraphFromStores(before, after)
+    const diff = diffGraphFromStores(before, after);
 
-    expect(diff.added).toHaveLength(1)
-    expect(diff.added[0].subject).toBe('_:bn1')
-  })
+    expect(diff.added).toHaveLength(1);
+    expect(diff.added[0].subject).toBe('_:bn1');
+  });
 
   it('handles very long IRI strings', () => {
-    const longIri = 'http://example.org/' + 'a'.repeat(1000)
-    const quad = createQuad(longIri, 'http://ex.org/p', 'http://ex.org/o')
-    const store = createMockStore([quad])
+    const longIri = 'http://example.org/' + 'a'.repeat(1000);
+    const quad = createQuad(longIri, 'http://ex.org/p', 'http://ex.org/o');
+    const store = createMockStore([quad]);
 
-    const triples = collectDiffTriplesFromStore(store)
+    const triples = collectDiffTriplesFromStore(store);
 
-    expect(triples[0].subject.length).toBeGreaterThan(1000)
-  })
+    expect(triples[0].subject.length).toBeGreaterThan(1000);
+  });
 
   it('handles special characters in IRI values', () => {
     const quad = createQuad(
       'http://example.org/value#fragment',
       'http://example.org/prop?query=1',
       'http://example.org/obj:with:colons'
-    )
-    const store = createMockStore([quad])
+    );
+    const store = createMockStore([quad]);
 
-    const triples = collectDiffTriplesFromStore(store)
-    const key = diffTripleKey(triples[0])
+    const triples = collectDiffTriplesFromStore(store);
+    const key = diffTripleKey(triples[0]);
 
-    expect(key).toContain('#')
-    expect(key).toContain('?')
-    expect(key).toContain(':')
-  })
+    expect(key).toContain('#');
+    expect(key).toContain('?');
+    expect(key).toContain(':');
+  });
 
   it('handles large diffs efficiently', () => {
     // Create 1000 quads
     const largeQuadSet = Array.from({ length: 1000 }, (_, i) =>
       createQuad(`http://ex.org/s${i}`, 'http://ex.org/p', `http://ex.org/o${i}`)
-    )
+    );
 
-    const before = createMockStore([])
-    const after = createMockStore(largeQuadSet)
+    const before = createMockStore([]);
+    const after = createMockStore(largeQuadSet);
 
-    const start = performance.now()
-    const diff = diffGraphFromStores(before, after)
-    const duration = performance.now() - start
+    const start = performance.now();
+    const diff = diffGraphFromStores(before, after);
+    const duration = performance.now() - start;
 
-    expect(diff.added).toHaveLength(1000)
-    expect(duration).toBeLessThan(1000) // Should complete in <1s
-  })
+    expect(diff.added).toHaveLength(1000);
+    expect(duration).toBeLessThan(1000); // Should complete in <1s
+  });
 
   it('handles circular lens references gracefully', () => {
     // A lens that references itself indirectly (but doesn't crash)
-    const circularLens = vi.fn((triple, direction) => {
+    const circularLens = vi.fn((triple, _direction) => {
       if (triple.subject.includes('feature')) {
-        return { kind: 'FeatureChange' }
+        return { kind: 'FeatureChange' };
       }
-      return null
-    })
+      return null;
+    });
 
     const graphDiff = {
       added: [
@@ -1034,10 +1032,10 @@ describe('diff.mjs - Edge Cases', () => {
         },
       ],
       removed: [],
-    }
+    };
 
-    const ontologyDiff = diffOntologyFromGraphDiff(graphDiff, circularLens)
+    const ontologyDiff = diffOntologyFromGraphDiff(graphDiff, circularLens);
 
-    expect(ontologyDiff.changes).toHaveLength(1)
-  })
-})
+    expect(ontologyDiff.changes).toHaveLength(1);
+  });
+});

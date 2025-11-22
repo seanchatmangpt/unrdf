@@ -30,12 +30,15 @@ export function useErrorBoundary(config = {}) {
   const [error, setError] = useState(null);
   const [errorInfo, setErrorInfo] = useState(null);
 
-  const captureError = useCallback((err, info) => {
-    setHasError(true);
-    setError(err);
-    setErrorInfo(info);
-    config.onError?.(err, info);
-  }, [config]);
+  const captureError = useCallback(
+    (err, info) => {
+      setHasError(true);
+      setError(err);
+      setErrorInfo(info);
+      config.onError?.(err, info);
+    },
+    [config]
+  );
 
   const resetError = useCallback(() => {
     setHasError(false);
@@ -44,7 +47,7 @@ export function useErrorBoundary(config = {}) {
   }, []);
 
   useEffect(() => {
-    const handleError = (event) => {
+    const handleError = event => {
       captureError(event.error, { componentStack: event.filename });
     };
 

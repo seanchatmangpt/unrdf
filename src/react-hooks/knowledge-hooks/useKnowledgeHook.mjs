@@ -86,28 +86,31 @@ export function useKnowledgeHook(hookDefinition, options = {}) {
   /**
    * Manually execute the hook
    */
-  const execute = useCallback(async (event) => {
-    if (!hookDefinition?.run) {
-      throw new Error('[useKnowledgeHook] Hook has no run function');
-    }
+  const execute = useCallback(
+    async event => {
+      if (!hookDefinition?.run) {
+        throw new Error('[useKnowledgeHook] Hook has no run function');
+      }
 
-    try {
-      const result = await hookDefinition.run(event);
-      setLastExecution({
-        timestamp: Date.now(),
-        result,
-        success: true
-      });
-      return result;
-    } catch (err) {
-      setLastExecution({
-        timestamp: Date.now(),
-        error: err,
-        success: false
-      });
-      throw err;
-    }
-  }, [hookDefinition]);
+      try {
+        const result = await hookDefinition.run(event);
+        setLastExecution({
+          timestamp: Date.now(),
+          result,
+          success: true,
+        });
+        return result;
+      } catch (err) {
+        setLastExecution({
+          timestamp: Date.now(),
+          error: err,
+          success: false,
+        });
+        throw err;
+      }
+    },
+    [hookDefinition]
+  );
 
   // Auto-register and auto-unregister
   useEffect(() => {
@@ -129,6 +132,6 @@ export function useKnowledgeHook(hookDefinition, options = {}) {
     isRegistered,
     error,
     lastExecution,
-    status: isRegistered ? 'active' : 'inactive'
+    status: isRegistered ? 'active' : 'inactive',
   };
 }

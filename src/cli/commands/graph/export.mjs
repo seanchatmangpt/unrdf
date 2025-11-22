@@ -20,7 +20,7 @@ import { writeFile } from 'node:fs/promises';
 const exportArgsSchema = z.object({
   name: z.string().optional().default(''),
   format: z.string().optional().default('turtle'),
-  output: z.string().optional().default('')
+  output: z.string().optional().default(''),
 });
 
 /**
@@ -29,26 +29,26 @@ const exportArgsSchema = z.object({
 export const exportCommand = defineCommand({
   meta: {
     name: 'export',
-    description: 'Export a graph to a file in specified format'
+    description: 'Export a graph to a file in specified format',
   },
   args: {
     name: {
       type: 'positional',
       description: 'Name of the graph to export',
-      required: true
+      required: true,
     },
     format: {
       type: 'string',
       description: 'Export format (turtle, nquads, jsonld, ntriples)',
       default: 'turtle',
-      alias: 'f'
+      alias: 'f',
     },
     output: {
       type: 'string',
       description: 'Output file path',
       required: true,
-      alias: 'o'
-    }
+      alias: 'o',
+    },
   },
   async run(ctx) {
     try {
@@ -67,11 +67,15 @@ export const exportCommand = defineCommand({
           exportData = '<http://example.org/subject> <http://example.org/predicate> "object" .\n';
           break;
         case 'jsonld':
-          exportData = JSON.stringify({
-            '@context': 'http://schema.org/',
-            '@type': 'Thing',
-            'name': 'Example'
-          }, null, 2);
+          exportData = JSON.stringify(
+            {
+              '@context': 'http://schema.org/',
+              '@type': 'Thing',
+              name: 'Example',
+            },
+            null,
+            2
+          );
           break;
         case 'ntriples':
           exportData = '<http://example.org/subject> <http://example.org/predicate> "object" .\n';
@@ -86,10 +90,9 @@ export const exportCommand = defineCommand({
         console.error(`Export failed: ${writeError.message}`);
         process.exit(1);
       }
-
     } catch (error) {
       console.error(`Export failed: ${error.message}`);
       process.exit(1);
     }
-  }
+  },
 });

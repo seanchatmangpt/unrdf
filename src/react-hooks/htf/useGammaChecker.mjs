@@ -4,11 +4,7 @@
  */
 
 import { useState, useCallback, useEffect, useMemo } from 'react';
-import {
-  computeGammaGlobalization,
-  StandardInvariants,
-  evolveTowardMuFixed
-} from './htf-core.mjs';
+import { computeGammaGlobalization, StandardInvariants, evolveTowardMuFixed } from './htf-core.mjs';
 
 /**
  * useGammaChecker hook - Validate thesis convergence to μ-fixed point
@@ -33,20 +29,21 @@ import {
  * @returns {Function} generateValidationReport - Export validation as report
  */
 export function useGammaChecker(shards = [], customInvariants = [], options = {}) {
-  const {
-    autoCheck = true,
-    onViolation = () => {},
-    onConvergence = () => {}
-  } = options;
+  const { autoCheck = true, onViolation = () => {}, onConvergence = () => {} } = options;
 
   const [validationState, setValidationState] = useState({
     timestamp: new Date(),
     violations: [],
     drift: 1,
-    isConverged: false
+    isConverged: false,
   });
 
-  const [evolution, setEvolution] = useState({ epoch: 0, state: {}, distance: 1, isConverged: false });
+  const [evolution, setEvolution] = useState({
+    epoch: 0,
+    state: {},
+    distance: 1,
+    isConverged: false,
+  });
   const [customChecks, setCustomChecks] = useState(customInvariants);
   const [fixHistory, setFixHistory] = useState([]);
 
@@ -80,7 +77,7 @@ export function useGammaChecker(shards = [], customInvariants = [], options = {}
                 shardLabel: shard.label,
                 severity: categorizeViolation(invariant.id),
                 fixSuggestion: suggestFix(invariant.id, shard),
-                timestamp: new Date()
+                timestamp: new Date(),
               });
             }
           } catch (e) {
@@ -92,7 +89,7 @@ export function useGammaChecker(shards = [], customInvariants = [], options = {}
               shardLabel: shard.label,
               severity: 'error',
               errorMessage: e.message,
-              timestamp: new Date()
+              timestamp: new Date(),
             });
           }
         }
@@ -106,7 +103,7 @@ export function useGammaChecker(shards = [], customInvariants = [], options = {}
       violations,
       drift: gamma.drift,
       isConverged,
-      report: gamma
+      report: gamma,
     };
 
     setValidationState(newState);
@@ -142,18 +139,24 @@ export function useGammaChecker(shards = [], customInvariants = [], options = {}
   /**
    * Add a custom Q-invariant
    */
-  const addCustomInvariant = useCallback((invariant) => {
-    setCustomChecks(prev => [...prev, invariant]);
-    validateShards();
-  }, [validateShards]);
+  const addCustomInvariant = useCallback(
+    invariant => {
+      setCustomChecks(prev => [...prev, invariant]);
+      validateShards();
+    },
+    [validateShards]
+  );
 
   /**
    * Remove custom Q-invariant
    */
-  const removeCustomInvariant = useCallback((invariantId) => {
-    setCustomChecks(prev => prev.filter(inv => inv.id !== invariantId));
-    validateShards();
-  }, [validateShards]);
+  const removeCustomInvariant = useCallback(
+    invariantId => {
+      setCustomChecks(prev => prev.filter(inv => inv.id !== invariantId));
+      validateShards();
+    },
+    [validateShards]
+  );
 
   /**
    * Get all active invariants
@@ -163,7 +166,7 @@ export function useGammaChecker(shards = [], customInvariants = [], options = {}
       id: inv.id,
       description: inv.description,
       appliesTo: inv.appliesTo,
-      isCustom: !StandardInvariants.find(s => s.id === inv.id)
+      isCustom: !StandardInvariants.find(s => s.id === inv.id),
     }));
   }, [allInvariants]);
 
@@ -172,131 +175,141 @@ export function useGammaChecker(shards = [], customInvariants = [], options = {}
   /**
    * Suggest automatic fixes for violations
    */
-  const suggestFixesForViolation = useCallback((violationId) => {
-    const violation = validationState.violations.find(v => v.id === violationId);
-    if (!violation) return [];
+  const suggestFixesForViolation = useCallback(
+    violationId => {
+      const violation = validationState.violations.find(v => v.id === violationId);
+      if (!violation) return [];
 
-    const shard = shards.find(s => s.id === violation.shardId);
-    if (!shard) return [];
+      const shard = shards.find(s => s.id === violation.shardId);
+      if (!shard) return [];
 
-    const fixes = [];
+      const fixes = [];
 
-    // Common fix patterns
-    if (violation.invariantId === 'Q-coherence') {
-      fixes.push({
-        type: 'expand-content',
-        description: 'Expand shard content to minimum 100 characters',
-        action: () => ({ content: shard.content + ' [NEEDS EXPANSION]' })
-      });
-    }
+      // Common fix patterns
+      if (violation.invariantId === 'Q-coherence') {
+        fixes.push({
+          type: 'expand-content',
+          description: 'Expand shard content to minimum 100 characters',
+          action: () => ({ content: shard.content + ' [NEEDS EXPANSION]' }),
+        });
+      }
 
-    if (violation.invariantId === 'Q-positioning') {
-      fixes.push({
-        type: 'validate-deps',
-        description: 'Ensure all dependencies are valid shard IDs',
-        action: () => ({
-          dependencies: (shard.dependencies || []).filter(id =>
-            shards.some(s => s.id === id)
-          )
-        })
-      });
-    }
+      if (violation.invariantId === 'Q-positioning') {
+        fixes.push({
+          type: 'validate-deps',
+          description: 'Ensure all dependencies are valid shard IDs',
+          action: () => ({
+            dependencies: (shard.dependencies || []).filter(id => shards.some(s => s.id === id)),
+          }),
+        });
+      }
 
-    if (violation.invariantId === 'Q-contribution') {
-      fixes.push({
-        type: 'set-weight',
-        description: 'Set shard weight > 0 to indicate contribution',
-        action: () => ({ weight: Math.max(shard.weight || 0, 0.5) })
-      });
-    }
+      if (violation.invariantId === 'Q-contribution') {
+        fixes.push({
+          type: 'set-weight',
+          description: 'Set shard weight > 0 to indicate contribution',
+          action: () => ({ weight: Math.max(shard.weight || 0, 0.5) }),
+        });
+      }
 
-    return fixes;
-  }, [validationState, shards]);
+      return fixes;
+    },
+    [validationState, shards]
+  );
 
   /**
    * Auto-apply fixes to violations
    */
-  const fixViolations = useCallback((violationIds = null) => {
-    const targetViolations = violationIds
-      ? validationState.violations.filter(v => violationIds.includes(v.id))
-      : validationState.violations;
+  const fixViolations = useCallback(
+    (violationIds = null) => {
+      const targetViolations = violationIds
+        ? validationState.violations.filter(v => violationIds.includes(v.id))
+        : validationState.violations;
 
-    const fixes = [];
-    const updatedShards = shards.map(shard => {
-      let updated = { ...shard };
+      const fixes = [];
+      const updatedShards = shards.map(shard => {
+        let updated = { ...shard };
 
-      for (const violation of targetViolations) {
-        if (violation.shardId === shard.id) {
-          const suggestedFix = suggestFixesForViolation(violation.id);
-          if (suggestedFix.length > 0) {
-            const fix = suggestedFix[0];
-            const fixAction = fix.action();
-            updated = { ...updated, ...fixAction };
-            fixes.push({
-              shardId: shard.id,
-              violationId: violation.id,
-              fix: fix.type,
-              before: shard,
-              after: updated
-            });
+        for (const violation of targetViolations) {
+          if (violation.shardId === shard.id) {
+            const suggestedFix = suggestFixesForViolation(violation.id);
+            if (suggestedFix.length > 0) {
+              const fix = suggestedFix[0];
+              const fixAction = fix.action();
+              updated = { ...updated, ...fixAction };
+              fixes.push({
+                shardId: shard.id,
+                violationId: violation.id,
+                fix: fix.type,
+                before: shard,
+                after: updated,
+              });
+            }
           }
         }
-      }
 
-      return updated;
-    });
+        return updated;
+      });
 
-    // Record in history and update shards
-    setFixHistory(prev => [...prev, { timestamp: new Date(), fixes, shards: updatedShards }]);
+      // Record in history and update shards
+      setFixHistory(prev => [...prev, { timestamp: new Date(), fixes, shards: updatedShards }]);
 
-    // Re-validate
-    validateShards();
+      // Re-validate
+      validateShards();
 
-    return { fixes, updatedShards };
-  }, [validationState, shards, suggestFixesForViolation, validateShards]);
+      return { fixes, updatedShards };
+    },
+    [validationState, shards, suggestFixesForViolation, validateShards]
+  );
 
   /**
    * Rollback to previous validation state
    */
-  const rollbackToEpoch = useCallback((epochIndex) => {
-    if (fixHistory[epochIndex]) {
-      const { shards: previousShards } = fixHistory[epochIndex];
-      // Note: Would need to propagate back to parent component
-      // This is a signal; actual update happens via parent state
-      return previousShards;
-    }
-    return shards;
-  }, [fixHistory, shards]);
+  const rollbackToEpoch = useCallback(
+    epochIndex => {
+      if (fixHistory[epochIndex]) {
+        const { shards: previousShards } = fixHistory[epochIndex];
+        // Note: Would need to propagate back to parent component
+        // This is a signal; actual update happens via parent state
+        return previousShards;
+      }
+      return shards;
+    },
+    [fixHistory, shards]
+  );
 
   // ====== REPORTING ======
 
   /**
    * Generate comprehensive validation report
    */
-  const generateValidationReport = useCallback((format = 'json') => {
-    const report = {
-      timestamp: validationState.timestamp,
-      epoch: evolution.epoch,
-      shards: shards.length,
-      violations: validationState.violations.length,
-      drift: validationState.drift,
-      isConverged: validationState.isConverged,
-      invariantsChecked: allInvariants.length,
-      violations: validationState.violations,
-      evolution,
-      activeInvariants: getActiveInvariants()
-    };
+  const generateValidationReport = useCallback(
+    (format = 'json') => {
+      const report = {
+        timestamp: validationState.timestamp,
+        epoch: evolution.epoch,
+        shards: shards.length,
+        violations: validationState.violations.length,
+        drift: validationState.drift,
+        isConverged: validationState.isConverged,
+        invariantsChecked: allInvariants.length,
+        violations: validationState.violations,
+        evolution,
+        activeInvariants: getActiveInvariants(),
+      };
 
-    if (format === 'json') {
-      return JSON.stringify(report, null, 2);
-    } else if (format === 'markdown') {
-      return generateMarkdownReport(report);
-    } else if (format === 'html') {
-      return generateHTMLReport(report);
-    }
+      if (format === 'json') {
+        return JSON.stringify(report, null, 2);
+      } else if (format === 'markdown') {
+        return generateMarkdownReport(report);
+      } else if (format === 'html') {
+        return generateHTMLReport(report);
+      }
 
-    return report;
-  }, [validationState, evolution, allInvariants, shards, getActiveInvariants]);
+      return report;
+    },
+    [validationState, evolution, allInvariants, shards, getActiveInvariants]
+  );
 
   /**
    * Get detailed violation analysis
@@ -346,7 +359,7 @@ export function useGammaChecker(shards = [], customInvariants = [], options = {}
       violations: validationState.violations,
       drift: validationState.drift,
       isConverged: validationState.isConverged,
-      timestamp: validationState.timestamp
+      timestamp: validationState.timestamp,
     },
 
     // Evolution tracking
@@ -373,8 +386,8 @@ export function useGammaChecker(shards = [], customInvariants = [], options = {}
       drift: validationState.drift,
       isConverged: validationState.isConverged,
       epoch: evolution.epoch,
-      invariantsChecked: allInvariants.length
-    })
+      invariantsChecked: allInvariants.length,
+    }),
   };
 }
 
@@ -389,7 +402,7 @@ function categorizeViolation(invariantId) {
     'Q-positioning': 'error',
     'Q-contribution': 'warning',
     'Q-imrad-closure': 'info',
-    'Q-argument-chain': 'info'
+    'Q-argument-chain': 'info',
   };
   return severityMap[invariantId] || 'info';
 }
@@ -403,7 +416,7 @@ function suggestFix(invariantId, shard) {
     'Q-positioning': 'Verify all dependency IDs are valid',
     'Q-contribution': 'Set weight > 0 (currently ' + (shard.weight || 0) + ')',
     'Q-imrad-closure': `Ensure shard ID is in [intro, method, result, discuss]`,
-    'Q-argument-chain': `Ensure shard ID is in [claim, ground, proof, objection, reply]`
+    'Q-argument-chain': `Ensure shard ID is in [claim, ground, proof, objection, reply]`,
   };
   return suggestions[invariantId] || 'See invariant description for requirements';
 }

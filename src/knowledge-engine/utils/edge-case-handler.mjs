@@ -24,13 +24,10 @@
  */
 export function safeGet(obj, path, defaultValue = undefined) {
   if (obj == null || typeof path !== 'string') {
-    return defaultValue
+    return defaultValue;
   }
 
-  return path.split('.').reduce(
-    (current, key) => current?.[key],
-    obj
-  ) ?? defaultValue
+  return path.split('.').reduce((current, key) => current?.[key], obj) ?? defaultValue;
 }
 
 /**
@@ -48,22 +45,22 @@ export function safeGet(obj, path, defaultValue = undefined) {
  */
 export function requireProperties(obj, props, errorMessage = 'Object') {
   if (obj == null) {
-    throw new TypeError(`${errorMessage} cannot be null or undefined`)
+    throw new TypeError(`${errorMessage} cannot be null or undefined`);
   }
 
   if (!Array.isArray(props)) {
-    throw new TypeError('props must be an array')
+    throw new TypeError('props must be an array');
   }
 
-  const missing = []
+  const missing = [];
   for (const prop of props) {
     if (safeGet(obj, prop) === undefined) {
-      missing.push(prop)
+      missing.push(prop);
     }
   }
 
   if (missing.length > 0) {
-    throw new TypeError(`${errorMessage}: missing required properties: ${missing.join(', ')}`)
+    throw new TypeError(`${errorMessage}: missing required properties: ${missing.join(', ')}`);
   }
 }
 
@@ -82,14 +79,14 @@ export function requireProperties(obj, props, errorMessage = 'Object') {
  */
 export function safeArrayAccess(arr, index, defaultValue = undefined) {
   if (!Array.isArray(arr)) {
-    return defaultValue
+    return defaultValue;
   }
 
   if (typeof index !== 'number' || index < 0 || index >= arr.length) {
-    return defaultValue
+    return defaultValue;
   }
 
-  return arr[index]
+  return arr[index];
 }
 
 /**
@@ -100,7 +97,7 @@ export function safeArrayAccess(arr, index, defaultValue = undefined) {
  * @returns {any} First element or default
  */
 export function safeFirst(arr, defaultValue = undefined) {
-  return safeArrayAccess(arr, 0, defaultValue)
+  return safeArrayAccess(arr, 0, defaultValue);
 }
 
 /**
@@ -112,9 +109,9 @@ export function safeFirst(arr, defaultValue = undefined) {
  */
 export function safeLast(arr, defaultValue = undefined) {
   if (!Array.isArray(arr) || arr.length === 0) {
-    return defaultValue
+    return defaultValue;
   }
-  return arr[arr.length - 1]
+  return arr[arr.length - 1];
 }
 
 /**
@@ -132,25 +129,25 @@ export function safeLast(arr, defaultValue = undefined) {
  */
 export function isEmpty(value) {
   // Null/undefined
-  if (value == null) return true
+  if (value == null) return true;
 
   // Array
-  if (Array.isArray(value)) return value.length === 0
+  if (Array.isArray(value)) return value.length === 0;
 
   // String
-  if (typeof value === 'string') return value.length === 0
+  if (typeof value === 'string') return value.length === 0;
 
   // Objects with .size property (Store, Map, Set)
   if (typeof value === 'object' && 'size' in value) {
-    return value.size === 0
+    return value.size === 0;
   }
 
   // Plain objects
   if (typeof value === 'object') {
-    return Object.keys(value).length === 0
+    return Object.keys(value).length === 0;
   }
 
-  return false
+  return false;
 }
 
 /**
@@ -160,7 +157,7 @@ export function isEmpty(value) {
  * @returns {boolean} True if value is not empty
  */
 export function isNotEmpty(value) {
-  return !isEmpty(value)
+  return !isEmpty(value);
 }
 
 /**
@@ -179,24 +176,24 @@ export function isNotEmpty(value) {
 export function hasCircularRefs(obj, seen = new WeakSet()) {
   // Primitives can't have circular refs
   if (obj == null || typeof obj !== 'object') {
-    return false
+    return false;
   }
 
   // Circular reference detected
   if (seen.has(obj)) {
-    return true
+    return true;
   }
 
-  seen.add(obj)
+  seen.add(obj);
 
   // Check all values
   for (const value of Object.values(obj)) {
     if (hasCircularRefs(value, seen)) {
-      return true
+      return true;
     }
   }
 
-  return false
+  return false;
 }
 
 /**
@@ -211,66 +208,66 @@ export function hasCircularRefs(obj, seen = new WeakSet()) {
  */
 export function getStronglyConnectedComponents(graph) {
   if (!graph || typeof graph !== 'object') {
-    return []
+    return [];
   }
 
-  const visited = new Set()
-  const stack = []
-  const components = []
+  const visited = new Set();
+  const stack = [];
+  const components = [];
 
   // DFS to fill stack
   function dfs1(node) {
-    if (visited.has(node)) return
-    visited.add(node)
+    if (visited.has(node)) return;
+    visited.add(node);
 
-    const neighbors = graph[node] || []
+    const neighbors = graph[node] || [];
     for (const neighbor of neighbors) {
-      dfs1(neighbor)
+      dfs1(neighbor);
     }
 
-    stack.push(node)
+    stack.push(node);
   }
 
   // Get transpose graph
-  const transpose = {}
+  const transpose = {};
   for (const [node, neighbors] of Object.entries(graph)) {
     for (const neighbor of neighbors) {
-      if (!transpose[neighbor]) transpose[neighbor] = []
-      transpose[neighbor].push(node)
+      if (!transpose[neighbor]) transpose[neighbor] = [];
+      transpose[neighbor].push(node);
     }
   }
 
   // DFS on transpose
   function dfs2(node, component) {
-    if (visited.has(node)) return
-    visited.add(node)
-    component.push(node)
+    if (visited.has(node)) return;
+    visited.add(node);
+    component.push(node);
 
-    const neighbors = transpose[node] || []
+    const neighbors = transpose[node] || [];
     for (const neighbor of neighbors) {
-      dfs2(neighbor, component)
+      dfs2(neighbor, component);
     }
   }
 
   // Fill stack
   for (const node of Object.keys(graph)) {
-    dfs1(node)
+    dfs1(node);
   }
 
   // Find components
-  visited.clear()
+  visited.clear();
   while (stack.length > 0) {
-    const node = stack.pop()
+    const node = stack.pop();
     if (!visited.has(node)) {
-      const component = []
-      dfs2(node, component)
+      const component = [];
+      dfs2(node, component);
       if (component.length > 0) {
-        components.push(component)
+        components.push(component);
       }
     }
   }
 
-  return components
+  return components;
 }
 
 /**
@@ -281,16 +278,16 @@ export function getStronglyConnectedComponents(graph) {
  */
 export function hasSelfReferences(graph) {
   if (!graph || typeof graph !== 'object') {
-    return false
+    return false;
   }
 
   for (const [node, neighbors] of Object.entries(graph)) {
     if (Array.isArray(neighbors) && neighbors.includes(node)) {
-      return true
+      return true;
     }
   }
 
-  return false
+  return false;
 }
 
 /**
@@ -301,30 +298,30 @@ export function hasSelfReferences(graph) {
  */
 export function quadCount(store) {
   if (!store || typeof store !== 'object') {
-    return 0
+    return 0;
   }
 
   // Check for .size property (n3.Store)
   if ('size' in store && typeof store.size === 'number') {
-    return store.size
+    return store.size;
   }
 
   // Check for .length property
   if ('length' in store && typeof store.length === 'number') {
-    return store.length
+    return store.length;
   }
 
   // Try counting quads
   if (typeof store.getQuads === 'function') {
-    return store.getQuads().length
+    return store.getQuads().length;
   }
 
   // Try iterating
   if (typeof store[Symbol.iterator] === 'function') {
-    return Array.from(store).length
+    return Array.from(store).length;
   }
 
-  return 0
+  return 0;
 }
 
 /**
@@ -335,20 +332,20 @@ export function quadCount(store) {
  */
 export function timestampCount(store) {
   if (!store || typeof store.getQuads !== 'function') {
-    return 0
+    return 0;
   }
 
-  let count = 0
-  const quads = store.getQuads()
+  let count = 0;
+  const quads = store.getQuads();
 
   for (const quad of quads) {
-    const obj = quad.object
+    const obj = quad.object;
     if (obj?.datatype?.value === 'http://www.w3.org/2001/XMLSchema#dateTime') {
-      count++
+      count++;
     }
   }
 
-  return count
+  return count;
 }
 
 /**
@@ -359,19 +356,19 @@ export function timestampCount(store) {
  */
 export function detectDstTransitions(store) {
   if (!store || typeof store.getQuads !== 'function') {
-    return []
+    return [];
   }
 
-  const transitions = []
-  const timestamps = []
+  const transitions = [];
+  const timestamps = [];
 
   // Extract all timestamps
-  const quads = store.getQuads()
+  const quads = store.getQuads();
   for (const quad of quads) {
-    const obj = quad.object
+    const obj = quad.object;
     if (obj?.datatype?.value === 'http://www.w3.org/2001/XMLSchema#dateTime') {
       try {
-        timestamps.push(new Date(obj.value))
+        timestamps.push(new Date(obj.value));
       } catch {
         // Skip invalid timestamps
       }
@@ -379,24 +376,24 @@ export function detectDstTransitions(store) {
   }
 
   // Sort timestamps
-  timestamps.sort((a, b) => a - b)
+  timestamps.sort((a, b) => a - b);
 
   // Detect hour-offset jumps (DST transitions)
   for (let i = 1; i < timestamps.length; i++) {
-    const diff = timestamps[i] - timestamps[i - 1]
-    const hourDiff = diff / (1000 * 60 * 60)
+    const diff = timestamps[i] - timestamps[i - 1];
+    const hourDiff = diff / (1000 * 60 * 60);
 
     // DST transition is typically 1-hour jump
     if (Math.abs(hourDiff - 1) < 0.1 || Math.abs(hourDiff + 1) < 0.1) {
       transitions.push({
         from: timestamps[i - 1],
         to: timestamps[i],
-        offsetHours: hourDiff
-      })
+        offsetHours: hourDiff,
+      });
     }
   }
 
-  return transitions
+  return transitions;
 }
 
 /**
@@ -408,15 +405,15 @@ export function detectDstTransitions(store) {
  */
 export function safeParseNumber(value, defaultValue = 0) {
   if (typeof value === 'number') {
-    return isNaN(value) ? defaultValue : value
+    return isNaN(value) ? defaultValue : value;
   }
 
   if (typeof value === 'string') {
-    const parsed = parseFloat(value)
-    return isNaN(parsed) ? defaultValue : parsed
+    const parsed = parseFloat(value);
+    return isNaN(parsed) ? defaultValue : parsed;
   }
 
-  return defaultValue
+  return defaultValue;
 }
 
 /**
@@ -428,15 +425,15 @@ export function safeParseNumber(value, defaultValue = 0) {
  */
 export function safeParseInt(value, defaultValue = 0) {
   if (typeof value === 'number') {
-    return Number.isInteger(value) ? value : defaultValue
+    return Number.isInteger(value) ? value : defaultValue;
   }
 
   if (typeof value === 'string') {
-    const parsed = parseInt(value, 10)
-    return isNaN(parsed) ? defaultValue : parsed
+    const parsed = parseInt(value, 10);
+    return isNaN(parsed) ? defaultValue : parsed;
   }
 
-  return defaultValue
+  return defaultValue;
 }
 
 /**
@@ -448,7 +445,7 @@ export function safeParseInt(value, defaultValue = 0) {
  * @returns {number} Clamped value
  */
 export function clamp(value, min, max) {
-  return Math.max(min, Math.min(max, value))
+  return Math.max(min, Math.min(max, value));
 }
 
 /**
@@ -461,9 +458,9 @@ export function clamp(value, min, max) {
  */
 export function safeDivide(numerator, denominator, defaultValue = 0) {
   if (denominator === 0) {
-    return defaultValue
+    return defaultValue;
   }
-  return numerator / denominator
+  return numerator / denominator;
 }
 
 /**
@@ -479,31 +476,28 @@ export async function retry(fn, options = {}) {
     baseDelay = 100,
     maxDelay = 5000,
     backoffFactor = 2,
-    onRetry = null
-  } = options
+    onRetry = null,
+  } = options;
 
-  let lastError
+  let lastError;
 
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
     try {
-      return await fn()
+      return await fn();
     } catch (error) {
-      lastError = error
+      lastError = error;
 
       if (attempt < maxAttempts - 1) {
-        const delay = Math.min(
-          baseDelay * Math.pow(backoffFactor, attempt),
-          maxDelay
-        )
+        const delay = Math.min(baseDelay * Math.pow(backoffFactor, attempt), maxDelay);
 
         if (onRetry) {
-          onRetry(error, attempt + 1, delay)
+          onRetry(error, attempt + 1, delay);
         }
 
-        await new Promise(resolve => setTimeout(resolve, delay))
+        await new Promise(resolve => setTimeout(resolve, delay));
       }
     }
   }
 
-  throw lastError
+  throw lastError;
 }

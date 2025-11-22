@@ -3,13 +3,13 @@
  * @module project-engine/golden-structure
  */
 
-import { promises as fs } from 'fs'
-import { Store } from 'n3'
-import { parseTurtle } from '../knowledge-engine/parse.mjs'
-import { trace, SpanStatusCode } from '@opentelemetry/api'
-import { z } from 'zod'
+import { promises as _fs } from 'fs';
+import { _Store } from 'n3';
+import { parseTurtle } from '../knowledge-engine/parse.mjs';
+import { trace, SpanStatusCode } from '@opentelemetry/api';
+import { z } from 'zod';
 
-const tracer = trace.getTracer('unrdf/golden-structure')
+const tracer = trace.getTracer('unrdf/golden-structure');
 
 const GoldenStructureOptionsSchema = z.object({
   profile: z.enum([
@@ -19,7 +19,7 @@ const GoldenStructureOptionsSchema = z.object({
     'nest-api-v1',
     'express-api-v1',
   ]),
-})
+});
 
 /**
  * Generate or load golden structure from profile
@@ -29,25 +29,25 @@ const GoldenStructureOptionsSchema = z.object({
  * @returns {Promise<Store>} Store with golden structure
  */
 export async function generateGoldenStructure(options) {
-  const validated = GoldenStructureOptionsSchema.parse(options)
-  const { profile } = validated
+  const validated = GoldenStructureOptionsSchema.parse(options);
+  const { profile } = validated;
 
-  return tracer.startActiveSpan('golden.structure.generate', async (span) => {
+  return tracer.startActiveSpan('golden.structure.generate', async span => {
     try {
-      span.setAttribute('golden.profile', profile)
+      span.setAttribute('golden.profile', profile);
 
-      const ttl = getGoldenStructureTtl(profile)
-      const store = await parseTurtle(ttl, 'http://example.org/unrdf/golden#')
+      const ttl = getGoldenStructureTtl(profile);
+      const store = await parseTurtle(ttl, 'http://example.org/unrdf/golden#');
 
-      span.setAttribute('golden.store_size', store.size)
-      span.setStatus({ code: SpanStatusCode.OK })
+      span.setAttribute('golden.store_size', store.size);
+      span.setStatus({ code: SpanStatusCode.OK });
 
-      return store
+      return store;
     } catch (error) {
-      span.setStatus({ code: SpanStatusCode.ERROR, message: error.message })
-      throw error
+      span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
+      throw error;
     }
-  })
+  });
 }
 
 /**
@@ -64,11 +64,13 @@ function getGoldenStructureTtl(profile) {
 
 golden:project a unproj:Project ;
   rdfs:label "Golden Structure" .
-`
+`;
 
   // Profile-specific structures
   if (profile === 'react-feature-v1') {
-    return baseGolden + `
+    return (
+      baseGolden +
+      `
 golden:featureExample a unproj:Feature ;
   rdfs:label "Example Feature" ;
   rdfs:comment "Standard React feature structure" .
@@ -88,8 +90,11 @@ golden:pathHookPattern a rdf:Property ;
 golden:pathTestPattern a rdf:Property ;
   rdfs:value "src/features/**/*.test.tsx" .
 `
+    );
   } else if (profile === 'next-app-router-v1') {
-    return baseGolden + `
+    return (
+      baseGolden +
+      `
 golden:project unproj:webFramework "next-app-router" .
 
 golden:pageExample a unproj:Page ;
@@ -110,8 +115,11 @@ golden:pathLayoutPattern a rdf:Property ;
 golden:pathApiPattern a rdf:Property ;
   rdfs:value "src/app/**/route.ts" .
 `
+    );
   } else if (profile === 'nest-api-v1') {
-    return baseGolden + `
+    return (
+      baseGolden +
+      `
 golden:project unproj:webFramework "nest" ;
   unproj:apiFramework "nest" .
 
@@ -133,8 +141,9 @@ golden:pathServicePattern a rdf:Property ;
 golden:pathDtoPattern a rdf:Property ;
   rdfs:value "src/**/dto/*.dto.ts" .
 `
+    );
   } else {
     // Default fallback
-    return baseGolden
+    return baseGolden;
   }
 }

@@ -2,11 +2,11 @@
  * @fileoverview Tests for useShapeValidation hook
  */
 
-import { describe, it, expect, beforeEach } from 'vitest';
-import { renderHook, waitFor } from '@testing-library/react';
+import { describe, it, expect, _beforeEach } from 'vitest';
+import { _renderHook, _waitFor } from '@testing-library/react';
 
 describe('useShapeValidation', () => {
-  const personShape = `
+  const _personShape = `
     @prefix sh: <http://www.w3.org/ns/shacl#> .
     @prefix ex: <http://example.org/> .
 
@@ -28,7 +28,7 @@ describe('useShapeValidation', () => {
 
   describe('Valid Data', () => {
     it('should validate conforming data', async () => {
-      const validData = `
+      const _validData = `
         @prefix ex: <http://example.org/> .
         ex:alice a ex:Person ;
           ex:name "Alice" ;
@@ -46,7 +46,7 @@ describe('useShapeValidation', () => {
 
   describe('Invalid Data', () => {
     it('should detect missing required properties', async () => {
-      const invalidData = `
+      const _invalidData = `
         @prefix ex: <http://example.org/> .
         ex:alice a ex:Person .
       `;
@@ -56,7 +56,7 @@ describe('useShapeValidation', () => {
     });
 
     it('should detect invalid datatypes', async () => {
-      const invalidData = `
+      const _invalidData = `
         @prefix ex: <http://example.org/> .
         ex:alice a ex:Person ;
           ex:name "Alice" ;
@@ -68,7 +68,7 @@ describe('useShapeValidation', () => {
     });
 
     it('should detect value constraint violations', async () => {
-      const invalidData = `
+      const _invalidData = `
         @prefix ex: <http://example.org/> .
         ex:alice a ex:Person ;
           ex:name "Alice" ;

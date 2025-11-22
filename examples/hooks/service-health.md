@@ -56,6 +56,7 @@ This Knowledge Hook monitors service health metrics and triggers alerts when per
 ## Effect Function
 
 When the hook fires, it will:
+
 - Log a health alert message
 - Display detailed metrics for each affected service
 - Show current values vs. thresholds

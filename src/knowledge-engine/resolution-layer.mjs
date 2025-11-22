@@ -1,14 +1,14 @@
 /**
  * @file Resolution Layer for Multi-Agent Coordination
  * @module resolution-layer
- * 
+ *
  * @description
  * Implements multi-agent coordination and Delta resolution for swarm behavior.
  * Handles competing proposals from multiple agents and resolves them into
  * a single, consolidated Delta.
  */
 
-import { Store } from 'n3';
+import { _Store } from 'n3';
 import { randomUUID } from 'crypto';
 import { z } from 'zod';
 
@@ -21,14 +21,14 @@ const AgentProposalSchema = z.object({
   delta: z.object({
     additions: z.array(z.any()),
     removals: z.array(z.any()),
-    metadata: z.record(z.any()).optional()
+    metadata: z.record(z.any()).optional(),
   }),
   confidence: z.number().min(0).max(1),
   priority: z.number().int().min(0).max(100).default(50),
   timestamp: z.number(),
   metadata: z.record(z.any()).optional(),
   dependencies: z.array(z.string()).optional(),
-  conflicts: z.array(z.string()).optional()
+  conflicts: z.array(z.string()).optional(),
 });
 
 /**
@@ -39,7 +39,7 @@ const ResolutionStrategySchema = z.object({
   parameters: z.record(z.any()).optional(),
   timeout: z.number().int().positive().max(300000).default(30000),
   quorum: z.number().min(0).max(1).default(0.5),
-  maxRetries: z.number().int().nonnegative().max(10).default(3)
+  maxRetries: z.number().int().nonnegative().max(10).default(3),
 });
 
 /**
@@ -52,17 +52,21 @@ const ResolutionResultSchema = z.object({
   resolvedDelta: z.object({
     additions: z.array(z.any()),
     removals: z.array(z.any()),
-    metadata: z.record(z.any()).optional()
+    metadata: z.record(z.any()).optional(),
   }),
   confidence: z.number().min(0).max(1),
   consensus: z.boolean(),
-  conflicts: z.array(z.object({
-    type: z.enum(['addition', 'removal', 'metadata']),
-    proposals: z.array(z.string()),
-    resolution: z.string()
-  })).optional(),
+  conflicts: z
+    .array(
+      z.object({
+        type: z.enum(['addition', 'removal', 'metadata']),
+        proposals: z.array(z.string()),
+        resolution: z.string(),
+      })
+    )
+    .optional(),
   timestamp: z.number(),
-  duration: z.number().nonnegative()
+  duration: z.number().nonnegative(),
 });
 
 /**
@@ -80,14 +84,14 @@ export class ResolutionLayer {
       enableConflictDetection: config.enableConflictDetection !== false,
       enableConsensus: config.enableConsensus !== false,
       timeout: config.timeout || 30000,
-      ...config
+      ...config,
     };
-    
+
     this.proposals = new Map();
     this.resolutionHistory = [];
     this.agents = new Map();
     this.strategies = new Map();
-    
+
     // Register default strategies
     this._registerDefaultStrategies();
   }
@@ -103,7 +107,7 @@ export class ResolutionLayer {
       metadata,
       registeredAt: Date.now(),
       proposalCount: 0,
-      lastActivity: Date.now()
+      lastActivity: Date.now(),
     });
   }
 
@@ -129,20 +133,20 @@ export class ResolutionLayer {
       timestamp: Date.now(),
       metadata: options.metadata || {},
       dependencies: options.dependencies || [],
-      conflicts: options.conflicts || []
+      conflicts: options.conflicts || [],
     };
 
     // Validate proposal
     const validatedProposal = AgentProposalSchema.parse(proposal);
-    
+
     // Store proposal
     this.proposals.set(validatedProposal.id, validatedProposal);
-    
+
     // Update agent stats
     const agent = this.agents.get(agentId);
     agent.proposalCount++;
     agent.lastActivity = Date.now();
-    
+
     return validatedProposal.id;
   }
 
@@ -155,13 +159,11 @@ export class ResolutionLayer {
   async resolveProposals(proposalIds, strategy = {}) {
     const startTime = Date.now();
     const resolutionId = randomUUID();
-    
+
     try {
       // Get proposals
-      const proposals = proposalIds
-        .map(id => this.proposals.get(id))
-        .filter(p => p !== undefined);
-      
+      const proposals = proposalIds.map(id => this.proposals.get(id)).filter(p => p !== undefined);
+
       if (proposals.length === 0) {
         throw new Error('No valid proposals found');
       }
@@ -172,7 +174,7 @@ export class ResolutionLayer {
         parameters: strategy.parameters || {},
         timeout: strategy.timeout || this.config.timeout,
         quorum: strategy.quorum || 0.5,
-        maxRetries: strategy.maxRetries || 3
+        maxRetries: strategy.maxRetries || 3,
       });
 
       // Get resolution function
@@ -183,12 +185,12 @@ export class ResolutionLayer {
 
       // Resolve proposals
       const resolvedDelta = await resolutionFn(proposals, validatedStrategy);
-      
+
       // Calculate consensus
       const consensus = this._calculateConsensus(proposals, resolvedDelta);
-      
+
       // Detect conflicts
-      const conflicts = this.config.enableConflictDetection 
+      const conflicts = this.config.enableConflictDetection
         ? this._detectConflicts(proposals, resolvedDelta)
         : [];
 
@@ -201,15 +203,15 @@ export class ResolutionLayer {
         consensus,
         conflicts,
         timestamp: Date.now(),
-        duration: Date.now() - startTime
+        duration: Date.now() - startTime,
       };
 
       // Validate result
       const validatedResult = ResolutionResultSchema.parse(result);
-      
+
       // Store in history
       this.resolutionHistory.push(validatedResult);
-      
+
       return validatedResult;
     } catch (error) {
       throw new Error(`Resolution failed: ${error.message}`);
@@ -222,8 +224,7 @@ export class ResolutionLayer {
    * @returns {Array} Agent proposals
    */
   getAgentProposals(agentId) {
-    return Array.from(this.proposals.values())
-      .filter(p => p.agentId === agentId);
+    return Array.from(this.proposals.values()).filter(p => p.agentId === agentId);
   }
 
   /**
@@ -251,7 +252,7 @@ export class ResolutionLayer {
   getStats() {
     const proposals = Array.from(this.proposals.values());
     const agents = Array.from(this.agents.values());
-    
+
     return {
       config: this.config,
       proposals: {
@@ -259,19 +260,19 @@ export class ResolutionLayer {
         byAgent: agents.reduce((acc, agent) => {
           acc[agent.id] = agent.proposalCount;
           return acc;
-        }, {})
+        }, {}),
       },
       agents: {
         total: agents.length,
-        active: agents.filter(a => Date.now() - a.lastActivity < 300000).length // 5 minutes
+        active: agents.filter(a => Date.now() - a.lastActivity < 300000).length, // 5 minutes
       },
       resolutions: {
         total: this.resolutionHistory.length,
         strategies: this.resolutionHistory.reduce((acc, r) => {
           acc[r.strategy] = (acc[r.strategy] || 0) + 1;
           return acc;
-        }, {})
-      }
+        }, {}),
+      },
     };
   }
 
@@ -281,86 +282,94 @@ export class ResolutionLayer {
    */
   _registerDefaultStrategies() {
     // Voting strategy
-    this.strategies.set('voting', async (proposals, strategy) => {
+    this.strategies.set('voting', async (proposals, _strategy) => {
       const votes = new Map();
-      
+
       for (const proposal of proposals) {
         const weight = proposal.confidence * (proposal.priority / 100);
         const key = JSON.stringify(proposal.delta);
         votes.set(key, (votes.get(key) || 0) + weight);
       }
-      
+
       // Find highest voted delta
       let bestDelta = null;
       let bestWeight = 0;
-      
+
       for (const [deltaKey, weight] of votes) {
         if (weight > bestWeight) {
           bestWeight = weight;
           bestDelta = JSON.parse(deltaKey);
         }
       }
-      
+
       return bestDelta;
     });
 
     // Merging strategy
-    this.strategies.set('merging', async (proposals, strategy) => {
+    this.strategies.set('merging', async (proposals, _strategy) => {
       const merged = { additions: [], removals: [], metadata: {} };
-      
+
       for (const proposal of proposals) {
         merged.additions.push(...proposal.delta.additions);
         merged.removals.push(...proposal.delta.removals);
         Object.assign(merged.metadata, proposal.delta.metadata || {});
       }
-      
+
       // Remove duplicates
       merged.additions = this._deduplicateQuads(merged.additions);
       merged.removals = this._deduplicateQuads(merged.removals);
-      
+
       return merged;
     });
 
     // Priority strategy
-    this.strategies.set('priority', async (proposals, strategy) => {
+    this.strategies.set('priority', async (proposals, _strategy) => {
       const sorted = proposals.sort((a, b) => b.priority - a.priority);
       return sorted[0].delta;
     });
 
     // Random strategy
-    this.strategies.set('random', async (proposals, strategy) => {
+    this.strategies.set('random', async (proposals, _strategy) => {
       const randomIndex = Math.floor(Math.random() * proposals.length);
       return proposals[randomIndex].delta;
     });
 
     // CRDT strategy (simplified)
-    this.strategies.set('crdt', async (proposals, strategy) => {
+    this.strategies.set('crdt', async (proposals, _strategy) => {
       const crdt = { additions: new Map(), removals: new Map() };
-      
+
       for (const proposal of proposals) {
         // Add additions with timestamps
         for (const quad of proposal.delta.additions) {
           const key = this._quadToKey(quad);
           const existing = crdt.additions.get(key);
           if (!existing || proposal.timestamp > existing.timestamp) {
-            crdt.additions.set(key, { quad, timestamp: proposal.timestamp, agent: proposal.agentId });
+            crdt.additions.set(key, {
+              quad,
+              timestamp: proposal.timestamp,
+              agent: proposal.agentId,
+            });
           }
         }
-        
+
         // Add removals with timestamps
         for (const quad of proposal.delta.removals) {
           const key = this._quadToKey(quad);
           const existing = crdt.removals.get(key);
           if (!existing || proposal.timestamp > existing.timestamp) {
-            crdt.removals.set(key, { quad, timestamp: proposal.timestamp, agent: proposal.agentId });
+            crdt.removals.set(key, {
+              quad,
+              timestamp: proposal.timestamp,
+              agent: proposal.agentId,
+            });
           }
         }
       }
-      
+
       return {
         additions: Array.from(crdt.additions.values()).map(v => v.quad),
         removals: Array.from(crdt.removals.values()).map(v => v.quad),
-        metadata: { strategy: 'crdt', timestamp: Date.now() }
+        metadata: { strategy: 'crdt', timestamp: Date.now() },
       };
     });
   }
@@ -374,17 +383,17 @@ export class ResolutionLayer {
    */
   _calculateConsensus(proposals, resolvedDelta) {
     if (proposals.length === 0) return false;
-    
+
     const resolvedKey = JSON.stringify(resolvedDelta);
     let consensusCount = 0;
-    
+
     for (const proposal of proposals) {
       const proposalKey = JSON.stringify(proposal.delta);
       if (proposalKey === resolvedKey) {
         consensusCount++;
       }
     }
-    
+
     const consensusRatio = consensusCount / proposals.length;
     return consensusRatio >= 0.5; // 50% consensus threshold
   }
@@ -398,37 +407,37 @@ export class ResolutionLayer {
    */
   _detectConflicts(proposals, resolvedDelta) {
     const conflicts = [];
-    
+
     // Check for conflicting additions/removals
     const resolvedAdditions = new Set(resolvedDelta.additions.map(q => this._quadToKey(q)));
     const resolvedRemovals = new Set(resolvedDelta.removals.map(q => this._quadToKey(q)));
-    
+
     for (const proposal of proposals) {
       const proposalAdditions = new Set(proposal.delta.additions.map(q => this._quadToKey(q)));
       const proposalRemovals = new Set(proposal.delta.removals.map(q => this._quadToKey(q)));
-      
+
       // Check for conflicts
       for (const key of proposalAdditions) {
         if (resolvedRemovals.has(key)) {
           conflicts.push({
             type: 'addition',
             proposals: [proposal.id],
-            resolution: 'conflict detected'
+            resolution: 'conflict detected',
           });
         }
       }
-      
+
       for (const key of proposalRemovals) {
         if (resolvedAdditions.has(key)) {
           conflicts.push({
             type: 'removal',
             proposals: [proposal.id],
-            resolution: 'conflict detected'
+            resolution: 'conflict detected',
           });
         }
       }
     }
-    
+
     return conflicts;
   }
 
@@ -439,18 +448,18 @@ export class ResolutionLayer {
    * @returns {number} Confidence score
    * @private
    */
-  _calculateConfidence(proposals, resolvedDelta) {
+  _calculateConfidence(proposals, _resolvedDelta) {
     if (proposals.length === 0) return 0;
-    
+
     let totalConfidence = 0;
     let weightSum = 0;
-    
+
     for (const proposal of proposals) {
       const weight = proposal.priority / 100;
       totalConfidence += proposal.confidence * weight;
       weightSum += weight;
     }
-    
+
     return weightSum > 0 ? totalConfidence / weightSum : 0;
   }
 

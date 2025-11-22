@@ -72,7 +72,7 @@ describe('useHookRegistry', () => {
         version: '1.0.0',
         author: 'test',
         description: 'Test hook',
-        execute: vi.fn()
+        execute: vi.fn(),
       };
 
       registry.set(hook.name, hook);
@@ -95,13 +95,19 @@ describe('useHookRegistry', () => {
     });
 
     it('should find hooks by tag', () => {
-      registry.set('h1', { name: 'h1', tags: ['validation'], execute: vi.fn() });
+      registry.set('h1', {
+        name: 'h1',
+        tags: ['validation'],
+        execute: vi.fn(),
+      });
       registry.set('h2', { name: 'h2', tags: ['audit'], execute: vi.fn() });
-      registry.set('h3', { name: 'h3', tags: ['validation'], execute: vi.fn() });
+      registry.set('h3', {
+        name: 'h3',
+        tags: ['validation'],
+        execute: vi.fn(),
+      });
 
-      const validationHooks = [...registry.values()].filter(h =>
-        h.tags?.includes('validation')
-      );
+      const validationHooks = [...registry.values()].filter(h => h.tags?.includes('validation'));
 
       expect(validationHooks).toHaveLength(2);
     });

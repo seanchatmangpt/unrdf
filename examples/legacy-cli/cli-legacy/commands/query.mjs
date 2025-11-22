@@ -29,9 +29,9 @@ function formatTable(results) {
 
   const headerRow = headers.map((h, i) => h.padEnd(colWidths[i])).join(' | ');
   const separator = headers.map((_, i) => '-'.repeat(colWidths[i])).join('-+-');
-  const dataRows = results.map(row =>
-    headers.map((h, i) => String(row[h] || '').padEnd(colWidths[i])).join(' | ')
-  ).join('\n');
+  const dataRows = results
+    .map(row => headers.map((h, i) => String(row[h] || '').padEnd(colWidths[i])).join(' | '))
+    .join('\n');
 
   return `${headerRow}\n${separator}\n${dataRows}`;
 }
@@ -48,9 +48,9 @@ function formatCSV(results) {
 
   const headers = Object.keys(results[0]);
   const headerRow = headers.join(',');
-  const dataRows = results.map(row =>
-    headers.map(h => `"${String(row[h] || '').replace(/"/g, '""')}"`).join(',')
-  ).join('\n');
+  const dataRows = results
+    .map(row => headers.map(h => `"${String(row[h] || '').replace(/"/g, '""')}"`).join(','))
+    .join('\n');
 
   return `${headerRow}\n${dataRows}`;
 }
@@ -61,7 +61,7 @@ function formatCSV(results) {
  * @param {Object} config - Configuration
  * @returns {Promise<void>}
  */
-export async function queryCommand(ctx, config) {
+export async function queryCommand(ctx, _config) {
   const { args } = ctx;
 
   // Validate required arguments
@@ -127,24 +127,24 @@ export const queryCommandMeta = {
     input: {
       type: 'positional',
       description: 'Input file path',
-      required: true
+      required: true,
     },
     query: {
       type: 'string',
-      description: 'SPARQL query string'
+      description: 'SPARQL query string',
     },
     'query-file': {
       type: 'string',
-      description: 'Path to SPARQL query file'
+      description: 'Path to SPARQL query file',
     },
     format: {
       type: 'string',
       description: 'Output format (table, json, csv)',
-      default: 'table'
+      default: 'table',
     },
     output: {
       type: 'string',
-      description: 'Output file path'
-    }
-  }
+      description: 'Output file path',
+    },
+  },
 };

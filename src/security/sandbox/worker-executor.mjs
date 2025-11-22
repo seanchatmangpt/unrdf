@@ -39,7 +39,7 @@ export class WorkerExecutor {
       memoryLimit: config.memoryLimit || 128,
       allowedGlobals: config.allowedGlobals || ['console', 'Date', 'Math', 'JSON'],
       strictMode: config.strictMode !== false,
-      ...config
+      ...config,
     };
 
     /** @type {Map<string, Worker>} */
@@ -57,7 +57,7 @@ export class WorkerExecutor {
    * @returns {Promise<Object>} Execution result
    */
   async run(code, context = {}, options = {}) {
-    return tracer.startActiveSpan('security.worker.execute', async (span) => {
+    return tracer.startActiveSpan('security.worker.execute', async span => {
       const startTime = Date.now();
       const executionId = randomUUID();
 
@@ -65,37 +65,32 @@ export class WorkerExecutor {
         span.setAttributes({
           'security.executor.type': 'worker',
           'security.execution.id': executionId,
-          'security.timeout': options.timeout || this.config.timeout
+          'security.timeout': options.timeout || this.config.timeout,
         });
 
         // Convert function to string if needed
         const codeString = typeof code === 'function' ? code.toString() : code;
 
         // Wrap code in strict mode if enabled
-        const wrappedCode = this.config.strictMode
-          ? `"use strict";\n${codeString}`
-          : codeString;
+        const wrappedCode = this.config.strictMode ? `"use strict";\n${codeString}` : codeString;
 
         // Create worker promise
         const result = await new Promise((resolve, reject) => {
           // Create worker first
-          const worker = new Worker(
-            join(__dirname, 'worker-executor-runtime.mjs'),
-            {
-              workerData: {
-                code: wrappedCode,
-                context,
-                config: {
-                  allowedGlobals: this.config.allowedGlobals,
-                  strictMode: this.config.strictMode
-                }
+          const worker = new Worker(join(__dirname, 'worker-executor-runtime.mjs'), {
+            workerData: {
+              code: wrappedCode,
+              context,
+              config: {
+                allowedGlobals: this.config.allowedGlobals,
+                strictMode: this.config.strictMode,
               },
-              resourceLimits: {
-                maxOldGenerationSizeMb: this.config.memoryLimit,
-                maxYoungGenerationSizeMb: Math.floor(this.config.memoryLimit / 4)
-              }
-            }
-          );
+            },
+            resourceLimits: {
+              maxOldGenerationSizeMb: this.config.memoryLimit,
+              maxYoungGenerationSizeMb: Math.floor(this.config.memoryLimit / 4),
+            },
+          });
 
           // Then set up timeout that uses worker
           const timeout = setTimeout(() => {
@@ -106,7 +101,7 @@ export class WorkerExecutor {
 
           this.workers.set(executionId, worker);
 
-          worker.on('message', (message) => {
+          worker.on('message', message => {
             clearTimeout(timeout);
             this.workers.delete(executionId);
             worker.terminate();
@@ -118,14 +113,14 @@ export class WorkerExecutor {
             }
           });
 
-          worker.on('error', (error) => {
+          worker.on('error', error => {
             clearTimeout(timeout);
             this.workers.delete(executionId);
             worker.terminate();
             reject(error);
           });
 
-          worker.on('exit', (code) => {
+          worker.on('exit', code => {
             if (code !== 0 && !this.workers.has(executionId)) {
               // Already handled by message or error
               return;
@@ -142,7 +137,7 @@ export class WorkerExecutor {
 
         span.setAttributes({
           'security.execution.duration': duration,
-          'security.execution.success': true
+          'security.execution.success': true,
         });
         span.setStatus({ code: 1 }); // OK
 
@@ -151,9 +146,8 @@ export class WorkerExecutor {
           result: result.result,
           duration,
           executionId,
-          memoryUsed: result.memoryUsed || { used: 0 }
+          memoryUsed: result.memoryUsed || { used: 0 },
         };
-
       } catch (error) {
         const duration = Date.now() - startTime;
 
@@ -161,7 +155,7 @@ export class WorkerExecutor {
         span.setAttributes({
           'security.execution.duration': duration,
           'security.execution.success': false,
-          'security.error.message': error.message
+          'security.error.message': error.message,
         });
         span.setStatus({ code: 2, message: error.message });
 
@@ -180,7 +174,7 @@ export class WorkerExecutor {
           error: error.message,
           errorType,
           duration,
-          executionId
+          executionId,
         };
       } finally {
         span.end();
@@ -198,7 +192,7 @@ export class WorkerExecutor {
       config: this.config,
       executionCount: this.executionCount,
       averageDuration: this.executionCount > 0 ? this.totalDuration / this.executionCount : 0,
-      activeWorkers: this.workers.size
+      activeWorkers: this.workers.size,
     };
   }
 

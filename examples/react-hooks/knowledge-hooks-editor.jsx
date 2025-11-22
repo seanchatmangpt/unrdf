@@ -50,7 +50,7 @@ function KnowledgeHooksEditor() {
   const [isCreating, setIsCreating] = useState(false);
 
   const handleCreateHook = useCallback(
-    (hookDef) => {
+    hookDef => {
       addHook(hookDef);
       setIsCreating(false);
     },
@@ -86,15 +86,9 @@ function KnowledgeHooksEditor() {
 
         <div style={styles.mainPanel}>
           {isCreating ? (
-            <HookCreator
-              onSave={handleCreateHook}
-              onCancel={() => setIsCreating(false)}
-            />
+            <HookCreator onSave={handleCreateHook} onCancel={() => setIsCreating(false)} />
           ) : selectedHook ? (
-            <HookEditor
-              hook={selectedHook}
-              onEvaluate={() => evaluateHook(selectedHook.name)}
-            />
+            <HookEditor hook={selectedHook} onEvaluate={() => evaluateHook(selectedHook.name)} />
           ) : (
             <div style={styles.emptyState}>
               <p>Select a hook to view details or create a new one</p>
@@ -120,7 +114,7 @@ function HooksList({ hooks, selectedHook, onSelectHook, onRemoveHook }) {
     <div style={styles.panel}>
       <h3>Registered Hooks ({hooks.length})</h3>
       <ul style={styles.list}>
-        {hooks.map((hook) => (
+        {hooks.map(hook => (
           <li
             key={hook.name}
             style={{
@@ -131,11 +125,9 @@ function HooksList({ hooks, selectedHook, onSelectHook, onRemoveHook }) {
           >
             <div style={styles.hookListItemName}>{hook.name}</div>
             <div style={styles.hookListItemDesc}>{hook.meta?.description}</div>
-            <div style={styles.hookListItemStatus}>
-              {hook.enabled ? '✓ Enabled' : '✗ Disabled'}
-            </div>
+            <div style={styles.hookListItemStatus}>{hook.enabled ? '✓ Enabled' : '✗ Disabled'}</div>
             <button
-              onClick={(e) => {
+              onClick={e => {
                 e.stopPropagation();
                 onRemoveHook(hook.name);
               }}
@@ -186,8 +178,8 @@ function HookCreator({ onSave, onCancel }) {
           type="text"
           placeholder="e.g., auto-tag-documents"
           value={hookDef.name}
-          onChange={(e) =>
-            setHookDef((prev) => ({
+          onChange={e =>
+            setHookDef(prev => ({
               ...prev,
               name: e.target.value,
             }))
@@ -201,8 +193,8 @@ function HookCreator({ onSave, onCancel }) {
         <textarea
           placeholder="What does this hook do?"
           value={hookDef.meta.description}
-          onChange={(e) =>
-            setHookDef((prev) => ({
+          onChange={e =>
+            setHookDef(prev => ({
               ...prev,
               meta: { ...prev.meta, description: e.target.value },
             }))
@@ -216,13 +208,17 @@ function HookCreator({ onSave, onCancel }) {
         <textarea
           placeholder="ASK { ?s ?p ?o }"
           value={hookDef.when.query}
-          onChange={(e) =>
-            setHookDef((prev) => ({
+          onChange={e =>
+            setHookDef(prev => ({
               ...prev,
               when: { ...prev.when, query: e.target.value },
             }))
           }
-          style={{ ...styles.input, minHeight: '100px', fontFamily: 'monospace' }}
+          style={{
+            ...styles.input,
+            minHeight: '100px',
+            fontFamily: 'monospace',
+          }}
         />
       </div>
 
@@ -231,13 +227,17 @@ function HookCreator({ onSave, onCancel }) {
         <textarea
           placeholder="async (event) => { /* your code */ }"
           value={hookDef.run.code}
-          onChange={(e) =>
-            setHookDef((prev) => ({
+          onChange={e =>
+            setHookDef(prev => ({
               ...prev,
               run: { ...prev.run, code: e.target.value },
             }))
           }
-          style={{ ...styles.input, minHeight: '150px', fontFamily: 'monospace' }}
+          style={{
+            ...styles.input,
+            minHeight: '150px',
+            fontFamily: 'monospace',
+          }}
         />
       </div>
 
@@ -245,10 +245,7 @@ function HookCreator({ onSave, onCancel }) {
         <button onClick={handleSave} style={{ ...styles.button, backgroundColor: '#22c55e' }}>
           Create Hook
         </button>
-        <button
-          onClick={onCancel}
-          style={{ ...styles.button, backgroundColor: '#6b7280' }}
-        >
+        <button onClick={onCancel} style={{ ...styles.button, backgroundColor: '#6b7280' }}>
           Cancel
         </button>
       </div>
@@ -272,9 +269,7 @@ function HookEditor({ hook, onEvaluate }) {
         </button>
       </div>
 
-      {hook.meta?.description && (
-        <p style={styles.description}>{hook.meta.description}</p>
-      )}
+      {hook.meta?.description && <p style={styles.description}>{hook.meta.description}</p>}
 
       <div style={styles.hookSection}>
         <h4>Trigger</h4>
@@ -307,7 +302,7 @@ function HookEditor({ hook, onEvaluate }) {
  */
 function HooksMetrics({ hooks }) {
   const totalHooks = hooks.length;
-  const enabledHooks = hooks.filter((h) => h.enabled).length;
+  const enabledHooks = hooks.filter(h => h.enabled).length;
   const totalExecutions = hooks.reduce((sum, h) => sum + (h.executionCount || 0), 0);
 
   return (
@@ -332,7 +327,11 @@ function HooksMetrics({ hooks }) {
 function HookExecutionLog() {
   const [logs, setLogs] = useState([
     { timestamp: Date.now() - 60000, hook: 'auto-tag', status: 'success' },
-    { timestamp: Date.now() - 30000, hook: 'validate-schema', status: 'success' },
+    {
+      timestamp: Date.now() - 30000,
+      hook: 'validate-schema',
+      status: 'success',
+    },
   ]);
 
   return (

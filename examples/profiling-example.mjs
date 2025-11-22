@@ -3,7 +3,7 @@
  */
 
 import { createProfiler, quickProfile } from '../src/profiling/profiler.mjs';
-import { measureLatency } from '../src/profiling/latency-profiler.mjs';
+import { _measureLatency } from '../src/profiling/latency-profiler.mjs';
 import { measureMemory } from '../src/profiling/memory-profiler.mjs';
 import { measureCpu, CpuProfiler } from '../src/profiling/cpu-profiler.mjs';
 import { Reporter } from '../src/profiling/reporter.mjs';
@@ -17,7 +17,7 @@ async function example1_BasicProfiling() {
   const profiler = createProfiler({
     enableLatency: true,
     enableMemory: true,
-    enableCpu: false
+    enableCpu: false,
   });
 
   // Profile a simple operation
@@ -84,9 +84,9 @@ async function example3_PerformanceBudget() {
 
   // Check against performance budget
   const budget = {
-    p50: 50,  // 50ms target
+    p50: 50, // 50ms target
     p95: 100, // 100ms max
-    p99: 150  // 150ms absolute max
+    p99: 150, // 150ms absolute max
   };
 
   const latencyProfiler = profiler.latencyProfiler;
@@ -98,7 +98,9 @@ async function example3_PerformanceBudget() {
   if (!budgetCheck.passed) {
     console.log('  Violations:');
     budgetCheck.violations.forEach(v => {
-      console.log(`    ${v.metric}: ${v.actual.toFixed(2)}ms (budget: ${v.budget}ms, exceeded by ${v.exceeded.toFixed(2)}ms)`);
+      console.log(
+        `    ${v.metric}: ${v.actual.toFixed(2)}ms (budget: ${v.budget}ms, exceeded by ${v.exceeded.toFixed(2)}ms)`
+      );
     });
   }
 }
@@ -109,10 +111,10 @@ async function example3_PerformanceBudget() {
 async function example4_MemoryProfiling() {
   console.log('\n=== Example 4: Memory Profiling ===\n');
 
-  const { result, metrics } = await measureMemory('memory-intensive', async () => {
+  const { _result, metrics } = await measureMemory('memory-intensive', async () => {
     const largeArray = new Array(1000000).fill(0).map((_, i) => ({
       id: i,
-      data: new Array(10).fill(Math.random())
+      data: new Array(10).fill(Math.random()),
     }));
 
     await new Promise(resolve => setTimeout(resolve, 100));
@@ -139,7 +141,7 @@ async function example5_CpuProfiling() {
     return;
   }
 
-  const { result, metrics } = await measureCpu('cpu-intensive', async () => {
+  const { _result, metrics } = await measureCpu('cpu-intensive', async () => {
     // CPU-intensive operation
     let sum = 0;
     for (let i = 0; i < 10000000; i++) {
@@ -155,7 +157,9 @@ async function example5_CpuProfiling() {
     console.log('  Hot functions:');
     metrics.hotFunctions.slice(0, 5).forEach((fn, i) => {
       console.log(`    ${i + 1}. ${fn.name.slice(0, 50)}`);
-      console.log(`       ${fn.selfTimePercent.toFixed(2)}% | ${(fn.selfTime / 1000).toFixed(2)} ms`);
+      console.log(
+        `       ${fn.selfTimePercent.toFixed(2)}% | ${(fn.selfTime / 1000).toFixed(2)} ms`
+      );
     });
   }
 }
@@ -166,7 +170,7 @@ async function example5_CpuProfiling() {
 async function example6_QuickProfile() {
   console.log('\n=== Example 6: Quick Profile Helper ===\n');
 
-  const { result, profile } = await quickProfile('quick-operation', async () => {
+  const { _result, profile } = await quickProfile('quick-operation', async () => {
     await new Promise(resolve => setTimeout(resolve, 30));
     return 'done';
   });
@@ -185,7 +189,7 @@ async function example7_Reporting() {
   const profiler = createProfiler({
     enableLatency: true,
     enableMemory: true,
-    enableCpu: false
+    enableCpu: false,
   });
 
   const { profile } = await profiler.profile('report-demo', async () => {
@@ -201,7 +205,7 @@ async function example7_Reporting() {
   try {
     Reporter.save(profile, 'profile-report.json', {
       format: 'json',
-      dir: '.'
+      dir: '.',
     });
     console.log('✓ Saved JSON report: profile-report.json');
   } catch (err) {
@@ -213,7 +217,7 @@ async function example7_Reporting() {
     Reporter.save(profile, 'profile-report.html', {
       format: 'html',
       dir: '.',
-      title: 'Performance Profile Demo'
+      title: 'Performance Profile Demo',
     });
     console.log('✓ Saved HTML report: profile-report.html');
   } catch (err) {
@@ -272,7 +276,7 @@ async function example9_UnrdfOperations() {
 
   const profiler = createProfiler({
     enableLatency: true,
-    enableMemory: true
+    enableMemory: true,
   });
 
   // Simulate UNRDF operations with performance targets
@@ -280,7 +284,7 @@ async function example9_UnrdfOperations() {
     { name: 'parse', target: 50, fn: () => simulateParse() },
     { name: 'query', target: 100, fn: () => simulateQuery() },
     { name: 'hook-execution', target: 80, fn: () => simulateHook() },
-    { name: 'transaction-commit', target: 120, fn: () => simulateCommit() }
+    { name: 'transaction-commit', target: 120, fn: () => simulateCommit() },
   ];
 
   console.log('Performance Targets:');
@@ -296,7 +300,9 @@ async function example9_UnrdfOperations() {
     const status = passed ? '✓' : '✗';
     const color = passed ? '' : '⚠️ ';
 
-    console.log(`${color}${status} ${op.name.padEnd(20)} p95: ${profile.latency.p95.toFixed(2)}ms (target: ${op.target}ms)`);
+    console.log(
+      `${color}${status} ${op.name.padEnd(20)} p95: ${profile.latency.p95.toFixed(2)}ms (target: ${op.target}ms)`
+    );
   }
 }
 

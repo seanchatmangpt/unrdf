@@ -3,7 +3,7 @@
  * @description React hook for semantic analysis of RDF graphs
  */
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, _useEffect } from 'react';
 import { useKnowledgeEngineContext } from '../core/use-knowledge-engine-context.mjs';
 
 /**
@@ -26,42 +26,46 @@ import { useKnowledgeEngineContext } from '../core/use-knowledge-engine-context.
  *   inferRelationships: true
  * });
  */
-export function useSemanticAnalyzer(config = {}) {
+export function useSemanticAnalyzer(_config = {}) {
   const { engine } = useKnowledgeEngineContext();
   const [relationships, setRelationships] = useState([]);
-  const [concepts, setConcepts] = useState([]);
-  const [insights, setInsights] = useState([]);
+  const [concepts, _setConcepts] = useState([]);
+  const [insights, _setInsights] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const analyze = useCallback(async (subject) => {
-    try {
-      setLoading(true);
-      const result = await engine.query(`
+  const analyze = useCallback(
+    async subject => {
+      try {
+        setLoading(true);
+        const result = await engine.query(`
         SELECT ?p ?o WHERE { <${subject}> ?p ?o }
       `);
 
-      const rels = result.map(b => ({
-        predicate: b.p.value,
-        object: b.o.value,
-        type: inferType(b.p.value)
-      }));
+        const rels = result.map(b => ({
+          predicate: b.p.value,
+          object: b.o.value,
+          type: inferType(b.p.value),
+        }));
 
-      setRelationships(rels);
-      setLoading(false);
-      return rels;
-    } catch (err) {
-      setError(err);
-      setLoading(false);
-      throw err;
-    }
-  }, [engine]);
+        setRelationships(rels);
+        setLoading(false);
+        return rels;
+      } catch (err) {
+        setError(err);
+        setLoading(false);
+        throw err;
+      }
+    },
+    [engine]
+  );
 
-  const findSimilar = useCallback(async (entity, threshold = 0.7) => {
-    try {
-      setLoading(true);
-      // Semantic similarity using shared properties
-      const result = await engine.query(`
+  const findSimilar = useCallback(
+    async (entity, _threshold = 0.7) => {
+      try {
+        setLoading(true);
+        // Semantic similarity using shared properties
+        const result = await engine.query(`
         SELECT ?similar (COUNT(?p) as ?score) WHERE {
           <${entity}> ?p ?o .
           ?similar ?p ?o .
@@ -72,14 +76,16 @@ export function useSemanticAnalyzer(config = {}) {
         ORDER BY DESC(?score)
         LIMIT 10
       `);
-      setLoading(false);
-      return result;
-    } catch (err) {
-      setError(err);
-      setLoading(false);
-      throw err;
-    }
-  }, [engine]);
+        setLoading(false);
+        return result;
+      } catch (err) {
+        setError(err);
+        setLoading(false);
+        throw err;
+      }
+    },
+    [engine]
+  );
 
   function inferType(predicate) {
     if (predicate.includes('type')) return 'classification';
@@ -88,5 +94,13 @@ export function useSemanticAnalyzer(config = {}) {
     return 'property';
   }
 
-  return { analyze, relationships, concepts, insights, findSimilar, loading, error };
+  return {
+    analyze,
+    relationships,
+    concepts,
+    insights,
+    findSimilar,
+    loading,
+    error,
+  };
 }

@@ -18,13 +18,13 @@ const tracer = trace.getTracer('unrdf');
  * @param {boolean} [options.strict] - Enable strict validation mode
  * @param {boolean} [options.includeDetails] - Include detailed validation results
  * @returns {{conforms: boolean, results: Array<object>}} Validation report
- * 
+ *
  * @throws {Error} If validation fails
- * 
+ *
  * @example
  * const dataStore = new Store();
  * // ... add data quads to store
- * 
+ *
  * const shapesTtl = `
  *   @prefix sh: <http://www.w3.org/ns/shacl#> .
  *   @prefix ex: <http://example.org/> .
@@ -36,7 +36,7 @@ const tracer = trace.getTracer('unrdf');
  *       sh:maxCount 1
  *     ] .
  * `;
- * 
+ *
  * const report = validateShacl(dataStore, shapesTtl);
  * console.log('Conforms:', report.conforms);
  * console.log('Results:', report.results);
@@ -49,18 +49,17 @@ export function validateShacl(store, shapes, options = {}) {
     throw new TypeError('validateShacl: shapes must be provided');
   }
 
-  return tracer.startActiveSpan('validate.shacl', (span) => {
+  return tracer.startActiveSpan('validate.shacl', span => {
     try {
       const shapesType = typeof shapes === 'string' ? 'turtle' : 'store';
       span.setAttributes({
         'validate.shapes_type': shapesType,
         'validate.data_size': store.size,
-        'validate.include_details': options.includeDetails || false
+        'validate.include_details': options.includeDetails || false,
       });
 
-      const shapesStore = typeof shapes === 'string'
-        ? new Store(new Parser().parse(shapes))
-        : shapes;
+      const shapesStore =
+        typeof shapes === 'string' ? new Store(new Parser().parse(shapes)) : shapes;
 
       if (!shapesStore || typeof shapesStore.getQuads !== 'function') {
         throw new TypeError('validateShacl: shapes must be a valid Store or Turtle string');
@@ -83,18 +82,22 @@ export function validateShacl(store, shapes, options = {}) {
         ...(options.includeDetails && {
           detail: r.detail || null,
           resultPath: r.resultPath?.value || null,
-          resultSeverity: r.resultSeverity?.value || null
-        })
+          resultSeverity: r.resultSeverity?.value || null,
+        }),
       }));
 
-      const errorCount = results.filter(r => r.severity === 'http://www.w3.org/ns/shacl#Violation').length;
-      const warningCount = results.filter(r => r.severity === 'http://www.w3.org/ns/shacl#Warning').length;
+      const errorCount = results.filter(
+        r => r.severity === 'http://www.w3.org/ns/shacl#Violation'
+      ).length;
+      const warningCount = results.filter(
+        r => r.severity === 'http://www.w3.org/ns/shacl#Warning'
+      ).length;
 
       span.setAttributes({
         'validate.conforms': report.conforms,
         'validate.total_results': results.length,
         'validate.error_count': errorCount,
-        'validate.warning_count': warningCount
+        'validate.warning_count': warningCount,
       });
 
       span.setStatus({ code: SpanStatusCode.OK });
@@ -106,8 +109,8 @@ export function validateShacl(store, shapes, options = {}) {
           totalResults: results.length,
           errorCount: errorCount,
           warningCount: warningCount,
-          infoCount: results.filter(r => r.severity === 'http://www.w3.org/ns/shacl#Info').length
-        })
+          infoCount: results.filter(r => r.severity === 'http://www.w3.org/ns/shacl#Info').length,
+        }),
       };
 
       span.end();
@@ -116,7 +119,7 @@ export function validateShacl(store, shapes, options = {}) {
       span.recordException(error);
       span.setStatus({
         code: SpanStatusCode.ERROR,
-        message: error.message
+        message: error.message,
       });
       span.end();
       throw new Error(`SHACL validation failed: ${error.message}`);
@@ -130,16 +133,16 @@ export function validateShacl(store, shapes, options = {}) {
  * @param {Array<Store|string>} shapesList - Array of stores or Turtle strings containing SHACL shapes
  * @param {Object} [options] - Validation options
  * @returns {{conforms: boolean, results: Array<object>, shapeResults: Array<object>}} Combined validation report
- * 
+ *
  * @throws {Error} If validation fails
- * 
+ *
  * @example
  * const shapesList = [
  *   personShapesTtl,
  *   organizationShapesTtl,
  *   contactShapesTtl
  * ];
- * 
+ *
  * const report = validateShaclMultiple(store, shapesList);
  * console.log('Overall conforms:', report.conforms);
  * console.log('Shape-specific results:', report.shapeResults);
@@ -160,13 +163,13 @@ export function validateShaclMultiple(store, shapesList, options = {}) {
     for (let i = 0; i < shapesList.length; i++) {
       const shapes = shapesList[i];
       const report = validateShacl(store, shapes, options);
-      
+
       shapeResults.push({
         index: i,
         shapes: typeof shapes === 'string' ? 'Turtle string' : 'Store',
         conforms: report.conforms,
         resultCount: report.results.length,
-        results: report.results
+        results: report.results,
       });
 
       allResults = allResults.concat(report.results);
@@ -180,7 +183,7 @@ export function validateShaclMultiple(store, shapesList, options = {}) {
       results: allResults,
       shapeResults,
       totalShapes: shapesList.length,
-      totalResults: allResults.length
+      totalResults: allResults.length,
     };
   } catch (error) {
     throw new Error(`Multiple SHACL validation failed: ${error.message}`);
@@ -194,7 +197,7 @@ export function validateShaclMultiple(store, shapesList, options = {}) {
  * @param {boolean} [options.includeSummary] - Include summary statistics
  * @param {boolean} [options.groupBySeverity] - Group results by severity
  * @returns {Object} Formatted validation report
- * 
+ *
  * @example
  * const report = validateShacl(store, shapes);
  * const formatted = formatValidationReport(report, {
@@ -212,7 +215,7 @@ export function formatValidationReport(validationResult, options = {}) {
 
   let formatted = {
     conforms,
-    resultCount: results.length
+    resultCount: results.length,
   };
 
   if (includeSummary) {
@@ -227,7 +230,7 @@ export function formatValidationReport(validationResult, options = {}) {
       severityCounts,
       hasErrors: severityCounts['http://www.w3.org/ns/shacl#Violation'] > 0,
       hasWarnings: severityCounts['http://www.w3.org/ns/shacl#Warning'] > 0,
-      hasInfo: severityCounts['http://www.w3.org/ns/shacl#Info'] > 0
+      hasInfo: severityCounts['http://www.w3.org/ns/shacl#Info'] > 0,
     };
   }
 
@@ -251,7 +254,7 @@ export function formatValidationReport(validationResult, options = {}) {
  * Check if a validation result contains any errors.
  * @param {Object} validationResult - Result from validateShacl
  * @returns {boolean} True if there are any validation errors
- * 
+ *
  * @example
  * const report = validateShacl(store, shapes);
  * if (hasValidationErrors(report)) {
@@ -264,16 +267,14 @@ export function hasValidationErrors(validationResult) {
   }
 
   const { results = [] } = validationResult;
-  return results.some(result => 
-    result.severity === 'http://www.w3.org/ns/shacl#Violation'
-  );
+  return results.some(result => result.severity === 'http://www.w3.org/ns/shacl#Violation');
 }
 
 /**
  * Get validation errors from a validation result.
  * @param {Object} validationResult - Result from validateShacl
  * @returns {Array<Object>} Array of validation error objects
- * 
+ *
  * @example
  * const report = validateShacl(store, shapes);
  * const errors = getValidationErrors(report);
@@ -287,16 +288,14 @@ export function getValidationErrors(validationResult) {
   }
 
   const { results = [] } = validationResult;
-  return results.filter(result => 
-    result.severity === 'http://www.w3.org/ns/shacl#Violation'
-  );
+  return results.filter(result => result.severity === 'http://www.w3.org/ns/shacl#Violation');
 }
 
 /**
  * Get validation warnings from a validation result.
  * @param {Object} validationResult - Result from validateShacl
  * @returns {Array<Object>} Array of validation warning objects
- * 
+ *
  * @example
  * const report = validateShacl(store, shapes);
  * const warnings = getValidationWarnings(report);
@@ -310,7 +309,5 @@ export function getValidationWarnings(validationResult) {
   }
 
   const { results = [] } = validationResult;
-  return results.filter(result => 
-    result.severity === 'http://www.w3.org/ns/shacl#Warning'
-  );
+  return results.filter(result => result.severity === 'http://www.w3.org/ns/shacl#Warning');
 }

@@ -31,10 +31,10 @@ describe('E2E Integration Tests (NO MOCKS)', () => {
           namedNode('http://example.org/alice'),
           namedNode('http://xmlns.com/foaf/0.1/name'),
           literal('Alice')
-        )
+        ),
       ],
       removals: [],
-      actor: 'test'
+      actor: 'test',
     });
 
     expect(result.receipt.committed).toBe(true);
@@ -50,15 +50,15 @@ describe('E2E Integration Tests (NO MOCKS)', () => {
           namedNode('http://example.org/alice'),
           namedNode('http://xmlns.com/foaf/0.1/name'),
           literal('Alice')
-        )
+        ),
       ],
       removals: [],
-      actor: 'test'
+      actor: 'test',
     });
 
     const results = await system.query({
       query: 'SELECT ?name WHERE { ?person <http://xmlns.com/foaf/0.1/name> ?name }',
-      type: 'sparql-select'
+      type: 'sparql-select',
     });
 
     expect(Array.isArray(results)).toBe(true);
@@ -71,7 +71,7 @@ describe('E2E Integration Tests (NO MOCKS)', () => {
     const hook = defineHook({
       meta: { name: 'test-hook', description: 'Test' },
       when: { kind: 'sparql-ask', query: 'ASK { ?s ?p ?o }' },
-      run: async () => {}
+      run: async () => {},
     });
 
     expect(hook.meta.name).toBe('test-hook');
@@ -92,15 +92,15 @@ describe('E2E Integration Tests (NO MOCKS)', () => {
           namedNode('http://example.org/alice'),
           namedNode('http://xmlns.com/foaf/0.1/knows'),
           namedNode('http://example.org/bob')
-        )
+        ),
       ],
       removals: [],
-      actor: 'system'
+      actor: 'system',
     });
 
     const results = await system.query({
       query: 'SELECT ?name WHERE { ?person <http://xmlns.com/foaf/0.1/name> ?name }',
-      type: 'sparql-select'
+      type: 'sparql-select',
     });
 
     expect(results).toEqual([{ name: 'Alice' }]);

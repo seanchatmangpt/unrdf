@@ -25,7 +25,7 @@
  * ```
  */
 
-import React, { createContext, useMemo } from 'react';
+import _React, { createContext, useMemo } from 'react';
 import { useKnowledgeEngine } from '../core/useKnowledgeEngine.mjs';
 
 /**
@@ -49,9 +49,12 @@ export const KnowledgeEngineContext = createContext(null);
 export function KnowledgeEngineProvider({ config = {}, children }) {
   const engineState = useKnowledgeEngine(config);
 
-  const contextValue = useMemo(() => ({
-    ...engineState
-  }), [engineState]);
+  const contextValue = useMemo(
+    () => ({
+      ...engineState,
+    }),
+    [engineState]
+  );
 
   return (
     <KnowledgeEngineContext.Provider value={contextValue}>

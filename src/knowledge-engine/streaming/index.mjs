@@ -11,27 +11,22 @@
 export {
   SubscriptionManager,
   createSubscriptionManager,
-  SubscriptionPatternType
+  SubscriptionPatternType,
 } from './subscription-manager.mjs';
 
-export {
-  ChangeFeed,
-  createChangeFeed,
-  createChangeFeedHook,
-  ChangeType
-} from './change-feed.mjs';
+export { ChangeFeed, createChangeFeed, createChangeFeedHook, ChangeType } from './change-feed.mjs';
 
 export {
   StreamProcessor,
   createStreamProcessor,
   WindowType,
-  Aggregators
+  Aggregators,
 } from './stream-processor.mjs';
 
 export {
   RealTimeValidator,
   createRealTimeValidator,
-  ValidationMode
+  ValidationMode,
 } from './real-time-validator.mjs';
 
 /**
@@ -44,7 +39,7 @@ export function createStreamingPipeline(config = {}) {
     subscriptionManager: subConfig,
     changeFeed: feedConfig,
     streamProcessor: processorConfig,
-    validator: validatorConfig
+    validator: validatorConfig,
   } = config;
 
   const subscriptionManager = createSubscriptionManager(subConfig);
@@ -53,7 +48,7 @@ export function createStreamingPipeline(config = {}) {
   const validator = validatorConfig ? createRealTimeValidator(validatorConfig) : null;
 
   // Wire up the pipeline
-  changeFeed.on('change', async (change) => {
+  changeFeed.on('change', async change => {
     try {
       // Process through stream processor
       const result = await streamProcessor.process(change);
@@ -102,7 +97,7 @@ export function createStreamingPipeline(config = {}) {
         subscriptionManager: subscriptionManager.getMetrics(),
         changeFeed: changeFeed.getMetrics(),
         streamProcessor: streamProcessor.getMetrics(),
-        validator: validator ? validator.getMetrics() : null
+        validator: validator ? validator.getMetrics() : null,
       };
     },
 
@@ -116,6 +111,6 @@ export function createStreamingPipeline(config = {}) {
       if (validator) {
         await validator.cleanup();
       }
-    }
+    },
   };
 }

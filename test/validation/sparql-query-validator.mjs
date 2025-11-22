@@ -4,17 +4,17 @@
  */
 
 import { createDarkMatterCore } from '../../src/knowledge-engine/dark-matter-core.mjs';
-import { query, select, ask, construct } from '../../src/knowledge-engine/query.mjs';
+import { _query, select, ask, construct } from '../../src/knowledge-engine/query.mjs';
 import { Store, DataFactory } from 'n3';
 
-const { namedNode, literal } = DataFactory;
+const { namedNode, _literal } = DataFactory;
 
 /**
  * Validate SPARQL query functionality
  */
 async function validateSparqlQueries() {
   console.log('\n🔍 SPARQL Query Validator Agent\n');
-  console.log('=' .repeat(60));
+  console.log('='.repeat(60));
 
   const results = {
     status: 'PASS',
@@ -23,15 +23,15 @@ async function validateSparqlQueries() {
       selectQueryWorks: false,
       askQueryWorks: false,
       constructQueryWorks: false,
-      returnTypesCorrect: false
+      returnTypesCorrect: false,
     },
     performance: {
       selectLatency: 0,
       askLatency: 0,
-      constructLatency: 0
+      constructLatency: 0,
     },
     issues: [],
-    recommendations: []
+    recommendations: [],
   };
 
   try {
@@ -63,7 +63,9 @@ async function validateSparqlQueries() {
     } else {
       results.tests.systemQueryExists = false;
       results.issues.push('❌ system.query() method does NOT exist on DarkMatterCore');
-      results.recommendations.push('README claims system.query() but DarkMatterCore does not expose this method');
+      results.recommendations.push(
+        'README claims system.query() but DarkMatterCore does not expose this method'
+      );
       console.log('❌ system.query() method NOT FOUND');
     }
 
@@ -72,18 +74,23 @@ async function validateSparqlQueries() {
     const selectStart = Date.now();
 
     try {
-      const selectResults = await select(store, `
+      const selectResults = await select(
+        store,
+        `
         SELECT ?person ?friend
         WHERE {
           ?person <http://xmlns.com/foaf/0.1/knows> ?friend .
         }
-      `);
+      `
+      );
 
       results.performance.selectLatency = Date.now() - selectStart;
 
       if (Array.isArray(selectResults) && selectResults.length > 0) {
         results.tests.selectQueryWorks = true;
-        console.log(`✅ SELECT query works (${selectResults.length} results in ${results.performance.selectLatency}ms)`);
+        console.log(
+          `✅ SELECT query works (${selectResults.length} results in ${results.performance.selectLatency}ms)`
+        );
       } else {
         results.tests.selectQueryWorks = false;
         results.issues.push('❌ SELECT query returned empty or invalid results');
@@ -105,7 +112,9 @@ async function validateSparqlQueries() {
 
       if (typeof askResult === 'boolean') {
         results.tests.askQueryWorks = true;
-        console.log(`✅ ASK query works (result: ${askResult} in ${results.performance.askLatency}ms)`);
+        console.log(
+          `✅ ASK query works (result: ${askResult} in ${results.performance.askLatency}ms)`
+        );
       } else {
         results.tests.askQueryWorks = false;
         results.issues.push(`❌ ASK query returned non-boolean: ${typeof askResult}`);
@@ -122,16 +131,21 @@ async function validateSparqlQueries() {
     const constructStart = Date.now();
 
     try {
-      const constructResult = await construct(store, `
+      const constructResult = await construct(
+        store,
+        `
         CONSTRUCT { ?s ?p ?o }
         WHERE { ?s ?p ?o }
-      `);
+      `
+      );
 
       results.performance.constructLatency = Date.now() - constructStart;
 
       if (constructResult && typeof constructResult.getQuads === 'function') {
         results.tests.constructQueryWorks = true;
-        console.log(`✅ CONSTRUCT query works (${constructResult.size} quads in ${results.performance.constructLatency}ms)`);
+        console.log(
+          `✅ CONSTRUCT query works (${constructResult.size} quads in ${results.performance.constructLatency}ms)`
+        );
       } else {
         results.tests.constructQueryWorks = false;
         results.issues.push('❌ CONSTRUCT query did not return a valid Store');
@@ -148,7 +162,7 @@ async function validateSparqlQueries() {
     const typeChecks = [
       results.tests.selectQueryWorks && 'SELECT returns Array',
       results.tests.askQueryWorks && 'ASK returns boolean',
-      results.tests.constructQueryWorks && 'CONSTRUCT returns Store'
+      results.tests.constructQueryWorks && 'CONSTRUCT returns Store',
     ].filter(Boolean);
 
     if (typeChecks.length === 3) {
@@ -161,7 +175,6 @@ async function validateSparqlQueries() {
 
     // Cleanup
     await system.cleanup();
-
   } catch (error) {
     results.status = 'FAIL';
     results.issues.push(`❌ CRITICAL ERROR: ${error.message}`);
@@ -174,8 +187,12 @@ async function validateSparqlQueries() {
 
   if (!results.tests.systemQueryExists) {
     results.status = 'FAIL';
-    results.recommendations.push('CRITICAL: README documentation is incorrect - system.query() does not exist');
-    results.recommendations.push('Update README to show: import { query } from "unrdf" instead of system.query()');
+    results.recommendations.push(
+      'CRITICAL: README documentation is incorrect - system.query() does not exist'
+    );
+    results.recommendations.push(
+      'Update README to show: import { query } from "unrdf" instead of system.query()'
+    );
   }
 
   if (passedTests < totalTests) {

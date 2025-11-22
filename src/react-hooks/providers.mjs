@@ -5,13 +5,10 @@
 
 export {
   KnowledgeEngineProvider,
-  KnowledgeEngineContext
+  KnowledgeEngineContext,
 } from './context/KnowledgeEngineProvider.mjs';
 
-export {
-  ConfigProvider,
-  ConfigContext
-} from './context/useConfigContext.mjs';
+export { ConfigProvider, ConfigContext } from './context/useConfigContext.mjs';
 
 export { useKnowledgeEngineContext } from './context/useKnowledgeEngineContext.mjs';
 export { useConfigContext } from './context/useConfigContext.mjs';

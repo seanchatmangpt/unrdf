@@ -1,15 +1,15 @@
 /**
  * @file Terraform Utilities for KGC Sidecar E2E Tests
  * @module terraform-utils
- * 
+ *
  * @description
  * Utilities for managing Terraform infrastructure in E2E tests
  * for the KGC sidecar Kubernetes deployment.
  */
 
-import { execSync, spawn } from 'child_process';
-import { readFileSync, writeFileSync, existsSync, mkdirSync, rmSync } from 'fs';
-import { join, dirname } from 'path';
+import { execSync, _spawn } from 'child_process';
+import { _readFileSync, writeFileSync, existsSync, _mkdirSync, rmSync } from 'fs';
+import { join, _dirname } from 'path';
 import { randomUUID } from 'crypto';
 
 /**
@@ -25,7 +25,7 @@ export class TerraformManager {
       autoApprove: true,
       stateFile: null,
       varFile: null,
-      ...options
+      ...options,
     };
     this.initialized = false;
     this.applied = false;
@@ -41,17 +41,17 @@ export class TerraformManager {
     }
 
     console.log('🔧 Initializing Terraform...');
-    
+
     const initCommand = ['terraform', 'init'];
     if (this.options.stateFile) {
       initCommand.push('-state', this.options.stateFile);
     }
-    
+
     execSync(initCommand.join(' '), {
       cwd: this.terraformDir,
-      stdio: 'inherit'
+      stdio: 'inherit',
     });
-    
+
     this.initialized = true;
     console.log('✅ Terraform initialized');
   }
@@ -61,30 +61,30 @@ export class TerraformManager {
    */
   async plan(variables = {}) {
     console.log('📋 Planning Terraform deployment...');
-    
+
     const planCommand = ['terraform', 'plan'];
-    
+
     if (this.options.stateFile) {
       planCommand.push('-state', this.options.stateFile);
     }
-    
+
     if (this.options.varFile) {
       planCommand.push('-var-file', this.options.varFile);
     }
-    
+
     // Add variables
     for (const [key, value] of Object.entries(variables)) {
       planCommand.push('-var', `${key}=${value}`);
     }
-    
+
     planCommand.push('-out', 'terraform.tfplan');
-    
+
     const planOutput = execSync(planCommand.join(' '), {
       cwd: this.terraformDir,
       stdio: 'pipe',
-      encoding: 'utf8'
+      encoding: 'utf8',
     });
-    
+
     console.log('✅ Terraform plan created');
     return planOutput;
   }
@@ -98,32 +98,32 @@ export class TerraformManager {
     }
 
     console.log('🚀 Applying Terraform deployment...');
-    
+
     // First plan
     await this.plan(variables);
-    
+
     // Then apply
     const applyCommand = ['terraform', 'apply'];
-    
+
     if (this.options.autoApprove) {
       applyCommand.push('-auto-approve');
     }
-    
+
     if (this.options.stateFile) {
       applyCommand.push('-state', this.options.stateFile);
     }
-    
+
     applyCommand.push('terraform.tfplan');
-    
+
     execSync(applyCommand.join(' '), {
       cwd: this.terraformDir,
-      stdio: 'inherit'
+      stdio: 'inherit',
     });
-    
+
     // Get outputs
     this.outputs = await this.getOutputs();
     this.applied = true;
-    
+
     console.log('✅ Terraform deployment applied');
     return this.outputs;
   }
@@ -133,34 +133,34 @@ export class TerraformManager {
    */
   async destroy(variables = {}) {
     console.log('🗑️ Destroying Terraform deployment...');
-    
+
     const destroyCommand = ['terraform', 'destroy'];
-    
+
     if (this.options.autoApprove) {
       destroyCommand.push('-auto-approve');
     }
-    
+
     if (this.options.stateFile) {
       destroyCommand.push('-state', this.options.stateFile);
     }
-    
+
     if (this.options.varFile) {
       destroyCommand.push('-var-file', this.options.varFile);
     }
-    
+
     // Add variables
     for (const [key, value] of Object.entries(variables)) {
       destroyCommand.push('-var', `${key}=${value}`);
     }
-    
+
     execSync(destroyCommand.join(' '), {
       cwd: this.terraformDir,
-      stdio: 'inherit'
+      stdio: 'inherit',
     });
-    
+
     this.applied = false;
     this.outputs = null;
-    
+
     console.log('✅ Terraform deployment destroyed');
   }
 
@@ -169,19 +169,19 @@ export class TerraformManager {
    */
   async getOutputs() {
     console.log('📊 Getting Terraform outputs...');
-    
+
     const outputCommand = ['terraform', 'output', '-json'];
-    
+
     if (this.options.stateFile) {
       outputCommand.push('-state', this.options.stateFile);
     }
-    
+
     const output = execSync(outputCommand.join(' '), {
       cwd: this.terraformDir,
       stdio: 'pipe',
-      encoding: 'utf8'
+      encoding: 'utf8',
     });
-    
+
     return JSON.parse(output);
   }
 
@@ -192,7 +192,7 @@ export class TerraformManager {
     if (!this.outputs) {
       throw new Error('Terraform not applied yet');
     }
-    
+
     return this.outputs[name]?.value;
   }
 
@@ -201,18 +201,18 @@ export class TerraformManager {
    */
   async validate() {
     console.log('✅ Validating Terraform configuration...');
-    
+
     const validateCommand = ['terraform', 'validate'];
-    
+
     if (this.options.stateFile) {
       validateCommand.push('-state', this.options.stateFile);
     }
-    
+
     execSync(validateCommand.join(' '), {
       cwd: this.terraformDir,
-      stdio: 'inherit'
+      stdio: 'inherit',
     });
-    
+
     console.log('✅ Terraform configuration is valid');
   }
 
@@ -221,12 +221,12 @@ export class TerraformManager {
    */
   async format() {
     console.log('🎨 Formatting Terraform files...');
-    
+
     execSync('terraform fmt -recursive', {
       cwd: this.terraformDir,
-      stdio: 'inherit'
+      stdio: 'inherit',
     });
-    
+
     console.log('✅ Terraform files formatted');
   }
 
@@ -235,19 +235,19 @@ export class TerraformManager {
    */
   async show() {
     console.log('📋 Showing Terraform state...');
-    
+
     const showCommand = ['terraform', 'show'];
-    
+
     if (this.options.stateFile) {
       showCommand.push('-state', this.options.stateFile);
     }
-    
+
     const output = execSync(showCommand.join(' '), {
       cwd: this.terraformDir,
       stdio: 'pipe',
-      encoding: 'utf8'
+      encoding: 'utf8',
     });
-    
+
     console.log(output);
     return output;
   }
@@ -257,19 +257,19 @@ export class TerraformManager {
    */
   async list() {
     console.log('📋 Listing Terraform resources...');
-    
+
     const listCommand = ['terraform', 'state', 'list'];
-    
+
     if (this.options.stateFile) {
       listCommand.push('-state', this.options.stateFile);
     }
-    
+
     const output = execSync(listCommand.join(' '), {
       cwd: this.terraformDir,
       stdio: 'pipe',
-      encoding: 'utf8'
+      encoding: 'utf8',
     });
-    
+
     return output.trim().split('\n');
   }
 
@@ -278,18 +278,18 @@ export class TerraformManager {
    */
   async import(address, id) {
     console.log(`📥 Importing resource ${address} with ID ${id}...`);
-    
+
     const importCommand = ['terraform', 'import', address, id];
-    
+
     if (this.options.stateFile) {
       importCommand.push('-state', this.options.stateFile);
     }
-    
+
     execSync(importCommand.join(' '), {
       cwd: this.terraformDir,
-      stdio: 'inherit'
+      stdio: 'inherit',
     });
-    
+
     console.log(`✅ Resource ${address} imported`);
   }
 
@@ -298,18 +298,18 @@ export class TerraformManager {
    */
   async remove(address) {
     console.log(`🗑️ Removing resource ${address} from state...`);
-    
+
     const removeCommand = ['terraform', 'state', 'rm', address];
-    
+
     if (this.options.stateFile) {
       removeCommand.push('-state', this.options.stateFile);
     }
-    
+
     execSync(removeCommand.join(' '), {
       cwd: this.terraformDir,
-      stdio: 'inherit'
+      stdio: 'inherit',
     });
-    
+
     console.log(`✅ Resource ${address} removed from state`);
   }
 
@@ -318,22 +318,22 @@ export class TerraformManager {
    */
   async refresh() {
     console.log('🔄 Refreshing Terraform state...');
-    
+
     const refreshCommand = ['terraform', 'refresh'];
-    
+
     if (this.options.stateFile) {
       refreshCommand.push('-state', this.options.stateFile);
     }
-    
+
     if (this.options.varFile) {
       refreshCommand.push('-var-file', this.options.varFile);
     }
-    
+
     execSync(refreshCommand.join(' '), {
       cwd: this.terraformDir,
-      stdio: 'inherit'
+      stdio: 'inherit',
     });
-    
+
     console.log('✅ Terraform state refreshed');
   }
 
@@ -342,7 +342,7 @@ export class TerraformManager {
    */
   createVariablesFile(variables, filename = 'terraform.tfvars') {
     const filePath = join(this.terraformDir, filename);
-    
+
     let content = '';
     for (const [key, value] of Object.entries(variables)) {
       if (typeof value === 'string') {
@@ -361,10 +361,10 @@ export class TerraformManager {
         content += `}\n`;
       }
     }
-    
+
     writeFileSync(filePath, content);
     this.options.varFile = filename;
-    
+
     console.log(`✅ Variables file created: ${filePath}`);
     return filePath;
   }
@@ -376,7 +376,7 @@ export class TerraformManager {
     const stateFilename = suffix ? `terraform.tfstate.${suffix}` : 'terraform.tfstate';
     const statePath = join(this.terraformDir, stateFilename);
     this.options.stateFile = statePath;
-    
+
     console.log(`✅ State file path set: ${statePath}`);
     return statePath;
   }
@@ -386,14 +386,14 @@ export class TerraformManager {
    */
   async cleanup() {
     console.log('🧹 Cleaning up Terraform files...');
-    
+
     const filesToRemove = [
       'terraform.tfplan',
       'terraform.tfvars',
       'terraform.tfstate.backup',
-      '.terraform.lock.hcl'
+      '.terraform.lock.hcl',
     ];
-    
+
     for (const file of filesToRemove) {
       const filePath = join(this.terraformDir, file);
       if (existsSync(filePath)) {
@@ -401,14 +401,14 @@ export class TerraformManager {
         console.log(`✅ Removed ${file}`);
       }
     }
-    
+
     // Remove .terraform directory
     const terraformDir = join(this.terraformDir, '.terraform');
     if (existsSync(terraformDir)) {
       rmSync(terraformDir, { recursive: true, force: true });
       console.log('✅ Removed .terraform directory');
     }
-    
+
     console.log('✅ Terraform cleanup completed');
   }
 
@@ -419,9 +419,9 @@ export class TerraformManager {
     const output = execSync('terraform version', {
       cwd: this.terraformDir,
       stdio: 'pipe',
-      encoding: 'utf8'
+      encoding: 'utf8',
     });
-    
+
     return output.trim();
   }
 
@@ -505,7 +505,7 @@ export function createE2ETerraformVariables(options = {}) {
     tolerations = [],
     affinity = {},
     labels = {},
-    annotations = {}
+    annotations = {},
   } = options;
 
   return {
@@ -550,7 +550,7 @@ export function createE2ETerraformVariables(options = {}) {
     tolerations,
     affinity,
     labels,
-    annotations
+    annotations,
   };
 }
 
@@ -567,7 +567,3 @@ export function createTerraformManager(terraformDir, options = {}) {
 export const terraformManager = createTerraformManager('./terraform');
 
 export default TerraformManager;
-
-
-
-

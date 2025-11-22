@@ -3,22 +3,26 @@
  * Tests the 80/20 analysis engine for identifying critical paths
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, _beforeEach, _vi } from 'vitest';
 
 describe('DarkMatterCore', () => {
   describe('Pareto Score Calculation', () => {
     it('should calculate pareto score for ideal 80/20 distribution', () => {
-      const critical = Array(20).fill(null).map((_, i) => ({
-        id: `critical-${i}`,
-        value: 0.04, // 20 ops * 0.04 = 0.80 total
-        cumulativeValue: (i + 1) * 0.04
-      }));
+      const critical = Array(20)
+        .fill(null)
+        .map((_, i) => ({
+          id: `critical-${i}`,
+          value: 0.04, // 20 ops * 0.04 = 0.80 total
+          cumulativeValue: (i + 1) * 0.04,
+        }));
 
-      const dark = Array(80).fill(null).map((_, i) => ({
-        id: `dark-${i}`,
-        value: 0.0025, // 80 ops * 0.0025 = 0.20 total
-        cumulativeValue: 0.8 + (i + 1) * 0.0025
-      }));
+      const dark = Array(80)
+        .fill(null)
+        .map((_, i) => ({
+          id: `dark-${i}`,
+          value: 0.0025, // 80 ops * 0.0025 = 0.20 total
+          cumulativeValue: 0.8 + (i + 1) * 0.0025,
+        }));
 
       // Perfect 80/20: 20% ops deliver 80% value
       const totalOps = critical.length + dark.length;
@@ -31,13 +35,13 @@ describe('DarkMatterCore', () => {
 
     it('should identify operations above 80% value threshold', () => {
       const operations = [
-        { id: 'query', value: 0.40, executionTime: 120 },
+        { id: 'query', value: 0.4, executionTime: 120 },
         { id: 'filter', value: 0.25, executionTime: 85 },
         { id: 'sort', value: 0.15, executionTime: 65 },
-        { id: 'render', value: 0.10, executionTime: 45 },
+        { id: 'render', value: 0.1, executionTime: 45 },
         { id: 'log', value: 0.05, executionTime: 20 },
         { id: 'metrics', value: 0.03, executionTime: 15 },
-        { id: 'cache', value: 0.02, executionTime: 10 }
+        { id: 'cache', value: 0.02, executionTime: 10 },
       ];
 
       // Sort by value and calculate cumulative
@@ -60,9 +64,9 @@ describe('DarkMatterCore', () => {
   describe('Critical Path Analysis', () => {
     it('should identify slow critical operations', () => {
       const criticalPaths = [
-        { id: 'query', value: 0.40, executionTime: 150 }, // Slow!
+        { id: 'query', value: 0.4, executionTime: 150 }, // Slow!
         { id: 'filter', value: 0.25, executionTime: 50 },
-        { id: 'sort', value: 0.15, executionTime: 30 }
+        { id: 'sort', value: 0.15, executionTime: 30 },
       ];
 
       const slowCritical = criticalPaths.filter(op => op.executionTime > 100);
@@ -73,31 +77,35 @@ describe('DarkMatterCore', () => {
 
     it('should calculate value distribution', () => {
       const operations = [
-        { id: 'a', value: 0.30, cumulativeValue: 0.30 },
+        { id: 'a', value: 0.3, cumulativeValue: 0.3 },
         { id: 'b', value: 0.25, cumulativeValue: 0.55 },
-        { id: 'c', value: 0.20, cumulativeValue: 0.75 },
-        { id: 'd', value: 0.10, cumulativeValue: 0.85 },
+        { id: 'c', value: 0.2, cumulativeValue: 0.75 },
+        { id: 'd', value: 0.1, cumulativeValue: 0.85 },
         { id: 'e', value: 0.08, cumulativeValue: 0.93 },
         { id: 'f', value: 0.05, cumulativeValue: 0.98 },
-        { id: 'g', value: 0.02, cumulativeValue: 1.00 }
+        { id: 'g', value: 0.02, cumulativeValue: 1.0 },
       ];
 
       const distribution = {
-        critical: operations.filter(op => op.cumulativeValue <= 0.5)
+        critical: operations
+          .filter(op => op.cumulativeValue <= 0.5)
           .reduce((sum, op) => sum + op.value, 0),
-        important: operations.filter(op => op.cumulativeValue > 0.5 && op.cumulativeValue <= 0.8)
+        important: operations
+          .filter(op => op.cumulativeValue > 0.5 && op.cumulativeValue <= 0.8)
           .reduce((sum, op) => sum + op.value, 0),
-        standard: operations.filter(op => op.cumulativeValue > 0.8 && op.cumulativeValue <= 0.95)
+        standard: operations
+          .filter(op => op.cumulativeValue > 0.8 && op.cumulativeValue <= 0.95)
           .reduce((sum, op) => sum + op.value, 0),
-        dark: operations.filter(op => op.cumulativeValue > 0.95)
-          .reduce((sum, op) => sum + op.value, 0)
+        dark: operations
+          .filter(op => op.cumulativeValue > 0.95)
+          .reduce((sum, op) => sum + op.value, 0),
       };
 
       // critical: 'a' (cumulative 0.30 ≤ 0.5) = 0.30
       // important: 'b', 'c' (cumulative > 0.5 && ≤ 0.8) = 0.25 + 0.20 = 0.45
       // standard: 'd', 'e' (cumulative > 0.8 && ≤ 0.95) = 0.10 + 0.08 = 0.18
       // dark: 'f', 'g' (cumulative > 0.95) = 0.05 + 0.02 = 0.07
-      expect(distribution.critical).toBeCloseTo(0.30, 2);
+      expect(distribution.critical).toBeCloseTo(0.3, 2);
       expect(distribution.important).toBeCloseTo(0.45, 2);
       expect(distribution.standard).toBeCloseTo(0.18, 2);
       expect(distribution.dark).toBeCloseTo(0.07, 2);
@@ -107,8 +115,8 @@ describe('DarkMatterCore', () => {
   describe('Optimization Suggestions', () => {
     it('should generate cache suggestions for high-value operations', () => {
       const critical = [
-        { id: 'query', value: 0.40, executionTime: 120 },
-        { id: 'filter', value: 0.25, executionTime: 85 }
+        { id: 'query', value: 0.4, executionTime: 120 },
+        { id: 'filter', value: 0.25, executionTime: 85 },
       ];
 
       const suggestions = critical.map(op => ({
@@ -116,7 +124,7 @@ describe('DarkMatterCore', () => {
         priority: 'high',
         operation: op.id,
         reason: `Delivers ${Math.round(op.value * 100)}% of value`,
-        estimatedGain: `${Math.round(op.executionTime * 0.9)}ms saved`
+        estimatedGain: `${Math.round(op.executionTime * 0.9)}ms saved`,
       }));
 
       expect(suggestions).toHaveLength(2);
@@ -129,7 +137,7 @@ describe('DarkMatterCore', () => {
       const darkMatter = [
         { id: 'telemetry', value: 0.005 },
         { id: 'debug-log', value: 0.003 },
-        { id: 'unused-validator', value: 0.001 }
+        { id: 'unused-validator', value: 0.001 },
       ];
 
       const removalCandidates = darkMatter.filter(op => op.value < 0.01);
@@ -144,10 +152,10 @@ describe('DarkMatterCore', () => {
   describe('Pareto Chart Data', () => {
     it('should generate sorted cumulative data', () => {
       const operations = [
-        { id: 'c', value: 0.10 },
-        { id: 'a', value: 0.50 },
-        { id: 'b', value: 0.30 },
-        { id: 'd', value: 0.10 }
+        { id: 'c', value: 0.1 },
+        { id: 'a', value: 0.5 },
+        { id: 'b', value: 0.3 },
+        { id: 'd', value: 0.1 },
       ];
 
       // Sort by value descending
@@ -160,7 +168,7 @@ describe('DarkMatterCore', () => {
           id: op.id,
           value: Math.round(op.value * 100),
           cumulativeValue: Math.round(cumulative * 100),
-          category: cumulative <= 0.8 ? 'critical' : 'dark'
+          category: cumulative <= 0.8 ? 'critical' : 'dark',
         };
       });
 
@@ -182,8 +190,11 @@ describe('QueryAnalyzer', () => {
   it('should identify slow queries', () => {
     const queries = [
       { sparql: 'SELECT * WHERE { ?s ?p ?o }', executionTime: 250 },
-      { sparql: 'SELECT ?name WHERE { ?s foaf:name ?name }', executionTime: 50 },
-      { sparql: 'SELECT * WHERE { ?s ?p ?o } LIMIT 10000', executionTime: 500 }
+      {
+        sparql: 'SELECT ?name WHERE { ?s foaf:name ?name }',
+        executionTime: 50,
+      },
+      { sparql: 'SELECT * WHERE { ?s ?p ?o } LIMIT 10000', executionTime: 500 },
     ];
 
     const slowThreshold = 100;
@@ -203,7 +214,7 @@ describe('QueryAnalyzer', () => {
     const suggestions = predicates.map(predicate => ({
       type: 'INDEX',
       predicate,
-      reason: `Add index on ${predicate} for faster lookups`
+      reason: `Add index on ${predicate} for faster lookups`,
     }));
 
     expect(suggestions).toHaveLength(2);
@@ -217,7 +228,7 @@ describe('CriticalPath', () => {
     const paths = [
       { path: 'query -> filter -> sort', impact: 0.4, latency: 120 },
       { path: 'insert -> validate -> commit', impact: 0.3, latency: 85 },
-      { path: 'fetch -> transform -> render', impact: 0.2, latency: 65 }
+      { path: 'fetch -> transform -> render', impact: 0.2, latency: 65 },
     ];
 
     // Sort by impact
@@ -232,7 +243,7 @@ describe('CriticalPath', () => {
       { name: 'query', latency: 45 },
       { name: 'filter', latency: 120 }, // Bottleneck!
       { name: 'sort', latency: 30 },
-      { name: 'limit', latency: 5 }
+      { name: 'limit', latency: 5 },
     ];
 
     const avgLatency = operations.reduce((sum, op) => sum + op.latency, 0) / operations.length;

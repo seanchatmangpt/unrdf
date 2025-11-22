@@ -1,16 +1,16 @@
-import { promises as fs } from "node:fs";
-import { createReadStream, createWriteStream } from "node:fs";
-import { pipeline } from "node:stream/promises";
-import { Transform } from "node:stream";
+import { promises as fs } from 'node:fs';
+import { createReadStream, createWriteStream } from 'node:fs';
+import { _pipeline } from 'node:stream/promises';
+import { _Transform } from 'node:stream';
 
 /**
  * Read Turtle file
  * @param {string} path - File path to read
  * @returns {Promise<string>} Turtle content
  */
-export const readTurtleFile = async (path) => {
+export const readTurtleFile = async path => {
   try {
-    return await fs.readFile(path, "utf8");
+    return await fs.readFile(path, 'utf8');
   } catch (error) {
     throw new Error(`Failed to read Turtle file at ${path}: ${error.message}`);
   }
@@ -24,7 +24,7 @@ export const readTurtleFile = async (path) => {
  */
 export const writeTurtleFile = async (path, ttl) => {
   try {
-    await fs.writeFile(path, ttl, "utf8");
+    await fs.writeFile(path, ttl, 'utf8');
     return { path, bytes: Buffer.byteLength(ttl) };
   } catch (error) {
     throw new Error(`Failed to write Turtle file at ${path}: ${error.message}`);
@@ -36,9 +36,9 @@ export const writeTurtleFile = async (path, ttl) => {
  * @param {string} path - File path to read
  * @returns {Promise<Object|Object[]>} JSON-LD content
  */
-export const readJSONLDFile = async (path) => {
+export const readJSONLDFile = async path => {
   try {
-    const content = await fs.readFile(path, "utf8");
+    const content = await fs.readFile(path, 'utf8');
     return JSON.parse(content);
   } catch (error) {
     throw new Error(`Failed to read JSON-LD file at ${path}: ${error.message}`);
@@ -55,7 +55,7 @@ export const readJSONLDFile = async (path) => {
 export const writeJSONLDFile = async (path, obj, indent = 2) => {
   try {
     const json = JSON.stringify(obj, null, indent);
-    await fs.writeFile(path, json, "utf8");
+    await fs.writeFile(path, json, 'utf8');
     return { path, bytes: Buffer.byteLength(json) };
   } catch (error) {
     throw new Error(`Failed to write JSON-LD file at ${path}: ${error.message}`);
@@ -67,9 +67,9 @@ export const writeJSONLDFile = async (path, obj, indent = 2) => {
  * @param {string} path - File path to read
  * @returns {Promise<string>} N-Triples content
  */
-export const readNTriplesFile = async (path) => {
+export const readNTriplesFile = async path => {
   try {
-    return await fs.readFile(path, "utf8");
+    return await fs.readFile(path, 'utf8');
   } catch (error) {
     throw new Error(`Failed to read N-Triples file at ${path}: ${error.message}`);
   }
@@ -83,7 +83,7 @@ export const readNTriplesFile = async (path) => {
  */
 export const writeNTriplesFile = async (path, ntriples) => {
   try {
-    await fs.writeFile(path, ntriples, "utf8");
+    await fs.writeFile(path, ntriples, 'utf8');
     return { path, bytes: Buffer.byteLength(ntriples) };
   } catch (error) {
     throw new Error(`Failed to write N-Triples file at ${path}: ${error.message}`);
@@ -95,9 +95,9 @@ export const writeNTriplesFile = async (path, ntriples) => {
  * @param {string} path - File path to read
  * @returns {Promise<string>} RDF/XML content
  */
-export const readRDFXMLFile = async (path) => {
+export const readRDFXMLFile = async path => {
   try {
-    return await fs.readFile(path, "utf8");
+    return await fs.readFile(path, 'utf8');
   } catch (error) {
     throw new Error(`Failed to read RDF/XML file at ${path}: ${error.message}`);
   }
@@ -111,7 +111,7 @@ export const readRDFXMLFile = async (path) => {
  */
 export const writeRDFXMLFile = async (path, rdfxml) => {
   try {
-    await fs.writeFile(path, rdfxml, "utf8");
+    await fs.writeFile(path, rdfxml, 'utf8');
     return { path, bytes: Buffer.byteLength(rdfxml) };
   } catch (error) {
     throw new Error(`Failed to write RDF/XML file at ${path}: ${error.message}`);
@@ -123,7 +123,7 @@ export const writeRDFXMLFile = async (path, rdfxml) => {
  * @param {string} path - File path to check
  * @returns {Promise<boolean>} True if file exists
  */
-export const fileExists = async (path) => {
+export const fileExists = async path => {
   try {
     await fs.access(path);
     return true;
@@ -137,7 +137,7 @@ export const fileExists = async (path) => {
  * @param {string} path - File path
  * @returns {Promise<import('fs').Stats>} File stats
  */
-export const getFileStats = async (path) => {
+export const getFileStats = async path => {
   try {
     return await fs.stat(path);
   } catch (error) {
@@ -155,7 +155,7 @@ export const ensureDir = async (path, recursive = true) => {
   try {
     await fs.mkdir(path, { recursive });
   } catch (error) {
-    if (error.code !== "EEXIST") {
+    if (error.code !== 'EEXIST') {
       throw new Error(`Failed to create directory ${path}: ${error.message}`);
     }
   }
@@ -166,9 +166,9 @@ export const ensureDir = async (path, recursive = true) => {
  * @param {string} path - File path
  * @returns {import('fs').ReadStream} Read stream
  */
-export const createFileReadStream = (path) => {
+export const createFileReadStream = path => {
   try {
-    return createReadStream(path, { encoding: "utf8" });
+    return createReadStream(path, { encoding: 'utf8' });
   } catch (error) {
     throw new Error(`Failed to create read stream for ${path}: ${error.message}`);
   }
@@ -179,9 +179,9 @@ export const createFileReadStream = (path) => {
  * @param {string} path - File path
  * @returns {import('fs').WriteStream} Write stream
  */
-export const createFileWriteStream = (path) => {
+export const createFileWriteStream = path => {
   try {
-    return createWriteStream(path, { encoding: "utf8" });
+    return createWriteStream(path, { encoding: 'utf8' });
   } catch (error) {
     throw new Error(`Failed to create write stream for ${path}: ${error.message}`);
   }
@@ -195,27 +195,27 @@ export const createFileWriteStream = (path) => {
  */
 export const streamFileLines = async (path, onLine) => {
   const readStream = createFileReadStream(path);
-  let buffer = "";
-  
-  readStream.on("data", (chunk) => {
+  let buffer = '';
+
+  readStream.on('data', chunk => {
     buffer += chunk;
-    const lines = buffer.split("\n");
-    buffer = lines.pop() || ""; // Keep incomplete line in buffer
-    
+    const lines = buffer.split('\n');
+    buffer = lines.pop() || ''; // Keep incomplete line in buffer
+
     for (const line of lines) {
       onLine(line);
     }
   });
-  
-  readStream.on("end", () => {
+
+  readStream.on('end', () => {
     if (buffer) {
       onLine(buffer);
     }
   });
-  
+
   return new Promise((resolve, reject) => {
-    readStream.on("error", reject);
-    readStream.on("end", resolve);
+    readStream.on('error', reject);
+    readStream.on('end', resolve);
   });
 };
 
@@ -252,7 +252,7 @@ export const moveFile = async (src, dest) => {
  * @param {string} path - File path to delete
  * @returns {Promise<void>}
  */
-export const deleteFile = async (path) => {
+export const deleteFile = async path => {
   try {
     await fs.unlink(path);
   } catch (error) {
@@ -270,7 +270,7 @@ export const listFiles = async (path, pattern) => {
   try {
     const files = await fs.readdir(path);
     if (pattern) {
-      const regex = new RegExp(pattern.replace(/\*/g, ".*"));
+      const regex = new RegExp(pattern.replace(/\*/g, '.*'));
       return files.filter(file => regex.test(file));
     }
     return files;
@@ -284,9 +284,9 @@ export const listFiles = async (path, pattern) => {
  * @param {string} path - File path
  * @returns {string} File extension (without dot)
  */
-export const getFileExtension = (path) => {
-  const parts = path.split(".");
-  return parts.length > 1 ? parts.pop().toLowerCase() : "";
+export const getFileExtension = path => {
+  const parts = path.split('.');
+  return parts.length > 1 ? parts.pop().toLowerCase() : '';
 };
 
 /**
@@ -294,17 +294,17 @@ export const getFileExtension = (path) => {
  * @param {string} path - File path
  * @returns {string} RDF format name
  */
-export const detectRDFFormat = (path) => {
+export const detectRDFFormat = path => {
   const ext = getFileExtension(path);
   const formatMap = {
-    "ttl": "turtle",
-    "turtle": "turtle",
-    "nt": "n-triples",
-    "n3": "n3",
-    "rdf": "rdf-xml",
-    "xml": "rdf-xml",
-    "jsonld": "json-ld",
-    "json": "json-ld"
+    ttl: 'turtle',
+    turtle: 'turtle',
+    nt: 'n-triples',
+    n3: 'n3',
+    rdf: 'rdf-xml',
+    xml: 'rdf-xml',
+    jsonld: 'json-ld',
+    json: 'json-ld',
   };
-  return formatMap[ext] || "turtle";
+  return formatMap[ext] || 'turtle';
 };

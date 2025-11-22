@@ -20,55 +20,54 @@ import { useKnowledgeEngineContext } from '../core/use-knowledge-engine-context.
  *   issues
  * } = useQualityMetrics();
  */
-export function useQualityMetrics(config = {}) {
+export function useQualityMetrics(_config = {}) {
   const { engine } = useKnowledgeEngineContext();
   const [metrics, setMetrics] = useState(null);
   const [score, setScore] = useState(0);
-  const [issues, setIssues] = useState([]);
+  const [issues, _setIssues] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const computeMetrics = useCallback(async (graphUri) => {
-    try {
-      setLoading(true);
+  const computeMetrics = useCallback(
+    async graphUri => {
+      try {
+        setLoading(true);
 
-      const quads = await engine.match(null, null, null, graphUri);
+        const quads = await engine.match(null, null, null, graphUri);
 
-      const completeness = await computeCompleteness(quads);
-      const consistency = await computeConsistency(quads);
-      const accuracy = await computeAccuracy(quads);
-      const timeliness = await computeTimeliness(quads);
+        const completeness = await computeCompleteness(quads);
+        const consistency = await computeConsistency(quads);
+        const accuracy = await computeAccuracy(quads);
+        const timeliness = await computeTimeliness(quads);
 
-      const qualityMetrics = {
-        completeness,
-        consistency,
-        accuracy,
-        timeliness,
-        tripleCount: quads.length,
-        timestamp: new Date().toISOString()
-      };
+        const qualityMetrics = {
+          completeness,
+          consistency,
+          accuracy,
+          timeliness,
+          tripleCount: quads.length,
+          timestamp: new Date().toISOString(),
+        };
 
-      const qualityScore = (
-        completeness * 0.3 +
-        consistency * 0.3 +
-        accuracy * 0.2 +
-        timeliness * 0.2
-      );
+        const qualityScore =
+          completeness * 0.3 + consistency * 0.3 + accuracy * 0.2 + timeliness * 0.2;
 
-      setMetrics(qualityMetrics);
-      setScore(Math.round(qualityScore));
-      setLoading(false);
-      return { metrics: qualityMetrics, score: qualityScore };
-    } catch (err) {
-      setError(err);
-      setLoading(false);
-      throw err;
-    }
-  }, [engine]);
+        setMetrics(qualityMetrics);
+        setScore(Math.round(qualityScore));
+        setLoading(false);
+        return { metrics: qualityMetrics, score: qualityScore };
+      } catch (err) {
+        setError(err);
+        setLoading(false);
+        throw err;
+      }
+    },
+    [engine]
+  );
 
   async function computeCompleteness(quads) {
     const subjects = new Set(quads.map(q => q.subject.value));
-    const predicates = new Set(quads.map(q => q.predicate.value));
+    const _predicates = new Set(quads.map(q => q.predicate.value));
 
     const avgPredicatesPerSubject = quads.length / subjects.size;
     return Math.min(100, (avgPredicatesPerSubject / 5) * 100);
@@ -82,7 +81,7 @@ export function useQualityMetrics(config = {}) {
     return Math.max(0, (1 - violationRate) * 100);
   }
 
-  async function computeAccuracy(quads) {
+  async function computeAccuracy(_quads) {
     return 95;
   }
 

@@ -6,7 +6,7 @@
  * Benchmarks LRU query cache to measure 40-60% overhead reduction.
  */
 
-import { describe, it, beforeEach, afterEach } from 'vitest';
+import { describe, it, beforeEach, _afterEach } from 'vitest';
 import { createQueryOptimizer } from '../../src/knowledge-engine/query-optimizer.mjs';
 import { Store } from 'n3';
 import { trace } from '@opentelemetry/api';
@@ -46,7 +46,7 @@ function createTestGraph() {
       subject: { value: `http://example.org/subject${i}` },
       predicate: { value: `http://example.org/predicate${i}` },
       object: { value: `http://example.org/object${i}` },
-      graph: { value: '' }
+      graph: { value: '' },
     });
   }
 
@@ -63,7 +63,7 @@ function createTestGraph() {
  * @returns {Promise<Object>} Benchmark results
  */
 async function runQueryBenchmark(name, queries, optimizer, graph, repeatRatio = 0.5) {
-  return await tracer.startActiveSpan(`benchmark.${name}`, async (span) => {
+  return await tracer.startActiveSpan(`benchmark.${name}`, async span => {
     const totalQueries = 100;
     const uniqueCount = queries.length;
     const durations = [];
@@ -113,7 +113,7 @@ async function runQueryBenchmark(name, queries, optimizer, graph, repeatRatio = 
       cacheHitRate: stats.cache.hitRate,
       cacheHits: stats.cache.hits,
       cacheMisses: stats.cache.misses,
-      cacheSize: stats.cache.size
+      cacheSize: stats.cache.size,
     };
   });
 }
@@ -130,13 +130,13 @@ describe('LRU Query Cache Performance Benchmarks', () => {
 
     const baselineOptimizer = createQueryOptimizer({
       enableCaching: false,
-      enableOTEL: true
+      enableOTEL: true,
     });
 
     const lruOptimizer = createQueryOptimizer({
       enableCaching: true,
       enableOTEL: true,
-      maxCacheSize: 1000
+      maxCacheSize: 1000,
     });
 
     console.log('\n🔍 Benchmark: Cold Cache (First Access)');
@@ -159,7 +159,8 @@ describe('LRU Query Cache Performance Benchmarks', () => {
     );
     console.log('  LRU cache:            ', lruResults.avgDuration.toFixed(2), 'ms');
 
-    const overhead = ((lruResults.avgDuration - baselineResults.avgDuration) / baselineResults.avgDuration) * 100;
+    const overhead =
+      ((lruResults.avgDuration - baselineResults.avgDuration) / baselineResults.avgDuration) * 100;
     console.log('  Overhead:             ', overhead.toFixed(2), '%');
     console.log('  Expected: <15%');
 
@@ -175,13 +176,13 @@ describe('LRU Query Cache Performance Benchmarks', () => {
 
     const baselineOptimizer = createQueryOptimizer({
       enableCaching: false,
-      enableOTEL: true
+      enableOTEL: true,
     });
 
     const lruOptimizer = createQueryOptimizer({
       enableCaching: true,
       enableOTEL: true,
-      maxCacheSize: 1000
+      maxCacheSize: 1000,
     });
 
     console.log('\n🔍 Benchmark: Warm Cache (50% Repeats)');
@@ -209,7 +210,9 @@ describe('LRU Query Cache Performance Benchmarks', () => {
     console.log('  Cache hits:           ', lruResults.cacheHits);
     console.log('  Cache misses:         ', lruResults.cacheMisses);
 
-    const improvement = ((baselineResults.totalDuration - lruResults.totalDuration) / baselineResults.totalDuration) * 100;
+    const improvement =
+      ((baselineResults.totalDuration - lruResults.totalDuration) / baselineResults.totalDuration) *
+      100;
     console.log('  Total improvement:    ', improvement.toFixed(2), '%');
     console.log('  Expected: 40-60%');
 
@@ -225,13 +228,13 @@ describe('LRU Query Cache Performance Benchmarks', () => {
 
     const baselineOptimizer = createQueryOptimizer({
       enableCaching: false,
-      enableOTEL: true
+      enableOTEL: true,
     });
 
     const lruOptimizer = createQueryOptimizer({
       enableCaching: true,
       enableOTEL: true,
-      maxCacheSize: 1000
+      maxCacheSize: 1000,
     });
 
     console.log('\n🔍 Benchmark: Hot Cache (90% Repeats)');
@@ -257,7 +260,9 @@ describe('LRU Query Cache Performance Benchmarks', () => {
     console.log('  Total duration:       ', lruResults.totalDuration, 'ms');
     console.log('  Cache hit rate:       ', (lruResults.cacheHitRate * 100).toFixed(2), '%');
 
-    const improvement = ((baselineResults.totalDuration - lruResults.totalDuration) / baselineResults.totalDuration) * 100;
+    const improvement =
+      ((baselineResults.totalDuration - lruResults.totalDuration) / baselineResults.totalDuration) *
+      100;
     console.log('  Total improvement:    ', improvement.toFixed(2), '%');
     console.log('  Expected: 80-95%');
 
@@ -274,7 +279,7 @@ describe('LRU Query Cache Performance Benchmarks', () => {
     const optimizer = createQueryOptimizer({
       enableCaching: true,
       enableOTEL: true,
-      maxCacheSize: 1000
+      maxCacheSize: 1000,
     });
 
     console.log('\n🔍 Cache Statistics Validation');
@@ -301,7 +306,7 @@ describe('LRU Query Cache Performance Benchmarks', () => {
       stats.cache.size === queries.length,
       stats.cache.hits > 0,
       stats.cache.misses === queries.length,
-      stats.cache.hitRate > 0.5
+      stats.cache.hitRate > 0.5,
     ];
 
     if (checks.every(c => c)) {
@@ -317,7 +322,7 @@ describe('LRU Query Cache Performance Benchmarks', () => {
     const optimizer = createQueryOptimizer({
       enableCaching: true,
       enableOTEL: true,
-      maxCacheSize: 10 // Small cache to force eviction
+      maxCacheSize: 10, // Small cache to force eviction
     });
 
     console.log('\n🔍 Cache Eviction Test');

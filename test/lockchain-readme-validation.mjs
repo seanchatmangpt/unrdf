@@ -57,10 +57,14 @@ async function main() {
       gitRepo: process.cwd(),
       enableMerkle: true,
       enableGitAnchoring: false, // Disable Git for testing
-      storagePath: testStoragePath
+      storagePath: testStoragePath,
     });
 
-    logTest('LockchainWriter initialization', !!lockchain, `Instance: ${lockchain.constructor.name}`);
+    logTest(
+      'LockchainWriter initialization',
+      !!lockchain,
+      `Instance: ${lockchain.constructor.name}`
+    );
     logTest('Config stored correctly', lockchain.config?.enableMerkle === true);
 
     // TEST 3: writeReceipt() - README line 256-262
@@ -71,37 +75,55 @@ async function main() {
       action: 'add-data',
       delta: { additions: [], removals: [] },
       timestamp: new Date(),
-      metadata: { reason: 'User registration' }
+      metadata: { reason: 'User registration' },
     });
 
     logTest('writeReceipt() works', !!receipt, `Receipt ID: ${receipt.id}`);
     logTest('Receipt has ID', !!receipt.id && typeof receipt.id === 'string');
     logTest('Receipt has timestamp', typeof receipt.timestamp === 'number');
-    logTest('Receipt has signature', !!receipt.signature && typeof receipt.signature.value === 'string');
+    logTest(
+      'Receipt has signature',
+      !!receipt.signature && typeof receipt.signature.value === 'string'
+    );
 
     // TEST 4: Merkle Root - README line 264-265
     console.log('\n🌳 Test 4: Merkle Root (SHA3-256)\n');
 
-    logTest('receipt.merkleRoot exists', !!receipt.merkleRoot, `merkleRoot: ${receipt.merkleRoot?.substring(0, 16)}...`);
+    logTest(
+      'receipt.merkleRoot exists',
+      !!receipt.merkleRoot,
+      `merkleRoot: ${receipt.merkleRoot?.substring(0, 16)}...`
+    );
     logTest('merkleRoot is string', typeof receipt.merkleRoot === 'string');
     logTest('merkleRoot is hex format', /^[0-9a-f]+$/.test(receipt.merkleRoot || ''));
 
     // SHA3-256 produces 64 character hex string (32 bytes * 2 chars/byte)
     const isSHA3_256 = receipt.merkleRoot?.length === 64;
-    logTest('SHA3-256 hashing (64 chars)', isSHA3_256, `Length: ${receipt.merkleRoot?.length} chars`);
+    logTest(
+      'SHA3-256 hashing (64 chars)',
+      isSHA3_256,
+      `Length: ${receipt.merkleRoot?.length} chars`
+    );
 
     // TEST 5: Verification
     console.log('\n🔍 Test 5: verifyEntry() Functionality\n');
 
     const verification = await lockchain.verifyEntry(receipt.id);
     logTest('verifyEntry() works', verification !== undefined);
-    logTest('Entry verification passes', verification.valid === true, verification.error || 'Valid entry');
+    logTest(
+      'Entry verification passes',
+      verification.valid === true,
+      verification.error || 'Valid entry'
+    );
 
     // TEST 6: Cryptographic Features
     console.log('\n🔐 Test 6: Cryptographic Features\n');
 
     logTest('Signature algorithm is SHA3-256', receipt.signature.algorithm === 'sha3-256');
-    logTest('Signature value exists', !!receipt.signature.value && receipt.signature.value.length > 0);
+    logTest(
+      'Signature value exists',
+      !!receipt.signature.value && receipt.signature.value.length > 0
+    );
     logTest('Previous hash chaining', receipt.previousHash !== undefined);
 
     // TEST 7: Git Storage Configuration
@@ -121,12 +143,16 @@ async function main() {
       action: 'update-data',
       delta: { additions: [], removals: [] },
       timestamp: new Date(),
-      metadata: { reason: 'Data update' }
+      metadata: { reason: 'Data update' },
     });
 
     logTest('Second receipt created', !!receipt2.id);
     logTest('Second receipt has merkleRoot', !!receipt2.merkleRoot);
-    logTest('Different merkleRoots', receipt.merkleRoot !== receipt2.merkleRoot, 'Each receipt has unique merkleRoot');
+    logTest(
+      'Different merkleRoots',
+      receipt.merkleRoot !== receipt2.merkleRoot,
+      'Each receipt has unique merkleRoot'
+    );
 
     // TEST 9: Tamper Detection
     console.log('\n🛡️  Test 9: Tamper Detection\n');
@@ -136,7 +162,7 @@ async function main() {
       actor: 'charlie@example.org',
       action: 'test-tamper',
       delta: { additions: [], removals: [] },
-      timestamp: new Date()
+      timestamp: new Date(),
     });
 
     // Tamper with merkle root
@@ -144,13 +170,16 @@ async function main() {
     await lockchain._updateEntry(receipt3);
 
     const tamperedVerification = await lockchain.verifyEntry(receipt3.id);
-    logTest('Tampered merkleRoot detected', tamperedVerification.valid === false, 'Verification correctly failed');
+    logTest(
+      'Tampered merkleRoot detected',
+      tamperedVerification.valid === false,
+      'Verification correctly failed'
+    );
 
     // Cleanup
     if (existsSync(testStoragePath)) {
       rmSync(testStoragePath, { recursive: true, force: true });
     }
-
   } catch (error) {
     console.error('\n❌ Fatal error:', error.message);
     console.error(error.stack);
@@ -171,10 +200,12 @@ async function main() {
 
   if (failed > 0) {
     console.log('Failed Tests:');
-    results.filter(r => !r.passed).forEach(r => {
-      console.log(`  ❌ ${r.name}`);
-      if (r.details) console.log(`     ${r.details}`);
-    });
+    results
+      .filter(r => !r.passed)
+      .forEach(r => {
+        console.log(`  ❌ ${r.name}`);
+        if (r.details) console.log(`     ${r.details}`);
+      });
     console.log();
   }
 

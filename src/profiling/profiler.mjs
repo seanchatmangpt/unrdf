@@ -57,7 +57,7 @@ export class Profiler {
       enableCpu: false,
       enableOtel: true,
       labels: [],
-      ...options
+      ...options,
     };
 
     this.latencyProfiler = new LatencyProfiler();
@@ -81,20 +81,20 @@ export class Profiler {
   setupOtelMetrics() {
     this.latencyHistogram = meter.createHistogram('profiler.operation.latency', {
       description: 'Operation latency distribution',
-      unit: 'ms'
+      unit: 'ms',
     });
 
     this.memoryGauge = meter.createObservableGauge('profiler.memory.heap_used', {
       description: 'Heap memory usage',
-      unit: 'bytes'
+      unit: 'bytes',
     });
 
     this.operationCounter = meter.createCounter('profiler.operations.total', {
-      description: 'Total profiled operations'
+      description: 'Total profiled operations',
     });
 
     this.errorCounter = meter.createCounter('profiler.operations.errors', {
-      description: 'Failed profiled operations'
+      description: 'Failed profiled operations',
     });
   }
 
@@ -105,14 +105,14 @@ export class Profiler {
    * @param {Object} [options={}] - Additional options
    * @returns {Promise<{result: any, profile: ProfileResult}>}
    */
-  async profile(operationName, operation, options = {}) {
+  async profile(operationName, operation, _options = {}) {
     const span = tracer.startSpan(`profile.${operationName}`, {
       attributes: {
         'profiler.operation': operationName,
         'profiler.latency_enabled': this.options.enableLatency,
         'profiler.memory_enabled': this.options.enableMemory,
-        'profiler.cpu_enabled': this.options.enableCpu
-      }
+        'profiler.cpu_enabled': this.options.enableCpu,
+      },
     });
 
     const profileId = `${operationName}-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
@@ -129,16 +129,14 @@ export class Profiler {
           ? this.memoryProfiler.start(operationName)
           : null;
 
-        const cpuSession = this.cpuProfiler
-          ? await this.cpuProfiler.start(operationName)
-          : null;
+        const cpuSession = this.cpuProfiler ? await this.cpuProfiler.start(operationName) : null;
 
         this.activeProfiles.set(profileId, {
           operationName,
           startTime,
           latencySession,
           memorySession,
-          cpuSession
+          cpuSession,
         });
 
         let result;
@@ -156,7 +154,7 @@ export class Profiler {
           if (this.options.enableOtel) {
             this.errorCounter.add(1, {
               operation: operationName,
-              error: err.name
+              error: err.name,
             });
           }
 
@@ -208,8 +206,8 @@ export class Profiler {
       metadata: {
         operationName,
         timestamp: session.startTime,
-        labels: [...this.options.labels]
-      }
+        labels: [...this.options.labels],
+      },
     };
 
     // Collect latency metrics
@@ -239,7 +237,7 @@ export class Profiler {
   recordOtelMetrics(operationName, profile) {
     const labels = {
       operation: operationName,
-      ...Object.fromEntries(this.options.labels.map((l, i) => [`label_${i}`, l]))
+      ...Object.fromEntries(this.options.labels.map((l, i) => [`label_${i}`, l])),
     };
 
     // Record latency histogram
@@ -300,31 +298,33 @@ export class Profiler {
       return null;
     }
 
-    const latencies = profiles
-      .filter(p => p.latency)
-      .map(p => p.latency.duration);
+    const latencies = profiles.filter(p => p.latency).map(p => p.latency.duration);
 
-    const memoryDeltas = profiles
-      .filter(p => p.memory)
-      .map(p => p.memory.heapUsedDelta);
+    const memoryDeltas = profiles.filter(p => p.memory).map(p => p.memory.heapUsedDelta);
 
     return {
       operationName,
       count: profiles.length,
-      latency: latencies.length > 0 ? {
-        min: Math.min(...latencies),
-        max: Math.max(...latencies),
-        mean: latencies.reduce((a, b) => a + b, 0) / latencies.length,
-        p50: this.percentile(latencies, 50),
-        p90: this.percentile(latencies, 90),
-        p95: this.percentile(latencies, 95),
-        p99: this.percentile(latencies, 99)
-      } : null,
-      memory: memoryDeltas.length > 0 ? {
-        min: Math.min(...memoryDeltas),
-        max: Math.max(...memoryDeltas),
-        mean: memoryDeltas.reduce((a, b) => a + b, 0) / memoryDeltas.length
-      } : null
+      latency:
+        latencies.length > 0
+          ? {
+              min: Math.min(...latencies),
+              max: Math.max(...latencies),
+              mean: latencies.reduce((a, b) => a + b, 0) / latencies.length,
+              p50: this.percentile(latencies, 50),
+              p90: this.percentile(latencies, 90),
+              p95: this.percentile(latencies, 95),
+              p99: this.percentile(latencies, 99),
+            }
+          : null,
+      memory:
+        memoryDeltas.length > 0
+          ? {
+              min: Math.min(...memoryDeltas),
+              max: Math.max(...memoryDeltas),
+              mean: memoryDeltas.reduce((a, b) => a + b, 0) / memoryDeltas.length,
+            }
+          : null,
     };
   }
 
@@ -358,7 +358,7 @@ export class Profiler {
       activeProfiles: this.activeProfiles.size,
       historySize: this.profileHistory.length,
       maxHistorySize: this.maxHistorySize,
-      options: this.options
+      options: this.options,
     };
   }
 }

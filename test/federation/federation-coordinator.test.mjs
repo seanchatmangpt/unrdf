@@ -4,9 +4,9 @@
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import {
-  FederationCoordinator,
+  _FederationCoordinator,
   createFederationCoordinator,
-  StoreHealth
+  StoreHealth,
 } from '../../src/knowledge-engine/federation/federation-coordinator.mjs';
 
 describe('FederationCoordinator', () => {
@@ -17,7 +17,7 @@ describe('FederationCoordinator', () => {
       federationId: 'test-federation',
       enableConsensus: false, // Disable for simpler testing
       healthCheckInterval: 100,
-      loadBalancingStrategy: 'weighted'
+      loadBalancingStrategy: 'weighted',
     });
     await coordinator.initialize();
   });
@@ -32,9 +32,12 @@ describe('FederationCoordinator', () => {
     });
 
     it('should emit initialized event', async () => {
-      const coord = createFederationCoordinator({ federationId: 'test-2', enableConsensus: false });
-      const eventPromise = new Promise((resolve) => {
-        coord.on('initialized', (data) => {
+      const coord = createFederationCoordinator({
+        federationId: 'test-2',
+        enableConsensus: false,
+      });
+      const eventPromise = new Promise(resolve => {
+        coord.on('initialized', data => {
           expect(data.federationId).toBe('test-2');
           resolve();
         });
@@ -51,7 +54,7 @@ describe('FederationCoordinator', () => {
         storeId: 'store-1',
         endpoint: 'http://store1:3000',
         capabilities: ['sparql-1.1'],
-        weight: 1.0
+        weight: 1.0,
       });
 
       expect(coordinator.stores.size).toBe(1);
@@ -59,15 +62,17 @@ describe('FederationCoordinator', () => {
     });
 
     it('should validate store metadata', async () => {
-      await expect(coordinator.registerStore({
-        storeId: 'store-1',
-        endpoint: 'invalid-url'
-      })).rejects.toThrow();
+      await expect(
+        coordinator.registerStore({
+          storeId: 'store-1',
+          endpoint: 'invalid-url',
+        })
+      ).rejects.toThrow();
     });
 
     it('should emit storeRegistered event', async () => {
-      const eventPromise = new Promise((resolve) => {
-        coordinator.on('storeRegistered', (metadata) => {
+      const eventPromise = new Promise(resolve => {
+        coordinator.on('storeRegistered', metadata => {
           expect(metadata.storeId).toBe('store-1');
           resolve();
         });
@@ -75,7 +80,7 @@ describe('FederationCoordinator', () => {
 
       await coordinator.registerStore({
         storeId: 'store-1',
-        endpoint: 'http://store1:3000'
+        endpoint: 'http://store1:3000',
       });
       await eventPromise;
     });
@@ -83,7 +88,7 @@ describe('FederationCoordinator', () => {
     it('should set initial health to unknown', async () => {
       await coordinator.registerStore({
         storeId: 'store-1',
-        endpoint: 'http://store1:3000'
+        endpoint: 'http://store1:3000',
       });
 
       // Health check runs asynchronously, wait a bit
@@ -98,7 +103,7 @@ describe('FederationCoordinator', () => {
     beforeEach(async () => {
       await coordinator.registerStore({
         storeId: 'store-1',
-        endpoint: 'http://store1:3000'
+        endpoint: 'http://store1:3000',
       });
     });
 
@@ -114,8 +119,8 @@ describe('FederationCoordinator', () => {
     });
 
     it('should emit storeDeregistered event', async () => {
-      const eventPromise = new Promise((resolve) => {
-        coordinator.on('storeDeregistered', (data) => {
+      const eventPromise = new Promise(resolve => {
+        coordinator.on('storeDeregistered', data => {
           expect(data.storeId).toBe('store-1');
           resolve();
         });
@@ -131,12 +136,12 @@ describe('FederationCoordinator', () => {
       await coordinator.registerStore({
         storeId: 'store-1',
         endpoint: 'http://store1:3000',
-        weight: 1.0
+        weight: 1.0,
       });
       await coordinator.registerStore({
         storeId: 'store-2',
         endpoint: 'http://store2:3000',
-        weight: 0.8
+        weight: 0.8,
       });
     });
 
@@ -165,12 +170,12 @@ describe('FederationCoordinator', () => {
       await coordinator.registerStore({
         storeId: 'store-1',
         endpoint: 'http://store1:3000',
-        weight: 1.0
+        weight: 1.0,
       });
       await coordinator.registerStore({
         storeId: 'store-2',
         endpoint: 'http://store2:3000',
-        weight: 0.5
+        weight: 0.5,
       });
 
       coordinator.storeHealth.set('store-1', StoreHealth.HEALTHY);
@@ -211,7 +216,7 @@ describe('FederationCoordinator', () => {
     beforeEach(async () => {
       await coordinator.registerStore({
         storeId: 'store-1',
-        endpoint: 'http://store1:3000'
+        endpoint: 'http://store1:3000',
       });
     });
 
@@ -224,8 +229,8 @@ describe('FederationCoordinator', () => {
     it('should emit health change events', async () => {
       coordinator.storeHealth.set('store-1', StoreHealth.HEALTHY);
 
-      const eventPromise = new Promise((resolve) => {
-        coordinator.on('storeHealthChanged', (data) => {
+      const eventPromise = new Promise(resolve => {
+        coordinator.on('storeHealthChanged', data => {
           expect(data.storeId).toBe('store-1');
           expect([StoreHealth.HEALTHY, StoreHealth.UNHEALTHY]).toContain(data.health);
           resolve();
@@ -238,7 +243,7 @@ describe('FederationCoordinator', () => {
     });
 
     it('should perform periodic health checks', async () => {
-      const initialChecks = coordinator.storeHealth.get('store-1');
+      const _initialChecks = coordinator.storeHealth.get('store-1');
 
       await new Promise(resolve => setTimeout(resolve, 250));
 
@@ -251,11 +256,11 @@ describe('FederationCoordinator', () => {
     beforeEach(async () => {
       await coordinator.registerStore({
         storeId: 'store-1',
-        endpoint: 'http://store1:3000'
+        endpoint: 'http://store1:3000',
       });
       await coordinator.registerStore({
         storeId: 'store-2',
-        endpoint: 'http://store2:3000'
+        endpoint: 'http://store2:3000',
       });
     });
 
@@ -266,7 +271,7 @@ describe('FederationCoordinator', () => {
         federationId: 'test-federation',
         totalStores: 2,
         healthStats: expect.any(Object),
-        loadBalancingStrategy: 'weighted'
+        loadBalancingStrategy: 'weighted',
       });
     });
 
@@ -291,7 +296,7 @@ describe('FederationCoordinator', () => {
     });
 
     it('should emit shutdown event', async () => {
-      const eventPromise = new Promise((resolve) => {
+      const eventPromise = new Promise(resolve => {
         coordinator.on('shutdown', () => {
           resolve();
         });

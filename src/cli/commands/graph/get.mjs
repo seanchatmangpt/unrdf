@@ -18,7 +18,7 @@ import { z } from 'zod';
  */
 const getArgsSchema = z.object({
   name: z.string().optional().default(''),
-  output: z.string().optional().default('json')
+  output: z.string().optional().default('json'),
 });
 
 /**
@@ -55,20 +55,20 @@ function formatGraphDetails(graph, format) {
 export const getCommand = defineCommand({
   meta: {
     name: 'get',
-    description: 'Get detailed information about a specific graph'
+    description: 'Get detailed information about a specific graph',
   },
   args: {
     name: {
       type: 'positional',
       description: 'Name of the graph',
-      required: true
+      required: true,
     },
     output: {
       type: 'string',
       description: 'Output format (json, yaml, table)',
       default: 'json',
-      alias: 'o'
-    }
+      alias: 'o',
+    },
   },
   async run(ctx) {
     try {
@@ -81,14 +81,13 @@ export const getCommand = defineCommand({
         baseIri: 'http://example.org/',
         triples: 1234,
         created: '2025-10-01T08:00:00Z',
-        updated: '2025-10-01T10:00:00Z'
+        updated: '2025-10-01T10:00:00Z',
       };
 
       formatGraphDetails(graphDetails, args.output);
-
     } catch (error) {
       console.error('❌ Get failed:', error.message);
       throw error;
     }
-  }
+  },
 });

@@ -7,7 +7,7 @@
  */
 
 import { getSidecarClient, formatSidecarError } from '../utils/sidecar-helper.mjs';
-import { getArg } from '../utils/context-wrapper.mjs';
+import { _getArg } from '../utils/context-wrapper.mjs';
 
 /**
  * Check sidecar status
@@ -15,7 +15,7 @@ import { getArg } from '../utils/context-wrapper.mjs';
  * @param {Object} config - Configuration
  * @returns {Promise<void>}
  */
-export async function sidecarStatusCommand(ctx, config) {
+export async function sidecarStatusCommand(_ctx, _config) {
   console.log('🔍 Checking sidecar status...\n');
 
   try {
@@ -35,7 +35,9 @@ export async function sidecarStatusCommand(ctx, config) {
     console.log(`Requests:      ${metrics.requests}`);
     console.log(`Successes:     ${metrics.successes}`);
     console.log(`Failures:      ${metrics.failures}`);
-    console.log(`Success Rate:  ${metrics.requests > 0 ? ((metrics.successes / metrics.requests) * 100).toFixed(1) : 0}%`);
+    console.log(
+      `Success Rate:  ${metrics.requests > 0 ? ((metrics.successes / metrics.requests) * 100).toFixed(1) : 0}%`
+    );
 
     if (metrics.connectionPool) {
       console.log('\nConnection Pool');
@@ -50,7 +52,7 @@ export async function sidecarStatusCommand(ctx, config) {
       console.log('Status: unavailable');
       console.log('⚠️  Sidecar not available');
       console.log(`Run 'unrdf sidecar start' to start the sidecar process`);
-      process.exit(0);  // Exit with success - unavailable is not an error
+      process.exit(0); // Exit with success - unavailable is not an error
     }
     console.error(`❌ ${formatSidecarError(error)}`);
     process.exit(1);
@@ -63,7 +65,7 @@ export async function sidecarStatusCommand(ctx, config) {
  * @param {Object} config - Configuration
  * @returns {Promise<void>}
  */
-export async function sidecarHealthCommand(ctx, config) {
+export async function sidecarHealthCommand(_ctx, _config) {
   console.log('🏥 Running health check...\n');
 
   try {
@@ -84,7 +86,7 @@ export async function sidecarHealthCommand(ctx, config) {
     if (error.code === 14 || error.code === 4) {
       console.log('⚠️  Sidecar not available');
       console.log(`Run 'unrdf sidecar start' to start the sidecar process`);
-      process.exit(0);  // Exit with success - unavailable is not an error
+      process.exit(0); // Exit with success - unavailable is not an error
     }
     console.error(`❌ Health check failed: ${formatSidecarError(error)}`);
     process.exit(1);
@@ -97,7 +99,7 @@ export async function sidecarHealthCommand(ctx, config) {
  * @param {Object} config - Configuration
  * @returns {Promise<void>}
  */
-export async function sidecarMetricsCommand(ctx, config) {
+export async function sidecarMetricsCommand(ctx, _config) {
   const { args } = ctx;
 
   console.log('📊 Sidecar metrics...\n');
@@ -105,7 +107,7 @@ export async function sidecarMetricsCommand(ctx, config) {
   try {
     const client = await getSidecarClient();
     const metrics = await client.getMetrics({
-      metricNames: args.metrics ? args.metrics.split(',') : []
+      metricNames: args.metrics ? args.metrics.split(',') : [],
     });
 
     if (args.watch) {
@@ -163,7 +165,7 @@ function displayMetrics(metrics) {
  * @param {Object} config - Configuration
  * @returns {Promise<void>}
  */
-export async function sidecarConfigGetCommand(ctx, config) {
+export async function sidecarConfigGetCommand(ctx, _config) {
   const { args } = ctx;
 
   try {
@@ -190,7 +192,7 @@ export async function sidecarConfigGetCommand(ctx, config) {
  * @param {Object} config - Configuration
  * @returns {Promise<void>}
  */
-export async function sidecarConfigSetCommand(ctx, config) {
+export async function sidecarConfigSetCommand(ctx, _config) {
   const { args } = ctx;
 
   if (!args.key || !args.value) {
@@ -221,5 +223,5 @@ function getNestedValue(obj, path) {
 export const sidecarCommandMeta = {
   name: 'sidecar',
   description: 'Manage KGC sidecar',
-  subcommands: ['status', 'health', 'metrics', 'config']
+  subcommands: ['status', 'health', 'metrics', 'config'],
 };

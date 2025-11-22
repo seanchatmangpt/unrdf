@@ -89,9 +89,7 @@ export function formatValidationSummary(results) {
  * @returns {string} JSON string
  */
 export function formatAsJSON(result, pretty = true) {
-  return pretty
-    ? JSON.stringify(result, null, 2)
-    : JSON.stringify(result);
+  return pretty ? JSON.stringify(result, null, 2) : JSON.stringify(result);
 }
 
 /**
@@ -140,9 +138,8 @@ export function formatAsMarkdown(result) {
 export function createReport(results) {
   const passed = results.filter(r => r.passed).length;
   const failed = results.length - passed;
-  const avgScore = results.length > 0
-    ? results.reduce((sum, r) => sum + r.score, 0) / results.length
-    : 0;
+  const avgScore =
+    results.length > 0 ? results.reduce((sum, r) => sum + r.score, 0) / results.length : 0;
 
   const totalLatency = results.reduce((sum, r) => sum + r.metrics.latency, 0);
   const avgLatency = results.length > 0 ? totalLatency / results.length : 0;

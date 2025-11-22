@@ -17,20 +17,22 @@ import { z } from 'zod';
 export const ConfigSchema = z.object({
   baseIRI: z.string().url().default('http://example.org/'),
   prefixes: z.record(z.string(), z.string().url()).default({
-    'ex': 'http://example.org/',
-    'foaf': 'http://xmlns.com/foaf/0.1/',
-    'schema': 'https://schema.org/',
-    'rdf': 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
-    'rdfs': 'http://www.w3.org/2000/01/rdf-schema#',
-    'owl': 'http://www.w3.org/2002/07/owl#'
+    ex: 'http://example.org/',
+    foaf: 'http://xmlns.com/foaf/0.1/',
+    schema: 'https://schema.org/',
+    rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
+    rdfs: 'http://www.w3.org/2000/01/rdf-schema#',
+    owl: 'http://www.w3.org/2002/07/owl#',
   }),
-  validation: z.object({
-    strict: z.boolean().default(true),
-    validateOnLoad: z.boolean().default(true)
-  }).default({
-    strict: true,
-    validateOnLoad: true
-  })
+  validation: z
+    .object({
+      strict: z.boolean().default(true),
+      validateOnLoad: z.boolean().default(true),
+    })
+    .default({
+      strict: true,
+      validateOnLoad: true,
+    }),
 });
 
 /**

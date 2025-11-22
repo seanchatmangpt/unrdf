@@ -32,7 +32,7 @@ export const listCommand = defineCommand({
     },
   },
   async run(ctx) {
-    return tracer.startActiveSpan('cli.context.list', async (span) => {
+    return tracer.startActiveSpan('cli.context.list', async span => {
       try {
         const { output } = ctx.args;
 
@@ -57,7 +57,7 @@ export const listCommand = defineCommand({
         } else if (output === 'table') {
           console.log('Available contexts:');
           console.log('');
-          contexts.forEach((context) => {
+          contexts.forEach(context => {
             const isCurrent = context.name === current;
             const marker = isCurrent ? '* ' : '  ';
             console.log(`${marker}${context.name}`);

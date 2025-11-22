@@ -7,28 +7,32 @@
  */
 
 import { z } from 'zod';
-import { resolve, normalize, isAbsolute } from 'path';
+import { resolve, normalize, _isAbsolute } from 'path';
 import { fileURLToPath } from 'url';
 
 /**
  * Schema for path validation options
  */
-const PathValidationOptionsSchema = z.object({
-  basePath: z.string().optional(),
-  allowAbsolutePaths: z.boolean().default(false),
-  allowedDirectories: z.array(z.string()).default([]),
-  blockedDirectories: z.array(z.string()).default([
-    '/etc',
-    '/usr',
-    '/bin',
-    '/sbin',
-    '/var',
-    '/root',
-    'C:\\Windows',
-    'C:\\System32',
-    'D:\\Windows',
-  ]),
-}).strict();
+const PathValidationOptionsSchema = z
+  .object({
+    basePath: z.string().optional(),
+    allowAbsolutePaths: z.boolean().default(false),
+    allowedDirectories: z.array(z.string()).default([]),
+    blockedDirectories: z
+      .array(z.string())
+      .default([
+        '/etc',
+        '/usr',
+        '/bin',
+        '/sbin',
+        '/var',
+        '/root',
+        'C:\\Windows',
+        'C:\\System32',
+        'D:\\Windows',
+      ]),
+  })
+  .strict();
 
 /**
  * Path Validator for preventing traversal attacks

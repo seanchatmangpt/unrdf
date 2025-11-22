@@ -3,7 +3,7 @@
  * Tests policy packs, security validation, and sandboxing
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, _beforeEach, _vi } from 'vitest';
 
 describe('PolicyPack', () => {
   describe('SHACL Policy Management', () => {
@@ -11,7 +11,7 @@ describe('PolicyPack', () => {
       const policies = [
         { name: 'PersonShape', status: 'active', violations: 0 },
         { name: 'ProductShape', status: 'active', violations: 2 },
-        { name: 'OrderShape', status: 'disabled', violations: 0 }
+        { name: 'OrderShape', status: 'disabled', violations: 0 },
       ];
 
       const activePolicies = policies.filter(p => p.status === 'active');
@@ -25,7 +25,7 @@ describe('PolicyPack', () => {
       const policies = [
         { name: 'PersonShape', violations: 0 },
         { name: 'ProductShape', violations: 2 },
-        { name: 'OrderShape', violations: 5 }
+        { name: 'OrderShape', violations: 5 },
       ];
 
       const totalViolations = policies.reduce((sum, p) => sum + p.violations, 0);
@@ -38,7 +38,7 @@ describe('PolicyPack', () => {
     it('should enable/disable policies', () => {
       const policies = new Map([
         ['PersonShape', { status: 'active' }],
-        ['ProductShape', { status: 'active' }]
+        ['ProductShape', { status: 'active' }],
       ]);
 
       // Disable a policy
@@ -53,8 +53,8 @@ describe('PolicyPack', () => {
         targetClass: 'Person',
         properties: [
           { path: 'name', minCount: 1, datatype: 'string' },
-          { path: 'age', minCount: 1, datatype: 'integer', minValue: 0 }
-        ]
+          { path: 'age', minCount: 1, datatype: 'integer', minValue: 0 },
+        ],
       };
 
       const validData = { type: 'Person', name: 'Alice', age: 30 };
@@ -64,10 +64,16 @@ describe('PolicyPack', () => {
         const violations = [];
         shape.properties.forEach(prop => {
           if (prop.minCount && !data[prop.path]) {
-            violations.push({ path: prop.path, message: 'Required field missing' });
+            violations.push({
+              path: prop.path,
+              message: 'Required field missing',
+            });
           }
           if (prop.minValue !== undefined && data[prop.path] < prop.minValue) {
-            violations.push({ path: prop.path, message: `Must be >= ${prop.minValue}` });
+            violations.push({
+              path: prop.path,
+              message: `Must be >= ${prop.minValue}`,
+            });
           }
         });
         return { conforms: violations.length === 0, violations };
@@ -87,9 +93,9 @@ describe('SecurityValidator', () => {
   describe('Access Control', () => {
     it('should check read access', () => {
       const permissions = {
-        'alice': ['read', 'write'],
-        'bob': ['read'],
-        'eve': []
+        alice: ['read', 'write'],
+        bob: ['read'],
+        eve: [],
       };
 
       const checkAccess = (user, action) => {
@@ -103,8 +109,8 @@ describe('SecurityValidator', () => {
 
     it('should check write access', () => {
       const permissions = {
-        'alice': ['read', 'write'],
-        'bob': ['read']
+        alice: ['read', 'write'],
+        bob: ['read'],
       };
 
       const checkAccess = (user, action) => {
@@ -116,7 +122,7 @@ describe('SecurityValidator', () => {
     });
 
     it('should deny delete by default', () => {
-      const checkAccess = (action) => {
+      const checkAccess = action => {
         const allowed = action !== 'delete';
         return allowed;
       };
@@ -138,7 +144,7 @@ describe('SecurityValidator', () => {
           action,
           resource,
           allowed,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
       };
 
@@ -155,7 +161,7 @@ describe('SecurityValidator', () => {
       const auditLog = [
         { user: 'alice', action: 'read' },
         { user: 'bob', action: 'write' },
-        { user: 'alice', action: 'write' }
+        { user: 'alice', action: 'write' },
       ];
 
       const aliceActions = auditLog.filter(l => l.user === 'alice');
@@ -168,7 +174,7 @@ describe('SecurityValidator', () => {
         { action: 'read', allowed: true },
         { action: 'write', allowed: true },
         { action: 'delete', allowed: false },
-        { action: 'admin', allowed: false }
+        { action: 'admin', allowed: false },
       ];
 
       const allowed = auditLog.filter(l => l.allowed);
@@ -184,16 +190,16 @@ describe('SecurityValidator', () => {
       const roles = {
         admin: ['read', 'write', 'delete', 'admin'],
         editor: ['read', 'write'],
-        viewer: ['read']
+        viewer: ['read'],
       };
 
       const userRoles = {
         alice: 'admin',
         bob: 'editor',
-        eve: 'viewer'
+        eve: 'viewer',
       };
 
-      const getUserPermissions = (user) => {
+      const getUserPermissions = user => {
         const role = userRoles[user];
         return roles[role] || [];
       };
@@ -212,7 +218,7 @@ describe('Sandbox', () => {
       const sandboxConfig = {
         timeout: 30000, // 30 seconds
         maxResults: 1000,
-        memoryLimit: '50MB'
+        memoryLimit: '50MB',
       };
 
       const executeWithTimeout = async (query, timeout) => {
@@ -227,7 +233,7 @@ describe('Sandbox', () => {
         return {
           success: !timedOut,
           executionTime,
-          timedOut
+          timedOut,
         };
       };
 
@@ -239,10 +245,12 @@ describe('Sandbox', () => {
 
     it('should limit result count', () => {
       const sandboxConfig = {
-        maxResults: 1000
+        maxResults: 1000,
       };
 
-      const allResults = Array(5000).fill(null).map((_, i) => ({ id: i }));
+      const allResults = Array(5000)
+        .fill(null)
+        .map((_, i) => ({ id: i }));
       const limitedResults = allResults.slice(0, sandboxConfig.maxResults);
 
       expect(limitedResults).toHaveLength(1000);
@@ -250,7 +258,7 @@ describe('Sandbox', () => {
 
     it('should track memory usage', () => {
       const sandboxConfig = {
-        memoryLimit: 50 * 1024 * 1024 // 50MB in bytes
+        memoryLimit: 50 * 1024 * 1024, // 50MB in bytes
       };
 
       const currentMemory = 25 * 1024 * 1024; // 25MB
@@ -265,14 +273,12 @@ describe('Sandbox', () => {
       const sandbox = {
         isolated: true,
         allowedNamespaces: ['http://example.org/', 'http://xmlns.com/foaf/'],
-        blockedOperations: ['DELETE', 'DROP', 'CLEAR']
+        blockedOperations: ['DELETE', 'DROP', 'CLEAR'],
       };
 
-      const isAllowedQuery = (query) => {
+      const isAllowedQuery = query => {
         // Check for blocked operations
-        const hasBlockedOp = sandbox.blockedOperations.some(op =>
-          query.toUpperCase().includes(op)
-        );
+        const hasBlockedOp = sandbox.blockedOperations.some(op => query.toUpperCase().includes(op));
         return !hasBlockedOp;
       };
 
@@ -284,7 +290,7 @@ describe('Sandbox', () => {
     it('should validate namespace access', () => {
       const allowedNamespaces = ['http://example.org/', 'http://xmlns.com/foaf/'];
 
-      const isAllowedNamespace = (uri) => {
+      const isAllowedNamespace = uri => {
         return allowedNamespaces.some(ns => uri.startsWith(ns));
       };
 
@@ -301,7 +307,7 @@ describe('Sandbox', () => {
         results: 42,
         executionTime: 156,
         memoryUsed: '2.4MB',
-        timedOut: false
+        timedOut: false,
       };
 
       expect(result.success).toBe(true);
@@ -311,7 +317,7 @@ describe('Sandbox', () => {
     });
 
     it('should handle execution errors', () => {
-      const executeQuery = (query, config) => {
+      const executeQuery = (query, _config) => {
         try {
           // Simulate parse error
           if (query.includes('INVALID')) {
@@ -322,7 +328,7 @@ describe('Sandbox', () => {
           return {
             success: false,
             error: error.message,
-            results: []
+            results: [],
           };
         }
       };

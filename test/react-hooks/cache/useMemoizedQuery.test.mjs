@@ -2,7 +2,7 @@
  * @fileoverview Tests for useMemoizedQuery hook
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, _beforeEach, vi } from 'vitest';
 import { renderHook } from '@testing-library/react';
 import { useMemo } from 'react';
 
@@ -11,10 +11,9 @@ describe('useMemoizedQuery', () => {
     it('should memoize query result', () => {
       const queryFn = vi.fn(() => ({ rows: [] }));
 
-      const { result, rerender } = renderHook(
-        ({ query }) => useMemo(() => queryFn(), [query]),
-        { initialProps: { query: 'SELECT * WHERE { ?s ?p ?o }' } }
-      );
+      const { result, rerender } = renderHook(({ query }) => useMemo(() => queryFn(), [query]), {
+        initialProps: { query: 'SELECT * WHERE { ?s ?p ?o }' },
+      });
 
       const result1 = result.current;
       rerender({ query: 'SELECT * WHERE { ?s ?p ?o }' });
@@ -25,7 +24,7 @@ describe('useMemoizedQuery', () => {
     });
 
     it('should recompute when dependencies change', () => {
-      const queryFn = vi.fn((q) => ({ query: q, rows: [] }));
+      const queryFn = vi.fn(q => ({ query: q, rows: [] }));
 
       const { result, rerender } = renderHook(
         ({ query }) => useMemo(() => queryFn(query), [query]),
@@ -53,7 +52,7 @@ describe('useMemoizedQuery', () => {
         return { rows: [], computed: sum };
       });
 
-      const { result, rerender } = renderHook(
+      const { _result, rerender } = renderHook(
         ({ deps }) => useMemo(() => expensiveQuery(), deps),
         { initialProps: { deps: [] } }
       );
@@ -77,17 +76,17 @@ describe('useMemoizedQuery', () => {
 
       // Without memoization
       const start1 = performance.now();
-      const r1 = computeFn();
-      const r2 = computeFn();
-      const r3 = computeFn();
+      const _r1 = computeFn();
+      const _r2 = computeFn();
+      const _r3 = computeFn();
       const duration1 = performance.now() - start1;
 
       // With memoization
       const cached = computeFn();
       const start2 = performance.now();
-      const r4 = cached;
-      const r5 = cached;
-      const r6 = cached;
+      const _r4 = cached;
+      const _r5 = cached;
+      const _r6 = cached;
       const duration2 = performance.now() - start2;
 
       expect(duration2).toBeLessThan(duration1);
@@ -96,9 +95,9 @@ describe('useMemoizedQuery', () => {
 
   describe('Dependency Tracking', () => {
     it('should track query string changes', () => {
-      const computeFn = vi.fn((query) => ({ query, rows: [] }));
+      const computeFn = vi.fn(query => ({ query, rows: [] }));
 
-      const { result, rerender } = renderHook(
+      const { _result, rerender } = renderHook(
         ({ query }) => useMemo(() => computeFn(query), [query]),
         { initialProps: { query: 'q1' } }
       );

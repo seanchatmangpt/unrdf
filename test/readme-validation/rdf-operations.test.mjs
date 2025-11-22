@@ -22,13 +22,19 @@ describe('README RDF Operations Examples', () => {
     mockParseJsonLd = vi.fn().mockResolvedValue(mockStore);
 
     // Mock serialization functions
-    mockToTurtle = vi.fn().mockResolvedValue('@prefix ex: <http://example.org/> .\nex:alice <http://xmlns.com/foaf/0.1/name> "Alice" .');
+    mockToTurtle = vi
+      .fn()
+      .mockResolvedValue(
+        '@prefix ex: <http://example.org/> .\nex:alice <http://xmlns.com/foaf/0.1/name> "Alice" .'
+      );
     mockToJsonLd = vi.fn().mockResolvedValue({
-      '@context': { 'foaf': 'http://xmlns.com/foaf/0.1/' },
+      '@context': { foaf: 'http://xmlns.com/foaf/0.1/' },
       '@id': 'http://example.org/alice',
-      'foaf:name': 'Alice'
+      'foaf:name': 'Alice',
     });
-    mockToNQuads = vi.fn().mockResolvedValue('<http://example.org/alice> <http://xmlns.com/foaf/0.1/name> "Alice" .\n');
+    mockToNQuads = vi
+      .fn()
+      .mockResolvedValue('<http://example.org/alice> <http://xmlns.com/foaf/0.1/name> "Alice" .\n');
   });
 
   describe('Parse Turtle', () => {
@@ -55,19 +61,16 @@ describe('README RDF Operations Examples', () => {
 
       const store = await mockParseTurtle(turtleInput, 'http://example.org/');
 
-      expect(mockParseTurtle).toHaveBeenCalledWith(
-        turtleInput,
-        'http://example.org/'
-      );
+      expect(mockParseTurtle).toHaveBeenCalledWith(turtleInput, 'http://example.org/');
       expect(store).toBeDefined();
     });
 
     it('should reject invalid Turtle syntax', async () => {
       mockParseTurtle.mockRejectedValue(new Error('Invalid Turtle syntax'));
 
-      await expect(
-        mockParseTurtle('INVALID TURTLE { } @#$')
-      ).rejects.toThrow('Invalid Turtle syntax');
+      await expect(mockParseTurtle('INVALID TURTLE { } @#$')).rejects.toThrow(
+        'Invalid Turtle syntax'
+      );
     });
 
     it('should parse empty Turtle document', async () => {
@@ -81,10 +84,10 @@ describe('README RDF Operations Examples', () => {
   describe('Parse JSON-LD', () => {
     it('should parse valid JSON-LD', async () => {
       const jsonldInput = {
-        '@context': { 'foaf': 'http://xmlns.com/foaf/0.1/' },
+        '@context': { foaf: 'http://xmlns.com/foaf/0.1/' },
         '@id': 'http://example.org/alice',
         'foaf:name': 'Alice',
-        'foaf:knows': { '@id': 'http://example.org/bob' }
+        'foaf:knows': { '@id': 'http://example.org/bob' },
       };
 
       const store = await mockParseJsonLd(jsonldInput);
@@ -95,22 +98,16 @@ describe('README RDF Operations Examples', () => {
 
     it('should handle JSON-LD with multiple contexts', async () => {
       const jsonldInput = {
-        '@context': [
-          'http://schema.org',
-          { 'foaf': 'http://xmlns.com/foaf/0.1/' }
-        ],
+        '@context': ['http://schema.org', { foaf: 'http://xmlns.com/foaf/0.1/' }],
         '@id': 'http://example.org/alice',
-        'foaf:name': 'Alice'
+        'foaf:name': 'Alice',
       };
 
       const store = await mockParseJsonLd(jsonldInput);
 
       expect(mockParseJsonLd).toHaveBeenCalledWith(
         expect.objectContaining({
-          '@context': expect.arrayContaining([
-            'http://schema.org',
-            expect.any(Object)
-          ])
+          '@context': expect.arrayContaining(['http://schema.org', expect.any(Object)]),
         })
       );
       expect(store).toBeDefined();
@@ -119,9 +116,7 @@ describe('README RDF Operations Examples', () => {
     it('should reject invalid JSON-LD', async () => {
       mockParseJsonLd.mockRejectedValue(new Error('Invalid JSON-LD'));
 
-      await expect(
-        mockParseJsonLd({ 'invalid': 'structure' })
-      ).rejects.toThrow('Invalid JSON-LD');
+      await expect(mockParseJsonLd({ invalid: 'structure' })).rejects.toThrow('Invalid JSON-LD');
     });
   });
 
@@ -136,8 +131,8 @@ describe('README RDF Operations Examples', () => {
 
     it('should handle custom prefixes in serialization', async () => {
       const customPrefixes = {
-        'ex': 'http://example.org/',
-        'foaf': 'http://xmlns.com/foaf/0.1/'
+        ex: 'http://example.org/',
+        foaf: 'http://xmlns.com/foaf/0.1/',
       };
 
       mockToTurtle.mockResolvedValue('@prefix ex: <http://example.org/> .');
@@ -168,14 +163,14 @@ describe('README RDF Operations Examples', () => {
 
     it('should handle custom context in JSON-LD output', async () => {
       const customContext = {
-        'foaf': 'http://xmlns.com/foaf/0.1/',
-        'name': 'foaf:name'
+        foaf: 'http://xmlns.com/foaf/0.1/',
+        name: 'foaf:name',
       };
 
       mockToJsonLd.mockResolvedValue({
         '@context': customContext,
         '@id': 'http://example.org/alice',
-        'name': 'Alice'
+        name: 'Alice',
       });
 
       const jsonld = await mockToJsonLd(mockStore, customContext);
@@ -249,7 +244,8 @@ describe('README RDF Operations Examples', () => {
     });
 
     it('should support N-Quads (.nq) format', async () => {
-      const nquads = '<http://example.org/alice> <http://xmlns.com/foaf/0.1/name> "Alice" <http://example.org/graph> .';
+      const _nquads =
+        '<http://example.org/alice> <http://xmlns.com/foaf/0.1/name> "Alice" <http://example.org/graph> .';
       const serialized = await mockToNQuads(mockStore);
 
       expect(serialized).toBeDefined();
@@ -257,9 +253,9 @@ describe('README RDF Operations Examples', () => {
 
     it('should support JSON-LD (.jsonld) format', async () => {
       const jsonld = {
-        '@context': { 'foaf': 'http://xmlns.com/foaf/0.1/' },
+        '@context': { foaf: 'http://xmlns.com/foaf/0.1/' },
         '@id': 'http://example.org/alice',
-        'foaf:name': 'Alice'
+        'foaf:name': 'Alice',
       };
       const store = await mockParseJsonLd(jsonld);
 
@@ -269,7 +265,8 @@ describe('README RDF Operations Examples', () => {
 
   describe('Round-trip Conversion', () => {
     it('should preserve data through Turtle round-trip', async () => {
-      const originalTurtle = '@prefix ex: <http://example.org/> .\nex:alice <http://xmlns.com/foaf/0.1/name> "Alice" .';
+      const originalTurtle =
+        '@prefix ex: <http://example.org/> .\nex:alice <http://xmlns.com/foaf/0.1/name> "Alice" .';
 
       const store = await mockParseTurtle(originalTurtle);
       const serialized = await mockToTurtle(store);
@@ -281,9 +278,9 @@ describe('README RDF Operations Examples', () => {
 
     it('should preserve data through JSON-LD round-trip', async () => {
       const originalJsonLd = {
-        '@context': { 'foaf': 'http://xmlns.com/foaf/0.1/' },
+        '@context': { foaf: 'http://xmlns.com/foaf/0.1/' },
         '@id': 'http://example.org/alice',
-        'foaf:name': 'Alice'
+        'foaf:name': 'Alice',
       };
 
       const store = await mockParseJsonLd(originalJsonLd);

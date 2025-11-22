@@ -24,7 +24,7 @@ export const matchers = {
       /Generated hook/i,
       /✓.*created/i,
       new RegExp(`Hook.*${hookName}`, 'i'),
-      new RegExp(`Created.*${hookName}`, 'i')
+      new RegExp(`Created.*${hookName}`, 'i'),
     ];
     return patterns.some(p => p.test(output)) && output.includes(hookName);
   },
@@ -34,14 +34,14 @@ export const matchers = {
    * @param {string} output - CLI output
    * @returns {boolean}
    */
-  policyPassed: (output) => {
+  policyPassed: output => {
     const patterns = [
       /Status:.*PASSED/i,
       /Validation.*PASSED/i,
       /Policy.*passed/i,
       /✓.*policy/i,
       /All policies passed/i,
-      /Validation successful/i
+      /Validation successful/i,
     ];
     return patterns.some(p => p.test(output));
   },
@@ -51,14 +51,14 @@ export const matchers = {
    * @param {string} output - CLI output
    * @returns {boolean}
    */
-  policyFailed: (output) => {
+  policyFailed: output => {
     const patterns = [
       /Status:.*FAILED/i,
       /Validation.*FAILED/i,
       /Policy.*failed/i,
       /×.*policy/i,
       /Validation failed/i,
-      /Policy violation/i
+      /Policy violation/i,
     ];
     return patterns.some(p => p.test(output));
   },
@@ -68,22 +68,10 @@ export const matchers = {
    * @param {string} output - CLI output
    * @returns {boolean}
    */
-  commandSuccess: (output) => {
-    const patterns = [
-      /Success/i,
-      /Complete/i,
-      /✓/,
-      /Done/i,
-      /Finished/i
-    ];
-    const errorPatterns = [
-      /Error/i,
-      /Failed/i,
-      /×/,
-      /Exception/i
-    ];
-    return patterns.some(p => p.test(output)) &&
-           !errorPatterns.some(p => p.test(output));
+  commandSuccess: output => {
+    const patterns = [/Success/i, /Complete/i, /✓/, /Done/i, /Finished/i];
+    const errorPatterns = [/Error/i, /Failed/i, /×/, /Exception/i];
+    return patterns.some(p => p.test(output)) && !errorPatterns.some(p => p.test(output));
   },
 
   /**
@@ -91,15 +79,8 @@ export const matchers = {
    * @param {string} output - CLI output
    * @returns {boolean}
    */
-  commandFailure: (output) => {
-    const patterns = [
-      /Error/i,
-      /Failed/i,
-      /×/,
-      /Exception/i,
-      /Cannot/i,
-      /Unable to/i
-    ];
+  commandFailure: output => {
+    const patterns = [/Error/i, /Failed/i, /×/, /Exception/i, /Cannot/i, /Unable to/i];
     return patterns.some(p => p.test(output));
   },
 
@@ -108,14 +89,14 @@ export const matchers = {
    * @param {string} output - CLI output
    * @returns {boolean}
    */
-  sparqlResults: (output) => {
+  sparqlResults: output => {
     const patterns = [
       /Results:/i,
       /Bindings:/i,
       /Query results/i,
       /Found \d+ result/i,
       /"results"/i,
-      /"bindings"/i
+      /"bindings"/i,
     ];
     return patterns.some(p => p.test(output));
   },
@@ -125,14 +106,8 @@ export const matchers = {
    * @param {string} output - CLI output
    * @returns {boolean}
    */
-  performanceMetrics: (output) => {
-    const patterns = [
-      /\d+ms/,
-      /Duration:/i,
-      /Execution time/i,
-      /Performance:/i,
-      /Benchmark/i
-    ];
+  performanceMetrics: output => {
+    const patterns = [/\d+ms/, /Duration:/i, /Execution time/i, /Performance:/i, /Benchmark/i];
     return patterns.some(p => p.test(output));
   },
 
@@ -147,7 +122,7 @@ export const matchers = {
       new RegExp(`Created.*${fileName}`, 'i'),
       new RegExp(`Generated.*${fileName}`, 'i'),
       new RegExp(`Wrote.*${fileName}`, 'i'),
-      new RegExp(`✓.*${fileName}`, 'i')
+      new RegExp(`✓.*${fileName}`, 'i'),
     ];
     return patterns.some(p => p.test(output));
   },
@@ -157,13 +132,13 @@ export const matchers = {
    * @param {string} output - CLI output
    * @returns {boolean}
    */
-  validationErrors: (output) => {
+  validationErrors: output => {
     const patterns = [
       /Validation error/i,
       /Invalid/i,
       /Schema error/i,
       /SHACL violation/i,
-      /Constraint violation/i
+      /Constraint violation/i,
     ];
     return patterns.some(p => p.test(output));
   },
@@ -190,7 +165,7 @@ export const matchers = {
     if (!timeMatch) return false;
     const actualMs = parseInt(timeMatch[1], 10);
     return actualMs <= maxMs;
-  }
+  },
 };
 
 /**
@@ -202,31 +177,25 @@ export const assertions = {
    */
   assertHookCreated: (output, hookName) => {
     if (!matchers.hookCreated(output, hookName)) {
-      throw new Error(
-        `Expected hook '${hookName}' to be created.\nOutput: ${output}`
-      );
+      throw new Error(`Expected hook '${hookName}' to be created.\nOutput: ${output}`);
     }
   },
 
   /**
    * Assert policy validation passed
    */
-  assertPolicyPassed: (output) => {
+  assertPolicyPassed: output => {
     if (!matchers.policyPassed(output)) {
-      throw new Error(
-        `Expected policy validation to pass.\nOutput: ${output}`
-      );
+      throw new Error(`Expected policy validation to pass.\nOutput: ${output}`);
     }
   },
 
   /**
    * Assert command succeeded
    */
-  assertSuccess: (output) => {
+  assertSuccess: output => {
     if (!matchers.commandSuccess(output)) {
-      throw new Error(
-        `Expected command to succeed.\nOutput: ${output}`
-      );
+      throw new Error(`Expected command to succeed.\nOutput: ${output}`);
     }
   },
 
@@ -237,11 +206,9 @@ export const assertions = {
     if (!matchers.meetsPerformanceTarget(output, maxMs)) {
       const timeMatch = output.match(/(\d+)ms/);
       const actual = timeMatch ? timeMatch[1] : 'unknown';
-      throw new Error(
-        `${operation} exceeded performance target: ${actual}ms > ${maxMs}ms`
-      );
+      throw new Error(`${operation} exceeded performance target: ${actual}ms > ${maxMs}ms`);
     }
-  }
+  },
 };
 
 export default { matchers, assertions };

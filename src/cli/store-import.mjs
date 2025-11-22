@@ -25,7 +25,7 @@ const ImportOptionsSchema = z.object({
   format: z.enum(['turtle', 'n-quads', 'n-triples', 'json-ld', 'auto']).default('auto'),
   graph: z.string().optional(),
   skipErrors: z.boolean().default(false),
-  batchSize: z.number().default(1000)
+  batchSize: z.number().default(1000),
 });
 
 /**
@@ -38,10 +38,12 @@ const ImportResultSchema = z.object({
   quadCount: z.number(),
   graphCount: z.number(),
   duration: z.number(),
-  errors: z.array(z.object({
-    file: z.string(),
-    message: z.string()
-  }))
+  errors: z.array(
+    z.object({
+      file: z.string(),
+      message: z.string(),
+    })
+  ),
 });
 
 /**
@@ -71,9 +73,9 @@ export async function importStore(files, options) {
   await defaultObservabilityManager.initialize();
 
   const transactionId = `import-${Date.now()}`;
-  const spanContext = defaultObservabilityManager.startTransactionSpan(transactionId, {
-    'operation': 'store.import',
-    'store.path': options.storePath
+  const _spanContext = defaultObservabilityManager.startTransactionSpan(transactionId, {
+    operation: 'store.import',
+    'store.path': options.storePath,
   });
 
   const startTime = Date.now();
@@ -106,7 +108,7 @@ export async function importStore(files, options) {
       quadCount: stats.quadCount,
       graphCount: stats.graphCount,
       duration,
-      errors: stats.errors
+      errors: stats.errors,
     });
 
     // End span successfully
@@ -115,15 +117,15 @@ export async function importStore(files, options) {
       'import.quads': stats.quadCount,
       'import.graphs': stats.graphCount,
       'import.duration_ms': duration,
-      'import.errors': stats.errors.length
+      'import.errors': stats.errors.length,
     });
 
     return result;
   } catch (error) {
     // Record error
     defaultObservabilityManager.recordError(error, {
-      'operation': 'store.import',
-      'store.path': options.storePath
+      operation: 'store.import',
+      'store.path': options.storePath,
     });
 
     // End span with error
@@ -192,9 +194,7 @@ async function importFiles(files, options) {
       console.log(`  Processing ${filePath}...`);
 
       // Detect format
-      const format = options.format === 'auto'
-        ? detectRDFFormat(filePath)
-        : options.format;
+      const format = options.format === 'auto' ? detectRDFFormat(filePath) : options.format;
 
       // Read file
       const content = await readFile(filePath, 'utf-8');
@@ -220,7 +220,7 @@ async function importFiles(files, options) {
         console.warn(`    ⚠️  Error: ${error.message}`);
         errors.push({
           file: filePath,
-          message: error.message
+          message: error.message,
         });
       } else {
         throw new Error(`Failed to import ${filePath}: ${error.message}`);
@@ -241,9 +241,7 @@ async function importFiles(files, options) {
       if (error) {
         reject(error);
       } else {
-        writeFile(storeFile, result, 'utf-8')
-          .then(resolve)
-          .catch(reject);
+        writeFile(storeFile, result, 'utf-8').then(resolve).catch(reject);
       }
     });
   });
@@ -252,7 +250,7 @@ async function importFiles(files, options) {
     filesImported,
     quadCount,
     graphCount: graphs.size,
-    errors
+    errors,
   };
 }
 
@@ -270,7 +268,7 @@ async function parseRDF(content, format, graph) {
     const quads = [];
     const parser = new N3Parser({ format });
 
-    parser.parse(content, (error, quad, prefixes) => {
+    parser.parse(content, (error, quad, _prefixes) => {
       if (error) {
         reject(error);
       } else if (quad) {
@@ -278,7 +276,7 @@ async function parseRDF(content, format, graph) {
         if (graph) {
           quad = {
             ...quad,
-            graph: { termType: 'NamedNode', value: graph }
+            graph: { termType: 'NamedNode', value: graph },
           };
         }
         quads.push(quad);

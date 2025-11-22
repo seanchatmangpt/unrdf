@@ -26,32 +26,38 @@ export function useFormValidation(schema) {
   const [touched, setTouched] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleChange = useCallback((field, value) => {
-    setValues(prev => ({ ...prev, [field]: value }));
+  const handleChange = useCallback(
+    (field, value) => {
+      setValues(prev => ({ ...prev, [field]: value }));
 
-    // Clear error when user types
-    if (errors[field]) {
-      setErrors(prev => {
-        const newErrors = { ...prev };
-        delete newErrors[field];
-        return newErrors;
-      });
-    }
-  }, [errors]);
+      // Clear error when user types
+      if (errors[field]) {
+        setErrors(prev => {
+          const newErrors = { ...prev };
+          delete newErrors[field];
+          return newErrors;
+        });
+      }
+    },
+    [errors]
+  );
 
-  const handleBlur = useCallback((field) => {
-    setTouched(prev => ({ ...prev, [field]: true }));
+  const handleBlur = useCallback(
+    field => {
+      setTouched(prev => ({ ...prev, [field]: true }));
 
-    // Validate single field
-    try {
-      schema.pick({ [field]: true }).parse({ [field]: values[field] });
-    } catch (err) {
-      setErrors(prev => ({
-        ...prev,
-        [field]: err.errors[0]?.message
-      }));
-    }
-  }, [schema, values]);
+      // Validate single field
+      try {
+        schema.pick({ [field]: true }).parse({ [field]: values[field] });
+      } catch (err) {
+        setErrors(prev => ({
+          ...prev,
+          [field]: err.errors[0]?.message,
+        }));
+      }
+    },
+    [schema, values]
+  );
 
   const validate = useCallback(() => {
     try {
@@ -69,25 +75,28 @@ export function useFormValidation(schema) {
     }
   }, [schema, values]);
 
-  const handleSubmit = useCallback(async (onSubmit) => {
-    setIsSubmitting(true);
+  const handleSubmit = useCallback(
+    async onSubmit => {
+      setIsSubmitting(true);
 
-    const isValid = validate();
+      const isValid = validate();
 
-    if (!isValid) {
-      setIsSubmitting(false);
-      return;
-    }
+      if (!isValid) {
+        setIsSubmitting(false);
+        return;
+      }
 
-    try {
-      await onSubmit(values);
-      reset();
-    } catch (err) {
-      setErrors({ submit: err.message });
-    } finally {
-      setIsSubmitting(false);
-    }
-  }, [values, validate]);
+      try {
+        await onSubmit(values);
+        reset();
+      } catch (err) {
+        setErrors({ submit: err.message });
+      } finally {
+        setIsSubmitting(false);
+      }
+    },
+    [values, validate]
+  );
 
   const reset = useCallback(() => {
     setValues({});
@@ -105,6 +114,6 @@ export function useFormValidation(schema) {
     handleBlur,
     handleSubmit,
     validate,
-    reset
+    reset,
   };
 }

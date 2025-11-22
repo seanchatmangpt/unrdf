@@ -1,386 +1,388 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>UNRDF Browser Example - Vanilla JS</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 20px;
-      background: #f5f5f5;
-    }
-
-    h1 {
-      color: #333;
-      margin-bottom: 10px;
-    }
-
-    .subtitle {
-      color: #666;
-      margin-bottom: 30px;
-    }
-
-    .card {
-      background: white;
-      border-radius: 8px;
-      padding: 20px;
-      margin-bottom: 20px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-
-    h2 {
-      color: #444;
-      margin-bottom: 15px;
-      font-size: 18px;
-    }
-
-    .button-group {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 15px;
-      flex-wrap: wrap;
-    }
-
-    button {
-      padding: 10px 20px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 500;
-      transition: all 0.2s;
-    }
-
-    button:hover:not(:disabled) {
-      transform: translateY(-1px);
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    }
-
-    button:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    .btn-primary {
-      background: #007bff;
-      color: white;
-    }
-
-    .btn-primary:hover:not(:disabled) {
-      background: #0056b3;
-    }
-
-    .btn-success {
-      background: #28a745;
-      color: white;
-    }
-
-    .btn-success:hover:not(:disabled) {
-      background: #218838;
-    }
-
-    .btn-warning {
-      background: #ffc107;
-      color: #333;
-    }
-
-    .btn-warning:hover:not(:disabled) {
-      background: #e0a800;
-    }
-
-    .btn-danger {
-      background: #dc3545;
-      color: white;
-    }
-
-    .btn-danger:hover:not(:disabled) {
-      background: #c82333;
-    }
-
-    .output {
-      background: #f8f9fa;
-      border: 1px solid #dee2e6;
-      border-radius: 4px;
-      padding: 15px;
-      font-family: 'Courier New', monospace;
-      font-size: 13px;
-      max-height: 400px;
-      overflow-y: auto;
-      white-space: pre-wrap;
-      word-wrap: break-word;
-    }
-
-    .status {
-      padding: 8px 12px;
-      border-radius: 4px;
-      margin-bottom: 10px;
-      font-size: 14px;
-    }
-
-    .status.info {
-      background: #d1ecf1;
-      color: #0c5460;
-      border: 1px solid #bee5eb;
-    }
-
-    .status.success {
-      background: #d4edda;
-      color: #155724;
-      border: 1px solid #c3e6cb;
-    }
-
-    .status.error {
-      background: #f8d7da;
-      color: #721c24;
-      border: 1px solid #f5c6cb;
-    }
-
-    .status.loading {
-      background: #fff3cd;
-      color: #856404;
-      border: 1px solid #ffeaa7;
-    }
-
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 15px;
-      margin-top: 15px;
-    }
-
-    .stat-card {
-      background: #f8f9fa;
-      padding: 15px;
-      border-radius: 4px;
-      border-left: 4px solid #007bff;
-    }
-
-    .stat-label {
-      font-size: 12px;
-      color: #666;
-      text-transform: uppercase;
-      margin-bottom: 5px;
-    }
-
-    .stat-value {
-      font-size: 24px;
-      font-weight: bold;
-      color: #333;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-    }
-
-    th, td {
-      padding: 10px;
-      text-align: left;
-      border-bottom: 1px solid #dee2e6;
-    }
-
-    th {
-      background: #f8f9fa;
-      font-weight: 600;
-      color: #495057;
-    }
-
-    tr:hover {
-      background: #f8f9fa;
-    }
-
-    .loader {
-      display: inline-block;
-      width: 16px;
-      height: 16px;
-      border: 2px solid #f3f3f3;
-      border-top: 2px solid #007bff;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-  </style>
-</head>
-<body>
-  <h1>UNRDF v3.1.0 Browser Example</h1>
-  <p class="subtitle">Vanilla JavaScript + IndexedDB + Web Workers</p>
-
-  <!-- Status Card -->
-  <div class="card">
-    <h2>System Status</h2>
-    <div id="status" class="status info">
-      Initializing...
-    </div>
-
-    <div class="stats">
-      <div class="stat-card">
-        <div class="stat-label">Engine Status</div>
-        <div class="stat-value" id="engine-status">Not Ready</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Total Triples</div>
-        <div class="stat-value" id="triple-count">0</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Storage Used</div>
-        <div class="stat-value" id="storage-used">0 KB</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Queries Run</div>
-        <div class="stat-value" id="query-count">0</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Actions Card -->
-  <div class="card">
-    <h2>Actions</h2>
-    <div class="button-group">
-      <button id="init-btn" class="btn-primary">1. Initialize Engine</button>
-      <button id="add-data-btn" class="btn-success" disabled>2. Add Sample Data</button>
-      <button id="query-btn" class="btn-primary" disabled>3. Run Query</button>
-      <button id="validate-btn" class="btn-warning" disabled>4. Validate Data</button>
-      <button id="profile-btn" class="btn-primary" disabled>5. Show Performance</button>
-      <button id="clear-btn" class="btn-danger" disabled>Clear All Data</button>
-    </div>
-  </div>
-
-  <!-- Results Card -->
-  <div class="card">
-    <h2>Results</h2>
-    <div id="results" class="output">
-Click "Initialize Engine" to get started...
-    </div>
-  </div>
-
-  <script type="module">
-    // Use unpkg for demo (in production, use bundler)
-    import {
-      createBrowserKnowledgeEngine,
-      parseTurtle
-    } from 'https://unpkg.com/unrdf@3.1.0/browser';
-
-    // State
-    let engine = null;
-    let queryCount = 0;
-
-    // DOM elements
-    const statusEl = document.getElementById('status');
-    const resultsEl = document.getElementById('results');
-    const engineStatusEl = document.getElementById('engine-status');
-    const tripleCountEl = document.getElementById('triple-count');
-    const storageUsedEl = document.getElementById('storage-used');
-    const queryCountEl = document.getElementById('query-count');
-
-    const initBtn = document.getElementById('init-btn');
-    const addDataBtn = document.getElementById('add-data-btn');
-    const queryBtn = document.getElementById('query-btn');
-    const validateBtn = document.getElementById('validate-btn');
-    const profileBtn = document.getElementById('profile-btn');
-    const clearBtn = document.getElementById('clear-btn');
-
-    // Helper functions
-    function setStatus(message, type = 'info') {
-      statusEl.className = `status ${type}`;
-      statusEl.innerHTML = type === 'loading'
-        ? `<span class="loader"></span> ${message}`
-        : message;
-    }
-
-    function setResults(content) {
-      resultsEl.textContent = content;
-    }
-
-    function setResultsHTML(html) {
-      resultsEl.innerHTML = html;
-    }
-
-    async function updateStats() {
-      if (!engine) return;
-
-      try {
-        // Get triple count
-        const countResult = await engine.query({
-          query: 'SELECT (COUNT(*) as ?count) WHERE { ?s ?p ?o }',
-          type: 'sparql-select'
-        });
-        tripleCountEl.textContent = countResult[0]?.count || 0;
-
-        // Get storage usage
-        const quota = await engine.getStorageQuota();
-        const usedMB = (quota.used / 1024 / 1024).toFixed(2);
-        storageUsedEl.textContent = `${usedMB} MB`;
-
-        // Query count
-        queryCountEl.textContent = queryCount;
-      } catch (err) {
-        console.error('Failed to update stats:', err);
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UNRDF Browser Example - Vanilla JS</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
       }
-    }
 
-    // 1. Initialize Engine
-    initBtn.addEventListener('click', async () => {
-      try {
-        setStatus('Initializing knowledge engine...', 'loading');
-        setResults('Initializing...');
-
-        engine = await createBrowserKnowledgeEngine({
-          storage: {
-            type: 'indexeddb',
-            name: 'unrdf-demo-graph',
-            quota: 50 * 1024 * 1024  // 50MB
-          },
-          workers: {
-            enabled: true,
-            maxWorkers: navigator.hardwareConcurrency || 4
-          },
-          profiling: {
-            enabled: true,
-            slowQueryThreshold: 100
-          }
-        });
-
-        setStatus('Knowledge engine ready! ✅', 'success');
-        setResults('Knowledge engine initialized successfully!\n\nFeatures enabled:\n- IndexedDB persistent storage\n- Web Worker query execution\n- Performance profiling\n\nClick "Add Sample Data" to continue...');
-
-        // Enable next buttons
-        addDataBtn.disabled = false;
-        queryBtn.disabled = false;
-        validateBtn.disabled = false;
-        profileBtn.disabled = false;
-        clearBtn.disabled = false;
-        initBtn.disabled = true;
-
-        // Update stats
-        engineStatusEl.textContent = 'Ready ✅';
-        await updateStats();
-
-      } catch (err) {
-        setStatus(`Initialization failed: ${err.message}`, 'error');
-        setResults(`Error: ${err.message}\n\n${err.stack}`);
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        background: #f5f5f5;
       }
-    });
 
-    // 2. Add Sample Data
-    addDataBtn.addEventListener('click', async () => {
-      try {
-        setStatus('Adding sample data...', 'loading');
+      h1 {
+        color: #333;
+        margin-bottom: 10px;
+      }
 
-        const ttl = `
+      .subtitle {
+        color: #666;
+        margin-bottom: 30px;
+      }
+
+      .card {
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      h2 {
+        color: #444;
+        margin-bottom: 15px;
+        font-size: 18px;
+      }
+
+      .button-group {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+        flex-wrap: wrap;
+      }
+
+      button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        transition: all 0.2s;
+      }
+
+      button:hover:not(:disabled) {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      }
+
+      button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      .btn-primary {
+        background: #007bff;
+        color: white;
+      }
+
+      .btn-primary:hover:not(:disabled) {
+        background: #0056b3;
+      }
+
+      .btn-success {
+        background: #28a745;
+        color: white;
+      }
+
+      .btn-success:hover:not(:disabled) {
+        background: #218838;
+      }
+
+      .btn-warning {
+        background: #ffc107;
+        color: #333;
+      }
+
+      .btn-warning:hover:not(:disabled) {
+        background: #e0a800;
+      }
+
+      .btn-danger {
+        background: #dc3545;
+        color: white;
+      }
+
+      .btn-danger:hover:not(:disabled) {
+        background: #c82333;
+      }
+
+      .output {
+        background: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        padding: 15px;
+        font-family: 'Courier New', monospace;
+        font-size: 13px;
+        max-height: 400px;
+        overflow-y: auto;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+      }
+
+      .status {
+        padding: 8px 12px;
+        border-radius: 4px;
+        margin-bottom: 10px;
+        font-size: 14px;
+      }
+
+      .status.info {
+        background: #d1ecf1;
+        color: #0c5460;
+        border: 1px solid #bee5eb;
+      }
+
+      .status.success {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+      }
+
+      .status.error {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+      }
+
+      .status.loading {
+        background: #fff3cd;
+        color: #856404;
+        border: 1px solid #ffeaa7;
+      }
+
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin-top: 15px;
+      }
+
+      .stat-card {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 4px;
+        border-left: 4px solid #007bff;
+      }
+
+      .stat-label {
+        font-size: 12px;
+        color: #666;
+        text-transform: uppercase;
+        margin-bottom: 5px;
+      }
+
+      .stat-value {
+        font-size: 24px;
+        font-weight: bold;
+        color: #333;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+      }
+
+      th,
+      td {
+        padding: 10px;
+        text-align: left;
+        border-bottom: 1px solid #dee2e6;
+      }
+
+      th {
+        background: #f8f9fa;
+        font-weight: 600;
+        color: #495057;
+      }
+
+      tr:hover {
+        background: #f8f9fa;
+      }
+
+      .loader {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        border: 2px solid #f3f3f3;
+        border-top: 2px solid #007bff;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>UNRDF v3.1.0 Browser Example</h1>
+    <p class="subtitle">Vanilla JavaScript + IndexedDB + Web Workers</p>
+
+    <!-- Status Card -->
+    <div class="card">
+      <h2>System Status</h2>
+      <div id="status" class="status info">Initializing...</div>
+
+      <div class="stats">
+        <div class="stat-card">
+          <div class="stat-label">Engine Status</div>
+          <div class="stat-value" id="engine-status">Not Ready</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total Triples</div>
+          <div class="stat-value" id="triple-count">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Storage Used</div>
+          <div class="stat-value" id="storage-used">0 KB</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Queries Run</div>
+          <div class="stat-value" id="query-count">0</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions Card -->
+    <div class="card">
+      <h2>Actions</h2>
+      <div class="button-group">
+        <button id="init-btn" class="btn-primary">1. Initialize Engine</button>
+        <button id="add-data-btn" class="btn-success" disabled>2. Add Sample Data</button>
+        <button id="query-btn" class="btn-primary" disabled>3. Run Query</button>
+        <button id="validate-btn" class="btn-warning" disabled>4. Validate Data</button>
+        <button id="profile-btn" class="btn-primary" disabled>5. Show Performance</button>
+        <button id="clear-btn" class="btn-danger" disabled>Clear All Data</button>
+      </div>
+    </div>
+
+    <!-- Results Card -->
+    <div class="card">
+      <h2>Results</h2>
+      <div id="results" class="output">Click "Initialize Engine" to get started...</div>
+    </div>
+
+    <script type="module">
+      // Use unpkg for demo (in production, use bundler)
+      import {
+        createBrowserKnowledgeEngine,
+        parseTurtle,
+      } from 'https://unpkg.com/unrdf@3.1.0/browser';
+
+      // State
+      let engine = null;
+      let queryCount = 0;
+
+      // DOM elements
+      const statusEl = document.getElementById('status');
+      const resultsEl = document.getElementById('results');
+      const engineStatusEl = document.getElementById('engine-status');
+      const tripleCountEl = document.getElementById('triple-count');
+      const storageUsedEl = document.getElementById('storage-used');
+      const queryCountEl = document.getElementById('query-count');
+
+      const initBtn = document.getElementById('init-btn');
+      const addDataBtn = document.getElementById('add-data-btn');
+      const queryBtn = document.getElementById('query-btn');
+      const validateBtn = document.getElementById('validate-btn');
+      const profileBtn = document.getElementById('profile-btn');
+      const clearBtn = document.getElementById('clear-btn');
+
+      // Helper functions
+      function setStatus(message, type = 'info') {
+        statusEl.className = `status ${type}`;
+        statusEl.innerHTML =
+          type === 'loading' ? `<span class="loader"></span> ${message}` : message;
+      }
+
+      function setResults(content) {
+        resultsEl.textContent = content;
+      }
+
+      function setResultsHTML(html) {
+        resultsEl.innerHTML = html;
+      }
+
+      async function updateStats() {
+        if (!engine) return;
+
+        try {
+          // Get triple count
+          const countResult = await engine.query({
+            query: 'SELECT (COUNT(*) as ?count) WHERE { ?s ?p ?o }',
+            type: 'sparql-select',
+          });
+          tripleCountEl.textContent = countResult[0]?.count || 0;
+
+          // Get storage usage
+          const quota = await engine.getStorageQuota();
+          const usedMB = (quota.used / 1024 / 1024).toFixed(2);
+          storageUsedEl.textContent = `${usedMB} MB`;
+
+          // Query count
+          queryCountEl.textContent = queryCount;
+        } catch (err) {
+          console.error('Failed to update stats:', err);
+        }
+      }
+
+      // 1. Initialize Engine
+      initBtn.addEventListener('click', async () => {
+        try {
+          setStatus('Initializing knowledge engine...', 'loading');
+          setResults('Initializing...');
+
+          engine = await createBrowserKnowledgeEngine({
+            storage: {
+              type: 'indexeddb',
+              name: 'unrdf-demo-graph',
+              quota: 50 * 1024 * 1024, // 50MB
+            },
+            workers: {
+              enabled: true,
+              maxWorkers: navigator.hardwareConcurrency || 4,
+            },
+            profiling: {
+              enabled: true,
+              slowQueryThreshold: 100,
+            },
+          });
+
+          setStatus('Knowledge engine ready! ✅', 'success');
+          setResults(
+            'Knowledge engine initialized successfully!\n\nFeatures enabled:\n- IndexedDB persistent storage\n- Web Worker query execution\n- Performance profiling\n\nClick "Add Sample Data" to continue...'
+          );
+
+          // Enable next buttons
+          addDataBtn.disabled = false;
+          queryBtn.disabled = false;
+          validateBtn.disabled = false;
+          profileBtn.disabled = false;
+          clearBtn.disabled = false;
+          initBtn.disabled = true;
+
+          // Update stats
+          engineStatusEl.textContent = 'Ready ✅';
+          await updateStats();
+        } catch (err) {
+          setStatus(`Initialization failed: ${err.message}`, 'error');
+          setResults(`Error: ${err.message}\n\n${err.stack}`);
+        }
+      });
+
+      // 2. Add Sample Data
+      addDataBtn.addEventListener('click', async () => {
+        try {
+          setStatus('Adding sample data...', 'loading');
+
+          const ttl = `
 @prefix ex: <http://example.org/> .
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
@@ -405,31 +407,32 @@ ex:company a foaf:Organization ;
            foaf:member ex:alice, ex:bob .
         `;
 
-        const store = await parseTurtle(ttl);
+          const store = await parseTurtle(ttl);
 
-        await engine.executeTransaction({
-          additions: [...store],
-          removals: [],
-          actor: 'browser-demo'
-        });
+          await engine.executeTransaction({
+            additions: [...store],
+            removals: [],
+            actor: 'browser-demo',
+          });
 
-        setStatus('Sample data added successfully! ✅', 'success');
-        setResults(`Added sample data:\n\n${ttl}\n\nTotal: ${[...store].length} triples added.\n\nClick "Run Query" to query the data...`);
+          setStatus('Sample data added successfully! ✅', 'success');
+          setResults(
+            `Added sample data:\n\n${ttl}\n\nTotal: ${[...store].length} triples added.\n\nClick "Run Query" to query the data...`
+          );
 
-        await updateStats();
+          await updateStats();
+        } catch (err) {
+          setStatus(`Failed to add data: ${err.message}`, 'error');
+          setResults(`Error: ${err.message}\n\n${err.stack}`);
+        }
+      });
 
-      } catch (err) {
-        setStatus(`Failed to add data: ${err.message}`, 'error');
-        setResults(`Error: ${err.message}\n\n${err.stack}`);
-      }
-    });
+      // 3. Run Query
+      queryBtn.addEventListener('click', async () => {
+        try {
+          setStatus('Running SPARQL query...', 'loading');
 
-    // 3. Run Query
-    queryBtn.addEventListener('click', async () => {
-      try {
-        setStatus('Running SPARQL query...', 'loading');
-
-        const query = `
+          const query = `
 PREFIX foaf: <http://xmlns.com/foaf/0.1/>
 SELECT ?person ?name ?age ?friendName
 WHERE {
@@ -442,32 +445,32 @@ WHERE {
 ORDER BY DESC(?age)
         `;
 
-        const startTime = performance.now();
-        const results = await engine.query({
-          query,
-          type: 'sparql-select'
-        });
-        const duration = (performance.now() - startTime).toFixed(2);
+          const startTime = performance.now();
+          const results = await engine.query({
+            query,
+            type: 'sparql-select',
+          });
+          const duration = (performance.now() - startTime).toFixed(2);
 
-        queryCount++;
+          queryCount++;
 
-        setStatus(`Query executed successfully in ${duration}ms! ✅`, 'success');
+          setStatus(`Query executed successfully in ${duration}ms! ✅`, 'success');
 
-        // Build table HTML
-        if (results.length > 0) {
-          const keys = Object.keys(results[0]);
-          let tableHTML = `<table>
+          // Build table HTML
+          if (results.length > 0) {
+            const keys = Object.keys(results[0]);
+            let tableHTML = `<table>
             <thead>
               <tr>${keys.map(k => `<th>${k}</th>`).join('')}</tr>
             </thead>
             <tbody>
-              ${results.map(row =>
-                `<tr>${keys.map(k => `<td>${row[k]}</td>`).join('')}</tr>`
-              ).join('')}
+              ${results
+                .map(row => `<tr>${keys.map(k => `<td>${row[k]}</td>`).join('')}</tr>`)
+                .join('')}
             </tbody>
           </table>`;
 
-          tableHTML = `
+            tableHTML = `
 <strong>Query:</strong>
 <pre>${query}</pre>
 
@@ -476,25 +479,24 @@ ORDER BY DESC(?age)
 ${tableHTML}
           `;
 
-          setResultsHTML(tableHTML);
-        } else {
-          setResults('No results found.');
+            setResultsHTML(tableHTML);
+          } else {
+            setResults('No results found.');
+          }
+
+          await updateStats();
+        } catch (err) {
+          setStatus(`Query failed: ${err.message}`, 'error');
+          setResults(`Error: ${err.message}\n\n${err.stack}`);
         }
+      });
 
-        await updateStats();
+      // 4. Validate Data
+      validateBtn.addEventListener('click', async () => {
+        try {
+          setStatus('Running SHACL validation...', 'loading');
 
-      } catch (err) {
-        setStatus(`Query failed: ${err.message}`, 'error');
-        setResults(`Error: ${err.message}\n\n${err.stack}`);
-      }
-    });
-
-    // 4. Validate Data
-    validateBtn.addEventListener('click', async () => {
-      try {
-        setStatus('Running SHACL validation...', 'loading');
-
-        const shapeTtl = `
+          const shapeTtl = `
 @prefix sh: <http://www.w3.org/ns/shacl#> .
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 @prefix ex: <http://example.org/> .
@@ -517,32 +519,33 @@ ex:PersonShape a sh:NodeShape ;
   ] .
         `;
 
-        const shapes = await parseTurtle(shapeTtl);
-        const validation = await engine.validate({ shapesGraph: shapes });
+          const shapes = await parseTurtle(shapeTtl);
+          const validation = await engine.validate({ shapesGraph: shapes });
 
-        if (validation.conforms) {
-          setStatus('Validation passed! ✅', 'success');
-          setResults(`✅ Validation Successful!\n\nAll data conforms to SHACL shapes.\n\nShapes validated:\n${shapeTtl}`);
-        } else {
-          setStatus('Validation failed ❌', 'error');
-          const violations = JSON.stringify(validation.results, null, 2);
-          setResults(`❌ Validation Failed\n\nViolations found:\n\n${violations}`);
+          if (validation.conforms) {
+            setStatus('Validation passed! ✅', 'success');
+            setResults(
+              `✅ Validation Successful!\n\nAll data conforms to SHACL shapes.\n\nShapes validated:\n${shapeTtl}`
+            );
+          } else {
+            setStatus('Validation failed ❌', 'error');
+            const violations = JSON.stringify(validation.results, null, 2);
+            setResults(`❌ Validation Failed\n\nViolations found:\n\n${violations}`);
+          }
+        } catch (err) {
+          setStatus(`Validation error: ${err.message}`, 'error');
+          setResults(`Error: ${err.message}\n\n${err.stack}`);
         }
+      });
 
-      } catch (err) {
-        setStatus(`Validation error: ${err.message}`, 'error');
-        setResults(`Error: ${err.message}\n\n${err.stack}`);
-      }
-    });
+      // 5. Show Performance Profile
+      profileBtn.addEventListener('click', async () => {
+        try {
+          setStatus('Generating performance profile...', 'loading');
 
-    // 5. Show Performance Profile
-    profileBtn.addEventListener('click', async () => {
-      try {
-        setStatus('Generating performance profile...', 'loading');
+          const profile = await engine.getPerformanceProfile();
 
-        const profile = await engine.getPerformanceProfile();
-
-        const report = `
+          const report = `
 📊 PERFORMANCE PROFILE
 
 Latency Metrics:
@@ -567,46 +570,50 @@ Query Stats:
   Total Queries:    ${queryCount}
   Slow Queries:     ${profile.slowQueries.length}
 
-${profile.slowQueries.length > 0 ? `
+${
+  profile.slowQueries.length > 0
+    ? `
 Slow Queries (>${profile.slowQueryThreshold}ms):
 ${profile.slowQueries.map(q => `  - ${q.duration.toFixed(2)}ms: ${q.query.slice(0, 80)}...`).join('\n')}
-` : ''}
+`
+    : ''
+}
         `;
 
-        setStatus('Performance profile ready! ✅', 'success');
-        setResults(report);
-
-      } catch (err) {
-        setStatus(`Profiling error: ${err.message}`, 'error');
-        setResults(`Error: ${err.message}\n\n${err.stack}`);
-      }
-    });
-
-    // 6. Clear All Data
-    clearBtn.addEventListener('click', async () => {
-      try {
-        if (!confirm('Clear all data from IndexedDB? This cannot be undone.')) {
-          return;
+          setStatus('Performance profile ready! ✅', 'success');
+          setResults(report);
+        } catch (err) {
+          setStatus(`Profiling error: ${err.message}`, 'error');
+          setResults(`Error: ${err.message}\n\n${err.stack}`);
         }
+      });
 
-        setStatus('Clearing all data...', 'loading');
+      // 6. Clear All Data
+      clearBtn.addEventListener('click', async () => {
+        try {
+          if (!confirm('Clear all data from IndexedDB? This cannot be undone.')) {
+            return;
+          }
 
-        await engine.clearAll();
-        queryCount = 0;
+          setStatus('Clearing all data...', 'loading');
 
-        setStatus('All data cleared! ✅', 'success');
-        setResults('All data has been cleared from IndexedDB.\n\nClick "Add Sample Data" to add new data.');
+          await engine.clearAll();
+          queryCount = 0;
 
-        await updateStats();
+          setStatus('All data cleared! ✅', 'success');
+          setResults(
+            'All data has been cleared from IndexedDB.\n\nClick "Add Sample Data" to add new data.'
+          );
 
-      } catch (err) {
-        setStatus(`Failed to clear data: ${err.message}`, 'error');
-        setResults(`Error: ${err.message}\n\n${err.stack}`);
-      }
-    });
+          await updateStats();
+        } catch (err) {
+          setStatus(`Failed to clear data: ${err.message}`, 'error');
+          setResults(`Error: ${err.message}\n\n${err.stack}`);
+        }
+      });
 
-    // Initialize on load
-    setStatus('Click "Initialize Engine" to get started!', 'info');
-  </script>
-</body>
+      // Initialize on load
+      setStatus('Click "Initialize Engine" to get started!', 'info');
+    </script>
+  </body>
 </html>

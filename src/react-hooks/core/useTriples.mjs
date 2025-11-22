@@ -120,6 +120,6 @@ export function useTriples(pattern = {}, options = {}) {
     error,
     refetch,
     count,
-    hasMatches
+    hasMatches,
   };
 }

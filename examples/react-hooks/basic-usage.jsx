@@ -11,7 +11,7 @@ import {
   useKnowledgeEngine,
   useStore,
   useTerms,
-  useSPARQLQuery
+  useSPARQLQuery,
 } from '../../src/react-hooks/index.mjs';
 
 /**
@@ -38,7 +38,7 @@ function RDFDataViewer() {
         namedNode('http://example.org/bob'),
         namedNode('http://xmlns.com/foaf/0.1/name'),
         literal('Bob', 'en')
-      )
+      ),
     ];
 
     triples.forEach(t => addQuad(t));
@@ -88,7 +88,7 @@ function App() {
       config={{
         enableKnowledgeHooks: true,
         enableObservability: true,
-        strictMode: false
+        strictMode: false,
       }}
     >
       <div className="App">

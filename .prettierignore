@@ -1,0 +1,35 @@
+# Build outputs
+dist/
+coverage/
+.nyc_output/
+node_modules/
+
+# Generated files
+*.min.js
+*.bundle.js
+
+# Logs
+*.log
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+
+# Test outputs
+test-results/
+playwright-report/
+
+# Documentation builds
+docs/api/
+book/book/
+
+# Lock files (formatting can cause merge conflicts)
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+

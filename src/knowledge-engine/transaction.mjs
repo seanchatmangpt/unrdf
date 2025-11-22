@@ -18,21 +18,21 @@ import { trace, SpanStatusCode } from '@opentelemetry/api';
 const tracer = trace.getTracer('unrdf');
 
 // Import consolidated schemas
-import { 
-  QuadSchema, 
-  DeltaSchema, 
-  TransactionHookSchema, 
-  TransactionHookResultSchema, 
-  HashSchema, 
-  TransactionReceiptSchemaNew, 
-  TransactionOptionsSchema, 
-  ManagerOptionsSchema 
+import {
+  _QuadSchema,
+  DeltaSchema,
+  TransactionHookSchema,
+  TransactionHookResultSchema,
+  _HashSchema,
+  TransactionReceiptSchemaNew,
+  TransactionOptionsSchema,
+  ManagerOptionsSchema,
 } from './schemas.mjs';
 
 // Use alias for backward compatibility
-const HookSchema = TransactionHookSchema;
-const HookResultSchema = TransactionHookResultSchema;
-const ReceiptSchema = TransactionReceiptSchemaNew;
+const _HookSchema = TransactionHookSchema;
+const _HookResultSchema = TransactionHookResultSchema;
+const _ReceiptSchema = TransactionReceiptSchemaNew;
 
 // Zod schemas for validation
 // QuadSchema now imported from schemas.mjs
@@ -54,7 +54,7 @@ const ReceiptSchema = TransactionReceiptSchemaNew;
  * @param {Object} [options] - Hashing options
  * @param {boolean} [options.afterHashOnly=false] - Skip canonicalization for performance
  * @returns {Promise<{ sha3: string, blake3: string }>} Promise resolving to hash object
- * 
+ *
  * @throws {Error} If hashing fails
  */
 async function hashStore(store, options = {}) {
@@ -62,14 +62,16 @@ async function hashStore(store, options = {}) {
     if (options.afterHashOnly) {
       // Fast hash without canonicalization for performance
       const quads = store.getQuads();
-      const content = quads.map(q => `${q.subject.value} ${q.predicate.value} ${q.object.value} ${q.graph.value}`).join('\n');
+      const content = quads
+        .map(q => `${q.subject.value} ${q.predicate.value} ${q.object.value} ${q.graph.value}`)
+        .join('\n');
       const bytes = utf8ToBytes(content);
       return {
         sha3: bytesToHex(sha3_256(bytes)),
         blake3: bytesToHex(blake3(bytes)),
       };
     }
-    
+
     const c14n = await canonicalize(store);
     const bytes = utf8ToBytes(c14n);
     return {
@@ -108,22 +110,22 @@ export class TransactionManager {
       hookExecutionRate: 0,
       errorCount: 0,
       totalTransactions: 0,
-      _maxLatencyEntries: 1000
+      _maxLatencyEntries: 1000,
     };
-    
+
     // Initialize lockchain writer if enabled
     if (this.options.enableLockchain) {
       const lockchainConfig = {
         gitRepo: this.options.lockchainConfig?.gitRepo || process.cwd(),
         refName: this.options.lockchainConfig?.refName || 'refs/notes/lockchain',
         signingKey: this.options.lockchainConfig?.signingKey,
-        batchSize: this.options.lockchainConfig?.batchSize || 10
+        batchSize: this.options.lockchainConfig?.batchSize || 10,
       };
       this.lockchainWriter = createLockchainWriter(lockchainConfig);
     } else {
       this.lockchainWriter = null;
     }
-    
+
     // Initialize resolution layer if enabled
     if (this.options.enableResolution) {
       const resolutionConfig = {
@@ -131,7 +133,7 @@ export class TransactionManager {
         maxProposals: this.options.resolutionConfig?.maxProposals || 100,
         enableConflictDetection: this.options.resolutionConfig?.enableConflictDetection !== false,
         enableConsensus: this.options.resolutionConfig?.enableConsensus !== false,
-        timeout: this.options.resolutionConfig?.timeout || 30000
+        timeout: this.options.resolutionConfig?.timeout || 30000,
       };
       this.resolutionLayer = createResolutionLayer(resolutionConfig);
     } else {
@@ -143,7 +145,7 @@ export class TransactionManager {
    * Register a hook.
    * @param {Hook} hook - Hook to register
    * @throws {Error} If hook is invalid or limit exceeded
-   * 
+   *
    * @example
    * tx.addHook({
    *   id: "no-eve",
@@ -173,7 +175,7 @@ export class TransactionManager {
    * Remove a hook by ID.
    * @param {string} hookId - Hook identifier to remove
    * @returns {boolean} True if hook was removed, false if not found
-   * 
+   *
    * @example
    * const removed = tx.removeHook("no-eve");
    * console.log('Hook removed:', removed);
@@ -212,15 +214,15 @@ export class TransactionManager {
    * @param {Delta} delta - The delta to apply
    * @param {TransactionOptions} [options] - Transaction options
    * @returns {Promise<{store: Store, receipt: Receipt}>} Promise resolving to transaction result
-   * 
+   *
    * @throws {Error} If transaction fails
-   * 
+   *
    * @example
    * const delta = {
    *   additions: [quad(namedNode("ex:alice"), namedNode("ex:knows"), namedNode("ex:bob"))],
    *   removals: []
    * };
-   * 
+   *
    * const result = await tx.apply(store, delta);
    * console.log('Committed:', result.receipt.committed);
    * console.log('New store size:', result.store.size);
@@ -230,7 +232,7 @@ export class TransactionManager {
     if (!store || typeof store.getQuads !== 'function') {
       throw new TypeError('apply: store must be a valid Store instance');
     }
-    
+
     const validatedDelta = DeltaSchema.parse(delta);
     const validatedOptions = TransactionOptionsSchema.parse(options);
     const startTime = Date.now();
@@ -242,100 +244,116 @@ export class TransactionManager {
     const hookErrors = [];
 
     // Start observability span
-    const spanContext = this.observability.startTransactionSpan(transactionId, {
+    const _spanContext = this.observability.startTransactionSpan(transactionId, {
       'kgc.delta.additions': validatedDelta.additions.length,
       'kgc.delta.removals': validatedDelta.removals.length,
       'kgc.actor': validatedOptions.actor || 'system',
-      'kgc.skipHooks': validatedOptions.skipHooks || false
+      'kgc.skipHooks': validatedOptions.skipHooks || false,
     });
 
     // Use mutex for concurrency control - reset to prevent chain buildup
     const currentMutex = this._applyMutex;
 
     return new Promise((resolve, reject) => {
-      this._applyMutex = currentMutex.then(async () => {
-        try {
-          // Set up timeout with proper cleanup
-          let timeoutHandle;
-          const timeoutPromise = new Promise((_, timeoutReject) => {
-            timeoutHandle = setTimeout(() => timeoutReject(new Error('Transaction timeout')), validatedOptions.timeoutMs);
-          });
+      this._applyMutex = currentMutex
+        .then(async () => {
+          try {
+            // Set up timeout with proper cleanup
+            let timeoutHandle;
+            const timeoutPromise = new Promise((_, timeoutReject) => {
+              timeoutHandle = setTimeout(
+                () => timeoutReject(new Error('Transaction timeout')),
+                validatedOptions.timeoutMs
+              );
+            });
 
-          const transactionPromise = this._executeTransaction(store, validatedDelta, validatedOptions.skipHooks, hookResults, hookErrors, transactionId, validatedOptions.actor);
-
-          const result = await Promise.race([transactionPromise, timeoutPromise]);
-          clearTimeout(timeoutHandle);
-
-          // Reset mutex chain to prevent circular reference buildup
-          this._resetMutex();
-          
-          const finalReceipt = {
-            ...result.receipt,
-            id: transactionId,
-            timestamp: startTime,
-            durationMs: Date.now() - startTime,
-            actor: validatedOptions.actor,
-            hookErrors
-          };
-          
-          // Write to lockchain if enabled
-          if (this.lockchainWriter && result.receipt.committed) {
-            try {
-              await this.lockchainWriter.writeReceipt(finalReceipt);
-            } catch (lockchainError) {
-              console.warn('Failed to write receipt to lockchain:', lockchainError.message);
-            }
-          }
-          
-          // Update performance metrics
-          const duration = Date.now() - startTime;
-          this._updatePerformanceMetrics(duration, true);
-          
-          // End observability span
-          this.observability.endTransactionSpan(transactionId, {
-            'kgc.transaction.committed': finalReceipt.committed,
-            'kgc.hook.results': hookResults.length,
-            'kgc.hook.errors': hookErrors.length
-          });
-          
-          resolve({
-            store: result.store,
-            receipt: finalReceipt
-          });
-        } catch (error) {
-          const beforeHash = await hashStore(store, this.options).catch(() => ({ sha3: '', blake3: '' }));
-          
-          // Update performance metrics
-          const duration = Date.now() - startTime;
-          this._updatePerformanceMetrics(duration, false);
-          
-          // Record error
-          this.observability.recordError(error, {
-            'kgc.transaction.id': transactionId,
-            'kgc.actor': validatedOptions.actor || 'system'
-          });
-          
-          // End observability span with error
-          this.observability.endTransactionSpan(transactionId, {}, error);
-          
-          resolve({
-            store,
-            receipt: {
-              id: transactionId,
-              delta: validatedDelta,
-              committed: false,
+            const transactionPromise = this._executeTransaction(
+              store,
+              validatedDelta,
+              validatedOptions.skipHooks,
               hookResults,
-              beforeHash,
-              afterHash: beforeHash,
+              hookErrors,
+              transactionId,
+              validatedOptions.actor
+            );
+
+            const result = await Promise.race([transactionPromise, timeoutPromise]);
+            clearTimeout(timeoutHandle);
+
+            // Reset mutex chain to prevent circular reference buildup
+            this._resetMutex();
+
+            const finalReceipt = {
+              ...result.receipt,
+              id: transactionId,
               timestamp: startTime,
               durationMs: Date.now() - startTime,
               actor: validatedOptions.actor,
               hookErrors,
-              error: error.message
+            };
+
+            // Write to lockchain if enabled
+            if (this.lockchainWriter && result.receipt.committed) {
+              try {
+                await this.lockchainWriter.writeReceipt(finalReceipt);
+              } catch (lockchainError) {
+                console.warn('Failed to write receipt to lockchain:', lockchainError.message);
+              }
             }
-          });
-        }
-      }).catch(reject);
+
+            // Update performance metrics
+            const duration = Date.now() - startTime;
+            this._updatePerformanceMetrics(duration, true);
+
+            // End observability span
+            this.observability.endTransactionSpan(transactionId, {
+              'kgc.transaction.committed': finalReceipt.committed,
+              'kgc.hook.results': hookResults.length,
+              'kgc.hook.errors': hookErrors.length,
+            });
+
+            resolve({
+              store: result.store,
+              receipt: finalReceipt,
+            });
+          } catch (error) {
+            const beforeHash = await hashStore(store, this.options).catch(() => ({
+              sha3: '',
+              blake3: '',
+            }));
+
+            // Update performance metrics
+            const duration = Date.now() - startTime;
+            this._updatePerformanceMetrics(duration, false);
+
+            // Record error
+            this.observability.recordError(error, {
+              'kgc.transaction.id': transactionId,
+              'kgc.actor': validatedOptions.actor || 'system',
+            });
+
+            // End observability span with error
+            this.observability.endTransactionSpan(transactionId, {}, error);
+
+            resolve({
+              store,
+              receipt: {
+                id: transactionId,
+                delta: validatedDelta,
+                committed: false,
+                hookResults,
+                beforeHash,
+                afterHash: beforeHash,
+                timestamp: startTime,
+                durationMs: Date.now() - startTime,
+                actor: validatedOptions.actor,
+                hookErrors,
+                error: error.message,
+              },
+            });
+          }
+        })
+        .catch(reject);
     });
   }
 
@@ -343,8 +361,16 @@ export class TransactionManager {
    * Execute the transaction with hooks.
    * @private
    */
-  async _executeTransaction(store, delta, skipHooks, hookResults, hookErrors, transactionId, actor) {
-    return tracer.startActiveSpan('transaction.commit', async (span) => {
+  async _executeTransaction(
+    store,
+    delta,
+    skipHooks,
+    hookResults,
+    hookErrors,
+    transactionId,
+    actor
+  ) {
+    return tracer.startActiveSpan('transaction.commit', async span => {
       try {
         span.setAttributes({
           'transaction.id': transactionId,
@@ -352,7 +378,7 @@ export class TransactionManager {
           'transaction.skip_hooks': skipHooks,
           'transaction.additions_count': delta.additions.length,
           'transaction.removals_count': delta.removals.length,
-          'transaction.store_size_before': store.size
+          'transaction.store_size_before': store.size,
         });
 
         const beforeHash = await hashStore(store, this.options);
@@ -370,7 +396,7 @@ export class TransactionManager {
           'transaction.committed': result.receipt.committed,
           'transaction.hook_results': hookResults.length,
           'transaction.hook_errors': hookErrors.length,
-          'transaction.store_size_after': store.size
+          'transaction.store_size_after': store.size,
         });
 
         span.setStatus({ code: SpanStatusCode.OK });
@@ -379,7 +405,7 @@ export class TransactionManager {
         span.recordException(error);
         span.setStatus({
           code: SpanStatusCode.ERROR,
-          message: error.message
+          message: error.message,
         });
         throw error;
       } finally {
@@ -393,36 +419,35 @@ export class TransactionManager {
    * @private
    */
   async _executeTransactionWithHooks(store, delta, skipHooks, hookResults, hookErrors, beforeHash) {
-
     // Pre-hooks
     if (!skipHooks) {
       for (const hook of this.hooks.filter(h => h.mode === 'pre')) {
         try {
           const ok = await hook.condition(store, delta);
           hookResults.push({ hookId: hook.id, mode: hook.mode, result: ok });
-          
+
           if (!ok && hook.effect === 'veto') {
             return {
               store,
-              receipt: { 
-                delta, 
-                committed: false, 
-                hookResults, 
-                beforeHash, 
-                afterHash: beforeHash 
-              }
+              receipt: {
+                delta,
+                committed: false,
+                hookResults,
+                beforeHash,
+                afterHash: beforeHash,
+              },
             };
           }
         } catch (error) {
           const errorMsg = `Pre-hook "${hook.id}" failed: ${error.message}`;
           hookErrors.push(errorMsg);
-          hookResults.push({ 
-            hookId: hook.id, 
-            mode: hook.mode, 
-            result: false, 
-            error: error.message 
+          hookResults.push({
+            hookId: hook.id,
+            mode: hook.mode,
+            result: false,
+            error: error.message,
           });
-          
+
           if (this.options.strictMode) {
             throw new Error(errorMsg);
           }
@@ -435,7 +460,7 @@ export class TransactionManager {
     for (const quad of delta.removals) {
       store.removeQuad(quad);
     }
-    
+
     // Add new quads
     for (const quad of delta.additions) {
       store.addQuad(quad);
@@ -447,7 +472,7 @@ export class TransactionManager {
         try {
           const ok = await hook.condition(store, delta);
           hookResults.push({ hookId: hook.id, mode: hook.mode, result: ok });
-          
+
           // Post-hooks ignore veto effects - only execute function effects
           if (ok && typeof hook.effect === 'function') {
             await hook.effect(store, delta);
@@ -455,13 +480,13 @@ export class TransactionManager {
         } catch (error) {
           const errorMsg = `Post-hook "${hook.id}" failed: ${error.message}`;
           hookErrors.push(errorMsg);
-          hookResults.push({ 
-            hookId: hook.id, 
-            mode: hook.mode, 
-            result: false, 
-            error: error.message 
+          hookResults.push({
+            hookId: hook.id,
+            mode: hook.mode,
+            result: false,
+            error: error.message,
           });
-          
+
           if (this.options.strictMode) {
             throw new Error(errorMsg);
           }
@@ -473,13 +498,13 @@ export class TransactionManager {
 
     return {
       store,
-      receipt: { 
-        delta, 
-        committed: true, 
-        hookResults, 
-        beforeHash, 
-        afterHash 
-      }
+      receipt: {
+        delta,
+        committed: true,
+        hookResults,
+        beforeHash,
+        afterHash,
+      },
     };
   }
 
@@ -488,21 +513,21 @@ export class TransactionManager {
    * @param {Store} initialStore - Initial store state
    * @param {Object} [sessionOptions] - Session options
    * @returns {Object} Transaction session
-   * 
+   *
    * @example
    * const session = tx.createSession(store);
-   * 
+   *
    * // Add multiple deltas
    * session.addDelta(delta1);
    * session.addDelta(delta2);
-   * 
+   *
    * // Apply all deltas
    * const results = await session.applyAll();
-   * 
+   *
    * // Get final state
    * const finalStore = session.getCurrentStore();
    */
-  createSession(initialStore, sessionOptions = {}) {
+  createSession(initialStore, _sessionOptions = {}) {
     if (!initialStore || typeof initialStore.getQuads !== 'function') {
       throw new TypeError('createSession: initialStore must be a valid Store instance');
     }
@@ -573,15 +598,15 @@ export class TransactionManager {
       getStats() {
         const committedCount = receipts.filter(r => r.committed).length;
         const failedCount = receipts.length - committedCount;
-        
+
         return {
           deltaCount: deltas.length,
           receiptCount: receipts.length,
           committedCount,
           failedCount,
-          successRate: receipts.length > 0 ? committedCount / receipts.length : 0
+          successRate: receipts.length > 0 ? committedCount / receipts.length : 0,
         };
-      }
+      },
     };
   }
 
@@ -592,7 +617,7 @@ export class TransactionManager {
   getStats() {
     const preHooks = this.hooks.filter(h => h.mode === 'pre').length;
     const postHooks = this.hooks.filter(h => h.mode === 'post').length;
-    
+
     const stats = {
       totalHooks: this.hooks.length,
       preHooks,
@@ -600,17 +625,17 @@ export class TransactionManager {
       maxHooks: this.options.maxHooks,
       strictMode: this.options.strictMode,
       afterHashOnly: this.options.afterHashOnly,
-      lockchainEnabled: this.options.enableLockchain
+      lockchainEnabled: this.options.enableLockchain,
     };
-    
+
     // Add lockchain stats if enabled
     if (this.lockchainWriter) {
       stats.lockchain = this.lockchainWriter.getStats();
     }
-    
+
     return stats;
   }
-  
+
   /**
    * Commit pending lockchain entries
    * @returns {Promise<Object>} Commit result
@@ -619,7 +644,7 @@ export class TransactionManager {
     if (!this.lockchainWriter) {
       throw new Error('Lockchain is not enabled');
     }
-    
+
     return this.lockchainWriter.commitBatch();
   }
 
@@ -634,7 +659,7 @@ export class TransactionManager {
     if (!this.resolutionLayer) {
       throw new Error('Resolution layer is not enabled');
     }
-    
+
     return this.resolutionLayer.submitProposal(agentId, delta, options);
   }
 
@@ -648,7 +673,7 @@ export class TransactionManager {
     if (!this.resolutionLayer) {
       throw new Error('Resolution layer is not enabled');
     }
-    
+
     return this.resolutionLayer.resolveProposals(proposalIds, strategy);
   }
 
@@ -660,10 +685,10 @@ export class TransactionManager {
     if (!this.resolutionLayer) {
       return { enabled: false };
     }
-    
+
     return {
       enabled: true,
-      ...this.resolutionLayer.getStats()
+      ...this.resolutionLayer.getStats(),
     };
   }
 
@@ -677,7 +702,7 @@ export class TransactionManager {
       lockchain: this.lockchainWriter ? this.lockchainWriter.getStats() : null,
       resolution: this.resolutionLayer ? this.resolutionLayer.getStats() : null,
       performance: this.performanceMetrics,
-      observability: this.observability.getPerformanceMetrics()
+      observability: this.observability.getPerformanceMetrics(),
     };
   }
 
@@ -698,7 +723,7 @@ export class TransactionManager {
     this.performanceMetrics.transactionLatency.push({
       timestamp: Date.now(),
       duration,
-      success
+      success,
     });
 
     this.performanceMetrics.totalTransactions++;
@@ -751,19 +776,19 @@ export class TransactionManager {
  */
 export function printReceipt(receipt, options = {}) {
   const { verbose = false } = options;
-  
+
   console.log(`📋 Transaction Receipt ${receipt.id}`);
   console.log(`   Status: ${receipt.committed ? '✅ Committed' : '❌ Failed'}`);
   console.log(`   Duration: ${receipt.durationMs}ms`);
-  
+
   if (receipt.actor) {
     console.log(`   Actor: ${receipt.actor}`);
   }
-  
+
   if (receipt.error) {
     console.log(`   Error: ${receipt.error}`);
   }
-  
+
   console.log(`   Hooks: ${receipt.hookResults.length} executed`);
   receipt.hookResults.forEach(result => {
     const status = result.result ? '✅' : '❌';
@@ -772,18 +797,19 @@ export function printReceipt(receipt, options = {}) {
       console.log(`       Error: ${result.error}`);
     }
   });
-  
+
   if (receipt.hookErrors.length > 0) {
     console.log(`   Hook Errors: ${receipt.hookErrors.length}`);
     receipt.hookErrors.forEach(error => {
       console.log(`     • ${error}`);
     });
   }
-  
+
   if (verbose) {
-    console.log(`   Delta: ${receipt.delta.additions.length} additions, ${receipt.delta.removals.length} removals`);
+    console.log(
+      `   Delta: ${receipt.delta.additions.length} additions, ${receipt.delta.removals.length} removals`
+    );
     console.log(`   Before Hash: ${receipt.beforeHash.sha3.substring(0, 16)}...`);
     console.log(`   After Hash:  ${receipt.afterHash.sha3.substring(0, 16)}...`);
   }
 }
-

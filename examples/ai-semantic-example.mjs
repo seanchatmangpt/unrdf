@@ -12,16 +12,16 @@ import {
   createSemanticAnalyzer,
   createNLPQueryBuilder,
   createEmbeddingsManager,
-  createAnomalyDetector
+  createAnomalyDetector,
 } from '../src/knowledge-engine/ai-semantic/index.mjs';
 import { query } from '../src/knowledge-engine/query.mjs';
 
 const { namedNode, literal, quad } = DataFactory;
 
 // Helper to create URIs
-const ex = (name) => namedNode(`http://example.org/${name}`);
-const rdfs = (name) => namedNode(`http://www.w3.org/2000/01/rdf-schema#${name}`);
-const rdf = (name) => namedNode(`http://www.w3.org/1999/02/22-rdf-syntax-ns#${name}`);
+const ex = name => namedNode(`http://example.org/${name}`);
+const rdfs = name => namedNode(`http://www.w3.org/2000/01/rdf-schema#${name}`);
+const rdf = name => namedNode(`http://www.w3.org/1999/02/22-rdf-syntax-ns#${name}`);
 
 async function main() {
   console.log('🤖 AI Semantic Analysis Example\n');
@@ -73,7 +73,7 @@ async function main() {
 
   const analyzer = createSemanticAnalyzer({
     maxConcepts: 20,
-    minConceptFrequency: 1
+    minConceptFrequency: 1,
   });
 
   const analysis = await analyzer.analyze(store);
@@ -81,7 +81,9 @@ async function main() {
   console.log('📌 Key Concepts:');
   analysis.concepts.slice(0, 5).forEach(concept => {
     console.log(`  - ${concept.uri}`);
-    console.log(`    Frequency: ${concept.frequency}, Centrality: ${concept.centrality.toFixed(3)}`);
+    console.log(
+      `    Frequency: ${concept.frequency}, Centrality: ${concept.centrality.toFixed(3)}`
+    );
   });
 
   console.log('\n📌 Top Relationships:');
@@ -115,15 +117,10 @@ async function main() {
   console.log('💬 NATURAL LANGUAGE QUERY TRANSLATION\n');
 
   const nlpBuilder = createNLPQueryBuilder({
-    enableLLM: false
+    enableLLM: false,
   });
 
-  const queries = [
-    'list all person',
-    'who is alice',
-    'how many person',
-    'show all organizations'
-  ];
+  const queries = ['list all person', 'who is alice', 'how many person', 'show all organizations'];
 
   for (const nlQuery of queries) {
     console.log(`📝 Query: "${nlQuery}"`);
@@ -156,7 +153,7 @@ async function main() {
     embeddingDim: 64,
     algorithm: 'transe',
     epochs: 50,
-    learningRate: 0.01
+    learningRate: 0.01,
   });
 
   console.log('⏳ Training embeddings (TransE)...');
@@ -176,10 +173,7 @@ async function main() {
   for (const entity of entities) {
     if (entity === target) continue;
 
-    const similarity = embeddings.computeSimilarity(
-      ex(target).value,
-      ex(entity).value
-    );
+    const similarity = embeddings.computeSimilarity(ex(target).value, ex(entity).value);
 
     console.log(`  ${target} ↔ ${entity}: ${similarity.toFixed(3)}`);
   }
@@ -189,11 +183,13 @@ async function main() {
     .filter(e => e !== target)
     .map(e => ({
       entity: e,
-      similarity: embeddings.computeSimilarity(ex(target).value, ex(e).value)
+      similarity: embeddings.computeSimilarity(ex(target).value, ex(e).value),
     }))
     .sort((a, b) => b.similarity - a.similarity);
 
-  console.log(`\n  Most similar to ${target}: ${similarities[0].entity} (${similarities[0].similarity.toFixed(3)})\n`);
+  console.log(
+    `\n  Most similar to ${target}: ${similarities[0].entity} (${similarities[0].similarity.toFixed(3)})\n`
+  );
 
   // =========================================================================
   // 4. ANOMALY DETECTION
@@ -203,7 +199,7 @@ async function main() {
   const detector = createAnomalyDetector({
     enableStatistical: true,
     enableMLBased: true,
-    minConfidence: 0.5
+    minConfidence: 0.5,
   });
 
   const anomalies = await detector.detectAnomalies(store);

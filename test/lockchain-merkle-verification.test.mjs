@@ -23,7 +23,7 @@ describe('Lockchain Merkle Root Verification', () => {
       gitRepo: process.cwd(),
       enableMerkle: true,
       enableGitAnchoring: false, // Disable Git for unit testing
-      storagePath: testStoragePath
+      storagePath: testStoragePath,
     });
   });
 
@@ -37,7 +37,7 @@ describe('Lockchain Merkle Root Verification', () => {
     const receipt = {
       transactionId: 'tx-123',
       operation: 'create',
-      data: { test: 'value' }
+      data: { test: 'value' },
     };
 
     const entry = await lockchain.writeReceipt(receipt);
@@ -52,7 +52,7 @@ describe('Lockchain Merkle Root Verification', () => {
     const receipt = {
       transactionId: 'tx-456',
       operation: 'update',
-      data: { test: 'value2' }
+      data: { test: 'value2' },
     };
 
     const entry = await lockchain.writeReceipt(receipt);
@@ -67,7 +67,7 @@ describe('Lockchain Merkle Root Verification', () => {
     const receipt = {
       transactionId: 'tx-789',
       operation: 'delete',
-      data: { test: 'value3' }
+      data: { test: 'value3' },
     };
 
     const entry = await lockchain.writeReceipt(receipt);
@@ -87,11 +87,11 @@ describe('Lockchain Merkle Root Verification', () => {
     const receipt = {
       transactionId: 'tx-999',
       operation: 'create',
-      data: { sensitive: 'data' }
+      data: { sensitive: 'data' },
     };
 
     const entry = await lockchain.writeReceipt(receipt);
-    const originalMerkleRoot = entry.merkleRoot;
+    const _originalMerkleRoot = entry.merkleRoot;
 
     // Tamper with receipt data (but keep Merkle root unchanged)
     entry.receipt.data.sensitive = 'tampered';
@@ -108,13 +108,13 @@ describe('Lockchain Merkle Root Verification', () => {
     const receipt1 = {
       transactionId: 'tx-identical',
       operation: 'create',
-      data: { value: 42 }
+      data: { value: 42 },
     };
 
     const receipt2 = {
       transactionId: 'tx-identical',
       operation: 'create',
-      data: { value: 42 }
+      data: { value: 42 },
     };
 
     const entry1 = await lockchain.writeReceipt(receipt1);
@@ -132,7 +132,7 @@ describe('Lockchain Merkle Root Verification', () => {
     const receipt = {
       transactionId: 'tx-no-merkle',
       operation: 'create',
-      data: { test: 'no merkle' }
+      data: { test: 'no merkle' },
     };
 
     // Create lockchain with Merkle disabled
@@ -140,7 +140,7 @@ describe('Lockchain Merkle Root Verification', () => {
       gitRepo: process.cwd(),
       enableMerkle: false,
       enableGitAnchoring: false,
-      storagePath: testStoragePath
+      storagePath: testStoragePath,
     });
 
     const entry = await noMerkleLockchain.writeReceipt(receipt);
@@ -157,7 +157,7 @@ describe('Lockchain Merkle Root Verification', () => {
     const receipt = {
       transactionId: 'tx-hash-test',
       operation: 'create',
-      data: { test: 'hash validation' }
+      data: { test: 'hash validation' },
     };
 
     const entry = await lockchain.writeReceipt(receipt);

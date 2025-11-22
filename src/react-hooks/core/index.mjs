@@ -66,5 +66,5 @@ export {
   PRELOAD_PRIORITY,
   PRELOAD_GROUPS,
   areEssentialModulesLoaded,
-  preloadEssentialModules
+  preloadEssentialModules,
 } from './use-module-preloader.mjs';

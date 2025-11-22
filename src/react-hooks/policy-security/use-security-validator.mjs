@@ -20,18 +20,19 @@ import { useKnowledgeEngineContext } from '../core/use-knowledge-engine-context.
  *   securityScore
  * } = useSecurityValidator();
  */
-export function useSecurityValidator(config = {}) {
+export function useSecurityValidator(_config = {}) {
   const { engine } = useKnowledgeEngineContext();
   const [auditLog, setAuditLog] = useState([]);
-  const [securityScore, setSecurityScore] = useState(100);
+  const [securityScore, _setSecurityScore] = useState(100);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const checkAccess = useCallback(async (user, resource, action) => {
-    try {
-      setLoading(true);
+  const checkAccess = useCallback(
+    async (user, resource, action) => {
+      try {
+        setLoading(true);
 
-      const result = await engine.query(`
+        const result = await engine.query(`
         SELECT * WHERE {
           <${user}> <urn:hasPermission> ?perm .
           ?perm <urn:resource> <${resource}> ;
@@ -39,43 +40,58 @@ export function useSecurityValidator(config = {}) {
         }
       `);
 
-      const hasAccess = result.length > 0;
+        const hasAccess = result.length > 0;
 
-      setAuditLog(prev => [...prev, {
-        user,
-        resource,
-        action,
-        allowed: hasAccess,
-        timestamp: new Date().toISOString()
-      }]);
+        setAuditLog(prev => [
+          ...prev,
+          {
+            user,
+            resource,
+            action,
+            allowed: hasAccess,
+            timestamp: new Date().toISOString(),
+          },
+        ]);
 
-      setLoading(false);
-      return hasAccess;
-    } catch (err) {
-      setError(err);
-      setLoading(false);
-      throw err;
-    }
-  }, [engine]);
+        setLoading(false);
+        return hasAccess;
+      } catch (err) {
+        setError(err);
+        setLoading(false);
+        throw err;
+      }
+    },
+    [engine]
+  );
 
-  const validatePermissions = useCallback(async (userId) => {
-    try {
-      setLoading(true);
+  const validatePermissions = useCallback(
+    async userId => {
+      try {
+        setLoading(true);
 
-      const permissions = await engine.query(`
+        const permissions = await engine.query(`
         SELECT * WHERE {
           <${userId}> <urn:hasPermission> ?perm
         }
       `);
 
-      setLoading(false);
-      return permissions;
-    } catch (err) {
-      setError(err);
-      setLoading(false);
-      throw err;
-    }
-  }, [engine]);
+        setLoading(false);
+        return permissions;
+      } catch (err) {
+        setError(err);
+        setLoading(false);
+        throw err;
+      }
+    },
+    [engine]
+  );
 
-  return { checkAccess, validatePermissions, auditLog, securityScore, loading, error };
+  return {
+    checkAccess,
+    validatePermissions,
+    auditLog,
+    securityScore,
+    loading,
+    error,
+  };
 }

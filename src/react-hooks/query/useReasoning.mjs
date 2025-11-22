@@ -100,6 +100,6 @@ export function useReasoning(rules, options = {}) {
     error,
     apply,
     clear,
-    count
+    count,
   };
 }

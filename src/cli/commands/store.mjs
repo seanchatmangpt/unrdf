@@ -21,37 +21,37 @@ import { importStore } from '../store-import.mjs';
 export const storeCommand = defineCommand({
   meta: {
     name: 'store',
-    description: 'RDF store management operations (backup, restore, import)'
+    description: 'RDF store management operations (backup, restore, import)',
   },
   subCommands: {
     backup: defineCommand({
       meta: {
         name: 'backup',
-        description: 'Create compressed backup of RDF store'
+        description: 'Create compressed backup of RDF store',
       },
       args: {
         storePath: {
           type: 'positional',
           description: 'Path to RDF store directory',
-          required: true
+          required: true,
         },
         output: {
           type: 'string',
           description: 'Output backup file path (default: backup-{timestamp}.tar.gz)',
-          alias: 'o'
+          alias: 'o',
         },
         incremental: {
           type: 'boolean',
           description: 'Create incremental backup',
           default: false,
-          alias: 'i'
+          alias: 'i',
         },
         compress: {
           type: 'boolean',
           description: 'Compress backup with gzip',
           default: true,
-          alias: 'c'
-        }
+          alias: 'c',
+        },
       },
       async run({ args }) {
         const { storePath, output, incremental, compress } = args;
@@ -60,7 +60,7 @@ export const storeCommand = defineCommand({
           const result = await backupStore(storePath, {
             output,
             incremental,
-            compress
+            compress,
           });
 
           console.log('✅ Backup completed successfully');
@@ -75,38 +75,38 @@ export const storeCommand = defineCommand({
           console.error('❌ Backup failed:', error.message);
           throw error;
         }
-      }
+      },
     }),
 
     restore: defineCommand({
       meta: {
         name: 'restore',
-        description: 'Restore RDF store from backup'
+        description: 'Restore RDF store from backup',
       },
       args: {
         backupPath: {
           type: 'positional',
           description: 'Path to backup file',
-          required: true
+          required: true,
         },
         target: {
           type: 'string',
           description: 'Target store directory path',
           required: true,
-          alias: 't'
+          alias: 't',
         },
         overwrite: {
           type: 'boolean',
           description: 'Overwrite existing store',
           default: false,
-          alias: 'f'
+          alias: 'f',
         },
         validate: {
           type: 'boolean',
           description: 'Validate backup before restore',
           default: true,
-          alias: 'v'
-        }
+          alias: 'v',
+        },
       },
       async run({ args }) {
         const { backupPath, target, overwrite, validate } = args;
@@ -115,7 +115,7 @@ export const storeCommand = defineCommand({
           const result = await restoreStore(backupPath, {
             target,
             overwrite,
-            validate
+            validate,
           });
 
           console.log('✅ Restore completed successfully');
@@ -129,44 +129,44 @@ export const storeCommand = defineCommand({
           console.error('❌ Restore failed:', error.message);
           throw error;
         }
-      }
+      },
     }),
 
     import: defineCommand({
       meta: {
         name: 'import',
-        description: 'Bulk import RDF files into store'
+        description: 'Bulk import RDF files into store',
       },
       args: {
         files: {
           type: 'positional',
           description: 'RDF files to import (glob patterns supported)',
           required: true,
-          isArray: true
+          isArray: true,
         },
         storePath: {
           type: 'string',
           description: 'Target store directory path',
           required: true,
-          alias: 's'
+          alias: 's',
         },
         format: {
           type: 'string',
           description: 'RDF format (turtle, n-quads, json-ld, auto)',
           default: 'auto',
-          alias: 'f'
+          alias: 'f',
         },
         graph: {
           type: 'string',
           description: 'Target named graph IRI',
-          alias: 'g'
+          alias: 'g',
         },
         skipErrors: {
           type: 'boolean',
           description: 'Continue on file errors',
           default: false,
-          alias: 'e'
-        }
+          alias: 'e',
+        },
       },
       async run({ args }) {
         const { files, storePath, format, graph, skipErrors } = args;
@@ -176,7 +176,7 @@ export const storeCommand = defineCommand({
             storePath,
             format,
             graph,
-            skipErrors
+            skipErrors,
           });
 
           console.log('✅ Import completed successfully');
@@ -198,7 +198,7 @@ export const storeCommand = defineCommand({
           console.error('❌ Import failed:', error.message);
           throw error;
         }
-      }
-    })
-  }
+      },
+    }),
+  },
 });

@@ -29,17 +29,17 @@ async function testQuickStart() {
           namedNode('http://example.org/alice'),
           namedNode('http://xmlns.com/foaf/0.1/knows'),
           namedNode('http://example.org/bob')
-        )
+        ),
       ],
       removals: [],
-      actor: 'system'
+      actor: 'system',
     });
     console.log('✅ Added RDF data');
 
     // 3. Query the data
     const results = await system.query({
       query: 'SELECT ?name WHERE { ?person <http://xmlns.com/foaf/0.1/name> ?name }',
-      type: 'sparql-select'
+      type: 'sparql-select',
     });
 
     console.log('✅ Query results:', results);

@@ -4,12 +4,15 @@
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import {
-  DistributedQueryEngine,
+  _DistributedQueryEngine,
   createDistributedQueryEngine,
   ExecutionStrategy,
-  PlanNodeType
+  PlanNodeType,
 } from '../../src/knowledge-engine/federation/distributed-query-engine.mjs';
-import { createFederationCoordinator, StoreHealth } from '../../src/knowledge-engine/federation/federation-coordinator.mjs';
+import {
+  createFederationCoordinator,
+  StoreHealth,
+} from '../../src/knowledge-engine/federation/federation-coordinator.mjs';
 
 describe('DistributedQueryEngine', () => {
   let coordinator;
@@ -18,7 +21,7 @@ describe('DistributedQueryEngine', () => {
   beforeEach(async () => {
     coordinator = createFederationCoordinator({
       federationId: 'test-federation',
-      enableConsensus: false
+      enableConsensus: false,
     });
     await coordinator.initialize();
 
@@ -26,12 +29,12 @@ describe('DistributedQueryEngine', () => {
     await coordinator.registerStore({
       storeId: 'store-1',
       endpoint: 'http://store1:3000',
-      weight: 1.0
+      weight: 1.0,
     });
     await coordinator.registerStore({
       storeId: 'store-2',
       endpoint: 'http://store2:3000',
-      weight: 0.8
+      weight: 0.8,
     });
 
     // Set stores as healthy
@@ -40,7 +43,7 @@ describe('DistributedQueryEngine', () => {
 
     engine = createDistributedQueryEngine(coordinator, {
       timeout: 1000,
-      executionStrategy: ExecutionStrategy.PARALLEL
+      executionStrategy: ExecutionStrategy.PARALLEL,
     });
   });
 
@@ -70,7 +73,7 @@ describe('DistributedQueryEngine', () => {
 
     it('should handle query timeout', async () => {
       const shortEngine = createDistributedQueryEngine(coordinator, {
-        timeout: 1
+        timeout: 1,
       });
 
       const query = 'SELECT * WHERE { ?s ?p ?o }';
@@ -146,12 +149,12 @@ describe('DistributedQueryEngine', () => {
       const analysis = {
         type: 'SELECT',
         variables: ['s', 'p'],
-        hasGroupBy: false
+        hasGroupBy: false,
       };
       const stores = coordinator.getHealthyStores();
 
       const strategy = engine.selectExecutionStrategy(analysis, stores, {
-        executionStrategy: ExecutionStrategy.ADAPTIVE
+        executionStrategy: ExecutionStrategy.ADAPTIVE,
       });
 
       expect(strategy).toBe(ExecutionStrategy.PARALLEL);
@@ -161,12 +164,12 @@ describe('DistributedQueryEngine', () => {
       const analysis = {
         type: 'SELECT',
         variables: Array.from({ length: 15 }, (_, i) => `v${i}`),
-        hasGroupBy: true
+        hasGroupBy: true,
       };
       const stores = coordinator.getHealthyStores();
 
       const strategy = engine.selectExecutionStrategy(analysis, stores, {
-        executionStrategy: ExecutionStrategy.ADAPTIVE
+        executionStrategy: ExecutionStrategy.ADAPTIVE,
       });
 
       expect(strategy).toBe(ExecutionStrategy.SEQUENTIAL);
@@ -177,7 +180,7 @@ describe('DistributedQueryEngine', () => {
       const stores = coordinator.getHealthyStores();
 
       const strategy = engine.selectExecutionStrategy(analysis, stores, {
-        executionStrategy: ExecutionStrategy.SEQUENTIAL
+        executionStrategy: ExecutionStrategy.SEQUENTIAL,
       });
 
       expect(strategy).toBe(ExecutionStrategy.SEQUENTIAL);
@@ -189,7 +192,7 @@ describe('DistributedQueryEngine', () => {
       const results = [
         { s: 'http://example.org/alice', p: 'name', o: 'Alice' },
         { s: 'http://example.org/alice', p: 'name', o: 'Alice' }, // duplicate
-        { s: 'http://example.org/bob', p: 'name', o: 'Bob' }
+        { s: 'http://example.org/bob', p: 'name', o: 'Bob' },
       ];
       const analysis = { variables: ['s', 'p', 'o'] };
 
@@ -202,7 +205,7 @@ describe('DistributedQueryEngine', () => {
       const results = [
         { s: 'http://example.org/alice', p: 'name', o: 'Alice' },
         { s: 'http://example.org/bob', p: 'name', o: 'Bob' },
-        { s: 'http://example.org/charlie', p: 'name', o: 'Charlie' }
+        { s: 'http://example.org/charlie', p: 'name', o: 'Charlie' },
       ];
       const analysis = { variables: ['s', 'p', 'o'] };
 

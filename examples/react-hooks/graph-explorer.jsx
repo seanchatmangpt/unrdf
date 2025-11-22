@@ -52,9 +52,7 @@ export function GraphExplorerApp() {
 function GraphExplorer() {
   const { store, isReady } = useKnowledgeEngineContext();
   const [selectedGraph, setSelectedGraph] = useState(null);
-  const [sparqlQuery, setSPARQLQuery] = useState(
-    'SELECT ?s ?p ?o WHERE { ?s ?p ?o } LIMIT 10'
-  );
+  const [sparqlQuery, setSPARQLQuery] = useState('SELECT ?s ?p ?o WHERE { ?s ?p ?o } LIMIT 10');
   const [shapes, setShapes] = useState('');
 
   if (!isReady) {
@@ -140,14 +138,13 @@ function GraphPanel({ selectedGraph, onSelectGraph }) {
     <div style={styles.panel}>
       <h3>Available Graphs</h3>
       <ul style={styles.list}>
-        {graphs?.rows?.map((row) => (
+        {graphs?.rows?.map(row => (
           <li
             key={row.g.value}
             onClick={() => onSelectGraph(row.g)}
             style={{
               ...styles.listItem,
-              backgroundColor:
-                selectedGraph?.value === row.g.value ? '#e0f2fe' : 'transparent',
+              backgroundColor: selectedGraph?.value === row.g.value ? '#e0f2fe' : 'transparent',
             }}
           >
             {row.g.value.split('/').pop()}
@@ -190,11 +187,7 @@ function DataImportPanel() {
   return (
     <div style={styles.panel}>
       <h3>Import Data</h3>
-      <select
-        value={format}
-        onChange={(e) => setFormat(e.target.value)}
-        style={styles.input}
-      >
+      <select value={format} onChange={e => setFormat(e.target.value)} style={styles.input}>
         <option value="turtle">Turtle</option>
         <option value="jsonld">JSON-LD</option>
         <option value="nquads">N-Quads</option>
@@ -202,7 +195,7 @@ function DataImportPanel() {
       <textarea
         placeholder="Paste RDF data..."
         value={importText}
-        onChange={(e) => setImportText(e.target.value)}
+        onChange={e => setImportText(e.target.value)}
         style={{ ...styles.input, minHeight: '100px' }}
       />
       <button onClick={handleImport} style={styles.button}>
@@ -222,13 +215,12 @@ function QueryPanel({ query, onQueryChange }) {
       <h3>SPARQL Query</h3>
       <textarea
         value={query}
-        onChange={(e) => onQueryChange(e.target.value)}
+        onChange={e => onQueryChange(e.target.value)}
         style={{ ...styles.input, minHeight: '150px', fontFamily: 'monospace' }}
       />
       <div style={styles.helperText}>
         <p>
-          <strong>Tips:</strong> Use SELECT, ASK, CONSTRUCT, or DESCRIBE. Bind variables with
-          ?name.
+          <strong>Tips:</strong> Use SELECT, ASK, CONSTRUCT, or DESCRIBE. Bind variables with ?name.
         </p>
       </div>
     </div>
@@ -279,7 +271,7 @@ function ResultsPanel({ query }) {
         <table style={styles.table}>
           <thead>
             <tr>
-              {Object.keys(rows[0] || {}).map((key) => (
+              {Object.keys(rows[0] || {}).map(key => (
                 <th key={key}>{key}</th>
               ))}
             </tr>
@@ -315,8 +307,7 @@ function ValidationPanel({ shapes, query }) {
           {results?.length === 0 && <div style={styles.success}>✓ All shapes valid</div>}
           {results?.map((result, idx) => (
             <div key={idx} style={styles.validationResult}>
-              <strong>Violation</strong> (severity: {result.severity})
-              <p>{result.message}</p>
+              <strong>Violation</strong> (severity: {result.severity})<p>{result.message}</p>
             </div>
           ))}
         </>

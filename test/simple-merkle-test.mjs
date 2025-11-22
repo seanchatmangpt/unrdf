@@ -21,7 +21,7 @@ const lockchain = new LockchainWriter({
   gitRepo: process.cwd(),
   enableMerkle: true,
   enableGitAnchoring: false,
-  storagePath: testStoragePath
+  storagePath: testStoragePath,
 });
 
 console.log('✅ Created lockchain writer with Merkle enabled\n');
@@ -31,7 +31,7 @@ console.log('Test 1: Merkle root calculation');
 const receipt1 = {
   transactionId: 'tx-test-123',
   operation: 'create',
-  data: { test: 'value' }
+  data: { test: 'value' },
 };
 
 const entry1 = await lockchain.writeReceipt(receipt1);
@@ -54,7 +54,7 @@ console.log('Test 3: Tampered Merkle root detection');
 const receipt2 = {
   transactionId: 'tx-test-456',
   operation: 'update',
-  data: { test: 'value2' }
+  data: { test: 'value2' },
 };
 
 const entry2 = await lockchain.writeReceipt(receipt2);
@@ -76,7 +76,7 @@ console.log('Test 4: Tampered data detection');
 const receipt3 = {
   transactionId: 'tx-test-789',
   operation: 'delete',
-  data: { sensitive: 'original' }
+  data: { sensitive: 'original' },
 };
 
 const entry3 = await lockchain.writeReceipt(receipt3);
@@ -101,7 +101,9 @@ console.log('  ✅ Tampered Merkle root detection: WORKING');
 console.log('  ✅ Tampered data detection: WORKING');
 console.log();
 console.log('🎉 All Merkle verification tests passed!');
-console.log('🔒 CRITICAL SECURITY HOLE FIXED - Merkle root verification is now cryptographically validated');
+console.log(
+  '🔒 CRITICAL SECURITY HOLE FIXED - Merkle root verification is now cryptographically validated'
+);
 
 // Clean up
 rmSync(testStoragePath, { recursive: true, force: true });

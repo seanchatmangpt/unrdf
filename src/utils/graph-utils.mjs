@@ -1,4 +1,4 @@
-import { asNamedNode, asLiteral, getIRI } from "./term-utils.mjs";
+import { asNamedNode, _asLiteral, getIRI } from './term-utils.mjs';
 
 /**
  * Get all objects for subject+predicate
@@ -39,9 +39,9 @@ export const getPredicates = (store, subject, object) =>
  */
 export const isA = (store, subject, typeIRI) =>
   store.countQuads(
-    subject, 
-    asNamedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"), 
-    asNamedNode(typeIRI), 
+    subject,
+    asNamedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+    asNamedNode(typeIRI),
     null
   ) > 0;
 
@@ -52,8 +52,9 @@ export const isA = (store, subject, typeIRI) =>
  * @returns {string[]} Array of type IRIs
  */
 export const getTypes = (store, subject) =>
-  getObjects(store, subject, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type")
-    .map(term => getIRI(term));
+  getObjects(store, subject, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type').map(term =>
+    getIRI(term)
+  );
 
 /**
  * Predicate pluck (all values across subjects)
@@ -89,7 +90,7 @@ export const indexByPredicate = (store, predicateIRI) => {
 export const getProperties = (store, subject) => {
   const properties = new Map();
   const quads = store.getQuads(subject, null, null, null);
-  
+
   for (const q of quads) {
     const predicate = q.predicate.value;
     if (!properties.has(predicate)) {
@@ -97,7 +98,7 @@ export const getProperties = (store, subject) => {
     }
     properties.get(predicate).push(q.object.value);
   }
-  
+
   return properties;
 };
 
@@ -107,15 +108,14 @@ export const getProperties = (store, subject) => {
  * @param {string|import('n3').NamedNode} subject - Subject IRI or NamedNode
  * @returns {boolean} True if subject exists
  */
-export const hasSubject = (store, subject) =>
-  store.countQuads(subject, null, null, null) > 0;
+export const hasSubject = (store, subject) => store.countQuads(subject, null, null, null) > 0;
 
 /**
  * Get all subjects in the store
  * @param {import('n3').Store} store - RDF store to query
  * @returns {string[]} Array of unique subject IRIs
  */
-export const getAllSubjects = (store) => {
+export const getAllSubjects = store => {
   const subjects = new Set();
   for (const q of store) {
     subjects.add(q.subject.value);
@@ -128,7 +128,7 @@ export const getAllSubjects = (store) => {
  * @param {import('n3').Store} store - RDF store to query
  * @returns {string[]} Array of unique predicate IRIs
  */
-export const getAllPredicates = (store) => {
+export const getAllPredicates = store => {
   const predicates = new Set();
   for (const q of store) {
     predicates.add(q.predicate.value);
@@ -141,7 +141,7 @@ export const getAllPredicates = (store) => {
  * @param {import('n3').Store} store - RDF store to query
  * @returns {string[]} Array of unique object values
  */
-export const getAllObjects = (store) => {
+export const getAllObjects = store => {
   const objects = new Set();
   for (const q of store) {
     objects.add(q.object.value);
@@ -157,8 +157,7 @@ export const getAllObjects = (store) => {
  * @returns {string[]} Array of subject IRIs
  */
 export const findByProperty = (store, predicate, value) =>
-  getSubjects(store, predicate, value)
-    .map(term => getIRI(term));
+  getSubjects(store, predicate, value).map(term => getIRI(term));
 
 /**
  * Get the first object value for a subject+predicate
@@ -178,8 +177,7 @@ export const getFirstObject = (store, subject, predicate) => {
  * @param {string|import('n3').NamedNode} subject - Subject IRI or NamedNode
  * @returns {number} Number of quads for the subject
  */
-export const countQuadsForSubject = (store, subject) =>
-  store.countQuads(subject, null, null, null);
+export const countQuadsForSubject = (store, subject) => store.countQuads(subject, null, null, null);
 
 /**
  * Get all quads for a subject
@@ -187,5 +185,4 @@ export const countQuadsForSubject = (store, subject) =>
  * @param {string|import('n3').NamedNode} subject - Subject IRI or NamedNode
  * @returns {import('n3').Quad[]} Array of quads for the subject
  */
-export const getQuadsForSubject = (store, subject) =>
-  store.getQuads(subject, null, null, null);
+export const getQuadsForSubject = (store, subject) => store.getQuads(subject, null, null, null);

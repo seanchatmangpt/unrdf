@@ -45,29 +45,33 @@ import { useFederatedSystem } from './use-federated-system.mjs';
  * const store1Health = getStoreHealth('store-1');
  */
 export function useFederationHealth(config = {}) {
-  const { system, health: federationHealth, refreshHealth } = useFederatedSystem(config.federation || {});
+  const {
+    system,
+    health: _federationHealth,
+    refreshHealth,
+  } = useFederatedSystem(config.federation || {});
   const [health, setHealth] = useState({
     status: 'unknown',
     score: 0,
-    checks: []
+    checks: [],
   });
   const [metrics, setMetrics] = useState({
     latency: { avg: 0, p95: 0, p99: 0 },
     throughput: { queries: 0, replications: 0 },
     availability: { uptime: 0, stores: {} },
-    errors: { count: 0, rate: 0 }
+    errors: { count: 0, rate: 0 },
   });
   const [stores, setStores] = useState([]);
   const [consensus, setConsensus] = useState({
     protocol: null,
     leader: null,
     term: 0,
-    healthy: false
+    healthy: false,
   });
   const [replication, setReplication] = useState({
     factor: 0,
     lag: 0,
-    conflicts: 0
+    conflicts: 0,
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -99,7 +103,7 @@ export function useFederationHealth(config = {}) {
           status: score >= 80 ? 'healthy' : score >= 50 ? 'degraded' : 'unhealthy',
           score,
           checks: healthData.checks || [],
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
 
         setHealth(healthState);
@@ -112,7 +116,7 @@ export function useFederationHealth(config = {}) {
             latency: stats.latency || { avg: 0, p95: 0, p99: 0 },
             throughput: stats.throughput || { queries: 0, replications: 0 },
             availability: stats.availability || { uptime: 0, stores: {} },
-            errors: stats.errors || { count: 0, rate: 0 }
+            errors: stats.errors || { count: 0, rate: 0 },
           });
         }
 
@@ -129,7 +133,7 @@ export function useFederationHealth(config = {}) {
         setHealth({
           status: 'error',
           score: 0,
-          checks: [{ name: 'system', status: 'error', error: err.message }]
+          checks: [{ name: 'system', status: 'error', error: err.message }],
         });
         setLoading(false);
       }
@@ -193,7 +197,7 @@ export function useFederationHealth(config = {}) {
       setHealth({
         status: score >= 80 ? 'healthy' : score >= 50 ? 'degraded' : 'unhealthy',
         score,
-        checks: healthData.checks || []
+        checks: healthData.checks || [],
       });
 
       setLoading(false);
@@ -206,9 +210,12 @@ export function useFederationHealth(config = {}) {
   }, [system, refreshHealth]);
 
   // Get specific store health
-  const getStoreHealth = useCallback((storeId) => {
-    return stores.find(s => s.id === storeId);
-  }, [stores]);
+  const getStoreHealth = useCallback(
+    storeId => {
+      return stores.find(s => s.id === storeId);
+    },
+    [stores]
+  );
 
   // Check if system is healthy
   const isHealthy = health.status === 'healthy';
@@ -223,6 +230,6 @@ export function useFederationHealth(config = {}) {
     error,
     isHealthy,
     refresh,
-    getStoreHealth
+    getStoreHealth,
   };
 }

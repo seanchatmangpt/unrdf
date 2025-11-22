@@ -8,7 +8,7 @@
  * statistical and ML approaches. Integrates with SHACL validation.
  */
 
-import { Store } from 'n3';
+import { _Store } from 'n3';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
 import { z } from 'zod';
 import { createSemanticAnalyzer } from './semantic-analyzer.mjs';
@@ -26,7 +26,7 @@ const AnomalySchema = z.object({
     'data_quality',
     'outlier',
     'inconsistency',
-    'structural_anomaly'
+    'structural_anomaly',
   ]),
   severity: z.enum(['critical', 'high', 'medium', 'low']),
   description: z.string(),
@@ -34,7 +34,7 @@ const AnomalySchema = z.object({
   predicate: z.string().optional(),
   object: z.string().optional(),
   confidence: z.number().min(0).max(1),
-  evidence: z.array(z.string()).optional()
+  evidence: z.array(z.string()).optional(),
 });
 
 /**
@@ -45,9 +45,9 @@ const AnomalyDetectionResultSchema = z.object({
   statistics: z.object({
     total: z.number(),
     bySeverity: z.record(z.number()),
-    byType: z.record(z.number())
+    byType: z.record(z.number()),
   }),
-  duration: z.number()
+  duration: z.number(),
 });
 
 /**
@@ -59,7 +59,7 @@ const AnomalyDetectorConfigSchema = z.object({
   enableSHACL: z.boolean().default(true),
   outlierThreshold: z.number().default(2.5), // Standard deviations
   minConfidence: z.number().min(0).max(1).default(0.6),
-  maxAnomalies: z.number().default(100)
+  maxAnomalies: z.number().default(100),
 });
 
 /**
@@ -81,7 +81,7 @@ export class AnomalyDetector {
     this.stats = {
       detections: 0,
       anomaliesFound: 0,
-      avgDuration: 0
+      avgDuration: 0,
     };
   }
 
@@ -91,15 +91,15 @@ export class AnomalyDetector {
    * @param {Object} [options] - Detection options
    * @returns {Promise<Object>} Detection results
    */
-  async detectAnomalies(store, options = {}) {
-    return tracer.startActiveSpan('anomaly.detect', async (span) => {
+  async detectAnomalies(store, _options = {}) {
+    return tracer.startActiveSpan('anomaly.detect', async span => {
       const startTime = Date.now();
 
       try {
         span.setAttributes({
           'anomaly.store_size': store.size,
           'anomaly.enable_statistical': this.config.enableStatistical,
-          'anomaly.enable_ml': this.config.enableMLBased
+          'anomaly.enable_ml': this.config.enableMLBased,
         });
 
         const anomalies = [];
@@ -141,18 +141,19 @@ export class AnomalyDetector {
         const result = AnomalyDetectionResultSchema.parse({
           anomalies: filtered,
           statistics,
-          duration
+          duration,
         });
 
         // Update stats
         this.stats.detections++;
         this.stats.anomaliesFound += filtered.length;
-        this.stats.avgDuration = (this.stats.avgDuration * (this.stats.detections - 1) + duration) / this.stats.detections;
+        this.stats.avgDuration =
+          (this.stats.avgDuration * (this.stats.detections - 1) + duration) / this.stats.detections;
 
         span.setAttributes({
           'anomaly.total_found': filtered.length,
           'anomaly.duration_ms': duration,
-          'anomaly.detection_complete': true
+          'anomaly.detection_complete': true,
         });
         span.setStatus({ code: SpanStatusCode.OK });
 
@@ -172,7 +173,7 @@ export class AnomalyDetector {
    * @private
    */
   async _detectStatisticalAnomalies(store) {
-    return tracer.startActiveSpan('anomaly.statistical', async (span) => {
+    return tracer.startActiveSpan('anomaly.statistical', async span => {
       try {
         const anomalies = [];
 
@@ -187,7 +188,8 @@ export class AnomalyDetector {
         // Calculate statistics
         const degrees = Array.from(degreeMap.values());
         const mean = degrees.reduce((a, b) => a + b, 0) / degrees.length;
-        const variance = degrees.reduce((sum, d) => sum + Math.pow(d - mean, 2), 0) / degrees.length;
+        const variance =
+          degrees.reduce((sum, d) => sum + Math.pow(d - mean, 2), 0) / degrees.length;
         const stdDev = Math.sqrt(variance);
 
         // Detect outliers (entities with unusually high or low degree)
@@ -201,7 +203,7 @@ export class AnomalyDetector {
               description: `Entity has unusual degree: ${degree} (mean: ${mean.toFixed(2)}, z-score: ${zScore.toFixed(2)})`,
               subject: entity,
               confidence: Math.min(0.9, zScore / 10),
-              evidence: [`Degree: ${degree}`, `Z-score: ${zScore.toFixed(2)}`]
+              evidence: [`Degree: ${degree}`, `Z-score: ${zScore.toFixed(2)}`],
             });
           }
         }
@@ -224,7 +226,7 @@ export class AnomalyDetector {
    * @private
    */
   async _detectMLAnomalies(store) {
-    return tracer.startActiveSpan('anomaly.ml_based', async (span) => {
+    return tracer.startActiveSpan('anomaly.ml_based', async span => {
       try {
         const anomalies = [];
 
@@ -252,15 +254,20 @@ export class AnomalyDetector {
         }
 
         const meanSim = similarities.reduce((a, b) => a + b, 0) / similarities.length;
-        const varSim = similarities.reduce((sum, s) => sum + Math.pow(s - meanSim, 2), 0) / similarities.length;
+        const varSim =
+          similarities.reduce((sum, s) => sum + Math.pow(s - meanSim, 2), 0) / similarities.length;
         const stdDevSim = Math.sqrt(varSim);
 
         // Find entities with very low similarity to all others (potential outliers)
         for (const entity of entities.slice(0, 50)) {
-          const avgSim = entities
-            .filter(e => e !== entity)
-            .slice(0, 20)
-            .reduce((sum, other) => sum + this.embeddingsManager.computeSimilarity(entity, other), 0) / 20;
+          const avgSim =
+            entities
+              .filter(e => e !== entity)
+              .slice(0, 20)
+              .reduce(
+                (sum, other) => sum + this.embeddingsManager.computeSimilarity(entity, other),
+                0
+              ) / 20;
 
           const zScore = Math.abs((avgSim - meanSim) / stdDevSim);
 
@@ -271,7 +278,7 @@ export class AnomalyDetector {
               description: `Entity has unusual embedding pattern (avg similarity: ${avgSim.toFixed(3)})`,
               subject: entity,
               confidence: Math.min(0.8, zScore / 5),
-              evidence: [`Avg similarity: ${avgSim.toFixed(3)}`, `Z-score: ${zScore.toFixed(2)}`]
+              evidence: [`Avg similarity: ${avgSim.toFixed(3)}`, `Z-score: ${zScore.toFixed(2)}`],
             });
           }
         }
@@ -294,7 +301,7 @@ export class AnomalyDetector {
    * @private
    */
   async _detectMissingLinks(store) {
-    return tracer.startActiveSpan('anomaly.missing_links', async (span) => {
+    return tracer.startActiveSpan('anomaly.missing_links', async span => {
       try {
         const anomalies = [];
 
@@ -309,13 +316,13 @@ export class AnomalyDetector {
               severity: suggestion.priority === 'high' ? 'high' : 'medium',
               description: suggestion.description,
               confidence: 0.7,
-              evidence: ['Detected by semantic analysis']
+              evidence: ['Detected by semantic analysis'],
             });
           }
         }
 
         // Detect common patterns and missing instances
-        const patterns = analysis.patterns;
+        const _patterns = analysis._patterns;
         const relationships = analysis.relationships;
 
         // Find relationships that appear frequently but have missing reciprocals
@@ -339,7 +346,7 @@ export class AnomalyDetector {
                 description: `Predicate ${predicate} appears inconsistently across similar entities`,
                 predicate,
                 confidence: 0.6,
-                evidence: [`Count: ${count}`, `Subjects: ${subjectsWithPredicate.size}`]
+                evidence: [`Count: ${count}`, `Subjects: ${subjectsWithPredicate.size}`],
               });
             }
           }
@@ -363,7 +370,7 @@ export class AnomalyDetector {
    * @private
    */
   async _detectDataQualityIssues(store) {
-    return tracer.startActiveSpan('anomaly.data_quality', async (span) => {
+    return tracer.startActiveSpan('anomaly.data_quality', async span => {
       try {
         const anomalies = [];
 
@@ -379,7 +386,7 @@ export class AnomalyDetector {
             entityProps.set(subject, {
               hasLabel: false,
               hasType: false,
-              propertyCount: 0
+              propertyCount: 0,
             });
           }
 
@@ -403,7 +410,7 @@ export class AnomalyDetector {
               description: `Entity missing rdfs:label`,
               subject: entity,
               confidence: 0.8,
-              evidence: [`Property count: ${props.propertyCount}`]
+              evidence: [`Property count: ${props.propertyCount}`],
             });
           }
 
@@ -414,7 +421,7 @@ export class AnomalyDetector {
               description: `Entity missing rdf:type`,
               subject: entity,
               confidence: 0.7,
-              evidence: [`Property count: ${props.propertyCount}`]
+              evidence: [`Property count: ${props.propertyCount}`],
             });
           }
 
@@ -426,7 +433,7 @@ export class AnomalyDetector {
               description: `Entity has only one property (potentially incomplete)`,
               subject: entity,
               confidence: 0.65,
-              evidence: [`Property count: 1`]
+              evidence: [`Property count: 1`],
             });
           }
         }
@@ -449,7 +456,7 @@ export class AnomalyDetector {
    * @private
    */
   async _detectStructuralAnomalies(store) {
-    return tracer.startActiveSpan('anomaly.structural', async (span) => {
+    return tracer.startActiveSpan('anomaly.structural', async span => {
       try {
         const anomalies = [];
 
@@ -459,7 +466,7 @@ export class AnomalyDetector {
         if (components.length > 1) {
           // Multiple disconnected components
           const sizes = components.map(c => c.size).sort((a, b) => b - a);
-          const mainSize = sizes[0];
+          const _mainSize = sizes[0];
           const otherSizes = sizes.slice(1);
 
           if (otherSizes.some(s => s > 5)) {
@@ -468,7 +475,7 @@ export class AnomalyDetector {
               severity: 'medium',
               description: `Graph has ${components.length} disconnected components`,
               confidence: 0.85,
-              evidence: [`Component sizes: ${sizes.join(', ')}`]
+              evidence: [`Component sizes: ${sizes.join(', ')}`],
             });
           }
         }
@@ -483,7 +490,7 @@ export class AnomalyDetector {
               subject: quad.subject.value,
               predicate: quad.predicate.value,
               confidence: 0.95,
-              evidence: ['Entity points to itself']
+              evidence: ['Entity points to itself'],
             });
           }
         }
@@ -564,7 +571,7 @@ export class AnomalyDetector {
     return {
       total: anomalies.length,
       bySeverity,
-      byType
+      byType,
     };
   }
 

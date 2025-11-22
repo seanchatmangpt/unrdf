@@ -18,7 +18,7 @@ describe('EmbeddingsManager', () => {
     manager = createEmbeddingsManager({
       embeddingDim: 64,
       epochs: 10,
-      batchSize: 32
+      batchSize: 32,
     });
   });
 
@@ -52,7 +52,7 @@ describe('EmbeddingsManager', () => {
       store.addQuad(quad(alice, knows, bob));
 
       const result = await manager.generateEmbeddings(store, {
-        algorithm: 'transe'
+        algorithm: 'transe',
       });
 
       expect(result.algorithm).toBe('transe');
@@ -68,7 +68,7 @@ describe('EmbeddingsManager', () => {
       store.addQuad(quad(alice, knows, bob));
 
       const result = await manager.generateEmbeddings(store, {
-        algorithm: 'complex'
+        algorithm: 'complex',
       });
 
       expect(result.algorithm).toBe('complex');
@@ -82,7 +82,7 @@ describe('EmbeddingsManager', () => {
       store.addQuad(quad(alice, knows, bob));
 
       const result = await manager.generateEmbeddings(store, {
-        algorithm: 'rotate'
+        algorithm: 'rotate',
       });
 
       expect(result.algorithm).toBe('rotate');
@@ -194,7 +194,7 @@ describe('EmbeddingsManager', () => {
       const uris = [
         'http://example.org/alice',
         'http://example.org/bob',
-        'http://example.org/charlie'
+        'http://example.org/charlie',
       ];
 
       const embeddings = manager.batchGetEmbeddings(uris, 'entity');
@@ -208,7 +208,7 @@ describe('EmbeddingsManager', () => {
       const uris = [
         'http://example.org/alice',
         'http://example.org/unknown',
-        'http://example.org/bob'
+        'http://example.org/bob',
       ];
 
       const embeddings = manager.batchGetEmbeddings(uris, 'entity');

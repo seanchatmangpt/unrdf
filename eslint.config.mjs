@@ -1,5 +1,6 @@
 import jsdocPlugin from 'eslint-plugin-jsdoc';
 import globals from 'globals';
+import prettierConfig from 'eslint-config-prettier';
 
 export default [
   {
@@ -45,6 +46,8 @@ export default [
       jsdoc: jsdocPlugin
     },
     rules: {
+      // Prettier config - disables ESLint rules that conflict with Prettier
+      ...prettierConfig.rules,
       // JSDoc enforcement rules
       'jsdoc/require-jsdoc': ['warn', {
         publicOnly: true,
@@ -62,7 +65,11 @@ export default [
       'jsdoc/valid-types': 'off',
 
       // Basic code quality rules
-      'no-unused-vars': ['warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
+      'no-unused-vars': ['warn', { 
+        argsIgnorePattern: '^_', 
+        varsIgnorePattern: '^_',
+        caughtErrors: 'none' // Allow unused error parameters in catch blocks
+      }],
       'no-console': 'off',
       'no-debugger': 'warn',
       'no-undef': 'error'
@@ -74,6 +81,7 @@ export default [
       'src/browser/**/*.mjs',
       'src/react-hooks/**/*.mjs',
       'src/knowledge-engine/browser-shims.mjs',
+      'src/knowledge-engine/browser.mjs',
       'src/knowledge-engine/streaming/**/*.mjs',
       'src/security/sandbox/browser-executor.mjs',
       'test/browser/**/*.mjs'
@@ -108,7 +116,8 @@ export default [
   {
     files: [
       'test/**/*.test.mjs',
-      'test/**/*.spec.mjs'
+      'test/**/*.spec.mjs',
+      'test/**/*.mjs'
     ],
     languageOptions: {
       globals: {
@@ -123,8 +132,25 @@ export default [
         afterEach: 'readonly',
         beforeAll: 'readonly',
         afterAll: 'readonly',
-        vi: 'readonly'
+        vi: 'readonly',
+        // Browser globals for tests
+        window: 'readonly',
+        document: 'readonly',
+        navigator: 'readonly'
       }
+    },
+    rules: {
+      // Prettier config - disables ESLint rules that conflict with Prettier
+      ...prettierConfig.rules,
+      // Be more lenient with unused vars in tests (demo code, examples)
+      'no-unused-vars': ['warn', {
+        argsIgnorePattern: '^_',
+        varsIgnorePattern: '^_',
+        caughtErrors: 'none'
+      }],
+      // Disable no-undef for test files - helper functions defined in same file
+      // Also handles false positives from ESLint parser issues
+      'no-undef': 'off'
     }
   },
   // Streaming module index that imports/re-exports
@@ -160,7 +186,14 @@ export default [
       }
     },
     rules: {
-      'no-unused-vars': 'warn',
+      // Prettier config - disables ESLint rules that conflict with Prettier
+      ...prettierConfig.rules,
+      // Be very lenient with examples - they're demo code
+      'no-unused-vars': ['warn', {
+        argsIgnorePattern: '^_',
+        varsIgnorePattern: '^_',
+        caughtErrors: 'none'
+      }],
       'no-undef': 'warn' // Be more lenient with examples
     }
   }

@@ -20,23 +20,26 @@ import {
   PRELOAD_GROUPS,
   areEssentialModulesLoaded,
   preloadEssentialModules,
-  getAllLoadedModules
+  getAllLoadedModules,
 } from '../../../src/react-hooks/core/use-module-preloader.mjs';
 
 // Mock React hooks for testing
 vi.mock('react', () => ({
-  useState: vi.fn((initial) => {
+  useState: vi.fn(initial => {
     let state = typeof initial === 'function' ? initial() : initial;
-    return [state, vi.fn((newState) => {
-      state = typeof newState === 'function' ? newState(state) : newState;
-    })];
+    return [
+      state,
+      vi.fn(newState => {
+        state = typeof newState === 'function' ? newState(state) : newState;
+      }),
+    ];
   }),
-  useEffect: vi.fn((fn) => {
+  useEffect: vi.fn(fn => {
     fn();
     return vi.fn();
   }),
-  useCallback: vi.fn((fn) => fn),
-  useRef: vi.fn((initial) => ({ current: initial }))
+  useCallback: vi.fn(fn => fn),
+  useRef: vi.fn(initial => ({ current: initial })),
 }));
 
 describe('use-module-preloader', () => {
@@ -60,7 +63,7 @@ describe('use-module-preloader', () => {
     });
 
     it('should have valid module paths', () => {
-      for (const [key, path] of Object.entries(PRELOAD_MODULES)) {
+      for (const [_key, path] of Object.entries(PRELOAD_MODULES)) {
         expect(typeof path).toBe('string');
         expect(path).toContain('.mjs');
         expect(path.startsWith('../../')).toBe(true);
@@ -189,15 +192,11 @@ describe('use-module-preloader', () => {
     it('should handle module load timeout', async () => {
       const fakePath = '/non/existent/module-that-will-fail.mjs';
 
-      await expect(
-        preloadModule(fakePath, { timeout: 100 })
-      ).rejects.toThrow();
+      await expect(preloadModule(fakePath, { timeout: 100 })).rejects.toThrow();
     });
 
     it('should handle invalid module path', async () => {
-      await expect(
-        preloadModule('/invalid/path/module.mjs', { timeout: 500 })
-      ).rejects.toThrow();
+      await expect(preloadModule('/invalid/path/module.mjs', { timeout: 500 })).rejects.toThrow();
     });
   });
 
@@ -274,7 +273,7 @@ describe('use-module-preloader', () => {
         autoLoad: false,
         concurrency: 3,
         onComplete,
-        onError
+        onError,
       });
 
       expect(result).toBeDefined();
@@ -306,7 +305,7 @@ describe('use-module-preloader', () => {
         () => isModuleLoaded('/test1'),
         () => isModuleLoading('/test2'),
         () => clearModule('/test3'),
-        () => getModule('/test4')
+        () => getModule('/test4'),
       ];
 
       const results = await Promise.all(operations.map(op => Promise.resolve(op())));

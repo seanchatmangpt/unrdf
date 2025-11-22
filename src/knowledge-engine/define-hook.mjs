@@ -123,8 +123,8 @@
  * @param {KnowledgeHook} def - The hook definition object.
  * @returns {KnowledgeHook} The validated and normalized hook definition.
  */
-import { createKnowledgeHook } from "./schemas.mjs";
-import { defaultSecurityValidator } from "./security-validator.mjs";
+import { createKnowledgeHook } from './schemas.mjs';
+import { defaultSecurityValidator } from './security-validator.mjs';
 
 /**
  *
@@ -135,12 +135,13 @@ export function defineHook(def) {
 
   // Apply security validation (warn only, don't block)
   // Security will be enforced at execution time via sandbox
-  const securityValidation =
-    defaultSecurityValidator.validateKnowledgeHook(validatedHook);
+  const securityValidation = defaultSecurityValidator.validateKnowledgeHook(validatedHook);
   if (!securityValidation.valid) {
     // Log warning in development (can't modify frozen object, so just log)
     if (process.env.NODE_ENV !== 'production') {
-      console.warn(`[Security Warning] Hook "${validatedHook.meta.name}": ${securityValidation.blockReason}`);
+      console.warn(
+        `[Security Warning] Hook "${validatedHook.meta.name}": ${securityValidation.blockReason}`
+      );
     }
   }
 
@@ -155,32 +156,31 @@ export function defineHook(def) {
  */
 export const exampleComplianceHook = defineHook({
   meta: {
-    name: "compliance:largeTx",
+    name: 'compliance:largeTx',
     description:
-      "Alerts and creates an audit trail when a financial transaction exceeds a certain threshold.",
-    ontology: ["fibo"],
+      'Alerts and creates an audit trail when a financial transaction exceeds a certain threshold.',
+    ontology: ['fibo'],
   },
   channel: {
-    graphs: ["urn:graph:fibo:prod"],
-    view: "delta",
+    graphs: ['urn:graph:fibo:prod'],
+    view: 'delta',
   },
   when: {
-    kind: "sparql-ask",
+    kind: 'sparql-ask',
     ref: {
-      uri: "file://hooks/compliance/largeTx.ask.rq",
-      sha256:
-        "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", // Example hash
-      mediaType: "application/sparql-query",
+      uri: 'file://hooks/compliance/largeTx.ask.rq',
+      sha256: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855', // Example hash
+      mediaType: 'application/sparql-query',
     },
   },
   determinism: { seed: 42 },
-  receipt: { anchor: "git-notes" },
+  receipt: { anchor: 'git-notes' },
 
   async before({ payload }) {
-    if (!payload || typeof payload.amount !== "number" || payload.amount <= 0) {
+    if (!payload || typeof payload.amount !== 'number' || payload.amount <= 0) {
       return {
         cancel: true,
-        reason: "Invalid or non-positive transaction amount.",
+        reason: 'Invalid or non-positive transaction amount.',
       };
     }
     // Normalize payload for the `run` step
@@ -189,11 +189,11 @@ export const exampleComplianceHook = defineHook({
 
   async run({ payload }) {
     console.log(
-      `[RUN] Processing large transaction of ${payload.amount} validated at ${payload.validatedAt}`,
+      `[RUN] Processing large transaction of ${payload.amount} validated at ${payload.validatedAt}`
     );
     // The main result could be an alert object, an event to be emitted, etc.
     return {
-      result: { status: "alert-dispatched", amount: payload.amount },
+      result: { status: 'alert-dispatched', amount: payload.amount },
       // This hook also generates a new piece of knowledge (an audit triple).
       assertions: [
         /* an RDF quad like: [ a:tx, prov:wasGeneratedBy, this:hook ] */
@@ -205,11 +205,9 @@ export const exampleComplianceHook = defineHook({
     if (cancelled) {
       console.log(`[AFTER] Hook execution was cancelled. Reason: ${reason}`);
     } else {
-      console.log(
-        `[AFTER] Hook successfully completed with status: ${result?.result?.status}`,
-      );
+      console.log(`[AFTER] Hook successfully completed with status: ${result?.result?.status}`);
     }
     // The 'after' hook always returns a result for logging/receipt purposes.
-    return { result: { finalStatus: cancelled ? "cancelled" : "completed" } };
+    return { result: { finalStatus: cancelled ? 'cancelled' : 'completed' } };
   },
 });

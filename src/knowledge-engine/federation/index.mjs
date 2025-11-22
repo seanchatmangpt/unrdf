@@ -32,23 +32,19 @@
  * const results = await federation.query('SELECT * WHERE { ?s ?p ?o } LIMIT 10');
  */
 
-export {
-  ConsensusManager,
-  createConsensusManager,
-  NodeState
-} from './consensus-manager.mjs';
+export { ConsensusManager, createConsensusManager, NodeState } from './consensus-manager.mjs';
 
 export {
   FederationCoordinator,
   createFederationCoordinator,
-  StoreHealth
+  StoreHealth,
 } from './federation-coordinator.mjs';
 
 export {
   DistributedQueryEngine,
   createDistributedQueryEngine,
   ExecutionStrategy,
-  PlanNodeType
+  PlanNodeType,
 } from './distributed-query-engine.mjs';
 
 export {
@@ -56,7 +52,7 @@ export {
   createDataReplicationManager,
   ReplicationTopology,
   ConflictResolution,
-  ReplicationMode
+  ReplicationMode,
 } from './data-replication.mjs';
 
 import { createFederationCoordinator } from './federation-coordinator.mjs';
@@ -94,7 +90,7 @@ export async function createFederatedSystem(config = {}) {
   const coordinator = createFederationCoordinator({
     federationId: config.federationId,
     enableConsensus: config.enableConsensus ?? true,
-    loadBalancingStrategy: config.loadBalancingStrategy ?? 'weighted'
+    loadBalancingStrategy: config.loadBalancingStrategy ?? 'weighted',
   });
 
   await coordinator.initialize();
@@ -103,14 +99,14 @@ export async function createFederatedSystem(config = {}) {
   const queryEngine = createDistributedQueryEngine(coordinator, {
     executionStrategy: config.executionStrategy ?? 'adaptive',
     enablePushdown: config.enablePushdown ?? true,
-    enableJoinOptimization: config.enableJoinOptimization ?? true
+    enableJoinOptimization: config.enableJoinOptimization ?? true,
   });
 
   // Create replication manager
   const replication = createDataReplicationManager(coordinator, {
     topology: config.replicationTopology ?? 'full-mesh',
     conflictResolution: config.conflictResolution ?? 'last-write-wins',
-    mode: config.replicationMode ?? 'bidirectional'
+    mode: config.replicationMode ?? 'bidirectional',
   });
 
   await replication.initialize();
@@ -166,7 +162,7 @@ export async function createFederatedSystem(config = {}) {
       return {
         coordinator: coordinator.getStats(),
         queryEngine: queryEngine.getStats(),
-        replication: replication.getStats()
+        replication: replication.getStats(),
       };
     },
 
@@ -177,6 +173,6 @@ export async function createFederatedSystem(config = {}) {
     async shutdown() {
       await replication.shutdown();
       await coordinator.shutdown();
-    }
+    },
   };
 }

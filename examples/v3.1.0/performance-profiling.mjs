@@ -21,12 +21,12 @@ console.log('=================================\n');
 const system = await createDarkMatterCore({
   profiling: {
     enabled: true,
-    sampleRate: 0.1,  // Sample 10% of operations
-    slowQueryThreshold: 100,  // Log queries > 100ms
+    sampleRate: 0.1, // Sample 10% of operations
+    slowQueryThreshold: 100, // Log queries > 100ms
     onSlowQuery: (query, duration) => {
       console.log(`⚠️  Slow query detected (${duration}ms): ${query.query.slice(0, 80)}...`);
-    }
-  }
+    },
+  },
 });
 
 console.log('✅ Profiling enabled');
@@ -63,7 +63,7 @@ const store = await parseTurtle(ttl);
 await system.executeTransaction({
   additions: [...store],
   removals: [],
-  actor: 'profiling-demo'
+  actor: 'profiling-demo',
 });
 
 console.log(`✅ Loaded ${[...store].length} triples\n`);
@@ -83,7 +83,7 @@ for (let i = 0; i < 100; i++) {
                 foaf:name ?name .
       }
     `,
-    type: 'sparql-select'
+    type: 'sparql-select',
   });
 
   // Mix in some complex queries
@@ -97,7 +97,7 @@ for (let i = 0; i < 100; i++) {
           FILTER(?person != ?friendOfFriend)
         }
       `,
-      type: 'sparql-select'
+      type: 'sparql-select',
     });
   }
 }
@@ -182,15 +182,15 @@ const budgetSystem = await createDarkMatterCore({
     enabled: true,
     budgets: {
       'sparql-select': {
-        p50: 15,  // ms
+        p50: 15, // ms
         p95: 50,
-        p99: 150
+        p99: 150,
       },
       'transaction-commit': {
         p50: 25,
         p95: 75,
-        p99: 200
-      }
+        p99: 200,
+      },
     },
     onBudgetExceeded: (operation, metric, actual, budget) => {
       console.log(`\n⚠️  PERFORMANCE BUDGET EXCEEDED`);
@@ -198,8 +198,8 @@ const budgetSystem = await createDarkMatterCore({
       console.log(`   Metric: ${metric}`);
       console.log(`   Actual: ${actual}ms`);
       console.log(`   Budget: ${budget}ms`);
-    }
-  }
+    },
+  },
 });
 
 console.log('✅ Performance budgets configured:');
@@ -213,15 +213,15 @@ console.log('========================================\n');
 const cpuSystem = await createDarkMatterCore({
   profiling: {
     enabled: true,
-    metrics: ['cpu']  // Enable CPU profiling
-  }
+    metrics: ['cpu'], // Enable CPU profiling
+  },
 });
 
 // Run some operations
 for (let i = 0; i < 50; i++) {
   await cpuSystem.query({
     query: 'SELECT * WHERE { ?s ?p ?o }',
-    type: 'sparql-select'
+    type: 'sparql-select',
   });
 }
 
@@ -253,9 +253,9 @@ console.log('Generating CPU flamegraph (30 second sample)...');
 
 try {
   const flamegraph = await system.generateFlamegraph({
-    duration: 5000,  // Sample for 5 seconds (reduced for demo)
+    duration: 5000, // Sample for 5 seconds (reduced for demo)
     outputPath: './profiles/flamegraph.svg',
-    format: 'svg'
+    format: 'svg',
   });
 
   console.log(`✅ Flamegraph generated: ${flamegraph.path}`);
@@ -277,9 +277,9 @@ const otelSystem = await createDarkMatterCore({
     otel: {
       exporter: prometheusExporter,
       metrics: ['latency', 'memory', 'cache', 'errors'],
-      interval: 30000  // Export every 30s
-    }
-  }
+      interval: 30000, // Export every 30s
+    },
+  },
 });
 
 console.log('✅ OTEL integration configured');
@@ -305,9 +305,9 @@ console.log('Example 12: Continuous Profiling');
 console.log('=================================\n');
 
 const profiler = system.startContinuousProfiling({
-  interval: 10000,  // Sample every 10 seconds
-  output: 'console',  // 'console', 'file', or 'otel'
-  filePath: './profiles/profile-{timestamp}.json'
+  interval: 10000, // Sample every 10 seconds
+  output: 'console', // 'console', 'file', or 'otel'
+  filePath: './profiles/profile-{timestamp}.json',
 });
 
 console.log('✅ Continuous profiling started');
@@ -334,16 +334,16 @@ const leakSystem = await createDarkMatterCore({
     enabled: true,
     memoryLeakDetection: {
       enabled: true,
-      sampleInterval: 10000,  // Check every 10s
-      threshold: 0.1,  // Alert if leak score > 10%
-      onLeakDetected: (leak) => {
+      sampleInterval: 10000, // Check every 10s
+      threshold: 0.1, // Alert if leak score > 10%
+      onLeakDetected: leak => {
         console.log('\n⚠️  MEMORY LEAK DETECTED');
         console.log(`   Leak Score: ${(leak.score * 100).toFixed(2)}%`);
         console.log(`   Growth Rate: ${leak.growthRate.toFixed(2)} MB/min`);
         console.log(`   Suspected Source: ${leak.suspectedSource}\n`);
-      }
-    }
-  }
+      },
+    },
+  },
 });
 
 console.log('✅ Memory leak detection enabled');

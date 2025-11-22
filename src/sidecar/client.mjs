@@ -7,7 +7,10 @@
  * This allows tests to import from the expected src/ path.
  */
 
-import SidecarClientClass, { SidecarClient as SidecarClientExport, createSidecarClient } from '../../sidecar/sidecar/client.mjs';
+import SidecarClientClass, {
+  SidecarClient as SidecarClientExport,
+  createSidecarClient,
+} from '../../sidecar/sidecar/client.mjs';
 
 export { SidecarClientExport as SidecarClient, createSidecarClient };
 export default SidecarClientClass;

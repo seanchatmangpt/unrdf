@@ -13,9 +13,9 @@ const tracer = trace.getTracer('unrdf');
  * @param {string} ttl - The Turtle string to parse
  * @param {string} [baseIRI] - Base IRI for resolving relative URIs
  * @returns {Promise<Store>} Promise resolving to a Store containing the parsed quads
- * 
+ *
  * @throws {Error} If parsing fails
- * 
+ *
  * @example
  * const ttl = `
  *   @prefix ex: <http://example.org/> .
@@ -31,12 +31,12 @@ export async function parseTurtle(ttl, baseIRI = 'http://example.org/') {
     throw new TypeError('parseTurtle: baseIRI must be a string');
   }
 
-  return tracer.startActiveSpan('parse.turtle', async (span) => {
+  return tracer.startActiveSpan('parse.turtle', async span => {
     try {
       span.setAttributes({
         'parse.format': 'turtle',
         'parse.base_iri': baseIRI,
-        'parse.input_length': ttl.length
+        'parse.input_length': ttl.length,
       });
 
       const parser = new Parser({ baseIRI });
@@ -51,7 +51,7 @@ export async function parseTurtle(ttl, baseIRI = 'http://example.org/') {
       span.recordException(error);
       span.setStatus({
         code: SpanStatusCode.ERROR,
-        message: error.message
+        message: error.message,
       });
       throw new Error(`Failed to parse Turtle: ${error.message}`);
     } finally {
@@ -67,9 +67,9 @@ export async function parseTurtle(ttl, baseIRI = 'http://example.org/') {
  * @param {Object} [options.prefixes] - Prefix mappings
  * @param {string} [options.baseIRI] - Base IRI for the output
  * @returns {Promise<string>} Promise resolving to the Turtle string
- * 
+ *
  * @throws {Error} If serialization fails
- * 
+ *
  * @example
  * const turtle = await toTurtle(store, {
  *   prefixes: { ex: 'http://example.org/' },
@@ -82,14 +82,14 @@ export async function toTurtle(store, options = {}) {
   }
 
   try {
-    const writer = new Writer({ 
+    const writer = new Writer({
       format: 'Turtle',
-      prefixes: options.prefixes || {}
+      prefixes: options.prefixes || {},
     });
-    
+
     const quads = store.getQuads();
     writer.addQuads(quads);
-    
+
     return new Promise((resolve, reject) => {
       writer.end((error, result) => {
         if (error) {
@@ -113,9 +113,9 @@ export async function toTurtle(store, options = {}) {
  * @param {Store} store - The store to serialize
  * @param {Object} [options] - Serialization options
  * @returns {Promise<string>} Promise resolving to the N-Quads string
- * 
+ *
  * @throws {Error} If serialization fails
- * 
+ *
  * @example
  * const nquads = await toNQuads(store);
  */
@@ -125,14 +125,14 @@ export async function toNQuads(store, options = {}) {
   }
 
   try {
-    const writer = new Writer({ 
+    const writer = new Writer({
       format: 'N-Quads',
-      ...options
+      ...options,
     });
-    
+
     const quads = store.getQuads();
     writer.addQuads(quads);
-    
+
     return new Promise((resolve, reject) => {
       writer.end((error, result) => {
         if (error) {
@@ -153,9 +153,9 @@ export async function toNQuads(store, options = {}) {
  * @param {Object} [options] - Parsing options
  * @param {string} [options.baseIRI] - Base IRI for resolving relative URIs
  * @returns {Promise<Store>} Promise resolving to a Store containing the parsed quads
- * 
+ *
  * @throws {Error} If parsing fails
- * 
+ *
  * @example
  * const jsonld = `{
  *   "@context": {"ex": "http://example.org/"},
@@ -164,7 +164,7 @@ export async function toNQuads(store, options = {}) {
  * }`;
  * const store = await parseJsonLd(jsonld);
  */
-export async function parseJsonLd(jsonld, options = {}) {
+export async function parseJsonLd(jsonld, _options = {}) {
   if (typeof jsonld !== 'string' && typeof jsonld !== 'object') {
     throw new TypeError('parseJsonLd: jsonld must be a string or object');
   }
@@ -172,7 +172,7 @@ export async function parseJsonLd(jsonld, options = {}) {
   try {
     // Parse JSON string if needed
     const jsonldData = typeof jsonld === 'string' ? JSON.parse(jsonld) : jsonld;
-    
+
     if (!jsonldData || (!Array.isArray(jsonldData) && typeof jsonldData !== 'object')) {
       throw new TypeError('parseJsonLd: jsonld must be an object or array');
     }
@@ -180,23 +180,26 @@ export async function parseJsonLd(jsonld, options = {}) {
     // Convert JSON-LD to RDF quads
     // This is a simplified implementation - in production you would use a proper JSON-LD to RDF converter
     const store = new Store();
-    
+
     // Handle @graph array or single object
     const items = jsonldData['@graph'] || (Array.isArray(jsonldData) ? jsonldData : [jsonldData]);
-    
+
     // Validate that we have valid JSON-LD structure
-    if (items.length === 0 || !items.some(item => item && typeof item === 'object' && item['@id'])) {
+    if (
+      items.length === 0 ||
+      !items.some(item => item && typeof item === 'object' && item['@id'])
+    ) {
       throw new Error('Invalid JSON-LD structure: no valid items with @id found');
     }
-    
+
     for (const item of items) {
       if (item && item['@id']) {
         const subject = item['@id'];
-        
+
         // Process each property
         for (const [key, value] of Object.entries(item)) {
           if (key === '@id' || key === '@context') continue;
-          
+
           if (Array.isArray(value)) {
             for (const val of value) {
               if (typeof val === 'object' && val['@id']) {
@@ -229,7 +232,7 @@ export async function parseJsonLd(jsonld, options = {}) {
         }
       }
     }
-    
+
     return store;
   } catch (error) {
     throw new Error(`Failed to parse JSON-LD: ${error.message}`);
@@ -242,9 +245,9 @@ export async function parseJsonLd(jsonld, options = {}) {
  * @param {Object} [options] - Serialization options
  * @param {Object} [options.context] - JSON-LD context
  * @returns {Promise<Object>} Promise resolving to the JSON-LD object
- * 
+ *
  * @throws {Error} If serialization fails
- * 
+ *
  * @example
  * const jsonld = await toJsonLd(store, {
  *   context: { ex: 'http://example.org/' }
@@ -261,7 +264,7 @@ export async function toJsonLd(store, options = {}) {
     const quads = store.getQuads();
     const result = {
       '@context': options.context || {},
-      '@graph': []
+      '@graph': [],
     };
 
     // Add @base to context if baseIRI is provided
@@ -274,14 +277,14 @@ export async function toJsonLd(store, options = {}) {
       const subject = quad.subject.value;
       const predicate = quad.predicate.value;
       const object = quad.object.value;
-      
+
       // Find existing subject in graph or create new one
       let subjectNode = result['@graph'].find(node => node['@id'] === subject);
       if (!subjectNode) {
         subjectNode = { '@id': subject };
         result['@graph'].push(subjectNode);
       }
-      
+
       // Add predicate-object pair
       if (!subjectNode[predicate]) {
         subjectNode[predicate] = [];

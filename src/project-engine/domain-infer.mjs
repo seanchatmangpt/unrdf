@@ -3,12 +3,12 @@
  * @module project-engine/domain-infer
  */
 
-import { promises as fs } from 'fs'
-import path from 'path'
-import { Store, DataFactory } from 'n3'
-import { z } from 'zod'
+import { promises as fs } from 'fs';
+import path from 'path';
+import { Store, DataFactory } from 'n3';
+import { z } from 'zod';
 
-const { namedNode, literal } = DataFactory
+const { namedNode, literal } = DataFactory;
 
 /* ========================================================================= */
 /* Namespace prefixes                                                        */
@@ -19,7 +19,7 @@ const NS = {
   rdfs: 'http://www.w3.org/2000/01/rdf-schema#',
   xsd: 'http://www.w3.org/2001/XMLSchema#',
   dom: 'http://example.org/unrdf/domain#',
-}
+};
 
 /* ========================================================================= */
 /* Zod Schemas                                                               */
@@ -33,14 +33,14 @@ const StackProfileSchema = z.object({
   hasDrizzle: z.boolean().default(false),
   hasTypescript: z.boolean().default(false),
   sourceRoot: z.string().default('src'),
-})
+});
 
 const InferOptionsSchema = z.object({
   fsStore: z.any(),
   stackProfile: StackProfileSchema.optional(),
   baseIri: z.string().default('http://example.org/unrdf/domain#'),
   projectRoot: z.string().optional(),
-})
+});
 
 /**
  * @typedef {Object} DomainField
@@ -91,10 +91,10 @@ function mapToXsdType(typeName) {
     uuid: `${NS.xsd}string`,
     email: `${NS.xsd}string`,
     url: `${NS.xsd}anyURI`,
-  }
+  };
 
-  const normalized = typeName.toLowerCase().replace(/[\[\]?]/g, '')
-  return typeMap[normalized] || `${NS.xsd}string`
+  const normalized = typeName.toLowerCase().replace(/[\[\]?]/g, '');
+  return typeMap[normalized] || `${NS.xsd}string`;
 }
 
 /* ========================================================================= */
@@ -108,9 +108,9 @@ function mapToXsdType(typeName) {
  */
 async function readFileContent(filePath) {
   try {
-    return await fs.readFile(filePath, 'utf-8')
+    return await fs.readFile(filePath, 'utf-8');
   } catch {
-    return null
+    return null;
   }
 }
 
@@ -120,16 +120,16 @@ async function readFileContent(filePath) {
  * @returns {Set<string>}
  */
 function extractFilePaths(fsStore) {
-  const paths = new Set()
+  const paths = new Set();
   const quads = fsStore.getQuads(
     null,
     namedNode('http://example.org/unrdf/filesystem#relativePath'),
     null
-  )
+  );
   for (const quad of quads) {
-    paths.add(quad.object.value)
+    paths.add(quad.object.value);
   }
-  return paths
+  return paths;
 }
 
 /* ========================================================================= */
@@ -151,41 +151,41 @@ async function detectStackProfile(fsStore, projectRoot) {
     hasDrizzle: false,
     hasTypescript: false,
     sourceRoot: 'src',
-  }
+  };
 
-  const filePaths = extractFilePaths(fsStore)
+  const filePaths = extractFilePaths(fsStore);
 
   // Check for TypeScript
   if (filePaths.has('tsconfig.json') || filePaths.has('tsconfig.base.json')) {
-    profile.hasTypescript = true
+    profile.hasTypescript = true;
   }
 
   // Check for Prisma
   if (filePaths.has('prisma/schema.prisma') || filePaths.has('schema.prisma')) {
-    profile.hasPrisma = true
+    profile.hasPrisma = true;
   }
 
   // Try to read package.json if projectRoot provided
   if (projectRoot) {
-    const pkgContent = await readFileContent(path.join(projectRoot, 'package.json'))
+    const pkgContent = await readFileContent(path.join(projectRoot, 'package.json'));
     if (pkgContent) {
       try {
-        const pkg = JSON.parse(pkgContent)
-        const allDeps = { ...pkg.dependencies, ...pkg.devDependencies }
+        const pkg = JSON.parse(pkgContent);
+        const allDeps = { ...pkg.dependencies, ...pkg.devDependencies };
 
-        if (allDeps.zod) profile.hasZod = true
-        if (allDeps['@prisma/client'] || allDeps.prisma) profile.hasPrisma = true
-        if (allDeps.typeorm) profile.hasTypeORM = true
-        if (allDeps.sequelize) profile.hasSequelize = true
-        if (allDeps.drizzle) profile.hasDrizzle = true
-        if (allDeps.typescript) profile.hasTypescript = true
+        if (allDeps.zod) profile.hasZod = true;
+        if (allDeps['@prisma/client'] || allDeps.prisma) profile.hasPrisma = true;
+        if (allDeps.typeorm) profile.hasTypeORM = true;
+        if (allDeps.sequelize) profile.hasSequelize = true;
+        if (allDeps.drizzle) profile.hasDrizzle = true;
+        if (allDeps.typescript) profile.hasTypescript = true;
       } catch {
         // Ignore JSON parse errors
       }
     }
   }
 
-  return profile
+  return profile;
 }
 
 /* ========================================================================= */
@@ -198,18 +198,19 @@ async function detectStackProfile(fsStore, projectRoot) {
  * @param {string} fileName
  * @returns {DomainEntity[]}
  */
-function parseZodSchemas(content, fileName) {
-  const entities = []
+function parseZodSchemas(content, _fileName) {
+  const entities = [];
 
   // Match export const XxxSchema = z.object({ ... })
-  const schemaPattern = /(?:export\s+)?(?:const|let)\s+(\w+)Schema\s*=\s*z\.object\(\s*\{([^}]+(?:\{[^}]*\}[^}]*)*)\}\s*\)/g
+  const schemaPattern =
+    /(?:export\s+)?(?:const|let)\s+(\w+)Schema\s*=\s*z\.object\(\s*\{([^}]+(?:\{[^}]*\}[^}]*)*)\}\s*\)/g;
 
-  let match
+  let match;
   while ((match = schemaPattern.exec(content)) !== null) {
-    const entityName = match[1]
-    const fieldsBlock = match[2]
+    const entityName = match[1];
+    const fieldsBlock = match[2];
 
-    const fields = parseZodFields(fieldsBlock)
+    const fields = parseZodFields(fieldsBlock);
 
     if (fields.length > 0) {
       entities.push({
@@ -217,19 +218,20 @@ function parseZodSchemas(content, fileName) {
         source: 'zod',
         fields,
         relations: extractZodRelations(fieldsBlock),
-      })
+      });
     }
   }
 
   // Also match z.object inline (for simpler schemas)
-  const inlinePattern = /(?:export\s+)?(?:const|let)\s+(\w+)\s*=\s*z\.object\(\s*\{([^}]+(?:\{[^}]*\}[^}]*)*)\}\s*\)/g
+  const inlinePattern =
+    /(?:export\s+)?(?:const|let)\s+(\w+)\s*=\s*z\.object\(\s*\{([^}]+(?:\{[^}]*\}[^}]*)*)\}\s*\)/g;
 
   while ((match = inlinePattern.exec(content)) !== null) {
-    const entityName = match[1]
-    if (entityName.endsWith('Schema')) continue // Already matched above
+    const entityName = match[1];
+    if (entityName.endsWith('Schema')) continue; // Already matched above
 
-    const fieldsBlock = match[2]
-    const fields = parseZodFields(fieldsBlock)
+    const fieldsBlock = match[2];
+    const fields = parseZodFields(fieldsBlock);
 
     if (fields.length > 0) {
       entities.push({
@@ -237,11 +239,11 @@ function parseZodSchemas(content, fileName) {
         source: 'zod',
         fields,
         relations: extractZodRelations(fieldsBlock),
-      })
+      });
     }
   }
 
-  return entities
+  return entities;
 }
 
 /**
@@ -250,39 +252,41 @@ function parseZodSchemas(content, fileName) {
  * @returns {DomainField[]}
  */
 function parseZodFields(fieldsBlock) {
-  const fields = []
+  const fields = [];
 
   // Match: fieldName: z.string(), z.number(), z.boolean(), z.array(), etc.
-  const fieldPattern = /(\w+)\s*:\s*z\.(string|number|boolean|date|bigint|array|enum|object|union|optional|nullable)(\([^)]*\))?/g
+  const fieldPattern =
+    /(\w+)\s*:\s*z\.(string|number|boolean|date|bigint|array|enum|object|union|optional|nullable)(\([^)]*\))?/g;
 
-  let match
+  let match;
   while ((match = fieldPattern.exec(fieldsBlock)) !== null) {
-    const fieldName = match[1]
-    let zodType = match[2]
-    const modifier = match[3] || ''
+    const fieldName = match[1];
+    let zodType = match[2];
+    const _modifier = match[3] || '';
 
     // Check for optional/nullable chain
-    const isOptional = fieldsBlock.includes(`${fieldName}:`) &&
-      (fieldsBlock.includes('.optional()') || fieldsBlock.includes('.nullable()'))
-    const isArray = zodType === 'array'
+    const isOptional =
+      fieldsBlock.includes(`${fieldName}:`) &&
+      (fieldsBlock.includes('.optional()') || fieldsBlock.includes('.nullable()'));
+    const isArray = zodType === 'array';
 
     // Map zod types to our types
-    let type = 'string'
-    if (zodType === 'number' || zodType === 'bigint') type = 'number'
-    else if (zodType === 'boolean') type = 'boolean'
-    else if (zodType === 'date') type = 'date'
-    else if (zodType === 'array') type = 'array'
-    else if (zodType === 'enum') type = 'enum'
+    let type = 'string';
+    if (zodType === 'number' || zodType === 'bigint') type = 'number';
+    else if (zodType === 'boolean') type = 'boolean';
+    else if (zodType === 'date') type = 'date';
+    else if (zodType === 'array') type = 'array';
+    else if (zodType === 'enum') type = 'enum';
 
     fields.push({
       name: fieldName,
       type,
       optional: isOptional,
       array: isArray,
-    })
+    });
   }
 
-  return fields
+  return fields;
 }
 
 /**
@@ -291,20 +295,20 @@ function parseZodFields(fieldsBlock) {
  * @returns {string[]}
  */
 function extractZodRelations(fieldsBlock) {
-  const relations = []
+  const relations = [];
 
   // Match: z.array(OtherSchema), z.lazy(() => OtherSchema)
-  const relationPattern = /z\.(?:array|lazy)\s*\(\s*(?:\(\)\s*=>\s*)?(\w+)Schema\s*\)/g
+  const relationPattern = /z\.(?:array|lazy)\s*\(\s*(?:\(\)\s*=>\s*)?(\w+)Schema\s*\)/g;
 
-  let match
+  let match;
   while ((match = relationPattern.exec(fieldsBlock)) !== null) {
-    const relatedEntity = match[1]
+    const relatedEntity = match[1];
     if (!relations.includes(relatedEntity)) {
-      relations.push(relatedEntity)
+      relations.push(relatedEntity);
     }
   }
 
-  return relations
+  return relations;
 }
 
 /* ========================================================================= */
@@ -317,27 +321,27 @@ function extractZodRelations(fieldsBlock) {
  * @returns {DomainEntity[]}
  */
 function parsePrismaSchema(content) {
-  const entities = []
+  const entities = [];
 
   // Match model blocks
-  const modelPattern = /model\s+(\w+)\s*\{([^}]+)\}/g
+  const modelPattern = /model\s+(\w+)\s*\{([^}]+)\}/g;
 
-  let match
+  let match;
   while ((match = modelPattern.exec(content)) !== null) {
-    const modelName = match[1]
-    const fieldsBlock = match[2]
+    const modelName = match[1];
+    const fieldsBlock = match[2];
 
-    const { fields, relations } = parsePrismaFields(fieldsBlock)
+    const { fields, relations } = parsePrismaFields(fieldsBlock);
 
     entities.push({
       name: modelName,
       source: 'prisma',
       fields,
       relations,
-    })
+    });
   }
 
-  return entities
+  return entities;
 }
 
 /**
@@ -346,57 +350,67 @@ function parsePrismaSchema(content) {
  * @returns {{fields: DomainField[], relations: string[]}}
  */
 function parsePrismaFields(fieldsBlock) {
-  const fields = []
-  const relations = []
+  const fields = [];
+  const relations = [];
 
-  const lines = fieldsBlock.split('\n')
+  const lines = fieldsBlock.split('\n');
 
   for (const line of lines) {
-    const trimmed = line.trim()
-    if (!trimmed || trimmed.startsWith('//') || trimmed.startsWith('@@')) continue
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith('//') || trimmed.startsWith('@@')) continue;
 
     // Match: fieldName Type? @relation(...) or fieldName Type[]
-    const fieldMatch = trimmed.match(/^(\w+)\s+(\w+)(\[\])?\??(.*)$/)
+    const fieldMatch = trimmed.match(/^(\w+)\s+(\w+)(\[\])?\??(.*)$/);
 
     if (fieldMatch) {
-      const fieldName = fieldMatch[1]
-      const fieldType = fieldMatch[2]
-      const isArray = !!fieldMatch[3]
-      const modifiers = fieldMatch[4] || ''
+      const fieldName = fieldMatch[1];
+      const fieldType = fieldMatch[2];
+      const isArray = !!fieldMatch[3];
+      const modifiers = fieldMatch[4] || '';
 
       // Skip internal Prisma fields
-      if (fieldName.startsWith('_')) continue
+      if (fieldName.startsWith('_')) continue;
 
       // Check if it's a relation
       if (modifiers.includes('@relation')) {
         if (!relations.includes(fieldType)) {
-          relations.push(fieldType)
+          relations.push(fieldType);
         }
-        continue
+        continue;
       }
 
       // Check if type is another model (relation without @relation)
-      const isPrimitiveType = ['String', 'Int', 'Float', 'Boolean', 'DateTime', 'BigInt', 'Decimal', 'Json', 'Bytes'].includes(fieldType)
+      const isPrimitiveType = [
+        'String',
+        'Int',
+        'Float',
+        'Boolean',
+        'DateTime',
+        'BigInt',
+        'Decimal',
+        'Json',
+        'Bytes',
+      ].includes(fieldType);
 
       if (!isPrimitiveType) {
         if (!relations.includes(fieldType)) {
-          relations.push(fieldType)
+          relations.push(fieldType);
         }
-        continue
+        continue;
       }
 
-      const isOptional = trimmed.includes('?')
+      const isOptional = trimmed.includes('?');
 
       fields.push({
         name: fieldName,
         type: fieldType.toLowerCase(),
         optional: isOptional,
         array: isArray,
-      })
+      });
     }
   }
 
-  return { fields, relations }
+  return { fields, relations };
 }
 
 /* ========================================================================= */
@@ -409,23 +423,28 @@ function parsePrismaFields(fieldsBlock) {
  * @param {string} fileName
  * @returns {DomainEntity[]}
  */
-function parseTypeScriptTypes(content, fileName) {
-  const entities = []
+function parseTypeScriptTypes(content, _fileName) {
+  const entities = [];
 
   // Match interface declarations
-  const interfacePattern = /(?:export\s+)?interface\s+(\w+)(?:\s+extends\s+[\w,\s]+)?\s*\{([^}]+(?:\{[^}]*\}[^}]*)*)\}/g
+  const interfacePattern =
+    /(?:export\s+)?interface\s+(\w+)(?:\s+extends\s+[\w,\s]+)?\s*\{([^}]+(?:\{[^}]*\}[^}]*)*)\}/g;
 
-  let match
+  let match;
   while ((match = interfacePattern.exec(content)) !== null) {
-    const entityName = match[1]
-    const fieldsBlock = match[2]
+    const entityName = match[1];
+    const fieldsBlock = match[2];
 
     // Skip common non-entity interfaces
-    if (entityName.endsWith('Props') || entityName.endsWith('Options') || entityName.endsWith('Config')) {
-      continue
+    if (
+      entityName.endsWith('Props') ||
+      entityName.endsWith('Options') ||
+      entityName.endsWith('Config')
+    ) {
+      continue;
     }
 
-    const { fields, relations } = parseTypeScriptFields(fieldsBlock)
+    const { fields, relations } = parseTypeScriptFields(fieldsBlock);
 
     if (fields.length > 0) {
       entities.push({
@@ -433,23 +452,27 @@ function parseTypeScriptTypes(content, fileName) {
         source: 'typescript',
         fields,
         relations,
-      })
+      });
     }
   }
 
   // Match type declarations with object shape
-  const typePattern = /(?:export\s+)?type\s+(\w+)\s*=\s*\{([^}]+(?:\{[^}]*\}[^}]*)*)\}/g
+  const typePattern = /(?:export\s+)?type\s+(\w+)\s*=\s*\{([^}]+(?:\{[^}]*\}[^}]*)*)\}/g;
 
   while ((match = typePattern.exec(content)) !== null) {
-    const entityName = match[1]
-    const fieldsBlock = match[2]
+    const entityName = match[1];
+    const fieldsBlock = match[2];
 
     // Skip utility types
-    if (entityName.endsWith('Props') || entityName.endsWith('Options') || entityName.endsWith('Config')) {
-      continue
+    if (
+      entityName.endsWith('Props') ||
+      entityName.endsWith('Options') ||
+      entityName.endsWith('Config')
+    ) {
+      continue;
     }
 
-    const { fields, relations } = parseTypeScriptFields(fieldsBlock)
+    const { fields, relations } = parseTypeScriptFields(fieldsBlock);
 
     if (fields.length > 0) {
       entities.push({
@@ -457,11 +480,11 @@ function parseTypeScriptTypes(content, fileName) {
         source: 'typescript',
         fields,
         relations,
-      })
+      });
     }
   }
 
-  return entities
+  return entities;
 }
 
 /**
@@ -470,20 +493,20 @@ function parseTypeScriptTypes(content, fileName) {
  * @returns {{fields: DomainField[], relations: string[]}}
  */
 function parseTypeScriptFields(fieldsBlock) {
-  const fields = []
-  const relations = []
+  const fields = [];
+  const relations = [];
 
   // Match: fieldName: Type, fieldName?: Type, readonly fieldName: Type
-  const fieldPattern = /(?:readonly\s+)?(\w+)(\?)?:\s*([^;,\n]+)/g
+  const fieldPattern = /(?:readonly\s+)?(\w+)(\?)?:\s*([^;,\n]+)/g;
 
-  let match
+  let match;
   while ((match = fieldPattern.exec(fieldsBlock)) !== null) {
-    const fieldName = match[1]
-    const isOptional = !!match[2]
-    let rawType = match[3].trim()
+    const fieldName = match[1];
+    const isOptional = !!match[2];
+    let rawType = match[3].trim();
 
     // Check for array types
-    const isArray = rawType.endsWith('[]') || rawType.startsWith('Array<')
+    const isArray = rawType.endsWith('[]') || rawType.startsWith('Array<');
 
     // Clean up the type
     let baseType = rawType
@@ -491,18 +514,35 @@ function parseTypeScriptFields(fieldsBlock) {
       .replace(/^Array<(.+)>$/, '$1')
       .replace(/\s*\|\s*null$/, '')
       .replace(/\s*\|\s*undefined$/, '')
-      .trim()
+      .trim();
 
     // Check if it's a primitive type
-    const primitiveTypes = ['string', 'number', 'boolean', 'Date', 'bigint', 'symbol', 'any', 'unknown', 'never', 'void']
-    const isPrimitive = primitiveTypes.includes(baseType) || primitiveTypes.includes(baseType.toLowerCase())
+    const primitiveTypes = [
+      'string',
+      'number',
+      'boolean',
+      'Date',
+      'bigint',
+      'symbol',
+      'any',
+      'unknown',
+      'never',
+      'void',
+    ];
+    const isPrimitive =
+      primitiveTypes.includes(baseType) || primitiveTypes.includes(baseType.toLowerCase());
 
-    if (!isPrimitive && /^[A-Z]/.test(baseType) && !baseType.includes('|') && !baseType.includes('&')) {
+    if (
+      !isPrimitive &&
+      /^[A-Z]/.test(baseType) &&
+      !baseType.includes('|') &&
+      !baseType.includes('&')
+    ) {
       // Looks like a relation to another entity
       if (!relations.includes(baseType)) {
-        relations.push(baseType)
+        relations.push(baseType);
       }
-      continue
+      continue;
     }
 
     fields.push({
@@ -510,10 +550,10 @@ function parseTypeScriptFields(fieldsBlock) {
       type: baseType.toLowerCase(),
       optional: isOptional,
       array: isArray,
-    })
+    });
   }
 
-  return { fields, relations }
+  return { fields, relations };
 }
 
 /* ========================================================================= */
@@ -526,33 +566,34 @@ function parseTypeScriptFields(fieldsBlock) {
  * @param {string} fileName
  * @returns {DomainEntity[]}
  */
-function parseTypeORMEntities(content, fileName) {
-  const entities = []
+function parseTypeORMEntities(content, _fileName) {
+  const entities = [];
 
   // Check if this looks like a TypeORM entity file
   if (!content.includes('@Entity') && !content.includes('typeorm')) {
-    return entities
+    return entities;
   }
 
   // Match @Entity() class declarations
-  const entityPattern = /@Entity\([^)]*\)\s*(?:export\s+)?class\s+(\w+)(?:\s+extends\s+\w+)?\s*\{([^]*?)(?=\n\}|$)/g
+  const entityPattern =
+    /@Entity\([^)]*\)\s*(?:export\s+)?class\s+(\w+)(?:\s+extends\s+\w+)?\s*\{([^]*?)(?=\n\}|$)/g;
 
-  let match
+  let match;
   while ((match = entityPattern.exec(content)) !== null) {
-    const entityName = match[1]
-    const classBody = match[2]
+    const entityName = match[1];
+    const classBody = match[2];
 
-    const { fields, relations } = parseTypeORMFields(classBody)
+    const { fields, relations } = parseTypeORMFields(classBody);
 
     entities.push({
       name: entityName,
       source: 'typeorm',
       fields,
       relations,
-    })
+    });
   }
 
-  return entities
+  return entities;
 }
 
 /**
@@ -561,36 +602,37 @@ function parseTypeORMEntities(content, fileName) {
  * @returns {{fields: DomainField[], relations: string[]}}
  */
 function parseTypeORMFields(classBody) {
-  const fields = []
-  const relations = []
+  const fields = [];
+  const relations = [];
 
   // Match @Column() fieldName: Type
-  const columnPattern = /@Column\([^)]*\)\s*(\w+)(?:\?)?:\s*([^;\n]+)/g
+  const columnPattern = /@Column\([^)]*\)\s*(\w+)(?:\?)?:\s*([^;\n]+)/g;
 
-  let match
+  let match;
   while ((match = columnPattern.exec(classBody)) !== null) {
-    const fieldName = match[1]
-    const fieldType = match[2].trim()
+    const fieldName = match[1];
+    const fieldType = match[2].trim();
 
     fields.push({
       name: fieldName,
       type: fieldType.toLowerCase(),
       optional: classBody.includes(`${fieldName}?:`),
       array: fieldType.endsWith('[]'),
-    })
+    });
   }
 
   // Match relation decorators
-  const relationPattern = /@(?:OneToMany|ManyToOne|OneToOne|ManyToMany)\([^)]*\)\s*\w+(?:\?)?:\s*(\w+)/g
+  const relationPattern =
+    /@(?:OneToMany|ManyToOne|OneToOne|ManyToMany)\([^)]*\)\s*\w+(?:\?)?:\s*(\w+)/g;
 
   while ((match = relationPattern.exec(classBody)) !== null) {
-    const relatedType = match[1]
+    const relatedType = match[1];
     if (!relations.includes(relatedType)) {
-      relations.push(relatedType)
+      relations.push(relatedType);
     }
   }
 
-  return { fields, relations }
+  return { fields, relations };
 }
 
 /* ========================================================================= */
@@ -604,26 +646,31 @@ function parseTypeORMFields(classBody) {
  * @returns {string[]}
  */
 function findSchemaFiles(filePaths, stackProfile) {
-  const schemaFiles = []
+  const schemaFiles = [];
 
   for (const filePath of filePaths) {
     // Skip node_modules, dist, etc.
-    if (filePath.includes('node_modules') || filePath.includes('/dist/') || filePath.includes('/build/')) {
-      continue
+    if (
+      filePath.includes('node_modules') ||
+      filePath.includes('/dist/') ||
+      filePath.includes('/build/')
+    ) {
+      continue;
     }
 
-    const ext = path.extname(filePath)
-    const basename = path.basename(filePath)
+    const ext = path.extname(filePath);
+    const basename = path.basename(filePath);
 
     // Check for Zod schema files
     if (stackProfile.hasZod) {
       if (
-        (filePath.includes('/schemas/') || filePath.includes('/schema/')) ||
+        filePath.includes('/schemas/') ||
+        filePath.includes('/schema/') ||
         (filePath.includes('/types/') && (ext === '.ts' || ext === '.mjs')) ||
         basename.includes('schema') ||
         basename.includes('validation')
       ) {
-        schemaFiles.push(filePath)
+        schemaFiles.push(filePath);
       }
     }
 
@@ -636,7 +683,7 @@ function findSchemaFiles(filePaths, stackProfile) {
         basename.endsWith('.d.ts') ||
         basename.includes('.types.')
       ) {
-        schemaFiles.push(filePath)
+        schemaFiles.push(filePath);
       }
     }
 
@@ -647,20 +694,20 @@ function findSchemaFiles(filePaths, stackProfile) {
         filePath.includes('/entity/') ||
         basename.includes('.entity.')
       ) {
-        schemaFiles.push(filePath)
+        schemaFiles.push(filePath);
       }
     }
 
     // Check for Prisma schema
     if (stackProfile.hasPrisma) {
       if (basename === 'schema.prisma') {
-        schemaFiles.push(filePath)
+        schemaFiles.push(filePath);
       }
     }
   }
 
   // Dedupe
-  return [...new Set(schemaFiles)]
+  return [...new Set(schemaFiles)];
 }
 
 /* ========================================================================= */
@@ -674,85 +721,53 @@ function findSchemaFiles(filePaths, stackProfile) {
  * @param {string} baseIri
  */
 function addEntityToStore(store, entity, baseIri) {
-  const entityIri = namedNode(`${baseIri}${entity.name}`)
+  const entityIri = namedNode(`${baseIri}${entity.name}`);
 
   // Add entity type
-  store.addQuad(
-    entityIri,
-    namedNode(`${NS.rdf}type`),
-    namedNode(`${NS.dom}Entity`)
-  )
+  store.addQuad(entityIri, namedNode(`${NS.rdf}type`), namedNode(`${NS.dom}Entity`));
 
   // Add label
-  store.addQuad(
-    entityIri,
-    namedNode(`${NS.rdfs}label`),
-    literal(entity.name)
-  )
+  store.addQuad(entityIri, namedNode(`${NS.rdfs}label`), literal(entity.name));
 
   // Add source
-  store.addQuad(
-    entityIri,
-    namedNode(`${NS.dom}source`),
-    literal(entity.source)
-  )
+  store.addQuad(entityIri, namedNode(`${NS.dom}source`), literal(entity.source));
 
   // Add fields
   for (const field of entity.fields) {
-    const fieldIri = namedNode(`${baseIri}${entity.name}.${field.name}`)
+    const fieldIri = namedNode(`${baseIri}${entity.name}.${field.name}`);
 
     // Link entity to field
-    store.addQuad(
-      entityIri,
-      namedNode(`${NS.dom}hasField`),
-      fieldIri
-    )
+    store.addQuad(entityIri, namedNode(`${NS.dom}hasField`), fieldIri);
 
     // Add field type
-    store.addQuad(
-      fieldIri,
-      namedNode(`${NS.rdf}type`),
-      namedNode(`${NS.dom}Field`)
-    )
+    store.addQuad(fieldIri, namedNode(`${NS.rdf}type`), namedNode(`${NS.dom}Field`));
 
     // Add field name
-    store.addQuad(
-      fieldIri,
-      namedNode(`${NS.dom}fieldName`),
-      literal(field.name)
-    )
+    store.addQuad(fieldIri, namedNode(`${NS.dom}fieldName`), literal(field.name));
 
     // Add field type (XSD)
-    store.addQuad(
-      fieldIri,
-      namedNode(`${NS.dom}fieldType`),
-      namedNode(mapToXsdType(field.type))
-    )
+    store.addQuad(fieldIri, namedNode(`${NS.dom}fieldType`), namedNode(mapToXsdType(field.type)));
 
     // Add optional flag
     store.addQuad(
       fieldIri,
       namedNode(`${NS.dom}isOptional`),
       literal(field.optional, namedNode(`${NS.xsd}boolean`))
-    )
+    );
 
     // Add array flag
     store.addQuad(
       fieldIri,
       namedNode(`${NS.dom}isArray`),
       literal(field.array, namedNode(`${NS.xsd}boolean`))
-    )
+    );
   }
 
   // Add relations
   for (const relation of entity.relations) {
-    const relationIri = namedNode(`${baseIri}${relation}`)
+    const relationIri = namedNode(`${baseIri}${relation}`);
 
-    store.addQuad(
-      entityIri,
-      namedNode(`${NS.dom}relatesTo`),
-      relationIri
-    )
+    store.addQuad(entityIri, namedNode(`${NS.dom}relatesTo`), relationIri);
   }
 }
 
@@ -771,82 +786,91 @@ function addEntityToStore(store, entity, baseIri) {
  * @returns {Promise<DomainInferResult>}
  */
 export async function inferDomainModel(options) {
-  const validated = InferOptionsSchema.parse(options)
-  const { fsStore, baseIri, projectRoot } = validated
+  const validated = InferOptionsSchema.parse(options);
+  const { fsStore, baseIri, projectRoot } = validated;
 
   // Detect or use provided stack profile
-  const stackProfile = validated.stackProfile || await detectStackProfile(fsStore, projectRoot)
+  const stackProfile = validated.stackProfile || (await detectStackProfile(fsStore, projectRoot));
 
-  const store = new Store()
-  const allEntities = []
+  const store = new Store();
+  const allEntities = [];
 
   // Get file paths from fsStore
-  const filePaths = extractFilePaths(fsStore)
+  const filePaths = extractFilePaths(fsStore);
 
   // Find schema files
-  const schemaFiles = findSchemaFiles(filePaths, stackProfile)
+  const schemaFiles = findSchemaFiles(filePaths, stackProfile);
 
   // Process each schema file
   for (const relativePath of schemaFiles) {
-    if (!projectRoot) continue
+    if (!projectRoot) continue;
 
-    const fullPath = path.join(projectRoot, relativePath)
-    const content = await readFileContent(fullPath)
+    const fullPath = path.join(projectRoot, relativePath);
+    const content = await readFileContent(fullPath);
 
-    if (!content) continue
+    if (!content) continue;
 
-    const ext = path.extname(relativePath)
+    const ext = path.extname(relativePath);
 
     // Parse based on file type and stack
     if (relativePath.endsWith('.prisma')) {
-      const entities = parsePrismaSchema(content)
-      allEntities.push(...entities)
+      const entities = parsePrismaSchema(content);
+      allEntities.push(...entities);
     } else if (ext === '.ts' || ext === '.tsx') {
       // Check for Zod schemas first
-      if (stackProfile.hasZod && (content.includes("from 'zod'") || content.includes('from "zod"'))) {
-        const zodEntities = parseZodSchemas(content, relativePath)
-        allEntities.push(...zodEntities)
+      if (
+        stackProfile.hasZod &&
+        (content.includes("from 'zod'") || content.includes('from "zod"'))
+      ) {
+        const zodEntities = parseZodSchemas(content, relativePath);
+        allEntities.push(...zodEntities);
       }
 
       // Check for TypeORM entities
       if (stackProfile.hasTypeORM && content.includes('@Entity')) {
-        const typeormEntities = parseTypeORMEntities(content, relativePath)
-        allEntities.push(...typeormEntities)
+        const typeormEntities = parseTypeORMEntities(content, relativePath);
+        allEntities.push(...typeormEntities);
       }
 
       // Parse TypeScript types/interfaces
       if (stackProfile.hasTypescript) {
-        const tsEntities = parseTypeScriptTypes(content, relativePath)
-        allEntities.push(...tsEntities)
+        const tsEntities = parseTypeScriptTypes(content, relativePath);
+        allEntities.push(...tsEntities);
       }
     } else if (ext === '.mjs' || ext === '.js') {
       // Check for Zod schemas in JS/MJS files
-      if (stackProfile.hasZod && (content.includes("from 'zod'") || content.includes('from "zod"'))) {
-        const zodEntities = parseZodSchemas(content, relativePath)
-        allEntities.push(...zodEntities)
+      if (
+        stackProfile.hasZod &&
+        (content.includes("from 'zod'") || content.includes('from "zod"'))
+      ) {
+        const zodEntities = parseZodSchemas(content, relativePath);
+        allEntities.push(...zodEntities);
       }
     }
   }
 
   // Deduplicate entities by name (prefer richer sources)
-  const entityMap = new Map()
-  const sourcePriority = { prisma: 4, typeorm: 3, zod: 2, typescript: 1 }
+  const entityMap = new Map();
+  const sourcePriority = { prisma: 4, typeorm: 3, zod: 2, typescript: 1 };
 
   for (const entity of allEntities) {
-    const existing = entityMap.get(entity.name)
-    if (!existing || (sourcePriority[entity.source] || 0) > (sourcePriority[existing.source] || 0)) {
-      entityMap.set(entity.name, entity)
+    const existing = entityMap.get(entity.name);
+    if (
+      !existing ||
+      (sourcePriority[entity.source] || 0) > (sourcePriority[existing.source] || 0)
+    ) {
+      entityMap.set(entity.name, entity);
     }
   }
 
   // Add entities to store
-  let fieldCount = 0
-  let relationshipCount = 0
+  let fieldCount = 0;
+  let relationshipCount = 0;
 
   for (const entity of entityMap.values()) {
-    addEntityToStore(store, entity, baseIri)
-    fieldCount += entity.fields.length
-    relationshipCount += entity.relations.length
+    addEntityToStore(store, entity, baseIri);
+    fieldCount += entity.fields.length;
+    relationshipCount += entity.relations.length;
   }
 
   return {
@@ -856,7 +880,7 @@ export async function inferDomainModel(options) {
       fieldCount,
       relationshipCount,
     },
-  }
+  };
 }
 
 /**
@@ -869,15 +893,15 @@ export async function inferDomainModel(options) {
  */
 export async function inferDomainModelFromPath(projectRoot, options = {}) {
   // Import fs-scan dynamically to avoid circular deps
-  const { scanFileSystemToStore } = await import('./fs-scan.mjs')
+  const { scanFileSystemToStore } = await import('./fs-scan.mjs');
 
-  const { store: fsStore } = await scanFileSystemToStore({ root: projectRoot })
+  const { store: fsStore } = await scanFileSystemToStore({ root: projectRoot });
 
   return inferDomainModel({
     fsStore,
     projectRoot,
     baseIri: options.baseIri,
-  })
+  });
 }
 
 /* ========================================================================= */
@@ -892,50 +916,50 @@ export async function inferDomainModelFromPath(projectRoot, options = {}) {
  * @returns {import('../diff.mjs').OntologyChange | null}
  */
 export function DomainModelLens(triple, direction) {
-  const { subject, predicate, object } = triple
+  const { subject, predicate, object } = triple;
 
   // Entity added/removed
   if (predicate === `${NS.rdf}type` && object === `${NS.dom}Entity`) {
-    const entityName = subject.split('#').pop() || subject.split('/').pop()
+    const entityName = subject.split('#').pop() || subject.split('/').pop();
     return {
       kind: direction === 'added' ? 'EntityAdded' : 'EntityRemoved',
       entity: subject,
       details: { name: entityName },
-    }
+    };
   }
 
   // Field added/removed
   if (predicate === `${NS.dom}hasField`) {
-    const entityName = subject.split('#').pop() || subject.split('/').pop()
-    const fieldName = object.split('.').pop()
+    const entityName = subject.split('#').pop() || subject.split('/').pop();
+    const fieldName = object.split('.').pop();
     return {
       kind: direction === 'added' ? 'FieldAdded' : 'FieldRemoved',
       entity: subject,
       role: fieldName,
       details: { entityName, fieldName },
-    }
+    };
   }
 
   // Relation added/removed
   if (predicate === `${NS.dom}relatesTo`) {
-    const fromEntity = subject.split('#').pop() || subject.split('/').pop()
-    const toEntity = object.split('#').pop() || object.split('/').pop()
+    const fromEntity = subject.split('#').pop() || subject.split('/').pop();
+    const toEntity = object.split('#').pop() || object.split('/').pop();
     return {
       kind: direction === 'added' ? 'RelationAdded' : 'RelationRemoved',
       entity: subject,
       details: { from: fromEntity, to: toEntity },
-    }
+    };
   }
 
   // Field type changed (detected as removed + added)
   if (predicate === `${NS.dom}fieldType`) {
-    const fieldPath = subject.split('#').pop() || subject.split('/').pop()
+    const fieldPath = subject.split('#').pop() || subject.split('/').pop();
     return {
       kind: direction === 'added' ? 'FieldTypeSet' : 'FieldTypeUnset',
       entity: subject,
       details: { field: fieldPath, type: object },
-    }
+    };
   }
 
-  return null
+  return null;
 }

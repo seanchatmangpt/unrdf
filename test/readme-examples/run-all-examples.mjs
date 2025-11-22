@@ -27,7 +27,7 @@ const tests = [
   { name: 'Observability', fn: testObservability, lines: '291-304' },
   { name: 'Simple Graph', fn: testSimpleGraph, lines: '336-379' },
   { name: 'Policy Validation', fn: testPolicyValidation, lines: '383-426' },
-  { name: 'Audit Trail', fn: testAuditTrail, lines: '430-462' }
+  { name: 'Audit Trail', fn: testAuditTrail, lines: '430-462' },
 ];
 
 console.log('═══════════════════════════════════════════════════════');

@@ -4,7 +4,10 @@
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { Store, Parser, DataFactory } from 'n3';
-import { RealTimeValidator, ValidationMode } from '../../src/knowledge-engine/streaming/real-time-validator.mjs';
+import {
+  RealTimeValidator,
+  ValidationMode,
+} from '../../src/knowledge-engine/streaming/real-time-validator.mjs';
 
 const { namedNode, literal, quad } = DataFactory;
 
@@ -31,7 +34,7 @@ describe('RealTimeValidator', () => {
       mode: ValidationMode.DELTA,
       shapes,
       strict: false,
-      enableCaching: true
+      enableCaching: true,
     });
   });
 
@@ -49,7 +52,7 @@ describe('RealTimeValidator', () => {
       const shapesStore = new Store(new Parser().parse(shapes));
       const v = new RealTimeValidator({
         shapes: shapesStore,
-        mode: ValidationMode.DELTA
+        mode: ValidationMode.DELTA,
       });
 
       expect(v.shapesStore).toBe(shapesStore);
@@ -76,9 +79,9 @@ describe('RealTimeValidator', () => {
             namedNode('http://example.org/alice'),
             namedNode('http://example.org/name'),
             literal('Alice')
-          )
+          ),
         ],
-        removals: []
+        removals: [],
       };
 
       const result = await validator.validateDelta(delta);
@@ -97,10 +100,10 @@ describe('RealTimeValidator', () => {
             namedNode('http://example.org/bob'),
             namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
             namedNode('http://example.org/Person')
-          )
+          ),
           // Missing required name property
         ],
-        removals: []
+        removals: [],
       };
 
       const result = await validator.validateDelta(delta);
@@ -121,9 +124,9 @@ describe('RealTimeValidator', () => {
             namedNode('http://example.org/alice'),
             namedNode('http://example.org/name'),
             literal('Alice')
-          )
+          ),
         ],
-        removals: []
+        removals: [],
       };
 
       const result = await validator.validateDelta(delta);
@@ -139,7 +142,7 @@ describe('RealTimeValidator', () => {
     it('should support DELTA mode', async () => {
       const v = new RealTimeValidator({
         mode: ValidationMode.DELTA,
-        shapes
+        shapes,
       });
 
       const delta = {
@@ -153,9 +156,9 @@ describe('RealTimeValidator', () => {
             namedNode('http://example.org/alice'),
             namedNode('http://example.org/name'),
             literal('Alice')
-          )
+          ),
         ],
-        removals: []
+        removals: [],
       };
 
       const result = await v.validateDelta(delta);
@@ -167,20 +170,24 @@ describe('RealTimeValidator', () => {
     it('should support FULL mode', async () => {
       const v = new RealTimeValidator({
         mode: ValidationMode.FULL,
-        shapes
+        shapes,
       });
 
       const store = new Store();
-      store.addQuad(quad(
-        namedNode('http://example.org/alice'),
-        namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
-        namedNode('http://example.org/Person')
-      ));
-      store.addQuad(quad(
-        namedNode('http://example.org/alice'),
-        namedNode('http://example.org/name'),
-        literal('Alice')
-      ));
+      store.addQuad(
+        quad(
+          namedNode('http://example.org/alice'),
+          namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+          namedNode('http://example.org/Person')
+        )
+      );
+      store.addQuad(
+        quad(
+          namedNode('http://example.org/alice'),
+          namedNode('http://example.org/name'),
+          literal('Alice')
+        )
+      );
 
       const delta = { additions: [], removals: [] };
       const result = await v.validateDelta(delta, store);
@@ -193,7 +200,7 @@ describe('RealTimeValidator', () => {
     it('should support INCREMENTAL mode', async () => {
       const v = new RealTimeValidator({
         mode: ValidationMode.INCREMENTAL,
-        shapes
+        shapes,
       });
 
       const store = new Store();
@@ -203,9 +210,9 @@ describe('RealTimeValidator', () => {
             namedNode('http://example.org/alice'),
             namedNode('http://example.org/name'),
             literal('Alice')
-          )
+          ),
         ],
-        removals: []
+        removals: [],
       };
 
       const result = await v.validateDelta(delta, store);
@@ -228,9 +235,9 @@ describe('RealTimeValidator', () => {
             namedNode('http://example.org/alice'),
             namedNode('http://example.org/name'),
             literal('Alice')
-          )
+          ),
         ],
-        removals: []
+        removals: [],
       };
 
       // First validation
@@ -246,7 +253,7 @@ describe('RealTimeValidator', () => {
       const smallCacheValidator = new RealTimeValidator({
         shapes,
         enableCaching: true,
-        cacheSize: 2
+        cacheSize: 2,
       });
 
       // Add 3 different deltas
@@ -262,9 +269,9 @@ describe('RealTimeValidator', () => {
               namedNode(`http://example.org/person${i}`),
               namedNode('http://example.org/name'),
               literal(`Person ${i}`)
-            )
+            ),
           ],
-          removals: []
+          removals: [],
         };
 
         await smallCacheValidator.validateDelta(delta);
@@ -287,9 +294,9 @@ describe('RealTimeValidator', () => {
             namedNode('http://example.org/alice'),
             namedNode('http://example.org/name'),
             literal('Alice')
-          )
+          ),
         ],
-        removals: []
+        removals: [],
       };
 
       await validator.validateDelta(delta);
@@ -313,9 +320,9 @@ describe('RealTimeValidator', () => {
             namedNode('http://example.org/alice'),
             namedNode('http://example.org/name'),
             literal('Alice')
-          )
+          ),
         ],
-        removals: []
+        removals: [],
       };
 
       const delta2 = {
@@ -329,14 +336,14 @@ describe('RealTimeValidator', () => {
             namedNode('http://example.org/bob'),
             namedNode('http://example.org/name'),
             literal('Bob')
-          )
+          ),
         ],
-        removals: []
+        removals: [],
       };
 
       const results = await Promise.all([
         validator.validateDebounced(delta1),
-        validator.validateDebounced(delta2)
+        validator.validateDebounced(delta2),
       ]);
 
       expect(results).toHaveLength(2);
@@ -349,8 +356,8 @@ describe('RealTimeValidator', () => {
     it.skip('should emit violation event', async () => {
       // SKIPPED: 80/20 - Depends on violation detection which is engine-specific
       // All other event tests pass successfully
-      const eventPromise = new Promise((resolve) => {
-        validator.once('violation', (result) => {
+      const eventPromise = new Promise(resolve => {
+        validator.once('violation', result => {
           expect(result.conforms).toBe(false);
           expect(result.violations.length).toBeGreaterThan(0);
           resolve();
@@ -363,10 +370,10 @@ describe('RealTimeValidator', () => {
             namedNode('http://example.org/bob'),
             namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
             namedNode('http://example.org/Person')
-          )
+          ),
           // Missing required name
         ],
-        removals: []
+        removals: [],
       };
 
       await validator.validateDelta(delta);
@@ -374,8 +381,8 @@ describe('RealTimeValidator', () => {
     }, 60000);
 
     it('should emit validated event', async () => {
-      const eventPromise = new Promise((resolve) => {
-        validator.once('validated', (result) => {
+      const eventPromise = new Promise(resolve => {
+        validator.once('validated', result => {
           expect(result).toBeDefined();
           expect(result.id).toBeDefined();
           resolve();
@@ -393,9 +400,9 @@ describe('RealTimeValidator', () => {
             namedNode('http://example.org/alice'),
             namedNode('http://example.org/name'),
             literal('Alice')
-          )
+          ),
         ],
-        removals: []
+        removals: [],
       };
 
       await validator.validateDelta(delta);
@@ -428,9 +435,9 @@ describe('RealTimeValidator', () => {
             namedNode('http://example.org/alice'),
             namedNode('http://example.org/name'),
             literal('Alice')
-          )
+          ),
         ],
-        removals: []
+        removals: [],
       };
 
       const result = await hook.condition(store, delta);
@@ -451,9 +458,9 @@ describe('RealTimeValidator', () => {
             namedNode('http://example.org/alice'),
             namedNode('http://example.org/name'),
             literal('Alice')
-          )
+          ),
         ],
-        removals: []
+        removals: [],
       };
 
       await validator.validateDelta(delta);
@@ -475,10 +482,10 @@ describe('RealTimeValidator', () => {
             namedNode('http://example.org/bob'),
             namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
             namedNode('http://example.org/Person')
-          )
+          ),
           // Missing required name
         ],
-        removals: []
+        removals: [],
       };
 
       await validator.validateDelta(delta);
@@ -502,9 +509,9 @@ describe('RealTimeValidator', () => {
             namedNode('http://example.org/alice'),
             namedNode('http://example.org/name'),
             literal('Alice')
-          )
+          ),
         ],
-        removals: []
+        removals: [],
       };
 
       await validator.validateDelta(delta);
@@ -528,9 +535,9 @@ describe('RealTimeValidator', () => {
             namedNode('http://example.org/alice'),
             namedNode('http://example.org/name'),
             literal('Alice')
-          )
+          ),
         ],
-        removals: []
+        removals: [],
       };
 
       await validator.validateDelta(delta);
@@ -556,9 +563,9 @@ describe('RealTimeValidator', () => {
             namedNode('http://example.org/alice'),
             namedNode('http://example.org/name'),
             literal('Alice')
-          )
+          ),
         ],
-        removals: []
+        removals: [],
       };
 
       const start = Date.now();
@@ -585,9 +592,9 @@ describe('RealTimeValidator', () => {
               namedNode(`http://example.org/person${i}`),
               namedNode('http://example.org/name'),
               literal(`Person ${i}`)
-            )
+            ),
           ],
-          removals: []
+          removals: [],
         };
 
         promises.push(validator.validateDelta(delta));
@@ -617,9 +624,9 @@ describe('RealTimeValidator', () => {
             namedNode('http://example.org/alice'),
             namedNode('http://example.org/name'),
             literal('Alice')
-          )
+          ),
         ],
-        removals: []
+        removals: [],
       };
 
       // First validation (cache miss)

@@ -14,20 +14,20 @@ describe('README Observability Examples', () => {
     mockSpan = {
       setAttribute: vi.fn(),
       setStatus: vi.fn(),
-      end: vi.fn()
+      end: vi.fn(),
     };
 
     mockTracer = {
       startSpan: vi.fn().mockReturnValue(mockSpan),
       startActiveSpan: vi.fn((name, fn) => {
         return fn(mockSpan);
-      })
+      }),
     };
 
     mockObservability = {
       getPerformanceMetrics: vi.fn(),
       recordMetric: vi.fn(),
-      createSpan: vi.fn().mockReturnValue(mockSpan)
+      createSpan: vi.fn().mockReturnValue(mockSpan),
     };
   });
 
@@ -42,7 +42,7 @@ describe('README Observability Examples', () => {
 
     it('should get tracer from OpenTelemetry', () => {
       const mockTrace = {
-        getTracer: vi.fn().mockReturnValue(mockTracer)
+        getTracer: vi.fn().mockReturnValue(mockTracer),
       };
 
       const tracer = mockTrace.getTracer('unrdf');
@@ -96,10 +96,10 @@ describe('README Observability Examples', () => {
         latency: {
           p50: 50,
           p95: 125,
-          p99: 200
+          p99: 200,
         },
         cacheHitRate: 0.65,
-        throughput: 1000
+        throughput: 1000,
       });
 
       const metrics = mockObservability.getPerformanceMetrics();
@@ -112,7 +112,7 @@ describe('README Observability Examples', () => {
 
     it('should report latency p95 metric', () => {
       mockObservability.getPerformanceMetrics.mockReturnValue({
-        latency: { p50: 50, p95: 125, p99: 200 }
+        latency: { p50: 50, p95: 125, p99: 200 },
       });
 
       const metrics = mockObservability.getPerformanceMetrics();
@@ -122,7 +122,7 @@ describe('README Observability Examples', () => {
 
     it('should report cache hit rate', () => {
       mockObservability.getPerformanceMetrics.mockReturnValue({
-        cacheHitRate: 0.65
+        cacheHitRate: 0.65,
       });
 
       const metrics = mockObservability.getPerformanceMetrics();
@@ -137,7 +137,7 @@ describe('README Observability Examples', () => {
         cacheHitRate: 0.65,
         throughput: 1000,
         errorRate: 0.01,
-        queryCount: 5000
+        queryCount: 5000,
       });
 
       const metrics = mockObservability.getPerformanceMetrics();
@@ -153,7 +153,7 @@ describe('README Observability Examples', () => {
   describe('Production Metrics', () => {
     it('should meet p95 hook execution latency target (<100ms)', () => {
       mockObservability.getPerformanceMetrics.mockReturnValue({
-        latency: { p95: 85 }
+        latency: { p95: 85 },
       });
 
       const metrics = mockObservability.getPerformanceMetrics();
@@ -163,7 +163,7 @@ describe('README Observability Examples', () => {
 
     it('should meet p95 query execution latency target (<500ms)', () => {
       mockObservability.getPerformanceMetrics.mockReturnValue({
-        queryLatency: { p95: 450 }
+        queryLatency: { p95: 450 },
       });
 
       const metrics = mockObservability.getPerformanceMetrics();
@@ -173,7 +173,7 @@ describe('README Observability Examples', () => {
 
     it('should meet p95 transaction commit latency target (<500ms)', () => {
       mockObservability.getPerformanceMetrics.mockReturnValue({
-        transactionLatency: { p95: 475 }
+        transactionLatency: { p95: 475 },
       });
 
       const metrics = mockObservability.getPerformanceMetrics();
@@ -183,7 +183,7 @@ describe('README Observability Examples', () => {
 
     it('should achieve >50% cache hit rate after warmup', () => {
       mockObservability.getPerformanceMetrics.mockReturnValue({
-        cacheHitRate: 0.65
+        cacheHitRate: 0.65,
       });
 
       const metrics = mockObservability.getPerformanceMetrics();
@@ -215,9 +215,7 @@ describe('README Observability Examples', () => {
       const span = mockTracer.startSpan('operation');
       span.setStatus({ code: 1 }); // OK status
 
-      expect(span.setStatus).toHaveBeenCalledWith(
-        expect.objectContaining({ code: 1 })
-      );
+      expect(span.setStatus).toHaveBeenCalledWith(expect.objectContaining({ code: 1 }));
     });
 
     it('should set span status on error', () => {
@@ -227,7 +225,7 @@ describe('README Observability Examples', () => {
       expect(span.setStatus).toHaveBeenCalledWith(
         expect.objectContaining({
           code: 2,
-          message: 'Operation failed'
+          message: 'Operation failed',
         })
       );
     });
@@ -258,7 +256,7 @@ describe('README Observability Examples', () => {
     });
 
     it('should instrument validation', () => {
-      const span = mockObservability.createSpan('shacl.validate');
+      const _span = mockObservability.createSpan('shacl.validate');
 
       expect(mockObservability.createSpan).toHaveBeenCalledWith('shacl.validate');
     });
@@ -290,7 +288,9 @@ describe('README Observability Examples', () => {
     });
 
     it('should record histogram metrics', () => {
-      mockObservability.recordMetric('query.duration', 125, { type: 'histogram' });
+      mockObservability.recordMetric('query.duration', 125, {
+        type: 'histogram',
+      });
 
       expect(mockObservability.recordMetric).toHaveBeenCalledWith(
         'query.duration',
@@ -323,7 +323,7 @@ describe('README Observability Examples', () => {
 
     it('should track error rate metric', () => {
       mockObservability.getPerformanceMetrics.mockReturnValue({
-        errorRate: 0.01 // 1% error rate
+        errorRate: 0.01, // 1% error rate
       });
 
       const metrics = mockObservability.getPerformanceMetrics();

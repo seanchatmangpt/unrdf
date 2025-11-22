@@ -34,7 +34,7 @@ async function testSimpleGraph() {
     await system.executeTransaction({
       additions: [...store],
       removals: [],
-      actor: 'importer'
+      actor: 'importer',
     });
     console.log('✅ Added to knowledge graph');
 
@@ -50,7 +50,7 @@ async function testSimpleGraph() {
           ?friend foaf:name ?friendName .
         }
       `,
-      type: 'sparql-select'
+      type: 'sparql-select',
     });
     console.log('✅ Query results:', friends);
 

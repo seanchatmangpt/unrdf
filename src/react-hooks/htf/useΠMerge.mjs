@@ -40,19 +40,19 @@ export function useΠMerge(shards = []) {
       {
         id: 'claim-proof',
         name: 'Claim ⟺ Proof',
-        check: (shards) => {
-          const hasClaim = shards.find((s) => s.type === 'Claim');
-          const hasProof = shards.find((s) => s.type === 'Proof');
+        check: shards => {
+          const hasClaim = shards.find(s => s.type === 'Claim');
+          const hasProof = shards.find(s => s.type === 'Proof');
           return hasClaim && hasProof ? [] : [{ type: 'missing', element: 'Proof for Claim' }];
         },
       },
       {
         id: 'gap-design-eval',
         name: 'Gap ⟺ Design + Eval',
-        check: (shards) => {
-          const hasGap = shards.find((s) => s.type === 'Gap');
-          const hasDesign = shards.find((s) => s.type === 'Design');
-          const hasEval = shards.find((s) => s.type === 'Eval');
+        check: shards => {
+          const hasGap = shards.find(s => s.type === 'Gap');
+          const hasDesign = shards.find(s => s.type === 'Design');
+          const hasEval = shards.find(s => s.type === 'Eval');
           const violations = [];
           if (hasGap && !hasDesign) violations.push({ type: 'missing', element: 'Design for Gap' });
           if (hasGap && !hasEval) violations.push({ type: 'missing', element: 'Eval for Gap' });
@@ -62,18 +62,20 @@ export function useΠMerge(shards = []) {
       {
         id: 'objection-reply',
         name: 'Objection ⟺ Reply',
-        check: (shards) => {
-          const hasObjection = shards.find((s) => s.type === 'Objection');
-          const hasReply = shards.find((s) => s.type === 'Reply');
-          return hasObjection && !hasReply ? [{ type: 'missing', element: 'Reply to Objection' }] : [];
+        check: shards => {
+          const hasObjection = shards.find(s => s.type === 'Objection');
+          const hasReply = shards.find(s => s.type === 'Reply');
+          return hasObjection && !hasReply
+            ? [{ type: 'missing', element: 'Reply to Objection' }]
+            : [];
         },
       },
       {
         id: 'paper-synthesis',
         name: 'Papers ⟺ Synthesis',
-        check: (shards) => {
-          const papers = shards.filter((s) => ['Paper1', 'Paper2', 'Paper3'].includes(s.type));
-          const hasSynthesis = shards.find((s) => s.type === 'Synthesis');
+        check: shards => {
+          const papers = shards.filter(s => ['Paper1', 'Paper2', 'Paper3'].includes(s.type));
+          const hasSynthesis = shards.find(s => s.type === 'Synthesis');
           return papers.length > 0 && !hasSynthesis
             ? [{ type: 'missing', element: 'Synthesis for Papers' }]
             : [];
@@ -82,9 +84,9 @@ export function useΠMerge(shards = []) {
       {
         id: 'voice-canon-consistency',
         name: 'Voice ⟺ Canon (consistent)',
-        check: (shards) => {
-          const hasVoice = shards.find((s) => s.type === 'Voice');
-          const hasCanon = shards.find((s) => s.type === 'Canon');
+        check: shards => {
+          const hasVoice = shards.find(s => s.type === 'Voice');
+          const hasCanon = shards.find(s => s.type === 'Canon');
           // Would need semantic analysis to fully check; basic presence check for now
           return hasVoice && hasCanon ? [] : [];
         },
@@ -119,7 +121,7 @@ export function useΠMerge(shards = []) {
    */
   const validateStructure = useCallback(() => {
     const violations = checkMerge();
-    const failedCount = violations.filter((v) => !v.passed).length;
+    const failedCount = violations.filter(v => !v.passed).length;
     const score = 1 - failedCount / violations.length;
 
     return {
@@ -138,40 +140,65 @@ export function useΠMerge(shards = []) {
     const newLinks = [];
 
     // Claim → Proof
-    const claim = shards.find((s) => s.type === 'Claim');
-    const proof = shards.find((s) => s.type === 'Proof');
+    const claim = shards.find(s => s.type === 'Claim');
+    const proof = shards.find(s => s.type === 'Proof');
     if (claim && proof) {
-      newLinks.push({ source: claim.id, target: proof.id, type: 'supports', strength: 1.0 });
+      newLinks.push({
+        source: claim.id,
+        target: proof.id,
+        type: 'supports',
+        strength: 1.0,
+      });
     }
 
     // Gap → Design → Eval
-    const gap = shards.find((s) => s.type === 'Gap');
-    const design = shards.find((s) => s.type === 'Design');
-    const eval1 = shards.find((s) => s.type === 'Eval');
+    const gap = shards.find(s => s.type === 'Gap');
+    const design = shards.find(s => s.type === 'Design');
+    const eval1 = shards.find(s => s.type === 'Eval');
 
     if (gap && design) {
-      newLinks.push({ source: gap.id, target: design.id, type: 'motivates', strength: 0.9 });
+      newLinks.push({
+        source: gap.id,
+        target: design.id,
+        type: 'motivates',
+        strength: 0.9,
+      });
     }
     if (design && eval1) {
-      newLinks.push({ source: design.id, target: eval1.id, type: 'supports', strength: 0.9 });
+      newLinks.push({
+        source: design.id,
+        target: eval1.id,
+        type: 'supports',
+        strength: 0.9,
+      });
     }
 
     // Papers → Synthesis
-    const papers = shards.filter((s) => ['Paper1', 'Paper2', 'Paper3'].includes(s.type));
-    const synthesis = shards.find((s) => s.type === 'Synthesis');
+    const papers = shards.filter(s => ['Paper1', 'Paper2', 'Paper3'].includes(s.type));
+    const synthesis = shards.find(s => s.type === 'Synthesis');
 
     if (synthesis) {
       for (const paper of papers) {
-        newLinks.push({ source: paper.id, target: synthesis.id, type: 'contributes', strength: 0.8 });
+        newLinks.push({
+          source: paper.id,
+          target: synthesis.id,
+          type: 'contributes',
+          strength: 0.8,
+        });
       }
     }
 
     // Objection → Reply
-    const objection = shards.find((s) => s.type === 'Objection');
-    const reply = shards.find((s) => s.type === 'Reply');
+    const objection = shards.find(s => s.type === 'Objection');
+    const reply = shards.find(s => s.type === 'Reply');
 
     if (objection && reply) {
-      newLinks.push({ source: objection.id, target: reply.id, type: 'answers', strength: 0.95 });
+      newLinks.push({
+        source: objection.id,
+        target: reply.id,
+        type: 'answers',
+        strength: 0.95,
+      });
     }
 
     setLinks(newLinks);

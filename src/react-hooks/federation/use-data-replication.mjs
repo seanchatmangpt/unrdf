@@ -52,13 +52,13 @@ export function useDataReplication(config = {}) {
   const [syncStatus, setSyncStatus] = useState({
     inProgress: false,
     lastSync: null,
-    pendingChanges: 0
+    pendingChanges: 0,
   });
   const [replicationStats, setReplicationStats] = useState({
     totalReplications: 0,
     successCount: 0,
     failureCount: 0,
-    conflictCount: 0
+    conflictCount: 0,
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -98,30 +98,33 @@ export function useDataReplication(config = {}) {
       try {
         await federatedReplicate(change, {
           strategy: config.strategy || 'eventual',
-          replicationFactor: config.replicationFactor || 2
+          replicationFactor: config.replicationFactor || 2,
         });
 
         setReplicationStats(prev => ({
           ...prev,
-          successCount: prev.successCount + 1
+          successCount: prev.successCount + 1,
         }));
       } catch (err) {
         setReplicationStats(prev => ({
           ...prev,
-          failureCount: prev.failureCount + 1
+          failureCount: prev.failureCount + 1,
         }));
 
         // Check for conflicts
         if (err.code === 'REPLICATION_CONFLICT') {
-          setConflicts(prev => [...prev, {
-            change,
-            conflict: err.details,
-            timestamp: new Date().toISOString()
-          }]);
+          setConflicts(prev => [
+            ...prev,
+            {
+              change,
+              conflict: err.details,
+              timestamp: new Date().toISOString(),
+            },
+          ]);
 
           setReplicationStats(prev => ({
             ...prev,
-            conflictCount: prev.conflictCount + 1
+            conflictCount: prev.conflictCount + 1,
           }));
         }
       }
@@ -131,108 +134,113 @@ export function useDataReplication(config = {}) {
       ...prev,
       inProgress: false,
       lastSync: new Date().toISOString(),
-      pendingChanges: syncQueueRef.current.length
+      pendingChanges: syncQueueRef.current.length,
     }));
   }, [federatedReplicate, config, syncStatus.inProgress]);
 
   // Replicate a change
-  const replicate = useCallback(async (change, options = {}) => {
-    if (!system) {
-      throw new Error('Federation system not initialized');
-    }
+  const replicate = useCallback(
+    async (change, options = {}) => {
+      if (!system) {
+        throw new Error('Federation system not initialized');
+      }
 
-    try {
-      setLoading(true);
+      try {
+        setLoading(true);
 
-      // Add to queue if auto-sync enabled
-      if (config.autoSync) {
-        syncQueueRef.current.push(change);
-        setSyncStatus(prev => ({
-          ...prev,
-          pendingChanges: syncQueueRef.current.length
-        }));
+        // Add to queue if auto-sync enabled
+        if (config.autoSync) {
+          syncQueueRef.current.push(change);
+          setSyncStatus(prev => ({
+            ...prev,
+            pendingChanges: syncQueueRef.current.length,
+          }));
+
+          setReplicationStats(prev => ({
+            ...prev,
+            totalReplications: prev.totalReplications + 1,
+          }));
+
+          setLoading(false);
+          return { queued: true };
+        }
+
+        // Immediate replication
+        await federatedReplicate(change, {
+          strategy: options.strategy || config.strategy || 'eventual',
+          stores: options.stores,
+          timeout: options.timeout || 10000,
+        });
 
         setReplicationStats(prev => ({
           ...prev,
-          totalReplications: prev.totalReplications + 1
+          totalReplications: prev.totalReplications + 1,
+          successCount: prev.successCount + 1,
         }));
 
         setLoading(false);
-        return { queued: true };
-      }
+        return { success: true };
+      } catch (err) {
+        setError(err);
+        setLoading(false);
 
-      // Immediate replication
-      await federatedReplicate(change, {
-        strategy: options.strategy || config.strategy || 'eventual',
-        stores: options.stores,
-        timeout: options.timeout || 10000
-      });
+        // Handle conflicts
+        if (err.code === 'REPLICATION_CONFLICT') {
+          const conflict = {
+            change,
+            conflict: err.details,
+            timestamp: new Date().toISOString(),
+          };
 
-      setReplicationStats(prev => ({
-        ...prev,
-        totalReplications: prev.totalReplications + 1,
-        successCount: prev.successCount + 1
-      }));
+          setConflicts(prev => [...prev, conflict]);
+          setReplicationStats(prev => ({
+            ...prev,
+            conflictCount: prev.conflictCount + 1,
+          }));
 
-      setLoading(false);
-      return { success: true };
-    } catch (err) {
-      setError(err);
-      setLoading(false);
-
-      // Handle conflicts
-      if (err.code === 'REPLICATION_CONFLICT') {
-        const conflict = {
-          change,
-          conflict: err.details,
-          timestamp: new Date().toISOString()
-        };
-
-        setConflicts(prev => [...prev, conflict]);
-        setReplicationStats(prev => ({
-          ...prev,
-          conflictCount: prev.conflictCount + 1
-        }));
-
-        // Auto-resolve if resolver provided
-        if (config.conflictResolver) {
-          await resolveConflict(conflict.conflict.id, config.conflictResolver);
+          // Auto-resolve if resolver provided
+          if (config.conflictResolver) {
+            await resolveConflict(conflict.conflict.id, config.conflictResolver);
+          }
         }
-      }
 
-      throw err;
-    }
-  }, [system, federatedReplicate, config]);
+        throw err;
+      }
+    },
+    [system, federatedReplicate, config]
+  );
 
   // Resolve conflict
-  const resolveConflict = useCallback(async (conflictId, resolver) => {
-    const conflict = conflicts.find(c => c.conflict.id === conflictId);
-    if (!conflict) {
-      throw new Error(`Conflict ${conflictId} not found`);
-    }
+  const resolveConflict = useCallback(
+    async (conflictId, resolver) => {
+      const conflict = conflicts.find(c => c.conflict.id === conflictId);
+      if (!conflict) {
+        throw new Error(`Conflict ${conflictId} not found`);
+      }
 
-    try {
-      const resolution = typeof resolver === 'function'
-        ? await resolver(conflict.conflict.versions)
-        : resolver;
+      try {
+        const resolution =
+          typeof resolver === 'function' ? await resolver(conflict.conflict.versions) : resolver;
 
-      // Apply resolution
-      await federatedReplicate({
-        operation: 'resolve-conflict',
-        conflictId,
-        resolution,
-        vector: conflict.conflict.mergedVector
-      });
+        // Apply resolution
+        await federatedReplicate({
+          operation: 'resolve-conflict',
+          conflictId,
+          resolution,
+          vector: conflict.conflict.mergedVector,
+        });
 
-      // Remove from conflicts
-      setConflicts(prev => prev.filter(c => c.conflict.id !== conflictId));
+        // Remove from conflicts
+        setConflicts(prev => prev.filter(c => c.conflict.id !== conflictId));
 
-      return { success: true, resolution };
-    } catch (err) {
-      setError(err);
-      throw err;
-    }
-  }, [conflicts, federatedReplicate]);
+        return { success: true, resolution };
+      } catch (err) {
+        setError(err);
+        throw err;
+      }
+    },
+    [conflicts, federatedReplicate]
+  );
 
   // Get replication status
   const getStatus = useCallback(() => {
@@ -240,7 +248,7 @@ export function useDataReplication(config = {}) {
       ...syncStatus,
       ...replicationStats,
       conflictsCount: conflicts.length,
-      queueSize: syncQueueRef.current.length
+      queueSize: syncQueueRef.current.length,
     };
   }, [syncStatus, replicationStats, conflicts]);
 
@@ -252,6 +260,6 @@ export function useDataReplication(config = {}) {
     replicationStats,
     loading,
     error,
-    getStatus
+    getStatus,
   };
 }

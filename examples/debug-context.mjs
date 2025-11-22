@@ -2,8 +2,8 @@
  * @fileoverview Simple test to debug RdfEngine context integration
  */
 
-import { RdfEngine } from "../src/engines/rdf-engine.mjs";
-import { initStore, useStoreContext } from "../src/context/index.mjs";
+import { RdfEngine } from '../src/engines/rdf-engine.mjs';
+import { initStore, useStoreContext } from '../src/context/index.mjs';
 
 const turtleData = `
 @prefix ex: <http://example.org/> .
@@ -14,16 +14,16 @@ ex:alice a foaf:Person ;
 `;
 
 async function testContext() {
-  console.log("=== Testing RdfEngine Context Integration ===\n");
+  console.log('=== Testing RdfEngine Context Integration ===\n');
 
-  const runApp = initStore([], { 
-    baseIRI: "http://example.org/",
-    deterministic: true 
+  const runApp = initStore([], {
+    baseIRI: 'http://example.org/',
+    deterministic: true,
   });
 
   await runApp(async () => {
-    console.log("1. Testing context availability:");
-    
+    console.log('1. Testing context availability:');
+
     try {
       const storeContext = useStoreContext();
       console.log(`   ✓ Context store available: ${storeContext.store.size} quads`);
@@ -31,10 +31,10 @@ async function testContext() {
       console.log(`   ✗ Context store error: ${error.message}`);
     }
 
-    console.log("\n2. Testing RdfEngine context methods:");
-    
+    console.log('\n2. Testing RdfEngine context methods:');
+
     const engine = new RdfEngine();
-    
+
     try {
       const contextStore = engine.getContextStore();
       console.log(`   ✓ getContextStore(): ${contextStore ? contextStore.size : 'null'} quads`);
@@ -72,7 +72,7 @@ async function testContext() {
       console.log(`   ✗ queryContext() error: ${error.message}`);
     }
 
-    console.log("\n=== Test Complete ===");
+    console.log('\n=== Test Complete ===');
   });
 }
 

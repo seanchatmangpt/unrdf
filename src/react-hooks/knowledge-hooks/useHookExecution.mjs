@@ -54,91 +54,99 @@ export function useHookExecution(options = {}) {
   /**
    * Execute a knowledge hook
    */
-  const execute = useCallback(async (hookName, event, execOptions = {}) => {
-    if (!engine || !engine.executeKnowledgeHook) {
-      throw new Error('[useHookExecution] Engine not initialized or hook execution not available');
-    }
+  const execute = useCallback(
+    async (hookName, event, execOptions = {}) => {
+      if (!engine || !engine.executeKnowledgeHook) {
+        throw new Error(
+          '[useHookExecution] Engine not initialized or hook execution not available'
+        );
+      }
 
-    const executionId = ++executionCountRef.current;
+      const executionId = ++executionCountRef.current;
 
-    try {
-      setLoading(true);
-      setError(null);
+      try {
+        setLoading(true);
+        setError(null);
 
-      const startTime = Date.now();
-      const execResult = await engine.executeKnowledgeHook(hookName, event, execOptions);
-      const duration = Date.now() - startTime;
+        const startTime = Date.now();
+        const execResult = await engine.executeKnowledgeHook(hookName, event, execOptions);
+        const duration = Date.now() - startTime;
 
-      const historyEntry = {
-        executionId,
-        hookName,
-        event,
-        result: execResult,
-        duration,
-        timestamp: Date.now(),
-        success: true
-      };
+        const historyEntry = {
+          executionId,
+          hookName,
+          event,
+          result: execResult,
+          duration,
+          timestamp: Date.now(),
+          success: true,
+        };
 
-      setResult(execResult);
-      setLoading(false);
+        setResult(execResult);
+        setLoading(false);
 
-      // Add to history
-      setHistory(prev => {
-        const updated = [...prev, historyEntry];
-        return updated.slice(-maxHistory);
-      });
+        // Add to history
+        setHistory(prev => {
+          const updated = [...prev, historyEntry];
+          return updated.slice(-maxHistory);
+        });
 
-      return execResult;
-    } catch (err) {
-      console.error('[useHookExecution] Execution failed:', err);
+        return execResult;
+      } catch (err) {
+        console.error('[useHookExecution] Execution failed:', err);
 
-      const historyEntry = {
-        executionId,
-        hookName,
-        event,
-        error: err,
-        timestamp: Date.now(),
-        success: false
-      };
+        const historyEntry = {
+          executionId,
+          hookName,
+          event,
+          error: err,
+          timestamp: Date.now(),
+          success: false,
+        };
 
-      setError(err);
-      setLoading(false);
+        setError(err);
+        setLoading(false);
 
-      // Add to history
-      setHistory(prev => {
-        const updated = [...prev, historyEntry];
-        return updated.slice(-maxHistory);
-      });
+        // Add to history
+        setHistory(prev => {
+          const updated = [...prev, historyEntry];
+          return updated.slice(-maxHistory);
+        });
 
-      throw err;
-    }
-  }, [engine, maxHistory]);
+        throw err;
+      }
+    },
+    [engine, maxHistory]
+  );
 
   /**
    * Execute all registered hooks
    */
-  const executeAll = useCallback(async (event, execOptions = {}) => {
-    if (!engine || !engine.executeAllKnowledgeHooks) {
-      throw new Error('[useHookExecution] Engine not initialized');
-    }
+  const executeAll = useCallback(
+    async (event, execOptions = {}) => {
+      if (!engine || !engine.executeAllKnowledgeHooks) {
+        throw new Error('[useHookExecution] Engine not initialized');
+      }
 
-    try {
-      setLoading(true);
-      setError(null);
+      try {
+        setLoading(true);
+        setError(null);
 
-      const results = await engine.executeAllKnowledgeHooks(event, execOptions);
+        const results = await engine.executeAllKnowledgeHooks(event, execOptions);
 
-      setResult(results);
-      setLoading(false);
+        setResult(results);
+        setLoading(false);
 
-      return results;
-    } catch (err) {
-      console.error('[useHookExecution] Batch execution failed:', err);
-      setError(err);
-      setLoading(false);
-      throw err;
-    }
-  }, [engine]);
+        return results;
+      } catch (err) {
+        console.error('[useHookExecution] Batch execution failed:', err);
+        setError(err);
+        setLoading(false);
+        throw err;
+      }
+    },
+    [engine]
+  );
 
   /**
    * Clear execution results
@@ -173,16 +181,22 @@ export function useHookExecution(options = {}) {
   /**
    * Get execution by ID
    */
-  const getExecutionById = useCallback((executionId) => {
-    return history.find(entry => entry.executionId === executionId);
-  }, [history]);
+  const getExecutionById = useCallback(
+    executionId => {
+      return history.find(entry => entry.executionId === executionId);
+    },
+    [history]
+  );
 
   /**
    * Get executions by hook name
    */
-  const getExecutionsByHook = useCallback((hookName) => {
-    return history.filter(entry => entry.hookName === hookName);
-  }, [history]);
+  const getExecutionsByHook = useCallback(
+    hookName => {
+      return history.filter(entry => entry.hookName === hookName);
+    },
+    [history]
+  );
 
   return {
     execute,
@@ -200,7 +214,7 @@ export function useHookExecution(options = {}) {
     stats: {
       totalExecutions: history.length,
       successful: history.filter(e => e.success).length,
-      failed: history.filter(e => !e.success).length
-    }
+      failed: history.filter(e => !e.success).length,
+    },
   };
 }

@@ -12,74 +12,74 @@
  * Defines which features are available in different environments
  */
 export const browserFeatureMatrix = {
-  'Chrome': {
+  Chrome: {
     version: '120+',
     features: {
-      'IndexedDB': true,
-      'WebWorker': true,
-      'WebAssembly': true,
+      IndexedDB: true,
+      WebWorker: true,
+      WebAssembly: true,
       'crypto.randomUUID': true,
       'crypto.subtle': true,
-      'SharedArrayBuffer': true,
-      'BigInt': true,
-      'WeakRef': true,
-      'FinalizationRegistry': true,
-      'Atomics': true,
-      'structuredClone': true
+      SharedArrayBuffer: true,
+      BigInt: true,
+      WeakRef: true,
+      FinalizationRegistry: true,
+      Atomics: true,
+      structuredClone: true,
     },
-    limitations: []
+    limitations: [],
   },
-  'Firefox': {
+  Firefox: {
     version: '120+',
     features: {
-      'IndexedDB': true,
-      'WebWorker': true,
-      'WebAssembly': true,
+      IndexedDB: true,
+      WebWorker: true,
+      WebAssembly: true,
       'crypto.randomUUID': true,
       'crypto.subtle': true,
-      'SharedArrayBuffer': true,
-      'BigInt': true,
-      'WeakRef': true,
-      'FinalizationRegistry': true,
-      'Atomics': true,
-      'structuredClone': true
+      SharedArrayBuffer: true,
+      BigInt: true,
+      WeakRef: true,
+      FinalizationRegistry: true,
+      Atomics: true,
+      structuredClone: true,
     },
-    limitations: []
+    limitations: [],
   },
-  'Safari': {
+  Safari: {
     version: '16.4+',
     features: {
-      'IndexedDB': true,
-      'WebWorker': true,
-      'WebAssembly': true,
+      IndexedDB: true,
+      WebWorker: true,
+      WebAssembly: true,
       'crypto.randomUUID': true,
       'crypto.subtle': true,
-      'SharedArrayBuffer': false, // Requires special headers
-      'BigInt': true,
-      'WeakRef': true,
-      'FinalizationRegistry': true,
-      'Atomics': true,
-      'structuredClone': true
+      SharedArrayBuffer: false, // Requires special headers
+      BigInt: true,
+      WeakRef: true,
+      FinalizationRegistry: true,
+      Atomics: true,
+      structuredClone: true,
     },
-    limitations: ['SharedArrayBuffer requires COOP/COEP headers']
+    limitations: ['SharedArrayBuffer requires COOP/COEP headers'],
   },
-  'Edge': {
+  Edge: {
     version: '120+',
     features: {
-      'IndexedDB': true,
-      'WebWorker': true,
-      'WebAssembly': true,
+      IndexedDB: true,
+      WebWorker: true,
+      WebAssembly: true,
       'crypto.randomUUID': true,
       'crypto.subtle': true,
-      'SharedArrayBuffer': true,
-      'BigInt': true,
-      'WeakRef': true,
-      'FinalizationRegistry': true,
-      'Atomics': true,
-      'structuredClone': true
+      SharedArrayBuffer: true,
+      BigInt: true,
+      WeakRef: true,
+      FinalizationRegistry: true,
+      Atomics: true,
+      structuredClone: true,
     },
-    limitations: []
-  }
+    limitations: [],
+  },
 };
 
 /**
@@ -91,14 +91,14 @@ export const indexedDBScenarios = [
     id: 'basic-store',
     name: 'Basic Quad Storage',
     description: 'Store and retrieve basic RDF quads',
-    setup: async (db) => {
+    setup: async _db => {
       const quads = [
         {
           subject: { value: 'http://example.org/s1' },
           predicate: { value: 'http://example.org/p1' },
           object: { value: 'literal value' },
-          graph: { value: 'http://example.org/g1' }
-        }
+          graph: { value: 'http://example.org/g1' },
+        },
       ];
       return quads;
     },
@@ -107,21 +107,21 @@ export const indexedDBScenarios = [
       const retrieved = await store.getQuads();
       return retrieved.length === quads.length;
     },
-    expectedResult: true
+    expectedResult: true,
   },
 
   {
     id: 'large-dataset',
     name: 'Large Dataset Storage',
     description: 'Store 10,000+ quads efficiently',
-    setup: async (db) => {
+    setup: async _db => {
       const quads = [];
       for (let i = 0; i < 10000; i++) {
         quads.push({
           subject: { value: `http://example.org/s${i}` },
           predicate: { value: 'http://example.org/predicate' },
           object: { value: `value${i}` },
-          graph: { value: 'http://example.org/graph' }
+          graph: { value: 'http://example.org/graph' },
         });
       }
       return quads;
@@ -133,24 +133,24 @@ export const indexedDBScenarios = [
       const retrieved = await store.getQuads();
       return {
         stored: retrieved.length === 10000,
-        performance: duration < 5000 // Should complete in < 5s
+        performance: duration < 5000, // Should complete in < 5s
       };
     },
-    expectedResult: { stored: true, performance: true }
+    expectedResult: { stored: true, performance: true },
   },
 
   {
     id: 'query-performance',
     name: 'Query Performance',
     description: 'Query large dataset efficiently',
-    setup: async (db) => {
+    setup: async _db => {
       const quads = [];
       for (let i = 0; i < 10000; i++) {
         quads.push({
           subject: { value: `http://example.org/s${i % 100}` },
           predicate: { value: `http://example.org/p${i % 10}` },
           object: { value: `value${i}` },
-          graph: { value: 'http://example.org/graph' }
+          graph: { value: 'http://example.org/graph' },
         });
       }
       return quads;
@@ -160,36 +160,38 @@ export const indexedDBScenarios = [
 
       const start = performance.now();
       const results = await store.getQuads({
-        subject: { value: 'http://example.org/s42' }
+        subject: { value: 'http://example.org/s42' },
       });
       const duration = performance.now() - start;
 
       return {
         found: results.length === 100,
-        performance: duration < 200 // Should complete in < 200ms
+        performance: duration < 200, // Should complete in < 200ms
       };
     },
-    expectedResult: { found: true, performance: true }
+    expectedResult: { found: true, performance: true },
   },
 
   {
     id: 'transaction-safety',
     name: 'Transaction Safety',
     description: 'Ensure transaction rollback on error',
-    setup: async (db) => {
+    setup: async _db => {
       return [];
     },
-    test: async (store, quads) => {
+    test: async (store, _quads) => {
       const initialCount = (await store.getQuads()).length;
 
       try {
         await store.beginTransaction();
-        await store.addQuads([{
-          subject: { value: 'http://example.org/s' },
-          predicate: { value: 'http://example.org/p' },
-          object: { value: 'test' },
-          graph: { value: 'http://example.org/g' }
-        }]);
+        await store.addQuads([
+          {
+            subject: { value: 'http://example.org/s' },
+            predicate: { value: 'http://example.org/p' },
+            object: { value: 'test' },
+            graph: { value: 'http://example.org/g' },
+          },
+        ]);
         throw new Error('Simulated error');
       } catch (error) {
         await store.rollback();
@@ -198,27 +200,31 @@ export const indexedDBScenarios = [
       const finalCount = (await store.getQuads()).length;
       return finalCount === initialCount;
     },
-    expectedResult: true
+    expectedResult: true,
   },
 
   {
     id: 'concurrent-access',
     name: 'Concurrent Access',
     description: 'Handle concurrent read/write operations',
-    setup: async (db) => {
+    setup: async _db => {
       return [];
     },
-    test: async (store, quads) => {
+    test: async (store, _quads) => {
       const promises = [];
 
       // Concurrent writes
       for (let i = 0; i < 10; i++) {
-        promises.push(store.addQuads([{
-          subject: { value: `http://example.org/s${i}` },
-          predicate: { value: 'http://example.org/p' },
-          object: { value: `value${i}` },
-          graph: { value: 'http://example.org/g' }
-        }]));
+        promises.push(
+          store.addQuads([
+            {
+              subject: { value: `http://example.org/s${i}` },
+              predicate: { value: 'http://example.org/p' },
+              object: { value: `value${i}` },
+              graph: { value: 'http://example.org/g' },
+            },
+          ])
+        );
       }
 
       await Promise.all(promises);
@@ -226,8 +232,8 @@ export const indexedDBScenarios = [
 
       return results.length === 10;
     },
-    expectedResult: true
-  }
+    expectedResult: true,
+  },
 ];
 
 /**
@@ -244,15 +250,15 @@ export const workerScenarios = [
         self.postMessage({ result: event.data.value * 2 });
       };
     `,
-    test: async (worker) => {
-      return new Promise((resolve) => {
-        worker.onmessage = (event) => {
+    test: async worker => {
+      return new Promise(resolve => {
+        worker.onmessage = event => {
           resolve(event.data.result === 84);
         };
         worker.postMessage({ value: 42 });
       });
     },
-    expectedResult: true
+    expectedResult: true,
   },
 
   {
@@ -268,21 +274,21 @@ export const workerScenarios = [
         self.postMessage({ quads });
       };
     `,
-    test: async (worker) => {
+    test: async worker => {
       const turtle = `
         @prefix ex: <http://example.org/> .
         ex:subject1 ex:predicate1 "value1" .
         ex:subject2 ex:predicate2 "value2" .
       `;
 
-      return new Promise((resolve) => {
-        worker.onmessage = (event) => {
+      return new Promise(resolve => {
+        worker.onmessage = event => {
           resolve(event.data.quads === 2);
         };
         worker.postMessage({ turtle });
       });
     },
-    expectedResult: true
+    expectedResult: true,
   },
 
   {
@@ -297,16 +303,16 @@ export const workerScenarios = [
         self.postMessage({ success: true });
       };
     `,
-    test: async (worker) => {
-      return new Promise((resolve) => {
-        worker.onerror = (error) => {
+    test: async worker => {
+      return new Promise(resolve => {
+        worker.onerror = _error => {
           resolve(true); // Error was caught
         };
         worker.postMessage({ shouldError: true });
       });
     },
-    expectedResult: true
-  }
+    expectedResult: true,
+  },
 ];
 
 /**
@@ -323,7 +329,7 @@ export const cryptoScenarios = [
       const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
       return uuidRegex.test(uuid);
     },
-    expectedResult: true
+    expectedResult: true,
   },
 
   {
@@ -340,8 +346,8 @@ export const cryptoScenarios = [
       const expected = '916f0027a575074ce72a331777c3478d6513f786a591bd892da1a577bf2335f9';
       return hashHex === expected;
     },
-    expectedResult: true
-  }
+    expectedResult: true,
+  },
 ];
 
 /**
@@ -353,19 +359,19 @@ export const fileSystemScenarios = [
     id: 'basic-file-ops',
     name: 'Basic File Operations',
     description: 'Read and write files using browser FS abstraction',
-    test: async (fs) => {
+    test: async fs => {
       await fs.writeFile('/test.txt', 'Hello World');
       const content = await fs.readFile('/test.txt', 'utf8');
       return content === 'Hello World';
     },
-    expectedResult: true
+    expectedResult: true,
   },
 
   {
     id: 'directory-ops',
     name: 'Directory Operations',
     description: 'Create and list directories',
-    test: async (fs) => {
+    test: async fs => {
       await fs.mkdir('/testdir');
       await fs.writeFile('/testdir/file1.txt', 'content1');
       await fs.writeFile('/testdir/file2.txt', 'content2');
@@ -375,14 +381,14 @@ export const fileSystemScenarios = [
 
       return exists && files.length === 2;
     },
-    expectedResult: true
+    expectedResult: true,
   },
 
   {
     id: 'error-handling',
     name: 'File System Error Handling',
     description: 'Handle ENOENT and other file system errors',
-    test: async (fs) => {
+    test: async fs => {
       try {
         await fs.readFile('/nonexistent.txt');
         return false;
@@ -390,8 +396,8 @@ export const fileSystemScenarios = [
         return error.message.includes('ENOENT');
       }
     },
-    expectedResult: true
-  }
+    expectedResult: true,
+  },
 ];
 
 /**
@@ -404,22 +410,22 @@ export const performanceBenchmarks = [
     name: 'Parse 1K Triples',
     description: 'Parse 1,000 RDF triples in browser',
     threshold: 1000, // ms
-    category: 'parsing'
+    category: 'parsing',
   },
   {
     id: 'query-10k-store',
     name: 'Query 10K Quad Store',
     description: 'Query store with 10,000 quads',
     threshold: 500,
-    category: 'querying'
+    category: 'querying',
   },
   {
     id: 'indexeddb-write-1k',
     name: 'IndexedDB Write 1K Quads',
     description: 'Write 1,000 quads to IndexedDB',
     threshold: 2000,
-    category: 'storage'
-  }
+    category: 'storage',
+  },
 ];
 
 /**
@@ -433,7 +439,7 @@ export function getScenario(scenarioType, id) {
     indexedDB: indexedDBScenarios,
     worker: workerScenarios,
     crypto: cryptoScenarios,
-    fileSystem: fileSystemScenarios
+    fileSystem: fileSystemScenarios,
   };
 
   const scenarioList = scenarios[scenarioType];
@@ -450,7 +456,7 @@ export function getScenariosByType(scenarioType) {
     indexedDB: indexedDBScenarios,
     worker: workerScenarios,
     crypto: cryptoScenarios,
-    fileSystem: fileSystemScenarios
+    fileSystem: fileSystemScenarios,
   };
 
   return scenarios[scenarioType] || [];
@@ -476,5 +482,5 @@ export default {
   performanceBenchmarks,
   getScenario,
   getScenariosByType,
-  isBrowserFeatureSupported
+  isBrowserFeatureSupported,
 };

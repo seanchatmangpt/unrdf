@@ -3,13 +3,13 @@
  * Tests window operations, aggregations, and stream processing
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, _beforeEach, _vi } from 'vitest';
 
 describe('useStreamProcessor', () => {
   describe('Tumbling Window', () => {
     it('should create non-overlapping windows', () => {
       const windowSize = 5000;
-      const events = [];
+      const _events = [];
       const windows = [];
       let windowStart = Date.now();
 
@@ -19,14 +19,14 @@ describe('useStreamProcessor', () => {
         for (let j = 0; j < 5; j++) {
           windowEvents.push({
             id: `event-${i}-${j}`,
-            timestamp: windowStart + (j * 1000)
+            timestamp: windowStart + j * 1000,
           });
         }
         windows.push({
           id: `window-${i}`,
           events: windowEvents,
           startTime: windowStart,
-          endTime: windowStart + windowSize
+          endTime: windowStart + windowSize,
         });
         windowStart += windowSize;
       }
@@ -55,7 +55,7 @@ describe('useStreamProcessor', () => {
           if (elapsed >= windowSize) {
             completedWindows.push({
               events: [...buffer],
-              size: buffer.length
+              size: buffer.length,
             });
             buffer = [{ ...event, windowStart: currentTime }];
           } else {
@@ -66,7 +66,7 @@ describe('useStreamProcessor', () => {
 
       const baseTime = Date.now();
       for (let i = 0; i < 10; i++) {
-        processEvent({ id: `event-${i}` }, baseTime + (i * 1000));
+        processEvent({ id: `event-${i}` }, baseTime + i * 1000);
       }
 
       expect(completedWindows.length).toBeGreaterThanOrEqual(1);
@@ -95,10 +95,12 @@ describe('useStreamProcessor', () => {
     it('should create overlapping windows', () => {
       const windowSize = 5000;
       const slideInterval = 2500;
-      const events = Array(10).fill(null).map((_, i) => ({
-        id: `event-${i}`,
-        timestamp: Date.now() + (i * 1000)
-      }));
+      const events = Array(10)
+        .fill(null)
+        .map((_, i) => ({
+          id: `event-${i}`,
+          timestamp: Date.now() + i * 1000,
+        }));
 
       // Simulate sliding window behavior
       const windows = [];
@@ -107,7 +109,7 @@ describe('useStreamProcessor', () => {
         if (windowEvents.length > 0) {
           windows.push({
             id: `window-${windows.length}`,
-            events: windowEvents
+            events: windowEvents,
           });
         }
       }
@@ -117,22 +119,20 @@ describe('useStreamProcessor', () => {
     });
 
     it('should keep events for next window on slide', () => {
-      const windowSize = 5000;
+      const _windowSize = 5000;
       const slideInterval = 2500;
       let buffer = [
         { id: '1', timestamp: Date.now() },
         { id: '2', timestamp: Date.now() + 1000 },
         { id: '3', timestamp: Date.now() + 2000 },
-        { id: '4', timestamp: Date.now() + 3000 }
+        { id: '4', timestamp: Date.now() + 3000 },
       ];
 
       const completeWindow = (keepOverlap = false) => {
         const events = [...buffer];
         if (keepOverlap) {
           const cutoffTime = Date.now() - slideInterval;
-          buffer = buffer.filter(e =>
-            new Date(e.timestamp).getTime() > cutoffTime
-          );
+          buffer = buffer.filter(e => new Date(e.timestamp).getTime() > cutoffTime);
         } else {
           buffer = [];
         }
@@ -148,7 +148,7 @@ describe('useStreamProcessor', () => {
       const config = {
         windowType: 'sliding',
         windowSize: 5000,
-        windowSlide: 2500
+        windowSlide: 2500,
       };
 
       const slideInterval = config.windowSlide || Math.floor(config.windowSize / 2);
@@ -165,12 +165,12 @@ describe('useStreamProcessor', () => {
       let currentSession = [];
 
       const processEvent = (event, eventTime) => {
-        if (lastEventTime && (eventTime - lastEventTime) > sessionGap) {
+        if (lastEventTime && eventTime - lastEventTime > sessionGap) {
           // Gap detected - complete current session
           windows.push({
             events: [...currentSession],
             startTime: currentSession[0]?.timestamp,
-            endTime: lastEventTime
+            endTime: lastEventTime,
           });
           currentSession = [];
         }
@@ -195,11 +195,11 @@ describe('useStreamProcessor', () => {
     it('should handle session timeout', async () => {
       const sessionGap = 100;
       let sessionCompleted = false;
-      let buffer = [{ id: '1' }];
+      let _buffer = [{ id: '1' }];
 
       const completeSession = () => {
         sessionCompleted = true;
-        buffer = [];
+        _buffer = [];
       };
 
       setTimeout(completeSession, sessionGap);
@@ -234,17 +234,17 @@ describe('useStreamProcessor', () => {
       const events = [
         { id: '1', operation: 'insert', timestamp: '2024-01-01T00:00:00Z' },
         { id: '2', operation: 'insert', timestamp: '2024-01-01T00:00:01Z' },
-        { id: '3', operation: 'delete', timestamp: '2024-01-01T00:00:02Z' }
+        { id: '3', operation: 'delete', timestamp: '2024-01-01T00:00:02Z' },
       ];
 
-      const defaultAggregator = (evts) => ({
+      const defaultAggregator = evts => ({
         count: evts.length,
         operations: {
           inserts: evts.filter(e => e.operation === 'insert').length,
-          deletes: evts.filter(e => e.operation === 'delete').length
+          deletes: evts.filter(e => e.operation === 'delete').length,
         },
         startTime: evts[0]?.timestamp,
-        endTime: evts[evts.length - 1]?.timestamp
+        endTime: evts[evts.length - 1]?.timestamp,
       });
 
       const result = defaultAggregator(events);
@@ -260,19 +260,17 @@ describe('useStreamProcessor', () => {
       const events = [
         { id: '1', quads: [{ object: { value: '100' } }] },
         { id: '2', quads: [{ object: { value: '200' } }] },
-        { id: '3', quads: [{ object: { value: '150' } }] }
+        { id: '3', quads: [{ object: { value: '150' } }] },
       ];
 
-      const customAggregator = (evts) => {
-        const values = evts.flatMap(e =>
-          e.quads.map(q => parseFloat(q.object.value))
-        );
+      const customAggregator = evts => {
+        const values = evts.flatMap(e => e.quads.map(q => parseFloat(q.object.value)));
         return {
           count: values.length,
           sum: values.reduce((a, b) => a + b, 0),
           avg: values.reduce((a, b) => a + b, 0) / values.length,
           min: Math.min(...values),
-          max: Math.max(...values)
+          max: Math.max(...values),
         };
       };
 
@@ -288,9 +286,9 @@ describe('useStreamProcessor', () => {
     it('should handle empty events in aggregation', () => {
       const events = [];
 
-      const aggregator = (evts) => ({
+      const aggregator = evts => ({
         count: evts.length,
-        isEmpty: evts.length === 0
+        isEmpty: evts.length === 0,
       });
 
       const result = aggregator(events);
@@ -305,16 +303,16 @@ describe('useStreamProcessor', () => {
       let stats = {
         windowsProcessed: 0,
         eventsProcessed: 0,
-        avgWindowSize: 0
+        avgWindowSize: 0,
       };
 
-      const updateStats = (window) => {
+      const updateStats = window => {
         const total = stats.eventsProcessed + window.events.length;
         const count = stats.windowsProcessed + 1;
         stats = {
           windowsProcessed: count,
           eventsProcessed: total,
-          avgWindowSize: Math.round(total / count)
+          avgWindowSize: Math.round(total / count),
         };
       };
 
@@ -329,11 +327,7 @@ describe('useStreamProcessor', () => {
 
     it('should track events processed', () => {
       let totalEvents = 0;
-      const windows = [
-        { events: [1, 2, 3] },
-        { events: [1, 2, 3, 4, 5] },
-        { events: [1, 2] }
-      ];
+      const windows = [{ events: [1, 2, 3] }, { events: [1, 2, 3, 4, 5] }, { events: [1, 2] }];
 
       windows.forEach(w => {
         totalEvents += w.events.length;
@@ -346,7 +340,7 @@ describe('useStreamProcessor', () => {
       const windows = [
         { events: Array(5).fill(1) },
         { events: Array(10).fill(1) },
-        { events: Array(15).fill(1) }
+        { events: Array(15).fill(1) },
       ];
 
       const totalEvents = windows.reduce((sum, w) => sum + w.events.length, 0);
@@ -359,14 +353,14 @@ describe('useStreamProcessor', () => {
       let stats = {
         windowsProcessed: 10,
         eventsProcessed: 100,
-        avgWindowSize: 10
+        avgWindowSize: 10,
       };
 
       const clear = () => {
         stats = {
           windowsProcessed: 0,
           eventsProcessed: 0,
-          avgWindowSize: 0
+          avgWindowSize: 0,
         };
       };
 
@@ -381,16 +375,32 @@ describe('useStreamProcessor', () => {
   describe('Time Range Query', () => {
     it('should get windows by time range', () => {
       const windows = [
-        { id: 'w1', startTime: '2024-01-01T00:00:00Z', endTime: '2024-01-01T01:00:00Z' },
-        { id: 'w2', startTime: '2024-01-01T01:00:00Z', endTime: '2024-01-01T02:00:00Z' },
-        { id: 'w3', startTime: '2024-01-01T02:00:00Z', endTime: '2024-01-01T03:00:00Z' },
-        { id: 'w4', startTime: '2024-01-01T03:00:00Z', endTime: '2024-01-01T04:00:00Z' }
+        {
+          id: 'w1',
+          startTime: '2024-01-01T00:00:00Z',
+          endTime: '2024-01-01T01:00:00Z',
+        },
+        {
+          id: 'w2',
+          startTime: '2024-01-01T01:00:00Z',
+          endTime: '2024-01-01T02:00:00Z',
+        },
+        {
+          id: 'w3',
+          startTime: '2024-01-01T02:00:00Z',
+          endTime: '2024-01-01T03:00:00Z',
+        },
+        {
+          id: 'w4',
+          startTime: '2024-01-01T03:00:00Z',
+          endTime: '2024-01-01T04:00:00Z',
+        },
       ];
 
       const getWindowsByTimeRange = (startTime, endTime) => {
-        return windows.filter(w =>
-          new Date(w.startTime) >= new Date(startTime) &&
-          new Date(w.endTime) <= new Date(endTime)
+        return windows.filter(
+          w =>
+            new Date(w.startTime) >= new Date(startTime) && new Date(w.endTime) <= new Date(endTime)
         );
       };
 
@@ -403,13 +413,17 @@ describe('useStreamProcessor', () => {
 
     it('should return empty for non-matching range', () => {
       const windows = [
-        { id: 'w1', startTime: '2024-01-01T00:00:00Z', endTime: '2024-01-01T01:00:00Z' }
+        {
+          id: 'w1',
+          startTime: '2024-01-01T00:00:00Z',
+          endTime: '2024-01-01T01:00:00Z',
+        },
       ];
 
       const getWindowsByTimeRange = (startTime, endTime) => {
-        return windows.filter(w =>
-          new Date(w.startTime) >= new Date(startTime) &&
-          new Date(w.endTime) <= new Date(endTime)
+        return windows.filter(
+          w =>
+            new Date(w.startTime) >= new Date(startTime) && new Date(w.endTime) <= new Date(endTime)
         );
       };
 
@@ -424,13 +438,13 @@ describe('useStreamProcessor', () => {
       let currentWindow = null;
       const buffer = [];
 
-      const updateCurrentWindow = (event) => {
+      const updateCurrentWindow = event => {
         buffer.push(event);
         currentWindow = {
           events: [...buffer],
           size: buffer.length,
           startTime: buffer[0]?.timestamp,
-          endTime: event.timestamp
+          endTime: event.timestamp,
         };
       };
 
@@ -480,7 +494,7 @@ describe('useStreamProcessor', () => {
     it('should handle event processing error', () => {
       let error = null;
 
-      const processEvent = (event) => {
+      const processEvent = event => {
         if (!event.id) {
           error = new Error('Invalid event: missing id');
           throw error;

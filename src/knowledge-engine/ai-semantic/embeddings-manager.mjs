@@ -8,7 +8,7 @@
  * Stores embeddings in LRU cache and computes similarity metrics with batch processing.
  */
 
-import { Store } from 'n3';
+import { _Store } from 'n3';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
 import { LRUCache } from 'lru-cache';
 import { z } from 'zod';
@@ -18,11 +18,11 @@ const tracer = trace.getTracer('unrdf-ai-semantic');
 /**
  * Embedding Schema
  */
-const EmbeddingSchema = z.object({
+const _EmbeddingSchema = z.object({
   uri: z.string(),
   vector: z.array(z.number()),
   algorithm: z.enum(['transe', 'complex', 'rotate']),
-  timestamp: z.number()
+  timestamp: z.number(),
 });
 
 /**
@@ -35,7 +35,7 @@ const EmbeddingsManagerConfigSchema = z.object({
   learningRate: z.number().default(0.01),
   epochs: z.number().default(100),
   batchSize: z.number().default(64),
-  negativeRatio: z.number().default(2)
+  negativeRatio: z.number().default(2),
 });
 
 /**
@@ -61,7 +61,7 @@ export class EmbeddingsManager {
       embeddings: 0,
       cacheHits: 0,
       cacheMisses: 0,
-      trainingSessions: 0
+      trainingSessions: 0,
     };
   }
 
@@ -72,7 +72,7 @@ export class EmbeddingsManager {
    * @returns {Promise<Object>} Embedding results
    */
   async generateEmbeddings(store, options = {}) {
-    return tracer.startActiveSpan('embeddings.generate', async (span) => {
+    return tracer.startActiveSpan('embeddings.generate', async span => {
       const startTime = Date.now();
 
       try {
@@ -81,7 +81,7 @@ export class EmbeddingsManager {
         span.setAttributes({
           'embeddings.store_size': store.size,
           'embeddings.algorithm': algorithm,
-          'embeddings.dimension': this.config.embeddingDim
+          'embeddings.dimension': this.config.embeddingDim,
         });
 
         // Extract entities and relations
@@ -100,7 +100,7 @@ export class EmbeddingsManager {
 
         span.setAttributes({
           'embeddings.duration_ms': duration,
-          'embeddings.training_complete': true
+          'embeddings.training_complete': true,
         });
         span.setStatus({ code: SpanStatusCode.OK });
 
@@ -109,7 +109,7 @@ export class EmbeddingsManager {
           relations: this.relationEmbeddings.size,
           algorithm,
           dimension: this.config.embeddingDim,
-          duration
+          duration,
         };
       } catch (error) {
         span.recordException(error);
@@ -142,14 +142,14 @@ export class EmbeddingsManager {
       triples.push({
         head: subject,
         relation: predicate,
-        tail: object
+        tail: object,
       });
     }
 
     return {
       entities: Array.from(entities),
       relations: Array.from(relations),
-      triples
+      triples,
     };
   }
 
@@ -195,7 +195,7 @@ export class EmbeddingsManager {
    * @private
    */
   async _trainEmbeddings(triples, algorithm) {
-    return tracer.startActiveSpan('embeddings.train', async (span) => {
+    return tracer.startActiveSpan('embeddings.train', async span => {
       try {
         span.setAttribute('embeddings.algorithm', algorithm);
         span.setAttribute('embeddings.triples_count', triples.length);
@@ -323,7 +323,7 @@ export class EmbeddingsManager {
    * @returns {Object} Negative triple
    * @private
    */
-  _generateNegativeSample(triple, allTriples) {
+  _generateNegativeSample(triple, _allTriples) {
     const entities = Array.from(this.entityEmbeddings.keys());
 
     // Randomly corrupt head or tail
@@ -333,7 +333,7 @@ export class EmbeddingsManager {
       return {
         head: randomHead,
         relation: triple.relation,
-        tail: triple.tail
+        tail: triple.tail,
       };
     } else {
       // Corrupt tail
@@ -341,7 +341,7 @@ export class EmbeddingsManager {
       return {
         head: triple.head,
         relation: triple.relation,
-        tail: randomTail
+        tail: randomTail,
       };
     }
   }
@@ -353,7 +353,7 @@ export class EmbeddingsManager {
    * @returns {Array<number>|null} Embedding vector
    */
   getEmbedding(uri, type = 'entity') {
-    return tracer.startActiveSpan('embeddings.get', (span) => {
+    return tracer.startActiveSpan('embeddings.get', span => {
       try {
         span.setAttribute('embeddings.uri', uri);
         span.setAttribute('embeddings.type', type);
@@ -371,9 +371,8 @@ export class EmbeddingsManager {
         this.stats.cacheMisses++;
 
         // Get from trained embeddings
-        const embedding = type === 'entity'
-          ? this.entityEmbeddings.get(uri)
-          : this.relationEmbeddings.get(uri);
+        const embedding =
+          type === 'entity' ? this.entityEmbeddings.get(uri) : this.relationEmbeddings.get(uri);
 
         if (embedding) {
           this.cache.set(cacheKey, embedding);
@@ -398,7 +397,7 @@ export class EmbeddingsManager {
    * @returns {number} Cosine similarity (-1 to 1)
    */
   computeSimilarity(entity1, entity2) {
-    return tracer.startActiveSpan('embeddings.similarity', (span) => {
+    return tracer.startActiveSpan('embeddings.similarity', span => {
       try {
         const emb1 = this.getEmbedding(entity1);
         const emb2 = this.getEmbedding(entity2);
@@ -414,7 +413,7 @@ export class EmbeddingsManager {
         span.setAttributes({
           'embeddings.entity1': entity1,
           'embeddings.entity2': entity2,
-          'embeddings.similarity': similarity
+          'embeddings.similarity': similarity,
         });
         span.setStatus({ code: SpanStatusCode.OK });
 
@@ -434,7 +433,7 @@ export class EmbeddingsManager {
    * @returns {Array<Array<number>>} Embeddings
    */
   batchGetEmbeddings(uris, type = 'entity') {
-    return tracer.startActiveSpan('embeddings.batch_get', (span) => {
+    return tracer.startActiveSpan('embeddings.batch_get', span => {
       try {
         span.setAttribute('embeddings.batch_size', uris.length);
 
@@ -539,9 +538,10 @@ export class EmbeddingsManager {
       entityEmbeddings: this.entityEmbeddings.size,
       relationEmbeddings: this.relationEmbeddings.size,
       cacheSize: this.cache.size,
-      cacheHitRate: (this.stats.cacheHits + this.stats.cacheMisses) > 0
-        ? this.stats.cacheHits / (this.stats.cacheHits + this.stats.cacheMisses)
-        : 0
+      cacheHitRate:
+        this.stats.cacheHits + this.stats.cacheMisses > 0
+          ? this.stats.cacheHits / (this.stats.cacheHits + this.stats.cacheMisses)
+          : 0,
     };
   }
 }

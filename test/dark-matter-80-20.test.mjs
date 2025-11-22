@@ -7,18 +7,18 @@
  * Validates that the core components deliver optimal value concentration.
  */
 
-import { describe, it, expect, beforeAll, afterAll, beforeEach } from "vitest";
+import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
 import {
   KnowledgeSubstrateCore,
   KnowledgeSubstrateFactory,
-  DarkMatterCore,
-  DarkMatterFactory,
-} from "../src/knowledge-engine/knowledge-substrate-core.mjs";
-import { Store, DataFactory } from "n3";
+  _DarkMatterCore,
+  _DarkMatterFactory,
+} from '../src/knowledge-engine/knowledge-substrate-core.mjs';
+import { Store, DataFactory } from 'n3';
 
-const { namedNode, literal, quad } = DataFactory;
+const { namedNode, _literal, quad } = DataFactory;
 
-describe("Knowledge Substrate Core", () => {
+describe('Knowledge Substrate Core', () => {
   let knowledgeSubstrateCore;
   let mockStore;
 
@@ -36,8 +36,8 @@ describe("Knowledge Substrate Core", () => {
     knowledgeSubstrateCore = null;
   });
 
-  describe("Knowledge Substrate Core Initialization", () => {
-    it("should initialize with core components only", async () => {
+  describe('Knowledge Substrate Core Initialization', () => {
+    it('should initialize with core components only', async () => {
       knowledgeSubstrateCore = new KnowledgeSubstrateCore({
         enableTransactionManager: true,
         enableKnowledgeHookManager: true,
@@ -63,7 +63,7 @@ describe("Knowledge Substrate Core", () => {
       expect(status.components).toHaveLength(6); // Core components only
     });
 
-    it("should achieve high value delivery from core components", async () => {
+    it('should achieve high value delivery from core components', async () => {
       knowledgeSubstrateCore = new KnowledgeSubstrateCore({
         enableTransactionManager: true,
         enableKnowledgeHookManager: true,
@@ -90,7 +90,7 @@ describe("Knowledge Substrate Core", () => {
       expect(metrics.optionalComponentCount).toBe(0);
     });
 
-    it("should validate performance targets", async () => {
+    it('should validate performance targets', async () => {
       knowledgeSubstrateCore = new KnowledgeSubstrateCore({
         performanceTargets: {
           p50PreHookPipeline: 0.2,
@@ -109,101 +109,93 @@ describe("Knowledge Substrate Core", () => {
     });
   });
 
-  describe("Knowledge Substrate Factory", () => {
-    it("should create a complete system", async () => {
+  describe('Knowledge Substrate Factory', () => {
+    it('should create a complete system', async () => {
       knowledgeSubstrateCore = await KnowledgeSubstrateFactory.createSystem();
 
       const status = knowledgeSubstrateCore.getStatus();
       expect(status.initialized).toBe(true);
-      expect(status.components).toContain("transactionManager");
-      expect(status.components).toContain("knowledgeHookManager");
-      expect(status.components).toContain("effectSandbox");
+      expect(status.components).toContain('transactionManager');
+      expect(status.components).toContain('knowledgeHookManager');
+      expect(status.components).toContain('effectSandbox');
     });
 
-    it("should create a minimal system", async () => {
-      knowledgeSubstrateCore =
-        await KnowledgeSubstrateFactory.createMinimalSystem();
+    it('should create a minimal system', async () => {
+      knowledgeSubstrateCore = await KnowledgeSubstrateFactory.createMinimalSystem();
 
       const status = knowledgeSubstrateCore.getStatus();
       expect(status.initialized).toBe(true);
       expect(status.components).toHaveLength(3); // Only essential components
-      expect(status.components).toContain("transactionManager");
-      expect(status.components).toContain("knowledgeHookManager");
-      expect(status.components).toContain("effectSandbox");
+      expect(status.components).toContain('transactionManager');
+      expect(status.components).toContain('knowledgeHookManager');
+      expect(status.components).toContain('effectSandbox');
     });
 
-    it("should create a full system", async () => {
-      knowledgeSubstrateCore =
-        await KnowledgeSubstrateFactory.createFullSystem();
+    it('should create a full system', async () => {
+      knowledgeSubstrateCore = await KnowledgeSubstrateFactory.createFullSystem();
 
       const status = knowledgeSubstrateCore.getStatus();
       expect(status.initialized).toBe(true);
       expect(status.components.length).toBeGreaterThanOrEqual(6);
-      expect(status.components).toContain("transactionManager");
-      expect(status.components).toContain("knowledgeHookManager");
-      expect(status.components).toContain("effectSandbox");
-      expect(status.components).toContain("observability");
-      expect(status.components).toContain("performanceOptimizer");
-      expect(status.components).toContain("lockchainWriter");
+      expect(status.components).toContain('transactionManager');
+      expect(status.components).toContain('knowledgeHookManager');
+      expect(status.components).toContain('effectSandbox');
+      expect(status.components).toContain('observability');
+      expect(status.components).toContain('performanceOptimizer');
+      expect(status.components).toContain('lockchainWriter');
     });
   });
 
-  describe("Knowledge Substrate Component Access", () => {
+  describe('Knowledge Substrate Component Access', () => {
     beforeEach(async () => {
       knowledgeSubstrateCore = await KnowledgeSubstrateFactory.createSystem();
     });
 
-    it("should provide access to core components", () => {
+    it('should provide access to core components', () => {
       const coreComponents = knowledgeSubstrateCore.getCoreComponents();
 
-      expect(coreComponents).toHaveProperty("transactionManager");
-      expect(coreComponents).toHaveProperty("knowledgeHookManager");
-      expect(coreComponents).toHaveProperty("effectSandbox");
-      expect(coreComponents).toHaveProperty("observability");
-      expect(coreComponents).toHaveProperty("performanceOptimizer");
-      expect(coreComponents).toHaveProperty("lockchainWriter");
+      expect(coreComponents).toHaveProperty('transactionManager');
+      expect(coreComponents).toHaveProperty('knowledgeHookManager');
+      expect(coreComponents).toHaveProperty('effectSandbox');
+      expect(coreComponents).toHaveProperty('observability');
+      expect(coreComponents).toHaveProperty('performanceOptimizer');
+      expect(coreComponents).toHaveProperty('lockchainWriter');
     });
 
-    it("should provide access to individual components", () => {
-      const transactionManager =
-        knowledgeSubstrateCore.getComponent("transactionManager");
-      const knowledgeHookManager = knowledgeSubstrateCore.getComponent(
-        "knowledgeHookManager",
-      );
-      const effectSandbox =
-        knowledgeSubstrateCore.getComponent("effectSandbox");
+    it('should provide access to individual components', () => {
+      const transactionManager = knowledgeSubstrateCore.getComponent('transactionManager');
+      const knowledgeHookManager = knowledgeSubstrateCore.getComponent('knowledgeHookManager');
+      const effectSandbox = knowledgeSubstrateCore.getComponent('effectSandbox');
 
       expect(transactionManager).toBeDefined();
       expect(knowledgeHookManager).toBeDefined();
       expect(effectSandbox).toBeDefined();
     });
 
-    it("should return null for non-existent components", () => {
-      const nonExistent = knowledgeSubstrateCore.getComponent("nonExistent");
+    it('should return null for non-existent components', () => {
+      const nonExistent = knowledgeSubstrateCore.getComponent('nonExistent');
       expect(nonExistent).toBeNull();
     });
   });
 
-  describe("Knowledge Substrate Transaction Execution", () => {
+  describe('Knowledge Substrate Transaction Execution', () => {
     beforeEach(async () => {
       knowledgeSubstrateCore = await KnowledgeSubstrateFactory.createSystem();
     });
 
-    it("should execute transactions optimally", async () => {
+    it('should execute transactions optimally', async () => {
       const delta = {
         additions: [
           quad(
-            namedNode("http://example.org/subject"),
-            namedNode("http://example.org/predicate"),
-            namedNode("http://example.org/object"),
+            namedNode('http://example.org/subject'),
+            namedNode('http://example.org/predicate'),
+            namedNode('http://example.org/object')
           ),
         ],
         removals: [],
       };
 
-      const result = await knowledgeSubstrateCore.executeTransaction(
-        delta,
-      );
+      const result = await knowledgeSubstrateCore.executeTransaction(delta);
 
       expect(result).toBeDefined();
       expect(result.receipt).toBeDefined();
@@ -211,88 +203,84 @@ describe("Knowledge Substrate Core", () => {
       expect(result.receipt.committed).toBeDefined();
     });
 
-    it("should handle transaction errors gracefully", async () => {
+    it('should handle transaction errors gracefully', async () => {
       const invalidDelta = {
-        additions: "invalid",
+        additions: 'invalid',
         removals: [],
       };
 
-      await expect(
-        knowledgeSubstrateCore.executeTransaction(invalidDelta),
-      ).rejects.toThrow();
+      await expect(knowledgeSubstrateCore.executeTransaction(invalidDelta)).rejects.toThrow();
     });
   });
 
-  describe("Knowledge Substrate Hook Execution", () => {
+  describe('Knowledge Substrate Hook Execution', () => {
     beforeEach(async () => {
       knowledgeSubstrateCore = await KnowledgeSubstrateFactory.createSystem();
     });
 
-    it("should execute hooks optimally", async () => {
+    it('should execute hooks optimally', async () => {
       const hook = {
-        meta: { name: "test-hook" },
+        meta: { name: 'test-hook' },
         when: {
-          kind: "sparql-ask",
+          kind: 'sparql-ask',
           ref: {
-            uri: "file://test.ask.rq",
-            sha256: "test-hash",
-            mediaType: "application/sparql-query",
+            uri: 'file://test.ask.rq',
+            sha256: 'test-hash',
+            mediaType: 'application/sparql-query',
           },
         },
-        run: async (event) => ({ result: "success" }),
+        run: async _event => ({ result: 'success' }),
       };
 
       const event = {
-        name: "test-hook",
-        payload: { test: "data" },
+        name: 'test-hook',
+        payload: { test: 'data' },
         context: { graph: mockStore },
       };
 
       const result = await knowledgeSubstrateCore.executeHook(hook, event);
 
       expect(result).toBeDefined();
-      expect(result.result).toBe("success");
+      expect(result.result).toBe('success');
     });
 
-    it("should handle hook errors with fail-fast behavior", async () => {
+    it('should handle hook errors with fail-fast behavior', async () => {
       const invalidHook = {
-        meta: { name: "invalid-hook" },
-        when: "invalid",
+        meta: { name: 'invalid-hook' },
+        when: 'invalid',
         run: async () => {
-          throw new Error("Hook error");
+          throw new Error('Hook error');
         },
       };
 
       const event = {
-        name: "invalid-hook",
+        name: 'invalid-hook',
         payload: {},
         context: { graph: mockStore },
       };
 
       // FAIL FAST - hook execution should throw errors without fallback
-      await expect(
-        knowledgeSubstrateCore.executeHook(invalidHook, event),
-      ).rejects.toThrow();
+      await expect(knowledgeSubstrateCore.executeHook(invalidHook, event)).rejects.toThrow();
     });
   });
 
-  describe("Knowledge Substrate Metrics", () => {
+  describe('Knowledge Substrate Metrics', () => {
     beforeEach(async () => {
       knowledgeSubstrateCore = await KnowledgeSubstrateFactory.createSystem();
     });
 
-    it("should provide comprehensive metrics", () => {
+    it('should provide comprehensive metrics', () => {
       const metrics = knowledgeSubstrateCore.getMetrics();
 
-      expect(metrics).toHaveProperty("valueDeliveryRatio");
-      expect(metrics).toHaveProperty("performanceImpactRatio");
-      expect(metrics).toHaveProperty("developmentEfficiencyRatio");
-      expect(metrics).toHaveProperty("componentCount");
-      expect(metrics).toHaveProperty("coreComponentCount");
-      expect(metrics).toHaveProperty("optionalComponentCount");
+      expect(metrics).toHaveProperty('valueDeliveryRatio');
+      expect(metrics).toHaveProperty('performanceImpactRatio');
+      expect(metrics).toHaveProperty('developmentEfficiencyRatio');
+      expect(metrics).toHaveProperty('componentCount');
+      expect(metrics).toHaveProperty('coreComponentCount');
+      expect(metrics).toHaveProperty('optionalComponentCount');
     });
 
-    it("should validate high value metrics", () => {
+    it('should validate high value metrics', () => {
       const metrics = knowledgeSubstrateCore.getMetrics();
 
       // High value delivery from core components
@@ -306,30 +294,30 @@ describe("Knowledge Substrate Core", () => {
     });
   });
 
-  describe("Knowledge Substrate Status", () => {
+  describe('Knowledge Substrate Status', () => {
     beforeEach(async () => {
       knowledgeSubstrateCore = await KnowledgeSubstrateFactory.createSystem();
     });
 
-    it("should provide system status", () => {
+    it('should provide system status', () => {
       const status = knowledgeSubstrateCore.getStatus();
 
-      expect(status).toHaveProperty("initialized");
-      expect(status).toHaveProperty("components");
-      expect(status).toHaveProperty("metrics");
-      expect(status).toHaveProperty("config");
-      expect(status).toHaveProperty("timestamp");
+      expect(status).toHaveProperty('initialized');
+      expect(status).toHaveProperty('components');
+      expect(status).toHaveProperty('metrics');
+      expect(status).toHaveProperty('config');
+      expect(status).toHaveProperty('timestamp');
 
       expect(status.initialized).toBe(true);
       expect(Array.isArray(status.components)).toBe(true);
-      expect(typeof status.metrics).toBe("object");
-      expect(typeof status.config).toBe("object");
-      expect(typeof status.timestamp).toBe("string");
+      expect(typeof status.metrics).toBe('object');
+      expect(typeof status.config).toBe('object');
+      expect(typeof status.timestamp).toBe('string');
     });
   });
 
-  describe("Knowledge Substrate Cleanup", () => {
-    it("should cleanup all components", async () => {
+  describe('Knowledge Substrate Cleanup', () => {
+    it('should cleanup all components', async () => {
       knowledgeSubstrateCore = await KnowledgeSubstrateFactory.createSystem();
 
       const statusBefore = knowledgeSubstrateCore.getStatus();
@@ -343,8 +331,8 @@ describe("Knowledge Substrate Core", () => {
     });
   });
 
-  describe("Knowledge Substrate Value Validation", () => {
-    it("should validate optimal value concentration", async () => {
+  describe('Knowledge Substrate Value Validation', () => {
+    it('should validate optimal value concentration', async () => {
       knowledgeSubstrateCore = await KnowledgeSubstrateFactory.createSystem();
 
       const metrics = knowledgeSubstrateCore.getMetrics();
@@ -364,14 +352,10 @@ describe("Knowledge Substrate Core", () => {
       console.log(`   Total Components: ${totalComponents}`);
       console.log(`   Core Components: ${coreComponents}`);
       console.log(`   Component Ratio: ${(componentRatio * 100).toFixed(1)}%`);
+      console.log(`   Value Delivery: ${(metrics.valueDeliveryRatio * 100).toFixed(1)}%`);
+      console.log(`   Performance Impact: ${(metrics.performanceImpactRatio * 100).toFixed(1)}%`);
       console.log(
-        `   Value Delivery: ${(metrics.valueDeliveryRatio * 100).toFixed(1)}%`,
-      );
-      console.log(
-        `   Performance Impact: ${(metrics.performanceImpactRatio * 100).toFixed(1)}%`,
-      );
-      console.log(
-        `   Development Efficiency: ${(metrics.developmentEfficiencyRatio * 100).toFixed(1)}%`,
+        `   Development Efficiency: ${(metrics.developmentEfficiencyRatio * 100).toFixed(1)}%`
       );
     });
   });

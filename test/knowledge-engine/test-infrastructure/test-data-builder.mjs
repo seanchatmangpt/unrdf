@@ -1,13 +1,13 @@
 /**
  * @file Test Data Builder for Knowledge Engine Tests
  * @module test-data-builder
- * 
+ *
  * @description
  * Builder pattern for creating test data objects with sensible defaults
  * and easy customization.
  */
 
-import { defineHook } from '../../../src/knowledge-engine/define-hook.mjs';
+import { _defineHook } from '../../../src/knowledge-engine/define-hook.mjs';
 import { Store } from 'n3';
 import { DataFactory } from 'n3';
 import crypto from 'node:crypto';
@@ -43,12 +43,12 @@ export class TestDataBuilder {
     const defaults = {
       meta: {
         name: this.generateId('hook'),
-        description: 'Test hook for knowledge engine'
+        description: 'Test hook for knowledge engine',
       },
       when: this.buildCondition(),
-      run: async (event) => {
+      run: async event => {
         return { success: true, hookName: event.name };
-      }
+      },
     };
 
     return { ...defaults, ...overrides };
@@ -66,11 +66,11 @@ export class TestDataBuilder {
       context: {
         graph: this.buildStore(),
         user: { id: 'test-user', role: 'user' },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       },
       id: crypto.randomUUID(),
       timestamp: new Date().toISOString(),
-      source: 'test'
+      source: 'test',
     };
 
     return { ...defaults, ...overrides };
@@ -97,7 +97,7 @@ export class TestDataBuilder {
           namedNode('http://example.org/subject2'),
           namedNode('http://example.org/predicate2'),
           namedNode('http://example.org/object2')
-        )
+        ),
       ];
       store.addQuads(defaultQuads);
     }
@@ -112,7 +112,7 @@ export class TestDataBuilder {
   buildCondition(overrides = {}) {
     const defaults = {
       kind: 'sparql-ask',
-      ref: this.buildFileRef()
+      ref: this.buildFileRef(),
     };
 
     return { ...defaults, ...overrides };
@@ -127,7 +127,7 @@ export class TestDataBuilder {
     const defaults = {
       uri: `file://test-${this.generateId('file')}.sparql`,
       sha256: 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',
-      mediaType: 'application/sparql-query'
+      mediaType: 'application/sparql-query',
     };
 
     return { ...defaults, ...overrides };
@@ -144,7 +144,7 @@ export class TestDataBuilder {
       removals: [],
       metadata: {},
       id: crypto.randomUUID(),
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
     return { ...defaults, ...overrides };
@@ -162,7 +162,7 @@ export class TestDataBuilder {
       env: {},
       metadata: {},
       transactionId: crypto.randomUUID(),
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
     return { ...defaults, ...overrides };
@@ -180,7 +180,7 @@ export class TestDataBuilder {
       strictMode: false,
       maxConcurrentHooks: 10,
       hookTimeout: 30000,
-      retryAttempts: 3
+      retryAttempts: 3,
     };
 
     return { ...defaults, ...overrides };
@@ -194,7 +194,7 @@ export class TestDataBuilder {
    */
   buildSparqlQuery(type = 'ask', options = {}) {
     const { subject = '?s', predicate = '?p', object = '?o' } = options;
-    
+
     switch (type) {
       case 'ask':
         return `ASK WHERE { ${subject} ${predicate} ${object} }`;
@@ -216,7 +216,7 @@ export class TestDataBuilder {
    */
   buildShaclShape(options = {}) {
     const { shapeName = 'TestShape', propertyPath = 'ex:testProperty' } = options;
-    
+
     return `
 @prefix ex: <http://example.org/> .
 @prefix sh: <http://www.w3.org/ns/shacl#> .
@@ -241,10 +241,10 @@ ex:${shapeName}
    */
   buildSuccessHook(overrides = {}) {
     return this.buildHook({
-      run: async (event) => {
+      run: async _event => {
         return { success: true, result: 'Hook executed successfully' };
       },
-      ...overrides
+      ...overrides,
     });
   }
 
@@ -256,10 +256,10 @@ ex:${shapeName}
    */
   buildFailureHook(overrides = {}, error = new Error('Test hook failure')) {
     return this.buildHook({
-      run: async (event) => {
+      run: async _event => {
         throw error;
       },
-      ...overrides
+      ...overrides,
     });
   }
 
@@ -271,11 +271,11 @@ ex:${shapeName}
    */
   buildTimeoutHook(overrides = {}, timeout = 100) {
     return this.buildHook({
-      run: async (event) => {
+      run: async _event => {
         await new Promise(resolve => setTimeout(resolve, timeout));
         return { success: true, result: 'Hook completed after timeout' };
       },
-      ...overrides
+      ...overrides,
     });
   }
 }

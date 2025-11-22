@@ -1,15 +1,15 @@
 /**
  * @file OpenTelemetry Observability for UNRDF
  * @module observability
- * 
+ *
  * @description
  * Implements comprehensive observability with OpenTelemetry traces, metrics,
  * and logging for the UNRDF Knowledge Engine. Provides backpressure monitoring,
  * error isolation, and performance tracking.
  */
 
-import { randomUUID } from 'crypto';
-import { z } from 'zod';
+import { _randomUUID } from 'crypto';
+import { _z } from 'zod';
 import { ObservabilityConfigSchema, PerformanceMetricsSchema } from './schemas.mjs';
 import { getRuntimeConfig } from '../context/config.mjs';
 
@@ -33,7 +33,7 @@ export class ObservabilityManager {
       totalTransactions: 0,
       memoryUsage: [],
       cacheStats: { hits: 0, misses: 0, size: 0 },
-      backpressure: { queueDepth: 0, watermarks: { high: 1000, low: 100 } }
+      backpressure: { queueDepth: 0, watermarks: { high: 1000, low: 100 } },
     };
     this.activeSpans = new Map();
     this.initialized = false;
@@ -50,7 +50,9 @@ export class ObservabilityManager {
     try {
       // Dynamic import of OpenTelemetry packages
       const { NodeSDK } = await import('@opentelemetry/sdk-node');
-      const { getNodeAutoInstrumentations } = await import('@opentelemetry/auto-instrumentations-node');
+      const { getNodeAutoInstrumentations } = await import(
+        '@opentelemetry/auto-instrumentations-node'
+      );
       const { Resource } = await import('@opentelemetry/resources');
       const { SemanticResourceAttributes } = await import('@opentelemetry/semantic-conventions');
       const { OTLPTraceExporter } = await import('@opentelemetry/exporter-otlp-http');
@@ -62,25 +64,25 @@ export class ObservabilityManager {
       const resource = new Resource({
         [SemanticResourceAttributes.SERVICE_NAME]: this.config.serviceName,
         [SemanticResourceAttributes.SERVICE_VERSION]: this.config.serviceVersion,
-        ...this.config.resourceAttributes
+        ...this.config.resourceAttributes,
       });
 
       // Create exporters
       const traceExporter = new OTLPTraceExporter({
         url: this.config.endpoint ? `${this.config.endpoint}/v1/traces` : undefined,
-        headers: this.config.headers
+        headers: this.config.headers,
       });
 
       const metricExporter = new OTLPMetricExporter({
         url: this.config.endpoint ? `${this.config.endpoint}/v1/metrics` : undefined,
-        headers: this.config.headers
+        headers: this.config.headers,
       });
 
       // Create metric reader
       const metricReader = new PeriodicExportingMetricReader({
         exporter: metricExporter,
         exportIntervalMillis: this.config.scheduledDelayMillis,
-        exportTimeoutMillis: this.config.exportTimeoutMillis
+        exportTimeoutMillis: this.config.exportTimeoutMillis,
       });
 
       // Initialize SDK
@@ -88,7 +90,7 @@ export class ObservabilityManager {
         resource,
         traceExporter: this.config.enableTracing ? traceExporter : undefined,
         metricReader: this.config.enableMetrics ? metricReader : undefined,
-        instrumentations: this.config.enableTracing ? [getNodeAutoInstrumentations()] : []
+        instrumentations: this.config.enableTracing ? [getNodeAutoInstrumentations()] : [],
       });
 
       await sdk.start();
@@ -118,41 +120,41 @@ export class ObservabilityManager {
 
     // Transaction metrics
     this.transactionCounter = this.meter.createCounter('kgc_transactions_total', {
-      description: 'Total number of transactions processed'
+      description: 'Total number of transactions processed',
     });
 
     this.transactionDuration = this.meter.createHistogram('kgc_transaction_duration_ms', {
       description: 'Transaction processing duration in milliseconds',
-      unit: 'ms'
+      unit: 'ms',
     });
 
     this.hookExecutionCounter = this.meter.createCounter('kgc_hooks_executed_total', {
-      description: 'Total number of hooks executed'
+      description: 'Total number of hooks executed',
     });
 
     this.hookDuration = this.meter.createHistogram('kgc_hook_duration_ms', {
       description: 'Hook execution duration in milliseconds',
-      unit: 'ms'
+      unit: 'ms',
     });
 
     this.errorCounter = this.meter.createCounter('kgc_errors_total', {
-      description: 'Total number of errors'
+      description: 'Total number of errors',
     });
 
     this.memoryGauge = this.meter.createUpDownCounter('kgc_memory_usage_bytes', {
-      description: 'Memory usage in bytes'
+      description: 'Memory usage in bytes',
     });
 
     this.cacheHitCounter = this.meter.createCounter('kgc_cache_hits_total', {
-      description: 'Total cache hits'
+      description: 'Total cache hits',
     });
 
     this.cacheMissCounter = this.meter.createCounter('kgc_cache_misses_total', {
-      description: 'Total cache misses'
+      description: 'Total cache misses',
     });
 
     this.queueDepthGauge = this.meter.createUpDownCounter('kgc_queue_depth', {
-      description: 'Current queue depth'
+      description: 'Current queue depth',
     });
   }
 
@@ -180,8 +182,8 @@ export class ObservabilityManager {
       attributes: {
         'kgc.transaction.id': transactionId,
         'kgc.service.name': this.config.serviceName,
-        ...attributes
-      }
+        ...attributes,
+      },
     });
 
     const spanContext = { transactionId, span, startTime: Date.now() };
@@ -206,7 +208,7 @@ export class ObservabilityManager {
       span.setAttributes({
         'kgc.transaction.duration_ms': duration,
         'kgc.transaction.success': !error,
-        ...attributes
+        ...attributes,
       });
 
       if (error) {
@@ -243,8 +245,8 @@ export class ObservabilityManager {
       attributes: {
         'kgc.hook.id': hookId,
         'kgc.transaction.id': transactionId,
-        ...attributes
-      }
+        ...attributes,
+      },
     });
 
     const spanKey = `${transactionId}:${hookId}`;
@@ -272,7 +274,7 @@ export class ObservabilityManager {
       span.setAttributes({
         'kgc.hook.duration_ms': duration,
         'kgc.hook.success': !error,
-        ...attributes
+        ...attributes,
       });
 
       if (error) {
@@ -303,7 +305,7 @@ export class ObservabilityManager {
       this.errorCounter.add(1, {
         'error.type': error.constructor.name,
         'error.message': error.message,
-        ...attributes
+        ...attributes,
       });
     }
 
@@ -334,14 +336,16 @@ export class ObservabilityManager {
    */
   updateQueueDepth(depth) {
     this.metrics.backpressure.queueDepth = depth;
-    
+
     if (this.queueDepthGauge) {
       this.queueDepthGauge.add(depth - this.metrics.backpressure.queueDepth);
     }
 
     // Check watermarks
     if (depth > this.metrics.backpressure.watermarks.high) {
-      console.warn(`[Observability] High queue depth: ${depth} > ${this.metrics.backpressure.watermarks.high}`);
+      console.warn(
+        `[Observability] High queue depth: ${depth} > ${this.metrics.backpressure.watermarks.high}`
+      );
     }
   }
 
@@ -355,7 +359,7 @@ export class ObservabilityManager {
       rss: memUsage.rss,
       heapUsed: memUsage.heapUsed,
       heapTotal: memUsage.heapTotal,
-      external: memUsage.external
+      external: memUsage.external,
     });
 
     // Keep only last 100 measurements
@@ -424,11 +428,12 @@ export class ObservabilityManager {
       cacheStats: {
         hitRate: cacheHitRate,
         size: this.metrics.cacheStats.size,
-        maxSize: typeof this.config.cacheMaxSize === 'number'
-          ? this.config.cacheMaxSize
-          : (getRuntimeConfig().cacheMaxSize ?? this.metrics.cacheStats.size)
+        maxSize:
+          typeof this.config.cacheMaxSize === 'number'
+            ? this.config.cacheMaxSize
+            : (getRuntimeConfig().cacheMaxSize ?? this.metrics.cacheStats.size),
       },
-      backpressure: this.metrics.backpressure
+      backpressure: this.metrics.backpressure,
     });
 
     this._lastMetrics = computed;
@@ -445,7 +450,7 @@ export class ObservabilityManager {
     this.metrics.transactionLatency.push({
       timestamp: Date.now(),
       duration,
-      success
+      success,
     });
 
     // Keep only last 1000 measurements
@@ -501,7 +506,7 @@ export class ObservabilityManager {
    */
   async shutdown() {
     // End all active spans
-    for (const [key, spanContext] of this.activeSpans) {
+    for (const [_key, spanContext] of this.activeSpans) {
       if (spanContext.span) {
         spanContext.span.end();
       }
@@ -525,5 +530,3 @@ export function createObservabilityManager(config = {}) {
  * Default observability manager instance
  */
 export const defaultObservabilityManager = createObservabilityManager();
-
-
