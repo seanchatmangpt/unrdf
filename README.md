@@ -1,23 +1,23 @@
-# unrdf
+# UNRDF
 
-> Production-ready RDF knowledge graph library with autonomic hooks, cryptographic provenance, and Dark Matter 80/20 optimization.
+> Production-ready RDF knowledge graph library with Knowledge Hooks, 40 React hooks, cryptographic provenance, and 80/20 Dark Matter optimization.
 
-[![Version](https://img.shields.io/badge/version-3.0.3-blue.svg)](https://github.com/unrdf/unrdf)
+[![Version](https://img.shields.io/badge/version-4.0.0-blue.svg)](https://github.com/unrdf/unrdf)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Node](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org)
-<!-- Tests badge removed: rely on generated artifacts (coverage/test-results.*) -->
 
-**unrdf** is a composable RDF knowledge graph library that transforms static data into intelligent, reactive systems. Built on battle-tested foundations ([N3.js](https://github.com/rdfjs/N3.js), [Comunica](https://github.com/comunica/comunica), [SHACL](https://github.com/zazuko/rdf-validate-shacl)), unrdf adds **Knowledge Hooks** for policy-driven automation, **cryptographic provenance** with lockchains, and **performance optimization** through the Dark Matter 80/20 framework.
+**UNRDF** is a composable RDF knowledge graph library that transforms static data into intelligent, reactive systems. Built on battle-tested foundations ([N3.js](https://github.com/rdfjs/N3.js), [Comunica](https://github.com/comunica/comunica), [SHACL](https://github.com/zazuko/rdf-validate-shacl)), UNRDF adds **Knowledge Hooks** for policy-driven automation, **40 React hooks** organized by the 80/20 principle, **cryptographic provenance** with lockchains, and **enterprise-grade features** for production deployments.
 
 ---
 
 ## Table of Contents
 
-- [Why v3.0.0?](#why-v300)
+- [Why v4.0.0?](#why-v400)
 - [Quick Start](#quick-start)
 - [Core Features](#core-features)
 - [Installation](#installation)
 - [Usage Examples](#usage-examples)
+- [Documentation](#documentation)
 - [API Reference](#api-reference)
 - [Architecture](#architecture)
 - [Performance](#performance)
@@ -29,23 +29,28 @@
 
 ---
 
-## Why v3.0.0?
+## Why v4.0.0?
 
-**v3.0.0 is a focused, production-ready release:**
+**v4.0.0 delivers enterprise-grade RDF infrastructure:**
 
-- ✅ **Core 80/20 tests green** (see coverage artifacts under `coverage/`)
-- ✅ **OTEL span-based validation runner included** (see `validation-output.log`)
-- ✅ **Security features enabled** (SHA3-256 Merkle verification, cryptographic audit trails)
-- ✅ **Performance optimizations enabled** (batching, caching, parallel execution)
-- ✅ **Composable architecture** (use only what you need)
+- 40 React hooks organized by 80/20 principle (Tier 1-4)
+- Knowledge Hooks with content-addressed conditions (SHA-256 verified)
+- AI/Semantic integration, Distributed Federation, Real-time Streaming
+- HTF Framework and SPARC methodology support
+- Full Kubernetes, Terraform, and Testcontainers integration
+- OpenTelemetry observability with OTEL span-based validation
 
-**What changed from v2.x:**
+**Key v4.0 Features:**
 
-- ❌ **CLI removed** → Will be separate `@unrdf/cli` package
-- ❌ **Sidecar removed** → Will be separate `@unrdf/sidecar` package
-- ✅ **Core API unchanged** → Drop-in upgrade for programmatic users
+| Feature | Description |
+|---------|-------------|
+| **40 React Hooks** | 4-tier organization: Essential (60%), Important (20%), Standard (15%), Advanced (5%) |
+| **Knowledge Hooks** | Declarative triggers with before/run/after lifecycle, cryptographic receipts |
+| **Knowledge Engine** | Full + Lite modes for browser and Node.js environments |
+| **Enterprise Features** | K8s deployment, Terraform IaC, federation, streaming |
+| **80/20 Optimization** | Eliminates 80% of RDF "dark matter" boilerplate |
 
-**Migration:** If you used the programmatic API, no changes needed. If you used CLI/sidecar, see [migration guide](docs/v3.0.0-VISION.md).
+**Migration from v3.x:** See [migration guide](docs/migration-guide.md).
 
 ---
 
@@ -520,6 +525,60 @@ await system.cleanup();
 
 ---
 
+## Documentation
+
+UNRDF documentation follows the [Diataxis](https://diataxis.fr/) framework, organizing content by purpose:
+
+### Getting Started
+
+- **[Getting Started Guide](docs/GETTING_STARTED.md)** - From zero to your first knowledge graph
+
+### Tutorials (Learning-Oriented)
+
+Step-by-step lessons for beginners:
+
+| Tutorial | Description |
+|----------|-------------|
+| [Creating RDF Documents](docs/tutorials/creating-rdf-documents.md) | Build your first knowledge graph from scratch |
+| [Knowledge Hooks](docs/tutorials/knowledge-hooks.md) | Create reactive triggers for graph changes |
+| [SPARQL Queries](docs/tutorials/sparql.md) | Master graph querying patterns |
+| [SHACL Validation](docs/tutorials/validation.md) | Enforce data quality with shapes |
+
+### How-To Guides (Task-Oriented)
+
+Practical solutions for specific problems:
+
+| Guide | Description |
+|-------|-------------|
+| [Querying Data](docs/guides/querying-data.md) | Common query patterns and recipes |
+| [Defining Hooks](docs/guides/defining-hooks.md) | Create custom Knowledge Hooks |
+| [Validation Rules](docs/guides/validation-rules.md) | Build comprehensive SHACL shapes |
+| [Performance Optimization](docs/guides/performance-optimization.md) | Speed up queries and reduce memory |
+| [Troubleshooting](docs/guides/troubleshooting.md) | Fix common issues |
+
+### Reference (Information-Oriented)
+
+Technical specifications and lookup tables:
+
+| Reference | Description |
+|-----------|-------------|
+| [API Reference](docs/reference/api-reference.md) | Complete function signatures and types |
+| [CLI Reference](docs/reference/cli-reference.md) | Command-line interface documentation |
+| [Configuration Options](docs/reference/configuration-options.md) | All configuration settings |
+
+### Explanation (Understanding-Oriented)
+
+Deep dives into concepts and architecture:
+
+| Topic | Description |
+|-------|-------------|
+| [RDF & SPARQL Concepts](docs/explanation/rdf-sparql-concepts.md) | Foundation concepts for knowledge graphs |
+| [Knowledge Hooks Architecture](docs/explanation/knowledge-hooks-architecture.md) | How reactive triggers work |
+| [System Design](docs/explanation/system-design.md) | Architecture decisions and trade-offs |
+| [Architecture Overview](docs/ARCHITECTURE.md) | Complete system architecture |
+
+---
+
 ## API Reference
 
 ### Core Exports
@@ -667,15 +726,11 @@ unrdf implements defense-in-depth security:
 
 ### Security Features
 
-- ✅ **Merkle Root Verification** - SHA3-256 cryptographic validation
-- ✅ **Sandboxed Execution** - VM2-based isolation (upgrading to isolated-vm in v3.1.0)
-- ✅ **Lockchain Integrity** - Tamper-evident audit logs
-- ✅ **Safe SPARQL** - Query timeout and complexity limits
-
-### Known Issues
-
-- ⚠️ **vm2 deprecation** - Migrating to isolated-vm in v3.1.0
-- ⚠️ **Browser compatibility** - Mock implementations (fixing in v3.1.0)
+- **Merkle Root Verification** - SHA3-256 cryptographic validation
+- **Sandboxed Execution** - isolated-vm based isolation
+- **Lockchain Integrity** - Tamper-evident audit logs
+- **Safe SPARQL** - Query timeout and complexity limits
+- **Content-Addressed Conditions** - SHA-256 verified Knowledge Hook conditions
 
 ### Reporting Vulnerabilities
 
@@ -690,30 +745,32 @@ We follow coordinated disclosure and aim to patch within 30 days.
 
 ## Roadmap
 
-### v3.0.0 (Current) ✅
-- Core knowledge engine
-- 100% test coverage
-- Production-ready observability
-- Merkle verification
-- Performance optimizations
+### v4.0.0 (Current)
+- 40 React hooks with 80/20 tier organization
+- Knowledge Hooks with content-addressed conditions
+- Knowledge Engine Full + Lite modes
+- AI/Semantic integration, Federation, Streaming
+- Kubernetes, Terraform, Testcontainers support
+- OpenTelemetry span-based validation
+- HTF Framework and SPARC methodology
 
-### v3.1.0 (Q1 2026)
-- Replace vm2 with isolated-vm
-- Browser compatibility fixes
-- Update OTEL validation
-- 90%+ test coverage
+### v4.1.0 (Planned)
+- GraphQL integration layer
+- Enhanced browser bundle optimization
+- Additional composables
+- Extended policy pack library
 
-### v3.2.0 (Q2 2026)
-- Advanced query optimization
-- Streaming RDF processing
-- Enhanced reasoning
-- Performance profiling tools
+### v4.2.0 (Planned)
+- Visual Knowledge Graph explorer
+- Advanced N3 reasoning capabilities
+- Performance profiling dashboard
+- Multi-tenant federation support
 
-### Ecosystem Packages
-- `@unrdf/cli` - Command-line interface
-- `@unrdf/sidecar` - gRPC server
-- `@unrdf/web` - REST API
-- `@unrdf/ui` - Graph explorer
+### Ecosystem
+- `unrdf/knowledge-engine` - Core RDF operations
+- `unrdf/knowledge-engine/lite` - Browser-optimized bundle
+- `unrdf/react-hooks` - 40 React hooks
+- `unrdf/cli` - Command-line interface
 
 ---
 
@@ -767,21 +824,20 @@ pnpm test
 
 ---
 
-## Documentation
+## Additional Resources
 
 ### Release Notes & Migration
-- [v3.0.0 Vision & Migration](docs/v3.0.0-VISION.md)
-- [v3.0.0 Release Notes](docs/v3.0.0-RELEASE-NOTES.md)
-- [Changelog](docs/CHANGELOG.md)
-- [v2.4.0 Release Summary](docs/v2.4.0-RELEASE-SUMMARY.md)
+- [Migration Guide](docs/migration-guide.md) - Upgrading from previous versions
+- [Changelog](docs/CHANGELOG.md) - Version history
 
 ### Architecture & Design
-- [Architecture Analysis](docs/v2.4.0-architecture-analysis.md)
-- [Test Strategy](docs/v2.4.0-test-strategy.md)
+- [Architecture Overview](docs/ARCHITECTURE.md) - Complete system architecture
+- [System Design](docs/explanation/system-design.md) - Design decisions and trade-offs
 
 ### Support Resources
 - [FAQ](docs/FAQ.md) - Frequently asked questions
-- [Troubleshooting](docs/TROUBLESHOOTING.md) - Common issues and solutions
+- [Troubleshooting](docs/guides/troubleshooting.md) - Common issues and solutions
+- [Performance Optimization](docs/guides/performance-optimization.md) - Speed improvements
 
 ---
 
@@ -789,11 +845,11 @@ pnpm test
 
 **Where can I find answers to common questions?**
 
-See the [FAQ document](docs/FAQ.md) for detailed answers including:
-- What is unrdf and why use it?
-- How does it compare to other RDF libraries?
-- What does "opinionated" mean?
-- Core components and design decisions
+See the [FAQ document](docs/FAQ.md) and the [comprehensive documentation](#documentation) for:
+- What is UNRDF and why use it?
+- How does the 80/20 principle work?
+- How to create Knowledge Hooks?
+- Performance optimization strategies
 
 ---
 
@@ -801,12 +857,12 @@ See the [FAQ document](docs/FAQ.md) for detailed answers including:
 
 **Having issues?**
 
-Check the [Troubleshooting guide](docs/TROUBLESHOOTING.md) for solutions to common problems:
-- Installation issues
-- Package manager conflicts
-- Node.js version compatibility
-- Performance optimization
-- Testing and validation errors
+Check the [Troubleshooting guide](docs/guides/troubleshooting.md) for solutions to:
+- Installation and import errors
+- Parse and query problems
+- Validation issues
+- Memory and performance concerns
+- Hook configuration problems
 
 ---
 
@@ -837,6 +893,6 @@ Developed using **Claude-Flow Hive Mind** orchestration with OTEL validation as 
 
 ---
 
-**Made with ❤️ by the unrdf community**
+**Made with care by the UNRDF community**
 
-**unrdf v3.0.0** - Production-ready RDF knowledge graphs
+**UNRDF v4.0.0** - Production-ready RDF knowledge graphs with Knowledge Hooks
