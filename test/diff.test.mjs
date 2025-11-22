@@ -1,6 +1,7 @@
 /**
  * @fileoverview Comprehensive TDD tests for diff.mjs
  * Uses London School (mock-driven) approach with strict isolation
+ * @vitest-environment node
  */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest'
