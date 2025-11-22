@@ -44,7 +44,13 @@ export function tableFormatter(data, options = {}) {
   }
 
   // Generate header row if needed
-  if (header && Array.isArray(data) && data.length > 0 && typeof data[0] === 'object' && !Array.isArray(data[0])) {
+  if (
+    header &&
+    Array.isArray(data) &&
+    data.length > 0 &&
+    typeof data[0] === 'object' &&
+    !Array.isArray(data[0])
+  ) {
     const headerRow = columns ?? Object.keys(data[0]);
     const tableData = [headerRow, ...rows];
     return table(tableData, config);
@@ -66,20 +72,20 @@ export function dataToRows(data, columns) {
   }
 
   // Handle 2D array
-  if (Array.isArray(data) && data.every((row) => Array.isArray(row))) {
-    return data.map((row) => row.map((cell) => formatCell(cell)));
+  if (Array.isArray(data) && data.every(row => Array.isArray(row))) {
+    return data.map(row => row.map(cell => formatCell(cell)));
   }
 
   // Handle array of objects
   if (Array.isArray(data) && data.length > 0 && typeof data[0] === 'object') {
     const keys = columns ?? Object.keys(data[0]);
-    return data.map((obj) => keys.map((key) => formatCell(obj[key])));
+    return data.map(obj => keys.map(key => formatCell(obj[key])));
   }
 
   // Handle single object
   if (typeof data === 'object' && !Array.isArray(data)) {
     const keys = columns ?? Object.keys(data);
-    return keys.map((key) => [key, formatCell(data[key])]);
+    return keys.map(key => [key, formatCell(data[key])]);
   }
 
   // Handle array of primitives
@@ -139,7 +145,7 @@ export function keyValueTable(data, options = {}) {
  * @returns {string} ASCII table string
  */
 export function listTable(items, header = 'Items') {
-  const rows = [[header], ...items.map((item) => [item])];
+  const rows = [[header], ...items.map(item => [item])];
   return table(rows, {
     border: getBorderCharacters('honeywell'),
     drawHorizontalLine: (lineIndex, rowCount) => {

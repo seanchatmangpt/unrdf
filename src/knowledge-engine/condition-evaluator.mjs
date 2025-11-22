@@ -1,14 +1,14 @@
 /**
  * @file Condition evaluation engine for knowledge hooks.
  * @module condition-evaluator
- * 
+ *
  * @description
  * Production-ready condition evaluator that loads and executes SPARQL queries
  * and SHACL validations to determine if hooks should trigger.
  */
 
 import { createFileResolver } from './file-resolver.mjs';
-import { query, ask, select } from './query.mjs';
+import { ask, select } from './query.mjs';
 import { validateShacl } from './validate.mjs';
 import { createQueryOptimizer } from './query-optimizer.mjs';
 import { Store } from 'n3';
@@ -21,7 +21,7 @@ import { Store } from 'n3';
  * @param {string} [options.basePath] - Base path for file resolution
  * @param {Object} [options.env] - Environment variables
  * @returns {Promise<boolean|Array|Object>} Condition evaluation result
- * 
+ *
  * @throws {Error} If condition evaluation fails
  */
 export async function evaluateCondition(condition, graph, options = {}) {
@@ -31,10 +31,10 @@ export async function evaluateCondition(condition, graph, options = {}) {
   if (!graph || typeof graph.getQuads !== 'function') {
     throw new TypeError('evaluateCondition: graph must be a valid Store instance');
   }
-  
+
   const { basePath = process.cwd(), env = {} } = options;
   const resolver = createFileResolver({ basePath });
-  
+
   try {
     switch (condition.kind) {
       case 'sparql-ask':
@@ -80,13 +80,15 @@ async function evaluateSparqlAsk(condition, graph, resolver, env) {
     // Use inline query string for convenience
     sparql = inlineQuery;
   } else {
-    throw new Error('SPARQL ASK condition requires either ref (file reference) or query (inline string)');
+    throw new Error(
+      'SPARQL ASK condition requires either ref (file reference) or query (inline string)'
+    );
   }
 
   // Execute ASK query
   const result = await ask(graph, sparql, {
     env,
-    deterministic: true
+    deterministic: true,
   });
 
   return result;
@@ -113,15 +115,17 @@ async function evaluateSparqlSelect(condition, graph, resolver, env) {
     // Use inline query string for convenience
     sparql = inlineQuery;
   } else {
-    throw new Error('SPARQL SELECT condition requires either ref (file reference) or query (inline string)');
+    throw new Error(
+      'SPARQL SELECT condition requires either ref (file reference) or query (inline string)'
+    );
   }
 
   // Execute SELECT query
-  const results = await select(graph, sparql, { 
+  const results = await select(graph, sparql, {
     env,
-    deterministic: true 
+    deterministic: true,
   });
-  
+
   return results;
 }
 
@@ -135,20 +139,20 @@ async function evaluateSparqlSelect(condition, graph, resolver, env) {
  */
 async function evaluateShacl(condition, graph, resolver, env) {
   const { ref } = condition;
-  
+
   if (!ref || !ref.uri || !ref.sha256) {
     throw new Error('SHACL condition requires ref with uri and sha256');
   }
-  
+
   // Load SHACL shapes file
   const { turtle } = await resolver.loadShacl(ref.uri, ref.sha256);
-  
+
   // Execute SHACL validation
   const report = validateShacl(graph, turtle, {
     strict: env.strictMode || false,
-    includeDetails: true
+    includeDetails: true,
   });
-  
+
   return report;
 }
 
@@ -168,13 +172,13 @@ export function createConditionEvaluator(options = {}) {
     cacheMaxAge = 60000, // 1 minute
     strictMode = false,
     enableOptimization = true,
-    optimizationConfig = {}
+    optimizationConfig = {},
   } = options;
-  
+
   const resolver = createFileResolver({ basePath, enableCache, cacheMaxAge });
   const conditionCache = new Map();
   const optimizer = enableOptimization ? createQueryOptimizer(optimizationConfig) : null;
-  
+
   const baseEvaluator = {
     /**
      * Validate a condition definition.
@@ -194,7 +198,7 @@ export function createConditionEvaluator(options = {}) {
      */
     async evaluate(condition, graph, env = {}) {
       const cacheKey = createCacheKey(condition, graph, env);
-      
+
       if (enableCache && conditionCache.has(cacheKey)) {
         const cached = conditionCache.get(cacheKey);
         if (Date.now() - cached.timestamp < cacheMaxAge) {
@@ -202,26 +206,26 @@ export function createConditionEvaluator(options = {}) {
         }
         conditionCache.delete(cacheKey);
       }
-      
+
       try {
         let result;
-        
+
         // For now, use standard evaluation
         result = await evaluateCondition(condition, graph, { basePath, env });
-        
+
         if (enableCache) {
           conditionCache.set(cacheKey, {
             result,
-            timestamp: Date.now()
+            timestamp: Date.now(),
           });
         }
-        
+
         return result;
       } catch (error) {
         if (strictMode) {
           throw error;
         }
-        
+
         // Return safe defaults in non-strict mode
         switch (condition.kind) {
           case 'sparql-ask':
@@ -235,7 +239,7 @@ export function createConditionEvaluator(options = {}) {
         }
       }
     },
-    
+
     /**
      * Evaluate multiple conditions in parallel.
      * @param {Array} conditions - Array of condition definitions
@@ -247,14 +251,12 @@ export function createConditionEvaluator(options = {}) {
       if (!Array.isArray(conditions)) {
         throw new TypeError('evaluateAll: conditions must be an array');
       }
-      
-      const promises = conditions.map(condition => 
-        this.evaluate(condition, graph, env)
-      );
-      
+
+      const promises = conditions.map(condition => this.evaluate(condition, graph, env));
+
       return Promise.all(promises);
     },
-    
+
     /**
      * Check if a condition is satisfied (for trigger evaluation).
      * @param {Object} condition - The condition definition
@@ -265,7 +267,7 @@ export function createConditionEvaluator(options = {}) {
     async isSatisfied(condition, graph, env = {}) {
       try {
         const result = await this.evaluate(condition, graph, env);
-        
+
         switch (condition.kind) {
           case 'sparql-ask':
             return Boolean(result);
@@ -283,7 +285,7 @@ export function createConditionEvaluator(options = {}) {
         return false;
       }
     },
-    
+
     /**
      * Clear all caches.
      */
@@ -291,7 +293,7 @@ export function createConditionEvaluator(options = {}) {
       resolver.clearCache();
       conditionCache.clear();
     },
-    
+
     /**
      * Get cache statistics.
      * @returns {Object} Cache statistics
@@ -301,27 +303,27 @@ export function createConditionEvaluator(options = {}) {
       const now = Date.now();
       let validEntries = 0;
       let expiredEntries = 0;
-      
-      for (const [key, value] of conditionCache.entries()) {
+
+      for (const [_key, value] of conditionCache.entries()) {
         if (now - value.timestamp < cacheMaxAge) {
           validEntries++;
         } else {
           expiredEntries++;
         }
       }
-      
+
       return {
         fileCache: fileStats,
         conditionCache: {
           totalEntries: conditionCache.size,
           validEntries,
           expiredEntries,
-          cacheMaxAge
-        }
+          cacheMaxAge,
+        },
       };
-    }
+    },
   };
-  
+
   // Add optimizer methods if enabled
   return addOptimizerMethods(baseEvaluator, optimizer);
 }
@@ -337,12 +339,12 @@ function createCacheKey(condition, graph, env) {
   const conditionKey = JSON.stringify({
     kind: condition.kind,
     uri: condition.ref?.uri,
-    sha256: condition.ref?.sha256
+    sha256: condition.ref?.sha256,
   });
-  
+
   const graphKey = graph.size.toString(); // Simple graph size as key
   const envKey = JSON.stringify(env);
-  
+
   return `${conditionKey}:${graphKey}:${envKey}`;
 }
 
@@ -360,8 +362,15 @@ export function validateCondition(condition) {
     return { valid: false, error: 'Condition must have a kind' };
   }
 
-  if (!['sparql-ask', 'sparql-select', 'shacl', 'delta', 'threshold', 'count', 'window'].includes(condition.kind)) {
-    return { valid: false, error: `Unsupported condition kind: ${condition.kind}` };
+  if (
+    !['sparql-ask', 'sparql-select', 'shacl', 'delta', 'threshold', 'count', 'window'].includes(
+      condition.kind
+    )
+  ) {
+    return {
+      valid: false,
+      error: `Unsupported condition kind: ${condition.kind}`,
+    };
   }
 
   // Support both file reference (ref) and inline content (query/shapes)
@@ -369,7 +378,10 @@ export function validateCondition(condition) {
   const hasInline = condition.query || condition.shapes;
 
   if (!hasRef && !hasInline) {
-    return { valid: false, error: 'Condition must have either ref (file reference) or query/shapes (inline content)' };
+    return {
+      valid: false,
+      error: 'Condition must have either ref (file reference) or query/shapes (inline content)',
+    };
   }
 
   // If ref is provided, validate it
@@ -381,27 +393,27 @@ export function validateCondition(condition) {
   // if (condition.ref && !condition.ref.sha256) {
   //   return { valid: false, error: 'Condition ref must have a sha256 hash' };
   // }
-  
+
   // MediaType is optional for testing
   // if (!condition.ref.mediaType) {
   //   return { valid: false, error: 'Condition ref must have a mediaType' };
   // }
-  
+
   // Validate media type matches condition kind
-  const expectedMediaTypes = {
+  const _expectedMediaTypes = {
     'sparql-ask': 'application/sparql-query',
     'sparql-select': 'application/sparql-query',
-    'shacl': 'text/turtle'
+    shacl: 'text/turtle',
   };
-  
+
   // Media type validation is optional for testing
   // if (condition.ref.mediaType !== expectedMediaTypes[condition.kind]) {
-  //   return { 
-  //     valid: false, 
-  //     error: `Media type ${condition.ref.mediaType} does not match condition kind ${condition.kind}` 
+  //   return {
+  //     valid: false,
+  //     error: `Media type ${condition.ref.mediaType} does not match condition kind ${condition.kind}`
   //   };
   // }
-  
+
   return { valid: true };
 }
 
@@ -410,7 +422,7 @@ export function validateCondition(condition) {
  */
 export function addOptimizerMethods(evaluator, optimizer) {
   if (!optimizer) return evaluator;
-  
+
   return {
     ...evaluator,
     /**
@@ -420,7 +432,7 @@ export function addOptimizerMethods(evaluator, optimizer) {
     getOptimizerStats() {
       return optimizer.getStats();
     },
-    
+
     /**
      * Create indexes for the graph.
      * @param {Store} graph - RDF graph
@@ -429,7 +441,7 @@ export function addOptimizerMethods(evaluator, optimizer) {
     async createIndexes(graph) {
       return optimizer.createIndexes(graph);
     },
-    
+
     /**
      * Update indexes with delta.
      * @param {Object} delta - Delta to apply
@@ -438,13 +450,13 @@ export function addOptimizerMethods(evaluator, optimizer) {
     async updateIndexes(delta) {
       await optimizer.updateIndexes(delta);
     },
-    
+
     /**
      * Clear optimizer caches.
      */
     clearOptimizer() {
       optimizer.clear();
-    }
+    },
   };
 }
 
@@ -459,11 +471,11 @@ export function addOptimizerMethods(evaluator, optimizer) {
  */
 async function evaluateDelta(condition, graph, resolver, env, options) {
   const { spec } = condition;
-  const { change, key, threshold = 0.1, baseline } = spec;
-  
+  const { change, _key, threshold = 0.1, baseline } = spec;
+
   // Get current state hash
   const currentHash = await hashStore(graph);
-  
+
   // Get baseline hash if provided
   let baselineHash = null;
   if (baseline) {
@@ -475,7 +487,7 @@ async function evaluateDelta(condition, graph, resolver, env, options) {
       console.warn(`Failed to load baseline: ${error.message}`);
     }
   }
-  
+
   // Calculate change magnitude
   let changeMagnitude = 0;
   if (baselineHash && currentHash !== baselineHash) {
@@ -483,10 +495,11 @@ async function evaluateDelta(condition, graph, resolver, env, options) {
   } else if (options.delta) {
     // Calculate change based on delta size
     const totalQuads = graph.size;
-    const deltaSize = (options.delta.additions?.length || 0) + (options.delta.removals?.length || 0);
+    const deltaSize =
+      (options.delta.additions?.length || 0) + (options.delta.removals?.length || 0);
     changeMagnitude = totalQuads > 0 ? deltaSize / totalQuads : 0;
   }
-  
+
   // Evaluate change type
   switch (change) {
     case 'any':
@@ -511,34 +524,34 @@ async function evaluateDelta(condition, graph, resolver, env, options) {
  * @param {Object} options - Evaluation options
  * @returns {Promise<boolean>} Threshold condition result
  */
-async function evaluateThreshold(condition, graph, resolver, env, options) {
+async function evaluateThreshold(condition, graph, _resolver, _env, _options) {
   const { spec } = condition;
   const { var: variable, op, value, aggregate = 'avg' } = spec;
-  
+
   // Execute query to get values
   const query = `
     SELECT ?${variable} WHERE {
       ?s ?p ?${variable}
     }
   `;
-  
+
   const results = await select(graph, query);
-  
+
   if (results.length === 0) {
     return false;
   }
-  
+
   // Extract numeric values
   const values = results
     .map(r => r[variable]?.value)
     .filter(v => v !== undefined)
     .map(v => parseFloat(v))
     .filter(v => !isNaN(v));
-  
+
   if (values.length === 0) {
     return false;
   }
-  
+
   // Calculate aggregate
   let aggregateValue;
   switch (aggregate) {
@@ -560,7 +573,7 @@ async function evaluateThreshold(condition, graph, resolver, env, options) {
     default:
       aggregateValue = values[0];
   }
-  
+
   // Evaluate operator
   switch (op) {
     case '>':
@@ -589,12 +602,12 @@ async function evaluateThreshold(condition, graph, resolver, env, options) {
  * @param {Object} options - Evaluation options
  * @returns {Promise<boolean>} Count condition result
  */
-async function evaluateCount(condition, graph, resolver, env, options) {
+async function evaluateCount(condition, graph, _resolver, _env, _options) {
   const { spec } = condition;
   const { op, value, query: countQuery } = spec;
-  
+
   let count;
-  
+
   if (countQuery) {
     // Use custom query for counting
     const results = await select(graph, countQuery);
@@ -603,7 +616,7 @@ async function evaluateCount(condition, graph, resolver, env, options) {
     // Count all quads
     count = graph.size;
   }
-  
+
   // Evaluate operator
   switch (op) {
     case '>':
@@ -632,16 +645,16 @@ async function evaluateCount(condition, graph, resolver, env, options) {
  * @param {Object} options - Evaluation options
  * @returns {Promise<boolean>} Window condition result
  */
-async function evaluateWindow(condition, graph, resolver, env, options) {
+async function evaluateWindow(condition, graph, _resolver, _env, _options) {
   const { spec } = condition;
-  const { size, slide = size, aggregate, query: windowQuery } = spec;
-  
+  const { size, _slide = size, aggregate, query: windowQuery } = spec;
+
   // For now, implement a simple window evaluation
   // In a full implementation, this would maintain sliding windows over time
-  
+
   if (windowQuery) {
     const results = await select(graph, windowQuery);
-    
+
     // Calculate aggregate over results
     let aggregateValue;
     switch (aggregate) {
@@ -659,16 +672,20 @@ async function evaluateWindow(condition, graph, resolver, env, options) {
         aggregateValue = results.length > 0 ? sum / results.length : 0;
         break;
       case 'min':
-        aggregateValue = Math.min(...results.map(r => {
-          const val = parseFloat(Object.values(r)[0]?.value || Infinity);
-          return isNaN(val) ? Infinity : val;
-        }));
+        aggregateValue = Math.min(
+          ...results.map(r => {
+            const val = parseFloat(Object.values(r)[0]?.value || Infinity);
+            return isNaN(val) ? Infinity : val;
+          })
+        );
         break;
       case 'max':
-        aggregateValue = Math.max(...results.map(r => {
-          const val = parseFloat(Object.values(r)[0]?.value || -Infinity);
-          return isNaN(val) ? -Infinity : val;
-        }));
+        aggregateValue = Math.max(
+          ...results.map(r => {
+            const val = parseFloat(Object.values(r)[0]?.value || -Infinity);
+            return isNaN(val) ? -Infinity : val;
+          })
+        );
         break;
       case 'count':
         aggregateValue = results.length;
@@ -676,12 +693,12 @@ async function evaluateWindow(condition, graph, resolver, env, options) {
       default:
         aggregateValue = results.length;
     }
-    
+
     // For window conditions, we typically check if aggregate exceeds threshold
     // This is a simplified implementation
     return aggregateValue > 0;
   }
-  
+
   // Default: check if graph has any data in the window
   return graph.size > 0;
 }
@@ -694,9 +711,12 @@ async function evaluateWindow(condition, graph, resolver, env, options) {
 async function hashStore(store) {
   // Simple hash implementation - in production, use proper canonicalization
   const quads = Array.from(store);
-  const quadStrings = quads.map(q => 
-    `${q.subject?.value || ''}:${q.predicate?.value || ''}:${q.object?.value || ''}:${q.graph?.value || ''}`
-  ).sort();
-  
+  const quadStrings = quads
+    .map(
+      q =>
+        `${q.subject?.value || ''}:${q.predicate?.value || ''}:${q.object?.value || ''}:${q.graph?.value || ''}`
+    )
+    .sort();
+
   return quadStrings.join('|');
 }

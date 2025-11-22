@@ -51,18 +51,10 @@
       <div class="card">
         <h2>Actions</h2>
         <div class="button-group">
-          <button @click="handleAddData" class="btn-primary">
-            Add Sample Data
-          </button>
-          <button @click="handleQuery" class="btn-primary">
-            Run Query
-          </button>
-          <button @click="handleProfile" class="btn-primary">
-            Show Performance
-          </button>
-          <button @click="handleClear" class="btn-danger">
-            Clear All Data
-          </button>
+          <button @click="handleAddData" class="btn-primary">Add Sample Data</button>
+          <button @click="handleQuery" class="btn-primary">Run Query</button>
+          <button @click="handleProfile" class="btn-primary">Show Performance</button>
+          <button @click="handleClear" class="btn-danger">Clear All Data</button>
         </div>
       </div>
 
@@ -97,15 +89,11 @@
           </div>
           <div class="stat-card">
             <div class="stat-label">Heap Used</div>
-            <div class="stat-value">
-              {{ (profile.memory.heapUsed / 1024 / 1024).toFixed(2) }}MB
-            </div>
+            <div class="stat-value">{{ (profile.memory.heapUsed / 1024 / 1024).toFixed(2) }}MB</div>
           </div>
           <div class="stat-card">
             <div class="stat-label">Cache Hit Rate</div>
-            <div class="stat-value">
-              {{ (profile.cache.hitRate * 100).toFixed(1) }}%
-            </div>
+            <div class="stat-value">{{ (profile.cache.hitRate * 100).toFixed(1) }}%</div>
           </div>
         </div>
       </div>
@@ -139,7 +127,7 @@ async function updateStats() {
   try {
     const countResult = await engine.value.query({
       query: 'SELECT (COUNT(*) as ?count) WHERE { ?s ?p ?o }',
-      type: 'sparql-select'
+      type: 'sparql-select',
     });
     tripleCount.value = countResult[0]?.count || 0;
   } catch (err) {
@@ -179,7 +167,7 @@ ex:charlie a foaf:Person ;
     await engine.value.executeTransaction({
       additions: [...store],
       removals: [],
-      actor: 'vue-app'
+      actor: 'vue-app',
     });
 
     status.value = `Added ${[...store].length} triples ✅`;
@@ -208,7 +196,7 @@ async function handleQuery() {
         }
         ORDER BY DESC(?age)
       `,
-      type: 'sparql-select'
+      type: 'sparql-select',
     });
 
     queryResults.value = results;
@@ -264,16 +252,16 @@ onMounted(async () => {
       storage: {
         type: 'indexeddb',
         name: 'vue-demo-graph',
-        quota: 100 * 1024 * 1024  // 100MB
+        quota: 100 * 1024 * 1024, // 100MB
       },
       workers: {
         enabled: true,
-        maxWorkers: navigator.hardwareConcurrency || 4
+        maxWorkers: navigator.hardwareConcurrency || 4,
       },
       profiling: {
         enabled: true,
-        slowQueryThreshold: 100
-      }
+        slowQueryThreshold: 100,
+      },
     });
 
     status.value = 'Ready ✅';

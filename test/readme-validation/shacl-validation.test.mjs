@@ -19,7 +19,7 @@ describe('README SHACL Validation Examples', () => {
     mockParseTurtle = vi.fn().mockResolvedValue(mockShapesStore);
 
     mockSystem = {
-      validate: vi.fn()
+      validate: vi.fn(),
     };
   });
 
@@ -92,17 +92,17 @@ describe('README SHACL Validation Examples', () => {
     it('should validate conforming data', async () => {
       mockSystem.validate.mockResolvedValue({
         conforms: true,
-        results: []
+        results: [],
       });
 
       const validation = await mockSystem.validate({
         dataGraph: mockDataStore,
-        shapesGraph: mockShapesStore
+        shapesGraph: mockShapesStore,
       });
 
       expect(mockSystem.validate).toHaveBeenCalledWith({
         dataGraph: mockDataStore,
-        shapesGraph: mockShapesStore
+        shapesGraph: mockShapesStore,
       });
 
       expect(validation.conforms).toBe(true);
@@ -117,14 +117,14 @@ describe('README SHACL Validation Examples', () => {
             severity: 'Violation',
             focusNode: 'http://example.org/alice',
             path: 'http://xmlns.com/foaf/0.1/name',
-            message: 'Property foaf:name is required but missing'
-          }
-        ]
+            message: 'Property foaf:name is required but missing',
+          },
+        ],
       });
 
       const validation = await mockSystem.validate({
         dataGraph: mockDataStore,
-        shapesGraph: mockShapesStore
+        shapesGraph: mockShapesStore,
       });
 
       expect(validation.conforms).toBe(false);
@@ -141,14 +141,14 @@ describe('README SHACL Validation Examples', () => {
             sourceConstraintComponent: 'http://www.w3.org/ns/shacl#MinCountConstraintComponent',
             focusNode: 'http://example.org/alice',
             path: 'http://xmlns.com/foaf/0.1/name',
-            message: 'Expected at least 1 values, but found 0'
-          }
-        ]
+            message: 'Expected at least 1 values, but found 0',
+          },
+        ],
       });
 
       const validation = await mockSystem.validate({
         dataGraph: mockDataStore,
-        shapesGraph: mockShapesStore
+        shapesGraph: mockShapesStore,
       });
 
       expect(validation.conforms).toBe(false);
@@ -164,14 +164,14 @@ describe('README SHACL Validation Examples', () => {
             sourceConstraintComponent: 'http://www.w3.org/ns/shacl#DatatypeConstraintComponent',
             focusNode: 'http://example.org/alice',
             path: 'http://example.org/age',
-            message: 'Value does not have datatype xsd:integer'
-          }
-        ]
+            message: 'Value does not have datatype xsd:integer',
+          },
+        ],
       });
 
       const validation = await mockSystem.validate({
         dataGraph: mockDataStore,
-        shapesGraph: mockShapesStore
+        shapesGraph: mockShapesStore,
       });
 
       expect(validation.conforms).toBe(false);
@@ -186,20 +186,20 @@ describe('README SHACL Validation Examples', () => {
             severity: 'Violation',
             focusNode: 'http://example.org/alice',
             path: 'http://xmlns.com/foaf/0.1/name',
-            message: 'Missing required property'
+            message: 'Missing required property',
           },
           {
             severity: 'Violation',
             focusNode: 'http://example.org/alice',
             path: 'http://xmlns.com/foaf/0.1/mbox',
-            message: 'Missing required property'
-          }
-        ]
+            message: 'Missing required property',
+          },
+        ],
       });
 
       const validation = await mockSystem.validate({
         dataGraph: mockDataStore,
-        shapesGraph: mockShapesStore
+        shapesGraph: mockShapesStore,
       });
 
       expect(validation.conforms).toBe(false);
@@ -218,14 +218,14 @@ describe('README SHACL Validation Examples', () => {
             severity: 'Violation',
             focusNode: 'http://example.org/alice',
             path: 'http://xmlns.com/foaf/0.1/name',
-            message: 'Property foaf:name is required'
-          }
-        ]
+            message: 'Property foaf:name is required',
+          },
+        ],
       });
 
       const validation = await mockSystem.validate({
         dataGraph: mockDataStore,
-        shapesGraph: mockShapesStore
+        shapesGraph: mockShapesStore,
       });
 
       if (!validation.conforms) {
@@ -234,9 +234,7 @@ describe('README SHACL Validation Examples', () => {
 
       expect(consoleSpy).toHaveBeenCalledWith(
         'Validation errors:',
-        expect.arrayContaining([
-          expect.objectContaining({ severity: 'Violation' })
-        ])
+        expect.arrayContaining([expect.objectContaining({ severity: 'Violation' })])
       );
 
       consoleSpy.mockRestore();
@@ -247,12 +245,12 @@ describe('README SHACL Validation Examples', () => {
 
       mockSystem.validate.mockResolvedValue({
         conforms: true,
-        results: []
+        results: [],
       });
 
       const validation = await mockSystem.validate({
         dataGraph: mockDataStore,
-        shapesGraph: mockShapesStore
+        shapesGraph: mockShapesStore,
       });
 
       if (!validation.conforms) {
@@ -272,14 +270,14 @@ describe('README SHACL Validation Examples', () => {
         results: [
           {
             sourceConstraintComponent: 'http://www.w3.org/ns/shacl#MinCountConstraintComponent',
-            message: 'Expected at least 1 values'
-          }
-        ]
+            message: 'Expected at least 1 values',
+          },
+        ],
       });
 
       const validation = await mockSystem.validate({
         dataGraph: mockDataStore,
-        shapesGraph: mockShapesStore
+        shapesGraph: mockShapesStore,
       });
 
       expect(validation.results[0].sourceConstraintComponent).toContain('MinCount');
@@ -291,14 +289,14 @@ describe('README SHACL Validation Examples', () => {
         results: [
           {
             sourceConstraintComponent: 'http://www.w3.org/ns/shacl#MaxCountConstraintComponent',
-            message: 'Expected at most 1 values'
-          }
-        ]
+            message: 'Expected at most 1 values',
+          },
+        ],
       });
 
       const validation = await mockSystem.validate({
         dataGraph: mockDataStore,
-        shapesGraph: mockShapesStore
+        shapesGraph: mockShapesStore,
       });
 
       expect(validation.results[0].sourceConstraintComponent).toContain('MaxCount');
@@ -310,14 +308,14 @@ describe('README SHACL Validation Examples', () => {
         results: [
           {
             sourceConstraintComponent: 'http://www.w3.org/ns/shacl#DatatypeConstraintComponent',
-            message: 'Value does not have required datatype'
-          }
-        ]
+            message: 'Value does not have required datatype',
+          },
+        ],
       });
 
       const validation = await mockSystem.validate({
         dataGraph: mockDataStore,
-        shapesGraph: mockShapesStore
+        shapesGraph: mockShapesStore,
       });
 
       expect(validation.results[0].sourceConstraintComponent).toContain('Datatype');
@@ -329,14 +327,14 @@ describe('README SHACL Validation Examples', () => {
         results: [
           {
             sourceConstraintComponent: 'http://www.w3.org/ns/shacl#PatternConstraintComponent',
-            message: 'Value does not match pattern'
-          }
-        ]
+            message: 'Value does not match pattern',
+          },
+        ],
       });
 
       const validation = await mockSystem.validate({
         dataGraph: mockDataStore,
-        shapesGraph: mockShapesStore
+        shapesGraph: mockShapesStore,
       });
 
       expect(validation.results[0].sourceConstraintComponent).toContain('Pattern');
@@ -348,14 +346,14 @@ describe('README SHACL Validation Examples', () => {
         results: [
           {
             sourceConstraintComponent: 'http://www.w3.org/ns/shacl#MinInclusiveConstraintComponent',
-            message: 'Value is less than minimum'
-          }
-        ]
+            message: 'Value is less than minimum',
+          },
+        ],
       });
 
       const validation = await mockSystem.validate({
         dataGraph: mockDataStore,
-        shapesGraph: mockShapesStore
+        shapesGraph: mockShapesStore,
       });
 
       expect(validation.results[0].sourceConstraintComponent).toContain('MinInclusive');
@@ -367,14 +365,14 @@ describe('README SHACL Validation Examples', () => {
         results: [
           {
             sourceConstraintComponent: 'http://www.w3.org/ns/shacl#MaxInclusiveConstraintComponent',
-            message: 'Value exceeds maximum'
-          }
-        ]
+            message: 'Value exceeds maximum',
+          },
+        ],
       });
 
       const validation = await mockSystem.validate({
         dataGraph: mockDataStore,
-        shapesGraph: mockShapesStore
+        shapesGraph: mockShapesStore,
       });
 
       expect(validation.results[0].sourceConstraintComponent).toContain('MaxInclusive');
@@ -385,12 +383,12 @@ describe('README SHACL Validation Examples', () => {
     it('should validate nested shapes', async () => {
       mockSystem.validate.mockResolvedValue({
         conforms: true,
-        results: []
+        results: [],
       });
 
       const validation = await mockSystem.validate({
         dataGraph: mockDataStore,
-        shapesGraph: mockShapesStore
+        shapesGraph: mockShapesStore,
       });
 
       expect(validation.conforms).toBe(true);
@@ -399,12 +397,12 @@ describe('README SHACL Validation Examples', () => {
     it('should validate with sh:or logical constraint', async () => {
       mockSystem.validate.mockResolvedValue({
         conforms: true,
-        results: []
+        results: [],
       });
 
       const validation = await mockSystem.validate({
         dataGraph: mockDataStore,
-        shapesGraph: mockShapesStore
+        shapesGraph: mockShapesStore,
       });
 
       expect(validation.conforms).toBe(true);
@@ -415,14 +413,14 @@ describe('README SHACL Validation Examples', () => {
         conforms: false,
         results: [
           {
-            message: 'Does not satisfy all conditions in sh:and'
-          }
-        ]
+            message: 'Does not satisfy all conditions in sh:and',
+          },
+        ],
       });
 
       const validation = await mockSystem.validate({
         dataGraph: mockDataStore,
-        shapesGraph: mockShapesStore
+        shapesGraph: mockShapesStore,
       });
 
       expect(validation.conforms).toBe(false);

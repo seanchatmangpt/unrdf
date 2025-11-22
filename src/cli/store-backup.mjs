@@ -11,11 +11,11 @@
  * @license MIT
  */
 
-import { readdir, readFile, writeFile, stat, mkdir } from 'node:fs/promises';
-import { createReadStream, createWriteStream } from 'node:fs';
-import { pipeline } from 'node:stream/promises';
+import { readdir, readFile, writeFile, stat, _mkdir } from 'node:fs/promises';
+import { _createReadStream, createWriteStream } from 'node:fs';
+import { _pipeline } from 'node:stream/promises';
 import { createGzip } from 'node:zlib';
-import { join, basename } from 'node:path';
+import { join, _basename } from 'node:path';
 import { z } from 'zod';
 import { defaultObservabilityManager } from '../knowledge-engine/observability.mjs';
 import { fileExists, ensureDir } from '../utils/io-utils.mjs';
@@ -27,7 +27,7 @@ const BackupOptionsSchema = z.object({
   output: z.string().optional(),
   incremental: z.boolean().default(false),
   compress: z.boolean().default(true),
-  includeMetadata: z.boolean().default(true)
+  includeMetadata: z.boolean().default(true),
 });
 
 /**
@@ -40,7 +40,7 @@ const BackupResultSchema = z.object({
   graphCount: z.number(),
   duration: z.number(),
   timestamp: z.string(),
-  incremental: z.boolean()
+  incremental: z.boolean(),
 });
 
 /**
@@ -68,9 +68,9 @@ export async function backupStore(storePath, options = {}) {
   await defaultObservabilityManager.initialize();
 
   const transactionId = `backup-${Date.now()}`;
-  const spanContext = defaultObservabilityManager.startTransactionSpan(transactionId, {
-    'operation': 'store.backup',
-    'store.path': storePath
+  const _spanContext = defaultObservabilityManager.startTransactionSpan(transactionId, {
+    operation: 'store.backup',
+    'store.path': storePath,
   });
 
   const startTime = Date.now();
@@ -117,7 +117,7 @@ export async function backupStore(storePath, options = {}) {
       graphCount: stats.graphCount,
       duration,
       timestamp: new Date().toISOString(),
-      incremental: opts.incremental
+      incremental: opts.incremental,
     });
 
     // End span successfully
@@ -125,15 +125,15 @@ export async function backupStore(storePath, options = {}) {
       'backup.size': backupStat.size,
       'backup.quads': stats.quadCount,
       'backup.graphs': stats.graphCount,
-      'backup.duration_ms': duration
+      'backup.duration_ms': duration,
     });
 
     return result;
   } catch (error) {
     // Record error
     defaultObservabilityManager.recordError(error, {
-      'operation': 'store.backup',
-      'store.path': storePath
+      operation: 'store.backup',
+      'store.path': storePath,
     });
 
     // End span with error
@@ -163,7 +163,7 @@ async function collectStoreFiles(storePath) {
         name: entry.name,
         path: filePath,
         size: stats.size,
-        mtime: stats.mtime
+        mtime: stats.mtime,
       });
     } else if (entry.isDirectory()) {
       // Recursively collect files from subdirectories
@@ -198,14 +198,14 @@ async function createBackupArchive(storePath, files, backupPath, options) {
     files: files.map(f => ({
       name: f.name,
       size: f.size,
-      mtime: f.mtime.toISOString()
-    }))
+      mtime: f.mtime.toISOString(),
+    })),
   };
 
   // Create backup data structure
   const backupData = {
     manifest,
-    files: {}
+    files: {},
   };
 
   // Read and package all files
@@ -251,7 +251,7 @@ async function createBackupArchive(storePath, files, backupPath, options) {
 
   return {
     quadCount,
-    graphCount: graphs.size
+    graphCount: graphs.size,
   };
 }
 

@@ -15,9 +15,24 @@ describe('useGraphs', () => {
   beforeEach(() => {
     testStore = new Store([
       quad(namedNode('http://s1'), namedNode('http://p1'), literal('o1'), defaultGraph()),
-      quad(namedNode('http://s2'), namedNode('http://p2'), literal('o2'), namedNode('http://graph1')),
-      quad(namedNode('http://s3'), namedNode('http://p3'), literal('o3'), namedNode('http://graph1')),
-      quad(namedNode('http://s4'), namedNode('http://p4'), literal('o4'), namedNode('http://graph2'))
+      quad(
+        namedNode('http://s2'),
+        namedNode('http://p2'),
+        literal('o2'),
+        namedNode('http://graph1')
+      ),
+      quad(
+        namedNode('http://s3'),
+        namedNode('http://p3'),
+        literal('o3'),
+        namedNode('http://graph1')
+      ),
+      quad(
+        namedNode('http://s4'),
+        namedNode('http://p4'),
+        literal('o4'),
+        namedNode('http://graph2')
+      ),
     ]);
   });
 
@@ -103,11 +118,7 @@ describe('useGraphs', () => {
     it('should add quad to named graph', () => {
       const { result } = renderHook(() => useGraphs(testStore));
 
-      const newQuad = quad(
-        namedNode('http://s5'),
-        namedNode('http://p5'),
-        literal('o5')
-      );
+      const newQuad = quad(namedNode('http://s5'), namedNode('http://p5'), literal('o5'));
 
       act(() => {
         result.current.addToGraph(newQuad, 'http://graph3');
@@ -120,11 +131,7 @@ describe('useGraphs', () => {
     it('should return created quad', () => {
       const { result } = renderHook(() => useGraphs(testStore));
 
-      const originalQuad = quad(
-        namedNode('http://s5'),
-        namedNode('http://p5'),
-        literal('o5')
-      );
+      const originalQuad = quad(namedNode('http://s5'), namedNode('http://p5'), literal('o5'));
 
       let createdQuad;
       act(() => {
@@ -157,16 +164,20 @@ describe('useGraphs', () => {
 
   describe('State Updates', () => {
     it('should update when store changes', () => {
-      const { result, rerender } = renderHook(
-        ({ store }) => useGraphs(store),
-        { initialProps: { store: testStore } }
-      );
+      const { result, rerender } = renderHook(({ store }) => useGraphs(store), {
+        initialProps: { store: testStore },
+      });
 
       const initialCount = result.current.graphCount;
 
       const newStore = new Store([
         ...testStore,
-        quad(namedNode('http://s5'), namedNode('http://p5'), literal('o5'), namedNode('http://graph3'))
+        quad(
+          namedNode('http://s5'),
+          namedNode('http://p5'),
+          literal('o5'),
+          namedNode('http://graph3')
+        ),
       ]);
 
       rerender({ store: newStore });

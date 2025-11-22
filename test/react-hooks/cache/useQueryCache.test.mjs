@@ -139,14 +139,14 @@ describe('useQueryCache', () => {
       const entry = {
         result: { rows: [] },
         timestamp: Date.now(),
-        ttl
+        ttl,
       };
 
       ttlCache.set(query, entry);
 
       // Check if expired
       const cached = ttlCache.get(query);
-      const isExpired = (Date.now() - cached.timestamp) > cached.ttl;
+      const isExpired = Date.now() - cached.timestamp > cached.ttl;
 
       if (isExpired) {
         ttlCache.delete(query);

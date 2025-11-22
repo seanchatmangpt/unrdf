@@ -1,0 +1,50 @@
+#!/bin/sh
+# UNRDF Pre-Commit Hook - Fast Tier
+# DfLSS: Prevent defects early with fast feedback
+# 80/20: Focus on high-value checks in <5 seconds
+
+set -e
+
+# Allow bypass for emergency situations only
+if [ -n "$SKIP_PRE_COMMIT" ]; then
+    echo "⚠️  WARNING: Skipping pre-commit checks (SKIP_PRE_COMMIT set)"
+    echo "This is DISCOURAGED. Fix issues before committing."
+    exit 0
+fi
+
+echo "🔍 Pre-commit validation (fast tier: <5s)..."
+echo ""
+
+# Gate 1: Format Check (2s timeout, auto-fixable)
+echo "Gate 1/2: Format Check..."
+if timeout 2s pnpm format:check >/dev/null 2>&1; then
+    echo "✅ Gate 1 passed"
+else
+    echo "⚠️  Code is not formatted. Auto-fixing..."
+    if pnpm format >/dev/null 2>&1; then
+        echo "✅ Code auto-formatted. Please review changes and commit again."
+        echo "   Run 'git add' to stage formatting changes."
+        exit 1
+    else
+        echo "❌ ERROR: Format check failed and auto-fix failed"
+        echo "Run 'pnpm format' to fix formatting issues"
+        exit 1
+    fi
+fi
+echo ""
+
+# Gate 2: Lint Check (3s timeout)
+echo "Gate 2/2: Lint Check..."
+if timeout 3s pnpm lint >/dev/null 2>&1; then
+    echo "✅ Gate 2 passed"
+else
+    echo "❌ ERROR: Lint check failed"
+    echo "Run 'pnpm lint' to see details"
+    echo "Run 'pnpm lint:fix' to auto-fix some issues"
+    exit 1
+fi
+echo ""
+
+echo "✅ Pre-commit passed. Commit will proceed."
+exit 0
+

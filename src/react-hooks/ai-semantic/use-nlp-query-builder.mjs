@@ -23,15 +23,15 @@ import { useKnowledgeEngineContext } from '../core/use-knowledge-engine-context.
  *   model: 'semantic-parser-v1'
  * });
  */
-export function useNLPQueryBuilder(config = {}) {
+export function useNLPQueryBuilder(_config = {}) {
   const { engine } = useKnowledgeEngineContext();
   const [query, setQuery] = useState('');
-  const [suggestions, setSuggestions] = useState([]);
+  const [suggestions, _setSuggestions] = useState([]);
   const [queryHistory, setQueryHistory] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const buildQuery = useCallback(async (naturalLanguage) => {
+  const buildQuery = useCallback(async naturalLanguage => {
     try {
       setLoading(true);
       const sparql = parseNaturalLanguage(naturalLanguage);
@@ -45,26 +45,32 @@ export function useNLPQueryBuilder(config = {}) {
     }
   }, []);
 
-  const executeNaturalQuery = useCallback(async (naturalLanguage) => {
-    try {
-      setLoading(true);
-      const sparql = await buildQuery(naturalLanguage);
-      const result = await engine.query(sparql);
+  const executeNaturalQuery = useCallback(
+    async naturalLanguage => {
+      try {
+        setLoading(true);
+        const sparql = await buildQuery(naturalLanguage);
+        const result = await engine.query(sparql);
 
-      setQueryHistory(prev => [...prev, {
-        natural: naturalLanguage,
-        sparql,
-        timestamp: new Date().toISOString()
-      }]);
+        setQueryHistory(prev => [
+          ...prev,
+          {
+            natural: naturalLanguage,
+            sparql,
+            timestamp: new Date().toISOString(),
+          },
+        ]);
 
-      setLoading(false);
-      return result;
-    } catch (err) {
-      setError(err);
-      setLoading(false);
-      throw err;
-    }
-  }, [engine, buildQuery]);
+        setLoading(false);
+        return result;
+      } catch (err) {
+        setError(err);
+        setLoading(false);
+        throw err;
+      }
+    },
+    [engine, buildQuery]
+  );
 
   function parseNaturalLanguage(text) {
     const lower = text.toLowerCase();
@@ -92,5 +98,13 @@ export function useNLPQueryBuilder(config = {}) {
     return str.charAt(0).toUpperCase() + str.slice(1);
   }
 
-  return { buildQuery, executeNaturalQuery, query, suggestions, queryHistory, loading, error };
+  return {
+    buildQuery,
+    executeNaturalQuery,
+    query,
+    suggestions,
+    queryHistory,
+    loading,
+    error,
+  };
 }

@@ -12,15 +12,17 @@ import { z } from 'zod';
 /**
  * Schema for sandbox configuration
  */
-const SandboxConfigSchema = z.object({
-  allowFileSystem: z.boolean().default(false),
-  allowNetwork: z.boolean().default(false),
-  allowProcessAccess: z.boolean().default(false),
-  allowEval: z.boolean().default(false),
-  timeoutMs: z.number().default(5000),
-  memoryLimitMB: z.number().default(50),
-  maxIterations: z.number().default(100000),
-}).strict();
+const SandboxConfigSchema = z
+  .object({
+    allowFileSystem: z.boolean().default(false),
+    allowNetwork: z.boolean().default(false),
+    allowProcessAccess: z.boolean().default(false),
+    allowEval: z.boolean().default(false),
+    timeoutMs: z.number().default(5000),
+    memoryLimitMB: z.number().default(50),
+    maxIterations: z.number().default(100000),
+  })
+  .strict();
 
 /**
  * Dangerous Node.js modules that should be blocked

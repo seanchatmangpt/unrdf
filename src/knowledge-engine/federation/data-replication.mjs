@@ -32,7 +32,7 @@ export const ReplicationTopology = {
   FULL_MESH: 'full-mesh',
   STAR: 'star',
   RING: 'ring',
-  TREE: 'tree'
+  TREE: 'tree',
 };
 
 /**
@@ -44,7 +44,7 @@ export const ConflictResolution = {
   FIRST_WRITE_WINS: 'first-write-wins',
   MANUAL: 'manual',
   MERGE: 'merge',
-  CUSTOM: 'custom'
+  CUSTOM: 'custom',
 };
 
 /**
@@ -54,7 +54,7 @@ export const ConflictResolution = {
 export const ReplicationMode = {
   PUSH: 'push',
   PULL: 'pull',
-  BIDIRECTIONAL: 'bidirectional'
+  BIDIRECTIONAL: 'bidirectional',
 };
 
 /**
@@ -68,11 +68,11 @@ const ChangeOperationSchema = z.object({
     subject: z.string(),
     predicate: z.string(),
     object: z.string(),
-    graph: z.string().optional()
+    graph: z.string().optional(),
   }),
   timestamp: z.number().default(() => Date.now()),
   version: z.record(z.number()).default({}),
-  metadata: z.record(z.any()).optional()
+  metadata: z.record(z.any()).optional(),
 });
 
 /**
@@ -88,7 +88,7 @@ const ReplicationConfigSchema = z.object({
   maxRetries: z.number().int().nonnegative().default(3),
   retryDelay: z.number().positive().default(1000),
   maxQueueSize: z.number().int().positive().default(10000), // Prevent unbounded queue growth
-  clockDriftThresholdMs: z.number().int().positive().default(60000) // 1 minute max drift
+  clockDriftThresholdMs: z.number().int().positive().default(60000), // 1 minute max drift
 });
 
 /**
@@ -142,21 +142,21 @@ export class DataReplicationManager extends EventEmitter {
     this.hlc = {
       physicalTime: Date.now(),
       logicalCounter: 0,
-      nodeId: randomUUID()
+      nodeId: randomUUID(),
     };
 
     // Metrics
     this.replicationCounter = meter.createCounter('federation.replication.total', {
-      description: 'Total replications performed'
+      description: 'Total replications performed',
     });
 
     this.conflictCounter = meter.createCounter('federation.replication.conflicts', {
-      description: 'Total replication conflicts detected'
+      description: 'Total replication conflicts detected',
     });
 
     this.replicationLatency = meter.createHistogram('federation.replication.latency', {
       description: 'Replication latency in milliseconds',
-      unit: 'ms'
+      unit: 'ms',
     });
   }
 
@@ -165,7 +165,7 @@ export class DataReplicationManager extends EventEmitter {
    * @returns {Promise<void>}
    */
   async initialize() {
-    return tracer.startActiveSpan('replication.initialize', async (span) => {
+    return tracer.startActiveSpan('replication.initialize', async span => {
       try {
         span.setAttribute('replication.topology', this.config.topology);
         span.setAttribute('replication.mode', this.config.mode);
@@ -197,7 +197,7 @@ export class DataReplicationManager extends EventEmitter {
    * @returns {Promise<void>}
    */
   async replicate(change) {
-    return tracer.startActiveSpan('replication.replicate', async (span) => {
+    return tracer.startActiveSpan('replication.replicate', async span => {
       const startTime = Date.now();
 
       try {
@@ -220,7 +220,7 @@ export class DataReplicationManager extends EventEmitter {
             queueSize: this.replicationQueue.length,
             maxSize: this.config.maxQueueSize,
             droppedOperation: operation.changeId,
-            overflowCount: this.queueOverflowCount
+            overflowCount: this.queueOverflowCount,
           });
 
           // Drop oldest entries to make room (FIFO overflow handling)
@@ -229,7 +229,7 @@ export class DataReplicationManager extends EventEmitter {
           this.emit('queueEntriesDropped', {
             count: dropped.length,
             oldestDropped: dropped[0]?.changeId,
-            newestDropped: dropped[dropped.length - 1]?.changeId
+            newestDropped: dropped[dropped.length - 1]?.changeId,
           });
         }
 
@@ -263,7 +263,7 @@ export class DataReplicationManager extends EventEmitter {
    * @private
    */
   async processReplication(operation) {
-    return tracer.startActiveSpan('replication.process', async (span) => {
+    return tracer.startActiveSpan('replication.process', async span => {
       try {
         span.setAttribute('operation.id', operation.changeId);
 
@@ -272,10 +272,10 @@ export class DataReplicationManager extends EventEmitter {
         span.setAttribute('replication.targets', targets.length);
 
         // Replicate to each target using Promise.allSettled for partial failure handling
-        const replicationPromises = targets.map(async (targetId) => {
+        const replicationPromises = targets.map(async targetId => {
           return this.replicateToStore(targetId, operation)
             .then(() => ({ targetId, success: true }))
-            .catch((error) => ({ targetId, success: false, error }));
+            .catch(error => ({ targetId, success: false, error }));
         });
 
         const results = await Promise.allSettled(replicationPromises);
@@ -294,7 +294,7 @@ export class DataReplicationManager extends EventEmitter {
               this.emit('replicationError', {
                 targetId: value.targetId,
                 operation,
-                error: value.error
+                error: value.error,
               });
             }
           } else {
@@ -309,13 +309,13 @@ export class DataReplicationManager extends EventEmitter {
             operation: operation.changeId,
             succeeded,
             failed,
-            totalTargets: targets.length
+            totalTargets: targets.length,
           });
         }
 
         this.replicationCounter.add(1, {
           operation: operation.operation,
-          source: operation.storeId
+          source: operation.storeId,
         });
 
         span.setStatus({ code: SpanStatusCode.OK });
@@ -337,7 +337,7 @@ export class DataReplicationManager extends EventEmitter {
    * @private
    */
   async replicateToStore(targetStoreId, operation) {
-    return tracer.startActiveSpan('replication.toStore', async (span) => {
+    return tracer.startActiveSpan('replication.toStore', async span => {
       try {
         span.setAttribute('target.store', targetStoreId);
         span.setAttribute('operation.id', operation.changeId);
@@ -379,8 +379,8 @@ export class DataReplicationManager extends EventEmitter {
    * @returns {Promise<void>}
    * @private
    */
-  async simulateStoreReplication(storeId, operation) {
-    return new Promise((resolve) => {
+  async simulateStoreReplication(_storeId, _operation) {
+    return new Promise(resolve => {
       setTimeout(resolve, Math.random() * 10 + 5);
     });
   }
@@ -455,7 +455,7 @@ export class DataReplicationManager extends EventEmitter {
         targetStoreId,
         targetVector,
         operation,
-        detectedAt: Date.now()
+        detectedAt: Date.now(),
       };
     }
 
@@ -469,7 +469,7 @@ export class DataReplicationManager extends EventEmitter {
    * @returns {Promise<boolean>} True if resolved
    * @private
    */
-  async resolveConflict(conflict, operation) {
+  async resolveConflict(conflict, _operation) {
     this.conflictLog.push(conflict);
     this.emit('conflict', conflict);
 
@@ -488,8 +488,8 @@ export class DataReplicationManager extends EventEmitter {
 
       case ConflictResolution.MANUAL:
         // Emit event for manual resolution
-        return new Promise((resolve) => {
-          this.once(`conflict-resolved-${conflict.operation.changeId}`, (decision) => {
+        return new Promise(resolve => {
+          this.once(`conflict-resolved-${conflict.operation.changeId}`, decision => {
             resolve(decision);
           });
         });
@@ -529,7 +529,7 @@ export class DataReplicationManager extends EventEmitter {
     if (incomingPhysical > 0) {
       const drift = Math.abs(incomingPhysical - now);
       if (drift > this.config.clockDriftThresholdMs) {
-        const driftError = new Error(
+        const _driftError = new Error(
           `Version vector clock drift detected: ${drift}ms exceeds threshold of ${this.config.clockDriftThresholdMs}ms`
         );
         this.emit('clockDriftDetected', {
@@ -537,7 +537,7 @@ export class DataReplicationManager extends EventEmitter {
           drift,
           threshold: this.config.clockDriftThresholdMs,
           localTime: now,
-          remoteTime: incomingPhysical
+          remoteTime: incomingPhysical,
         });
         // Don't throw - emit warning but continue with local time
         console.warn(`[DataReplication] Clock drift warning for store ${storeId}: ${drift}ms`);
@@ -575,7 +575,7 @@ export class DataReplicationManager extends EventEmitter {
           versionKey: id,
           incomingVersion,
           currentVersion,
-          delta: incomingVersion - currentVersion
+          delta: incomingVersion - currentVersion,
         });
         // Cap the version to prevent unbounded jumps
         current[id] = currentVersion + Math.min(incomingVersion - currentVersion, 1000);
@@ -608,7 +608,7 @@ export class DataReplicationManager extends EventEmitter {
       physical: this.hlc.physicalTime,
       logical: this.hlc.logicalCounter,
       nodeId: this.hlc.nodeId,
-      timestamp: `${this.hlc.physicalTime}.${this.hlc.logicalCounter}.${this.hlc.nodeId}`
+      timestamp: `${this.hlc.physicalTime}.${this.hlc.logicalCounter}.${this.hlc.nodeId}`,
     };
   }
 
@@ -634,7 +634,7 @@ export class DataReplicationManager extends EventEmitter {
 
     if (batch.length === 0) return;
 
-    return tracer.startActiveSpan('replication.batch', async (span) => {
+    return tracer.startActiveSpan('replication.batch', async span => {
       try {
         span.setAttribute('batch.size', batch.length);
 
@@ -667,9 +667,9 @@ export class DataReplicationManager extends EventEmitter {
       hlc: {
         physical: this.hlc.physicalTime,
         logical: this.hlc.logicalCounter,
-        nodeId: this.hlc.nodeId
+        nodeId: this.hlc.nodeId,
       },
-      config: this.config
+      config: this.config,
     };
   }
 

@@ -35,7 +35,7 @@ import { useKnowledgeEngineContext } from '../context/useKnowledgeEngineContext.
  * @returns {Object} Hook manager operations
  */
 export function useHookManager() {
-  const { engine, addKnowledgeHook, removeKnowledgeHook } = useKnowledgeEngineContext();
+  const { _engine, addKnowledgeHook, removeKnowledgeHook } = useKnowledgeEngineContext();
 
   const [registeredHooks, setRegisteredHooks] = useState(new Map());
   const [errors, setErrors] = useState([]);
@@ -43,51 +43,60 @@ export function useHookManager() {
   /**
    * Register a single hook
    */
-  const registerHook = useCallback((hook) => {
-    if (!hook?.meta?.name) {
-      throw new TypeError('[useHookManager] Hook must have meta.name');
-    }
+  const registerHook = useCallback(
+    hook => {
+      if (!hook?.meta?.name) {
+        throw new TypeError('[useHookManager] Hook must have meta.name');
+      }
 
-    try {
-      addKnowledgeHook(hook);
-      setRegisteredHooks(prev => new Map(prev).set(hook.meta.name, hook));
-      return true;
-    } catch (err) {
-      console.error('[useHookManager] Failed to register hook:', err);
-      setErrors(prev => [...prev, { hook: hook.meta.name, error: err }]);
-      return false;
-    }
-  }, [addKnowledgeHook]);
+      try {
+        addKnowledgeHook(hook);
+        setRegisteredHooks(prev => new Map(prev).set(hook.meta.name, hook));
+        return true;
+      } catch (err) {
+        console.error('[useHookManager] Failed to register hook:', err);
+        setErrors(prev => [...prev, { hook: hook.meta.name, error: err }]);
+        return false;
+      }
+    },
+    [addKnowledgeHook]
+  );
 
   /**
    * Register multiple hooks
    */
-  const registerHooks = useCallback((hooks) => {
-    const results = [];
-    for (const hook of hooks) {
-      const success = registerHook(hook);
-      results.push({ hook: hook.meta.name, success });
-    }
-    return results;
-  }, [registerHook]);
+  const registerHooks = useCallback(
+    hooks => {
+      const results = [];
+      for (const hook of hooks) {
+        const success = registerHook(hook);
+        results.push({ hook: hook.meta.name, success });
+      }
+      return results;
+    },
+    [registerHook]
+  );
 
   /**
    * Unregister a single hook
    */
-  const unregisterHook = useCallback((hookName) => {
-    try {
-      removeKnowledgeHook(hookName);
-      setRegisteredHooks(prev => {
-        const updated = new Map(prev);
-        updated.delete(hookName);
-        return updated;
-      });
-      return true;
-    } catch (err) {
-      console.error('[useHookManager] Failed to unregister hook:', err);
-      return false;
-    }
-  }, [removeKnowledgeHook]);
+  const unregisterHook = useCallback(
+    hookName => {
+      try {
+        removeKnowledgeHook(hookName);
+        setRegisteredHooks(prev => {
+          const updated = new Map(prev);
+          updated.delete(hookName);
+          return updated;
+        });
+        return true;
+      } catch (err) {
+        console.error('[useHookManager] Failed to unregister hook:', err);
+        return false;
+      }
+    },
+    [removeKnowledgeHook]
+  );
 
   /**
    * Unregister all hooks
@@ -102,16 +111,22 @@ export function useHookManager() {
   /**
    * Get hook by name
    */
-  const getHook = useCallback((hookName) => {
-    return registeredHooks.get(hookName);
-  }, [registeredHooks]);
+  const getHook = useCallback(
+    hookName => {
+      return registeredHooks.get(hookName);
+    },
+    [registeredHooks]
+  );
 
   /**
    * Check if hook is registered
    */
-  const isRegistered = useCallback((hookName) => {
-    return registeredHooks.has(hookName);
-  }, [registeredHooks]);
+  const isRegistered = useCallback(
+    hookName => {
+      return registeredHooks.has(hookName);
+    },
+    [registeredHooks]
+  );
 
   /**
    * Clear errors
@@ -123,19 +138,19 @@ export function useHookManager() {
   /**
    * Get statistics
    */
-  const stats = useMemo(() => ({
-    total: registeredHooks.size,
-    hooks: Array.from(registeredHooks.keys()),
-    errorCount: errors.length
-  }), [registeredHooks, errors]);
+  const stats = useMemo(
+    () => ({
+      total: registeredHooks.size,
+      hooks: Array.from(registeredHooks.keys()),
+      errorCount: errors.length,
+    }),
+    [registeredHooks, errors]
+  );
 
   /**
    * Get all hooks as array
    */
-  const hooks = useMemo(() =>
-    Array.from(registeredHooks.values()),
-    [registeredHooks]
-  );
+  const hooks = useMemo(() => Array.from(registeredHooks.values()), [registeredHooks]);
 
   return {
     hooks,
@@ -148,6 +163,6 @@ export function useHookManager() {
     isRegistered,
     errors,
     clearErrors,
-    stats
+    stats,
   };
 }

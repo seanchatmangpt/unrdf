@@ -7,7 +7,7 @@
  * in test suites. Provides assertion helpers and validation functions.
  */
 
-import { describe, it, expect } from 'vitest';
+import { _describe, _it, expect } from 'vitest';
 
 /**
  * Span status codes from OTEL spec
@@ -15,7 +15,7 @@ import { describe, it, expect } from 'vitest';
 export const SpanStatusCode = {
   UNSET: 0,
   OK: 1,
-  ERROR: 2
+  ERROR: 2,
 };
 
 /**
@@ -28,7 +28,7 @@ export function validateSpanAttributes(span, requiredAttributes) {
   const result = {
     valid: true,
     missing: [],
-    present: []
+    present: [],
   };
 
   for (const attr of requiredAttributes) {
@@ -61,13 +61,13 @@ export function validateSpanStatus(span, expectedStatus) {
  * @returns {Object} Validation result
  */
 export function validateSpanDuration(span, maxDuration) {
-  const duration = span.attributes?.['kgc.transaction.duration_ms'] ||
-                   span.attributes?.['duration_ms'] || 0;
+  const duration =
+    span.attributes?.['kgc.transaction.duration_ms'] || span.attributes?.['duration_ms'] || 0;
 
   return {
     valid: duration <= maxDuration,
     duration,
-    threshold: maxDuration
+    threshold: maxDuration,
   };
 }
 
@@ -93,7 +93,9 @@ export function assertSpanAttribute(span, attrName, expectedValue = undefined) {
   expect(span.attributes[attrName], `Span should have attribute '${attrName}'`).toBeDefined();
 
   if (expectedValue !== undefined) {
-    expect(span.attributes[attrName], `Attribute '${attrName}' should match expected value`).toBe(expectedValue);
+    expect(span.attributes[attrName], `Attribute '${attrName}' should match expected value`).toBe(
+      expectedValue
+    );
   }
 }
 
@@ -122,9 +124,9 @@ export function assertSpanFailed(span) {
  */
 export function assertSpanPerformance(span, maxDuration) {
   const result = validateSpanDuration(span, maxDuration);
-  expect(result.valid,
-    `Span duration ${result.duration}ms should be under ${maxDuration}ms`
-  ).toBe(true);
+  expect(result.valid, `Span duration ${result.duration}ms should be under ${maxDuration}ms`).toBe(
+    true
+  );
 }
 
 /**
@@ -138,33 +140,33 @@ export function createMockSpan(options = {}) {
     attributes = {},
     status = { code: SpanStatusCode.OK },
     startTime = Date.now(),
-    endTime = null
+    endTime = null,
   } = options;
 
   return {
     name,
     attributes: {
       'service.name': 'test-service',
-      ...attributes
+      ...attributes,
     },
     status,
     startTime,
     endTime,
-    setAttributes: function(attrs) {
+    setAttributes: function (attrs) {
       Object.assign(this.attributes, attrs);
     },
-    setStatus: function(newStatus) {
+    setStatus: function (newStatus) {
       this.status = newStatus;
     },
-    recordException: function(error) {
+    recordException: function (error) {
       this.attributes['error.type'] = error.constructor.name;
       this.attributes['error.message'] = error.message;
     },
-    end: function() {
+    end: function () {
       this.endTime = Date.now();
       const duration = this.endTime - this.startTime;
       this.attributes['duration_ms'] = duration;
-    }
+    },
   };
 }
 
@@ -177,20 +179,20 @@ export function createMockTracer() {
 
   return {
     spans,
-    startSpan: function(name, options = {}) {
+    startSpan: function (name, options = {}) {
       const span = createMockSpan({
         name,
-        attributes: options.attributes || {}
+        attributes: options.attributes || {},
       });
       spans.push(span);
       return span;
     },
-    getSpans: function() {
+    getSpans: function () {
       return spans;
     },
-    clear: function() {
+    clear: function () {
       spans.length = 0;
-    }
+    },
   };
 }
 
@@ -203,7 +205,7 @@ export function createMockTracer() {
 export function validateMetricsSchema(metrics, schema) {
   const result = {
     valid: true,
-    errors: []
+    errors: [],
   };
 
   for (const [key, type] of Object.entries(schema)) {
@@ -212,7 +214,9 @@ export function validateMetricsSchema(metrics, schema) {
       result.errors.push(`Missing metric: ${key}`);
     } else if (typeof metrics[key] !== type) {
       result.valid = false;
-      result.errors.push(`Metric '${key}' has wrong type: expected ${type}, got ${typeof metrics[key]}`);
+      result.errors.push(
+        `Metric '${key}' has wrong type: expected ${type}, got ${typeof metrics[key]}`
+      );
     }
   }
 
@@ -227,22 +231,20 @@ export function validateMetricsSchema(metrics, schema) {
 export function buildSpanTree(spans) {
   const tree = {
     roots: [],
-    byId: new Map()
+    byId: new Map(),
   };
 
   // First pass: index all spans
   for (const span of spans) {
-    const id = span.attributes?.['kgc.transaction.id'] ||
-               span.attributes?.['kgc.hook.id'] ||
-               span.name;
+    const id =
+      span.attributes?.['kgc.transaction.id'] || span.attributes?.['kgc.hook.id'] || span.name;
     tree.byId.set(id, { span, children: [] });
   }
 
   // Second pass: build hierarchy
   for (const span of spans) {
-    const id = span.attributes?.['kgc.transaction.id'] ||
-               span.attributes?.['kgc.hook.id'] ||
-               span.name;
+    const id =
+      span.attributes?.['kgc.transaction.id'] || span.attributes?.['kgc.hook.id'] || span.name;
     const parentId = span.attributes?.['parent.id'];
 
     if (parentId && tree.byId.has(parentId)) {
@@ -268,7 +270,7 @@ export function calculateSpanStats(spans) {
     totalDuration: 0,
     avgDuration: 0,
     minDuration: Infinity,
-    maxDuration: 0
+    maxDuration: 0,
   };
 
   for (const span of spans) {
@@ -280,8 +282,8 @@ export function calculateSpanStats(spans) {
     }
 
     // Calculate durations
-    const duration = span.attributes?.['duration_ms'] ||
-                     span.attributes?.['kgc.transaction.duration_ms'] || 0;
+    const duration =
+      span.attributes?.['duration_ms'] || span.attributes?.['kgc.transaction.duration_ms'] || 0;
 
     stats.totalDuration += duration;
     stats.minDuration = Math.min(stats.minDuration, duration);
@@ -305,37 +307,31 @@ export function validateV3_1Features(spans) {
       'isolated-vm': false,
       'browser-support': false,
       'policy-pack': false,
-      'knowledge-hooks': false
+      'knowledge-hooks': false,
     },
-    missing: []
+    missing: [],
   };
 
   // Check for isolated-vm spans
-  const isolatedVmSpans = spans.filter(s =>
-    s.name.includes('isolated-vm') ||
-    s.attributes?.['sandbox.engine'] === 'isolated-vm'
+  const isolatedVmSpans = spans.filter(
+    s => s.name.includes('isolated-vm') || s.attributes?.['sandbox.engine'] === 'isolated-vm'
   );
   result.features['isolated-vm'] = isolatedVmSpans.length > 0;
 
   // Check for browser feature spans
-  const browserSpans = spans.filter(s =>
-    s.name.includes('browser') ||
-    s.attributes?.['environment'] === 'browser'
+  const browserSpans = spans.filter(
+    s => s.name.includes('browser') || s.attributes?.['environment'] === 'browser'
   );
   result.features['browser-support'] = browserSpans.length > 0;
 
   // Check for policy pack spans
-  const policySpans = spans.filter(s =>
-    s.name.includes('policy') ||
-    s.attributes?.['hook.type'] === 'policy'
+  const policySpans = spans.filter(
+    s => s.name.includes('policy') || s.attributes?.['hook.type'] === 'policy'
   );
   result.features['policy-pack'] = policySpans.length > 0;
 
   // Check for knowledge hooks spans
-  const hookSpans = spans.filter(s =>
-    s.name.includes('kgc.hook') ||
-    s.attributes?.['kgc.hook.id']
-  );
+  const hookSpans = spans.filter(s => s.name.includes('kgc.hook') || s.attributes?.['kgc.hook.id']);
   result.features['knowledge-hooks'] = hookSpans.length > 0;
 
   // Identify missing features
@@ -355,10 +351,14 @@ export function validateV3_1Features(spans) {
  * @returns {string} Formatted span string
  */
 export function formatSpan(span) {
-  const status = span.status?.code === SpanStatusCode.OK ? '✓' :
-                 span.status?.code === SpanStatusCode.ERROR ? '✗' : '?';
-  const duration = span.attributes?.['duration_ms'] ||
-                   span.attributes?.['kgc.transaction.duration_ms'] || 'N/A';
+  const status =
+    span.status?.code === SpanStatusCode.OK
+      ? '✓'
+      : span.status?.code === SpanStatusCode.ERROR
+        ? '✗'
+        : '?';
+  const duration =
+    span.attributes?.['duration_ms'] || span.attributes?.['kgc.transaction.duration_ms'] || 'N/A';
 
   return `[${status}] ${span.name} (${duration}ms)`;
 }
@@ -396,5 +396,5 @@ export default {
   calculateSpanStats,
   validateV3_1Features,
   formatSpan,
-  printSpanTree
+  printSpanTree,
 };

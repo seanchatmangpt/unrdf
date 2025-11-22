@@ -13,7 +13,7 @@ export {
   computeGammaGlobalization,
   StandardInvariants,
   evolveTowardMuFixed,
-  validateDeltaShard
+  validateDeltaShard,
 } from './htf-core.mjs';
 
 // React hooks
@@ -85,49 +85,41 @@ export const HTF_CONCEPT = {
   version: '1.0',
   description: 'Unified architecture for academic thesis writing',
 
-  families: [
-    'imrad',
-    'papers',
-    'argument',
-    'contribution',
-    'monograph',
-    'dsr',
-    'narrative'
-  ],
+  families: ['imrad', 'papers', 'argument', 'contribution', 'monograph', 'dsr', 'narrative'],
 
   operations: {
     lambda: {
       symbol: 'Λ',
       name: 'Total Ordering',
       description: 'Schedule all Δ-shards across timeline',
-      produces: 'LambdaOrder'
+      produces: 'LambdaOrder',
     },
     pi: {
       symbol: 'Π',
       name: 'Merge',
       description: 'Merge all Δ-shards into unified A',
-      produces: 'PiMerge'
+      produces: 'PiMerge',
     },
     gamma: {
       symbol: 'Γ',
       name: 'Globalization',
       description: 'Validate against Q-invariants',
-      produces: 'GammaGlobalization'
-    }
+      produces: 'GammaGlobalization',
+    },
   },
 
   invariants: [
     {
       symbol: 'Q',
       name: 'Query Invariants',
-      description: 'Constraints preserved across all layers'
-    }
+      description: 'Constraints preserved across all layers',
+    },
   ],
 
   convergence: {
     symbol: 'μ',
     name: 'Mu-Fixed Point',
     description: 'Idempotent closure where τ(A) = A',
-    threshold: 0.05 // 5% drift = converged
-  }
+    threshold: 0.05, // 5% drift = converged
+  },
 };

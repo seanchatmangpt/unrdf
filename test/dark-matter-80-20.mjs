@@ -1,7 +1,7 @@
 /**
  * @file Dark Matter 80/20 Test Suite
  * @module dark-matter-80-20-test
- * 
+ *
  * @description
  * Comprehensive test suite for the Dark Matter 80/20 framework implementation.
  * Validates that 20% of components deliver 80% of the value.
@@ -39,7 +39,7 @@ describe('Dark Matter 80/20 Framework', () => {
         enablePerformanceOptimizer: true,
         enableLockchainWriter: true,
         enablePolicyPackManager: false,
-        enableResolutionLayer: false
+        enableResolutionLayer: false,
       });
 
       await darkMatterCore.initialize();
@@ -58,7 +58,7 @@ describe('Dark Matter 80/20 Framework', () => {
         enablePerformanceOptimizer: true,
         enableLockchainWriter: true,
         enablePolicyPackManager: false,
-        enableResolutionLayer: false
+        enableResolutionLayer: false,
       });
 
       await darkMatterCore.initialize();
@@ -76,8 +76,8 @@ describe('Dark Matter 80/20 Framework', () => {
           p99PreHookPipeline: 2,
           receiptWriteMedian: 5,
           hookEngineExecPerMin: 10000,
-          errorIsolation: 1
-        }
+          errorIsolation: 1,
+        },
       });
 
       await darkMatterCore.initialize();
@@ -132,7 +132,7 @@ describe('Dark Matter 80/20 Framework', () => {
 
     it('should provide access to core components', () => {
       const coreComponents = darkMatterCore.getCoreComponents();
-      
+
       expect(coreComponents).toHaveProperty('transactionManager');
       expect(coreComponents).toHaveProperty('knowledgeHookManager');
       expect(coreComponents).toHaveProperty('effectSandbox');
@@ -169,10 +169,10 @@ describe('Dark Matter 80/20 Framework', () => {
             subject: { value: 'http://example.org/subject' },
             predicate: { value: 'http://example.org/predicate' },
             object: { value: 'http://example.org/object' },
-            graph: { value: 'http://example.org/graph' }
-          }
+            graph: { value: 'http://example.org/graph' },
+          },
         ],
-        removals: []
+        removals: [],
       };
 
       const result = await darkMatterCore.executeTransaction(mockStore, delta);
@@ -185,12 +185,10 @@ describe('Dark Matter 80/20 Framework', () => {
     it('should handle transaction errors gracefully', async () => {
       const invalidDelta = {
         additions: 'invalid',
-        removals: []
+        removals: [],
       };
 
-      await expect(
-        darkMatterCore.executeTransaction(mockStore, invalidDelta)
-      ).rejects.toThrow();
+      await expect(darkMatterCore.executeTransaction(mockStore, invalidDelta)).rejects.toThrow();
     });
   });
 
@@ -207,16 +205,16 @@ describe('Dark Matter 80/20 Framework', () => {
           ref: {
             uri: 'file://test.ask.rq',
             sha256: 'test-hash',
-            mediaType: 'application/sparql-query'
-          }
+            mediaType: 'application/sparql-query',
+          },
         },
-        run: async (event) => ({ result: 'success' })
+        run: async _event => ({ result: 'success' }),
       };
 
       const event = {
         name: 'test-hook',
         payload: { test: 'data' },
-        context: { graph: mockStore }
+        context: { graph: mockStore },
       };
 
       const result = await darkMatterCore.executeHook(hook, event);
@@ -229,18 +227,18 @@ describe('Dark Matter 80/20 Framework', () => {
       const invalidHook = {
         meta: { name: 'invalid-hook' },
         when: 'invalid',
-        run: async () => { throw new Error('Hook error'); }
+        run: async () => {
+          throw new Error('Hook error');
+        },
       };
 
       const event = {
         name: 'invalid-hook',
         payload: {},
-        context: { graph: mockStore }
+        context: { graph: mockStore },
       };
 
-      await expect(
-        darkMatterCore.executeHook(invalidHook, event)
-      ).rejects.toThrow();
+      await expect(darkMatterCore.executeHook(invalidHook, event)).rejects.toThrow();
     });
   });
 
@@ -265,10 +263,10 @@ describe('Dark Matter 80/20 Framework', () => {
 
       // 80% value delivery from core components
       expect(metrics.valueDeliveryRatio).toBeGreaterThanOrEqual(0.8);
-      
+
       // 80% performance impact from critical optimizations
       expect(metrics.performanceImpactRatio).toBeGreaterThanOrEqual(0.8);
-      
+
       // 80% development efficiency from focused effort
       expect(metrics.developmentEfficiencyRatio).toBeGreaterThanOrEqual(0.8);
     });
@@ -333,11 +331,9 @@ describe('Dark Matter 80/20 Framework', () => {
       console.log(`   Component Ratio: ${(componentRatio * 100).toFixed(1)}%`);
       console.log(`   Value Delivery: ${(metrics.valueDeliveryRatio * 100).toFixed(1)}%`);
       console.log(`   Performance Impact: ${(metrics.performanceImpactRatio * 100).toFixed(1)}%`);
-      console.log(`   Development Efficiency: ${(metrics.developmentEfficiencyRatio * 100).toFixed(1)}%`);
+      console.log(
+        `   Development Efficiency: ${(metrics.developmentEfficiencyRatio * 100).toFixed(1)}%`
+      );
     });
   });
 });
-
-
-
-

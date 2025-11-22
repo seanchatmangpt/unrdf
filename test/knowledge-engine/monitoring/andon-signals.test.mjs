@@ -17,7 +17,7 @@ import {
   getStatePriority,
   getWorstState,
   createAndonSignalManager,
-  defaultAndonSignalManager
+  defaultAndonSignalManager,
 } from '../../../src/knowledge-engine/monitoring/andon-signals.mjs';
 
 describe('Andon Signals', () => {
@@ -113,7 +113,7 @@ describe('Andon Signals', () => {
       it('should accept custom config', () => {
         const custom = new AndonSignalManager({
           thresholds: { green: 90, yellow: 70 },
-          strictDeployment: false
+          strictDeployment: false,
         });
         expect(custom.config.thresholds.green).toBe(90);
         expect(custom.config.strictDeployment).toBe(false);
@@ -124,7 +124,7 @@ describe('Andon Signals', () => {
       it('should register a valid signal', () => {
         manager.registerSignal({
           name: 'test-signal',
-          category: SignalCategory.VALIDATION
+          category: SignalCategory.VALIDATION,
         });
         expect(manager.signalConfigs.has('test-signal')).toBe(true);
       });
@@ -148,7 +148,7 @@ describe('Andon Signals', () => {
       beforeEach(() => {
         manager.registerSignal({
           name: 'test-signal',
-          category: SignalCategory.VALIDATION
+          category: SignalCategory.VALIDATION,
         });
       });
 
@@ -165,7 +165,7 @@ describe('Andon Signals', () => {
       it('should store message and metadata', () => {
         const result = manager.updateSignal('test-signal', 75, {
           message: 'Test message',
-          metadata: { key: 'value' }
+          metadata: { key: 'value' },
         });
         expect(result.message).toBe('Test message');
         expect(result.metadata.key).toBe('value');
@@ -196,8 +196,13 @@ describe('Andon Signals', () => {
         const mockResults = {
           features: [
             { name: 'knowledge-engine-core', score: 85, passed: true },
-            { name: 'knowledge-hooks-api', score: 45, passed: false, violations: ['v1', 'v2'] }
-          ]
+            {
+              name: 'knowledge-hooks-api',
+              score: 45,
+              passed: false,
+              violations: ['v1', 'v2'],
+            },
+          ],
         };
 
         manager.registerValidationSignals(mockResults);
@@ -226,8 +231,8 @@ describe('Andon Signals', () => {
           jobs: [
             { name: 'lint', conclusion: 'success' },
             { name: 'unit-tests', conclusion: 'failure' },
-            { name: 'build', status: 'in_progress' }
-          ]
+            { name: 'build', status: 'in_progress' },
+          ],
         });
 
         expect(manager.signals.get('ci-lint').score).toBe(100);
@@ -241,8 +246,8 @@ describe('Andon Signals', () => {
             { name: 'lint', conclusion: 'success' },
             { name: 'typecheck', conclusion: 'failure' },
             { name: 'test', conclusion: 'cancelled' },
-            { name: 'integration', conclusion: 'skipped' }
-          ]
+            { name: 'integration', conclusion: 'skipped' },
+          ],
         });
 
         expect(manager.signals.get('ci-lint').score).toBe(100);
@@ -258,8 +263,8 @@ describe('Andon Signals', () => {
             { name: 'Type-Check Source', conclusion: 'success' },
             { name: 'Security Scan', conclusion: 'success' },
             { name: 'E2E Tests', conclusion: 'success' },
-            { name: 'Performance Benchmark', conclusion: 'success' }
-          ]
+            { name: 'Performance Benchmark', conclusion: 'success' },
+          ],
         });
 
         expect(manager.signals.get('ci-lint')).toBeDefined();
@@ -285,7 +290,10 @@ describe('Andon Signals', () => {
           transactionLatency: { p50: 50, p95: 200, p99: 500 },
           errorRate: 0.01,
           hookExecutionRate: 15,
-          memoryUsage: { heapUsed: 50 * 1024 * 1024, heapTotal: 100 * 1024 * 1024 }
+          memoryUsage: {
+            heapUsed: 50 * 1024 * 1024,
+            heapTotal: 100 * 1024 * 1024,
+          },
         });
 
         const latency = manager.signals.get('perf-latency');
@@ -304,9 +312,18 @@ describe('Andon Signals', () => {
 
     describe('isDeploymentReady', () => {
       beforeEach(() => {
-        manager.registerSignal({ name: 'sig1', category: SignalCategory.VALIDATION });
-        manager.registerSignal({ name: 'sig2', category: SignalCategory.CI_CD });
-        manager.registerSignal({ name: 'sig3', category: SignalCategory.PERFORMANCE });
+        manager.registerSignal({
+          name: 'sig1',
+          category: SignalCategory.VALIDATION,
+        });
+        manager.registerSignal({
+          name: 'sig2',
+          category: SignalCategory.CI_CD,
+        });
+        manager.registerSignal({
+          name: 'sig3',
+          category: SignalCategory.PERFORMANCE,
+        });
       });
 
       it('should return not ready when no signals registered', () => {
@@ -348,8 +365,13 @@ describe('Andon Signals', () => {
       });
 
       it('should allow YELLOW in lenient mode', () => {
-        const lenientManager = new AndonSignalManager({ strictDeployment: false });
-        lenientManager.registerSignal({ name: 'sig1', category: SignalCategory.VALIDATION });
+        const lenientManager = new AndonSignalManager({
+          strictDeployment: false,
+        });
+        lenientManager.registerSignal({
+          name: 'sig1',
+          category: SignalCategory.VALIDATION,
+        });
         lenientManager.updateSignal('sig1', 70); // YELLOW
 
         const result = lenientManager.isDeploymentReady();
@@ -359,9 +381,12 @@ describe('Andon Signals', () => {
 
       it('should check required signals', () => {
         const strictManager = new AndonSignalManager({
-          requiredSignals: ['required-signal']
+          requiredSignals: ['required-signal'],
         });
-        strictManager.registerSignal({ name: 'other', category: SignalCategory.VALIDATION });
+        strictManager.registerSignal({
+          name: 'other',
+          category: SignalCategory.VALIDATION,
+        });
         strictManager.updateSignal('other', 100);
 
         const result = strictManager.isDeploymentReady();
@@ -376,8 +401,14 @@ describe('Andon Signals', () => {
       });
 
       it('should return all updated signals', () => {
-        manager.registerSignal({ name: 'sig1', category: SignalCategory.VALIDATION });
-        manager.registerSignal({ name: 'sig2', category: SignalCategory.CI_CD });
+        manager.registerSignal({
+          name: 'sig1',
+          category: SignalCategory.VALIDATION,
+        });
+        manager.registerSignal({
+          name: 'sig2',
+          category: SignalCategory.CI_CD,
+        });
         manager.updateSignal('sig1', 80);
         manager.updateSignal('sig2', 60);
 
@@ -388,8 +419,14 @@ describe('Andon Signals', () => {
 
     describe('getSignalsByCategory', () => {
       beforeEach(() => {
-        manager.registerSignal({ name: 'val1', category: SignalCategory.VALIDATION });
-        manager.registerSignal({ name: 'val2', category: SignalCategory.VALIDATION });
+        manager.registerSignal({
+          name: 'val1',
+          category: SignalCategory.VALIDATION,
+        });
+        manager.registerSignal({
+          name: 'val2',
+          category: SignalCategory.VALIDATION,
+        });
         manager.registerSignal({ name: 'ci1', category: SignalCategory.CI_CD });
         manager.updateSignal('val1', 80);
         manager.updateSignal('val2', 90);
@@ -412,8 +449,14 @@ describe('Andon Signals', () => {
 
     describe('getOverallState', () => {
       beforeEach(() => {
-        manager.registerSignal({ name: 'sig1', category: SignalCategory.VALIDATION });
-        manager.registerSignal({ name: 'sig2', category: SignalCategory.CI_CD });
+        manager.registerSignal({
+          name: 'sig1',
+          category: SignalCategory.VALIDATION,
+        });
+        manager.registerSignal({
+          name: 'sig2',
+          category: SignalCategory.CI_CD,
+        });
       });
 
       it('should return GREEN when no signals', () => {
@@ -442,8 +485,16 @@ describe('Andon Signals', () => {
       });
 
       it('should calculate weighted average', () => {
-        manager.registerSignal({ name: 'sig1', category: SignalCategory.VALIDATION, weight: 0.7 });
-        manager.registerSignal({ name: 'sig2', category: SignalCategory.CI_CD, weight: 0.3 });
+        manager.registerSignal({
+          name: 'sig1',
+          category: SignalCategory.VALIDATION,
+          weight: 0.7,
+        });
+        manager.registerSignal({
+          name: 'sig2',
+          category: SignalCategory.CI_CD,
+          weight: 0.3,
+        });
         manager.updateSignal('sig1', 100);
         manager.updateSignal('sig2', 0);
 
@@ -455,20 +506,28 @@ describe('Andon Signals', () => {
     describe('onSignalChange', () => {
       it('should notify listeners on state change', () => {
         const callback = vi.fn();
-        manager.registerSignal({ name: 'sig', category: SignalCategory.VALIDATION });
+        manager.registerSignal({
+          name: 'sig',
+          category: SignalCategory.VALIDATION,
+        });
         manager.onSignalChange(callback);
 
         manager.updateSignal('sig', 50);
 
         expect(callback).toHaveBeenCalledTimes(1);
-        expect(callback).toHaveBeenCalledWith(expect.objectContaining({
-          newState: AndonState.RED
-        }));
+        expect(callback).toHaveBeenCalledWith(
+          expect.objectContaining({
+            newState: AndonState.RED,
+          })
+        );
       });
 
       it('should not notify when state unchanged', () => {
         const callback = vi.fn();
-        manager.registerSignal({ name: 'sig', category: SignalCategory.VALIDATION });
+        manager.registerSignal({
+          name: 'sig',
+          category: SignalCategory.VALIDATION,
+        });
         manager.onSignalChange(callback);
 
         manager.updateSignal('sig', 50); // RED
@@ -479,7 +538,10 @@ describe('Andon Signals', () => {
 
       it('should return unsubscribe function', () => {
         const callback = vi.fn();
-        manager.registerSignal({ name: 'sig', category: SignalCategory.VALIDATION });
+        manager.registerSignal({
+          name: 'sig',
+          category: SignalCategory.VALIDATION,
+        });
         const unsubscribe = manager.onSignalChange(callback);
 
         manager.updateSignal('sig', 50);
@@ -495,10 +557,15 @@ describe('Andon Signals', () => {
       });
 
       it('should handle listener errors gracefully', () => {
-        const errorCallback = vi.fn(() => { throw new Error('Listener error'); });
+        const errorCallback = vi.fn(() => {
+          throw new Error('Listener error');
+        });
         const goodCallback = vi.fn();
 
-        manager.registerSignal({ name: 'sig', category: SignalCategory.VALIDATION });
+        manager.registerSignal({
+          name: 'sig',
+          category: SignalCategory.VALIDATION,
+        });
         manager.onSignalChange(errorCallback);
         manager.onSignalChange(goodCallback);
 
@@ -514,7 +581,10 @@ describe('Andon Signals', () => {
       });
 
       it('should limit history entries', () => {
-        manager.registerSignal({ name: 'sig', category: SignalCategory.VALIDATION });
+        manager.registerSignal({
+          name: 'sig',
+          category: SignalCategory.VALIDATION,
+        });
         for (let i = 0; i < 20; i++) {
           manager.updateSignal('sig', i * 5);
         }
@@ -526,8 +596,16 @@ describe('Andon Signals', () => {
 
     describe('getDashboardSummary', () => {
       beforeEach(() => {
-        manager.registerSignal({ name: 'val', category: SignalCategory.VALIDATION, weight: 0.5 });
-        manager.registerSignal({ name: 'ci', category: SignalCategory.CI_CD, weight: 0.5 });
+        manager.registerSignal({
+          name: 'val',
+          category: SignalCategory.VALIDATION,
+          weight: 0.5,
+        });
+        manager.registerSignal({
+          name: 'ci',
+          category: SignalCategory.CI_CD,
+          weight: 0.5,
+        });
         manager.updateSignal('val', 90);
         manager.updateSignal('ci', 70);
       });
@@ -546,7 +624,10 @@ describe('Andon Signals', () => {
 
     describe('clear', () => {
       it('should clear all data', () => {
-        manager.registerSignal({ name: 'sig', category: SignalCategory.VALIDATION });
+        manager.registerSignal({
+          name: 'sig',
+          category: SignalCategory.VALIDATION,
+        });
         manager.updateSignal('sig', 80);
         manager.onSignalChange(() => {});
 
@@ -577,13 +658,18 @@ describe('Andon Signals', () => {
       const eventHandler = vi.fn();
 
       manager.on('signalChange', eventHandler);
-      manager.registerSignal({ name: 'sig', category: SignalCategory.VALIDATION });
+      manager.registerSignal({
+        name: 'sig',
+        category: SignalCategory.VALIDATION,
+      });
       manager.updateSignal('sig', 50);
 
-      expect(eventHandler).toHaveBeenCalledWith(expect.objectContaining({
-        signal: expect.objectContaining({ name: 'sig' }),
-        newState: AndonState.RED
-      }));
+      expect(eventHandler).toHaveBeenCalledWith(
+        expect.objectContaining({
+          signal: expect.objectContaining({ name: 'sig' }),
+          newState: AndonState.RED,
+        })
+      );
     });
   });
 
@@ -595,7 +681,10 @@ describe('Andon Signals', () => {
     });
 
     it('should handle rapid signal updates', () => {
-      manager.registerSignal({ name: 'sig', category: SignalCategory.VALIDATION });
+      manager.registerSignal({
+        name: 'sig',
+        category: SignalCategory.VALIDATION,
+      });
 
       for (let i = 0; i < 100; i++) {
         manager.updateSignal('sig', Math.random() * 100);
@@ -614,7 +703,10 @@ describe('Andon Signals', () => {
     });
 
     it('should preserve signal metadata across updates', () => {
-      manager.registerSignal({ name: 'sig', category: SignalCategory.VALIDATION });
+      manager.registerSignal({
+        name: 'sig',
+        category: SignalCategory.VALIDATION,
+      });
 
       manager.updateSignal('sig', 80, { metadata: { key: 'value1' } });
       manager.updateSignal('sig', 85, { metadata: { key: 'value2' } });

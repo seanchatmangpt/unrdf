@@ -17,7 +17,7 @@ async function main() {
     enableConsensus: true,
     replicationTopology: 'full-mesh',
     conflictResolution: 'last-write-wins',
-    loadBalancingStrategy: 'weighted'
+    loadBalancingStrategy: 'weighted',
   });
   console.log('✅ Federation created\n');
 
@@ -28,7 +28,7 @@ async function main() {
     endpoint: 'http://localhost:3001',
     name: 'Primary Store',
     capabilities: ['sparql-1.1', 'update'],
-    weight: 1.0
+    weight: 1.0,
   });
 
   await federation.registerStore({
@@ -36,7 +36,7 @@ async function main() {
     endpoint: 'http://localhost:3002',
     name: 'Secondary Store',
     capabilities: ['sparql-1.1'],
-    weight: 0.8
+    weight: 0.8,
   });
 
   await federation.registerStore({
@@ -44,7 +44,7 @@ async function main() {
     endpoint: 'http://localhost:3003',
     name: 'Tertiary Store',
     capabilities: ['sparql-1.1'],
-    weight: 0.6
+    weight: 0.6,
   });
   console.log('✅ Registered 3 stores\n');
 
@@ -80,8 +80,8 @@ async function main() {
     quad: {
       subject: 'http://example.org/alice',
       predicate: 'http://xmlns.com/foaf/0.1/name',
-      object: '"Alice"'
-    }
+      object: '"Alice"',
+    },
   });
 
   await federation.replicate({
@@ -90,8 +90,8 @@ async function main() {
     quad: {
       subject: 'http://example.org/alice',
       predicate: 'http://example.org/age',
-      object: '"25"^^<http://www.w3.org/2001/XMLSchema#integer>'
-    }
+      object: '"25"^^<http://www.w3.org/2001/XMLSchema#integer>',
+    },
   });
   console.log('✅ Data replicated\n');
 

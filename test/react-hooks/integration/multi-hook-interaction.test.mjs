@@ -3,7 +3,7 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
-import { renderHook, act, waitFor } from '@testing-library/react';
+import { _renderHook, _act, _waitFor } from '@testing-library/react';
 import { Store, DataFactory } from 'n3';
 
 const { quad, namedNode, literal } = DataFactory;
@@ -32,11 +32,7 @@ describe('Multi-Hook Integration', () => {
     it('should update triple count when quads added', async () => {
       expect(testStore.size).toBe(0);
 
-      testStore.add(quad(
-        namedNode('http://s'),
-        namedNode('http://p'),
-        literal('o')
-      ));
+      testStore.add(quad(namedNode('http://s'), namedNode('http://p'), literal('o')));
 
       expect(testStore.size).toBe(1);
     });
@@ -44,11 +40,9 @@ describe('Multi-Hook Integration', () => {
 
   describe('useKnowledgeEngine + useSPARQLQuery Integration', () => {
     it('should execute queries on engine store', async () => {
-      testStore.add(quad(
-        namedNode('http://alice'),
-        namedNode('http://knows'),
-        namedNode('http://bob')
-      ));
+      testStore.add(
+        quad(namedNode('http://alice'), namedNode('http://knows'), namedNode('http://bob'))
+      );
 
       expect(testStore.size).toBe(1);
     });
@@ -56,11 +50,7 @@ describe('Multi-Hook Integration', () => {
     it('should handle query updates when store changes', async () => {
       const initialSize = testStore.size;
 
-      testStore.add(quad(
-        namedNode('http://s'),
-        namedNode('http://p'),
-        literal('o')
-      ));
+      testStore.add(quad(namedNode('http://s'), namedNode('http://p'), literal('o')));
 
       expect(testStore.size).toBe(initialSize + 1);
     });
@@ -71,19 +61,9 @@ describe('Multi-Hook Integration', () => {
       const graph1 = namedNode('http://graph1');
       const graph2 = namedNode('http://graph2');
 
-      testStore.add(quad(
-        namedNode('http://s1'),
-        namedNode('http://p1'),
-        literal('o1'),
-        graph1
-      ));
+      testStore.add(quad(namedNode('http://s1'), namedNode('http://p1'), literal('o1'), graph1));
 
-      testStore.add(quad(
-        namedNode('http://s2'),
-        namedNode('http://p2'),
-        literal('o2'),
-        graph2
-      ));
+      testStore.add(quad(namedNode('http://s2'), namedNode('http://p2'), literal('o2'), graph2));
 
       const graph1Quads = [...testStore.match(null, null, null, graph1)];
       expect(graph1Quads).toHaveLength(1);
@@ -97,7 +77,7 @@ describe('Multi-Hook Integration', () => {
       // Simulate transaction
       const quadsToAdd = [
         quad(namedNode('http://s1'), namedNode('http://p'), literal('o1')),
-        quad(namedNode('http://s2'), namedNode('http://p'), literal('o2'))
+        quad(namedNode('http://s2'), namedNode('http://p'), literal('o2')),
       ];
 
       quadsToAdd.forEach(q => testStore.add(q));
@@ -149,13 +129,13 @@ describe('Multi-Hook Integration', () => {
       const preHook = {
         name: 'pre-transaction',
         type: 'pre',
-        execute: vi.fn()
+        execute: vi.fn(),
       };
 
       const postHook = {
         name: 'post-transaction',
         type: 'post',
-        execute: vi.fn()
+        execute: vi.fn(),
       };
 
       hooks.push(preHook, postHook);
@@ -176,11 +156,7 @@ describe('Multi-Hook Integration', () => {
 
       // Simulate multiple hooks working together
       for (let i = 0; i < 1000; i++) {
-        testStore.add(quad(
-          namedNode(`http://s${i}`),
-          namedNode('http://p'),
-          literal(`o${i}`)
-        ));
+        testStore.add(quad(namedNode(`http://s${i}`), namedNode('http://p'), literal(`o${i}`)));
       }
 
       const addDuration = performance.now() - start;

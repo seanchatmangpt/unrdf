@@ -30,34 +30,37 @@ export function useRecovery(config = {}) {
   const [lastError, setLastError] = useState(null);
   const attemptsRef = useRef(0);
 
-  const executeWithRecovery = useCallback(async (fn, options = {}) => {
-    const maxRetries = options.maxRetries || config.maxRetries || 3;
-    const retryDelay = options.retryDelay || config.retryDelay || 1000;
+  const executeWithRecovery = useCallback(
+    async (fn, options = {}) => {
+      const maxRetries = options.maxRetries || config.maxRetries || 3;
+      const retryDelay = options.retryDelay || config.retryDelay || 1000;
 
-    attemptsRef.current = 0;
-    setIsRecovering(false);
+      attemptsRef.current = 0;
+      setIsRecovering(false);
 
-    while (attemptsRef.current < maxRetries) {
-      try {
-        const result = await fn();
-        setRetryCount(0);
-        setLastError(null);
-        return result;
-      } catch (err) {
-        attemptsRef.current++;
-        setRetryCount(attemptsRef.current);
-        setLastError(err);
+      while (attemptsRef.current < maxRetries) {
+        try {
+          const result = await fn();
+          setRetryCount(0);
+          setLastError(null);
+          return result;
+        } catch (err) {
+          attemptsRef.current++;
+          setRetryCount(attemptsRef.current);
+          setLastError(err);
 
-        if (attemptsRef.current >= maxRetries) {
-          setIsRecovering(false);
-          throw err;
+          if (attemptsRef.current >= maxRetries) {
+            setIsRecovering(false);
+            throw err;
+          }
+
+          setIsRecovering(true);
+          await new Promise(resolve => setTimeout(resolve, retryDelay * attemptsRef.current));
         }
-
-        setIsRecovering(true);
-        await new Promise(resolve => setTimeout(resolve, retryDelay * attemptsRef.current));
       }
-    }
-  }, [config]);
+    },
+    [config]
+  );
 
   const reset = useCallback(() => {
     setRetryCount(0);

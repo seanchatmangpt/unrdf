@@ -193,6 +193,20 @@ const main = defineCommand({
             return hookCommands.describeCommand.run(ctx);
           },
         }),
+        eval: defineCommand({
+          meta: { name: "eval", description: "Evaluate a knowledge hook" },
+          args: {
+            hook: { type: "positional", required: true },
+            data: { type: "string", alias: "d" },
+            format: { type: "string", default: "table", alias: "f" },
+            output: { type: "string", alias: "o" },
+            verbose: { type: "boolean", alias: "v" },
+          },
+          async run(ctx) {
+            const { evalCommand } = await import("../src/cli/commands/hook/eval.mjs");
+            return evalCommand.run(ctx);
+          },
+        }),
       },
     }),
 

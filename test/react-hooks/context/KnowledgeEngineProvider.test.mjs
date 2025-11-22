@@ -5,7 +5,10 @@
 import { describe, it, expect } from 'vitest';
 import { renderHook } from '@testing-library/react';
 import { createElement } from 'react';
-import { KnowledgeEngineProvider, KnowledgeEngineContext } from '../../../src/react-hooks/context/KnowledgeEngineContext.mjs';
+import {
+  KnowledgeEngineProvider,
+  KnowledgeEngineContext,
+} from '../../../src/react-hooks/context/KnowledgeEngineContext.mjs';
 import { useContext } from 'react';
 
 describe('KnowledgeEngineProvider', () => {
@@ -16,10 +19,9 @@ describe('KnowledgeEngineProvider', () => {
       const wrapper = ({ children }) =>
         createElement(KnowledgeEngineProvider, { value: mockEngine }, children);
 
-      const { result } = renderHook(
-        () => useContext(KnowledgeEngineContext),
-        { wrapper }
-      );
+      const { result } = renderHook(() => useContext(KnowledgeEngineContext), {
+        wrapper,
+      });
 
       expect(result.current).toBe(mockEngine);
     });
@@ -28,10 +30,9 @@ describe('KnowledgeEngineProvider', () => {
       const wrapper = ({ children }) =>
         createElement(KnowledgeEngineProvider, { value: null }, children);
 
-      const { result } = renderHook(
-        () => useContext(KnowledgeEngineContext),
-        { wrapper }
-      );
+      const { result } = renderHook(() => useContext(KnowledgeEngineContext), {
+        wrapper,
+      });
 
       expect(result.current).toBeNull();
     });
@@ -44,10 +45,9 @@ describe('KnowledgeEngineProvider', () => {
       const wrapper = ({ children }) =>
         createElement(KnowledgeEngineProvider, { value: mockEngine }, children);
 
-      const { result } = renderHook(
-        () => useContext(KnowledgeEngineContext),
-        { wrapper }
-      );
+      const { result } = renderHook(() => useContext(KnowledgeEngineContext), {
+        wrapper,
+      });
 
       expect(result.current.id).toBe('123');
       expect(result.current.type).toBe('knowledge-engine');
@@ -62,7 +62,9 @@ describe('KnowledgeEngineProvider', () => {
           const wrapper = ({ children }) =>
             createElement(KnowledgeEngineProvider, { value: engine }, children);
 
-          return renderHook(() => useContext(KnowledgeEngineContext), { wrapper }).result.current;
+          return renderHook(() => useContext(KnowledgeEngineContext), {
+            wrapper,
+          }).result.current;
         },
         { initialProps: { engine: engine1 } }
       );
@@ -84,17 +86,12 @@ describe('KnowledgeEngineProvider', () => {
         createElement(
           KnowledgeEngineProvider,
           { value: outerEngine },
-          createElement(
-            KnowledgeEngineProvider,
-            { value: innerEngine },
-            children
-          )
+          createElement(KnowledgeEngineProvider, { value: innerEngine }, children)
         );
 
-      const { result } = renderHook(
-        () => useContext(KnowledgeEngineContext),
-        { wrapper }
-      );
+      const { result } = renderHook(() => useContext(KnowledgeEngineContext), {
+        wrapper,
+      });
 
       expect(result.current.level).toBe('inner');
     });

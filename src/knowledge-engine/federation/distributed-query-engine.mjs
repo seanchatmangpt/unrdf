@@ -18,7 +18,7 @@
 
 import { z } from 'zod';
 import { trace, SpanStatusCode, metrics } from '@opentelemetry/api';
-import { analyzeSPARQLQuery, extractVariables } from '../../utils/sparql-utils.mjs';
+import { analyzeSPARQLQuery, _extractVariables } from '../../utils/sparql-utils.mjs';
 
 const tracer = trace.getTracer('unrdf-federation');
 const meter = metrics.getMeter('unrdf-federation');
@@ -30,7 +30,7 @@ const meter = metrics.getMeter('unrdf-federation');
 export const ExecutionStrategy = {
   PARALLEL: 'parallel',
   SEQUENTIAL: 'sequential',
-  ADAPTIVE: 'adaptive'
+  ADAPTIVE: 'adaptive',
 };
 
 /**
@@ -43,7 +43,7 @@ export const PlanNodeType = {
   PROJECT: 'project',
   JOIN: 'join',
   UNION: 'union',
-  MERGE: 'merge'
+  MERGE: 'merge',
 };
 
 /**
@@ -55,7 +55,7 @@ const QueryConfigSchema = z.object({
   executionStrategy: z.nativeEnum(ExecutionStrategy).default(ExecutionStrategy.ADAPTIVE),
   enablePushdown: z.boolean().default(true),
   enableJoinOptimization: z.boolean().default(true),
-  streamResults: z.boolean().default(false)
+  streamResults: z.boolean().default(false),
 });
 
 /**
@@ -68,7 +68,7 @@ const PlanNodeSchema = z.object({
   query: z.string().optional(),
   children: z.array(z.lazy(() => PlanNodeSchema)).default([]),
   estimatedCost: z.number().nonnegative().default(0),
-  metadata: z.record(z.any()).optional()
+  metadata: z.record(z.any()).optional(),
 });
 
 /**
@@ -104,16 +104,16 @@ export class DistributedQueryEngine {
 
     // Metrics
     this.queryCounter = meter.createCounter('federation.query.total', {
-      description: 'Total distributed queries executed'
+      description: 'Total distributed queries executed',
     });
 
     this.queryDuration = meter.createHistogram('federation.query.duration', {
       description: 'Query execution duration in milliseconds',
-      unit: 'ms'
+      unit: 'ms',
     });
 
     this.storeQueryCounter = meter.createCounter('federation.query.store', {
-      description: 'Queries sent to individual stores'
+      description: 'Queries sent to individual stores',
     });
   }
 
@@ -124,7 +124,7 @@ export class DistributedQueryEngine {
    * @returns {Promise<Array>} Query results
    */
   async execute(sparql, options = {}) {
-    return tracer.startActiveSpan('federation.query.execute', async (span) => {
+    return tracer.startActiveSpan('federation.query.execute', async span => {
       const startTime = Date.now();
 
       try {
@@ -176,7 +176,7 @@ export class DistributedQueryEngine {
    * @private
    */
   async createExecutionPlan(sparql, analysis, config) {
-    return tracer.startActiveSpan('federation.query.plan', async (span) => {
+    return tracer.startActiveSpan('federation.query.plan', async span => {
       try {
         const stores = this.coordinator.getHealthyStores();
         span.setAttribute('plan.stores_available', stores.length);
@@ -257,13 +257,11 @@ export class DistributedQueryEngine {
       nodeId: 'merge-root',
       type: PlanNodeType.MERGE,
       children: [],
-      estimatedCost: 0
+      estimatedCost: 0,
     };
 
     // Apply pushdown optimizations
-    const optimizedQuery = config.enablePushdown
-      ? this.applyPushdown(sparql, analysis)
-      : sparql;
+    const optimizedQuery = config.enablePushdown ? this.applyPushdown(sparql, analysis) : sparql;
 
     // Create scan nodes for each store
     for (const store of stores) {
@@ -273,7 +271,7 @@ export class DistributedQueryEngine {
         storeId: store.storeId,
         query: optimizedQuery,
         children: [],
-        estimatedCost: this.estimateCost(optimizedQuery, store)
+        estimatedCost: this.estimateCost(optimizedQuery, store),
       });
     }
 
@@ -297,12 +295,10 @@ export class DistributedQueryEngine {
       nodeId: 'union-root',
       type: PlanNodeType.UNION,
       children: [],
-      estimatedCost: 0
+      estimatedCost: 0,
     };
 
-    const optimizedQuery = config.enablePushdown
-      ? this.applyPushdown(sparql, analysis)
-      : sparql;
+    const optimizedQuery = config.enablePushdown ? this.applyPushdown(sparql, analysis) : sparql;
 
     for (const store of stores) {
       plan.children.push({
@@ -311,7 +307,7 @@ export class DistributedQueryEngine {
         storeId: store.storeId,
         query: optimizedQuery,
         children: [],
-        estimatedCost: this.estimateCost(optimizedQuery, store)
+        estimatedCost: this.estimateCost(optimizedQuery, store),
       });
     }
 
@@ -341,7 +337,7 @@ export class DistributedQueryEngine {
    * @returns {string} Optimized query
    * @private
    */
-  applyPushdown(sparql, analysis) {
+  applyPushdown(sparql, _analysis) {
     // In production, perform actual query rewriting
     // For now, return original query
     // Optimizations could include:
@@ -376,7 +372,7 @@ export class DistributedQueryEngine {
    * @private
    */
   async executePlan(plan, config) {
-    return tracer.startActiveSpan('federation.query.executePlan', async (span) => {
+    return tracer.startActiveSpan('federation.query.executePlan', async span => {
       try {
         span.setAttribute('plan.type', plan.type);
         span.setAttribute('plan.children', plan.children.length);
@@ -393,7 +389,10 @@ export class DistributedQueryEngine {
         }
       } catch (error) {
         span.recordException(error);
-        span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
+        span.setStatus({
+          code: SpanStatusCode.ERROR,
+          message: error.message,
+        });
         throw error;
       } finally {
         span.end();
@@ -443,7 +442,7 @@ export class DistributedQueryEngine {
    * @private
    */
   async executeScanNode(node, config) {
-    return tracer.startActiveSpan('federation.query.scan', async (span) => {
+    return tracer.startActiveSpan('federation.query.scan', async span => {
       try {
         span.setAttribute('scan.store_id', node.storeId);
         span.setAttribute('scan.query', node.query.substring(0, 200));
@@ -494,17 +493,28 @@ export class DistributedQueryEngine {
       }, config.timeout);
 
       // Simulate query execution
-      executionHandle = setTimeout(() => {
-        if (!isResolved) {
-          isResolved = true;
-          clearTimeout(timeoutHandle);
-          // Return mock results
-          resolve([
-            { s: `http://example.org/${storeId}/1`, p: 'http://example.org/name', o: 'Alice' },
-            { s: `http://example.org/${storeId}/2`, p: 'http://example.org/name', o: 'Bob' }
-          ]);
-        }
-      }, Math.random() * 100 + 50);
+      executionHandle = setTimeout(
+        () => {
+          if (!isResolved) {
+            isResolved = true;
+            clearTimeout(timeoutHandle);
+            // Return mock results
+            resolve([
+              {
+                s: `http://example.org/${storeId}/1`,
+                p: 'http://example.org/name',
+                o: 'Alice',
+              },
+              {
+                s: `http://example.org/${storeId}/2`,
+                p: 'http://example.org/name',
+                o: 'Bob',
+              },
+            ]);
+          }
+        },
+        Math.random() * 100 + 50
+      );
     });
   }
 
@@ -515,7 +525,7 @@ export class DistributedQueryEngine {
    * @returns {Array} Merged results
    * @private
    */
-  mergeResults(results, analysis) {
+  mergeResults(results, _analysis) {
     if (results.length === 0) {
       return [];
     }

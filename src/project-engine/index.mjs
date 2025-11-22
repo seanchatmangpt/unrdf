@@ -3,36 +3,29 @@
  * @module project-engine
  */
 
-export { scanFileSystemToStore } from './fs-scan.mjs'
-export { buildProjectModelFromFs } from './project-model.mjs'
-export { detectStackFromFs } from './stack-detect.mjs'
-export { classifyFiles } from './file-roles.mjs'
-export { generateGoldenStructure } from './golden-structure.mjs'
-export { diffProjectStructure } from './project-diff.mjs'
-export { materializeArtifacts } from './materialize.mjs'
-export { ProjectStructureLens } from './lens/project-structure.mjs'
-export {
-  getProjectEngineConfig,
-  ProjectEngineConfigSchema,
-} from './project-config.mjs'
-export { buildProjectReport } from './project-report.mjs'
-export { createProjectInitializationPipeline } from './initialize.mjs'
+export { scanFileSystemToStore } from './fs-scan.mjs';
+export { buildProjectModelFromFs } from './project-model.mjs';
+export { detectStackFromFs } from './stack-detect.mjs';
+export { classifyFiles } from './file-roles.mjs';
+// Removed unused export: generateGoldenStructure (never imported/used)
+export { diffProjectStructure } from './project-diff.mjs';
+export { materializeArtifacts } from './materialize.mjs';
+export { ProjectStructureLens } from './lens/project-structure.mjs';
+export { getProjectEngineConfig, ProjectEngineConfigSchema } from './project-config.mjs';
+export { buildProjectReport } from './project-report.mjs';
+export { createProjectInitializationPipeline } from './initialize.mjs';
 export {
   deriveHooksFromStructure,
   analyzePatternViolations,
   createCustomPatternHook,
-} from './policy-derivation.mjs'
-export {
-  inferDomainModel,
-  inferDomainModelFromPath,
-  DomainModelLens,
-} from './domain-infer.mjs'
+} from './policy-derivation.mjs';
+export { inferDomainModel, inferDomainModelFromPath, DomainModelLens } from './domain-infer.mjs';
 export {
   inferTemplatesFromProject,
   inferTemplatesWithDomainBinding,
   getTemplatesByKind,
   serializeTemplates,
-} from './template-infer.mjs'
+} from './template-infer.mjs';
 
 // Materialization planning and execution
 export {
@@ -40,14 +33,14 @@ export {
   validatePlan,
   createEmptyPlan,
   mergePlans,
-} from './materialize-plan.mjs'
+} from './materialize-plan.mjs';
 
 export {
   applyMaterializationPlan,
   rollbackMaterialization,
   previewPlan,
   checkPlanApplicability,
-} from './materialize-apply.mjs'
+} from './materialize-apply.mjs';
 
 // Drift detection
 export {
@@ -56,19 +49,13 @@ export {
   createEmptyBaseline,
   serializeSnapshot,
   deserializeSnapshot,
-} from './drift-snapshot.mjs'
+} from './drift-snapshot.mjs';
 
 // Hotspot analysis
-export {
-  analyzeHotspots,
-  scoreFeature,
-} from './hotspot-analyzer.mjs'
+export { analyzeHotspots, scoreFeature } from './hotspot-analyzer.mjs';
 
 // Gap detection
-export {
-  findMissingRoles,
-  scoreMissingRole,
-} from './gap-finder.mjs'
+export { findMissingRoles, scoreMissingRole } from './gap-finder.mjs';
 
 // Type-safety auditing
 export {
@@ -79,7 +66,7 @@ export {
   MismatchSchema,
   AuditResultSchema,
   CompareTypesResultSchema,
-} from './type-auditor.mjs'
+} from './type-auditor.mjs';
 
 // Autonomic MAPEK Loop - Full autonomics with Knowledge Hooks
 export {
@@ -87,7 +74,7 @@ export {
   createAutonomicHooks,
   runContinuousMapekLoop,
   reportMapekStatus,
-} from './autonomic-mapek.mjs'
+} from './autonomic-mapek.mjs';
 
 // API Contract Validation
 export {
@@ -102,22 +89,12 @@ export {
   ValidationResultSchema,
   BreakingChangeSchema,
   ContractBreaksSchema,
-} from './api-contract-validator.mjs'
+} from './api-contract-validator.mjs';
 
 // Stack-Aware Linter Rules
-export {
-  deriveLinterRules,
-  analyzeCodePatterns,
-  generateESLintConfig,
-} from './stack-linter.mjs'
+export { deriveLinterRules, analyzeCodePatterns, generateESLintConfig } from './stack-linter.mjs';
 
-// Automated Refactoring Guide
-export {
-  planEntityRename,
-  planEntityMerge,
-  planServiceExtraction,
-  validateRefactoringPlan,
-} from './refactoring-guide.mjs'
+// Removed unused exports: planEntityRename, planEntityMerge, planServiceExtraction, validateRefactoringPlan (never imported/used)
 
 // Feature Dependency Graph
 export {
@@ -126,9 +103,9 @@ export {
   topologicalSort,
   analyzeDependencyPath,
   getTransitiveDependencies,
-  getTransitiveDependents,
+  // Removed unused export: getTransitiveDependents (never imported/used, getTransitiveDependencies is used)
   calculateImpactScore,
-} from './dependency-graph.mjs'
+} from './dependency-graph.mjs';
 
 // Auto-Test Generator
 export {
@@ -136,16 +113,11 @@ export {
   generateTestSkeleton,
   scoreTestCoverage,
   generateTestFactory,
-} from './auto-test-generator.mjs'
+} from './auto-test-generator.mjs';
 
-// Generative Documentation - auto-generate docs from domain model + project structure
-export {
-  generateEntityReference,
-  generateAPIReference,
-  generateArchitectureDiagram,
-  generateCompleteDocumentation,
-  DocGenerationResultSchema,
-} from './doc-generator.mjs'
+// Removed unused exports: generateEntityReference, generateAPIReference, generateArchitectureDiagram, generateCompleteDocumentation (never imported/used)
+// Kept DocGenerationResultSchema as it may be used by checkDocConsistency
+export { DocGenerationResultSchema } from './doc-generator.mjs';
 
 // Documentation Drift Checker - validate documentation consistency against domain model
 export {
@@ -154,7 +126,7 @@ export {
   scoreDocDrift,
   checkDocDrift,
   DriftEntrySchema,
-} from './doc-drift-checker.mjs'
+} from './doc-drift-checker.mjs';
 
 // MAPEK Orchestration - Unified execution with all innovations
 export {
@@ -162,4 +134,4 @@ export {
   runInnovationsParallel,
   aggregateInnovationFindings,
   ALL_INNOVATIONS,
-} from './mapek-orchestration.mjs'
+} from './mapek-orchestration.mjs';

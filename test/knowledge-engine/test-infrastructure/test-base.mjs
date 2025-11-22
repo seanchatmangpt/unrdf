@@ -1,7 +1,7 @@
 /**
  * @file Test Base Infrastructure
  * @module test-base
- * 
+ *
  * @description
  * Base class for all knowledge engine tests providing common setup,
  * teardown, and utility methods.
@@ -35,19 +35,19 @@ export class TestBase {
    */
   async setup(options = {}) {
     const { testName = 'test', managerConfig = {} } = options;
-    
+
     // Create temporary directory
     this.tempDir = await this.createTempDir(testName);
-    
+
     // Create test store
     this.testStore = new Store();
-    
+
     // Create manager with temp directory as base path
     this.manager = new KnowledgeHookManager({
       basePath: this.tempDir,
-      ...managerConfig
+      ...managerConfig,
     });
-    
+
     this.setupComplete = true;
   }
 
@@ -56,7 +56,7 @@ export class TestBase {
    */
   async teardown() {
     if (!this.setupComplete) return;
-    
+
     try {
       // Clean up temporary directory
       await this.cleanup();
@@ -77,7 +77,10 @@ export class TestBase {
    * @returns {Promise<string>} Path to the temporary directory
    */
   async createTempDir(testName) {
-    const tempDir = join(tmpdir(), `unrdf-${testName}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`);
+    const tempDir = join(
+      tmpdir(),
+      `unrdf-${testName}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+    );
     await mkdir(tempDir, { recursive: true });
     return tempDir;
   }

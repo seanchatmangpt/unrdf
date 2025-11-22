@@ -3,7 +3,7 @@
  * @description React hook for detecting anomalies in graph data
  */
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, _useEffect } from 'react';
 import { useKnowledgeEngineContext } from '../core/use-knowledge-engine-context.mjs';
 
 /**
@@ -35,51 +35,54 @@ export function useAnomalyDetector(config = {}) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const detectAnomalies = useCallback(async (predicate) => {
-    try {
-      setLoading(true);
+  const detectAnomalies = useCallback(
+    async predicate => {
+      try {
+        setLoading(true);
 
-      const result = await engine.query(`
+        const result = await engine.query(`
         SELECT ?s ?o WHERE {
           ?s <${predicate}> ?o
         }
       `);
 
-      const values = result.map(b => parseFloat(b.o.value)).filter(v => !isNaN(v));
+        const values = result.map(b => parseFloat(b.o.value)).filter(v => !isNaN(v));
 
-      if (values.length === 0) {
+        if (values.length === 0) {
+          setLoading(false);
+          return [];
+        }
+
+        const mean = values.reduce((sum, v) => sum + v, 0) / values.length;
+        const stdDev = Math.sqrt(
+          values.reduce((sum, v) => sum + Math.pow(v - mean, 2), 0) / values.length
+        );
+
+        const threshold = config.threshold || 2.5;
+        const detected = result
+          .map((b, i) => ({
+            subject: b.s.value,
+            value: values[i],
+            zScore: Math.abs((values[i] - mean) / stdDev),
+            isAnomaly: Math.abs((values[i] - mean) / stdDev) > threshold,
+          }))
+          .filter(item => item.isAnomaly);
+
+        setAnomalies(prev => [...prev, ...detected]);
+        setStats({ total: values.length, anomalies: detected.length });
+
+        detected.forEach(anomaly => config.onAnomaly?.(anomaly));
+
         setLoading(false);
-        return [];
+        return detected;
+      } catch (err) {
+        setError(err);
+        setLoading(false);
+        throw err;
       }
-
-      const mean = values.reduce((sum, v) => sum + v, 0) / values.length;
-      const stdDev = Math.sqrt(
-        values.reduce((sum, v) => sum + Math.pow(v - mean, 2), 0) / values.length
-      );
-
-      const threshold = config.threshold || 2.5;
-      const detected = result
-        .map((b, i) => ({
-          subject: b.s.value,
-          value: values[i],
-          zScore: Math.abs((values[i] - mean) / stdDev),
-          isAnomaly: Math.abs((values[i] - mean) / stdDev) > threshold
-        }))
-        .filter(item => item.isAnomaly);
-
-      setAnomalies(prev => [...prev, ...detected]);
-      setStats({ total: values.length, anomalies: detected.length });
-
-      detected.forEach(anomaly => config.onAnomaly?.(anomaly));
-
-      setLoading(false);
-      return detected;
-    } catch (err) {
-      setError(err);
-      setLoading(false);
-      throw err;
-    }
-  }, [engine, config]);
+    },
+    [engine, config]
+  );
 
   const analyzePatterns = useCallback(async () => {
     try {
@@ -108,5 +111,13 @@ export function useAnomalyDetector(config = {}) {
     }
   }, [engine]);
 
-  return { detectAnomalies, analyzePatterns, anomalies, patterns, stats, loading, error };
+  return {
+    detectAnomalies,
+    analyzePatterns,
+    anomalies,
+    patterns,
+    stats,
+    loading,
+    error,
+  };
 }

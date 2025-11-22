@@ -2,7 +2,7 @@
 
 /**
  * Simple Production Test
- * 
+ *
  * This test validates the core functionality without complex validation
  */
 
@@ -19,10 +19,10 @@ async function testSimpleProduction() {
   try {
     // === Phase 1: System Initialization ===
     console.log('🔧 Phase 1: System Initialization');
-    
+
     const manager = new KnowledgeHookManager({
       basePath: process.cwd(),
-      strictMode: false
+      strictMode: false,
     });
 
     console.log('  ✅ KnowledgeHookManager initialized');
@@ -30,23 +30,23 @@ async function testSimpleProduction() {
 
     // === Phase 2: Simple Hook Creation ===
     console.log('\n📋 Phase 2: Simple Hook Creation');
-    
+
     const simpleHook = createKnowledgeHook({
       meta: {
         name: 'simple-test',
         version: '1.0.0',
-        description: 'Simple test hook'
+        description: 'Simple test hook',
       },
       when: {
         kind: 'sparql-ask',
-        ref: { 
-          uri: 'file://simple.rq'
-        }
+        ref: {
+          uri: 'file://simple.rq',
+        },
       },
-      run: async (event, store, delta, metadata) => {
+      run: async (_event, _store, _delta, _metadata) => {
         console.log('    ✅ Simple hook executed');
         return { result: 'success' };
-      }
+      },
     });
 
     // Add hook directly
@@ -56,18 +56,16 @@ async function testSimpleProduction() {
 
     // === Phase 3: Simple Transaction ===
     console.log('\n🔄 Phase 3: Simple Transaction');
-    
+
     // Create test store
     const store = new Store();
     const initialQuad = { s: 'ex:test', p: 'ex:hasStatus', o: 'ex:active' };
     store.addQuad(initialQuad);
-    
+
     // Create simple delta without complex validation
     const simpleDelta = {
-      additions: [
-        { s: 'ex:test', p: 'ex:hasValue', o: 'ex:success' }
-      ],
-      removals: []
+      additions: [{ s: 'ex:test', p: 'ex:hasValue', o: 'ex:success' }],
+      removals: [],
     };
 
     console.log('  📊 Simple delta created');
@@ -75,14 +73,15 @@ async function testSimpleProduction() {
     // Apply transaction
     const receipt = await manager.apply(store, simpleDelta, {
       actor: 'test-user',
-      metadata: { testRun: 'simple-production' }
+      metadata: { testRun: 'simple-production' },
     });
 
     console.log(`  ✅ Transaction applied: ${receipt.committed ? 'committed' : 'vetoed'}`);
-    console.log(`  📊 Hook results: ${receipt.hookResults ? receipt.hookResults.length : 0} hooks executed`);
-    
-    results.push({ phase: 'Simple Transaction', success: true });
+    console.log(
+      `  📊 Hook results: ${receipt.hookResults ? receipt.hookResults.length : 0} hooks executed`
+    );
 
+    results.push({ phase: 'Simple Transaction', success: true });
   } catch (error) {
     console.error(`\n❌ Simple production test failed: ${error.message}`);
     console.error(error.stack);
@@ -92,17 +91,17 @@ async function testSimpleProduction() {
   // === Summary ===
   console.log('\n🎯 Simple Production Test Summary:');
   console.log('==================================');
-  
+
   results.forEach(result => {
     const status = result.success ? '✅' : '❌';
     console.log(`${status} ${result.phase}`);
   });
-  
+
   const passed = results.filter(r => r.success).length;
   const total = results.length;
-  
+
   console.log(`\n📊 Results: ${passed}/${total} phases passed`);
-  
+
   if (success && passed === total) {
     console.log('🎉 Simple production test: SUCCESS');
     console.log('🚀 Core system is working!');
@@ -110,7 +109,7 @@ async function testSimpleProduction() {
     console.log('⚠️  Simple production test: FAILED');
     console.log('🔧 Core system needs fixes');
   }
-  
+
   return success;
 }
 

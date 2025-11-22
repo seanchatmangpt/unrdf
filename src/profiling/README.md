@@ -41,7 +41,7 @@ const profiler = createProfiler({
   enableMemory: true,
   enableCpu: false,
   enableOtel: true,
-  labels: ['production', 'api-v1']
+  labels: ['production', 'api-v1'],
 });
 
 await profiler.profile('operation', async () => work());
@@ -117,11 +117,11 @@ if (comparison.regression) {
 
 UNRDF v3.1.0 performance targets (p95 latency):
 
-| Operation | Target |
-|-----------|--------|
-| Parse operations | < 50ms |
-| Query operations | < 100ms |
-| Hook execution | < 80ms |
+| Operation          | Target  |
+| ------------------ | ------- |
+| Parse operations   | < 50ms  |
+| Query operations   | < 100ms |
+| Hook execution     | < 80ms  |
 | Transaction commit | < 120ms |
 
 ## Usage Examples

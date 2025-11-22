@@ -83,7 +83,7 @@ export const PRELOAD_MODULES = {
   edgeCases: '../../knowledge-engine/utils/edge-case-handler.mjs',
 
   /** Memory manager for resource optimization */
-  memoryManager: '../../knowledge-engine/utils/memory-manager.mjs'
+  memoryManager: '../../knowledge-engine/utils/memory-manager.mjs',
 };
 
 /**
@@ -98,7 +98,7 @@ export const PRELOAD_PRIORITY = {
   /** Normal priority modules */
   NORMAL: 3,
   /** Low priority background loading */
-  LOW: 4
+  LOW: 4,
 };
 
 /**
@@ -107,36 +107,22 @@ export const PRELOAD_PRIORITY = {
  */
 export const PRELOAD_GROUPS = {
   /** Essential modules for basic operation */
-  essential: [
-    PRELOAD_MODULES.hookManager,
-    PRELOAD_MODULES.edgeCases
-  ],
+  essential: [PRELOAD_MODULES.hookManager, PRELOAD_MODULES.edgeCases],
 
   /** Modules for distributed operations */
-  distributed: [
-    PRELOAD_MODULES.federation,
-    PRELOAD_MODULES.consensus,
-    PRELOAD_MODULES.replication
-  ],
+  distributed: [PRELOAD_MODULES.federation, PRELOAD_MODULES.consensus, PRELOAD_MODULES.replication],
 
   /** Modules for query operations */
-  query: [
-    PRELOAD_MODULES.sparql,
-    PRELOAD_MODULES.optimizer
-  ],
+  query: [PRELOAD_MODULES.sparql, PRELOAD_MODULES.optimizer],
 
   /** Modules for real-time features */
-  realtime: [
-    PRELOAD_MODULES.streaming
-  ],
+  realtime: [PRELOAD_MODULES.streaming],
 
   /** All validation modules */
-  validation: [
-    PRELOAD_MODULES.shacl
-  ],
+  validation: [PRELOAD_MODULES.shacl],
 
   /** All available modules */
-  all: Object.values(PRELOAD_MODULES)
+  all: Object.values(PRELOAD_MODULES),
 };
 
 /**
@@ -168,14 +154,14 @@ export async function preloadModule(modulePath, options = {}) {
     }, timeout);
 
     import(modulePath)
-      .then((mod) => {
+      .then(mod => {
         clearTimeout(timeoutId);
         moduleCache.set(modulePath, mod);
         loadTimestamps.set(modulePath, Date.now());
         preloadPromises.delete(modulePath);
         resolve(mod);
       })
-      .catch((err) => {
+      .catch(err => {
         clearTimeout(timeoutId);
         preloadPromises.delete(modulePath);
         reject(err);
@@ -196,17 +182,13 @@ export async function preloadModule(modulePath, options = {}) {
  * @returns {Promise<Object>} Results object with modules and errors
  */
 export async function preloadModules(moduleList, options = {}) {
-  const {
-    concurrency = 5,
-    onProgress,
-    stopOnError = false
-  } = options;
+  const { concurrency = 5, onProgress, stopOnError = false } = options;
 
   const results = {
     modules: new Map(),
     errors: new Map(),
     loaded: 0,
-    failed: 0
+    failed: 0,
   };
 
   if (!moduleList || moduleList.length === 0) {
@@ -222,7 +204,7 @@ export async function preloadModules(moduleList, options = {}) {
   let loadedCount = 0;
 
   for (const batch of batches) {
-    const batchPromises = batch.map(async (path) => {
+    const batchPromises = batch.map(async path => {
       try {
         const mod = await preloadModule(path);
         results.modules.set(path, mod);
@@ -322,7 +304,7 @@ export function getCacheStats() {
     loadingModules: preloadPromises.size,
     moduleList: Array.from(moduleCache.keys()),
     loadingList: Array.from(preloadPromises.keys()),
-    timestamps: Object.fromEntries(loadTimestamps)
+    timestamps: Object.fromEntries(loadTimestamps),
   };
 }
 
@@ -359,16 +341,8 @@ export function getCacheStats() {
  * );
  * ```
  */
-export function useModulePreloader(
-  modules = Object.values(PRELOAD_MODULES),
-  options = {}
-) {
-  const {
-    autoLoad = true,
-    concurrency = 5,
-    onComplete,
-    onError
-  } = options;
+export function useModulePreloader(modules = Object.values(PRELOAD_MODULES), options = {}) {
+  const { autoLoad = true, concurrency = 5, onComplete, onError } = options;
 
   // State
   const [loaded, setLoaded] = useState(false);
@@ -401,7 +375,7 @@ export function useModulePreloader(
             setProgress(loaded / total);
             setLoadedCount(loaded);
           }
-        }
+        },
       });
 
       if (mountedRef.current) {
@@ -472,7 +446,7 @@ export function useModulePreloader(
     errors,
     getModule,
     reload,
-    clear
+    clear,
   };
 }
 

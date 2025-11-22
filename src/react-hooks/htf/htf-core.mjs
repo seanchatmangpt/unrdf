@@ -75,38 +75,38 @@ export const DeltaFamilies = {
   imrad: {
     name: 'IMRaD',
     shards: ['intro', 'method', 'result', 'discuss'],
-    description: 'Classical empirical structure'
+    description: 'Classical empirical structure',
   },
   papers: {
     name: 'Thesis-by-Papers',
     shards: ['paper1', 'paper2', 'paper3', 'synthesis'],
-    description: 'Multi-article modularity'
+    description: 'Multi-article modularity',
   },
   argument: {
     name: 'Argument',
     shards: ['claim', 'ground', 'proof', 'objection', 'reply'],
-    description: 'Toulmin-style reasoning chain'
+    description: 'Toulmin-style reasoning chain',
   },
   contribution: {
     name: 'Contribution',
     shards: ['gap', 'design', 'eval', 'impact'],
-    description: 'Problem-solution-evidence arc'
+    description: 'Problem-solution-evidence arc',
   },
   monograph: {
     name: 'Monograph',
     shards: ['context', 'canon', 'method', 'analysis', 'conclusion'],
-    description: 'Deep contextual narrative'
+    description: 'Deep contextual narrative',
   },
   dsr: {
     name: 'Design Science Research',
     shards: ['problem', 'artifact', 'eval', 'theory'],
-    description: 'Artifact-centric design logic'
+    description: 'Artifact-centric design logic',
   },
   narrative: {
     name: 'Narrative',
     shards: ['field', 'voice', 'pattern', 'insight'],
-    description: 'Experiential knowledge creation'
-  }
+    description: 'Experiential knowledge creation',
+  },
 };
 
 // ============================================
@@ -118,32 +118,32 @@ export const DeltaFamilies = {
  * This primordial structure ensures all modes nest coherently
  */
 export const CanonicalLambdaOrder = [
-  'problem',      // DSR: starts with problem
-  'gap',          // Contribution: what's missing
-  'claim',        // Argument: what we assert
-  'intro',        // IMRaD: introduce the work
-  'method',       // IMRaD: method(s)
-  'method2',      // Monograph: deeper methods
-  'voice',        // Narrative: author voice
-  'canon',        // Monograph: canonical works
-  'field',        // Narrative: field context
-  'artifact',     // DSR: the artifact
-  'proof',        // Argument: proof
-  'paper1',       // Papers: first paper
-  'result',       // IMRaD: results
-  'paper2',       // Papers: second paper
-  'eval2',        // Contribution: evaluation
-  'eval3',        // DSR: evaluation
-  'objection',    // Argument: counter-arguments
-  'discuss',      // IMRaD: discussion
-  'reply',        // Argument: reply to objections
-  'pattern',      // Narrative: emerging patterns
-  'theory',       // DSR: theory contribution
-  'analysis',     // Monograph: analysis
-  'synthesis',    // Papers: synthesis
-  'insight',      // Narrative: key insight
-  'impact',       // Contribution: impact
-  'conclusion'    // Monograph: conclusion
+  'problem', // DSR: starts with problem
+  'gap', // Contribution: what's missing
+  'claim', // Argument: what we assert
+  'intro', // IMRaD: introduce the work
+  'method', // IMRaD: method(s)
+  'method2', // Monograph: deeper methods
+  'voice', // Narrative: author voice
+  'canon', // Monograph: canonical works
+  'field', // Narrative: field context
+  'artifact', // DSR: the artifact
+  'proof', // Argument: proof
+  'paper1', // Papers: first paper
+  'result', // IMRaD: results
+  'paper2', // Papers: second paper
+  'eval2', // Contribution: evaluation
+  'eval3', // DSR: evaluation
+  'objection', // Argument: counter-arguments
+  'discuss', // IMRaD: discussion
+  'reply', // Argument: reply to objections
+  'pattern', // Narrative: emerging patterns
+  'theory', // DSR: theory contribution
+  'analysis', // Monograph: analysis
+  'synthesis', // Papers: synthesis
+  'insight', // Narrative: key insight
+  'impact', // Contribution: impact
+  'conclusion', // Monograph: conclusion
 ];
 
 /**
@@ -255,7 +255,7 @@ export function computePiMerge(shards) {
     unifiedId: `unified-${Date.now()}`,
     components: shards.map(s => s.id),
     mergePoints,
-    coherence
+    coherence,
   };
 }
 
@@ -277,17 +277,18 @@ function findMergePoints(shards) {
 
   // Find cross-family dependencies
   for (const shard of shards) {
-    const crossFamilyDeps = shard.dependencies?.filter(dep => {
-      const depShard = shards.find(s => s.id === dep);
-      return depShard && depShard.family !== shard.family;
-    }) || [];
+    const crossFamilyDeps =
+      shard.dependencies?.filter(dep => {
+        const depShard = shards.find(s => s.id === dep);
+        return depShard && depShard.family !== shard.family;
+      }) || [];
 
     if (crossFamilyDeps.length > 0) {
       mergePoints[shard.id] = {
         shard: shard.id,
         family: shard.family,
         crossFamilyDependencies: crossFamilyDeps,
-        integrationStrength: crossFamilyDeps.length / Math.max(shard.dependencies?.length || 1, 1)
+        integrationStrength: crossFamilyDeps.length / Math.max(shard.dependencies?.length || 1, 1),
       };
     }
   }
@@ -304,7 +305,8 @@ function computeCoherence(shards, mergePoints) {
 
   // Count merge points
   const mergeCount = Object.keys(mergePoints).length;
-  const expectedMerges = (Object.keys(DeltaFamilies).length * (Object.keys(DeltaFamilies).length - 1)) / 2;
+  const expectedMerges =
+    (Object.keys(DeltaFamilies).length * (Object.keys(DeltaFamilies).length - 1)) / 2;
 
   // Coherence = coverage of potential merges + weight consistency
   const mergeCoverage = mergeCount / Math.max(expectedMerges, 1);
@@ -321,7 +323,7 @@ function computeCoherence(shards, mergePoints) {
   const variance = weights.reduce((sum, w) => sum + Math.pow(w - avgWeight, 2), 0) / weights.length;
   const weightBalance = 1 - Math.min(variance, 1);
 
-  return (mergeCoverage * 0.6 + weightBalance * 0.4);
+  return mergeCoverage * 0.6 + weightBalance * 0.4;
 }
 
 // ============================================
@@ -353,7 +355,7 @@ export function computeGammaGlobalization(shards, invariants = []) {
           driftViolations.push({
             invariant: invariant.id,
             shard: shard.id,
-            description: invariant.description
+            description: invariant.description,
           });
         }
       }
@@ -368,7 +370,7 @@ export function computeGammaGlobalization(shards, invariants = []) {
     shardMap,
     invariants: invariants.map(i => i.id),
     drift,
-    violations: driftViolations
+    violations: driftViolations,
   };
 }
 
@@ -383,34 +385,36 @@ export const StandardInvariants = [
   {
     id: 'Q-coherence',
     description: 'Overall argument is internally coherent',
-    predicate: (shard) => shard.content && shard.content.length > 100,
-    appliesTo: Object.keys(DeltaFamilies)
+    predicate: shard => shard.content && shard.content.length > 100,
+    appliesTo: Object.keys(DeltaFamilies),
   },
   {
     id: 'Q-positioning',
     description: 'Shard respects dependency constraints',
-    predicate: (shard) => Array.isArray(shard.dependencies),
-    appliesTo: Object.keys(DeltaFamilies)
+    predicate: shard => Array.isArray(shard.dependencies),
+    appliesTo: Object.keys(DeltaFamilies),
   },
   {
     id: 'Q-contribution',
     description: 'Shard advances the argument',
-    predicate: (shard) => shard.weight > 0,
-    appliesTo: Object.keys(DeltaFamilies)
+    predicate: shard => shard.weight > 0,
+    appliesTo: Object.keys(DeltaFamilies),
   },
   {
     id: 'Q-imrad-closure',
     description: 'IMRaD family forms complete cycle',
-    predicate: (shard) => shard.family !== 'imrad' || ['intro', 'method', 'result', 'discuss'].includes(shard.id),
-    appliesTo: ['imrad']
+    predicate: shard =>
+      shard.family !== 'imrad' || ['intro', 'method', 'result', 'discuss'].includes(shard.id),
+    appliesTo: ['imrad'],
   },
   {
     id: 'Q-argument-chain',
     description: 'Argument follows claim→proof→objection→reply',
-    predicate: (shard) => shard.family !== 'argument' ||
+    predicate: shard =>
+      shard.family !== 'argument' ||
       ['claim', 'ground', 'proof', 'objection', 'reply'].includes(shard.id),
-    appliesTo: ['argument']
-  }
+    appliesTo: ['argument'],
+  },
 ];
 
 // ============================================
@@ -435,11 +439,11 @@ export function evolveTowardMuFixed(shards, previousEpoch = null) {
     epoch,
     state: {
       shards: shards.map(s => s.id),
-      globalization: globalized
+      globalization: globalized,
     },
     distance,
     isConverged,
-    improvement: previousEpoch ? previousEpoch.distance - distance : 0
+    improvement: previousEpoch ? previousEpoch.distance - distance : 0,
   };
 }
 
@@ -454,7 +458,7 @@ const DeltaShardSchema = z.object({
   content: z.string(),
   weight: z.number().min(0).max(1).default(0.5),
   dependencies: z.array(z.string()).default([]),
-  metadata: z.record(z.any()).default({})
+  metadata: z.record(z.any()).default({}),
 });
 
 /**
@@ -474,5 +478,5 @@ export default {
   computeGammaGlobalization,
   StandardInvariants,
   evolveTowardMuFixed,
-  validateDeltaShard
+  validateDeltaShard,
 };

@@ -48,15 +48,15 @@ import { useQueryAnalyzer } from './use-query-analyzer.mjs';
 export function useOptimizer(config = {}) {
   const darkMatter = useDarkMatterCore({
     targets: config.targets,
-    sampleSize: config.sampleSize || 1000
+    sampleSize: config.sampleSize || 1000,
   });
   const queryAnalyzer = useQueryAnalyzer({
-    slowThreshold: config.slowThreshold || 100
+    slowThreshold: config.slowThreshold || 100,
   });
 
   const [recommendations, setRecommendations] = useState([]);
   const [optimizationHistory, setOptimizationHistory] = useState([]);
-  const [benchmarks, setBenchmarks] = useState({});
+  const [benchmarks, _setBenchmarks] = useState({});
   const [autoTuneEnabled, setAutoTuneEnabled] = useState(config.autoTune || false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -78,14 +78,17 @@ export function useOptimizer(config = {}) {
         // Create optimizer
         const optimizer = new PerformanceOptimizer({
           autoTune: config.autoTune,
-          onOptimization: (result) => {
+          onOptimization: result => {
             if (!mounted) return;
-            setOptimizationHistory(prev => [...prev, {
-              ...result,
-              timestamp: new Date().toISOString()
-            }]);
+            setOptimizationHistory(prev => [
+              ...prev,
+              {
+                ...result,
+                timestamp: new Date().toISOString(),
+              },
+            ]);
             config.onOptimization?.(result);
-          }
+          },
         });
 
         if (!mounted) return;
@@ -114,7 +117,7 @@ export function useOptimizer(config = {}) {
       ...generateDarkMatterRecommendations(darkMatter),
       ...generateQueryRecommendations(queryAnalyzer),
       ...generateCachingRecommendations(darkMatter, queryAnalyzer),
-      ...generateArchitectureRecommendations(darkMatter)
+      ...generateArchitectureRecommendations(darkMatter),
     ];
 
     // Sort by priority and estimated gain
@@ -147,29 +150,31 @@ export function useOptimizer(config = {}) {
         actions: [
           { type: 'cache', description: 'Add caching layer' },
           { type: 'index', description: 'Optimize database indexes' },
-          { type: 'batch', description: 'Implement request batching' }
-        ]
+          { type: 'batch', description: 'Implement request batching' },
+        ],
       });
     });
 
     // Remove dark matter
-    dm.darkMatter.filter(op => op.value < 0.01).forEach(op => {
-      recs.push({
-        id: `dm-remove-${op.id}`,
-        type: 'remove-dark',
-        priority: 'low',
-        title: `Remove low-value operation: ${op.id}`,
-        description: `This operation delivers only ${Math.round(op.value * 100)}% of value. Consider removing.`,
-        estimatedGainPercent: 2, // Small gain from reduced bundle size
-        effort: 'low',
-        autoApplicable: false,
-        actions: [
-          { type: 'remove', description: 'Remove from codebase' },
-          { type: 'lazy', description: 'Lazy load if needed' },
-          { type: 'feature-flag', description: 'Put behind feature flag' }
-        ]
+    dm.darkMatter
+      .filter(op => op.value < 0.01)
+      .forEach(op => {
+        recs.push({
+          id: `dm-remove-${op.id}`,
+          type: 'remove-dark',
+          priority: 'low',
+          title: `Remove low-value operation: ${op.id}`,
+          description: `This operation delivers only ${Math.round(op.value * 100)}% of value. Consider removing.`,
+          estimatedGainPercent: 2, // Small gain from reduced bundle size
+          effort: 'low',
+          autoApplicable: false,
+          actions: [
+            { type: 'remove', description: 'Remove from codebase' },
+            { type: 'lazy', description: 'Lazy load if needed' },
+            { type: 'feature-flag', description: 'Put behind feature flag' },
+          ],
+        });
       });
-    });
 
     return recs;
   }
@@ -185,15 +190,13 @@ export function useOptimizer(config = {}) {
       estimatedGainPercent: parseEstimatedGain(suggestion.estimatedGain),
       effort: suggestion.autoApplicable ? 'low' : 'medium',
       autoApplicable: suggestion.autoApplicable,
-      actions: [
-        { type: 'optimize', description: suggestion.suggestion }
-      ],
-      query: suggestion.query
+      actions: [{ type: 'optimize', description: suggestion.suggestion }],
+      query: suggestion.query,
     }));
   }
 
   // Generate caching recommendations
-  function generateCachingRecommendations(dm, qa) {
+  function generateCachingRecommendations(dm, _qa) {
     const recs = [];
 
     // Cache critical paths
@@ -208,9 +211,7 @@ export function useOptimizer(config = {}) {
         estimatedGainPercent: Math.round(op.value * 80), // 80% of operation cost
         effort: 'low',
         autoApplicable: true,
-        actions: [
-          { type: 'cache', description: 'Use createCachedHook with 5min TTL' }
-        ]
+        actions: [{ type: 'cache', description: 'Use createCachedHook with 5min TTL' }],
       });
     });
 
@@ -235,8 +236,8 @@ export function useOptimizer(config = {}) {
         actions: [
           { type: 'refactor', description: 'Restructure critical paths' },
           { type: 'decompose', description: 'Break down complex operations' },
-          { type: 'cache-layer', description: 'Add caching layer' }
-        ]
+          { type: 'cache-layer', description: 'Add caching layer' },
+        ],
       });
     }
 
@@ -258,72 +259,75 @@ export function useOptimizer(config = {}) {
   }
 
   // Apply an optimization
-  const applyOptimization = useCallback(async (recommendationId, options = {}) => {
-    const recommendation = recommendations.find(r => r.id === recommendationId);
-    if (!recommendation) {
-      throw new Error(`Recommendation ${recommendationId} not found`);
-    }
-
-    try {
-      setLoading(true);
-      setError(null);
-
-      // Benchmark before
-      const beforeBenchmark = await benchmarkPerformance(recommendation);
-
-      // Apply optimization
-      let result;
-      switch (recommendation.type) {
-        case 'query-limit':
-        case 'query-filter':
-        case 'query-optional':
-          result = await queryAnalyzer.optimizeQuery(recommendation.query, {
-            autoApply: true,
-            strategies: [recommendation.actions[0].type]
-          });
-          break;
-
-        case 'add-cache':
-          result = await applyCaching(recommendation);
-          break;
-
-        case 'remove-dark':
-          result = await removeDarkMatter(recommendation);
-          break;
-
-        default:
-          result = { applied: false, reason: 'Manual optimization required' };
+  const applyOptimization = useCallback(
+    async (recommendationId, _options = {}) => {
+      const recommendation = recommendations.find(r => r.id === recommendationId);
+      if (!recommendation) {
+        throw new Error(`Recommendation ${recommendationId} not found`);
       }
 
-      // Benchmark after
-      const afterBenchmark = await benchmarkPerformance(recommendation);
+      try {
+        setLoading(true);
+        setError(null);
 
-      // Calculate actual gain
-      const actualGain = calculateActualGain(beforeBenchmark, afterBenchmark);
+        // Benchmark before
+        const beforeBenchmark = await benchmarkPerformance(recommendation);
 
-      const optimizationResult = {
-        recommendation,
-        result,
-        beforeBenchmark,
-        afterBenchmark,
-        actualGain,
-        timestamp: new Date().toISOString()
-      };
+        // Apply optimization
+        let result;
+        switch (recommendation.type) {
+          case 'query-limit':
+          case 'query-filter':
+          case 'query-optional':
+            result = await queryAnalyzer.optimizeQuery(recommendation.query, {
+              autoApply: true,
+              strategies: [recommendation.actions[0].type],
+            });
+            break;
 
-      setOptimizationHistory(prev => [...prev, optimizationResult]);
-      config.onOptimization?.(optimizationResult);
+          case 'add-cache':
+            result = await applyCaching(recommendation);
+            break;
 
-      setLoading(false);
-      return optimizationResult;
-    } catch (err) {
-      setError(err);
-      setLoading(false);
-      throw err;
-    }
-  }, [recommendations, queryAnalyzer, config]);
+          case 'remove-dark':
+            result = await removeDarkMatter(recommendation);
+            break;
+
+          default:
+            result = { applied: false, reason: 'Manual optimization required' };
+        }
+
+        // Benchmark after
+        const afterBenchmark = await benchmarkPerformance(recommendation);
+
+        // Calculate actual gain
+        const actualGain = calculateActualGain(beforeBenchmark, afterBenchmark);
+
+        const optimizationResult = {
+          recommendation,
+          result,
+          beforeBenchmark,
+          afterBenchmark,
+          actualGain,
+          timestamp: new Date().toISOString(),
+        };
+
+        setOptimizationHistory(prev => [...prev, optimizationResult]);
+        config.onOptimization?.(optimizationResult);
+
+        setLoading(false);
+        return optimizationResult;
+      } catch (err) {
+        setError(err);
+        setLoading(false);
+        throw err;
+      }
+    },
+    [recommendations, queryAnalyzer, config]
+  );
 
   // Benchmark performance
-  async function benchmarkPerformance(recommendation) {
+  async function benchmarkPerformance(_recommendation) {
     // Simple benchmark implementation
     const startTime = performance.now();
 
@@ -336,7 +340,7 @@ export function useOptimizer(config = {}) {
     const endTime = performance.now();
     return {
       avgTime: (endTime - startTime) / iterations,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 
@@ -347,35 +351,41 @@ export function useOptimizer(config = {}) {
   }
 
   // Apply caching
-  async function applyCaching(recommendation) {
+  async function applyCaching(_recommendation) {
     // Implementation would add caching layer
     return {
       applied: true,
       type: 'cache',
       ttl: 300000, // 5 minutes
-      message: 'Caching layer added'
+      message: 'Caching layer added',
     };
   }
 
   // Remove dark matter
-  async function removeDarkMatter(recommendation) {
+  async function removeDarkMatter(_recommendation) {
     // Implementation would remove or lazy-load code
     return {
       applied: true,
       type: 'remove',
-      message: 'Operation removed or lazy-loaded'
+      message: 'Operation removed or lazy-loaded',
     };
   }
 
   // Get top recommendations
-  const getTopRecommendations = useCallback((count = 5) => {
-    return recommendations.slice(0, count);
-  }, [recommendations]);
+  const getTopRecommendations = useCallback(
+    (count = 5) => {
+      return recommendations.slice(0, count);
+    },
+    [recommendations]
+  );
 
   // Get recommendations by type
-  const getRecommendationsByType = useCallback((type) => {
-    return recommendations.filter(r => r.type === type);
-  }, [recommendations]);
+  const getRecommendationsByType = useCallback(
+    type => {
+      return recommendations.filter(r => r.type === type);
+    },
+    [recommendations]
+  );
 
   // Calculate total potential gain
   const getTotalPotentialGain = useCallback(() => {
@@ -393,6 +403,6 @@ export function useOptimizer(config = {}) {
     error,
     getTopRecommendations,
     getRecommendationsByType,
-    getTotalPotentialGain
+    getTotalPotentialGain,
   };
 }

@@ -81,13 +81,15 @@ export function useOfflineStore(config = {}) {
     syncInterval = 30000,
     autoSync = true,
     onSync,
-    onConflict
+    onConflict,
   } = config;
 
   // State
   const [quads, setQuads] = useState([]);
   const [syncQueue, setSyncQueue] = useState([]);
-  const [isOnline, setIsOnline] = useState(typeof navigator !== 'undefined' ? navigator.onLine : true);
+  const [isOnline, setIsOnline] = useState(
+    typeof navigator !== 'undefined' ? navigator.onLine : true
+  );
   const [lastSynced, setLastSynced] = useState(null);
   const [isSyncing, setIsSyncing] = useState(false);
   const [error, setError] = useState(null);
@@ -170,7 +172,7 @@ export function useOfflineStore(config = {}) {
         resolve(request.result);
       };
 
-      request.onupgradeneeded = (event) => {
+      request.onupgradeneeded = event => {
         const db = event.target.result;
 
         // Quads store with indexes
@@ -183,7 +185,9 @@ export function useOfflineStore(config = {}) {
 
         // Sync queue store
         if (!db.objectStoreNames.contains(syncQueueName)) {
-          const queueStore = db.createObjectStore(syncQueueName, { keyPath: 'id' });
+          const queueStore = db.createObjectStore(syncQueueName, {
+            keyPath: 'id',
+          });
           queueStore.createIndex('status', 'status', { unique: false });
           queueStore.createIndex('timestamp', 'timestamp', { unique: false });
         }
@@ -207,7 +211,7 @@ export function useOfflineStore(config = {}) {
     const queueStore = tx.objectStore(syncQueueName);
     const queueRequest = queueStore.getAll();
 
-    await new Promise((resolve) => {
+    await new Promise(resolve => {
       tx.oncomplete = () => {
         setQuads(quadsRequest.result || []);
         setSyncQueue(queueRequest.result || []);
@@ -221,117 +225,123 @@ export function useOfflineStore(config = {}) {
    * @param {Object[]} newQuads - Quads to insert
    * @returns {Promise<Object>} Insert result
    */
-  const insert = useCallback(async (newQuads) => {
-    if (!dbRef.current) {
-      throw new Error('IndexedDB not initialized');
-    }
+  const insert = useCallback(
+    async newQuads => {
+      if (!dbRef.current) {
+        throw new Error('IndexedDB not initialized');
+      }
 
-    const timestamp = Date.now();
-    const quadsWithIds = newQuads.map((q, i) => ({
-      ...q,
-      id: `${timestamp}-${i}-${Math.random().toString(36).substr(2, 9)}`,
-      _localOnly: true,
-      _createdAt: timestamp
-    }));
+      const timestamp = Date.now();
+      const quadsWithIds = newQuads.map((q, i) => ({
+        ...q,
+        id: `${timestamp}-${i}-${Math.random().toString(36).substr(2, 9)}`,
+        _localOnly: true,
+        _createdAt: timestamp,
+      }));
 
-    // Add to IndexedDB
-    const tx = dbRef.current.transaction([storeName, syncQueueName], 'readwrite');
-    const quadStore = tx.objectStore(storeName);
-    const queueStore = tx.objectStore(syncQueueName);
+      // Add to IndexedDB
+      const tx = dbRef.current.transaction([storeName, syncQueueName], 'readwrite');
+      const quadStore = tx.objectStore(storeName);
+      const queueStore = tx.objectStore(syncQueueName);
 
-    // Store quads locally
-    for (const quad of quadsWithIds) {
-      quadStore.put(quad);
-    }
+      // Store quads locally
+      for (const quad of quadsWithIds) {
+        quadStore.put(quad);
+      }
 
-    // Add to sync queue
-    const queueItem = {
-      id: `sync-${timestamp}-${Math.random().toString(36).substr(2, 9)}`,
-      operation: 'insert',
-      quads: quadsWithIds,
-      timestamp,
-      retries: 0,
-      status: 'pending'
-    };
-    queueStore.put(queueItem);
+      // Add to sync queue
+      const queueItem = {
+        id: `sync-${timestamp}-${Math.random().toString(36).substr(2, 9)}`,
+        operation: 'insert',
+        quads: quadsWithIds,
+        timestamp,
+        retries: 0,
+        status: 'pending',
+      };
+      queueStore.put(queueItem);
 
-    await new Promise((resolve) => {
-      tx.oncomplete = resolve;
-    });
+      await new Promise(resolve => {
+        tx.oncomplete = resolve;
+      });
 
-    // Update local state
-    setQuads(prev => [...prev, ...quadsWithIds]);
-    setSyncQueue(prev => [...prev, queueItem]);
+      // Update local state
+      setQuads(prev => [...prev, ...quadsWithIds]);
+      setSyncQueue(prev => [...prev, queueItem]);
 
-    // Try immediate sync if online
-    if (isOnline && autoSync) {
-      sync();
-    }
+      // Try immediate sync if online
+      if (isOnline && autoSync) {
+        sync();
+      }
 
-    return { inserted: quadsWithIds.length, queued: !isOnline };
-  }, [storeName, syncQueueName, isOnline, autoSync]);
+      return { inserted: quadsWithIds.length, queued: !isOnline };
+    },
+    [storeName, syncQueueName, isOnline, autoSync]
+  );
 
   /**
    * Delete quads (offline-first)
    * @param {Object} pattern - Pattern to match for deletion
    * @returns {Promise<Object>} Delete result
    */
-  const deleteQuads = useCallback(async (pattern) => {
-    if (!dbRef.current) {
-      throw new Error('IndexedDB not initialized');
-    }
+  const deleteQuads = useCallback(
+    async pattern => {
+      if (!dbRef.current) {
+        throw new Error('IndexedDB not initialized');
+      }
 
-    const timestamp = Date.now();
+      const timestamp = Date.now();
 
-    // Find matching quads
-    const toDelete = quads.filter(q => {
-      if (pattern.subject && q.subject !== pattern.subject) return false;
-      if (pattern.predicate && q.predicate !== pattern.predicate) return false;
-      if (pattern.object && q.object !== pattern.object) return false;
-      if (pattern.graph && q.graph !== pattern.graph) return false;
-      return true;
-    });
+      // Find matching quads
+      const toDelete = quads.filter(q => {
+        if (pattern.subject && q.subject !== pattern.subject) return false;
+        if (pattern.predicate && q.predicate !== pattern.predicate) return false;
+        if (pattern.object && q.object !== pattern.object) return false;
+        if (pattern.graph && q.graph !== pattern.graph) return false;
+        return true;
+      });
 
-    if (toDelete.length === 0) {
-      return { deleted: 0 };
-    }
+      if (toDelete.length === 0) {
+        return { deleted: 0 };
+      }
 
-    const tx = dbRef.current.transaction([storeName, syncQueueName], 'readwrite');
-    const quadStore = tx.objectStore(storeName);
-    const queueStore = tx.objectStore(syncQueueName);
+      const tx = dbRef.current.transaction([storeName, syncQueueName], 'readwrite');
+      const quadStore = tx.objectStore(storeName);
+      const queueStore = tx.objectStore(syncQueueName);
 
-    // Delete from local store
-    for (const quad of toDelete) {
-      quadStore.delete(quad.id);
-    }
+      // Delete from local store
+      for (const quad of toDelete) {
+        quadStore.delete(quad.id);
+      }
 
-    // Add to sync queue
-    const queueItem = {
-      id: `sync-${timestamp}-${Math.random().toString(36).substr(2, 9)}`,
-      operation: 'delete',
-      quads: toDelete,
-      timestamp,
-      retries: 0,
-      status: 'pending'
-    };
-    queueStore.put(queueItem);
+      // Add to sync queue
+      const queueItem = {
+        id: `sync-${timestamp}-${Math.random().toString(36).substr(2, 9)}`,
+        operation: 'delete',
+        quads: toDelete,
+        timestamp,
+        retries: 0,
+        status: 'pending',
+      };
+      queueStore.put(queueItem);
 
-    await new Promise((resolve) => {
-      tx.oncomplete = resolve;
-    });
+      await new Promise(resolve => {
+        tx.oncomplete = resolve;
+      });
 
-    // Update local state
-    const deleteIds = new Set(toDelete.map(q => q.id));
-    setQuads(prev => prev.filter(q => !deleteIds.has(q.id)));
-    setSyncQueue(prev => [...prev, queueItem]);
+      // Update local state
+      const deleteIds = new Set(toDelete.map(q => q.id));
+      setQuads(prev => prev.filter(q => !deleteIds.has(q.id)));
+      setSyncQueue(prev => [...prev, queueItem]);
 
-    // Try immediate sync if online
-    if (isOnline && autoSync) {
-      sync();
-    }
+      // Try immediate sync if online
+      if (isOnline && autoSync) {
+        sync();
+      }
 
-    return { deleted: toDelete.length, queued: !isOnline };
-  }, [quads, storeName, syncQueueName, isOnline, autoSync]);
+      return { deleted: toDelete.length, queued: !isOnline };
+    },
+    [quads, storeName, syncQueueName, isOnline, autoSync]
+  );
 
   /**
    * Sync pending mutations to server
@@ -406,89 +416,101 @@ export function useOfflineStore(config = {}) {
   /**
    * Update queue item status in IndexedDB
    */
-  const updateQueueItemStatus = useCallback(async (id, status, retries) => {
-    if (!dbRef.current) return;
+  const updateQueueItemStatus = useCallback(
+    async (id, status, retries) => {
+      if (!dbRef.current) return;
 
-    const tx = dbRef.current.transaction(syncQueueName, 'readwrite');
-    const store = tx.objectStore(syncQueueName);
-    const request = store.get(id);
+      const tx = dbRef.current.transaction(syncQueueName, 'readwrite');
+      const store = tx.objectStore(syncQueueName);
+      const request = store.get(id);
 
-    await new Promise((resolve) => {
-      request.onsuccess = () => {
-        const item = request.result;
-        if (item) {
-          item.status = status;
-          if (retries !== undefined) item.retries = retries;
-          store.put(item);
-        }
-        resolve();
-      };
-    });
-  }, [syncQueueName]);
+      await new Promise(resolve => {
+        request.onsuccess = () => {
+          const item = request.result;
+          if (item) {
+            item.status = status;
+            if (retries !== undefined) item.retries = retries;
+            store.put(item);
+          }
+          resolve();
+        };
+      });
+    },
+    [syncQueueName]
+  );
 
   /**
    * Remove item from sync queue
    */
-  const removeFromQueue = useCallback(async (id) => {
-    if (!dbRef.current) return;
+  const removeFromQueue = useCallback(
+    async id => {
+      if (!dbRef.current) return;
 
-    const tx = dbRef.current.transaction(syncQueueName, 'readwrite');
-    const store = tx.objectStore(syncQueueName);
-    store.delete(id);
+      const tx = dbRef.current.transaction(syncQueueName, 'readwrite');
+      const store = tx.objectStore(syncQueueName);
+      store.delete(id);
 
-    await new Promise((resolve) => {
-      tx.oncomplete = resolve;
-    });
-  }, [syncQueueName]);
+      await new Promise(resolve => {
+        tx.oncomplete = resolve;
+      });
+    },
+    [syncQueueName]
+  );
 
   /**
    * Mark quads as synced (remove _localOnly flag)
    */
-  const markQuadsSynced = useCallback(async (syncedQuads) => {
-    if (!dbRef.current) return;
+  const markQuadsSynced = useCallback(
+    async syncedQuads => {
+      if (!dbRef.current) return;
 
-    const tx = dbRef.current.transaction(storeName, 'readwrite');
-    const store = tx.objectStore(storeName);
+      const tx = dbRef.current.transaction(storeName, 'readwrite');
+      const store = tx.objectStore(storeName);
 
-    for (const quad of syncedQuads) {
-      const request = store.get(quad.id);
-      request.onsuccess = () => {
-        const q = request.result;
-        if (q) {
-          delete q._localOnly;
-          q._syncedAt = Date.now();
-          store.put(q);
-        }
-      };
-    }
+      for (const quad of syncedQuads) {
+        const request = store.get(quad.id);
+        request.onsuccess = () => {
+          const q = request.result;
+          if (q) {
+            delete q._localOnly;
+            q._syncedAt = Date.now();
+            store.put(q);
+          }
+        };
+      }
 
-    await new Promise((resolve) => {
-      tx.oncomplete = resolve;
-    });
-  }, [storeName]);
+      await new Promise(resolve => {
+        tx.oncomplete = resolve;
+      });
+    },
+    [storeName]
+  );
 
   /**
    * Update local quads with server data
    */
-  const updateLocalQuads = useCallback(async (serverQuads) => {
-    if (!dbRef.current) return;
+  const updateLocalQuads = useCallback(
+    async serverQuads => {
+      if (!dbRef.current) return;
 
-    const tx = dbRef.current.transaction(storeName, 'readwrite');
-    const store = tx.objectStore(storeName);
+      const tx = dbRef.current.transaction(storeName, 'readwrite');
+      const store = tx.objectStore(storeName);
 
-    for (const quad of serverQuads) {
-      store.put(quad);
-    }
+      for (const quad of serverQuads) {
+        store.put(quad);
+      }
 
-    await new Promise((resolve) => {
-      tx.oncomplete = resolve;
-    });
-  }, [storeName]);
+      await new Promise(resolve => {
+        tx.oncomplete = resolve;
+      });
+    },
+    [storeName]
+  );
 
   /**
    * Simulate server sync (replace with actual implementation)
    */
-  const simulateServerSync = async (item, options = {}) => {
+  const simulateServerSync = async (item, _options = {}) => {
     // Simulate network delay
     await new Promise(resolve => setTimeout(resolve, 100));
 
@@ -508,7 +530,7 @@ export function useOfflineStore(config = {}) {
     tx.objectStore(storeName).clear();
     tx.objectStore(syncQueueName).clear();
 
-    await new Promise((resolve) => {
+    await new Promise(resolve => {
       tx.oncomplete = resolve;
     });
 
@@ -549,7 +571,7 @@ export function useOfflineStore(config = {}) {
     loadFromDB,
 
     // Error state
-    error
+    error,
   };
 }
 

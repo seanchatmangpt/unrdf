@@ -22,7 +22,7 @@ export class SandboxAdapter {
       memoryLimit: options.memoryLimit || 128,
       sandbox: options.sandbox || {},
       strictMode: options.strictMode !== false,
-      ...options
+      ...options,
     };
 
     this.engine = options.engine || null;
@@ -42,7 +42,7 @@ export class SandboxAdapter {
       this.engine = await detectBestExecutor({
         preferIsolatedVm: true,
         allowVm2: process.env.UNRDF_ALLOW_VM2 === '1', // Only allow if explicitly enabled
-        allowBrowser: true
+        allowBrowser: true,
       });
     }
 
@@ -50,7 +50,7 @@ export class SandboxAdapter {
     this.executor = await createExecutor(this.engine, {
       timeout: this.options.timeoutMs,
       memoryLimit: this.options.memoryLimit,
-      strictMode: this.options.strictMode
+      strictMode: this.options.strictMode,
     });
 
     this.initialized = true;
@@ -68,7 +68,7 @@ export class SandboxAdapter {
     if (this.initialized && this.executor && typeof this.executor.runSync === 'function') {
       try {
         return this.executor.runSync(code, this.options.sandbox, {
-          timeout: this.options.timeoutMs
+          timeout: this.options.timeoutMs,
         });
       } catch (error) {
         throw error;
@@ -80,7 +80,7 @@ export class SandboxAdapter {
       await this._initialize();
 
       const result = await this.executor.run(code, this.options.sandbox, {
-        timeout: this.options.timeoutMs
+        timeout: this.options.timeoutMs,
       });
 
       if (!result || !result.success) {
@@ -101,7 +101,7 @@ export class SandboxAdapter {
       const result = detectBestExecutor({
         preferIsolatedVm: false,
         allowVm2: process.env.UNRDF_ALLOW_VM2 === '1',
-        allowBrowser: true
+        allowBrowser: true,
       });
       // If result is a promise, we can't wait for it in a sync getter
       // Just return 'vm2' as default for now
@@ -139,5 +139,3 @@ export class SandboxAdapter {
 export function createSandboxAdapter(options = {}) {
   return new SandboxAdapter(options);
 }
-
-

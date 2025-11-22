@@ -1,7 +1,7 @@
 /**
  * @file Mock Factory for Test Services
  * @module test-utils/mock-factory
- * 
+ *
  * @description
  * Factory for creating mock implementations of services
  * to avoid ESM mocking issues and provide clean test doubles.
@@ -23,7 +23,7 @@ export class MockQueryEngine {
       ask: 0,
       select: 0,
       construct: 0,
-      describe: 0
+      describe: 0,
     };
   }
 
@@ -35,17 +35,17 @@ export class MockQueryEngine {
    */
   async ask(store, query) {
     this.callCounts.ask++;
-    
+
     // Check for predefined results
     if (this.askResults.has(query)) {
       return this.askResults.get(query);
     }
-    
+
     // Default behavior - check for dangerous patterns
     if (this.isDangerousQuery(query)) {
       throw new Error('Dangerous query detected');
     }
-    
+
     return true;
   }
 
@@ -57,15 +57,15 @@ export class MockQueryEngine {
    */
   async select(store, query) {
     this.callCounts.select++;
-    
+
     if (this.selectResults.has(query)) {
       return this.selectResults.get(query);
     }
-    
+
     if (this.isDangerousQuery(query)) {
       throw new Error('Dangerous query detected');
     }
-    
+
     return [];
   }
 
@@ -77,15 +77,15 @@ export class MockQueryEngine {
    */
   async construct(store, query) {
     this.callCounts.construct++;
-    
+
     if (this.constructResults.has(query)) {
       return this.constructResults.get(query);
     }
-    
+
     if (this.isDangerousQuery(query)) {
       throw new Error('Dangerous query detected');
     }
-    
+
     return new (await import('n3')).Store();
   }
 
@@ -97,15 +97,15 @@ export class MockQueryEngine {
    */
   async describe(store, query) {
     this.callCounts.describe++;
-    
+
     if (this.describeResults.has(query)) {
       return this.describeResults.get(query);
     }
-    
+
     if (this.isDangerousQuery(query)) {
       throw new Error('Dangerous query detected');
     }
-    
+
     return new (await import('n3')).Store();
   }
 
@@ -123,12 +123,10 @@ export class MockQueryEngine {
       'LOAD',
       'UNION',
       'FILTER',
-      'BIND'
+      'BIND',
     ];
-    
-    return dangerousPatterns.some(pattern => 
-      query.toUpperCase().includes(pattern.toUpperCase())
-    );
+
+    return dangerousPatterns.some(pattern => query.toUpperCase().includes(pattern.toUpperCase()));
   }
 
   /**
@@ -157,7 +155,7 @@ export class MockQueryEngine {
       ask: 0,
       select: 0,
       construct: 0,
-      describe: 0
+      describe: 0,
     };
   }
 
@@ -185,7 +183,7 @@ export class MockFileResolver {
     this.callCounts = {
       resolve: 0,
       load: 0,
-      calculateHash: 0
+      calculateHash: 0,
     };
   }
 
@@ -196,11 +194,11 @@ export class MockFileResolver {
    */
   async resolve(uri) {
     this.callCounts.resolve++;
-    
+
     if (this.files.has(uri)) {
       return this.files.get(uri);
     }
-    
+
     // Default behavior
     return uri.replace('file://', '');
   }
@@ -211,13 +209,13 @@ export class MockFileResolver {
    * @param {string} expectedHash - Expected file hash
    * @returns {Promise<string>} File content
    */
-  async load(uri, expectedHash) {
+  async load(uri, _expectedHash) {
     this.callCounts.load++;
-    
+
     if (this.readResults.has(uri)) {
       return this.readResults.get(uri);
     }
-    
+
     // Default behavior
     return 'SELECT * WHERE { ?s ?p ?o }';
   }
@@ -227,7 +225,7 @@ export class MockFileResolver {
    * @param {string} content - File content
    * @returns {Promise<string>} Calculated hash
    */
-  async calculateHash(content) {
+  async calculateHash(_content) {
     this.callCounts.calculateHash++;
     return 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3';
   }
@@ -257,7 +255,7 @@ export class MockFileResolver {
     this.callCounts = {
       resolve: 0,
       load: 0,
-      calculateHash: 0
+      calculateHash: 0,
     };
   }
 }
@@ -273,7 +271,7 @@ export class MockConditionEvaluator {
     this.evaluationResults = new Map();
     this.callCounts = {
       evaluate: 0,
-      isSatisfied: 0
+      isSatisfied: 0,
     };
   }
 
@@ -283,14 +281,14 @@ export class MockConditionEvaluator {
    * @param {Object} context - Evaluation context
    * @returns {Promise<boolean>} Evaluation result
    */
-  async evaluate(condition, context) {
+  async evaluate(condition, _context) {
     this.callCounts.evaluate++;
-    
+
     const key = JSON.stringify(condition);
     if (this.evaluationResults.has(key)) {
       return this.evaluationResults.get(key);
     }
-    
+
     // Default behavior
     return true;
   }
@@ -301,14 +299,14 @@ export class MockConditionEvaluator {
    * @param {Object} context - Evaluation context
    * @returns {Promise<boolean>} Satisfaction result
    */
-  async isSatisfied(condition, context) {
+  async isSatisfied(condition, _context) {
     this.callCounts.isSatisfied++;
-    
+
     const key = JSON.stringify(condition);
     if (this.evaluationResults.has(key)) {
       return this.evaluationResults.get(key);
     }
-    
+
     // Default behavior
     return true;
   }
@@ -329,7 +327,7 @@ export class MockConditionEvaluator {
   resetCallCounts() {
     this.callCounts = {
       evaluate: 0,
-      isSatisfied: 0
+      isSatisfied: 0,
     };
   }
 }

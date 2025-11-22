@@ -31,17 +31,17 @@ function useKnowledgeEngine(options = {}) {
           storage: {
             type: 'indexeddb',
             name: options.dbName || 'react-knowledge-graph',
-            quota: options.quota || 100 * 1024 * 1024  // 100MB
+            quota: options.quota || 100 * 1024 * 1024, // 100MB
           },
           workers: {
             enabled: true,
-            maxWorkers: navigator.hardwareConcurrency || 4
+            maxWorkers: navigator.hardwareConcurrency || 4,
           },
           profiling: {
             enabled: true,
-            slowQueryThreshold: 100
+            slowQueryThreshold: 100,
           },
-          ...options
+          ...options,
         });
 
         if (mounted) {
@@ -84,7 +84,7 @@ function useQuery(engine, queryString) {
     try {
       const results = await engine.query({
         query: queryString,
-        type: 'sparql-select'
+        type: 'sparql-select',
       });
       setData(results);
     } catch (err) {
@@ -99,8 +99,12 @@ function useQuery(engine, queryString) {
 
 // Main App Component
 export default function App() {
-  const { engine, loading: engineLoading, error: engineError } = useKnowledgeEngine({
-    dbName: 'react-demo-graph'
+  const {
+    engine,
+    loading: engineLoading,
+    error: engineError,
+  } = useKnowledgeEngine({
+    dbName: 'react-demo-graph',
   });
 
   const [status, setStatus] = useState('Initializing...');
@@ -115,7 +119,7 @@ export default function App() {
     try {
       const countResult = await engine.query({
         query: 'SELECT (COUNT(*) as ?count) WHERE { ?s ?p ?o }',
-        type: 'sparql-select'
+        type: 'sparql-select',
       });
       setTripleCount(countResult[0]?.count || 0);
     } catch (err) {
@@ -162,7 +166,7 @@ ex:charlie a foaf:Person ;
       await engine.executeTransaction({
         additions: [...store],
         removals: [],
-        actor: 'react-app'
+        actor: 'react-app',
       });
 
       setStatus(`Added ${[...store].length} triples ✅`);
@@ -191,7 +195,7 @@ ex:charlie a foaf:Person ;
           }
           ORDER BY DESC(?age)
         `,
-        type: 'sparql-select'
+        type: 'sparql-select',
       });
 
       setQueryResults(results);
@@ -314,7 +318,9 @@ ex:charlie a foaf:Person ;
             <thead>
               <tr>
                 {Object.keys(queryResults[0] || {}).map(key => (
-                  <th key={key} style={styles.th}>{key}</th>
+                  <th key={key} style={styles.th}>
+                    {key}
+                  </th>
                 ))}
               </tr>
             </thead>
@@ -322,7 +328,9 @@ ex:charlie a foaf:Person ;
               {queryResults.map((row, i) => (
                 <tr key={i} style={styles.tr}>
                   {Object.values(row).map((val, j) => (
-                    <td key={j} style={styles.td}>{val}</td>
+                    <td key={j} style={styles.td}>
+                      {val}
+                    </td>
                   ))}
                 </tr>
               ))}
@@ -352,9 +360,7 @@ ex:charlie a foaf:Person ;
             </div>
             <div style={styles.statCard}>
               <div style={styles.statLabel}>Cache Hit Rate</div>
-              <div style={styles.statValue}>
-                {(profile.cache.hitRate * 100).toFixed(1)}%
-              </div>
+              <div style={styles.statValue}>{(profile.cache.hitRate * 100).toFixed(1)}%</div>
             </div>
           </div>
         </div>
@@ -369,52 +375,52 @@ const styles = {
     maxWidth: '1200px',
     margin: '0 auto',
     padding: '20px',
-    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
   },
   subtitle: {
     color: '#666',
-    marginBottom: '30px'
+    marginBottom: '30px',
   },
   card: {
     background: 'white',
     borderRadius: '8px',
     padding: '20px',
     marginBottom: '20px',
-    boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
   },
   status: {
     padding: '10px',
     background: '#d1ecf1',
     color: '#0c5460',
     borderRadius: '4px',
-    marginBottom: '15px'
+    marginBottom: '15px',
   },
   stats: {
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-    gap: '15px'
+    gap: '15px',
   },
   statCard: {
     background: '#f8f9fa',
     padding: '15px',
     borderRadius: '4px',
-    borderLeft: '4px solid #007bff'
+    borderLeft: '4px solid #007bff',
   },
   statLabel: {
     fontSize: '12px',
     color: '#666',
     textTransform: 'uppercase',
-    marginBottom: '5px'
+    marginBottom: '5px',
   },
   statValue: {
     fontSize: '24px',
     fontWeight: 'bold',
-    color: '#333'
+    color: '#333',
   },
   buttonGroup: {
     display: 'flex',
     gap: '10px',
-    flexWrap: 'wrap'
+    flexWrap: 'wrap',
   },
   button: {
     padding: '10px 20px',
@@ -424,25 +430,25 @@ const styles = {
     color: 'white',
     cursor: 'pointer',
     fontSize: '14px',
-    fontWeight: '500'
+    fontWeight: '500',
   },
   table: {
     width: '100%',
     borderCollapse: 'collapse',
-    marginTop: '10px'
+    marginTop: '10px',
   },
   th: {
     padding: '10px',
     textAlign: 'left',
     borderBottom: '2px solid #dee2e6',
     background: '#f8f9fa',
-    fontWeight: '600'
+    fontWeight: '600',
   },
   tr: {
-    borderBottom: '1px solid #dee2e6'
+    borderBottom: '1px solid #dee2e6',
   },
   td: {
     padding: '10px',
-    textAlign: 'left'
-  }
+    textAlign: 'left',
+  },
 };

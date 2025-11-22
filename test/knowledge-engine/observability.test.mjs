@@ -7,10 +7,13 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { ObservabilityManager, createObservabilityManager } from '../../src/knowledge-engine/observability.mjs';
-import { Store, DataFactory } from 'n3';
+import {
+  ObservabilityManager,
+  createObservabilityManager,
+} from '../../src/knowledge-engine/observability.mjs';
+import { _Store, DataFactory } from 'n3';
 
-const { namedNode, literal } = DataFactory;
+const { _namedNode, _literal } = DataFactory;
 
 describe('ObservabilityManager', () => {
   let observability;
@@ -23,7 +26,7 @@ describe('ObservabilityManager', () => {
       serviceName: 'test-service',
       serviceVersion: '1.0.0',
       enableTracing: false, // Disable actual OTEL for unit tests
-      enableMetrics: false
+      enableMetrics: false,
     });
 
     // Mock tracer and meter
@@ -32,17 +35,21 @@ describe('ObservabilityManager', () => {
         name,
         attributes: options?.attributes || {},
         status: null,
-        setAttributes: vi.fn(function(attrs) { Object.assign(this.attributes, attrs); }),
+        setAttributes: vi.fn(function (attrs) {
+          Object.assign(this.attributes, attrs);
+        }),
         recordException: vi.fn(),
-        setStatus: vi.fn(function(status) { this.status = status; }),
-        end: vi.fn()
-      }))
+        setStatus: vi.fn(function (status) {
+          this.status = status;
+        }),
+        end: vi.fn(),
+      })),
     };
 
     mockMeter = {
       createCounter: vi.fn(() => ({ add: vi.fn() })),
       createHistogram: vi.fn(() => ({ record: vi.fn() })),
-      createUpDownCounter: vi.fn(() => ({ add: vi.fn() }))
+      createUpDownCounter: vi.fn(() => ({ add: vi.fn() })),
     };
   });
 
@@ -69,7 +76,7 @@ describe('ObservabilityManager', () => {
     it('should handle initialization errors gracefully', async () => {
       const badConfig = createObservabilityManager({
         endpoint: 'invalid://endpoint',
-        enableTracing: true
+        enableTracing: true,
       });
 
       await badConfig.initialize();
@@ -86,7 +93,7 @@ describe('ObservabilityManager', () => {
       const transactionId = 'tx-123';
       const attributes = {
         'transaction.type': 'update',
-        'transaction.priority': 'high'
+        'transaction.priority': 'high',
       };
 
       const spanContext = observability.startTransactionSpan(transactionId, attributes);
@@ -98,8 +105,8 @@ describe('ObservabilityManager', () => {
         attributes: expect.objectContaining({
           'kgc.transaction.id': transactionId,
           'kgc.service.name': 'test-service',
-          ...attributes
-        })
+          ...attributes,
+        }),
       });
     });
 
@@ -116,7 +123,7 @@ describe('ObservabilityManager', () => {
       expect(span.setAttributes).toHaveBeenCalledWith(
         expect.objectContaining({
           'kgc.transaction.success': true,
-          'result.size': 100
+          'result.size': 100,
         })
       );
       expect(span.setStatus).toHaveBeenCalledWith({ code: 1 }); // OK status
@@ -138,7 +145,7 @@ describe('ObservabilityManager', () => {
       expect(span.recordException).toHaveBeenCalledWith(error);
       expect(span.setStatus).toHaveBeenCalledWith({
         code: 2,
-        message: error.message
+        message: error.message,
       }); // ERROR status
       expect(span.end).toHaveBeenCalled();
     });
@@ -195,7 +202,7 @@ describe('ObservabilityManager', () => {
       // Start hook span
       const hookSpan = observability.startHookSpan(hookId, transactionId, {
         'hook.type': 'before',
-        'hook.name': 'validation-hook'
+        'hook.name': 'validation-hook',
       });
 
       expect(hookSpan).toBeDefined();
@@ -206,8 +213,8 @@ describe('ObservabilityManager', () => {
           'kgc.hook.id': hookId,
           'kgc.transaction.id': transactionId,
           'hook.type': 'before',
-          'hook.name': 'validation-hook'
-        })
+          'hook.name': 'validation-hook',
+        }),
       });
     });
 
@@ -223,12 +230,14 @@ describe('ObservabilityManager', () => {
       const spanKey = `${transactionId}:${hookId}`;
 
       // End hook span
-      observability.endHookSpan(hookId, transactionId, { 'hook.result': 'success' });
+      observability.endHookSpan(hookId, transactionId, {
+        'hook.result': 'success',
+      });
 
       expect(span.setAttributes).toHaveBeenCalledWith(
         expect.objectContaining({
           'kgc.hook.success': true,
-          'hook.result': 'success'
+          'hook.result': 'success',
         })
       );
       expect(span.setStatus).toHaveBeenCalledWith({ code: 1 }); // OK
@@ -246,7 +255,7 @@ describe('ObservabilityManager', () => {
       const hookSpanContext = observability.startHookSpan(hookId, transactionId);
       const span = hookSpanContext.span;
 
-      const spanKey = `${transactionId}:${hookId}`;
+      const _spanKey = `${transactionId}:${hookId}`;
 
       // End hook span with error
       observability.endHookSpan(hookId, transactionId, {}, error);
@@ -254,7 +263,7 @@ describe('ObservabilityManager', () => {
       expect(span.recordException).toHaveBeenCalledWith(error);
       expect(span.setStatus).toHaveBeenCalledWith({
         code: 2,
-        message: error.message
+        message: error.message,
       }); // ERROR
       expect(span.end).toHaveBeenCalled();
     });
@@ -285,8 +294,8 @@ describe('ObservabilityManager', () => {
       expect(mockTracer.startSpan).toHaveBeenCalledWith('kgc.hook', {
         parent: undefined,
         attributes: expect.objectContaining({
-          'kgc.hook.id': hookId
-        })
+          'kgc.hook.id': hookId,
+        }),
       });
     });
   });
@@ -301,7 +310,7 @@ describe('ObservabilityManager', () => {
       const error = new TypeError('Invalid input');
       const attributes = {
         'error.context': 'validation',
-        'error.severity': 'high'
+        'error.severity': 'high',
       };
 
       observability.recordError(error, attributes);
@@ -310,7 +319,7 @@ describe('ObservabilityManager', () => {
       expect(observability.errorCounter.add).toHaveBeenCalledWith(1, {
         'error.type': 'TypeError',
         'error.message': 'Invalid input',
-        ...attributes
+        ...attributes,
       });
     });
 
@@ -339,7 +348,7 @@ describe('ObservabilityManager', () => {
         new Error('Generic error'),
         new TypeError('Type error'),
         new ReferenceError('Reference error'),
-        new SyntaxError('Syntax error')
+        new SyntaxError('Syntax error'),
       ];
 
       errors.forEach(error => observability.recordError(error));
@@ -375,10 +384,10 @@ describe('ObservabilityManager', () => {
     });
 
     it('should track mixed cache operations', () => {
-      observability.updateCacheStats(true);  // hit
+      observability.updateCacheStats(true); // hit
       observability.updateCacheStats(false); // miss
-      observability.updateCacheStats(true);  // hit
-      observability.updateCacheStats(true);  // hit
+      observability.updateCacheStats(true); // hit
+      observability.updateCacheStats(true); // hit
       observability.updateCacheStats(false); // miss
 
       expect(observability.metrics.cacheStats.hits).toBe(3);
@@ -419,9 +428,7 @@ describe('ObservabilityManager', () => {
       const highWatermark = observability.metrics.backpressure.watermarks.high;
       observability.updateQueueDepth(highWatermark + 1);
 
-      expect(consoleWarnSpy).toHaveBeenCalledWith(
-        expect.stringContaining('High queue depth')
-      );
+      expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining('High queue depth'));
 
       consoleWarnSpy.mockRestore();
     });
@@ -474,7 +481,7 @@ describe('ObservabilityManager', () => {
       const firstSnapshot = observability.metrics.memoryUsage[0];
 
       // Allocate some memory
-      const array = new Array(1000000).fill('test');
+      const _array = new Array(1000000).fill('test');
 
       observability.updateMemoryUsage();
       const secondSnapshot = observability.metrics.memoryUsage[1];
@@ -493,7 +500,7 @@ describe('ObservabilityManager', () => {
         { timestamp: now, duration: 200, success: true },
         { timestamp: now, duration: 150, success: true },
         { timestamp: now, duration: 300, success: false },
-        { timestamp: now, duration: 250, success: true }
+        { timestamp: now, duration: 250, success: true },
       ];
       observability.metrics.hookExecutionRate = 10;
       observability.metrics.totalTransactions = 5;
@@ -580,7 +587,7 @@ describe('ObservabilityManager', () => {
       const spans = [
         observability.activeSpans.get('tx-1').span,
         observability.activeSpans.get('tx-2').span,
-        observability.activeSpans.get('tx-3').span
+        observability.activeSpans.get('tx-3').span,
       ];
 
       await observability.shutdown();
@@ -625,7 +632,7 @@ describe('ObservabilityManager', () => {
 
       observability.startTransactionSpan(transactionId, {
         'operation.type': 'parse',
-        'input.format': 'turtle'
+        'input.format': 'turtle',
       });
 
       // Simulate parse work
@@ -634,7 +641,7 @@ describe('ObservabilityManager', () => {
 
       observability.endTransactionSpan(transactionId, {
         'output.size': 100,
-        'output.format': 'store'
+        'output.format': 'store',
       });
 
       expect(observability.metrics.totalTransactions).toBe(1);
@@ -646,11 +653,11 @@ describe('ObservabilityManager', () => {
 
       observability.startTransactionSpan(transactionId, {
         'operation.type': 'query',
-        'query.type': 'select'
+        'query.type': 'select',
       });
 
       observability.endTransactionSpan(transactionId, {
-        'results.count': 50
+        'results.count': 50,
       });
 
       const span = mockTracer.startSpan.mock.results[0].value;
@@ -662,17 +669,21 @@ describe('ObservabilityManager', () => {
       const error = new Error('SHACL validation failed');
 
       observability.startTransactionSpan(transactionId, {
-        'operation.type': 'validate'
+        'operation.type': 'validate',
       });
 
       observability.recordError(error, {
         'validation.type': 'shacl',
-        'transaction.id': transactionId
+        'transaction.id': transactionId,
       });
 
-      observability.endTransactionSpan(transactionId, {
-        'validation.conforms': false
-      }, error);
+      observability.endTransactionSpan(
+        transactionId,
+        {
+          'validation.conforms': false,
+        },
+        error
+      );
 
       expect(observability.metrics.errorCount).toBe(1);
       expect(observability.metrics.totalTransactions).toBe(1);
@@ -688,7 +699,7 @@ describe('ObservabilityManager', () => {
       // Execute hook
       observability.startHookSpan(hookId, transactionId, {
         'hook.phase': 'before',
-        'hook.type': 'validation'
+        'hook.type': 'validation',
       });
 
       // Simulate hook work
@@ -696,7 +707,7 @@ describe('ObservabilityManager', () => {
       while (Date.now() - hookStart < 5) {}
 
       observability.endHookSpan(hookId, transactionId, {
-        'hook.success': true
+        'hook.success': true,
       });
 
       // End transaction
@@ -713,7 +724,7 @@ describe('ObservabilityManager', () => {
       observability.startTransactionSpan(transactionId);
 
       // Execute multiple hooks
-      hooks.forEach((hookId, index) => {
+      hooks.forEach((hookId, _index) => {
         observability.startHookSpan(hookId, transactionId);
         observability.endHookSpan(hookId, transactionId);
       });
@@ -768,7 +779,8 @@ describe('ObservabilityManager', () => {
         const txId = `tx-${i}`;
         observability.startTransactionSpan(txId);
 
-        if (i < 2) { // Only 2 errors
+        if (i < 2) {
+          // Only 2 errors
           observability.recordError(new Error('Test error'));
           observability.endTransactionSpan(txId, {}, new Error('Test error'));
         } else {
@@ -800,7 +812,7 @@ describe('ObservabilityManager', () => {
         observability.metrics.transactionLatency.push({
           timestamp: Date.now(),
           duration: 100,
-          success: true
+          success: true,
         });
       }
 
@@ -852,7 +864,7 @@ describe('ObservabilityManager', () => {
         serviceName: 'custom-service',
         serviceVersion: '2.0.0',
         enableTracing: true,
-        enableMetrics: true
+        enableMetrics: true,
       });
 
       expect(manager).toBeInstanceOf(ObservabilityManager);
@@ -879,7 +891,7 @@ describe('ObservabilityManager', () => {
       observability.startTransactionSpan(transactionId, {
         'operation.type': 'parse',
         'input.size': 1024,
-        'input.format': 'turtle'
+        'input.format': 'turtle',
       });
 
       const span = mockTracer.startSpan.mock.results[0].value;
@@ -889,7 +901,7 @@ describe('ObservabilityManager', () => {
         'kgc.service.name': 'test-service',
         'operation.type': 'parse',
         'input.size': 1024,
-        'input.format': 'turtle'
+        'input.format': 'turtle',
       });
     });
 
@@ -904,7 +916,7 @@ describe('ObservabilityManager', () => {
       expect(span.setAttributes).toHaveBeenCalledWith(
         expect.objectContaining({
           'kgc.transaction.duration_ms': expect.any(Number),
-          'kgc.transaction.success': true
+          'kgc.transaction.success': true,
         })
       );
     });
@@ -925,7 +937,7 @@ describe('ObservabilityManager', () => {
       observability.endTransactionSpan(txFail, {}, new Error('Failed'));
       expect(failSpan.setStatus).toHaveBeenCalledWith({
         code: 2,
-        message: 'Failed'
+        message: 'Failed',
       }); // ERROR
     });
   });
@@ -937,7 +949,7 @@ describe('Performance Metrics Schema Validation', () => {
   beforeEach(() => {
     observability = createObservabilityManager({
       enableTracing: false,
-      enableMetrics: false
+      enableMetrics: false,
     });
   });
 

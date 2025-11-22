@@ -24,7 +24,7 @@ import { EventEmitter } from 'events';
 export const AndonState = {
   GREEN: 'green',
   YELLOW: 'yellow',
-  RED: 'red'
+  RED: 'red',
 };
 
 /**
@@ -37,7 +37,7 @@ export const SignalCategory = {
   CI_CD: 'ci_cd',
   PERFORMANCE: 'performance',
   SECURITY: 'security',
-  HEALTH: 'health'
+  HEALTH: 'health',
 };
 
 /**
@@ -48,10 +48,12 @@ const SignalConfigSchema = z.object({
   category: z.nativeEnum(SignalCategory),
   description: z.string().optional(),
   weight: z.number().min(0).max(1).default(1),
-  thresholds: z.object({
-    green: z.number().min(0).max(100).default(80),
-    yellow: z.number().min(0).max(100).default(60)
-  }).default({ green: 80, yellow: 60 })
+  thresholds: z
+    .object({
+      green: z.number().min(0).max(100).default(80),
+      yellow: z.number().min(0).max(100).default(60),
+    })
+    .default({ green: 80, yellow: 60 }),
 });
 
 /**
@@ -64,7 +66,7 @@ const SignalStateSchema = z.object({
   score: z.number().min(0).max(100),
   message: z.string().optional(),
   timestamp: z.number(),
-  metadata: z.record(z.unknown()).optional()
+  metadata: z.record(z.unknown()).optional(),
 });
 
 /**
@@ -94,10 +96,14 @@ export function computeSignalState(score, thresholds = { green: 80, yellow: 60 }
  */
 export function getStatePriority(state) {
   switch (state) {
-    case AndonState.RED: return 3;
-    case AndonState.YELLOW: return 2;
-    case AndonState.GREEN: return 1;
-    default: return 0;
+    case AndonState.RED:
+      return 3;
+    case AndonState.YELLOW:
+      return 2;
+    case AndonState.GREEN:
+      return 1;
+    default:
+      return 0;
   }
 }
 
@@ -131,7 +137,7 @@ export class AndonSignalManager extends EventEmitter {
     this.config = {
       thresholds: config.thresholds || { green: 80, yellow: 60 },
       strictDeployment: config.strictDeployment !== false,
-      requiredSignals: config.requiredSignals || []
+      requiredSignals: config.requiredSignals || [],
     };
 
     /** @type {Map<string, Object>} */
@@ -183,7 +189,7 @@ export class AndonSignalManager extends EventEmitter {
       score,
       message: options.message,
       timestamp: Date.now(),
-      metadata: options.metadata
+      metadata: options.metadata,
     });
 
     const previousState = this.signals.get(name);
@@ -205,7 +211,7 @@ export class AndonSignalManager extends EventEmitter {
       this.emit('signalChange', {
         signal: signalState,
         previousState: previousState?.state,
-        newState: state
+        newState: state,
       });
 
       // Notify registered listeners
@@ -214,7 +220,7 @@ export class AndonSignalManager extends EventEmitter {
           listener({
             signal: signalState,
             previousState: previousState?.state,
-            newState: state
+            newState: state,
           });
         } catch (err) {
           console.error(`Listener error: ${err.message}`);
@@ -233,13 +239,48 @@ export class AndonSignalManager extends EventEmitter {
   registerValidationSignals(otelValidator) {
     // Default validation signals (7 core features)
     const validationSignals = [
-      { name: 'knowledge-engine-core', category: SignalCategory.VALIDATION, weight: 0.30, description: 'Core knowledge engine operations' },
-      { name: 'knowledge-hooks-api', category: SignalCategory.VALIDATION, weight: 0.20, description: 'Knowledge hooks API' },
-      { name: 'policy-packs', category: SignalCategory.VALIDATION, weight: 0.15, description: 'Policy pack system' },
-      { name: 'lockchain-integrity', category: SignalCategory.VALIDATION, weight: 0.15, description: 'Cryptographic audit trail' },
-      { name: 'transaction-manager', category: SignalCategory.VALIDATION, weight: 0.10, description: 'ACID transaction guarantees' },
-      { name: 'browser-compatibility', category: SignalCategory.VALIDATION, weight: 0.10, description: 'Browser compatibility layer' },
-      { name: 'isolated-vm-security', category: SignalCategory.VALIDATION, weight: 0.05, description: 'Sandbox security' }
+      {
+        name: 'knowledge-engine-core',
+        category: SignalCategory.VALIDATION,
+        weight: 0.3,
+        description: 'Core knowledge engine operations',
+      },
+      {
+        name: 'knowledge-hooks-api',
+        category: SignalCategory.VALIDATION,
+        weight: 0.2,
+        description: 'Knowledge hooks API',
+      },
+      {
+        name: 'policy-packs',
+        category: SignalCategory.VALIDATION,
+        weight: 0.15,
+        description: 'Policy pack system',
+      },
+      {
+        name: 'lockchain-integrity',
+        category: SignalCategory.VALIDATION,
+        weight: 0.15,
+        description: 'Cryptographic audit trail',
+      },
+      {
+        name: 'transaction-manager',
+        category: SignalCategory.VALIDATION,
+        weight: 0.1,
+        description: 'ACID transaction guarantees',
+      },
+      {
+        name: 'browser-compatibility',
+        category: SignalCategory.VALIDATION,
+        weight: 0.1,
+        description: 'Browser compatibility layer',
+      },
+      {
+        name: 'isolated-vm-security',
+        category: SignalCategory.VALIDATION,
+        weight: 0.05,
+        description: 'Sandbox security',
+      },
     ];
 
     for (const signal of validationSignals) {
@@ -251,12 +292,14 @@ export class AndonSignalManager extends EventEmitter {
       for (const feature of otelValidator.features) {
         if (this.signalConfigs.has(feature.name)) {
           this.updateSignal(feature.name, feature.score, {
-            message: feature.passed ? 'Validation passed' : `${feature.violations?.length || 0} violations`,
+            message: feature.passed
+              ? 'Validation passed'
+              : `${feature.violations?.length || 0} violations`,
             metadata: {
               passed: feature.passed,
               violations: feature.violations,
-              metrics: feature.metrics
-            }
+              metrics: feature.metrics,
+            },
           });
         }
       }
@@ -275,15 +318,60 @@ export class AndonSignalManager extends EventEmitter {
   registerCISignals(config = {}) {
     // Default CI/CD signals (9 pipeline stages)
     const ciSignals = [
-      { name: 'ci-lint', category: SignalCategory.CI_CD, weight: 0.10, description: 'Code linting' },
-      { name: 'ci-typecheck', category: SignalCategory.CI_CD, weight: 0.10, description: 'Type checking' },
-      { name: 'ci-unit-tests', category: SignalCategory.CI_CD, weight: 0.20, description: 'Unit test suite' },
-      { name: 'ci-integration-tests', category: SignalCategory.CI_CD, weight: 0.15, description: 'Integration tests' },
-      { name: 'ci-e2e-tests', category: SignalCategory.CI_CD, weight: 0.15, description: 'End-to-end tests' },
-      { name: 'ci-security-scan', category: SignalCategory.CI_CD, weight: 0.10, description: 'Security scanning' },
-      { name: 'ci-build', category: SignalCategory.CI_CD, weight: 0.10, description: 'Build process' },
-      { name: 'ci-coverage', category: SignalCategory.CI_CD, weight: 0.05, description: 'Code coverage' },
-      { name: 'ci-performance', category: SignalCategory.CI_CD, weight: 0.05, description: 'Performance benchmarks' }
+      {
+        name: 'ci-lint',
+        category: SignalCategory.CI_CD,
+        weight: 0.1,
+        description: 'Code linting',
+      },
+      {
+        name: 'ci-typecheck',
+        category: SignalCategory.CI_CD,
+        weight: 0.1,
+        description: 'Type checking',
+      },
+      {
+        name: 'ci-unit-tests',
+        category: SignalCategory.CI_CD,
+        weight: 0.2,
+        description: 'Unit test suite',
+      },
+      {
+        name: 'ci-integration-tests',
+        category: SignalCategory.CI_CD,
+        weight: 0.15,
+        description: 'Integration tests',
+      },
+      {
+        name: 'ci-e2e-tests',
+        category: SignalCategory.CI_CD,
+        weight: 0.15,
+        description: 'End-to-end tests',
+      },
+      {
+        name: 'ci-security-scan',
+        category: SignalCategory.CI_CD,
+        weight: 0.1,
+        description: 'Security scanning',
+      },
+      {
+        name: 'ci-build',
+        category: SignalCategory.CI_CD,
+        weight: 0.1,
+        description: 'Build process',
+      },
+      {
+        name: 'ci-coverage',
+        category: SignalCategory.CI_CD,
+        weight: 0.05,
+        description: 'Code coverage',
+      },
+      {
+        name: 'ci-performance',
+        category: SignalCategory.CI_CD,
+        weight: 0.05,
+        description: 'Performance benchmarks',
+      },
     ];
 
     for (const signal of ciSignals) {
@@ -303,8 +391,8 @@ export class AndonSignalManager extends EventEmitter {
               status: job.status,
               conclusion: job.conclusion,
               duration: job.duration,
-              url: job.url
-            }
+              url: job.url,
+            },
           });
         }
       }
@@ -331,12 +419,15 @@ export class AndonSignalManager extends EventEmitter {
       { patterns: ['integration'], signal: 'ci-integration-tests' },
       { patterns: ['e2e', 'endtoend'], signal: 'ci-e2e-tests' },
       { patterns: ['security'], signal: 'ci-security-scan' },
-      { patterns: ['performance', 'benchmark', 'perf'], signal: 'ci-performance' },
+      {
+        patterns: ['performance', 'benchmark', 'perf'],
+        signal: 'ci-performance',
+      },
       { patterns: ['coverage'], signal: 'ci-coverage' },
       { patterns: ['build'], signal: 'ci-build' },
       { patterns: ['lint'], signal: 'ci-lint' },
       { patterns: ['test'], signal: 'ci-unit-tests' },
-      { patterns: ['type'], signal: 'ci-typecheck' }
+      { patterns: ['type'], signal: 'ci-typecheck' },
     ];
 
     for (const { patterns, signal } of mappings) {
@@ -390,10 +481,30 @@ export class AndonSignalManager extends EventEmitter {
    */
   registerPerformanceSignals(performanceMetrics = null) {
     const perfSignals = [
-      { name: 'perf-latency', category: SignalCategory.PERFORMANCE, weight: 0.30, description: 'Response latency P95' },
-      { name: 'perf-throughput', category: SignalCategory.PERFORMANCE, weight: 0.25, description: 'Transaction throughput' },
-      { name: 'perf-error-rate', category: SignalCategory.PERFORMANCE, weight: 0.25, description: 'Error rate' },
-      { name: 'perf-memory', category: SignalCategory.PERFORMANCE, weight: 0.20, description: 'Memory usage' }
+      {
+        name: 'perf-latency',
+        category: SignalCategory.PERFORMANCE,
+        weight: 0.3,
+        description: 'Response latency P95',
+      },
+      {
+        name: 'perf-throughput',
+        category: SignalCategory.PERFORMANCE,
+        weight: 0.25,
+        description: 'Transaction throughput',
+      },
+      {
+        name: 'perf-error-rate',
+        category: SignalCategory.PERFORMANCE,
+        weight: 0.25,
+        description: 'Error rate',
+      },
+      {
+        name: 'perf-memory',
+        category: SignalCategory.PERFORMANCE,
+        weight: 0.2,
+        description: 'Memory usage',
+      },
     ];
 
     for (const signal of perfSignals) {
@@ -415,20 +526,20 @@ export class AndonSignalManager extends EventEmitter {
     // Latency score: 100ms = 100, 500ms = 80, 1000ms = 60, 2000ms+ = 0
     if (metrics.transactionLatency) {
       const p95 = metrics.transactionLatency.p95 || 0;
-      const latencyScore = Math.max(0, Math.min(100, 100 - (p95 / 20)));
+      const latencyScore = Math.max(0, Math.min(100, 100 - p95 / 20));
       this.updateSignal('perf-latency', latencyScore, {
         message: `P95: ${p95}ms`,
-        metadata: metrics.transactionLatency
+        metadata: metrics.transactionLatency,
       });
     }
 
     // Error rate score: 0% = 100, 1% = 80, 5% = 60, 10%+ = 0
     if (metrics.errorRate !== undefined) {
       const errorPct = metrics.errorRate * 100;
-      const errorScore = Math.max(0, Math.min(100, 100 - (errorPct * 10)));
+      const errorScore = Math.max(0, Math.min(100, 100 - errorPct * 10));
       this.updateSignal('perf-error-rate', errorScore, {
         message: `Error rate: ${errorPct.toFixed(2)}%`,
-        metadata: { errorRate: metrics.errorRate }
+        metadata: { errorRate: metrics.errorRate },
       });
     }
 
@@ -439,7 +550,7 @@ export class AndonSignalManager extends EventEmitter {
       const throughputScore = Math.min(100, (rate / 10) * 100);
       this.updateSignal('perf-throughput', throughputScore, {
         message: `${rate} ops/min`,
-        metadata: { rate }
+        metadata: { rate },
       });
     }
 
@@ -451,7 +562,7 @@ export class AndonSignalManager extends EventEmitter {
       const memScore = Math.max(0, 100 - memPct);
       this.updateSignal('perf-memory', memScore, {
         message: `Heap: ${(heapUsed / 1024 / 1024).toFixed(1)}MB / ${(heapTotal / 1024 / 1024).toFixed(1)}MB`,
-        metadata: metrics.memoryUsage
+        metadata: metrics.memoryUsage,
       });
     }
   }
@@ -468,7 +579,7 @@ export class AndonSignalManager extends EventEmitter {
         ready: false,
         reason: 'No signals registered',
         signals: [],
-        summary: { green: 0, yellow: 0, red: 0 }
+        summary: { green: 0, yellow: 0, red: 0 },
       };
     }
 
@@ -487,9 +598,7 @@ export class AndonSignalManager extends EventEmitter {
     }
 
     // Check required signals
-    const missingRequired = this.config.requiredSignals.filter(
-      name => !this.signals.has(name)
-    );
+    const missingRequired = this.config.requiredSignals.filter(name => !this.signals.has(name));
 
     if (missingRequired.length > 0) {
       return {
@@ -497,7 +606,7 @@ export class AndonSignalManager extends EventEmitter {
         reason: `Missing required signals: ${missingRequired.join(', ')}`,
         signals: allSignals,
         summary,
-        missingRequired
+        missingRequired,
       };
     }
 
@@ -514,7 +623,7 @@ export class AndonSignalManager extends EventEmitter {
         signals: allSignals,
         summary,
         failures,
-        warnings
+        warnings,
       };
     }
 
@@ -530,7 +639,7 @@ export class AndonSignalManager extends EventEmitter {
       signals: allSignals,
       summary,
       failures,
-      warnings
+      warnings,
     };
   }
 
@@ -561,10 +670,7 @@ export class AndonSignalManager extends EventEmitter {
       return AndonState.GREEN;
     }
 
-    return signals.reduce((worst, signal) =>
-      getWorstState(worst, signal.state),
-      AndonState.GREEN
-    );
+    return signals.reduce((worst, signal) => getWorstState(worst, signal.state), AndonState.GREEN);
   }
 
   /**
@@ -631,7 +737,7 @@ export class AndonSignalManager extends EventEmitter {
    * @returns {Object} Dashboard summary
    */
   getDashboardSummary() {
-    const signals = this.getAllSignals();
+    const _signals = this.getAllSignals();
     const deployment = this.isDeploymentReady();
 
     return {
@@ -639,7 +745,7 @@ export class AndonSignalManager extends EventEmitter {
       overallScore: this.getWeightedScore(),
       deployment: {
         ready: deployment.ready,
-        reason: deployment.reason
+        reason: deployment.reason,
       },
       summary: deployment.summary,
       byCategory: {
@@ -647,9 +753,9 @@ export class AndonSignalManager extends EventEmitter {
         cicd: this.getSignalsByCategory(SignalCategory.CI_CD),
         performance: this.getSignalsByCategory(SignalCategory.PERFORMANCE),
         security: this.getSignalsByCategory(SignalCategory.SECURITY),
-        health: this.getSignalsByCategory(SignalCategory.HEALTH)
+        health: this.getSignalsByCategory(SignalCategory.HEALTH),
       },
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
   }
 }

@@ -16,7 +16,7 @@ describe('IsolatedVmExecutor - Security Tests', () => {
       memoryLimit: 128,
       timeout: 1000,
       enableThreatDetection: true,
-      strictMode: true
+      strictMode: true,
     });
   });
 
@@ -272,7 +272,7 @@ describe('IsolatedVmExecutor - Security Tests', () => {
 
       const context = {
         event: { type: 'test' },
-        store: { name: 'mystore' }
+        store: { name: 'mystore' },
       };
 
       const result = await executor.run(safeCode, context);
@@ -312,7 +312,7 @@ describe('IsolatedVmExecutor - Security Tests', () => {
 
       const limitedExecutor = new IsolatedVmExecutor({
         memoryLimit: 8, // 8MB limit
-        timeout: 5000
+        timeout: 5000,
       });
 
       const result = await limitedExecutor.run(memoryHog);
@@ -465,7 +465,7 @@ describe('Performance Tests', () => {
     executor = new IsolatedVmExecutor({
       memoryLimit: 128,
       timeout: 5000,
-      enableThreatDetection: true
+      enableThreatDetection: true,
     });
   });
 

@@ -1,7 +1,7 @@
 /**
  * @file Test Event Factory
  * @module test-utils/test-event-factory
- * 
+ *
  * @description
  * Factory for creating test events with sensible defaults
  * and easy customization for different test scenarios.
@@ -23,8 +23,8 @@ export class TestEventFactory {
       context: {
         graph: new Store(),
         user: { role: 'user', id: 'test-user' },
-        timestamp: new Date().toISOString()
-      }
+        timestamp: new Date().toISOString(),
+      },
     };
   }
 
@@ -84,9 +84,8 @@ export class TestEventFactory {
    * @returns {TestEventFactory} This factory instance
    */
   withTimestamp(timestamp) {
-    this.defaultEvent.context.timestamp = timestamp instanceof Date 
-      ? timestamp.toISOString() 
-      : timestamp;
+    this.defaultEvent.context.timestamp =
+      timestamp instanceof Date ? timestamp.toISOString() : timestamp;
     return this;
   }
 
@@ -99,11 +98,11 @@ export class TestEventFactory {
     const { Parser } = require('n3');
     const parser = new Parser();
     const quads = parser.parse(data);
-    
+
     quads.forEach(quad => {
       this.defaultEvent.context.graph.add(quad);
     });
-    
+
     return this;
   }
 
@@ -126,21 +125,21 @@ export class TestEventFactory {
   withMaliciousPayload(type = 'xss') {
     switch (type) {
       case 'xss':
-        this.defaultEvent.payload = { 
+        this.defaultEvent.payload = {
           script: '<script>alert("xss")</script>',
-          img: '<img src=x onerror=alert(1)>'
+          img: '<img src=x onerror=alert(1)>',
         };
         break;
       case 'sql':
-        this.defaultEvent.payload = { 
+        this.defaultEvent.payload = {
           query: "'; DROP TABLE users; --",
-          union: "1' UNION SELECT * FROM users --"
+          union: "1' UNION SELECT * FROM users --",
         };
         break;
       case 'path':
-        this.defaultEvent.payload = { 
+        this.defaultEvent.payload = {
           path: '../../../etc/passwd',
-          uri: 'file:///etc/passwd'
+          uri: 'file:///etc/passwd',
         };
         break;
       default:
@@ -194,9 +193,7 @@ export function createTestEventFactory() {
  * @returns {Object} Event definition
  */
 export function createTestEvent(name = 'test-event') {
-  return new TestEventFactory()
-    .withName(name)
-    .build();
+  return new TestEventFactory().withName(name).build();
 }
 
 /**
@@ -206,10 +203,7 @@ export function createTestEvent(name = 'test-event') {
  * @returns {Object} Event definition
  */
 export function createTestEventWithRdf(name, rdfData) {
-  return new TestEventFactory()
-    .withName(name)
-    .withRdfData(rdfData)
-    .build();
+  return new TestEventFactory().withName(name).withRdfData(rdfData).build();
 }
 
 /**
@@ -219,10 +213,7 @@ export function createTestEventWithRdf(name, rdfData) {
  * @returns {Object} Event definition
  */
 export function createMaliciousTestEvent(name, maliciousType = 'xss') {
-  return new TestEventFactory()
-    .withName(name)
-    .withMaliciousPayload(maliciousType)
-    .build();
+  return new TestEventFactory().withName(name).withMaliciousPayload(maliciousType).build();
 }
 
 /**
@@ -232,10 +223,7 @@ export function createMaliciousTestEvent(name, maliciousType = 'xss') {
  * @returns {Object} Event definition
  */
 export function createPerformanceTestEvent(name, payloadSizeKB = 100) {
-  return new TestEventFactory()
-    .withName(name)
-    .withLargePayload(payloadSizeKB)
-    .build();
+  return new TestEventFactory().withName(name).withLargePayload(payloadSizeKB).build();
 }
 
 /**
@@ -245,8 +233,5 @@ export function createPerformanceTestEvent(name, payloadSizeKB = 100) {
  * @returns {Object} Event definition
  */
 export function createErrorTestEvent(name, errorType = 'timeout') {
-  return new TestEventFactory()
-    .withName(name)
-    .withErrorCondition(errorType)
-    .build();
+  return new TestEventFactory().withName(name).withErrorCondition(errorType).build();
 }

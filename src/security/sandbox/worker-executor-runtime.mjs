@@ -15,15 +15,15 @@ try {
       log: (...args) => console.log('[Worker]', ...args),
       error: (...args) => console.error('[Worker]', ...args),
       warn: (...args) => console.warn('[Worker]', ...args),
-      info: (...args) => console.info('[Worker]', ...args)
+      info: (...args) => console.info('[Worker]', ...args),
     },
     Date: {
-      now: () => Date.now()
+      now: () => Date.now(),
     },
     Math,
     JSON,
     // Context data
-    ...context
+    ...context,
   };
 
   // Add allowed globals from config
@@ -37,14 +37,18 @@ try {
 
   // Execute code
   // If code doesn't contain return, wrap it in return for expression evaluation
-  const wrappedCode = code.trim().includes('return') || code.trim().includes(';') || code.trim().includes('{')
-    ? code
-    : `return (${code})`;
+  const wrappedCode =
+    code.trim().includes('return') || code.trim().includes(';') || code.trim().includes('{')
+      ? code
+      : `return (${code})`;
 
-  const func = new Function(...Object.keys(sandbox), `
+  const func = new Function(
+    ...Object.keys(sandbox),
+    `
     ${config.strictMode ? '"use strict";' : ''}
     ${wrappedCode}
-  `);
+  `
+  );
 
   const result = func(...Object.values(sandbox));
 
@@ -58,14 +62,13 @@ try {
     memoryUsed: {
       used: memoryUsage.heapUsed,
       total: memoryUsage.heapTotal,
-      rss: memoryUsage.rss
-    }
+      rss: memoryUsage.rss,
+    },
   });
-
 } catch (error) {
   parentPort.postMessage({
     success: false,
     error: error.message,
-    stack: error.stack
+    stack: error.stack,
   });
 }

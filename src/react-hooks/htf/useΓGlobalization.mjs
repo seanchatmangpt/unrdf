@@ -26,7 +26,7 @@ import { useState, useCallback, useMemo } from 'react';
  */
 export function useΓGlobalization(shards = []) {
   const [glossary, setGlossary] = useState({});
-  const [notation, setNotation] = useState({});
+  const [notation, _setNotation] = useState({});
   const [enforcedGlue, setEnforcedGlue] = useState(false);
 
   /**
@@ -114,8 +114,8 @@ export function useΓGlobalization(shards = []) {
    */
   const checkConceptualConsistency = useCallback(() => {
     const violations = [];
-    const voice = shards.find((s) => s.type === 'Voice');
-    const method = shards.find((s) => s.type === 'Method' || s.type === 'Method2');
+    const voice = shards.find(s => s.type === 'Voice');
+    const method = shards.find(s => s.type === 'Method' || s.type === 'Method2');
 
     if (voice && method) {
       // Would need semantic analysis to fully check
@@ -127,7 +127,8 @@ export function useΓGlobalization(shards = []) {
         violations.push({
           type: 'voice_method_mismatch',
           severity: 'warning',
-          message: 'Voice section is very brief compared to Method. Consider expanding authorial perspective.',
+          message:
+            'Voice section is very brief compared to Method. Consider expanding authorial perspective.',
         });
       }
     }
@@ -152,7 +153,7 @@ export function useΓGlobalization(shards = []) {
     };
 
     for (const [type, weight] of Object.entries(importance)) {
-      const shard = shards.find((s) => s.type === type);
+      const shard = shards.find(s => s.type === type);
       if (!shard) continue;
 
       const expectedWords = weight * 1000; // Expected word count
@@ -229,7 +230,7 @@ export function useΓGlobalization(shards = []) {
       });
     }
 
-    if (violations.some((v) => v.type === 'orphaned_term')) {
+    if (violations.some(v => v.type === 'orphaned_term')) {
       suggestions.push({
         type: 'propagate_terms',
         action: 'Use defined terms consistently across shards',
@@ -237,7 +238,7 @@ export function useΓGlobalization(shards = []) {
       });
     }
 
-    if (violations.some((v) => v.type === 'voice_method_mismatch')) {
+    if (violations.some(v => v.type === 'voice_method_mismatch')) {
       suggestions.push({
         type: 'expand_voice',
         action: 'Develop authorial perspective section',
@@ -254,7 +255,10 @@ export function useΓGlobalization(shards = []) {
   const enforceGlue = useCallback(() => {
     if (driftScore < 0.1) {
       setEnforcedGlue(true);
-      return { success: true, message: 'Γ-coherence locked. No further drift allowed.' };
+      return {
+        success: true,
+        message: 'Γ-coherence locked. No further drift allowed.',
+      };
     } else {
       return {
         success: false,

@@ -3,18 +3,25 @@
  * Tests SPARQL editor, graph visualizer, paginator, query builder, form validation
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, _beforeEach, _vi } from 'vitest';
 
 describe('SPARQLEditor', () => {
   describe('Query Validation', () => {
     it('should validate SELECT query', () => {
-      const validateQuery = (query) => {
+      const validateQuery = query => {
         const errors = [];
         const upper = query.toUpperCase();
 
-        if (!upper.includes('SELECT') && !upper.includes('CONSTRUCT') &&
-            !upper.includes('ASK') && !upper.includes('DESCRIBE')) {
-          errors.push({ line: 1, message: 'Missing query type (SELECT/CONSTRUCT/ASK/DESCRIBE)' });
+        if (
+          !upper.includes('SELECT') &&
+          !upper.includes('CONSTRUCT') &&
+          !upper.includes('ASK') &&
+          !upper.includes('DESCRIBE')
+        ) {
+          errors.push({
+            line: 1,
+            message: 'Missing query type (SELECT/CONSTRUCT/ASK/DESCRIBE)',
+          });
         }
         if (!upper.includes('WHERE') && upper.includes('SELECT')) {
           errors.push({ line: 1, message: 'Missing WHERE clause' });
@@ -32,7 +39,7 @@ describe('SPARQLEditor', () => {
     });
 
     it('should validate CONSTRUCT query', () => {
-      const validateQuery = (query) => {
+      const validateQuery = query => {
         const upper = query.toUpperCase();
         return upper.includes('CONSTRUCT') && upper.includes('WHERE');
       };
@@ -41,7 +48,7 @@ describe('SPARQLEditor', () => {
     });
 
     it('should detect syntax errors', () => {
-      const detectErrors = (query) => {
+      const detectErrors = query => {
         const errors = [];
 
         // Check for unbalanced braces
@@ -64,7 +71,7 @@ describe('SPARQLEditor', () => {
 
   describe('Query Formatting', () => {
     it('should format SPARQL keywords', () => {
-      const formatQuery = (query) => {
+      const formatQuery = query => {
         return query
           .replace(/\bselect\b/gi, 'SELECT')
           .replace(/\bwhere\b/gi, 'WHERE')
@@ -83,7 +90,7 @@ describe('SPARQLEditor', () => {
     });
 
     it('should add proper indentation', () => {
-      const addIndentation = (query) => {
+      const addIndentation = query => {
         return query
           .replace(/\{/g, ' {\n  ')
           .replace(/\}/g, '\n}')
@@ -105,10 +112,10 @@ describe('GraphVisualizer', () => {
     it('should generate nodes from triples', () => {
       const triples = [
         { subject: 'alice', predicate: 'knows', object: 'bob' },
-        { subject: 'alice', predicate: 'knows', object: 'charlie' }
+        { subject: 'alice', predicate: 'knows', object: 'charlie' },
       ];
 
-      const generateNodes = (triples) => {
+      const generateNodes = triples => {
         const subjects = new Set(triples.map(t => t.subject));
         const objects = new Set(triples.map(t => t.object));
         const allEntities = new Set([...subjects, ...objects]);
@@ -116,7 +123,7 @@ describe('GraphVisualizer', () => {
         return Array.from(allEntities).map(entity => ({
           id: entity,
           label: entity,
-          type: subjects.has(entity) ? 'subject' : 'object'
+          type: subjects.has(entity) ? 'subject' : 'object',
         }));
       };
 
@@ -129,14 +136,14 @@ describe('GraphVisualizer', () => {
     it('should generate edges from triples', () => {
       const triples = [
         { subject: 'alice', predicate: 'knows', object: 'bob' },
-        { subject: 'alice', predicate: 'likes', object: 'charlie' }
+        { subject: 'alice', predicate: 'likes', object: 'charlie' },
       ];
 
-      const generateEdges = (triples) => {
+      const generateEdges = triples => {
         return triples.map(t => ({
           source: t.subject,
           target: t.object,
-          label: t.predicate
+          label: t.predicate,
         }));
       };
 
@@ -155,14 +162,14 @@ describe('GraphVisualizer', () => {
         edges: [
           { source: 'a', target: 'b' },
           { source: 'a', target: 'c' },
-          { source: 'b', target: 'c' }
-        ]
+          { source: 'b', target: 'c' },
+        ],
       };
 
       const stats = {
         nodeCount: graphData.nodes.length,
         edgeCount: graphData.edges.length,
-        density: graphData.edges.length / (graphData.nodes.length * (graphData.nodes.length - 1))
+        density: graphData.edges.length / (graphData.nodes.length * (graphData.nodes.length - 1)),
       };
 
       expect(stats.nodeCount).toBe(3);
@@ -175,7 +182,9 @@ describe('GraphVisualizer', () => {
 describe('ResultsPaginator', () => {
   describe('Pagination Logic', () => {
     it('should paginate results', () => {
-      const results = Array(25).fill(null).map((_, i) => ({ id: i }));
+      const results = Array(25)
+        .fill(null)
+        .map((_, i) => ({ id: i }));
       const pageSize = 10;
 
       const paginate = (data, page, size) => {
@@ -185,7 +194,7 @@ describe('ResultsPaginator', () => {
           data: data.slice(start, end),
           page,
           totalPages: Math.ceil(data.length / size),
-          totalItems: data.length
+          totalItems: data.length,
         };
       };
 
@@ -207,7 +216,7 @@ describe('ResultsPaginator', () => {
         data: data.slice((page - 1) * size, page * size),
         page,
         totalPages: Math.max(1, Math.ceil(data.length / size)),
-        totalItems: data.length
+        totalItems: data.length,
       });
 
       const page1 = paginate(results, 1, pageSize);
@@ -218,7 +227,7 @@ describe('ResultsPaginator', () => {
 
     it('should calculate page range', () => {
       const currentPage = 5;
-      const totalPages = 10;
+      const _totalPages = 10;
       const pageSize = 10;
       const totalItems = 95;
 
@@ -236,12 +245,20 @@ describe('QueryBuilder', () => {
     it('should add triple patterns', () => {
       const triples = [];
 
-      const addTriple = (triple) => {
+      const addTriple = triple => {
         triples.push(triple);
       };
 
-      addTriple({ subject: '?person', predicate: 'rdf:type', object: 'foaf:Person' });
-      addTriple({ subject: '?person', predicate: 'foaf:name', object: '?name' });
+      addTriple({
+        subject: '?person',
+        predicate: 'rdf:type',
+        object: 'foaf:Person',
+      });
+      addTriple({
+        subject: '?person',
+        predicate: 'foaf:name',
+        object: '?name',
+      });
 
       expect(triples).toHaveLength(2);
     });
@@ -249,10 +266,10 @@ describe('QueryBuilder', () => {
     it('should remove triple patterns', () => {
       const triples = [
         { subject: '?s', predicate: 'p1', object: 'o1' },
-        { subject: '?s', predicate: 'p2', object: 'o2' }
+        { subject: '?s', predicate: 'p2', object: 'o2' },
       ];
 
-      const removeTriple = (index) => {
+      const removeTriple = index => {
         triples.splice(index, 1);
       };
 
@@ -265,10 +282,10 @@ describe('QueryBuilder', () => {
     it('should build SPARQL from triples', () => {
       const triples = [
         { subject: '?person', predicate: 'foaf:name', object: '?name' },
-        { subject: '?person', predicate: 'foaf:age', object: '?age' }
+        { subject: '?person', predicate: 'foaf:age', object: '?age' },
       ];
 
-      const buildQuery = (triples) => {
+      const buildQuery = triples => {
         const variables = new Set();
         triples.forEach(t => {
           if (t.subject.startsWith('?')) variables.add(t.subject);
@@ -297,8 +314,8 @@ describe('FormValidation', () => {
       const shape = {
         properties: [
           { path: 'name', minCount: 1 },
-          { path: 'email', minCount: 1 }
-        ]
+          { path: 'email', minCount: 1 },
+        ],
       };
 
       const validate = (data, shape) => {
@@ -322,7 +339,7 @@ describe('FormValidation', () => {
     it('should validate patterns', () => {
       const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-      const validateEmail = (email) => {
+      const validateEmail = email => {
         return emailPattern.test(email);
       };
 
@@ -352,15 +369,17 @@ describe('FormValidation', () => {
       const validations = [
         { field: 'name', valid: true },
         { field: 'email', valid: true },
-        { field: 'age', valid: false, message: 'Must be >= 18' }
+        { field: 'age', valid: false, message: 'Must be >= 18' },
       ];
 
       const result = {
         isValid: validations.every(v => v.valid),
-        errors: validations.filter(v => !v.valid).map(v => ({
-          field: v.field,
-          message: v.message
-        }))
+        errors: validations
+          .filter(v => !v.valid)
+          .map(v => ({
+            field: v.field,
+            message: v.message,
+          })),
       };
 
       expect(result.isValid).toBe(false);

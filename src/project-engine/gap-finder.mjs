@@ -3,10 +3,10 @@
  * @module project-engine/gap-finder
  */
 
-import { DataFactory } from 'n3'
-import { z } from 'zod'
+import { DataFactory } from 'n3';
+import { z } from 'zod';
 
-const { namedNode } = DataFactory
+const { namedNode } = DataFactory;
 
 /* ========================================================================= */
 /* Namespace prefixes                                                        */
@@ -18,29 +18,32 @@ const NS = {
   dom: 'http://example.org/unrdf/domain#',
   fs: 'http://example.org/unrdf/filesystem#',
   proj: 'http://example.org/unrdf/project#',
-}
+};
 
 /* ========================================================================= */
 /* Zod Schemas                                                               */
 /* ========================================================================= */
 
-const StackProfileSchema = z.object({
-  webFramework: z.string().nullable().optional(),
-  uiFramework: z.string().nullable().optional(),
-  apiFramework: z.string().nullable().optional(),
-  testFramework: z.string().nullable().optional(),
-}).passthrough().optional()
+const StackProfileSchema = z
+  .object({
+    webFramework: z.string().nullable().optional(),
+    uiFramework: z.string().nullable().optional(),
+    apiFramework: z.string().nullable().optional(),
+    testFramework: z.string().nullable().optional(),
+  })
+  .passthrough()
+  .optional();
 
 const FindMissingRolesOptionsSchema = z.object({
-  domainStore: z.custom((val) => val && typeof val.getQuads === 'function', {
+  domainStore: z.custom(val => val && typeof val.getQuads === 'function', {
     message: 'domainStore must be an RDF store with getQuads method',
   }),
-  projectStore: z.custom((val) => val && typeof val.getQuads === 'function', {
+  projectStore: z.custom(val => val && typeof val.getQuads === 'function', {
     message: 'projectStore must be an RDF store with getQuads method',
   }),
-  templateGraph: z.custom((val) => val && typeof val.getQuads === 'function').optional(),
+  templateGraph: z.custom(val => val && typeof val.getQuads === 'function').optional(),
   stackProfile: StackProfileSchema,
-})
+});
 
 /* ========================================================================= */
 /* Role configuration                                                        */
@@ -60,7 +63,7 @@ const ROLE_BASE_SCORES = {
   Service: 60,
   Hook: 55,
   Doc: 50,
-}
+};
 
 /**
  * Required roles per framework
@@ -73,7 +76,7 @@ const FRAMEWORK_ROLES = {
   nest: ['Controller', 'Service', 'Test', 'Schema'],
   react: ['Component', 'Test', 'Schema'],
   default: ['Api', 'Component', 'Test', 'Schema'],
-}
+};
 
 /**
  * Framework-specific role score boosts
@@ -84,7 +87,7 @@ const FRAMEWORK_BOOSTS = {
   'next-pages': { Page: 15, Api: 10 },
   express: { Route: 15, Service: 10 },
   nest: { Controller: 15, Service: 10 },
-}
+};
 
 /* ========================================================================= */
 /* Entity extraction                                                         */
@@ -96,20 +99,20 @@ const FRAMEWORK_BOOSTS = {
  * @returns {string[]}
  */
 function extractEntities(domainStore) {
-  const entities = []
+  const entities = [];
   const quads = domainStore.getQuads(
     null,
     namedNode(`${NS.rdf}type`),
     namedNode(`${NS.dom}Entity`)
-  )
+  );
 
   for (const quad of quads) {
-    const iri = quad.subject.value
-    const name = iri.split('#').pop() || iri.split('/').pop()
-    if (name) entities.push(name)
+    const iri = quad.subject.value;
+    const name = iri.split('#').pop() || iri.split('/').pop();
+    if (name) entities.push(name);
   }
 
-  return entities
+  return entities;
 }
 
 /* ========================================================================= */
@@ -122,30 +125,22 @@ function extractEntities(domainStore) {
  * @returns {Array<{path: string, role: string|null}>}
  */
 function extractFilesWithRoles(projectStore) {
-  const files = []
+  const files = [];
 
-  const pathQuads = projectStore.getQuads(
-    null,
-    namedNode(`${NS.fs}relativePath`),
-    null
-  )
+  const pathQuads = projectStore.getQuads(null, namedNode(`${NS.fs}relativePath`), null);
 
   for (const quad of pathQuads) {
-    const fileIri = quad.subject
-    const path = quad.object.value
+    const fileIri = quad.subject;
+    const path = quad.object.value;
 
     // Get role for this file
-    const roleQuads = projectStore.getQuads(
-      fileIri,
-      namedNode(`${NS.proj}roleString`),
-      null
-    )
+    const roleQuads = projectStore.getQuads(fileIri, namedNode(`${NS.proj}roleString`), null);
 
-    const role = roleQuads.length > 0 ? roleQuads[0].object.value : null
-    files.push({ path, role })
+    const role = roleQuads.length > 0 ? roleQuads[0].object.value : null;
+    files.push({ path, role });
   }
 
-  return files
+  return files;
 }
 
 /* ========================================================================= */
@@ -159,24 +154,24 @@ function extractFilesWithRoles(projectStore) {
  * @returns {boolean}
  */
 function fileMatchesEntity(filePath, entityName) {
-  const lowerPath = filePath.toLowerCase()
-  const lowerEntity = entityName.toLowerCase()
+  const lowerPath = filePath.toLowerCase();
+  const lowerEntity = entityName.toLowerCase();
 
   // Direct match
-  if (lowerPath.includes(lowerEntity)) return true
+  if (lowerPath.includes(lowerEntity)) return true;
 
   // Plural form: User -> users
-  if (lowerPath.includes(lowerEntity + 's')) return true
+  if (lowerPath.includes(lowerEntity + 's')) return true;
 
   // Kebab-case: UserProfile -> user-profile
-  const kebabEntity = entityName.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase()
-  if (lowerPath.includes(kebabEntity)) return true
+  const kebabEntity = entityName.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
+  if (lowerPath.includes(kebabEntity)) return true;
 
   // Snake_case: UserProfile -> user_profile
-  const snakeEntity = entityName.replace(/([a-z])([A-Z])/g, '$1_$2').toLowerCase()
-  if (lowerPath.includes(snakeEntity)) return true
+  const snakeEntity = entityName.replace(/([a-z])([A-Z])/g, '$1_$2').toLowerCase();
+  if (lowerPath.includes(snakeEntity)) return true;
 
-  return false
+  return false;
 }
 
 /**
@@ -186,15 +181,15 @@ function fileMatchesEntity(filePath, entityName) {
  * @returns {Set<string>}
  */
 function findPresentRoles(entityName, files) {
-  const roles = new Set()
+  const roles = new Set();
 
   for (const { path, role } of files) {
     if (role && fileMatchesEntity(path, entityName)) {
-      roles.add(role)
+      roles.add(role);
     }
   }
 
-  return roles
+  return roles;
 }
 
 /* ========================================================================= */
@@ -207,14 +202,14 @@ function findPresentRoles(entityName, files) {
  * @returns {string[]}
  */
 function getRequiredRoles(stackProfile) {
-  if (!stackProfile) return FRAMEWORK_ROLES.default
+  if (!stackProfile) return FRAMEWORK_ROLES.default;
 
-  const framework = stackProfile.webFramework || stackProfile.apiFramework
+  const framework = stackProfile.webFramework || stackProfile.apiFramework;
   if (framework && FRAMEWORK_ROLES[framework]) {
-    return FRAMEWORK_ROLES[framework]
+    return FRAMEWORK_ROLES[framework];
   }
 
-  return FRAMEWORK_ROLES.default
+  return FRAMEWORK_ROLES.default;
 }
 
 /**
@@ -225,7 +220,7 @@ function getRequiredRoles(stackProfile) {
  * @returns {string[]}
  */
 function calculateMissingRoles(entityName, presentRoles, requiredRoles) {
-  return requiredRoles.filter(role => !presentRoles.has(role))
+  return requiredRoles.filter(role => !presentRoles.has(role));
 }
 
 /**
@@ -244,9 +239,9 @@ function generateSuggestion(entityName, role) {
     Schema: `${entityName}Schema needed for validation`,
     Service: `${entityName}Service needed for business logic`,
     Doc: `${entityName} documentation needed`,
-  }
+  };
 
-  return suggestions[role] || `${entityName}${role} needed`
+  return suggestions[role] || `${entityName}${role} needed`;
 }
 
 /* ========================================================================= */
@@ -280,11 +275,11 @@ function generateSuggestion(entityName, role) {
  * @returns {FindMissingRolesResult}
  */
 export function findMissingRoles(options) {
-  const validated = FindMissingRolesOptionsSchema.parse(options)
-  const { domainStore, projectStore, stackProfile } = validated
+  const validated = FindMissingRolesOptionsSchema.parse(options);
+  const { domainStore, projectStore, stackProfile } = validated;
 
   // Extract entities from domain model
-  const entities = extractEntities(domainStore)
+  const entities = extractEntities(domainStore);
 
   // Early exit if no entities
   if (entities.length === 0) {
@@ -292,35 +287,35 @@ export function findMissingRoles(options) {
       gaps: [],
       summary: '0 gaps found (no entities in domain model)',
       callToAction: 'Run: unrdf infer-domain to detect domain entities',
-    }
+    };
   }
 
   // Extract files with roles from project store
-  const files = extractFilesWithRoles(projectStore)
+  const files = extractFilesWithRoles(projectStore);
 
   // Determine required roles based on stack
-  const requiredRoles = getRequiredRoles(stackProfile)
+  const requiredRoles = getRequiredRoles(stackProfile);
 
   // Find gaps for each entity
-  const gaps = []
-  const gapCounts = { Api: 0, Test: 0, Component: 0, Schema: 0, other: 0 }
+  const gaps = [];
+  const gapCounts = { Api: 0, Test: 0, Component: 0, Schema: 0, other: 0 };
 
   for (const entityName of entities) {
-    const presentRoles = findPresentRoles(entityName, files)
-    const missingRoles = calculateMissingRoles(entityName, presentRoles, requiredRoles)
+    const presentRoles = findPresentRoles(entityName, files);
+    const missingRoles = calculateMissingRoles(entityName, presentRoles, requiredRoles);
 
     // Calculate max score for this entity's gaps
     const maxScore = missingRoles.reduce((max, role) => {
-      const score = scoreMissingRole(entityName, role, stackProfile || {})
-      return Math.max(max, score)
-    }, 0)
+      const score = scoreMissingRole(entityName, role, stackProfile || {});
+      return Math.max(max, score);
+    }, 0);
 
     // Count gaps by type
     for (const role of missingRoles) {
       if (gapCounts[role] !== undefined) {
-        gapCounts[role]++
+        gapCounts[role]++;
       } else {
-        gapCounts.other++
+        gapCounts.other++;
       }
     }
 
@@ -328,34 +323,33 @@ export function findMissingRoles(options) {
       entity: entityName,
       missingRoles,
       score: maxScore,
-      suggestion: missingRoles.length > 0
-        ? generateSuggestion(entityName, missingRoles[0])
-        : '',
-    })
+      suggestion: missingRoles.length > 0 ? generateSuggestion(entityName, missingRoles[0]) : '',
+    });
   }
 
   // Sort by score (highest first)
-  gaps.sort((a, b) => b.score - a.score)
+  gaps.sort((a, b) => b.score - a.score);
 
   // Generate summary
-  const summaryParts = []
-  if (gapCounts.Api > 0) summaryParts.push(`${gapCounts.Api} missing APIs`)
-  if (gapCounts.Test > 0) summaryParts.push(`${gapCounts.Test} missing tests`)
-  if (gapCounts.Component > 0) summaryParts.push(`${gapCounts.Component} missing components`)
-  if (gapCounts.Schema > 0) summaryParts.push(`${gapCounts.Schema} missing schemas`)
-  if (gapCounts.other > 0) summaryParts.push(`${gapCounts.other} other gaps`)
+  const summaryParts = [];
+  if (gapCounts.Api > 0) summaryParts.push(`${gapCounts.Api} missing APIs`);
+  if (gapCounts.Test > 0) summaryParts.push(`${gapCounts.Test} missing tests`);
+  if (gapCounts.Component > 0) summaryParts.push(`${gapCounts.Component} missing components`);
+  if (gapCounts.Schema > 0) summaryParts.push(`${gapCounts.Schema} missing schemas`);
+  if (gapCounts.other > 0) summaryParts.push(`${gapCounts.other} other gaps`);
 
-  const summary = summaryParts.length > 0
-    ? summaryParts.join(', ')
-    : '0 gaps found - all entities have required roles'
+  const summary =
+    summaryParts.length > 0
+      ? summaryParts.join(', ')
+      : '0 gaps found - all entities have required roles';
 
   // Generate call to action
-  const topGap = gaps.find(g => g.missingRoles.length > 0)
+  const topGap = gaps.find(g => g.missingRoles.length > 0);
   const callToAction = topGap
     ? `Run: unrdf generate --entity ${topGap.entity} --roles ${topGap.missingRoles.join(',')}`
-    : 'Run: unrdf analyze to check for other issues'
+    : 'Run: unrdf analyze to check for other issues';
 
-  return { gaps, summary, callToAction }
+  return { gaps, summary, callToAction };
 }
 
 /**
@@ -368,15 +362,15 @@ export function findMissingRoles(options) {
  */
 export function scoreMissingRole(entity, role, stackProfile) {
   // Get base score
-  let score = ROLE_BASE_SCORES[role] || 40
+  let score = ROLE_BASE_SCORES[role] || 40;
 
   // Apply framework-specific boosts
-  const framework = stackProfile?.webFramework || stackProfile?.apiFramework
+  const framework = stackProfile?.webFramework || stackProfile?.apiFramework;
   if (framework && FRAMEWORK_BOOSTS[framework]) {
-    const boost = FRAMEWORK_BOOSTS[framework][role] || 0
-    score += boost
+    const boost = FRAMEWORK_BOOSTS[framework][role] || 0;
+    score += boost;
   }
 
   // Cap at 100
-  return Math.min(score, 100)
+  return Math.min(score, 100);
 }

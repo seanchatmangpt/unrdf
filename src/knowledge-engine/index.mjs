@@ -8,20 +8,20 @@
  */
 
 // Core Engine Components
-export { KnowledgeHookManager } from "./knowledge-hook-manager.mjs";
-export { TransactionManager } from "./transaction.mjs";
+export { KnowledgeHookManager } from './knowledge-hook-manager.mjs';
+export { TransactionManager } from './transaction.mjs';
 
 // Hook System
-export { defineHook } from "./define-hook.mjs";
-export { createHookExecutor } from "./hook-executor.mjs";
-export { createConditionEvaluator } from "./condition-evaluator.mjs";
+export { defineHook } from './define-hook.mjs';
+export { createHookExecutor } from './hook-executor.mjs';
+export { createConditionEvaluator } from './condition-evaluator.mjs';
 export {
   registerHook,
   deregisterHook,
   evaluateHook,
   getRegisteredHooks,
   resetGlobalHookManager,
-} from "./hook-management.mjs";
+} from './hook-management.mjs';
 
 // Knowledge Substrate Core (80/20 Framework)
 export {
@@ -32,24 +32,18 @@ export {
   DarkMatterCore,
   createDarkMatterCore,
   DarkMatterFactory,
-} from "./knowledge-substrate-core.mjs";
+} from './knowledge-substrate-core.mjs';
 
 // Storage & Persistence
-export { LockchainWriter, createLockchainWriter } from "./lockchain-writer.mjs";
-export { ResolutionLayer } from "./resolution-layer.mjs";
+export { LockchainWriter, createLockchainWriter } from './lockchain-writer.mjs';
+export { ResolutionLayer } from './resolution-layer.mjs';
 
 // Query & Optimization
-export { QueryOptimizer } from "./query-optimizer.mjs";
-export { query } from "./query.mjs";
+export { QueryOptimizer } from './query-optimizer.mjs';
+export { query } from './query.mjs';
 
 // Utilities
-export {
-  parseTurtle,
-  toTurtle,
-  toNQuads,
-  parseJsonLd,
-  toJsonLd,
-} from "./parse.mjs";
+export { parseTurtle, toTurtle, toNQuads, parseJsonLd, toJsonLd } from './parse.mjs';
 export {
   validateShacl,
   validateShaclMultiple,
@@ -57,7 +51,7 @@ export {
   hasValidationErrors,
   getValidationErrors,
   getValidationWarnings,
-} from "./validate.mjs";
+} from './validate.mjs';
 export {
   canonicalize,
   isIsomorphic,
@@ -66,7 +60,7 @@ export {
   findDuplicates,
   getCanonicalizationStats,
   createCanonicalizationSession,
-} from "./canonicalize.mjs";
+} from './canonicalize.mjs';
 export {
   reason,
   reasonMultiple,
@@ -74,29 +68,29 @@ export {
   getReasoningStats,
   validateRules,
   createReasoningSession,
-} from "./reason.mjs";
+} from './reason.mjs';
 export {
   resolveFileUri,
   calculateFileHash,
   loadFileWithHash,
   loadSparqlFile,
-} from "./file-resolver.mjs";
+} from './file-resolver.mjs';
 
 // Security & Sandbox
-export { EffectSandbox } from "./effect-sandbox.mjs";
+export { EffectSandbox } from './effect-sandbox.mjs';
 
 // Policy Management
-export { PolicyPackManager, PolicyPack } from "./policy-pack.mjs";
+export { PolicyPackManager, PolicyPack } from './policy-pack.mjs';
 
 // Observability System
 export {
   ObservabilityManager,
   createObservabilityManager,
   defaultObservabilityManager,
-} from "./observability.mjs";
+} from './observability.mjs';
 
 // N3 Re-exports (as documented in README)
-export { Store, Parser, Writer, DataFactory } from "n3";
+export { Store, Parser, Writer, DataFactory } from 'n3';
 
 // Consolidated Schemas (single source of truth)
-export * from "./schemas.mjs";
+export * from './schemas.mjs';

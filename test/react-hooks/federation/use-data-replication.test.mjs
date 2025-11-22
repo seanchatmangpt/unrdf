@@ -3,7 +3,7 @@
  * Tests replication state, consistency, conflict resolution, and sync strategies
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, _beforeEach, _vi } from 'vitest';
 
 describe('DataReplication', () => {
   describe('Replication Operations', () => {
@@ -17,7 +17,7 @@ describe('DataReplication', () => {
           replications.push({
             store,
             change,
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
           });
         }
 
@@ -45,10 +45,7 @@ describe('DataReplication', () => {
         return { success: true };
       };
 
-      const result = await replicate(
-        { operation: 'update', data: { id: 1 } },
-        { autoSync: true }
-      );
+      const result = await replicate({ operation: 'update', data: { id: 1 } }, { autoSync: true });
 
       expect(result.queued).toBe(true);
       expect(syncQueue).toHaveLength(1);
@@ -59,7 +56,7 @@ describe('DataReplication', () => {
         totalReplications: 0,
         successCount: 0,
         failureCount: 0,
-        conflictCount: 0
+        conflictCount: 0,
       };
 
       const replicate = async (change, shouldFail = false) => {
@@ -159,7 +156,7 @@ describe('DataReplication', () => {
         return {
           success: successes.length >= quorum,
           quorumMet: true,
-          acknowledged: successes.length
+          acknowledged: successes.length,
         };
       };
 
@@ -178,7 +175,7 @@ describe('DataReplication', () => {
             hasConflict: true,
             type: 'write-write',
             local,
-            remote
+            remote,
           };
         }
         return { hasConflict: false };
@@ -196,10 +193,10 @@ describe('DataReplication', () => {
       const versionVector = {
         'node-1': 0,
         'node-2': 0,
-        'node-3': 0
+        'node-3': 0,
       };
 
-      const incrementVersion = (nodeId) => {
+      const incrementVersion = nodeId => {
         versionVector[nodeId]++;
         return { ...versionVector };
       };
@@ -234,7 +231,7 @@ describe('DataReplication', () => {
     it('should identify concurrent modifications', () => {
       const modifications = [
         { nodeId: 'node-1', timestamp: 1000, data: 'a' },
-        { nodeId: 'node-2', timestamp: 1000, data: 'b' }
+        { nodeId: 'node-2', timestamp: 1000, data: 'b' },
       ];
 
       const areConcurrent = (mod1, mod2, threshold = 100) => {
@@ -251,10 +248,10 @@ describe('DataReplication', () => {
       const conflicts = [
         { timestamp: 1000, data: 'first' },
         { timestamp: 2000, data: 'second' },
-        { timestamp: 1500, data: 'middle' }
+        { timestamp: 1500, data: 'middle' },
       ];
 
-      const lastWriteWins = (conflicts) => {
+      const lastWriteWins = conflicts => {
         return conflicts.reduce((latest, current) =>
           current.timestamp > latest.timestamp ? current : latest
         );
@@ -269,11 +266,11 @@ describe('DataReplication', () => {
         id: 'conflict-1',
         versions: [
           { nodeId: 'node-1', data: { count: 10 } },
-          { nodeId: 'node-2', data: { count: 15 } }
-        ]
+          { nodeId: 'node-2', data: { count: 15 } },
+        ],
       };
 
-      const customResolver = (versions) => {
+      const customResolver = versions => {
         // Merge by taking max count
         const maxCount = Math.max(...versions.map(v => v.data.count));
         return { count: maxCount };
@@ -287,13 +284,11 @@ describe('DataReplication', () => {
       let conflicts = [
         { id: 'c1', resolved: false },
         { id: 'c2', resolved: false },
-        { id: 'c3', resolved: false }
+        { id: 'c3', resolved: false },
       ];
 
-      const resolveConflict = (conflictId) => {
-        conflicts = conflicts.map(c =>
-          c.id === conflictId ? { ...c, resolved: true } : c
-        );
+      const resolveConflict = conflictId => {
+        conflicts = conflicts.map(c => (c.id === conflictId ? { ...c, resolved: true } : c));
         return { success: true };
       };
 
@@ -329,7 +324,7 @@ describe('DataReplication', () => {
       const syncStatus = {
         inProgress: false,
         lastSync: null,
-        pendingChanges: 5
+        pendingChanges: 5,
       };
 
       const startSync = () => {
@@ -355,12 +350,12 @@ describe('DataReplication', () => {
       let pendingChanges = 0;
       const queue = [];
 
-      const addChange = (change) => {
+      const addChange = change => {
         queue.push(change);
         pendingChanges = queue.length;
       };
 
-      const processChanges = (count) => {
+      const processChanges = count => {
         queue.splice(0, count);
         pendingChanges = queue.length;
       };
@@ -379,19 +374,19 @@ describe('DataReplication', () => {
         totalReplications: 100,
         successCount: 95,
         failureCount: 5,
-        conflictCount: 2
+        conflictCount: 2,
       };
 
       const syncStatus = {
         inProgress: false,
         lastSync: '2024-01-01T00:00:00Z',
-        pendingChanges: 3
+        pendingChanges: 3,
       };
 
       const getStatus = () => ({
         ...syncStatus,
         ...replicationStats,
-        successRate: replicationStats.successCount / replicationStats.totalReplications
+        successRate: replicationStats.successCount / replicationStats.totalReplications,
       });
 
       const status = getStatus();
@@ -418,7 +413,9 @@ describe('DataReplication', () => {
     });
 
     it('should batch process sync items', async () => {
-      const queue = Array(25).fill(null).map((_, i) => ({ id: i }));
+      const queue = Array(25)
+        .fill(null)
+        .map((_, i) => ({ id: i }));
       const batches = [];
 
       const processBatch = (batchSize = 10) => {
@@ -491,7 +488,7 @@ describe('DataReplication', () => {
     it('should detect replication conflicts', async () => {
       const conflicts = [];
 
-      const replicate = async (change) => {
+      const replicate = async change => {
         const error = new Error('Conflict detected');
         error.code = 'REPLICATION_CONFLICT';
         error.details = { id: 'conflict-1', versions: [] };
@@ -499,7 +496,7 @@ describe('DataReplication', () => {
         conflicts.push({
           change,
           conflict: error.details,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
 
         throw error;
@@ -517,9 +514,9 @@ describe('DataReplication', () => {
     it('should auto-resolve conflicts when resolver provided', async () => {
       const resolved = [];
 
-      const conflictResolver = (versions) => versions[0]; // Take first version
+      const conflictResolver = versions => versions[0]; // Take first version
 
-      const handleConflict = async (conflict) => {
+      const handleConflict = async conflict => {
         const resolution = conflictResolver(conflict.versions);
         resolved.push({ conflictId: conflict.id, resolution });
         return resolution;
@@ -527,7 +524,7 @@ describe('DataReplication', () => {
 
       await handleConflict({
         id: 'c1',
-        versions: [{ data: 'v1' }, { data: 'v2' }]
+        versions: [{ data: 'v1' }, { data: 'v2' }],
       });
 
       expect(resolved).toHaveLength(1);
@@ -540,14 +537,14 @@ describe('DataReplication', () => {
       const syncStatus = {
         inProgress: false,
         lastSync: '2024-01-01T12:00:00Z',
-        pendingChanges: 5
+        pendingChanges: 5,
       };
 
       const replicationStats = {
         totalReplications: 1000,
         successCount: 950,
         failureCount: 50,
-        conflictCount: 10
+        conflictCount: 10,
       };
 
       const conflicts = [{ id: 'c1' }, { id: 'c2' }];
@@ -557,7 +554,7 @@ describe('DataReplication', () => {
         ...syncStatus,
         ...replicationStats,
         conflictsCount: conflicts.length,
-        queueSize
+        queueSize,
       });
 
       const status = getStatus();

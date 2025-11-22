@@ -24,20 +24,20 @@ const loadBasicQuery = async () => {
  * @param {number} [options.maxIterations] - Maximum number of reasoning iterations
  * @param {boolean} [options.debug] - Enable debug output
  * @returns {Promise<Store>} Promise resolving to a new store containing original and inferred quads
- * 
+ *
  * @throws {Error} If reasoning fails
- * 
+ *
  * @example
  * const dataStore = new Store();
  * // ... add data quads to store
- * 
+ *
  * const rulesTtl = `
  *   @prefix ex: <http://example.org/> .
  *   @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
- *   
+ *
  *   { ?x ex:parent ?y } => { ?x rdfs:subClassOf ?y } .
  * `;
- * 
+ *
  * const reasonedStore = await reason(dataStore, rulesTtl);
  * console.log('Original quads:', dataStore.size);
  * console.log('Reasoned quads:', reasonedStore.size);
@@ -50,7 +50,7 @@ export async function reason(store, rules, options = {}) {
     throw new TypeError('reason: rules must be provided');
   }
 
-  const { includeOriginal = true, maxIterations = 100, debug = false } = options;
+  const { includeOriginal = true, _maxIterations = 100, debug = false } = options;
 
   try {
     // Get data quads from store
@@ -86,7 +86,7 @@ export async function reason(store, rules, options = {}) {
     }
 
     // Create result store
-    const resultStore = new Store(result);
+    const _resultStore = new Store(result);
 
     // Combine original and inferred data if requested
     if (includeOriginal) {
@@ -108,16 +108,16 @@ export async function reason(store, rules, options = {}) {
  * @param {Array<Store|string>} rulesList - Array of stores or Turtle strings containing N3 rules
  * @param {Object} [options] - Reasoning options
  * @returns {Promise<Store>} Promise resolving to a new store with all reasoning results
- * 
+ *
  * @throws {Error} If reasoning fails
- * 
+ *
  * @example
  * const rulesList = [
  *   rdfsRulesTtl,
  *   owlRulesTtl,
  *   customRulesTtl
  * ];
- * 
+ *
  * const reasonedStore = await reasonMultiple(store, rulesList);
  */
 export async function reasonMultiple(store, rulesList, options = {}) {
@@ -130,19 +130,19 @@ export async function reasonMultiple(store, rulesList, options = {}) {
 
   try {
     let currentStore = store;
-    
+
     for (let i = 0; i < rulesList.length; i++) {
       const rules = rulesList[i];
       if (options.debug) {
         console.log(`Applying rule set ${i + 1}/${rulesList.length}`);
       }
-      
+
       currentStore = await reason(currentStore, rules, {
         ...options,
-        includeOriginal: true // Always include original data for subsequent rule applications
+        includeOriginal: true, // Always include original data for subsequent rule applications
       });
     }
-    
+
     return currentStore;
   } catch (error) {
     throw new Error(`Multiple N3 reasoning failed: ${error.message}`);
@@ -154,11 +154,11 @@ export async function reasonMultiple(store, rulesList, options = {}) {
  * @param {Store} originalStore - The original store before reasoning
  * @param {Store} reasonedStore - The store after reasoning
  * @returns {Store} Store containing only the newly inferred quads
- * 
+ *
  * @example
  * const originalStore = new Store();
  * // ... add original quads
- * 
+ *
  * const reasonedStore = await reason(originalStore, rules);
  * const inferredOnly = extractInferred(originalStore, reasonedStore);
  * console.log('Newly inferred quads:', inferredOnly.size);
@@ -173,9 +173,9 @@ export function extractInferred(originalStore, reasonedStore) {
 
   const originalQuads = new Set(originalStore.getQuads().map(q => q.toString()));
   const reasonedQuads = reasonedStore.getQuads();
-  
+
   const inferredQuads = reasonedQuads.filter(q => !originalQuads.has(q.toString()));
-  
+
   return new Store(inferredQuads);
 }
 
@@ -184,7 +184,7 @@ export function extractInferred(originalStore, reasonedStore) {
  * @param {Store} originalStore - The original store before reasoning
  * @param {Store} reasonedStore - The store after reasoning
  * @returns {Object} Reasoning statistics
- * 
+ *
  * @example
  * const stats = getReasoningStats(originalStore, reasonedStore);
  * console.log(`Original quads: ${stats.originalCount}`);
@@ -210,7 +210,7 @@ export function getReasoningStats(originalStore, reasonedStore) {
     inferredCount,
     totalCount,
     inferenceRatio,
-    hasInferences: inferredCount > 0
+    hasInferences: inferredCount > 0,
   };
 }
 
@@ -218,7 +218,7 @@ export function getReasoningStats(originalStore, reasonedStore) {
  * Validate N3 rules syntax.
  * @param {Store|string} rules - The store or Turtle string containing N3 rules
  * @returns {Object} Validation result
- * 
+ *
  * @example
  * const validation = validateRules(rulesTtl);
  * if (!validation.valid) {
@@ -239,13 +239,16 @@ export function validateRules(rules) {
       writer.addQuads(rules.getQuads());
       rulesTurtle = writer.quadsToString(rules.getQuads());
     } else {
-      return { valid: false, errors: ['Rules must be a Store or Turtle string'] };
+      return {
+        valid: false,
+        errors: ['Rules must be a Store or Turtle string'],
+      };
     }
 
     // Basic syntax validation
     const parser = new Parser();
     parser.parse(rulesTurtle);
-    
+
     return { valid: true, errors: [] };
   } catch (error) {
     return { valid: false, errors: [error.message] };
@@ -258,16 +261,16 @@ export function validateRules(rules) {
  * @param {Store|string} rules - N3 rules to apply
  * @param {Object} [options] - Session options
  * @returns {Object} Reasoning session object
- * 
+ *
  * @example
  * const session = createReasoningSession(store, rules);
- * 
+ *
  * // Add new data
  * session.addData(newQuads);
- * 
+ *
  * // Apply reasoning
  * await session.reason();
- * 
+ *
  * // Get current state
  * const currentState = session.getState();
  */
@@ -315,7 +318,7 @@ export function createReasoningSession(initialStore, rules, options = {}) {
     async reason(reasonOptions = {}) {
       currentStore = await reason(currentStore, sessionRules, {
         ...options,
-        ...reasonOptions
+        ...reasonOptions,
       });
       return currentStore;
     },
@@ -341,6 +344,6 @@ export function createReasoningSession(initialStore, rules, options = {}) {
      */
     getStats() {
       return getReasoningStats(initialStore, currentStore);
-    }
+    },
   };
 }

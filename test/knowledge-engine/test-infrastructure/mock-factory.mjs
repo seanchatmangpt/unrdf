@@ -1,7 +1,7 @@
 /**
  * @file Mock Factory for Knowledge Engine Tests
  * @module mock-factory
- * 
+ *
  * @description
  * Factory for creating and managing mocks for knowledge engine components.
  * Provides ESM-compatible mocking strategies.
@@ -30,9 +30,9 @@ export class MockFactory {
    */
   createConditionEvaluatorMock(options = {}) {
     const { shouldSucceed = true, error = new Error('Mock error'), delay = 0 } = options;
-    
+
     const mock = {
-      evaluate: this.vi.fn().mockImplementation(async (condition, store) => {
+      evaluate: this.vi.fn().mockImplementation(async (_condition, _store) => {
         if (delay > 0) {
           await new Promise(resolve => setTimeout(resolve, delay));
         }
@@ -41,7 +41,7 @@ export class MockFactory {
         }
         throw error;
       }),
-      isSatisfied: this.vi.fn().mockImplementation(async (condition, store) => {
+      isSatisfied: this.vi.fn().mockImplementation(async (_condition, _store) => {
         if (delay > 0) {
           await new Promise(resolve => setTimeout(resolve, delay));
         }
@@ -50,7 +50,7 @@ export class MockFactory {
         }
         throw error;
       }),
-      validateCondition: this.vi.fn().mockReturnValue({ valid: true })
+      validateCondition: this.vi.fn().mockReturnValue({ valid: true }),
     };
 
     this.mocks.set('conditionEvaluator', mock);
@@ -67,8 +67,13 @@ export class MockFactory {
    * @returns {Object} Mock object
    */
   createFileResolverMock(options = {}) {
-    const { shouldSucceed = true, error = new Error('File not found'), content = '', hash = 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3' } = options;
-    
+    const {
+      shouldSucceed = true,
+      error = new Error('File not found'),
+      content = '',
+      hash = 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',
+    } = options;
+
     const mock = {
       loadFileWithHash: this.vi.fn().mockImplementation(async (uri, expectedHash, basePath) => {
         if (shouldSucceed) {
@@ -76,7 +81,7 @@ export class MockFactory {
         }
         throw error;
       }),
-      calculateFileHash: this.vi.fn().mockImplementation(async (filePath) => {
+      calculateFileHash: this.vi.fn().mockImplementation(async _filePath => {
         if (shouldSucceed) {
           return hash;
         }
@@ -84,8 +89,8 @@ export class MockFactory {
       }),
       createFileResolver: this.vi.fn().mockReturnValue({
         loadFileWithHash: mock.loadFileWithHash,
-        calculateFileHash: mock.calculateFileHash
-      })
+        calculateFileHash: mock.calculateFileHash,
+      }),
     };
 
     this.mocks.set('fileResolver', mock);
@@ -102,10 +107,15 @@ export class MockFactory {
    * @returns {Object} Mock object
    */
   createQueryEngineMock(options = {}) {
-    const { shouldSucceed = true, error = new Error('Query failed'), result = true, delay = 0 } = options;
-    
+    const {
+      shouldSucceed = true,
+      error = new Error('Query failed'),
+      result = true,
+      delay = 0,
+    } = options;
+
     const mock = {
-      ask: this.vi.fn().mockImplementation(async (query, store) => {
+      ask: this.vi.fn().mockImplementation(async (_query, _store) => {
         if (delay > 0) {
           await new Promise(resolve => setTimeout(resolve, delay));
         }
@@ -114,7 +124,7 @@ export class MockFactory {
         }
         throw error;
       }),
-      select: this.vi.fn().mockImplementation(async (query, store) => {
+      select: this.vi.fn().mockImplementation(async (_query, _store) => {
         if (delay > 0) {
           await new Promise(resolve => setTimeout(resolve, delay));
         }
@@ -123,7 +133,7 @@ export class MockFactory {
         }
         throw error;
       }),
-      construct: this.vi.fn().mockImplementation(async (query, store) => {
+      construct: this.vi.fn().mockImplementation(async (_query, _store) => {
         if (delay > 0) {
           await new Promise(resolve => setTimeout(resolve, delay));
         }
@@ -132,7 +142,7 @@ export class MockFactory {
         }
         throw error;
       }),
-      describe: this.vi.fn().mockImplementation(async (query, store) => {
+      describe: this.vi.fn().mockImplementation(async (_query, _store) => {
         if (delay > 0) {
           await new Promise(resolve => setTimeout(resolve, delay));
         }
@@ -140,7 +150,7 @@ export class MockFactory {
           return result;
         }
         throw error;
-      })
+      }),
     };
 
     this.mocks.set('queryEngine', mock);
@@ -157,10 +167,15 @@ export class MockFactory {
    * @returns {Object} Mock object
    */
   createHookExecutorMock(options = {}) {
-    const { shouldSucceed = true, error = new Error('Hook execution failed'), result = { success: true }, delay = 0 } = options;
-    
+    const {
+      shouldSucceed = true,
+      error = new Error('Hook execution failed'),
+      result = { success: true },
+      delay = 0,
+    } = options;
+
     const mock = {
-      execute: this.vi.fn().mockImplementation(async (hook, event, options) => {
+      execute: this.vi.fn().mockImplementation(async (_hook, _event, _options) => {
         if (delay > 0) {
           await new Promise(resolve => setTimeout(resolve, delay));
         }
@@ -169,7 +184,7 @@ export class MockFactory {
         }
         throw error;
       }),
-      executeAll: this.vi.fn().mockImplementation(async (hooks, event, options) => {
+      executeAll: this.vi.fn().mockImplementation(async (hooks, _event, _options) => {
         if (delay > 0) {
           await new Promise(resolve => setTimeout(resolve, delay));
         }
@@ -177,7 +192,7 @@ export class MockFactory {
           return hooks.map(() => result);
         }
         throw error;
-      })
+      }),
     };
 
     this.mocks.set('hookExecutor', mock);

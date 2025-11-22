@@ -19,23 +19,23 @@
 export {
   SemanticAnalyzer,
   createSemanticAnalyzer,
-  defaultSemanticAnalyzer
+  defaultSemanticAnalyzer,
 } from './semantic-analyzer.mjs';
 
 export {
   NLPQueryBuilder,
   createNLPQueryBuilder,
-  defaultNLPQueryBuilder
+  defaultNLPQueryBuilder,
 } from './nlp-query-builder.mjs';
 
 export {
   EmbeddingsManager,
   createEmbeddingsManager,
-  defaultEmbeddingsManager
+  defaultEmbeddingsManager,
 } from './embeddings-manager.mjs';
 
 export {
   AnomalyDetector,
   createAnomalyDetector,
-  defaultAnomalyDetector
+  defaultAnomalyDetector,
 } from './anomaly-detector.mjs';

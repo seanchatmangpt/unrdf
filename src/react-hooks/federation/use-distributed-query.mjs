@@ -17,7 +17,8 @@ const MAX_SPARQL_SIZE = 100 * 1024;
  * Zod schema for SPARQL query validation
  * Validates query string size and format to prevent injection
  */
-const SparqlQuerySchema = z.string()
+const SparqlQuerySchema = z
+  .string()
   .max(MAX_SPARQL_SIZE, `SPARQL query exceeds maximum size of ${MAX_SPARQL_SIZE} bytes`)
   .nullable()
   .optional();
@@ -26,7 +27,8 @@ const SparqlQuerySchema = z.string()
  * Zod schema for store ID validation
  * Store IDs must be alphanumeric with limited special chars to prevent injection
  */
-const StoreIdSchema = z.string()
+const StoreIdSchema = z
+  .string()
   .min(1)
   .max(256)
   .regex(/^[a-zA-Z0-9_\-:.]+$/, 'Store ID contains invalid characters');
@@ -35,20 +37,22 @@ const StoreIdSchema = z.string()
  * Zod schema for distributed query options validation
  * Prevents XSS/injection by validating all inputs
  */
-const DistributedQueryOptionsSchema = z.object({
-  /** Specific stores to query - validated store IDs */
-  stores: z.array(StoreIdSchema).optional(),
-  /** Query strategy must be one of allowed values */
-  strategy: z.enum(['fastest', 'quorum', 'all', 'leader']).optional().default('fastest'),
-  /** Result aggregation strategy */
-  aggregation: z.enum(['union', 'intersection']).optional().default('union'),
-  /** Timeout must be positive number, max 5 minutes */
-  timeout: z.number().positive().max(300000).optional().default(30000),
-  /** Enable result caching */
-  cache: z.boolean().optional().default(true),
-  /** Federation options (passed through) */
-  federation: z.object({}).passthrough().optional()
-}).strict();
+const DistributedQueryOptionsSchema = z
+  .object({
+    /** Specific stores to query - validated store IDs */
+    stores: z.array(StoreIdSchema).optional(),
+    /** Query strategy must be one of allowed values */
+    strategy: z.enum(['fastest', 'quorum', 'all', 'leader']).optional().default('fastest'),
+    /** Result aggregation strategy */
+    aggregation: z.enum(['union', 'intersection']).optional().default('union'),
+    /** Timeout must be positive number, max 5 minutes */
+    timeout: z.number().positive().max(300000).optional().default(30000),
+    /** Enable result caching */
+    cache: z.boolean().optional().default(true),
+    /** Federation options (passed through) */
+    federation: z.object({}).passthrough().optional(),
+  })
+  .strict();
 
 /**
  * Hook for distributed SPARQL query execution with intelligent routing
@@ -113,7 +117,7 @@ export function useDistributedQuery(sparql = null, options = {}) {
           strategy: validatedOptions.strategy,
           aggregation: validatedOptions.aggregation,
           timeout: validatedOptions.timeout,
-          cache: validatedOptions.cache
+          cache: validatedOptions.cache,
         });
 
         const duration = performance.now() - startTime;
@@ -125,7 +129,7 @@ export function useDistributedQuery(sparql = null, options = {}) {
           duration,
           storesQueried: result.storesQueried || [],
           strategy: result.strategy,
-          cacheHit: result.cacheHit || false
+          cacheHit: result.cacheHit || false,
         });
         setLoading(false);
       } catch (err) {
@@ -143,49 +147,52 @@ export function useDistributedQuery(sparql = null, options = {}) {
   }, [validatedSparql, system, JSON.stringify(validatedOptions)]);
 
   // Manual execute function
-  const execute = useCallback(async (queryString, executeOptions = {}) => {
-    if (!system) {
-      throw new Error('Federation system not initialized');
-    }
+  const execute = useCallback(
+    async (queryString, executeOptions = {}) => {
+      if (!system) {
+        throw new Error('Federation system not initialized');
+      }
 
-    // Validate manual query string
-    const validatedQueryString = SparqlQuerySchema.parse(queryString);
-    if (!validatedQueryString) {
-      throw new Error('Query string is required for manual execution');
-    }
+      // Validate manual query string
+      const validatedQueryString = SparqlQuerySchema.parse(queryString);
+      if (!validatedQueryString) {
+        throw new Error('Query string is required for manual execution');
+      }
 
-    // Validate execute options
-    const validatedExecuteOptions = DistributedQueryOptionsSchema.partial().parse(executeOptions);
+      // Validate execute options
+      const validatedExecuteOptions = DistributedQueryOptionsSchema.partial().parse(executeOptions);
 
-    try {
-      setLoading(true);
-      setError(null);
+      try {
+        setLoading(true);
+        setError(null);
 
-      const startTime = performance.now();
+        const startTime = performance.now();
 
-      const result = await federatedQuery(validatedQueryString, {
-        ...validatedOptions,
-        ...validatedExecuteOptions
-      });
+        const result = await federatedQuery(validatedQueryString, {
+          ...validatedOptions,
+          ...validatedExecuteOptions,
+        });
 
-      const duration = performance.now() - startTime;
+        const duration = performance.now() - startTime;
 
-      setData(result.bindings || result);
-      setExecutionStats({
-        duration,
-        storesQueried: result.storesQueried || [],
-        strategy: result.strategy,
-        cacheHit: result.cacheHit || false
-      });
-      setLoading(false);
+        setData(result.bindings || result);
+        setExecutionStats({
+          duration,
+          storesQueried: result.storesQueried || [],
+          strategy: result.strategy,
+          cacheHit: result.cacheHit || false,
+        });
+        setLoading(false);
 
-      return result;
-    } catch (err) {
-      setError(err);
-      setLoading(false);
-      throw err;
-    }
-  }, [federatedQuery, system, validatedOptions]);
+        return result;
+      } catch (err) {
+        setError(err);
+        setLoading(false);
+        throw err;
+      }
+    },
+    [federatedQuery, system, validatedOptions]
+  );
 
   // Refetch current query
   const refetch = useCallback(() => {
@@ -201,6 +208,6 @@ export function useDistributedQuery(sparql = null, options = {}) {
     error,
     executionStats,
     execute,
-    refetch
+    refetch,
   };
 }

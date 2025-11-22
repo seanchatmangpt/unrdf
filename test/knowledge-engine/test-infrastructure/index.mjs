@@ -1,7 +1,7 @@
 /**
  * @file Test Infrastructure Index
  * @module test-infrastructure
- * 
+ *
  * @description
  * Central export point for all test infrastructure components.
  */

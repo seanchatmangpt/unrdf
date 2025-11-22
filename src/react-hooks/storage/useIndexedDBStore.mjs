@@ -9,7 +9,7 @@ import { IndexedDBQuadStore } from '../../../browser/indexeddb-store.mjs';
 /**
  *
  */
-export function useIndexedDBStore(options = {}) {
+export function useIndexedDBStore(_options = {}) {
   const [store, setStore] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -30,21 +30,27 @@ export function useIndexedDBStore(options = {}) {
     initStore();
   }, []);
 
-  const addQuad = useCallback(async (quad) => {
-    if (!store) return false;
-    try {
-      await store.addQuad(quad);
-      return true;
-    } catch (err) {
-      console.error('[useIndexedDBStore] addQuad failed:', err);
-      return false;
-    }
-  }, [store]);
+  const addQuad = useCallback(
+    async quad => {
+      if (!store) return false;
+      try {
+        await store.addQuad(quad);
+        return true;
+      } catch (err) {
+        console.error('[useIndexedDBStore] addQuad failed:', err);
+        return false;
+      }
+    },
+    [store]
+  );
 
-  const match = useCallback(async (pattern) => {
-    if (!store) return [];
-    return store.match(pattern);
-  }, [store]);
+  const match = useCallback(
+    async pattern => {
+      if (!store) return [];
+      return store.match(pattern);
+    },
+    [store]
+  );
 
   const clear = useCallback(async () => {
     if (!store) return false;

@@ -3,7 +3,7 @@
  * Tests error boundaries, recovery strategies, and error reporting
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, _beforeEach, vi } from 'vitest';
 
 describe('ErrorBoundary', () => {
   describe('Error Catching', () => {
@@ -11,7 +11,7 @@ describe('ErrorBoundary', () => {
       const errorBoundary = {
         hasError: false,
         error: null,
-        errorInfo: null
+        errorInfo: null,
       };
 
       const catchError = (error, errorInfo) => {
@@ -32,7 +32,7 @@ describe('ErrorBoundary', () => {
       const errorBoundary = {
         hasError: true,
         error: new Error('Test error'),
-        errorInfo: {}
+        errorInfo: {},
       };
 
       const resetError = () => {
@@ -49,7 +49,7 @@ describe('ErrorBoundary', () => {
 
     it('should call onError callback', () => {
       const errors = [];
-      const onError = vi.fn((error) => {
+      const onError = vi.fn(error => {
         errors.push(error);
       });
 
@@ -64,7 +64,7 @@ describe('ErrorBoundary', () => {
 
   describe('Error Classification', () => {
     it('should classify network errors', () => {
-      const classifyError = (error) => {
+      const classifyError = error => {
         const msg = error.message.toLowerCase();
         if (msg.includes('network') || msg.includes('timeout') || msg.includes('connection')) {
           return 'network';
@@ -82,11 +82,9 @@ describe('ErrorBoundary', () => {
     });
 
     it('should determine if error is recoverable', () => {
-      const isRecoverable = (error) => {
+      const isRecoverable = error => {
         const recoverablePatterns = ['timeout', 'network', 'rate limit'];
-        return recoverablePatterns.some(pattern =>
-          error.message.toLowerCase().includes(pattern)
-        );
+        return recoverablePatterns.some(pattern => error.message.toLowerCase().includes(pattern));
       };
 
       expect(isRecoverable(new Error('Connection timeout'))).toBe(true);
@@ -103,7 +101,7 @@ describe('Recovery', () => {
       let attempts = 0;
       const maxRetries = 3;
 
-      const executeWithRetry = async (operation) => {
+      const executeWithRetry = async operation => {
         while (attempts < maxRetries) {
           attempts++;
           try {
@@ -116,7 +114,8 @@ describe('Recovery', () => {
         }
       };
 
-      const failingOperation = vi.fn()
+      const failingOperation = vi
+        .fn()
         .mockRejectedValueOnce(new Error('Fail 1'))
         .mockRejectedValueOnce(new Error('Fail 2'))
         .mockResolvedValueOnce('Success');
@@ -129,9 +128,9 @@ describe('Recovery', () => {
 
     it('should use exponential backoff', async () => {
       const baseDelay = 1000;
-      const maxRetries = 3;
+      const _maxRetries = 3;
 
-      const getBackoffDelay = (attempt) => {
+      const getBackoffDelay = attempt => {
         return baseDelay * Math.pow(2, attempt - 1);
       };
 
@@ -144,19 +143,19 @@ describe('Recovery', () => {
       const recoveryState = {
         retryCount: 0,
         isRecovering: false,
-        lastError: null
+        lastError: null,
       };
 
       const startRecovery = () => {
         recoveryState.isRecovering = true;
       };
 
-      const incrementRetry = (error) => {
+      const incrementRetry = error => {
         recoveryState.retryCount++;
         recoveryState.lastError = error;
       };
 
-      const endRecovery = (success) => {
+      const endRecovery = success => {
         recoveryState.isRecovering = false;
         if (success) {
           recoveryState.retryCount = 0;
@@ -176,9 +175,7 @@ describe('Recovery', () => {
 
   describe('Recovery Strategies', () => {
     it('should fallback to cache on failure', async () => {
-      const cache = new Map([
-        ['query1', [{ id: 1, name: 'Cached Alice' }]]
-      ]);
+      const cache = new Map([['query1', [{ id: 1, name: 'Cached Alice' }]]]);
 
       const fetchWithFallback = async (queryId, fetchFn) => {
         try {
@@ -202,20 +199,23 @@ describe('Recovery', () => {
     it('should execute recovery actions', () => {
       const recoveryActions = [];
 
-      const addRecoveryAction = (action) => {
+      const addRecoveryAction = action => {
         recoveryActions.push(action);
       };
 
       const executeRecovery = () => {
         return recoveryActions.map(action => ({
           action: action.name,
-          result: action.execute()
+          result: action.execute(),
         }));
       };
 
       addRecoveryAction({ name: 'clearCache', execute: () => 'Cache cleared' });
       addRecoveryAction({ name: 'reconnect', execute: () => 'Reconnected' });
-      addRecoveryAction({ name: 'refreshToken', execute: () => 'Token refreshed' });
+      addRecoveryAction({
+        name: 'refreshToken',
+        execute: () => 'Token refreshed',
+      });
 
       const results = executeRecovery();
 
@@ -231,20 +231,20 @@ describe('ErrorReporting', () => {
     it('should create error log entries', () => {
       const errorLog = [];
 
-      const determineSeverity = (error) => {
+      const determineSeverity = error => {
         const msg = error.message.toLowerCase();
         if (msg.includes('critical') || msg.includes('failure')) return 'critical';
         if (msg.includes('timeout') || msg.includes('warning')) return 'warning';
         return 'error';
       };
 
-      const logError = (error) => {
+      const logError = error => {
         errorLog.push({
           id: Date.now(),
           message: error.message,
           stack: error.stack,
           timestamp: new Date().toISOString(),
-          severity: determineSeverity(error)
+          severity: determineSeverity(error),
         });
       };
 
@@ -262,7 +262,7 @@ describe('ErrorReporting', () => {
       const maxLogSize = 100;
       let errorLog = [];
 
-      const logError = (error) => {
+      const logError = error => {
         errorLog.push({ message: error.message, timestamp: Date.now() });
         if (errorLog.length > maxLogSize) {
           errorLog = errorLog.slice(-maxLogSize);
@@ -279,12 +279,9 @@ describe('ErrorReporting', () => {
     });
 
     it('should clear error log', () => {
-      const errorLog = [
-        { message: 'Error 1' },
-        { message: 'Error 2' }
-      ];
+      const errorLog = [{ message: 'Error 1' }, { message: 'Error 2' }];
 
-      const clearLog = () => errorLog.length = 0;
+      const clearLog = () => (errorLog.length = 0);
 
       clearLog();
 
@@ -297,7 +294,7 @@ describe('ErrorReporting', () => {
       const errors = [
         { message: 'Connection timeout', count: 5 },
         { message: 'Network error', count: 3 },
-        { message: 'Connection timeout', count: 2 }
+        { message: 'Connection timeout', count: 2 },
       ];
 
       const aggregated = errors.reduce((acc, err) => {
@@ -317,7 +314,7 @@ describe('ErrorReporting', () => {
     it('should calculate error rate', () => {
       const stats = {
         totalOperations: 1000,
-        failedOperations: 25
+        failedOperations: 25,
       };
 
       const errorRate = (stats.failedOperations / stats.totalOperations) * 100;
@@ -335,7 +332,7 @@ describe('ErrorReporting', () => {
           notifications.push({
             type: 'alert',
             message: error.message,
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
           });
         }
       };
@@ -352,7 +349,7 @@ describe('ErrorReporting', () => {
       let pendingNotifications = [];
       let sentBatches = [];
 
-      const queueNotification = (notification) => {
+      const queueNotification = notification => {
         pendingNotifications.push(notification);
         if (pendingNotifications.length >= batchSize) {
           sentBatches.push([...pendingNotifications]);

@@ -3,7 +3,11 @@
  * Tests full transaction audit workflow
  */
 
-import { createDarkMatterCore, LockchainWriter, DataFactory } from '../../src/knowledge-engine/index.mjs';
+import {
+  createDarkMatterCore,
+  LockchainWriter,
+  DataFactory,
+} from '../../src/knowledge-engine/index.mjs';
 import { mkdirSync, rmSync } from 'fs';
 import { join } from 'path';
 const { namedNode, quad, literal } = DataFactory;
@@ -29,7 +33,7 @@ async function testAuditTrail() {
 
     const lockchain = new LockchainWriter({
       repoPath: testDir,
-      enableMerkle: true
+      enableMerkle: true,
     });
 
     await lockchain.init();
@@ -42,10 +46,10 @@ async function testAuditTrail() {
           namedNode('http://example.org/newuser'),
           namedNode('http://example.org/name'),
           literal('New User')
-        )
+        ),
       ],
       removals: [],
-      actor: 'alice@example.org'
+      actor: 'alice@example.org',
     });
     console.log('✅ Executed transaction');
 
@@ -55,7 +59,7 @@ async function testAuditTrail() {
       action: 'add-user',
       delta: result.delta,
       timestamp: new Date(),
-      metadata: { ip: '192.168.1.1', reason: 'User registration' }
+      metadata: { ip: '192.168.1.1', reason: 'User registration' },
     });
     console.log('✅ Wrote receipt');
 

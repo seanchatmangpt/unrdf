@@ -26,7 +26,9 @@ export class Thesis {
     // Validate type
     const typeResult = ThesisTypeSchema.safeParse(type);
     if (!typeResult.success) {
-      throw new Error(`Invalid thesis type: ${type}. Valid types: ${THESIS_TYPES.map((t) => t.name).join(', ')}`);
+      throw new Error(
+        `Invalid thesis type: ${type}. Valid types: ${THESIS_TYPES.map(t => t.name).join(', ')}`
+      );
     }
 
     /** @type {string} */
@@ -64,7 +66,7 @@ export class Thesis {
    * @returns {Array<{milestone: string, dueDate: string, completed: boolean, notes?: string}>}
    */
   _validateSchedule(schedule) {
-    return schedule.map((item) => {
+    return schedule.map(item => {
       const result = ScheduleItemSchema.safeParse(item);
       if (!result.success) {
         throw new Error(`Invalid schedule item: ${result.error.message}`);
@@ -78,7 +80,7 @@ export class Thesis {
    * @returns {string[]}
    */
   getDefaultSections() {
-    const typeDef = THESIS_TYPES.find((t) => t.name === this.type);
+    const typeDef = THESIS_TYPES.find(t => t.name === this.type);
     return typeDef ? [...typeDef.sections] : [];
   }
 
@@ -87,7 +89,7 @@ export class Thesis {
    * @returns {{name: string, label: string, sections: string[]}|undefined}
    */
   getTypeDefinition() {
-    return THESIS_TYPES.find((t) => t.name === this.type);
+    return THESIS_TYPES.find(t => t.name === this.type);
   }
 
   /**
@@ -126,7 +128,7 @@ export class Thesis {
    * @returns {boolean} true if milestone was found and updated
    */
   completeMilestone(milestone) {
-    const item = this.schedule.find((s) => s.milestone === milestone);
+    const item = this.schedule.find(s => s.milestone === milestone);
     if (item) {
       item.completed = true;
       this.updatedAt = new Date().toISOString();
@@ -140,7 +142,7 @@ export class Thesis {
    * @returns {Array<{milestone: string, dueDate: string, completed: boolean, notes?: string}>}
    */
   getRemainingMilestones() {
-    return this.schedule.filter((s) => !s.completed);
+    return this.schedule.filter(s => !s.completed);
   }
 
   /**
@@ -148,7 +150,7 @@ export class Thesis {
    * @returns {Array<{milestone: string, dueDate: string, completed: boolean, notes?: string}>}
    */
   getCompletedMilestones() {
-    return this.schedule.filter((s) => s.completed);
+    return this.schedule.filter(s => s.completed);
   }
 
   /**
@@ -157,7 +159,7 @@ export class Thesis {
    */
   getProgress() {
     if (this.schedule.length === 0) return 0;
-    const completed = this.schedule.filter((s) => s.completed).length;
+    const completed = this.schedule.filter(s => s.completed).length;
     return Math.round((completed / this.schedule.length) * 100);
   }
 
@@ -238,7 +240,7 @@ export class Thesis {
     return {
       type: this.type,
       title: this.title,
-      schedule: this.schedule.map((s) => ({ ...s })),
+      schedule: this.schedule.map(s => ({ ...s })),
       defenseDate: this.defenseDate,
       sections: [...this.sections],
       committee: [...this.committee],
@@ -261,7 +263,7 @@ export class Thesis {
    * @returns {Array<{name: string, label: string, sections: string[]}>}
    */
   static all() {
-    return THESIS_TYPES.map((t) => ({ ...t, sections: [...t.sections] }));
+    return THESIS_TYPES.map(t => ({ ...t, sections: [...t.sections] }));
   }
 
   /**
@@ -270,7 +272,7 @@ export class Thesis {
    * @returns {{name: string, label: string, sections: string[]}|undefined}
    */
   static getType(name) {
-    const type = THESIS_TYPES.find((t) => t.name === name);
+    const type = THESIS_TYPES.find(t => t.name === name);
     return type ? { ...type, sections: [...type.sections] } : undefined;
   }
 

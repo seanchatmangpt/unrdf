@@ -3,7 +3,7 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
-import { renderHook, act } from '@testing-library/react';
+import { renderHook, _act } from '@testing-library/react';
 import { useTriples } from '../../../src/react-hooks/core/useTriples.mjs';
 import { Store, DataFactory } from 'n3';
 
@@ -16,7 +16,7 @@ describe('useTriples', () => {
     testStore = new Store([
       quad(namedNode('http://s1'), namedNode('http://p1'), literal('o1')),
       quad(namedNode('http://s2'), namedNode('http://p1'), literal('o2')),
-      quad(namedNode('http://s1'), namedNode('http://p2'), literal('o3'))
+      quad(namedNode('http://s1'), namedNode('http://p2'), literal('o3')),
     ]);
   });
 
@@ -41,7 +41,7 @@ describe('useTriples', () => {
       const { result } = renderHook(() => useTriples(testStore));
 
       const filtered = result.current.filter({
-        subject: namedNode('http://s1')
+        subject: namedNode('http://s1'),
       });
 
       expect(filtered).toHaveLength(2);
@@ -51,7 +51,7 @@ describe('useTriples', () => {
       const { result } = renderHook(() => useTriples(testStore));
 
       const filtered = result.current.filter({
-        predicate: namedNode('http://p1')
+        predicate: namedNode('http://p1'),
       });
 
       expect(filtered).toHaveLength(2);
@@ -61,7 +61,7 @@ describe('useTriples', () => {
       const { result } = renderHook(() => useTriples(testStore));
 
       const filtered = result.current.filter({
-        object: literal('o1')
+        object: literal('o1'),
       });
 
       expect(filtered).toHaveLength(1);
@@ -72,7 +72,7 @@ describe('useTriples', () => {
 
       const filtered = result.current.filter({
         subject: namedNode('http://s1'),
-        predicate: namedNode('http://p1')
+        predicate: namedNode('http://p1'),
       });
 
       expect(filtered).toHaveLength(1);
@@ -82,7 +82,7 @@ describe('useTriples', () => {
       const { result } = renderHook(() => useTriples(testStore));
 
       const filtered = result.current.filter({
-        subject: namedNode('http://nonexistent')
+        subject: namedNode('http://nonexistent'),
       });
 
       expect(filtered).toHaveLength(0);
@@ -136,7 +136,7 @@ describe('useTriples', () => {
       const { result } = renderHook(() => useTriples(testStore));
 
       const count = result.current.count({
-        subject: namedNode('http://s1')
+        subject: namedNode('http://s1'),
       });
 
       expect(count).toBe(2);
@@ -146,7 +146,7 @@ describe('useTriples', () => {
       const { result } = renderHook(() => useTriples(testStore));
 
       const count = result.current.count({
-        subject: namedNode('http://nonexistent')
+        subject: namedNode('http://nonexistent'),
       });
 
       expect(count).toBe(0);
@@ -156,19 +156,18 @@ describe('useTriples', () => {
   describe('State Updates', () => {
     it('should update when store changes', () => {
       const initialStore = new Store([
-        quad(namedNode('http://s1'), namedNode('http://p1'), literal('o1'))
+        quad(namedNode('http://s1'), namedNode('http://p1'), literal('o1')),
       ]);
 
-      const { result, rerender } = renderHook(
-        ({ store }) => useTriples(store),
-        { initialProps: { store: initialStore } }
-      );
+      const { result, rerender } = renderHook(({ store }) => useTriples(store), {
+        initialProps: { store: initialStore },
+      });
 
       expect(result.current.total).toBe(1);
 
       const newStore = new Store([
         quad(namedNode('http://s1'), namedNode('http://p1'), literal('o1')),
-        quad(namedNode('http://s2'), namedNode('http://p2'), literal('o2'))
+        quad(namedNode('http://s2'), namedNode('http://p2'), literal('o2')),
       ]);
 
       rerender({ store: newStore });
@@ -183,11 +182,7 @@ describe('useTriples', () => {
 
       for (let i = 0; i < 10000; i++) {
         largeStore.add(
-          quad(
-            namedNode(`http://s${i % 100}`),
-            namedNode(`http://p${i % 10}`),
-            literal(`o${i}`)
-          )
+          quad(namedNode(`http://s${i % 100}`), namedNode(`http://p${i % 10}`), literal(`o${i}`))
         );
       }
 

@@ -20,12 +20,6 @@
     "hooks",
     "policy"
   ],
-  "activationEvents": [
-    "onLanguage:hook",
-    "onLanguage:policy",
-    "onCommand:unrdf.validateHook",
-    "onCommand:unrdf.evaluateHook"
-  ],
   "main": "./extension.js",
   "contributes": {
     "languages": [

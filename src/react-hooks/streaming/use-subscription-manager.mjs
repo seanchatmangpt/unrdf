@@ -93,7 +93,7 @@ export function useSubscriptionManager(config = {}) {
         if (config.autoStart && config.pattern) {
           await subscribe(config.pattern, {
             filter: config.filter,
-            bufferSize: bufferSize
+            bufferSize: bufferSize,
           });
         }
 
@@ -116,88 +116,96 @@ export function useSubscriptionManager(config = {}) {
   }, [engine]);
 
   // Subscribe to pattern
-  const subscribe = useCallback(async (pattern, options = {}) => {
-    if (!subscriptionRef.current) {
-      throw new Error('Subscription manager not initialized');
-    }
-
-    try {
-      const subscriptionId = options.id || `sub-${Date.now()}`;
-
-      // Ensure RingBuffer is initialized with correct size
-      const maxBuffer = options.bufferSize || config.bufferSize || 100;
-      if (!eventsRef.current || eventsRef.current.capacity !== maxBuffer) {
-        eventsRef.current = new RingBuffer(maxBuffer);
+  const subscribe = useCallback(
+    async (pattern, options = {}) => {
+      if (!subscriptionRef.current) {
+        throw new Error('Subscription manager not initialized');
       }
 
-      const subscription = await subscriptionRef.current.subscribe({
-        pattern,
-        filter: options.filter,
-        bufferSize: maxBuffer,
-        onEvent: (event) => {
-          // TRIZ #10 Prior Action: O(1) push with automatic overflow handling
-          // RingBuffer automatically discards oldest items when full
-          eventsRef.current.push({
-            ...event,
-            subscriptionId,
-            timestamp: new Date().toISOString()
-          });
+      try {
+        const subscriptionId = options.id || `sub-${Date.now()}`;
 
-          // Convert to array for React state (RingBuffer handles size limiting)
-          setEvents(eventsRef.current.toArray());
-
-          // Custom callback
-          options.onEvent?.(event);
-        },
-        onError: (err) => {
-          setError(err);
-          options.onError?.(err);
+        // Ensure RingBuffer is initialized with correct size
+        const maxBuffer = options.bufferSize || config.bufferSize || 100;
+        if (!eventsRef.current || eventsRef.current.capacity !== maxBuffer) {
+          eventsRef.current = new RingBuffer(maxBuffer);
         }
-      });
 
-      setSubscriptions(prev => new Map(prev).set(subscriptionId, {
-        pattern,
-        subscription,
-        options
-      }));
+        const subscription = await subscriptionRef.current.subscribe({
+          pattern,
+          filter: options.filter,
+          bufferSize: maxBuffer,
+          onEvent: event => {
+            // TRIZ #10 Prior Action: O(1) push with automatic overflow handling
+            // RingBuffer automatically discards oldest items when full
+            eventsRef.current.push({
+              ...event,
+              subscriptionId,
+              timestamp: new Date().toISOString(),
+            });
 
-      setIsActive(true);
+            // Convert to array for React state (RingBuffer handles size limiting)
+            setEvents(eventsRef.current.toArray());
 
-      return { subscriptionId, subscription };
-    } catch (err) {
-      setError(err);
-      throw err;
-    }
-  }, [config]);
+            // Custom callback
+            options.onEvent?.(event);
+          },
+          onError: err => {
+            setError(err);
+            options.onError?.(err);
+          },
+        });
+
+        setSubscriptions(prev =>
+          new Map(prev).set(subscriptionId, {
+            pattern,
+            subscription,
+            options,
+          })
+        );
+
+        setIsActive(true);
+
+        return { subscriptionId, subscription };
+      } catch (err) {
+        setError(err);
+        throw err;
+      }
+    },
+    [config]
+  );
 
   // Unsubscribe from pattern
-  const unsubscribe = useCallback(async (subscriptionId) => {
-    if (!subscriptionRef.current) {
-      throw new Error('Subscription manager not initialized');
-    }
-
-    try {
-      const sub = subscriptions.get(subscriptionId);
-      if (!sub) {
-        throw new Error(`Subscription ${subscriptionId} not found`);
+  const unsubscribe = useCallback(
+    async subscriptionId => {
+      if (!subscriptionRef.current) {
+        throw new Error('Subscription manager not initialized');
       }
 
-      await sub.subscription.unsubscribe();
+      try {
+        const sub = subscriptions.get(subscriptionId);
+        if (!sub) {
+          throw new Error(`Subscription ${subscriptionId} not found`);
+        }
 
-      const newSubs = new Map(subscriptions);
-      newSubs.delete(subscriptionId);
-      setSubscriptions(newSubs);
+        await sub.subscription.unsubscribe();
 
-      if (newSubs.size === 0) {
-        setIsActive(false);
+        const newSubs = new Map(subscriptions);
+        newSubs.delete(subscriptionId);
+        setSubscriptions(newSubs);
+
+        if (newSubs.size === 0) {
+          setIsActive(false);
+        }
+
+        return { success: true };
+      } catch (err) {
+        setError(err);
+        throw err;
       }
-
-      return { success: true };
-    } catch (err) {
-      setError(err);
-      throw err;
-    }
-  }, [subscriptions]);
+    },
+    [subscriptions]
+  );
 
   // Unsubscribe all
   const unsubscribeAll = useCallback(async () => {
@@ -206,7 +214,7 @@ export function useSubscriptionManager(config = {}) {
     }
 
     try {
-      for (const [id, sub] of subscriptions) {
+      for (const [_id, sub] of subscriptions) {
         await sub.subscription.unsubscribe();
       }
 
@@ -230,41 +238,50 @@ export function useSubscriptionManager(config = {}) {
   }, []);
 
   // Get subscription by ID
-  const getSubscription = useCallback((subscriptionId) => {
-    return subscriptions.get(subscriptionId);
-  }, [subscriptions]);
+  const getSubscription = useCallback(
+    subscriptionId => {
+      return subscriptions.get(subscriptionId);
+    },
+    [subscriptions]
+  );
 
   // Pause subscription
-  const pause = useCallback(async (subscriptionId) => {
-    const sub = subscriptions.get(subscriptionId);
-    if (!sub) {
-      throw new Error(`Subscription ${subscriptionId} not found`);
-    }
+  const pause = useCallback(
+    async subscriptionId => {
+      const sub = subscriptions.get(subscriptionId);
+      if (!sub) {
+        throw new Error(`Subscription ${subscriptionId} not found`);
+      }
 
-    try {
-      await sub.subscription.pause();
-      return { success: true };
-    } catch (err) {
-      setError(err);
-      throw err;
-    }
-  }, [subscriptions]);
+      try {
+        await sub.subscription.pause();
+        return { success: true };
+      } catch (err) {
+        setError(err);
+        throw err;
+      }
+    },
+    [subscriptions]
+  );
 
   // Resume subscription
-  const resume = useCallback(async (subscriptionId) => {
-    const sub = subscriptions.get(subscriptionId);
-    if (!sub) {
-      throw new Error(`Subscription ${subscriptionId} not found`);
-    }
+  const resume = useCallback(
+    async subscriptionId => {
+      const sub = subscriptions.get(subscriptionId);
+      if (!sub) {
+        throw new Error(`Subscription ${subscriptionId} not found`);
+      }
 
-    try {
-      await sub.subscription.resume();
-      return { success: true };
-    } catch (err) {
-      setError(err);
-      throw err;
-    }
-  }, [subscriptions]);
+      try {
+        await sub.subscription.resume();
+        return { success: true };
+      } catch (err) {
+        setError(err);
+        throw err;
+      }
+    },
+    [subscriptions]
+  );
 
   return {
     subscribe,
@@ -274,7 +291,7 @@ export function useSubscriptionManager(config = {}) {
     subscriptions: Array.from(subscriptions.entries()).map(([id, sub]) => ({
       id,
       pattern: sub.pattern,
-      options: sub.options
+      options: sub.options,
     })),
     isActive,
     loading,
@@ -282,6 +299,6 @@ export function useSubscriptionManager(config = {}) {
     clear,
     getSubscription,
     pause,
-    resume
+    resume,
   };
 }

@@ -17,22 +17,24 @@ const QueryExecutionLogSchema = z.object({
   query: z.string(),
   executionTime: z.number(),
   timestamp: z.number(),
-  metadata: z.object({}).passthrough().optional()
+  metadata: z.object({}).passthrough().optional(),
 });
 
 /**
  * Schema for critical path result
  */
 const CriticalPathResultSchema = z.object({
-  criticalQueries: z.array(z.object({
-    queryId: z.string(),
-    query: z.string(),
-    executionTime: z.number(),
-    occurrences: z.number(),
-    totalTime: z.number(),
-    percentageOfTotal: z.number(),
-    rank: z.number()
-  })),
+  criticalQueries: z.array(
+    z.object({
+      queryId: z.string(),
+      query: z.string(),
+      executionTime: z.number(),
+      occurrences: z.number(),
+      totalTime: z.number(),
+      percentageOfTotal: z.number(),
+      rank: z.number(),
+    })
+  ),
   metrics: z.object({
     totalQueries: z.number(),
     criticalQueryCount: z.number(),
@@ -43,9 +45,9 @@ const CriticalPathResultSchema = z.object({
     avgExecutionTime: z.number(),
     p50: z.number(),
     p90: z.number(),
-    p99: z.number()
+    p99: z.number(),
   }),
-  timestamp: z.number()
+  timestamp: z.number(),
 });
 
 /**
@@ -62,7 +64,7 @@ export class CriticalPathIdentifier {
       targetQueryRatio: config.targetQueryRatio || 0.2, // from 20% of queries
       minSampleSize: config.minSampleSize || 10,
       windowSize: config.windowSize || 1000, // Keep last 1000 queries
-      ...config
+      ...config,
     };
 
     this.executionLogs = [];
@@ -82,7 +84,7 @@ export class CriticalPathIdentifier {
       query,
       executionTime,
       timestamp: Date.now(),
-      metadata
+      metadata,
     };
 
     this.executionLogs.push(QueryExecutionLogSchema.parse(log));
@@ -104,7 +106,7 @@ export class CriticalPathIdentifier {
     if (this.executionLogs.length < this.config.minSampleSize) {
       throw new Error(
         `Insufficient data: ${this.executionLogs.length} queries logged, ` +
-        `minimum ${this.config.minSampleSize} required`
+          `minimum ${this.config.minSampleSize} required`
       );
     }
 
@@ -118,32 +120,24 @@ export class CriticalPathIdentifier {
     const queryStats = this._aggregateQueryStats();
 
     // Sort by total execution time (descending)
-    const sortedQueries = Array.from(queryStats.values())
-      .sort((a, b) => b.totalTime - a.totalTime);
+    const sortedQueries = Array.from(queryStats.values()).sort((a, b) => b.totalTime - a.totalTime);
 
     // Calculate total execution time
     const totalExecutionTime = sortedQueries.reduce((sum, q) => sum + q.totalTime, 0);
 
     // Find critical queries (top 20% that account for 80% of time)
-    const criticalQueries = this._findCriticalQueries(
-      sortedQueries,
-      totalExecutionTime
-    );
+    const criticalQueries = this._findCriticalQueries(sortedQueries, totalExecutionTime);
 
     // Calculate metrics
-    const metrics = this._calculateMetrics(
-      sortedQueries,
-      criticalQueries,
-      totalExecutionTime
-    );
+    const metrics = this._calculateMetrics(sortedQueries, criticalQueries, totalExecutionTime);
 
     const result = {
       criticalQueries: criticalQueries.map((q, index) => ({
         ...q,
-        rank: index + 1
+        rank: index + 1,
       })),
       metrics,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
 
     const validated = CriticalPathResultSchema.parse(result);
@@ -170,7 +164,7 @@ export class CriticalPathIdentifier {
           executionTime: 0,
           occurrences: 0,
           totalTime: 0,
-          percentageOfTotal: 0
+          percentageOfTotal: 0,
         });
       }
 
@@ -210,9 +204,7 @@ export class CriticalPathIdentifier {
     }
 
     // Ensure we don't exceed target query ratio (20%)
-    const maxCriticalQueries = Math.ceil(
-      sortedQueries.length * this.config.targetQueryRatio
-    );
+    const maxCriticalQueries = Math.ceil(sortedQueries.length * this.config.targetQueryRatio);
 
     // Return either the queries that hit 80% impact or top 20%, whichever is smaller
     return critical.slice(0, Math.min(critical.length, maxCriticalQueries));
@@ -227,18 +219,13 @@ export class CriticalPathIdentifier {
    * @private
    */
   _calculateMetrics(allQueries, criticalQueries, totalExecutionTime) {
-    const criticalExecutionTime = criticalQueries.reduce(
-      (sum, q) => sum + q.totalTime,
-      0
-    );
+    const criticalExecutionTime = criticalQueries.reduce((sum, q) => sum + q.totalTime, 0);
 
     // Calculate percentiles
-    const executionTimes = this.executionLogs
-      .map(log => log.executionTime)
-      .sort((a, b) => a - b);
+    const executionTimes = this.executionLogs.map(log => log.executionTime).sort((a, b) => a - b);
 
-    const p50 = this._percentile(executionTimes, 0.50);
-    const p90 = this._percentile(executionTimes, 0.90);
+    const p50 = this._percentile(executionTimes, 0.5);
+    const p90 = this._percentile(executionTimes, 0.9);
     const p99 = this._percentile(executionTimes, 0.99);
 
     return {
@@ -251,7 +238,7 @@ export class CriticalPathIdentifier {
       avgExecutionTime: totalExecutionTime / this.executionLogs.length,
       p50,
       p90,
-      p99
+      p99,
     };
   }
 
@@ -298,9 +285,11 @@ export class CriticalPathIdentifier {
     }
 
     report += '\n## Recommendations\n\n';
-    report += 'Focus optimization efforts on the queries listed above. These represent the critical path:\n\n';
+    report +=
+      'Focus optimization efforts on the queries listed above. These represent the critical path:\n\n';
     report += `- Optimizing the top ${analysis.metrics.criticalQueryCount} queries will improve ${(analysis.metrics.impactRatio * 100).toFixed(1)}% of query performance\n`;
-    report += '- Consider adding indexes, rewriting queries, or caching results for critical queries\n';
+    report +=
+      '- Consider adding indexes, rewriting queries, or caching results for critical queries\n';
     report += '- Monitor P99 latency to catch performance regressions\n';
 
     return report;
@@ -344,11 +333,15 @@ export class CriticalPathIdentifier {
    * @returns {string} JSON string
    */
   exportLogs() {
-    return JSON.stringify({
-      logs: this.executionLogs,
-      config: this.config,
-      timestamp: Date.now()
-    }, null, 2);
+    return JSON.stringify(
+      {
+        logs: this.executionLogs,
+        config: this.config,
+        timestamp: Date.now(),
+      },
+      null,
+      2
+    );
   }
 
   /**
@@ -357,9 +350,7 @@ export class CriticalPathIdentifier {
    */
   importLogs(json) {
     const data = JSON.parse(json);
-    this.executionLogs = data.logs.map(log =>
-      QueryExecutionLogSchema.parse(log)
-    );
+    this.executionLogs = data.logs.map(log => QueryExecutionLogSchema.parse(log));
     this.cache.clear();
   }
 }

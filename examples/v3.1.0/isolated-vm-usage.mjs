@@ -20,13 +20,13 @@ console.log('========================================\n');
 
 const system = await createDarkMatterCore({
   sandbox: {
-    engine: 'isolated-vm',  // Default in v3.1.0
-    memoryLimit: 128,  // MB per isolate
-    timeout: 5000,     // ms
-    enableWasm: true,  // Enable WASM support
-    poolSize: 10,      // Reuse isolates
-    maxConcurrent: 20  // Max concurrent executions
-  }
+    engine: 'isolated-vm', // Default in v3.1.0
+    memoryLimit: 128, // MB per isolate
+    timeout: 5000, // ms
+    enableWasm: true, // Enable WASM support
+    poolSize: 10, // Reuse isolates
+    maxConcurrent: 20, // Max concurrent executions
+  },
 });
 
 console.log('✅ System initialized with isolated-vm sandbox');
@@ -43,13 +43,13 @@ console.log('=============================================\n');
 const safeHook = defineHook({
   meta: {
     name: 'safe-transform',
-    description: 'Safely transform data in isolated environment'
+    description: 'Safely transform data in isolated environment',
   },
   when: {
     kind: 'delta',
-    additions: { minCount: 1 }
+    additions: { minCount: 1 },
   },
-  run: async (event) => {
+  run: async event => {
     // This code runs in isolated-vm (complete isolation)
     const count = event.delta.additions.length;
 
@@ -59,9 +59,9 @@ const safeHook = defineHook({
     return {
       success: true,
       transformed: result,
-      message: `Processed ${count} additions`
+      message: `Processed ${count} additions`,
     };
-  }
+  },
 });
 
 await registerHook(safeHook);
@@ -78,10 +78,10 @@ await system.executeTransaction({
       namedNode('http://example.org/bob'),
       namedNode('http://xmlns.com/foaf/0.1/name'),
       literal('Bob')
-    )
+    ),
   ],
   removals: [],
-  actor: 'example-user'
+  actor: 'example-user',
 });
 
 console.log('✅ Safe hook executed successfully in isolated-vm\n');
@@ -93,32 +93,32 @@ console.log('====================================\n');
 const memoryTestHook = defineHook({
   meta: {
     name: 'memory-test',
-    description: 'Test memory limit enforcement'
+    description: 'Test memory limit enforcement',
   },
   when: {
     kind: 'sparql-ask',
-    query: 'ASK { ?s ?p ?o }'
+    query: 'ASK { ?s ?p ?o }',
   },
-  run: async (event) => {
+  run: async _event => {
     // Attempt to allocate large array (will be limited)
     const largeArray = [];
 
     // This will hit memory limit before exhausting host memory
     try {
       for (let i = 0; i < 1000000; i++) {
-        largeArray.push(new Array(1024));  // 1KB per iteration
+        largeArray.push(new Array(1024)); // 1KB per iteration
       }
     } catch (err) {
       // Memory limit enforced by isolated-vm
       return {
         success: false,
         error: 'Memory limit enforced',
-        allocated: largeArray.length
+        allocated: largeArray.length,
       };
     }
 
     return { success: true, allocated: largeArray.length };
-  }
+  },
 });
 
 await registerHook(memoryTestHook);
@@ -133,23 +133,23 @@ console.log('===================================\n');
 const timeoutHook = defineHook({
   meta: {
     name: 'timeout-test',
-    description: 'Test CPU timeout enforcement'
+    description: 'Test CPU timeout enforcement',
   },
   when: {
     kind: 'sparql-ask',
-    query: 'ASK { ?s ?p ?o }'
+    query: 'ASK { ?s ?p ?o }',
   },
-  run: async (event) => {
+  run: async _event => {
     // Infinite loop - will be killed after timeout
     const start = Date.now();
     while (true) {
       // This will run for at most 5000ms (timeout)
       if (Date.now() - start > 10000) {
-        break;  // Would take 10s, but timeout is 5s
+        break; // Would take 10s, but timeout is 5s
       }
     }
     return { success: true };
-  }
+  },
 });
 
 await registerHook(timeoutHook);
@@ -161,9 +161,9 @@ try {
         namedNode('http://example.org/test'),
         namedNode('http://example.org/prop'),
         literal('value')
-      )
+      ),
     ],
-    actor: 'timeout-test'
+    actor: 'timeout-test',
   });
 } catch (err) {
   console.log('✅ Timeout enforced correctly');
@@ -178,18 +178,18 @@ console.log('===================================================\n');
 const maliciousHook = defineHook({
   meta: {
     name: 'malicious-attempt',
-    description: 'Attempt dangerous operations (will be blocked)'
+    description: 'Attempt dangerous operations (will be blocked)',
   },
   when: {
     kind: 'sparql-ask',
-    query: 'ASK { ?s ?p ?o }'
+    query: 'ASK { ?s ?p ?o }',
   },
-  run: async (event) => {
+  run: async _event => {
     const blockedOperations = [];
 
     // Attempt 1: Access process (BLOCKED)
     try {
-      const proc = process;  // ReferenceError: process is not defined
+      const _proc = process; // ReferenceError: process is not defined
       blockedOperations.push('process - ACCESSIBLE ❌');
     } catch (err) {
       blockedOperations.push('process - BLOCKED ✅');
@@ -197,7 +197,7 @@ const maliciousHook = defineHook({
 
     // Attempt 2: Require modules (BLOCKED)
     try {
-      const fs = require('fs');  // ReferenceError: require is not defined
+      const _fs = require('_fs'); // ReferenceError: require is not defined
       blockedOperations.push('require - ACCESSIBLE ❌');
     } catch (err) {
       blockedOperations.push('require - BLOCKED ✅');
@@ -205,7 +205,7 @@ const maliciousHook = defineHook({
 
     // Attempt 3: Access global (BLOCKED)
     try {
-      const g = global;  // ReferenceError: global is not defined
+      const _g = global; // ReferenceError: global is not defined
       blockedOperations.push('global - ACCESSIBLE ❌');
     } catch (err) {
       blockedOperations.push('global - BLOCKED ✅');
@@ -214,7 +214,7 @@ const maliciousHook = defineHook({
     // Attempt 4: Constructor escape (BLOCKED)
     try {
       const Constructor = this.constructor.constructor;
-      const proc = Constructor('return process')();
+      const _proc = Constructor('return process')();
       blockedOperations.push('constructor escape - SUCCESSFUL ❌');
     } catch (err) {
       blockedOperations.push('constructor escape - BLOCKED ✅');
@@ -222,22 +222,22 @@ const maliciousHook = defineHook({
 
     return {
       success: true,
-      blockedOperations
+      blockedOperations,
     };
-  }
+  },
 });
 
 await registerHook(maliciousHook);
 
-const securityResult = await system.executeTransaction({
+const _securityResult = await system.executeTransaction({
   additions: [
     quad(
       namedNode('http://example.org/security-test'),
       namedNode('http://example.org/test'),
       literal('test')
-    )
+    ),
   ],
-  actor: 'security-test'
+  actor: 'security-test',
 });
 
 console.log('Security Isolation Test Results:');
@@ -265,8 +265,8 @@ const systemWithHandlers = await createDarkMatterCore({
     onMemoryLimit: (effectId, usage) => {
       console.log(`⚠️  Effect "${effectId}" exceeded memory limit: ${usage}MB`);
       // Can log to monitoring, alert team, etc.
-    }
-  }
+    },
+  },
 });
 
 console.log('✅ Custom error handlers registered');
@@ -280,9 +280,9 @@ console.log('===================================\n');
 const pooledSystem = await createDarkMatterCore({
   sandbox: {
     engine: 'isolated-vm',
-    poolSize: 5,  // Reuse 5 isolates
-    maxConcurrent: 10  // Max 10 concurrent executions
-  }
+    poolSize: 5, // Reuse 5 isolates
+    maxConcurrent: 10, // Max 10 concurrent executions
+  },
 });
 
 console.log('✅ Isolate pool configured:');
@@ -300,20 +300,20 @@ console.log('============================================\n');
 const wasmSystem = await createDarkMatterCore({
   sandbox: {
     engine: 'isolated-vm',
-    enableWasm: true  // Enable WebAssembly support
-  }
+    enableWasm: true, // Enable WebAssembly support
+  },
 });
 
-const wasmHook = defineHook({
+const _wasmHook = defineHook({
   meta: {
     name: 'wasm-transform',
-    description: 'Use WASM for compute-intensive transformations'
+    description: 'Use WASM for compute-intensive transformations',
   },
   when: {
     kind: 'delta',
-    additions: { minCount: 1 }
+    additions: { minCount: 1 },
   },
-  run: async (event) => {
+  run: async _event => {
     // In real usage, you'd load a WASM module here
     // This is a conceptual example
 
@@ -324,9 +324,9 @@ const wasmHook = defineHook({
     return {
       success: true,
       message: 'WASM transformation would execute here',
-      note: 'WASM provides near-native performance for compute tasks'
+      note: 'WASM provides near-native performance for compute tasks',
     };
-  }
+  },
 });
 
 console.log('✅ WASM support enabled');

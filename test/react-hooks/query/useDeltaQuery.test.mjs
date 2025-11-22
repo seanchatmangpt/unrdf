@@ -11,13 +11,11 @@ describe('useDeltaQuery', () => {
   let store1, store2;
 
   beforeEach(() => {
-    store1 = new Store([
-      quad(namedNode('http://s1'), namedNode('http://p'), literal('o1'))
-    ]);
+    store1 = new Store([quad(namedNode('http://s1'), namedNode('http://p'), literal('o1'))]);
 
     store2 = new Store([
       quad(namedNode('http://s1'), namedNode('http://p'), literal('o1')),
-      quad(namedNode('http://s2'), namedNode('http://p'), literal('o2'))
+      quad(namedNode('http://s2'), namedNode('http://p'), literal('o2')),
     ]);
   });
 
@@ -60,7 +58,7 @@ describe('useDeltaQuery', () => {
     it('should apply delta to store', () => {
       const delta = {
         added: [quad(namedNode('http://s3'), namedNode('http://p'), literal('o3'))],
-        removed: []
+        removed: [],
       };
 
       delta.added.forEach(q => store1.add(q));
@@ -71,10 +69,16 @@ describe('useDeltaQuery', () => {
     it('should track delta history', () => {
       const history = [];
 
-      const delta1 = { added: [quad(namedNode('http://s2'), namedNode('http://p'), literal('o2'))], removed: [] };
+      const delta1 = {
+        added: [quad(namedNode('http://s2'), namedNode('http://p'), literal('o2'))],
+        removed: [],
+      };
       history.push(delta1);
 
-      const delta2 = { added: [quad(namedNode('http://s3'), namedNode('http://p'), literal('o3'))], removed: [] };
+      const delta2 = {
+        added: [quad(namedNode('http://s3'), namedNode('http://p'), literal('o3'))],
+        removed: [],
+      };
       history.push(delta2);
 
       expect(history).toHaveLength(2);

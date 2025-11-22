@@ -45,72 +45,87 @@ export function useStore(initialStore = null) {
   /**
    * Add a quad to the store
    */
-  const addQuad = useCallback((quad) => {
-    try {
-      store.addQuad(quad);
-      setVersion(v => v + 1);
-      return true;
-    } catch (error) {
-      console.error('[useStore] Failed to add quad:', error);
-      return false;
-    }
-  }, [store]);
+  const addQuad = useCallback(
+    quad => {
+      try {
+        store.addQuad(quad);
+        setVersion(v => v + 1);
+        return true;
+      } catch (error) {
+        console.error('[useStore] Failed to add quad:', error);
+        return false;
+      }
+    },
+    [store]
+  );
 
   /**
    * Add multiple quads to the store
    */
-  const addQuads = useCallback((quads) => {
-    try {
-      store.addQuads(quads);
-      setVersion(v => v + 1);
-      return true;
-    } catch (error) {
-      console.error('[useStore] Failed to add quads:', error);
-      return false;
-    }
-  }, [store]);
+  const addQuads = useCallback(
+    quads => {
+      try {
+        store.addQuads(quads);
+        setVersion(v => v + 1);
+        return true;
+      } catch (error) {
+        console.error('[useStore] Failed to add quads:', error);
+        return false;
+      }
+    },
+    [store]
+  );
 
   /**
    * Remove a quad from the store
    */
-  const removeQuad = useCallback((quad) => {
-    try {
-      store.removeQuad(quad);
-      setVersion(v => v + 1);
-      return true;
-    } catch (error) {
-      console.error('[useStore] Failed to remove quad:', error);
-      return false;
-    }
-  }, [store]);
+  const removeQuad = useCallback(
+    quad => {
+      try {
+        store.removeQuad(quad);
+        setVersion(v => v + 1);
+        return true;
+      } catch (error) {
+        console.error('[useStore] Failed to remove quad:', error);
+        return false;
+      }
+    },
+    [store]
+  );
 
   /**
    * Remove multiple quads from the store
    */
-  const removeQuads = useCallback((quads) => {
-    try {
-      store.removeQuads(quads);
-      setVersion(v => v + 1);
-      return true;
-    } catch (error) {
-      console.error('[useStore] Failed to remove quads:', error);
-      return false;
-    }
-  }, [store]);
+  const removeQuads = useCallback(
+    quads => {
+      try {
+        store.removeQuads(quads);
+        setVersion(v => v + 1);
+        return true;
+      } catch (error) {
+        console.error('[useStore] Failed to remove quads:', error);
+        return false;
+      }
+    },
+    [store]
+  );
 
   /**
    * Remove matching quads
    */
-  const removeMatches = useCallback((subject, predicate, object, graph) => {
-    try {
-      store.removeMatches(subject, predicate, object, graph);
-      setVersion(v => v + 1);
-      return true;
-    } catch (error) {
-      console.error('[useStore] Failed to remove matches:', error);
-      return false;
-    }
-  }, [store]);
+  const removeMatches = useCallback(
+    (subject, predicate, object, graph) => {
+      try {
+        store.removeMatches(subject, predicate, object, graph);
+        setVersion(v => v + 1);
+        return true;
+      } catch (error) {
+        console.error('[useStore] Failed to remove matches:', error);
+        return false;
+      }
+    },
+    [store]
+  );
 
   /**
    * Clear all quads from the store
@@ -130,7 +145,7 @@ export function useStore(initialStore = null) {
   /**
    * Replace entire store
    */
-  const replaceStore = useCallback((newStore) => {
+  const replaceStore = useCallback(newStore => {
     setStore(newStore);
     setVersion(0);
   }, []);
@@ -153,23 +168,32 @@ export function useStore(initialStore = null) {
   /**
    * Match quads by pattern
    */
-  const match = useCallback((subject, predicate, object, graph) => {
-    return store.getQuads(subject, predicate, object, graph);
-  }, [store, version]);
+  const match = useCallback(
+    (subject, predicate, object, graph) => {
+      return store.getQuads(subject, predicate, object, graph);
+    },
+    [store, version]
+  );
 
   /**
    * Check if quad exists
    */
-  const has = useCallback((quad) => {
-    return store.has(quad);
-  }, [store, version]);
+  const has = useCallback(
+    quad => {
+      return store.has(quad);
+    },
+    [store, version]
+  );
 
   /**
    * Count matching quads
    */
-  const countMatches = useCallback((subject, predicate, object, graph) => {
-    return store.countQuads(subject, predicate, object, graph);
-  }, [store, version]);
+  const countMatches = useCallback(
+    (subject, predicate, object, graph) => {
+      return store.countQuads(subject, predicate, object, graph);
+    },
+    [store, version]
+  );
 
   return {
     store,
@@ -186,6 +210,6 @@ export function useStore(initialStore = null) {
     size,
     isEmpty,
     quads,
-    version // Expose version for external tracking
+    version, // Expose version for external tracking
   };
 }

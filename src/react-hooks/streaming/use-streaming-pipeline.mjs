@@ -80,7 +80,7 @@ export function useStreamingPipeline(config = {}) {
     eventsProcessed: 0,
     validationsPassed: 0,
     validationsFailed: 0,
-    windowsCompleted: 0
+    windowsCompleted: 0,
   });
   const [error, setError] = useState(null);
   const uptimeIntervalRef = useRef(null);
@@ -100,7 +100,7 @@ export function useStreamingPipeline(config = {}) {
         eventsProcessed: changeFeed.stats.totalChanges,
         validationsPassed: validator.stats.passed,
         validationsFailed: validator.stats.failed,
-        windowsCompleted: processor.stats.windowsProcessed
+        windowsCompleted: processor.stats.windowsProcessed,
       });
     };
 
@@ -125,7 +125,7 @@ export function useStreamingPipeline(config = {}) {
       // Start subscriptions
       if (config.subscription?.pattern) {
         await subscription.subscribe(config.subscription.pattern, {
-          filter: config.subscription.filter
+          filter: config.subscription.filter,
         });
       }
 
@@ -143,7 +143,7 @@ export function useStreamingPipeline(config = {}) {
 
       config.onPipelineEvent?.({
         type: 'pipeline:started',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
 
       return { success: true };
@@ -152,7 +152,7 @@ export function useStreamingPipeline(config = {}) {
       config.onPipelineEvent?.({
         type: 'pipeline:error',
         error: err,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
       throw err;
     }
@@ -180,7 +180,7 @@ export function useStreamingPipeline(config = {}) {
       config.onPipelineEvent?.({
         type: 'pipeline:stopped',
         timestamp: new Date().toISOString(),
-        stats: pipelineStats
+        stats: pipelineStats,
       });
 
       return { success: true };
@@ -189,7 +189,7 @@ export function useStreamingPipeline(config = {}) {
       config.onPipelineEvent?.({
         type: 'pipeline:error',
         error: err,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
       throw err;
     }
@@ -203,7 +203,7 @@ export function useStreamingPipeline(config = {}) {
 
       config.onPipelineEvent?.({
         type: 'pipeline:paused',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
 
       return { success: true };
@@ -221,7 +221,7 @@ export function useStreamingPipeline(config = {}) {
 
       config.onPipelineEvent?.({
         type: 'pipeline:resumed',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
 
       return { success: true };
@@ -243,18 +243,19 @@ export function useStreamingPipeline(config = {}) {
       eventsProcessed: 0,
       validationsPassed: 0,
       validationsFailed: 0,
-      windowsCompleted: 0
+      windowsCompleted: 0,
     });
 
     config.onPipelineEvent?.({
       type: 'pipeline:cleared',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }, [subscription, changeFeed, processor, validator, config]);
 
   // Get pipeline health
   const getHealth = useCallback(() => {
-    const isHealthy = isPipelineRunning &&
+    const isHealthy =
+      isPipelineRunning &&
       !error &&
       changeFeed.isRunning &&
       (config.enableProcessing === false || processor.isProcessing) &&
@@ -266,9 +267,9 @@ export function useStreamingPipeline(config = {}) {
         changeFeed: changeFeed.isRunning,
         subscriptions: subscription.isActive,
         processor: config.enableProcessing === false || processor.isProcessing,
-        validator: config.enableValidation === false || validator.isRunning
+        validator: config.enableValidation === false || validator.isRunning,
       },
-      error
+      error,
     };
   }, [isPipelineRunning, error, changeFeed, subscription, processor, validator, config]);
 
@@ -281,8 +282,8 @@ export function useStreamingPipeline(config = {}) {
       validator: validator.stats,
       subscriptions: {
         active: subscription.subscriptions.length,
-        events: subscription.events.length
-      }
+        events: subscription.events.length,
+      },
     };
   }, [pipelineStats, changeFeed, processor, validator, subscription]);
 
@@ -312,6 +313,6 @@ export function useStreamingPipeline(config = {}) {
     windows: processor.windows,
     violations: validator.violations,
     validChanges: validator.validChanges,
-    invalidChanges: validator.invalidChanges
+    invalidChanges: validator.invalidChanges,
   };
 }

@@ -4,7 +4,7 @@
  * @since 3.2.0
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, _beforeEach, vi } from 'vitest';
 
 describe('useKnowledgeStack', () => {
   describe('Stack Preset Configuration', () => {
@@ -13,8 +13,8 @@ describe('useKnowledgeStack', () => {
         basic: {
           enableRealtime: false,
           enableRecovery: false,
-          enableErrorBoundary: true
-        }
+          enableErrorBoundary: true,
+        },
       };
 
       const config = presets['basic'];
@@ -29,8 +29,8 @@ describe('useKnowledgeStack', () => {
         realtime: {
           enableRealtime: true,
           enableRecovery: false,
-          enableErrorBoundary: true
-        }
+          enableErrorBoundary: true,
+        },
       };
 
       const config = presets['realtime'];
@@ -45,8 +45,8 @@ describe('useKnowledgeStack', () => {
         resilient: {
           enableRealtime: false,
           enableRecovery: true,
-          enableErrorBoundary: true
-        }
+          enableErrorBoundary: true,
+        },
       };
 
       const config = presets['resilient'];
@@ -61,8 +61,8 @@ describe('useKnowledgeStack', () => {
         full: {
           enableRealtime: true,
           enableRecovery: true,
-          enableErrorBoundary: true
-        }
+          enableErrorBoundary: true,
+        },
       };
 
       const config = presets['full'];
@@ -76,19 +76,19 @@ describe('useKnowledgeStack', () => {
       const preset = {
         enableRealtime: false,
         enableRecovery: false,
-        enableErrorBoundary: true
+        enableErrorBoundary: true,
       };
 
       const userConfig = {
         enableRealtime: true,
-        maxRetries: 5
+        maxRetries: 5,
       };
 
       const resolved = {
         enableRealtime: userConfig.enableRealtime ?? preset.enableRealtime,
         enableRecovery: userConfig.enableRecovery ?? preset.enableRecovery,
         enableErrorBoundary: userConfig.enableErrorBoundary ?? preset.enableErrorBoundary,
-        maxRetries: userConfig.maxRetries || 3
+        maxRetries: userConfig.maxRetries || 3,
       };
 
       expect(resolved.enableRealtime).toBe(true);
@@ -97,12 +97,12 @@ describe('useKnowledgeStack', () => {
     });
 
     it('should default to basic preset when invalid preset specified', () => {
-      const resolvePreset = (preset) => {
+      const resolvePreset = preset => {
         const presets = {
           basic: { enableRealtime: false, enableRecovery: false },
           realtime: { enableRealtime: true, enableRecovery: false },
           resilient: { enableRealtime: false, enableRecovery: true },
-          full: { enableRealtime: true, enableRecovery: true }
+          full: { enableRealtime: true, enableRecovery: true },
         };
         return presets[preset] || presets.basic;
       };
@@ -119,8 +119,8 @@ describe('useKnowledgeStack', () => {
       const stack = {
         query: vi.fn().mockResolvedValue([
           { subject: 'alice', predicate: 'knows', object: 'bob' },
-          { subject: 'bob', predicate: 'knows', object: 'carol' }
-        ])
+          { subject: 'bob', predicate: 'knows', object: 'carol' },
+        ]),
       };
 
       const result = await stack.query('SELECT * WHERE { ?s foaf:knows ?o }');
@@ -132,15 +132,13 @@ describe('useKnowledgeStack', () => {
     it('should provide insert operation', async () => {
       const data = [];
       const stack = {
-        insert: vi.fn((quads) => {
+        insert: vi.fn(quads => {
           data.push(...quads);
           return { inserted: quads.length };
-        })
+        }),
       };
 
-      const result = await stack.insert([
-        { subject: 'alice', predicate: 'knows', object: 'bob' }
-      ]);
+      const result = await stack.insert([{ subject: 'alice', predicate: 'knows', object: 'bob' }]);
 
       expect(result.inserted).toBe(1);
       expect(data).toHaveLength(1);
@@ -149,15 +147,15 @@ describe('useKnowledgeStack', () => {
     it('should provide delete operation', async () => {
       let data = [
         { id: '1', subject: 'alice', predicate: 'knows', object: 'bob' },
-        { id: '2', subject: 'bob', predicate: 'knows', object: 'carol' }
+        { id: '2', subject: 'bob', predicate: 'knows', object: 'carol' },
       ];
 
       const stack = {
-        delete: vi.fn((pattern) => {
+        delete: vi.fn(pattern => {
           const before = data.length;
           data = data.filter(q => q.subject !== pattern.subject);
           return { deleted: before - data.length };
-        })
+        }),
       };
 
       const result = await stack.delete({ subject: 'alice' });
@@ -169,7 +167,7 @@ describe('useKnowledgeStack', () => {
     it('should handle query errors gracefully', async () => {
       const stack = {
         query: vi.fn().mockRejectedValue(new Error('Query failed')),
-        error: null
+        error: null,
       };
 
       try {
@@ -184,12 +182,12 @@ describe('useKnowledgeStack', () => {
     it('should track loading state during operations', async () => {
       let loading = false;
       const stack = {
-        query: vi.fn(async (sparql) => {
+        query: vi.fn(async _sparql => {
           loading = true;
           await new Promise(resolve => setTimeout(resolve, 10));
           loading = false;
           return [];
-        })
+        }),
       };
 
       const promise = stack.query('SELECT * WHERE { ?s ?p ?o }');
@@ -206,9 +204,13 @@ describe('useKnowledgeStack', () => {
 
       const createDashboardStack = () => {
         const stack = {
-          startLive: vi.fn(() => { liveStarted = true; }),
-          stopLive: vi.fn(() => { liveStarted = false; }),
-          isLive: false
+          startLive: vi.fn(() => {
+            liveStarted = true;
+          }),
+          stopLive: vi.fn(() => {
+            liveStarted = false;
+          }),
+          isLive: false,
         };
 
         // Auto-start
@@ -228,9 +230,9 @@ describe('useKnowledgeStack', () => {
       const changes = [];
       const dashboard = {
         changes,
-        onChangeReceived: (change) => {
+        onChangeReceived: change => {
           changes.push(change);
-        }
+        },
       };
 
       dashboard.onChangeReceived({ id: '1', operation: 'insert', quads: [] });
@@ -245,8 +247,8 @@ describe('useKnowledgeStack', () => {
           totalChanges: 150,
           inserts: 100,
           deletes: 50,
-          uptime: 3600000
-        }
+          uptime: 3600000,
+        },
       };
 
       expect(dashboard.liveStats.totalChanges).toBe(150);
@@ -257,7 +259,9 @@ describe('useKnowledgeStack', () => {
       let liveActive = true;
 
       const dashboard = {
-        stopLive: vi.fn(() => { liveActive = false; })
+        stopLive: vi.fn(() => {
+          liveActive = false;
+        }),
       };
 
       // Simulate unmount cleanup
@@ -273,7 +277,7 @@ describe('useKnowledgeStack', () => {
       const productionConfig = {
         preset: 'full',
         maxRetries: 5,
-        retryDelay: 2000
+        retryDelay: 2000,
       };
 
       expect(productionConfig.maxRetries).toBe(5);
@@ -284,7 +288,7 @@ describe('useKnowledgeStack', () => {
       let retryCount = 0;
       const maxRetries = 3;
 
-      const executeWithRecovery = async (fn) => {
+      const executeWithRecovery = async fn => {
         while (retryCount < maxRetries) {
           try {
             return await fn();
@@ -295,7 +299,8 @@ describe('useKnowledgeStack', () => {
         }
       };
 
-      const failingFn = vi.fn()
+      const failingFn = vi
+        .fn()
         .mockRejectedValueOnce(new Error('Fail 1'))
         .mockRejectedValueOnce(new Error('Fail 2'))
         .mockResolvedValue({ success: true });
@@ -314,14 +319,15 @@ describe('useKnowledgeStack', () => {
             sparql,
             duration,
             resultCount,
-            timestamp: Date.now()
+            timestamp: Date.now(),
           });
         },
         getMetrics: () => ({
           totalQueries: telemetry.queries.length,
-          avgDuration: telemetry.queries.reduce((sum, q) => sum + q.duration, 0) / telemetry.queries.length,
-          totalResults: telemetry.queries.reduce((sum, q) => sum + q.resultCount, 0)
-        })
+          avgDuration:
+            telemetry.queries.reduce((sum, q) => sum + q.duration, 0) / telemetry.queries.length,
+          totalResults: telemetry.queries.reduce((sum, q) => sum + q.resultCount, 0),
+        }),
       };
 
       telemetry.recordQuery('SELECT * WHERE { ?s ?p ?o }', 50, 100);
@@ -338,14 +344,14 @@ describe('useKnowledgeStack', () => {
       const errorBoundary = {
         hasError: false,
         error: null,
-        captureError: (err) => {
+        captureError: err => {
           errorBoundary.hasError = true;
           errorBoundary.error = err;
         },
         resetError: () => {
           errorBoundary.hasError = false;
           errorBoundary.error = null;
-        }
+        },
       };
 
       errorBoundary.captureError(new Error('Component error'));
@@ -370,7 +376,7 @@ describe('useKnowledgeStack', () => {
         endRecovery: (success, error = null) => {
           recovery.isRecovering = false;
           if (!success) recovery.lastError = error;
-        }
+        },
       };
 
       recovery.startRecovery();
@@ -387,7 +393,7 @@ describe('useKnowledgeStack', () => {
       const resolveFeatures = (preset, config) => {
         const presetDefaults = {
           basic: { realtime: false, recovery: false, errorBoundary: true },
-          full: { realtime: true, recovery: true, errorBoundary: true }
+          full: { realtime: true, recovery: true, errorBoundary: true },
         };
 
         const base = presetDefaults[preset] || presetDefaults.basic;
@@ -395,7 +401,7 @@ describe('useKnowledgeStack', () => {
         return {
           realtime: config.enableRealtime ?? base.realtime,
           recovery: config.enableRecovery ?? base.recovery,
-          errorBoundary: config.enableErrorBoundary ?? base.errorBoundary
+          errorBoundary: config.enableErrorBoundary ?? base.errorBoundary,
         };
       };
 
@@ -407,10 +413,10 @@ describe('useKnowledgeStack', () => {
     });
 
     it('should include realtime features when enabled', () => {
-      const buildStack = (features) => {
+      const buildStack = features => {
         const stack = {
           query: vi.fn(),
-          insert: vi.fn()
+          insert: vi.fn(),
         };
 
         if (features.realtime) {
@@ -418,7 +424,7 @@ describe('useKnowledgeStack', () => {
             changes: [],
             startLive: vi.fn(),
             stopLive: vi.fn(),
-            isLive: false
+            isLive: false,
           });
         }
 
@@ -432,16 +438,16 @@ describe('useKnowledgeStack', () => {
     });
 
     it('should include recovery features when enabled', () => {
-      const buildStack = (features) => {
+      const buildStack = features => {
         const stack = {
-          query: vi.fn()
+          query: vi.fn(),
         };
 
         if (features.recovery) {
           Object.assign(stack, {
             retryCount: 0,
             isRecovering: false,
-            lastError: null
+            lastError: null,
           });
         }
 
@@ -462,8 +468,8 @@ describe('useKnowledgeStack', () => {
         features: {
           enableRealtime: true,
           enableRecovery: true,
-          enableErrorBoundary: true
-        }
+          enableErrorBoundary: true,
+        },
       };
 
       expect(stack.preset).toBe('full');
@@ -475,8 +481,8 @@ describe('useKnowledgeStack', () => {
         features: {
           enableRealtime: true,
           enableRecovery: false,
-          enableErrorBoundary: true
-        }
+          enableErrorBoundary: true,
+        },
       };
 
       expect(stack.features.enableRealtime).toBe(true);
@@ -491,7 +497,7 @@ describe('useCRUDStack', () => {
       return {
         ...config,
         preset: 'basic',
-        enableErrorBoundary: true
+        enableErrorBoundary: true,
       };
     };
 
@@ -505,7 +511,7 @@ describe('useCRUDStack', () => {
     const crudStack = {
       query: vi.fn(),
       insert: vi.fn(),
-      delete: vi.fn()
+      delete: vi.fn(),
     };
 
     expect(crudStack.query).toBeDefined();
@@ -520,7 +526,7 @@ describe('useDashboardStack', () => {
       return {
         ...config,
         preset: 'realtime',
-        operations: ['insert', 'delete', 'update']
+        operations: ['insert', 'delete', 'update'],
       };
     };
 
@@ -538,7 +544,7 @@ describe('useProductionStack', () => {
         ...config,
         preset: 'full',
         maxRetries: 5,
-        retryDelay: 2000
+        retryDelay: 2000,
       };
     };
 

@@ -26,39 +26,45 @@ import { useKnowledgeEngineContext } from '../core/use-knowledge-engine-context.
  */
 export function useSandbox(config = {}) {
   const { engine } = useKnowledgeEngineContext();
-  const [isolatedGraph, setIsolatedGraph] = useState(null);
+  const [isolatedGraph, _setIsolatedGraph] = useState(null);
   const [violations, setViolations] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const executeSandboxed = useCallback(async (sparql) => {
-    try {
-      setLoading(true);
+  const executeSandboxed = useCallback(
+    async sparql => {
+      try {
+        setLoading(true);
 
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), config.timeout || 5000);
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), config.timeout || 5000);
 
-      const result = await engine.query(sparql);
+        const result = await engine.query(sparql);
 
-      clearTimeout(timeout);
+        clearTimeout(timeout);
 
-      if (result.length > (config.maxResults || 1000)) {
-        throw new Error('Result set exceeds maximum allowed');
+        if (result.length > (config.maxResults || 1000)) {
+          throw new Error('Result set exceeds maximum allowed');
+        }
+
+        setLoading(false);
+        return result;
+      } catch (err) {
+        setError(err);
+        setViolations(prev => [
+          ...prev,
+          {
+            query: sparql,
+            error: err.message,
+            timestamp: new Date().toISOString(),
+          },
+        ]);
+        setLoading(false);
+        throw err;
       }
-
-      setLoading(false);
-      return result;
-    } catch (err) {
-      setError(err);
-      setViolations(prev => [...prev, {
-        query: sparql,
-        error: err.message,
-        timestamp: new Date().toISOString()
-      }]);
-      setLoading(false);
-      throw err;
-    }
-  }, [engine, config]);
+    },
+    [engine, config]
+  );
 
   return { executeSandboxed, isolatedGraph, violations, loading, error };
 }

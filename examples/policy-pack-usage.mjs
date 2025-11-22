@@ -5,7 +5,10 @@
  * Policy packs bundle hooks, shapes, and rules into versioned governance units.
  */
 
-import { PolicyPackManager, createPolicyPackManifest } from '../src/knowledge-engine/policy-pack.mjs';
+import {
+  PolicyPackManager,
+  createPolicyPackManifest,
+} from '../src/knowledge-engine/policy-pack.mjs';
 import { defineHook } from '../src/knowledge-engine/define-hook.mjs';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
@@ -30,25 +33,21 @@ ASK {
 }
 `;
 
-await writeFile(
-  resolve(policyPackDir, 'large-transaction.ask.rq'),
-  largeTxQuery,
-  'utf-8'
-);
+await writeFile(resolve(policyPackDir, 'large-transaction.ask.rq'), largeTxQuery, 'utf-8');
 
 const largeTxHook = defineHook({
   meta: {
     name: 'compliance:large-transaction',
     description: 'Alert on transactions exceeding $10,000',
-    ontology: ['fibo']
+    ontology: ['fibo'],
   },
   when: {
     kind: 'sparql-ask',
     ref: {
       uri: 'file://policy-packs/compliance-v1/large-transaction.ask.rq',
       sha256: 'mock-hash-123',
-      mediaType: 'application/sparql-query'
-    }
+      mediaType: 'application/sparql-query',
+    },
   },
   async run({ payload }) {
     console.log('[HOOK] Large transaction detected!');
@@ -56,10 +55,10 @@ const largeTxHook = defineHook({
       result: {
         alert: 'Large transaction',
         amount: payload.amount,
-        timestamp: Date.now()
-      }
+        timestamp: Date.now(),
+      },
     };
-  }
+  },
 });
 
 // Hook 2: Data quality check
@@ -72,34 +71,30 @@ ASK {
 }
 `;
 
-await writeFile(
-  resolve(policyPackDir, 'data-quality.ask.rq'),
-  qualityQuery,
-  'utf-8'
-);
+await writeFile(resolve(policyPackDir, 'data-quality.ask.rq'), qualityQuery, 'utf-8');
 
 const qualityHook = defineHook({
   meta: {
     name: 'quality:missing-email',
-    description: 'Detect customers without email addresses'
+    description: 'Detect customers without email addresses',
   },
   when: {
     kind: 'sparql-ask',
     ref: {
       uri: 'file://policy-packs/compliance-v1/data-quality.ask.rq',
       sha256: 'mock-hash-456',
-      mediaType: 'application/sparql-query'
-    }
+      mediaType: 'application/sparql-query',
+    },
   },
-  async run({ payload }) {
+  async run({ _payload }) {
     console.log('[HOOK] Data quality issue detected!');
     return {
       result: {
         alert: 'Missing email',
-        severity: 'warning'
-      }
+        severity: 'warning',
+      },
     };
-  }
+  },
 });
 
 console.log('✓ Created 2 hooks for policy pack\n');
@@ -141,11 +136,7 @@ ex:TransactionShape a sh:NodeShape ;
   ] .
 `;
 
-await writeFile(
-  resolve(policyPackDir, 'shapes.ttl'),
-  shaclShapes,
-  'utf-8'
-);
+await writeFile(resolve(policyPackDir, 'shapes.ttl'), shaclShapes, 'utf-8');
 
 console.log('✓ Created SHACL shapes\n');
 
@@ -161,8 +152,8 @@ const manifest = createPolicyPackManifest({
     category: 'compliance',
     industry: 'financial-services',
     regulation: ['SOX', 'GDPR'],
-    created: new Date().toISOString()
-  }
+    created: new Date().toISOString(),
+  },
 });
 
 await writeFile(
@@ -186,7 +177,10 @@ console.log('✓ Loaded policy packs');
 
 // List available packs
 const packs = policyManager.getAvailablePolicyPacks();
-console.log('\nAvailable packs:', packs.map(p => p.name));
+console.log(
+  '\nAvailable packs:',
+  packs.map(p => p.name)
+);
 
 // Activate policy pack
 policyManager.activatePolicyPack('compliance-v1');
@@ -194,11 +188,17 @@ console.log('✓ Activated compliance-v1');
 
 // Get active packs
 const activePacks = policyManager.getActivePolicyPacks();
-console.log('\nActive packs:', activePacks.map(p => p.name));
+console.log(
+  '\nActive packs:',
+  activePacks.map(p => p.name)
+);
 
 // Get hooks from active packs
 const activeHooks = policyManager.getActiveHooks();
-console.log('\nActive hooks:', activeHooks.map(h => h.meta.name));
+console.log(
+  '\nActive hooks:',
+  activeHooks.map(h => h.meta.name)
+);
 
 // Get specific policy pack
 const pack = policyManager.getPolicyPack('compliance-v1');
@@ -234,7 +234,7 @@ const manifestV2 = createPolicyPackManifest({
   hooks: [largeTxHook, qualityHook],
   shapes: ['policy-packs/compliance-v1/shapes.ttl'],
   dependencies: {
-    'compliance-v1': '>=1.0.0'
+    'compliance-v1': '>=1.0.0',
   },
   metadata: {
     category: 'compliance',
@@ -243,10 +243,10 @@ const manifestV2 = createPolicyPackManifest({
     changelog: [
       'Added PCI-DSS compliance rules',
       'Enhanced transaction monitoring',
-      'Improved data quality checks'
+      'Improved data quality checks',
     ],
-    created: new Date().toISOString()
-  }
+    created: new Date().toISOString(),
+  },
 });
 
 const policyPackDirV2 = resolve(process.cwd(), 'policy-packs', 'compliance-v2');
@@ -264,7 +264,10 @@ console.log('✓ Created compliance-v2');
 await policyManager.loadAllPolicyPacks();
 
 const allPacks = policyManager.getAvailablePolicyPacks();
-console.log('\nAll available packs:', allPacks.map(p => `${p.name} v${p.version}`));
+console.log(
+  '\nAll available packs:',
+  allPacks.map(p => `${p.name} v${p.version}`)
+);
 
 // Activate v2
 policyManager.activatePolicyPack('compliance-v2');

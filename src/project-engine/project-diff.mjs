@@ -3,14 +3,14 @@
  * @module project-engine/project-diff
  */
 
-import { diffOntologyFromStores } from '../diff.mjs'
-import { ProjectStructureLens } from './lens/project-structure.mjs'
-import { z } from 'zod'
+import { diffOntologyFromStores } from '../diff.mjs';
+import { ProjectStructureLens } from './lens/project-structure.mjs';
+import { z } from 'zod';
 
 const ProjectDiffOptionsSchema = z.object({
   actualStore: z.object({}).passthrough(),
   goldenStore: z.object({}).passthrough(),
-})
+});
 
 /**
  * Compute project structure diff using low-level diff.mjs
@@ -21,8 +21,8 @@ const ProjectDiffOptionsSchema = z.object({
  * @returns {OntologyDiff}
  */
 export function diffProjectStructure(options) {
-  const validated = ProjectDiffOptionsSchema.parse(options)
-  const { actualStore, goldenStore } = validated
+  const validated = ProjectDiffOptionsSchema.parse(options);
+  const { actualStore, goldenStore } = validated;
 
-  return diffOntologyFromStores(goldenStore, actualStore, ProjectStructureLens)
+  return diffOntologyFromStores(goldenStore, actualStore, ProjectStructureLens);
 }

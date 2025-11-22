@@ -8,10 +8,10 @@
  * and generates hooks that enforce these patterns on future transactions.
  */
 
-import { DataFactory } from 'n3'
-import { z } from 'zod'
+import { DataFactory } from 'n3';
+import { z } from 'zod';
 
-const { namedNode } = DataFactory
+const { namedNode } = DataFactory;
 
 // ============================================================================
 // Zod Schemas
@@ -23,7 +23,7 @@ const StackProfileSchema = z.object({
   apiFramework: z.string().nullable().optional(),
   testFramework: z.string().nullable().optional(),
   packageManager: z.string().nullable().optional(),
-})
+});
 
 const DeriveOptionsSchema = z.object({
   enableFeatureViewPolicy: z.boolean().default(true),
@@ -32,18 +32,20 @@ const DeriveOptionsSchema = z.object({
   enableTestCompanionPolicy: z.boolean().default(true),
   enableStackPolicies: z.boolean().default(true),
   strictMode: z.boolean().default(false),
-})
+});
 
 const HookConditionSchema = z.object({
   kind: z.enum(['sparql-ask', 'sparql-select', 'shacl', 'delta', 'threshold', 'count']),
-  ref: z.object({
-    uri: z.string(),
-    sha256: z.string().optional(),
-    mediaType: z.string().optional(),
-  }).optional(),
+  ref: z
+    .object({
+      uri: z.string(),
+      sha256: z.string().optional(),
+      mediaType: z.string().optional(),
+    })
+    .optional(),
   query: z.string().optional(),
   spec: z.any().optional(),
-})
+});
 
 /**
  * @typedef {Object} DerivedHook
@@ -78,43 +80,35 @@ const HookConditionSchema = z.object({
  * @returns {PatternViolation[]}
  */
 function detectFeaturesWithoutViews(store) {
-  const violations = []
-  const projectNs = 'http://example.org/unrdf/project#'
-  const rdfType = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type'
+  const violations = [];
+  const projectNs = 'http://example.org/unrdf/project#';
+  const rdfType = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type';
 
   // Find all features
-  const featureQuads = store.getQuads(
-    null,
-    namedNode(rdfType),
-    namedNode(`${projectNs}Feature`)
-  )
+  const featureQuads = store.getQuads(null, namedNode(rdfType), namedNode(`${projectNs}Feature`));
 
   for (const featureQuad of featureQuads) {
-    const featureIri = featureQuad.subject.value
+    const featureIri = featureQuad.subject.value;
 
     // Check if feature has any file with Component or Page role
     const roleQuads = store.getQuads(
       null,
       namedNode(`${projectNs}belongsToFeature`),
       namedNode(featureIri)
-    )
+    );
 
-    let hasView = false
+    let hasView = false;
     for (const roleQuad of roleQuads) {
-      const fileIri = roleQuad.subject
-      const fileRoles = store.getQuads(
-        fileIri,
-        namedNode(`${projectNs}roleString`),
-        null
-      )
+      const fileIri = roleQuad.subject;
+      const fileRoles = store.getQuads(fileIri, namedNode(`${projectNs}roleString`), null);
 
       for (const fileRole of fileRoles) {
         if (['Component', 'Page'].includes(fileRole.object.value)) {
-          hasView = true
-          break
+          hasView = true;
+          break;
         }
       }
-      if (hasView) break
+      if (hasView) break;
     }
 
     if (!hasView) {
@@ -122,11 +116,11 @@ function detectFeaturesWithoutViews(store) {
         type: 'feature-without-view',
         subject: featureIri,
         message: `Feature "${featureIri}" has no Component or Page view`,
-      })
+      });
     }
   }
 
-  return violations
+  return violations;
 }
 
 /**
@@ -135,39 +129,31 @@ function detectFeaturesWithoutViews(store) {
  * @returns {PatternViolation[]}
  */
 function detectApiWithoutTest(store) {
-  const violations = []
-  const projectNs = 'http://example.org/unrdf/project#'
-  const rdfType = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type'
+  const violations = [];
+  const projectNs = 'http://example.org/unrdf/project#';
+  const rdfType = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type';
 
-  const featureQuads = store.getQuads(
-    null,
-    namedNode(rdfType),
-    namedNode(`${projectNs}Feature`)
-  )
+  const featureQuads = store.getQuads(null, namedNode(rdfType), namedNode(`${projectNs}Feature`));
 
   for (const featureQuad of featureQuads) {
-    const featureIri = featureQuad.subject.value
+    const featureIri = featureQuad.subject.value;
 
     const roleQuads = store.getQuads(
       null,
       namedNode(`${projectNs}belongsToFeature`),
       namedNode(featureIri)
-    )
+    );
 
-    let hasApi = false
-    let hasTest = false
+    let hasApi = false;
+    let hasTest = false;
 
     for (const roleQuad of roleQuads) {
-      const fileIri = roleQuad.subject
-      const fileRoles = store.getQuads(
-        fileIri,
-        namedNode(`${projectNs}roleString`),
-        null
-      )
+      const fileIri = roleQuad.subject;
+      const fileRoles = store.getQuads(fileIri, namedNode(`${projectNs}roleString`), null);
 
       for (const fileRole of fileRoles) {
-        if (fileRole.object.value === 'Api') hasApi = true
-        if (fileRole.object.value === 'Test') hasTest = true
+        if (fileRole.object.value === 'Api') hasApi = true;
+        if (fileRole.object.value === 'Test') hasTest = true;
       }
     }
 
@@ -176,11 +162,11 @@ function detectApiWithoutTest(store) {
         type: 'api-without-test',
         subject: featureIri,
         message: `Feature "${featureIri}" has API but no test`,
-      })
+      });
     }
   }
 
-  return violations
+  return violations;
 }
 
 /**
@@ -189,28 +175,20 @@ function detectApiWithoutTest(store) {
  * @returns {PatternViolation[]}
  */
 function detectOrphanFiles(store) {
-  const violations = []
-  const projectNs = 'http://example.org/unrdf/project#'
-  const fsNs = 'http://example.org/unrdf/filesystem#'
+  const violations = [];
+  const projectNs = 'http://example.org/unrdf/project#';
+  const fsNs = 'http://example.org/unrdf/filesystem#';
 
-  const fileQuads = store.getQuads(
-    null,
-    namedNode(`${fsNs}relativePath`),
-    null
-  )
+  const fileQuads = store.getQuads(null, namedNode(`${fsNs}relativePath`), null);
 
   for (const fileQuad of fileQuads) {
-    const filePath = fileQuad.object.value
-    const fileIri = fileQuad.subject
+    const filePath = fileQuad.object.value;
+    const fileIri = fileQuad.subject;
 
     // Check if file is under features/ directory
     if (filePath.match(/^src\/features\/[^/]+\//)) {
       // Check if file belongs to a feature
-      const belongsQuads = store.getQuads(
-        fileIri,
-        namedNode(`${projectNs}belongsToFeature`),
-        null
-      )
+      const belongsQuads = store.getQuads(fileIri, namedNode(`${projectNs}belongsToFeature`), null);
 
       if (belongsQuads.length === 0) {
         violations.push({
@@ -218,12 +196,12 @@ function detectOrphanFiles(store) {
           subject: fileIri.value,
           message: `File "${filePath}" is under features/ but has no Feature association`,
           relatedEntity: filePath,
-        })
+        });
       }
     }
   }
 
-  return violations
+  return violations;
 }
 
 /**
@@ -232,39 +210,35 @@ function detectOrphanFiles(store) {
  * @returns {PatternViolation[]}
  */
 function detectFilesWithoutTests(store) {
-  const violations = []
-  const projectNs = 'http://example.org/unrdf/project#'
-  const fsNs = 'http://example.org/unrdf/filesystem#'
+  const violations = [];
+  const _projectNs = 'http://example.org/unrdf/project#';
+  const fsNs = 'http://example.org/unrdf/filesystem#';
 
-  const fileQuads = store.getQuads(
-    null,
-    namedNode(`${fsNs}relativePath`),
-    null
-  )
+  const fileQuads = store.getQuads(null, namedNode(`${fsNs}relativePath`), null);
 
-  const filePaths = new Set()
-  const testPaths = new Set()
+  const filePaths = new Set();
+  const testPaths = new Set();
 
   for (const fileQuad of fileQuads) {
-    const filePath = fileQuad.object.value
-    filePaths.add(filePath)
+    const filePath = fileQuad.object.value;
+    filePaths.add(filePath);
 
     if (filePath.match(/\.(test|spec)\.(tsx?|jsx?|mjs)$/)) {
-      testPaths.add(filePath)
+      testPaths.add(filePath);
     }
   }
 
   for (const filePath of filePaths) {
     // Skip test files, config, docs
-    if (filePath.match(/\.(test|spec|config|d)\.(tsx?|jsx?|mjs)$/)) continue
-    if (filePath.match(/\.(md|json|yaml|yml)$/)) continue
-    if (!filePath.match(/\.(tsx?|jsx?|mjs)$/)) continue
+    if (filePath.match(/\.(test|spec|config|d)\.(tsx?|jsx?|mjs)$/)) continue;
+    if (filePath.match(/\.(md|json|yaml|yml)$/)) continue;
+    if (!filePath.match(/\.(tsx?|jsx?|mjs)$/)) continue;
 
     // Only check src files
-    if (!filePath.startsWith('src/')) continue
+    if (!filePath.startsWith('src/')) continue;
 
     // Check for corresponding test file
-    const baseName = filePath.replace(/\.(tsx?|jsx?|mjs)$/, '')
+    const baseName = filePath.replace(/\.(tsx?|jsx?|mjs)$/, '');
     const possibleTests = [
       `${baseName}.test.ts`,
       `${baseName}.test.tsx`,
@@ -276,20 +250,20 @@ function detectFilesWithoutTests(store) {
       `${baseName}.spec.js`,
       `${baseName}.spec.jsx`,
       `${baseName}.spec.mjs`,
-    ]
+    ];
 
-    const hasTest = possibleTests.some((t) => testPaths.has(t))
+    const hasTest = possibleTests.some(t => testPaths.has(t));
 
     if (!hasTest) {
       violations.push({
         type: 'file-without-test',
         subject: filePath,
         message: `Source file "${filePath}" has no corresponding test file`,
-      })
+      });
     }
   }
 
-  return violations
+  return violations;
 }
 
 /**
@@ -299,31 +273,27 @@ function detectFilesWithoutTests(store) {
  * @returns {PatternViolation[]}
  */
 function detectNextAppRouterViolations(store, stackProfile) {
-  const violations = []
+  const violations = [];
 
   if (stackProfile.webFramework !== 'next-app-router') {
-    return violations
+    return violations;
   }
 
-  const fsNs = 'http://example.org/unrdf/filesystem#'
+  const fsNs = 'http://example.org/unrdf/filesystem#';
 
-  const fileQuads = store.getQuads(
-    null,
-    namedNode(`${fsNs}relativePath`),
-    null
-  )
+  const fileQuads = store.getQuads(null, namedNode(`${fsNs}relativePath`), null);
 
-  const filePaths = new Set()
+  const filePaths = new Set();
   for (const fileQuad of fileQuads) {
-    filePaths.add(fileQuad.object.value)
+    filePaths.add(fileQuad.object.value);
   }
 
   // Find page.tsx files and check for route.ts
   for (const filePath of filePaths) {
     if (filePath.match(/app\/.*\/page\.(tsx?|jsx?)$/)) {
-      const routeDir = filePath.replace(/page\.(tsx?|jsx?)$/, '')
-      const routeFile = `${routeDir}route.ts`
-      const routeFileTsx = `${routeDir}route.tsx`
+      const routeDir = filePath.replace(/page\.(tsx?|jsx?)$/, '');
+      const routeFile = `${routeDir}route.ts`;
+      const routeFileTsx = `${routeDir}route.tsx`;
 
       // Note: route.ts is optional, but if it's an API route it should exist
       // This is a soft check - only flag if directory looks like API route
@@ -334,13 +304,13 @@ function detectNextAppRouterViolations(store, stackProfile) {
             subject: filePath,
             message: `API route "${routeDir}" has page.tsx but no route.ts`,
             relatedEntity: routeFile,
-          })
+          });
         }
       }
     }
   }
 
-  return violations
+  return violations;
 }
 
 // ============================================================================
@@ -352,7 +322,7 @@ function detectNextAppRouterViolations(store, stackProfile) {
  * @param {PatternViolation[]} violations - Detected violations
  * @returns {DerivedHook}
  */
-function createFeatureViewHook(violations) {
+function createFeatureViewHook(_violations) {
   return {
     meta: {
       name: 'derived:feature-must-have-view',
@@ -382,47 +352,47 @@ function createFeatureViewHook(violations) {
     receipt: { anchor: 'none' },
 
     before({ payload }) {
-      return payload
+      return payload;
     },
 
-    run({ payload, context }) {
-      const store = context.graph
+    run({ _payload, context }) {
+      const store = context.graph;
       if (!store) {
-        return { result: { valid: true, violations: [] } }
+        return { result: { valid: true, violations: [] } };
       }
 
-      const projectNs = 'http://example.org/unrdf/project#'
-      const rdfType = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type'
+      const projectNs = 'http://example.org/unrdf/project#';
+      const rdfType = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type';
 
-      const currentViolations = []
+      const currentViolations = [];
       const featureQuads = store.getQuads(
         null,
         namedNode(rdfType),
         namedNode(`${projectNs}Feature`)
-      )
+      );
 
       for (const featureQuad of featureQuads) {
-        const featureIri = featureQuad.subject.value
+        const featureIri = featureQuad.subject.value;
         const roleQuads = store.getQuads(
           null,
           namedNode(`${projectNs}belongsToFeature`),
           namedNode(featureIri)
-        )
+        );
 
-        let hasView = false
+        let hasView = false;
         for (const roleQuad of roleQuads) {
           const fileRoles = store.getQuads(
             roleQuad.subject,
             namedNode(`${projectNs}roleString`),
             null
-          )
+          );
           for (const fileRole of fileRoles) {
             if (['Component', 'Page'].includes(fileRole.object.value)) {
-              hasView = true
-              break
+              hasView = true;
+              break;
             }
           }
-          if (hasView) break
+          if (hasView) break;
         }
 
         if (!hasView) {
@@ -430,7 +400,7 @@ function createFeatureViewHook(violations) {
             type: 'feature-without-view',
             subject: featureIri,
             message: `Feature "${featureIri}" must have at least one view`,
-          })
+          });
         }
       }
 
@@ -439,16 +409,16 @@ function createFeatureViewHook(violations) {
           valid: currentViolations.length === 0,
           violations: currentViolations,
         },
-      }
+      };
     },
 
     after({ result, cancelled, reason }) {
       if (cancelled) {
-        return { result: { status: 'cancelled', reason } }
+        return { result: { status: 'cancelled', reason } };
       }
-      return { result: { status: 'completed', ...result } }
+      return { result: { status: 'completed', ...result } };
     },
-  }
+  };
 }
 
 /**
@@ -456,7 +426,7 @@ function createFeatureViewHook(violations) {
  * @param {PatternViolation[]} violations - Detected violations
  * @returns {DerivedHook}
  */
-function createApiTestHook(violations) {
+function createApiTestHook(_violations) {
   return {
     meta: {
       name: 'derived:api-must-have-test',
@@ -487,32 +457,32 @@ function createApiTestHook(violations) {
     receipt: { anchor: 'none' },
 
     before({ payload }) {
-      return payload
+      return payload;
     },
 
-    run({ payload, context }) {
-      const store = context.graph
+    run({ _payload, context }) {
+      const store = context.graph;
       if (!store) {
-        return { result: { valid: true, violations: [] } }
+        return { result: { valid: true, violations: [] } };
       }
 
-      const currentViolations = detectApiWithoutTest(store)
+      const currentViolations = detectApiWithoutTest(store);
 
       return {
         result: {
           valid: currentViolations.length === 0,
           violations: currentViolations,
         },
-      }
+      };
     },
 
     after({ result, cancelled, reason }) {
       if (cancelled) {
-        return { result: { status: 'cancelled', reason } }
+        return { result: { status: 'cancelled', reason } };
       }
-      return { result: { status: 'completed', ...result } }
+      return { result: { status: 'completed', ...result } };
     },
-  }
+  };
 }
 
 /**
@@ -520,7 +490,7 @@ function createApiTestHook(violations) {
  * @param {PatternViolation[]} violations - Detected violations
  * @returns {DerivedHook}
  */
-function createOrphanFileHook(violations) {
+function createOrphanFileHook(_violations) {
   return {
     meta: {
       name: 'derived:no-orphan-files',
@@ -549,32 +519,32 @@ function createOrphanFileHook(violations) {
     receipt: { anchor: 'none' },
 
     before({ payload }) {
-      return payload
+      return payload;
     },
 
-    run({ payload, context }) {
-      const store = context.graph
+    run({ _payload, context }) {
+      const store = context.graph;
       if (!store) {
-        return { result: { valid: true, violations: [] } }
+        return { result: { valid: true, violations: [] } };
       }
 
-      const currentViolations = detectOrphanFiles(store)
+      const currentViolations = detectOrphanFiles(store);
 
       return {
         result: {
           valid: currentViolations.length === 0,
           violations: currentViolations,
         },
-      }
+      };
     },
 
     after({ result, cancelled, reason }) {
       if (cancelled) {
-        return { result: { status: 'cancelled', reason } }
+        return { result: { status: 'cancelled', reason } };
       }
-      return { result: { status: 'completed', ...result } }
+      return { result: { status: 'completed', ...result } };
     },
-  }
+  };
 }
 
 /**
@@ -582,7 +552,7 @@ function createOrphanFileHook(violations) {
  * @param {PatternViolation[]} violations - Detected violations
  * @returns {DerivedHook}
  */
-function createTestCompanionHook(violations) {
+function createTestCompanionHook(_violations) {
   return {
     meta: {
       name: 'derived:test-companion-required',
@@ -598,39 +568,40 @@ function createTestCompanionHook(violations) {
       spec: {
         op: '>',
         value: 0,
-        query: 'SELECT (COUNT(?file) AS ?count) WHERE { ?file a <http://example.org/unrdf/filesystem#File> }',
+        query:
+          'SELECT (COUNT(?file) AS ?count) WHERE { ?file a <http://example.org/unrdf/filesystem#File> }',
       },
     },
     determinism: { seed: 42 },
     receipt: { anchor: 'none' },
 
     before({ payload }) {
-      return payload
+      return payload;
     },
 
-    run({ payload, context }) {
-      const store = context.graph
+    run({ _payload, context }) {
+      const store = context.graph;
       if (!store) {
-        return { result: { valid: true, violations: [] } }
+        return { result: { valid: true, violations: [] } };
       }
 
-      const currentViolations = detectFilesWithoutTests(store)
+      const currentViolations = detectFilesWithoutTests(store);
 
       return {
         result: {
           valid: currentViolations.length === 0,
           violations: currentViolations,
         },
-      }
+      };
     },
 
     after({ result, cancelled, reason }) {
       if (cancelled) {
-        return { result: { status: 'cancelled', reason } }
+        return { result: { status: 'cancelled', reason } };
       }
-      return { result: { status: 'completed', ...result } }
+      return { result: { status: 'completed', ...result } };
     },
-  }
+  };
 }
 
 /**
@@ -664,16 +635,16 @@ function createNextAppRouterHook(violations, stackProfile) {
     receipt: { anchor: 'none' },
 
     before({ payload }) {
-      return payload
+      return payload;
     },
 
-    run({ payload, context }) {
-      const store = context.graph
+    run({ _payload, context }) {
+      const store = context.graph;
       if (!store) {
-        return { result: { valid: true, violations: [] } }
+        return { result: { valid: true, violations: [] } };
       }
 
-      const currentViolations = detectNextAppRouterViolations(store, stackProfile)
+      const currentViolations = detectNextAppRouterViolations(store, stackProfile);
 
       return {
         result: {
@@ -681,16 +652,16 @@ function createNextAppRouterHook(violations, stackProfile) {
           violations: currentViolations,
           stackProfile,
         },
-      }
+      };
     },
 
     after({ result, cancelled, reason }) {
       if (cancelled) {
-        return { result: { status: 'cancelled', reason } }
+        return { result: { status: 'cancelled', reason } };
       }
-      return { result: { status: 'completed', ...result } }
+      return { result: { status: 'completed', ...result } };
     },
-  }
+  };
 }
 
 // ============================================================================
@@ -728,44 +699,44 @@ function createNextAppRouterHook(violations, stackProfile) {
 export function deriveHooksFromStructure(projectStore, stackProfile, options = {}) {
   // Validate inputs
   if (!projectStore || typeof projectStore.getQuads !== 'function') {
-    throw new TypeError('deriveHooksFromStructure: projectStore must be an N3 Store')
+    throw new TypeError('deriveHooksFromStructure: projectStore must be an N3 Store');
   }
 
-  const validatedStack = StackProfileSchema.parse(stackProfile || {})
-  const validatedOptions = DeriveOptionsSchema.parse(options)
+  const validatedStack = StackProfileSchema.parse(stackProfile || {});
+  const validatedOptions = DeriveOptionsSchema.parse(options);
 
-  const hooks = []
+  const hooks = [];
 
   // Detect violations for each pattern type
   if (validatedOptions.enableFeatureViewPolicy) {
-    const featureViewViolations = detectFeaturesWithoutViews(projectStore)
-    hooks.push(createFeatureViewHook(featureViewViolations))
+    const featureViewViolations = detectFeaturesWithoutViews(projectStore);
+    hooks.push(createFeatureViewHook(featureViewViolations));
   }
 
   if (validatedOptions.enableApiTestPolicy) {
-    const apiTestViolations = detectApiWithoutTest(projectStore)
-    hooks.push(createApiTestHook(apiTestViolations))
+    const apiTestViolations = detectApiWithoutTest(projectStore);
+    hooks.push(createApiTestHook(apiTestViolations));
   }
 
   if (validatedOptions.enableOrphanFilePolicy) {
-    const orphanViolations = detectOrphanFiles(projectStore)
-    hooks.push(createOrphanFileHook(orphanViolations))
+    const orphanViolations = detectOrphanFiles(projectStore);
+    hooks.push(createOrphanFileHook(orphanViolations));
   }
 
   if (validatedOptions.enableTestCompanionPolicy) {
-    const testCompanionViolations = detectFilesWithoutTests(projectStore)
-    hooks.push(createTestCompanionHook(testCompanionViolations))
+    const testCompanionViolations = detectFilesWithoutTests(projectStore);
+    hooks.push(createTestCompanionHook(testCompanionViolations));
   }
 
   // Stack-specific policies
   if (validatedOptions.enableStackPolicies) {
     if (validatedStack.webFramework === 'next-app-router') {
-      const nextViolations = detectNextAppRouterViolations(projectStore, validatedStack)
-      hooks.push(createNextAppRouterHook(nextViolations, validatedStack))
+      const nextViolations = detectNextAppRouterViolations(projectStore, validatedStack);
+      hooks.push(createNextAppRouterHook(nextViolations, validatedStack));
     }
   }
 
-  return hooks
+  return hooks;
 }
 
 /**
@@ -778,11 +749,11 @@ export function deriveHooksFromStructure(projectStore, stackProfile, options = {
  */
 export function analyzePatternViolations(projectStore, stackProfile, options = {}) {
   if (!projectStore || typeof projectStore.getQuads !== 'function') {
-    throw new TypeError('analyzePatternViolations: projectStore must be an N3 Store')
+    throw new TypeError('analyzePatternViolations: projectStore must be an N3 Store');
   }
 
-  const validatedStack = StackProfileSchema.parse(stackProfile || {})
-  const validatedOptions = DeriveOptionsSchema.parse(options)
+  const validatedStack = StackProfileSchema.parse(stackProfile || {});
+  const validatedOptions = DeriveOptionsSchema.parse(options);
 
   const report = {
     timestamp: new Date().toISOString(),
@@ -798,37 +769,37 @@ export function analyzePatternViolations(projectStore, stackProfile, options = {
       total: 0,
       byType: {},
     },
-  }
+  };
 
   if (validatedOptions.enableFeatureViewPolicy) {
-    report.violations.featureWithoutView = detectFeaturesWithoutViews(projectStore)
+    report.violations.featureWithoutView = detectFeaturesWithoutViews(projectStore);
   }
 
   if (validatedOptions.enableApiTestPolicy) {
-    report.violations.apiWithoutTest = detectApiWithoutTest(projectStore)
+    report.violations.apiWithoutTest = detectApiWithoutTest(projectStore);
   }
 
   if (validatedOptions.enableOrphanFilePolicy) {
-    report.violations.orphanFiles = detectOrphanFiles(projectStore)
+    report.violations.orphanFiles = detectOrphanFiles(projectStore);
   }
 
   if (validatedOptions.enableTestCompanionPolicy) {
-    report.violations.filesWithoutTests = detectFilesWithoutTests(projectStore)
+    report.violations.filesWithoutTests = detectFilesWithoutTests(projectStore);
   }
 
   if (validatedOptions.enableStackPolicies) {
     if (validatedStack.webFramework === 'next-app-router') {
-      report.violations.stackSpecific = detectNextAppRouterViolations(projectStore, validatedStack)
+      report.violations.stackSpecific = detectNextAppRouterViolations(projectStore, validatedStack);
     }
   }
 
   // Compute summary
   for (const [type, violations] of Object.entries(report.violations)) {
-    report.summary.byType[type] = violations.length
-    report.summary.total += violations.length
+    report.summary.byType[type] = violations.length;
+    report.summary.total += violations.length;
   }
 
-  return report
+  return report;
 }
 
 /**
@@ -849,9 +820,9 @@ export function createCustomPatternHook(spec) {
     pattern: z.string().min(1),
     condition: HookConditionSchema,
     validator: z.function(),
-  })
+  });
 
-  const validated = SpecSchema.parse(spec)
+  const validated = SpecSchema.parse(spec);
 
   return {
     meta: {
@@ -868,16 +839,16 @@ export function createCustomPatternHook(spec) {
     receipt: { anchor: 'none' },
 
     before({ payload }) {
-      return payload
+      return payload;
     },
 
     run({ payload, context }) {
-      const store = context.graph
+      const store = context.graph;
       if (!store) {
-        return { result: { valid: true, violations: [] } }
+        return { result: { valid: true, violations: [] } };
       }
 
-      const violations = validated.validator(store, payload)
+      const violations = validated.validator(store, payload);
 
       return {
         result: {
@@ -885,14 +856,14 @@ export function createCustomPatternHook(spec) {
           violations: Array.isArray(violations) ? violations : [],
           pattern: validated.pattern,
         },
-      }
+      };
     },
 
     after({ result, cancelled, reason }) {
       if (cancelled) {
-        return { result: { status: 'cancelled', reason } }
+        return { result: { status: 'cancelled', reason } };
       }
-      return { result: { status: 'completed', ...result } }
+      return { result: { status: 'completed', ...result } };
     },
-  }
+  };
 }

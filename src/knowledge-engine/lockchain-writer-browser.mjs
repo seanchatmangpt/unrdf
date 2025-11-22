@@ -1,16 +1,16 @@
 /**
  * @file Browser-compatible Lockchain Writer
  * @module lockchain-writer-browser
- * 
+ *
  * @description
  * Browser-compatible version of the lockchain writer that stores entries in memory
- * or browser storage instead of Git commits. Provides cryptographic integrity 
+ * or browser storage instead of Git commits. Provides cryptographic integrity
  * verification without Git dependencies.
  */
 
-import { randomUUID, createHash, fs } from './browser-shims.mjs';
+import { randomUUID, createHash, _fs } from './browser-shims.mjs';
 import { sha3_256 } from '@noble/hashes/sha3.js';
-import { blake3 } from '@noble/hashes/blake3.js';
+import { _blake3 } from '@noble/hashes/blake3.js';
 import { utf8ToBytes, bytesToHex } from '@noble/hashes/utils.js';
 import { z } from 'zod';
 
@@ -24,12 +24,12 @@ const LockchainEntrySchema = z.object({
   signature: z.object({
     algorithm: z.string(),
     value: z.string(),
-    publicKey: z.string().optional()
+    publicKey: z.string().optional(),
   }),
   previousHash: z.string().optional().nullable(),
   merkleRoot: z.string().optional(),
   storageKey: z.string().optional(), // Browser storage key instead of git commit
-  storageRef: z.string().optional()
+  storageRef: z.string().optional(),
 });
 
 /**
@@ -42,7 +42,7 @@ const LockchainConfigSchema = z.object({
   enableMerkle: z.boolean().default(true),
   enablePersistence: z.boolean().default(true),
   storagePrefix: z.string().default('lockchain'),
-  maxAgeMs: z.number().int().positive().optional() // Time to live
+  maxAgeMs: z.number().int().positive().optional(), // Time to live
 });
 
 /**
@@ -57,18 +57,18 @@ export class BrowserLockchainWriter {
       ...config,
       // Override Git-specific options for browser
       enableGitAnchoring: false,
-      gitRepo: undefined
+      gitRepo: undefined,
     });
     this.config = validatedConfig;
-    
+
     // Initialize storage
     this.entries = [];
     this.lastHash = null;
     this.processingBatches = new Set();
-    
+
     // Browser storage API
     this.storage = this._initStorage();
-    
+
     // Load existing entries
     this._loadEntries().catch(err => {
       console.warn('Failed to load entries during initialization:', err.message);
@@ -83,15 +83,15 @@ export class BrowserLockchainWriter {
     switch (this.config.storageType) {
       case 'localStorage':
         return {
-          get: (key) => localStorage.getItem(`${this.config.storagePrefix}_${key}`),
+          get: key => localStorage.getItem(`${this.config.storagePrefix}_${key}`),
           set: (key, value) => localStorage.setItem(`${this.config.storagePrefix}_${key}`, value),
-          remove: (key) => localStorage.removeItem(`${this.config.storagePrefix}_${key}`)
+          remove: key => localStorage.removeItem(`${this.config.storagePrefix}_${key}`),
         };
       case 'sessionStorage':
         return {
-          get: (key) => sessionStorage.getItem(`${this.config.storagePrefix}_${key}`),
+          get: key => sessionStorage.getItem(`${this.config.storagePrefix}_${key}`),
           set: (key, value) => sessionStorage.setItem(`${this.config.storagePrefix}_${key}`, value),
-          remove: (key) => sessionStorage.removeItem(`${this.config.storagePrefix}_${key}`)
+          remove: key => sessionStorage.removeItem(`${this.config.storagePrefix}_${key}`),
         };
       case 'indexedDB':
         // Simplified IndexedDB implementation would go here
@@ -109,9 +109,9 @@ export class BrowserLockchainWriter {
   _initMemoryStorage() {
     const memoryStorage = new Map();
     return {
-      get: (key) => memoryStorage.get(key),
+      get: key => memoryStorage.get(key),
       set: (key, value) => memoryStorage.set(key, value),
-      remove: (key) => memoryStorage.delete(key)
+      remove: key => memoryStorage.delete(key),
     };
   }
 
@@ -123,10 +123,10 @@ export class BrowserLockchainWriter {
     try {
       const entriesKey = `${this.config.storagePrefix}_entries`;
       const entriesData = this.storage.get(entriesKey);
-      
+
       if (entriesData) {
         this.entries = JSON.parse(entriesData);
-        
+
         // Restore last hash
         const lastEntry = this.entries[this.entries.length - 1];
         if (lastEntry) {
@@ -162,7 +162,7 @@ export class BrowserLockchainWriter {
   async writeReceipt(receipt, options = {}) {
     const entryId = randomUUID();
     const timestamp = Date.now();
-    
+
     // Create lockchain entry
     const entry = {
       id: entryId,
@@ -170,21 +170,21 @@ export class BrowserLockchainWriter {
       receipt: this._serializeReceipt(receipt),
       signature: await this._signEntry(receipt, entryId, timestamp),
       previousHash: this.lastHash || null,
-      merkleRoot: options.merkleRoot
+      merkleRoot: options.merkleRoot,
     };
-    
+
     // Validate entry
     const validatedEntry = LockchainEntrySchema.parse(entry);
-    
+
     // Store entry
     await this._storeEntry(validatedEntry);
-    
+
     // Update hash chain
     this.lastHash = await this._calculateEntryHash(validatedEntry);
-    
+
     // Persist to storage
     await this._saveEntries();
-    
+
     return validatedEntry;
   }
 
@@ -194,13 +194,13 @@ export class BrowserLockchainWriter {
    * @param {Object} [options] - Batch options
    * @returns {Promise<Array>} Array of lockchain entries
    */
-  async writeReceiptBatch(receipts, options = {}) {
+  async writeReceiptBatch(receipts, _options = {}) {
     const batchId = `batch_${randomUUID().slice(0, 8)}`;
-    const validatedReceipts = receipts.map(r => typeof r === 'string' ? JSON.parse(r) : r);
-    
+    const validatedReceipts = receipts.map(r => (typeof r === 'string' ? JSON.parse(r) : r));
+
     const batchPromise = this._processBatch(validatedReceipts, batchId);
     this.processingBatches.add(batchId);
-    
+
     try {
       const entries = await batchPromise;
       this.processingBatches.delete(batchId);
@@ -218,17 +218,17 @@ export class BrowserLockchainWriter {
   async _processBatch(receipts, batchId) {
     const entries = [];
     const merkleRoot = this.config.enableMerkle ? await this._calculateMerkleRoot(receipts) : null;
-    
+
     for (let i = 0; i < receipts.length; i++) {
       const receipt = receipts[i];
       const entry = await this.writeReceipt(receipt, {
         batchId,
         batchIndex: i,
-        merkleRoot
+        merkleRoot,
       });
       entries.push(entry);
     }
-    
+
     return entries;
   }
 
@@ -238,12 +238,12 @@ export class BrowserLockchainWriter {
    */
   async _calculateMerkleRoot(receipts) {
     const hashes = await Promise.all(
-      receipts.map(async (receipt) => {
+      receipts.map(async receipt => {
         const serialized = this._serializeReceipt(receipt);
         return bytesToHex(sha3_256(utf8ToBytes(JSON.stringify(serialized))));
       })
     );
-    
+
     // Simple binary tree merkle calculation
     let current = hashes;
     while (current.length > 1) {
@@ -256,7 +256,7 @@ export class BrowserLockchainWriter {
       }
       current = next;
     }
-    
+
     return current[0];
   }
 
@@ -268,11 +268,11 @@ export class BrowserLockchainWriter {
     // Store individual entry
     const storageKey = `entry_${entry.id}`;
     this.storage.set(storageKey, JSON.stringify(entry));
-    
+
     // Update entries array
     this.entries.push({
       ...entry,
-      storageKey
+      storageKey,
     });
   }
 
@@ -293,16 +293,18 @@ export class BrowserLockchainWriter {
    */
   async _signEntry(receipt, entryId, timestamp) {
     const hash = createHash(this.config.algorithm);
-    const signature = hash.update(JSON.stringify({
-      receipt,
-      entryId,
-      timestamp,
-      previousHash: this.lastHash
-    }));
-    
+    const signature = hash.update(
+      JSON.stringify({
+        receipt,
+        entryId,
+        timestamp,
+        previousHash: this.lastHash,
+      })
+    );
+
     return {
       algorithm: this.config.algorithm,
-      value: await signature.digest('hex')
+      value: await signature.digest('hex'),
     };
   }
 
@@ -322,36 +324,36 @@ export class BrowserLockchainWriter {
   async verifyIntegrity() {
     const results = [];
     let previousHash = null;
-    
+
     for (let i = 0; i < this.entries.length; i++) {
       const entry = this.entries[i];
       const expectedHash = await this._calculateEntryHash(entry);
-      
-      const isValid = 
+
+      const isValid =
         expectedHash === entry.previousHash &&
         (previousHash === null || entry.previousHash === previousHash);
-      
+
       results.push({
         index: i,
         entryId: entry.id,
         valid: isValid,
-        hash: expectedHash
+        hash: expectedHash,
       });
-      
+
       if (!isValid) {
         break; // Chain is broken
       }
-      
+
       previousHash = expectedHash;
     }
-    
+
     const isValid = results.every(r => r.valid);
-    
+
     return {
       valid: isValid,
       totalEntries: this.entries.length,
       results,
-      verificationTimestamp: Date.now()
+      verificationTimestamp: Date.now(),
     };
   }
 
@@ -367,7 +369,7 @@ export class BrowserLockchainWriter {
       lastHash: this.lastHash,
       storageType: this.config.storageType,
       oldestEntry: this.entries.length > 0 ? this.entries[0].timestamp : null,
-      newestEntry: this.entries.length > 0 ? this.entries[this.entries.length - 1].timestamp : null
+      newestEntry: this.entries.length > 0 ? this.entries[this.entries.length - 1].timestamp : null,
     };
   }
 
@@ -378,7 +380,7 @@ export class BrowserLockchainWriter {
     this.entries = [];
     this.lastHash = null;
     this.processingBatches.clear();
-    
+
     if (this.config.enablePersistence) {
       // Clear persisted entries
       this.entries.forEach(entry => {
@@ -386,7 +388,7 @@ export class BrowserLockchainWriter {
           this.storage.remove(entry.storageKey);
         }
       });
-      
+
       const entriesKey = `${this.config.storagePrefix}_entries`;
       this.storage.remove(entriesKey);
     }

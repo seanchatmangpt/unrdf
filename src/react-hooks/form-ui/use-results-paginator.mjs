@@ -47,9 +47,12 @@ export function useResultsPaginator(data = [], config = {}) {
     setCurrentPage(prev => Math.max(prev - 1, 1));
   }, []);
 
-  const goToPage = useCallback((page) => {
-    setCurrentPage(Math.max(1, Math.min(page, totalPages)));
-  }, [totalPages]);
+  const goToPage = useCallback(
+    page => {
+      setCurrentPage(Math.max(1, Math.min(page, totalPages)));
+    },
+    [totalPages]
+  );
 
   const reset = useCallback(() => {
     setCurrentPage(1);
@@ -65,6 +68,6 @@ export function useResultsPaginator(data = [], config = {}) {
     totalPages,
     pageSize,
     hasNext: currentPage < totalPages,
-    hasPrev: currentPage > 1
+    hasPrev: currentPage > 1,
   };
 }

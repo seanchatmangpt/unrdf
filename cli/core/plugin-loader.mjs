@@ -131,10 +131,63 @@ export class PluginLoader {
   /**
    * Install a plugin from npm
    * @param {string} packageName - NPM package name
+   * @param {Object} [options] - Installation options
+   * @param {boolean} [options.save=true] - Save to package.json
+   * @returns {Promise<Object>} Installation result
    */
-  async install(packageName) {
-    // TODO: Implement npm install integration
-    throw new Error('Plugin installation not yet implemented');
+  async install(packageName, options = {}) {
+    const { save = true } = options;
+    
+    if (!packageName || typeof packageName !== 'string') {
+      throw new Error('Plugin package name must be a non-empty string');
+    }
+
+    try {
+      // Use pnpm to install the plugin package (per project rules)
+      const { execSync } = await import('child_process');
+      const { join } = await import('path');
+      
+      console.log(`Installing plugin: ${packageName}...`);
+      
+      // Install using pnpm (as per project rules - PNPM ONLY)
+      const installCommand = save 
+        ? `pnpm add ${packageName}`
+        : `pnpm add ${packageName} --no-save`;
+      
+      execSync(installCommand, {
+        stdio: 'inherit',
+        cwd: process.cwd(),
+      });
+      
+      // Load the installed plugin
+      const pluginModulePath = join(process.cwd(), 'node_modules', packageName);
+      const pluginPath = join(pluginModulePath, 'index.mjs');
+      
+      // Try to load the plugin
+      try {
+        await this.loadPlugin(pluginPath);
+        console.log(`✅ Plugin ${packageName} installed and loaded`);
+        
+        return {
+          success: true,
+          name: packageName,
+          path: pluginPath,
+          loaded: true,
+        };
+      } catch (loadError) {
+        // Plugin installed but couldn't load - still report success
+        console.warn(`⚠️  Plugin ${packageName} installed but failed to load: ${loadError.message}`);
+        return {
+          success: true,
+          name: packageName,
+          path: pluginPath,
+          loaded: false,
+          error: loadError.message,
+        };
+      }
+    } catch (error) {
+      throw new Error(`Failed to install plugin ${packageName}: ${error.message}`);
+    }
   }
 
   /**

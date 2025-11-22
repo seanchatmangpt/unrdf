@@ -13,7 +13,7 @@ import {
   createMonitorOrchestrator,
   DEFAULT_CONFIG,
   HealthStatus,
-  MonitorEvents
+  MonitorEvents,
 } from '../../../src/knowledge-engine/utils/adaptive-monitor.mjs';
 
 describe('AdaptiveMonitor', () => {
@@ -43,7 +43,7 @@ describe('AdaptiveMonitor', () => {
       const m = new AdaptiveMonitor({
         baseInterval: 30000,
         minInterval: 500,
-        maxInterval: 600000
+        maxInterval: 600000,
       });
       expect(m.config.baseInterval).toBe(30000);
       expect(m.config.minInterval).toBe(500);
@@ -119,7 +119,7 @@ describe('AdaptiveMonitor', () => {
       expect(startHandler).toHaveBeenCalledWith(
         expect.objectContaining({
           interval: expect.any(Number),
-          timestamp: expect.any(Number)
+          timestamp: expect.any(Number),
         })
       );
     });
@@ -159,7 +159,7 @@ describe('AdaptiveMonitor', () => {
         expect.objectContaining({
           duration: expect.any(Number),
           totalChecks: expect.any(Number),
-          timestamp: expect.any(Number)
+          timestamp: expect.any(Number),
         })
       );
     });
@@ -275,7 +275,9 @@ describe('AdaptiveMonitor', () => {
       monitor.start(checkFn);
 
       // Wait for check to complete and record
-      await vi.waitFor(() => expect(monitor.totalChecks).toBeGreaterThan(0), { timeout: 2000 });
+      await vi.waitFor(() => expect(monitor.totalChecks).toBeGreaterThan(0), {
+        timeout: 2000,
+      });
 
       const stats = monitor.getStats();
       expect(stats.running).toBe(true);
@@ -327,7 +329,7 @@ describe('AdaptiveMonitor', () => {
       vi.useRealTimers();
       monitor = new AdaptiveMonitor({
         baseInterval: 100,
-        healthyBackoffFactor: 2
+        healthyBackoffFactor: 2,
       });
 
       const initialInterval = monitor.currentInterval;
@@ -346,7 +348,7 @@ describe('AdaptiveMonitor', () => {
       monitor = new AdaptiveMonitor({
         baseInterval: 1000,
         minInterval: 100,
-        unhealthyRushFactor: 0.5
+        unhealthyRushFactor: 0.5,
       });
 
       const initialInterval = monitor.currentInterval;
@@ -365,7 +367,7 @@ describe('AdaptiveMonitor', () => {
       monitor = new AdaptiveMonitor({
         baseInterval: 100,
         minInterval: 50,
-        unhealthyRushFactor: 0.1
+        unhealthyRushFactor: 0.1,
       });
 
       const checkFn = vi.fn().mockResolvedValue(false);
@@ -382,13 +384,15 @@ describe('AdaptiveMonitor', () => {
       monitor = new AdaptiveMonitor({
         baseInterval: 100,
         maxInterval: 500,
-        healthyBackoffFactor: 10
+        healthyBackoffFactor: 10,
       });
 
       const checkFn = vi.fn().mockResolvedValue(true);
       monitor.start(checkFn);
 
-      await vi.waitFor(() => expect(checkFn.mock.calls.length).toBeGreaterThanOrEqual(2), { timeout: 3000 });
+      await vi.waitFor(() => expect(checkFn.mock.calls.length).toBeGreaterThanOrEqual(2), {
+        timeout: 3000,
+      });
 
       expect(monitor.currentInterval).toBeLessThanOrEqual(500);
       monitor.stop();
@@ -400,7 +404,7 @@ describe('AdaptiveMonitor', () => {
       vi.useRealTimers();
       monitor = new AdaptiveMonitor({
         baseInterval: 50,
-        stableThreshold: 3
+        stableThreshold: 3,
       });
 
       const stableHandler = vi.fn();
@@ -408,7 +412,9 @@ describe('AdaptiveMonitor', () => {
 
       monitor.start(() => true);
 
-      await vi.waitFor(() => expect(stableHandler).toHaveBeenCalled(), { timeout: 2000 });
+      await vi.waitFor(() => expect(stableHandler).toHaveBeenCalled(), {
+        timeout: 2000,
+      });
       expect(monitor.status).toBe(HealthStatus.STABLE);
       monitor.stop();
     });
@@ -418,7 +424,7 @@ describe('AdaptiveMonitor', () => {
       monitor = new AdaptiveMonitor({
         baseInterval: 50,
         minInterval: 10,
-        criticalThreshold: 3
+        criticalThreshold: 3,
       });
 
       const criticalHandler = vi.fn();
@@ -426,7 +432,9 @@ describe('AdaptiveMonitor', () => {
 
       monitor.start(() => false);
 
-      await vi.waitFor(() => expect(criticalHandler).toHaveBeenCalled(), { timeout: 5000 });
+      await vi.waitFor(() => expect(criticalHandler).toHaveBeenCalled(), {
+        timeout: 5000,
+      });
       expect(monitor.status).toBe(HealthStatus.CRITICAL);
       monitor.stop();
     });
@@ -440,7 +448,9 @@ describe('AdaptiveMonitor', () => {
 
       monitor.start(() => true);
 
-      await vi.waitFor(() => expect(statusHandler).toHaveBeenCalled(), { timeout: 1000 });
+      await vi.waitFor(() => expect(statusHandler).toHaveBeenCalled(), {
+        timeout: 1000,
+      });
       monitor.stop();
     });
   });
@@ -455,11 +465,13 @@ describe('AdaptiveMonitor', () => {
         throw new Error('Check failed');
       });
 
-      await vi.waitFor(() => expect(errorHandler).toHaveBeenCalled(), { timeout: 1000 });
+      await vi.waitFor(() => expect(errorHandler).toHaveBeenCalled(), {
+        timeout: 1000,
+      });
 
       expect(errorHandler).toHaveBeenCalledWith(
         expect.objectContaining({
-          error: expect.any(Error)
+          error: expect.any(Error),
         })
       );
       monitor.stop();
@@ -491,7 +503,7 @@ describe('AdaptiveMonitor', () => {
 
       expect(healthHandler).toHaveBeenCalledWith(
         expect.objectContaining({
-          healthy: true
+          healthy: true,
         })
       );
       monitor.stop();
@@ -504,7 +516,7 @@ describe('AdaptiveMonitor', () => {
 
       monitor.start(() => ({
         healthy: true,
-        details: { metric: 42 }
+        details: { metric: 42 },
       }));
 
       await vi.waitFor(() => expect(healthHandler).toHaveBeenCalled());
@@ -512,7 +524,7 @@ describe('AdaptiveMonitor', () => {
       expect(healthHandler).toHaveBeenCalledWith(
         expect.objectContaining({
           healthy: true,
-          details: expect.objectContaining({ metric: 42 })
+          details: expect.objectContaining({ metric: 42 }),
         })
       );
       monitor.stop();

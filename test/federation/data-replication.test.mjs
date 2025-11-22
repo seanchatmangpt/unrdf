@@ -2,15 +2,18 @@
  * @fileoverview Tests for Data Replication Manager
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, _vi } from 'vitest';
 import {
-  DataReplicationManager,
+  _DataReplicationManager,
   createDataReplicationManager,
   ReplicationTopology,
   ConflictResolution,
-  ReplicationMode
+  _ReplicationMode,
 } from '../../src/knowledge-engine/federation/data-replication.mjs';
-import { createFederationCoordinator, StoreHealth } from '../../src/knowledge-engine/federation/federation-coordinator.mjs';
+import {
+  createFederationCoordinator,
+  StoreHealth,
+} from '../../src/knowledge-engine/federation/federation-coordinator.mjs';
 
 describe('DataReplicationManager', () => {
   let coordinator;
@@ -19,7 +22,7 @@ describe('DataReplicationManager', () => {
   beforeEach(async () => {
     coordinator = createFederationCoordinator({
       federationId: 'test-federation',
-      enableConsensus: false
+      enableConsensus: false,
     });
     await coordinator.initialize();
 
@@ -27,17 +30,17 @@ describe('DataReplicationManager', () => {
     await coordinator.registerStore({
       storeId: 'store-1',
       endpoint: 'http://store1:3000',
-      weight: 1.0
+      weight: 1.0,
     });
     await coordinator.registerStore({
       storeId: 'store-2',
       endpoint: 'http://store2:3000',
-      weight: 1.0
+      weight: 1.0,
     });
     await coordinator.registerStore({
       storeId: 'store-3',
       endpoint: 'http://store3:3000',
-      weight: 1.0
+      weight: 1.0,
     });
 
     // Set stores as healthy
@@ -48,7 +51,7 @@ describe('DataReplicationManager', () => {
     replication = createDataReplicationManager(coordinator, {
       topology: ReplicationTopology.FULL_MESH,
       conflictResolution: ConflictResolution.LAST_WRITE_WINS,
-      batchInterval: 50
+      batchInterval: 50,
     });
     await replication.initialize();
   });
@@ -69,7 +72,7 @@ describe('DataReplicationManager', () => {
 
     it('should emit initialized event', async () => {
       const mgr = createDataReplicationManager(coordinator, {});
-      const eventPromise = new Promise((resolve) => {
+      const eventPromise = new Promise(resolve => {
         mgr.on('initialized', () => {
           resolve();
         });
@@ -88,8 +91,8 @@ describe('DataReplicationManager', () => {
         quad: {
           subject: 'http://example.org/alice',
           predicate: 'http://xmlns.com/foaf/0.1/name',
-          object: '"Alice"'
-        }
+          object: '"Alice"',
+        },
       };
 
       await replication.replicate(change);
@@ -105,8 +108,8 @@ describe('DataReplicationManager', () => {
         quad: {
           subject: 'http://example.org/bob',
           predicate: 'http://xmlns.com/foaf/0.1/name',
-          object: '"Bob"'
-        }
+          object: '"Bob"',
+        },
       };
 
       await replication.replicate(change);
@@ -125,8 +128,8 @@ describe('DataReplicationManager', () => {
         quad: {
           subject: 'http://example.org/test',
           predicate: 'http://example.org/prop',
-          object: '"value"'
-        }
+          object: '"value"',
+        },
       });
 
       const newVector = replication.versionVectors.get('store-1');
@@ -134,8 +137,8 @@ describe('DataReplicationManager', () => {
     });
 
     it('should emit changeReplicated event', async () => {
-      const eventPromise = new Promise((resolve) => {
-        replication.on('changeReplicated', (operation) => {
+      const eventPromise = new Promise(resolve => {
+        replication.on('changeReplicated', operation => {
           expect(operation.storeId).toBe('store-1');
           resolve();
         });
@@ -147,8 +150,8 @@ describe('DataReplicationManager', () => {
         quad: {
           subject: 'http://example.org/test',
           predicate: 'http://example.org/prop',
-          object: '"value"'
-        }
+          object: '"value"',
+        },
       });
       await eventPromise;
     });
@@ -191,7 +194,7 @@ describe('DataReplicationManager', () => {
       const operation = {
         storeId: 'store-1',
         version: { 'store-1': 5, 'store-2': 3 },
-        quad: { subject: 'test', predicate: 'test', object: 'test' }
+        quad: { subject: 'test', predicate: 'test', object: 'test' },
       };
 
       const conflict = replication.detectConflict('store-2', operation);
@@ -206,7 +209,7 @@ describe('DataReplicationManager', () => {
       const operation = {
         storeId: 'store-1',
         version: { 'store-1': 5 },
-        quad: { subject: 'test', predicate: 'test', object: 'test' }
+        quad: { subject: 'test', predicate: 'test', object: 'test' },
       };
 
       const conflict = replication.detectConflict('store-2', operation);
@@ -220,7 +223,7 @@ describe('DataReplicationManager', () => {
       const conflict = {
         targetStoreId: 'store-2',
         targetVector: {},
-        operation: { timestamp: Date.now() }
+        operation: { timestamp: Date.now() },
       };
 
       const resolved = await replication.resolveConflict(conflict, conflict.operation);
@@ -234,7 +237,7 @@ describe('DataReplicationManager', () => {
       const conflict = {
         targetStoreId: 'store-2',
         targetVector: {},
-        operation: { timestamp: Date.now() }
+        operation: { timestamp: Date.now() },
       };
 
       const resolved = await replication.resolveConflict(conflict, conflict.operation);
@@ -243,8 +246,8 @@ describe('DataReplicationManager', () => {
     });
 
     it('should emit conflict event', async () => {
-      const eventPromise = new Promise((resolve) => {
-        replication.on('conflict', (conflict) => {
+      const eventPromise = new Promise(resolve => {
+        replication.on('conflict', conflict => {
           expect(conflict).toBeDefined();
           resolve();
         });
@@ -253,7 +256,7 @@ describe('DataReplicationManager', () => {
       const conflict = {
         targetStoreId: 'store-2',
         targetVector: {},
-        operation: { timestamp: Date.now() }
+        operation: { timestamp: Date.now() },
       };
 
       await replication.resolveConflict(conflict, conflict.operation);
@@ -266,7 +269,7 @@ describe('DataReplicationManager', () => {
       await replication.replicate({
         storeId: 'store-1',
         operation: 'INSERT',
-        quad: { subject: 'test', predicate: 'test', object: 'test' }
+        quad: { subject: 'test', predicate: 'test', object: 'test' },
       });
 
       expect(replication.replicationQueue.length).toBeGreaterThanOrEqual(0);
@@ -278,7 +281,7 @@ describe('DataReplicationManager', () => {
       await replication.replicate({
         storeId: 'store-1',
         operation: 'INSERT',
-        quad: { subject: 'test', predicate: 'test', object: 'test' }
+        quad: { subject: 'test', predicate: 'test', object: 'test' },
       });
 
       // Wait for batch processing
@@ -310,7 +313,7 @@ describe('DataReplicationManager', () => {
       await replication.replicate({
         storeId: 'store-1',
         operation: 'INSERT',
-        quad: { subject: 'test', predicate: 'test', object: 'test' }
+        quad: { subject: 'test', predicate: 'test', object: 'test' },
       });
 
       const stats = replication.getStats();
@@ -320,7 +323,7 @@ describe('DataReplicationManager', () => {
         queueSize: expect.any(Number),
         conflictCount: expect.any(Number),
         versionVectors: expect.any(Object),
-        config: expect.any(Object)
+        config: expect.any(Object),
       });
     });
   });
@@ -330,7 +333,7 @@ describe('DataReplicationManager', () => {
       await replication.replicate({
         storeId: 'store-1',
         operation: 'INSERT',
-        quad: { subject: 'test', predicate: 'test', object: 'test' }
+        quad: { subject: 'test', predicate: 'test', object: 'test' },
       });
 
       await replication.shutdown();
@@ -339,7 +342,7 @@ describe('DataReplicationManager', () => {
     });
 
     it('should emit shutdown event', async () => {
-      const eventPromise = new Promise((resolve) => {
+      const eventPromise = new Promise(resolve => {
         replication.on('shutdown', () => {
           resolve();
         });

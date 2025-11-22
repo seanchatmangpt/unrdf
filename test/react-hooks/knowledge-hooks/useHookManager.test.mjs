@@ -15,7 +15,7 @@ describe('useHookManager', () => {
     it('should add hooks to manager', () => {
       const hook = {
         name: 'test-hook',
-        execute: vi.fn()
+        execute: vi.fn(),
       };
 
       hooks.push(hook);
@@ -26,7 +26,7 @@ describe('useHookManager', () => {
     it('should remove hooks from manager', () => {
       const hook = {
         name: 'test-hook',
-        execute: vi.fn()
+        execute: vi.fn(),
       };
 
       hooks.push(hook);
@@ -50,13 +50,13 @@ describe('useHookManager', () => {
       const preHook = {
         name: 'pre',
         type: 'pre',
-        execute: () => order.push('pre')
+        execute: () => order.push('pre'),
       };
 
       const postHook = {
         name: 'post',
         type: 'post',
-        execute: () => order.push('post')
+        execute: () => order.push('post'),
       };
 
       hooks = [preHook, postHook];
@@ -69,8 +69,18 @@ describe('useHookManager', () => {
     it('should respect priority within hook types', () => {
       const order = [];
 
-      const hook1 = { name: 'h1', type: 'pre', priority: 10, execute: () => order.push('h1') };
-      const hook2 = { name: 'h2', type: 'pre', priority: 20, execute: () => order.push('h2') };
+      const hook1 = {
+        name: 'h1',
+        type: 'pre',
+        priority: 10,
+        execute: () => order.push('h1'),
+      };
+      const hook2 = {
+        name: 'h2',
+        type: 'pre',
+        priority: 20,
+        execute: () => order.push('h2'),
+      };
 
       hooks = [hook1, hook2].sort((a, b) => b.priority - a.priority);
       hooks.forEach(h => h.execute());
@@ -86,7 +96,7 @@ describe('useHookManager', () => {
       const hook = {
         name: 'test',
         init: () => initialized.push('initialized'),
-        execute: vi.fn()
+        execute: vi.fn(),
       };
 
       hook.init?.();
@@ -100,7 +110,7 @@ describe('useHookManager', () => {
       const hook = {
         name: 'test',
         cleanup: () => cleaned.push('cleaned'),
-        execute: vi.fn()
+        execute: vi.fn(),
       };
 
       hook.cleanup?.();
@@ -115,7 +125,7 @@ describe('useHookManager', () => {
 
       const hook = {
         name: 'test',
-        execute: () => stats.executions++
+        execute: () => stats.executions++,
       };
 
       hook.execute();
@@ -134,8 +144,8 @@ describe('useHookManager', () => {
           const start = performance.now();
           // Simulate work
           const end = performance.now();
-          stats.totalTime += (end - start);
-        }
+          stats.totalTime += end - start;
+        },
       };
 
       hook.execute();

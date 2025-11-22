@@ -20,20 +20,22 @@ import { useState, useCallback } from 'react';
  *   reset
  * } = useQueryBuilder();
  */
-export function useQueryBuilder(config = {}) {
+export function useQueryBuilder(_config = {}) {
   const [triplePatterns, setTriplePatterns] = useState([]);
   const [filters, setFilters] = useState([]);
-  const [prefixes, setPrefixes] = useState(new Map([
-    ['rdf', 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'],
-    ['rdfs', 'http://www.w3.org/2000/01/rdf-schema#'],
-    ['schema', 'http://schema.org/']
-  ]));
+  const [prefixes, _setPrefixes] = useState(
+    new Map([
+      ['rdf', 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'],
+      ['rdfs', 'http://www.w3.org/2000/01/rdf-schema#'],
+      ['schema', 'http://schema.org/'],
+    ])
+  );
 
   const addTriplePattern = useCallback((subject, predicate, object) => {
     setTriplePatterns(prev => [...prev, { subject, predicate, object }]);
   }, []);
 
-  const removeTriplePattern = useCallback((index) => {
+  const removeTriplePattern = useCallback(index => {
     setTriplePatterns(prev => prev.filter((_, i) => i !== index));
   }, []);
 
@@ -41,7 +43,7 @@ export function useQueryBuilder(config = {}) {
     setFilters(prev => [...prev, { variable, operator, value }]);
   }, []);
 
-  const removeFilter = useCallback((index) => {
+  const removeFilter = useCallback(index => {
     setFilters(prev => prev.filter((_, i) => i !== index));
   }, []);
 
@@ -87,6 +89,6 @@ export function useQueryBuilder(config = {}) {
     removeFilter,
     buildQuery,
     reset,
-    query: buildQuery()
+    query: buildQuery(),
   };
 }

@@ -27,12 +27,7 @@ pnpm add unrdf react react-dom
 
 ```jsx
 import React from 'react';
-import {
-  KnowledgeEngineProvider,
-  useStore,
-  useSPARQLQuery,
-  useTerms,
-} from 'unrdf/react-hooks';
+import { KnowledgeEngineProvider, useStore, useSPARQLQuery, useTerms } from 'unrdf/react-hooks';
 
 export function App() {
   return (
@@ -51,8 +46,10 @@ function RDFApp() {
     <div>
       <h1>Store Size: {store?.size || 0}</h1>
       <ul>
-        {data?.rows?.map((row) => (
-          <li key={row.s.value}>{row.p.value}: {row.o.value}</li>
+        {data?.rows?.map(row => (
+          <li key={row.s.value}>
+            {row.p.value}: {row.o.value}
+          </li>
         ))}
       </ul>
     </div>
@@ -167,7 +164,7 @@ Context providers for React integration.
 ```jsx
 <KnowledgeEngineProvider config={config}>
   <App />
-</KnowledgeEngineProvider>
+</KnowledgeEngineProvider>;
 
 const context = useKnowledgeEngineContext();
 const config = useConfigContext();
@@ -204,13 +201,9 @@ function ValidationApp() {
       <textarea
         placeholder="SHACL Shapes"
         value={shapes}
-        onChange={(e) => setShapes(e.target.value)}
+        onChange={e => setShapes(e.target.value)}
       />
-      <textarea
-        placeholder="RDF Data"
-        value={data}
-        onChange={(e) => setData(e.target.value)}
-      />
+      <textarea placeholder="RDF Data" value={data} onChange={e => setData(e.target.value)} />
       <div>{isValid ? '✓ Valid' : '✗ Invalid'}</div>
       {results?.map((result, i) => (
         <div key={i}>{result.message}</div>
@@ -307,9 +300,7 @@ useKnowledgeEffect(() => {
 Use React.memo for expensive components:
 
 ```jsx
-const ResultsTable = React.memo(({ data }) => (
-  <table>{/* ... */}</table>
-));
+const ResultsTable = React.memo(({ data }) => <table>{/* ... */}</table>);
 ```
 
 ## Performance

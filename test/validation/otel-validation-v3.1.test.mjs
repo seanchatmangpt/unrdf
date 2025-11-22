@@ -14,9 +14,9 @@ import {
   validateV3_1Features,
   assertSpanExists,
   assertSpanAttribute,
-  assertSpanSucceeded,
+  _assertSpanSucceeded,
   calculateSpanStats,
-  SpanStatusCode
+  SpanStatusCode,
 } from '../utils/otel-validator.mjs';
 
 describe('OTEL Validation: v3.1.0 Features', () => {
@@ -33,8 +33,8 @@ describe('OTEL Validation: v3.1.0 Features', () => {
           'sandbox.engine': 'isolated-vm',
           'code.hash': 'abc123',
           'execution.timeout': 1000,
-          'memory.limit': 128
-        }
+          'memory.limit': 128,
+        },
       });
 
       span.end();
@@ -49,8 +49,8 @@ describe('OTEL Validation: v3.1.0 Features', () => {
         attributes: {
           'threat.patterns.tested': 13,
           'threats.blocked': 13,
-          'threats.escaped': 0
-        }
+          'threats.escaped': 0,
+        },
       });
 
       span.end();
@@ -65,8 +65,8 @@ describe('OTEL Validation: v3.1.0 Features', () => {
         attributes: {
           'memory.allocated': 128 * 1024 * 1024,
           'memory.used': 45 * 1024 * 1024,
-          'memory.isolated': true
-        }
+          'memory.isolated': true,
+        },
       });
 
       span.end();
@@ -78,10 +78,10 @@ describe('OTEL Validation: v3.1.0 Features', () => {
       const span = tracer.startSpan('isolated-vm.performance.benchmark', {
         attributes: {
           'benchmark.type': 'fibonacci',
-          'duration_ms': 45,
-          'threshold_ms': 1000,
-          'within_threshold': true
-        }
+          duration_ms: 45,
+          threshold_ms: 1000,
+          within_threshold: true,
+        },
       });
 
       span.end();
@@ -94,11 +94,11 @@ describe('OTEL Validation: v3.1.0 Features', () => {
     it('should create IndexedDB store span', () => {
       const span = tracer.startSpan('browser.indexeddb.store', {
         attributes: {
-          'environment': 'browser',
+          environment: 'browser',
           'store.name': 'unrdf',
           'quads.count': 10000,
-          'operation': 'addQuads'
-        }
+          operation: 'addQuads',
+        },
       });
 
       span.end();
@@ -112,8 +112,8 @@ describe('OTEL Validation: v3.1.0 Features', () => {
         attributes: {
           'worker.type': 'rdf-parser',
           'message.sent': true,
-          'message.received': true
-        }
+          'message.received': true,
+        },
       });
 
       span.end();
@@ -125,9 +125,9 @@ describe('OTEL Validation: v3.1.0 Features', () => {
       const span = tracer.startSpan('browser.shim.fs', {
         attributes: {
           'shim.type': 'fs',
-          'operation': 'writeFile',
-          'path': '/test.txt'
-        }
+          operation: 'writeFile',
+          path: '/test.txt',
+        },
       });
 
       span.end();
@@ -138,10 +138,10 @@ describe('OTEL Validation: v3.1.0 Features', () => {
     it('should create crypto operation span', () => {
       const span = tracer.startSpan('browser.crypto.hash', {
         attributes: {
-          'algorithm': 'SHA-256',
+          algorithm: 'SHA-256',
           'data.size': 1024,
-          'hash.hex': '916f0027...'
-        }
+          'hash.hex': '916f0027...',
+        },
       });
 
       span.end();
@@ -157,8 +157,8 @@ describe('OTEL Validation: v3.1.0 Features', () => {
           'policy.name': 'data-validation',
           'policy.version': '1.0.0',
           'rules.evaluated': 5,
-          'rules.passed': 5
-        }
+          'rules.passed': 5,
+        },
       });
 
       span.end();
@@ -172,8 +172,8 @@ describe('OTEL Validation: v3.1.0 Features', () => {
         attributes: {
           'policy.name': 'security-policy',
           'violation.type': 'unauthorized-access',
-          'violation.severity': 'high'
-        }
+          'violation.severity': 'high',
+        },
       });
 
       span.setStatus({ code: SpanStatusCode.ERROR });
@@ -187,8 +187,8 @@ describe('OTEL Validation: v3.1.0 Features', () => {
         attributes: {
           'pack.name': 'default-policies',
           'policies.count': 10,
-          'pack.version': '3.1.0'
-        }
+          'pack.version': '3.1.0',
+        },
       });
 
       span.end();
@@ -204,8 +204,8 @@ describe('OTEL Validation: v3.1.0 Features', () => {
           'kgc.hook.id': 'validation-hook',
           'kgc.transaction.id': 'tx-123',
           'hook.type': 'before',
-          'hook.phase': 'validate'
-        }
+          'hook.phase': 'validate',
+        },
       });
 
       span.end();
@@ -219,8 +219,8 @@ describe('OTEL Validation: v3.1.0 Features', () => {
         attributes: {
           'sandbox.engine': 'isolated-vm',
           'hook.id': 'effect-hook',
-          'code.hash': 'def456'
-        }
+          'code.hash': 'def456',
+        },
       });
 
       span.end();
@@ -233,8 +233,8 @@ describe('OTEL Validation: v3.1.0 Features', () => {
         attributes: {
           'condition.expression': 'quad.predicate === rdf:type',
           'condition.result': true,
-          'hook.id': 'type-hook'
-        }
+          'hook.id': 'type-hook',
+        },
       });
 
       span.end();
@@ -246,21 +246,29 @@ describe('OTEL Validation: v3.1.0 Features', () => {
   describe('v3.1.0 Feature Validation', () => {
     it('should validate all v3.1.0 features present', () => {
       // Create spans for all v3.1.0 features
-      tracer.startSpan('isolated-vm.execute', {
-        attributes: { 'sandbox.engine': 'isolated-vm' }
-      }).end();
+      tracer
+        .startSpan('isolated-vm.execute', {
+          attributes: { 'sandbox.engine': 'isolated-vm' },
+        })
+        .end();
 
-      tracer.startSpan('browser.indexeddb.store', {
-        attributes: { 'environment': 'browser' }
-      }).end();
+      tracer
+        .startSpan('browser.indexeddb.store', {
+          attributes: { environment: 'browser' },
+        })
+        .end();
 
-      tracer.startSpan('kgc.policy.evaluate', {
-        attributes: { 'hook.type': 'policy' }
-      }).end();
+      tracer
+        .startSpan('kgc.policy.evaluate', {
+          attributes: { 'hook.type': 'policy' },
+        })
+        .end();
 
-      tracer.startSpan('kgc.hook', {
-        attributes: { 'kgc.hook.id': 'test-hook' }
-      }).end();
+      tracer
+        .startSpan('kgc.hook', {
+          attributes: { 'kgc.hook.id': 'test-hook' },
+        })
+        .end();
 
       const result = validateV3_1Features(tracer.getSpans());
 
@@ -274,9 +282,11 @@ describe('OTEL Validation: v3.1.0 Features', () => {
 
     it('should detect missing isolated-vm features', () => {
       // Create spans without isolated-vm
-      tracer.startSpan('browser.indexeddb.store', {
-        attributes: { 'environment': 'browser' }
-      }).end();
+      tracer
+        .startSpan('browser.indexeddb.store', {
+          attributes: { environment: 'browser' },
+        })
+        .end();
 
       const result = validateV3_1Features(tracer.getSpans());
 
@@ -287,9 +297,11 @@ describe('OTEL Validation: v3.1.0 Features', () => {
 
     it('should detect missing browser features', () => {
       // Create spans without browser features
-      tracer.startSpan('isolated-vm.execute', {
-        attributes: { 'sandbox.engine': 'isolated-vm' }
-      }).end();
+      tracer
+        .startSpan('isolated-vm.execute', {
+          attributes: { 'sandbox.engine': 'isolated-vm' },
+        })
+        .end();
 
       const result = validateV3_1Features(tracer.getSpans());
 
@@ -302,9 +314,11 @@ describe('OTEL Validation: v3.1.0 Features', () => {
       // Create multiple spans
       for (let i = 0; i < 10; i++) {
         const span = tracer.startSpan(`operation-${i}`, {
-          attributes: { 'duration_ms': 100 + i * 10 }
+          attributes: { duration_ms: 100 + i * 10 },
         });
-        span.setStatus({ code: i < 9 ? SpanStatusCode.OK : SpanStatusCode.ERROR });
+        span.setStatus({
+          code: i < 9 ? SpanStatusCode.OK : SpanStatusCode.ERROR,
+        });
         span.end();
       }
 
@@ -320,9 +334,9 @@ describe('OTEL Validation: v3.1.0 Features', () => {
     it('should validate isolated-vm execution time', () => {
       const span = tracer.startSpan('isolated-vm.execute', {
         attributes: {
-          'duration_ms': 45,
-          'threshold_ms': 100
-        }
+          duration_ms: 45,
+          threshold_ms: 100,
+        },
       });
 
       span.end();
@@ -335,10 +349,10 @@ describe('OTEL Validation: v3.1.0 Features', () => {
     it('should validate browser query performance', () => {
       const span = tracer.startSpan('browser.indexeddb.query', {
         attributes: {
-          'duration_ms': 150,
-          'threshold_ms': 200,
-          'quads.queried': 10000
-        }
+          duration_ms: 150,
+          threshold_ms: 200,
+          'quads.queried': 10000,
+        },
       });
 
       span.end();
@@ -350,9 +364,9 @@ describe('OTEL Validation: v3.1.0 Features', () => {
     it('should validate hook execution time', () => {
       const span = tracer.startSpan('kgc.hook', {
         attributes: {
-          'duration_ms': 30,
-          'threshold_ms': 100
-        }
+          duration_ms: 30,
+          threshold_ms: 100,
+        },
       });
 
       span.end();
@@ -368,14 +382,14 @@ describe('OTEL Validation: v3.1.0 Features', () => {
 
       span.setStatus({
         code: SpanStatusCode.ERROR,
-        message: 'Execution timeout exceeded'
+        message: 'Execution timeout exceeded',
       });
 
       span.setAttributes({
         'error.type': 'TimeoutError',
         'error.message': 'Execution timeout exceeded',
-        'timeout_ms': 1000,
-        'actual_duration_ms': 1500
+        timeout_ms: 1000,
+        actual_duration_ms: 1500,
       });
 
       span.end();
@@ -389,13 +403,13 @@ describe('OTEL Validation: v3.1.0 Features', () => {
 
       span.setStatus({
         code: SpanStatusCode.ERROR,
-        message: 'VM escape attempt detected'
+        message: 'VM escape attempt detected',
       });
 
       span.setAttributes({
         'error.type': 'SecurityViolation',
         'threat.pattern': 'constructor-escape',
-        'threat.severity': 'critical'
+        'threat.severity': 'critical',
       });
 
       span.end();
@@ -409,17 +423,40 @@ describe('OTEL Validation: v3.1.0 Features', () => {
     it('should achieve 90+ validation score for complete implementation', () => {
       // Create comprehensive span set
       const spanConfigs = [
-        { name: 'isolated-vm.execute', attrs: { 'sandbox.engine': 'isolated-vm', 'duration_ms': 40 } },
-        { name: 'isolated-vm.security.validate', attrs: { 'threats.blocked': 13, 'threats.escaped': 0 } },
-        { name: 'browser.indexeddb.store', attrs: { 'environment': 'browser', 'quads.count': 10000 } },
-        { name: 'browser.indexeddb.query', attrs: { 'duration_ms': 150, 'results.count': 100 } },
-        { name: 'kgc.policy.evaluate', attrs: { 'hook.type': 'policy', 'rules.passed': 5 } },
-        { name: 'kgc.hook', attrs: { 'kgc.hook.id': 'test-hook', 'duration_ms': 30 } },
-        { name: 'kgc.hook.sandbox.execute', attrs: { 'sandbox.engine': 'isolated-vm' } }
+        {
+          name: 'isolated-vm.execute',
+          attrs: { 'sandbox.engine': 'isolated-vm', duration_ms: 40 },
+        },
+        {
+          name: 'isolated-vm.security.validate',
+          attrs: { 'threats.blocked': 13, 'threats.escaped': 0 },
+        },
+        {
+          name: 'browser.indexeddb.store',
+          attrs: { environment: 'browser', 'quads.count': 10000 },
+        },
+        {
+          name: 'browser.indexeddb.query',
+          attrs: { duration_ms: 150, 'results.count': 100 },
+        },
+        {
+          name: 'kgc.policy.evaluate',
+          attrs: { 'hook.type': 'policy', 'rules.passed': 5 },
+        },
+        {
+          name: 'kgc.hook',
+          attrs: { 'kgc.hook.id': 'test-hook', duration_ms: 30 },
+        },
+        {
+          name: 'kgc.hook.sandbox.execute',
+          attrs: { 'sandbox.engine': 'isolated-vm' },
+        },
       ];
 
       for (const config of spanConfigs) {
-        const span = tracer.startSpan(config.name, { attributes: config.attrs });
+        const span = tracer.startSpan(config.name, {
+          attributes: config.attrs,
+        });
         span.setStatus({ code: SpanStatusCode.OK });
         span.end();
       }
@@ -438,9 +475,11 @@ describe('OTEL Validation: v3.1.0 Features', () => {
 
     it('should fail validation with missing features', () => {
       // Create incomplete span set (missing isolated-vm)
-      tracer.startSpan('browser.indexeddb.store', {
-        attributes: { 'environment': 'browser' }
-      }).end();
+      tracer
+        .startSpan('browser.indexeddb.store', {
+          attributes: { environment: 'browser' },
+        })
+        .end();
 
       const result = validateV3_1Features(tracer.getSpans());
 
@@ -458,8 +497,8 @@ describe('OTEL Validation: v3.1.0 Features', () => {
     it('should have service.name attribute', () => {
       const span = tracer.startSpan('test.operation', {
         attributes: {
-          'service.name': 'unrdf'
-        }
+          'service.name': 'unrdf',
+        },
       });
 
       span.end();
@@ -470,8 +509,8 @@ describe('OTEL Validation: v3.1.0 Features', () => {
     it('should have operation.type attribute', () => {
       const span = tracer.startSpan('isolated-vm.execute', {
         attributes: {
-          'operation.type': 'execute'
-        }
+          'operation.type': 'execute',
+        },
       });
 
       span.end();
@@ -484,8 +523,8 @@ describe('OTEL Validation: v3.1.0 Features', () => {
         attributes: {
           'input.size': 1024,
           'output.size': 2048,
-          'duration_ms': 50
-        }
+          duration_ms: 50,
+        },
       });
 
       // Manually set duration before ending to simulate delay

@@ -3,7 +3,7 @@
  * Tests federation setup, teardown, store registration, and distributed state
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, _beforeEach, vi } from 'vitest';
 
 describe('FederatedSystem', () => {
   describe('System Initialization', () => {
@@ -15,10 +15,10 @@ describe('FederatedSystem', () => {
           status: 'initializing',
           stores: {},
           consensus: null,
-          replication: null
+          replication: null,
         },
         loading: true,
-        error: null
+        error: null,
       };
 
       expect(initialState.loading).toBe(true);
@@ -28,7 +28,9 @@ describe('FederatedSystem', () => {
 
     it('should track loading state during initialization', () => {
       let loading = true;
-      const setLoading = (value) => { loading = value; };
+      const setLoading = value => {
+        loading = value;
+      };
 
       // Simulate initialization start
       expect(loading).toBe(true);
@@ -43,7 +45,7 @@ describe('FederatedSystem', () => {
         stores: ['store1', 'store2', 'store3'],
         consensusProtocol: 'raft',
         replicationFactor: 3,
-        syncStrategy: { mode: 'eventual' }
+        syncStrategy: { mode: 'eventual' },
       };
 
       expect(config.stores).toHaveLength(3);
@@ -81,21 +83,21 @@ describe('FederatedSystem', () => {
     it('should register a new store', async () => {
       const stores = [];
 
-      const registerStore = async (storeMetadata) => {
+      const registerStore = async storeMetadata => {
         if (!storeMetadata.id) {
           throw new Error('Store ID required');
         }
         stores.push({
           ...storeMetadata,
           status: 'connected',
-          registeredAt: new Date().toISOString()
+          registeredAt: new Date().toISOString(),
         });
         return { success: true, storeId: storeMetadata.id };
       };
 
       const result = await registerStore({
         id: 'store-1',
-        endpoint: 'http://store1.example.org/sparql'
+        endpoint: 'http://store1.example.org/sparql',
       });
 
       expect(result.success).toBe(true);
@@ -104,7 +106,7 @@ describe('FederatedSystem', () => {
     });
 
     it('should require store ID for registration', async () => {
-      const registerStore = async (metadata) => {
+      const registerStore = async metadata => {
         if (!metadata.id) {
           throw new Error('Store ID required');
         }
@@ -117,10 +119,10 @@ describe('FederatedSystem', () => {
     it('should register multiple stores', async () => {
       const stores = new Map();
 
-      const registerStore = (metadata) => {
+      const registerStore = metadata => {
         stores.set(metadata.id, {
           ...metadata,
-          status: 'connected'
+          status: 'connected',
         });
       };
 
@@ -136,10 +138,10 @@ describe('FederatedSystem', () => {
     it('should unregister a store', async () => {
       const stores = new Map([
         ['store-1', { id: 'store-1', status: 'connected' }],
-        ['store-2', { id: 'store-2', status: 'connected' }]
+        ['store-2', { id: 'store-2', status: 'connected' }],
       ]);
 
-      const unregisterStore = async (storeId) => {
+      const unregisterStore = async storeId => {
         if (!stores.has(storeId)) {
           throw new Error(`Store ${storeId} not found`);
         }
@@ -155,7 +157,7 @@ describe('FederatedSystem', () => {
     it('should fail to unregister non-existent store', async () => {
       const stores = new Map();
 
-      const unregisterStore = async (storeId) => {
+      const unregisterStore = async storeId => {
         if (!stores.has(storeId)) {
           throw new Error(`Store ${storeId} not found`);
         }
@@ -174,19 +176,19 @@ describe('FederatedSystem', () => {
         for (const store of stores) {
           results.push({
             store,
-            bindings: [{ s: `http://${store}/entity1` }]
+            bindings: [{ s: `http://${store}/entity1` }],
           });
         }
 
         return {
           bindings: results.flatMap(r => r.bindings),
           storesQueried: stores,
-          executionTime: 150
+          executionTime: 150,
         };
       };
 
       const result = await executeQuery('SELECT ?s WHERE { ?s ?p ?o }', {
-        stores: ['store-1', 'store-2']
+        stores: ['store-1', 'store-2'],
       });
 
       expect(result.bindings).toHaveLength(2);
@@ -210,7 +212,9 @@ describe('FederatedSystem', () => {
         return { success: true, executionTime };
       };
 
-      const result = await executeQuery('SELECT * WHERE { ?s ?p ?o }', { timeout: 30000 });
+      const result = await executeQuery('SELECT * WHERE { ?s ?p ?o }', {
+        timeout: 30000,
+      });
       expect(result.success).toBe(true);
     });
 
@@ -260,7 +264,7 @@ describe('FederatedSystem', () => {
             store,
             change,
             strategy,
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
           });
         }
 
@@ -308,7 +312,13 @@ describe('FederatedSystem', () => {
   describe('System Teardown', () => {
     it('should cleanup on unmount', () => {
       let cleaned = false;
-      const systemRef = { current: { shutdown: () => { cleaned = true; } } };
+      const systemRef = {
+        current: {
+          shutdown: () => {
+            cleaned = true;
+          },
+        },
+      };
 
       // Simulate cleanup
       systemRef.current.shutdown();
@@ -356,10 +366,10 @@ describe('FederatedSystem', () => {
         status: 'healthy',
         stores: {
           'store-1': { status: 'healthy', latency: 50 },
-          'store-2': { status: 'healthy', latency: 75 }
+          'store-2': { status: 'healthy', latency: 75 },
         },
         consensus: { leader: 'node-1', term: 5 },
-        replication: { lag: 100, conflicts: 0 }
+        replication: { lag: 100, conflicts: 0 },
       };
 
       expect(health.status).toBe('healthy');
@@ -374,7 +384,7 @@ describe('FederatedSystem', () => {
         return {
           status: 'healthy',
           score: 95,
-          stores: []
+          stores: [],
         };
       };
 
@@ -391,7 +401,7 @@ describe('FederatedSystem', () => {
         totalQueries: 1500,
         averageLatency: 125,
         replicationLag: 50,
-        uptime: 86400000
+        uptime: 86400000,
       });
 
       const stats = await getStats();
@@ -404,7 +414,7 @@ describe('FederatedSystem', () => {
       const metrics = {
         queriesExecuted: 0,
         totalExecutionTime: 0,
-        successRate: 1.0
+        successRate: 1.0,
       };
 
       const trackQuery = (executionTime, success) => {

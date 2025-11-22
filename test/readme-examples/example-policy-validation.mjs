@@ -3,7 +3,12 @@
  * Tests validation hooks with age requirement
  */
 
-import { createDarkMatterCore, defineHook, registerHook, DataFactory } from '../../src/knowledge-engine/index.mjs';
+import {
+  createDarkMatterCore,
+  defineHook,
+  registerHook,
+  DataFactory,
+} from '../../src/knowledge-engine/index.mjs';
 const { namedNode, quad, literal } = DataFactory;
 
 /**
@@ -25,13 +30,13 @@ async function testPolicyValidation() {
             ?person <http://example.org/age> ?age .
             FILTER (?age < 18)
           }
-        `
+        `,
       },
-      run: async (event) => {
+      run: async event => {
         if (event.result) {
           throw new Error('All persons must be 18 or older');
         }
-      }
+      },
     });
     console.log('✅ Defined validation hook');
 
@@ -47,10 +52,10 @@ async function testPolicyValidation() {
             namedNode('http://example.org/charlie'),
             namedNode('http://example.org/age'),
             literal('16', namedNode('http://www.w3.org/2001/XMLSchema#integer'))
-          )
+          ),
         ],
         removals: [],
-        actor: 'system'
+        actor: 'system',
       });
     } catch (err) {
       console.log('✅ Validation failed as expected:', err.message);

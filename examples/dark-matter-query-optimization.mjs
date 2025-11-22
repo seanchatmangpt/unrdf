@@ -11,7 +11,7 @@ console.log('\n🌌 Dark Matter 80/20 Query Optimization Example\n');
 // Create the integrated system
 const system = createDarkMatterQuerySystem({
   complexityThreshold: 50,
-  enableAutoOptimization: true
+  enableAutoOptimization: true,
 });
 
 // Example queries
@@ -23,7 +23,7 @@ const queries = [
         <http://example.org/alice> <http://example.org/name> ?name .
       }
     `,
-    executionTime: 5
+    executionTime: 5,
   },
   {
     id: 'complex-join',
@@ -34,7 +34,7 @@ const queries = [
         ?friend <http://example.org/name> ?friendName .
       }
     `,
-    executionTime: 150
+    executionTime: 150,
   },
   {
     id: 'expensive-scan',
@@ -44,7 +44,7 @@ const queries = [
         FILTER(?p = <http://example.org/type>)
       }
     `,
-    executionTime: 450
+    executionTime: 450,
   },
   {
     id: 'aggregation-query',
@@ -54,8 +54,8 @@ const queries = [
       }
       GROUP BY ?name
     `,
-    executionTime: 200
-  }
+    executionTime: 200,
+  },
 ];
 
 console.log('📊 Step 1: Analyzing Queries\n');
@@ -92,7 +92,9 @@ try {
 
   console.log('Metrics:');
   console.log(`  - Total Queries: ${criticalPath.metrics.totalQueries}`);
-  console.log(`  - Critical Queries: ${criticalPath.metrics.criticalQueryCount} (${criticalPath.metrics.criticalQueryPercentage.toFixed(1)}%)`);
+  console.log(
+    `  - Critical Queries: ${criticalPath.metrics.criticalQueryCount} (${criticalPath.metrics.criticalQueryPercentage.toFixed(1)}%)`
+  );
   console.log(`  - Impact Ratio: ${(criticalPath.metrics.impactRatio * 100).toFixed(1)}%`);
   console.log(`  - P50 Latency: ${criticalPath.metrics.p50.toFixed(2)}ms`);
   console.log(`  - P90 Latency: ${criticalPath.metrics.p90.toFixed(2)}ms`);
@@ -119,7 +121,9 @@ for (const { id, query } of queries.slice(1)) {
   const optimization = system.optimize(query);
 
   console.log(`  - Rules Applied: ${optimization.rules.filter(r => r.applied).length}`);
-  console.log(`  - Estimated Improvement: ${optimization.estimatedImprovement.percentageGain.toFixed(1)}%`);
+  console.log(
+    `  - Estimated Improvement: ${optimization.estimatedImprovement.percentageGain.toFixed(1)}%`
+  );
 
   if (optimization.rules.some(r => r.applied)) {
     console.log('  - Applied Rules:');

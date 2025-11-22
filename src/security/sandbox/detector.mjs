@@ -19,7 +19,7 @@ const tracer = trace.getTracer('sandbox-detector');
  * @returns {Object} Environment info
  */
 export function detectEnvironment() {
-  return tracer.startActiveSpan('detector.detectEnvironment', (span) => {
+  return tracer.startActiveSpan('detector.detectEnvironment', span => {
     try {
       const env = {
         isNode: typeof process !== 'undefined' && process.versions?.node,
@@ -28,14 +28,14 @@ export function detectEnvironment() {
         nodeVersion: process.versions?.node || null,
         v8Version: process.versions?.v8 || null,
         platform: process.platform || 'unknown',
-        arch: process.arch || 'unknown'
+        arch: process.arch || 'unknown',
       };
 
       span.setAttributes({
         'detector.isNode': env.isNode,
         'detector.isBrowser': env.isBrowser,
         'detector.nodeVersion': env.nodeVersion || 'unknown',
-        'detector.platform': env.platform
+        'detector.platform': env.platform,
       });
 
       span.setStatus({ code: 1 }); // OK
@@ -55,7 +55,7 @@ export function detectEnvironment() {
  * @returns {Promise<boolean>} True if isolated-vm is available
  */
 export async function checkIsolatedVm() {
-  return tracer.startActiveSpan('detector.checkIsolatedVm', async (span) => {
+  return tracer.startActiveSpan('detector.checkIsolatedVm', async span => {
     try {
       // Try to import isolated-vm
       const ivm = await import('isolated-vm').catch(() => null);
@@ -96,7 +96,7 @@ export async function checkIsolatedVm() {
  * @returns {Promise<boolean>} True if Worker threads are available
  */
 export async function checkWorkerThreads() {
-  return tracer.startActiveSpan('detector.checkWorkerThreads', async (span) => {
+  return tracer.startActiveSpan('detector.checkWorkerThreads', async span => {
     try {
       const { Worker } = await import('worker_threads').catch(() => ({}));
       const available = !!Worker;
@@ -120,7 +120,7 @@ export async function checkWorkerThreads() {
  * @returns {Promise<boolean>} True if vm2 is available
  */
 export async function checkVm2() {
-  return tracer.startActiveSpan('detector.checkVm2', async (span) => {
+  return tracer.startActiveSpan('detector.checkVm2', async span => {
     try {
       const vm2Module = await import('vm2').catch(() => null);
       const available = !!vm2Module?.VM;
@@ -151,19 +151,15 @@ export async function checkVm2() {
  * @returns {Promise<string>} Executor type ('isolated-vm' | 'worker' | 'vm2' | 'browser')
  */
 export async function detectBestExecutor(options = {}) {
-  return tracer.startActiveSpan('detector.detectBestExecutor', async (span) => {
+  return tracer.startActiveSpan('detector.detectBestExecutor', async span => {
     try {
-      const {
-        preferIsolatedVm = true,
-        allowVm2 = false,
-        allowBrowser = true
-      } = options;
+      const { preferIsolatedVm = true, allowVm2 = false, allowBrowser = true } = options;
 
       const env = detectEnvironment();
       span.setAttributes({
         'detector.preferIsolatedVm': preferIsolatedVm,
         'detector.allowVm2': allowVm2,
-        'detector.allowBrowser': allowBrowser
+        'detector.allowBrowser': allowBrowser,
       });
 
       // Browser environment
@@ -176,7 +172,7 @@ export async function detectBestExecutor(options = {}) {
       // Node.js environment - check capabilities in priority order
       if (env.isNode) {
         // 1. Try isolated-vm (best security and performance)
-        if (preferIsolatedVm && await checkIsolatedVm()) {
+        if (preferIsolatedVm && (await checkIsolatedVm())) {
           span.setAttribute('detector.executor', 'isolated-vm');
           span.setStatus({ code: 1 });
           return 'isolated-vm';
@@ -190,14 +186,14 @@ export async function detectBestExecutor(options = {}) {
         }
 
         // 3. Fall back to vm2 if explicitly allowed (deprecated, security issues)
-        if (allowVm2 && await checkVm2()) {
+        if (allowVm2 && (await checkVm2())) {
           span.setAttribute('detector.executor', 'vm2');
           span.setAttribute('detector.warning', 'Using deprecated vm2 - security issues present');
           span.setStatus({ code: 1 });
           console.warn(
             '[SECURITY WARNING] Using deprecated vm2 sandbox executor. ' +
-            'This has known security vulnerabilities. ' +
-            'Consider upgrading Node.js or installing isolated-vm.'
+              'This has known security vulnerabilities. ' +
+              'Consider upgrading Node.js or installing isolated-vm.'
           );
           return 'vm2';
         }
@@ -206,7 +202,7 @@ export async function detectBestExecutor(options = {}) {
       // No suitable executor found
       const error = new Error(
         'No suitable sandbox executor available. ' +
-        'Install isolated-vm or upgrade to Node.js 12+ for Worker threads.'
+          'Install isolated-vm or upgrade to Node.js 12+ for Worker threads.'
       );
       span.recordException(error);
       span.setStatus({ code: 2, message: error.message });
@@ -228,7 +224,7 @@ export async function detectBestExecutor(options = {}) {
  * @returns {Promise<Object>} Executor instance
  */
 export async function createExecutor(executorType, config = {}) {
-  return tracer.startActiveSpan('detector.createExecutor', async (span) => {
+  return tracer.startActiveSpan('detector.createExecutor', async span => {
     try {
       span.setAttribute('detector.executorType', executorType);
 
@@ -276,7 +272,7 @@ export async function createExecutor(executorType, config = {}) {
  * @returns {Promise<Object>} Executor instance
  */
 export async function createBestExecutor(config = {}, detectionOptions = {}) {
-  return tracer.startActiveSpan('detector.createBestExecutor', async (span) => {
+  return tracer.startActiveSpan('detector.createBestExecutor', async span => {
     try {
       const executorType = await detectBestExecutor(detectionOptions);
       span.setAttribute('detector.selectedExecutor', executorType);
@@ -309,18 +305,18 @@ export function getExecutorCapabilities(executorType) {
       wasmSupport: true,
       securityLevel: 'high',
       performance: 'high',
-      overhead: 'low'
+      overhead: 'low',
     },
-    'worker': {
+    worker: {
       memoryIsolation: 'partial',
       cpuIsolation: 'partial',
       asyncSupport: true,
       wasmSupport: false,
       securityLevel: 'medium',
       performance: 'medium',
-      overhead: 'medium'
+      overhead: 'medium',
     },
-    'vm2': {
+    vm2: {
       memoryIsolation: 'weak',
       cpuIsolation: 'none',
       asyncSupport: false,
@@ -329,17 +325,17 @@ export function getExecutorCapabilities(executorType) {
       performance: 'medium',
       overhead: 'low',
       deprecated: true,
-      securityIssues: true
+      securityIssues: true,
     },
-    'browser': {
+    browser: {
       memoryIsolation: 'partial',
       cpuIsolation: 'partial',
       asyncSupport: true,
       wasmSupport: true,
       securityLevel: 'medium',
       performance: 'low',
-      overhead: 'high'
-    }
+      overhead: 'high',
+    },
   };
 
   return capabilities[executorType] || null;

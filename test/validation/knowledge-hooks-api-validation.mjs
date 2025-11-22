@@ -15,7 +15,7 @@ const results = {
   hookTypes: {},
   readmeExample: { status: false, error: null },
   criticalIssues: [],
-  recommendations: []
+  recommendations: [],
 };
 
 console.log('🔍 VALIDATING KNOWLEDGE HOOKS API (README Lines 137-175)\n');
@@ -32,10 +32,18 @@ results.apiExists.evaluateHook = typeof mainIndex.evaluateHook === 'function';
 results.apiExists.KnowledgeHookManager = typeof mainIndex.KnowledgeHookManager === 'function';
 
 console.log(`  ✅ defineHook: ${results.apiExists.defineHook ? 'EXISTS' : 'MISSING'}`);
-console.log(`  ${results.apiExists.registerHook ? '✅' : '❌'} registerHook: ${results.apiExists.registerHook ? 'EXISTS' : 'MISSING'}`);
-console.log(`  ${results.apiExists.deregisterHook ? '✅' : '❌'} deregisterHook: ${results.apiExists.deregisterHook ? 'EXISTS' : 'MISSING'}`);
-console.log(`  ${results.apiExists.evaluateHook ? '✅' : '❌'} evaluateHook: ${results.apiExists.evaluateHook ? 'EXISTS' : 'MISSING'}`);
-console.log(`  ✅ KnowledgeHookManager: ${results.apiExists.KnowledgeHookManager ? 'EXISTS' : 'MISSING'}`);
+console.log(
+  `  ${results.apiExists.registerHook ? '✅' : '❌'} registerHook: ${results.apiExists.registerHook ? 'EXISTS' : 'MISSING'}`
+);
+console.log(
+  `  ${results.apiExists.deregisterHook ? '✅' : '❌'} deregisterHook: ${results.apiExists.deregisterHook ? 'EXISTS' : 'MISSING'}`
+);
+console.log(
+  `  ${results.apiExists.evaluateHook ? '✅' : '❌'} evaluateHook: ${results.apiExists.evaluateHook ? 'EXISTS' : 'MISSING'}`
+);
+console.log(
+  `  ✅ KnowledgeHookManager: ${results.apiExists.KnowledgeHookManager ? 'EXISTS' : 'MISSING'}`
+);
 
 // ============================================================================
 // TEST 2: Check if hook types are supported
@@ -50,17 +58,17 @@ for (const hookType of hookTypes) {
     const testHook = defineHook({
       meta: {
         name: `test-${hookType}`,
-        description: `Test hook for ${hookType}`
+        description: `Test hook for ${hookType}`,
       },
       when: {
         kind: hookType === 'shacl' ? 'shacl' : 'sparql-ask',
         ref: {
           uri: `file://test/${hookType}.rq`,
           sha256: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
-          mediaType: hookType === 'shacl' ? 'text/shacl' : 'application/sparql-query'
-        }
+          mediaType: hookType === 'shacl' ? 'text/shacl' : 'application/sparql-query',
+        },
       },
-      run: async (event) => ({ result: 'test' })
+      run: async _event => ({ result: 'test' }),
     });
 
     results.hookTypes[hookType] = testHook !== null;
@@ -81,7 +89,7 @@ try {
   const readmeHook = {
     meta: {
       name: 'data-quality-gate',
-      description: 'Ensures all persons have names'
+      description: 'Ensures all persons have names',
     },
     when: {
       kind: 'sparql-ask',
@@ -90,18 +98,18 @@ try {
           ?person a <http://xmlns.com/foaf/0.1/Person> .
           FILTER NOT EXISTS { ?person <http://xmlns.com/foaf/0.1/name> ?name }
         }
-      `
+      `,
     },
-    run: async (event) => {
+    run: async event => {
       if (event.result === true) {
         throw new Error('All persons must have names');
       }
-    }
+    },
   };
 
   // Try to use defineHook with inline query (README style)
   try {
-    const hook = defineHook(readmeHook);
+    const _hook = defineHook(readmeHook);
     results.readmeExample.status = false;
     results.readmeExample.error = 'README example accepted inline query (should require ref)';
     console.log('  ❌ README example validation: FAILED (accepts inline queries)');
@@ -129,25 +137,25 @@ try {
 console.log('\nTEST 4: Testing Correct API Usage (with ref)...');
 
 try {
-  const correctHook = defineHook({
+  const _correctHook = defineHook({
     meta: {
       name: 'data-quality-gate-correct',
-      description: 'Ensures all persons have names'
+      description: 'Ensures all persons have names',
     },
     when: {
       kind: 'sparql-ask',
       ref: {
         uri: 'file://hooks/quality/person-name-check.ask.rq',
         sha256: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
-        mediaType: 'application/sparql-query'
-      }
+        mediaType: 'application/sparql-query',
+      },
     },
-    run: async (event) => {
+    run: async event => {
       if (event.result === true) {
         throw new Error('All persons must have names');
       }
       return { result: 'validation-passed' };
-    }
+    },
   });
 
   console.log('  ✅ Correct API usage (with ref): WORKS');
@@ -176,17 +184,19 @@ if (!results.apiExists.registerHook) {
         ref: {
           uri: 'file://test.rq',
           sha256: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
-          mediaType: 'application/sparql-query'
-        }
+          mediaType: 'application/sparql-query',
+        },
       },
-      run: async () => ({ result: 'ok' })
+      run: async () => ({ result: 'ok' }),
     });
 
     manager.addKnowledgeHook(testHook);
     const registered = manager.getKnowledgeHooks();
 
     if (registered.length === 1 && registered[0].meta.name === 'test-registration') {
-      console.log('  ✅ Alternative registration method works: KnowledgeHookManager.addKnowledgeHook()');
+      console.log(
+        '  ✅ Alternative registration method works: KnowledgeHookManager.addKnowledgeHook()'
+      );
       results.apiExists.alternativeRegistration = true;
     }
   } catch (error) {
@@ -208,7 +218,7 @@ const missingApis = Object.entries(results.apiExists)
   .map(([key]) => key);
 
 const unsupportedTypes = Object.entries(results.hookTypes)
-  .filter(([type, supported]) => !supported)
+  .filter(([_type, supported]) => !supported)
   .map(([type]) => type);
 
 // Critical Issues
@@ -227,7 +237,9 @@ if (unsupportedTypes.length > 0) {
 // Recommendations
 if (!results.apiExists.registerHook) {
   results.recommendations.push('Add registerHook() to src/index.mjs exports');
-  results.recommendations.push('Create convenience wrapper: registerHook = (hook) => manager.addKnowledgeHook(hook)');
+  results.recommendations.push(
+    'Create convenience wrapper: registerHook = (hook) => manager.addKnowledgeHook(hook)'
+  );
 }
 
 if (!results.apiExists.deregisterHook) {

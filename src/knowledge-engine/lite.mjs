@@ -88,7 +88,7 @@ export async function toTurtle(store, options = {}) {
   const { Writer } = await import('n3');
   const writer = new Writer({
     format: 'Turtle',
-    prefixes: options.prefixes || {}
+    prefixes: options.prefixes || {},
   });
 
   const quads = store.getQuads();
@@ -127,7 +127,7 @@ export async function toNQuads(store, options = {}) {
   const { Writer } = await import('n3');
   const writer = new Writer({
     format: 'N-Quads',
-    ...options
+    ...options,
   });
 
   const quads = store.getQuads();
@@ -169,7 +169,11 @@ export function createQuad(subject, predicate, object, graph) {
   let objectNode;
   if (typeof object === 'string') {
     // Check if it looks like a URI
-    if (object.startsWith('http://') || object.startsWith('https://') || object.startsWith('urn:')) {
+    if (
+      object.startsWith('http://') ||
+      object.startsWith('https://') ||
+      object.startsWith('urn:')
+    ) {
       objectNode = namedNode(object);
     } else {
       objectNode = literal(object);

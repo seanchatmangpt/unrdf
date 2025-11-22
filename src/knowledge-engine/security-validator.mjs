@@ -7,7 +7,7 @@
  * injection attacks, and unauthorized access in knowledge hooks.
  */
 
-import { z } from "zod";
+import { z } from 'zod';
 
 /**
  * Schema for security validation result
@@ -42,12 +42,12 @@ export class SecurityValidator {
   validateFileUri(uri) {
     const violations = [];
 
-    if (!uri || typeof uri !== "string") {
+    if (!uri || typeof uri !== 'string') {
       return {
         valid: false,
-        violations: ["Invalid URI: must be a non-empty string"],
+        violations: ['Invalid URI: must be a non-empty string'],
         blocked: true,
-        blockReason: "Invalid URI format",
+        blockReason: 'Invalid URI format',
       };
     }
 
@@ -75,29 +75,21 @@ export class SecurityValidator {
 
       for (const pattern of pathTraversalPatterns) {
         if (pattern.test(uri)) {
-          violations.push("Path traversal detected");
+          violations.push('Path traversal detected');
           break;
         }
       }
 
       // Check for absolute paths
-      if (uri.includes("://") && !uri.startsWith("file://")) {
-        violations.push("Absolute path detected");
+      if (uri.includes('://') && !uri.startsWith('file://')) {
+        violations.push('Absolute path detected');
       }
 
       // Check for system paths
-      const systemPaths = [
-        "/etc/",
-        "/usr/",
-        "/bin/",
-        "/sbin/",
-        "/var/",
-        "C:\\",
-        "D:\\",
-      ];
+      const systemPaths = ['/etc/', '/usr/', '/bin/', '/sbin/', '/var/', 'C:\\', 'D:\\'];
       for (const sysPath of systemPaths) {
         if (uri.includes(sysPath)) {
-          violations.push("System path access detected");
+          violations.push('System path access detected');
           break;
         }
       }
@@ -119,7 +111,7 @@ export class SecurityValidator {
 
       for (const pattern of injectionPatterns) {
         if (pattern.test(uri)) {
-          violations.push("Code injection pattern detected");
+          violations.push('Code injection pattern detected');
           break;
         }
       }
@@ -130,7 +122,7 @@ export class SecurityValidator {
       valid: !blocked,
       violations,
       blocked,
-      blockReason: blocked ? violations.join(", ") : undefined,
+      blockReason: blocked ? violations.join(', ') : undefined,
       securityViolation: blocked ? violations[0] : undefined,
     };
 
@@ -145,12 +137,12 @@ export class SecurityValidator {
   validateSparqlQuery(sparql) {
     const violations = [];
 
-    if (!sparql || typeof sparql !== "string") {
+    if (!sparql || typeof sparql !== 'string') {
       return {
         valid: false,
-        violations: ["Invalid SPARQL: must be a non-empty string"],
+        violations: ['Invalid SPARQL: must be a non-empty string'],
         blocked: true,
-        blockReason: "Invalid SPARQL format",
+        blockReason: 'Invalid SPARQL format',
       };
     }
 
@@ -167,17 +159,17 @@ export class SecurityValidator {
 
     // Check for dangerous SPARQL operations
     const dangerousOperations = [
-      "INSERT",
-      "DELETE",
-      "DROP",
-      "CREATE",
-      "LOAD",
-      "CLEAR",
-      "COPY",
-      "MOVE",
-      "ADD",
-      "MODIFY",
-      "ALTER",
+      'INSERT',
+      'DELETE',
+      'DROP',
+      'CREATE',
+      'LOAD',
+      'CLEAR',
+      'COPY',
+      'MOVE',
+      'ADD',
+      'MODIFY',
+      'ALTER',
     ];
 
     for (const operation of dangerousOperations) {
@@ -201,7 +193,7 @@ export class SecurityValidator {
 
       for (const pattern of injectionPatterns) {
         if (pattern.test(sparql)) {
-          violations.push("SPARQL injection pattern detected");
+          violations.push('SPARQL injection pattern detected');
           break;
         }
       }
@@ -216,7 +208,7 @@ export class SecurityValidator {
 
       for (const pattern of resourcePatterns) {
         if (pattern.test(sparql)) {
-          violations.push("Resource exhaustion pattern detected");
+          violations.push('Resource exhaustion pattern detected');
           break;
         }
       }
@@ -227,7 +219,7 @@ export class SecurityValidator {
       valid: !blocked,
       violations,
       blocked,
-      blockReason: blocked ? violations.join(", ") : undefined,
+      blockReason: blocked ? violations.join(', ') : undefined,
       securityViolation: blocked ? violations[0] : undefined,
     };
 
@@ -242,12 +234,12 @@ export class SecurityValidator {
   validateEffectCode(effectCode) {
     const violations = [];
 
-    if (!effectCode || typeof effectCode !== "string") {
+    if (!effectCode || typeof effectCode !== 'string') {
       return {
         valid: false,
-        violations: ["Invalid effect code: must be a non-empty string"],
+        violations: ['Invalid effect code: must be a non-empty string'],
         blocked: true,
-        blockReason: "Invalid effect code format",
+        blockReason: 'Invalid effect code format',
       };
     }
 
@@ -301,7 +293,7 @@ export class SecurityValidator {
 
     for (const pattern of loopPatterns) {
       if (pattern.test(effectCode)) {
-        violations.push("Potential infinite loop detected");
+        violations.push('Potential infinite loop detected');
       }
     }
 
@@ -310,7 +302,7 @@ export class SecurityValidator {
       valid: !blocked,
       violations,
       blocked,
-      blockReason: blocked ? violations.join(", ") : undefined,
+      blockReason: blocked ? violations.join(', ') : undefined,
       securityViolation: blocked ? violations[0] : undefined,
     };
 
@@ -325,12 +317,12 @@ export class SecurityValidator {
   validateKnowledgeHook(hook) {
     const violations = [];
 
-    if (!hook || typeof hook !== "object") {
+    if (!hook || typeof hook !== 'object') {
       return {
         valid: false,
-        violations: ["Invalid hook: must be an object"],
+        violations: ['Invalid hook: must be an object'],
         blocked: true,
-        blockReason: "Invalid hook format",
+        blockReason: 'Invalid hook format',
       };
     }
 
@@ -345,15 +337,12 @@ export class SecurityValidator {
 
     // Validate hook metadata
     if (!hook.meta || !hook.meta.name) {
-      violations.push("Hook missing required metadata");
+      violations.push('Hook missing required metadata');
     }
 
     // Validate condition
     if (hook.when) {
-      if (
-        hook.when.kind === "sparql-ask" ||
-        hook.when.kind === "sparql-select"
-      ) {
+      if (hook.when.kind === 'sparql-ask' || hook.when.kind === 'sparql-select') {
         if (hook.when.ref && hook.when.ref.uri) {
           const uriValidation = this.validateFileUri(hook.when.ref.uri);
           if (!uriValidation.valid) {
@@ -364,7 +353,7 @@ export class SecurityValidator {
     }
 
     // Validate effect code
-    if (hook.run && typeof hook.run === "function") {
+    if (hook.run && typeof hook.run === 'function') {
       const effectCode = hook.run.toString();
       const effectValidation = this.validateEffectCode(effectCode);
       if (!effectValidation.valid) {
@@ -377,7 +366,7 @@ export class SecurityValidator {
       valid: !blocked,
       violations,
       blocked,
-      blockReason: blocked ? violations.join(", ") : undefined,
+      blockReason: blocked ? violations.join(', ') : undefined,
       securityViolation: blocked ? violations[0] : undefined,
     };
 

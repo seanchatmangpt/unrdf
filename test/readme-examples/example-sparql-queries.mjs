@@ -27,10 +27,10 @@ async function testSparqlQueries() {
           namedNode('http://example.org/alice'),
           namedNode('http://xmlns.com/foaf/0.1/name'),
           literal('Alice')
-        )
+        ),
       ],
       removals: [],
-      actor: 'system'
+      actor: 'system',
     });
     console.log('✅ Added test data');
 
@@ -42,7 +42,7 @@ async function testSparqlQueries() {
           ?person <http://xmlns.com/foaf/0.1/knows> ?friend .
         }
       `,
-      type: 'sparql-select'
+      type: 'sparql-select',
     });
     console.log('✅ SELECT query executed:', results.length, 'results');
 
@@ -53,7 +53,7 @@ async function testSparqlQueries() {
     // ASK query
     const exists = await system.query({
       query: 'ASK { ?s ?p ?o }',
-      type: 'sparql-ask'
+      type: 'sparql-ask',
     });
     console.log('✅ ASK query executed:', exists);
 
@@ -67,7 +67,7 @@ async function testSparqlQueries() {
         CONSTRUCT { ?s ?p ?o }
         WHERE { ?s ?p ?o }
       `,
-      type: 'sparql-construct'
+      type: 'sparql-construct',
     });
     console.log('✅ CONSTRUCT query executed:', graph?.size || 0, 'quads');
 

@@ -4,9 +4,9 @@
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import {
-  ConsensusManager,
+  _ConsensusManager,
   createConsensusManager,
-  NodeState
+  NodeState,
 } from '../../src/knowledge-engine/federation/consensus-manager.mjs';
 
 describe('ConsensusManager', () => {
@@ -17,7 +17,7 @@ describe('ConsensusManager', () => {
       nodeId: 'test-node-1',
       electionTimeoutMin: 50,
       electionTimeoutMax: 100,
-      heartbeatInterval: 20
+      heartbeatInterval: 20,
     });
     await consensus.initialize();
   });
@@ -35,8 +35,8 @@ describe('ConsensusManager', () => {
 
     it('should emit initialized event', async () => {
       const manager = createConsensusManager({ nodeId: 'test-node-2' });
-      const eventPromise = new Promise((resolve) => {
-        manager.on('initialized', (data) => {
+      const eventPromise = new Promise(resolve => {
+        manager.on('initialized', data => {
           expect(data.nodeId).toBe('test-node-2');
           resolve();
         });
@@ -77,8 +77,8 @@ describe('ConsensusManager', () => {
     });
 
     it('should emit state change events', async () => {
-      const eventPromise = new Promise((resolve) => {
-        consensus.on('stateChange', (state) => {
+      const eventPromise = new Promise(resolve => {
+        consensus.on('stateChange', state => {
           expect([NodeState.LEADER, NodeState.FOLLOWER]).toContain(state);
           resolve();
         });
@@ -103,7 +103,7 @@ describe('ConsensusManager', () => {
       const command = {
         type: 'ADD_STORE',
         storeId: 'store-1',
-        data: { endpoint: 'http://store1:3000' }
+        data: { endpoint: 'http://store1:3000' },
       };
 
       const success = await consensus.replicate(command);
@@ -126,15 +126,15 @@ describe('ConsensusManager', () => {
 
       await consensus.replicate({
         type: 'TEST',
-        data: {}
+        data: {},
       });
 
       expect(consensus.stats.logEntriesReplicated).toBe(initialCount + 1);
     });
 
     it('should emit commandApplied event', async () => {
-      const eventPromise = new Promise((resolve) => {
-        consensus.on('commandApplied', (command) => {
+      const _eventPromise = new Promise(resolve => {
+        consensus.on('commandApplied', command => {
           expect(command.type).toBe('TEST_COMMAND');
           resolve();
         });
@@ -142,7 +142,7 @@ describe('ConsensusManager', () => {
 
       await consensus.replicate({
         type: 'TEST_COMMAND',
-        data: {}
+        data: {},
       });
 
       // Give time for async event
@@ -178,7 +178,7 @@ describe('ConsensusManager', () => {
         logLength: expect.any(Number),
         commitIndex: expect.any(Number),
         lastApplied: expect.any(Number),
-        peerCount: expect.any(Number)
+        peerCount: expect.any(Number),
       });
     });
 
@@ -190,7 +190,7 @@ describe('ConsensusManager', () => {
         electionsWon: expect.any(Number),
         heartbeatsSent: expect.any(Number),
         heartbeatsReceived: expect.any(Number),
-        logEntriesReplicated: expect.any(Number)
+        logEntriesReplicated: expect.any(Number),
       });
     });
   });
@@ -203,7 +203,7 @@ describe('ConsensusManager', () => {
         prevLogIndex: 0,
         prevLogTerm: 0,
         entries: [],
-        leaderCommit: 0
+        leaderCommit: 0,
       };
 
       const response = consensus.handleAppendEntries(request);
@@ -219,7 +219,7 @@ describe('ConsensusManager', () => {
         prevLogIndex: 0,
         prevLogTerm: 0,
         entries: [],
-        leaderCommit: 0
+        leaderCommit: 0,
       };
 
       consensus.handleAppendEntries(request);
@@ -238,7 +238,7 @@ describe('ConsensusManager', () => {
     });
 
     it('should emit shutdown event', async () => {
-      const eventPromise = new Promise((resolve) => {
+      const eventPromise = new Promise(resolve => {
         consensus.on('shutdown', () => {
           resolve();
         });

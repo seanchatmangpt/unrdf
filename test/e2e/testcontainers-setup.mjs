@@ -1,13 +1,13 @@
 /**
  * @file Testcontainers Setup for KGC Sidecar E2E Tests
  * @module testcontainers-setup
- * 
+ *
  * @description
  * Testcontainers configuration and utilities for E2E testing
  * of the KGC sidecar in Kubernetes environment.
  */
 
-import { GenericContainer, StartedTestContainer, Network } from 'testcontainers';
+import { GenericContainer, _StartedTestContainer, Network } from 'testcontainers';
 import { PostgreSqlContainer } from '@testcontainers/postgresql';
 import { RedisContainer } from '@testcontainers/redis';
 
@@ -18,9 +18,9 @@ export const testcontainersConfig = {
   // Network configuration
   network: {
     name: 'kgc-test-network',
-    driver: 'bridge'
+    driver: 'bridge',
   },
-  
+
   // PostgreSQL configuration
   postgres: {
     image: 'postgres:15-alpine',
@@ -32,16 +32,16 @@ export const testcontainersConfig = {
       POSTGRES_DB: 'kgc_test',
       POSTGRES_USER: 'test',
       POSTGRES_PASSWORD: 'test',
-      POSTGRES_INITDB_ARGS: '--encoding=UTF-8 --lc-collate=C --lc-ctype=C'
+      POSTGRES_INITDB_ARGS: '--encoding=UTF-8 --lc-collate=C --lc-ctype=C',
     },
     volumes: [
       {
         host: './test-data/postgres',
-        container: '/var/lib/postgresql/data'
-      }
-    ]
+        container: '/var/lib/postgresql/data',
+      },
+    ],
   },
-  
+
   // Redis configuration
   redis: {
     image: 'redis:7-alpine',
@@ -50,11 +50,11 @@ export const testcontainersConfig = {
     volumes: [
       {
         host: './test-data/redis',
-        container: '/data'
-      }
-    ]
+        container: '/data',
+      },
+    ],
   },
-  
+
   // Jaeger configuration
   jaeger: {
     image: 'jaegertracing/all-in-one:latest',
@@ -63,10 +63,10 @@ export const testcontainersConfig = {
       COLLECTOR_OTLP_ENABLED: 'true',
       COLLECTOR_ZIPKIN_HOST_PORT: ':9411',
       SPAN_STORAGE_TYPE: 'memory',
-      LOG_LEVEL: 'debug'
-    }
+      LOG_LEVEL: 'debug',
+    },
   },
-  
+
   // Prometheus configuration
   prometheus: {
     image: 'prom/prometheus:latest',
@@ -74,44 +74,44 @@ export const testcontainersConfig = {
     volumes: [
       {
         host: './test-data/prometheus/prometheus.yml',
-        container: '/etc/prometheus/prometheus.yml'
-      }
-    ]
+        container: '/etc/prometheus/prometheus.yml',
+      },
+    ],
   },
-  
+
   // Grafana configuration
   grafana: {
     image: 'grafana/grafana:latest',
     port: 3000,
     environment: {
       GF_SECURITY_ADMIN_PASSWORD: 'admin',
-      GF_USERS_ALLOW_SIGN_UP: 'false'
+      GF_USERS_ALLOW_SIGN_UP: 'false',
     },
     volumes: [
       {
         host: './test-data/grafana',
-        container: '/var/lib/grafana'
-      }
-    ]
+        container: '/var/lib/grafana',
+      },
+    ],
   },
-  
+
   // MinIO configuration (for S3-compatible storage)
   minio: {
     image: 'minio/minio:latest',
     ports: [9000, 9001],
     environment: {
       MINIO_ROOT_USER: 'minioadmin',
-      MINIO_ROOT_PASSWORD: 'minioadmin'
+      MINIO_ROOT_PASSWORD: 'minioadmin',
     },
     command: ['server', '/data', '--console-address', ':9001'],
     volumes: [
       {
         host: './test-data/minio',
-        container: '/data'
-      }
-    ]
+        container: '/data',
+      },
+    ],
   },
-  
+
   // Elasticsearch configuration
   elasticsearch: {
     image: 'docker.elastic.co/elasticsearch/elasticsearch:8.11.0',
@@ -119,16 +119,16 @@ export const testcontainersConfig = {
     environment: {
       'discovery.type': 'single-node',
       'xpack.security.enabled': 'false',
-      'ES_JAVA_OPTS': '-Xms512m -Xmx512m'
+      ES_JAVA_OPTS: '-Xms512m -Xmx512m',
     },
     volumes: [
       {
         host: './test-data/elasticsearch',
-        container: '/usr/share/elasticsearch/data'
-      }
-    ]
+        container: '/usr/share/elasticsearch/data',
+      },
+    ],
   },
-  
+
   // Kibana configuration
   kibana: {
     image: 'docker.elastic.co/kibana/kibana:8.11.0',
@@ -136,9 +136,9 @@ export const testcontainersConfig = {
     environment: {
       ELASTICSEARCH_HOSTS: 'http://elasticsearch:9200',
       ELASTICSEARCH_USERNAME: 'elastic',
-      ELASTICSEARCH_PASSWORD: 'changeme'
-    }
-  }
+      ELASTICSEARCH_PASSWORD: 'changeme',
+    },
+  },
 };
 
 /**
@@ -265,8 +265,9 @@ export class TestcontainersManager {
     }
 
     console.log('📊 Starting Prometheus container...');
-    let container = new GenericContainer(testcontainersConfig.prometheus.image)
-      .withExposedPorts(testcontainersConfig.prometheus.port);
+    let container = new GenericContainer(testcontainersConfig.prometheus.image).withExposedPorts(
+      testcontainersConfig.prometheus.port
+    );
 
     // Only set network if it exists
     if (this.network) {
@@ -390,26 +391,26 @@ export class TestcontainersManager {
     }
 
     console.log('🚀 Starting all testcontainers...');
-    
+
     // Initialize network
     await this.initializeNetwork();
-    
+
     // Start core services
     await this.startPostgreSQL();
     await this.startRedis();
     await this.startJaeger();
-    
+
     // Start monitoring services
     await this.startPrometheus();
     await this.startGrafana();
-    
+
     // Start storage services
     await this.startMinIO();
-    
+
     // Start logging services
     await this.startElasticsearch();
     await this.startKibana();
-    
+
     this.initialized = true;
     console.log('✅ All testcontainers started successfully');
   }
@@ -423,15 +424,15 @@ export class TestcontainersManager {
     }
 
     console.log('🚀 Starting minimal testcontainers...');
-    
+
     // Initialize network
     await this.initializeNetwork();
-    
+
     // Start only essential services
     await this.startPostgreSQL();
     await this.startRedis();
     await this.startJaeger();
-    
+
     this.initialized = true;
     console.log('✅ Minimal testcontainers started successfully');
   }
@@ -486,7 +487,7 @@ export class TestcontainersManager {
         host: container.getHost(),
         ports: ports,
         // Note: getNetworkAliases() may not be available in all container types
-        networkAliases: container.getNetworkAliases?.() || []
+        networkAliases: container.getNetworkAliases?.() || [],
       };
     }
 
@@ -498,7 +499,7 @@ export class TestcontainersManager {
    */
   getEnvironmentVariables() {
     const env = {};
-    
+
     // PostgreSQL
     const postgres = this.containers.get('postgres');
     if (postgres) {
@@ -509,7 +510,7 @@ export class TestcontainersManager {
       env.POSTGRES_USER = testcontainersConfig.postgres.username;
       env.POSTGRES_PASSWORD = testcontainersConfig.postgres.password;
     }
-    
+
     // Redis
     const redis = this.containers.get('redis');
     if (redis) {
@@ -517,7 +518,7 @@ export class TestcontainersManager {
       env.REDIS_HOST = 'redis';
       env.REDIS_PORT = '6379';
     }
-    
+
     // Jaeger
     const jaeger = this.containers.get('jaeger');
     if (jaeger) {
@@ -526,7 +527,7 @@ export class TestcontainersManager {
       env.JAEGER_AGENT_HOST = 'jaeger';
       env.JAEGER_AGENT_PORT = '6831';
     }
-    
+
     // Prometheus
     const prometheus = this.containers.get('prometheus');
     if (prometheus) {
@@ -534,7 +535,7 @@ export class TestcontainersManager {
       env.PROMETHEUS_HOST = 'prometheus';
       env.PROMETHEUS_PORT = '9090';
     }
-    
+
     // Grafana
     const grafana = this.containers.get('grafana');
     if (grafana) {
@@ -542,7 +543,7 @@ export class TestcontainersManager {
       env.GRAFANA_HOST = 'grafana';
       env.GRAFANA_PORT = '3000';
     }
-    
+
     // MinIO
     const minio = this.containers.get('minio');
     if (minio) {
@@ -552,7 +553,7 @@ export class TestcontainersManager {
       env.MINIO_ACCESS_KEY = testcontainersConfig.minio.environment.MINIO_ROOT_USER;
       env.MINIO_SECRET_KEY = testcontainersConfig.minio.environment.MINIO_ROOT_PASSWORD;
     }
-    
+
     // Elasticsearch
     const elasticsearch = this.containers.get('elasticsearch');
     if (elasticsearch) {
@@ -560,7 +561,7 @@ export class TestcontainersManager {
       env.ELASTICSEARCH_HOST = 'elasticsearch';
       env.ELASTICSEARCH_PORT = '9200';
     }
-    
+
     // Kibana
     const kibana = this.containers.get('kibana');
     if (kibana) {
@@ -568,7 +569,7 @@ export class TestcontainersManager {
       env.KIBANA_HOST = 'kibana';
       env.KIBANA_PORT = '5601';
     }
-    
+
     return env;
   }
 
@@ -592,7 +593,7 @@ export class TestcontainersManager {
    */
   async stopAll() {
     console.log('🛑 Stopping all testcontainers...');
-    
+
     for (const [name, container] of this.containers.entries()) {
       try {
         console.log(`🛑 Stopping ${name}...`);
@@ -602,9 +603,9 @@ export class TestcontainersManager {
         console.warn(`⚠️ Failed to stop ${name}:`, error.message);
       }
     }
-    
+
     this.containers.clear();
-    
+
     if (this.network) {
       try {
         console.log('🛑 Stopping network...');
@@ -615,7 +616,7 @@ export class TestcontainersManager {
       }
       this.network = null;
     }
-    
+
     this.initialized = false;
     console.log('✅ All testcontainers stopped');
   }
@@ -625,23 +626,23 @@ export class TestcontainersManager {
    */
   async cleanup() {
     console.log('🧹 Cleaning up test data...');
-    
+
     // Stop all containers
     await this.stopAll();
-    
+
     // Clean up test data directories
     const fs = await import('fs');
-    const path = await import('path');
-    
+    const _path = await import('_path');
+
     const testDataDirs = [
       './test-data/postgres',
       './test-data/redis',
       './test-data/prometheus',
       './test-data/grafana',
       './test-data/minio',
-      './test-data/elasticsearch'
+      './test-data/elasticsearch',
     ];
-    
+
     for (const dir of testDataDirs) {
       try {
         if (fs.existsSync(dir)) {
@@ -652,7 +653,7 @@ export class TestcontainersManager {
         console.warn(`⚠️ Failed to cleanup ${dir}:`, error.message);
       }
     }
-    
+
     console.log('✅ Test data cleanup completed');
   }
 }
@@ -670,7 +671,3 @@ export function createTestcontainersManager() {
 export const testcontainersManager = createTestcontainersManager();
 
 export default TestcontainersManager;
-
-
-
-

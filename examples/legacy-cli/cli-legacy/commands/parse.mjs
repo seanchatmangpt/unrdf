@@ -18,7 +18,7 @@ import { validateRequiredArgs, getArg } from '../utils/context-wrapper.mjs';
  * @param {Object} config - Configuration
  * @returns {Promise<void>}
  */
-export async function parseCommand(ctx, config) {
+export async function parseCommand(ctx, _config) {
   const { args } = ctx;
 
   // Validate required arguments
@@ -76,16 +76,16 @@ export const parseCommandMeta = {
     input: {
       type: 'positional',
       description: 'Input file path',
-      required: true
+      required: true,
     },
     format: {
       type: 'string',
       description: 'Input format (turtle, n-quads)',
-      default: 'turtle'
+      default: 'turtle',
     },
     output: {
       type: 'string',
-      description: 'Output file path'
-    }
-  }
+      description: 'Output file path',
+    },
+  },
 };

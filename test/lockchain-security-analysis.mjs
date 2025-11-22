@@ -56,14 +56,14 @@ async function main() {
     gitRepo: process.cwd(),
     enableMerkle: true,
     enableGitAnchoring: false,
-    storagePath: testPath
+    storagePath: testPath,
   });
 
   const receipt1 = await lockchain.writeReceipt({
     actor: 'security-test@example.org',
     action: 'create',
     delta: { additions: [], removals: [] },
-    timestamp: new Date()
+    timestamp: new Date(),
   });
 
   logTest('Crypto', 'Signature algorithm is SHA3-256', receipt1.signature.algorithm === 'sha3-256');
@@ -78,10 +78,10 @@ async function main() {
     actor: 'tamper-test-1@example.org',
     action: 'test',
     delta: {},
-    timestamp: new Date()
+    timestamp: new Date(),
   });
 
-  const originalMerkleRoot = receipt2.merkleRoot;
+  const _originalMerkleRoot = receipt2.merkleRoot;
   receipt2.merkleRoot = '0'.repeat(64);
   await lockchain._updateEntry(receipt2);
 
@@ -93,7 +93,7 @@ async function main() {
     actor: 'tamper-test-2@example.org',
     action: 'original-action',
     delta: {},
-    timestamp: new Date()
+    timestamp: new Date(),
   });
 
   receipt3.receipt.action = 'malicious-action';
@@ -107,7 +107,7 @@ async function main() {
     actor: 'tamper-test-3@example.org',
     action: 'test',
     delta: {},
-    timestamp: new Date()
+    timestamp: new Date(),
   });
 
   receipt4.signature.value = 'a'.repeat(64);
@@ -126,7 +126,7 @@ async function main() {
       actor: `chain-test-${i}@example.org`,
       action: `action-${i}`,
       delta: {},
-      timestamp: new Date()
+      timestamp: new Date(),
     });
     chainReceipts.push(receipt);
   }
@@ -143,9 +143,16 @@ async function main() {
   }
 
   logTest('Chain', 'Previous hash chaining works', chainValid, 'All receipts properly chained');
-  logTest('Chain', 'First receipt has empty/null previousHash',
-    chainReceipts[0].previousHash === '' || chainReceipts[0].previousHash === null);
-  logTest('Chain', 'Subsequent receipts have previousHash', chainReceipts[1].previousHash?.length > 0);
+  logTest(
+    'Chain',
+    'First receipt has empty/null previousHash',
+    chainReceipts[0].previousHash === '' || chainReceipts[0].previousHash === null
+  );
+  logTest(
+    'Chain',
+    'Subsequent receipts have previousHash',
+    chainReceipts[1].previousHash?.length > 0
+  );
 
   // ========== MERKLE TREE SECURITY ==========
   console.log('\n🌳 MERKLE TREE SECURITY\n');
@@ -155,7 +162,7 @@ async function main() {
     actor: 'deterministic-test',
     action: 'test',
     delta: { additions: [], removals: [] },
-    timestamp: new Date()
+    timestamp: new Date(),
   };
 
   const entry1 = await lockchain.writeReceipt(testReceipt1);
@@ -166,8 +173,11 @@ async function main() {
   const merkle2 = entry2.merkleRoot;
 
   logTest('Merkle', 'Each entry has unique merkle root', merkle1 !== merkle2, 'IDs differ');
-  logTest('Merkle', 'Merkle roots are deterministic',
-    typeof merkle1 === 'string' && merkle1.length === 64);
+  logTest(
+    'Merkle',
+    'Merkle roots are deterministic',
+    typeof merkle1 === 'string' && merkle1.length === 64
+  );
 
   // Test verification
   const merkleVerification = await lockchain.verifyEntry(entry1.id);
@@ -176,12 +186,18 @@ async function main() {
   // ========== GIT ANCHORING ==========
   console.log('\n🗄️  GIT ANCHORING\n');
 
-  logTest('Git', 'Git anchoring is configurable',
-    typeof lockchain.config.enableGitAnchoring === 'boolean');
+  logTest(
+    'Git',
+    'Git anchoring is configurable',
+    typeof lockchain.config.enableGitAnchoring === 'boolean'
+  );
   logTest('Git', 'Git repo path configured', !!lockchain.config.gitRepo);
   logTest('Git', 'Git ref name configured', !!lockchain.config.refName);
-  logTest('Git', 'Batch size configurable',
-    typeof lockchain.config.batchSize === 'number' && lockchain.config.batchSize > 0);
+  logTest(
+    'Git',
+    'Batch size configurable',
+    typeof lockchain.config.batchSize === 'number' && lockchain.config.batchSize > 0
+  );
 
   // ========== PERFORMANCE & STORAGE ==========
   console.log('\n⚡ PERFORMANCE & STORAGE\n');
@@ -193,15 +209,19 @@ async function main() {
       actor: `perf-test-${i}@example.org`,
       action: 'performance-test',
       delta: {},
-      timestamp: new Date()
+      timestamp: new Date(),
     });
     perfReceipts.push(receipt);
   }
   const duration = Date.now() - startTime;
 
   logTest('Performance', '100 receipts written in <5s', duration < 5000, `Duration: ${duration}ms`);
-  logTest('Performance', 'Average <50ms per receipt', (duration / 100) < 50,
-    `Avg: ${(duration / 100).toFixed(2)}ms`);
+  logTest(
+    'Performance',
+    'Average <50ms per receipt',
+    duration / 100 < 50,
+    `Avg: ${(duration / 100).toFixed(2)}ms`
+  );
 
   const stats = lockchain.getStats();
   logTest('Storage', 'Storage path exists', existsSync(stats.storagePath));
@@ -217,7 +237,7 @@ async function main() {
     'Chain Integrity': chainValid,
     'Deterministic Hashing': merkle1 !== merkle2,
     'Cryptographic Signatures': receipt1.signature.value.length === 64,
-    'Git Anchoring Support': typeof lockchain.config.enableGitAnchoring === 'boolean'
+    'Git Anchoring Support': typeof lockchain.config.enableGitAnchoring === 'boolean',
   };
 
   Object.entries(securityFeatures).forEach(([feature, enabled]) => {

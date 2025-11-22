@@ -56,7 +56,7 @@ export function useFederatedSystem(config = {}) {
     status: 'initializing',
     stores: {},
     consensus: null,
-    replication: null
+    replication: null,
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -78,7 +78,7 @@ export function useFederatedSystem(config = {}) {
         // Create federated system
         const federatedSystem = await createFederatedSystem({
           ...config,
-          engine
+          engine,
         });
 
         if (!mounted) return;
@@ -92,7 +92,7 @@ export function useFederatedSystem(config = {}) {
             await federatedSystem.registerStore({
               id: storeId,
               endpoint: config.endpoints?.[storeId],
-              metadata: config.metadata?.[storeId]
+              metadata: config.metadata?.[storeId],
             });
           }
         }
@@ -119,93 +119,105 @@ export function useFederatedSystem(config = {}) {
   }, [engine, JSON.stringify(config)]);
 
   // Register new store
-  const registerStore = useCallback(async (storeMetadata) => {
-    if (!system) {
-      throw new Error('Federation system not initialized');
-    }
+  const registerStore = useCallback(
+    async storeMetadata => {
+      if (!system) {
+        throw new Error('Federation system not initialized');
+      }
 
-    try {
-      await system.registerStore(storeMetadata);
+      try {
+        await system.registerStore(storeMetadata);
 
-      // Update stores list
-      const updatedStores = await system.listStores();
-      setStores(updatedStores);
+        // Update stores list
+        const updatedStores = await system.listStores();
+        setStores(updatedStores);
 
-      // Update health
-      const healthData = await system.getHealth();
-      setHealth(healthData);
+        // Update health
+        const healthData = await system.getHealth();
+        setHealth(healthData);
 
-      return { success: true, storeId: storeMetadata.id };
-    } catch (err) {
-      setError(err);
-      throw err;
-    }
-  }, [system]);
+        return { success: true, storeId: storeMetadata.id };
+      } catch (err) {
+        setError(err);
+        throw err;
+      }
+    },
+    [system]
+  );
 
   // Unregister store
-  const unregisterStore = useCallback(async (storeId) => {
-    if (!system) {
-      throw new Error('Federation system not initialized');
-    }
+  const unregisterStore = useCallback(
+    async storeId => {
+      if (!system) {
+        throw new Error('Federation system not initialized');
+      }
 
-    try {
-      await system.unregisterStore(storeId);
+      try {
+        await system.unregisterStore(storeId);
 
-      // Update stores list
-      const updatedStores = await system.listStores();
-      setStores(updatedStores);
+        // Update stores list
+        const updatedStores = await system.listStores();
+        setStores(updatedStores);
 
-      // Update health
-      const healthData = await system.getHealth();
-      setHealth(healthData);
+        // Update health
+        const healthData = await system.getHealth();
+        setHealth(healthData);
 
-      return { success: true };
-    } catch (err) {
-      setError(err);
-      throw err;
-    }
-  }, [system]);
+        return { success: true };
+      } catch (err) {
+        setError(err);
+        throw err;
+      }
+    },
+    [system]
+  );
 
   // Execute distributed SPARQL query
-  const query = useCallback(async (sparql, options = {}) => {
-    if (!system) {
-      throw new Error('Federation system not initialized');
-    }
+  const query = useCallback(
+    async (sparql, options = {}) => {
+      if (!system) {
+        throw new Error('Federation system not initialized');
+      }
 
-    try {
-      const result = await system.query(sparql, {
-        timeout: options.timeout || 30000,
-        storeSelection: options.storeSelection, // 'all', 'quorum', 'fastest'
-        aggregation: options.aggregation || 'union', // 'union', 'intersection'
-        ...options
-      });
+      try {
+        const result = await system.query(sparql, {
+          timeout: options.timeout || 30000,
+          storeSelection: options.storeSelection, // 'all', 'quorum', 'fastest'
+          aggregation: options.aggregation || 'union', // 'union', 'intersection'
+          ...options,
+        });
 
-      return result;
-    } catch (err) {
-      setError(err);
-      throw err;
-    }
-  }, [system]);
+        return result;
+      } catch (err) {
+        setError(err);
+        throw err;
+      }
+    },
+    [system]
+  );
 
   // Replicate data across stores
-  const replicate = useCallback(async (change, options = {}) => {
-    if (!system) {
-      throw new Error('Federation system not initialized');
-    }
+  const replicate = useCallback(
+    async (change, options = {}) => {
+      if (!system) {
+        throw new Error('Federation system not initialized');
+      }
 
-    try {
-      await system.replicate(change, {
-        strategy: options.strategy || 'eventual', // 'immediate', 'eventual'
-        stores: options.stores, // Specific stores to replicate to
-        timeout: options.timeout || 10000
-      });
+      try {
+        await system.replicate(change, {
+          strategy: options.strategy || 'eventual', // 'immediate', 'eventual'
+          stores: options.stores, // Specific stores to replicate to
+          timeout: options.timeout || 10000,
+        });
 
-      return { success: true };
-    } catch (err) {
-      setError(err);
-      throw err;
-    }
-  }, [system]);
+        return { success: true };
+      } catch (err) {
+        setError(err);
+        throw err;
+      }
+    },
+    [system]
+  );
 
   // Get federation statistics
   const getStats = useCallback(async () => {
@@ -247,6 +259,6 @@ export function useFederatedSystem(config = {}) {
     query,
     replicate,
     getStats,
-    refreshHealth
+    refreshHealth,
   };
 }

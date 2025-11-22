@@ -17,19 +17,23 @@ const QueryAnalysisSchema = z.object({
   queryId: z.string(),
   query: z.string(),
   type: z.enum(['SELECT', 'ASK', 'CONSTRUCT', 'DESCRIBE', 'UNKNOWN']),
-  patterns: z.array(z.object({
-    type: z.string(),
-    subject: z.string().optional(),
-    predicate: z.string().optional(),
-    object: z.string().optional(),
-    complexity: z.number()
-  })),
+  patterns: z.array(
+    z.object({
+      type: z.string(),
+      subject: z.string().optional(),
+      predicate: z.string().optional(),
+      object: z.string().optional(),
+      complexity: z.number(),
+    })
+  ),
   filters: z.array(z.string()),
-  joins: z.array(z.object({
-    type: z.string(),
-    variables: z.array(z.string()),
-    estimatedCost: z.number()
-  })),
+  joins: z.array(
+    z.object({
+      type: z.string(),
+      variables: z.array(z.string()),
+      estimatedCost: z.number(),
+    })
+  ),
   aggregations: z.array(z.string()),
   complexity: z.object({
     score: z.number(),
@@ -38,14 +42,16 @@ const QueryAnalysisSchema = z.object({
     joinCount: z.number(),
     aggregationCount: z.number(),
     variableCount: z.number(),
-    estimatedRows: z.number()
+    estimatedRows: z.number(),
   }),
-  expensiveOperations: z.array(z.object({
-    type: z.string(),
-    cost: z.number(),
-    reason: z.string()
-  })),
-  timestamp: z.number()
+  expensiveOperations: z.array(
+    z.object({
+      type: z.string(),
+      cost: z.number(),
+      reason: z.string(),
+    })
+  ),
+  timestamp: z.number(),
 });
 
 /**
@@ -63,14 +69,14 @@ export class QueryAnalyzer {
       joinCostMultiplier: config.joinCostMultiplier || 10,
       filterCostMultiplier: config.filterCostMultiplier || 5,
       aggregationCostMultiplier: config.aggregationCostMultiplier || 8,
-      ...config
+      ...config,
     };
 
     this.stats = {
       totalAnalyzed: 0,
       complexQueries: 0,
       simpleQueries: 0,
-      avgComplexity: 0
+      avgComplexity: 0,
     };
   }
 
@@ -111,7 +117,7 @@ export class QueryAnalyzer {
       complexity,
       expensiveOperations,
       timestamp: Date.now(),
-      metadata
+      metadata,
     };
 
     // Update stats
@@ -137,7 +143,7 @@ export class QueryAnalyzer {
    * @returns {Array} Triple patterns
    * @private
    */
-  _extractPatterns(query, analysis) {
+  _extractPatterns(query, _analysis) {
     const patterns = [];
 
     // Extract WHERE clause
@@ -170,7 +176,7 @@ export class QueryAnalyzer {
         subject,
         predicate,
         object,
-        complexity
+        complexity,
       });
     }
 
@@ -184,7 +190,7 @@ export class QueryAnalyzer {
    * @returns {Array} Filters
    * @private
    */
-  _extractFilters(query, analysis) {
+  _extractFilters(query, _analysis) {
     const filters = [];
     const filterPattern = /FILTER\s*\(([^)]+)\)/gi;
     let match;
@@ -203,7 +209,7 @@ export class QueryAnalyzer {
    * @returns {Array} Joins
    * @private
    */
-  _identifyJoins(query, analysis) {
+  _identifyJoins(query, _analysis) {
     const joins = [];
     const variables = extractVariables(query);
 
@@ -225,7 +231,7 @@ export class QueryAnalyzer {
         joins.push({
           type: 'variable-join',
           variables: [variable],
-          estimatedCost
+          estimatedCost,
         });
       }
     }
@@ -235,7 +241,7 @@ export class QueryAnalyzer {
       joins.push({
         type: 'optional-join',
         variables: [],
-        estimatedCost: 20 // OPTIONAL is typically expensive
+        estimatedCost: 20, // OPTIONAL is typically expensive
       });
     }
 
@@ -244,7 +250,7 @@ export class QueryAnalyzer {
       joins.push({
         type: 'union',
         variables: [],
-        estimatedCost: 30 // UNION is very expensive
+        estimatedCost: 30, // UNION is very expensive
       });
     }
 
@@ -311,7 +317,7 @@ export class QueryAnalyzer {
     }
 
     if (filters.length > 0) {
-      estimatedRows /= (filters.length * 2); // Filters reduce results
+      estimatedRows /= filters.length * 2; // Filters reduce results
     }
 
     return {
@@ -321,7 +327,7 @@ export class QueryAnalyzer {
       joinCount: joins.length,
       aggregationCount: aggregations.length,
       variableCount: analysis.variables.length,
-      estimatedRows: Math.round(estimatedRows)
+      estimatedRows: Math.round(estimatedRows),
     };
   }
 
@@ -344,7 +350,7 @@ export class QueryAnalyzer {
         expensive.push({
           type: 'pattern',
           cost: pattern.complexity,
-          reason: `High complexity pattern: ${pattern.subject} ${pattern.predicate} ${pattern.object}`
+          reason: `High complexity pattern: ${pattern.subject} ${pattern.predicate} ${pattern.object}`,
         });
       }
 
@@ -353,7 +359,7 @@ export class QueryAnalyzer {
         expensive.push({
           type: 'variable-predicate',
           cost: 100,
-          reason: `Variable predicate ${pattern.predicate} requires full graph scan`
+          reason: `Variable predicate ${pattern.predicate} requires full graph scan`,
         });
       }
     }
@@ -364,7 +370,7 @@ export class QueryAnalyzer {
         expensive.push({
           type: 'join',
           cost: join.estimatedCost,
-          reason: `${join.type} with cost ${join.estimatedCost}`
+          reason: `${join.type} with cost ${join.estimatedCost}`,
         });
       }
     }
@@ -374,7 +380,7 @@ export class QueryAnalyzer {
       expensive.push({
         type: 'union',
         cost: 50,
-        reason: 'UNION requires multiple query executions'
+        reason: 'UNION requires multiple query executions',
       });
     }
 
@@ -383,7 +389,7 @@ export class QueryAnalyzer {
       expensive.push({
         type: 'aggregation',
         cost: aggregations.length * this.config.aggregationCostMultiplier,
-        reason: `${aggregations.length} aggregation(s) on ~${complexity.estimatedRows} rows`
+        reason: `${aggregations.length} aggregation(s) on ~${complexity.estimatedRows} rows`,
       });
     }
 
@@ -392,7 +398,7 @@ export class QueryAnalyzer {
       expensive.push({
         type: 'unfiltered',
         cost: 75,
-        reason: `No filters with estimated ${complexity.estimatedRows} rows`
+        reason: `No filters with estimated ${complexity.estimatedRows} rows`,
       });
     }
 
@@ -406,9 +412,8 @@ export class QueryAnalyzer {
   getStats() {
     return {
       ...this.stats,
-      complexQueryRatio: this.stats.totalAnalyzed > 0
-        ? this.stats.complexQueries / this.stats.totalAnalyzed
-        : 0
+      complexQueryRatio:
+        this.stats.totalAnalyzed > 0 ? this.stats.complexQueries / this.stats.totalAnalyzed : 0,
     };
   }
 
@@ -420,7 +425,7 @@ export class QueryAnalyzer {
       totalAnalyzed: 0,
       complexQueries: 0,
       simpleQueries: 0,
-      avgComplexity: 0
+      avgComplexity: 0,
     };
   }
 }

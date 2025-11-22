@@ -37,7 +37,8 @@ import { Store } from 'n3';
  * Zod schema for URL validation (endpoints)
  * Validates URL format to prevent injection attacks
  */
-const UrlSchema = z.string()
+const UrlSchema = z
+  .string()
   .url('Invalid URL format')
   .max(2048, 'URL exceeds maximum length')
   .optional();
@@ -46,45 +47,48 @@ const UrlSchema = z.string()
  * Zod schema for base path validation
  * Validates file path to prevent path traversal attacks
  */
-const BasePathSchema = z.string()
+const BasePathSchema = z
+  .string()
   .max(4096, 'Base path exceeds maximum length')
-  .refine(
-    (path) => !path.includes('..'),
-    'Base path cannot contain path traversal sequences'
-  )
+  .refine(path => !path.includes('..'), 'Base path cannot contain path traversal sequences')
   .optional();
 
 /**
  * Zod schema for lockchain options validation
  */
-const LockchainOptionsSchema = z.object({
-  enabled: z.boolean().optional(),
-  threshold: z.number().int().positive().max(1000).optional(),
-  timeout: z.number().positive().max(300000).optional()
-}).passthrough().optional();
+const LockchainOptionsSchema = z
+  .object({
+    enabled: z.boolean().optional(),
+    threshold: z.number().int().positive().max(1000).optional(),
+    timeout: z.number().positive().max(300000).optional(),
+  })
+  .passthrough()
+  .optional();
 
 /**
  * Zod schema for useKnowledgeEngine options validation
  * Prevents XSS/injection by validating all configuration inputs
  */
-const UseKnowledgeEngineOptionsSchema = z.object({
-  /** Base path for file resolution - validated for path traversal */
-  basePath: BasePathSchema,
-  /** Enable knowledge hook execution */
-  enableKnowledgeHooks: z.boolean().optional().default(true),
-  /** Enable OpenTelemetry observability */
-  enableObservability: z.boolean().optional().default(true),
-  /** Enable strict error handling */
-  strictMode: z.boolean().optional().default(false),
-  /** Initial RDF store (n3 Store instance) */
-  initialStore: z.instanceof(Store).nullable().optional(),
-  /** Lockchain configuration options */
-  lockchainOptions: LockchainOptionsSchema,
-  /** Automatically initialize engine on mount */
-  autoInit: z.boolean().optional().default(true),
-  /** Optional endpoint URL for remote knowledge engine */
-  endpoint: UrlSchema
-}).strict();
+const UseKnowledgeEngineOptionsSchema = z
+  .object({
+    /** Base path for file resolution - validated for path traversal */
+    basePath: BasePathSchema,
+    /** Enable knowledge hook execution */
+    enableKnowledgeHooks: z.boolean().optional().default(true),
+    /** Enable OpenTelemetry observability */
+    enableObservability: z.boolean().optional().default(true),
+    /** Enable strict error handling */
+    strictMode: z.boolean().optional().default(false),
+    /** Initial RDF store (n3 Store instance) */
+    initialStore: z.instanceof(Store).nullable().optional(),
+    /** Lockchain configuration options */
+    lockchainOptions: LockchainOptionsSchema,
+    /** Automatically initialize engine on mount */
+    autoInit: z.boolean().optional().default(true),
+    /** Optional endpoint URL for remote knowledge engine */
+    endpoint: UrlSchema,
+  })
+  .strict();
 
 /**
  * Configuration options for useKnowledgeEngine hook
@@ -130,7 +134,7 @@ export function useKnowledgeEngine(options = {}) {
     strictMode = false,
     initialStore = null,
     lockchainOptions = {},
-    autoInit = true
+    autoInit = true,
   } = validatedOptions;
 
   // State
@@ -160,7 +164,7 @@ export function useKnowledgeEngine(options = {}) {
         enableKnowledgeHooks,
         enableObservability,
         strictMode,
-        lockchainOptions
+        lockchainOptions,
       });
 
       engineRef.current = manager;
@@ -181,23 +185,26 @@ export function useKnowledgeEngine(options = {}) {
   /**
    * Execute SPARQL query
    */
-  const query = useCallback(async (sparql, queryOptions = {}) => {
-    if (!engineRef.current || !store) {
-      throw new Error('[useKnowledgeEngine] Engine not initialized');
-    }
+  const query = useCallback(
+    async (sparql, queryOptions = {}) => {
+      if (!engineRef.current || !store) {
+        throw new Error('[useKnowledgeEngine] Engine not initialized');
+      }
 
-    try {
-      return await engineRef.current.query(store, sparql, queryOptions);
-    } catch (err) {
-      console.error('[useKnowledgeEngine] Query failed:', err);
-      throw err;
-    }
-  }, [store]);
+      try {
+        return await engineRef.current.query(store, sparql, queryOptions);
+      } catch (err) {
+        console.error('[useKnowledgeEngine] Query failed:', err);
+        throw err;
+      }
+    },
+    [store]
+  );
 
   /**
    * Add a knowledge hook
    */
-  const addKnowledgeHook = useCallback((hook) => {
+  const addKnowledgeHook = useCallback(hook => {
     if (!engineRef.current) {
       throw new Error('[useKnowledgeEngine] Engine not initialized');
     }
@@ -207,7 +214,7 @@ export function useKnowledgeEngine(options = {}) {
   /**
    * Remove a knowledge hook
    */
-  const removeKnowledgeHook = useCallback((hookName) => {
+  const removeKnowledgeHook = useCallback(hookName => {
     if (!engineRef.current) {
       throw new Error('[useKnowledgeEngine] Engine not initialized');
     }
@@ -217,25 +224,28 @@ export function useKnowledgeEngine(options = {}) {
   /**
    * Apply transaction to store
    */
-  const applyTransaction = useCallback(async (delta, transactionOptions = {}) => {
-    if (!engineRef.current || !store) {
-      throw new Error('[useKnowledgeEngine] Engine not initialized');
-    }
-
-    try {
-      const result = await engineRef.current.apply(store, delta, transactionOptions);
-
-      // Update store state if transaction modified it
-      if (result.store && result.store !== store) {
-        setStore(result.store);
+  const applyTransaction = useCallback(
+    async (delta, transactionOptions = {}) => {
+      if (!engineRef.current || !store) {
+        throw new Error('[useKnowledgeEngine] Engine not initialized');
       }
 
-      return result;
-    } catch (err) {
-      console.error('[useKnowledgeEngine] Transaction failed:', err);
-      throw err;
-    }
-  }, [store]);
+      try {
+        const result = await engineRef.current.apply(store, delta, transactionOptions);
+
+        // Update store state if transaction modified it
+        if (result.store && result.store !== store) {
+          setStore(result.store);
+        }
+
+        return result;
+      } catch (err) {
+        console.error('[useKnowledgeEngine] Transaction failed:', err);
+        throw err;
+      }
+    },
+    [store]
+  );
 
   /**
    * Reinitialize the engine
@@ -296,6 +306,6 @@ export function useKnowledgeEngine(options = {}) {
     loading,
     error,
     reinitialize,
-    stats
+    stats,
   };
 }

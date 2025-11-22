@@ -86,17 +86,23 @@ export function useShapeValidation(shapes, options = {}) {
   /**
    * Get violations by severity
    */
-  const getViolationsBySeverity = useCallback((severity) => {
-    return violations.filter(v => v.severity?.value?.includes(severity));
-  }, [violations]);
+  const getViolationsBySeverity = useCallback(
+    severity => {
+      return violations.filter(v => v.severity?.value?.includes(severity));
+    },
+    [violations]
+  );
 
   /**
    * Get violations by focus node
    */
-  const getViolationsByFocusNode = useCallback((focusNode) => {
-    const nodeValue = typeof focusNode === 'string' ? focusNode : focusNode?.value;
-    return violations.filter(v => v.focusNode?.value === nodeValue);
-  }, [violations]);
+  const getViolationsByFocusNode = useCallback(
+    focusNode => {
+      const nodeValue = typeof focusNode === 'string' ? focusNode : focusNode?.value;
+      return violations.filter(v => v.focusNode?.value === nodeValue);
+    },
+    [violations]
+  );
 
   /**
    * Check if validation passed
@@ -125,6 +131,6 @@ export function useShapeValidation(shapes, options = {}) {
     isValid,
     violationCount,
     getViolationsBySeverity,
-    getViolationsByFocusNode
+    getViolationsByFocusNode,
   };
 }

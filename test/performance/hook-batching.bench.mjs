@@ -29,14 +29,14 @@ function createTestHooks(count, independentRatio = 0.5) {
     hooks.push({
       meta: {
         name: `hook-${i}`,
-        dependencies: isIndependent ? [] : [`hook-${Math.max(0, i - 1)}`]
+        dependencies: isIndependent ? [] : [`hook-${Math.max(0, i - 1)}`],
       },
-      run: async (event) => {
+      run: async _event => {
         // Simulate hook execution (10-50ms)
         const duration = 10 + Math.random() * 40;
         await new Promise(resolve => setTimeout(resolve, duration));
         return { success: true, hookId: i };
-      }
+      },
     });
   }
 
@@ -51,11 +51,11 @@ function createTestHooks(count, independentRatio = 0.5) {
  * @returns {Promise<Object>} Benchmark results
  */
 async function runBenchmark(name, hooks, executor) {
-  return await tracer.startActiveSpan(`benchmark.${name}`, async (span) => {
+  return await tracer.startActiveSpan(`benchmark.${name}`, async span => {
     const event = {
       type: 'benchmark',
       payload: { test: true },
-      context: {}
+      context: {},
     };
 
     const iterations = 5;
@@ -95,7 +95,7 @@ async function runBenchmark(name, hooks, executor) {
       avgDuration,
       minDuration,
       maxDuration,
-      durations
+      durations,
     };
   });
 }
@@ -108,12 +108,12 @@ describe('Hook Batching Performance Benchmarks', () => {
     baseExecutor = createHookExecutor({
       enableMetrics: true,
       enableOTEL: true,
-      strictMode: false
+      strictMode: false,
     });
 
     batchingExecutor = createBatchingExecutor(baseExecutor, {
       enableOTEL: true,
-      enableBatching: true
+      enableBatching: true,
     });
   });
 
@@ -132,7 +132,9 @@ describe('Hook Batching Performance Benchmarks', () => {
     const batchResults = await runBenchmark('5-hooks-batched', hooks, batchingExecutor);
     console.log('  Batched (parallel):  ', batchResults.avgDuration.toFixed(2), 'ms');
 
-    const improvement = ((baselineResults.avgDuration - batchResults.avgDuration) / baselineResults.avgDuration) * 100;
+    const improvement =
+      ((baselineResults.avgDuration - batchResults.avgDuration) / baselineResults.avgDuration) *
+      100;
     console.log('  Improvement:         ', improvement.toFixed(2), '%');
     console.log('  Expected: 30-50%');
 
@@ -156,7 +158,9 @@ describe('Hook Batching Performance Benchmarks', () => {
     const batchResults = await runBenchmark('10-hooks-batched', hooks, batchingExecutor);
     console.log('  Batched (parallel):  ', batchResults.avgDuration.toFixed(2), 'ms');
 
-    const improvement = ((baselineResults.avgDuration - batchResults.avgDuration) / baselineResults.avgDuration) * 100;
+    const improvement =
+      ((baselineResults.avgDuration - batchResults.avgDuration) / baselineResults.avgDuration) *
+      100;
     console.log('  Improvement:         ', improvement.toFixed(2), '%');
     console.log('  Expected: 30-40%');
 
@@ -178,7 +182,9 @@ describe('Hook Batching Performance Benchmarks', () => {
     const batchResults = await runBenchmark('20-hooks-batched', hooks, batchingExecutor);
     console.log('  Batched (sequential): ', batchResults.avgDuration.toFixed(2), 'ms');
 
-    const overhead = ((batchResults.avgDuration - baselineResults.avgDuration) / baselineResults.avgDuration) * 100;
+    const overhead =
+      ((batchResults.avgDuration - baselineResults.avgDuration) / baselineResults.avgDuration) *
+      100;
     console.log('  Overhead:            ', overhead.toFixed(2), '%');
     console.log('  Expected: <10%');
 
@@ -197,7 +203,7 @@ describe('Hook Batching Performance Benchmarks', () => {
     await batchingExecutor.executeBatched(hooks, {
       type: 'test',
       payload: {},
-      context: {}
+      context: {},
     });
 
     const metrics = batchingExecutor.getBatchingMetrics();
@@ -213,7 +219,7 @@ describe('Hook Batching Performance Benchmarks', () => {
       metrics.batchExecutions > 0,
       metrics.parallelExecutions > 0,
       metrics.parallelizationRatio > 0,
-      metrics.averageBatchSize > 0
+      metrics.averageBatchSize > 0,
     ];
 
     if (checks.every(c => c)) {
@@ -229,7 +235,7 @@ describe('Hook Batching Performance Benchmarks', () => {
       { meta: { name: 'b', dependencies: [] }, run: async () => ({}) },
       { meta: { name: 'c', dependencies: ['a'] }, run: async () => ({}) },
       { meta: { name: 'd', dependencies: ['a', 'b'] }, run: async () => ({}) },
-      { meta: { name: 'e', dependencies: [] }, run: async () => ({}) }
+      { meta: { name: 'e', dependencies: [] }, run: async () => ({}) },
     ];
 
     console.log('\n🔍 Dependency Analysis');
@@ -242,7 +248,7 @@ describe('Hook Batching Performance Benchmarks', () => {
     await batchingExecutor.executeBatched(hooks, {
       type: 'test',
       payload: {},
-      context: {}
+      context: {},
     });
     const duration = Date.now() - startTime;
 

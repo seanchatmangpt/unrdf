@@ -55,15 +55,19 @@ export function useDeltaQuery(options = {}) {
     }
 
     const currentQuads = new Set(
-      store.getQuads().map(q =>
-        `${q.subject.value}|${q.predicate.value}|${q.object.value}|${q.graph?.value || ''}`
-      )
+      store
+        .getQuads()
+        .map(
+          q => `${q.subject.value}|${q.predicate.value}|${q.object.value}|${q.graph?.value || ''}`
+        )
     );
 
     const previousQuads = new Set(
-      previousStoreRef.current.getQuads().map(q =>
-        `${q.subject.value}|${q.predicate.value}|${q.object.value}|${q.graph?.value || ''}`
-      )
+      previousStoreRef.current
+        .getQuads()
+        .map(
+          q => `${q.subject.value}|${q.predicate.value}|${q.object.value}|${q.graph?.value || ''}`
+        )
     );
 
     const added = [];
@@ -104,7 +108,7 @@ export function useDeltaQuery(options = {}) {
         const change = {
           timestamp: Date.now(),
           additions: delta.additions,
-          removals: delta.removals
+          removals: delta.removals,
         };
 
         setChanges(prev => {
@@ -139,16 +143,22 @@ export function useDeltaQuery(options = {}) {
   /**
    * Get changes since timestamp
    */
-  const getChangesSince = useCallback((timestamp) => {
-    return changes.filter(change => change.timestamp >= timestamp);
-  }, [changes]);
+  const getChangesSince = useCallback(
+    timestamp => {
+      return changes.filter(change => change.timestamp >= timestamp);
+    },
+    [changes]
+  );
 
   /**
    * Get recent changes
    */
-  const getRecentChanges = useCallback((count = 10) => {
-    return changes.slice(-count);
-  }, [changes]);
+  const getRecentChanges = useCallback(
+    (count = 10) => {
+      return changes.slice(-count);
+    },
+    [changes]
+  );
 
   // Track store changes
   useEffect(() => {
@@ -165,6 +175,6 @@ export function useDeltaQuery(options = {}) {
     getChangesSince,
     getRecentChanges,
     hasChanges: additions.length > 0 || removals.length > 0,
-    changeCount: changes.length
+    changeCount: changes.length,
   };
 }

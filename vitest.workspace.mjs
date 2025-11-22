@@ -16,6 +16,33 @@
 import { defineWorkspace } from 'vitest/config';
 
 export default defineWorkspace([
+  // Project Engine tests workspace - Node.js only, isolated
+  {
+    extends: './vitest.config.mjs',
+    test: {
+      name: 'project-engine',
+      pool: 'forks',
+      poolOptions: {
+        forks: {
+          singleFork: true,
+        },
+      },
+      include: [
+        'test/project-engine/**/*.test.mjs',
+      ],
+      exclude: [
+        'node_modules/**',
+      ],
+      testTimeout: 30_000,
+      hookTimeout: 20_000,
+      environment: 'node',
+      // Force node environment - ignore file-level annotations that might conflict
+      env: {
+        NODE_ENV: 'test',
+      },
+    },
+  },
+
   // Unit tests workspace - fast, parallel execution
   {
     extends: './vitest.config.mjs',
@@ -39,9 +66,11 @@ export default defineWorkspace([
         'node_modules/**',
         'test/knowledge-engine/sandbox/executor-detection.test.mjs',
         'test/knowledge-engine/sandbox/isolated-vm.test.mjs',
+        'test/project-engine/**/*.test.mjs', // Exclude project-engine from unit tests
       ],
       testTimeout: 15_000,
       hookTimeout: 15_000,
+      environment: 'node',
     },
   },
 
@@ -63,10 +92,12 @@ export default defineWorkspace([
       ],
       exclude: [
         'node_modules/**',
+        'test/project-engine/**/*.test.mjs', // Exclude project-engine from e2e
       ],
       testTimeout: 60_000,
       hookTimeout: 30_000,
       retry: 1,
+      environment: 'node',
     },
   },
 
@@ -88,9 +119,11 @@ export default defineWorkspace([
       ],
       exclude: [
         'node_modules/**',
+        'test/project-engine/**/*.test.mjs', // Exclude project-engine from hooks
       ],
       testTimeout: 20_000,
       hookTimeout: 15_000,
+      environment: 'node', // React hooks can run in node with proper mocking
     },
   },
 
@@ -112,9 +145,11 @@ export default defineWorkspace([
         'node_modules/**',
         'test/browser/browser-compatibility.test.mjs',
         'test/browser/playwright.spec.mjs',
+        'test/project-engine/**/*.test.mjs', // Exclude project-engine from browser
       ],
       testTimeout: 30_000,
       hookTimeout: 20_000,
+      environment: 'node', // Browser tests can use node with browser shims
     },
   },
 
@@ -137,9 +172,11 @@ export default defineWorkspace([
       ],
       exclude: [
         'node_modules/**',
+        'test/project-engine/**/*.test.mjs', // Exclude project-engine from streaming
       ],
       testTimeout: 30_000,
       hookTimeout: 20_000,
+      environment: 'node',
     },
   },
 ]);

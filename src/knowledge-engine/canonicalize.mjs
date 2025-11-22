@@ -14,13 +14,13 @@ import rdfCanonize from 'rdf-canonize';
  * @param {boolean} [options.produceGeneralizedRdf=false] - Produce generalized RDF
  * @param {number} [options.timeoutMs=30000] - Timeout in milliseconds
  * @returns {Promise<string>} Promise resolving to canonical N-Quads string
- * 
+ *
  * @throws {Error} If canonicalization fails
- * 
+ *
  * @example
  * const store = new Store();
  * // ... add quads to store
- * 
+ *
  * const canonical = await canonicalize(store);
  * console.log('Canonical N-Quads:', canonical);
  */
@@ -29,11 +29,7 @@ export async function canonicalize(store, options = {}) {
     throw new TypeError('canonicalize: store must be a valid Store instance');
   }
 
-  const {
-    algorithm = 'URDNA2015',
-    produceGeneralizedRdf = false,
-    timeoutMs = 30000
-  } = options;
+  const { algorithm = 'URDNA2015', produceGeneralizedRdf = false, timeoutMs = 30000 } = options;
 
   try {
     // Get quads from store and validate
@@ -77,7 +73,7 @@ export async function canonicalize(store, options = {}) {
     // Perform canonicalization with parsed dataset
     const canonicalPromise = rdfCanonize.canonize(parsedDataset, {
       algorithm,
-      produceGeneralizedRdf
+      produceGeneralizedRdf,
     });
 
     return await Promise.race([canonicalPromise, timeoutPromise]);
@@ -94,14 +90,14 @@ export async function canonicalize(store, options = {}) {
  * @param {string} [options.algorithm='URDNA2015'] - Canonicalization algorithm
  * @param {number} [options.timeoutMs=30000] - Timeout in milliseconds
  * @returns {Promise<boolean>} Promise resolving to true if stores are isomorphic
- * 
+ *
  * @throws {Error} If comparison fails
- * 
+ *
  * @example
  * const store1 = new Store();
  * const store2 = new Store();
  * // ... add quads to both stores
- * 
+ *
  * const isomorphic = await isIsomorphic(store1, store2);
  * console.log('Stores are isomorphic:', isomorphic);
  */
@@ -127,7 +123,7 @@ export async function isIsomorphic(storeA, storeB, options = {}) {
     // Canonicalize both stores and compare
     const [canonicalA, canonicalB] = await Promise.all([
       canonicalize(storeA, options),
-      canonicalize(storeB, options)
+      canonicalize(storeB, options),
     ]);
 
     return canonicalA === canonicalB;
@@ -161,13 +157,13 @@ export async function getCanonicalHash(store, options = {}) {
   const { hashAlgorithm = 'SHA-256', algorithm = 'URDNA2015' } = options;
 
   // Normalize hash algorithm name for Web Crypto API
-  const normalizeHashAlgorithm = (alg) => {
+  const normalizeHashAlgorithm = alg => {
     const normalized = alg.toLowerCase().replace(/[^a-z0-9]/g, '');
     const map = {
-      'sha1': 'SHA-1',
-      'sha256': 'SHA-256',
-      'sha384': 'SHA-384',
-      'sha512': 'SHA-512'
+      sha1: 'SHA-1',
+      sha256: 'SHA-256',
+      sha384: 'SHA-384',
+      sha512: 'SHA-512',
     };
     return map[normalized] || alg;
   };
@@ -289,7 +285,7 @@ export async function findDuplicates(stores, options = {}) {
       const hash = await getCanonicalHash(group.stores[0], options);
       duplicates.push({
         stores: group.stores,
-        canonicalHash: hash
+        canonicalHash: hash,
       });
     }
   }
@@ -325,7 +321,7 @@ export async function getCanonicalizationStats(store, options = {}) {
       quads: store.size,
       canonicalLength: canonical.length,
       canonicalizationTime: Math.max(endTime - startTime, 0.01), // Ensure non-zero time
-      algorithm
+      algorithm,
     };
   } catch (error) {
     throw new Error(`Canonicalization statistics failed: ${error.message}`);
@@ -422,8 +418,8 @@ export async function createCanonicalizationSession(options = {}) {
       return {
         canonicalizations: canonicalizationCount,
         isomorphismChecks: isomorphismCheckCount,
-        totalTime
+        totalTime,
       };
-    }
+    },
   };
 }

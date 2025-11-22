@@ -35,12 +35,12 @@ const healthCheckHook = defineHook({
   meta: {
     name: 'system:health-check',
     description: 'Monitor system health and alert on issues',
-    ontology: ['ex']
+    ontology: ['ex'],
   },
 
   channel: {
     graphs: ['urn:graph:system'],
-    view: 'delta'  // Watch for changes
+    view: 'delta', // Watch for changes
   },
 
   when: {
@@ -48,16 +48,16 @@ const healthCheckHook = defineHook({
     ref: {
       uri: 'file://hooks/health-check.ask.rq',
       sha256: mockHash,
-      mediaType: 'application/sparql-query'
-    }
+      mediaType: 'application/sparql-query',
+    },
   },
 
   determinism: {
-    seed: 42  // Ensure deterministic execution
+    seed: 42, // Ensure deterministic execution
   },
 
   receipt: {
-    anchor: 'none'  // Use 'git-notes' for audit trails
+    anchor: 'none', // Use 'git-notes' for audit trails
   },
 
   // Pre-execution validation
@@ -67,7 +67,7 @@ const healthCheckHook = defineHook({
     if (!payload || typeof payload !== 'object') {
       return {
         cancel: true,
-        reason: 'Invalid payload: must be an object'
+        reason: 'Invalid payload: must be an object',
       };
     }
 
@@ -75,12 +75,12 @@ const healthCheckHook = defineHook({
     return {
       ...payload,
       timestamp: Date.now(),
-      validated: true
+      validated: true,
     };
   },
 
   // Main execution
-  async run({ payload, context }) {
+  async run({ payload, context: _context }) {
     console.log('[RUN] Health check triggered!');
     console.log('Payload:', JSON.stringify(payload, null, 2));
 
@@ -90,15 +90,15 @@ const healthCheckHook = defineHook({
       checks: {
         database: 'ok',
         cache: 'ok',
-        api: 'ok'
+        api: 'ok',
       },
-      timestamp: payload.timestamp
+      timestamp: payload.timestamp,
     };
 
     // Return result
     return {
       result: healthStatus,
-      assertions: []  // Could add RDF assertions here
+      assertions: [], // Could add RDF assertions here
     };
   },
 
@@ -109,8 +109,8 @@ const healthCheckHook = defineHook({
       return {
         result: {
           finalStatus: 'cancelled',
-          reason
-        }
+          reason,
+        },
       };
     }
 
@@ -122,10 +122,10 @@ const healthCheckHook = defineHook({
       result: {
         ...result,
         finalStatus: 'completed',
-        audited: true
-      }
+        audited: true,
+      },
     };
-  }
+  },
 });
 
 console.log('\n✓ Hook defined successfully!');
@@ -140,13 +140,13 @@ const testEvent = {
   name: 'manual-trigger',
   payload: {
     source: 'test',
-    data: 'sample'
+    data: 'sample',
   },
   context: {
     env: {
-      environment: 'development'
-    }
-  }
+      environment: 'development',
+    },
+  },
 };
 
 // Execute before
@@ -163,7 +163,7 @@ if (!beforeResult.cancel) {
   const afterResult = await healthCheckHook.after({
     ...testEvent,
     result: runResult.result,
-    cancelled: false
+    cancelled: false,
   });
   console.log('After result:', afterResult);
 }

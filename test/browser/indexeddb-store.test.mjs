@@ -24,7 +24,7 @@ class IndexedDBStore {
       subject: new Map(),
       predicate: new Map(),
       object: new Map(),
-      graph: new Map()
+      graph: new Map(),
     };
     this.transactionActive = false;
     this.transactionQuads = null;
@@ -218,7 +218,7 @@ describe('IndexedDB Store', () => {
         subject: { value: 'http://example.org/s1' },
         predicate: { value: 'http://example.org/p1' },
         object: { value: 'literal value' },
-        graph: { value: 'http://example.org/g1' }
+        graph: { value: 'http://example.org/g1' },
       };
 
       await store.addQuads([quad]);
@@ -234,14 +234,14 @@ describe('IndexedDB Store', () => {
           subject: { value: 'http://example.org/s1' },
           predicate: { value: 'http://example.org/p1' },
           object: { value: 'value1' },
-          graph: { value: 'http://example.org/g1' }
+          graph: { value: 'http://example.org/g1' },
         },
         {
           subject: { value: 'http://example.org/s2' },
           predicate: { value: 'http://example.org/p2' },
           object: { value: 'value2' },
-          graph: { value: 'http://example.org/g1' }
-        }
+          graph: { value: 'http://example.org/g1' },
+        },
       ];
 
       await store.addQuads(quads);
@@ -251,12 +251,14 @@ describe('IndexedDB Store', () => {
     });
 
     it('should count quads', async () => {
-      const quads = Array(100).fill(null).map((_, i) => ({
-        subject: { value: `http://example.org/s${i}` },
-        predicate: { value: 'http://example.org/p' },
-        object: { value: `value${i}` },
-        graph: { value: 'http://example.org/g' }
-      }));
+      const quads = Array(100)
+        .fill(null)
+        .map((_, i) => ({
+          subject: { value: `http://example.org/s${i}` },
+          predicate: { value: 'http://example.org/p' },
+          object: { value: `value${i}` },
+          graph: { value: 'http://example.org/g' },
+        }));
 
       await store.addQuads(quads);
       const count = await store.count();
@@ -270,8 +272,8 @@ describe('IndexedDB Store', () => {
           subject: { value: 'http://example.org/s1' },
           predicate: { value: 'http://example.org/p1' },
           object: { value: 'value1' },
-          graph: { value: 'http://example.org/g1' }
-        }
+          graph: { value: 'http://example.org/g1' },
+        },
       ];
 
       await store.addQuads(quads);
@@ -282,12 +284,14 @@ describe('IndexedDB Store', () => {
     });
 
     it('should clear all quads', async () => {
-      const quads = Array(50).fill(null).map((_, i) => ({
-        subject: { value: `http://example.org/s${i}` },
-        predicate: { value: 'http://example.org/p' },
-        object: { value: `value${i}` },
-        graph: { value: 'http://example.org/g' }
-      }));
+      const quads = Array(50)
+        .fill(null)
+        .map((_, i) => ({
+          subject: { value: `http://example.org/s${i}` },
+          predicate: { value: 'http://example.org/p' },
+          object: { value: `value${i}` },
+          graph: { value: 'http://example.org/g' },
+        }));
 
       await store.addQuads(quads);
       await store.clear();
@@ -304,20 +308,20 @@ describe('IndexedDB Store', () => {
           subject: { value: 'http://example.org/alice' },
           predicate: { value: 'http://example.org/name' },
           object: { value: 'Alice' },
-          graph: { value: 'http://example.org/g1' }
+          graph: { value: 'http://example.org/g1' },
         },
         {
           subject: { value: 'http://example.org/alice' },
           predicate: { value: 'http://example.org/age' },
           object: { value: '30' },
-          graph: { value: 'http://example.org/g1' }
+          graph: { value: 'http://example.org/g1' },
         },
         {
           subject: { value: 'http://example.org/bob' },
           predicate: { value: 'http://example.org/name' },
           object: { value: 'Bob' },
-          graph: { value: 'http://example.org/g1' }
-        }
+          graph: { value: 'http://example.org/g1' },
+        },
       ];
 
       await store.addQuads(quads);
@@ -325,7 +329,7 @@ describe('IndexedDB Store', () => {
 
     it('should query by subject', async () => {
       const results = await store.getQuads({
-        subject: { value: 'http://example.org/alice' }
+        subject: { value: 'http://example.org/alice' },
       });
 
       expect(results).toHaveLength(2);
@@ -333,7 +337,7 @@ describe('IndexedDB Store', () => {
 
     it('should query by predicate', async () => {
       const results = await store.getQuads({
-        predicate: { value: 'http://example.org/name' }
+        predicate: { value: 'http://example.org/name' },
       });
 
       expect(results).toHaveLength(2);
@@ -341,7 +345,7 @@ describe('IndexedDB Store', () => {
 
     it('should query by object', async () => {
       const results = await store.getQuads({
-        object: { value: 'Alice' }
+        object: { value: 'Alice' },
       });
 
       expect(results).toHaveLength(1);
@@ -350,7 +354,7 @@ describe('IndexedDB Store', () => {
 
     it('should query by graph', async () => {
       const results = await store.getQuads({
-        graph: { value: 'http://example.org/g1' }
+        graph: { value: 'http://example.org/g1' },
       });
 
       expect(results).toHaveLength(3);
@@ -359,7 +363,7 @@ describe('IndexedDB Store', () => {
     it('should query by multiple criteria', async () => {
       const results = await store.getQuads({
         subject: { value: 'http://example.org/alice' },
-        predicate: { value: 'http://example.org/name' }
+        predicate: { value: 'http://example.org/name' },
       });
 
       expect(results).toHaveLength(1);
@@ -368,7 +372,7 @@ describe('IndexedDB Store', () => {
 
     it('should return empty array for no matches', async () => {
       const results = await store.getQuads({
-        subject: { value: 'http://example.org/charlie' }
+        subject: { value: 'http://example.org/charlie' },
       });
 
       expect(results).toHaveLength(0);
@@ -398,7 +402,7 @@ describe('IndexedDB Store', () => {
 
       const start = performance.now();
       const results = await store.getQuads({
-        subject: { value: 'http://example.org/s42' }
+        subject: { value: 'http://example.org/s42' },
       });
       const duration = performance.now() - start;
 
@@ -407,18 +411,20 @@ describe('IndexedDB Store', () => {
     });
 
     it('should maintain query performance with indexes', async () => {
-      const quads = Array(10000).fill(null).map((_, i) => ({
-        subject: { value: `http://example.org/s${i % 1000}` },
-        predicate: { value: `http://example.org/p${i % 100}` },
-        object: { value: `value${i}` },
-        graph: { value: 'http://example.org/g' }
-      }));
+      const quads = Array(10000)
+        .fill(null)
+        .map((_, i) => ({
+          subject: { value: `http://example.org/s${i % 1000}` },
+          predicate: { value: `http://example.org/p${i % 100}` },
+          object: { value: `value${i}` },
+          graph: { value: 'http://example.org/g' },
+        }));
 
       await store.addQuads(quads);
 
       const start = performance.now();
       const results = await store.getQuads({
-        subject: { value: 'http://example.org/s500' }
+        subject: { value: 'http://example.org/s500' },
       });
       const duration = performance.now() - start;
 
@@ -431,12 +437,14 @@ describe('IndexedDB Store', () => {
     it('should commit transaction successfully', async () => {
       await store.beginTransaction();
 
-      await store.addQuads([{
-        subject: { value: 'http://example.org/s' },
-        predicate: { value: 'http://example.org/p' },
-        object: { value: 'value' },
-        graph: { value: 'http://example.org/g' }
-      }]);
+      await store.addQuads([
+        {
+          subject: { value: 'http://example.org/s' },
+          predicate: { value: 'http://example.org/p' },
+          object: { value: 'value' },
+          graph: { value: 'http://example.org/g' },
+        },
+      ]);
 
       await store.commit();
 
@@ -445,19 +453,21 @@ describe('IndexedDB Store', () => {
     });
 
     it('should rollback transaction on error', async () => {
-      const scenario = indexedDBScenarios.find(s => s.id === 'transaction-safety');
+      const _scenario = indexedDBScenarios.find(s => s.id === 'transaction-safety');
 
       const initialCount = await store.count();
 
       try {
         await store.beginTransaction();
 
-        await store.addQuads([{
-          subject: { value: 'http://example.org/s' },
-          predicate: { value: 'http://example.org/p' },
-          object: { value: 'test' },
-          graph: { value: 'http://example.org/g' }
-        }]);
+        await store.addQuads([
+          {
+            subject: { value: 'http://example.org/s' },
+            predicate: { value: 'http://example.org/p' },
+            object: { value: 'test' },
+            graph: { value: 'http://example.org/g' },
+          },
+        ]);
 
         throw new Error('Simulated error');
       } catch (error) {
@@ -469,21 +479,25 @@ describe('IndexedDB Store', () => {
     });
 
     it('should isolate transaction changes', async () => {
-      await store.addQuads([{
-        subject: { value: 'http://example.org/s1' },
-        predicate: { value: 'http://example.org/p' },
-        object: { value: 'original' },
-        graph: { value: 'http://example.org/g' }
-      }]);
+      await store.addQuads([
+        {
+          subject: { value: 'http://example.org/s1' },
+          predicate: { value: 'http://example.org/p' },
+          object: { value: 'original' },
+          graph: { value: 'http://example.org/g' },
+        },
+      ]);
 
       await store.beginTransaction();
 
-      await store.addQuads([{
-        subject: { value: 'http://example.org/s2' },
-        predicate: { value: 'http://example.org/p' },
-        object: { value: 'new' },
-        graph: { value: 'http://example.org/g' }
-      }]);
+      await store.addQuads([
+        {
+          subject: { value: 'http://example.org/s2' },
+          predicate: { value: 'http://example.org/p' },
+          object: { value: 'new' },
+          graph: { value: 'http://example.org/g' },
+        },
+      ]);
 
       // Before commit, should still see original count
       const beforeCommit = await store.count();
@@ -498,16 +512,20 @@ describe('IndexedDB Store', () => {
 
   describe('Concurrent Access', () => {
     it('should handle concurrent writes', async () => {
-      const scenario = indexedDBScenarios.find(s => s.id === 'concurrent-access');
+      const _scenario = indexedDBScenarios.find(s => s.id === 'concurrent-access');
 
       const promises = [];
       for (let i = 0; i < 10; i++) {
-        promises.push(store.addQuads([{
-          subject: { value: `http://example.org/s${i}` },
-          predicate: { value: 'http://example.org/p' },
-          object: { value: `value${i}` },
-          graph: { value: 'http://example.org/g' }
-        }]));
+        promises.push(
+          store.addQuads([
+            {
+              subject: { value: `http://example.org/s${i}` },
+              predicate: { value: 'http://example.org/p' },
+              object: { value: `value${i}` },
+              graph: { value: 'http://example.org/g' },
+            },
+          ])
+        );
       }
 
       await Promise.all(promises);
@@ -517,16 +535,20 @@ describe('IndexedDB Store', () => {
     });
 
     it('should handle concurrent reads', async () => {
-      await store.addQuads(Array(100).fill(null).map((_, i) => ({
-        subject: { value: `http://example.org/s${i}` },
-        predicate: { value: 'http://example.org/p' },
-        object: { value: `value${i}` },
-        graph: { value: 'http://example.org/g' }
-      })));
-
-      const promises = Array(20).fill(null).map(() =>
-        store.getQuads()
+      await store.addQuads(
+        Array(100)
+          .fill(null)
+          .map((_, i) => ({
+            subject: { value: `http://example.org/s${i}` },
+            predicate: { value: 'http://example.org/p' },
+            object: { value: `value${i}` },
+            graph: { value: 'http://example.org/g' },
+          }))
       );
+
+      const promises = Array(20)
+        .fill(null)
+        .map(() => store.getQuads());
 
       const results = await Promise.all(promises);
 
@@ -545,11 +567,13 @@ describe('IndexedDB Store', () => {
     });
 
     it('should handle quads without graphs', async () => {
-      await store.addQuads([{
-        subject: { value: 'http://example.org/s' },
-        predicate: { value: 'http://example.org/p' },
-        object: { value: 'value' }
-      }]);
+      await store.addQuads([
+        {
+          subject: { value: 'http://example.org/s' },
+          predicate: { value: 'http://example.org/p' },
+          object: { value: 'value' },
+        },
+      ]);
 
       const results = await store.getQuads();
       expect(results).toHaveLength(1);
@@ -560,7 +584,7 @@ describe('IndexedDB Store', () => {
         subject: { value: 'http://example.org/s' },
         predicate: { value: 'http://example.org/p' },
         object: { value: 'value' },
-        graph: { value: 'http://example.org/g' }
+        graph: { value: 'http://example.org/g' },
       };
 
       await store.addQuads([quad]);
@@ -571,12 +595,14 @@ describe('IndexedDB Store', () => {
     });
 
     it('should handle special characters in values', async () => {
-      await store.addQuads([{
-        subject: { value: 'http://example.org/s' },
-        predicate: { value: 'http://example.org/p' },
-        object: { value: 'Hello 世界 🌍' },
-        graph: { value: 'http://example.org/g' }
-      }]);
+      await store.addQuads([
+        {
+          subject: { value: 'http://example.org/s' },
+          predicate: { value: 'http://example.org/p' },
+          object: { value: 'Hello 世界 🌍' },
+          graph: { value: 'http://example.org/g' },
+        },
+      ]);
 
       const results = await store.getQuads();
       expect(results[0].object.value).toBe('Hello 世界 🌍');
@@ -585,24 +611,28 @@ describe('IndexedDB Store', () => {
     it('should handle very long URIs', async () => {
       const longURI = 'http://example.org/' + 'a'.repeat(1000);
 
-      await store.addQuads([{
-        subject: { value: longURI },
-        predicate: { value: 'http://example.org/p' },
-        object: { value: 'value' },
-        graph: { value: 'http://example.org/g' }
-      }]);
+      await store.addQuads([
+        {
+          subject: { value: longURI },
+          predicate: { value: 'http://example.org/p' },
+          object: { value: 'value' },
+          graph: { value: 'http://example.org/g' },
+        },
+      ]);
 
       const results = await store.getQuads({ subject: { value: longURI } });
       expect(results).toHaveLength(1);
     });
 
     it('should handle queries with no criteria', async () => {
-      await store.addQuads([{
-        subject: { value: 'http://example.org/s' },
-        predicate: { value: 'http://example.org/p' },
-        object: { value: 'value' },
-        graph: { value: 'http://example.org/g' }
-      }]);
+      await store.addQuads([
+        {
+          subject: { value: 'http://example.org/s' },
+          predicate: { value: 'http://example.org/p' },
+          object: { value: 'value' },
+          graph: { value: 'http://example.org/g' },
+        },
+      ]);
 
       const results = await store.getQuads({});
       expect(results).toHaveLength(1);
@@ -613,30 +643,34 @@ describe('IndexedDB Store', () => {
     it('should handle large object values', async () => {
       const largeValue = 'x'.repeat(100000);
 
-      await store.addQuads([{
-        subject: { value: 'http://example.org/s' },
-        predicate: { value: 'http://example.org/p' },
-        object: { value: largeValue },
-        graph: { value: 'http://example.org/g' }
-      }]);
+      await store.addQuads([
+        {
+          subject: { value: 'http://example.org/s' },
+          predicate: { value: 'http://example.org/p' },
+          object: { value: largeValue },
+          graph: { value: 'http://example.org/g' },
+        },
+      ]);
 
       const results = await store.getQuads();
       expect(results[0].object.value).toHaveLength(100000);
     });
 
     it('should efficiently manage index memory', async () => {
-      const quads = Array(1000).fill(null).map((_, i) => ({
-        subject: { value: `http://example.org/s${i}` },
-        predicate: { value: `http://example.org/p${i % 10}` },
-        object: { value: `value${i}` },
-        graph: { value: 'http://example.org/g' }
-      }));
+      const quads = Array(1000)
+        .fill(null)
+        .map((_, i) => ({
+          subject: { value: `http://example.org/s${i}` },
+          predicate: { value: `http://example.org/p${i % 10}` },
+          object: { value: `value${i}` },
+          graph: { value: 'http://example.org/g' },
+        }));
 
       await store.addQuads(quads);
 
       // Verify indexes are built correctly
       const results = await store.getQuads({
-        predicate: { value: 'http://example.org/p5' }
+        predicate: { value: 'http://example.org/p5' },
       });
 
       expect(results.length).toBe(100);

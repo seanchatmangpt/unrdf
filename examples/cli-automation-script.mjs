@@ -36,7 +36,7 @@ const testFiles = [
 ex:Alice a foaf:Person ;
   foaf:name "Alice Smith" ;
   foaf:email "alice@example.org" .
-    `
+    `,
   },
   {
     name: 'invalid-data.ttl',
@@ -44,8 +44,8 @@ ex:Alice a foaf:Person ;
 @prefix ex: <http://example.org/> .
 ex:Bob a ex:Person  # Missing semicolon
 ex:name "Bob"
-    `
-  }
+    `,
+  },
 ];
 
 for (const file of testFiles) {
@@ -70,14 +70,14 @@ async function batchValidate(directory) {
         results.push({
           file,
           status: 'valid',
-          output: stdout.trim()
+          output: stdout.trim(),
         });
         console.log(`  ✓ ${file}: VALID`);
       } catch (error) {
         results.push({
           file,
           status: 'invalid',
-          error: error.message
+          error: error.message,
         });
         console.log(`  ✗ ${file}: INVALID`);
       }
@@ -88,7 +88,9 @@ async function batchValidate(directory) {
 }
 
 const validationResults = await batchValidate(testDir);
-console.log(`\nValidation complete: ${validationResults.filter(r => r.status === 'valid').length}/${validationResults.length} files valid\n`);
+console.log(
+  `\nValidation complete: ${validationResults.filter(r => r.status === 'valid').length}/${validationResults.length} files valid\n`
+);
 
 // Example 2: Automated Data Quality Checks
 console.log('2. Automated Data Quality Checks\n');
@@ -150,20 +152,20 @@ async function cicdPipeline() {
   const steps = [
     {
       name: 'Lint RDF files',
-      command: 'npx unrdf parse test-data/*.ttl'
+      command: 'npx unrdf parse test-data/*.ttl',
     },
     {
       name: 'Validate with SHACL',
-      command: `npx unrdf graph validate ${dataPath} --shapes ${shapesPath}`
+      command: `npx unrdf graph validate ${dataPath} --shapes ${shapesPath}`,
     },
     {
       name: 'Run quality checks',
-      command: 'npx unrdf hook list --active'
+      command: 'npx unrdf hook list --active',
     },
     {
       name: 'Generate report',
-      command: 'npx unrdf graph stats test-data/valid-data.ttl --output json'
-    }
+      command: 'npx unrdf graph stats test-data/valid-data.ttl --output json',
+    },
   ];
 
   const results = [];
@@ -176,14 +178,14 @@ async function cicdPipeline() {
       results.push({
         step: step.name,
         status: 'success',
-        output: stdout || stderr
+        output: stdout || stderr,
       });
       console.log(`  ✓ ${step.name} passed`);
     } catch (error) {
       results.push({
         step: step.name,
         status: 'failed',
-        error: error.message
+        error: error.message,
       });
       console.log(`  ✗ ${step.name} failed`);
 
@@ -207,7 +209,7 @@ console.log(`✓ Pipeline results saved to ${resultsPath}\n`);
 // Example 4: Data Migration Script
 console.log('4. Data Migration Automation\n');
 
-async function migrateData(sourceFormat, targetFormat) {
+async function _migrateData(sourceFormat, targetFormat) {
   const sourceFile = resolve(testDir, `data.${sourceFormat}`);
   const targetFile = resolve(testDir, `data.${targetFormat}`);
 
@@ -233,7 +235,7 @@ console.log('5. Data Quality Monitoring\n');
 async function monitorDataQuality() {
   const monitoringResults = {
     timestamp: new Date().toISOString(),
-    checks: []
+    checks: [],
   };
 
   // Check 1: File count
@@ -244,7 +246,7 @@ async function monitorDataQuality() {
     name: 'RDF File Count',
     value: rdfFiles.length,
     threshold: 1,
-    status: rdfFiles.length >= 1 ? 'pass' : 'fail'
+    status: rdfFiles.length >= 1 ? 'pass' : 'fail',
   });
 
   // Check 2: SHACL compliance
@@ -253,35 +255,33 @@ async function monitorDataQuality() {
     monitoringResults.checks.push({
       name: 'SHACL Compliance',
       value: result.conforms,
-      status: result.conforms ? 'pass' : 'fail'
+      status: result.conforms ? 'pass' : 'fail',
     });
   } catch (error) {
     monitoringResults.checks.push({
       name: 'SHACL Compliance',
       value: false,
       status: 'error',
-      error: error.message
+      error: error.message,
     });
   }
 
   // Check 3: Triple count
   try {
-    const { stdout } = await execAsync(
-      `npx unrdf graph stats ${dataPath} --output json`
-    );
+    const { stdout } = await execAsync(`npx unrdf graph stats ${dataPath} --output json`);
     const stats = JSON.parse(stdout);
 
     monitoringResults.checks.push({
       name: 'Triple Count',
       value: stats.quadCount,
       threshold: 1,
-      status: stats.quadCount >= 1 ? 'pass' : 'fail'
+      status: stats.quadCount >= 1 ? 'pass' : 'fail',
     });
   } catch (error) {
     monitoringResults.checks.push({
       name: 'Triple Count',
       value: 0,
-      status: 'error'
+      status: 'error',
     });
   }
 
@@ -303,17 +303,15 @@ console.log('6. Multi-Environment Context Management\n');
 const environments = [
   { name: 'dev', sidecar: 'localhost:50051' },
   { name: 'staging', sidecar: 'staging.example.com:50051' },
-  { name: 'prod', sidecar: 'prod.example.com:50051' }
+  { name: 'prod', sidecar: 'prod.example.com:50051' },
 ];
 
-async function setupContexts() {
+async function _setupContexts() {
   for (const env of environments) {
     console.log(`Setting up ${env.name} context...`);
 
     try {
-      await execAsync(
-        `npx unrdf context create ${env.name} --sidecar ${env.sidecar}`
-      );
+      await execAsync(`npx unrdf context create ${env.name} --sidecar ${env.sidecar}`);
       console.log(`  ✓ Created ${env.name} context`);
     } catch (error) {
       console.log(`  ⚠ Context ${env.name} may already exist`);
@@ -323,7 +321,7 @@ async function setupContexts() {
   console.log();
 }
 
-async function switchContext(contextName) {
+async function _switchContext(contextName) {
   console.log(`Switching to ${contextName} context...`);
 
   try {

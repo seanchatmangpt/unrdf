@@ -26,29 +26,29 @@ import { useKnowledgeEngineContext } from '../core/use-knowledge-engine-context.
  *   enableMetrics: true
  * });
  */
-export function useObservabilityManager(config = {}) {
-  const { engine } = useKnowledgeEngineContext();
+export function useObservabilityManager(_config = {}) {
+  const { _engine } = useKnowledgeEngineContext();
   const [traces, setTraces] = useState([]);
   const [metrics, setMetrics] = useState({});
   const [dashboard, setDashboard] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [loading, _setLoading] = useState(false);
+  const [error, _setError] = useState(null);
   const activeTracesRef = useRef(new Map());
 
-  const startTrace = useCallback((operation) => {
+  const startTrace = useCallback(operation => {
     const traceId = `trace-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     const trace = {
       id: traceId,
       operation,
       startTime: performance.now(),
-      spans: []
+      spans: [],
     };
 
     activeTracesRef.current.set(traceId, trace);
     return traceId;
   }, []);
 
-  const endTrace = useCallback((traceId) => {
+  const endTrace = useCallback(traceId => {
     const trace = activeTracesRef.current.get(traceId);
     if (!trace) return;
 
@@ -69,7 +69,7 @@ export function useObservabilityManager(config = {}) {
       name: spanName,
       startTime: performance.now(),
       endTime: null,
-      duration: null
+      duration: null,
     };
 
     trace.spans.push(span);
@@ -81,8 +81,8 @@ export function useObservabilityManager(config = {}) {
       ...prev,
       [metricName]: {
         value,
-        timestamp: new Date().toISOString()
-      }
+        timestamp: new Date().toISOString(),
+      },
     }));
   }, []);
 
@@ -91,11 +91,10 @@ export function useObservabilityManager(config = {}) {
       setDashboard({
         activeTraces: activeTracesRef.current.size,
         totalTraces: traces.length,
-        avgDuration: traces.length > 0
-          ? traces.reduce((sum, t) => sum + t.duration, 0) / traces.length
-          : 0,
+        avgDuration:
+          traces.length > 0 ? traces.reduce((sum, t) => sum + t.duration, 0) / traces.length : 0,
         metricsCount: Object.keys(metrics).length,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     };
 
@@ -112,6 +111,6 @@ export function useObservabilityManager(config = {}) {
     metrics,
     dashboard,
     loading,
-    error
+    error,
   };
 }

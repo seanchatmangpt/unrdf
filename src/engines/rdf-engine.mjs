@@ -4,13 +4,13 @@
  * @license MIT
  */
 
-import { Parser, Store, Writer, DataFactory } from "n3";
-import { QueryEngine } from "@comunica/query-sparql";
-import rdf from "rdf-ext";
-import SHACLValidator from "rdf-validate-shacl";
-import rdfCanonize from "rdf-canonize";
-import eyereasoner from "eyereasoner";
-import jsonld from "jsonld";
+import { Parser, Store, Writer, DataFactory } from 'n3';
+import { QueryEngine } from '@comunica/query-sparql';
+import rdf from 'rdf-ext';
+import SHACLValidator from 'rdf-validate-shacl';
+import rdfCanonize from 'rdf-canonize';
+import eyereasoner from 'eyereasoner';
+import _jsonld from 'jsonld';
 
 const { namedNode, literal, quad, blankNode, defaultGraph } = DataFactory;
 
@@ -24,7 +24,7 @@ export class RdfEngine {
    * @param {string} [options.baseIRI] - The base IRI to use for parsing relative URIs.
    */
   constructor(options = {}) {
-    this.baseIRI = options.baseIRI || "http://example.org/";
+    this.baseIRI = options.baseIRI || 'http://example.org/';
     this.comunicaEngine = new QueryEngine();
     this.store = new Store();
   }
@@ -99,7 +99,7 @@ export class RdfEngine {
    * @returns {string}
    */
   serializeTurtle(store = this.store, options = {}) {
-    const writer = new Writer({ ...options, format: "Turtle" });
+    const writer = new Writer({ ...options, format: 'Turtle' });
     return writer.quadsToString(store.getQuads());
   }
 
@@ -109,7 +109,7 @@ export class RdfEngine {
    * @returns {string}
    */
   serializeNQuads(store = this.store) {
-    const writer = new Writer({ format: "N-Quads" });
+    const writer = new Writer({ format: 'N-Quads' });
     return writer.quadsToString(store.getQuads());
   }
 
@@ -124,9 +124,7 @@ export class RdfEngine {
    */
   async query(sparql) {
     // Remove PREFIX declarations to find the actual query type
-    const queryWithoutPrefixes = sparql
-      .replace(/^PREFIX\s+[^\s]+\s+<[^>]+>\s*/gm, "")
-      .trim();
+    const queryWithoutPrefixes = sparql.replace(/^PREFIX\s+[^\s]+\s+<[^>]+>\s*/gm, '').trim();
     const queryType = queryWithoutPrefixes.toUpperCase().split(/\s+/)[0];
     // Comunica expects the store directly in sources array
     const context = {
@@ -134,13 +132,10 @@ export class RdfEngine {
     };
 
     switch (queryType) {
-      case "SELECT": {
-        const bindingsStream = await this.comunicaEngine.queryBindings(
-          sparql,
-          context,
-        );
+      case 'SELECT': {
+        const bindingsStream = await this.comunicaEngine.queryBindings(sparql, context);
         const bindings = await bindingsStream.toArray();
-        const rows = bindings.map((binding) => {
+        const rows = bindings.map(binding => {
           const entry = {};
           for (const [variable, value] of binding) {
             entry[variable.value] = value.value;
@@ -148,36 +143,34 @@ export class RdfEngine {
           return entry;
         });
         const variables = rows.length > 0 ? Object.keys(rows[0]) : [];
-        return { type: "select", rows, variables };
+        return { type: 'select', rows, variables };
       }
-      case "ASK": {
+      case 'ASK': {
         const boolean = await this.comunicaEngine.queryBoolean(sparql, context);
-        return { type: "ask", boolean };
+        return { type: 'ask', boolean };
       }
-      case "CONSTRUCT": {
-        const quadStream = await this.comunicaEngine.queryQuads(
-          sparql,
-          context,
-        );
-        return { type: "construct", store: new Store(await quadStream.toArray()) };
+      case 'CONSTRUCT': {
+        const quadStream = await this.comunicaEngine.queryQuads(sparql, context);
+        return {
+          type: 'construct',
+          store: new Store(await quadStream.toArray()),
+        };
       }
-      case "DESCRIBE": {
-        const quadStream = await this.comunicaEngine.queryQuads(
-          sparql,
-          context,
-        );
-        return { type: "describe", store: new Store(await quadStream.toArray()) };
+      case 'DESCRIBE': {
+        const quadStream = await this.comunicaEngine.queryQuads(sparql, context);
+        return {
+          type: 'describe',
+          store: new Store(await quadStream.toArray()),
+        };
       }
-      case "INSERT":
-      case "UPDATE":
-      case "DELETE":
+      case 'INSERT':
+      case 'UPDATE':
+      case 'DELETE':
         throw new Error(
-          `Query type "${queryType}" is not supported. Use the update() helper for writes.`,
+          `Query type "${queryType}" is not supported. Use the update() helper for writes.`
         );
       default:
-        throw new Error(
-          `Query type "${queryType}" is not supported by query().`,
-        );
+        throw new Error(`Query type "${queryType}" is not supported by query().`);
     }
   }
 
@@ -188,26 +181,19 @@ export class RdfEngine {
    */
   async update(sparql) {
     // Remove PREFIX declarations to find the actual query type
-    const queryWithoutPrefixes = sparql
-      .replace(/PREFIX\s+[^\s]+\s+<[^>]+>\s*/g, "")
-      .trim();
+    const queryWithoutPrefixes = sparql.replace(/PREFIX\s+[^\s]+\s+<[^>]+>\s*/g, '').trim();
 
     // If still starts with PREFIX, try a different approach
-    if (queryWithoutPrefixes.startsWith("PREFIX")) {
-      const lines = queryWithoutPrefixes.split("\n");
-      const nonPrefixLines = lines.filter(
-        (line) => !line.trim().startsWith("PREFIX"),
-      );
-      const result = nonPrefixLines.join("\n").trim();
+    if (queryWithoutPrefixes.startsWith('PREFIX')) {
+      const lines = queryWithoutPrefixes.split('\n');
+      const nonPrefixLines = lines.filter(line => !line.trim().startsWith('PREFIX'));
+      const result = nonPrefixLines.join('\n').trim();
       return this.update(result);
     }
     const queryType = queryWithoutPrefixes.toUpperCase().split(/\s+/)[0];
 
     // For now, we'll implement a simple INSERT DATA operation
-    if (
-      queryType === "INSERT" &&
-      queryWithoutPrefixes.includes("INSERT DATA")
-    ) {
+    if (queryType === 'INSERT' && queryWithoutPrefixes.includes('INSERT DATA')) {
       // Parse the INSERT DATA operation - need to handle PREFIX declarations
       const insertMatch = sparql.match(/INSERT\s+DATA\s*\{([^}]+)\}/is);
       if (insertMatch) {
@@ -215,10 +201,10 @@ export class RdfEngine {
 
         // Extract PREFIX declarations from the original query
         const prefixMatches = sparql.match(/PREFIX\s+[^\s]+\s+<[^>]+>/gi) || [];
-        const prefixes = prefixMatches.join("\n");
+        const prefixes = prefixMatches.join('\n');
 
         // Combine prefixes with the data for parsing
-        const dataToParse = prefixes + (prefixes ? "\n" : "") + turtleData;
+        const dataToParse = prefixes + (prefixes ? '\n' : '') + turtleData;
 
         // Parse the Turtle data with PREFIX declarations and add to store
         const parser = new Parser();
@@ -226,7 +212,7 @@ export class RdfEngine {
         for (const quad of quads) {
           this.store.add(quad);
         }
-        return { type: "update", ok: true, inserted: quads.length };
+        return { type: 'update', ok: true, inserted: quads.length };
       }
     }
 
@@ -245,17 +231,14 @@ export class RdfEngine {
    * @returns {{conforms: boolean, results: Array<object>}} A validation report.
    */
   validateShacl(dataStore, shapes) {
-    const shapesStore =
-      typeof shapes === "string"
-        ? new Store(new Parser().parse(shapes))
-        : shapes;
+    const shapesStore = typeof shapes === 'string' ? new Store(new Parser().parse(shapes)) : shapes;
 
     const validator = new SHACLValidator(rdf.dataset([...shapesStore]));
     const report = validator.validate(rdf.dataset([...dataStore]));
 
     return {
       conforms: report.conforms,
-      results: (report.results || []).map((r) => ({
+      results: (report.results || []).map(r => ({
         message: r.message?.[0]?.value || null,
         path: r.path?.value || null,
         focusNode: r.focusNode?.value || null,
@@ -274,15 +257,10 @@ export class RdfEngine {
    * @returns {Promise<import('n3').Store>} A new store containing both original and inferred quads.
    */
   async reason(dataStore, rules) {
-    const rulesN3 =
-      typeof rules === "string" ? rules : this.serializeTurtle(rules);
+    const rulesN3 = typeof rules === 'string' ? rules : this.serializeTurtle(rules);
     const dataN3 = this.serializeTurtle(dataStore);
-    const { executeBasicEyeQuery } = await import("eyereasoner");
-    const inferredN3 = await executeBasicEyeQuery(
-      eyereasoner.SWIPL,
-      dataN3,
-      rulesN3,
-    );
+    const { executeBasicEyeQuery } = await import('eyereasoner');
+    const inferredN3 = await executeBasicEyeQuery(eyereasoner.SWIPL, dataN3, rulesN3);
     return new Store(new Parser().parse(inferredN3));
   }
 
@@ -297,7 +275,7 @@ export class RdfEngine {
    */
   canonicalize(store) {
     return rdfCanonize.canonizeSync(store.getQuads(), {
-      algorithm: "URDNA2015",
+      algorithm: 'URDNA2015',
     });
   }
 

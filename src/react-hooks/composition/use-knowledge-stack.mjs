@@ -7,7 +7,7 @@
  * reducing boilerplate and ensuring best practices are followed automatically.
  */
 
-import { useState, useCallback, useMemo, useEffect } from 'react';
+import { _useState, useCallback, useMemo, useEffect } from 'react';
 import { useKnowledgeEngine } from '../core/index.mjs';
 import { useChangeFeed } from '../streaming/use-change-feed.mjs';
 import { useErrorBoundary } from '../error-recovery/use-error-boundary.mjs';
@@ -70,33 +70,39 @@ export function useKnowledgeStack(config = {}) {
   // Conditional hooks based on features
   const changeFeed = useChangeFeed({
     operations: config.operations || ['insert', 'delete'],
-    batchSize: config.batchSize || 10
+    batchSize: config.batchSize || 10,
   });
 
   const errorBoundary = useErrorBoundary({
-    onError: config.onError
+    onError: config.onError,
   });
 
   const recovery = useRecovery({
     maxRetries: config.maxRetries || 3,
-    retryDelay: config.retryDelay || 1000
+    retryDelay: config.retryDelay || 1000,
   });
 
   // Composed query with optional recovery
-  const resilientQuery = useCallback(async (sparql) => {
-    if (features.enableRecovery) {
-      return recovery.executeWithRecovery(() => engine.query(sparql));
-    }
-    return engine.query(sparql);
-  }, [engine, recovery, features.enableRecovery]);
+  const resilientQuery = useCallback(
+    async sparql => {
+      if (features.enableRecovery) {
+        return recovery.executeWithRecovery(() => engine.query(sparql));
+      }
+      return engine.query(sparql);
+    },
+    [engine, recovery, features.enableRecovery]
+  );
 
   // Composed insert with optional recovery
-  const resilientInsert = useCallback(async (quads) => {
-    if (features.enableRecovery) {
-      return recovery.executeWithRecovery(() => engine.insert(quads));
-    }
-    return engine.insert(quads);
-  }, [engine, recovery, features.enableRecovery]);
+  const resilientInsert = useCallback(
+    async quads => {
+      if (features.enableRecovery) {
+        return recovery.executeWithRecovery(() => engine.insert(quads));
+      }
+      return engine.insert(quads);
+    },
+    [engine, recovery, features.enableRecovery]
+  );
 
   // Start real-time mode
   const startLive = useCallback(() => {
@@ -134,7 +140,7 @@ export function useKnowledgeStack(config = {}) {
 
       // Stack metadata
       preset,
-      features
+      features,
     };
 
     // Add real-time features
@@ -144,7 +150,7 @@ export function useKnowledgeStack(config = {}) {
         startLive,
         stopLive,
         isLive: changeFeed.stats?.isActive || false,
-        liveStats: changeFeed.stats
+        liveStats: changeFeed.stats,
       });
     }
 
@@ -153,7 +159,7 @@ export function useKnowledgeStack(config = {}) {
       Object.assign(base, {
         retryCount: recovery.retryCount,
         isRecovering: recovery.isRecovering,
-        lastError: recovery.lastError
+        lastError: recovery.lastError,
       });
     }
 
@@ -162,15 +168,22 @@ export function useKnowledgeStack(config = {}) {
       Object.assign(base, {
         hasError: errorBoundary.hasError,
         resetError: errorBoundary.resetError,
-        captureError: errorBoundary.captureError
+        captureError: errorBoundary.captureError,
       });
     }
 
     return base;
   }, [
-    engine, changeFeed, errorBoundary, recovery,
-    resilientQuery, resilientInsert, startLive, stopLive,
-    preset, features
+    engine,
+    changeFeed,
+    errorBoundary,
+    recovery,
+    resilientQuery,
+    resilientInsert,
+    startLive,
+    stopLive,
+    preset,
+    features,
   ]);
 
   return stack;
@@ -188,29 +201,29 @@ function resolvePreset(preset, config) {
     basic: {
       enableRealtime: false,
       enableRecovery: false,
-      enableErrorBoundary: true
+      enableErrorBoundary: true,
     },
 
     // Realtime: Live updates for dashboards
     realtime: {
       enableRealtime: true,
       enableRecovery: false,
-      enableErrorBoundary: true
+      enableErrorBoundary: true,
     },
 
     // Resilient: Auto-retry for unreliable networks
     resilient: {
       enableRealtime: false,
       enableRecovery: true,
-      enableErrorBoundary: true
+      enableErrorBoundary: true,
     },
 
     // Full: Everything enabled
     full: {
       enableRealtime: true,
       enableRecovery: true,
-      enableErrorBoundary: true
-    }
+      enableErrorBoundary: true,
+    },
   };
 
   const base = presets[preset] || presets.basic;
@@ -219,7 +232,7 @@ function resolvePreset(preset, config) {
   return {
     enableRealtime: config.enableRealtime ?? base.enableRealtime,
     enableRecovery: config.enableRecovery ?? base.enableRecovery,
-    enableErrorBoundary: config.enableErrorBoundary ?? base.enableErrorBoundary
+    enableErrorBoundary: config.enableErrorBoundary ?? base.enableErrorBoundary,
   };
 }
 
@@ -232,7 +245,7 @@ export function useCRUDStack(config = {}) {
   return useKnowledgeStack({
     ...config,
     preset: 'basic',
-    enableErrorBoundary: true
+    enableErrorBoundary: true,
   });
 }
 
@@ -245,7 +258,7 @@ export function useDashboardStack(config = {}) {
   const stack = useKnowledgeStack({
     ...config,
     preset: 'realtime',
-    operations: ['insert', 'delete', 'update']
+    operations: ['insert', 'delete', 'update'],
   });
 
   // Auto-start live mode
@@ -267,7 +280,7 @@ export function useProductionStack(config = {}) {
     ...config,
     preset: 'full',
     maxRetries: 5,
-    retryDelay: 2000
+    retryDelay: 2000,
   });
 }
 

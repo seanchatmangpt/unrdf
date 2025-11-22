@@ -87,9 +87,9 @@ describe('CircuitBreaker', () => {
     it('should throw CircuitOpenError when circuit is open', async () => {
       breaker.trip();
 
-      await expect(
-        breaker.execute(async () => 'should not execute')
-      ).rejects.toThrow(CircuitOpenError);
+      await expect(breaker.execute(async () => 'should not execute')).rejects.toThrow(
+        CircuitOpenError
+      );
     });
 
     it('should track metrics', async () => {
@@ -266,9 +266,7 @@ describe('CircuitBreaker', () => {
       breaker.halfOpenCalls = 2;
       breaker.successCount = 0;
 
-      await expect(
-        breaker.execute(async () => 'should fail')
-      ).rejects.toThrow(CircuitOpenError);
+      await expect(breaker.execute(async () => 'should fail')).rejects.toThrow(CircuitOpenError);
     });
   });
 });
@@ -397,7 +395,9 @@ describe('CircuitBreakerRegistry', () => {
 
 describe('createCircuitBreaker', () => {
   it('should create a circuit breaker with name', () => {
-    const breaker = createCircuitBreaker('my-breaker', { failureThreshold: 10 });
+    const breaker = createCircuitBreaker('my-breaker', {
+      failureThreshold: 10,
+    });
     expect(breaker.name).toBe('my-breaker');
     expect(breaker.failureThreshold).toBe(10);
   });
@@ -438,7 +438,7 @@ describe('custom failure detection', () => {
     const breaker = new CircuitBreaker({
       name: 'custom-failure',
       failureThreshold: 1,
-      isFailure: (error) => error.message === 'critical',
+      isFailure: error => error.message === 'critical',
     });
 
     // Non-critical error should not count

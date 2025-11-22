@@ -13,18 +13,13 @@
  * Integrated with UNRDF Knowledge Hooks for autonomous self-healing.
  */
 
-import { z } from 'zod'
-import { DataFactory } from 'n3'
-import { findMissingRoles, scoreMissingRole } from './gap-finder.mjs'
-import { auditTypeConsistency } from './type-auditor.mjs'
-import { analyzeHotspots } from './hotspot-analyzer.mjs'
-import { computeDrift } from './drift-snapshot.mjs'
-import { planMaterialization, validatePlan } from './materialize-plan.mjs'
-import { deriveHooksFromStructure } from './policy-derivation.mjs'
+import { z } from 'zod';
+import { findMissingRoles } from './gap-finder.mjs';
+import { auditTypeConsistency } from './type-auditor.mjs';
+import { analyzeHotspots } from './hotspot-analyzer.mjs';
+import { computeDrift } from './drift-snapshot.mjs';
 
-const { namedNode, literal } = DataFactory
-
-const MapekStateSchema = z.object({
+const _MapekStateSchema = z.object({
   phase: z.enum(['monitor', 'analyze', 'plan', 'execute', 'knowledge']),
   timestamp: z.string().datetime(),
   findings: z.object({}).passthrough(),
@@ -35,7 +30,7 @@ const MapekStateSchema = z.object({
     hotspotScore: z.number().default(0),
     driftSeverity: z.string().default('none'),
   }),
-})
+});
 
 /**
  * Autonomic MAPEK Loop - Single iteration
@@ -52,14 +47,18 @@ const MapekStateSchema = z.object({
 export async function runMapekIteration(options) {
   const validated = z
     .object({
-      projectStore: z.object({}).passthrough(),
-      domainStore: z.object({}).passthrough(),
+      projectStore: z.custom(val => val && typeof val.getQuads === 'function', {
+        message: 'projectStore must be an RDF store with getQuads method',
+      }),
+      domainStore: z.custom(val => val && typeof val.getQuads === 'function', {
+        message: 'domainStore must be an RDF store with getQuads method',
+      }),
       baselineSnapshot: z.object({}).passthrough().optional(),
       projectRoot: z.string(),
       stackProfile: z.object({}).passthrough().optional(),
       knowledge: z.object({}).passthrough().optional(),
     })
-    .parse(options)
+    .parse(options);
 
   const state = {
     phase: 'monitor',
@@ -72,7 +71,7 @@ export async function runMapekIteration(options) {
       hotspotScore: 0,
       driftSeverity: 'none',
     },
-  }
+  };
 
   // ===== PHASE 1: MONITOR =====
   // Continuously observe system state
@@ -80,65 +79,67 @@ export async function runMapekIteration(options) {
     domainStore: validated.domainStore,
     projectStore: validated.projectStore,
     stackProfile: validated.stackProfile,
-  })
+  });
 
   state.findings.typeIssues = await auditTypeConsistency({
     domainStore: validated.domainStore,
     fsStore: validated.projectStore,
     stackProfile: validated.stackProfile,
     projectRoot: validated.projectRoot,
-  })
+  });
 
   state.findings.hotspots = analyzeHotspots({
     projectStore: validated.projectStore,
     domainStore: validated.domainStore,
     stackProfile: validated.stackProfile,
-  })
+  });
 
   if (validated.baselineSnapshot) {
-    state.findings.drift = computeDrift(validated.projectStore, validated.baselineSnapshot)
+    state.findings.drift = computeDrift(validated.projectStore, validated.baselineSnapshot);
   }
 
   // ===== PHASE 2: ANALYZE =====
   // Interpret findings and calculate health metrics
-  state.phase = 'analyze'
+  state.phase = 'analyze';
 
   // Gap severity (0-100, higher = more missing)
-  const gapCount = state.findings.gaps?.gaps?.length || 0
-  const criticalGaps = state.findings.gaps?.gaps?.filter((g) => g.score > 80).length || 0
-  state.metrics.gapScore = Math.min(100, gapCount * 10 + criticalGaps * 20)
+  const gapCount = state.findings.gaps?.gaps?.length || 0;
+  const criticalGaps = state.findings.gaps?.gaps?.filter(g => g.score > 80).length || 0;
+  state.metrics.gapScore = Math.min(100, gapCount * 10 + criticalGaps * 20);
 
   // Type safety score (0-100, higher = more problems)
-  const typeCount = state.findings.typeIssues?.mismatches?.length || 0
-  const highSeverityTypes = state.findings.typeIssues?.mismatches?.filter(
-    (m) => m.severity === 'high'
-  ).length || 0
-  state.metrics.typeScore = Math.min(100, typeCount * 15 + highSeverityTypes * 25)
+  const typeCount = state.findings.typeIssues?.mismatches?.length || 0;
+  const highSeverityTypes =
+    state.findings.typeIssues?.mismatches?.filter(m => m.severity === 'high').length || 0;
+  state.metrics.typeScore = Math.min(100, typeCount * 15 + highSeverityTypes * 25);
 
   // Hotspot score (average risk of identified hotspots)
-  const hotspotCount = state.findings.hotspots?.hotspots?.length || 0
-  const highRiskCount = state.findings.hotspots?.hotspots?.filter(
-    (h) => h.risk === 'HIGH'
-  ).length || 0
-  state.metrics.hotspotScore = Math.min(100, hotspotCount * 5 + highRiskCount * 30)
+  const hotspotCount = state.findings.hotspots?.hotspots?.length || 0;
+  const highRiskCount =
+    state.findings.hotspots?.hotspots?.filter(h => h.risk === 'HIGH').length || 0;
+  state.metrics.hotspotScore = Math.min(100, hotspotCount * 5 + highRiskCount * 30);
 
   // Drift severity (from computeDrift)
-  state.metrics.driftSeverity = state.findings.drift?.driftSeverity || 'none'
+  state.metrics.driftSeverity = state.findings.drift?.driftSeverity || 'none';
 
   // Overall health
-  const overallHealth = (
-    state.metrics.gapScore * 0.3 +
-    state.metrics.typeScore * 0.3 +
-    state.metrics.hotspotScore * 0.2 +
-    (state.metrics.driftSeverity === 'major' ? 50 : state.metrics.driftSeverity === 'minor' ? 25 : 0) *
-      0.2
-  ) / 100
+  const overallHealth =
+    (state.metrics.gapScore * 0.3 +
+      state.metrics.typeScore * 0.3 +
+      state.metrics.hotspotScore * 0.2 +
+      (state.metrics.driftSeverity === 'major'
+        ? 50
+        : state.metrics.driftSeverity === 'minor'
+          ? 25
+          : 0) *
+        0.2) /
+    100;
 
   // ===== PHASE 3: PLAN =====
   // Decide what to do about findings
-  state.phase = 'plan'
+  state.phase = 'plan';
 
-  const decisions = []
+  const decisions = [];
 
   // Decision 1: Fix type mismatches (highest priority)
   if (state.metrics.typeScore > 60) {
@@ -148,38 +149,38 @@ export async function runMapekIteration(options) {
       action: 'sync-zod-ts-types',
       description: `${typeCount} type mismatches detected. Sync Zod schemas with TypeScript types.`,
       autoFixable: true,
-    })
+    });
   }
 
   // Decision 2: Fill gaps (medium priority)
   if (state.metrics.gapScore > 50) {
-    const topGaps = state.findings.gaps?.gaps?.slice(0, 3) || []
+    const topGaps = state.findings.gaps?.gaps?.slice(0, 3) || [];
     decisions.push({
       issue: 'missing-roles',
       severity: criticalGaps > 0 ? 'high' : 'medium',
       action: 'generate-missing-files',
-      targets: topGaps.map((g) => ({
+      targets: topGaps.map(g => ({
         entity: g.entity,
         roles: g.missingRoles,
         score: g.score,
       })),
       autoFixable: true,
-      description: `Generate ${topGaps.length} missing files for ${topGaps.map((g) => g.entity).join(', ')}`,
-    })
+      description: `Generate ${topGaps.length} missing files for ${topGaps.map(g => g.entity).join(', ')}`,
+    });
   }
 
   // Decision 3: Refactor hotspots (low priority, requires human review)
   if (state.metrics.hotspotScore > 70) {
-    const topRisks = state.findings.hotspots?.topRisks?.slice(0, 2) || []
+    const topRisks = state.findings.hotspots?.topRisks?.slice(0, 2) || [];
     decisions.push({
       issue: 'high-complexity',
       severity: 'medium',
       action: 'refactor-hotspots',
       targets: topRisks,
       autoFixable: false, // Requires human decision
-      description: `Features ${topRisks.map((r) => r.feature).join(', ')} have high complexity.`,
+      description: `Features ${topRisks.map(r => r.feature).join(', ')} have high complexity.`,
       recommendation: 'Add tests or refactor into smaller modules.',
-    })
+    });
   }
 
   // Decision 4: Fix drift (if baseline exists)
@@ -191,20 +192,20 @@ export async function runMapekIteration(options) {
       autoFixable: true,
       description: 'Project structure has drifted significantly from baseline.',
       recommendation: 'Run: unrdf init --skip-snapshot to resync',
-    })
+    });
   }
 
-  state.findings.decisions = decisions
+  state.findings.decisions = decisions;
 
   // ===== PHASE 4: EXECUTE =====
   // Apply fixes autonomously (for auto-fixable issues)
-  state.phase = 'execute'
+  state.phase = 'execute';
 
   for (const decision of decisions) {
     if (decision.autoFixable) {
       if (decision.action === 'generate-missing-files') {
         // Plan and queue file generation
-        const targets = decision.targets || []
+        const targets = decision.targets || [];
         for (const target of targets) {
           state.actions.push({
             type: 'generate-files',
@@ -212,7 +213,7 @@ export async function runMapekIteration(options) {
             roles: target.roles,
             status: 'planned',
             timestamp: new Date().toISOString(),
-          })
+          });
         }
       } else if (decision.action === 'sync-zod-ts-types') {
         state.actions.push({
@@ -220,35 +221,35 @@ export async function runMapekIteration(options) {
           mismatches: state.findings.typeIssues?.mismatches?.length || 0,
           status: 'planned',
           timestamp: new Date().toISOString(),
-        })
+        });
       } else if (decision.action === 'resync-model') {
         state.actions.push({
           type: 'reinitialize',
           reason: 'drift-recovery',
           status: 'planned',
           timestamp: new Date().toISOString(),
-        })
+        });
       }
     }
   }
 
   // ===== PHASE 5: KNOWLEDGE =====
   // Learn from outcomes and update policies
-  state.phase = 'knowledge'
+  state.phase = 'knowledge';
 
   // Extract learning
   const learnings = {
     timestamp: new Date().toISOString(),
     gapPatterns: (state.findings.gaps?.gaps || [])
-      .filter((g) => g.score > 80)
-      .map((g) => ({
+      .filter(g => g.score > 80)
+      .map(g => ({
         entity: g.entity,
         missingRoles: g.missingRoles,
         frequency: 1,
       })),
     typePatterns: (state.findings.typeIssues?.mismatches || [])
-      .filter((m) => m.severity === 'high')
-      .map((m) => ({
+      .filter(m => m.severity === 'high')
+      .map(m => ({
         entity: m.entity,
         issueType: 'type-mismatch',
         frequency: m.issues?.length || 1,
@@ -258,23 +259,24 @@ export async function runMapekIteration(options) {
       testCoverageHighRisk: 70,
       dependenciesHighRisk: 12,
     },
-  }
+  };
 
-  state.findings.learnings = learnings
+  state.findings.learnings = learnings;
 
   // Determine if another iteration is needed
-  const shouldRepeat = overallHealth < 0.7 && state.actions.length > 0
+  const shouldRepeat = overallHealth < 0.7 && state.actions.length > 0;
 
   return {
     state,
     overallHealth: Math.round(overallHealth * 100),
     phase: state.phase,
     findings: state.findings,
-    decisions: decisions.filter((d) => d.autoFixable),
+    metrics: state.metrics,
+    decisions: decisions.filter(d => d.autoFixable),
     actions: state.actions,
     learnings,
     shouldRepeat,
-  }
+  };
 }
 
 /**
@@ -284,11 +286,11 @@ export async function runMapekIteration(options) {
  * @param {Store} projectStore - Project RDF store
  * @returns {Hook[]} Array of hooks for KnowledgeHookManager
  */
-export function createAutonomicHooks(mapekFindings, projectStore) {
-  const hooks = []
+export function createAutonomicHooks(mapekFindings, _projectStore) {
+  const hooks = [];
 
   // Hook 1: Auto-generate missing files on gap detection
-  if (mapekFindings.findings.gaps?.gaps?.some((g) => g.score > 80)) {
+  if (mapekFindings.findings.gaps?.gaps?.some(g => g.score > 80)) {
     hooks.push({
       meta: {
         name: 'autonomic:auto-generate-missing-files',
@@ -305,17 +307,25 @@ export function createAutonomicHooks(mapekFindings, projectStore) {
           }
         `,
       },
-      run: async ({ payload, context }) => {
-        // Trigger file generation for missing entity
+      run: async ({ payload, _context }) => {
+        // This hook triggers when a new entity is detected without corresponding files
+        // The actual file generation is handled by applyMapekActions in the CLI
+        const entity = payload?.subject?.value || payload?.subject || 'unknown';
+        console.log(`[Autonomic Hook] Detected missing files for entity: ${entity}`);
         return {
-          result: { action: 'generate', entity: payload.subject },
-        }
+          result: {
+            action: 'generate',
+            entity,
+            triggered: true,
+            note: 'File generation will be handled by MAPEK execute phase',
+          },
+        };
       },
-    })
+    });
   }
 
   // Hook 2: Auto-sync types when mismatch detected
-  if (mapekFindings.findings.typeIssues?.mismatches?.some((m) => m.severity === 'high')) {
+  if (mapekFindings.findings.typeIssues?.mismatches?.some(m => m.severity === 'high')) {
     hooks.push({
       meta: {
         name: 'autonomic:auto-sync-types',
@@ -326,17 +336,24 @@ export function createAutonomicHooks(mapekFindings, projectStore) {
       when: {
         kind: 'custom',
       },
-      run: async ({ payload, context }) => {
-        // Detect type change and sync
+      run: async ({ _payload, _context }) => {
+        // This hook triggers when type mismatches are detected
+        // The actual type syncing requires manual review due to complexity
+        console.log('[Autonomic Hook] Type mismatch detected - requires manual review');
         return {
-          result: { action: 'sync', type: 'zod-ts' },
-        }
+          result: {
+            action: 'sync',
+            type: 'zod-ts',
+            triggered: true,
+            note: 'Type syncing requires manual review. Run: unrdf autonomic --full',
+          },
+        };
       },
-    })
+    });
   }
 
   // Hook 3: Alert on hotspots (for human review)
-  if (mapekFindings.findings.hotspots?.hotspots?.some((h) => h.risk === 'HIGH')) {
+  if (mapekFindings.findings.hotspots?.hotspots?.some(h => h.risk === 'HIGH')) {
     hooks.push({
       meta: {
         name: 'autonomic:hotspot-alert',
@@ -347,21 +364,34 @@ export function createAutonomicHooks(mapekFindings, projectStore) {
       when: {
         kind: 'custom',
       },
-      run: async ({ payload, context }) => {
-        const topRisk = mapekFindings.findings.hotspots.topRisks[0]
+      run: async ({ _payload, _context }) => {
+        // This hook alerts on high-risk features that need human attention
+        const topRisk = mapekFindings.findings.hotspots?.topRisks?.[0];
+        if (topRisk) {
+          console.log(`[Autonomic Hook] High-risk feature detected: ${topRisk.feature}`);
+          console.log(`   Reason: ${topRisk.reason || 'High complexity'}`);
+          return {
+            result: {
+              action: 'alert',
+              feature: topRisk.feature,
+              reason: topRisk.reason,
+              level: 'warning',
+              triggered: true,
+            },
+          };
+        }
         return {
           result: {
             action: 'alert',
-            feature: topRisk.feature,
-            reason: topRisk.reason,
-            level: 'warning',
+            level: 'info',
+            triggered: false,
           },
-        }
+        };
       },
-    })
+    });
   }
 
-  return hooks
+  return hooks;
 }
 
 /**
@@ -387,38 +417,38 @@ export async function runContinuousMapekLoop(options) {
       intervalMs: z.number().default(5000),
       maxIterations: z.number().default(10),
     })
-    .parse(options)
+    .parse(options);
 
-  let iteration = 0
-  let lastState = null
-  let converged = false
+  let iteration = 0;
+  let lastState = null;
+  let converged = false;
 
   while (iteration < maxIterations && !converged) {
-    iteration++
+    iteration++;
 
     // Get current state
-    const state = await getState()
+    const state = await getState();
 
     // Run MAPEK iteration
-    const result = await runMapekIteration(state)
+    const result = await runMapekIteration(state);
 
     // Apply auto-fixable actions
     if (result.actions.length > 0) {
-      await applyActions(result.actions, state)
+      await applyActions(result.actions, state);
     }
 
-    lastState = result
+    lastState = result;
 
     // Check convergence
     if (result.overallHealth > 80) {
-      converged = true
+      converged = true;
     } else if (!result.shouldRepeat) {
-      converged = true
+      converged = true;
     }
 
     // Wait before next iteration
     if (!converged && iteration < maxIterations) {
-      await new Promise((resolve) => setTimeout(resolve, intervalMs))
+      await new Promise(resolve => setTimeout(resolve, intervalMs));
     }
   }
 
@@ -427,7 +457,7 @@ export async function runContinuousMapekLoop(options) {
     iterations: iteration,
     finalHealth: lastState?.overallHealth || 0,
     finalState: lastState,
-  }
+  };
 }
 
 /**
@@ -453,29 +483,29 @@ export function reportMapekStatus(mapekState) {
     `   Gaps: ${mapekState.findings.gaps?.gaps?.length || 0} missing roles`,
     `   Type Issues: ${mapekState.findings.typeIssues?.mismatches?.length || 0} mismatches`,
     `   Hotspots: ${mapekState.findings.hotspots?.hotspots?.length || 0} high-risk features`,
-  ]
+  ];
 
   if (mapekState.findings.decisions?.length > 0) {
-    lines.push('')
-    lines.push('📋 Decisions:')
-    mapekState.findings.decisions.forEach((d) => {
-      const icon = d.autoFixable ? '⚙️ ' : '🤔'
-      lines.push(`   ${icon} ${d.description}`)
-    })
+    lines.push('');
+    lines.push('📋 Decisions:');
+    mapekState.findings.decisions.forEach(d => {
+      const icon = d.autoFixable ? '⚙️ ' : '🤔';
+      lines.push(`   ${icon} ${d.description}`);
+    });
   }
 
   if (mapekState.actions?.length > 0) {
-    lines.push('')
-    lines.push('⚡ Planned Actions:')
-    mapekState.actions.forEach((a) => {
-      lines.push(`   → ${a.type}: ${a.status}`)
-    })
+    lines.push('');
+    lines.push('⚡ Planned Actions:');
+    mapekState.actions.forEach(a => {
+      lines.push(`   → ${a.type}: ${a.status}`);
+    });
   }
 
-  lines.push('')
-  return lines.join('\n')
+  lines.push('');
+  return lines.join('\n');
 }
 
-export { findMissingRoles, scoreMissingRole } from './gap-finder.mjs'
-export { auditTypeConsistency, compareTypes } from './type-auditor.mjs'
-export { analyzeHotspots, scoreFeature } from './hotspot-analyzer.mjs'
+export { findMissingRoles, scoreMissingRole } from './gap-finder.mjs';
+export { auditTypeConsistency, compareTypes } from './type-auditor.mjs';
+export { analyzeHotspots, scoreFeature } from './hotspot-analyzer.mjs';

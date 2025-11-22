@@ -19,8 +19,8 @@ const runApp = initStore([], {
     schema: 'https://schema.org/',
     rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
     rdfs: 'http://www.w3.org/2000/01/rdf-schema#',
-    xsd: 'http://www.w3.org/2001/XMLSchema#'
-  }
+    xsd: 'http://www.w3.org/2001/XMLSchema#',
+  },
 });
 
 await runApp(async () => {
@@ -156,7 +156,9 @@ await runApp(async () => {
   `);
 
   aggregateSelect.forEach(row => {
-    console.log(`  ${row.deptName.value}: $${parseFloat(row.avgSalary.value).toFixed(2)} (${row.employees.value} employees)`);
+    console.log(
+      `  ${row.deptName.value}: $${parseFloat(row.avgSalary.value).toFixed(2)} (${row.employees.value} employees)`
+    );
   });
 
   // SELECT with OPTIONAL
@@ -255,7 +257,9 @@ await runApp(async () => {
   `);
 
   subquerySelect.forEach(row => {
-    console.log(`  ${row.name.value}: $${row.salary.value} (avg: $${parseFloat(row.avgSalary.value).toFixed(2)})`);
+    console.log(
+      `  ${row.name.value}: $${row.salary.value} (avg: $${parseFloat(row.avgSalary.value).toFixed(2)})`
+    );
   });
 
   // Property paths

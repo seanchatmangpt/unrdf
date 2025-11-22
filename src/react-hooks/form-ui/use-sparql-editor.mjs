@@ -22,19 +22,21 @@ import { useKnowledgeEngineContext } from '../core/use-knowledge-engine-context.
  *   errors
  * } = useSPARQLEditor();
  */
-export function useSPARQLEditor(config = {}) {
+export function useSPARQLEditor(_config = {}) {
   const { engine } = useKnowledgeEngineContext();
   const [query, setQuery] = useState('');
   const [errors, setErrors] = useState([]);
-  const [suggestions, setSuggestions] = useState([]);
+  const [suggestions, _setSuggestions] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const validate = useCallback((sparql) => {
+  const validate = useCallback(sparql => {
     const validationErrors = [];
 
-    if (!sparql.toUpperCase().includes('SELECT') &&
-        !sparql.toUpperCase().includes('CONSTRUCT') &&
-        !sparql.toUpperCase().includes('ASK')) {
+    if (
+      !sparql.toUpperCase().includes('SELECT') &&
+      !sparql.toUpperCase().includes('CONSTRUCT') &&
+      !sparql.toUpperCase().includes('ASK')
+    ) {
       validationErrors.push({ message: 'Missing query type', line: 0 });
     }
 
@@ -46,20 +48,23 @@ export function useSPARQLEditor(config = {}) {
     return validationErrors.length === 0;
   }, []);
 
-  const execute = useCallback(async (sparql = query) => {
-    try {
-      setLoading(true);
-      const result = await engine.query(sparql);
-      setLoading(false);
-      return result;
-    } catch (err) {
-      setErrors([{ message: err.message, line: 0 }]);
-      setLoading(false);
-      throw err;
-    }
-  }, [engine, query]);
+  const execute = useCallback(
+    async (sparql = query) => {
+      try {
+        setLoading(true);
+        const result = await engine.query(sparql);
+        setLoading(false);
+        return result;
+      } catch (err) {
+        setErrors([{ message: err.message, line: 0 }]);
+        setLoading(false);
+        throw err;
+      }
+    },
+    [engine, query]
+  );
 
-  const format = useCallback((sparql) => {
+  const format = useCallback(sparql => {
     return sparql
       .replace(/\s+/g, ' ')
       .replace(/\s*{\s*/g, ' {\n  ')
@@ -67,5 +72,14 @@ export function useSPARQLEditor(config = {}) {
       .trim();
   }, []);
 
-  return { query, setQuery, validate, execute, format, errors, suggestions, loading };
+  return {
+    query,
+    setQuery,
+    validate,
+    execute,
+    format,
+    errors,
+    suggestions,
+    loading,
+  };
 }

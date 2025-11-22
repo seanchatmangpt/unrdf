@@ -3,7 +3,7 @@
  * Tests consensus protocol, leader election, voting, and log replication
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, _beforeEach, _vi } from 'vitest';
 
 describe('ConsensusManager', () => {
   describe('State Management', () => {
@@ -14,7 +14,7 @@ describe('ConsensusManager', () => {
         term: 0,
         commitIndex: 0,
         log: [],
-        peers: []
+        peers: [],
       };
 
       expect(initialState.state).toBe('follower');
@@ -26,8 +26,12 @@ describe('ConsensusManager', () => {
       const roleHistory = [];
       let currentRole = 'follower';
 
-      const transitionTo = (newRole) => {
-        roleHistory.push({ from: currentRole, to: newRole, timestamp: Date.now() });
+      const transitionTo = newRole => {
+        roleHistory.push({
+          from: currentRole,
+          to: newRole,
+          timestamp: Date.now(),
+        });
         currentRole = newRole;
       };
 
@@ -58,10 +62,10 @@ describe('ConsensusManager', () => {
       const log = [
         { index: 1, term: 1, value: 'a' },
         { index: 2, term: 1, value: 'b' },
-        { index: 3, term: 2, value: 'c' }
+        { index: 3, term: 2, value: 'c' },
       ];
 
-      const commit = (index) => {
+      const commit = index => {
         if (index > log.length) {
           throw new Error('Cannot commit beyond log length');
         }
@@ -81,7 +85,7 @@ describe('ConsensusManager', () => {
       const peers = ['node-2', 'node-3', 'node-4'];
       const voteResponses = [];
 
-      const requestVote = async (peer, candidateId, term) => {
+      const requestVote = async (peer, _candidateId, _term) => {
         // Simulate vote response
         const granted = Math.random() > 0.3;
         voteResponses.push({ peer, granted });
@@ -111,7 +115,7 @@ describe('ConsensusManager', () => {
     it('should reject vote if term is stale', () => {
       const currentTerm = 5;
 
-      const handleVoteRequest = (candidateTerm) => {
+      const handleVoteRequest = candidateTerm => {
         if (candidateTerm < currentTerm) {
           return { voteGranted: false, reason: 'stale-term' };
         }
@@ -150,7 +154,7 @@ describe('ConsensusManager', () => {
       let state = 'leader';
       let term = 5;
 
-      const handleHigherTerm = (newTerm) => {
+      const handleHigherTerm = newTerm => {
         if (newTerm > term) {
           term = newTerm;
           state = 'follower';
@@ -170,10 +174,10 @@ describe('ConsensusManager', () => {
     it('should append entries to log', () => {
       const log = [];
 
-      const appendEntry = (entry) => {
+      const appendEntry = entry => {
         log.push({
           ...entry,
-          index: log.length + 1
+          index: log.length + 1,
         });
         return log.length;
       };
@@ -195,14 +199,14 @@ describe('ConsensusManager', () => {
         replications.push({
           followerId,
           entries,
-          timestamp: Date.now()
+          timestamp: Date.now(),
         });
         return { success: true, matchIndex: entries.length };
       };
 
       const entries = [
         { index: 1, term: 1, value: 'a' },
-        { index: 2, term: 1, value: 'b' }
+        { index: 2, term: 1, value: 'b' },
       ];
 
       for (const follower of followers) {
@@ -216,7 +220,7 @@ describe('ConsensusManager', () => {
     it('should handle append entries request', () => {
       const log = [
         { index: 1, term: 1, value: 'a' },
-        { index: 2, term: 1, value: 'b' }
+        { index: 2, term: 1, value: 'b' },
       ];
 
       const handleAppendEntries = (prevLogIndex, prevLogTerm, entries) => {
@@ -249,19 +253,23 @@ describe('ConsensusManager', () => {
       const leaderLog = [
         { index: 1, term: 1 },
         { index: 2, term: 1 },
-        { index: 3, term: 2 }
+        { index: 3, term: 2 },
       ];
 
       const followerLog = [
         { index: 1, term: 1 },
         { index: 2, term: 1 },
-        { index: 3, term: 1 } // Conflict: different term
+        { index: 3, term: 1 }, // Conflict: different term
       ];
 
       const findConflict = (leaderLog, followerLog) => {
         for (let i = 0; i < Math.min(leaderLog.length, followerLog.length); i++) {
           if (leaderLog[i].term !== followerLog[i].term) {
-            return { index: i + 1, leaderTerm: leaderLog[i].term, followerTerm: followerLog[i].term };
+            return {
+              index: i + 1,
+              leaderTerm: leaderLog[i].term,
+              followerTerm: followerLog[i].term,
+            };
           }
         }
         return null;
@@ -279,7 +287,7 @@ describe('ConsensusManager', () => {
       const term = 3;
       const log = [];
 
-      const propose = async (value, options) => {
+      const propose = async (value, _options) => {
         if (state !== 'leader') {
           throw new Error('Only leader can propose values');
         }
@@ -288,7 +296,7 @@ describe('ConsensusManager', () => {
           index: log.length + 1,
           term,
           value,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
 
         log.push(entry);
@@ -303,7 +311,7 @@ describe('ConsensusManager', () => {
     it('should reject proposal from non-leader', async () => {
       const state = 'follower';
 
-      const propose = async (value) => {
+      const propose = async _value => {
         if (state !== 'leader') {
           throw new Error('Only leader can propose values');
         }
@@ -337,12 +345,12 @@ describe('ConsensusManager', () => {
       const log = [
         { index: 1, value: { op: 'set', key: 'x', data: 1 } },
         { index: 2, value: { op: 'set', key: 'y', data: 2 } },
-        { index: 3, value: { op: 'set', key: 'z', data: 3 } }
+        { index: 3, value: { op: 'set', key: 'z', data: 3 } },
       ];
       const state = {};
       let lastApplied = 0;
 
-      const applyCommitted = (commitIndex) => {
+      const applyCommitted = commitIndex => {
         while (lastApplied < commitIndex) {
           lastApplied++;
           const entry = log[lastApplied - 1];
@@ -384,7 +392,7 @@ describe('ConsensusManager', () => {
           to: followerId,
           term,
           commitIndex,
-          timestamp: Date.now()
+          timestamp: Date.now(),
         });
         return { success: true };
       };
@@ -430,7 +438,7 @@ describe('ConsensusManager', () => {
         logLength: log.length,
         peers,
         isLeader: state === 'leader',
-        canPropose: state === 'leader'
+        canPropose: state === 'leader',
       });
 
       const status = getStatus();
@@ -443,7 +451,11 @@ describe('ConsensusManager', () => {
       const peerStates = {
         'node-2': { matchIndex: 95, nextIndex: 96, lastContact: Date.now() },
         'node-3': { matchIndex: 100, nextIndex: 101, lastContact: Date.now() },
-        'node-4': { matchIndex: 98, nextIndex: 99, lastContact: Date.now() - 10000 }
+        'node-4': {
+          matchIndex: 98,
+          nextIndex: 99,
+          lastContact: Date.now() - 10000,
+        },
       };
 
       const getHealthyPeers = (timeout = 5000) => {
@@ -506,7 +518,7 @@ describe('ConsensusManager', () => {
         { nodeId: 'n4', value: 'A' },
         { nodeId: 'n5', value: 'A' },
         { nodeId: 'n6', value: 'C' }, // Faulty
-        { nodeId: 'n7', value: 'A' }
+        { nodeId: 'n7', value: 'A' },
       ];
 
       const findConsensus = (responses, f) => {

@@ -2,7 +2,7 @@
  * @fileoverview Tests for useKnowledgeHook
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, _beforeEach, vi } from 'vitest';
 
 describe('useKnowledgeHook', () => {
   describe('Hook Registration', () => {
@@ -10,7 +10,7 @@ describe('useKnowledgeHook', () => {
       const hook = {
         name: 'test-pre-hook',
         type: 'pre',
-        execute: vi.fn()
+        execute: vi.fn(),
       };
 
       expect(hook.name).toBe('test-pre-hook');
@@ -21,7 +21,7 @@ describe('useKnowledgeHook', () => {
       const hook = {
         name: 'test-post-hook',
         type: 'post',
-        execute: vi.fn()
+        execute: vi.fn(),
       };
 
       expect(hook.type).toBe('post');
@@ -31,7 +31,7 @@ describe('useKnowledgeHook', () => {
       const hook = {
         name: 'test-veto-hook',
         type: 'veto',
-        execute: vi.fn()
+        execute: vi.fn(),
       };
 
       expect(hook.type).toBe('veto');
@@ -43,7 +43,7 @@ describe('useKnowledgeHook', () => {
       const hook = {
         name: 'pre-hook',
         type: 'pre',
-        execute: vi.fn()
+        execute: vi.fn(),
       };
 
       hook.execute();
@@ -55,7 +55,7 @@ describe('useKnowledgeHook', () => {
       const hook = {
         name: 'post-hook',
         type: 'post',
-        execute: vi.fn()
+        execute: vi.fn(),
       };
 
       hook.execute();
@@ -67,7 +67,7 @@ describe('useKnowledgeHook', () => {
       const hook = {
         name: 'veto-hook',
         type: 'veto',
-        execute: vi.fn(() => ({ allowed: false, reason: 'Blocked' }))
+        execute: vi.fn(() => ({ allowed: false, reason: 'Blocked' })),
       };
 
       const result = hook.execute();
@@ -82,7 +82,7 @@ describe('useKnowledgeHook', () => {
       const context = {
         transactionId: '123',
         delta: { added: [], removed: [] },
-        metadata: { user: 'alice' }
+        metadata: { user: 'alice' },
       };
 
       expect(context.transactionId).toBe('123');
@@ -104,13 +104,13 @@ describe('useKnowledgeHook', () => {
       const hook1 = {
         name: 'hook-1',
         priority: 10,
-        execute: () => executionOrder.push('hook-1')
+        execute: () => executionOrder.push('hook-1'),
       };
 
       const hook2 = {
         name: 'hook-2',
         priority: 5,
-        execute: () => executionOrder.push('hook-2')
+        execute: () => executionOrder.push('hook-2'),
       };
 
       const hooks = [hook1, hook2].sort((a, b) => b.priority - a.priority);
@@ -126,7 +126,7 @@ describe('useKnowledgeHook', () => {
         name: 'error-hook',
         execute: () => {
           throw new Error('Hook failed');
-        }
+        },
       };
 
       expect(() => hook.execute()).toThrow('Hook failed');
@@ -137,12 +137,14 @@ describe('useKnowledgeHook', () => {
 
       const hook1 = {
         name: 'hook-1',
-        execute: () => { throw new Error('Failed'); }
+        execute: () => {
+          throw new Error('Failed');
+        },
       };
 
       const hook2 = {
         name: 'hook-2',
-        execute: () => executionOrder.push('hook-2')
+        execute: () => executionOrder.push('hook-2'),
       };
 
       try {

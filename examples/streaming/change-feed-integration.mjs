@@ -7,7 +7,10 @@
 
 import { Store, DataFactory } from 'n3';
 import { TransactionManager } from '../../src/knowledge-engine/transaction.mjs';
-import { createChangeFeed, createChangeFeedHook } from '../../src/knowledge-engine/streaming/index.mjs';
+import {
+  createChangeFeed,
+  createChangeFeedHook,
+} from '../../src/knowledge-engine/streaming/index.mjs';
 
 const { namedNode, literal, quad } = DataFactory;
 
@@ -16,7 +19,7 @@ async function main() {
   const feed = createChangeFeed({
     enableHistory: true,
     historySize: 1000,
-    batchMode: false
+    batchMode: false,
   });
 
   // Start the feed
@@ -24,13 +27,13 @@ async function main() {
   console.log('Change feed started');
 
   // Listen for changes
-  feed.on('change', (change) => {
+  feed.on('change', change => {
     console.log('Change detected:', {
       id: change.id,
       type: change.type,
       additionsCount: change.delta.additions.length,
       removalsCount: change.delta.removals.length,
-      timestamp: new Date(change.timestamp).toISOString()
+      timestamp: new Date(change.timestamp).toISOString(),
     });
 
     if (change.metadata) {
@@ -41,15 +44,15 @@ async function main() {
   // Create transaction manager
   const txManager = new TransactionManager({
     strictMode: false,
-    enableLockchain: false
+    enableLockchain: false,
   });
 
   // Add change feed hook to transaction manager
   const changeFeedHook = createChangeFeedHook(feed, {
     strict: false,
     metadata: {
-      source: 'transaction-system'
-    }
+      source: 'transaction-system',
+    },
   });
 
   txManager.addHook(changeFeedHook);
@@ -78,9 +81,9 @@ async function main() {
         namedNode('http://example.org/alice'),
         namedNode('http://example.org/age'),
         literal('30', namedNode('http://www.w3.org/2001/XMLSchema#integer'))
-      )
+      ),
     ],
-    removals: []
+    removals: [],
   };
 
   const result1 = await txManager.apply(store, delta1, { actor: 'system' });
@@ -93,18 +96,20 @@ async function main() {
         namedNode('http://example.org/alice'),
         namedNode('http://example.org/age'),
         literal('31', namedNode('http://www.w3.org/2001/XMLSchema#integer'))
-      )
+      ),
     ],
     removals: [
       quad(
         namedNode('http://example.org/alice'),
         namedNode('http://example.org/age'),
         literal('30', namedNode('http://www.w3.org/2001/XMLSchema#integer'))
-      )
-    ]
+      ),
+    ],
   };
 
-  const result2 = await txManager.apply(result1.store, delta2, { actor: 'alice' });
+  const result2 = await txManager.apply(result1.store, delta2, {
+    actor: 'alice',
+  });
   console.log('Transaction 2 committed:', result2.receipt.committed);
 
   // Transaction 3: Delete person
@@ -125,11 +130,13 @@ async function main() {
         namedNode('http://example.org/alice'),
         namedNode('http://example.org/age'),
         literal('31', namedNode('http://www.w3.org/2001/XMLSchema#integer'))
-      )
-    ]
+      ),
+    ],
   };
 
-  const result3 = await txManager.apply(result2.store, delta3, { actor: 'admin' });
+  const result3 = await txManager.apply(result2.store, delta3, {
+    actor: 'admin',
+  });
   console.log('Transaction 3 committed:', result3.receipt.committed);
 
   // Get change history

@@ -2,7 +2,7 @@
  * @fileoverview Tests for React hooks core functionality
  */
 
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, _beforeEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useStore } from '../../src/react-hooks/core/useStore.mjs';
 import { useTerms } from '../../src/react-hooks/core/useTerms.mjs';
@@ -123,8 +123,8 @@ describe('useTerms', () => {
     const { result } = renderHook(() =>
       useTerms({
         prefixes: {
-          foaf: 'http://xmlns.com/foaf/0.1/'
-        }
+          foaf: 'http://xmlns.com/foaf/0.1/',
+        },
       })
     );
 

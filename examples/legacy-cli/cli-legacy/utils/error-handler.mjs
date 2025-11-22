@@ -22,7 +22,7 @@ export const ErrorCodes = {
   QUERY_ERROR: 6,
   CONVERSION_ERROR: 7,
   HOOK_ERROR: 8,
-  CONFIG_ERROR: 9
+  CONFIG_ERROR: 9,
 };
 
 /**
@@ -31,10 +31,12 @@ export const ErrorCodes = {
  * @returns {string} Formatted error message
  */
 function formatZodError(error) {
-  const issues = error.issues.map(issue => {
-    const path = issue.path.join('.');
-    return `  - ${path}: ${issue.message}`;
-  }).join('\n');
+  const issues = error.issues
+    .map(issue => {
+      const path = issue.path.join('.');
+      return `  - ${path}: ${issue.message}`;
+    })
+    .join('\n');
 
   return `Validation error:\n${issues}`;
 }

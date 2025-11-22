@@ -13,7 +13,7 @@ describe('useCacheStats', () => {
       misses: 0,
       size: 0,
       maxSize: 100,
-      evictions: 0
+      evictions: 0,
     };
   });
 
@@ -120,7 +120,7 @@ describe('useCacheStats', () => {
         misses: 0,
         size: 0,
         maxSize: 100,
-        evictions: 0
+        evictions: 0,
       };
 
       expect(stats.hits).toBe(0);
@@ -171,7 +171,7 @@ describe('useCacheStats', () => {
 
       const exportedStats = {
         ...stats,
-        hitRate
+        hitRate,
       };
 
       expect(exportedStats.hitRate).toBe(0.75);

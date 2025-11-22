@@ -18,7 +18,7 @@ const cleanupRegistry = {
   emitters: new Set(),
   timers: new Set(),
   connections: new Set(),
-  caches: new Map()
+  caches: new Map(),
 };
 
 /**

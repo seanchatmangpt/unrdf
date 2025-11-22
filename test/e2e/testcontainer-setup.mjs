@@ -1,14 +1,14 @@
 /**
  * @file Testcontainers E2E Test Setup
  * @module testcontainer-setup
- * 
+ *
  * @description
  * Sets up Testcontainers for end-to-end testing of the KGC JS sidecar.
  * Provides containerized services for realistic testing environments.
  */
 
-import { GenericContainer, StartedTestContainer } from 'testcontainers';
-import { createWriteStream, createReadStream } from 'fs';
+import { GenericContainer, _StartedTestContainer } from 'testcontainers';
+import { _createWriteStream, _createReadStream } from 'fs';
 import { join } from 'path';
 import { tmpdir } from 'os';
 
@@ -19,18 +19,18 @@ export const TEST_CONFIG = {
   // Container timeouts
   STARTUP_TIMEOUT: 30000,
   SHUTDOWN_TIMEOUT: 10000,
-  
+
   // Test data paths
   TEST_DATA_DIR: join(tmpdir(), 'unrdf-e2e-tests'),
-  
+
   // Service ports
   PORTS: {
     POSTGRES: 5432,
     REDIS: 6379,
     MINIO: 9000,
     MINIO_CONSOLE: 9001,
-    FUSEKI: 3030
-  }
+    FUSEKI: 3030,
+  },
 };
 
 /**
@@ -55,13 +55,13 @@ export class E2ETestContainer {
     console.log(`Starting container: ${name}`);
     const started = await container.start();
     this.containers.set(name, started);
-    
+
     // Add cleanup function
     this.cleanup.push(async () => {
       console.log(`Stopping container: ${name}`);
       await started.stop();
     });
-    
+
     return started;
   }
 
@@ -104,7 +104,7 @@ export class PostgresContainer {
       .withEnvironment({
         POSTGRES_DB: 'unrdf_test',
         POSTGRES_USER: 'testuser',
-        POSTGRES_PASSWORD: 'testpass'
+        POSTGRES_PASSWORD: 'testpass',
       })
       .withStartupTimeout(TEST_CONFIG.STARTUP_TIMEOUT);
   }
@@ -168,7 +168,7 @@ export class MinioContainer {
       .withExposedPorts(TEST_CONFIG.PORTS.MINIO, TEST_CONFIG.PORTS.MINIO_CONSOLE)
       .withEnvironment({
         MINIO_ROOT_USER: 'minioadmin',
-        MINIO_ROOT_PASSWORD: 'minioadmin'
+        MINIO_ROOT_PASSWORD: 'minioadmin',
       })
       .withCommand(['server', '/data', '--console-address', ':9001'])
       .withStartupTimeout(TEST_CONFIG.STARTUP_TIMEOUT);
@@ -188,13 +188,13 @@ export class MinioContainer {
     const host = container.getHost();
     const port = container.getMappedPort(TEST_CONFIG.PORTS.MINIO);
     const consolePort = container.getMappedPort(TEST_CONFIG.PORTS.MINIO_CONSOLE);
-    
+
     return {
       endpoint: `http://${host}:${port}`,
       consoleEndpoint: `http://${host}:${consolePort}`,
       accessKey: 'minioadmin',
       secretKey: 'minioadmin',
-      bucket: 'unrdf-test'
+      bucket: 'unrdf-test',
     };
   }
 }
@@ -211,7 +211,7 @@ export class FusekiContainer {
       .withExposedPorts(TEST_CONFIG.PORTS.FUSEKI)
       .withEnvironment({
         FUSEKI_DATASET_1: 'unrdf-test',
-        ADMIN_PASSWORD: 'admin123'
+        ADMIN_PASSWORD: 'admin123',
       })
       .withStartupTimeout(TEST_CONFIG.STARTUP_TIMEOUT);
   }
@@ -256,16 +256,16 @@ export class NodeContainer {
       .withCopyFilesToContainer([
         {
           source: join(process.cwd(), 'dist'),
-          target: '/app/dist'
+          target: '/app/dist',
         },
         {
           source: join(process.cwd(), 'package.json'),
-          target: '/app/package.json'
+          target: '/app/package.json',
         },
         {
           source: join(process.cwd(), 'pnpm-lock.yaml'),
-          target: '/app/pnpm-lock.yaml'
-        }
+          target: '/app/pnpm-lock.yaml',
+        },
       ])
       .withCommand(['sh', '-c', 'npm install -g pnpm && pnpm install && node dist/index.mjs'])
       .withStartupTimeout(TEST_CONFIG.STARTUP_TIMEOUT);
@@ -325,9 +325,9 @@ export class TestDataManager {
     return {
       '@context': {
         '@vocab': 'https://example.org/',
-        'schema': 'https://schema.org/',
-        'rdf': 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
-        'rdfs': 'http://www.w3.org/2000/01/rdf-schema#'
+        schema: 'https://schema.org/',
+        rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
+        rdfs: 'http://www.w3.org/2000/01/rdf-schema#',
       },
       '@graph': [
         {
@@ -336,24 +336,24 @@ export class TestDataManager {
           'schema:name': 'Alice Doe',
           'schema:email': 'alice@example.org',
           'schema:knows': {
-            '@id': 'https://example.org/bob'
-          }
+            '@id': 'https://example.org/bob',
+          },
         },
         {
           '@id': 'https://example.org/bob',
           '@type': 'schema:Person',
           'schema:name': 'Bob Smith',
-          'schema:email': 'bob@example.org'
+          'schema:email': 'bob@example.org',
         },
         {
           '@id': 'https://example.org/acme',
           '@type': 'schema:Organization',
           'schema:name': 'Acme Corp',
           'schema:employee': {
-            '@id': 'https://example.org/alice'
-          }
-        }
-      ]
+            '@id': 'https://example.org/alice',
+          },
+        },
+      ],
     };
   }
 
@@ -366,7 +366,7 @@ export class TestDataManager {
       meta: {
         name: 'test-policy-pack',
         version: '1.0.0',
-        description: 'Test policy pack for E2E testing'
+        description: 'Test policy pack for E2E testing',
       },
       hooks: [
         {
@@ -375,7 +375,7 @@ export class TestDataManager {
           description: 'A test hook for validation',
           when: {
             kind: 'sparql-ask',
-            query: 'ASK WHERE { ?s a schema:Person }'
+            query: 'ASK WHERE { ?s a schema:Person }',
           },
           then: {
             kind: 'javascript',
@@ -385,9 +385,9 @@ export class TestDataManager {
                 message: 'Test hook executed successfully',
                 timestamp: new Date().toISOString()
               };
-            `
-          }
-        }
+            `,
+          },
+        },
       ],
       resources: {
         'test-data.ttl': `
@@ -397,8 +397,8 @@ export class TestDataManager {
           ex:testPerson a schema:Person ;
             schema:name "Test Person" ;
             schema:email "test@example.org" .
-        `
-      }
+        `,
+      },
     };
   }
 }
@@ -425,57 +425,45 @@ export class E2ETestEnvironment {
     // Start PostgreSQL
     const postgres = new PostgresContainer();
     const postgresContainer = await this.containerManager.startContainer(
-      postgres.container, 
+      postgres.container,
       'postgres'
     );
     this.services.set('postgres', {
       container: postgresContainer,
-      connectionString: postgres.getConnectionString(postgresContainer)
+      connectionString: postgres.getConnectionString(postgresContainer),
     });
 
     // Start Redis
     const redis = new RedisContainer();
-    const redisContainer = await this.containerManager.startContainer(
-      redis.container, 
-      'redis'
-    );
+    const redisContainer = await this.containerManager.startContainer(redis.container, 'redis');
     this.services.set('redis', {
       container: redisContainer,
-      connectionString: redis.getConnectionString(redisContainer)
+      connectionString: redis.getConnectionString(redisContainer),
     });
 
     // Start MinIO
     const minio = new MinioContainer();
-    const minioContainer = await this.containerManager.startContainer(
-      minio.container, 
-      'minio'
-    );
+    const minioContainer = await this.containerManager.startContainer(minio.container, 'minio');
     this.services.set('minio', {
       container: minioContainer,
-      config: minio.getConnectionConfig(minioContainer)
+      config: minio.getConnectionConfig(minioContainer),
     });
 
     // Start Fuseki
     const fuseki = new FusekiContainer();
-    const fusekiContainer = await this.containerManager.startContainer(
-      fuseki.container, 
-      'fuseki'
-    );
+    const fusekiContainer = await this.containerManager.startContainer(fuseki.container, 'fuseki');
     this.services.set('fuseki', {
       container: fusekiContainer,
       sparqlEndpoint: fuseki.getSparqlEndpoint(fusekiContainer),
-      updateEndpoint: fuseki.getUpdateEndpoint(fusekiContainer)
+      updateEndpoint: fuseki.getUpdateEndpoint(fusekiContainer),
     });
 
     // Start Node.js app
     const nodeApp = new NodeContainer();
-    const nodeContainer = await this.containerManager.startContainer(
-      nodeApp.container, 
-      'node-app'
-    );
+    const nodeContainer = await this.containerManager.startContainer(nodeApp.container, 'node-app');
     this.services.set('node-app', {
       container: nodeContainer,
-      apiEndpoint: nodeApp.getApiEndpoint(nodeContainer)
+      apiEndpoint: nodeApp.getApiEndpoint(nodeContainer),
     });
 
     console.log('E2E test environment started successfully');
@@ -506,7 +494,7 @@ export class E2ETestEnvironment {
    */
   async waitForServices(timeout = 30000) {
     const startTime = Date.now();
-    
+
     while (Date.now() - startTime < timeout) {
       try {
         // Check if all services are responding
@@ -523,10 +511,10 @@ export class E2ETestEnvironment {
       } catch (error) {
         console.log('Waiting for services...', error.message);
       }
-      
+
       await new Promise(resolve => setTimeout(resolve, 1000));
     }
-    
+
     throw new Error('Services did not become ready within timeout');
   }
 }
@@ -540,11 +528,5 @@ export default {
   FusekiContainer,
   NodeContainer,
   TestDataManager,
-  TEST_CONFIG
+  TEST_CONFIG,
 };
-
-
-
-
-
-

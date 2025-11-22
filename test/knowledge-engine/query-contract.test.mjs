@@ -15,5 +15,3 @@ describe('query contract', () => {
     expect(r2.length).toBeLessThanOrEqual(r1.length);
   });
 });
-
-

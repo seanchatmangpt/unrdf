@@ -2,7 +2,7 @@
  * @fileoverview Tests for useAuditTrail hook
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, _vi } from 'vitest';
 
 describe('useAuditTrail', () => {
   let auditLog;
@@ -19,7 +19,7 @@ describe('useAuditTrail', () => {
         subject: 'http://s',
         predicate: 'http://p',
         object: 'o',
-        user: 'alice'
+        user: 'alice',
       };
 
       auditLog.push(entry);
@@ -32,7 +32,7 @@ describe('useAuditTrail', () => {
       const entries = [
         { timestamp: Date.now(), action: 'ADD', user: 'alice' },
         { timestamp: Date.now(), action: 'UPDATE', user: 'bob' },
-        { timestamp: Date.now(), action: 'DELETE', user: 'charlie' }
+        { timestamp: Date.now(), action: 'DELETE', user: 'charlie' },
       ];
 
       entries.forEach(e => auditLog.push(e));
@@ -45,7 +45,7 @@ describe('useAuditTrail', () => {
     it('should include timestamp', () => {
       const entry = {
         timestamp: Date.now(),
-        action: 'ADD'
+        action: 'ADD',
       };
 
       auditLog.push(entry);
@@ -59,7 +59,7 @@ describe('useAuditTrail', () => {
         timestamp: Date.now(),
         action: 'ADD',
         user: 'alice',
-        userId: '123'
+        userId: '123',
       };
 
       auditLog.push(entry);
@@ -73,7 +73,7 @@ describe('useAuditTrail', () => {
         timestamp: Date.now(),
         action: 'ADD',
         transactionId: 'tx-123',
-        sessionId: 'session-456'
+        sessionId: 'session-456',
       };
 
       auditLog.push(entry);
@@ -143,7 +143,7 @@ describe('useAuditTrail', () => {
           timestamp: Date.now(),
           action: 'ADD',
           user: `user-${i % 100}`,
-          data: `data-${i}`
+          data: `data-${i}`,
         });
       }
 
@@ -158,7 +158,7 @@ describe('useAuditTrail', () => {
         auditLog.push({
           timestamp: i,
           action: i % 2 === 0 ? 'ADD' : 'DELETE',
-          user: `user-${i % 100}`
+          user: `user-${i % 100}`,
         });
       }
 

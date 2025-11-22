@@ -9,22 +9,34 @@ import { Store, DataFactory } from 'n3';
 const { quad, namedNode, literal } = DataFactory;
 
 // Mock useSPARQLQuery hook since it needs to be created
-const useSPARQLQuery = (query, options = {}) => {
-  const [result, setResult] = vi.fn(() => ({ rows: [], type: 'select' }));
-  const [loading, setLoading] = vi.fn(() => false);
-  const [error, setError] = vi.fn(() => null);
+const useSPARQLQuery = (query, _options = {}) => {
+  const [result, _setResult] = vi.fn(() => ({ rows: [], type: 'select' }));
+  const [loading, _setLoading] = vi.fn(() => false);
+  const [error, _setError] = vi.fn(() => null);
 
   return { result, loading, error, refetch: vi.fn() };
 };
 
 describe('useSPARQLQuery', () => {
-  let testStore;
+  let _testStore;
 
   beforeEach(() => {
-    testStore = new Store([
-      quad(namedNode('http://example.org/alice'), namedNode('http://xmlns.com/foaf/0.1/name'), literal('Alice')),
-      quad(namedNode('http://example.org/bob'), namedNode('http://xmlns.com/foaf/0.1/name'), literal('Bob')),
-      quad(namedNode('http://example.org/alice'), namedNode('http://xmlns.com/foaf/0.1/knows'), namedNode('http://example.org/bob'))
+    _testStore = new Store([
+      quad(
+        namedNode('http://example.org/alice'),
+        namedNode('http://xmlns.com/foaf/0.1/name'),
+        literal('Alice')
+      ),
+      quad(
+        namedNode('http://example.org/bob'),
+        namedNode('http://xmlns.com/foaf/0.1/name'),
+        literal('Bob')
+      ),
+      quad(
+        namedNode('http://example.org/alice'),
+        namedNode('http://xmlns.com/foaf/0.1/knows'),
+        namedNode('http://example.org/bob')
+      ),
     ]);
   });
 
@@ -139,11 +151,9 @@ describe('useSPARQLQuery', () => {
     it('should handle large result sets efficiently', async () => {
       const largeStore = new Store();
       for (let i = 0; i < 10000; i++) {
-        largeStore.add(quad(
-          namedNode(`http://ex.org/s${i}`),
-          namedNode('http://ex.org/p'),
-          literal(`o${i}`)
-        ));
+        largeStore.add(
+          quad(namedNode(`http://ex.org/s${i}`), namedNode('http://ex.org/p'), literal(`o${i}`))
+        );
       }
 
       const query = 'SELECT ?s ?o WHERE { ?s <http://ex.org/p> ?o }';

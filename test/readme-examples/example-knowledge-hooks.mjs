@@ -15,7 +15,7 @@ async function testKnowledgeHooks() {
     const hook = defineHook({
       meta: {
         name: 'data-quality-gate',
-        description: 'Ensures all persons have names'
+        description: 'Ensures all persons have names',
       },
       when: {
         kind: 'sparql-ask',
@@ -24,13 +24,13 @@ async function testKnowledgeHooks() {
             ?person a <http://xmlns.com/foaf/0.1/Person> .
             FILTER NOT EXISTS { ?person <http://xmlns.com/foaf/0.1/name> ?name }
           }
-        `
+        `,
       },
-      run: async (event) => {
+      run: async event => {
         if (event.result === true) {
           throw new Error('All persons must have names');
         }
-      }
+      },
     });
     console.log('✅ Defined hook');
 

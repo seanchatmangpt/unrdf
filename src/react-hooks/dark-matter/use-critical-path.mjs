@@ -48,7 +48,7 @@ import { useDarkMatterCore } from './use-dark-matter-core.mjs';
 export function useCriticalPath(config = {}) {
   const darkMatter = useDarkMatterCore({
     targets: config.operations,
-    autoAnalyze: config.autoTrace !== false
+    autoAnalyze: config.autoTrace !== false,
   });
 
   const [criticalPath, setCriticalPath] = useState(null);
@@ -75,14 +75,17 @@ export function useCriticalPath(config = {}) {
         // Create tracer
         const tracer = new CriticalPathTracer({
           operations: config.operations,
-          onBottleneck: (bottleneck) => {
+          onBottleneck: bottleneck => {
             if (!mounted) return;
-            setBottlenecks(prev => [...prev, {
-              ...bottleneck,
-              timestamp: new Date().toISOString()
-            }]);
+            setBottlenecks(prev => [
+              ...prev,
+              {
+                ...bottleneck,
+                timestamp: new Date().toISOString(),
+              },
+            ]);
             config.onBottleneck?.(bottleneck);
-          }
+          },
         });
 
         if (!mounted) return;
@@ -135,7 +138,7 @@ export function useCriticalPath(config = {}) {
       value: op.value,
       executionTime: op.executionTime,
       frequency: op.frequency,
-      dependencies: op.dependencies || []
+      dependencies: op.dependencies || [],
     }));
 
     // Calculate path length (sum of execution times)
@@ -150,7 +153,7 @@ export function useCriticalPath(config = {}) {
       longestPath,
       totalTime,
       totalValue: critical.reduce((sum, op) => sum + op.value, 0),
-      averageValue: critical.reduce((sum, op) => sum + op.value, 0) / critical.length
+      averageValue: critical.reduce((sum, op) => sum + op.value, 0) / critical.length,
     };
   }
 
@@ -167,7 +170,7 @@ export function useCriticalPath(config = {}) {
         paths.push({
           path: [...path],
           time,
-          value: path.reduce((sum, n) => sum + n.value, 0)
+          value: path.reduce((sum, n) => sum + n.value, 0),
         });
       } else {
         for (const depId of node.dependencies) {
@@ -190,9 +193,11 @@ export function useCriticalPath(config = {}) {
     });
 
     // Return longest path by time
-    return paths.reduce((longest, current) =>
-      current.time > longest.time ? current : longest
-    , { path: [], time: 0, value: 0 });
+    return paths.reduce((longest, current) => (current.time > longest.time ? current : longest), {
+      path: [],
+      time: 0,
+      value: 0,
+    });
   }
 
   // Identify bottlenecks in critical path
@@ -215,11 +220,7 @@ export function useCriticalPath(config = {}) {
           impact: Math.round(op.value * 100),
           executionTime: op.executionTime,
           reason: `Operation takes ${op.executionTime}ms and delivers ${Math.round(op.value * 100)}% of value`,
-          suggestions: [
-            'Add caching',
-            'Optimize query',
-            'Implement request batching'
-          ]
+          suggestions: ['Add caching', 'Optimize query', 'Implement request batching'],
         });
       });
 
@@ -237,11 +238,7 @@ export function useCriticalPath(config = {}) {
           impact: Math.round(op.value * 100),
           frequency: op.frequency,
           reason: `Operation called ${op.frequency} times, causing overhead`,
-          suggestions: [
-            'Implement debouncing',
-            'Add memoization',
-            'Batch requests'
-          ]
+          suggestions: ['Implement debouncing', 'Add memoization', 'Batch requests'],
         });
       });
 
@@ -249,7 +246,7 @@ export function useCriticalPath(config = {}) {
     operations
       .map(op => ({
         ...op,
-        cumulativeCost: op.executionTime * op.frequency
+        cumulativeCost: op.executionTime * op.frequency,
       }))
       .sort((a, b) => b.cumulativeCost - a.cumulativeCost)
       .slice(0, 3)
@@ -262,11 +259,7 @@ export function useCriticalPath(config = {}) {
           impact: Math.round(op.value * 100),
           cumulativeCost: op.cumulativeCost,
           reason: `Total cost ${op.cumulativeCost}ms (${op.executionTime}ms × ${op.frequency} calls)`,
-          suggestions: [
-            'Reduce call frequency',
-            'Optimize execution time',
-            'Cache results'
-          ]
+          suggestions: ['Reduce call frequency', 'Optimize execution time', 'Cache results'],
         });
       });
 
@@ -285,13 +278,13 @@ export function useCriticalPath(config = {}) {
         value: Math.round(node.value * 100),
         time: node.executionTime,
         frequency: node.frequency,
-        category: node.value > 0.2 ? 'critical' : 'important'
+        category: node.value > 0.2 ? 'critical' : 'important',
       })),
       edges: path.nodes.flatMap(node =>
         node.dependencies.map(depId => ({
           source: node.id,
           target: depId,
-          weight: node.executionTime
+          weight: node.executionTime,
         }))
       ),
       longestPath: path.longestPath.path.map(n => n.id),
@@ -299,13 +292,13 @@ export function useCriticalPath(config = {}) {
         totalTime: path.totalTime,
         totalValue: Math.round(path.totalValue * 100),
         operationCount: path.operations.length,
-        paretoScore: dm.analysis.paretoScore
-      }
+        paretoScore: dm.analysis.paretoScore,
+      },
     };
   }
 
   // Trace a specific operation
-  const traceOperation = useCallback(async (operationId) => {
+  const traceOperation = useCallback(async operationId => {
     if (!tracerRef.current) {
       throw new Error('Critical path tracer not initialized');
     }
@@ -316,10 +309,13 @@ export function useCriticalPath(config = {}) {
 
       const trace = await tracerRef.current.trace(operationId);
 
-      setTraces(prev => [...prev, {
-        ...trace,
-        timestamp: new Date().toISOString()
-      }]);
+      setTraces(prev => [
+        ...prev,
+        {
+          ...trace,
+          timestamp: new Date().toISOString(),
+        },
+      ]);
 
       setLoading(false);
       return trace;
@@ -331,86 +327,93 @@ export function useCriticalPath(config = {}) {
   }, []);
 
   // Optimize critical path
-  const optimizePath = useCallback(async (options = {}) => {
-    if (!criticalPath) {
-      throw new Error('No critical path identified');
-    }
-
-    try {
-      setLoading(true);
-      setError(null);
-
-      const optimizations = [];
-
-      // Strategy 1: Cache top operations
-      const topOps = criticalPath.operations
-        .sort((a, b) => b.value - a.value)
-        .slice(0, 5);
-
-      topOps.forEach(op => {
-        optimizations.push({
-          operation: op.id,
-          strategy: 'cache',
-          estimatedGain: `${Math.round(op.executionTime * 0.8)}ms per call`,
-          implementation: 'createCachedHook with 5min TTL'
-        });
-      });
-
-      // Strategy 2: Parallelize independent operations
-      const independentOps = criticalPath.operations.filter(op =>
-        !op.dependencies || op.dependencies.length === 0
-      );
-
-      if (independentOps.length > 1) {
-        optimizations.push({
-          operations: independentOps.map(o => o.id),
-          strategy: 'parallelize',
-          estimatedGain: `${Math.round(criticalPath.totalTime * 0.4)}ms total`,
-          implementation: 'Promise.all or concurrent hooks'
-        });
+  const optimizePath = useCallback(
+    async (_options = {}) => {
+      if (!criticalPath) {
+        throw new Error('No critical path identified');
       }
 
-      // Strategy 3: Optimize bottlenecks
-      bottlenecks.slice(0, 3).forEach(bottleneck => {
-        optimizations.push({
-          operation: bottleneck.operation,
-          strategy: 'optimize-bottleneck',
-          estimatedGain: `${Math.round(bottleneck.impact)}% value improvement`,
-          implementation: bottleneck.suggestions[0]
-        });
-      });
+      try {
+        setLoading(true);
+        setError(null);
 
-      setLoading(false);
-      return { optimizations, criticalPath };
-    } catch (err) {
-      setError(err);
-      setLoading(false);
-      throw err;
-    }
-  }, [criticalPath, bottlenecks]);
+        const optimizations = [];
+
+        // Strategy 1: Cache top operations
+        const topOps = criticalPath.operations.sort((a, b) => b.value - a.value).slice(0, 5);
+
+        topOps.forEach(op => {
+          optimizations.push({
+            operation: op.id,
+            strategy: 'cache',
+            estimatedGain: `${Math.round(op.executionTime * 0.8)}ms per call`,
+            implementation: 'createCachedHook with 5min TTL',
+          });
+        });
+
+        // Strategy 2: Parallelize independent operations
+        const independentOps = criticalPath.operations.filter(
+          op => !op.dependencies || op.dependencies.length === 0
+        );
+
+        if (independentOps.length > 1) {
+          optimizations.push({
+            operations: independentOps.map(o => o.id),
+            strategy: 'parallelize',
+            estimatedGain: `${Math.round(criticalPath.totalTime * 0.4)}ms total`,
+            implementation: 'Promise.all or concurrent hooks',
+          });
+        }
+
+        // Strategy 3: Optimize bottlenecks
+        bottlenecks.slice(0, 3).forEach(bottleneck => {
+          optimizations.push({
+            operation: bottleneck.operation,
+            strategy: 'optimize-bottleneck',
+            estimatedGain: `${Math.round(bottleneck.impact)}% value improvement`,
+            implementation: bottleneck.suggestions[0],
+          });
+        });
+
+        setLoading(false);
+        return { optimizations, criticalPath };
+      } catch (err) {
+        setError(err);
+        setLoading(false);
+        throw err;
+      }
+    },
+    [criticalPath, bottlenecks]
+  );
 
   // Get bottleneck by severity
-  const getBottlenecksBySeverity = useCallback((severity) => {
-    return bottlenecks.filter(b => b.severity === severity);
-  }, [bottlenecks]);
+  const getBottlenecksBySeverity = useCallback(
+    severity => {
+      return bottlenecks.filter(b => b.severity === severity);
+    },
+    [bottlenecks]
+  );
 
   // Get operation impact
-  const getOperationImpact = useCallback((operationId) => {
-    if (!criticalPath) return null;
+  const getOperationImpact = useCallback(
+    operationId => {
+      if (!criticalPath) return null;
 
-    const operation = criticalPath.operations.find(op => op.id === operationId);
-    if (!operation) return null;
+      const operation = criticalPath.operations.find(op => op.id === operationId);
+      if (!operation) return null;
 
-    return {
-      operation: operationId,
-      value: Math.round(operation.value * 100),
-      executionTime: operation.executionTime,
-      frequency: operation.frequency,
-      cumulativeValue: Math.round(operation.cumulativeValue * 100),
-      isBottleneck: bottlenecks.some(b => b.operation === operationId),
-      inLongestPath: criticalPath.longestPath.path.some(n => n.id === operationId)
-    };
-  }, [criticalPath, bottlenecks]);
+      return {
+        operation: operationId,
+        value: Math.round(operation.value * 100),
+        executionTime: operation.executionTime,
+        frequency: operation.frequency,
+        cumulativeValue: Math.round(operation.cumulativeValue * 100),
+        isBottleneck: bottlenecks.some(b => b.operation === operationId),
+        inLongestPath: criticalPath.longestPath.path.some(n => n.id === operationId),
+      };
+    },
+    [criticalPath, bottlenecks]
+  );
 
   return {
     criticalPath,
@@ -422,6 +425,6 @@ export function useCriticalPath(config = {}) {
     traceOperation,
     optimizePath,
     getBottlenecksBySeverity,
-    getOperationImpact
+    getOperationImpact,
   };
 }

@@ -1,7 +1,7 @@
 /**
  * @file Zod schemas for knowledge hook validation
  * @module schemas
- * 
+ *
  * @description
  * Comprehensive Zod schemas for validating all knowledge hook components
  * including hook definitions, conditions, events, and execution results.
@@ -13,25 +13,42 @@ import { z } from 'zod';
  * Schema for hook metadata
  */
 export const HookMetaSchema = z.object({
-  name: z.string().min(1).max(100).regex(/^[a-zA-Z0-9:_-]+$/, 'Name must contain only alphanumeric characters, colons, hyphens, and underscores'),
+  name: z
+    .string()
+    .min(1)
+    .max(100)
+    .regex(
+      /^[a-zA-Z0-9:_-]+$/,
+      'Name must contain only alphanumeric characters, colons, hyphens, and underscores'
+    ),
   description: z.string().min(1).max(500).optional(),
-  version: z.string().regex(/^\d+\.\d+\.\d+$/, 'Version must be semantic version format').optional(),
+  version: z
+    .string()
+    .regex(/^\d+\.\d+\.\d+$/, 'Version must be semantic version format')
+    .optional(),
   author: z.string().min(1).max(100).optional(),
   tags: z.array(z.string().min(1).max(50)).max(10).optional(),
   ontology: z.array(z.string().min(1).max(50)).max(10).optional(),
   createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().optional()
+  updatedAt: z.coerce.date().optional(),
 });
 
 /**
  * Schema for content-addressed file references
  */
 export const FileRefSchema = z.object({
-  uri: z.string().url({ message: 'Must be a valid URI' }).or(z.string().regex(/^file:\/\/.+/, 'Must be a valid file URI')),
-  sha256: z.string().length(64).regex(/^[a-f0-9]+$/, 'Must be a valid SHA-256 hash').optional(),
+  uri: z
+    .string()
+    .url({ message: 'Must be a valid URI' })
+    .or(z.string().regex(/^file:\/\/.+/, 'Must be a valid file URI')),
+  sha256: z
+    .string()
+    .length(64)
+    .regex(/^[a-f0-9]+$/, 'Must be a valid SHA-256 hash')
+    .optional(),
   mediaType: z.string().min(1).max(100).optional(),
   size: z.number().int().positive().optional(),
-  lastModified: z.coerce.date().optional()
+  lastModified: z.coerce.date().optional(),
 });
 
 /**
@@ -42,11 +59,13 @@ export const SparqlAskConditionSchema = z.object({
   kind: z.literal('sparql-ask'),
   ref: FileRefSchema.optional(),
   query: z.string().min(1).optional(),
-  options: z.object({
-    timeout: z.number().int().positive().max(30000).optional(),
-    strict: z.boolean().optional(),
-    variables: z.record(z.string()).optional()
-  }).optional()
+  options: z
+    .object({
+      timeout: z.number().int().positive().max(30000).optional(),
+      strict: z.boolean().optional(),
+      variables: z.record(z.string()).optional(),
+    })
+    .optional(),
 });
 
 /**
@@ -57,13 +76,15 @@ export const SparqlSelectConditionSchema = z.object({
   kind: z.literal('sparql-select'),
   ref: FileRefSchema.optional(),
   query: z.string().min(1).optional(),
-  options: z.object({
-    timeout: z.number().int().positive().max(30000).optional(),
-    limit: z.number().int().positive().max(10000).optional(),
-    offset: z.number().int().nonnegative().optional(),
-    strict: z.boolean().optional(),
-    variables: z.record(z.string()).optional()
-  }).optional()
+  options: z
+    .object({
+      timeout: z.number().int().positive().max(30000).optional(),
+      limit: z.number().int().positive().max(10000).optional(),
+      offset: z.number().int().nonnegative().optional(),
+      strict: z.boolean().optional(),
+      variables: z.record(z.string()).optional(),
+    })
+    .optional(),
 });
 
 /**
@@ -74,12 +95,14 @@ export const ShaclConditionSchema = z.object({
   kind: z.literal('shacl'),
   ref: FileRefSchema.optional(),
   shapes: z.string().min(1).optional(), // Inline Turtle shapes for convenience
-  options: z.object({
-    strict: z.boolean().optional(),
-    includeDetails: z.boolean().optional(),
-    maxViolations: z.number().int().positive().max(1000).optional(),
-    shapesGraph: z.string().url({ message: 'Must be a valid URL' }).optional()
-  }).optional()
+  options: z
+    .object({
+      strict: z.boolean().optional(),
+      includeDetails: z.boolean().optional(),
+      maxViolations: z.number().int().positive().max(1000).optional(),
+      shapesGraph: z.string().url({ message: 'Must be a valid URL' }).optional(),
+    })
+    .optional(),
 });
 
 /**
@@ -91,12 +114,14 @@ export const DeltaConditionSchema = z.object({
     change: z.enum(['any', 'increase', 'decrease', 'modify']),
     key: z.array(z.string()).min(1),
     threshold: z.number().min(0).max(1).optional(),
-    baseline: z.string().optional()
+    baseline: z.string().optional(),
   }),
-  options: z.object({
-    timeout: z.number().int().positive().max(30000).optional(),
-    strict: z.boolean().optional()
-  }).optional()
+  options: z
+    .object({
+      timeout: z.number().int().positive().max(30000).optional(),
+      strict: z.boolean().optional(),
+    })
+    .optional(),
 });
 
 /**
@@ -108,12 +133,14 @@ export const ThresholdConditionSchema = z.object({
     var: z.string().min(1),
     op: z.enum(['>', '>=', '<', '<=', '==', '!=']),
     value: z.number(),
-    aggregate: z.enum(['sum', 'avg', 'min', 'max', 'count']).optional()
+    aggregate: z.enum(['sum', 'avg', 'min', 'max', 'count']).optional(),
   }),
-  options: z.object({
-    timeout: z.number().int().positive().max(30000).optional(),
-    strict: z.boolean().optional()
-  }).optional()
+  options: z
+    .object({
+      timeout: z.number().int().positive().max(30000).optional(),
+      strict: z.boolean().optional(),
+    })
+    .optional(),
 });
 
 /**
@@ -124,12 +151,14 @@ export const CountConditionSchema = z.object({
   spec: z.object({
     op: z.enum(['>', '>=', '<', '<=', '==', '!=']),
     value: z.number().int().nonnegative(),
-    query: z.string().optional() // SPARQL query for counting
+    query: z.string().optional(), // SPARQL query for counting
   }),
-  options: z.object({
-    timeout: z.number().int().positive().max(30000).optional(),
-    strict: z.boolean().optional()
-  }).optional()
+  options: z
+    .object({
+      timeout: z.number().int().positive().max(30000).optional(),
+      strict: z.boolean().optional(),
+    })
+    .optional(),
 });
 
 /**
@@ -141,12 +170,14 @@ export const WindowConditionSchema = z.object({
     size: z.number().int().positive(), // Window size in milliseconds
     slide: z.number().int().positive().optional(), // Slide interval
     aggregate: z.enum(['sum', 'avg', 'min', 'max', 'count']),
-    query: z.string().optional() // SPARQL query for windowing
+    query: z.string().optional(), // SPARQL query for windowing
   }),
-  options: z.object({
-    timeout: z.number().int().positive().max(30000).optional(),
-    strict: z.boolean().optional()
-  }).optional()
+  options: z
+    .object({
+      timeout: z.number().int().positive().max(30000).optional(),
+      strict: z.boolean().optional(),
+    })
+    .optional(),
 });
 
 /**
@@ -159,7 +190,7 @@ export const ConditionSchema = z.discriminatedUnion('kind', [
   DeltaConditionSchema,
   ThresholdConditionSchema,
   CountConditionSchema,
-  WindowConditionSchema
+  WindowConditionSchema,
 ]);
 
 /**
@@ -168,17 +199,19 @@ export const ConditionSchema = z.discriminatedUnion('kind', [
 export const DeterminismSchema = z.object({
   seed: z.number().int().nonnegative().max(2147483647).default(42),
   algorithm: z.enum(['lcg', 'xorshift', 'mersenne']).default('lcg'),
-  salt: z.string().min(1).max(100).optional()
+  salt: z.string().min(1).max(100).optional(),
 });
 
 /**
  * Schema for receipt configuration
  */
 export const ReceiptSchema = z.object({
-  anchor: z.enum(['none', 'blockchain', 'merkle', 'timestamp', 'hash', 'git-notes']).default('none'),
+  anchor: z
+    .enum(['none', 'blockchain', 'merkle', 'timestamp', 'hash', 'git-notes'])
+    .default('none'),
   format: z.enum(['json', 'jsonld', 'rdf', 'turtle']).default('json'),
   includeProof: z.boolean().default(false),
-  ttl: z.number().int().positive().max(86400).optional() // Time to live in seconds
+  ttl: z.number().int().positive().max(86400).optional(), // Time to live in seconds
 });
 
 /**
@@ -189,7 +222,7 @@ export const HookContextSchema = z.object({
   env: z.record(z.any()).optional(),
   metadata: z.record(z.any()).optional(),
   transactionId: z.string().uuid({ message: 'Must be a valid UUID' }).optional(),
-  timestamp: z.coerce.date().optional()
+  timestamp: z.coerce.date().optional(),
 });
 
 /**
@@ -202,7 +235,7 @@ export const HookEventSchema = z.object({
   id: z.string().uuid({ message: 'Must be a valid UUID' }).optional(),
   timestamp: z.coerce.date().optional(),
   source: z.string().min(1).max(100).optional(),
-  correlationId: z.string().uuid({ message: 'Must be a valid UUID' }).optional()
+  correlationId: z.string().uuid({ message: 'Must be a valid UUID' }).optional(),
 });
 
 /**
@@ -216,12 +249,16 @@ export const HookResultSchema = z.object({
   phase: z.enum(['before', 'run', 'after', 'completed', 'failed']).optional(),
   cancelled: z.boolean().default(false),
   metadata: z.record(z.any()).optional(),
-  assertions: z.array(z.object({
-    subject: z.string(),
-    predicate: z.string(),
-    object: z.string(),
-    graph: z.string().optional()
-  })).optional()
+  assertions: z
+    .array(
+      z.object({
+        subject: z.string(),
+        predicate: z.string(),
+        object: z.string(),
+        graph: z.string().optional(),
+      })
+    )
+    .optional(),
 });
 
 /**
@@ -229,7 +266,7 @@ export const HookResultSchema = z.object({
  */
 export const HookChannelSchema = z.object({
   graphs: z.array(z.string()).optional(),
-  view: z.enum(['before', 'after', 'delta']).optional()
+  view: z.enum(['before', 'after', 'delta']).optional(),
 });
 
 /**
@@ -246,7 +283,7 @@ export const KnowledgeHookSchema = z.object({
   receipt: ReceiptSchema.optional(),
   timeout: z.number().int().positive().max(300000).optional(), // 5 minutes max
   retries: z.number().int().nonnegative().max(5).optional(),
-  priority: z.number().int().min(0).max(100).default(50).optional()
+  priority: z.number().int().min(0).max(100).default(50).optional(),
 });
 
 /**
@@ -257,7 +294,7 @@ export const TransactionDeltaSchema = z.object({
   removals: z.array(z.any()).default([]), // RDF Quad array
   metadata: z.record(z.any()).optional(),
   id: z.string().optional(),
-  timestamp: z.coerce.date().optional()
+  timestamp: z.coerce.date().optional(),
 });
 
 /**
@@ -266,23 +303,31 @@ export const TransactionDeltaSchema = z.object({
 export const TransactionReceiptSchema = z.object({
   committed: z.boolean(),
   delta: TransactionDeltaSchema,
-  hookResults: z.array(z.object({
-    hookId: z.string(),
-    result: z.boolean(),
-    error: z.string().optional(),
-    duration: z.number().nonnegative().optional()
-  })).default([]),
-  beforeHash: z.object({
-    sha3: z.string(),
-    blake3: z.string()
-  }).optional(),
-  afterHash: z.object({
-    sha3: z.string(),
-    blake3: z.string()
-  }).optional(),
+  hookResults: z
+    .array(
+      z.object({
+        hookId: z.string(),
+        result: z.boolean(),
+        error: z.string().optional(),
+        duration: z.number().nonnegative().optional(),
+      })
+    )
+    .default([]),
+  beforeHash: z
+    .object({
+      sha3: z.string(),
+      blake3: z.string(),
+    })
+    .optional(),
+  afterHash: z
+    .object({
+      sha3: z.string(),
+      blake3: z.string(),
+    })
+    .optional(),
   timestamp: z.coerce.date(),
   duration: z.number().nonnegative(),
-  knowledgeHookResults: z.number().int().nonnegative().default(0)
+  knowledgeHookResults: z.number().int().nonnegative().default(0),
 });
 
 /**
@@ -292,7 +337,12 @@ export const ObservabilityConfigSchema = z.object({
   enableTracing: z.boolean().default(true),
   enableMetrics: z.boolean().default(true),
   enableLogging: z.boolean().default(true),
-  serviceName: z.string().min(1).max(100).regex(/^[a-zA-Z0-9._-]+$/).default('unrdf-kgc'),
+  serviceName: z
+    .string()
+    .min(1)
+    .max(100)
+    .regex(/^[a-zA-Z0-9._-]+$/)
+    .default('unrdf-kgc'),
   serviceVersion: z.string().min(1).max(50).default('1.0.0'),
   endpoint: z.string().url().optional(),
   headers: z.record(z.string()).optional(),
@@ -306,7 +356,7 @@ export const ObservabilityConfigSchema = z.object({
   cacheMaxSize: z.number().int().nonnegative().optional(),
   // Smoothing to reduce false-positive alerts from low samples/spikes
   minSamples: z.number().int().positive().default(20),
-  ewmaAlpha: z.number().min(0).max(1).default(0.3)
+  ewmaAlpha: z.number().min(0).max(1).default(0.3),
 });
 
 /**
@@ -317,7 +367,7 @@ export const PerformanceMetricsSchema = z.object({
     p50: z.number().nonnegative(),
     p95: z.number().nonnegative(),
     p99: z.number().nonnegative(),
-    max: z.number().nonnegative()
+    max: z.number().nonnegative(),
   }),
   hookExecutionRate: z.number().nonnegative(), // hooks per minute
   errorRate: z.number().min(0).max(1),
@@ -325,20 +375,20 @@ export const PerformanceMetricsSchema = z.object({
     rss: z.number().nonnegative(),
     heapUsed: z.number().nonnegative(),
     heapTotal: z.number().nonnegative(),
-    external: z.number().nonnegative()
+    external: z.number().nonnegative(),
   }),
   cacheStats: z.object({
     hitRate: z.number().min(0).max(1),
     size: z.number().nonnegative(),
-    maxSize: z.number().nonnegative()
+    maxSize: z.number().nonnegative(),
   }),
   backpressure: z.object({
     queueDepth: z.number().nonnegative(),
     watermarks: z.object({
       high: z.number().nonnegative(),
-      low: z.number().nonnegative()
-    })
-  })
+      low: z.number().nonnegative(),
+    }),
+  }),
 });
 
 /**
@@ -355,14 +405,16 @@ export const ManagerConfigSchema = z.object({
   enableMetrics: z.boolean().default(true),
   logLevel: z.enum(['error', 'warn', 'info', 'debug']).default('info'),
   observability: ObservabilityConfigSchema.optional(),
-  performance: z.object({
-    enableProfiling: z.boolean().default(false),
-    maxConcurrency: z.number().int().positive().default(10),
-    afterHashOnly: z.boolean().default(false), // KGC PRD fast path
-    enableCache: z.boolean().default(true),
-    timeoutMs: z.number().int().positive().default(2000), // KGC PRD: p99 ≤ 2ms
-    maxHooks: z.number().int().positive().default(10000) // KGC PRD: 10k exec/min
-  }).optional()
+  performance: z
+    .object({
+      enableProfiling: z.boolean().default(false),
+      maxConcurrency: z.number().int().positive().default(10),
+      afterHashOnly: z.boolean().default(false), // KGC PRD fast path
+      enableCache: z.boolean().default(true),
+      timeoutMs: z.number().int().positive().default(2000), // KGC PRD: p99 ≤ 2ms
+      maxHooks: z.number().int().positive().default(10000), // KGC PRD: 10k exec/min
+    })
+    .optional(),
 });
 
 /**
@@ -373,13 +425,15 @@ export const FileResolverConfigSchema = z.object({
   enableCache: z.boolean().default(true),
   cacheMaxAge: z.number().int().positive().max(3600000).default(300000),
   maxFileSize: z.number().int().positive().max(10485760).default(1048576), // 1MB default
-  allowedMediaTypes: z.array(z.string()).default([
-    'application/sparql-query',
-    'text/turtle',
-    'application/rdf+xml',
-    'application/ld+json'
-  ]),
-  timeout: z.number().int().positive().max(30000).default(5000)
+  allowedMediaTypes: z
+    .array(z.string())
+    .default([
+      'application/sparql-query',
+      'text/turtle',
+      'application/rdf+xml',
+      'application/ld+json',
+    ]),
+  timeout: z.number().int().positive().max(30000).default(5000),
 });
 
 /**
@@ -391,7 +445,7 @@ export const ConditionEvaluatorConfigSchema = z.object({
   timeout: z.number().int().positive().max(30000).default(10000),
   maxConcurrent: z.number().int().positive().max(100).default(10),
   retries: z.number().int().nonnegative().max(3).default(1),
-  strict: z.boolean().default(false)
+  strict: z.boolean().default(false),
 });
 
 /**
@@ -403,7 +457,7 @@ export const HookExecutorConfigSchema = z.object({
   retries: z.number().int().nonnegative().max(3).default(1),
   enableMetrics: z.boolean().default(true),
   strict: z.boolean().default(false),
-  enableAssertions: z.boolean().default(true)
+  enableAssertions: z.boolean().default(true),
 });
 
 /**
@@ -429,8 +483,8 @@ export function validateKnowledgeHook(hook) {
           message: err.message || 'Unknown error',
           code: err.code || 'unknown',
           received: err.received,
-          expected: err.expected
-        }))
+          expected: err.expected,
+        })),
       };
     }
     throw error;
@@ -456,8 +510,8 @@ export function validateHookEvent(event) {
           message: err.message || 'Unknown error',
           code: err.code || 'unknown',
           received: err.received,
-          expected: err.expected
-        }))
+          expected: err.expected,
+        })),
       };
     }
     throw error;
@@ -483,8 +537,8 @@ export function validateCondition(condition) {
           message: err.message || 'Unknown error',
           code: err.code || 'unknown',
           received: err.received,
-          expected: err.expected
-        }))
+          expected: err.expected,
+        })),
       };
     }
     throw error;
@@ -505,11 +559,12 @@ export function validateManagerConfig(config) {
       return {
         success: false,
         data: null,
-        errors: error.errors?.map(err => ({
-          path: err.path?.join('.') || 'unknown',
-          message: err.message || 'Unknown error',
-          code: err.code || 'unknown'
-        })) || []
+        errors:
+          error.errors?.map(err => ({
+            path: err.path?.join('.') || 'unknown',
+            message: err.message || 'Unknown error',
+            code: err.code || 'unknown',
+          })) || [],
       };
     }
     throw error;
@@ -530,11 +585,12 @@ export function validateTransactionDelta(delta) {
       return {
         success: false,
         data: null,
-        errors: error.errors?.map(err => ({
-          path: err.path?.join('.') || 'unknown',
-          message: err.message || 'Unknown error',
-          code: err.code || 'unknown'
-        })) || []
+        errors:
+          error.errors?.map(err => ({
+            path: err.path?.join('.') || 'unknown',
+            message: err.message || 'Unknown error',
+            code: err.code || 'unknown',
+          })) || [],
       };
     }
     throw error;
@@ -549,31 +605,34 @@ export function validateTransactionDelta(delta) {
 export function createKnowledgeHook(definition) {
   try {
     const validation = validateKnowledgeHook(definition);
-    
+
     if (!validation.success) {
       console.error('Validation errors:', validation.errors);
       console.error('Definition:', definition);
-      const errorMessages = validation.errors?.map(err => {
-        let msg = `${err.path}: ${err.message}`;
-        if (err.received !== undefined) {
-          msg += ` (received: ${JSON.stringify(err.received)})`;
-        }
-        if (err.expected !== undefined) {
-          msg += ` (expected: ${err.expected})`;
-        }
-        return msg;
-      }).join(', ') || 'Unknown validation error';
+      const errorMessages =
+        validation.errors
+          ?.map(err => {
+            let msg = `${err.path}: ${err.message}`;
+            if (err.received !== undefined) {
+              msg += ` (received: ${JSON.stringify(err.received)})`;
+            }
+            if (err.expected !== undefined) {
+              msg += ` (expected: ${err.expected})`;
+            }
+            return msg;
+          })
+          .join(', ') || 'Unknown validation error';
       throw new TypeError(`Invalid knowledge hook definition: ${errorMessages}`);
     }
-    
+
     // Apply defaults and freeze
     const normalized = {
       ...validation.data,
       determinism: { seed: 42, ...validation.data.determinism },
       receipt: { anchor: 'none', ...validation.data.receipt },
-      priority: validation.data.priority ?? 50
+      priority: validation.data.priority ?? 50,
     };
-    
+
     return Object.freeze(normalized);
   } catch (error) {
     if (error instanceof TypeError) {
@@ -591,28 +650,31 @@ export function createKnowledgeHook(definition) {
  */
 export function createHookEvent(event) {
   const validation = validateHookEvent(event);
-  
+
   if (!validation.success) {
-    const errorMessages = validation.errors?.map(err => {
-      let msg = `${err.path}: ${err.message}`;
-      if (err.received !== undefined) {
-        msg += ` (received: ${JSON.stringify(err.received)})`;
-      }
-      if (err.expected !== undefined) {
-        msg += ` (expected: ${err.expected})`;
-      }
-      return msg;
-    }).join(', ') || 'Unknown validation error';
+    const errorMessages =
+      validation.errors
+        ?.map(err => {
+          let msg = `${err.path}: ${err.message}`;
+          if (err.received !== undefined) {
+            msg += ` (received: ${JSON.stringify(err.received)})`;
+          }
+          if (err.expected !== undefined) {
+            msg += ` (expected: ${err.expected})`;
+          }
+          return msg;
+        })
+        .join(', ') || 'Unknown validation error';
     throw new TypeError(`Invalid hook event: ${errorMessages}`);
   }
-  
+
   // Apply defaults
   const normalized = {
     ...validation.data,
     id: validation.data.id ?? crypto.randomUUID(),
-    timestamp: validation.data.timestamp ?? new Date().toISOString()
+    timestamp: validation.data.timestamp ?? new Date().toISOString(),
   };
-  
+
   return normalized;
 }
 
@@ -623,21 +685,24 @@ export function createHookEvent(event) {
  */
 export function createCondition(condition) {
   const validation = validateCondition(condition);
-  
+
   if (!validation.success) {
-    const errorMessages = validation.errors?.map(err => {
-      let msg = `${err.path}: ${err.message}`;
-      if (err.received !== undefined) {
-        msg += ` (received: ${JSON.stringify(err.received)})`;
-      }
-      if (err.expected !== undefined) {
-        msg += ` (expected: ${err.expected})`;
-      }
-      return msg;
-    }).join(', ') || 'Unknown validation error';
+    const errorMessages =
+      validation.errors
+        ?.map(err => {
+          let msg = `${err.path}: ${err.message}`;
+          if (err.received !== undefined) {
+            msg += ` (received: ${JSON.stringify(err.received)})`;
+          }
+          if (err.expected !== undefined) {
+            msg += ` (expected: ${err.expected})`;
+          }
+          return msg;
+        })
+        .join(', ') || 'Unknown validation error';
     throw new TypeError(`Invalid condition: ${errorMessages}`);
   }
-  
+
   return validation.data;
 }
 
@@ -648,20 +713,22 @@ export function createCondition(condition) {
 /**
  * Schema for RDF quads (from transaction.mjs)
  */
-export const QuadSchema = z.object({
-  subject: z.any(), // RDF/JS Term
-  predicate: z.any(), // RDF/JS Term
-  object: z.any(), // RDF/JS Term
-  graph: z.any().optional(), // RDF/JS Term
-  equals: z.function().optional()
-}).passthrough(); // Allow additional properties for RDF/JS Quad objects
+export const QuadSchema = z
+  .object({
+    subject: z.any(), // RDF/JS Term
+    predicate: z.any(), // RDF/JS Term
+    object: z.any(), // RDF/JS Term
+    graph: z.any().optional(), // RDF/JS Term
+    equals: z.function().optional(),
+  })
+  .passthrough(); // Allow additional properties for RDF/JS Quad objects
 
 /**
  * Schema for delta (from transaction.mjs)
  */
 export const DeltaSchema = z.object({
   additions: z.array(QuadSchema),
-  removals: z.array(QuadSchema)
+  removals: z.array(QuadSchema),
 });
 
 /**
@@ -671,7 +738,7 @@ export const TransactionHookSchema = z.object({
   id: z.string().min(1),
   mode: z.enum(['pre', 'post']),
   condition: z.function(),
-  effect: z.union([z.literal('veto'), z.function()])
+  effect: z.union([z.literal('veto'), z.function()]),
 });
 
 /**
@@ -681,7 +748,7 @@ export const TransactionHookResultSchema = z.object({
   hookId: z.string(),
   mode: z.enum(['pre', 'post']),
   result: z.boolean(),
-  error: z.string().optional()
+  error: z.string().optional(),
 });
 
 /**
@@ -689,7 +756,7 @@ export const TransactionHookResultSchema = z.object({
  */
 export const HashSchema = z.object({
   sha3: z.string(),
-  blake3: z.string()
+  blake3: z.string(),
 });
 
 /**
@@ -706,7 +773,7 @@ export const TransactionReceiptSchemaNew = z.object({
   durationMs: z.number(),
   actor: z.string().optional(),
   hookErrors: z.array(z.string()),
-  error: z.string().optional()
+  error: z.string().optional(),
 });
 
 /**
@@ -715,7 +782,7 @@ export const TransactionReceiptSchemaNew = z.object({
 export const TransactionOptionsSchema = z.object({
   skipHooks: z.boolean().default(false),
   timeoutMs: z.number().positive().default(30000),
-  actor: z.string().optional()
+  actor: z.string().optional(),
 });
 
 /**
@@ -730,7 +797,7 @@ export const ManagerOptionsSchema = z.object({
   enableCache: z.boolean().default(true),
   cacheMaxAge: z.number().int().positive().max(3600000).default(300000), // 5 minutes
   enableMetrics: z.boolean().default(true),
-  logLevel: z.enum(['error', 'warn', 'info', 'debug']).default('info')
+  logLevel: z.enum(['error', 'warn', 'info', 'debug']).default('info'),
 });
 
 /**
@@ -742,19 +809,21 @@ export const QueryPlanSchema = z.object({
   type: z.enum(['sparql-ask', 'sparql-select', 'shacl']),
   hash: z.string(),
   plan: z.object({
-    operations: z.array(z.object({
-      type: z.string(),
-      cost: z.number(),
-      selectivity: z.number(),
-      dependencies: z.array(z.string()).optional()
-    })),
+    operations: z.array(
+      z.object({
+        type: z.string(),
+        cost: z.number(),
+        selectivity: z.number(),
+        dependencies: z.array(z.string()).optional(),
+      })
+    ),
     estimatedCost: z.number(),
     estimatedRows: z.number(),
-    indexes: z.array(z.string()).optional()
+    indexes: z.array(z.string()).optional(),
   }),
   createdAt: z.number(),
   lastUsed: z.number(),
-  hitCount: z.number().default(0)
+  hitCount: z.number().default(0),
 });
 
 /**
@@ -768,7 +837,7 @@ export const IndexSchema = z.object({
   selectivity: z.number().min(0).max(1),
   size: z.number().nonnegative(),
   createdAt: z.number(),
-  lastUpdated: z.number()
+  lastUpdated: z.number(),
 });
 
 /**
@@ -777,12 +846,12 @@ export const IndexSchema = z.object({
 export const DeltaAwareContextSchema = z.object({
   delta: z.object({
     additions: z.array(z.any()),
-    removals: z.array(z.any())
+    removals: z.array(z.any()),
   }),
   affectedSubjects: z.set(z.string()).optional(),
   affectedPredicates: z.set(z.string()).optional(),
   affectedObjects: z.set(z.string()).optional(),
-  affectedGraphs: z.set(z.string()).optional()
+  affectedGraphs: z.set(z.string()).optional(),
 });
 
 /**
@@ -794,14 +863,14 @@ export const AgentProposalSchema = z.object({
   delta: z.object({
     additions: z.array(z.any()),
     removals: z.array(z.any()),
-    metadata: z.record(z.any()).optional()
+    metadata: z.record(z.any()).optional(),
   }),
   confidence: z.number().min(0).max(1),
   priority: z.number().int().min(0).max(100).default(50),
   timestamp: z.number(),
   metadata: z.record(z.any()).optional(),
   dependencies: z.array(z.string()).optional(),
-  conflicts: z.array(z.string()).optional()
+  conflicts: z.array(z.string()).optional(),
 });
 
 /**
@@ -812,7 +881,7 @@ export const ResolutionStrategySchema = z.object({
   parameters: z.record(z.any()).optional(),
   timeout: z.number().int().positive().max(300000).default(30000),
   quorum: z.number().min(0).max(1).default(0.5),
-  maxRetries: z.number().int().nonnegative().max(10).default(3)
+  maxRetries: z.number().int().nonnegative().max(10).default(3),
 });
 
 /**
@@ -825,17 +894,21 @@ export const ResolutionResultSchema = z.object({
   resolvedDelta: z.object({
     additions: z.array(z.any()),
     removals: z.array(z.any()),
-    metadata: z.record(z.any()).optional()
+    metadata: z.record(z.any()).optional(),
   }),
   confidence: z.number().min(0).max(1),
   consensus: z.boolean(),
-  conflicts: z.array(z.object({
-    type: z.enum(['addition', 'removal', 'metadata']),
-    proposals: z.array(z.string()),
-    resolution: z.string()
-  })).optional(),
+  conflicts: z
+    .array(
+      z.object({
+        type: z.enum(['addition', 'removal', 'metadata']),
+        proposals: z.array(z.string()),
+        resolution: z.string(),
+      })
+    )
+    .optional(),
   timestamp: z.number(),
-  duration: z.number().nonnegative()
+  duration: z.number().nonnegative(),
 });
 
 /**
@@ -844,14 +917,19 @@ export const ResolutionResultSchema = z.object({
 export const SandboxConfigSchema = z.object({
   type: z.enum(['vm2', 'worker', 'isolate']).default('worker'),
   timeout: z.number().int().positive().max(300000).default(30000),
-  memoryLimit: z.number().int().positive().max(1024 * 1024 * 1024).default(64 * 1024 * 1024), // 64MB
+  memoryLimit: z
+    .number()
+    .int()
+    .positive()
+    .max(1024 * 1024 * 1024)
+    .default(64 * 1024 * 1024), // 64MB
   cpuLimit: z.number().int().positive().max(100).default(50), // 50% CPU
   allowedModules: z.array(z.string()).default([]),
   allowedGlobals: z.array(z.string()).default(['console', 'Date', 'Math', 'JSON']),
   enableNetwork: z.boolean().default(false),
   enableFileSystem: z.boolean().default(false),
   enableProcess: z.boolean().default(false),
-  strictMode: z.boolean().default(true)
+  strictMode: z.boolean().default(true),
 });
 
 /**
@@ -862,7 +940,7 @@ export const SandboxContextSchema = z.object({
   store: z.any(),
   delta: z.any(),
   metadata: z.record(z.any()).optional(),
-  allowedFunctions: z.array(z.string()).default(['emitEvent', 'log', 'assert'])
+  allowedFunctions: z.array(z.string()).default(['emitEvent', 'log', 'assert']),
 });
 
 /**
@@ -875,13 +953,17 @@ export const SandboxResultSchema = z.object({
   duration: z.number().nonnegative(),
   memoryUsed: z.number().nonnegative().optional(),
   cpuUsed: z.number().nonnegative().optional(),
-  assertions: z.array(z.object({
-    subject: z.string(),
-    predicate: z.string(),
-    object: z.string(),
-    graph: z.string().optional()
-  })).optional(),
-  events: z.array(z.any()).optional()
+  assertions: z
+    .array(
+      z.object({
+        subject: z.string(),
+        predicate: z.string(),
+        object: z.string(),
+        graph: z.string().optional(),
+      })
+    )
+    .optional(),
+  events: z.array(z.any()).optional(),
 });
 
 /**
@@ -894,12 +976,12 @@ export const LockchainEntrySchema = z.object({
   signature: z.object({
     algorithm: z.string(),
     value: z.string(),
-    publicKey: z.string().optional()
+    publicKey: z.string().optional(),
   }),
   previousHash: z.string().optional().nullable(),
   merkleRoot: z.string().optional(),
   gitCommit: z.string().optional(),
-  gitRef: z.string().optional()
+  gitRef: z.string().optional(),
 });
 
 /**
@@ -913,7 +995,7 @@ export const LockchainConfigSchema = z.object({
   batchSize: z.number().int().positive().default(10),
   enableMerkle: z.boolean().default(true),
   enableGitAnchoring: z.boolean().default(true),
-  storagePath: z.string().optional()
+  storagePath: z.string().optional(),
 });
 
 /**
@@ -931,7 +1013,7 @@ export const PolicyPackMetaSchema = z.object({
   ontology: z.array(z.string().min(1).max(50)).max(10).optional(),
   dependencies: z.array(z.string()).optional(),
   createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().optional()
+  updatedAt: z.coerce.date().optional(),
 });
 
 /**
@@ -945,7 +1027,7 @@ export const PolicyPackConfigSchema = z.object({
   enableValidation: z.boolean().default(true),
   maxHooks: z.number().int().positive().max(100).default(50),
   timeout: z.number().int().positive().max(300000).default(30000),
-  strictMode: z.boolean().default(false)
+  strictMode: z.boolean().default(false),
 });
 
 /**
@@ -953,23 +1035,29 @@ export const PolicyPackConfigSchema = z.object({
  */
 export const PolicyPackManifestSchema = z.object({
   meta: PolicyPackMetaSchema,
-  hooks: z.array(z.object({
-    file: z.string().min(1),
-    condition: z.object({
-      kind: z.enum(['sparql-ask', 'sparql-select', 'shacl']),
-      ref: FileRefSchema
-    }),
-    priority: z.number().int().min(0).max(100).default(50).optional(),
-    enabled: z.boolean().default(true).optional()
-  })),
-  rules: z.array(z.object({
-    id: z.string().min(1),
-    description: z.string().min(1).max(500),
-    severity: z.enum(['error', 'warn', 'info']).default('info'),
-    condition: z.string().min(1),
-    appliesTo: z.array(z.string()).optional(),
-    excludeFrom: z.array(z.string()).optional()
-  })).optional(),
+  hooks: z.array(
+    z.object({
+      file: z.string().min(1),
+      condition: z.object({
+        kind: z.enum(['sparql-ask', 'sparql-select', 'shacl']),
+        ref: FileRefSchema,
+      }),
+      priority: z.number().int().min(0).max(100).default(50).optional(),
+      enabled: z.boolean().default(true).optional(),
+    })
+  ),
+  rules: z
+    .array(
+      z.object({
+        id: z.string().min(1),
+        description: z.string().min(1).max(500),
+        severity: z.enum(['error', 'warn', 'info']).default('info'),
+        condition: z.string().min(1),
+        appliesTo: z.array(z.string()).optional(),
+        excludeFrom: z.array(z.string()).optional(),
+      })
+    )
+    .optional(),
   dependencies: z.array(z.string()).optional(),
-  peerDependencies: z.array(z.string()).optional()
+  peerDependencies: z.array(z.string()).optional(),
 });

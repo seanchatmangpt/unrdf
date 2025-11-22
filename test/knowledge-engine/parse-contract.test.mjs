@@ -19,5 +19,3 @@ describe('parseTurtle contract', () => {
     expect(s2.size).toBeGreaterThan(s1.size);
   });
 });
-
-

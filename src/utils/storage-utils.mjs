@@ -18,7 +18,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
  * @param {string} input - Input string
  * @returns {Promise<string>} Hash string
  */
-async function hashString(input) {
+async function _hashString(input) {
   if (input === undefined || input === null) {
     return '';
   }
@@ -73,8 +73,8 @@ export class HookStorage {
       _metadata: {
         created: new Date().toISOString(),
         updated: new Date().toISOString(),
-        version: '1.0.0'
-      }
+        version: '1.0.0',
+      },
     };
 
     await writeFile(filePath, JSON.stringify(hookWithMeta, null, 2));
@@ -127,7 +127,7 @@ export class HookStorage {
               description: hookWithMeta.description,
               created: hookWithMeta._metadata?.created,
               updated: hookWithMeta._metadata?.updated,
-              predicateCount: hookWithMeta.predicates?.length || 0
+              predicateCount: hookWithMeta.predicates?.length || 0,
             });
           } catch {
             // Skip invalid files
@@ -180,8 +180,8 @@ export class HookStorage {
       ...receipt,
       _metadata: {
         saved: new Date().toISOString(),
-        receiptId
-      }
+        receiptId,
+      },
     };
 
     await writeFile(filePath, JSON.stringify(receiptWithMeta, null, 2));
@@ -217,9 +217,7 @@ export class HookStorage {
         }
       }
 
-      return receipts
-        .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
-        .slice(0, limit);
+      return receipts.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).slice(0, limit);
     } catch {
       return [];
     }
@@ -241,8 +239,8 @@ export class HookStorage {
       ...baseline,
       _metadata: {
         hookId,
-        saved: new Date().toISOString()
-      }
+        saved: new Date().toISOString(),
+      },
     };
 
     await writeFile(filePath, JSON.stringify(baselineWithMeta, null, 2));
@@ -282,10 +280,12 @@ export class HookStorage {
       const [hookFiles, receiptFiles, baselineFiles] = await Promise.all([
         readdir(this.hooksPath),
         readdir(this.receiptsPath),
-        readdir(this.baselinesPath)
+        readdir(this.baselinesPath),
       ]);
 
-      const validHooks = hookFiles.filter(f => f.endsWith('.json') && !f.endsWith('.deleted.json')).length;
+      const validHooks = hookFiles.filter(
+        f => f.endsWith('.json') && !f.endsWith('.deleted.json')
+      ).length;
       const receipts = receiptFiles.filter(f => f.endsWith('.json')).length;
       const baselines = baselineFiles.filter(f => f.endsWith('.json')).length;
 
@@ -293,7 +293,7 @@ export class HookStorage {
         hooks: validHooks,
         receipts,
         baselines,
-        totalFiles: hookFiles.length + receiptFiles.length + baselineFiles.length
+        totalFiles: hookFiles.length + receiptFiles.length + baselineFiles.length,
       };
     } catch {
       return { hooks: 0, receipts: 0, baselines: 0, totalFiles: 0 };
@@ -313,5 +313,5 @@ export const storageConfig = {
   defaultPath: './.unrdf',
   maxReceiptsPerHook: 1000,
   cleanupInterval: 24 * 60 * 60 * 1000, // 24 hours
-  retentionDays: 30
+  retentionDays: 30,
 };

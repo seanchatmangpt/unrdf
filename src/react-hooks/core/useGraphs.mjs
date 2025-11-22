@@ -81,7 +81,7 @@ export function useGraphs(options = {}) {
         size: quads.length,
         subjects: new Set(quads.map(q => q.subject.value)).size,
         predicates: new Set(quads.map(q => q.predicate.value)).size,
-        objects: new Set(quads.map(q => q.object.value)).size
+        objects: new Set(quads.map(q => q.object.value)).size,
       };
     }
 
@@ -91,7 +91,7 @@ export function useGraphs(options = {}) {
   /**
    * Select a graph
    */
-  const selectGraph = useCallback((graphUri) => {
+  const selectGraph = useCallback(graphUri => {
     setSelectedGraph(graphUri);
   }, []);
 
@@ -101,9 +101,7 @@ export function useGraphs(options = {}) {
   const getSelectedGraphQuads = useCallback(() => {
     if (!store || !selectedGraph) return [];
 
-    const graph = selectedGraph === 'default'
-      ? defaultGraph()
-      : namedNode(selectedGraph);
+    const graph = selectedGraph === 'default' ? defaultGraph() : namedNode(selectedGraph);
 
     return store.getQuads(null, null, null, graph);
   }, [store, selectedGraph]);
@@ -122,9 +120,7 @@ export function useGraphs(options = {}) {
     if (!store || !selectedGraph) return false;
 
     try {
-      const graph = selectedGraph === 'default'
-        ? defaultGraph()
-        : namedNode(selectedGraph);
+      const graph = selectedGraph === 'default' ? defaultGraph() : namedNode(selectedGraph);
 
       store.removeMatches(null, null, null, graph);
       updateGraphStats();
@@ -138,9 +134,12 @@ export function useGraphs(options = {}) {
   /**
    * Check if graph exists
    */
-  const hasGraph = useCallback((graphUri) => {
-    return graphs.includes(graphUri);
-  }, [graphs]);
+  const hasGraph = useCallback(
+    graphUri => {
+      return graphs.includes(graphUri);
+    },
+    [graphs]
+  );
 
   // Update stats when graphs change
   useEffect(() => {
@@ -156,6 +155,6 @@ export function useGraphs(options = {}) {
     getSelectedGraphQuads,
     clearSelectedGraph,
     hasGraph,
-    refreshStats: updateGraphStats
+    refreshStats: updateGraphStats,
   };
 }

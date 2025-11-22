@@ -3,7 +3,7 @@
  * Tests knowledge stack presets and offline store
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, _beforeEach, vi } from 'vitest';
 
 describe('KnowledgeStack', () => {
   describe('Preset Configuration', () => {
@@ -13,8 +13,8 @@ describe('KnowledgeStack', () => {
           realtime: false,
           recovery: false,
           errorBoundary: true,
-          cache: true
-        }
+          cache: true,
+        },
       };
 
       const config = presets['basic'];
@@ -33,8 +33,8 @@ describe('KnowledgeStack', () => {
           errorBoundary: true,
           cache: true,
           subscriptions: true,
-          changeFeed: true
-        }
+          changeFeed: true,
+        },
       };
 
       const config = presets['realtime'];
@@ -51,8 +51,8 @@ describe('KnowledgeStack', () => {
           recovery: true,
           errorBoundary: true,
           maxRetries: 3,
-          retryDelay: 1000
-        }
+          retryDelay: 1000,
+        },
       };
 
       const config = presets['resilient'];
@@ -72,8 +72,8 @@ describe('KnowledgeStack', () => {
           subscriptions: true,
           changeFeed: true,
           maxRetries: 3,
-          telemetry: true
-        }
+          telemetry: true,
+        },
       };
 
       const config = presets['full'];
@@ -87,12 +87,12 @@ describe('KnowledgeStack', () => {
       const preset = {
         realtime: false,
         cache: true,
-        maxResults: 100
+        maxResults: 100,
       };
 
       const overrides = {
         realtime: true,
-        maxResults: 500
+        maxResults: 500,
       };
 
       const merged = { ...preset, ...overrides };
@@ -109,7 +109,7 @@ describe('KnowledgeStack', () => {
         features: ['insert', 'update', 'delete', 'query'],
         optimisticUpdates: true,
         historySize: 50,
-        undoEnabled: true
+        undoEnabled: true,
       };
 
       expect(crudStack.features).toContain('insert');
@@ -124,7 +124,7 @@ describe('KnowledgeStack', () => {
         features: ['query', 'subscribe', 'aggregate'],
         refreshInterval: 5000,
         aggregations: ['count', 'sum', 'avg'],
-        liveUpdates: true
+        liveUpdates: true,
       };
 
       expect(dashboardStack.features).toContain('subscribe');
@@ -139,7 +139,7 @@ describe('KnowledgeStack', () => {
         errorBoundary: true,
         maxRetries: 3,
         telemetryEnabled: true,
-        metricsCollection: true
+        metricsCollection: true,
       };
 
       expect(productionStack.features).toContain('recovery');
@@ -154,8 +154,8 @@ describe('KnowledgeStack', () => {
       const stack = {
         query: vi.fn().mockResolvedValue([
           { subject: 'alice', name: 'Alice' },
-          { subject: 'bob', name: 'Bob' }
-        ])
+          { subject: 'bob', name: 'Bob' },
+        ]),
       };
 
       const result = await stack.query('SELECT * WHERE { ?s foaf:name ?name }');
@@ -167,15 +167,13 @@ describe('KnowledgeStack', () => {
     it('should provide insert operation', async () => {
       const data = [];
       const stack = {
-        insert: vi.fn((quads) => {
+        insert: vi.fn(quads => {
           data.push(...quads);
           return { inserted: quads.length };
-        })
+        }),
       };
 
-      const result = await stack.insert([
-        { subject: 'alice', predicate: 'knows', object: 'bob' }
-      ]);
+      const result = await stack.insert([{ subject: 'alice', predicate: 'knows', object: 'bob' }]);
 
       expect(result.inserted).toBe(1);
       expect(data).toHaveLength(1);
@@ -189,18 +187,16 @@ describe('OfflineStore', () => {
       const localStore = new Map();
 
       const store = {
-        insert: (quads) => {
+        insert: quads => {
           quads.forEach((quad, i) => {
             localStore.set(`quad-${Date.now()}-${i}`, quad);
           });
           return { stored: quads.length };
         },
-        query: () => Array.from(localStore.values())
+        query: () => Array.from(localStore.values()),
       };
 
-      store.insert([
-        { subject: 'alice', predicate: 'knows', object: 'bob' }
-      ]);
+      store.insert([{ subject: 'alice', predicate: 'knows', object: 'bob' }]);
 
       expect(localStore.size).toBe(1);
       expect(store.query()).toHaveLength(1);
@@ -209,11 +205,11 @@ describe('OfflineStore', () => {
     it('should track pending changes', () => {
       const pendingQueue = [];
 
-      const queueChange = (change) => {
+      const queueChange = change => {
         pendingQueue.push({
           ...change,
           id: Date.now(),
-          synced: false
+          synced: false,
         });
       };
 
@@ -228,10 +224,10 @@ describe('OfflineStore', () => {
       const pendingQueue = [
         { id: 1, synced: false },
         { id: 2, synced: false },
-        { id: 3, synced: false }
+        { id: 3, synced: false },
       ];
 
-      const markSynced = (ids) => {
+      const markSynced = ids => {
         ids.forEach(id => {
           const change = pendingQueue.find(c => c.id === id);
           if (change) change.synced = true;
@@ -249,8 +245,12 @@ describe('OfflineStore', () => {
     it('should detect online status', () => {
       const connectionState = { isOnline: true };
 
-      const goOffline = () => { connectionState.isOnline = false; };
-      const goOnline = () => { connectionState.isOnline = true; };
+      const goOffline = () => {
+        connectionState.isOnline = false;
+      };
+      const goOnline = () => {
+        connectionState.isOnline = true;
+      };
 
       expect(connectionState.isOnline).toBe(true);
 
@@ -264,12 +264,16 @@ describe('OfflineStore', () => {
     it('should queue operations while offline', () => {
       const state = {
         isOnline: false,
-        pendingQueue: []
+        pendingQueue: [],
       };
 
-      const insert = (data) => {
+      const insert = data => {
         if (!state.isOnline) {
-          state.pendingQueue.push({ type: 'insert', data, timestamp: Date.now() });
+          state.pendingQueue.push({
+            type: 'insert',
+            data,
+            timestamp: Date.now(),
+          });
           return { queued: true, synced: false };
         }
         return { queued: false, synced: true };
@@ -289,9 +293,9 @@ describe('OfflineStore', () => {
         isOnline: true,
         pendingQueue: [
           { id: 1, type: 'insert', data: { subject: 'alice' }, synced: false },
-          { id: 2, type: 'insert', data: { subject: 'bob' }, synced: false }
+          { id: 2, type: 'insert', data: { subject: 'bob' }, synced: false },
         ],
-        lastSynced: null
+        lastSynced: null,
       };
 
       const syncToServer = vi.fn().mockResolvedValue({ success: true });
@@ -322,7 +326,7 @@ describe('OfflineStore', () => {
         { synced: false },
         { synced: true },
         { synced: false },
-        { synced: false }
+        { synced: false },
       ];
 
       const pendingCount = pendingQueue.filter(c => !c.synced).length;
@@ -334,7 +338,7 @@ describe('OfflineStore', () => {
       let pendingQueue = [
         { id: 1, synced: true },
         { id: 2, synced: false },
-        { id: 3, synced: true }
+        { id: 3, synced: true },
       ];
 
       const cleanup = () => {
@@ -351,13 +355,11 @@ describe('OfflineStore', () => {
   describe('Data Persistence', () => {
     it('should persist data structure', () => {
       const store = {
-        quads: [
-          { subject: 'alice', predicate: 'knows', object: 'bob' }
-        ],
+        quads: [{ subject: 'alice', predicate: 'knows', object: 'bob' }],
         metadata: {
           version: 1,
-          lastModified: Date.now()
-        }
+          lastModified: Date.now(),
+        },
       };
 
       // Simulate serialization/deserialization
@@ -369,11 +371,13 @@ describe('OfflineStore', () => {
     });
 
     it('should handle large datasets', () => {
-      const quads = Array(10000).fill(null).map((_, i) => ({
-        subject: `entity-${i}`,
-        predicate: 'type',
-        object: 'Thing'
-      }));
+      const quads = Array(10000)
+        .fill(null)
+        .map((_, i) => ({
+          subject: `entity-${i}`,
+          predicate: 'type',
+          object: 'Thing',
+        }));
 
       // Verify we can handle large arrays
       expect(quads).toHaveLength(10000);
@@ -390,8 +394,7 @@ describe('OfflineStore', () => {
       const remoteData = { subject: 'alice', age: 31, version: 2 };
 
       const hasConflict = (local, remote) => {
-        return local.version < remote.version &&
-               JSON.stringify(local) !== JSON.stringify(remote);
+        return local.version < remote.version && JSON.stringify(local) !== JSON.stringify(remote);
       };
 
       expect(hasConflict(localData, remoteData)).toBe(true);

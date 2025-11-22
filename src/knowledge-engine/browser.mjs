@@ -1,26 +1,29 @@
 /**
  * @file Browser-Compatible Knowledge Engine
  * @module knowledge-engine-browser
- * 
+ *
  * @description
  * Browser-compatible version of the knowledge engine with Node.js APIs
  * replaced by browser-compatible alternatives.
  */
 
-import { isBrowser } from './browser-shims.mjs';
-import { randomUUID, path, fs } from './browser-shims.mjs';
-import { process as browserProcess } from './browser-shims.mjs';
+import { _isBrowser } from './browser-shims.mjs';
+import { randomUUID, path, _fs } from './browser-shims.mjs';
+import { process as _browserProcess } from './browser-shims.mjs';
 
 // Browser-compatible versions
 import { EffectSandbox, createEffectSandbox } from './effect-sandbox-browser.mjs';
-import { BrowserLockchainWriter, createBrowserLockchainWriter } from './lockchain-writer-browser.mjs';
+import {
+  BrowserLockchainWriter,
+  createBrowserLockchainWriter,
+} from './lockchain-writer-browser.mjs';
 
 // Re-export schemas (these are already browser-compatible)
 export * from './schemas.mjs';
 
 // Core Engine Components (Browser-compatible)
-import { KnowledgeHookManager } from './knowledge-hook-manager.mjs';
-import { QueryOptimizer } from './query-optimizer.mjs';
+import { _KnowledgeHookManager } from './knowledge-hook-manager.mjs';
+import { _QueryOptimizer } from './query-optimizer.mjs';
 import { QueryEngine } from '@comunica/query-sparql';
 
 // Browser-compatible Transaction Manager base class
@@ -36,9 +39,9 @@ class BrowserTransactionManager {
       cacheMaxAge: options.cacheMaxAge || 300000,
       enableMetrics: options.enableMetrics ?? true,
       logLevel: options.logLevel || 'info',
-      ...options
+      ...options,
     };
-    
+
     this.hooks = [];
     this.executionCount = 0;
     this.totalDuration = 0;
@@ -49,7 +52,7 @@ class BrowserTransactionManager {
       hooks: this.hooks.length,
       executions: this.executionCount,
       averageDuration: this.executionCount > 0 ? this.totalDuration / this.executionCount : 0,
-      config: this.options
+      config: this.options,
     };
   }
 }
@@ -69,55 +72,55 @@ export class BrowserHookExecutor {
       enableConditionEvaluation: config.enableConditionEvaluation ?? true,
       enableMetrics: config.enableMetrics ?? true,
       timeout: config.timeout || 30000,
-      ...config
+      ...config,
     };
-    
+
     this.metrics = {
       executions: 0,
       errors: 0,
       totalDuration: 0,
       cacheHits: 0,
-      cacheMisses: 0
+      cacheMisses: 0,
     };
-    
+
     this.cache = new Map();
   }
 
   /**
    *
    */
-  async execute(hook, event, options = {}) {
+  async execute(hook, event, _options = {}) {
     const startTime = Date.now();
     this.metrics.executions++;
-    
+
     try {
       let result;
-      
+
       if (hook.run) {
         result = await hook.run(event);
       } else {
         result = { success: true };
       }
-      
+
       const duration = Date.now() - startTime;
       this.metrics.totalDuration += duration;
-      
+
       return {
         success: true,
         result,
         duration,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       };
     } catch (error) {
       this.metrics.errors++;
       const duration = Date.now() - startTime;
       this.metrics.totalDuration += duration;
-      
+
       return {
         success: false,
         error: error.message,
         duration,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       };
     }
   }
@@ -127,7 +130,7 @@ export class BrowserHookExecutor {
    */
   async executeAll(hooks, event, options = {}) {
     const results = [];
-    
+
     for (const hook of hooks) {
       try {
         const result = await this.execute(hook, event, options);
@@ -136,11 +139,11 @@ export class BrowserHookExecutor {
         results.push({
           success: false,
           error: error.message,
-          hook: hook.meta?.name || 'unknown'
+          hook: hook.meta?.name || 'unknown',
         });
       }
     }
-    
+
     return results;
   }
 
@@ -174,50 +177,47 @@ export class BrowserConditionEvaluator {
       cacheMaxAge: config.cacheMaxAge || 300000,
       timeout: config.timeout || 10000,
       strict: config.strict || false,
-      ...config
+      ...config,
     };
-    
+
     this.cache = new Map();
     this.cacheStats = {
       hits: 0,
-      misses: 0
+      misses: 0,
     };
   }
 
   /**
    *
    */
-  async evaluateCondition(condition, graph, options = {}) {
+  async evaluateCondition(condition, graph, _options = {}) {
     const cacheKey = `${JSON.stringify(condition)}_${graph.size || 0}`;
-    
+
     if (this.cache.has(cacheKey)) {
       this.cacheStats.hits++;
       return this.cache.get(cacheKey);
     }
-    
+
     this.cacheStats.misses++;
-    
+
     try {
       let result = false;
-      
-      // Simple condition evaluation for browser
+
+      // Browser-compatible condition evaluation using pattern matching
       if (condition.kind === 'sparql-ask') {
-        // Mock SPARQL ASK evaluation - in real implementation would use Comunica
-        result = graph.size > 0;
+        result = await this._evaluateSparqlAsk(condition, graph);
       } else if (condition.kind === 'sparql-select') {
-        // Mock SPARQL SELECT evaluation
-        result = graph.size > 0;
+        result = await this._evaluateSparqlSelect(condition, graph);
       } else if (condition.kind === 'shacl') {
-        // Mock SHACL validation
-        result = true; // Assume valid for browser demo
+        result = await this._evaluateShacl(condition, graph);
       }
-      
+
       const evaluationResult = {
         satisfied: result,
         evaluationTime: Date.now(),
-        condition
+        condition,
       };
-      
+
       this.cache.set(cacheKey, evaluationResult);
       return evaluationResult;
     } catch (error) {
@@ -225,7 +225,7 @@ export class BrowserConditionEvaluator {
         satisfied: false,
         error: error.message,
         evaluationTime: Date.now(),
-        condition
+        condition,
       };
     }
   }
@@ -243,6 +243,170 @@ export class BrowserConditionEvaluator {
   clearCache() {
     this.cache.clear();
     this.cacheStats = { hits: 0, misses: 0 };
+  }
+
+  /**
+   * Evaluate SPARQL ASK query using pattern matching
+   * @param {Object} condition - Condition with query property
+   * @param {Store} graph - RDF graph
+   * @returns {Promise<boolean>} Query result
+   * @private
+   */
+  async _evaluateSparqlAsk(condition, graph) {
+    const query = condition.query || condition.ref?.query || '';
+    if (!query) {
+      return graph.size > 0; // Fallback
+    }
+
+    // Parse basic SPARQL ASK patterns
+    const whereMatch = query.match(/WHERE\s*\{([^}]+)\}/is);
+    if (!whereMatch) {
+      return graph.size > 0; // Fallback if can't parse
+    }
+
+    const patterns = whereMatch[1]
+      .split(/\.\s*/)
+      .map(p => p.trim())
+      .filter(p => p && !p.startsWith('#'));
+
+    // For each pattern, check if it matches in the graph
+    for (const pattern of patterns) {
+      const match = pattern.match(/(\S+)\s+(\S+)\s+(\S+)/);
+      if (!match) continue;
+
+      const [, s, p, o] = match;
+      const subject = this._normalizeTerm(s);
+      const predicate = this._normalizeTerm(p);
+      const object = this._normalizeTerm(o);
+
+      // Check if any quad matches this pattern
+      const quads = graph.getQuads(subject, predicate, object, null);
+      if (quads.length === 0) {
+        return false; // Pattern doesn't match
+      }
+    }
+
+    return true; // All patterns matched
+  }
+
+  /**
+   * Evaluate SPARQL SELECT query using pattern matching
+   * @param {Object} condition - Condition with query property
+   * @param {Store} graph - RDF graph
+   * @returns {Promise<Array>} Query results
+   * @private
+   */
+  async _evaluateSparqlSelect(condition, graph) {
+    const query = condition.query || condition.ref?.query || '';
+    if (!query) {
+      return [];
+    }
+
+    // Extract SELECT variables
+    const selectMatch = query.match(/SELECT\s+(.+?)\s+WHERE/is);
+    if (!selectMatch) {
+      return [];
+    }
+
+    const _variables = selectMatch[1]
+      .split(/\s+/)
+      .map(v => v.replace(/^\?/, '').trim())
+      .filter(v => v);
+
+    // Extract WHERE patterns
+    const whereMatch = query.match(/WHERE\s*\{([^}]+)\}/is);
+    if (!whereMatch) {
+      return [];
+    }
+
+    const patterns = whereMatch[1]
+      .split(/\.\s*/)
+      .map(p => p.trim())
+      .filter(p => p && !p.startsWith('#'));
+
+    // Simple pattern matching - find matching quads
+    const results = [];
+
+    for (const pattern of patterns) {
+      const match = pattern.match(/(\S+)\s+(\S+)\s+(\S+)/);
+      if (!match) continue;
+
+      const [, s, p, o] = match;
+      const subject = this._normalizeTerm(s);
+      const predicate = this._normalizeTerm(p);
+      const object = this._normalizeTerm(o);
+
+      const quads = graph.getQuads(subject, predicate, object, null);
+      for (const quad of quads) {
+        const binding = {};
+        if (s.startsWith('?')) {
+          binding[s.substring(1)] = quad.subject.value;
+        }
+        if (p.startsWith('?')) {
+          binding[p.substring(1)] = quad.predicate.value;
+        }
+        if (o.startsWith('?')) {
+          binding[o.substring(1)] = quad.object.value;
+        }
+        if (Object.keys(binding).length > 0) {
+          results.push(binding);
+        }
+      }
+    }
+
+    return results;
+  }
+
+  /**
+   * Evaluate SHACL validation using basic pattern matching
+   * @param {Object} condition - Condition with shapes
+   * @param {Store} graph - RDF graph
+   * @returns {Promise<boolean>} Validation result
+   * @private
+   */
+  async _evaluateShacl(condition, graph) {
+    // Basic SHACL validation - check for required properties
+    // Full SHACL validation would require a proper SHACL engine
+    const shapes = condition.shapes || condition.ref?.shapes;
+    if (!shapes) {
+      return graph.size > 0; // No shapes to validate against
+    }
+
+    // For now, return true if graph has data
+    // Full implementation would parse SHACL shapes and validate
+    return graph.size > 0;
+  }
+
+  /**
+   * Normalize SPARQL term (variable, IRI, literal) to match format
+   * @param {string} term - SPARQL term
+   * @returns {string|null} Normalized term or null for variables
+   * @private
+   */
+  _normalizeTerm(term) {
+    if (!term) return null;
+    term = term.trim();
+
+    // Variable - return null to match any
+    if (term.startsWith('?')) {
+      return null;
+    }
+
+    // IRI with angle brackets
+    if (term.startsWith('<') && term.endsWith('>')) {
+      return term.slice(1, -1);
+    }
+
+    // Literal with quotes
+    if (
+      (term.startsWith('"') && term.endsWith('"')) ||
+      (term.startsWith("'") && term.endsWith("'"))
+    ) {
+      return term.slice(1, -1);
+    }
+
+    // Plain IRI or term
+    return term;
   }
 }
 
@@ -270,7 +434,7 @@ export class BrowserPolicyPackManager {
       hooks: manifest.hooks || [],
       rules: manifest.rules || [],
       loaded: true,
-      activated: false
+      activated: false,
     });
   }
 
@@ -311,7 +475,9 @@ export class BrowserPolicyPackManager {
    *
    */
   getActivePolicyPacks() {
-    return Array.from(this.activePacks).map(name => this.policyPacks.get(name)).filter(Boolean);
+    return Array.from(this.activePacks)
+      .map(name => this.policyPacks.get(name))
+      .filter(Boolean);
   }
 
   /**
@@ -340,12 +506,12 @@ export class BrowserFileResolver {
         'application/sparql-query',
         'text/turtle',
         'application/rdf+xml',
-        'application/ld+json'
+        'application/ld+json',
       ],
       timeout: config.timeout || 5000,
-      ...config
+      ...config,
     };
-    
+
     this.cache = new Map();
   }
 
@@ -366,8 +532,38 @@ export class BrowserFileResolver {
    *
    */
   async calculateFileHash(filePath) {
-    // Mock hash calculation for browser
-    return 'mock-hash-' + randomUUID().slice(0, 16);
+    // Use Web Crypto API for SHA-256 hash calculation
+    if (typeof window === 'undefined' || !window.crypto || !window.crypto.subtle) {
+      // Fallback for environments without Web Crypto API
+      return 'fallback-hash-' + Date.now().toString(36);
+    }
+
+    try {
+      // Read file content (in browser, this would typically be from File/Blob)
+      // For now, we'll hash the file path and any available content
+      let content = filePath;
+
+      // If filePath is a File or Blob, read it
+      if (filePath instanceof File || filePath instanceof Blob) {
+        const arrayBuffer = await filePath.arrayBuffer();
+        content = new Uint8Array(arrayBuffer);
+      } else if (typeof filePath === 'string') {
+        // Convert string to Uint8Array
+        const encoder = new TextEncoder();
+        content = encoder.encode(filePath);
+      }
+
+      // Calculate SHA-256 hash
+      const hashBuffer = await window.crypto.subtle.digest('SHA-256', content);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+      return hashHex;
+    } catch (error) {
+      // Fallback on error
+      console.warn('Failed to calculate file hash with Web Crypto API:', error);
+      return 'error-hash-' + Date.now().toString(36);
+    }
   }
 
   /**
@@ -376,20 +572,20 @@ export class BrowserFileResolver {
   async loadFileWithHash(uri, expectedHash, basePath = this.config.basePath) {
     const filePath = await this.resolveFileUri(uri, basePath);
     const cacheKey = `${filePath}:${expectedHash}`;
-    
+
     if (this.cache.has(cacheKey)) {
       return this.cache.get(cacheKey);
     }
-    
+
     // Mock file loading for browser
     const mockContent = `-- Mock content from ${filePath} --`;
     const content = {
       content: mockContent,
       size: mockContent.length,
       lastModified: Date.now(),
-      hash: await this.calculateFileHash(filePath)
+      hash: await this.calculateFileHash(filePath),
     };
-    
+
     this.cache.set(cacheKey, content);
     return content;
   }
@@ -418,9 +614,9 @@ export class BrowserResolutionLayer {
       enableConflictDetection: config.enableConflictDetection ?? true,
       enableConsensus: config.enableConsensus ?? true,
       timeout: config.timeout || 30000,
-      ...config
+      ...config,
     };
-    
+
     this.proposals = new Map();
     this.resolutionHistory = [];
     this.agents = new Map();
@@ -434,7 +630,7 @@ export class BrowserResolutionLayer {
     this.agents.set(agentId, {
       id: agentId,
       ...metadata,
-      registeredAt: Date.now()
+      registeredAt: Date.now(),
     });
   }
 
@@ -454,7 +650,7 @@ export class BrowserResolutionLayer {
     if (pendingProposals.length === 0) {
       return null;
     }
-    
+
     const resolution = {
       id: randomUUID(),
       strategy,
@@ -464,14 +660,14 @@ export class BrowserResolutionLayer {
       consensus: pendingProposals.length > 1,
       conflicts: this._detectConflicts(pendingProposals),
       timestamp: Date.now(),
-      duration: 0
+      duration: 0,
     };
-    
+
     this.resolutionHistory.push(resolution);
-    
+
     // Clear processed proposals
     this.proposals.clear();
-    
+
     return resolution;
   }
 
@@ -481,16 +677,16 @@ export class BrowserResolutionLayer {
   _mergeProposals(proposals) {
     const additions = [];
     const removals = [];
-    
+
     for (const proposal of proposals) {
       additions.push(...proposal.delta.additions);
       removals.push(...proposal.delta.removals);
     }
-    
+
     return {
       additions,
       removals,
-      metadata: { mergedFrom: proposals.length }
+      metadata: { mergedFrom: proposals.length },
     };
   }
 
@@ -504,7 +700,7 @@ export class BrowserResolutionLayer {
   /**
    *
    */
-  _detectConflicts(proposals) {
+  _detectConflicts(_proposals) {
     // Simple conflict detection
     return [];
   }
@@ -517,7 +713,7 @@ export class BrowserResolutionLayer {
       agents: this.agents.size,
       pendingProposals: this.proposals.size,
       totalResolutions: this.resolutionHistory.length,
-      config: this.config
+      config: this.config,
     };
   }
 }
@@ -532,24 +728,24 @@ export class BrowserKnowledgeHookManager extends BrowserTransactionManager {
    */
   constructor(options = {}) {
     super(options);
-    
+
     this.basePath = options.basePath || '/';
     this.enableKnowledgeHooks = options.enableKnowledgeHooks ?? true;
     this.strictMode = options.strictMode || false;
-    
+
     // Browser-compatible components
     this.hookExecutor = new BrowserHookExecutor({
       basePath: this.basePath,
       strictMode: this.strictMode,
-      enableMetrics: true
+      enableMetrics: true,
     });
-    
+
     this.conditionEvaluator = new BrowserConditionEvaluator({
       basePath: this.basePath,
       strictMode: this.strictMode,
-      enableCache: true
+      enableCache: true,
     });
-    
+
     this.policyPackManager = new BrowserPolicyPackManager(this.basePath);
     this.knowledgeHooks = new Map();
   }
@@ -561,23 +757,23 @@ export class BrowserKnowledgeHookManager extends BrowserTransactionManager {
     if (!this.enableKnowledgeHooks) {
       throw new Error('Knowledge hooks are disabled');
     }
-    
+
     if (!hook || typeof hook !== 'object') {
       throw new TypeError('Hook must be an object');
     }
-    
+
     if (!hook.meta || !hook.meta.name) {
       throw new TypeError('Hook must have meta.name');
     }
-    
+
     if (!hook.run || typeof hook.run !== 'function') {
       throw new TypeError('Hook must have a run function');
     }
-    
+
     if (this.knowledgeHooks.has(hook.meta.name)) {
       throw new Error(`Knowledge hook "${hook.meta.name}" already exists`);
     }
-    
+
     this.knowledgeHooks.set(hook.meta.name, hook);
     return hook;
   }
@@ -608,7 +804,7 @@ export class BrowserKnowledgeHookManager extends BrowserTransactionManager {
     if (!hook) {
       throw new Error(`Knowledge hook "${hookName}" not found`);
     }
-    
+
     return this.hookExecutor.execute(hook, event, options);
   }
 
@@ -627,16 +823,16 @@ export class BrowserKnowledgeHookManager extends BrowserTransactionManager {
     const baseStats = super.getStats();
     const hookExecutorStats = this.hookExecutor.getMetrics();
     const conditionEvaluatorStats = this.conditionEvaluator.getCacheStats();
-    
+
     return {
       ...baseStats,
       knowledgeHooks: {
         total: this.knowledgeHooks.size,
         enabled: this.enableKnowledgeHooks,
-        strictMode: this.strictMode
+        strictMode: this.strictMode,
       },
       hookExecutor: hookExecutorStats,
-      conditionEvaluator: conditionEvaluatorStats
+      conditionEvaluator: conditionEvaluatorStats,
     };
   }
 }
@@ -693,7 +889,7 @@ export {
   BrowserLockchainWriter as LockchainWriter,
   createBrowserLockchainWriter as createLockchainWriter,
   BrowserKnowledgeHookManager as KnowledgeHookManager,
-  createBrowserKnowledgeHookManager as createKnowledgeHookManager
+  createBrowserKnowledgeHookManager as createKnowledgeHookManager,
 };
 
 // Export QueryEngine from Comunica (browser-compatible)
@@ -711,5 +907,5 @@ export default {
   BrowserPolicyPackManager,
   BrowserFileResolver,
   BrowserResolutionLayer,
-  QueryEngine
+  QueryEngine,
 };

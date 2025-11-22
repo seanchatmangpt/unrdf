@@ -3,7 +3,12 @@ import { createObservabilityManager } from '../src/knowledge-engine/observabilit
 
 describe('Observability - smoothing and minSamples', () => {
   it('applies EWMA fallback when samples are below minSamples', async () => {
-    const obs = createObservabilityManager({ minSamples: 10, ewmaAlpha: 0.5, enableMetrics: false, enableTracing: false });
+    const obs = createObservabilityManager({
+      minSamples: 10,
+      ewmaAlpha: 0.5,
+      enableMetrics: false,
+      enableTracing: false,
+    });
 
     // Prime last metrics by calling once with some fake latency entries
     obs.metrics.transactionLatency = [
@@ -22,7 +27,7 @@ describe('Observability - smoothing and minSamples', () => {
 
     // Now very few samples; smoothing should use previous
     obs.metrics.transactionLatency = [
-      { timestamp: Date.now() - 50, duration: 1000, success: true }
+      { timestamp: Date.now() - 50, duration: 1000, success: true },
     ];
 
     const second = obs.getPerformanceMetrics();
@@ -30,5 +35,3 @@ describe('Observability - smoothing and minSamples', () => {
     expect(second.transactionLatency.p50).toBeLessThan(1000); // smoothed, not raw spike
   });
 });
-
-

@@ -55,7 +55,7 @@ const fileContentCache = new Map();
 /**
  * Maximum cache entries
  */
-const MAX_QUERY_CACHE = 100;
+const _MAX_QUERY_CACHE = 100;
 const MAX_FILE_CACHE = 50;
 
 /**
@@ -70,7 +70,7 @@ const stats = {
   initRetries: 0,
   initFailures: 0,
   healthChecks: 0,
-  fallbacksUsed: 0
+  fallbacksUsed: 0,
 };
 
 /**
@@ -78,7 +78,7 @@ const stats = {
  * @param {number} ms - Milliseconds to sleep
  * @returns {Promise<void>}
  */
-const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 /**
  * Get or create the singleton QueryEngine instance with lazy initialization and retry.
@@ -124,7 +124,10 @@ export function getQueryEngine(options = {}) {
         return queryEngineInstance;
       } catch (error) {
         stats.initRetries++;
-        console.warn(`[QueryCache] QueryEngine initialization attempt ${attempt}/${INIT_MAX_RETRIES} failed:`, error.message);
+        console.warn(
+          `[QueryCache] QueryEngine initialization attempt ${attempt}/${INIT_MAX_RETRIES} failed:`,
+          error.message
+        );
 
         if (attempt < INIT_MAX_RETRIES) {
           // Synchronous retry delay (avoid async in getter)
@@ -136,7 +139,9 @@ export function getQueryEngine(options = {}) {
           initializationState = 'failed';
           initializationError = error;
           stats.initFailures++;
-          throw new Error(`QueryEngine initialization failed after ${INIT_MAX_RETRIES} attempts: ${error.message}`);
+          throw new Error(
+            `QueryEngine initialization failed after ${INIT_MAX_RETRIES} attempts: ${error.message}`
+          );
         }
       }
     }
@@ -187,7 +192,10 @@ export async function getQueryEngineAsync(options = {}) {
       return queryEngineInstance;
     } catch (error) {
       stats.initRetries++;
-      console.warn(`[QueryCache] QueryEngine initialization attempt ${attempt}/${INIT_MAX_RETRIES} failed:`, error.message);
+      console.warn(
+        `[QueryCache] QueryEngine initialization attempt ${attempt}/${INIT_MAX_RETRIES} failed:`,
+        error.message
+      );
 
       if (attempt < INIT_MAX_RETRIES) {
         await sleep(INIT_RETRY_DELAY * attempt);
@@ -195,7 +203,9 @@ export async function getQueryEngineAsync(options = {}) {
         initializationState = 'failed';
         initializationError = error;
         stats.initFailures++;
-        throw new Error(`QueryEngine initialization failed after ${INIT_MAX_RETRIES} attempts: ${error.message}`);
+        throw new Error(
+          `QueryEngine initialization failed after ${INIT_MAX_RETRIES} attempts: ${error.message}`
+        );
       }
     }
   }
@@ -240,7 +250,7 @@ export function getInitializationStatus() {
     error: initializationError?.message || null,
     hasInstance: !!queryEngineInstance,
     retries: stats.initRetries,
-    failures: stats.initFailures
+    failures: stats.initFailures,
   };
 }
 
@@ -318,7 +328,7 @@ export function getCacheStats() {
     queryCacheSize: queryCompilationCache.size,
     fileCacheSize: fileContentCache.size,
     queryCacheHitRate: stats.queryCacheHits / (stats.queryCacheHits + stats.queryCacheMisses) || 0,
-    fileCacheHitRate: stats.fileCacheHits / (stats.fileCacheHits + stats.fileCacheMisses) || 0
+    fileCacheHitRate: stats.fileCacheHits / (stats.fileCacheHits + stats.fileCacheMisses) || 0,
   };
 }
 

@@ -10,7 +10,7 @@
  */
 
 import { IndexedDBFileSystem } from './indexeddb-fs.mjs';
-import { crypto } from './browser-shim.mjs';
+import { _crypto } from './browser-shim.mjs';
 
 const LOCKCHAIN_DB = 'unrdf-lockchain';
 const COMMITS_STORE = 'commits';
@@ -58,12 +58,14 @@ export class BrowserLockchainWriter {
         resolve();
       };
 
-      request.onupgradeneeded = (event) => {
+      request.onupgradeneeded = event => {
         const db = event.target.result;
 
         // Commits store
         if (!db.objectStoreNames.contains(COMMITS_STORE)) {
-          const commitsStore = db.createObjectStore(COMMITS_STORE, { keyPath: 'hash' });
+          const commitsStore = db.createObjectStore(COMMITS_STORE, {
+            keyPath: 'hash',
+          });
           commitsStore.createIndex('timestamp', 'timestamp', { unique: false });
           commitsStore.createIndex('author', 'author', { unique: false });
           commitsStore.createIndex('parent', 'parentHash', { unique: false });
@@ -242,7 +244,7 @@ export class BrowserLockchainWriter {
       const commits = [];
       let count = 0;
 
-      request.onsuccess = (event) => {
+      request.onsuccess = event => {
         const cursor = event.target.result;
 
         if (cursor && count < limit) {
@@ -266,7 +268,7 @@ export class BrowserLockchainWriter {
   async verifyChain(fromHash = null) {
     await this.ensureInit();
 
-    const startHash = fromHash || await this.getHead();
+    const startHash = fromHash || (await this.getHead());
     if (!startHash) {
       return {
         valid: true,

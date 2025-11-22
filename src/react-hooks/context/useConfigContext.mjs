@@ -43,14 +43,14 @@ export function useConfigContext() {
       config: {
         enableKnowledgeHooks: true,
         enableObservability: true,
-        strictMode: false
+        strictMode: false,
       },
       updateConfig: () => {
         console.warn('[useConfigContext] Not within ConfigProvider, config cannot be updated');
       },
       resetConfig: () => {
         console.warn('[useConfigContext] Not within ConfigProvider, config cannot be reset');
-      }
+      },
     };
   }
 
@@ -66,19 +66,22 @@ export function useConfigContext() {
  * @returns {React.ReactElement} Provider component
  */
 export function ConfigProvider({ initialConfig = {}, children }) {
-  const defaultConfig = useMemo(() => ({
-    enableKnowledgeHooks: true,
-    enableObservability: true,
-    strictMode: false,
-    ...initialConfig
-  }), [initialConfig]);
+  const defaultConfig = useMemo(
+    () => ({
+      enableKnowledgeHooks: true,
+      enableObservability: true,
+      strictMode: false,
+      ...initialConfig,
+    }),
+    [initialConfig]
+  );
 
   const [config, setConfig] = useState(defaultConfig);
 
   /**
    * Update configuration
    */
-  const updateConfig = useCallback((updates) => {
+  const updateConfig = useCallback(updates => {
     setConfig(prev => ({ ...prev, ...updates }));
   }, []);
 
@@ -89,15 +92,14 @@ export function ConfigProvider({ initialConfig = {}, children }) {
     setConfig(defaultConfig);
   }, [defaultConfig]);
 
-  const contextValue = useMemo(() => ({
-    config,
-    updateConfig,
-    resetConfig
-  }), [config, updateConfig, resetConfig]);
-
-  return (
-    <ConfigContext.Provider value={contextValue}>
-      {children}
-    </ConfigContext.Provider>
+  const contextValue = useMemo(
+    () => ({
+      config,
+      updateConfig,
+      resetConfig,
+    }),
+    [config, updateConfig, resetConfig]
   );
+
+  return <ConfigContext.Provider value={contextValue}>{children}</ConfigContext.Provider>;
 }

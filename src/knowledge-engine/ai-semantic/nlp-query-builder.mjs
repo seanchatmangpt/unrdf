@@ -10,7 +10,7 @@
  * Performance target: <300ms for NL→SPARQL translation
  */
 
-import { Store } from 'n3';
+import { _Store } from 'n3';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
 import { LRUCache } from 'lru-cache';
 import { z } from 'zod';
@@ -22,15 +22,17 @@ const tracer = trace.getTracer('unrdf-ai-semantic');
  */
 const NLPQueryResultSchema = z.object({
   sparql: z.string(),
-  entities: z.array(z.object({
-    text: z.string(),
-    uri: z.string(),
-    type: z.string().optional()
-  })),
+  entities: z.array(
+    z.object({
+      text: z.string(),
+      uri: z.string(),
+      type: z.string().optional(),
+    })
+  ),
   intent: z.enum(['select', 'ask', 'describe', 'construct']),
   confidence: z.number().min(0).max(1),
   method: z.enum(['pattern', 'llm', 'hybrid']),
-  duration: z.number()
+  duration: z.number(),
 });
 
 /**
@@ -43,7 +45,7 @@ const NLPQueryBuilderConfigSchema = z.object({
   llmApiKey: z.string().optional(),
   llmModel: z.string().default('gpt-3.5-turbo'),
   timeout: z.number().default(300), // 300ms timeout
-  minConfidence: z.number().min(0).max(1).default(0.6)
+  minConfidence: z.number().min(0).max(1).default(0.6),
 });
 
 /**
@@ -58,9 +60,7 @@ export class NLPQueryBuilder {
     this.config = NLPQueryBuilderConfigSchema.parse(config);
 
     // LRU cache for query patterns
-    this.cache = this.config.enableCache
-      ? new LRUCache({ max: this.config.cacheSize })
-      : null;
+    this.cache = this.config.enableCache ? new LRUCache({ max: this.config.cacheSize }) : null;
 
     // Common SPARQL patterns for NL queries
     this.patterns = this._initializePatterns();
@@ -74,7 +74,7 @@ export class NLPQueryBuilder {
       cacheHits: 0,
       cacheMisses: 0,
       avgDuration: 0,
-      llmCalls: 0
+      llmCalls: 0,
     };
   }
 
@@ -86,64 +86,74 @@ export class NLPQueryBuilder {
   _initializePatterns() {
     return [
       {
-        pattern: /^(what|which)\s+(.+?)\s+(is|are|was|were)\s+(.+?)$/i,
+        // Non-capturing groups for question word and verb - we only need subject and predicate
+        pattern: /^(?:what|which)\s+(.+?)\s+(?:is|are|was|were)\s+(.+?)$/i,
         intent: 'select',
         generator: (match, entities) => {
-          const [_, questionWord, subject, verb, predicate] = match;
+          const [_, subject, predicate] = match;
           const subjectUri = entities.find(e => e.text === subject.trim())?.uri || '?subject';
           const predicateUri = entities.find(e => e.text === predicate.trim())?.uri || '?predicate';
           return `SELECT ?result WHERE { <${subjectUri}> <${predicateUri}> ?result . }`;
-        }
+        },
       },
       {
-        pattern: /^(who|what)\s+(is|are|was|were)\s+(.+?)$/i,
+        // Non-capturing groups - we only need the subject
+        pattern: /^(?:who|what)\s+(?:is|are|was|were)\s+(.+?)$/i,
         intent: 'describe',
         generator: (match, entities) => {
-          const [_, questionWord, verb, subject] = match;
+          const [_, subject] = match;
           const subjectUri = entities.find(e => e.text === subject.trim())?.uri || subject.trim();
           return `DESCRIBE <${subjectUri}>`;
-        }
+        },
       },
       {
-        pattern: /^(list|show|find)\s+(all\s+)?(.+?)$/i,
+        // Non-capturing groups for verb and optional "all" - we only need the object
+        pattern: /^(?:list|show|find)\s+(?:all\s+)?(.+?)$/i,
         intent: 'select',
         generator: (match, entities) => {
-          const [_, verb, all, object] = match;
+          const [_, object] = match;
           const objectType = entities.find(e => e.text === object.trim())?.uri;
           if (objectType) {
             return `SELECT ?item WHERE { ?item a <${objectType}> . }`;
           }
           return `SELECT ?item WHERE { ?item ?p ?o . FILTER(regex(str(?o), "${object}", "i")) }`;
-        }
+        },
       },
       {
-        pattern: /^(how\s+many|count)\s+(.+?)$/i,
+        // Non-capturing group for "how many" or "count" - we only need the object
+        pattern: /^(?:how\s+many|count)\s+(.+?)$/i,
         intent: 'select',
         generator: (match, entities) => {
-          const [_, verb, object] = match;
+          const [_, object] = match;
           const objectType = entities.find(e => e.text === object.trim())?.uri;
           if (objectType) {
             return `SELECT (COUNT(?item) AS ?count) WHERE { ?item a <${objectType}> . }`;
           }
           return `SELECT (COUNT(?item) AS ?count) WHERE { ?item ?p ?o . FILTER(regex(str(?o), "${object}", "i")) }`;
-        }
+        },
       },
       {
-        pattern: /^(does|is|are)\s+(.+?)\s+(have|has|contain|contains)\s+(.+?)$/i,
+        // Non-capturing group for first verb - we need subject, predicate verb, and object
+        pattern: /^(?:does|is|are)\s+(.+?)\s+(have|has|contain|contains)\s+(.+?)$/i,
         intent: 'ask',
         generator: (match, entities) => {
-          const [_, verb, subject, predicate, object] = match;
+          const [_, subject, predicateVerb, object] = match;
           const subjectUri = entities.find(e => e.text === subject.trim())?.uri || '?subject';
-          const predicateUri = entities.find(e => e.text === predicate.trim())?.uri || '?predicate';
+          // predicateVerb (have/has/contain/contains) helps identify the predicate
+          const predicateUri =
+            entities.find(e => e.text === predicateVerb.trim())?.uri || '?predicate';
           const objectUri = entities.find(e => e.text === object.trim())?.uri || '?object';
-          return `ASK WHERE { <${subjectUri}> ?predicate <${objectUri}> . }`;
-        }
+          // Use actual predicate URI if found, otherwise use variable
+          const predicatePart = predicateUri !== '?predicate' ? `<${predicateUri}>` : '?predicate';
+          return `ASK WHERE { <${subjectUri}> ${predicatePart} <${objectUri}> . }`;
+        },
       },
       {
-        pattern: /^(.+?)\s+(related\s+to|connected\s+to|linked\s+to)\s+(.+?)$/i,
+        // Non-capturing group for relation phrase - we need subject and object
+        pattern: /^(.+?)\s+(?:related\s+to|connected\s+to|linked\s+to)\s+(.+?)$/i,
         intent: 'select',
         generator: (match, entities) => {
-          const [_, subject, relation, object] = match;
+          const [_, subject, object] = match;
           const subjectUri = entities.find(e => e.text === subject.trim())?.uri || subject.trim();
           const objectUri = entities.find(e => e.text === object.trim())?.uri || object.trim();
           return `SELECT ?relation WHERE {
@@ -151,8 +161,8 @@ export class NLPQueryBuilder {
             UNION
             { <${objectUri}> ?relation <${subjectUri}> . }
           }`;
-        }
-      }
+        },
+      },
     ];
   }
 
@@ -164,14 +174,17 @@ export class NLPQueryBuilder {
    * @returns {Promise<Object>} Query result with SPARQL
    */
   async buildQuery(nlQuery, store, options = {}) {
-    return tracer.startActiveSpan('nlp.build_query', async (span) => {
+    // Merge options with config for runtime overrides
+    const config = { ...this.config, ...options };
+
+    return tracer.startActiveSpan('nlp.build_query', async span => {
       const startTime = Date.now();
 
       try {
         span.setAttributes({
           'nlp.query_length': nlQuery.length,
           'nlp.store_size': store.size,
-          'nlp.cache_enabled': this.config.enableCache
+          'nlp.cache_enabled': config.enableCache,
         });
 
         // Check cache
@@ -210,8 +223,8 @@ export class NLPQueryBuilder {
         }
 
         // Fallback to LLM if enabled and confidence is low
-        if (this.config.enableLLM && confidence < this.config.minConfidence) {
-          const llmResult = await this._useLLMTranslation(normalized, store, entities);
+        if (config.enableLLM && confidence < config.minConfidence) {
+          const llmResult = await this._useLLMTranslation(normalized, store, entities, config);
           if (llmResult && llmResult.confidence > confidence) {
             sparql = llmResult.sparql;
             intent = llmResult.intent;
@@ -232,7 +245,9 @@ export class NLPQueryBuilder {
 
         // Check timeout
         if (duration > this.config.timeout) {
-          console.warn(`[NLP] Query translation exceeded timeout: ${duration}ms > ${this.config.timeout}ms`);
+          console.warn(
+            `[NLP] Query translation exceeded timeout: ${duration}ms > ${this.config.timeout}ms`
+          );
         }
 
         const result = NLPQueryResultSchema.parse({
@@ -241,7 +256,7 @@ export class NLPQueryBuilder {
           intent,
           confidence,
           method,
-          duration
+          duration,
         });
 
         // Cache result
@@ -251,14 +266,15 @@ export class NLPQueryBuilder {
 
         // Update stats
         this.stats.queries++;
-        this.stats.avgDuration = (this.stats.avgDuration * (this.stats.queries - 1) + duration) / this.stats.queries;
+        this.stats.avgDuration =
+          (this.stats.avgDuration * (this.stats.queries - 1) + duration) / this.stats.queries;
 
         span.setAttributes({
           'nlp.duration_ms': duration,
           'nlp.intent': intent,
           'nlp.confidence': confidence,
           'nlp.method': method,
-          'nlp.translation_complete': true
+          'nlp.translation_complete': true,
         });
         span.setStatus({ code: SpanStatusCode.OK });
 
@@ -293,15 +309,28 @@ export class NLPQueryBuilder {
    * @private
    */
   async _extractAndMapEntities(query, store) {
-    return tracer.startActiveSpan('nlp.extract_entities', async (span) => {
+    return tracer.startActiveSpan('nlp.extract_entities', async span => {
       try {
         const entities = [];
         const words = query.split(' ');
 
         // Extract potential entities (simple keyword extraction)
-        const keywords = words.filter(w =>
-          w.length > 3 &&
-          !['what', 'which', 'where', 'when', 'how', 'who', 'does', 'have', 'list', 'show', 'find'].includes(w)
+        const keywords = words.filter(
+          w =>
+            w.length > 3 &&
+            ![
+              'what',
+              'which',
+              'where',
+              'when',
+              'how',
+              'who',
+              'does',
+              'have',
+              'list',
+              'show',
+              'find',
+            ].includes(w)
         );
 
         // Map keywords to RDF URIs
@@ -311,7 +340,7 @@ export class NLPQueryBuilder {
             entities.push({
               text: keyword,
               uri,
-              type: await this._getEntityType(uri, store)
+              type: await this._getEntityType(uri, store),
             });
           }
         }
@@ -344,8 +373,7 @@ export class NLPQueryBuilder {
 
     // Search for matching labels
     for (const quad of store) {
-      if (quad.predicate.value === RDFS_LABEL &&
-          quad.object.value.toLowerCase().includes(text)) {
+      if (quad.predicate.value === RDFS_LABEL && quad.object.value.toLowerCase().includes(text)) {
         const uri = quad.subject.value;
         this.entityCache.set(text, uri);
         return uri;
@@ -399,7 +427,7 @@ export class NLPQueryBuilder {
           return {
             sparql,
             intent: pattern.intent,
-            confidence: 0.8 // Pattern-based confidence
+            confidence: 0.8, // Pattern-based confidence
           };
         } catch (error) {
           console.warn(`[NLP] Pattern generation failed:`, error.message);
@@ -418,55 +446,95 @@ export class NLPQueryBuilder {
    * @returns {Promise<Object|null>} LLM translation result
    * @private
    */
-  async _useLLMTranslation(query, store, entities) {
-    if (!this.config.llmApiKey) {
+  async _useLLMTranslation(query, store, entities, config = null) {
+    const cfg = config || this.config;
+    if (!cfg.llmApiKey) {
       return null;
     }
 
-    // This is a placeholder - actual implementation would call OpenAI/Anthropic API
-    // For now, return null to use pattern-based fallback
-    console.log('[NLP] LLM translation not implemented - using pattern-based fallback');
-    return null;
+    const provider = cfg.llmProvider || 'openai';
+    const model =
+      cfg.llmModel || (provider === 'anthropic' ? 'claude-3-5-sonnet-20241022' : 'gpt-4');
 
-    /*
-    // Example LLM integration (commented out):
     try {
-      const response = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.config.llmApiKey}`
-        },
-        body: JSON.stringify({
-          model: this.config.llmModel,
-          messages: [
-            {
-              role: 'system',
-              content: 'You are a SPARQL query generator. Convert natural language to SPARQL.'
-            },
-            {
-              role: 'user',
-              content: `Convert this query to SPARQL: "${query}"\n\nAvailable entities: ${JSON.stringify(entities)}`
-            }
-          ],
-          temperature: 0.3,
-          max_tokens: 500
-        })
-      });
+      let sparql;
 
-      const data = await response.json();
-      const sparql = data.choices[0].message.content;
+      if (provider === 'anthropic') {
+        // Anthropic Claude API
+        const response = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': cfg.llmApiKey,
+            'anthropic-version': '2023-06-01',
+          },
+          body: JSON.stringify({
+            model,
+            max_tokens: 500,
+            messages: [
+              {
+                role: 'user',
+                content: `You are a SPARQL query generator. Convert this natural language query to SPARQL:\n\n"${query}"\n\nAvailable entities: ${JSON.stringify(entities)}\n\nReturn only the SPARQL query, no explanation.`,
+              },
+            ],
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`Anthropic API error: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        sparql = data.content[0].text.trim();
+      } else {
+        // OpenAI API (default)
+        const response = await fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${cfg.llmApiKey}`,
+          },
+          body: JSON.stringify({
+            model,
+            messages: [
+              {
+                role: 'system',
+                content:
+                  'You are a SPARQL query generator. Convert natural language to SPARQL. Return only the SPARQL query, no explanation.',
+              },
+              {
+                role: 'user',
+                content: `Convert this query to SPARQL: "${query}"\n\nAvailable entities: ${JSON.stringify(entities)}`,
+              },
+            ],
+            temperature: 0.3,
+            max_tokens: 500,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`OpenAI API error: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        sparql = data.choices[0].message.content.trim();
+      }
+
+      // Extract SPARQL from code blocks if present
+      const codeBlockMatch = sparql.match(/```(?:sparql)?\n?(.*?)```/s);
+      if (codeBlockMatch) {
+        sparql = codeBlockMatch[1].trim();
+      }
 
       return {
         sparql,
         intent: this._inferIntent(sparql),
-        confidence: 0.9
+        confidence: 0.9,
       };
     } catch (error) {
       console.warn('[NLP] LLM translation failed:', error.message);
       return null;
     }
-    */
   }
 
   /**
@@ -476,7 +544,7 @@ export class NLPQueryBuilder {
    * @returns {string} Fallback SPARQL
    * @private
    */
-  _generateFallbackSPARQL(query, entities) {
+  _generateFallbackSPARQL(query, _entities) {
     // Generic SELECT query that searches for any triple matching the query terms
     const keywords = query.split(' ').filter(w => w.length > 3);
     const filterConditions = keywords
@@ -523,9 +591,7 @@ export class NLPQueryBuilder {
       ...this.stats,
       cacheSize: this.cache ? this.cache.size : 0,
       entityCacheSize: this.entityCache.size,
-      cacheHitRate: this.stats.queries > 0
-        ? this.stats.cacheHits / this.stats.queries
-        : 0
+      cacheHitRate: this.stats.queries > 0 ? this.stats.cacheHits / this.stats.queries : 0,
     };
   }
 }

@@ -7,7 +7,10 @@
 
 import { Store, DataFactory } from 'n3';
 import { TransactionManager } from '../../src/knowledge-engine/transaction.mjs';
-import { createRealTimeValidator, ValidationMode } from '../../src/knowledge-engine/streaming/index.mjs';
+import {
+  createRealTimeValidator,
+  ValidationMode,
+} from '../../src/knowledge-engine/streaming/index.mjs';
 
 const { namedNode, literal, quad } = DataFactory;
 
@@ -49,13 +52,13 @@ async function main() {
     strict: false,
     enableCaching: true,
     cacheSize: 100,
-    debounceMs: 50
+    debounceMs: 50,
   });
 
   console.log('Validator initialized with mode:', ValidationMode.DELTA, '\n');
 
   // Listen for violations
-  validator.on('violation', (result) => {
+  validator.on('violation', result => {
     console.error('VALIDATION VIOLATION:');
     console.error('  ID:', result.id);
     console.error('  Timestamp:', new Date(result.timestamp).toISOString());
@@ -75,19 +78,19 @@ async function main() {
   });
 
   // Listen for successful validations
-  validator.on('validated', (result) => {
+  validator.on('validated', result => {
     if (result.conforms) {
       console.log('VALIDATION PASSED:', {
         id: result.id,
         duration: result.duration + 'ms',
-        mode: result.mode
+        mode: result.mode,
       });
     }
   });
 
   // Create transaction manager with validation hook
   const txManager = new TransactionManager({
-    strictMode: false
+    strictMode: false,
   });
 
   // Add validation hook
@@ -122,9 +125,9 @@ async function main() {
         namedNode('http://example.org/alice'),
         namedNode('http://example.org/email'),
         literal('alice@example.org')
-      )
+      ),
     ],
-    removals: []
+    removals: [],
   };
 
   const result1 = await txManager.apply(store, delta1);
@@ -144,9 +147,9 @@ async function main() {
         namedNode('http://example.org/bob'),
         namedNode('http://example.org/age'),
         literal('25', namedNode('http://www.w3.org/2001/XMLSchema#integer'))
-      )
+      ),
     ],
-    removals: []
+    removals: [],
   };
 
   const result2 = await txManager.apply(store, delta2);
@@ -173,9 +176,9 @@ async function main() {
         namedNode('http://example.org/charlie'),
         namedNode('http://example.org/age'),
         literal('200', namedNode('http://www.w3.org/2001/XMLSchema#integer'))
-      )
+      ),
     ],
-    removals: []
+    removals: [],
   };
 
   const result3 = await txManager.apply(store, delta3);
@@ -199,9 +202,9 @@ async function main() {
         namedNode('http://example.org/diana'),
         namedNode('http://example.org/email'),
         literal('not-an-email')
-      )
+      ),
     ],
-    removals: []
+    removals: [],
   };
 
   const result4 = await txManager.apply(store, delta4);
@@ -215,15 +218,15 @@ async function main() {
         namedNode('http://example.org/alice'),
         namedNode('http://example.org/age'),
         literal('31', namedNode('http://www.w3.org/2001/XMLSchema#integer'))
-      )
+      ),
     ],
     removals: [
       quad(
         namedNode('http://example.org/alice'),
         namedNode('http://example.org/age'),
         literal('30', namedNode('http://www.w3.org/2001/XMLSchema#integer'))
-      )
-    ]
+      ),
+    ],
   };
 
   const result5 = await txManager.apply(store, delta5);
@@ -255,9 +258,9 @@ async function main() {
           namedNode(`http://example.org/person${i}`),
           namedNode('http://example.org/age'),
           literal(`${20 + (i % 50)}`, namedNode('http://www.w3.org/2001/XMLSchema#integer'))
-        )
+        ),
       ],
-      removals: []
+      removals: [],
     };
 
     await validator.validateDelta(delta);

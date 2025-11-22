@@ -1,17 +1,17 @@
 /**
  * @fileoverview Namespace utilities - RDF vocabulary and namespace management
- * 
+ *
  * These utilities provide comprehensive namespace management, vocabulary handling,
  * and prefix management for RDF operations.
- * 
+ *
  * @version 1.0.0
  * @author GitVan Team
  * @license MIT
  */
 
-import { DataFactory } from "n3";
-import { asNamedNode } from "./term-utils.mjs";
-import { createNamespaceId } from "./id-utils.mjs";
+import { DataFactory } from 'n3';
+import { _asNamedNode } from './term-utils.mjs';
+import { createNamespaceId } from './id-utils.mjs';
 
 const { namedNode } = DataFactory;
 
@@ -20,45 +20,45 @@ const { namedNode } = DataFactory;
  */
 export const COMMON_VOCABULARIES = {
   // Core RDF vocabularies
-  RDF: "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
-  RDFS: "http://www.w3.org/2000/01/rdf-schema#",
-  OWL: "http://www.w3.org/2002/07/owl#",
-  XSD: "http://www.w3.org/2001/XMLSchema#",
-  
+  RDF: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
+  RDFS: 'http://www.w3.org/2000/01/rdf-schema#',
+  OWL: 'http://www.w3.org/2002/07/owl#',
+  XSD: 'http://www.w3.org/2001/XMLSchema#',
+
   // Dublin Core
-  DC: "http://purl.org/dc/elements/1.1/",
-  DCTERMS: "http://purl.org/dc/terms/",
-  
+  DC: 'http://purl.org/dc/elements/1.1/',
+  DCTERMS: 'http://purl.org/dc/terms/',
+
   // FOAF
-  FOAF: "http://xmlns.com/foaf/0.1/",
-  
+  FOAF: 'http://xmlns.com/foaf/0.1/',
+
   // SKOS
-  SKOS: "http://www.w3.org/2004/02/skos/core#",
-  
+  SKOS: 'http://www.w3.org/2004/02/skos/core#',
+
   // Schema.org
-  SCHEMA: "https://schema.org/",
-  
+  SCHEMA: 'https://schema.org/',
+
   // PROV
-  PROV: "http://www.w3.org/ns/prov#",
-  
+  PROV: 'http://www.w3.org/ns/prov#',
+
   // SHACL
-  SHACL: "http://www.w3.org/ns/shacl#",
-  
+  SHACL: 'http://www.w3.org/ns/shacl#',
+
   // Time
-  TIME: "http://www.w3.org/2006/time#",
-  
+  TIME: 'http://www.w3.org/2006/time#',
+
   // Geo
-  GEO: "http://www.opengis.net/ont/geosparql#",
-  WGS84: "http://www.w3.org/2003/01/geo/wgs84_pos#",
-  
+  GEO: 'http://www.opengis.net/ont/geosparql#',
+  WGS84: 'http://www.w3.org/2003/01/geo/wgs84_pos#',
+
   // Creative Commons
-  CC: "http://creativecommons.org/ns#",
-  
+  CC: 'http://creativecommons.org/ns#',
+
   // DOAP
-  DOAP: "http://usefulinc.com/ns/doap#",
-  
+  DOAP: 'http://usefulinc.com/ns/doap#',
+
   // VCard
-  VCARD: "http://www.w3.org/2006/vcard/ns#"
+  VCARD: 'http://www.w3.org/2006/vcard/ns#',
 };
 
 /**
@@ -81,7 +81,7 @@ export const COMMON_PREFIXES = {
   wgs84: COMMON_VOCABULARIES.WGS84,
   cc: COMMON_VOCABULARIES.CC,
   doap: COMMON_VOCABULARIES.DOAP,
-  vcard: COMMON_VOCABULARIES.VCARD
+  vcard: COMMON_VOCABULARIES.VCARD,
 };
 
 /**
@@ -95,11 +95,11 @@ export class NamespaceManager {
     this.namespaces = new Map();
     this.prefixes = new Map();
     this.reverseLookup = new Map();
-    
+
     // Initialize with common vocabularies
     this.addCommonVocabularies();
   }
-  
+
   /**
    * Add common vocabularies to the manager
    */
@@ -108,7 +108,7 @@ export class NamespaceManager {
       this.addNamespace(prefix, namespace);
     }
   }
-  
+
   /**
    * Add a namespace with a prefix
    * @param {string} prefix - The prefix (e.g., 'foaf')
@@ -116,15 +116,14 @@ export class NamespaceManager {
    */
   addNamespace(prefix, namespace) {
     // Ensure namespace ends with # or /
-    const normalizedNamespace = namespace.endsWith('#') || namespace.endsWith('/') 
-      ? namespace 
-      : `${namespace}#`;
-    
+    const normalizedNamespace =
+      namespace.endsWith('#') || namespace.endsWith('/') ? namespace : `${namespace}#`;
+
     this.namespaces.set(prefix, normalizedNamespace);
     this.prefixes.set(normalizedNamespace, prefix);
     this.reverseLookup.set(normalizedNamespace, prefix);
   }
-  
+
   /**
    * Get namespace for a prefix
    * @param {string} prefix - The prefix
@@ -133,7 +132,7 @@ export class NamespaceManager {
   getNamespace(prefix) {
     return this.namespaces.get(prefix) || null;
   }
-  
+
   /**
    * Get prefix for a namespace
    * @param {string} namespace - The namespace URI
@@ -142,7 +141,7 @@ export class NamespaceManager {
   getPrefix(namespace) {
     return this.prefixes.get(namespace) || null;
   }
-  
+
   /**
    * Create a named node using a prefix and local name
    * @param {string} prefix - The prefix
@@ -156,7 +155,7 @@ export class NamespaceManager {
     }
     return namedNode(createNamespaceId(namespace, localName));
   }
-  
+
   /**
    * Expand a prefixed IRI to full IRI
    * @param {string} prefixedIRI - The prefixed IRI (e.g., 'foaf:name')
@@ -167,15 +166,15 @@ export class NamespaceManager {
     if (!localName) {
       return prefixedIRI; // Not a prefixed IRI
     }
-    
+
     const namespace = this.getNamespace(prefix);
     if (!namespace) {
       throw new Error(`Unknown prefix: ${prefix}`);
     }
-    
+
     return createNamespaceId(namespace, localName);
   }
-  
+
   /**
    * Contract a full IRI to prefixed form
    * @param {string} fullIRI - The full IRI
@@ -190,7 +189,7 @@ export class NamespaceManager {
     }
     return fullIRI;
   }
-  
+
   /**
    * Get all registered prefixes
    * @returns {string[]} Array of prefixes
@@ -198,7 +197,7 @@ export class NamespaceManager {
   getPrefixes() {
     return [...this.namespaces.keys()];
   }
-  
+
   /**
    * Get all registered namespaces
    * @returns {string[]} Array of namespace URIs
@@ -206,7 +205,7 @@ export class NamespaceManager {
   getNamespaces() {
     return [...this.namespaces.values()];
   }
-  
+
   /**
    * Export prefixes for serialization
    * @returns {Object} Object with prefix mappings
@@ -218,7 +217,7 @@ export class NamespaceManager {
     }
     return result;
   }
-  
+
   /**
    * Import prefixes from an object
    * @param {Object} prefixes - Object with prefix mappings
@@ -228,7 +227,7 @@ export class NamespaceManager {
       this.addNamespace(prefix, namespace);
     }
   }
-  
+
   /**
    * Clear all namespaces
    */
@@ -237,7 +236,7 @@ export class NamespaceManager {
     this.prefixes.clear();
     this.reverseLookup.clear();
   }
-  
+
   /**
    * Remove a namespace
    * @param {string} prefix - The prefix to remove
@@ -277,7 +276,7 @@ export const getVocabularyTerm = (vocabulary, localName) => {
  * @param {string} iri - The IRI to check
  * @returns {string|null} The vocabulary name or null if not found
  */
-export const getVocabularyForIRI = (iri) => {
+export const getVocabularyForIRI = iri => {
   for (const [vocab, namespace] of Object.entries(COMMON_VOCABULARIES)) {
     if (iri.startsWith(namespace)) {
       return vocab;
@@ -291,10 +290,10 @@ export const getVocabularyForIRI = (iri) => {
  * @param {import('n3').Store} store - The RDF store
  * @returns {Object} Statistics about vocabulary usage
  */
-export const getVocabularyStats = (store) => {
+export const getVocabularyStats = store => {
   const stats = {};
   const vocabularies = new Set();
-  
+
   for (const quad of store) {
     // Check subject
     const subjectVocab = getVocabularyForIRI(quad.subject.value);
@@ -302,16 +301,16 @@ export const getVocabularyStats = (store) => {
       vocabularies.add(subjectVocab);
       stats[subjectVocab] = (stats[subjectVocab] || 0) + 1;
     }
-    
+
     // Check predicate
     const predicateVocab = getVocabularyForIRI(quad.predicate.value);
     if (predicateVocab) {
       vocabularies.add(predicateVocab);
       stats[predicateVocab] = (stats[predicateVocab] || 0) + 1;
     }
-    
+
     // Check object if it's a named node
-    if (quad.object.termType === "NamedNode") {
+    if (quad.object.termType === 'NamedNode') {
       const objectVocab = getVocabularyForIRI(quad.object.value);
       if (objectVocab) {
         vocabularies.add(objectVocab);
@@ -319,11 +318,11 @@ export const getVocabularyStats = (store) => {
       }
     }
   }
-  
+
   return {
     vocabularies: [...vocabularies],
     usage: stats,
-    totalVocabularies: vocabularies.size
+    totalVocabularies: vocabularies.size,
   };
 };
 
@@ -332,20 +331,20 @@ export const getVocabularyStats = (store) => {
  * @param {import('n3').Store} store - The RDF store
  * @returns {Object} Validation result
  */
-export const validateNamespaces = (store) => {
-  const issues = [];
+export const validateNamespaces = store => {
+  const _issues = [];
   const usedNamespaces = new Set();
   const unknownNamespaces = new Set();
-  
+
   for (const quad of store) {
     const terms = [quad.subject, quad.predicate, quad.object];
     if (quad.graph) terms.push(quad.graph);
-    
+
     for (const term of terms) {
-      if (term.termType === "NamedNode") {
+      if (term.termType === 'NamedNode') {
         const iri = term.value;
         const vocab = getVocabularyForIRI(iri);
-        
+
         if (vocab) {
           usedNamespaces.add(vocab);
         } else {
@@ -353,7 +352,7 @@ export const validateNamespaces = (store) => {
           const hashIndex = iri.lastIndexOf('#');
           const slashIndex = iri.lastIndexOf('/');
           const index = Math.max(hashIndex, slashIndex);
-          
+
           if (index > 0) {
             const namespace = iri.slice(0, Math.max(0, index + 1));
             unknownNamespaces.add(namespace);
@@ -362,12 +361,12 @@ export const validateNamespaces = (store) => {
       }
     }
   }
-  
+
   return {
     valid: unknownNamespaces.size === 0,
     usedVocabularies: [...usedNamespaces],
     unknownNamespaces: [...unknownNamespaces],
-    issueCount: unknownNamespaces.size
+    issueCount: unknownNamespaces.size,
   };
 };
 
@@ -376,7 +375,7 @@ export const validateNamespaces = (store) => {
  * @param {Object} prefixes - Prefix mappings
  * @returns {string} Turtle prefix declarations
  */
-export const generateTurtlePrefixes = (prefixes) => {
+export const generateTurtlePrefixes = prefixes => {
   const lines = [];
   for (const [prefix, namespace] of Object.entries(prefixes)) {
     lines.push(`@prefix ${prefix}: <${namespace}> .`);
@@ -389,7 +388,7 @@ export const generateTurtlePrefixes = (prefixes) => {
  * @param {Object} prefixes - Prefix mappings
  * @returns {string} SPARQL prefix declarations
  */
-export const generateSPARQLPrefixes = (prefixes) => {
+export const generateSPARQLPrefixes = prefixes => {
   const lines = [];
   for (const [prefix, namespace] of Object.entries(prefixes)) {
     lines.push(`PREFIX ${prefix}: <${namespace}>`);
@@ -402,8 +401,8 @@ export const generateSPARQLPrefixes = (prefixes) => {
  * @param {string} namespace - Base namespace IRI
  * @returns {Function} Function that creates IRIs in the namespace
  */
-export const createNamespace = (namespace) => {
-  return (localName) => `${namespace}${localName}`;
+export const createNamespace = namespace => {
+  return localName => `${namespace}${localName}`;
 };
 
 /**
@@ -417,14 +416,14 @@ export const expandCurie = (curie, prefixes) => {
   if (colonIndex === -1) {
     return curie; // Not a CURIE
   }
-  
+
   const prefix = curie.slice(0, Math.max(0, colonIndex));
   const localName = curie.slice(Math.max(0, colonIndex + 1));
-  
+
   if (prefixes[prefix]) {
     return `${prefixes[prefix]}${localName}`;
   }
-  
+
   return curie; // Unknown prefix, return as-is
 };
 
@@ -441,7 +440,6 @@ export const shrinkIri = (iri, prefixes) => {
       return `${prefix}:${localName}`;
     }
   }
-  
+
   return iri; // No matching prefix found
 };
-

@@ -17,87 +17,58 @@ export {
   useKnowledgeEngine,
   useKnowledgeEngineContext,
   useTransaction,
-  useKnowledgeHook
+  useKnowledgeHook,
 } from './core/index.mjs';
 
 // Streaming - Real-time Updates (20% usage)
-export {
-  useChangeFeed
-} from './streaming/use-change-feed.mjs';
+export { useChangeFeed } from './streaming/use-change-feed.mjs';
 
 // Optimization - Performance Analysis (15% usage)
-export {
-  useDarkMatterCore
-} from './dark-matter/use-dark-matter-core.mjs';
+export { useDarkMatterCore } from './dark-matter/use-dark-matter-core.mjs';
 
 // Optimization - Query Analysis (10% usage)
-export {
-  useQueryAnalyzer
-} from './dark-matter/use-query-analyzer.mjs';
+export { useQueryAnalyzer } from './dark-matter/use-query-analyzer.mjs';
 
 // Error Handling (15% usage)
-export {
-  useErrorBoundary
-} from './error-recovery/use-error-boundary.mjs';
+export { useErrorBoundary } from './error-recovery/use-error-boundary.mjs';
 
 // ============================================================================
 // TIER 2: IMPORTANT (2 hooks - 20% usage)
 // ============================================================================
 
 // Utility - Graph Operations (10% usage)
-export {
-  useGraphDiff
-} from './advanced-utility/use-graph-diff.mjs';
+export { useGraphDiff } from './advanced-utility/use-graph-diff.mjs';
 
 // UI - Query Interface (10% usage)
-export {
-  useSPARQLEditor
-} from './form-ui/use-sparql-editor.mjs';
+export { useSPARQLEditor } from './form-ui/use-sparql-editor.mjs';
 
 // ============================================================================
 // TIER 3: STANDARD (9 hooks - 15% usage)
 // ============================================================================
 
 // Federation (5% usage)
-export {
-  useFederatedSystem
-} from './federation/use-federated-system.mjs';
+export { useFederatedSystem } from './federation/use-federated-system.mjs';
 
 // Streaming (3% usage)
-export {
-  useStreamProcessor
-} from './streaming/use-stream-processor.mjs';
+export { useStreamProcessor } from './streaming/use-stream-processor.mjs';
 
 // Optimization (2% usage)
-export {
-  useOptimizer
-} from './dark-matter/use-optimizer.mjs';
+export { useOptimizer } from './dark-matter/use-optimizer.mjs';
 
 // AI/Semantic (1% usage)
-export {
-  useSemanticAnalyzer
-} from './ai-semantic/use-semantic-analyzer.mjs';
+export { useSemanticAnalyzer } from './ai-semantic/use-semantic-analyzer.mjs';
 
 // Utility (1% usage each)
-export {
-  useGraphMerge
-} from './advanced-utility/use-graph-merge.mjs';
+export { useGraphMerge } from './advanced-utility/use-graph-merge.mjs';
 
 // Policy (1% usage)
-export {
-  usePolicyPack
-} from './policy-security/use-policy-pack.mjs';
+export { usePolicyPack } from './policy-security/use-policy-pack.mjs';
 
 // Error (1% usage)
-export {
-  useRecovery
-} from './error-recovery/use-recovery.mjs';
+export { useRecovery } from './error-recovery/use-recovery.mjs';
 
 // UI (1% usage each)
-export {
-  useGraphVisualizer,
-  useResultsPaginator
-} from './form-ui/index.mjs';
+export { useGraphVisualizer, useResultsPaginator } from './form-ui/index.mjs';
 
 // ============================================================================
 // TIER 4: ADVANCED (19 hooks - 5% usage)
@@ -151,13 +122,11 @@ export {
   useKnowledgeStack,
   useCRUDStack,
   useDashboardStack,
-  useProductionStack
+  useProductionStack,
 } from './composition/use-knowledge-stack.mjs';
 
 // Offline-First Support - IndexedDB persistence with sync queue
-export {
-  useOfflineStore
-} from './composition/use-offline-store.mjs';
+export { useOfflineStore } from './composition/use-offline-store.mjs';
 
 // Category exports for advanced users
 export * as Federation from './federation/index.mjs';

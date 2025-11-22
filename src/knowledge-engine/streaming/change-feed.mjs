@@ -24,7 +24,7 @@ export const ChangeType = {
   ADD: 'add',
   DELETE: 'delete',
   UPDATE: 'update',
-  TRANSACTION: 'transaction'
+  TRANSACTION: 'transaction',
 };
 
 /**
@@ -36,13 +36,15 @@ const ChangeEventSchema = z.object({
   timestamp: z.number(),
   delta: z.object({
     additions: z.array(z.any()),
-    removals: z.array(z.any())
+    removals: z.array(z.any()),
   }),
-  metadata: z.object({
-    actor: z.string().optional(),
-    transactionId: z.string().optional(),
-    source: z.string().optional()
-  }).optional()
+  metadata: z
+    .object({
+      actor: z.string().optional(),
+      transactionId: z.string().optional(),
+      source: z.string().optional(),
+    })
+    .optional(),
 });
 
 /**
@@ -55,11 +57,13 @@ const ChangeFeedConfigSchema = z.object({
   batchSize: z.number().min(1).default(10),
   batchInterval: z.number().min(10).default(1000),
   enableCompression: z.boolean().default(false),
-  observability: z.object({
-    serviceName: z.string().default('unrdf-change-feed'),
-    enableTracing: z.boolean().default(true),
-    enableMetrics: z.boolean().default(true)
-  }).optional()
+  observability: z
+    .object({
+      serviceName: z.string().default('unrdf-change-feed'),
+      enableTracing: z.boolean().default(true),
+      enableMetrics: z.boolean().default(true),
+    })
+    .optional(),
 });
 
 /**
@@ -80,16 +84,14 @@ export class ChangeFeed extends EventEmitter {
     this.isActive = false;
 
     // Observability
-    this.observability = createObservabilityManager(
-      this.config.observability || {}
-    );
+    this.observability = createObservabilityManager(this.config.observability || {});
 
     // Metrics
     this.metrics = {
       changesProcessed: 0,
       changesEmitted: 0,
       batchesSent: 0,
-      errorCount: 0
+      errorCount: 0,
     };
 
     // Initialize observability
@@ -145,7 +147,7 @@ export class ChangeFeed extends EventEmitter {
    * @returns {string} Change ID
    */
   recordChange(delta, metadata = {}) {
-    return tracer.startActiveSpan('change-feed.record', (span) => {
+    return tracer.startActiveSpan('change-feed.record', span => {
       try {
         if (!this.isActive) {
           throw new Error('Change feed is not active');
@@ -167,16 +169,16 @@ export class ChangeFeed extends EventEmitter {
           timestamp: Date.now(),
           delta: {
             additions: delta.additions || [],
-            removals: delta.removals || []
+            removals: delta.removals || [],
           },
-          metadata
+          metadata,
         });
 
         span.setAttributes({
           'change.id': change.id,
           'change.type': change.type,
           'change.additions_count': change.delta.additions.length,
-          'change.removals_count': change.delta.removals.length
+          'change.removals_count': change.delta.removals.length,
         });
 
         this.metrics.changesProcessed++;
@@ -201,7 +203,7 @@ export class ChangeFeed extends EventEmitter {
         span.recordException(error);
         span.setStatus({
           code: SpanStatusCode.ERROR,
-          message: error.message
+          message: error.message,
         });
         span.end();
         this.metrics.errorCount++;
@@ -255,7 +257,7 @@ export class ChangeFeed extends EventEmitter {
       return;
     }
 
-    return tracer.startActiveSpan('change-feed.flush-batch', (span) => {
+    return tracer.startActiveSpan('change-feed.flush-batch', span => {
       try {
         span.setAttribute('batch.size', this.batchBuffer.length);
 
@@ -263,7 +265,7 @@ export class ChangeFeed extends EventEmitter {
           id: randomUUID(),
           changes: [...this.batchBuffer],
           timestamp: Date.now(),
-          count: this.batchBuffer.length
+          count: this.batchBuffer.length,
         };
 
         this.emit('batch', batch);
@@ -279,7 +281,7 @@ export class ChangeFeed extends EventEmitter {
         span.recordException(error);
         span.setStatus({
           code: SpanStatusCode.ERROR,
-          message: error.message
+          message: error.message,
         });
         span.end();
         this.observability.recordError(error, { context: 'flush-batch' });
@@ -366,7 +368,7 @@ export class ChangeFeed extends EventEmitter {
       ...this.metrics,
       historySize: this.history.length,
       batchBufferSize: this.batchBuffer.length,
-      isActive: this.isActive
+      isActive: this.isActive,
     };
   }
 
@@ -391,7 +393,7 @@ export class ChangeFeed extends EventEmitter {
       removals,
       count: changes.length,
       startTime: changes[0]?.timestamp,
-      endTime: changes[changes.length - 1]?.timestamp
+      endTime: changes[changes.length - 1]?.timestamp,
     };
   }
 
@@ -404,11 +406,11 @@ export class ChangeFeed extends EventEmitter {
     const { batchSize = 1 } = options;
     let buffer = [];
 
-    const changeHandler = (change) => {
+    const changeHandler = change => {
       buffer.push(change);
     };
 
-    const batchHandler = (batch) => {
+    const batchHandler = batch => {
       buffer.push(...batch.changes);
     };
 
@@ -470,7 +472,7 @@ export function createChangeFeedHook(feed, options = {}) {
       try {
         feed.recordChange(delta, {
           source: 'transaction-hook',
-          ...options.metadata
+          ...options.metadata,
         });
       } catch (error) {
         console.error('[ChangeFeedHook] Failed to record change:', error.message);
@@ -478,6 +480,6 @@ export function createChangeFeedHook(feed, options = {}) {
           throw error;
         }
       }
-    }
+    },
   };
 }

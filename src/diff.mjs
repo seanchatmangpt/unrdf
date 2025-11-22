@@ -3,7 +3,7 @@
  * @module diff
  */
 
-import { z } from 'zod'
+import { z } from 'zod';
 
 /**
  * @typedef {import('n3').Quad} Quad
@@ -70,12 +70,12 @@ export const DiffTripleSchema = z.object({
   subject: z.string(),
   predicate: z.string(),
   object: z.string(),
-})
+});
 
 export const GraphDiffSchema = z.object({
   added: z.array(DiffTripleSchema),
   removed: z.array(DiffTripleSchema),
-})
+});
 
 export const OntologyChangeSchema = z
   .object({
@@ -83,12 +83,12 @@ export const OntologyChangeSchema = z
     entity: z.string().optional(),
     role: z.string().optional(),
   })
-  .passthrough()
+  .passthrough();
 
 export const OntologyDiffSchema = z.object({
   triples: GraphDiffSchema,
   changes: z.array(OntologyChangeSchema),
-})
+});
 
 /**
  * Local Quad-like schema for deltas.
@@ -99,7 +99,7 @@ const QuadLikeSchema = z.object({
   predicate: z.object({ value: z.string() }),
   object: z.object({ value: z.string() }),
   graph: z.object({ value: z.string() }).optional(),
-})
+});
 
 /**
  * Local Delta schema (additions/removals of quads).
@@ -108,7 +108,7 @@ const QuadLikeSchema = z.object({
 export const DeltaLikeSchema = z.object({
   additions: z.array(QuadLikeSchema),
   removals: z.array(QuadLikeSchema),
-})
+});
 
 /* ========================================================================= */
 /* Internal helpers                                                         */
@@ -125,7 +125,7 @@ export function quadToDiffTriple(quad) {
     subject: quad.subject.value,
     predicate: quad.predicate.value,
     object: quad.object.value,
-  }
+  };
 }
 
 /**
@@ -140,7 +140,7 @@ export function quadToDiffTriple(quad) {
  */
 export function diffTripleKey(t) {
   // Use a delimiter unlikely to appear in IRIs; whitespace is fine for most cases.
-  return `${t.subject} ${t.predicate} ${t.object}`
+  return `${t.subject} ${t.predicate} ${t.object}`;
 }
 
 /**
@@ -151,12 +151,12 @@ export function diffTripleKey(t) {
  */
 export function collectDiffTriplesFromStore(store) {
   if (!store || typeof store.getQuads !== 'function') {
-    throw new TypeError('collectDiffTriplesFromStore: store must implement getQuads()')
+    throw new TypeError('collectDiffTriplesFromStore: store must implement getQuads()');
   }
 
   /** @type {Quad[]} */
-  const quads = store.getQuads(null, null, null, null)
-  return quads.map(quadToDiffTriple)
+  const quads = store.getQuads(null, null, null, null);
+  return quads.map(quadToDiffTriple);
 }
 
 /**
@@ -166,11 +166,11 @@ export function collectDiffTriplesFromStore(store) {
  * @returns {Set<string>}
  */
 function buildTripleKeySet(triples) {
-  const set = new Set()
+  const set = new Set();
   for (const t of triples) {
-    set.add(diffTripleKey(t))
+    set.add(diffTripleKey(t));
   }
-  return set
+  return set;
 }
 
 /* ========================================================================= */
@@ -185,32 +185,32 @@ function buildTripleKeySet(triples) {
  * @returns {GraphDiff}
  */
 export function diffGraphFromStores(beforeStore, afterStore) {
-  const beforeTriples = collectDiffTriplesFromStore(beforeStore)
-  const afterTriples = collectDiffTriplesFromStore(afterStore)
+  const beforeTriples = collectDiffTriplesFromStore(beforeStore);
+  const afterTriples = collectDiffTriplesFromStore(afterStore);
 
-  const beforeSet = buildTripleKeySet(beforeTriples)
-  const afterSet = buildTripleKeySet(afterTriples)
+  const beforeSet = buildTripleKeySet(beforeTriples);
+  const afterSet = buildTripleKeySet(afterTriples);
 
   /** @type {DiffTriple[]} */
-  const added = []
+  const added = [];
   /** @type {DiffTriple[]} */
-  const removed = []
+  const removed = [];
 
   for (const t of afterTriples) {
-    const key = diffTripleKey(t)
+    const key = diffTripleKey(t);
     if (!beforeSet.has(key)) {
-      added.push(t)
+      added.push(t);
     }
   }
 
   for (const t of beforeTriples) {
-    const key = diffTripleKey(t)
+    const key = diffTripleKey(t);
     if (!afterSet.has(key)) {
-      removed.push(t)
+      removed.push(t);
     }
   }
 
-  return GraphDiffSchema.parse({ added, removed })
+  return GraphDiffSchema.parse({ added, removed });
 }
 
 /**
@@ -221,14 +221,14 @@ export function diffGraphFromStores(beforeStore, afterStore) {
  * @returns {GraphDiff}
  */
 export function diffGraphFromDelta(delta) {
-  const validated = DeltaLikeSchema.parse(delta)
+  const validated = DeltaLikeSchema.parse(delta);
 
   /** @type {DiffTriple[]} */
-  const added = validated.additions.map(quadToDiffTriple)
+  const added = validated.additions.map(quadToDiffTriple);
   /** @type {DiffTriple[]} */
-  const removed = validated.removals.map(quadToDiffTriple)
+  const removed = validated.removals.map(quadToDiffTriple);
 
-  return GraphDiffSchema.parse({ added, removed })
+  return GraphDiffSchema.parse({ added, removed });
 }
 
 /* ========================================================================= */
@@ -243,29 +243,29 @@ export function diffGraphFromDelta(delta) {
  * @returns {OntologyDiff}
  */
 export function diffOntologyFromGraphDiff(graphDiff, lens) {
-  const validatedGraphDiff = GraphDiffSchema.parse(graphDiff)
+  const validatedGraphDiff = GraphDiffSchema.parse(graphDiff);
 
   /** @type {OntologyChange[]} */
-  const changes = []
+  const changes = [];
 
   for (const t of validatedGraphDiff.added) {
-    const change = lens(t, 'added')
+    const change = lens(t, 'added');
     if (change) {
-      changes.push(OntologyChangeSchema.parse(change))
+      changes.push(OntologyChangeSchema.parse(change));
     }
   }
 
   for (const t of validatedGraphDiff.removed) {
-    const change = lens(t, 'removed')
+    const change = lens(t, 'removed');
     if (change) {
-      changes.push(OntologyChangeSchema.parse(change))
+      changes.push(OntologyChangeSchema.parse(change));
     }
   }
 
   return OntologyDiffSchema.parse({
     triples: validatedGraphDiff,
     changes,
-  })
+  });
 }
 
 /**
@@ -277,8 +277,8 @@ export function diffOntologyFromGraphDiff(graphDiff, lens) {
  * @returns {OntologyDiff}
  */
 export function diffOntologyFromStores(beforeStore, afterStore, lens) {
-  const graphDiff = diffGraphFromStores(beforeStore, afterStore)
-  return diffOntologyFromGraphDiff(graphDiff, lens)
+  const graphDiff = diffGraphFromStores(beforeStore, afterStore);
+  return diffOntologyFromGraphDiff(graphDiff, lens);
 }
 
 /**
@@ -291,8 +291,8 @@ export function diffOntologyFromStores(beforeStore, afterStore, lens) {
  * @returns {OntologyDiff}
  */
 export function diffOntologyFromDelta(delta, lens) {
-  const graphDiff = diffGraphFromDelta(delta)
-  return diffOntologyFromGraphDiff(graphDiff, lens)
+  const graphDiff = diffGraphFromDelta(delta);
+  return diffOntologyFromGraphDiff(graphDiff, lens);
 }
 
 /* ========================================================================= */
@@ -306,15 +306,15 @@ export function diffOntologyFromDelta(delta, lens) {
  * @returns {Record<string, number>}
  */
 export function summarizeChangesByKind(ontologyDiff) {
-  const validated = OntologyDiffSchema.parse(ontologyDiff)
+  const validated = OntologyDiffSchema.parse(ontologyDiff);
   /** @type {Record<string, number>} */
-  const summary = {}
+  const summary = {};
 
   for (const change of validated.changes) {
-    summary[change.kind] = (summary[change.kind] || 0) + 1
+    summary[change.kind] = (summary[change.kind] || 0) + 1;
   }
 
-  return summary
+  return summary;
 }
 
 /**
@@ -325,6 +325,6 @@ export function summarizeChangesByKind(ontologyDiff) {
  * @returns {OntologyChange[]}
  */
 export function changesForEntity(ontologyDiff, entityIri) {
-  const validated = OntologyDiffSchema.parse(ontologyDiff)
-  return validated.changes.filter((c) => c.entity === entityIri)
+  const validated = OntologyDiffSchema.parse(ontologyDiff);
+  return validated.changes.filter(c => c.entity === entityIri);
 }

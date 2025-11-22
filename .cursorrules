@@ -1,63 +1,448 @@
-# zod-to-from Project Rules
+# UNRDF Project Rules
 
 ## Package Manager
 - **PNPM ONLY**: Use pnpm exclusively for all package management operations
 - Never use npm, yarn, or other package managers
 - All scripts and commands must use pnpm
+- Always use `pnpm add <package>` to add dependencies
+- Always use `pnpm remove <package>` to remove dependencies
+- Never edit package.json dependencies directly
 
 ## File Format
 - **MJS ONLY**: All source files must use `.mjs` extension
 - **NO TYPESCRIPT**: Do not write TypeScript files (.ts, .tsx)
 - Use JavaScript with JSDoc for type safety and documentation
+- Pure ESM modules (`"type": "module"` in package.json)
+
+## Project Structure
+
+### Source Code (`src/`)
+- `src/knowledge-engine/` - Core knowledge hooks system, transaction management, policy packs
+  - `ai-semantic/` - AI/semantic integration modules
+  - `dark-matter/` - Dark matter optimization modules
+  - `federation/` - Distributed federation modules
+  - `monitoring/` - Monitoring and observability
+  - `security/` - Security validators
+  - `streaming/` - Real-time streaming modules
+  - `utils/` - Knowledge engine utilities
+  - `validators/` - Validation utilities
+- `src/react-hooks/` - React integration hooks
+  - `core/` - Core React hooks (useKnowledgeEngine, useTransaction, etc.)
+  - `streaming/` - Streaming hooks (useChangeFeed, useStreamProcessor)
+  - `federation/` - Federation hooks (useFederatedSystem)
+  - `dark-matter/` - Dark matter hooks (useDarkMatterCore, useQueryAnalyzer)
+  - `ai-semantic/` - AI/semantic hooks (useSemanticAnalyzer)
+  - `advanced-utility/` - Advanced utility hooks (useGraphDiff, useGraphMerge)
+  - `policy-security/` - Policy and security hooks (usePolicyPack)
+  - `error-recovery/` - Error recovery hooks (useErrorBoundary, useRecovery)
+  - `form-ui/` - Form UI hooks (useSPARQLEditor, useGraphVisualizer)
+  - `composition/` - Composition hooks (useKnowledgeStack, useOfflineStore)
+  - `batch/` - Batch operation hooks
+  - `cache/` - Caching hooks
+  - `context/` - Context hooks
+  - `effects/` - Effect hooks
+  - `htf/` - HTF framework hooks
+  - `knowledge-hooks/` - Knowledge hook hooks
+  - `query/` - Query hooks
+  - `storage/` - Storage hooks
+  - `utils/` - React hooks utilities
+- `src/cli/` - Simple CLI implementation (active entrypoint at `src/cli/index.mjs`)
+  - Commands: `init`, `autonomic`, `store`
+  - Entry point: `src/cli/index.mjs` (exports to `./cli` in package.json)
+- `src/composables/` - RDF composables
+  - `use-canon.mjs` - Canonicalization
+  - `use-delta.mjs` - Change tracking
+  - `use-graph.mjs` - Graph operations
+  - `use-prefixes.mjs` - Prefix management
+  - `use-reasoner.mjs` - Reasoning
+  - `use-terms.mjs` - Term operations
+  - `use-turtle.mjs` - Turtle serialization
+  - `use-validator.mjs` - Validation
+  - `use-zod.mjs` - Zod integration
+- `src/context/` - Store context management and configuration
+- `src/browser/` - Browser-specific implementations (IndexedDB, browser shims)
+- `src/project-engine/` - Project analysis, automation, MAPEK orchestration
+  - `lens/` - Project lens utilities
+- `src/sidecar/` - gRPC sidecar client
+- `src/utils/` - Shared utilities (graph, sparql, validation, etc.)
+- `src/engines/` - RDF engine abstraction
+- `src/domain/` - Domain models and formatters
+  - `formatters/` - Domain formatters
+  - `models/` - Domain models
+- `src/security/` - Security and sandbox implementations
+  - `sandbox/` - Sandbox implementations
+- `src/validation/` - Validation utilities
+- `src/diff.mjs` - Diff utilities
+- `src/ontologies/` - Ontology definitions (TTL files)
+- `src/profiling/` - Profiling utilities (CPU, memory, latency)
+- `src/integration/` - Integration utilities (nunjucks filters)
+- `src/test-utils/` - Testing utilities
+- `src/ken.mjs` - Ken module
+- `src/ken-parliment.mjs` - Ken parliament module
+- `src/knowledge-engine.mjs` - Knowledge engine entry point
+
+### Test Files (`test/`)
+- `test/**/*.test.mjs` - Vitest test files
+- `test/**/*.spec.mjs` - Behavior test suites
+- `test/e2e/` - End-to-end tests with testcontainers
+- `test/browser/` - Browser compatibility tests
+- `test/knowledge-engine/` - Knowledge engine tests
+- `test/react-hooks/` - React hooks tests (dark-matter, advanced-utility, policy-security, error-recovery, form-ui, composition)
+- `test/streaming/` - Streaming tests
+- `test/federation/` - Federation tests
+- `test/validation/` - Validation tests
+- `test/performance/` - Performance tests
+- `test/project-engine/` - Project engine tests
+- `test-data/` - Shared test fixtures
+
+### CLI Structure
+- `src/cli/` - Simple CLI (3 commands: init, autonomic, store)
+  - Active entrypoint: `src/cli/index.mjs`
+  - Exported as `./cli` in package.json
+- `cli/` - Full v2 CLI structure (noun-verb pattern)
+  - `cli/commands/` - CLI command implementations (context, graph, hook, policy, sidecar, store)
+  - `cli/core/` - CLI core (router, context, config, completion, plugin-loader)
+  - `cli/formatters/` - Output formatters (json, table, tree, yaml)
+  - `cli/middleware/` - Middleware (auth, error-handler, telemetry, validation)
+  - Entry point: `cli/index.mjs` (not currently used as main entrypoint)
+
+### Other Directories
+- `examples/` - Example code demonstrating usage
+- `docs/` - Documentation (API, guides, tutorials)
+- `sidecar/` - Sidecar implementation and gRPC server
+- `playground/` - Playground application
+- `policy-packs/` - Policy pack definitions
+- `terraform/` - Terraform infrastructure as code
+- `k8s/` - Kubernetes deployment manifests
+- `validation/` - Validation scripts and utilities
+- `dist/` - Build output (ephemeral, gitignored)
+- `cli-legacy/` - Legacy CLI implementation
+- `completions/` - Shell completion scripts
+- `templates/` - Project templates
+- `test-policy-packs/` - Test policy packs
+- `hooks/` - Example hook definitions
+
+## Build System
+- Uses `build.config.mjs` (obuild) for Node.js builds
+- Uses `build.browser.config.mjs` for browser builds
+- Builds output to `dist/` directory
+- Build entries: `src/index.mjs`, `src/composables/index.mjs`, `src/utils/index.mjs`, `src/engines/index.mjs`, `src/knowledge-engine.mjs`, `src/knowledge-engine/browser.mjs`
+- Note: `src/cli.mjs` is referenced in build.config.mjs but does not exist (build config may need update)
+- Run `pnpm build` to execute build
+- Run `pnpm build:browser` for browser-specific builds
+
+## Testing
+- **Vitest** - Test framework (configured in `vitest.config.mjs`)
+- Test files: `test/**/*.test.mjs`
+- Coverage thresholds: 95% (branches/functions/lines/statements)
+- Single-threaded execution for AI agent compatibility
+- Run `pnpm test` for tests with coverage
+- Run `pnpm test:watch` for watch mode
+- Run `pnpm test:e2e` for end-to-end tests
+- Run `pnpm test:k8s` for Kubernetes tests
+- Run `pnpm test:dark-matter` for dark matter tests
+- Run `pnpm test:browser` for browser tests
 
 ## Code Style
 - **JSDoc ONLY**: Use JSDoc comments for all type annotations and documentation
 - No TypeScript type annotations in code
-- Use JSDoc `@param`, `@returns`, `@typedef`, etc. for type information
-- Follow JSDoc best practices for comprehensive documentation
+- Use JSDoc `@param`, `@returns`, `@typedef`, `@type`, etc. for type information
+- 2-space indentation
+- Single quotes for strings
+- Trailing commas on multiline literals
+- ESLint with JSDoc plugin enforcement
+- Prettier for formatting
+- Filenames use kebab-case
+- Exports use camelCase for functions, PascalCase for types/classes
 
-## Build System
-- Build-less by design - use `.mjs` files directly
-- No TypeScript compilation step required
-- Use JSDoc for type checking and IDE support
+## Development Commands
+- `pnpm install` - Install dependencies
+- `pnpm dev` - Run CLI locally with live reload (`node src/cli/index.mjs dev`)
+- `pnpm build` - Build project via `build.config.mjs`
+- `pnpm build:browser` - Build browser bundle
+- `pnpm test` - Run Vitest with coverage
+- `pnpm test:watch` - Run Vitest in watch mode
+- `pnpm test:e2e` - Run end-to-end tests
+- `pnpm test:k8s` - Run Kubernetes tests
+- `pnpm test:dark-matter` - Run dark matter tests
+- `pnpm test:browser` - Run browser tests
+- `pnpm lint` - Run ESLint
+- `pnpm lint:fix` - Fix ESLint issues
+- `pnpm format` - Format code with Prettier
+- `pnpm format:check` - Check formatting
+- `pnpm docs` - Generate JSDoc documentation
+- `pnpm docs:serve` - Serve JSDoc documentation
+- `pnpm clean` - Clean build artifacts
+- `pnpm precommit` - Run pre-commit checks (lint + test)
+- `pnpm ci:test` - Run CI test suite
+- `pnpm ci:build` - Run CI build
+- `pnpm ci:deploy` - Run CI deployment
 
-## Examples
+## Happy Path Development
+- Focus on direct implementation without excessive error handling
+- Assume valid inputs and trust the system
+- No TODO comments - implement features completely
+- No false positives - ensure correctness
+- Write code that works for the expected happy path
+- Avoid defensive programming patterns
+
+## JSDoc Examples
 
 ### ✅ Correct JSDoc Usage
 ```javascript
 /**
- * Parse input from a specified format into a Zod-validated object
+ * Parse RDF data from a specified format
  * @param {import('zod').ZodSchema} schema - The Zod schema to validate against
- * @param {string} format - The input format (e.g., 'json', 'yaml', 'toml')
+ * @param {string} format - The input format (e.g., 'turtle', 'jsonld', 'ntriples')
  * @param {string} input - The input string to parse
  * @param {Object} [opts] - Optional configuration
- * @returns {Promise<any>} The parsed and validated object
+ * @param {boolean} [opts.strict=false] - Enable strict parsing
+ * @returns {Promise<import('n3').Store>} The parsed RDF store
  */
-export async function parseFrom(schema, format, input, opts = {}) {
+export async function parseRDF(schema, format, input, opts = {}) {
   // implementation
 }
 ```
 
 ### ❌ Incorrect TypeScript Usage
 ```typescript
-export async function parseFrom<T>(
+export async function parseRDF<T>(
   schema: ZodSchema<T>,
   format: string,
   input: string,
-  opts: ZTFOptions = {}
-): Promise<T> {
+  opts: ParseOptions = {}
+): Promise<Store> {
   // implementation
 }
 ```
 
-## Commands
-- `pnpm install` - Install dependencies
-- `pnpm dev` - Run development server/tests
-- `pnpm build` - Build project (if needed)
-- `pnpm test` - Run tests
-- `pnpm lint` - Run linting
+## Entry Points
+- Main: `src/index.mjs` (exports as `.`)
+- Knowledge Engine: `src/knowledge-engine/index.mjs` (exports as `./knowledge-engine`)
+- Knowledge Engine Lite: `src/knowledge-engine/lite.mjs` (exports as `./knowledge-engine/lite`)
+- React Hooks: `src/react-hooks/index.mjs` (exports as `./react-hooks`)
+- React Hooks Core: `src/react-hooks/core/index.mjs` (exports as `./react-hooks/core`)
+- React Hooks Streaming: `src/react-hooks/streaming/index.mjs` (exports as `./react-hooks/streaming`)
+- React Hooks Federation: `src/react-hooks/federation/index.mjs` (exports as `./react-hooks/federation`)
+- React Hooks Dark Matter: `src/react-hooks/dark-matter/index.mjs` (exports as `./react-hooks/dark-matter`)
+- React Hooks AI Semantic: `src/react-hooks/ai-semantic/index.mjs` (exports as `./react-hooks/ai-semantic`)
+- React Hooks Advanced Utility: `src/react-hooks/advanced-utility/index.mjs` (exports as `./react-hooks/advanced-utility`)
+- React Hooks Policy Security: `src/react-hooks/policy-security/index.mjs` (exports as `./react-hooks/policy-security`)
+- React Hooks Error Recovery: `src/react-hooks/error-recovery/index.mjs` (exports as `./react-hooks/error-recovery`)
+- React Hooks Form UI: `src/react-hooks/form-ui/index.mjs` (exports as `./react-hooks/form-ui`)
+- React Hooks Composition: `src/react-hooks/composition/index.mjs` (exports as `./react-hooks/composition`)
+- CLI: `src/cli/index.mjs` (exports as `./cli`)
+- Composables: `src/composables/*.mjs` (exports as `./composables/*`)
 
-DO NOT ADD OR REMOVE DEPENDENCIES DIRECTLY IN THE package.json FILE.
+## Autonomic Hyper-Intelligence Insights
 
-ALWAYS USE pnpm add <package> to add dependencies.
-ALWAYS USE pnpm remove <package> to remove dependencies.
+### System-Level Thinking Patterns
+
+**Think in Layers, Not Lines**:
+- Knowledge graph is the substrate layer - all other layers query it
+- Hooks are the reactive layer - they respond to graph changes
+- Applications are the presentation layer - they consume hooks
+- Never duplicate logic across layers - query the graph instead
+
+**Content-Addressed Everything**:
+- Conditions, policies, and rules are content-addressed (hash-based)
+- This enables verification, deduplication, and provenance
+- When generating code, prefer content-addressed identifiers over sequential IDs
+- Example: Hook conditions are identified by their SPARQL hash, not by name
+
+**Declarative Over Imperative**:
+- Define *what* to monitor (SPARQL conditions), not *how* to check
+- Let the system figure out execution order and optimization
+- Knowledge hooks are declarative - they describe desired state, not steps
+
+### MAPEK Autonomic Loop Principles
+
+**Monitor-Analyze-Plan-Execute-Knowledge**:
+- **Monitor**: Always observe system state through RDF queries, not polling
+- **Analyze**: Use gap finder, type auditor, hotspot analyzer to interpret findings
+- **Plan**: Generate fix plans that can be auto-executed or require manual review
+- **Execute**: Apply fixes through knowledge hooks (transactional, auditable)
+- **Knowledge**: Learn patterns from executions and update policies
+
+**When Implementing Features**:
+1. First, add monitoring (what state to observe)
+2. Then, add analysis (how to interpret observations)
+3. Finally, add execution (how to respond)
+
+**Autonomic Properties** (aim for 0.8+ maturity):
+- **Self-Configuration** (0.92): Policy packs auto-apply, hooks auto-trigger
+- **Self-Healing** (0.87): Effect sandboxing isolates failures, graceful degradation
+- **Self-Optimization** (0.78): Query optimization, resource allocation
+- **Self-Protection** (0.95): Lockchain provides cryptographic audit trail
+
+### Dark Matter 80/20 Optimization
+
+**The Core Principle**:
+- 20% of components deliver 80% of value
+- 20% of queries account for 80% of performance impact
+- 20% of code paths handle 80% of use cases
+
+**When Writing Code**:
+- Identify the critical 20% first - implement that completely
+- Defer the remaining 80% until needed
+- Use `DarkMatterFactory` to enable only core components
+- Performance targets: P50 < 0.2ms, P99 < 2ms for critical paths
+
+**Query Optimization Strategy**:
+- Identify top 20% slowest queries (critical path)
+- Apply high-impact rules first: filter pushdown, join reordering, early LIMIT
+- Measure impact ratio - if 20% of queries take 80% of time, optimize those
+- Use `QueryAnalyzer` and `CriticalPathIdentifier` to find bottlenecks
+
+**Component Prioritization**:
+- Tier 1 (60% usage): Transaction manager, hook manager, effect sandbox
+- Tier 2 (20% usage): Policy packs, observability
+- Tier 3 (15% usage): Advanced features (federation, streaming)
+- Tier 4 (5% usage): Specialized features (AI semantic, HTF framework)
+
+### Knowledge Graph Architectural Patterns
+
+**Graph as Single Source of Truth**:
+- All application state should be queryable from the graph
+- Never maintain separate state stores - derive from graph
+- Use SPARQL to express business logic, not JavaScript conditionals
+- Example: Instead of `if (user.role === 'admin')`, use `ASK { ?user :hasRole :Admin }`
+
+**Delta-Driven Reactivity**:
+- Knowledge hooks trigger on graph deltas (changes), not polling
+- Use `useDelta` composable to track changes
+- Hooks evaluate conditions against delta + current state
+- This enables real-time reactivity without event buses
+
+**Content-Addressed Conditions**:
+- Hook conditions are SPARQL queries, identified by hash
+- Same condition = same hash = deduplication
+- Conditions are verifiable standalone - can be audited independently
+- When creating hooks, prefer reusable condition patterns
+
+**Transaction Boundaries**:
+- All graph modifications happen within transactions
+- Transactions are ACID - atomic, consistent, isolated, durable
+- Use `TransactionManager` for multi-step operations
+- Receipts provide cryptographic proof of transaction execution
+
+### Meta-Cognitive Patterns for Code Generation
+
+**Context-Aware Decision Making**:
+- Before implementing, query the graph: "What similar patterns exist?"
+- Check for existing hooks that solve similar problems
+- Look for policy packs that might apply
+- Use `project-engine` tools to understand system state
+
+**Proactive Problem Prevention**:
+- Use type auditor to catch mismatches before runtime
+- Use gap finder to identify missing roles/components
+- Use hotspot analyzer to find complexity before it becomes technical debt
+- Run MAPEK loop during development, not just in production
+
+**Emergent Behavior Understanding**:
+- System behavior emerges from hook interactions, not explicit orchestration
+- When debugging, trace hook execution chains, not linear code flow
+- Use observability manager to understand system-wide patterns
+- Look for hook conflicts or circular dependencies
+
+**Pattern Recognition**:
+- Recurring problems indicate missing abstractions - create composables
+- Similar hooks suggest policy pack opportunities
+- Performance patterns indicate optimization targets
+- Test failures often reveal missing validation hooks
+
+### Knowledge Substrate Principles
+
+**Ephemeral Artifacts**:
+- Generated code, configs, and docs are ephemeral - regenerate from graph
+- Store the "why" in the graph, generate the "how" on demand
+- This eliminates technical debt - artifacts don't drift from source of truth
+- Use `project-engine` to materialize artifacts from graph structure
+
+**Deterministic Generation**:
+- Same graph state + same templates = same output
+- This enables verification, diffing, and rollback
+- When generating code, ensure idempotency
+- Use content-addressed templates (identified by hash)
+
+**Multi-Agent Coordination**:
+- Agents share knowledge through distributed memory (Claude-Flow)
+- Use namespaced keys: `swarm/{agent-id}/`, `swarm/shared/`
+- Consensus mechanisms for architectural decisions
+- Conflict resolution through priority hierarchy (PRIMARY > SECONDARY > TERTIARY)
+
+### Advanced Optimization Strategies
+
+**Query Pattern Optimization**:
+- Variable predicates (full graph scans) cost 100x more - avoid when possible
+- Push filters closer to triple patterns (filter pushdown)
+- Reorder joins by selectivity (most selective first)
+- Add LIMIT to unbounded queries (early LIMIT)
+
+**Caching Strategy**:
+- Cache query results, not graph state (graph is source of truth)
+- Use `QueryCache` for frequently executed queries
+- Invalidate cache on graph mutations (delta-driven)
+- Cache hook condition evaluations (conditions are content-addressed)
+
+**Performance Targets** (SLOs):
+- P50 hook latency: 0.2ms (200 microseconds)
+- P99 hook latency: 2ms
+- Receipt write median: 5ms
+- Hook throughput: 10,000 executions/minute
+- Error isolation: 100% (failures don't cascade)
+
+### Autonomic Development Workflow
+
+**Before Writing Code**:
+1. Query the graph: "Does this pattern already exist?"
+2. Check for existing hooks/policies that solve the problem
+3. Identify the critical 20% that delivers 80% of value
+4. Plan the MAPEK loop: what to monitor, how to analyze, what to execute
+
+**While Writing Code**:
+1. Use composables for RDF operations (don't reinvent)
+2. Prefer SPARQL for business logic (declarative)
+3. Use Zod schemas for validation (runtime type safety)
+4. Generate content-addressed identifiers (hash-based)
+
+**After Writing Code**:
+1. Run MAPEK loop to detect gaps/type issues/hotspots
+2. Measure performance against SLOs
+3. Check for hook conflicts or circular dependencies
+4. Verify content-addressed patterns (same input = same output)
+
+### Critical Insights for AI Agents
+
+**The Graph is the API**:
+- Don't create REST endpoints - query the graph with SPARQL
+- Don't create event buses - use knowledge hooks for reactivity
+- Don't create separate databases - the graph is the database
+- Don't create manual audit trails - lockchain provides cryptographic proof
+
+**Hooks are the Integration Layer**:
+- Hooks connect graph changes to application behavior
+- Hooks are composable - chain them for complex workflows
+- Hooks are testable - conditions are SPARQL (declarative)
+- Hooks are auditable - every execution creates a receipt
+
+**Policy Packs are the Governance Layer**:
+- Policy packs encode business rules as SPARQL + SHACL
+- Policy packs are content-addressed (verifiable, shareable)
+- Policy packs auto-apply (self-configuration)
+- Policy packs enable compliance without manual audits
+
+**The 80/20 Rule is Everywhere**:
+- 20% of code delivers 80% of value - focus there first
+- 20% of queries take 80% of time - optimize those
+- 20% of features handle 80% of use cases - implement those
+- 20% of components enable 80% of capabilities - enable those
+
+**Autonomic Means Self-Managing**:
+- System monitors itself (MAPEK Monitor phase)
+- System analyzes itself (MAPEK Analyze phase)
+- System fixes itself (MAPEK Execute phase)
+- System learns from itself (MAPEK Knowledge phase)
+
+When implementing features, ask: "How can this be self-managing?" rather than "How do I manage this?"

@@ -5,9 +5,9 @@
 import { describe, it, expect } from 'vitest';
 import { renderHook } from '@testing-library/react';
 import { useTerms } from '../../../src/react-hooks/core/useTerms.mjs';
-import { DataFactory } from '@rdfjs/data-model';
+import { DataFactory } from 'n3';
 
-const { namedNode, literal, blankNode } = DataFactory;
+const { namedNode, literal, _blankNode } = DataFactory;
 
 describe('useTerms', () => {
   describe('Named Node Creation', () => {

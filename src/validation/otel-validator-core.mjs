@@ -7,13 +7,9 @@
  * Validates features by analyzing OTEL spans instead of unit tests.
  */
 
-import {
-  trace,
-  metrics,
-  SpanStatusCode,
-} from "@opentelemetry/api";
-import { z } from "zod";
-import { randomUUID } from "crypto";
+import { trace, metrics, SpanStatusCode } from '@opentelemetry/api';
+import { z } from 'zod';
+import { randomUUID } from 'crypto';
 
 // Import span builder functions
 import {
@@ -44,10 +40,10 @@ export const ValidationResultSchema = z.object({
   spans: z.array(
     z.object({
       name: z.string(),
-      status: z.enum(["ok", "error"]),
+      status: z.enum(['ok', 'error']),
       duration: z.number(),
       attributes: z.record(z.any()),
-    }),
+    })
   ),
   violations: z.array(z.string()),
   timestamp: z.string(),
@@ -66,8 +62,8 @@ export const FeatureValidationConfigSchema = z.object({
     z.object({
       name: z.string(),
       condition: z.function(),
-      severity: z.enum(["error", "warning", "info"]),
-    }),
+      severity: z.enum(['error', 'warning', 'info']),
+    })
   ),
 });
 
@@ -82,7 +78,7 @@ export class OTELValidator {
    */
   constructor(config = {}) {
     this.config = {
-      serviceName: "unrdf-validator",
+      serviceName: 'unrdf-validator',
       enableMetrics: true,
       enableTracing: true,
       validationTimeout: 30000,
@@ -110,28 +106,22 @@ export class OTELValidator {
    * @private
    */
   _createValidationMetrics() {
-    this.validationCounter = this.meter.createCounter("validation_total", {
-      description: "Total number of feature validations",
+    this.validationCounter = this.meter.createCounter('validation_total', {
+      description: 'Total number of feature validations',
     });
 
-    this.validationDuration = this.meter.createHistogram(
-      "validation_duration_ms",
-      {
-        description: "Feature validation duration in milliseconds",
-        unit: "ms",
-      },
-    );
-
-    this.validationScore = this.meter.createHistogram("validation_score", {
-      description: "Feature validation score (0-100)",
+    this.validationDuration = this.meter.createHistogram('validation_duration_ms', {
+      description: 'Feature validation duration in milliseconds',
+      unit: 'ms',
     });
 
-    this.featureHealthGauge = this.meter.createUpDownCounter(
-      "feature_health_score",
-      {
-        description: "Current health score of features",
-      },
-    );
+    this.validationScore = this.meter.createHistogram('validation_score', {
+      description: 'Feature validation score (0-100)',
+    });
+
+    this.featureHealthGauge = this.meter.createUpDownCounter('feature_health_score', {
+      description: 'Current health score of features',
+    });
   }
 
   /**
@@ -144,142 +134,125 @@ export class OTELValidator {
     const validationConfig = FeatureValidationConfigSchema.parse(config);
     const validationId = randomUUID();
 
-    return await this.tracer.startActiveSpan(
-      `validation.${feature}`,
-      async (span) => {
-        try {
-          span.setAttributes({
-            "validation.id": validationId,
-            "validation.feature": feature,
-            "validation.start_time": Date.now(),
-          });
+    return await this.tracer.startActiveSpan(`validation.${feature}`, async span => {
+      try {
+        span.setAttributes({
+          'validation.id': validationId,
+          'validation.feature': feature,
+          'validation.start_time': Date.now(),
+        });
 
-          const startTime = Date.now();
+        const startTime = Date.now();
 
-          // Start collecting spans and metrics
-          this._startSpanCollection(validationId);
-          this._startMetricCollection(validationId);
+        // Start collecting spans and metrics
+        this._startSpanCollection(validationId);
+        this._startMetricCollection(validationId);
 
-          // Create temp spans array for THIS validation only
-          this._validationTempSpans.set(validationId, []);
+        // Create temp spans array for THIS validation only
+        this._validationTempSpans.set(validationId, []);
 
-          // Execute the feature (this will generate OTEL spans)
-          const featureResult = await this._executeFeature(
-            feature,
-            validationConfig,
-            validationId,
-          );
+        // Execute the feature (this will generate OTEL spans)
+        const _featureResult = await this._executeFeature(feature, validationConfig, validationId);
 
-          // Collect manually tracked spans
-          const collectedTempSpans = this._validationTempSpans.get(validationId) || [];
-          if (collectedTempSpans.length > 0) {
-            for (const tempSpan of collectedTempSpans) {
-              this._addSpan(validationId, tempSpan);
-            }
+        // Collect manually tracked spans
+        const collectedTempSpans = this._validationTempSpans.get(validationId) || [];
+        if (collectedTempSpans.length > 0) {
+          for (const tempSpan of collectedTempSpans) {
+            this._addSpan(validationId, tempSpan);
           }
-
-          // Collect and analyze spans
-          const collectedSpans = this._collectSpans(validationId);
-          const collectedMetrics = this._collectMetrics(validationId);
-
-          // Guard: prevent null-success
-          if (!collectedSpans || collectedSpans.length === 0) {
-            throw new Error(
-              `No spans collected for feature '${feature}'. Ensure TracerProvider is initialized.`,
-            );
-          }
-          if (!collectedMetrics || (collectedMetrics.throughput || 0) <= 0) {
-            throw new Error(
-              `No operations recorded for feature '${feature}'. Validation cannot pass with zero throughput.`,
-            );
-          }
-
-          // Clear temp spans
-          this._validationTempSpans.delete(validationId);
-
-          // Validate against expected spans and attributes
-          const spanValidation = this._validateSpans(
-            collectedSpans,
-            validationConfig,
-          );
-          const metricValidation = this._validateMetrics(
-            collectedMetrics,
-            validationConfig,
-          );
-          const ruleValidation = this._validateRules(
-            collectedSpans,
-            collectedMetrics,
-            validationConfig,
-          );
-
-          // Calculate overall score
-          const score = this._calculateScore(
-            spanValidation,
-            metricValidation,
-            ruleValidation,
-          );
-          const passed = score >= 80;
-
-          const duration = Date.now() - startTime;
-
-          const result = ValidationResultSchema.parse({
-            feature,
-            passed,
-            score,
-            metrics: {
-              latency: collectedMetrics.latency || 0,
-              errorRate: collectedMetrics.errorRate || 0,
-              throughput: collectedMetrics.throughput || 0,
-              memoryUsage: collectedMetrics.memoryUsage || 0,
-            },
-            spans: collectedSpans.map((s) => ({
-              name: s.name,
-              status: s.status,
-              duration: s.duration,
-              attributes: s.attributes,
-            })),
-            violations: [
-              ...spanValidation.violations,
-              ...metricValidation.violations,
-              ...ruleValidation.violations,
-            ],
-            timestamp: new Date().toISOString(),
-          });
-
-          // Update metrics
-          this.validationCounter.add(1, { feature, passed: passed.toString() });
-          this.validationDuration.record(duration);
-          this.validationScore.record(score);
-          this.featureHealthGauge.add(score, { feature });
-
-          // Store result
-          this.validationResults.set(feature, result);
-
-          span.setAttributes({
-            "validation.passed": passed,
-            "validation.score": score,
-            "validation.duration": duration,
-            "validation.violations": result.violations.length,
-          });
-
-          span.setStatus({
-            code: passed ? SpanStatusCode.OK : SpanStatusCode.ERROR,
-          });
-
-          return result;
-        } catch (error) {
-          span.recordException(error);
-          span.setStatus({
-            code: SpanStatusCode.ERROR,
-            message: error.message,
-          });
-          throw error;
-        } finally {
-          span.end();
-          this._cleanupValidation(validationId);
         }
-      },
-    );
+
+        // Collect and analyze spans
+        const collectedSpans = this._collectSpans(validationId);
+        const collectedMetrics = this._collectMetrics(validationId);
+
+        // Guard: prevent null-success
+        if (!collectedSpans || collectedSpans.length === 0) {
+          throw new Error(
+            `No spans collected for feature '${feature}'. Ensure TracerProvider is initialized.`
+          );
+        }
+        if (!collectedMetrics || (collectedMetrics.throughput || 0) <= 0) {
+          throw new Error(
+            `No operations recorded for feature '${feature}'. Validation cannot pass with zero throughput.`
+          );
+        }
+
+        // Clear temp spans
+        this._validationTempSpans.delete(validationId);
+
+        // Validate against expected spans and attributes
+        const spanValidation = this._validateSpans(collectedSpans, validationConfig);
+        const metricValidation = this._validateMetrics(collectedMetrics, validationConfig);
+        const ruleValidation = this._validateRules(
+          collectedSpans,
+          collectedMetrics,
+          validationConfig
+        );
+
+        // Calculate overall score
+        const score = this._calculateScore(spanValidation, metricValidation, ruleValidation);
+        const passed = score >= 80;
+
+        const duration = Date.now() - startTime;
+
+        const result = ValidationResultSchema.parse({
+          feature,
+          passed,
+          score,
+          metrics: {
+            latency: collectedMetrics.latency || 0,
+            errorRate: collectedMetrics.errorRate || 0,
+            throughput: collectedMetrics.throughput || 0,
+            memoryUsage: collectedMetrics.memoryUsage || 0,
+          },
+          spans: collectedSpans.map(s => ({
+            name: s.name,
+            status: s.status,
+            duration: s.duration,
+            attributes: s.attributes,
+          })),
+          violations: [
+            ...spanValidation.violations,
+            ...metricValidation.violations,
+            ...ruleValidation.violations,
+          ],
+          timestamp: new Date().toISOString(),
+        });
+
+        // Update metrics
+        this.validationCounter.add(1, { feature, passed: passed.toString() });
+        this.validationDuration.record(duration);
+        this.validationScore.record(score);
+        this.featureHealthGauge.add(score, { feature });
+
+        // Store result
+        this.validationResults.set(feature, result);
+
+        span.setAttributes({
+          'validation.passed': passed,
+          'validation.score': score,
+          'validation.duration': duration,
+          'validation.violations': result.violations.length,
+        });
+
+        span.setStatus({
+          code: passed ? SpanStatusCode.OK : SpanStatusCode.ERROR,
+        });
+
+        return result;
+      } catch (error) {
+        span.recordException(error);
+        span.setStatus({
+          code: SpanStatusCode.ERROR,
+          message: error.message,
+        });
+        throw error;
+      } finally {
+        span.end();
+        this._cleanupValidation(validationId);
+      }
+    });
   }
 
   /**
@@ -291,25 +264,22 @@ export class OTELValidator {
    * @private
    */
   async _executeFeature(feature, config, validationId) {
-    return await this.tracer.startActiveSpan(
-      `feature.${feature}`,
-      async (span) => {
-        span.setAttribute("feature.name", feature);
+    return await this.tracer.startActiveSpan(`feature.${feature}`, async span => {
+      span.setAttribute('feature.name', feature);
 
-        try {
-          const result = await this._executeRealFeature(feature, span, validationId);
-          span.setStatus({ code: SpanStatusCode.OK });
-          return result;
-        } catch (error) {
-          span.recordException(error);
-          span.setStatus({
-            code: SpanStatusCode.ERROR,
-            message: error.message,
-          });
-          return { success: false, error: error.message };
-        }
-      },
-    );
+      try {
+        const result = await this._executeRealFeature(feature, span, validationId);
+        span.setStatus({ code: SpanStatusCode.OK });
+        return result;
+      } catch (error) {
+        span.recordException(error);
+        span.setStatus({
+          code: SpanStatusCode.ERROR,
+          message: error.message,
+        });
+        return { success: false, error: error.message };
+      }
+    });
   }
 
   /**
@@ -323,17 +293,17 @@ export class OTELValidator {
   async _executeRealFeature(feature, parentSpan, validationId) {
     // Feature execution map - delegates to span builder functions
     const featureExecutors = {
-      "knowledge-engine": () => executeKnowledgeEngine(this, parentSpan, validationId),
-      "knowledge-engine-core": () => executeKnowledgeEngineCore(this, parentSpan, validationId),
-      "knowledge-hooks-api": () => executeKnowledgeHooksAPI(this, parentSpan, validationId),
-      "policy-packs": () => executePolicyPacks(this, parentSpan, validationId),
-      "lockchain-integrity": () => executeLockchainIntegrity(this, parentSpan, validationId),
-      "browser-compatibility": () => executeBrowserCompatibility(this, parentSpan, validationId),
-      "cli-parse": () => executeCLIParse(this, parentSpan, validationId),
-      "cli-query": () => executeCLIQuery(this, parentSpan, validationId),
-      "cli-validate": () => executeCLIValidate(this, parentSpan, validationId),
-      "cli-hook": () => executeCLIHook(this, parentSpan, validationId),
-      "transaction-manager": () => executeTransactionManager(this, parentSpan, validationId),
+      'knowledge-engine': () => executeKnowledgeEngine(this, parentSpan, validationId),
+      'knowledge-engine-core': () => executeKnowledgeEngineCore(this, parentSpan, validationId),
+      'knowledge-hooks-api': () => executeKnowledgeHooksAPI(this, parentSpan, validationId),
+      'policy-packs': () => executePolicyPacks(this, parentSpan, validationId),
+      'lockchain-integrity': () => executeLockchainIntegrity(this, parentSpan, validationId),
+      'browser-compatibility': () => executeBrowserCompatibility(this, parentSpan, validationId),
+      'cli-parse': () => executeCLIParse(this, parentSpan, validationId),
+      'cli-query': () => executeCLIQuery(this, parentSpan, validationId),
+      'cli-validate': () => executeCLIValidate(this, parentSpan, validationId),
+      'cli-hook': () => executeCLIHook(this, parentSpan, validationId),
+      'transaction-manager': () => executeTransactionManager(this, parentSpan, validationId),
     };
 
     const executor = featureExecutors[feature];
@@ -399,7 +369,7 @@ export class OTELValidator {
         if (spanData.duration) {
           metricsData.latency.push(spanData.duration);
         }
-        if (spanData.status === "error") {
+        if (spanData.status === 'error') {
           metricsData.errors++;
         }
       }
@@ -424,8 +394,7 @@ export class OTELValidator {
         ? metricsData.latency.reduce((a, b) => a + b, 0) / metricsData.latency.length
         : 0;
 
-    const errorRate =
-      metricsData.operations > 0 ? metricsData.errors / metricsData.operations : 0;
+    const errorRate = metricsData.operations > 0 ? metricsData.errors / metricsData.operations : 0;
     const throughput = metricsData.operations;
 
     return {
@@ -445,7 +414,7 @@ export class OTELValidator {
    */
   _validateSpans(spans, config) {
     const violations = [];
-    const spanNames = spans.map((s) => s.name);
+    const spanNames = spans.map(s => s.name);
 
     for (const expectedSpan of config.expectedSpans) {
       if (!spanNames.includes(expectedSpan)) {
@@ -456,14 +425,12 @@ export class OTELValidator {
     for (const span of spans) {
       for (const requiredAttr of config.requiredAttributes) {
         if (!(requiredAttr in span.attributes)) {
-          violations.push(
-            `Missing required attribute '${requiredAttr}' in span '${span.name}'`,
-          );
+          violations.push(`Missing required attribute '${requiredAttr}' in span '${span.name}'`);
         }
       }
     }
 
-    const errorSpans = spans.filter((s) => s.status === "error");
+    const errorSpans = spans.filter(s => s.status === 'error');
     if (errorSpans.length > 0) {
       violations.push(`Found ${errorSpans.length} spans with error status`);
     }
@@ -484,25 +451,25 @@ export class OTELValidator {
 
     if (metricsData.latency > thresholds.maxLatency) {
       violations.push(
-        `Latency ${metricsData.latency}ms exceeds threshold ${thresholds.maxLatency}ms`,
+        `Latency ${metricsData.latency}ms exceeds threshold ${thresholds.maxLatency}ms`
       );
     }
 
     if (metricsData.errorRate > thresholds.maxErrorRate) {
       violations.push(
-        `Error rate ${metricsData.errorRate} exceeds threshold ${thresholds.maxErrorRate}`,
+        `Error rate ${metricsData.errorRate} exceeds threshold ${thresholds.maxErrorRate}`
       );
     }
 
     if (metricsData.throughput < thresholds.minThroughput) {
       violations.push(
-        `Throughput ${metricsData.throughput} below threshold ${thresholds.minThroughput}`,
+        `Throughput ${metricsData.throughput} below threshold ${thresholds.minThroughput}`
       );
     }
 
     if (metricsData.memoryUsage > thresholds.maxMemoryUsage) {
       violations.push(
-        `Memory usage ${metricsData.memoryUsage} exceeds threshold ${thresholds.maxMemoryUsage}`,
+        `Memory usage ${metricsData.memoryUsage} exceeds threshold ${thresholds.maxMemoryUsage}`
       );
     }
 
@@ -548,7 +515,7 @@ export class OTELValidator {
     return Math.round(
       spanValidation.score * weights.spans +
         metricValidation.score * weights.metrics +
-        ruleValidation.score * weights.rules,
+        ruleValidation.score * weights.rules
     );
   }
 
@@ -597,25 +564,19 @@ export class OTELValidator {
     const operations = this._getFeatureOperations(feature);
 
     for (const operation of operations) {
-      await this.tracer.startActiveSpan(
-        operation.name,
-        { parent: parentSpan },
-        async (span) => {
-          span.setAttributes(operation.attributes);
-          await new Promise((resolve) =>
-            setTimeout(resolve, operation.duration || 10),
-          );
+      await this.tracer.startActiveSpan(operation.name, { parent: parentSpan }, async span => {
+        span.setAttributes(operation.attributes);
+        await new Promise(resolve => setTimeout(resolve, operation.duration || 10));
 
-          if (operation.shouldFail) {
-            span.setStatus({
-              code: SpanStatusCode.ERROR,
-              message: "Simulated failure",
-            });
-          } else {
-            span.setStatus({ code: SpanStatusCode.OK });
-          }
-        },
-      );
+        if (operation.shouldFail) {
+          span.setStatus({
+            code: SpanStatusCode.ERROR,
+            message: 'Simulated failure',
+          });
+        } else {
+          span.setStatus({ code: SpanStatusCode.OK });
+        }
+      });
     }
   }
 
@@ -627,40 +588,113 @@ export class OTELValidator {
    */
   _getFeatureOperations(feature) {
     const operationMap = {
-      "knowledge-engine": [
-        { name: "parse.turtle", attributes: { format: "turtle", size: 1000 }, duration: 50 },
-        { name: "query.sparql", attributes: { "query.type": "select", results: 10 }, duration: 30 },
-        { name: "validate.shacl", attributes: { shapes: 5, conforms: true }, duration: 40 },
+      'knowledge-engine': [
+        {
+          name: 'parse.turtle',
+          attributes: { format: 'turtle', size: 1000 },
+          duration: 50,
+        },
+        {
+          name: 'query.sparql',
+          attributes: { 'query.type': 'select', results: 10 },
+          duration: 30,
+        },
+        {
+          name: 'validate.shacl',
+          attributes: { shapes: 5, conforms: true },
+          duration: 40,
+        },
       ],
-      "cli-parse": [
-        { name: "cli.parse", attributes: { "input.file": "test.ttl", format: "turtle" }, duration: 20 },
-        { name: "cli.output", attributes: { "output.file": "result.ttl", triples: 100 }, duration: 10 },
-        { name: "parse.turtle", attributes: { format: "turtle" }, duration: 15 },
+      'cli-parse': [
+        {
+          name: 'cli.parse',
+          attributes: { 'input.file': 'test.ttl', format: 'turtle' },
+          duration: 20,
+        },
+        {
+          name: 'cli.output',
+          attributes: { 'output.file': 'result.ttl', triples: 100 },
+          duration: 10,
+        },
+        {
+          name: 'parse.turtle',
+          attributes: { format: 'turtle' },
+          duration: 15,
+        },
       ],
-      "cli-query": [
-        { name: "cli.query", attributes: { query: "SELECT * WHERE { ?s ?p ?o }", results: 50 }, duration: 25 },
-        { name: "cli.format", attributes: { format: "json", size: 1024 }, duration: 5 },
-        { name: "query.sparql", attributes: { "query.type": "select" }, duration: 20 },
+      'cli-query': [
+        {
+          name: 'cli.query',
+          attributes: { query: 'SELECT * WHERE { ?s ?p ?o }', results: 50 },
+          duration: 25,
+        },
+        {
+          name: 'cli.format',
+          attributes: { format: 'json', size: 1024 },
+          duration: 5,
+        },
+        {
+          name: 'query.sparql',
+          attributes: { 'query.type': 'select' },
+          duration: 20,
+        },
       ],
-      "cli-validate": [
-        { name: "cli.validate", attributes: { "input.file": "test.ttl", "shapes.file": "shapes.ttl" }, duration: 30 },
-        { name: "validate.shacl", attributes: { conforms: true, violations: 0 }, duration: 40 },
-        { name: "cli.report", attributes: { conforms: true }, duration: 10 },
+      'cli-validate': [
+        {
+          name: 'cli.validate',
+          attributes: { 'input.file': 'test.ttl', 'shapes.file': 'shapes.ttl' },
+          duration: 30,
+        },
+        {
+          name: 'validate.shacl',
+          attributes: { conforms: true, violations: 0 },
+          duration: 40,
+        },
+        { name: 'cli.report', attributes: { conforms: true }, duration: 10 },
       ],
-      "cli-hook": [
-        { name: "cli.hook", attributes: { "hook.name": "test-hook", "hook.kind": "sparql-ask" }, duration: 15 },
-        { name: "hook.evaluate", attributes: { "hook.kind": "sparql-ask", "hook.fired": true }, duration: 20 },
-        { name: "hook.result", attributes: { "execution.time": 20, result: true }, duration: 5 },
+      'cli-hook': [
+        {
+          name: 'cli.hook',
+          attributes: { 'hook.name': 'test-hook', 'hook.kind': 'sparql-ask' },
+          duration: 15,
+        },
+        {
+          name: 'hook.evaluate',
+          attributes: { 'hook.kind': 'sparql-ask', 'hook.fired': true },
+          duration: 20,
+        },
+        {
+          name: 'hook.result',
+          attributes: { 'execution.time': 20, result: true },
+          duration: 5,
+        },
       ],
-      "transaction-manager": [
-        { name: "transaction.start", attributes: { "transaction.id": "tx-123", "transaction.type": "rdf", "transaction.success": true }, duration: 10 },
-        { name: "transaction.commit", attributes: { "transaction.id": "tx-123", "transaction.success": true }, duration: 15 },
+      'transaction-manager': [
+        {
+          name: 'transaction.start',
+          attributes: {
+            'transaction.id': 'tx-123',
+            'transaction.type': 'rdf',
+            'transaction.success': true,
+          },
+          duration: 10,
+        },
+        {
+          name: 'transaction.commit',
+          attributes: {
+            'transaction.id': 'tx-123',
+            'transaction.success': true,
+          },
+          duration: 15,
+        },
       ],
     };
 
-    return operationMap[feature] || [
-      { name: `${feature}.operation`, attributes: { feature }, duration: 15 },
-    ];
+    return (
+      operationMap[feature] || [
+        { name: `${feature}.operation`, attributes: { feature }, duration: 15 },
+      ]
+    );
   }
 }
 

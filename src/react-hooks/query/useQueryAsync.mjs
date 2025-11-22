@@ -50,7 +50,7 @@ export function useQueryAsync(query, options = {}) {
     retries = 0,
     retryDelay = 1000,
     onSuccess,
-    onError
+    onError,
   } = options;
 
   const { engine, store } = useKnowledgeEngineContext();
@@ -68,87 +68,104 @@ export function useQueryAsync(query, options = {}) {
   /**
    * Generate cache key for query
    */
-  const getCacheKey = useCallback((query) => {
+  const getCacheKey = useCallback(query => {
     return `query:${query}`;
   }, []);
 
   /**
    * Check if cached data is valid
    */
-  const isCacheValid = useCallback((timestamp) => {
-    if (!timestamp) return false;
-    return Date.now() - timestamp < cacheTime;
-  }, [cacheTime]);
+  const isCacheValid = useCallback(
+    timestamp => {
+      if (!timestamp) return false;
+      return Date.now() - timestamp < cacheTime;
+    },
+    [cacheTime]
+  );
 
   /**
    * Execute query with retry logic
    */
-  const executeWithRetry = useCallback(async (attemptNumber = 0) => {
-    if (!engine || !store || !query) {
-      return;
-    }
+  const executeWithRetry = useCallback(
+    async (attemptNumber = 0) => {
+      if (!engine || !store || !query) {
+        return;
+      }
 
-    try {
-      // Check cache first
-      if (cache) {
-        const cacheKey = getCacheKey(query);
-        const cached = cacheRef.current.get(cacheKey);
-        const timestamp = timestampRef.current;
+      try {
+        // Check cache first
+        if (cache) {
+          const cacheKey = getCacheKey(query);
+          const cached = cacheRef.current.get(cacheKey);
+          const timestamp = timestampRef.current;
 
-        if (cached && isCacheValid(timestamp)) {
-          setData(cached);
-          setIsStale(false);
-          return cached;
+          if (cached && isCacheValid(timestamp)) {
+            setData(cached);
+            setIsStale(false);
+            return cached;
+          }
         }
+
+        setLoading(true);
+        setError(null);
+        setIsStale(false);
+
+        // Create abort controller
+        abortControllerRef.current = new AbortController();
+
+        const result = await engine.query(store, query, {
+          signal: abortControllerRef.current.signal,
+        });
+
+        // Update cache
+        if (cache) {
+          const cacheKey = getCacheKey(query);
+          cacheRef.current.set(cacheKey, result);
+          timestampRef.current = Date.now();
+        }
+
+        setData(result);
+        setLoading(false);
+        setAttemptCount(0);
+
+        if (onSuccess) {
+          onSuccess(result);
+        }
+
+        return result;
+      } catch (err) {
+        // Handle retries
+        if (attemptNumber < retries) {
+          console.log(`[useQueryAsync] Retry ${attemptNumber + 1}/${retries}`);
+          await new Promise(resolve => setTimeout(resolve, retryDelay));
+          setAttemptCount(attemptNumber + 1);
+          return executeWithRetry(attemptNumber + 1);
+        }
+
+        console.error('[useQueryAsync] Query failed after retries:', err);
+        setError(err);
+        setLoading(false);
+
+        if (onError) {
+          onError(err);
+        }
+
+        throw err;
       }
-
-      setLoading(true);
-      setError(null);
-      setIsStale(false);
-
-      // Create abort controller
-      abortControllerRef.current = new AbortController();
-
-      const result = await engine.query(store, query, {
-        signal: abortControllerRef.current.signal
-      });
-
-      // Update cache
-      if (cache) {
-        const cacheKey = getCacheKey(query);
-        cacheRef.current.set(cacheKey, result);
-        timestampRef.current = Date.now();
-      }
-
-      setData(result);
-      setLoading(false);
-      setAttemptCount(0);
-
-      if (onSuccess) {
-        onSuccess(result);
-      }
-
-      return result;
-    } catch (err) {
-      // Handle retries
-      if (attemptNumber < retries) {
-        console.log(`[useQueryAsync] Retry ${attemptNumber + 1}/${retries}`);
-        await new Promise(resolve => setTimeout(resolve, retryDelay));
-        setAttemptCount(attemptNumber + 1);
-        return executeWithRetry(attemptNumber + 1);
-      }
-
-      console.error('[useQueryAsync] Query failed after retries:', err);
-      setError(err);
-      setLoading(false);
-
-      if (onError) {
-        onError(err);
-      }
-
-      throw err;
-    }
-  }, [engine, store, query, cache, getCacheKey, isCacheValid, retries, retryDelay, onSuccess, onError]);
+    },
+    [
+      engine,
+      store,
+      query,
+      cache,
+      getCacheKey,
+      isCacheValid,
+      retries,
+      retryDelay,
+      onSuccess,
+      onError,
+    ]
+  );
 
   /**
    * Execute query
@@ -212,6 +229,6 @@ export function useQueryAsync(query, options = {}) {
     execute,
     refetch,
     cancel,
-    clear
+    clear,
   };
 }

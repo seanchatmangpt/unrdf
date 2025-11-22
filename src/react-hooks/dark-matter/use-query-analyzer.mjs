@@ -47,7 +47,7 @@ import { useKnowledgeEngineContext } from '../core/use-knowledge-engine-context.
  */
 export function useQueryAnalyzer(config = {}) {
   const { engine } = useKnowledgeEngineContext();
-  const [analyzer, setAnalyzer] = useState(null);
+  const [_analyzer, setAnalyzer] = useState(null);
   const [slowQueries, setSlowQueries] = useState([]);
   const [suggestions, setSuggestions] = useState([]);
   const [queryStats, setQueryStats] = useState({
@@ -55,7 +55,7 @@ export function useQueryAnalyzer(config = {}) {
     avgExecutionTime: 0,
     slowQueryCount: 0,
     cachedQueryCount: 0,
-    optimizedQueryCount: 0
+    optimizedQueryCount: 0,
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -79,14 +79,17 @@ export function useQueryAnalyzer(config = {}) {
         const qAnalyzer = new QueryAnalyzer({
           engine,
           slowThreshold: config.slowThreshold || 100,
-          onSlowQuery: (query) => {
+          onSlowQuery: query => {
             if (!mounted) return;
-            setSlowQueries(prev => [...prev, {
-              ...query,
-              timestamp: new Date().toISOString()
-            }]);
+            setSlowQueries(prev => [
+              ...prev,
+              {
+                ...query,
+                timestamp: new Date().toISOString(),
+              },
+            ]);
             config.onSlowQuery?.(query);
-          }
+          },
         });
 
         if (!mounted) return;
@@ -120,26 +123,27 @@ export function useQueryAnalyzer(config = {}) {
 
       const analysis = await analyzerRef.current.analyze(sparql, {
         explain: options.explain !== false,
-        profile: options.profile !== false
+        profile: options.profile !== false,
       });
 
       // Add to history
       queryHistoryRef.current.push({
         sparql,
         analysis,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
 
       // Update stats
       setQueryStats(prev => {
         const total = prev.totalQueries + 1;
-        const avgTime = ((prev.avgExecutionTime * prev.totalQueries) + analysis.executionTime) / total;
+        const avgTime =
+          (prev.avgExecutionTime * prev.totalQueries + analysis.executionTime) / total;
         return {
           totalQueries: total,
           avgExecutionTime: Math.round(avgTime),
           slowQueryCount: analysis.isSlow ? prev.slowQueryCount + 1 : prev.slowQueryCount,
           cachedQueryCount: analysis.cached ? prev.cachedQueryCount + 1 : prev.cachedQueryCount,
-          optimizedQueryCount: prev.optimizedQueryCount
+          optimizedQueryCount: prev.optimizedQueryCount,
         };
       });
 
@@ -171,7 +175,7 @@ export function useQueryAnalyzer(config = {}) {
         reason: 'Query performs full table scan. Add index for significant speedup.',
         suggestion: `Create index on predicates: ${analysis.predicates?.join(', ')}`,
         estimatedGain: '10-100x faster',
-        autoApplicable: false
+        autoApplicable: false,
       });
     }
 
@@ -181,10 +185,11 @@ export function useQueryAnalyzer(config = {}) {
         type: 'join',
         severity: 'critical',
         query: sparql,
-        reason: 'Query contains Cartesian product. Add join conditions to prevent exponential results.',
+        reason:
+          'Query contains Cartesian product. Add join conditions to prevent exponential results.',
         suggestion: 'Add connecting triple patterns between unconnected variables',
         estimatedGain: '100-1000x faster',
-        autoApplicable: false
+        autoApplicable: false,
       });
     }
 
@@ -198,7 +203,7 @@ export function useQueryAnalyzer(config = {}) {
         suggestion: 'Add LIMIT clause (e.g., LIMIT 100)',
         estimatedGain: '2-10x faster',
         autoApplicable: true,
-        optimizedQuery: sparql + '\nLIMIT 100'
+        optimizedQuery: sparql + '\nLIMIT 100',
       });
     }
 
@@ -208,10 +213,11 @@ export function useQueryAnalyzer(config = {}) {
         type: 'optional',
         severity: 'medium',
         query: sparql,
-        reason: 'OPTIONAL clause is expensive. Consider making it required or moving to separate query.',
+        reason:
+          'OPTIONAL clause is expensive. Consider making it required or moving to separate query.',
         suggestion: 'Replace OPTIONAL with required pattern or use UNION',
         estimatedGain: '2-5x faster',
-        autoApplicable: false
+        autoApplicable: false,
       });
     }
 
@@ -224,7 +230,7 @@ export function useQueryAnalyzer(config = {}) {
         reason: 'Complex FILTER expression. Consider moving to triple patterns where possible.',
         suggestion: 'Replace FILTER with more specific triple patterns',
         estimatedGain: '1.5-3x faster',
-        autoApplicable: false
+        autoApplicable: false,
       });
     }
 
@@ -232,78 +238,79 @@ export function useQueryAnalyzer(config = {}) {
   }
 
   // Optimize a SPARQL query
-  const optimizeQuery = useCallback(async (sparql, options = {}) => {
-    if (!analyzerRef.current) {
-      throw new Error('Query analyzer not initialized');
-    }
-
-    try {
-      setLoading(true);
-      setError(null);
-
-      // Analyze first
-      const analysis = await analyzeQuery(sparql);
-
-      // Apply optimizations
-      let optimized = sparql;
-
-      // Auto-apply safe optimizations
-      if (config.autoOptimize || options.autoApply) {
-        const autoApplicable = suggestions.filter(s =>
-          s.autoApplicable && s.query === sparql
-        );
-
-        for (const suggestion of autoApplicable) {
-          if (suggestion.optimizedQuery) {
-            optimized = suggestion.optimizedQuery;
-          }
-        }
+  const optimizeQuery = useCallback(
+    async (sparql, options = {}) => {
+      if (!analyzerRef.current) {
+        throw new Error('Query analyzer not initialized');
       }
 
-      // Manual optimization strategies
-      if (options.strategies) {
-        for (const strategy of options.strategies) {
-          switch (strategy) {
-            case 'add-limit':
-              if (!optimized.includes('LIMIT')) {
-                optimized += '\nLIMIT 100';
-              }
-              break;
-            case 'add-index-hints':
-              // Add index hints based on analysis
-              if (analysis.predicates?.length > 0) {
-                optimized = `# INDEX HINT: ${analysis.predicates.join(', ')}\n${optimized}`;
-              }
-              break;
-            case 'reorder-triples':
-              // Reorder triple patterns for better execution plan
-              optimized = await analyzerRef.current.reorderTriples(optimized);
-              break;
+      try {
+        setLoading(true);
+        setError(null);
+
+        // Analyze first
+        const analysis = await analyzeQuery(sparql);
+
+        // Apply optimizations
+        let optimized = sparql;
+
+        // Auto-apply safe optimizations
+        if (config.autoOptimize || options.autoApply) {
+          const autoApplicable = suggestions.filter(s => s.autoApplicable && s.query === sparql);
+
+          for (const suggestion of autoApplicable) {
+            if (suggestion.optimizedQuery) {
+              optimized = suggestion.optimizedQuery;
+            }
           }
         }
+
+        // Manual optimization strategies
+        if (options.strategies) {
+          for (const strategy of options.strategies) {
+            switch (strategy) {
+              case 'add-limit':
+                if (!optimized.includes('LIMIT')) {
+                  optimized += '\nLIMIT 100';
+                }
+                break;
+              case 'add-index-hints':
+                // Add index hints based on analysis
+                if (analysis.predicates?.length > 0) {
+                  optimized = `# INDEX HINT: ${analysis.predicates.join(', ')}\n${optimized}`;
+                }
+                break;
+              case 'reorder-triples':
+                // Reorder triple patterns for better execution plan
+                optimized = await analyzerRef.current.reorderTriples(optimized);
+                break;
+            }
+          }
+        }
+
+        // Update stats
+        setQueryStats(prev => ({
+          ...prev,
+          optimizedQueryCount: prev.optimizedQueryCount + 1,
+        }));
+
+        setLoading(false);
+
+        return {
+          original: sparql,
+          optimized,
+          analysis,
+          suggestions: suggestions.filter(s => s.query === sparql),
+          estimatedGain: calculateEstimatedGain(analysis, suggestions),
+        };
+      } catch (err) {
+        setError(err);
+        setLoading(false);
+        throw err;
       }
-
-      // Update stats
-      setQueryStats(prev => ({
-        ...prev,
-        optimizedQueryCount: prev.optimizedQueryCount + 1
-      }));
-
-      setLoading(false);
-
-      return {
-        original: sparql,
-        optimized,
-        analysis,
-        suggestions: suggestions.filter(s => s.query === sparql),
-        estimatedGain: calculateEstimatedGain(analysis, suggestions)
-      };
-    } catch (err) {
-      setError(err);
-      setLoading(false);
-      throw err;
-    }
-  }, [analyzeQuery, suggestions, config.autoOptimize]);
+    },
+    [analyzeQuery, suggestions, config.autoOptimize]
+  );
 
   // Calculate estimated performance gain
   function calculateEstimatedGain(analysis, querySuggestions) {
@@ -325,16 +332,20 @@ export function useQueryAnalyzer(config = {}) {
   }
 
   // Get top slow queries
-  const getTopSlowQueries = useCallback((count = 10) => {
-    return slowQueries
-      .sort((a, b) => b.executionTime - a.executionTime)
-      .slice(0, count);
-  }, [slowQueries]);
+  const getTopSlowQueries = useCallback(
+    (count = 10) => {
+      return slowQueries.sort((a, b) => b.executionTime - a.executionTime).slice(0, count);
+    },
+    [slowQueries]
+  );
 
   // Get suggestions by severity
-  const getSuggestionsBySeverity = useCallback((severity) => {
-    return suggestions.filter(s => s.severity === severity);
-  }, [suggestions]);
+  const getSuggestionsBySeverity = useCallback(
+    severity => {
+      return suggestions.filter(s => s.severity === severity);
+    },
+    [suggestions]
+  );
 
   // Get query pattern analysis
   const getQueryPatternAnalysis = useCallback(() => {
@@ -342,7 +353,7 @@ export function useQueryAnalyzer(config = {}) {
       select: 0,
       construct: 0,
       ask: 0,
-      describe: 0
+      describe: 0,
     };
 
     const features = {
@@ -351,7 +362,7 @@ export function useQueryAnalyzer(config = {}) {
       filter: 0,
       orderBy: 0,
       limit: 0,
-      groupBy: 0
+      groupBy: 0,
     };
 
     queryHistoryRef.current.forEach(({ sparql }) => {
@@ -383,7 +394,7 @@ export function useQueryAnalyzer(config = {}) {
       avgExecutionTime: 0,
       slowQueryCount: 0,
       cachedQueryCount: 0,
-      optimizedQueryCount: 0
+      optimizedQueryCount: 0,
     });
   }, []);
 
@@ -398,6 +409,6 @@ export function useQueryAnalyzer(config = {}) {
     getTopSlowQueries,
     getSuggestionsBySeverity,
     getQueryPatternAnalysis,
-    clear
+    clear,
   };
 }

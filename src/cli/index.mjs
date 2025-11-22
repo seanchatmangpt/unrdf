@@ -25,13 +25,13 @@ const main = defineCommand({
   meta: {
     name: 'unrdf',
     version: '2.1.1',
-    description: 'Autonomic RDF framework CLI - Knowledge Hooks, policy packs, and audit trails'
+    description: 'Autonomic RDF framework CLI - Knowledge Hooks, policy packs, and audit trails',
   },
   subCommands: {
     init: initCommand,
     autonomic: autonomicCommand,
-    store: storeCommand
-  }
+    store: storeCommand,
+  },
 });
 
 // Run the CLI

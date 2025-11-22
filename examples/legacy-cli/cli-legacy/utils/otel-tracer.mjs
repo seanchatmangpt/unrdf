@@ -36,21 +36,22 @@ export async function initializeTracer() {
       [SemanticResourceAttributes.SERVICE_NAME]: 'unrdf-cli',
       [SemanticResourceAttributes.SERVICE_VERSION]: '2.1.0',
       [SemanticResourceAttributes.SERVICE_NAMESPACE]: 'unrdf',
-      [SemanticResourceAttributes.DEPLOYMENT_ENVIRONMENT]: process.env.NODE_ENV || 'development'
+      [SemanticResourceAttributes.DEPLOYMENT_ENVIRONMENT]: process.env.NODE_ENV || 'development',
     });
 
     // Configure Jaeger exporter
     // Use gRPC endpoint (14250) for better performance and reliability
     // Support environment variable override for testing/deployment flexibility
-    const jaegerEndpoint = process.env.OTEL_EXPORTER_JAEGER_ENDPOINT ||
-                          process.env.JAEGER_ENDPOINT ||
-                          'http://localhost:14250';
+    const jaegerEndpoint =
+      process.env.OTEL_EXPORTER_JAEGER_ENDPOINT ||
+      process.env.JAEGER_ENDPOINT ||
+      'http://localhost:14250';
 
     const exporter = new JaegerExporter({
       endpoint: jaegerEndpoint,
       // Agent host/port for UDP transport (alternative to HTTP)
       host: process.env.JAEGER_AGENT_HOST || 'localhost',
-      port: parseInt(process.env.JAEGER_AGENT_PORT || '6832', 10)
+      port: parseInt(process.env.JAEGER_AGENT_PORT || '6832', 10),
     });
 
     console.log('[OTEL] Initializing Jaeger exporter');
@@ -61,7 +62,7 @@ export async function initializeTracer() {
     // NodeSDK will automatically create a BatchSpanProcessor
     sdk = new NodeSDK({
       resource,
-      traceExporter: exporter
+      traceExporter: exporter,
     });
 
     await sdk.start();
@@ -143,8 +144,8 @@ export function traced(spanName, fn, attributes = {}) {
     const span = currentTracer.startSpan(spanName, {
       attributes: {
         'code.function': fn.name || 'anonymous',
-        ...attributes
-      }
+        ...attributes,
+      },
     });
 
     try {
@@ -153,7 +154,7 @@ export function traced(spanName, fn, attributes = {}) {
       span.recordException(error);
       span.setStatus({
         code: SpanStatusCode.ERROR,
-        message: error.message
+        message: error.message,
       });
       throw error;
     } finally {
@@ -186,7 +187,7 @@ export function getCurrentTraceId() {
  * Print trace information to console
  * @param {string} operation - Operation name
  */
-export function printTraceInfo(operation) {
+export function printTraceInfo(_operation) {
   const traceId = getCurrentTraceId();
   const jaegerUrl = process.env.JAEGER_UI_URL || 'http://localhost:16686';
 

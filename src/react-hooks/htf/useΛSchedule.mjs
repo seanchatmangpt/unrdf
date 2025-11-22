@@ -52,17 +52,42 @@ export function useΛSchedule(shards = []) {
       { pos: 14, type: 'Paper2', phase: 'Evidence', requires: ['Result'] },
       { pos: 15, type: 'Eval', phase: 'Evidence', requires: ['Paper2'] },
       { pos: 16, type: 'Eval2', phase: 'Interpretation', requires: ['Eval'] },
-      { pos: 17, type: 'Objection', phase: 'Interpretation', requires: ['Eval2'] },
-      { pos: 18, type: 'Discussion', phase: 'Interpretation', requires: ['Objection'] },
-      { pos: 19, type: 'Reply', phase: 'Interpretation', requires: ['Discussion'] },
+      {
+        pos: 17,
+        type: 'Objection',
+        phase: 'Interpretation',
+        requires: ['Eval2'],
+      },
+      {
+        pos: 18,
+        type: 'Discussion',
+        phase: 'Interpretation',
+        requires: ['Objection'],
+      },
+      {
+        pos: 19,
+        type: 'Reply',
+        phase: 'Interpretation',
+        requires: ['Discussion'],
+      },
       { pos: 20, type: 'Pattern', phase: 'Synthesis', requires: ['Reply'] },
       { pos: 21, type: 'Theory', phase: 'Synthesis', requires: ['Pattern'] },
       { pos: 22, type: 'Analysis', phase: 'Synthesis', requires: ['Theory'] },
-      { pos: 23, type: 'Synthesis', phase: 'Synthesis', requires: ['Analysis'] },
+      {
+        pos: 23,
+        type: 'Synthesis',
+        phase: 'Synthesis',
+        requires: ['Analysis'],
+      },
       { pos: 24, type: 'Insight', phase: 'Impact', requires: ['Synthesis'] },
       { pos: 25, type: 'Impact', phase: 'Impact', requires: ['Insight'] },
       { pos: 26, type: 'Context', phase: 'Conclusion', requires: ['Impact'] },
-      { pos: 27, type: 'Conclusion', phase: 'Conclusion', requires: ['Context'] },
+      {
+        pos: 27,
+        type: 'Conclusion',
+        phase: 'Conclusion',
+        requires: ['Context'],
+      },
     ],
     []
   );
@@ -86,15 +111,15 @@ export function useΛSchedule(shards = []) {
   const validateOrder = useCallback(() => {
     const violations = [];
     const seen = new Set();
-    const typeToPos = new Map(schedule.map((s) => [s.type, s.position]));
+    const _typeToPos = new Map(schedule.map(s => [s.type, s.position]));
 
     for (const shard of schedule) {
-      const chainPos = canonicalChain.find((c) => c.type === shard.type);
+      const chainPos = canonicalChain.find(c => c.type === shard.type);
       if (!chainPos) continue;
 
       // Check dependencies
       for (const dep of chainPos.requires) {
-        const depShard = schedule.find((s) => s.type === dep);
+        const depShard = schedule.find(s => s.type === dep);
         if (!depShard) {
           violations.push({
             type: 'missing_dependency',
@@ -132,15 +157,15 @@ export function useΛSchedule(shards = []) {
    */
   const flowScore = useMemo(() => {
     const violations = validateOrder();
-    const errorCount = violations.filter((v) => v.severity === 'error').length;
-    const warningCount = violations.filter((v) => v.severity === 'warning').length;
+    const errorCount = violations.filter(v => v.severity === 'error').length;
+    const warningCount = violations.filter(v => v.severity === 'warning').length;
 
     // Score = 100 - (errors * 5 + warnings * 2)
     let score = 100 - errorCount * 5 - warningCount * 2;
 
     // Bonus for following canonical order
     const matchCanonical = schedule.reduce((acc, s, i) => {
-      const expectedPos = canonicalChain.findIndex((c) => c.type === s.type);
+      const expectedPos = canonicalChain.findIndex(c => c.type === s.type);
       return acc + (expectedPos === i ? 1 : 0);
     }, 0);
 
@@ -173,14 +198,14 @@ export function useΛSchedule(shards = []) {
 
       const deps = adjList.get(type) || [];
       for (const dep of deps) {
-        if (schedule.find((s) => s.type === dep)) {
+        if (schedule.find(s => s.type === dep)) {
           dfs(dep);
         }
       }
 
       visiting.delete(type);
       visited.add(type);
-      if (schedule.find((s) => s.type === type)) {
+      if (schedule.find(s => s.type === type)) {
         sorted.push(type);
       }
     }
@@ -191,7 +216,7 @@ export function useΛSchedule(shards = []) {
 
     // Reorder shards according to sorted order
     const reordered = sorted
-      .map((type) => schedule.find((s) => s.type === type))
+      .map(type => schedule.find(s => s.type === type))
       .filter(Boolean)
       .map((s, i) => ({ ...s, position: i + 1 }));
 
@@ -202,8 +227,8 @@ export function useΛSchedule(shards = []) {
    * Get detailed position information
    */
   const positions = useMemo(() => {
-    return schedule.map((shard) => {
-      const canonical = canonicalChain.find((c) => c.type === shard.type);
+    return schedule.map(shard => {
+      const canonical = canonicalChain.find(c => c.type === shard.type);
       return {
         shard: shard.id,
         type: shard.type,

@@ -3,14 +3,14 @@
  * @module project-engine/fs-scan
  */
 
-import { promises as fs } from 'fs'
-import path from 'path'
-import { Store, DataFactory } from 'n3'
-import { trace, SpanStatusCode } from '@opentelemetry/api'
-import { z } from 'zod'
+import { promises as fs } from 'fs';
+import path from 'path';
+import { Store, DataFactory } from 'n3';
+import { trace, SpanStatusCode } from '@opentelemetry/api';
+import { z } from 'zod';
 
-const tracer = trace.getTracer('unrdf/fs-scan')
-const { namedNode, literal } = DataFactory
+const tracer = trace.getTracer('unrdf/fs-scan');
+const { namedNode, literal } = DataFactory;
 
 /**
  * Default ignore patterns for filesystem scan
@@ -31,13 +31,13 @@ const DEFAULT_IGNORE_PATTERNS = [
   '.DS_Store',
   '.env.local',
   '.env.*.local',
-]
+];
 
 const ScanOptionsSchema = z.object({
   root: z.string(),
   ignorePatterns: z.array(z.string()).optional(),
   baseIri: z.string().default('http://example.org/unrdf/fs#'),
-})
+});
 
 /**
  * Scan a filesystem directory and create RDF graph with NFO + UNRDF FS ontology
@@ -49,62 +49,62 @@ const ScanOptionsSchema = z.object({
  * @returns {Promise<{store: Store, summary: {fileCount: number, folderCount: number, ignoredCount: number, rootIri: string}}>}
  */
 export async function scanFileSystemToStore(options) {
-  const validated = ScanOptionsSchema.parse(options)
-  const { root, baseIri } = validated
-  const ignorePatterns = validated.ignorePatterns || DEFAULT_IGNORE_PATTERNS
+  const validated = ScanOptionsSchema.parse(options);
+  const { root, baseIri } = validated;
+  const ignorePatterns = validated.ignorePatterns || DEFAULT_IGNORE_PATTERNS;
 
-  return tracer.startActiveSpan('fs.scan', async (span) => {
+  return tracer.startActiveSpan('fs.scan', async span => {
     try {
       span.setAttributes({
         'fs.root': root,
         'fs.ignore_count': ignorePatterns.length,
-      })
+      });
 
-      const store = new Store()
+      const store = new Store();
       const stats = {
         fileCount: 0,
         folderCount: 0,
         ignoredCount: 0,
         rootIri: `${baseIri}root`,
-      }
+      };
 
       // Add root as ProjectRoot
-      const rootIri = namedNode(`${baseIri}root`)
+      const rootIri = namedNode(`${baseIri}root`);
       store.addQuad(
         rootIri,
         namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
         namedNode('http://example.org/unrdf/filesystem#ProjectRoot')
-      )
+      );
       store.addQuad(
         rootIri,
         namedNode('http://example.org/unrdf/filesystem#relativePath'),
         literal('.')
-      )
+      );
       store.addQuad(
         rootIri,
         namedNode('http://example.org/unrdf/filesystem#depth'),
         literal(0, namedNode('http://www.w3.org/2001/XMLSchema#integer'))
-      )
+      );
 
       // Recursive walk
-      await walkDirectory(root, '.', rootIri, store, ignorePatterns, baseIri, stats)
+      await walkDirectory(root, '.', rootIri, store, ignorePatterns, baseIri, stats);
 
       span.setAttributes({
         'fs.file_count': stats.fileCount,
         'fs.folder_count': stats.folderCount,
         'fs.ignored_count': stats.ignoredCount,
-      })
-      span.setStatus({ code: SpanStatusCode.OK })
+      });
+      span.setStatus({ code: SpanStatusCode.OK });
 
-      return { store, summary: stats }
+      return { store, summary: stats };
     } catch (error) {
       span.setStatus({
         code: SpanStatusCode.ERROR,
         message: error.message,
-      })
-      throw error
+      });
+      throw error;
     }
-  })
+  });
 }
 
 /**
@@ -122,18 +122,18 @@ async function walkDirectory(
   stats
 ) {
   try {
-    const entries = await fs.readdir(diskPath, { withFileTypes: true })
+    const entries = await fs.readdir(diskPath, { withFileTypes: true });
 
     for (const entry of entries) {
       // Check ignore patterns
       if (shouldIgnore(entry.name, ignorePatterns)) {
-        stats.ignoredCount++
-        continue
+        stats.ignoredCount++;
+        continue;
       }
 
-      const entryRelPath = relativePath === '.' ? entry.name : `${relativePath}/${entry.name}`
-      const entryDiskPath = path.join(diskPath, entry.name)
-      const entryIri = namedNode(`${baseIri}${encodeURIComponent(entryRelPath)}`)
+      const entryRelPath = relativePath === '.' ? entry.name : `${relativePath}/${entry.name}`;
+      const entryDiskPath = path.join(diskPath, entry.name);
+      const entryIri = namedNode(`${baseIri}${encodeURIComponent(entryRelPath)}`);
 
       // Determine type
       if (entry.isDirectory()) {
@@ -146,14 +146,14 @@ async function walkDirectory(
           ignorePatterns,
           baseIri,
           stats
-        )
+        );
       } else if (entry.isFile()) {
-        await handleFile(entryDiskPath, entryRelPath, entryIri, parentIri, store, stats)
+        await handleFile(entryDiskPath, entryRelPath, entryIri, parentIri, store, stats);
       }
     }
   } catch (error) {
     // Skip unreadable directories
-    console.warn(`Skipped: ${diskPath} (${error.message})`)
+    console.warn(`Skipped: ${diskPath} (${error.message})`);
   }
 }
 
@@ -172,19 +172,28 @@ async function handleDirectory(
   baseIri,
   stats
 ) {
-  const depth = (relativePath.match(/\//g) || []).length
+  const depth = (relativePath.match(/\//g) || []).length;
 
   // Determine folder type
-  let folderType = 'http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#Folder'
+  let folderType = 'http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#Folder';
   if (relativePath.includes('/src') || relativePath === 'src') {
-    folderType = 'http://example.org/unrdf/filesystem#SourceFolder'
-  } else if (relativePath.includes('/dist') || relativePath === 'dist' ||
-             relativePath.includes('/.next') || relativePath === '.next' ||
-             relativePath.includes('/build') || relativePath === 'build') {
-    folderType = 'http://example.org/unrdf/filesystem#BuildFolder'
-  } else if (relativePath.includes('/config') || relativePath === 'config' ||
-             relativePath.includes('/.') || relativePath.startsWith('.')) {
-    folderType = 'http://example.org/unrdf/filesystem#ConfigFolder'
+    folderType = 'http://example.org/unrdf/filesystem#SourceFolder';
+  } else if (
+    relativePath.includes('/dist') ||
+    relativePath === 'dist' ||
+    relativePath.includes('/.next') ||
+    relativePath === '.next' ||
+    relativePath.includes('/build') ||
+    relativePath === 'build'
+  ) {
+    folderType = 'http://example.org/unrdf/filesystem#BuildFolder';
+  } else if (
+    relativePath.includes('/config') ||
+    relativePath === 'config' ||
+    relativePath.includes('/.') ||
+    relativePath.startsWith('.')
+  ) {
+    folderType = 'http://example.org/unrdf/filesystem#ConfigFolder';
   }
 
   // Add folder quads
@@ -192,34 +201,30 @@ async function handleDirectory(
     dirIri,
     namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
     namedNode(folderType)
-  )
+  );
   store.addQuad(
     dirIri,
     namedNode('http://example.org/unrdf/filesystem#relativePath'),
     literal(relativePath)
-  )
+  );
   store.addQuad(
     dirIri,
     namedNode('http://example.org/unrdf/filesystem#depth'),
     literal(depth, namedNode('http://www.w3.org/2001/XMLSchema#integer'))
-  )
+  );
   store.addQuad(
     dirIri,
     namedNode('http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#containedFolders'),
     namedNode('http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#FileDataObject')
-  )
+  );
 
   // Link to parent
-  store.addQuad(
-    dirIri,
-    namedNode('http://example.org/unrdf/filesystem#containedIn'),
-    parentIri
-  )
+  store.addQuad(dirIri, namedNode('http://example.org/unrdf/filesystem#containedIn'), parentIri);
 
-  stats.folderCount++
+  stats.folderCount++;
 
   // Recurse
-  await walkDirectory(diskPath, relativePath, dirIri, store, ignorePatterns, baseIri, stats)
+  await walkDirectory(diskPath, relativePath, dirIri, store, ignorePatterns, baseIri, stats);
 }
 
 /**
@@ -229,60 +234,56 @@ async function handleDirectory(
  */
 async function handleFile(diskPath, relativePath, fileIri, parentIri, store, stats) {
   try {
-    const stat = await fs.stat(diskPath)
-    const depth = (relativePath.match(/\//g) || []).length
-    const ext = path.extname(relativePath).replace(/^\./, '')
-    const isHidden = path.basename(relativePath).startsWith('.')
+    const stat = await fs.stat(diskPath);
+    const depth = (relativePath.match(/\//g) || []).length;
+    const ext = path.extname(relativePath).replace(/^\./, '');
+    const isHidden = path.basename(relativePath).startsWith('.');
 
     store.addQuad(
       fileIri,
       namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
       namedNode('http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#FileDataObject')
-    )
+    );
     store.addQuad(
       fileIri,
       namedNode('http://example.org/unrdf/filesystem#relativePath'),
       literal(relativePath)
-    )
+    );
     store.addQuad(
       fileIri,
       namedNode('http://example.org/unrdf/filesystem#depth'),
       literal(depth, namedNode('http://www.w3.org/2001/XMLSchema#integer'))
-    )
+    );
     store.addQuad(
       fileIri,
       namedNode('http://example.org/unrdf/filesystem#byteSize'),
       literal(stat.size, namedNode('http://www.w3.org/2001/XMLSchema#integer'))
-    )
+    );
     store.addQuad(
       fileIri,
       namedNode('http://example.org/unrdf/filesystem#lastModified'),
       literal(stat.mtime.toISOString(), namedNode('http://www.w3.org/2001/XMLSchema#dateTime'))
-    )
+    );
     store.addQuad(
       fileIri,
       namedNode('http://example.org/unrdf/filesystem#isHidden'),
       literal(isHidden, namedNode('http://www.w3.org/2001/XMLSchema#boolean'))
-    )
+    );
 
     if (ext) {
       store.addQuad(
         fileIri,
         namedNode('http://example.org/unrdf/filesystem#extension'),
         literal(ext)
-      )
+      );
     }
 
     // Link to parent
-    store.addQuad(
-      fileIri,
-      namedNode('http://example.org/unrdf/filesystem#containedIn'),
-      parentIri
-    )
+    store.addQuad(fileIri, namedNode('http://example.org/unrdf/filesystem#containedIn'), parentIri);
 
-    stats.fileCount++
+    stats.fileCount++;
   } catch (error) {
-    console.warn(`Skipped file: ${diskPath} (${error.message})`)
+    console.warn(`Skipped file: ${diskPath} (${error.message})`);
   }
 }
 
@@ -292,12 +293,12 @@ async function handleFile(diskPath, relativePath, fileIri, parentIri, store, sta
  * @private
  */
 function shouldIgnore(name, patterns) {
-  return patterns.some((pattern) => {
+  return patterns.some(pattern => {
     if (pattern.includes('*')) {
       // Simple glob: *.swp, .*, etc.
-      const regex = new RegExp(`^${pattern.replace(/\*/g, '.*')}$`)
-      return regex.test(name)
+      const regex = new RegExp(`^${pattern.replace(/\*/g, '.*')}$`);
+      return regex.test(name);
     }
-    return name === pattern
-  })
+    return name === pattern;
+  });
 }

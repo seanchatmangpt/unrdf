@@ -57,7 +57,7 @@ export class MemoryProfiler {
       startMemory,
       snapshots: [startMemory],
       peakHeapUsed: startMemory.heapUsed,
-      intervalId: null
+      intervalId: null,
     };
 
     // Start periodic snapshots
@@ -86,7 +86,7 @@ export class MemoryProfiler {
       heapTotal: mem.heapTotal,
       external: mem.external,
       arrayBuffers: mem.arrayBuffers,
-      rss: mem.rss
+      rss: mem.rss,
     };
   }
 
@@ -152,7 +152,7 @@ export class MemoryProfiler {
       leakDetected,
       snapshots: session.snapshots,
       duration,
-      operationName: session.operationName
+      operationName: session.operationName,
     };
   }
 
@@ -167,14 +167,14 @@ export class MemoryProfiler {
       return {
         direction: 'stable',
         growthRate: 0,
-        confidence: 0
+        confidence: 0,
       };
     }
 
     // Calculate linear regression for heap usage over time
     const points = snapshots.map(s => ({
       x: s.timestamp - snapshots[0].timestamp,
-      y: s.heapUsed
+      y: s.heapUsed,
     }));
 
     const { slope, rSquared } = this.linearRegression(points);
@@ -183,7 +183,8 @@ export class MemoryProfiler {
     const growthRate = slope; // slope is already in bytes/ms, * 1000 for bytes/sec
 
     let direction;
-    if (Math.abs(growthRate) < 1024) { // < 1 KB/sec
+    if (Math.abs(growthRate) < 1024) {
+      // < 1 KB/sec
       direction = 'stable';
     } else if (growthRate > 0) {
       direction = 'growing';
@@ -195,7 +196,7 @@ export class MemoryProfiler {
       direction,
       growthRate: growthRate * 1000, // Convert to bytes/sec
       confidence: rSquared,
-      sampleCount: snapshots.length
+      sampleCount: snapshots.length,
     };
   }
 
@@ -213,7 +214,7 @@ export class MemoryProfiler {
     const sumY = points.reduce((sum, p) => sum + p.y, 0);
     const sumXY = points.reduce((sum, p) => sum + p.x * p.y, 0);
     const sumXX = points.reduce((sum, p) => sum + p.x * p.x, 0);
-    const sumYY = points.reduce((sum, p) => sum + p.y * p.y, 0);
+    const _sumYY = points.reduce((sum, p) => sum + p.y * p.y, 0);
 
     const slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
     const intercept = (sumY - slope * sumX) / n;
@@ -226,7 +227,7 @@ export class MemoryProfiler {
       return sum + Math.pow(p.y - predicted, 2);
     }, 0);
 
-    const rSquared = ssTotal > 0 ? 1 - (ssResidual / ssTotal) : 0;
+    const rSquared = ssTotal > 0 ? 1 - ssResidual / ssTotal : 0;
 
     return { slope, intercept, rSquared };
   }
@@ -307,23 +308,24 @@ export class MemoryProfiler {
   checkBudget(metrics, budget) {
     const violations = [];
 
-    if (budget.maxHeapDelta !== undefined &&
-        Math.abs(metrics.heapUsedDelta) > budget.maxHeapDelta) {
+    if (
+      budget.maxHeapDelta !== undefined &&
+      Math.abs(metrics.heapUsedDelta) > budget.maxHeapDelta
+    ) {
       violations.push({
         metric: 'heapUsedDelta',
         actual: metrics.heapUsedDelta,
         budget: budget.maxHeapDelta,
-        exceeded: Math.abs(metrics.heapUsedDelta) - budget.maxHeapDelta
+        exceeded: Math.abs(metrics.heapUsedDelta) - budget.maxHeapDelta,
       });
     }
 
-    if (budget.maxGrowthRate !== undefined &&
-        metrics.trend.growthRate > budget.maxGrowthRate) {
+    if (budget.maxGrowthRate !== undefined && metrics.trend.growthRate > budget.maxGrowthRate) {
       violations.push({
         metric: 'growthRate',
         actual: metrics.trend.growthRate,
         budget: budget.maxGrowthRate,
-        exceeded: metrics.trend.growthRate - budget.maxGrowthRate
+        exceeded: metrics.trend.growthRate - budget.maxGrowthRate,
       });
     }
 
@@ -333,13 +335,13 @@ export class MemoryProfiler {
         actual: metrics.trend.growthRate,
         budget: this.leakThreshold,
         exceeded: metrics.trend.growthRate - this.leakThreshold,
-        message: 'Potential memory leak detected'
+        message: 'Potential memory leak detected',
       });
     }
 
     return {
       passed: violations.length === 0,
-      violations
+      violations,
     };
   }
 }

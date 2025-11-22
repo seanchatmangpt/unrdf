@@ -17,19 +17,28 @@ export function useQuadStore(initialQuads = []) {
   });
   const [version, setVersion] = useState(0);
 
-  const add = useCallback((quads) => {
-    store.addQuads(Array.isArray(quads) ? quads : [quads]);
-    setVersion(v => v + 1);
-  }, [store]);
+  const add = useCallback(
+    quads => {
+      store.addQuads(Array.isArray(quads) ? quads : [quads]);
+      setVersion(v => v + 1);
+    },
+    [store]
+  );
 
-  const remove = useCallback((quads) => {
-    store.removeQuads(Array.isArray(quads) ? quads : [quads]);
-    setVersion(v => v + 1);
-  }, [store]);
+  const remove = useCallback(
+    quads => {
+      store.removeQuads(Array.isArray(quads) ? quads : [quads]);
+      setVersion(v => v + 1);
+    },
+    [store]
+  );
 
-  const match = useCallback((s, p, o, g) => {
-    return store.getQuads(s, p, o, g);
-  }, [store, version]);
+  const match = useCallback(
+    (s, p, o, g) => {
+      return store.getQuads(s, p, o, g);
+    },
+    [store, version]
+  );
 
   const size = useMemo(() => store.size, [store, version]);
 

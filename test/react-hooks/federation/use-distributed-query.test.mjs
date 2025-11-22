@@ -3,7 +3,7 @@
  * Tests query routing, result aggregation, caching, and execution strategies
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, _beforeEach, vi } from 'vitest';
 
 describe('DistributedQuery', () => {
   describe('Query Execution', () => {
@@ -13,20 +13,28 @@ describe('DistributedQuery', () => {
 
         // Simulate query execution
         const bindings = [
-          { s: 'http://example.org/entity1', p: 'http://schema.org/name', o: 'Alice' },
-          { s: 'http://example.org/entity2', p: 'http://schema.org/name', o: 'Bob' }
+          {
+            s: 'http://example.org/entity1',
+            p: 'http://schema.org/name',
+            o: 'Alice',
+          },
+          {
+            s: 'http://example.org/entity2',
+            p: 'http://schema.org/name',
+            o: 'Bob',
+          },
         ];
 
         return {
           bindings,
           duration: performance.now() - startTime,
           storesQueried: options.stores || ['default'],
-          strategy: options.strategy || 'fastest'
+          strategy: options.strategy || 'fastest',
         };
       };
 
       const result = await execute('SELECT ?s ?p ?o WHERE { ?s ?p ?o }', {
-        stores: ['store-1', 'store-2']
+        stores: ['store-1', 'store-2'],
       });
 
       expect(result.bindings).toHaveLength(2);
@@ -34,7 +42,7 @@ describe('DistributedQuery', () => {
     });
 
     it('should track execution statistics', async () => {
-      const execute = async (sparql) => {
+      const execute = async _sparql => {
         const startTime = performance.now();
         await new Promise(resolve => setTimeout(resolve, 5));
         const duration = performance.now() - startTime;
@@ -45,8 +53,8 @@ describe('DistributedQuery', () => {
             duration,
             storesQueried: ['store-1'],
             strategy: 'fastest',
-            cacheHit: false
-          }
+            cacheHit: false,
+          },
         };
       };
 
@@ -56,7 +64,7 @@ describe('DistributedQuery', () => {
     });
 
     it('should handle query execution errors', async () => {
-      const execute = async (sparql) => {
+      const execute = async sparql => {
         if (sparql.includes('INVALID')) {
           throw new Error('Parse error: Invalid SPARQL syntax');
         }
@@ -69,7 +77,7 @@ describe('DistributedQuery', () => {
     it('should set loading state during execution', async () => {
       let loading = false;
 
-      const execute = async (sparql) => {
+      const execute = async _sparql => {
         loading = true;
         await new Promise(resolve => setTimeout(resolve, 10));
         loading = false;
@@ -89,7 +97,7 @@ describe('DistributedQuery', () => {
       const stores = [
         { id: 'store-1', latency: 150 },
         { id: 'store-2', latency: 50 },
-        { id: 'store-3', latency: 100 }
+        { id: 'store-3', latency: 100 },
       ];
 
       const selectStore = (strategy, stores) => {
@@ -139,7 +147,7 @@ describe('DistributedQuery', () => {
       const stores = [
         { id: 'store-1', role: 'follower' },
         { id: 'store-2', role: 'leader' },
-        { id: 'store-3', role: 'follower' }
+        { id: 'store-3', role: 'follower' },
       ];
 
       const selectStore = (strategy, stores) => {
@@ -158,8 +166,14 @@ describe('DistributedQuery', () => {
   describe('Result Aggregation', () => {
     it('should aggregate results with union', () => {
       const resultSets = [
-        [{ id: 1, name: 'Alice' }, { id: 2, name: 'Bob' }],
-        [{ id: 3, name: 'Carol' }, { id: 4, name: 'Dave' }]
+        [
+          { id: 1, name: 'Alice' },
+          { id: 2, name: 'Bob' },
+        ],
+        [
+          { id: 3, name: 'Carol' },
+          { id: 4, name: 'Dave' },
+        ],
       ];
 
       const aggregate = (strategy, resultSets) => {
@@ -177,7 +191,7 @@ describe('DistributedQuery', () => {
       const resultSets = [
         [{ id: 1 }, { id: 2 }, { id: 3 }],
         [{ id: 2 }, { id: 3 }, { id: 4 }],
-        [{ id: 3 }, { id: 4 }, { id: 5 }]
+        [{ id: 3 }, { id: 4 }, { id: 5 }],
       ];
 
       const aggregate = (strategy, resultSets) => {
@@ -202,10 +216,10 @@ describe('DistributedQuery', () => {
     it('should deduplicate union results', () => {
       const resultSets = [
         [{ uri: 'http://example.org/1' }, { uri: 'http://example.org/2' }],
-        [{ uri: 'http://example.org/2' }, { uri: 'http://example.org/3' }]
+        [{ uri: 'http://example.org/2' }, { uri: 'http://example.org/3' }],
       ];
 
-      const aggregateWithDedup = (resultSets) => {
+      const aggregateWithDedup = resultSets => {
         const seen = new Set();
         const results = [];
 
@@ -228,10 +242,10 @@ describe('DistributedQuery', () => {
     it('should preserve order in aggregation', () => {
       const resultSets = [
         [{ order: 1 }, { order: 3 }, { order: 5 }],
-        [{ order: 2 }, { order: 4 }, { order: 6 }]
+        [{ order: 2 }, { order: 4 }, { order: 6 }],
       ];
 
-      const aggregateOrdered = (resultSets) => {
+      const aggregateOrdered = resultSets => {
         return resultSets.flat().sort((a, b) => a.order - b.order);
       };
 
@@ -253,7 +267,7 @@ describe('DistributedQuery', () => {
 
         const result = {
           bindings: [{ s: 'test' }],
-          timestamp: Date.now()
+          timestamp: Date.now(),
         };
 
         if (options.cache !== false) {
@@ -263,8 +277,12 @@ describe('DistributedQuery', () => {
         return { ...result, cacheHit: false };
       };
 
-      const result1 = await execute('SELECT * WHERE { ?s ?p ?o }', { cache: true });
-      const result2 = await execute('SELECT * WHERE { ?s ?p ?o }', { cache: true });
+      const result1 = await execute('SELECT * WHERE { ?s ?p ?o }', {
+        cache: true,
+      });
+      const result2 = await execute('SELECT * WHERE { ?s ?p ?o }', {
+        cache: true,
+      });
 
       expect(result1.cacheHit).toBe(false);
       expect(result2.cacheHit).toBe(true);
@@ -278,7 +296,7 @@ describe('DistributedQuery', () => {
         cache.set(key, { value, expires: Date.now() + TTL });
       };
 
-      const getWithTTL = (key) => {
+      const getWithTTL = key => {
         const entry = cache.get(key);
         if (!entry) return null;
         if (Date.now() > entry.expires) {
@@ -318,7 +336,7 @@ describe('DistributedQuery', () => {
       cache.set('query1', { bindings: [{ id: 1 }] });
       cache.set('query2', { bindings: [{ id: 2 }] });
 
-      const invalidateCache = (pattern) => {
+      const invalidateCache = pattern => {
         for (const key of cache.keys()) {
           if (key.includes(pattern)) {
             cache.delete(key);
@@ -350,7 +368,9 @@ describe('DistributedQuery', () => {
         });
       };
 
-      const result = await execute('SELECT * WHERE { ?s ?p ?o }', { timeout: 30000 });
+      const result = await execute('SELECT * WHERE { ?s ?p ?o }', {
+        timeout: 30000,
+      });
       expect(result.bindings).toBeDefined();
     });
 
@@ -365,21 +385,22 @@ describe('DistributedQuery', () => {
         });
       };
 
-      await expect(execute('SELECT * WHERE { ?s ?p ?o }', { timeout: 10 }))
-        .rejects.toThrow('Query timeout');
+      await expect(execute('SELECT * WHERE { ?s ?p ?o }', { timeout: 10 })).rejects.toThrow(
+        'Query timeout'
+      );
     });
 
     it('should cancel pending requests on timeout', () => {
       const pendingRequests = new Map();
 
-      const startRequest = (id) => {
+      const startRequest = id => {
         const abortController = { aborted: false, abort: vi.fn() };
         pendingRequests.set(id, abortController);
         return abortController;
       };
 
       const cancelAllPending = () => {
-        for (const [id, controller] of pendingRequests) {
+        for (const [_id, controller] of pendingRequests) {
           controller.abort();
           controller.aborted = true;
         }
@@ -411,10 +432,10 @@ describe('DistributedQuery', () => {
     });
 
     it('should execute queries manually', async () => {
-      const execute = async (sparql) => {
+      const execute = async sparql => {
         return {
           bindings: [{ query: sparql }],
-          executedAt: new Date().toISOString()
+          executedAt: new Date().toISOString(),
         };
       };
 
@@ -439,7 +460,7 @@ describe('DistributedQuery', () => {
     it('should capture and expose errors', async () => {
       let error = null;
 
-      const execute = async (sparql) => {
+      const execute = async _sparql => {
         try {
           throw new Error('Network error');
         } catch (err) {
@@ -474,7 +495,7 @@ describe('DistributedQuery', () => {
       const result = await executeAcrossStores('SELECT * WHERE { ?s ?p ?o }', [
         'store-1',
         'store-failing',
-        'store-2'
+        'store-2',
       ]);
 
       expect(result.results).toHaveLength(2);

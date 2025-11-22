@@ -51,10 +51,7 @@ describe('useStore', () => {
     it('should add multiple quads', () => {
       const { result } = renderHook(() => useStore());
 
-      const quads = [
-        testQuad,
-        quad(namedNode('http://s2'), namedNode('http://p2'), literal('o2'))
-      ];
+      const quads = [testQuad, quad(namedNode('http://s2'), namedNode('http://p2'), literal('o2'))];
 
       act(() => {
         result.current.addQuads(quads);
@@ -211,11 +208,7 @@ describe('useStore', () => {
       const { result } = renderHook(() => useStore());
 
       const quads = Array.from({ length: 1000 }, (_, i) =>
-        quad(
-          namedNode(`http://s${i}`),
-          namedNode('http://p'),
-          literal(`o${i}`)
-        )
+        quad(namedNode(`http://s${i}`), namedNode('http://p'), literal(`o${i}`))
       );
 
       const start = performance.now();
@@ -245,12 +238,7 @@ describe('useStore', () => {
     it('should handle empty match results', () => {
       const { result } = renderHook(() => useStore());
 
-      const matches = result.current.match(
-        namedNode('http://nonexistent'),
-        null,
-        null,
-        null
-      );
+      const matches = result.current.match(namedNode('http://nonexistent'), null, null, null);
 
       expect([...matches]).toHaveLength(0);
     });

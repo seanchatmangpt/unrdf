@@ -11,9 +11,7 @@
 
     <div v-else class="container">
       <!-- Error Display -->
-      <div v-if="error" class="error">
-        <strong>❌ Error:</strong> {{ error }}
-      </div>
+      <div v-if="error" class="error"><strong>❌ Error:</strong> {{ error }}</div>
 
       <!-- Statistics -->
       <div class="stats">
@@ -57,9 +55,7 @@
         ></textarea>
         <div class="controls">
           <button @click="handleQuery" class="button">Execute Query</button>
-          <button @click="loadSampleQueries('names')" class="button">
-            Query Names
-          </button>
+          <button @click="loadSampleQueries('names')" class="button">Query Names</button>
           <button @click="loadSampleQueries('connections')" class="button">
             Query Connections
           </button>
@@ -70,11 +66,7 @@
 
           <template v-else-if="queryResults.type === 'bindings'">
             <p class="success">✅ Found {{ queryResults.bindings.length }} results:</p>
-            <div
-              v-for="(binding, i) in queryResults.bindings"
-              :key="i"
-              class="result-row"
-            >
+            <div v-for="(binding, i) in queryResults.bindings" :key="i" class="result-row">
               <strong>Result {{ i + 1 }}:</strong>
               {{ formatBinding(binding) }}
             </div>
@@ -101,22 +93,16 @@
             <p v-if="lockchainOutput.data.length === 0">No commits yet</p>
             <template v-else>
               <p class="success">✅ {{ lockchainOutput.data.length }} recent commits:</p>
-              <div
-                v-for="(commit, i) in lockchainOutput.data"
-                :key="i"
-                class="result-row"
-              >
-                <strong>#{{ i + 1 }}</strong> {{ commit.hash.substring(0, 8) }}... by
-                <strong>{{ commit.author }}</strong> - {{ commit.message }}
+              <div v-for="(commit, i) in lockchainOutput.data" :key="i" class="result-row">
+                <strong>#{{ i + 1 }}</strong>
+                {{ commit.hash.substring(0, 8) }}... by <strong>{{ commit.author }}</strong> -
+                {{ commit.message }}
                 <small>({{ formatDate(commit.timestamp) }})</small>
               </div>
             </template>
           </template>
 
-          <p
-            v-else
-            :class="lockchainOutput.data.valid ? 'success' : 'error'"
-          >
+          <p v-else :class="lockchainOutput.data.valid ? 'success' : 'error'">
             {{ lockchainOutput.data.valid ? '✅' : '❌' }}
             {{ lockchainOutput.data.message }} ({{ lockchainOutput.data.commits }}
             commits)
@@ -259,7 +245,7 @@ export default {
       }
     };
 
-    const loadSampleQueries = (type) => {
+    const loadSampleQueries = type => {
       if (type === 'names') {
         sparqlInput.value = `PREFIX foaf: <http://xmlns.com/foaf/0.1/>
 SELECT ?name WHERE {
@@ -273,13 +259,13 @@ SELECT ?person ?friend WHERE {
       }
     };
 
-    const formatBinding = (binding) => {
+    const formatBinding = binding => {
       return Object.entries(binding)
         .map(([k, v]) => `${k}: ${v}`)
         .join(', ');
     };
 
-    const formatDate = (timestamp) => {
+    const formatDate = timestamp => {
       return new Date(timestamp).toLocaleString();
     };
 

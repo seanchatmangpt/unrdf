@@ -49,7 +49,7 @@ describe('useQuadStore', () => {
       const quads = [
         quad(namedNode('http://s1'), namedNode('http://p'), literal('o1')),
         quad(namedNode('http://s2'), namedNode('http://p'), literal('o2')),
-        quad(namedNode('http://s3'), namedNode('http://p'), literal('o3'))
+        quad(namedNode('http://s3'), namedNode('http://p'), literal('o3')),
       ];
 
       quads.forEach(q => store.add(q));
@@ -60,7 +60,7 @@ describe('useQuadStore', () => {
     it('should remove multiple quads', () => {
       const quads = [
         quad(namedNode('http://s1'), namedNode('http://p'), literal('o1')),
-        quad(namedNode('http://s2'), namedNode('http://p'), literal('o2'))
+        quad(namedNode('http://s2'), namedNode('http://p'), literal('o2')),
       ];
 
       quads.forEach(q => store.add(q));
@@ -72,7 +72,9 @@ describe('useQuadStore', () => {
 
   describe('Pattern Matching', () => {
     beforeEach(() => {
-      store.add(quad(namedNode('http://alice'), namedNode('http://knows'), namedNode('http://bob')));
+      store.add(
+        quad(namedNode('http://alice'), namedNode('http://knows'), namedNode('http://bob'))
+      );
       store.add(quad(namedNode('http://alice'), namedNode('http://age'), literal('30')));
       store.add(quad(namedNode('http://bob'), namedNode('http://age'), literal('25')));
     });
@@ -96,7 +98,9 @@ describe('useQuadStore', () => {
     });
 
     it('should match with multiple criteria', () => {
-      const results = [...store.match(namedNode('http://alice'), namedNode('http://age'), null, null)];
+      const results = [
+        ...store.match(namedNode('http://alice'), namedNode('http://age'), null, null),
+      ];
 
       expect(results).toHaveLength(1);
       expect(results[0].object.value).toBe('30');
@@ -108,11 +112,7 @@ describe('useQuadStore', () => {
       const start = performance.now();
 
       for (let i = 0; i < 100000; i++) {
-        store.add(quad(
-          namedNode(`http://s${i}`),
-          namedNode('http://p'),
-          literal(`o${i}`)
-        ));
+        store.add(quad(namedNode(`http://s${i}`), namedNode('http://p'), literal(`o${i}`)));
       }
 
       const duration = performance.now() - start;
@@ -123,11 +123,9 @@ describe('useQuadStore', () => {
 
     it('should query large stores efficiently', () => {
       for (let i = 0; i < 10000; i++) {
-        store.add(quad(
-          namedNode(`http://s${i}`),
-          namedNode(`http://p${i % 10}`),
-          literal(`o${i}`)
-        ));
+        store.add(
+          quad(namedNode(`http://s${i}`), namedNode(`http://p${i % 10}`), literal(`o${i}`))
+        );
       }
 
       const start = performance.now();

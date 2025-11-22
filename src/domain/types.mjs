@@ -27,7 +27,9 @@ export const ThesisTypeSchema = z.enum(/** @type {[string, ...string[]]} */ (THE
  * Output format schema
  * @type {import('zod').ZodEnum<['json', 'json-pretty', 'yaml', 'table']>}
  */
-export const OutputFormatSchema = z.enum(/** @type {[string, ...string[]]} */ (OUTPUT_FORMAT_NAMES));
+export const OutputFormatSchema = z.enum(
+  /** @type {[string, ...string[]]} */ (OUTPUT_FORMAT_NAMES)
+);
 
 /**
  * Shell type schema

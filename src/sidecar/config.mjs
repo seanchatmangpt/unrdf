@@ -7,7 +7,10 @@
  * This allows tests to import from the expected src/ path.
  */
 
-import SidecarConfigClass, { SidecarConfig as SidecarConfigExport, createSidecarConfig } from '../../sidecar/sidecar/config.mjs';
+import SidecarConfigClass, {
+  SidecarConfig as SidecarConfigExport,
+  createSidecarConfig,
+} from '../../sidecar/sidecar/config.mjs';
 
 export { SidecarConfigExport as SidecarConfig, createSidecarConfig };
 export default SidecarConfigClass;

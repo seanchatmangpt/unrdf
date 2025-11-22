@@ -18,7 +18,7 @@ describe('SemanticAnalyzer', () => {
     analyzer = createSemanticAnalyzer({
       cacheSize: 100,
       maxConcepts: 50,
-      minConceptFrequency: 1 // Allow single occurrences for tests
+      minConceptFrequency: 1, // Allow single occurrences for tests
     });
   });
 
@@ -114,7 +114,7 @@ describe('SemanticAnalyzer', () => {
     it('should generate ontology improvement suggestions', async () => {
       // Create a graph with potential improvements
       const alice = namedNode('http://example.org/alice');
-      const bob = namedNode('http://example.org/bob');
+      const _bob = namedNode('http://example.org/_bob');
       const knows = namedNode('http://example.org/knows');
 
       // Add many forward relationships without reverse
@@ -195,11 +195,7 @@ describe('SemanticAnalyzer', () => {
       store.addQuad(quad(bob, knows, charlie));
       store.addQuad(quad(bob, likes, pizza));
 
-      const result = await analyzer.computeSimilarity(
-        store,
-        alice.value,
-        bob.value
-      );
+      const result = await analyzer.computeSimilarity(store, alice.value, bob.value);
 
       expect(result).toBeDefined();
       expect(result.similarity).toBeGreaterThanOrEqual(0);
@@ -221,11 +217,7 @@ describe('SemanticAnalyzer', () => {
       store.addQuad(quad(alice, knows, charlie));
       store.addQuad(quad(bob, likes, pizza));
 
-      const result = await analyzer.computeSimilarity(
-        store,
-        alice.value,
-        bob.value
-      );
+      const result = await analyzer.computeSimilarity(store, alice.value, bob.value);
 
       expect(result.similarity).toBeLessThan(0.5);
     });

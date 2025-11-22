@@ -3,12 +3,12 @@
  * @module project-engine/materialize-apply
  */
 
-import { z } from 'zod'
-import { promises as fs } from 'fs'
-import path from 'path'
-import { createHash } from 'crypto'
-import { scanFileSystemToStore } from './fs-scan.mjs'
-import { diffProjectStructure } from './project-diff.mjs'
+import { z } from 'zod';
+import { promises as fs } from 'fs';
+import path from 'path';
+import { createHash } from 'crypto';
+import { scanFileSystemToStore } from './fs-scan.mjs';
+import { diffProjectStructure } from './project-diff.mjs';
 
 /**
  * @typedef {import('./materialize-plan.mjs').MaterializationPlan} MaterializationPlan
@@ -50,7 +50,7 @@ const ApplyOptionsSchema = z.object({
   outputRoot: z.string().default('.'),
   snapshotBefore: z.boolean().default(true),
   snapshotAfter: z.boolean().default(true),
-})
+});
 
 const WriteOperationSchema = z.object({
   path: z.string(),
@@ -59,7 +59,7 @@ const WriteOperationSchema = z.object({
   templateIri: z.string(),
   entityIri: z.string(),
   entityType: z.string(),
-})
+});
 
 const UpdateOperationSchema = z.object({
   path: z.string(),
@@ -68,19 +68,19 @@ const UpdateOperationSchema = z.object({
   newHash: z.string(),
   templateIri: z.string(),
   entityIri: z.string(),
-})
+});
 
 const DeleteOperationSchema = z.object({
   path: z.string(),
   hash: z.string(),
   reason: z.string(),
-})
+});
 
 const MaterializationPlanSchema = z.object({
   writes: z.array(WriteOperationSchema),
   updates: z.array(UpdateOperationSchema),
   deletes: z.array(DeleteOperationSchema),
-})
+});
 
 /**
  * Compute SHA256 hash of content
@@ -89,7 +89,7 @@ const MaterializationPlanSchema = z.object({
  * @returns {string}
  */
 function hashContent(content) {
-  return createHash('sha256').update(content).digest('hex')
+  return createHash('sha256').update(content).digest('hex');
 }
 
 /**
@@ -99,8 +99,8 @@ function hashContent(content) {
  * @returns {Promise<void>}
  */
 async function ensureDirectoryExists(filePath) {
-  const dir = path.dirname(filePath)
-  await fs.mkdir(dir, { recursive: true })
+  const dir = path.dirname(filePath);
+  await fs.mkdir(dir, { recursive: true });
 }
 
 /**
@@ -111,14 +111,14 @@ async function ensureDirectoryExists(filePath) {
  */
 async function readFileWithHash(filePath) {
   try {
-    const content = await fs.readFile(filePath, 'utf-8')
+    const content = await fs.readFile(filePath, 'utf-8');
     return {
       content,
       hash: hashContent(content),
-    }
+    };
   } catch (err) {
-    if (err.code === 'ENOENT') return null
-    throw err
+    if (err.code === 'ENOENT') return null;
+    throw err;
   }
 }
 
@@ -133,27 +133,27 @@ async function readFileWithHash(filePath) {
  * @returns {Promise<{success: boolean, error?: string}>}
  */
 async function applyWrite(op, options) {
-  const fullPath = path.resolve(options.outputRoot, op.path)
+  const fullPath = path.resolve(options.outputRoot, op.path);
 
   // Check if file already exists
-  const existing = await readFileWithHash(fullPath)
+  const existing = await readFileWithHash(fullPath);
   if (existing !== null) {
     return {
       success: false,
       error: `File already exists: ${op.path}`,
-    }
+    };
   }
 
   if (options.dryRun) {
-    return { success: true }
+    return { success: true };
   }
 
   if (options.createDirectories) {
-    await ensureDirectoryExists(fullPath)
+    await ensureDirectoryExists(fullPath);
   }
 
-  await fs.writeFile(fullPath, op.content, 'utf-8')
-  return { success: true }
+  await fs.writeFile(fullPath, op.content, 'utf-8');
+  return { success: true };
 }
 
 /**
@@ -167,16 +167,16 @@ async function applyWrite(op, options) {
  * @returns {Promise<{success: boolean, error?: string}>}
  */
 async function applyUpdate(op, options) {
-  const fullPath = path.resolve(options.outputRoot, op.path)
+  const fullPath = path.resolve(options.outputRoot, op.path);
 
   // Read existing file
-  const existing = await readFileWithHash(fullPath)
+  const existing = await readFileWithHash(fullPath);
 
   if (existing === null) {
     return {
       success: false,
       error: `File not found for update: ${op.path}`,
-    }
+    };
   }
 
   // Validate hash if required
@@ -184,15 +184,15 @@ async function applyUpdate(op, options) {
     return {
       success: false,
       error: `Hash mismatch for ${op.path}: expected ${op.oldHash}, got ${existing.hash}`,
-    }
+    };
   }
 
   if (options.dryRun) {
-    return { success: true }
+    return { success: true };
   }
 
-  await fs.writeFile(fullPath, op.content, 'utf-8')
-  return { success: true }
+  await fs.writeFile(fullPath, op.content, 'utf-8');
+  return { success: true };
 }
 
 /**
@@ -206,14 +206,14 @@ async function applyUpdate(op, options) {
  * @returns {Promise<{success: boolean, error?: string}>}
  */
 async function applyDelete(op, options) {
-  const fullPath = path.resolve(options.outputRoot, op.path)
+  const fullPath = path.resolve(options.outputRoot, op.path);
 
   // Read existing file
-  const existing = await readFileWithHash(fullPath)
+  const existing = await readFileWithHash(fullPath);
 
   if (existing === null) {
     // File already doesn't exist - skip
-    return { success: true }
+    return { success: true };
   }
 
   // Validate hash if required
@@ -221,15 +221,15 @@ async function applyDelete(op, options) {
     return {
       success: false,
       error: `Hash mismatch for delete ${op.path}: expected ${op.hash}, got ${existing.hash}`,
-    }
+    };
   }
 
   if (options.dryRun) {
-    return { success: true }
+    return { success: true };
   }
 
-  await fs.unlink(fullPath)
-  return { success: true }
+  await fs.unlink(fullPath);
+  return { success: true };
 }
 
 /**
@@ -243,21 +243,21 @@ async function snapshotFileSystem(root) {
     const { store, summary } = await scanFileSystemToStore({
       root,
       baseIri: 'http://example.org/unrdf/materialize#',
-    })
+    });
 
     const hash = createHash('sha256')
       .update(`files:${summary.fileCount}|folders:${summary.folderCount}`)
       .digest('hex')
-      .substring(0, 16)
+      .substring(0, 16);
 
-    return { store, hash }
+    return { store, hash };
   } catch (err) {
     // If directory doesn't exist, return empty store
-    const { Store } = await import('n3')
+    const { Store } = await import('n3');
     return {
       store: new Store(),
       hash: 'empty',
-    }
+    };
   }
 }
 
@@ -291,8 +291,8 @@ async function snapshotFileSystem(root) {
  * @returns {Promise<ApplyOutput>}
  */
 export async function applyMaterializationPlan(plan, options = {}) {
-  const opts = ApplyOptionsSchema.parse(options)
-  const validatedPlan = MaterializationPlanSchema.parse(plan)
+  const opts = ApplyOptionsSchema.parse(options);
+  const validatedPlan = MaterializationPlanSchema.parse(plan);
 
   /** @type {ApplyResult} */
   const result = {
@@ -302,55 +302,55 @@ export async function applyMaterializationPlan(plan, options = {}) {
     updatedPaths: [],
     deletedPaths: [],
     errors: [],
-  }
+  };
 
   // Snapshot before
-  let beforeSnapshot = null
+  let beforeSnapshot = null;
   if (opts.snapshotBefore) {
-    beforeSnapshot = await snapshotFileSystem(opts.outputRoot)
+    beforeSnapshot = await snapshotFileSystem(opts.outputRoot);
   }
 
   // Apply writes
   for (const op of validatedPlan.writes) {
-    const writeResult = await applyWrite(op, opts)
+    const writeResult = await applyWrite(op, opts);
     if (writeResult.success) {
-      result.appliedCount++
-      result.writtenPaths.push(op.path)
+      result.appliedCount++;
+      result.writtenPaths.push(op.path);
     } else {
-      result.skippedCount++
-      result.errors.push(writeResult.error)
+      result.skippedCount++;
+      result.errors.push(writeResult.error);
     }
   }
 
   // Apply updates
   for (const op of validatedPlan.updates) {
-    const updateResult = await applyUpdate(op, opts)
+    const updateResult = await applyUpdate(op, opts);
     if (updateResult.success) {
-      result.appliedCount++
-      result.updatedPaths.push(op.path)
+      result.appliedCount++;
+      result.updatedPaths.push(op.path);
     } else {
-      result.skippedCount++
-      result.errors.push(updateResult.error)
+      result.skippedCount++;
+      result.errors.push(updateResult.error);
     }
   }
 
   // Apply deletes
   for (const op of validatedPlan.deletes) {
-    const deleteResult = await applyDelete(op, opts)
+    const deleteResult = await applyDelete(op, opts);
     if (deleteResult.success) {
-      result.appliedCount++
-      result.deletedPaths.push(op.path)
+      result.appliedCount++;
+      result.deletedPaths.push(op.path);
     } else {
-      result.skippedCount++
-      result.errors.push(deleteResult.error)
+      result.skippedCount++;
+      result.errors.push(deleteResult.error);
     }
   }
 
   // Snapshot after
-  let afterSnapshot = null
-  let fsDiff = null
+  let afterSnapshot = null;
+  let fsDiff = null;
   if (opts.snapshotAfter && !opts.dryRun) {
-    afterSnapshot = await snapshotFileSystem(opts.outputRoot)
+    afterSnapshot = await snapshotFileSystem(opts.outputRoot);
 
     // Compute diff if we have both snapshots
     if (beforeSnapshot && afterSnapshot) {
@@ -358,23 +358,25 @@ export async function applyMaterializationPlan(plan, options = {}) {
         fsDiff = diffProjectStructure({
           actualStore: afterSnapshot.store,
           goldenStore: beforeSnapshot.store,
-        })
+        });
       } catch (err) {
         // Diff failed, but apply succeeded
-        fsDiff = { error: err.message }
+        fsDiff = { error: err.message };
       }
     }
   }
 
   // Create plan hash
   const planHash = createHash('sha256')
-    .update(JSON.stringify({
-      writes: validatedPlan.writes.length,
-      updates: validatedPlan.updates.length,
-      deletes: validatedPlan.deletes.length,
-    }))
+    .update(
+      JSON.stringify({
+        writes: validatedPlan.writes.length,
+        updates: validatedPlan.updates.length,
+        deletes: validatedPlan.deletes.length,
+      })
+    )
     .digest('hex')
-    .substring(0, 16)
+    .substring(0, 16);
 
   /** @type {ApplyReceipt} */
   const receipt = {
@@ -384,9 +386,9 @@ export async function applyMaterializationPlan(plan, options = {}) {
     fsDiff: fsDiff || {},
     timestamp: new Date().toISOString(),
     success: result.errors.length === 0,
-  }
+  };
 
-  return { result, receipt }
+  return { result, receipt };
 }
 
 /**
@@ -398,19 +400,19 @@ export async function applyMaterializationPlan(plan, options = {}) {
  * @returns {Promise<{rolledBack: string[], errors: string[]}>}
  */
 export async function rollbackMaterialization(result, options = {}) {
-  const outputRoot = options.outputRoot || '.'
-  const rolledBack = []
-  const errors = []
+  const outputRoot = options.outputRoot || '.';
+  const rolledBack = [];
+  const errors = [];
 
   // Delete written files
   for (const filePath of result.writtenPaths) {
-    const fullPath = path.resolve(outputRoot, filePath)
+    const fullPath = path.resolve(outputRoot, filePath);
     try {
-      await fs.unlink(fullPath)
-      rolledBack.push(filePath)
+      await fs.unlink(fullPath);
+      rolledBack.push(filePath);
     } catch (err) {
       if (err.code !== 'ENOENT') {
-        errors.push(`Failed to rollback ${filePath}: ${err.message}`)
+        errors.push(`Failed to rollback ${filePath}: ${err.message}`);
       }
     }
   }
@@ -418,7 +420,7 @@ export async function rollbackMaterialization(result, options = {}) {
   // Note: We can't easily rollback updates or restore deleted files
   // without having stored the original content
 
-  return { rolledBack, errors }
+  return { rolledBack, errors };
 }
 
 /**
@@ -428,24 +430,25 @@ export async function rollbackMaterialization(result, options = {}) {
  * @returns {Object} Summary of what would be done
  */
 export function previewPlan(plan) {
-  const validatedPlan = MaterializationPlanSchema.parse(plan)
+  const validatedPlan = MaterializationPlanSchema.parse(plan);
 
   return {
-    totalOperations: validatedPlan.writes.length + validatedPlan.updates.length + validatedPlan.deletes.length,
-    writes: validatedPlan.writes.map((op) => ({
+    totalOperations:
+      validatedPlan.writes.length + validatedPlan.updates.length + validatedPlan.deletes.length,
+    writes: validatedPlan.writes.map(op => ({
       path: op.path,
       templateIri: op.templateIri,
       entityIri: op.entityIri,
     })),
-    updates: validatedPlan.updates.map((op) => ({
+    updates: validatedPlan.updates.map(op => ({
       path: op.path,
       templateIri: op.templateIri,
     })),
-    deletes: validatedPlan.deletes.map((op) => ({
+    deletes: validatedPlan.deletes.map(op => ({
       path: op.path,
       reason: op.reason,
     })),
-  }
+  };
 }
 
 /**
@@ -462,41 +465,41 @@ export function previewPlan(plan) {
  * @returns {Promise<{canApply: boolean, issues: string[]}>}
  */
 export async function checkPlanApplicability(plan, options = {}) {
-  const outputRoot = options.outputRoot || '.'
-  const validatedPlan = MaterializationPlanSchema.parse(plan)
-  const issues = []
+  const outputRoot = options.outputRoot || '.';
+  const validatedPlan = MaterializationPlanSchema.parse(plan);
+  const issues = [];
 
   // Check writes don't conflict
   for (const op of validatedPlan.writes) {
-    const fullPath = path.resolve(outputRoot, op.path)
-    const existing = await readFileWithHash(fullPath)
+    const fullPath = path.resolve(outputRoot, op.path);
+    const existing = await readFileWithHash(fullPath);
     if (existing !== null) {
-      issues.push(`Write conflict: ${op.path} already exists`)
+      issues.push(`Write conflict: ${op.path} already exists`);
     }
   }
 
   // Check updates exist and match
   for (const op of validatedPlan.updates) {
-    const fullPath = path.resolve(outputRoot, op.path)
-    const existing = await readFileWithHash(fullPath)
+    const fullPath = path.resolve(outputRoot, op.path);
+    const existing = await readFileWithHash(fullPath);
     if (existing === null) {
-      issues.push(`Update target missing: ${op.path}`)
+      issues.push(`Update target missing: ${op.path}`);
     } else if (existing.hash !== op.oldHash) {
-      issues.push(`Update hash mismatch: ${op.path}`)
+      issues.push(`Update hash mismatch: ${op.path}`);
     }
   }
 
   // Check deletes exist and match
   for (const op of validatedPlan.deletes) {
-    const fullPath = path.resolve(outputRoot, op.path)
-    const existing = await readFileWithHash(fullPath)
+    const fullPath = path.resolve(outputRoot, op.path);
+    const existing = await readFileWithHash(fullPath);
     if (existing !== null && existing.hash !== op.hash) {
-      issues.push(`Delete hash mismatch: ${op.path}`)
+      issues.push(`Delete hash mismatch: ${op.path}`);
     }
   }
 
   return {
     canApply: issues.length === 0,
     issues,
-  }
+  };
 }

@@ -41,12 +41,7 @@ import { useKnowledgeEngineContext } from '../context/useKnowledgeEngineContext.
  * @returns {Object} Query result state
  */
 export function useSPARQLQuery(query, options = {}) {
-  const {
-    autoExecute = true,
-    limit,
-    signal,
-    dependencies = []
-  } = options;
+  const { autoExecute = true, limit, signal, dependencies = [] } = options;
 
   const { engine, store } = useKnowledgeEngineContext();
 
@@ -106,6 +101,6 @@ export function useSPARQLQuery(query, options = {}) {
     error,
     execute,
     refetch,
-    clear
+    clear,
   };
 }
