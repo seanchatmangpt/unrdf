@@ -15,3 +15,45 @@ export {
   getProjectEngineConfig,
   ProjectEngineConfigSchema,
 } from './project-config.mjs'
+export { buildProjectReport } from './project-report.mjs'
+export { createProjectInitializationPipeline } from './initialize.mjs'
+export {
+  deriveHooksFromStructure,
+  analyzePatternViolations,
+  createCustomPatternHook,
+} from './policy-derivation.mjs'
+export {
+  inferDomainModel,
+  inferDomainModelFromPath,
+  DomainModelLens,
+} from './domain-infer.mjs'
+export {
+  inferTemplatesFromProject,
+  inferTemplatesWithDomainBinding,
+  getTemplatesByKind,
+  serializeTemplates,
+} from './template-infer.mjs'
+
+// Materialization planning and execution
+export {
+  planMaterialization,
+  validatePlan,
+  createEmptyPlan,
+  mergePlans,
+} from './materialize-plan.mjs'
+
+export {
+  applyMaterializationPlan,
+  rollbackMaterialization,
+  previewPlan,
+  checkPlanApplicability,
+} from './materialize-apply.mjs'
+
+// Drift detection
+export {
+  createStructureSnapshot,
+  computeDrift,
+  createEmptyBaseline,
+  serializeSnapshot,
+  deserializeSnapshot,
+} from './drift-snapshot.mjs'

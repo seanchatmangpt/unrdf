@@ -9,7 +9,9 @@ import { z } from 'zod'
 const { namedNode } = DataFactory
 
 const StackDetectOptionsSchema = z.object({
-  fsStore: z.object({}).passthrough(),
+  fsStore: z.custom((val) => val && typeof val.getQuads === 'function', {
+    message: 'fsStore must be an RDF store with getQuads method',
+  }),
   projectIri: z.string().default('http://example.org/unrdf/project#project'),
 })
 

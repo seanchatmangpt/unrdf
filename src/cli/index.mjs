@@ -15,6 +15,7 @@
 
 import { defineCommand, runMain } from 'citty';
 import { storeCommand } from './commands/store.mjs';
+import { initCommand } from './commands/init.mjs';
 
 /**
  * Main CLI application
@@ -26,6 +27,7 @@ const main = defineCommand({
     description: 'Autonomic RDF framework CLI - Knowledge Hooks, policy packs, and audit trails'
   },
   subCommands: {
+    init: initCommand,
     store: storeCommand
   }
 });

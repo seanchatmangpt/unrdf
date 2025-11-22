@@ -9,7 +9,9 @@ import { z } from 'zod'
 const { namedNode, literal } = DataFactory
 
 const ProjectModelOptionsSchema = z.object({
-  fsStore: z.object({}).passthrough(),
+  fsStore: z.custom((val) => val && typeof val.getQuads === 'function', {
+    message: 'fsStore must be an RDF store with getQuads method',
+  }),
   baseIri: z.string().default('http://example.org/unrdf/project#'),
   conventions: z.object({
     sourcePaths: z.array(z.string()).default(['src']),

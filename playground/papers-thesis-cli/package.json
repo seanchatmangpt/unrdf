@@ -1,0 +1,69 @@
+{
+  "name": "papers-thesis-cli",
+  "version": "1.0.0",
+  "description": "CLI for generating academic papers and theses using templates and RDF knowledge graphs",
+  "type": "module",
+  "main": "src/index.mjs",
+  "bin": {
+    "playground": "./src/cli/index.mjs"
+  },
+  "exports": {
+    ".": "./src/index.mjs",
+    "./cli": "./src/cli/index.mjs",
+    "./domain": "./src/domain/index.mjs",
+    "./integration": "./src/integration/index.mjs"
+  },
+  "scripts": {
+    "start": "node src/cli/index.mjs",
+    "dev": "node --watch src/cli/index.mjs",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint src/ test/",
+    "lint:fix": "eslint src/ test/ --fix",
+    "format": "prettier --write src/ test/",
+    "build": "echo 'No build step required for ESM'",
+    "papers:list": "node src/cli/index.mjs papers list",
+    "thesis:list": "node src/cli/index.mjs thesis list",
+    "meta:introspect": "node src/cli/index.mjs meta introspect",
+    "ontology:list": "node src/cli/index.mjs meta ontology list --verbose"
+  },
+  "keywords": [
+    "cli",
+    "academic",
+    "papers",
+    "thesis",
+    "latex",
+    "rdf",
+    "sparql",
+    "nunjucks",
+    "citty",
+    "unrdf",
+    "knowledge-graph"
+  ],
+  "author": "UNRDF Team",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "citty": "^0.1.6",
+    "nunjucks": "^3.2.4",
+    "unrdf": "file:../..",
+    "yaml": "^2.3.0",
+    "zod": "^3.22.0"
+  },
+  "devDependencies": {
+    "@vitest/coverage-v8": "^1.0.0",
+    "eslint": "^8.0.0",
+    "execa": "^8.0.0",
+    "prettier": "^3.0.0",
+    "vitest": "^1.0.0"
+  },
+  "files": [
+    "src/",
+    "templates/",
+    "ontologies/",
+    "command-registry.json"
+  ]
+}

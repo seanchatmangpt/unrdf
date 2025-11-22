@@ -9,7 +9,9 @@ import { z } from 'zod'
 const { namedNode, literal } = DataFactory
 
 const FileRolesOptionsSchema = z.object({
-  fsStore: z.object({}).passthrough(),
+  fsStore: z.custom((val) => val && typeof val.getQuads === 'function', {
+    message: 'fsStore must be an RDF store with getQuads method',
+  }),
   stackInfo: z.object({
     uiFramework: z.string().nullable(),
     webFramework: z.string().nullable(),

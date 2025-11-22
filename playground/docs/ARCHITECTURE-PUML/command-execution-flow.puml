@@ -1,0 +1,83 @@
+@startuml command-execution-flow
+!theme plain
+title Command Execution Flow - How Agents Invoke Commands
+
+skinparam backgroundColor #FFFFFF
+skinparam sequenceArrowThickness 2
+skinparam roundcorner 10
+
+actor "Autonomous\nAgent" as Agent
+participant "CLI\nEntry" as CLI
+participant "Citty\nParser" as Parser
+participant "Zod\nValidator" as Validator
+participant "Command\nHandler" as Handler
+participant "Integration\nLayer" as Integration
+database "File\nSystem" as FS
+database "Knowledge\nGraph" as KG
+
+== Discovery Phase ==
+Agent -> CLI: playground meta introspect --format json
+CLI -> Parser: Parse args
+Parser -> Handler: Route to meta.introspect
+Handler --> Agent: Command registry JSON
+
+== Capability Matching ==
+note over Agent
+  Agent analyzes registry
+  Matches task to capability
+  Builds command invocation
+end note
+
+== Execution Phase ==
+Agent -> CLI: playground papers generate --title "Paper" --author "Agent"
+activate CLI
+
+CLI -> Parser: Parse CLI arguments
+activate Parser
+Parser -> Parser: Extract command path
+Parser -> Parser: Extract flags & values
+Parser --> CLI: ParsedArgs
+deactivate Parser
+
+CLI -> Validator: Validate with Zod schema
+activate Validator
+Validator -> Validator: Check required fields
+Validator -> Validator: Validate types
+Validator -> Validator: Apply defaults
+alt Validation Success
+    Validator --> CLI: ValidatedInput
+else Validation Failure
+    Validator --> Agent: E_VALIDATION error
+end
+deactivate Validator
+
+CLI -> Handler: Execute command handler
+activate Handler
+
+Handler -> Integration: Build template context
+activate Integration
+Integration -> FS: Load template file
+FS --> Integration: Template content
+Integration -> Integration: Compile Nunjucks
+Integration -> Integration: Render template
+Integration --> Handler: Rendered output
+deactivate Integration
+
+Handler -> FS: Write output file
+FS --> Handler: Write success
+
+Handler -> KG: Store paper metadata (optional)
+KG --> Handler: Store success
+
+Handler --> CLI: PaperOutput object
+deactivate Handler
+
+CLI --> Agent: JSON result
+deactivate CLI
+
+== Feedback Phase ==
+Agent -> Agent: Record success/failure
+Agent -> Agent: Update capability confidence
+Agent -> Agent: Store telemetry
+
+@enduml

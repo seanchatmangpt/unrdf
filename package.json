@@ -129,12 +129,15 @@
     "jsonld": "^8.2.0",
     "lru-cache": "^11.2.2",
     "n3": "^1.17.0",
+    "nunjucks": "^3.2.4",
     "rdf-canonize": "^2.0.0",
     "rdf-ext": "^2.0.0",
     "rdf-validate-shacl": "^0.6.5",
+    "table": "^6.9.0",
     "unctx": "^1.0.0",
     "vm2": "^3.9.0",
     "ws": "^8.18.3",
+    "yaml": "^2.8.1",
     "zod": "^3.22.0"
   },
   "devDependencies": {
