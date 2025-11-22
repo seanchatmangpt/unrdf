@@ -96,6 +96,9 @@ export { deriveLinterRules, analyzeCodePatterns, generateESLintConfig } from './
 
 // Removed unused exports: planEntityRename, planEntityMerge, planServiceExtraction, validateRefactoringPlan (never imported/used)
 
+// JavaScript Code Complexity Analysis
+export { analyzeJsComplexity } from './code-complexity-js.mjs';
+
 // Feature Dependency Graph
 export {
   buildDependencyGraph,

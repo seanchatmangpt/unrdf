@@ -1,0 +1,125 @@
+{
+  "@context": {
+    "@vocab": "urn:unrdf:error:",
+    "schema": "http://schema.org/"
+  },
+  "@id": "urn:unrdf:error-codes:v4.0.0",
+  "@type": "error:ErrorRegistry",
+  "version": "4.0.0",
+  "errors": {
+    "E_MAPEK_INVALID_STORE": {
+      "code": "E_MAPEK_INVALID_STORE",
+      "message": "Store must have getQuads method",
+      "category": "validation",
+      "severity": "error",
+      "recovery": {
+        "action": "verify",
+        "steps": [
+          "Ensure store is N3.Store instance",
+          "Verify store has getQuads method",
+          "Check store initialization"
+        ]
+      }
+    },
+    "E_MAPEK_INVALID_PATH": {
+      "code": "E_MAPEK_INVALID_PATH",
+      "message": "Project root path is invalid",
+      "category": "validation",
+      "severity": "error",
+      "recovery": {
+        "action": "verify",
+        "steps": [
+          "Check path exists",
+          "Verify path is accessible",
+          "Ensure path is absolute or relative to current working directory"
+        ]
+      }
+    },
+    "E_HOOK_INVALID_NAME": {
+      "code": "E_HOOK_INVALID_NAME",
+      "message": "Hook name must match pattern ^[a-zA-Z0-9:_-]+$",
+      "category": "validation",
+      "severity": "error",
+      "recovery": {
+        "action": "fix",
+        "steps": [
+          "Use only alphanumeric characters",
+          "Allowed special characters: colon, hyphen, underscore",
+          "Remove invalid characters"
+        ]
+      }
+    },
+    "E_HOOK_MISSING_CONDITION": {
+      "code": "E_HOOK_MISSING_CONDITION",
+      "message": "Either query or ref must be provided in when clause",
+      "category": "validation",
+      "severity": "error",
+      "recovery": {
+        "action": "fix",
+        "steps": [
+          "Provide inline query string",
+          "OR provide content-addressed reference with uri, sha256, mediaType"
+        ]
+      }
+    },
+    "E_HOOK_INVALID_RUN": {
+      "code": "E_HOOK_INVALID_RUN",
+      "message": "Hook must have a run function",
+      "category": "validation",
+      "severity": "error",
+      "recovery": {
+        "action": "fix",
+        "steps": [
+          "Provide run function",
+          "Function signature: (event: HookEvent) => Promise<HookResult> | HookResult"
+        ]
+      }
+    },
+    "E_SYSTEM_INIT_FAILED": {
+      "code": "E_SYSTEM_INIT_FAILED",
+      "message": "Failed to initialize knowledge engine",
+      "category": "system",
+      "severity": "error",
+      "recovery": {
+        "action": "diagnose",
+        "steps": [
+          "Check Node.js version >= 18",
+          "Verify all dependencies installed",
+          "Check memory availability",
+          "Review initialization logs"
+        ]
+      }
+    },
+    "E_TRANSACTION_HOOK_FAILED": {
+      "code": "E_TRANSACTION_HOOK_FAILED",
+      "message": "Hook execution failed during transaction",
+      "category": "execution",
+      "severity": "error",
+      "recovery": {
+        "action": "rollback",
+        "steps": [
+          "Transaction automatically rolled back",
+          "Check hook error message",
+          "Verify hook condition and run function",
+          "Retry with corrected hook"
+        ]
+      }
+    },
+    "E_CAPABILITY_PRECONDITION_FAILED": {
+      "code": "E_CAPABILITY_PRECONDITION_FAILED",
+      "message": "Capability preconditions not met",
+      "category": "validation",
+      "severity": "error",
+      "recovery": {
+        "action": "verify",
+        "steps": [
+          "Check runtime environment",
+          "Verify Node.js version",
+          "Ensure required modules available",
+          "Check memory constraints"
+        ]
+      }
+    }
+  }
+}
+

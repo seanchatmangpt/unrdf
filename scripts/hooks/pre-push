@@ -2,11 +2,20 @@
 # UNRDF Pre-Push Hook - Full Tier
 # DfLSS: Comprehensive validation before sharing code
 # 80/20: Catch remaining defects in <60 seconds
+#
+# This hook runs comprehensive validation before each push:
+# - Format check
+# - Lint check
+# - Build check
+# - Unit tests
+#
+# To bypass temporarily (DISCOURAGED): SKIP_PRE_PUSH=1 git push
+# To remove hook: rm .git/hooks/pre-push
 
 set -e
 
 # Allow bypass for emergency situations only
-if [ -n "$SKIP_PRE_PUSH" ]; then
+if [ -n "${SKIP_PRE_PUSH:-}" ]; then
     echo "⚠️  WARNING: Skipping pre-push validation (SKIP_PRE_PUSH set)"
     echo "This is DISCOURAGED. Fix issues before pushing."
     exit 0
@@ -15,12 +24,30 @@ fi
 echo "🚦 Pre-push validation (full tier: <60s)..."
 echo ""
 
+# Helper function to run command with optional timeout
+run_with_timeout() {
+    local timeout_seconds=$1
+    shift
+    local cmd="$@"
+    
+    if command -v timeout >/dev/null 2>&1; then
+        timeout "${timeout_seconds}s" $cmd 2>&1 || return $?
+    else
+        $cmd 2>&1 || return $?
+    fi
+}
+
 # Gate 1: Format Check (5s timeout)
 echo "Gate 1/4: Format Check..."
-if timeout 5s pnpm format:check >/dev/null 2>&1; then
+FMT_OUTPUT=$(run_with_timeout 5 pnpm format:check) || FMT_EXIT=$?
+if [ -z "${FMT_EXIT:-}" ]; then
     echo "✅ Gate 1 passed"
 else
     echo "❌ ERROR: Code is not formatted"
+    echo ""
+    echo "Last 10 lines of format output:"
+    echo "$FMT_OUTPUT" | tail -10
+    echo ""
     echo "Run 'pnpm format' to fix formatting issues"
     exit 1
 fi
@@ -28,7 +55,7 @@ echo ""
 
 # Gate 2: Lint Check (10s timeout)
 echo "Gate 2/4: Lint Check..."
-LINT_OUTPUT=$(timeout 10s pnpm lint 2>&1) || LINT_EXIT=$?
+LINT_OUTPUT=$(run_with_timeout 10 pnpm lint) || LINT_EXIT=$?
 if [ -z "${LINT_EXIT:-}" ]; then
     echo "✅ Gate 2 passed"
 else
@@ -45,7 +72,7 @@ echo ""
 
 # Gate 3: Build Check (15s timeout)
 echo "Gate 3/4: Build Check..."
-BUILD_OUTPUT=$(timeout 15s pnpm build >/dev/null 2>&1) || BUILD_EXIT=$?
+BUILD_OUTPUT=$(run_with_timeout 15 pnpm build) || BUILD_EXIT=$?
 if [ -z "${BUILD_EXIT:-}" ]; then
     echo "✅ Gate 3 passed"
 else
@@ -61,7 +88,7 @@ echo ""
 
 # Gate 4: Unit Tests (30s timeout)
 echo "Gate 4/4: Unit Tests..."
-TEST_OUTPUT=$(timeout 30s pnpm test >/dev/null 2>&1) || TEST_EXIT=$?
+TEST_OUTPUT=$(run_with_timeout 30 pnpm test) || TEST_EXIT=$?
 if [ -z "${TEST_EXIT:-}" ]; then
     echo "✅ Gate 4 passed"
 else
