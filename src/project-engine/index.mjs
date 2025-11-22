@@ -88,3 +88,78 @@ export {
   runContinuousMapekLoop,
   reportMapekStatus,
 } from './autonomic-mapek.mjs'
+
+// API Contract Validation
+export {
+  generateAPISchema,
+  generateAllAPISchemas,
+  validateAPIFiles,
+  detectContractBreaks,
+  detectAllContractBreaks,
+  FieldSchemaSchema,
+  EntitySchemaSchema,
+  ViolationSchema,
+  ValidationResultSchema,
+  BreakingChangeSchema,
+  ContractBreaksSchema,
+} from './api-contract-validator.mjs'
+
+// Stack-Aware Linter Rules
+export {
+  deriveLinterRules,
+  analyzeCodePatterns,
+  generateESLintConfig,
+} from './stack-linter.mjs'
+
+// Automated Refactoring Guide
+export {
+  planEntityRename,
+  planEntityMerge,
+  planServiceExtraction,
+  validateRefactoringPlan,
+} from './refactoring-guide.mjs'
+
+// Feature Dependency Graph
+export {
+  buildDependencyGraph,
+  detectCircularDependencies,
+  topologicalSort,
+  analyzeDependencyPath,
+  getTransitiveDependencies,
+  getTransitiveDependents,
+  calculateImpactScore,
+} from './dependency-graph.mjs'
+
+// Auto-Test Generator
+export {
+  inferTestPatterns,
+  generateTestSkeleton,
+  scoreTestCoverage,
+  generateTestFactory,
+} from './auto-test-generator.mjs'
+
+// Generative Documentation - auto-generate docs from domain model + project structure
+export {
+  generateEntityReference,
+  generateAPIReference,
+  generateArchitectureDiagram,
+  generateCompleteDocumentation,
+  DocGenerationResultSchema,
+} from './doc-generator.mjs'
+
+// Documentation Drift Checker - validate documentation consistency against domain model
+export {
+  checkDocConsistency,
+  extractDocReferences,
+  scoreDocDrift,
+  checkDocDrift,
+  DriftEntrySchema,
+} from './doc-drift-checker.mjs'
+
+// MAPEK Orchestration - Unified execution with all innovations
+export {
+  runFullMapekWithAllInnovations,
+  runInnovationsParallel,
+  aggregateInnovationFindings,
+  ALL_INNOVATIONS,
+} from './mapek-orchestration.mjs'
