@@ -1,0 +1,829 @@
+{
+  "@context": {
+    "@vocab": "https://unrdf.org/schema/",
+    "unrdf": "https://unrdf.org/schema/",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "sh": "http://www.w3.org/ns/shacl#",
+    "owl": "http://www.w3.org/2002/07/owl#",
+    "type": "https://unrdf.org/type/",
+    "subClassOf": { "@id": "rdfs:subClassOf", "@type": "@id" },
+    "domain": { "@id": "rdfs:domain", "@type": "@id" },
+    "range": { "@id": "rdfs:range", "@type": "@id" },
+    "zodSchema": { "@id": "unrdf:zodSchema" },
+    "shaclShape": { "@id": "unrdf:shaclShape", "@type": "@id" },
+    "properties": { "@id": "unrdf:properties", "@container": "@list" },
+    "constraints": { "@id": "unrdf:constraints", "@container": "@list" }
+  },
+  "@graph": [
+    {
+      "@id": "type:KnowledgeHook",
+      "@type": ["rdfs:Class", "sh:NodeShape"],
+      "rdfs:label": "Knowledge Hook",
+      "rdfs:comment": "A declarative hook that triggers on graph conditions",
+      "zodSchema": "KnowledgeHookSchema",
+      "sh:property": [
+        {
+          "sh:path": "unrdf:meta",
+          "sh:node": "type:HookMeta",
+          "sh:minCount": 1,
+          "sh:maxCount": 1
+        },
+        {
+          "sh:path": "unrdf:when",
+          "sh:node": "type:Condition",
+          "sh:minCount": 1,
+          "sh:maxCount": 1
+        },
+        {
+          "sh:path": "unrdf:run",
+          "sh:datatype": "xsd:string",
+          "sh:minCount": 1,
+          "sh:description": "JavaScript function body"
+        },
+        {
+          "sh:path": "unrdf:priority",
+          "sh:datatype": "xsd:integer",
+          "sh:minInclusive": 0,
+          "sh:maxInclusive": 100,
+          "sh:defaultValue": 50
+        },
+        {
+          "sh:path": "unrdf:timeout",
+          "sh:datatype": "xsd:integer",
+          "sh:maxInclusive": 300000
+        }
+      ]
+    },
+
+    {
+      "@id": "type:HookMeta",
+      "@type": ["rdfs:Class", "sh:NodeShape"],
+      "rdfs:label": "Hook Metadata",
+      "rdfs:comment": "Metadata for a knowledge hook",
+      "zodSchema": "HookMetaSchema",
+      "sh:property": [
+        {
+          "sh:path": "unrdf:name",
+          "sh:datatype": "xsd:string",
+          "sh:minCount": 1,
+          "sh:maxCount": 1,
+          "sh:minLength": 1,
+          "sh:maxLength": 100,
+          "sh:pattern": "^[a-zA-Z0-9:_-]+$"
+        },
+        {
+          "sh:path": "rdfs:comment",
+          "sh:datatype": "xsd:string",
+          "sh:maxLength": 500
+        },
+        {
+          "sh:path": "unrdf:version",
+          "sh:datatype": "xsd:string",
+          "sh:pattern": "^\\d+\\.\\d+\\.\\d+$"
+        },
+        {
+          "sh:path": "unrdf:author",
+          "sh:datatype": "xsd:string",
+          "sh:maxLength": 100
+        },
+        {
+          "sh:path": "unrdf:tags",
+          "sh:datatype": "xsd:string",
+          "sh:maxCount": 10
+        }
+      ]
+    },
+
+    {
+      "@id": "type:Condition",
+      "@type": ["rdfs:Class", "sh:NodeShape"],
+      "rdfs:label": "Hook Condition",
+      "rdfs:comment": "Abstract base for hook trigger conditions",
+      "zodSchema": "ConditionSchema",
+      "sh:property": [
+        {
+          "sh:path": "unrdf:kind",
+          "sh:datatype": "xsd:string",
+          "sh:minCount": 1,
+          "sh:maxCount": 1,
+          "sh:in": ["sparql-ask", "sparql-select", "shacl", "delta", "threshold", "count", "window"]
+        }
+      ]
+    },
+
+    {
+      "@id": "type:SparqlAskCondition",
+      "@type": ["rdfs:Class", "sh:NodeShape"],
+      "rdfs:label": "SPARQL ASK Condition",
+      "rdfs:comment": "Condition based on SPARQL ASK query result",
+      "subClassOf": "type:Condition",
+      "zodSchema": "SparqlAskConditionSchema",
+      "sh:property": [
+        {
+          "sh:path": "unrdf:kind",
+          "sh:hasValue": "sparql-ask"
+        },
+        {
+          "sh:path": "unrdf:query",
+          "sh:datatype": "xsd:string",
+          "sh:description": "Inline SPARQL ASK query"
+        },
+        {
+          "sh:path": "unrdf:ref",
+          "sh:node": "type:FileRef",
+          "sh:description": "Reference to external query file"
+        }
+      ]
+    },
+
+    {
+      "@id": "type:SparqlSelectCondition",
+      "@type": ["rdfs:Class", "sh:NodeShape"],
+      "rdfs:label": "SPARQL SELECT Condition",
+      "rdfs:comment": "Condition based on SPARQL SELECT query results",
+      "subClassOf": "type:Condition",
+      "zodSchema": "SparqlSelectConditionSchema",
+      "sh:property": [
+        {
+          "sh:path": "unrdf:kind",
+          "sh:hasValue": "sparql-select"
+        },
+        {
+          "sh:path": "unrdf:query",
+          "sh:datatype": "xsd:string"
+        },
+        {
+          "sh:path": "unrdf:ref",
+          "sh:node": "type:FileRef"
+        }
+      ]
+    },
+
+    {
+      "@id": "type:ShaclCondition",
+      "@type": ["rdfs:Class", "sh:NodeShape"],
+      "rdfs:label": "SHACL Condition",
+      "rdfs:comment": "Condition based on SHACL validation result",
+      "subClassOf": "type:Condition",
+      "zodSchema": "ShaclConditionSchema",
+      "sh:property": [
+        {
+          "sh:path": "unrdf:kind",
+          "sh:hasValue": "shacl"
+        },
+        {
+          "sh:path": "unrdf:shapes",
+          "sh:datatype": "xsd:string",
+          "sh:description": "Inline Turtle shapes"
+        },
+        {
+          "sh:path": "unrdf:ref",
+          "sh:node": "type:FileRef"
+        }
+      ]
+    },
+
+    {
+      "@id": "type:DeltaCondition",
+      "@type": ["rdfs:Class", "sh:NodeShape"],
+      "rdfs:label": "Delta Condition",
+      "rdfs:comment": "Condition based on graph change detection",
+      "subClassOf": "type:Condition",
+      "zodSchema": "DeltaConditionSchema",
+      "sh:property": [
+        {
+          "sh:path": "unrdf:kind",
+          "sh:hasValue": "delta"
+        },
+        {
+          "sh:path": "unrdf:spec",
+          "sh:node": "type:DeltaSpec",
+          "sh:minCount": 1
+        }
+      ]
+    },
+
+    {
+      "@id": "type:ThresholdCondition",
+      "@type": ["rdfs:Class", "sh:NodeShape"],
+      "rdfs:label": "Threshold Condition",
+      "rdfs:comment": "Condition based on numeric threshold",
+      "subClassOf": "type:Condition",
+      "zodSchema": "ThresholdConditionSchema",
+      "sh:property": [
+        {
+          "sh:path": "unrdf:kind",
+          "sh:hasValue": "threshold"
+        },
+        {
+          "sh:path": "unrdf:spec",
+          "sh:node": "type:ThresholdSpec",
+          "sh:minCount": 1
+        }
+      ]
+    },
+
+    {
+      "@id": "type:FileRef",
+      "@type": ["rdfs:Class", "sh:NodeShape"],
+      "rdfs:label": "File Reference",
+      "rdfs:comment": "Content-addressed file reference",
+      "zodSchema": "FileRefSchema",
+      "sh:property": [
+        {
+          "sh:path": "unrdf:uri",
+          "sh:datatype": "xsd:anyURI",
+          "sh:minCount": 1,
+          "sh:maxCount": 1
+        },
+        {
+          "sh:path": "unrdf:sha256",
+          "sh:datatype": "xsd:string",
+          "sh:pattern": "^[a-f0-9]{64}$"
+        },
+        {
+          "sh:path": "unrdf:mediaType",
+          "sh:datatype": "xsd:string"
+        }
+      ]
+    },
+
+    {
+      "@id": "type:Delta",
+      "@type": ["rdfs:Class", "sh:NodeShape"],
+      "rdfs:label": "Graph Delta",
+      "rdfs:comment": "Set of additions and removals",
+      "zodSchema": "DeltaSchema",
+      "sh:property": [
+        {
+          "sh:path": "unrdf:additions",
+          "sh:node": "type:Quad"
+        },
+        {
+          "sh:path": "unrdf:removals",
+          "sh:node": "type:Quad"
+        }
+      ]
+    },
+
+    {
+      "@id": "type:Quad",
+      "@type": ["rdfs:Class", "sh:NodeShape"],
+      "rdfs:label": "RDF Quad",
+      "rdfs:comment": "An RDF quad (subject, predicate, object, graph)",
+      "zodSchema": "QuadSchema",
+      "sh:property": [
+        {
+          "sh:path": "rdf:subject",
+          "sh:nodeKind": "sh:BlankNodeOrIRI",
+          "sh:minCount": 1,
+          "sh:maxCount": 1
+        },
+        {
+          "sh:path": "rdf:predicate",
+          "sh:nodeKind": "sh:IRI",
+          "sh:minCount": 1,
+          "sh:maxCount": 1
+        },
+        {
+          "sh:path": "rdf:object",
+          "sh:minCount": 1,
+          "sh:maxCount": 1
+        },
+        {
+          "sh:path": "unrdf:graph",
+          "sh:nodeKind": "sh:BlankNodeOrIRI"
+        }
+      ]
+    },
+
+    {
+      "@id": "type:TransactionReceipt",
+      "@type": ["rdfs:Class", "sh:NodeShape"],
+      "rdfs:label": "Transaction Receipt",
+      "rdfs:comment": "Immutable record of a transaction",
+      "zodSchema": "TransactionReceiptSchema",
+      "sh:property": [
+        {
+          "sh:path": "unrdf:id",
+          "sh:datatype": "xsd:string",
+          "sh:minCount": 1,
+          "sh:maxCount": 1
+        },
+        {
+          "sh:path": "unrdf:delta",
+          "sh:node": "type:Delta",
+          "sh:minCount": 1,
+          "sh:maxCount": 1
+        },
+        {
+          "sh:path": "unrdf:committed",
+          "sh:datatype": "xsd:boolean",
+          "sh:minCount": 1,
+          "sh:maxCount": 1
+        },
+        {
+          "sh:path": "unrdf:beforeHash",
+          "sh:node": "type:Hash"
+        },
+        {
+          "sh:path": "unrdf:afterHash",
+          "sh:node": "type:Hash"
+        },
+        {
+          "sh:path": "unrdf:timestamp",
+          "sh:datatype": "xsd:dateTime",
+          "sh:minCount": 1
+        },
+        {
+          "sh:path": "unrdf:durationMs",
+          "sh:datatype": "xsd:decimal",
+          "sh:minInclusive": 0
+        },
+        {
+          "sh:path": "unrdf:hookResults",
+          "sh:node": "type:HookResult"
+        }
+      ]
+    },
+
+    {
+      "@id": "type:Hash",
+      "@type": ["rdfs:Class", "sh:NodeShape"],
+      "rdfs:label": "Cryptographic Hash",
+      "rdfs:comment": "SHA-3 and BLAKE3 hash pair",
+      "zodSchema": "HashSchema",
+      "sh:property": [
+        {
+          "sh:path": "unrdf:sha3",
+          "sh:datatype": "xsd:string",
+          "sh:minCount": 1,
+          "sh:maxCount": 1
+        },
+        {
+          "sh:path": "unrdf:blake3",
+          "sh:datatype": "xsd:string",
+          "sh:minCount": 1,
+          "sh:maxCount": 1
+        }
+      ]
+    },
+
+    {
+      "@id": "type:HookResult",
+      "@type": ["rdfs:Class", "sh:NodeShape"],
+      "rdfs:label": "Hook Execution Result",
+      "rdfs:comment": "Result of a hook execution",
+      "zodSchema": "HookResultSchema",
+      "sh:property": [
+        {
+          "sh:path": "unrdf:success",
+          "sh:datatype": "xsd:boolean",
+          "sh:minCount": 1,
+          "sh:maxCount": 1
+        },
+        {
+          "sh:path": "unrdf:result",
+          "sh:description": "Hook return value"
+        },
+        {
+          "sh:path": "unrdf:error",
+          "sh:datatype": "xsd:string"
+        },
+        {
+          "sh:path": "unrdf:duration",
+          "sh:datatype": "xsd:decimal",
+          "sh:minInclusive": 0
+        },
+        {
+          "sh:path": "unrdf:phase",
+          "sh:datatype": "xsd:string",
+          "sh:in": ["before", "run", "after", "completed", "failed"]
+        }
+      ]
+    },
+
+    {
+      "@id": "type:QueryPlan",
+      "@type": ["rdfs:Class", "sh:NodeShape"],
+      "rdfs:label": "Query Plan",
+      "rdfs:comment": "Optimized SPARQL execution plan",
+      "zodSchema": "QueryPlanSchema",
+      "sh:property": [
+        {
+          "sh:path": "unrdf:id",
+          "sh:datatype": "xsd:string",
+          "sh:minCount": 1
+        },
+        {
+          "sh:path": "unrdf:query",
+          "sh:datatype": "xsd:string",
+          "sh:minCount": 1
+        },
+        {
+          "sh:path": "unrdf:type",
+          "sh:datatype": "xsd:string",
+          "sh:in": ["sparql-ask", "sparql-select", "shacl"]
+        },
+        {
+          "sh:path": "unrdf:hash",
+          "sh:datatype": "xsd:string"
+        },
+        {
+          "sh:path": "unrdf:estimatedCost",
+          "sh:datatype": "xsd:decimal"
+        }
+      ]
+    },
+
+    {
+      "@id": "type:PolicyPack",
+      "@type": ["rdfs:Class", "sh:NodeShape"],
+      "rdfs:label": "Policy Pack",
+      "rdfs:comment": "Bundle of hooks with metadata",
+      "zodSchema": "PolicyPackManifestSchema",
+      "sh:property": [
+        {
+          "sh:path": "unrdf:meta",
+          "sh:node": "type:PolicyPackMeta",
+          "sh:minCount": 1
+        },
+        {
+          "sh:path": "unrdf:hooks",
+          "sh:node": "type:PolicyHookRef"
+        },
+        {
+          "sh:path": "unrdf:rules",
+          "sh:node": "type:PolicyRule"
+        }
+      ]
+    },
+
+    {
+      "@id": "type:PolicyPackMeta",
+      "@type": ["rdfs:Class", "sh:NodeShape"],
+      "rdfs:label": "Policy Pack Metadata",
+      "zodSchema": "PolicyPackMetaSchema",
+      "sh:property": [
+        {
+          "sh:path": "unrdf:name",
+          "sh:datatype": "xsd:string",
+          "sh:minCount": 1,
+          "sh:minLength": 1,
+          "sh:maxLength": 100
+        },
+        {
+          "sh:path": "unrdf:version",
+          "sh:datatype": "xsd:string",
+          "sh:minCount": 1,
+          "sh:pattern": "^\\d+\\.\\d+\\.\\d+$"
+        },
+        {
+          "sh:path": "rdfs:comment",
+          "sh:datatype": "xsd:string",
+          "sh:maxLength": 500
+        }
+      ]
+    },
+
+    {
+      "@id": "type:LockchainEntry",
+      "@type": ["rdfs:Class", "sh:NodeShape"],
+      "rdfs:label": "Lockchain Entry",
+      "rdfs:comment": "Cryptographically signed audit entry",
+      "zodSchema": "LockchainEntrySchema",
+      "sh:property": [
+        {
+          "sh:path": "unrdf:id",
+          "sh:datatype": "xsd:string",
+          "sh:minCount": 1
+        },
+        {
+          "sh:path": "unrdf:timestamp",
+          "sh:datatype": "xsd:long",
+          "sh:minCount": 1
+        },
+        {
+          "sh:path": "unrdf:receipt",
+          "sh:node": "type:TransactionReceipt",
+          "sh:minCount": 1
+        },
+        {
+          "sh:path": "unrdf:signature",
+          "sh:node": "type:Signature",
+          "sh:minCount": 1
+        },
+        {
+          "sh:path": "unrdf:previousHash",
+          "sh:datatype": "xsd:string"
+        },
+        {
+          "sh:path": "unrdf:merkleRoot",
+          "sh:datatype": "xsd:string"
+        }
+      ]
+    },
+
+    {
+      "@id": "type:Signature",
+      "@type": ["rdfs:Class", "sh:NodeShape"],
+      "rdfs:label": "Cryptographic Signature",
+      "sh:property": [
+        {
+          "sh:path": "unrdf:algorithm",
+          "sh:datatype": "xsd:string",
+          "sh:minCount": 1,
+          "sh:in": ["ed25519", "ecdsa", "rsa"]
+        },
+        {
+          "sh:path": "unrdf:value",
+          "sh:datatype": "xsd:string",
+          "sh:minCount": 1
+        },
+        {
+          "sh:path": "unrdf:publicKey",
+          "sh:datatype": "xsd:string"
+        }
+      ]
+    },
+
+    {
+      "@id": "type:AgentProposal",
+      "@type": ["rdfs:Class", "sh:NodeShape"],
+      "rdfs:label": "Agent Proposal",
+      "rdfs:comment": "Proposal from an agent for conflict resolution",
+      "zodSchema": "AgentProposalSchema",
+      "sh:property": [
+        {
+          "sh:path": "unrdf:id",
+          "sh:datatype": "xsd:string",
+          "sh:minCount": 1
+        },
+        {
+          "sh:path": "unrdf:agentId",
+          "sh:datatype": "xsd:string",
+          "sh:minCount": 1
+        },
+        {
+          "sh:path": "unrdf:delta",
+          "sh:node": "type:Delta",
+          "sh:minCount": 1
+        },
+        {
+          "sh:path": "unrdf:confidence",
+          "sh:datatype": "xsd:decimal",
+          "sh:minInclusive": 0,
+          "sh:maxInclusive": 1
+        },
+        {
+          "sh:path": "unrdf:priority",
+          "sh:datatype": "xsd:integer",
+          "sh:minInclusive": 0,
+          "sh:maxInclusive": 100
+        }
+      ]
+    },
+
+    {
+      "@id": "type:ResolutionResult",
+      "@type": ["rdfs:Class", "sh:NodeShape"],
+      "rdfs:label": "Resolution Result",
+      "rdfs:comment": "Result of multi-agent conflict resolution",
+      "zodSchema": "ResolutionResultSchema",
+      "sh:property": [
+        {
+          "sh:path": "unrdf:id",
+          "sh:datatype": "xsd:string",
+          "sh:minCount": 1
+        },
+        {
+          "sh:path": "unrdf:strategy",
+          "sh:datatype": "xsd:string",
+          "sh:minCount": 1
+        },
+        {
+          "sh:path": "unrdf:resolvedDelta",
+          "sh:node": "type:Delta",
+          "sh:minCount": 1
+        },
+        {
+          "sh:path": "unrdf:confidence",
+          "sh:datatype": "xsd:decimal",
+          "sh:minInclusive": 0,
+          "sh:maxInclusive": 1
+        },
+        {
+          "sh:path": "unrdf:consensus",
+          "sh:datatype": "xsd:boolean",
+          "sh:minCount": 1
+        }
+      ]
+    },
+
+    {
+      "@id": "type:SandboxResult",
+      "@type": ["rdfs:Class", "sh:NodeShape"],
+      "rdfs:label": "Sandbox Execution Result",
+      "rdfs:comment": "Result of sandboxed effect execution",
+      "zodSchema": "SandboxResultSchema",
+      "sh:property": [
+        {
+          "sh:path": "unrdf:success",
+          "sh:datatype": "xsd:boolean",
+          "sh:minCount": 1
+        },
+        {
+          "sh:path": "unrdf:result",
+          "sh:description": "Execution result value"
+        },
+        {
+          "sh:path": "unrdf:error",
+          "sh:datatype": "xsd:string"
+        },
+        {
+          "sh:path": "unrdf:duration",
+          "sh:datatype": "xsd:decimal",
+          "sh:minInclusive": 0
+        },
+        {
+          "sh:path": "unrdf:memoryUsed",
+          "sh:datatype": "xsd:long",
+          "sh:minInclusive": 0
+        }
+      ]
+    },
+
+    {
+      "@id": "type:PerformanceMetrics",
+      "@type": ["rdfs:Class", "sh:NodeShape"],
+      "rdfs:label": "Performance Metrics",
+      "rdfs:comment": "System performance measurements",
+      "zodSchema": "PerformanceMetricsSchema",
+      "sh:property": [
+        {
+          "sh:path": "unrdf:transactionLatency",
+          "sh:node": "type:LatencyMetrics"
+        },
+        {
+          "sh:path": "unrdf:hookExecutionRate",
+          "sh:datatype": "xsd:decimal",
+          "sh:minInclusive": 0
+        },
+        {
+          "sh:path": "unrdf:errorRate",
+          "sh:datatype": "xsd:decimal",
+          "sh:minInclusive": 0,
+          "sh:maxInclusive": 1
+        },
+        {
+          "sh:path": "unrdf:memoryUsage",
+          "sh:node": "type:MemoryMetrics"
+        }
+      ]
+    },
+
+    {
+      "@id": "type:LatencyMetrics",
+      "@type": ["rdfs:Class", "sh:NodeShape"],
+      "rdfs:label": "Latency Metrics",
+      "sh:property": [
+        {
+          "sh:path": "unrdf:p50",
+          "sh:datatype": "xsd:decimal",
+          "sh:minInclusive": 0
+        },
+        {
+          "sh:path": "unrdf:p95",
+          "sh:datatype": "xsd:decimal",
+          "sh:minInclusive": 0
+        },
+        {
+          "sh:path": "unrdf:p99",
+          "sh:datatype": "xsd:decimal",
+          "sh:minInclusive": 0
+        },
+        {
+          "sh:path": "unrdf:max",
+          "sh:datatype": "xsd:decimal",
+          "sh:minInclusive": 0
+        }
+      ]
+    },
+
+    {
+      "@id": "type:MemoryMetrics",
+      "@type": ["rdfs:Class", "sh:NodeShape"],
+      "rdfs:label": "Memory Metrics",
+      "sh:property": [
+        {
+          "sh:path": "unrdf:rss",
+          "sh:datatype": "xsd:long",
+          "sh:minInclusive": 0
+        },
+        {
+          "sh:path": "unrdf:heapUsed",
+          "sh:datatype": "xsd:long",
+          "sh:minInclusive": 0
+        },
+        {
+          "sh:path": "unrdf:heapTotal",
+          "sh:datatype": "xsd:long",
+          "sh:minInclusive": 0
+        },
+        {
+          "sh:path": "unrdf:external",
+          "sh:datatype": "xsd:long",
+          "sh:minInclusive": 0
+        }
+      ]
+    },
+
+    {
+      "@id": "type:ObservabilityConfig",
+      "@type": ["rdfs:Class", "sh:NodeShape"],
+      "rdfs:label": "Observability Configuration",
+      "rdfs:comment": "OpenTelemetry configuration",
+      "zodSchema": "ObservabilityConfigSchema",
+      "sh:property": [
+        {
+          "sh:path": "unrdf:enableTracing",
+          "sh:datatype": "xsd:boolean",
+          "sh:defaultValue": true
+        },
+        {
+          "sh:path": "unrdf:enableMetrics",
+          "sh:datatype": "xsd:boolean",
+          "sh:defaultValue": true
+        },
+        {
+          "sh:path": "unrdf:serviceName",
+          "sh:datatype": "xsd:string",
+          "sh:defaultValue": "unrdf-kgc"
+        },
+        {
+          "sh:path": "unrdf:samplingRatio",
+          "sh:datatype": "xsd:decimal",
+          "sh:minInclusive": 0,
+          "sh:maxInclusive": 1,
+          "sh:defaultValue": 1.0
+        }
+      ]
+    },
+
+    {
+      "@id": "type:FederationConfig",
+      "@type": ["rdfs:Class", "sh:NodeShape"],
+      "rdfs:label": "Federation Configuration",
+      "rdfs:comment": "Distributed federation settings",
+      "sh:property": [
+        {
+          "sh:path": "unrdf:federationId",
+          "sh:datatype": "xsd:string"
+        },
+        {
+          "sh:path": "unrdf:enableConsensus",
+          "sh:datatype": "xsd:boolean",
+          "sh:defaultValue": true
+        },
+        {
+          "sh:path": "unrdf:replicationTopology",
+          "sh:datatype": "xsd:string",
+          "sh:in": ["full-mesh", "star", "ring"],
+          "sh:defaultValue": "full-mesh"
+        },
+        {
+          "sh:path": "unrdf:conflictResolution",
+          "sh:datatype": "xsd:string",
+          "sh:in": ["last-write-wins", "voting", "crdt"],
+          "sh:defaultValue": "last-write-wins"
+        }
+      ]
+    },
+
+    {
+      "@id": "type:StreamConfig",
+      "@type": ["rdfs:Class", "sh:NodeShape"],
+      "rdfs:label": "Streaming Configuration",
+      "rdfs:comment": "Real-time streaming settings",
+      "sh:property": [
+        {
+          "sh:path": "unrdf:windowSize",
+          "sh:datatype": "xsd:integer",
+          "sh:minInclusive": 1
+        },
+        {
+          "sh:path": "unrdf:slideInterval",
+          "sh:datatype": "xsd:integer",
+          "sh:minInclusive": 1
+        },
+        {
+          "sh:path": "unrdf:aggregator",
+          "sh:datatype": "xsd:string",
+          "sh:in": ["sum", "avg", "min", "max", "count"]
+        }
+      ]
+    }
+  ]
+}

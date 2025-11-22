@@ -1,0 +1,245 @@
+@startuml Knowledge Hook Execution
+!theme plain
+title Knowledge Hook Execution Lifecycle
+
+skinparam sequence {
+    ArrowColor #2C3E50
+    ActorBorderColor #2C3E50
+    LifeLineBorderColor #34495E
+    ParticipantBorderColor #2C3E50
+    ParticipantBackgroundColor #ECF0F1
+    NoteBackgroundColor #F9E79F
+}
+
+participant "Event Bus" as EventBus
+participant "Hook Manager\n(KnowledgeHookManager)" as HookMgr
+participant "Condition\nEvaluator" as CondEval
+participant "Policy Pack\nManager" as PolicyPack
+participant "Hook Executor" as Executor
+participant "Security\nValidator" as Security
+participant "Receipt\nGenerator" as Receipt
+participant "Consensus\nCoordinator" as Consensus
+database "Knowledge Graph" as KG
+
+== Phase 1: Hook Trigger Detection ==
+EventBus -> HookMgr: emit('beforeAddQuad', delta)
+note right of EventBus
+**Delta Payload:**
+```json
+{
+  "type": "beforeAddQuad",
+  "delta": {
+    "additions": [quad1, quad2],
+    "deletions": []
+  },
+  "context": { "graphId": "ex:graph1" }
+}
+```
+end note
+
+HookMgr -> HookMgr: getMatchingHooks(delta)
+HookMgr -> CondEval: evaluateWhenConditions(hooks, delta)
+
+loop for each registered hook
+    CondEval -> KG: ASK SPARQL query
+    note right of CondEval
+    **When Condition:**
+    ```sparql
+    ASK {
+      ?s ?p ?o .
+      FILTER(STRSTARTS(STR(?p), "http://sensitive/"))
+    }
+    ```
+    end note
+    KG --> CondEval: boolean match
+end
+
+CondEval --> HookMgr: matchedHooks[]
+
+== Phase 2: Before Lifecycle (Vetoing Possible) ==
+HookMgr -> PolicyPack: getActivePolicy(hook)
+PolicyPack --> HookMgr: policy config
+
+HookMgr -> Security: validateHookSecurity(hook)
+Security -> Security: checkPermissions()
+Security -> Security: validateSandbox()
+alt security check fails
+    Security --> HookMgr: SecurityError
+    HookMgr --> EventBus: veto (return false)
+end
+Security --> HookMgr: validated
+
+group Before Phase [can veto operation]
+    HookMgr -> Executor: executeBeforeHook(hook, delta)
+    activate Executor
+
+    Executor -> Executor: prepareContext(delta)
+    Executor -> KG: read current state
+
+    alt hook.before defined
+        Executor -> Executor: hook.before(context)
+        note right of Executor
+        **Before Hook Example:**
+        ```javascript
+        before: async (ctx) => {
+          if (ctx.delta.additions.some(isRestricted)) {
+            return { veto: true, reason: 'Restricted predicate' };
+          }
+          return { veto: false };
+        }
+        ```
+        end note
+
+        alt veto returned
+            Executor --> HookMgr: { veto: true, reason }
+            HookMgr --> EventBus: false (operation cancelled)
+            note over EventBus: Quad NOT added to store
+        else allow returned
+            Executor --> HookMgr: { veto: false }
+        end
+    end
+    deactivate Executor
+end
+
+== Phase 3: Run Lifecycle (Main Execution) ==
+EventBus -> HookMgr: operation proceeds (quad added)
+EventBus -> HookMgr: emit('afterAddQuad', delta)
+
+group Run Phase [main hook logic]
+    HookMgr -> Executor: executeRunHook(hook, delta)
+    activate Executor
+
+    Executor -> Executor: hook.run(context, delta)
+    note right of Executor
+    **Run Hook Example:**
+    ```javascript
+    run: async (ctx, delta) => {
+      const results = await ctx.query(`
+        SELECT ?related WHERE {
+          ?s ex:relatedTo ?related
+        }
+      `);
+      return {
+        status: 'success',
+        inferred: results,
+        metrics: { processed: delta.additions.length }
+      };
+    }
+    ```
+    end note
+
+    Executor -> KG: execute SPARQL queries
+    KG --> Executor: query results
+
+    Executor --> HookMgr: runResult
+    deactivate Executor
+end
+
+== Phase 4: After Lifecycle ==
+group After Phase [cleanup and notifications]
+    HookMgr -> Executor: executeAfterHook(hook, runResult)
+    activate Executor
+
+    Executor -> Executor: hook.after(context, result)
+    note right of Executor
+    **After Hook Example:**
+    ```javascript
+    after: async (ctx, result) => {
+      await ctx.notify('hook:completed', {
+        hookName: ctx.hook.meta.name,
+        duration: result.metrics.duration
+      });
+      return result;
+    }
+    ```
+    end note
+
+    Executor --> HookMgr: afterResult
+    deactivate Executor
+end
+
+== Phase 5: Policy Enforcement ==
+HookMgr -> PolicyPack: enforcePolicy(hook, results)
+PolicyPack -> PolicyPack: checkViolations()
+
+alt policy violation detected
+    PolicyPack -> HookMgr: PolicyViolation[]
+    HookMgr -> HookMgr: rollbackTransaction()
+    HookMgr -> KG: revert changes
+else policy passed
+    PolicyPack --> HookMgr: approved
+end
+
+== Phase 6: Receipt Generation ==
+HookMgr -> Receipt: generateReceipt(hook, results)
+Receipt -> Receipt: computeHash(results)
+Receipt -> Receipt: signReceipt(privateKey)
+
+note right of Receipt
+**Receipt Structure (JSON-LD):**
+```json
+{
+  "@context": "https://unrdf.org/context/receipt",
+  "@type": "hook:ExecutionReceipt",
+  "hook:name": "validateSensitiveData",
+  "hook:version": "1.0.0",
+  "hook:timestamp": "2024-01-15T10:30:00Z",
+  "hook:duration": "PT0.045S",
+  "hook:status": "completed",
+  "hook:inputHash": "sha256:abc...",
+  "hook:outputHash": "sha256:def...",
+  "hook:signature": "ed25519:xyz..."
+}
+```
+end note
+
+Receipt --> HookMgr: signedReceipt
+
+== Phase 7: Distributed Consensus (Multi-Node) ==
+alt distributed mode enabled
+    HookMgr -> Consensus: proposeResult(receipt)
+
+    Consensus -> Consensus: broadcastToNodes()
+    note right of Consensus
+    **Consensus Protocol:**
+    1. Propose (leader broadcasts)
+    2. Prepare (nodes acknowledge)
+    3. Commit (2/3 majority)
+    4. Apply (all nodes apply)
+    end note
+
+    loop until consensus reached
+        Consensus -> Consensus: collectVotes()
+        alt 2/3 majority achieved
+            Consensus -> KG: applyChanges()
+            Consensus --> HookMgr: consensus achieved
+        else timeout
+            Consensus --> HookMgr: consensus failed
+            HookMgr -> HookMgr: initiateRecovery()
+        end
+    end
+end
+
+HookMgr --> EventBus: hookResult with receipt
+
+== Hook State Machine ==
+state "Hook Execution States" as HookStates {
+    [*] --> TRIGGERED : event received
+    TRIGGERED --> EVALUATING : check when conditions
+    EVALUATING --> MATCHED : conditions met
+    EVALUATING --> SKIPPED : conditions not met
+    MATCHED --> BEFORE : execute before phase
+    BEFORE --> VETOED : veto returned
+    BEFORE --> RUNNING : allowed
+    RUNNING --> AFTER : run completed
+    AFTER --> ENFORCING : policy check
+    ENFORCING --> VIOLATED : policy failed
+    ENFORCING --> GENERATING : policy passed
+    GENERATING --> COMPLETED : receipt generated
+    VETOED --> [*]
+    VIOLATED --> [*]
+    SKIPPED --> [*]
+    COMPLETED --> [*]
+}
+
+@enduml

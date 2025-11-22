@@ -1,0 +1,283 @@
+@startuml Federation Protocol
+!theme plain
+title Multi-Node Graph Federation Protocol
+
+skinparam sequence {
+    ArrowColor #2C3E50
+    ActorBorderColor #2C3E50
+    LifeLineBorderColor #34495E
+    ParticipantBorderColor #2C3E50
+    ParticipantBackgroundColor #ECF0F1
+    NoteBackgroundColor #F9E79F
+}
+
+box "Partition A" #LightBlue
+    participant "Node A\n(Leader)" as NodeA
+    database "Graph A" as GraphA
+end box
+
+box "Partition B" #LightGreen
+    participant "Node B" as NodeB
+    database "Graph B" as GraphB
+end box
+
+box "Partition C" #LightCoral
+    participant "Node C" as NodeC
+    database "Graph C" as GraphC
+end box
+
+participant "Coordinator" as Coord
+participant "Message Queue" as MQ
+participant "Conflict Resolver" as Resolver
+
+== Phase 1: Multi-Node Graph Consensus ==
+NodeA -> Coord: proposeTransaction(delta)
+note right of NodeA
+**Transaction Delta:**
+```json
+{
+  "txId": "tx-001",
+  "epoch": 42,
+  "delta": {
+    "additions": [quad1, quad2],
+    "deletions": [quad3]
+  },
+  "vector_clock": { "A": 15, "B": 12, "C": 10 }
+}
+```
+end note
+
+Coord -> Coord: assignEpoch(tx)
+Coord -> MQ: broadcast(PREPARE, tx)
+
+group Prepare Phase [2PC - Phase 1]
+    MQ -> NodeA: PREPARE(tx)
+    MQ -> NodeB: PREPARE(tx)
+    MQ -> NodeC: PREPARE(tx)
+
+    NodeA -> GraphA: validate(delta)
+    NodeB -> GraphB: validate(delta)
+    NodeC -> GraphC: validate(delta)
+
+    GraphA --> NodeA: valid
+    GraphB --> NodeB: valid
+    GraphC --> NodeC: conflict detected
+
+    NodeA --> Coord: VOTE_YES
+    NodeB --> Coord: VOTE_YES
+    NodeC --> Coord: VOTE_CONFLICT
+end
+
+== Phase 2: Conflict Resolution ==
+alt conflict detected
+    Coord -> Resolver: resolveConflict(tx, conflicts)
+
+    Resolver -> Resolver: analyzeConflictType()
+    note right of Resolver
+    **Conflict Types:**
+    1. Write-Write: Same quad modified
+    2. Write-Delete: Modified deleted quad
+    3. Constraint: SHACL violation
+    4. Ordering: Causal dependency
+    end note
+
+    alt write-write conflict
+        Resolver -> Resolver: applyLWW(timestamps)
+        note right of Resolver
+        **Last-Writer-Wins:**
+        ```javascript
+        if (tx.timestamp > existing.timestamp) {
+          return tx.value;  // Accept new
+        } else {
+          return existing.value;  // Keep existing
+        }
+        ```
+        end note
+    else semantic conflict
+        Resolver -> Resolver: mergeCRDT()
+        note right of Resolver
+        **CRDT Merge (G-Set):**
+        ```javascript
+        mergedSet = union(setA, setB, setC);
+        // Additions are monotonic
+        // No removals in G-Set
+        ```
+        end note
+    end
+
+    Resolver --> Coord: resolvedDelta
+end
+
+== Phase 3: Commit Phase ==
+Coord -> MQ: broadcast(COMMIT, resolvedDelta)
+
+group Commit Phase [2PC - Phase 2]
+    MQ -> NodeA: COMMIT(resolvedDelta)
+    MQ -> NodeB: COMMIT(resolvedDelta)
+    MQ -> NodeC: COMMIT(resolvedDelta)
+
+    NodeA -> GraphA: apply(delta)
+    NodeB -> GraphB: apply(delta)
+    NodeC -> GraphC: apply(delta)
+
+    GraphA --> NodeA: applied
+    GraphB --> NodeB: applied
+    GraphC --> NodeC: applied
+
+    NodeA --> Coord: ACK
+    NodeB --> Coord: ACK
+    NodeC --> Coord: ACK
+end
+
+Coord -> Coord: markCommitted(txId)
+
+== Phase 4: Split-Brain Resolution ==
+note over NodeA, NodeC
+**Network Partition Scenario:**
+Partition A (NodeA) isolated from Partition B (NodeB, NodeC)
+end note
+
+group During Partition
+    NodeA -> NodeA: detectPartition()
+    NodeA -> NodeA: enterReadOnlyMode()
+
+    NodeB -> NodeC: formQuorum()
+    note right of NodeB
+    **Quorum Check:**
+    ```javascript
+    if (activeNodes >= (totalNodes / 2) + 1) {
+      // Majority partition
+      canAcceptWrites = true;
+    }
+    ```
+    end note
+
+    NodeB -> GraphB: continueOperations()
+end
+
+group Partition Heals
+    NodeA -> Coord: reconnect()
+    Coord -> Coord: detectSplitBrain()
+
+    Coord -> NodeA: getState()
+    Coord -> NodeB: getState()
+
+    NodeA --> Coord: { epoch: 42, clock: {A:20, B:12, C:10} }
+    NodeB --> Coord: { epoch: 45, clock: {A:15, B:18, C:15} }
+
+    note right of Coord
+    **Split-Brain Resolution:**
+    1. Compare epochs (higher wins)
+    2. Merge divergent changes
+    3. Replay missing operations
+    4. Reconcile conflicts
+    end note
+
+    Coord -> Resolver: reconcile(stateA, stateB)
+    Resolver -> Resolver: computeMissedOps()
+    Resolver -> Resolver: mergeDivergentStates()
+    Resolver --> Coord: reconciledState
+
+    Coord -> NodeA: sync(reconciledState)
+    NodeA -> GraphA: apply(missedOps)
+end
+
+== Phase 5: Message Ordering ==
+note over MQ
+**Lamport Timestamp Ordering:**
+Each message carries (logicalTime, nodeId)
+end note
+
+MQ -> MQ: orderMessages()
+note right of MQ
+**Ordering Algorithm:**
+```javascript
+function orderMessages(msgs) {
+  return msgs.sort((a, b) => {
+    if (a.lamport !== b.lamport) {
+      return a.lamport - b.lamport;
+    }
+    return a.nodeId.localeCompare(b.nodeId);
+  });
+}
+```
+end note
+
+group Causal Ordering
+    NodeA -> MQ: send(msg1, {deps: []})
+    NodeB -> MQ: send(msg2, {deps: [msg1.id]})
+    NodeC -> MQ: send(msg3, {deps: [msg1.id, msg2.id]})
+
+    MQ -> MQ: validateCausalDeps()
+    alt deps satisfied
+        MQ -> NodeC: deliver(msg3)
+    else deps missing
+        MQ -> MQ: buffer(msg3)
+        MQ -> NodeA: requestMissing(msg1)
+    end
+end
+
+== Phase 6: Timeout Handling ==
+group Transaction Timeout
+    Coord -> Coord: startTimer(tx, 30s)
+
+    alt all nodes respond
+        Coord -> Coord: cancelTimer()
+    else timeout reached
+        Coord -> Coord: initiateAbort(tx)
+        Coord -> MQ: broadcast(ABORT, tx)
+
+        MQ -> NodeA: ABORT(tx)
+        MQ -> NodeB: ABORT(tx)
+        MQ -> NodeC: ABORT(tx)
+
+        NodeA -> GraphA: rollback(tx)
+        NodeB -> GraphB: rollback(tx)
+        NodeC -> GraphC: rollback(tx)
+    end
+end
+
+group Leader Election Timeout
+    note over NodeA, NodeC
+    Leader (NodeA) becomes unresponsive
+    end note
+
+    NodeB -> NodeB: leaderTimeout(10s)
+    NodeB -> NodeC: proposeElection()
+
+    NodeC --> NodeB: vote(NodeB)
+    NodeB --> NodeB: vote(NodeB)
+
+    note right of NodeB
+    **Raft Election:**
+    Term: 43
+    Candidate: NodeB
+    Votes: 2/3 (majority)
+    end note
+
+    NodeB -> NodeB: becomeLeader()
+    NodeB -> MQ: broadcast(NEW_LEADER, NodeB)
+end
+
+== Federation State Machine ==
+state "Node States" as NodeStates {
+    [*] --> FOLLOWER : startup
+    FOLLOWER --> CANDIDATE : leader timeout
+    CANDIDATE --> LEADER : won election
+    CANDIDATE --> FOLLOWER : lost election
+    LEADER --> FOLLOWER : higher term seen
+
+    state LEADER {
+        [*] --> ACTIVE
+        ACTIVE --> PARTITIONED : network split
+        PARTITIONED --> ACTIVE : partition heals
+    }
+
+    state FOLLOWER {
+        [*] --> SYNCED
+        SYNCED --> STALE : missed updates
+        STALE --> SYNCED : caught up
+    }
+}
+
+@enduml

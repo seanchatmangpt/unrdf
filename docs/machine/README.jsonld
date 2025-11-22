@@ -1,0 +1,160 @@
+{
+  "@context": {
+    "@vocab": "https://unrdf.org/schema/",
+    "unrdf": "https://unrdf.org/schema/",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#"
+  },
+  "@id": "https://unrdf.org/docs/machine",
+  "@type": "unrdf:MachineExecutableDocumentation",
+  "rdfs:label": "UNRDF Machine-Executable Documentation",
+  "rdfs:comment": "Machine-readable documentation for autonomous agent consumption",
+  "unrdf:version": "1.0.0",
+  "unrdf:generatedAt": "2025-01-21T00:00:00Z",
+  "unrdf:contents": [
+    {
+      "@id": "unrdf:capabilities",
+      "@type": "unrdf:DocumentationFile",
+      "rdfs:label": "Capability Registry",
+      "unrdf:path": "/docs/machine/capabilities.jsonld",
+      "unrdf:format": "application/ld+json",
+      "unrdf:description": "Complete registry of 60+ UNRDF capabilities with URIs, preconditions, postconditions, inputs, outputs, and performance profiles",
+      "unrdf:sparqlEndpoint": "Run local N3 reasoner with capabilities.jsonld loaded",
+      "unrdf:usageExample": {
+        "@type": "unrdf:AgentUsageExample",
+        "unrdf:task": "Find all Essential tier capabilities",
+        "unrdf:sparqlQuery": "PREFIX cap: <https://unrdf.org/capability/>\nPREFIX tier: <https://unrdf.org/tier/>\nPREFIX unrdf: <https://unrdf.org/schema/>\n\nSELECT ?capability ?label ?module WHERE {\n  ?capability unrdf:tier tier:Essential ;\n              rdfs:label ?label ;\n              unrdf:module ?module .\n}",
+        "unrdf:expectedResult": "7 capabilities: KnowledgeHookManager, defineHook, TransactionManager, query, validateShacl, parseTurtle, canonicalize"
+      }
+    },
+    {
+      "@id": "unrdf:types",
+      "@type": "unrdf:DocumentationFile",
+      "rdfs:label": "Type Definitions",
+      "unrdf:path": "/docs/machine/types.jsonld",
+      "unrdf:format": "application/ld+json",
+      "unrdf:description": "All exported types as RDF classes with SHACL shapes and Zod schema references",
+      "unrdf:usageExample": {
+        "@type": "unrdf:AgentUsageExample",
+        "unrdf:task": "Get required properties for KnowledgeHook type",
+        "unrdf:sparqlQuery": "PREFIX type: <https://unrdf.org/type/>\nPREFIX sh: <http://www.w3.org/ns/shacl#>\n\nSELECT ?path ?minCount WHERE {\n  type:KnowledgeHook sh:property ?prop .\n  ?prop sh:path ?path ;\n        sh:minCount ?minCount .\n  FILTER(?minCount > 0)\n}"
+      }
+    },
+    {
+      "@id": "unrdf:slos",
+      "@type": "unrdf:DocumentationFile",
+      "rdfs:label": "SLO Definitions",
+      "unrdf:path": "/docs/machine/slos.jsonld",
+      "unrdf:format": "application/ld+json",
+      "unrdf:description": "Service Level Objectives with latency targets, error rate thresholds, and availability requirements",
+      "unrdf:usageExample": {
+        "@type": "unrdf:AgentUsageExample",
+        "unrdf:task": "Find critical SLOs for monitoring setup",
+        "unrdf:sparqlQuery": "PREFIX slo: <https://unrdf.org/slo/>\nPREFIX unrdf: <https://unrdf.org/schema/>\n\nSELECT ?slo ?metric ?threshold ?unit WHERE {\n  ?slo unrdf:severity \"critical\" ;\n       unrdf:metric ?metric ;\n       unrdf:threshold ?threshold ;\n       unrdf:unit ?unit .\n}"
+      }
+    },
+    {
+      "@id": "unrdf:rules",
+      "@type": "unrdf:DocumentationFile",
+      "rdfs:label": "Reasoner Rules",
+      "unrdf:path": "/docs/machine/rules.n3",
+      "unrdf:format": "text/n3",
+      "unrdf:description": "N3 inference rules for capability matching, protocol validation, type constraints, and performance prediction",
+      "unrdf:reasonerRequired": "EYE reasoner (eyereasoner npm package)",
+      "unrdf:usageExample": {
+        "@type": "unrdf:AgentUsageExample",
+        "unrdf:task": "Run capability matching inference",
+        "unrdf:command": "npx eye --nope --quiet capabilities.jsonld rules.n3 --query 'PREFIX unrdf: <https://unrdf.org/schema/> { ?cap unrdf:suitableFor ?task } => { ?cap unrdf:suitableFor ?task }.'",
+        "unrdf:expectedBehavior": "Returns capabilities matched to tasks based on input/output types"
+      }
+    },
+    {
+      "@id": "unrdf:protocols",
+      "@type": "unrdf:DocumentationDirectory",
+      "rdfs:label": "Protocol Definitions",
+      "unrdf:path": "/docs/machine/protocols/",
+      "unrdf:contents": [
+        {
+          "@id": "unrdf:protocols/hook-execution",
+          "unrdf:path": "/docs/machine/protocols/knowledge-hook-execution.jsonld",
+          "rdfs:label": "Knowledge Hook Execution Protocol",
+          "unrdf:description": "State machine for hook execution lifecycle"
+        },
+        {
+          "@id": "unrdf:protocols/query-federation",
+          "unrdf:path": "/docs/machine/protocols/query-federation.jsonld",
+          "rdfs:label": "Query Federation Protocol",
+          "unrdf:description": "Distributed SPARQL query execution protocol"
+        },
+        {
+          "@id": "unrdf:protocols/consensus",
+          "unrdf:path": "/docs/machine/protocols/consensus.jsonld",
+          "rdfs:label": "RAFT Consensus Protocol",
+          "unrdf:description": "RAFT-based consensus for distributed coordination"
+        },
+        {
+          "@id": "unrdf:protocols/message-schemas",
+          "unrdf:path": "/docs/machine/protocols/message-schemas.json",
+          "unrdf:format": "application/json",
+          "rdfs:label": "Message Schemas",
+          "unrdf:description": "JSON Schema definitions for all protocol messages"
+        },
+        {
+          "@id": "unrdf:protocols/puml-diagrams",
+          "rdfs:label": "State Machine Diagrams",
+          "unrdf:files": [
+            "/docs/machine/protocols/hook-execution.puml",
+            "/docs/machine/protocols/federation-query.puml",
+            "/docs/machine/protocols/raft-consensus.puml"
+          ],
+          "unrdf:format": "text/x-plantuml",
+          "unrdf:description": "Visual state machine diagrams in PlantUML format"
+        }
+      ]
+    }
+  ],
+  "unrdf:agentInstructions": {
+    "@type": "unrdf:AgentGuidance",
+    "unrdf:howToUse": [
+      {
+        "@type": "unrdf:Step",
+        "unrdf:order": 1,
+        "unrdf:action": "Load capabilities.jsonld to discover available UNRDF capabilities",
+        "unrdf:code": "import { parseTurtle, query } from 'unrdf/knowledge-engine';\nconst store = await fetch('/docs/machine/capabilities.jsonld').then(r => r.json());\n// Query for capabilities matching your task"
+      },
+      {
+        "@type": "unrdf:Step",
+        "unrdf:order": 2,
+        "unrdf:action": "Query for capabilities matching your requirements",
+        "unrdf:sparql": "SELECT ?capability WHERE { ?capability unrdf:tier tier:Essential ; unrdf:usable true . }"
+      },
+      {
+        "@type": "unrdf:Step",
+        "unrdf:order": 3,
+        "unrdf:action": "Check SLOs to understand performance expectations",
+        "unrdf:sparql": "SELECT ?slo ?threshold ?unit WHERE { ?slo unrdf:capability cap:query ; unrdf:threshold ?threshold ; unrdf:unit ?unit . }"
+      },
+      {
+        "@type": "unrdf:Step",
+        "unrdf:order": 4,
+        "unrdf:action": "Validate inputs using types.jsonld SHACL shapes",
+        "unrdf:code": "import { validateShacl } from 'unrdf/knowledge-engine';\nconst typesGraph = await loadJsonLd('/docs/machine/types.jsonld');\nconst report = await validateShacl(myData, typesGraph);"
+      },
+      {
+        "@type": "unrdf:Step",
+        "unrdf:order": 5,
+        "unrdf:action": "Use inference rules to match capabilities to tasks",
+        "unrdf:code": "import { reason } from 'unrdf/knowledge-engine';\nconst rulesN3 = await fetch('/docs/machine/rules.n3').then(r => r.text());\nconst inferred = await reason(taskGraph, rulesN3);"
+      }
+    ],
+    "unrdf:sparqlQueries": {
+      "findCapabilityByName": "PREFIX unrdf: <https://unrdf.org/schema/>\nSELECT * WHERE { ?cap rdfs:label ?name . FILTER(CONTAINS(LCASE(?name), LCASE($searchTerm))) }",
+      "findCapabilitiesByTier": "PREFIX unrdf: <https://unrdf.org/schema/>\nPREFIX tier: <https://unrdf.org/tier/>\nSELECT ?cap ?label WHERE { ?cap unrdf:tier $tier ; rdfs:label ?label . }",
+      "findCapabilitiesForModule": "PREFIX unrdf: <https://unrdf.org/schema/>\nSELECT ?cap ?label WHERE { ?cap unrdf:module $module ; rdfs:label ?label . }",
+      "getSLOsForCapability": "PREFIX unrdf: <https://unrdf.org/schema/>\nSELECT ?slo ?metric ?threshold WHERE { ?slo unrdf:capability $capUri ; unrdf:metric ?metric ; unrdf:threshold ?threshold . }",
+      "getTypeConstraints": "PREFIX sh: <http://www.w3.org/ns/shacl#>\nSELECT ?path ?datatype ?minCount ?maxCount WHERE { $typeUri sh:property [ sh:path ?path ; sh:datatype ?datatype ] . }",
+      "findDependencies": "PREFIX unrdf: <https://unrdf.org/schema/>\nSELECT ?dep WHERE { $capUri unrdf:dependencies/rdf:rest*/rdf:first ?dep . }"
+    }
+  }
+}

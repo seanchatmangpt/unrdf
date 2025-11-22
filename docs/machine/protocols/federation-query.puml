@@ -1,0 +1,123 @@
+@startuml Query Federation Protocol
+
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam state {
+  BackgroundColor #FFF3E0
+  BorderColor #FF9800
+  FontColor #333333
+  StartColor #4CAF50
+  EndColor #F44336
+}
+
+title Distributed Query Federation State Machine
+
+[*] --> Idle
+
+state Idle {
+  Idle : Federation coordinator ready
+  Idle : Stores registered and healthy
+}
+
+Idle --> QueryParsing : QuerySubmitted\n[query.length > 0]
+
+state QueryParsing {
+  QueryParsing : Parse SPARQL to AST
+  QueryParsing : Extract triple patterns
+  QueryParsing : Identify variables
+  QueryParsing : timeout: 5s
+}
+
+QueryParsing --> PlanOptimization : QueryParsed
+QueryParsing --> QueryFailed : ParseError
+
+state PlanOptimization {
+  PlanOptimization : Analyze selectivity
+  PlanOptimization : Optimize join order
+  PlanOptimization : Identify pushdown operations
+  PlanOptimization : Estimate cost
+  PlanOptimization : timeout: 10s
+}
+
+PlanOptimization --> StoreSelection : PlanOptimized\n[cost < Infinity]
+PlanOptimization --> QueryFailed : OptimizationFailed
+
+state StoreSelection {
+  StoreSelection : Evaluate store capabilities
+  StoreSelection : Check store health
+  StoreSelection : Compute routing table
+  StoreSelection : Apply load balancing
+}
+
+StoreSelection --> QueryDistribution : StoresSelected\n[stores.length > 0]
+StoreSelection --> QueryFailed : NoHealthyStores
+
+state QueryDistribution {
+  QueryDistribution : Create sub-queries
+  QueryDistribution : Apply predicate pushdown
+  QueryDistribution : Dispatch to stores
+}
+
+QueryDistribution --> ParallelExecution : QueriesDispatched
+
+state ParallelExecution {
+  ParallelExecution : Execute sub-queries in parallel
+  ParallelExecution : Monitor execution progress
+  ParallelExecution : Handle individual timeouts
+  ParallelExecution : Collect partial results
+  ParallelExecution : timeout: 60s
+}
+
+ParallelExecution --> ResultAggregation : AllResultsReceived
+ParallelExecution --> QueryFailed : Timeout/MajorityFailed
+
+state ResultAggregation {
+  ResultAggregation : Collect all partial results
+  ResultAggregation : Perform distributed joins
+  ResultAggregation : Apply projection
+  ResultAggregation : Sort and limit
+  ResultAggregation : Deduplicate
+}
+
+ResultAggregation --> ResultsReturned : ResultsAggregated
+ResultAggregation --> QueryFailed : AggregationError
+
+state ResultsReturned {
+  ResultsReturned : Emit query metrics
+  ResultsReturned : Cache results
+  ResultsReturned : Return to client
+}
+
+state QueryFailed {
+  QueryFailed : Record failure
+  QueryFailed : Notify affected stores
+  QueryFailed : Return error to client
+}
+
+ResultsReturned --> [*]
+QueryFailed --> [*]
+
+note right of PlanOptimization
+  Optimization Strategies:
+  - Join reordering
+  - Predicate pushdown
+  - Filter placement
+  - Index selection
+end note
+
+note right of ParallelExecution
+  Execution Strategies:
+  - Parallel: No dependencies
+  - Sequential: Has dependencies
+  - Adaptive: Dynamic adjustment
+end note
+
+note right of StoreSelection
+  Load Balancing:
+  - Round Robin
+  - Weighted
+  - Least Connections
+  - Content-Based
+end note
+
+@enduml

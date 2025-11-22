@@ -1,0 +1,604 @@
+@prefix unrdf: <https://unrdf.org/schema/> .
+@prefix cap: <https://unrdf.org/capability/> .
+@prefix tier: <https://unrdf.org/tier/> .
+@prefix slo: <https://unrdf.org/slo/> .
+@prefix type: <https://unrdf.org/type/> .
+@prefix proto: <https://unrdf.org/protocol/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix log: <http://www.w3.org/2000/10/swap/log#> .
+@prefix math: <http://www.w3.org/2000/10/swap/math#> .
+@prefix list: <http://www.w3.org/2000/10/swap/list#> .
+@prefix string: <http://www.w3.org/2000/10/swap/string#> .
+
+# ============================================================================
+# UNRDF Reasoner Rules for Machine-Executable Documentation
+# Version: 1.0.0
+# Purpose: Inference rules for capability matching, protocol validation,
+#          type constraint checking, and performance prediction
+# ============================================================================
+
+# ============================================================================
+# SECTION 1: Capability Matching Rules
+# ============================================================================
+
+# Rule: Infer capability availability based on tier
+{
+  ?capability unrdf:tier tier:Essential .
+} => {
+  ?capability unrdf:availabilityLevel "core" .
+  ?capability unrdf:loadPriority 1 .
+} .
+
+{
+  ?capability unrdf:tier tier:Important .
+} => {
+  ?capability unrdf:availabilityLevel "standard" .
+  ?capability unrdf:loadPriority 2 .
+} .
+
+{
+  ?capability unrdf:tier tier:Standard .
+} => {
+  ?capability unrdf:availabilityLevel "extended" .
+  ?capability unrdf:loadPriority 3 .
+} .
+
+{
+  ?capability unrdf:tier tier:Advanced .
+} => {
+  ?capability unrdf:availabilityLevel "specialized" .
+  ?capability unrdf:loadPriority 4 .
+} .
+
+# Rule: Infer capability dependencies are satisfied
+{
+  ?capability unrdf:dependencies ?depList .
+  ?depList list:member ?dependency .
+  ?dependency a unrdf:Capability .
+  ?dependency unrdf:status "available" .
+} => {
+  ?capability unrdf:dependencySatisfied ?dependency .
+} .
+
+# Rule: Capability is ready when all dependencies are satisfied
+{
+  ?capability a unrdf:Capability .
+  ?capability unrdf:dependencies ?depList .
+  ?depList list:length ?depCount .
+  ?capability unrdf:dependencySatisfiedCount ?depCount .
+} => {
+  ?capability unrdf:dependenciesReady true .
+} .
+
+# Rule: Capability is usable when ready and preconditions can be met
+{
+  ?capability a unrdf:Capability .
+  ?capability unrdf:dependenciesReady true .
+  ?capability unrdf:precondition ?precond .
+  ?precond unrdf:canBeSatisfied true .
+} => {
+  ?capability unrdf:usable true .
+} .
+
+# Rule: Match capability to task based on inputs/outputs
+{
+  ?task unrdf:requiresInput ?inputType .
+  ?capability unrdf:inputs ?inputList .
+  ?inputList list:member ?input .
+  ?input unrdf:schema ?inputType .
+} => {
+  ?capability unrdf:matchesInput ?task .
+} .
+
+{
+  ?task unrdf:producesOutput ?outputType .
+  ?capability unrdf:outputs ?outputList .
+  ?outputList list:member ?output .
+  ?output unrdf:schema ?outputType .
+} => {
+  ?capability unrdf:matchesOutput ?task .
+} .
+
+# Rule: Capability is suitable for task
+{
+  ?capability unrdf:matchesInput ?task .
+  ?capability unrdf:matchesOutput ?task .
+  ?capability unrdf:usable true .
+} => {
+  ?capability unrdf:suitableFor ?task .
+  ?task unrdf:canUse ?capability .
+} .
+
+# ============================================================================
+# SECTION 2: Protocol Validation Rules
+# ============================================================================
+
+# Rule: Validate state transition is legal
+{
+  ?transition a unrdf:Transition .
+  ?transition unrdf:from ?fromState .
+  ?transition unrdf:to ?toState .
+  ?protocol unrdf:states ?stateList .
+  ?stateList list:member ?fromState .
+  ?stateList list:member ?toState .
+} => {
+  ?transition unrdf:statesValid true .
+} .
+
+# Rule: Validate guard expression exists
+{
+  ?transition a unrdf:Transition .
+  ?transition unrdf:guard ?guard .
+  ?guard log:notEqualTo "" .
+} => {
+  ?transition unrdf:hasGuard true .
+} .
+
+# Rule: Initial state must exist in states list
+{
+  ?protocol a unrdf:Protocol .
+  ?protocol unrdf:initialState ?initial .
+  ?protocol unrdf:states ?stateList .
+  ?stateList list:member ?initial .
+} => {
+  ?protocol unrdf:initialStateValid true .
+} .
+
+# Rule: Terminal states must exist in states list
+{
+  ?protocol a unrdf:Protocol .
+  ?protocol unrdf:terminalStates ?terminalList .
+  ?terminalList list:member ?terminal .
+  ?protocol unrdf:states ?stateList .
+  ?stateList list:member ?terminal .
+} => {
+  ?protocol unrdf:terminalStateValid ?terminal .
+} .
+
+# Rule: Reachability - state is reachable from initial
+{
+  ?protocol unrdf:initialState ?state .
+} => {
+  ?state unrdf:reachableFrom ?state .
+} .
+
+{
+  ?transition unrdf:from ?fromState .
+  ?transition unrdf:to ?toState .
+  ?fromState unrdf:reachableFrom ?initial .
+} => {
+  ?toState unrdf:reachableFrom ?initial .
+} .
+
+# Rule: Protocol is well-formed
+{
+  ?protocol a unrdf:Protocol .
+  ?protocol unrdf:initialStateValid true .
+  ?protocol unrdf:terminalStates ?terminalList .
+  ?terminalList list:member ?terminal .
+  ?terminal unrdf:reachableFrom ?protocol .
+} => {
+  ?protocol unrdf:wellFormed true .
+} .
+
+# ============================================================================
+# SECTION 3: Type Constraint Rules
+# ============================================================================
+
+# Rule: Type has required property
+{
+  ?type sh:property ?propShape .
+  ?propShape sh:minCount ?min .
+  ?min math:greaterThan 0 .
+} => {
+  ?propShape unrdf:isRequired true .
+} .
+
+# Rule: Property has default value
+{
+  ?propShape sh:defaultValue ?default .
+} => {
+  ?propShape unrdf:hasDefault true .
+  ?propShape unrdf:defaultValue ?default .
+} .
+
+# Rule: Infer subclass relationships from SHACL
+{
+  ?subType rdfs:subClassOf ?superType .
+  ?superType sh:property ?propShape .
+} => {
+  ?subType unrdf:inheritsProperty ?propShape .
+} .
+
+# Rule: Type is valid when all SHACL constraints can be satisfied
+{
+  ?type a sh:NodeShape .
+  ?type sh:property ?propShape .
+  ?propShape unrdf:isRequired true .
+  ?propShape unrdf:hasDefault true .
+} => {
+  ?propShape unrdf:canBeSatisfied true .
+} .
+
+# Rule: Zod schema correspondence
+{
+  ?type unrdf:zodSchema ?zodName .
+} => {
+  ?type unrdf:hasRuntimeValidation true .
+  ?type unrdf:validatorName ?zodName .
+} .
+
+# Rule: Type has complete validation
+{
+  ?type a sh:NodeShape .
+  ?type unrdf:hasRuntimeValidation true .
+} => {
+  ?type unrdf:hasCompleteValidation true .
+} .
+
+# ============================================================================
+# SECTION 4: Performance Prediction Rules
+# ============================================================================
+
+# Rule: Performance is acceptable if p99 < threshold
+{
+  ?capability unrdf:performance ?perf .
+  ?perf unrdf:p99 ?p99 .
+  ?slo unrdf:capability ?capability .
+  ?slo unrdf:threshold ?threshold .
+  ?p99 math:lessThan ?threshold .
+} => {
+  ?capability unrdf:meetsSLO ?slo .
+} .
+
+# Rule: Predict combined latency for sequential operations
+{
+  ?workflow unrdf:steps ?stepList .
+  ?stepList list:member ?step1 .
+  ?stepList list:member ?step2 .
+  ?step1 unrdf:capability ?cap1 .
+  ?step2 unrdf:capability ?cap2 .
+  ?cap1 unrdf:performance ?perf1 .
+  ?cap2 unrdf:performance ?perf2 .
+  ?perf1 unrdf:p50 ?lat1 .
+  ?perf2 unrdf:p50 ?lat2 .
+  (?lat1 ?lat2) math:sum ?totalLat .
+} => {
+  ?workflow unrdf:predictedLatencyP50 ?totalLat .
+} .
+
+# Rule: High memory usage warning
+{
+  ?capability unrdf:performance ?perf .
+  ?perf unrdf:memoryMB ?mem .
+  ?mem math:greaterThan 100 .
+} => {
+  ?capability unrdf:memoryWarning "High memory usage - consider chunking" .
+} .
+
+# Rule: Latency budget allocation
+{
+  ?workflow unrdf:latencyBudget ?budget .
+  ?workflow unrdf:steps ?stepList .
+  ?stepList list:length ?stepCount .
+  (?budget ?stepCount) math:quotient ?perStepBudget .
+} => {
+  ?workflow unrdf:perStepLatencyBudget ?perStepBudget .
+} .
+
+# Rule: Capability fits within budget
+{
+  ?workflow unrdf:perStepLatencyBudget ?budget .
+  ?workflow unrdf:steps ?stepList .
+  ?stepList list:member ?step .
+  ?step unrdf:capability ?cap .
+  ?cap unrdf:performance ?perf .
+  ?perf unrdf:p95 ?lat .
+  ?lat math:lessThan ?budget .
+} => {
+  ?step unrdf:fitsLatencyBudget true .
+} .
+
+# ============================================================================
+# SECTION 5: Agent Capability Matching Rules
+# ============================================================================
+
+# Rule: Agent can use capability if tier matches agent level
+{
+  ?agent unrdf:accessLevel "basic" .
+  ?capability unrdf:tier tier:Essential .
+} => {
+  ?agent unrdf:canAccess ?capability .
+} .
+
+{
+  ?agent unrdf:accessLevel "standard" .
+  ?capability unrdf:tier ?tier .
+  ?tier rdf:value ?tierValue .
+  ?tierValue math:lessThan 3 .
+} => {
+  ?agent unrdf:canAccess ?capability .
+} .
+
+{
+  ?agent unrdf:accessLevel "advanced" .
+  ?capability a unrdf:Capability .
+} => {
+  ?agent unrdf:canAccess ?capability .
+} .
+
+# Rule: Recommend capability based on task type
+{
+  ?task unrdf:type "query" .
+  ?capability unrdf:module "unrdf/knowledge-engine" .
+  ?capability rdfs:label ?label .
+  ?label string:contains "Query" .
+} => {
+  ?capability unrdf:recommendedFor ?task .
+} .
+
+{
+  ?task unrdf:type "validation" .
+  ?capability rdfs:label ?label .
+  ?label string:contains "Validation" .
+} => {
+  ?capability unrdf:recommendedFor ?task .
+} .
+
+{
+  ?task unrdf:type "federation" .
+  ?capability unrdf:module "unrdf/knowledge-engine/federation" .
+} => {
+  ?capability unrdf:recommendedFor ?task .
+} .
+
+{
+  ?task unrdf:type "streaming" .
+  ?capability unrdf:module "unrdf/knowledge-engine/streaming" .
+} => {
+  ?capability unrdf:recommendedFor ?task .
+} .
+
+# Rule: Capability selection by optimization goal
+{
+  ?goal unrdf:optimize "latency" .
+  ?capability unrdf:performance ?perf .
+  ?perf unrdf:p99 ?lat .
+  ?lat math:lessThan 10 .
+} => {
+  ?capability unrdf:optimizedFor ?goal .
+} .
+
+{
+  ?goal unrdf:optimize "memory" .
+  ?capability unrdf:performance ?perf .
+  ?perf unrdf:memoryMB ?mem .
+  ?mem math:lessThan 50 .
+} => {
+  ?capability unrdf:optimizedFor ?goal .
+} .
+
+{
+  ?goal unrdf:optimize "throughput" .
+  ?capability unrdf:performance ?perf .
+  ?perf unrdf:maxThroughput ?tp .
+} => {
+  ?capability unrdf:optimizedFor ?goal .
+} .
+
+# ============================================================================
+# SECTION 6: Error and Recovery Rules
+# ============================================================================
+
+# Rule: Identify retry-safe operations
+{
+  ?capability unrdf:sideEffects "none" .
+} => {
+  ?capability unrdf:retrySafe true .
+} .
+
+{
+  ?capability unrdf:idempotent true .
+} => {
+  ?capability unrdf:retrySafe true .
+} .
+
+# Rule: Identify operations requiring transaction
+{
+  ?capability unrdf:sideEffects "write" .
+} => {
+  ?capability unrdf:requiresTransaction true .
+} .
+
+# Rule: Error recovery recommendation
+{
+  ?capability unrdf:retrySafe true .
+  ?error unrdf:type "timeout" .
+} => {
+  ?error unrdf:recoveryStrategy "retry" .
+  ?error unrdf:maxRetries 3 .
+} .
+
+{
+  ?capability unrdf:requiresTransaction true .
+  ?error unrdf:type "failure" .
+} => {
+  ?error unrdf:recoveryStrategy "rollback" .
+} .
+
+# ============================================================================
+# SECTION 7: SLO Compliance Rules
+# ============================================================================
+
+# Rule: SLO is critical if severity is critical
+{
+  ?slo unrdf:severity "critical" .
+} => {
+  ?slo unrdf:alertPriority "P1" .
+  ?slo unrdf:responseTime "5m" .
+} .
+
+{
+  ?slo unrdf:severity "high" .
+} => {
+  ?slo unrdf:alertPriority "P2" .
+  ?slo unrdf:responseTime "15m" .
+} .
+
+{
+  ?slo unrdf:severity "medium" .
+} => {
+  ?slo unrdf:alertPriority "P3" .
+  ?slo unrdf:responseTime "1h" .
+} .
+
+{
+  ?slo unrdf:severity "low" .
+} => {
+  ?slo unrdf:alertPriority "P4" .
+  ?slo unrdf:responseTime "24h" .
+} .
+
+# Rule: SLO breach detection
+{
+  ?measurement unrdf:metric ?metric .
+  ?measurement unrdf:value ?value .
+  ?slo unrdf:metric ?metric .
+  ?slo unrdf:threshold ?threshold .
+  ?value math:greaterThan ?threshold .
+  ?slo unrdf:unit ?unit .
+  ?unit log:notEqualTo "ratio" .
+} => {
+  ?measurement unrdf:breachesSLO ?slo .
+  ?slo unrdf:status "breached" .
+} .
+
+# Rule: SLO compliance for ratio metrics (higher is better)
+{
+  ?measurement unrdf:metric ?metric .
+  ?measurement unrdf:value ?value .
+  ?slo unrdf:metric ?metric .
+  ?slo unrdf:threshold ?threshold .
+  ?value math:lessThan ?threshold .
+  ?slo unrdf:unit "ratio" .
+} => {
+  ?measurement unrdf:breachesSLO ?slo .
+  ?slo unrdf:status "breached" .
+} .
+
+# ============================================================================
+# SECTION 8: Workflow Composition Rules
+# ============================================================================
+
+# Rule: Workflow step ordering by dependencies
+{
+  ?step1 unrdf:produces ?output .
+  ?step2 unrdf:requires ?output .
+} => {
+  ?step2 unrdf:dependsOn ?step1 .
+  ?step1 unrdf:precedes ?step2 .
+} .
+
+# Rule: Parallel execution allowed when no dependencies
+{
+  ?step1 unrdf:inWorkflow ?workflow .
+  ?step2 unrdf:inWorkflow ?workflow .
+  ?step1 log:notEqualTo ?step2 .
+  NOT { ?step1 unrdf:dependsOn ?step2 } .
+  NOT { ?step2 unrdf:dependsOn ?step1 } .
+} => {
+  ?step1 unrdf:canParallelWith ?step2 .
+} .
+
+# Rule: Workflow is sequential if all steps have dependencies
+{
+  ?workflow unrdf:steps ?stepList .
+  ?stepList list:member ?step .
+  ?step unrdf:dependsOn ?other .
+} => {
+  ?workflow unrdf:executionMode "sequential" .
+} .
+
+# Rule: Workflow can be parallelized
+{
+  ?workflow unrdf:steps ?stepList .
+  ?stepList list:member ?step1 .
+  ?stepList list:member ?step2 .
+  ?step1 unrdf:canParallelWith ?step2 .
+} => {
+  ?workflow unrdf:executionMode "parallel" .
+} .
+
+# ============================================================================
+# SECTION 9: Documentation Inference Rules
+# ============================================================================
+
+# Rule: Generate import statement
+{
+  ?capability unrdf:module ?module .
+  ?capability unrdf:exportPath ?export .
+} => {
+  ?capability unrdf:importStatement
+    (("import { " ?export " } from '" ?module "';") string:concatenation) .
+} .
+
+# Rule: Infer usage example needed
+{
+  ?capability a unrdf:Capability .
+  NOT { ?capability unrdf:example ?_ } .
+  ?capability unrdf:tier tier:Essential .
+} => {
+  ?capability unrdf:needsExample true .
+} .
+
+# Rule: Capability documentation completeness
+{
+  ?capability rdfs:label ?label .
+  ?capability rdfs:comment ?comment .
+  ?capability unrdf:inputs ?inputs .
+  ?capability unrdf:outputs ?outputs .
+  ?capability unrdf:performance ?perf .
+} => {
+  ?capability unrdf:documentationComplete true .
+} .
+
+# ============================================================================
+# SECTION 10: Security and Access Control Rules
+# ============================================================================
+
+# Rule: Capability requires authentication
+{
+  ?capability unrdf:module "unrdf/knowledge-engine/federation" .
+} => {
+  ?capability unrdf:requiresAuth true .
+} .
+
+{
+  ?capability unrdf:sideEffects "write" .
+} => {
+  ?capability unrdf:requiresAuth true .
+} .
+
+# Rule: Sandbox required for untrusted code
+{
+  ?hook unrdf:source "external" .
+} => {
+  ?hook unrdf:requiresSandbox true .
+  ?hook unrdf:sandboxLevel "strict" .
+} .
+
+# Rule: Audit logging required
+{
+  ?capability unrdf:sideEffects "write" .
+} => {
+  ?capability unrdf:requiresAuditLog true .
+} .
+
+{
+  ?capability unrdf:tier tier:Advanced .
+} => {
+  ?capability unrdf:requiresAuditLog true .
+} .

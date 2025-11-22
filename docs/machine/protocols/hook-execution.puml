@@ -1,0 +1,105 @@
+@startuml Knowledge Hook Execution Protocol
+
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam state {
+  BackgroundColor #E8F4FD
+  BorderColor #1976D2
+  FontColor #333333
+  StartColor #4CAF50
+  EndColor #F44336
+}
+
+title Knowledge Hook Execution State Machine
+
+[*] --> Idle
+
+state Idle {
+  Idle : Hook registered
+  Idle : Waiting for transaction
+}
+
+Idle --> ConditionEvaluation : TransactionStarted\n[hook.enabled]
+
+state ConditionEvaluation {
+  ConditionEvaluation : Start OTEL span
+  ConditionEvaluation : Load condition (SPARQL/SHACL/Delta)
+  ConditionEvaluation : Evaluate against store
+  ConditionEvaluation : timeout: 10s
+}
+
+ConditionEvaluation --> BeforePhase : ConditionEvaluated\n[result=true, before defined]
+ConditionEvaluation --> RunPhase : ConditionEvaluated\n[result=true, no before]
+ConditionEvaluation --> Cancelled : ConditionEvaluated\n[result=false]
+ConditionEvaluation --> Failed : Timeout/Error
+
+state BeforePhase {
+  BeforePhase : Create sandbox
+  BeforePhase : Execute before()
+  BeforePhase : Check for veto
+  BeforePhase : timeout: 5s
+}
+
+BeforePhase --> RunPhase : BeforeCompleted\n[success, no veto]
+BeforePhase --> Cancelled : BeforeCompleted\n[veto=true]
+BeforePhase --> Failed : BeforeError
+
+state RunPhase {
+  RunPhase : Execute run() in sandbox
+  RunPhase : Collect assertions
+  RunPhase : Record metrics
+  RunPhase : timeout: 30s
+}
+
+RunPhase --> AfterPhase : RunCompleted\n[success, after defined]
+RunPhase --> Completed : RunCompleted\n[success, no after]
+RunPhase --> Failed : RunError/Timeout
+
+state AfterPhase {
+  AfterPhase : Execute after()
+  AfterPhase : Cleanup sandbox
+  AfterPhase : timeout: 5s
+}
+
+AfterPhase --> Completed : AfterCompleted\n[success]
+AfterPhase --> Failed : AfterError
+
+state Completed {
+  Completed : Record duration
+  Completed : Emit metrics
+  Completed : End OTEL span (OK)
+}
+
+state Failed {
+  Failed : Record error
+  Failed : Emit error metrics
+  Failed : End OTEL span (ERROR)
+}
+
+state Cancelled {
+  Cancelled : Record cancellation
+  Cancelled : End OTEL span
+}
+
+Completed --> [*]
+Failed --> [*]
+Cancelled --> [*]
+
+note right of ConditionEvaluation
+  Condition Types:
+  - sparql-ask: Boolean query
+  - sparql-select: Binding results
+  - shacl: Validation result
+  - delta: Change detection
+  - threshold: Numeric comparison
+end note
+
+note right of RunPhase
+  Sandbox Execution:
+  - Isolated VM (vm2/isolated-vm)
+  - Memory limit: 64MB
+  - CPU limit: 50%
+  - No network access
+end note
+
+@enduml

@@ -1,0 +1,428 @@
+{
+  "@context": {
+    "@vocab": "https://unrdf.org/schema/",
+    "unrdf": "https://unrdf.org/schema/",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "slo": "https://unrdf.org/slo/",
+    "cap": "https://unrdf.org/capability/",
+    "target": { "@id": "unrdf:target", "@type": "@id" },
+    "metric": { "@id": "unrdf:metric" },
+    "threshold": { "@id": "unrdf:threshold" },
+    "unit": { "@id": "unrdf:unit" },
+    "severity": { "@id": "unrdf:severity" },
+    "capability": { "@id": "unrdf:capability", "@type": "@id" }
+  },
+  "@graph": [
+    {
+      "@id": "slo:HookExecutionLatencyP99",
+      "@type": "unrdf:SLO",
+      "rdfs:label": "Hook Execution Latency P99",
+      "rdfs:comment": "99th percentile latency for hook execution must be under 2ms (KGC PRD)",
+      "metric": "hook.execution.latency.p99",
+      "threshold": 2,
+      "unit": "milliseconds",
+      "severity": "critical",
+      "capability": "cap:KnowledgeHookManager",
+      "unrdf:alertThreshold": 1.5,
+      "unrdf:warningThreshold": 1.0,
+      "unrdf:measurementWindow": "PT5M",
+      "unrdf:evaluationPeriods": 3,
+      "unrdf:dataPointsToAlarm": 2
+    },
+
+    {
+      "@id": "slo:HookExecutionThroughput",
+      "@type": "unrdf:SLO",
+      "rdfs:label": "Hook Execution Throughput",
+      "rdfs:comment": "System must support 10,000 hook executions per minute (KGC PRD)",
+      "metric": "hook.execution.rate",
+      "threshold": 10000,
+      "unit": "executions/minute",
+      "severity": "critical",
+      "capability": "cap:KnowledgeHookManager",
+      "unrdf:alertThreshold": 8000,
+      "unrdf:warningThreshold": 9000,
+      "unrdf:measurementWindow": "PT1M"
+    },
+
+    {
+      "@id": "slo:TransactionCommitLatencyP95",
+      "@type": "unrdf:SLO",
+      "rdfs:label": "Transaction Commit Latency P95",
+      "rdfs:comment": "95th percentile transaction commit latency",
+      "metric": "transaction.commit.latency.p95",
+      "threshold": 5,
+      "unit": "milliseconds",
+      "severity": "high",
+      "capability": "cap:TransactionManager",
+      "unrdf:alertThreshold": 4,
+      "unrdf:warningThreshold": 3
+    },
+
+    {
+      "@id": "slo:QueryLatencyP50",
+      "@type": "unrdf:SLO",
+      "rdfs:label": "SPARQL Query Latency P50",
+      "rdfs:comment": "Median SPARQL query latency",
+      "metric": "query.sparql.latency.p50",
+      "threshold": 10,
+      "unit": "milliseconds",
+      "severity": "medium",
+      "capability": "cap:query"
+    },
+
+    {
+      "@id": "slo:QueryLatencyP99",
+      "@type": "unrdf:SLO",
+      "rdfs:label": "SPARQL Query Latency P99",
+      "rdfs:comment": "99th percentile SPARQL query latency",
+      "metric": "query.sparql.latency.p99",
+      "threshold": 100,
+      "unit": "milliseconds",
+      "severity": "high",
+      "capability": "cap:query"
+    },
+
+    {
+      "@id": "slo:ValidationLatencyP95",
+      "@type": "unrdf:SLO",
+      "rdfs:label": "SHACL Validation Latency P95",
+      "rdfs:comment": "95th percentile SHACL validation latency",
+      "metric": "validation.shacl.latency.p95",
+      "threshold": 50,
+      "unit": "milliseconds",
+      "severity": "medium",
+      "capability": "cap:validateShacl"
+    },
+
+    {
+      "@id": "slo:CanonicalizationLatencyP95",
+      "@type": "unrdf:SLO",
+      "rdfs:label": "Canonicalization Latency P95",
+      "rdfs:comment": "95th percentile graph canonicalization latency",
+      "metric": "canonicalize.latency.p95",
+      "threshold": 20,
+      "unit": "milliseconds",
+      "severity": "medium",
+      "capability": "cap:canonicalize"
+    },
+
+    {
+      "@id": "slo:ReasoningLatencyP95",
+      "@type": "unrdf:SLO",
+      "rdfs:label": "N3 Reasoning Latency P95",
+      "rdfs:comment": "95th percentile reasoning latency",
+      "metric": "reasoning.n3.latency.p95",
+      "threshold": 500,
+      "unit": "milliseconds",
+      "severity": "medium",
+      "capability": "cap:reason"
+    },
+
+    {
+      "@id": "slo:FederationQueryLatencyP95",
+      "@type": "unrdf:SLO",
+      "rdfs:label": "Federation Query Latency P95",
+      "rdfs:comment": "95th percentile distributed query latency",
+      "metric": "federation.query.latency.p95",
+      "threshold": 500,
+      "unit": "milliseconds",
+      "severity": "high",
+      "capability": "cap:DistributedQueryEngine"
+    },
+
+    {
+      "@id": "slo:ReplicationLatencyP99",
+      "@type": "unrdf:SLO",
+      "rdfs:label": "Data Replication Latency P99",
+      "rdfs:comment": "99th percentile replication propagation latency",
+      "metric": "replication.latency.p99",
+      "threshold": 1000,
+      "unit": "milliseconds",
+      "severity": "high",
+      "capability": "cap:DataReplicationManager"
+    },
+
+    {
+      "@id": "slo:ConsensusLatencyP95",
+      "@type": "unrdf:SLO",
+      "rdfs:label": "Consensus Latency P95",
+      "rdfs:comment": "95th percentile RAFT consensus latency",
+      "metric": "consensus.raft.latency.p95",
+      "threshold": 100,
+      "unit": "milliseconds",
+      "severity": "critical",
+      "capability": "cap:ConsensusManager"
+    },
+
+    {
+      "@id": "slo:StreamProcessingLatencyP95",
+      "@type": "unrdf:SLO",
+      "rdfs:label": "Stream Processing Latency P95",
+      "rdfs:comment": "95th percentile stream processing latency",
+      "metric": "stream.processing.latency.p95",
+      "threshold": 50,
+      "unit": "milliseconds",
+      "severity": "medium",
+      "capability": "cap:StreamProcessor"
+    },
+
+    {
+      "@id": "slo:ChangeFeedLatencyP99",
+      "@type": "unrdf:SLO",
+      "rdfs:label": "Change Feed Latency P99",
+      "rdfs:comment": "99th percentile change event delivery latency",
+      "metric": "changefeed.delivery.latency.p99",
+      "threshold": 20,
+      "unit": "milliseconds",
+      "severity": "high",
+      "capability": "cap:ChangeFeed"
+    },
+
+    {
+      "@id": "slo:SandboxExecutionLatencyP95",
+      "@type": "unrdf:SLO",
+      "rdfs:label": "Sandbox Execution Latency P95",
+      "rdfs:comment": "95th percentile sandboxed effect execution latency",
+      "metric": "sandbox.execution.latency.p95",
+      "threshold": 100,
+      "unit": "milliseconds",
+      "severity": "medium",
+      "capability": "cap:EffectSandbox"
+    },
+
+    {
+      "@id": "slo:ErrorRate",
+      "@type": "unrdf:SLO",
+      "rdfs:label": "System Error Rate",
+      "rdfs:comment": "Overall system error rate must be below 0.1%",
+      "metric": "system.error.rate",
+      "threshold": 0.001,
+      "unit": "ratio",
+      "severity": "critical",
+      "unrdf:alertThreshold": 0.0008,
+      "unrdf:warningThreshold": 0.0005,
+      "unrdf:measurementWindow": "PT5M"
+    },
+
+    {
+      "@id": "slo:HookErrorRate",
+      "@type": "unrdf:SLO",
+      "rdfs:label": "Hook Execution Error Rate",
+      "rdfs:comment": "Hook execution error rate must be below 0.5%",
+      "metric": "hook.execution.error.rate",
+      "threshold": 0.005,
+      "unit": "ratio",
+      "severity": "high",
+      "capability": "cap:KnowledgeHookManager"
+    },
+
+    {
+      "@id": "slo:TransactionSuccessRate",
+      "@type": "unrdf:SLO",
+      "rdfs:label": "Transaction Success Rate",
+      "rdfs:comment": "Transaction commit success rate must be above 99.9%",
+      "metric": "transaction.success.rate",
+      "threshold": 0.999,
+      "unit": "ratio",
+      "severity": "critical",
+      "capability": "cap:TransactionManager"
+    },
+
+    {
+      "@id": "slo:ValidationSuccessRate",
+      "@type": "unrdf:SLO",
+      "rdfs:label": "Validation Success Rate",
+      "rdfs:comment": "SHACL validation should not error (validation failures are OK)",
+      "metric": "validation.execution.success.rate",
+      "threshold": 0.9999,
+      "unit": "ratio",
+      "severity": "high",
+      "capability": "cap:validateShacl"
+    },
+
+    {
+      "@id": "slo:Availability",
+      "@type": "unrdf:SLO",
+      "rdfs:label": "System Availability",
+      "rdfs:comment": "System availability must be 99.9% (three nines)",
+      "metric": "system.availability",
+      "threshold": 0.999,
+      "unit": "ratio",
+      "severity": "critical",
+      "unrdf:measurementWindow": "P30D"
+    },
+
+    {
+      "@id": "slo:FederationAvailability",
+      "@type": "unrdf:SLO",
+      "rdfs:label": "Federation Availability",
+      "rdfs:comment": "Federation must remain available with up to 1/3 node failures",
+      "metric": "federation.availability",
+      "threshold": 0.999,
+      "unit": "ratio",
+      "severity": "critical",
+      "capability": "cap:createFederatedSystem",
+      "unrdf:faultTolerance": "n/3"
+    },
+
+    {
+      "@id": "slo:ConsensusQuorum",
+      "@type": "unrdf:SLO",
+      "rdfs:label": "Consensus Quorum Availability",
+      "rdfs:comment": "Consensus quorum must be maintained",
+      "metric": "consensus.quorum.available",
+      "threshold": 1,
+      "unit": "boolean",
+      "severity": "critical",
+      "capability": "cap:ConsensusManager"
+    },
+
+    {
+      "@id": "slo:MemoryUsage",
+      "@type": "unrdf:SLO",
+      "rdfs:label": "Memory Usage",
+      "rdfs:comment": "Heap memory usage should stay below 80% of allocated",
+      "metric": "system.memory.heap.usage.ratio",
+      "threshold": 0.8,
+      "unit": "ratio",
+      "severity": "high",
+      "unrdf:alertThreshold": 0.75,
+      "unrdf:warningThreshold": 0.6
+    },
+
+    {
+      "@id": "slo:CacheHitRate",
+      "@type": "unrdf:SLO",
+      "rdfs:label": "Query Cache Hit Rate",
+      "rdfs:comment": "Query cache should maintain high hit rate",
+      "metric": "cache.query.hit.rate",
+      "threshold": 0.7,
+      "unit": "ratio",
+      "severity": "low",
+      "capability": "cap:QueryOptimizer"
+    },
+
+    {
+      "@id": "slo:IndexSelectivity",
+      "@type": "unrdf:SLO",
+      "rdfs:label": "Index Selectivity",
+      "rdfs:comment": "Index selectivity should be optimized",
+      "metric": "index.selectivity.average",
+      "threshold": 0.1,
+      "unit": "ratio",
+      "severity": "low",
+      "capability": "cap:QueryOptimizer"
+    },
+
+    {
+      "@id": "slo:SandboxMemoryLimit",
+      "@type": "unrdf:SLO",
+      "rdfs:label": "Sandbox Memory Limit",
+      "rdfs:comment": "Sandbox memory usage per execution",
+      "metric": "sandbox.memory.max",
+      "threshold": 67108864,
+      "unit": "bytes",
+      "severity": "high",
+      "capability": "cap:EffectSandbox"
+    },
+
+    {
+      "@id": "slo:SandboxTimeout",
+      "@type": "unrdf:SLO",
+      "rdfs:label": "Sandbox Execution Timeout",
+      "rdfs:comment": "Maximum sandbox execution time",
+      "metric": "sandbox.execution.timeout",
+      "threshold": 30000,
+      "unit": "milliseconds",
+      "severity": "high",
+      "capability": "cap:EffectSandbox"
+    },
+
+    {
+      "@id": "slo:LockchainWriteLatencyP95",
+      "@type": "unrdf:SLO",
+      "rdfs:label": "Lockchain Write Latency P95",
+      "rdfs:comment": "95th percentile lockchain entry write latency",
+      "metric": "lockchain.write.latency.p95",
+      "threshold": 100,
+      "unit": "milliseconds",
+      "severity": "medium",
+      "capability": "cap:LockchainWriter"
+    },
+
+    {
+      "@id": "slo:PolicyLoadLatencyP95",
+      "@type": "unrdf:SLO",
+      "rdfs:label": "Policy Pack Load Latency P95",
+      "rdfs:comment": "95th percentile policy pack loading latency",
+      "metric": "policypack.load.latency.p95",
+      "threshold": 500,
+      "unit": "milliseconds",
+      "severity": "low",
+      "capability": "cap:PolicyPackManager"
+    },
+
+    {
+      "@id": "slo:ResolutionLatencyP95",
+      "@type": "unrdf:SLO",
+      "rdfs:label": "Conflict Resolution Latency P95",
+      "rdfs:comment": "95th percentile multi-agent resolution latency",
+      "metric": "resolution.latency.p95",
+      "threshold": 200,
+      "unit": "milliseconds",
+      "severity": "medium",
+      "capability": "cap:ResolutionLayer"
+    },
+
+    {
+      "@id": "slo:SemanticAnalysisLatencyP95",
+      "@type": "unrdf:SLO",
+      "rdfs:label": "Semantic Analysis Latency P95",
+      "rdfs:comment": "95th percentile AI semantic analysis latency",
+      "metric": "semantic.analysis.latency.p95",
+      "threshold": 1000,
+      "unit": "milliseconds",
+      "severity": "low",
+      "capability": "cap:SemanticAnalyzer"
+    },
+
+    {
+      "@id": "slo:NLPQueryLatencyP95",
+      "@type": "unrdf:SLO",
+      "rdfs:label": "NLP Query Translation Latency P95",
+      "rdfs:comment": "95th percentile NL to SPARQL translation latency",
+      "metric": "nlp.query.latency.p95",
+      "threshold": 2000,
+      "unit": "milliseconds",
+      "severity": "low",
+      "capability": "cap:NLPQueryBuilder"
+    },
+
+    {
+      "@id": "slo:ObservabilityOverhead",
+      "@type": "unrdf:SLO",
+      "rdfs:label": "Observability Overhead",
+      "rdfs:comment": "OTEL instrumentation overhead should be minimal",
+      "metric": "observability.overhead.ratio",
+      "threshold": 0.02,
+      "unit": "ratio",
+      "severity": "medium",
+      "capability": "cap:ObservabilityManager"
+    },
+
+    {
+      "@id": "slo:SpanExportLatencyP95",
+      "@type": "unrdf:SLO",
+      "rdfs:label": "Span Export Latency P95",
+      "rdfs:comment": "95th percentile OTEL span export latency",
+      "metric": "observability.span.export.latency.p95",
+      "threshold": 50,
+      "unit": "milliseconds",
+      "severity": "low",
+      "capability": "cap:ObservabilityManager"
+    }
+  ]
+}
