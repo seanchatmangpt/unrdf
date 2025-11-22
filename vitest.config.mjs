@@ -64,6 +64,10 @@ export default defineConfig({
       // v4.0 Diff utilities tests
       "test/diff.test.mjs",
 
+      // v4.0 Project engine tests
+      "test/project-engine.test.mjs",
+      "test/project-engine/**/*.test.mjs",
+
       // v3.0 Core tests
       "test/knowledge-engine/parse.test.mjs",
       "test/knowledge-engine/utils/*.test.mjs",

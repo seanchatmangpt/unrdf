@@ -1,0 +1,132 @@
+{# IMRAD Paper Template - Introduction, Methods, Results, and Discussion #}
+{# Variables: paper (object with title, authors, abstract, sections) #}
+
+\documentclass[11pt,a4paper]{article}
+
+% Packages
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{natbib}
+\usepackage[margin=1in]{geometry}
+
+% Document metadata
+\title{ {{- paper.title | texescape -}} }
+{% for author in paper.authors %}
+\author{ {{- author.name | texescape -}} {% if author.affiliation %}\\{\small {{ author.affiliation | texescape }}}{% endif %}}
+{% endfor %}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+{% if paper.abstract %}
+\begin{abstract}
+{{ paper.abstract | texescape }}
+\end{abstract}
+{% endif %}
+
+{% if paper.keywords %}
+\textbf{Keywords:} {{ paper.keywords | join(', ') | texescape }}
+{% endif %}
+
+% =============================================================================
+% INTRODUCTION
+% =============================================================================
+\section{Introduction}
+\label{sec:introduction}
+
+{% if paper.sections and paper.sections[0] %}
+{{ paper.sections[0].content | texescape }}
+{% else %}
+% TODO: Write introduction
+% - Background and context
+% - Problem statement
+% - Research objectives
+% - Paper structure overview
+{% endif %}
+
+% =============================================================================
+% METHODS
+% =============================================================================
+\section{Methods}
+\label{sec:methods}
+
+{% if paper.sections and paper.sections[1] %}
+{{ paper.sections[1].content | texescape }}
+{% else %}
+% TODO: Write methods section
+% - Research design
+% - Data collection
+% - Analysis procedures
+% - Validation approach
+{% endif %}
+
+\subsection{Data Collection}
+% Describe data collection procedures
+
+\subsection{Analysis}
+% Describe analysis methods
+
+% =============================================================================
+% RESULTS
+% =============================================================================
+\section{Results}
+\label{sec:results}
+
+{% if paper.sections and paper.sections[2] %}
+{{ paper.sections[2].content | texescape }}
+{% else %}
+% TODO: Write results section
+% - Key findings
+% - Tables and figures
+% - Statistical analysis
+{% endif %}
+
+% =============================================================================
+% DISCUSSION
+% =============================================================================
+\section{Discussion}
+\label{sec:discussion}
+
+{% if paper.sections and paper.sections[3] %}
+{{ paper.sections[3].content | texescape }}
+{% else %}
+% TODO: Write discussion section
+% - Interpretation of results
+% - Comparison with prior work
+% - Implications
+% - Limitations
+{% endif %}
+
+\subsection{Implications}
+% Discuss implications of findings
+
+\subsection{Limitations}
+% Acknowledge limitations
+
+% =============================================================================
+% CONCLUSION
+% =============================================================================
+\section{Conclusion}
+\label{sec:conclusion}
+
+{% if paper.sections and paper.sections[4] %}
+{{ paper.sections[4].content | texescape }}
+{% else %}
+% TODO: Write conclusion
+% - Summary of contributions
+% - Future work
+{% endif %}
+
+% =============================================================================
+% REFERENCES
+% =============================================================================
+\bibliographystyle{plainnat}
+% \bibliography{references}
+
+\end{document}

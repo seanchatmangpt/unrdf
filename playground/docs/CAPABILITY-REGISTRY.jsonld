@@ -1,0 +1,515 @@
+{
+  "@context": {
+    "cap": "urn:playground:capabilities:",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "schema": "http://schema.org/",
+    "sh": "http://www.w3.org/ns/shacl#",
+    "name": "rdfs:label",
+    "description": "rdfs:comment",
+    "version": "schema:version",
+    "preconditions": {"@id": "cap:preconditions", "@type": "@id"},
+    "postconditions": {"@id": "cap:postconditions", "@type": "@id"},
+    "inputs": {"@id": "cap:inputs", "@container": "@list"},
+    "outputs": {"@id": "cap:outputs", "@container": "@list"},
+    "successCriteria": "cap:successCriteria",
+    "failureModes": {"@id": "cap:failureModes", "@container": "@list"},
+    "latencyP50": "cap:latencyP50",
+    "latencyP99": "cap:latencyP99"
+  },
+  "@id": "urn:playground:capability-registry:v1.0.0",
+  "@type": "cap:CapabilityRegistry",
+  "version": "1.0.0",
+  "generatedAt": "2025-11-22T00:00:00Z",
+  "capabilities": [
+    {
+      "@id": "cap:papers-generate",
+      "@type": "cap:Capability",
+      "name": "papers generate",
+      "description": "Generate research paper from template using specified family structure",
+      "version": "1.0.0",
+      "command": "playground papers generate [family] --title <title> --author <author>",
+      "preconditions": [
+        {"@type": "cap:Precondition", "condition": "title argument provided", "required": true},
+        {"@type": "cap:Precondition", "condition": "author argument provided", "required": true},
+        {"@type": "cap:Precondition", "condition": "family is valid enum", "required": false, "default": "imrad"}
+      ],
+      "postconditions": [
+        {"@type": "cap:Postcondition", "effect": "Paper object created in memory"},
+        {"@type": "cap:Postcondition", "effect": "Paper written to output path if --output specified"},
+        {"@type": "cap:Postcondition", "effect": "Paper metadata logged to stdout"}
+      ],
+      "inputs": [
+        {"name": "family", "type": "enum", "enum": ["imrad", "dsr", "argument", "contribution"], "default": "imrad", "required": false},
+        {"name": "title", "type": "string", "alias": "t", "required": true, "minLength": 1},
+        {"name": "author", "type": "string", "alias": "a", "required": true, "minLength": 1},
+        {"name": "affiliation", "type": "string", "required": false},
+        {"name": "abstract", "type": "string", "required": false},
+        {"name": "sections", "type": "json", "required": false, "description": "Custom sections as JSON array"},
+        {"name": "output", "type": "string", "alias": "o", "required": false},
+        {"name": "format", "type": "enum", "enum": ["latex", "json"], "default": "latex", "alias": "f"}
+      ],
+      "outputs": [
+        {"name": "paper", "type": "object", "schema": "cap:PaperOutputSchema"},
+        {"name": "file", "type": "string", "condition": "when --output specified"}
+      ],
+      "successCriteria": "ASK { ?paper a paper:Paper ; paper:hasTitle ?title ; paper:hasAuthor ?author . }",
+      "failureModes": [
+        {"code": "E_VALIDATION", "message": "Input validation failed", "recovery": "Check required args --title and --author"},
+        {"code": "E_UNKNOWN_FAMILY", "message": "Unknown paper family", "recovery": "Run 'playground papers list' for valid families"},
+        {"code": "E_TEMPLATE_ERROR", "message": "Template rendering failed", "recovery": "Check template syntax"},
+        {"code": "E_WRITE_ERROR", "message": "File write failed", "recovery": "Check output path permissions"}
+      ],
+      "latencyP50": "120ms",
+      "latencyP99": "450ms"
+    },
+    {
+      "@id": "cap:papers-list",
+      "@type": "cap:Capability",
+      "name": "papers list",
+      "description": "List all available paper families with optional detailed information",
+      "version": "1.0.0",
+      "command": "playground papers list [--verbose]",
+      "preconditions": [],
+      "postconditions": [
+        {"@type": "cap:Postcondition", "effect": "Paper families listed to stdout"}
+      ],
+      "inputs": [
+        {"name": "verbose", "type": "boolean", "alias": "v", "default": false},
+        {"name": "format", "type": "enum", "enum": ["table", "json", "yaml"], "default": "table", "alias": "f"}
+      ],
+      "outputs": [
+        {"name": "families", "type": "array", "schema": "cap:PaperFamilySchema"}
+      ],
+      "successCriteria": "ASK { ?family a cap:PaperFamily . }",
+      "failureModes": [],
+      "latencyP50": "5ms",
+      "latencyP99": "15ms"
+    },
+    {
+      "@id": "cap:papers-validate",
+      "@type": "cap:Capability",
+      "name": "papers validate",
+      "description": "Validate paper structure against family schema and SHACL constraints",
+      "version": "1.0.0",
+      "command": "playground papers validate <path> [--strict]",
+      "preconditions": [
+        {"@type": "cap:Precondition", "condition": "path argument provided", "required": true},
+        {"@type": "cap:Precondition", "condition": "file exists at path", "required": true}
+      ],
+      "postconditions": [
+        {"@type": "cap:Postcondition", "effect": "Validation result returned"}
+      ],
+      "inputs": [
+        {"name": "path", "type": "string", "positional": true, "required": true},
+        {"name": "strict", "type": "boolean", "default": false},
+        {"name": "format", "type": "enum", "enum": ["table", "json"], "default": "table", "alias": "f"}
+      ],
+      "outputs": [
+        {"name": "validationResult", "type": "object", "schema": "cap:ValidationResultSchema"}
+      ],
+      "successCriteria": "ASK { ?result cap:valid true . }",
+      "failureModes": [
+        {"code": "E_FILE_NOT_FOUND", "message": "File not found", "recovery": "Check file path"},
+        {"code": "E_PARSE_ERROR", "message": "Cannot parse file", "recovery": "Check file format"},
+        {"code": "E_VALIDATION_FAILED", "message": "Validation failed", "recovery": "Review validation errors"}
+      ],
+      "latencyP50": "80ms",
+      "latencyP99": "250ms"
+    },
+    {
+      "@id": "cap:thesis-generate",
+      "@type": "cap:Capability",
+      "name": "thesis generate",
+      "description": "Generate thesis document structure using specified type",
+      "version": "1.0.0",
+      "command": "playground thesis generate [type] --title <title> --author <author>",
+      "preconditions": [
+        {"@type": "cap:Precondition", "condition": "title argument provided", "required": true},
+        {"@type": "cap:Precondition", "condition": "author argument provided", "required": true}
+      ],
+      "postconditions": [
+        {"@type": "cap:Postcondition", "effect": "Thesis object created in memory"},
+        {"@type": "cap:Postcondition", "effect": "Thesis written to output path if --output specified"}
+      ],
+      "inputs": [
+        {"name": "type", "type": "enum", "enum": ["monograph", "narrative", "contribution"], "default": "monograph", "required": false},
+        {"name": "title", "type": "string", "alias": "t", "required": true},
+        {"name": "author", "type": "string", "alias": "a", "required": true},
+        {"name": "institution", "type": "string", "required": false},
+        {"name": "department", "type": "string", "required": false},
+        {"name": "supervisor", "type": "string", "alias": "s", "required": false},
+        {"name": "degree", "type": "enum", "enum": ["PhD", "Master", "Bachelor"], "default": "PhD", "alias": "d"},
+        {"name": "output", "type": "string", "alias": "o", "required": false},
+        {"name": "format", "type": "enum", "enum": ["latex", "json"], "default": "latex", "alias": "f"}
+      ],
+      "outputs": [
+        {"name": "thesis", "type": "object", "schema": "cap:ThesisOutputSchema"}
+      ],
+      "successCriteria": "ASK { ?thesis a thesis:Thesis ; paper:hasTitle ?title . }",
+      "failureModes": [
+        {"code": "E_VALIDATION", "message": "Input validation failed", "recovery": "Check required args"},
+        {"code": "E_UNKNOWN_TYPE", "message": "Unknown thesis type", "recovery": "Run 'playground thesis list'"}
+      ],
+      "latencyP50": "150ms",
+      "latencyP99": "520ms"
+    },
+    {
+      "@id": "cap:thesis-list",
+      "@type": "cap:Capability",
+      "name": "thesis list",
+      "description": "List all available thesis types",
+      "version": "1.0.0",
+      "command": "playground thesis list [--verbose]",
+      "preconditions": [],
+      "postconditions": [
+        {"@type": "cap:Postcondition", "effect": "Thesis types listed to stdout"}
+      ],
+      "inputs": [
+        {"name": "verbose", "type": "boolean", "alias": "v", "default": false},
+        {"name": "format", "type": "enum", "enum": ["table", "json", "yaml"], "default": "table", "alias": "f"}
+      ],
+      "outputs": [
+        {"name": "types", "type": "array", "schema": "cap:ThesisTypeSchema"}
+      ],
+      "successCriteria": "ASK { ?type a cap:ThesisType . }",
+      "failureModes": [],
+      "latencyP50": "5ms",
+      "latencyP99": "15ms"
+    },
+    {
+      "@id": "cap:thesis-schedule-list",
+      "@type": "cap:Capability",
+      "name": "thesis schedule list",
+      "description": "Display current thesis schedule and milestones",
+      "version": "1.0.0",
+      "command": "playground thesis schedule list [--format]",
+      "preconditions": [],
+      "postconditions": [
+        {"@type": "cap:Postcondition", "effect": "Schedule displayed to stdout"}
+      ],
+      "inputs": [
+        {"name": "format", "type": "enum", "enum": ["table", "json"], "default": "table", "alias": "f"}
+      ],
+      "outputs": [
+        {"name": "schedule", "type": "object", "schema": "cap:ScheduleSchema"}
+      ],
+      "successCriteria": "ASK { ?schedule a thesis:Schedule . }",
+      "failureModes": [],
+      "latencyP50": "10ms",
+      "latencyP99": "30ms"
+    },
+    {
+      "@id": "cap:thesis-schedule-set",
+      "@type": "cap:Capability",
+      "name": "thesis schedule set",
+      "description": "Configure thesis schedule with defense date or milestones",
+      "version": "1.0.0",
+      "command": "playground thesis schedule set [--defense] [--milestone]",
+      "preconditions": [
+        {"@type": "cap:Precondition", "condition": "at least one of --defense or --milestone provided", "required": true}
+      ],
+      "postconditions": [
+        {"@type": "cap:Postcondition", "effect": "Schedule updated in memory/storage"}
+      ],
+      "inputs": [
+        {"name": "defense", "type": "string", "format": "date", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
+        {"name": "milestone", "type": "json", "schema": {"name": "string", "date": "date"}, "alias": "m"}
+      ],
+      "outputs": [
+        {"name": "updated", "type": "boolean"}
+      ],
+      "successCriteria": "ASK { ?schedule thesis:defenseDate ?date . }",
+      "failureModes": [
+        {"code": "E_INVALID_DATE", "message": "Invalid date format", "recovery": "Use YYYY-MM-DD format"},
+        {"code": "E_INVALID_JSON", "message": "Invalid milestone JSON", "recovery": "Use format: {\"name\": \"...\", \"date\": \"YYYY-MM-DD\"}"}
+      ],
+      "latencyP50": "20ms",
+      "latencyP99": "60ms"
+    },
+    {
+      "@id": "cap:config-set",
+      "@type": "cap:Capability",
+      "name": "config set",
+      "description": "Set a configuration value by key",
+      "version": "1.0.0",
+      "command": "playground config set <key> <value>",
+      "preconditions": [
+        {"@type": "cap:Precondition", "condition": "key matches pattern ^[a-z]+(\\.[a-z]+)*$", "required": true}
+      ],
+      "postconditions": [
+        {"@type": "cap:Postcondition", "effect": "Configuration value stored"}
+      ],
+      "inputs": [
+        {"name": "key", "type": "string", "positional": true, "required": true, "pattern": "^[a-z]+(\\.[a-z]+)*$"},
+        {"name": "value", "type": "string", "positional": true, "required": true}
+      ],
+      "outputs": [
+        {"name": "success", "type": "boolean"}
+      ],
+      "successCriteria": "ASK { ?config cap:key ?key ; cap:value ?value . }",
+      "failureModes": [
+        {"code": "E_INVALID_KEY", "message": "Invalid key format", "recovery": "Use format: category.key"}
+      ],
+      "latencyP50": "8ms",
+      "latencyP99": "25ms"
+    },
+    {
+      "@id": "cap:config-get",
+      "@type": "cap:Capability",
+      "name": "config get",
+      "description": "Get a configuration value by key",
+      "version": "1.0.0",
+      "command": "playground config get <key>",
+      "preconditions": [
+        {"@type": "cap:Precondition", "condition": "key exists in config", "required": true}
+      ],
+      "postconditions": [
+        {"@type": "cap:Postcondition", "effect": "Value printed to stdout"}
+      ],
+      "inputs": [
+        {"name": "key", "type": "string", "positional": true, "required": true},
+        {"name": "format", "type": "enum", "enum": ["value", "json"], "default": "value", "alias": "f"}
+      ],
+      "outputs": [
+        {"name": "value", "type": "string"}
+      ],
+      "successCriteria": "ASK { ?config cap:key ?key . }",
+      "failureModes": [
+        {"code": "E_KEY_NOT_FOUND", "message": "Configuration key not found", "recovery": "Run 'playground config list'"}
+      ],
+      "latencyP50": "5ms",
+      "latencyP99": "15ms"
+    },
+    {
+      "@id": "cap:config-list",
+      "@type": "cap:Capability",
+      "name": "config list",
+      "description": "List all configuration values",
+      "version": "1.0.0",
+      "command": "playground config list [--defaults]",
+      "preconditions": [],
+      "postconditions": [
+        {"@type": "cap:Postcondition", "effect": "All config values printed to stdout"}
+      ],
+      "inputs": [
+        {"name": "format", "type": "enum", "enum": ["table", "json", "yaml"], "default": "table", "alias": "f"},
+        {"name": "defaults", "type": "boolean", "default": false}
+      ],
+      "outputs": [
+        {"name": "config", "type": "object"}
+      ],
+      "successCriteria": "true",
+      "failureModes": [],
+      "latencyP50": "5ms",
+      "latencyP99": "15ms"
+    },
+    {
+      "@id": "cap:config-reset",
+      "@type": "cap:Capability",
+      "name": "config reset",
+      "description": "Reset configuration to defaults",
+      "version": "1.0.0",
+      "command": "playground config reset [--confirm] [--key]",
+      "preconditions": [
+        {"@type": "cap:Precondition", "condition": "--confirm flag or --key specified", "required": true}
+      ],
+      "postconditions": [
+        {"@type": "cap:Postcondition", "effect": "Configuration reset to defaults"}
+      ],
+      "inputs": [
+        {"name": "confirm", "type": "boolean", "alias": "y", "default": false},
+        {"name": "key", "type": "string", "alias": "k", "required": false}
+      ],
+      "outputs": [
+        {"name": "success", "type": "boolean"}
+      ],
+      "successCriteria": "ASK { ?config cap:isDefault true . }",
+      "failureModes": [
+        {"code": "E_NOT_CONFIRMED", "message": "Reset not confirmed", "recovery": "Add --confirm flag"}
+      ],
+      "latencyP50": "10ms",
+      "latencyP99": "30ms"
+    },
+    {
+      "@id": "cap:meta-introspect",
+      "@type": "cap:Capability",
+      "name": "meta introspect",
+      "description": "Machine-grade introspection of CLI capabilities",
+      "version": "1.0.0",
+      "command": "playground meta introspect [--format] [--section]",
+      "preconditions": [],
+      "postconditions": [
+        {"@type": "cap:Postcondition", "effect": "Command registry exported"}
+      ],
+      "inputs": [
+        {"name": "format", "type": "enum", "enum": ["json", "yaml"], "default": "json", "alias": "f"},
+        {"name": "section", "type": "enum", "enum": ["all", "commands", "families", "types", "global"], "default": "all", "alias": "s"}
+      ],
+      "outputs": [
+        {"name": "registry", "type": "object", "schema": "cap:CommandRegistrySchema"}
+      ],
+      "successCriteria": "true",
+      "failureModes": [],
+      "latencyP50": "8ms",
+      "latencyP99": "20ms"
+    },
+    {
+      "@id": "cap:meta-ontology-list",
+      "@type": "cap:Capability",
+      "name": "meta ontology list",
+      "description": "List RDF classes and properties from ontology",
+      "version": "1.0.0",
+      "command": "playground meta ontology list [--verbose] [--type]",
+      "preconditions": [
+        {"@type": "cap:Precondition", "condition": "ontology file loaded", "required": true}
+      ],
+      "postconditions": [
+        {"@type": "cap:Postcondition", "effect": "Ontology entities listed"}
+      ],
+      "inputs": [
+        {"name": "verbose", "type": "boolean", "alias": "v", "default": false},
+        {"name": "format", "type": "enum", "enum": ["table", "json", "turtle"], "default": "table", "alias": "f"},
+        {"name": "type", "type": "enum", "enum": ["all", "class", "property"], "default": "all", "alias": "t"}
+      ],
+      "outputs": [
+        {"name": "entities", "type": "array", "schema": "cap:OntologyEntitySchema"}
+      ],
+      "successCriteria": "ASK { ?class a rdfs:Class . }",
+      "failureModes": [
+        {"code": "E_ONTOLOGY_NOT_FOUND", "message": "Ontology file not found", "recovery": "Check ontology.path config"}
+      ],
+      "latencyP50": "50ms",
+      "latencyP99": "150ms"
+    },
+    {
+      "@id": "cap:meta-sparql",
+      "@type": "cap:Capability",
+      "name": "meta sparql",
+      "description": "Execute SPARQL query against loaded ontologies",
+      "version": "1.0.0",
+      "command": "playground meta sparql <query> [--file] [--format]",
+      "preconditions": [
+        {"@type": "cap:Precondition", "condition": "query or --file provided", "required": true}
+      ],
+      "postconditions": [
+        {"@type": "cap:Postcondition", "effect": "Query results returned"}
+      ],
+      "inputs": [
+        {"name": "query", "type": "string", "positional": true, "required": false},
+        {"name": "file", "type": "string", "alias": "f", "required": false},
+        {"name": "format", "type": "enum", "enum": ["table", "json", "csv"], "default": "table"},
+        {"name": "limit", "type": "string", "alias": "l", "default": "100"}
+      ],
+      "outputs": [
+        {"name": "results", "type": "array", "schema": "cap:SPARQLResultSchema"}
+      ],
+      "successCriteria": "ASK { ?s ?p ?o . }",
+      "failureModes": [
+        {"code": "E_NO_QUERY", "message": "No query provided", "recovery": "Provide query or --file"},
+        {"code": "E_SYNTAX_ERROR", "message": "SPARQL syntax error", "recovery": "Check query syntax"},
+        {"code": "E_EXECUTION_ERROR", "message": "Query execution failed", "recovery": "Check ontology loaded"}
+      ],
+      "latencyP50": "85ms",
+      "latencyP99": "350ms"
+    },
+    {
+      "@id": "cap:meta-completions",
+      "@type": "cap:Capability",
+      "name": "meta completions",
+      "description": "Generate shell completions for specified shell",
+      "version": "1.0.0",
+      "command": "playground meta completions <shell>",
+      "preconditions": [],
+      "postconditions": [
+        {"@type": "cap:Postcondition", "effect": "Shell completion script printed"}
+      ],
+      "inputs": [
+        {"name": "shell", "type": "enum", "enum": ["bash", "zsh", "fish", "powershell"], "positional": true, "required": true}
+      ],
+      "outputs": [
+        {"name": "script", "type": "string"}
+      ],
+      "successCriteria": "true",
+      "failureModes": [
+        {"code": "E_UNKNOWN_SHELL", "message": "Unknown shell", "recovery": "Use bash, zsh, fish, or powershell"}
+      ],
+      "latencyP50": "5ms",
+      "latencyP99": "15ms"
+    },
+    {
+      "@id": "cap:meta-middleware-list",
+      "@type": "cap:Capability",
+      "name": "meta middleware list",
+      "description": "List active middleware components",
+      "version": "1.0.0",
+      "command": "playground meta middleware list [--format]",
+      "preconditions": [],
+      "postconditions": [
+        {"@type": "cap:Postcondition", "effect": "Middleware list printed"}
+      ],
+      "inputs": [
+        {"name": "format", "type": "enum", "enum": ["table", "json"], "default": "table", "alias": "f"}
+      ],
+      "outputs": [
+        {"name": "middleware", "type": "array", "schema": "cap:MiddlewareSchema"}
+      ],
+      "successCriteria": "true",
+      "failureModes": [],
+      "latencyP50": "5ms",
+      "latencyP99": "15ms"
+    },
+    {
+      "@id": "cap:meta-telemetry",
+      "@type": "cap:Capability",
+      "name": "meta telemetry",
+      "description": "Export execution metrics in specified format",
+      "version": "1.0.0",
+      "command": "playground meta telemetry [format] [--output] [--timeframe]",
+      "preconditions": [],
+      "postconditions": [
+        {"@type": "cap:Postcondition", "effect": "Metrics exported"}
+      ],
+      "inputs": [
+        {"name": "format", "type": "enum", "enum": ["json", "prometheus", "otlp"], "default": "json", "positional": true},
+        {"name": "output", "type": "string", "alias": "o", "required": false},
+        {"name": "timeframe", "type": "enum", "enum": ["1h", "24h", "7d"], "default": "24h", "alias": "t"}
+      ],
+      "outputs": [
+        {"name": "metrics", "type": "object", "schema": "cap:MetricsSchema"}
+      ],
+      "successCriteria": "true",
+      "failureModes": [],
+      "latencyP50": "30ms",
+      "latencyP99": "100ms"
+    }
+  ],
+  "schemas": {
+    "cap:PaperOutputSchema": {
+      "type": "object",
+      "properties": {
+        "id": {"type": "string"},
+        "family": {"type": "string", "enum": ["imrad", "dsr", "argument", "contribution"]},
+        "title": {"type": "string"},
+        "authors": {"type": "array", "items": {"type": "object", "properties": {"name": {"type": "string"}, "affiliation": {"type": "string"}}}},
+        "abstract": {"type": "string"},
+        "sections": {"type": "array", "items": {"type": "object", "properties": {"heading": {"type": "string"}, "order": {"type": "integer"}, "content": {"type": "string"}}}},
+        "createdAt": {"type": "string", "format": "date-time"}
+      },
+      "required": ["id", "family", "title", "authors", "sections", "createdAt"]
+    },
+    "cap:ThesisOutputSchema": {
+      "type": "object",
+      "properties": {
+        "id": {"type": "string"},
+        "type": {"type": "string", "enum": ["monograph", "narrative", "contribution"]},
+        "title": {"type": "string"},
+        "author": {"type": "object"},
+        "degree": {"type": "string"},
+        "chapters": {"type": "array"},
+        "schedule": {"type": "object"},
+        "createdAt": {"type": "string", "format": "date-time"}
+      }
+    }
+  }
+}

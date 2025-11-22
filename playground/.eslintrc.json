@@ -1,0 +1,35 @@
+{
+  "env": {
+    "node": true,
+    "es2022": true,
+    "mocha": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 2022,
+    "sourceType": "module"
+  },
+  "extends": ["eslint:recommended"],
+  "rules": {
+    "no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
+    "no-console": "off",
+    "prefer-const": "error",
+    "no-var": "error",
+    "object-shorthand": "error",
+    "prefer-arrow-callback": "error",
+    "prefer-template": "warn",
+    "quotes": ["warn", "single", { "avoidEscape": true }],
+    "semi": ["error", "always"],
+    "comma-dangle": ["warn", "always-multiline"],
+    "eqeqeq": ["error", "always"],
+    "curly": ["error", "all"],
+    "brace-style": ["error", "1tbs"],
+    "indent": ["warn", 2, { "SwitchCase": 1 }],
+    "no-multiple-empty-lines": ["warn", { "max": 2, "maxEOF": 1 }]
+  },
+  "ignorePatterns": [
+    "node_modules/",
+    "dist/",
+    "output/",
+    "*.min.js"
+  ]
+}

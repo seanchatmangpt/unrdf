@@ -1,0 +1,51 @@
+{#
+  Paper Template (Base)
+  =====================
+  Base academic paper template for LaTeX output.
+
+  Required Variables:
+  - title: Paper title
+  - author: Author name(s)
+  - abstract: Paper abstract
+  - sections: Array of {title, content} objects
+
+  Optional Variables:
+  - date: Publication date (defaults to \today)
+  - bibliography: Bibliography file name (defaults to 'references')
+
+  Usage:
+    const context = {
+      title: "My Research Paper",
+      author: "Jane Doe",
+      abstract: "This paper explores...",
+      sections: [
+        { title: "Introduction", content: "..." },
+        { title: "Methodology", content: "..." }
+      ]
+    };
+#}
+\documentclass{article}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{graphicx}
+
+\title{{ '{' }}{{ title | texescape }}{{ '}' }}
+\author{{ '{' }}{{ author | texescape }}{{ '}' }}
+\date{{ '{' }}{% if date %}{{ date | texescape }}{% else %}\today{% endif %}{{ '}' }}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+{{ abstract | texescape }}
+\end{abstract}
+
+{% for section in sections %}
+\section{{ '{' }}{{ section.title | texescape }}{{ '}' }}
+{{ section.content | texescape }}
+
+{% endfor %}
+\bibliographystyle{plain}
+\bibliography{{ '{' }}{{ bibliography | default('references') }}{{ '}' }}
+
+\end{document}

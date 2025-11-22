@@ -1,0 +1,73 @@
+{#
+  Design Science Research (DSR) Template
+  ======================================
+  DSR methodology structure: Problem, Artifact, Evaluation, Theory.
+  For creating and evaluating design artifacts.
+
+  Required Variables:
+  - title: Paper title
+  - author: Author name(s)
+  - abstract: Paper abstract
+
+  Optional Variables:
+  - problem: Problem identification content
+  - artifact: Artifact design content
+  - evaluation: Artifact evaluation content
+  - theory: Theoretical contribution content
+  - date: Publication date (defaults to \today)
+  - bibliography: Bibliography file name (defaults to 'references')
+
+  Usage:
+    const context = {
+      title: "Designing a Semantic CLI Framework",
+      author: "Design Scientist",
+      abstract: "This DSR paper presents...",
+      problem: "Organizations struggle with...",
+      artifact: "We designed a framework...",
+      evaluation: "Laboratory and field evaluation...",
+      theory: "Generalizable design principles..."
+    };
+#}
+\documentclass{article}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{graphicx}
+
+\title{{ '{' }}{{ title | texescape }}{{ '}' }}
+\author{{ '{' }}{{ author | texescape }}{{ '}' }}
+\date{{ '{' }}{% if date %}{{ date | texescape }}{% else %}\today{% endif %}{{ '}' }}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+{{ abstract | texescape }}
+\end{abstract}
+
+% Design Science Research (DSR) Thesis Structure: Problem, Artifact, Evaluation, Theory
+% This structure follows the DSR methodology for creating and evaluating artifacts
+
+\section{Problem}
+{% if problem %}{{ problem | texescape }}{% endif %}
+
+Identification and motivation of the research problem, establishing relevance and defining the problem space for design science inquiry.
+
+\section{Artifact}
+{% if artifact %}{{ artifact | texescape }}{% endif %}
+
+Design and development of the solution artifact, including design principles, architecture, and implementation details.
+
+\section{Evaluation}
+{% if evaluation %}{{ evaluation | texescape }}{% endif %}
+
+Rigorous evaluation of the artifact's effectiveness and utility, demonstrating that it addresses the identified problem.
+
+\section{Theory}
+{% if theory %}{{ theory | texescape }}{% endif %}
+
+Contribution to the theoretical knowledge base, generalizing findings and establishing design principles for future research.
+
+\bibliographystyle{plain}
+\bibliography{{ '{' }}{{ bibliography | default('references') }}{{ '}' }}
+
+\end{document}

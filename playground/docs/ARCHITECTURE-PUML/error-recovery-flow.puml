@@ -1,0 +1,130 @@
+@startuml error-recovery-flow
+!theme plain
+title Error Recovery Flow - Failure Handling Process
+
+skinparam backgroundColor #FFFFFF
+skinparam activityArrowThickness 2
+skinparam roundcorner 10
+
+start
+
+:Error detected;
+
+partition "Error Classification" {
+    :Extract error code;
+
+    switch (Error Category)
+    case ( USER_INPUT )
+        :Recoverable|
+        User can correct input;
+        #lightgreen:Exit code: 1;
+    case ( VALIDATION )
+        :Recoverable|
+        Data can be fixed;
+        #lightgreen:Exit code: 1;
+    case ( NOT_FOUND )
+        :Recoverable|
+        Resource can be created;
+        #lightgreen:Exit code: 1;
+    case ( IO_ERROR )
+        :Potentially Fatal|
+        Check permissions/space;
+        #yellow:Exit code: 2;
+    case ( SYSTEM )
+        :Fatal|
+        System issue;
+        #pink:Exit code: 2;
+    endswitch
+}
+
+partition "Error Context" {
+    :Capture error details|
+    - Error message
+    - Stack trace
+    - Input arguments
+    - System state;
+
+    :Log to telemetry;
+}
+
+partition "Recovery Selection" {
+    if (Error code known?) then (yes)
+        :Lookup recovery procedure;
+
+        switch (Error Code)
+        case ( E_VALIDATION )
+            :Show validation errors;
+            :Suggest correct format;
+            :Link to --help;
+
+        case ( E_UNKNOWN_FAMILY )
+            :List valid families;
+            :Suggest closest match;
+            :Command: papers list;
+
+        case ( E_FILE_NOT_FOUND )
+            :Show searched path;
+            :Suggest alternatives;
+            :Check common locations;
+
+        case ( E_CONFIG_NOT_FOUND )
+            :Suggest config set;
+            :Show default value;
+            :Command: config list;
+
+        case ( E_QUERY_TIMEOUT )
+            :Suggest LIMIT clause;
+            :Show simpler query;
+            :Increase timeout flag;
+
+        case ( E_WRITE_ERROR )
+            :Check permissions;
+            :Check disk space;
+            :Try alternative path;
+
+        case ( E_ONTOLOGY_NOT_FOUND )
+            :Check ontology.path config;
+            :Show expected location;
+            :Suggest download;
+
+        endswitch
+    else (no)
+        :Generic error handling;
+        :Show error message;
+        :Suggest --verbose;
+    endif
+}
+
+partition "User Communication" {
+    :Format error message;
+
+    :Display|
+    Error: [code] - [message]
+
+    Cause: [explanation]
+
+    Recovery: [suggestion]
+
+    Example: [corrected command];
+
+    if (Interactive mode?) then (yes)
+        :Offer retry prompt;
+        if (User confirms?) then (yes)
+            :Collect corrected input;
+            :Retry command;
+            stop
+        endif
+    endif
+}
+
+partition "Cleanup" {
+    :Clean temporary files;
+    :Release resources;
+    :Flush logs;
+}
+
+:Exit with error code;
+
+stop
+
+@enduml
