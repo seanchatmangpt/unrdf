@@ -1,0 +1,1695 @@
+{
+  "@context": {
+    "@vocab": "https://unrdf.org/schema/",
+    "unrdf": "https://unrdf.org/schema/",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "sh": "http://www.w3.org/ns/shacl#",
+    "cap": "https://unrdf.org/capability/",
+    "tier": "https://unrdf.org/tier/",
+    "precondition": { "@id": "unrdf:precondition", "@type": "@id" },
+    "postcondition": { "@id": "unrdf:postcondition", "@type": "@id" },
+    "inputs": { "@id": "unrdf:inputs", "@container": "@list" },
+    "outputs": { "@id": "unrdf:outputs", "@container": "@list" },
+    "performance": { "@id": "unrdf:performance", "@type": "@id" },
+    "module": { "@id": "unrdf:module" },
+    "exportPath": { "@id": "unrdf:exportPath" },
+    "tier": { "@id": "unrdf:tier", "@type": "@id" },
+    "dependencies": { "@id": "unrdf:dependencies", "@container": "@set" },
+    "p50": { "@id": "unrdf:p50", "@type": "xsd:decimal" },
+    "p95": { "@id": "unrdf:p95", "@type": "xsd:decimal" },
+    "p99": { "@id": "unrdf:p99", "@type": "xsd:decimal" },
+    "memoryMB": { "@id": "unrdf:memoryMB", "@type": "xsd:decimal" }
+  },
+  "@graph": [
+    {
+      "@id": "tier:Essential",
+      "@type": "unrdf:Tier",
+      "rdfs:label": "Essential Tier",
+      "rdfs:comment": "Core capabilities used by 80% of applications (7 capabilities)"
+    },
+    {
+      "@id": "tier:Important",
+      "@type": "unrdf:Tier",
+      "rdfs:label": "Important Tier",
+      "rdfs:comment": "Standard capabilities for 15% of applications"
+    },
+    {
+      "@id": "tier:Standard",
+      "@type": "unrdf:Tier",
+      "rdfs:label": "Standard Tier",
+      "rdfs:comment": "Extended capabilities for 4% of applications"
+    },
+    {
+      "@id": "tier:Advanced",
+      "@type": "unrdf:Tier",
+      "rdfs:label": "Advanced Tier",
+      "rdfs:comment": "Specialized capabilities for 1% of applications"
+    },
+
+    {
+      "@id": "cap:KnowledgeHookManager",
+      "@type": "unrdf:Capability",
+      "rdfs:label": "Knowledge Hook Manager",
+      "rdfs:comment": "Central orchestrator for knowledge hooks with transaction support",
+      "tier": "tier:Essential",
+      "module": "unrdf/knowledge-engine",
+      "exportPath": "KnowledgeHookManager",
+      "precondition": {
+        "@type": "unrdf:Precondition",
+        "description": "Valid N3 Store instance available"
+      },
+      "postcondition": {
+        "@type": "unrdf:Postcondition",
+        "description": "Hooks registered and transaction-ready"
+      },
+      "inputs": [
+        { "@type": "unrdf:Input", "name": "config", "schema": "ManagerConfigSchema", "required": false }
+      ],
+      "outputs": [
+        { "@type": "unrdf:Output", "name": "manager", "schema": "KnowledgeHookManager" }
+      ],
+      "performance": {
+        "@type": "unrdf:PerformanceProfile",
+        "p50": 0.5,
+        "p95": 1.5,
+        "p99": 2.0,
+        "memoryMB": 10,
+        "maxThroughput": "10000 hooks/min"
+      },
+      "dependencies": ["cap:TransactionManager", "cap:HookExecutor"]
+    },
+
+    {
+      "@id": "cap:defineHook",
+      "@type": "unrdf:Capability",
+      "rdfs:label": "Define Hook",
+      "rdfs:comment": "Factory function to create validated knowledge hooks",
+      "tier": "tier:Essential",
+      "module": "unrdf/knowledge-engine",
+      "exportPath": "defineHook",
+      "precondition": {
+        "@type": "unrdf:Precondition",
+        "description": "Hook definition conforms to KnowledgeHookSchema"
+      },
+      "postcondition": {
+        "@type": "unrdf:Postcondition",
+        "description": "Frozen, validated hook object returned"
+      },
+      "inputs": [
+        { "@type": "unrdf:Input", "name": "meta", "schema": "HookMetaSchema", "required": true },
+        { "@type": "unrdf:Input", "name": "when", "schema": "ConditionSchema", "required": true },
+        { "@type": "unrdf:Input", "name": "run", "schema": "function", "required": true }
+      ],
+      "outputs": [
+        { "@type": "unrdf:Output", "name": "hook", "schema": "KnowledgeHookSchema" }
+      ],
+      "performance": {
+        "@type": "unrdf:PerformanceProfile",
+        "p50": 0.1,
+        "p95": 0.3,
+        "p99": 0.5,
+        "memoryMB": 0.5
+      }
+    },
+
+    {
+      "@id": "cap:TransactionManager",
+      "@type": "unrdf:Capability",
+      "rdfs:label": "Transaction Manager",
+      "rdfs:comment": "ACID transaction support with pre/post hooks and cryptographic receipts",
+      "tier": "tier:Essential",
+      "module": "unrdf/knowledge-engine",
+      "exportPath": "TransactionManager",
+      "precondition": {
+        "@type": "unrdf:Precondition",
+        "description": "N3 Store instance with optional hook configuration"
+      },
+      "postcondition": {
+        "@type": "unrdf:Postcondition",
+        "description": "Transaction receipt with delta, hashes, and hook results"
+      },
+      "inputs": [
+        { "@type": "unrdf:Input", "name": "store", "schema": "N3Store", "required": true },
+        { "@type": "unrdf:Input", "name": "delta", "schema": "DeltaSchema", "required": true },
+        { "@type": "unrdf:Input", "name": "options", "schema": "TransactionOptionsSchema", "required": false }
+      ],
+      "outputs": [
+        { "@type": "unrdf:Output", "name": "receipt", "schema": "TransactionReceiptSchema" }
+      ],
+      "performance": {
+        "@type": "unrdf:PerformanceProfile",
+        "p50": 1.0,
+        "p95": 3.0,
+        "p99": 5.0,
+        "memoryMB": 5
+      }
+    },
+
+    {
+      "@id": "cap:query",
+      "@type": "unrdf:Capability",
+      "rdfs:label": "SPARQL Query",
+      "rdfs:comment": "Execute SPARQL queries against N3 Store with optimization",
+      "tier": "tier:Essential",
+      "module": "unrdf/knowledge-engine",
+      "exportPath": "query",
+      "precondition": {
+        "@type": "unrdf:Precondition",
+        "description": "Valid SPARQL query string and N3 Store"
+      },
+      "postcondition": {
+        "@type": "unrdf:Postcondition",
+        "description": "Query results as bindings array or boolean"
+      },
+      "inputs": [
+        { "@type": "unrdf:Input", "name": "sparql", "schema": "string", "required": true },
+        { "@type": "unrdf:Input", "name": "store", "schema": "N3Store", "required": true },
+        { "@type": "unrdf:Input", "name": "options", "schema": "QueryOptions", "required": false }
+      ],
+      "outputs": [
+        { "@type": "unrdf:Output", "name": "results", "schema": "QueryResults" }
+      ],
+      "performance": {
+        "@type": "unrdf:PerformanceProfile",
+        "p50": 2.0,
+        "p95": 10.0,
+        "p99": 50.0,
+        "memoryMB": 20
+      }
+    },
+
+    {
+      "@id": "cap:validateShacl",
+      "@type": "unrdf:Capability",
+      "rdfs:label": "SHACL Validation",
+      "rdfs:comment": "Validate RDF data against SHACL shapes",
+      "tier": "tier:Essential",
+      "module": "unrdf/knowledge-engine",
+      "exportPath": "validateShacl",
+      "precondition": {
+        "@type": "unrdf:Precondition",
+        "description": "Valid shapes graph and data graph"
+      },
+      "postcondition": {
+        "@type": "unrdf:Postcondition",
+        "description": "Validation report with conformance status"
+      },
+      "inputs": [
+        { "@type": "unrdf:Input", "name": "dataGraph", "schema": "N3Store", "required": true },
+        { "@type": "unrdf:Input", "name": "shapesGraph", "schema": "N3Store", "required": true }
+      ],
+      "outputs": [
+        { "@type": "unrdf:Output", "name": "report", "schema": "ValidationReport" }
+      ],
+      "performance": {
+        "@type": "unrdf:PerformanceProfile",
+        "p50": 5.0,
+        "p95": 20.0,
+        "p99": 100.0,
+        "memoryMB": 30
+      }
+    },
+
+    {
+      "@id": "cap:parseTurtle",
+      "@type": "unrdf:Capability",
+      "rdfs:label": "Parse Turtle",
+      "rdfs:comment": "Parse Turtle/N3 syntax into N3 Store",
+      "tier": "tier:Essential",
+      "module": "unrdf/knowledge-engine",
+      "exportPath": "parseTurtle",
+      "precondition": {
+        "@type": "unrdf:Precondition",
+        "description": "Valid Turtle string"
+      },
+      "postcondition": {
+        "@type": "unrdf:Postcondition",
+        "description": "N3 Store populated with parsed quads"
+      },
+      "inputs": [
+        { "@type": "unrdf:Input", "name": "turtle", "schema": "string", "required": true },
+        { "@type": "unrdf:Input", "name": "options", "schema": "ParseOptions", "required": false }
+      ],
+      "outputs": [
+        { "@type": "unrdf:Output", "name": "store", "schema": "N3Store" }
+      ],
+      "performance": {
+        "@type": "unrdf:PerformanceProfile",
+        "p50": 1.0,
+        "p95": 5.0,
+        "p99": 20.0,
+        "memoryMB": 15
+      }
+    },
+
+    {
+      "@id": "cap:canonicalize",
+      "@type": "unrdf:Capability",
+      "rdfs:label": "Canonicalize RDF",
+      "rdfs:comment": "Compute canonical form and hash of RDF graphs",
+      "tier": "tier:Essential",
+      "module": "unrdf/knowledge-engine",
+      "exportPath": "canonicalize",
+      "precondition": {
+        "@type": "unrdf:Precondition",
+        "description": "Valid N3 Store or quad array"
+      },
+      "postcondition": {
+        "@type": "unrdf:Postcondition",
+        "description": "Canonical N-Quads string with hash"
+      },
+      "inputs": [
+        { "@type": "unrdf:Input", "name": "store", "schema": "N3Store", "required": true }
+      ],
+      "outputs": [
+        { "@type": "unrdf:Output", "name": "canonical", "schema": "string" },
+        { "@type": "unrdf:Output", "name": "hash", "schema": "string" }
+      ],
+      "performance": {
+        "@type": "unrdf:PerformanceProfile",
+        "p50": 2.0,
+        "p95": 10.0,
+        "p99": 50.0,
+        "memoryMB": 25
+      }
+    },
+
+    {
+      "@id": "cap:useKnowledgeEngine",
+      "@type": "unrdf:Capability",
+      "rdfs:label": "useKnowledgeEngine Hook",
+      "rdfs:comment": "React hook for knowledge engine integration",
+      "tier": "tier:Essential",
+      "module": "unrdf/react-hooks",
+      "exportPath": "useKnowledgeEngine",
+      "precondition": {
+        "@type": "unrdf:Precondition",
+        "description": "React component within KnowledgeEngineProvider"
+      },
+      "postcondition": {
+        "@type": "unrdf:Postcondition",
+        "description": "Access to store, query, transaction methods"
+      },
+      "inputs": [
+        { "@type": "unrdf:Input", "name": "config", "schema": "KnowledgeEngineConfig", "required": false }
+      ],
+      "outputs": [
+        { "@type": "unrdf:Output", "name": "engine", "schema": "KnowledgeEngineContext" }
+      ],
+      "performance": {
+        "@type": "unrdf:PerformanceProfile",
+        "p50": 0.1,
+        "p95": 0.5,
+        "p99": 1.0,
+        "memoryMB": 5
+      }
+    },
+
+    {
+      "@id": "cap:useChangeFeed",
+      "@type": "unrdf:Capability",
+      "rdfs:label": "useChangeFeed Hook",
+      "rdfs:comment": "React hook for real-time change subscriptions",
+      "tier": "tier:Important",
+      "module": "unrdf/react-hooks",
+      "exportPath": "useChangeFeed",
+      "precondition": {
+        "@type": "unrdf:Precondition",
+        "description": "KnowledgeEngine context available"
+      },
+      "postcondition": {
+        "@type": "unrdf:Postcondition",
+        "description": "Subscription to graph changes with delta stream"
+      },
+      "inputs": [
+        { "@type": "unrdf:Input", "name": "pattern", "schema": "SubscriptionPattern", "required": false }
+      ],
+      "outputs": [
+        { "@type": "unrdf:Output", "name": "changes", "schema": "ChangeStream" }
+      ],
+      "performance": {
+        "@type": "unrdf:PerformanceProfile",
+        "p50": 0.5,
+        "p95": 2.0,
+        "p99": 5.0,
+        "memoryMB": 10
+      }
+    },
+
+    {
+      "@id": "cap:useDarkMatterCore",
+      "@type": "unrdf:Capability",
+      "rdfs:label": "useDarkMatterCore Hook",
+      "rdfs:comment": "React hook for 80/20 performance optimization analysis",
+      "tier": "tier:Important",
+      "module": "unrdf/react-hooks",
+      "exportPath": "useDarkMatterCore",
+      "precondition": {
+        "@type": "unrdf:Precondition",
+        "description": "KnowledgeEngine context with query history"
+      },
+      "postcondition": {
+        "@type": "unrdf:Postcondition",
+        "description": "Critical path analysis and optimization recommendations"
+      },
+      "inputs": [
+        { "@type": "unrdf:Input", "name": "options", "schema": "DarkMatterOptions", "required": false }
+      ],
+      "outputs": [
+        { "@type": "unrdf:Output", "name": "analysis", "schema": "DarkMatterAnalysis" }
+      ],
+      "performance": {
+        "@type": "unrdf:PerformanceProfile",
+        "p50": 5.0,
+        "p95": 20.0,
+        "p99": 100.0,
+        "memoryMB": 50
+      }
+    },
+
+    {
+      "@id": "cap:KnowledgeSubstrateCore",
+      "@type": "unrdf:Capability",
+      "rdfs:label": "Knowledge Substrate Core",
+      "rdfs:comment": "80/20 optimization framework for query performance",
+      "tier": "tier:Important",
+      "module": "unrdf/knowledge-engine",
+      "exportPath": "KnowledgeSubstrateCore",
+      "precondition": {
+        "@type": "unrdf:Precondition",
+        "description": "Query execution metrics available"
+      },
+      "postcondition": {
+        "@type": "unrdf:Postcondition",
+        "description": "Optimized query plans and critical path analysis"
+      },
+      "inputs": [
+        { "@type": "unrdf:Input", "name": "config", "schema": "SubstrateConfig", "required": false }
+      ],
+      "outputs": [
+        { "@type": "unrdf:Output", "name": "core", "schema": "KnowledgeSubstrateCore" }
+      ],
+      "performance": {
+        "@type": "unrdf:PerformanceProfile",
+        "p50": 10.0,
+        "p95": 50.0,
+        "p99": 200.0,
+        "memoryMB": 100
+      }
+    },
+
+    {
+      "@id": "cap:QueryOptimizer",
+      "@type": "unrdf:Capability",
+      "rdfs:label": "Query Optimizer",
+      "rdfs:comment": "SPARQL query plan optimization with caching",
+      "tier": "tier:Important",
+      "module": "unrdf/knowledge-engine",
+      "exportPath": "QueryOptimizer",
+      "precondition": {
+        "@type": "unrdf:Precondition",
+        "description": "SPARQL query for optimization"
+      },
+      "postcondition": {
+        "@type": "unrdf:Postcondition",
+        "description": "Optimized query plan with cost estimates"
+      },
+      "inputs": [
+        { "@type": "unrdf:Input", "name": "query", "schema": "string", "required": true }
+      ],
+      "outputs": [
+        { "@type": "unrdf:Output", "name": "plan", "schema": "QueryPlanSchema" }
+      ],
+      "performance": {
+        "@type": "unrdf:PerformanceProfile",
+        "p50": 1.0,
+        "p95": 5.0,
+        "p99": 20.0,
+        "memoryMB": 15
+      }
+    },
+
+    {
+      "@id": "cap:LockchainWriter",
+      "@type": "unrdf:Capability",
+      "rdfs:label": "Lockchain Writer",
+      "rdfs:comment": "Cryptographic audit trail with git-notes anchoring",
+      "tier": "tier:Standard",
+      "module": "unrdf/knowledge-engine",
+      "exportPath": "LockchainWriter",
+      "precondition": {
+        "@type": "unrdf:Precondition",
+        "description": "Git repository and optional signing key"
+      },
+      "postcondition": {
+        "@type": "unrdf:Postcondition",
+        "description": "Immutable audit entry with merkle proof"
+      },
+      "inputs": [
+        { "@type": "unrdf:Input", "name": "receipt", "schema": "TransactionReceiptSchema", "required": true },
+        { "@type": "unrdf:Input", "name": "config", "schema": "LockchainConfigSchema", "required": false }
+      ],
+      "outputs": [
+        { "@type": "unrdf:Output", "name": "entry", "schema": "LockchainEntrySchema" }
+      ],
+      "performance": {
+        "@type": "unrdf:PerformanceProfile",
+        "p50": 10.0,
+        "p95": 50.0,
+        "p99": 200.0,
+        "memoryMB": 20
+      }
+    },
+
+    {
+      "@id": "cap:PolicyPackManager",
+      "@type": "unrdf:Capability",
+      "rdfs:label": "Policy Pack Manager",
+      "rdfs:comment": "Load and manage policy packs with hook bundles",
+      "tier": "tier:Standard",
+      "module": "unrdf/knowledge-engine",
+      "exportPath": "PolicyPackManager",
+      "precondition": {
+        "@type": "unrdf:Precondition",
+        "description": "Policy pack manifest file"
+      },
+      "postcondition": {
+        "@type": "unrdf:Postcondition",
+        "description": "Loaded policy pack with activated hooks"
+      },
+      "inputs": [
+        { "@type": "unrdf:Input", "name": "manifestPath", "schema": "string", "required": true },
+        { "@type": "unrdf:Input", "name": "config", "schema": "PolicyPackConfigSchema", "required": false }
+      ],
+      "outputs": [
+        { "@type": "unrdf:Output", "name": "manager", "schema": "PolicyPackManager" }
+      ],
+      "performance": {
+        "@type": "unrdf:PerformanceProfile",
+        "p50": 50.0,
+        "p95": 200.0,
+        "p99": 500.0,
+        "memoryMB": 50
+      }
+    },
+
+    {
+      "@id": "cap:ResolutionLayer",
+      "@type": "unrdf:Capability",
+      "rdfs:label": "Resolution Layer",
+      "rdfs:comment": "Multi-agent conflict resolution with voting/CRDT strategies",
+      "tier": "tier:Standard",
+      "module": "unrdf/knowledge-engine",
+      "exportPath": "ResolutionLayer",
+      "precondition": {
+        "@type": "unrdf:Precondition",
+        "description": "Multiple agent proposals for resolution"
+      },
+      "postcondition": {
+        "@type": "unrdf:Postcondition",
+        "description": "Resolved delta with consensus status"
+      },
+      "inputs": [
+        { "@type": "unrdf:Input", "name": "proposals", "schema": "AgentProposalSchema[]", "required": true },
+        { "@type": "unrdf:Input", "name": "strategy", "schema": "ResolutionStrategySchema", "required": false }
+      ],
+      "outputs": [
+        { "@type": "unrdf:Output", "name": "result", "schema": "ResolutionResultSchema" }
+      ],
+      "performance": {
+        "@type": "unrdf:PerformanceProfile",
+        "p50": 20.0,
+        "p95": 100.0,
+        "p99": 500.0,
+        "memoryMB": 30
+      }
+    },
+
+    {
+      "@id": "cap:EffectSandbox",
+      "@type": "unrdf:Capability",
+      "rdfs:label": "Effect Sandbox",
+      "rdfs:comment": "Secure sandboxed execution of hook effects",
+      "tier": "tier:Standard",
+      "module": "unrdf/knowledge-engine",
+      "exportPath": "EffectSandbox",
+      "precondition": {
+        "@type": "unrdf:Precondition",
+        "description": "Effect function and sandbox configuration"
+      },
+      "postcondition": {
+        "@type": "unrdf:Postcondition",
+        "description": "Isolated execution with resource limits"
+      },
+      "inputs": [
+        { "@type": "unrdf:Input", "name": "effect", "schema": "function", "required": true },
+        { "@type": "unrdf:Input", "name": "context", "schema": "SandboxContextSchema", "required": true },
+        { "@type": "unrdf:Input", "name": "config", "schema": "SandboxConfigSchema", "required": false }
+      ],
+      "outputs": [
+        { "@type": "unrdf:Output", "name": "result", "schema": "SandboxResultSchema" }
+      ],
+      "performance": {
+        "@type": "unrdf:PerformanceProfile",
+        "p50": 5.0,
+        "p95": 30.0,
+        "p99": 100.0,
+        "memoryMB": 64
+      }
+    },
+
+    {
+      "@id": "cap:ObservabilityManager",
+      "@type": "unrdf:Capability",
+      "rdfs:label": "Observability Manager",
+      "rdfs:comment": "OpenTelemetry integration for traces, metrics, logs",
+      "tier": "tier:Standard",
+      "module": "unrdf/knowledge-engine",
+      "exportPath": "ObservabilityManager",
+      "precondition": {
+        "@type": "unrdf:Precondition",
+        "description": "OTEL SDK available"
+      },
+      "postcondition": {
+        "@type": "unrdf:Postcondition",
+        "description": "Spans, metrics, and logs exported"
+      },
+      "inputs": [
+        { "@type": "unrdf:Input", "name": "config", "schema": "ObservabilityConfigSchema", "required": false }
+      ],
+      "outputs": [
+        { "@type": "unrdf:Output", "name": "manager", "schema": "ObservabilityManager" }
+      ],
+      "performance": {
+        "@type": "unrdf:PerformanceProfile",
+        "p50": 0.1,
+        "p95": 0.5,
+        "p99": 2.0,
+        "memoryMB": 10
+      }
+    },
+
+    {
+      "@id": "cap:reason",
+      "@type": "unrdf:Capability",
+      "rdfs:label": "N3 Reasoning",
+      "rdfs:comment": "Execute N3 reasoning rules with EYE reasoner",
+      "tier": "tier:Standard",
+      "module": "unrdf/knowledge-engine",
+      "exportPath": "reason",
+      "precondition": {
+        "@type": "unrdf:Precondition",
+        "description": "N3 rules and data graph"
+      },
+      "postcondition": {
+        "@type": "unrdf:Postcondition",
+        "description": "Inferred triples added to store"
+      },
+      "inputs": [
+        { "@type": "unrdf:Input", "name": "data", "schema": "N3Store", "required": true },
+        { "@type": "unrdf:Input", "name": "rules", "schema": "string", "required": true }
+      ],
+      "outputs": [
+        { "@type": "unrdf:Output", "name": "inferred", "schema": "N3Store" }
+      ],
+      "performance": {
+        "@type": "unrdf:PerformanceProfile",
+        "p50": 50.0,
+        "p95": 200.0,
+        "p99": 1000.0,
+        "memoryMB": 100
+      }
+    },
+
+    {
+      "@id": "cap:createFederatedSystem",
+      "@type": "unrdf:Capability",
+      "rdfs:label": "Federated System",
+      "rdfs:comment": "Distributed RDF federation with RAFT consensus",
+      "tier": "tier:Advanced",
+      "module": "unrdf/knowledge-engine/federation",
+      "exportPath": "createFederatedSystem",
+      "precondition": {
+        "@type": "unrdf:Precondition",
+        "description": "Network connectivity to federated stores"
+      },
+      "postcondition": {
+        "@type": "unrdf:Postcondition",
+        "description": "Coordinated federation with query routing"
+      },
+      "inputs": [
+        { "@type": "unrdf:Input", "name": "config", "schema": "FederationConfig", "required": false }
+      ],
+      "outputs": [
+        { "@type": "unrdf:Output", "name": "federation", "schema": "FederatedSystem" }
+      ],
+      "performance": {
+        "@type": "unrdf:PerformanceProfile",
+        "p50": 100.0,
+        "p95": 500.0,
+        "p99": 2000.0,
+        "memoryMB": 200
+      },
+      "dependencies": ["cap:ConsensusManager", "cap:DistributedQueryEngine", "cap:DataReplicationManager"]
+    },
+
+    {
+      "@id": "cap:ConsensusManager",
+      "@type": "unrdf:Capability",
+      "rdfs:label": "Consensus Manager",
+      "rdfs:comment": "RAFT-based consensus for distributed coordination",
+      "tier": "tier:Advanced",
+      "module": "unrdf/knowledge-engine/federation",
+      "exportPath": "ConsensusManager",
+      "precondition": {
+        "@type": "unrdf:Precondition",
+        "description": "Cluster configuration with node addresses"
+      },
+      "postcondition": {
+        "@type": "unrdf:Postcondition",
+        "description": "Leader election and log replication active"
+      },
+      "inputs": [
+        { "@type": "unrdf:Input", "name": "config", "schema": "ConsensusConfig", "required": true }
+      ],
+      "outputs": [
+        { "@type": "unrdf:Output", "name": "manager", "schema": "ConsensusManager" }
+      ],
+      "performance": {
+        "@type": "unrdf:PerformanceProfile",
+        "p50": 10.0,
+        "p95": 50.0,
+        "p99": 200.0,
+        "memoryMB": 50
+      }
+    },
+
+    {
+      "@id": "cap:DistributedQueryEngine",
+      "@type": "unrdf:Capability",
+      "rdfs:label": "Distributed Query Engine",
+      "rdfs:comment": "Execute SPARQL across federated stores with pushdown",
+      "tier": "tier:Advanced",
+      "module": "unrdf/knowledge-engine/federation",
+      "exportPath": "DistributedQueryEngine",
+      "precondition": {
+        "@type": "unrdf:Precondition",
+        "description": "Federation coordinator with registered stores"
+      },
+      "postcondition": {
+        "@type": "unrdf:Postcondition",
+        "description": "Merged results from distributed execution"
+      },
+      "inputs": [
+        { "@type": "unrdf:Input", "name": "query", "schema": "string", "required": true },
+        { "@type": "unrdf:Input", "name": "options", "schema": "DistributedQueryOptions", "required": false }
+      ],
+      "outputs": [
+        { "@type": "unrdf:Output", "name": "results", "schema": "QueryResults" }
+      ],
+      "performance": {
+        "@type": "unrdf:PerformanceProfile",
+        "p50": 50.0,
+        "p95": 200.0,
+        "p99": 1000.0,
+        "memoryMB": 100
+      }
+    },
+
+    {
+      "@id": "cap:DataReplicationManager",
+      "@type": "unrdf:Capability",
+      "rdfs:label": "Data Replication Manager",
+      "rdfs:comment": "Bidirectional data replication with conflict resolution",
+      "tier": "tier:Advanced",
+      "module": "unrdf/knowledge-engine/federation",
+      "exportPath": "DataReplicationManager",
+      "precondition": {
+        "@type": "unrdf:Precondition",
+        "description": "Federation topology defined"
+      },
+      "postcondition": {
+        "@type": "unrdf:Postcondition",
+        "description": "Data synchronized across stores"
+      },
+      "inputs": [
+        { "@type": "unrdf:Input", "name": "change", "schema": "ChangeOperation", "required": true },
+        { "@type": "unrdf:Input", "name": "options", "schema": "ReplicationOptions", "required": false }
+      ],
+      "outputs": [
+        { "@type": "unrdf:Output", "name": "status", "schema": "ReplicationStatus" }
+      ],
+      "performance": {
+        "@type": "unrdf:PerformanceProfile",
+        "p50": 20.0,
+        "p95": 100.0,
+        "p99": 500.0,
+        "memoryMB": 50
+      }
+    },
+
+    {
+      "@id": "cap:createStreamingPipeline",
+      "@type": "unrdf:Capability",
+      "rdfs:label": "Streaming Pipeline",
+      "rdfs:comment": "Real-time streaming with change feeds and validation",
+      "tier": "tier:Advanced",
+      "module": "unrdf/knowledge-engine/streaming",
+      "exportPath": "createStreamingPipeline",
+      "precondition": {
+        "@type": "unrdf:Precondition",
+        "description": "Pipeline configuration with components"
+      },
+      "postcondition": {
+        "@type": "unrdf:Postcondition",
+        "description": "Active pipeline processing changes"
+      },
+      "inputs": [
+        { "@type": "unrdf:Input", "name": "config", "schema": "PipelineConfig", "required": false }
+      ],
+      "outputs": [
+        { "@type": "unrdf:Output", "name": "pipeline", "schema": "StreamingPipeline" }
+      ],
+      "performance": {
+        "@type": "unrdf:PerformanceProfile",
+        "p50": 5.0,
+        "p95": 20.0,
+        "p99": 100.0,
+        "memoryMB": 50
+      },
+      "dependencies": ["cap:SubscriptionManager", "cap:ChangeFeed", "cap:StreamProcessor"]
+    },
+
+    {
+      "@id": "cap:SubscriptionManager",
+      "@type": "unrdf:Capability",
+      "rdfs:label": "Subscription Manager",
+      "rdfs:comment": "WebSocket subscription management for real-time updates",
+      "tier": "tier:Advanced",
+      "module": "unrdf/knowledge-engine/streaming",
+      "exportPath": "SubscriptionManager",
+      "precondition": {
+        "@type": "unrdf:Precondition",
+        "description": "WebSocket connection available"
+      },
+      "postcondition": {
+        "@type": "unrdf:Postcondition",
+        "description": "Active subscriptions with pattern matching"
+      },
+      "inputs": [
+        { "@type": "unrdf:Input", "name": "pattern", "schema": "SubscriptionPattern", "required": true }
+      ],
+      "outputs": [
+        { "@type": "unrdf:Output", "name": "subscription", "schema": "Subscription" }
+      ],
+      "performance": {
+        "@type": "unrdf:PerformanceProfile",
+        "p50": 1.0,
+        "p95": 5.0,
+        "p99": 20.0,
+        "memoryMB": 20
+      }
+    },
+
+    {
+      "@id": "cap:ChangeFeed",
+      "@type": "unrdf:Capability",
+      "rdfs:label": "Change Feed",
+      "rdfs:comment": "Emit change events for graph modifications",
+      "tier": "tier:Advanced",
+      "module": "unrdf/knowledge-engine/streaming",
+      "exportPath": "ChangeFeed",
+      "precondition": {
+        "@type": "unrdf:Precondition",
+        "description": "Store with change tracking enabled"
+      },
+      "postcondition": {
+        "@type": "unrdf:Postcondition",
+        "description": "Stream of change events"
+      },
+      "inputs": [
+        { "@type": "unrdf:Input", "name": "config", "schema": "ChangeFeedConfig", "required": false }
+      ],
+      "outputs": [
+        { "@type": "unrdf:Output", "name": "feed", "schema": "ChangeFeed" }
+      ],
+      "performance": {
+        "@type": "unrdf:PerformanceProfile",
+        "p50": 0.5,
+        "p95": 2.0,
+        "p99": 10.0,
+        "memoryMB": 15
+      }
+    },
+
+    {
+      "@id": "cap:StreamProcessor",
+      "@type": "unrdf:Capability",
+      "rdfs:label": "Stream Processor",
+      "rdfs:comment": "Window-based stream processing with aggregations",
+      "tier": "tier:Advanced",
+      "module": "unrdf/knowledge-engine/streaming",
+      "exportPath": "StreamProcessor",
+      "precondition": {
+        "@type": "unrdf:Precondition",
+        "description": "Change stream input"
+      },
+      "postcondition": {
+        "@type": "unrdf:Postcondition",
+        "description": "Aggregated results per window"
+      },
+      "inputs": [
+        { "@type": "unrdf:Input", "name": "stream", "schema": "ChangeStream", "required": true },
+        { "@type": "unrdf:Input", "name": "windowConfig", "schema": "WindowConfig", "required": false }
+      ],
+      "outputs": [
+        { "@type": "unrdf:Output", "name": "results", "schema": "WindowResults" }
+      ],
+      "performance": {
+        "@type": "unrdf:PerformanceProfile",
+        "p50": 2.0,
+        "p95": 10.0,
+        "p99": 50.0,
+        "memoryMB": 30
+      }
+    },
+
+    {
+      "@id": "cap:RealTimeValidator",
+      "@type": "unrdf:Capability",
+      "rdfs:label": "Real-Time Validator",
+      "rdfs:comment": "Streaming SHACL validation with incremental checking",
+      "tier": "tier:Advanced",
+      "module": "unrdf/knowledge-engine/streaming",
+      "exportPath": "RealTimeValidator",
+      "precondition": {
+        "@type": "unrdf:Precondition",
+        "description": "SHACL shapes and change stream"
+      },
+      "postcondition": {
+        "@type": "unrdf:Postcondition",
+        "description": "Validation results per change"
+      },
+      "inputs": [
+        { "@type": "unrdf:Input", "name": "shapes", "schema": "N3Store", "required": true },
+        { "@type": "unrdf:Input", "name": "delta", "schema": "DeltaSchema", "required": true }
+      ],
+      "outputs": [
+        { "@type": "unrdf:Output", "name": "report", "schema": "ValidationReport" }
+      ],
+      "performance": {
+        "@type": "unrdf:PerformanceProfile",
+        "p50": 5.0,
+        "p95": 20.0,
+        "p99": 100.0,
+        "memoryMB": 30
+      }
+    },
+
+    {
+      "@id": "cap:SemanticAnalyzer",
+      "@type": "unrdf:Capability",
+      "rdfs:label": "Semantic Analyzer",
+      "rdfs:comment": "AI-powered semantic analysis of RDF graphs",
+      "tier": "tier:Advanced",
+      "module": "unrdf/knowledge-engine/ai-semantic",
+      "exportPath": "SemanticAnalyzer",
+      "precondition": {
+        "@type": "unrdf:Precondition",
+        "description": "RDF store with data"
+      },
+      "postcondition": {
+        "@type": "unrdf:Postcondition",
+        "description": "Semantic insights and recommendations"
+      },
+      "inputs": [
+        { "@type": "unrdf:Input", "name": "store", "schema": "N3Store", "required": true }
+      ],
+      "outputs": [
+        { "@type": "unrdf:Output", "name": "analysis", "schema": "SemanticAnalysis" }
+      ],
+      "performance": {
+        "@type": "unrdf:PerformanceProfile",
+        "p50": 100.0,
+        "p95": 500.0,
+        "p99": 2000.0,
+        "memoryMB": 200
+      }
+    },
+
+    {
+      "@id": "cap:NLPQueryBuilder",
+      "@type": "unrdf:Capability",
+      "rdfs:label": "NLP Query Builder",
+      "rdfs:comment": "Natural language to SPARQL translation",
+      "tier": "tier:Advanced",
+      "module": "unrdf/knowledge-engine/ai-semantic",
+      "exportPath": "NLPQueryBuilder",
+      "precondition": {
+        "@type": "unrdf:Precondition",
+        "description": "Natural language query string"
+      },
+      "postcondition": {
+        "@type": "unrdf:Postcondition",
+        "description": "Generated SPARQL query"
+      },
+      "inputs": [
+        { "@type": "unrdf:Input", "name": "text", "schema": "string", "required": true },
+        { "@type": "unrdf:Input", "name": "context", "schema": "QueryContext", "required": false }
+      ],
+      "outputs": [
+        { "@type": "unrdf:Output", "name": "sparql", "schema": "string" }
+      ],
+      "performance": {
+        "@type": "unrdf:PerformanceProfile",
+        "p50": 200.0,
+        "p95": 1000.0,
+        "p99": 5000.0,
+        "memoryMB": 100
+      }
+    },
+
+    {
+      "@id": "cap:EmbeddingsManager",
+      "@type": "unrdf:Capability",
+      "rdfs:label": "Embeddings Manager",
+      "rdfs:comment": "Vector embeddings for RDF entities",
+      "tier": "tier:Advanced",
+      "module": "unrdf/knowledge-engine/ai-semantic",
+      "exportPath": "EmbeddingsManager",
+      "precondition": {
+        "@type": "unrdf:Precondition",
+        "description": "RDF entities for embedding"
+      },
+      "postcondition": {
+        "@type": "unrdf:Postcondition",
+        "description": "Vector representations stored"
+      },
+      "inputs": [
+        { "@type": "unrdf:Input", "name": "entities", "schema": "URI[]", "required": true }
+      ],
+      "outputs": [
+        { "@type": "unrdf:Output", "name": "embeddings", "schema": "EmbeddingsMap" }
+      ],
+      "performance": {
+        "@type": "unrdf:PerformanceProfile",
+        "p50": 500.0,
+        "p95": 2000.0,
+        "p99": 10000.0,
+        "memoryMB": 500
+      }
+    },
+
+    {
+      "@id": "cap:AnomalyDetector",
+      "@type": "unrdf:Capability",
+      "rdfs:label": "Anomaly Detector",
+      "rdfs:comment": "Detect anomalies in RDF graph patterns",
+      "tier": "tier:Advanced",
+      "module": "unrdf/knowledge-engine/ai-semantic",
+      "exportPath": "AnomalyDetector",
+      "precondition": {
+        "@type": "unrdf:Precondition",
+        "description": "Historical graph data for baseline"
+      },
+      "postcondition": {
+        "@type": "unrdf:Postcondition",
+        "description": "Anomaly scores and alerts"
+      },
+      "inputs": [
+        { "@type": "unrdf:Input", "name": "store", "schema": "N3Store", "required": true },
+        { "@type": "unrdf:Input", "name": "delta", "schema": "DeltaSchema", "required": false }
+      ],
+      "outputs": [
+        { "@type": "unrdf:Output", "name": "anomalies", "schema": "AnomalyReport" }
+      ],
+      "performance": {
+        "@type": "unrdf:PerformanceProfile",
+        "p50": 100.0,
+        "p95": 500.0,
+        "p99": 2000.0,
+        "memoryMB": 150
+      }
+    },
+
+    {
+      "@id": "cap:useGraph",
+      "@type": "unrdf:Capability",
+      "rdfs:label": "useGraph Composable",
+      "rdfs:comment": "Core composable for RDF graph operations",
+      "tier": "tier:Essential",
+      "module": "unrdf",
+      "exportPath": "useGraph",
+      "precondition": {
+        "@type": "unrdf:Precondition",
+        "description": "None - creates new store"
+      },
+      "postcondition": {
+        "@type": "unrdf:Postcondition",
+        "description": "Graph operations API"
+      },
+      "inputs": [
+        { "@type": "unrdf:Input", "name": "options", "schema": "GraphOptions", "required": false }
+      ],
+      "outputs": [
+        { "@type": "unrdf:Output", "name": "graph", "schema": "GraphAPI" }
+      ],
+      "performance": {
+        "@type": "unrdf:PerformanceProfile",
+        "p50": 0.1,
+        "p95": 0.5,
+        "p99": 1.0,
+        "memoryMB": 5
+      }
+    },
+
+    {
+      "@id": "cap:useTurtle",
+      "@type": "unrdf:Capability",
+      "rdfs:label": "useTurtle Composable",
+      "rdfs:comment": "Turtle serialization composable",
+      "tier": "tier:Essential",
+      "module": "unrdf",
+      "exportPath": "useTurtle",
+      "precondition": {
+        "@type": "unrdf:Precondition",
+        "description": "N3 Store or Turtle string"
+      },
+      "postcondition": {
+        "@type": "unrdf:Postcondition",
+        "description": "Parse/serialize operations"
+      },
+      "inputs": [
+        { "@type": "unrdf:Input", "name": "input", "schema": "string|N3Store", "required": true }
+      ],
+      "outputs": [
+        { "@type": "unrdf:Output", "name": "result", "schema": "N3Store|string" }
+      ],
+      "performance": {
+        "@type": "unrdf:PerformanceProfile",
+        "p50": 1.0,
+        "p95": 5.0,
+        "p99": 20.0,
+        "memoryMB": 10
+      }
+    },
+
+    {
+      "@id": "cap:useZod",
+      "@type": "unrdf:Capability",
+      "rdfs:label": "useZod Composable",
+      "rdfs:comment": "Zod validation integration for RDF",
+      "tier": "tier:Important",
+      "module": "unrdf",
+      "exportPath": "useZod",
+      "precondition": {
+        "@type": "unrdf:Precondition",
+        "description": "Zod schema and RDF data"
+      },
+      "postcondition": {
+        "@type": "unrdf:Postcondition",
+        "description": "Validated data with type safety"
+      },
+      "inputs": [
+        { "@type": "unrdf:Input", "name": "schema", "schema": "ZodSchema", "required": true },
+        { "@type": "unrdf:Input", "name": "data", "schema": "object", "required": true }
+      ],
+      "outputs": [
+        { "@type": "unrdf:Output", "name": "validated", "schema": "ValidationResult" }
+      ],
+      "performance": {
+        "@type": "unrdf:PerformanceProfile",
+        "p50": 0.1,
+        "p95": 0.5,
+        "p99": 2.0,
+        "memoryMB": 2
+      }
+    },
+
+    {
+      "@id": "cap:useReasoner",
+      "@type": "unrdf:Capability",
+      "rdfs:label": "useReasoner Composable",
+      "rdfs:comment": "N3 reasoning composable",
+      "tier": "tier:Standard",
+      "module": "unrdf",
+      "exportPath": "useReasoner",
+      "precondition": {
+        "@type": "unrdf:Precondition",
+        "description": "N3 rules and data"
+      },
+      "postcondition": {
+        "@type": "unrdf:Postcondition",
+        "description": "Inferred triples"
+      },
+      "inputs": [
+        { "@type": "unrdf:Input", "name": "rules", "schema": "string", "required": true },
+        { "@type": "unrdf:Input", "name": "data", "schema": "N3Store", "required": true }
+      ],
+      "outputs": [
+        { "@type": "unrdf:Output", "name": "inferred", "schema": "N3Store" }
+      ],
+      "performance": {
+        "@type": "unrdf:PerformanceProfile",
+        "p50": 50.0,
+        "p95": 200.0,
+        "p99": 1000.0,
+        "memoryMB": 100
+      }
+    },
+
+    {
+      "@id": "cap:useDelta",
+      "@type": "unrdf:Capability",
+      "rdfs:label": "useDelta Composable",
+      "rdfs:comment": "Change tracking and provenance",
+      "tier": "tier:Important",
+      "module": "unrdf",
+      "exportPath": "useDelta",
+      "precondition": {
+        "@type": "unrdf:Precondition",
+        "description": "Two graph states"
+      },
+      "postcondition": {
+        "@type": "unrdf:Postcondition",
+        "description": "Delta with additions/removals"
+      },
+      "inputs": [
+        { "@type": "unrdf:Input", "name": "before", "schema": "N3Store", "required": true },
+        { "@type": "unrdf:Input", "name": "after", "schema": "N3Store", "required": true }
+      ],
+      "outputs": [
+        { "@type": "unrdf:Output", "name": "delta", "schema": "DeltaSchema" }
+      ],
+      "performance": {
+        "@type": "unrdf:PerformanceProfile",
+        "p50": 2.0,
+        "p95": 10.0,
+        "p99": 50.0,
+        "memoryMB": 20
+      }
+    },
+
+    {
+      "@id": "cap:toJsonLd",
+      "@type": "unrdf:Capability",
+      "rdfs:label": "To JSON-LD",
+      "rdfs:comment": "Serialize RDF to JSON-LD format",
+      "tier": "tier:Standard",
+      "module": "unrdf/knowledge-engine",
+      "exportPath": "toJsonLd",
+      "precondition": {
+        "@type": "unrdf:Precondition",
+        "description": "N3 Store with data"
+      },
+      "postcondition": {
+        "@type": "unrdf:Postcondition",
+        "description": "JSON-LD document"
+      },
+      "inputs": [
+        { "@type": "unrdf:Input", "name": "store", "schema": "N3Store", "required": true },
+        { "@type": "unrdf:Input", "name": "context", "schema": "object", "required": false }
+      ],
+      "outputs": [
+        { "@type": "unrdf:Output", "name": "jsonld", "schema": "object" }
+      ],
+      "performance": {
+        "@type": "unrdf:PerformanceProfile",
+        "p50": 5.0,
+        "p95": 20.0,
+        "p99": 100.0,
+        "memoryMB": 30
+      }
+    },
+
+    {
+      "@id": "cap:parseJsonLd",
+      "@type": "unrdf:Capability",
+      "rdfs:label": "Parse JSON-LD",
+      "rdfs:comment": "Parse JSON-LD to N3 Store",
+      "tier": "tier:Standard",
+      "module": "unrdf/knowledge-engine",
+      "exportPath": "parseJsonLd",
+      "precondition": {
+        "@type": "unrdf:Precondition",
+        "description": "Valid JSON-LD document"
+      },
+      "postcondition": {
+        "@type": "unrdf:Postcondition",
+        "description": "N3 Store populated"
+      },
+      "inputs": [
+        { "@type": "unrdf:Input", "name": "jsonld", "schema": "object", "required": true }
+      ],
+      "outputs": [
+        { "@type": "unrdf:Output", "name": "store", "schema": "N3Store" }
+      ],
+      "performance": {
+        "@type": "unrdf:PerformanceProfile",
+        "p50": 5.0,
+        "p95": 20.0,
+        "p99": 100.0,
+        "memoryMB": 30
+      }
+    },
+
+    {
+      "@id": "cap:toNQuads",
+      "@type": "unrdf:Capability",
+      "rdfs:label": "To N-Quads",
+      "rdfs:comment": "Serialize RDF to N-Quads format",
+      "tier": "tier:Standard",
+      "module": "unrdf/knowledge-engine",
+      "exportPath": "toNQuads",
+      "precondition": {
+        "@type": "unrdf:Precondition",
+        "description": "N3 Store with data"
+      },
+      "postcondition": {
+        "@type": "unrdf:Postcondition",
+        "description": "N-Quads string"
+      },
+      "inputs": [
+        { "@type": "unrdf:Input", "name": "store", "schema": "N3Store", "required": true }
+      ],
+      "outputs": [
+        { "@type": "unrdf:Output", "name": "nquads", "schema": "string" }
+      ],
+      "performance": {
+        "@type": "unrdf:PerformanceProfile",
+        "p50": 1.0,
+        "p95": 5.0,
+        "p99": 20.0,
+        "memoryMB": 15
+      }
+    },
+
+    {
+      "@id": "cap:isIsomorphic",
+      "@type": "unrdf:Capability",
+      "rdfs:label": "Isomorphism Check",
+      "rdfs:comment": "Check if two graphs are isomorphic",
+      "tier": "tier:Standard",
+      "module": "unrdf/knowledge-engine",
+      "exportPath": "isIsomorphic",
+      "precondition": {
+        "@type": "unrdf:Precondition",
+        "description": "Two N3 Stores"
+      },
+      "postcondition": {
+        "@type": "unrdf:Postcondition",
+        "description": "Boolean isomorphism result"
+      },
+      "inputs": [
+        { "@type": "unrdf:Input", "name": "graphA", "schema": "N3Store", "required": true },
+        { "@type": "unrdf:Input", "name": "graphB", "schema": "N3Store", "required": true }
+      ],
+      "outputs": [
+        { "@type": "unrdf:Output", "name": "isomorphic", "schema": "boolean" }
+      ],
+      "performance": {
+        "@type": "unrdf:PerformanceProfile",
+        "p50": 5.0,
+        "p95": 50.0,
+        "p99": 500.0,
+        "memoryMB": 50
+      }
+    },
+
+    {
+      "@id": "cap:useKnowledgeStack",
+      "@type": "unrdf:Capability",
+      "rdfs:label": "useKnowledgeStack Hook",
+      "rdfs:comment": "Pre-configured bundle of common hooks",
+      "tier": "tier:Important",
+      "module": "unrdf/react-hooks",
+      "exportPath": "useKnowledgeStack",
+      "precondition": {
+        "@type": "unrdf:Precondition",
+        "description": "React component"
+      },
+      "postcondition": {
+        "@type": "unrdf:Postcondition",
+        "description": "Combined engine, query, transaction hooks"
+      },
+      "inputs": [
+        { "@type": "unrdf:Input", "name": "options", "schema": "StackOptions", "required": false }
+      ],
+      "outputs": [
+        { "@type": "unrdf:Output", "name": "stack", "schema": "KnowledgeStack" }
+      ],
+      "performance": {
+        "@type": "unrdf:PerformanceProfile",
+        "p50": 0.5,
+        "p95": 2.0,
+        "p99": 5.0,
+        "memoryMB": 15
+      }
+    },
+
+    {
+      "@id": "cap:useOfflineStore",
+      "@type": "unrdf:Capability",
+      "rdfs:label": "useOfflineStore Hook",
+      "rdfs:comment": "IndexedDB persistence with sync queue",
+      "tier": "tier:Important",
+      "module": "unrdf/react-hooks",
+      "exportPath": "useOfflineStore",
+      "precondition": {
+        "@type": "unrdf:Precondition",
+        "description": "Browser environment with IndexedDB"
+      },
+      "postcondition": {
+        "@type": "unrdf:Postcondition",
+        "description": "Offline-capable store with sync"
+      },
+      "inputs": [
+        { "@type": "unrdf:Input", "name": "config", "schema": "OfflineStoreConfig", "required": false }
+      ],
+      "outputs": [
+        { "@type": "unrdf:Output", "name": "store", "schema": "OfflineStore" }
+      ],
+      "performance": {
+        "@type": "unrdf:PerformanceProfile",
+        "p50": 5.0,
+        "p95": 20.0,
+        "p99": 100.0,
+        "memoryMB": 30
+      }
+    },
+
+    {
+      "@id": "cap:useFederatedSystem",
+      "@type": "unrdf:Capability",
+      "rdfs:label": "useFederatedSystem Hook",
+      "rdfs:comment": "React hook for distributed federation",
+      "tier": "tier:Advanced",
+      "module": "unrdf/react-hooks",
+      "exportPath": "useFederatedSystem",
+      "precondition": {
+        "@type": "unrdf:Precondition",
+        "description": "Federation configuration"
+      },
+      "postcondition": {
+        "@type": "unrdf:Postcondition",
+        "description": "Federation context and query methods"
+      },
+      "inputs": [
+        { "@type": "unrdf:Input", "name": "config", "schema": "FederationConfig", "required": false }
+      ],
+      "outputs": [
+        { "@type": "unrdf:Output", "name": "federation", "schema": "FederatedSystemHook" }
+      ],
+      "performance": {
+        "@type": "unrdf:PerformanceProfile",
+        "p50": 10.0,
+        "p95": 50.0,
+        "p99": 200.0,
+        "memoryMB": 50
+      }
+    },
+
+    {
+      "@id": "cap:useStreamProcessor",
+      "@type": "unrdf:Capability",
+      "rdfs:label": "useStreamProcessor Hook",
+      "rdfs:comment": "React hook for stream processing",
+      "tier": "tier:Standard",
+      "module": "unrdf/react-hooks",
+      "exportPath": "useStreamProcessor",
+      "precondition": {
+        "@type": "unrdf:Precondition",
+        "description": "Stream configuration"
+      },
+      "postcondition": {
+        "@type": "unrdf:Postcondition",
+        "description": "Stream processor with window management"
+      },
+      "inputs": [
+        { "@type": "unrdf:Input", "name": "config", "schema": "StreamConfig", "required": false }
+      ],
+      "outputs": [
+        { "@type": "unrdf:Output", "name": "processor", "schema": "StreamProcessorHook" }
+      ],
+      "performance": {
+        "@type": "unrdf:PerformanceProfile",
+        "p50": 2.0,
+        "p95": 10.0,
+        "p99": 50.0,
+        "memoryMB": 30
+      }
+    },
+
+    {
+      "@id": "cap:useErrorBoundary",
+      "@type": "unrdf:Capability",
+      "rdfs:label": "useErrorBoundary Hook",
+      "rdfs:comment": "Error boundary integration for knowledge operations",
+      "tier": "tier:Essential",
+      "module": "unrdf/react-hooks",
+      "exportPath": "useErrorBoundary",
+      "precondition": {
+        "@type": "unrdf:Precondition",
+        "description": "React component tree"
+      },
+      "postcondition": {
+        "@type": "unrdf:Postcondition",
+        "description": "Error capture and recovery"
+      },
+      "inputs": [
+        { "@type": "unrdf:Input", "name": "fallback", "schema": "ReactNode", "required": false }
+      ],
+      "outputs": [
+        { "@type": "unrdf:Output", "name": "boundary", "schema": "ErrorBoundaryHook" }
+      ],
+      "performance": {
+        "@type": "unrdf:PerformanceProfile",
+        "p50": 0.1,
+        "p95": 0.5,
+        "p99": 1.0,
+        "memoryMB": 2
+      }
+    },
+
+    {
+      "@id": "cap:useGraphDiff",
+      "@type": "unrdf:Capability",
+      "rdfs:label": "useGraphDiff Hook",
+      "rdfs:comment": "Compare two graphs and visualize differences",
+      "tier": "tier:Important",
+      "module": "unrdf/react-hooks",
+      "exportPath": "useGraphDiff",
+      "precondition": {
+        "@type": "unrdf:Precondition",
+        "description": "Two graph references"
+      },
+      "postcondition": {
+        "@type": "unrdf:Postcondition",
+        "description": "Diff result with additions/removals"
+      },
+      "inputs": [
+        { "@type": "unrdf:Input", "name": "graphA", "schema": "N3Store", "required": true },
+        { "@type": "unrdf:Input", "name": "graphB", "schema": "N3Store", "required": true }
+      ],
+      "outputs": [
+        { "@type": "unrdf:Output", "name": "diff", "schema": "GraphDiff" }
+      ],
+      "performance": {
+        "@type": "unrdf:PerformanceProfile",
+        "p50": 5.0,
+        "p95": 20.0,
+        "p99": 100.0,
+        "memoryMB": 25
+      }
+    },
+
+    {
+      "@id": "cap:useSPARQLEditor",
+      "@type": "unrdf:Capability",
+      "rdfs:label": "useSPARQLEditor Hook",
+      "rdfs:comment": "SPARQL editor with syntax highlighting and autocomplete",
+      "tier": "tier:Important",
+      "module": "unrdf/react-hooks",
+      "exportPath": "useSPARQLEditor",
+      "precondition": {
+        "@type": "unrdf:Precondition",
+        "description": "React component"
+      },
+      "postcondition": {
+        "@type": "unrdf:Postcondition",
+        "description": "Editor state and query execution"
+      },
+      "inputs": [
+        { "@type": "unrdf:Input", "name": "initialQuery", "schema": "string", "required": false }
+      ],
+      "outputs": [
+        { "@type": "unrdf:Output", "name": "editor", "schema": "SPARQLEditorHook" }
+      ],
+      "performance": {
+        "@type": "unrdf:PerformanceProfile",
+        "p50": 1.0,
+        "p95": 5.0,
+        "p99": 20.0,
+        "memoryMB": 20
+      }
+    },
+
+    {
+      "@id": "cap:usePolicyPack",
+      "@type": "unrdf:Capability",
+      "rdfs:label": "usePolicyPack Hook",
+      "rdfs:comment": "Load and manage policy packs in React",
+      "tier": "tier:Standard",
+      "module": "unrdf/react-hooks",
+      "exportPath": "usePolicyPack",
+      "precondition": {
+        "@type": "unrdf:Precondition",
+        "description": "Policy pack manifest"
+      },
+      "postcondition": {
+        "@type": "unrdf:Postcondition",
+        "description": "Loaded policy with hooks"
+      },
+      "inputs": [
+        { "@type": "unrdf:Input", "name": "manifest", "schema": "string", "required": true }
+      ],
+      "outputs": [
+        { "@type": "unrdf:Output", "name": "policy", "schema": "PolicyPackHook" }
+      ],
+      "performance": {
+        "@type": "unrdf:PerformanceProfile",
+        "p50": 50.0,
+        "p95": 200.0,
+        "p99": 500.0,
+        "memoryMB": 40
+      }
+    },
+
+    {
+      "@id": "cap:useQueryAnalyzer",
+      "@type": "unrdf:Capability",
+      "rdfs:label": "useQueryAnalyzer Hook",
+      "rdfs:comment": "Analyze SPARQL query performance",
+      "tier": "tier:Important",
+      "module": "unrdf/react-hooks",
+      "exportPath": "useQueryAnalyzer",
+      "precondition": {
+        "@type": "unrdf:Precondition",
+        "description": "Query execution context"
+      },
+      "postcondition": {
+        "@type": "unrdf:Postcondition",
+        "description": "Query analysis with optimization hints"
+      },
+      "inputs": [
+        { "@type": "unrdf:Input", "name": "query", "schema": "string", "required": true }
+      ],
+      "outputs": [
+        { "@type": "unrdf:Output", "name": "analysis", "schema": "QueryAnalysis" }
+      ],
+      "performance": {
+        "@type": "unrdf:PerformanceProfile",
+        "p50": 5.0,
+        "p95": 20.0,
+        "p99": 100.0,
+        "memoryMB": 30
+      }
+    },
+
+    {
+      "@id": "cap:createHookExecutor",
+      "@type": "unrdf:Capability",
+      "rdfs:label": "Create Hook Executor",
+      "rdfs:comment": "Factory for hook execution with batching",
+      "tier": "tier:Standard",
+      "module": "unrdf/knowledge-engine",
+      "exportPath": "createHookExecutor",
+      "precondition": {
+        "@type": "unrdf:Precondition",
+        "description": "Executor configuration"
+      },
+      "postcondition": {
+        "@type": "unrdf:Postcondition",
+        "description": "Hook executor instance"
+      },
+      "inputs": [
+        { "@type": "unrdf:Input", "name": "config", "schema": "HookExecutorConfigSchema", "required": false }
+      ],
+      "outputs": [
+        { "@type": "unrdf:Output", "name": "executor", "schema": "HookExecutor" }
+      ],
+      "performance": {
+        "@type": "unrdf:PerformanceProfile",
+        "p50": 0.1,
+        "p95": 0.5,
+        "p99": 1.0,
+        "memoryMB": 5
+      }
+    },
+
+    {
+      "@id": "cap:createConditionEvaluator",
+      "@type": "unrdf:Capability",
+      "rdfs:label": "Create Condition Evaluator",
+      "rdfs:comment": "Factory for condition evaluation with caching",
+      "tier": "tier:Standard",
+      "module": "unrdf/knowledge-engine",
+      "exportPath": "createConditionEvaluator",
+      "precondition": {
+        "@type": "unrdf:Precondition",
+        "description": "Evaluator configuration"
+      },
+      "postcondition": {
+        "@type": "unrdf:Postcondition",
+        "description": "Condition evaluator instance"
+      },
+      "inputs": [
+        { "@type": "unrdf:Input", "name": "config", "schema": "ConditionEvaluatorConfigSchema", "required": false }
+      ],
+      "outputs": [
+        { "@type": "unrdf:Output", "name": "evaluator", "schema": "ConditionEvaluator" }
+      ],
+      "performance": {
+        "@type": "unrdf:PerformanceProfile",
+        "p50": 0.1,
+        "p95": 0.5,
+        "p99": 1.0,
+        "memoryMB": 5
+      }
+    },
+
+    {
+      "@id": "cap:resolveFileUri",
+      "@type": "unrdf:Capability",
+      "rdfs:label": "Resolve File URI",
+      "rdfs:comment": "Resolve file:// URIs with hash verification",
+      "tier": "tier:Standard",
+      "module": "unrdf/knowledge-engine",
+      "exportPath": "resolveFileUri",
+      "precondition": {
+        "@type": "unrdf:Precondition",
+        "description": "Valid file URI"
+      },
+      "postcondition": {
+        "@type": "unrdf:Postcondition",
+        "description": "File content with hash"
+      },
+      "inputs": [
+        { "@type": "unrdf:Input", "name": "uri", "schema": "string", "required": true },
+        { "@type": "unrdf:Input", "name": "expectedHash", "schema": "string", "required": false }
+      ],
+      "outputs": [
+        { "@type": "unrdf:Output", "name": "content", "schema": "FileContent" }
+      ],
+      "performance": {
+        "@type": "unrdf:PerformanceProfile",
+        "p50": 2.0,
+        "p95": 10.0,
+        "p99": 50.0,
+        "memoryMB": 10
+      }
+    }
+  ]
+}

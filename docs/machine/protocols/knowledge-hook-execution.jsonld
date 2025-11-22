@@ -1,0 +1,427 @@
+{
+  "@context": {
+    "@vocab": "https://unrdf.org/schema/",
+    "unrdf": "https://unrdf.org/schema/",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "proto": "https://unrdf.org/protocol/",
+    "state": "https://unrdf.org/state/",
+    "event": "https://unrdf.org/event/",
+    "transition": { "@id": "unrdf:transition", "@type": "@id" },
+    "from": { "@id": "unrdf:from", "@type": "@id" },
+    "to": { "@id": "unrdf:to", "@type": "@id" },
+    "trigger": { "@id": "unrdf:trigger", "@type": "@id" },
+    "guard": { "@id": "unrdf:guard" },
+    "action": { "@id": "unrdf:action" }
+  },
+  "@graph": [
+    {
+      "@id": "proto:KnowledgeHookExecution",
+      "@type": "unrdf:Protocol",
+      "rdfs:label": "Knowledge Hook Execution Protocol",
+      "rdfs:comment": "State machine for executing knowledge hooks within transactions",
+      "unrdf:version": "1.0.0",
+      "unrdf:initialState": "state:Idle",
+      "unrdf:terminalStates": ["state:Completed", "state:Failed", "state:Cancelled"],
+      "unrdf:states": [
+        "state:Idle",
+        "state:ConditionEvaluation",
+        "state:BeforePhase",
+        "state:RunPhase",
+        "state:AfterPhase",
+        "state:Completed",
+        "state:Failed",
+        "state:Cancelled"
+      ]
+    },
+
+    {
+      "@id": "state:Idle",
+      "@type": "unrdf:State",
+      "rdfs:label": "Idle",
+      "rdfs:comment": "Hook is registered but not executing",
+      "unrdf:entryActions": [],
+      "unrdf:exitActions": ["action:recordStartTime"]
+    },
+
+    {
+      "@id": "state:ConditionEvaluation",
+      "@type": "unrdf:State",
+      "rdfs:label": "Condition Evaluation",
+      "rdfs:comment": "Evaluating when condition (SPARQL/SHACL/Delta)",
+      "unrdf:entryActions": ["action:startSpan", "action:loadCondition"],
+      "unrdf:exitActions": ["action:recordConditionResult"],
+      "unrdf:timeout": 10000,
+      "unrdf:timeoutTransition": "state:Failed"
+    },
+
+    {
+      "@id": "state:BeforePhase",
+      "@type": "unrdf:State",
+      "rdfs:label": "Before Phase",
+      "rdfs:comment": "Executing optional before() callback",
+      "unrdf:entryActions": ["action:createSandbox"],
+      "unrdf:exitActions": ["action:validateBeforeResult"],
+      "unrdf:timeout": 5000,
+      "unrdf:timeoutTransition": "state:Failed"
+    },
+
+    {
+      "@id": "state:RunPhase",
+      "@type": "unrdf:State",
+      "rdfs:label": "Run Phase",
+      "rdfs:comment": "Executing main run() callback in sandbox",
+      "unrdf:entryActions": ["action:executeSandboxed"],
+      "unrdf:exitActions": ["action:collectAssertions"],
+      "unrdf:timeout": 30000,
+      "unrdf:timeoutTransition": "state:Failed"
+    },
+
+    {
+      "@id": "state:AfterPhase",
+      "@type": "unrdf:State",
+      "rdfs:label": "After Phase",
+      "rdfs:comment": "Executing optional after() callback",
+      "unrdf:entryActions": [],
+      "unrdf:exitActions": ["action:cleanupSandbox"],
+      "unrdf:timeout": 5000,
+      "unrdf:timeoutTransition": "state:Failed"
+    },
+
+    {
+      "@id": "state:Completed",
+      "@type": "unrdf:State",
+      "rdfs:label": "Completed",
+      "rdfs:comment": "Hook execution successful",
+      "unrdf:entryActions": [
+        "action:recordDuration",
+        "action:emitMetrics",
+        "action:endSpan"
+      ],
+      "unrdf:isFinal": true
+    },
+
+    {
+      "@id": "state:Failed",
+      "@type": "unrdf:State",
+      "rdfs:label": "Failed",
+      "rdfs:comment": "Hook execution failed",
+      "unrdf:entryActions": [
+        "action:recordError",
+        "action:emitErrorMetrics",
+        "action:endSpanWithError"
+      ],
+      "unrdf:isFinal": true
+    },
+
+    {
+      "@id": "state:Cancelled",
+      "@type": "unrdf:State",
+      "rdfs:label": "Cancelled",
+      "rdfs:comment": "Hook execution cancelled (condition false or veto)",
+      "unrdf:entryActions": ["action:recordCancellation", "action:endSpan"],
+      "unrdf:isFinal": true
+    },
+
+    {
+      "@id": "proto:transition:IdleToCondition",
+      "@type": "unrdf:Transition",
+      "from": "state:Idle",
+      "to": "state:ConditionEvaluation",
+      "trigger": "event:TransactionStarted",
+      "guard": "hook.enabled && !hook.suspended",
+      "action": "action:initializeContext"
+    },
+
+    {
+      "@id": "proto:transition:ConditionToBeforeTrue",
+      "@type": "unrdf:Transition",
+      "from": "state:ConditionEvaluation",
+      "to": "state:BeforePhase",
+      "trigger": "event:ConditionEvaluated",
+      "guard": "conditionResult === true && hook.before !== undefined",
+      "action": "action:prepareBeforePhase"
+    },
+
+    {
+      "@id": "proto:transition:ConditionToRunDirect",
+      "@type": "unrdf:Transition",
+      "from": "state:ConditionEvaluation",
+      "to": "state:RunPhase",
+      "trigger": "event:ConditionEvaluated",
+      "guard": "conditionResult === true && hook.before === undefined",
+      "action": "action:prepareRunPhase"
+    },
+
+    {
+      "@id": "proto:transition:ConditionToCancelled",
+      "@type": "unrdf:Transition",
+      "from": "state:ConditionEvaluation",
+      "to": "state:Cancelled",
+      "trigger": "event:ConditionEvaluated",
+      "guard": "conditionResult === false",
+      "action": "action:recordConditionFalse"
+    },
+
+    {
+      "@id": "proto:transition:BeforeToRun",
+      "@type": "unrdf:Transition",
+      "from": "state:BeforePhase",
+      "to": "state:RunPhase",
+      "trigger": "event:BeforeCompleted",
+      "guard": "beforeResult.success && !beforeResult.veto",
+      "action": "action:transferBeforeContext"
+    },
+
+    {
+      "@id": "proto:transition:BeforeToCancelled",
+      "@type": "unrdf:Transition",
+      "from": "state:BeforePhase",
+      "to": "state:Cancelled",
+      "trigger": "event:BeforeCompleted",
+      "guard": "beforeResult.veto === true",
+      "action": "action:recordVeto"
+    },
+
+    {
+      "@id": "proto:transition:BeforeToFailed",
+      "@type": "unrdf:Transition",
+      "from": "state:BeforePhase",
+      "to": "state:Failed",
+      "trigger": "event:BeforeError",
+      "guard": "true",
+      "action": "action:recordBeforeError"
+    },
+
+    {
+      "@id": "proto:transition:RunToAfter",
+      "@type": "unrdf:Transition",
+      "from": "state:RunPhase",
+      "to": "state:AfterPhase",
+      "trigger": "event:RunCompleted",
+      "guard": "runResult.success && hook.after !== undefined",
+      "action": "action:prepareAfterPhase"
+    },
+
+    {
+      "@id": "proto:transition:RunToCompletedDirect",
+      "@type": "unrdf:Transition",
+      "from": "state:RunPhase",
+      "to": "state:Completed",
+      "trigger": "event:RunCompleted",
+      "guard": "runResult.success && hook.after === undefined",
+      "action": "action:finalizeResult"
+    },
+
+    {
+      "@id": "proto:transition:RunToFailed",
+      "@type": "unrdf:Transition",
+      "from": "state:RunPhase",
+      "to": "state:Failed",
+      "trigger": "event:RunError",
+      "guard": "true",
+      "action": "action:recordRunError"
+    },
+
+    {
+      "@id": "proto:transition:AfterToCompleted",
+      "@type": "unrdf:Transition",
+      "from": "state:AfterPhase",
+      "to": "state:Completed",
+      "trigger": "event:AfterCompleted",
+      "guard": "afterResult.success",
+      "action": "action:finalizeResult"
+    },
+
+    {
+      "@id": "proto:transition:AfterToFailed",
+      "@type": "unrdf:Transition",
+      "from": "state:AfterPhase",
+      "to": "state:Failed",
+      "trigger": "event:AfterError",
+      "guard": "true",
+      "action": "action:recordAfterError"
+    },
+
+    {
+      "@id": "event:TransactionStarted",
+      "@type": "unrdf:Event",
+      "rdfs:label": "Transaction Started",
+      "rdfs:comment": "A transaction has begun and hooks should evaluate",
+      "unrdf:payload": {
+        "transactionId": "xsd:string",
+        "delta": "type:Delta",
+        "store": "N3Store",
+        "timestamp": "xsd:dateTime"
+      }
+    },
+
+    {
+      "@id": "event:ConditionEvaluated",
+      "@type": "unrdf:Event",
+      "rdfs:label": "Condition Evaluated",
+      "rdfs:comment": "The when condition has been evaluated",
+      "unrdf:payload": {
+        "result": "xsd:boolean",
+        "bindings": "array",
+        "duration": "xsd:decimal"
+      }
+    },
+
+    {
+      "@id": "event:BeforeCompleted",
+      "@type": "unrdf:Event",
+      "rdfs:label": "Before Phase Completed",
+      "rdfs:comment": "The before() callback has completed",
+      "unrdf:payload": {
+        "success": "xsd:boolean",
+        "veto": "xsd:boolean",
+        "result": "any"
+      }
+    },
+
+    {
+      "@id": "event:BeforeError",
+      "@type": "unrdf:Event",
+      "rdfs:label": "Before Phase Error",
+      "unrdf:payload": {
+        "error": "xsd:string",
+        "stack": "xsd:string"
+      }
+    },
+
+    {
+      "@id": "event:RunCompleted",
+      "@type": "unrdf:Event",
+      "rdfs:label": "Run Phase Completed",
+      "rdfs:comment": "The run() callback has completed",
+      "unrdf:payload": {
+        "success": "xsd:boolean",
+        "result": "any",
+        "assertions": "array"
+      }
+    },
+
+    {
+      "@id": "event:RunError",
+      "@type": "unrdf:Event",
+      "rdfs:label": "Run Phase Error",
+      "unrdf:payload": {
+        "error": "xsd:string",
+        "stack": "xsd:string"
+      }
+    },
+
+    {
+      "@id": "event:AfterCompleted",
+      "@type": "unrdf:Event",
+      "rdfs:label": "After Phase Completed",
+      "unrdf:payload": {
+        "success": "xsd:boolean",
+        "result": "any"
+      }
+    },
+
+    {
+      "@id": "event:AfterError",
+      "@type": "unrdf:Event",
+      "rdfs:label": "After Phase Error",
+      "unrdf:payload": {
+        "error": "xsd:string",
+        "stack": "xsd:string"
+      }
+    },
+
+    {
+      "@id": "action:recordStartTime",
+      "@type": "unrdf:Action",
+      "rdfs:label": "Record Start Time",
+      "unrdf:implementation": "context.startTime = performance.now()"
+    },
+
+    {
+      "@id": "action:startSpan",
+      "@type": "unrdf:Action",
+      "rdfs:label": "Start OTEL Span",
+      "unrdf:implementation": "context.span = tracer.startSpan('hook.execute', { attributes: { 'hook.name': hook.meta.name } })"
+    },
+
+    {
+      "@id": "action:loadCondition",
+      "@type": "unrdf:Action",
+      "rdfs:label": "Load Condition",
+      "unrdf:implementation": "context.condition = await conditionEvaluator.load(hook.when)"
+    },
+
+    {
+      "@id": "action:createSandbox",
+      "@type": "unrdf:Action",
+      "rdfs:label": "Create Effect Sandbox",
+      "unrdf:implementation": "context.sandbox = new EffectSandbox(hook.sandboxConfig)"
+    },
+
+    {
+      "@id": "action:executeSandboxed",
+      "@type": "unrdf:Action",
+      "rdfs:label": "Execute in Sandbox",
+      "unrdf:implementation": "context.runResult = await context.sandbox.execute(hook.run, context.event)"
+    },
+
+    {
+      "@id": "action:collectAssertions",
+      "@type": "unrdf:Action",
+      "rdfs:label": "Collect Assertions",
+      "unrdf:implementation": "context.assertions = context.runResult.assertions || []"
+    },
+
+    {
+      "@id": "action:cleanupSandbox",
+      "@type": "unrdf:Action",
+      "rdfs:label": "Cleanup Sandbox",
+      "unrdf:implementation": "await context.sandbox.cleanup()"
+    },
+
+    {
+      "@id": "action:recordDuration",
+      "@type": "unrdf:Action",
+      "rdfs:label": "Record Duration",
+      "unrdf:implementation": "context.duration = performance.now() - context.startTime"
+    },
+
+    {
+      "@id": "action:emitMetrics",
+      "@type": "unrdf:Action",
+      "rdfs:label": "Emit Metrics",
+      "unrdf:implementation": "metrics.hookExecutionLatency.record(context.duration, { hook: hook.meta.name, phase: 'completed' })"
+    },
+
+    {
+      "@id": "action:endSpan",
+      "@type": "unrdf:Action",
+      "rdfs:label": "End OTEL Span",
+      "unrdf:implementation": "context.span.setStatus({ code: SpanStatusCode.OK }); context.span.end()"
+    },
+
+    {
+      "@id": "action:recordError",
+      "@type": "unrdf:Action",
+      "rdfs:label": "Record Error",
+      "unrdf:implementation": "context.error = event.error; context.span.recordException(event.error)"
+    },
+
+    {
+      "@id": "action:endSpanWithError",
+      "@type": "unrdf:Action",
+      "rdfs:label": "End Span With Error",
+      "unrdf:implementation": "context.span.setStatus({ code: SpanStatusCode.ERROR, message: context.error }); context.span.end()"
+    },
+
+    {
+      "@id": "action:recordCancellation",
+      "@type": "unrdf:Action",
+      "rdfs:label": "Record Cancellation",
+      "unrdf:implementation": "context.cancelled = true; context.cancelReason = event.reason"
+    }
+  ]
+}

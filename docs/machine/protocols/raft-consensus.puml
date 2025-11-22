@@ -1,0 +1,103 @@
+@startuml RAFT Consensus Protocol
+
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam state {
+  BackgroundColor #E8F5E9
+  BorderColor #4CAF50
+  FontColor #333333
+  StartColor #2196F3
+  EndColor #F44336
+}
+
+title RAFT Consensus State Machine for UNRDF Federation
+
+[*] --> Follower
+
+state Follower {
+  Follower : Respond to RPCs
+  Follower : Reset election timer on heartbeat
+  Follower : Forward client requests to leader
+  ---
+  Follower : electionTimeout: 150-300ms
+}
+
+Follower --> Candidate : ElectionTimeout\n[!receivedHeartbeat]
+
+state Candidate {
+  Candidate : Increment term
+  Candidate : Vote for self
+  Candidate : Send RequestVote RPCs
+  Candidate : Reset election timer
+  ---
+  Candidate : electionTimeout: 150-300ms
+}
+
+Candidate --> Leader : MajorityVotesReceived\n[votes > N/2]
+Candidate --> Follower : HigherTermDiscovered\n[receivedTerm > currentTerm]
+Candidate --> Candidate : ElectionTimeout\n[!majority && !higherTerm]
+
+state Leader {
+  Leader : Send heartbeats (empty AppendEntries)
+  Leader : Accept client requests
+  Leader : Replicate log entries
+  Leader : Advance commit index
+  ---
+  Leader : heartbeatInterval: 50ms
+}
+
+Leader --> Follower : HigherTermDiscovered\n[receivedTerm > currentTerm]
+
+Follower --> Shutdown : ShutdownRequested
+Candidate --> Shutdown : ShutdownRequested
+Leader --> Shutdown : ShutdownRequested
+
+state Shutdown {
+  Shutdown : Stop timers
+  Shutdown : Close connections
+  Shutdown : Persist state
+}
+
+Shutdown --> [*]
+
+' RequestVote RPC handling
+note right of Candidate
+  RequestVote RPC:
+  Request:
+    term, candidateId
+    lastLogIndex, lastLogTerm
+  Response:
+    term, voteGranted
+
+  Grant vote if:
+    term >= currentTerm AND
+    (votedFor is null OR candidateId) AND
+    candidate log >= receiver log
+end note
+
+' AppendEntries RPC handling
+note right of Leader
+  AppendEntries RPC:
+  Request:
+    term, leaderId
+    prevLogIndex, prevLogTerm
+    entries[], leaderCommit
+  Response:
+    term, success
+
+  Success if:
+    term >= currentTerm AND
+    log[prevLogIndex].term == prevLogTerm
+end note
+
+' Safety properties
+note bottom of Follower
+  RAFT Safety Properties:
+  1. Election Safety: One leader per term
+  2. Leader Append-Only: Never overwrites
+  3. Log Matching: Identical prefix
+  4. Leader Completeness: Has all committed
+  5. State Machine Safety: Same apply order
+end note
+
+@enduml

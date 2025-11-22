@@ -1,0 +1,320 @@
+@startuml Type System Resolution
+!theme plain
+title UNRDF Type System Resolution Flow
+
+skinparam sequence {
+    ArrowColor #2C3E50
+    ActorBorderColor #2C3E50
+    LifeLineBorderColor #34495E
+    ParticipantBorderColor #2C3E50
+    ParticipantBackgroundColor #ECF0F1
+    NoteBackgroundColor #F9E79F
+}
+
+actor "Autonomic Agent" as Agent
+participant "Type Resolver" as Resolver
+participant "Schema Registry\n(Zod + SHACL)" as Schema
+participant "SPARQL Engine" as SPARQL
+participant "Coercion Engine" as Coercer
+participant "Constraint Checker" as Constraint
+participant "Error Handler" as ErrorHandler
+database "Knowledge Graph" as KG
+database "Type Definitions" as TypeDefs
+
+== Phase 1: Agent Requesting Type Information ==
+Agent -> Resolver: resolveType(term)
+note right of Agent
+**Type Resolution Request:**
+```javascript
+resolveType({
+  term: namedNode('ex:Person/123'),
+  context: { graph: 'ex:mainGraph' },
+  options: { strict: true, coerce: true }
+})
+```
+end note
+
+Resolver -> SPARQL: queryTypeDefinition(term)
+SPARQL -> KG: SELECT type query
+note right of SPARQL
+**Type Discovery Query:**
+```sparql
+SELECT ?type ?constraint WHERE {
+  <ex:Person/123> a ?type .
+  OPTIONAL {
+    ?type sh:property ?prop .
+    ?prop sh:constraint ?constraint .
+  }
+}
+```
+end note
+
+KG --> SPARQL: type bindings
+SPARQL --> Resolver: typeInfo
+
+Resolver -> TypeDefs: getTypeSchema(type)
+TypeDefs --> Resolver: schemaDefinition
+
+note right of Resolver
+**Type Schema (Zod):**
+```javascript
+const PersonSchema = z.object({
+  '@id': z.string().url(),
+  '@type': z.literal('ex:Person'),
+  'foaf:name': z.string().min(1).max(100),
+  'foaf:age': z.number().int().min(0).max(150),
+  'foaf:email': z.string().email().optional()
+});
+```
+end note
+
+== Phase 2: Constraint Checking ==
+Resolver -> Schema: getConstraints(type)
+Schema --> Resolver: zodSchema + shaclShapes
+
+Resolver -> Constraint: validateConstraints(term, constraints)
+
+group Zod Validation
+    Constraint -> Schema: zodSchema.safeParse(value)
+
+    alt valid
+        Schema --> Constraint: { success: true, data }
+    else invalid
+        Schema --> Constraint: { success: false, error }
+        note right of Schema
+        **Zod Error:**
+        ```javascript
+        {
+          success: false,
+          error: {
+            issues: [{
+              code: 'too_small',
+              path: ['foaf:age'],
+              message: 'Number must be >= 0',
+              minimum: 0
+            }]
+          }
+        }
+        ```
+        end note
+    end
+end
+
+group SHACL Validation
+    Constraint -> SPARQL: validateSHACL(term, shape)
+    note right of Constraint
+    **SHACL Shape:**
+    ```turtle
+    ex:PersonShape a sh:NodeShape ;
+      sh:targetClass ex:Person ;
+      sh:property [
+        sh:path foaf:name ;
+        sh:minCount 1 ;
+        sh:maxLength 100 ;
+        sh:datatype xsd:string
+      ] ;
+      sh:property [
+        sh:path foaf:age ;
+        sh:datatype xsd:integer ;
+        sh:minInclusive 0 ;
+        sh:maxInclusive 150
+      ] .
+    ```
+    end note
+
+    SPARQL -> KG: validate against shape
+    KG --> SPARQL: validation report
+
+    alt conforms
+        SPARQL --> Constraint: { conforms: true }
+    else violations
+        SPARQL --> Constraint: { conforms: false, results }
+        note right of SPARQL
+        **SHACL Report:**
+        ```turtle
+        [] a sh:ValidationResult ;
+          sh:focusNode ex:Person/123 ;
+          sh:resultPath foaf:age ;
+          sh:resultSeverity sh:Violation ;
+          sh:resultMessage "Value is not an integer" .
+        ```
+        end note
+    end
+end
+
+Constraint --> Resolver: validationResult
+
+== Phase 3: Coercion Strategies ==
+alt validation failed with coercible types
+    Resolver -> Coercer: attemptCoercion(value, targetType)
+
+    Coercer -> Coercer: detectSourceType(value)
+    Coercer -> Coercer: selectCoercionStrategy()
+
+    note right of Coercer
+    **Coercion Strategies:**
+    1. String -> Integer: parseInt()
+    2. String -> DateTime: Date.parse()
+    3. Literal -> URI: namedNode()
+    4. JSON -> RDF: expand JSON-LD
+    5. RDF -> Zod: transform bindings
+    end note
+
+    alt string to integer
+        Coercer -> Coercer: coerceStringToInt(value)
+        note right of Coercer
+        ```javascript
+        function coerceStringToInt(val) {
+          const parsed = parseInt(val, 10);
+          if (isNaN(parsed)) {
+            throw new CoercionError('Cannot coerce to integer');
+          }
+          return parsed;
+        }
+        ```
+        end note
+    else string to datetime
+        Coercer -> Coercer: coerceStringToDateTime(value)
+    else literal to uri
+        Coercer -> Coercer: coerceLiteralToURI(value)
+    else json to rdf
+        Coercer -> Coercer: expandJsonLd(value)
+        note right of Coercer
+        ```javascript
+        async function expandJsonLd(json) {
+          const expanded = await jsonld.expand(json);
+          return toRdfQuads(expanded);
+        }
+        ```
+        end note
+    end
+
+    alt coercion successful
+        Coercer --> Resolver: coercedValue
+        Resolver -> Constraint: revalidate(coercedValue)
+        Constraint --> Resolver: { valid: true }
+    else coercion failed
+        Coercer --> Resolver: CoercionError
+    end
+end
+
+== Phase 4: Error Propagation ==
+alt validation/coercion failed
+    Resolver -> ErrorHandler: handleTypeError(error)
+
+    ErrorHandler -> ErrorHandler: classifyError()
+    note right of ErrorHandler
+    **Error Classification:**
+    ```javascript
+    {
+      code: 'TYPE_CONSTRAINT_VIOLATION',
+      severity: 'error',
+      path: ['foaf:age'],
+      expected: 'xsd:integer',
+      received: 'xsd:string',
+      value: '"twenty"',
+      suggestion: 'Provide numeric value'
+    }
+    ```
+    end note
+
+    ErrorHandler -> ErrorHandler: enrichErrorContext()
+
+    group Error Propagation Chain
+        ErrorHandler -> ErrorHandler: attachStackTrace()
+        ErrorHandler -> ErrorHandler: addSuggestions()
+        ErrorHandler -> ErrorHandler: linkDocumentation()
+    end
+
+    ErrorHandler --> Resolver: enrichedError
+
+    alt strict mode
+        Resolver --> Agent: throw TypeError
+        note right of Resolver
+        **Strict Error:**
+        ```javascript
+        throw new TypeError({
+          message: 'Type constraint violated',
+          code: 'TYPE_CONSTRAINT_VIOLATION',
+          details: { ... },
+          recoverable: false
+        });
+        ```
+        end note
+    else lenient mode
+        Resolver --> Agent: { valid: false, warnings, coerced }
+        note right of Resolver
+        **Lenient Response:**
+        ```javascript
+        {
+          valid: false,
+          warnings: [
+            'foaf:age coerced from string to integer',
+            'foaf:email missing (optional)'
+          ],
+          data: { /* best-effort result */ }
+        }
+        ```
+        end note
+    end
+end
+
+== Phase 5: Successful Resolution ==
+alt all validations pass
+    Resolver -> Resolver: buildTypedResult()
+
+    Resolver --> Agent: typedValue
+    note right of Resolver
+    **Typed Result:**
+    ```javascript
+    {
+      '@context': 'https://unrdf.org/context/person',
+      '@id': 'ex:Person/123',
+      '@type': 'ex:Person',
+      'foaf:name': { '@value': 'Alice', '@type': 'xsd:string' },
+      'foaf:age': { '@value': 30, '@type': 'xsd:integer' },
+      '_meta': {
+        'validated': true,
+        'schema': 'PersonSchema@1.0.0',
+        'timestamp': '2024-01-15T10:30:00Z'
+      }
+    }
+    ```
+    end note
+end
+
+== Type Resolution State Machine ==
+state "Type Resolution States" as TypeStates {
+    [*] --> RESOLVING : request type
+    RESOLVING --> DISCOVERED : type found
+    RESOLVING --> UNKNOWN : type not found
+    DISCOVERED --> VALIDATING : constraints loaded
+    VALIDATING --> VALID : all constraints pass
+    VALIDATING --> INVALID : constraints fail
+    INVALID --> COERCING : coercion possible
+    COERCING --> VALID : coercion success
+    COERCING --> ERROR : coercion failed
+    VALID --> RESOLVED : build result
+    ERROR --> PROPAGATED : handle error
+    UNKNOWN --> ERROR : strict mode
+    UNKNOWN --> RESOLVED : lenient mode (as Any)
+    RESOLVED --> [*]
+    PROPAGATED --> [*]
+}
+
+== Type Coercion Matrix ==
+note over Coercer
+**Supported Coercions:**
+| From | To | Strategy |
+|------|-----|----------|
+| xsd:string | xsd:integer | parseInt() |
+| xsd:string | xsd:decimal | parseFloat() |
+| xsd:string | xsd:dateTime | Date.parse() |
+| xsd:string | xsd:boolean | Boolean() |
+| xsd:integer | xsd:string | String() |
+| xsd:anyURI | NamedNode | namedNode() |
+| JSON-LD | RDF Quads | jsonld.expand() |
+| RDF Quads | Zod Object | bindingsToObject() |
+end note
+
+@enduml

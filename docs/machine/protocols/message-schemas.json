@@ -1,0 +1,584 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://unrdf.org/schema/messages",
+  "title": "UNRDF Protocol Message Schemas",
+  "description": "JSON Schema definitions for UNRDF protocol messages",
+  "definitions": {
+    "TransactionRequest": {
+      "$id": "#/definitions/TransactionRequest",
+      "type": "object",
+      "title": "Transaction Request",
+      "description": "Request to execute a transaction on the knowledge store",
+      "required": ["id", "delta", "timestamp"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Unique transaction identifier"
+        },
+        "delta": {
+          "$ref": "#/definitions/Delta"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "actor": {
+          "type": "string",
+          "description": "Identity of the actor initiating the transaction"
+        },
+        "options": {
+          "$ref": "#/definitions/TransactionOptions"
+        }
+      }
+    },
+
+    "TransactionResponse": {
+      "$id": "#/definitions/TransactionResponse",
+      "type": "object",
+      "title": "Transaction Response",
+      "description": "Response from transaction execution",
+      "required": ["id", "committed", "timestamp"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "committed": {
+          "type": "boolean"
+        },
+        "receipt": {
+          "$ref": "#/definitions/TransactionReceipt"
+        },
+        "error": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+
+    "Delta": {
+      "$id": "#/definitions/Delta",
+      "type": "object",
+      "title": "Graph Delta",
+      "description": "Set of additions and removals to/from the graph",
+      "required": ["additions", "removals"],
+      "properties": {
+        "additions": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/Quad" }
+        },
+        "removals": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/Quad" }
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+
+    "Quad": {
+      "$id": "#/definitions/Quad",
+      "type": "object",
+      "title": "RDF Quad",
+      "description": "An RDF quad (subject, predicate, object, graph)",
+      "required": ["subject", "predicate", "object"],
+      "properties": {
+        "subject": { "$ref": "#/definitions/Term" },
+        "predicate": { "$ref": "#/definitions/Term" },
+        "object": { "$ref": "#/definitions/Term" },
+        "graph": { "$ref": "#/definitions/Term" }
+      }
+    },
+
+    "Term": {
+      "$id": "#/definitions/Term",
+      "type": "object",
+      "title": "RDF Term",
+      "description": "An RDF term (IRI, literal, or blank node)",
+      "required": ["termType", "value"],
+      "properties": {
+        "termType": {
+          "type": "string",
+          "enum": ["NamedNode", "BlankNode", "Literal", "DefaultGraph"]
+        },
+        "value": {
+          "type": "string"
+        },
+        "language": {
+          "type": "string",
+          "description": "Language tag for literals"
+        },
+        "datatype": {
+          "$ref": "#/definitions/Term",
+          "description": "Datatype IRI for typed literals"
+        }
+      }
+    },
+
+    "TransactionReceipt": {
+      "$id": "#/definitions/TransactionReceipt",
+      "type": "object",
+      "title": "Transaction Receipt",
+      "description": "Immutable receipt of a committed transaction",
+      "required": ["id", "committed", "delta", "timestamp", "duration"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "committed": {
+          "type": "boolean"
+        },
+        "delta": { "$ref": "#/definitions/Delta" },
+        "beforeHash": { "$ref": "#/definitions/Hash" },
+        "afterHash": { "$ref": "#/definitions/Hash" },
+        "hookResults": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/HookResult" }
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "duration": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Duration in milliseconds"
+        }
+      }
+    },
+
+    "Hash": {
+      "$id": "#/definitions/Hash",
+      "type": "object",
+      "title": "Cryptographic Hash",
+      "required": ["sha3", "blake3"],
+      "properties": {
+        "sha3": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "blake3": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      }
+    },
+
+    "HookResult": {
+      "$id": "#/definitions/HookResult",
+      "type": "object",
+      "title": "Hook Execution Result",
+      "required": ["hookId", "success"],
+      "properties": {
+        "hookId": {
+          "type": "string"
+        },
+        "success": {
+          "type": "boolean"
+        },
+        "result": {},
+        "error": {
+          "type": "string"
+        },
+        "duration": {
+          "type": "number",
+          "minimum": 0
+        },
+        "phase": {
+          "type": "string",
+          "enum": ["before", "run", "after", "completed", "failed"]
+        }
+      }
+    },
+
+    "TransactionOptions": {
+      "$id": "#/definitions/TransactionOptions",
+      "type": "object",
+      "title": "Transaction Options",
+      "properties": {
+        "skipHooks": {
+          "type": "boolean",
+          "default": false
+        },
+        "timeoutMs": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 300000,
+          "default": 30000
+        },
+        "actor": {
+          "type": "string"
+        }
+      }
+    },
+
+    "QueryRequest": {
+      "$id": "#/definitions/QueryRequest",
+      "type": "object",
+      "title": "SPARQL Query Request",
+      "required": ["query"],
+      "properties": {
+        "query": {
+          "type": "string",
+          "minLength": 1,
+          "description": "SPARQL query string"
+        },
+        "options": {
+          "$ref": "#/definitions/QueryOptions"
+        }
+      }
+    },
+
+    "QueryOptions": {
+      "$id": "#/definitions/QueryOptions",
+      "type": "object",
+      "title": "Query Options",
+      "properties": {
+        "timeout": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 300000,
+          "default": 30000
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100000
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "defaultGraph": {
+          "type": "string",
+          "format": "uri"
+        },
+        "namedGraphs": {
+          "type": "array",
+          "items": { "type": "string", "format": "uri" }
+        }
+      }
+    },
+
+    "QueryResponse": {
+      "$id": "#/definitions/QueryResponse",
+      "type": "object",
+      "title": "Query Response",
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["bindings", "boolean", "quads"]
+        },
+        "bindings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": { "$ref": "#/definitions/Term" }
+          }
+        },
+        "boolean": {
+          "type": "boolean"
+        },
+        "quads": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/Quad" }
+        },
+        "metadata": {
+          "type": "object",
+          "properties": {
+            "duration": { "type": "number" },
+            "rowCount": { "type": "integer" },
+            "cached": { "type": "boolean" }
+          }
+        }
+      }
+    },
+
+    "ValidationRequest": {
+      "$id": "#/definitions/ValidationRequest",
+      "type": "object",
+      "title": "SHACL Validation Request",
+      "required": ["data"],
+      "properties": {
+        "data": {
+          "type": "string",
+          "description": "Turtle-serialized data graph"
+        },
+        "shapes": {
+          "type": "string",
+          "description": "Turtle-serialized shapes graph"
+        },
+        "options": {
+          "type": "object",
+          "properties": {
+            "strict": { "type": "boolean", "default": false },
+            "includeDetails": { "type": "boolean", "default": true },
+            "maxViolations": { "type": "integer", "default": 100 }
+          }
+        }
+      }
+    },
+
+    "ValidationResponse": {
+      "$id": "#/definitions/ValidationResponse",
+      "type": "object",
+      "title": "Validation Response",
+      "required": ["conforms"],
+      "properties": {
+        "conforms": {
+          "type": "boolean"
+        },
+        "results": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/ValidationResult" }
+        },
+        "shapesEvaluated": {
+          "type": "integer"
+        },
+        "duration": {
+          "type": "number"
+        }
+      }
+    },
+
+    "ValidationResult": {
+      "$id": "#/definitions/ValidationResult",
+      "type": "object",
+      "title": "Validation Result",
+      "required": ["severity", "focusNode", "message"],
+      "properties": {
+        "severity": {
+          "type": "string",
+          "enum": ["Violation", "Warning", "Info"]
+        },
+        "focusNode": { "$ref": "#/definitions/Term" },
+        "resultPath": { "$ref": "#/definitions/Term" },
+        "value": { "$ref": "#/definitions/Term" },
+        "sourceShape": { "$ref": "#/definitions/Term" },
+        "sourceConstraintComponent": { "$ref": "#/definitions/Term" },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+
+    "SubscriptionRequest": {
+      "$id": "#/definitions/SubscriptionRequest",
+      "type": "object",
+      "title": "Change Feed Subscription Request",
+      "required": ["pattern"],
+      "properties": {
+        "pattern": {
+          "$ref": "#/definitions/SubscriptionPattern"
+        },
+        "options": {
+          "type": "object",
+          "properties": {
+            "includeInitial": { "type": "boolean", "default": false },
+            "throttleMs": { "type": "integer", "minimum": 0 }
+          }
+        }
+      }
+    },
+
+    "SubscriptionPattern": {
+      "$id": "#/definitions/SubscriptionPattern",
+      "type": "object",
+      "title": "Subscription Pattern",
+      "properties": {
+        "subject": { "$ref": "#/definitions/Term" },
+        "predicate": { "$ref": "#/definitions/Term" },
+        "object": { "$ref": "#/definitions/Term" },
+        "graph": { "$ref": "#/definitions/Term" },
+        "sparqlFilter": { "type": "string" }
+      }
+    },
+
+    "ChangeEvent": {
+      "$id": "#/definitions/ChangeEvent",
+      "type": "object",
+      "title": "Change Event",
+      "required": ["type", "timestamp"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["add", "remove", "update"]
+        },
+        "quad": { "$ref": "#/definitions/Quad" },
+        "delta": { "$ref": "#/definitions/Delta" },
+        "transactionId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+
+    "FederationJoinRequest": {
+      "$id": "#/definitions/FederationJoinRequest",
+      "type": "object",
+      "title": "Federation Join Request",
+      "required": ["storeId", "endpoint"],
+      "properties": {
+        "storeId": {
+          "type": "string"
+        },
+        "endpoint": {
+          "type": "string",
+          "format": "uri"
+        },
+        "capabilities": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "weight": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "default": 1.0
+        },
+        "metadata": {
+          "type": "object"
+        }
+      }
+    },
+
+    "ReplicationMessage": {
+      "$id": "#/definitions/ReplicationMessage",
+      "type": "object",
+      "title": "Replication Message",
+      "required": ["type", "sourceStore", "sequence"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["delta", "snapshot", "ack", "nack"]
+        },
+        "sourceStore": {
+          "type": "string"
+        },
+        "sequence": {
+          "type": "integer"
+        },
+        "delta": { "$ref": "#/definitions/Delta" },
+        "vectorClock": {
+          "type": "object",
+          "additionalProperties": { "type": "integer" }
+        }
+      }
+    },
+
+    "AgentProposal": {
+      "$id": "#/definitions/AgentProposal",
+      "type": "object",
+      "title": "Agent Proposal",
+      "required": ["id", "agentId", "delta", "confidence"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "agentId": {
+          "type": "string"
+        },
+        "delta": { "$ref": "#/definitions/Delta" },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "priority": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100,
+          "default": 50
+        },
+        "timestamp": {
+          "type": "integer"
+        },
+        "dependencies": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+
+    "ResolutionRequest": {
+      "$id": "#/definitions/ResolutionRequest",
+      "type": "object",
+      "title": "Resolution Request",
+      "required": ["proposals"],
+      "properties": {
+        "proposals": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/AgentProposal" },
+          "minItems": 1
+        },
+        "strategy": {
+          "type": "string",
+          "enum": ["voting", "merging", "crdt", "consensus", "priority"],
+          "default": "voting"
+        },
+        "timeout": {
+          "type": "integer",
+          "default": 30000
+        },
+        "quorum": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "default": 0.5
+        }
+      }
+    },
+
+    "ResolutionResponse": {
+      "$id": "#/definitions/ResolutionResponse",
+      "type": "object",
+      "title": "Resolution Response",
+      "required": ["id", "resolvedDelta", "consensus"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "strategy": {
+          "type": "string"
+        },
+        "resolvedDelta": { "$ref": "#/definitions/Delta" },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "consensus": {
+          "type": "boolean"
+        },
+        "conflicts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "type": { "type": "string" },
+              "proposals": { "type": "array", "items": { "type": "string" } },
+              "resolution": { "type": "string" }
+            }
+          }
+        },
+        "duration": {
+          "type": "number"
+        }
+      }
+    }
+  }
+}

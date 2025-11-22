@@ -1,0 +1,151 @@
+@startuml Capability Orchestration Flow
+!theme plain
+title Autonomic System - Capability Orchestration Flow
+
+skinparam sequence {
+    ArrowColor #2C3E50
+    ActorBorderColor #2C3E50
+    LifeLineBorderColor #34495E
+    ParticipantBorderColor #2C3E50
+    ParticipantBackgroundColor #ECF0F1
+    NoteBackgroundColor #F9E79F
+}
+
+actor "Autonomic Agent" as Agent
+participant "Capability Registry\n(RDF Graph)" as Registry
+participant "SPARQL Engine" as SPARQL
+participant "Precondition\nChecker" as PreCheck
+participant "Capability\nExecutor" as Executor
+participant "State Machine" as StateMachine
+participant "Receipt\nGenerator" as Receipt
+database "Knowledge Graph" as KG
+
+== Phase 1: Capability Discovery via RDF Query ==
+Agent -> SPARQL: query capabilities for task
+note right of Agent
+**SPARQL Query:**
+```sparql
+SELECT ?capability ?precondition ?effect
+WHERE {
+  ?capability a cap:Capability ;
+    cap:domain ?domain ;
+    cap:precondition ?precondition ;
+    cap:effect ?effect .
+  FILTER(?domain = <task:domain>)
+}
+```
+end note
+
+SPARQL -> Registry: getQuads(capability patterns)
+Registry -> KG: fetch capability definitions
+KG --> Registry: RDF quads
+Registry --> SPARQL: capability bindings
+SPARQL --> Agent: matched capabilities (JSON-LD)
+
+== Phase 2: Precondition Checking ==
+Agent -> PreCheck: validatePreconditions(capabilities)
+loop for each capability
+    PreCheck -> SPARQL: ASK precondition query
+    note right of PreCheck
+    **ASK Query Example:**
+    ```sparql
+    ASK {
+      ?resource cap:available true ;
+        cap:state cap:Ready .
+    }
+    ```
+    end note
+    SPARQL --> PreCheck: boolean result
+    alt precondition met
+        PreCheck -> PreCheck: mark capability ready
+    else precondition failed
+        PreCheck -> PreCheck: mark capability blocked
+        PreCheck -> Agent: dependency chain needed
+    end
+end
+PreCheck --> Agent: validated capabilities[]
+
+== Phase 3: Parallel Capability Execution ==
+Agent -> StateMachine: transition(EXECUTING)
+StateMachine -> StateMachine: state = EXECUTING
+
+group Parallel Execution [Promise.all]
+    Agent -> Executor: execute(capability_1)
+    activate Executor
+    Agent -> Executor: execute(capability_2)
+    Agent -> Executor: execute(capability_n)
+
+    Executor -> KG: apply effects
+    note right of Executor
+    **Effect Application:**
+    ```turtle
+    ex:task cap:status cap:InProgress ;
+      cap:startedAt "timestamp"^^xsd:dateTime .
+    ```
+    end note
+
+    Executor --> Agent: result_1
+    Executor --> Agent: result_2
+    Executor --> Agent: result_n
+    deactivate Executor
+end
+
+Agent -> StateMachine: transition(COMPLETED)
+
+== Phase 4: Failure and Recovery ==
+alt Execution Success
+    Agent -> Receipt: generateReceipt(results)
+    Receipt -> KG: store provenance
+    note right of Receipt
+    **Receipt (JSON-LD):**
+    ```json
+    {
+      "@type": "cap:ExecutionReceipt",
+      "cap:capability": "cap:Transform",
+      "cap:status": "cap:Completed",
+      "cap:duration": "PT2.5S",
+      "cap:hash": "sha256:abc..."
+    }
+    ```
+    end note
+    Receipt --> Agent: cryptographic receipt
+    Agent -> StateMachine: transition(SUCCESS)
+else Execution Failure
+    Agent -> StateMachine: transition(FAILED)
+    StateMachine -> StateMachine: increment retryCount
+
+    alt retryCount < maxRetries
+        StateMachine -> Agent: retry signal
+        Agent -> Executor: execute(capability) [retry]
+    else maxRetries exceeded
+        StateMachine -> Agent: escalate failure
+        Agent -> KG: record failure provenance
+        note right of Agent
+        **Failure Record:**
+        ```turtle
+        ex:execution cap:status cap:Failed ;
+          cap:errorCode "E001" ;
+          cap:errorMessage "Resource unavailable" ;
+          cap:failedAt "timestamp"^^xsd:dateTime .
+        ```
+        end note
+    end
+end
+
+== State Transition Diagram ==
+state "Capability States" as CapStates {
+    [*] --> DISCOVERED : capabilities found
+    DISCOVERED --> VALIDATING : check preconditions
+    VALIDATING --> READY : preconditions met
+    VALIDATING --> BLOCKED : preconditions failed
+    BLOCKED --> VALIDATING : dependencies resolved
+    READY --> EXECUTING : start execution
+    EXECUTING --> COMPLETED : success
+    EXECUTING --> FAILED : error
+    FAILED --> EXECUTING : retry
+    FAILED --> ESCALATED : max retries
+    COMPLETED --> [*]
+    ESCALATED --> [*]
+}
+
+@enduml

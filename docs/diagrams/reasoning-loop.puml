@@ -1,0 +1,334 @@
+@startuml Autonomous Reasoning Loop
+!theme plain
+title Autonomous Reasoning Loop - RDF Query to Decision
+
+skinparam sequence {
+    ArrowColor #2C3E50
+    ActorBorderColor #2C3E50
+    LifeLineBorderColor #34495E
+    ParticipantBorderColor #2C3E50
+    ParticipantBackgroundColor #ECF0F1
+    NoteBackgroundColor #F9E79F
+}
+
+actor "Autonomic Agent" as Agent
+participant "Query Formulator" as Formulator
+participant "SPARQL Engine\n(Comunica)" as SPARQL
+participant "N3 Reasoner\n(EYE)" as N3Reasoner
+participant "Proof Generator" as ProofGen
+participant "Decision Engine" as Decision
+participant "Action Planner" as Planner
+database "Knowledge Graph" as KG
+database "Rule Base" as Rules
+
+== Phase 1: RDF Query Formulation ==
+Agent -> Formulator: formulateQuery(goal)
+note right of Agent
+**Agent Goal:**
+```javascript
+{
+  objective: 'Find optimal resource allocation',
+  constraints: ['budget < 10000', 'deadline < 7days'],
+  context: { project: 'ex:Project1' }
+}
+```
+end note
+
+Formulator -> Formulator: analyzeGoal()
+Formulator -> Formulator: identifyPatterns()
+Formulator -> Formulator: buildSPARQL()
+
+note right of Formulator
+**Generated SPARQL:**
+```sparql
+PREFIX ex: <http://example.org/>
+PREFIX schema: <http://schema.org/>
+
+SELECT ?resource ?cost ?availability WHERE {
+  ?resource a ex:Resource ;
+    ex:cost ?cost ;
+    ex:availableFor ?project ;
+    ex:availability ?availability .
+
+  ?project ex:budget ?budget ;
+    ex:deadline ?deadline .
+
+  FILTER(?cost <= ?budget)
+  FILTER(?availability <= ?deadline)
+}
+ORDER BY ASC(?cost)
+```
+end note
+
+Formulator --> Agent: sparqlQuery
+
+== Phase 2: Knowledge Graph Query ==
+Agent -> SPARQL: executeQuery(sparql)
+SPARQL -> KG: getQuads(patterns)
+
+note right of SPARQL
+**Query Execution:**
+1. Parse SPARQL
+2. Optimize query plan
+3. Execute against store
+4. Apply filters
+5. Return bindings
+end note
+
+KG --> SPARQL: matchingQuads
+SPARQL -> SPARQL: applyFilters()
+SPARQL -> SPARQL: orderResults()
+
+SPARQL --> Agent: queryResults
+note right of SPARQL
+**Query Results:**
+```javascript
+[
+  { resource: 'ex:Dev1', cost: 5000, availability: '2024-01-20' },
+  { resource: 'ex:Dev2', cost: 7500, availability: '2024-01-18' },
+  { resource: 'ex:Tool1', cost: 1000, availability: '2024-01-15' }
+]
+```
+end note
+
+== Phase 3: N3 Rule Application ==
+Agent -> N3Reasoner: applyRules(data, rules)
+
+N3Reasoner -> Rules: loadRules()
+Rules --> N3Reasoner: n3Rules
+
+note right of N3Reasoner
+**N3 Rules:**
+```n3
+@prefix ex: <http://example.org/> .
+@prefix log: <http://www.w3.org/2000/10/swap/log#> .
+
+# Rule 1: Optimal resource selection
+{
+  ?resource ex:cost ?cost ;
+    ex:availability ?avail .
+  ?project ex:budget ?budget ;
+    ex:deadline ?deadline .
+  ?cost log:lessThan ?budget .
+  ?avail log:lessThan ?deadline .
+} => {
+  ?resource ex:eligibleFor ?project ;
+    ex:score [ ex:costEfficiency (?budget - ?cost) ] .
+} .
+
+# Rule 2: Risk assessment
+{
+  ?resource ex:eligibleFor ?project ;
+    ex:availability ?avail .
+  ?project ex:deadline ?deadline .
+  (?deadline ?avail) math:difference ?margin .
+  ?margin log:lessThan 3 .
+} => {
+  ?resource ex:riskLevel ex:High .
+} .
+
+# Rule 3: Recommendation
+{
+  ?resource ex:eligibleFor ?project ;
+    ex:riskLevel ?risk .
+  ?risk log:notEqualTo ex:High .
+} => {
+  ?resource ex:recommended true .
+} .
+```
+end note
+
+N3Reasoner -> KG: getData()
+KG --> N3Reasoner: dataQuads
+
+N3Reasoner -> N3Reasoner: forwardChaining()
+
+group Forward Chaining Loop
+    loop until fixpoint
+        N3Reasoner -> N3Reasoner: matchRulePatterns()
+        N3Reasoner -> N3Reasoner: fireMatchingRules()
+        N3Reasoner -> N3Reasoner: addInferredQuads()
+        N3Reasoner -> N3Reasoner: checkFixpoint()
+    end
+end
+
+N3Reasoner --> Agent: inferredKnowledge
+note right of N3Reasoner
+**Inferred Knowledge:**
+```turtle
+ex:Dev1 ex:eligibleFor ex:Project1 ;
+  ex:score [ ex:costEfficiency 5000 ] ;
+  ex:riskLevel ex:Low ;
+  ex:recommended true .
+
+ex:Dev2 ex:eligibleFor ex:Project1 ;
+  ex:score [ ex:costEfficiency 2500 ] ;
+  ex:riskLevel ex:Medium .
+
+ex:Tool1 ex:eligibleFor ex:Project1 ;
+  ex:score [ ex:costEfficiency 9000 ] ;
+  ex:riskLevel ex:High .
+```
+end note
+
+== Phase 4: Proof Generation ==
+Agent -> ProofGen: generateProof(inference)
+ProofGen -> ProofGen: traceDerivation()
+
+note right of ProofGen
+**Proof Trace:**
+```n3
+# Step 1: Pattern Match
+_:e1 a r:Extraction ;
+  r:because [ r:rule <rule1> ;
+    r:binding [
+      r:variable [ r:name "?resource" ; r:value ex:Dev1 ] ;
+      r:variable [ r:name "?cost" ; r:value 5000 ] ;
+      r:variable [ r:name "?budget" ; r:value 10000 ]
+    ]
+  ] .
+
+# Step 2: Rule Application
+_:e2 a r:Inference ;
+  r:gives { ex:Dev1 ex:eligibleFor ex:Project1 } ;
+  r:because [ r:rule <rule1> ; r:evidence _:e1 ] .
+
+# Step 3: Chained Inference
+_:e3 a r:Inference ;
+  r:gives { ex:Dev1 ex:recommended true } ;
+  r:because [ r:rule <rule3> ; r:evidence _:e2 ] .
+```
+end note
+
+ProofGen -> ProofGen: buildProofTree()
+ProofGen -> ProofGen: validateProof()
+
+ProofGen --> Agent: verifiableProof
+
+== Phase 5: Decision Making ==
+Agent -> Decision: makeDecision(knowledge, proof)
+
+Decision -> Decision: evaluateOptions()
+note right of Decision
+**Decision Criteria:**
+```javascript
+{
+  criteria: [
+    { name: 'costEfficiency', weight: 0.4 },
+    { name: 'riskLevel', weight: 0.3 },
+    { name: 'availability', weight: 0.3 }
+  ],
+  aggregation: 'weighted_sum'
+}
+```
+end note
+
+Decision -> Decision: scoreAlternatives()
+note right of Decision
+**Scoring:**
+```javascript
+scores = {
+  'ex:Dev1': 0.4*5000/10000 + 0.3*(1-0.1) + 0.3*0.8 = 0.71,
+  'ex:Dev2': 0.4*2500/10000 + 0.3*(1-0.3) + 0.3*0.9 = 0.58,
+  'ex:Tool1': 0.4*9000/10000 + 0.3*(1-0.8) + 0.3*0.95 = 0.65
+}
+winner = 'ex:Dev1' (score: 0.71)
+```
+end note
+
+Decision -> Decision: selectOptimal()
+Decision -> Decision: justifyDecision()
+
+Decision --> Agent: decision
+note right of Decision
+**Decision Output:**
+```javascript
+{
+  selected: 'ex:Dev1',
+  score: 0.71,
+  justification: {
+    proofRef: '_:e3',
+    criteria: {
+      costEfficiency: 'Within budget (50% savings)',
+      riskLevel: 'Low risk (5-day margin)',
+      availability: 'Good availability (80%)'
+    },
+    alternatives: ['ex:Dev2', 'ex:Tool1'],
+    confidence: 0.85
+  }
+}
+```
+end note
+
+== Phase 6: Action Planning ==
+Agent -> Planner: planActions(decision)
+
+Planner -> Planner: decomposeGoal()
+Planner -> Planner: orderActions()
+
+note right of Planner
+**Action Plan:**
+```javascript
+{
+  goal: 'allocate_resource',
+  steps: [
+    { action: 'reserve', target: 'ex:Dev1', params: { project: 'ex:Project1' } },
+    { action: 'notify', target: 'ex:ProjectManager', params: { allocation: 'ex:Dev1' } },
+    { action: 'update', target: 'ex:Budget', params: { deduct: 5000 } },
+    { action: 'schedule', target: 'ex:Dev1', params: { start: '2024-01-15' } }
+  ],
+  contingency: {
+    if: 'ex:Dev1 unavailable',
+    then: 'fallback to ex:Tool1'
+  }
+}
+```
+end note
+
+Planner --> Agent: actionPlan
+
+Agent -> KG: executeActions(plan)
+note right of Agent
+**Executed Updates:**
+```turtle
+ex:Project1 ex:allocatedResource ex:Dev1 ;
+  ex:allocationDate "2024-01-15"^^xsd:date ;
+  ex:remainingBudget 5000 ;
+  ex:decisionProof _:e3 .
+
+ex:Dev1 ex:assignedTo ex:Project1 ;
+  ex:assignmentStatus ex:Confirmed .
+```
+end note
+
+== Reasoning Loop State Machine ==
+state "Reasoning States" as ReasoningStates {
+    [*] --> FORMULATING : receive goal
+    FORMULATING --> QUERYING : SPARQL ready
+    QUERYING --> REASONING : results received
+    REASONING --> PROVING : inferences complete
+    PROVING --> DECIDING : proof validated
+    DECIDING --> PLANNING : decision made
+    PLANNING --> EXECUTING : plan ready
+    EXECUTING --> MONITORING : actions started
+    MONITORING --> FORMULATING : new information
+    MONITORING --> COMPLETED : goal achieved
+
+    QUERYING --> FORMULATING : no results (refine query)
+    REASONING --> QUERYING : need more data
+    DECIDING --> REASONING : insufficient evidence
+    EXECUTING --> PLANNING : action failed (replan)
+
+    COMPLETED --> [*]
+}
+
+== Continuous Reasoning Loop ==
+note over Agent, KG
+**Autonomous Operation:**
+The agent continuously monitors the knowledge graph
+for changes that might invalidate decisions or trigger
+new reasoning cycles. This creates a reactive system
+that adapts to environmental changes.
+end note
+
+@enduml

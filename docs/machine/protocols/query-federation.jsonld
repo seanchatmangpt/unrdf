@@ -1,0 +1,336 @@
+{
+  "@context": {
+    "@vocab": "https://unrdf.org/schema/",
+    "unrdf": "https://unrdf.org/schema/",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "proto": "https://unrdf.org/protocol/",
+    "state": "https://unrdf.org/state/federation/",
+    "event": "https://unrdf.org/event/federation/",
+    "transition": { "@id": "unrdf:transition", "@type": "@id" },
+    "from": { "@id": "unrdf:from", "@type": "@id" },
+    "to": { "@id": "unrdf:to", "@type": "@id" }
+  },
+  "@graph": [
+    {
+      "@id": "proto:QueryFederation",
+      "@type": "unrdf:Protocol",
+      "rdfs:label": "Query Federation Protocol",
+      "rdfs:comment": "Distributed SPARQL query execution across federated stores",
+      "unrdf:version": "1.0.0",
+      "unrdf:initialState": "state:Idle",
+      "unrdf:terminalStates": ["state:ResultsReturned", "state:QueryFailed"],
+      "unrdf:states": [
+        "state:Idle",
+        "state:QueryParsing",
+        "state:PlanOptimization",
+        "state:StoreSelection",
+        "state:QueryDistribution",
+        "state:ParallelExecution",
+        "state:ResultAggregation",
+        "state:ResultsReturned",
+        "state:QueryFailed"
+      ]
+    },
+
+    {
+      "@id": "state:Idle",
+      "@type": "unrdf:State",
+      "rdfs:label": "Idle",
+      "rdfs:comment": "Federation coordinator ready for queries"
+    },
+
+    {
+      "@id": "state:QueryParsing",
+      "@type": "unrdf:State",
+      "rdfs:label": "Query Parsing",
+      "rdfs:comment": "Parsing SPARQL query into AST",
+      "unrdf:entryActions": ["action:parseSPARQL", "action:extractPatterns"],
+      "unrdf:timeout": 5000
+    },
+
+    {
+      "@id": "state:PlanOptimization",
+      "@type": "unrdf:State",
+      "rdfs:label": "Plan Optimization",
+      "rdfs:comment": "Optimizing query execution plan",
+      "unrdf:entryActions": [
+        "action:analyzeSelectivity",
+        "action:optimizeJoinOrder",
+        "action:identifyPushdown"
+      ],
+      "unrdf:timeout": 10000
+    },
+
+    {
+      "@id": "state:StoreSelection",
+      "@type": "unrdf:State",
+      "rdfs:label": "Store Selection",
+      "rdfs:comment": "Selecting stores for query patterns",
+      "unrdf:entryActions": [
+        "action:evaluateStoreCapabilities",
+        "action:checkStoreHealth",
+        "action:computeRouting"
+      ]
+    },
+
+    {
+      "@id": "state:QueryDistribution",
+      "@type": "unrdf:State",
+      "rdfs:label": "Query Distribution",
+      "rdfs:comment": "Distributing sub-queries to selected stores",
+      "unrdf:entryActions": [
+        "action:createSubQueries",
+        "action:applyPushdown",
+        "action:dispatchQueries"
+      ]
+    },
+
+    {
+      "@id": "state:ParallelExecution",
+      "@type": "unrdf:State",
+      "rdfs:label": "Parallel Execution",
+      "rdfs:comment": "Executing sub-queries in parallel across stores",
+      "unrdf:entryActions": ["action:monitorExecution", "action:handleTimeouts"],
+      "unrdf:timeout": 60000
+    },
+
+    {
+      "@id": "state:ResultAggregation",
+      "@type": "unrdf:State",
+      "rdfs:label": "Result Aggregation",
+      "rdfs:comment": "Aggregating and joining results from stores",
+      "unrdf:entryActions": [
+        "action:collectResults",
+        "action:performJoins",
+        "action:applyProjection",
+        "action:sortAndLimit"
+      ]
+    },
+
+    {
+      "@id": "state:ResultsReturned",
+      "@type": "unrdf:State",
+      "rdfs:label": "Results Returned",
+      "rdfs:comment": "Query completed successfully",
+      "unrdf:entryActions": ["action:emitQueryMetrics", "action:cacheResults"],
+      "unrdf:isFinal": true
+    },
+
+    {
+      "@id": "state:QueryFailed",
+      "@type": "unrdf:State",
+      "rdfs:label": "Query Failed",
+      "rdfs:comment": "Query execution failed",
+      "unrdf:entryActions": ["action:recordFailure", "action:notifyStores"],
+      "unrdf:isFinal": true
+    },
+
+    {
+      "@id": "proto:transition:IdleToParsing",
+      "@type": "unrdf:Transition",
+      "from": "state:Idle",
+      "to": "state:QueryParsing",
+      "trigger": "event:QuerySubmitted",
+      "guard": "query.length > 0",
+      "action": "action:initializeQueryContext"
+    },
+
+    {
+      "@id": "proto:transition:ParsingToOptimization",
+      "@type": "unrdf:Transition",
+      "from": "state:QueryParsing",
+      "to": "state:PlanOptimization",
+      "trigger": "event:QueryParsed",
+      "guard": "ast !== null && ast.type in ['SelectQuery', 'AskQuery', 'ConstructQuery']"
+    },
+
+    {
+      "@id": "proto:transition:OptimizationToSelection",
+      "@type": "unrdf:Transition",
+      "from": "state:PlanOptimization",
+      "to": "state:StoreSelection",
+      "trigger": "event:PlanOptimized",
+      "guard": "plan.cost < Infinity"
+    },
+
+    {
+      "@id": "proto:transition:SelectionToDistribution",
+      "@type": "unrdf:Transition",
+      "from": "state:StoreSelection",
+      "to": "state:QueryDistribution",
+      "trigger": "event:StoresSelected",
+      "guard": "selectedStores.length > 0 && selectedStores.every(s => s.health === 'healthy')"
+    },
+
+    {
+      "@id": "proto:transition:DistributionToExecution",
+      "@type": "unrdf:Transition",
+      "from": "state:QueryDistribution",
+      "to": "state:ParallelExecution",
+      "trigger": "event:QueriesDispatched",
+      "guard": "dispatchedQueries.length > 0"
+    },
+
+    {
+      "@id": "proto:transition:ExecutionToAggregation",
+      "@type": "unrdf:Transition",
+      "from": "state:ParallelExecution",
+      "to": "state:ResultAggregation",
+      "trigger": "event:AllResultsReceived",
+      "guard": "partialResults.length === dispatchedQueries.length"
+    },
+
+    {
+      "@id": "proto:transition:AggregationToReturned",
+      "@type": "unrdf:Transition",
+      "from": "state:ResultAggregation",
+      "to": "state:ResultsReturned",
+      "trigger": "event:ResultsAggregated",
+      "guard": "aggregatedResults !== null"
+    },
+
+    {
+      "@id": "proto:transition:AnyToFailed",
+      "@type": "unrdf:Transition",
+      "from": ["state:QueryParsing", "state:PlanOptimization", "state:StoreSelection", "state:QueryDistribution", "state:ParallelExecution", "state:ResultAggregation"],
+      "to": "state:QueryFailed",
+      "trigger": "event:Error",
+      "guard": "error.fatal || retries >= maxRetries"
+    },
+
+    {
+      "@id": "event:QuerySubmitted",
+      "@type": "unrdf:Event",
+      "rdfs:label": "Query Submitted",
+      "unrdf:payload": {
+        "query": "xsd:string",
+        "options": {
+          "timeout": "xsd:integer",
+          "limit": "xsd:integer",
+          "preferredStores": "array"
+        }
+      }
+    },
+
+    {
+      "@id": "event:QueryParsed",
+      "@type": "unrdf:Event",
+      "rdfs:label": "Query Parsed",
+      "unrdf:payload": {
+        "ast": "object",
+        "patterns": "array",
+        "variables": "array"
+      }
+    },
+
+    {
+      "@id": "event:PlanOptimized",
+      "@type": "unrdf:Event",
+      "rdfs:label": "Plan Optimized",
+      "unrdf:payload": {
+        "plan": "object",
+        "estimatedCost": "xsd:decimal",
+        "pushdownOperations": "array"
+      }
+    },
+
+    {
+      "@id": "event:StoresSelected",
+      "@type": "unrdf:Event",
+      "rdfs:label": "Stores Selected",
+      "unrdf:payload": {
+        "stores": "array",
+        "routing": "object"
+      }
+    },
+
+    {
+      "@id": "event:QueriesDispatched",
+      "@type": "unrdf:Event",
+      "rdfs:label": "Queries Dispatched",
+      "unrdf:payload": {
+        "subQueries": "array",
+        "dispatchTime": "xsd:dateTime"
+      }
+    },
+
+    {
+      "@id": "event:AllResultsReceived",
+      "@type": "unrdf:Event",
+      "rdfs:label": "All Results Received",
+      "unrdf:payload": {
+        "partialResults": "array",
+        "totalDuration": "xsd:decimal"
+      }
+    },
+
+    {
+      "@id": "event:ResultsAggregated",
+      "@type": "unrdf:Event",
+      "rdfs:label": "Results Aggregated",
+      "unrdf:payload": {
+        "results": "array",
+        "totalCount": "xsd:integer"
+      }
+    },
+
+    {
+      "@id": "unrdf:executionStrategies",
+      "@type": "unrdf:StrategySet",
+      "unrdf:strategies": [
+        {
+          "@id": "proto:strategy:Parallel",
+          "@type": "unrdf:ExecutionStrategy",
+          "rdfs:label": "Parallel Execution",
+          "rdfs:comment": "Execute all sub-queries in parallel",
+          "unrdf:applicableWhen": "subQueries.every(q => !q.dependsOn)"
+        },
+        {
+          "@id": "proto:strategy:Sequential",
+          "@type": "unrdf:ExecutionStrategy",
+          "rdfs:label": "Sequential Execution",
+          "rdfs:comment": "Execute sub-queries in dependency order",
+          "unrdf:applicableWhen": "subQueries.some(q => q.dependsOn.length > 0)"
+        },
+        {
+          "@id": "proto:strategy:Adaptive",
+          "@type": "unrdf:ExecutionStrategy",
+          "rdfs:label": "Adaptive Execution",
+          "rdfs:comment": "Dynamically adjust based on intermediate results",
+          "unrdf:applicableWhen": "true"
+        }
+      ]
+    },
+
+    {
+      "@id": "unrdf:loadBalancingStrategies",
+      "@type": "unrdf:StrategySet",
+      "unrdf:strategies": [
+        {
+          "@id": "proto:lb:RoundRobin",
+          "@type": "unrdf:LoadBalancingStrategy",
+          "rdfs:label": "Round Robin"
+        },
+        {
+          "@id": "proto:lb:Weighted",
+          "@type": "unrdf:LoadBalancingStrategy",
+          "rdfs:label": "Weighted",
+          "rdfs:comment": "Route based on store weights/capacities"
+        },
+        {
+          "@id": "proto:lb:LeastConnections",
+          "@type": "unrdf:LoadBalancingStrategy",
+          "rdfs:label": "Least Connections"
+        },
+        {
+          "@id": "proto:lb:ContentBased",
+          "@type": "unrdf:LoadBalancingStrategy",
+          "rdfs:label": "Content-Based",
+          "rdfs:comment": "Route based on data locality"
+        }
+      ]
+    }
+  ]
+}

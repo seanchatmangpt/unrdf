@@ -1,0 +1,380 @@
+@startuml Multi-Agent Swarm Coordination
+!theme plain
+title Multi-Agent Swarm Coordination Protocol
+
+skinparam sequence {
+    ArrowColor #2C3E50
+    ActorBorderColor #2C3E50
+    LifeLineBorderColor #34495E
+    ParticipantBorderColor #2C3E50
+    ParticipantBackgroundColor #ECF0F1
+    NoteBackgroundColor #F9E79F
+}
+
+box "Swarm Coordinator" #LightYellow
+    participant "Coordinator\nAgent" as Coord
+end box
+
+box "Agent Pool" #LightBlue
+    participant "Agent A\n(Researcher)" as AgentA
+    participant "Agent B\n(Coder)" as AgentB
+    participant "Agent C\n(Tester)" as AgentC
+    participant "Agent D\n(Reviewer)" as AgentD
+end box
+
+participant "Gossip Protocol" as Gossip
+participant "Capability\nRegistry" as CapReg
+participant "Consensus\nEngine" as Consensus
+database "Shared Memory\n(CRDT)" as Memory
+
+== Phase 1: Agent Gossip Protocol ==
+note over AgentA, AgentD
+**Gossip Protocol:**
+Agents periodically exchange state information
+with random peers to maintain consistency
+end note
+
+AgentA -> Gossip: heartbeat({ id: 'A', capabilities, load: 0.3 })
+AgentB -> Gossip: heartbeat({ id: 'B', capabilities, load: 0.7 })
+AgentC -> Gossip: heartbeat({ id: 'C', capabilities, load: 0.2 })
+AgentD -> Gossip: heartbeat({ id: 'D', capabilities, load: 0.5 })
+
+Gossip -> Gossip: selectRandomPeers(3)
+
+group Gossip Round
+    Gossip -> AgentA: exchange(stateB)
+    Gossip -> AgentB: exchange(stateC)
+    Gossip -> AgentC: exchange(stateD)
+    Gossip -> AgentD: exchange(stateA)
+
+    note right of Gossip
+    **Gossip Message:**
+    ```json
+    {
+      "type": "gossip",
+      "sender": "AgentB",
+      "epoch": 42,
+      "state": {
+        "id": "AgentB",
+        "capabilities": ["code", "refactor"],
+        "load": 0.7,
+        "tasks": ["task-123"],
+        "vector_clock": { "A": 5, "B": 12, "C": 8, "D": 10 }
+      },
+      "known_agents": ["A", "C", "D"],
+      "rumor": { "AgentE": "joining" }
+    }
+    ```
+    end note
+
+    AgentA -> AgentA: mergeState(stateB)
+    AgentB -> AgentB: mergeState(stateC)
+    AgentC -> AgentC: mergeState(stateD)
+    AgentD -> AgentD: mergeState(stateA)
+end
+
+Gossip -> Gossip: incrementEpoch()
+
+== Phase 2: Capability Sharing ==
+Coord -> CapReg: queryCapabilities(task)
+note right of Coord
+**Task Requirements:**
+```json
+{
+  "task": "implement_feature",
+  "required_capabilities": ["research", "code", "test", "review"],
+  "priority": "high",
+  "deadline": "2024-01-20"
+}
+```
+end note
+
+CapReg -> CapReg: buildCapabilityMatrix()
+
+note right of CapReg
+**Capability Matrix:**
+```
+        | research | code | test | review |
+--------|----------|------|------|--------|
+Agent A |    X     |      |      |        |
+Agent B |          |  X   |      |   X    |
+Agent C |          |      |  X   |        |
+Agent D |          |  X   |      |   X    |
+```
+end note
+
+CapReg --> Coord: capabilityMap
+
+Coord -> Coord: matchCapabilitiesToAgents()
+
+group Capability Advertisement
+    AgentA -> CapReg: advertise({ research: { level: 'expert', available: true } })
+    AgentB -> CapReg: advertise({ code: { level: 'senior', available: true }, review: { level: 'junior' } })
+    AgentC -> CapReg: advertise({ test: { level: 'expert', available: true } })
+    AgentD -> CapReg: advertise({ code: { level: 'mid' }, review: { level: 'senior', available: false } })
+end
+
+== Phase 3: Distributed Decision Making ==
+Coord -> Consensus: proposeTaskAssignment(assignments)
+
+note right of Coord
+**Proposed Assignments:**
+```json
+{
+  "task": "implement_feature",
+  "assignments": [
+    { "subtask": "research", "agent": "A", "confidence": 0.95 },
+    { "subtask": "code", "agent": "B", "confidence": 0.88 },
+    { "subtask": "test", "agent": "C", "confidence": 0.92 },
+    { "subtask": "review", "agent": "D", "confidence": 0.85 }
+  ],
+  "estimated_completion": "2024-01-18"
+}
+```
+end note
+
+group Byzantine Fault Tolerant Consensus
+    Consensus -> AgentA: REQUEST_VOTE(proposal)
+    Consensus -> AgentB: REQUEST_VOTE(proposal)
+    Consensus -> AgentC: REQUEST_VOTE(proposal)
+    Consensus -> AgentD: REQUEST_VOTE(proposal)
+
+    AgentA -> AgentA: evaluateProposal()
+    AgentB -> AgentB: evaluateProposal()
+    AgentC -> AgentC: evaluateProposal()
+    AgentD -> AgentD: evaluateProposal()
+
+    note right of AgentA
+    **Vote Evaluation:**
+    ```javascript
+    function evaluateProposal(proposal) {
+      const myCapabilities = getCapabilities();
+      const assignedTask = proposal.assignments.find(a => a.agent === myId);
+
+      // Check if I can do the assigned task
+      if (!myCapabilities.includes(assignedTask.subtask)) {
+        return { vote: 'REJECT', reason: 'capability_mismatch' };
+      }
+
+      // Check load capacity
+      if (currentLoad > 0.8) {
+        return { vote: 'REJECT', reason: 'overloaded' };
+      }
+
+      return { vote: 'ACCEPT', commitment: assignedTask };
+    }
+    ```
+    end note
+
+    AgentA --> Consensus: VOTE(ACCEPT)
+    AgentB --> Consensus: VOTE(ACCEPT)
+    AgentC --> Consensus: VOTE(ACCEPT)
+    AgentD --> Consensus: VOTE(REJECT, overloaded)
+
+    Consensus -> Consensus: tallyVotes()
+    note right of Consensus
+    **Consensus Check:**
+    ```javascript
+    const votes = { accept: 3, reject: 1 };
+    const threshold = Math.ceil(agents.length * 2 / 3);
+    // threshold = 3, accept >= 3
+    // Consensus: ACHIEVED (despite 1 rejection)
+    ```
+    end note
+end
+
+alt consensus achieved
+    Consensus -> Consensus: handleRejection(AgentD)
+    Consensus -> CapReg: findAlternative(review)
+    CapReg --> Consensus: AgentB (secondary capability)
+
+    Consensus -> Consensus: amendProposal()
+    note right of Consensus
+    **Amended Assignment:**
+    ```json
+    {
+      "subtask": "review",
+      "agent": "B",
+      "mode": "sequential_after_code"
+    }
+    ```
+    end note
+
+    Consensus --> Coord: CONSENSUS_ACHIEVED
+else consensus failed
+    Consensus --> Coord: CONSENSUS_FAILED
+    Coord -> Coord: escalateOrRetry()
+end
+
+== Phase 4: Consensus Achievement ==
+Coord -> Memory: commitDecision(finalAssignments)
+
+note right of Memory
+**CRDT Merge (LWW-Map):**
+```javascript
+{
+  "task:implement_feature": {
+    "status": "assigned",
+    "assignments": {
+      "research": { "agent": "A", "timestamp": 1705320000 },
+      "code": { "agent": "B", "timestamp": 1705320000 },
+      "test": { "agent": "C", "timestamp": 1705320000 },
+      "review": { "agent": "B", "timestamp": 1705320001 }
+    },
+    "consensus_epoch": 42,
+    "signatures": ["sigA", "sigB", "sigC"]
+  }
+}
+```
+end note
+
+Memory -> AgentA: sync(decision)
+Memory -> AgentB: sync(decision)
+Memory -> AgentC: sync(decision)
+Memory -> AgentD: sync(decision)
+
+== Phase 5: Coordinated Execution ==
+group Parallel Task Execution
+    AgentA -> AgentA: startTask(research)
+    AgentA -> Memory: updateProgress({ research: 0.0 })
+
+    loop research phase
+        AgentA -> AgentA: executeResearch()
+        AgentA -> Memory: updateProgress({ research: progress })
+        AgentA -> Gossip: broadcast(progress)
+    end
+
+    AgentA -> Memory: completeTask({ research: 1.0, output: results })
+    AgentA -> AgentB: handoff(researchResults)
+end
+
+note right of AgentA
+**Task Handoff (RDF):**
+```turtle
+ex:Task/research ex:completedBy ex:AgentA ;
+  ex:output ex:ResearchResults/123 ;
+  ex:completedAt "2024-01-16T10:00:00Z"^^xsd:dateTime ;
+  ex:nextTask ex:Task/code ;
+  ex:assignedTo ex:AgentB .
+
+ex:ResearchResults/123 ex:contains [
+  ex:finding "Pattern X is optimal" ;
+  ex:confidence 0.92
+] .
+```
+end note
+
+group Sequential Execution (code -> review)
+    AgentB -> AgentB: startTask(code, researchResults)
+    AgentB -> Memory: updateProgress({ code: 0.0 })
+
+    loop coding phase
+        AgentB -> AgentB: implementCode()
+        AgentB -> Memory: updateProgress({ code: progress })
+    end
+
+    AgentB -> Memory: completeTask({ code: 1.0, output: implementation })
+
+    AgentB -> AgentB: startTask(review, implementation)
+    note right of AgentB
+    **Self-review flag:**
+    AgentB reviews own code with
+    additional scrutiny rules applied
+    end note
+end
+
+group Parallel Testing
+    AgentC -> AgentC: startTask(test, implementation)
+
+    par Unit Tests
+        AgentC -> AgentC: runUnitTests()
+    and Integration Tests
+        AgentC -> AgentC: runIntegrationTests()
+    and Performance Tests
+        AgentC -> AgentC: runPerfTests()
+    end
+
+    AgentC -> Memory: completeTask({ test: 1.0, output: testResults })
+end
+
+== Phase 6: Swarm Completion ==
+Coord -> Memory: checkAllTasksComplete()
+Memory --> Coord: { complete: true, results: [...] }
+
+Coord -> Consensus: finalizeTask(results)
+
+group Final Consensus
+    Consensus -> AgentA: VERIFY_COMPLETION
+    Consensus -> AgentB: VERIFY_COMPLETION
+    Consensus -> AgentC: VERIFY_COMPLETION
+
+    AgentA --> Consensus: VERIFIED
+    AgentB --> Consensus: VERIFIED
+    AgentC --> Consensus: VERIFIED
+end
+
+Coord -> Memory: recordCompletion(taskId, proof)
+
+note right of Coord
+**Completion Record (JSON-LD):**
+```json
+{
+  "@context": "https://unrdf.org/context/swarm",
+  "@type": "swarm:TaskCompletion",
+  "swarm:taskId": "implement_feature",
+  "swarm:status": "completed",
+  "swarm:agents": ["A", "B", "C"],
+  "swarm:duration": "PT48H",
+  "swarm:consensus": {
+    "epoch": 42,
+    "votes": 3,
+    "threshold": 3
+  },
+  "swarm:outputs": [
+    { "@id": "ex:ResearchResults/123" },
+    { "@id": "ex:Implementation/456" },
+    { "@id": "ex:TestResults/789" }
+  ],
+  "swarm:proof": "sha256:abc..."
+}
+```
+end note
+
+== Swarm State Machine ==
+state "Swarm Coordination States" as SwarmStates {
+    [*] --> INITIALIZING : swarm created
+    INITIALIZING --> DISCOVERING : agents registered
+    DISCOVERING --> PROPOSING : capabilities mapped
+    PROPOSING --> VOTING : assignments proposed
+    VOTING --> COMMITTED : consensus achieved
+    VOTING --> PROPOSING : consensus failed (retry)
+    COMMITTED --> EXECUTING : tasks assigned
+
+    state EXECUTING {
+        [*] --> PARALLEL
+        PARALLEL --> SEQUENTIAL : dependencies
+        SEQUENTIAL --> PARALLEL : handoff complete
+        PARALLEL --> AGGREGATING : all parallel done
+        SEQUENTIAL --> AGGREGATING : all sequential done
+    }
+
+    EXECUTING --> VERIFYING : tasks complete
+    VERIFYING --> COMPLETED : verified
+    VERIFYING --> EXECUTING : verification failed
+    COMPLETED --> [*]
+}
+
+== Gossip Protocol State ==
+state "Gossip States" as GossipStates {
+    [*] --> IDLE
+    IDLE --> SELECTING : gossip timer
+    SELECTING --> EXCHANGING : peers selected
+    EXCHANGING --> MERGING : messages received
+    MERGING --> IDLE : state merged
+
+    IDLE --> FAILURE_DETECTED : heartbeat timeout
+    FAILURE_DETECTED --> PROPAGATING : failure rumor
+    PROPAGATING --> IDLE : rumor spread
+}
+
+@enduml

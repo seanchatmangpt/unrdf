@@ -1,0 +1,300 @@
+{
+  "@context": {
+    "@vocab": "https://unrdf.org/schema/",
+    "unrdf": "https://unrdf.org/schema/",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "proto": "https://unrdf.org/protocol/",
+    "state": "https://unrdf.org/state/consensus/",
+    "event": "https://unrdf.org/event/consensus/"
+  },
+  "@graph": [
+    {
+      "@id": "proto:RAFTConsensus",
+      "@type": "unrdf:Protocol",
+      "rdfs:label": "RAFT Consensus Protocol",
+      "rdfs:comment": "RAFT-based consensus for distributed RDF store coordination",
+      "unrdf:version": "1.0.0",
+      "unrdf:initialState": "state:Follower",
+      "unrdf:terminalStates": ["state:Shutdown"],
+      "unrdf:states": [
+        "state:Follower",
+        "state:Candidate",
+        "state:Leader",
+        "state:Shutdown"
+      ]
+    },
+
+    {
+      "@id": "state:Follower",
+      "@type": "unrdf:State",
+      "rdfs:label": "Follower",
+      "rdfs:comment": "Node is following a leader",
+      "unrdf:entryActions": [
+        "action:resetElectionTimer",
+        "action:setFollowerState"
+      ],
+      "unrdf:behaviors": [
+        {
+          "event": "event:AppendEntries",
+          "action": "action:handleAppendEntries",
+          "resetTimer": true
+        },
+        {
+          "event": "event:RequestVote",
+          "action": "action:handleVoteRequest"
+        }
+      ],
+      "unrdf:electionTimeout": {
+        "min": 150,
+        "max": 300,
+        "unit": "milliseconds"
+      }
+    },
+
+    {
+      "@id": "state:Candidate",
+      "@type": "unrdf:State",
+      "rdfs:label": "Candidate",
+      "rdfs:comment": "Node is requesting votes for leadership",
+      "unrdf:entryActions": [
+        "action:incrementTerm",
+        "action:voteForSelf",
+        "action:resetElectionTimer",
+        "action:sendVoteRequests"
+      ],
+      "unrdf:behaviors": [
+        {
+          "event": "event:VoteGranted",
+          "action": "action:countVote"
+        },
+        {
+          "event": "event:AppendEntries",
+          "action": "action:checkLeaderTerm",
+          "mayTransition": "state:Follower"
+        }
+      ]
+    },
+
+    {
+      "@id": "state:Leader",
+      "@type": "unrdf:State",
+      "rdfs:label": "Leader",
+      "rdfs:comment": "Node is the cluster leader",
+      "unrdf:entryActions": [
+        "action:initializeLeaderState",
+        "action:sendInitialHeartbeats"
+      ],
+      "unrdf:heartbeatInterval": 50,
+      "unrdf:behaviors": [
+        {
+          "event": "event:ClientRequest",
+          "action": "action:appendToLog"
+        },
+        {
+          "event": "event:HeartbeatTick",
+          "action": "action:sendAppendEntries"
+        },
+        {
+          "event": "event:AppendEntriesResponse",
+          "action": "action:updateFollowerIndex"
+        }
+      ]
+    },
+
+    {
+      "@id": "state:Shutdown",
+      "@type": "unrdf:State",
+      "rdfs:label": "Shutdown",
+      "rdfs:comment": "Node is shutting down",
+      "unrdf:isFinal": true,
+      "unrdf:entryActions": [
+        "action:stopTimers",
+        "action:closeConnections",
+        "action:persistState"
+      ]
+    },
+
+    {
+      "@id": "proto:transition:FollowerToCandidate",
+      "@type": "unrdf:Transition",
+      "from": "state:Follower",
+      "to": "state:Candidate",
+      "trigger": "event:ElectionTimeout",
+      "guard": "!receivedHeartbeat && !receivedVoteRequest",
+      "action": "action:startElection"
+    },
+
+    {
+      "@id": "proto:transition:CandidateToLeader",
+      "@type": "unrdf:Transition",
+      "from": "state:Candidate",
+      "to": "state:Leader",
+      "trigger": "event:MajorityVotesReceived",
+      "guard": "votesReceived > (clusterSize / 2)",
+      "action": "action:becomeLeader"
+    },
+
+    {
+      "@id": "proto:transition:CandidateToFollower",
+      "@type": "unrdf:Transition",
+      "from": "state:Candidate",
+      "to": "state:Follower",
+      "trigger": "event:HigherTermDiscovered",
+      "guard": "receivedTerm > currentTerm",
+      "action": "action:updateTerm"
+    },
+
+    {
+      "@id": "proto:transition:LeaderToFollower",
+      "@type": "unrdf:Transition",
+      "from": "state:Leader",
+      "to": "state:Follower",
+      "trigger": "event:HigherTermDiscovered",
+      "guard": "receivedTerm > currentTerm",
+      "action": "action:stepDown"
+    },
+
+    {
+      "@id": "proto:transition:AnyToShutdown",
+      "@type": "unrdf:Transition",
+      "from": ["state:Follower", "state:Candidate", "state:Leader"],
+      "to": "state:Shutdown",
+      "trigger": "event:ShutdownRequested",
+      "action": "action:gracefulShutdown"
+    },
+
+    {
+      "@id": "event:AppendEntries",
+      "@type": "unrdf:Event",
+      "rdfs:label": "Append Entries RPC",
+      "rdfs:comment": "Leader sends log entries to followers",
+      "unrdf:payload": {
+        "term": "xsd:integer",
+        "leaderId": "xsd:string",
+        "prevLogIndex": "xsd:integer",
+        "prevLogTerm": "xsd:integer",
+        "entries": "array",
+        "leaderCommit": "xsd:integer"
+      },
+      "unrdf:response": {
+        "term": "xsd:integer",
+        "success": "xsd:boolean"
+      }
+    },
+
+    {
+      "@id": "event:RequestVote",
+      "@type": "unrdf:Event",
+      "rdfs:label": "Request Vote RPC",
+      "rdfs:comment": "Candidate requests vote from other nodes",
+      "unrdf:payload": {
+        "term": "xsd:integer",
+        "candidateId": "xsd:string",
+        "lastLogIndex": "xsd:integer",
+        "lastLogTerm": "xsd:integer"
+      },
+      "unrdf:response": {
+        "term": "xsd:integer",
+        "voteGranted": "xsd:boolean"
+      }
+    },
+
+    {
+      "@id": "event:ClientRequest",
+      "@type": "unrdf:Event",
+      "rdfs:label": "Client Request",
+      "rdfs:comment": "Client submits a change to the cluster",
+      "unrdf:payload": {
+        "requestId": "xsd:string",
+        "operation": {
+          "type": "xsd:string",
+          "delta": "type:Delta"
+        }
+      }
+    },
+
+    {
+      "@id": "unrdf:logEntry",
+      "@type": "unrdf:Schema",
+      "rdfs:label": "RAFT Log Entry",
+      "unrdf:fields": {
+        "term": { "@type": "xsd:integer", "required": true },
+        "index": { "@type": "xsd:integer", "required": true },
+        "command": {
+          "type": { "@type": "xsd:string" },
+          "delta": { "@type": "type:Delta" }
+        },
+        "timestamp": { "@type": "xsd:dateTime" }
+      }
+    },
+
+    {
+      "@id": "unrdf:persistentState",
+      "@type": "unrdf:Schema",
+      "rdfs:label": "RAFT Persistent State",
+      "rdfs:comment": "State that must survive restarts",
+      "unrdf:fields": {
+        "currentTerm": { "@type": "xsd:integer", "default": 0 },
+        "votedFor": { "@type": "xsd:string", "nullable": true },
+        "log": { "@type": "array", "items": "unrdf:logEntry" }
+      }
+    },
+
+    {
+      "@id": "unrdf:volatileState",
+      "@type": "unrdf:Schema",
+      "rdfs:label": "RAFT Volatile State",
+      "rdfs:comment": "State reinitialized on restart",
+      "unrdf:fields": {
+        "commitIndex": { "@type": "xsd:integer", "default": 0 },
+        "lastApplied": { "@type": "xsd:integer", "default": 0 }
+      }
+    },
+
+    {
+      "@id": "unrdf:leaderVolatileState",
+      "@type": "unrdf:Schema",
+      "rdfs:label": "RAFT Leader Volatile State",
+      "rdfs:comment": "State maintained only by leader",
+      "unrdf:fields": {
+        "nextIndex": { "@type": "object", "description": "Map<nodeId, nextLogIndex>" },
+        "matchIndex": { "@type": "object", "description": "Map<nodeId, matchedLogIndex>" }
+      }
+    },
+
+    {
+      "@id": "unrdf:safetyProperties",
+      "@type": "unrdf:PropertySet",
+      "rdfs:label": "RAFT Safety Properties",
+      "unrdf:properties": [
+        {
+          "@id": "prop:ElectionSafety",
+          "rdfs:label": "Election Safety",
+          "rdfs:comment": "At most one leader per term"
+        },
+        {
+          "@id": "prop:LeaderAppendOnly",
+          "rdfs:label": "Leader Append-Only",
+          "rdfs:comment": "Leader never overwrites or deletes entries"
+        },
+        {
+          "@id": "prop:LogMatching",
+          "rdfs:label": "Log Matching",
+          "rdfs:comment": "If two logs contain entry with same index and term, logs are identical through that index"
+        },
+        {
+          "@id": "prop:LeaderCompleteness",
+          "rdfs:label": "Leader Completeness",
+          "rdfs:comment": "If entry committed in term, present in all future leaders"
+        },
+        {
+          "@id": "prop:StateMachineSafety",
+          "rdfs:label": "State Machine Safety",
+          "rdfs:comment": "If server applies entry at index, no other applies different entry at same index"
+        }
+      ]
+    }
+  ]
+}
