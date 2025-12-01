@@ -10,7 +10,7 @@ import {
   toTurtle,
   toNQuads,
   parseJsonLd,
-  _toJsonLd,
+  toJsonLd,
 } from '../../src/knowledge-engine/parse.mjs';
 
 const { namedNode, literal, _quad } = DataFactory;

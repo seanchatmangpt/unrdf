@@ -32,6 +32,8 @@ export default defineWorkspace([
       ],
       exclude: [
         'node_modules/**',
+        // Performance tests are environment-dependent
+        'test/performance/**/*.test.mjs',
       ],
       testTimeout: 30_000,
       hookTimeout: 20_000,
@@ -67,6 +69,8 @@ export default defineWorkspace([
         'test/knowledge-engine/sandbox/executor-detection.test.mjs',
         'test/knowledge-engine/sandbox/isolated-vm.test.mjs',
         'test/project-engine/**/*.test.mjs', // Exclude project-engine from unit tests
+        // Performance tests are environment-dependent and should not run in unit tests
+        'test/performance/**/*.test.mjs',
       ],
       testTimeout: 15_000,
       hookTimeout: 15_000,
@@ -88,11 +92,12 @@ export default defineWorkspace([
       include: [
         'test/e2e/**/*.test.mjs',
         'test/validation/**/*.test.mjs',
-        'test/performance/**/*.test.mjs',
       ],
       exclude: [
         'node_modules/**',
         'test/project-engine/**/*.test.mjs', // Exclude project-engine from e2e
+        // Performance tests are environment-dependent
+        'test/performance/**/*.test.mjs',
       ],
       testTimeout: 60_000,
       hookTimeout: 30_000,
@@ -120,6 +125,20 @@ export default defineWorkspace([
       exclude: [
         'node_modules/**',
         'test/project-engine/**/*.test.mjs', // Exclude project-engine from hooks
+        // Exclude tests that require jsdom/browser DOM (document not defined in node)
+        // These use @testing-library/react renderHook which requires document
+        'test/react-hooks/core.test.mjs',                // Root level core tests
+        'test/react-hooks/core/**/*.test.mjs',           // useStore, useTriples, useTerms, etc.
+        'test/react-hooks/query/**/*.test.mjs',          // useSPARQLQuery, useDeltaQuery, etc.
+        'test/react-hooks/storage/**/*.test.mjs',        // useAuditTrail, useQuadStore, etc.
+        'test/react-hooks/cache/**/*.test.mjs',          // useQueryCache, useCacheStats, etc.
+        'test/react-hooks/context/**/*.test.mjs',        // KnowledgeEngineProvider
+        'test/react-hooks/knowledge-hooks/**/*.test.mjs', // useHookManager, useHookRegistry
+        'test/react-hooks/integration/**/*.test.mjs',    // multi-hook-interaction, performance-benchmarks
+        'test/react-hooks/federation/**/*.test.mjs',     // useConsensusManager, useDistributedQuery, etc.
+        'test/react-hooks/streaming/**/*.test.mjs',      // useChangeFeed, useStreamProcessor, etc.
+        // Performance tests are environment-dependent
+        'test/performance/**/*.test.mjs',
       ],
       testTimeout: 20_000,
       hookTimeout: 15_000,
@@ -146,6 +165,7 @@ export default defineWorkspace([
         'test/browser/browser-compatibility.test.mjs',
         'test/browser/playwright.spec.mjs',
         'test/project-engine/**/*.test.mjs', // Exclude project-engine from browser
+        'test/performance/**/*.test.mjs', // Performance tests are environment-dependent
       ],
       testTimeout: 30_000,
       hookTimeout: 20_000,
@@ -173,6 +193,7 @@ export default defineWorkspace([
       exclude: [
         'node_modules/**',
         'test/project-engine/**/*.test.mjs', // Exclude project-engine from streaming
+        'test/performance/**/*.test.mjs', // Performance tests are environment-dependent
       ],
       testTimeout: 30_000,
       hookTimeout: 20_000,
