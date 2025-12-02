@@ -4,6 +4,11 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  '@inrupt/universal-fetch': 1.0.3
+
+packageExtensionsChecksum: 36d508941c28ebe25666fb40a9757d53
+
 importers:
 
   .:
