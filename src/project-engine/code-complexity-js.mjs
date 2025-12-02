@@ -9,7 +9,7 @@ import { z } from 'zod';
 import { Store, DataFactory } from 'n3';
 import { readdir, readFile } from 'fs/promises';
 import { join, extname } from 'path';
-import { statSync } from 'fs';
+import { statSync as _statSync } from 'fs';
 import ProjectReport from 'typhonjs-escomplex';
 import * as unmetric from '../ontologies/unmetric-ontology.mjs';
 
@@ -264,7 +264,7 @@ function analyzeFileComplexity(content, filePath, projectRoot) {
  * @param {FileMetrics} metrics - File metrics
  * @param {string} projectRoot - Project root
  */
-function emitFileComplexityTriples(store, metrics, projectRoot) {
+function emitFileComplexityTriples(store, metrics, _projectRoot) {
   const fileNode = namedNode(
     `http://example.org/unrdf/metrics#file-${Date.now()}-${Math.random()}`
   );

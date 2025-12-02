@@ -9,7 +9,7 @@ import { mkdtemp, writeFile, rm } from 'fs/promises';
 import { join } from 'path';
 import { tmpdir } from 'os';
 import { analyzeJsComplexity } from '../../src/project-engine/code-complexity-js.mjs';
-import * as unmetric from '../../src/ontologies/unmetric-ontology.mjs';
+import * as _unmetric from '../../src/ontologies/unmetric-ontology.mjs';
 
 const { namedNode } = DataFactory;
 

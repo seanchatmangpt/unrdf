@@ -1,7 +1,7 @@
 import { promises as fs } from 'node:fs';
 import { createReadStream, createWriteStream } from 'node:fs';
-import { pipeline } from 'node:stream/promises';
-import { Transform } from 'node:stream';
+import { pipeline as _pipeline } from 'node:stream/promises';
+import { Transform as _Transform } from 'node:stream';
 
 /**
  * Read Turtle file

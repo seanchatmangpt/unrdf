@@ -1,5 +1,11 @@
 import { DataFactory } from 'n3';
-import { asNamedNode, asLiteral, isNamedNode, isLiteral, isBlankNode } from './term-utils.mjs';
+import {
+  asNamedNode,
+  asLiteral,
+  isNamedNode as _isNamedNode,
+  isLiteral as _isLiteral,
+  isBlankNode as _isBlankNode,
+} from './term-utils.mjs';
 
 const { quad } = DataFactory;
 
