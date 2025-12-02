@@ -11,11 +11,11 @@
  * @license MIT
  */
 
-import { readdir, readFile, writeFile, stat, _mkdir } from 'node:fs/promises';
-import { _createReadStream, createWriteStream } from 'node:fs';
-import { _pipeline } from 'node:stream/promises';
+import { readdir, readFile, writeFile, stat, mkdir } from 'node:fs/promises';
+import { createReadStream, createWriteStream } from 'node:fs';
+import { pipeline } from 'node:stream/promises';
 import { createGzip } from 'node:zlib';
-import { join, _basename } from 'node:path';
+import { join, basename } from 'node:path';
 import { z } from 'zod';
 import { defaultObservabilityManager } from '../knowledge-engine/observability.mjs';
 import { fileExists, ensureDir } from '../utils/io-utils.mjs';

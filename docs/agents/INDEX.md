@@ -73,7 +73,15 @@ Complete API contracts and schemas:
    - SLOs and preconditions
    - Input/output schemas
 
-4. **[quick-reference.md](./reference/quick-reference.md)**
+4. **[implementation.md](./reference/implementation.md)** + **[implementation.mjs](./reference/implementation.mjs)**
+   - **Implementation file references**
+   - **Code location mapping**
+   - **Function line ranges**
+   - **Test file locations**
+   - **Pattern implementations**
+   - **Machine-executable discovery functions**
+
+5. **[quick-reference.md](./reference/quick-reference.md)**
    - Common operations
    - Quick lookup tables
    - Performance SLOs

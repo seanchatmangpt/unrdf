@@ -10,7 +10,7 @@
  * @license MIT
  */
 
-import { readFile, writeFile, readdir } from 'node:fs/promises';
+import { readFile, writeFile, readdir, stat } from 'node:fs/promises';
 import { join } from 'node:path';
 import { z } from 'zod';
 import { Store, Parser as N3Parser, Writer as N3Writer } from 'n3';
@@ -158,7 +158,19 @@ async function expandFilePatterns(patterns) {
 
         for (const file of dirFiles) {
           if (regex.test(file)) {
-            files.push(join(dir, file));
+            const fullPath = join(dir, file);
+
+            // Check if entry is actually a file
+            try {
+              const stats = await stat(fullPath);
+              if (stats.isFile()) {
+                files.push(fullPath);
+              }
+              // Skip directories silently
+            } catch (error) {
+              // Skip entries we can't stat
+              continue;
+            }
           }
         }
       }
