@@ -85,6 +85,83 @@ await system.registerHook(hook);
 
 ---
 
+## Composables (Context-Based API)
+
+UNRDF provides a composable API for working with RDF stores using `unctx` for context management. Composables like `useGraph()`, `useStore()`, and `useTerms()` require initialization via `initStore()`.
+
+### Basic Usage
+
+```javascript
+import { initStore, useGraph, useStore, useTerms } from 'unrdf';
+
+// Initialize the store context
+const runApp = initStore([], { baseIRI: 'http://example.org/' });
+
+// All composables must be used inside runApp callback
+runApp(() => {
+  const store = useStore();    // Access the store
+  const terms = useTerms();    // Create RDF terms
+  const graph = useGraph();    // Query operations
+
+  // Create and add data
+  const quad = terms.quad(
+    terms.iri('person1'),
+    terms.iri('name'),
+    terms.lit('John Doe')
+  );
+  store.add(quad);
+
+  // Query the data
+  const results = await graph.select(`
+    SELECT ?s ?p ?o WHERE { ?s ?p ?o }
+  `);
+
+  console.log('Results:', results);
+});
+```
+
+### Shared Store Context
+
+All composables share the same store instance within a context:
+
+```javascript
+runApp(() => {
+  const store1 = useStore();
+  const store2 = useStore();
+  const graph = useGraph();
+
+  console.log(store1 === store2);  // true - same instance
+
+  store1.add(quad);
+  console.log(store2.size);  // Reflects the addition
+});
+```
+
+### Error Handling
+
+Composables must be called within the `runApp` context:
+
+```javascript
+// ❌ WRONG: Calling outside context
+const store = useStore();  // Throws: Context not initialized
+
+// ✅ CORRECT: Calling inside context
+runApp(() => {
+  const store = useStore();  // Works correctly
+});
+```
+
+### Available Composables
+
+- **`useStore()`** - Access the RDF store directly
+- **`useGraph()`** - SPARQL query operations
+- **`useTerms()`** - Create RDF terms (IRIs, literals, quads)
+- **`useTurtle()`** - Parse and serialize Turtle format
+
+See `examples/context-example.mjs` for complete usage examples.
+
+---
+
 # Documentation Structure (Diataxis Framework)
 
 This documentation follows the [Diataxis framework](https://diataxis.fr/) with four distinct types:
