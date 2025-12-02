@@ -47,20 +47,24 @@ function printReport(report) {
   console.log('='.repeat(70) + '\n');
 
   // Stack profile
-  console.log(`📦 Tech Stack: ${report.stackProfile}`);
-  console.log(`   └─ Detected: ${report.stats.frameworks?.join(', ') || 'standard'}`);
+  const stackProfile = report.stackProfile || 'unknown';
+  const frameworks = report.stats?.frameworks?.join(', ') || 'none detected';
+  console.log(`📦 Tech Stack: ${stackProfile}`);
+  console.log(`   └─ Detected: ${frameworks}`);
 
   // Features
-  console.log(`\n🎯 Features: ${report.stats.featureCount}`);
-  if (report.features && report.features.length > 0) {
+  console.log(`\n🎯 Features: ${report.stats?.featureCount || 0}`);
+  if (report.features && Array.isArray(report.features) && report.features.length > 0) {
     const byRole = {};
     report.features.forEach(f => {
-      const roles = Object.entries(f.roles)
-        .filter(([, has]) => has)
-        .map(([role]) => role);
-      roles.forEach(r => {
-        byRole[r] = (byRole[r] || 0) + 1;
-      });
+      if (f && f.roles && typeof f.roles === 'object') {
+        const roles = Object.entries(f.roles)
+          .filter(([, has]) => has)
+          .map(([role]) => role);
+        roles.forEach(r => {
+          byRole[r] = (byRole[r] || 0) + 1;
+        });
+      }
     });
 
     Object.entries(byRole).forEach(([role, count]) => {
@@ -75,8 +79,12 @@ function printReport(report) {
   }
 
   // Domain model
-  console.log(`\n📊 Domain Model: ${report.stats.domainEntityCount || 0} entities`);
-  if (report.domainEntities && report.domainEntities.length > 0) {
+  console.log(`\n📊 Domain Model: ${report.stats?.domainEntityCount || 0} entities`);
+  if (
+    report.domainEntities &&
+    Array.isArray(report.domainEntities) &&
+    report.domainEntities.length > 0
+  ) {
     report.domainEntities.slice(0, 5).forEach(e => {
       console.log(`   └─ ${e.name} (${e.fieldCount} fields)`);
     });
@@ -86,8 +94,8 @@ function printReport(report) {
   }
 
   // Files
-  console.log(`\n📄 Files: ${report.stats.totalFiles}`);
-  const byRole = report.stats.filesByRole || {};
+  console.log(`\n📄 Files: ${report.stats?.totalFiles || 0}`);
+  const byRole = report.stats?.filesByRole || {};
   Object.entries(byRole)
     .slice(0, 5)
     .forEach(([role, count]) => {
@@ -98,7 +106,7 @@ function printReport(report) {
   }
 
   // Test coverage
-  if (report.stats.testCoverageAverage !== undefined) {
+  if (report.stats?.testCoverageAverage !== undefined) {
     const coverage = Math.round(report.stats.testCoverageAverage);
     const indicator = coverage >= 80 ? '✅' : coverage >= 60 ? '⚠️ ' : '❌';
     console.log(`\n${indicator} Test Coverage: ${coverage}%`);

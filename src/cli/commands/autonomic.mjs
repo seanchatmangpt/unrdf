@@ -29,7 +29,7 @@ import {
 } from '../../project-engine/autonomic-mapek.mjs';
 import {
   runFullMapekWithAllInnovations,
-  _ALL_INNOVATIONS,
+  ALL_INNOVATIONS,
 } from '../../project-engine/mapek-orchestration.mjs';
 
 /**
@@ -72,7 +72,7 @@ function printMapekResult(result, index) {
 async function initializeProjectState(projectRoot) {
   try {
     console.log('📊 Scanning project structure...');
-    const fsStore = await scanFileSystemToStore(projectRoot);
+    const { store: fsStore } = await scanFileSystemToStore({ root: projectRoot });
 
     console.log('🏗️  Building project model...');
     const projectStore = buildProjectModelFromFs({ fsStore });
@@ -81,13 +81,13 @@ async function initializeProjectState(projectRoot) {
     const stackProfile = detectStackFromFs({ fsStore });
 
     console.log('📚 Inferring domain model...');
-    const domainStore = await inferDomainModel(fsStore, stackProfile);
+    const { store: domainStore } = await inferDomainModel({ fsStore, stackProfile });
 
     console.log('🎯 Classifying files...');
     classifyFiles({ fsStore: projectStore });
 
     console.log('📸 Creating baseline snapshot...');
-    const baselineSnapshot = createStructureSnapshot(projectStore, domainStore);
+    const { snapshotStore: baselineSnapshot } = createStructureSnapshot(projectStore, domainStore);
 
     return {
       projectStore,

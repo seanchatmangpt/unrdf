@@ -6,7 +6,7 @@
 import { createHash } from 'crypto';
 import { Store, DataFactory } from 'n3';
 import { z } from 'zod';
-import { diffGraphFromStores, _summarizeChangesByKind } from '../diff.mjs';
+import { diffGraphFromStores, summarizeChangesByKind } from '../diff.mjs';
 import { ProjectStructureLens } from './lens/project-structure.mjs';
 
 const { namedNode, literal } = DataFactory;
