@@ -10,8 +10,17 @@
  */
 
 import { DataFactory, Store } from 'n3';
-import { asNamedNode, getIRI, isNamedNode, isLiteral, isBlankNode } from './term-utils.mjs';
-import { getVocabularyStats, validateNamespaces } from './namespace-utils.mjs';
+import {
+  asNamedNode as _asNamedNode,
+  getIRI as _getIRI,
+  isNamedNode as _isNamedNode,
+  isLiteral as _isLiteral,
+  isBlankNode as _isBlankNode,
+} from './term-utils.mjs';
+import {
+  getVocabularyStats as _getVocabularyStats,
+  validateNamespaces,
+} from './namespace-utils.mjs';
 
 const { _namedNode, _literal, _blankNode } = DataFactory;
 

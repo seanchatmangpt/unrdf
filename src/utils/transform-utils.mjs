@@ -11,8 +11,13 @@
  */
 
 import { DataFactory, Store } from 'n3';
-import { asNamedNode, asLiteral, asBlankNode, getIRI } from './term-utils.mjs';
-import { quadToJSON, jsonToQuad } from './quad-utils.mjs';
+import {
+  asNamedNode,
+  asLiteral,
+  asBlankNode as _asBlankNode,
+  getIRI as _getIRI,
+} from './term-utils.mjs';
+import { quadToJSON as _quadToJSON, jsonToQuad as _jsonToQuad } from './quad-utils.mjs';
 
 const { _namedNode, _literal, _blankNode, quad, _defaultGraph } = DataFactory;
 

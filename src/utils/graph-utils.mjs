@@ -1,4 +1,4 @@
-import { asNamedNode, asLiteral, getIRI } from './term-utils.mjs';
+import { asNamedNode, asLiteral as _asLiteral, getIRI } from './term-utils.mjs';
 
 /**
  * Get all objects for subject+predicate
