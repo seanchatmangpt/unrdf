@@ -8,7 +8,7 @@
 
 import { createResolutionLayer } from '../src/knowledge-engine/resolution-layer.mjs';
 import { TransactionManager } from '../src/knowledge-engine/transaction.mjs';
-import { _Store } from 'n3';
+import { Store } from 'n3';
 
 console.log('🤝 Resolution Layer Demo\n');
 

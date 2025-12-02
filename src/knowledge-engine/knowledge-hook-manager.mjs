@@ -12,7 +12,7 @@ import { createHookExecutor } from './hook-executor.mjs';
 import { createConditionEvaluator } from './condition-evaluator.mjs';
 import { PolicyPackManager } from './policy-pack.mjs';
 import { createSecurityValidator } from './security-validator.mjs';
-import { _Store } from 'n3';
+import { Store } from 'n3';
 import { validateManagerConfig, _validateTransactionDelta, validateHookEvent } from './schemas.mjs';
 
 /**

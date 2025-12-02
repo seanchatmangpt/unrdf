@@ -69,7 +69,7 @@ describe('Thesis Model', () => {
 
       expect(thesis.supervisor).toBeDefined();
       expect(thesis.supervisor.name).toBe('Dr. Supervisor');
-      expect(thesis.supervisor.role).toBe('supervisor');
+      expect(thesis.supervisor.role).toBe('primary');
     });
 
     it('should include institution and department', () => {

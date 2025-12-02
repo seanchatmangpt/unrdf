@@ -11,7 +11,7 @@ import {
   ObservabilityManager,
   createObservabilityManager,
 } from '../../src/knowledge-engine/observability.mjs';
-import { _Store, DataFactory } from 'n3';
+import { Store, DataFactory } from 'n3';
 
 const { _namedNode, _literal } = DataFactory;
 

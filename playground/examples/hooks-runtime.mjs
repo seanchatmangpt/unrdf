@@ -6,7 +6,7 @@
  * This demonstrates how to use the hooks engine with Nitro runtime.
  */
 
-import { defineHook, evaluateHook, planHook, registerPredicate } from '../../src/hooks.mjs'
+import { defineHook, evaluateHook } from 'unrdf/knowledge-engine';
 import { initStore } from '../../src/context/index.mjs'
 import { useTurtle } from '../../src/composables/use-turtle.mjs'
 import { useGraph } from '../../src/composables/use-graph.mjs'
@@ -44,39 +44,6 @@ ex:person2 a foaf:Person ;
   foaf:name "Bob" ;
   foaf:age 25 .
 `
-
-// Custom predicate for service health scoring
-registerPredicate('HEALTH_SCORE', async (spec, ctx) => {
-  const { rows } = ctx
-  let totalScore = 0
-  let serviceCount = 0
-  
-  for (const row of rows) {
-    const errorRate = Number(row.errorRate?.value ?? 0)
-    const latency = Number(row.latency?.value ?? 0)
-    
-    // Simple health scoring: lower error rate and latency = higher score
-    const errorScore = Math.max(0, 100 - (errorRate * 1000)) // 0-100 based on error rate
-    const latencyScore = Math.max(0, 100 - (latency / 20)) // 0-100 based on latency
-    const serviceScore = (errorScore + latencyScore) / 2
-    
-    totalScore += serviceScore
-    serviceCount++
-  }
-  
-  const avgScore = serviceCount > 0 ? totalScore / serviceCount : 0
-  const threshold = spec.threshold || 70
-  
-  return {
-    ok: avgScore >= threshold,
-    meta: {
-      avgScore: Math.round(avgScore * 100) / 100,
-      threshold,
-      serviceCount,
-      kind: 'HEALTH_SCORE'
-    }
-  }
-})
 
 async function demonstrateHooksRuntime() {
   console.log('🚀 UNRDF Hooks Runtime Demo')
@@ -129,19 +96,7 @@ async function demonstrateHooksRuntime() {
         ],
         combine: 'AND'
       }),
-      
-      // Health Score Assessment
-      defineHook({
-        id: 'ex:HealthScoreAssessment',
-        name: 'Health Score Assessment',
-        description: 'Assesses overall system health using custom scoring',
-        select: 'SELECT ?service ?errorRate ?latency WHERE { ?service <http://example.org/errorRate> ?errorRate ; <http://example.org/latency> ?latency }',
-        predicates: [
-          { kind: 'HEALTH_SCORE', spec: { threshold: 60 } }
-        ],
-        combine: 'AND'
-      }),
-      
+
       // Complex Multi-Predicate Hook
       defineHook({
         id: 'ex:ComplexSystemMonitor',
@@ -165,11 +120,7 @@ async function demonstrateHooksRuntime() {
       console.log(`\n📋 Evaluating Hook: ${hook.id}`)
       console.log(`   Name: ${hook.name}`)
       console.log(`   Description: ${hook.description}`)
-      
-      // Show execution plan
-      const plan = planHook(hook)
-      console.log(`   Plan: ${plan.queryPlan} query with ${plan.predicatePlan.length} predicates (${plan.combine})`)
-      
+
       // Evaluate the hook
       const receipt = await evaluateHook(hook)
       

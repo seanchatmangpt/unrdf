@@ -15,7 +15,7 @@ import { createPerformanceOptimizer } from './performance-optimizer.mjs';
 import { LockchainWriter } from './lockchain-writer.mjs';
 import { PolicyPackManager } from './policy-pack.mjs';
 import { ResolutionLayer } from './resolution-layer.mjs';
-import { _Store } from 'n3';
+import { Store } from 'n3';
 import { z } from 'zod';
 import crypto from 'node:crypto';
 

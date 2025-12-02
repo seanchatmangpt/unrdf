@@ -4,7 +4,7 @@
  */
 
 import { promises as _fs } from 'fs';
-import { _Store } from 'n3';
+import { Store } from 'n3';
 import { parseTurtle } from '../knowledge-engine/parse.mjs';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
 import { z } from 'zod';
