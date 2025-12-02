@@ -17,7 +17,7 @@
  */
 
 import { EventEmitter } from 'events';
-import { randomUUID } from 'crypto';
+import { _randomUUID } from 'crypto';
 import { z } from 'zod';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
 

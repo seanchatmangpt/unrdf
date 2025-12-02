@@ -19,12 +19,12 @@ const tracer = trace.getTracer('unrdf');
 
 // Import consolidated schemas
 import {
-  QuadSchema,
+  _QuadSchema,
   DeltaSchema,
   TransactionHookSchema,
-  TransactionHookResultSchema,
-  HashSchema,
-  TransactionReceiptSchemaNew,
+  _TransactionHookResultSchema,
+  _HashSchema,
+  _TransactionReceiptSchemaNew,
   TransactionOptionsSchema,
   ManagerOptionsSchema,
 } from './schemas.mjs';

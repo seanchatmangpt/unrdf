@@ -7,7 +7,7 @@
  */
 
 import { z } from 'zod';
-import { resolve, normalize, isAbsolute } from 'path';
+import { resolve, normalize, _isAbsolute } from 'path';
 import { fileURLToPath } from 'url';
 
 /**

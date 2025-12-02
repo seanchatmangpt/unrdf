@@ -8,7 +8,7 @@
  * Stores embeddings in LRU cache and computes similarity metrics with batch processing.
  */
 
-import { Store } from 'n3';
+import { _Store } from 'n3';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
 import { LRUCache } from 'lru-cache';
 import { z } from 'zod';

@@ -14,7 +14,7 @@ import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 import { sha3_256 } from '@noble/hashes/sha3.js';
-import { blake3 } from '@noble/hashes/blake3.js';
+import { _blake3 } from '@noble/hashes/blake3.js';
 import { utf8ToBytes, bytesToHex } from '@noble/hashes/utils.js';
 import { randomUUID } from 'crypto';
 import { z } from 'zod';

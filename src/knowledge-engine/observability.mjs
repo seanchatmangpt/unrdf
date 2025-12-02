@@ -8,8 +8,8 @@
  * error isolation, and performance tracking.
  */
 
-import { randomUUID } from 'crypto';
-import { z } from 'zod';
+import { _randomUUID } from 'crypto';
+import { _z } from 'zod';
 import { ObservabilityConfigSchema, PerformanceMetricsSchema } from './schemas.mjs';
 import { getRuntimeConfig } from '../context/config.mjs';
 

@@ -8,7 +8,7 @@
  * a single, consolidated Delta.
  */
 
-import { Store } from 'n3';
+import { _Store } from 'n3';
 import { randomUUID } from 'crypto';
 import { z } from 'zod';
 

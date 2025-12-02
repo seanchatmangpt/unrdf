@@ -22,7 +22,7 @@ import {
   describe as _keDescribe,
   update as _keUpdate,
 } from '../knowledge-engine/query.mjs';
-import { toTurtle, toNQuads } from '../knowledge-engine/parse.mjs';
+import { _toTurtle, _toNQuads } from '../knowledge-engine/parse.mjs';
 import {
   canonicalize as _keCanonicalize,
   isIsomorphic as _keIsomorphic,
