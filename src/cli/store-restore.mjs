@@ -10,8 +10,8 @@
  * @license MIT
  */
 
-import { writeFile, mkdir, access, rm } from 'node:fs/promises';
-import { createReadStream, createWriteStream } from 'node:fs';
+import { writeFile, _mkdir, _access, rm } from 'node:fs/promises';
+import { createReadStream, _createWriteStream } from 'node:fs';
 import { createGunzip } from 'node:zlib';
 import { join } from 'node:path';
 import { z } from 'zod';

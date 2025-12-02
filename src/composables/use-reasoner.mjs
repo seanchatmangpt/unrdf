@@ -9,7 +9,7 @@
  * @license MIT
  */
 
-import { Store } from 'n3';
+import { _Store } from 'n3';
 import { useStoreContext } from '../context/index.mjs';
 
 /**

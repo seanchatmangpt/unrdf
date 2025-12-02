@@ -7,7 +7,7 @@
  * to prevent malicious code execution and system access.
  */
 
-import { Worker, isMainThread, parentPort, workerData } from 'worker_threads';
+import { Worker, _isMainThread, _parentPort, _workerData } from 'worker_threads';
 import { join } from 'path';
 import { randomUUID } from 'crypto';
 import { z } from 'zod';
