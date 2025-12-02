@@ -143,9 +143,11 @@ export async function importStore(files, options) {
  * @private
  */
 async function expandFilePatterns(patterns) {
+  // Ensure patterns is always an array
+  const patternArray = Array.isArray(patterns) ? patterns : [patterns];
   const files = [];
 
-  for (const pattern of patterns) {
+  for (const pattern of patternArray) {
     // Simple glob expansion (supports * and **)
     if (pattern.includes('*')) {
       const dir = pattern.substring(0, pattern.lastIndexOf('/') + 1) || '.';
