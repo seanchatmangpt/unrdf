@@ -1,1314 +1,587 @@
-# UNRDF - Autonomic Knowledge Graph System
+# UNRDF
 
-**Autonomous RDF knowledge graph system with MAPEK autonomic loops and reactive Knowledge Hooks**
+**Production-ready RDF knowledge graph library for Node.js**
 
-UNRDF transforms static knowledge graphs into intelligent, self-managing systems through the **MAPEK autonomic loop** (Monitor-Analyze-Plan-Execute-Knowledge) and **Knowledge Hooks**—declarative, policy-driven triggers that react to graph changes in real-time.
+UNRDF combines the power of RDF with composable APIs and autonomous Knowledge Hooks to build self-validating, self-healing semantic systems. Built with zero TypeScript dependencies (JSDoc + Zod runtime validation), it delivers 300+ validated functions for parsing, querying, validation, reasoning, and autonomous workflows.
 
-```json
-{
-  "@context": {
-    "@vocab": "urn:unrdf:manifest:",
-    "unrdf": "urn:unrdf:",
-    "cap": "urn:unrdf:capability:",
-    "proto": "urn:unrdf:protocol:"
-  },
-  "@id": "urn:unrdf:v4.0.0",
-  "@type": "SystemManifest",
-  "name": "UNRDF v4.0.0",
-  "version": "4.0.0",
-  "purpose": "Autonomous RDF knowledge graph system for distributed intelligence",
-  "capabilities": [
-    "cap:knowledge-hooks",
-    "cap:mapek-autonomic-loop",
-    "cap:sparql-1.1",
-    "cap:shacl-validation",
-    "cap:cryptographic-provenance",
-    "cap:opentelemetry-observability"
-  ],
-  "entrypoints": {
-    "main": "./src/index.mjs",
-    "knowledge-engine": "./src/knowledge-engine/index.mjs",
-    "react-hooks": "./src/react-hooks/index.mjs",
-    "cli": "./src/cli/index.mjs",
-    "project-engine": "./src/project-engine/index.mjs"
-  }
-}
+```bash
+npm install unrdf
 ```
 
 ---
 
 ## Quick Start
 
-```bash
-# Install
-pnpm add unrdf
-
-# Initialize project structure
-npx unrdf init
-
-# Backup RDF store
-npx unrdf store backup ./my-store --output backup.tar.gz
-
-# Restore from backup
-npx unrdf store restore backup.tar.gz --target ./restored-store
-
-# Import RDF files
-npx unrdf store import data/*.ttl --storePath ./my-store
-```
+Get started in 3 minutes with RDF parsing, SPARQL queries, and Knowledge Hooks:
 
 ```javascript
-// Create a knowledge hook
-import { defineHook, createDarkMatterCore } from 'unrdf';
+import { initStore, useGraph, useTurtle, defineHook, registerHook, TransactionManager } from 'unrdf';
 
-const system = await createDarkMatterCore();
-const hook = defineHook({
-  meta: { name: 'person-name-required' },
-  when: {
-    kind: 'sparql-ask',
-    query: `
-      PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-      ASK {
-        ?person a foaf:Person .
-        FILTER NOT EXISTS { ?person foaf:name ?name }
-      }
-    `
-  },
-  run: async (event) => {
-    if (event.result === true) {
-      throw new Error('All persons must have a name');
-    }
+// 1. Parse RDF and query with composables
+await initStore(); // Initialize context
+const graph = useGraph();
+const turtle = useTurtle();
+
+const store = turtle.parse(`
+  @prefix ex: <http://example.org/> .
+  ex:Alice ex:knows ex:Bob .
+  ex:Bob ex:knows ex:Charlie .
+`);
+
+// Execute SPARQL query
+const friends = graph.select(`
+  SELECT ?person WHERE {
+    ?person <http://example.org/knows> ?friend
   }
-});
+`);
+console.log(friends); // [{ person: 'ex:Alice' }, { person: 'ex:Bob' }]
 
-await system.registerHook(hook);
-```
-
----
-
-## Composables (Context-Based API)
-
-UNRDF provides a composable API for working with RDF stores using `unctx` for context management. Composables like `useGraph()`, `useStore()`, and `useTerms()` require initialization via `initStore()`.
-
-### Basic Usage
-
-```javascript
-import { initStore, useGraph, useStore, useTerms } from 'unrdf';
-
-// Initialize the store context
-const runApp = initStore([], { baseIRI: 'http://example.org/' });
-
-// All composables must be used inside runApp callback
-runApp(() => {
-  const store = useStore();    // Access the store
-  const terms = useTerms();    // Create RDF terms
-  const graph = useGraph();    // Query operations
-
-  // Create and add data
-  const quad = terms.quad(
-    terms.iri('person1'),
-    terms.iri('name'),
-    terms.lit('John Doe')
-  );
-  store.add(quad);
-
-  // Query the data
-  const results = await graph.select(`
-    SELECT ?s ?p ?o WHERE { ?s ?p ?o }
-  `);
-
-  console.log('Results:', results);
-});
-```
-
-### Shared Store Context
-
-All composables share the same store instance within a context:
-
-```javascript
-runApp(() => {
-  const store1 = useStore();
-  const store2 = useStore();
-  const graph = useGraph();
-
-  console.log(store1 === store2);  // true - same instance
-
-  store1.add(quad);
-  console.log(store2.size);  // Reflects the addition
-});
-```
-
-### Error Handling
-
-Composables must be called within the `runApp` context:
-
-```javascript
-// ❌ WRONG: Calling outside context
-const store = useStore();  // Throws: Context not initialized
-
-// ✅ CORRECT: Calling inside context
-runApp(() => {
-  const store = useStore();  // Works correctly
-});
-```
-
-### Available Composables
-
-- **`useStore()`** - Access the RDF store directly
-- **`useGraph()`** - SPARQL query operations
-- **`useTerms()`** - Create RDF terms (IRIs, literals, quads)
-- **`useTurtle()`** - Parse and serialize Turtle format
-
-See `examples/context-example.mjs` for complete usage examples.
-
----
-
-# Documentation Structure (Diataxis Framework)
-
-This documentation follows the [Diataxis framework](https://diataxis.fr/) with four distinct types:
-
-- **[Tutorials](#tutorials)** - Step-by-step learning guides
-- **[How-To Guides](#how-to-guides)** - Task-focused problem solving
-- **[Reference](#reference)** - Complete technical specifications
-- **[Explanation](#explanation)** - Deep conceptual understanding
-
----
-
-## Tutorials
-
-*Learning-oriented guides that teach you how to use MAPEK and Knowledge Hooks*
-
-### Tutorial 1: Your First Knowledge Hook
-
-Learn how to create a reactive hook that enforces data quality rules.
-
-**Step 1: Set up the system**
-
-```javascript
-import { createDarkMatterCore, defineHook } from 'unrdf';
-
-const system = await createDarkMatterCore();
-```
-
-**Step 2: Define a hook**
-
-```javascript
+// 2. Define autonomous Knowledge Hook
 const validationHook = defineHook({
   meta: {
-    name: 'person-name-required',
-    description: 'Ensures all persons have names'
+    name: 'friend-validation',
+    description: 'Validate friendships on transaction'
   },
-  when: {
-    kind: 'sparql-ask',
-    query: `
-      PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-      ASK {
-        ?person a foaf:Person .
-        FILTER NOT EXISTS { ?person foaf:name ?name }
-      }
-    `
-  },
-  run: async (event) => {
-    if (event.result === true) {
-      throw new Error('CONSTRAINT_VIOLATION: All persons must have names');
+  before(event) {
+    // Pre-transaction validation
+    const { additions } = event.delta;
+    if (additions.some(q => q.predicate.value === 'http://example.org/knows')) {
+      console.log('Validating friendships...');
     }
-    return { validated: true };
+  },
+  run(event) {
+    // Main execution - validate all friendships
+    return { valid: true };
+  },
+  after(result) {
+    // Post-execution cleanup
+    console.log('Validation complete:', result);
   }
 });
-```
 
-**Step 3: Register the hook**
+// 3. Hook-driven transactions
+registerHook(validationHook);
+const txManager = new TransactionManager();
+txManager.addHook(validationHook);
 
-```javascript
-await system.registerHook(validationHook);
-```
-
-**Step 4: Execute a transaction**
-
-```javascript
-// This will trigger the hook
-const receipt = await system.executeTransaction({
-  additions: [
-    { subject: 'ex:alice', predicate: 'rdf:type', object: 'foaf:Person' }
-    // Missing foaf:name - hook will reject this
-  ]
+// Apply transaction - hook runs automatically
+await txManager.apply(store, {
+  additions: [quad(namedNode('ex:Alice'), namedNode('ex:knows'), namedNode('ex:Dave'))],
+  removals: []
 });
 ```
 
-**Result:** The transaction is rejected because the hook detected a person without a name.
-
-### Tutorial 2: Running Your First MAPEK Cycle
-
-Learn how to use the MAPEK autonomic loop to continuously monitor and improve your system.
-
-**Step 1: Initialize project model**
-
-```javascript
-import { runMapekIteration, reportMapekStatus } from 'unrdf/project-engine';
-import { buildProjectModelFromFs, inferDomainModel } from 'unrdf/project-engine';
-
-// Build RDF models from your codebase
-const projectStore = await buildProjectModelFromFs('/path/to/project');
-const domainStore = await inferDomainModel(projectStore);
-```
-
-**Step 2: Run one MAPEK iteration**
-
-```javascript
-const result = await runMapekIteration({
-  projectStore,
-  domainStore,
-  projectRoot: '/path/to/project',
-  stackProfile: { webFramework: 'next' }
-});
-```
-
-**Step 3: View the status**
-
-```javascript
-console.log(reportMapekStatus(result));
-
-// Output:
-// ╔════════════════════════════════════════╗
-// ║         AUTONOMIC SYSTEM STATUS        ║
-// ╚════════════════════════════════════════╝
-// 
-// 🔄 Overall Health: 85%
-// 
-// 📊 Metrics:
-//    Gap Score: 30/100
-//    Type Score: 0/100
-//    Hotspot Score: 15/100
-//    Drift: minor
-// 
-// 📋 Decisions:
-//    ⚙️  Generate missing UserAPI
-```
-
-**Step 4: Enable continuous monitoring**
-
-```javascript
-import { runContinuousMapekLoop } from 'unrdf/project-engine';
-
-const result = await runContinuousMapekLoop({
-  getState: async () => ({
-    projectStore: await buildProjectModelFromFs('/path'),
-    domainStore: await inferDomainModel(projectStore),
-    projectRoot: '/path'
-  }),
-  applyActions: async (actions) => {
-    // Auto-fix issues
-    for (const action of actions) {
-      if (action.type === 'generate-files') {
-        await generateMissingFiles(action);
-      }
-    }
-  },
-  intervalMs: 5000,
-  maxIterations: 10
-});
-
-console.log(`System converged after ${result.iterations} iterations`);
-```
-
-### Tutorial 3: Integrating MAPEK with Knowledge Hooks
-
-Learn how MAPEK's Execute phase creates and registers Knowledge Hooks automatically.
-
-**Step 1: Run MAPEK to detect issues**
-
-```javascript
-const mapekResult = await runMapekIteration({
-  projectStore,
-  domainStore,
-  projectRoot: '/path'
-});
-```
-
-**Step 2: Create autonomic hooks from findings**
-
-```javascript
-import { createAutonomicHooks } from 'unrdf/project-engine';
-
-const hooks = createAutonomicHooks(mapekResult, projectStore);
-
-// Hooks are automatically created for:
-// - Missing files (autonomic:auto-generate-missing-files)
-// - Type mismatches (autonomic:auto-sync-types)
-// - High-risk hotspots (autonomic:hotspot-alert)
-```
-
-**Step 3: Register hooks with the system**
-
-```javascript
-for (const hook of hooks) {
-  await system.registerHook(hook);
-}
-```
-
-**Step 4: Hooks now monitor and auto-fix**
-
-The registered hooks will automatically:
-- Detect when new entities are added without corresponding files
-- Alert on type mismatches
-- Warn about high-complexity features
+**Next**: Follow the [Getting Started Tutorial](docs/tutorials/01-getting-started.md) for a complete walkthrough.
 
 ---
 
-## How-To Guides
+## Documentation Structure (Diataxis)
 
-*Task-focused instructions for solving specific problems*
+UNRDF follows the **Diataxis framework** to organize documentation by user need:
 
-### How-To: Enforce Data Quality with Hooks
+### 🎓 Tutorials (Learning-Oriented)
 
-**Problem:** You need to ensure all entities in your graph meet certain quality criteria.
+Progressive learning paths from first steps to advanced patterns:
 
-**Solution:** Create validation hooks that run before transactions commit.
+- [**Getting Started** (15 min)](docs/tutorials/01-getting-started.md) - Parse, query, validate RDF
+- [**Knowledge Hooks** (30 min)](docs/tutorials/02-knowledge-hooks.md) - Build autonomous hooks
+- [**Transactions** (30 min)](docs/tutorials/03-transactions.md) - Hook-driven workflows
+- [**Dark Matter** (45 min)](docs/tutorials/04-dark-matter.md) - 80/20 framework optimization
 
+**Start here** if you're new to UNRDF or RDF knowledge graphs.
+
+---
+
+### 🔧 How-To Guides (Task-Oriented)
+
+Practical recipes for specific tasks:
+
+**Parsing & Serialization**
+- [Parse Turtle/TriG](docs/how-to/parsing/parse-turtle.md)
+- [Parse JSON-LD](docs/how-to/parsing/parse-jsonld.md)
+- [Convert Between Formats](docs/how-to/parsing/convert-formats.md)
+
+**Querying**
+- [SPARQL SELECT Queries](docs/how-to/querying/sparql-select.md)
+- [SPARQL CONSTRUCT Queries](docs/how-to/querying/sparql-construct.md)
+- [Federated Queries](docs/how-to/querying/federated-queries.md)
+
+**Validation**
+- [SHACL Validation](docs/how-to/validation/shacl-validation.md)
+- [Data Quality Assessment](docs/how-to/validation/quality-assessment.md)
+
+**Knowledge Hooks**
+- [Define Hooks](docs/how-to/hooks/define-hook.md)
+- [Register & Manage Hooks](docs/how-to/hooks/register-hook.md)
+- [Hook Lifecycle Management](docs/how-to/hooks/hook-lifecycle.md)
+
+**Transactions & Audit**
+- [Transaction Basics](docs/how-to/transactions/transaction-basics.md)
+- [Audit Trails with Lockchain](docs/how-to/transactions/audit-trails.md)
+
+**Optimization**
+- [Query Optimization](docs/how-to/optimization/query-optimization.md)
+- [Dark Matter Performance Tuning](docs/how-to/optimization/dark-matter-tuning.md)
+
+[**View All How-To Guides →**](docs/how-to/)
+
+---
+
+### 📖 Reference (Information-Oriented)
+
+Complete API documentation:
+
+- [**Knowledge Engine API**](docs/reference/api/knowledge-engine.md) - Core RDF operations
+- [**Composables API**](docs/reference/api/composables.md) - High-level composable functions
+- [**Utilities API**](docs/reference/api/utilities.md) - 100+ utility functions
+- [**React Hooks API**](docs/reference/api/react-hooks.md) - React integration
+- [**CLI Reference**](docs/reference/cli.md) - Command-line interface
+- [**Schemas Reference**](docs/reference/schemas.md) - Zod validation schemas
+- [**N3.js Re-exports**](docs/reference/n3-reexports.md) - Underlying N3.js API
+
+[**View Full API Reference →**](docs/reference/)
+
+---
+
+### 💡 Explanation (Understanding-Oriented)
+
+Conceptual deep-dives and design philosophy:
+
+**Architecture**
+- [Architecture Overview](docs/explanation/architecture/overview.md) - System design
+- [Context System](docs/explanation/architecture/context-system.md) - unctx async context
+- [Composables Pattern](docs/explanation/architecture/composables.md) - Composable design
+- [Knowledge Substrate](docs/explanation/architecture/knowledge-substrate.md) - 80/20 framework
+
+**Concepts**
+- [Knowledge Hooks](docs/explanation/concepts/knowledge-hooks.md) - Autonomic hook philosophy
+- [Transactions](docs/explanation/concepts/transactions.md) - Transaction model
+- [Canonicalization](docs/explanation/concepts/canonicalization.md) - RDF isomorphism
+- [Provenance](docs/explanation/concepts/provenance.md) - Lockchain audit model
+
+**Design Decisions**
+- [No TypeScript](docs/explanation/design-decisions/no-typescript.md) - Why JSDoc + Zod
+- [Sender-Only Pattern](docs/explanation/design-decisions/sender-only.md) - Unidirectional data flow
+- [80/20 Principle](docs/explanation/design-decisions/80-20-principle.md) - Dark Matter rationale
+
+[**View All Explanations →**](docs/explanation/)
+
+---
+
+## Core Capabilities
+
+UNRDF provides 300+ functions organized into three tiers based on the 80/20 principle:
+
+### Tier 1: Foundation (80% of Usage)
+
+**Core RDF Operations**
 ```javascript
-import { defineHook, createDarkMatterCore } from 'unrdf';
+import { parseTurtle, toTurtle, query, validateShacl, reason, canonicalize } from 'unrdf';
 
-const system = await createDarkMatterCore();
+// Parse RDF
+const store = parseTurtle(`@prefix ex: <http://example.org/> . ex:Alice ex:knows ex:Bob .`);
 
-// Hook 1: Require email format
-const emailHook = defineHook({
-  meta: { name: 'email-format-validation' },
-  channel: { view: 'before' }, // Run before transaction commits
-  when: {
-    kind: 'sparql-ask',
-    query: `
-      ASK {
-        ?entity ex:email ?email .
-        FILTER (!REGEX(?email, "^[^@]+@[^@]+\\.[^@]+$"))
-      }
-    `
-  },
-  run: async (event) => {
-    if (event.result === true) {
-      throw new Error('Invalid email format detected');
-    }
-  }
-});
+// Query with SPARQL
+const results = query(store, 'SELECT ?s WHERE { ?s ?p ?o }');
 
-// Hook 2: Require age to be positive
-const ageHook = defineHook({
-  meta: { name: 'age-validation' },
-  channel: { view: 'before' },
-  when: {
-    kind: 'sparql-ask',
-    query: 'ASK { ?person ex:age ?age . FILTER (?age < 0 || ?age > 150) }'
-  },
-  run: async (event) => {
-    if (event.result) {
-      throw new Error('Age must be between 0 and 150');
-    }
-  }
-});
+// Validate with SHACL
+const report = validateShacl(store, shapesTurtle);
 
-await system.registerHook(emailHook);
-await system.registerHook(ageHook);
+// Reason with N3 rules
+const inferred = reason(store, rulesTurtle);
+
+// Canonicalize for isomorphism
+const canonical = canonicalize(store);
 ```
 
-### How-To: Monitor System Health with MAPEK
-
-**Problem:** You want to continuously monitor your codebase for gaps, type issues, and complexity.
-
-**Solution:** Set up a continuous MAPEK loop.
-
+**Knowledge Hooks System**
 ```javascript
-import { runContinuousMapekLoop } from 'unrdf/project-engine';
+import { defineHook, registerHook, TransactionManager } from 'unrdf';
 
-const loop = await runContinuousMapekLoop({
-  getState: async () => {
-    const projectStore = await buildProjectModelFromFs(process.cwd());
-    const domainStore = await inferDomainModel(projectStore);
-    return { projectStore, domainStore, projectRoot: process.cwd() };
-  },
-  applyActions: async (actions) => {
-    console.log(`Applying ${actions.length} auto-fixes...`);
-    // Implement your auto-fix logic here
-  },
-  intervalMs: 10000, // Check every 10 seconds
-  maxIterations: 20
-});
-
-if (loop.converged) {
-  console.log(`✅ System healthy (${loop.finalHealth}% health)`);
-} else {
-  console.log(`⚠️  System needs attention (${loop.finalHealth}% health)`);
-}
-```
-
-### How-To: Auto-Fix Missing Files with MAPEK
-
-**Problem:** Your domain model defines entities, but corresponding files (APIs, components, tests) are missing.
-
-**Solution:** Use MAPEK to detect gaps and auto-generate files.
-
-```javascript
-import { runMapekIteration } from 'unrdf/project-engine';
-
-const result = await runMapekIteration({
-  projectStore,
-  domainStore,
-  projectRoot: '/path'
-});
-
-// Filter for gap-fixing decisions
-const gapDecisions = result.decisions.filter(d => d.issue === 'missing-roles');
-
-for (const decision of gapDecisions) {
-  for (const target of decision.targets) {
-    // Generate missing files
-    const plan = await planMaterialization(projectStore, templateGraph, {
-      entities: [target.entity],
-      roles: target.roles // e.g., ['Api', 'Component', 'Test']
-    });
-    await applyMaterializationPlan(plan);
-  }
-}
-```
-
-### How-To: Create Content-Addressed Hook Conditions
-
-**Problem:** You want hook conditions to be verifiable, shareable artifacts, not inline strings.
-
-**Solution:** Use content-addressed file references.
-
-```javascript
-import { defineHook } from 'unrdf';
-import { createHash } from 'crypto';
-import { readFileSync } from 'fs';
-
-// Store condition in a file
-const conditionFile = './hooks/compliance/large-transaction.ask.rq';
-const conditionContent = readFileSync(conditionFile, 'utf-8');
-const conditionHash = createHash('sha256').update(conditionContent).digest('hex');
-
+// Define autonomous hook
 const hook = defineHook({
-  meta: { name: 'large-transaction-monitor' },
-  when: {
-    kind: 'sparql-ask',
-    ref: {
-      uri: `file://${conditionFile}`,
-      sha256: conditionHash,
-      mediaType: 'application/sparql-query'
-    }
-  },
-  run: async (event) => {
-    if (event.result === true) {
-      console.warn('Large transaction detected!');
-    }
-  }
+  meta: { name: 'auto-validator' },
+  before(event) { /* validation */ },
+  run(event) { /* execution */ },
+  after(result) { /* cleanup */ }
 });
+
+// Register and execute
+registerHook(hook);
+const txManager = new TransactionManager();
+txManager.addHook(hook);
+await txManager.apply(store, delta);
 ```
 
-### How-To: Debug Hook Execution
-
-**Problem:** A hook isn't triggering when expected, or you need to trace execution.
-
-**Solution:** Use OpenTelemetry spans and SPARQL queries.
-
+**Composables API**
 ```javascript
-// Query hook execution traces
-const traces = await system.query({
-  query: `
-    PREFIX otel: <urn:opentelemetry:>
-    PREFIX unrdf: <urn:unrdf:>
-    
-    SELECT ?traceId ?spanName ?duration ?status WHERE {
-      ?span a otel:Span ;
-            otel:traceId ?traceId ;
-            otel:name ?spanName ;
-            otel:duration ?duration ;
-            otel:status ?status .
-      FILTER(STRSTARTS(?spanName, "unrdf.hook."))
-    }
-    ORDER BY DESC(?duration)
-    LIMIT 100
-  `,
-  type: 'sparql-select'
-});
+import { initStore, useGraph, useTurtle, useTerms } from 'unrdf';
 
-console.table(traces);
+await initStore(); // Initialize context
+
+const graph = useGraph();
+const turtle = useTurtle();
+const terms = useTerms();
+
+// High-level operations
+graph.add(...quads);
+const results = graph.select('SELECT ...');
+const ttl = turtle.serialize(store);
+const node = terms.namedNode('http://example.org/Alice');
+```
+
+**Context System**
+```javascript
+import { createStoreContext, useStoreContext } from 'unrdf';
+
+// unctx async context (no prop drilling)
+await createStoreContext(quads);
+const store = useStoreContext(); // Access from anywhere
 ```
 
 ---
 
-## Reference
+### Tier 2: Advanced Features (15% of Usage)
 
-*Complete technical specifications and API documentation*
-
-### MAPEK API Reference
-
-#### `runMapekIteration(options)`
-
-Runs a single MAPEK cycle (Monitor → Analyze → Plan → Execute → Knowledge).
-
-**Parameters:**
-
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `projectStore` | N3 Store | ✅ | RDF project structure from filesystem |
-| `domainStore` | N3 Store | ✅ | RDF domain model (entities, fields, relationships) |
-| `projectRoot` | string | ✅ | Filesystem root path |
-| `stackProfile` | object | ❌ | Framework detection result (e.g., `{ webFramework: 'next' }`) |
-| `baselineSnapshot` | Store | ❌ | Baseline snapshot for drift detection |
-| `knowledge` | object | ❌ | Learned patterns from previous runs |
-
-**Returns:**
-
+**Dark Matter (80/20 Framework)**
 ```javascript
-{
-  state: {
-    phase: 'monitor' | 'analyze' | 'plan' | 'execute' | 'knowledge',
-    timestamp: string, // ISO 8601
-    findings: {
-      gaps: { gaps: Array<GapFinding> },
-      typeIssues: { mismatches: Array<TypeMismatch> },
-      hotspots: { hotspots: Array<Hotspot>, topRisks: Array<Risk> },
-      drift: { driftSeverity: 'none' | 'minor' | 'major' }
-    },
-    metrics: {
-      gapScore: number, // 0-100
-      typeScore: number, // 0-100
-      hotspotScore: number, // 0-100
-      driftSeverity: string
-    },
-    decisions: Array<Decision>,
-    actions: Array<Action>
-  },
-  overallHealth: number, // 0-100
-  phase: string,
-  findings: object,
-  metrics: object,
-  decisions: Array<object>,
-  actions: Array<object>,
-  learnings: object,
-  shouldRepeat: boolean
-}
-```
+import { createKnowledgeSubstrateCore } from 'unrdf/knowledge-engine';
 
-**Example:**
-
-```javascript
-import { runMapekIteration } from 'unrdf/project-engine';
-
-const result = await runMapekIteration({
-  projectStore: myProjectStore,
-  domainStore: myDomainStore,
-  projectRoot: '/path/to/project'
-});
-
-console.log(`Health: ${result.overallHealth}%`);
-console.log(`Decisions: ${result.decisions.length}`);
-```
-
-#### `runContinuousMapekLoop(options)`
-
-Runs MAPEK repeatedly until system converges or max iterations reached.
-
-**Parameters:**
-
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `getState` | Function | ✅ | Async function returning `{ projectStore, domainStore, projectRoot }` |
-| `applyActions` | Function | ✅ | Async function to apply auto-fixable actions |
-| `intervalMs` | number | ❌ | Polling interval in milliseconds (default: 5000) |
-| `maxIterations` | number | ❌ | Maximum iterations before stopping (default: 10) |
-
-**Returns:**
-
-```javascript
-{
-  converged: boolean,
-  iterations: number,
-  finalHealth: number, // 0-100
-  finalState: object
-}
-```
-
-#### `createAutonomicHooks(mapekFindings, projectStore)`
-
-Creates Knowledge Hooks from MAPEK findings for autonomous execution.
-
-**Parameters:**
-
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `mapekFindings` | object | ✅ | Result from `runMapekIteration` |
-| `projectStore` | Store | ✅ | Project RDF store |
-
-**Returns:** `Array<Hook>` - Array of hook definitions ready for registration
-
-**Generated Hooks:**
-
-- `autonomic:auto-generate-missing-files` - Triggers on gap detection
-- `autonomic:auto-sync-types` - Triggers on type mismatch
-- `autonomic:hotspot-alert` - Alerts on high-risk features
-
-### Knowledge Hooks API Reference
-
-#### `defineHook(spec)`
-
-Creates a new Knowledge Hook with validation.
-
-**Parameters:**
-
-```javascript
-{
-  meta: {
-    name: string, // Required: unique hook identifier
-    description?: string,
-    version?: string,
-    tags?: string[]
-  },
-  channel?: {
-    graphs?: string[], // Named graphs to observe
-    view?: 'before' | 'after' | 'delta' // Graph state view
-  },
-  when: {
-    kind: 'sparql-ask' | 'sparql-select' | 'shacl',
-    query?: string, // SPARQL query string
-    ref?: { // Content-addressed reference (preferred)
-      uri: string,
-      sha256: string,
-      mediaType: string
-    }
-  },
-  before?: (event: HookEvent) => Promise<HookPayload | {cancel: true, reason?: string}>,
-  run: (event: HookEvent) => Promise<HookResult>,
-  after?: (event: HookEvent & {result: any}) => Promise<HookResult>,
-  determinism?: { seed?: number },
-  receipt?: { anchor?: 'git-notes' | 'none' }
-}
-```
-
-**Returns:** `Hook` - Validated hook definition
-
-**Example:**
-
-```javascript
-import { defineHook } from 'unrdf';
-
-const hook = defineHook({
-  meta: { name: 'my-hook' },
-  when: {
-    kind: 'sparql-ask',
-    query: 'ASK { ?s ?p ?o }'
-  },
-  run: async (event) => {
-    return { result: 'success' };
-  }
+// Optimize: 20% of components = 80% of value
+const substrate = createKnowledgeSubstrateCore({
+  core: ['TransactionManager', 'KnowledgeHookManager'], // Essential
+  optional: ['PolicyPackManager'] // Use only if needed
 });
 ```
 
-#### `KnowledgeHookManager`
-
-Manages hook registration, evaluation, and execution.
-
-**Methods:**
-
-- `registerHook(hook: Hook): Promise<void>` - Register a hook
-- `removeHook(name: string): Promise<void>` - Remove a hook
-- `executeKnowledgeHook(name: string, event: object, options?: object): Promise<object>` - Execute a specific hook
-- `executeAllHooks(event: object, options?: object): Promise<Array<object>>` - Execute all matching hooks
-
-**Example:**
-
+**Lockchain (Audit Trail)**
 ```javascript
-import { KnowledgeHookManager, createDarkMatterCore } from 'unrdf';
+import { LockchainWriter } from 'unrdf/knowledge-engine';
 
-const system = await createDarkMatterCore();
-const manager = system.getComponent('knowledgeHookManager');
-
-await manager.registerHook(myHook);
-const result = await manager.executeKnowledgeHook('my-hook', {
-  payload: { delta: myDelta },
-  context: { graph: myStore }
-});
+const lockchain = new LockchainWriter({ gitNotesRef: 'audit' });
+await lockchain.writeReceipt(transaction);
 ```
 
-### Hook Lifecycle
-
-Hooks execute in three phases:
-
-1. **`before`** - Pre-condition gate, can cancel execution
-2. **`run`** - Core effect execution
-3. **`after`** - Post-execution cleanup/auditing
-
+**Policy Packs (Governance)**
 ```javascript
-const hook = defineHook({
-  meta: { name: 'lifecycle-example' },
-  when: { kind: 'sparql-ask', query: 'ASK { ?s ?p ?o }' },
-  before: async (event) => {
-    // Can modify payload or cancel
-    if (shouldCancel) {
-      return { cancel: true, reason: 'Cancelled by before phase' };
-    }
-    return { ...event.payload, normalized: true };
-  },
-  run: async (event) => {
-    // Main execution
-    return { result: 'executed' };
-  },
-  after: async (event) => {
-    // Cleanup, logging, auditing
-    console.log(`Hook completed: ${event.result}`);
-    return {};
-  }
-});
+import { PolicyPackManager } from 'unrdf/knowledge-engine';
+
+const policies = new PolicyPackManager();
+policies.addPolicy({ name: 'access-control', rules: [...] });
 ```
 
-### Condition Types
-
-**SPARQL ASK:** Boolean condition (true/false)
-
+**Query Optimization**
 ```javascript
-when: {
-  kind: 'sparql-ask',
-  query: 'ASK { ?person ex:age ?age . FILTER (?age < 0) }'
-}
+import { CriticalPathAnalyzer, QueryOptimizer } from 'unrdf/knowledge-engine/dark-matter';
+
+const analyzer = new CriticalPathAnalyzer();
+const criticalQueries = analyzer.identify(queryLog); // 20% = 80% workload
+
+const optimizer = new QueryOptimizer();
+optimizer.optimize(criticalQueries);
 ```
 
-**SPARQL SELECT:** Returns bindings, hook runs if results exist
+**Utilities (100+ Functions)**
+- Term utilities: `asNamedNode()`, `asLiteral()`, `isNamedNode()`
+- Quad utilities: `filterQuadsBySubject()`, `sortQuads()`
+- Graph utilities: `getObjects()`, `getSubjects()`, `countQuads()`
+- SPARQL utilities: `createSPARQLBuilder()`, `escapeSPARQLString()`
+- Transform utilities: `mapQuads()`, `filterStore()`, `reduceQuads()`
+- Merge utilities: `mergeStores()`, `diffStores()`, `intersectStores()`
+- Quality utilities: `assessDataQuality()`, `findBrokenLinks()`
+- I/O utilities: `readTurtleFile()`, `writeTurtleFile()`
 
-```javascript
-when: {
-  kind: 'sparql-select',
-  query: 'SELECT ?person WHERE { ?person ex:status "inactive" }'
-}
-```
-
-**SHACL:** Shape-based validation
-
-```javascript
-when: {
-  kind: 'shacl',
-  ref: {
-    uri: 'file://shapes/person-shape.ttl',
-    sha256: '...',
-    mediaType: 'text/turtle'
-  }
-}
-```
-
-### Transaction Integration
-
-Hooks execute automatically during transactions:
-
-```javascript
-const receipt = await system.executeTransaction({
-  additions: [
-    { subject: 'ex:alice', predicate: 'rdf:type', object: 'foaf:Person' }
-  ]
-});
-
-// Hooks with channel.view='before' run before commit
-// Hooks with channel.view='after' run after commit
-// Hooks with channel.view='delta' run on delta only
-```
-
-### Performance SLOs
-
-| Metric | Target | Unit |
-|--------|--------|------|
-| Hook registration | p99 < 1ms | milliseconds |
-| Condition evaluation | p99 < 2ms | milliseconds |
-| Hook execution | p99 < 10ms | milliseconds |
-| Full pipeline | p99 < 50ms | milliseconds |
-| Hook throughput | 10,000/min | executions per minute |
+[**View Full Utilities Reference →**](docs/reference/api/utilities.md)
 
 ---
 
-## Explanation
+### Tier 3: Optional Features (5% of Usage)
 
-*Deep conceptual understanding of MAPEK and Knowledge Hooks*
-
-### What is MAPEK?
-
-**MAPEK** stands for **Monitor-Analyze-Plan-Execute-Knowledge**—a closed-loop autonomic system that continuously:
-
-1. **Monitors** - Observes system state (gaps, type issues, complexity, drift)
-2. **Analyzes** - Interprets findings and calculates health scores
-3. **Plans** - Decides what actions to take (auto-fixable vs. manual)
-4. **Executes** - Applies fixes through Knowledge Hooks
-5. **Learns** - Extracts patterns to improve future decisions
-
-**Why MAPEK Matters:**
-
-Traditional systems require manual intervention to maintain quality. MAPEK automates this through continuous monitoring and autonomous execution via Knowledge Hooks.
-
-| Traditional Approach | MAPEK Approach |
-|---------------------|----------------|
-| Manual code reviews | Automatic gap detection |
-| Type errors in production | Real-time type validation |
-| Refactoring fear | Safe, planned, auto-tracked |
-| Code decay over time | Continuous drift detection |
-| Best practices as guidelines | Best practices as enforced hooks |
-
-### The Five MAPEK Phases
-
-#### Phase 1: Monitor
-
-**Purpose:** Continuously observe system state
-
-**Tools:**
-- **Gap Finder** - Detects missing roles (APIs, components, tests) for entities
-- **Type Auditor** - Validates Zod schemas match TypeScript types
-- **Hotspot Analyzer** - Identifies high-complexity features
-- **Drift Detector** - Tracks divergence from baseline model
-
-**Output:** Raw findings (gaps, type mismatches, hotspots, drift)
-
-#### Phase 2: Analyze
-
-**Purpose:** Interpret findings and calculate health metrics
-
-**Metrics:**
-- **Gap Score (0-100)** - Missing critical functionality (higher = worse)
-- **Type Score (0-100)** - Dangerous type mismatches (higher = worse)
-- **Hotspot Score (0-100)** - Code complexity risk (higher = worse)
-- **Overall Health** - Weighted average: `(gapScore * 0.3 + typeScore * 0.3 + hotspotScore * 0.2 + driftPenalty * 0.2) / 100`
-
-**Output:** Health scores and prioritized issues
-
-#### Phase 3: Plan
-
-**Purpose:** Decide what actions to take
-
-**Decision Types:**
-- **Auto-fixable** - Can be executed automatically (e.g., generate missing files, sync types)
-- **Manual review** - Requires human decision (e.g., refactor high-complexity features)
-
-**Prioritization:** Type issues > gaps > complexity
-
-**Output:** Array of decisions with `autoFixable` flags
-
-#### Phase 4: Execute
-
-**Purpose:** Apply auto-fixable decisions
-
-**Execution Methods:**
-- **Knowledge Hooks** - Reactive triggers that auto-fix issues
-- **File Generation** - Create missing APIs, components, tests
-- **Type Synchronization** - Sync Zod schemas with TypeScript
-- **Refactoring Queue** - Queue recommendations for manual review
-
-**Integration:** MAPEK creates Knowledge Hooks via `createAutonomicHooks()`, which are then registered and executed automatically.
-
-**Output:** Applied actions and execution receipts
-
-#### Phase 5: Knowledge
-
-**Purpose:** Learn patterns from the cycle
-
-**Learning Types:**
-- **Gap Patterns** - Which entities consistently lack certain roles?
-- **Type Patterns** - Which fields are frequently mismatched?
-- **Hotspot Thresholds** - When does complexity become critical?
-- **Policy Updates** - Update thresholds based on successful fixes
-
-**Output:** Learned patterns stored for next iteration
-
-### What are Knowledge Hooks?
-
-**Knowledge Hooks** are declarative, policy-driven triggers that react to RDF graph changes. They transform passive knowledge graphs into reactive, self-governing systems.
-
-**Key Characteristics:**
-
-1. **Declarative Conditions** - Use SPARQL or SHACL to express *what* to monitor, not *how*
-2. **Content-Addressed** - Conditions are identified by hash, enabling verification and deduplication
-3. **Lifecycle Phases** - `before`, `run`, `after` provide complete execution control
-4. **Cryptographic Provenance** - Every execution creates a signed receipt
-5. **Transaction Integration** - Execute automatically during ACID transactions
-
-**Why Knowledge Hooks Matter:**
-
-Traditional RDF systems are **passive**—they store data and answer queries, but don't proactively enforce rules or react to changes. Knowledge Hooks make RDF **reactive**:
-
-- **Data Quality Enforcement** - Automatically reject invalid data
-- **Business Rule Automation** - Encode policies as hooks
-- **Real-Time Reactivity** - Respond to graph changes immediately
-- **Self-Healing** - Auto-fix issues detected by MAPEK
-
-### How MAPEK and Knowledge Hooks Work Together
-
-**The Integration Flow:**
-
-```
-1. MAPEK Monitor Phase
-   ↓
-   Detects gaps, type issues, hotspots
-   ↓
-2. MAPEK Analyze Phase
-   ↓
-   Calculates health scores, prioritizes issues
-   ↓
-3. MAPEK Plan Phase
-   ↓
-   Decides which issues are auto-fixable
-   ↓
-4. MAPEK Execute Phase
-   ↓
-   Creates Knowledge Hooks via createAutonomicHooks()
-   ↓
-5. Knowledge Hooks Registered
-   ↓
-   Hooks monitor graph for conditions
-   ↓
-6. Hooks Execute on Graph Changes
-   ↓
-   Auto-fix issues (generate files, sync types, alert)
-   ↓
-7. MAPEK Knowledge Phase
-   ↓
-   Learns from hook executions, updates policies
-```
-
-**Example: Auto-Generating Missing Files**
-
-1. **MAPEK detects:** Entity `User` exists in domain model but lacks `Api` role
-2. **MAPEK plans:** Decision to generate `UserAPI` file (auto-fixable)
-3. **MAPEK executes:** Creates hook `autonomic:auto-generate-missing-files`
-4. **Hook registered:** Hook monitors for new entities without APIs
-5. **Graph changes:** New entity added without API
-6. **Hook triggers:** Generates missing API file automatically
-7. **MAPEK learns:** Pattern: "Entities in domain model always need APIs"
-
-### Content-Addressed Conditions
-
-**Why Content-Addressed?**
-
-Hook conditions should be **verifiable artifacts**, not inline strings. Content-addressing enables:
-
-- **Verification** - Same condition = same hash = can verify integrity
-- **Deduplication** - Multiple hooks can reference the same condition
-- **Provenance** - Conditions are standalone, auditable artifacts
-- **Sharing** - Conditions can be shared across systems
-
-**Best Practice:**
-
+**React Hooks**
 ```javascript
-// ❌ Bad: Inline query
-when: {
-  kind: 'sparql-ask',
-  query: 'ASK { ?s ?p ?o }' // Not verifiable, not shareable
-}
+import { useRDFStore, useRDFQuery, useRDFStream } from 'unrdf/react-hooks';
 
-// ✅ Good: Content-addressed reference
-when: {
-  kind: 'sparql-ask',
-  ref: {
-    uri: 'file://hooks/compliance/large-tx.ask.rq',
-    sha256: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
-    mediaType: 'application/sparql-query'
-  }
+function MyComponent() {
+  const store = useRDFStore();
+  const results = useRDFQuery('SELECT ...');
+  const stream = useRDFStream(); // Real-time updates
+
+  return <div>{/* Render RDF data */}</div>;
 }
 ```
 
-### Transaction Lifecycle with Hooks
+Available React Hook categories:
+- `react-hooks/core` - Core Store integration
+- `react-hooks/streaming` - Real-time updates
+- `react-hooks/federation` - Distributed queries
+- `react-hooks/dark-matter` - 80/20 optimization
+- `react-hooks/ai-semantic` - AI integration
+- `react-hooks/policy-security` - Governance
 
-**State Machine:**
+[**React Hooks How-To Guide →**](docs/how-to/react-integration.md)
 
-```
-PENDING → ACTIVE → HOOKS_PASSED → APPLYING → POST_HOOKS → COMMITTED
-           ↓                              ↓
-        ROLLING_BACK ←───────────────────┘
-           ↓
-      ROLLED_BACK
-```
+**CLI**
+```bash
+# Parse RDF files
+unrdf parse data.ttl
 
-**Hook Execution Points:**
+# Execute SPARQL queries
+unrdf query "SELECT ?s WHERE { ?s ?p ?o }" data.ttl
 
-- **`before` hooks** - Run in `ACTIVE` state, can veto transaction
-- **`after` hooks** - Run in `POST_HOOKS` state, for auditing/cleanup
-- **`delta` hooks** - Run on delta graph (additions/removals only)
+# SHACL validation
+unrdf validate shapes.ttl data.ttl
 
-**Example:**
+# N3 reasoning
+unrdf reason rules.n3 data.ttl
 
-```javascript
-// Transaction with hooks
-const receipt = await system.executeTransaction({
-  additions: [
-    { subject: 'ex:alice', predicate: 'rdf:type', object: 'foaf:Person' }
-  ]
-});
+# Knowledge Hooks
+unrdf hook eval my-hook.mjs
 
-// Execution flow:
-// 1. State: PENDING → ACTIVE
-// 2. Run 'before' hooks (can cancel here)
-// 3. State: ACTIVE → HOOKS_PASSED (if all pass)
-// 4. Apply delta to graph
-// 5. State: HOOKS_PASSED → APPLYING → POST_HOOKS
-// 6. Run 'after' hooks
-// 7. State: POST_HOOKS → COMMITTED
+# Context management
+unrdf context create my-context
+unrdf context use my-context
 ```
 
-### Autonomic Properties
-
-UNRDF achieves autonomic computing properties through MAPEK + Knowledge Hooks:
-
-| Property | Maturity | How It Works |
-|----------|----------|--------------|
-| **Self-Configuration** | 0.92 | Policy packs auto-apply, hooks auto-register |
-| **Self-Healing** | 0.87 | MAPEK detects issues, hooks auto-fix |
-| **Self-Optimization** | 0.78 | Query optimization, resource allocation |
-| **Self-Protection** | 0.95 | Lockchain provides cryptographic audit trail |
-
-**Maturity Score:** Weighted average of autonomic properties (0-1 scale)
-
-### The 80/20 Principle
-
-UNRDF follows the **80/20 rule** (Pareto Principle):
-
-- **20% of components** deliver 80% of value → Focus on Tier 1 capabilities
-- **20% of queries** take 80% of time → Optimize critical path
-- **20% of code paths** handle 80% of use cases → Implement those first
-
-**Tier System:**
-
-- **Tier 1 (60% usage):** `defineHook`, `executeTransaction`, `query` - Use these first
-- **Tier 2 (20% usage):** `registerHook`, `reason`, `canonicalize` - Specialized operations
-- **Tier 3 (15% usage):** `ResolutionLayer`, `PolicyPackManager` - Advanced features
-- **Tier 4 (5% usage):** `FederatedQuery`, `StreamProcessor` - Experimental
+[**CLI Reference →**](docs/reference/cli.md)
 
 ---
 
 ## Installation
 
-```bash
-# Install from npm
-pnpm add unrdf
-
-# Verify installation
-node -e "import('unrdf').then(m => console.log('Version:', m.default?.version || '4.0.0'))"
-```
-
-## CLI Commands
-
-UNRDF provides a comprehensive CLI for RDF store management and project initialization.
-
-### `unrdf init` - Initialize Project Structure
-
-Initialize a new UNRDF project with automatic stack detection and structure analysis.
+### NPM/PNPM/Yarn
 
 ```bash
-# Initialize current directory
-npx unrdf init
+# Core package
+npm install unrdf
 
-# Initialize specific path
-npx unrdf init --root /path/to/project
+# Optional: React hooks
+npm install unrdf react
 
-# Dry run (preview without applying)
-npx unrdf init --dry-run
-
-# Verbose output
-npx unrdf init --verbose
-
-# Skip baseline snapshot
-npx unrdf init --skip-snapshot
-
-# Skip hook registration
-npx unrdf init --skip-hooks
+# Optional: CLI
+npm install -g unrdf
 ```
 
-**What it does:**
-- Scans project file system
-- Detects tech stack (frameworks, languages)
-- Builds domain model from code
-- Classifies file roles (api, component, test, etc.)
-- Creates baseline snapshot
-- Registers project hooks
+### Package Exports
 
-**Output:** Comprehensive initialization report with:
-- Tech stack profile
-- Feature count and roles
-- Domain entities
-- File statistics
-- Test coverage
-
----
-
-### `unrdf store backup` - Backup RDF Store
-
-Create compressed backups of RDF stores with incremental support.
-
-```bash
-# Basic backup
-npx unrdf store backup ./my-store
-
-# Custom output path
-npx unrdf store backup ./my-store --output backup.tar.gz
-
-# Incremental backup
-npx unrdf store backup ./my-store --incremental
-
-# Uncompressed backup
-npx unrdf store backup ./my-store --compress false
-```
-
-**What it does:**
-- Creates compressed archive of RDF store
-- Supports incremental backups
-- Tracks quad count and graph count
-- Measures backup size and duration
-- Full OpenTelemetry instrumentation
-
-**Output Example:**
-```
-✅ Backup completed successfully
-📦 Backup file: backup-1701234567890.tar.gz
-📊 Size: 2.45 MB
-🔢 Quads backed up: 125430
-📈 Graphs: 5
-⏱️  Duration: 350ms
-```
-
----
-
-### `unrdf store restore` - Restore from Backup
-
-Restore RDF stores from backup archives with validation.
-
-```bash
-# Basic restore
-npx unrdf store restore backup.tar.gz --target ./restored-store
-
-# Overwrite existing store
-npx unrdf store restore backup.tar.gz --target ./my-store --overwrite
-
-# Skip validation
-npx unrdf store restore backup.tar.gz --target ./my-store --validate false
-```
-
-**What it does:**
-- Extracts and validates backup archive
-- Restores quads to target store
-- Validates backup integrity
-- Full OpenTelemetry instrumentation
-
-**Output Example:**
-```
-✅ Restore completed successfully
-📂 Store path: ./restored-store
-🔢 Quads restored: 125430
-📈 Graphs restored: 5
-⏱️  Duration: 280ms
-```
-
----
-
-### `unrdf store import` - Bulk Import RDF Files
-
-Import multiple RDF files into a store with format detection and error handling.
-
-```bash
-# Import single file
-npx unrdf store import data.ttl --storePath ./my-store
-
-# Import multiple files with glob
-npx unrdf store import 'data/*.ttl' --storePath ./my-store
-
-# Specify format explicitly
-npx unrdf store import data.nq --storePath ./my-store --format n-quads
-
-# Import to named graph
-npx unrdf store import data.ttl --storePath ./my-store --graph http://example.org/graph1
-
-# Continue on errors
-npx unrdf store import 'data/*.ttl' --storePath ./my-store --skipErrors
-```
-
-**Supported Formats:**
-- Turtle (`.ttl`)
-- N-Quads (`.nq`)
-- N-Triples (`.nt`)
-- JSON-LD (`.jsonld`)
-- Auto-detection (default)
-
-**What it does:**
-- Expands glob patterns to file lists
-- Auto-detects RDF format from extension
-- Filters directories (imports files only)
-- Parses and imports quads to store
-- Tracks import statistics
-- Full OpenTelemetry instrumentation
-
-**Output Example:**
-```
-📥 Importing 3 files into ./my-store...
-  Processing data/users.ttl...
-    ✅ Imported 50 quads
-  Processing data/products.ttl...
-    ✅ Imported 120 quads
-  Processing data/orders.ttl...
-    ✅ Imported 85 quads
-✅ Import completed successfully
-📂 Store path: ./my-store
-📄 Files imported: 3/3
-🔢 Quads imported: 255
-📈 Graphs: 2
-⏱️  Duration: 125ms
-```
-
----
-
-### Command Status
-
-| Command | Status | Completion | Use Case |
-|---------|--------|------------|----------|
-| `unrdf init` | ✅ Working | 90/100 | Project initialization and analysis |
-| `unrdf store backup` | ✅ Working | 95/100 | Create RDF store backups |
-| `unrdf store restore` | ✅ Working | 95/100 | Restore stores from backup |
-| `unrdf store import` | ✅ Working | 95/100 | Bulk import RDF files |
-
-**Overall CLI Functionality: 93.75/100** (4/4 commands fully operational)
-
-**Note:** MAPEK autonomic loop functionality is available via programmatic API only. See [Tutorial: Running Your First MAPEK Cycle](#tutorial-2-running-your-first-mapek-cycle) and [V5 Migration Guide](./docs/V5-MIGRATION-GUIDE.md) for details.
-
-## Quick Verification
+UNRDF uses [Node.js package exports](https://nodejs.org/api/packages.html#exports) for tree-shaking:
 
 ```javascript
-import { createDarkMatterCore, parseTurtle } from 'unrdf';
+// Core RDF + Knowledge Hooks + Composables
+import { parseTurtle, defineHook, useGraph } from 'unrdf';
 
-const system = await createDarkMatterCore();
-const store = await parseTurtle('@prefix ex: <http://example.org/> . ex:test ex:works true .');
+// Knowledge Engine (low-level)
+import { query, validate, reason } from 'unrdf/knowledge-engine';
 
-const results = await system.query({
-  query: 'ASK { ?s ?p true }',
-  type: 'sparql-ask'
-});
+// Composables (high-level)
+import { useGraph } from 'unrdf/composables/use-graph';
+import { useTurtle } from 'unrdf/composables/use-turtle';
 
-console.assert(results === true, 'Basic capability verification');
-await system.cleanup();
+// React Hooks
+import { useRDFStore } from 'unrdf/react-hooks';
+
+// CLI
+import { parseCommand } from 'unrdf/cli';
 ```
 
-## Links & Resources
+### Requirements
 
-- **Repository**: https://github.com/unrdf/unrdf
-- **npm**: https://www.npmjs.com/package/unrdf
-- **Issues**: https://github.com/unrdf/unrdf/issues
-- **Documentation**: [docs/](./docs/)
-- **MAPEK Guide**: [docs/AUTONOMIC-MAPEK-README.md](./docs/AUTONOMIC-MAPEK-README.md)
-- **Knowledge Hooks Guide**: [docs/guides/knowledge-hooks.md](./docs/guides/knowledge-hooks.md)
-- **API Reference**: [docs/reference/api-reference.md](./docs/reference/api-reference.md)
+- **Node.js**: 18.x or higher (ESM modules)
+- **Package Manager**: npm, pnpm, or yarn
+- **Optional**: React 18+ for `unrdf/react-hooks`
+
+---
+
+## Examples
+
+Comprehensive working examples in [`/examples`](examples/):
+
+- [`knowledge-engine-example.mjs`](examples/knowledge-engine-example.mjs) - Core RDF operations (363 lines)
+- [`basic-knowledge-hook.mjs`](examples/basic-knowledge-hook.mjs) - Hook lifecycle (214 lines)
+- [`sparql-query-advanced.mjs`](examples/sparql-query-advanced.mjs) - Advanced queries (453 lines)
+- [`dark-matter-80-20.mjs`](examples/dark-matter-80-20.mjs) - 80/20 optimization (286 lines)
+- [`context-example.mjs`](examples/context-example.mjs) - Context system
+- [`lockchain-demo.mjs`](examples/lockchain-demo.mjs) - Audit trails
+- [`policy-pack-demo.mjs`](examples/policy-pack-demo.mjs) - Policy governance
+
+**Run examples**:
+```bash
+node examples/knowledge-engine-example.mjs
+node examples/basic-knowledge-hook.mjs
+```
+
+---
+
+## Architecture Highlights
+
+### No TypeScript
+UNRDF uses **JSDoc for type hints** + **Zod for runtime validation**. This eliminates build steps while maintaining type safety and runtime guarantees.
+
+```javascript
+/**
+ * Parse Turtle/TriG RDF into N3 Store
+ * @param {string} ttl - Turtle/TriG string
+ * @returns {import('n3').Store} N3 Store
+ */
+export function parseTurtle(ttl) {
+  // Zod runtime validation
+  const validated = TurtleSchema.parse(ttl);
+  // ...
+}
+```
+
+### Composable Design
+Based on [unctx](https://github.com/unjs/unctx) async context system, UNRDF composables work like Vue/React hooks without prop drilling:
+
+```javascript
+await initStore(); // Root context
+
+// Access from any nested function
+const graph = useGraph();
+const turtle = useTurtle();
+```
+
+### Knowledge Hooks (Autonomic System)
+Self-executing hooks with lifecycle management:
+
+```javascript
+defineHook({
+  before(event) { /* validate */ },
+  run(event) { /* execute */ },
+  after(result) { /* cleanup */ }
+});
+```
+
+Hooks enable autonomous workflows: validation, policy enforcement, audit trails, optimization.
+
+### 80/20 Principle (Dark Matter)
+**20% of components deliver 80% of value**. Dark Matter framework optimizes by focusing on critical paths:
+
+- Core components: TransactionManager, KnowledgeHookManager
+- Optional components: PolicyPackManager, ResolutionLayer
+- Adaptive indexing: 20% of queries = 80% of workload
+
+[**Architecture Deep-Dive →**](docs/explanation/architecture/overview.md)
+
+---
+
+## Capabilities Summary
+
+| Category | Key Functions | Count |
+|----------|---------------|-------|
+| **Parsing & Serialization** | `parseTurtle`, `toTurtle`, `parseJsonLd`, `toNQuads` | 5 |
+| **SPARQL Queries** | `query`, `select`, `ask`, `construct`, `describe`, `update` | 6 |
+| **SHACL Validation** | `validateShacl`, `formatValidationReport`, `hasValidationErrors` | 6 |
+| **N3 Reasoning** | `reason`, `reasonMultiple`, `extractInferred` | 6 |
+| **Canonicalization** | `canonicalize`, `isIsomorphic`, `getCanonicalHash` | 7 |
+| **Knowledge Hooks** | `defineHook`, `registerHook`, `evaluateHook`, `TransactionManager` | 8 |
+| **Composables** | `useGraph`, `useTurtle`, `useTerms`, `useValidator`, `useReasoner` | 10 |
+| **Context System** | `initStore`, `createStoreContext`, `useStoreContext` | 5 |
+| **Utilities** | Term, Quad, Graph, SPARQL, Transform, Merge, Quality, I/O | 100+ |
+| **Dark Matter** | `KnowledgeSubstrateCore`, `CriticalPathAnalyzer`, `QueryOptimizer` | 15 |
+| **Lockchain** | `LockchainWriter`, cryptographic audit trails | 5 |
+| **Policy Packs** | `PolicyPackManager`, declarative governance | 8 |
+| **React Hooks** | `useRDFStore`, `useRDFQuery`, `useRDFStream` | 30+ |
+| **CLI** | `parse`, `query`, `validate`, `reason`, `hook eval` | 20+ |
+
+**Total**: 300+ validated, production-ready functions.
+
+[**Full Capability Map →**](docs/capabilities/VALIDATED-CAPABILITIES-MAP.md)
+
+---
+
+## Project Structure
+
+```
+unrdf/
+├── src/
+│   ├── knowledge-engine/       # Core RDF operations
+│   │   ├── parse.mjs           # Parsing & serialization
+│   │   ├── query.mjs           # SPARQL queries
+│   │   ├── validate.mjs        # SHACL validation
+│   │   ├── reason.mjs          # N3 reasoning
+│   │   ├── canonicalize.mjs    # RDF canonicalization
+│   │   ├── define-hook.mjs     # Knowledge Hooks
+│   │   ├── hook-management.mjs # Hook coordination
+│   │   ├── transaction.mjs     # Transaction manager
+│   │   └── dark-matter/        # 80/20 framework
+│   ├── composables/            # High-level composables
+│   │   ├── use-graph.mjs
+│   │   ├── use-turtle.mjs
+│   │   ├── use-terms.mjs
+│   │   └── ...
+│   ├── context/                # unctx context system
+│   ├── utils/                  # 100+ utilities
+│   ├── react-hooks/            # React integration
+│   └── cli/                    # Command-line interface
+├── examples/                   # Working examples
+├── test/                       # Vitest test suite
+├── docs/                       # Diataxis documentation
+│   ├── tutorials/
+│   ├── how-to/
+│   ├── reference/
+│   └── explanation/
+└── package.json
+```
+
+---
+
+## Contributing
+
+Contributions welcome! Please follow these guidelines:
+
+1. **Read the docs**: Review [Architecture Overview](docs/explanation/architecture/overview.md)
+2. **File structure**: Use appropriate directories (`src/`, `test/`, `docs/`, never root)
+3. **No TypeScript**: JSDoc + Zod only
+4. **Tests required**: Vitest tests with 80%+ coverage
+5. **Documentation**: Update Diataxis docs (tutorials, how-to, reference, explanation)
+6. **Examples**: Add working examples to `/examples`
+
+**Development**:
+```bash
+# Install dependencies
+pnpm install
+
+# Run tests
+pnpm test
+
+# Run tests with coverage
+pnpm test:coverage
+
+# Lint code
+pnpm lint
+
+# Format code
+pnpm format
+```
+
+[**Contribution Guidelines →**](CONTRIBUTING.md)
+
+---
 
 ## License
 
-MIT License - see [LICENSE](LICENSE)
+MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-```json
-{
-  "@type": "unrdf:ManifestFooter",
-  "generatedAt": "2024-01-01T00:00:00Z",
-  "validUntil": "2025-12-31T23:59:59Z",
-  "verificationHash": "sha256:computed-at-build-time",
-  "humanReadable": true,
-  "machineReadable": true,
-  "formallyVerifiable": true,
-  "performanceCharacterized": true,
-  "distributionAware": true
-}
-```
+## Links
+
+- **Documentation**: [docs/](docs/) (Diataxis structure)
+- **Examples**: [examples/](examples/)
+- **GitHub**: [github.com/unrdf/unrdf](https://github.com/unrdf/unrdf)
+- **npm**: [npmjs.com/package/unrdf](https://www.npmjs.com/package/unrdf)
+- **Issues**: [github.com/unrdf/unrdf/issues](https://github.com/unrdf/unrdf/issues)
+
+---
+
+## Acknowledgments
+
+UNRDF builds on these excellent libraries:
+- [N3.js](https://github.com/rdfjs/N3.js) - RDF parsing, serialization, and Store
+- [RDFJS](https://rdf.js.org/) - RDF/JS data model specifications
+- [unctx](https://github.com/unjs/unctx) - Async context system
+- [Zod](https://github.com/colinhacks/zod) - Runtime validation
+
+---
+
+**Ready to start?** → [Getting Started Tutorial](docs/tutorials/01-getting-started.md)
