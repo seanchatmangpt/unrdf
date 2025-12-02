@@ -9,8 +9,8 @@
  * @license MIT
  */
 
-import { _DataFactory, Store } from 'n3';
-import { _asNamedNode, _getIRI } from './term-utils.mjs';
+import { DataFactory, Store } from 'n3';
+import { asNamedNode, getIRI } from './term-utils.mjs';
 
 /**
  * Merge multiple stores into one
