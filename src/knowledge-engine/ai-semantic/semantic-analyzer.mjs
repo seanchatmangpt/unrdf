@@ -10,7 +10,7 @@
  * Integrates with UNRDF's Knowledge Hook system and provides OTEL observability.
  */
 
-import { _Store } from 'n3';
+import { Store } from 'n3';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
 import { _query } from '../query.mjs';
 import { LRUCache } from 'lru-cache';

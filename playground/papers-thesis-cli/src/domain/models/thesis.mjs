@@ -236,7 +236,7 @@ export function createThesis(input) {
         name: validated.supervisor.name,
         affiliation: validated.supervisor.affiliation || validated.institution,
         email: validated.supervisor.email,
-        role: 'supervisor'
+        role: 'primary'
       }
     : undefined;
 

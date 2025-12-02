@@ -5,7 +5,7 @@
  * aggregation, and real-time validation.
  */
 
-import { _Store, DataFactory } from 'n3';
+import { Store, DataFactory } from 'n3';
 import {
   createStreamingPipeline,
   WindowType,

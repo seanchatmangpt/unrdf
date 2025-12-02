@@ -9,8 +9,8 @@
 
 import { readFile } from 'fs/promises';
 import { createHash } from 'crypto';
-import { _fileURLToPath } from 'url';
-import { _dirname, _join, _resolve } from 'path';
+import { fileURLToPath } from 'url';
+import { dirname, join, resolve } from 'path';
 import { createPathValidator } from './security/path-validator.mjs';
 
 /**

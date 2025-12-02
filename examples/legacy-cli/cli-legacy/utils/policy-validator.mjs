@@ -7,7 +7,7 @@
  * with comprehensive OTEL instrumentation and violation reporting.
  */
 
-import { _Store } from 'n3';
+import { Store } from 'n3';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
 import { PolicyPackManager } from '../../knowledge-engine/policy-pack.mjs';
 import { evaluateHook } from './hook-evaluator.mjs';

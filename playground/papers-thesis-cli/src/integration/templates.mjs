@@ -677,3 +677,14 @@ export async function previewTemplate(templateName) {
 
   return renderTemplate(templateName, sampleContext);
 }
+
+/**
+ * Format a date for display
+ * @param {string|Date} date - Date to format
+ * @param {string} [format='long'] - Format type ('long', 'short', 'iso')
+ * @returns {string} Formatted date string
+ */
+export function formatDate(date, format = 'long') {
+  // Delegate to the formatdate filter from nunjucks-filters
+  return formatdate(date, format);
+}
