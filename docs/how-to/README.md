@@ -1,173 +1,155 @@
-# UNRDF How-to Guides
+# UNRDF How-To Guides
 
-**Task-oriented recipes for solving specific problems**
+**Task-oriented recipes. Start with [ESSENTIAL], skip [ADVANCED] until needed.**
 
-How-to guides are practical, step-by-step instructions for accomplishing specific tasks. They assume you have basic knowledge from the tutorials.
+---
 
-## Core Operations
+## [ESSENTIAL] Core Operations (Start Here)
 
-### Data Management
-- [How to Import Large RDF Datasets](./import-large-datasets.md)
-- [How to Export Knowledge Graphs](./export-knowledge-graphs.md)
-- [How to Batch Insert Triples Efficiently](./batch-insert-triples.md)
-- [How to Deduplicate RDF Data](./deduplicate-rdf-data.md)
-- [How to Merge Multiple Knowledge Graphs](./merge-knowledge-graphs.md)
+These cover 80% of use cases:
+
+### Parsing & Serialization
+- **[ESSENTIAL]** [How to Parse RDF Formats](./parse-rdf-formats.md) - Turtle, JSON-LD, N-Triples
+- **[ESSENTIAL]** [How to Serialize RDF](./serialize-rdf.md) - Back to Turtle/JSON-LD
 
 ### Querying
-- [How to Optimize SPARQL Query Performance](./optimize-sparql-queries.md)
-- [How to Write Complex JOIN Queries](./complex-join-queries.md)
-- [How to Implement Full-Text Search](./full-text-search.md)
-- [How to Query Across Federated Sources](./query-federated-sources.md)
-- [How to Use SPARQL Property Paths](./sparql-property-paths.md)
+- **[ESSENTIAL]** [How to Execute SPARQL Queries](./execute-sparql-queries.md) - SELECT, CONSTRUCT, ASK
+- **[ESSENTIAL]** [How to Use SPARQL Property Paths](./sparql-property-paths.md) - Path expressions
+
+### Validation
+- **[ESSENTIAL]** [How to Define SHACL Constraints](./define-shacl-constraints.md) - Shape validation
+- **[ESSENTIAL]** [How to Handle Validation Errors](./handle-validation-errors.md) - Error handling
 
 ---
 
-## Knowledge Hooks
+## STOP HERE if you just need basic RDF operations.
 
-### Hook Development
-- [How to Create Validation Hooks](./create-validation-hooks.md)
-- [How to Build Transformation Hooks](./build-transformation-hooks.md)
-- [How to Implement Audit Trail Hooks](./implement-audit-trail-hooks.md)
-- [How to Chain Multiple Hooks](./chain-multiple-hooks.md)
-- [How to Debug Hook Execution](./debug-hook-execution.md)
-
-### Hook Patterns
-- [How to Implement Hook Conditions](./implement-hook-conditions.md)
-- [How to Use Hook Context](./use-hook-context.md)
-- [How to Handle Hook Errors](./handle-hook-errors.md)
-- [How to Test Knowledge Hooks](./test-knowledge-hooks.md)
+The guides below are for specialized requirements.
 
 ---
 
-## Browser & Client-Side
+## [ADVANCED] Knowledge Hooks
+
+**When you need it:** Autonomous behaviors on every data change.
+**Skip if:** You can validate/transform in your code.
+
+- [ADVANCED] [How to Create Validation Hooks](./create-validation-hooks.md)
+- [ADVANCED] [How to Build Transformation Hooks](./build-transformation-hooks.md)
+- [ADVANCED] [How to Chain Multiple Hooks](./chain-multiple-hooks.md)
+- [ADVANCED] [How to Debug Hook Execution](./debug-hook-execution.md)
+- [ADVANCED] [How to Test Knowledge Hooks](./test-knowledge-hooks.md)
+
+---
+
+## [ADVANCED] Transactions
+
+**When you need it:** Hook-driven atomic operations.
+**Skip if:** Basic add/remove is sufficient.
+
+- [ADVANCED] [How to Handle Transactions](./handle-transactions.md) - TransactionManager lifecycle
+- [ADVANCED] [How to Use Hook Context](./use-hook-context.md)
+- [ADVANCED] [How to Handle Hook Errors](./handle-hook-errors.md)
+
+---
+
+## [ADVANCED] Compliance & Audit
+
+**When you need it:** GDPR, SOC2, HIPAA compliance.
+**Skip if:** No regulatory requirements.
+
+- [ADVANCED] [How to Implement Audit Trails](./implement-audit-trails.md) - LockchainWriter
+- [ADVANCED] [How to Create Knowledge Hooks](./create-knowledge-hooks.md) - Autonomic functions
+
+---
+
+## [ADVANCED] Performance Optimization
+
+**When you need it:** Queries taking >100ms.
+**Skip if:** Performance is acceptable.
+
+- [ADVANCED] [How to Optimize Query Performance](./optimize-query-performance.md) - Singleton, caching
+- [ADVANCED] [How to Cache Query Results](./cache-query-results.md)
+- [ADVANCED] [How to Optimize Memory Usage](./optimize-memory-usage.md)
+
+---
+
+## [ADVANCED] Browser & React
+
+**When you need it:** Client-side applications.
+**Skip if:** Node.js only.
 
 ### Browser Setup
-- [How to Configure IndexedDB Storage](./configure-indexeddb-storage.md)
-- [How to Enable Browser Caching](./enable-browser-caching.md)
-- [How to Handle Cross-Origin Requests](./handle-cors.md)
-- [How to Implement Offline Support](./implement-offline-support.md)
+- [ADVANCED] [How to Configure IndexedDB Storage](./configure-indexeddb-storage.md)
+- [ADVANCED] [How to Implement Offline Support](./implement-offline-support.md)
 
 ### React Integration
-- [How to Use React Hooks with UNRDF](./use-react-hooks.md)
-- [How to Build Reactive Components](./build-reactive-components.md)
-- [How to Implement Optimistic Updates](./implement-optimistic-updates.md)
-- [How to Handle Loading States](./handle-loading-states.md)
+- [ADVANCED] [How to Use React Hooks with UNRDF](./use-react-hooks.md)
+- [ADVANCED] [How to Use Knowledge Hooks in React](./use-hooks-in-react.md)
+- [ADVANCED] [How to Build Reactive Components](./build-reactive-components.md)
 
 ---
 
-## Policy & Validation
+## [ADVANCED] Policy & Governance
 
-### Policy Management
-- [How to Define SHACL Constraints](./define-shacl-constraints.md)
-- [How to Create Custom Validators](./create-custom-validators.md)
-- [How to Implement Access Control](./implement-access-control.md)
-- [How to Compose Policy Packs](./compose-policy-packs.md)
+**When you need it:** Enterprise governance workflows.
+**Skip if:** Basic SHACL is enough.
 
-### Validation Strategies
-- [How to Validate on Insert](./validate-on-insert.md)
-- [How to Validate Batch Operations](./validate-batch-operations.md)
-- [How to Handle Validation Errors](./handle-validation-errors.md)
+- [ADVANCED] [How to Create Custom Validators](./create-custom-validators.md)
+- [ADVANCED] [How to Implement Access Control](./implement-access-control.md)
+- [ADVANCED] [How to Compose Policy Packs](./compose-policy-packs.md)
 
 ---
 
-## Streaming & Real-time
+## [ADVANCED] Streaming & Real-time
 
-### Stream Processing
-- [How to Set Up Change Feeds](./setup-change-feeds.md)
-- [How to Implement Windowing](./implement-windowing.md)
-- [How to Create Stream Aggregators](./create-stream-aggregators.md)
-- [How to Process Event Streams](./process-event-streams.md)
+**When you need it:** Real-time data pipelines.
+**Skip if:** Batch processing is sufficient.
 
-### Real-time Updates
-- [How to Subscribe to Data Changes](./subscribe-to-changes.md)
-- [How to Broadcast Updates](./broadcast-updates.md)
-- [How to Implement WebSocket Sync](./implement-websocket-sync.md)
+- [ADVANCED] [How to Set Up Change Feeds](./setup-change-feeds.md)
+- [ADVANCED] [How to Implement Windowing](./implement-windowing.md)
+- [ADVANCED] [How to Subscribe to Data Changes](./subscribe-to-changes.md)
 
 ---
 
-## Distributed Systems
+## [ADVANCED] Distributed Systems
 
-### Federation
-- [How to Connect Multiple Nodes](./connect-multiple-nodes.md)
-- [How to Implement Consensus Protocols](./implement-consensus.md)
-- [How to Handle Network Partitions](./handle-network-partitions.md)
-- [How to Query Distributed Data](./query-distributed-data.md)
+**When you need it:** Multi-node deployments.
+**Skip if:** Single store is sufficient.
 
-### Scaling
-- [How to Shard Your Knowledge Graph](./shard-knowledge-graph.md)
-- [How to Replicate Data Across Nodes](./replicate-data.md)
-- [How to Load Balance Queries](./load-balance-queries.md)
+- [ADVANCED] [How to Connect Multiple Nodes](./connect-multiple-nodes.md)
+- [ADVANCED] [How to Query Distributed Data](./query-distributed-data.md)
+- [ADVANCED] [How to Handle Network Partitions](./handle-network-partitions.md)
 
 ---
 
-## Observability & Monitoring
+## [ADVANCED] Deployment & Production
 
-### OpenTelemetry
-- [How to Configure OTEL Exporters](./configure-otel-exporters.md)
-- [How to Create Custom Spans](./create-custom-spans.md)
-- [How to Track Performance Metrics](./track-performance-metrics.md)
-- [How to Implement Distributed Tracing](./implement-distributed-tracing.md)
+**When you need it:** Production infrastructure.
+**Skip if:** Development only.
 
-### Debugging
-- [How to Enable Debug Logging](./enable-debug-logging.md)
-- [How to Profile Query Performance](./profile-query-performance.md)
-- [How to Trace Transaction Execution](./trace-transaction-execution.md)
+- [ADVANCED] [How to Deploy with Docker](./deploy-with-docker.md)
+- [ADVANCED] [How to Set Up Kubernetes](./setup-kubernetes.md)
+- [ADVANCED] [How to Configure OTEL Exporters](./configure-otel-exporters.md)
+- [ADVANCED] [How to Monitor Production Health](./monitor-production-health.md)
 
 ---
 
-## Deployment & Production
+## Quick Reference
 
-### Infrastructure
-- [How to Deploy with Docker](./deploy-with-docker.md)
-- [How to Set Up Kubernetes](./setup-kubernetes.md)
-- [How to Configure Terraform](./configure-terraform.md)
-- [How to Use Testcontainers](./use-testcontainers.md)
-
-### Production Operations
-- [How to Backup Knowledge Graphs](./backup-knowledge-graphs.md)
-- [How to Restore from Backups](./restore-from-backups.md)
-- [How to Monitor Production Health](./monitor-production-health.md)
-- [How to Handle Production Incidents](./handle-production-incidents.md)
-
----
-
-## Integration
-
-### AI & ML
-- [How to Integrate with NLP Services](./integrate-nlp-services.md)
-- [How to Generate Embeddings](./generate-embeddings.md)
-- [How to Implement Semantic Search](./implement-semantic-search.md)
-
-### External Systems
-- [How to Connect to GraphQL APIs](./connect-to-graphql.md)
-- [How to Sync with SQL Databases](./sync-with-sql.md)
-- [How to Integrate with Message Queues](./integrate-message-queues.md)
-
----
-
-## Performance Optimization
-
-- [How to Optimize Query Performance](./optimize-query-performance.md) - QueryEngine singleton, LRU caching, delta-aware optimization
-- [How to Optimize Memory Usage](./optimize-memory-usage.md)
-- [How to Cache Query Results](./cache-query-results.md)
-- [How to Tune Transaction Performance](./tune-transaction-performance.md)
-- [How to Reduce Bundle Size](./reduce-bundle-size.md)
-
----
-
-## Compliance & Audit Trails
-
-- [How to Implement Audit Trails](./implement-audit-trails.md) - GDPR, SOC2, HIPAA compliance with LockchainWriter
-- [How to Create Knowledge Hooks](./create-knowledge-hooks.md) - Autonomic event-driven functions
-- [How to Use Knowledge Hooks in React](./use-hooks-in-react.md) - React integration patterns
-- [How to Handle Transactions](./handle-transactions.md) - TransactionManager lifecycle
+| I want to... | Guide |
+|--------------|-------|
+| Parse RDF | [ESSENTIAL] Parse RDF Formats |
+| Query data | [ESSENTIAL] Execute SPARQL Queries |
+| Validate | [ESSENTIAL] Define SHACL Constraints |
+| Auto-validate on change | [ADVANCED] Create Validation Hooks |
+| Audit trail | [ADVANCED] Implement Audit Trails |
+| Optimize performance | [ADVANCED] Optimize Query Performance |
+| Use React | [ADVANCED] Use React Hooks |
 
 ---
 
 ## Need Something Else?
 
-Can't find what you're looking for?
-- Check [Tutorials](../tutorials/README.md) for learning basics
-- See [Reference](../reference/README.md) for API documentation
-- Read [Explanations](../explanation/README.md) for conceptual understanding
-- Ask in [GitHub Discussions](https://github.com/unrdf/unrdf/discussions)
+- [Tutorials](../tutorials/README.md) - Learning paths
+- [Reference](../reference/README.md) - API documentation
+- [Which Features?](../WHICH-FEATURES.md) - Decision trees

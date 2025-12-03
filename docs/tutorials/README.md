@@ -1,119 +1,125 @@
 # UNRDF Tutorials
 
-**Learning-oriented guides to get you started with UNRDF**
+**Start with #1. Stop when you have what you need.**
 
-Tutorials are hands-on lessons that guide you through building practical applications step-by-step. Perfect for beginners and those exploring UNRDF for the first time.
+---
 
-## Getting Started
+## Beginner Path (30 minutes)
 
-### [Quick Start Tutorial](./01-quick-start.md)
-Learn the basics of UNRDF in 15 minutes. Create your first RDF knowledge graph, insert triples, and execute SPARQL queries.
+### 1. [Quick Start Tutorial](./01-quick-start.md) ← START HERE
 
+Parse RDF, execute SPARQL queries, serialize data.
+
+**Time:** 15 minutes
 **What you'll learn:**
 - Installing UNRDF
-- Creating your first knowledge graph
-- Inserting and querying RDF data
+- The 11-line pit of success
 - Basic SPARQL queries
 
-**Estimated time:** 15 minutes
+### 2. [SHACL Validation](./02-shacl-validation.md)
 
----
+Validate your data with SHACL shapes.
 
-### [Building Your First Knowledge Hook](./02-first-knowledge-hook.md)
-Master UNRDF's powerful Knowledge Hooks system. Learn how to create hooks that react to data changes, validate insertions, and transform data automatically.
-
+**Time:** 15 minutes
 **What you'll learn:**
-- Understanding Knowledge Hooks
-- Creating pre-transaction hooks
-- Creating post-transaction hooks
-- Hook composition patterns
-
-**Estimated time:** 30 minutes
+- Defining shape constraints
+- Validating data
+- Handling validation errors
 
 ---
 
-### [Browser Integration Tutorial](./03-browser-integration.md)
-Build a browser-based RDF application using UNRDF's IndexedDB integration. Create a rich client-side semantic application with persistent storage.
+## STOP HERE if you just need to parse, query, and validate.
 
-**What you'll learn:**
-- Setting up UNRDF in the browser
-- Using IndexedDB for RDF storage
-- Building reactive UI components
-- Querying RDF data client-side
-
-**Estimated time:** 45 minutes
+Most users don't need anything beyond this point.
 
 ---
 
-### [Policy Packs and Validation](./04-policy-packs.md)
-Implement robust data governance with Policy Packs. Learn how to enforce SHACL constraints, business rules, and access control policies.
+## Intermediate Path (1 hour) - Only If You Need Automation
 
-**What you'll learn:**
-- Creating Policy Pack definitions
-- SHACL shape validation
-- Custom validation rules
-- Composing multiple policies
+### 3. [Building Your First Knowledge Hook](./02-first-knowledge-hook.md)
 
-**Estimated time:** 40 minutes
+Create hooks that react to data changes automatically.
 
----
+**Time:** 30 minutes
+**When you need it:** Autonomous validation, transformation, logging
+**Skip if:** You can validate/transform manually in your code
 
-### [Real-time Streaming Tutorial](./05-real-time-streaming.md)
-Build a real-time knowledge graph application with UNRDF's streaming capabilities. Process change feeds, implement windowing, and create reactive data pipelines.
+### 4. [Transactions with Hooks](./03-transactions-with-hooks.md)
 
-**What you'll learn:**
-- Setting up Change Feeds
-- Processing streaming updates
-- Windowing and aggregation
-- Real-time validation
+Hook-driven atomic transactions.
 
-**Estimated time:** 50 minutes
+**Time:** 20 minutes
+**When you need it:** Multiple hooks coordinated on changes
+**Skip if:** You don't need Knowledge Hooks
 
 ---
 
-## Advanced Tutorials
+## Advanced Path (2+ hours) - Specialized Use Cases Only
 
-### [Distributed Federation](./06-distributed-federation.md)
-Scale your knowledge graph across multiple nodes. Implement distributed queries, consensus protocols, and federated data access.
+### 5. [Browser Integration](./03-browser-integration.md)
 
-**Estimated time:** 60 minutes
+Client-side RDF with IndexedDB.
 
-### [AI/Semantic Integration](./07-ai-semantic-integration.md)
-Enhance your knowledge graph with AI capabilities. Integrate NLP query builders, semantic analyzers, and embedding managers.
+**Time:** 45 minutes
+**When you need it:** Browser-based applications
+**Skip if:** Node.js only
 
-**Estimated time:** 55 minutes
+### 6. [Policy Packs and Governance](./04-policy-packs.md)
 
-### [Production Deployment](./08-production-deployment.md)
-Deploy UNRDF to production with Kubernetes, Docker, and Terraform. Implement observability, monitoring, and high availability.
+Declarative access control and validation policies.
 
-**Estimated time:** 90 minutes
+**Time:** 40 minutes
+**When you need it:** Enterprise governance requirements
+**Skip if:** Basic SHACL is enough
+
+### 7. [Real-time Streaming](./05-real-time-streaming.md)
+
+Change feeds, windowing, reactive pipelines.
+
+**Time:** 50 minutes
+**When you need it:** Real-time data processing
+**Skip if:** Batch processing is sufficient
+
+### 8. [Distributed Federation](./06-distributed-federation.md)
+
+Multi-node queries, consensus protocols.
+
+**Time:** 60 minutes
+**When you need it:** Distributed systems
+**Skip if:** Single-node is sufficient
+
+### 9. [Production Deployment](./08-production-deployment.md)
+
+Docker, Kubernetes, observability.
+
+**Time:** 90 minutes
+**When you need it:** Production infrastructure
+**Skip if:** Development only
 
 ---
 
-## Tutorial Path Recommendations
+## Tutorial Selection Guide
 
-### **Beginner Path** (2-3 hours)
-1. Quick Start Tutorial → First Knowledge Hook → Browser Integration
-
-### **Intermediate Path** (4-5 hours)
-1. Quick Start → Knowledge Hooks → Policy Packs → Real-time Streaming
-
-### **Advanced Path** (6-8 hours)
-1. All beginner tutorials → Distributed Federation → AI Integration → Production Deployment
+| Your Goal | Tutorials to Complete |
+|-----------|----------------------|
+| Parse and query RDF | 1 only |
+| Add validation | 1, 2 |
+| React to data changes | 1, 2, 3 |
+| Browser application | 1, 2, 5 |
+| Production deployment | 1, 2, 9 |
+| Everything | All of them (but why?) |
 
 ---
 
 ## Next Steps
 
-After completing tutorials, explore:
-- **[How-to Guides](../how-to/README.md)** for specific task solutions
-- **[Reference Documentation](../reference/README.md)** for API details
-- **[Explanation Guides](../explanation/README.md)** for deeper understanding
+- **[How-To Guides](../how-to/README.md)** - Task-specific recipes
+- **[Reference](../reference/README.md)** - API documentation
+- **[Which Features?](../WHICH-FEATURES.md)** - Decision trees
 
 ---
 
 ## Need Help?
 
-- **Questions?** Check [FAQ](../FAQ.md)
-- **Issues?** See [Troubleshooting Guide](../TROUBLESHOOTING.md)
-- **Community:** [GitHub Discussions](https://github.com/unrdf/unrdf/discussions)
+- [GitHub Discussions](https://github.com/seanchatmangpt/unrdf/discussions)
+- [Troubleshooting Guide](../TROUBLESHOOTING.md)
