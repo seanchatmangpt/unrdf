@@ -111,16 +111,16 @@ Practical recipes for specific tasks:
 - [Data Quality Assessment](docs/how-to/validation/quality-assessment.md)
 
 **Knowledge Hooks**
-- [Define Hooks](docs/how-to/hooks/define-hook.md)
-- [Register & Manage Hooks](docs/how-to/hooks/register-hook.md)
-- [Hook Lifecycle Management](docs/how-to/hooks/hook-lifecycle.md)
+- [Create Knowledge Hooks](docs/how-to/create-knowledge-hooks.md) - Complete hook lifecycle
+- [Use Hooks in React](docs/how-to/use-hooks-in-react.md) - React integration patterns
+- [Handle Transactions](docs/how-to/handle-transactions.md) - TransactionManager lifecycle
 
-**Transactions & Audit**
-- [Transaction Basics](docs/how-to/transactions/transaction-basics.md)
-- [Audit Trails with Lockchain](docs/how-to/transactions/audit-trails.md)
+**Compliance & Audit**
+- [Implement Audit Trails](docs/how-to/implement-audit-trails.md) - GDPR, SOC2, HIPAA compliance
+- [Transaction Receipts](docs/how-to/transactions/transaction-basics.md) - Cryptographic receipts
 
-**Optimization**
-- [Query Optimization](docs/how-to/optimization/query-optimization.md)
+**Performance Optimization**
+- [Optimize Query Performance](docs/how-to/optimize-query-performance.md) - Singleton, caching, delta-aware
 - [Dark Matter Performance Tuning](docs/how-to/optimization/dark-matter-tuning.md)
 
 [**View All How-To Guides →**](docs/how-to/)
