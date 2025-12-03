@@ -1,100 +1,170 @@
-# Start Here: The Simplest Path
+# Start Here: The Knowledge Substrate
 
-**Most users need only 11 lines of code.**
+**One function gives you everything.**
 
 ## The Pit of Success
 
 ```javascript
-import { initStore, useGraph, useTurtle } from 'unrdf';
+import { createKnowledgeSubstrateCore } from 'unrdf';
 
-await initStore();
-const turtle = useTurtle();
-const graph = useGraph();
+const core = await createKnowledgeSubstrateCore();
 
-const store = turtle.parse(`
+// Parse
+const store = core.parseTurtle(`
   @prefix ex: <http://example.org/> .
   ex:Alice ex:knows ex:Bob .
 `);
 
-const results = graph.select(`SELECT ?person WHERE { ?person ?p ?o }`);
+// Query
+const results = core.query(store, `SELECT ?person WHERE { ?person ?p ?o }`);
 console.log(results);
 ```
 
-**That's a complete RDF application.**
+**That's a production-ready RDF system with:**
+- Transactions
+- Hooks
+- Sandboxing
+- Audit trails
+- Performance optimization
+- Observability
 
 ---
 
-## What Each Line Does
+## What `createKnowledgeSubstrateCore()` Gives You
 
-| Line | Purpose |
-|------|---------|
-| `import { initStore, useGraph, useTurtle }` | Import 3 functions (not 300) |
-| `await initStore()` | Initialize context (call once at startup) |
-| `const turtle = useTurtle()` | Get Turtle parser/serializer |
-| `const graph = useGraph()` | Get graph operations |
-| `turtle.parse(...)` | Parse RDF Turtle string into store |
-| `graph.select(...)` | Execute SPARQL query |
+| Component | Purpose | Enabled |
+|-----------|---------|---------|
+| TransactionManager | Atomic operations with rollback | Default |
+| KnowledgeHookManager | Autonomous behaviors | Default |
+| EffectSandbox | Safe execution environment | Default |
+| LockchainWriter | Cryptographic audit trails | Default |
+| PerformanceOptimizer | 80/20 optimization | Default |
+| Observability | OTEL tracing | Default |
+| PolicyPackManager | Governance | Optional |
+| ResolutionLayer | Multi-agent consensus | Optional |
 
----
-
-## When to Add Complexity
-
-**Default answer: Don't.**
-
-| Question | If YES | If NO |
-|----------|--------|-------|
-| Do you need to validate data? | Add SHACL | Skip it |
-| Do you need autonomous behaviors on every change? | Add Knowledge Hooks | Skip it |
-| Do you need an audit trail? | Add Lockchain | Skip it |
-| Do you need to optimize performance? | Add Dark Matter | Skip it |
-| Are you building a React app? | Add React Hooks | Skip it |
-
-**If all answers are NO, you're done.** Use the 11-line example.
+**The defaults are the 20% of components that deliver 80% of value.**
 
 ---
 
-## The 10 Essential Functions
+## The Hierarchy
 
-You probably only need these:
+```
+Level 1: createKnowledgeSubstrateCore()  ← START HERE (recommended)
+    ↓
+Level 2: defineHook() / registerHook()   ← Custom hooks (when needed)
+    ↓
+Level 3: parseTurtle() / query()         ← Low-level (rare)
+```
 
-| Function | When to Use |
-|----------|-------------|
-| `initStore()` | Once at app startup |
-| `useGraph()` | For queries and modifications |
-| `useTurtle()` | To parse/serialize Turtle |
-| `useTerms()` | To create RDF terms |
-| `useValidator()` | Only if you need SHACL validation |
-
-**That's 5 functions for 80% of use cases.**
+**Drop down a level only when you need something the higher level doesn't provide.**
 
 ---
 
-## What You Probably Don't Need
+## When to Use Each Level
 
-Unless you have a specific requirement:
+### Level 1: Knowledge Substrate (Default)
 
-- **Knowledge Hooks** - Only for autonomous, event-driven behaviors
-- **TransactionManager** - Only for hook-driven transactions
-- **LockchainWriter** - Only for cryptographic audit trails
-- **PolicyPackManager** - Only for governance workflows
-- **Dark Matter** - Only for performance optimization at scale
-- **React Hooks** - Only for React applications
-- **Federation** - Only for distributed systems
-- **Streaming** - Only for real-time data pipelines
+**Use for:** 80% of applications
+**What you get:** Everything, optimized and configured
+
+```javascript
+const core = await createKnowledgeSubstrateCore();
+```
+
+### Level 2: Knowledge Hooks
+
+**Use for:** Custom autonomous behaviors beyond defaults
+**When:** You need hooks that aren't built into the Substrate
+
+```javascript
+import { defineHook, registerHook } from 'unrdf';
+
+const customHook = defineHook({
+  meta: { name: 'my-validator' },
+  before(event) { /* ... */ }
+});
+registerHook(customHook);
+```
+
+### Level 3: Low-level APIs
+
+**Use for:** Edge cases, multi-store scenarios
+**When:** You need direct control over individual stores
+
+```javascript
+import { parseTurtle, query } from 'unrdf';
+
+const store1 = parseTurtle(data1);
+const store2 = parseTurtle(data2);
+// Manage stores independently
+```
+
+---
+
+## Configuration
+
+```javascript
+const core = await createKnowledgeSubstrateCore({
+  // Core (enabled by default)
+  enableTransactionManager: true,
+  enableKnowledgeHookManager: true,
+  enableEffectSandbox: true,
+  enableLockchainWriter: true,
+  enableObservability: true,
+  enablePerformanceOptimizer: true,
+
+  // Optional (disabled by default)
+  enablePolicyPackManager: false,  // Enable for governance
+  enableResolutionLayer: false,    // Enable for multi-agent
+
+  // Performance tuning
+  maxConcurrency: 10,
+  cacheSize: 10000,
+  batchSize: 1000,
+  timeoutMs: 2000,
+});
+```
+
+---
+
+## Accessing Components
+
+```javascript
+const core = await createKnowledgeSubstrateCore();
+
+// Get specific components
+const txManager = core.getComponent('TransactionManager');
+const hookManager = core.getComponent('KnowledgeHookManager');
+const lockchain = core.getComponent('LockchainWriter');
+const sandbox = core.getComponent('EffectSandbox');
+
+// Use the transaction manager
+await txManager.apply(store, {
+  additions: [quad],
+  removals: []
+});
+
+// Use the lockchain
+await lockchain.writeReceipt(transaction);
+```
+
+---
+
+## The 80/20 Principle
+
+The Knowledge Substrate embodies the 80/20 principle:
+
+- **20% of components** (TransactionManager, KnowledgeHookManager, etc.) deliver **80% of value**
+- **80% of components** (PolicyPackManager, ResolutionLayer) deliver **20% of value**
+
+The defaults enable the essential 20%. Enable the optional 80% only when you have specific requirements.
 
 ---
 
 ## Next Steps
 
-1. **Copy the 11-line example** and run it
-2. **Modify** it for your data
-3. **Only add features** when you hit a specific need
-4. **Consult [WHICH-FEATURES.md](WHICH-FEATURES.md)** if unsure
-
----
-
-## Stop Here
-
-If you're not sure whether you need more features, you don't.
-
-The 11-line example is production-ready. Ship it.
+1. **Use `createKnowledgeSubstrateCore()`** for your application
+2. **Only drop to Level 2** if you need custom hooks
+3. **Only drop to Level 3** if you have multi-store edge cases
+4. **Consult [WHICH-FEATURES.md](WHICH-FEATURES.md)** for decision trees
