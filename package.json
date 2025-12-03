@@ -1,22 +1,11 @@
 {
   "name": "unrdf",
-  "version": "4.2.1",
+  "version": "4.2.2",
   "description": "Production-ready RDF knowledge graph library with Knowledge Hooks, SPARC methodology, Knowledge Substrate optimization, AI/Semantic integration, Distributed Federation, Real-time Streaming, and HTF Framework",
   "type": "module",
   "main": "src/index.mjs",
   "exports": {
     ".": "./src/index.mjs",
-    "./react-hooks": "./src/react-hooks/index.mjs",
-    "./react-hooks/core": "./src/react-hooks/core/index.mjs",
-    "./react-hooks/streaming": "./src/react-hooks/streaming/index.mjs",
-    "./react-hooks/federation": "./src/react-hooks/federation/index.mjs",
-    "./react-hooks/dark-matter": "./src/react-hooks/dark-matter/index.mjs",
-    "./react-hooks/ai-semantic": "./src/react-hooks/ai-semantic/index.mjs",
-    "./react-hooks/advanced-utility": "./src/react-hooks/advanced-utility/index.mjs",
-    "./react-hooks/policy-security": "./src/react-hooks/policy-security/index.mjs",
-    "./react-hooks/error-recovery": "./src/react-hooks/error-recovery/index.mjs",
-    "./react-hooks/form-ui": "./src/react-hooks/form-ui/index.mjs",
-    "./react-hooks/composition": "./src/react-hooks/composition/index.mjs",
     "./knowledge-engine": "./src/knowledge-engine/index.mjs",
     "./knowledge-engine/lite": "./src/knowledge-engine/lite.mjs",
     "./composables/*": "./src/composables/*.mjs",
@@ -150,11 +139,8 @@
     "@kubernetes/client-node": "^0.20.0",
     "@opentelemetry/sdk-metrics": "^2.2.0",
     "@opentelemetry/sdk-trace-base": "^2.2.0",
-    "@playwright/test": "^1.56.1",
     "@testcontainers/postgresql": "^11.8.1",
     "@testcontainers/redis": "^11.8.1",
-    "@testing-library/react": "^16.3.0",
-    "@testing-library/react-hooks": "^8.0.1",
     "@types/node": "^20.0.0",
     "@vitest/coverage-v8": "^1.0.0",
     "@vitest/ui": "^1.0.0",
@@ -164,28 +150,17 @@
     "eslint": "^8.0.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-jsdoc": "^48.0.0",
-    "fake-indexeddb": "^6.2.5",
     "globals": "^16.5.0",
     "jsdoc": "^4.0.0",
     "obuild": "^0.2.1",
     "prettier": "^3.0.0",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0",
-    "react-test-renderer": "^19.2.0",
     "redis": "^5.8.2",
     "terraform": "^1.0.0",
     "testcontainers": "^11.8.1",
     "vitest": "^1.0.0"
   },
   "peerDependencies": {
-    "node": ">=18.0.0",
-    "react": ">=16.8.0",
-    "react-dom": ">=16.8.0"
-  },
-  "peerDependenciesMeta": {
-    "node": {
-      "optional": false
-    }
+    "node": ">=18.0.0"
   },
   "files": [
     "src/",
