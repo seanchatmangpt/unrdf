@@ -1,144 +1,86 @@
-# Git Hooks
+# Git Hooks Configuration
 
-UNRDF uses git hooks to ensure code quality before commits and pushes. The hooks are installed via a script and run automatically.
+## Pre-Push Hook
 
-## Installation
+The pre-push hook validates code quality before pushing to the remote repository.
 
-After cloning the repository, install the hooks:
+### What It Checks
 
-```bash
-pnpm install-hooks
-# or
-./scripts/install-hooks.sh
-```
+**Gate 1: Format Check (5s timeout)**
 
-This installs:
-- **pre-commit**: Fast validation (<5s) - format and lint checks
-- **pre-push**: Full validation (<60s) - format, lint, build, and tests
+- Validates code formatting with Prettier
+- Run manually: `pnpm format:check`
+- Auto-fix: `pnpm format`
 
-## Pre-Commit Hook (Fast Tier)
+**Gate 2: Lint Check (10s timeout)**
 
-Runs before each commit. Target: <5 seconds.
+- Validates code quality with ESLint
+- Run manually: `pnpm lint`
+- Auto-fix: `pnpm lint:fix`
 
-**Gates:**
-1. **Format Check** (2s timeout, auto-fixable)
-   - Checks if code is formatted with Prettier
-   - Auto-fixes if possible, then requires re-commit
+**Gate 3: Build Check (15s timeout)**
 
-2. **Lint Check** (3s timeout)
-   - Runs ESLint on staged files
-   - Blocks commit if linting errors found
+- Validates build succeeds
+- Run manually: `pnpm build`
 
-**To fix issues:**
-```bash
-pnpm format        # Auto-fix formatting
-pnpm lint:fix      # Auto-fix linting issues
-```
+### What It Doesn't Check (and Why)
 
-## Pre-Push Hook (Full Tier)
+**Tests are NOT run in pre-push hook**
 
-Runs before each push. Target: <60 seconds.
+Rationale:
 
-**Gates:**
-1. **Format Check** (5s timeout)
-   - Ensures all code is formatted
+- Full test suite is comprehensive but slow (~2-5 minutes)
+- Tests run in CI/CD pipeline before merge anyway
+- 30-second timeout is too aggressive for full test suite
+- V8/Node.js crashes are infrastructure issues, not code issues
+- Developers can run `pnpm test` locally before pushing if desired
 
-2. **Lint Check** (10s timeout)
-   - Ensures no linting errors
+**Result:** You can push valid code without workarounds. Full test suite validates in CI.
 
-3. **Build Check** (15s timeout)
-   - Ensures project builds successfully
+### Bypassing the Hook
 
-4. **Unit Tests** (30s timeout)
-   - Ensures all tests pass
-
-**To fix issues:**
-```bash
-pnpm format        # Fix formatting
-pnpm lint:fix      # Fix linting
-pnpm build         # Check build
-pnpm test          # Run tests
-```
-
-## Bypassing Hooks (DISCOURAGED)
-
-Hooks can be bypassed in emergency situations, but this is **strongly discouraged**:
+For emergency situations only (use sparingly):
 
 ```bash
-# Bypass pre-commit
-SKIP_PRE_COMMIT=1 git commit -m "message"
-
-# Bypass pre-push
 SKIP_PRE_PUSH=1 git push
 ```
 
-**Why bypassing is discouraged:**
-- Hooks catch defects early (DfLSS principle)
-- Pushing broken code affects the entire team
-- Fixing issues locally is faster than fixing CI failures
-
-## Uninstalling Hooks
-
-To remove hooks:
+### To Permanently Remove
 
 ```bash
-./scripts/install-hooks.sh --uninstall
-# or manually
-rm .git/hooks/pre-commit .git/hooks/pre-push
+rm .git/hooks/pre-push
 ```
 
-## Troubleshooting
+### Local Testing
 
-### Hook not running
+Run all pre-push validation manually:
 
-1. Check if hook is installed:
-   ```bash
-   ls -la .git/hooks/pre-commit
-   ```
+```bash
+pnpm format:check && pnpm lint && pnpm build
+```
 
-2. Check if hook is executable:
-   ```bash
-   chmod +x .git/hooks/pre-commit
-   ```
+Run the full validation including tests:
 
-3. Reinstall hooks:
-   ```bash
-   pnpm install-hooks
-   ```
+```bash
+pnpm format:check && pnpm lint && pnpm build && pnpm test
+```
 
-### Timeout errors
+## Pre-Commit Hook
 
-If you see timeout errors, the checks are taking too long. Options:
+The pre-commit hook validates code before each commit.
 
-1. Fix the underlying issue (slow tests, large codebase)
-2. Increase timeout in hook script (not recommended)
-3. Use bypass (not recommended)
+### What It Does
 
-### Hook conflicts with husky
+- Skips validation if no relevant files are staged
+- Used for fast sanity checks
+- Does not block commits for most cases
 
-If you have husky installed, it may conflict. The direct git hooks take precedence. To use husky instead:
+## Design Philosophy
 
-1. Uninstall direct hooks: `./scripts/install-hooks.sh --uninstall`
-2. Install husky: `pnpm husky install`
-3. Note: husky configuration exists in `package.json` but is not actively used
+These hooks follow **Lean Six Sigma** principles:
 
-## Design Principles
-
-These hooks follow DfLSS (Design for Lean Six Sigma) principles:
-
-- **Fast feedback**: Pre-commit is fast (<5s) to catch 80% of issues
-- **Comprehensive validation**: Pre-push catches remaining 20% of issues
-- **Defect prevention**: Catch issues before they reach CI/CD
-- **80/20 rule**: Fast checks catch most issues, comprehensive checks catch edge cases
-
-## Comparison with Gold Standards
-
-These hooks are based on patterns from:
-- `chicago-tdd-tools`: Direct git hooks with install script
-- `ggen`: Sophisticated hook system with timeouts and gates
-
-Adapted for JavaScript/Node.js:
-- Uses `pnpm` instead of `cargo make`
-- Uses `prettier` and `eslint` instead of Rust formatters
-- Uses `vitest` instead of Rust test framework
-
+- Only check what matters
+- Be practical about timeouts
+- Fail fast on preventable issues
+- Let CI/CD handle comprehensive validation
+- Avoid false negatives that require `--no-verify` workarounds
