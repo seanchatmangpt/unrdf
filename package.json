@@ -1,6 +1,6 @@
 {
   "name": "unrdf",
-  "version": "4.2.2",
+  "version": "4.2.3",
   "description": "Production-ready RDF knowledge graph library with Knowledge Hooks, SPARC methodology, Knowledge Substrate optimization, AI/Semantic integration, Distributed Federation, Real-time Streaming, and HTF Framework",
   "type": "module",
   "main": "src/index.mjs",
