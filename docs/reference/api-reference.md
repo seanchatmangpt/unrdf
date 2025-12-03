@@ -1229,28 +1229,265 @@ const auditHook = defineHook({
 
 ### Class: `TransactionManager`
 
-Base transaction manager with hook support and receipt generation.
+ACID-like transaction manager with mutex-based concurrency control, hook support, and cryptographic receipt generation.
 
 **Type Signature**:
 ```javascript
 class TransactionManager {
   /**
    * @param {Object} [options] - Manager options
-   * @param {boolean} [options.strictMode=false] - Strict mode
-   * @param {number} [options.maxHooks=100] - Maximum hooks
+   * @param {boolean} [options.strictMode=false] - Fail on hook errors
+   * @param {number} [options.maxHooks=100] - Maximum hooks allowed
+   * @param {boolean} [options.afterHashOnly=false] - Skip canonicalization for faster hashing
+   * @param {boolean} [options.enableLockchain=false] - Enable audit trail persistence
+   * @param {Object} [options.lockchainConfig] - Lockchain configuration
+   * @param {boolean} [options.enableResolution=false] - Enable multi-agent consensus
+   * @param {Object} [options.resolutionConfig] - Resolution layer configuration
+   * @param {Object} [options.observability] - OTEL observability configuration
    */
   constructor(options)
 }
 ```
 
-**Methods**:
+**Configuration Options**:
 
-| Method | Returns | Description |
-|--------|---------|-------------|
-| `addHook(hook)` | `void` | Add transaction hook |
-| `removeHook(id)` | `boolean` | Remove hook by ID |
-| `apply(store, delta, options)` | `Promise<{store, receipt}>` | Apply delta to store |
-| `getStats()` | `Object` | Get manager statistics |
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `strictMode` | `boolean` | `false` | Fail transaction on any hook error |
+| `maxHooks` | `number` | `100` | Maximum number of registered hooks |
+| `afterHashOnly` | `boolean` | `false` | Skip canonicalization for faster hashing |
+| `enableLockchain` | `boolean` | `false` | Enable cryptographic audit trail |
+| `lockchainConfig.gitRepo` | `string` | `process.cwd()` | Git repository path |
+| `lockchainConfig.refName` | `string` | `refs/notes/lockchain` | Git ref for entries |
+| `lockchainConfig.batchSize` | `number` | `10` | Auto-commit batch size |
+| `enableResolution` | `boolean` | `false` | Enable multi-agent consensus layer |
+| `resolutionConfig.defaultStrategy` | `string` | `'voting'` | Consensus strategy |
+| `resolutionConfig.timeout` | `number` | `30000` | Resolution timeout (ms) |
+
+**Core Methods**:
+
+#### `apply(store, delta, options)`
+
+Apply a delta to a store with hook execution and receipt generation.
+
+```javascript
+/**
+ * @param {Store} store - N3 Store to modify
+ * @param {Delta} delta - Changes to apply
+ * @param {Object} [options] - Transaction options
+ * @param {string} [options.actor] - Actor identifier
+ * @param {boolean} [options.skipHooks=false] - Skip hook execution
+ * @param {number} [options.timeoutMs=30000] - Transaction timeout
+ * @returns {Promise<{store: Store, receipt: Receipt}>} Transaction result
+ * @throws {Error} If transaction fails or times out
+ */
+async apply(store, delta, options)
+```
+
+**Example**:
+```javascript
+const tx = new TransactionManager({ strictMode: true });
+
+const delta = {
+  additions: [quad(namedNode('ex:alice'), namedNode('ex:knows'), namedNode('ex:bob'))],
+  removals: []
+};
+
+const result = await tx.apply(store, delta, { actor: 'admin@example.org' });
+console.log('Committed:', result.receipt.committed);
+console.log('Duration:', result.receipt.durationMs, 'ms');
+console.log('Before hash:', result.receipt.beforeHash.sha3.substring(0, 16));
+console.log('After hash:', result.receipt.afterHash.sha3.substring(0, 16));
+```
+
+#### `addHook(hook)`
+
+Register a pre or post transaction hook.
+
+```javascript
+/**
+ * @param {Hook} hook - Hook definition
+ * @param {string} hook.id - Unique hook identifier
+ * @param {'pre'|'post'} hook.mode - Hook execution mode
+ * @param {function} hook.condition - Condition function (store, delta) => boolean
+ * @param {'veto'|function} hook.effect - 'veto' for pre-hooks, function for post-hooks
+ * @throws {Error} If hook ID already exists or max hooks exceeded
+ */
+addHook(hook)
+```
+
+**Example**:
+```javascript
+// Pre-hook: Veto transactions adding "eve"
+tx.addHook({
+  id: 'no-eve',
+  mode: 'pre',
+  condition: async (store, delta) =>
+    !delta.additions.some(q => q.object.value.includes('eve')),
+  effect: 'veto'
+});
+
+// Post-hook: Log all committed transactions
+tx.addHook({
+  id: 'audit-log',
+  mode: 'post',
+  condition: async () => true,
+  effect: async (store, delta) => {
+    console.log(`Committed: ${delta.additions.length} additions`);
+  }
+});
+```
+
+#### `removeHook(hookId)`
+
+Remove a registered hook by ID.
+
+```javascript
+/**
+ * @param {string} hookId - Hook identifier to remove
+ * @returns {boolean} True if removed, false if not found
+ */
+removeHook(hookId)
+```
+
+#### `createSession(initialStore, options)`
+
+Create a session for batch operations with rollback capability.
+
+```javascript
+/**
+ * @param {Store} initialStore - Initial store state
+ * @param {Object} [options] - Session options
+ * @returns {Object} Session object with addDelta, applyAll, getCurrentStore, reset
+ */
+createSession(initialStore, options)
+```
+
+**Example**:
+```javascript
+const session = tx.createSession(store);
+
+// Queue multiple deltas
+session.addDelta({ additions: [quad1], removals: [] });
+session.addDelta({ additions: [quad2], removals: [] });
+session.addDelta({ additions: [], removals: [quad3] });
+
+// Apply all atomically
+const receipts = await session.applyAll({ actor: 'batch-processor' });
+
+// Get final state
+const finalStore = session.getCurrentStore();
+console.log(`Applied ${receipts.length} transactions, ${session.getStats().committedCount} committed`);
+
+// Or reset to start over
+session.reset();
+```
+
+#### `commitLockchain()`
+
+Commit pending audit trail entries to Git.
+
+```javascript
+/**
+ * @returns {Promise<Object>} Commit result with batchId, commitHash, entryCount
+ * @throws {Error} If lockchain is not enabled
+ */
+async commitLockchain()
+```
+
+#### `submitProposal(agentId, delta, options)` / `resolveProposals(proposalIds, strategy)`
+
+Multi-agent consensus methods for distributed coordination.
+
+```javascript
+/**
+ * @param {string} agentId - Agent identifier
+ * @param {Object} delta - Proposed changes
+ * @param {Object} [options] - Proposal options
+ * @returns {Promise<string>} Proposal ID
+ */
+async submitProposal(agentId, delta, options)
+
+/**
+ * @param {string[]} proposalIds - Proposal IDs to resolve
+ * @param {Object} [strategy] - Resolution strategy
+ * @returns {Promise<Object>} Resolution result
+ */
+async resolveProposals(proposalIds, strategy)
+```
+
+#### `getStats()`
+
+Get comprehensive manager statistics.
+
+```javascript
+/**
+ * @returns {Object} Statistics including hooks, lockchain, resolution, performance
+ */
+getStats()
+```
+
+**Returns**:
+```javascript
+{
+  hooks: 5,                    // Number of registered hooks
+  lockchain: { ... },          // Lockchain stats if enabled
+  resolution: { ... },         // Resolution layer stats if enabled
+  performance: {
+    transactionLatency: [...], // Recent latency entries
+    totalTransactions: 150,    // Total transactions processed
+    errorCount: 2              // Failed transactions
+  },
+  observability: { ... }       // OTEL metrics
+}
+```
+
+#### `cleanup()`
+
+Clean up manager resources, clearing hooks and metrics.
+
+```javascript
+/**
+ * @returns {Promise<void>}
+ */
+async cleanup()
+```
+
+**Transaction Receipt Structure**:
+
+```javascript
+/**
+ * @typedef {Object} Receipt
+ * @property {string} id - Transaction UUID
+ * @property {number} timestamp - Unix timestamp (ms)
+ * @property {number} durationMs - Execution duration
+ * @property {boolean} committed - Whether transaction was committed
+ * @property {string} [actor] - Actor identifier
+ * @property {Delta} delta - Applied changes
+ * @property {Object} beforeHash - SHA3 + BLAKE3 hashes before
+ * @property {Object} afterHash - SHA3 + BLAKE3 hashes after
+ * @property {HookResult[]} hookResults - Hook execution results
+ * @property {string[]} hookErrors - Hook error messages
+ * @property {string} [error] - Transaction error message
+ */
+```
+
+**Concurrency Model**:
+
+TransactionManager uses mutex-based serialization:
+- All `apply()` calls are queued in FIFO order
+- No concurrent execution (serializable isolation)
+- Timeout protection prevents deadlocks (default 30s)
+- Automatic rollback on errors
+
+**Performance Characteristics**:
+
+| Operation | Latency | Notes |
+|-----------|---------|-------|
+| Base transaction | 1-5ms | Without hooks |
+| With hooks | 10-100ms | Depends on hook complexity |
+| Hash calculation | 5-20ms | SHA3-256 + BLAKE3 |
+| Lockchain write | 10-50ms | If enabled |
 
 **Version**: 1.0.0 | **Stability**: Stable
 
