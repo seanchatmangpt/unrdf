@@ -99,9 +99,6 @@ export default defineConfig({
       // Exclude large federation tests (300+ lines each) - nice to have, not critical
       "test/federation/**",
 
-      // Exclude large React hooks tests (200+ lines each) - moving to unrdf-react
-      "test/react-hooks/**",
-
       // Exclude slow sandbox tests (500+ lines, native modules)
       "test/knowledge-engine/sandbox/**",
 
