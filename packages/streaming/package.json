@@ -1,0 +1,59 @@
+{
+  "name": "@unrdf/streaming",
+  "version": "5.0.0-alpha.0",
+  "description": "UNRDF Streaming - Change Feeds and Real-time Synchronization",
+  "type": "module",
+  "main": "src/index.mjs",
+  "exports": {
+    ".": "./src/index.mjs",
+    "./processor": "./src/processor.mjs"
+  },
+  "sideEffects": false,
+  "files": [
+    "src/",
+    "dist/",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "vitest run --config ../../vitest.config.mjs --coverage",
+    "test:fast": "vitest run --config ../../vitest.config.fast.mjs --coverage",
+    "test:watch": "vitest --config ../../vitest.config.mjs --coverage",
+    "build": "node build.config.mjs",
+    "lint": "eslint src/ test/ --max-warnings=0",
+    "lint:fix": "eslint src/ test/ --fix",
+    "format": "prettier --write src/ test/",
+    "format:check": "prettier --check src/ test/",
+    "clean": "rm -rf dist/ .nyc_output/ coverage/",
+    "dev": "echo 'Development mode for @unrdf/streaming'"
+  },
+  "keywords": [
+    "rdf",
+    "streaming",
+    "real-time",
+    "change-feed",
+    "synchronization"
+  ],
+  "dependencies": {
+    "@unrdf/core": "workspace:*",
+    "@unrdf/hooks": "workspace:*",
+    "ws": "^8.18.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "vitest": "^1.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/unrdf/unrdf.git",
+    "directory": "packages/streaming"
+  },
+  "bugs": {
+    "url": "https://github.com/unrdf/unrdf/issues"
+  },
+  "homepage": "https://github.com/unrdf/unrdf#readme",
+  "license": "MIT"
+}

@@ -1,0 +1,72 @@
+{
+  "name": "@unrdf/core",
+  "version": "5.0.0-alpha.0",
+  "description": "UNRDF Core - RDF Graph Operations, SPARQL Execution, and Foundational Substrate",
+  "type": "module",
+  "main": "src/index.mjs",
+  "exports": {
+    ".": "./src/index.mjs",
+    "./rdf": "./src/rdf/index.mjs",
+    "./sparql": "./src/sparql/index.mjs",
+    "./types": "./src/types.mjs",
+    "./constants": "./src/constants.mjs",
+    "./validation": "./src/validation/index.mjs"
+  },
+  "sideEffects": false,
+  "files": [
+    "src/",
+    "dist/",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "vitest run --config ../../vitest.config.mjs --coverage",
+    "test:fast": "vitest run --config ../../vitest.config.fast.mjs --coverage",
+    "test:watch": "vitest --config ../../vitest.config.mjs --coverage",
+    "build": "node build.config.mjs",
+    "lint": "eslint src/ test/ --max-warnings=0",
+    "lint:fix": "eslint src/ test/ --fix",
+    "format": "prettier --write src/ test/",
+    "format:check": "prettier --check src/ test/",
+    "clean": "rm -rf dist/ .nyc_output/ coverage/",
+    "dev": "echo 'Development mode for @unrdf/core'"
+  },
+  "keywords": [
+    "rdf",
+    "knowledge-graph",
+    "sparql",
+    "semantic-web",
+    "linked-data"
+  ],
+  "dependencies": {
+    "@comunica/query-sparql": "^3.0.0",
+    "@rdfjs/data-model": "^2.0.0",
+    "@rdfjs/namespace": "^2.0.0",
+    "@rdfjs/serializer-jsonld": "^2.0.0",
+    "@rdfjs/serializer-turtle": "^1.1.5",
+    "@rdfjs/to-ntriples": "^2.0.0",
+    "jsonld": "^8.2.0",
+    "n3": "^1.17.0",
+    "rdf-canonize": "^2.0.0",
+    "rdf-ext": "^2.0.0",
+    "rdf-validate-shacl": "^0.6.5",
+    "zod": "^3.22.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "vitest": "^1.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/unrdf/unrdf.git",
+    "directory": "packages/core"
+  },
+  "bugs": {
+    "url": "https://github.com/unrdf/unrdf/issues"
+  },
+  "homepage": "https://github.com/unrdf/unrdf#readme",
+  "license": "MIT"
+}
