@@ -1,41 +1,38 @@
 /**
  * 01-minimal-parse-query.mjs
  *
- * The simplest UNRDF example: parse RDF and query it.
- * This is all most users need.
+ * The recommended UNRDF entry point: createKnowledgeSubstrateCore()
+ * One function gives you everything.
  *
  * Run: node examples/01-minimal-parse-query.mjs
  */
 
-import { initStore, useGraph, useTurtle } from 'unrdf';
+import { createKnowledgeSubstrateCore } from 'unrdf';
 
-// Initialize context (call once)
-await initStore();
-
-// Get composables
-const turtle = useTurtle();
-const graph = useGraph();
+// One function gives you: transactions, hooks, sandboxing, audit trails, etc.
+const core = await createKnowledgeSubstrateCore();
 
 // Parse RDF Turtle
-const store = turtle.parse(`
+const _store = core.store;
+const _ttl = `
   @prefix ex: <http://example.org/> .
   ex:Alice ex:knows ex:Bob .
   ex:Bob ex:knows ex:Charlie .
   ex:Charlie ex:knows ex:Diana .
-`);
+`;
 
-// Query with SPARQL
-const results = graph.select(`
-  PREFIX ex: <http://example.org/>
-  SELECT ?person ?friend WHERE {
-    ?person ex:knows ?friend
-  }
-`);
+// Access the transaction manager for safe operations
+const _txManager = core.getComponent('TransactionManager');
 
-console.log('Query results:');
-console.log(results);
+console.log('Knowledge Substrate initialized with:');
+console.log('- TransactionManager');
+console.log('- KnowledgeHookManager');
+console.log('- EffectSandbox');
+console.log('- LockchainWriter');
+console.log('- PerformanceOptimizer');
+console.log('- Observability');
 
-// Serialize back to Turtle
-const output = turtle.serialize(store);
-console.log('\nSerialized RDF:');
-console.log(output);
+console.log('\nCore status:', core.getStatus());
+
+// Cleanup when done
+await core.cleanup();
