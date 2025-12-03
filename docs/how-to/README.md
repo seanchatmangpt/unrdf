@@ -147,10 +147,20 @@ How-to guides are practical, step-by-step instructions for accomplishing specifi
 
 ## Performance Optimization
 
+- [How to Optimize Query Performance](./optimize-query-performance.md) - QueryEngine singleton, LRU caching, delta-aware optimization
 - [How to Optimize Memory Usage](./optimize-memory-usage.md)
 - [How to Cache Query Results](./cache-query-results.md)
 - [How to Tune Transaction Performance](./tune-transaction-performance.md)
 - [How to Reduce Bundle Size](./reduce-bundle-size.md)
+
+---
+
+## Compliance & Audit Trails
+
+- [How to Implement Audit Trails](./implement-audit-trails.md) - GDPR, SOC2, HIPAA compliance with LockchainWriter
+- [How to Create Knowledge Hooks](./create-knowledge-hooks.md) - Autonomic event-driven functions
+- [How to Use Knowledge Hooks in React](./use-hooks-in-react.md) - React integration patterns
+- [How to Handle Transactions](./handle-transactions.md) - TransactionManager lifecycle
 
 ---
 
