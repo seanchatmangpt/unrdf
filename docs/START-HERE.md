@@ -17,7 +17,9 @@ const store = core.parseTurtle(`
 
 // Query
 const results = core.query(store, `SELECT ?person WHERE { ?person ?p ?o }`);
-console.log(results);
+for (const binding of results) {
+  console.log(binding.get('person').value);
+}
 ```
 
 **That's a production-ready RDF system with:**

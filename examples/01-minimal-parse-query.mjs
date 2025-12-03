@@ -12,27 +12,37 @@ import { createKnowledgeSubstrateCore } from 'unrdf';
 // One function gives you: transactions, hooks, sandboxing, audit trails, etc.
 const core = await createKnowledgeSubstrateCore();
 
-// Parse RDF Turtle
-const _store = core.store;
-const _ttl = `
+// Parse RDF Turtle using the core's parseTurtle method
+const ttl = `
   @prefix ex: <http://example.org/> .
   ex:Alice ex:knows ex:Bob .
   ex:Bob ex:knows ex:Charlie .
   ex:Charlie ex:knows ex:Diana .
 `;
 
-// Access the transaction manager for safe operations
-const _txManager = core.getComponent('TransactionManager');
+const store = core.parseTurtle(ttl);
 
-console.log('Knowledge Substrate initialized with:');
-console.log('- TransactionManager');
-console.log('- KnowledgeHookManager');
-console.log('- EffectSandbox');
-console.log('- LockchainWriter');
-console.log('- PerformanceOptimizer');
-console.log('- Observability');
+// Query the store using SPARQL
+const results = core.query(
+  store,
+  `
+  SELECT ?person ?knows WHERE {
+    ?person <http://example.org/knows> ?knows .
+  }
+`
+);
 
-console.log('\nCore status:', core.getStatus());
+console.log('Query results:');
+for (const binding of results) {
+  console.log(`  ${binding.get('person').value} knows ${binding.get('knows').value}`);
+}
+
+// Access components for advanced operations
+const txManager = core.getComponent('TransactionManager');
+console.log('\nTransaction manager ready:', txManager !== null);
+
+// Get core status
+console.log('Core status:', core.getStatus());
 
 // Cleanup when done
 await core.cleanup();
