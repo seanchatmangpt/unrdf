@@ -28,30 +28,30 @@ export const globalArgs = {
     type: 'boolean',
     alias: 'q',
     description: 'Suppress non-essential output',
-    default: false
+    default: false,
   },
   format: {
     type: 'string',
     alias: 'f',
     description: 'Output format (json, yaml, table, latex)',
-    default: 'table'
+    default: 'table',
   },
   output: {
     type: 'string',
     alias: 'o',
-    description: 'Output file path'
+    description: 'Output file path',
   },
   verbose: {
     type: 'boolean',
     alias: 'v',
     description: 'Enable verbose output',
-    default: false
+    default: false,
   },
   config: {
     type: 'string',
     alias: 'c',
-    description: 'Path to config file'
-  }
+    description: 'Path to config file',
+  },
 };
 
 /**
@@ -62,19 +62,20 @@ const main = defineCommand({
   meta: {
     name: 'playground',
     version: '1.0.0',
-    description: 'Papers-Thesis CLI - Generate academic documents with RDF knowledge graphs'
+    description: 'Papers-Thesis CLI - Generate academic documents with RDF knowledge graphs',
   },
   args: globalArgs,
   subCommands: {
     papers: papersCommand,
     thesis: thesisCommand,
     config: configCommand,
-    meta: metaCommand
+    meta: metaCommand,
   },
   async run({ args }) {
     // If no subcommand provided, show help
     if (!args._[0]) {
-      console.log(`
+      console.log(
+        `
 Papers-Thesis CLI v1.0.0
 
 Generate academic papers and theses using templates and RDF knowledge graphs.
@@ -99,9 +100,10 @@ Examples:
   playground config list
 
 Run 'playground <command> --help' for more information on a command.
-      `.trim());
+      `.trim()
+      );
     }
-  }
+  },
 });
 
 // Run the CLI

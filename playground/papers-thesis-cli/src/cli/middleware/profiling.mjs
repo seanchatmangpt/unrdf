@@ -40,9 +40,9 @@
  * Performance thresholds for warnings
  */
 const THRESHOLDS = {
-  executionTimeMs: 5000,     // Warn if command takes > 5s
-  memoryDeltaMB: 100,        // Warn if memory grows > 100MB
-  heapUsedMB: 500            // Warn if heap exceeds 500MB
+  executionTimeMs: 5000, // Warn if command takes > 5s
+  memoryDeltaMB: 100, // Warn if memory grows > 100MB
+  heapUsedMB: 500, // Warn if heap exceeds 500MB
 };
 
 /**
@@ -59,7 +59,9 @@ function generateId(length) {
       bytes[i] = Math.floor(Math.random() * 256);
     }
   }
-  return Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
+  return Array.from(bytes)
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('');
 }
 
 /**
@@ -83,7 +85,7 @@ function getMemoryUsage() {
     external: usage.external,
     rss: usage.rss,
     heapUsedMB: usage.heapUsed / (1024 * 1024),
-    rssMB: usage.rss / (1024 * 1024)
+    rssMB: usage.rss / (1024 * 1024),
   };
 }
 
@@ -105,7 +107,7 @@ export function createSpan(name, traceId, parentSpanId = null) {
     endTimeUnixNano: null,
     attributes: [],
     events: [],
-    status: { code: 'STATUS_CODE_UNSET' }
+    status: { code: 'STATUS_CODE_UNSET' },
   };
 
   return {
@@ -118,7 +120,7 @@ export function createSpan(name, traceId, parentSpanId = null) {
     setAttribute(key, value) {
       this.attributes.push({
         key,
-        value: { stringValue: String(value) }
+        value: { stringValue: String(value) },
       });
     },
     /**
@@ -132,8 +134,8 @@ export function createSpan(name, traceId, parentSpanId = null) {
         timeUnixNano: hrtimeToNanos(process.hrtime.bigint()),
         attributes: Object.entries(attributes).map(([key, value]) => ({
           key,
-          value: { stringValue: String(value) }
-        }))
+          value: { stringValue: String(value) },
+        })),
       });
     },
     /**
@@ -167,9 +169,9 @@ export function createSpan(name, traceId, parentSpanId = null) {
         endTimeUnixNano: String(this.endTimeUnixNano),
         attributes: this.attributes,
         events: this.events,
-        status: this.status
+        status: this.status,
       };
-    }
+    },
   };
 }
 
@@ -185,11 +187,11 @@ export function createProfilingContext() {
     metrics: {
       executionTimeMs: 0,
       memory: null,
-      memoryDelta: 0
+      memoryDelta: 0,
     },
     warnings: [],
     startMemory: getMemoryUsage(),
-    startTime: process.hrtime.bigint()
+    startTime: process.hrtime.bigint(),
   };
 }
 
@@ -283,10 +285,10 @@ export async function profilingMiddleware(context) {
         executionTimeMs: Number(process.hrtime.bigint() - profiling.startTime) / 1e6,
         memory: {
           ...currentMemory,
-          deltaInMB: (currentMemory.heapUsed - profiling.startMemory.heapUsed) / (1024 * 1024)
-        }
+          deltaInMB: (currentMemory.heapUsed - profiling.startMemory.heapUsed) / (1024 * 1024),
+        },
       };
-    }
+    },
   };
 
   // Add cleanup handler
@@ -304,9 +306,9 @@ export async function profilingMiddleware(context) {
         start: profiling.startMemory,
         end: endMemory,
         heapUsedMB: endMemory.heapUsedMB,
-        deltaInMB: (endMemory.heapUsed - profiling.startMemory.heapUsed) / (1024 * 1024)
+        deltaInMB: (endMemory.heapUsed - profiling.startMemory.heapUsed) / (1024 * 1024),
       },
-      spans: profiling.spans.map(s => s.toOTEL())
+      spans: profiling.spans.map(s => s.toOTEL()),
     };
 
     // Check thresholds
@@ -346,18 +348,22 @@ export function exportSpans(context) {
   }
 
   return {
-    resourceSpans: [{
-      resource: {
-        attributes: [
-          { key: 'service.name', value: { stringValue: 'papers-thesis-cli' } },
-          { key: 'service.version', value: { stringValue: '1.0.0' } }
-        ]
+    resourceSpans: [
+      {
+        resource: {
+          attributes: [
+            { key: 'service.name', value: { stringValue: 'papers-thesis-cli' } },
+            { key: 'service.version', value: { stringValue: '1.0.0' } },
+          ],
+        },
+        scopeSpans: [
+          {
+            scope: { name: 'cli', version: '1.0.0' },
+            spans: context.performanceMetrics.spans,
+          },
+        ],
       },
-      scopeSpans: [{
-        scope: { name: 'cli', version: '1.0.0' },
-        spans: context.performanceMetrics.spans
-      }]
-    }]
+    ],
   };
 }
 

@@ -31,8 +31,8 @@ import rdfCanonize from 'rdf-canonize';
  * console.log('Canonical N-Quads:', canonical);
  */
 export async function canonicalize(store, options = {}) {
-  if (!store || typeof store.getQuads !== 'function') {
-    throw new TypeError('canonicalize: store must be a valid Store instance');
+  if (!store) {
+    throw new TypeError('store is required');
   }
 
   const { algorithm = 'URDNA2015', produceGeneralizedRdf = false, timeoutMs = 30000 } = options;
@@ -182,11 +182,11 @@ export function sortQuads(quads) {
  * }
  */
 export async function isIsomorphic(store1, store2, options = {}) {
-  if (!store1 || typeof store1.getQuads !== 'function') {
-    throw new TypeError('isIsomorphic: store1 must be a valid Store instance');
+  if (!store1) {
+    throw new TypeError('store1 is required');
   }
-  if (!store2 || typeof store2.getQuads !== 'function') {
-    throw new TypeError('isIsomorphic: store2 must be a valid Store instance');
+  if (!store2) {
+    throw new TypeError('store2 is required');
   }
 
   try {

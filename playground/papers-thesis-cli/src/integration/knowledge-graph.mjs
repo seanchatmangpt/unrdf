@@ -33,7 +33,7 @@ import {
   clearQueryCache,
   PREFIXES,
   NAMED_QUERIES as SPARQL_NAMED_QUERIES,
-  createPrefixDeclarations
+  createPrefixDeclarations,
 } from './sparql.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -114,7 +114,7 @@ export const NAMED_QUERIES = {
     }
     GROUP BY ?authorName
     ORDER BY DESC(?workCount)
-  `
+  `,
 };
 
 // =============================================================================
@@ -135,7 +135,7 @@ export function createKnowledgeGraph(options = {}) {
   // In-memory store for domain objects (supplements RDF store)
   let domainStore = {
     papers: new Map(),
-    theses: new Map()
+    theses: new Map(),
   };
 
   let initialized = false;
@@ -151,7 +151,7 @@ export function createKnowledgeGraph(options = {}) {
         if (!isInitialized()) {
           await initSparql({
             ontologyPath,
-            loadExamples
+            loadExamples,
           });
         } else {
           // Just load the ontology file
@@ -163,7 +163,7 @@ export function createKnowledgeGraph(options = {}) {
         return {
           success: true,
           path: ontologyPath,
-          message: 'Ontology loaded successfully'
+          message: 'Ontology loaded successfully',
         };
       } catch (error) {
         throw new Error(`Failed to load ontology: ${error.message}`);
@@ -193,7 +193,7 @@ export function createKnowledgeGraph(options = {}) {
         return {
           success: true,
           uri,
-          id: paper.id
+          id: paper.id,
         };
       } catch (error) {
         throw new Error(`Failed to add paper: ${error.message}`);
@@ -223,7 +223,7 @@ export function createKnowledgeGraph(options = {}) {
         return {
           success: true,
           uri,
-          id: thesis.id
+          id: thesis.id,
         };
       } catch (error) {
         throw new Error(`Failed to add thesis: ${error.message}`);
@@ -252,7 +252,7 @@ export function createKnowledgeGraph(options = {}) {
             query: fullQuery,
             bindings: [],
             duration: Date.now() - startTime,
-            message: 'Query executed (not initialized - empty results)'
+            message: 'Query executed (not initialized - empty results)',
           };
         }
 
@@ -267,7 +267,7 @@ export function createKnowledgeGraph(options = {}) {
               success: true,
               query: fullQuery,
               result,
-              duration: Date.now() - startTime
+              duration: Date.now() - startTime,
             };
           case 'CONSTRUCT':
             result = await executeSparqlConstruct(fullQuery);
@@ -275,7 +275,7 @@ export function createKnowledgeGraph(options = {}) {
               success: true,
               query: fullQuery,
               turtle: result,
-              duration: Date.now() - startTime
+              duration: Date.now() - startTime,
             };
           default:
             result = await executeSparqlSelect(fullQuery);
@@ -283,7 +283,7 @@ export function createKnowledgeGraph(options = {}) {
               success: true,
               query: fullQuery,
               bindings: result,
-              duration: Date.now() - startTime
+              duration: Date.now() - startTime,
             };
         }
       } catch (error) {
@@ -291,7 +291,7 @@ export function createKnowledgeGraph(options = {}) {
           success: false,
           query: fullQuery,
           error: error.message,
-          duration: Date.now() - startTime
+          duration: Date.now() - startTime,
         };
       }
     },
@@ -318,16 +318,14 @@ export function createKnowledgeGraph(options = {}) {
     async findPapersByFamily(family) {
       if (!isInitialized()) {
         // Return from in-memory store
-        return Array.from(domainStore.papers.values())
-          .filter(p => p.family === family);
+        return Array.from(domainStore.papers.values()).filter(p => p.family === family);
       }
 
       try {
         return await executeNamedQuery('findPapersByFamily', { family });
       } catch {
         // Fallback to in-memory
-        return Array.from(domainStore.papers.values())
-          .filter(p => p.family === family);
+        return Array.from(domainStore.papers.values()).filter(p => p.family === family);
       }
     },
 
@@ -338,15 +336,13 @@ export function createKnowledgeGraph(options = {}) {
      */
     async findThesesByType(type) {
       if (!isInitialized()) {
-        return Array.from(domainStore.theses.values())
-          .filter(t => t.type === type);
+        return Array.from(domainStore.theses.values()).filter(t => t.type === type);
       }
 
       try {
         return await executeNamedQuery('getThesisByType', { type });
       } catch {
-        return Array.from(domainStore.theses.values())
-          .filter(t => t.type === type);
+        return Array.from(domainStore.theses.values()).filter(t => t.type === type);
       }
     },
 
@@ -365,7 +361,7 @@ export function createKnowledgeGraph(options = {}) {
         return results.map(r => ({
           uri: r.class,
           label: r.label || extractLocalName(r.class),
-          comment: r.comment || ''
+          comment: r.comment || '',
         }));
       } catch {
         return getDefaultClasses();
@@ -388,7 +384,7 @@ export function createKnowledgeGraph(options = {}) {
           label: r.label || extractLocalName(r.property),
           domain: r.domain ? extractLocalName(r.domain) : 'unknown',
           range: r.range ? extractLocalName(r.range) : 'unknown',
-          type: r.type || 'General'
+          type: r.type || 'General',
         }));
       } catch {
         return getDefaultProperties();
@@ -407,10 +403,14 @@ export function createKnowledgeGraph(options = {}) {
         const theses = Array.from(domainStore.theses.values());
 
         if (format === 'jsonld') {
-          return JSON.stringify({
-            '@context': PREFIXES,
-            '@graph': [...papers, ...theses]
-          }, null, 2);
+          return JSON.stringify(
+            {
+              '@context': PREFIXES,
+              '@graph': [...papers, ...theses],
+            },
+            null,
+            2
+          );
         }
 
         return `# Papers: ${papers.length}\n# Theses: ${theses.length}\n# Format: ${format}`;
@@ -424,11 +424,15 @@ export function createKnowledgeGraph(options = {}) {
         // For JSON-LD, get turtle and note that conversion would be needed
         const turtle = await exportAsTurtle();
         if (format === 'jsonld') {
-          return JSON.stringify({
-            '@context': PREFIXES,
-            turtle: turtle.substring(0, 500) + '...',
-            note: 'Full JSON-LD conversion requires additional processing'
-          }, null, 2);
+          return JSON.stringify(
+            {
+              '@context': PREFIXES,
+              turtle: turtle.substring(0, 500) + '...',
+              note: 'Full JSON-LD conversion requires additional processing',
+            },
+            null,
+            2
+          );
         }
 
         return turtle;
@@ -445,14 +449,14 @@ export function createKnowledgeGraph(options = {}) {
       const baseStats = {
         paperCount: domainStore.papers.size,
         thesisCount: domainStore.theses.size,
-        totalDocuments: domainStore.papers.size + domainStore.theses.size
+        totalDocuments: domainStore.papers.size + domainStore.theses.size,
       };
 
       if (!isInitialized()) {
         return {
           ...baseStats,
           ontologyLoaded: false,
-          tripleCount: 0
+          tripleCount: 0,
         };
       }
 
@@ -465,13 +469,13 @@ export function createKnowledgeGraph(options = {}) {
           ontologyLoaded: true,
           tripleCount: graphStats.tripleCount,
           loadedOntologies: graphStats.loadedOntologies,
-          queryMetrics
+          queryMetrics,
         };
       } catch {
         return {
           ...baseStats,
           ontologyLoaded: true,
-          tripleCount: 0
+          tripleCount: 0,
         };
       }
     },
@@ -483,7 +487,7 @@ export function createKnowledgeGraph(options = {}) {
     async clear() {
       domainStore = {
         papers: new Map(),
-        theses: new Map()
+        theses: new Map(),
       };
 
       if (isInitialized()) {
@@ -516,7 +520,7 @@ export function createKnowledgeGraph(options = {}) {
      */
     getQueryMetrics() {
       return getQueryMetrics();
-    }
+    },
   };
 }
 
@@ -562,7 +566,7 @@ function paperToTurtle(paper) {
     `@prefix ex: <${PREFIXES.ex}> .`,
     `@prefix xsd: <${PREFIXES.xsd}> .`,
     '',
-    `${uri} a pt:Paper ;`
+    `${uri} a pt:Paper ;`,
   ];
 
   if (paper.title) {
@@ -597,7 +601,7 @@ function thesisToTurtle(thesis) {
     `@prefix ex: <${PREFIXES.ex}> .`,
     `@prefix xsd: <${PREFIXES.xsd}> .`,
     '',
-    `${uri} a pt:Thesis ;`
+    `${uri} a pt:Thesis ;`,
   ];
 
   if (thesis.title) {
@@ -643,20 +647,52 @@ function escapeTurtle(str) {
  */
 function getDefaultClasses() {
   return [
-    { uri: `${PREFIXES.pt}AcademicWork`, label: 'Academic Work', comment: 'Base class for all academic documents' },
+    {
+      uri: `${PREFIXES.pt}AcademicWork`,
+      label: 'Academic Work',
+      comment: 'Base class for all academic documents',
+    },
     { uri: `${PREFIXES.pt}Paper`, label: 'Research Paper', comment: 'A research paper' },
     { uri: `${PREFIXES.pt}Thesis`, label: 'Thesis', comment: 'A thesis document' },
-    { uri: `${PREFIXES.pt}IMRADPaper`, label: 'IMRAD Paper', comment: 'Paper with IMRAD structure' },
+    {
+      uri: `${PREFIXES.pt}IMRADPaper`,
+      label: 'IMRAD Paper',
+      comment: 'Paper with IMRAD structure',
+    },
     { uri: `${PREFIXES.pt}DSRPaper`, label: 'DSR Paper', comment: 'Design Science Research paper' },
-    { uri: `${PREFIXES.pt}ArgumentPaper`, label: 'Argument Paper', comment: 'Argument-based paper' },
-    { uri: `${PREFIXES.pt}ContributionPaper`, label: 'Contribution Paper', comment: 'Contribution-focused paper' },
-    { uri: `${PREFIXES.pt}Monograph`, label: 'Monograph Thesis', comment: 'Traditional monograph thesis' },
-    { uri: `${PREFIXES.pt}NarrativeThesis`, label: 'Narrative Thesis', comment: 'Narrative-style thesis' },
-    { uri: `${PREFIXES.pt}ContributionThesis`, label: 'Contribution Thesis', comment: 'Publication-based thesis' },
-    { uri: `${PREFIXES.pt}Section`, label: 'Document Section', comment: 'A section within a document' },
+    {
+      uri: `${PREFIXES.pt}ArgumentPaper`,
+      label: 'Argument Paper',
+      comment: 'Argument-based paper',
+    },
+    {
+      uri: `${PREFIXES.pt}ContributionPaper`,
+      label: 'Contribution Paper',
+      comment: 'Contribution-focused paper',
+    },
+    {
+      uri: `${PREFIXES.pt}Monograph`,
+      label: 'Monograph Thesis',
+      comment: 'Traditional monograph thesis',
+    },
+    {
+      uri: `${PREFIXES.pt}NarrativeThesis`,
+      label: 'Narrative Thesis',
+      comment: 'Narrative-style thesis',
+    },
+    {
+      uri: `${PREFIXES.pt}ContributionThesis`,
+      label: 'Contribution Thesis',
+      comment: 'Publication-based thesis',
+    },
+    {
+      uri: `${PREFIXES.pt}Section`,
+      label: 'Document Section',
+      comment: 'A section within a document',
+    },
     { uri: `${PREFIXES.pt}Author`, label: 'Author', comment: 'Document author' },
     { uri: `${PREFIXES.pt}Schedule`, label: 'Schedule', comment: 'Thesis schedule' },
-    { uri: `${PREFIXES.pt}Milestone`, label: 'Milestone', comment: 'Schedule milestone' }
+    { uri: `${PREFIXES.pt}Milestone`, label: 'Milestone', comment: 'Schedule milestone' },
   ];
 }
 
@@ -666,16 +702,76 @@ function getDefaultClasses() {
  */
 function getDefaultProperties() {
   return [
-    { uri: `${PREFIXES.pt}hasTitle`, label: 'has title', domain: 'AcademicWork', range: 'xsd:string', type: 'Datatype' },
-    { uri: `${PREFIXES.pt}hasAbstract`, label: 'has abstract', domain: 'AcademicWork', range: 'xsd:string', type: 'Datatype' },
-    { uri: `${PREFIXES.pt}hasAuthor`, label: 'has author', domain: 'AcademicWork', range: 'Author', type: 'Object' },
-    { uri: `${PREFIXES.pt}hasSection`, label: 'has section', domain: 'AcademicWork', range: 'Section', type: 'Object' },
-    { uri: `${PREFIXES.pt}paperFamily`, label: 'paper family', domain: 'Paper', range: 'xsd:string', type: 'Datatype' },
-    { uri: `${PREFIXES.pt}thesisType`, label: 'thesis type', domain: 'Thesis', range: 'xsd:string', type: 'Datatype' },
-    { uri: `${PREFIXES.pt}hasSchedule`, label: 'has schedule', domain: 'Thesis', range: 'Schedule', type: 'Object' },
-    { uri: `${PREFIXES.pt}institution`, label: 'institution', domain: 'Thesis', range: 'xsd:string', type: 'Datatype' },
-    { uri: `${PREFIXES.pt}degree`, label: 'degree', domain: 'Thesis', range: 'xsd:string', type: 'Datatype' },
-    { uri: `${PREFIXES.pt}defenseDate`, label: 'defense date', domain: 'Schedule', range: 'xsd:date', type: 'Datatype' }
+    {
+      uri: `${PREFIXES.pt}hasTitle`,
+      label: 'has title',
+      domain: 'AcademicWork',
+      range: 'xsd:string',
+      type: 'Datatype',
+    },
+    {
+      uri: `${PREFIXES.pt}hasAbstract`,
+      label: 'has abstract',
+      domain: 'AcademicWork',
+      range: 'xsd:string',
+      type: 'Datatype',
+    },
+    {
+      uri: `${PREFIXES.pt}hasAuthor`,
+      label: 'has author',
+      domain: 'AcademicWork',
+      range: 'Author',
+      type: 'Object',
+    },
+    {
+      uri: `${PREFIXES.pt}hasSection`,
+      label: 'has section',
+      domain: 'AcademicWork',
+      range: 'Section',
+      type: 'Object',
+    },
+    {
+      uri: `${PREFIXES.pt}paperFamily`,
+      label: 'paper family',
+      domain: 'Paper',
+      range: 'xsd:string',
+      type: 'Datatype',
+    },
+    {
+      uri: `${PREFIXES.pt}thesisType`,
+      label: 'thesis type',
+      domain: 'Thesis',
+      range: 'xsd:string',
+      type: 'Datatype',
+    },
+    {
+      uri: `${PREFIXES.pt}hasSchedule`,
+      label: 'has schedule',
+      domain: 'Thesis',
+      range: 'Schedule',
+      type: 'Object',
+    },
+    {
+      uri: `${PREFIXES.pt}institution`,
+      label: 'institution',
+      domain: 'Thesis',
+      range: 'xsd:string',
+      type: 'Datatype',
+    },
+    {
+      uri: `${PREFIXES.pt}degree`,
+      label: 'degree',
+      domain: 'Thesis',
+      range: 'xsd:string',
+      type: 'Datatype',
+    },
+    {
+      uri: `${PREFIXES.pt}defenseDate`,
+      label: 'defense date',
+      domain: 'Schedule',
+      range: 'xsd:date',
+      type: 'Datatype',
+    },
   ];
 }
 

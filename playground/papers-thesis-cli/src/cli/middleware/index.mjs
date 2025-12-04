@@ -47,7 +47,7 @@ const defaultMiddlewareStack = [
   { name: 'config', handler: configMiddleware, phase: 'pre' },
   { name: 'validation', handler: validationMiddleware, phase: 'pre' },
   { name: 'logging', handler: loggingMiddleware, phase: 'pre' },
-  { name: 'profiling', handler: profilingMiddleware, phase: 'pre' }
+  { name: 'profiling', handler: profilingMiddleware, phase: 'pre' },
 ];
 
 /**
@@ -64,17 +64,17 @@ export function createContext(options = {}) {
     meta: {
       startTime: Date.now(),
       phase: 'init',
-      middlewareExecuted: []
+      middlewareExecuted: [],
     },
     timing: {
       start: process.hrtime.bigint(),
-      checkpoints: []
+      checkpoints: [],
     },
     errors: [],
     warnings: [],
     quiet: options.quiet || false,
     verbose: options.verbose || false,
-    ...options
+    ...options,
   };
 }
 
@@ -121,24 +121,22 @@ export async function applyMiddleware(context, options = {}) {
       // Add timing checkpoint
       currentContext.timing.checkpoints.push({
         name,
-        start: process.hrtime.bigint()
+        start: process.hrtime.bigint(),
       });
 
       currentContext = await handler(currentContext);
 
       // Update checkpoint with end time
-      const lastCheckpoint = currentContext.timing.checkpoints[
-        currentContext.timing.checkpoints.length - 1
-      ];
+      const lastCheckpoint =
+        currentContext.timing.checkpoints[currentContext.timing.checkpoints.length - 1];
       lastCheckpoint.end = process.hrtime.bigint();
       lastCheckpoint.duration = Number(lastCheckpoint.end - lastCheckpoint.start) / 1e6;
-
     } catch (error) {
       currentContext.errors.push({
         middleware: name,
         message: error.message,
         stack: error.stack,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
 
       // Optionally continue or abort on error
@@ -188,7 +186,7 @@ export function listMiddleware() {
   const result = defaultMiddlewareStack.map(m => ({
     name: m.name,
     phase: m.phase,
-    builtin: true
+    builtin: true,
   }));
 
   for (const name of customMiddleware.keys()) {
@@ -208,9 +206,10 @@ export function compose(middleware) {
     let currentContext = { ...context };
 
     for (const item of middleware) {
-      const handler = typeof item === 'string'
-        ? (customMiddleware.get(item) || defaultMiddlewareStack.find(m => m.name === item)?.handler)
-        : item;
+      const handler =
+        typeof item === 'string'
+          ? customMiddleware.get(item) || defaultMiddlewareStack.find(m => m.name === item)?.handler
+          : item;
 
       if (!handler) {
         throw new Error(`Unknown middleware: ${item}`);
@@ -236,7 +235,7 @@ export async function runWithMiddleware(commandFn, args, options = {}) {
     args,
     options,
     quiet: args.quiet || options.quiet,
-    verbose: args.verbose || options.verbose
+    verbose: args.verbose || options.verbose,
   });
 
   // Apply pre-execution middleware
@@ -255,16 +254,15 @@ export async function runWithMiddleware(commandFn, args, options = {}) {
       phase: 'execution',
       message: err.message,
       stack: err.stack,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
   // Apply post-execution hooks
   preparedContext.meta.phase = 'post';
   preparedContext.timing.end = process.hrtime.bigint();
-  preparedContext.timing.totalDuration = Number(
-    preparedContext.timing.end - preparedContext.timing.start
-  ) / 1e6;
+  preparedContext.timing.totalDuration =
+    Number(preparedContext.timing.end - preparedContext.timing.start) / 1e6;
 
   // Re-throw if there was an execution error
   if (error) {

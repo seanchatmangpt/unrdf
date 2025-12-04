@@ -25,7 +25,7 @@ const CLI_STRUCTURE = {
         args: {
           '--family': {
             description: 'Paper family/structure type',
-            choices: ['imrad', 'dsr', 'argument', 'contribution']
+            choices: ['imrad', 'dsr', 'argument', 'contribution'],
           },
           '-t': { alias: '--title' },
           '--title': { description: 'Paper title', type: 'string' },
@@ -36,8 +36,8 @@ const CLI_STRUCTURE = {
           '-o': { alias: '--output' },
           '--output': { description: 'Output file path', type: 'file' },
           '-f': { alias: '--format' },
-          '--format': { description: 'Output format', choices: ['json', 'latex', 'yaml'] }
-        }
+          '--format': { description: 'Output format', choices: ['json', 'latex', 'yaml'] },
+        },
       },
       list: {
         description: 'List available paper families',
@@ -45,19 +45,19 @@ const CLI_STRUCTURE = {
           '-v': { alias: '--verbose' },
           '--verbose': { description: 'Show detailed information', type: 'boolean' },
           '-f': { alias: '--format' },
-          '--format': { description: 'Output format', choices: ['json', 'yaml', 'table'] }
-        }
+          '--format': { description: 'Output format', choices: ['json', 'yaml', 'table'] },
+        },
       },
       validate: {
         description: 'Validate paper structure',
         args: {
-          'path': { description: 'Path to paper file', type: 'file', positional: true },
+          path: { description: 'Path to paper file', type: 'file', positional: true },
           '--strict': { description: 'Enable strict validation', type: 'boolean' },
           '-f': { alias: '--format' },
-          '--format': { description: 'Output format', choices: ['json', 'table'] }
-        }
-      }
-    }
+          '--format': { description: 'Output format', choices: ['json', 'table'] },
+        },
+      },
+    },
   },
   thesis: {
     name: 'thesis',
@@ -68,7 +68,7 @@ const CLI_STRUCTURE = {
         args: {
           '--type': {
             description: 'Thesis type',
-            choices: ['masters', 'phd', 'doctoral']
+            choices: ['masters', 'phd', 'doctoral'],
           },
           '-t': { alias: '--title' },
           '--title': { description: 'Thesis title', type: 'string' },
@@ -80,8 +80,8 @@ const CLI_STRUCTURE = {
           '-o': { alias: '--output' },
           '--output': { description: 'Output file path', type: 'file' },
           '-f': { alias: '--format' },
-          '--format': { description: 'Output format', choices: ['json', 'latex', 'yaml'] }
-        }
+          '--format': { description: 'Output format', choices: ['json', 'latex', 'yaml'] },
+        },
       },
       list: {
         description: 'List available thesis types',
@@ -89,17 +89,17 @@ const CLI_STRUCTURE = {
           '-v': { alias: '--verbose' },
           '--verbose': { description: 'Show detailed information', type: 'boolean' },
           '-f': { alias: '--format' },
-          '--format': { description: 'Output format', choices: ['json', 'yaml', 'table'] }
-        }
+          '--format': { description: 'Output format', choices: ['json', 'yaml', 'table'] },
+        },
       },
       schedule: {
         description: 'Manage thesis schedule',
         args: {
           '--milestone': { description: 'Milestone name', type: 'string' },
-          '--date': { description: 'Target date', type: 'string' }
-        }
-      }
-    }
+          '--date': { description: 'Target date', type: 'string' },
+        },
+      },
+    },
   },
   config: {
     name: 'config',
@@ -107,28 +107,28 @@ const CLI_STRUCTURE = {
     subcommands: {
       list: {
         description: 'List all configuration values',
-        args: {}
+        args: {},
       },
       get: {
         description: 'Get a configuration value',
         args: {
-          'key': { description: 'Configuration key', type: 'string', positional: true }
-        }
+          key: { description: 'Configuration key', type: 'string', positional: true },
+        },
       },
       set: {
         description: 'Set a configuration value',
         args: {
-          'key': { description: 'Configuration key', type: 'string', positional: true },
-          'value': { description: 'Configuration value', type: 'string', positional: true }
-        }
+          key: { description: 'Configuration key', type: 'string', positional: true },
+          value: { description: 'Configuration value', type: 'string', positional: true },
+        },
       },
       reset: {
         description: 'Reset configuration to defaults',
         args: {
-          '--all': { description: 'Reset all values', type: 'boolean' }
-        }
-      }
-    }
+          '--all': { description: 'Reset all values', type: 'boolean' },
+        },
+      },
+    },
   },
   meta: {
     name: 'meta',
@@ -137,33 +137,36 @@ const CLI_STRUCTURE = {
       sparql: {
         description: 'Execute SPARQL query',
         args: {
-          'query': { description: 'SPARQL query string', type: 'string', positional: true },
+          query: { description: 'SPARQL query string', type: 'string', positional: true },
           '-f': { alias: '--format' },
           '--format': { description: 'Output format', choices: ['json', 'table', 'csv'] },
-          '--file': { description: 'Query file', type: 'file' }
-        }
+          '--file': { description: 'Query file', type: 'file' },
+        },
       },
       schema: {
         description: 'Show schema information',
         args: {
           '-f': { alias: '--format' },
-          '--format': { description: 'Output format', choices: ['json', 'yaml', 'turtle'] }
-        }
+          '--format': { description: 'Output format', choices: ['json', 'yaml', 'turtle'] },
+        },
       },
       version: {
         description: 'Show version information',
-        args: {}
+        args: {},
       },
       completions: {
         description: 'Generate shell completions',
         args: {
-          '--shell': { description: 'Target shell', choices: ['bash', 'zsh', 'fish', 'powershell'] },
+          '--shell': {
+            description: 'Target shell',
+            choices: ['bash', 'zsh', 'fish', 'powershell'],
+          },
           '-o': { alias: '--output' },
-          '--output': { description: 'Output file', type: 'file' }
-        }
-      }
-    }
-  }
+          '--output': { description: 'Output file', type: 'file' },
+        },
+      },
+    },
+  },
 };
 
 /**
@@ -229,10 +232,7 @@ function formatZshArg(name, def) {
  * @returns {string} Zsh completion script
  */
 export function generateZshCompletions(options = {}) {
-  const {
-    cliName = 'playground',
-    commands = CLI_STRUCTURE
-  } = options;
+  const { cliName = 'playground', commands = CLI_STRUCTURE } = options;
 
   const commandDescriptions = Object.entries(commands)
     .map(([name, def]) => `'${name}:${def.description}'`)

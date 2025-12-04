@@ -39,7 +39,7 @@ export const FileInfoSchema = z.object({
   size: z.number(),
   modified: z.date(),
   extension: z.string().optional(),
-  isDirectory: z.boolean().optional()
+  isDirectory: z.boolean().optional(),
 });
 
 /**
@@ -50,7 +50,7 @@ export const WriteOptionsSchema = z
     encoding: z.enum(['utf-8', 'utf8', 'ascii', 'binary']).default('utf-8'),
     mode: z.number().optional(),
     createDir: z.boolean().default(true),
-    overwrite: z.boolean().default(true)
+    overwrite: z.boolean().default(true),
   })
   .default({});
 
@@ -90,7 +90,7 @@ export async function ensureOutputDir(dir) {
   } catch (error) {
     if (error.code !== 'EEXIST') {
       throw new Error(`Failed to create output directory '${resolvedDir}': ${error.message}`, {
-        cause: error
+        cause: error,
       });
     }
   }
@@ -140,11 +140,11 @@ export async function writePaper(path, content, options = {}) {
   try {
     await fs.writeFile(resolvedPath, content, {
       encoding: opts.encoding,
-      mode: opts.mode
+      mode: opts.mode,
     });
   } catch (error) {
     throw new Error(`Failed to write paper to '${resolvedPath}': ${error.message}`, {
-      cause: error
+      cause: error,
     });
   }
 }
@@ -174,7 +174,7 @@ export async function readPaper(path, encoding = 'utf-8') {
       throw new Error(`Permission denied reading paper: ${resolvedPath}`);
     }
     throw new Error(`Failed to read paper from '${resolvedPath}': ${error.message}`, {
-      cause: error
+      cause: error,
     });
   }
 }
@@ -203,7 +203,7 @@ export async function listPapers(dir = DEFAULT_OUTPUT_DIR, options = {}) {
       return []; // Directory doesn't exist, return empty array
     }
     throw new Error(`Cannot access directory '${resolvedDir}': ${error.message}`, {
-      cause: error
+      cause: error,
     });
   }
 
@@ -245,7 +245,7 @@ export async function listPapers(dir = DEFAULT_OUTPUT_DIR, options = {}) {
             size: stats.size,
             modified: stats.mtime,
             extension: ext,
-            isDirectory: false
+            isDirectory: false,
           });
         } catch {
           // Skip files we can't stat
@@ -288,7 +288,7 @@ export async function deletePaper(path) {
       throw new Error(`Permission denied deleting paper: ${resolvedPath}`);
     }
     throw new Error(`Failed to delete paper '${resolvedPath}': ${error.message}`, {
-      cause: error
+      cause: error,
     });
   }
 }
@@ -337,14 +337,14 @@ export async function getPaperInfo(path) {
       size: stats.size,
       modified: stats.mtime,
       extension: extname(resolvedPath).toLowerCase(),
-      isDirectory: stats.isDirectory()
+      isDirectory: stats.isDirectory(),
     };
   } catch (error) {
     if (error.code === 'ENOENT') {
       throw new Error(`Paper not found: ${resolvedPath}`);
     }
     throw new Error(`Failed to get paper info for '${resolvedPath}': ${error.message}`, {
-      cause: error
+      cause: error,
     });
   }
 }
@@ -378,7 +378,9 @@ export async function copyPaper(source, destination, options = {}) {
   if (!overwrite) {
     try {
       await fs.access(resolvedDest);
-      throw new Error(`Destination already exists: ${resolvedDest}. Set overwrite=true to replace.`);
+      throw new Error(
+        `Destination already exists: ${resolvedDest}. Set overwrite=true to replace.`
+      );
     } catch (error) {
       if (error.code !== 'ENOENT' && !error.message.includes('already exists')) {
         throw error;
@@ -392,9 +394,12 @@ export async function copyPaper(source, destination, options = {}) {
   try {
     await fs.copyFile(resolvedSource, resolvedDest);
   } catch (error) {
-    throw new Error(`Failed to copy paper from '${resolvedSource}' to '${resolvedDest}': ${error.message}`, {
-      cause: error
-    });
+    throw new Error(
+      `Failed to copy paper from '${resolvedSource}' to '${resolvedDest}': ${error.message}`,
+      {
+        cause: error,
+      }
+    );
   }
 }
 
@@ -420,7 +425,9 @@ export async function movePaper(source, destination, options = {}) {
   if (!overwrite) {
     try {
       await fs.access(resolvedDest);
-      throw new Error(`Destination already exists: ${resolvedDest}. Set overwrite=true to replace.`);
+      throw new Error(
+        `Destination already exists: ${resolvedDest}. Set overwrite=true to replace.`
+      );
     } catch (error) {
       if (error.code !== 'ENOENT' && !error.message.includes('already exists')) {
         throw error;
@@ -441,9 +448,12 @@ export async function movePaper(source, destination, options = {}) {
       return;
     }
 
-    throw new Error(`Failed to move paper from '${resolvedSource}' to '${resolvedDest}': ${error.message}`, {
-      cause: error
-    });
+    throw new Error(
+      `Failed to move paper from '${resolvedSource}' to '${resolvedDest}': ${error.message}`,
+      {
+        cause: error,
+      }
+    );
   }
 }
 
@@ -485,12 +495,8 @@ export async function getOutputStats(dir = DEFAULT_OUTPUT_DIR) {
     totalSize,
     totalSizeFormatted: formatFileSize(totalSize),
     byExtension,
-    oldestFile: oldestFile
-      ? { name: oldestFile.name, modified: oldestFile.modified }
-      : null,
-    newestFile: newestFile
-      ? { name: newestFile.name, modified: newestFile.modified }
-      : null
+    oldestFile: oldestFile ? { name: oldestFile.name, modified: oldestFile.modified } : null,
+    newestFile: newestFile ? { name: newestFile.name, modified: newestFile.modified } : null,
   };
 }
 

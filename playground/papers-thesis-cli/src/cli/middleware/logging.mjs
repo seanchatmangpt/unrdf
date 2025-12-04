@@ -32,7 +32,7 @@ const SENSITIVE_PATTERNS = [
   /key/i,
   /auth/i,
   /credential/i,
-  /api[_-]?key/i
+  /api[_-]?key/i,
 ];
 
 /**
@@ -40,8 +40,8 @@ const SENSITIVE_PATTERNS = [
  */
 const LOG_CONTEXT = {
   '@vocab': 'http://schema.org/',
-  'log': 'http://purl.org/logging#',
-  'cli': 'http://unrdf.io/cli#'
+  log: 'http://purl.org/logging#',
+  cli: 'http://unrdf.io/cli#',
 };
 
 /**
@@ -52,7 +52,7 @@ const LOG_LEVELS = {
   debug: 0,
   info: 1,
   warn: 2,
-  error: 3
+  error: 3,
 };
 
 /**
@@ -73,7 +73,9 @@ const logHandlers = [defaultConsoleHandler];
  */
 export function setLogLevel(level) {
   if (!LOG_LEVELS.hasOwnProperty(level)) {
-    throw new Error(`Invalid log level: ${level}. Valid levels: ${Object.keys(LOG_LEVELS).join(', ')}`);
+    throw new Error(
+      `Invalid log level: ${level}. Valid levels: ${Object.keys(LOG_LEVELS).join(', ')}`
+    );
   }
   currentLogLevel = level;
 }
@@ -112,12 +114,13 @@ export function maskSensitiveArgs(args) {
 function defaultConsoleHandler(entry, context) {
   if (context.quiet) return;
 
-  const prefix = {
-    debug: '\x1b[90m[DEBUG]\x1b[0m',
-    info: '\x1b[34m[INFO]\x1b[0m',
-    warn: '\x1b[33m[WARN]\x1b[0m',
-    error: '\x1b[31m[ERROR]\x1b[0m'
-  }[entry.level] || '[LOG]';
+  const prefix =
+    {
+      debug: '\x1b[90m[DEBUG]\x1b[0m',
+      info: '\x1b[34m[INFO]\x1b[0m',
+      warn: '\x1b[33m[WARN]\x1b[0m',
+      error: '\x1b[31m[ERROR]\x1b[0m',
+    }[entry.level] || '[LOG]';
 
   if (context.verbose || entry.level === 'error') {
     console.log(`${prefix} ${entry.timestamp} ${entry.message || JSON.stringify(entry.data)}`);
@@ -174,7 +177,7 @@ export function createLogEntry(level, message, data, context) {
     level,
     message,
     command: context.command,
-    data
+    data,
   };
 }
 
@@ -226,17 +229,27 @@ export async function loggingMiddleware(context) {
   }
 
   // Log command start
-  log('info', `Starting command: ${context.command}`, {
-    args: maskSensitiveArgs(context.args),
-    phase: context.meta.phase
-  }, context);
+  log(
+    'info',
+    `Starting command: ${context.command}`,
+    {
+      args: maskSensitiveArgs(context.args),
+      phase: context.meta.phase,
+    },
+    context
+  );
 
   // Log arguments in verbose mode
   if (context.verbose) {
-    log('debug', 'Command arguments', {
-      args: maskSensitiveArgs(context.args),
-      options: context.options
-    }, context);
+    log(
+      'debug',
+      'Command arguments',
+      {
+        args: maskSensitiveArgs(context.args),
+        options: context.options,
+      },
+      context
+    );
   }
 
   // Add logging utilities to context
@@ -244,7 +257,7 @@ export async function loggingMiddleware(context) {
     debug: (msg, data) => debug(msg, data, context),
     info: (msg, data) => info(msg, data, context),
     warn: (msg, data) => warn(msg, data, context),
-    error: (msg, data) => error(msg, data, context)
+    error: (msg, data) => error(msg, data, context),
   };
 
   // Add cleanup handler
@@ -256,15 +269,25 @@ export async function loggingMiddleware(context) {
       : 'N/A';
 
     if (context.errors.length > 0) {
-      log('error', `Command failed: ${context.command}`, {
-        errors: context.errors,
-        duration
-      }, context);
+      log(
+        'error',
+        `Command failed: ${context.command}`,
+        {
+          errors: context.errors,
+          duration,
+        },
+        context
+      );
     } else {
-      log('info', `Command completed: ${context.command}`, {
-        duration,
-        success: true
-      }, context);
+      log(
+        'info',
+        `Command completed: ${context.command}`,
+        {
+          duration,
+          success: true,
+        },
+        context
+      );
     }
   });
 
@@ -292,7 +315,7 @@ export function formatLogsAsJsonLd(context) {
     'log:entries': getLogs(context),
     'log:command': context.command,
     'log:startTime': new Date(context.meta?.startTime).toISOString(),
-    'log:endTime': new Date().toISOString()
+    'log:endTime': new Date().toISOString(),
   };
 }
 

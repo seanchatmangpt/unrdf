@@ -12,7 +12,7 @@ import {
   toBibtexKey,
   slugify,
   formatDate,
-  wrapText
+  wrapText,
 } from '../../src/integration/templates.mjs';
 
 describe('Template Engine', () => {
@@ -138,10 +138,9 @@ describe('Template Engine', () => {
     it('should render template strings', async () => {
       const engine = createTemplateEngine();
 
-      const result = await engine.renderString(
-        'Hello {{ name | texescape }}!',
-        { name: 'World & Co' }
-      );
+      const result = await engine.renderString('Hello {{ name | texescape }}!', {
+        name: 'World & Co',
+      });
 
       expect(result).toBe('Hello World \\& Co!');
     });
@@ -149,10 +148,9 @@ describe('Template Engine', () => {
     it('should support default filter', async () => {
       const engine = createTemplateEngine();
 
-      const result = await engine.renderString(
-        '{{ value | default("fallback") }}',
-        { value: undefined }
-      );
+      const result = await engine.renderString('{{ value | default("fallback") }}', {
+        value: undefined,
+      });
 
       expect(result).toBe('fallback');
     });
@@ -160,10 +158,9 @@ describe('Template Engine', () => {
     it('should support latexjoin filter', async () => {
       const engine = createTemplateEngine();
 
-      const result = await engine.renderString(
-        '{{ items | latexjoin("; ") }}',
-        { items: ['a & b', 'c $d'] }
-      );
+      const result = await engine.renderString('{{ items | latexjoin("; ") }}', {
+        items: ['a & b', 'c $d'],
+      });
 
       expect(result).toBe('a \\& b; c \\$d');
     });
@@ -171,10 +168,7 @@ describe('Template Engine', () => {
     it('should support capitalize filter', async () => {
       const engine = createTemplateEngine();
 
-      const result = await engine.renderString(
-        '{{ word | capitalize }}',
-        { word: 'hello' }
-      );
+      const result = await engine.renderString('{{ word | capitalize }}', { word: 'hello' });
 
       expect(result).toBe('Hello');
     });
@@ -182,10 +176,9 @@ describe('Template Engine', () => {
     it('should support titlecase filter', async () => {
       const engine = createTemplateEngine();
 
-      const result = await engine.renderString(
-        '{{ phrase | titlecase }}',
-        { phrase: 'hello world' }
-      );
+      const result = await engine.renderString('{{ phrase | titlecase }}', {
+        phrase: 'hello world',
+      });
 
       expect(result).toBe('Hello World');
     });
@@ -202,12 +195,9 @@ describe('Template Engine', () => {
     it('should allow adding custom filters', async () => {
       const engine = createTemplateEngine();
 
-      engine.addFilter('shout', (str) => str.toUpperCase() + '!');
+      engine.addFilter('shout', str => str.toUpperCase() + '!');
 
-      const result = await engine.renderString(
-        '{{ message | shout }}',
-        { message: 'hello' }
-      );
+      const result = await engine.renderString('{{ message | shout }}', { message: 'hello' });
 
       expect(result).toBe('HELLO!');
     });
@@ -217,10 +207,7 @@ describe('Template Engine', () => {
 
       engine.addGlobal('version', '1.0.0');
 
-      const result = await engine.renderString(
-        'Version: {{ version }}',
-        {}
-      );
+      const result = await engine.renderString('Version: {{ version }}', {});
 
       expect(result).toBe('Version: 1.0.0');
     });
@@ -238,8 +225,8 @@ describe('Template Engine', () => {
       const result = await engine.renderString(template, {
         paper: {
           title: 'Test & Demo',
-          authors: [{ name: 'Alice $Johnson' }]
-        }
+          authors: [{ name: 'Alice $Johnson' }],
+        },
       });
 
       expect(result).toContain('\\title{Test \\& Demo}');
@@ -257,12 +244,8 @@ describe('Template Engine', () => {
 
       const result = await engine.renderString(template, {
         paper: {
-          sections: [
-            { heading: 'Introduction' },
-            { heading: 'Methods' },
-            { heading: 'Results' }
-          ]
-        }
+          sections: [{ heading: 'Introduction' }, { heading: 'Methods' }, { heading: 'Results' }],
+        },
       });
 
       expect(result).toContain('\\section{ Introduction }');
@@ -283,13 +266,13 @@ describe('Template Engine', () => {
 
       // With abstract
       const withAbstract = await engine.renderString(template, {
-        paper: { abstract: 'Test abstract' }
+        paper: { abstract: 'Test abstract' },
       });
       expect(withAbstract).toContain('\\begin{abstract}');
 
       // Without abstract
       const withoutAbstract = await engine.renderString(template, {
-        paper: { abstract: '' }
+        paper: { abstract: '' },
       });
       expect(withoutAbstract).not.toContain('\\begin{abstract}');
     });

@@ -3,14 +3,34 @@
  *
  * Core substrate for UNRDF v5. Provides:
  * - RDF store operations (create, add, query quads)
- * - SPARQL query execution
+ * - SPARQL query execution (sync and async)
  * - RDF canonicalization
  * - Type definitions and constants
  *
  * @module @unrdf/core
  */
 
-// Export RDF operations
+// ============================================================================
+// === Synchronous APIs (NEW - Primary) ===
+// ============================================================================
+
+// Synchronous RDF Store (UnrdfStore class with direct method calls)
+export { UnrdfStore, createStore as createUnrdfStore } from './rdf/unrdf-store.mjs';
+
+// Synchronous SPARQL Executors (no async/await required)
+export {
+  executeQuerySync,
+  executeSelectSync,
+  executeAskSync,
+  executeConstructSync,
+  prepareQuerySync,
+} from './sparql/executor-sync.mjs';
+
+// ============================================================================
+// === Async APIs (Existing - Backward Compatibility) ===
+// ============================================================================
+
+// Async RDF operations (functional style with async store)
 export {
   createStore,
   addQuad,
@@ -28,7 +48,7 @@ export {
 
 export { canonicalize, toNTriples, sortQuads, isIsomorphic } from './rdf/canonicalize.mjs';
 
-// Export SPARQL operations
+// Async SPARQL operations (legacy functional API)
 export {
   executeQuery,
   prepareQuery,

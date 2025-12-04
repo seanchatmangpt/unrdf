@@ -156,8 +156,8 @@ describe('IndexedDB Persistence Example', () => {
         store.add({
           subject: namedNode(`http://example.org/user/${i}`),
           predicate: namedNode('http://xmlns.com/foaf/0.1/name'),
-          object: { value: `User${i}` },
-          graph: { value: '' }
+          object: { value: `User${i}`, termType: 'Literal' },
+          graph: { value: '', termType: 'DefaultGraph' }
         })
       );
       await Promise.all(writes);

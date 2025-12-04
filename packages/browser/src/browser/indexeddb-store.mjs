@@ -143,6 +143,17 @@ export async function addQuadToDB(store, quad) {
     throw new Error('Store is not open');
   }
 
+  // Validate quad structure
+  if (!quad || !quad.subject || !quad.subject.value) {
+    throw new Error('Invalid quad: missing subject');
+  }
+  if (!quad.predicate || !quad.predicate.value) {
+    throw new Error('Invalid quad: missing predicate');
+  }
+  if (!quad.object || quad.object.value === undefined) {
+    throw new Error('Invalid quad: missing object');
+  }
+
   // Add to memory store
   addQuad(store.memoryStore, quad);
 
@@ -151,14 +162,14 @@ export async function addQuadToDB(store, quad) {
   const objectStore = transaction.objectStore(store.storeName);
 
   const quadData = {
-    subject: quad.subject?.value || '',
-    predicate: quad.predicate?.value || '',
-    object: quad.object?.value || '',
+    subject: quad.subject.value,
+    predicate: quad.predicate.value,
+    object: quad.object.value,
     graph: quad.graph?.value || '',
-    subjectType: quad.subject?.termType || 'NamedNode',
-    objectType: quad.object?.termType || 'Literal',
-    objectLanguage: quad.object?.language || null,
-    objectDatatype: quad.object?.datatype?.value || null,
+    subjectType: quad.subject.termType || 'NamedNode',
+    objectType: quad.object.termType || 'Literal',
+    objectLanguage: quad.object.language || null,
+    objectDatatype: quad.object.datatype?.value || null,
   };
 
   return new Promise((resolve, reject) => {
@@ -460,5 +471,17 @@ export class IndexedDBStore {
    */
   isOpen() {
     return this._store.isOpen;
+  }
+
+  /**
+   * Get underlying IndexedDB database instance
+   *
+   * @returns {IDBDatabase|null} Database instance
+   *
+   * @example
+   * const db = store.db;
+   */
+  get db() {
+    return this._store.db;
   }
 }

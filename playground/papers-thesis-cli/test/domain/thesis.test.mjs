@@ -17,7 +17,7 @@ import {
   calculateProgress,
   ThesisType,
   DegreeType,
-  THESIS_TYPE_CONFIG
+  THESIS_TYPE_CONFIG,
 } from '../../src/domain/models/thesis.mjs';
 
 describe('Thesis Model', () => {
@@ -25,7 +25,7 @@ describe('Thesis Model', () => {
     it('should create a valid monograph thesis with minimal input', () => {
       const thesis = createThesis({
         title: 'Test Thesis',
-        author: { name: 'Alice' }
+        author: { name: 'Alice' },
       });
 
       expect(thesis).toBeDefined();
@@ -40,7 +40,7 @@ describe('Thesis Model', () => {
       const thesis = createThesis({
         type: 'narrative',
         title: 'Narrative Thesis',
-        author: { name: 'Bob' }
+        author: { name: 'Bob' },
       });
 
       expect(thesis.type).toBe('narrative');
@@ -52,7 +52,7 @@ describe('Thesis Model', () => {
       const thesis = createThesis({
         type: 'contribution',
         title: 'Publication-based Thesis',
-        author: { name: 'Carol' }
+        author: { name: 'Carol' },
       });
 
       expect(thesis.type).toBe('contribution');
@@ -64,7 +64,7 @@ describe('Thesis Model', () => {
       const thesis = createThesis({
         title: 'Test',
         author: { name: 'Student' },
-        supervisor: { name: 'Dr. Supervisor' }
+        supervisor: { name: 'Dr. Supervisor' },
       });
 
       expect(thesis.supervisor).toBeDefined();
@@ -77,7 +77,7 @@ describe('Thesis Model', () => {
         title: 'Test',
         author: { name: 'Student' },
         institution: 'MIT',
-        department: 'Computer Science'
+        department: 'Computer Science',
       });
 
       expect(thesis.institution).toBe('MIT');
@@ -90,8 +90,8 @@ describe('Thesis Model', () => {
         author: { name: 'Author' },
         customChapters: [
           { heading: 'Custom Chapter 1' },
-          { heading: 'Custom Chapter 2', content: 'Content' }
-        ]
+          { heading: 'Custom Chapter 2', content: 'Content' },
+        ],
       });
 
       expect(thesis.chapters).toHaveLength(2);
@@ -101,7 +101,7 @@ describe('Thesis Model', () => {
     it('should initialize empty schedule', () => {
       const thesis = createThesis({
         title: 'Test',
-        author: { name: 'Author' }
+        author: { name: 'Author' },
       });
 
       expect(thesis.schedule).toBeDefined();
@@ -115,10 +115,8 @@ describe('Thesis Model', () => {
         author: { name: 'Author' },
         schedule: {
           defenseDate: '2025-06-15',
-          milestones: [
-            { name: 'Draft', date: '2025-03-01' }
-          ]
-        }
+          milestones: [{ name: 'Draft', date: '2025-03-01' }],
+        },
       });
 
       expect(thesis.schedule.defenseDate).toBe('2025-06-15');
@@ -137,7 +135,7 @@ describe('Thesis Model', () => {
         degree: 'PhD',
         chapters: [{ heading: 'Intro', content: '', order: 1, completion: 0 }],
         schedule: { milestones: [] },
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
       };
 
       const result = ThesisSchema.safeParse(thesis);
@@ -151,7 +149,7 @@ describe('Thesis Model', () => {
         title: 'Test',
         chapters: [],
         schedule: { milestones: [] },
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
       };
 
       const result = ThesisSchema.safeParse(thesis);
@@ -184,12 +182,12 @@ describe('Thesis Model', () => {
     it('should add a milestone to thesis schedule', () => {
       const thesis = createThesis({
         title: 'Test',
-        author: { name: 'Author' }
+        author: { name: 'Author' },
       });
 
       const updated = addMilestone(thesis, {
         name: 'New Milestone',
-        date: '2025-05-01'
+        date: '2025-05-01',
       });
 
       expect(updated.schedule.milestones).toHaveLength(1);
@@ -200,7 +198,7 @@ describe('Thesis Model', () => {
     it('should preserve existing milestones', () => {
       let thesis = createThesis({
         title: 'Test',
-        author: { name: 'Author' }
+        author: { name: 'Author' },
       });
 
       thesis = addMilestone(thesis, { name: 'First', date: '2025-01-01' });
@@ -214,7 +212,7 @@ describe('Thesis Model', () => {
     it('should update milestone status', () => {
       let thesis = createThesis({
         title: 'Test',
-        author: { name: 'Author' }
+        author: { name: 'Author' },
       });
 
       thesis = addMilestone(thesis, { name: 'Task', date: '2025-01-01' });
@@ -226,7 +224,7 @@ describe('Thesis Model', () => {
     it('should throw for invalid index', () => {
       const thesis = createThesis({
         title: 'Test',
-        author: { name: 'Author' }
+        author: { name: 'Author' },
       });
 
       expect(() => updateMilestoneStatus(thesis, 5, 'completed')).toThrow();
@@ -237,7 +235,7 @@ describe('Thesis Model', () => {
     it('should calculate 0% for empty chapters', () => {
       const thesis = createThesis({
         title: 'Test',
-        author: { name: 'Author' }
+        author: { name: 'Author' },
       });
 
       const progress = calculateProgress(thesis);
@@ -248,10 +246,7 @@ describe('Thesis Model', () => {
       const thesis = createThesis({
         title: 'Test',
         author: { name: 'Author' },
-        customChapters: [
-          { heading: 'Ch1' },
-          { heading: 'Ch2' }
-        ]
+        customChapters: [{ heading: 'Ch1' }, { heading: 'Ch2' }],
       });
 
       // Manually set completion
@@ -268,7 +263,7 @@ describe('Thesis Model', () => {
       const thesis = createThesis({
         title: 'RDF Test Thesis',
         author: { name: 'RDF Author' },
-        institution: 'Test University'
+        institution: 'Test University',
       });
 
       const rdf = thesisToRdf(thesis);
@@ -282,7 +277,7 @@ describe('Thesis Model', () => {
       const thesis = createThesis({
         title: 'Test',
         author: { name: 'Student' },
-        supervisor: { name: 'Supervisor' }
+        supervisor: { name: 'Supervisor' },
       });
 
       const rdf = thesisToRdf(thesis);

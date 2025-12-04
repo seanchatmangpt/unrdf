@@ -34,7 +34,7 @@ import {
   ordinal,
   pluralize,
   formatauthor,
-  registerAllFilters
+  registerAllFilters,
 } from './nunjucks-filters.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -49,7 +49,14 @@ export const DEFAULT_TEMPLATES_DIR = resolve(join(__dirname, '../../templates'))
  * Available template families
  * @type {string[]}
  */
-export const TEMPLATE_FAMILIES = ['imrad', 'dsr', 'argument', 'contribution', 'monograph', 'narrative'];
+export const TEMPLATE_FAMILIES = [
+  'imrad',
+  'dsr',
+  'argument',
+  'contribution',
+  'monograph',
+  'narrative',
+];
 
 /**
  * Template file extension
@@ -65,7 +72,7 @@ export const AuthorSchema = z.object({
   affiliation: z.string().optional(),
   role: z.string().optional(),
   email: z.string().email().optional(),
-  orcid: z.string().optional()
+  orcid: z.string().optional(),
 });
 
 /**
@@ -75,7 +82,7 @@ export const SectionSchema = z.object({
   heading: z.string().min(1, 'Section heading is required'),
   content: z.string(),
   level: z.number().int().min(1).max(4).optional(),
-  subsections: z.array(z.lazy(() => SectionSchema)).optional()
+  subsections: z.array(z.lazy(() => SectionSchema)).optional(),
 });
 
 /**
@@ -89,7 +96,7 @@ export const BibliographyEntrySchema = z.object({
   source: z.string().optional(),
   doi: z.string().optional(),
   url: z.string().url().optional(),
-  type: z.enum(['article', 'book', 'inproceedings', 'misc', 'thesis']).optional()
+  type: z.enum(['article', 'book', 'inproceedings', 'misc', 'thesis']).optional(),
 });
 
 /**
@@ -99,7 +106,7 @@ export const FigureSchema = z.object({
   caption: z.string().min(1),
   path: z.string().min(1),
   width: z.string().optional(),
-  label: z.string().optional()
+  label: z.string().optional(),
 });
 
 /**
@@ -109,7 +116,7 @@ export const TableSchema = z.object({
   caption: z.string().min(1),
   data: z.array(z.array(z.string())),
   headers: z.array(z.string()).optional(),
-  label: z.string().optional()
+  label: z.string().optional(),
 });
 
 /**
@@ -137,7 +144,7 @@ export const TemplateContextSchema = z.object({
   twocolumn: z.boolean().optional(),
   documentClass: z.string().optional(),
   fontSize: z.enum(['10pt', '11pt', '12pt']).optional(),
-  paperSize: z.enum(['a4paper', 'letterpaper']).optional()
+  paperSize: z.enum(['a4paper', 'letterpaper']).optional(),
 });
 
 /**
@@ -186,7 +193,7 @@ export function initTemplateEngine(options = {}) {
     trimBlocks: true,
     lstripBlocks: true,
     throwOnUndefined: false,
-    watch
+    watch,
   });
 
   // Register all custom filters
@@ -305,19 +312,19 @@ export async function getAvailableTemplates(templatesDir = DEFAULT_TEMPLATES_DIR
           name,
           path: join(resolvedDir, entry.name),
           family: name,
-          exists: true
+          exists: true,
         });
       }
     }
 
     // Add standard families that may not have files yet
     for (const family of TEMPLATE_FAMILIES) {
-      if (!templates.find((t) => t.name === family)) {
+      if (!templates.find(t => t.name === family)) {
         templates.push({
           name: family,
           path: join(resolvedDir, `${family}${TEMPLATE_EXTENSION}`),
           family,
-          exists: false
+          exists: false,
         });
       }
     }
@@ -326,11 +333,11 @@ export async function getAvailableTemplates(templatesDir = DEFAULT_TEMPLATES_DIR
   } catch (error) {
     if (error.code === 'ENOENT') {
       // Directory doesn't exist, return empty list
-      return TEMPLATE_FAMILIES.map((family) => ({
+      return TEMPLATE_FAMILIES.map(family => ({
         name: family,
         path: join(resolvedDir, `${family}${TEMPLATE_EXTENSION}`),
         family,
-        exists: false
+        exists: false,
       }));
     }
     throw new Error(`Failed to list templates: ${error.message}`, { cause: error });
@@ -382,7 +389,7 @@ export async function validateContext(context) {
     return { valid: true };
   } catch (error) {
     if (error instanceof z.ZodError) {
-      const errors = error.errors.map((e) => {
+      const errors = error.errors.map(e => {
         const path = e.path.join('.');
         return path ? `${path}: ${e.message}` : e.message;
       });
@@ -404,7 +411,7 @@ export async function validatePartialContext(context) {
     return { valid: true };
   } catch (error) {
     if (error instanceof z.ZodError) {
-      const errors = error.errors.map((e) => {
+      const errors = error.errors.map(e => {
         const path = e.path.join('.');
         return path ? `${path}: ${e.message}` : e.message;
       });
@@ -436,7 +443,7 @@ export function createContextFactory(family) {
       twocolumn: false,
       documentClass: 'article',
       fontSize: '11pt',
-      paperSize: 'a4paper'
+      paperSize: 'a4paper',
     };
 
     // Family-specific defaults
@@ -446,13 +453,13 @@ export function createContextFactory(family) {
       monograph: { toc: true, documentClass: 'report' },
       narrative: { sections: [] },
       argument: { sections: [] },
-      contribution: { sections: [] }
+      contribution: { sections: [] },
     };
 
     return {
       ...defaults,
       ...(familyDefaults[family] || {}),
-      ...overrides
+      ...overrides,
     };
   };
 }
@@ -486,14 +493,14 @@ export async function getTemplateMetadata(templateName, templatesDir = DEFAULT_T
       modified: stats.mtime,
       description: descriptionMatch ? descriptionMatch[1].trim() : null,
       variables: variablesMatch ? variablesMatch[1].trim() : null,
-      exists: true
+      exists: true,
     };
   } catch (error) {
     if (error.code === 'ENOENT') {
       return {
         name: templateName,
         path: templatePath,
-        exists: false
+        exists: false,
       };
     }
     throw error;
@@ -517,7 +524,7 @@ export {
   formatnumber,
   ordinal,
   pluralize,
-  formatauthor
+  formatauthor,
 };
 
 // Also export the legacy names for backward compatibility
@@ -565,7 +572,7 @@ export function createTemplateEngine(templatesDir = DEFAULT_TEMPLATES_DIR) {
      */
     async getTemplates() {
       const templates = await getAvailableTemplates(templatesDir);
-      return templates.filter((t) => t.exists).map((t) => t.name);
+      return templates.filter(t => t.exists).map(t => t.name);
     },
 
     /**
@@ -601,7 +608,7 @@ export function createTemplateEngine(templatesDir = DEFAULT_TEMPLATES_DIR) {
      */
     addGlobal(name, value) {
       env.addGlobal(name, value);
-    }
+    },
   };
 }
 
@@ -662,7 +669,7 @@ export async function previewTemplate(templateName) {
       abstract: 'This is a sample abstract demonstrating the template structure.',
       authors: [
         { name: 'John Smith', affiliation: 'University of Example' },
-        { name: 'Jane Doe', affiliation: 'Research Institute' }
+        { name: 'Jane Doe', affiliation: 'Research Institute' },
       ],
       keywords: ['sample', 'template', 'preview'],
       sections: [
@@ -670,9 +677,9 @@ export async function previewTemplate(templateName) {
         { heading: 'Methods', content: 'Sample methods content...' },
         { heading: 'Results', content: 'Sample results content...' },
         { heading: 'Discussion', content: 'Sample discussion content...' },
-        { heading: 'Conclusion', content: 'Sample conclusion content...' }
-      ]
-    }
+        { heading: 'Conclusion', content: 'Sample conclusion content...' },
+      ],
+    },
   };
 
   return renderTemplate(templateName, sampleContext);

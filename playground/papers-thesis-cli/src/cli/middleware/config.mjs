@@ -37,7 +37,7 @@ const CONFIG_SEARCH_PATHS = [
   '.playgroundrc.yml',
   'playground.config.mjs',
   'playground.config.js',
-  'playground.config.json'
+  'playground.config.json',
 ];
 
 /**
@@ -59,81 +59,104 @@ export const DEFAULT_CONFIG = {
   logging: {
     level: 'info',
     format: 'pretty',
-    structured: false
+    structured: false,
   },
   output: {
     format: 'table',
     color: true,
-    directory: './output'
+    directory: './output',
   },
   validation: {
     strict: false,
-    abortOnError: true
+    abortOnError: true,
   },
   middleware: {
     abortOnError: true,
-    enabled: ['config', 'validation', 'logging', 'profiling']
+    enabled: ['config', 'validation', 'logging', 'profiling'],
   },
   templates: {
     papers: './templates/papers',
     thesis: './templates/thesis',
-    custom: './templates/custom'
+    custom: './templates/custom',
   },
   knowledgeGraph: {
     endpoint: null,
     defaultGraph: null,
-    prefixes: {}
-  }
+    prefixes: {},
+  },
 };
 
 /**
  * Zod schema for configuration validation
  */
-export const ConfigSchema = z.object({
-  logging: z.object({
-    level: z.enum(['debug', 'info', 'warn', 'error']).default('info'),
-    format: z.enum(['pretty', 'json', 'jsonld']).default('pretty'),
-    structured: z.boolean().default(false)
-  }).default({}),
+export const ConfigSchema = z
+  .object({
+    logging: z
+      .object({
+        level: z.enum(['debug', 'info', 'warn', 'error']).default('info'),
+        format: z.enum(['pretty', 'json', 'jsonld']).default('pretty'),
+        structured: z.boolean().default(false),
+      })
+      .default({}),
 
-  output: z.object({
-    format: z.enum(['json', 'json-pretty', 'yaml', 'table', 'latex', 'csv']).default('table'),
-    color: z.boolean().default(true),
-    directory: z.string().default('./output')
-  }).default({}),
+    output: z
+      .object({
+        format: z.enum(['json', 'json-pretty', 'yaml', 'table', 'latex', 'csv']).default('table'),
+        color: z.boolean().default(true),
+        directory: z.string().default('./output'),
+      })
+      .default({}),
 
-  validation: z.object({
-    strict: z.boolean().default(false),
-    abortOnError: z.boolean().default(true),
-    schema: z.any().optional(),
-    preconditions: z.array(z.object({
-      type: z.string(),
-      args: z.string(),
-      label: z.string().optional()
-    })).default([]),
-    custom: z.array(z.object({
-      name: z.string(),
-      args: z.string()
-    })).default([])
-  }).default({}),
+    validation: z
+      .object({
+        strict: z.boolean().default(false),
+        abortOnError: z.boolean().default(true),
+        schema: z.any().optional(),
+        preconditions: z
+          .array(
+            z.object({
+              type: z.string(),
+              args: z.string(),
+              label: z.string().optional(),
+            })
+          )
+          .default([]),
+        custom: z
+          .array(
+            z.object({
+              name: z.string(),
+              args: z.string(),
+            })
+          )
+          .default([]),
+      })
+      .default({}),
 
-  middleware: z.object({
-    abortOnError: z.boolean().default(true),
-    enabled: z.array(z.string()).default(['config', 'validation', 'logging', 'profiling'])
-  }).default({}),
+    middleware: z
+      .object({
+        abortOnError: z.boolean().default(true),
+        enabled: z.array(z.string()).default(['config', 'validation', 'logging', 'profiling']),
+      })
+      .default({}),
 
-  templates: z.object({
-    papers: z.string().default('./templates/papers'),
-    thesis: z.string().default('./templates/thesis'),
-    custom: z.string().default('./templates/custom')
-  }).default({}),
+    templates: z
+      .object({
+        papers: z.string().default('./templates/papers'),
+        thesis: z.string().default('./templates/thesis'),
+        custom: z.string().default('./templates/custom'),
+      })
+      .default({}),
 
-  knowledgeGraph: z.object({
-    endpoint: z.string().nullable().default(null),
-    defaultGraph: z.string().nullable().default(null),
-    prefixes: z.record(z.string()).default({})
-  }).default({})
-}).strict().default({});
+    knowledgeGraph: z
+      .object({
+        endpoint: z.string().nullable().default(null),
+        defaultGraph: z.string().nullable().default(null),
+        prefixes: z.record(z.string()).default({}),
+      })
+      .default({}),
+  })
+  .strict()
+  .default({});
 
 /**
  * Load configuration from a file
@@ -239,7 +262,7 @@ function getCachedConfig(filePath) {
   const resolved = resolve(filePath);
   const cached = configCache.get(resolved);
 
-  if (cached && (Date.now() - cached.timestamp) < CACHE_TTL) {
+  if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
     return cached.config;
   }
 
@@ -397,9 +420,11 @@ export async function configMiddleware(context) {
   context.getConfig = (path, defaultValue) => {
     if (!path) return config;
 
-    return path.split('.').reduce((obj, key) => {
-      return obj?.[key];
-    }, config) ?? defaultValue;
+    return (
+      path.split('.').reduce((obj, key) => {
+        return obj?.[key];
+      }, config) ?? defaultValue
+    );
   };
 
   context.setConfig = (path, value) => {

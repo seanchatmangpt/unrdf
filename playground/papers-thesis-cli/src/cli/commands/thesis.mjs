@@ -18,18 +18,25 @@ const THESIS_TYPES = {
   monograph: {
     name: 'Monograph',
     description: 'Traditional monograph-style thesis',
-    chapters: ['Introduction', 'Literature Review', 'Methodology', 'Results', 'Discussion', 'Conclusion']
+    chapters: [
+      'Introduction',
+      'Literature Review',
+      'Methodology',
+      'Results',
+      'Discussion',
+      'Conclusion',
+    ],
   },
   narrative: {
     name: 'Narrative',
     description: 'Narrative-style thesis',
-    chapters: ['Prologue', 'Background', 'Story', 'Analysis', 'Epilogue']
+    chapters: ['Prologue', 'Background', 'Story', 'Analysis', 'Epilogue'],
   },
   contribution: {
     name: 'Contribution-based',
     description: 'Publication-based thesis with multiple papers',
-    chapters: ['Introduction', 'Paper 1', 'Paper 2', 'Paper 3', 'Synthesis', 'Conclusion']
-  }
+    chapters: ['Introduction', 'Paper 1', 'Paper 2', 'Paper 3', 'Synthesis', 'Conclusion'],
+  },
 };
 
 /**
@@ -42,18 +49,23 @@ const ThesisInputSchema = z.object({
   institution: z.string().optional(),
   department: z.string().optional(),
   supervisor: z.string().optional(),
-  degree: z.enum(['PhD', 'Master', 'Bachelor']).default('PhD')
+  degree: z.enum(['PhD', 'Master', 'Bachelor']).default('PhD'),
 });
 
 /**
  * Zod schema for schedule input
  */
 const ScheduleInputSchema = z.object({
-  defense: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be YYYY-MM-DD format').optional(),
-  milestone: z.object({
-    name: z.string(),
-    date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be YYYY-MM-DD format')
-  }).optional()
+  defense: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be YYYY-MM-DD format')
+    .optional(),
+  milestone: z
+    .object({
+      name: z.string(),
+      date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be YYYY-MM-DD format'),
+    })
+    .optional(),
 });
 
 /**
@@ -63,7 +75,7 @@ const ScheduleInputSchema = z.object({
 export const thesisCommand = defineCommand({
   meta: {
     name: 'thesis',
-    description: 'Manage thesis documents'
+    description: 'Manage thesis documents',
   },
   subCommands: {
     /**
@@ -72,57 +84,57 @@ export const thesisCommand = defineCommand({
     generate: defineCommand({
       meta: {
         name: 'generate',
-        description: 'Generate thesis structure'
+        description: 'Generate thesis structure',
       },
       args: {
         type: {
           type: 'positional',
           description: 'Thesis type (monograph, narrative, contribution)',
           required: false,
-          default: 'monograph'
+          default: 'monograph',
         },
         title: {
           type: 'string',
           alias: 't',
           description: 'Thesis title',
-          required: true
+          required: true,
         },
         author: {
           type: 'string',
           alias: 'a',
           description: 'Author name',
-          required: true
+          required: true,
         },
         institution: {
           type: 'string',
-          description: 'Institution name'
+          description: 'Institution name',
         },
         department: {
           type: 'string',
-          description: 'Department name'
+          description: 'Department name',
         },
         supervisor: {
           type: 'string',
           alias: 's',
-          description: 'Supervisor name'
+          description: 'Supervisor name',
         },
         degree: {
           type: 'string',
           alias: 'd',
           description: 'Degree type (PhD, Master, Bachelor)',
-          default: 'PhD'
+          default: 'PhD',
         },
         output: {
           type: 'string',
           alias: 'o',
-          description: 'Output file path'
+          description: 'Output file path',
         },
         format: {
           type: 'string',
           alias: 'f',
           description: 'Output format (latex, json)',
-          default: 'latex'
-        }
+          default: 'latex',
+        },
       },
       async run({ args }) {
         try {
@@ -133,7 +145,7 @@ export const thesisCommand = defineCommand({
             institution: args.institution,
             department: args.department,
             supervisor: args.supervisor,
-            degree: args.degree || 'PhD'
+            degree: args.degree || 'PhD',
           });
 
           const typeConfig = THESIS_TYPES[input.type];
@@ -165,20 +177,20 @@ export const thesisCommand = defineCommand({
             author: {
               name: input.author,
               institution: input.institution || 'Unknown',
-              department: input.department
+              department: input.department,
             },
             supervisor: input.supervisor ? { name: input.supervisor } : null,
             degree: input.degree,
             chapters: typeConfig.chapters.map((name, index) => ({
               heading: name,
               order: index + 1,
-              content: ''
+              content: '',
             })),
             schedule: {
               milestones: [],
-              defenseDate: null
+              defenseDate: null,
             },
-            createdAt: new Date().toISOString()
+            createdAt: new Date().toISOString(),
           };
 
           if (args.format === 'json') {
@@ -189,7 +201,6 @@ export const thesisCommand = defineCommand({
           }
 
           return thesis;
-
         } catch (error) {
           if (error instanceof z.ZodError) {
             console.error('Validation error:');
@@ -201,7 +212,7 @@ export const thesisCommand = defineCommand({
           }
           process.exit(1);
         }
-      }
+      },
     }),
 
     /**
@@ -210,28 +221,28 @@ export const thesisCommand = defineCommand({
     list: defineCommand({
       meta: {
         name: 'list',
-        description: 'List thesis types'
+        description: 'List thesis types',
       },
       args: {
         verbose: {
           type: 'boolean',
           alias: 'v',
           description: 'Show detailed information',
-          default: false
+          default: false,
         },
         format: {
           type: 'string',
           alias: 'f',
           description: 'Output format (table, json, yaml)',
-          default: 'table'
-        }
+          default: 'table',
+        },
       },
       async run({ args }) {
         const types = Object.entries(THESIS_TYPES).map(([key, value]) => ({
           id: key,
           name: value.name,
           description: value.description,
-          chapters: value.chapters
+          chapters: value.chapters,
         }));
 
         if (args.format === 'json') {
@@ -254,7 +265,7 @@ export const thesisCommand = defineCommand({
         if (!args.verbose) {
           console.log('\nUse --verbose for detailed information');
         }
-      }
+      },
     }),
 
     /**
@@ -263,7 +274,7 @@ export const thesisCommand = defineCommand({
     schedule: defineCommand({
       meta: {
         name: 'schedule',
-        description: 'Manage thesis schedule'
+        description: 'Manage thesis schedule',
       },
       subCommands: {
         /**
@@ -272,15 +283,15 @@ export const thesisCommand = defineCommand({
         list: defineCommand({
           meta: {
             name: 'list',
-            description: 'Show current schedule'
+            description: 'Show current schedule',
           },
           args: {
             format: {
               type: 'string',
               alias: 'f',
               description: 'Output format (table, json)',
-              default: 'table'
-            }
+              default: 'table',
+            },
           },
           async run({ args }) {
             // TODO: Integration layer - query schedule from knowledge graph
@@ -292,8 +303,8 @@ export const thesisCommand = defineCommand({
                 { name: 'Literature Review', date: '2024-12-01', status: 'completed' },
                 { name: 'Complete Draft', date: '2025-03-01', status: 'in-progress' },
                 { name: 'Final Review', date: '2025-05-15', status: 'pending' },
-                { name: 'Thesis Defense', date: '2025-06-15', status: 'pending' }
-              ]
+                { name: 'Thesis Defense', date: '2025-06-15', status: 'pending' },
+              ],
             };
 
             if (args.format === 'json') {
@@ -306,11 +317,15 @@ export const thesisCommand = defineCommand({
             console.log('  Milestones:');
 
             for (const milestone of schedule.milestones) {
-              const statusIcon = milestone.status === 'completed' ? '[x]' :
-                                milestone.status === 'in-progress' ? '[~]' : '[ ]';
+              const statusIcon =
+                milestone.status === 'completed'
+                  ? '[x]'
+                  : milestone.status === 'in-progress'
+                    ? '[~]'
+                    : '[ ]';
               console.log(`    ${statusIcon} ${milestone.date}  ${milestone.name}`);
             }
-          }
+          },
         }),
 
         /**
@@ -319,18 +334,18 @@ export const thesisCommand = defineCommand({
         set: defineCommand({
           meta: {
             name: 'set',
-            description: 'Configure schedule'
+            description: 'Configure schedule',
           },
           args: {
             defense: {
               type: 'string',
-              description: 'Defense date (YYYY-MM-DD)'
+              description: 'Defense date (YYYY-MM-DD)',
             },
             milestone: {
               type: 'string',
               alias: 'm',
-              description: 'Add milestone (JSON: {"name": "...", "date": "..."})'
-            }
+              description: 'Add milestone (JSON: {"name": "...", "date": "..."})',
+            },
           },
           async run({ args }) {
             try {
@@ -353,11 +368,12 @@ export const thesisCommand = defineCommand({
               }
 
               if (validated.milestone) {
-                console.log(`Milestone added: ${validated.milestone.name} (${validated.milestone.date})`);
+                console.log(
+                  `Milestone added: ${validated.milestone.name} (${validated.milestone.date})`
+                );
               }
 
               console.log('\nSchedule updated successfully!');
-
             } catch (error) {
               if (error instanceof z.ZodError) {
                 console.error('Validation error:');
@@ -372,9 +388,9 @@ export const thesisCommand = defineCommand({
               }
               process.exit(1);
             }
-          }
-        })
-      }
-    })
-  }
+          },
+        }),
+      },
+    }),
+  },
 });

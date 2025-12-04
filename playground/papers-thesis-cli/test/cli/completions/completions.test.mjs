@@ -16,13 +16,25 @@ import {
   detectShell,
   getCompletionFilename,
   SUPPORTED_SHELLS,
-  DEFAULT_FILENAMES
+  DEFAULT_FILENAMES,
 } from '../../../src/cli/completions/index.mjs';
 
-import { generateBashCompletions, getBashInstallInstructions } from '../../../src/cli/completions/bash.mjs';
-import { generateZshCompletions, getZshInstallInstructions } from '../../../src/cli/completions/zsh.mjs';
-import { generateFishCompletions, getFishInstallInstructions } from '../../../src/cli/completions/fish.mjs';
-import { generatePowerShellCompletions, getPowerShellInstallInstructions } from '../../../src/cli/completions/powershell.mjs';
+import {
+  generateBashCompletions,
+  getBashInstallInstructions,
+} from '../../../src/cli/completions/bash.mjs';
+import {
+  generateZshCompletions,
+  getZshInstallInstructions,
+} from '../../../src/cli/completions/zsh.mjs';
+import {
+  generateFishCompletions,
+  getFishInstallInstructions,
+} from '../../../src/cli/completions/fish.mjs';
+import {
+  generatePowerShellCompletions,
+  getPowerShellInstallInstructions,
+} from '../../../src/cli/completions/powershell.mjs';
 
 describe('Shell Completions Index', () => {
   describe('SUPPORTED_SHELLS', () => {
@@ -332,7 +344,7 @@ describe('Completions Content Validation', () => {
     it('should include all subcommands', () => {
       const subcommands = {
         papers: ['generate', 'list', 'validate'],
-        thesis: ['generate', 'list', 'schedule']
+        thesis: ['generate', 'list', 'schedule'],
       };
 
       for (const shell of SUPPORTED_SHELLS) {

@@ -28,7 +28,7 @@ import {
   getOntologyProperties,
   getQueryMetrics,
   isInitialized,
-  ONTOLOGY_PATHS
+  ONTOLOGY_PATHS,
 } from '../../integration/sparql.mjs';
 
 import { knowledgeGraph } from '../../integration/knowledge-graph.mjs';
@@ -40,7 +40,7 @@ import { knowledgeGraph } from '../../integration/knowledge-graph.mjs';
 export const metaCommand = defineCommand({
   meta: {
     name: 'meta',
-    description: 'Meta operations and introspection'
+    description: 'Meta operations and introspection',
   },
   subCommands: {
     /**
@@ -49,21 +49,21 @@ export const metaCommand = defineCommand({
     introspect: defineCommand({
       meta: {
         name: 'introspect',
-        description: 'Machine-grade introspection'
+        description: 'Machine-grade introspection',
       },
       args: {
         format: {
           type: 'string',
           alias: 'f',
           description: 'Output format (json, yaml)',
-          default: 'json'
+          default: 'json',
         },
         section: {
           type: 'string',
           alias: 's',
           description: 'Specific section (commands, families, types, global)',
-          default: 'all'
-        }
+          default: 'all',
+        },
       },
       async run({ args }) {
         let output = commandRegistry;
@@ -96,7 +96,7 @@ export const metaCommand = defineCommand({
         } else {
           console.log(JSON.stringify(output, null, 2));
         }
-      }
+      },
     }),
 
     /**
@@ -105,7 +105,7 @@ export const metaCommand = defineCommand({
     ontology: defineCommand({
       meta: {
         name: 'ontology',
-        description: 'Ontology operations'
+        description: 'Ontology operations',
       },
       subCommands: {
         /**
@@ -114,32 +114,32 @@ export const metaCommand = defineCommand({
         list: defineCommand({
           meta: {
             name: 'list',
-            description: 'List RDF classes and properties'
+            description: 'List RDF classes and properties',
           },
           args: {
             verbose: {
               type: 'boolean',
               alias: 'v',
               description: 'Show detailed information',
-              default: false
+              default: false,
             },
             format: {
               type: 'string',
               alias: 'f',
               description: 'Output format (table, json, turtle)',
-              default: 'table'
+              default: 'table',
             },
             type: {
               type: 'string',
               alias: 't',
               description: 'Filter by type (class, property, all)',
-              default: 'all'
+              default: 'all',
             },
             init: {
               type: 'boolean',
               description: 'Initialize knowledge graph before querying',
-              default: false
-            }
+              default: false,
+            },
           },
           async run({ args }) {
             let classes = [];
@@ -178,7 +178,7 @@ export const metaCommand = defineCommand({
               type: 'Class',
               name: c.class || c.uri || 'unknown',
               label: c.label || extractLocalName(c.class || c.uri),
-              comment: c.comment || ''
+              comment: c.comment || '',
             }));
 
             // Format properties for display
@@ -188,7 +188,7 @@ export const metaCommand = defineCommand({
               label: p.label || extractLocalName(p.property || p.uri),
               domain: p.domain || 'unknown',
               range: p.range || 'unknown',
-              propType: p.type || 'General'
+              propType: p.type || 'General',
             }));
 
             // Filter by type
@@ -240,9 +240,9 @@ export const metaCommand = defineCommand({
               console.log(`    Avg query time: ${metrics.avgQueryTime}ms`);
               console.log(`    Cache hit rate: ${metrics.hitRate}%`);
             }
-          }
-        })
-      }
+          },
+        }),
+      },
     }),
 
     /**
@@ -251,50 +251,50 @@ export const metaCommand = defineCommand({
     sparql: defineCommand({
       meta: {
         name: 'sparql',
-        description: 'Execute SPARQL query'
+        description: 'Execute SPARQL query',
       },
       args: {
         query: {
           type: 'positional',
           description: 'SPARQL query string or named query name',
-          required: false
+          required: false,
         },
         file: {
           type: 'string',
           alias: 'f',
-          description: 'Path to SPARQL query file'
+          description: 'Path to SPARQL query file',
         },
         format: {
           type: 'string',
           description: 'Output format (table, json, csv)',
-          default: 'table'
+          default: 'table',
         },
         limit: {
           type: 'string',
           alias: 'l',
           description: 'Limit results (default: 100)',
-          default: '100'
+          default: '100',
         },
         named: {
           type: 'string',
           alias: 'n',
-          description: 'Execute named query by name'
+          description: 'Execute named query by name',
         },
         params: {
           type: 'string',
           alias: 'p',
-          description: 'Query parameters as JSON (for named queries)'
+          description: 'Query parameters as JSON (for named queries)',
         },
         list: {
           type: 'boolean',
           description: 'List available named queries',
-          default: false
+          default: false,
         },
         init: {
           type: 'boolean',
           description: 'Initialize knowledge graph before querying',
-          default: false
-        }
+          default: false,
+        },
       },
       async run({ args }) {
         // List named queries
@@ -357,7 +357,9 @@ export const metaCommand = defineCommand({
           console.error('Examples:');
           console.error('  playground meta sparql "SELECT * WHERE { ?s ?p ?o } LIMIT 10"');
           console.error('  playground meta sparql --file ./queries/find-papers.sparql');
-          console.error('  playground meta sparql --named findPapersByAuthor --params \'{"authorName": "Alice"}\'');
+          console.error(
+            '  playground meta sparql --named findPapersByAuthor --params \'{"authorName": "Alice"}\''
+          );
           console.error('  playground meta sparql --list');
           process.exit(1);
         }
@@ -426,11 +428,13 @@ export const metaCommand = defineCommand({
 
             // Rows
             for (const row of results) {
-              const values = keys.map(k => {
-                const val = row[k];
-                const str = val !== null && val !== undefined ? String(val) : '';
-                return str.substring(0, 24).padEnd(25);
-              }).join('');
+              const values = keys
+                .map(k => {
+                  const val = row[k];
+                  const str = val !== null && val !== undefined ? String(val) : '';
+                  return str.substring(0, 24).padEnd(25);
+                })
+                .join('');
               console.log(`  ${values}`);
             }
 
@@ -443,8 +447,9 @@ export const metaCommand = defineCommand({
 
           // Show metrics
           const metrics = getQueryMetrics();
-          console.log(`  Cache: ${metrics.cacheHits} hits / ${metrics.cacheMisses} misses (${metrics.hitRate}% hit rate)`);
-
+          console.log(
+            `  Cache: ${metrics.cacheHits} hits / ${metrics.cacheMisses} misses (${metrics.hitRate}% hit rate)`
+          );
         } catch (error) {
           console.error(`\nQuery failed: ${error.message}`);
           if (error.query) {
@@ -453,7 +458,7 @@ export const metaCommand = defineCommand({
           }
           process.exit(1);
         }
-      }
+      },
     }),
 
     /**
@@ -462,14 +467,14 @@ export const metaCommand = defineCommand({
     completions: defineCommand({
       meta: {
         name: 'completions',
-        description: 'Generate shell completions'
+        description: 'Generate shell completions',
       },
       args: {
         shell: {
           type: 'positional',
           description: 'Target shell (bash, zsh, fish, powershell)',
-          required: true
-        }
+          required: true,
+        },
       },
       async run({ args }) {
         const shell = args.shell.toLowerCase();
@@ -493,7 +498,7 @@ export const metaCommand = defineCommand({
         } else if (shell === 'powershell') {
           console.log(generatePowershellCompletions());
         }
-      }
+      },
     }),
 
     /**
@@ -502,7 +507,7 @@ export const metaCommand = defineCommand({
     middleware: defineCommand({
       meta: {
         name: 'middleware',
-        description: 'Middleware operations'
+        description: 'Middleware operations',
       },
       subCommands: {
         /**
@@ -511,15 +516,15 @@ export const metaCommand = defineCommand({
         list: defineCommand({
           meta: {
             name: 'list',
-            description: 'List active middleware'
+            description: 'List active middleware',
           },
           args: {
             format: {
               type: 'string',
               alias: 'f',
               description: 'Output format (table, json)',
-              default: 'table'
-            }
+              default: 'table',
+            },
           },
           async run({ args }) {
             const middleware = [
@@ -528,7 +533,7 @@ export const metaCommand = defineCommand({
               { name: 'rate-limit', enabled: false, description: 'Rate limiting' },
               { name: 'telemetry', enabled: true, description: 'OpenTelemetry integration' },
               { name: 'validation', enabled: true, description: 'Input validation' },
-              { name: 'sparql-cache', enabled: true, description: 'SPARQL query result caching' }
+              { name: 'sparql-cache', enabled: true, description: 'SPARQL query result caching' },
             ];
 
             if (args.format === 'json') {
@@ -541,9 +546,9 @@ export const metaCommand = defineCommand({
               const status = mw.enabled ? '[x]' : '[ ]';
               console.log(`  ${status} ${mw.name.padEnd(15)} ${mw.description}`);
             }
-          }
-        })
-      }
+          },
+        }),
+      },
     }),
 
     /**
@@ -552,39 +557,41 @@ export const metaCommand = defineCommand({
     telemetry: defineCommand({
       meta: {
         name: 'telemetry',
-        description: 'Export execution metrics'
+        description: 'Export execution metrics',
       },
       args: {
         format: {
           type: 'positional',
           description: 'Export format (json, prometheus, otlp)',
           required: false,
-          default: 'json'
+          default: 'json',
         },
         output: {
           type: 'string',
           alias: 'o',
-          description: 'Output file path'
+          description: 'Output file path',
         },
         timeframe: {
           type: 'string',
           alias: 't',
           description: 'Timeframe (1h, 24h, 7d)',
-          default: '24h'
-        }
+          default: '24h',
+        },
       },
       async run({ args }) {
         const format = args.format || 'json';
 
         // Get real query metrics if available
-        const queryMetrics = isInitialized() ? getQueryMetrics() : {
-          queriesExecuted: 0,
-          totalQueryTime: 0,
-          avgQueryTime: 0,
-          cacheHits: 0,
-          cacheMisses: 0,
-          hitRate: 0
-        };
+        const queryMetrics = isInitialized()
+          ? getQueryMetrics()
+          : {
+              queriesExecuted: 0,
+              totalQueryTime: 0,
+              avgQueryTime: 0,
+              cacheHits: 0,
+              cacheMisses: 0,
+              hitRate: 0,
+            };
 
         const metrics = {
           timeframe: args.timeframe,
@@ -592,20 +599,24 @@ export const metaCommand = defineCommand({
           sparql: {
             queriesExecuted: queryMetrics.queriesExecuted,
             avgQueryTime: queryMetrics.avgQueryTime,
-            cacheHitRate: queryMetrics.hitRate
+            cacheHitRate: queryMetrics.hitRate,
           },
           commands: {
             'papers.generate': { count: 15, avgDuration: 450, errors: 0 },
             'papers.list': { count: 8, avgDuration: 12, errors: 0 },
             'thesis.generate': { count: 3, avgDuration: 520, errors: 1 },
-            'meta.sparql': { count: queryMetrics.queriesExecuted, avgDuration: queryMetrics.avgQueryTime, errors: 0 }
+            'meta.sparql': {
+              count: queryMetrics.queriesExecuted,
+              avgDuration: queryMetrics.avgQueryTime,
+              errors: 0,
+            },
           },
           totals: {
             totalCommands: 26 + queryMetrics.queriesExecuted,
             totalDuration: 8450 + queryMetrics.totalQueryTime,
             totalErrors: 3,
-            successRate: 93.75
-          }
+            successRate: 93.75,
+          },
         };
 
         if (format === 'prometheus') {
@@ -629,18 +640,39 @@ export const metaCommand = defineCommand({
 
         if (format === 'otlp') {
           console.log('OTLP format export (would send to collector)');
-          console.log(JSON.stringify({
-            resourceMetrics: [{
-              resource: { attributes: [{ key: 'service.name', value: { stringValue: 'papers-thesis-cli' } }] },
-              scopeMetrics: [{
-                metrics: Object.entries(metrics.commands).map(([cmd, data]) => ({
-                  name: 'playground.command.duration',
-                  unit: 'ms',
-                  sum: { dataPoints: [{ asInt: data.avgDuration, attributes: [{ key: 'command', value: { stringValue: cmd } }] }] }
-                }))
-              }]
-            }]
-          }, null, 2));
+          console.log(
+            JSON.stringify(
+              {
+                resourceMetrics: [
+                  {
+                    resource: {
+                      attributes: [
+                        { key: 'service.name', value: { stringValue: 'papers-thesis-cli' } },
+                      ],
+                    },
+                    scopeMetrics: [
+                      {
+                        metrics: Object.entries(metrics.commands).map(([cmd, data]) => ({
+                          name: 'playground.command.duration',
+                          unit: 'ms',
+                          sum: {
+                            dataPoints: [
+                              {
+                                asInt: data.avgDuration,
+                                attributes: [{ key: 'command', value: { stringValue: cmd } }],
+                              },
+                            ],
+                          },
+                        })),
+                      },
+                    ],
+                  },
+                ],
+              },
+              null,
+              2
+            )
+          );
           return;
         }
 
@@ -649,9 +681,9 @@ export const metaCommand = defineCommand({
           console.log(`Metrics would be written to: ${args.output}`);
         }
         console.log(JSON.stringify(metrics, null, 2));
-      }
-    })
-  }
+      },
+    }),
+  },
 });
 
 // =============================================================================
