@@ -20,7 +20,7 @@ import {
 const originalFetch = global.fetch;
 
 function createMockFetch(responses = {}) {
-  return vi.fn(async (url, options) => {
+  return vi.fn(async (url, _options) => {
     const endpoint = url.toString();
 
     // Mock SPARQL endpoint
