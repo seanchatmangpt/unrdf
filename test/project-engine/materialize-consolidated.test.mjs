@@ -7,7 +7,7 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { createStore } from '@unrdf/oxigraph';
+import { createStore, dataFactory } from '@unrdf/oxigraph';
 import { promises as fs } from 'fs';
 import path from 'path';
 import os from 'os';
@@ -17,7 +17,7 @@ import {
   previewPlan,
 } from '../../src/project-engine/materialize-apply.mjs';
 
-const { namedNode, _literal } = DataFactory;
+const { namedNode, _literal } = dataFactory;
 
 describe('materialize consolidated - 80/20 core', () => {
   let testDir;

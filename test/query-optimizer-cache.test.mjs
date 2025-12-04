@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { QueryOptimizer } from '../src/knowledge-engine/query-optimizer.mjs';
-import { createStore } from '@unrdf/oxigraph';
+import { createStore, dataFactory } from '@unrdf/oxigraph';
 
-const { quad, namedNode } = DataFactory;
+const { quad, namedNode } = dataFactory;
 
 describe('Query Optimizer - cache behavior', () => {
   it('caches query plans and reports cache hit rate', async () => {
