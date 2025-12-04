@@ -8,7 +8,8 @@
  */
 
 import { EventEmitter } from 'events';
-import { Store, Parser } from 'n3';
+import { createStore } from '@unrdf/oxigraph';
+import { Parser } from 'n3';
 import { z } from 'zod';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
 import { validateShacl } from '../validate.mjs';

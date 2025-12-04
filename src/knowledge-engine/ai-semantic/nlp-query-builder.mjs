@@ -10,7 +10,7 @@
  * Performance target: <300ms for NL→SPARQL translation
  */
 
-import { _Store } from 'n3';
+// Unused N3 import removed
 import { trace, SpanStatusCode } from '@opentelemetry/api';
 import LRUCache from 'lru-cache';
 import { z } from 'zod';
