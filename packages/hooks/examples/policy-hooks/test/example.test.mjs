@@ -146,7 +146,7 @@ describe('Policy Hooks Example', () => {
       );
 
       const hooks = [aclPolicy, dataTypePolicy, privacyPolicy, provenancePolicy];
-      const results = executeHooksByTrigger(hooks, 'before-add', q);
+      const results = executeHooksByTrigger(hooks, 'before-add', q, { collectResults: true });
       expect(results.results.length).toBe(4);
       expect(results.results.filter(r => r.valid).length).toBe(4);
       expect(results.valid).toBe(true);
@@ -162,7 +162,7 @@ describe('Policy Hooks Example', () => {
       );
 
       const hooks = [aclPolicy, dataTypePolicy, privacyPolicy, provenancePolicy];
-      const results = executeHooksByTrigger(hooks, 'before-add', q);
+      const results = executeHooksByTrigger(hooks, 'before-add', q, { collectResults: true });
       // Chain stops on first failure, so we only get results up to the failed hook
       expect(results.results.length).toBeGreaterThan(0);
       expect(results.valid).toBe(false);
@@ -181,7 +181,7 @@ describe('Policy Hooks Example', () => {
       );
 
       const hooks = [aclPolicy, privacyPolicy, provenancePolicy];
-      const results = executeHooksByTrigger(hooks, 'before-add', q);
+      const results = executeHooksByTrigger(hooks, 'before-add', q, { collectResults: true });
 
       // All policies should pass
       expect(results.valid).toBe(true);

@@ -3,7 +3,7 @@
  * @description Demonstrates peer registration, health checks, and status management
  */
 
-import { createPeerManager } from '../../../src/index.mjs';
+import { createPeerManager } from '@unrdf/federation';
 
 /**
  * Main example: Peer Discovery

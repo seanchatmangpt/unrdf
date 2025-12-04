@@ -122,7 +122,7 @@ describe('@unrdf/hooks - Hook Execution', () => {
       transform: q => q,
     });
 
-    const result = executeHookChain([validator, transformer], testQuad);
+    const result = executeHookChain([validator, transformer], testQuad, { collectResults: true });
     expect(result.valid).toBe(true);
     expect(result.results.length).toBe(2);
   });
@@ -140,7 +140,7 @@ describe('@unrdf/hooks - Hook Execution', () => {
       transform: q => q,
     });
 
-    const result = executeHookChain([validator, transformer], testQuad);
+    const result = executeHookChain([validator, transformer], testQuad, { collectResults: true });
     expect(result.valid).toBe(false);
     expect(result.results.length).toBe(1);
   });
@@ -158,7 +158,7 @@ describe('@unrdf/hooks - Hook Execution', () => {
       validate: () => true,
     });
 
-    const result = executeHooksByTrigger([beforeHook, afterHook], 'before-add', testQuad);
+    const result = executeHooksByTrigger([beforeHook, afterHook], 'before-add', testQuad, { collectResults: true });
     expect(result.valid).toBe(true);
     expect(result.results.length).toBe(1);
     expect(result.results[0].hookName).toBe('before');

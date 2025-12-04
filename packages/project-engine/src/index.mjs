@@ -1,87 +1,151 @@
 /**
- * @unrdf/project-engine
- *
- * Project Engine - Self-hosting Tools and Infrastructure
- *
- * @module @unrdf/project-engine
+ * @file Project engine exports
+ * @module project-engine
  */
 
-// Documentation Generation
+export { scanFileSystemToStore } from './fs-scan.mjs';
+export { buildProjectModelFromFs } from './project-model.mjs';
+export { detectStackFromFs } from './stack-detect.mjs';
+export { classifyFiles } from './file-roles.mjs';
+// Removed unused export: generateGoldenStructure (never imported/used)
+export { diffProjectStructure } from './project-diff.mjs';
+export { materializeArtifacts } from './materialize.mjs';
+export { ProjectStructureLens } from './lens/project-structure.mjs';
+export { getProjectEngineConfig, ProjectEngineConfigSchema } from './project-config.mjs';
+export { buildProjectReport } from './project-report.mjs';
+export { createProjectInitializationPipeline } from './initialize.mjs';
 export {
-  generateApiDocs,
-  generatePackageGuide,
-  generateChangelog,
-} from './project-engine/doc-generator.mjs';
-
-// Code Analysis
-export { analyzePackage, findExports, countCoverage } from './project-engine/code-analyzer.mjs';
-
-// Build Utilities
-export { buildPackage, verifyPackage, listPackages } from './project-engine/build-utils.mjs';
-
-// Metrics Collection
-export { collectMetrics, reportMetrics } from './project-engine/metrics.mjs';
-
-// Infrastructure
+  deriveHooksFromStructure,
+  analyzePatternViolations,
+  createCustomPatternHook,
+} from './policy-derivation.mjs';
+export { inferDomainModel, inferDomainModelFromPath, DomainModelLens } from './domain-infer.mjs';
 export {
-  createProjectConfig,
-  setupDevEnvironment,
-  createDeploymentConfig,
-} from './project-engine/infrastructure.mjs';
+  inferTemplatesFromProject,
+  inferTemplatesWithDomainBinding,
+  getTemplatesByKind,
+  serializeTemplates,
+} from './template-infer.mjs';
 
-// Project Management API
-import { analyzePackage } from './project-engine/code-analyzer.mjs';
-import { listPackages } from './project-engine/build-utils.mjs';
+// Materialization planning and execution
+export {
+  planMaterialization,
+  validatePlan,
+  createEmptyPlan,
+  mergePlans,
+} from './materialize-plan.mjs';
 
-/**
- *
- */
-export function createProject(options = {}) {
-  return {
-    name: options.name || 'unrdf-project',
-    version: options.version || '1.0.0',
-    packages: [],
-    artifacts: [],
-    metadata: {},
-  };
-}
+export {
+  applyMaterializationPlan,
+  rollbackMaterialization,
+  previewPlan,
+  checkPlanApplicability,
+} from './materialize-apply.mjs';
 
-/**
- *
- */
-export async function loadProject(configPath = '.') {
-  return createProject({ name: configPath });
-}
+// Drift detection
+export {
+  createStructureSnapshot,
+  computeDrift,
+  createEmptyBaseline,
+  serializeSnapshot,
+  deserializeSnapshot,
+} from './drift-snapshot.mjs';
 
-/**
- *
- */
-export async function saveProject(project, outputPath = '.') {
-  return { saved: true, path: outputPath };
-}
+// Hotspot analysis
+export { analyzeHotspots, scoreFeature } from './hotspot-analyzer.mjs';
 
-/**
- *
- */
-export function describeProject(project) {
-  return {
-    name: project?.name || 'unknown',
-    packages: project?.packages || [],
-    artifacts: project?.artifacts || [],
-  };
-}
+// Gap detection
+export { findMissingRoles, scoreMissingRole } from './gap-finder.mjs';
 
-/**
- *
- */
-export async function analyzeProject(project) {
-  const analysis = analyzePackage ? await analyzePackage(project?.name) : {};
-  return { name: project?.name, analysis };
-}
+// Type-safety auditing
+export {
+  auditTypeConsistency,
+  auditEntityTypes,
+  compareTypes,
+  FieldInfoSchema,
+  MismatchSchema,
+  AuditResultSchema,
+  CompareTypesResultSchema,
+} from './type-auditor.mjs';
 
-/**
- *
- */
-export function listArtifacts(project) {
-  return project?.artifacts || (listPackages ? listPackages() : []);
-}
+// Autonomic MAPEK Loop - Full autonomics with Knowledge Hooks
+export {
+  runMapekIteration,
+  createAutonomicHooks,
+  runContinuousMapekLoop,
+  reportMapekStatus,
+} from './autonomic-mapek.mjs';
+
+// API Contract Validation
+export {
+  generateAPISchema,
+  generateAllAPISchemas,
+  validateAPIFiles,
+  detectContractBreaks,
+  detectAllContractBreaks,
+  FieldSchemaSchema,
+  EntitySchemaSchema,
+  ViolationSchema,
+  ValidationResultSchema,
+  BreakingChangeSchema,
+  ContractBreaksSchema,
+} from './api-contract-validator.mjs';
+
+// Stack-Aware Linter Rules
+export { deriveLinterRules, analyzeCodePatterns, generateESLintConfig } from './stack-linter.mjs';
+
+// Removed unused exports: planEntityRename, planEntityMerge, planServiceExtraction, validateRefactoringPlan (never imported/used)
+
+// JavaScript Code Complexity Analysis
+export { analyzeJsComplexity } from './code-complexity-js.mjs';
+
+// Capabilities Manifest - Feature flags and metadata
+export {
+  CODE_COMPLEXITY_JS,
+  CAPABILITIES,
+  FEATURE_FLAGS,
+  isCapabilityEnabled,
+  getCapabilityMetadata,
+  getEnabledCapabilities,
+  setCapabilityEnabled,
+} from './capabilities-manifest.mjs';
+
+// Feature Dependency Graph
+export {
+  buildDependencyGraph,
+  detectCircularDependencies,
+  topologicalSort,
+  analyzeDependencyPath,
+  getTransitiveDependencies,
+  // Removed unused export: getTransitiveDependents (never imported/used, getTransitiveDependencies is used)
+  calculateImpactScore,
+} from './dependency-graph.mjs';
+
+// Auto-Test Generator
+export {
+  inferTestPatterns,
+  generateTestSkeleton,
+  scoreTestCoverage,
+  generateTestFactory,
+} from './auto-test-generator.mjs';
+
+// Removed unused exports: generateEntityReference, generateAPIReference, generateArchitectureDiagram, generateCompleteDocumentation (never imported/used)
+// Kept DocGenerationResultSchema as it may be used by checkDocConsistency
+export { DocGenerationResultSchema } from './doc-generator.mjs';
+
+// Documentation Drift Checker - validate documentation consistency against domain model
+export {
+  checkDocConsistency,
+  extractDocReferences,
+  scoreDocDrift,
+  checkDocDrift,
+  DriftEntrySchema,
+} from './doc-drift-checker.mjs';
+
+// MAPEK Orchestration - Unified execution with all innovations
+export {
+  runFullMapekWithAllInnovations,
+  runInnovationsParallel,
+  aggregateInnovationFindings,
+  ALL_INNOVATIONS,
+} from './mapek-orchestration.mjs';

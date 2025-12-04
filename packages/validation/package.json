@@ -1,0 +1,22 @@
+{
+  "name": "@unrdf/validation",
+  "version": "1.0.0",
+  "description": "OTEL validation framework for UNRDF development",
+  "type": "module",
+  "main": "./src/index.mjs",
+  "exports": {
+    ".": "./src/index.mjs"
+  },
+  "files": [
+    "src"
+  ],
+  "private": true,
+  "keywords": [
+    "rdf",
+    "validation",
+    "otel",
+    "observability"
+  ],
+  "author": "UNRDF Contributors",
+  "license": "MIT"
+}
