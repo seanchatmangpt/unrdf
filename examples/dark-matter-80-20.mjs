@@ -8,7 +8,7 @@
  */
 
 import { DarkMatterFactory } from '../src/knowledge-engine/dark-matter-core.mjs';
-import { Store } from 'n3';
+import { createStore } from '@unrdf/oxigraph';
 
 /**
  * Dark Matter 80/20 Example
@@ -83,7 +83,7 @@ async function darkMatter8020Example() {
 
     // Demonstrate transaction execution
     console.log('⚡ Transaction Execution Example:');
-    const store = new Store();
+    const store = createStore();
     const delta = {
       additions: [
         {

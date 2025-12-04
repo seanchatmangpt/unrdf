@@ -7,9 +7,9 @@
  * with comprehensive OTEL instrumentation and violation reporting.
  */
 
-import { _Store } from 'n3';
+import { createStore } from '../../../../packages/oxigraph/src/index.mjs';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
-import { PolicyPackManager } from '../../knowledge-engine/policy-pack.mjs';
+import { PolicyPackManager } from '../../../../src/knowledge-engine/policy-pack.mjs';
 import { evaluateHook } from './hook-evaluator.mjs';
 
 const tracer = trace.getTracer('unrdf-policy-validator');

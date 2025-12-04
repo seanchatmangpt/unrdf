@@ -20,9 +20,8 @@ import {
   TransactionManager,
   createKnowledgeEngine,
 } from '../src/knowledge-engine.mjs';
-import { DataFactory, Store } from 'n3';
-
-const { namedNode, quad } = DataFactory;
+import { createStore } from '../packages/oxigraph/src/index.mjs';
+import { namedNode, quad } from '../src/rdf/quad-utils.mjs';
 
 /**
  * Main example function demonstrating all Knowledge Engine capabilities.
@@ -190,7 +189,10 @@ async function main() {
   console.log(canonical.substring(0, 200) + '...');
 
   // Test isomorphism
-  const storeCopy = new Store(store.getQuads());
+  const storeCopy = createStore();
+  for (const q of store.match()) {
+    storeCopy.add(q);
+  }
   const isIsomorphicResult = await isIsomorphic(store, storeCopy);
   console.log('Store is isomorphic to its copy:', isIsomorphicResult);
   console.log();

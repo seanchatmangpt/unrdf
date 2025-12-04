@@ -7,7 +7,7 @@
  * SHACL validation, and threshold checks with full OTEL instrumentation.
  */
 
-import { Store } from 'n3';
+import { createStore } from '@unrdf/oxigraph';
 import { query as sparqlQuery } from '../../knowledge-engine/query.mjs';
 import { trace, context as _otelContext, SpanStatusCode } from '@opentelemetry/api';
 import { readFile } from 'node:fs/promises';
@@ -347,7 +347,7 @@ async function loadShapesFromRef(ref, parentSpan) {
       const turtle = await useTurtle();
       const quads = await turtle.parse(content);
 
-      const shapesStore = new Store();
+      const shapesStore = createStore();
       shapesStore.addQuads(quads);
 
       span.setAttribute('shapes.path', filePath);

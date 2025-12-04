@@ -5,7 +5,7 @@
  * to track and stream RDF graph changes.
  */
 
-import { Store, DataFactory } from 'n3';
+import { createStore } from '@unrdf/oxigraph';
 import { TransactionManager } from '../../src/knowledge-engine/transaction.mjs';
 import {
   createChangeFeed,
@@ -59,7 +59,7 @@ async function main() {
   console.log('Change feed hook registered');
 
   // Create store
-  const store = new Store();
+  const store = createStore();
 
   // Perform transactions
   console.log('\nPerforming transactions...\n');

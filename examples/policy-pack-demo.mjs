@@ -11,7 +11,7 @@ import {
   createPolicyPackManifest,
 } from '../src/knowledge-engine/policy-pack.mjs';
 import { KnowledgeHookManager } from '../src/knowledge-engine/knowledge-hook-manager.mjs';
-import { _Store } from 'n3';
+import { createStore } from '../packages/oxigraph/src/index.mjs';
 
 console.log('📦 Policy Pack Demo\n');
 

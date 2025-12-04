@@ -7,7 +7,7 @@
  */
 
 import { readFile, writeFile } from 'node:fs/promises';
-import { Writer } from 'n3';
+import {  Writer  } from '@unrdf/core/rdf/n3-justified-only';
 import { QueryEngine } from '@comunica/query-sparql';
 import { useStoreContext } from '../../context/index.mjs';
 import { useTurtle } from '../../composables/index.mjs';

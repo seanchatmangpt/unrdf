@@ -7,7 +7,7 @@
  * and verifiable audit trails.
  */
 
-import { Store } from 'n3';
+import { createStore } from '../packages/oxigraph/src/index.mjs';
 import { _createLockchainWriter } from '../src/knowledge-engine/lockchain-writer.mjs';
 import { TransactionManager } from '../src/knowledge-engine/transaction.mjs';
 
@@ -29,10 +29,10 @@ async function demonstrateLockchain() {
     console.log('📋 Transaction Manager created with lockchain enabled');
 
     // Create a test store
-    const store = new Store();
+    const store = createStore();
 
     // Add some initial data
-    store.addQuad(
+    store.add(
       { value: 'ex:alice', termType: 'NamedNode' },
       { value: 'ex:hasRole', termType: 'NamedNode' },
       { value: 'ex:admin', termType: 'NamedNode' }

@@ -7,7 +7,7 @@
  * to ensure complete coverage of functionality.
  */
 
-import { Store } from 'n3';
+import { createStore } from '@unrdf/oxigraph';
 import { RealKnowledgeHookManager } from '../src/knowledge-engine/real-knowledge-hooks.mjs';
 import { createRealLockchainWriter } from '../src/knowledge-engine/real-lockchain-writer.mjs';
 import { createRealResolutionLayer } from '../src/knowledge-engine/real-resolution-layer.mjs';
@@ -37,7 +37,7 @@ async function testAllFeatures() {
     });
 
     // Test basic transaction
-    const store = new Store();
+    const store = createStore();
     const delta = {
       additions: [{ s: 'ex:test', p: 'ex:type', o: 'ex:document' }],
       removals: [],
@@ -193,7 +193,7 @@ async function testAllFeatures() {
     });
 
     // Create test store with data
-    const testStore = new Store();
+    const testStore = createStore();
     for (let i = 0; i < 10; i++) {
       testStore.addQuad({
         s: `ex:subject-${i}`,

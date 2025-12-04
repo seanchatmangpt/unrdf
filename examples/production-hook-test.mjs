@@ -6,11 +6,10 @@
 
 import { KnowledgeHookManager } from '../src/knowledge-engine/knowledge-hook-manager.mjs';
 import { defineHook } from '../src/knowledge-engine/define-hook.mjs';
-import { DataFactory, Store } from 'n3';
+import { createStore } from '../packages/oxigraph/src/index.mjs';
+import { namedNode, literal, quad } from '../src/rdf/quad-utils.mjs';
 import { readFile } from 'fs/promises';
 import { createHash } from 'crypto';
-
-const { namedNode, literal, quad } = DataFactory;
 
 /**
  * Calculate SHA-256 hash of file content.
@@ -462,24 +461,24 @@ async function testProductionSystem() {
     console.log(`✅ Registered ${manager.getKnowledgeHooks().length} knowledge hooks\n`);
 
     // Create test store with real data
-    const store = new Store();
+    const store = createStore();
 
     // Add some test data
-    store.addQuad(
+    store.add(
       quad(
         namedNode('urn:motion:motion-001'),
         namedNode('urn:parliamentary:introducedBy'),
         literal('Alice')
       )
     );
-    store.addQuad(
+    store.add(
       quad(
         namedNode('urn:motion:motion-001'),
         namedNode('urn:parliamentary:secondedBy'),
         literal('Bob')
       )
     );
-    store.addQuad(
+    store.add(
       quad(
         namedNode('urn:motion:motion-001'),
         namedNode('urn:parliamentary:votedBy'),
@@ -487,10 +486,10 @@ async function testProductionSystem() {
       )
     );
 
-    store.addQuad(
+    store.add(
       quad(namedNode('urn:transaction:tx-001'), namedNode('urn:financial:amount'), literal('50000'))
     );
-    store.addQuad(
+    store.add(
       quad(namedNode('urn:transaction:tx-001'), namedNode('urn:financial:currency'), literal('USD'))
     );
 
