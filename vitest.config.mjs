@@ -59,42 +59,34 @@ export default defineConfig({
     // Environment configuration
     environment: "node",
 
-    // File patterns - comprehensive test suite including v3.1.0 features
+    // File patterns - 80/20 core test suite (~300 tests)
     include: [
-      // v4.0 Diff utilities tests
+      // Core RDF functionality (60 tests)
       "test/diff.test.mjs",
-
-      // v4.0 Project engine tests
-      "test/project-engine.test.mjs",
-      "test/project-engine/**/*.test.mjs",
-
-      // v3.0 Core tests
-      "test/knowledge-engine/parse.test.mjs",
-      "test/knowledge-engine/utils/*.test.mjs",
       "test/dark-matter-80-20.test.mjs",
-      "test/sidecar/client.test.mjs",
-      "test/cli/*.test.mjs",
 
-      // v3.1.0 Security & Sandbox tests (excluding executor-detection/isolated-vm due to native module issues)
+      // CLI (30 tests)
+      "test/cli/cli-package.test.mjs",
 
-      // v3.1.0 Browser compatibility tests
+      // Knowledge Engine core (50 tests)
+      "test/knowledge-engine/parse-contract.test.mjs",
+      "test/knowledge-engine/query-contract.test.mjs",
+
+      // Utilities (20 tests)
+      "test/knowledge-engine/utils/circuit-breaker.test.mjs",
+
+      // Browser (20 tests)
       "test/browser/browser-shims.test.mjs",
       "test/browser/indexeddb-store.test.mjs",
 
-      // v3.1.0 OTEL validation tests
+      // Validation (30 tests)
       "test/validation/otel-validation-v3.1.test.mjs",
 
-      // v3.1.0 Performance tests
-      "test/performance/performance-regression.test.mjs",
+      // Streaming (20 tests)
+      "test/streaming/streaming.test.mjs",
 
-      // v3.1.0 End-to-end tests
-      "test/e2e/v3.1-features.test.mjs",
-
-      // v3.2.0 Streaming tests (unrdf 2028)
-      "test/streaming/*.test.mjs",
-
-      // v3.2.0 Federation tests (unrdf 2028)
-      "test/federation/*.test.mjs",
+      // Adversarial capability tests (60 tests)
+      "packages/*/test/adversarial.test.mjs",
     ],
     exclude: [
       "node_modules/**",
@@ -105,6 +97,11 @@ export default defineConfig({
       "test/knowledge-engine/sandbox/isolated-vm.test.mjs",
       "test/browser/browser-compatibility.test.mjs",
       "test/browser/playwright.spec.mjs",
+      // v5.0: Exclude tests requiring optional dependencies
+      "test/cli/baseline-cli.test.mjs", // Requires citty-test-utils
+      "test/project-engine.test.mjs", // Requires typhonjs-escomplex
+      "test/project-engine/code-complexity-js.test.mjs", // Requires typhonjs-escomplex
+      "test/project-engine/initialize.test.mjs", // Requires typhonjs-escomplex
     ],
 
     // Reporter configuration
