@@ -1,0 +1,713 @@
+{
+  "metadata": {
+    "timestamp": "2025-12-04T19:52:54.552Z",
+    "nodeVersion": "v24.11.1",
+    "platform": "darwin arm64",
+    "testSizes": [
+      10,
+      50,
+      100,
+      500,
+      1000
+    ],
+    "iterations": 100
+  },
+  "hookConfigurations": [
+    {
+      "name": "minimal",
+      "description": "Minimal hook with validation only"
+    },
+    {
+      "name": "validation-only",
+      "description": "Validation hook with type checking"
+    },
+    {
+      "name": "transformation",
+      "description": "Hook that transforms data"
+    },
+    {
+      "name": "complex-validation",
+      "description": "Hook with complex validation logic"
+    },
+    {
+      "name": "transformation-chain",
+      "description": "Hook with validation and transformation"
+    },
+    {
+      "name": "intensive-compute",
+      "description": "Hook with CPU-intensive operations"
+    }
+  ],
+  "results": [
+    {
+      "hookConfig": "minimal",
+      "hookName": "MinimalHook",
+      "dataSize": 10,
+      "iterations": 100,
+      "latency": {
+        "min": "0.045",
+        "max": "1.458",
+        "mean": "0.153",
+        "median": "0.079",
+        "p95": "0.610",
+        "p99": "1.458"
+      },
+      "throughput": "6553598.74",
+      "memory": {
+        "before": "7.06",
+        "after": "8.40",
+        "delta": "1.34"
+      },
+      "overhead": "0.015"
+    },
+    {
+      "hookConfig": "minimal",
+      "hookName": "MinimalHook",
+      "dataSize": 50,
+      "iterations": 100,
+      "latency": {
+        "min": "0.119",
+        "max": "1.276",
+        "mean": "0.287",
+        "median": "0.249",
+        "p95": "0.579",
+        "p99": "1.276"
+      },
+      "throughput": "17441862.70",
+      "memory": {
+        "before": "8.70",
+        "after": "9.05",
+        "delta": "0.35"
+      },
+      "overhead": "0.006"
+    },
+    {
+      "hookConfig": "minimal",
+      "hookName": "MinimalHook",
+      "dataSize": 100,
+      "iterations": 100,
+      "latency": {
+        "min": "0.210",
+        "max": "1.876",
+        "mean": "0.423",
+        "median": "0.416",
+        "p95": "0.980",
+        "p99": "1.876"
+      },
+      "throughput": "23628205.46",
+      "memory": {
+        "before": "9.47",
+        "after": "10.91",
+        "delta": "1.44"
+      },
+      "overhead": "0.004"
+    },
+    {
+      "hookConfig": "minimal",
+      "hookName": "MinimalHook",
+      "dataSize": 500,
+      "iterations": 100,
+      "latency": {
+        "min": "0.984",
+        "max": "4.833",
+        "mean": "1.436",
+        "median": "1.100",
+        "p95": "2.649",
+        "p99": "4.833"
+      },
+      "throughput": "34828006.24",
+      "memory": {
+        "before": "8.89",
+        "after": "8.43",
+        "delta": "-0.45"
+      },
+      "overhead": "0.003"
+    },
+    {
+      "hookConfig": "minimal",
+      "hookName": "MinimalHook",
+      "dataSize": 1000,
+      "iterations": 100,
+      "latency": {
+        "min": "2.292",
+        "max": "9.507",
+        "mean": "2.662",
+        "median": "2.350",
+        "p95": "4.488",
+        "p99": "9.507"
+      },
+      "throughput": "37562000.21",
+      "memory": {
+        "before": "12.15",
+        "after": "12.80",
+        "delta": "0.64"
+      },
+      "overhead": "0.003"
+    },
+    {
+      "hookConfig": "validation-only",
+      "hookName": "ValidationHook",
+      "dataSize": 10,
+      "iterations": 100,
+      "latency": {
+        "min": "0.155",
+        "max": "22.245",
+        "mean": "0.505",
+        "median": "0.223",
+        "p95": "0.946",
+        "p99": "22.245"
+      },
+      "throughput": "1980814.23",
+      "memory": {
+        "before": "12.86",
+        "after": "13.71",
+        "delta": "0.85"
+      },
+      "overhead": "0.050"
+    },
+    {
+      "hookConfig": "validation-only",
+      "hookName": "ValidationHook",
+      "dataSize": 50,
+      "iterations": 100,
+      "latency": {
+        "min": "0.641",
+        "max": "23.069",
+        "mean": "1.725",
+        "median": "0.753",
+        "p95": "4.143",
+        "p99": "23.069"
+      },
+      "throughput": "2898989.07",
+      "memory": {
+        "before": "13.92",
+        "after": "35.16",
+        "delta": "21.24"
+      },
+      "overhead": "0.034"
+    },
+    {
+      "hookConfig": "validation-only",
+      "hookName": "ValidationHook",
+      "dataSize": 100,
+      "iterations": 100,
+      "latency": {
+        "min": "1.192",
+        "max": "9.092",
+        "mean": "1.756",
+        "median": "1.384",
+        "p95": "4.021",
+        "p99": "9.092"
+      },
+      "throughput": "5695012.07",
+      "memory": {
+        "before": "35.55",
+        "after": "59.25",
+        "delta": "23.70"
+      },
+      "overhead": "0.018"
+    },
+    {
+      "hookConfig": "validation-only",
+      "hookName": "ValidationHook",
+      "dataSize": 500,
+      "iterations": 100,
+      "latency": {
+        "min": "6.647",
+        "max": "52.613",
+        "mean": "13.266",
+        "median": "10.218",
+        "p95": "36.877",
+        "p99": "52.613"
+      },
+      "throughput": "3769167.14",
+      "memory": {
+        "before": "61.15",
+        "after": "122.58",
+        "delta": "61.43"
+      },
+      "overhead": "0.027"
+    },
+    {
+      "hookConfig": "validation-only",
+      "hookName": "ValidationHook",
+      "dataSize": 1000,
+      "iterations": 100,
+      "latency": {
+        "min": "14.241",
+        "max": "87.478",
+        "mean": "27.229",
+        "median": "22.093",
+        "p95": "60.625",
+        "p99": "87.478"
+      },
+      "throughput": "3672568.48",
+      "memory": {
+        "before": "69.40",
+        "after": "107.60",
+        "delta": "38.20"
+      },
+      "overhead": "0.027"
+    },
+    {
+      "hookConfig": "transformation",
+      "hookName": "TransformHook",
+      "dataSize": 10,
+      "iterations": 100,
+      "latency": {
+        "min": "0.100",
+        "max": "12.401",
+        "mean": "0.447",
+        "median": "0.114",
+        "p95": "2.429",
+        "p99": "12.401"
+      },
+      "throughput": "2236969.62",
+      "memory": {
+        "before": "107.67",
+        "after": "124.16",
+        "delta": "16.49"
+      },
+      "overhead": "0.045"
+    },
+    {
+      "hookConfig": "transformation",
+      "hookName": "TransformHook",
+      "dataSize": 50,
+      "iterations": 100,
+      "latency": {
+        "min": "0.516",
+        "max": "12.100",
+        "mean": "1.007",
+        "median": "0.598",
+        "p95": "3.386",
+        "p99": "12.100"
+      },
+      "throughput": "4962883.83",
+      "memory": {
+        "before": "124.37",
+        "after": "148.06",
+        "delta": "23.69"
+      },
+      "overhead": "0.020"
+    },
+    {
+      "hookConfig": "transformation",
+      "hookName": "TransformHook",
+      "dataSize": 100,
+      "iterations": 100,
+      "latency": {
+        "min": "0.935",
+        "max": "31.335",
+        "mean": "1.850",
+        "median": "1.079",
+        "p95": "5.578",
+        "p99": "31.335"
+      },
+      "throughput": "5404547.25",
+      "memory": {
+        "before": "148.45",
+        "after": "136.48",
+        "delta": "-11.98"
+      },
+      "overhead": "0.019"
+    },
+    {
+      "hookConfig": "transformation",
+      "hookName": "TransformHook",
+      "dataSize": 500,
+      "iterations": 100,
+      "latency": {
+        "min": "4.956",
+        "max": "186.540",
+        "mean": "32.828",
+        "median": "10.045",
+        "p95": "136.704",
+        "p99": "186.540"
+      },
+      "throughput": "1523089.43",
+      "memory": {
+        "before": "138.41",
+        "after": "88.45",
+        "delta": "-49.96"
+      },
+      "overhead": "0.066"
+    },
+    {
+      "hookConfig": "transformation",
+      "hookName": "TransformHook",
+      "dataSize": 1000,
+      "iterations": 100,
+      "latency": {
+        "min": "13.299",
+        "max": "430.829",
+        "mean": "118.795",
+        "median": "99.879",
+        "p95": "304.222",
+        "p99": "430.829"
+      },
+      "throughput": "841786.11",
+      "memory": {
+        "before": "83.09",
+        "after": "125.26",
+        "delta": "42.16"
+      },
+      "overhead": "0.119"
+    },
+    {
+      "hookConfig": "complex-validation",
+      "hookName": "ComplexValidationHook",
+      "dataSize": 10,
+      "iterations": 100,
+      "latency": {
+        "min": "0.034",
+        "max": "61.035",
+        "mean": "0.671",
+        "median": "0.051",
+        "p95": "0.121",
+        "p99": "61.035"
+      },
+      "throughput": "1490251.87",
+      "memory": {
+        "before": "125.32",
+        "after": "129.85",
+        "delta": "4.52"
+      },
+      "overhead": "0.067"
+    },
+    {
+      "hookConfig": "complex-validation",
+      "hookName": "ComplexValidationHook",
+      "dataSize": 50,
+      "iterations": 100,
+      "latency": {
+        "min": "0.088",
+        "max": "94.936",
+        "mean": "1.286",
+        "median": "0.162",
+        "p95": "0.880",
+        "p99": "94.936"
+      },
+      "throughput": "3888981.19",
+      "memory": {
+        "before": "130.07",
+        "after": "165.91",
+        "delta": "35.84"
+      },
+      "overhead": "0.026"
+    },
+    {
+      "hookConfig": "complex-validation",
+      "hookName": "ComplexValidationHook",
+      "dataSize": 100,
+      "iterations": 100,
+      "latency": {
+        "min": "0.175",
+        "max": "0.710",
+        "mean": "0.192",
+        "median": "0.177",
+        "p95": "0.231",
+        "p99": "0.710"
+      },
+      "throughput": "52140359.14",
+      "memory": {
+        "before": "166.32",
+        "after": "131.38",
+        "delta": "-34.95"
+      },
+      "overhead": "0.002"
+    },
+    {
+      "hookConfig": "complex-validation",
+      "hookName": "ComplexValidationHook",
+      "dataSize": 500,
+      "iterations": 100,
+      "latency": {
+        "min": "0.851",
+        "max": "65.182",
+        "mean": "1.676",
+        "median": "0.917",
+        "p95": "1.981",
+        "p99": "65.182"
+      },
+      "throughput": "29837772.09",
+      "memory": {
+        "before": "133.43",
+        "after": "139.31",
+        "delta": "5.89"
+      },
+      "overhead": "0.003"
+    },
+    {
+      "hookConfig": "complex-validation",
+      "hookName": "ComplexValidationHook",
+      "dataSize": 1000,
+      "iterations": 100,
+      "latency": {
+        "min": "1.711",
+        "max": "87.451",
+        "mean": "3.062",
+        "median": "1.852",
+        "p95": "4.707",
+        "p99": "87.451"
+      },
+      "throughput": "32659984.71",
+      "memory": {
+        "before": "143.41",
+        "after": "152.96",
+        "delta": "9.55"
+      },
+      "overhead": "0.003"
+    },
+    {
+      "hookConfig": "transformation-chain",
+      "hookName": "TransformChainHook",
+      "dataSize": 10,
+      "iterations": 100,
+      "latency": {
+        "min": "0.111",
+        "max": "65.462",
+        "mean": "1.646",
+        "median": "0.174",
+        "p95": "4.335",
+        "p99": "65.462"
+      },
+      "throughput": "607388.72",
+      "memory": {
+        "before": "153.03",
+        "after": "134.62",
+        "delta": "-18.41"
+      },
+      "overhead": "0.165"
+    },
+    {
+      "hookConfig": "transformation-chain",
+      "hookName": "TransformChainHook",
+      "dataSize": 50,
+      "iterations": 100,
+      "latency": {
+        "min": "0.713",
+        "max": "140.038",
+        "mean": "9.076",
+        "median": "1.133",
+        "p95": "76.411",
+        "p99": "140.038"
+      },
+      "throughput": "550915.29",
+      "memory": {
+        "before": "134.83",
+        "after": "141.15",
+        "delta": "6.32"
+      },
+      "overhead": "0.182"
+    },
+    {
+      "hookConfig": "transformation-chain",
+      "hookName": "TransformChainHook",
+      "dataSize": 100,
+      "iterations": 100,
+      "latency": {
+        "min": "1.661",
+        "max": "120.962",
+        "mean": "14.474",
+        "median": "2.480",
+        "p95": "106.459",
+        "p99": "120.962"
+      },
+      "throughput": "690881.41",
+      "memory": {
+        "before": "141.55",
+        "after": "159.78",
+        "delta": "18.23"
+      },
+      "overhead": "0.145"
+    },
+    {
+      "hookConfig": "transformation-chain",
+      "hookName": "TransformChainHook",
+      "dataSize": 500,
+      "iterations": 100,
+      "latency": {
+        "min": "9.768",
+        "max": "342.858",
+        "mean": "97.890",
+        "median": "85.243",
+        "p95": "285.897",
+        "p99": "342.858"
+      },
+      "throughput": "510778.54",
+      "memory": {
+        "before": "146.59",
+        "after": "200.72",
+        "delta": "54.13"
+      },
+      "overhead": "0.196"
+    },
+    {
+      "hookConfig": "transformation-chain",
+      "hookName": "TransformChainHook",
+      "dataSize": 1000,
+      "iterations": 100,
+      "latency": {
+        "min": "19.166",
+        "max": "918.354",
+        "mean": "236.138",
+        "median": "187.469",
+        "p95": "707.536",
+        "p99": "918.354"
+      },
+      "throughput": "423481.31",
+      "memory": {
+        "before": "184.16",
+        "after": "271.55",
+        "delta": "87.38"
+      },
+      "overhead": "0.236"
+    },
+    {
+      "hookConfig": "intensive-compute",
+      "hookName": "IntensiveComputeHook",
+      "dataSize": 10,
+      "iterations": 100,
+      "latency": {
+        "min": "0.177",
+        "max": "67.403",
+        "mean": "0.890",
+        "median": "0.179",
+        "p95": "0.273",
+        "p99": "67.403"
+      },
+      "throughput": "1123868.54",
+      "memory": {
+        "before": "271.61",
+        "after": "260.17",
+        "delta": "-11.44"
+      },
+      "overhead": "0.089"
+    },
+    {
+      "hookConfig": "intensive-compute",
+      "hookName": "IntensiveComputeHook",
+      "dataSize": 50,
+      "iterations": 100,
+      "latency": {
+        "min": "0.689",
+        "max": "275.089",
+        "mean": "9.564",
+        "median": "0.856",
+        "p95": "29.395",
+        "p99": "275.089"
+      },
+      "throughput": "522812.37",
+      "memory": {
+        "before": "260.38",
+        "after": "231.39",
+        "delta": "-29.00"
+      },
+      "overhead": "0.191"
+    },
+    {
+      "hookConfig": "intensive-compute",
+      "hookName": "IntensiveComputeHook",
+      "dataSize": 100,
+      "iterations": 100,
+      "latency": {
+        "min": "1.380",
+        "max": "375.124",
+        "mean": "14.367",
+        "median": "1.914",
+        "p95": "86.877",
+        "p99": "375.124"
+      },
+      "throughput": "696026.19",
+      "memory": {
+        "before": "231.85",
+        "after": "235.02",
+        "delta": "3.16"
+      },
+      "overhead": "0.144"
+    },
+    {
+      "hookConfig": "intensive-compute",
+      "hookName": "IntensiveComputeHook",
+      "dataSize": 500,
+      "iterations": 100,
+      "latency": {
+        "min": "7.496",
+        "max": "276.829",
+        "mean": "47.806",
+        "median": "11.140",
+        "p95": "219.493",
+        "p99": "276.829"
+      },
+      "throughput": "1045904.37",
+      "memory": {
+        "before": "237.10",
+        "after": "254.82",
+        "delta": "17.73"
+      },
+      "overhead": "0.096"
+    },
+    {
+      "hookConfig": "intensive-compute",
+      "hookName": "IntensiveComputeHook",
+      "dataSize": 1000,
+      "iterations": 100,
+      "latency": {
+        "min": "17.523",
+        "max": "448.388",
+        "mean": "81.683",
+        "median": "30.001",
+        "p95": "278.589",
+        "p99": "448.388"
+      },
+      "throughput": "1224249.95",
+      "memory": {
+        "before": "258.77",
+        "after": "251.06",
+        "delta": "-7.71"
+      },
+      "overhead": "0.082"
+    }
+  ],
+  "triggerResults": [
+    {
+      "trigger": "before-add",
+      "latency": {
+        "mean": "18.123",
+        "p95": "168.392",
+        "p99": "317.344"
+      }
+    },
+    {
+      "trigger": "after-add",
+      "latency": {
+        "mean": "6.151",
+        "p95": "10.288",
+        "p99": "128.407"
+      }
+    },
+    {
+      "trigger": "before-query",
+      "latency": {
+        "mean": "8.037",
+        "p95": "8.332",
+        "p99": "221.220"
+      }
+    },
+    {
+      "trigger": "after-query",
+      "latency": {
+        "mean": "11.621",
+        "p95": "98.864",
+        "p99": "244.400"
+      }
+    }
+  ],
+  "summary": {
+    "totalBenchmarks": 30,
+    "meanLatency": 24.159666666666666,
+    "p95Latency": 118.795,
+    "p99Latency": 236.138
+  }
+}
