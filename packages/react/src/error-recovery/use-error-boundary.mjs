@@ -2,6 +2,7 @@
  * @file use-error-boundary.mjs
  * @description React hook for error boundary functionality
  */
+/* global window */
 
 import { useState, useCallback, useEffect } from 'react';
 

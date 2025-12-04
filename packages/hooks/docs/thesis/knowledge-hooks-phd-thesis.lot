@@ -1,19 +1,14 @@
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {3.1}{\ignorespaces Hook Trigger Type Taxonomy}}{9}{table.3.1}%
-\addvspace {10\p@ }
-\contentsline {table}{\numberline {4.1}{\ignorespaces FMEA Summary by Category}}{11}{table.4.1}%
-\contentsline {table}{\numberline {4.2}{\ignorespaces Top 5 RPN Risks with Mitigations}}{11}{table.4.2}%
+\contentsline {table}{\numberline {3.1}{\ignorespaces JTBD Completion with 8 Operators}}{12}{table.3.1}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {6.1}{\ignorespaces JTBD Scenario Coverage}}{16}{table.6.1}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {7.1}{\ignorespaces Final Test Suite Statistics}}{18}{table.7.1}%
-\contentsline {table}{\numberline {7.2}{\ignorespaces Hook Execution Performance}}{18}{table.7.2}%
+\contentsline {table}{\numberline {6.1}{\ignorespaces Failure Modes Eliminated (RPN Reduction)}}{17}{table.6.1}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {8.1}{\ignorespaces Projected Autonomous AI Knowledge Operations (2026)}}{20}{table.8.1}%
+\contentsline {table}{\numberline {7.1}{\ignorespaces $\mu $-Operator Performance (Information Per Time Unit)}}{18}{table.7.1}%
+\contentsline {table}{\numberline {7.2}{\ignorespaces JTBD Execution: Entropy Reduction Rate}}{18}{table.7.2}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {A.1}{Complete Failure Mode Analysis}}{25}{table.A.1}%
 \addvspace {10\p@ }

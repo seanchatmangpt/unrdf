@@ -2,6 +2,7 @@
  * @file use-error-reporting.mjs
  * @description React hook for error reporting and analytics
  */
+/* global navigator */
 
 import { useState, useCallback, useEffect } from 'react';
 
