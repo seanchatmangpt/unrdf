@@ -23,6 +23,15 @@ class OxigraphStore {
   }
 
   /**
+   * Add a quad to the store (compatibility method)
+   * @param {Object} quad - RDF quad to add
+   * @returns {void}
+   */
+  addQuad(quad) {
+    return this.add(quad);
+  }
+
+  /**
    * Delete a quad from the store
    * @param {Object} quad - RDF quad to delete
    * @returns {void}
@@ -137,9 +146,21 @@ class OxigraphStore {
    * Get the size of the store (number of quads)
    * @returns {number} Number of quads in store
    */
-  size() {
+  get size() {
     const quads = this.match();
     return quads.length;
+  }
+
+  /**
+   * Get all quads from the store (compatibility method)
+   * @param {Object} [subject] - Optional subject filter
+   * @param {Object} [predicate] - Optional predicate filter
+   * @param {Object} [object] - Optional object filter
+   * @param {Object} [graph] - Optional graph filter
+   * @returns {Array<Object>} Array of quads
+   */
+  getQuads(subject, predicate, object, graph) {
+    return this.match(subject, predicate, object, graph);
   }
 
   /**

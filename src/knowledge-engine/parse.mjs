@@ -3,7 +3,7 @@
  * @module parse
  */
 
-import { Parser, Writer, Store } from 'n3';
+import { createStore, dataFactory } from '@unrdf/oxigraph';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
 
 const tracer = trace.getTracer('unrdf');
@@ -39,9 +39,9 @@ export async function parseTurtle(ttl, baseIRI = 'http://example.org/') {
         'parse.input_length': ttl.length,
       });
 
-      const parser = new Parser({ baseIRI });
-      const quads = parser.parse(ttl);
-      const store = new Store(quads);
+      // Use Oxigraph for parsing Turtle
+      const store = createStore();
+      store.load(ttl, { format: 'text/turtle', base: baseIRI });
 
       span.setAttribute('parse.quads_count', store.size);
       span.setStatus({ code: SpanStatusCode.OK });
@@ -82,27 +82,23 @@ export async function toTurtle(store, options = {}) {
   }
 
   try {
-    const writer = new Writer({
-      format: 'Turtle',
-      prefixes: options.prefixes || {},
-    });
+    // Use Oxigraph dump for serialization
+    let result = store.dump({ format: 'text/turtle' });
 
-    const quads = store.getQuads();
-    writer.addQuads(quads);
+    // Add @base directive if baseIRI is provided
+    if (options.baseIRI) {
+      result = `@base <${options.baseIRI}> .\n\n${result}`;
+    }
 
-    return new Promise((resolve, reject) => {
-      writer.end((error, result) => {
-        if (error) {
-          reject(new Error(`Failed to serialize to Turtle: ${error.message}`));
-        } else {
-          // Add @base directive if baseIRI is provided
-          if (options.baseIRI) {
-            result = `@base <${options.baseIRI}> .\n\n${result}`;
-          }
-          resolve(result);
-        }
-      });
-    });
+    // Add prefixes if provided (prepend to output)
+    if (options.prefixes && Object.keys(options.prefixes).length > 0) {
+      const prefixLines = Object.entries(options.prefixes)
+        .map(([prefix, iri]) => `@prefix ${prefix}: <${iri}> .`)
+        .join('\n');
+      result = `${prefixLines}\n\n${result}`;
+    }
+
+    return result;
   } catch (error) {
     throw new Error(`Failed to serialize to Turtle: ${error.message}`);
   }
@@ -125,23 +121,9 @@ export async function toNQuads(store, options = {}) {
   }
 
   try {
-    const writer = new Writer({
-      format: 'N-Quads',
-      ...options,
-    });
-
-    const quads = store.getQuads();
-    writer.addQuads(quads);
-
-    return new Promise((resolve, reject) => {
-      writer.end((error, result) => {
-        if (error) {
-          reject(new Error(`Failed to serialize to N-Quads: ${error.message}`));
-        } else {
-          resolve(result);
-        }
-      });
-    });
+    // Use Oxigraph dump for N-Quads serialization
+    const result = store.dump({ format: 'application/n-quads', ...options });
+    return result;
   } catch (error) {
     throw new Error(`Failed to serialize to N-Quads: ${error.message}`);
   }
@@ -179,7 +161,7 @@ export async function parseJsonLd(jsonld, _options = {}) {
 
     // Convert JSON-LD to RDF quads
     // This is a simplified implementation - in production you would use a proper JSON-LD to RDF converter
-    const store = new Store();
+    const store = createStore();
 
     // Handle @graph array or single object
     const items = jsonldData['@graph'] || (Array.isArray(jsonldData) ? jsonldData : [jsonldData]);
@@ -203,30 +185,38 @@ export async function parseJsonLd(jsonld, _options = {}) {
           if (Array.isArray(value)) {
             for (const val of value) {
               if (typeof val === 'object' && val['@id']) {
-                store.addQuad(
-                  { value: subject, termType: 'NamedNode' },
-                  { value: key, termType: 'NamedNode' },
-                  { value: val['@id'], termType: 'NamedNode' }
+                store.add(
+                  dataFactory.quad(
+                    dataFactory.namedNode(subject),
+                    dataFactory.namedNode(key),
+                    dataFactory.namedNode(val['@id'])
+                  )
                 );
               } else if (typeof val === 'string' || typeof val === 'number') {
-                store.addQuad(
-                  { value: subject, termType: 'NamedNode' },
-                  { value: key, termType: 'NamedNode' },
-                  { value: String(val), termType: 'Literal' }
+                store.add(
+                  dataFactory.quad(
+                    dataFactory.namedNode(subject),
+                    dataFactory.namedNode(key),
+                    dataFactory.literal(String(val))
+                  )
                 );
               }
             }
           } else if (typeof value === 'object' && value['@id']) {
-            store.addQuad(
-              { value: subject, termType: 'NamedNode' },
-              { value: key, termType: 'NamedNode' },
-              { value: value['@id'], termType: 'NamedNode' }
+            store.add(
+              dataFactory.quad(
+                dataFactory.namedNode(subject),
+                dataFactory.namedNode(key),
+                dataFactory.namedNode(value['@id'])
+              )
             );
           } else if (typeof value === 'string' || typeof value === 'number') {
-            store.addQuad(
-              { value: subject, termType: 'NamedNode' },
-              { value: key, termType: 'NamedNode' },
-              { value: String(value), termType: 'Literal' }
+            store.add(
+              dataFactory.quad(
+                dataFactory.namedNode(subject),
+                dataFactory.namedNode(key),
+                dataFactory.literal(String(value))
+              )
             );
           }
         }

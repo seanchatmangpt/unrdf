@@ -3,7 +3,7 @@
  * @module validate
  */
 
-import { Parser, Store } from 'n3';
+import { createStore } from '@unrdf/oxigraph';
 import rdf from 'rdf-ext';
 import SHACLValidator from 'rdf-validate-shacl';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
@@ -58,8 +58,14 @@ export function validateShacl(store, shapes, options = {}) {
         'validate.include_details': options.includeDetails || false,
       });
 
-      const shapesStore =
-        typeof shapes === 'string' ? new Store(new Parser().parse(shapes)) : shapes;
+      // Parse Turtle shapes if provided as string
+      let shapesStore;
+      if (typeof shapes === 'string') {
+        shapesStore = createStore();
+        shapesStore.load(shapes, { format: 'text/turtle' });
+      } else {
+        shapesStore = shapes;
+      }
 
       if (!shapesStore || typeof shapesStore.getQuads !== 'function') {
         throw new TypeError('validateShacl: shapes must be a valid Store or Turtle string');
