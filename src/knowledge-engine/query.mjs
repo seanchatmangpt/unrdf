@@ -3,7 +3,6 @@
  * @module query
  */
 
-import { Store } from 'n3';
 import { createStore } from '@unrdf/oxigraph';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
 
@@ -66,8 +65,9 @@ export async function query(store, sparql, options = {}) {
           } else {
             // Check query type to determine formatting
             if (queryType === 'CONSTRUCT' || queryType === 'DESCRIBE') {
-              // Return as new Store
-              result = new Store(queryResult);
+              // Return Oxigraph store directly with quads
+              result = rdfStore;
+              span.setAttribute('query.result_count', result.size);
             } else {
               // SELECT - format as bindings array
               result = queryResult.map(item => {
@@ -88,17 +88,17 @@ export async function query(store, sparql, options = {}) {
                 }
                 return item;
               });
+              span.setAttribute('query.result_count', result.length);
             }
           }
-          span.setAttribute('query.result_count', result instanceof Store ? result.size : result.length);
         } else if (typeof queryResult === 'boolean') {
           // ASK query
           result = queryResult;
           span.setAttribute('query.result_type', 'boolean');
           span.setAttribute('query.result', result);
         } else {
-          // CONSTRUCT/DESCRIBE - should be array of quads
-          result = new Store(Array.isArray(queryResult) ? queryResult : []);
+          // CONSTRUCT/DESCRIBE - return rdfStore directly (it's already an Oxigraph store)
+          result = rdfStore;
           span.setAttribute('query.result_count', result.size);
         }
       } catch (engineError) {

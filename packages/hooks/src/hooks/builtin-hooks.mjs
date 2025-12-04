@@ -4,7 +4,7 @@
  */
 
 import { defineHook } from './define-hook.mjs';
-import { DataFactory } from 'n3';
+import { dataFactory } from '@unrdf/oxigraph';
 
 /**
  * @typedef {import('n3').Quad} Quad
@@ -144,11 +144,11 @@ export const normalizeLanguageTag = defineHook({
       return quad;
     }
 
-    // Use imported DataFactory to create new quad with normalized language tag
-    return DataFactory.quad(
+    // Use imported dataFactory to create new quad with normalized language tag
+    return dataFactory.quad(
       quad.subject,
       quad.predicate,
-      DataFactory.literal(quad.object.value, quad.object.language.toLowerCase()),
+      dataFactory.literal(quad.object.value, quad.object.language.toLowerCase()),
       quad.graph
     );
   },
@@ -168,11 +168,11 @@ export const trimLiterals = defineHook({
       return quad;
     }
 
-    // Use imported DataFactory to create new quad with trimmed literal
-    return DataFactory.quad(
+    // Use imported dataFactory to create new quad with trimmed literal
+    return dataFactory.quad(
       quad.subject,
       quad.predicate,
-      DataFactory.literal(quad.object.value.trim(), quad.object.language || quad.object.datatype),
+      dataFactory.literal(quad.object.value.trim(), quad.object.language || quad.object.datatype),
       quad.graph
     );
   },
