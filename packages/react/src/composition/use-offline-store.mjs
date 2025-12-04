@@ -8,6 +8,7 @@
  * Uses IndexedDB for persistent storage and a mutation queue for
  * offline-first writes.
  */
+/* global navigator, window, indexedDB */
 
 import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 

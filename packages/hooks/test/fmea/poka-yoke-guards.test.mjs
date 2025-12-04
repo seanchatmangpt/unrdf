@@ -4,7 +4,7 @@
  * 80/20: 12 essential tests covering all critical failure modes
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { defineHook } from '../../src/hooks/define-hook.mjs';
 import { executeHook } from '../../src/hooks/hook-executor.mjs';
 import { KnowledgeHookManager } from '../../src/hooks/knowledge-hook-manager.mjs';
@@ -53,7 +53,9 @@ describe('FMEA Poka-Yoke Guards', () => {
       const hook = defineHook({
         name: 'throwing-hook',
         trigger: 'before-add',
-        validate: () => { throw new Error('Test error'); },
+        validate: () => {
+          throw new Error('Test error');
+        },
       });
 
       const result = executeHook(hook, mockQuad);
@@ -68,7 +70,10 @@ describe('FMEA Poka-Yoke Guards', () => {
     it('should reject intervalMs below 10ms', () => {
       expect(() => {
         ScheduleConfigSchema.parse({
-          id: 'test', hookId: 'test', type: 'interval', intervalMs: 5,
+          id: 'test',
+          hookId: 'test',
+          type: 'interval',
+          intervalMs: 5,
         });
       }).toThrow('at least 10ms');
     });
@@ -76,7 +81,10 @@ describe('FMEA Poka-Yoke Guards', () => {
     it('should reject intervalMs above 24 hours', () => {
       expect(() => {
         ScheduleConfigSchema.parse({
-          id: 'test', hookId: 'test', type: 'interval', intervalMs: 86400001,
+          id: 'test',
+          hookId: 'test',
+          type: 'interval',
+          intervalMs: 86400001,
         });
       }).toThrow('cannot exceed 24 hours');
     });
@@ -91,12 +99,17 @@ describe('FMEA Poka-Yoke Guards', () => {
       const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
       const scheduler = new HookScheduler({
-        executeHook: async () => { throw new Error('Simulated failure'); },
+        executeHook: async () => {
+          throw new Error('Simulated failure');
+        },
       });
 
       const hook = { name: 'failing-hook', trigger: 'on-interval' };
       const scheduled = scheduler.register(hook, {
-        id: 'circuit-test', hookId: 'failing-hook', type: 'interval', intervalMs: 1000,
+        id: 'circuit-test',
+        hookId: 'failing-hook',
+        type: 'interval',
+        intervalMs: 1000,
       });
 
       await scheduler._executeScheduled(scheduled);
@@ -116,7 +129,10 @@ describe('FMEA Poka-Yoke Guards', () => {
     it('should reject operator-threshold mismatch', () => {
       expect(() => {
         QualityGateSchema.parse({
-          name: 'invalid-between', metric: 'defect-rate', operator: 'between', threshold: 0.5,
+          name: 'invalid-between',
+          metric: 'defect-rate',
+          operator: 'between',
+          threshold: 0.5,
         });
       }).toThrow('[min, max] array');
     });
@@ -147,7 +163,10 @@ describe('FMEA Poka-Yoke Guards', () => {
       const hook = defineHook({
         name: 'depth-hook',
         trigger: 'before-add',
-        validate: () => { depthDuringExecution = manager.getExecutionDepth(); return true; },
+        validate: () => {
+          depthDuringExecution = manager.getExecutionDepth();
+          return true;
+        },
       });
 
       manager.registerHook(hook);

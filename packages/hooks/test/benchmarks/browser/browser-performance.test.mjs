@@ -6,6 +6,7 @@
  *
  * Runs in: Chromium (V8), Firefox (SpiderMonkey), WebKit (JSC)
  */
+/* global navigator */
 
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import {
@@ -161,7 +162,9 @@ describe('Browser Hook Performance', () => {
     it('should report environment info', () => {
       const ua = typeof navigator !== 'undefined' ? navigator.userAgent : 'Node.js';
       console.log(`\nEnvironment: ${ua}`);
-      console.log(`Performance.now precision: ${typeof performance !== 'undefined' ? 'available' : 'unavailable'}`);
+      console.log(
+        `Performance.now precision: ${typeof performance !== 'undefined' ? 'available' : 'unavailable'}`
+      );
 
       expect(true).toBe(true);
     });
@@ -177,7 +180,7 @@ describe('Browser Hook Performance', () => {
       const totalMs = performance.now() - start;
 
       console.log(`\n10K operations: ${totalMs.toFixed(2)}ms total`);
-      console.log(`Throughput: ${Math.round(10000 / totalMs * 1000)} ops/sec`);
+      console.log(`Throughput: ${Math.round((10000 / totalMs) * 1000)} ops/sec`);
 
       // Target: <10ms for 10K operations
       expect(totalMs).toBeLessThan(100);
