@@ -1,0 +1,480 @@
+{
+  "timestamp": "2025-12-04T20:07:08.866Z",
+  "configurations": [
+    "baseline",
+    "validate-only",
+    "transform-only",
+    "validate+transform",
+    "validate+validate",
+    "transform+transform",
+    "triple-hooks",
+    "all-validation",
+    "all-transform",
+    "complex-chain"
+  ],
+  "dataSizes": [
+    10,
+    100,
+    1000,
+    10000
+  ],
+  "iterations": 100,
+  "results": {
+    "baseline": {
+      "10": {
+        "avgLatency": 0.004014510000001508,
+        "minLatency": 0.0007080000000314612,
+        "maxLatency": 0.14129100000002381,
+        "p95Latency": 0.0037909999999925503,
+        "p99Latency": 0.026083000000028278,
+        "avgThroughput": 4554633.178786544,
+        "avgMemory": 0.0014151763916015626,
+        "iterations": 100
+      },
+      "100": {
+        "avgLatency": 0.002593360000003031,
+        "minLatency": 0.0012920000000349319,
+        "maxLatency": 0.005875000000003183,
+        "p95Latency": 0.0049579999999878055,
+        "p99Latency": 0.005291999999997188,
+        "avgThroughput": 42931803.355440624,
+        "avgMemory": 0.00433197021484375,
+        "iterations": 100
+      },
+      "1000": {
+        "avgLatency": 0.07201127000000838,
+        "minLatency": 0.009291000000075655,
+        "maxLatency": 4.13170799999989,
+        "p95Latency": 0.046875,
+        "p99Latency": 0.7335420000000568,
+        "avgThroughput": 48251506.68342907,
+        "avgMemory": 0.03863494873046875,
+        "iterations": 100
+      },
+      "10000": {
+        "avgLatency": 0.0240316699999903,
+        "minLatency": 0.010874999999941792,
+        "maxLatency": 0.19287500000018554,
+        "p95Latency": 0.08483299999988958,
+        "p99Latency": 0.14454200000000128,
+        "avgThroughput": 608230676.742225,
+        "avgMemory": 0.022918853759765625,
+        "iterations": 100
+      }
+    },
+    "validate-only": {
+      "10": {
+        "avgLatency": 0.23065578000000642,
+        "minLatency": 0.09883400000035181,
+        "maxLatency": 0.87887499999988,
+        "p95Latency": 0.35104199999977936,
+        "p99Latency": 0.671291999999994,
+        "avgThroughput": 48569.35725202213,
+        "avgMemory": 0.20144187927246093,
+        "iterations": 100,
+        "overhead": 5645.55250827423
+      },
+      "100": {
+        "avgLatency": 1.979723319999989,
+        "minLatency": 0.5029589999999189,
+        "maxLatency": 13.634624999999687,
+        "p95Latency": 3.1136670000000777,
+        "p99Latency": 10.641708000000108,
+        "avgThroughput": 64306.756230018764,
+        "avgMemory": 1.8109974670410156,
+        "iterations": 100,
+        "overhead": 76238.16053296402
+      },
+      "1000": {
+        "avgLatency": 4.475810850000003,
+        "minLatency": 2.339082999999846,
+        "maxLatency": 13.154250000000047,
+        "p95Latency": 6.538042000000132,
+        "p99Latency": 11.351000000000113,
+        "avgThroughput": 255099.402746403,
+        "avgMemory": 13.362772750854493,
+        "iterations": 100,
+        "overhead": 6115.4310707191835
+      },
+      "10000": {
+        "avgLatency": 33.450408390000014,
+        "minLatency": 23.388834000000315,
+        "maxLatency": 69.93383300000005,
+        "p95Latency": 51.13720900000044,
+        "p99Latency": 66.63908300000003,
+        "avgThroughput": 313719.9029534538,
+        "avgMemory": 4.405783157348633,
+        "iterations": 100,
+        "overhead": 139093.0248293752
+      }
+    },
+    "transform-only": {
+      "10": {
+        "avgLatency": 0.3847587399999156,
+        "minLatency": 0.15129199999864795,
+        "maxLatency": 3.5988330000000133,
+        "p95Latency": 0.8045000000001892,
+        "p99Latency": 1.976249999999709,
+        "avgThroughput": 36948.90627578153,
+        "avgMemory": 0.1708233642578125,
+        "iterations": 100,
+        "overhead": 9484.20180793599
+      },
+      "100": {
+        "avgLatency": 1.9331679300000724,
+        "minLatency": 1.0771660000009433,
+        "maxLatency": 16.009791000000405,
+        "p95Latency": 3.32799999999952,
+        "p99Latency": 7.601791999999477,
+        "avgThroughput": 65630.45596532157,
+        "avgMemory": 1.6684495544433593,
+        "iterations": 100,
+        "overhead": 74442.98400522153
+      },
+      "1000": {
+        "avgLatency": 13.508308399999805,
+        "minLatency": 8.884125000000495,
+        "maxLatency": 17.123916000000463,
+        "p95Latency": 17.123916000000463,
+        "p99Latency": 17.123916000000463,
+        "avgThroughput": 77166.40193573253,
+        "avgMemory": 16.640937042236327,
+        "iterations": 10,
+        "overhead": 18658.603201968574
+      },
+      "10000": {
+        "avgLatency": 120.1484083999998,
+        "minLatency": 91.88183299999946,
+        "maxLatency": 203.4366659999996,
+        "p95Latency": 203.4366659999996,
+        "p99Latency": 203.4366659999996,
+        "avgThroughput": 88572.4565210179,
+        "avgMemory": 39.78504943847656,
+        "iterations": 10,
+        "overhead": 499858.6312563725
+      }
+    },
+    "validate+transform": {
+      "10": {
+        "avgLatency": 0.6805591700000332,
+        "minLatency": 0.2711250000011205,
+        "maxLatency": 5.786583000000974,
+        "p95Latency": 2.1466249999994034,
+        "p99Latency": 3.5949170000003505,
+        "avgThroughput": 20406.90551539338,
+        "avgMemory": 0.5338225555419922,
+        "iterations": 100,
+        "overhead": 16852.48411387137
+      },
+      "100": {
+        "avgLatency": 3.48187128000005,
+        "minLatency": 1.8771250000008877,
+        "maxLatency": 9.205707999997685,
+        "p95Latency": 6.42120900000009,
+        "p99Latency": 8.036208999999872,
+        "avgThroughput": 33034.8398743802,
+        "avgMemory": 4.936994552612305,
+        "iterations": 100,
+        "overhead": 134161.00811287214
+      },
+      "1000": {
+        "avgLatency": 125.11995439999991,
+        "minLatency": 22.13537499999802,
+        "maxLatency": 223.28408399999898,
+        "p95Latency": 223.28408399999898,
+        "p99Latency": 223.28408399999898,
+        "avgThroughput": 13426.580579063104,
+        "avgMemory": 18.278831481933594,
+        "iterations": 10,
+        "overhead": 173650.51766200672
+      },
+      "10000": {
+        "avgLatency": 1796.2920209,
+        "minLatency": 1514.4344579999997,
+        "maxLatency": 2217.5684169999986,
+        "p95Latency": 2217.5684169999986,
+        "p99Latency": 2217.5684169999986,
+        "avgThroughput": 5641.083014203238,
+        "avgMemory": 19.42032241821289,
+        "iterations": 10,
+        "overhead": 7474586.615207038
+      }
+    },
+    "validate+validate": {
+      "10": {
+        "avgLatency": 0.3130083500003821,
+        "minLatency": 0.15216700000019046,
+        "maxLatency": 4.667207999998936,
+        "p95Latency": 0.3934159999989788,
+        "p99Latency": 1.1456250000046566,
+        "avgThroughput": 42406.47079487411,
+        "avgMemory": 0.46215667724609377,
+        "iterations": 100,
+        "overhead": 7696.925403106841
+      },
+      "100": {
+        "avgLatency": 1.9466179299999202,
+        "minLatency": 1.0152080000043497,
+        "maxLatency": 7.157750000005763,
+        "p95Latency": 3.961875000000873,
+        "p99Latency": 5.742875000003551,
+        "avgThroughput": 63688.58719955038,
+        "avgMemory": 4.5964671325683595,
+        "iterations": 100,
+        "overhead": 74961.61620436983
+      },
+      "1000": {
+        "avgLatency": 13.150510389999763,
+        "minLatency": 9.291041000004043,
+        "maxLatency": 25.346041999997396,
+        "p95Latency": 19.377707999999984,
+        "p99Latency": 22.905542000000423,
+        "avgThroughput": 80451.72414081538,
+        "avgMemory": 45.897500381469726,
+        "iterations": 100,
+        "overhead": 18161.739294416322
+      },
+      "10000": {
+        "avgLatency": 142.65543119999987,
+        "minLatency": 94.73158300000068,
+        "maxLatency": 270.11299999999756,
+        "p95Latency": 217.73058299999684,
+        "p99Latency": 243.78908399999636,
+        "avgThroughput": 74571.65466386678,
+        "avgMemory": 9.715762557983398,
+        "iterations": 100,
+        "overhead": 593514.306455013
+      }
+    },
+    "transform+transform": {
+      "10": {
+        "avgLatency": 1.659841230000602,
+        "minLatency": 0.39037500000267755,
+        "maxLatency": 42.015417000002344,
+        "p95Latency": 4.033250000007683,
+        "p99Latency": 8.518458000005921,
+        "avgThroughput": 14015.78615860625,
+        "avgMemory": 0.5500872039794922,
+        "iterations": 100,
+        "overhead": 41246.047961020864
+      },
+      "100": {
+        "avgLatency": 22.351114639999434,
+        "minLatency": 5.230374999999185,
+        "maxLatency": 101.12316700001247,
+        "p95Latency": 78.04804099998728,
+        "p99Latency": 99.88820799998939,
+        "avgThroughput": 9717.602294199001,
+        "avgMemory": 5.058381958007812,
+        "iterations": 100,
+        "overhead": 861759.3114713465
+      },
+      "1000": {
+        "avgLatency": 252.6100709999984,
+        "minLatency": 129.52312499999243,
+        "maxLatency": 329.7081249999901,
+        "p95Latency": 329.7081249999901,
+        "p99Latency": 329.7081249999901,
+        "avgThroughput": 4248.396266268121,
+        "avgMemory": 17.457440185546876,
+        "iterations": 10,
+        "overhead": 350692.4120765666
+      },
+      "10000": {
+        "avgLatency": 3278.307737500002,
+        "minLatency": 2111.488083000004,
+        "maxLatency": 4239.9598750000005,
+        "p95Latency": 4239.9598750000005,
+        "p99Latency": 4239.9598750000005,
+        "avgThroughput": 3204.898123865029,
+        "avgMemory": 25.5822998046875,
+        "iterations": 10,
+        "overhead": 13641514.326017812
+      }
+    },
+    "triple-hooks": {
+      "10": {
+        "avgLatency": 1.2354441699982273,
+        "minLatency": 0.2983749999984866,
+        "maxLatency": 23.77537499999744,
+        "p95Latency": 5.928958000004059,
+        "p99Latency": 9.070458000001963,
+        "avgThroughput": 18112.427710119897,
+        "avgMemory": 0.7001960754394532,
+        "iterations": 100,
+        "overhead": 30674.469860525023
+      },
+      "100": {
+        "avgLatency": 29.41425042999879,
+        "minLatency": 2.235917000012705,
+        "maxLatency": 236.68120900000213,
+        "p95Latency": 168.09137500001816,
+        "p99Latency": 233.38933400000678,
+        "avgThroughput": 15321.401730775659,
+        "avgMemory": 6.520060729980469,
+        "iterations": 100,
+        "overhead": 1134113.9321175779
+      },
+      "1000": {
+        "avgLatency": 417.53310420000344,
+        "minLatency": 179.19679099999485,
+        "maxLatency": 623.1888340000005,
+        "p95Latency": 623.1888340000005,
+        "p99Latency": 623.1888340000005,
+        "avgThroughput": 2784.841291404029,
+        "avgMemory": 27.684201812744142,
+        "iterations": 10,
+        "overhead": 579716.3318046673
+      },
+      "10000": {
+        "avgLatency": 4322.860474999997,
+        "minLatency": 3288.45204199999,
+        "maxLatency": 5208.541292000009,
+        "p95Latency": 5208.541292000009,
+        "p99Latency": 5208.541292000009,
+        "avgThroughput": 2367.0425218497717,
+        "avgMemory": 38.9135383605957,
+        "iterations": 10,
+        "overhead": 17988081.741018172
+      }
+    },
+    "all-validation": {
+      "10": {
+        "avgLatency": 0.5234687700023641,
+        "minLatency": 0.25287500000558794,
+        "maxLatency": 8.439708999998402,
+        "p95Latency": 0.7831669999868609,
+        "p99Latency": 1.0899159999971744,
+        "avgThroughput": 24777.394185704972,
+        "avgMemory": 0.6737485504150391,
+        "iterations": 100,
+        "overhead": 12939.4187585077
+      },
+      "100": {
+        "avgLatency": 3.117984160002379,
+        "minLatency": 1.5560830000031274,
+        "maxLatency": 13.211875000008149,
+        "p95Latency": 5.75041700003203,
+        "p99Latency": 8.794584000017494,
+        "avgThroughput": 38999.91996848842,
+        "avgMemory": 6.703026504516601,
+        "iterations": 100,
+        "overhead": 120129.51537768514
+      },
+      "1000": {
+        "avgLatency": 20.837283790000946,
+        "minLatency": 15.02995799999917,
+        "maxLatency": 36.68220899999142,
+        "p95Latency": 30.0362089999835,
+        "p99Latency": 33.459499999997206,
+        "avgThroughput": 49878.60594852871,
+        "avgMemory": 2.903356018066406,
+        "iterations": 100,
+        "overhead": 28836.142620451657
+      },
+      "10000": {
+        "avgLatency": 194.06800700000022,
+        "minLatency": 145.03754099999787,
+        "maxLatency": 290.0995000000112,
+        "p95Latency": 262.46937499998603,
+        "p99Latency": 286.3175419999752,
+        "avgThroughput": 53222.15297282613,
+        "avgMemory": 27.515169067382814,
+        "iterations": 100,
+        "overhead": 807451.064907593
+      }
+    },
+    "all-transform": {
+      "10": {
+        "avgLatency": 3.306140849997755,
+        "minLatency": 0.41533299995353445,
+        "maxLatency": 21.13541599997552,
+        "p95Latency": 12.56212499999674,
+        "p99Latency": 20.600999999966007,
+        "avgThroughput": 11618.192003496213,
+        "avgMemory": 0.554279556274414,
+        "iterations": 100,
+        "overhead": 82254.77928804544
+      },
+      "100": {
+        "avgLatency": 57.17184326999879,
+        "minLatency": 8.683750000025611,
+        "maxLatency": 272.3765419999836,
+        "p95Latency": 227.12795900000492,
+        "p99Latency": 270.5206670000334,
+        "avgThroughput": 5208.020571700934,
+        "avgMemory": 5.0367765045166015,
+        "iterations": 100,
+        "overhead": 2204447.123034672
+      },
+      "1000": {
+        "avgLatency": 530.624687600002,
+        "minLatency": 225.04187499999534,
+        "maxLatency": 1112.5810419999762,
+        "p95Latency": 1112.5810419999762,
+        "p99Latency": 1112.5810419999762,
+        "avgThroughput": 2404.5160231172513,
+        "avgMemory": 25.364083099365235,
+        "iterations": 10,
+        "overhead": 736763.3931882333
+      },
+      "10000": {
+        "avgLatency": 6734.57140850001,
+        "minLatency": 5131.135000000009,
+        "maxLatency": 8728.070125000027,
+        "p95Latency": 8728.070125000027,
+        "p99Latency": 8728.070125000027,
+        "avgThroughput": 1541.2627355301486,
+        "avgMemory": 32.89944152832031,
+        "iterations": 10,
+        "overhead": 28023634.54904602
+      }
+    },
+    "complex-chain": {
+      "10": {
+        "avgLatency": 4.119870830000727,
+        "minLatency": 0.480833999987226,
+        "maxLatency": 61.67404199996963,
+        "p95Latency": 15.4879999999539,
+        "p99Latency": 18.290915999969002,
+        "avgThroughput": 9886.573760101754,
+        "avgMemory": 0.9609527587890625,
+        "iterations": 100,
+        "overhead": 102524.50037486968
+      },
+      "100": {
+        "avgLatency": 142.28776412000298,
+        "minLatency": 11.44079199997941,
+        "maxLatency": 687.3932499999646,
+        "p95Latency": 456.61879099998623,
+        "p99Latency": 565.9360420000157,
+        "avgThroughput": 3067.7708281230325,
+        "avgMemory": 8.078843460083007,
+        "iterations": 100,
+        "overhead": 5486518.291322326
+      },
+      "1000": {
+        "avgLatency": 1205.821162399999,
+        "minLatency": 510.7430419999873,
+        "maxLatency": 1949.690082999994,
+        "p95Latency": 1949.690082999994,
+        "p99Latency": 1949.690082999994,
+        "avgThroughput": 952.1270561721489,
+        "avgMemory": 30.60392074584961,
+        "iterations": 10,
+        "overhead": 1674389.5103222851
+      },
+      "10000": {
+        "avgLatency": 10827.437504300044,
+        "minLatency": 8484.50120900001,
+        "maxLatency": 12059.71020900004,
+        "p95Latency": 12059.71020900004,
+        "p99Latency": 12059.71020900004,
+        "avgThroughput": 932.5380430306413,
+        "avgMemory": 54.58588333129883,
+        "iterations": 10,
+        "overhead": 45054769.28001431
+      }
+    }
+  }
+}

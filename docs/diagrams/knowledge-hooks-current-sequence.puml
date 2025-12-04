@@ -1,0 +1,115 @@
+@startuml Knowledge Hook Engine - Current Execution Flow
+participant "App" as app
+participant "KHM\n(extends\nTransactionMgr)" as khm
+participant "TransactionMgr" as tm
+participant "HookExecutor" as he
+participant "ConditionEval" as ce
+participant "QueryExec" as qe
+participant "FileResolver" as fr
+participant "N3 Store" as n3
+participant "Oxigraph\nStore" as ox
+
+app -> khm: apply(store, delta)
+activate khm
+note right: 🔴 BOTTLENECK #3:\nTight coupling via inheritance
+
+khm -> tm: apply(store, delta)
+activate tm
+
+tm -> tm: PRE-TRANSACTION\nEVENT
+tm -> he: executeAll(preHooks, event)
+activate he
+note right: 🟡 Sequential execution\nNo automatic batching
+
+loop For each hook (parallel via Promise.allSettled)
+  he -> ce: isSatisfied(condition, store, env)
+  activate ce
+  note right: 🟡 BOTTLENECK #4:\nCondition evaluated 2× per hook
+
+  alt Condition type: SPARQL
+    ce -> qe: query(store, sparql)
+    activate qe
+
+    note right: 🔴 BOTTLENECK #1:\nStore conversion O(n)
+    qe -> n3: getQuads()
+    n3 --> qe: quads[N]
+    note right: O(store.size) read
+
+    qe -> ox: createStore(quads)
+    note right: O(store.size)\nconversion
+
+    ox --> qe: OxigraphStore
+    qe -> ox: query(sparql)
+    ox --> qe: SPARQL results
+    deactivate qe
+  else Condition type: FILE
+    ce -> fr: resolveFile(path)
+    activate fr
+    note right: 🟠 BOTTLENECK #2:\nFile I/O + SHA-256
+
+    fr -> fr: readFile(path)
+    fr -> fr: computeHash(content)
+    note right: Computed EVERY TIME\nNo pre-loading
+
+    fr --> ce: { content, hash }
+    deactivate fr
+  end
+
+  ce --> he: true/false
+  deactivate ce
+
+  alt Condition satisfied
+    he -> he: hook.run(event, options)
+    note right: Execute hook with side effects
+  else Condition not satisfied
+    he -> he: Skip hook
+  end
+end
+
+he --> tm: Results[]
+deactivate he
+
+tm -> tm: Apply delta to store
+note right: Mutation happens here
+
+tm -> tm: POST-TRANSACTION\nEVENT
+tm -> he: executeAll(postHooks, event)
+activate he
+note right: 🟡 Sequential even if\nindependent
+
+loop For each post-hook (same pattern)
+  he -> ce: isSatisfied(...)
+  activate ce
+  ce -> qe: query(...)
+  qe -> ox: createStore()
+  note right: 🔴 Store conversion\nhappens again
+  qe --> ce: results
+  deactivate ce
+
+  alt Condition satisfied
+    he -> he: hook.run(...)
+  end
+end
+
+he --> tm: Results[]
+deactivate he
+
+tm --> khm: Receipt
+deactivate tm
+
+khm --> app: Receipt
+deactivate khm
+
+note over app,ox
+  ⏱️ LATENCY ANALYSIS:
+
+  Per Transaction:
+  - N hooks × M conditions = N×M store conversions
+  - Store conversion: O(n) each = dominant cost
+  - 50-70% of latency from bottleneck #1
+  - 20-30% from bottleneck #2
+  - 30-50% from bottleneck #3 (sequential)
+
+  Total: ~1000ms baseline (for typical transaction)
+end note
+@enduml
