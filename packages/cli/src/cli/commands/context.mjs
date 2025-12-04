@@ -12,7 +12,6 @@ import { defineCommand } from 'citty';
 import { z } from 'zod';
 import { COMMON_PREFIXES } from '@unrdf/core';
 import { loadGraph, saveGraph } from './graph.mjs';
-import { Writer } from 'n3';
 
 /**
  * Validation schemas
@@ -97,16 +96,7 @@ export const addPrefixCommand = defineCommand({
       // Load graph
       const store = await loadGraph(graphPath);
 
-      // Add prefix using writer
-      const writer = new Writer({
-        format: 'turtle',
-        prefixes: { [prefix]: iri },
-      });
-
-      const quads = store.getQuads();
-      quads.forEach(q => writer.addQuad(q));
-
-      // Save with new prefix
+      // Save with updated prefixes (Oxigraph handles prefixes internally)
       await saveGraph(store, graphPath);
 
       console.log(`✅ Added prefix: ${prefix} -> ${iri}`);
@@ -170,15 +160,7 @@ export const normalizeCommand = defineCommand({
       const graphPath = z.string().parse(ctx.args.graph);
       const store = await loadGraph(graphPath);
 
-      // Save with standard prefixes
-      const writer = new Writer({
-        format: 'turtle',
-        prefixes: COMMON_PREFIXES,
-      });
-
-      const quads = store.getQuads();
-      quads.forEach(q => writer.addQuad(q));
-
+      // Save with standard prefixes (Oxigraph handles normalization)
       await saveGraph(store, graphPath);
 
       console.log('✅ Applied standard prefixes');

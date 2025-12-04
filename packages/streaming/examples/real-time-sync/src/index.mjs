@@ -4,10 +4,10 @@
  * Demonstrates subscription management, real-time monitoring, concurrent updates, and peer sync
  */
 
-import { Store, DataFactory } from 'n3';
 import { createSubscriptionManager, createChangeFeed } from '@unrdf/streaming';
+import { createStore, dataFactory } from '@unrdf/oxigraph';
 
-const { namedNode, literal, quad } = DataFactory;
+const { namedNode, literal, quad  } = dataFactory;
 
 /**
  * Example 1: Basic Subscription Management
@@ -15,7 +15,7 @@ const { namedNode, literal, quad } = DataFactory;
 async function basicSubscription() {
   console.log('\n=== Example 1: Basic Subscription Management ===\n');
 
-  const store = new Store();
+  const store = createStore();
   const manager = createSubscriptionManager(store);
 
   // Subscribe to specific pattern
@@ -55,7 +55,7 @@ async function basicSubscription() {
 async function realTimeMonitoring() {
   console.log('\n=== Example 2: Real-Time Graph Monitoring ===\n');
 
-  const store = new Store();
+  const store = createStore();
   const manager = createSubscriptionManager(store);
 
   // Monitor all changes
@@ -99,7 +99,7 @@ async function realTimeMonitoring() {
 async function concurrentUpdates() {
   console.log('\n=== Example 3: Concurrent Updates and Conflict Resolution ===\n');
 
-  const store = new Store();
+  const store = createStore();
   const manager = createSubscriptionManager(store);
 
   const alice = namedNode('http://example.org/alice');
@@ -157,9 +157,9 @@ async function multiPeerSync() {
   console.log('\n=== Example 4: Multi-Peer Synchronization ===\n');
 
   // Create three peer stores
-  const peer1 = new Store();
-  const peer2 = new Store();
-  const peer3 = new Store();
+  const peer1 = createStore();
+  const peer2 = createStore();
+  const peer3 = createStore();
 
   const feed1 = createChangeFeed(peer1);
   const feed2 = createChangeFeed(peer2);
@@ -223,7 +223,7 @@ async function multiPeerSync() {
 async function subscriptionPatterns() {
   console.log('\n=== Example 5: Advanced Subscription Patterns ===\n');
 
-  const store = new Store();
+  const store = createStore();
   const manager = createSubscriptionManager(store);
 
   const alice = namedNode('http://example.org/alice');

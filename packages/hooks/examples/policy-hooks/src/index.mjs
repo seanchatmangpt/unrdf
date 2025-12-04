@@ -11,6 +11,7 @@
  */
 
 import { namedNode, literal, quad, createStore, addQuad } from '@unrdf/core';
+import { createStore, dataFactory } from '@unrdf/oxigraph';
 import {
   defineHook,
   createHookRegistry,
@@ -18,8 +19,6 @@ import {
   executeHook,
   executeHooksByTrigger,
 } from '@unrdf/hooks';
-import { DataFactory } from 'n3';
-
 /* ========================================================================= */
 /* Policy Hook Definitions                                                   */
 /* ========================================================================= */
@@ -86,10 +85,10 @@ const privacyPolicy = defineHook({
     if (quad.predicate.value === 'http://xmlns.com/foaf/0.1/mbox') {
       if (quad.object.termType === 'Literal') {
         // Redact email - replace with placeholder
-        return DataFactory.quad(
+        return dataFactory.quad(
           quad.subject,
           quad.predicate,
-          DataFactory.literal('[REDACTED]'),
+          dataFactory.literal('[REDACTED]'),
           quad.graph
         );
       }

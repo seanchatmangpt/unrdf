@@ -4,9 +4,8 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest'
-import { DataFactory } from 'n3'
-
-const { namedNode, literal } = DataFactory
+import { createStore, dataFactory } from '@unrdf/oxigraph';
+const { namedNode, literal  } = dataFactory;
 
 // Mock QueryOptimizer implementation for testing
 class QueryOptimizer {

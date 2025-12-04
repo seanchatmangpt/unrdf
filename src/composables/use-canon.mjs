@@ -11,7 +11,7 @@
 
 import * as rdfCanonizeModule from 'rdf-canonize';
 import { useStoreContext } from '../context/index.mjs';
-import { Store } from 'n3';
+import { createStore } from '@unrdf/core';
 
 const rdfCanonize = rdfCanonizeModule.default || rdfCanonizeModule;
 
@@ -263,17 +263,21 @@ export function useCanon(options = {}) {
     async createCanonicalStore(stores, options = {}) {
       const storeInstances = stores.map(s => s.store || s);
       // Create union by merging all quads into a new store
-      const unionStore = new Store();
+      const unionStore = createStore();
       for (const store of storeInstances) {
-        unionStore.addQuads(store.getQuads());
+        for (const quad of store.match()) {
+          unionStore.add(quad);
+        }
       }
       const canonical = await this.canonicalize(unionStore, options);
       // Parse canonical N-Quads back into a Store
       const { Parser } = await import('n3');
       const parser = new Parser({ format: 'N-Quads' });
-      const canonicalStore = new Store();
+      const canonicalStore = createStore();
       const quads = parser.parse(canonical);
-      canonicalStore.addQuads(quads);
+      for (const quad of quads) {
+        canonicalStore.add(quad);
+      }
 
       return {
         store: canonicalStore,

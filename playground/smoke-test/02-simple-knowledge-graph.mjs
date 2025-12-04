@@ -4,7 +4,7 @@
  */
 
 import { createDarkMatterCore, parseTurtle, DataFactory, Store } from "unrdf";
-const { namedNode, quad } = DataFactory;
+const { namedNode, quad  } = dataFactory;
 
 console.log("🧪 Testing Simple Knowledge Graph Example...\n");
 
@@ -15,7 +15,7 @@ try {
   await system.initialize();
 
   // Create a store for data
-  const store = new Store();
+  const store = createStore();
 
   // Parse and load data
   const ttl = `

@@ -25,7 +25,7 @@ const MAX_BODY_SIZE = 1024 * 1024; // 1MB limit
 // ============================================================================
 
 /** @type {Store} */
-const store = new Store();
+const store = createStore();
 
 // Load sample RDF data
 const sampleData = `

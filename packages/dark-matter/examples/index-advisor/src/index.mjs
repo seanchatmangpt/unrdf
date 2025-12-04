@@ -1,7 +1,5 @@
 // @ts-check
-import { Store, DataFactory } from 'n3';
-
-const { namedNode, literal } = DataFactory;
+const { namedNode, literal  } = dataFactory;
 
 /**
  * Mock IndexAdvisor for demonstration
@@ -105,7 +103,7 @@ class IndexAdvisor {
  * @returns {Store} Populated N3 Store
  */
 function createSampleDataset() {
-  const store = new Store();
+  const store = createStore();
 
   // Create 5000 person entities
   for (let i = 1; i <= 5000; i++) {

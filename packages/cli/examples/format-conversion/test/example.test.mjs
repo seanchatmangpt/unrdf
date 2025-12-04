@@ -3,6 +3,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
+import { createStore, dataFactory } from '@unrdf/oxigraph';
 import {
   detectFormat,
   parseRDF,
@@ -12,9 +13,7 @@ import {
   getFormatInfo,
   RDF_FORMATS
 } from '../src/converter.mjs';
-import { DataFactory } from 'n3';
-
-const { namedNode, literal, quad } = DataFactory;
+const { namedNode, literal, quad } = dataFactory;
 
 describe('Format Conversion Example', () => {
   describe('Format Detection', () => {

@@ -721,7 +721,7 @@ export async function executeSparqlConstruct(query) {
       sources: [graphState.store],
     });
 
-    const tempStore = new Store();
+    const tempStore = createStore();
     for await (const quad of resultStream) {
       tempStore.add(quad);
     }

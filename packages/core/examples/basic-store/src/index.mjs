@@ -3,17 +3,16 @@
  * @description Demonstrates core RDF store functionality: create, add, query, remove, export
  */
 
-import { Store } from 'n3';
-import { DataFactory } from 'n3';
+import { createStore, dataFactory } from '@unrdf/oxigraph';
 
-const { namedNode, literal, quad } = DataFactory;
+const { namedNode, literal, quad } = dataFactory;
 
 /**
  * Creates a new RDF store with sample data
  * @returns {Store} Populated RDF store
  */
 export function createSampleStore() {
-  const store = new Store();
+  const store = createStore();
 
   // Add some sample triples about people
   store.addQuad(

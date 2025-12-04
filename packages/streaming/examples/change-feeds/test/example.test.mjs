@@ -2,7 +2,7 @@
 // @vitest-environment node
 
 import { describe, it, expect } from 'vitest';
-import { Store, DataFactory } from 'n3';
+import { createStore, dataFactory } from '@unrdf/oxigraph';
 import { createChangeFeed } from '@unrdf/streaming';
 import {
   basicChangeFeed,
@@ -11,11 +11,11 @@ import {
   timeBasedQueries
 } from '../src/index.mjs';
 
-const { namedNode, literal, quad } = DataFactory;
+const { namedNode, literal, quad } = dataFactory;
 
 describe('Change Feeds Examples', () => {
   it('should create and subscribe to change feed', async () => {
-    const store = new Store();
+    const store = createStore();
     const feed = createChangeFeed(store);
 
     const changes = [];
@@ -37,7 +37,7 @@ describe('Change Feeds Examples', () => {
   });
 
   it('should track change history', async () => {
-    const store = new Store();
+    const store = createStore();
     const feed = createChangeFeed(store);
 
     const alice = namedNode('http://example.org/alice');
@@ -54,7 +54,7 @@ describe('Change Feeds Examples', () => {
   });
 
   it('should replay changes to new store', async () => {
-    const store = new Store();
+    const store = createStore();
     const feed = createChangeFeed(store);
 
     const alice = namedNode('http://example.org/alice');
@@ -63,7 +63,7 @@ describe('Change Feeds Examples', () => {
     store.addQuad(quad(alice, name, literal('Alice')));
     await new Promise(resolve => setTimeout(resolve, 50));
 
-    const newStore = new Store();
+    const newStore = createStore();
     feed.replay((change) => {
       if (change.type === 'add') {
         newStore.addQuad(change.quad);
@@ -74,7 +74,7 @@ describe('Change Feeds Examples', () => {
   });
 
   it('should support filtered subscriptions', async () => {
-    const store = new Store();
+    const store = createStore();
     const feed = createChangeFeed(store);
 
     const additions = [];
@@ -99,7 +99,7 @@ describe('Change Feeds Examples', () => {
   });
 
   it('should support time-based queries', async () => {
-    const store = new Store();
+    const store = createStore();
     const feed = createChangeFeed(store);
 
     const alice = namedNode('http://example.org/alice');

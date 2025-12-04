@@ -7,15 +7,14 @@
  */
 
 import {
+import { createStore, dataFactory } from '@unrdf/oxigraph';
   generateId,
   validateIRI,
   validateNamedNode,
   mergeStores,
   createNamespaceManager
 } from 'unrdf/utils';
-import { DataFactory } from 'n3';
-
-const { namedNode, literal, quad } = DataFactory;
+const { namedNode, literal, quad  } = dataFactory;
 
 const colors = {
   green: '\x1b[32m',
@@ -110,8 +109,8 @@ ${colors.reset}`);
       namedNode('http://example.org/p2'),
       literal('object2')
     );
-    const store1 = new Store([q1]);
-    const store2 = new Store([q2]);
+    const store1 = createStore([q1]);
+    const store2 = createStore([q2]);
     const merged = mergeStores(store1, store2);
     if (merged && merged.size === 2) {
       pass(`mergeStores working (${merged.size} quads merged)`);

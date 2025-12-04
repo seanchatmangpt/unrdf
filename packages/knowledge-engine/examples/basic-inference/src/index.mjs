@@ -3,10 +3,10 @@
  * @description Demonstrates RDFS domain/range inference and property chains
  */
 
-import { Store, DataFactory } from 'n3';
 import { KnowledgeEngine } from '@unrdf/knowledge-engine';
+import { createStore, dataFactory } from '@unrdf/oxigraph';
 
-const { namedNode, literal } = DataFactory;
+const { namedNode, literal  } = dataFactory;
 
 // Define namespaces
 const EX = 'http://example.org/';
@@ -17,7 +17,7 @@ const RDFS = 'http://www.w3.org/2000/01/rdf-schema#';
  * Create and configure knowledge engine with inference rules
  */
 function createEngine() {
-  const store = new Store();
+  const store = createStore();
   const engine = new KnowledgeEngine({ store });
 
   // Define RDFS schema - domain and range constraints

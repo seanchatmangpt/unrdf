@@ -3,10 +3,10 @@
  * @description Demonstrates advanced reasoning with SPARQL CONSTRUCT queries
  */
 
-import { Store, DataFactory } from 'n3';
 import { KnowledgeEngine } from '@unrdf/knowledge-engine';
+import { createStore, dataFactory } from '@unrdf/oxigraph';
 
-const { namedNode, literal } = DataFactory;
+const { namedNode, literal  } = dataFactory;
 
 // Define namespaces
 const EX = 'http://example.org/';
@@ -17,7 +17,7 @@ const RDF = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#';
  * Create knowledge engine with SPARQL-based rules
  */
 function createEngine() {
-  const store = new Store();
+  const store = createStore();
   const engine = new KnowledgeEngine({ store });
 
   console.log('📋 Configuring SPARQL reasoning rules...');

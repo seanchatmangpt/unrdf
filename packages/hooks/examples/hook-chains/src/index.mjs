@@ -12,6 +12,7 @@
  */
 
 import { namedNode, literal, quad, createStore } from '@unrdf/core';
+import { createStore, dataFactory } from '@unrdf/oxigraph';
 import {
   defineHook,
   createHookRegistry,
@@ -19,8 +20,6 @@ import {
   executeHookChain,
   builtinHooks,
 } from '@unrdf/hooks';
-import { DataFactory } from 'n3';
-
 /* ========================================================================= */
 /* Custom Hook Definitions for Chaining                                     */
 /* ========================================================================= */
@@ -68,10 +67,10 @@ const normalizeWhitespace = defineHook({
     // Normalize whitespace: trim and collapse multiple spaces
     const normalized = quad.object.value.trim().replace(/\s+/g, ' ');
 
-    return DataFactory.quad(
+    return dataFactory.quad(
       quad.subject,
       quad.predicate,
-      DataFactory.literal(
+      dataFactory.literal(
         normalized,
         quad.object.language || quad.object.datatype
       ),
@@ -114,7 +113,7 @@ const addProvenance = defineHook({
   transform: quad => {
     // If no graph specified, add provenance graph
     if (!quad.graph || quad.graph.termType === 'DefaultGraph') {
-      return DataFactory.quad(
+      return dataFactory.quad(
         quad.subject,
         quad.predicate,
         quad.object,

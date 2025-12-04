@@ -9,7 +9,8 @@
  * @license MIT
  */
 
-import { DataFactory, Store } from 'n3';
+import { createStore } from '@unrdf/core';
+import { DataFactory } from 'n3';
 import {
   asNamedNode as _asNamedNode,
   getIRI as _getIRI,
@@ -697,7 +698,10 @@ export const generateQualityReport = (assessment, options = {}) => {
  * @returns {Object} Fix result
  */
 export const fixQualityIssues = (store, options = {}) => {
-  const fixedStore = new Store(store);
+  const fixedStore = createStore();
+  for (const quad of store) {
+    fixedStore.add(quad);
+  }
   const fixes = [];
 
   // Remove duplicate quads

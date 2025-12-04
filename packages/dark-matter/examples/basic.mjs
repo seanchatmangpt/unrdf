@@ -4,7 +4,7 @@
  * Demonstrates query optimization and performance analysis.
  */
 
-import { Store } from 'n3';
+import { createStore } from '@unrdf/oxigraph';
 import {
   analyzeSparqlQuery,
   estimateComplexity,
@@ -74,7 +74,7 @@ console.log();
 
 console.log('📇 5. Index Recommendations');
 console.log('===========================');
-const store = new Store();
+const store = createStore();
 const indexSuggestions = suggestIndexes(store, query);
 console.log('Suggested indexes:');
 indexSuggestions.forEach((suggestion) => {
