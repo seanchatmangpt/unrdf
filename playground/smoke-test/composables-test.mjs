@@ -7,10 +7,11 @@
  */
 
 import { readFileSync } from 'fs';
-import { Parser, Store, DataFactory } from 'n3';
+import { createStore, dataFactory } from '@unrdf/oxigraph';
+import { Parser } from 'n3';
 import { z } from 'zod';
 
-const { namedNode, literal, blankNode } = DataFactory;
+const { namedNode, literal, blankNode  } = dataFactory;
 
 const colors = {
   green: '\x1b[32m',
@@ -46,7 +47,7 @@ ${colors.reset}`);
   try {
     // Test 1: N3 Store - Core RDF operations
     section('1. N3 Store - Core RDF Operations');
-    const store = new Store();
+    const store = createStore();
     const parser = new Parser();
     const turtleData = readFileSync('./data.ttl', 'utf-8');
     const quads = parser.parse(turtleData);

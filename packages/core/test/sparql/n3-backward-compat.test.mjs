@@ -7,8 +7,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { Store } from 'n3';
-import { namedNode, literal, quad } from '../../src/index.mjs';
+import { createN3Store, namedNode, literal, quad } from '../../src/rdf/n3-migration.mjs';
 import {
   executeQuery,
   executeSelect,
@@ -26,7 +25,7 @@ describe('N3 Store Backward Compatibility', () => {
   describe('Async API (executeQuery, executeSelect, executeAsk, executeConstruct)', () => {
     it('executeQuery works with N3 Store (SELECT)', async () => {
       // Create N3 Store and add data
-      const n3Store = new Store();
+      const n3Store = createN3Store();
       n3Store.addQuad(
         quad(namedNode('http://example.org/alice'), namedNode('http://foaf/name'), literal('Alice'))
       );
@@ -44,7 +43,7 @@ describe('N3 Store Backward Compatibility', () => {
     });
 
     it('executeQuery works with N3 Store (ASK)', async () => {
-      const n3Store = new Store();
+      const n3Store = createN3Store();
       n3Store.addQuad(
         quad(namedNode('http://example.org/alice'), namedNode('http://foaf/name'), literal('Alice'))
       );
@@ -57,7 +56,7 @@ describe('N3 Store Backward Compatibility', () => {
     });
 
     it('executeQuery works with N3 Store (CONSTRUCT)', async () => {
-      const n3Store = new Store();
+      const n3Store = createN3Store();
       n3Store.addQuad(
         quad(namedNode('http://example.org/alice'), namedNode('http://foaf/name'), literal('Alice'))
       );
@@ -74,7 +73,7 @@ describe('N3 Store Backward Compatibility', () => {
     });
 
     it('executeSelect works with N3 Store', async () => {
-      const n3Store = new Store();
+      const n3Store = createN3Store();
       n3Store.addQuad(
         quad(namedNode('http://example.org/alice'), namedNode('http://foaf/name'), literal('Alice'))
       );
@@ -87,7 +86,7 @@ describe('N3 Store Backward Compatibility', () => {
     });
 
     it('executeAsk works with N3 Store', async () => {
-      const n3Store = new Store();
+      const n3Store = createN3Store();
       n3Store.addQuad(
         quad(namedNode('http://example.org/alice'), namedNode('http://foaf/name'), literal('Alice'))
       );
@@ -100,7 +99,7 @@ describe('N3 Store Backward Compatibility', () => {
     });
 
     it('executeConstruct works with N3 Store', async () => {
-      const n3Store = new Store();
+      const n3Store = createN3Store();
       n3Store.addQuad(
         quad(namedNode('http://example.org/alice'), namedNode('http://foaf/name'), literal('Alice'))
       );
@@ -118,7 +117,7 @@ describe('N3 Store Backward Compatibility', () => {
 
   describe('Sync API (executeQuerySync, executeSelectSync, executeAskSync, executeConstructSync)', () => {
     it('executeQuerySync works with N3 Store (SELECT)', () => {
-      const n3Store = new Store();
+      const n3Store = createN3Store();
       n3Store.addQuad(
         quad(namedNode('http://example.org/alice'), namedNode('http://foaf/name'), literal('Alice'))
       );
@@ -132,7 +131,7 @@ describe('N3 Store Backward Compatibility', () => {
     });
 
     it('executeQuerySync works with N3 Store (ASK)', () => {
-      const n3Store = new Store();
+      const n3Store = createN3Store();
       n3Store.addQuad(
         quad(namedNode('http://example.org/alice'), namedNode('http://foaf/name'), literal('Alice'))
       );
@@ -145,7 +144,7 @@ describe('N3 Store Backward Compatibility', () => {
     });
 
     it('executeQuerySync works with N3 Store (CONSTRUCT)', () => {
-      const n3Store = new Store();
+      const n3Store = createN3Store();
       n3Store.addQuad(
         quad(namedNode('http://example.org/alice'), namedNode('http://foaf/name'), literal('Alice'))
       );
@@ -162,7 +161,7 @@ describe('N3 Store Backward Compatibility', () => {
     });
 
     it('executeSelectSync works with N3 Store', () => {
-      const n3Store = new Store();
+      const n3Store = createN3Store();
       n3Store.addQuad(
         quad(namedNode('http://example.org/alice'), namedNode('http://foaf/name'), literal('Alice'))
       );
@@ -175,7 +174,7 @@ describe('N3 Store Backward Compatibility', () => {
     });
 
     it('executeAskSync works with N3 Store', () => {
-      const n3Store = new Store();
+      const n3Store = createN3Store();
       n3Store.addQuad(
         quad(namedNode('http://example.org/alice'), namedNode('http://foaf/name'), literal('Alice'))
       );
@@ -188,7 +187,7 @@ describe('N3 Store Backward Compatibility', () => {
     });
 
     it('executeConstructSync works with N3 Store', () => {
-      const n3Store = new Store();
+      const n3Store = createN3Store();
       n3Store.addQuad(
         quad(namedNode('http://example.org/alice'), namedNode('http://foaf/name'), literal('Alice'))
       );
@@ -206,7 +205,7 @@ describe('N3 Store Backward Compatibility', () => {
 
   describe('N3 Store API Coverage', () => {
     it('handles empty N3 Store', async () => {
-      const n3Store = new Store();
+      const n3Store = createN3Store();
       const sparql = 'SELECT * WHERE { ?s ?p ?o }';
       const result = await executeQuery(n3Store, sparql);
 
@@ -214,7 +213,7 @@ describe('N3 Store Backward Compatibility', () => {
     });
 
     it('handles N3 Store with multiple quads', async () => {
-      const n3Store = new Store();
+      const n3Store = createN3Store();
 
       // Add multiple quads
       for (let i = 0; i < 100; i++) {
@@ -234,7 +233,7 @@ describe('N3 Store Backward Compatibility', () => {
     });
 
     it('preserves result format between N3 Store and UnrdfStore', async () => {
-      const n3Store = new Store();
+      const n3Store = createN3Store();
       n3Store.addQuad(
         quad(namedNode('http://example.org/alice'), namedNode('http://foaf/name'), literal('Alice'))
       );
@@ -258,7 +257,7 @@ describe('N3 Store Backward Compatibility', () => {
 
   describe('Performance Characteristics', () => {
     it('N3 Store conversion happens once per query (not cached between queries)', async () => {
-      const n3Store = new Store();
+      const n3Store = createN3Store();
       n3Store.addQuad(
         quad(namedNode('http://example.org/alice'), namedNode('http://foaf/name'), literal('Alice'))
       );
@@ -273,7 +272,7 @@ describe('N3 Store Backward Compatibility', () => {
     });
 
     it('N3 Store with large dataset still works (conversion overhead acceptable)', async () => {
-      const n3Store = new Store();
+      const n3Store = createN3Store();
 
       // Add 1000 quads
       for (let i = 0; i < 1000; i++) {

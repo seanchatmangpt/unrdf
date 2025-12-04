@@ -13,7 +13,8 @@ import {
   TransactionManager,
 } from './knowledge-engine.mjs';
 
-import { DataFactory, Store } from 'n3';
+import { UnrdfDataFactory as DataFactory } from '@unrdf/core/rdf/n3-justified-only';
+import { Store } from 'n3'; // TODO: Replace with Oxigraph Store
 import { faker } from '@faker-js/faker';
 import assert from 'assert';
 

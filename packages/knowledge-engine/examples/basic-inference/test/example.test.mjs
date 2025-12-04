@@ -4,10 +4,10 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { Store, DataFactory } from 'n3';
+import { createStore, dataFactory } from '@unrdf/oxigraph';
 import { KnowledgeEngine } from '@unrdf/knowledge-engine';
 
-const { namedNode } = DataFactory;
+const { namedNode } = dataFactory;
 
 const EX = 'http://example.org/';
 const RDF = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#';
@@ -15,7 +15,7 @@ const RDFS = 'http://www.w3.org/2000/01/rdf-schema#';
 
 describe('Basic Inference Example', () => {
   it('should infer types from domain constraints', () => {
-    const store = new Store();
+    const store = createStore();
     const engine = new KnowledgeEngine({ store });
 
     // Define domain: ex:worksFor domain ex:Person
@@ -48,7 +48,7 @@ describe('Basic Inference Example', () => {
   });
 
   it('should infer types from range constraints', () => {
-    const store = new Store();
+    const store = createStore();
     const engine = new KnowledgeEngine({ store });
 
     // Define range: ex:worksFor range ex:Organization
@@ -81,7 +81,7 @@ describe('Basic Inference Example', () => {
   });
 
   it('should infer triples from subPropertyOf relationships', () => {
-    const store = new Store();
+    const store = createStore();
     const engine = new KnowledgeEngine({ store });
 
     // Define property hierarchy: ex:manages subPropertyOf ex:worksFor
@@ -113,7 +113,7 @@ describe('Basic Inference Example', () => {
   });
 
   it('should infer multiple types from combined domain/range rules', () => {
-    const store = new Store();
+    const store = createStore();
     const engine = new KnowledgeEngine({ store });
 
     // Define schema
@@ -171,7 +171,7 @@ describe('Basic Inference Example', () => {
   });
 
   it('should return inference statistics', () => {
-    const store = new Store();
+    const store = createStore();
     const engine = new KnowledgeEngine({ store });
 
     // Define simple schema
@@ -196,7 +196,7 @@ describe('Basic Inference Example', () => {
   });
 
   it('should infer domain types for multiple subjects', () => {
-    const store = new Store();
+    const store = createStore();
     const engine = new KnowledgeEngine({ store });
 
     // Define domain
@@ -249,7 +249,7 @@ describe('Basic Inference Example', () => {
   });
 
   it('should infer range types for multiple objects', () => {
-    const store = new Store();
+    const store = createStore();
     const engine = new KnowledgeEngine({ store });
 
     // Define range
@@ -302,7 +302,7 @@ describe('Basic Inference Example', () => {
   });
 
   it('should handle transitive subPropertyOf chains', () => {
-    const store = new Store();
+    const store = createStore();
     const engine = new KnowledgeEngine({ store });
 
     // Define property hierarchy: manages -> supervises -> relatedTo
@@ -344,7 +344,7 @@ describe('Basic Inference Example', () => {
   });
 
   it('should handle multiple properties on same subject', () => {
-    const store = new Store();
+    const store = createStore();
     const engine = new KnowledgeEngine({ store });
 
     // Define domains for different properties
@@ -388,9 +388,9 @@ describe('Basic Inference Example', () => {
   });
 
   it('should handle inference with blank nodes', () => {
-    const store = new Store();
+    const store = createStore();
     const engine = new KnowledgeEngine({ store });
-    const { blankNode } = DataFactory;
+    const { blankNode } = dataFactory;
 
     // Define domain
     store.addQuad(
@@ -421,7 +421,7 @@ describe('Basic Inference Example', () => {
   });
 
   it('should handle multiple materialization cycles efficiently', () => {
-    const store = new Store();
+    const store = createStore();
     const engine = new KnowledgeEngine({ store });
 
     // Define schema

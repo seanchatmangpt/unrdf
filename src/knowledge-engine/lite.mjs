@@ -33,8 +33,19 @@
  * @see {@link https://github.com/rdfjs/N3.js} for N3.js documentation
  */
 
+/**
+ * JUSTIFIED N3 USAGE (μ(O) Compliance):
+ * This lite.mjs module is a justified boundary for N3 exports because:
+ * 1. It provides streaming parsing with backpressure control (N3.Parser)
+ * 2. It's explicitly designed for lightweight RDF operations without Oxigraph
+ * 3. Users opting into lite.mjs accept N3-based implementation
+ *
+ * For full Oxigraph-based functionality, use the main knowledge-engine exports.
+ */
+
 // Core N3 exports - the essential RDF primitives
-export { Store, Parser, Writer, DataFactory } from 'n3';
+export { Parser, Writer, UnrdfDataFactory as DataFactory } from '@unrdf/core/rdf/n3-justified-only';
+export { Store } from 'n3'; // TODO: Replace with Oxigraph Store
 
 /**
  * Parse a Turtle string into a Store (lite version - no OTEL tracing)

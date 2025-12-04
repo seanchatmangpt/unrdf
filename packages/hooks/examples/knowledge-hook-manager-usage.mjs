@@ -3,9 +3,8 @@
  */
 
 import { KnowledgeHookManager, defineHook } from '@unrdf/hooks';
-import { DataFactory } from 'n3';
-
-const { namedNode, literal, quad } = DataFactory;
+import { createStore, dataFactory } from '@unrdf/oxigraph';
+const { namedNode, literal, quad  } = dataFactory;
 
 // Example 1: Create manager with built-in hooks
 const manager = new KnowledgeHookManager({ includeBuiltins: true });

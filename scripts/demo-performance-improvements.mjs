@@ -7,7 +7,7 @@
 import { createHookExecutor } from '../src/knowledge-engine/hook-executor.mjs';
 import { createBatchingExecutor } from '../src/knowledge-engine/hook-executor-batching.mjs';
 import { createQueryOptimizer } from '../src/knowledge-engine/query-optimizer.mjs';
-import { Store } from 'n3';
+import { createStore } from '@unrdf/core';
 
 console.log('╔════════════════════════════════════════════════════════════════╗');
 console.log('║        Performance Optimization Demonstration                  ║');
@@ -110,13 +110,13 @@ console.log('━━━━━━━━━━━━━━━━━━━━━━�
 console.log('');
 
 // Create test graph
-const graph = new Store();
+const graph = createStore();
 for (let i = 0; i < 100; i++) {
-  graph.addQuad({
-    subject: { value: `http://example.org/subject${i}` },
-    predicate: { value: `http://example.org/predicate${i}` },
-    object: { value: `http://example.org/object${i}` },
-    graph: { value: '' }
+  graph.add({
+    subject: { value: `http://example.org/subject${i}`, termType: 'NamedNode' },
+    predicate: { value: `http://example.org/predicate${i}`, termType: 'NamedNode' },
+    object: { value: `http://example.org/object${i}`, termType: 'NamedNode' },
+    graph: { value: '', termType: 'DefaultGraph' }
   });
 }
 

@@ -3,17 +3,15 @@
  * @description Demonstrates SPARQL query execution: SELECT, ASK, CONSTRUCT
  */
 
-import { Store } from 'n3';
-import { DataFactory } from 'n3';
-
-const { namedNode, literal, quad } = DataFactory;
+import { createStore, dataFactory } from '@unrdf/oxigraph';
+const { namedNode, literal, quad  } = dataFactory;
 
 /**
  * Creates a store with sample book catalog data
  * @returns {Store} Populated RDF store
  */
 export function createBookCatalog() {
-  const store = new Store();
+  const store = createStore();
 
   // Book 1: The RDF Book
   store.addQuad(
@@ -158,7 +156,7 @@ export function hasBooksInStock(store) {
  * @returns {Store} New store with constructed triples
  */
 export function constructBookSummaries(store) {
-  const summaryStore = new Store();
+  const summaryStore = createStore();
 
   const allBooks = store.getQuads(
     null,

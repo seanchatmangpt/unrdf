@@ -7,7 +7,7 @@
  * scenario DSL, fluent assertions, and helper functions.
  */
 
-import { Store } from 'n3';
+import { Store } from 'n3'; // TODO: Replace with Oxigraph Store
 import { randomUUID } from 'crypto';
 import { KnowledgeHookManager } from '../knowledge-engine/knowledge-hook-manager.mjs';
 import { _PolicyPackManager } from '../knowledge-engine/policy-pack.mjs';

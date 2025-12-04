@@ -4,7 +4,8 @@
  * @license MIT
  */
 
-import { Parser, Store, Writer, DataFactory } from 'n3';
+import { Parser, Writer, UnrdfDataFactory as DataFactory } from '@unrdf/core/rdf/n3-justified-only';
+import { Store } from 'n3'; // TODO: Replace with Oxigraph Store
 import { createStore as createOxigraphStore } from '@unrdf/oxigraph';
 import rdf from 'rdf-ext';
 import SHACLValidator from 'rdf-validate-shacl';

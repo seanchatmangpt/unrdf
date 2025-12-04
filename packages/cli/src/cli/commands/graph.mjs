@@ -12,8 +12,8 @@ import { defineCommand } from 'citty';
 import { z } from 'zod';
 import { readFile, writeFile, unlink, mkdir } from 'node:fs/promises';
 import path from 'node:path';
-import { createStore, addQuad, getQuads } from '@unrdf/core';
-import { Parser, Writer } from 'n3';
+import { OxigraphStore, dataFactory } from '@unrdf/oxigraph';
+import { Writer } from '@unrdf/core/rdf/n3-justified-only';
 
 /**
  * Validation schema for graph commands
@@ -24,71 +24,107 @@ const formatSchema = z.enum(['turtle', 'ntriples', 'nquads', 'trig']).default('t
 /**
  * Detect format from file extension
  * @param {string} filePath - File path
- * @returns {string} Format name
+ * @returns {string} Format name (Oxigraph style)
  */
 function detectFormat(filePath) {
   const ext = path.extname(filePath).toLowerCase();
   const formatMap = {
-    '.ttl': 'turtle',
-    '.nt': 'ntriples',
-    '.nq': 'nquads',
+    '.ttl': 'ttl',
+    '.nt': 'nt',
+    '.nq': 'nq',
     '.trig': 'trig',
-    '.n3': 'turtle',
+    '.n3': 'n3',
+    '.rdf': 'rdf',
+    '.jsonld': 'jsonld',
+    '.json': 'jsonld',
   };
-  return formatMap[ext] || 'turtle';
+  return formatMap[ext] || 'ttl';
 }
 
 /**
- * Load RDF graph from file
+ * Map format name to Oxigraph format string
+ * @param {string} format - Format name
+ * @returns {string} Oxigraph format string
+ */
+function toOxigraphFormat(format) {
+  const oxFormatMap = {
+    turtle: 'text/turtle',
+    ttl: 'text/turtle',
+    ntriples: 'application/n-triples',
+    nt: 'application/n-triples',
+    nquads: 'application/n-quads',
+    nq: 'application/n-quads',
+    trig: 'application/trig',
+    n3: 'text/n3',
+    rdf: 'application/rdf+xml',
+    jsonld: 'application/ld+json',
+    json: 'application/ld+json',
+  };
+  return oxFormatMap[format] || 'text/turtle';
+}
+
+/**
+ * Load RDF graph from file using Oxigraph
  * @param {string} filePath - Path to RDF file
  * @param {string} [format] - RDF format (auto-detected if not provided)
- * @returns {Promise<Object>} N3 Store
+ * @returns {Promise<Object>} Oxigraph Store
  */
 export async function loadGraph(filePath, format) {
-  const content = await readFile(filePath, 'utf8');
-  const actualFormat = format || detectFormat(filePath);
+  try {
+    const content = await readFile(filePath, 'utf8');
+    const actualFormat = format || detectFormat(filePath);
+    const oxFormat = toOxigraphFormat(actualFormat);
 
-  return new Promise((resolve, reject) => {
-    const store = createStore();
-    const parser = new Parser({ format: actualFormat });
+    // Create Oxigraph store
+    const store = new OxigraphStore();
 
-    parser.parse(content, (error, quad, _prefixes) => {
-      if (error) {
-        reject(new Error(`Parse error: ${error.message}`));
-      } else if (quad) {
-        addQuad(store, quad);
-      } else {
-        resolve(store);
-      }
-    });
-  });
+    // Only load if content is non-empty (handle empty graphs)
+    if (content.trim().length > 0) {
+      store.load(content, { format: oxFormat });
+    }
+
+    return store;
+  } catch (error) {
+    throw new Error(`Parse error: ${error.message}`);
+  }
 }
 
 /**
- * Save RDF graph to file
- * @param {Object} store - N3 Store
+ * Save RDF graph to file using Oxigraph
+ * @param {Object} store - Oxigraph Store
  * @param {string} filePath - Output file path
  * @param {string} [format] - Output format (auto-detected if not provided)
  * @returns {Promise<void>}
  */
 export async function saveGraph(store, filePath, format) {
-  const actualFormat = format || detectFormat(filePath);
-  const writer = new Writer({ format: actualFormat });
+  try {
+    const actualFormat = format || detectFormat(filePath);
+    const oxFormat = toOxigraphFormat(actualFormat);
 
-  const quads = getQuads(store);
-  quads.forEach(q => writer.addQuad(q));
+    // Hybrid serialization adapter: N3.Writer for triple formats, Oxigraph for quad formats
+    let serialized;
+    const isTripleFormat = ['text/turtle', 'application/n-triples', 'text/n3'].includes(oxFormat);
 
-  return new Promise((resolve, reject) => {
-    writer.end((error, result) => {
-      if (error) {
-        reject(new Error(`Write error: ${error.message}`));
-      } else {
-        writeFile(filePath, result, 'utf8')
-          .then(() => resolve())
-          .catch(reject);
-      }
-    });
-  });
+    if (isTripleFormat) {
+      // Use N3.Writer for triple formats (Turtle, N-Triples, N3)
+      const writer = new Writer({ format: actualFormat });
+      const quads = store.getQuads ? store.getQuads() : store.match();
+      quads.forEach(q => writer.addQuad(q));
+      serialized = await new Promise((resolve, reject) => {
+        writer.end((error, result) => {
+          if (error) reject(error);
+          else resolve(result);
+        });
+      });
+    } else {
+      // Use Oxigraph dump for quad formats (N-Quads, TriG)
+      serialized = store.dump({ format: oxFormat });
+    }
+
+    await writeFile(filePath, serialized, 'utf8');
+  } catch (error) {
+    throw new Error(`Write error: ${error.message}`);
+  }
 }
 
 /**
@@ -121,8 +157,8 @@ export const createCommand = defineCommand({
       const dir = path.dirname(filePath);
       await mkdir(dir, { recursive: true });
 
-      // Create empty store and save
-      const store = createStore();
+      // Create empty Oxigraph store and save
+      const store = new OxigraphStore();
       await saveGraph(store, filePath, format);
 
       console.log(`✅ Created graph: ${filePath}`);
@@ -181,7 +217,7 @@ export const describeCommand = defineCommand({
       const filePath = graphPathSchema.parse(ctx.args.path);
       const store = await loadGraph(filePath);
 
-      const quads = getQuads(store);
+      const quads = store.getQuads();
       const subjects = new Set();
       const predicates = new Set();
       const objects = new Set();
@@ -244,15 +280,35 @@ export const mergeCommand = defineCommand({
       const store1 = await loadGraph(input1);
       const store2 = await loadGraph(input2);
 
-      // Merge into new store
-      const mergedStore = createStore();
-      getQuads(store1).forEach(q => addQuad(mergedStore, q));
-      getQuads(store2).forEach(q => addQuad(mergedStore, q));
+      // Merge into new Oxigraph store (default graph only)
+      const mergedStore = new OxigraphStore();
+      const quads1 = store1.getQuads();
+      const quads2 = store2.getQuads();
+
+      // Create quads in default graph using dataFactory
+      for (const q of quads1) {
+        const normalizedQuad = dataFactory.quad(
+          q.subject,
+          q.predicate,
+          q.object,
+          dataFactory.defaultGraph()
+        );
+        mergedStore.add(normalizedQuad);
+      }
+      for (const q of quads2) {
+        const normalizedQuad = dataFactory.quad(
+          q.subject,
+          q.predicate,
+          q.object,
+          dataFactory.defaultGraph()
+        );
+        mergedStore.add(normalizedQuad);
+      }
 
       // Save merged graph
       await saveGraph(mergedStore, output, ctx.args.format);
 
-      const totalQuads = getQuads(mergedStore).length;
+      const totalQuads = mergedStore.getQuads().length;
       console.log(`✅ Merged graphs to: ${output}`);
       console.log(`   Total triples: ${totalQuads}`);
     } catch (error) {

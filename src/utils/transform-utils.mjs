@@ -10,7 +10,8 @@
  * @license MIT
  */
 
-import { DataFactory, Store } from 'n3';
+import { createStore } from '@unrdf/core';
+import { dataFactory } from '@unrdf/oxigraph';
 import {
   asNamedNode,
   asLiteral,
@@ -19,16 +20,16 @@ import {
 } from './term-utils.mjs';
 import { quadToJSON as _quadToJSON, jsonToQuad as _jsonToQuad } from './quad-utils.mjs';
 
-const { _namedNode, _literal, _blankNode, quad, _defaultGraph } = DataFactory;
+const { _namedNode, _literal, _blankNode, quad, _defaultGraph } = dataFactory;
 
 /**
  * Transform a store to a different structure
- * @param {import('n3').Store} sourceStore - Source store
+ * @param {object} sourceStore - Source store
  * @param {Function} transformer - Transformation function
- * @returns {import('n3').Store} Transformed store
+ * @returns {object} Transformed store
  */
 export const transformStore = (sourceStore, transformer) => {
-  const targetStore = new Store();
+  const targetStore = createStore();
 
   for (const sourceQuad of sourceStore) {
     const transformedQuads = transformer(sourceQuad);
@@ -46,7 +47,7 @@ export const transformStore = (sourceStore, transformer) => {
 
 /**
  * Convert store to JSON-LD format
- * @param {import('n3').Store} store - RDF store
+ * @param {object} store - RDF store
  * @param {Object} [options] - Conversion options
  * @param {string} [options.baseIRI] - Base IRI for the document
  * @param {Object} [options.context] - JSON-LD context
@@ -101,10 +102,10 @@ export const storeToJSONLD = (store, options = {}) => {
 /**
  * Convert JSON-LD to store
  * @param {Object} jsonld - JSON-LD document
- * @returns {import('n3').Store} RDF store
+ * @returns {object} RDF store
  */
 export const jsonLDToStore = jsonld => {
-  const store = new Store();
+  const store = createStore();
   const graph = jsonld['@graph'] || (Array.isArray(jsonld) ? jsonld : [jsonld]);
 
   for (const node of graph) {
@@ -264,10 +265,10 @@ export const storeToCSV = (store, options = {}) => {
  * Convert CSV to store
  * @param {string} csv - CSV string
  * @param {Object} [options] - Conversion options
- * @returns {import('n3').Store} RDF store
+ * @returns {object} RDF store
  */
 export const csvToStore = (csv, _options = {}) => {
-  const store = new Store();
+  const store = createStore();
   const lines = csv.split('\n').filter(line => line.trim());
 
   if (lines.length < 2) {
@@ -302,12 +303,12 @@ export const csvToStore = (csv, _options = {}) => {
 
 /**
  * Flatten nested RDF structures
- * @param {import('n3').Store} store - RDF store
+ * @param {object} store - RDF store
  * @param {Object} [options] - Flattening options
- * @returns {import('n3').Store} Flattened store
+ * @returns {object} Flattened store
  */
 export const flattenStore = (store, _options = {}) => {
-  const flattenedStore = new Store();
+  const flattenedStore = createStore();
   const visited = new Set();
 
   const flatten = (subject, depth = 0) => {
@@ -396,10 +397,10 @@ export const denormalizeStore = (store, _options = {}) => {
 /**
  * Normalize RDF data (convert from denormalized format)
  * @param {Object[]} data - Array of denormalized objects
- * @returns {import('n3').Store} RDF store
+ * @returns {object} RDF store
  */
 export const normalizeData = data => {
-  const store = new Store();
+  const store = createStore();
 
   for (const obj of data) {
     const subject = asNamedNode(obj['@id']);
@@ -441,12 +442,12 @@ export const normalizeData = data => {
 
 /**
  * Transform RDF data using a mapping
- * @param {import('n3').Store} sourceStore - Source store
+ * @param {object} sourceStore - Source store
  * @param {Object} mapping - Transformation mapping
- * @returns {import('n3').Store} Transformed store
+ * @returns {object} Transformed store
  */
 export const transformWithMapping = (sourceStore, mapping) => {
-  const targetStore = new Store();
+  const targetStore = createStore();
 
   for (const q of sourceStore) {
     const sourcePredicate = q.predicate.value;

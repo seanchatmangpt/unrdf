@@ -4,10 +4,11 @@
  * @description Measures actual performance characteristics to establish realistic test targets
  */
 
-import { Store, DataFactory } from 'n3';
+import { createStore } from '@unrdf/core';
+import { dataFactory } from '@unrdf/oxigraph';
 import { RealTimeValidator, ValidationMode } from '../src/knowledge-engine/streaming/real-time-validator.mjs';
 
-const { namedNode, literal, quad } = DataFactory;
+const { namedNode, literal, quad } = dataFactory;
 
 // SHACL shapes for testing
 const shapes = `
@@ -270,7 +271,7 @@ async function benchmarkValidationModes() {
       enableCaching: false
     });
 
-    const store = new Store();
+    const store = createStore();
     const delta = createValidDelta(0);
 
     const iterations = 50;

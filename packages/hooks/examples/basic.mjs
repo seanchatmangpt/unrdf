@@ -4,7 +4,7 @@
  * Demonstrates basic usage of the Knowledge Hooks package.
  */
 
-import { DataFactory } from 'n3';
+import { createStore, dataFactory } from '@unrdf/oxigraph';
 import {
   defineHook,
   createHookRegistry,
@@ -13,7 +13,7 @@ import {
   builtinHooks,
 } from '../src/index.mjs';
 
-const { namedNode, literal, quad } = DataFactory;
+const { namedNode, literal, quad  } = dataFactory;
 
 console.log('=== @unrdf/hooks Basic Example ===\n');
 
@@ -84,7 +84,7 @@ const normalizeEmail = defineHook({
   transform: (quad) => {
     if (quad.predicate.value === 'http://schema.org/email' &&
         quad.object.termType === 'Literal') {
-      return DataFactory.quad(
+      return dataFactory.quad(
         quad.subject,
         quad.predicate,
         literal(quad.object.value.toLowerCase()),

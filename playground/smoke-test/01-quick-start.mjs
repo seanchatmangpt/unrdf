@@ -3,8 +3,8 @@
  * Tests basic createDarkMatterCore + query functionality
  */
 
-import { createDarkMatterCore, DataFactory, Store } from "unrdf";
-const { namedNode, quad, literal } = DataFactory;
+import { createDarkMatterCore, dataFactory, createStore } from "unrdf";
+const { namedNode, quad, literal } = dataFactory;
 
 console.log("🧪 Testing Quick Start Example...\n");
 
@@ -16,7 +16,7 @@ try {
   await system.initialize();
 
   // 2. Create a store for data
-  const store = new Store();
+  const store = createStore();
 
   // 3. Add some RDF data
   await system.executeTransaction(store, {

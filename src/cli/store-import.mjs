@@ -13,7 +13,7 @@
 import { readFile, writeFile, readdir, stat } from 'node:fs/promises';
 import { join } from 'node:path';
 import { z } from 'zod';
-import { Store, Parser as N3Parser, Writer as N3Writer } from 'n3';
+import { OxigraphStore } from '@unrdf/oxigraph';
 import { defaultObservabilityManager } from '../knowledge-engine/observability.mjs';
 import { fileExists, ensureDir, detectRDFFormat } from '../utils/io-utils.mjs';
 
@@ -197,7 +197,7 @@ async function expandFilePatterns(patterns) {
  * @private
  */
 async function importFiles(files, options) {
-  const store = new Store();
+  const store = new OxigraphStore();
   const graphs = new Set();
   const errors = [];
   let filesImported = 0;
@@ -213,22 +213,32 @@ async function importFiles(files, options) {
       // Read file
       const content = await readFile(filePath, 'utf-8');
 
-      // Parse RDF
-      const quads = await parseRDF(content, format, options.graph);
+      // Parse RDF using Oxigraph
+      const mimeTypes = {
+        turtle: 'text/turtle',
+        'n-triples': 'application/n-triples',
+        'n-quads': 'application/n-quads',
+        trig: 'application/trig',
+        n3: 'text/n3',
+        rdf: 'application/rdf+xml',
+        'json-ld': 'application/ld+json'
+      };
 
-      // Add quads to store
-      for (const quad of quads) {
-        store.addQuad(quad);
-        quadCount++;
+      const mimeType = mimeTypes[format] || 'text/turtle';
+      const quadsAdded = store.load(content, { format: mimeType, baseIRI: options.graph });
 
+      // Count quads and track graphs
+      const allQuads = store.getQuads();
+      quadCount = allQuads.length;
+      allQuads.forEach(quad => {
         if (quad.graph && quad.graph.value) {
           graphs.add(quad.graph.value);
         }
-      }
+      });
 
       filesImported++;
 
-      console.log(`    ✅ Imported ${quads.length} quads`);
+      console.log(`    ✅ Imported ${quadsAdded} quads`);
     } catch (error) {
       if (options.skipErrors) {
         console.warn(`    ⚠️  Error: ${error.message}`);
@@ -242,23 +252,10 @@ async function importFiles(files, options) {
     }
   }
 
-  // Write store to disk
+  // Write store to disk using Oxigraph dump
   const storeFile = join(options.storePath, 'store.nq');
-  const writer = new N3Writer({ format: 'N-Quads' });
-
-  for (const quad of store) {
-    writer.addQuad(quad);
-  }
-
-  await new Promise((resolve, reject) => {
-    writer.end((error, result) => {
-      if (error) {
-        reject(error);
-      } else {
-        writeFile(storeFile, result, 'utf-8').then(resolve).catch(reject);
-      }
-    });
-  });
+  const serialized = store.dump({ format: 'application/n-quads' });
+  await writeFile(storeFile, serialized, 'utf-8');
 
   return {
     filesImported,
@@ -268,36 +265,3 @@ async function importFiles(files, options) {
   };
 }
 
-/**
- * Parse RDF content
- *
- * @param {string} content - RDF content
- * @param {string} format - RDF format
- * @param {string} [graph] - Target named graph IRI
- * @returns {Promise<Array>} Array of quads
- * @private
- */
-async function parseRDF(content, format, graph) {
-  return new Promise((resolve, reject) => {
-    const quads = [];
-    const parser = new N3Parser({ format });
-
-    parser.parse(content, (error, quad, _prefixes) => {
-      if (error) {
-        reject(error);
-      } else if (quad) {
-        // Override graph if specified
-        if (graph) {
-          quad = {
-            ...quad,
-            graph: { termType: 'NamedNode', value: graph },
-          };
-        }
-        quads.push(quad);
-      } else {
-        // Parsing complete
-        resolve(quads);
-      }
-    });
-  });
-}

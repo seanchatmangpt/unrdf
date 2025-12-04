@@ -337,7 +337,8 @@ export class UnrdfStore {
    * console.log(`Store has ${store.size()} quads`);
    */
   size() {
-    return this._store.size();
+    // Handle both N3 Store (size() method) and Oxigraph (size getter)
+    return typeof this._store.size === 'function' ? this._store.size() : this._store.size;
   }
 
   /**
