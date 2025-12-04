@@ -160,7 +160,7 @@ export function useFederationHealth(config = {}) {
 
     // Check store availability (40 points)
     const storeCount = healthData.stores?.length || 0;
-    const healthyStores = healthData.stores?.filter(s => s.status === 'healthy').length || 0;
+    const healthyStores = healthData.stores?.filter((s) => s.status === 'healthy').length || 0;
     if (storeCount > 0) {
       score -= (1 - healthyStores / storeCount) * 40;
     }
@@ -211,8 +211,8 @@ export function useFederationHealth(config = {}) {
 
   // Get specific store health
   const getStoreHealth = useCallback(
-    storeId => {
-      return stores.find(s => s.id === storeId);
+    (storeId) => {
+      return stores.find((s) => s.id === storeId);
     },
     [stores]
   );

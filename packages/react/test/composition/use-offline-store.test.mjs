@@ -11,7 +11,7 @@ describe('useOfflineStore', () => {
     it('should store quads locally', () => {
       const localStore = new Map();
 
-      const insert = quads => {
+      const insert = (quads) => {
         const timestamp = Date.now();
         quads.forEach((quad, i) => {
           const id = `${timestamp}-${i}-${Math.random().toString(36).substr(2, 9)}`;
@@ -48,9 +48,9 @@ describe('useOfflineStore', () => {
         { id: '3', subject: 'alice', predicate: 'likes', object: 'coding' },
       ];
 
-      const deleteQuads = pattern => {
+      const deleteQuads = (pattern) => {
         const before = quads.length;
-        quads = quads.filter(q => {
+        quads = quads.filter((q) => {
           if (pattern.subject && q.subject !== pattern.subject) return true;
           if (pattern.predicate && q.predicate !== pattern.predicate) return true;
           return false;
@@ -155,7 +155,7 @@ describe('useOfflineStore', () => {
         { id: '4', status: 'failed' },
       ];
 
-      const pendingCount = syncQueue.filter(item => item.status === 'pending').length;
+      const pendingCount = syncQueue.filter((item) => item.status === 'pending').length;
 
       expect(pendingCount).toBe(2);
     });
@@ -166,8 +166,8 @@ describe('useOfflineStore', () => {
         { id: 'sync-2', status: 'pending' },
       ];
 
-      const removeFromQueue = id => {
-        syncQueue = syncQueue.filter(item => item.id !== id);
+      const removeFromQueue = (id) => {
+        syncQueue = syncQueue.filter((item) => item.id !== id);
       };
 
       removeFromQueue('sync-1');
@@ -183,7 +183,7 @@ describe('useOfflineStore', () => {
         retries: 0,
       };
 
-      const handleSyncFailure = queueItem => {
+      const handleSyncFailure = (queueItem) => {
         queueItem.retries += 1;
         queueItem.status = 'pending';
       };
@@ -213,7 +213,7 @@ describe('useOfflineStore', () => {
         if (state.isSyncing) return { success: false, reason: 'already-syncing' };
 
         state.isSyncing = true;
-        const pending = state.syncQueue.filter(item => item.status === 'pending');
+        const pending = state.syncQueue.filter((item) => item.status === 'pending');
 
         for (const item of pending) {
           item.status = 'syncing';
@@ -277,7 +277,7 @@ describe('useOfflineStore', () => {
         if (!state.isOnline) return { success: false, reason: 'offline' };
         if (state.isSyncing) return { success: false, reason: 'already-syncing' };
 
-        const pending = state.syncQueue.filter(item => item.status === 'pending');
+        const pending = state.syncQueue.filter((item) => item.status === 'pending');
         if (pending.length === 0) return { success: true, synced: 0 };
 
         return { success: true, synced: pending.length };
@@ -300,7 +300,7 @@ describe('useOfflineStore', () => {
         if (!state.isOnline) return { success: false };
 
         // Simulate sync
-        await new Promise(resolve => setTimeout(resolve, 10));
+        await new Promise((resolve) => setTimeout(resolve, 10));
 
         state.lastSynced = new Date();
         return { success: true };
@@ -317,9 +317,9 @@ describe('useOfflineStore', () => {
         { id: '2', subject: 'bob', _localOnly: true, _syncedAt: null },
       ];
 
-      const markQuadsSynced = quadIds => {
-        quadIds.forEach(id => {
-          const quad = quads.find(q => q.id === id);
+      const markQuadsSynced = (quadIds) => {
+        quadIds.forEach((id) => {
+          const quad = quads.find((q) => q.id === id);
           if (quad) {
             delete quad._localOnly;
             quad._syncedAt = Date.now();
@@ -399,9 +399,9 @@ describe('useOfflineStore', () => {
 
       const serverQuads = [{ id: '1', subject: 'alice', age: 31 }];
 
-      const updateLocalQuads = serverData => {
-        serverData.forEach(serverQuad => {
-          const index = localQuads.findIndex(q => q.id === serverQuad.id);
+      const updateLocalQuads = (serverData) => {
+        serverData.forEach((serverQuad) => {
+          const index = localQuads.findIndex((q) => q.id === serverQuad.id);
           if (index >= 0) {
             localQuads[index] = serverQuad;
           } else {
@@ -442,7 +442,7 @@ describe('useOfflineStore', () => {
         syncQueue: [],
       };
 
-      const insert = quads => {
+      const insert = (quads) => {
         const item = {
           id: `sync-${Date.now()}`,
           operation: 'insert',
@@ -488,7 +488,7 @@ describe('useOfflineStore', () => {
         { id: '4' },
       ];
 
-      const localOnlyCount = quads.filter(q => q._localOnly).length;
+      const localOnlyCount = quads.filter((q) => q._localOnly).length;
 
       expect(localOnlyCount).toBe(2);
     });
@@ -566,7 +566,7 @@ describe('useOfflineStore', () => {
       let dbInitialized = false;
 
       const initDB = async () => {
-        await new Promise(resolve => setTimeout(resolve, 10));
+        await new Promise((resolve) => setTimeout(resolve, 10));
         dbInitialized = true;
         return { success: true };
       };
@@ -629,7 +629,7 @@ describe('useOfflineStore', () => {
     it('should throw when insert called before init', () => {
       const db = null;
 
-      const insert = quads => {
+      const insert = (quads) => {
         if (!db) {
           throw new Error('IndexedDB not initialized');
         }

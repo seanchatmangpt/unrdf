@@ -55,7 +55,7 @@ export function useRecovery(config = {}) {
           }
 
           setIsRecovering(true);
-          await new Promise(resolve => setTimeout(resolve, retryDelay * attemptsRef.current));
+          await new Promise((resolve) => setTimeout(resolve, retryDelay * attemptsRef.current));
         }
       }
     },

@@ -135,7 +135,7 @@ export function useSubscriptionManager(config = {}) {
           pattern,
           filter: options.filter,
           bufferSize: maxBuffer,
-          onEvent: event => {
+          onEvent: (event) => {
             // TRIZ #10 Prior Action: O(1) push with automatic overflow handling
             // RingBuffer automatically discards oldest items when full
             eventsRef.current.push({
@@ -150,13 +150,13 @@ export function useSubscriptionManager(config = {}) {
             // Custom callback
             options.onEvent?.(event);
           },
-          onError: err => {
+          onError: (err) => {
             setError(err);
             options.onError?.(err);
           },
         });
 
-        setSubscriptions(prev =>
+        setSubscriptions((prev) =>
           new Map(prev).set(subscriptionId, {
             pattern,
             subscription,
@@ -177,7 +177,7 @@ export function useSubscriptionManager(config = {}) {
 
   // Unsubscribe from pattern
   const unsubscribe = useCallback(
-    async subscriptionId => {
+    async (subscriptionId) => {
       if (!subscriptionRef.current) {
         throw new Error('Subscription manager not initialized');
       }
@@ -239,7 +239,7 @@ export function useSubscriptionManager(config = {}) {
 
   // Get subscription by ID
   const getSubscription = useCallback(
-    subscriptionId => {
+    (subscriptionId) => {
       return subscriptions.get(subscriptionId);
     },
     [subscriptions]
@@ -247,7 +247,7 @@ export function useSubscriptionManager(config = {}) {
 
   // Pause subscription
   const pause = useCallback(
-    async subscriptionId => {
+    async (subscriptionId) => {
       const sub = subscriptions.get(subscriptionId);
       if (!sub) {
         throw new Error(`Subscription ${subscriptionId} not found`);
@@ -266,7 +266,7 @@ export function useSubscriptionManager(config = {}) {
 
   // Resume subscription
   const resume = useCallback(
-    async subscriptionId => {
+    async (subscriptionId) => {
       const sub = subscriptions.get(subscriptionId);
       if (!sub) {
         throw new Error(`Subscription ${subscriptionId} not found`);

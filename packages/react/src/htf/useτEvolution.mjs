@@ -109,7 +109,7 @@ export function useτEvolution(shards = [], metrics = {}) {
     const newLevel = draftLevel < 5 ? draftLevel + 1 : 'final';
 
     setDraftLevel(newLevel);
-    setTimeline(prev => [
+    setTimeline((prev) => [
       ...prev,
       {
         timestamp: new Date(),

@@ -230,7 +230,7 @@ export class KnowledgeHookManager {
     if (this.#executionDepth >= this.#maxExecutionDepth) {
       const error = new Error(
         `[POKA-YOKE] Recursive hook execution detected (depth: ${this.#executionDepth}, max: ${this.#maxExecutionDepth}). ` +
-        `Trigger: ${trigger}`
+          `Trigger: ${trigger}`
       );
       error.code = 'RECURSIVE_HOOK_EXECUTION';
       throw error;

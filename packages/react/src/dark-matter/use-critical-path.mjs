@@ -75,9 +75,9 @@ export function useCriticalPath(config = {}) {
         // Create tracer
         const tracer = new CriticalPathTracer({
           operations: config.operations,
-          onBottleneck: bottleneck => {
+          onBottleneck: (bottleneck) => {
             if (!mounted) return;
-            setBottlenecks(prev => [
+            setBottlenecks((prev) => [
               ...prev,
               {
                 ...bottleneck,
@@ -127,13 +127,13 @@ export function useCriticalPath(config = {}) {
   function buildCriticalPath(operations) {
     // Sort by cumulative value (operations that contribute to 80% value)
     const critical = operations
-      .filter(op => op.cumulativeValue <= 0.8)
+      .filter((op) => op.cumulativeValue <= 0.8)
       .sort((a, b) => a.cumulativeValue - b.cumulativeValue);
 
     if (critical.length === 0) return null;
 
     // Build dependency graph
-    const nodes = critical.map(op => ({
+    const nodes = critical.map((op) => ({
       id: op.id,
       value: op.value,
       executionTime: op.executionTime,
@@ -174,7 +174,7 @@ export function useCriticalPath(config = {}) {
         });
       } else {
         for (const depId of node.dependencies) {
-          const depNode = nodes.find(n => n.id === depId);
+          const depNode = nodes.find((n) => n.id === depId);
           if (depNode && !visited.has(depId)) {
             dfs(depNode, path, time + depNode.executionTime);
           }
@@ -186,7 +186,7 @@ export function useCriticalPath(config = {}) {
     }
 
     // Start DFS from each node
-    nodes.forEach(node => {
+    nodes.forEach((node) => {
       if (!visited.has(node.id)) {
         dfs(node, [], node.executionTime);
       }
@@ -208,10 +208,10 @@ export function useCriticalPath(config = {}) {
 
     // Bottleneck 1: Slowest operations
     operations
-      .filter(op => op.executionTime > 100) // Slower than 100ms
+      .filter((op) => op.executionTime > 100) // Slower than 100ms
       .sort((a, b) => b.executionTime - a.executionTime)
       .slice(0, 3)
-      .forEach(op => {
+      .forEach((op) => {
         bottlenecks.push({
           id: `bottleneck-slow-${op.id}`,
           type: 'slow-operation',
@@ -226,10 +226,10 @@ export function useCriticalPath(config = {}) {
 
     // Bottleneck 2: High-frequency operations
     operations
-      .filter(op => op.frequency > 100)
+      .filter((op) => op.frequency > 100)
       .sort((a, b) => b.frequency - a.frequency)
       .slice(0, 3)
-      .forEach(op => {
+      .forEach((op) => {
         bottlenecks.push({
           id: `bottleneck-freq-${op.id}`,
           type: 'high-frequency',
@@ -244,13 +244,13 @@ export function useCriticalPath(config = {}) {
 
     // Bottleneck 3: Operations with high cumulative cost
     operations
-      .map(op => ({
+      .map((op) => ({
         ...op,
         cumulativeCost: op.executionTime * op.frequency,
       }))
       .sort((a, b) => b.cumulativeCost - a.cumulativeCost)
       .slice(0, 3)
-      .forEach(op => {
+      .forEach((op) => {
         bottlenecks.push({
           id: `bottleneck-cumulative-${op.id}`,
           type: 'cumulative-cost',
@@ -272,7 +272,7 @@ export function useCriticalPath(config = {}) {
 
     return {
       type: 'critical-path-graph',
-      nodes: path.nodes.map(node => ({
+      nodes: path.nodes.map((node) => ({
         id: node.id,
         label: node.id,
         value: Math.round(node.value * 100),
@@ -280,14 +280,14 @@ export function useCriticalPath(config = {}) {
         frequency: node.frequency,
         category: node.value > 0.2 ? 'critical' : 'important',
       })),
-      edges: path.nodes.flatMap(node =>
-        node.dependencies.map(depId => ({
+      edges: path.nodes.flatMap((node) =>
+        node.dependencies.map((depId) => ({
           source: node.id,
           target: depId,
           weight: node.executionTime,
         }))
       ),
-      longestPath: path.longestPath.path.map(n => n.id),
+      longestPath: path.longestPath.path.map((n) => n.id),
       stats: {
         totalTime: path.totalTime,
         totalValue: Math.round(path.totalValue * 100),
@@ -298,7 +298,7 @@ export function useCriticalPath(config = {}) {
   }
 
   // Trace a specific operation
-  const traceOperation = useCallback(async operationId => {
+  const traceOperation = useCallback(async (operationId) => {
     if (!tracerRef.current) {
       throw new Error('Critical path tracer not initialized');
     }
@@ -309,7 +309,7 @@ export function useCriticalPath(config = {}) {
 
       const trace = await tracerRef.current.trace(operationId);
 
-      setTraces(prev => [
+      setTraces((prev) => [
         ...prev,
         {
           ...trace,
@@ -342,7 +342,7 @@ export function useCriticalPath(config = {}) {
         // Strategy 1: Cache top operations
         const topOps = criticalPath.operations.sort((a, b) => b.value - a.value).slice(0, 5);
 
-        topOps.forEach(op => {
+        topOps.forEach((op) => {
           optimizations.push({
             operation: op.id,
             strategy: 'cache',
@@ -353,12 +353,12 @@ export function useCriticalPath(config = {}) {
 
         // Strategy 2: Parallelize independent operations
         const independentOps = criticalPath.operations.filter(
-          op => !op.dependencies || op.dependencies.length === 0
+          (op) => !op.dependencies || op.dependencies.length === 0
         );
 
         if (independentOps.length > 1) {
           optimizations.push({
-            operations: independentOps.map(o => o.id),
+            operations: independentOps.map((o) => o.id),
             strategy: 'parallelize',
             estimatedGain: `${Math.round(criticalPath.totalTime * 0.4)}ms total`,
             implementation: 'Promise.all or concurrent hooks',
@@ -366,7 +366,7 @@ export function useCriticalPath(config = {}) {
         }
 
         // Strategy 3: Optimize bottlenecks
-        bottlenecks.slice(0, 3).forEach(bottleneck => {
+        bottlenecks.slice(0, 3).forEach((bottleneck) => {
           optimizations.push({
             operation: bottleneck.operation,
             strategy: 'optimize-bottleneck',
@@ -388,18 +388,18 @@ export function useCriticalPath(config = {}) {
 
   // Get bottleneck by severity
   const getBottlenecksBySeverity = useCallback(
-    severity => {
-      return bottlenecks.filter(b => b.severity === severity);
+    (severity) => {
+      return bottlenecks.filter((b) => b.severity === severity);
     },
     [bottlenecks]
   );
 
   // Get operation impact
   const getOperationImpact = useCallback(
-    operationId => {
+    (operationId) => {
       if (!criticalPath) return null;
 
-      const operation = criticalPath.operations.find(op => op.id === operationId);
+      const operation = criticalPath.operations.find((op) => op.id === operationId);
       if (!operation) return null;
 
       return {
@@ -408,8 +408,8 @@ export function useCriticalPath(config = {}) {
         executionTime: operation.executionTime,
         frequency: operation.frequency,
         cumulativeValue: Math.round(operation.cumulativeValue * 100),
-        isBottleneck: bottlenecks.some(b => b.operation === operationId),
-        inLongestPath: criticalPath.longestPath.path.some(n => n.id === operationId),
+        isBottleneck: bottlenecks.some((b) => b.operation === operationId),
+        inLongestPath: criticalPath.longestPath.path.some((n) => n.id === operationId),
       };
     },
     [criticalPath, bottlenecks]

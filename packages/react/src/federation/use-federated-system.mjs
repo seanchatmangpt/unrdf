@@ -120,7 +120,7 @@ export function useFederatedSystem(config = {}) {
 
   // Register new store
   const registerStore = useCallback(
-    async storeMetadata => {
+    async (storeMetadata) => {
       if (!system) {
         throw new Error('Federation system not initialized');
       }
@@ -147,7 +147,7 @@ export function useFederatedSystem(config = {}) {
 
   // Unregister store
   const unregisterStore = useCallback(
-    async storeId => {
+    async (storeId) => {
       if (!system) {
         throw new Error('Federation system not initialized');
       }

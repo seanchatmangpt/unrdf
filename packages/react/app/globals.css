@@ -1,0 +1,91 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  @apply box-border;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-slate-950 text-slate-100;
+}
+
+/* Metric Card Styling */
+.metric-card {
+  @apply rounded-lg border border-slate-700 bg-slate-900 p-4 hover:border-slate-600 transition-all hover:shadow-lg hover:shadow-cyan-500/10;
+}
+
+.metric-value {
+  @apply text-3xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent;
+}
+
+.metric-label {
+  @apply text-sm uppercase tracking-wider text-slate-400;
+}
+
+/* Chart Container */
+.chart-container {
+  @apply rounded-lg border border-slate-700 bg-slate-900 p-6;
+}
+
+/* Section Headers */
+.section-header {
+  @apply text-2xl font-bold mb-6 flex items-center gap-3;
+}
+
+.section-header::before {
+  @apply content-[''] w-1 h-6 bg-gradient-to-b from-cyan-400 to-blue-500 rounded-full;
+}
+
+/* Smooth Transitions */
+.transition-fast {
+  @apply transition-all duration-200 ease-out;
+}
+
+/* Gradient Text */
+.gradient-text {
+  @apply bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 bg-clip-text text-transparent;
+}
+
+/* Code Blocks */
+code {
+  @apply bg-slate-800 rounded px-2 py-1 text-xs font-mono text-cyan-300;
+}
+
+pre {
+  @apply bg-slate-800 rounded-lg p-4 overflow-x-auto;
+}
+
+/* Tables */
+table {
+  @apply w-full border-collapse;
+}
+
+thead {
+  @apply bg-slate-800/50 border-b border-slate-700;
+}
+
+th {
+  @apply px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-300;
+}
+
+td {
+  @apply px-4 py-3 border-b border-slate-800/50;
+}
+
+tr:hover {
+  @apply bg-slate-800/30;
+}
+
+/* Button Styles */
+.btn-primary {
+  @apply px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-lg font-semibold hover:shadow-lg hover:shadow-cyan-500/20 transition-all;
+}
+
+.btn-secondary {
+  @apply px-4 py-2 border border-slate-600 rounded-lg font-semibold hover:bg-slate-800 transition-colors;
+}

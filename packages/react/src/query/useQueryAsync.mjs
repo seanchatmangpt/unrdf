@@ -68,7 +68,7 @@ export function useQueryAsync(query, options = {}) {
   /**
    * Generate cache key for query
    */
-  const getCacheKey = useCallback(query => {
+  const getCacheKey = useCallback((query) => {
     return `query:${query}`;
   }, []);
 
@@ -76,7 +76,7 @@ export function useQueryAsync(query, options = {}) {
    * Check if cached data is valid
    */
   const isCacheValid = useCallback(
-    timestamp => {
+    (timestamp) => {
       if (!timestamp) return false;
       return Date.now() - timestamp < cacheTime;
     },
@@ -137,7 +137,7 @@ export function useQueryAsync(query, options = {}) {
         // Handle retries
         if (attemptNumber < retries) {
           console.log(`[useQueryAsync] Retry ${attemptNumber + 1}/${retries}`);
-          await new Promise(resolve => setTimeout(resolve, retryDelay));
+          await new Promise((resolve) => setTimeout(resolve, retryDelay));
           setAttemptCount(attemptNumber + 1);
           return executeWithRetry(attemptNumber + 1);
         }

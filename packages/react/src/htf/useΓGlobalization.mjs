@@ -114,8 +114,8 @@ export function useΓGlobalization(shards = []) {
    */
   const checkConceptualConsistency = useCallback(() => {
     const violations = [];
-    const voice = shards.find(s => s.type === 'Voice');
-    const method = shards.find(s => s.type === 'Method' || s.type === 'Method2');
+    const voice = shards.find((s) => s.type === 'Voice');
+    const method = shards.find((s) => s.type === 'Method' || s.type === 'Method2');
 
     if (voice && method) {
       // Would need semantic analysis to fully check
@@ -153,7 +153,7 @@ export function useΓGlobalization(shards = []) {
     };
 
     for (const [type, weight] of Object.entries(importance)) {
-      const shard = shards.find(s => s.type === type);
+      const shard = shards.find((s) => s.type === type);
       if (!shard) continue;
 
       const expectedWords = weight * 1000; // Expected word count
@@ -230,7 +230,7 @@ export function useΓGlobalization(shards = []) {
       });
     }
 
-    if (violations.some(v => v.type === 'orphaned_term')) {
+    if (violations.some((v) => v.type === 'orphaned_term')) {
       suggestions.push({
         type: 'propagate_terms',
         action: 'Use defined terms consistently across shards',
@@ -238,7 +238,7 @@ export function useΓGlobalization(shards = []) {
       });
     }
 
-    if (violations.some(v => v.type === 'voice_method_mismatch')) {
+    if (violations.some((v) => v.type === 'voice_method_mismatch')) {
       suggestions.push({
         type: 'expand_voice',
         action: 'Develop authorial perspective section',

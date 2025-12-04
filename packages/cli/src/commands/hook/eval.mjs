@@ -47,7 +47,7 @@ async function parseRDFFile(filePath, format = 'turtle') {
     trig: 'application/trig',
     n3: 'text/n3',
     rdf: 'application/rdf+xml',
-    jsonld: 'application/ld+json'
+    jsonld: 'application/ld+json',
   };
 
   const mimeType = mimeTypes[format] || 'text/turtle';

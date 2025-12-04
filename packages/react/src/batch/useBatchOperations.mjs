@@ -14,11 +14,11 @@ export function useBatchOperations() {
   const [pending, setPending] = useState(false);
 
   const executeBatch = useCallback(
-    async operations => {
+    async (operations) => {
       setPending(true);
       try {
         const results = await Promise.all(
-          operations.map(op => engine.query(store, op.query, op.options))
+          operations.map((op) => engine.query(store, op.query, op.options))
         );
         setPending(false);
         return results;

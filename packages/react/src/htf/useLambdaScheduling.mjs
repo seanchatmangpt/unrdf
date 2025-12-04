@@ -77,7 +77,7 @@ export function useLambdaScheduling(initialShards = [], options = {}) {
     let currentWeek = 0;
 
     for (const [idx, shardId] of lambdaOrder.chain.entries()) {
-      const shard = shards.find(s => s.id === shardId);
+      const shard = shards.find((s) => s.id === shardId);
       if (!shard) continue;
 
       // Shards on critical path get more time
@@ -112,16 +112,16 @@ export function useLambdaScheduling(initialShards = [], options = {}) {
   // Calculate overall progress
   const overallProgress = useMemo(() => {
     if (shards.length === 0) return 0;
-    const completed = shards.filter(s => progress[s.id] === 'completed').length;
+    const completed = shards.filter((s) => progress[s.id] === 'completed').length;
     return completed / shards.length;
   }, [shards, progress]);
 
   // ====== SHARD MANAGEMENT ======
 
   const addShard = useCallback(
-    shard => {
+    (shard) => {
       const validated = validateDeltaShard(shard);
-      setShards(prev => [...prev, validated]);
+      setShards((prev) => [...prev, validated]);
       onScheduleChange({ action: 'add', shard: validated });
     },
     [onScheduleChange]
@@ -129,15 +129,15 @@ export function useLambdaScheduling(initialShards = [], options = {}) {
 
   const updateShard = useCallback(
     (shardId, updates) => {
-      setShards(prev => prev.map(s => (s.id === shardId ? { ...s, ...updates } : s)));
+      setShards((prev) => prev.map((s) => (s.id === shardId ? { ...s, ...updates } : s)));
       onScheduleChange({ action: 'update', shardId, updates });
     },
     [onScheduleChange]
   );
 
   const removeShard = useCallback(
-    shardId => {
-      setShards(prev => prev.filter(s => s.id !== shardId));
+    (shardId) => {
+      setShards((prev) => prev.filter((s) => s.id !== shardId));
       const newProgress = { ...progress };
       delete newProgress[shardId];
       setProgress(newProgress);
@@ -152,21 +152,21 @@ export function useLambdaScheduling(initialShards = [], options = {}) {
    * Reorder shards manually (adjust Λ-chain)
    */
   const reorderShards = useCallback(
-    newOrder => {
+    (newOrder) => {
       // Validate all shardIds exist
-      const validOrder = newOrder.filter(id => shards.some(s => s.id === id));
+      const validOrder = newOrder.filter((id) => shards.some((s) => s.id === id));
 
       if (validOrder.length !== newOrder.length) {
         console.warn('Some shard IDs in new order are invalid');
       }
 
       // Update dependencies to respect new order
-      const newShards = shards.map(shard => {
+      const newShards = shards.map((shard) => {
         const _oldPosition = lambdaOrder.positions.get(shard.id) || Infinity;
         const newPosition = validOrder.indexOf(shard.id);
 
         // Dependencies should come before in the chain
-        const validDeps = (shard.dependencies || []).filter(depId => {
+        const validDeps = (shard.dependencies || []).filter((depId) => {
           const depPosition = validOrder.indexOf(depId);
           return depPosition !== -1 && depPosition < newPosition;
         });
@@ -195,7 +195,7 @@ export function useLambdaScheduling(initialShards = [], options = {}) {
       if (criticalPath.length === 0) return;
 
       // Allocate time proportionally to critical path
-      const updatedShards = shards.map(shard => {
+      const updatedShards = shards.map((shard) => {
         const isCritical = criticalPath.includes(shard.id);
         const baseWeight = shard.weight || 0.5;
         const criticalBonus = isCritical ? 1.5 : 1;
@@ -255,7 +255,7 @@ export function useLambdaScheduling(initialShards = [], options = {}) {
       duration: Math.ceil((lambdaOrder.criticalPath.length * totalWeeks) / (shards.length || 1)),
       flexibility:
         totalWeeks - (lambdaOrder.criticalPath.length * totalWeeks) / (shards.length || 1),
-      items: generatedSchedule.filter(item => item.isCritical),
+      items: generatedSchedule.filter((item) => item.isCritical),
     };
   }, [lambdaOrder, totalWeeks, shards, generatedSchedule]);
 
@@ -265,7 +265,7 @@ export function useLambdaScheduling(initialShards = [], options = {}) {
   const upcomingMilestones = useMemo(() => {
     const now = new Date();
     return generatedSchedule
-      .filter(item => item.dueDate > now)
+      .filter((item) => item.dueDate > now)
       .sort((a, b) => a.dueDate - b.dueDate)
       .slice(0, 5); // Next 5 milestones
   }, [generatedSchedule]);
@@ -274,11 +274,11 @@ export function useLambdaScheduling(initialShards = [], options = {}) {
    * Check if shard can start (all dependencies complete)
    */
   const canStartShard = useCallback(
-    shardId => {
-      const shard = shards.find(s => s.id === shardId);
+    (shardId) => {
+      const shard = shards.find((s) => s.id === shardId);
       if (!shard) return false;
 
-      return (shard.dependencies || []).every(depId => progress[depId] === 'completed');
+      return (shard.dependencies || []).every((depId) => progress[depId] === 'completed');
     },
     [shards, progress]
   );
@@ -287,8 +287,8 @@ export function useLambdaScheduling(initialShards = [], options = {}) {
    * Mark shard as complete
    */
   const markComplete = useCallback(
-    shardId => {
-      setProgress(prev => ({ ...prev, [shardId]: 'completed' }));
+    (shardId) => {
+      setProgress((prev) => ({ ...prev, [shardId]: 'completed' }));
       onScheduleChange({ action: 'complete', shardId });
     },
     [onScheduleChange]
@@ -330,7 +330,7 @@ export function useLambdaScheduling(initialShards = [], options = {}) {
     getCriticalPath: () => lambdaOrder.criticalPath,
     getScheduleStats: () => ({
       totalShards: shards.length,
-      completedShards: shards.filter(s => progress[s.id] === 'completed').length,
+      completedShards: shards.filter((s) => progress[s.id] === 'completed').length,
       criticalPathLength: lambdaOrder.criticalPath.length,
       availableWeeks: totalWeeks,
       progress: overallProgress,
@@ -341,11 +341,13 @@ export function useLambdaScheduling(initialShards = [], options = {}) {
 // ====== HELPERS ======
 
 function checkDependentsReady(shardId, schedule, shards) {
-  const dependents = shards.filter(s => (s.dependencies || []).includes(shardId)).map(s => s.id);
+  const dependents = shards
+    .filter((s) => (s.dependencies || []).includes(shardId))
+    .map((s) => s.id);
 
-  return dependents.map(depId => {
-    const depShard = shards.find(s => s.id === depId);
-    const deps = depShard.dependencies.every(d => schedule.some(item => item.shardId === d));
+  return dependents.map((depId) => {
+    const depShard = shards.find((s) => s.id === depId);
+    const deps = depShard.dependencies.every((d) => schedule.some((item) => item.shardId === d));
     return { shardId: depId, ready: deps };
   });
 }
@@ -355,18 +357,18 @@ function generateMarkdownSchedule(schedule, lambdaOrder, totalWeeks) {
   md += `**Total Duration:** ${totalWeeks} weeks\n\n`;
 
   md += `## Critical Path\n\n`;
-  md += `${lambdaOrder.criticalPath.map(id => `- ${id}`).join('\n')}\n\n`;
+  md += `${lambdaOrder.criticalPath.map((id) => `- ${id}`).join('\n')}\n\n`;
 
   md += `## Schedule by Week\n\n`;
 
   for (let week = 0; week < totalWeeks; week += 2) {
     md += `### Weeks ${week + 1}-${Math.min(week + 2, totalWeeks)}\n\n`;
-    const weekItems = schedule.filter(item => item.startWeek <= week && item.endWeek >= week);
+    const weekItems = schedule.filter((item) => item.startWeek <= week && item.endWeek >= week);
     if (weekItems.length > 0) {
       md +=
         weekItems
           .map(
-            item => `- **${item.label}** (${item.family})${item.isCritical ? ' [CRITICAL]' : ''}`
+            (item) => `- **${item.label}** (${item.family})${item.isCritical ? ' [CRITICAL]' : ''}`
           )
           .join('\n') + '\n';
     }
@@ -377,7 +379,7 @@ function generateMarkdownSchedule(schedule, lambdaOrder, totalWeeks) {
 }
 
 function generateGanttData(schedule) {
-  return schedule.map(item => ({
+  return schedule.map((item) => ({
     id: item.shardId,
     name: item.label,
     start: item.startWeek,

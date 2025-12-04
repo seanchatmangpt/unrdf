@@ -29,7 +29,7 @@ export function useQualityMetrics(_config = {}) {
   const [error, setError] = useState(null);
 
   const computeMetrics = useCallback(
-    async graphUri => {
+    async (graphUri) => {
       try {
         setLoading(true);
 
@@ -66,8 +66,8 @@ export function useQualityMetrics(_config = {}) {
   );
 
   async function computeCompleteness(quads) {
-    const subjects = new Set(quads.map(q => q.subject.value));
-    const _predicates = new Set(quads.map(q => q.predicate.value));
+    const subjects = new Set(quads.map((q) => q.subject.value));
+    const _predicates = new Set(quads.map((q) => q.predicate.value));
 
     const avgPredicatesPerSubject = quads.length / subjects.size;
     return Math.min(100, (avgPredicatesPerSubject / 5) * 100);
@@ -88,8 +88,8 @@ export function useQualityMetrics(_config = {}) {
   async function computeTimeliness(quads) {
     const now = Date.now();
     const timestamps = quads
-      .filter(q => q.predicate.value.includes('modified'))
-      .map(q => new Date(q.object.value).getTime());
+      .filter((q) => q.predicate.value.includes('modified'))
+      .map((q) => new Date(q.object.value).getTime());
 
     if (timestamps.length === 0) return 50;
 

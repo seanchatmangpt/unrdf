@@ -101,9 +101,7 @@ export function compileHookChain(hooks) {
 
   // Generate inline transformation steps
   const transformSteps = hooks
-    .map((h, i) =>
-      hasTransformation(h) ? `quad = hooks[${i}].transform(quad);` : ''
-    )
+    .map((h, i) => (hasTransformation(h) ? `quad = hooks[${i}].transform(quad);` : ''))
     .filter(Boolean)
     .join('\n    ');
 
@@ -183,9 +181,7 @@ export function compileValidationOnlyChain(hooks) {
   }
 
   // Generate inline validation checks
-  const checks = validationHooks
-    .map((_, i) => `hooks[${i}].validate(quad)`)
-    .join(' && ');
+  const checks = validationHooks.map((_, i) => `hooks[${i}].validate(quad)`).join(' && ');
 
   const fnBody = `return ${checks || 'true'};`;
 

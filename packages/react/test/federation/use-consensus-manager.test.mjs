@@ -26,7 +26,7 @@ describe('ConsensusManager', () => {
       const roleHistory = [];
       let currentRole = 'follower';
 
-      const transitionTo = newRole => {
+      const transitionTo = (newRole) => {
         roleHistory.push({
           from: currentRole,
           to: newRole,
@@ -65,7 +65,7 @@ describe('ConsensusManager', () => {
         { index: 3, term: 2, value: 'c' },
       ];
 
-      const commit = index => {
+      const commit = (index) => {
         if (index > log.length) {
           throw new Error('Cannot commit beyond log length');
         }
@@ -104,7 +104,7 @@ describe('ConsensusManager', () => {
       const votes = [true, true, false, true]; // 3 out of 4 votes
 
       const hasMajority = (votes, peerCount) => {
-        const votesReceived = votes.filter(v => v).length + 1; // +1 for self
+        const votesReceived = votes.filter((v) => v).length + 1; // +1 for self
         const majority = Math.floor(peerCount / 2) + 1;
         return votesReceived >= majority;
       };
@@ -115,7 +115,7 @@ describe('ConsensusManager', () => {
     it('should reject vote if term is stale', () => {
       const currentTerm = 5;
 
-      const handleVoteRequest = candidateTerm => {
+      const handleVoteRequest = (candidateTerm) => {
         if (candidateTerm < currentTerm) {
           return { voteGranted: false, reason: 'stale-term' };
         }
@@ -154,7 +154,7 @@ describe('ConsensusManager', () => {
       let state = 'leader';
       let term = 5;
 
-      const handleHigherTerm = newTerm => {
+      const handleHigherTerm = (newTerm) => {
         if (newTerm > term) {
           term = newTerm;
           state = 'follower';
@@ -174,7 +174,7 @@ describe('ConsensusManager', () => {
     it('should append entries to log', () => {
       const log = [];
 
-      const appendEntry = entry => {
+      const appendEntry = (entry) => {
         log.push({
           ...entry,
           index: log.length + 1,
@@ -311,7 +311,7 @@ describe('ConsensusManager', () => {
     it('should reject proposal from non-leader', async () => {
       const state = 'follower';
 
-      const propose = async _value => {
+      const propose = async (_value) => {
         if (state !== 'leader') {
           throw new Error('Only leader can propose values');
         }
@@ -350,7 +350,7 @@ describe('ConsensusManager', () => {
       const state = {};
       let lastApplied = 0;
 
-      const applyCommitted = commitIndex => {
+      const applyCommitted = (commitIndex) => {
         while (lastApplied < commitIndex) {
           lastApplied++;
           const entry = log[lastApplied - 1];

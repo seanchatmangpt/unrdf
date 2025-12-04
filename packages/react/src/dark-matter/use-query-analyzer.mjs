@@ -79,9 +79,9 @@ export function useQueryAnalyzer(config = {}) {
         const qAnalyzer = new QueryAnalyzer({
           engine,
           slowThreshold: config.slowThreshold || 100,
-          onSlowQuery: query => {
+          onSlowQuery: (query) => {
             if (!mounted) return;
-            setSlowQueries(prev => [
+            setSlowQueries((prev) => [
               ...prev,
               {
                 ...query,
@@ -134,7 +134,7 @@ export function useQueryAnalyzer(config = {}) {
       });
 
       // Update stats
-      setQueryStats(prev => {
+      setQueryStats((prev) => {
         const total = prev.totalQueries + 1;
         const avgTime =
           (prev.avgExecutionTime * prev.totalQueries + analysis.executionTime) / total;
@@ -150,7 +150,7 @@ export function useQueryAnalyzer(config = {}) {
       // Generate suggestions
       if (analysis.issues?.length > 0) {
         const newSuggestions = generateSuggestions(sparql, analysis);
-        setSuggestions(prev => [...prev, ...newSuggestions]);
+        setSuggestions((prev) => [...prev, ...newSuggestions]);
       }
 
       setLoading(false);
@@ -256,7 +256,7 @@ export function useQueryAnalyzer(config = {}) {
 
         // Auto-apply safe optimizations
         if (config.autoOptimize || options.autoApply) {
-          const autoApplicable = suggestions.filter(s => s.autoApplicable && s.query === sparql);
+          const autoApplicable = suggestions.filter((s) => s.autoApplicable && s.query === sparql);
 
           for (const suggestion of autoApplicable) {
             if (suggestion.optimizedQuery) {
@@ -289,7 +289,7 @@ export function useQueryAnalyzer(config = {}) {
         }
 
         // Update stats
-        setQueryStats(prev => ({
+        setQueryStats((prev) => ({
           ...prev,
           optimizedQueryCount: prev.optimizedQueryCount + 1,
         }));
@@ -300,7 +300,7 @@ export function useQueryAnalyzer(config = {}) {
           original: sparql,
           optimized,
           analysis,
-          suggestions: suggestions.filter(s => s.query === sparql),
+          suggestions: suggestions.filter((s) => s.query === sparql),
           estimatedGain: calculateEstimatedGain(analysis, suggestions),
         };
       } catch (err) {
@@ -314,11 +314,11 @@ export function useQueryAnalyzer(config = {}) {
 
   // Calculate estimated performance gain
   function calculateEstimatedGain(analysis, querySuggestions) {
-    const relevantSuggestions = querySuggestions.filter(s => s.query === analysis.query);
+    const relevantSuggestions = querySuggestions.filter((s) => s.query === analysis.query);
     if (relevantSuggestions.length === 0) return '1x';
 
     // Parse gain estimates (e.g., "10-100x" -> 55x average)
-    const gains = relevantSuggestions.map(s => {
+    const gains = relevantSuggestions.map((s) => {
       const match = s.estimatedGain.match(/(\d+)-(\d+)x/);
       if (match) {
         return (parseInt(match[1]) + parseInt(match[2])) / 2;
@@ -341,8 +341,8 @@ export function useQueryAnalyzer(config = {}) {
 
   // Get suggestions by severity
   const getSuggestionsBySeverity = useCallback(
-    severity => {
-      return suggestions.filter(s => s.severity === severity);
+    (severity) => {
+      return suggestions.filter((s) => s.severity === severity);
     },
     [suggestions]
   );

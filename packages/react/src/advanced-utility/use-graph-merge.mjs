@@ -72,7 +72,8 @@ export function useGraphMerge(config = {}) {
           for (const conflict of detectedConflicts) {
             const resolved = config.conflictResolver(conflict.values);
             const quad = Array.from(quadMap.values()).find(
-              q => q.subject.value === conflict.subject && q.predicate.value === conflict.predicate
+              (q) =>
+                q.subject.value === conflict.subject && q.predicate.value === conflict.predicate
             );
             if (quad) {
               quad.object = { value: resolved, termType: 'Literal' };
@@ -94,7 +95,7 @@ export function useGraphMerge(config = {}) {
   );
 
   const resolveConflict = useCallback((conflict, chosenValue) => {
-    setConflicts(prev => prev.filter(c => c !== conflict));
+    setConflicts((prev) => prev.filter((c) => c !== conflict));
     return { resolved: true, value: chosenValue };
   }, []);
 

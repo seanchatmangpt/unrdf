@@ -40,15 +40,15 @@ export function useResultsPaginator(data = [], config = {}) {
   }, [data, currentPage, pageSize]);
 
   const nextPage = useCallback(() => {
-    setCurrentPage(prev => Math.min(prev + 1, totalPages));
+    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
   }, [totalPages]);
 
   const prevPage = useCallback(() => {
-    setCurrentPage(prev => Math.max(prev - 1, 1));
+    setCurrentPage((prev) => Math.max(prev - 1, 1));
   }, []);
 
   const goToPage = useCallback(
-    page => {
+    (page) => {
       setCurrentPage(Math.max(1, Math.min(page, totalPages)));
     },
     [totalPages]

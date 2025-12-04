@@ -32,19 +32,19 @@ export function useQueryBuilder(_config = {}) {
   );
 
   const addTriplePattern = useCallback((subject, predicate, object) => {
-    setTriplePatterns(prev => [...prev, { subject, predicate, object }]);
+    setTriplePatterns((prev) => [...prev, { subject, predicate, object }]);
   }, []);
 
-  const removeTriplePattern = useCallback(index => {
-    setTriplePatterns(prev => prev.filter((_, i) => i !== index));
+  const removeTriplePattern = useCallback((index) => {
+    setTriplePatterns((prev) => prev.filter((_, i) => i !== index));
   }, []);
 
   const addFilter = useCallback((variable, operator, value) => {
-    setFilters(prev => [...prev, { variable, operator, value }]);
+    setFilters((prev) => [...prev, { variable, operator, value }]);
   }, []);
 
-  const removeFilter = useCallback(index => {
-    setFilters(prev => prev.filter((_, i) => i !== index));
+  const removeFilter = useCallback((index) => {
+    setFilters((prev) => prev.filter((_, i) => i !== index));
   }, []);
 
   const buildQuery = useCallback(() => {

@@ -221,7 +221,7 @@ async function importFiles(files, options) {
         trig: 'application/trig',
         n3: 'text/n3',
         rdf: 'application/rdf+xml',
-        'json-ld': 'application/ld+json'
+        'json-ld': 'application/ld+json',
       };
 
       const mimeType = mimeTypes[format] || 'text/turtle';
@@ -264,4 +264,3 @@ async function importFiles(files, options) {
     errors,
   };
 }
-

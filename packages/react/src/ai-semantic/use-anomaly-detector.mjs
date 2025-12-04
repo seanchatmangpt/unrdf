@@ -36,7 +36,7 @@ export function useAnomalyDetector(config = {}) {
   const [error, setError] = useState(null);
 
   const detectAnomalies = useCallback(
-    async predicate => {
+    async (predicate) => {
       try {
         setLoading(true);
 
@@ -46,7 +46,7 @@ export function useAnomalyDetector(config = {}) {
         }
       `);
 
-        const values = result.map(b => parseFloat(b.o.value)).filter(v => !isNaN(v));
+        const values = result.map((b) => parseFloat(b.o.value)).filter((v) => !isNaN(v));
 
         if (values.length === 0) {
           setLoading(false);
@@ -66,12 +66,12 @@ export function useAnomalyDetector(config = {}) {
             zScore: Math.abs((values[i] - mean) / stdDev),
             isAnomaly: Math.abs((values[i] - mean) / stdDev) > threshold,
           }))
-          .filter(item => item.isAnomaly);
+          .filter((item) => item.isAnomaly);
 
-        setAnomalies(prev => [...prev, ...detected]);
+        setAnomalies((prev) => [...prev, ...detected]);
         setStats({ total: values.length, anomalies: detected.length });
 
-        detected.forEach(anomaly => config.onAnomaly?.(anomaly));
+        detected.forEach((anomaly) => config.onAnomaly?.(anomaly));
 
         setLoading(false);
         return detected;
@@ -97,7 +97,7 @@ export function useAnomalyDetector(config = {}) {
       `);
 
       const patternData = {};
-      result.forEach(b => {
+      result.forEach((b) => {
         patternData[b.p.value] = parseInt(b.count.value);
       });
 

@@ -47,14 +47,14 @@ describe('DarkMatterCore', () => {
       // Sort by value and calculate cumulative
       const sorted = [...operations].sort((a, b) => b.value - a.value);
       let cumulative = 0;
-      const withCumulative = sorted.map(op => {
+      const withCumulative = sorted.map((op) => {
         cumulative += op.value;
         return { ...op, cumulativeValue: cumulative };
       });
 
       // Critical paths (80% value threshold)
-      const critical = withCumulative.filter(op => op.cumulativeValue <= 0.8);
-      const dark = withCumulative.filter(op => op.cumulativeValue > 0.8);
+      const critical = withCumulative.filter((op) => op.cumulativeValue <= 0.8);
+      const dark = withCumulative.filter((op) => op.cumulativeValue > 0.8);
 
       expect(critical.length).toBe(3); // query + filter + sort = 0.8
       expect(dark.length).toBe(4);
@@ -69,7 +69,7 @@ describe('DarkMatterCore', () => {
         { id: 'sort', value: 0.15, executionTime: 30 },
       ];
 
-      const slowCritical = criticalPaths.filter(op => op.executionTime > 100);
+      const slowCritical = criticalPaths.filter((op) => op.executionTime > 100);
 
       expect(slowCritical).toHaveLength(1);
       expect(slowCritical[0].id).toBe('query');
@@ -88,16 +88,16 @@ describe('DarkMatterCore', () => {
 
       const distribution = {
         critical: operations
-          .filter(op => op.cumulativeValue <= 0.5)
+          .filter((op) => op.cumulativeValue <= 0.5)
           .reduce((sum, op) => sum + op.value, 0),
         important: operations
-          .filter(op => op.cumulativeValue > 0.5 && op.cumulativeValue <= 0.8)
+          .filter((op) => op.cumulativeValue > 0.5 && op.cumulativeValue <= 0.8)
           .reduce((sum, op) => sum + op.value, 0),
         standard: operations
-          .filter(op => op.cumulativeValue > 0.8 && op.cumulativeValue <= 0.95)
+          .filter((op) => op.cumulativeValue > 0.8 && op.cumulativeValue <= 0.95)
           .reduce((sum, op) => sum + op.value, 0),
         dark: operations
-          .filter(op => op.cumulativeValue > 0.95)
+          .filter((op) => op.cumulativeValue > 0.95)
           .reduce((sum, op) => sum + op.value, 0),
       };
 
@@ -119,7 +119,7 @@ describe('DarkMatterCore', () => {
         { id: 'filter', value: 0.25, executionTime: 85 },
       ];
 
-      const suggestions = critical.map(op => ({
+      const suggestions = critical.map((op) => ({
         type: 'cache',
         priority: 'high',
         operation: op.id,
@@ -140,10 +140,10 @@ describe('DarkMatterCore', () => {
         { id: 'unused-validator', value: 0.001 },
       ];
 
-      const removalCandidates = darkMatter.filter(op => op.value < 0.01);
+      const removalCandidates = darkMatter.filter((op) => op.value < 0.01);
 
       expect(removalCandidates).toHaveLength(3);
-      removalCandidates.forEach(op => {
+      removalCandidates.forEach((op) => {
         expect(op.value).toBeLessThan(0.01);
       });
     });
@@ -162,7 +162,7 @@ describe('DarkMatterCore', () => {
       const sorted = [...operations].sort((a, b) => b.value - a.value);
 
       let cumulative = 0;
-      const chartData = sorted.map(op => {
+      const chartData = sorted.map((op) => {
         cumulative += op.value;
         return {
           id: op.id,
@@ -198,7 +198,7 @@ describe('QueryAnalyzer', () => {
     ];
 
     const slowThreshold = 100;
-    const slowQueries = queries.filter(q => q.executionTime > slowThreshold);
+    const slowQueries = queries.filter((q) => q.executionTime > slowThreshold);
 
     expect(slowQueries).toHaveLength(2);
     expect(slowQueries[0].executionTime).toBe(250);
@@ -211,15 +211,15 @@ describe('QueryAnalyzer', () => {
     // Detect predicates that could benefit from indexing
     const predicates = query.match(/\w+:\w+/g) || [];
 
-    const suggestions = predicates.map(predicate => ({
+    const suggestions = predicates.map((predicate) => ({
       type: 'INDEX',
       predicate,
       reason: `Add index on ${predicate} for faster lookups`,
     }));
 
     expect(suggestions).toHaveLength(2);
-    expect(suggestions.some(s => s.predicate === 'foaf:name')).toBe(true);
-    expect(suggestions.some(s => s.predicate === 'foaf:age')).toBe(true);
+    expect(suggestions.some((s) => s.predicate === 'foaf:name')).toBe(true);
+    expect(suggestions.some((s) => s.predicate === 'foaf:age')).toBe(true);
   });
 });
 
@@ -249,7 +249,7 @@ describe('CriticalPath', () => {
     const avgLatency = operations.reduce((sum, op) => sum + op.latency, 0) / operations.length;
     const threshold = avgLatency * 2;
 
-    const bottlenecks = operations.filter(op => op.latency > threshold);
+    const bottlenecks = operations.filter((op) => op.latency > threshold);
 
     expect(bottlenecks).toHaveLength(1);
     expect(bottlenecks[0].name).toBe('filter');

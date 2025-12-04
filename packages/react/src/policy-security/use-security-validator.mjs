@@ -42,7 +42,7 @@ export function useSecurityValidator(_config = {}) {
 
         const hasAccess = result.length > 0;
 
-        setAuditLog(prev => [
+        setAuditLog((prev) => [
           ...prev,
           {
             user,
@@ -65,7 +65,7 @@ export function useSecurityValidator(_config = {}) {
   );
 
   const validatePermissions = useCallback(
-    async userId => {
+    async (userId) => {
       try {
         setLoading(true);
 

@@ -36,7 +36,7 @@ export function usePiProfile(shards = [], options = {}) {
     }
 
     // Apply custom weights if set
-    const weightedShards = shards.map(shard => ({
+    const weightedShards = shards.map((shard) => ({
       ...shard,
       weight: weights[shard.id] ?? shard.weight,
     }));
@@ -53,7 +53,7 @@ export function usePiProfile(shards = [], options = {}) {
     const profiles = {};
 
     for (const family of Object.keys(DeltaFamilies)) {
-      const familyShards = shards.filter(s => s.family === family);
+      const familyShards = shards.filter((s) => s.family === family);
       const totalWeight = familyShards.reduce((sum, s) => sum + (weights[s.id] ?? s.weight), 0);
       const coverage = familyShards.length / (DeltaFamilies[family].shards.length || 1);
 
@@ -91,7 +91,7 @@ export function usePiProfile(shards = [], options = {}) {
     // Find dependencies crossing family boundaries
     for (const shard of shards) {
       for (const depId of shard.dependencies || []) {
-        const depShard = shards.find(s => s.id === depId);
+        const depShard = shards.find((s) => s.id === depId);
         if (depShard && depShard.family !== shard.family) {
           const key = [depShard.family, shard.family].sort().join('→');
           if (!pointSet.has(key)) {
@@ -105,7 +105,7 @@ export function usePiProfile(shards = [], options = {}) {
           }
 
           // Find the matching point and add connection
-          const point = points.find(p => p.from === depShard.family && p.to === shard.family);
+          const point = points.find((p) => p.from === depShard.family && p.to === shard.family);
           if (point) {
             point.connections.push({
               fromShard: depId,
@@ -127,7 +127,7 @@ export function usePiProfile(shards = [], options = {}) {
    */
   const coherenceMetrics = useMemo(() => {
     // Family balance: how evenly distributed are weights?
-    const familyWeights = Object.values(profileByFamily).map(p => p.totalWeight);
+    const familyWeights = Object.values(profileByFamily).map((p) => p.totalWeight);
     const avgFamilyWeight =
       familyWeights.reduce((a, b) => a + b, 0) / Math.max(familyWeights.length, 1);
     const familyVariance =
@@ -136,7 +136,7 @@ export function usePiProfile(shards = [], options = {}) {
     const familyBalance = 1 - Math.min(Math.sqrt(familyVariance) / (avgFamilyWeight || 1), 1);
 
     // Coverage: are all families represented?
-    const representedFamilies = Object.values(profileByFamily).filter(p => p.count > 0).length;
+    const representedFamilies = Object.values(profileByFamily).filter((p) => p.count > 0).length;
     const totalFamilies = Object.keys(DeltaFamilies).length;
     const familyCoverage = representedFamilies / totalFamilies;
 
@@ -173,7 +173,7 @@ export function usePiProfile(shards = [], options = {}) {
    */
   const setShardWeight = useCallback(
     (shardId, weight) => {
-      setWeights(prev => ({
+      setWeights((prev) => ({
         ...prev,
         [shardId]: Math.max(0, Math.min(1, weight)),
       }));
@@ -192,11 +192,11 @@ export function usePiProfile(shards = [], options = {}) {
     for (const [_family, profile] of Object.entries(profileByFamily)) {
       if (profile.status === 'empty') {
         // Add weight to existing shards to compensate
-        profile.shards.forEach(shard => {
+        profile.shards.forEach((shard) => {
           suggestions[shard.id] = (weights[shard.id] ?? shard.weight) * 1.5;
         });
       } else if (profile.status === 'sparse') {
-        profile.shards.forEach(shard => {
+        profile.shards.forEach((shard) => {
           suggestions[shard.id] = (weights[shard.id] ?? shard.weight) * 1.2;
         });
       }
@@ -219,9 +219,9 @@ export function usePiProfile(shards = [], options = {}) {
           const targetPerFamily = totalWeight / Math.max(Object.keys(DeltaFamilies).length, 1);
 
           for (const family of Object.keys(DeltaFamilies)) {
-            const familyShards = shards.filter(s => s.family === family);
+            const familyShards = shards.filter((s) => s.family === family);
             const perShard = targetPerFamily / Math.max(familyShards.length, 1);
-            familyShards.forEach(shard => {
+            familyShards.forEach((shard) => {
               newWeights[shard.id] = perShard;
             });
           }
@@ -231,7 +231,7 @@ export function usePiProfile(shards = [], options = {}) {
         case 'emphasize-gaps': {
           // Emphasize contribution family (gap, design, eval, impact)
           newWeights = { ...weights };
-          shards.forEach(shard => {
+          shards.forEach((shard) => {
             if (shard.family === 'contribution') {
               newWeights[shard.id] = (weights[shard.id] ?? shard.weight) * 1.5;
             } else if (shard.family === 'imrad') {
@@ -244,7 +244,7 @@ export function usePiProfile(shards = [], options = {}) {
         case 'emphasize-methods': {
           // Emphasize method/design shards
           newWeights = { ...weights };
-          shards.forEach(shard => {
+          shards.forEach((shard) => {
             if (['monograph', 'dsr'].includes(shard.family)) {
               newWeights[shard.id] = (weights[shard.id] ?? shard.weight) * 1.5;
             } else if (shard.family === 'narrative') {
@@ -257,7 +257,7 @@ export function usePiProfile(shards = [], options = {}) {
         case 'emphasize-narrative': {
           // Emphasize narrative/insight shards
           newWeights = { ...weights };
-          shards.forEach(shard => {
+          shards.forEach((shard) => {
             if (shard.family === 'narrative') {
               newWeights[shard.id] = (weights[shard.id] ?? shard.weight) * 1.5;
             } else if (shard.family === 'papers') {
@@ -291,7 +291,7 @@ export function usePiProfile(shards = [], options = {}) {
         });
       } else if (profile.status === 'sparse') {
         const missing = DeltaFamilies[family].shards.filter(
-          shardName => !profile.shards.some(s => s.id === shardName)
+          (shardName) => !profile.shards.some((s) => s.id === shardName)
         );
         recommendations.push({
           priority: 'medium',
@@ -350,14 +350,14 @@ export function usePiProfile(shards = [], options = {}) {
   const getMergeVisualizationData = useCallback(() => {
     return {
       families: Object.keys(DeltaFamilies),
-      shards: shards.map(s => ({
+      shards: shards.map((s) => ({
         id: s.id,
         family: s.family,
         label: s.label,
         weight: weights[s.id] ?? s.weight,
       })),
-      connections: mergePointsAnalysis.flatMap(point =>
-        point.connections.map(conn => ({
+      connections: mergePointsAnalysis.flatMap((point) =>
+        point.connections.map((conn) => ({
           source: conn.fromShard,
           target: conn.toShard,
           value: 1,
@@ -397,7 +397,7 @@ export function usePiProfile(shards = [], options = {}) {
     // Helpers
     getProfileStats: () => ({
       totalShards: shards.length,
-      representedFamilies: Object.values(profileByFamily).filter(p => p.count > 0).length,
+      representedFamilies: Object.values(profileByFamily).filter((p) => p.count > 0).length,
       totalFamilies: Object.keys(DeltaFamilies).length,
       overallCoherence: coherenceMetrics.overall,
       familyBalance: coherenceMetrics.familyBalance,

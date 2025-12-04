@@ -108,7 +108,7 @@ describe('DataReplication', () => {
         if (options.strategy === 'immediate') {
           // Replicate synchronously to all stores
           for (const store of options.stores) {
-            await new Promise(r => setTimeout(r, 1)); // Simulate network
+            await new Promise((r) => setTimeout(r, 1)); // Simulate network
             replicationLog.push({ store, immediate: true });
           }
           return { success: true, immediate: true };
@@ -196,7 +196,7 @@ describe('DataReplication', () => {
         'node-3': 0,
       };
 
-      const incrementVersion = nodeId => {
+      const incrementVersion = (nodeId) => {
         versionVector[nodeId]++;
         return { ...versionVector };
       };
@@ -251,7 +251,7 @@ describe('DataReplication', () => {
         { timestamp: 1500, data: 'middle' },
       ];
 
-      const lastWriteWins = conflicts => {
+      const lastWriteWins = (conflicts) => {
         return conflicts.reduce((latest, current) =>
           current.timestamp > latest.timestamp ? current : latest
         );
@@ -270,9 +270,9 @@ describe('DataReplication', () => {
         ],
       };
 
-      const customResolver = versions => {
+      const customResolver = (versions) => {
         // Merge by taking max count
-        const maxCount = Math.max(...versions.map(v => v.data.count));
+        const maxCount = Math.max(...versions.map((v) => v.data.count));
         return { count: maxCount };
       };
 
@@ -287,15 +287,15 @@ describe('DataReplication', () => {
         { id: 'c3', resolved: false },
       ];
 
-      const resolveConflict = conflictId => {
-        conflicts = conflicts.map(c => (c.id === conflictId ? { ...c, resolved: true } : c));
+      const resolveConflict = (conflictId) => {
+        conflicts = conflicts.map((c) => (c.id === conflictId ? { ...c, resolved: true } : c));
         return { success: true };
       };
 
       resolveConflict('c1');
       resolveConflict('c3');
 
-      const unresolvedCount = conflicts.filter(c => !c.resolved).length;
+      const unresolvedCount = conflicts.filter((c) => !c.resolved).length;
       expect(unresolvedCount).toBe(1);
     });
 
@@ -350,12 +350,12 @@ describe('DataReplication', () => {
       let pendingChanges = 0;
       const queue = [];
 
-      const addChange = change => {
+      const addChange = (change) => {
         queue.push(change);
         pendingChanges = queue.length;
       };
 
-      const processChanges = count => {
+      const processChanges = (count) => {
         queue.splice(0, count);
         pendingChanges = queue.length;
       };
@@ -444,7 +444,7 @@ describe('DataReplication', () => {
 
       const interval = setInterval(autoSync, syncInterval);
 
-      await new Promise(resolve => setTimeout(resolve, 120));
+      await new Promise((resolve) => setTimeout(resolve, 120));
       clearInterval(interval);
 
       expect(syncCount).toBeGreaterThanOrEqual(2);
@@ -488,7 +488,7 @@ describe('DataReplication', () => {
     it('should detect replication conflicts', async () => {
       const conflicts = [];
 
-      const replicate = async change => {
+      const replicate = async (change) => {
         const error = new Error('Conflict detected');
         error.code = 'REPLICATION_CONFLICT';
         error.details = { id: 'conflict-1', versions: [] };
@@ -514,9 +514,9 @@ describe('DataReplication', () => {
     it('should auto-resolve conflicts when resolver provided', async () => {
       const resolved = [];
 
-      const conflictResolver = versions => versions[0]; // Take first version
+      const conflictResolver = (versions) => versions[0]; // Take first version
 
-      const handleConflict = async conflict => {
+      const handleConflict = async (conflict) => {
         const resolution = conflictResolver(conflict.versions);
         resolved.push({ conflictId: conflict.id, resolution });
         return resolution;

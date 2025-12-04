@@ -32,7 +32,7 @@ export function useSandbox(config = {}) {
   const [error, setError] = useState(null);
 
   const executeSandboxed = useCallback(
-    async sparql => {
+    async (sparql) => {
       try {
         setLoading(true);
 
@@ -51,7 +51,7 @@ export function useSandbox(config = {}) {
         return result;
       } catch (err) {
         setError(err);
-        setViolations(prev => [
+        setViolations((prev) => [
           ...prev,
           {
             query: sparql,

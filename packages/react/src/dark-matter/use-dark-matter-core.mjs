@@ -85,7 +85,7 @@ export function useDarkMatterCore(config = {}) {
         const dmAnalyzer = new DarkMatterAnalyzer({
           engine,
           sampleSize: config.sampleSize || 1000,
-          onSample: sample => {
+          onSample: (sample) => {
             if (!mounted) return;
             samplesRef.current.push(sample);
           },
@@ -135,12 +135,12 @@ export function useDarkMatterCore(config = {}) {
 
         // Identify critical paths (20% that delivers 80%)
         const critical = result.operations
-          .filter(op => op.cumulativeValue <= 0.8)
+          .filter((op) => op.cumulativeValue <= 0.8)
           .sort((a, b) => b.value - a.value);
 
         // Identify dark matter (80% that delivers 20%)
         const dark = result.operations
-          .filter(op => op.cumulativeValue > 0.8)
+          .filter((op) => op.cumulativeValue > 0.8)
           .sort((a, b) => a.value - b.value);
 
         // Calculate Pareto score (how close to ideal 80/20)
@@ -155,10 +155,10 @@ export function useDarkMatterCore(config = {}) {
           valueDistribution: {
             critical: critical.reduce((sum, op) => sum + op.value, 0),
             important: result.operations
-              .filter(op => op.cumulativeValue > 0.5 && op.cumulativeValue <= 0.8)
+              .filter((op) => op.cumulativeValue > 0.5 && op.cumulativeValue <= 0.8)
               .reduce((sum, op) => sum + op.value, 0),
             standard: result.operations
-              .filter(op => op.cumulativeValue > 0.8 && op.cumulativeValue <= 0.95)
+              .filter((op) => op.cumulativeValue > 0.8 && op.cumulativeValue <= 0.95)
               .reduce((sum, op) => sum + op.value, 0),
             dark: dark.reduce((sum, op) => sum + op.value, 0),
           },
@@ -172,7 +172,7 @@ export function useDarkMatterCore(config = {}) {
         setOptimizationSuggestions(suggestions);
 
         // Notify critical paths
-        critical.forEach(path => {
+        critical.forEach((path) => {
           config.onCriticalPathFound?.({
             ...path,
             valuePercentage: Math.round(path.value * 100),
@@ -214,7 +214,7 @@ export function useDarkMatterCore(config = {}) {
     const suggestions = [];
 
     // Suggestion 1: Cache critical paths
-    critical.slice(0, 5).forEach(op => {
+    critical.slice(0, 5).forEach((op) => {
       suggestions.push({
         type: 'cache',
         priority: 'high',
@@ -226,7 +226,7 @@ export function useDarkMatterCore(config = {}) {
     });
 
     // Suggestion 2: Remove or lazy-load dark matter
-    dark.slice(0, 3).forEach(op => {
+    dark.slice(0, 3).forEach((op) => {
       if (op.value < 0.01) {
         // Less than 1% value
         suggestions.push({
@@ -241,8 +241,8 @@ export function useDarkMatterCore(config = {}) {
     });
 
     // Suggestion 3: Optimize query patterns
-    const slowCritical = critical.filter(op => op.executionTime > 100);
-    slowCritical.forEach(op => {
+    const slowCritical = critical.filter((op) => op.executionTime > 100);
+    slowCritical.forEach((op) => {
       suggestions.push({
         type: 'optimize',
         priority: 'critical',
@@ -261,9 +261,9 @@ export function useDarkMatterCore(config = {}) {
 
   // Get operations by value percentile
   const getOperationsByPercentile = useCallback(
-    percentile => {
+    (percentile) => {
       const threshold = percentile / 100;
-      return analysis.criticalPaths.filter(op => op.cumulativeValue <= threshold);
+      return analysis.criticalPaths.filter((op) => op.cumulativeValue <= threshold);
     },
     [analysis]
   );
@@ -271,21 +271,21 @@ export function useDarkMatterCore(config = {}) {
   // Get dark matter by removal priority
   const getDarkMatterByPriority = useCallback(() => {
     return darkMatter
-      .filter(op => op.value < 0.05) // Less than 5% value
+      .filter((op) => op.value < 0.05) // Less than 5% value
       .sort((a, b) => a.value - b.value);
   }, [darkMatter]);
 
   // Focus optimization on critical path
   const focusOnCritical = useCallback(
-    operationId => {
-      const operation = criticalPaths.find(op => op.id === operationId);
+    (operationId) => {
+      const operation = criticalPaths.find((op) => op.id === operationId);
       if (!operation) {
         throw new Error(`Operation ${operationId} not found in critical paths`);
       }
 
       return {
         operation,
-        suggestions: optimizationSuggestions.filter(s => s.operation === operationId),
+        suggestions: optimizationSuggestions.filter((s) => s.operation === operationId),
         valueImpact: Math.round(operation.value * 100),
         optimizationPriority: operation.cumulativeValue <= 0.2 ? 'critical' : 'high',
       };
@@ -298,7 +298,7 @@ export function useDarkMatterCore(config = {}) {
     const ops = [...criticalPaths, ...darkMatter].sort((a, b) => b.value - a.value);
 
     let cumulative = 0;
-    return ops.map(op => {
+    return ops.map((op) => {
       cumulative += op.value;
       return {
         id: op.id,

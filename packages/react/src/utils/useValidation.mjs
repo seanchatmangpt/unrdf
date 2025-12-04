@@ -13,7 +13,7 @@ export function useValidation(schema) {
   const [isValid, setIsValid] = useState(true);
 
   const validate = useCallback(
-    data => {
+    (data) => {
       try {
         schema.parse(data);
         setErrors([]);

@@ -19,7 +19,7 @@ describe('FederationHealth', () => {
     });
 
     it('should classify health by score', () => {
-      const classifyHealth = score => {
+      const classifyHealth = (score) => {
         if (score >= 80) return 'healthy';
         if (score >= 50) return 'degraded';
         return 'unhealthy';
@@ -36,7 +36,7 @@ describe('FederationHealth', () => {
       const healthHistory = [];
       let previousStatus = null;
 
-      const updateHealth = newHealth => {
+      const updateHealth = (newHealth) => {
         if (previousStatus !== newHealth.status) {
           healthHistory.push({
             from: previousStatus,
@@ -61,11 +61,11 @@ describe('FederationHealth', () => {
       const callbacks = [];
       let previousHealth = { status: 'healthy' };
 
-      const onUnhealthy = health => {
+      const onUnhealthy = (health) => {
         callbacks.push({ health, triggeredAt: Date.now() });
       };
 
-      const checkHealth = newHealth => {
+      const checkHealth = (newHealth) => {
         if (previousHealth.status === 'healthy' && newHealth.status !== 'healthy') {
           onUnhealthy(newHealth);
         }
@@ -83,9 +83,9 @@ describe('FederationHealth', () => {
 
   describe('Health Score Calculation', () => {
     it('should calculate score from store availability', () => {
-      const calculateStoreScore = stores => {
+      const calculateStoreScore = (stores) => {
         const total = stores.length;
-        const healthy = stores.filter(s => s.status === 'healthy').length;
+        const healthy = stores.filter((s) => s.status === 'healthy').length;
         return total > 0 ? (healthy / total) * 40 : 40; // 40 points max
       };
 
@@ -101,7 +101,7 @@ describe('FederationHealth', () => {
     });
 
     it('should penalize unhealthy consensus', () => {
-      const calculateConsensusScore = consensus => {
+      const calculateConsensusScore = (consensus) => {
         return consensus.healthy ? 30 : 0; // 30 points max
       };
 
@@ -110,7 +110,7 @@ describe('FederationHealth', () => {
     });
 
     it('should penalize high replication lag', () => {
-      const calculateLagScore = lag => {
+      const calculateLagScore = (lag) => {
         if (lag <= 100) return 20; // Full points
         if (lag <= 1000) return 20 - Math.floor(lag / 100);
         return 0;
@@ -122,7 +122,7 @@ describe('FederationHealth', () => {
     });
 
     it('should penalize conflicts', () => {
-      const calculateConflictScore = conflicts => {
+      const calculateConflictScore = (conflicts) => {
         return Math.max(0, 10 - conflicts); // 10 points max
       };
 
@@ -132,12 +132,12 @@ describe('FederationHealth', () => {
     });
 
     it('should combine all scores', () => {
-      const calculateHealthScore = healthData => {
+      const calculateHealthScore = (healthData) => {
         let score = 100;
 
         // Store availability (40 points)
         const storeCount = healthData.stores?.length || 0;
-        const healthyStores = healthData.stores?.filter(s => s.status === 'healthy').length || 0;
+        const healthyStores = healthData.stores?.filter((s) => s.status === 'healthy').length || 0;
         if (storeCount > 0) {
           score -= (1 - healthyStores / storeCount) * 40;
         }
@@ -182,7 +182,7 @@ describe('FederationHealth', () => {
     it('should track latency metrics', () => {
       const latencies = [50, 75, 100, 125, 200, 250, 300, 350, 400, 500];
 
-      const calculateMetrics = values => {
+      const calculateMetrics = (values) => {
         const sorted = [...values].sort((a, b) => a - b);
         const avg = values.reduce((a, b) => a + b, 0) / values.length;
         const p95Index = Math.floor(values.length * 0.95) - 1;
@@ -235,7 +235,7 @@ describe('FederationHealth', () => {
       };
 
       const getAverageAvailability = () => {
-        const uptimes = Object.values(availability.stores).map(s => s.uptime);
+        const uptimes = Object.values(availability.stores).map((s) => s.uptime);
         return uptimes.reduce((a, b) => a + b, 0) / uptimes.length;
       };
 
@@ -248,7 +248,7 @@ describe('FederationHealth', () => {
         history: [],
       };
 
-      const recordError = error => {
+      const recordError = (error) => {
         errors.count++;
         errors.history.push({
           message: error.message,
@@ -258,7 +258,7 @@ describe('FederationHealth', () => {
 
       const getErrorRate = (windowMs = 60000) => {
         const now = Date.now();
-        const recentErrors = errors.history.filter(e => now - e.timestamp < windowMs);
+        const recentErrors = errors.history.filter((e) => now - e.timestamp < windowMs);
         return recentErrors.length;
       };
 
@@ -278,8 +278,8 @@ describe('FederationHealth', () => {
         { id: 'store-3', status: 'degraded', latency: 500, connections: 2 },
       ];
 
-      const getStoreHealth = storeId => {
-        return stores.find(s => s.id === storeId);
+      const getStoreHealth = (storeId) => {
+        return stores.find((s) => s.id === storeId);
       };
 
       const store = getStoreHealth('store-3');
@@ -319,9 +319,9 @@ describe('FederationHealth', () => {
         { status: 'unhealthy' },
       ];
 
-      const aggregateStatus = stores => {
+      const aggregateStatus = (stores) => {
         const counts = { healthy: 0, degraded: 0, unhealthy: 0 };
-        stores.forEach(s => counts[s.status]++);
+        stores.forEach((s) => counts[s.status]++);
 
         if (counts.unhealthy > 0) return 'unhealthy';
         if (counts.degraded > 0) return 'degraded';
@@ -380,7 +380,7 @@ describe('FederationHealth', () => {
         conflicts: 0,
       };
 
-      const isReplicationHealthy = rep => {
+      const isReplicationHealthy = (rep) => {
         return rep.activeReplicas >= rep.factor && rep.lag < 1000 && rep.conflicts === 0;
       };
 
@@ -394,16 +394,16 @@ describe('FederationHealth', () => {
         { id: 'r3', offset: 850 },
       ];
 
-      const calculateLag = replicas => {
-        const maxOffset = Math.max(...replicas.map(r => r.offset));
-        return replicas.map(r => ({
+      const calculateLag = (replicas) => {
+        const maxOffset = Math.max(...replicas.map((r) => r.offset));
+        return replicas.map((r) => ({
           id: r.id,
           lag: maxOffset - r.offset,
         }));
       };
 
       const lags = calculateLag(replicas);
-      expect(lags.find(l => l.id === 'r3').lag).toBe(150);
+      expect(lags.find((l) => l.id === 'r3').lag).toBe(150);
     });
 
     it('should track conflict count', () => {
@@ -466,7 +466,7 @@ describe('FederationHealth', () => {
 
       const intervalId = setInterval(check, interval);
 
-      await new Promise(resolve => setTimeout(resolve, 150));
+      await new Promise((resolve) => setTimeout(resolve, 150));
       clearInterval(intervalId);
 
       expect(checkCount).toBeGreaterThanOrEqual(2);
@@ -482,7 +482,7 @@ describe('FederationHealth', () => {
       };
 
       const cleanup = () => {
-        intervals.forEach(id => clearInterval(id));
+        intervals.forEach((id) => clearInterval(id));
         intervals.length = 0;
       };
 
@@ -537,8 +537,8 @@ describe('FederationHealth', () => {
         },
       ];
 
-      const getIssues = checks => {
-        return checks.filter(c => c.status !== 'pass');
+      const getIssues = (checks) => {
+        return checks.filter((c) => c.status !== 'pass');
       };
 
       const issues = getIssues(healthChecks);

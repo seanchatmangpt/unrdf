@@ -50,8 +50,8 @@ export function useHookRegistry() {
    * Get hooks by type
    */
   const getByType = useCallback(
-    type => {
-      return hooks.filter(hook => hook.meta?.type === type || hook.when?.event?.includes(type));
+    (type) => {
+      return hooks.filter((hook) => hook.meta?.type === type || hook.when?.event?.includes(type));
     },
     [hooks]
   );
@@ -60,8 +60,10 @@ export function useHookRegistry() {
    * Get hooks by event
    */
   const getByEvent = useCallback(
-    event => {
-      return hooks.filter(hook => hook.when?.event === event || hook.when?.event?.includes(event));
+    (event) => {
+      return hooks.filter(
+        (hook) => hook.when?.event === event || hook.when?.event?.includes(event)
+      );
     },
     [hooks]
   );
@@ -70,10 +72,10 @@ export function useHookRegistry() {
    * Search hooks by name or description
    */
   const search = useCallback(
-    query => {
+    (query) => {
       const lowerQuery = query.toLowerCase();
       return hooks.filter(
-        hook =>
+        (hook) =>
           hook.meta?.name?.toLowerCase().includes(lowerQuery) ||
           hook.meta?.description?.toLowerCase().includes(lowerQuery)
       );
@@ -85,8 +87,8 @@ export function useHookRegistry() {
    * Get hook by exact name
    */
   const getByName = useCallback(
-    name => {
-      return hooks.find(hook => hook.meta?.name === name);
+    (name) => {
+      return hooks.find((hook) => hook.meta?.name === name);
     },
     [hooks]
   );
@@ -95,8 +97,8 @@ export function useHookRegistry() {
    * Get hooks by author
    */
   const getByAuthor = useCallback(
-    author => {
-      return hooks.filter(hook => hook.meta?.author === author);
+    (author) => {
+      return hooks.filter((hook) => hook.meta?.author === author);
     },
     [hooks]
   );
@@ -105,8 +107,8 @@ export function useHookRegistry() {
    * Get hooks by version
    */
   const getByVersion = useCallback(
-    version => {
-      return hooks.filter(hook => hook.meta?.version === version);
+    (version) => {
+      return hooks.filter((hook) => hook.meta?.version === version);
     },
     [hooks]
   );

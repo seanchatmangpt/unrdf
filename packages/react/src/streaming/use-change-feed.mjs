@@ -111,7 +111,7 @@ export function useChangeFeed(config = {}) {
           filter: validatedConfig.filter,
           operations: validatedConfig.operations,
           includeMetadata: validatedConfig.includeMetadata,
-          onBatchReady: batch => {
+          onBatchReady: (batch) => {
             if (!mounted) return;
 
             // Add to changes
@@ -119,10 +119,10 @@ export function useChangeFeed(config = {}) {
             setChanges([...changesRef.current]);
 
             // Update stats
-            setStats(prev => ({
+            setStats((prev) => ({
               totalChanges: prev.totalChanges + batch.length,
-              inserts: prev.inserts + batch.filter(c => c.operation === 'insert').length,
-              deletes: prev.deletes + batch.filter(c => c.operation === 'delete').length,
+              inserts: prev.inserts + batch.filter((c) => c.operation === 'insert').length,
+              deletes: prev.deletes + batch.filter((c) => c.operation === 'delete').length,
               filtered: prev.filtered,
             }));
           },
@@ -202,24 +202,24 @@ export function useChangeFeed(config = {}) {
 
   // Get changes by operation
   const getChangesByOperation = useCallback(
-    operation => {
-      return changes.filter(c => c.operation === operation);
+    (operation) => {
+      return changes.filter((c) => c.operation === operation);
     },
     [changes]
   );
 
   // Get changes by predicate
   const getChangesByPredicate = useCallback(
-    predicate => {
-      return changes.filter(c => c.quads.some(q => q.predicate.value === predicate));
+    (predicate) => {
+      return changes.filter((c) => c.quads.some((q) => q.predicate.value === predicate));
     },
     [changes]
   );
 
   // Get changes by subject
   const getChangesBySubject = useCallback(
-    subject => {
-      return changes.filter(c => c.quads.some(q => q.subject.value === subject));
+    (subject) => {
+      return changes.filter((c) => c.quads.some((q) => q.subject.value === subject));
     },
     [changes]
   );

@@ -90,7 +90,7 @@ export function useDataReplication(config = {}) {
       return;
     }
 
-    setSyncStatus(prev => ({ ...prev, inProgress: true }));
+    setSyncStatus((prev) => ({ ...prev, inProgress: true }));
 
     const batch = syncQueueRef.current.splice(0, 10); // Process 10 at a time
 
@@ -101,19 +101,19 @@ export function useDataReplication(config = {}) {
           replicationFactor: config.replicationFactor || 2,
         });
 
-        setReplicationStats(prev => ({
+        setReplicationStats((prev) => ({
           ...prev,
           successCount: prev.successCount + 1,
         }));
       } catch (err) {
-        setReplicationStats(prev => ({
+        setReplicationStats((prev) => ({
           ...prev,
           failureCount: prev.failureCount + 1,
         }));
 
         // Check for conflicts
         if (err.code === 'REPLICATION_CONFLICT') {
-          setConflicts(prev => [
+          setConflicts((prev) => [
             ...prev,
             {
               change,
@@ -122,7 +122,7 @@ export function useDataReplication(config = {}) {
             },
           ]);
 
-          setReplicationStats(prev => ({
+          setReplicationStats((prev) => ({
             ...prev,
             conflictCount: prev.conflictCount + 1,
           }));
@@ -130,7 +130,7 @@ export function useDataReplication(config = {}) {
       }
     }
 
-    setSyncStatus(prev => ({
+    setSyncStatus((prev) => ({
       ...prev,
       inProgress: false,
       lastSync: new Date().toISOString(),
@@ -151,12 +151,12 @@ export function useDataReplication(config = {}) {
         // Add to queue if auto-sync enabled
         if (config.autoSync) {
           syncQueueRef.current.push(change);
-          setSyncStatus(prev => ({
+          setSyncStatus((prev) => ({
             ...prev,
             pendingChanges: syncQueueRef.current.length,
           }));
 
-          setReplicationStats(prev => ({
+          setReplicationStats((prev) => ({
             ...prev,
             totalReplications: prev.totalReplications + 1,
           }));
@@ -172,7 +172,7 @@ export function useDataReplication(config = {}) {
           timeout: options.timeout || 10000,
         });
 
-        setReplicationStats(prev => ({
+        setReplicationStats((prev) => ({
           ...prev,
           totalReplications: prev.totalReplications + 1,
           successCount: prev.successCount + 1,
@@ -192,8 +192,8 @@ export function useDataReplication(config = {}) {
             timestamp: new Date().toISOString(),
           };
 
-          setConflicts(prev => [...prev, conflict]);
-          setReplicationStats(prev => ({
+          setConflicts((prev) => [...prev, conflict]);
+          setReplicationStats((prev) => ({
             ...prev,
             conflictCount: prev.conflictCount + 1,
           }));
@@ -213,7 +213,7 @@ export function useDataReplication(config = {}) {
   // Resolve conflict
   const resolveConflict = useCallback(
     async (conflictId, resolver) => {
-      const conflict = conflicts.find(c => c.conflict.id === conflictId);
+      const conflict = conflicts.find((c) => c.conflict.id === conflictId);
       if (!conflict) {
         throw new Error(`Conflict ${conflictId} not found`);
       }
@@ -231,7 +231,7 @@ export function useDataReplication(config = {}) {
         });
 
         // Remove from conflicts
-        setConflicts(prev => prev.filter(c => c.conflict.id !== conflictId));
+        setConflicts((prev) => prev.filter((c) => c.conflict.id !== conflictId));
 
         return { success: true, resolution };
       } catch (err) {

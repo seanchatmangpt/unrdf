@@ -116,9 +116,9 @@ export function useQInvariants(shards = [], config = {}) {
   const checkNovelty = useCallback(() => {
     const issues = [];
 
-    const claim = shards.find(s => s.type === 'Claim');
-    const gap = shards.find(s => s.type === 'Gap');
-    const design = shards.find(s => s.type === 'Design');
+    const claim = shards.find((s) => s.type === 'Claim');
+    const gap = shards.find((s) => s.type === 'Gap');
+    const design = shards.find((s) => s.type === 'Design');
 
     if (!claim) {
       issues.push({ issue: 'Missing explicit claim. How is this novel?' });
@@ -130,14 +130,14 @@ export function useQInvariants(shards = [], config = {}) {
       });
     }
 
-    if (!design && !shards.find(s => s.type === 'Artifact')) {
+    if (!design && !shards.find((s) => s.type === 'Artifact')) {
       issues.push({
         issue: 'No new design or artifact. What is novel about this work?',
       });
     }
 
     // Check for sufficient differentiation language
-    const canon = shards.find(s => s.type === 'Canon');
+    const canon = shards.find((s) => s.type === 'Canon');
     if (canon) {
       const differentiation = /unlike|novel|new|advance|extend|improve|beyond/i;
       if (!differentiation.test(canon.content || '')) {
@@ -210,7 +210,7 @@ export function useQInvariants(shards = [], config = {}) {
     const issues = [];
 
     // Check if intro has RQ
-    const intro = shards.find(s => s.type === 'Intro');
+    const intro = shards.find((s) => s.type === 'Intro');
     const rqFound = intro && /question|objective|research|purpose|aim/i.test(intro.content || '');
 
     if (!rqFound) {
@@ -220,7 +220,7 @@ export function useQInvariants(shards = [], config = {}) {
     }
 
     // Check if conclusion answers RQ
-    const conclusion = shards.find(s => s.type === 'Conclusion');
+    const conclusion = shards.find((s) => s.type === 'Conclusion');
     const answerFound =
       conclusion && /answer|address|address|resolve|conclude/i.test(conclusion.content || '');
 
@@ -231,7 +231,7 @@ export function useQInvariants(shards = [], config = {}) {
     }
 
     // Check for results section
-    if (!shards.find(s => s.type === 'Result')) {
+    if (!shards.find((s) => s.type === 'Result')) {
       issues.push({ issue: 'No results section. How are findings presented?' });
     }
 
@@ -256,7 +256,7 @@ export function useQInvariants(shards = [], config = {}) {
     };
 
     for (const [type, expectedProp] of Object.entries(expectedProportions)) {
-      const shard = shards.find(s => s.type === type);
+      const shard = shards.find((s) => s.type === type);
       if (!shard) continue;
 
       const actualProp = shard.wordCount / totalWords;
@@ -286,7 +286,7 @@ export function useQInvariants(shards = [], config = {}) {
 
     // Check for glossary of terms
     const hasGlossary = shards.some(
-      s => s.type === 'Intro' && /defined as|means|refers to/i.test(s.content || '')
+      (s) => s.type === 'Intro' && /defined as|means|refers to/i.test(s.content || '')
     );
 
     if (!hasGlossary) {
@@ -296,7 +296,7 @@ export function useQInvariants(shards = [], config = {}) {
     }
 
     // Check for examples or illustrations
-    const hasExamples = shards.some(s =>
+    const hasExamples = shards.some((s) =>
       /example|figure|table|illustration/i.test(s.content || '')
     );
 
@@ -307,7 +307,7 @@ export function useQInvariants(shards = [], config = {}) {
     }
 
     // Check for summary/recap sections
-    const hasRecaps = shards.some(s =>
+    const hasRecaps = shards.some((s) =>
       /summary|recap|in brief|to summarize/i.test(s.content || '')
     );
 

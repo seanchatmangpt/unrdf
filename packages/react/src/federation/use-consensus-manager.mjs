@@ -76,7 +76,7 @@ export function useConsensusManager(config = {}) {
         const consensusManager = new ConsensusManager({
           ...config,
           engine,
-          onStateChange: newState => {
+          onStateChange: (newState) => {
             if (!mounted) return;
             setState(newState.role);
             setLeader(newState.leader);
@@ -86,9 +86,9 @@ export function useConsensusManager(config = {}) {
             if (!mounted) return;
             setCommitIndex(index);
           },
-          onLogAppend: entry => {
+          onLogAppend: (entry) => {
             if (!mounted) return;
-            setLog(prev => [...prev, entry]);
+            setLog((prev) => [...prev, entry]);
           },
         });
 

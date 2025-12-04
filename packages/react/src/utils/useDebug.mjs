@@ -16,7 +16,7 @@ export function useDebug(componentName, props) {
     renderCount.current += 1;
     console.log(`[${componentName}] Render #${renderCount.current}`);
 
-    const changed = Object.keys(props).filter(key => props[key] !== prevProps.current[key]);
+    const changed = Object.keys(props).filter((key) => props[key] !== prevProps.current[key]);
 
     if (changed.length > 0) {
       console.log(`[${componentName}] Changed props:`, changed);
