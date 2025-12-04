@@ -11,7 +11,7 @@
  */
 
 import { createStore } from '@unrdf/core';
-import { DataFactory } from 'n3';
+import { dataFactory } from '@unrdf/oxigraph';
 import {
   asNamedNode,
   asLiteral,
@@ -20,7 +20,7 @@ import {
 } from './term-utils.mjs';
 import { quadToJSON as _quadToJSON, jsonToQuad as _jsonToQuad } from './quad-utils.mjs';
 
-const { _namedNode, _literal, _blankNode, quad, _defaultGraph } = DataFactory;
+const { _namedNode, _literal, _blankNode, quad, _defaultGraph } = dataFactory;
 
 /**
  * Transform a store to a different structure

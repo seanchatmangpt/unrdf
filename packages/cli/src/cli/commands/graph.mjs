@@ -13,7 +13,6 @@ import { z } from 'zod';
 import { readFile, writeFile, unlink, mkdir } from 'node:fs/promises';
 import path from 'node:path';
 import { OxigraphStore, dataFactory } from '@unrdf/oxigraph';
-import { Writer } from 'n3';
 
 /**
  * Validation schema for graph commands
@@ -75,9 +74,14 @@ export async function loadGraph(filePath, format) {
     const actualFormat = format || detectFormat(filePath);
     const oxFormat = toOxigraphFormat(actualFormat);
 
-    // Create Oxigraph store and load RDF
+    // Create Oxigraph store
     const store = new OxigraphStore();
-    store.load(content, { format: oxFormat });
+
+    // Only load if content is non-empty (handle empty graphs)
+    if (content.trim().length > 0) {
+      store.load(content, { format: oxFormat });
+    }
+
     return store;
   } catch (error) {
     throw new Error(`Parse error: ${error.message}`);
@@ -96,21 +100,12 @@ export async function saveGraph(store, filePath, format) {
     const actualFormat = format || detectFormat(filePath);
     const oxFormat = toOxigraphFormat(actualFormat);
 
-    // Use Oxigraph dump or N3 Writer as fallback
+    // Hybrid serialization adapter: N3.Writer for triple formats, Oxigraph for quad formats
     let serialized;
-    if (store instanceof OxigraphStore) {
-      // For triple formats (Turtle, N-Triples), dump from default graph only
-      const isTripleFormat = ['text/turtle', 'application/n-triples', 'text/n3'].includes(oxFormat);
-      const dumpOptions = { format: oxFormat };
+    const isTripleFormat = ['text/turtle', 'application/n-triples', 'text/n3'].includes(oxFormat);
 
-      if (isTripleFormat) {
-        // Use default graph for triple formats
-        dumpOptions.from_named_graph = dataFactory.defaultGraph();
-      }
-
-      serialized = store.dump(dumpOptions);
-    } else {
-      // Fallback to N3 Writer for compatibility
+    if (isTripleFormat) {
+      // Use N3.Writer for triple formats (Turtle, N-Triples, N3)
       const writer = new Writer({ format: actualFormat });
       const quads = store.getQuads ? store.getQuads() : store.match();
       quads.forEach(q => writer.addQuad(q));
@@ -120,6 +115,9 @@ export async function saveGraph(store, filePath, format) {
           else resolve(result);
         });
       });
+    } else {
+      // Use Oxigraph dump for quad formats (N-Quads, TriG)
+      serialized = store.dump({ format: oxFormat });
     }
 
     await writeFile(filePath, serialized, 'utf8');

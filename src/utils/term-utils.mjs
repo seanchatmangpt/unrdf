@@ -1,6 +1,6 @@
-import { DataFactory } from 'n3';
+import { dataFactory } from '@unrdf/oxigraph';
 
-const { namedNode, literal, blankNode } = DataFactory;
+const { namedNode, literal, blankNode } = dataFactory;
 
 /**
  * Ensure any input is a NamedNode
