@@ -1,0 +1,22 @@
+{
+  "name": "@unrdf/example-rdf-parsing",
+  "version": "1.0.0",
+  "description": "RDF format parsing examples with UNRDF",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "start": "node src/index.mjs",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
+  },
+  "dependencies": {
+    "@unrdf/core": "workspace:*",
+    "n3": "^1.21.3",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@vitest/coverage-v8": "^2.1.9",
+    "vitest": "^2.1.8"
+  }
+}

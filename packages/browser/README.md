@@ -10,6 +10,17 @@ RDF operations in the browser. Persistent storage with IndexedDB, SPARQL executi
 pnpm add @unrdf/browser
 ```
 
+## 📚 Examples
+
+See these examples that demonstrate @unrdf/browser:
+
+- **[browser/indexeddb-store.html](../../examples/browser/indexeddb-store.html)** - IndexedDB persistent storage
+- **[browser-react.jsx](../../examples/browser-react.jsx)** - React integration with UNRDF
+- **[browser-vue.vue](../../examples/browser-vue.vue)** - Vue 3 integration with Composition API
+- **[browser-vanilla.html](../../examples/browser-vanilla.html)** - Vanilla JavaScript usage
+
+**Building a web app?** Start with [browser/indexeddb-store.html](../../examples/browser/indexeddb-store.html).
+
 ## Quick Start
 
 ```javascript

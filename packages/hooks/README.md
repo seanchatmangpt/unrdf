@@ -10,6 +10,18 @@ The policy enforcement layer for UNRDF. Define and execute hooks to enforce rule
 pnpm add @unrdf/hooks
 ```
 
+## 📚 Examples
+
+See these examples that demonstrate @unrdf/hooks:
+
+- **[basic-knowledge-hook.mjs](../../examples/basic-knowledge-hook.mjs)** - Hook basics: validation and transformation (15 min)
+- **[define-hook-example.mjs](../../examples/define-hook-example.mjs)** - Advanced hook composition patterns (20 min)
+- **[production-hook-test.mjs](../../examples/production-hook-test.mjs)** - Production-ready hook testing
+- **[hook-lifecycle-test.mjs](../../examples/hook-lifecycle-test.mjs)** - Complete hook lifecycle
+- **[knowledge-hooks-events.mjs](../../examples/knowledge-hooks-events.mjs)** - Event-driven hooks
+
+**Want to learn hooks?** Follow the [hooks learning path](../../examples/README.md#-knowledge-hooks).
+
 ## Quick Start
 
 ```javascript

@@ -1,0 +1,20 @@
+{
+  "name": "@unrdf/dark-matter-example-query-optimization",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Query optimization example using @unrdf/dark-matter",
+  "scripts": {
+    "start": "node src/index.mjs",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
+  },
+  "dependencies": {
+    "@unrdf/core": "workspace:*",
+    "@unrdf/dark-matter": "workspace:*",
+    "n3": "^1.22.3"
+  },
+  "devDependencies": {
+    "vitest": "^2.1.8"
+  }
+}

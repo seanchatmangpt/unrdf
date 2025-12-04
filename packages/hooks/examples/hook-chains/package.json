@@ -1,0 +1,25 @@
+{
+  "name": "@unrdf/hooks-example-chains",
+  "version": "5.0.0",
+  "type": "module",
+  "description": "Hook Chains Example - Sequential hook execution and composition",
+  "private": true,
+  "scripts": {
+    "start": "node src/index.mjs",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
+  },
+  "dependencies": {
+    "@unrdf/core": "workspace:*",
+    "@unrdf/hooks": "workspace:*",
+    "n3": "^1.22.3",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "vitest": "^2.1.8"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

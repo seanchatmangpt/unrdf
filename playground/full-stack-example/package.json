@@ -1,0 +1,34 @@
+{
+  "name": "unrdf-full-stack-example",
+  "version": "1.0.0",
+  "description": "Full-stack Knowledge Graph Browser demonstrating all UNRDF packages",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "pnpm -r --parallel dev",
+    "dev:server": "pnpm -C apps/server dev",
+    "dev:web": "pnpm -C apps/web dev",
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "start": "pnpm -r --parallel start",
+    "clean": "pnpm -r clean && rm -rf node_modules"
+  },
+  "keywords": [
+    "unrdf",
+    "rdf",
+    "knowledge-graph",
+    "full-stack",
+    "example"
+  ],
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "vitest": "^1.0.0"
+  }
+}

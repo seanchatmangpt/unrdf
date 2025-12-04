@@ -10,6 +10,16 @@ Stream RDF changes in real-time. Subscribe to changes, process deltas, and maint
 pnpm add @unrdf/streaming
 ```
 
+## 📚 Examples
+
+See these examples that demonstrate @unrdf/streaming:
+
+- **[streaming/basic-stream.mjs](../../examples/streaming/basic-stream.mjs)** - Real-time change feeds basics
+- **[streaming/advanced-filters.mjs](../../examples/streaming/advanced-filters.mjs)** - Stream filtering and transformation
+- **[comprehensive-feature-test.mjs](../../examples/comprehensive-feature-test.mjs)** - Streaming integration
+
+**Need real-time updates?** Start with [streaming/basic-stream.mjs](../../examples/streaming/basic-stream.mjs).
+
 ## Quick Start
 
 ```javascript
