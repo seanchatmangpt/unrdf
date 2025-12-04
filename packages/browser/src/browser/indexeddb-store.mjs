@@ -325,3 +325,140 @@ export async function clearIndexedDBStore(store) {
     request.onerror = () => reject(new Error(`Failed to clear store: ${request.error}`));
   });
 }
+
+/**
+ * IndexedDBStore Class
+ *
+ * Class-based wrapper around IndexedDB store functions.
+ * Provides an object-oriented interface for browser examples.
+ *
+ * @class
+ * @example
+ * const store = new IndexedDBStore({ name: 'myapp', storeName: 'quads' });
+ * await store.open();
+ * await store.add(quad);
+ */
+export class IndexedDBStore {
+  /**
+   * Create IndexedDB store instance
+   *
+   * @param {Object} config - Store configuration
+   * @param {string} config.name - Database name
+   * @param {string} [config.storeName='quads'] - Object store name
+   * @param {number} [config.version] - Database version (unused, for compatibility)
+   */
+  constructor(config) {
+    const { name, storeName = 'quads' } = config;
+    this._store = createIndexedDBStore(name, storeName);
+  }
+
+  /**
+   * Open IndexedDB connection
+   *
+   * @returns {Promise<void>}
+   *
+   * @example
+   * await store.open();
+   */
+  async open() {
+    this._store = await openIndexedDBStore(this._store);
+  }
+
+  /**
+   * Close IndexedDB connection
+   *
+   * @returns {Promise<void>}
+   *
+   * @example
+   * await store.close();
+   */
+  async close() {
+    closeIndexedDBStore(this._store);
+  }
+
+  /**
+   * Add quad to store
+   *
+   * @param {Object} quad - RDF quad to add
+   * @returns {Promise<void>}
+   *
+   * @example
+   * await store.add(quad(':alice', 'foaf:name', '"Alice"'));
+   */
+  async add(quad) {
+    return addQuadToDB(this._store, quad);
+  }
+
+  /**
+   * Remove quad from store
+   *
+   * @param {Object} quad - RDF quad to remove
+   * @returns {Promise<void>}
+   *
+   * @example
+   * await store.remove(quad);
+   */
+  async remove(quad) {
+    return removeQuadFromDB(this._store, quad);
+  }
+
+  /**
+   * Query quads matching pattern
+   *
+   * @param {Object} [subject] - Subject filter
+   * @param {Object} [predicate] - Predicate filter
+   * @param {Object} [object] - Object filter
+   * @param {Object} [graph] - Graph filter
+   * @returns {Promise<Array<Object>>} Matching quads
+   *
+   * @example
+   * const quads = await store.match(null, namedNode('foaf:name'), null);
+   */
+  async match(subject, predicate, object, graph) {
+    const filter = {};
+    if (subject) filter.subject = subject.value;
+    if (predicate) filter.predicate = predicate.value;
+    if (object) filter.object = object.value;
+    if (graph) filter.graph = graph.value;
+    return getQuadsFromDB(this._store, filter);
+  }
+
+  /**
+   * Clear all quads from store
+   *
+   * @returns {Promise<void>}
+   *
+   * @example
+   * await store.clear();
+   */
+  async clear() {
+    return clearIndexedDBStore(this._store);
+  }
+
+  /**
+   * Get number of quads in store
+   *
+   * @returns {Promise<number>} Quad count
+   *
+   * @example
+   * const count = await store.size();
+   */
+  async size() {
+    if (!this._store.isOpen) {
+      throw new Error('Store is not open');
+    }
+    return this._store.memoryStore.size;
+  }
+
+  /**
+   * Check if store is open
+   *
+   * @returns {boolean} True if open
+   *
+   * @example
+   * if (store.isOpen()) { ... }
+   */
+  isOpen() {
+    return this._store.isOpen;
+  }
+}

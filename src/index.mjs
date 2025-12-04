@@ -2,8 +2,8 @@
  * @fileoverview unrdf - Opinionated composable framework for RDF knowledge operations
  *
  * unrdf is the opinionated RDF framework for JavaScript. It makes the RDF universe
- * accessible through a single composable surface — powered by N3.js, Comunica,
- * SHACL, and Zod.
+ * accessible through a single composable surface — powered by N3.js, high-performance
+ * SPARQL engine, SHACL, and Zod.
  *
  * No TypeScript. Ever. TypeScript is an illusion of safety that collapses at runtime.
  * unrdf guarantees correctness at the only level that matters: execution.

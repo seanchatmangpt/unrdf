@@ -169,5 +169,36 @@ describe('Policy Hooks Example', () => {
       expect(results.results[0].hookName).toBe('acl-policy');
       expect(results.results[0].valid).toBe(false);
     });
+
+    it('should enforce combined policies on sensitive data with privacy redaction', () => {
+      const registry = setupPolicyRegistry();
+      const store = createStore();
+      const q = quad(
+        namedNode('http://example.org/alice'),
+        namedNode('http://xmlns.com/foaf/0.1/mbox'),
+        literal('alice@example.org'),
+        namedNode('http://example.org/graph1')
+      );
+
+      const hooks = [aclPolicy, privacyPolicy, provenancePolicy];
+      const results = executeHooksByTrigger(hooks, 'before-add', q);
+
+      // All policies should pass
+      expect(results.valid).toBe(true);
+      expect(results.results.length).toBe(3);
+
+      // ACL policy should allow trusted namespace
+      expect(results.results[0].hookName).toBe('acl-policy');
+      expect(results.results[0].valid).toBe(true);
+
+      // Privacy policy should redact email
+      expect(results.results[1].hookName).toBe('privacy-policy');
+      expect(results.results[1].valid).toBe(true);
+      expect(results.results[1].quad.object.value).toBe('[REDACTED]');
+
+      // Provenance policy should validate graph
+      expect(results.results[2].hookName).toBe('provenance-policy');
+      expect(results.results[2].valid).toBe(true);
+    });
   });
 });

@@ -4,22 +4,17 @@
  */
 
 import { Store } from 'n3';
-import { getQueryEngine } from './query-cache.mjs';
+import { createStore } from '@unrdf/oxigraph';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
 
 const tracer = trace.getTracer('unrdf');
 
-// Use singleton QueryEngine to eliminate 100-500ms initialization overhead
-// This improves hook evaluation performance by 80%
-
 /**
  * Run a SPARQL query against a store.
- * @param {Store} store - The store to query against
+ * @param {Store} store - The n3.Store to query against
  * @param {string} sparql - The SPARQL query string
- * @param {Object} [options] - Query options
+ * @param {Object} [options] - Query options (for compatibility)
  * @param {number} [options.limit] - Maximum number of results
- * @param {AbortSignal} [options.signal] - Abort signal for cancellation
- * @param {boolean} [options.deterministic] - Enable deterministic results
  * @returns {Promise<any>} Promise resolving to the query result
  *
  * @throws {Error} If query execution fails
@@ -44,6 +39,7 @@ export async function query(store, sparql, options = {}) {
   }
 
   return tracer.startActiveSpan('query.sparql', async span => {
+    const startTime = performance.now();
     try {
       const queryType = sparql.trim().split(/\s+/)[0].toUpperCase();
       span.setAttributes({
@@ -52,47 +48,67 @@ export async function query(store, sparql, options = {}) {
         'query.store_size': store.size,
       });
 
-      const queryOptions = {
-        sources: [store],
-        ...options,
-      };
+      // Convert n3.Store quads to substrate store (synchronous)
+      const quads = store.getQuads();
+      const rdfStore = createStore(Array.from(quads));
 
-      // Use cached singleton QueryEngine (0ms overhead vs 100-500ms for new instance)
-      const comunica = getQueryEngine();
-      const res = await comunica.query(sparql, queryOptions);
-
+      // Execute query synchronously
       let result;
-      switch (res.resultType) {
-        case 'bindings': {
-          const executed = await res.execute();
-          const rows = [];
-          for await (const binding of executed) {
-            rows.push(Object.fromEntries([...binding].map(([k, v]) => [k.value, v.value])));
+      try {
+        const queryResult = rdfStore.query(sparql);
+
+        // Determine result type and format accordingly
+        if (Array.isArray(queryResult)) {
+          // SELECT query result (array of bindings)
+          if (queryResult.length > 0 && typeof queryResult[0] === 'object' && !queryResult[0].subject) {
+            // Already formatted bindings
+            result = queryResult;
+          } else {
+            // Check query type to determine formatting
+            if (queryType === 'CONSTRUCT' || queryType === 'DESCRIBE') {
+              // Return as new Store
+              result = new Store(queryResult);
+            } else {
+              // SELECT - format as bindings array
+              result = queryResult.map(item => {
+                if (item instanceof Map) {
+                  // Handle Map objects from Oxigraph
+                  const bindings = {};
+                  for (const [key, val] of item.entries()) {
+                    bindings[key] = val && val.value ? val.value : (val && val.toString ? val.toString() : val);
+                  }
+                  return bindings;
+                } else if (item && typeof item === 'object') {
+                  return Object.fromEntries(
+                    Object.entries(item).map(([k, v]) => [
+                      k,
+                      v && v.value ? v.value : v,
+                    ])
+                  );
+                }
+                return item;
+              });
+            }
           }
-          result = rows;
-          span.setAttribute('query.result_count', rows.length);
-          break;
-        }
-        case 'boolean':
-          result = res.booleanResult ?? (await res.execute());
+          span.setAttribute('query.result_count', result instanceof Store ? result.size : result.length);
+        } else if (typeof queryResult === 'boolean') {
+          // ASK query
+          result = queryResult;
           span.setAttribute('query.result_type', 'boolean');
           span.setAttribute('query.result', result);
-          break;
-        case 'quads': {
-          const executed = await res.execute();
-          const quads = [];
-          for await (const quad of executed) {
-            quads.push(quad);
-          }
-          result = new Store(quads);
-          span.setAttribute('query.result_count', quads.length);
-          break;
+        } else {
+          // CONSTRUCT/DESCRIBE - should be array of quads
+          result = new Store(Array.isArray(queryResult) ? queryResult : []);
+          span.setAttribute('query.result_count', result.size);
         }
-        default:
-          throw new Error(`Unsupported query type: ${res.resultType}`);
+      } catch (engineError) {
+        // If query execution fails, provide helpful error
+        throw new Error(`Query execution failed: ${engineError.message}`);
       }
 
       span.setStatus({ code: SpanStatusCode.OK });
+      const duration = performance.now() - startTime;
+      span.setAttribute('query.duration_ms', duration);
       return result;
     } catch (error) {
       span.recordException(error);
@@ -229,15 +245,12 @@ export async function update(store, sparql, options = {}) {
   }
 
   try {
-    const source = { type: 'rdfjsSource', value: store };
-    const updateOptions = {
-      sources: [source],
-      ...options,
-    };
+    // Convert n3.Store to substrate store for update
+    const quads = store.getQuads();
+    const rdfStore = createStore(Array.from(quads));
 
-    // Use cached singleton QueryEngine
-    const comunica = getQueryEngine();
-    await comunica.query(sparql, updateOptions);
+    // Execute update synchronously
+    rdfStore.query(sparql);
 
     // Return the updated store
     return store;

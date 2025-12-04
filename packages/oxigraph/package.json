@@ -1,16 +1,17 @@
 {
-  "name": "@unrdf/knowledge-engine",
-  "version": "2.0.0-alpha.0",
-  "description": "UNRDF Knowledge Engine - Rule Engine, Inference, and Pattern Matching (Optional Extension)",
+  "name": "@unrdf/oxigraph",
+  "version": "5.0.0-alpha.0",
+  "description": "UNRDF Oxigraph - Graph database benchmarking implementation using Oxigraph SPARQL engine",
   "type": "module",
   "main": "src/index.mjs",
   "exports": {
-    ".": "./src/index.mjs"
+    ".": "./src/index.mjs",
+    "./store": "./src/store.mjs",
+    "./types": "./src/types.mjs"
   },
   "sideEffects": false,
   "files": [
     "src/",
-    "dist/",
     "README.md",
     "LICENSE"
   ],
@@ -18,28 +19,29 @@
     "test": "vitest run --coverage",
     "test:fast": "vitest run --coverage",
     "test:watch": "vitest --coverage",
-    "build": "node build.config.mjs",
+    "test:bench": "vitest run test/benchmark.test.mjs",
     "lint": "eslint src/ test/ --max-warnings=0",
     "lint:fix": "eslint src/ test/ --fix",
     "format": "prettier --write src/ test/",
     "format:check": "prettier --check src/ test/",
     "clean": "rm -rf dist/ .nyc_output/ coverage/",
-    "dev": "echo 'Development mode for @unrdf/knowledge-engine'"
+    "dev": "echo 'Development mode for @unrdf/oxigraph'"
   },
   "keywords": [
     "rdf",
-    "knowledge-engine",
-    "inference",
-    "reasoning",
-    "rules"
+    "sparql",
+    "graph-database",
+    "oxigraph",
+    "knowledge-graph",
+    "benchmark"
   ],
   "dependencies": {
-    "@unrdf/core": "workspace:*",
-    "@unrdf/streaming": "workspace:*",
-    "eyereasoner": "^1.0.0"
+    "oxigraph": "^0.5.2",
+    "zod": "^3.22.0"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
+    "@unrdf/core": "workspace:*",
     "vitest": "^1.0.0"
   },
   "engines": {
@@ -48,7 +50,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/unrdf/unrdf.git",
-    "directory": "packages/knowledge-engine"
+    "directory": "packages/oxigraph"
   },
   "bugs": {
     "url": "https://github.com/unrdf/unrdf/issues"

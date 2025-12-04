@@ -5,7 +5,7 @@
  */
 
 import { Parser, Store, Writer, DataFactory } from 'n3';
-import { QueryEngine } from '@comunica/query-sparql';
+import { createStore as createOxigraphStore } from '@unrdf/oxigraph';
 import rdf from 'rdf-ext';
 import SHACLValidator from 'rdf-validate-shacl';
 import rdfCanonize from 'rdf-canonize';
@@ -25,7 +25,6 @@ export class RdfEngine {
    */
   constructor(options = {}) {
     this.baseIRI = options.baseIRI || 'http://example.org/';
-    this.comunicaEngine = new QueryEngine();
     this.store = new Store();
   }
 
@@ -126,41 +125,47 @@ export class RdfEngine {
     // Remove PREFIX declarations to find the actual query type
     const queryWithoutPrefixes = sparql.replace(/^PREFIX\s+[^\s]+\s+<[^>]+>\s*/gm, '').trim();
     const queryType = queryWithoutPrefixes.toUpperCase().split(/\s+/)[0];
-    // Comunica expects the store directly in sources array
-    const context = {
-      sources: [this.store],
-    };
+
+    // Convert n3.Store to Oxigraph store and execute query synchronously
+    const oxigraphStore = createOxigraphStore(Array.from(this.store.getQuads()));
+    const result = oxigraphStore.query(sparql);
 
     switch (queryType) {
       case 'SELECT': {
-        const bindingsStream = await this.comunicaEngine.queryBindings(sparql, context);
-        const bindings = await bindingsStream.toArray();
-        const rows = bindings.map(binding => {
-          const entry = {};
-          for (const [variable, value] of binding) {
-            entry[variable.value] = value.value;
-          }
-          return entry;
-        });
+        // Oxigraph returns array of binding objects for SELECT
+        const rows = Array.isArray(result)
+          ? result.map(item => {
+              const entry = {};
+              if (item && typeof item === 'object') {
+                for (const [key, val] of Object.entries(item)) {
+                  entry[key] = val && val.value ? val.value : val;
+                }
+              }
+              return entry;
+            })
+          : [];
         const variables = rows.length > 0 ? Object.keys(rows[0]) : [];
         return { type: 'select', rows, variables };
       }
       case 'ASK': {
-        const boolean = await this.comunicaEngine.queryBoolean(sparql, context);
+        // Oxigraph returns boolean for ASK
+        const boolean = typeof result === 'boolean' ? result : false;
         return { type: 'ask', boolean };
       }
       case 'CONSTRUCT': {
-        const quadStream = await this.comunicaEngine.queryQuads(sparql, context);
+        // Oxigraph returns array of quads for CONSTRUCT
+        const quads = Array.isArray(result) ? result : [];
         return {
           type: 'construct',
-          store: new Store(await quadStream.toArray()),
+          store: new Store(quads),
         };
       }
       case 'DESCRIBE': {
-        const quadStream = await this.comunicaEngine.queryQuads(sparql, context);
+        // Oxigraph returns array of quads for DESCRIBE
+        const quads = Array.isArray(result) ? result : [];
         return {
           type: 'describe',
-          store: new Store(await quadStream.toArray()),
+          store: new Store(quads),
         };
       }
       case 'INSERT':

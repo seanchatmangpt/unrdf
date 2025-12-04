@@ -24,7 +24,6 @@ export * from './schemas.mjs';
 // Core Engine Components (Browser-compatible)
 import { _KnowledgeHookManager } from './knowledge-hook-manager.mjs';
 import { _QueryOptimizer } from './query-optimizer.mjs';
-import { QueryEngine } from '@comunica/query-sparql';
 
 // Browser-compatible Transaction Manager base class
 class BrowserTransactionManager {
@@ -892,9 +891,6 @@ export {
   createBrowserKnowledgeHookManager as createKnowledgeHookManager,
 };
 
-// Export QueryEngine from Comunica (browser-compatible)
-export { QueryEngine } from '@comunica/query-sparql';
-
 export default {
   EffectSandbox,
   createEffectSandbox,
@@ -907,5 +903,4 @@ export default {
   BrowserPolicyPackManager,
   BrowserFileResolver,
   BrowserResolutionLayer,
-  QueryEngine,
 };
