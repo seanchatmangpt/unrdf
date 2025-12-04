@@ -4,14 +4,14 @@
  */
 
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { createStore } from '@unrdf/oxigraph';
+import { createStore, dataFactory } from '@unrdf/oxigraph';
 import { mkdtemp, writeFile, rm } from 'fs/promises';
 import { join } from 'path';
 import { tmpdir } from 'os';
 import { analyzeJsComplexity } from '../../src/project-engine/code-complexity-js.mjs';
 import * as _unmetric from '../../src/ontologies/unmetric-ontology.mjs';
 
-const { namedNode } = DataFactory;
+const { namedNode } = dataFactory;
 
 describe('analyzeJsComplexity', () => {
   let tempDir;
