@@ -1,172 +1,288 @@
-# Start Here: The Knowledge Substrate
+# START-HERE: Quick Orientation Guide
 
-**One function gives you everything.**
+Welcome to UNRDF! This guide will help you understand what UNRDF is and get you started in 5 minutes.
 
-## The Pit of Success
+## What is UNRDF?
+
+UNRDF is a **knowledge graph platform for JavaScript/Node.js**. It lets you:
+- Store semantic data as RDF (Resource Description Framework)
+- Query it with SPARQL (like SQL for knowledge graphs)
+- Validate it with SHACL
+- Define autonomous behaviors with Knowledge Hooks
+- Build production-grade applications
+
+### Think of it as:
+- **Semantic Database** - store relationships and facts
+- **Graph Query Engine** - ask questions about your data
+- **Autonomous Agent System** - define behaviors that react to changes
+- **Interoperable Platform** - export to standard RDF formats
+
+---
+
+## The 80/20 - What You Really Need
+
+### Level 1: Knowledge Substrate (START HERE)
+
+Use `createKnowledgeSubstrateCore()` - it gives you everything:
 
 ```javascript
-import { createKnowledgeSubstrateCore } from 'unrdf';
+import { createKnowledgeSubstrateCore } from '@unrdf/core';
 
+// One call gives you everything
 const core = await createKnowledgeSubstrateCore();
 
-// Parse
-const store = core.parseTurtle(`
+// Parse some data
+const store = core.parseRdf(`
   @prefix ex: <http://example.org/> .
   ex:Alice ex:knows ex:Bob .
 `);
 
-// Query
-const results = core.query(store, `SELECT ?person WHERE { ?person ?p ?o }`);
-for (const binding of results) {
-  console.log(binding.get('person').value);
+// Query it
+const results = await core.query(store, `
+  SELECT ?person WHERE { ?person ?p ?o }
+`);
+
+console.log(results);
+```
+
+**That's it.** This single API gives you:
+- RDF triple storage
+- SPARQL querying
+- SHACL validation
+- Transactions (ACID operations)
+- Knowledge Hooks (autonomous behaviors)
+- Streaming
+- Type safety
+- Observability
+
+**👉 Use this 99% of the time.**
+
+### Level 2: Low-level APIs
+
+Only if you need advanced control (rare):
+
+```javascript
+import { parseTurtle, query } from '@unrdf/core';
+
+const store = parseTurtle(turtleData);
+const results = query(store, sparqlQuery);
+```
+
+### Level 3: Individual Packages
+
+Only for edge cases. See [PACKAGES.md](../PACKAGES.md).
+
+---
+
+## 5-Minute Quickstart
+
+### 1. Install
+
+```bash
+npm install @unrdf/core
+# or
+pnpm add @unrdf/core
+```
+
+### 2. Create a Knowledge Base
+
+Create `knowledge-base.mjs`:
+
+```javascript
+import { createKnowledgeSubstrateCore } from '@unrdf/core';
+
+const core = await createKnowledgeSubstrateCore();
+
+// Define some people
+const data = `
+  @prefix ex: <http://example.org/> .
+  @prefix foaf: <http://xmlns.com/foaf/0.1/> .
+
+  ex:Alice foaf:name "Alice" ; foaf:knows ex:Bob, ex:Charlie .
+  ex:Bob foaf:name "Bob" ; foaf:knows ex:Alice .
+  ex:Charlie foaf:name "Charlie" ; foaf:knows ex:Alice .
+`;
+
+const store = core.parseRdf(data);
+console.log('Store loaded:', store.size, 'triples');
+
+export { core, store };
+```
+
+### 3. Query Your Data
+
+Create `query.mjs`:
+
+```javascript
+import { core, store } from './knowledge-base.mjs';
+
+// Find everyone and who they know
+const results = await core.query(store, `
+  PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+
+  SELECT ?name ?friend
+  WHERE {
+    ?person foaf:name ?name ;
+            foaf:knows ?knownPerson .
+    ?knownPerson foaf:name ?friend .
+  }
+  ORDER BY ?name
+`);
+
+console.log('Friends:');
+for (const row of results) {
+  console.log(`  ${row.get('name').value} knows ${row.get('friend').value}`);
 }
 ```
 
-**That's a production-ready RDF system with:**
-- Transactions
-- Hooks
-- Sandboxing
-- Audit trails
-- Performance optimization
-- Observability
+### 4. Run It
 
----
-
-## What `createKnowledgeSubstrateCore()` Gives You
-
-| Component | Purpose | Enabled |
-|-----------|---------|---------|
-| TransactionManager | Atomic operations with rollback | Default |
-| KnowledgeHookManager | Autonomous behaviors | Default |
-| EffectSandbox | Safe execution environment | Default |
-| LockchainWriter | Cryptographic audit trails | Default |
-| PerformanceOptimizer | 80/20 optimization | Default |
-| Observability | OTEL tracing | Default |
-| PolicyPackManager | Governance | Optional |
-| ResolutionLayer | Multi-agent consensus | Optional |
-
-**The defaults are the 20% of components that deliver 80% of value.**
-
----
-
-## The Hierarchy
-
-```
-Level 1: createKnowledgeSubstrateCore()  ← START HERE (recommended)
-    ↓
-Level 2: defineHook() / registerHook()   ← Custom hooks (when needed)
-    ↓
-Level 3: parseTurtle() / query()         ← Low-level (rare)
+```bash
+node query.mjs
 ```
 
-**Drop down a level only when you need something the higher level doesn't provide.**
-
----
-
-## When to Use Each Level
-
-### Level 1: Knowledge Substrate (Default)
-
-**Use for:** 80% of applications
-**What you get:** Everything, optimized and configured
-
-```javascript
-const core = await createKnowledgeSubstrateCore();
+Output:
 ```
-
-### Level 2: Knowledge Hooks
-
-**Use for:** Custom autonomous behaviors beyond defaults
-**When:** You need hooks that aren't built into the Substrate
-
-```javascript
-import { defineHook, registerHook } from 'unrdf';
-
-const customHook = defineHook({
-  meta: { name: 'my-validator' },
-  before(event) { /* ... */ }
-});
-registerHook(customHook);
-```
-
-### Level 3: Low-level APIs
-
-**Use for:** Edge cases, multi-store scenarios
-**When:** You need direct control over individual stores
-
-```javascript
-import { parseTurtle, query } from 'unrdf';
-
-const store1 = parseTurtle(data1);
-const store2 = parseTurtle(data2);
-// Manage stores independently
+Store loaded: 8 triples
+Friends:
+  Alice knows Bob
+  Alice knows Charlie
+  Bob knows Alice
+  Charlie knows Alice
 ```
 
 ---
 
-## Configuration
+## Common Questions
 
+### Q: Where do I put my data?
+
+**In-memory** (default, for development):
 ```javascript
-const core = await createKnowledgeSubstrateCore({
-  // Core (enabled by default)
-  enableTransactionManager: true,
-  enableKnowledgeHookManager: true,
-  enableEffectSandbox: true,
-  enableLockchainWriter: true,
-  enableObservability: true,
-  enablePerformanceOptimizer: true,
-
-  // Optional (disabled by default)
-  enablePolicyPackManager: false,  // Enable for governance
-  enableResolutionLayer: false,    // Enable for multi-agent
-
-  // Performance tuning
-  maxConcurrency: 10,
-  cacheSize: 10000,
-  batchSize: 1000,
-  timeoutMs: 2000,
-});
+const store = core.parseRdf(turtleData);
 ```
 
----
+**From a file**:
+```javascript
+import { readFileSync } from 'fs';
+const rdfData = readFileSync('data.ttl', 'utf-8');
+const store = core.parseRdf(rdfData);
+```
 
-## Accessing Components
+**From a URL/SPARQL endpoint**:
+```javascript
+const results = await core.query(remoteEndpoint, sparqlQuery);
+```
+
+### Q: How do I add more data?
 
 ```javascript
-const core = await createKnowledgeSubstrateCore();
+// Add individual triples
+import { namedNode, literal } from '@rdfjs/data-model';
 
-// Get specific components
-const txManager = core.getComponent('TransactionManager');
-const hookManager = core.getComponent('KnowledgeHookManager');
-const lockchain = core.getComponent('LockchainWriter');
-const sandbox = core.getComponent('EffectSandbox');
+store.addQuad(
+  namedNode('http://example.org/Alice'),
+  namedNode('http://xmlns.com/foaf/0.1/name'),
+  literal('Alice Smith')
+);
+```
 
-// Use the transaction manager
-await txManager.apply(store, {
-  additions: [quad],
-  removals: []
+### Q: How do I validate my data?
+
+Define SHACL shapes:
+
+```javascript
+const shapes = `
+  @prefix sh: <http://www.w3.org/ns/shacl#> .
+  @prefix ex: <http://example.org/> .
+
+  ex:PersonShape a sh:NodeShape ;
+    sh:targetClass ex:Person ;
+    sh:property [
+      sh:path ex:name ;
+      sh:minCount 1 ;
+      sh:datatype xsd:string ;
+    ] .
+`;
+
+const shapesStore = core.parseRdf(shapes);
+const report = await core.validateShacl(store, shapesStore);
+console.log(report);
+```
+
+### Q: How do I update data?
+
+Use transactions:
+
+```javascript
+const tx = await core.beginTransaction();
+try {
+  // Make changes inside transaction
+  store.addQuad(...);
+  store.deleteQuad(...);
+  await tx.commit();
+} catch (error) {
+  await tx.rollback();
+}
+```
+
+### Q: How do I run this in the browser?
+
+Use `@unrdf/browser`:
+
+```html
+<script type="module">
+  import { createKnowledgeSubstrateCore } from 'https://cdn.jsdelivr.net/npm/@unrdf/browser';
+
+  const core = await createKnowledgeSubstrateCore();
+  const store = core.parseRdf(turtleData);
+  const results = await core.query(store, sparqlQuery);
+
+  console.log(results);
+</script>
+```
+
+### Q: How do I define behaviors that react to changes?
+
+Use Knowledge Hooks:
+
+```javascript
+// Define a hook that fires when data changes
+const myHook = defineHook({
+  meta: { name: 'log-changes' },
+  trigger: 'INSERT',
+  pattern: '?person ex:status ?status .',
+
+  run(event) {
+    console.log(`${event.quad.subject.value} status: ${event.quad.object.value}`);
+  }
 });
 
-// Use the lockchain
-await lockchain.writeReceipt(transaction);
+registerHook(myHook);
+
+// Now when you add a triple matching the pattern, the hook runs
+store.addQuad(...);  // Hook fires automatically!
 ```
-
----
-
-## The 80/20 Principle
-
-The Knowledge Substrate embodies the 80/20 principle:
-
-- **20% of components** (TransactionManager, KnowledgeHookManager, etc.) deliver **80% of value**
-- **80% of components** (PolicyPackManager, ResolutionLayer) deliver **20% of value**
-
-The defaults enable the essential 20%. Enable the optional 80% only when you have specific requirements.
 
 ---
 
 ## Next Steps
 
-1. **Use `createKnowledgeSubstrateCore()`** for your application
-2. **Only drop to Level 2** if you need custom hooks
-3. **Only drop to Level 3** if you have multi-store edge cases
-4. **Consult [WHICH-FEATURES.md](WHICH-FEATURES.md)** for decision trees
+1. **Read** [ARCHITECTURE.md](../ARCHITECTURE.md) to understand how pieces fit together
+2. **Explore** [PACKAGES.md](../PACKAGES.md) to see what each package does
+3. **Try** [GETTING-STARTED/QUICK-START.md](GETTING-STARTED/QUICK-START.md) for more examples
+4. **Learn** [GETTING-STARTED/INSTALLATION.md](GETTING-STARTED/INSTALLATION.md) for detailed setup
+5. **Reference** [API-REFERENCE.md](../API-REFERENCE.md) for complete API docs
+
+---
+
+## Need Help?
+
+- **Examples** - See [EXAMPLES.md](../EXAMPLES.md)
+- **API Docs** - See [API-REFERENCE.md](../API-REFERENCE.md)
+- **Issues** - https://github.com/unrdf/unrdf/issues
+- **Discussions** - https://github.com/unrdf/unrdf/discussions
+
+---
+
+**Ready?** → [ARCHITECTURE.md](../ARCHITECTURE.md)
