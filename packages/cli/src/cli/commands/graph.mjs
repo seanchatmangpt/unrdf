@@ -12,7 +12,7 @@ import { defineCommand } from 'citty';
 import { z } from 'zod';
 import { readFile, writeFile, unlink, mkdir } from 'node:fs/promises';
 import path from 'node:path';
-import { OxigraphStore } from '@unrdf/oxigraph';
+import { OxigraphStore, dataFactory } from '@unrdf/oxigraph';
 import { Writer } from 'n3';
 
 /**
@@ -104,9 +104,8 @@ export async function saveGraph(store, filePath, format) {
       const dumpOptions = { format: oxFormat };
 
       if (isTripleFormat) {
-        // Import defaultGraph from oxigraph
-        const oxigraph = await import('oxigraph');
-        dumpOptions.from_named_graph = oxigraph.defaultGraph();
+        // Use default graph for triple formats
+        dumpOptions.from_named_graph = dataFactory.defaultGraph();
       }
 
       serialized = store.dump(dumpOptions);
@@ -282,16 +281,29 @@ export const mergeCommand = defineCommand({
       const store1 = await loadGraph(input1);
       const store2 = await loadGraph(input2);
 
-      // Merge into new Oxigraph store
+      // Merge into new Oxigraph store (default graph only)
       const mergedStore = new OxigraphStore();
       const quads1 = store1.getQuads();
       const quads2 = store2.getQuads();
 
+      // Create quads in default graph using dataFactory
       for (const q of quads1) {
-        mergedStore.add(q);
+        const normalizedQuad = dataFactory.quad(
+          q.subject,
+          q.predicate,
+          q.object,
+          dataFactory.defaultGraph()
+        );
+        mergedStore.add(normalizedQuad);
       }
       for (const q of quads2) {
-        mergedStore.add(q);
+        const normalizedQuad = dataFactory.quad(
+          q.subject,
+          q.predicate,
+          q.object,
+          dataFactory.defaultGraph()
+        );
+        mergedStore.add(normalizedQuad);
       }
 
       // Save merged graph
