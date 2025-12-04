@@ -39,7 +39,7 @@
     "linked-data"
   ],
   "dependencies": {
-    "@comunica/query-sparql": "^3.0.0",
+    "@unrdf/oxigraph": "workspace:*",
     "@rdfjs/data-model": "^2.0.0",
     "@rdfjs/namespace": "^2.0.0",
     "@rdfjs/serializer-jsonld": "^2.0.0",

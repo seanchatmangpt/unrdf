@@ -6,6 +6,9 @@
  * @module @unrdf/knowledge-engine
  */
 
+// Export main KnowledgeEngine class
+export { KnowledgeEngine } from './knowledge-engine/knowledge-engine.mjs';
+
 // Export rule definition and management
 export {
   defineRule,

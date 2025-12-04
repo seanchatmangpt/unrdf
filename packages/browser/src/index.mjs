@@ -13,8 +13,9 @@
  * @module @unrdf/browser
  */
 
-// Export IndexedDB store operations
+// Export IndexedDB store operations and class
 export {
+  IndexedDBStore,
   createIndexedDBStore,
   openIndexedDBStore,
   closeIndexedDBStore,
@@ -23,6 +24,9 @@ export {
   getQuadsFromDB,
   clearIndexedDBStore,
 } from './browser/indexeddb-store.mjs';
+
+// Export IndexedDBStore as default for convenience
+export { IndexedDBStore as default } from './browser/indexeddb-store.mjs';
 
 // Export browser adapters
 export {

@@ -4,7 +4,7 @@
  */
 
 import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest'
-import { createServer } from '../src/server.mjs'
+import { createServer } from '../src/index.mjs'
 import { DataFactory } from 'n3'
 
 const { namedNode, literal, quad } = DataFactory

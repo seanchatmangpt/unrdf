@@ -1,19 +1,19 @@
 /**
- * @fileoverview Comunica browser adapter for SPARQL queries
+ * @fileoverview Browser adapter for SPARQL queries
  *
- * Adapts Comunica query engine for browser environment:
+ * Adapts SPARQL engine for browser environment:
  * - Uses IndexedDB quad store as data source
  * - Supports SELECT, ASK, CONSTRUCT queries
- * - Handles async iteration in browser
+ * - Synchronous query execution
  *
- * @module browser/comunica-browser-adapter
+ * @module browser/browser-adapter
  */
 
-import { QueryEngine } from '@comunica/query-sparql';
+import { createStore } from '@unrdf/oxigraph';
 import { IndexedDBQuadStore } from './indexeddb-store.mjs';
 
 /**
- * Browser-compatible Comunica query executor
+ * Browser-compatible SPARQL query executor
  *
  * @example
  * const executor = new BrowserQueryExecutor();
@@ -31,7 +31,6 @@ export class BrowserQueryExecutor {
    */
   constructor(store = null) {
     this.store = store || new IndexedDBQuadStore();
-    this.engine = new QueryEngine();
     this.initialized = false;
   }
 
@@ -47,37 +46,6 @@ export class BrowserQueryExecutor {
   }
 
   /**
-   * Create source descriptor for Comunica
-   * @private
-   * @returns {Object} Source descriptor
-   */
-  createSource() {
-    return {
-      type: 'rdfjsSource',
-      value: {
-        match: async (s, p, o, g) => {
-          const pattern = {};
-          if (s) pattern.subject = s;
-          if (p) pattern.predicate = p;
-          if (o) pattern.object = o;
-          if (g) pattern.graph = g;
-
-          const quads = await this.store.match(pattern);
-
-          // Return async iterable
-          return {
-            [Symbol.asyncIterator]: async function* () {
-              for (const quad of quads) {
-                yield quad;
-              }
-            },
-          };
-        },
-      },
-    };
-  }
-
-  /**
    * Execute SPARQL query
    * @param {string} queryString - SPARQL query string
    * @param {Object} [options] - Query options
@@ -86,23 +54,27 @@ export class BrowserQueryExecutor {
   async query(queryString, options = {}) {
     await this.init();
 
-    const sources = [this.createSource()];
-
     try {
-      const result = await this.engine.query(queryString, {
-        sources,
-        ...options,
-      });
+      // Get quads from IndexedDB store
+      const quads = await this.store.match({});
 
-      // Handle different query types
-      if (result.type === 'bindings') {
-        return this.handleBindingsResult(result);
-      } else if (result.type === 'boolean') {
-        return this.handleBooleanResult(result);
-      } else if (result.type === 'quads') {
-        return this.handleQuadsResult(result);
+      // Create substrate store from quads
+      const rdfStore = createStore(quads);
+
+      // Execute query synchronously
+      const queryResult = rdfStore.query(queryString);
+
+      // Determine query type and format result
+      const queryType = queryString.trim().split(/\s+/)[0].toUpperCase();
+
+      if (queryType === 'SELECT') {
+        return this.handleSelectResult(queryResult);
+      } else if (queryType === 'ASK') {
+        return this.handleAskResult(queryResult);
+      } else if (queryType === 'CONSTRUCT' || queryType === 'DESCRIBE') {
+        return this.handleConstructResult(queryResult);
       } else {
-        throw new Error(`Unsupported query result type: ${result.type}`);
+        throw new Error(`Unsupported query type: ${queryType}`);
       }
     } catch (error) {
       throw new Error(`Query execution failed: ${error.message}`);
@@ -112,97 +84,62 @@ export class BrowserQueryExecutor {
   /**
    * Handle SELECT query results (bindings)
    * @private
-   * @param {Object} result - Query result
-   * @returns {Promise<Array<Object>>} Bindings array
+   * @param {Array} result - Query result
+   * @returns {Object} Bindings array
    */
-  async handleBindingsResult(result) {
-    const bindings = [];
-
-    for await (const binding of result.bindingsStream) {
-      const row = {};
-      for (const [variable, term] of binding) {
-        row[variable.value] = this.termToValue(term);
-      }
-      bindings.push(row);
-    }
+  handleSelectResult(result) {
+    const bindings = Array.isArray(result)
+      ? result.map(item => {
+          if (item instanceof Map) {
+            // Handle Map objects from Oxigraph
+            const binding = {};
+            for (const [key, val] of item.entries()) {
+              binding[key] = val && val.value ? val.value : (val && val.toString ? val.toString() : val);
+            }
+            return binding;
+          } else if (item && typeof item === 'object') {
+            return Object.fromEntries(
+              Object.entries(item).map(([k, v]) => [k, v && v.value ? v.value : v])
+            );
+          }
+          return item;
+        })
+      : [];
 
     return {
       type: 'bindings',
       bindings,
-      variables: [...(result.metadata?.variables || [])].map(v => v.value),
+      variables: bindings.length > 0 ? Object.keys(bindings[0]) : [],
     };
   }
 
   /**
    * Handle ASK query results (boolean)
    * @private
-   * @param {Object} result - Query result
-   * @returns {Promise<Object>} Boolean result
+   * @param {boolean} result - Query result
+   * @returns {Object} Boolean result
    */
-  async handleBooleanResult(result) {
-    const boolean = await result.booleanResult;
-
+  handleAskResult(result) {
     return {
       type: 'boolean',
-      value: boolean,
+      value: typeof result === 'boolean' ? result : false,
     };
   }
 
   /**
    * Handle CONSTRUCT/DESCRIBE query results (quads)
    * @private
-   * @param {Object} result - Query result
-   * @returns {Promise<Array<Object>>} Quads array
+   * @param {Array} result - Query result
+   * @returns {Object} Quads result
    */
-  async handleQuadsResult(result) {
-    const quads = [];
-
-    for await (const quad of result.quadStream) {
-      quads.push(quad);
-    }
+  handleConstructResult(result) {
+    const quads = Array.isArray(result) ? result : [];
 
     return {
       type: 'quads',
       quads,
+      size: quads.length,
     };
-  }
-
-  /**
-   * Convert RDF term to JavaScript value
-   * @private
-   * @param {Object} term - RDF term
-   * @returns {*} JavaScript value
-   */
-  termToValue(term) {
-    if (!term) return null;
-
-    if (term.termType === 'NamedNode') {
-      return term.value;
-    } else if (term.termType === 'Literal') {
-      // Try to parse typed literals
-      if (term.datatype) {
-        const datatype = term.datatype.value;
-
-        if (datatype === 'http://www.w3.org/2001/XMLSchema#integer') {
-          return parseInt(term.value, 10);
-        } else if (
-          datatype === 'http://www.w3.org/2001/XMLSchema#decimal' ||
-          datatype === 'http://www.w3.org/2001/XMLSchema#double'
-        ) {
-          return parseFloat(term.value);
-        } else if (datatype === 'http://www.w3.org/2001/XMLSchema#boolean') {
-          return term.value === 'true';
-        } else if (datatype === 'http://www.w3.org/2001/XMLSchema#dateTime') {
-          return new Date(term.value);
-        }
-      }
-
-      return term.value;
-    } else if (term.termType === 'BlankNode') {
-      return `_:${term.value}`;
-    }
-
-    return term.value;
   }
 
   /**

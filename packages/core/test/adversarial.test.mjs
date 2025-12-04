@@ -92,14 +92,14 @@ describe('@unrdf/core Adversarial Tests - Capabilities', () => {
   });
 
   describe('Serialization - Advertised Features', () => {
-    it('ADVERTISED: Can canonicalize RDF graphs', () => {
+    it('ADVERTISED: Can canonicalize RDF graphs', async () => {
       const store = createStore();
       addQuad(
         store,
         quad(namedNode('http://example.org/alice'), namedNode('http://foaf/name'), literal('Alice'))
       );
 
-      const canonicalized = canonicalize(store);
+      const canonicalized = await canonicalize(store);
       expect(canonicalized).toContain('http://example.org/alice');
       expect(canonicalized).toContain('http://foaf/name');
       expect(canonicalized).toContain('Alice');
@@ -118,7 +118,7 @@ describe('@unrdf/core Adversarial Tests - Capabilities', () => {
       expect(ntriples).toContain('"Alice"');
     });
 
-    it('ADVERTISED: Canonicalization is deterministic', () => {
+    it('ADVERTISED: Canonicalization is deterministic', async () => {
       const store1 = createStore();
       const store2 = createStore();
 
@@ -130,8 +130,8 @@ describe('@unrdf/core Adversarial Tests - Capabilities', () => {
       addQuad(store1, q);
       addQuad(store2, q);
 
-      const canon1 = canonicalize(store1);
-      const canon2 = canonicalize(store2);
+      const canon1 = await canonicalize(store1);
+      const canon2 = await canonicalize(store2);
 
       expect(canon1).toBe(canon2);
     });

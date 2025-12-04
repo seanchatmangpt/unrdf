@@ -5,9 +5,7 @@
   "type": "module",
   "main": "src/index.mjs",
   "exports": {
-    ".": "./src/index.mjs",
-    "./inference": "./src/inference/index.mjs",
-    "./optimize": "./src/optimize/index.mjs"
+    ".": "./src/index.mjs"
   },
   "sideEffects": false,
   "files": [

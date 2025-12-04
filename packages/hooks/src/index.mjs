@@ -56,3 +56,6 @@ export {
   trimLiterals,
   standardValidation,
 } from './hooks/builtin-hooks.mjs';
+
+// Hook manager (class-based interface)
+export { KnowledgeHookManager } from './hooks/knowledge-hook-manager.mjs';

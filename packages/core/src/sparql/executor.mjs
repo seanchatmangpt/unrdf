@@ -1,9 +1,9 @@
 /**
- * @file SPARQL Query Execution - Comunica integration
+ * @file SPARQL Query Execution
  * @module @unrdf/core/sparql/executor
  */
 
-import { QueryEngine } from '@comunica/query-sparql';
+import { createStore } from '@unrdf/oxigraph';
 import { z } from 'zod';
 
 /**
@@ -59,70 +59,79 @@ export async function executeQuery(store, sparql, options = {}) {
   QueryOptionsSchema.parse(options);
 
   try {
-    const engine = new QueryEngine();
-    const result = await engine.query(sparql, {
-      sources: [store],
-      ...options,
-    });
+    // Convert n3.Store to substrate store
+    const quads = store.getQuads();
+    const rdfStore = createStore(Array.from(quads));
 
-    // Determine query type from result
-    const queryType = result.resultType;
+    // Determine query type (skip PREFIX declarations)
+    const queryWithoutPrefixes = sparql.replace(/PREFIX\s+[^\s]+\s+<[^>]+>/gm, '').trim();
+    const queryType =
+      queryWithoutPrefixes
+        .split(/\s+/)
+        .find(word => word && /^[A-Z]/.test(word))
+        ?.toUpperCase() || 'SELECT';
+
+    // Execute query synchronously
+    const queryResult = rdfStore.query(sparql);
 
     switch (queryType) {
-      case 'bindings': {
-        // SELECT query
-        const bindingsStream = await result.execute();
-        const rows = [];
+      case 'SELECT': {
+        // SELECT query - return array of bindings
+        const rows = Array.isArray(queryResult)
+          ? queryResult.map(item => {
+              const row = {};
 
-        for await (const binding of bindingsStream) {
-          const row = {};
-          // Comunica bindings use a Map-like interface with keys()
-          const keys = binding.keys ? Array.from(binding.keys()) : Object.keys(binding);
-          for (const key of keys) {
-            const varName = typeof key === 'string' ? key : key.value;
-            const value = binding.get ? binding.get(key) : binding[key];
-            if (value) {
-              row[varName] = {
-                type: value.termType,
-                value: value.value,
-                datatype: value.datatype?.value,
-                language: value.language,
-              };
-            }
-          }
-          rows.push(row);
-        }
+              // Handle Map objects from Oxigraph
+              if (item instanceof Map) {
+                for (const [key, val] of item.entries()) {
+                  // Oxigraph returns Term objects (Literal, NamedNode, etc)
+                  if (val && typeof val === 'object') {
+                    row[key] = {
+                      type: val.termType || 'Literal',
+                      value: val.value || val.toString(),
+                    };
+                  } else {
+                    row[key] = {
+                      type: 'Literal',
+                      value: val,
+                    };
+                  }
+                }
+              } else if (item && typeof item === 'object') {
+                // Fallback for plain objects
+                for (const [key, val] of Object.entries(item)) {
+                  row[key] = {
+                    type: 'Literal',
+                    value: val && val.value ? val.value : val,
+                  };
+                }
+              } else {
+                return item;
+              }
 
-        return {
-          type: 'select',
-          rows,
-          count: rows.length,
-        };
+              return row;
+            })
+          : [];
+
+        // Return as array-like object with type property for compatibility
+        rows.type = 'select';
+        rows.rows = rows;
+        return rows;
       }
 
-      case 'quads': {
-        // CONSTRUCT query
-        const quadStream = await result.execute();
-        const quads = [];
-
-        for await (const quad of quadStream) {
-          quads.push(quad);
-        }
-
-        return {
-          type: 'construct',
-          quads,
-          count: quads.length,
-        };
+      case 'CONSTRUCT':
+      case 'DESCRIBE': {
+        // CONSTRUCT/DESCRIBE query - return array of quads
+        const quads = Array.isArray(queryResult) ? queryResult : [];
+        quads.type = queryType.toLowerCase();
+        quads.quads = quads;
+        return quads;
       }
 
-      case 'boolean': {
-        // ASK query
-        const booleanResult = await result.execute();
-        return {
-          type: 'ask',
-          result: booleanResult,
-        };
+      case 'ASK': {
+        // ASK query - return boolean
+        const result = typeof queryResult === 'boolean' ? queryResult : false;
+        return result;
       }
 
       default: {
@@ -275,9 +284,9 @@ export async function executeConstruct(store, sparql, options = {}) {
 export async function executeAsk(store, sparql, options = {}) {
   const result = await executeQuery(store, sparql, options);
 
-  if (result.type !== 'ask') {
+  if (typeof result !== 'boolean') {
     throw new Error('Query is not an ASK query');
   }
 
-  return result.result;
+  return result;
 }
