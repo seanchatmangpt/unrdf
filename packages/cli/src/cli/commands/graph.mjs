@@ -12,7 +12,7 @@ import { defineCommand } from 'citty';
 import { z } from 'zod';
 import { readFile, writeFile, unlink, mkdir } from 'node:fs/promises';
 import path from 'node:path';
-import { createStore, addQuad, getQuads, namedNode, literal, quad } from '@unrdf/core';
+import { createStore, addQuad, getQuads } from '@unrdf/core';
 import { Parser, Writer } from 'n3';
 
 /**
@@ -52,7 +52,7 @@ export async function loadGraph(filePath, format) {
     const store = createStore();
     const parser = new Parser({ format: actualFormat });
 
-    parser.parse(content, (error, quad, prefixes) => {
+    parser.parse(content, (error, quad, _prefixes) => {
       if (error) {
         reject(new Error(`Parse error: ${error.message}`));
       } else if (quad) {

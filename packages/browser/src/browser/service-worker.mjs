@@ -1,5 +1,6 @@
+/* eslint-disable no-undef */
 /**
- * @unrdf/browser - Service Worker Support
+ * @fileoverview Service Worker Support
  *
  * Provides offline RDF persistence and background sync via service workers.
  *

@@ -1,5 +1,6 @@
+/* eslint-disable no-undef */
 /**
- * @unrdf/browser - IndexedDB Store
+ * @fileoverview IndexedDB Store
  *
  * Provides persistent RDF storage in the browser using IndexedDB.
  * Stores quads with indexed subject, predicate, and object for efficient queries.
@@ -8,7 +9,7 @@
  */
 
 import { z } from 'zod';
-import { createStore, addQuad, removeQuad, getQuads } from '@unrdf/core';
+import { createStore, addQuad, removeQuad } from '@unrdf/core';
 
 /**
  * @typedef {Object} IndexedDBStore

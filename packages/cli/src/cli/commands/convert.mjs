@@ -11,7 +11,6 @@
 import { defineCommand } from 'citty';
 import { z } from 'zod';
 import { loadGraph, saveGraph } from './graph.mjs';
-import { Writer } from 'n3';
 
 /**
  * Validation schemas

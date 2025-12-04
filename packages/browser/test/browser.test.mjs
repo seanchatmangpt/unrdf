@@ -2,7 +2,7 @@
  * @vitest-environment jsdom
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import {
   createIndexedDBStore,
   openIndexedDBStore,
@@ -10,7 +10,6 @@ import {
   addQuadToDB,
   removeQuadFromDB,
   getQuadsFromDB,
-  clearIndexedDBStore,
 } from '../src/browser/indexeddb-store.mjs';
 import {
   createBrowserRDFStore,
@@ -30,8 +29,6 @@ import {
   estimateCapacity,
   isStorageApproachingLimit,
   formatStorageSize,
-  exportStoreToJSON,
-  importStoreFromJSON,
 } from '../src/browser/utils.mjs';
 import {
   registerServiceWorker,

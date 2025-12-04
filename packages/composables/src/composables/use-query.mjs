@@ -7,7 +7,7 @@
  * @module composables/use-query
  */
 
-import { ref, computed, watch, onUnmounted } from 'vue';
+import { ref, watch, onUnmounted } from 'vue';
 import { executeQuery, executeSelect, executeConstruct, executeAsk } from '@unrdf/core';
 import { z } from 'zod';
 

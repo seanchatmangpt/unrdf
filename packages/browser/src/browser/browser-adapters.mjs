@@ -1,5 +1,6 @@
+/* eslint-disable no-undef */
 /**
- * @unrdf/browser - Browser Adapters
+ * @fileoverview Browser Adapters
  *
  * Provides browser-specific adaptations for RDF operations.
  * Handles environment detection, storage selection, and SPARQL execution.
