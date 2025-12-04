@@ -8,6 +8,8 @@
  * verification without Git dependencies.
  */
 
+/* global localStorage, sessionStorage */
+
 import { randomUUID, createHash, _fs } from './browser-shims.mjs';
 import { sha3_256 } from '@noble/hashes/sha3.js';
 import { _blake3 } from '@noble/hashes/blake3.js';

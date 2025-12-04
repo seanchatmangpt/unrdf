@@ -7,6 +7,8 @@
  * This allows the same codebase to work in both Node.js and browser environments.
  */
 
+/* global window */
+
 /**
  * Check if we're running in a browser environment
  */

@@ -10,6 +10,8 @@
  * @module browser/browser-shim
  */
 
+/* global Worker */
+
 import { IndexedDBFileSystem } from './indexeddb-fs.mjs';
 
 /**
