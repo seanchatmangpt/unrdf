@@ -196,7 +196,7 @@ describe('Application JTBD: Single Query Response Times', () => {
       `;
 
       const start2 = performance.now();
-      const results2 = store.query(query2);
+      const _results2 = store.query(query2);
       const duration2 = performance.now() - start2;
 
       console.log(`   Response time (Hop 2): ${duration2.toFixed(2)}ms`);
@@ -301,7 +301,7 @@ describe('Application JTBD: Single Query Response Times', () => {
       const pollIntervals = [];
       for (let i = 0; i < 5; i++) {
         const start = performance.now();
-        const results = store.query(query);
+        const _results = store.query(query);
         const duration = performance.now() - start;
         pollIntervals.push(duration);
       }
@@ -358,7 +358,7 @@ describe('Application JTBD: Single Query Response Times', () => {
       `;
 
       const start = performance.now();
-      const results = store.query(query);
+      const _results = store.query(query);
       const duration = performance.now() - start;
 
       // Simulated total API response time:
@@ -410,7 +410,7 @@ describe('Application JTBD: Single Query Response Times', () => {
       const eventTimes = [];
       for (let i = 0; i < 100; i++) {
         const start = performance.now();
-        const results = store.query(query);
+        const _results = store.query(query);
         const duration = performance.now() - start;
         eventTimes.push(duration);
       }
@@ -459,7 +459,7 @@ describe('Application JTBD: Single Query Response Times', () => {
       const validationTimes = [];
       for (let i = 0; i < 1000; i++) {
         const start = performance.now();
-        const isValid = store.query(cacheValidationQuery);
+        const _isValid = store.query(cacheValidationQuery);
         const duration = performance.now() - start;
         validationTimes.push(duration);
       }
@@ -485,7 +485,7 @@ describe('Application JTBD: Single Query Response Times', () => {
     it('JTBD-Node-4: Batch Job (Process 1000 users)', () => {
       // Setup: 1000 users with interests
       const hasInterest = dataFactory.namedNode('http://example.com/hasInterest');
-      const interest = dataFactory.namedNode('http://example.com/Interest');
+      const _interest = dataFactory.namedNode('http://example.com/Interest');
       const name = dataFactory.namedNode('http://schema.org/name');
 
       const interests = ['sports', 'tech', 'music', 'art', 'cooking'];
@@ -536,7 +536,7 @@ describe('Application JTBD: Single Query Response Times', () => {
       // Setup: Eligibility rules
       const user = dataFactory.namedNode('http://example.com/newuser/999');
       const signup = dataFactory.namedNode('http://example.com/signupDate');
-      const referrer = dataFactory.namedNode('http://example.com/referrer');
+      const _referrer = dataFactory.namedNode('http://example.com/referrer');
       const isEarlyBird = dataFactory.namedNode('http://example.com/earlyBird');
       const codeName = dataFactory.namedNode('http://schema.org/name');
 

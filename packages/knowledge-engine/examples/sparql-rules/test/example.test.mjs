@@ -112,10 +112,15 @@ describe('SPARQL Rules Example', () => {
       );
     }
 
-    // Define schema
+    // Define schema - both domain and range to cover all people in chain
     store.addQuad(
       namedNode(`${FOAF}knows`),
       namedNode('http://www.w3.org/2000/01/rdf-schema#domain'),
+      namedNode(`${FOAF}Person`)
+    );
+    store.addQuad(
+      namedNode(`${FOAF}knows`),
+      namedNode('http://www.w3.org/2000/01/rdf-schema#range'),
       namedNode(`${FOAF}Person`)
     );
 
@@ -228,10 +233,15 @@ describe('SPARQL Rules Example', () => {
       namedNode(`${EX}Diana`)
     );
 
-    // Define schema
+    // Define schema - both domain and range to cover all people in diamond
     store.addQuad(
       namedNode(`${FOAF}knows`),
       namedNode('http://www.w3.org/2000/01/rdf-schema#domain'),
+      namedNode(`${FOAF}Person`)
+    );
+    store.addQuad(
+      namedNode(`${FOAF}knows`),
+      namedNode('http://www.w3.org/2000/01/rdf-schema#range'),
       namedNode(`${FOAF}Person`)
     );
 
