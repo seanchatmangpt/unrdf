@@ -165,8 +165,9 @@ function wrapQueryResult(queryResult, queryType) {
  * @param {*} queryResult - Raw query result
  * @param {string} queryType - Type of query (SELECT, ASK, CONSTRUCT, DESCRIBE)
  * @returns {Object|boolean|Array} Formatted result
+ * @deprecated Use wrapQueryResult instead
  */
-function formatQueryResult(queryResult, queryType) {
+function _formatQueryResult(queryResult, queryType) {
   switch (queryType) {
     case 'SELECT': {
       const rows = Array.isArray(queryResult)

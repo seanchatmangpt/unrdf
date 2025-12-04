@@ -9,7 +9,6 @@
 
 import { describe, it, expect } from 'vitest';
 import { createUnrdfStore, namedNode, literal, quad } from '../../src/index.mjs';
-import { executeQuerySync } from '../../src/sparql/executor-sync.mjs';
 
 describe('SPARQL Branch Coverage Tests', () => {
   describe('FILTER Clause Branches', () => {

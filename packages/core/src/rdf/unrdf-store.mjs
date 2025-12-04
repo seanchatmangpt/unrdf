@@ -31,8 +31,9 @@ const QueryOptionsSchema = z
 /**
  * SPARQL JSON Results format schema (W3C standard)
  * @see https://www.w3.org/TR/sparql11-results-json/
+ * @deprecated Reserved for future use
  */
-const SparqlJsonResultsSchema = z.object({
+const _SparqlJsonResultsSchema = z.object({
   head: z.object({
     vars: z.array(z.string()),
   }),
@@ -526,10 +527,10 @@ export class UnrdfStore {
    * Format CONSTRUCT/DESCRIBE query results
    * @private
    * @param {*} queryResult - Raw query result
-   * @param {string} queryType - Query type
+   * @param {string} _queryType - Query type (unused, reserved for future use)
    * @returns {Array} Array of quads
    */
-  _formatConstructResult(queryResult, queryType) {
+  _formatConstructResult(queryResult, _queryType) {
     const quads = Array.isArray(queryResult) ? queryResult : [];
     return quads;
   }

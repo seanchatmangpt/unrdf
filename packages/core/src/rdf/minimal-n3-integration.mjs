@@ -129,8 +129,11 @@ export async function applyN3Rules(store, rulesTtl) {
 /**
  * Placeholder for N3 reasoning implementation
  * @private
+ * @param {*} _dataStore - Data store (reserved for future use)
+ * @param {*} _rulesStore - Rules store (reserved for future use)
+ * @returns {Array} Results array
  */
-function performN3Reasoning(dataStore, rulesStore) {
+function performN3Reasoning(_dataStore, _rulesStore) {
   // Real implementation would use eye.js or similar
   // This is a pattern demonstration
   return [];
