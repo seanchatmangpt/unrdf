@@ -7,6 +7,8 @@
  * replaced by browser-compatible alternatives.
  */
 
+/* global window */
+
 import { _isBrowser } from './browser-shims.mjs';
 import { randomUUID, path, _fs } from './browser-shims.mjs';
 import { process as _browserProcess } from './browser-shims.mjs';

@@ -48,10 +48,10 @@ export class BrowserQueryExecutor {
   /**
    * Execute SPARQL query
    * @param {string} queryString - SPARQL query string
-   * @param {Object} [options] - Query options
+   * @param {Object} [_options] - Query options
    * @returns {Promise<Object>} Query results
    */
-  async query(queryString, options = {}) {
+  async query(queryString, _options = {}) {
     await this.init();
 
     try {

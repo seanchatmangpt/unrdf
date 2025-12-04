@@ -6,7 +6,7 @@
  */
 
 import { z } from 'zod';
-import { UnrdfDataFactory as DataFactory } from '@unrdf/core/rdf/n3-justified-only';
+import { UnrdfDataFactory as DataFactory, createStore } from '@unrdf/core/rdf/n3-justified-only';
 import { readdir, readFile } from 'fs/promises';
 import { join, extname } from 'path';
 import { statSync as _statSync } from 'fs';
