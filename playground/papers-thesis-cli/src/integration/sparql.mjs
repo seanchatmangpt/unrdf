@@ -18,7 +18,7 @@ import { join, dirname } from 'node:path';
 import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { useGraph, initStore, RdfEngine, Store } from 'unrdf';
-import { LRUCache } from 'lru-cache';
+import LRUCache from 'lru-cache';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 

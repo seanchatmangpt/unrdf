@@ -80,10 +80,10 @@ describe('@unrdf/streaming Adversarial Tests - Capabilities', () => {
     it('ADVERTISED: Can manage multiple subscriptions', () => {
       const manager = createSubscriptionManager();
 
-      const sub1 = manager.subscribe(data => {
+      const sub1 = manager.subscribe(_data => {
         /* noop */
       });
-      const sub2 = manager.subscribe(data => {
+      const sub2 = manager.subscribe(_data => {
         /* noop */
       });
 
@@ -95,7 +95,7 @@ describe('@unrdf/streaming Adversarial Tests - Capabilities', () => {
     it('ADVERTISED: Can unsubscribe from events', () => {
       const manager = createSubscriptionManager();
 
-      const subId = manager.subscribe(data => {
+      const subId = manager.subscribe(_data => {
         /* noop */
       });
       const unsubResult = manager.unsubscribe(subId);
