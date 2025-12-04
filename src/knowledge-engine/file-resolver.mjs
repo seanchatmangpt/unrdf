@@ -293,6 +293,73 @@ export function createFileResolver(options = {}) {
     },
 
     /**
+     * Pre-load a file at startup (compute hash once, avoid I/O in hot path)
+     * @param {string} uri - The file URI
+     * @returns {Promise<Object>} File content, computed hash, and metadata
+     *
+     * This method loads a file and computes its SHA-256 hash once at startup,
+     * then caches the result. Useful for "warming" the cache before transaction execution.
+     */
+    async preload(uri) {
+      try {
+        const filePath = resolveFileUri(uri, basePath);
+        const content = await readFile(filePath, 'utf-8');
+        const hash = await calculateFileHash(filePath);
+
+        const data = {
+          content,
+          hash,
+          path: filePath,
+          uri,
+        };
+
+        // Cache with preloaded marker (very long TTL)
+        const cacheKey = `preloaded:${uri}`;
+        if (enableCache) {
+          cache.set(cacheKey, {
+            data,
+            timestamp: Date.now(),
+          });
+        }
+
+        return data;
+      } catch (error) {
+        throw new Error(`Failed to preload ${uri}: ${error.message}`);
+      }
+    },
+
+    /**
+     * Collect all file URIs referenced in hook conditions
+     * @param {Array<Object>} hooks - Array of hook definitions
+     * @returns {Set<string>} Set of unique file URIs
+     *
+     * This method analyzes hook conditions to find all file references
+     * that should be preloaded at startup to eliminate File I/O from hot path.
+     */
+    collectFileUris(hooks) {
+      const uris = new Set();
+
+      if (!Array.isArray(hooks)) {
+        return uris;
+      }
+
+      for (const hook of hooks) {
+        if (hook.condition && hook.condition.file) {
+          uris.add(hook.condition.file);
+        }
+        if (hook.conditions && Array.isArray(hook.conditions)) {
+          for (const cond of hook.conditions) {
+            if (cond.file) {
+              uris.add(cond.file);
+            }
+          }
+        }
+      }
+
+      return uris;
+    },
+
+    /**
      * Get cache statistics.
      * @returns {Object} Cache statistics
      */

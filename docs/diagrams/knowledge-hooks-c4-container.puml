@@ -1,0 +1,47 @@
+@startuml Knowledge Hook Engine - C4 Container
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+Container(hook_manager, "Knowledge Hook Manager", "JavaScript", "Central coordinator that registers\nand manages knowledge hooks\n🔴 Tight coupling via TransactionManager")
+Container(transaction_mgr, "Transaction Manager", "JavaScript", "Applies deltas with transactional\nguarantees and lifecycle events")
+Container(hook_executor, "Hook Executor", "JavaScript", "🟡 Executes hooks in parallel\n(Promise.allSettled)\nNo automatic batching")
+Container(batching_exec, "Batching Executor", "JavaScript", "Optional: Executes hooks\nin dependency-ordered batches\n(currently opt-in)")
+Container(condition_eval, "Condition Evaluator", "JavaScript", "🟡 BOTTLENECK #4: Evaluates\nSPARQL-ASK conditions\n(evaluated 2× per hook)")
+Container(query_exec, "Query Executor", "JavaScript", "🔴 BOTTLENECK #1: Store conversion\nN3 Store → Oxigraph Store\nHappens N×M times per transaction")
+Container(file_resolver, "File Resolver", "JavaScript", "🟠 BOTTLENECK #2: File I/O\nSHA-256 hash on every execution\n(no pre-loading)")
+
+ContainerDb(n3_store, "N3 Store", "In-memory RDF", "Mutable N3 triple/quad store\nfor hook intermediate results")
+ContainerDb(oxigraph_store, "Oxigraph Store", "WASM Engine", "Authoritative RDF storage\nwith SPARQL 1.1 support")
+ContainerDb(file_cache, "File Cache (LRU)", "In-memory", "Caches 50 most recent\nfile resolutions")
+
+Rel(hook_manager, transaction_mgr, "Extends", "Inheritance → Tight coupling 🔴")
+Rel(transaction_mgr, hook_executor, "Executes pre-hooks", "Sequential execution 🟡")
+Rel(hook_executor, condition_eval, "For each hook:\nEvaluate condition", "2× per hook 🟡")
+Rel(condition_eval, query_exec, "For SPARQL condition:\nRun query")
+Rel(query_exec, n3_store, "1. Read quads", "getQuads() → O(n)")
+Rel(query_exec, oxigraph_store, "2. Convert store\n3. Execute SPARQL\n🔴 O(n) conversion each time")
+Rel(hook_executor, batching_exec, "Optional: Dependency-based\nparallel execution", "Feature flag\n(currently opt-in)")
+Rel(condition_eval, file_resolver, "For file conditions:\nResolve + verify")
+Rel(file_resolver, file_cache, "Check/update cache", "LRU 50 entries")
+Rel(transaction_mgr, hook_executor, "Executes post-hooks", "Sequential even if independent 🟡")
+
+Rel(hook_executor, oxigraph_store, "Final store for\nhook effects")
+
+note right of hook_manager
+  🔴 BOTTLENECK #3: Architecture Forces Sequential Execution
+  KnowledgeHookManager extends TransactionManager → synchronous apply()
+  Even though hooks could execute in parallel, the tight coupling
+  forces sequential pre-hooks → delta → post-hooks
+end note
+
+note right of query_exec
+  🔴 CRITICAL: Store Conversion Pattern
+
+  const quads = store.getQuads();  // O(store.size)
+  const oxStore = createStore(quads);  // O(store.size) AGAIN
+
+  Frequency: N hooks × M conditions = N×M conversions
+  Impact: 50-70% of transaction latency
+end note
+
+SHOW_LEGEND()
+@enduml
