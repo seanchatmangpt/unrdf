@@ -166,7 +166,7 @@ export function computeLambdaOrder(shards) {
     visiting.add(shardId);
 
     // Visit dependencies first
-    const shard = shards.find(s => s.id === shardId);
+    const shard = shards.find((s) => s.id === shardId);
     if (shard?.dependencies) {
       for (const dep of shard.dependencies) {
         visit(dep);
@@ -181,7 +181,7 @@ export function computeLambdaOrder(shards) {
 
   // Start with canonical order, then fill gaps
   for (const shardId of CanonicalLambdaOrder) {
-    if (shards.some(s => s.id === shardId)) {
+    if (shards.some((s) => s.id === shardId)) {
       visit(shardId);
     }
   }
@@ -206,7 +206,7 @@ function findCriticalPath(shards, order) {
   const paths = new Map();
 
   for (const shardId of order) {
-    const shard = shards.find(s => s.id === shardId);
+    const shard = shards.find((s) => s.id === shardId);
     let maxLength = 0;
     let maxPath = [shardId];
 
@@ -253,7 +253,7 @@ export function computePiMerge(shards) {
 
   return {
     unifiedId: `unified-${Date.now()}`,
-    components: shards.map(s => s.id),
+    components: shards.map((s) => s.id),
     mergePoints,
     coherence,
   };
@@ -278,8 +278,8 @@ function findMergePoints(shards) {
   // Find cross-family dependencies
   for (const shard of shards) {
     const crossFamilyDeps =
-      shard.dependencies?.filter(dep => {
-        const depShard = shards.find(s => s.id === dep);
+      shard.dependencies?.filter((dep) => {
+        const depShard = shards.find((s) => s.id === dep);
         return depShard && depShard.family !== shard.family;
       }) || [];
 
@@ -368,7 +368,7 @@ export function computeGammaGlobalization(shards, invariants = []) {
   return {
     thesisId: `thesis-${Date.now()}`,
     shardMap,
-    invariants: invariants.map(i => i.id),
+    invariants: invariants.map((i) => i.id),
     drift,
     violations: driftViolations,
   };
@@ -385,32 +385,32 @@ export const StandardInvariants = [
   {
     id: 'Q-coherence',
     description: 'Overall argument is internally coherent',
-    predicate: shard => shard.content && shard.content.length > 100,
+    predicate: (shard) => shard.content && shard.content.length > 100,
     appliesTo: Object.keys(DeltaFamilies),
   },
   {
     id: 'Q-positioning',
     description: 'Shard respects dependency constraints',
-    predicate: shard => Array.isArray(shard.dependencies),
+    predicate: (shard) => Array.isArray(shard.dependencies),
     appliesTo: Object.keys(DeltaFamilies),
   },
   {
     id: 'Q-contribution',
     description: 'Shard advances the argument',
-    predicate: shard => shard.weight > 0,
+    predicate: (shard) => shard.weight > 0,
     appliesTo: Object.keys(DeltaFamilies),
   },
   {
     id: 'Q-imrad-closure',
     description: 'IMRaD family forms complete cycle',
-    predicate: shard =>
+    predicate: (shard) =>
       shard.family !== 'imrad' || ['intro', 'method', 'result', 'discuss'].includes(shard.id),
     appliesTo: ['imrad'],
   },
   {
     id: 'Q-argument-chain',
     description: 'Argument follows claim→proof→objection→reply',
-    predicate: shard =>
+    predicate: (shard) =>
       shard.family !== 'argument' ||
       ['claim', 'ground', 'proof', 'objection', 'reply'].includes(shard.id),
     appliesTo: ['argument'],
@@ -438,7 +438,7 @@ export function evolveTowardMuFixed(shards, previousEpoch = null) {
   return {
     epoch,
     state: {
-      shards: shards.map(s => s.id),
+      shards: shards.map((s) => s.id),
       globalization: globalized,
     },
     distance,

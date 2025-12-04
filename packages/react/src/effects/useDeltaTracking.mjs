@@ -22,7 +22,7 @@ export function useDeltaTracking(callback) {
 
     if (delta !== 0) {
       const change = { timestamp: Date.now(), delta, size };
-      setDeltas(prev => [...prev, change]);
+      setDeltas((prev) => [...prev, change]);
 
       if (callback) callback(change);
     }

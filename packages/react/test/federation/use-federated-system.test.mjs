@@ -28,7 +28,7 @@ describe('FederatedSystem', () => {
 
     it('should track loading state during initialization', () => {
       let loading = true;
-      const setLoading = value => {
+      const setLoading = (value) => {
         loading = value;
       };
 
@@ -62,7 +62,7 @@ describe('FederatedSystem', () => {
         }
       };
 
-      return initWithError().then(result => {
+      return initWithError().then((result) => {
         expect(result.error.message).toBe('Connection failed');
         expect(result.loading).toBe(false);
         expect(result.system).toBeNull();
@@ -72,7 +72,7 @@ describe('FederatedSystem', () => {
     it('should support multiple consensus protocols', () => {
       const protocols = ['raft', 'gossip', 'byzantine'];
 
-      protocols.forEach(protocol => {
+      protocols.forEach((protocol) => {
         const config = { consensusProtocol: protocol };
         expect(['raft', 'gossip', 'byzantine']).toContain(config.consensusProtocol);
       });
@@ -83,7 +83,7 @@ describe('FederatedSystem', () => {
     it('should register a new store', async () => {
       const stores = [];
 
-      const registerStore = async storeMetadata => {
+      const registerStore = async (storeMetadata) => {
         if (!storeMetadata.id) {
           throw new Error('Store ID required');
         }
@@ -106,7 +106,7 @@ describe('FederatedSystem', () => {
     });
 
     it('should require store ID for registration', async () => {
-      const registerStore = async metadata => {
+      const registerStore = async (metadata) => {
         if (!metadata.id) {
           throw new Error('Store ID required');
         }
@@ -119,7 +119,7 @@ describe('FederatedSystem', () => {
     it('should register multiple stores', async () => {
       const stores = new Map();
 
-      const registerStore = metadata => {
+      const registerStore = (metadata) => {
         stores.set(metadata.id, {
           ...metadata,
           status: 'connected',
@@ -141,7 +141,7 @@ describe('FederatedSystem', () => {
         ['store-2', { id: 'store-2', status: 'connected' }],
       ]);
 
-      const unregisterStore = async storeId => {
+      const unregisterStore = async (storeId) => {
         if (!stores.has(storeId)) {
           throw new Error(`Store ${storeId} not found`);
         }
@@ -157,7 +157,7 @@ describe('FederatedSystem', () => {
     it('should fail to unregister non-existent store', async () => {
       const stores = new Map();
 
-      const unregisterStore = async storeId => {
+      const unregisterStore = async (storeId) => {
         if (!stores.has(storeId)) {
           throw new Error(`Store ${storeId} not found`);
         }
@@ -181,7 +181,7 @@ describe('FederatedSystem', () => {
         }
 
         return {
-          bindings: results.flatMap(r => r.bindings),
+          bindings: results.flatMap((r) => r.bindings),
           storesQueried: stores,
           executionTime: 150,
         };
@@ -201,7 +201,7 @@ describe('FederatedSystem', () => {
         const startTime = Date.now();
 
         // Simulate fast execution
-        await new Promise(resolve => setTimeout(resolve, 10));
+        await new Promise((resolve) => setTimeout(resolve, 10));
 
         const executionTime = Date.now() - startTime;
 
@@ -239,15 +239,15 @@ describe('FederatedSystem', () => {
 
       const aggregate = (strategy, set1, set2) => {
         if (strategy === 'intersection') {
-          const ids2 = new Set(set2.map(r => r.id));
-          return set1.filter(r => ids2.has(r.id));
+          const ids2 = new Set(set2.map((r) => r.id));
+          return set1.filter((r) => ids2.has(r.id));
         }
         return [];
       };
 
       const aggregated = aggregate('intersection', results1, results2);
       expect(aggregated).toHaveLength(2);
-      expect(aggregated.map(r => r.id)).toEqual([2, 3]);
+      expect(aggregated.map((r) => r.id)).toEqual([2, 3]);
     });
   });
 
@@ -331,7 +331,7 @@ describe('FederatedSystem', () => {
 
       const cancelPending = () => {
         mounted = false;
-        pendingOps.forEach(op => op.cancel?.());
+        pendingOps.forEach((op) => op.cancel?.());
       };
 
       pendingOps.push({ id: 1, cancel: vi.fn() });

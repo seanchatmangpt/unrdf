@@ -58,7 +58,7 @@ export function useDeltaQuery(options = {}) {
       store
         .getQuads()
         .map(
-          q => `${q.subject.value}|${q.predicate.value}|${q.object.value}|${q.graph?.value || ''}`
+          (q) => `${q.subject.value}|${q.predicate.value}|${q.object.value}|${q.graph?.value || ''}`
         )
     );
 
@@ -66,7 +66,7 @@ export function useDeltaQuery(options = {}) {
       previousStoreRef.current
         .getQuads()
         .map(
-          q => `${q.subject.value}|${q.predicate.value}|${q.object.value}|${q.graph?.value || ''}`
+          (q) => `${q.subject.value}|${q.predicate.value}|${q.object.value}|${q.graph?.value || ''}`
         )
     );
 
@@ -111,7 +111,7 @@ export function useDeltaQuery(options = {}) {
           removals: delta.removals,
         };
 
-        setChanges(prev => {
+        setChanges((prev) => {
           const updated = [...prev, change];
           // Limit history size
           return updated.slice(-maxHistory);
@@ -144,8 +144,8 @@ export function useDeltaQuery(options = {}) {
    * Get changes since timestamp
    */
   const getChangesSince = useCallback(
-    timestamp => {
-      return changes.filter(change => change.timestamp >= timestamp);
+    (timestamp) => {
+      return changes.filter((change) => change.timestamp >= timestamp);
     },
     [changes]
   );

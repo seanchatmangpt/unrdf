@@ -46,10 +46,10 @@ export function useStore(initialStore = null) {
    * Add a quad to the store
    */
   const addQuad = useCallback(
-    quad => {
+    (quad) => {
       try {
         store.addQuad(quad);
-        setVersion(v => v + 1);
+        setVersion((v) => v + 1);
         return true;
       } catch (error) {
         console.error('[useStore] Failed to add quad:', error);
@@ -63,10 +63,10 @@ export function useStore(initialStore = null) {
    * Add multiple quads to the store
    */
   const addQuads = useCallback(
-    quads => {
+    (quads) => {
       try {
         store.addQuads(quads);
-        setVersion(v => v + 1);
+        setVersion((v) => v + 1);
         return true;
       } catch (error) {
         console.error('[useStore] Failed to add quads:', error);
@@ -80,10 +80,10 @@ export function useStore(initialStore = null) {
    * Remove a quad from the store
    */
   const removeQuad = useCallback(
-    quad => {
+    (quad) => {
       try {
         store.removeQuad(quad);
-        setVersion(v => v + 1);
+        setVersion((v) => v + 1);
         return true;
       } catch (error) {
         console.error('[useStore] Failed to remove quad:', error);
@@ -97,10 +97,10 @@ export function useStore(initialStore = null) {
    * Remove multiple quads from the store
    */
   const removeQuads = useCallback(
-    quads => {
+    (quads) => {
       try {
         store.removeQuads(quads);
-        setVersion(v => v + 1);
+        setVersion((v) => v + 1);
         return true;
       } catch (error) {
         console.error('[useStore] Failed to remove quads:', error);
@@ -117,7 +117,7 @@ export function useStore(initialStore = null) {
     (subject, predicate, object, graph) => {
       try {
         store.removeMatches(subject, predicate, object, graph);
-        setVersion(v => v + 1);
+        setVersion((v) => v + 1);
         return true;
       } catch (error) {
         console.error('[useStore] Failed to remove matches:', error);
@@ -145,7 +145,7 @@ export function useStore(initialStore = null) {
   /**
    * Replace entire store
    */
-  const replaceStore = useCallback(newStore => {
+  const replaceStore = useCallback((newStore) => {
     setStore(newStore);
     setVersion(0);
   }, []);
@@ -179,7 +179,7 @@ export function useStore(initialStore = null) {
    * Check if quad exists
    */
   const has = useCallback(
-    quad => {
+    (quad) => {
       return store.has(quad);
     },
     [store, version]

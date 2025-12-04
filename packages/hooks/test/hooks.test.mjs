@@ -158,7 +158,9 @@ describe('@unrdf/hooks - Hook Execution', () => {
       validate: () => true,
     });
 
-    const result = executeHooksByTrigger([beforeHook, afterHook], 'before-add', testQuad, { collectResults: true });
+    const result = executeHooksByTrigger([beforeHook, afterHook], 'before-add', testQuad, {
+      collectResults: true,
+    });
     expect(result.valid).toBe(true);
     expect(result.results.length).toBe(1);
     expect(result.results[0].hookName).toBe('before');

@@ -36,11 +36,11 @@ export function useGraphDiff(_config = {}) {
         const quads1 = await engine.match(null, null, null, graph1Uri);
         const quads2 = await engine.match(null, null, null, graph2Uri);
 
-        const set1 = new Set(quads1.map(q => quadToString(q)));
-        const set2 = new Set(quads2.map(q => quadToString(q)));
+        const set1 = new Set(quads1.map((q) => quadToString(q)));
+        const set2 = new Set(quads2.map((q) => quadToString(q)));
 
-        const added = quads2.filter(q => !set1.has(quadToString(q)));
-        const removed = quads1.filter(q => !set2.has(quadToString(q)));
+        const added = quads2.filter((q) => !set1.has(quadToString(q)));
+        const removed = quads1.filter((q) => !set2.has(quadToString(q)));
 
         const diffResult = {
           added,

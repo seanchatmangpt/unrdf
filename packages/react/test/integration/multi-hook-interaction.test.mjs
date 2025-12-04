@@ -80,7 +80,7 @@ describe('Multi-Hook Integration', () => {
         quad(namedNode('http://s2'), namedNode('http://p'), literal('o2')),
       ];
 
-      quadsToAdd.forEach(q => testStore.add(q));
+      quadsToAdd.forEach((q) => testStore.add(q));
 
       expect(testStore.size).toBe(initialSize + 2);
     });
@@ -185,7 +185,7 @@ describe('Multi-Hook Integration', () => {
       expect(personQuads).toHaveLength(2);
 
       // UPDATE
-      const ageQuad = personQuads.find(q => q.predicate.value === 'http://age');
+      const ageQuad = personQuads.find((q) => q.predicate.value === 'http://age');
       testStore.delete(ageQuad);
       testStore.add(quad(person, namedNode('http://age'), literal('31')));
 

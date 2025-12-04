@@ -31,7 +31,7 @@ export function useNLPQueryBuilder(_config = {}) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const buildQuery = useCallback(async naturalLanguage => {
+  const buildQuery = useCallback(async (naturalLanguage) => {
     try {
       setLoading(true);
       const sparql = parseNaturalLanguage(naturalLanguage);
@@ -46,13 +46,13 @@ export function useNLPQueryBuilder(_config = {}) {
   }, []);
 
   const executeNaturalQuery = useCallback(
-    async naturalLanguage => {
+    async (naturalLanguage) => {
       try {
         setLoading(true);
         const sparql = await buildQuery(naturalLanguage);
         const result = await engine.query(sparql);
 
-        setQueryHistory(prev => [
+        setQueryHistory((prev) => [
           ...prev,
           {
             natural: naturalLanguage,

@@ -87,8 +87,8 @@ export function useShapeValidation(shapes, options = {}) {
    * Get violations by severity
    */
   const getViolationsBySeverity = useCallback(
-    severity => {
-      return violations.filter(v => v.severity?.value?.includes(severity));
+    (severity) => {
+      return violations.filter((v) => v.severity?.value?.includes(severity));
     },
     [violations]
   );
@@ -97,9 +97,9 @@ export function useShapeValidation(shapes, options = {}) {
    * Get violations by focus node
    */
   const getViolationsByFocusNode = useCallback(
-    focusNode => {
+    (focusNode) => {
       const nodeValue = typeof focusNode === 'string' ? focusNode : focusNode?.value;
-      return violations.filter(v => v.focusNode?.value === nodeValue);
+      return violations.filter((v) => v.focusNode?.value === nodeValue);
     },
     [violations]
   );

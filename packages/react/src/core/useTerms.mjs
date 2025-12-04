@@ -17,7 +17,7 @@ const { quad, namedNode, literal, blankNode, defaultGraph, variable } = DataFact
  * const q = createQuad('http://s', 'http://p', 'object value');
  */
 export function useTerms() {
-  const createNamedNode = useCallback(iri => {
+  const createNamedNode = useCallback((iri) => {
     if (typeof iri !== 'string') {
       throw new TypeError('IRI must be a string');
     }
@@ -31,7 +31,7 @@ export function useTerms() {
     return literal(String(value), languageOrDatatype);
   }, []);
 
-  const createBlankNode = useCallback(id => {
+  const createBlankNode = useCallback((id) => {
     return blankNode(id);
   }, []);
 
@@ -44,23 +44,23 @@ export function useTerms() {
     return quad(s, p, o, g);
   }, []);
 
-  const createVariable = useCallback(name => {
+  const createVariable = useCallback((name) => {
     return variable(name);
   }, []);
 
-  const isNamedNode = useCallback(term => {
+  const isNamedNode = useCallback((term) => {
     return term?.termType === 'NamedNode';
   }, []);
 
-  const isLiteral = useCallback(term => {
+  const isLiteral = useCallback((term) => {
     return term?.termType === 'Literal';
   }, []);
 
-  const isBlankNode = useCallback(term => {
+  const isBlankNode = useCallback((term) => {
     return term?.termType === 'BlankNode';
   }, []);
 
-  const termToString = useCallback(term => {
+  const termToString = useCallback((term) => {
     if (!term) return '';
     return term.value || '';
   }, []);

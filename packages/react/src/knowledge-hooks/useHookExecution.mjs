@@ -86,7 +86,7 @@ export function useHookExecution(options = {}) {
         setLoading(false);
 
         // Add to history
-        setHistory(prev => {
+        setHistory((prev) => {
           const updated = [...prev, historyEntry];
           return updated.slice(-maxHistory);
         });
@@ -108,7 +108,7 @@ export function useHookExecution(options = {}) {
         setLoading(false);
 
         // Add to history
-        setHistory(prev => {
+        setHistory((prev) => {
           const updated = [...prev, historyEntry];
           return updated.slice(-maxHistory);
         });
@@ -168,22 +168,22 @@ export function useHookExecution(options = {}) {
    * Get successful executions
    */
   const getSuccessfulExecutions = useCallback(() => {
-    return history.filter(entry => entry.success);
+    return history.filter((entry) => entry.success);
   }, [history]);
 
   /**
    * Get failed executions
    */
   const getFailedExecutions = useCallback(() => {
-    return history.filter(entry => !entry.success);
+    return history.filter((entry) => !entry.success);
   }, [history]);
 
   /**
    * Get execution by ID
    */
   const getExecutionById = useCallback(
-    executionId => {
-      return history.find(entry => entry.executionId === executionId);
+    (executionId) => {
+      return history.find((entry) => entry.executionId === executionId);
     },
     [history]
   );
@@ -192,8 +192,8 @@ export function useHookExecution(options = {}) {
    * Get executions by hook name
    */
   const getExecutionsByHook = useCallback(
-    hookName => {
-      return history.filter(entry => entry.hookName === hookName);
+    (hookName) => {
+      return history.filter((entry) => entry.hookName === hookName);
     },
     [history]
   );
@@ -213,8 +213,8 @@ export function useHookExecution(options = {}) {
     getExecutionsByHook,
     stats: {
       totalExecutions: history.length,
-      successful: history.filter(e => e.success).length,
-      failed: history.filter(e => !e.success).length,
+      successful: history.filter((e) => e.success).length,
+      failed: history.filter((e) => !e.success).length,
     },
   };
 }

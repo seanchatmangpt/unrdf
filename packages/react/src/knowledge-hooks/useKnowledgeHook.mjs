@@ -87,7 +87,7 @@ export function useKnowledgeHook(hookDefinition, options = {}) {
    * Manually execute the hook
    */
   const execute = useCallback(
-    async event => {
+    async (event) => {
       if (!hookDefinition?.run) {
         throw new Error('[useKnowledgeHook] Hook has no run function');
       }

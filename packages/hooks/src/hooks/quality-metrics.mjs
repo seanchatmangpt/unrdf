@@ -232,7 +232,8 @@ export class QualityMetricsCollector {
     const mean = points.reduce((sum, v) => sum + v, 0) / points.length;
 
     // Calculate standard deviation
-    const variance = points.reduce((sum, v) => sum + Math.pow(v - mean, 2), 0) / (points.length - 1);
+    const variance =
+      points.reduce((sum, v) => sum + Math.pow(v - mean, 2), 0) / (points.length - 1);
     const stdDev = Math.sqrt(variance);
 
     // Control limits (3-sigma)
@@ -249,10 +250,7 @@ export class QualityMetricsCollector {
       const lsl = metric.lcl;
 
       cp = (usl - lsl) / (6 * stdDev);
-      cpk = Math.min(
-        (usl - mean) / (3 * stdDev),
-        (mean - lsl) / (3 * stdDev)
-      );
+      cpk = Math.min((usl - mean) / (3 * stdDev), (mean - lsl) / (3 * stdDev));
     }
 
     return {
@@ -369,8 +367,10 @@ export class QualityMetricsCollector {
       dpmo: this.calculateDPMO(),
       sigmaLevel: this.calculateSigmaLevel(),
       metricsTracked: this.metrics.size,
-      dataPointsStored: Array.from(this.dataPoints.values())
-        .reduce((sum, arr) => sum + arr.length, 0),
+      dataPointsStored: Array.from(this.dataPoints.values()).reduce(
+        (sum, arr) => sum + arr.length,
+        0
+      ),
       qualityGatesRegistered: this.qualityGates.size,
       auditLogEntries: this.auditLog.length,
       recentDefects: this.defects.slice(-10),
@@ -429,17 +429,24 @@ export class QualityMetricsCollector {
    */
   _evaluateGate(gate, value) {
     switch (gate.operator) {
-      case 'gt': return value > gate.threshold;
-      case 'gte': return value >= gate.threshold;
-      case 'lt': return value < gate.threshold;
-      case 'lte': return value <= gate.threshold;
-      case 'eq': return value === gate.threshold;
-      case 'neq': return value !== gate.threshold;
+      case 'gt':
+        return value > gate.threshold;
+      case 'gte':
+        return value >= gate.threshold;
+      case 'lt':
+        return value < gate.threshold;
+      case 'lte':
+        return value <= gate.threshold;
+      case 'eq':
+        return value === gate.threshold;
+      case 'neq':
+        return value !== gate.threshold;
       case 'between':
-        return Array.isArray(gate.threshold) &&
-          value >= gate.threshold[0] &&
-          value <= gate.threshold[1];
-      default: return true;
+        return (
+          Array.isArray(gate.threshold) && value >= gate.threshold[0] && value <= gate.threshold[1]
+        );
+      default:
+        return true;
     }
   }
 
@@ -487,7 +494,7 @@ export function createQualityHooks(collector) {
     createQualityGateHook: (gateName, metricExtractor) => ({
       name: `quality-gate-${gateName}`,
       trigger: 'quality-gate',
-      validate: (data) => {
+      validate: data => {
         const value = metricExtractor(data);
         const result = collector.checkQualityGates(gateName, value);
         if (!result.passed) {
@@ -505,7 +512,7 @@ export function createQualityHooks(collector) {
     createDefectDetectionHook: (metricName, extractor) => ({
       name: `defect-detection-${metricName}`,
       trigger: 'defect-detection',
-      validate: (data) => {
+      validate: data => {
         const value = extractor(data);
         collector.record(metricName, value);
         const outliers = collector.detectOutliers(metricName);
@@ -517,10 +524,10 @@ export function createQualityHooks(collector) {
     /**
      * Create an audit trail hook
      */
-    createAuditTrailHook: (operationType) => ({
+    createAuditTrailHook: operationType => ({
       name: `audit-trail-${operationType}`,
       trigger: 'audit-trail',
-      transform: (data) => {
+      transform: data => {
         collector._auditLog(operationType, { data, timestamp: new Date() });
         return data;
       },

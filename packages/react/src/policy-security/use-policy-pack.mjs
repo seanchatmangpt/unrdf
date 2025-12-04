@@ -28,7 +28,7 @@ export function usePolicyPack(_config = {}) {
   const [error, setError] = useState(null);
 
   const loadPolicyPack = useCallback(
-    async packUri => {
+    async (packUri) => {
       try {
         setLoading(true);
         const shapes = await engine.query(`
@@ -39,7 +39,7 @@ export function usePolicyPack(_config = {}) {
         }
       `);
 
-        setPolicies(shapes.map(b => b.shape.value));
+        setPolicies(shapes.map((b) => b.shape.value));
         setLoading(false);
         return shapes;
       } catch (err) {
@@ -52,7 +52,7 @@ export function usePolicyPack(_config = {}) {
   );
 
   const validate = useCallback(
-    async _data => {
+    async (_data) => {
       try {
         setLoading(true);
         const results = [];
@@ -67,7 +67,7 @@ export function usePolicyPack(_config = {}) {
           results.push(result);
         }
 
-        const allViolations = results.flatMap(r => r.violations);
+        const allViolations = results.flatMap((r) => r.violations);
         setViolations(allViolations);
         setLoading(false);
         return results;

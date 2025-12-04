@@ -18,17 +18,17 @@ export function useQuadStore(initialQuads = []) {
   const [version, setVersion] = useState(0);
 
   const add = useCallback(
-    quads => {
+    (quads) => {
       store.addQuads(Array.isArray(quads) ? quads : [quads]);
-      setVersion(v => v + 1);
+      setVersion((v) => v + 1);
     },
     [store]
   );
 
   const remove = useCallback(
-    quads => {
+    (quads) => {
       store.removeQuads(Array.isArray(quads) ? quads : [quads]);
-      setVersion(v => v + 1);
+      setVersion((v) => v + 1);
     },
     [store]
   );

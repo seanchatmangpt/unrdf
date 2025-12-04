@@ -25,21 +25,21 @@ import {
 
 // Mock React hooks for testing
 vi.mock('react', () => ({
-  useState: vi.fn(initial => {
+  useState: vi.fn((initial) => {
     let state = typeof initial === 'function' ? initial() : initial;
     return [
       state,
-      vi.fn(newState => {
+      vi.fn((newState) => {
         state = typeof newState === 'function' ? newState(state) : newState;
       }),
     ];
   }),
-  useEffect: vi.fn(fn => {
+  useEffect: vi.fn((fn) => {
     fn();
     return vi.fn();
   }),
-  useCallback: vi.fn(fn => fn),
-  useRef: vi.fn(initial => ({ current: initial })),
+  useCallback: vi.fn((fn) => fn),
+  useRef: vi.fn((initial) => ({ current: initial })),
 }));
 
 describe('use-module-preloader', () => {
@@ -308,7 +308,7 @@ describe('use-module-preloader', () => {
         () => getModule('/test4'),
       ];
 
-      const results = await Promise.all(operations.map(op => Promise.resolve(op())));
+      const results = await Promise.all(operations.map((op) => Promise.resolve(op())));
       expect(results).toHaveLength(5);
     });
   });

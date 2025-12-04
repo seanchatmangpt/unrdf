@@ -48,12 +48,7 @@ export {
 } from './hooks/hook-chain-compiler.mjs';
 
 // Quad pool (object pooling optimization)
-export {
-  QuadPool,
-  quadPool,
-  createPooledTransform,
-  isPooledQuad,
-} from './hooks/quad-pool.mjs';
+export { QuadPool, quadPool, createPooledTransform, isPooledQuad } from './hooks/quad-pool.mjs';
 
 // Hook management
 export {

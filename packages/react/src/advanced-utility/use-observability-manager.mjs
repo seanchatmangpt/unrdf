@@ -35,7 +35,7 @@ export function useObservabilityManager(_config = {}) {
   const [error, _setError] = useState(null);
   const activeTracesRef = useRef(new Map());
 
-  const startTrace = useCallback(operation => {
+  const startTrace = useCallback((operation) => {
     const traceId = `trace-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     const trace = {
       id: traceId,
@@ -48,14 +48,14 @@ export function useObservabilityManager(_config = {}) {
     return traceId;
   }, []);
 
-  const endTrace = useCallback(traceId => {
+  const endTrace = useCallback((traceId) => {
     const trace = activeTracesRef.current.get(traceId);
     if (!trace) return;
 
     trace.endTime = performance.now();
     trace.duration = trace.endTime - trace.startTime;
 
-    setTraces(prev => [...prev, trace]);
+    setTraces((prev) => [...prev, trace]);
     activeTracesRef.current.delete(traceId);
 
     return trace;
@@ -77,7 +77,7 @@ export function useObservabilityManager(_config = {}) {
   }, []);
 
   const recordMetric = useCallback((metricName, value) => {
-    setMetrics(prev => ({
+    setMetrics((prev) => ({
       ...prev,
       [metricName]: {
         value,

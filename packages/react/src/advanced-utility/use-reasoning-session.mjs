@@ -31,7 +31,7 @@ export function useReasoningSession(config = {}) {
   const [error, setError] = useState(null);
 
   const infer = useCallback(
-    async subject => {
+    async (subject) => {
       try {
         setLoading(true);
 

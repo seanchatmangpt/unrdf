@@ -26,7 +26,7 @@ export function useAuditTrail() {
   }, [engine]);
 
   const verify = useCallback(
-    async entryId => {
+    async (entryId) => {
       if (!engine?.lockchainWriter) return false;
       try {
         return await engine.lockchainWriter.verify(entryId);

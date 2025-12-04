@@ -44,18 +44,18 @@ export function useHookManager() {
    * Register a single hook
    */
   const registerHook = useCallback(
-    hook => {
+    (hook) => {
       if (!hook?.meta?.name) {
         throw new TypeError('[useHookManager] Hook must have meta.name');
       }
 
       try {
         addKnowledgeHook(hook);
-        setRegisteredHooks(prev => new Map(prev).set(hook.meta.name, hook));
+        setRegisteredHooks((prev) => new Map(prev).set(hook.meta.name, hook));
         return true;
       } catch (err) {
         console.error('[useHookManager] Failed to register hook:', err);
-        setErrors(prev => [...prev, { hook: hook.meta.name, error: err }]);
+        setErrors((prev) => [...prev, { hook: hook.meta.name, error: err }]);
         return false;
       }
     },
@@ -66,7 +66,7 @@ export function useHookManager() {
    * Register multiple hooks
    */
   const registerHooks = useCallback(
-    hooks => {
+    (hooks) => {
       const results = [];
       for (const hook of hooks) {
         const success = registerHook(hook);
@@ -81,10 +81,10 @@ export function useHookManager() {
    * Unregister a single hook
    */
   const unregisterHook = useCallback(
-    hookName => {
+    (hookName) => {
       try {
         removeKnowledgeHook(hookName);
-        setRegisteredHooks(prev => {
+        setRegisteredHooks((prev) => {
           const updated = new Map(prev);
           updated.delete(hookName);
           return updated;
@@ -112,7 +112,7 @@ export function useHookManager() {
    * Get hook by name
    */
   const getHook = useCallback(
-    hookName => {
+    (hookName) => {
       return registeredHooks.get(hookName);
     },
     [registeredHooks]
@@ -122,7 +122,7 @@ export function useHookManager() {
    * Check if hook is registered
    */
   const isRegistered = useCallback(
-    hookName => {
+    (hookName) => {
       return registeredHooks.has(hookName);
     },
     [registeredHooks]

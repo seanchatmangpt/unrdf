@@ -84,7 +84,7 @@ export function useKnowledgeStack(config = {}) {
 
   // Composed query with optional recovery
   const resilientQuery = useCallback(
-    async sparql => {
+    async (sparql) => {
       if (features.enableRecovery) {
         return recovery.executeWithRecovery(() => engine.query(sparql));
       }
@@ -95,7 +95,7 @@ export function useKnowledgeStack(config = {}) {
 
   // Composed insert with optional recovery
   const resilientInsert = useCallback(
-    async quads => {
+    async (quads) => {
       if (features.enableRecovery) {
         return recovery.executeWithRecovery(() => engine.insert(quads));
       }

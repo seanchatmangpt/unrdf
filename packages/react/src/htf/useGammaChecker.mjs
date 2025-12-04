@@ -140,8 +140,8 @@ export function useGammaChecker(shards = [], customInvariants = [], options = {}
    * Add a custom Q-invariant
    */
   const addCustomInvariant = useCallback(
-    invariant => {
-      setCustomChecks(prev => [...prev, invariant]);
+    (invariant) => {
+      setCustomChecks((prev) => [...prev, invariant]);
       validateShards();
     },
     [validateShards]
@@ -151,8 +151,8 @@ export function useGammaChecker(shards = [], customInvariants = [], options = {}
    * Remove custom Q-invariant
    */
   const removeCustomInvariant = useCallback(
-    invariantId => {
-      setCustomChecks(prev => prev.filter(inv => inv.id !== invariantId));
+    (invariantId) => {
+      setCustomChecks((prev) => prev.filter((inv) => inv.id !== invariantId));
       validateShards();
     },
     [validateShards]
@@ -162,11 +162,11 @@ export function useGammaChecker(shards = [], customInvariants = [], options = {}
    * Get all active invariants
    */
   const getActiveInvariants = useCallback(() => {
-    return allInvariants.map(inv => ({
+    return allInvariants.map((inv) => ({
       id: inv.id,
       description: inv.description,
       appliesTo: inv.appliesTo,
-      isCustom: !StandardInvariants.find(s => s.id === inv.id),
+      isCustom: !StandardInvariants.find((s) => s.id === inv.id),
     }));
   }, [allInvariants]);
 
@@ -176,11 +176,11 @@ export function useGammaChecker(shards = [], customInvariants = [], options = {}
    * Suggest automatic fixes for violations
    */
   const suggestFixesForViolation = useCallback(
-    violationId => {
-      const violation = validationState.violations.find(v => v.id === violationId);
+    (violationId) => {
+      const violation = validationState.violations.find((v) => v.id === violationId);
       if (!violation) return [];
 
-      const shard = shards.find(s => s.id === violation.shardId);
+      const shard = shards.find((s) => s.id === violation.shardId);
       if (!shard) return [];
 
       const fixes = [];
@@ -199,7 +199,9 @@ export function useGammaChecker(shards = [], customInvariants = [], options = {}
           type: 'validate-deps',
           description: 'Ensure all dependencies are valid shard IDs',
           action: () => ({
-            dependencies: (shard.dependencies || []).filter(id => shards.some(s => s.id === id)),
+            dependencies: (shard.dependencies || []).filter((id) =>
+              shards.some((s) => s.id === id)
+            ),
           }),
         });
       }
@@ -223,11 +225,11 @@ export function useGammaChecker(shards = [], customInvariants = [], options = {}
   const fixViolations = useCallback(
     (violationIds = null) => {
       const targetViolations = violationIds
-        ? validationState.violations.filter(v => violationIds.includes(v.id))
+        ? validationState.violations.filter((v) => violationIds.includes(v.id))
         : validationState.violations;
 
       const fixes = [];
-      const updatedShards = shards.map(shard => {
+      const updatedShards = shards.map((shard) => {
         let updated = { ...shard };
 
         for (const violation of targetViolations) {
@@ -252,7 +254,7 @@ export function useGammaChecker(shards = [], customInvariants = [], options = {}
       });
 
       // Record in history and update shards
-      setFixHistory(prev => [...prev, { timestamp: new Date(), fixes, shards: updatedShards }]);
+      setFixHistory((prev) => [...prev, { timestamp: new Date(), fixes, shards: updatedShards }]);
 
       // Re-validate
       validateShards();
@@ -266,7 +268,7 @@ export function useGammaChecker(shards = [], customInvariants = [], options = {}
    * Rollback to previous validation state
    */
   const rollbackToEpoch = useCallback(
-    epochIndex => {
+    (epochIndex) => {
       if (fixHistory[epochIndex]) {
         const { shards: previousShards } = fixHistory[epochIndex];
         // Note: Would need to propagate back to parent component
@@ -333,7 +335,7 @@ export function useGammaChecker(shards = [], customInvariants = [], options = {}
       bySeverity[violation.severity].push(violation);
 
       // By family
-      const shard = shards.find(s => s.id === violation.shardId);
+      const shard = shards.find((s) => s.id === violation.shardId);
       if (shard) {
         if (!byFamily[shard.family]) {
           byFamily[shard.family] = [];

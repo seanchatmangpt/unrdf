@@ -173,7 +173,7 @@ export function useOfflineStore(config = {}) {
         resolve(request.result);
       };
 
-      request.onupgradeneeded = event => {
+      request.onupgradeneeded = (event) => {
         const db = event.target.result;
 
         // Quads store with indexes
@@ -212,7 +212,7 @@ export function useOfflineStore(config = {}) {
     const queueStore = tx.objectStore(syncQueueName);
     const queueRequest = queueStore.getAll();
 
-    await new Promise(resolve => {
+    await new Promise((resolve) => {
       tx.oncomplete = () => {
         setQuads(quadsRequest.result || []);
         setSyncQueue(queueRequest.result || []);
@@ -227,7 +227,7 @@ export function useOfflineStore(config = {}) {
    * @returns {Promise<Object>} Insert result
    */
   const insert = useCallback(
-    async newQuads => {
+    async (newQuads) => {
       if (!dbRef.current) {
         throw new Error('IndexedDB not initialized');
       }
@@ -261,13 +261,13 @@ export function useOfflineStore(config = {}) {
       };
       queueStore.put(queueItem);
 
-      await new Promise(resolve => {
+      await new Promise((resolve) => {
         tx.oncomplete = resolve;
       });
 
       // Update local state
-      setQuads(prev => [...prev, ...quadsWithIds]);
-      setSyncQueue(prev => [...prev, queueItem]);
+      setQuads((prev) => [...prev, ...quadsWithIds]);
+      setSyncQueue((prev) => [...prev, queueItem]);
 
       // Try immediate sync if online
       if (isOnline && autoSync) {
@@ -285,7 +285,7 @@ export function useOfflineStore(config = {}) {
    * @returns {Promise<Object>} Delete result
    */
   const deleteQuads = useCallback(
-    async pattern => {
+    async (pattern) => {
       if (!dbRef.current) {
         throw new Error('IndexedDB not initialized');
       }
@@ -293,7 +293,7 @@ export function useOfflineStore(config = {}) {
       const timestamp = Date.now();
 
       // Find matching quads
-      const toDelete = quads.filter(q => {
+      const toDelete = quads.filter((q) => {
         if (pattern.subject && q.subject !== pattern.subject) return false;
         if (pattern.predicate && q.predicate !== pattern.predicate) return false;
         if (pattern.object && q.object !== pattern.object) return false;
@@ -325,14 +325,14 @@ export function useOfflineStore(config = {}) {
       };
       queueStore.put(queueItem);
 
-      await new Promise(resolve => {
+      await new Promise((resolve) => {
         tx.oncomplete = resolve;
       });
 
       // Update local state
-      const deleteIds = new Set(toDelete.map(q => q.id));
-      setQuads(prev => prev.filter(q => !deleteIds.has(q.id)));
-      setSyncQueue(prev => [...prev, queueItem]);
+      const deleteIds = new Set(toDelete.map((q) => q.id));
+      setQuads((prev) => prev.filter((q) => !deleteIds.has(q.id)));
+      setSyncQueue((prev) => [...prev, queueItem]);
 
       // Try immediate sync if online
       if (isOnline && autoSync) {
@@ -357,7 +357,7 @@ export function useOfflineStore(config = {}) {
       return { success: false, reason: 'already-syncing' };
     }
 
-    const pendingItems = syncQueue.filter(item => item.status === 'pending');
+    const pendingItems = syncQueue.filter((item) => item.status === 'pending');
     if (pendingItems.length === 0) {
       return { success: true, synced: 0 };
     }
@@ -425,7 +425,7 @@ export function useOfflineStore(config = {}) {
       const store = tx.objectStore(syncQueueName);
       const request = store.get(id);
 
-      await new Promise(resolve => {
+      await new Promise((resolve) => {
         request.onsuccess = () => {
           const item = request.result;
           if (item) {
@@ -444,14 +444,14 @@ export function useOfflineStore(config = {}) {
    * Remove item from sync queue
    */
   const removeFromQueue = useCallback(
-    async id => {
+    async (id) => {
       if (!dbRef.current) return;
 
       const tx = dbRef.current.transaction(syncQueueName, 'readwrite');
       const store = tx.objectStore(syncQueueName);
       store.delete(id);
 
-      await new Promise(resolve => {
+      await new Promise((resolve) => {
         tx.oncomplete = resolve;
       });
     },
@@ -462,7 +462,7 @@ export function useOfflineStore(config = {}) {
    * Mark quads as synced (remove _localOnly flag)
    */
   const markQuadsSynced = useCallback(
-    async syncedQuads => {
+    async (syncedQuads) => {
       if (!dbRef.current) return;
 
       const tx = dbRef.current.transaction(storeName, 'readwrite');
@@ -480,7 +480,7 @@ export function useOfflineStore(config = {}) {
         };
       }
 
-      await new Promise(resolve => {
+      await new Promise((resolve) => {
         tx.oncomplete = resolve;
       });
     },
@@ -491,7 +491,7 @@ export function useOfflineStore(config = {}) {
    * Update local quads with server data
    */
   const updateLocalQuads = useCallback(
-    async serverQuads => {
+    async (serverQuads) => {
       if (!dbRef.current) return;
 
       const tx = dbRef.current.transaction(storeName, 'readwrite');
@@ -501,7 +501,7 @@ export function useOfflineStore(config = {}) {
         store.put(quad);
       }
 
-      await new Promise(resolve => {
+      await new Promise((resolve) => {
         tx.oncomplete = resolve;
       });
     },
@@ -513,7 +513,7 @@ export function useOfflineStore(config = {}) {
    */
   const simulateServerSync = async (item, _options = {}) => {
     // Simulate network delay
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
     // In real implementation, this would call your API
     // throw { code: 'CONFLICT', serverData: [...] } for conflicts
@@ -531,7 +531,7 @@ export function useOfflineStore(config = {}) {
     tx.objectStore(storeName).clear();
     tx.objectStore(syncQueueName).clear();
 
-    await new Promise(resolve => {
+    await new Promise((resolve) => {
       tx.oncomplete = resolve;
     });
 
@@ -541,11 +541,11 @@ export function useOfflineStore(config = {}) {
 
   // Computed values
   const pendingCount = useMemo(() => {
-    return syncQueue.filter(item => item.status === 'pending').length;
+    return syncQueue.filter((item) => item.status === 'pending').length;
   }, [syncQueue]);
 
   const localOnlyCount = useMemo(() => {
-    return quads.filter(q => q._localOnly).length;
+    return quads.filter((q) => q._localOnly).length;
   }, [quads]);
 
   return {

@@ -35,14 +35,14 @@ export function useSemanticAnalyzer(_config = {}) {
   const [error, setError] = useState(null);
 
   const analyze = useCallback(
-    async subject => {
+    async (subject) => {
       try {
         setLoading(true);
         const result = await engine.query(`
         SELECT ?p ?o WHERE { <${subject}> ?p ?o }
       `);
 
-        const rels = result.map(b => ({
+        const rels = result.map((b) => ({
           predicate: b.p.value,
           object: b.o.value,
           type: inferType(b.p.value),

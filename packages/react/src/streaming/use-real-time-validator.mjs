@@ -80,10 +80,10 @@ export function useRealTimeValidator(config = {}) {
         // Create validator
         const validator = new RealTimeValidator({
           shapeGraph: config.shapeGraph,
-          onViolation: violation => {
+          onViolation: (violation) => {
             if (!mounted) return;
 
-            setViolations(prev => [
+            setViolations((prev) => [
               ...prev,
               {
                 ...violation,
@@ -152,7 +152,7 @@ export function useRealTimeValidator(config = {}) {
   }, [config.batchSize]);
 
   // Validate a single change
-  const validateChange = useCallback(async change => {
+  const validateChange = useCallback(async (change) => {
     if (!validatorRef.current) {
       throw new Error('Validator not initialized');
     }
@@ -165,7 +165,7 @@ export function useRealTimeValidator(config = {}) {
       });
 
       if (result.conforms) {
-        setValidChanges(prev => [
+        setValidChanges((prev) => [
           ...prev,
           {
             change,
@@ -173,7 +173,7 @@ export function useRealTimeValidator(config = {}) {
           },
         ]);
       } else {
-        setInvalidChanges(prev => [
+        setInvalidChanges((prev) => [
           ...prev,
           {
             change,
@@ -183,9 +183,9 @@ export function useRealTimeValidator(config = {}) {
         ]);
 
         // Add violations
-        setViolations(prev => [
+        setViolations((prev) => [
           ...prev,
-          ...result.violations.map(v => ({
+          ...result.violations.map((v) => ({
             ...v,
             changeId: change.id,
             timestamp: new Date().toISOString(),
@@ -194,7 +194,7 @@ export function useRealTimeValidator(config = {}) {
       }
 
       // Update stats
-      setStats(prev => {
+      setStats((prev) => {
         const total = prev.totalValidated + 1;
         const passed = result.conforms ? prev.passed + 1 : prev.passed;
         const failed = result.conforms ? prev.failed : prev.failed + 1;
@@ -215,7 +215,7 @@ export function useRealTimeValidator(config = {}) {
 
   // Manually validate a change
   const validate = useCallback(
-    async change => {
+    async (change) => {
       return validateChange(change);
     },
     [validateChange]
@@ -223,13 +223,13 @@ export function useRealTimeValidator(config = {}) {
 
   // Validate batch of changes
   const validateBatch = useCallback(
-    async changeBatch => {
+    async (changeBatch) => {
       if (!validatorRef.current) {
         throw new Error('Validator not initialized');
       }
 
       try {
-        const results = await Promise.all(changeBatch.map(change => validateChange(change)));
+        const results = await Promise.all(changeBatch.map((change) => validateChange(change)));
 
         return results;
       } catch (err) {
@@ -255,24 +255,24 @@ export function useRealTimeValidator(config = {}) {
 
   // Get violations by severity
   const getViolationsBySeverity = useCallback(
-    severity => {
-      return violations.filter(v => v.severity === severity);
+    (severity) => {
+      return violations.filter((v) => v.severity === severity);
     },
     [violations]
   );
 
   // Get violations by focus node
   const getViolationsByFocusNode = useCallback(
-    focusNode => {
-      return violations.filter(v => v.focusNode === focusNode);
+    (focusNode) => {
+      return violations.filter((v) => v.focusNode === focusNode);
     },
     [violations]
   );
 
   // Get violations by shape
   const getViolationsByShape = useCallback(
-    shape => {
-      return violations.filter(v => v.shape === shape);
+    (shape) => {
+      return violations.filter((v) => v.shape === shape);
     },
     [violations]
   );

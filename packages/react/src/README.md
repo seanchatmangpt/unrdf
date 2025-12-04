@@ -46,7 +46,7 @@ function RDFApp() {
     <div>
       <h1>Store Size: {store?.size || 0}</h1>
       <ul>
-        {data?.rows?.map(row => (
+        {data?.rows?.map((row) => (
           <li key={row.s.value}>
             {row.p.value}: {row.o.value}
           </li>
@@ -201,9 +201,9 @@ function ValidationApp() {
       <textarea
         placeholder="SHACL Shapes"
         value={shapes}
-        onChange={e => setShapes(e.target.value)}
+        onChange={(e) => setShapes(e.target.value)}
       />
-      <textarea placeholder="RDF Data" value={data} onChange={e => setData(e.target.value)} />
+      <textarea placeholder="RDF Data" value={data} onChange={(e) => setData(e.target.value)} />
       <div>{isValid ? '✓ Valid' : '✗ Invalid'}</div>
       {results?.map((result, i) => (
         <div key={i}>{result.message}</div>

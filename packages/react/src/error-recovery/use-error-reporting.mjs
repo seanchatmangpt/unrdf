@@ -39,7 +39,7 @@ export function useErrorReporting(config = {}) {
         userAgent: navigator.userAgent,
       };
 
-      setErrors(prev => [...prev, errorReport]);
+      setErrors((prev) => [...prev, errorReport]);
       config.onReport?.(errorReport);
 
       return errorReport;
@@ -56,7 +56,7 @@ export function useErrorReporting(config = {}) {
     if (errors.length === 0) return;
 
     const now = Date.now();
-    const lastHour = errors.filter(e => now - new Date(e.timestamp).getTime() < 3600000);
+    const lastHour = errors.filter((e) => now - new Date(e.timestamp).getTime() < 3600000);
 
     setErrorRate(lastHour.length);
   }, [errors]);

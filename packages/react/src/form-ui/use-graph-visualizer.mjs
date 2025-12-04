@@ -31,7 +31,7 @@ export function useGraphVisualizer(config = {}) {
   const [loading, setLoading] = useState(false);
 
   const visualize = useCallback(
-    async sparql => {
+    async (sparql) => {
       try {
         setLoading(true);
 
@@ -40,7 +40,7 @@ export function useGraphVisualizer(config = {}) {
         const graphNodes = new Map();
         const graphEdges = [];
 
-        result.forEach(binding => {
+        result.forEach((binding) => {
           if (binding.s && binding.p && binding.o) {
             if (!graphNodes.has(binding.s.value)) {
               graphNodes.set(binding.s.value, {

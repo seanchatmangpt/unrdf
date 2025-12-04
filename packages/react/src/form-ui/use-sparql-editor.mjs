@@ -29,7 +29,7 @@ export function useSPARQLEditor(_config = {}) {
   const [suggestions, _setSuggestions] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const validate = useCallback(sparql => {
+  const validate = useCallback((sparql) => {
     const validationErrors = [];
 
     if (
@@ -64,7 +64,7 @@ export function useSPARQLEditor(_config = {}) {
     [engine, query]
   );
 
-  const format = useCallback(sparql => {
+  const format = useCallback((sparql) => {
     return sparql
       .replace(/\s+/g, ' ')
       .replace(/\s*{\s*/g, ' {\n  ')

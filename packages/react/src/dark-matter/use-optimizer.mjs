@@ -78,9 +78,9 @@ export function useOptimizer(config = {}) {
         // Create optimizer
         const optimizer = new PerformanceOptimizer({
           autoTune: config.autoTune,
-          onOptimization: result => {
+          onOptimization: (result) => {
             if (!mounted) return;
-            setOptimizationHistory(prev => [
+            setOptimizationHistory((prev) => [
               ...prev,
               {
                 ...result,
@@ -137,7 +137,7 @@ export function useOptimizer(config = {}) {
     const recs = [];
 
     // Focus on critical paths
-    dm.criticalPaths.slice(0, 3).forEach(path => {
+    dm.criticalPaths.slice(0, 3).forEach((path) => {
       recs.push({
         id: `dm-critical-${path.id}`,
         type: 'optimize-critical',
@@ -157,8 +157,8 @@ export function useOptimizer(config = {}) {
 
     // Remove dark matter
     dm.darkMatter
-      .filter(op => op.value < 0.01)
-      .forEach(op => {
+      .filter((op) => op.value < 0.01)
+      .forEach((op) => {
         recs.push({
           id: `dm-remove-${op.id}`,
           type: 'remove-dark',
@@ -181,7 +181,7 @@ export function useOptimizer(config = {}) {
 
   // Generate query recommendations
   function generateQueryRecommendations(qa) {
-    return qa.suggestions.map(suggestion => ({
+    return qa.suggestions.map((suggestion) => ({
       id: `query-${suggestion.type}-${Date.now()}`,
       type: `query-${suggestion.type}`,
       priority: suggestion.severity === 'critical' ? 'critical' : suggestion.severity,
@@ -200,8 +200,8 @@ export function useOptimizer(config = {}) {
     const recs = [];
 
     // Cache critical paths
-    const frequentOps = dm.criticalPaths.filter(op => op.frequency > 10);
-    frequentOps.forEach(op => {
+    const frequentOps = dm.criticalPaths.filter((op) => op.frequency > 10);
+    frequentOps.forEach((op) => {
       recs.push({
         id: `cache-${op.id}`,
         type: 'add-cache',
@@ -261,7 +261,7 @@ export function useOptimizer(config = {}) {
   // Apply an optimization
   const applyOptimization = useCallback(
     async (recommendationId, _options = {}) => {
-      const recommendation = recommendations.find(r => r.id === recommendationId);
+      const recommendation = recommendations.find((r) => r.id === recommendationId);
       if (!recommendation) {
         throw new Error(`Recommendation ${recommendationId} not found`);
       }
@@ -312,7 +312,7 @@ export function useOptimizer(config = {}) {
           timestamp: new Date().toISOString(),
         };
 
-        setOptimizationHistory(prev => [...prev, optimizationResult]);
+        setOptimizationHistory((prev) => [...prev, optimizationResult]);
         config.onOptimization?.(optimizationResult);
 
         setLoading(false);
@@ -334,7 +334,7 @@ export function useOptimizer(config = {}) {
     // Run operation multiple times
     const iterations = 10;
     for (let i = 0; i < iterations; i++) {
-      await new Promise(resolve => setTimeout(resolve, 1));
+      await new Promise((resolve) => setTimeout(resolve, 1));
     }
 
     const endTime = performance.now();
@@ -381,8 +381,8 @@ export function useOptimizer(config = {}) {
 
   // Get recommendations by type
   const getRecommendationsByType = useCallback(
-    type => {
-      return recommendations.filter(r => r.type === type);
+    (type) => {
+      return recommendations.filter((r) => r.type === type);
     },
     [recommendations]
   );

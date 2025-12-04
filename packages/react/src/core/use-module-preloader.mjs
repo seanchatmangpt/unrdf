@@ -154,14 +154,14 @@ export async function preloadModule(modulePath, options = {}) {
     }, timeout);
 
     import(modulePath)
-      .then(mod => {
+      .then((mod) => {
         clearTimeout(timeoutId);
         moduleCache.set(modulePath, mod);
         loadTimestamps.set(modulePath, Date.now());
         preloadPromises.delete(modulePath);
         resolve(mod);
       })
-      .catch(err => {
+      .catch((err) => {
         clearTimeout(timeoutId);
         preloadPromises.delete(modulePath);
         reject(err);
@@ -204,7 +204,7 @@ export async function preloadModules(moduleList, options = {}) {
   let loadedCount = 0;
 
   for (const batch of batches) {
-    const batchPromises = batch.map(async path => {
+    const batchPromises = batch.map(async (path) => {
       try {
         const mod = await preloadModule(path);
         results.modules.set(path, mod);

@@ -229,8 +229,11 @@ export class HookScheduler {
           shouldRun = scheduled.nextRun && now >= scheduled.nextRun;
           break;
         case 'idle':
-          shouldRun = isIdle && (!scheduled.lastRun ||
-            Date.now() - scheduled.lastRun.getTime() > (scheduled.idleTimeout || this.idleThreshold));
+          shouldRun =
+            isIdle &&
+            (!scheduled.lastRun ||
+              Date.now() - scheduled.lastRun.getTime() >
+                (scheduled.idleTimeout || this.idleThreshold));
           break;
         case 'cron':
           shouldRun = scheduled.nextRun && now >= scheduled.nextRun;

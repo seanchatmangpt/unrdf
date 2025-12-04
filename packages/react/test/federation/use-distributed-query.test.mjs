@@ -42,9 +42,9 @@ describe('DistributedQuery', () => {
     });
 
     it('should track execution statistics', async () => {
-      const execute = async _sparql => {
+      const execute = async (_sparql) => {
         const startTime = performance.now();
-        await new Promise(resolve => setTimeout(resolve, 5));
+        await new Promise((resolve) => setTimeout(resolve, 5));
         const duration = performance.now() - startTime;
 
         return {
@@ -64,7 +64,7 @@ describe('DistributedQuery', () => {
     });
 
     it('should handle query execution errors', async () => {
-      const execute = async sparql => {
+      const execute = async (sparql) => {
         if (sparql.includes('INVALID')) {
           throw new Error('Parse error: Invalid SPARQL syntax');
         }
@@ -77,9 +77,9 @@ describe('DistributedQuery', () => {
     it('should set loading state during execution', async () => {
       let loading = false;
 
-      const execute = async _sparql => {
+      const execute = async (_sparql) => {
         loading = true;
-        await new Promise(resolve => setTimeout(resolve, 10));
+        await new Promise((resolve) => setTimeout(resolve, 10));
         loading = false;
         return { bindings: [] };
       };
@@ -152,7 +152,7 @@ describe('DistributedQuery', () => {
 
       const selectStore = (strategy, stores) => {
         if (strategy === 'leader') {
-          return stores.find(s => s.role === 'leader');
+          return stores.find((s) => s.role === 'leader');
         }
         return stores[0];
       };
@@ -200,8 +200,8 @@ describe('DistributedQuery', () => {
 
           let intersection = resultSets[0];
           for (let i = 1; i < resultSets.length; i++) {
-            const ids = new Set(resultSets[i].map(r => r.id));
-            intersection = intersection.filter(r => ids.has(r.id));
+            const ids = new Set(resultSets[i].map((r) => r.id));
+            intersection = intersection.filter((r) => ids.has(r.id));
           }
           return intersection;
         }
@@ -219,7 +219,7 @@ describe('DistributedQuery', () => {
         [{ uri: 'http://example.org/2' }, { uri: 'http://example.org/3' }],
       ];
 
-      const aggregateWithDedup = resultSets => {
+      const aggregateWithDedup = (resultSets) => {
         const seen = new Set();
         const results = [];
 
@@ -245,12 +245,12 @@ describe('DistributedQuery', () => {
         [{ order: 2 }, { order: 4 }, { order: 6 }],
       ];
 
-      const aggregateOrdered = resultSets => {
+      const aggregateOrdered = (resultSets) => {
         return resultSets.flat().sort((a, b) => a.order - b.order);
       };
 
       const aggregated = aggregateOrdered(resultSets);
-      expect(aggregated.map(r => r.order)).toEqual([1, 2, 3, 4, 5, 6]);
+      expect(aggregated.map((r) => r.order)).toEqual([1, 2, 3, 4, 5, 6]);
     });
   });
 
@@ -296,7 +296,7 @@ describe('DistributedQuery', () => {
         cache.set(key, { value, expires: Date.now() + TTL });
       };
 
-      const getWithTTL = key => {
+      const getWithTTL = (key) => {
         const entry = cache.get(key);
         if (!entry) return null;
         if (Date.now() > entry.expires) {
@@ -310,7 +310,7 @@ describe('DistributedQuery', () => {
       expect(getWithTTL('query1')).not.toBeNull();
 
       // Wait for TTL to expire
-      await new Promise(resolve => setTimeout(resolve, 150));
+      await new Promise((resolve) => setTimeout(resolve, 150));
       expect(getWithTTL('query1')).toBeNull();
     });
 
@@ -336,7 +336,7 @@ describe('DistributedQuery', () => {
       cache.set('query1', { bindings: [{ id: 1 }] });
       cache.set('query2', { bindings: [{ id: 2 }] });
 
-      const invalidateCache = pattern => {
+      const invalidateCache = (pattern) => {
         for (const key of cache.keys()) {
           if (key.includes(pattern)) {
             cache.delete(key);
@@ -393,7 +393,7 @@ describe('DistributedQuery', () => {
     it('should cancel pending requests on timeout', () => {
       const pendingRequests = new Map();
 
-      const startRequest = id => {
+      const startRequest = (id) => {
         const abortController = { aborted: false, abort: vi.fn() };
         pendingRequests.set(id, abortController);
         return abortController;
@@ -432,7 +432,7 @@ describe('DistributedQuery', () => {
     });
 
     it('should execute queries manually', async () => {
-      const execute = async sparql => {
+      const execute = async (sparql) => {
         return {
           bindings: [{ query: sparql }],
           executedAt: new Date().toISOString(),
@@ -460,7 +460,7 @@ describe('DistributedQuery', () => {
     it('should capture and expose errors', async () => {
       let error = null;
 
-      const execute = async _sparql => {
+      const execute = async (_sparql) => {
         try {
           throw new Error('Network error');
         } catch (err) {

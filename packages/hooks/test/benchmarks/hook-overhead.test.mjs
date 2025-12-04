@@ -133,7 +133,9 @@ describe('Knowledge Hook Overhead Benchmarks', () => {
     });
 
     it('IRI validation overhead', () => {
-      const stats = benchmarkWithStats(() => executeHook(builtinHooks.validateSubjectIRI, testQuad));
+      const stats = benchmarkWithStats(() =>
+        executeHook(builtinHooks.validateSubjectIRI, testQuad)
+      );
       expect(stats.avg).toBeLessThan(1);
     });
 
@@ -268,7 +270,11 @@ describe('Knowledge Hook Overhead Benchmarks', () => {
       );
       const threeHooksStats = benchmarkWithStats(() =>
         executeHookChain(
-          [builtinHooks.validateSubjectIRI, builtinHooks.validatePredicateIRI, builtinHooks.trimLiterals],
+          [
+            builtinHooks.validateSubjectIRI,
+            builtinHooks.validatePredicateIRI,
+            builtinHooks.trimLiterals,
+          ],
           testQuad
         )
       );

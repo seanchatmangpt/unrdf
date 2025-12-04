@@ -32,7 +32,7 @@ export function useEmbeddingsManager(config = {}) {
   const [error, setError] = useState(null);
 
   const generateEmbedding = useCallback(
-    async _text => {
+    async (_text) => {
       try {
         setLoading(true);
         // Mock embedding generation (would use actual model in production)
@@ -55,7 +55,7 @@ export function useEmbeddingsManager(config = {}) {
         const text = Object.values(properties).join(' ');
         const embedding = await generateEmbedding(text);
 
-        setEmbeddings(prev =>
+        setEmbeddings((prev) =>
           new Map(prev).set(entityUri, {
             embedding,
             properties,

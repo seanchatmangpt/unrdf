@@ -81,8 +81,8 @@ export function ConfigProvider({ initialConfig = {}, children }) {
   /**
    * Update configuration
    */
-  const updateConfig = useCallback(updates => {
-    setConfig(prev => ({ ...prev, ...updates }));
+  const updateConfig = useCallback((updates) => {
+    setConfig((prev) => ({ ...prev, ...updates }));
   }, []);
 
   /**

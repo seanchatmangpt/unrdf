@@ -12,11 +12,11 @@ export function useNamespaces(initialPrefixes = {}) {
   const [prefixes, setPrefixes] = useState(initialPrefixes);
 
   const add = useCallback((prefix, namespace) => {
-    setPrefixes(prev => ({ ...prev, [prefix]: namespace }));
+    setPrefixes((prev) => ({ ...prev, [prefix]: namespace }));
   }, []);
 
-  const remove = useCallback(prefix => {
-    setPrefixes(prev => {
+  const remove = useCallback((prefix) => {
+    setPrefixes((prev) => {
       const updated = { ...prev };
       delete updated[prefix];
       return updated;
@@ -24,7 +24,7 @@ export function useNamespaces(initialPrefixes = {}) {
   }, []);
 
   const expand = useCallback(
-    prefixedName => {
+    (prefixedName) => {
       const [prefix, localName] = prefixedName.split(':');
       const namespace = prefixes[prefix];
       if (!namespace) throw new Error(`Unknown prefix: ${prefix}`);

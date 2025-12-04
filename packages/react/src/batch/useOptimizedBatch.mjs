@@ -14,7 +14,7 @@ export function useOptimizedBatch() {
   const [pending, setPending] = useState(false);
 
   const executeDarkMatter = useCallback(
-    async queries => {
+    async (queries) => {
       setPending(true);
       try {
         const results = await engine.darkMatter?.executeBatch(store, queries);

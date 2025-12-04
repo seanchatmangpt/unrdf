@@ -31,7 +31,7 @@ export function useIndexedDBStore(_options = {}) {
   }, []);
 
   const addQuad = useCallback(
-    async quad => {
+    async (quad) => {
       if (!store) return false;
       try {
         await store.addQuad(quad);
@@ -45,7 +45,7 @@ export function useIndexedDBStore(_options = {}) {
   );
 
   const match = useCallback(
-    async pattern => {
+    async (pattern) => {
       if (!store) return [];
       return store.match(pattern);
     },

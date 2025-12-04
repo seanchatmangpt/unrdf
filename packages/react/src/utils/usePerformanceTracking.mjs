@@ -17,11 +17,11 @@ export function usePerformanceTracking() {
       try {
         const result = await fn(...args);
         const duration = performance.now() - start;
-        setMetrics(prev => [...prev, { name, duration, timestamp: Date.now() }]);
+        setMetrics((prev) => [...prev, { name, duration, timestamp: Date.now() }]);
         return result;
       } catch (err) {
         const duration = performance.now() - start;
-        setMetrics(prev => [...prev, { name, duration, error: err, timestamp: Date.now() }]);
+        setMetrics((prev) => [...prev, { name, duration, error: err, timestamp: Date.now() }]);
         throw err;
       }
     };

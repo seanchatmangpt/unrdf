@@ -97,7 +97,7 @@ describe('useKnowledgeStack', () => {
     });
 
     it('should default to basic preset when invalid preset specified', () => {
-      const resolvePreset = preset => {
+      const resolvePreset = (preset) => {
         const presets = {
           basic: { enableRealtime: false, enableRecovery: false },
           realtime: { enableRealtime: true, enableRecovery: false },
@@ -132,7 +132,7 @@ describe('useKnowledgeStack', () => {
     it('should provide insert operation', async () => {
       const data = [];
       const stack = {
-        insert: vi.fn(quads => {
+        insert: vi.fn((quads) => {
           data.push(...quads);
           return { inserted: quads.length };
         }),
@@ -151,9 +151,9 @@ describe('useKnowledgeStack', () => {
       ];
 
       const stack = {
-        delete: vi.fn(pattern => {
+        delete: vi.fn((pattern) => {
           const before = data.length;
-          data = data.filter(q => q.subject !== pattern.subject);
+          data = data.filter((q) => q.subject !== pattern.subject);
           return { deleted: before - data.length };
         }),
       };
@@ -182,9 +182,9 @@ describe('useKnowledgeStack', () => {
     it('should track loading state during operations', async () => {
       let loading = false;
       const stack = {
-        query: vi.fn(async _sparql => {
+        query: vi.fn(async (_sparql) => {
           loading = true;
-          await new Promise(resolve => setTimeout(resolve, 10));
+          await new Promise((resolve) => setTimeout(resolve, 10));
           loading = false;
           return [];
         }),
@@ -230,7 +230,7 @@ describe('useKnowledgeStack', () => {
       const changes = [];
       const dashboard = {
         changes,
-        onChangeReceived: change => {
+        onChangeReceived: (change) => {
           changes.push(change);
         },
       };
@@ -288,7 +288,7 @@ describe('useKnowledgeStack', () => {
       let retryCount = 0;
       const maxRetries = 3;
 
-      const executeWithRecovery = async fn => {
+      const executeWithRecovery = async (fn) => {
         while (retryCount < maxRetries) {
           try {
             return await fn();
@@ -344,7 +344,7 @@ describe('useKnowledgeStack', () => {
       const errorBoundary = {
         hasError: false,
         error: null,
-        captureError: err => {
+        captureError: (err) => {
           errorBoundary.hasError = true;
           errorBoundary.error = err;
         },
@@ -413,7 +413,7 @@ describe('useKnowledgeStack', () => {
     });
 
     it('should include realtime features when enabled', () => {
-      const buildStack = features => {
+      const buildStack = (features) => {
         const stack = {
           query: vi.fn(),
           insert: vi.fn(),
@@ -438,7 +438,7 @@ describe('useKnowledgeStack', () => {
     });
 
     it('should include recovery features when enabled', () => {
-      const buildStack = features => {
+      const buildStack = (features) => {
         const stack = {
           query: vi.fn(),
         };

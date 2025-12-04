@@ -58,7 +58,7 @@ export function useIsomorphism(_config = {}) {
   );
 
   const canonicalize = useCallback(
-    async graphUri => {
+    async (graphUri) => {
       try {
         setLoading(true);
         const quads = await engine.match(null, null, null, graphUri);
@@ -76,7 +76,7 @@ export function useIsomorphism(_config = {}) {
 
   function computeSignature(quads) {
     const sorted = quads
-      .map(q => quadToString(q))
+      .map((q) => quadToString(q))
       .sort()
       .join('|');
     return sorted;

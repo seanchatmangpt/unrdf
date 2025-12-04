@@ -14,12 +14,12 @@ export function useQueryCache(options = {}) {
   const cacheRef = useRef(new LRUCache({ max, ttl }));
   const [stats, setStats] = useState({ hits: 0, misses: 0 });
 
-  const get = useCallback(key => {
+  const get = useCallback((key) => {
     const value = cacheRef.current.get(key);
     if (value !== undefined) {
-      setStats(s => ({ ...s, hits: s.hits + 1 }));
+      setStats((s) => ({ ...s, hits: s.hits + 1 }));
     } else {
-      setStats(s => ({ ...s, misses: s.misses + 1 }));
+      setStats((s) => ({ ...s, misses: s.misses + 1 }));
     }
     return value;
   }, []);

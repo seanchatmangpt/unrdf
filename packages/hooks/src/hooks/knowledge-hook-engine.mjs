@@ -124,25 +124,14 @@ export class KnowledgeHookEngine {
       this.conditionCache.clear();
 
       // Phase 1: Parallel condition evaluation (ONCE per hook)
-      const conditionResults = await this.evaluateConditions(
-        store,
-        delta,
-        options,
-      );
+      const conditionResults = await this.evaluateConditions(store, delta, options);
 
       this.telemetry.setAttribute(span, 'conditions.evaluated', conditionResults.length);
 
       // Phase 2: Execute satisfied hooks in parallel batches
-      const satisfiedHooks = conditionResults
-        .filter(r => r.satisfied)
-        .map(r => r.hook);
+      const satisfiedHooks = conditionResults.filter(r => r.satisfied).map(r => r.hook);
 
-      const executionResults = await this.executeBatches(
-        satisfiedHooks,
-        store,
-        delta,
-        options,
-      );
+      const executionResults = await this.executeBatches(satisfiedHooks, store, delta, options);
 
       this.telemetry.setAttribute(span, 'hooks.executed', executionResults.length);
 
@@ -183,11 +172,7 @@ export class KnowledgeHookEngine {
           const oxStore = this.storeCache.getOrCreate(store, this.createStore);
 
           // Evaluate condition
-          const satisfied = this.isSatisfied(
-            hook.condition,
-            oxStore,
-            options.env,
-          );
+          const satisfied = this.isSatisfied(hook.condition, oxStore, options.env);
 
           // Cache result
           if (this.enableCaching) {
@@ -199,7 +184,7 @@ export class KnowledgeHookEngine {
           // On error, fail the condition (don't execute hook)
           return { hook, satisfied: false, error };
         }
-      }),
+      })
     );
   }
 
@@ -217,7 +202,7 @@ export class KnowledgeHookEngine {
     for (const batch of batches) {
       // Within each batch, run hooks in parallel
       const batchResults = await Promise.allSettled(
-        batch.map(hook => this.executeHook(hook, store, delta, options)),
+        batch.map(hook => this.executeHook(hook, store, delta, options))
       );
       results.push(...batchResults);
     }
@@ -314,14 +299,10 @@ export class KnowledgeHookEngine {
 
     try {
       // Collect all file URIs referenced in hooks
-      const fileUris = this.fileResolver.collectFileUris(
-        Array.from(this.hooks.values()),
-      );
+      const fileUris = this.fileResolver.collectFileUris(Array.from(this.hooks.values()));
 
       // Pre-load all files in parallel
-      await Promise.all(
-        Array.from(fileUris).map(uri => this.fileResolver.preload(uri)),
-      );
+      await Promise.all(Array.from(fileUris).map(uri => this.fileResolver.preload(uri)));
     } catch (error) {
       // Log but don't fail on preload errors
       if (process.env.NODE_ENV !== 'production') {

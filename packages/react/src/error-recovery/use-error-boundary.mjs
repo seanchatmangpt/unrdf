@@ -48,7 +48,7 @@ export function useErrorBoundary(config = {}) {
   }, []);
 
   useEffect(() => {
-    const handleError = event => {
+    const handleError = (event) => {
       captureError(event.error, { componentStack: event.filename });
     };
 

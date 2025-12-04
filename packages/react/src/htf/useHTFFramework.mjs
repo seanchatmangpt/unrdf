@@ -68,8 +68,8 @@ export function useHTFFramework(config = {}) {
    * Add shard and auto-sync across subsystems
    */
   const addShard = useCallback(
-    shard => {
-      setShards(prev => [...prev, shard]);
+    (shard) => {
+      setShards((prev) => [...prev, shard]);
       scheduling.addShard(shard);
     },
     [scheduling]
@@ -80,7 +80,7 @@ export function useHTFFramework(config = {}) {
    */
   const updateShard = useCallback(
     (shardId, updates) => {
-      setShards(prev => prev.map(s => (s.id === shardId ? { ...s, ...updates } : s)));
+      setShards((prev) => prev.map((s) => (s.id === shardId ? { ...s, ...updates } : s)));
       scheduling.updateShard(shardId, updates);
     },
     [scheduling]
@@ -90,8 +90,8 @@ export function useHTFFramework(config = {}) {
    * Remove shard and auto-sync
    */
   const removeShard = useCallback(
-    shardId => {
-      setShards(prev => prev.filter(s => s.id !== shardId));
+    (shardId) => {
+      setShards((prev) => prev.filter((s) => s.id !== shardId));
       scheduling.removeShard(shardId);
     },
     [scheduling]
@@ -163,7 +163,7 @@ export function useHTFFramework(config = {}) {
         priority: 3,
         action: 'add-missing-shards',
         label: `Add ${recommendations.length} missing shard families`,
-        detail: recommendations.map(r => r.family).join(', '),
+        detail: recommendations.map((r) => r.family).join(', '),
         auto: false,
       });
     }
@@ -201,7 +201,7 @@ export function useHTFFramework(config = {}) {
       sections.push('## Executive Summary\n\n');
       sections.push(`- **Total Shards:** ${shards.length}\n`);
       sections.push(
-        `- **Families Represented:** ${Object.keys(profile.analysis.profileByFamily).filter(f => profile.analysis.profileByFamily[f].count > 0).length}/7\n`
+        `- **Families Represented:** ${Object.keys(profile.analysis.profileByFamily).filter((f) => profile.analysis.profileByFamily[f].count > 0).length}/7\n`
       );
       sections.push(
         `- **Overall Coherence:** ${(profile.analysis.coherence.overall * 100).toFixed(1)}%\n`
@@ -239,7 +239,7 @@ export function useHTFFramework(config = {}) {
         const analysis = validation.getViolationAnalysis();
         for (const [severity, violations] of Object.entries(analysis.bySeverity)) {
           sections.push(`### ${severity.toUpperCase()} (${violations.length})\n\n`);
-          violations.slice(0, 5).forEach(v => {
+          violations.slice(0, 5).forEach((v) => {
             sections.push(`- **${v.shardLabel}:** ${v.invariantDescription}\n`);
           });
           if (violations.length > 5) {
@@ -253,7 +253,7 @@ export function useHTFFramework(config = {}) {
       const nextSteps = recommendNextSteps();
       if (nextSteps.length > 0) {
         sections.push('## Next Steps\n\n');
-        nextSteps.forEach(step => {
+        nextSteps.forEach((step) => {
           const autoLabel = step.auto ? '[AUTO]' : '[MANUAL]';
           sections.push(`${step.priority}. ${autoLabel} **${step.label}**\n`);
           sections.push(`   ${step.detail}\n\n`);
@@ -297,10 +297,10 @@ export function useHTFFramework(config = {}) {
         isConverged: validation.state.isConverged,
       },
       progress: {
-        completed: shards.filter(s => scheduling.progress[s.id] === 'completed').length,
-        inProgress: shards.filter(s => scheduling.progress[s.id] === 'in_progress').length,
+        completed: shards.filter((s) => scheduling.progress[s.id] === 'completed').length,
+        inProgress: shards.filter((s) => scheduling.progress[s.id] === 'in_progress').length,
         pending: shards.filter(
-          s => !scheduling.progress[s.id] || scheduling.progress[s.id] === 'scheduled'
+          (s) => !scheduling.progress[s.id] || scheduling.progress[s.id] === 'scheduled'
         ).length,
       },
     };
@@ -341,7 +341,7 @@ export function useHTFFramework(config = {}) {
     getDrift: () => validation.state.drift,
     getCoherence: () => profile.analysis.coherence.overall,
     getProgress: () => {
-      const completed = shards.filter(s => scheduling.progress[s.id] === 'completed').length;
+      const completed = shards.filter((s) => scheduling.progress[s.id] === 'completed').length;
       return completed / Math.max(shards.length, 1);
     },
   };

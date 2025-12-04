@@ -98,11 +98,11 @@ export function useStreamProcessor(config = {}) {
           windowSlide: config.windowSlide,
           sessionGap: config.sessionGap || 30000,
           aggregator: config.aggregator || defaultAggregator,
-          onWindowComplete: window => {
+          onWindowComplete: (window) => {
             if (!mounted) return;
 
-            setWindows(prev => [...prev, window]);
-            setStats(prev => ({
+            setWindows((prev) => [...prev, window]);
+            setStats((prev) => ({
               windowsProcessed: prev.windowsProcessed + 1,
               eventsProcessed: prev.eventsProcessed + window.events.length,
               avgWindowSize: Math.round(
@@ -138,8 +138,8 @@ export function useStreamProcessor(config = {}) {
     return {
       count: events.length,
       operations: {
-        inserts: events.filter(e => e.operation === 'insert').length,
-        deletes: events.filter(e => e.operation === 'delete').length,
+        inserts: events.filter((e) => e.operation === 'insert').length,
+        deletes: events.filter((e) => e.operation === 'delete').length,
       },
       startTime: events[0]?.timestamp,
       endTime: events[events.length - 1]?.timestamp,
@@ -156,7 +156,7 @@ export function useStreamProcessor(config = {}) {
 
   // Process individual event
   const processEvent = useCallback(
-    async event => {
+    async (event) => {
       if (!processorRef.current) return;
 
       try {
@@ -230,8 +230,8 @@ export function useStreamProcessor(config = {}) {
         size: events.length,
       };
 
-      setWindows(prev => [...prev, window]);
-      setStats(prev => ({
+      setWindows((prev) => [...prev, window]);
+      setStats((prev) => ({
         windowsProcessed: prev.windowsProcessed + 1,
         eventsProcessed: prev.eventsProcessed + events.length,
         avgWindowSize: Math.round(
@@ -244,7 +244,7 @@ export function useStreamProcessor(config = {}) {
         const slideInterval = config.windowSlide || Math.floor((config.windowSize || 5000) / 2);
         const cutoffTime = Date.now() - slideInterval;
         windowBufferRef.current = windowBufferRef.current.filter(
-          e => new Date(e.timestamp).getTime() > cutoffTime
+          (e) => new Date(e.timestamp).getTime() > cutoffTime
         );
       } else {
         windowBufferRef.current = [];
@@ -306,7 +306,7 @@ export function useStreamProcessor(config = {}) {
   const getWindowsByTimeRange = useCallback(
     (startTime, endTime) => {
       return windows.filter(
-        w =>
+        (w) =>
           new Date(w.startTime) >= new Date(startTime) && new Date(w.endTime) <= new Date(endTime)
       );
     },

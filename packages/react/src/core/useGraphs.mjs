@@ -79,9 +79,9 @@ export function useGraphs(options = {}) {
 
       stats[graphUri] = {
         size: quads.length,
-        subjects: new Set(quads.map(q => q.subject.value)).size,
-        predicates: new Set(quads.map(q => q.predicate.value)).size,
-        objects: new Set(quads.map(q => q.object.value)).size,
+        subjects: new Set(quads.map((q) => q.subject.value)).size,
+        predicates: new Set(quads.map((q) => q.predicate.value)).size,
+        objects: new Set(quads.map((q) => q.object.value)).size,
       };
     }
 
@@ -91,7 +91,7 @@ export function useGraphs(options = {}) {
   /**
    * Select a graph
    */
-  const selectGraph = useCallback(graphUri => {
+  const selectGraph = useCallback((graphUri) => {
     setSelectedGraph(graphUri);
   }, []);
 
@@ -135,7 +135,7 @@ export function useGraphs(options = {}) {
    * Check if graph exists
    */
   const hasGraph = useCallback(
-    graphUri => {
+    (graphUri) => {
       return graphs.includes(graphUri);
     },
     [graphs]

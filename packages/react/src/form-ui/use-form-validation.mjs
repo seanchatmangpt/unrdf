@@ -28,11 +28,11 @@ export function useFormValidation(schema) {
 
   const handleChange = useCallback(
     (field, value) => {
-      setValues(prev => ({ ...prev, [field]: value }));
+      setValues((prev) => ({ ...prev, [field]: value }));
 
       // Clear error when user types
       if (errors[field]) {
-        setErrors(prev => {
+        setErrors((prev) => {
           const newErrors = { ...prev };
           delete newErrors[field];
           return newErrors;
@@ -43,14 +43,14 @@ export function useFormValidation(schema) {
   );
 
   const handleBlur = useCallback(
-    field => {
-      setTouched(prev => ({ ...prev, [field]: true }));
+    (field) => {
+      setTouched((prev) => ({ ...prev, [field]: true }));
 
       // Validate single field
       try {
         schema.pick({ [field]: true }).parse({ [field]: values[field] });
       } catch (err) {
-        setErrors(prev => ({
+        setErrors((prev) => ({
           ...prev,
           [field]: err.errors[0]?.message,
         }));
@@ -66,7 +66,7 @@ export function useFormValidation(schema) {
       return true;
     } catch (err) {
       const fieldErrors = {};
-      err.errors.forEach(error => {
+      err.errors.forEach((error) => {
         const field = error.path[0];
         fieldErrors[field] = error.message;
       });
@@ -76,7 +76,7 @@ export function useFormValidation(schema) {
   }, [schema, values]);
 
   const handleSubmit = useCallback(
-    async onSubmit => {
+    async (onSubmit) => {
       setIsSubmitting(true);
 
       const isValid = validate();

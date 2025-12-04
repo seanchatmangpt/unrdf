@@ -167,7 +167,7 @@ describe('KnowledgeStack', () => {
     it('should provide insert operation', async () => {
       const data = [];
       const stack = {
-        insert: vi.fn(quads => {
+        insert: vi.fn((quads) => {
           data.push(...quads);
           return { inserted: quads.length };
         }),
@@ -187,7 +187,7 @@ describe('OfflineStore', () => {
       const localStore = new Map();
 
       const store = {
-        insert: quads => {
+        insert: (quads) => {
           quads.forEach((quad, i) => {
             localStore.set(`quad-${Date.now()}-${i}`, quad);
           });
@@ -205,7 +205,7 @@ describe('OfflineStore', () => {
     it('should track pending changes', () => {
       const pendingQueue = [];
 
-      const queueChange = change => {
+      const queueChange = (change) => {
         pendingQueue.push({
           ...change,
           id: Date.now(),
@@ -217,7 +217,7 @@ describe('OfflineStore', () => {
       queueChange({ type: 'insert', data: { subject: 'bob' } });
 
       expect(pendingQueue).toHaveLength(2);
-      expect(pendingQueue.every(c => !c.synced)).toBe(true);
+      expect(pendingQueue.every((c) => !c.synced)).toBe(true);
     });
 
     it('should mark changes as synced', () => {
@@ -227,17 +227,17 @@ describe('OfflineStore', () => {
         { id: 3, synced: false },
       ];
 
-      const markSynced = ids => {
-        ids.forEach(id => {
-          const change = pendingQueue.find(c => c.id === id);
+      const markSynced = (ids) => {
+        ids.forEach((id) => {
+          const change = pendingQueue.find((c) => c.id === id);
           if (change) change.synced = true;
         });
       };
 
       markSynced([1, 2]);
 
-      expect(pendingQueue.filter(c => c.synced)).toHaveLength(2);
-      expect(pendingQueue.filter(c => !c.synced)).toHaveLength(1);
+      expect(pendingQueue.filter((c) => c.synced)).toHaveLength(2);
+      expect(pendingQueue.filter((c) => !c.synced)).toHaveLength(1);
     });
   });
 
@@ -267,7 +267,7 @@ describe('OfflineStore', () => {
         pendingQueue: [],
       };
 
-      const insert = data => {
+      const insert = (data) => {
         if (!state.isOnline) {
           state.pendingQueue.push({
             type: 'insert',
@@ -303,7 +303,7 @@ describe('OfflineStore', () => {
       const sync = async () => {
         if (!state.isOnline) return { synced: 0 };
 
-        const pending = state.pendingQueue.filter(c => !c.synced);
+        const pending = state.pendingQueue.filter((c) => !c.synced);
 
         for (const change of pending) {
           await syncToServer(change);
@@ -329,7 +329,7 @@ describe('OfflineStore', () => {
         { synced: false },
       ];
 
-      const pendingCount = pendingQueue.filter(c => !c.synced).length;
+      const pendingCount = pendingQueue.filter((c) => !c.synced).length;
 
       expect(pendingCount).toBe(3);
     });
@@ -342,7 +342,7 @@ describe('OfflineStore', () => {
       ];
 
       const cleanup = () => {
-        pendingQueue = pendingQueue.filter(c => !c.synced);
+        pendingQueue = pendingQueue.filter((c) => !c.synced);
       };
 
       cleanup();

@@ -50,7 +50,7 @@ const UrlSchema = z
 const BasePathSchema = z
   .string()
   .max(4096, 'Base path exceeds maximum length')
-  .refine(path => !path.includes('..'), 'Base path cannot contain path traversal sequences')
+  .refine((path) => !path.includes('..'), 'Base path cannot contain path traversal sequences')
   .optional();
 
 /**
@@ -204,7 +204,7 @@ export function useKnowledgeEngine(options = {}) {
   /**
    * Add a knowledge hook
    */
-  const addKnowledgeHook = useCallback(hook => {
+  const addKnowledgeHook = useCallback((hook) => {
     if (!engineRef.current) {
       throw new Error('[useKnowledgeEngine] Engine not initialized');
     }
@@ -214,7 +214,7 @@ export function useKnowledgeEngine(options = {}) {
   /**
    * Remove a knowledge hook
    */
-  const removeKnowledgeHook = useCallback(hookName => {
+  const removeKnowledgeHook = useCallback((hookName) => {
     if (!engineRef.current) {
       throw new Error('[useKnowledgeEngine] Engine not initialized');
     }
