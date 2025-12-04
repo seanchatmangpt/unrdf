@@ -1,0 +1,46 @@
+{
+  "name": "unrdf-react",
+  "version": "4.1.1",
+  "description": "React hooks and integration layer for UNRDF knowledge engine",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./src/index.mjs"
+    },
+    "./hooks": "./src/hooks.mjs",
+    "./core": "./src/core/index.mjs",
+    "./context": "./src/context/index.mjs",
+    "./providers": "./src/providers.mjs"
+  },
+  "main": "./src/index.mjs",
+  "files": [
+    "src",
+    "README.md"
+  ],
+  "scripts": {
+    "test": "vitest",
+    "test:watch": "vitest --watch",
+    "lint": "eslint src/ test/",
+    "format": "prettier --write src/ test/",
+    "format:check": "prettier --check src/ test/"
+  },
+  "dependencies": {
+    "unrdf": "^4.1.1",
+    "react": "^18.2.0"
+  },
+  "devDependencies": {
+    "@testing-library/react": "^14.1.2",
+    "vitest": "^1.0.4"
+  },
+  "peerDependencies": {
+    "react": ">=16.8.0"
+  },
+  "keywords": ["rdf", "knowledge", "hooks", "react", "semantic-web"],
+  "author": "UNRDF Contributors",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/seanchatmangpt/unrdf-react.git"
+  },
+  "homepage": "https://github.com/seanchatmangpt/unrdf-react#readme"
+}

@@ -24,19 +24,19 @@ describe('@unrdf/hooks Adversarial Tests - Capabilities', () => {
     it('ADVERTISED: Can define hooks with validation', () => {
       const hook = defineHook({
         name: 'test-hook',
-        trigger: 'quad-add',
+        trigger: 'before-add',
         validate: ({ quad }) => ({ valid: true, quad }),
       });
 
       expect(isValidHook(hook)).toBe(true);
       expect(hook.name).toBe('test-hook');
-      expect(hook.trigger).toBe('quad-add');
+      expect(hook.trigger).toBe('before-add');
     });
 
     it('ADVERTISED: Can define hooks with transformation', () => {
       const hook = defineHook({
         name: 'transform-hook',
-        trigger: 'quad-add',
+        trigger: 'before-add',
         transform: ({ quad }) => ({ quad }),
       });
 
@@ -47,7 +47,7 @@ describe('@unrdf/hooks Adversarial Tests - Capabilities', () => {
     it('ADVERTISED: Can define hooks with both validation and transformation', () => {
       const hook = defineHook({
         name: 'combo-hook',
-        trigger: 'quad-add',
+        trigger: 'before-add',
         validate: ({ quad }) => ({ valid: true, quad }),
         transform: ({ quad }) => ({ quad }),
       });
@@ -62,8 +62,8 @@ describe('@unrdf/hooks Adversarial Tests - Capabilities', () => {
     it('ADVERTISED: Can execute hooks on quad operations', () => {
       const hook = defineHook({
         name: 'exec-hook',
-        trigger: 'quad-add',
-        validate: ({ quad }) => ({ valid: true, quad }),
+        trigger: 'before-add',
+        validate: q => q.subject.termType === 'NamedNode',
       });
 
       const testQuad = quad(
@@ -72,21 +72,21 @@ describe('@unrdf/hooks Adversarial Tests - Capabilities', () => {
         literal('o')
       );
 
-      const result = executeHook(hook, { quad: testQuad, operation: 'add' });
-      expect(result.success).toBe(true);
+      const result = executeHook(hook, testQuad);
+      expect(result.valid).toBe(true);
     });
 
     it('ADVERTISED: Can execute hook chains', () => {
       const hook1 = defineHook({
         name: 'chain-1',
-        trigger: 'quad-add',
-        validate: ({ quad }) => ({ valid: true, quad }),
+        trigger: 'before-add',
+        validate: q => q.subject.termType === 'NamedNode',
       });
 
       const hook2 = defineHook({
         name: 'chain-2',
-        trigger: 'quad-add',
-        validate: ({ quad }) => ({ valid: true, quad }),
+        trigger: 'before-add',
+        validate: q => q.predicate.termType === 'NamedNode',
       });
 
       const testQuad = quad(
@@ -95,8 +95,8 @@ describe('@unrdf/hooks Adversarial Tests - Capabilities', () => {
         literal('o')
       );
 
-      const result = executeHookChain([hook1, hook2], { quad: testQuad, operation: 'add' });
-      expect(result.success).toBe(true);
+      const result = executeHookChain([hook1, hook2], testQuad);
+      expect(result.valid).toBe(true);
     });
   });
 
@@ -106,13 +106,13 @@ describe('@unrdf/hooks Adversarial Tests - Capabilities', () => {
 
       const hook = defineHook({
         name: 'registry-hook',
-        trigger: 'quad-add',
+        trigger: 'before-add',
         validate: ({ quad }) => ({ valid: true, quad }),
       });
 
       registerHook(registry, hook);
 
-      const hooks = getHooksByTrigger(registry, 'quad-add');
+      const hooks = getHooksByTrigger(registry, 'before-add');
       expect(hooks.length).toBeGreaterThan(0);
       expect(hooks[0].name).toBe('registry-hook');
     });
@@ -124,8 +124,8 @@ describe('@unrdf/hooks Adversarial Tests - Capabilities', () => {
         registry,
         defineHook({
           name: 'add-hook',
-          trigger: 'quad-add',
-          validate: ({ quad }) => ({ valid: true, quad }),
+          trigger: 'before-add',
+          validate: q => q.subject.termType === 'NamedNode',
         })
       );
 
@@ -133,13 +133,13 @@ describe('@unrdf/hooks Adversarial Tests - Capabilities', () => {
         registry,
         defineHook({
           name: 'delete-hook',
-          trigger: 'quad-delete',
-          validate: ({ quad }) => ({ valid: true, quad }),
+          trigger: 'before-remove',
+          validate: q => q.subject.termType === 'NamedNode',
         })
       );
 
-      const addHooks = getHooksByTrigger(registry, 'quad-add');
-      const deleteHooks = getHooksByTrigger(registry, 'quad-delete');
+      const addHooks = getHooksByTrigger(registry, 'before-add');
+      const deleteHooks = getHooksByTrigger(registry, 'before-remove');
 
       expect(addHooks.length).toBe(1);
       expect(deleteHooks.length).toBe(1);
@@ -152,11 +152,11 @@ describe('@unrdf/hooks Adversarial Tests - Capabilities', () => {
     it('ADVERTISED: Can use built-in IRI validation hooks', () => {
       const validIRI = namedNode('http://example.org/valid');
 
-      const testQuad = quad(validIRI, namedNode('http://p'), literal('o'));
+      const testQuad = quad(validIRI, namedNode('http://example.org/p'), literal('o'));
 
-      const result = executeHook(validateSubjectIRI, { quad: testQuad, operation: 'add' });
+      const result = executeHook(validateSubjectIRI, testQuad);
 
-      expect(result.success).toBe(true);
+      expect(result.valid).toBe(true);
     });
 
     it('ADVERTISED: Built-in hooks are available and functional', () => {
@@ -174,8 +174,8 @@ describe('@unrdf/hooks Adversarial Tests - Capabilities', () => {
         literal('o')
       );
 
-      const result = executeHook(standardValidation, { quad: testQuad, operation: 'add' });
-      expect(result.success).toBe(true);
+      const result = executeHook(standardValidation, testQuad);
+      expect(result.valid).toBe(true);
     });
   });
 });
