@@ -3,12 +3,14 @@
  * Demonstrates all server-side UNRDF packages working together
  */
 
-import { createServer } from 'node:http';
+import { createServer as createHttpServer } from 'node:http';
 import { WebSocketServer } from 'ws';
 import { Store, Parser } from 'n3';
 import { KnowledgeHookManager } from '@unrdf/hooks';
 import { createStreamProcessor } from '@unrdf/streaming';
 import { createCoordinator } from '@unrdf/federation';
+import { executeQuery } from '@unrdf/core';
+import { createStore as createOxigraphStore } from '@unrdf/oxigraph';
 
 // ============================================================================
 // CONFIGURATION
@@ -50,7 +52,7 @@ ex:Person3 a foaf:Person ;
 
 const parser = new Parser();
 const quads = parser.parse(sampleData);
-quads.forEach((quad) => store.addQuad(quad));
+quads.forEach(quad => store.addQuad(quad));
 
 console.log(`📊 Loaded ${quads.length} triples into RDF store`);
 
@@ -64,7 +66,7 @@ const hookManager = new KnowledgeHookManager();
 hookManager.define({
   name: 'validateEmail',
   trigger: 'before-add',
-  validate: (quad) => {
+  validate: quad => {
     if (quad.predicate.value === 'http://xmlns.com/foaf/0.1/mbox') {
       const email = quad.object.value;
       return email.startsWith('mailto:') && email.includes('@');
@@ -77,7 +79,7 @@ hookManager.define({
 hookManager.define({
   name: 'addTimestamp',
   trigger: 'after-add',
-  transform: (quad) => {
+  transform: quad => {
     // Return the quad as-is (transformation happens in the server endpoint)
     return quad;
   },
@@ -98,7 +100,7 @@ const wss = new WebSocketServer({ port: WS_PORT });
 // Track WebSocket clients
 const wsClients = new Set();
 
-wss.on('connection', (ws) => {
+wss.on('connection', ws => {
   console.log('🔌 WebSocket client connected');
   wsClients.add(ws);
 
@@ -107,7 +109,7 @@ wss.on('connection', (ws) => {
   ws.send(
     JSON.stringify({
       type: 'initial',
-      quads: allQuads.map((q) => ({
+      quads: allQuads.map(q => ({
         subject: q.subject.value,
         predicate: q.predicate.value,
         object: q.object.value,
@@ -134,7 +136,8 @@ function broadcastChange(operation, quad) {
   });
 
   for (const client of wsClients) {
-    if (client.readyState === 1) { // WebSocket.OPEN
+    if (client.readyState === 1) {
+      // WebSocket.OPEN
       client.send(message);
     }
   }
@@ -153,10 +156,26 @@ const federation = createCoordinator({
 console.log('🌐 Federation coordinator initialized');
 
 // ============================================================================
+// SPARQL QUERY HELPER
+// ============================================================================
+
+/**
+ * Execute SPARQL query on n3.Store by converting to Oxigraph
+ * @param {Store} n3Store - N3 store with quads
+ * @param {string} sparql - SPARQL query string
+ * @returns {Promise<Object|boolean|Array>} Query results
+ */
+async function executeSparqlQuery(n3Store, sparql) {
+  const quads = n3Store.getQuads();
+  const oxStore = createOxigraphStore(quads);
+  return executeQuery(oxStore, sparql);
+}
+
+// ============================================================================
 // HTTP API ENDPOINTS
 // ============================================================================
 
-const server = createServer(async (req, res) => {
+const server = createHttpServer(async (req, res) => {
   // CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
@@ -177,7 +196,7 @@ const server = createServer(async (req, res) => {
     res.end(
       JSON.stringify({
         count: quads.length,
-        quads: quads.map((q) => ({
+        quads: quads.map(q => ({
           subject: q.subject.value,
           predicate: q.predicate.value,
           object: q.object.value,
@@ -198,21 +217,20 @@ const server = createServer(async (req, res) => {
     }
 
     try {
-      // Simple pattern matching (replace with full SPARQL in production)
-      const results = store.getQuads();
+      const startTime = Date.now();
+      const results = await executeSparqlQuery(store, query);
+      const executionTime = Date.now() - startTime;
+
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(
         JSON.stringify({
           query,
-          results: results.slice(0, 10).map((q) => ({
-            subject: q.subject.value,
-            predicate: q.predicate.value,
-            object: q.object.value,
-          })),
+          results,
+          executionTime,
         })
       );
     } catch (error) {
-      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.writeHead(400, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ error: error.message }));
     }
     return;
@@ -223,7 +241,7 @@ const server = createServer(async (req, res) => {
     let body = '';
     let totalSize = 0;
 
-    req.on('data', (chunk) => {
+    req.on('data', chunk => {
       totalSize += chunk.length;
       if (totalSize > MAX_BODY_SIZE) {
         res.writeHead(413, { 'Content-Type': 'application/json' });
@@ -243,29 +261,15 @@ const server = createServer(async (req, res) => {
           return;
         }
 
-        // Check for invalid SPARQL syntax
-        if (sparql.includes('INVALID') || sparql.includes('###')) {
-          res.writeHead(400, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify({ error: 'Invalid SPARQL syntax' }));
-          return;
-        }
-
         const startTime = Date.now();
-
-        // Simple pattern matching (replace with full SPARQL in production)
-        const results = store.getQuads();
-
+        const results = await executeSparqlQuery(store, sparql);
         const executionTime = Date.now() - startTime;
 
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(
           JSON.stringify({
-            results: results.slice(0, 10).map((q) => ({
-              subject: q.subject.value,
-              predicate: q.predicate.value,
-              object: q.object.value,
-            })),
-            executionTime
+            results,
+            executionTime,
           })
         );
       } catch (error) {
@@ -281,7 +285,7 @@ const server = createServer(async (req, res) => {
     let body = '';
     let totalSize = 0;
 
-    req.on('data', (chunk) => {
+    req.on('data', chunk => {
       totalSize += chunk.length;
       if (totalSize > MAX_BODY_SIZE) {
         res.writeHead(413, { 'Content-Type': 'application/json' });
@@ -330,7 +334,10 @@ const server = createServer(async (req, res) => {
 
           hooksExecuted.push('pre-add');
 
-          if (!beforeResult.success || beforeResult.results.some(r => r.success && r.data?.valid === false)) {
+          if (
+            !beforeResult.success ||
+            beforeResult.results.some(r => r.success && r.data?.valid === false)
+          ) {
             const failedResult = beforeResult.results.find(r => r.data?.valid === false);
             res.writeHead(400, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ error: failedResult?.data?.message || 'Validation failed' }));
@@ -340,20 +347,26 @@ const server = createServer(async (req, res) => {
 
         // Add quad
         const parser = new Parser();
-        const quadStr = oType === 'literal'
-          ? `<${s}> <${p}> "${o}" .`
-          : `<${s}> <${p}> <${o}> .`;
-        const [n3quad] = parser.parse(quadStr);
+        // Escape quotes in literal values
+        const escapedO = oType === 'literal' ? o.replace(/"/g, '\\"') : o;
+        const quadStr =
+          oType === 'literal' ? `<${s}> <${p}> "${escapedO}" .` : `<${s}> <${p}> <${o}> .`;
+
+        let n3quad;
+        try {
+          [n3quad] = parser.parse(quadStr);
+        } catch (parseError) {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: `Invalid quad format: ${parseError.message}` }));
+          return;
+        }
+
         store.addQuad(n3quad);
 
         // Execute after-add hooks
         const afterHooks = hookManager.getHooksByTrigger('after-add');
         if (afterHooks.length > 0) {
-          await hookManager.executeByTrigger(
-            'after-add',
-            { quad: n3quad },
-            { store }
-          );
+          await hookManager.executeByTrigger('after-add', { quad: n3quad }, { store });
           hooksExecuted.push('post-add');
         }
 
@@ -361,11 +374,13 @@ const server = createServer(async (req, res) => {
         broadcastChange('add', n3quad);
 
         res.writeHead(201, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({
-          success: true,
-          hooksValidated: validateHooks === true,
-          hooksExecuted
-        }));
+        res.end(
+          JSON.stringify({
+            success: true,
+            hooksValidated: validateHooks === true,
+            hooksExecuted,
+          })
+        );
       } catch (error) {
         res.writeHead(500, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ error: error.message }));
@@ -377,7 +392,7 @@ const server = createServer(async (req, res) => {
   // DELETE /api/quads - Delete a quad
   if (req.method === 'DELETE' && url.pathname === '/api/quads') {
     let body = '';
-    req.on('data', (chunk) => {
+    req.on('data', chunk => {
       body += chunk.toString();
     });
 
@@ -386,9 +401,7 @@ const server = createServer(async (req, res) => {
         const { subject, predicate, object } = JSON.parse(body);
 
         const parser = new Parser();
-        const [quad] = parser.parse(
-          `<${subject}> <${predicate}> "${object}" .`
-        );
+        const [quad] = parser.parse(`<${subject}> <${predicate}> "${object}" .`);
         store.removeQuad(quad);
 
         broadcastChange('delete', quad);
@@ -414,7 +427,7 @@ const server = createServer(async (req, res) => {
   // POST /api/import - Import RDF data
   if (req.method === 'POST' && url.pathname === '/api/import') {
     let body = '';
-    req.on('data', (chunk) => {
+    req.on('data', chunk => {
       body += chunk.toString();
     });
 
@@ -422,7 +435,10 @@ const server = createServer(async (req, res) => {
       try {
         const contentType = req.headers['content-type'];
 
-        if (!contentType || (!contentType.includes('text/turtle') && !contentType.includes('application/n-triples'))) {
+        if (
+          !contentType ||
+          (!contentType.includes('text/turtle') && !contentType.includes('application/n-triples'))
+        ) {
           res.writeHead(415, { 'Content-Type': 'application/json' });
           res.end(JSON.stringify({ error: 'Unsupported Media Type' }));
           return;
@@ -430,7 +446,7 @@ const server = createServer(async (req, res) => {
 
         const parser = new Parser();
         const quads = parser.parse(body);
-        quads.forEach((quad) => store.addQuad(quad));
+        quads.forEach(quad => store.addQuad(quad));
 
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ success: true, imported: quads.length }));
@@ -466,8 +482,8 @@ const server = createServer(async (req, res) => {
   // GET /api/stats - Statistics
   if (req.method === 'GET' && url.pathname === '/api/stats') {
     const quads = store.getQuads();
-    const subjects = new Set(quads.map((q) => q.subject.value));
-    const predicatesSet = new Set(quads.map((q) => q.predicate.value));
+    const subjects = new Set(quads.map(q => q.subject.value));
+    const predicatesSet = new Set(quads.map(q => q.predicate.value));
 
     const predicateCounts = {};
     quads.forEach(q => {
@@ -483,13 +499,6 @@ const server = createServer(async (req, res) => {
         predicates: predicateCounts,
       })
     );
-    return;
-  }
-
-  // Handle unsupported methods
-  if (url.pathname.startsWith('/api/')) {
-    res.writeHead(405, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ error: 'Method Not Allowed' }));
     return;
   }
 
@@ -511,7 +520,7 @@ const server = createServer(async (req, res) => {
 export async function createServer(options = {}) {
   const port = options.port ?? PORT;
 
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     server.listen(port, () => {
       // Attach store and other properties to server for testing
       server.store = store;
