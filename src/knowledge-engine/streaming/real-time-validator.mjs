@@ -9,7 +9,7 @@
 
 import { EventEmitter } from 'events';
 import { createStore } from '@unrdf/oxigraph';
-import { Parser } from 'n3'; // JUSTIFIED: N3 Parser for streaming with backpressure
+import { Parser } from '@unrdf/core/rdf/n3-justified-only'; // JUSTIFIED: N3 Parser for streaming with backpressure
 import { z } from 'zod';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
 import { validateShacl } from '../validate.mjs';

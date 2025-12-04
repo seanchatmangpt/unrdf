@@ -3,7 +3,8 @@
  * @module reason
  */
 
-import { Parser, Store, Writer } from 'n3';
+import { Parser, Writer } from '@unrdf/core/rdf/n3-justified-only';
+import { Store } from 'n3'; // TODO: Replace with Oxigraph Store
 
 // Dynamic import to avoid top-level await issues
 let basicQuery;
