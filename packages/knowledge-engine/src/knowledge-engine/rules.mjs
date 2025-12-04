@@ -4,7 +4,6 @@
  */
 
 import { z } from 'zod';
-import { namedNode, literal, blankNode, variable } from '@unrdf/core';
 
 /**
  * @typedef {import('n3').Quad} Quad

@@ -3,7 +3,7 @@
  * @module @unrdf/knowledge-engine/inference-engine
  */
 
-import { addQuad, quad, namedNode, literal, blankNode, countQuads, getQuads } from '@unrdf/core';
+import { addQuad, quad, namedNode, literal, countQuads, getQuads } from '@unrdf/core';
 import { compileRule } from './rules.mjs';
 
 /**
@@ -72,11 +72,8 @@ export function runInference(engine, maxIterations = 100) {
     iteration++;
     engine.iterations = iteration;
 
-    let newFactsThisIteration = 0;
-
     for (const rule of engine.rules) {
-      const newFacts = applyRule(engine, rule);
-      newFactsThisIteration += newFacts;
+      applyRule(engine, rule);
     }
 
     const currentCount = countQuads(engine.store);
