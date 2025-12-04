@@ -13,7 +13,7 @@ importers:
   .:
     dependencies:
       zod:
-        specifier: ^3.25.76
+        specifier: ^3.22.0
         version: 3.25.76
     devDependencies:
       '@opentelemetry/api':
