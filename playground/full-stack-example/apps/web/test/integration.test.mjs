@@ -269,13 +269,17 @@ describe('Full-Stack Web Integration', () => {
     it('should sync state with server', async () => {
       const wrapper = mount(App)
 
-      vi.spyOn(apiClient, 'getQuads').mockResolvedValue([
-        {
-          subject: 'http://example.org/alice',
-          predicate: 'http://schema.org/name',
-          object: 'Alice'
-        }
-      ])
+      // Mock fetch to return quads
+      vi.spyOn(global, 'fetch').mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          quads: [{
+            subject: 'http://example.org/alice',
+            predicate: 'http://schema.org/name',
+            object: 'Alice'
+          }]
+        })
+      })
 
       await wrapper.vm.syncWithServer()
       await nextTick()
@@ -328,11 +332,12 @@ describe('Full-Stack Web Integration', () => {
     it('should display API errors', async () => {
       const wrapper = mount(App)
 
-      vi.spyOn(apiClient, 'getQuads').mockRejectedValue(new Error('API Error'))
+      vi.spyOn(global, 'fetch').mockRejectedValue(new Error('API Error'))
 
       await wrapper.vm.loadQuads()
       await nextTick()
 
+      expect(wrapper.vm.error).toBeTruthy()
       expect(wrapper.vm.error).toContain('API Error')
     })
 

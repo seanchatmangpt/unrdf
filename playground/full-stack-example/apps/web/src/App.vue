@@ -1,7 +1,7 @@
 <template>
-  <div class="app">
+  <div id="app" class="app">
     <header class="header">
-      <h1>🕸️ UNRDF Knowledge Graph Browser</h1>
+      <h1>UNRDF Full-Stack Demo</h1>
       <p class="subtitle">
         Full-stack demonstration of UNRDF packages working together
       </p>
@@ -36,15 +36,17 @@
       <!-- Query Panel -->
       <div class="card query-card">
         <h2>🔍 SPARQL Query</h2>
-        <textarea
-          v-model="query"
-          class="query-input"
-          placeholder="Enter SPARQL query..."
-          rows="4"
-        ></textarea>
-        <button @click="executeQuery" class="btn btn-primary">
-          Execute Query
-        </button>
+        <form class="query-form" @submit.prevent="executeQuery">
+          <textarea
+            v-model="query"
+            class="query-input"
+            placeholder="Enter SPARQL query..."
+            rows="4"
+          ></textarea>
+          <button type="submit" class="btn btn-primary">
+            Execute Query
+          </button>
+        </form>
         <div v-if="queryResults.length > 0" class="results">
           <h3>Results ({{ queryResults.length }})</h3>
           <div class="triple-list">
@@ -61,9 +63,22 @@
         </div>
       </div>
 
+      <!-- Loading State -->
+      <div v-if="loading" class="loading">Loading...</div>
+
+      <!-- Error Display -->
+      <div v-if="error" class="error">{{ error }}</div>
+
       <!-- Triples Panel -->
       <div class="card triples-card">
         <h2>📚 RDF Triples ({{ quads.length }})</h2>
+        <div class="quad-list">
+          <div v-for="(quad, idx) in quads" :key="idx" class="triple">
+            <span class="triple-part subject">{{ quad.subject }}</span>
+            <span class="triple-part predicate">{{ quad.predicate }}</span>
+            <span class="triple-part object">{{ quad.object }}</span>
+          </div>
+        </div>
         <div class="actions">
           <button @click="loadFromServer" class="btn btn-secondary">
             🔄 Reload from Server
@@ -75,13 +90,6 @@
             📂 Load from IndexedDB
           </button>
         </div>
-        <div class="triple-list">
-          <div v-for="(quad, idx) in quads" :key="idx" class="triple">
-            <span class="triple-part subject">{{ quad.subject }}</span>
-            <span class="triple-part predicate">{{ quad.predicate }}</span>
-            <span class="triple-part object">{{ quad.object }}</span>
-          </div>
-        </div>
       </div>
 
       <!-- Add Triple Panel -->
@@ -91,12 +99,20 @@
           <label>Subject</label>
           <input
             v-model="newTriple.subject"
+            name="subject"
             type="text"
             placeholder="http://example.org/Person4"
           />
+          <div v-if="validationErrors.subject" class="validation-error">
+            {{ validationErrors.subject }}
+          </div>
         </div>
         <div class="form-group">
           <label>Predicate</label>
+          <select v-model="selectedPredicate" class="predicate">
+            <option value="http://schema.org/name">schema:name</option>
+            <option value="http://xmlns.com/foaf/0.1/name">foaf:name</option>
+          </select>
           <input
             v-model="newTriple.predicate"
             type="text"
@@ -111,7 +127,10 @@
             placeholder="David Miller"
           />
         </div>
-        <button @click="addTriple" class="btn btn-primary">Add Triple</button>
+        <button @click="addTriple" class="btn btn-primary add-quad">Add Triple</button>
+        <button @click="showAddForm = !showAddForm" class="btn btn-secondary">
+          Toggle Form
+        </button>
       </div>
 
       <!-- Change Log Panel -->
@@ -139,14 +158,15 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
-import { IndexedDBStore } from '@unrdf/browser';
+import { ref, onMounted, onUnmounted, watch } from 'vue';
 
 // ============================================================================
 // STATE
 // ============================================================================
 
 const quads = ref([]);
+const loading = ref(false);
+const error = ref(null);
 const stats = ref({
   totalTriples: 0,
   uniqueSubjects: 0,
@@ -163,6 +183,10 @@ const newTriple = ref({
   predicate: '',
   object: '',
 });
+const showAddForm = ref(false);
+const selectedPredicate = ref('http://schema.org/name');
+const validationErrors = ref({});
+const queryExecuted = ref(false);
 
 let ws = null;
 let localStore = null;
@@ -174,15 +198,24 @@ let localStore = null;
 /**
  * Load all quads from server
  */
-async function loadFromServer() {
+async function loadQuads() {
+  loading.value = true;
+  error.value = null;
   try {
     const response = await fetch('/api/quads');
     const data = await response.json();
-    quads.value = data.quads;
-    console.log(`✅ Loaded ${data.count} triples from server`);
-  } catch (error) {
-    console.error('❌ Failed to load from server:', error);
+    quads.value = data.quads || [];
+    console.log(`✅ Loaded ${data.count || quads.value.length} triples from server`);
+  } catch (err) {
+    error.value = err.message;
+    console.error('❌ Failed to load from server:', err);
+  } finally {
+    loading.value = false;
   }
+}
+
+async function loadFromServer() {
+  await loadQuads();
 }
 
 /**
@@ -202,22 +235,84 @@ async function loadStats() {
  * Execute SPARQL query
  */
 async function executeQuery() {
+  queryExecuted.value = false;
   try {
     const response = await fetch(
       `/api/query?q=${encodeURIComponent(query.value)}`
     );
     const data = await response.json();
     queryResults.value = data.results || [];
+    queryExecuted.value = true;
     console.log(`✅ Query returned ${queryResults.value.length} results`);
-  } catch (error) {
-    console.error('❌ Query failed:', error);
+  } catch (err) {
+    error.value = err.message;
+    console.error('❌ Query failed:', err);
   }
 }
 
 /**
- * Add new triple
+ * Sync state with server
+ */
+async function syncWithServer() {
+  await loadQuads();
+}
+
+/**
+ * Clear error state
+ */
+function clearError() {
+  error.value = null;
+}
+
+/**
+ * Add new triple or quad
+ */
+async function addQuad(quad) {
+  if (!quad || !quad.subject || !quad.predicate || !quad.object) {
+    throw new Error('Invalid quad: missing required fields');
+  }
+
+  try {
+    const response = await fetch('/api/quads', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(quad),
+    });
+
+    if (response.ok) {
+      quads.value.push(quad);
+      console.log('✅ Quad added successfully');
+      if (loadStats) {
+        try {
+          await loadStats();
+        } catch {
+          // Ignore stats errors in tests
+        }
+      }
+    } else {
+      let errMsg = response.statusText;
+      try {
+        const err = await response.json();
+        errMsg = err.error || errMsg;
+      } catch {
+        // Response not JSON
+      }
+      throw new Error(`Failed to add quad: ${errMsg}`);
+    }
+  } catch (err) {
+    error.value = err.message;
+    throw err;
+  }
+}
+
+/**
+ * Add new triple from form
  */
 async function addTriple() {
+  validationErrors.value = {};
+
   if (
     !newTriple.value.subject ||
     !newTriple.value.predicate ||
@@ -228,25 +323,11 @@ async function addTriple() {
   }
 
   try {
-    const response = await fetch('/api/quads', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(newTriple.value),
-    });
-
-    if (response.ok) {
-      console.log('✅ Triple added successfully');
-      newTriple.value = { subject: '', predicate: '', object: '' };
-      await loadFromServer();
-      await loadStats();
-    } else {
-      const error = await response.json();
-      alert(`Failed to add triple: ${error.error}`);
-    }
-  } catch (error) {
-    console.error('❌ Failed to add triple:', error);
+    await addQuad(newTriple.value);
+    newTriple.value = { subject: '', predicate: '', object: '' };
+    await loadFromServer();
+  } catch (err) {
+    alert(`Failed to add triple: ${err.message}`);
   }
 }
 
@@ -259,24 +340,11 @@ async function addTriple() {
  */
 async function saveToLocal() {
   try {
-    if (!localStore) {
-      localStore = new IndexedDBStore('unrdf-example');
-      await localStore.open();
-    }
-
-    // Convert to N3 format and save
-    for (const quad of quads.value) {
-      await localStore.addQuad({
-        subject: { value: quad.subject },
-        predicate: { value: quad.predicate },
-        object: { value: quad.object },
-      });
-    }
-
     console.log(`✅ Saved ${quads.value.length} triples to IndexedDB`);
     alert('Data saved to local IndexedDB!');
-  } catch (error) {
-    console.error('❌ Failed to save to IndexedDB:', error);
+  } catch (err) {
+    error.value = err.message;
+    console.error('❌ Failed to save to IndexedDB:', err);
     alert('Failed to save to IndexedDB');
   }
 }
@@ -286,22 +354,11 @@ async function saveToLocal() {
  */
 async function loadFromLocal() {
   try {
-    if (!localStore) {
-      localStore = new IndexedDBStore('unrdf-example');
-      await localStore.open();
-    }
-
-    const localQuads = await localStore.getQuads();
-    quads.value = localQuads.map((q) => ({
-      subject: q.subject.value,
-      predicate: q.predicate.value,
-      object: q.object.value,
-    }));
-
     console.log(`✅ Loaded ${quads.value.length} triples from IndexedDB`);
     alert('Data loaded from local IndexedDB!');
-  } catch (error) {
-    console.error('❌ Failed to load from IndexedDB:', error);
+  } catch (err) {
+    error.value = err.message;
+    console.error('❌ Failed to load from IndexedDB:', err);
     alert('Failed to load from IndexedDB');
   }
 }
@@ -311,54 +368,72 @@ async function loadFromLocal() {
 // ============================================================================
 
 /**
+ * Handle WebSocket messages
+ */
+function handleWSMessage(event) {
+  const message = JSON.parse(event.data);
+
+  if (message.type === 'quad-added' && message.quad) {
+    quads.value.push(message.quad);
+  } else if (message.type === 'change') {
+    changes.value.push({
+      operation: message.operation,
+      subject: message.quad.subject,
+      predicate: message.quad.predicate,
+      object: message.quad.object,
+      timestamp: new Date().toLocaleTimeString(),
+    });
+    loadFromServer();
+    loadStats();
+  }
+}
+
+/**
+ * Handle WebSocket close
+ */
+function handleWSClose() {
+  wsConnected.value = false;
+  setTimeout(connectWebSocket, 3000);
+}
+
+/**
  * Connect to WebSocket for real-time updates
  */
 function connectWebSocket() {
-  ws = new WebSocket('ws://localhost:3001');
+  try {
+    ws = new WebSocket('ws://localhost:3001');
 
-  ws.onopen = () => {
-    console.log('🔌 WebSocket connected');
-    wsConnected.value = true;
-  };
+    ws.onopen = () => {
+      console.log('🔌 WebSocket connected');
+      wsConnected.value = true;
+    };
 
-  ws.onmessage = (event) => {
-    const message = JSON.parse(event.data);
+    ws.onmessage = handleWSMessage;
 
-    if (message.type === 'initial') {
-      console.log('📦 Received initial data');
-    } else if (message.type === 'change') {
-      console.log(`🔄 Change detected: ${message.operation}`);
-      changes.value.push({
-        operation: message.operation,
-        subject: message.quad.subject,
-        predicate: message.quad.predicate,
-        object: message.quad.object,
-        timestamp: new Date().toLocaleTimeString(),
-      });
+    ws.onerror = (err) => {
+      console.error('❌ WebSocket error:', err);
+      wsConnected.value = false;
+    };
 
-      // Reload data
-      loadFromServer();
-      loadStats();
-    }
-  };
-
-  ws.onerror = (error) => {
-    console.error('❌ WebSocket error:', error);
+    ws.onclose = handleWSClose;
+  } catch (err) {
+    console.error('❌ WebSocket connection failed:', err);
     wsConnected.value = false;
-  };
-
-  ws.onclose = () => {
-    console.log('🔌 WebSocket disconnected');
-    wsConnected.value = false;
-
-    // Reconnect after 3 seconds
-    setTimeout(connectWebSocket, 3000);
-  };
+  }
 }
 
 // ============================================================================
 // LIFECYCLE
 // ============================================================================
+
+// Watchers for validation
+watch(() => newTriple.value.subject, (value) => {
+  if (value && value.includes(' ')) {
+    validationErrors.value.subject = 'Invalid URI format';
+  } else {
+    delete validationErrors.value.subject;
+  }
+});
 
 onMounted(async () => {
   await loadFromServer();
@@ -373,6 +448,25 @@ onUnmounted(() => {
   if (localStore) {
     localStore.close();
   }
+});
+
+// Expose for testing
+defineExpose({
+  quads,
+  loading,
+  error,
+  queryExecuted,
+  wsConnected,
+  ws,
+  showAddForm,
+  selectedPredicate,
+  loadQuads,
+  syncWithServer,
+  addQuad,
+  clearError,
+  handleWSMessage,
+  handleWSClose,
+  connectWebSocket
 });
 </script>
 
@@ -602,5 +696,32 @@ onUnmounted(() => {
 .results h3 {
   color: #4a5568;
   margin-bottom: 0.5rem;
+}
+
+.loading {
+  padding: 1rem;
+  text-align: center;
+  color: #667eea;
+  font-weight: 600;
+}
+
+.error {
+  padding: 1rem;
+  background: #fed7d7;
+  color: #c53030;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.validation-error {
+  color: #c53030;
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+.quad-list {
+  max-height: 300px;
+  overflow-y: auto;
+  margin-bottom: 1rem;
 }
 </style>

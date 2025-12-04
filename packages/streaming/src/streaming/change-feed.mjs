@@ -27,7 +27,8 @@ const ChangeEventSchema = z.object({
 /**
  * Create a change feed emitter
  *
- * @returns {Object} Change feed with emit and addEventListener
+ * @param {Object} [store] - Optional N3 Store to monitor
+ * @returns {Object} Change feed with emit, subscribe, getHistory, and replay
  *
  * @example
  * const feed = createChangeFeed();
@@ -40,11 +41,46 @@ const ChangeEventSchema = z.object({
  *   timestamp: Date.now()
  * });
  */
-export function createChangeFeed() {
+export function createChangeFeed(store) {
   const target = new EventTarget();
   const changes = [];
+  const subscribers = new Set();
 
-  return {
+  // Hook into store if provided
+  if (store) {
+    const originalAddQuad = store.addQuad.bind(store);
+    const originalRemoveQuad = store.removeQuad.bind(store);
+
+    store.addQuad = function(quad) {
+      const result = originalAddQuad(quad);
+      feed.emitChange({
+        type: 'add',
+        quad: {
+          subject: quad.subject,
+          predicate: quad.predicate,
+          object: quad.object,
+          graph: quad.graph
+        }
+      });
+      return result;
+    };
+
+    store.removeQuad = function(quad) {
+      const result = originalRemoveQuad(quad);
+      feed.emitChange({
+        type: 'remove',
+        quad: {
+          subject: quad.subject,
+          predicate: quad.predicate,
+          object: quad.object,
+          graph: quad.graph
+        }
+      });
+      return result;
+    };
+  }
+
+  const feed = {
     /**
      * Emit a change event
      *
@@ -67,6 +103,46 @@ export function createChangeFeed() {
       });
 
       target.dispatchEvent(event);
+
+      // Notify subscribers
+      for (const callback of subscribers) {
+        callback(validated);
+      }
+    },
+
+    /**
+     * Subscribe to change events
+     *
+     * @param {Function} callback - Callback function to receive changes
+     * @returns {Function} Unsubscribe function
+     */
+    subscribe(callback) {
+      subscribers.add(callback);
+      return () => {
+        subscribers.delete(callback);
+      };
+    },
+
+    /**
+     * Get change history
+     *
+     * @param {Object} [options] - Query options
+     * @param {number} [options.since] - Return only changes after this timestamp
+     * @param {number} [options.limit] - Maximum number of changes to return
+     * @returns {Array} Array of change events
+     */
+    getHistory(options = {}) {
+      let result = [...changes];
+
+      if (options.since !== undefined) {
+        result = result.filter(change => change.timestamp >= options.since);
+      }
+
+      if (options.limit !== undefined) {
+        result = result.slice(0, options.limit);
+      }
+
+      return result;
     },
 
     /**
@@ -118,4 +194,6 @@ export function createChangeFeed() {
       }
     },
   };
+
+  return feed;
 }
