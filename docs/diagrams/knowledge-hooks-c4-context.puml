@@ -1,0 +1,18 @@
+@startuml Knowledge Hook Engine - C4 Context
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+Person(dev, "Application Developer", "Registers and uses knowledge hooks")
+System(unrdf, "UNRDF Knowledge Engine", "RDF graph database with knowledge hooks\nfor validation, transformation, and reasoning")
+System_Ext(oxigraph, "Oxigraph WASM", "SPARQL 1.1 execution engine\nfor queries and updates")
+System_Ext(n3js, "N3.js Library", "RDF parsing, serialization, and reasoning\nfor specialized operations")
+System_Ext(storage, "File System", "Policy pack files and configurations\nfor hook conditions and rules")
+
+Rel(dev, unrdf, "Registers hooks", "JavaScript API")
+Rel(dev, unrdf, "Applies transactions", "apply(store, delta)")
+Rel(unrdf, oxigraph, "Executes SPARQL queries\nfor condition evaluation", "WASM calls")
+Rel(unrdf, oxigraph, "Stores and updates RDF\nvia Oxigraph Store", "SPARQL UPDATE")
+Rel(unrdf, n3js, "Parses RDF for edge cases\nand N3 reasoning", "Streaming + Rules")
+Rel(unrdf, storage, "Resolves file-based conditions\nwith SHA-256 verification", "File I/O + Hashing")
+
+SHOW_LEGEND()
+@enduml

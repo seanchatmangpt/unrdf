@@ -1,0 +1,70 @@
+@startuml Knowledge Hook Engine - Current Components
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+Component(define_hook, "defineHook()", "Hook API", "Entry point with Zod validation")
+Component(register_hook, "registerHook()", "Hook Manager", "Wraps hook as transaction hook\nProblem: No option for standalone execution")
+Component(apply_tx, "apply()", "Transaction Manager", "🔴 Main coordinator\nForces synchronous pre → delta → post")
+Component(evt_pre, "PRE-TRANSACTION\nEVENT", "Lifecycle", "Emitted before delta applied")
+Component(apply_delta, "Apply Delta", "Storage", "Update RDF store with changes")
+Component(evt_post, "POST-TRANSACTION\nEVENT", "Lifecycle", "Emitted after delta applied")
+Component(execute_all, "executeAll()", "Hook Executor", "Parallel execution with Promise.allSettled()\n🟡 No automatic batching by dependency")
+Component(execute_batch, "executeBatching()", "Batching Executor", "Dependency-ordered parallel execution\n⚠️ Currently opt-in, not default")
+Component(is_satisfied, "isSatisfied()", "Condition Evaluator", "🟡 BOTTLENECK #4:\nEvaluate SPARQL-ASK condition\nProblem: Evaluated 2× per hook")
+Component(eval_sparql, "Evaluate SPARQL", "Query Path", "Execute condition query")
+Component(query, "query()", "Query Executor", "🔴 BOTTLENECK #1:\nStore conversion → Oxigraph conversion\nPattern: getQuads() + createStore()")
+Component(resolve_file, "resolveFile()", "File Resolver", "🟠 BOTTLENECK #2:\nFile I/O + SHA-256 hash\nProblem: Computed every time, no pre-load")
+Component(run_hook, "hook.run()", "Hook Execution", "Execute hook with side effects")
+
+ComponentDb(n3_store, "N3 Store", "RDF Storage", "Mutable triple store")
+ComponentDb(ox_store, "Oxigraph Store", "WASM SPARQL", "SPARQL 1.1 compliant")
+
+Rel(define_hook, register_hook, "Registers hook")
+Rel(register_hook, apply_tx, "Wraps hook via inheritance")
+
+note on link : 🔴 PROBLEM: Tight coupling\nforces synchronous execution
+
+Rel(apply_tx, evt_pre, "Emit PRE event")
+Rel(evt_pre, execute_all, "Execute pre-transaction\nhooks")
+Rel(execute_all, is_satisfied, "For each hook:\nEvaluate condition")
+Rel(is_satisfied, eval_sparql, "Execute condition query")
+Rel(eval_sparql, query, "Run SPARQL-ASK")
+Rel(query, n3_store, "1. Read quads O(n)")
+Rel(query, ox_store, "2. Convert O(n)\n3. Query O(q)")
+
+note on link : 🔴 N×M conversions\n50-70% latency impact
+
+Rel(is_satisfied, resolve_file, "For file conditions:\nResolve file")
+
+note on link : 🟠 File I/O every time\n20-30% latency impact
+
+Rel(execute_all, execute_batch, "Optional: Use batching")
+Rel(execute_all, run_hook, "If satisfied:\nRun hook")
+Rel(run_hook, ox_store, "Hook side effects")
+Rel(apply_tx, apply_delta, "Apply delta to store")
+Rel(apply_delta, evt_post, "Emit POST event")
+Rel(evt_post, execute_all, "Execute post-transaction\nhooks")
+
+note right of apply_tx
+  🔴 BOTTLENECK #3: Tight Coupling
+
+  KnowledgeHookManager extends TransactionManager
+  → Forces apply() to be synchronous
+  → Pre-hooks must complete before delta
+  → Post-hooks must complete after delta
+
+  Even independent hooks are sequential!
+end note
+
+note right of is_satisfied
+  🟡 BOTTLENECK #4: Duplicate Evaluation
+
+  Condition evaluated twice:
+  1. In transaction hook wrapper
+  2. In lifecycle evaluation
+
+  → 40-50% latency overhead
+  → Cache would eliminate this
+end note
+
+SHOW_LEGEND()
+@enduml
