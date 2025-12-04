@@ -65,7 +65,8 @@ export const ChainResultSchema = z.object({
  * }
  */
 export function executeHook(hook, quad, options = {}) {
-  const validatedHook = HookSchema.parse(hook);
+  // Fast path: skip Zod if hook was created via defineHook (_validated flag)
+  const validatedHook = hook._validated ? hook : HookSchema.parse(hook);
 
   /** @type {HookResult} */
   const result = {
@@ -157,7 +158,7 @@ export function executeHook(hook, quad, options = {}) {
  * }
  */
 export function executeHookChain(hooks, quad) {
-  const validatedHooks = z.array(HookSchema).parse(hooks);
+  // Fast path: trust pre-validated hooks (skip Zod array parse)
 
   /** @type {HookResult[]} */
   const results = [];
@@ -165,7 +166,7 @@ export function executeHookChain(hooks, quad) {
   let chainValid = true;
   let chainError = undefined;
 
-  for (const hook of validatedHooks) {
+  for (const hook of hooks) {
     const result = executeHook(hook, currentQuad);
     results.push(result);
 
@@ -180,12 +181,13 @@ export function executeHookChain(hooks, quad) {
     }
   }
 
-  return ChainResultSchema.parse({
+  // Fast path: return plain object (skip ChainResultSchema.parse)
+  return {
     valid: chainValid,
     quad: currentQuad,
     results,
     error: chainError,
-  });
+  };
 }
 
 /**
@@ -200,8 +202,8 @@ export function executeHookChain(hooks, quad) {
  * const result = executeHooksByTrigger(allHooks, 'before-add', quad);
  */
 export function executeHooksByTrigger(hooks, trigger, quad) {
-  const validatedHooks = z.array(HookSchema).parse(hooks);
-  const matchingHooks = validatedHooks.filter(h => h.trigger === trigger);
+  // Fast path: trust pre-validated hooks (skip Zod array parse)
+  const matchingHooks = hooks.filter(h => h.trigger === trigger);
   return executeHookChain(matchingHooks, quad);
 }
 
