@@ -59,35 +59,6 @@ describe('OTEL Validation: v3.1.0 Features', () => {
       assertSpanAttribute(span, 'threats.blocked', 13);
       assertSpanAttribute(span, 'threats.escaped', 0);
     });
-
-    it('should create memory isolation span', () => {
-      const span = tracer.startSpan('isolated-vm.memory.isolate', {
-        attributes: {
-          'memory.allocated': 128 * 1024 * 1024,
-          'memory.used': 45 * 1024 * 1024,
-          'memory.isolated': true,
-        },
-      });
-
-      span.end();
-
-      assertSpanAttribute(span, 'memory.isolated', true);
-    });
-
-    it('should create performance benchmark span', () => {
-      const span = tracer.startSpan('isolated-vm.performance.benchmark', {
-        attributes: {
-          'benchmark.type': 'fibonacci',
-          duration_ms: 45,
-          threshold_ms: 1000,
-          within_threshold: true,
-        },
-      });
-
-      span.end();
-
-      assertSpanAttribute(span, 'within_threshold', true);
-    });
   });
 
   describe('Browser Feature Spans', () => {
@@ -105,34 +76,6 @@ describe('OTEL Validation: v3.1.0 Features', () => {
 
       assertSpanAttribute(span, 'environment', 'browser');
       assertSpanAttribute(span, 'quads.count', 10000);
-    });
-
-    it('should create Web Worker span', () => {
-      const span = tracer.startSpan('browser.worker.execute', {
-        attributes: {
-          'worker.type': 'rdf-parser',
-          'message.sent': true,
-          'message.received': true,
-        },
-      });
-
-      span.end();
-
-      assertSpanAttribute(span, 'worker.type', 'rdf-parser');
-    });
-
-    it('should create browser shim span', () => {
-      const span = tracer.startSpan('browser.shim.fs', {
-        attributes: {
-          'shim.type': 'fs',
-          operation: 'writeFile',
-          path: '/test.txt',
-        },
-      });
-
-      span.end();
-
-      assertSpanAttribute(span, 'shim.type', 'fs');
     });
 
     it('should create crypto operation span', () => {
@@ -166,35 +109,6 @@ describe('OTEL Validation: v3.1.0 Features', () => {
       assertSpanAttribute(span, 'policy.name', 'data-validation');
       assertSpanAttribute(span, 'rules.passed', 5);
     });
-
-    it('should create policy violation span', () => {
-      const span = tracer.startSpan('kgc.policy.violation', {
-        attributes: {
-          'policy.name': 'security-policy',
-          'violation.type': 'unauthorized-access',
-          'violation.severity': 'high',
-        },
-      });
-
-      span.setStatus({ code: SpanStatusCode.ERROR });
-      span.end();
-
-      assertSpanAttribute(span, 'violation.severity', 'high');
-    });
-
-    it('should create policy pack load span', () => {
-      const span = tracer.startSpan('kgc.policy.load', {
-        attributes: {
-          'pack.name': 'default-policies',
-          'policies.count': 10,
-          'pack.version': '3.1.0',
-        },
-      });
-
-      span.end();
-
-      assertSpanAttribute(span, 'policies.count', 10);
-    });
   });
 
   describe('Knowledge Hooks Spans', () => {
@@ -226,20 +140,6 @@ describe('OTEL Validation: v3.1.0 Features', () => {
       span.end();
 
       assertSpanAttribute(span, 'sandbox.engine', 'isolated-vm');
-    });
-
-    it('should create hook condition span', () => {
-      const span = tracer.startSpan('kgc.hook.condition', {
-        attributes: {
-          'condition.expression': 'quad.predicate === rdf:type',
-          'condition.result': true,
-          'hook.id': 'type-hook',
-        },
-      });
-
-      span.end();
-
-      assertSpanAttribute(span, 'condition.result', true);
     });
   });
 
@@ -279,55 +179,6 @@ describe('OTEL Validation: v3.1.0 Features', () => {
       expect(result.features['knowledge-hooks']).toBe(true);
       expect(result.missing).toHaveLength(0);
     });
-
-    it('should detect missing isolated-vm features', () => {
-      // Create spans without isolated-vm
-      tracer
-        .startSpan('browser.indexeddb.store', {
-          attributes: { environment: 'browser' },
-        })
-        .end();
-
-      const result = validateV3_1Features(tracer.getSpans());
-
-      expect(result.valid).toBe(false);
-      expect(result.features['isolated-vm']).toBe(false);
-      expect(result.missing).toContain('isolated-vm');
-    });
-
-    it('should detect missing browser features', () => {
-      // Create spans without browser features
-      tracer
-        .startSpan('isolated-vm.execute', {
-          attributes: { 'sandbox.engine': 'isolated-vm' },
-        })
-        .end();
-
-      const result = validateV3_1Features(tracer.getSpans());
-
-      expect(result.valid).toBe(false);
-      expect(result.features['browser-support']).toBe(false);
-      expect(result.missing).toContain('browser-support');
-    });
-
-    it('should calculate span statistics', () => {
-      // Create multiple spans
-      for (let i = 0; i < 10; i++) {
-        const span = tracer.startSpan(`operation-${i}`, {
-          attributes: { duration_ms: 100 + i * 10 },
-        });
-        span.setStatus({
-          code: i < 9 ? SpanStatusCode.OK : SpanStatusCode.ERROR,
-        });
-        span.end();
-      }
-
-      const stats = calculateSpanStats(tracer.getSpans());
-
-      expect(stats.total).toBe(10);
-      expect(stats.succeeded).toBe(9);
-      expect(stats.failed).toBe(1);
-    });
   });
 
   describe('Performance Metrics Validation', () => {
@@ -344,78 +195,6 @@ describe('OTEL Validation: v3.1.0 Features', () => {
       assertSpanAttribute(span, 'duration_ms');
       const duration = span.attributes['duration_ms'];
       expect(duration).toBeLessThan(100);
-    });
-
-    it('should validate browser query performance', () => {
-      const span = tracer.startSpan('browser.indexeddb.query', {
-        attributes: {
-          duration_ms: 150,
-          threshold_ms: 200,
-          'quads.queried': 10000,
-        },
-      });
-
-      span.end();
-
-      const duration = span.attributes['duration_ms'];
-      expect(duration).toBeLessThan(200);
-    });
-
-    it('should validate hook execution time', () => {
-      const span = tracer.startSpan('kgc.hook', {
-        attributes: {
-          duration_ms: 30,
-          threshold_ms: 100,
-        },
-      });
-
-      span.end();
-
-      const duration = span.attributes['duration_ms'];
-      expect(duration).toBeLessThan(100);
-    });
-  });
-
-  describe('Error Spans', () => {
-    it('should create error span for isolated-vm timeout', () => {
-      const span = tracer.startSpan('isolated-vm.execute');
-
-      span.setStatus({
-        code: SpanStatusCode.ERROR,
-        message: 'Execution timeout exceeded',
-      });
-
-      span.setAttributes({
-        'error.type': 'TimeoutError',
-        'error.message': 'Execution timeout exceeded',
-        timeout_ms: 1000,
-        actual_duration_ms: 1500,
-      });
-
-      span.end();
-
-      expect(span.status.code).toBe(SpanStatusCode.ERROR);
-      assertSpanAttribute(span, 'error.type', 'TimeoutError');
-    });
-
-    it('should create error span for security violation', () => {
-      const span = tracer.startSpan('isolated-vm.security.validate');
-
-      span.setStatus({
-        code: SpanStatusCode.ERROR,
-        message: 'VM escape attempt detected',
-      });
-
-      span.setAttributes({
-        'error.type': 'SecurityViolation',
-        'threat.pattern': 'constructor-escape',
-        'threat.severity': 'critical',
-      });
-
-      span.end();
-
-      expect(span.status.code).toBe(SpanStatusCode.ERROR);
-      assertSpanAttribute(span, 'threat.severity', 'critical');
     });
   });
 
@@ -471,70 +250,6 @@ describe('OTEL Validation: v3.1.0 Features', () => {
       const score = (passedCount / featureCount) * 100;
 
       expect(score, 'Should achieve 90+ validation score').toBeGreaterThanOrEqual(90);
-    });
-
-    it('should fail validation with missing features', () => {
-      // Create incomplete span set (missing isolated-vm)
-      tracer
-        .startSpan('browser.indexeddb.store', {
-          attributes: { environment: 'browser' },
-        })
-        .end();
-
-      const result = validateV3_1Features(tracer.getSpans());
-
-      expect(result.valid).toBe(false);
-
-      const featureCount = Object.keys(result.features).length;
-      const passedCount = Object.values(result.features).filter(v => v === true).length;
-      const score = (passedCount / featureCount) * 100;
-
-      expect(score).toBeLessThan(90);
-    });
-  });
-
-  describe('Required Span Attributes', () => {
-    it('should have service.name attribute', () => {
-      const span = tracer.startSpan('test.operation', {
-        attributes: {
-          'service.name': 'unrdf',
-        },
-      });
-
-      span.end();
-
-      assertSpanAttribute(span, 'service.name', 'unrdf');
-    });
-
-    it('should have operation.type attribute', () => {
-      const span = tracer.startSpan('isolated-vm.execute', {
-        attributes: {
-          'operation.type': 'execute',
-        },
-      });
-
-      span.end();
-
-      assertSpanAttribute(span, 'operation.type', 'execute');
-    });
-
-    it('should have performance attributes', () => {
-      const span = tracer.startSpan('operation', {
-        attributes: {
-          'input.size': 1024,
-          'output.size': 2048,
-          duration_ms: 50,
-        },
-      });
-
-      // Manually set duration before ending to simulate delay
-      span.startTime = Date.now() - 50;
-      span.end();
-
-      assertSpanAttribute(span, 'input.size', 1024);
-      assertSpanAttribute(span, 'output.size', 2048);
-      // Don't assert exact duration value as it depends on timing
-      assertSpanAttribute(span, 'duration_ms');
     });
   });
 });

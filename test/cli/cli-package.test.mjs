@@ -20,7 +20,7 @@ import {
   formatCSV,
 } from '../../packages/cli/src/cli/commands/query.mjs';
 
-const TEST_DIR = path.join(process.cwd(), 'test-data-cli');
+const TEST_DIR = path.join(process.cwd(), `test-data-cli-${Date.now()}-${Math.random().toString(36).slice(2)}`);
 
 describe('@unrdf/cli - Graph Commands', () => {
   beforeEach(async () => {
