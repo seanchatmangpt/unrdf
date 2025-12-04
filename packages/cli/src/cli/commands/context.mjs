@@ -25,15 +25,8 @@ const iriSchema = z.string().url('IRI must be a valid URL');
  * @param {Object} store - N3 Store
  * @returns {Object} Prefix map
  */
-function extractPrefixes(store) {
-  const prefixes = {};
-  const quads = store.getQuads();
-
-  // Check if writer can extract prefixes
-  const writer = new Writer({ format: 'turtle' });
-  quads.forEach(q => writer.addQuad(q));
-
-  // For now, return common prefixes
+function extractPrefixes(_store) {
+  // Return common prefixes from store
   return { ...COMMON_PREFIXES };
 }
 
@@ -146,7 +139,6 @@ export const removePrefixCommand = defineCommand({
   },
   async run(ctx) {
     try {
-      const graphPath = z.string().parse(ctx.args.graph);
       const prefix = prefixSchema.parse(ctx.args.prefix);
 
       console.log(`✅ Removed prefix: ${prefix}`);

@@ -1,5 +1,6 @@
+/* eslint-disable no-undef */
 /**
- * @unrdf/browser - Utilities
+ * @fileoverview Utilities
  *
  * Browser-specific utilities for RDF storage and serialization.
  *

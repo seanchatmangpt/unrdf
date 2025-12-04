@@ -7,7 +7,7 @@
  * @module composables/use-graph
  */
 
-import { ref, computed, onUnmounted, watch } from 'vue';
+import { ref, computed, onUnmounted } from 'vue';
 import { createStore } from '@unrdf/core';
 import { createBrowserRDFStore } from '@unrdf/browser';
 import { z } from 'zod';
@@ -98,12 +98,11 @@ export function useGraph(graphUrl, options = {}) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
-      const contentType = response.headers.get('content-type') || '';
-      const text = await response.text();
-
       // Parse RDF (simplified - would use a real parser in production)
       // For now, this is a placeholder that triggers reactivity
       // In production, integrate with rdf-parse or N3.js
+      // TODO: Parse response based on content-type
+      await response.text();
       if (!store.value) {
         store.value = createStore();
       }

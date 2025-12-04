@@ -11,7 +11,7 @@
 import { defineCommand } from 'citty';
 import { z } from 'zod';
 import { readFile } from 'node:fs/promises';
-import { executeQuery, executeSelect, executeAsk, executeConstruct } from '@unrdf/core';
+import { executeQuery } from '@unrdf/core';
 import { loadGraph } from './graph.mjs';
 import { table } from 'table';
 

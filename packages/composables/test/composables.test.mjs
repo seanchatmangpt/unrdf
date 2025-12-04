@@ -2,8 +2,8 @@
  * @vitest-environment jsdom
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { ref, nextTick } from 'vue';
+import { describe, it, expect, vi } from 'vitest';
+import { ref } from 'vue';
 
 // Mock streaming module before imports
 vi.mock('@unrdf/streaming', () => ({
