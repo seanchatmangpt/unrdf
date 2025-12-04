@@ -8,9 +8,9 @@
  * verification without Git dependencies.
  */
 
-import { randomUUID, createHash, _fs } from './browser-shims.mjs';
+import { randomUUID, createHash, fs } from './browser-shims.mjs';
 import { sha3_256 } from '@noble/hashes/sha3.js';
-import { _blake3 } from '@noble/hashes/blake3.js';
+import { _BLAKE3 } from '@noble/hashes/blake3.js';
 import { utf8ToBytes, bytesToHex } from '@noble/hashes/utils.js';
 import { z } from 'zod';
 

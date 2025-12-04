@@ -524,7 +524,7 @@ async function evaluateDelta(condition, graph, resolver, env, options) {
  * @param {Object} options - Evaluation options
  * @returns {Promise<boolean>} Threshold condition result
  */
-async function evaluateThreshold(condition, graph, _resolver, _env, _options) {
+async function evaluateThreshold(condition, graph, resolver, _env, _options) {
   const { spec } = condition;
   const { var: variable, op, value, aggregate = 'avg' } = spec;
 
@@ -602,7 +602,7 @@ async function evaluateThreshold(condition, graph, _resolver, _env, _options) {
  * @param {Object} options - Evaluation options
  * @returns {Promise<boolean>} Count condition result
  */
-async function evaluateCount(condition, graph, _resolver, _env, _options) {
+async function evaluateCount(condition, graph, resolver, _env, _options) {
   const { spec } = condition;
   const { op, value, query: countQuery } = spec;
 
@@ -645,7 +645,7 @@ async function evaluateCount(condition, graph, _resolver, _env, _options) {
  * @param {Object} options - Evaluation options
  * @returns {Promise<boolean>} Window condition result
  */
-async function evaluateWindow(condition, graph, _resolver, _env, _options) {
+async function evaluateWindow(condition, graph, resolver, _env, _options) {
   const { spec } = condition;
   const { size, _slide = size, aggregate, query: windowQuery } = spec;
 

@@ -448,7 +448,7 @@ export class ResolutionLayer {
    * @returns {number} Confidence score
    * @private
    */
-  _calculateConfidence(proposals, _resolvedDelta) {
+  _calculateConfidence(proposals, resolvedDelta) {
     if (proposals.length === 0) return 0;
 
     let totalConfidence = 0;
