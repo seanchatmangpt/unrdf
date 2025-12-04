@@ -32,7 +32,7 @@ const IndexedDBStoreSchema = z.object({
  *
  * @param {string} dbName - Database name
  * @param {string} [storeName='quads'] - Object store name
- * @returns {IndexedDBStore} IndexedDB store instance
+ * @returns {IndexedDBStore} IndexedDB store instance (not yet opened)
  *
  * @example
  * const store = createIndexedDBStore('myapp-rdf', 'quads');
@@ -150,14 +150,14 @@ export async function addQuadToDB(store, quad) {
   const objectStore = transaction.objectStore(store.storeName);
 
   const quadData = {
-    subject: quad.subject.value,
-    predicate: quad.predicate.value,
-    object: quad.object.value,
-    graph: quad.graph.value,
-    subjectType: quad.subject.termType,
-    objectType: quad.object.termType,
-    objectLanguage: quad.object.language || null,
-    objectDatatype: quad.object.datatype?.value || null,
+    subject: quad.subject?.value || '',
+    predicate: quad.predicate?.value || '',
+    object: quad.object?.value || '',
+    graph: quad.graph?.value || '',
+    subjectType: quad.subject?.termType || 'NamedNode',
+    objectType: quad.object?.termType || 'Literal',
+    objectLanguage: quad.object?.language || null,
+    objectDatatype: quad.object?.datatype?.value || null,
   };
 
   return new Promise((resolve, reject) => {
@@ -193,7 +193,11 @@ export async function removeQuadFromDB(store, quad) {
 
   // Find and delete matching quads
   const index = objectStore.index('subject');
-  const request = index.openCursor(IDBKeyRange.only(quad.subject.value));
+  const subjectValue = quad.subject?.value || '';
+  const predicateValue = quad.predicate?.value || '';
+  const objectValue = quad.object?.value || '';
+  const graphValue = quad.graph?.value || '';
+  const request = index.openCursor(IDBKeyRange.only(subjectValue));
 
   return new Promise((resolve, reject) => {
     request.onsuccess = event => {
@@ -201,9 +205,9 @@ export async function removeQuadFromDB(store, quad) {
       if (cursor) {
         const record = cursor.value;
         if (
-          record.predicate === quad.predicate.value &&
-          record.object === quad.object.value &&
-          record.graph === quad.graph.value
+          record.predicate === predicateValue &&
+          record.object === objectValue &&
+          record.graph === graphValue
         ) {
           cursor.delete();
           resolve();

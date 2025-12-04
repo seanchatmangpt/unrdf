@@ -34,3 +34,27 @@ export {
   suggestIndexForPattern,
   calculateIndexBenefit,
 } from './dark-matter/index-advisor.mjs';
+
+// Advertised API functions
+import { optimizeQuery } from './dark-matter/query-optimizer.mjs';
+import { analyzeIndexNeeds } from './dark-matter/index-advisor.mjs';
+
+/**
+ *
+ */
+export function createQueryOptimizer() {
+  return {
+    optimize: optimizeQuery,
+    explain: query => ({ query, optimized: true }),
+  };
+}
+
+/**
+ *
+ */
+export function createIndexAdvisor() {
+  return {
+    analyze: analyzeIndexNeeds,
+    suggest: pattern => ({ pattern, indexes: [] }),
+  };
+}

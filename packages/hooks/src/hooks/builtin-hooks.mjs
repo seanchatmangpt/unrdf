@@ -4,6 +4,7 @@
  */
 
 import { defineHook } from './define-hook.mjs';
+import { DataFactory } from 'n3';
 
 /**
  * @typedef {import('n3').Quad} Quad
@@ -143,7 +144,7 @@ export const normalizeLanguageTag = defineHook({
       return quad;
     }
 
-    const DataFactory = quad.subject.constructor.prototype.constructor;
+    // Use imported DataFactory to create new quad with normalized language tag
     return DataFactory.quad(
       quad.subject,
       quad.predicate,
@@ -167,7 +168,7 @@ export const trimLiterals = defineHook({
       return quad;
     }
 
-    const DataFactory = quad.subject.constructor.prototype.constructor;
+    // Use imported DataFactory to create new quad with trimmed literal
     return DataFactory.quad(
       quad.subject,
       quad.predicate,
