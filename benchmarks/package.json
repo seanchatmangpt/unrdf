@@ -1,0 +1,14 @@
+{
+  "name": "unrdf-benchmarks",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "description": "Performance benchmarks for UNRDF Knowledge Hooks",
+  "scripts": {
+    "bench": "node --expose-gc runner.mjs",
+    "bench:no-gc": "node runner.mjs"
+  },
+  "dependencies": {
+    "@unrdf/oxigraph": "workspace:*"
+  }
+}
