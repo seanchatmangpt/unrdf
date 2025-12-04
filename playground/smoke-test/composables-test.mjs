@@ -8,7 +8,7 @@
 
 import { readFileSync } from 'fs';
 import { createStore, dataFactory } from '@unrdf/oxigraph';
-import { Parser } from 'n3';
+import {  Parser  } from '@unrdf/core/rdf/n3-justified-only';
 import { z } from 'zod';
 
 const { namedNode, literal, blankNode  } = dataFactory;

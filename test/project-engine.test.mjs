@@ -5,7 +5,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { Store, DataFactory } from 'n3';
+import { createStore, dataFactory } from '@unrdf/oxigraph';
 import {
   materializeArtifacts,
   getProjectEngineConfig,
@@ -18,7 +18,7 @@ import {
   serializeTemplates,
 } from '../src/project-engine/index.mjs';
 
-const { namedNode, literal } = DataFactory;
+const { namedNode, literal } = dataFactory;
 
 describe('project-engine', () => {
   describe('Config', () => {
@@ -48,7 +48,7 @@ describe('project-engine', () => {
 
   describe('Materialization', () => {
     it('creates materialization plan from ontology', () => {
-      const store = new Store();
+      const store = createStore();
       const projectIri = namedNode('http://example.org/unrdf/project#project');
       store.addQuad(
         projectIri,
@@ -68,7 +68,7 @@ describe('project-engine', () => {
     });
 
     it('includes metadata in receipt', () => {
-      const store = new Store();
+      const store = createStore();
       const { receipt } = materializeArtifacts({
         ontologyStore: store,
       });
@@ -84,7 +84,7 @@ describe('project-engine', () => {
      * Create a mock project store with features and files
      */
     function createMockProjectStore() {
-      const store = new Store();
+      const store = createStore();
       const projectNs = 'http://example.org/unrdf/project#';
       const fsNs = 'http://example.org/unrdf/filesystem#';
       const rdfType = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type';
@@ -243,7 +243,7 @@ describe('project-engine', () => {
     });
 
     it('handles empty store gracefully', () => {
-      const emptyStore = new Store();
+      const emptyStore = createStore();
       const hooks = deriveHooksFromStructure(emptyStore, {});
 
       expect(hooks).toBeInstanceOf(Array);
@@ -306,7 +306,7 @@ describe('project-engine', () => {
      * Create a mock FS store with file paths
      */
     function createMockFsStore(paths) {
-      const store = new Store();
+      const store = createStore();
       for (const path of paths) {
         const fileIri = namedNode(`http://example.org/fs#${encodeURIComponent(path)}`);
         store.addQuad(fileIri, namedNode(`${NS.fs}relativePath`), literal(path));
@@ -315,7 +315,7 @@ describe('project-engine', () => {
     }
 
     it('returns empty result for empty store', () => {
-      const fsStore = new Store();
+      const fsStore = createStore();
       const { store, summary } = inferTemplatesFromProject(fsStore);
 
       expect(summary.templateCount).toBe(0);
@@ -431,7 +431,7 @@ describe('project-engine', () => {
         'src/features/product/ProductPage.tsx',
       ]);
 
-      const domainStore = new Store();
+      const domainStore = createStore();
       domainStore.addQuad(
         namedNode('http://example.org/domain#User'),
         namedNode(`${NS.rdf}type`),

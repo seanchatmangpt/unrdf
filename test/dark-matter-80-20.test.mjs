@@ -14,16 +14,16 @@ import {
   _DarkMatterCore,
   _DarkMatterFactory,
 } from '../src/knowledge-engine/knowledge-substrate-core.mjs';
-import { Store, DataFactory } from 'n3';
+import { createStore, dataFactory } from '@unrdf/oxigraph';
 
-const { namedNode, _literal, quad } = DataFactory;
+const { namedNode, literal: _literal, quad } = dataFactory;
 
 describe('Knowledge Substrate Core', () => {
   let knowledgeSubstrateCore;
   let mockStore;
 
   beforeAll(() => {
-    mockStore = new Store();
+    mockStore = createStore();
   });
 
   afterAll(async () => {

@@ -6,7 +6,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { Store, DataFactory } from 'n3';
+import { createStore } from '@unrdf/oxigraph';
 import {
   createStructureSnapshot,
   computeDrift,
@@ -21,7 +21,7 @@ const NS = {
 };
 
 function createMockFsStore() {
-  const store = new Store();
+  const store = createStore();
   const files = ['src/index.mjs', 'src/user.mjs', 'test/user.test.mjs'];
   for (const filePath of files) {
     const fileIri = namedNode(`${NS.fs}${encodeURIComponent(filePath)}`);

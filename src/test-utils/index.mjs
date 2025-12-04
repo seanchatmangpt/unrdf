@@ -7,7 +7,7 @@
  * scenario DSL, fluent assertions, and helper functions.
  */
 
-import { Store } from 'n3'; // TODO: Replace with Oxigraph Store
+import { createStore } from '@unrdf/oxigraph'; // TODO: Replace with Oxigraph Store
 import { randomUUID } from 'crypto';
 import { KnowledgeHookManager } from '../knowledge-engine/knowledge-hook-manager.mjs';
 import { _PolicyPackManager } from '../knowledge-engine/policy-pack.mjs';
@@ -294,11 +294,13 @@ export class FluentAssertions {
 
     const store = this.context.store;
     for (const expectedQuad of expectedQuads) {
-      const found = store.getQuads(
-        expectedQuad.subject,
-        expectedQuad.predicate,
-        expectedQuad.object,
-        expectedQuad.graph
+      const found = Array.from(
+        store.match(
+          expectedQuad.subject,
+          expectedQuad.predicate,
+          expectedQuad.object,
+          expectedQuad.graph
+        )
       );
       if (found.length === 0) {
         throw new Error(`Expected quad not found: ${JSON.stringify(expectedQuad)}`);
@@ -319,11 +321,13 @@ export class FluentAssertions {
 
     const store = this.context.store;
     for (const unexpectedQuad of unexpectedQuads) {
-      const found = store.getQuads(
-        unexpectedQuad.subject,
-        unexpectedQuad.predicate,
-        unexpectedQuad.object,
-        unexpectedQuad.graph
+      const found = Array.from(
+        store.match(
+          unexpectedQuad.subject,
+          unexpectedQuad.predicate,
+          unexpectedQuad.object,
+          unexpectedQuad.graph
+        )
       );
       if (found.length > 0) {
         throw new Error(`Unexpected quad found: ${JSON.stringify(unexpectedQuad)}`);
@@ -422,7 +426,7 @@ export class TestContextBuilder {
    */
   constructor() {
     this.context = {
-      store: new Store(),
+      store: createStore(),
       metadata: {},
     };
   }
@@ -444,7 +448,7 @@ export class TestContextBuilder {
    */
   withQuads(quads) {
     for (const quad of quads) {
-      this.context.store.addQuad(quad);
+      this.context.store.add(quad);
     }
     return this;
   }
@@ -634,7 +638,7 @@ export function createTestContext() {
  */
 export function createDefaultTestContext() {
   return new TestContextBuilder()
-    .withStore(new Store())
+    .withStore(createStore())
     .withManager(new KnowledgeHookManager())
     .build();
 }

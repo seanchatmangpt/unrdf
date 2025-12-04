@@ -5,7 +5,7 @@
 
 import { createServer as createHttpServer } from 'node:http';
 import { WebSocketServer } from 'ws';
-import { Store, Parser } from 'n3';
+import { createStore } from '@unrdf/oxigraph';
 import { KnowledgeHookManager } from '@unrdf/hooks';
 import { createStreamProcessor } from '@unrdf/streaming';
 import { createCoordinator } from '@unrdf/federation';

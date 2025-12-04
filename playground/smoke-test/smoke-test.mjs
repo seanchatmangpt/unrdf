@@ -8,7 +8,7 @@
 
 import { readFileSync } from 'fs';
 import { createStore, dataFactory } from '@unrdf/oxigraph';
-import { Parser, Store } from 'n3';
+import {  Parser, Store  } from '@unrdf/core/rdf/n3-justified-only';
 import { createDarkMatterCore, defineHook } from 'unrdf';
 
 // ANSI colors

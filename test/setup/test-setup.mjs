@@ -3,7 +3,7 @@
  * @description Setup and teardown helpers for UNRDF tests
  */
 
-import { Store } from 'n3'
+import { createStore } from '@unrdf/oxigraph'
 import { createSampleStore } from '../vitest-helpers.mjs'
 
 /**
@@ -12,7 +12,7 @@ import { createSampleStore } from '../vitest-helpers.mjs'
  * @returns {import('n3').Store}
  */
 export function setupRDFStore(options = {}) {
-  const store = options.withData ? createSampleStore(true) : new Store()
+  const store = options.withData ? createSampleStore(true) : createStore()
 
   // Add custom initialization if needed
   if (options.initQuads) {

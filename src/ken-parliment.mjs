@@ -4,7 +4,7 @@
  */
 
 import { UnrdfDataFactory as DataFactory } from '@unrdf/core/rdf/n3-justified-only';
-import { Store } from 'n3'; // TODO: Replace with Oxigraph Store
+import { createStore } from '@unrdf/oxigraph'; // TODO: Replace with Oxigraph Store
 import { TransactionManager, printReceipt } from './knowledge-engine.mjs';
 
 const { namedNode, literal, quad } = DataFactory;
@@ -12,7 +12,7 @@ const { namedNode, literal, quad } = DataFactory;
 async function main() {
   console.log('🏛️ Starting Parliamentary Swarm Demo (Debug Mode)...\n');
 
-  const store = new Store();
+  const store = createStore();
   const tx = new TransactionManager();
   const ex = 'http://example.org/';
 

@@ -4,7 +4,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { Store, DataFactory } from 'n3';
+import { createStore } from '@unrdf/oxigraph';
 import { findMissingRoles, scoreMissingRole } from '../../src/project-engine/gap-finder.mjs';
 
 const { namedNode, literal } = DataFactory;
@@ -18,7 +18,7 @@ const NS = {
 };
 
 function createDomainStore(entities) {
-  const store = new Store();
+  const store = createStore();
   for (const { name, fields = [] } of entities) {
     const iri = namedNode(`${NS.dom}${name}`);
     store.addQuad(iri, namedNode(`${NS.rdf}type`), namedNode(`${NS.dom}Entity`));
@@ -31,7 +31,7 @@ function createDomainStore(entities) {
 }
 
 function createProjectStore(files) {
-  const store = new Store();
+  const store = createStore();
   for (const { path, role } of files) {
     const iri = namedNode(`http://example.org/unrdf/fs#${encodeURIComponent(path)}`);
     store.addQuad(iri, namedNode(`${NS.fs}relativePath`), literal(path));

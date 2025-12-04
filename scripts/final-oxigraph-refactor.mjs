@@ -81,7 +81,7 @@ function refactorFile(fullPath) {
     modified = true;
   }
 
-  // Pattern 4: Replace new Store() with createStore()
+  // Pattern 4: Replace createStore() with createStore()
   if (content.match(/new\s+Store\s*\(/)) {
     content = content.replace(/new\s+Store\s*\(\s*\)/g, 'createStore()');
     content = content.replace(/new\s+Store\s*\(([^)]+)\)/g, 'createStore($1)');

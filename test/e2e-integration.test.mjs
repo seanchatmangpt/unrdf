@@ -7,8 +7,10 @@
  */
 
 import { createDarkMatterCore, parseTurtle, defineHook } from '../src/knowledge-engine/index.mjs';
-import { namedNode, literal, quad } from 'n3';
+import { UnrdfDataFactory } from '../packages/core/src/rdf/n3-justified-only.mjs';
 import { describe, it, expect } from 'vitest';
+
+const { namedNode, literal, quad } = UnrdfDataFactory;
 
 describe('E2E Integration Tests (NO MOCKS)', () => {
   it('should create and initialize DarkMatterCore', async () => {

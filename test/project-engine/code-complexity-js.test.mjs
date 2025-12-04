@@ -4,7 +4,7 @@
  */
 
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { Store, DataFactory } from 'n3';
+import { createStore } from '@unrdf/oxigraph';
 import { mkdtemp, writeFile, rm } from 'fs/promises';
 import { join } from 'path';
 import { tmpdir } from 'os';
@@ -68,7 +68,7 @@ describe('analyzeJsComplexity', () => {
 
   describe('RDF output', () => {
     it('should preserve existing store when merging', async () => {
-      const baseStore = new Store();
+      const baseStore = createStore();
       const testQuad = DataFactory.quad(
         namedNode('http://test.org/test'),
         namedNode('http://test.org/prop'),

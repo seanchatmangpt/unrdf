@@ -5,7 +5,7 @@
 
 import { createHash } from 'crypto';
 import { UnrdfDataFactory as DataFactory } from '@unrdf/core/rdf/n3-justified-only';
-import { Store } from 'n3'; // TODO: Replace with Oxigraph Store
+import { createStore } from '@unrdf/oxigraph'; // TODO: Replace with Oxigraph Store
 import { z } from 'zod';
 import {
   diffGraphFromStores,
@@ -73,7 +73,7 @@ export function createStructureSnapshot(fsStore, domainStore, options = {}) {
   });
 
   const { baseIri, templateMappings = {} } = validated;
-  const snapshotStore = new Store();
+  const snapshotStore = createStore();
   const createdAt = new Date().toISOString();
 
   // Summary counters
@@ -726,7 +726,7 @@ function extractNameFromIri(iri) {
  * @returns {Store}
  */
 export function createEmptyBaseline() {
-  return new Store();
+  return createStore();
 }
 
 /**
@@ -758,7 +758,7 @@ export function serializeSnapshot(snapshotStore, receipt) {
  */
 export function deserializeSnapshot(json) {
   const data = JSON.parse(json);
-  const store = new Store();
+  const store = createStore();
 
   for (const q of data.quads) {
     store.addQuad(

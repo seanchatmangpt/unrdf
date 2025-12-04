@@ -14,14 +14,14 @@ import {
 } from './knowledge-engine.mjs';
 
 import { UnrdfDataFactory as DataFactory } from '@unrdf/core/rdf/n3-justified-only';
-import { Store } from 'n3'; // TODO: Replace with Oxigraph Store
+import { createStore } from '@unrdf/oxigraph'; // TODO: Replace with Oxigraph Store
 import { faker } from '@faker-js/faker';
 import assert from 'assert';
 
 const { namedNode, literal, quad } = DataFactory;
 
 async function generatePeople(count) {
-  const store = new Store();
+  const store = createStore();
   const ex = 'http://example.org/';
 
   for (let i = 0; i < count; i++) {
@@ -110,7 +110,7 @@ async function main() {
   const canonical = await canonicalize(bulkStore);
   assert(canonical.length > 0, 'Canonicalization should produce non-empty output');
 
-  const copy = new Store(bulkStore.getQuads());
+  const copy = createStore(bulkStore.getQuads());
   const iso = await isIsomorphic(bulkStore, copy);
   assert.strictEqual(iso, true, 'Copy of store should be isomorphic');
 

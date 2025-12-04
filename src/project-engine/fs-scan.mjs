@@ -6,7 +6,7 @@
 import { promises as fs } from 'fs';
 import path from 'path';
 import { UnrdfDataFactory as DataFactory } from '@unrdf/core/rdf/n3-justified-only';
-import { Store } from 'n3'; // TODO: Replace with Oxigraph Store
+import { createStore } from '@unrdf/oxigraph'; // TODO: Replace with Oxigraph Store
 import { trace, SpanStatusCode } from '@opentelemetry/api';
 import { z } from 'zod';
 
@@ -61,7 +61,7 @@ export async function scanFileSystemToStore(options) {
         'fs.ignore_count': ignorePatterns.length,
       });
 
-      const store = new Store();
+      const store = createStore();
       const stats = {
         fileCount: 0,
         folderCount: 0,

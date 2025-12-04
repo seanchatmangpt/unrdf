@@ -5,7 +5,7 @@
  */
 
 import { Parser, Writer, UnrdfDataFactory as DataFactory } from '@unrdf/core/rdf/n3-justified-only';
-import { Store } from 'n3'; // TODO: Replace with Oxigraph Store
+import { createStore } from '@unrdf/oxigraph'; // TODO: Replace with Oxigraph Store
 import { createStore as createOxigraphStore } from '@unrdf/oxigraph';
 import rdf from 'rdf-ext';
 import SHACLValidator from 'rdf-validate-shacl';
@@ -26,7 +26,7 @@ export class RdfEngine {
    */
   constructor(options = {}) {
     this.baseIRI = options.baseIRI || 'http://example.org/';
-    this.store = new Store();
+    this.store = createStore();
   }
 
   // =================================================================
@@ -158,7 +158,7 @@ export class RdfEngine {
         const quads = Array.isArray(result) ? result : [];
         return {
           type: 'construct',
-          store: new Store(quads),
+          store: createStore(quads),
         };
       }
       case 'DESCRIBE': {
@@ -166,7 +166,7 @@ export class RdfEngine {
         const quads = Array.isArray(result) ? result : [];
         return {
           type: 'describe',
-          store: new Store(quads),
+          store: createStore(quads),
         };
       }
       case 'INSERT':
@@ -237,7 +237,7 @@ export class RdfEngine {
    * @returns {{conforms: boolean, results: Array<object>}} A validation report.
    */
   validateShacl(dataStore, shapes) {
-    const shapesStore = typeof shapes === 'string' ? new Store(new Parser().parse(shapes)) : shapes;
+    const shapesStore = typeof shapes === 'string' ? createStore(new Parser().parse(shapes)) : shapes;
 
     const validator = new SHACLValidator(rdf.dataset([...shapesStore]));
     const report = validator.validate(rdf.dataset([...dataStore]));
@@ -267,7 +267,7 @@ export class RdfEngine {
     const dataN3 = this.serializeTurtle(dataStore);
     const { executeBasicEyeQuery } = await import('eyereasoner');
     const inferredN3 = await executeBasicEyeQuery(eyereasoner.SWIPL, dataN3, rulesN3);
-    return new Store(new Parser().parse(inferredN3));
+    return createStore(new Parser().parse(inferredN3));
   }
 
   // =================================================================
