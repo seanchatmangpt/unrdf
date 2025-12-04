@@ -4,7 +4,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { Store, DataFactory } from 'n3';
+import { createStore } from '@unrdf/oxigraph';
 import {
   inferTestPatterns,
   generateTestSkeleton,
@@ -23,7 +23,7 @@ const NS = {
 };
 
 function createFsStore(files) {
-  const store = new Store();
+  const store = createStore();
   for (const { path, content } of files) {
     const iri = namedNode(`http://example.org/unrdf/fs#${encodeURIComponent(path)}`);
     store.addQuad(iri, namedNode(`${NS.fs}relativePath`), literal(path));
@@ -33,7 +33,7 @@ function createFsStore(files) {
 }
 
 function createProjectStore(files) {
-  const store = new Store();
+  const store = createStore();
   for (const { path, role } of files) {
     const iri = namedNode(`http://example.org/unrdf/fs#${encodeURIComponent(path)}`);
     store.addQuad(iri, namedNode(`${NS.fs}relativePath`), literal(path));
@@ -43,7 +43,7 @@ function createProjectStore(files) {
 }
 
 function createDomainStore(entities) {
-  const store = new Store();
+  const store = createStore();
   for (const { name, fields = [] } of entities) {
     const iri = namedNode(`${NS.dom}${name}`);
     store.addQuad(iri, namedNode(`${NS.rdf}type`), namedNode(`${NS.dom}Entity`));

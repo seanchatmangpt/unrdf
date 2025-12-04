@@ -11,9 +11,9 @@ import {
   ObservabilityManager,
   createObservabilityManager,
 } from '../../src/knowledge-engine/observability.mjs';
-import { Store as _Store, DataFactory } from 'n3';
+import { createStore, dataFactory } from '@unrdf/oxigraph';
 
-const { _namedNode, _literal } = DataFactory;
+const { namedNode: _namedNode, literal: _literal } = dataFactory;
 
 describe('ObservabilityManager', () => {
   let observability;

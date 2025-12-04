@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { TransactionManager } from '../src/knowledge-engine/transaction.mjs';
-import { Store, DataFactory } from 'n3';
+import { createStore } from '@unrdf/oxigraph';
 
 const { namedNode, quad } = DataFactory;
 
@@ -11,7 +11,7 @@ describe('Transaction Manager - veto pre-hook', () => {
       enableLockchain: false,
       enableResolution: false,
     });
-    const store = new Store();
+    const store = createStore();
 
     tx.addHook({
       id: 'veto-eve',

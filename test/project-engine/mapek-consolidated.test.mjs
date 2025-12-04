@@ -7,7 +7,7 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
-import { Store, DataFactory } from 'n3';
+import { createStore } from '@unrdf/oxigraph';
 import {
   runMapekIteration,
   createAutonomicHooks,
@@ -31,7 +31,7 @@ const NS = {
 };
 
 function createTestDomainStore() {
-  const store = new Store();
+  const store = createStore();
   ['User', 'Product'].forEach(entity => {
     store.addQuad(
       namedNode(`${NS.dom}${entity}`),
@@ -48,7 +48,7 @@ function createTestDomainStore() {
 }
 
 function createTestProjectStore() {
-  const store = new Store();
+  const store = createStore();
   // User feature (complete)
   ['Component', 'Api', 'Test'].forEach(role => {
     const fileIri = namedNode(`${NS.fs}src/features/user/User${role}.tsx`);

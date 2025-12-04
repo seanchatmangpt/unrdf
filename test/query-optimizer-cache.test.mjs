@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { QueryOptimizer } from '../src/knowledge-engine/query-optimizer.mjs';
-import { Store, DataFactory } from 'n3';
+import { createStore } from '@unrdf/oxigraph';
 
 const { quad, namedNode } = DataFactory;
 
@@ -10,7 +10,7 @@ describe('Query Optimizer - cache behavior', () => {
       enableOTEL: false,
       maxCacheSize: 128,
     });
-    const graph = new Store([quad(namedNode('ex:s'), namedNode('ex:p'), namedNode('ex:o'))]);
+    const graph = createStore([quad(namedNode('ex:s'), namedNode('ex:p'), namedNode('ex:o'))]);
 
     const q = 'SELECT * WHERE { ?s ?p ?o }';
     const plan1 = await optimizer.optimizeQuery(q, 'sparql-select', graph);

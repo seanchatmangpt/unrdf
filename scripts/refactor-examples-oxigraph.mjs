@@ -3,7 +3,7 @@
 /**
  * Refactor example files to use Oxigraph createStore() instead of N3 Store
  *
- * This script performs bulk refactoring of example files to migrate from N3.Store
+ * This script performs bulk refactoring of example files to migrate from Oxigraph Store
  * to @unrdf/oxigraph createStore() pattern.
  */
 
@@ -11,7 +11,7 @@ import { readFileSync, writeFileSync } from 'fs';
 import { execSync } from 'child_process';
 
 const filesToRefactor = [
-  // Package examples with new Store()
+  // Package examples with createStore()
   'packages/cli/examples/graph-commands/src/custom-commands.mjs',
   'packages/cli/examples/graph-commands/test/example.test.mjs',
   'packages/core/examples/basic-store/src/index.mjs',
@@ -76,7 +76,7 @@ function refactorFile(filePath) {
     let modified = false;
 
     // Pattern 1: Replace N3 Store constructor with createStore()
-    if (content.includes('new Store()') || content.includes('new Store(')) {
+    if (content.includes('createStore()') || content.includes('createStore(')) {
       content = content.replace(/new Store\(\)/g, 'createStore()');
       content = content.replace(/new Store\(([^)]+)\)/g, 'createStore($1)');
       stats.patterns.storeConstructor++;

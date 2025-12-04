@@ -6,7 +6,7 @@
 import { z } from 'zod';
 import { createHash } from 'crypto';
 import { UnrdfDataFactory as DataFactory } from '@unrdf/core/rdf/n3-justified-only';
-import { Store } from 'n3'; // TODO: Replace with Oxigraph Store
+import { createStore } from '@unrdf/oxigraph'; // TODO: Replace with Oxigraph Store
 import { scanFileSystemToStore } from './fs-scan.mjs';
 import { detectStackFromFs } from './stack-detect.mjs';
 import { buildProjectModelFromFs } from './project-model.mjs';
@@ -389,7 +389,7 @@ function executeDomainInferencePhase(projectStore, options) {
 
   try {
     // Create domain store from project store
-    const domainStore = new Store();
+    const domainStore = createStore();
     const baseIri = `${options.baseIri}domain#`;
 
     // Extract entities from feature names and file patterns
@@ -585,7 +585,7 @@ async function executeCodeComplexityPhase(projectRoot, domainStore, _options) {
   try {
     const { store, summary } = await analyzeJsComplexity({
       projectRoot,
-      baseStore: domainStore ? new Store(domainStore) : undefined,
+      baseStore: domainStore ? createStore(domainStore) : undefined,
       mode: 'observe',
     });
 

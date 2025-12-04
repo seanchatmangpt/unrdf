@@ -4,7 +4,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { Store, DataFactory } from 'n3';
+import { createStore } from '@unrdf/oxigraph';
 import { analyzeHotspots, scoreFeature } from '../../src/project-engine/hotspot-analyzer.mjs';
 
 const { namedNode, literal } = DataFactory;
@@ -17,7 +17,7 @@ const NS = {
 };
 
 function createProjectStore(config = {}) {
-  const store = new Store();
+  const store = createStore();
   const { features = {}, baseIri = 'http://example.org/unrdf/project#' } = config;
   const projectIri = namedNode(`${baseIri}project`);
   store.addQuad(projectIri, namedNode(`${NS.rdf}type`), namedNode(`${NS.proj}Project`));
@@ -48,7 +48,7 @@ function createProjectStore(config = {}) {
 describe('hotspot-analyzer', () => {
   describe('analyzeHotspots', () => {
     it('returns empty for empty store', () => {
-      const result = analyzeHotspots({ projectStore: new Store() });
+      const result = analyzeHotspots({ projectStore: createStore() });
       expect(result.hotspots).toHaveLength(0);
       expect(result.summary).toBe('No high-risk features identified');
     });

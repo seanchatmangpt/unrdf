@@ -7,7 +7,7 @@
 
 import { z } from 'zod';
 import { UnrdfDataFactory as DataFactory } from '@unrdf/core/rdf/n3-justified-only';
-import { Store } from 'n3'; // TODO: Replace with Oxigraph Store
+import { createStore } from '@unrdf/oxigraph'; // TODO: Replace with Oxigraph Store
 import { readdir, readFile } from 'fs/promises';
 import { join, extname } from 'path';
 import { statSync as _statSync } from 'fs';
@@ -85,7 +85,7 @@ export async function analyzeJsComplexity(input) {
 
   if (validated.mode === 'off') {
     // Return empty store if analysis is disabled
-    const emptyStore = new Store();
+    const emptyStore = createStore();
     return {
       store: emptyStore,
       summary: {
@@ -98,7 +98,7 @@ export async function analyzeJsComplexity(input) {
     };
   }
 
-  const store = validated.baseStore || new Store();
+  const store = validated.baseStore || createStore();
   const excludePatterns = [...(validated.excludePatterns || []), ...DEFAULT_EXCLUDE_PATTERNS];
 
   // Find all JS/TS files

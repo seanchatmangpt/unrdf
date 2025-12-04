@@ -7,7 +7,7 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { promises as fs } from 'fs';
 import path from 'path';
 import os from 'os';
-import { Store, DataFactory } from 'n3';
+import { createStore } from '@unrdf/oxigraph';
 import {
   checkDocConsistency,
   extractDocReferences,
@@ -23,7 +23,7 @@ const NS = {
 };
 
 function _createDomainStore(entities) {
-  const store = new Store();
+  const store = createStore();
   for (const { name, fields = [] } of entities) {
     const iri = namedNode(`${NS.dom}${name}`);
     store.addQuad(iri, namedNode(`${NS.rdf}type`), namedNode(`${NS.dom}Entity`));
@@ -56,7 +56,7 @@ async function cleanupTempDir(dir) {
 describe('doc-drift-checker', () => {
   describe('extractDocReferences', () => {
     it('extracts doc references from project store', () => {
-      const projectStore = new Store();
+      const projectStore = createStore();
       const docIri = namedNode(`${NS.fs}docs/guide.md`);
       projectStore.addQuad(docIri, namedNode(`${NS.fs}relativePath`), literal('docs/guide.md'));
       const result = extractDocReferences({
@@ -73,7 +73,7 @@ describe('doc-drift-checker', () => {
 
   describe('scoreDocDrift', () => {
     it('returns score based on doc drift', () => {
-      const projectStore = new Store();
+      const projectStore = createStore();
       // Add a source file without doc
       const sourceIri = namedNode(`${NS.fs}src/user.mjs`);
       projectStore.addQuad(sourceIri, namedNode(`${NS.fs}relativePath`), literal('src/user.mjs'));
@@ -99,7 +99,7 @@ describe('doc-drift-checker', () => {
     });
 
     it('detects stale entity references and missing docs', async () => {
-      const projectStore = new Store();
+      const projectStore = createStore();
       // Add a doc file
       const docIri = namedNode(`${NS.fs}docs/guide.md`);
       projectStore.addQuad(docIri, namedNode(`${NS.fs}relativePath`), literal('docs/guide.md'));
@@ -123,7 +123,7 @@ describe('doc-drift-checker', () => {
     });
 
     it('handles empty and nonexistent docs directories', async () => {
-      const projectStore = new Store();
+      const projectStore = createStore();
       // Add a source file
       const sourceIri = namedNode(`${NS.fs}src/foo.mjs`);
       projectStore.addQuad(sourceIri, namedNode(`${NS.fs}relativePath`), literal('src/foo.mjs'));

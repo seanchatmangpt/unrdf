@@ -7,7 +7,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { Store, DataFactory } from 'n3';
+import { createStore } from '@unrdf/oxigraph';
 import { inferDomainModel, DomainModelLens } from '../../src/project-engine/domain-infer.mjs';
 
 const { namedNode, literal } = DataFactory;
@@ -19,7 +19,7 @@ const NS = {
 };
 
 function createMockFsStore(paths) {
-  const store = new Store();
+  const store = createStore();
   for (const filePath of paths) {
     const fileIri = namedNode(`${NS.fs}${encodeURIComponent(filePath)}`);
     store.addQuad(fileIri, namedNode(`${NS.fs}relativePath`), literal(filePath));
@@ -45,7 +45,7 @@ describe('domain-infer consolidated - 80/20 core', () => {
   });
 
   it('returns empty result for empty store', async () => {
-    const fsStore = new Store();
+    const fsStore = createStore();
     const { store, summary } = await inferDomainModel({ fsStore });
 
     expect(summary.entityCount).toBe(0);

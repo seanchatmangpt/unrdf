@@ -4,7 +4,7 @@
  */
 
 import { UnrdfDataFactory as DataFactory } from '@unrdf/core/rdf/n3-justified-only';
-import { Store } from 'n3'; // TODO: Replace with Oxigraph Store
+import { createStore } from '@unrdf/oxigraph'; // TODO: Replace with Oxigraph Store
 import { z } from 'zod';
 
 const { namedNode, literal } = DataFactory;
@@ -472,7 +472,7 @@ export function inferTemplatesFromProject(fsStore, domainStore, stackProfile) {
     stackProfile,
   });
 
-  const store = new Store();
+  const store = createStore();
   const summary = {
     templateCount: 0,
     byKind: {},

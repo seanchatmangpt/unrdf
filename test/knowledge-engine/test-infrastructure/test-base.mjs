@@ -8,7 +8,7 @@
  */
 
 import { KnowledgeHookManager } from '../../../src/knowledge-engine/knowledge-hook-manager.mjs';
-import { Store } from 'n3';
+import { createStore } from '@unrdf/oxigraph';
 import { join } from 'path';
 import { tmpdir } from 'os';
 import { mkdir, rm } from 'fs/promises';
@@ -40,7 +40,7 @@ export class TestBase {
     this.tempDir = await this.createTempDir(testName);
 
     // Create test store
-    this.testStore = new Store();
+    this.testStore = createStore();
 
     // Create manager with temp directory as base path
     this.manager = new KnowledgeHookManager({

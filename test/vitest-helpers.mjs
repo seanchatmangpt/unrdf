@@ -3,9 +3,9 @@
  * @description Reusable test utilities for all 26 examples
  */
 
-import { Store, DataFactory } from 'n3'
+import { createStore, dataFactory } from '@unrdf/oxigraph'
 
-const { namedNode, literal, quad, defaultGraph } = DataFactory
+const { namedNode, literal, quad, defaultGraph } = dataFactory
 
 // ============================================================================
 // Sample Data Generators
@@ -33,7 +33,7 @@ export function createSampleQuad(subject, predicate, object, graph) {
  * @returns {import('n3').Store}
  */
 export function createSampleStore(withData = true) {
-  const store = new Store()
+  const store = createStore()
 
   if (withData) {
     // Add sample FOAF data
@@ -68,7 +68,7 @@ export function createSampleStore(withData = true) {
  * @returns {import('n3').Store}
  */
 export function createSampleGraph(size = 10) {
-  const store = new Store()
+  const store = createStore()
 
   for (let i = 0; i < size; i++) {
     store.addQuad(
@@ -123,8 +123,8 @@ export function assertQuadsEqual(quads1, quads2, message) {
     )
   }
 
-  const store1 = new Store(quads1)
-  const store2 = new Store(quads2)
+  const store1 = createStore(quads1)
+  const store2 = createStore(quads2)
 
   for (const q of quads1) {
     if (!store2.has(q)) {

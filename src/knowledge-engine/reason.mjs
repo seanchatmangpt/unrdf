@@ -4,7 +4,7 @@
  */
 
 import { Parser, Writer } from '@unrdf/core/rdf/n3-justified-only';
-import { Store } from 'n3'; // TODO: Replace with Oxigraph Store
+import { createStore } from '@unrdf/oxigraph'; // TODO: Replace with Oxigraph Store
 
 // Dynamic import to avoid top-level await issues
 let basicQuery;
@@ -29,7 +29,7 @@ const loadBasicQuery = async () => {
  * @throws {Error} If reasoning fails
  *
  * @example
- * const dataStore = new Store();
+ * const dataStore = createStore();
  * // ... add data quads to store
  *
  * const rulesTtl = `
@@ -87,16 +87,16 @@ export async function reason(store, rules, options = {}) {
     }
 
     // Create result store
-    const _resultStore = new Store(result);
+    const _resultStore = createStore(result);
 
     // Combine original and inferred data if requested
     if (includeOriginal) {
-      return new Store([...dataQuads, ...result]);
+      return createStore([...dataQuads, ...result]);
     } else {
       // Extract only inferred quads (not in original data)
       const originalQuadSet = new Set(dataQuads.map(q => q.toString()));
       const inferredQuads = result.filter(q => !originalQuadSet.has(q.toString()));
-      return new Store(inferredQuads);
+      return createStore(inferredQuads);
     }
   } catch (error) {
     throw new Error(`N3 reasoning failed: ${error.message}`);
@@ -157,7 +157,7 @@ export async function reasonMultiple(store, rulesList, options = {}) {
  * @returns {Store} Store containing only the newly inferred quads
  *
  * @example
- * const originalStore = new Store();
+ * const originalStore = createStore();
  * // ... add original quads
  *
  * const reasonedStore = await reason(originalStore, rules);
@@ -177,7 +177,7 @@ export function extractInferred(originalStore, reasonedStore) {
 
   const inferredQuads = reasonedQuads.filter(q => !originalQuads.has(q.toString()));
 
-  return new Store(inferredQuads);
+  return createStore(inferredQuads);
 }
 
 /**
@@ -283,7 +283,7 @@ export function createReasoningSession(initialStore, rules, options = {}) {
     throw new TypeError('createReasoningSession: rules must be provided');
   }
 
-  let currentStore = new Store(initialStore.getQuads());
+  let currentStore = createStore(initialStore.getQuads());
   const sessionRules = rules;
 
   return {
@@ -329,14 +329,14 @@ export function createReasoningSession(initialStore, rules, options = {}) {
      * @returns {Store} Current store
      */
     getState() {
-      return new Store(currentStore.getQuads());
+      return createStore(currentStore.getQuads());
     },
 
     /**
      * Reset to initial state.
      */
     reset() {
-      currentStore = new Store(initialStore.getQuads());
+      currentStore = createStore(initialStore.getQuads());
     },
 
     /**

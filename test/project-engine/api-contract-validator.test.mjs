@@ -4,7 +4,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { Store, DataFactory } from 'n3';
+import { createStore } from '@unrdf/oxigraph';
 import {
   generateAPISchema,
   _generateAllAPISchemas,
@@ -22,7 +22,7 @@ const NS = {
 };
 
 function createDomainStore(entityName, fields) {
-  const store = new Store();
+  const store = createStore();
   const entityIri = `http://example.org/unrdf/domain#${entityName}`;
   store.addQuad(namedNode(entityIri), namedNode(`${NS.rdf}type`), namedNode(`${NS.dom}Entity`));
   store.addQuad(namedNode(entityIri), namedNode(`${NS.rdfs}label`), literal(entityName));
@@ -136,8 +136,8 @@ describe('api-contract-validator', () => {
 
   describe('detectAllContractBreaks', () => {
     it('detects entity removal', () => {
-      const oldStore = new Store();
-      const newStore = new Store();
+      const oldStore = createStore();
+      const newStore = createStore();
       oldStore.addQuad(
         namedNode(`${NS.dom}User`),
         namedNode(`${NS.rdf}type`),

@@ -4,7 +4,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { Store, DataFactory } from 'n3';
+import { createStore } from '@unrdf/oxigraph';
 import {
   buildDependencyGraph,
   detectCircularDependencies,
@@ -24,7 +24,7 @@ const NS = {
 };
 
 function createProjectStoreWithFiles(files) {
-  const store = new Store();
+  const store = createStore();
   // First, add all files with relativePath
   // Use encodeURIComponent to match what extractPathFromIri expects
   for (const { path, imports = [] } of files) {

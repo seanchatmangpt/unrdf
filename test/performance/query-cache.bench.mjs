@@ -8,7 +8,7 @@
 
 import { describe, it, beforeEach, _afterEach } from 'vitest';
 import { createQueryOptimizer } from '../../src/knowledge-engine/query-optimizer.mjs';
-import { Store } from 'n3';
+import { createStore } from '@unrdf/oxigraph';
 import { trace } from '@opentelemetry/api';
 
 const tracer = trace.getTracer('query-cache-benchmark');
@@ -38,7 +38,7 @@ function createTestQueries(count) {
  * @returns {Store} RDF store with test data
  */
 function createTestGraph() {
-  const store = new Store();
+  const store = createStore();
 
   // Add sample triples
   for (let i = 0; i < 100; i++) {

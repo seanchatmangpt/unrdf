@@ -12,7 +12,7 @@
 import { createContext } from 'unctx';
 import { AsyncLocalStorage } from 'node:async_hooks';
 import { UnrdfDataFactory as DataFactory } from '@unrdf/core/rdf/n3-justified-only';
-import { Store } from 'n3'; // TODO: Replace with Oxigraph Store
+import { createStore } from '@unrdf/oxigraph'; // TODO: Replace with Oxigraph Store
 import crypto from 'node:crypto';
 import * as rdfCanonizeModule from 'rdf-canonize';
 import {
@@ -90,12 +90,12 @@ export function createStoreContext(initialQuads = [], options = {}) {
     throw new TypeError('[createStoreContext] options must be an object');
   }
 
-  const store = new Store();
+  const store = createStore();
   const prefixRegistry = new Map();
 
   // Add initial quads to the engine's store
   if (initialQuads.length > 0) {
-    store.addQuads(initialQuads);
+    store.addAll(initialQuads);
   }
 
   const context = {
@@ -146,7 +146,7 @@ export function createStoreContext(initialQuads = [], options = {}) {
      * @returns {StoreContext} This context for chaining
      */
     clear() {
-      store.removeQuads([...store]);
+      store.clear();
       return this;
     },
 
@@ -242,7 +242,7 @@ export function createStoreContext(initialQuads = [], options = {}) {
      * @returns {Object} Store statistics
      */
     stats() {
-      const quads = store.getQuads(null, null, null, null);
+      const quads = Array.from(store.match());
       const subjects = new Set();
       const predicates = new Set();
       const objects = new Set();

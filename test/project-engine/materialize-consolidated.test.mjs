@@ -7,7 +7,7 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { Store, DataFactory } from 'n3';
+import { createStore } from '@unrdf/oxigraph';
 import { promises as fs } from 'fs';
 import path from 'path';
 import os from 'os';
@@ -26,8 +26,8 @@ describe('materialize consolidated - 80/20 core', () => {
 
   beforeEach(async () => {
     testDir = await fs.mkdtemp(path.join(os.tmpdir(), 'materialize-test-'));
-    ontologyStore = new Store();
-    templateGraph = new Store();
+    ontologyStore = createStore();
+    templateGraph = createStore();
   });
 
   afterEach(async () => {

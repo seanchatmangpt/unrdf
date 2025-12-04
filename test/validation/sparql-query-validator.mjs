@@ -5,7 +5,7 @@
 
 import { createDarkMatterCore } from '../../src/knowledge-engine/dark-matter-core.mjs';
 import { _query, select, ask, construct } from '../../src/knowledge-engine/query.mjs';
-import { Store, DataFactory } from 'n3';
+import { createStore } from '@unrdf/oxigraph';
 
 const { namedNode, _literal } = DataFactory;
 
@@ -43,7 +43,7 @@ async function validateSparqlQueries() {
 
     // Step 2: Add test data
     console.log('\n📝 Step 2: Add test data');
-    const store = new Store();
+    const store = createStore();
     const foafKnows = namedNode('http://xmlns.com/foaf/0.1/knows');
     const alice = namedNode('http://example.org/alice');
     const bob = namedNode('http://example.org/bob');

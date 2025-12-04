@@ -7,7 +7,7 @@
  * and easy customization for different test scenarios.
  */
 
-import { Store } from 'n3';
+import { createStore } from '@unrdf/oxigraph';
 
 /**
  * Test event factory class
@@ -21,7 +21,7 @@ export class TestEventFactory {
       name: 'test-event',
       payload: {},
       context: {
-        graph: new Store(),
+        graph: createStore(),
         user: { role: 'user', id: 'test-user' },
         timestamp: new Date().toISOString(),
       },

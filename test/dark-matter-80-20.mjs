@@ -9,14 +9,14 @@
 
 import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
 import { DarkMatterCore, DarkMatterFactory } from '../src/knowledge-engine/dark-matter-core.mjs';
-import { Store } from 'n3';
+import { createStore } from '@unrdf/oxigraph';
 
 describe('Dark Matter 80/20 Framework', () => {
   let darkMatterCore;
   let mockStore;
 
   beforeAll(() => {
-    mockStore = new Store();
+    mockStore = createStore();
   });
 
   afterAll(async () => {

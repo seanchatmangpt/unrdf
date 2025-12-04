@@ -8,8 +8,8 @@
  */
 
 import { _defineHook } from '../../../src/knowledge-engine/define-hook.mjs';
-import { Store } from 'n3';
-import { DataFactory } from 'n3';
+import { createStore } from '@unrdf/oxigraph';
+import { UnrdfDataFactory as DataFactory } from '@unrdf/core/rdf/n3-justified-only';
 import crypto from 'node:crypto';
 
 const { namedNode, quad } = DataFactory;
@@ -82,7 +82,7 @@ export class TestDataBuilder {
    * @returns {Store} N3 Store instance
    */
   buildStore(quads = []) {
-    const store = new Store();
+    const store = createStore();
     if (quads.length > 0) {
       store.addQuads(quads);
     } else {

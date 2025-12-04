@@ -2,7 +2,7 @@
  * @vitest-environment node
  */
 import { describe, it, expect, beforeEach } from 'vitest';
-import { Store } from 'n3';
+import { createStore } from '@unrdf/oxigraph';
 import {
   analyzeSparqlQuery,
   estimateComplexity,
@@ -119,7 +119,7 @@ describe('@unrdf/dark-matter', () => {
     });
 
     it('should suggest indexes', () => {
-      const store = new Store();
+      const store = createStore();
       const query = `
         SELECT ?name WHERE {
           ?person <http://xmlns.com/foaf/0.1/name> ?name .
@@ -220,7 +220,7 @@ describe('@unrdf/dark-matter', () => {
     });
 
     it('should analyze store performance', () => {
-      const store = new Store();
+      const store = createStore();
 
       const analysis = analyzePerformance(store);
 
@@ -241,7 +241,7 @@ describe('@unrdf/dark-matter', () => {
 
   describe('Index Advisor', () => {
     it('should analyze index needs from query log', () => {
-      const store = new Store();
+      const store = createStore();
       const queryLog = [
         'SELECT ?name WHERE { ?s <http://xmlns.com/foaf/0.1/name> ?name }',
         'SELECT ?name WHERE { ?s <http://xmlns.com/foaf/0.1/name> ?name }',
@@ -309,7 +309,7 @@ describe('@unrdf/dark-matter', () => {
     });
 
     it('should validate input parameters', () => {
-      const store = new Store();
+      const store = createStore();
 
       expect(() => analyzeIndexNeeds(null, [])).toThrow(TypeError);
       expect(() => analyzeIndexNeeds(store, 'not-array')).toThrow(TypeError);
@@ -349,7 +349,7 @@ describe('@unrdf/dark-matter', () => {
     });
 
     it('should provide index recommendations for slow queries', () => {
-      const store = new Store();
+      const store = createStore();
       const metrics = createMetricsCollector();
 
       const query = `
