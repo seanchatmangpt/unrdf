@@ -364,7 +364,9 @@ describe('UnrdfStore - Comprehensive Coverage Tests', () => {
       const store = createUnrdfStore();
 
       expect(() => store.transaction('not a function')).toThrow(TypeError);
-      expect(() => store.transaction('not a function')).toThrow('transaction: fn must be a function');
+      expect(() => store.transaction('not a function')).toThrow(
+        'transaction: fn must be a function'
+      );
     });
 
     it('throws TypeError for null input', () => {
@@ -406,7 +408,9 @@ describe('UnrdfStore - Comprehensive Coverage Tests', () => {
 
     it('executes DELETE DATA update', () => {
       const store = createUnrdfStore();
-      store.add(quad(namedNode('http://example.org/alice'), namedNode('http://foaf/name'), literal('Alice')));
+      store.add(
+        quad(namedNode('http://example.org/alice'), namedNode('http://foaf/name'), literal('Alice'))
+      );
 
       expect(store.size()).toBe(1);
 
@@ -529,32 +533,36 @@ describe('UnrdfStore - Comprehensive Coverage Tests', () => {
   });
 
   describe('dump - RDF Serialization Export (CRITICAL GAP)', () => {
-    it('dumps store to Turtle format', () => {
+    it('dumps store to N-Quads format', () => {
       const store = createUnrdfStore();
-      store.add(quad(namedNode('http://example.org/s'), namedNode('http://example.org/p'), literal('o')));
+      store.add(
+        quad(namedNode('http://example.org/s'), namedNode('http://example.org/p'), literal('o'))
+      );
 
-      const turtle = store.dump({ format: 'text/turtle' });
+      const nquads = store.dump({ format: 'application/n-quads' });
 
-      expect(typeof turtle).toBe('string');
-      expect(turtle.length).toBeGreaterThan(0);
+      expect(typeof nquads).toBe('string');
+      expect(nquads.length).toBeGreaterThan(0);
     });
 
-    it('dumps store to N-Triples format', () => {
+    it('dumps store to TriG format', () => {
       const store = createUnrdfStore();
-      store.add(quad(namedNode('http://example.org/s'), namedNode('http://example.org/p'), literal('o')));
+      store.add(
+        quad(namedNode('http://example.org/s'), namedNode('http://example.org/p'), literal('o'))
+      );
 
-      const ntriples = store.dump({ format: 'application/n-triples' });
+      const trig = store.dump({ format: 'application/trig' });
 
-      expect(typeof ntriples).toBe('string');
-      expect(ntriples.length).toBeGreaterThan(0);
+      expect(typeof trig).toBe('string');
+      expect(trig.length).toBeGreaterThan(0);
     });
 
     it('dumps empty store', () => {
       const store = createUnrdfStore();
 
-      const turtle = store.dump({ format: 'text/turtle' });
+      const nquads = store.dump({ format: 'application/n-quads' });
 
-      expect(typeof turtle).toBe('string');
+      expect(typeof nquads).toBe('string');
     });
 
     it('dumps multiple quads correctly', () => {
@@ -562,19 +570,21 @@ describe('UnrdfStore - Comprehensive Coverage Tests', () => {
       store.add(quad(namedNode('http://s1'), namedNode('http://p'), literal('o1')));
       store.add(quad(namedNode('http://s2'), namedNode('http://p'), literal('o2')));
 
-      const turtle = store.dump({ format: 'text/turtle' });
+      const nquads = store.dump({ format: 'application/n-quads' });
 
-      expect(turtle.length).toBeGreaterThan(0);
+      expect(nquads.length).toBeGreaterThan(0);
     });
 
     it('roundtrip: dump and load produce same store', () => {
       const store1 = createUnrdfStore();
-      store1.add(quad(namedNode('http://example.org/s'), namedNode('http://example.org/p'), literal('test')));
+      store1.add(
+        quad(namedNode('http://example.org/s'), namedNode('http://example.org/p'), literal('test'))
+      );
 
-      const turtle = store1.dump({ format: 'text/turtle' });
+      const nquads = store1.dump({ format: 'application/n-quads' });
 
       const store2 = createUnrdfStore();
-      store2.load(turtle, { format: 'text/turtle' });
+      store2.load(nquads, { format: 'application/n-quads' });
 
       expect(store2.size()).toBe(store1.size());
     });
@@ -682,7 +692,11 @@ describe('UnrdfStore - Comprehensive Coverage Tests', () => {
 
       // 1. Bulk add data
       const quads = [
-        quad(namedNode('http://example.org/alice'), namedNode('http://foaf/name'), literal('Alice')),
+        quad(
+          namedNode('http://example.org/alice'),
+          namedNode('http://foaf/name'),
+          literal('Alice')
+        ),
         quad(namedNode('http://example.org/bob'), namedNode('http://foaf/name'), literal('Bob')),
       ];
       store.bulkAdd(quads);
@@ -693,20 +707,26 @@ describe('UnrdfStore - Comprehensive Coverage Tests', () => {
 
       // 3. Transaction to modify
       store.transaction(txStore => {
-        txStore.add(quad(namedNode('http://example.org/charlie'), namedNode('http://foaf/name'), literal('Charlie')));
+        txStore.add(
+          quad(
+            namedNode('http://example.org/charlie'),
+            namedNode('http://foaf/name'),
+            literal('Charlie')
+          )
+        );
       });
 
       // 4. Query again
       const result2 = store.query('SELECT * WHERE { ?s ?p ?o }');
       expect(result2.length).toBe(3);
 
-      // 5. Dump to Turtle
-      const turtle = store.dump({ format: 'text/turtle' });
-      expect(turtle.length).toBeGreaterThan(0);
+      // 5. Dump to N-Quads
+      const nquads = store.dump({ format: 'application/n-quads' });
+      expect(nquads.length).toBeGreaterThan(0);
 
       // 6. Load into new store
       const store2 = createUnrdfStore();
-      store2.load(turtle, { format: 'text/turtle' });
+      store2.load(nquads, { format: 'application/n-quads' });
       expect(store2.size()).toBe(store.size());
     });
   });

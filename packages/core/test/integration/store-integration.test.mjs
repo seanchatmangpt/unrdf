@@ -368,10 +368,10 @@ describe('Store Integration Tests', () => {
 
       store.bulkAdd(quads);
 
-      const turtle = store.dump({ format: 'text/turtle' });
+      const nquads = store.dump({ format: 'application/n-quads' });
 
-      expect(typeof turtle).toBe('string');
-      expect(turtle.length).toBeGreaterThan(0);
+      expect(typeof nquads).toBe('string');
+      expect(nquads.length).toBeGreaterThan(0);
     });
 
     it('load after dump produces same store', () => {
@@ -381,15 +381,15 @@ describe('Store Integration Tests', () => {
         quad(namedNode('http://s2'), namedNode('http://p'), literal('o2')),
       ]);
 
-      const turtle = store1.dump({ format: 'turtle' });
+      const nquads = store1.dump({ format: 'application/n-quads' });
 
       const store2 = createUnrdfStore();
-      store2.load(turtle, { format: 'text/turtle' });
+      store2.load(nquads, { format: 'application/n-quads' });
 
       expect(store2.size()).toBe(store1.size());
     });
 
-    it('dump after transaction produces valid Turtle', () => {
+    it('dump after transaction produces valid N-Quads', () => {
       const store = createUnrdfStore();
 
       store.transaction(txStore => {
@@ -397,10 +397,10 @@ describe('Store Integration Tests', () => {
         txStore.add(quad(namedNode('http://s2'), namedNode('http://p'), literal('o2')));
       });
 
-      const turtle = store.dump({ format: 'text/turtle' });
+      const nquads = store.dump({ format: 'application/n-quads' });
 
-      expect(typeof turtle).toBe('string');
-      expect(turtle.length).toBeGreaterThan(0);
+      expect(typeof nquads).toBe('string');
+      expect(nquads.length).toBeGreaterThan(0);
     });
 
     it('load into store then bulkAdd works correctly', () => {

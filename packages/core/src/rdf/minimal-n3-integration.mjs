@@ -17,7 +17,7 @@
  * Everything else: Use Oxigraph ONLY.
  */
 
-import { createStore } from '@unrdf/oxigraph'
+import { createStore } from '@unrdf/oxigraph';
 
 /**
  * Case 1: Streaming Parse (N3 justified - backpressure handling)
@@ -34,21 +34,21 @@ import { createStore } from '@unrdf/oxigraph'
  * const results = store.query('SELECT * WHERE { ?s ?p ?o } LIMIT 10');
  */
 export async function streamParse(stream, options = {}) {
-  const { Parser } = await import('n3')
-  const parser = new Parser(options)
-  const quads = []
+  const { Parser } = await import('n3');
+  const parser = new Parser(options);
+  const quads = [];
 
   return new Promise((resolve, reject) => {
     stream
       .pipe(parser)
-      .on('data', (quad) => quads.push(quad))
+      .on('data', quad => quads.push(quad))
       .on('end', () => {
         // CRITICAL: Re-enter Oxigraph immediately
-        const store = createStore(quads)
-        resolve(store)
+        const store = createStore(quads);
+        resolve(store);
       })
-      .on('error', reject)
-  })
+      .on('error', reject);
+  });
 }
 
 /**
@@ -66,27 +66,27 @@ export async function streamParse(stream, options = {}) {
  * await streamSerialize(store, 'turtle', sink);
  */
 export async function streamSerialize(store, format, sink) {
-  const { Writer } = await import('n3')
-  const writer = new Writer({ format })
+  const { Writer } = await import('n3');
+  const writer = new Writer({ format });
 
   // Extract quads from Oxigraph (staying in Oxigraph as long as possible)
-  const quads = store.match(null, null, null, null)
+  const quads = store.match(null, null, null, null);
 
   for (const quad of quads) {
-    writer.addQuad(quad)
+    writer.addQuad(quad);
   }
 
   return new Promise((resolve, reject) => {
     writer.end((error, result) => {
       if (error) {
-        reject(error)
-        return
+        reject(error);
+        return;
       }
-      sink.write(result)
-      sink.end()
-      resolve()
-    })
-  })
+      sink.write(result);
+      sink.end();
+      resolve();
+    });
+  });
 }
 
 /**
@@ -106,24 +106,24 @@ export async function streamSerialize(store, format, sink) {
  * // Back in Oxigraph - can query inferred triples
  */
 export async function applyN3Rules(store, rulesTtl) {
-  const { Store, Parser } = await import('n3')
+  const { Store, Parser } = await import('n3');
 
   // Convert Oxigraph → N3 (boundary crossing)
-  const n3Store = new Store(Array.from(store.dump()))
-  const rulesStore = new Store()
+  const n3Store = new Store(Array.from(store.dump()));
+  const rulesStore = new Store();
 
-  const parser = new Parser()
-  const rules = parser.parse(rulesTtl)
-  rules.forEach((r) => rulesStore.addQuad(r))
+  const parser = new Parser();
+  const rules = parser.parse(rulesTtl);
+  rules.forEach(r => rulesStore.addQuad(r));
 
   // N3 reasoning (N3-only capability)
   // Note: Actual N3 reasoner would go here (eye.js, etc.)
   // For now, this is a placeholder showing the pattern
-  const inferred = performN3Reasoning(n3Store, rulesStore)
+  const inferred = performN3Reasoning(n3Store, rulesStore);
 
   // CRITICAL: Re-enter Oxigraph immediately
-  const allQuads = [...n3Store.getQuads(), ...inferred]
-  return createStore(allQuads)
+  const allQuads = [...n3Store.getQuads(), ...inferred];
+  return createStore(allQuads);
 }
 
 /**
@@ -133,7 +133,7 @@ export async function applyN3Rules(store, rulesTtl) {
 function performN3Reasoning(dataStore, rulesStore) {
   // Real implementation would use eye.js or similar
   // This is a pattern demonstration
-  return []
+  return [];
 }
 
 /**
@@ -150,15 +150,15 @@ function performN3Reasoning(dataStore, rulesStore) {
  * // N3's permissive parser recovered what it could, now in Oxigraph
  */
 export function parsePermissive(dirtyRdf, options = {}) {
-  const { Parser } = require('n3')
-  const parser = new Parser({ ...options, strict: false })
+  const { Parser } = require('n3');
+  const parser = new Parser({ ...options, strict: false });
 
   try {
-    const quads = parser.parse(dirtyRdf)
+    const quads = parser.parse(dirtyRdf);
     // CRITICAL: Re-enter Oxigraph immediately
-    return createStore(quads)
+    return createStore(quads);
   } catch (e) {
-    throw new Error(`Even permissive parsing failed: ${e.message}`)
+    throw new Error(`Even permissive parsing failed: ${e.message}`);
   }
 }
 
@@ -178,16 +178,16 @@ export function parsePermissive(dirtyRdf, options = {}) {
  * const transformed = transformRdfStructure(store, transform);
  */
 export function transformRdfStructure(store, transformFn) {
-  const { Store } = require('n3')
+  const { Store } = require('n3');
 
   // Convert Oxigraph → N3 (boundary crossing)
-  const n3Store = new Store(Array.from(store.dump()))
+  const n3Store = new Store(Array.from(store.dump()));
 
   // Apply transformation (N3-only utility)
-  const transformed = transformFn(n3Store)
+  const transformed = transformFn(n3Store);
 
   // CRITICAL: Re-enter Oxigraph immediately
-  return createStore(Array.from(transformed.getQuads()))
+  return createStore(Array.from(transformed.getQuads()));
 }
 
 // ============================================================================
@@ -211,9 +211,9 @@ export function transformRdfStructure(store, transformFn) {
  * // Stays in Oxigraph - ready for SPARQL
  */
 export function parse(rdf, options = {}) {
-  const store = createStore()
-  store.load(rdf, options)
-  return store
+  const store = createStore();
+  store.load(rdf, options);
+  return store;
 }
 
 /**
@@ -227,7 +227,7 @@ export function parse(rdf, options = {}) {
  * const ttl = serialize(store, { format: 'turtle' });
  */
 export function serialize(store, options = {}) {
-  return store.dump(options)
+  return store.dump(options);
 }
 
 /**
@@ -242,7 +242,7 @@ export function serialize(store, options = {}) {
  * const results = query(store, 'SELECT * WHERE { ?s ?p ?o } LIMIT 10');
  */
 export function query(store, sparql, options = {}) {
-  return store.query(sparql, options)
+  return store.query(sparql, options);
 }
 
 /**
@@ -256,7 +256,7 @@ export function query(store, sparql, options = {}) {
  * update(store, 'INSERT DATA { <http://example.org/alice> a <http://example.org/Person> }');
  */
 export function update(store, sparqlUpdate) {
-  return store.update(sparqlUpdate)
+  return store.update(sparqlUpdate);
 }
 
 // ============================================================================
@@ -340,15 +340,15 @@ export function shouldUseN3(operation) {
       justification: 'Oxigraph is authoritative storage',
       function: 'createStore',
     },
-  }
+  };
 
-  const decision = decisions[operation]
+  const decision = decisions[operation];
   if (!decision) {
     return {
       engine: 'oxigraph',
       justification: 'Default: Oxigraph for all unlisted operations',
-    }
+    };
   }
 
-  return decision
+  return decision;
 }
