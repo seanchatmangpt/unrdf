@@ -21,7 +21,7 @@ import { AuthorSchema } from './paper.mjs';
 export const ThesisType = {
   MONOGRAPH: 'monograph',
   NARRATIVE: 'narrative',
-  CONTRIBUTION: 'contribution'
+  CONTRIBUTION: 'contribution',
 };
 
 /**
@@ -32,7 +32,7 @@ export const ThesisType = {
 export const DegreeType = {
   PHD: 'PhD',
   MASTER: 'Master',
-  BACHELOR: 'Bachelor'
+  BACHELOR: 'Bachelor',
 };
 
 /**
@@ -43,18 +43,25 @@ export const THESIS_TYPE_CONFIG = {
   [ThesisType.MONOGRAPH]: {
     name: 'Monograph',
     description: 'Traditional monograph-style thesis',
-    chapters: ['Introduction', 'Literature Review', 'Methodology', 'Results', 'Discussion', 'Conclusion']
+    chapters: [
+      'Introduction',
+      'Literature Review',
+      'Methodology',
+      'Results',
+      'Discussion',
+      'Conclusion',
+    ],
   },
   [ThesisType.NARRATIVE]: {
     name: 'Narrative',
     description: 'Narrative-style thesis',
-    chapters: ['Prologue', 'Background', 'Story', 'Analysis', 'Epilogue']
+    chapters: ['Prologue', 'Background', 'Story', 'Analysis', 'Epilogue'],
   },
   [ThesisType.CONTRIBUTION]: {
     name: 'Contribution-based',
     description: 'Publication-based thesis with multiple papers',
-    chapters: ['Introduction', 'Paper 1', 'Paper 2', 'Paper 3', 'Synthesis', 'Conclusion']
-  }
+    chapters: ['Introduction', 'Paper 1', 'Paper 2', 'Paper 3', 'Synthesis', 'Conclusion'],
+  },
 };
 
 /**
@@ -68,7 +75,7 @@ export const MilestoneSchema = z.object({
   /** Status */
   status: z.enum(['pending', 'in-progress', 'completed']).default('pending'),
   /** Notes */
-  notes: z.string().optional()
+  notes: z.string().optional(),
 });
 
 /**
@@ -76,9 +83,12 @@ export const MilestoneSchema = z.object({
  */
 export const ScheduleSchema = z.object({
   /** Defense date */
-  defenseDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+  defenseDate: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/)
+    .optional(),
   /** Milestones */
-  milestones: z.array(MilestoneSchema).default([])
+  milestones: z.array(MilestoneSchema).default([]),
 });
 
 /**
@@ -94,7 +104,7 @@ export const ChapterSchema = z.object({
   /** Word count (estimated or actual) */
   wordCount: z.number().int().nonnegative().optional(),
   /** Completion percentage */
-  completion: z.number().min(0).max(100).default(0)
+  completion: z.number().min(0).max(100).default(0),
 });
 
 /**
@@ -128,7 +138,7 @@ export const ThesisSchema = z.object({
   /** Creation timestamp */
   createdAt: z.string().datetime(),
   /** Last modification timestamp */
-  lastModified: z.string().datetime().optional()
+  lastModified: z.string().datetime().optional(),
 });
 
 /**
@@ -141,27 +151,39 @@ export const CreateThesisInputSchema = z.object({
   author: z.object({
     name: z.string().min(1),
     affiliation: z.string().optional(),
-    email: z.string().email().optional()
+    email: z.string().email().optional(),
   }),
-  supervisor: z.object({
-    name: z.string().min(1),
-    affiliation: z.string().optional(),
-    email: z.string().email().optional()
-  }).optional(),
+  supervisor: z
+    .object({
+      name: z.string().min(1),
+      affiliation: z.string().optional(),
+      email: z.string().email().optional(),
+    })
+    .optional(),
   institution: z.string().optional(),
   department: z.string().optional(),
   degree: z.enum(['PhD', 'Master', 'Bachelor']).optional(),
-  customChapters: z.array(z.object({
-    heading: z.string(),
-    content: z.string().optional()
-  })).optional(),
-  schedule: z.object({
-    defenseDate: z.string().optional(),
-    milestones: z.array(z.object({
-      name: z.string(),
-      date: z.string()
-    })).optional()
-  }).optional()
+  customChapters: z
+    .array(
+      z.object({
+        heading: z.string(),
+        content: z.string().optional(),
+      })
+    )
+    .optional(),
+  schedule: z
+    .object({
+      defenseDate: z.string().optional(),
+      milestones: z
+        .array(
+          z.object({
+            name: z.string(),
+            date: z.string(),
+          })
+        )
+        .optional(),
+    })
+    .optional(),
 });
 
 /**
@@ -213,13 +235,13 @@ export function createThesis(input) {
         heading: c.heading,
         content: c.content || '',
         order: i + 1,
-        completion: 0
+        completion: 0,
       }))
     : typeConfig.chapters.map((heading, i) => ({
         heading,
         content: '',
         order: i + 1,
-        completion: 0
+        completion: 0,
       }));
 
   // Normalize author
@@ -227,7 +249,7 @@ export function createThesis(input) {
     name: validated.author.name,
     affiliation: validated.author.affiliation || validated.institution || 'Unknown',
     email: validated.author.email,
-    role: 'primary'
+    role: 'primary',
   };
 
   // Normalize supervisor if provided
@@ -236,18 +258,19 @@ export function createThesis(input) {
         name: validated.supervisor.name,
         affiliation: validated.supervisor.affiliation || validated.institution,
         email: validated.supervisor.email,
-        role: 'primary'
+        role: 'primary',
       }
     : undefined;
 
   // Build schedule
   const schedule = {
     defenseDate: validated.schedule?.defenseDate,
-    milestones: validated.schedule?.milestones?.map(m => ({
-      name: m.name,
-      date: m.date,
-      status: 'pending'
-    })) || []
+    milestones:
+      validated.schedule?.milestones?.map(m => ({
+        name: m.name,
+        date: m.date,
+        status: 'pending',
+      })) || [],
   };
 
   const now = new Date().toISOString();
@@ -265,7 +288,7 @@ export function createThesis(input) {
     chapters,
     schedule,
     createdAt: now,
-    lastModified: now
+    lastModified: now,
   };
 
   // Validate complete thesis
@@ -290,15 +313,15 @@ export function thesisToRdf(thesis) {
     [`${ontologyUri}degree`]: thesis.degree,
     [`${ontologyUri}createdAt`]: {
       '@type': 'http://www.w3.org/2001/XMLSchema#dateTime',
-      '@value': thesis.createdAt
+      '@value': thesis.createdAt,
     },
     [`${ontologyUri}hasAuthor`]: {
       '@id': `${baseUri}${thesis.id}-author`,
       '@type': `${ontologyUri}Author`,
       [`${ontologyUri}authorName`]: thesis.author.name,
       [`${ontologyUri}authorAffiliation`]: thesis.author.affiliation,
-      [`${ontologyUri}authorRole`]: 'primary'
-    }
+      [`${ontologyUri}authorRole`]: 'primary',
+    },
   };
 
   if (thesis.institution) {
@@ -315,7 +338,7 @@ export function thesisToRdf(thesis) {
       '@type': `${ontologyUri}Author`,
       [`${ontologyUri}authorName`]: thesis.supervisor.name,
       [`${ontologyUri}authorAffiliation`]: thesis.supervisor.affiliation,
-      [`${ontologyUri}authorRole`]: 'supervisor'
+      [`${ontologyUri}authorRole`]: 'supervisor',
     };
   }
 
@@ -325,7 +348,7 @@ export function thesisToRdf(thesis) {
       '@type': `${ontologyUri}Schedule`,
       [`${ontologyUri}defenseDate`]: {
         '@type': 'http://www.w3.org/2001/XMLSchema#date',
-        '@value': thesis.schedule.defenseDate
+        '@value': thesis.schedule.defenseDate,
       },
       [`${ontologyUri}hasMilestone`]: thesis.schedule.milestones.map((m, i) => ({
         '@id': `${baseUri}${thesis.id}-milestone-${i}`,
@@ -333,10 +356,10 @@ export function thesisToRdf(thesis) {
         [`${ontologyUri}milestoneName`]: m.name,
         [`${ontologyUri}milestoneDate`]: {
           '@type': 'http://www.w3.org/2001/XMLSchema#date',
-          '@value': m.date
+          '@value': m.date,
         },
-        [`${ontologyUri}milestoneStatus`]: m.status
-      }))
+        [`${ontologyUri}milestoneStatus`]: m.status,
+      })),
     };
   }
 
@@ -352,7 +375,7 @@ function getTypeClass(type) {
   const classMap = {
     monograph: 'Monograph',
     narrative: 'NarrativeThesis',
-    contribution: 'ContributionThesis'
+    contribution: 'ContributionThesis',
   };
   return classMap[type] || 'Thesis';
 }
@@ -364,7 +387,7 @@ function getTypeClass(type) {
 export function listThesisTypes() {
   return Object.entries(THESIS_TYPE_CONFIG).map(([id, config]) => ({
     id,
-    ...config
+    ...config,
   }));
 }
 
@@ -377,16 +400,16 @@ export function listThesisTypes() {
 export function addMilestone(thesis, milestone) {
   const validated = MilestoneSchema.parse({
     ...milestone,
-    status: milestone.status || 'pending'
+    status: milestone.status || 'pending',
   });
 
   return {
     ...thesis,
     schedule: {
       ...thesis.schedule,
-      milestones: [...thesis.schedule.milestones, validated]
+      milestones: [...thesis.schedule.milestones, validated],
     },
-    lastModified: new Date().toISOString()
+    lastModified: new Date().toISOString(),
   };
 }
 
@@ -406,16 +429,16 @@ export function updateMilestoneStatus(thesis, milestoneIndex, status) {
 
   milestones[milestoneIndex] = {
     ...milestones[milestoneIndex],
-    status
+    status,
   };
 
   return {
     ...thesis,
     schedule: {
       ...thesis.schedule,
-      milestones
+      milestones,
     },
-    lastModified: new Date().toISOString()
+    lastModified: new Date().toISOString(),
   };
 }
 

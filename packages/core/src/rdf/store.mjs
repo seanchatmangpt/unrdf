@@ -55,12 +55,12 @@ export function createStore() {
  * });
  */
 export function addQuad(store, quadData) {
-  if (!store || typeof store.addQuad !== 'function') {
-    throw new TypeError('addQuad: store must be a valid Store instance');
+  if (!store) {
+    throw new TypeError('store is required');
   }
 
   if (!quadData) {
-    throw new TypeError('addQuad: quadData is required');
+    throw new TypeError('quadData is required');
   }
 
   // Validate quad structure
@@ -88,12 +88,12 @@ export function addQuad(store, quadData) {
  * });
  */
 export function removeQuad(store, quadData) {
-  if (!store || typeof store.removeQuad !== 'function') {
-    throw new TypeError('removeQuad: store must be a valid Store instance');
+  if (!store) {
+    throw new TypeError('store is required');
   }
 
   if (!quadData) {
-    throw new TypeError('removeQuad: quadData is required');
+    throw new TypeError('quadData is required');
   }
 
   // Validate quad structure
@@ -125,8 +125,8 @@ export function removeQuad(store, quadData) {
  * const nameQuads = getQuads(store, null, namedNode('http://xmlns.com/foaf/0.1/name'));
  */
 export function getQuads(store, subject = null, predicate = null, object = null, graph = null) {
-  if (!store || typeof store.getQuads !== 'function') {
-    throw new TypeError('getQuads: store must be a valid Store instance');
+  if (!store) {
+    throw new TypeError('store is required');
   }
 
   return store.getQuads(subject, predicate, object, graph);
@@ -146,8 +146,8 @@ export function getQuads(store, subject = null, predicate = null, object = null,
  * }
  */
 export function* iterateQuads(store) {
-  if (!store || typeof store.getQuads !== 'function') {
-    throw new TypeError('iterateQuads: store must be a valid Store instance');
+  if (!store) {
+    throw new TypeError('store is required');
   }
 
   const quads = store.getQuads();
@@ -173,8 +173,8 @@ export function* iterateQuads(store) {
  * console.log(`Store has ${count} quads`);
  */
 export function countQuads(store, subject = null, predicate = null, object = null, graph = null) {
-  if (!store || typeof store.countQuads !== 'function') {
-    throw new TypeError('countQuads: store must be a valid Store instance');
+  if (!store) {
+    throw new TypeError('store is required');
   }
 
   return store.countQuads(subject, predicate, object, graph);

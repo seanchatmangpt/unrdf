@@ -38,23 +38,34 @@ const CLI_STRUCTURE = {
     subcommands: ['generate', 'list', 'validate'],
     args: {
       generate: {
-        '--family': { choices: ['imrad', 'dsr', 'argument', 'contribution', 'IMRaD', 'DSR', 'Argument', 'Contribution'] },
+        '--family': {
+          choices: [
+            'imrad',
+            'dsr',
+            'argument',
+            'contribution',
+            'IMRaD',
+            'DSR',
+            'Argument',
+            'Contribution',
+          ],
+        },
         '--title': { type: 'string', description: 'Paper title' },
         '--author': { type: 'string', description: 'Author name' },
         '--affiliation': { type: 'string', description: 'Author affiliation' },
         '--abstract': { type: 'string', description: 'Paper abstract' },
         '--output': { type: 'file', description: 'Output file path' },
-        '--format': { choices: ['json', 'latex', 'yaml'] }
+        '--format': { choices: ['json', 'latex', 'yaml'] },
       },
       list: {
         '--verbose': { type: 'boolean' },
-        '--format': { choices: ['json', 'yaml', 'table'] }
+        '--format': { choices: ['json', 'yaml', 'table'] },
       },
       validate: {
         '--strict': { type: 'boolean' },
-        '--format': { choices: ['json', 'table'] }
-      }
-    }
+        '--format': { choices: ['json', 'table'] },
+      },
+    },
   },
   thesis: {
     name: 'thesis',
@@ -69,17 +80,17 @@ const CLI_STRUCTURE = {
         '--institution': { type: 'string', description: 'Institution name' },
         '--department': { type: 'string', description: 'Department name' },
         '--output': { type: 'file', description: 'Output file path' },
-        '--format': { choices: ['json', 'latex', 'yaml'] }
+        '--format': { choices: ['json', 'latex', 'yaml'] },
       },
       list: {
         '--verbose': { type: 'boolean' },
-        '--format': { choices: ['json', 'yaml', 'table'] }
+        '--format': { choices: ['json', 'yaml', 'table'] },
       },
       schedule: {
         '--milestone': { type: 'string' },
-        '--date': { type: 'string' }
-      }
-    }
+        '--date': { type: 'string' },
+      },
+    },
   },
   config: {
     name: 'config',
@@ -87,16 +98,16 @@ const CLI_STRUCTURE = {
     subcommands: ['list', 'get', 'set', 'reset'],
     args: {
       get: {
-        'key': { type: 'positional', description: 'Config key' }
+        key: { type: 'positional', description: 'Config key' },
       },
       set: {
-        'key': { type: 'positional', description: 'Config key' },
-        'value': { type: 'positional', description: 'Config value' }
+        key: { type: 'positional', description: 'Config key' },
+        value: { type: 'positional', description: 'Config value' },
       },
       reset: {
-        '--all': { type: 'boolean' }
-      }
-    }
+        '--all': { type: 'boolean' },
+      },
+    },
   },
   meta: {
     name: 'meta',
@@ -104,32 +115,38 @@ const CLI_STRUCTURE = {
     subcommands: ['sparql', 'schema', 'version', 'completions'],
     args: {
       sparql: {
-        'query': { type: 'positional', description: 'SPARQL query' },
+        query: { type: 'positional', description: 'SPARQL query' },
         '--format': { choices: ['json', 'table', 'csv'] },
-        '--file': { type: 'file', description: 'Query file' }
+        '--file': { type: 'file', description: 'Query file' },
       },
       schema: {
-        '--format': { choices: ['json', 'yaml', 'turtle'] }
+        '--format': { choices: ['json', 'yaml', 'turtle'] },
       },
       completions: {
         '--shell': { choices: ['bash', 'zsh', 'fish', 'powershell'] },
-        '--output': { type: 'file', description: 'Output file' }
-      }
-    }
-  }
+        '--output': { type: 'file', description: 'Output file' },
+      },
+    },
+  },
 };
 
 /**
  * Global CLI arguments
  */
 const GLOBAL_ARGS = [
-  '-q', '--quiet',
-  '-v', '--verbose',
-  '-f', '--format',
-  '-o', '--output',
-  '-c', '--config',
-  '-h', '--help',
-  '--version'
+  '-q',
+  '--quiet',
+  '-v',
+  '--verbose',
+  '-f',
+  '--format',
+  '-o',
+  '--output',
+  '-c',
+  '--config',
+  '-h',
+  '--help',
+  '--version',
 ];
 
 /**
@@ -141,11 +158,7 @@ const GLOBAL_ARGS = [
  * @returns {string} Bash completion script
  */
 export function generateBashCompletions(options = {}) {
-  const {
-    cliName = 'playground',
-    commands = CLI_STRUCTURE,
-    includeDynamic = true
-  } = options;
+  const { cliName = 'playground', commands = CLI_STRUCTURE, includeDynamic = true } = options;
 
   const commandNames = Object.keys(commands);
   const globalArgsStr = GLOBAL_ARGS.join(' ');

@@ -51,7 +51,7 @@ export function createChangeFeed(store) {
     const originalAddQuad = store.addQuad.bind(store);
     const originalRemoveQuad = store.removeQuad.bind(store);
 
-    store.addQuad = function(quad) {
+    store.addQuad = function (quad) {
       const result = originalAddQuad(quad);
       feed.emitChange({
         type: 'add',
@@ -59,13 +59,13 @@ export function createChangeFeed(store) {
           subject: quad.subject,
           predicate: quad.predicate,
           object: quad.object,
-          graph: quad.graph
-        }
+          graph: quad.graph,
+        },
       });
       return result;
     };
 
-    store.removeQuad = function(quad) {
+    store.removeQuad = function (quad) {
       const result = originalRemoveQuad(quad);
       feed.emitChange({
         type: 'remove',
@@ -73,8 +73,8 @@ export function createChangeFeed(store) {
           subject: quad.subject,
           predicate: quad.predicate,
           object: quad.object,
-          graph: quad.graph
-        }
+          graph: quad.graph,
+        },
       });
       return result;
     };

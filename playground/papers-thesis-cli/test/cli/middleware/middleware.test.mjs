@@ -17,21 +17,21 @@ import {
   unregisterMiddleware,
   listMiddleware,
   compose,
-  runWithMiddleware
+  runWithMiddleware,
 } from '../../../src/cli/middleware/index.mjs';
 
 import {
   loggingMiddleware,
   maskSensitiveArgs,
   createLogEntry,
-  setLogLevel
+  setLogLevel,
 } from '../../../src/cli/middleware/logging.mjs';
 
 import {
   profilingMiddleware,
   createSpan,
   createProfilingContext,
-  exportSpans
+  exportSpans,
 } from '../../../src/cli/middleware/profiling.mjs';
 
 import {
@@ -39,7 +39,7 @@ import {
   CommonSchemas,
   Preconditions,
   registerValidator,
-  createArgsSchema
+  createArgsSchema,
 } from '../../../src/cli/middleware/validation.mjs';
 
 import {
@@ -48,7 +48,7 @@ import {
   ConfigSchema,
   mergeConfigs,
   applyCliOverrides,
-  clearConfigCache
+  clearConfigCache,
 } from '../../../src/cli/middleware/config.mjs';
 
 describe('Middleware Orchestrator', () => {
@@ -74,7 +74,7 @@ describe('Middleware Orchestrator', () => {
       const ctx = createContext({
         command: 'papers',
         args: { title: 'Test' },
-        quiet: true
+        quiet: true,
       });
 
       expect(ctx.command).toBe('papers');
@@ -88,7 +88,7 @@ describe('Middleware Orchestrator', () => {
       const ctx = createContext({
         command: 'test',
         args: { format: 'json' },
-        quiet: true
+        quiet: true,
       });
 
       const result = await applyMiddleware(ctx);
@@ -103,7 +103,7 @@ describe('Middleware Orchestrator', () => {
       const ctx = createContext({ command: 'test', quiet: true });
 
       const result = await applyMiddleware(ctx, {
-        skip: ['profiling', 'validation']
+        skip: ['profiling', 'validation'],
       });
 
       expect(result.meta.middlewareExecuted).not.toContain('profiling');
@@ -114,7 +114,7 @@ describe('Middleware Orchestrator', () => {
       const ctx = createContext({ command: 'test', quiet: true });
 
       const result = await applyMiddleware(ctx, {
-        only: ['config']
+        only: ['config'],
       });
 
       expect(result.meta.middlewareExecuted).toEqual(['config']);
@@ -164,7 +164,7 @@ describe('Logging Middleware', () => {
         username: 'alice',
         password: 'secret123',
         apiKey: 'key-abc',
-        title: 'My Paper'
+        title: 'My Paper',
       };
 
       const masked = maskSensitiveArgs(args);
@@ -311,8 +311,8 @@ describe('Validation Middleware', () => {
         return { valid: value === 'expected', error: 'Value mismatch' };
       });
 
-      const validator = await import('../../../src/cli/middleware/validation.mjs').then(
-        m => m.getValidator('custom-validator')
+      const validator = await import('../../../src/cli/middleware/validation.mjs').then(m =>
+        m.getValidator('custom-validator')
       );
 
       expect(validator).toBeDefined();
@@ -342,12 +342,12 @@ describe('Config Middleware', () => {
     it('should deep merge configurations', () => {
       const base = {
         logging: { level: 'info', format: 'pretty' },
-        output: { format: 'table' }
+        output: { format: 'table' },
       };
 
       const override = {
         logging: { level: 'debug' },
-        custom: 'value'
+        custom: 'value',
       };
 
       const result = mergeConfigs(base, override);

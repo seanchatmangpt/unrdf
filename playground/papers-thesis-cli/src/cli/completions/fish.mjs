@@ -26,31 +26,39 @@ const CLI_STRUCTURE = {
           '--family': {
             short: '-F',
             description: 'Paper family/structure type',
-            choices: ['imrad', 'dsr', 'argument', 'contribution']
+            choices: ['imrad', 'dsr', 'argument', 'contribution'],
           },
           '--title': { short: '-t', description: 'Paper title' },
           '--author': { short: '-a', description: 'Author name' },
           '--affiliation': { description: 'Author affiliation' },
           '--abstract': { description: 'Paper abstract' },
           '--output': { short: '-o', description: 'Output file path', type: 'file' },
-          '--format': { short: '-f', description: 'Output format', choices: ['json', 'latex', 'yaml'] }
-        }
+          '--format': {
+            short: '-f',
+            description: 'Output format',
+            choices: ['json', 'latex', 'yaml'],
+          },
+        },
       },
       list: {
         description: 'List available paper families',
         args: {
           '--verbose': { short: '-v', description: 'Show detailed information' },
-          '--format': { short: '-f', description: 'Output format', choices: ['json', 'yaml', 'table'] }
-        }
+          '--format': {
+            short: '-f',
+            description: 'Output format',
+            choices: ['json', 'yaml', 'table'],
+          },
+        },
       },
       validate: {
         description: 'Validate paper structure',
         args: {
           '--strict': { description: 'Enable strict validation' },
-          '--format': { short: '-f', description: 'Output format', choices: ['json', 'table'] }
-        }
-      }
-    }
+          '--format': { short: '-f', description: 'Output format', choices: ['json', 'table'] },
+        },
+      },
+    },
   },
   thesis: {
     name: 'thesis',
@@ -59,31 +67,43 @@ const CLI_STRUCTURE = {
       generate: {
         description: 'Generate thesis from template',
         args: {
-          '--type': { short: '-T', description: 'Thesis type', choices: ['masters', 'phd', 'doctoral'] },
+          '--type': {
+            short: '-T',
+            description: 'Thesis type',
+            choices: ['masters', 'phd', 'doctoral'],
+          },
           '--title': { short: '-t', description: 'Thesis title' },
           '--author': { short: '-a', description: 'Author name' },
           '--advisor': { description: 'Advisor name' },
           '--institution': { description: 'Institution name' },
           '--department': { description: 'Department name' },
           '--output': { short: '-o', description: 'Output file path', type: 'file' },
-          '--format': { short: '-f', description: 'Output format', choices: ['json', 'latex', 'yaml'] }
-        }
+          '--format': {
+            short: '-f',
+            description: 'Output format',
+            choices: ['json', 'latex', 'yaml'],
+          },
+        },
       },
       list: {
         description: 'List available thesis types',
         args: {
           '--verbose': { short: '-v', description: 'Show detailed information' },
-          '--format': { short: '-f', description: 'Output format', choices: ['json', 'yaml', 'table'] }
-        }
+          '--format': {
+            short: '-f',
+            description: 'Output format',
+            choices: ['json', 'yaml', 'table'],
+          },
+        },
       },
       schedule: {
         description: 'Manage thesis schedule',
         args: {
           '--milestone': { description: 'Milestone name' },
-          '--date': { description: 'Target date' }
-        }
-      }
-    }
+          '--date': { description: 'Target date' },
+        },
+      },
+    },
   },
   config: {
     name: 'config',
@@ -94,9 +114,9 @@ const CLI_STRUCTURE = {
       set: { description: 'Set a configuration value', args: {} },
       reset: {
         description: 'Reset configuration to defaults',
-        args: { '--all': { description: 'Reset all values' } }
-      }
-    }
+        args: { '--all': { description: 'Reset all values' } },
+      },
+    },
   },
   meta: {
     name: 'meta',
@@ -105,26 +125,37 @@ const CLI_STRUCTURE = {
       sparql: {
         description: 'Execute SPARQL query',
         args: {
-          '--format': { short: '-f', description: 'Output format', choices: ['json', 'table', 'csv'] },
-          '--file': { description: 'Query file', type: 'file' }
-        }
+          '--format': {
+            short: '-f',
+            description: 'Output format',
+            choices: ['json', 'table', 'csv'],
+          },
+          '--file': { description: 'Query file', type: 'file' },
+        },
       },
       schema: {
         description: 'Show schema information',
         args: {
-          '--format': { short: '-f', description: 'Output format', choices: ['json', 'yaml', 'turtle'] }
-        }
+          '--format': {
+            short: '-f',
+            description: 'Output format',
+            choices: ['json', 'yaml', 'turtle'],
+          },
+        },
       },
       version: { description: 'Show version information', args: {} },
       completions: {
         description: 'Generate shell completions',
         args: {
-          '--shell': { description: 'Target shell', choices: ['bash', 'zsh', 'fish', 'powershell'] },
-          '--output': { short: '-o', description: 'Output file', type: 'file' }
-        }
-      }
-    }
-  }
+          '--shell': {
+            description: 'Target shell',
+            choices: ['bash', 'zsh', 'fish', 'powershell'],
+          },
+          '--output': { short: '-o', description: 'Output file', type: 'file' },
+        },
+      },
+    },
+  },
 };
 
 /**
@@ -144,10 +175,7 @@ function escapeForFish(str) {
  * @returns {string} Fish completion script
  */
 export function generateFishCompletions(options = {}) {
-  const {
-    cliName = 'playground',
-    commands = CLI_STRUCTURE
-  } = options;
+  const { cliName = 'playground', commands = CLI_STRUCTURE } = options;
 
   const commandNames = Object.keys(commands);
 

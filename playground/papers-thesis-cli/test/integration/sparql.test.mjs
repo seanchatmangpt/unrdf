@@ -39,7 +39,7 @@ import {
   NAMED_QUERIES,
   ONTOLOGY_PATHS,
   createPrefixDeclarations,
-  SparqlQueryError
+  SparqlQueryError,
 } from '../../src/integration/sparql.mjs';
 
 describe('SPARQL Integration Layer', () => {
@@ -189,13 +189,15 @@ describe('SPARQL Integration Layer', () => {
     });
 
     it('should throw when executing query before init', async () => {
-      await expect(executeSparqlSelect('SELECT * WHERE { ?s ?p ?o } LIMIT 1'))
-        .rejects.toThrow('Knowledge graph not initialized');
+      await expect(executeSparqlSelect('SELECT * WHERE { ?s ?p ?o } LIMIT 1')).rejects.toThrow(
+        'Knowledge graph not initialized'
+      );
     });
 
     it('should throw when executing named query before init', async () => {
-      await expect(executeNamedQuery('listAllTheses'))
-        .rejects.toThrow('Knowledge graph not initialized');
+      await expect(executeNamedQuery('listAllTheses')).rejects.toThrow(
+        'Knowledge graph not initialized'
+      );
     });
   });
 
@@ -284,10 +286,7 @@ describe('SPARQL Integration Layer (With Initialization)', () => {
     });
 
     it('should respect limit option', async () => {
-      const results = await executeSparqlSelect(
-        'SELECT * WHERE { ?s ?p ?o }',
-        { limit: 3 }
-      );
+      const results = await executeSparqlSelect('SELECT * WHERE { ?s ?p ?o }', { limit: 3 });
       expect(results.length).toBeLessThanOrEqual(3);
     });
 
@@ -355,13 +354,13 @@ describe('SPARQL Integration Layer (With Initialization)', () => {
     });
 
     it('should throw for unknown named query', async () => {
-      await expect(executeNamedQuery('nonExistentQuery'))
-        .rejects.toThrow('Unknown named query');
+      await expect(executeNamedQuery('nonExistentQuery')).rejects.toThrow('Unknown named query');
     });
 
     it('should throw for missing required parameter', async () => {
-      await expect(executeNamedQuery('findPapersByFamily', {}))
-        .rejects.toThrow('Missing required parameter');
+      await expect(executeNamedQuery('findPapersByFamily', {})).rejects.toThrow(
+        'Missing required parameter'
+      );
     });
   });
 

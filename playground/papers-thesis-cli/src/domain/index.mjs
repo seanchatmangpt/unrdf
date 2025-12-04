@@ -20,7 +20,7 @@ export {
   listPaperFamilies,
   generatePaperId,
   PaperFamily,
-  PAPER_FAMILY_CONFIG
+  PAPER_FAMILY_CONFIG,
 } from './models/paper.mjs';
 
 // Thesis model and related exports
@@ -39,5 +39,5 @@ export {
   calculateProgress,
   ThesisType,
   DegreeType,
-  THESIS_TYPE_CONFIG
+  THESIS_TYPE_CONFIG,
 } from './models/thesis.mjs';

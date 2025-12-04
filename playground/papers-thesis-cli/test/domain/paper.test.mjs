@@ -13,7 +13,7 @@ import {
   listPaperFamilies,
   paperToRdf,
   PaperFamily,
-  PAPER_FAMILY_CONFIG
+  PAPER_FAMILY_CONFIG,
 } from '../../src/domain/models/paper.mjs';
 
 describe('Paper Model', () => {
@@ -21,7 +21,7 @@ describe('Paper Model', () => {
     it('should create a valid IMRAD paper with minimal input', () => {
       const paper = createPaper({
         title: 'Test Paper',
-        authors: [{ name: 'Alice' }]
+        authors: [{ name: 'Alice' }],
       });
 
       expect(paper).toBeDefined();
@@ -36,7 +36,7 @@ describe('Paper Model', () => {
       const paper = createPaper({
         family: 'dsr',
         title: 'DSR Paper',
-        authors: [{ name: 'Bob', affiliation: 'MIT' }]
+        authors: [{ name: 'Bob', affiliation: 'MIT' }],
       });
 
       expect(paper.family).toBe('dsr');
@@ -50,8 +50,8 @@ describe('Paper Model', () => {
         authors: [{ name: 'Carol' }],
         customSections: [
           { heading: 'Custom Section 1' },
-          { heading: 'Custom Section 2', content: 'Some content' }
-        ]
+          { heading: 'Custom Section 2', content: 'Some content' },
+        ],
       });
 
       expect(paper.sections).toHaveLength(2);
@@ -62,7 +62,7 @@ describe('Paper Model', () => {
     it('should set timestamps on creation', () => {
       const paper = createPaper({
         title: 'Test',
-        authors: [{ name: 'Test Author' }]
+        authors: [{ name: 'Test Author' }],
       });
 
       expect(paper.createdAt).toBeDefined();
@@ -88,7 +88,7 @@ describe('Paper Model', () => {
         keywords: ['test', 'paper'],
         authors: [{ name: 'Test', affiliation: 'Uni', role: 'primary' }],
         sections: [{ heading: 'Intro', content: '', order: 1, level: 1 }],
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
       };
 
       const result = PaperSchema.safeParse(paper);
@@ -101,7 +101,7 @@ describe('Paper Model', () => {
         family: 'imrad',
         authors: [{ name: 'Test', role: 'primary' }],
         sections: [],
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
       };
 
       const result = PaperSchema.safeParse(paper);
@@ -115,7 +115,7 @@ describe('Paper Model', () => {
         title: 'Test',
         authors: [{ name: 'Test', role: 'primary' }],
         sections: [],
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
       };
 
       const result = PaperSchema.safeParse(paper);
@@ -127,7 +127,7 @@ describe('Paper Model', () => {
     it('should validate minimal input', () => {
       const input = {
         title: 'Test',
-        authors: [{ name: 'Author' }]
+        authors: [{ name: 'Author' }],
       };
 
       const result = CreatePaperInputSchema.safeParse(input);
@@ -137,7 +137,7 @@ describe('Paper Model', () => {
     it('should require at least one author', () => {
       const input = {
         title: 'Test',
-        authors: []
+        authors: [],
       };
 
       const result = CreatePaperInputSchema.safeParse(input);
@@ -172,7 +172,7 @@ describe('Paper Model', () => {
       const paper = createPaper({
         title: 'RDF Test Paper',
         authors: [{ name: 'RDF Author', affiliation: 'RDF Uni' }],
-        abstract: 'Test abstract'
+        abstract: 'Test abstract',
       });
 
       const rdf = paperToRdf(paper);

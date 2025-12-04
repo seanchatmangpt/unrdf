@@ -32,7 +32,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
  */
 export const ONTOLOGY_PATHS = {
   papersThesis: join(__dirname, '../../ontologies/papers-thesis.ttl'),
-  examples: join(__dirname, '../../ontologies/examples.ttl')
+  examples: join(__dirname, '../../ontologies/examples.ttl'),
 };
 
 /**
@@ -48,7 +48,7 @@ export const PREFIXES = {
   owl: 'http://www.w3.org/2002/07/owl#',
   foaf: 'http://xmlns.com/foaf/0.1/',
   dc: 'http://purl.org/dc/terms/',
-  skos: 'http://www.w3.org/2004/02/skos/core#'
+  skos: 'http://www.w3.org/2004/02/skos/core#',
 };
 
 /**
@@ -85,7 +85,7 @@ export const NAMED_QUERIES = {
       ORDER BY ?title
     `,
     description: 'Find all papers written by a specific author',
-    params: ['authorName']
+    params: ['authorName'],
   },
 
   findPapersByFamily: {
@@ -101,7 +101,7 @@ export const NAMED_QUERIES = {
       ORDER BY ?title
     `,
     description: 'Find all papers of a specific structural family',
-    params: ['family']
+    params: ['family'],
   },
 
   listPaperSections: {
@@ -117,7 +117,7 @@ export const NAMED_QUERIES = {
       ORDER BY ?order
     `,
     description: 'List all sections of a paper in order',
-    params: ['paperUri']
+    params: ['paperUri'],
   },
 
   searchPapersByKeyword: {
@@ -137,7 +137,7 @@ export const NAMED_QUERIES = {
       ORDER BY ?title
     `,
     description: 'Search papers by keyword in title, abstract, or keywords',
-    params: ['keyword']
+    params: ['keyword'],
   },
 
   getPaperDetails: {
@@ -164,7 +164,7 @@ export const NAMED_QUERIES = {
       GROUP BY ?paper ?title ?abstract ?family ?venue ?doi
     `,
     description: 'Get comprehensive details about a paper',
-    params: ['paperUri']
+    params: ['paperUri'],
   },
 
   // Thesis Queries
@@ -186,7 +186,7 @@ export const NAMED_QUERIES = {
       ORDER BY ?defenseDate
     `,
     description: 'List all theses of a specific type',
-    params: ['type']
+    params: ['type'],
   },
 
   listAllTheses: {
@@ -206,7 +206,7 @@ export const NAMED_QUERIES = {
       ORDER BY ?defenseDate
     `,
     description: 'List all theses with schedule information',
-    params: []
+    params: [],
   },
 
   findUpcomingDefenses: {
@@ -224,7 +224,7 @@ export const NAMED_QUERIES = {
       ORDER BY ?defenseDate
     `,
     description: 'Find thesis defenses scheduled in the future',
-    params: []
+    params: [],
   },
 
   getThesisProgress: {
@@ -246,7 +246,7 @@ export const NAMED_QUERIES = {
       GROUP BY ?thesis ?title
     `,
     description: 'Calculate thesis completion progress based on milestones',
-    params: ['thesisUri']
+    params: ['thesisUri'],
   },
 
   findMilestonesByStatus: {
@@ -265,7 +265,7 @@ export const NAMED_QUERIES = {
       ORDER BY ?milestoneDate
     `,
     description: 'Find all milestones with a specific status',
-    params: ['status']
+    params: ['status'],
   },
 
   getOverdueMilestones: {
@@ -284,7 +284,7 @@ export const NAMED_QUERIES = {
       ORDER BY ?milestoneDate
     `,
     description: 'Find milestones that are past due but not completed',
-    params: []
+    params: [],
   },
 
   // Author and Statistics Queries
@@ -300,7 +300,7 @@ export const NAMED_QUERIES = {
       ORDER BY DESC(?workCount)
     `,
     description: 'Get statistics on papers per author',
-    params: []
+    params: [],
   },
 
   findCoAuthors: {
@@ -317,7 +317,7 @@ export const NAMED_QUERIES = {
       ORDER BY DESC(?collaborations)
     `,
     description: 'Find pairs of authors who have co-authored papers',
-    params: []
+    params: [],
   },
 
   // Ontology Introspection Queries
@@ -334,7 +334,7 @@ export const NAMED_QUERIES = {
       ORDER BY ?label
     `,
     description: 'List all classes defined in the ontology',
-    params: []
+    params: [],
   },
 
   listOntologyProperties: {
@@ -353,7 +353,7 @@ export const NAMED_QUERIES = {
       ORDER BY ?type ?label
     `,
     description: 'List all properties with their domains and ranges',
-    params: []
+    params: [],
   },
 
   ontologyIntrospection: {
@@ -377,7 +377,7 @@ export const NAMED_QUERIES = {
       ORDER BY ?type ?label
     `,
     description: 'List all classes and properties in the ontology',
-    params: []
+    params: [],
   },
 
   // Citation and Relationship Queries
@@ -392,7 +392,7 @@ export const NAMED_QUERIES = {
       ORDER BY ?citingTitle
     `,
     description: 'Get the citation network between academic works',
-    params: []
+    params: [],
   },
 
   getSectionHierarchy: {
@@ -411,7 +411,7 @@ export const NAMED_QUERIES = {
       ORDER BY ?level ?order
     `,
     description: 'Get the complete section hierarchy for a paper',
-    params: ['paperUri']
+    params: ['paperUri'],
   },
 
   // Validation Queries (ASK)
@@ -433,7 +433,7 @@ export const NAMED_QUERIES = {
       }
     `,
     description: 'Check if a paper has valid IMRAD structure',
-    params: ['paperUri']
+    params: ['paperUri'],
   },
 
   checkPaperHasAuthor: {
@@ -444,7 +444,7 @@ export const NAMED_QUERIES = {
       }
     `,
     description: 'Check if a paper has at least one author',
-    params: ['paperUri']
+    params: ['paperUri'],
   },
 
   // CONSTRUCT Queries
@@ -466,8 +466,8 @@ export const NAMED_QUERIES = {
       }
     `,
     description: 'Construct an RDF summary of a paper using Dublin Core',
-    params: ['paperUri']
-  }
+    params: ['paperUri'],
+  },
 };
 
 // =============================================================================
@@ -480,7 +480,7 @@ export const NAMED_QUERIES = {
  */
 const queryCache = new LRUCache({
   max: 100,
-  ttl: 1000 * 60 * 5 // 5 minutes TTL
+  ttl: 1000 * 60 * 5, // 5 minutes TTL
 });
 
 /**
@@ -499,7 +499,7 @@ export function getCacheStats() {
     size: queryCache.size,
     max: queryCache.max,
     // @ts-ignore - calculatedSize might not be available
-    calculatedSize: queryCache.calculatedSize || 0
+    calculatedSize: queryCache.calculatedSize || 0,
   };
 }
 
@@ -532,8 +532,8 @@ let graphState = {
     queriesExecuted: 0,
     totalQueryTime: 0,
     cacheHits: 0,
-    cacheMisses: 0
-  }
+    cacheMisses: 0,
+  },
 };
 
 // =============================================================================
@@ -580,7 +580,7 @@ export async function initKnowledgeGraph(options = {}) {
       success: true,
       message: `Knowledge graph initialized in ${duration}ms`,
       ontologies: [...graphState.loadedOntologies],
-      duration
+      duration,
     };
   } catch (error) {
     graphState.initialized = false;
@@ -613,7 +613,7 @@ export async function loadOntology(filePath) {
     return {
       success: true,
       path: filePath,
-      tripleCount
+      tripleCount,
     };
   } catch (error) {
     throw new Error(`Failed to load ontology from ${filePath}: ${error.message}`);
@@ -647,10 +647,9 @@ export async function executeSparqlSelect(query, options = {}) {
 
   try {
     // Execute SPARQL query using comunicaEngine directly
-    const resultStream = await graphState.engine.comunicaEngine.queryBindings(
-      fullQuery,
-      { sources: [graphState.store] }
-    );
+    const resultStream = await graphState.engine.comunicaEngine.queryBindings(fullQuery, {
+      sources: [graphState.store],
+    });
 
     const bindings = [];
     for await (const binding of resultStream) {
@@ -692,10 +691,9 @@ export async function executeSparqlAsk(query) {
 
   try {
     // Execute ASK query using comunicaEngine
-    const result = await graphState.engine.comunicaEngine.queryBoolean(
-      fullQuery,
-      { sources: [graphState.store] }
-    );
+    const result = await graphState.engine.comunicaEngine.queryBoolean(fullQuery, {
+      sources: [graphState.store],
+    });
 
     graphState.metrics.queriesExecuted++;
     graphState.metrics.totalQueryTime += Date.now() - startTime;
@@ -719,10 +717,9 @@ export async function executeSparqlConstruct(query) {
 
   try {
     // Execute CONSTRUCT query using comunicaEngine
-    const resultStream = await graphState.engine.comunicaEngine.queryQuads(
-      fullQuery,
-      { sources: [graphState.store] }
-    );
+    const resultStream = await graphState.engine.comunicaEngine.queryQuads(fullQuery, {
+      sources: [graphState.store],
+    });
 
     const tempStore = new Store();
     for await (const quad of resultStream) {
@@ -787,7 +784,7 @@ export function listNamedQueries() {
   return Object.entries(NAMED_QUERIES).map(([name, def]) => ({
     name,
     description: def.description,
-    params: def.params
+    params: def.params,
   }));
 }
 
@@ -814,7 +811,7 @@ export async function insertTriples(turtleData) {
 
     return {
       success: true,
-      tripleCount
+      tripleCount,
     };
   } catch (error) {
     throw new Error(`Failed to insert triples: ${error.message}`);
@@ -867,7 +864,7 @@ export function getQueryMetrics() {
     avgQueryTime: queriesExecuted > 0 ? Math.round(totalQueryTime / queriesExecuted) : 0,
     cacheHits,
     cacheMisses,
-    hitRate: totalCacheAccess > 0 ? Math.round((cacheHits / totalCacheAccess) * 100) : 0
+    hitRate: totalCacheAccess > 0 ? Math.round((cacheHits / totalCacheAccess) * 100) : 0,
   };
 }
 
@@ -879,7 +876,7 @@ export function resetQueryMetrics() {
     queriesExecuted: 0,
     totalQueryTime: 0,
     cacheHits: 0,
-    cacheMisses: 0
+    cacheMisses: 0,
   };
 }
 
@@ -908,7 +905,7 @@ export async function getGraphStats() {
     return {
       tripleCount: 0,
       initialized: false,
-      loadedOntologies: []
+      loadedOntologies: [],
     };
   }
 
@@ -918,13 +915,13 @@ export async function getGraphStats() {
     return {
       tripleCount,
       initialized: graphState.initialized,
-      loadedOntologies: [...graphState.loadedOntologies]
+      loadedOntologies: [...graphState.loadedOntologies],
     };
   } catch {
     return {
       tripleCount: 0,
       initialized: graphState.initialized,
-      loadedOntologies: [...graphState.loadedOntologies]
+      loadedOntologies: [...graphState.loadedOntologies],
     };
   }
 }
@@ -944,8 +941,8 @@ export function shutdown() {
       queriesExecuted: 0,
       totalQueryTime: 0,
       cacheHits: 0,
-      cacheMisses: 0
-    }
+      cacheMisses: 0,
+    },
   };
   clearQueryCache();
 }
@@ -985,9 +982,7 @@ function ensureInitialized(allowPartial = false) {
  * @returns {string} Prepared query
  */
 function prepareQuery(query, limit) {
-  let fullQuery = query.includes('PREFIX')
-    ? query
-    : `${createPrefixDeclarations()}\n\n${query}`;
+  let fullQuery = query.includes('PREFIX') ? query : `${createPrefixDeclarations()}\n\n${query}`;
 
   // Add limit if specified and not already present
   if (limit && !query.toUpperCase().includes('LIMIT')) {
@@ -1092,5 +1087,5 @@ export default {
   PREFIXES,
   NAMED_QUERIES,
   ONTOLOGY_PATHS,
-  createPrefixDeclarations
+  createPrefixDeclarations,
 };

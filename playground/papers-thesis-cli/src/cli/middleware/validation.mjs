@@ -36,26 +36,23 @@ export const CommonSchemas = {
   /**
    * File path that must exist
    */
-  existingFile: z.string().refine(
-    (path) => existsSync(path) && statSync(path).isFile(),
-    { message: 'File does not exist or is not a file' }
-  ),
+  existingFile: z.string().refine(path => existsSync(path) && statSync(path).isFile(), {
+    message: 'File does not exist or is not a file',
+  }),
 
   /**
    * Directory path that must exist
    */
-  existingDirectory: z.string().refine(
-    (path) => existsSync(path) && statSync(path).isDirectory(),
-    { message: 'Directory does not exist or is not a directory' }
-  ),
+  existingDirectory: z.string().refine(path => existsSync(path) && statSync(path).isDirectory(), {
+    message: 'Directory does not exist or is not a directory',
+  }),
 
   /**
    * Valid file path (may not exist)
    */
-  filePath: z.string().refine(
-    (path) => /^[^<>:"|?*]+$/.test(path),
-    { message: 'Invalid file path characters' }
-  ),
+  filePath: z
+    .string()
+    .refine(path => /^[^<>:"|?*]+$/.test(path), { message: 'Invalid file path characters' }),
 
   /**
    * Output format options
@@ -65,13 +62,15 @@ export const CommonSchemas = {
   /**
    * Paper family options
    */
-  paperFamily: z.enum(['imrad', 'dsr', 'argument', 'contribution', 'IMRaD', 'Argument', 'Contribution', 'DSR'])
+  paperFamily: z
+    .enum(['imrad', 'dsr', 'argument', 'contribution', 'IMRaD', 'Argument', 'Contribution', 'DSR'])
     .transform(v => v.toLowerCase()),
 
   /**
    * Thesis type options
    */
-  thesisType: z.enum(['masters', 'phd', 'doctoral', 'Masters', 'PhD', 'Doctoral'])
+  thesisType: z
+    .enum(['masters', 'phd', 'doctoral', 'Masters', 'PhD', 'Doctoral'])
     .transform(v => v.toLowerCase()),
 
   /**
@@ -87,10 +86,7 @@ export const CommonSchemas = {
   /**
    * Date string
    */
-  dateString: z.string().refine(
-    (d) => !isNaN(Date.parse(d)),
-    { message: 'Invalid date format' }
-  ),
+  dateString: z.string().refine(d => !isNaN(Date.parse(d)), { message: 'Invalid date format' }),
 
   /**
    * URL string
@@ -100,7 +96,7 @@ export const CommonSchemas = {
   /**
    * Email string
    */
-  email: z.string().email('Invalid email format')
+  email: z.string().email('Invalid email format'),
 };
 
 /**
@@ -152,7 +148,7 @@ export const Preconditions = {
     if (!allowed.includes(ext)) {
       return {
         valid: false,
-        error: `Invalid file extension: ${ext}. Allowed: ${allowed.join(', ')}`
+        error: `Invalid file extension: ${ext}. Allowed: ${allowed.join(', ')}`,
       };
     }
     return { valid: true };
@@ -167,7 +163,7 @@ export const Preconditions = {
     if (!process.env[name]) {
       return {
         valid: false,
-        error: `Environment variable not set: ${name}`
+        error: `Environment variable not set: ${name}`,
       };
     }
     return { valid: true };
@@ -184,11 +180,11 @@ export const Preconditions = {
     if (!allowed.includes(value)) {
       return {
         valid: false,
-        error: `${label} must be one of: ${allowed.join(', ')}. Got: ${value}`
+        error: `${label} must be one of: ${allowed.join(', ')}. Got: ${value}`,
       };
     }
     return { valid: true };
-  }
+  },
 };
 
 /**
@@ -267,7 +263,7 @@ export function formatZodErrors(zodError) {
     path: err.path.join('.'),
     message: err.message,
     code: err.code,
-    received: err.received
+    received: err.received,
   }));
 }
 
@@ -280,13 +276,11 @@ export async function validationMiddleware(context) {
   const validationResult = {
     valid: true,
     errors: [],
-    warnings: []
+    warnings: [],
   };
 
   // Get schema from context or config
-  const schema = context.config?.validation?.schema ||
-                 context._argsSchema ||
-                 null;
+  const schema = context.config?.validation?.schema || context._argsSchema || null;
 
   // Validate with Zod schema if available
   if (schema) {
@@ -303,7 +297,7 @@ export async function validationMiddleware(context) {
     } catch (err) {
       validationResult.errors.push({
         path: '',
-        message: `Schema validation error: ${err.message}`
+        message: `Schema validation error: ${err.message}`,
       });
       validationResult.valid = false;
     }
@@ -322,7 +316,7 @@ export async function validationMiddleware(context) {
       if (!result.valid) {
         validationResult.errors.push({
           path: pArgs,
-          message: result.error
+          message: result.error,
         });
         validationResult.valid = false;
       }
@@ -342,14 +336,14 @@ export async function validationMiddleware(context) {
       if (!result.valid) {
         validationResult.errors.push({
           path: vArgs,
-          message: result.error
+          message: result.error,
         });
         validationResult.valid = false;
       }
       if (result.warning) {
         validationResult.warnings.push({
           path: vArgs,
-          message: result.warning
+          message: result.warning,
         });
       }
     }
@@ -371,7 +365,7 @@ export async function validationMiddleware(context) {
       return {
         valid: result.success,
         data: result.success ? result.data : undefined,
-        errors: result.success ? [] : formatZodErrors(result.error)
+        errors: result.success ? [] : formatZodErrors(result.error),
       };
     },
 
@@ -388,7 +382,7 @@ export async function validationMiddleware(context) {
         return { valid: false, error: `Unknown precondition: ${type}` };
       }
       return checker(value, label);
-    }
+    },
   };
 
   // Abort if validation failed
@@ -436,7 +430,7 @@ export function createValidationConfig(options) {
     schema: options.schema || null,
     preconditions: options.preconditions || [],
     custom: options.custom || [],
-    abortOnError: options.abortOnError !== false
+    abortOnError: options.abortOnError !== false,
   };
 }
 

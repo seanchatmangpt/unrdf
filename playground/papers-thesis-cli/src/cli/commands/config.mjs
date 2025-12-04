@@ -22,7 +22,7 @@ const DEFAULT_CONFIG = {
   'cli.verbose': 'false',
   'cli.color': 'true',
   'templates.directory': './templates',
-  'ontology.path': './ontologies/papers-thesis.ttl'
+  'ontology.path': './ontologies/papers-thesis.ttl',
 };
 
 // In-memory config store (would be persisted in real implementation)
@@ -31,10 +31,9 @@ let currentConfig = { ...DEFAULT_CONFIG };
 /**
  * Zod schema for config key validation
  */
-const ConfigKeySchema = z.string().regex(
-  /^[a-z]+(\.[a-z]+)*$/,
-  'Config key must be in format: category.key (e.g., author.name)'
-);
+const ConfigKeySchema = z
+  .string()
+  .regex(/^[a-z]+(\.[a-z]+)*$/, 'Config key must be in format: category.key (e.g., author.name)');
 
 /**
  * Config command with subcommands for set, get, list, reset
@@ -43,7 +42,7 @@ const ConfigKeySchema = z.string().regex(
 export const configCommand = defineCommand({
   meta: {
     name: 'config',
-    description: 'Manage CLI configuration'
+    description: 'Manage CLI configuration',
   },
   subCommands: {
     /**
@@ -52,19 +51,19 @@ export const configCommand = defineCommand({
     set: defineCommand({
       meta: {
         name: 'set',
-        description: 'Set configuration value'
+        description: 'Set configuration value',
       },
       args: {
         key: {
           type: 'positional',
           description: 'Configuration key (e.g., author.name)',
-          required: true
+          required: true,
         },
         value: {
           type: 'positional',
           description: 'Configuration value',
-          required: true
-        }
+          required: true,
+        },
       },
       async run({ args }) {
         try {
@@ -81,7 +80,6 @@ export const configCommand = defineCommand({
 
           currentConfig[key] = value;
           console.log(`Configuration updated: ${key} = ${value}`);
-
         } catch (error) {
           if (error instanceof z.ZodError) {
             console.error('Invalid configuration key format');
@@ -91,7 +89,7 @@ export const configCommand = defineCommand({
           }
           process.exit(1);
         }
-      }
+      },
     }),
 
     /**
@@ -100,20 +98,20 @@ export const configCommand = defineCommand({
     get: defineCommand({
       meta: {
         name: 'get',
-        description: 'Get configuration value'
+        description: 'Get configuration value',
       },
       args: {
         key: {
           type: 'positional',
           description: 'Configuration key',
-          required: true
+          required: true,
         },
         format: {
           type: 'string',
           alias: 'f',
           description: 'Output format (value, json)',
-          default: 'value'
-        }
+          default: 'value',
+        },
       },
       async run({ args }) {
         try {
@@ -134,7 +132,6 @@ export const configCommand = defineCommand({
           } else {
             console.log(value);
           }
-
         } catch (error) {
           if (error instanceof z.ZodError) {
             console.error('Invalid configuration key format');
@@ -143,7 +140,7 @@ export const configCommand = defineCommand({
           }
           process.exit(1);
         }
-      }
+      },
     }),
 
     /**
@@ -152,20 +149,20 @@ export const configCommand = defineCommand({
     list: defineCommand({
       meta: {
         name: 'list',
-        description: 'List all configuration'
+        description: 'List all configuration',
       },
       args: {
         format: {
           type: 'string',
           alias: 'f',
           description: 'Output format (table, json, yaml)',
-          default: 'table'
+          default: 'table',
         },
         defaults: {
           type: 'boolean',
           description: 'Show default values',
-          default: false
-        }
+          default: false,
+        },
       },
       async run({ args }) {
         // TODO: Integration layer - load from config file
@@ -201,7 +198,7 @@ export const configCommand = defineCommand({
         if (args.defaults) {
           console.log('(showing default values)');
         }
-      }
+      },
     }),
 
     /**
@@ -210,20 +207,20 @@ export const configCommand = defineCommand({
     reset: defineCommand({
       meta: {
         name: 'reset',
-        description: 'Reset to defaults'
+        description: 'Reset to defaults',
       },
       args: {
         confirm: {
           type: 'boolean',
           alias: 'y',
           description: 'Confirm reset without prompt',
-          default: false
+          default: false,
         },
         key: {
           type: 'string',
           alias: 'k',
-          description: 'Reset specific key only'
-        }
+          description: 'Reset specific key only',
+        },
       },
       async run({ args }) {
         if (args.key) {
@@ -238,7 +235,6 @@ export const configCommand = defineCommand({
 
             currentConfig[key] = DEFAULT_CONFIG[key];
             console.log(`Reset ${key} to default: ${DEFAULT_CONFIG[key]}`);
-
           } catch (error) {
             console.error('Invalid configuration key format');
             process.exit(1);
@@ -258,7 +254,7 @@ export const configCommand = defineCommand({
         currentConfig = { ...DEFAULT_CONFIG };
         console.log('Configuration reset to defaults.');
         console.log('Run "playground config list" to see current configuration.');
-      }
-    })
-  }
+      },
+    }),
+  },
 });

@@ -227,6 +227,19 @@ importers:
         specifier: ^1.0.0
         version: 1.6.1(@types/node@20.19.19)(@vitest/ui@1.6.1)(happy-dom@20.0.11)(jsdom@27.2.0)(sass@1.64.1)(terser@5.44.1)
 
+  packages/engine-gateway:
+    dependencies:
+      '@unrdf/core':
+        specifier: workspace:*
+        version: link:../core
+      '@unrdf/oxigraph':
+        specifier: workspace:*
+        version: link:../oxigraph
+    devDependencies:
+      vitest:
+        specifier: ^1.6.0
+        version: 1.6.1(@types/node@20.19.19)(@vitest/ui@1.6.1)(happy-dom@20.0.11)(jsdom@27.2.0)(sass@1.64.1)(terser@5.44.1)
+
   packages/federation:
     dependencies:
       '@unrdf/core':

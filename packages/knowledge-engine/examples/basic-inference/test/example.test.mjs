@@ -194,4 +194,268 @@ describe('Basic Inference Example', () => {
     expect(stats).toBeDefined();
     expect(stats.triplesInferred).toBeGreaterThan(0);
   });
+
+  it('should infer domain types for multiple subjects', () => {
+    const store = new Store();
+    const engine = new KnowledgeEngine({ store });
+
+    // Define domain
+    store.addQuad(
+      namedNode(`${EX}knows`),
+      namedNode(`${RDFS}domain`),
+      namedNode(`${EX}Person`)
+    );
+
+    // Add multiple subjects using the property
+    store.addQuad(
+      namedNode(`${EX}Alice`),
+      namedNode(`${EX}knows`),
+      namedNode(`${EX}Bob`)
+    );
+    store.addQuad(
+      namedNode(`${EX}Charlie`),
+      namedNode(`${EX}knows`),
+      namedNode(`${EX}Diana`)
+    );
+    store.addQuad(
+      namedNode(`${EX}Eve`),
+      namedNode(`${EX}knows`),
+      namedNode(`${EX}Frank`)
+    );
+
+    // Run inference
+    engine.materialize();
+
+    // All subjects should be inferred as Person
+    const aliceType = store.getQuads(
+      namedNode(`${EX}Alice`),
+      namedNode(`${RDF}type`),
+      namedNode(`${EX}Person`)
+    );
+    const charlieType = store.getQuads(
+      namedNode(`${EX}Charlie`),
+      namedNode(`${RDF}type`),
+      namedNode(`${EX}Person`)
+    );
+    const eveType = store.getQuads(
+      namedNode(`${EX}Eve`),
+      namedNode(`${RDF}type`),
+      namedNode(`${EX}Person`)
+    );
+
+    expect(aliceType).toHaveLength(1);
+    expect(charlieType).toHaveLength(1);
+    expect(eveType).toHaveLength(1);
+  });
+
+  it('should infer range types for multiple objects', () => {
+    const store = new Store();
+    const engine = new KnowledgeEngine({ store });
+
+    // Define range
+    store.addQuad(
+      namedNode(`${EX}livesIn`),
+      namedNode(`${RDFS}range`),
+      namedNode(`${EX}City`)
+    );
+
+    // Add multiple objects
+    store.addQuad(
+      namedNode(`${EX}Alice`),
+      namedNode(`${EX}livesIn`),
+      namedNode(`${EX}NewYork`)
+    );
+    store.addQuad(
+      namedNode(`${EX}Bob`),
+      namedNode(`${EX}livesIn`),
+      namedNode(`${EX}London`)
+    );
+    store.addQuad(
+      namedNode(`${EX}Charlie`),
+      namedNode(`${EX}livesIn`),
+      namedNode(`${EX}Tokyo`)
+    );
+
+    // Run inference
+    engine.materialize();
+
+    // All objects should be inferred as City
+    const nyType = store.getQuads(
+      namedNode(`${EX}NewYork`),
+      namedNode(`${RDF}type`),
+      namedNode(`${EX}City`)
+    );
+    const londonType = store.getQuads(
+      namedNode(`${EX}London`),
+      namedNode(`${RDF}type`),
+      namedNode(`${EX}City`)
+    );
+    const tokyoType = store.getQuads(
+      namedNode(`${EX}Tokyo`),
+      namedNode(`${RDF}type`),
+      namedNode(`${EX}City`)
+    );
+
+    expect(nyType).toHaveLength(1);
+    expect(londonType).toHaveLength(1);
+    expect(tokyoType).toHaveLength(1);
+  });
+
+  it('should handle transitive subPropertyOf chains', () => {
+    const store = new Store();
+    const engine = new KnowledgeEngine({ store });
+
+    // Define property hierarchy: manages -> supervises -> relatedTo
+    store.addQuad(
+      namedNode(`${EX}manages`),
+      namedNode(`${RDFS}subPropertyOf`),
+      namedNode(`${EX}supervises`)
+    );
+    store.addQuad(
+      namedNode(`${EX}supervises`),
+      namedNode(`${RDFS}subPropertyOf`),
+      namedNode(`${EX}relatedTo`)
+    );
+
+    // Add instance
+    store.addQuad(
+      namedNode(`${EX}Alice`),
+      namedNode(`${EX}manages`),
+      namedNode(`${EX}Bob`)
+    );
+
+    // Run inference
+    engine.materialize();
+
+    // Check both levels of inference
+    const aliceSupervises = store.getQuads(
+      namedNode(`${EX}Alice`),
+      namedNode(`${EX}supervises`),
+      namedNode(`${EX}Bob`)
+    );
+    const aliceRelatedTo = store.getQuads(
+      namedNode(`${EX}Alice`),
+      namedNode(`${EX}relatedTo`),
+      namedNode(`${EX}Bob`)
+    );
+
+    expect(aliceSupervises).toHaveLength(1);
+    expect(aliceRelatedTo).toHaveLength(1);
+  });
+
+  it('should handle multiple properties on same subject', () => {
+    const store = new Store();
+    const engine = new KnowledgeEngine({ store });
+
+    // Define domains for different properties
+    store.addQuad(
+      namedNode(`${EX}teaches`),
+      namedNode(`${RDFS}domain`),
+      namedNode(`${EX}Teacher`)
+    );
+    store.addQuad(
+      namedNode(`${EX}researches`),
+      namedNode(`${RDFS}domain`),
+      namedNode(`${EX}Researcher`)
+    );
+
+    // Add subject with multiple properties
+    store.addQuad(
+      namedNode(`${EX}Alice`),
+      namedNode(`${EX}teaches`),
+      namedNode(`${EX}Math`)
+    );
+    store.addQuad(
+      namedNode(`${EX}Alice`),
+      namedNode(`${EX}researches`),
+      namedNode(`${EX}AI`)
+    );
+
+    // Run inference
+    engine.materialize();
+
+    // Alice should have both types
+    const aliceTypes = store.getQuads(
+      namedNode(`${EX}Alice`),
+      namedNode(`${RDF}type`),
+      null
+    );
+
+    const typeValues = aliceTypes.map(q => q.object.value);
+    expect(typeValues).toContain(`${EX}Teacher`);
+    expect(typeValues).toContain(`${EX}Researcher`);
+    expect(aliceTypes.length).toBeGreaterThanOrEqual(2);
+  });
+
+  it('should handle inference with blank nodes', () => {
+    const store = new Store();
+    const engine = new KnowledgeEngine({ store });
+    const { blankNode } = DataFactory;
+
+    // Define domain
+    store.addQuad(
+      namedNode(`${EX}hasPart`),
+      namedNode(`${RDFS}domain`),
+      namedNode(`${EX}Whole`)
+    );
+
+    // Add blank node as subject
+    const bn = blankNode();
+    store.addQuad(
+      bn,
+      namedNode(`${EX}hasPart`),
+      namedNode(`${EX}Component1`)
+    );
+
+    // Run inference
+    engine.materialize();
+
+    // Blank node should have inferred type
+    const bnTypes = store.getQuads(
+      bn,
+      namedNode(`${RDF}type`),
+      namedNode(`${EX}Whole`)
+    );
+
+    expect(bnTypes).toHaveLength(1);
+  });
+
+  it('should handle multiple materialization cycles efficiently', () => {
+    const store = new Store();
+    const engine = new KnowledgeEngine({ store });
+
+    // Define schema
+    store.addQuad(
+      namedNode(`${EX}knows`),
+      namedNode(`${RDFS}domain`),
+      namedNode(`${EX}Person`)
+    );
+
+    // Add data
+    store.addQuad(
+      namedNode(`${EX}Alice`),
+      namedNode(`${EX}knows`),
+      namedNode(`${EX}Bob`)
+    );
+
+    // First cycle
+    const stats1 = engine.materialize();
+    expect(stats1.triplesInferred).toBeGreaterThan(0);
+
+    // Second cycle should not infer duplicates
+    const stats2 = engine.materialize();
+    expect(stats2.triplesInferred).toBe(0);
+
+    // Add new data
+    store.addQuad(
+      namedNode(`${EX}Charlie`),
+      namedNode(`${EX}knows`),
+      namedNode(`${EX}Diana`)
+    );
+
+    // Third cycle should infer only new triples
+    const stats3 = engine.materialize();
+    expect(stats3.triplesInferred).toBeGreaterThan(0);
+    expect(stats3.triplesInferred).toBeLessThan(stats1.triplesInferred * 2);
+  });
 });

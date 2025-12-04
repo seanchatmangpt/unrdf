@@ -29,7 +29,7 @@ const generators = {
   bash: generateBashCompletions,
   zsh: generateZshCompletions,
   fish: generateFishCompletions,
-  powershell: generatePowerShellCompletions
+  powershell: generatePowerShellCompletions,
 };
 
 /**
@@ -40,7 +40,7 @@ const installInstructions = {
   bash: getBashInstallInstructions,
   zsh: getZshInstallInstructions,
   fish: getFishInstallInstructions,
-  powershell: getPowerShellInstallInstructions
+  powershell: getPowerShellInstallInstructions,
 };
 
 /**
@@ -51,7 +51,7 @@ export const DEFAULT_FILENAMES = {
   bash: 'playground-completion.bash',
   zsh: '_playground',
   fish: 'playground.fish',
-  powershell: 'playground-completion.ps1'
+  powershell: 'playground-completion.ps1',
 };
 
 /**
@@ -62,7 +62,7 @@ export const DEFAULT_PATHS = {
   bash: '/usr/local/etc/bash_completion.d/',
   zsh: '/usr/local/share/zsh/site-functions/',
   fish: '/usr/local/share/fish/vendor_completions.d/',
-  powershell: '$PROFILE directory'
+  powershell: '$PROFILE directory',
 };
 
 /**

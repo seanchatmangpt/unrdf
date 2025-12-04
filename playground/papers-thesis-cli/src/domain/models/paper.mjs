@@ -21,7 +21,7 @@ export const PaperFamily = {
   IMRAD: 'imrad',
   DSR: 'dsr',
   ARGUMENT: 'argument',
-  CONTRIBUTION: 'contribution'
+  CONTRIBUTION: 'contribution',
 };
 
 /**
@@ -32,23 +32,37 @@ export const PAPER_FAMILY_CONFIG = {
   [PaperFamily.IMRAD]: {
     name: 'IMRAD',
     description: 'Introduction, Methods, Results, and Discussion',
-    sections: ['Introduction', 'Methods', 'Results', 'Discussion', 'Conclusion']
+    sections: ['Introduction', 'Methods', 'Results', 'Discussion', 'Conclusion'],
   },
   [PaperFamily.DSR]: {
     name: 'Design Science Research',
     description: 'Design Science Research methodology',
-    sections: ['Problem Identification', 'Objectives', 'Design & Development', 'Demonstration', 'Evaluation', 'Communication']
+    sections: [
+      'Problem Identification',
+      'Objectives',
+      'Design & Development',
+      'Demonstration',
+      'Evaluation',
+      'Communication',
+    ],
   },
   [PaperFamily.ARGUMENT]: {
     name: 'Argument-based',
     description: 'Argument-based paper structure',
-    sections: ['Thesis Statement', 'Premises', 'Arguments', 'Counter-arguments', 'Conclusion']
+    sections: ['Thesis Statement', 'Premises', 'Arguments', 'Counter-arguments', 'Conclusion'],
   },
   [PaperFamily.CONTRIBUTION]: {
     name: 'Contribution',
     description: 'Research contribution structure',
-    sections: ['Motivation', 'Background', 'Contribution', 'Validation', 'Related Work', 'Conclusion']
-  }
+    sections: [
+      'Motivation',
+      'Background',
+      'Contribution',
+      'Validation',
+      'Related Work',
+      'Conclusion',
+    ],
+  },
 };
 
 /**
@@ -64,7 +78,10 @@ export const AuthorSchema = z.object({
   /** Author role (primary, co-author, etc.) */
   role: z.enum(['primary', 'co-author', 'corresponding']).default('primary'),
   /** ORCID identifier */
-  orcid: z.string().regex(/^\d{4}-\d{4}-\d{4}-\d{3}[\dX]$/).optional()
+  orcid: z
+    .string()
+    .regex(/^\d{4}-\d{4}-\d{4}-\d{3}[\dX]$/)
+    .optional(),
 });
 
 /**
@@ -80,7 +97,7 @@ export const SectionSchema = z.object({
   /** Nesting level (1=section, 2=subsection, 3=subsubsection) */
   level: z.number().int().min(1).max(3).default(1),
   /** Parent section ID (for nested sections) */
-  parentId: z.string().optional()
+  parentId: z.string().optional(),
 });
 
 /**
@@ -108,7 +125,7 @@ export const PaperSchema = z.object({
   /** Creation timestamp */
   createdAt: z.string().datetime(),
   /** Last modification timestamp */
-  lastModified: z.string().datetime().optional()
+  lastModified: z.string().datetime().optional(),
 });
 
 /**
@@ -119,17 +136,25 @@ export const CreatePaperInputSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   abstract: z.string().optional(),
   keywords: z.array(z.string()).optional(),
-  authors: z.array(z.object({
-    name: z.string().min(1),
-    affiliation: z.string().optional(),
-    email: z.string().email().optional(),
-    role: z.enum(['primary', 'co-author', 'corresponding']).optional()
-  })).min(1, 'At least one author is required'),
+  authors: z
+    .array(
+      z.object({
+        name: z.string().min(1),
+        affiliation: z.string().optional(),
+        email: z.string().email().optional(),
+        role: z.enum(['primary', 'co-author', 'corresponding']).optional(),
+      })
+    )
+    .min(1, 'At least one author is required'),
   venue: z.string().optional(),
-  customSections: z.array(z.object({
-    heading: z.string(),
-    content: z.string().optional()
-  })).optional()
+  customSections: z
+    .array(
+      z.object({
+        heading: z.string(),
+        content: z.string().optional(),
+      })
+    )
+    .optional(),
 });
 
 /**
@@ -177,13 +202,13 @@ export function createPaper(input) {
         heading: s.heading,
         content: s.content || '',
         order: i + 1,
-        level: 1
+        level: 1,
       }))
     : familyConfig.sections.map((heading, i) => ({
         heading,
         content: '',
         order: i + 1,
-        level: 1
+        level: 1,
       }));
 
   // Normalize authors with defaults
@@ -191,7 +216,7 @@ export function createPaper(input) {
     name: a.name,
     affiliation: a.affiliation || 'Unknown',
     email: a.email,
-    role: a.role || (i === 0 ? 'primary' : 'co-author')
+    role: a.role || (i === 0 ? 'primary' : 'co-author'),
   }));
 
   const now = new Date().toISOString();
@@ -206,7 +231,7 @@ export function createPaper(input) {
     sections,
     venue: validated.venue,
     createdAt: now,
-    lastModified: now
+    lastModified: now,
   };
 
   // Validate complete paper
@@ -230,22 +255,22 @@ export function paperToRdf(paper) {
     [`${ontologyUri}paperFamily`]: paper.family,
     [`${ontologyUri}createdAt`]: {
       '@type': 'http://www.w3.org/2001/XMLSchema#dateTime',
-      '@value': paper.createdAt
+      '@value': paper.createdAt,
     },
     [`${ontologyUri}hasAuthor`]: paper.authors.map((author, i) => ({
       '@id': `${baseUri}${paper.id}-author-${i}`,
       '@type': `${ontologyUri}Author`,
       [`${ontologyUri}authorName`]: author.name,
       [`${ontologyUri}authorAffiliation`]: author.affiliation,
-      [`${ontologyUri}authorRole`]: author.role
+      [`${ontologyUri}authorRole`]: author.role,
     })),
-    [`${ontologyUri}hasSection`]: paper.sections.map((section) => ({
+    [`${ontologyUri}hasSection`]: paper.sections.map(section => ({
       '@id': `${baseUri}${paper.id}-section-${section.order}`,
       '@type': `${ontologyUri}Section`,
       [`${ontologyUri}sectionHeading`]: section.heading,
       [`${ontologyUri}sectionContent`]: section.content,
-      [`${ontologyUri}sectionOrder`]: section.order
-    }))
+      [`${ontologyUri}sectionOrder`]: section.order,
+    })),
   };
 }
 
@@ -259,7 +284,7 @@ function getFamilyClass(family) {
     imrad: 'IMRADPaper',
     dsr: 'DSRPaper',
     argument: 'ArgumentPaper',
-    contribution: 'ContributionPaper'
+    contribution: 'ContributionPaper',
   };
   return classMap[family] || 'Paper';
 }
@@ -271,6 +296,6 @@ function getFamilyClass(family) {
 export function listPaperFamilies() {
   return Object.entries(PAPER_FAMILY_CONFIG).map(([id, config]) => ({
     id,
-    ...config
+    ...config,
   }));
 }

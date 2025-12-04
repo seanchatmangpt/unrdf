@@ -7,6 +7,7 @@
   "exports": {
     ".": "./src/index.mjs",
     "./rdf": "./src/rdf/index.mjs",
+    "./rdf/minimal-n3-integration": "./src/rdf/minimal-n3-integration.mjs",
     "./sparql": "./src/sparql/index.mjs",
     "./types": "./src/types.mjs",
     "./constants": "./src/constants.mjs",

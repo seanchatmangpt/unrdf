@@ -18,23 +18,37 @@ const PAPER_FAMILIES = {
   imrad: {
     name: 'IMRAD',
     description: 'Introduction, Methods, Results, and Discussion',
-    sections: ['Introduction', 'Methods', 'Results', 'Discussion', 'Conclusion']
+    sections: ['Introduction', 'Methods', 'Results', 'Discussion', 'Conclusion'],
   },
   dsr: {
     name: 'Design Science Research',
     description: 'Design Science Research structure',
-    sections: ['Problem Identification', 'Objectives', 'Design & Development', 'Demonstration', 'Evaluation', 'Communication']
+    sections: [
+      'Problem Identification',
+      'Objectives',
+      'Design & Development',
+      'Demonstration',
+      'Evaluation',
+      'Communication',
+    ],
   },
   argument: {
     name: 'Argument-based',
     description: 'Argument-based paper structure',
-    sections: ['Thesis Statement', 'Premises', 'Arguments', 'Counter-arguments', 'Conclusion']
+    sections: ['Thesis Statement', 'Premises', 'Arguments', 'Counter-arguments', 'Conclusion'],
   },
   contribution: {
     name: 'Contribution',
     description: 'Research contribution structure',
-    sections: ['Motivation', 'Background', 'Contribution', 'Validation', 'Related Work', 'Conclusion']
-  }
+    sections: [
+      'Motivation',
+      'Background',
+      'Contribution',
+      'Validation',
+      'Related Work',
+      'Conclusion',
+    ],
+  },
 };
 
 /**
@@ -46,10 +60,14 @@ const PaperInputSchema = z.object({
   author: z.string().min(1, 'Author is required'),
   affiliation: z.string().optional(),
   abstract: z.string().optional(),
-  sections: z.array(z.object({
-    heading: z.string(),
-    content: z.string().optional()
-  })).optional()
+  sections: z
+    .array(
+      z.object({
+        heading: z.string(),
+        content: z.string().optional(),
+      })
+    )
+    .optional(),
 });
 
 /**
@@ -59,7 +77,7 @@ const PaperInputSchema = z.object({
 export const papersCommand = defineCommand({
   meta: {
     name: 'papers',
-    description: 'Manage research papers'
+    description: 'Manage research papers',
   },
   subCommands: {
     /**
@@ -68,50 +86,50 @@ export const papersCommand = defineCommand({
     generate: defineCommand({
       meta: {
         name: 'generate',
-        description: 'Generate paper from template'
+        description: 'Generate paper from template',
       },
       args: {
         family: {
           type: 'positional',
           description: 'Paper family (imrad, dsr, argument, contribution)',
           required: false,
-          default: 'imrad'
+          default: 'imrad',
         },
         title: {
           type: 'string',
           alias: 't',
           description: 'Paper title',
-          required: true
+          required: true,
         },
         author: {
           type: 'string',
           alias: 'a',
           description: 'Author name',
-          required: true
+          required: true,
         },
         affiliation: {
           type: 'string',
-          description: 'Author affiliation'
+          description: 'Author affiliation',
         },
         abstract: {
           type: 'string',
-          description: 'Paper abstract'
+          description: 'Paper abstract',
         },
         sections: {
           type: 'string',
-          description: 'Custom sections (JSON array)'
+          description: 'Custom sections (JSON array)',
         },
         output: {
           type: 'string',
           alias: 'o',
-          description: 'Output file path'
+          description: 'Output file path',
         },
         format: {
           type: 'string',
           alias: 'f',
           description: 'Output format (latex, json)',
-          default: 'latex'
-        }
+          default: 'latex',
+        },
       },
       async run({ args }) {
         try {
@@ -124,7 +142,7 @@ export const papersCommand = defineCommand({
             author: args.author,
             affiliation: args.affiliation,
             abstract: args.abstract,
-            sections: parsedSections
+            sections: parsedSections,
           });
 
           const familyConfig = PAPER_FAMILIES[input.family];
@@ -150,17 +168,19 @@ export const papersCommand = defineCommand({
             id: `paper-${Date.now()}`,
             family: input.family,
             title: input.title,
-            authors: [{
-              name: input.author,
-              affiliation: input.affiliation || 'Unknown'
-            }],
+            authors: [
+              {
+                name: input.author,
+                affiliation: input.affiliation || 'Unknown',
+              },
+            ],
             abstract: input.abstract || '',
             sections: familyConfig.sections.map((name, index) => ({
               heading: name,
               order: index + 1,
-              content: ''
+              content: '',
             })),
-            createdAt: new Date().toISOString()
+            createdAt: new Date().toISOString(),
           };
 
           if (args.format === 'json') {
@@ -171,7 +191,6 @@ export const papersCommand = defineCommand({
           }
 
           return paper;
-
         } catch (error) {
           if (error instanceof z.ZodError) {
             console.error('Validation error:');
@@ -183,7 +202,7 @@ export const papersCommand = defineCommand({
           }
           process.exit(1);
         }
-      }
+      },
     }),
 
     /**
@@ -192,28 +211,28 @@ export const papersCommand = defineCommand({
     list: defineCommand({
       meta: {
         name: 'list',
-        description: 'List available paper families'
+        description: 'List available paper families',
       },
       args: {
         verbose: {
           type: 'boolean',
           alias: 'v',
           description: 'Show detailed information',
-          default: false
+          default: false,
         },
         format: {
           type: 'string',
           alias: 'f',
           description: 'Output format (table, json, yaml)',
-          default: 'table'
-        }
+          default: 'table',
+        },
       },
       async run({ args }) {
         const families = Object.entries(PAPER_FAMILIES).map(([key, value]) => ({
           id: key,
           name: value.name,
           description: value.description,
-          sections: value.sections
+          sections: value.sections,
         }));
 
         if (args.format === 'json') {
@@ -236,7 +255,7 @@ export const papersCommand = defineCommand({
         if (!args.verbose) {
           console.log('\nUse --verbose for detailed information');
         }
-      }
+      },
     }),
 
     /**
@@ -245,25 +264,25 @@ export const papersCommand = defineCommand({
     validate: defineCommand({
       meta: {
         name: 'validate',
-        description: 'Validate paper structure'
+        description: 'Validate paper structure',
       },
       args: {
         path: {
           type: 'positional',
           description: 'Path to paper file',
-          required: true
+          required: true,
         },
         strict: {
           type: 'boolean',
           description: 'Enable strict validation',
-          default: false
+          default: false,
         },
         format: {
           type: 'string',
           alias: 'f',
           description: 'Output format (table, json)',
-          default: 'table'
-        }
+          default: 'table',
+        },
       },
       async run({ args }) {
         console.log(`Validating paper: ${args.path}`);
@@ -281,8 +300,8 @@ export const papersCommand = defineCommand({
           info: {
             family: 'imrad',
             sections: 5,
-            wordCount: 1500
-          }
+            wordCount: 1500,
+          },
         };
 
         if (args.format === 'json') {
@@ -310,7 +329,7 @@ export const papersCommand = defineCommand({
         }
 
         return validationResult;
-      }
-    })
-  }
+      },
+    }),
+  },
 });

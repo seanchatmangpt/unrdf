@@ -55,7 +55,7 @@ export {
   SectionSchema,
   BibliographyEntrySchema,
   FigureSchema,
-  TableSchema
+  TableSchema,
 } from './templates.mjs';
 
 // =============================================================================
@@ -92,7 +92,7 @@ export {
   ALL_FILTERS,
   FILTER_METADATA,
   registerAllFilters,
-  FilterRegistrationSchema
+  FilterRegistrationSchema,
 } from './nunjucks-filters.mjs';
 
 // Legacy aliases for backward compatibility
@@ -129,14 +129,20 @@ export {
 
   // Schemas
   FileInfoSchema,
-  WriteOptionsSchema
+  WriteOptionsSchema,
 } from './file-io.mjs';
 
 // =============================================================================
 // Knowledge Graph Exports
 // =============================================================================
 
-export { createKnowledgeGraph, knowledgeGraph, NAMED_QUERIES, PREFIXES, createPrefixDeclarations } from './knowledge-graph.mjs';
+export {
+  createKnowledgeGraph,
+  knowledgeGraph,
+  NAMED_QUERIES,
+  PREFIXES,
+  createPrefixDeclarations,
+} from './knowledge-graph.mjs';
 
 // =============================================================================
 // SPARQL Layer Exports
@@ -179,7 +185,7 @@ export {
   NAMED_QUERIES as SPARQL_NAMED_QUERIES,
 
   // Error class
-  SparqlQueryError
+  SparqlQueryError,
 } from './sparql.mjs';
 
 // =============================================================================
@@ -194,19 +200,19 @@ export const config = {
   templates: {
     dir: '/Users/sac/unrdf/playground/papers-thesis-cli/templates',
     extension: '.tex.njk',
-    families: ['imrad', 'dsr', 'argument', 'contribution', 'monograph', 'narrative']
+    families: ['imrad', 'dsr', 'argument', 'contribution', 'monograph', 'narrative'],
   },
   output: {
     dir: '/Users/sac/unrdf/playground/papers-thesis-cli/output',
-    extensions: ['.tex', '.bib', '.cls', '.sty', '.txt']
+    extensions: ['.tex', '.bib', '.cls', '.sty', '.txt'],
   },
   knowledgeGraph: {
     ontologyPath: '/Users/sac/unrdf/playground/papers-thesis-cli/ontologies/papers-thesis.ttl',
     prefixes: {
       pt: 'http://papers-thesis.org/ontology#',
-      ex: 'http://papers-thesis.org/examples#'
-    }
-  }
+      ex: 'http://papers-thesis.org/examples#',
+    },
+  },
 };
 
 // =============================================================================
@@ -252,13 +258,13 @@ export function createIntegration(options = {}) {
      */
     files: {
       write: (path, content, opts) => fileIO.writePaper(path, content, opts),
-      read: (path) => fileIO.readPaper(path),
-      delete: (path) => fileIO.deletePaper(path),
+      read: path => fileIO.readPaper(path),
+      delete: path => fileIO.deletePaper(path),
       list: (dir = outputDir, opts) => fileIO.listPapers(dir, opts),
-      exists: (path) => fileIO.paperExists(path),
-      info: (path) => fileIO.getPaperInfo(path),
-      ensureDir: (dir) => fileIO.ensureOutputDir(dir),
-      stats: (dir = outputDir) => fileIO.getOutputStats(dir)
+      exists: path => fileIO.paperExists(path),
+      info: path => fileIO.getPaperInfo(path),
+      ensureDir: dir => fileIO.ensureOutputDir(dir),
+      stats: (dir = outputDir) => fileIO.getOutputStats(dir),
     },
 
     /**
@@ -267,7 +273,7 @@ export function createIntegration(options = {}) {
     config: {
       templatesDir,
       outputDir,
-      ontologyPath
-    }
+      ontologyPath,
+    },
   };
 }

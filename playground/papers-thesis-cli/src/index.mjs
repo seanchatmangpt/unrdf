@@ -22,7 +22,7 @@ export {
   listPaperFamilies,
   generatePaperId,
   PaperFamily,
-  PAPER_FAMILY_CONFIG
+  PAPER_FAMILY_CONFIG,
 } from './domain/models/paper.mjs';
 
 export {
@@ -40,7 +40,7 @@ export {
   calculateProgress,
   ThesisType,
   DegreeType,
-  THESIS_TYPE_CONFIG
+  THESIS_TYPE_CONFIG,
 } from './domain/models/thesis.mjs';
 
 // Integration layer
@@ -52,11 +52,11 @@ export {
   texEscape,
   toBibtexKey,
   formatDate,
-  wrapText
+  wrapText,
 } from './integration/templates.mjs';
 
 export {
   createKnowledgeGraph,
   knowledgeGraph,
-  NAMED_QUERIES
+  NAMED_QUERIES,
 } from './integration/knowledge-graph.mjs';

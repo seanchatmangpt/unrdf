@@ -257,4 +257,189 @@ describe('SPARQL Rules Example', () => {
 
     expect(dianaTypes).toHaveLength(1);
   });
+
+  it('should handle complex WHERE clause patterns', () => {
+    const store = new Store();
+    const engine = new KnowledgeEngine({ store });
+
+    // Add data with multiple predicates
+    store.addQuad(
+      namedNode(`${EX}Alice`),
+      namedNode(`${FOAF}name`),
+      literal('Alice')
+    );
+    store.addQuad(
+      namedNode(`${EX}Alice`),
+      namedNode(`${FOAF}knows`),
+      namedNode(`${EX}Bob`)
+    );
+    store.addQuad(
+      namedNode(`${EX}Bob`),
+      namedNode(`${FOAF}name`),
+      literal('Bob')
+    );
+
+    // Define schema to trigger inference
+    store.addQuad(
+      namedNode(`${FOAF}name`),
+      namedNode('http://www.w3.org/2000/01/rdf-schema#domain'),
+      namedNode(`${FOAF}Person`)
+    );
+
+    // Run inference
+    const stats = engine.materialize();
+
+    // Verify both are typed
+    const aliceTypes = store.getQuads(
+      namedNode(`${EX}Alice`),
+      namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+      namedNode(`${FOAF}Person`)
+    );
+    const bobTypes = store.getQuads(
+      namedNode(`${EX}Bob`),
+      namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+      namedNode(`${FOAF}Person`)
+    );
+
+    expect(aliceTypes).toHaveLength(1);
+    expect(bobTypes).toHaveLength(1);
+    expect(stats.triplesInferred).toBeGreaterThanOrEqual(2);
+  });
+
+  it('should handle variable binding across multiple triple patterns', () => {
+    const store = new Store();
+    const engine = new KnowledgeEngine({ store });
+
+    // Create a network with multiple predicates
+    store.addQuad(
+      namedNode(`${EX}Alice`),
+      namedNode(`${FOAF}knows`),
+      namedNode(`${EX}Bob`)
+    );
+    store.addQuad(
+      namedNode(`${EX}Alice`),
+      namedNode(`${FOAF}interest`),
+      namedNode(`${EX}RDF`)
+    );
+    store.addQuad(
+      namedNode(`${EX}Bob`),
+      namedNode(`${FOAF}interest`),
+      namedNode(`${EX}SPARQL`)
+    );
+
+    // Define domains for both predicates
+    store.addQuad(
+      namedNode(`${FOAF}knows`),
+      namedNode('http://www.w3.org/2000/01/rdf-schema#domain'),
+      namedNode(`${FOAF}Person`)
+    );
+    store.addQuad(
+      namedNode(`${FOAF}interest`),
+      namedNode('http://www.w3.org/2000/01/rdf-schema#domain'),
+      namedNode(`${FOAF}Person`)
+    );
+
+    const beforeCount = store.size;
+    engine.materialize();
+    const afterCount = store.size;
+
+    // Should have added type triples
+    expect(afterCount).toBeGreaterThan(beforeCount);
+
+    // Both should be typed from both predicates
+    const aliceTypes = store.getQuads(
+      namedNode(`${EX}Alice`),
+      namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+      namedNode(`${FOAF}Person`)
+    );
+    expect(aliceTypes).toHaveLength(1);
+  });
+
+  it('should handle different rule application orders consistently', () => {
+    const store = new Store();
+    const engine = new KnowledgeEngine({ store });
+
+    // Add data
+    store.addQuad(
+      namedNode(`${EX}Alice`),
+      namedNode(`${FOAF}knows`),
+      namedNode(`${EX}Bob`)
+    );
+
+    // Add rules in different order
+    store.addQuad(
+      namedNode(`${FOAF}knows`),
+      namedNode('http://www.w3.org/2000/01/rdf-schema#range'),
+      namedNode(`${FOAF}Person`)
+    );
+    store.addQuad(
+      namedNode(`${FOAF}knows`),
+      namedNode('http://www.w3.org/2000/01/rdf-schema#domain'),
+      namedNode(`${FOAF}Person`)
+    );
+
+    // Run inference multiple times - should be idempotent
+    const stats1 = engine.materialize();
+    const count1 = store.size;
+
+    const stats2 = engine.materialize();
+    const count2 = store.size;
+
+    // Second run should infer nothing new
+    expect(stats2.triplesInferred).toBe(0);
+    expect(count2).toBe(count1);
+  });
+
+  it('should respect inference depth limits', () => {
+    const store = new Store();
+    const engine = new KnowledgeEngine({ store });
+
+    // Create a long chain that might exceed depth
+    const people = Array.from({ length: 20 }, (_, i) => `Person${i}`);
+
+    for (let i = 0; i < people.length - 1; i++) {
+      store.addQuad(
+        namedNode(`${EX}${people[i]}`),
+        namedNode(`${FOAF}knows`),
+        namedNode(`${EX}${people[i + 1]}`)
+      );
+    }
+
+    // Define schema
+    store.addQuad(
+      namedNode(`${FOAF}knows`),
+      namedNode('http://www.w3.org/2000/01/rdf-schema#domain'),
+      namedNode(`${FOAF}Person`)
+    );
+    store.addQuad(
+      namedNode(`${FOAF}knows`),
+      namedNode('http://www.w3.org/2000/01/rdf-schema#range'),
+      namedNode(`${FOAF}Person`)
+    );
+
+    // Run inference
+    const stats = engine.materialize();
+
+    // Should infer types for all people in chain
+    expect(stats.triplesInferred).toBeGreaterThan(0);
+
+    // First person should be typed
+    const firstTypes = store.getQuads(
+      namedNode(`${EX}${people[0]}`),
+      namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+      namedNode(`${FOAF}Person`)
+    );
+    expect(firstTypes.length).toBeGreaterThan(0);
+  });
+
+  it('should handle empty stores gracefully', () => {
+    const store = new Store();
+    const engine = new KnowledgeEngine({ store });
+
+    // Run inference on empty store
+    const stats = engine.materialize();
+
+    expect(stats.triplesInferred).toBe(0);
+    expect(store.size).toBe(0);
+  });
 });

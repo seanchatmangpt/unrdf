@@ -21,14 +21,14 @@ import { z } from 'zod';
 export const LATEX_ESCAPE_MAP = Object.freeze({
   '&': '\\&',
   '%': '\\%',
-  '$': '\\$',
+  $: '\\$',
   '#': '\\#',
-  '_': '\\_',
+  _: '\\_',
   '{': '\\{',
   '}': '\\}',
   '~': '\\textasciitilde{}',
   '^': '\\textasciicircum{}',
-  '\\': '\\textbackslash{}'
+  '\\': '\\textbackslash{}',
 });
 
 /**
@@ -52,7 +52,7 @@ export function texescape(str) {
   if (str === null || str === undefined) return '';
   if (typeof str !== 'string') return String(str);
 
-  return str.replace(LATEX_SPECIAL_CHARS_REGEX, (char) => LATEX_ESCAPE_MAP[char] || char);
+  return str.replace(LATEX_SPECIAL_CHARS_REGEX, char => LATEX_ESCAPE_MAP[char] || char);
 }
 
 /**
@@ -78,21 +78,47 @@ export function bibtexkey(title) {
 
   // Words to skip (articles, prepositions, conjunctions)
   const stopWords = new Set([
-    'a', 'an', 'the', 'of', 'for', 'in', 'on', 'at', 'to', 'and', 'or', 'but',
-    'with', 'by', 'from', 'as', 'into', 'through', 'during', 'before', 'after',
-    'above', 'below', 'between', 'under', 'again', 'further', 'then', 'once'
+    'a',
+    'an',
+    'the',
+    'of',
+    'for',
+    'in',
+    'on',
+    'at',
+    'to',
+    'and',
+    'or',
+    'but',
+    'with',
+    'by',
+    'from',
+    'as',
+    'into',
+    'through',
+    'during',
+    'before',
+    'after',
+    'above',
+    'below',
+    'between',
+    'under',
+    'again',
+    'further',
+    'then',
+    'once',
   ]);
 
   // Extract words, filter stop words, take first 3 significant words
   const words = title
     .split(/\s+/)
-    .map((word) => word.replace(/[^a-zA-Z0-9]/g, ''))
-    .filter((word) => word.length > 0 && !stopWords.has(word.toLowerCase()))
+    .map(word => word.replace(/[^a-zA-Z0-9]/g, ''))
+    .filter(word => word.length > 0 && !stopWords.has(word.toLowerCase()))
     .slice(0, 3);
 
   // CamelCase the words
   const camelCased = words
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join('');
 
   // Append current year
@@ -117,7 +143,7 @@ export function latexjoin(items, sep = ' ') {
     return items === null || items === undefined ? '' : String(items);
   }
 
-  return items.map((item) => texescape(String(item))).join(sep);
+  return items.map(item => texescape(String(item))).join(sep);
 }
 
 /**
@@ -153,14 +179,14 @@ export function formatdate(date, format = 'long') {
       return d.toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'long',
-        day: 'numeric'
+        day: 'numeric',
       });
 
     case 'short':
       return d.toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'short',
-        day: 'numeric'
+        day: 'numeric',
       });
 
     case 'iso':
@@ -172,7 +198,7 @@ export function formatdate(date, format = 'long') {
     case 'month-year':
       return d.toLocaleDateString('en-US', {
         year: 'numeric',
-        month: 'long'
+        month: 'long',
       });
 
     default:
@@ -259,7 +285,7 @@ export function titlecase(str) {
   return String(str)
     .toLowerCase()
     .split(' ')
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ');
 }
 
@@ -418,7 +444,7 @@ export function formatauthor(author) {
 export const FilterRegistrationSchema = z.object({
   name: z.string().min(1),
   fn: z.function(),
-  description: z.string().optional()
+  description: z.string().optional(),
 });
 
 /**
@@ -442,7 +468,7 @@ export const ALL_FILTERS = Object.freeze({
   formatnumber,
   ordinal,
   pluralize,
-  formatauthor
+  formatauthor,
 });
 
 /**
@@ -473,81 +499,81 @@ export const FILTER_METADATA = [
   {
     name: 'texescape',
     description: 'Escape LaTeX special characters (&, %, $, #, _, {}, ~, ^, \\)',
-    signature: 'texescape(str)'
+    signature: 'texescape(str)',
   },
   {
     name: 'bibtexkey',
     description: 'Generate bibliography key from title',
-    signature: 'bibtexkey(title)'
+    signature: 'bibtexkey(title)',
   },
   {
     name: 'latexjoin',
     description: 'Join array items for LaTeX with optional separator',
-    signature: "latexjoin(items, sep=' ')"
+    signature: "latexjoin(items, sep=' ')",
   },
   {
     name: 'formatdate',
     description: 'Format date for LaTeX (long, short, iso, year, month-year)',
-    signature: "formatdate(date, format='long')"
+    signature: "formatdate(date, format='long')",
   },
   {
     name: 'uppercase',
     description: 'Convert string to uppercase',
-    signature: 'uppercase(str)'
+    signature: 'uppercase(str)',
   },
   {
     name: 'lowercase',
     description: 'Convert string to lowercase',
-    signature: 'lowercase(str)'
+    signature: 'lowercase(str)',
   },
   {
     name: 'slugify',
     description: 'Convert to URL-friendly slug format',
-    signature: 'slugify(str)'
+    signature: 'slugify(str)',
   },
   {
     name: 'capitalize',
     description: 'Capitalize first letter of string',
-    signature: 'capitalize(str)'
+    signature: 'capitalize(str)',
   },
   {
     name: 'titlecase',
     description: 'Convert string to Title Case',
-    signature: 'titlecase(str)'
+    signature: 'titlecase(str)',
   },
   {
     name: 'wraptext',
     description: 'Wrap text at specified column width',
-    signature: 'wraptext(str, width=80)'
+    signature: 'wraptext(str, width=80)',
   },
   {
     name: 'truncate',
     description: 'Truncate string to specified length with ellipsis',
-    signature: "truncate(str, length=100, ellipsis='...')"
+    signature: "truncate(str, length=100, ellipsis='...')",
   },
   {
     name: 'striptags',
     description: 'Strip HTML tags from string',
-    signature: 'striptags(str)'
+    signature: 'striptags(str)',
   },
   {
     name: 'formatnumber',
     description: 'Format number with thousands separator',
-    signature: "formatnumber(num, locale='en-US')"
+    signature: "formatnumber(num, locale='en-US')",
   },
   {
     name: 'ordinal',
-    description: "Convert number to ordinal string (1st, 2nd, 3rd, etc.)",
-    signature: 'ordinal(num)'
+    description: 'Convert number to ordinal string (1st, 2nd, 3rd, etc.)',
+    signature: 'ordinal(num)',
   },
   {
     name: 'pluralize',
     description: 'Pluralize word based on count',
-    signature: 'pluralize(count, singular, plural?)'
+    signature: 'pluralize(count, singular, plural?)',
   },
   {
     name: 'formatauthor',
     description: 'Format author name for LaTeX (Last, First)',
-    signature: 'formatauthor(author)'
-  }
+    signature: 'formatauthor(author)',
+  },
 ];

@@ -65,7 +65,9 @@ describe('Nunjucks Filters', () => {
     });
 
     it('should escape LaTeX special character \\', () => {
-      expect(filters.texescape('path\\to\\file')).toBe('path\\textbackslash{}to\\textbackslash{}file');
+      expect(filters.texescape('path\\to\\file')).toBe(
+        'path\\textbackslash{}to\\textbackslash{}file'
+      );
     });
 
     it('should escape multiple special characters', () => {
@@ -377,18 +379,16 @@ describe('Template Engine', () => {
     });
 
     it('should apply filters in template string', async () => {
-      const result = await templates.renderTemplateString(
-        '{{ text | uppercase }}',
-        { text: 'hello' }
-      );
+      const result = await templates.renderTemplateString('{{ text | uppercase }}', {
+        text: 'hello',
+      });
       expect(result).toBe('HELLO');
     });
 
     it('should apply texescape filter', async () => {
-      const result = await templates.renderTemplateString(
-        '{{ text | texescape }}',
-        { text: '100%' }
-      );
+      const result = await templates.renderTemplateString('{{ text | texescape }}', {
+        text: '100%',
+      });
       expect(result).toBe('100\\%');
     });
   });
@@ -424,14 +424,14 @@ describe('Template Engine', () => {
     it('should validate correct context', async () => {
       const result = await templates.validateContext({
         title: 'Test Paper',
-        authors: [{ name: 'John Smith' }]
+        authors: [{ name: 'John Smith' }],
       });
       expect(result.valid).toBe(true);
     });
 
     it('should reject context without title', async () => {
       const result = await templates.validateContext({
-        authors: [{ name: 'John Smith' }]
+        authors: [{ name: 'John Smith' }],
       });
       expect(result.valid).toBe(false);
       expect(result.errors).toBeDefined();
@@ -439,7 +439,7 @@ describe('Template Engine', () => {
 
     it('should reject context without authors', async () => {
       const result = await templates.validateContext({
-        title: 'Test Paper'
+        title: 'Test Paper',
       });
       expect(result.valid).toBe(false);
     });
@@ -447,7 +447,7 @@ describe('Template Engine', () => {
     it('should reject context with empty authors array', async () => {
       const result = await templates.validateContext({
         title: 'Test Paper',
-        authors: []
+        authors: [],
       });
       expect(result.valid).toBe(false);
     });
@@ -456,14 +456,14 @@ describe('Template Engine', () => {
   describe('validatePartialContext', () => {
     it('should accept partial context', async () => {
       const result = await templates.validatePartialContext({
-        title: 'Test Paper'
+        title: 'Test Paper',
       });
       expect(result.valid).toBe(true);
     });
 
     it('should validate sections if provided', async () => {
       const result = await templates.validatePartialContext({
-        sections: [{ heading: 'Intro', content: 'Content' }]
+        sections: [{ heading: 'Intro', content: 'Content' }],
       });
       expect(result.valid).toBe(true);
     });
@@ -497,7 +497,7 @@ describe('Template Engine', () => {
 
     it('should allow adding custom filters', () => {
       const engine = templates.createTemplateEngine();
-      engine.addFilter('customFilter', (val) => `[${val}]`);
+      engine.addFilter('customFilter', val => `[${val}]`);
       // Filter should be added without error
     });
   });
@@ -557,9 +557,9 @@ describe('File I/O', () => {
     it('should respect overwrite option', async () => {
       const testFile = join(TEST_OUTPUT_DIR, 'existing.tex');
       await fileIO.writePaper(testFile, 'Original');
-      await expect(
-        fileIO.writePaper(testFile, 'New', { overwrite: false })
-      ).rejects.toThrow(/already exists/);
+      await expect(fileIO.writePaper(testFile, 'New', { overwrite: false })).rejects.toThrow(
+        /already exists/
+      );
     });
   });
 
@@ -572,9 +572,9 @@ describe('File I/O', () => {
     });
 
     it('should throw error for non-existent file', async () => {
-      await expect(
-        fileIO.readPaper(join(TEST_OUTPUT_DIR, 'nonexistent.tex'))
-      ).rejects.toThrow(/not found/);
+      await expect(fileIO.readPaper(join(TEST_OUTPUT_DIR, 'nonexistent.tex'))).rejects.toThrow(
+        /not found/
+      );
     });
   });
 
@@ -625,9 +625,9 @@ describe('File I/O', () => {
     });
 
     it('should throw error for non-existent file', async () => {
-      await expect(
-        fileIO.getPaperInfo(join(TEST_OUTPUT_DIR, 'nonexistent.tex'))
-      ).rejects.toThrow(/not found/);
+      await expect(fileIO.getPaperInfo(join(TEST_OUTPUT_DIR, 'nonexistent.tex'))).rejects.toThrow(
+        /not found/
+      );
     });
   });
 
@@ -641,9 +641,9 @@ describe('File I/O', () => {
     });
 
     it('should throw error for non-existent file', async () => {
-      await expect(
-        fileIO.deletePaper(join(TEST_OUTPUT_DIR, 'nonexistent.tex'))
-      ).rejects.toThrow(/not found/);
+      await expect(fileIO.deletePaper(join(TEST_OUTPUT_DIR, 'nonexistent.tex'))).rejects.toThrow(
+        /not found/
+      );
     });
   });
 
