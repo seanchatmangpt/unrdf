@@ -5,8 +5,11 @@
   "private": true,
   "description": "Performance benchmarks for UNRDF Knowledge Hooks",
   "scripts": {
-    "bench": "node --expose-gc runner.mjs",
-    "bench:no-gc": "node runner.mjs"
+    "bench": "node --expose-gc runner.mjs && node generate-dashboard.mjs",
+    "bench:no-gc": "node runner.mjs && node generate-dashboard.mjs",
+    "bench:metrics-only": "node --expose-gc runner.mjs",
+    "dashboard": "node generate-dashboard.mjs",
+    "open-dashboard": "node generate-dashboard.mjs && open dashboard.html || xdg-open dashboard.html || echo 'Open dashboard.html manually: file://$(pwd)/dashboard.html'"
   },
   "dependencies": {
     "@unrdf/oxigraph": "workspace:*"
