@@ -13,7 +13,7 @@ import { z } from 'zod';
 import { readFile, writeFile, unlink, mkdir } from 'node:fs/promises';
 import path from 'node:path';
 import { OxigraphStore, dataFactory } from '@unrdf/oxigraph';
-import { Writer } from 'n3';
+import { Writer } from '@unrdf/core/rdf/n3-justified-only';
 
 /**
  * Validation schema for graph commands

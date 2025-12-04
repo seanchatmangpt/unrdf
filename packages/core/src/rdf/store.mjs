@@ -1,17 +1,17 @@
 /**
- * @file RDF Store operations - N3.Store wrapper
+ * @file RDF Store operations - Oxigraph Store wrapper
  * @module @unrdf/core/rdf/store
  */
 
-import { Store, DataFactory } from 'n3';
+import { createStore as createOxigraphStore, dataFactory } from '@unrdf/oxigraph';
 import { z } from 'zod';
 
-const { namedNode, literal, blankNode, variable, defaultGraph, quad } = DataFactory;
+const { namedNode, literal, blankNode, variable, defaultGraph, quad } = dataFactory;
 
 /**
- * @typedef {import('n3').Quad} Quad
- * @typedef {import('n3').Term} Term
- * @typedef {import('n3').Store} Store
+ * @typedef {import('@unrdf/oxigraph').Quad} Quad
+ * @typedef {import('@unrdf/oxigraph').Term} Term
+ * @typedef {import('@unrdf/oxigraph').Store} Store
  */
 
 /**
@@ -26,14 +26,14 @@ const QuadSchema = z.object({
 
 /**
  * Create a new RDF store
- * @returns {Store} New N3.Store instance
+ * @returns {Store} New Oxigraph Store instance
  *
  * @example
  * const store = createStore();
  * console.log('Created RDF store');
  */
 export function createStore() {
-  return new Store();
+  return createOxigraphStore();
 }
 
 /**
@@ -66,7 +66,7 @@ export function addQuad(store, quadData) {
   // Validate quad structure
   QuadSchema.parse(quadData);
 
-  store.addQuad(quadData);
+  store.add(quadData);
 }
 
 /**
@@ -99,7 +99,7 @@ export function removeQuad(store, quadData) {
   // Validate quad structure
   QuadSchema.parse(quadData);
 
-  store.removeQuad(quadData);
+  store.delete(quadData);
 }
 
 /**
@@ -129,7 +129,7 @@ export function getQuads(store, subject = null, predicate = null, object = null,
     throw new TypeError('store is required');
   }
 
-  return store.getQuads(subject, predicate, object, graph);
+  return Array.from(store.match(subject, predicate, object, graph));
 }
 
 /**
@@ -150,8 +150,7 @@ export function* iterateQuads(store) {
     throw new TypeError('store is required');
   }
 
-  const quads = store.getQuads();
-  for (const quad of quads) {
+  for (const quad of store.match()) {
     yield quad;
   }
 }
@@ -172,13 +171,19 @@ export function* iterateQuads(store) {
  * const count = countQuads(store);
  * console.log(`Store has ${count} quads`);
  */
-export function countQuads(store, subject = null, predicate = null, object = null, graph = null) {
+export function countQuads(
+  store,
+  _subject = null,
+  _predicate = null,
+  _object = null,
+  _graph = null
+) {
   if (!store) {
     throw new TypeError('store is required');
   }
 
-  return store.countQuads(subject, predicate, object, graph);
+  return store.size;
 }
 
-// Re-export N3 DataFactory for convenience
+// Re-export Oxigraph DataFactory for convenience
 export { namedNode, literal, blankNode, variable, defaultGraph, quad };

@@ -6,7 +6,7 @@
  */
 
 import { createStore } from '@unrdf/core';
-import { Parser } from 'n3';
+import { Parser } from '@unrdf/core/rdf/n3-justified-only';
 import { useStoreContext } from '../context/index.mjs';
 
 /**

@@ -4,7 +4,7 @@
  */
 
 import { z } from 'zod';
-import { DataFactory } from 'n3';
+import { UnrdfDataFactory as DataFactory } from '@unrdf/core/rdf/n3-justified-only';
 
 const { namedNode } = DataFactory;
 

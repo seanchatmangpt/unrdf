@@ -3,7 +3,8 @@
  * @description Debugging version of Parliamentary Swarm Demo with Robert's Rules
  */
 
-import { DataFactory, Store } from 'n3';
+import { UnrdfDataFactory as DataFactory } from '@unrdf/core/rdf/n3-justified-only';
+import { Store } from 'n3'; // TODO: Replace with Oxigraph Store
 import { TransactionManager, printReceipt } from './knowledge-engine.mjs';
 
 const { namedNode, literal, quad } = DataFactory;

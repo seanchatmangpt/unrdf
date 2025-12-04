@@ -3,7 +3,7 @@
  * @module project-engine/file-roles
  */
 
-import { DataFactory } from 'n3';
+import { UnrdfDataFactory as DataFactory } from '@unrdf/core/rdf/n3-justified-only';
 import { z } from 'zod';
 
 const { namedNode, literal } = DataFactory;
