@@ -435,7 +435,9 @@ describe('SPARQL Branch Coverage Tests', () => {
       const store = createUnrdfStore();
       store.add(quad(namedNode('http://alice'), namedNode('http://name'), literal('Alice')));
       store.add(quad(namedNode('http://alice'), namedNode('http://age'), literal('30')));
-      store.add(quad(namedNode('http://alice'), namedNode('http://email'), literal('alice@example.org')));
+      store.add(
+        quad(namedNode('http://alice'), namedNode('http://email'), literal('alice@example.org'))
+      );
 
       const sparql = `
         SELECT ?person ?name ?age ?email WHERE {
@@ -457,7 +459,13 @@ describe('SPARQL Branch Coverage Tests', () => {
   describe('Query Type Detection Branches', () => {
     it('detects SELECT with PREFIX', () => {
       const store = createUnrdfStore();
-      store.add(quad(namedNode('http://xmlns.com/foaf/0.1/alice'), namedNode('http://xmlns.com/foaf/0.1/name'), literal('Alice')));
+      store.add(
+        quad(
+          namedNode('http://xmlns.com/foaf/0.1/alice'),
+          namedNode('http://xmlns.com/foaf/0.1/name'),
+          literal('Alice')
+        )
+      );
 
       const sparql = `
         PREFIX foaf: <http://xmlns.com/foaf/0.1/>
@@ -471,7 +479,13 @@ describe('SPARQL Branch Coverage Tests', () => {
 
     it('detects CONSTRUCT with PREFIX', () => {
       const store = createUnrdfStore();
-      store.add(quad(namedNode('http://xmlns.com/foaf/0.1/alice'), namedNode('http://xmlns.com/foaf/0.1/name'), literal('Alice')));
+      store.add(
+        quad(
+          namedNode('http://xmlns.com/foaf/0.1/alice'),
+          namedNode('http://xmlns.com/foaf/0.1/name'),
+          literal('Alice')
+        )
+      );
 
       const sparql = `
         PREFIX foaf: <http://xmlns.com/foaf/0.1/>
@@ -487,7 +501,13 @@ describe('SPARQL Branch Coverage Tests', () => {
 
     it('detects ASK with PREFIX', () => {
       const store = createUnrdfStore();
-      store.add(quad(namedNode('http://xmlns.com/foaf/0.1/alice'), namedNode('http://xmlns.com/foaf/0.1/name'), literal('Alice')));
+      store.add(
+        quad(
+          namedNode('http://xmlns.com/foaf/0.1/alice'),
+          namedNode('http://xmlns.com/foaf/0.1/name'),
+          literal('Alice')
+        )
+      );
 
       const sparql = `
         PREFIX foaf: <http://xmlns.com/foaf/0.1/>
@@ -501,7 +521,9 @@ describe('SPARQL Branch Coverage Tests', () => {
 
     it('detects DESCRIBE', () => {
       const store = createUnrdfStore();
-      store.add(quad(namedNode('http://example.org/alice'), namedNode('http://name'), literal('Alice')));
+      store.add(
+        quad(namedNode('http://example.org/alice'), namedNode('http://name'), literal('Alice'))
+      );
 
       const sparql = `DESCRIBE <http://example.org/alice>`;
 

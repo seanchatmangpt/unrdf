@@ -165,8 +165,12 @@ describe('Synchronous SPARQL Executors - executor-sync.mjs', () => {
       // Simulate N3 Store interface
       const n3StoreStub = {
         getQuads: () => [
-          quad(namedNode('http://example.org/s'), namedNode('http://example.org/p'), literal('value'))
-        ]
+          quad(
+            namedNode('http://example.org/s'),
+            namedNode('http://example.org/p'),
+            literal('value')
+          ),
+        ],
       };
 
       const sparql = 'SELECT * WHERE { ?s ?p ?o }';
