@@ -5,15 +5,16 @@
  * contributors always reach for the same validation workflow.
  */
 
-import { Parser, Store } from 'n3';
+import { createStore } from '@unrdf/core';
+import { Parser } from 'n3';
 import { useStoreContext } from '../context/index.mjs';
 
 /**
- * Normalise incoming data into an N3.Store without mutating the shared store.
- * @param {string|import('n3').Store|Array} input - Data to coerce into a store
- * @param {import('n3').Store} fallback - Default store when input is falsy
+ * Normalise incoming data into a store without mutating the shared store.
+ * @param {string|object|Array} input - Data to coerce into a store
+ * @param {object} fallback - Default store when input is falsy
  * @param {string} baseIRI - Base IRI for Turtle parsing
- * @returns {import('n3').Store}
+ * @returns {object}
  */
 function toStore(input, fallback, baseIRI) {
   if (!input) {
@@ -22,16 +23,25 @@ function toStore(input, fallback, baseIRI) {
 
   if (typeof input === 'string') {
     const parser = new Parser({ baseIRI });
-    return new Store(parser.parse(input));
+    const quads = parser.parse(input);
+    const store = createStore();
+    for (const quad of quads) {
+      store.add(quad);
+    }
+    return store;
   }
 
   if (typeof input === 'object') {
-    if (typeof input.getQuads === 'function') {
+    if (typeof input.match === 'function') {
       return input;
     }
 
     if (Array.isArray(input)) {
-      return new Store(input);
+      const store = createStore();
+      for (const quad of input) {
+        store.add(quad);
+      }
+      return store;
     }
   }
 

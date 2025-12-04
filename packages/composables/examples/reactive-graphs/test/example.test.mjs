@@ -4,10 +4,9 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest'
+import { createStore, dataFactory } from '@unrdf/oxigraph';
 import { ref, nextTick } from 'vue'
-import { DataFactory } from 'n3'
-
-const { namedNode, literal, quad } = DataFactory
+const { namedNode, literal, quad  } = dataFactory;
 
 // Mock useGraph composable
 function useGraph() {

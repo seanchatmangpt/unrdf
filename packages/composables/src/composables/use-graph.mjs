@@ -100,7 +100,7 @@ export function useGraph(graphUrl, options = {}) {
 
       // Parse RDF (simplified - would use a real parser in production)
       // For now, this is a placeholder that triggers reactivity
-      // In production, integrate with rdf-parse or N3.js
+      // In production, integrate with rdf-parse or Oxigraph parser
       // TODO: Parse response based on content-type
       await response.text();
       if (!store.value) {

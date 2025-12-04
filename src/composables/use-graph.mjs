@@ -10,7 +10,7 @@
  * @license MIT
  */
 
-import { Store } from 'n3';
+import { createStore } from '@unrdf/core';
 import { useStoreContext } from '../context/index.mjs';
 
 /**
@@ -122,7 +122,7 @@ export function useGraph() {
       if (res.type !== 'construct' && res.type !== 'describe') {
         throw new Error('[useGraph] Query is not a CONSTRUCT/DESCRIBE query');
       }
-      return res.store || new Store();
+      return res.store || createStore();
     },
 
     /**

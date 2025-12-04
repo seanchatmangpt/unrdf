@@ -2,7 +2,7 @@
 // @vitest-environment node
 
 import { describe, it, expect } from 'vitest';
-import { Store, DataFactory } from 'n3';
+import { createStore, dataFactory } from '@unrdf/oxigraph';
 import { createSubscriptionManager, createChangeFeed } from '@unrdf/streaming';
 import {
   basicSubscription,
@@ -12,11 +12,11 @@ import {
   subscriptionPatterns
 } from '../src/index.mjs';
 
-const { namedNode, literal, quad } = DataFactory;
+const { namedNode, literal, quad } = dataFactory;
 
 describe('Real-Time Sync Examples', () => {
   it('should manage subscriptions', async () => {
-    const store = new Store();
+    const store = createStore();
     const manager = createSubscriptionManager(store);
 
     const notifications = [];
@@ -40,7 +40,7 @@ describe('Real-Time Sync Examples', () => {
   });
 
   it('should monitor graph changes in real-time', async () => {
-    const store = new Store();
+    const store = createStore();
     const manager = createSubscriptionManager(store);
 
     const changes = [];
@@ -60,7 +60,7 @@ describe('Real-Time Sync Examples', () => {
   });
 
   it('should handle concurrent updates', async () => {
-    const store = new Store();
+    const store = createStore();
     const manager = createSubscriptionManager(store);
 
     const alice = namedNode('http://example.org/alice');
@@ -87,8 +87,8 @@ describe('Real-Time Sync Examples', () => {
   });
 
   it('should sync across multiple peers', async () => {
-    const peer1 = new Store();
-    const peer2 = new Store();
+    const peer1 = createStore();
+    const peer2 = createStore();
 
     const feed1 = createChangeFeed(peer1);
 
@@ -108,7 +108,7 @@ describe('Real-Time Sync Examples', () => {
   });
 
   it('should support subscription patterns', async () => {
-    const store = new Store();
+    const store = createStore();
     const manager = createSubscriptionManager(store);
 
     const alice = namedNode('http://example.org/alice');
@@ -133,8 +133,8 @@ describe('Real-Time Sync Examples', () => {
   });
 
   it('should prevent circular updates in peer sync', async () => {
-    const peer1 = new Store();
-    const peer2 = new Store();
+    const peer1 = createStore();
+    const peer2 = createStore();
 
     const feed1 = createChangeFeed(peer1);
     const feed2 = createChangeFeed(peer2);

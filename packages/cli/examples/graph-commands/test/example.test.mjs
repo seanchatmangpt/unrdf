@@ -3,13 +3,13 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { Store, DataFactory } from 'n3';
+import { createStore, dataFactory } from '@unrdf/oxigraph';
 import { loadGraph, saveGraph, getGraphStats, mergeGraphs } from '../src/custom-commands.mjs';
 import { mkdtempSync, writeFileSync, readFileSync, rmSync, existsSync } from 'fs';
 import { join } from 'path';
 import { tmpdir } from 'os';
 
-const { namedNode, literal, quad } = DataFactory;
+const { namedNode, literal, quad } = dataFactory;
 
 describe('Graph Commands Example', () => {
   let tmpDir;
@@ -54,7 +54,7 @@ describe('Graph Commands Example', () => {
   describe('Save Graph to File', () => {
     it('should save graph in Turtle format', async () => {
       const outputPath = join(tmpDir, 'output.ttl');
-      const store = new Store();
+      const store = createStore();
       store.addQuad(quad(
         namedNode('http://ex.org/s'),
         namedNode('http://ex.org/p'),
@@ -69,7 +69,7 @@ describe('Graph Commands Example', () => {
 
     it('should save graph in N-Triples format', async () => {
       const outputPath = join(tmpDir, 'output.nt');
-      const store = new Store();
+      const store = createStore();
       store.addQuad(quad(
         namedNode('http://ex.org/s'),
         namedNode('http://ex.org/p'),
@@ -83,7 +83,7 @@ describe('Graph Commands Example', () => {
     });
 
     it('should validate format before saving', async () => {
-      const store = new Store();
+      const store = createStore();
       await expect(
         saveGraph(store, join(tmpDir, 'output.txt'), 'invalid')
       ).rejects.toThrow();
@@ -92,7 +92,7 @@ describe('Graph Commands Example', () => {
 
   describe('Statistics Calculation', () => {
     it('should calculate graph statistics', () => {
-      const store = new Store();
+      const store = createStore();
       store.addQuad(quad(
         namedNode('http://ex.org/s1'),
         namedNode('http://ex.org/p1'),
@@ -113,7 +113,7 @@ describe('Graph Commands Example', () => {
     });
 
     it('should handle empty store', () => {
-      const store = new Store();
+      const store = createStore();
       const stats = getGraphStats(store);
 
       expect(stats.totalQuads).toBe(0);
@@ -123,7 +123,7 @@ describe('Graph Commands Example', () => {
     });
 
     it('should count duplicate subjects correctly', () => {
-      const store = new Store();
+      const store = createStore();
       store.addQuad(quad(
         namedNode('http://ex.org/s1'),
         namedNode('http://ex.org/p1'),
@@ -143,14 +143,14 @@ describe('Graph Commands Example', () => {
 
   describe('Merge Operations', () => {
     it('should merge multiple graphs', () => {
-      const store1 = new Store();
+      const store1 = createStore();
       store1.addQuad(quad(
         namedNode('http://ex.org/s1'),
         namedNode('http://ex.org/p1'),
         literal('o1')
       ));
 
-      const store2 = new Store();
+      const store2 = createStore();
       store2.addQuad(quad(
         namedNode('http://ex.org/s2'),
         namedNode('http://ex.org/p2'),
@@ -163,7 +163,7 @@ describe('Graph Commands Example', () => {
     });
 
     it('should handle duplicate quads in merge', () => {
-      const store1 = new Store();
+      const store1 = createStore();
       const testQuad = quad(
         namedNode('http://ex.org/s1'),
         namedNode('http://ex.org/p1'),
@@ -171,7 +171,7 @@ describe('Graph Commands Example', () => {
       );
       store1.addQuad(testQuad);
 
-      const store2 = new Store();
+      const store2 = createStore();
       store2.addQuad(testQuad);
 
       const merged = mergeGraphs([store1, store2]);
@@ -212,7 +212,7 @@ describe('Graph Commands Example', () => {
 
   describe('File I/O Operations', () => {
     it('should roundtrip save and load', async () => {
-      const store = new Store();
+      const store = createStore();
       store.addQuad(quad(
         namedNode('http://ex.org/s'),
         namedNode('http://ex.org/p'),

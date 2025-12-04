@@ -13,7 +13,7 @@ import {
   validateRDF,
   convertFormat
 } from '../src/index.mjs';
-import { Store } from 'n3';
+import { createStore } from '@unrdf/oxigraph';
 
 const SAMPLE_TURTLE = `
 @prefix ex: <http://example.org/> .
@@ -111,14 +111,14 @@ describe('RDF Parsing Examples', () => {
   });
 
   it('merges empty stores', () => {
-    const store1 = new Store();
-    const store2 = new Store();
+    const store1 = createStore();
+    const store2 = createStore();
     const merged = mergeStores([store1, store2]);
     expect(merged.size).toBe(0);
   });
 
   it('canonicalizes empty store', () => {
-    const emptyStore = new Store();
+    const emptyStore = createStore();
     const canonical = canonicalize(emptyStore);
     expect(canonical).toBe('');
   });

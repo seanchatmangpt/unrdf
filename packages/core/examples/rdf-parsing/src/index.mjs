@@ -4,9 +4,8 @@
  */
 
 import { Parser, Store } from 'n3';
-import { DataFactory } from 'n3';
-
-const { namedNode, literal } = DataFactory;
+import { createStore, dataFactory } from '@unrdf/oxigraph';
+const { namedNode, literal  } = dataFactory;
 
 /**
  * Parses Turtle format RDF
@@ -15,7 +14,7 @@ const { namedNode, literal } = DataFactory;
  */
 export async function parseTurtle(turtle) {
   const parser = new Parser({ format: 'text/turtle' });
-  const store = new Store();
+  const store = createStore();
 
   return new Promise((resolve, reject) => {
     try {
@@ -35,7 +34,7 @@ export async function parseTurtle(turtle) {
  */
 export async function parseNTriples(ntriples) {
   const parser = new Parser({ format: 'application/n-triples' });
-  const store = new Store();
+  const store = createStore();
 
   return new Promise((resolve, reject) => {
     try {
@@ -55,7 +54,7 @@ export async function parseNTriples(ntriples) {
  */
 export async function parseNQuads(nquads) {
   const parser = new Parser({ format: 'application/n-quads' });
-  const store = new Store();
+  const store = createStore();
 
   return new Promise((resolve, reject) => {
     try {
@@ -74,7 +73,7 @@ export async function parseNQuads(nquads) {
  * @returns {Store} Merged store
  */
 export function mergeStores(stores) {
-  const merged = new Store();
+  const merged = createStore();
 
   stores.forEach(store => {
     const quads = store.getQuads(null, null, null, null);

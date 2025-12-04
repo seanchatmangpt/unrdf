@@ -4,17 +4,17 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { Store, DataFactory } from 'n3';
+import { createStore, dataFactory } from '@unrdf/oxigraph';
 import { KnowledgeEngine } from '@unrdf/knowledge-engine';
 
-const { namedNode, literal } = DataFactory;
+const { namedNode, literal } = dataFactory;
 
 const EX = 'http://example.org/';
 const FOAF = 'http://xmlns.com/foaf/0.1/';
 
 describe('SPARQL Rules Example', () => {
   it('should infer friend-of-friend relationships', () => {
-    const store = new Store();
+    const store = createStore();
     const engine = new KnowledgeEngine({ store });
 
     // Add friendship chain: Alice -> Bob -> Charlie
@@ -57,7 +57,7 @@ describe('SPARQL Rules Example', () => {
   });
 
   it('should infer shared interest connections', () => {
-    const store = new Store();
+    const store = createStore();
     const engine = new KnowledgeEngine({ store });
 
     // Add shared interests
@@ -99,7 +99,7 @@ describe('SPARQL Rules Example', () => {
   });
 
   it('should handle transitive relationship chains', () => {
-    const store = new Store();
+    const store = createStore();
     const engine = new KnowledgeEngine({ store });
 
     // Create chain: A -> B -> C -> D
@@ -142,7 +142,7 @@ describe('SPARQL Rules Example', () => {
   });
 
   it('should handle rules with filters', () => {
-    const store = new Store();
+    const store = createStore();
     const engine = new KnowledgeEngine({ store });
 
     // Add self-reference that should be filtered
@@ -179,7 +179,7 @@ describe('SPARQL Rules Example', () => {
   });
 
   it('should return statistics for SPARQL rule execution', () => {
-    const store = new Store();
+    const store = createStore();
     const engine = new KnowledgeEngine({ store });
 
     // Setup social network
@@ -208,7 +208,7 @@ describe('SPARQL Rules Example', () => {
   });
 
   it('should handle multiple derivation paths without duplicates', () => {
-    const store = new Store();
+    const store = createStore();
     const engine = new KnowledgeEngine({ store });
 
     // Create diamond pattern: A -> B, A -> C, B -> D, C -> D
@@ -259,7 +259,7 @@ describe('SPARQL Rules Example', () => {
   });
 
   it('should handle complex WHERE clause patterns', () => {
-    const store = new Store();
+    const store = createStore();
     const engine = new KnowledgeEngine({ store });
 
     // Add data with multiple predicates
@@ -307,7 +307,7 @@ describe('SPARQL Rules Example', () => {
   });
 
   it('should handle variable binding across multiple triple patterns', () => {
-    const store = new Store();
+    const store = createStore();
     const engine = new KnowledgeEngine({ store });
 
     // Create a network with multiple predicates
@@ -356,7 +356,7 @@ describe('SPARQL Rules Example', () => {
   });
 
   it('should handle different rule application orders consistently', () => {
-    const store = new Store();
+    const store = createStore();
     const engine = new KnowledgeEngine({ store });
 
     // Add data
@@ -391,7 +391,7 @@ describe('SPARQL Rules Example', () => {
   });
 
   it('should respect inference depth limits', () => {
-    const store = new Store();
+    const store = createStore();
     const engine = new KnowledgeEngine({ store });
 
     // Create a long chain that might exceed depth
@@ -433,7 +433,7 @@ describe('SPARQL Rules Example', () => {
   });
 
   it('should handle empty stores gracefully', () => {
-    const store = new Store();
+    const store = createStore();
     const engine = new KnowledgeEngine({ store });
 
     // Run inference on empty store

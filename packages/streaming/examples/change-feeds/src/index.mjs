@@ -4,10 +4,10 @@
  * Demonstrates change feed creation, subscription, history, and replay
  */
 
-import { Store, DataFactory } from 'n3';
+import { createStore, dataFactory } from '@unrdf/oxigraph';
 import { createChangeFeed } from '@unrdf/streaming';
 
-const { namedNode, literal, quad } = DataFactory;
+const { namedNode, literal, quad } = dataFactory;
 
 /**
  * Example 1: Create and Subscribe to Change Feed
@@ -15,7 +15,7 @@ const { namedNode, literal, quad } = DataFactory;
 async function basicChangeFeed() {
   console.log('\n=== Example 1: Basic Change Feed ===\n');
 
-  const store = new Store();
+  const store = createStore();
   const feed = createChangeFeed(store);
 
   // Subscribe to changes
@@ -55,7 +55,7 @@ async function basicChangeFeed() {
 async function changeHistory() {
   console.log('\n=== Example 2: Change History and Replay ===\n');
 
-  const store = new Store();
+  const store = createStore();
   const feed = createChangeFeed(store);
 
   // Make multiple changes
@@ -82,7 +82,7 @@ async function changeHistory() {
 
   // Replay changes to a new store
   console.log('\n--- Replaying changes to new store ---');
-  const newStore = new Store();
+  const newStore = createStore();
 
   feed.replay((change) => {
     if (change.type === 'add') {
@@ -104,7 +104,7 @@ async function changeHistory() {
 async function filteredSubscription() {
   console.log('\n=== Example 3: Filtered Subscriptions ===\n');
 
-  const store = new Store();
+  const store = createStore();
   const feed = createChangeFeed(store);
 
   // Subscribe only to additions
@@ -144,7 +144,7 @@ async function filteredSubscription() {
 async function timeBasedQueries() {
   console.log('\n=== Example 4: Time-based Queries ===\n');
 
-  const store = new Store();
+  const store = createStore();
   const feed = createChangeFeed(store);
 
   const alice = namedNode('http://example.org/alice');
