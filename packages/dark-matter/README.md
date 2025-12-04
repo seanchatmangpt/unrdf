@@ -10,6 +10,17 @@ Optimize SPARQL queries and analyze RDF graph performance. Implements the 80/20 
 pnpm add @unrdf/dark-matter
 ```
 
+## 📚 Examples
+
+See these examples that demonstrate @unrdf/dark-matter:
+
+- **[dark-matter-80-20.mjs](../../examples/dark-matter-80-20.mjs)** - Query optimization basics (30 min, 5-10x speedup)
+- **[dark-matter-query-optimization.mjs](../../examples/dark-matter-query-optimization.mjs)** - Advanced optimization strategies
+- **[profiling-example.mjs](../../examples/profiling-example.mjs)** - Performance profiling and analysis
+- **[lockchain-dark-matter-test.mjs](../../examples/lockchain-dark-matter-test.mjs)** - Combined optimization + audit
+
+**Need faster queries?** Start with [dark-matter-80-20.mjs](../../examples/dark-matter-80-20.mjs).
+
 ## Quick Start
 
 ```javascript

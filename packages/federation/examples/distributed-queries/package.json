@@ -1,0 +1,21 @@
+{
+  "name": "@unrdf/examples-distributed-queries",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "UNRDF Federation - Distributed Queries Example",
+  "main": "src/index.mjs",
+  "scripts": {
+    "start": "node src/index.mjs",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
+  },
+  "dependencies": {
+    "@unrdf/core": "workspace:*",
+    "@unrdf/federation": "workspace:*",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "vitest": "^2.1.8"
+  }
+}

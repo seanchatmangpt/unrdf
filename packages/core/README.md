@@ -18,6 +18,17 @@ The essential RDF substrate that all UNRDF packages and applications build upon.
 pnpm add @unrdf/core
 ```
 
+## 📚 Examples
+
+See these examples that demonstrate @unrdf/core:
+
+- **[01-minimal-parse-query.mjs](../../examples/01-minimal-parse-query.mjs)** - Start here! Minimal parse & query example (3 min)
+- **[minimal-core-example.mjs](../../examples/minimal-core-example.mjs)** - Direct @unrdf/core usage without substrate wrapper
+- **[context-example.mjs](../../examples/context-example.mjs)** - Understanding the core context system
+- **[comprehensive-feature-test.mjs](../../examples/comprehensive-feature-test.mjs)** - All core features integrated
+
+**New to UNRDF?** Start with the [Quick Start Guide](../../examples/QUICKSTART.md).
+
 ## Quick Start
 
 ```javascript

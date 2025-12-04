@@ -1,0 +1,21 @@
+{
+  "name": "@unrdf/streaming-example-real-time-sync",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "description": "Real-time sync example for @unrdf/streaming",
+  "scripts": {
+    "start": "node src/index.mjs",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
+  },
+  "dependencies": {
+    "@unrdf/core": "workspace:*",
+    "@unrdf/streaming": "workspace:*",
+    "n3": "^1.22.3"
+  },
+  "devDependencies": {
+    "vitest": "^2.1.8"
+  }
+}

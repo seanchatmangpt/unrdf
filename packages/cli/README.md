@@ -12,6 +12,16 @@ pnpm add -g @unrdf/cli
 pnpm exec unrdf
 ```
 
+## 📚 Examples
+
+See these examples that demonstrate @unrdf/cli:
+
+- **[cli-automation-script.mjs](../../examples/cli-automation-script.mjs)** - Automate workflows with CLI (20 min)
+- **[cli-scaffolding-demo.mjs](../../examples/cli-scaffolding-demo.mjs)** - Project scaffolding and code generation
+- **[examples/legacy-cli/](../../examples/legacy-cli/)** - Legacy CLI examples (reference)
+
+**Need CLI automation?** Start with [cli-automation-script.mjs](../../examples/cli-automation-script.mjs).
+
 ## Quick Start
 
 ```bash

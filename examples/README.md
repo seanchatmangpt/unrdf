@@ -2,11 +2,20 @@
 
 **Start with #01. Add complexity only if needed.**
 
+## 🚀 Quick Navigation
+
+- **New to UNRDF?** → [QUICKSTART.md](./QUICKSTART.md) (5 minutes)
+- **How does it work?** → [ARCHITECTURE.md](./ARCHITECTURE.md) (system design)
+- **All examples detailed** → [docs/examples/EXAMPLES-GUIDE.md](../docs/examples/EXAMPLES-GUIDE.md)
+- **Package docs** → [Per-package READMEs](#per-package-documentation)
+
 ## Beginner Examples (Start Here)
 
 | #   | Example                                                    | Time  | What You'll Learn                              |
 | --- | ---------------------------------------------------------- | ----- | ---------------------------------------------- |
 | 01  | [01-minimal-parse-query.mjs](./01-minimal-parse-query.mjs) | 3 min | Parse RDF, execute SPARQL (the pit of success) |
+
+**After #01:** Read [QUICKSTART.md](./QUICKSTART.md) for next steps.
 
 ## Intermediate Examples (Only If Needed)
 
@@ -14,6 +23,7 @@
 | --- | ------------------------------------------------------ | ------ | ------------------------------------ |
 | 10  | [basic-knowledge-hook.mjs](./basic-knowledge-hook.mjs) | 15 min | Autonomous behaviors on data changes |
 | 11  | [context-example.mjs](./context-example.mjs)           | 10 min | Understanding the context system     |
+| 12  | [define-hook-example.mjs](./define-hook-example.mjs)   | 20 min | Advanced hook composition patterns   |
 
 ## Advanced Examples (Skip Unless Required)
 
@@ -22,6 +32,7 @@
 | 20  | [dark-matter-80-20.mjs](./dark-matter-80-20.mjs) | 30 min | Performance optimization at scale |
 | 21  | [lockchain-demo.mjs](./lockchain-demo.mjs)       | 20 min | Compliance audit trails           |
 | 22  | [policy-pack-demo.mjs](./policy-pack-demo.mjs)   | 25 min | Declarative governance            |
+| 23  | [policy-pack-usage.mjs](./policy-pack-usage.mjs) | 25 min | Custom policy pack creation       |
 
 ## Full Feature Showcase (Reference Only)
 
@@ -29,6 +40,46 @@
 | -------------------------------------------------------------- | ----- | ------------------------------ |
 | [knowledge-engine-example.mjs](./knowledge-engine-example.mjs) | 363   | Complete feature demonstration |
 | [sparql-query-advanced.mjs](./sparql-query-advanced.mjs)       | 453   | Complex query patterns         |
+| [comprehensive-feature-test.mjs](./comprehensive-feature-test.mjs) | 345 | All features integrated |
+
+## Examples by Category
+
+### 📊 Core Functionality
+- [01-minimal-parse-query.mjs](./01-minimal-parse-query.mjs) - Parse & query (start here)
+- [minimal-core-example.mjs](./minimal-core-example.mjs) - Low-level core usage
+- [context-example.mjs](./context-example.mjs) - Context system
+
+### 🪝 Knowledge Hooks
+- [basic-knowledge-hook.mjs](./basic-knowledge-hook.mjs) - Hook basics
+- [define-hook-example.mjs](./define-hook-example.mjs) - Advanced hooks
+- [production-hook-test.mjs](./production-hook-test.mjs) - Production testing
+
+### ⚡ Performance Optimization
+- [dark-matter-80-20.mjs](./dark-matter-80-20.mjs) - Query optimization
+- [dark-matter-query-optimization.mjs](./dark-matter-query-optimization.mjs) - Advanced optimization
+- [profiling-example.mjs](./profiling-example.mjs) - Performance profiling
+
+### 🔒 Governance & Compliance
+- [lockchain-demo.mjs](./lockchain-demo.mjs) - Audit trails
+- [policy-pack-demo.mjs](./policy-pack-demo.mjs) - Policy enforcement
+- [policy-pack-usage.mjs](./policy-pack-usage.mjs) - Custom policies
+
+### 📡 Streaming & Real-time
+- [streaming/basic-stream.mjs](./streaming/basic-stream.mjs) - Change feeds
+- [streaming/advanced-filters.mjs](./streaming/advanced-filters.mjs) - Stream filtering
+
+### 🌐 Browser & Client-side
+- [browser/indexeddb-store.html](./browser/indexeddb-store.html) - IndexedDB storage
+- [browser-react.jsx](./browser-react.jsx) - React integration
+- [browser-vue.vue](./browser-vue.vue) - Vue integration
+
+### 🛠️ CLI & Automation
+- [cli-automation-script.mjs](./cli-automation-script.mjs) - CLI workflows
+- [cli-scaffolding-demo.mjs](./cli-scaffolding-demo.mjs) - Project scaffolding
+
+### 🧠 AI & Semantics
+- [knowledge-engine-example.mjs](./knowledge-engine-example.mjs) - AI semantic analysis
+- [ai-semantic-example.mjs](./ai-semantic-example.mjs) - Embedding search
 
 ---
 
@@ -39,12 +90,11 @@
 node examples/01-minimal-parse-query.mjs
 
 # Output:
-# Query results:
-# [
-#   { person: 'http://example.org/Alice', friend: 'http://example.org/Bob' },
-#   { person: 'http://example.org/Bob', friend: 'http://example.org/Charlie' },
-#   { person: 'http://example.org/Charlie', friend: 'http://example.org/Diana' }
-# ]
+# http://example.org/Alice knows http://example.org/Bob
+# http://example.org/Bob knows http://example.org/Charlie
+# http://example.org/Charlie knows http://example.org/Diana
+# Transaction manager ready: true
+# Core status: { status: 'active', components: 1 }
 ```
 
 ---
@@ -53,10 +103,90 @@ node examples/01-minimal-parse-query.mjs
 
 | Your Goal                | Start With                              |
 | ------------------------ | --------------------------------------- |
-| Just parse and query RDF | 01-minimal-parse-query.mjs              |
-| Add validation           | (use SHACL directly, see how-to guides) |
-| Add hooks                | 10-basic-knowledge-hook.mjs             |
-| Optimize performance     | 20-dark-matter-80-20.mjs                |
-| Add audit trails         | 21-lockchain-demo.mjs                   |
+| Just parse and query RDF | [01-minimal-parse-query.mjs](./01-minimal-parse-query.mjs) |
+| Add validation           | [basic-knowledge-hook.mjs](./basic-knowledge-hook.mjs) |
+| Add hooks                | [define-hook-example.mjs](./define-hook-example.mjs) |
+| Optimize performance     | [dark-matter-80-20.mjs](./dark-matter-80-20.mjs) |
+| Add audit trails         | [lockchain-demo.mjs](./lockchain-demo.mjs) |
+| Build a web app          | [browser-react.jsx](./browser-react.jsx) |
+| Automate workflows       | [cli-automation-script.mjs](./cli-automation-script.mjs) |
 
 **When in doubt, start with 01.**
+
+## Per-Package Documentation
+
+Each package has comprehensive README files:
+
+- **[@unrdf/core](../packages/core/README.md)** - RDF parsing, SPARQL, serialization
+- **[@unrdf/hooks](../packages/hooks/README.md)** - Policy enforcement framework
+- **[@unrdf/dark-matter](../packages/dark-matter/README.md)** - Query optimization
+- **[@unrdf/knowledge-engine](../packages/knowledge-engine/README.md)** - AI semantic analysis
+- **[@unrdf/streaming](../packages/streaming/README.md)** - Real-time change feeds
+- **[@unrdf/browser](../packages/browser/README.md)** - Client-side storage
+- **[@unrdf/federation](../packages/federation/README.md)** - Distributed queries
+- **[@unrdf/cli](../packages/cli/README.md)** - Command-line interface
+- **[@unrdf/composables](../packages/composables/README.md)** - React/Vue/Svelte hooks
+- **[@unrdf/project-engine](../packages/project-engine/README.md)** - Build system integration
+
+## How to Run Examples
+
+### Prerequisites
+```bash
+# Install dependencies
+pnpm install
+
+# Build packages
+pnpm build
+```
+
+### Running Examples
+```bash
+# Run any example
+node examples/[example-name].mjs
+
+# Run with debugging
+DEBUG=unrdf:* node examples/[example-name].mjs
+
+# Run in watch mode (auto-reload)
+nodemon examples/[example-name].mjs
+```
+
+## Learning Path
+
+**Path 1: Beginner (30 minutes)**
+1. [01-minimal-parse-query.mjs](./01-minimal-parse-query.mjs) (3 min)
+2. [QUICKSTART.md](./QUICKSTART.md) (10 min)
+3. [basic-knowledge-hook.mjs](./basic-knowledge-hook.mjs) (15 min)
+
+**Path 2: Intermediate (2 hours)**
+1. Complete Path 1
+2. [context-example.mjs](./context-example.mjs) (10 min)
+3. [dark-matter-80-20.mjs](./dark-matter-80-20.mjs) (30 min)
+4. [lockchain-demo.mjs](./lockchain-demo.mjs) (20 min)
+5. [policy-pack-demo.mjs](./policy-pack-demo.mjs) (25 min)
+6. [ARCHITECTURE.md](./ARCHITECTURE.md) (30 min)
+
+**Path 3: Advanced (4 hours)**
+1. Complete Path 2
+2. [knowledge-engine-example.mjs](./knowledge-engine-example.mjs) (1 hour)
+3. [sparql-query-advanced.mjs](./sparql-query-advanced.mjs) (1 hour)
+4. [comprehensive-feature-test.mjs](./comprehensive-feature-test.mjs) (1 hour)
+5. [docs/examples/EXAMPLES-GUIDE.md](../docs/examples/EXAMPLES-GUIDE.md) (1 hour)
+
+## Documentation Index
+
+- **[QUICKSTART.md](./QUICKSTART.md)** - 5-minute getting started guide
+- **[ARCHITECTURE.md](./ARCHITECTURE.md)** - System architecture and design patterns
+- **[docs/examples/EXAMPLES-GUIDE.md](../docs/examples/EXAMPLES-GUIDE.md)** - Comprehensive examples guide
+- **[Per-package READMEs](#per-package-documentation)** - API documentation
+
+## Need Help?
+
+- **Examples not working?** Check [QUICKSTART.md](./QUICKSTART.md) troubleshooting section
+- **Architecture questions?** Read [ARCHITECTURE.md](./ARCHITECTURE.md)
+- **API questions?** See package-specific READMEs
+- **Community support:** [GitHub Issues](https://github.com/unrdf/unrdf/issues)
+
+---
+
+**Remember:** Start with [01-minimal-parse-query.mjs](./01-minimal-parse-query.mjs) and add complexity only when needed.
