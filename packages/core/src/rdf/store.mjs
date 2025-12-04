@@ -64,7 +64,7 @@ export function addQuad(store, quadData) {
   }
 
   // Validate quad structure
-  const validatedQuad = QuadSchema.parse(quadData);
+  QuadSchema.parse(quadData);
 
   store.addQuad(quadData);
 }
@@ -97,7 +97,7 @@ export function removeQuad(store, quadData) {
   }
 
   // Validate quad structure
-  const validatedQuad = QuadSchema.parse(quadData);
+  QuadSchema.parse(quadData);
 
   store.removeQuad(quadData);
 }
