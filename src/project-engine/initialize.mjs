@@ -5,7 +5,8 @@
 
 import { z } from 'zod';
 import { createHash } from 'crypto';
-import { Store, DataFactory } from 'n3';
+import { UnrdfDataFactory as DataFactory } from '@unrdf/core/rdf/n3-justified-only';
+import { Store } from 'n3'; // TODO: Replace with Oxigraph Store
 import { scanFileSystemToStore } from './fs-scan.mjs';
 import { detectStackFromFs } from './stack-detect.mjs';
 import { buildProjectModelFromFs } from './project-model.mjs';

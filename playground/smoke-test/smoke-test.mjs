@@ -7,6 +7,7 @@
  */
 
 import { readFileSync } from 'fs';
+import { createStore, dataFactory } from '@unrdf/oxigraph';
 import { Parser, Store } from 'n3';
 import { createDarkMatterCore, defineHook } from 'unrdf';
 
@@ -56,7 +57,7 @@ ${colors.reset}`);
     const turtleData = readFileSync('./data.ttl', 'utf-8');
     const parser = new Parser();
     const quads = parser.parse(turtleData);
-    const store = new Store(quads);
+    const store = createStore(quads);
     pass(`Parsed ${store.size} RDF quads from Turtle`);
     testsPassed++;
 

@@ -3,7 +3,7 @@
  * @module converter
  */
 
-import { Parser, Writer } from 'n3';
+import { OxigraphStore } from '@unrdf/oxigraph';
 import { z } from 'zod';
 
 /**
@@ -16,6 +16,28 @@ export const RDF_FORMATS = {
   trig: ['trig'],
   jsonld: ['jsonld', 'json']
 };
+
+/**
+ * Map format name to Oxigraph format string
+ * @param {string} format - Format name
+ * @returns {string} Oxigraph format string
+ */
+function toOxigraphFormat(format) {
+  const oxFormatMap = {
+    'turtle': 'text/turtle',
+    'ttl': 'text/turtle',
+    'ntriples': 'application/n-triples',
+    'nt': 'application/n-triples',
+    'nquads': 'application/n-quads',
+    'nq': 'application/n-quads',
+    'trig': 'application/trig',
+    'n3': 'text/n3',
+    'rdf': 'application/rdf+xml',
+    'jsonld': 'application/ld+json',
+    'json': 'application/ld+json',
+  };
+  return oxFormatMap[format] || 'text/turtle';
+}
 
 /**
  * Auto-detect RDF format from file extension
@@ -38,10 +60,10 @@ export function detectFormat(filepath) {
 }
 
 /**
- * Parse RDF content
+ * Parse RDF content using Oxigraph
  * @param {string} content - RDF content
  * @param {string} format - Input format
- * @returns {Promise<Array>} Array of quads
+ * @returns {Promise<Object>} Oxigraph Store
  */
 export async function parseRDF(content, format = 'turtle') {
   const inputSchema = z.object({
@@ -51,48 +73,28 @@ export async function parseRDF(content, format = 'turtle') {
 
   inputSchema.parse({ content, format });
 
-  const parser = new Parser({ format });
-  const quads = [];
-
-  return new Promise((resolve, reject) => {
-    parser.parse(content, (error, quad, prefixes) => {
-      if (error) {
-        reject(error);
-      } else if (quad) {
-        quads.push(quad);
-      } else {
-        resolve(quads);
-      }
-    });
-  });
+  const oxFormat = toOxigraphFormat(format);
+  const store = new OxigraphStore();
+  store.load(content, { format: oxFormat });
+  return store;
 }
 
 /**
- * Serialize quads to RDF format
- * @param {Array} quads - Array of quads
+ * Serialize store to RDF format using Oxigraph
+ * @param {Object} store - Oxigraph Store
  * @param {string} format - Output format
  * @returns {Promise<string>} Serialized RDF
  */
-export async function serializeRDF(quads, format = 'turtle') {
+export async function serializeRDF(store, format = 'turtle') {
   const inputSchema = z.object({
-    quads: z.array(z.any()),
+    store: z.any(),
     format: z.string()
   });
 
-  inputSchema.parse({ quads, format });
+  inputSchema.parse({ store, format });
 
-  const writer = new Writer({ format });
-
-  return new Promise((resolve, reject) => {
-    writer.addQuads(quads);
-    writer.end((error, result) => {
-      if (error) {
-        reject(error);
-      } else {
-        resolve(result);
-      }
-    });
-  });
+  const oxFormat = toOxigraphFormat(format);
+  return store.dump({ format: oxFormat });
 }
 
 /**
@@ -111,8 +113,8 @@ export async function convertFormat(content, inputFormat, outputFormat) {
 
   inputSchema.parse({ content, inputFormat, outputFormat });
 
-  const quads = await parseRDF(content, inputFormat);
-  return serializeRDF(quads, outputFormat);
+  const store = await parseRDF(content, inputFormat);
+  return serializeRDF(store, outputFormat);
 }
 
 /**

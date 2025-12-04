@@ -3,7 +3,6 @@
  * @module canonicalize
  */
 
-import { Writer } from 'n3';
 import rdfCanonize from 'rdf-canonize';
 
 /**
@@ -43,18 +42,8 @@ export async function canonicalize(store, options = {}) {
       return '';
     }
 
-    // Convert store to N-Quads format
-    const writer = new Writer({ format: 'N-Quads' });
-    writer.addQuads(quads);
-    const nquads = await new Promise((resolve, reject) => {
-      writer.end((error, result) => {
-        if (error) {
-          reject(new Error(`Failed to serialize to N-Quads: ${error.message}`));
-        } else {
-          resolve(result);
-        }
-      });
-    });
+    // Convert store to N-Quads format using Oxigraph dump
+    const nquads = store.dump({ format: 'application/n-quads' });
 
     // Validate nquads output
     if (typeof nquads !== 'string' || nquads.trim().length === 0) {

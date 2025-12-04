@@ -5,38 +5,49 @@
 
 import { defineCommand } from 'citty';
 import { readFileSync, writeFileSync } from 'fs';
-import { Parser, Store, Writer } from 'n3';
+import { OxigraphStore } from '@unrdf/oxigraph';
 import { z } from 'zod';
 
 /**
- * Load graph from file
+ * Map format name to Oxigraph format string
+ * @param {string} format - Format name
+ * @returns {string} Oxigraph format string
+ */
+function toOxigraphFormat(format) {
+  const oxFormatMap = {
+    'turtle': 'text/turtle',
+    'ttl': 'text/turtle',
+    'ntriples': 'application/n-triples',
+    'nt': 'application/n-triples',
+    'nquads': 'application/n-quads',
+    'nq': 'application/n-quads',
+    'trig': 'application/trig',
+    'n3': 'text/n3',
+    'rdf': 'application/rdf+xml',
+    'jsonld': 'application/ld+json',
+    'json': 'application/ld+json',
+  };
+  return oxFormatMap[format] || 'text/turtle';
+}
+
+/**
+ * Load graph from file using Oxigraph
  * @param {string} filepath - Path to graph file
- * @returns {Promise<Store>}
+ * @returns {Promise<Object>} Oxigraph Store
  */
 export async function loadGraph(filepath) {
   const inputSchema = z.string().min(1);
   const validPath = inputSchema.parse(filepath);
 
   const content = readFileSync(validPath, 'utf-8');
-  const parser = new Parser();
-  const store = new Store();
-
-  return new Promise((resolve, reject) => {
-    parser.parse(content, (error, quad, prefixes) => {
-      if (error) {
-        reject(error);
-      } else if (quad) {
-        store.addQuad(quad);
-      } else {
-        resolve(store);
-      }
-    });
-  });
+  const store = new OxigraphStore();
+  store.load(content, { format: toOxigraphFormat('turtle') });
+  return store;
 }
 
 /**
- * Save graph to file
- * @param {Store} store - N3 Store
+ * Save graph to file using Oxigraph
+ * @param {Object} store - Oxigraph Store
  * @param {string} filepath - Output file path
  * @param {string} format - Output format (turtle, ntriples, etc)
  * @returns {Promise<void>}
@@ -50,25 +61,14 @@ export async function saveGraph(store, filepath, format = 'turtle') {
 
   inputSchema.parse({ store, filepath, format });
 
-  const writer = new Writer({ format });
-  const quads = store.getQuads();
-
-  return new Promise((resolve, reject) => {
-    writer.addQuads(quads);
-    writer.end((error, result) => {
-      if (error) {
-        reject(error);
-      } else {
-        writeFileSync(filepath, result);
-        resolve();
-      }
-    });
-  });
+  const oxFormat = toOxigraphFormat(format);
+  const serialized = store.dump({ format: oxFormat });
+  writeFileSync(filepath, serialized);
 }
 
 /**
- * Get graph statistics
- * @param {Store} store - N3 Store
+ * Get graph statistics using Oxigraph
+ * @param {Object} store - Oxigraph Store
  * @returns {object}
  */
 export function getGraphStats(store) {
@@ -92,20 +92,20 @@ export function getGraphStats(store) {
 }
 
 /**
- * Merge multiple graphs
- * @param {Store[]} stores - Array of N3 Stores
- * @returns {Store}
+ * Merge multiple graphs using Oxigraph
+ * @param {Object[]} stores - Array of Oxigraph Stores
+ * @returns {Object} Merged Oxigraph Store
  */
 export function mergeGraphs(stores) {
   const inputSchema = z.array(z.any()).min(1);
   inputSchema.parse(stores);
 
-  const merged = new Store();
+  const merged = new OxigraphStore();
 
   for (const store of stores) {
     const quads = store.getQuads();
     for (const quad of quads) {
-      merged.addQuad(quad);
+      merged.add(quad);
     }
   }
 

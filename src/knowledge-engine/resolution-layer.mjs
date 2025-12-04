@@ -8,7 +8,7 @@
  * a single, consolidated Delta.
  */
 
-import { _Store } from 'n3';
+import { _Store } from 'n3'; // TODO: Replace with Oxigraph Store
 import { randomUUID } from 'crypto';
 import { z } from 'zod';
 

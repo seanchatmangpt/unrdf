@@ -9,11 +9,11 @@
  * @license MIT
  */
 
-import { DataFactory } from 'n3';
+import { dataFactory } from '@unrdf/oxigraph';
 import { asNamedNode as _asNamedNode } from './term-utils.mjs';
 import { createNamespaceId } from './id-utils.mjs';
 
-const { namedNode } = DataFactory;
+const { namedNode } = dataFactory;
 
 /**
  * Common RDF vocabularies and their namespaces

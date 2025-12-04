@@ -3,9 +3,9 @@
  * @module @unrdf/core/types
  */
 
-import { DataFactory } from 'n3';
+import { dataFactory } from '@unrdf/oxigraph';
 
-const { namedNode, literal, blankNode, variable, defaultGraph, quad } = DataFactory;
+const { namedNode, literal, blankNode, variable, defaultGraph, quad } = dataFactory;
 
 /**
  * Create RDF terms from simple values

@@ -1,7 +1,5 @@
 // @ts-check
-import { Store, DataFactory } from 'n3';
-
-const { namedNode, literal } = DataFactory;
+const { namedNode, literal  } = dataFactory;
 
 /**
  * Mock QueryAnalyzer for demonstration
@@ -41,7 +39,7 @@ class QueryAnalyzer {
  * @returns {Store} Populated N3 Store
  */
 function createSampleDataset() {
-  const store = new Store();
+  const store = createStore();
 
   // Add 1000 person triples
   for (let i = 1; i <= 1000; i++) {

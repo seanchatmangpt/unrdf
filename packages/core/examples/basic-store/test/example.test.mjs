@@ -3,7 +3,7 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
-import { DataFactory, Store } from 'n3';
+import { createStore, dataFactory } from '@unrdf/oxigraph';
 import {
   createSampleStore,
   queryStore,
@@ -12,7 +12,7 @@ import {
   getStoreStats
 } from '../src/index.mjs';
 
-const { namedNode, literal } = DataFactory;
+const { namedNode, literal } = dataFactory;
 
 describe('Basic Store Operations', () => {
   it('creates store with sample data', () => {
@@ -87,7 +87,7 @@ describe('Basic Store Operations', () => {
   });
 
   it('handles empty store gracefully', () => {
-    const emptyStore = new Store();
+    const emptyStore = createStore();
     const quads = queryStore(emptyStore);
     expect(quads).toHaveLength(0);
     const stats = getStoreStats(emptyStore);
@@ -113,7 +113,7 @@ describe('Basic Store Operations', () => {
   });
 
   it('exports empty store', () => {
-    const emptyStore = new Store();
+    const emptyStore = createStore();
     const ntriples = exportToNTriples(emptyStore);
     expect(ntriples).toBe('');
   });
@@ -160,7 +160,7 @@ describe('Edge Cases and Error Handling', () => {
   });
 
   it('exports store with blank node subjects', () => {
-    const store = new Store();
+    const store = createStore();
     store.addQuad(
       { termType: 'BlankNode', value: '_:b1' },
       namedNode('http://example.org/pred'),
@@ -171,7 +171,7 @@ describe('Edge Cases and Error Handling', () => {
   });
 
   it('exports store with typed literals', () => {
-    const store = new Store();
+    const store = createStore();
     store.addQuad(
       namedNode('http://example.org/subject'),
       namedNode('http://example.org/pred'),
@@ -182,7 +182,7 @@ describe('Edge Cases and Error Handling', () => {
   });
 
   it('exports store with string literals (no datatype)', () => {
-    const store = new Store();
+    const store = createStore();
     store.addQuad(
       namedNode('http://example.org/subject'),
       namedNode('http://example.org/pred'),

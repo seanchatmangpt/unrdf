@@ -8,7 +8,7 @@
  * statistical and ML approaches. Integrates with SHACL validation.
  */
 
-import { _Store } from 'n3';
+// Unused N3 import removed
 import { trace, SpanStatusCode } from '@opentelemetry/api';
 import { z } from 'zod';
 import { createSemanticAnalyzer } from './semantic-analyzer.mjs';

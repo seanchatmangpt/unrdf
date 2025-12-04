@@ -8,7 +8,8 @@
  */
 
 import { EventEmitter } from 'events';
-import { Store, Parser } from 'n3';
+import { createStore } from '@unrdf/oxigraph';
+import { Parser } from '@unrdf/core/rdf/n3-justified-only'; // JUSTIFIED: N3 Parser for streaming with backpressure
 import { z } from 'zod';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
 import { validateShacl } from '../validate.mjs';
@@ -109,7 +110,7 @@ export class RealTimeValidator extends EventEmitter {
 
     if (typeof shapes === 'string') {
       // Parse Turtle string
-      return new Store(new Parser().parse(shapes));
+      return createStore(new Parser().parse(shapes));
     } else if (shapes instanceof Store) {
       return shapes;
     } else {
@@ -265,7 +266,7 @@ export class RealTimeValidator extends EventEmitter {
     }
 
     // Create a filtered store with only affected subgraphs
-    const filteredStore = new Store();
+    const filteredStore = createStore();
 
     for (const subject of affectedSubjects) {
       const quads = store.getQuads(subject, null, null, null);
@@ -287,7 +288,7 @@ export class RealTimeValidator extends EventEmitter {
    */
   async _validateDeltaOnly(delta) {
     // Create temporary store with delta changes
-    const tempStore = new Store();
+    const tempStore = createStore();
 
     for (const quad of delta.additions || []) {
       tempStore.addQuad(quad);

@@ -14,8 +14,8 @@ import { defineCommand } from 'citty';
 import { readFile, writeFile } from 'fs/promises';
 import { z } from 'zod';
 import { evaluateHook } from '../../../knowledge-engine/hook-management.mjs';
-import { Store } from 'n3';
-import { Parser } from 'n3';
+import { createStore } from '@unrdf/core';
+import { OxigraphStore } from '@unrdf/oxigraph';
 
 /**
  * Validation schema for eval command arguments
@@ -32,15 +32,26 @@ const evalArgsSchema = z.object({
  * Parse RDF data from file
  * @param {string} filePath - Path to RDF file
  * @param {string} format - File format (turtle, ntriples, etc.)
- * @returns {Promise<Store>} Parsed RDF store
+ * @returns {Promise<OxigraphStore>} Parsed RDF store
  * @private
  */
 async function parseRDFFile(filePath, format = 'turtle') {
   const content = await readFile(filePath, 'utf-8');
-  const parser = new Parser({ format });
-  const quads = parser.parse(content);
-  const store = new Store();
-  store.addQuads(quads);
+  const store = new OxigraphStore();
+
+  // Map format to MIME type
+  const mimeTypes = {
+    turtle: 'text/turtle',
+    ntriples: 'application/n-triples',
+    nquads: 'application/n-quads',
+    trig: 'application/trig',
+    n3: 'text/n3',
+    rdf: 'application/rdf+xml',
+    jsonld: 'application/ld+json'
+  };
+
+  const mimeType = mimeTypes[format] || 'text/turtle';
+  store.load(content, { format: mimeType });
   return store;
 }
 
@@ -149,10 +160,15 @@ export const evalCommand = defineCommand({
       }
 
       // Load data if provided
-      let store = new Store();
+      let store = createStore();
       if (args.data) {
         try {
-          store = await parseRDFFile(args.data);
+          const oxStore = await parseRDFFile(args.data);
+          // Convert to core store
+          store = createStore();
+          for (const quad of oxStore.getQuads()) {
+            store.add(quad);
+          }
           console.log(`📊 Loaded ${store.size} triples from ${args.data}`);
         } catch (error) {
           throw new Error(`Failed to load data: ${error.message}`);

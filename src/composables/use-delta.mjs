@@ -9,7 +9,7 @@
  * @license MIT
  */
 
-import { Store } from 'n3';
+import { createStore } from '@unrdf/core';
 import { useStoreContext } from '../context/index.mjs';
 
 /**
@@ -55,8 +55,8 @@ export function useDelta(options = {}) {
       const contextStore = storeContext.store;
 
       // Calculate differences
-      const added = new Store();
-      const removed = new Store();
+      const added = createStore();
+      const removed = createStore();
 
       // Find quads in new data but not in context (added)
       for (const quad of newStore) {
@@ -243,8 +243,8 @@ export function useDelta(options = {}) {
      */
     merge(...changeSets) {
       const merged = {
-        added: new Store(),
-        removed: new Store(),
+        added: createStore(),
+        removed: createStore(),
       };
 
       for (const changes of changeSets) {
@@ -285,8 +285,8 @@ export function useDelta(options = {}) {
       const { added, removed } = changes;
 
       return {
-        added: removed || new Store(),
-        removed: added || new Store(),
+        added: removed || createStore(),
+        removed: added || createStore(),
       };
     },
 
@@ -367,7 +367,11 @@ export function useDelta(options = {}) {
         return aStr.localeCompare(bStr);
       });
 
-      return new Store(quads);
+      const sortedStore = createStore();
+      for (const quad of quads) {
+        sortedStore.add(quad);
+      }
+      return sortedStore;
     },
   };
 }

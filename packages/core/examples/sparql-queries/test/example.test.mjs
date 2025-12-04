@@ -12,9 +12,9 @@ import {
   getBooksByPriceRange,
   formatResults
 } from '../src/index.mjs';
-import { DataFactory, Store } from 'n3';
+import { createStore, dataFactory } from '@unrdf/oxigraph';
 
-const { namedNode, literal } = DataFactory;
+const { namedNode, literal } = dataFactory;
 
 describe('SPARQL Query Examples', () => {
   it('creates book catalog with sample data', () => {
@@ -109,7 +109,7 @@ describe('SPARQL Query Examples', () => {
   });
 
   it('checks stock status when no books in stock', () => {
-    const store = new Store();
+    const store = createStore();
     store.addQuad(
       namedNode('http://example.org/book99'),
       namedNode('http://example.org/vocab/inStock'),
@@ -146,7 +146,7 @@ describe('Complex Query Patterns', () => {
   });
 
   it('handles books without price information', () => {
-    const store = new Store();
+    const store = createStore();
     store.addQuad(
       namedNode('http://example.org/book99'),
       namedNode('http://purl.org/dc/elements/1.1/title'),

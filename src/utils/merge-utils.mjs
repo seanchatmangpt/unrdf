@@ -9,16 +9,17 @@
  * @license MIT
  */
 
-import { DataFactory as _DataFactory, Store } from 'n3';
+import { createStore } from '@unrdf/core';
+import { dataFactory as _DataFactory } from '@unrdf/oxigraph';
 import { asNamedNode as _asNamedNode, getIRI as _getIRI } from './term-utils.mjs';
 
 /**
  * Merge multiple stores into one
- * @param {...import('n3').Store} stores - Stores to merge
- * @returns {import('n3').Store} Merged store
+ * @param {...object} stores - Stores to merge
+ * @returns {object} Merged store
  */
 export const mergeStores = (...stores) => {
-  const mergedStore = new Store();
+  const mergedStore = createStore();
 
   for (const store of stores) {
     for (const quad of store) {
@@ -41,12 +42,12 @@ export const unionStores = (store1, store2) => {
 
 /**
  * Intersection of two stores (quads present in both stores)
- * @param {import('n3').Store} store1 - First store
- * @param {import('n3').Store} store2 - Second store
- * @returns {import('n3').Store} Intersection store
+ * @param {object} store1 - First store
+ * @param {object} store2 - Second store
+ * @returns {object} Intersection store
  */
 export const intersectStores = (store1, store2) => {
-  const intersectionStore = new Store();
+  const intersectionStore = createStore();
   const store2Quads = new Set();
 
   // Create a set of quads from store2 for fast lookup
@@ -66,12 +67,12 @@ export const intersectStores = (store1, store2) => {
 
 /**
  * Difference of two stores (quads in store1 but not in store2)
- * @param {import('n3').Store} store1 - First store
- * @param {import('n3').Store} store2 - Second store
- * @returns {import('n3').Store} Difference store
+ * @param {object} store1 - First store
+ * @param {object} store2 - Second store
+ * @returns {object} Difference store
  */
 export const differenceStores = (store1, store2) => {
-  const differenceStore = new Store();
+  const differenceStore = createStore();
   const store2Quads = new Set();
 
   // Create a set of quads from store2 for fast lookup
@@ -220,10 +221,14 @@ export const mergeStoresWithStrategy = (store1, store2, options = {}) => {
       return intersectStores(store1, store2);
     }
     case 'store1': {
-      return new Store(store1);
+      const s1 = createStore();
+      for (const quad of store1) s1.add(quad);
+      return s1;
     }
     case 'store2': {
-      return new Store(store2);
+      const s2 = createStore();
+      for (const quad of store2) s2.add(quad);
+      return s2;
     }
     case 'custom': {
       if (!conflictResolver) {
@@ -239,12 +244,12 @@ export const mergeStoresWithStrategy = (store1, store2, options = {}) => {
 
 /**
  * Merge stores by subject (merge quads with the same subject)
- * @param {import('n3').Store} store1 - First store
- * @param {import('n3').Store} store2 - Second store
- * @returns {import('n3').Store} Merged store
+ * @param {object} store1 - First store
+ * @param {object} store2 - Second store
+ * @returns {object} Merged store
  */
 export const mergeStoresBySubject = (store1, store2) => {
-  const mergedStore = new Store();
+  const mergedStore = createStore();
   const subjectQuads = new Map();
 
   // Collect all quads by subject
@@ -276,12 +281,12 @@ export const mergeStoresBySubject = (store1, store2) => {
 
 /**
  * Merge stores by predicate (merge quads with the same predicate)
- * @param {import('n3').Store} store1 - First store
- * @param {import('n3').Store} store2 - Second store
- * @returns {import('n3').Store} Merged store
+ * @param {object} store1 - First store
+ * @param {object} store2 - Second store
+ * @returns {object} Merged store
  */
 export const mergeStoresByPredicate = (store1, store2) => {
-  const mergedStore = new Store();
+  const mergedStore = createStore();
   const predicateQuads = new Map();
 
   // Collect all quads by predicate
@@ -313,11 +318,11 @@ export const mergeStoresByPredicate = (store1, store2) => {
 
 /**
  * Remove duplicate quads from a store
- * @param {import('n3').Store} store - Store to deduplicate
- * @returns {import('n3').Store} Deduplicated store
+ * @param {object} store - Store to deduplicate
+ * @returns {object} Deduplicated store
  */
 export const deduplicateStore = store => {
-  const deduplicatedStore = new Store();
+  const deduplicatedStore = createStore();
   const seenQuads = new Set();
 
   for (const quad of store) {
@@ -398,12 +403,12 @@ export const mergeStoresWithValidation = (store1, store2, options = {}) => {
 
 /**
  * Merge stores by graph (merge quads with the same graph)
- * @param {import('n3').Store} store1 - First store
- * @param {import('n3').Store} store2 - Second store
- * @returns {import('n3').Store} Merged store
+ * @param {object} store1 - First store
+ * @param {object} store2 - Second store
+ * @returns {object} Merged store
  */
 export const mergeStoresByGraph = (store1, store2) => {
-  const mergedStore = new Store();
+  const mergedStore = createStore();
   const graphQuads = new Map();
 
   // Collect all quads by graph
@@ -435,12 +440,12 @@ export const mergeStoresByGraph = (store1, store2) => {
 
 /**
  * Merge stores with conflict detection
- * @param {import('n3').Store} store1 - First store
- * @param {import('n3').Store} store2 - Second store
+ * @param {object} store1 - First store
+ * @param {object} store2 - Second store
  * @returns {Object} Merge result with conflict information
  */
 export const mergeStoresWithConflictDetection = (store1, store2) => {
-  const mergedStore = new Store();
+  const mergedStore = createStore();
   const conflicts = [];
   const subjectPredicateMap = new Map();
 

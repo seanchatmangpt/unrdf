@@ -3,10 +3,8 @@
  * @description Demonstrates parsing RDF from various formats: Turtle, N-Triples, N-Quads
  */
 
-import { Parser, Store } from 'n3';
-import { DataFactory } from 'n3';
-
-const { namedNode, literal } = DataFactory;
+import { createStore, dataFactory } from '@unrdf/oxigraph';
+const { namedNode, literal } = dataFactory;
 
 /**
  * Parses Turtle format RDF
@@ -14,18 +12,13 @@ const { namedNode, literal } = DataFactory;
  * @returns {Promise<Store>} Store with parsed triples
  */
 export async function parseTurtle(turtle) {
-  const parser = new Parser({ format: 'text/turtle' });
-  const store = new Store();
-
-  return new Promise((resolve, reject) => {
-    try {
-      const quads = parser.parse(turtle);
-      quads.forEach(quad => store.addQuad(quad));
-      resolve(store);
-    } catch (error) {
-      reject(new Error(`Turtle parsing failed: ${error.message}`));
-    }
-  });
+  try {
+    const store = createStore();
+    store.load(turtle, { format: 'text/turtle', base_iri: 'http://example.org/' });
+    return store;
+  } catch (error) {
+    throw new Error(`Turtle parsing failed: ${error.message}`);
+  }
 }
 
 /**
@@ -34,18 +27,13 @@ export async function parseTurtle(turtle) {
  * @returns {Promise<Store>} Store with parsed triples
  */
 export async function parseNTriples(ntriples) {
-  const parser = new Parser({ format: 'application/n-triples' });
-  const store = new Store();
-
-  return new Promise((resolve, reject) => {
-    try {
-      const quads = parser.parse(ntriples);
-      quads.forEach(quad => store.addQuad(quad));
-      resolve(store);
-    } catch (error) {
-      reject(new Error(`N-Triples parsing failed: ${error.message}`));
-    }
-  });
+  try {
+    const store = createStore();
+    store.load(ntriples, { format: 'application/n-triples' });
+    return store;
+  } catch (error) {
+    throw new Error(`N-Triples parsing failed: ${error.message}`);
+  }
 }
 
 /**
@@ -54,18 +42,13 @@ export async function parseNTriples(ntriples) {
  * @returns {Promise<Store>} Store with parsed quads
  */
 export async function parseNQuads(nquads) {
-  const parser = new Parser({ format: 'application/n-quads' });
-  const store = new Store();
-
-  return new Promise((resolve, reject) => {
-    try {
-      const quads = parser.parse(nquads);
-      quads.forEach(quad => store.addQuad(quad));
-      resolve(store);
-    } catch (error) {
-      reject(new Error(`N-Quads parsing failed: ${error.message}`));
-    }
-  });
+  try {
+    const store = createStore();
+    store.load(nquads, { format: 'application/n-quads' });
+    return store;
+  } catch (error) {
+    throw new Error(`N-Quads parsing failed: ${error.message}`);
+  }
 }
 
 /**
@@ -74,11 +57,12 @@ export async function parseNQuads(nquads) {
  * @returns {Store} Merged store
  */
 export function mergeStores(stores) {
-  const merged = new Store();
+  const merged = createStore();
 
   stores.forEach(store => {
-    const quads = store.getQuads(null, null, null, null);
-    quads.forEach(quad => merged.addQuad(quad));
+    for (const quad of store.match()) {
+      merged.add(quad);
+    }
   });
 
   return merged;
@@ -90,14 +74,13 @@ export function mergeStores(stores) {
  * @returns {Array<string>} List of unique graph URIs
  */
 export function getGraphs(store) {
-  const quads = store.getQuads(null, null, null, null);
   const graphs = new Set();
 
-  quads.forEach(quad => {
+  for (const quad of store.match()) {
     if (quad.graph && quad.graph.value) {
       graphs.add(quad.graph.value);
     }
-  });
+  }
 
   return Array.from(graphs);
 }
@@ -108,24 +91,15 @@ export function getGraphs(store) {
  * @returns {string} Canonical N-Triples representation
  */
 export function canonicalize(store) {
-  const quads = store.getQuads(null, null, null, null);
+  // Use Oxigraph's built-in N-Triples serialization
+  const ntriples = store.dump({ format: 'application/n-triples' });
 
-  // Convert to N-Triples strings
-  const triples = quads.map(q => {
-    const s = q.subject.termType === 'NamedNode' ? `<${q.subject.value}>` : q.subject.value;
-    const p = `<${q.predicate.value}>`;
-    const o = q.object.termType === 'NamedNode'
-      ? `<${q.object.value}>`
-      : q.object.termType === 'Literal'
-        ? q.object.datatype && q.object.datatype.value !== 'http://www.w3.org/2001/XMLSchema#string'
-          ? `"${q.object.value}"^^<${q.object.datatype.value}>`
-          : `"${q.object.value}"`
-        : q.object.value;
-    return `${s} ${p} ${o} .`;
-  });
-
-  // Sort alphabetically for canonical form
-  return triples.sort().join('\n');
+  // Sort lines alphabetically for canonical form
+  return ntriples
+    .split('\n')
+    .filter(line => line.trim())
+    .sort()
+    .join('\n');
 }
 
 /**
@@ -142,12 +116,12 @@ export async function validateRDF(rdf, format = 'turtle') {
   };
 
   try {
-    const parser = new Parser({ format: formatMap[format] });
-    const quads = parser.parse(rdf);
+    const store = createStore();
+    store.load(rdf, { format: formatMap[format], base_iri: 'http://example.org/' });
 
     return {
       valid: true,
-      tripleCount: quads.length,
+      tripleCount: store.size,
       errors: []
     };
   } catch (error) {

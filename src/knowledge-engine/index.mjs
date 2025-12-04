@@ -89,8 +89,5 @@ export {
   defaultObservabilityManager,
 } from './observability.mjs';
 
-// N3 Re-exports (as documented in README)
-export { Store, Parser, Writer, DataFactory } from 'n3';
-
 // Consolidated Schemas (single source of truth)
 export * from './schemas.mjs';

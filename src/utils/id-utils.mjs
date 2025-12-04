@@ -1,7 +1,7 @@
-import { DataFactory } from 'n3';
+import { dataFactory } from '@unrdf/oxigraph';
 import { createHash, randomBytes } from 'node:crypto';
 
-const { blankNode, namedNode } = DataFactory;
+const { blankNode, namedNode } = dataFactory;
 
 /**
  * Deterministic blank node generator
