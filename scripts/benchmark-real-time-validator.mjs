@@ -271,7 +271,7 @@ async function benchmarkValidationModes() {
       enableCaching: false
     });
 
-    const store = new Store();
+    const store = createStore();
     const delta = createValidDelta(0);
 
     const iterations = 50;
