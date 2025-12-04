@@ -1,713 +1,480 @@
 {
-  "metadata": {
-    "timestamp": "2025-12-04T19:52:54.552Z",
-    "nodeVersion": "v24.11.1",
-    "platform": "darwin arm64",
-    "testSizes": [
-      10,
-      50,
-      100,
-      500,
-      1000
-    ],
-    "iterations": 100
-  },
-  "hookConfigurations": [
-    {
-      "name": "minimal",
-      "description": "Minimal hook with validation only"
-    },
-    {
-      "name": "validation-only",
-      "description": "Validation hook with type checking"
-    },
-    {
-      "name": "transformation",
-      "description": "Hook that transforms data"
-    },
-    {
-      "name": "complex-validation",
-      "description": "Hook with complex validation logic"
-    },
-    {
-      "name": "transformation-chain",
-      "description": "Hook with validation and transformation"
-    },
-    {
-      "name": "intensive-compute",
-      "description": "Hook with CPU-intensive operations"
-    }
+  "timestamp": "2025-12-04T20:07:08.866Z",
+  "configurations": [
+    "baseline",
+    "validate-only",
+    "transform-only",
+    "validate+transform",
+    "validate+validate",
+    "transform+transform",
+    "triple-hooks",
+    "all-validation",
+    "all-transform",
+    "complex-chain"
   ],
-  "results": [
-    {
-      "hookConfig": "minimal",
-      "hookName": "MinimalHook",
-      "dataSize": 10,
-      "iterations": 100,
-      "latency": {
-        "min": "0.045",
-        "max": "1.458",
-        "mean": "0.153",
-        "median": "0.079",
-        "p95": "0.610",
-        "p99": "1.458"
-      },
-      "throughput": "6553598.74",
-      "memory": {
-        "before": "7.06",
-        "after": "8.40",
-        "delta": "1.34"
-      },
-      "overhead": "0.015"
-    },
-    {
-      "hookConfig": "minimal",
-      "hookName": "MinimalHook",
-      "dataSize": 50,
-      "iterations": 100,
-      "latency": {
-        "min": "0.119",
-        "max": "1.276",
-        "mean": "0.287",
-        "median": "0.249",
-        "p95": "0.579",
-        "p99": "1.276"
-      },
-      "throughput": "17441862.70",
-      "memory": {
-        "before": "8.70",
-        "after": "9.05",
-        "delta": "0.35"
-      },
-      "overhead": "0.006"
-    },
-    {
-      "hookConfig": "minimal",
-      "hookName": "MinimalHook",
-      "dataSize": 100,
-      "iterations": 100,
-      "latency": {
-        "min": "0.210",
-        "max": "1.876",
-        "mean": "0.423",
-        "median": "0.416",
-        "p95": "0.980",
-        "p99": "1.876"
-      },
-      "throughput": "23628205.46",
-      "memory": {
-        "before": "9.47",
-        "after": "10.91",
-        "delta": "1.44"
-      },
-      "overhead": "0.004"
-    },
-    {
-      "hookConfig": "minimal",
-      "hookName": "MinimalHook",
-      "dataSize": 500,
-      "iterations": 100,
-      "latency": {
-        "min": "0.984",
-        "max": "4.833",
-        "mean": "1.436",
-        "median": "1.100",
-        "p95": "2.649",
-        "p99": "4.833"
-      },
-      "throughput": "34828006.24",
-      "memory": {
-        "before": "8.89",
-        "after": "8.43",
-        "delta": "-0.45"
-      },
-      "overhead": "0.003"
-    },
-    {
-      "hookConfig": "minimal",
-      "hookName": "MinimalHook",
-      "dataSize": 1000,
-      "iterations": 100,
-      "latency": {
-        "min": "2.292",
-        "max": "9.507",
-        "mean": "2.662",
-        "median": "2.350",
-        "p95": "4.488",
-        "p99": "9.507"
-      },
-      "throughput": "37562000.21",
-      "memory": {
-        "before": "12.15",
-        "after": "12.80",
-        "delta": "0.64"
-      },
-      "overhead": "0.003"
-    },
-    {
-      "hookConfig": "validation-only",
-      "hookName": "ValidationHook",
-      "dataSize": 10,
-      "iterations": 100,
-      "latency": {
-        "min": "0.155",
-        "max": "22.245",
-        "mean": "0.505",
-        "median": "0.223",
-        "p95": "0.946",
-        "p99": "22.245"
-      },
-      "throughput": "1980814.23",
-      "memory": {
-        "before": "12.86",
-        "after": "13.71",
-        "delta": "0.85"
-      },
-      "overhead": "0.050"
-    },
-    {
-      "hookConfig": "validation-only",
-      "hookName": "ValidationHook",
-      "dataSize": 50,
-      "iterations": 100,
-      "latency": {
-        "min": "0.641",
-        "max": "23.069",
-        "mean": "1.725",
-        "median": "0.753",
-        "p95": "4.143",
-        "p99": "23.069"
-      },
-      "throughput": "2898989.07",
-      "memory": {
-        "before": "13.92",
-        "after": "35.16",
-        "delta": "21.24"
-      },
-      "overhead": "0.034"
-    },
-    {
-      "hookConfig": "validation-only",
-      "hookName": "ValidationHook",
-      "dataSize": 100,
-      "iterations": 100,
-      "latency": {
-        "min": "1.192",
-        "max": "9.092",
-        "mean": "1.756",
-        "median": "1.384",
-        "p95": "4.021",
-        "p99": "9.092"
-      },
-      "throughput": "5695012.07",
-      "memory": {
-        "before": "35.55",
-        "after": "59.25",
-        "delta": "23.70"
-      },
-      "overhead": "0.018"
-    },
-    {
-      "hookConfig": "validation-only",
-      "hookName": "ValidationHook",
-      "dataSize": 500,
-      "iterations": 100,
-      "latency": {
-        "min": "6.647",
-        "max": "52.613",
-        "mean": "13.266",
-        "median": "10.218",
-        "p95": "36.877",
-        "p99": "52.613"
-      },
-      "throughput": "3769167.14",
-      "memory": {
-        "before": "61.15",
-        "after": "122.58",
-        "delta": "61.43"
-      },
-      "overhead": "0.027"
-    },
-    {
-      "hookConfig": "validation-only",
-      "hookName": "ValidationHook",
-      "dataSize": 1000,
-      "iterations": 100,
-      "latency": {
-        "min": "14.241",
-        "max": "87.478",
-        "mean": "27.229",
-        "median": "22.093",
-        "p95": "60.625",
-        "p99": "87.478"
-      },
-      "throughput": "3672568.48",
-      "memory": {
-        "before": "69.40",
-        "after": "107.60",
-        "delta": "38.20"
-      },
-      "overhead": "0.027"
-    },
-    {
-      "hookConfig": "transformation",
-      "hookName": "TransformHook",
-      "dataSize": 10,
-      "iterations": 100,
-      "latency": {
-        "min": "0.100",
-        "max": "12.401",
-        "mean": "0.447",
-        "median": "0.114",
-        "p95": "2.429",
-        "p99": "12.401"
-      },
-      "throughput": "2236969.62",
-      "memory": {
-        "before": "107.67",
-        "after": "124.16",
-        "delta": "16.49"
-      },
-      "overhead": "0.045"
-    },
-    {
-      "hookConfig": "transformation",
-      "hookName": "TransformHook",
-      "dataSize": 50,
-      "iterations": 100,
-      "latency": {
-        "min": "0.516",
-        "max": "12.100",
-        "mean": "1.007",
-        "median": "0.598",
-        "p95": "3.386",
-        "p99": "12.100"
-      },
-      "throughput": "4962883.83",
-      "memory": {
-        "before": "124.37",
-        "after": "148.06",
-        "delta": "23.69"
-      },
-      "overhead": "0.020"
-    },
-    {
-      "hookConfig": "transformation",
-      "hookName": "TransformHook",
-      "dataSize": 100,
-      "iterations": 100,
-      "latency": {
-        "min": "0.935",
-        "max": "31.335",
-        "mean": "1.850",
-        "median": "1.079",
-        "p95": "5.578",
-        "p99": "31.335"
-      },
-      "throughput": "5404547.25",
-      "memory": {
-        "before": "148.45",
-        "after": "136.48",
-        "delta": "-11.98"
-      },
-      "overhead": "0.019"
-    },
-    {
-      "hookConfig": "transformation",
-      "hookName": "TransformHook",
-      "dataSize": 500,
-      "iterations": 100,
-      "latency": {
-        "min": "4.956",
-        "max": "186.540",
-        "mean": "32.828",
-        "median": "10.045",
-        "p95": "136.704",
-        "p99": "186.540"
-      },
-      "throughput": "1523089.43",
-      "memory": {
-        "before": "138.41",
-        "after": "88.45",
-        "delta": "-49.96"
-      },
-      "overhead": "0.066"
-    },
-    {
-      "hookConfig": "transformation",
-      "hookName": "TransformHook",
-      "dataSize": 1000,
-      "iterations": 100,
-      "latency": {
-        "min": "13.299",
-        "max": "430.829",
-        "mean": "118.795",
-        "median": "99.879",
-        "p95": "304.222",
-        "p99": "430.829"
-      },
-      "throughput": "841786.11",
-      "memory": {
-        "before": "83.09",
-        "after": "125.26",
-        "delta": "42.16"
-      },
-      "overhead": "0.119"
-    },
-    {
-      "hookConfig": "complex-validation",
-      "hookName": "ComplexValidationHook",
-      "dataSize": 10,
-      "iterations": 100,
-      "latency": {
-        "min": "0.034",
-        "max": "61.035",
-        "mean": "0.671",
-        "median": "0.051",
-        "p95": "0.121",
-        "p99": "61.035"
-      },
-      "throughput": "1490251.87",
-      "memory": {
-        "before": "125.32",
-        "after": "129.85",
-        "delta": "4.52"
-      },
-      "overhead": "0.067"
-    },
-    {
-      "hookConfig": "complex-validation",
-      "hookName": "ComplexValidationHook",
-      "dataSize": 50,
-      "iterations": 100,
-      "latency": {
-        "min": "0.088",
-        "max": "94.936",
-        "mean": "1.286",
-        "median": "0.162",
-        "p95": "0.880",
-        "p99": "94.936"
-      },
-      "throughput": "3888981.19",
-      "memory": {
-        "before": "130.07",
-        "after": "165.91",
-        "delta": "35.84"
-      },
-      "overhead": "0.026"
-    },
-    {
-      "hookConfig": "complex-validation",
-      "hookName": "ComplexValidationHook",
-      "dataSize": 100,
-      "iterations": 100,
-      "latency": {
-        "min": "0.175",
-        "max": "0.710",
-        "mean": "0.192",
-        "median": "0.177",
-        "p95": "0.231",
-        "p99": "0.710"
-      },
-      "throughput": "52140359.14",
-      "memory": {
-        "before": "166.32",
-        "after": "131.38",
-        "delta": "-34.95"
-      },
-      "overhead": "0.002"
-    },
-    {
-      "hookConfig": "complex-validation",
-      "hookName": "ComplexValidationHook",
-      "dataSize": 500,
-      "iterations": 100,
-      "latency": {
-        "min": "0.851",
-        "max": "65.182",
-        "mean": "1.676",
-        "median": "0.917",
-        "p95": "1.981",
-        "p99": "65.182"
-      },
-      "throughput": "29837772.09",
-      "memory": {
-        "before": "133.43",
-        "after": "139.31",
-        "delta": "5.89"
-      },
-      "overhead": "0.003"
-    },
-    {
-      "hookConfig": "complex-validation",
-      "hookName": "ComplexValidationHook",
-      "dataSize": 1000,
-      "iterations": 100,
-      "latency": {
-        "min": "1.711",
-        "max": "87.451",
-        "mean": "3.062",
-        "median": "1.852",
-        "p95": "4.707",
-        "p99": "87.451"
-      },
-      "throughput": "32659984.71",
-      "memory": {
-        "before": "143.41",
-        "after": "152.96",
-        "delta": "9.55"
-      },
-      "overhead": "0.003"
-    },
-    {
-      "hookConfig": "transformation-chain",
-      "hookName": "TransformChainHook",
-      "dataSize": 10,
-      "iterations": 100,
-      "latency": {
-        "min": "0.111",
-        "max": "65.462",
-        "mean": "1.646",
-        "median": "0.174",
-        "p95": "4.335",
-        "p99": "65.462"
-      },
-      "throughput": "607388.72",
-      "memory": {
-        "before": "153.03",
-        "after": "134.62",
-        "delta": "-18.41"
-      },
-      "overhead": "0.165"
-    },
-    {
-      "hookConfig": "transformation-chain",
-      "hookName": "TransformChainHook",
-      "dataSize": 50,
-      "iterations": 100,
-      "latency": {
-        "min": "0.713",
-        "max": "140.038",
-        "mean": "9.076",
-        "median": "1.133",
-        "p95": "76.411",
-        "p99": "140.038"
-      },
-      "throughput": "550915.29",
-      "memory": {
-        "before": "134.83",
-        "after": "141.15",
-        "delta": "6.32"
-      },
-      "overhead": "0.182"
-    },
-    {
-      "hookConfig": "transformation-chain",
-      "hookName": "TransformChainHook",
-      "dataSize": 100,
-      "iterations": 100,
-      "latency": {
-        "min": "1.661",
-        "max": "120.962",
-        "mean": "14.474",
-        "median": "2.480",
-        "p95": "106.459",
-        "p99": "120.962"
-      },
-      "throughput": "690881.41",
-      "memory": {
-        "before": "141.55",
-        "after": "159.78",
-        "delta": "18.23"
-      },
-      "overhead": "0.145"
-    },
-    {
-      "hookConfig": "transformation-chain",
-      "hookName": "TransformChainHook",
-      "dataSize": 500,
-      "iterations": 100,
-      "latency": {
-        "min": "9.768",
-        "max": "342.858",
-        "mean": "97.890",
-        "median": "85.243",
-        "p95": "285.897",
-        "p99": "342.858"
-      },
-      "throughput": "510778.54",
-      "memory": {
-        "before": "146.59",
-        "after": "200.72",
-        "delta": "54.13"
-      },
-      "overhead": "0.196"
-    },
-    {
-      "hookConfig": "transformation-chain",
-      "hookName": "TransformChainHook",
-      "dataSize": 1000,
-      "iterations": 100,
-      "latency": {
-        "min": "19.166",
-        "max": "918.354",
-        "mean": "236.138",
-        "median": "187.469",
-        "p95": "707.536",
-        "p99": "918.354"
-      },
-      "throughput": "423481.31",
-      "memory": {
-        "before": "184.16",
-        "after": "271.55",
-        "delta": "87.38"
-      },
-      "overhead": "0.236"
-    },
-    {
-      "hookConfig": "intensive-compute",
-      "hookName": "IntensiveComputeHook",
-      "dataSize": 10,
-      "iterations": 100,
-      "latency": {
-        "min": "0.177",
-        "max": "67.403",
-        "mean": "0.890",
-        "median": "0.179",
-        "p95": "0.273",
-        "p99": "67.403"
-      },
-      "throughput": "1123868.54",
-      "memory": {
-        "before": "271.61",
-        "after": "260.17",
-        "delta": "-11.44"
-      },
-      "overhead": "0.089"
-    },
-    {
-      "hookConfig": "intensive-compute",
-      "hookName": "IntensiveComputeHook",
-      "dataSize": 50,
-      "iterations": 100,
-      "latency": {
-        "min": "0.689",
-        "max": "275.089",
-        "mean": "9.564",
-        "median": "0.856",
-        "p95": "29.395",
-        "p99": "275.089"
-      },
-      "throughput": "522812.37",
-      "memory": {
-        "before": "260.38",
-        "after": "231.39",
-        "delta": "-29.00"
-      },
-      "overhead": "0.191"
-    },
-    {
-      "hookConfig": "intensive-compute",
-      "hookName": "IntensiveComputeHook",
-      "dataSize": 100,
-      "iterations": 100,
-      "latency": {
-        "min": "1.380",
-        "max": "375.124",
-        "mean": "14.367",
-        "median": "1.914",
-        "p95": "86.877",
-        "p99": "375.124"
-      },
-      "throughput": "696026.19",
-      "memory": {
-        "before": "231.85",
-        "after": "235.02",
-        "delta": "3.16"
-      },
-      "overhead": "0.144"
-    },
-    {
-      "hookConfig": "intensive-compute",
-      "hookName": "IntensiveComputeHook",
-      "dataSize": 500,
-      "iterations": 100,
-      "latency": {
-        "min": "7.496",
-        "max": "276.829",
-        "mean": "47.806",
-        "median": "11.140",
-        "p95": "219.493",
-        "p99": "276.829"
-      },
-      "throughput": "1045904.37",
-      "memory": {
-        "before": "237.10",
-        "after": "254.82",
-        "delta": "17.73"
-      },
-      "overhead": "0.096"
-    },
-    {
-      "hookConfig": "intensive-compute",
-      "hookName": "IntensiveComputeHook",
-      "dataSize": 1000,
-      "iterations": 100,
-      "latency": {
-        "min": "17.523",
-        "max": "448.388",
-        "mean": "81.683",
-        "median": "30.001",
-        "p95": "278.589",
-        "p99": "448.388"
-      },
-      "throughput": "1224249.95",
-      "memory": {
-        "before": "258.77",
-        "after": "251.06",
-        "delta": "-7.71"
-      },
-      "overhead": "0.082"
-    }
+  "dataSizes": [
+    10,
+    100,
+    1000,
+    10000
   ],
-  "triggerResults": [
-    {
-      "trigger": "before-add",
-      "latency": {
-        "mean": "18.123",
-        "p95": "168.392",
-        "p99": "317.344"
+  "iterations": 100,
+  "results": {
+    "baseline": {
+      "10": {
+        "avgLatency": 0.004014510000001508,
+        "minLatency": 0.0007080000000314612,
+        "maxLatency": 0.14129100000002381,
+        "p95Latency": 0.0037909999999925503,
+        "p99Latency": 0.026083000000028278,
+        "avgThroughput": 4554633.178786544,
+        "avgMemory": 0.0014151763916015626,
+        "iterations": 100
+      },
+      "100": {
+        "avgLatency": 0.002593360000003031,
+        "minLatency": 0.0012920000000349319,
+        "maxLatency": 0.005875000000003183,
+        "p95Latency": 0.0049579999999878055,
+        "p99Latency": 0.005291999999997188,
+        "avgThroughput": 42931803.355440624,
+        "avgMemory": 0.00433197021484375,
+        "iterations": 100
+      },
+      "1000": {
+        "avgLatency": 0.07201127000000838,
+        "minLatency": 0.009291000000075655,
+        "maxLatency": 4.13170799999989,
+        "p95Latency": 0.046875,
+        "p99Latency": 0.7335420000000568,
+        "avgThroughput": 48251506.68342907,
+        "avgMemory": 0.03863494873046875,
+        "iterations": 100
+      },
+      "10000": {
+        "avgLatency": 0.0240316699999903,
+        "minLatency": 0.010874999999941792,
+        "maxLatency": 0.19287500000018554,
+        "p95Latency": 0.08483299999988958,
+        "p99Latency": 0.14454200000000128,
+        "avgThroughput": 608230676.742225,
+        "avgMemory": 0.022918853759765625,
+        "iterations": 100
       }
     },
-    {
-      "trigger": "after-add",
-      "latency": {
-        "mean": "6.151",
-        "p95": "10.288",
-        "p99": "128.407"
+    "validate-only": {
+      "10": {
+        "avgLatency": 0.23065578000000642,
+        "minLatency": 0.09883400000035181,
+        "maxLatency": 0.87887499999988,
+        "p95Latency": 0.35104199999977936,
+        "p99Latency": 0.671291999999994,
+        "avgThroughput": 48569.35725202213,
+        "avgMemory": 0.20144187927246093,
+        "iterations": 100,
+        "overhead": 5645.55250827423
+      },
+      "100": {
+        "avgLatency": 1.979723319999989,
+        "minLatency": 0.5029589999999189,
+        "maxLatency": 13.634624999999687,
+        "p95Latency": 3.1136670000000777,
+        "p99Latency": 10.641708000000108,
+        "avgThroughput": 64306.756230018764,
+        "avgMemory": 1.8109974670410156,
+        "iterations": 100,
+        "overhead": 76238.16053296402
+      },
+      "1000": {
+        "avgLatency": 4.475810850000003,
+        "minLatency": 2.339082999999846,
+        "maxLatency": 13.154250000000047,
+        "p95Latency": 6.538042000000132,
+        "p99Latency": 11.351000000000113,
+        "avgThroughput": 255099.402746403,
+        "avgMemory": 13.362772750854493,
+        "iterations": 100,
+        "overhead": 6115.4310707191835
+      },
+      "10000": {
+        "avgLatency": 33.450408390000014,
+        "minLatency": 23.388834000000315,
+        "maxLatency": 69.93383300000005,
+        "p95Latency": 51.13720900000044,
+        "p99Latency": 66.63908300000003,
+        "avgThroughput": 313719.9029534538,
+        "avgMemory": 4.405783157348633,
+        "iterations": 100,
+        "overhead": 139093.0248293752
       }
     },
-    {
-      "trigger": "before-query",
-      "latency": {
-        "mean": "8.037",
-        "p95": "8.332",
-        "p99": "221.220"
+    "transform-only": {
+      "10": {
+        "avgLatency": 0.3847587399999156,
+        "minLatency": 0.15129199999864795,
+        "maxLatency": 3.5988330000000133,
+        "p95Latency": 0.8045000000001892,
+        "p99Latency": 1.976249999999709,
+        "avgThroughput": 36948.90627578153,
+        "avgMemory": 0.1708233642578125,
+        "iterations": 100,
+        "overhead": 9484.20180793599
+      },
+      "100": {
+        "avgLatency": 1.9331679300000724,
+        "minLatency": 1.0771660000009433,
+        "maxLatency": 16.009791000000405,
+        "p95Latency": 3.32799999999952,
+        "p99Latency": 7.601791999999477,
+        "avgThroughput": 65630.45596532157,
+        "avgMemory": 1.6684495544433593,
+        "iterations": 100,
+        "overhead": 74442.98400522153
+      },
+      "1000": {
+        "avgLatency": 13.508308399999805,
+        "minLatency": 8.884125000000495,
+        "maxLatency": 17.123916000000463,
+        "p95Latency": 17.123916000000463,
+        "p99Latency": 17.123916000000463,
+        "avgThroughput": 77166.40193573253,
+        "avgMemory": 16.640937042236327,
+        "iterations": 10,
+        "overhead": 18658.603201968574
+      },
+      "10000": {
+        "avgLatency": 120.1484083999998,
+        "minLatency": 91.88183299999946,
+        "maxLatency": 203.4366659999996,
+        "p95Latency": 203.4366659999996,
+        "p99Latency": 203.4366659999996,
+        "avgThroughput": 88572.4565210179,
+        "avgMemory": 39.78504943847656,
+        "iterations": 10,
+        "overhead": 499858.6312563725
       }
     },
-    {
-      "trigger": "after-query",
-      "latency": {
-        "mean": "11.621",
-        "p95": "98.864",
-        "p99": "244.400"
+    "validate+transform": {
+      "10": {
+        "avgLatency": 0.6805591700000332,
+        "minLatency": 0.2711250000011205,
+        "maxLatency": 5.786583000000974,
+        "p95Latency": 2.1466249999994034,
+        "p99Latency": 3.5949170000003505,
+        "avgThroughput": 20406.90551539338,
+        "avgMemory": 0.5338225555419922,
+        "iterations": 100,
+        "overhead": 16852.48411387137
+      },
+      "100": {
+        "avgLatency": 3.48187128000005,
+        "minLatency": 1.8771250000008877,
+        "maxLatency": 9.205707999997685,
+        "p95Latency": 6.42120900000009,
+        "p99Latency": 8.036208999999872,
+        "avgThroughput": 33034.8398743802,
+        "avgMemory": 4.936994552612305,
+        "iterations": 100,
+        "overhead": 134161.00811287214
+      },
+      "1000": {
+        "avgLatency": 125.11995439999991,
+        "minLatency": 22.13537499999802,
+        "maxLatency": 223.28408399999898,
+        "p95Latency": 223.28408399999898,
+        "p99Latency": 223.28408399999898,
+        "avgThroughput": 13426.580579063104,
+        "avgMemory": 18.278831481933594,
+        "iterations": 10,
+        "overhead": 173650.51766200672
+      },
+      "10000": {
+        "avgLatency": 1796.2920209,
+        "minLatency": 1514.4344579999997,
+        "maxLatency": 2217.5684169999986,
+        "p95Latency": 2217.5684169999986,
+        "p99Latency": 2217.5684169999986,
+        "avgThroughput": 5641.083014203238,
+        "avgMemory": 19.42032241821289,
+        "iterations": 10,
+        "overhead": 7474586.615207038
+      }
+    },
+    "validate+validate": {
+      "10": {
+        "avgLatency": 0.3130083500003821,
+        "minLatency": 0.15216700000019046,
+        "maxLatency": 4.667207999998936,
+        "p95Latency": 0.3934159999989788,
+        "p99Latency": 1.1456250000046566,
+        "avgThroughput": 42406.47079487411,
+        "avgMemory": 0.46215667724609377,
+        "iterations": 100,
+        "overhead": 7696.925403106841
+      },
+      "100": {
+        "avgLatency": 1.9466179299999202,
+        "minLatency": 1.0152080000043497,
+        "maxLatency": 7.157750000005763,
+        "p95Latency": 3.961875000000873,
+        "p99Latency": 5.742875000003551,
+        "avgThroughput": 63688.58719955038,
+        "avgMemory": 4.5964671325683595,
+        "iterations": 100,
+        "overhead": 74961.61620436983
+      },
+      "1000": {
+        "avgLatency": 13.150510389999763,
+        "minLatency": 9.291041000004043,
+        "maxLatency": 25.346041999997396,
+        "p95Latency": 19.377707999999984,
+        "p99Latency": 22.905542000000423,
+        "avgThroughput": 80451.72414081538,
+        "avgMemory": 45.897500381469726,
+        "iterations": 100,
+        "overhead": 18161.739294416322
+      },
+      "10000": {
+        "avgLatency": 142.65543119999987,
+        "minLatency": 94.73158300000068,
+        "maxLatency": 270.11299999999756,
+        "p95Latency": 217.73058299999684,
+        "p99Latency": 243.78908399999636,
+        "avgThroughput": 74571.65466386678,
+        "avgMemory": 9.715762557983398,
+        "iterations": 100,
+        "overhead": 593514.306455013
+      }
+    },
+    "transform+transform": {
+      "10": {
+        "avgLatency": 1.659841230000602,
+        "minLatency": 0.39037500000267755,
+        "maxLatency": 42.015417000002344,
+        "p95Latency": 4.033250000007683,
+        "p99Latency": 8.518458000005921,
+        "avgThroughput": 14015.78615860625,
+        "avgMemory": 0.5500872039794922,
+        "iterations": 100,
+        "overhead": 41246.047961020864
+      },
+      "100": {
+        "avgLatency": 22.351114639999434,
+        "minLatency": 5.230374999999185,
+        "maxLatency": 101.12316700001247,
+        "p95Latency": 78.04804099998728,
+        "p99Latency": 99.88820799998939,
+        "avgThroughput": 9717.602294199001,
+        "avgMemory": 5.058381958007812,
+        "iterations": 100,
+        "overhead": 861759.3114713465
+      },
+      "1000": {
+        "avgLatency": 252.6100709999984,
+        "minLatency": 129.52312499999243,
+        "maxLatency": 329.7081249999901,
+        "p95Latency": 329.7081249999901,
+        "p99Latency": 329.7081249999901,
+        "avgThroughput": 4248.396266268121,
+        "avgMemory": 17.457440185546876,
+        "iterations": 10,
+        "overhead": 350692.4120765666
+      },
+      "10000": {
+        "avgLatency": 3278.307737500002,
+        "minLatency": 2111.488083000004,
+        "maxLatency": 4239.9598750000005,
+        "p95Latency": 4239.9598750000005,
+        "p99Latency": 4239.9598750000005,
+        "avgThroughput": 3204.898123865029,
+        "avgMemory": 25.5822998046875,
+        "iterations": 10,
+        "overhead": 13641514.326017812
+      }
+    },
+    "triple-hooks": {
+      "10": {
+        "avgLatency": 1.2354441699982273,
+        "minLatency": 0.2983749999984866,
+        "maxLatency": 23.77537499999744,
+        "p95Latency": 5.928958000004059,
+        "p99Latency": 9.070458000001963,
+        "avgThroughput": 18112.427710119897,
+        "avgMemory": 0.7001960754394532,
+        "iterations": 100,
+        "overhead": 30674.469860525023
+      },
+      "100": {
+        "avgLatency": 29.41425042999879,
+        "minLatency": 2.235917000012705,
+        "maxLatency": 236.68120900000213,
+        "p95Latency": 168.09137500001816,
+        "p99Latency": 233.38933400000678,
+        "avgThroughput": 15321.401730775659,
+        "avgMemory": 6.520060729980469,
+        "iterations": 100,
+        "overhead": 1134113.9321175779
+      },
+      "1000": {
+        "avgLatency": 417.53310420000344,
+        "minLatency": 179.19679099999485,
+        "maxLatency": 623.1888340000005,
+        "p95Latency": 623.1888340000005,
+        "p99Latency": 623.1888340000005,
+        "avgThroughput": 2784.841291404029,
+        "avgMemory": 27.684201812744142,
+        "iterations": 10,
+        "overhead": 579716.3318046673
+      },
+      "10000": {
+        "avgLatency": 4322.860474999997,
+        "minLatency": 3288.45204199999,
+        "maxLatency": 5208.541292000009,
+        "p95Latency": 5208.541292000009,
+        "p99Latency": 5208.541292000009,
+        "avgThroughput": 2367.0425218497717,
+        "avgMemory": 38.9135383605957,
+        "iterations": 10,
+        "overhead": 17988081.741018172
+      }
+    },
+    "all-validation": {
+      "10": {
+        "avgLatency": 0.5234687700023641,
+        "minLatency": 0.25287500000558794,
+        "maxLatency": 8.439708999998402,
+        "p95Latency": 0.7831669999868609,
+        "p99Latency": 1.0899159999971744,
+        "avgThroughput": 24777.394185704972,
+        "avgMemory": 0.6737485504150391,
+        "iterations": 100,
+        "overhead": 12939.4187585077
+      },
+      "100": {
+        "avgLatency": 3.117984160002379,
+        "minLatency": 1.5560830000031274,
+        "maxLatency": 13.211875000008149,
+        "p95Latency": 5.75041700003203,
+        "p99Latency": 8.794584000017494,
+        "avgThroughput": 38999.91996848842,
+        "avgMemory": 6.703026504516601,
+        "iterations": 100,
+        "overhead": 120129.51537768514
+      },
+      "1000": {
+        "avgLatency": 20.837283790000946,
+        "minLatency": 15.02995799999917,
+        "maxLatency": 36.68220899999142,
+        "p95Latency": 30.0362089999835,
+        "p99Latency": 33.459499999997206,
+        "avgThroughput": 49878.60594852871,
+        "avgMemory": 2.903356018066406,
+        "iterations": 100,
+        "overhead": 28836.142620451657
+      },
+      "10000": {
+        "avgLatency": 194.06800700000022,
+        "minLatency": 145.03754099999787,
+        "maxLatency": 290.0995000000112,
+        "p95Latency": 262.46937499998603,
+        "p99Latency": 286.3175419999752,
+        "avgThroughput": 53222.15297282613,
+        "avgMemory": 27.515169067382814,
+        "iterations": 100,
+        "overhead": 807451.064907593
+      }
+    },
+    "all-transform": {
+      "10": {
+        "avgLatency": 3.306140849997755,
+        "minLatency": 0.41533299995353445,
+        "maxLatency": 21.13541599997552,
+        "p95Latency": 12.56212499999674,
+        "p99Latency": 20.600999999966007,
+        "avgThroughput": 11618.192003496213,
+        "avgMemory": 0.554279556274414,
+        "iterations": 100,
+        "overhead": 82254.77928804544
+      },
+      "100": {
+        "avgLatency": 57.17184326999879,
+        "minLatency": 8.683750000025611,
+        "maxLatency": 272.3765419999836,
+        "p95Latency": 227.12795900000492,
+        "p99Latency": 270.5206670000334,
+        "avgThroughput": 5208.020571700934,
+        "avgMemory": 5.0367765045166015,
+        "iterations": 100,
+        "overhead": 2204447.123034672
+      },
+      "1000": {
+        "avgLatency": 530.624687600002,
+        "minLatency": 225.04187499999534,
+        "maxLatency": 1112.5810419999762,
+        "p95Latency": 1112.5810419999762,
+        "p99Latency": 1112.5810419999762,
+        "avgThroughput": 2404.5160231172513,
+        "avgMemory": 25.364083099365235,
+        "iterations": 10,
+        "overhead": 736763.3931882333
+      },
+      "10000": {
+        "avgLatency": 6734.57140850001,
+        "minLatency": 5131.135000000009,
+        "maxLatency": 8728.070125000027,
+        "p95Latency": 8728.070125000027,
+        "p99Latency": 8728.070125000027,
+        "avgThroughput": 1541.2627355301486,
+        "avgMemory": 32.89944152832031,
+        "iterations": 10,
+        "overhead": 28023634.54904602
+      }
+    },
+    "complex-chain": {
+      "10": {
+        "avgLatency": 4.119870830000727,
+        "minLatency": 0.480833999987226,
+        "maxLatency": 61.67404199996963,
+        "p95Latency": 15.4879999999539,
+        "p99Latency": 18.290915999969002,
+        "avgThroughput": 9886.573760101754,
+        "avgMemory": 0.9609527587890625,
+        "iterations": 100,
+        "overhead": 102524.50037486968
+      },
+      "100": {
+        "avgLatency": 142.28776412000298,
+        "minLatency": 11.44079199997941,
+        "maxLatency": 687.3932499999646,
+        "p95Latency": 456.61879099998623,
+        "p99Latency": 565.9360420000157,
+        "avgThroughput": 3067.7708281230325,
+        "avgMemory": 8.078843460083007,
+        "iterations": 100,
+        "overhead": 5486518.291322326
+      },
+      "1000": {
+        "avgLatency": 1205.821162399999,
+        "minLatency": 510.7430419999873,
+        "maxLatency": 1949.690082999994,
+        "p95Latency": 1949.690082999994,
+        "p99Latency": 1949.690082999994,
+        "avgThroughput": 952.1270561721489,
+        "avgMemory": 30.60392074584961,
+        "iterations": 10,
+        "overhead": 1674389.5103222851
+      },
+      "10000": {
+        "avgLatency": 10827.437504300044,
+        "minLatency": 8484.50120900001,
+        "maxLatency": 12059.71020900004,
+        "p95Latency": 12059.71020900004,
+        "p99Latency": 12059.71020900004,
+        "avgThroughput": 932.5380430306413,
+        "avgMemory": 54.58588333129883,
+        "iterations": 10,
+        "overhead": 45054769.28001431
       }
     }
-  ],
-  "summary": {
-    "totalBenchmarks": 30,
-    "meanLatency": 24.159666666666666,
-    "p95Latency": 118.795,
-    "p99Latency": 236.138
   }
 }
