@@ -6,14 +6,14 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { createStore } from '@unrdf/oxigraph';
+import { createStore, dataFactory } from '@unrdf/oxigraph';
 import {
   createStructureSnapshot,
   computeDrift,
   createEmptyBaseline,
 } from '../../src/project-engine/drift-snapshot.mjs';
 
-const { namedNode, literal } = DataFactory;
+const { namedNode, literal } = dataFactory;
 
 const NS = {
   fs: 'http://example.org/unrdf/filesystem#',

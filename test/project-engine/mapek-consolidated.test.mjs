@@ -7,7 +7,7 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
-import { createStore } from '@unrdf/oxigraph';
+import { createStore, dataFactory } from '@unrdf/oxigraph';
 import {
   runMapekIteration,
   createAutonomicHooks,
@@ -21,7 +21,7 @@ import {
   _ALL_INNOVATIONS,
 } from '../../src/project-engine/mapek-orchestration.mjs';
 
-const { namedNode, literal } = DataFactory;
+const { namedNode, literal } = dataFactory;
 
 const NS = {
   rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',

@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { TransactionManager } from '../src/knowledge-engine/transaction.mjs';
-import { createStore } from '@unrdf/oxigraph';
+import { createStore, dataFactory } from '@unrdf/oxigraph';
 
-const { namedNode, quad } = DataFactory;
+const { namedNode, quad } = dataFactory;
 
 describe('Transaction Manager - veto pre-hook', () => {
   it('pre-hook with veto prevents commit', async () => {

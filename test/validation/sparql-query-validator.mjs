@@ -5,9 +5,9 @@
 
 import { createDarkMatterCore } from '../../src/knowledge-engine/dark-matter-core.mjs';
 import { _query, select, ask, construct } from '../../src/knowledge-engine/query.mjs';
-import { createStore } from '@unrdf/oxigraph';
+import { createStore, dataFactory } from '@unrdf/oxigraph';
 
-const { namedNode, _literal } = DataFactory;
+const { namedNode, _literal } = dataFactory;
 
 /**
  * Validate SPARQL query functionality

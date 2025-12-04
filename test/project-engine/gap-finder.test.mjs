@@ -4,10 +4,10 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { createStore } from '@unrdf/oxigraph';
+import { createStore, dataFactory } from '@unrdf/oxigraph';
 import { findMissingRoles, scoreMissingRole } from '../../src/project-engine/gap-finder.mjs';
 
-const { namedNode, literal } = DataFactory;
+const { namedNode, literal } = dataFactory;
 
 const NS = {
   rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
