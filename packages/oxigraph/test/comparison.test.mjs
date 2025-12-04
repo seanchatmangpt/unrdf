@@ -21,7 +21,7 @@ describe('Engine Comparison: Oxigraph vs Current Engine', () => {
     console.log('─'.repeat(60));
 
     const oxigraphStart = performance.now();
-    const newOxigraphStore = createOxigraphStore();
+    const _newOxigraphStore = createOxigraphStore();
     const oxigraphInit = performance.now() - oxigraphStart;
 
     console.log(`Oxigraph init time: ${oxigraphInit.toFixed(2)}ms`);
@@ -253,7 +253,7 @@ describe('Engine Comparison: Oxigraph vs Current Engine', () => {
     console.log('─'.repeat(60));
 
     // Initialize with test data
-    const ex = dataFactory.namedNode('http://example.com/');
+    const _ex = dataFactory.namedNode('http://example.com/');
     const predicate = dataFactory.namedNode('http://schema.org/age');
 
     for (let i = 0; i < 100; i++) {
@@ -369,7 +369,7 @@ describe('Engine Comparison: Oxigraph vs Current Engine', () => {
     // Get initial memory
     const initialMemory = process.memoryUsage().heapUsed / 1024 / 1024;
 
-    const ex = dataFactory.namedNode('http://example.com/');
+    const _ex = dataFactory.namedNode('http://example.com/');
     const predicates = [
       dataFactory.namedNode('http://schema.org/name'),
       dataFactory.namedNode('http://schema.org/age'),
@@ -414,7 +414,7 @@ describe('Engine Comparison: Oxigraph vs Current Engine', () => {
     console.log('─'.repeat(60));
 
     // Complex dataset
-    const ex = dataFactory.namedNode('http://example.com/');
+    const _ex = dataFactory.namedNode('http://example.com/');
     const type = dataFactory.namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type');
     const person = dataFactory.namedNode('http://schema.org/Person');
     const name = dataFactory.namedNode('http://schema.org/name');
