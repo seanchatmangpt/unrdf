@@ -53,19 +53,53 @@ import { z } from 'zod';
 /* ========================================================================= */
 
 export const HookTriggerSchema = z.enum([
+  // Core CRUD (6)
   'before-add',
   'after-add',
   'before-query',
   'after-query',
   'before-remove',
   'after-remove',
+  // Transaction Hooks (4)
+  'before-commit',
+  'after-commit',
+  'before-rollback',
+  'after-rollback',
+  // Error/Event Hooks (5)
+  'on-error',
+  'on-validation-fail',
+  'on-transform',
+  'on-timeout',
+  'on-circuit-open',
+  // Async/IO Hooks (6)
+  'before-fetch',
+  'after-fetch',
+  'before-sync',
+  'after-sync',
+  'before-import',
+  'after-import',
+  // Cron/Time Hooks (4)
+  'on-schedule',
+  'on-interval',
+  'on-idle',
+  'on-startup',
+  // Lean Six Sigma Quality Hooks (8)
+  'quality-gate',
+  'defect-detection',
+  'continuous-improvement',
+  'spc-control',
+  'capability-analysis',
+  'root-cause',
+  'kaizen-event',
+  'audit-trail',
 ]);
 
 export const HookConfigSchema = z.object({
   name: z.string().min(1, 'Hook name is required'),
   trigger: HookTriggerSchema,
-  validate: z.function().args(z.any()).returns(z.boolean()).optional(),
-  transform: z.function().args(z.any()).returns(z.any()).optional(),
+  // Note: No return type enforcement - runtime POKA-YOKE guard handles non-boolean returns
+  validate: z.function().optional(),
+  transform: z.function().optional(),
   metadata: z.record(z.any()).optional(),
 });
 
