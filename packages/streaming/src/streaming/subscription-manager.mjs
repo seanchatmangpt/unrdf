@@ -140,7 +140,7 @@ export function createSubscriptionManager(feed) {
      * Clear all subscriptions
      */
     clearSubscriptions() {
-      for (const [id, sub] of subscriptions) {
+      for (const [_id, sub] of subscriptions) {
         feed.removeEventListener('change', sub.listener);
       }
       subscriptions.clear();
