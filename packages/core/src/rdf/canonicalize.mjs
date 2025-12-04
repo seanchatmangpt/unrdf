@@ -102,18 +102,12 @@ export async function toNTriples(quads) {
   }
 
   try {
-    const writer = new Writer({ format: 'N-Triples' });
-    writer.addQuads(quads);
-
-    return await new Promise((resolve, reject) => {
-      writer.end((error, result) => {
-        if (error) {
-          reject(new Error(`Failed to serialize to N-Triples: ${error.message}`));
-        } else {
-          resolve(result);
-        }
-      });
-    });
+    // Convert quads to N-Triples format using Oxigraph
+    const tempStore = createStore();
+    for (const quad of quads) {
+      tempStore.add(quad);
+    }
+    return tempStore.dump({ format: 'application/n-triples' });
   } catch (error) {
     throw new Error(`N-Triples conversion failed: ${error.message}`);
   }
