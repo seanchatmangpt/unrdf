@@ -3,7 +3,7 @@
  * @module transaction
  */
 
-import { Store } from 'n3';
+import { createStore } from '@unrdf/oxigraph';
 import { sha3_256 } from '@noble/hashes/sha3.js';
 import { blake3 } from '@noble/hashes/blake3.js';
 import { utf8ToBytes, bytesToHex } from '@noble/hashes/utils.js';
@@ -527,7 +527,7 @@ export class TransactionManager {
       throw new TypeError('createSession: initialStore must be a valid Store instance');
     }
 
-    let currentStore = new Store(initialStore.getQuads());
+    let currentStore = createStore(initialStore.getQuads());
     const deltas = [];
     const receipts = [];
 
@@ -566,7 +566,7 @@ export class TransactionManager {
        * @returns {Store} Current store
        */
       getCurrentStore() {
-        return new Store(currentStore.getQuads());
+        return createStore(currentStore.getQuads());
       },
 
       /**
@@ -581,7 +581,7 @@ export class TransactionManager {
        * Reset session to initial state.
        */
       reset() {
-        currentStore = new Store(initialStore.getQuads());
+        currentStore = createStore(initialStore.getQuads());
         deltas.length = 0;
         receipts.length = 0;
       },

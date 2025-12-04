@@ -10,7 +10,7 @@
  */
 
 import { createStore } from '@unrdf/core';
-import { DataFactory } from 'n3';
+import { dataFactory } from '@unrdf/oxigraph';
 import {
   asNamedNode as _asNamedNode,
   getIRI as _getIRI,
@@ -23,7 +23,7 @@ import {
   validateNamespaces,
 } from './namespace-utils.mjs';
 
-const { _namedNode, _literal, _blankNode } = DataFactory;
+const { _namedNode, _literal, _blankNode } = dataFactory;
 
 /**
  * Data quality assessment result

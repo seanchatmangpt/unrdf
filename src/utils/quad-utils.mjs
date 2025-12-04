@@ -1,4 +1,4 @@
-import { DataFactory } from 'n3';
+import { dataFactory } from '@unrdf/oxigraph';
 import {
   asNamedNode,
   asLiteral,
@@ -7,7 +7,7 @@ import {
   isBlankNode as _isBlankNode,
 } from './term-utils.mjs';
 
-const { quad } = DataFactory;
+const { quad } = dataFactory;
 
 /**
  * Convert quad → plain JSON

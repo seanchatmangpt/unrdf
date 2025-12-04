@@ -3,9 +3,9 @@
  * @module ontologies/unmetric
  */
 
-import { DataFactory } from 'n3';
+import { dataFactory } from '@unrdf/oxigraph';
 
-const { namedNode } = DataFactory;
+const { namedNode } = dataFactory;
 
 // Base namespace
 const UNMETRIC = 'http://example.org/unrdf/metrics#';

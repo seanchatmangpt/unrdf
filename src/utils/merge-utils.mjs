@@ -10,7 +10,7 @@
  */
 
 import { createStore } from '@unrdf/core';
-import { DataFactory as _DataFactory } from 'n3';
+import { dataFactory as _DataFactory } from '@unrdf/oxigraph';
 import { asNamedNode as _asNamedNode, getIRI as _getIRI } from './term-utils.mjs';
 
 /**
