@@ -30,6 +30,9 @@ importers:
       eslint-plugin-jsdoc:
         specifier: ^48.0.0
         version: 48.11.0(eslint@8.57.1)
+      jsdom:
+        specifier: ^27.2.0
+        version: 27.2.0
       prettier:
         specifier: ^3.0.0
         version: 3.6.2
@@ -467,18 +470,6 @@ importers:
 
   playground/full-stack-example/apps/web:
     dependencies:
-      '@unrdf/browser':
-        specifier: workspace:*
-        version: link:../../../../packages/browser
-      '@unrdf/composables':
-        specifier: workspace:*
-        version: link:../../../../packages/composables
-      '@unrdf/core':
-        specifier: workspace:*
-        version: link:../../../../packages/core
-      '@unrdf/streaming':
-        specifier: workspace:*
-        version: link:../../../../packages/streaming
       n3:
         specifier: ^1.26.0
         version: 1.26.0

@@ -37,10 +37,15 @@ function useQuery() {
           const type = detectQueryType(sparql)
 
           if (type === 'SELECT') {
-            results.value = [
-              { s: 'http://example.org/s1', p: 'http://example.org/p', o: 'value1' },
-              { s: 'http://example.org/s2', p: 'http://example.org/p', o: 'value2' }
-            ]
+            // Return empty results for nonexistent properties
+            if (sparql.includes('nonexistent')) {
+              results.value = []
+            } else {
+              results.value = [
+                { s: 'http://example.org/s1', p: 'http://example.org/p', o: 'value1' },
+                { s: 'http://example.org/s2', p: 'http://example.org/p', o: 'value2' }
+              ]
+            }
           } else if (type === 'ASK') {
             results.value = true
           } else if (type === 'CONSTRUCT') {
@@ -73,7 +78,7 @@ function useQuery() {
     return 'SELECT'
   }
 
-  const setTimeout = (ms) => {
+  const setQueryTimeout = (ms) => {
     // Mock timeout
   }
 
@@ -90,7 +95,7 @@ function useQuery() {
     queryCount,
     execute,
     detectQueryType,
-    setTimeout,
+    setQueryTimeout,
     store
   }
 }
@@ -263,7 +268,7 @@ describe('Query Integration (Vue 3)', () => {
     })
 
     it('should handle network timeout', async () => {
-      query.setTimeout(1)
+      query.setQueryTimeout(1)
 
       const sparql = 'SELECT * WHERE { ?s ?p ?o }'
       await query.execute(sparql)

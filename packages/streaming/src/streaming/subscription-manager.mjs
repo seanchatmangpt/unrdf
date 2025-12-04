@@ -8,6 +8,7 @@
  */
 
 import { z } from 'zod';
+import { createChangeFeed } from './change-feed.mjs';
 
 /**
  * Schema for subscription filters
@@ -24,17 +25,20 @@ const FilterSchema = z
 /**
  * Create a subscription manager
  *
- * @param {Object} feed - Change feed to manage subscriptions for
+ * @param {Object} storeOrFeed - N3 Store or ChangeFeed to manage subscriptions for
  * @returns {Object} Subscription manager
  *
  * @example
- * const feed = createChangeFeed();
- * const manager = createSubscriptionManager(feed);
- * const subId = manager.subscribe((change) => {
+ * const store = new Store();
+ * const manager = createSubscriptionManager(store);
+ * const subId = manager.subscribe({ subject: 'http://example.org/person/1' }, (change) => {
  *   console.log('Change:', change);
- * }, { subject: 'http://example.org/person/1' });
+ * });
  */
-export function createSubscriptionManager(feed) {
+export function createSubscriptionManager(storeOrFeed) {
+  // If given a Store, wrap it in a ChangeFeed
+  const feed = storeOrFeed.addEventListener ? storeOrFeed : createChangeFeed(storeOrFeed);
+
   const subscriptions = new Map();
   let nextId = 1;
 
@@ -79,22 +83,23 @@ export function createSubscriptionManager(feed) {
     /**
      * Subscribe to changes
      *
-     * @param {Function} callback - Callback function to receive changes
      * @param {Object} [filter] - Optional filter
      * @param {*} [filter.subject] - Filter by subject
      * @param {*} [filter.predicate] - Filter by predicate
      * @param {*} [filter.object] - Filter by object
      * @param {*} [filter.graph] - Filter by graph
-     * @returns {number} Subscription ID
+     * @param {Function} callback - Callback function to receive changes
+     * @returns {string} Subscription ID
      */
-    subscribe(callback, filter) {
+    subscribe(filter, callback) {
       const validated = FilterSchema.parse(filter);
-      const id = nextId++;
+      const id = `sub_${nextId++}`;
 
       const listener = event => {
         const change = event.detail;
         if (matchesFilter(change.quad, validated)) {
-          callback(change);
+          // Pass array of matching quads to callback
+          callback([change.quad]);
         }
       };
 
@@ -112,7 +117,7 @@ export function createSubscriptionManager(feed) {
     /**
      * Unsubscribe from changes
      *
-     * @param {number} subscriptionId - Subscription ID to remove
+     * @param {string} subscriptionId - Subscription ID to remove
      * @returns {boolean} True if subscription was removed
      */
     unsubscribe(subscriptionId) {

@@ -176,14 +176,16 @@ export class OfflineRDFStore {
 
     for (const op of operations) {
       try {
-        if (op.type === 'add') {
+        if (op && op.type === 'add' && op.data) {
           await this.store.add(op.data);
-        } else if (op.type === 'remove') {
+        } else if (op && op.type === 'remove' && op.data) {
           await this.store.remove(op.data);
         }
         synced++;
       } catch (err) {
-        console.error(`Failed to sync ${op.type} operation:`, err);
+        const opType = op && op.type ? op.type : 'unknown';
+        const errMsg = err && err.message ? err.message : 'Unknown error';
+        console.error(`Failed to sync ${opType} operation: ${errMsg}`);
         failed++;
       }
     }

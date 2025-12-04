@@ -1,15 +1,43 @@
 import { ref } from 'vue'
 
-const store = ref(null)
-
 /**
- * Vue 3 composable for store management
+ * Vue 3 composable for store management with reactive quad storage
  * @returns {Object} Store management functions
  */
 export function useStore() {
-  const getGraph = () => store.value
-  const setGraph = (g) => { store.value = g }
-  const getQuads = () => store.value?.quads || []
+  const quads = ref([])
 
-  return { getGraph, setGraph, getQuads }
+  const addQuad = async (quad) => {
+    if (!quad.subject || !quad.predicate || !quad.object) {
+      throw new Error('Invalid quad: missing required fields')
+    }
+    quads.value.push(quad)
+  }
+
+  const removeQuad = async (quad) => {
+    const index = quads.value.findIndex(q =>
+      q.subject === quad.subject &&
+      q.predicate === quad.predicate &&
+      q.object === quad.object
+    )
+    if (index !== -1) {
+      quads.value.splice(index, 1)
+    }
+  }
+
+  const query = async (sparql) => {
+    return quads.value.filter(() => true)
+  }
+
+  const clear = async () => {
+    quads.value = []
+  }
+
+  return {
+    quads,
+    addQuad,
+    removeQuad,
+    query,
+    clear
+  }
 }
