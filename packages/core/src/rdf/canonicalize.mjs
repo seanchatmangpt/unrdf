@@ -102,12 +102,20 @@ export async function toNTriples(quads) {
   }
 
   try {
-    // Convert quads to N-Triples format using Oxigraph
+    // Oxigraph only supports dataset formats (N-Quads), so dump as N-Quads
+    // and convert to N-Triples by removing graph components
     const tempStore = createStore();
     for (const quad of quads) {
       tempStore.add(quad);
     }
-    return tempStore.dump({ format: 'application/n-triples' });
+    const nquads = tempStore.dump({ format: 'application/n-quads' });
+
+    // Strip graph component: "<s> <p> <o> <g> ." → "<s> <p> <o> ."
+    return nquads
+      .split('\n')
+      .filter(line => line.trim())
+      .map(line => line.replace(/\s+<[^>]+>\s+\.\s*$/, ' .'))
+      .join('\n');
   } catch (error) {
     throw new Error(`N-Triples conversion failed: ${error.message}`);
   }
