@@ -1,6 +1,6 @@
 # UNRDF Architecture
 
-Comprehensive system architecture document for UNRDF v4.0.0.
+Complete system architecture guide for UNRDF v5.0.0+.
 
 ## Executive Summary
 
