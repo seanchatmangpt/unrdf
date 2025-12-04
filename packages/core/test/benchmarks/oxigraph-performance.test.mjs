@@ -11,10 +11,9 @@
  * @vitest-environment node
  */
 
-import { describe, it, expect, beforeAll } from 'vitest';
-import { createStore as createN3Store, namedNode, literal, quad } from '../../src/rdf/store.mjs';
+import { describe, it, expect } from 'vitest';
+import { namedNode, literal, quad } from '../../src/rdf/store.mjs';
 import { createStore as createUnrdfStore } from '../../src/rdf/unrdf-store.mjs';
-import { executeQuery } from '../../src/sparql/executor.mjs';
 import { executeQuerySync } from '../../src/sparql/executor-sync.mjs';
 
 /**
@@ -79,7 +78,7 @@ describe('Oxigraph Performance Benchmarks', () => {
         for (let i = 0; i < 100; i++) {
           // OLD pattern: recreate store from quads on every query
           const tempStore = createUnrdfStore(quads);
-          const result = tempStore.query(sparql);
+          tempStore.query(sparql);
         }
       });
 

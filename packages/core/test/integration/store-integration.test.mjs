@@ -489,7 +489,7 @@ describe('Store Integration Tests', () => {
       store.match();
       store.size();
       store.has(quad(namedNode('http://s'), namedNode('http://p'), literal('o')));
-      store.dump({ format: 'turtle' });
+      store.dump({ format: 'application/n-quads' });
 
       expect(store.version).toBe(version);
     });
