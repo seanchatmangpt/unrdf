@@ -12,7 +12,7 @@
  * 6. Error Handling
  */
 
-import { Store } from 'n3';
+import { createStore } from '@unrdf/oxigraph';
 import { KnowledgeHookManager } from '../src/knowledge-engine/knowledge-hook-manager.mjs';
 import { createPolicyPackManifest } from '../src/knowledge-engine/policy-pack.mjs';
 import { createKnowledgeHook } from '../src/knowledge-engine/schemas.mjs';
@@ -149,7 +149,7 @@ async function testProductionSequence() {
     console.log('\n🔄 Phase 4: Transaction Processing');
 
     // Create test store with initial data
-    const store = new Store();
+    const store = createStore();
     const initialQuad = TestHelpers.createQuad('ex:test', 'ex:hasStatus', 'ex:active');
     store.addQuad(initialQuad);
 

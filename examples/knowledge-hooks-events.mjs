@@ -16,7 +16,7 @@
 import { initStore } from '../src/context/index.mjs';
 import { useKnowledgeHooks, defineHook } from '../src/composables/use-knowledge-hooks.mjs';
 import { EVENTS } from '../src/engines/event-bus.mjs';
-import { DataFactory } from 'n3';
+import { UnrdfDataFactory as DataFactory } from '@unrdf/core/rdf/n3-justified-only';
 
 const { namedNode, literal } = DataFactory; // quad unused
 

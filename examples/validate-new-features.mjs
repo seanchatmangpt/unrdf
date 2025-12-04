@@ -12,7 +12,7 @@
  * - Test utilities
  */
 
-import { Store } from 'n3';
+import { createStore } from '@unrdf/oxigraph';
 import { KnowledgeHookManager } from '../src/knowledge-engine/knowledge-hook-manager.mjs';
 import {
   PolicyPackManager,
@@ -144,7 +144,7 @@ async function validateEffectSandbox() {
     // Execute in sandbox
     const result = await sandbox.executeEffect(testEffect, {
       event: { name: 'test-event' },
-      store: new Store(),
+      store: createStore(),
       delta: { additions: [], removals: [] },
     });
 
@@ -256,7 +256,7 @@ async function validateQueryOptimizer() {
     });
 
     // Create a test store
-    const store = new Store();
+    const store = createStore();
     store.addQuad(
       { value: 'ex:alice', termType: 'NamedNode' },
       { value: 'ex:knows', termType: 'NamedNode' },
@@ -312,7 +312,7 @@ async function validateTestUtils() {
     const testResult = await scenario('Feature Validation Test')
       .setupScenario(async () => {
         return createTestContext()
-          .withStore(new Store())
+          .withStore(createStore())
           .withMetadata({ testRun: 'validation' })
           .build();
       })
@@ -394,7 +394,7 @@ async function validateIntegratedFeatures() {
     console.log(`  ✅ Test hook added: ${testHook.meta.name}`);
 
     // Create a test store and delta
-    const store = new Store();
+    const store = createStore();
     const delta = {
       additions: [
         {

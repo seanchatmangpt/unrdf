@@ -19,7 +19,7 @@ import {
   TransactionManager,
 } from '../src/knowledge-engine.mjs';
 
-import { DataFactory, Store } from 'n3';
+import { UnrdfDataFactory as DataFactory } from '@unrdf/core/rdf/n3-justified-only';
 // import assert from 'assert'; // Unused
 const { namedNode, literal, quad } = DataFactory;
 
@@ -42,7 +42,7 @@ async function main() {
   console.log('🚀 Starting Git Governance Example...\n');
 
   // STEP 1: Initialize empty RDF store representing commits
-  const store = new Store();
+  const store = createStore();
   console.log('📦 Initialized RDF knowledge store for commits.\n');
 
   // STEP 2: Define approved library list

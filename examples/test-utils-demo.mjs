@@ -8,7 +8,7 @@
 
 import { scenario, expect, createTestContext, TestHelpers } from '../src/test-utils/index.mjs';
 import { KnowledgeHookManager } from '../src/knowledge-engine/knowledge-hook-manager.mjs';
-import { Store } from 'n3';
+import { createStore } from '@unrdf/oxigraph';
 
 console.log('🧪 Test Utils Demo\n');
 
@@ -20,7 +20,7 @@ async function demonstrateTestUtils() {
     const basicTest = await scenario('Basic Store Operations')
       .setupScenario(async () => {
         return createTestContext()
-          .withStore(new Store())
+          .withStore(createStore())
           .withMetadata({ testType: 'basic' })
           .build();
       })
@@ -96,7 +96,7 @@ async function demonstrateTestUtils() {
 
         manager.addKnowledgeHook(testHook);
 
-        return createTestContext().withStore(new Store()).withManager(manager).build();
+        return createTestContext().withStore(createStore()).withManager(manager).build();
       })
       .step(
         'Execute knowledge hook',
@@ -188,7 +188,7 @@ async function demonstrateTestUtils() {
           manager.addKnowledgeHook(hook);
         }
 
-        return createTestContext().withStore(new Store()).withManager(manager).build();
+        return createTestContext().withStore(createStore()).withManager(manager).build();
       })
       .step(
         'Apply transaction with hooks',
@@ -240,7 +240,7 @@ async function demonstrateTestUtils() {
 
     const performanceTest = await scenario('Performance Validation')
       .setupScenario(async () => {
-        return createTestContext().withStore(new Store()).build();
+        return createTestContext().withStore(createStore()).build();
       })
       .step(
         'Fast operation',
@@ -278,7 +278,7 @@ async function demonstrateTestUtils() {
 
     const errorTest = await scenario('Error Handling Validation')
       .setupScenario(async () => {
-        return createTestContext().withStore(new Store()).build();
+        return createTestContext().withStore(createStore()).build();
       })
       .step(
         'Successful operation',

@@ -8,13 +8,13 @@
 
 import { TransactionManager } from '../src/knowledge-engine.mjs';
 
-import { DataFactory, Store } from 'n3';
+import { UnrdfDataFactory as DataFactory } from '@unrdf/core/rdf/n3-justified-only';
 const { namedNode, literal, quad } = DataFactory;
 
 // ---------------------------------------------------------------------------
 // Shared Knowledge Store + Transaction Manager
 // ---------------------------------------------------------------------------
-const store = new Store();
+const store = createStore();
 const tx = new TransactionManager();
 
 // ---------------------------------------------------------------------------

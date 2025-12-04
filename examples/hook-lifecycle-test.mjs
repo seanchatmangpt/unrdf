@@ -18,7 +18,7 @@ import {
   financialMonitoringHook,
   dataQualityHook,
 } from './define-hook-example.mjs';
-import { DataFactory, Store } from 'n3';
+import { UnrdfDataFactory as DataFactory } from '@unrdf/core/rdf/n3-justified-only';
 
 const { namedNode, literal, quad } = DataFactory;
 
@@ -29,7 +29,7 @@ async function testMotionComplianceHook() {
   console.log('\n🏛️ Testing Parliamentary Motion Compliance Hook');
   console.log('='.repeat(50));
 
-  const mockGraph = new Store();
+  const mockGraph = createStore();
   const mockContext = {
     graph: mockGraph,
     env: { sessionId: 'test-session-123' },
@@ -112,7 +112,7 @@ async function testFinancialMonitoringHook() {
   console.log('\n💰 Testing Financial Monitoring Hook');
   console.log('='.repeat(50));
 
-  const mockGraph = new Store();
+  const mockGraph = createStore();
   const mockContext = {
     graph: mockGraph,
     env: { environment: 'production' },
@@ -193,7 +193,7 @@ async function testDataQualityHook() {
   console.log('\n🔍 Testing Data Quality Validation Hook');
   console.log('='.repeat(50));
 
-  const mockGraph = new Store();
+  const mockGraph = createStore();
   // Add some test data to the graph
   mockGraph.addQuad(
     quad(
@@ -450,7 +450,7 @@ async function testEdgeCases() {
     const errorEvent = {
       name: errorHook.meta.name,
       payload: { test: 'data' },
-      context: { graph: new Store() },
+      context: { graph: createStore() },
     };
 
     try {
@@ -469,7 +469,7 @@ async function testEdgeCases() {
     const nullEvent = {
       name: motionComplianceHook.meta.name,
       payload: null,
-      context: { graph: new Store() },
+      context: { graph: createStore() },
     };
 
     const beforeResult = await motionComplianceHook.before(nullEvent);
@@ -515,7 +515,7 @@ async function testEdgeCases() {
     const largeEvent = {
       name: financialMonitoringHook.meta.name,
       payload: largePayload,
-      context: { graph: new Store() },
+      context: { graph: createStore() },
     };
 
     const beforeResult = await financialMonitoringHook.before(largeEvent);
@@ -539,7 +539,7 @@ async function testEdgeCases() {
     const circularEvent = {
       name: motionComplianceHook.meta.name,
       payload: circularPayload,
-      context: { graph: new Store() },
+      context: { graph: createStore() },
     };
 
     // This should handle circular references gracefully
@@ -567,7 +567,7 @@ async function testPerformance() {
       const event = {
         name: financialMonitoringHook.meta.name,
         payload: { transactionId: `tx-concurrent-${i}`, amount: 1000 + i },
-        context: { graph: new Store() },
+        context: { graph: createStore() },
       };
 
       promises.push(
@@ -641,7 +641,7 @@ async function testRdfAssertions() {
     const event = {
       name: motionComplianceHook.meta.name,
       payload: { motionId: 'test-assertions' },
-      context: { graph: new Store() },
+      context: { graph: createStore() },
     };
 
     const beforeResult = await motionComplianceHook.before(event);
@@ -712,7 +712,7 @@ async function testRdfAssertions() {
     const assertionEvent = {
       name: assertionHook.meta.name,
       payload: { id: 'data-types-test' },
-      context: { graph: new Store() },
+      context: { graph: createStore() },
     };
 
     const runResult = await assertionHook.run(assertionEvent);

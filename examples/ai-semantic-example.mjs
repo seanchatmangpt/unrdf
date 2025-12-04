@@ -7,7 +7,7 @@
  * Shows semantic analysis, NL→SPARQL, embeddings, and anomaly detection.
  */
 
-import { Store, DataFactory } from 'n3';
+import { createStore } from '@unrdf/oxigraph';
 import {
   createSemanticAnalyzer,
   createNLPQueryBuilder,
@@ -27,7 +27,7 @@ async function main() {
   console.log('🤖 AI Semantic Analysis Example\n');
 
   // Create store with example data
-  const store = new Store();
+  const store = createStore();
 
   // Define ontology
   store.addQuad(quad(ex('Person'), rdf('type'), rdfs('Class')));

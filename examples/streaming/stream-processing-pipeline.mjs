@@ -5,7 +5,7 @@
  * aggregation, and real-time validation.
  */
 
-import { _Store, DataFactory } from 'n3';
+import { UnrdfDataFactory as DataFactory } from '@unrdf/core/rdf/n3-justified-only';
 import {
   createStreamingPipeline,
   WindowType,

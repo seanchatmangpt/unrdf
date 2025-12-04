@@ -6,7 +6,7 @@
  * This test validates the core functionality without complex validation
  */
 
-import { Store } from 'n3';
+import { createStore } from '@unrdf/oxigraph';
 import { KnowledgeHookManager } from '../src/knowledge-engine/knowledge-hook-manager.mjs';
 import { createKnowledgeHook } from '../src/knowledge-engine/schemas.mjs';
 
@@ -58,7 +58,7 @@ async function testSimpleProduction() {
     console.log('\n🔄 Phase 3: Simple Transaction');
 
     // Create test store
-    const store = new Store();
+    const store = createStore();
     const initialQuad = { s: 'ex:test', p: 'ex:hasStatus', o: 'ex:active' };
     store.addQuad(initialQuad);
 

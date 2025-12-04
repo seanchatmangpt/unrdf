@@ -5,7 +5,7 @@
  * and integrate it with the transaction system.
  */
 
-import { Store, DataFactory } from 'n3';
+import { createStore } from '@unrdf/oxigraph';
 import { TransactionManager } from '../../src/knowledge-engine/transaction.mjs';
 import {
   createRealTimeValidator,
@@ -100,7 +100,7 @@ async function main() {
   console.log('Validation hook registered\n');
 
   // Create store
-  let store = new Store();
+  let store = createStore();
 
   // Test 1: Valid person
   console.log('Test 1: Adding valid person...');

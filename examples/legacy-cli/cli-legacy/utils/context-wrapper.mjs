@@ -13,7 +13,7 @@ import { handleError } from './error-handler.mjs';
 import { existsSync } from 'node:fs';
 import { readFile, mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
-import { Parser } from 'n3';
+import {  Parser  } from '@unrdf/core/rdf/n3-justified-only';
 
 /**
  * Get path to persistent store file

@@ -7,7 +7,7 @@
  * transaction system. It demonstrates actual functionality without fake components.
  */
 
-import { Store } from 'n3';
+import { createStore } from '@unrdf/oxigraph';
 import { RealKnowledgeHookManager } from '../src/knowledge-engine/real-knowledge-hooks.mjs';
 import { createRealLockchainWriter } from '../src/knowledge-engine/real-lockchain-writer.mjs';
 import { createRealResolutionLayer } from '../src/knowledge-engine/real-resolution-layer.mjs';
@@ -68,7 +68,7 @@ async function testRealSystem() {
     console.log('\n🔄 Phase 3: Real Transaction Processing');
 
     // Create real store with actual data
-    const store = new Store();
+    const store = createStore();
     const realQuad1 = { s: 'ex:alice', p: 'ex:knows', o: 'ex:bob' };
     const realQuad2 = { s: 'ex:bob', p: 'ex:knows', o: 'ex:charlie' };
     store.addQuad(realQuad1);

@@ -5,9 +5,7 @@
  */
 
 import { defineHook } from '../src/knowledge-engine/define-hook.mjs';
-import { DataFactory } from 'n3';
-
-const { namedNode, literal, quad } = DataFactory;
+import { namedNode, literal, quad } from '../src/rdf/quad-utils.mjs';
 
 /**
  * Example hook for parliamentary motion compliance.
