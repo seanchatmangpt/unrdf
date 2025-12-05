@@ -24,6 +24,11 @@ export class KGCStore extends UnrdfStore {
   /**
    * Generate a unique node ID for this store instance
    * @returns {string}
+   *
+   * @example
+   * import { KGCStore } from './store.mjs';
+   * const store = new KGCStore();
+   * console.assert(store.vectorClock.nodeId.startsWith('node-'), 'Generated node ID has node- prefix');
    */
   _generateNodeId() {
     if (typeof crypto !== 'undefined' && crypto.randomUUID) {
@@ -41,6 +46,13 @@ export class KGCStore extends UnrdfStore {
    * Atomic append: Add event to log and apply deltas to universe in one transaction
    * Follows ACID semantics via UnrdfStore.transaction()
    * Includes vector clock for causality tracking and delta storage for time-travel replay
+   *
+   * @example
+   * import { KGCStore } from './store.mjs';
+   * const store = new KGCStore({ nodeId: 'test-node' });
+   * const receipt = await store.appendEvent({ type: 'CREATE', payload: { label: 'test' } });
+   * console.assert(receipt.receipt.id, 'Event has ID');
+   * console.assert(receipt.receipt.event_count === 1, 'Event count incremented');
    */
   async appendEvent(eventData = {}, deltas = []) {
     const eventId = this._generateEventId();

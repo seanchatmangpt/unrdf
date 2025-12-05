@@ -14,6 +14,13 @@
  * Guard T1: Enforce monotonic clock ordering
  * Prevents: Clock going backwards due to system clock drift or VM pause
  * Action: Auto-increment if current <= lastTime
+ *
+ * @example
+ * import { guardMonotonicOrdering } from './guards.mjs';
+ * const result = guardMonotonicOrdering(100n, 99n);
+ * console.assert(result === 100n, 'Forwards time unchanged');
+ * const wrapped = guardMonotonicOrdering(99n, 100n);
+ * console.assert(wrapped === 101n, 'Backwards time incremented');
  */
 export function guardMonotonicOrdering(current, lastTime) {
   if (typeof current !== 'bigint') {
@@ -32,6 +39,11 @@ export function guardMonotonicOrdering(current, lastTime) {
  * Guard T2: Validate now() environment
  * Prevents: Invalid timestamp in wrong environment (browser vs Node.js)
  * Action: Check both process.hrtime.bigint and performance.now exist
+ *
+ * @example
+ * import { guardTimeEnvironment } from './guards.mjs';
+ * const hasNodeEnv = guardTimeEnvironment();
+ * console.assert(typeof hasNodeEnv === 'boolean', 'Returns boolean');
  */
 export function guardTimeEnvironment() {
   const hasNodeTime = typeof process !== 'undefined' && process.hrtime && typeof process.hrtime.bigint === 'function';
@@ -48,6 +60,16 @@ export function guardTimeEnvironment() {
  * Guard T3: Validate ISO date format
  * Prevents: Silent NaN from malformed ISO strings
  * Action: Check format with regex and validate date parsing
+ *
+ * @example
+ * import { guardISOFormat } from './guards.mjs';
+ * guardISOFormat('2025-01-15T10:30:00.000Z');
+ * try {
+ *   guardISOFormat('not-an-iso');
+ *   throw new Error('Should have thrown');
+ * } catch (err) {
+ *   console.assert(err instanceof Error, 'Throws on invalid format');
+ * }
  */
 export function guardISOFormat(iso) {
   if (typeof iso !== 'string') {
@@ -72,6 +94,16 @@ export function guardISOFormat(iso) {
  * Guard T4: Validate BigInt range
  * Prevents: BigInt overflow or wrap-around
  * Action: Check timestamp within safe range (now and future)
+ *
+ * @example
+ * import { guardBigIntRange } from './guards.mjs';
+ * guardBigIntRange(1000000000n);
+ * try {
+ *   guardBigIntRange(-1n);
+ *   throw new Error('Should reject negative');
+ * } catch (err) {
+ *   console.assert(err instanceof RangeError, 'Throws RangeError for invalid range');
+ * }
  */
 export function guardBigIntRange(t_ns) {
   if (typeof t_ns !== 'bigint') {

@@ -8,6 +8,13 @@ let lastTime = 0n;
 /**
  * Get current time in nanoseconds as BigInt
  * Ensures monotonic ordering (never goes backwards)
+ *
+ * @example
+ * import { now } from './time.mjs';
+ * const t1 = now();
+ * const t2 = now();
+ * console.assert(typeof t1 === 'bigint', 'Returns BigInt');
+ * console.assert(t1 < t2, 'Monotonic: second call returns larger value');
  */
 export function now() {
   let current;
@@ -31,6 +38,20 @@ export function now() {
 
 /**
  * Convert nanosecond BigInt to ISO 8601 string
+ *
+ * @example
+ * import { toISO } from './time.mjs';
+ * const iso = toISO(1609459200000000000n);  // 2021-01-01T00:00:00.000Z
+ * console.assert(iso.includes('2021-01-01'), 'Correct date');
+ *
+ * @example
+ * import { toISO } from './time.mjs';
+ * try {
+ *   toISO(123);  // Not a BigInt
+ *   throw new Error('Should have thrown TypeError');
+ * } catch (err) {
+ *   console.assert(err instanceof TypeError, 'Throws on non-BigInt');
+ * }
  */
 export function toISO(t_ns) {
   if (typeof t_ns !== 'bigint') {
@@ -44,6 +65,22 @@ export function toISO(t_ns) {
  * Convert ISO 8601 string to nanosecond BigInt
  * Preserves nanosecond precision from fractional seconds (e.g., .123456789)
  * Standard Date.parse() truncates to milliseconds - this preserves all 9 digits
+ *
+ * @example
+ * import { fromISO, toISO } from './time.mjs';
+ * const iso = '2025-01-15T10:30:00.123456789Z';
+ * const ns = fromISO(iso);
+ * console.assert(typeof ns === 'bigint', 'Returns BigInt');
+ * console.assert(ns > 0n, 'Positive timestamp');
+ *
+ * @example
+ * import { fromISO } from './time.mjs';
+ * try {
+ *   fromISO('not-a-date');
+ *   throw new Error('Should have thrown');
+ * } catch (err) {
+ *   console.assert(err.message.includes('Invalid ISO'), 'Clear error message');
+ * }
  */
 export function fromISO(iso) {
   if (typeof iso !== 'string') {

@@ -10,6 +10,15 @@ import { GRAPHS, EVENT_TYPES, PREDICATES } from './constants.mjs';
 
 /**
  * Freeze the current universe state: dump, hash, commit to Git, record in EventLog
+ *
+ * @example
+ * import { freezeUniverse } from './freeze.mjs';
+ * import { KGCStore } from './store.mjs';
+ * import { GitBackbone } from './git.mjs';
+ * const store = new KGCStore();
+ * const git = new GitBackbone('/tmp/freeze-test');
+ * const result = await freezeUniverse(store, git);
+ * console.assert(result.id, 'Returns receipt with id');
  */
 export async function freezeUniverse(store, gitBackbone) {
   try {
@@ -76,9 +85,9 @@ export async function freezeUniverse(store, gitBackbone) {
       type: EVENT_TYPES.SNAPSHOT,
       payload: {
         universe_hash: universeHash,
-        git_ref: gitRef,
         nquad_count: nquads.split('\n').filter(l => l.trim()).length,
       },
+      git_ref: gitRef,  // Store git_ref as separate predicate (CRITICAL for reconstructState lookup)
     }, []);
 
     // 5. Update latest snapshot pointer in System graph (O(1) lookup optimization - Flaw 6 fix)
@@ -196,12 +205,37 @@ export async function reconstructState(store, gitBackbone, targetTime) {
 
     // 2. If no cached snapshot or it's after target time, scan for best snapshot
     if (!bestSnapshot) {
+      // Try to find all events (not just filtered by type, since snapshot storage may vary)
+      const allEventTimeQuadsForEdgeCase = [...store.match(null, tNsPredi, null, eventLogGraph)];
+
+      if (allEventTimeQuadsForEdgeCase.length === 0) {
+        // Edge case 1: No events exist yet - return empty store (genesis)
+        const TempStore = store.constructor;
+        return new TempStore();
+      }
+
+      // Find events with SNAPSHOT type indicator
       const snapshotQuads = [
         ...store.match(null, typePredi, dataFactory.literal('SNAPSHOT'), eventLogGraph)
       ];
 
       if (snapshotQuads.length === 0) {
-        throw new Error(`No snapshot found before time ${targetTime}`);
+        // Edge case 2: No snapshots created yet - check if targetTime is before all events
+        let earliestTime = null;
+        for (const timeQuad of allEventTimeQuadsForEdgeCase) {
+          const time = BigInt(timeQuad.object.value);
+          if (earliestTime === null || time < earliestTime) {
+            earliestTime = time;
+          }
+        }
+
+        if (earliestTime !== null && targetTime < earliestTime) {
+          // Target time is before any events - return empty store (genesis)
+          const TempStore = store.constructor;
+          return new TempStore();
+        }
+
+        throw new Error(`No snapshot found before time ${targetTime} (earliest event: ${earliestTime})`);
       }
 
       for (const quad of snapshotQuads) {

@@ -10,64 +10,57 @@
  */
 
 import { getUniverse, broadcastUpdate, GRAPHS, dataFactory, now, VectorClock } from './universe.mjs';
+import { HookRegistry } from '@unrdf/kgc-4d';
 
 /**
- * Validation hook types
+ * Initialize validation registry with domain-specific rules
  */
-const HOOKS = {
-  // Budget validation: must not exceed 100,000
-  VALIDATE_BUDGET: {
-    id: 'validate-budget',
-    predicate: 'http://kgc.io/ontology/budget',
-    validate: (value) => {
-      const budget = parseInt(value, 10);
-      if (isNaN(budget)) return { valid: false, reason: 'Budget must be a number' };
-      if (budget < 0) return { valid: false, reason: 'Budget cannot be negative' };
-      if (budget > 100000) return { valid: false, reason: 'Budget cannot exceed $100,000' };
-      return { valid: true };
-    },
-  },
+const hooks = new HookRegistry();
 
-  // Status validation: must be one of allowed values
-  VALIDATE_STATUS: {
-    id: 'validate-status',
-    predicate: 'http://kgc.io/ontology/status',
-    validate: (value) => {
-      const allowed = ['active', 'paused', 'completed', 'cancelled'];
-      if (!allowed.includes(value)) {
-        return { valid: false, reason: `Status must be one of: ${allowed.join(', ')}` };
-      }
-      return { valid: true };
-    },
+// Budget validation: must not exceed 100,000
+hooks.register('http://kgc.io/ontology/budget', {
+  validate: (value) => {
+    const budget = parseInt(value, 10);
+    if (isNaN(budget)) return { valid: false, reason: 'Budget must be a number' };
+    if (budget < 0) return { valid: false, reason: 'Budget cannot be negative' };
+    if (budget > 100000) return { valid: false, reason: 'Budget cannot exceed $100,000' };
+    return { valid: true };
   },
+});
 
-  // Name validation: must not be empty
-  VALIDATE_NAME: {
-    id: 'validate-name',
-    predicate: 'http://kgc.io/ontology/name',
-    validate: (value) => {
-      if (!value || value.trim().length === 0) {
-        return { valid: false, reason: 'Name cannot be empty' };
-      }
-      if (value.length > 100) {
-        return { valid: false, reason: 'Name cannot exceed 100 characters' };
-      }
-      return { valid: true };
-    },
+// Status validation: must be one of allowed values
+hooks.register('http://kgc.io/ontology/status', {
+  validate: (value) => {
+    const allowed = ['active', 'paused', 'completed', 'cancelled'];
+    if (!allowed.includes(value)) {
+      return { valid: false, reason: `Status must be one of: ${allowed.join(', ')}` };
+    }
+    return { valid: true };
   },
+});
 
-  // Title validation
-  VALIDATE_TITLE: {
-    id: 'validate-title',
-    predicate: 'http://kgc.io/ontology/title',
-    validate: (value) => {
-      if (!value || value.trim().length === 0) {
-        return { valid: false, reason: 'Title cannot be empty' };
-      }
-      return { valid: true };
-    },
+// Name validation: must not be empty
+hooks.register('http://kgc.io/ontology/name', {
+  validate: (value) => {
+    if (!value || value.trim().length === 0) {
+      return { valid: false, reason: 'Name cannot be empty' };
+    }
+    if (value.length > 100) {
+      return { valid: false, reason: 'Name cannot exceed 100 characters' };
+    }
+    return { valid: true };
   },
-};
+});
+
+// Title validation
+hooks.register('http://kgc.io/ontology/title', {
+  validate: (value) => {
+    if (!value || value.trim().length === 0) {
+      return { valid: false, reason: 'Title cannot be empty' };
+    }
+    return { valid: true };
+  },
+});
 
 /**
  * Run validation hooks on a delta operation
@@ -76,18 +69,7 @@ const HOOKS = {
  */
 function runValidationHooks(operation) {
   const predicate = operation.predicate.value || operation.predicate;
-
-  // Find applicable hooks
-  for (const hook of Object.values(HOOKS)) {
-    if (hook.predicate === predicate) {
-      const result = hook.validate(operation.object.value);
-      if (!result.valid) {
-        return result;
-      }
-    }
-  }
-
-  return { valid: true };
+  return hooks.validate(predicate, operation.object.value);
 }
 
 /**

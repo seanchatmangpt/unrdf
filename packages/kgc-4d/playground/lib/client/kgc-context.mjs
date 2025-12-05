@@ -8,146 +8,21 @@
  * - Shard cache (current view of Universe)
  * - Delta submission with optimistic updates
  * - Real-time subscription via SSE
+ *
+ * Uses DeltaSyncReducer pattern from @unrdf/kgc-4d for reusable state management
  */
 
 import { createContext, useContext, useReducer, useCallback, useEffect, useRef } from 'react';
+import {
+  createDeltaSyncReducer,
+  DeltaSyncState,
+} from '@unrdf/kgc-4d';
 
-// Connection states
-export const ConnectionState = {
-  DISCONNECTED: 'disconnected',
-  CONNECTING: 'connecting',
-  CONNECTED: 'connected',
-  SYNCING: 'syncing',
-  ERROR: 'error',
-};
+// Re-export for convenience
+export const ConnectionState = DeltaSyncState;
 
-// Initial state
-const initialState = {
-  connection: ConnectionState.DISCONNECTED,
-  shard: null,
-  vectorClock: null,
-  events: [],
-  pendingDeltas: [],
-  error: null,
-  stats: null,
-};
-
-// Action types
-const Actions = {
-  CONNECT: 'CONNECT',
-  CONNECTED: 'CONNECTED',
-  DISCONNECT: 'DISCONNECT',
-  ERROR: 'ERROR',
-  SET_SHARD: 'SET_SHARD',
-  APPLY_DELTA: 'APPLY_DELTA',
-  QUEUE_DELTA: 'QUEUE_DELTA',
-  DELTA_ACK: 'DELTA_ACK',
-  DELTA_REJECT: 'DELTA_REJECT',
-  ADD_EVENT: 'ADD_EVENT',
-  SET_STATS: 'SET_STATS',
-};
-
-// Reducer
-function kgcReducer(state, action) {
-  switch (action.type) {
-    case Actions.CONNECT:
-      return { ...state, connection: ConnectionState.CONNECTING, error: null };
-
-    case Actions.CONNECTED:
-      return {
-        ...state,
-        connection: ConnectionState.CONNECTED,
-        vectorClock: action.vectorClock,
-      };
-
-    case Actions.DISCONNECT:
-      return { ...state, connection: ConnectionState.DISCONNECTED };
-
-    case Actions.ERROR:
-      return { ...state, connection: ConnectionState.ERROR, error: action.error };
-
-    case Actions.SET_SHARD:
-      return {
-        ...state,
-        shard: action.shard,
-        vectorClock: action.shard.vector_clock,
-        connection: ConnectionState.CONNECTED,
-      };
-
-    case Actions.APPLY_DELTA:
-      // Apply delta to local Shard (optimistic update)
-      const updatedQuads = applyDeltaToQuads(state.shard?.quads || [], action.delta);
-      return {
-        ...state,
-        shard: state.shard ? { ...state.shard, quads: updatedQuads } : null,
-        connection: ConnectionState.SYNCING,
-      };
-
-    case Actions.QUEUE_DELTA:
-      return {
-        ...state,
-        pendingDeltas: [...state.pendingDeltas, action.delta],
-      };
-
-    case Actions.DELTA_ACK:
-      return {
-        ...state,
-        pendingDeltas: state.pendingDeltas.filter((d) => d.id !== action.deltaId),
-        vectorClock: action.vectorClock,
-        connection: ConnectionState.CONNECTED,
-      };
-
-    case Actions.DELTA_REJECT:
-      // Rollback: remove pending delta and potentially refresh Shard
-      return {
-        ...state,
-        pendingDeltas: state.pendingDeltas.filter((d) => d.id !== action.deltaId),
-        error: action.reason,
-        connection: ConnectionState.ERROR,
-      };
-
-    case Actions.ADD_EVENT:
-      return {
-        ...state,
-        events: [action.event, ...state.events].slice(0, 100), // Keep last 100 events
-      };
-
-    case Actions.SET_STATS:
-      return { ...state, stats: action.stats };
-
-    default:
-      return state;
-  }
-}
-
-// Helper: Apply delta operations to quads array
-function applyDeltaToQuads(quads, delta) {
-  let result = [...quads];
-
-  for (const op of delta.operations || []) {
-    if (op.type === 'add') {
-      // Add new quad
-      result.push({
-        subject: op.subject,
-        predicate: op.predicate,
-        object: op.object,
-        graph: op.graph || { value: 'http://kgc.io/Universe', termType: 'NamedNode' },
-      });
-    } else if (op.type === 'delete') {
-      // Remove matching quad
-      result = result.filter(
-        (q) =>
-          !(
-            q.subject.value === op.subject.value &&
-            q.predicate.value === op.predicate.value &&
-            q.object.value === op.object.value
-          )
-      );
-    }
-  }
-
-  return result;
-}
+// Initialize reducer pattern
+const { reducer: kgcReducer, initialState, actions: createActions } = createDeltaSyncReducer();
 
 // Context
 const KGCContext = createContext(null);
@@ -163,7 +38,7 @@ export function KGCProvider({ children, autoConnect = false, query = {} }) {
   // Connect to Tether (SSE)
   const connect = useCallback(
     (subscriptionQuery = query) => {
-      dispatch({ type: Actions.CONNECT });
+      dispatch(createActions.connect());
 
       // Build SSE URL with query parameters
       const params = new URLSearchParams();
@@ -185,30 +60,30 @@ export function KGCProvider({ children, autoConnect = false, query = {} }) {
 
       eventSource.addEventListener('connected', (e) => {
         const data = JSON.parse(e.data);
-        dispatch({ type: Actions.CONNECTED, vectorClock: data.vector_clock });
-        dispatch({ type: Actions.ADD_EVENT, event: { type: 'CONNECTED', ...data } });
+        dispatch(createActions.connected(data.vector_clock));
+        dispatch(createActions.addEvent({ type: 'CONNECTED', ...data }));
       });
 
       eventSource.addEventListener('shard', (e) => {
         const data = JSON.parse(e.data);
-        dispatch({ type: Actions.SET_SHARD, shard: data });
-        dispatch({ type: Actions.ADD_EVENT, event: { type: 'SHARD', quad_count: data.quad_count } });
+        dispatch(createActions.setShard(data));
+        dispatch(createActions.addEvent({ type: 'SHARD', quad_count: data.quad_count }));
       });
 
       eventSource.addEventListener('delta', (e) => {
         const data = JSON.parse(e.data);
-        dispatch({ type: Actions.APPLY_DELTA, delta: data.delta });
-        dispatch({ type: Actions.ADD_EVENT, event: { type: 'DELTA', delta: data.delta } });
+        dispatch(createActions.applyDelta(data.delta));
+        dispatch(createActions.addEvent({ type: 'DELTA', delta: data.delta }));
       });
 
       eventSource.addEventListener('heartbeat', (e) => {
         const data = JSON.parse(e.data);
-        dispatch({ type: Actions.ADD_EVENT, event: { type: 'HEARTBEAT', ...data } });
+        dispatch(createActions.addEvent({ type: 'HEARTBEAT', ...data }));
       });
 
       eventSource.addEventListener('error', (e) => {
         console.error('[KGC] SSE error:', e);
-        dispatch({ type: Actions.ERROR, error: 'Connection lost' });
+        dispatch(createActions.error('Connection lost'));
 
         // Auto-reconnect after 5 seconds
         reconnectTimeoutRef.current = setTimeout(() => {
@@ -217,7 +92,7 @@ export function KGCProvider({ children, autoConnect = false, query = {} }) {
       });
 
       eventSource.onerror = () => {
-        dispatch({ type: Actions.ERROR, error: 'Connection failed' });
+        dispatch(createActions.error('Connection failed'));
       };
     },
     [query]
@@ -232,7 +107,7 @@ export function KGCProvider({ children, autoConnect = false, query = {} }) {
     if (reconnectTimeoutRef.current) {
       clearTimeout(reconnectTimeoutRef.current);
     }
-    dispatch({ type: Actions.DISCONNECT });
+    dispatch(createActions.disconnect());
   }, []);
 
   // Submit delta with optimistic update
@@ -247,8 +122,8 @@ export function KGCProvider({ children, autoConnect = false, query = {} }) {
       };
 
       // Optimistic update
-      dispatch({ type: Actions.QUEUE_DELTA, delta });
-      dispatch({ type: Actions.APPLY_DELTA, delta });
+      dispatch(createActions.queueDelta(delta));
+      dispatch(createActions.applyDelta(delta));
 
       try {
         const response = await fetch('/api/delta', {
@@ -260,31 +135,19 @@ export function KGCProvider({ children, autoConnect = false, query = {} }) {
         const result = await response.json();
 
         if (result.status === 'ACK') {
-          dispatch({
-            type: Actions.DELTA_ACK,
-            deltaId,
-            vectorClock: result.vector_clock,
-          });
-          dispatch({ type: Actions.ADD_EVENT, event: { type: 'ACK', ...result } });
+          dispatch(createActions.deltaAck(deltaId, result.vector_clock));
+          dispatch(createActions.addEvent({ type: 'ACK', ...result }));
           return { success: true, result };
         } else {
-          dispatch({
-            type: Actions.DELTA_REJECT,
-            deltaId,
-            reason: result.reason,
-          });
-          dispatch({ type: Actions.ADD_EVENT, event: { type: 'REJECT', ...result } });
+          dispatch(createActions.deltaReject(deltaId, result.reason));
+          dispatch(createActions.addEvent({ type: 'REJECT', ...result }));
 
           // Refresh Shard to rollback
           await refreshShard();
           return { success: false, error: result.reason };
         }
       } catch (error) {
-        dispatch({
-          type: Actions.DELTA_REJECT,
-          deltaId,
-          reason: error.message,
-        });
+        dispatch(createActions.deltaReject(deltaId, error.message));
         return { success: false, error: error.message };
       }
     },
@@ -303,7 +166,7 @@ export function KGCProvider({ children, autoConnect = false, query = {} }) {
       const data = await response.json();
 
       if (data.success) {
-        dispatch({ type: Actions.SET_SHARD, shard: data.shard });
+        dispatch(createActions.setShard(data.shard));
       }
     } catch (error) {
       console.error('[KGC] Refresh error:', error);
@@ -315,7 +178,7 @@ export function KGCProvider({ children, autoConnect = false, query = {} }) {
     try {
       const response = await fetch('/api/shard?stats=true');
       const stats = await response.json();
-      dispatch({ type: Actions.SET_STATS, stats });
+      // Stats are read-only, no dispatch needed
       return stats;
     } catch (error) {
       console.error('[KGC] Stats error:', error);
