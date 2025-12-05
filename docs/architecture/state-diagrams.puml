@@ -1,0 +1,232 @@
+@startuml UNRDF State Machines
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_State.puml
+
+title UNRDF - State Diagrams (Key State Machines)
+
+' =====================================
+' STATE 1: PEER HEALTH STATE MACHINE
+' =====================================
+
+state PeerHealthFSM {
+
+  state HEALTHY as "🟢 HEALTHY\nLatency < 100ms\nError rate < 5%"
+
+  state DEGRADED as "🟡 DEGRADED\nLatency ≥ 100ms\nOR Error rate ≥ 5%\nOR Partial failures"
+
+  state UNREACHABLE as "🔴 UNREACHABLE\nTimeout on ping\nConnection refused\nError rate > 50%"
+
+  state REMOVED as "⚫ REMOVED\nPeer removed\nFrom registry"
+
+  [*] --> HEALTHY: addPeer()\nFirst ping succeeds
+
+  HEALTHY --> DEGRADED: Health check shows\nlatency ≥ 100ms\nOR errors increase
+
+  HEALTHY --> UNREACHABLE: Consecutive\nping failures\n(configurable: 3x)\nOR network error
+
+  DEGRADED --> HEALTHY: Latency < 100ms\nAND error rate < 5%\nAND no timeouts
+
+  DEGRADED --> UNREACHABLE: Continue degraded\nfor timeout period\n(default: 5 min)\nOR explicit failure
+
+  UNREACHABLE --> REMOVED: Max retries exceeded\n(default: 10)\nOR admin removal\nOR peer offline > 1h
+
+  REMOVED --> [*]: Cleanup complete
+
+  note right of HEALTHY
+    Normal operation
+    Peer available for queries
+    Included in broadcasts
+    Low latency
+  end note
+
+  note right of DEGRADED
+    Operational but slow
+    Still available for queries
+    May retry with other peers
+    Monitoring latency recovery
+  end note
+
+  note right of UNREACHABLE
+    Not responding
+    Excluded from new queries
+    Periodic ping retry
+    May recover to HEALTHY
+  end note
+}
+
+' =====================================
+' STATE 2: CIRCUIT BREAKER
+' =====================================
+
+state CircuitBreakerFSM {
+
+  state CLOSED as "🔵 CLOSED\nOperational\nRequests pass through\nFailure count: 0"
+
+  state OPEN as "🔴 OPEN\nFailing\nRequests rejected immediately\nFast fail"
+
+  state HALF_OPEN as "🟡 HALF_OPEN\nRecovery in progress\nLimited requests allowed\nTesting peer"
+
+  [*] --> CLOSED: initialize()
+
+  CLOSED --> OPEN: Failure count\nexceeds threshold\n(default: 5 failures)\nOR error rate > limit
+
+  OPEN --> HALF_OPEN: Timeout expires\n(default: 60s)\nAllow test request
+
+  HALF_OPEN --> CLOSED: Test request succeeds\n& passes validation
+
+  HALF_OPEN --> OPEN: Test request fails\nReset counter\nWait for timeout
+
+  note right of CLOSED
+    ✓ Normal operation
+    Requests execute immediately
+    Errors tracked
+    Failure count incremented
+  end note
+
+  note right of OPEN
+    ✗ Fast fail
+    New requests rejected
+    Prevents cascading failures
+    Waiting for recovery
+  end note
+
+  note right of HALF_OPEN
+    ⚡ Recovery probe
+    Limited test requests allowed
+    Success = circuit closed
+    Failure = circuit re-opened
+    Prevents thrashing
+  end note
+}
+
+' =====================================
+' STATE 3: HOOK EXECUTION STATE
+' =====================================
+
+state HookExecutionFSM {
+
+  state PENDING as "⏳ PENDING\nQueued for execution\nAwaiting resources"
+
+  state CHECKING_CACHE as "💾 CACHE CHECK\nLRU cache lookup\nKey = (hook, quad hash)"
+
+  state CACHED as "⚡ CACHED\nResult found in cache\nReturning cached value\n(78% hit rate)"
+
+  state EXECUTING as "⚙️ EXECUTING\nRunning hook function\nValidation/transformation\nTimeout: 5s"
+
+  state TRANSFORMING as "🔄 TRANSFORMING\nApplying transformation\nModifying quad\nIf _hasTransformation"
+
+  state SUCCESS as "✅ SUCCESS\nHook completed\nResult cached\nMetrics updated"
+
+  state ERROR as "❌ ERROR\nHook failed\nException caught\nError logged"
+
+  [*] --> PENDING: executeHook(hook, quad)
+
+  PENDING --> CHECKING_CACHE: Start execution\nCheck pre-computed flags
+
+  CHECKING_CACHE --> CACHED: Cache hit\n(no execution needed)\n60-80% of calls
+
+  CHECKING_CACHE --> EXECUTING: Cache miss\nProceed with validation\n20-40% of calls
+
+  EXECUTING --> TRANSFORMING: Validation passed\n& _hasTransformation=true
+
+  EXECUTING --> SUCCESS: Validation passed\n& no transformation needed
+
+  EXECUTING --> ERROR: Validation returned false\nOR thrown exception
+
+  TRANSFORMING --> SUCCESS: Transformation complete\nResult cached
+
+  TRANSFORMING --> ERROR: Transformation failed\nException caught
+
+  CACHED --> [*]: Return cached result
+
+  SUCCESS --> [*]: Return {success: true, value}
+
+  ERROR --> [*]: Return {success: false, error}\nOR throw (depends on onError)
+
+  note right of CHECKING_CACHE
+    Pre-computed flags:
+    _hasValidation: <1μs check
+    _hasTransformation: <1μs check
+    _isCached: <1μs check
+  end note
+
+  note right of EXECUTING
+    Synchronous execution
+    <1μs to 1000μs duration
+    Zod validation: 10-20μs bottleneck
+    Timeout: 5000ms default
+  end note
+
+  note right of SUCCESS
+    Result stored in cache
+    TTL: configurable (1 hour default)
+    Metrics: count, duration, cached
+    Event emitted
+  end note
+}
+
+' =====================================
+' STATE 4: BROWSER CONNECTION STATE
+' =====================================
+
+state BrowserConnectionFSM {
+
+  state OFFLINE as "📴 OFFLINE\nNo network\nUsing IndexedDB\nQueuing changes"
+
+  state CONNECTING as "🔄 CONNECTING\nDetecting network\nEstablishing WebSocket\nService Worker starting"
+
+  state SYNCING as "📤 SYNCING\nSending pending changes\nReceiving remote changes\nMerging data"
+
+  state ONLINE as "📡 ONLINE\nConnected to server\nReal-time sync active\nCache coherent"
+
+  [*] --> OFFLINE: Browser load\nNavigator.onLine = false
+
+  OFFLINE --> CONNECTING: Network restored\nNavigation.onLine = true\nService Worker detects
+
+  CONNECTING --> SYNCING: WebSocket connected\nPending queue exists\nInitiate sync
+
+  SYNCING --> ONLINE: All pending sent\nRemote changes applied\nCache updated\nUI re-rendered
+
+  ONLINE --> OFFLINE: Network lost\nConnection closed\nFall back to IndexedDB
+
+  ONLINE --> SYNCING: User adds data\nWhile online\nNo pending queue\nDirect server write
+
+  SYNCING --> SYNCING: More changes arrive\nDuring sync\nQueue updated
+
+  SYNCING --> OFFLINE: Sync interrupted\nConnection lost\nDuring sync\nRollback & requeue
+
+  note right of OFFLINE
+    No server connectivity
+    IndexedDB: persistence layer
+    pendingQuads[]: mutation queue
+    Works fully offline
+    No data loss
+  end note
+
+  note right of CONNECTING
+    Detecting network status
+    WebSocket handshake
+    Service Worker activation
+    Progress: connecting...
+  end note
+
+  note right of SYNCING
+    Bidirectional sync:
+    1. Send: pendingQuads[]
+    2. Receive: remoteChanges
+    3. Merge: Apply remote
+    4. UI: Re-render
+    Conflict resolution:
+    Last-write-wins (timestamp)
+  end note
+
+  note right of ONLINE
+    Server connected
+    Real-time updates
+    Instant writes
+    Cache warm
+  end note
+}
+
+SHOW_LEGEND()
+
+@enduml

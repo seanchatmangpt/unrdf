@@ -1,0 +1,199 @@
+@startuml UNRDF Knowledge Hooks Validation
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Sequence.puml
+
+title UNRDF - Knowledge Hooks Validation & Policy Enforcement
+
+participant "Application" as App
+participant "@unrdf/core\nUnrdfStore" as Store
+participant "@unrdf/hooks\nKnowledgeHookManager" as HookMgr
+participant "Hook 1:\nValidateIRI" as Hook1
+participant "Hook 2:\nNormalizeLiteral" as Hook2
+participant "Hook Cache\n(LRU)" as Cache
+participant "@unrdf/oxigraph\nStore" as Oxigraph
+
+== SINGLE HOOK EXECUTION ==
+
+App -> Store: store.add(quad)
+activate Store
+
+Note over Store: beforeAdd trigger\nValidate quad before insertion
+
+Store -> HookMgr: executeHook(hook_validateIRI, quad, {timeout: 5000})
+activate HookMgr
+
+HookMgr -> Cache: Check cache\nKey = (hook.name, quadHash)
+activate Cache
+Cache --> HookMgr: Cache miss (not seen before)
+deactivate Cache
+
+Note over HookMgr: Cache miss → execute hook
+
+HookMgr -> Hook1: Execute validate function\nquad: {s: ex:Alice, p: rdf:type, o: foaf:Person}
+activate Hook1
+
+Hook1 -> Hook1: Check _hasValidation flag\n(pre-computed <1μs)\nResult: true → execute
+
+Hook1 -> Hook1: Validation logic:\n1. Check subject is IRI\n   ✓ ex:Alice is NamedNode\n2. Check predicate is IRI\n   ✓ rdf:type is NamedNode\n3. Check object for type\n   ✓ foaf:Person is NamedNode\n4. All IRI checks pass\n   → Return true
+
+Hook1 --> HookMgr: {success: true, value: quad, duration: 2.3ms}
+deactivate Hook1
+
+HookMgr -> Cache: Store result\nTTL: 1 hour
+activate Cache
+deactivate Cache
+
+HookMgr --> Store: ✓ Validation passed
+deactivate HookMgr
+
+deactivate Store
+
+== HOOK CHAIN EXECUTION ==
+
+App -> Store: store.add(quad)
+activate Store
+
+Note over Store: Execute hook chain:\n1. validateIRI\n2. normalizeLiteral\n(both must pass)
+
+Store -> HookMgr: executeHookChain([hook1, hook2], quad)
+activate HookMgr
+
+par Hook 1: Validate IRI (same as above)
+  HookMgr -> Hook1: validate(quad)
+  activate Hook1
+  Hook1 -> Hook1: ✓ Pass
+  Hook1 --> HookMgr: {success: true, quad}
+  deactivate Hook1
+and Hook 2: Normalize Literal (sequential after 1)
+  Note right of HookMgr: Wait for Hook 1 success\nbefore Hook 2
+end
+
+HookMgr -> Hook2: execute transform function\nquad: {..., object: literal("alice", "EN-US")}
+activate Hook2
+
+Hook2 -> Hook2: Check _hasTransformation flag\nResult: true → execute
+
+Hook2 -> Hook2: Transform logic:\n1. Is object a Literal?\n   ✓ Yes\n2. Get language tag: "EN-US"\n3. Normalize to lowercase: "en-us"\n4. Return modified quad\n\nquad_out: {..., object: literal("alice", "en-us")}
+
+Hook2 --> HookMgr: {success: true, value: quad_modified, duration: 0.8ms}
+deactivate Hook2
+
+HookMgr -> HookMgr: Accumulate results:\nvalues: [quad, quad_modified]\nErrors: []\ntotalDuration: 3.1ms
+
+HookMgr --> Store: ✓ Chain passed\nquad = quad_modified
+deactivate HookMgr
+
+Note right of Store: Use transformed quad\nfor storage
+
+Store -> Oxigraph: add(quad_modified)
+activate Oxigraph
+deactivate Oxigraph
+
+Store --> App: ✓ Quad added (normalized)
+deactivate Store
+
+== BULK BATCH EXECUTION (10x FASTER) ==
+
+App -> Store: store.bulkAdd([1000 quads])
+activate Store
+
+Note over Store: High-performance batch\nWith caching & dedup
+
+Store -> HookMgr: executeBatch([hooks], quads)
+activate HookMgr
+
+Note over HookMgr: Optimization 1:\nResult caching
+
+HookMgr -> Cache: Check for cached results
+activate Cache
+Cache --> HookMgr: 600 hits, 400 misses\n(60% cache hit rate!)
+deactivate Cache
+
+Note over HookMgr: Skipped 600 quads\n(already validated)\nExecution time: -60%!
+
+HookMgr -> HookMgr: Execute 400 new quads\nin parallel using Promise.all()
+
+Note over HookMgr: Optimization 2:\nParallel execution
+
+par Quad batch 1-100
+  HookMgr -> Hook1: validate batch 1
+  activate Hook1
+  Hook1 --> HookMgr: results batch 1
+  deactivate Hook1
+and Quad batch 101-200
+  HookMgr -> Hook1: validate batch 2
+  activate Hook1
+  Hook1 --> HookMgr: results batch 2
+  deactivate Hook1
+and Quad batch 201-300
+  HookMgr -> Hook1: validate batch 3
+  activate Hook1
+  Hook1 --> HookMgr: results batch 3
+  deactivate Hook1
+and Quad batch 301-400
+  HookMgr -> Hook1: validate batch 4
+  activate Hook1
+  Hook1 --> HookMgr: results batch 4
+  deactivate Hook1
+end
+
+HookMgr -> HookMgr: Aggregate batch results:\nsuccessful: 1000\nfailed: 0\nspeed: 10,000 ops/sec\nduration: 100ms
+
+HookMgr --> Store: BatchResult {\n  successful: 1000,\n  failed: 0,\n  throughput: 10K ops/sec,\n  cacheHits: 600,\n  cacheRatio: 60%\n}
+deactivate HookMgr
+
+Store -> Oxigraph: bulkAdd([1000 quads])\nAll pre-validated
+activate Oxigraph
+Oxigraph --> Store: ✓ All added
+deactivate Oxigraph
+
+Store --> App: ✓ 1000 quads bulk-added\nwith validation\nIn 100ms (6x speedup vs serial!)
+deactivate Store
+
+Note right of App: Batch + Cache = ⚡⚡⚡\nIdeal for imports, migrations
+
+== ERROR HANDLING ==
+
+App -> Store: store.add(quad_invalid)
+activate Store
+
+Note over Store: Quad: {s: "not-an-iri", ...}
+
+Store -> HookMgr: executeHook(validateIRI, quad, {onError: 'throw'})
+activate HookMgr
+
+HookMgr -> Hook1: validate("not-an-iri")
+activate Hook1
+
+Hook1 -> Hook1: Check subject is IRI\n✗ "not-an-iri" is string\n→ Return false
+
+Hook1 --> HookMgr: {success: false}
+deactivate Hook1
+
+HookMgr -> HookMgr: onError: 'throw'\n→ Create error
+
+HookMgr --> Store: ✗ Error: "Subject must be NamedNode"
+deactivate HookMgr
+
+Store -> Store: Catch error\nRollback transaction\nDon't insert quad
+
+Store --> App: ✗ Validation failed
+deactivate Store
+
+App -> App: Display error to user\n"Invalid IRI in subject"
+
+Note right of App: Data quality protected!\nNo invalid data reaches store
+
+== METRICS & MONITORING ==
+
+Note over HookMgr: Statistics collected:\n  execution count: 10,500\n  error count: 42\n  total duration: 2.3s\n  avg duration: 219μs\n  cache hits: 8,200\n  hit rate: 78%
+
+App -> HookMgr: getStats()
+activate HookMgr
+HookMgr --> App: {\n  executions: 10500,\n  errors: 42,\n  avgDuration: 219μs,\n  cacheHitRate: 78%,\n  throughput: 4.5K ops/sec\n}
+deactivate HookMgr
+
+Note right of App: Observable metrics\nFor performance monitoring\nand optimization
+
+SHOW_LEGEND()
+
+@enduml
