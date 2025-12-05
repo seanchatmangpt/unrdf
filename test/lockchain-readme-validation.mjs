@@ -14,8 +14,8 @@
  * 7. Git-based storage
  */
 
-import { createLockchainWriter } from '../src/index.mjs';
-import { LockchainWriter } from '../src/knowledge-engine/lockchain-writer.mjs';
+import { createLockchainWriter } from '../packages/index.mjs';
+import { LockchainWriter } from '../packages/knowledge-engine/lockchain-writer.mjs';
 import { existsSync, rmSync } from 'fs';
 
 console.log('🔗 Lockchain README Claims Validation\n');

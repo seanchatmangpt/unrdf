@@ -11,7 +11,7 @@ import {
   validateAPIFiles,
   detectContractBreaks,
   detectAllContractBreaks,
-} from '../../src/project-engine/api-contract-validator.mjs';
+} from '../../packages/project-engine/api-contract-validator.mjs';
 
 const { namedNode, literal } = dataFactory;
 const NS = {

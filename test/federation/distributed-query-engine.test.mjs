@@ -8,11 +8,11 @@ import {
   createDistributedQueryEngine,
   ExecutionStrategy,
   PlanNodeType,
-} from '../../src/knowledge-engine/federation/distributed-query-engine.mjs';
+} from '../../packages/knowledge-engine/federation/distributed-query-engine.mjs';
 import {
   createFederationCoordinator,
   StoreHealth,
-} from '../../src/knowledge-engine/federation/federation-coordinator.mjs';
+} from '../../packages/knowledge-engine/federation/federation-coordinator.mjs';
 
 describe('DistributedQueryEngine', () => {
   let coordinator;

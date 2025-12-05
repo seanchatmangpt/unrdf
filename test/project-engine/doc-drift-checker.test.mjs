@@ -12,7 +12,7 @@ import {
   checkDocConsistency,
   extractDocReferences,
   scoreDocDrift,
-} from '../../src/project-engine/doc-drift-checker.mjs';
+} from '../../packages/project-engine/doc-drift-checker.mjs';
 
 const { namedNode, literal } = dataFactory;
 const NS = {

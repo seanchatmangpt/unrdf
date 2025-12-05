@@ -7,7 +7,7 @@ import {
   _FederationCoordinator,
   createFederationCoordinator,
   StoreHealth,
-} from '../../src/knowledge-engine/federation/federation-coordinator.mjs';
+} from '../../packages/knowledge-engine/federation/federation-coordinator.mjs';
 
 describe('FederationCoordinator', () => {
   let coordinator;

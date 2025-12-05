@@ -6,8 +6,8 @@
  * Demonstrates multi-agent coordination and Delta resolution for swarm behavior.
  */
 
-import { createResolutionLayer } from '../src/knowledge-engine/resolution-layer.mjs';
-import { TransactionManager } from '../src/knowledge-engine/transaction.mjs';
+import { createResolutionLayer } from '../packages/knowledge-engine/src/resolution-layer.mjs';
+import { TransactionManager } from '../packages/knowledge-engine/src/transaction.mjs';
 import { createStore } from '../packages/oxigraph/src/index.mjs';
 
 console.log('🤝 Resolution Layer Demo\n');

@@ -9,7 +9,7 @@
 
 import { createStore } from '../../../../packages/oxigraph/src/index.mjs';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
-import { PolicyPackManager } from '../../../../src/knowledge-engine/policy-pack.mjs';
+import { PolicyPackManager } from '../../../../packages/knowledge-engine/policy-pack.mjs';
 import { evaluateHook } from './hook-evaluator.mjs';
 
 const tracer = trace.getTracer('unrdf-policy-validator');

@@ -7,7 +7,7 @@
  * receipt writing, batch committing, Git integration, and integrity verification.
  */
 
-import { createRealLockchainWriter } from '../src/knowledge-engine/real-lockchain-writer.mjs';
+import { createRealLockchainWriter } from '../packages/knowledge-engine/src/real-lockchain-writer.mjs';
 import { randomUUID } from 'crypto';
 
 console.log('🔗 Lockchain Validation Test\n');

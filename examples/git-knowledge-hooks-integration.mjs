@@ -11,15 +11,15 @@
  * @license MIT
  */
 
-import { RdfEngine } from '../src/engines/rdf-engine.mjs';
-import { registerHook } from '../src/engines/hook-manager.mjs';
+import { RdfEngine } from '../packages/knowledge-engine/src/engines/rdf-engine.mjs';
+import { registerHook } from '../packages/knowledge-engine/src/engines/hook-manager.mjs';
 import {
   defineHook,
   _evaluateHook,
   useKnowledgeHooks,
-} from '../src/composables/use-knowledge-hooks.mjs';
-import { initStore } from '../src/context/index.mjs';
-import { EVENTS } from '../src/engines/event-bus.mjs';
+} from '../packages/composables/src/composables/use-knowledge-hooks.mjs';
+import { initStore } from '../packages/composables/src/context/index.mjs';
+import { EVENTS } from '../packages/knowledge-engine/src/engines/event-bus.mjs';
 import { z } from 'zod';
 
 // Git operation schemas

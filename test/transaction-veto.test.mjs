@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { TransactionManager } from '../src/knowledge-engine/transaction.mjs';
+import { TransactionManager } from '../packages/knowledge-engine/transaction.mjs';
 import { createStore, dataFactory } from '@unrdf/oxigraph';
 
 const { namedNode, quad } = dataFactory;

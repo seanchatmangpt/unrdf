@@ -12,7 +12,7 @@ import {
   analyzeDependencyPath,
   getTransitiveDependencies,
   calculateImpactScore,
-} from '../../src/project-engine/dependency-graph.mjs';
+} from '../../packages/project-engine/dependency-graph.mjs';
 
 const { namedNode, literal } = dataFactory;
 const NS = {

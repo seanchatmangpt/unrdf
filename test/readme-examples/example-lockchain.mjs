@@ -3,7 +3,7 @@
  * Tests LockchainWriter with Merkle verification
  */
 
-import { LockchainWriter } from '../../src/knowledge-engine/index.mjs';
+import { LockchainWriter } from '../../packages/knowledge-engine/index.mjs';
 import { mkdirSync, rmSync } from 'fs';
 import { join } from 'path';
 

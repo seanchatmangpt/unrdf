@@ -15,7 +15,7 @@
  * - Browser Compatibility (10%)
  */
 
-import { createValidationRunner } from "../src/validation/index.mjs";
+import { createValidationRunner } from "../packages/validation/index.mjs";
 import { ensureProviderInitialized } from "./otel-provider.mjs";
 
 await ensureProviderInitialized();

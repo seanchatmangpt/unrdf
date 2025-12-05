@@ -2,9 +2,9 @@
  * @fileoverview Data source query API endpoint
  */
 
-import { initStore } from '../../../../src/context/index.mjs'
-import { useTurtle } from '../../../../src/composables/use-turtle.mjs'
-import { useGraph } from '../../../../src/composables/use-graph.mjs'
+import { initStore } from '../../../../packages/composables/src/context/index.mjs'
+import { useTurtle } from '../../../../packages/composables/src/composables/use-turtle.mjs'
+import { useGraph } from '../../../../packages/composables/src/composables/use-graph.mjs'
 
 /**
  * POST /api/data/[id]/query - Query data source

@@ -3,8 +3,8 @@
  * @description Validates README SPARQL query claims (lines 176-206)
  */
 
-import { createDarkMatterCore } from '../../src/knowledge-engine/dark-matter-core.mjs';
-import { _query, select, ask, construct } from '../../src/knowledge-engine/query.mjs';
+import { createDarkMatterCore } from '../../packages/knowledge-engine/dark-matter-core.mjs';
+import { _query, select, ask, construct } from '../../packages/knowledge-engine/query.mjs';
 import { createStore, dataFactory } from '@unrdf/oxigraph';
 
 const { namedNode, _literal } = dataFactory;

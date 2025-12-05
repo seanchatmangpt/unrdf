@@ -7,7 +7,7 @@
  * and easy customization.
  */
 
-import { _defineHook } from '../../../src/knowledge-engine/define-hook.mjs';
+import { _defineHook } from '../../../packages/knowledge-engine/define-hook.mjs';
 import { createStore } from '@unrdf/oxigraph';
 import { UnrdfDataFactory as DataFactory } from '@unrdf/core/rdf/n3-justified-only';
 import crypto from 'node:crypto';

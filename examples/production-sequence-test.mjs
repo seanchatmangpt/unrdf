@@ -13,10 +13,10 @@
  */
 
 import { createStore } from '@unrdf/oxigraph';
-import { KnowledgeHookManager } from '../src/knowledge-engine/knowledge-hook-manager.mjs';
-import { createPolicyPackManifest } from '../src/knowledge-engine/policy-pack.mjs';
-import { createKnowledgeHook } from '../src/knowledge-engine/schemas.mjs';
-import { TestHelpers } from '../src/test-utils/index.mjs';
+import { KnowledgeHookManager } from '../packages/knowledge-engine/src/knowledge-hook-manager.mjs';
+import { createPolicyPackManifest } from '../packages/knowledge-engine/src/policy-pack.mjs';
+import { createKnowledgeHook } from '../packages/knowledge-engine/src/schemas.mjs';
+import { TestHelpers } from '../packages/test-utils/index.mjs';
 import { join } from 'node:path';
 import { mkdir, writeFile } from 'node:fs/promises';
 

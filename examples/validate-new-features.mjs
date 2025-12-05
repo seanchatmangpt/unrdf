@@ -13,16 +13,16 @@
  */
 
 import { createStore } from '@unrdf/oxigraph';
-import { KnowledgeHookManager } from '../src/knowledge-engine/knowledge-hook-manager.mjs';
+import { KnowledgeHookManager } from '../packages/knowledge-engine/src/knowledge-hook-manager.mjs';
 import {
   PolicyPackManager,
   createPolicyPackManifest,
-} from '../src/knowledge-engine/policy-pack.mjs';
-import { createLockchainWriter } from '../src/knowledge-engine/lockchain-writer.mjs';
-import { createEffectSandbox } from '../src/knowledge-engine/effect-sandbox.mjs';
-import { createResolutionLayer } from '../src/knowledge-engine/resolution-layer.mjs';
-import { createQueryOptimizer } from '../src/knowledge-engine/query-optimizer.mjs';
-import { scenario, _expect, createTestContext, TestHelpers } from '../src/test-utils/index.mjs';
+} from '../packages/knowledge-engine/src/policy-pack.mjs';
+import { createLockchainWriter } from '../packages/knowledge-engine/src/lockchain-writer.mjs';
+import { createEffectSandbox } from '../packages/knowledge-engine/src/effect-sandbox.mjs';
+import { createResolutionLayer } from '../packages/knowledge-engine/src/resolution-layer.mjs';
+import { createQueryOptimizer } from '../packages/knowledge-engine/src/query-optimizer.mjs';
+import { scenario, _expect, createTestContext, TestHelpers } from '../packages/test-utils/index.mjs';
 
 console.log('🚀 UNRDF New Features Validation\n');
 

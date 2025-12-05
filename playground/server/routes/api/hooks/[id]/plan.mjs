@@ -2,7 +2,7 @@
  * @fileoverview Hook planning API endpoint
  */
 
-import { planHook } from '../../../../src/hooks.mjs'
+import { planHook } from '../../../../packages/hooks/src/hooks/define-hook.mjs'
 
 /**
  * POST /api/hooks/[id]/plan - Plan hook execution

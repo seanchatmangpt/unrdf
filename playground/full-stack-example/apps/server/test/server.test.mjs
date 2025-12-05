@@ -5,7 +5,7 @@
 
 import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest'
 import { createStore, dataFactory } from '@unrdf/oxigraph';
-import { createServer } from '../src/index.mjs'
+import { createServer } from '../packages/index.mjs'
 const { namedNode, literal, quad  } = dataFactory;
 
 describe('Full-Stack Server', () => {

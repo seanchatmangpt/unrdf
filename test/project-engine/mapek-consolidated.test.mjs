@@ -13,13 +13,13 @@ import {
   createAutonomicHooks,
   runContinuousMapekLoop,
   reportMapekStatus,
-} from '../../src/project-engine/autonomic-mapek.mjs';
+} from '../../packages/project-engine/autonomic-mapek.mjs';
 import {
   _runFullMapekWithAllInnovations,
   runInnovationsParallel,
   aggregateInnovationFindings,
   _ALL_INNOVATIONS,
-} from '../../src/project-engine/mapek-orchestration.mjs';
+} from '../../packages/project-engine/mapek-orchestration.mjs';
 
 const { namedNode, literal } = dataFactory;
 

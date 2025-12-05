@@ -20,7 +20,7 @@
  * @license MIT
  */
 
-import { initStore, useStore, useGraph, useTerms } from '../src/index.mjs';
+import { initStore, useStore, useGraph, useTerms } from '../packages/core/src/index.mjs';
 
 // Example 1: Basic usage with context
 console.log('=== Example 1: Basic Context Usage ===');

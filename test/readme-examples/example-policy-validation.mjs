@@ -8,7 +8,7 @@ import {
   defineHook,
   registerHook,
   DataFactory,
-} from '../../src/knowledge-engine/index.mjs';
+} from '../../packages/knowledge-engine/index.mjs';
 const { namedNode, quad, literal } = DataFactory;
 
 /**

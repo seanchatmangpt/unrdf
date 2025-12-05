@@ -5,7 +5,7 @@
 
 import { describe, it, expect } from 'vitest';
 import path from 'path';
-import { createProjectInitializationPipeline } from '../../src/project-engine/initialize.mjs';
+import { createProjectInitializationPipeline } from '../../packages/project-engine/initialize.mjs';
 
 describe('initialize', () => {
   describe('createProjectInitializationPipeline', () => {

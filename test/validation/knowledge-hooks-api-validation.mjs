@@ -3,9 +3,9 @@
  * @description Tests if the README examples actually work
  */
 
-import { defineHook } from '../../src/knowledge-engine/define-hook.mjs';
-import { KnowledgeHookManager } from '../../src/knowledge-engine/knowledge-hook-manager.mjs';
-import * as mainIndex from '../../src/index.mjs';
+import { defineHook } from '../../packages/knowledge-engine/define-hook.mjs';
+import { KnowledgeHookManager } from '../../packages/knowledge-engine/knowledge-hook-manager.mjs';
+import * as mainIndex from '../../packages/index.mjs';
 
 /**
  * Validation results tracker

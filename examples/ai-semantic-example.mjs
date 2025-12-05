@@ -13,8 +13,8 @@ import {
   createNLPQueryBuilder,
   createEmbeddingsManager,
   createAnomalyDetector,
-} from '../src/knowledge-engine/ai-semantic/index.mjs';
-import { query } from '../src/knowledge-engine/query.mjs';
+} from '../packages/knowledge-engine/src/ai-semantic/index.mjs';
+import { query } from '../packages/knowledge-engine/src/query.mjs';
 
 const { namedNode, literal, quad } = DataFactory;
 

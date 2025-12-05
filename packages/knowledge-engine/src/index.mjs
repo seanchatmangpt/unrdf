@@ -1,60 +1,93 @@
 /**
- * @unrdf/knowledge-engine
+ * @file Central Knowledge Engine Index
+ * @module knowledge-engine
  *
- * Knowledge Engine - Rule Engine, Inference, and Pattern Matching
- *
- * @module @unrdf/knowledge-engine
+ * @description
+ * Centralized export hub for the entire knowledge engine system.
+ * This provides a single import point for all functionality.
  */
 
-// Export main KnowledgeEngine class
-export { KnowledgeEngine } from './knowledge-engine/knowledge-engine.mjs';
+// Core Engine Components
+export { KnowledgeHookManager } from './knowledge-hook-manager.mjs';
+export { TransactionManager } from './transaction.mjs';
 
-// Export rule definition and management
+// Hook System
+export { defineHook } from './define-hook.mjs';
+export { createHookExecutor } from './hook-executor.mjs';
+export { createConditionEvaluator } from './condition-evaluator.mjs';
 export {
-  defineRule,
-  compileRule,
-  getRule,
-  getAllRules,
-  clearRules,
-} from './knowledge-engine/rules.mjs';
+  registerHook,
+  deregisterHook,
+  evaluateHook,
+  getRegisteredHooks,
+  resetGlobalHookManager,
+} from './hook-management.mjs';
 
-// Export pattern matching
+// Knowledge Substrate Core (80/20 Framework)
 export {
-  matchPattern,
-  matchPatternWithBindings,
-  hasMatch,
-  matchMultiplePatterns,
-} from './knowledge-engine/pattern-matcher.mjs';
+  KnowledgeSubstrateCore,
+  createKnowledgeSubstrateCore,
+  KnowledgeSubstrateFactory,
+  // Legacy compatibility
+  DarkMatterCore,
+  createDarkMatterCore,
+  DarkMatterFactory,
+} from './knowledge-substrate-core.mjs';
 
-// Export inference engine
-export {
-  createInferenceEngine,
-  addRules,
-  runInference,
-  getInferredQuads,
-  resetEngine,
-} from './knowledge-engine/inference-engine.mjs';
+// Storage & Persistence
+export { LockchainWriter, createLockchainWriter } from './lockchain-writer.mjs';
+export { ResolutionLayer } from './resolution-layer.mjs';
 
-// Export built-in rules
-export {
-  rdfsSubClassRule,
-  rdfsSubPropertyRule,
-  rdfsDomainRule,
-  rdfsRangeRule,
-  owlTransitiveRule,
-  owlSymmetricRule,
-  owlInverseRule,
-  builtinRules,
-  getBuiltinRules,
-  getRDFSRules,
-  getOWLRules,
-} from './knowledge-engine/builtin-rules.mjs';
+// Query & Optimization
+export { QueryOptimizer } from './query-optimizer.mjs';
+export { query } from './query.mjs';
 
-// Export pattern DSL
+// Utilities
+export { parseTurtle, toTurtle, toNQuads, parseJsonLd, toJsonLd } from './parse.mjs';
 export {
-  parsePattern,
-  patternToSparql,
-  parsePatterns,
-  buildPattern,
-  isValidPattern,
-} from './knowledge-engine/pattern-dsl.mjs';
+  validateShacl,
+  validateShaclMultiple,
+  formatValidationReport,
+  hasValidationErrors,
+  getValidationErrors,
+  getValidationWarnings,
+} from './validate.mjs';
+export {
+  canonicalize,
+  isIsomorphic,
+  getCanonicalHash,
+  groupByIsomorphism,
+  findDuplicates,
+  getCanonicalizationStats,
+  createCanonicalizationSession,
+} from './canonicalize.mjs';
+export {
+  reason,
+  reasonMultiple,
+  extractInferred,
+  getReasoningStats,
+  validateRules,
+  createReasoningSession,
+} from './reason.mjs';
+export {
+  resolveFileUri,
+  calculateFileHash,
+  loadFileWithHash,
+  loadSparqlFile,
+} from './file-resolver.mjs';
+
+// Security & Sandbox
+export { EffectSandbox } from './effect-sandbox.mjs';
+
+// Policy Management
+export { PolicyPackManager, PolicyPack } from './policy-pack.mjs';
+
+// Observability System
+export {
+  ObservabilityManager,
+  createObservabilityManager,
+  defaultObservabilityManager,
+} from './observability.mjs';
+
+// Consolidated Schemas (single source of truth)
+export * from './schemas.mjs';

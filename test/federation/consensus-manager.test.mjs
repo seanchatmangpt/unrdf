@@ -7,7 +7,7 @@ import {
   _ConsensusManager,
   createConsensusManager,
   NodeState,
-} from '../../src/knowledge-engine/federation/consensus-manager.mjs';
+} from '../../packages/knowledge-engine/federation/consensus-manager.mjs';
 
 describe('ConsensusManager', () => {
   let consensus;

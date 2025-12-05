@@ -1,140 +1,432 @@
 /**
- * useGraph Composable - Reactive RDF Graph Store
+ * @fileoverview useGraph composable - high-level RDF graph operations with context
  *
- * Creates a reactive RDF graph store for Vue 3 applications.
- * Automatically fetches and manages RDF data with reactive state.
+ * This composable provides the main interface for RDF operations.
+ * It wraps a store with common graph operations like SPARQL queries,
+ * set operations, and traversal utilities. Now uses unctx for store access.
  *
- * @module composables/use-graph
+ * @version 1.0.0
+ * @author GitVan Team
+ * @license MIT
  */
 
-import { ref, computed, onUnmounted } from 'vue';
 import { createStore } from '@unrdf/core';
-import { createBrowserRDFStore } from '@unrdf/browser';
-import { z } from 'zod';
+import { useStoreContext } from '../context/index.mjs';
 
 /**
- * Options schema for useGraph
- */
-const UseGraphOptionsSchema = z
-  .object({
-    autoRefresh: z.boolean().optional().default(false),
-    fetchInterval: z.number().optional().default(60000),
-    headers: z.record(z.string()).optional(),
-    enableIndexedDB: z.boolean().optional().default(false),
-  })
-  .strict();
-
-/**
- * Create a reactive RDF graph store
+ * Create a graph composable for operating on the global RDF store
  *
- * @param {string | null} graphUrl - URL to fetch RDF graph from (null for local-only)
- * @param {object} [options={}] - Configuration options
- * @param {boolean} [options.autoRefresh=false] - Auto-refresh graph at interval
- * @param {number} [options.fetchInterval=60000] - Refresh interval in ms
- * @param {Record<string, string>} [options.headers] - Custom fetch headers
- * @param {boolean} [options.enableIndexedDB=false] - Use IndexedDB for persistence
- * @returns {{
- *   store: import('vue').Ref<object>,
- *   loading: import('vue').Ref<boolean>,
- *   error: import('vue').Ref<Error | null>,
- *   quads: import('vue').ComputedRef<Array>,
- *   refresh: () => Promise<void>
- * }} Reactive graph state and methods
+ * @returns {Object} Graph operations interface
+ *
  * @example
- * const { store, loading, error, quads, refresh } = useGraph('https://example.org/data.ttl')
- * watch(quads, (newQuads) => console.log('Graph updated:', newQuads.length))
+ * // Initialize store context first
+ * const runApp = initStore();
+ *
+ * runApp(() => {
+ *   const graph = useGraph();
+ *
+ *   // SPARQL SELECT query
+ *   const results = graph.select(`
+ *     PREFIX ex: <http://example.org/>
+ *     SELECT ?s ?p ?o WHERE { ?s ?p ?o }
+ *   `);
+ *
+ *   // SPARQL ASK query
+ *   const exists = graph.ask(`
+ *     PREFIX ex: <http://example.org/>
+ *     ASK { ex:subject ex:predicate ?o }
+ *   `);
+ * });
+ *
+ * @throws {Error} If store context is not initialized
  */
-export function useGraph(graphUrl, options = {}) {
-  const opts = UseGraphOptionsSchema.parse(options);
-
-  // Reactive state
-  const store = ref(opts.enableIndexedDB ? null : createStore());
-  const loading = ref(false);
-  const error = ref(null);
-  let intervalId = null;
-
-  // Computed quads array
-  const quads = computed(() => {
-    if (!store.value) return [];
-    try {
-      const allQuads = [];
-      for (const quad of store.value.match()) {
-        allQuads.push(quad);
-      }
-      return allQuads;
-    } catch (err) {
-      error.value = err;
-      return [];
-    }
-  });
-
-  /**
-   * Fetch and load graph data
-   */
-  async function refresh() {
-    if (!graphUrl) {
-      error.value = new Error('No graph URL provided');
-      return;
-    }
-
-    loading.value = true;
-    error.value = null;
-
-    try {
-      // Initialize IndexedDB store if needed
-      if (opts.enableIndexedDB && !store.value) {
-        store.value = await createBrowserRDFStore({ dbName: 'unrdf-graph' });
-      }
-
-      // Fetch RDF data
-      const response = await fetch(graphUrl, {
-        headers: {
-          Accept: 'text/turtle, application/rdf+xml, application/ld+json',
-          ...opts.headers,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-
-      // Parse RDF (simplified - would use a real parser in production)
-      // For now, this is a placeholder that triggers reactivity
-      // In production, integrate with rdf-parse or Oxigraph parser
-      // TODO: Parse response based on content-type
-      await response.text();
-      if (!store.value) {
-        store.value = createStore();
-      }
-
-      // Trigger reactivity by reassigning
-      store.value = { ...store.value };
-    } catch (err) {
-      error.value = err;
-    } finally {
-      loading.value = false;
-    }
-  }
-
-  // Auto-refresh setup
-  if (opts.autoRefresh && graphUrl) {
-    intervalId = setInterval(refresh, opts.fetchInterval);
-    // Initial fetch
-    refresh();
-  }
-
-  // Cleanup on unmount
-  onUnmounted(() => {
-    if (intervalId) {
-      clearInterval(intervalId);
-    }
-  });
+export function useGraph() {
+  // Get the store context - now sender-only operations
+  const storeContext = useStoreContext();
+  const engine = storeContext.engine;
+  const store = storeContext.store;
 
   return {
-    store,
-    loading,
-    error,
-    quads,
-    refresh,
+    /**
+     * Execute any valid SPARQL 1.1 query
+     * @param {string} sparql - SPARQL query string
+     * @param {Object} [options] - Query options
+     * @param {number} [options.limit] - Result limit
+     * @param {AbortSignal} [options.signal] - Abort signal
+     * @returns {Object} Query result object
+     *
+     * @throws {TypeError} If sparql is not a string
+     * @note This is a READER operation - use sparingly
+     */
+    async query(sparql, options) {
+      if (typeof sparql !== 'string') {
+        throw new TypeError('[useGraph] SPARQL query must be a string');
+      }
+      return storeContext.query(sparql, options);
+    },
+
+    /**
+     * Execute a SPARQL SELECT query
+     * @param {string} sparql - SPARQL SELECT query string
+     * @returns {Array<Object>} Array of result bindings
+     *
+     * @throws {TypeError} If sparql is not a string
+     * @throws {Error} If query is not a SELECT query
+     * @note This is a READER operation - use sparingly
+     */
+    async select(sparql) {
+      if (typeof sparql !== 'string') {
+        throw new TypeError('[useGraph] SPARQL query must be a string');
+      }
+      const res = await storeContext.query(sparql);
+      if (res.type !== 'select') {
+        throw new Error('[useGraph] Query is not a SELECT query');
+      }
+      return res.rows || [];
+    },
+
+    /**
+     * Execute a SPARQL ASK query
+     * @param {string} sparql - SPARQL ASK query string
+     * @returns {boolean} Boolean result
+     *
+     * @throws {TypeError} If sparql is not a string
+     * @throws {Error} If query is not an ASK query
+     * @note This is a READER operation - use sparingly
+     */
+    async ask(sparql) {
+      if (typeof sparql !== 'string') {
+        throw new TypeError('[useGraph] SPARQL query must be a string');
+      }
+      const res = await storeContext.query(sparql);
+      if (res.type !== 'ask') {
+        throw new Error('[useGraph] Query is not an ASK query');
+      }
+      return res.boolean || false;
+    },
+
+    /**
+     * Execute a SPARQL CONSTRUCT query
+     * @param {string} sparql - SPARQL CONSTRUCT query string
+     * @returns {Store} New store with constructed triples
+     *
+     * @throws {TypeError} If sparql is not a string
+     * @throws {Error} If query is not a CONSTRUCT query
+     * @note This is a READER operation - use sparingly
+     */
+    async construct(sparql) {
+      if (typeof sparql !== 'string') {
+        throw new TypeError('[useGraph] SPARQL query must be a string');
+      }
+      const res = await storeContext.query(sparql);
+      if (res.type !== 'construct' && res.type !== 'describe') {
+        throw new Error('[useGraph] Query is not a CONSTRUCT/DESCRIBE query');
+      }
+      return res.store || createStore();
+    },
+
+    /**
+     * Execute a SPARQL UPDATE query
+     * @param {string} sparql - SPARQL UPDATE query string
+     * @returns {Object} Update result
+     *
+     * @throws {TypeError} If sparql is not a string
+     * @throws {Error} If query is not an UPDATE query
+     */
+    async update(sparql) {
+      if (typeof sparql !== 'string') {
+        throw new TypeError('[useGraph] SPARQL query must be a string');
+      }
+      const res = await storeContext.query(sparql);
+      if (res.type !== 'update') {
+        throw new Error('[useGraph] Query is not an UPDATE query');
+      }
+      return res;
+    },
+
+    /**
+     * Validate the graph against SHACL shapes
+     * @param {string|Store} shapesInput - SHACL shapes as Turtle string or Store
+     * @returns {Object} Validation report
+     */
+    validate(shapesInput) {
+      return engine.validateShacl(store, shapesInput);
+    },
+
+    /**
+     * Validate the graph against SHACL shapes, throw on failure
+     * @param {string|Store} shapesInput - SHACL shapes
+     * @returns {Object} Validation report
+     * @throws {Error} If validation fails
+     */
+    validateOrThrow(shapesInput) {
+      const result = engine.validateShacl(store, shapesInput);
+      if (!result.conforms) {
+        throw new Error(
+          `SHACL validation failed: ${result.results.map(r => r.message).join(', ')}`
+        );
+      }
+      return result;
+    },
+
+    /**
+     * Serialize the graph to a string
+     * @param {Object} [options] - Serialization options
+     * @param {string} [options.format='Turtle'] - Output format
+     * @param {Object} [options.prefixes] - Prefix mappings
+     * @returns {string} Serialized string
+     *
+     * @throws {TypeError} If options is not an object
+     * @throws {Error} If format is unsupported
+     */
+    serialize(options = {}) {
+      if (options && typeof options !== 'object') {
+        throw new TypeError('[useGraph] serialize options must be an object');
+      }
+
+      const { format = 'Turtle', prefixes } = options;
+
+      if (format === 'Turtle') {
+        return engine.serializeTurtle(store, { prefixes });
+      }
+      if (format === 'N-Quads') {
+        return engine.serializeNQuads(store);
+      }
+
+      throw new Error(`[useGraph] Unsupported serialization format: ${format}`);
+    },
+
+    /**
+     * Get a Clownface pointer for fluent graph traversal
+     * @returns {Clownface} Clownface pointer
+     */
+    pointer() {
+      return engine.getClownface(store);
+    },
+
+    /**
+     * Get basic statistics about the graph
+     * @returns {Object} Graph statistics
+     */
+    stats() {
+      return engine.getStats(store);
+    },
+
+    /**
+     * Check if this graph is isomorphic to another
+     * @param {Object|Store} otherGraph - Another useGraph instance or Store
+     * @returns {boolean} True if isomorphic
+     */
+    isIsomorphic(otherGraph) {
+      const otherStore = otherGraph.store || otherGraph;
+      return engine.isIsomorphic(store, otherStore);
+    },
+
+    /**
+     * Create a new graph containing the union of this graph and others
+     * @param {...Object|Store} otherGraphs - Other useGraph instances or Stores
+     * @returns {Object} New useGraph instance with union
+     */
+    union(...otherGraphs) {
+      const otherStores = otherGraphs.map(g => g.store || g);
+      const resultStore = engine.union(store, ...otherStores);
+      // Create a temporary context for the result
+      return createTemporaryGraph(resultStore, engine);
+    },
+
+    /**
+     * Create a new graph containing quads in this graph but not in the other
+     * @param {Object|Store} otherGraph - Another useGraph instance or Store
+     * @returns {Object} New useGraph instance with difference
+     */
+    difference(otherGraph) {
+      const otherStore = otherGraph.store || otherGraph;
+      const resultStore = engine.difference(store, otherStore);
+      return createTemporaryGraph(resultStore, engine);
+    },
+
+    /**
+     * Create a new graph containing only quads that exist in both graphs
+     * @param {Object|Store} otherGraph - Another useGraph instance or Store
+     * @returns {Object} New useGraph instance with intersection
+     */
+    intersection(otherGraph) {
+      const otherStore = otherGraph.store || otherGraph;
+      const resultStore = engine.intersection(store, otherStore);
+      return createTemporaryGraph(resultStore, engine);
+    },
+
+    /**
+     * Skolemize blank nodes in the graph
+     * @param {string} [baseIRI] - Base IRI for skolemization
+     * @returns {Object} New useGraph instance with skolemized nodes
+     */
+    skolemize(baseIRI) {
+      const resultStore = engine.skolemize(store, baseIRI);
+      return createTemporaryGraph(resultStore, engine);
+    },
+
+    /**
+     * Convert the graph to JSON-LD
+     * @param {Object} [options] - Conversion options
+     * @param {Object} [options.context] - JSON-LD context
+     * @param {Object} [options.frame] - JSON-LD frame
+     * @returns {Object} JSON-LD document
+     */
+    toJSONLD(options = {}) {
+      return engine.toJSONLD(store, options);
+    },
+
+    /**
+     * Get the size of the graph
+     * @returns {number} Number of quads
+     */
+    get size() {
+      return store.size;
+    },
+  };
+}
+
+/**
+ * Create a temporary graph interface for a specific store
+ * Used for operations that return new stores (union, difference, etc.)
+ * @param {Store} store - The store to wrap
+ * @param {RdfEngine} engine - The RDF engine to use
+ * @returns {Object} Graph interface
+ * @private
+ */
+function createTemporaryGraph(store, engine) {
+  return {
+    get store() {
+      return store;
+    },
+
+    get engine() {
+      return engine;
+    },
+
+    query(sparql, options) {
+      if (typeof sparql !== 'string') {
+        throw new TypeError('[useGraph] SPARQL query must be a string');
+      }
+      try {
+        return engine.query(store, sparql, options);
+      } catch (error) {
+        throw new Error(`[useGraph] Query failed: ${error.message}`);
+      }
+    },
+
+    select(sparql) {
+      if (typeof sparql !== 'string') {
+        throw new TypeError('[useGraph] SPARQL query must be a string');
+      }
+      const res = engine.query(store, sparql);
+      if (res.type !== 'select') {
+        throw new Error('[useGraph] Query is not a SELECT query');
+      }
+      return res.results;
+    },
+
+    ask(sparql) {
+      if (typeof sparql !== 'string') {
+        throw new TypeError('[useGraph] SPARQL query must be a string');
+      }
+      const res = engine.query(store, sparql);
+      if (res.type !== 'ask') {
+        throw new Error('[useGraph] Query is not an ASK query');
+      }
+      return res.boolean;
+    },
+
+    construct(sparql) {
+      if (typeof sparql !== 'string') {
+        throw new TypeError('[useGraph] SPARQL query must be a string');
+      }
+      const res = engine.query(store, sparql);
+      if (res.type !== 'construct') {
+        throw new Error('[useGraph] Query is not a CONSTRUCT query');
+      }
+      return res.store;
+    },
+
+    update(sparql) {
+      if (typeof sparql !== 'string') {
+        throw new TypeError('[useGraph] SPARQL query must be a string');
+      }
+      const res = engine.query(store, sparql);
+      if (res.type !== 'update') {
+        throw new Error('[useGraph] Query is not an UPDATE query');
+      }
+      return res;
+    },
+
+    validate(shapesInput) {
+      return engine.validateShacl(store, shapesInput);
+    },
+
+    validateOrThrow(shapesInput) {
+      return engine.validateShaclOrThrow(store, shapesInput);
+    },
+
+    serialize(options = {}) {
+      if (options && typeof options !== 'object') {
+        throw new TypeError('[useGraph] serialize options must be an object');
+      }
+
+      const { format = 'Turtle', prefixes } = options;
+
+      if (format === 'Turtle') {
+        return engine.serializeTurtle(store, { prefixes });
+      }
+      if (format === 'N-Quads') {
+        return engine.serializeNQuads(store);
+      }
+
+      throw new Error(`[useGraph] Unsupported serialization format: ${format}`);
+    },
+
+    pointer() {
+      return engine.getClownface(store);
+    },
+
+    stats() {
+      return engine.getStats(store);
+    },
+
+    async isIsomorphic(otherGraph) {
+      const otherStore = otherGraph.store || otherGraph;
+      return engine.isIsomorphic(store, otherStore);
+    },
+
+    union(...otherGraphs) {
+      const otherStores = otherGraphs.map(g => g.store || g);
+      const resultStore = engine.union(store, ...otherStores);
+      return createTemporaryGraph(resultStore, engine);
+    },
+
+    difference(otherGraph) {
+      const otherStore = otherGraph.store || otherGraph;
+      const resultStore = engine.difference(store, otherStore);
+      return createTemporaryGraph(resultStore, engine);
+    },
+
+    intersection(otherGraph) {
+      const otherStore = otherGraph.store || otherGraph;
+      const resultStore = engine.intersection(store, otherStore);
+      return createTemporaryGraph(resultStore, engine);
+    },
+
+    skolemize(baseIRI) {
+      const resultStore = engine.skolemize(store, baseIRI);
+      return createTemporaryGraph(resultStore, engine);
+    },
+
+    toJSONLD(options = {}) {
+      return engine.toJSONLD(store, options);
+    },
+
+    get size() {
+      return store.size;
+    },
   };
 }
