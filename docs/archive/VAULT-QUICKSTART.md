@@ -19,7 +19,7 @@
 - Distributed key management
 
 ### 4. **Vault Client** ✅
-- Full-featured Vault client (`/sidecar/server/utils/vault-client.mjs`)
+- Full-featured Vault client (`/knowledge-engine/server/utils/vault-client.mjs`)
 - Automatic token renewal
 - Secret caching (5 minutes TTL)
 - Audit logging support
@@ -81,7 +81,6 @@
 ### Option 1: Development Mode (Auto-Setup)
 
 ```bash
-# Start Vault + KGC Sidecar with auto-initialization
 docker compose -f docker-compose.vault.yml up -d
 
 # Check Vault status
@@ -130,9 +129,8 @@ docker exec -it kgc-vault vault operator unseal <share-3>  # Progress: 3/3 ✅
 export VAULT_TOKEN=<root-token>
 docker compose -f docker-compose.vault.yml run --rm vault-init
 
-# 6. Start KGC Sidecar
 export VAULT_TOKEN=<app-token>
-docker compose -f docker-compose.vault.yml up -d kgc-sidecar
+docker compose -f docker-compose.vault.yml up -d knowledge-engine
 ```
 
 ## 🔑 Secrets Stored in Vault
@@ -241,7 +239,6 @@ vault token create -policy=kgc-read -ttl=24h
 # Vault status
 curl http://localhost:8200/v1/sys/health
 
-# KGC Sidecar health
 curl http://localhost:3000/health
 ```
 
@@ -285,8 +282,7 @@ docker exec kgc-vault vault kv list kgc/
 # 3. Test secret retrieval
 docker exec kgc-vault vault kv get kgc/api-credentials
 
-# 4. Check KGC Sidecar logs
-docker logs kgc-sidecar | grep Vault
+docker logs knowledge-engine | grep Vault
 # Output:
 # [KGC] Initializing Vault client...
 # [Vault] Connected to Vault 1.15.0
@@ -336,7 +332,7 @@ vault token create -policy=kgc-read
 
 # Update environment and restart
 export VAULT_TOKEN=<new-token>
-docker compose -f docker-compose.vault.yml restart kgc-sidecar
+docker compose -f docker-compose.vault.yml restart knowledge-engine
 ```
 
 ### Secret Not Found
@@ -359,7 +355,7 @@ vault kv get kgc/api-credentials
 ├── terraform/
 │   ├── vault.tf                           # Vault Terraform config
 │   └── variables.tf                        # Updated (secrets removed)
-├── sidecar/
+├── knowledge-engine/
 │   ├── server/
 │   │   ├── utils/vault-client.mjs         # Vault client implementation
 │   │   └── plugins/00.managers.mjs        # Updated (Vault integration)
@@ -376,8 +372,8 @@ vault kv get kgc/api-credentials
 ### Key Components
 
 1. **Vault Server**: `docker-compose.vault.yml`
-2. **Vault Client**: `/sidecar/server/utils/vault-client.mjs`
-3. **Manager Integration**: `/sidecar/server/plugins/00.managers.mjs`
+2. **Vault Client**: `/knowledge-engine/server/utils/vault-client.mjs`
+3. **Manager Integration**: `/knowledge-engine/server/plugins/00.managers.mjs`
 4. **Terraform Config**: `/terraform/vault.tf`
 5. **Init Script**: `/scripts/vault-init.sh`
 

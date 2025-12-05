@@ -12,7 +12,7 @@
 ## 🎯 Deliverables (100% Complete)
 
 ### 1. ✅ Package Dependencies Updated
-**File:** `/Users/sac/unrdf/sidecar/package.json`
+**File:** `/Users/sac/unrdf/knowledge-engine/package.json`
 
 **Actions:**
 - ✅ Removed vm2 (was not present)
@@ -28,7 +28,7 @@
 ```
 
 ### 2. ✅ Secure Sandbox Implementation
-**File:** `/Users/sac/unrdf/sidecar/server/utils/secure-sandbox.mjs`
+**File:** `/Users/sac/unrdf/knowledge-engine/server/utils/secure-sandbox.mjs`
 
 **Features:**
 - V8 isolate-based sandboxing (1200 lines)
@@ -67,7 +67,7 @@ await sandbox.destroyIsolate('effect-id')
 ```
 
 ### 3. ✅ ML-Based Threat Detector
-**File:** `/Users/sac/unrdf/sidecar/server/utils/sandbox-threat-detector.mjs`
+**File:** `/Users/sac/unrdf/knowledge-engine/server/utils/sandbox-threat-detector.mjs`
 
 **Threat Patterns (13 Types):**
 
@@ -118,7 +118,7 @@ function add(a, b) { return a + b }
 ```
 
 ### 4. ✅ Updated Register Endpoint
-**File:** `/Users/sac/unrdf/sidecar/server/api/effects/register.post.mjs`
+**File:** `/Users/sac/unrdf/knowledge-engine/server/api/effects/register.post.mjs`
 
 **Security Flow:**
 1. Authentication check (existing)
@@ -164,7 +164,7 @@ function add(a, b) { return a + b }
 ```
 
 ### 5. ✅ New Execute Endpoint
-**File:** `/Users/sac/unrdf/sidecar/server/api/effects/execute.post.mjs`
+**File:** `/Users/sac/unrdf/knowledge-engine/server/api/effects/execute.post.mjs`
 
 **Features:**
 - Effect execution in isolated-vm
@@ -190,7 +190,7 @@ function add(a, b) { return a + b }
 ```
 
 ### 6. ✅ Enhanced Validation Schemas
-**File:** `/Users/sac/unrdf/sidecar/server/utils/validation.mjs`
+**File:** `/Users/sac/unrdf/knowledge-engine/server/utils/validation.mjs`
 
 **Updates:**
 ```javascript
@@ -218,7 +218,7 @@ export const executeEffectSchema = z.object({
 ```
 
 ### 7. ✅ Comprehensive Test Suite
-**File:** `/Users/sac/unrdf/sidecar/test/unit/secure-sandbox.test.mjs`
+**File:** `/Users/sac/unrdf/knowledge-engine/test/unit/secure-sandbox.test.mjs`
 
 **Test Coverage (140+ assertions):**
 
@@ -299,7 +299,7 @@ it('should detect eval usage', async () => {
 
 **Workaround (Direct test execution):**
 ```bash
-cd /Users/sac/unrdf/sidecar
+cd /Users/sac/unrdf/knowledge-engine
 npm test test/unit/secure-sandbox.test.mjs
 ```
 

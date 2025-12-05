@@ -38,17 +38,13 @@
 
 ---
 
-### Sidecar Operations (3/5 commands - 60% WORKING)
 
 | Command | Implementation | Dependencies | OTEL | Status |
 |---------|---------------|--------------|------|--------|
-| `sidecar status` | Full implementation | createSidecarClient, gRPC | ❌ | **WORKING** |
-| `sidecar health` | Full implementation | createSidecarClient | ❌ | **WORKING** |
-| `sidecar logs` | Full implementation | createSidecarClient | ❌ | **WORKING** |
-| `sidecar config` | Partial - get/set | N/A | ❌ | **STUB** |
-| `sidecar restart` | Not implemented | N/A | ❌ | **STUB** |
+| `knowledge-engine config` | Partial - get/set | N/A | ❌ | **STUB** |
+| `knowledge-engine restart` | Not implemented | N/A | ❌ | **STUB** |
 
-**Evidence**: Status, health, and logs commands have real sidecar client integration with circuit breaker, metrics, and error handling.
+**Evidence**: Status, health, and logs commands have real knowledge-engine client integration with circuit breaker, metrics, and error handling.
 
 ---
 
@@ -93,7 +89,7 @@
 | `store backup` | `// TODO: Export store data`, writes `# Backup data\n` | L29-30 |
 | `store restore` | `// TODO: Import backup` | L27 |
 
-**Recommendation**: **REMOVE ALL** store commands. No integration with actual RDF store. Replace with single `store query` that uses sidecar.
+**Recommendation**: **REMOVE ALL** store commands. No integration with actual RDF store. Replace with single `store query` that uses 
 
 ---
 
@@ -101,16 +97,15 @@
 
 | Command | Issue | Line Number |
 |---------|-------|-------------|
-| `graph list` | `// TODO: Integrate with sidecar`, returns hardcoded data | L27-31 |
-| `graph get` | `// TODO: Fetch graph details from sidecar` | L30 |
-| `graph create` | `// TODO: Integrate with sidecar client` | L40 |
+| `graph list` | `// TODO: Integrate with knowledge-engine`, returns hardcoded data | L27-31 |
+| `graph get` | `// TODO: Fetch graph details from knowledge-engine` | L30 |
+| `graph create` | `// TODO: Integrate with knowledge-engine client` | L40 |
 | `graph update` | Not implemented | N/A |
 | `graph delete` | Not implemented | N/A |
 | `graph validate` | `// TODO: Integrate with knowledge-engine` | L40 |
 | `graph export` | `// TODO: Integrate with store to export graph` | L37 |
 | `graph describe` | Not implemented | N/A |
 
-**Recommendation**: **REMOVE** all graph commands except `graph list` and `graph validate`. Implement those two properly with sidecar integration.
 
 ---
 
@@ -193,7 +188,6 @@
 | Category | Total | Working | Stub | TODO | Keep % |
 |----------|-------|---------|------|------|--------|
 | **Context** | 6 | 6 | 0 | 0 | **100%** ✅ |
-| **Sidecar** | 5 | 3 | 2 | 0 | **60%** |
 | **Hook** | 8 | 1 | 6 | 1 | **12%** ❌ |
 | **Graph** | 8 | 0 | 7 | 1 | **0%** ❌ |
 | **Store** | 6 | 0 | 6 | 0 | **0%** ❌ |
@@ -211,14 +205,12 @@
 
 **KEEP (13 commands - 28%)**:
 1. **Context management** (6 commands) - ✅ Fully working, essential
-2. **Sidecar status/health/logs** (3 commands) - ✅ Working, critical for ops
 3. **Init & REPL** (2 commands) - ✅ Working, high developer value
 4. **Hook list** (1 command) - ✅ Working, essential
 5. **Completion** (1 command) - ⚠️ Working, nice-to-have
 
 **FAST-IMPLEMENT (5 commands - 4 hours total)**:
 1. `hook eval` - Migrate from cli-legacy (1h)
-2. `graph list` - Implement sidecar integration (1h)
 3. `plugin list/install` - Implement npm integration (2h)
 
 **TOTAL ESSENTIAL**: 18 commands (38% of current CLI)
@@ -232,9 +224,9 @@
 - 7 graph commands (except list)
 - 6 policy commands (all stubs)
 - 6 hook commands (except list and eval)
-- 4 sidecar commands (config, restart)
+- 4 knowledge-engine commands (config, restart)
 
-**Reasoning**: No actual implementation, duplicates functionality available via `hook eval` or sidecar commands.
+**Reasoning**: No actual implementation, duplicates functionality available via `hook eval` or knowledge-engine commands.
 
 ---
 
@@ -258,7 +250,6 @@
    - Document removed commands in CHANGELOG
 
 4. **Implement Fast Wins** (4h)
-   - `graph list` - Real sidecar integration
    - `plugin list/install` - npm package management
    - `auth` middleware - Simple JWT validation
 
@@ -267,7 +258,6 @@
 5. **Document Working Commands** (2h)
    - Create CLI reference docs for 18 working commands
    - Add usage examples
-   - Document sidecar integration patterns
 
 6. **Testing** (4h)
    - Write integration tests for 18 working commands
@@ -283,7 +273,7 @@
 
 8. **Store Commands v2** (8h)
    - Consolidate to `query` command
-   - Route all queries through sidecar
+   - Route all queries through knowledge-engine
    - Remove local store dependency
 
 ---
@@ -293,7 +283,6 @@
 ### What Works Well
 
 1. **Context Management** - Clean abstraction, proper persistence, OTEL instrumentation
-2. **Sidecar Integration** - gRPC client with circuit breaker, metrics, health checks
 3. **Formatters** - Modular output formatting (JSON, YAML, table, tree)
 4. **OTEL Integration** - Proper tracing in context and hook commands
 5. **Init/REPL** - Polished user experience with interactive prompts
@@ -353,7 +342,6 @@
 ### KEEP (18 commands = 38%)
 Delivers **80% of user value**:
 - Context management (essential)
-- Sidecar operations (ops-critical)
 - Hook list/eval (core functionality)
 - Init/REPL (DX value)
 - Plugin system (extensibility)
@@ -396,11 +384,9 @@ Delivers **20% of user value**:
 | context get | ✅ | Real ContextManager, OTEL | KEEP |
 | context use | ✅ | Real ContextManager, OTEL | KEEP |
 | context current | ✅ | Real ContextManager, OTEL | KEEP |
-| sidecar status | ✅ | Real sidecarClient, gRPC | KEEP |
-| sidecar health | ✅ | Real sidecarClient, gRPC | KEEP |
-| sidecar logs | ✅ | Real sidecarClient, gRPC | KEEP |
-| sidecar config | ❌ | Stub | REMOVE |
-| sidecar restart | ❌ | Stub | REMOVE |
+| knowledge-engine logs | ✅ | Real knowledge-engineClient, gRPC | KEEP |
+| knowledge-engine config | ❌ | Stub | REMOVE |
+| knowledge-engine restart | ❌ | Stub | REMOVE |
 | hook list | ✅ | Real KnowledgeHookManager | KEEP |
 | hook eval | ⚠️ | TODO in v2, working in legacy | MIGRATE |
 | hook create | ❌ | Stub | REMOVE |

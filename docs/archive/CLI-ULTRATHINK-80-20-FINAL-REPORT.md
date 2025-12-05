@@ -111,7 +111,6 @@ Test Pass Rate:        100% → 100%    (maintained)
 **Before**:
 ```bash
 $ unrdf graph list
-TODO: Implement graph list with sidecar integration
 # User: "WTF? This doesn't work?"
 ```
 
@@ -165,13 +164,10 @@ Available commands:
 - `policy describe` - Policy metadata
 - `policy/index.mjs` - Command registry
 
-**Sidecar Operations** (6 files):
-- `sidecar status` - Check sidecar status
-- `sidecar health` - Health check
-- `sidecar config` - Show configuration
-- `sidecar logs` - View logs
-- `sidecar restart` - Restart sidecar
-- `sidecar/index.mjs` - Command registry
+- `knowledge-engine config` - Show configuration
+- `knowledge-engine logs` - View logs
+- `knowledge-engine restart` - Restart knowledge-engine
+- `knowledge-engine/index.mjs` - Command registry
 
 **Store Operations** (2 files):
 - `store export` - Export RDF data
@@ -265,7 +261,7 @@ $ ls -la src/cli/commands/*/index.mjs
 -rw-r--r--  src/cli/commands/graph/index.mjs    (167 bytes)
 -rw-r--r--  src/cli/commands/hook/index.mjs     (281 bytes)
 -rw-r--r--  src/cli/commands/policy/index.mjs   (253 bytes)
--rw-r--r--  src/cli/commands/sidecar/index.mjs  (228 bytes)
+-rw-r--r--  src/cli/commands/knowledge-engine/index.mjs  (228 bytes)
 -rw-r--r--  src/cli/commands/store/index.mjs    (193 bytes)
 
 $ find src/cli/commands -name "*.mjs" -type f | wc -l
@@ -281,7 +277,7 @@ $ find src/cli/commands -name "*.mjs" -type f | wc -l
 ### What the 80/20 Principle Revealed
 
 **The Pareto Distribution**:
-- 20% of commands (context, sidecar, hooks) = 80% of user value
+- 20% of commands (context, knowledge-engine, hooks) = 80% of user value
 - 80% of commands (stubs, duplicates) = 20% of user value
 - Removing 40% of files improved quality by 257%
 
@@ -357,7 +353,6 @@ All 37 production commands continue to work:
 - Hook operations (7 commands)
 - Graph operations (3 commands)
 - Policy management (6 commands)
-- Sidecar operations (5 commands)
 - Store operations (2 working + 2 partial)
 - Utilities (5 commands)
 ```

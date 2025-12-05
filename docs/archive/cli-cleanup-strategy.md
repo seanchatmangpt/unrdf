@@ -32,7 +32,7 @@ Status: Ready for Implementation
    - ✅ **PRODUCTION ENTRY POINT** - defined in package.json bin
    - ✅ Uses citty for command routing
    - ✅ Lazy loading for optimal startup performance
-   - ✅ Complete command structure (graph, hook, policy, sidecar, store, context)
+   - ✅ Complete command structure (graph, hook, policy, knowledge-engine, store, context)
    - ⚠️ Contains 9 stub command references
 
 2. **`src/cli.mjs`** (520 lines)
@@ -57,11 +57,11 @@ All located in `src/cli/commands/`:
 3. **`store/import.mjs`** - Line 36: `// TODO: Parse and import`
 
 #### Graph Commands (4 stubs)
-4. **`graph/create.mjs`** - Line 40: `// TODO: Integrate with sidecar client`
-5. **`graph/list.mjs`** - Line 27: `// TODO: Integrate with sidecar client to fetch graphs`
+4. **`graph/create.mjs`** - Line 40: `// TODO: Integrate with knowledge-engine client`
+5. **`graph/list.mjs`** - Line 27: `// TODO: Integrate with knowledge-engine client to fetch graphs`
 6. **`graph/export.mjs`** - Line 37: `// TODO: Integrate with store to export graph`
 7. **`graph/validate.mjs`** - Line 40: `// TODO: Integrate with knowledge-engine validation`
-8. **`graph/get.mjs`** - Line 30: `// TODO: Fetch graph details from sidecar`
+8. **`graph/get.mjs`** - Line 30: `// TODO: Fetch graph details from knowledge-engine`
 
 #### Hook Commands (1 stub)
 9. **`hook/eval.mjs`** - Line 39: `// TODO: Integrate with KnowledgeHookManager`
@@ -163,7 +163,6 @@ mv src/cli-new.mjs examples/legacy-cli/cli-with-otel-wrapper.mjs
 
 #### Graph resource (keep all, mark as WIP):
 - ⚠️ Keep all graph commands but add "(WIP)" to descriptions
-- Reason: Graph operations are core functionality, just need sidecar integration
 - Better to keep stubs visible so users know what's planned
 
 #### Hook resource (keep all, mark as WIP):
@@ -174,7 +173,7 @@ mv src/cli-new.mjs examples/legacy-cli/cli-with-otel-wrapper.mjs
 **Files to edit**:
 1. `src/cli/index.mjs` - Remove backup/restore command definitions (lines 372-385)
 2. `src/cli/commands/store/index.mjs` - Remove export statements for backup/restore
-3. Update command descriptions to add "(WIP - requires sidecar)" where appropriate
+3. Update command descriptions to add "(WIP - requires knowledge-engine)" where appropriate
 
 **Impact**:
 - ✅ Users won't see broken commands in `unrdf store --help`
@@ -209,7 +208,6 @@ mv src/cli-new.mjs examples/legacy-cli/cli-with-otel-wrapper.mjs
    - `completion` - Shell completion
 
    ## Work In Progress ⚠️
-   ### Graph Commands (requires sidecar integration)
    - `graph list` - List graphs
    - `graph get` - Get graph details
    - `graph create` - Create graph
@@ -230,12 +228,9 @@ mv src/cli-new.mjs examples/legacy-cli/cli-with-otel-wrapper.mjs
    - `policy test` - Test policy
    - `policy validate` - Validate against policy
 
-   ### Sidecar Commands
-   - `sidecar status` - Sidecar status
-   - `sidecar health` - Health check
-   - `sidecar config` - Config management
-   - `sidecar logs` - View logs
-   - `sidecar restart` - Restart sidecar
+   - `knowledge-engine config` - Config management
+   - `knowledge-engine logs` - View logs
+   - `knowledge-engine restart` - Restart knowledge-engine
 
    ### Context Commands
    - `context list` - List contexts
@@ -269,7 +264,7 @@ mv src/cli-new.mjs examples/legacy-cli/cli-with-otel-wrapper.mjs
 **Rationale for NOT deleting**:
 - ✅ Stubs document intended functionality
 - ✅ Provide structure for future implementation
-- ✅ Show what integrations are needed (sidecar, KnowledgeHookManager)
+- ✅ Show what integrations are needed (knowledge-engine, KnowledgeHookManager)
 - ✅ Minimal maintenance burden (~30 lines per file)
 - ✅ Tests already removed per BROKEN-TESTS-REMOVAL-SUMMARY.md
 
@@ -363,7 +358,7 @@ npx unrdf repl --help
 npx unrdf graph --help
 npx unrdf hook --help
 npx unrdf policy --help
-npx unrdf sidecar --help
+npx unrdf knowledge-engine --help
 npx unrdf context --help
 ```
 
@@ -423,13 +418,12 @@ git checkout main
 ## Next Steps After Cleanup
 
 ### Immediate (P0):
-1. Implement sidecar integration for graph commands
 2. Integrate KnowledgeHookManager for hook commands
 3. Add context persistence for context commands
 
 ### Short Term (P1):
 4. Restore `store import` full functionality
-5. Add sidecar client to graph/hook operations
+5. Add knowledge-engine client to graph/hook operations
 6. Create integration tests for CLI commands
 
 ### Long Term (P2):

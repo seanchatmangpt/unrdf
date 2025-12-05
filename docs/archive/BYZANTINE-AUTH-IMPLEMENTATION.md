@@ -2,7 +2,7 @@
 
 ## Overview
 
-Complete OAuth2/JWT authentication system with Byzantine consensus for the UNRDF sidecar, implementing cryptographically secure multi-signature validation for admin operations.
+Complete OAuth2/JWT authentication system with Byzantine consensus for the UNRDF knowledge-engine, implementing cryptographically secure multi-signature validation for admin operations.
 
 ## Architecture
 
@@ -178,7 +178,7 @@ NODE_ENV=production
 
 - **Access Token**: 15 minutes expiry
 - **Refresh Token**: 7 days expiry
-- **Issuer**: unrdf-sidecar
+- **Issuer**: unrdf-knowledge-engine
 - **Audience**: unrdf-api
 - **Algorithm**: HS256
 
@@ -337,21 +337,21 @@ curl -X POST http://localhost:3000/api/admin/byzantine-operation \
 
 ## Files Created
 
-1. `/Users/sac/unrdf/sidecar/server/utils/auth.mjs` (580 lines)
-2. `/Users/sac/unrdf/sidecar/server/middleware/00.auth.mjs` (189 lines)
-3. `/Users/sac/unrdf/sidecar/server/api/auth/login.post.mjs` (115 lines)
-4. `/Users/sac/unrdf/sidecar/server/api/auth/register.post.mjs` (113 lines)
-5. `/Users/sac/unrdf/sidecar/server/api/auth/refresh.post.mjs` (115 lines)
-6. `/Users/sac/unrdf/sidecar/server/api/auth/logout.post.mjs` (55 lines)
-7. `/Users/sac/unrdf/sidecar/server/api/auth/me.get.mjs` (60 lines)
-8. `/Users/sac/unrdf/sidecar/server/api/admin/byzantine-operation.post.mjs` (165 lines)
-9. `/Users/sac/unrdf/sidecar/server/api/admin/validators.get.mjs` (75 lines)
+1. `/Users/sac/unrdf/knowledge-engine/server/utils/auth.mjs` (580 lines)
+2. `/Users/sac/unrdf/knowledge-engine/server/middleware/00.auth.mjs` (189 lines)
+3. `/Users/sac/unrdf/knowledge-engine/server/api/auth/login.post.mjs` (115 lines)
+4. `/Users/sac/unrdf/knowledge-engine/server/api/auth/register.post.mjs` (113 lines)
+5. `/Users/sac/unrdf/knowledge-engine/server/api/auth/refresh.post.mjs` (115 lines)
+6. `/Users/sac/unrdf/knowledge-engine/server/api/auth/logout.post.mjs` (55 lines)
+7. `/Users/sac/unrdf/knowledge-engine/server/api/auth/me.get.mjs` (60 lines)
+8. `/Users/sac/unrdf/knowledge-engine/server/api/admin/byzantine-operation.post.mjs` (165 lines)
+9. `/Users/sac/unrdf/knowledge-engine/server/api/admin/validators.get.mjs` (75 lines)
 
 ## Files Modified
 
-1. `/Users/sac/unrdf/sidecar/server/api/effects/register.post.mjs` (added auth check)
-2. `/Users/sac/unrdf/sidecar/server/api/agents/register.post.mjs` (added auth check)
-3. `/Users/sac/unrdf/sidecar/package.json` (added dependencies)
+1. `/Users/sac/unrdf/knowledge-engine/server/api/effects/register.post.mjs` (added auth check)
+2. `/Users/sac/unrdf/knowledge-engine/server/api/agents/register.post.mjs` (added auth check)
+3. `/Users/sac/unrdf/knowledge-engine/package.json` (added dependencies)
 
 ## Dependencies Added
 
