@@ -16,7 +16,7 @@ import { createContext, useContext, useReducer, useCallback, useEffect, useRef }
 import {
   createDeltaSyncReducer,
   DeltaSyncState,
-} from '@unrdf/kgc-4d';
+} from '@unrdf/kgc-4d/client';
 
 // Re-export for convenience
 export const ConnectionState = DeltaSyncState;
