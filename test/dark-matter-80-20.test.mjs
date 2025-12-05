@@ -13,7 +13,7 @@ import {
   KnowledgeSubstrateFactory,
   _DarkMatterCore,
   _DarkMatterFactory,
-} from '../src/knowledge-engine/knowledge-substrate-core.mjs';
+} from '../packages/knowledge-engine/knowledge-substrate-core.mjs';
 import { createStore, dataFactory } from '@unrdf/oxigraph';
 
 const { namedNode, literal: _literal, quad } = dataFactory;

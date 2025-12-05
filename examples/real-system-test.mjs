@@ -8,11 +8,11 @@
  */
 
 import { createStore } from '@unrdf/oxigraph';
-import { RealKnowledgeHookManager } from '../src/knowledge-engine/real-knowledge-hooks.mjs';
-import { createRealLockchainWriter } from '../src/knowledge-engine/real-lockchain-writer.mjs';
-import { createRealResolutionLayer } from '../src/knowledge-engine/real-resolution-layer.mjs';
-import { createRealEffectSandbox } from '../src/knowledge-engine/real-effect-sandbox.mjs';
-import { createRealQueryOptimizer } from '../src/knowledge-engine/real-query-optimizer.mjs';
+import { RealKnowledgeHookManager } from '../packages/knowledge-engine/src/real-knowledge-hooks.mjs';
+import { createRealLockchainWriter } from '../packages/knowledge-engine/src/real-lockchain-writer.mjs';
+import { createRealResolutionLayer } from '../packages/knowledge-engine/src/real-resolution-layer.mjs';
+import { createRealEffectSandbox } from '../packages/knowledge-engine/src/real-effect-sandbox.mjs';
+import { createRealQueryOptimizer } from '../packages/knowledge-engine/src/real-query-optimizer.mjs';
 
 console.log('🚀 Real System Integration Test\n');
 

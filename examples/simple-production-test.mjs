@@ -7,8 +7,8 @@
  */
 
 import { createStore } from '@unrdf/oxigraph';
-import { KnowledgeHookManager } from '../src/knowledge-engine/knowledge-hook-manager.mjs';
-import { createKnowledgeHook } from '../src/knowledge-engine/schemas.mjs';
+import { KnowledgeHookManager } from '../packages/knowledge-engine/src/knowledge-hook-manager.mjs';
+import { createKnowledgeHook } from '../packages/knowledge-engine/src/schemas.mjs';
 
 console.log('🚀 Simple Production Test\n');
 

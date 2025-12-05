@@ -3,7 +3,7 @@
  * Tests SELECT, ASK, and CONSTRUCT queries
  */
 
-import { createDarkMatterCore, DataFactory } from '../../src/knowledge-engine/index.mjs';
+import { createDarkMatterCore, DataFactory } from '../../packages/knowledge-engine/index.mjs';
 const { namedNode, quad, literal } = DataFactory;
 
 /**

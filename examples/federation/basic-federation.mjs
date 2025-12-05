@@ -5,7 +5,7 @@
  * multiple stores, execute queries, and replicate data.
  */
 
-import { createFederatedSystem } from '../../src/knowledge-engine/federation/index.mjs';
+import { createFederatedSystem } from '../../packages/knowledge-engine/federation/index.mjs';
 
 async function main() {
   console.log('🚀 UNRDF Federation - Basic Example\n');

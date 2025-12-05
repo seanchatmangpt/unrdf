@@ -5,7 +5,7 @@
 
 import { describe, it, expect } from 'vitest';
 import { createStore, dataFactory } from '@unrdf/oxigraph';
-import { findMissingRoles, scoreMissingRole } from '../../src/project-engine/gap-finder.mjs';
+import { findMissingRoles, scoreMissingRole } from '../../packages/project-engine/gap-finder.mjs';
 
 const { namedNode, literal } = dataFactory;
 

@@ -3,7 +3,7 @@
  * Tests the 5-minute tutorial
  */
 
-import { createDarkMatterCore, DataFactory } from '../../src/knowledge-engine/index.mjs';
+import { createDarkMatterCore, DataFactory } from '../../packages/knowledge-engine/index.mjs';
 const { namedNode, quad, literal } = DataFactory;
 
 /**

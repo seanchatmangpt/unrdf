@@ -5,7 +5,7 @@
 
 import { describe, it, expect } from 'vitest';
 import { createStore, dataFactory } from '@unrdf/oxigraph';
-import { analyzeHotspots, scoreFeature } from '../../src/project-engine/hotspot-analyzer.mjs';
+import { analyzeHotspots, scoreFeature } from '../../packages/project-engine/hotspot-analyzer.mjs';
 
 const { namedNode, literal } = dataFactory;
 const NS = {

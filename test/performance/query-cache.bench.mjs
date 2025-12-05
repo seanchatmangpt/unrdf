@@ -7,7 +7,7 @@
  */
 
 import { describe, it, beforeEach, _afterEach } from 'vitest';
-import { createQueryOptimizer } from '../../src/knowledge-engine/query-optimizer.mjs';
+import { createQueryOptimizer } from '../../packages/knowledge-engine/query-optimizer.mjs';
 import { createStore } from '@unrdf/oxigraph';
 import { trace } from '@opentelemetry/api';
 

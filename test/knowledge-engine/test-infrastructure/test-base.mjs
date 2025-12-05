@@ -7,7 +7,7 @@
  * teardown, and utility methods.
  */
 
-import { KnowledgeHookManager } from '../../../src/knowledge-engine/knowledge-hook-manager.mjs';
+import { KnowledgeHookManager } from '../../../packages/knowledge-engine/knowledge-hook-manager.mjs';
 import { createStore } from '@unrdf/oxigraph';
 import { join } from 'path';
 import { tmpdir } from 'os';

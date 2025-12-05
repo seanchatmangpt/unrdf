@@ -2,11 +2,11 @@
  * @fileoverview Performance Profiling Examples
  */
 
-import { createProfiler, quickProfile } from '../src/profiling/profiler.mjs';
-import { _measureLatency } from '../src/profiling/latency-profiler.mjs';
-import { measureMemory } from '../src/profiling/memory-profiler.mjs';
-import { measureCpu, CpuProfiler } from '../src/profiling/cpu-profiler.mjs';
-import { Reporter } from '../src/profiling/reporter.mjs';
+import { createProfiler, quickProfile } from '../packages/core/src/profiling/profiler.mjs';
+import { _measureLatency } from '../packages/core/src/profiling/latency-profiler.mjs';
+import { measureMemory } from '../packages/core/src/profiling/memory-profiler.mjs';
+import { measureCpu, CpuProfiler } from '../packages/core/src/profiling/cpu-profiler.mjs';
+import { Reporter } from '../packages/core/src/profiling/reporter.mjs';
 
 /**
  * Example 1: Basic profiling with the main profiler

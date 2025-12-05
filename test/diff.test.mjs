@@ -22,7 +22,7 @@ import {
   OntologyChangeSchema,
   OntologyDiffSchema,
   DeltaLikeSchema,
-} from '../src/diff.mjs';
+} from '../packages/diff.mjs';
 
 /* ========================================================================= */
 /* Test Fixtures & Mocks                                                    */

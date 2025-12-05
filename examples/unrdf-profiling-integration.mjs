@@ -3,8 +3,8 @@
  * Demonstrates how to integrate profiling into UNRDF operations
  */
 
-import { createProfiler } from '../src/profiling/profiler.mjs';
-import { Reporter } from '../src/profiling/reporter.mjs';
+import { createProfiler } from '../packages/core/src/profiling/profiler.mjs';
+import { Reporter } from '../packages/core/src/profiling/reporter.mjs';
 
 /**
  * Example UNRDF operation profiling wrapper

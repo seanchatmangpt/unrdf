@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { QueryOptimizer } from '../src/knowledge-engine/query-optimizer.mjs';
+import { QueryOptimizer } from '../packages/knowledge-engine/query-optimizer.mjs';
 import { createStore, dataFactory } from '@unrdf/oxigraph';
 
 const { quad, namedNode } = dataFactory;

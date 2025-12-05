@@ -5,8 +5,8 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { IsolatedVmExecutor } from '../../../src/security/sandbox/isolated-vm-executor.mjs';
-import { SandboxAdapter } from '../../../src/security/sandbox-adapter.mjs';
+import { IsolatedVmExecutor } from '../../../packages/security/sandbox/isolated-vm-executor.mjs';
+import { SandboxAdapter } from '../../../packages/security/sandbox-adapter.mjs';
 
 describe('IsolatedVmExecutor - Security Tests', () => {
   let executor;

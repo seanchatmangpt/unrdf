@@ -4,8 +4,8 @@
  * with the defineHook function, following the autonomic systems principles.
  */
 
-import { defineHook } from '../src/knowledge-engine/define-hook.mjs';
-import { namedNode, literal, quad } from '../src/rdf/quad-utils.mjs';
+import { defineHook } from '../packages/knowledge-engine/src/define-hook.mjs';
+import { namedNode, literal, quad } from '../packages/rdf/quad-utils.mjs';
 
 /**
  * Example hook for parliamentary motion compliance.

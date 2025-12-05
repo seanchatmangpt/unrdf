@@ -12,7 +12,7 @@ import {
   createFederatedSystem,
   ReplicationTopology,
   ConflictResolution,
-} from '../../src/knowledge-engine/federation/index.mjs';
+} from '../../packages/knowledge-engine/federation/index.mjs';
 
 async function demonstrateTopologies() {
   console.log('📊 Replication Topologies Demo\n');

@@ -4,7 +4,7 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
-import { RingBuffer } from '../../../src/knowledge-engine/utils/ring-buffer.mjs';
+import { RingBuffer } from '../../../packages/knowledge-engine/utils/ring-buffer.mjs';
 
 describe('RingBuffer (TRIZ #10 Prior Action)', () => {
   /** @type {RingBuffer<number>} */

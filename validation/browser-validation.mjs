@@ -14,9 +14,9 @@
  */
 
 import { trace, context } from '@opentelemetry/api';
-import { IndexedDBQuadStore } from '../src/browser/indexeddb-store.mjs';
-import { BrowserQueryExecutor } from '../src/browser/comunica-browser-adapter.mjs';
-import { BrowserLockchainWriter } from '../src/browser/browser-lockchain-writer.mjs';
+import { IndexedDBQuadStore } from '../packages/browser/indexeddb-store.mjs';
+import { BrowserQueryExecutor } from '../packages/browser/comunica-browser-adapter.mjs';
+import { BrowserLockchainWriter } from '../packages/browser/browser-lockchain-writer.mjs';
 import { DataFactory } from '@rdfjs/data-model';
 
 const { namedNode, literal, quad } = DataFactory;

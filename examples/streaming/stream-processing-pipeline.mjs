@@ -11,7 +11,7 @@ import {
   WindowType,
   Aggregators,
   ValidationMode,
-} from '../../src/knowledge-engine/streaming/index.mjs';
+} from '../../packages/knowledge-engine/streaming/index.mjs';
 
 const { namedNode, literal, quad } = DataFactory;
 

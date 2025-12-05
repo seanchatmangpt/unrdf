@@ -2,7 +2,7 @@
  * @fileoverview Hooks API endpoints for Nitro runtime
  */
 
-import { defineHook } from '../../../../src/hooks.mjs'
+import { defineHook } from '../../../../packages/hooks/src/hooks/define-hook.mjs'
 import { requireAuth } from '../../_auth.mjs'
 import { hookRegistry } from './_shared.mjs'
 

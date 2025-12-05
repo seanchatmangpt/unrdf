@@ -3,7 +3,7 @@
  * Tests OTEL instrumentation
  */
 
-import { ObservabilityManager } from '../../src/knowledge-engine/index.mjs';
+import { ObservabilityManager } from '../../packages/knowledge-engine/index.mjs';
 import { trace } from '@opentelemetry/api';
 
 /**

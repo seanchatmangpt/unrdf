@@ -1,148 +1,243 @@
 /**
- * useTerms Composable - RDF Term Factory
+ * @fileoverview useTerms composable - RDF term creation with context and configuration
  *
- * Provides helper functions for creating RDF terms with caching.
- * Terms are cached for equality comparisons.
+ * This composable provides convenient RDF term creation with base IRI resolution,
+ * default datatypes, and type conversion. It wraps N3 DataFactory with additional
+ * functionality while maintaining compatibility with the core RDF data model.
  *
- * @module composables/use-terms
+ * @version 1.0.0
+ * @author GitVan Team
+ * @license MIT
  */
 
-import { namedNode, literal, blankNode, variable, defaultGraph, quad } from '@unrdf/core';
+import { UnrdfDataFactory as DataFactory } from '@unrdf/core/rdf/n3-justified-only';
+import { useStoreContext } from '../context/index.mjs';
+
+const { namedNode, literal, blankNode, quad, defaultGraph } = DataFactory;
 
 /**
- * Term cache for equality comparisons
- */
-const termCache = new Map();
-
-/**
- * Create RDF terms with caching
+ * Create a terms composable for RDF term creation
  *
- * @returns {{
- *   namedNode: (iri: string) => object,
- *   literal: (value: string, langOrDatatype?: string) => object,
- *   blankNode: (label?: string) => object,
- *   variable: (name: string) => object,
- *   defaultGraph: () => object,
- *   quad: (subject: object, predicate: object, object: object, graph?: object) => object,
- *   clearCache: () => void
- * }} Term factory functions
+ * @param {Object} [options] - Terms options
+ * @param {string} [options.baseIRI] - Base IRI for relative IRIs
+ * @param {string} [options.defaultDatatype] - Default datatype for literals
+ * @returns {Object} Terms creation interface
+ *
  * @example
- * const { namedNode, literal } = useTerms()
- * const person = namedNode('http://example.org/person/1')
- * const name = literal('Alice', 'en')
+ * // Initialize store context first
+ * const runApp = initStore();
+ *
+ * runApp(() => {
+ *   const terms = useTerms({ baseIRI: "https://example.org/" });
+ *
+ *   // Create named nodes with base IRI resolution
+ *   const subject = terms.iri("person"); // → "https://example.org/person"
+ *
+ *   // Create literals with type conversion
+ *   const name = terms.lit("John Doe");
+ *   const age = terms.lit(30, "http://www.w3.org/2001/XMLSchema#integer");
+ *
+ *   // Create blank nodes
+ *   const bnode = terms.bnode("person1");
+ *
+ *   // Create quads
+ *   const statement = terms.quad(subject, terms.iri("name"), name);
+ * });
+ *
+ * @throws {Error} If store context is not initialized
  */
-export function useTerms() {
-  /**
-   * Create or retrieve cached named node
-   *
-   * @param {string} iri - IRI for the named node
-   * @returns {object} Named node term
-   */
-  function cachedNamedNode(iri) {
-    const key = `nn:${iri}`;
-    if (termCache.has(key)) {
-      return termCache.get(key);
-    }
-    const term = namedNode(iri);
-    termCache.set(key, term);
-    return term;
-  }
+export function useTerms(options = {}) {
+  // Get the store context
+  const _storeContext = useStoreContext();
 
-  /**
-   * Create or retrieve cached literal
-   *
-   * @param {string} value - Literal value
-   * @param {string} [langOrDatatype] - Language tag or datatype IRI
-   * @returns {object} Literal term
-   */
-  function cachedLiteral(value, langOrDatatype) {
-    const key = `lit:${value}:${langOrDatatype || ''}`;
-    if (termCache.has(key)) {
-      return termCache.get(key);
-    }
-    const term = literal(value, langOrDatatype);
-    termCache.set(key, term);
-    return term;
-  }
-
-  /**
-   * Create or retrieve cached blank node
-   *
-   * @param {string} [label] - Optional blank node label
-   * @returns {object} Blank node term
-   */
-  function cachedBlankNode(label) {
-    if (!label) {
-      // Don't cache unlabeled blank nodes
-      return blankNode();
-    }
-    const key = `bn:${label}`;
-    if (termCache.has(key)) {
-      return termCache.get(key);
-    }
-    const term = blankNode(label);
-    termCache.set(key, term);
-    return term;
-  }
-
-  /**
-   * Create or retrieve cached variable
-   *
-   * @param {string} name - Variable name
-   * @returns {object} Variable term
-   */
-  function cachedVariable(name) {
-    const key = `var:${name}`;
-    if (termCache.has(key)) {
-      return termCache.get(key);
-    }
-    const term = variable(name);
-    termCache.set(key, term);
-    return term;
-  }
-
-  /**
-   * Get the default graph term (singleton)
-   *
-   * @returns {object} Default graph term
-   */
-  function cachedDefaultGraph() {
-    const key = 'dg:default';
-    if (termCache.has(key)) {
-      return termCache.get(key);
-    }
-    const term = defaultGraph();
-    termCache.set(key, term);
-    return term;
-  }
-
-  /**
-   * Create a quad (not cached)
-   *
-   * @param {object} subject - Subject term
-   * @param {object} predicate - Predicate term
-   * @param {object} object - Object term
-   * @param {object} [graph] - Graph term
-   * @returns {object} Quad
-   */
-  function createQuad(subject, predicate, object, graph) {
-    return quad(subject, predicate, object, graph);
-  }
-
-  /**
-   * Clear the term cache
-   */
-  function clearCache() {
-    termCache.clear();
-  }
+  const {
+    baseIRI = 'http://example.org/',
+    defaultDatatype = 'http://www.w3.org/2001/XMLSchema#string',
+  } = options || {};
 
   return {
-    namedNode: cachedNamedNode,
-    literal: cachedLiteral,
-    blankNode: cachedBlankNode,
-    variable: cachedVariable,
-    defaultGraph: cachedDefaultGraph,
-    quad: createQuad,
-    clearCache,
+    /**
+     * Create a named node (IRI)
+     * @param {string} iri - The IRI string
+     * @returns {NamedNode} Named node term
+     *
+     * @throws {TypeError} If iri is not a string
+     */
+    iri(iri) {
+      if (typeof iri !== 'string') {
+        throw new TypeError('[useTerms] IRI must be a string');
+      }
+
+      // Handle relative IRIs
+      if (!iri.startsWith('http://') && !iri.startsWith('https://') && !iri.startsWith('urn:')) {
+        iri = baseIRI + iri;
+      }
+
+      return namedNode(iri);
+    },
+
+    /**
+     * Create a literal
+     * @param {string|number|boolean} value - The literal value
+     * @param {string} [datatype] - The datatype IRI
+     * @param {string} [language] - The language tag
+     * @returns {Literal} Literal term
+     *
+     * @throws {TypeError} If value is null or undefined
+     */
+    lit(value, datatype, language) {
+      if (value === null || value === undefined) {
+        throw new TypeError('[useTerms] Literal value cannot be null or undefined');
+      }
+
+      // Convert to string if needed
+      const stringValue = String(value);
+
+      // Handle language tags
+      if (language) {
+        return literal(stringValue, language);
+      }
+
+      // Handle datatypes - check for null/undefined explicitly
+      if (datatype !== null && datatype !== undefined) {
+        return literal(stringValue, namedNode(datatype));
+      }
+
+      // Use default datatype
+      return literal(stringValue, namedNode(defaultDatatype));
+    },
+
+    /**
+     * Create a blank node
+     * @param {string} [id] - Optional blank node ID
+     * @returns {BlankNode} Blank node term
+     *
+     * @throws {TypeError} If id is provided but not a string
+     */
+    bnode(id) {
+      if (id !== undefined && id !== null && typeof id !== 'string') {
+        throw new TypeError('[useTerms] Blank node ID must be a string');
+      }
+
+      // Allow null/undefined to generate automatic ID
+      return blankNode(id || undefined);
+    },
+
+    /**
+     * Create a quad (statement)
+     * @param {Term} subject - The subject term
+     * @param {Term} predicate - The predicate term
+     * @param {Term} object - The object term
+     * @param {Term} [graph] - The graph term (optional)
+     * @returns {Quad} Quad term
+     *
+     * @throws {TypeError} If subject, predicate, or object are missing
+     */
+    quad(subject, predicate, object, graph) {
+      if (!subject || !predicate || !object) {
+        throw new TypeError('[useTerms] Subject, predicate, and object are required');
+      }
+
+      // Handle null/undefined graph as null (not defaultGraph)
+      return quad(subject, predicate, object, graph === null || graph === undefined ? null : graph);
+    },
+
+    /**
+     * Create a named node for graph (alias for iri)
+     * @param {string} iri - The IRI string
+     * @returns {NamedNode} Named node term
+     */
+    graph(iri) {
+      return this.iri(iri);
+    },
+
+    /**
+     * Create a default graph term
+     * @returns {DefaultGraph} Default graph term
+     */
+    defaultGraph() {
+      return defaultGraph();
+    },
+
+    /**
+     * Get the base IRI
+     * @returns {string} Base IRI
+     */
+    getBaseIRI() {
+      return baseIRI;
+    },
+
+    /**
+     * Get the default datatype
+     * @returns {string} Default datatype
+     */
+    getDefaultDatatype() {
+      return defaultDatatype;
+    },
+
+    /**
+     * Check if a term is a NamedNode
+     * @param {any} term - The term to check
+     * @returns {boolean} True if the term is a NamedNode
+     */
+    isNamedNode(term) {
+      return term && typeof term === 'object' && term.termType === 'NamedNode';
+    },
+
+    /**
+     * Check if a term is a Literal
+     * @param {any} term - The term to check
+     * @returns {boolean} True if the term is a Literal
+     */
+    isLiteral(term) {
+      return term && typeof term === 'object' && term.termType === 'Literal';
+    },
+
+    /**
+     * Check if a term is a BlankNode
+     * @param {any} term - The term to check
+     * @returns {boolean} True if the term is a BlankNode
+     */
+    isBlankNode(term) {
+      return term && typeof term === 'object' && term.termType === 'BlankNode';
+    },
+
+    /**
+     * Check if a term is a DefaultGraph
+     * @param {any} term - The term to check
+     * @returns {boolean} True if the term is a DefaultGraph
+     */
+    isDefaultGraph(term) {
+      return term && typeof term === 'object' && term.termType === 'DefaultGraph';
+    },
+
+    /**
+     * Check if a term is a valid RDF term
+     * @param {any} term - The term to check
+     * @returns {boolean} True if the term is a valid RDF term
+     */
+    isTerm(term) {
+      if (!term || typeof term !== 'object') {
+        return false;
+      }
+      return (
+        this.isNamedNode(term) ||
+        this.isLiteral(term) ||
+        this.isBlankNode(term) ||
+        this.isDefaultGraph(term)
+      );
+    },
+
+    /**
+     * Get the term type of a term
+     * @param {any} term - The term to check
+     * @returns {string|null} The term type or null if not a term
+     */
+    getTermType(term) {
+      if (!term || typeof term !== 'object') {
+        return null;
+      }
+      return term.termType || null;
+    },
   };
 }
