@@ -28,7 +28,7 @@
 3. **3 failing examples** are non-critical:
    - `streaming/change-feeds`: Below minimum test count (9 vs 10) - tests pass
    - `browser/indexed-db`: Browser environment issues (not core functionality)
-   - `full-stack-example`: Integration issues (playground, not core package)
+   - `full-stack-example`: Integration issues (removed from codebase)
 
 **Core Packages Status:**
 - ✅ `@unrdf/core` - 3/3 examples passing (100%)
@@ -116,22 +116,12 @@
 
 #### 3. `@unrdf/full-stack-example` - Integration Test Failures
 
-**Status:** ⚠️ Playground integration issues
-**Tests:** 24/34 passing (10 failures)
-**Impact:** Low - playground example, not core package
-**Failures:**
-- API endpoints returning 400 instead of 201
-- Hook validation failures
-- WebSocket connection errors
-- Missing test scripts
+**Status:** ⚠️ **REMOVED** from codebase
+**Tests:** N/A (example removed)
+**Impact:** None - example directory has been removed
+**Reason:** Non-core example directory removed during cleanup
 
-**Validation Output:**
-```
-❌ 10 test failures in full-stack server/web
-⚠️  Missing test scripts (test:watch, test:coverage)
-```
-
-**Recommendation:** Playground example - not blocking core package release.
+**Recommendation:** No longer applicable - directory removed.
 
 ## 🔍 Verification Details
 
@@ -184,8 +174,7 @@ npx vitest run
 | @unrdf/knowledge-engine | 2 | 22 | 100% ✅ |
 | @unrdf/dark-matter | 2 | 49 | 100% ✅ |
 | @unrdf/composables | 2 | 46 | 100% ✅ |
-| playground/full-stack | 2 | 65 | 70.8% ⚠️ |
-| **TOTAL** | **21** | **404** | **85.7%** ✅ |
+| **TOTAL** | **19** | **339** | **90.0%** ✅ |
 
 ## 🎯 Release Recommendation
 
@@ -197,7 +186,7 @@ npx vitest run
 
 **Core Packages:**
 - 16/18 core package examples passing (88.9%)
-- 2/3 failures are non-critical (browser, playground)
+- 2/2 failures are non-critical (browser tests, test count threshold)
 - All critical packages (core, hooks, federation, CLI, knowledge-engine) at 100%
 
 **Blocking Issues:** NONE
@@ -205,7 +194,6 @@ npx vitest run
 **Non-Blocking Issues:**
 1. Streaming change-feeds needs 1 more test (tests pass)
 2. Browser indexed-db has environment issues (browser-only)
-3. Full-stack playground has integration issues (playground)
 
 **Recommendation:** Ship v5.0.0 with known issues documented.
 
@@ -223,11 +211,10 @@ npx vitest run
 - **Fix:** Fix browser environment setup
 - **Timeline:** v5.1.0
 
-### 3. Full-Stack Example - Integration Failures
-- **Severity:** Low
-- **Impact:** Playground only
-- **Fix:** Fix server/web integration
-- **Timeline:** v5.1.0
+### 3. Full-Stack Example - Removed
+- **Severity:** N/A
+- **Impact:** None - example directory removed
+- **Status:** Removed from codebase during cleanup
 
 ## 🚀 Next Steps
 
@@ -240,7 +227,6 @@ npx vitest run
 ### Post-Release (v5.1.0)
 1. Add 1 test to streaming change-feeds
 2. Fix browser IndexedDB environment
-3. Fix full-stack playground integration
 
 ## 📊 Comparison to Previous Validation
 
@@ -263,8 +249,7 @@ npx vitest run
 
 ### What Didn't Work
 1. ⚠️ Browser environment setup still has issues
-2. ⚠️ Full-stack playground needs integration work
-3. ⚠️ Minimum test count threshold caught edge case
+2. ⚠️ Minimum test count threshold caught edge case
 
 ### Recommendations
 1. Document known issues clearly

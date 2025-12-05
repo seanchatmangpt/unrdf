@@ -105,7 +105,7 @@ DOCUMENTATION QUALITY
 
 **Level 3: Best-in-Class**
 - [ ] All Level 2 criteria
-- [ ] Interactive examples/playground
+- [ ] Interactive examples (playground removed)
 - [ ] Video tutorials
 - [ ] Internationalization
 - [ ] Accessibility compliance (WCAG 2.1)
