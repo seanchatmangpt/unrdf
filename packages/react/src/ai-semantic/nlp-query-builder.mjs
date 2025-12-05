@@ -91,8 +91,9 @@ export class NLPQueryBuilder {
         intent: 'select',
         generator: (match, entities) => {
           const [_, subject, predicate] = match;
-          const subjectUri = entities.find(e => e.text === subject.trim())?.uri || '?subject';
-          const predicateUri = entities.find(e => e.text === predicate.trim())?.uri || '?predicate';
+          const subjectUri = entities.find((e) => e.text === subject.trim())?.uri || '?subject';
+          const predicateUri =
+            entities.find((e) => e.text === predicate.trim())?.uri || '?predicate';
           return `SELECT ?result WHERE { <${subjectUri}> <${predicateUri}> ?result . }`;
         },
       },
@@ -102,7 +103,7 @@ export class NLPQueryBuilder {
         intent: 'describe',
         generator: (match, entities) => {
           const [_, subject] = match;
-          const subjectUri = entities.find(e => e.text === subject.trim())?.uri || subject.trim();
+          const subjectUri = entities.find((e) => e.text === subject.trim())?.uri || subject.trim();
           return `DESCRIBE <${subjectUri}>`;
         },
       },
@@ -112,7 +113,7 @@ export class NLPQueryBuilder {
         intent: 'select',
         generator: (match, entities) => {
           const [_, object] = match;
-          const objectType = entities.find(e => e.text === object.trim())?.uri;
+          const objectType = entities.find((e) => e.text === object.trim())?.uri;
           if (objectType) {
             return `SELECT ?item WHERE { ?item a <${objectType}> . }`;
           }
@@ -125,7 +126,7 @@ export class NLPQueryBuilder {
         intent: 'select',
         generator: (match, entities) => {
           const [_, object] = match;
-          const objectType = entities.find(e => e.text === object.trim())?.uri;
+          const objectType = entities.find((e) => e.text === object.trim())?.uri;
           if (objectType) {
             return `SELECT (COUNT(?item) AS ?count) WHERE { ?item a <${objectType}> . }`;
           }
@@ -138,11 +139,11 @@ export class NLPQueryBuilder {
         intent: 'ask',
         generator: (match, entities) => {
           const [_, subject, predicateVerb, object] = match;
-          const subjectUri = entities.find(e => e.text === subject.trim())?.uri || '?subject';
+          const subjectUri = entities.find((e) => e.text === subject.trim())?.uri || '?subject';
           // predicateVerb (have/has/contain/contains) helps identify the predicate
           const predicateUri =
-            entities.find(e => e.text === predicateVerb.trim())?.uri || '?predicate';
-          const objectUri = entities.find(e => e.text === object.trim())?.uri || '?object';
+            entities.find((e) => e.text === predicateVerb.trim())?.uri || '?predicate';
+          const objectUri = entities.find((e) => e.text === object.trim())?.uri || '?object';
           // Use actual predicate URI if found, otherwise use variable
           const predicatePart = predicateUri !== '?predicate' ? `<${predicateUri}>` : '?predicate';
           return `ASK WHERE { <${subjectUri}> ${predicatePart} <${objectUri}> . }`;
@@ -154,8 +155,8 @@ export class NLPQueryBuilder {
         intent: 'select',
         generator: (match, entities) => {
           const [_, subject, object] = match;
-          const subjectUri = entities.find(e => e.text === subject.trim())?.uri || subject.trim();
-          const objectUri = entities.find(e => e.text === object.trim())?.uri || object.trim();
+          const subjectUri = entities.find((e) => e.text === subject.trim())?.uri || subject.trim();
+          const objectUri = entities.find((e) => e.text === object.trim())?.uri || object.trim();
           return `SELECT ?relation WHERE {
             { <${subjectUri}> ?relation <${objectUri}> . }
             UNION
@@ -177,7 +178,7 @@ export class NLPQueryBuilder {
     // Merge options with config for runtime overrides
     const config = { ...this.config, ...options };
 
-    return tracer.startActiveSpan('nlp.build_query', async span => {
+    return tracer.startActiveSpan('nlp.build_query', async (span) => {
       const startTime = Date.now();
 
       try {
@@ -309,14 +310,14 @@ export class NLPQueryBuilder {
    * @private
    */
   async _extractAndMapEntities(query, store) {
-    return tracer.startActiveSpan('nlp.extract_entities', async span => {
+    return tracer.startActiveSpan('nlp.extract_entities', async (span) => {
       try {
         const entities = [];
         const words = query.split(' ');
 
         // Extract potential entities (simple keyword extraction)
         const keywords = words.filter(
-          w =>
+          (w) =>
             w.length > 3 &&
             ![
               'what',
@@ -546,9 +547,9 @@ export class NLPQueryBuilder {
    */
   _generateFallbackSPARQL(query, _entities) {
     // Generic SELECT query that searches for any triple matching the query terms
-    const keywords = query.split(' ').filter(w => w.length > 3);
+    const keywords = query.split(' ').filter((w) => w.length > 3);
     const filterConditions = keywords
-      .map(k => `regex(str(?s), "${k}", "i") || regex(str(?o), "${k}", "i")`)
+      .map((k) => `regex(str(?s), "${k}", "i") || regex(str(?o), "${k}", "i")`)
       .join(' || ');
 
     return `SELECT ?s ?p ?o WHERE {

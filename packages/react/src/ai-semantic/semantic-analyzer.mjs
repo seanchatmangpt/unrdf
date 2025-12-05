@@ -122,7 +122,7 @@ export class SemanticAnalyzer {
    * @returns {Promise<Object>} Analysis results
    */
   async analyze(store, options = {}) {
-    return tracer.startActiveSpan('semantic.analyze', async span => {
+    return tracer.startActiveSpan('semantic.analyze', async (span) => {
       const startTime = Date.now();
 
       try {
@@ -206,7 +206,7 @@ export class SemanticAnalyzer {
    * @private
    */
   async _extractConcepts(store, maxConcepts) {
-    return tracer.startActiveSpan('semantic.extract_concepts', async span => {
+    return tracer.startActiveSpan('semantic.extract_concepts', async (span) => {
       try {
         const conceptMap = new Map();
 
@@ -247,7 +247,7 @@ export class SemanticAnalyzer {
             centrality: centrality.get(uri) || 0,
             type: data.types.size > 0 ? Array.from(data.types)[0] : undefined,
           }))
-          .filter(c => c.frequency >= this.config.minConceptFrequency)
+          .filter((c) => c.frequency >= this.config.minConceptFrequency)
           .sort((a, b) => b.centrality - a.centrality);
 
         // Limit results
@@ -332,7 +332,7 @@ export class SemanticAnalyzer {
    * @private
    */
   async _analyzeRelationships(store) {
-    return tracer.startActiveSpan('semantic.analyze_relationships', async span => {
+    return tracer.startActiveSpan('semantic.analyze_relationships', async (span) => {
       try {
         const relationshipMap = new Map();
 
@@ -350,10 +350,10 @@ export class SemanticAnalyzer {
         }
 
         // Calculate relationship strength (normalized by max count)
-        const maxCount = Math.max(...Array.from(relationshipMap.values()).map(r => r.count), 1);
+        const maxCount = Math.max(...Array.from(relationshipMap.values()).map((r) => r.count), 1);
 
         const relationships = Array.from(relationshipMap.values())
-          .map(r => ({
+          .map((r) => ({
             subject: r.subject,
             predicate: r.predicate,
             object: r.object,
@@ -383,7 +383,7 @@ export class SemanticAnalyzer {
    * @private
    */
   async _detectPatterns(store) {
-    return tracer.startActiveSpan('semantic.detect_patterns', async span => {
+    return tracer.startActiveSpan('semantic.detect_patterns', async (span) => {
       try {
         const patterns = [];
         const predicateCount = new Map();
@@ -461,7 +461,7 @@ export class SemanticAnalyzer {
    * @private
    */
   async _generateSuggestions(store, concepts, relationships) {
-    return tracer.startActiveSpan('semantic.generate_suggestions', async span => {
+    return tracer.startActiveSpan('semantic.generate_suggestions', async (span) => {
       try {
         const suggestions = [];
 
@@ -500,13 +500,13 @@ export class SemanticAnalyzer {
    */
   async _checkMissingInverses(store, relationships) {
     const suggestions = [];
-    const predicates = new Set(relationships.map(r => r.predicate));
+    const predicates = new Set(relationships.map((r) => r.predicate));
 
     for (const pred of predicates) {
       // Simple heuristic: check if there's a reverse relationship pattern
-      const forward = relationships.filter(r => r.predicate === pred);
-      const reverse = relationships.filter(r =>
-        forward.some(f => f.subject === r.object && f.object === r.subject)
+      const forward = relationships.filter((r) => r.predicate === pred);
+      const reverse = relationships.filter((r) =>
+        forward.some((f) => f.subject === r.object && f.object === r.subject)
       );
 
       if (forward.length > 5 && reverse.length === 0) {
@@ -640,7 +640,7 @@ export class SemanticAnalyzer {
    * @returns {Promise<Object>} Similarity result
    */
   async computeSimilarity(store, concept1, concept2, _options = {}) {
-    return tracer.startActiveSpan('semantic.compute_similarity', async span => {
+    return tracer.startActiveSpan('semantic.compute_similarity', async (span) => {
       try {
         span.setAttributes({
           'semantic.concept1': concept1,
@@ -656,12 +656,12 @@ export class SemanticAnalyzer {
         const neighbors2 = this._getConceptNeighbors(store, concept2);
 
         // Jaccard similarity on properties
-        const commonProps = props1.filter(p => props2.includes(p));
+        const commonProps = props1.filter((p) => props2.includes(p));
         const propSimilarity =
           commonProps.length / Math.max(new Set([...props1, ...props2]).size, 1);
 
         // Jaccard similarity on neighbors
-        const commonNeighbors = neighbors1.filter(n => neighbors2.includes(n));
+        const commonNeighbors = neighbors1.filter((n) => neighbors2.includes(n));
         const neighborSimilarity =
           commonNeighbors.length / Math.max(new Set([...neighbors1, ...neighbors2]).size, 1);
 
@@ -741,7 +741,7 @@ export class SemanticAnalyzer {
     // Simple hash based on size and a sample of quads
     const sample = Array.from(store)
       .slice(0, 10)
-      .map(q => `${q.subject.value}|${q.predicate.value}|${q.object.value}`)
+      .map((q) => `${q.subject.value}|${q.predicate.value}|${q.object.value}`)
       .join('::');
     return `${store.size}:${sample}`;
   }
