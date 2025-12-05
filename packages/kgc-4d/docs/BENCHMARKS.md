@@ -346,8 +346,8 @@ Before deploying hooks to production:
 
 - **Optimization Recommendations**: See `/packages/core/docs/benchmarks/OPTIMIZATION-RECOMMENDATIONS.md`
 - **Hook Overhead Analysis**: See `/packages/core/docs/benchmarks/HOOK-OVERHEAD-ANALYSIS.md`
-- **Implementation Guide**: See `IMPLEMENTATION-SUMMARY.md`
-- **Production FMEA**: See `FMEA-PRODUCTION.md` for risk assessment
+- **Implementation Guide**: See `how-to/IMPLEMENTATION-SUMMARY.md`
+- **Production FMEA**: See `reference/FMEA-PRODUCTION.md` for risk assessment
 
 ---
 

@@ -203,10 +203,13 @@ Guard Assertions | 24 | Poka-yoke
 See `README.md` for complete folder structure and how to navigate all research materials.
 
 **Quick Links**:
-- **Theory**: `hdit-theory/` - Mathematical foundations
+- **Theory**: `explanation/` - Mathematical foundations and academic papers
 - **Validation**: `validation/` - Testing and FMEA results
 - **Patterns**: `patterns/` - Extracted and reusable solutions
 - **Performance**: `benchmarks/` - Detailed benchmark data
+- **Learning**: `tutorials/` - Hands-on learning material
+- **How-to**: `how-to/` - Task-oriented guides
+- **Reference**: `reference/` - Information-oriented documents
 
 ---
 
@@ -222,8 +225,8 @@ See `README.md` for complete folder structure and how to navigate all research m
 
 ## Related Documents
 
-- **Completion Summary**: `COMPLETION-SUMMARY.md` - Full project metrics
-- **Production FMEA**: `FMEA-PRODUCTION.md` - Risk assessment (28 modes, 0 high-risk)
-- **Benchmarks**: `benchmarks/KNOWLEDGE-HOOKS-PERFORMANCE.md` - Performance data
-- **Academic Paper**: `kgc-4d-comprehensive.pdf` - 107-page publication
-- **Implementation Patterns**: `PATTERN-IMPLEMENTATIONS.md` - 74 use cases
+- **Completion Summary**: `reference/COMPLETION-SUMMARY.md` - Full project metrics
+- **Production FMEA**: `reference/FMEA-PRODUCTION.md` - Risk assessment (28 modes, 0 high-risk)
+- **Benchmarks**: `../../../docs/benchmarks/KNOWLEDGE-HOOKS-PERFORMANCE.md` - Performance data
+- **Academic Paper**: `explanation/kgc-4d-comprehensive.pdf` - 107-page publication
+- **Implementation Patterns**: `tutorials/PATTERN-IMPLEMENTATIONS.md` - 74 use cases
