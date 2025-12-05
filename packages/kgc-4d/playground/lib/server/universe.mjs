@@ -224,3 +224,5 @@ function matchesQuery(delta, query) {
 }
 
 export { GRAPHS, dataFactory, now, toISO, VectorClock };
+export { getUniverseStats } from './shard.mjs';
+export { createSSEStream } from './tether.mjs';

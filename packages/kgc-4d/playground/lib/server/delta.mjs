@@ -75,7 +75,7 @@ const HOOKS = {
  * @returns {Object} { valid: boolean, reason?: string }
  */
 function runValidationHooks(operation) {
-  const predicate = operation.predicate;
+  const predicate = operation.predicate.value || operation.predicate;
 
   // Find applicable hooks
   for (const hook of Object.values(HOOKS)) {

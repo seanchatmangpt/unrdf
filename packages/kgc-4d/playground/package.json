@@ -21,6 +21,7 @@
     "@unrdf/oxigraph": "workspace:*",
     "@unrdf/core": "workspace:*",
     "@unrdf/hooks": "workspace:*",
+    "@unrdf/validation": "workspace:*",
     "next": "^15.1.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
