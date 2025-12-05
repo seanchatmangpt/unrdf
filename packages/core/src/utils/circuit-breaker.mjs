@@ -12,8 +12,6 @@
  * - HALF_OPEN: Testing if service recovered
  */
 
-import { trace, SpanStatusCode } from '@opentelemetry/api';
-
 /**
  * Circuit breaker states
  * @readonly
@@ -85,113 +83,67 @@ export class CircuitBreaker {
       rejectedCalls: 0,
       stateChanges: 0,
     };
-
-    // OTEL tracer
-    this.tracer = trace.getTracer('unrdf-circuit-breaker');
   }
 
   /**
    * Execute a function with circuit breaker protection
    * @param {Function} fn - Async function to execute
-   * @param {Object} [context={}] - Execution context for tracing
+   * @param {Object} [context={}] - Execution context (reserved for observability wrapper)
    * @returns {Promise<any>} Result of the function
    * @throws {CircuitOpenError} If circuit is open
    * @throws {Error} If function execution fails
    */
-  async execute(fn, context = {}) {
-    return await this.tracer.startActiveSpan(`circuit-breaker.${this.name}`, async span => {
-      span.setAttributes({
-        'circuit.name': this.name,
-        'circuit.state': this.state,
-        'circuit.failure_count': this.failureCount,
-        ...context,
-      });
+  async execute(fn, _context = {}) {
+    this.metrics.totalCalls++;
 
-      this.metrics.totalCalls++;
+    try {
+      // Check if circuit should transition
+      this._checkStateTransition();
 
-      try {
-        // Check if circuit should transition
-        this._checkStateTransition();
+      // Handle based on current state
+      if (this.state === CircuitState.OPEN) {
+        this.metrics.rejectedCalls++;
+        throw new CircuitOpenError(
+          `Circuit breaker '${this.name}' is open`,
+          this.name,
+          this.lastFailureTime
+        );
+      }
 
-        // Handle based on current state
-        if (this.state === CircuitState.OPEN) {
+      if (this.state === CircuitState.HALF_OPEN) {
+        if (this.halfOpenCalls >= this.halfOpenMaxCalls) {
           this.metrics.rejectedCalls++;
-          span.setAttributes({
-            'circuit.rejected': true,
-            'circuit.reason': 'circuit_open',
-          });
-          span.setStatus({
-            code: SpanStatusCode.ERROR,
-            message: 'Circuit is open',
-          });
           throw new CircuitOpenError(
-            `Circuit breaker '${this.name}' is open`,
+            `Circuit breaker '${this.name}' half-open limit reached`,
             this.name,
             this.lastFailureTime
           );
         }
-
-        if (this.state === CircuitState.HALF_OPEN) {
-          if (this.halfOpenCalls >= this.halfOpenMaxCalls) {
-            this.metrics.rejectedCalls++;
-            span.setAttributes({
-              'circuit.rejected': true,
-              'circuit.reason': 'half_open_limit',
-            });
-            span.setStatus({
-              code: SpanStatusCode.ERROR,
-              message: 'Half-open call limit reached',
-            });
-            throw new CircuitOpenError(
-              `Circuit breaker '${this.name}' half-open limit reached`,
-              this.name,
-              this.lastFailureTime
-            );
-          }
-          this.halfOpenCalls++;
-        }
-
-        // Execute the function
-        const result = await fn();
-
-        // Record success
-        this.recordSuccess();
-        this.metrics.successfulCalls++;
-        span.setAttributes({
-          'circuit.success': true,
-          'circuit.final_state': this.state,
-        });
-        span.setStatus({ code: SpanStatusCode.OK });
-
-        return result;
-      } catch (error) {
-        // Check if this is a circuit error (pass through)
-        if (error instanceof CircuitOpenError) {
-          span.end();
-          throw error;
-        }
-
-        // Determine if this error counts as a failure
-        if (this.isFailure(error)) {
-          this.recordFailure();
-          this.metrics.failedCalls++;
-          span.setAttributes({
-            'circuit.failure': true,
-            'circuit.final_state': this.state,
-            'circuit.error': error.message,
-          });
-        }
-
-        span.recordException(error);
-        span.setStatus({
-          code: SpanStatusCode.ERROR,
-          message: error.message,
-        });
-        throw error;
-      } finally {
-        span.end();
+        this.halfOpenCalls++;
       }
-    });
+
+      // Execute the function
+      const result = await fn();
+
+      // Record success
+      this.recordSuccess();
+      this.metrics.successfulCalls++;
+
+      return result;
+    } catch (error) {
+      // Check if this is a circuit error (pass through)
+      if (error instanceof CircuitOpenError) {
+        throw error;
+      }
+
+      // Determine if this error counts as a failure
+      if (this.isFailure(error)) {
+        this.recordFailure();
+        this.metrics.failedCalls++;
+      }
+
+      throw error;
+    }
   }
 
   /**
