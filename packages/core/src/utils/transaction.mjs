@@ -10,12 +10,8 @@ import { utf8ToBytes, bytesToHex } from '@noble/hashes/utils.js';
 import { canonicalize } from './canonicalize.mjs';
 import { createLockchainWriter } from './lockchain-writer.mjs';
 import { createResolutionLayer } from './resolution-layer.mjs';
-import { createObservabilityManager } from './observability.mjs';
 import { randomUUID } from 'crypto';
 import { z } from 'zod';
-import { trace, SpanStatusCode } from '@opentelemetry/api';
-
-const tracer = trace.getTracer('unrdf');
 
 // Import consolidated schemas
 import {
@@ -95,9 +91,6 @@ export class TransactionManager {
     // Simple mutex for concurrency control - no circular ref accumulation
     this._applyMutex = null;
     this._resetMutex();
-
-    // Initialize observability manager
-    this.observability = createObservabilityManager(this.options.observability || {});
 
     // Performance tracking with bounded arrays
     this.performanceMetrics = {
@@ -238,14 +231,6 @@ export class TransactionManager {
     /** @type {string[]} */
     const hookErrors = [];
 
-    // Start observability span
-    const _spanContext = this.observability.startTransactionSpan(transactionId, {
-      'kgc.delta.additions': validatedDelta.additions.length,
-      'kgc.delta.removals': validatedDelta.removals.length,
-      'kgc.actor': validatedOptions.actor || 'system',
-      'kgc.skipHooks': validatedOptions.skipHooks || false,
-    });
-
     // Use mutex for concurrency control - reset to prevent chain buildup
     const currentMutex = this._applyMutex;
 
@@ -300,13 +285,6 @@ export class TransactionManager {
             const duration = Date.now() - startTime;
             this._updatePerformanceMetrics(duration, true);
 
-            // End observability span
-            this.observability.endTransactionSpan(transactionId, {
-              'kgc.transaction.committed': finalReceipt.committed,
-              'kgc.hook.results': hookResults.length,
-              'kgc.hook.errors': hookErrors.length,
-            });
-
             resolve({
               store: result.store,
               receipt: finalReceipt,
@@ -320,15 +298,6 @@ export class TransactionManager {
             // Update performance metrics
             const duration = Date.now() - startTime;
             this._updatePerformanceMetrics(duration, false);
-
-            // Record error
-            this.observability.recordError(error, {
-              'kgc.transaction.id': transactionId,
-              'kgc.actor': validatedOptions.actor || 'system',
-            });
-
-            // End observability span with error
-            this.observability.endTransactionSpan(transactionId, {}, error);
 
             resolve({
               store,
@@ -362,51 +331,21 @@ export class TransactionManager {
     skipHooks,
     hookResults,
     hookErrors,
-    transactionId,
-    actor
+    _transactionId,
+    _actor
   ) {
-    return tracer.startActiveSpan('transaction.commit', async span => {
-      try {
-        span.setAttributes({
-          'transaction.id': transactionId,
-          'transaction.actor': actor || 'system',
-          'transaction.skip_hooks': skipHooks,
-          'transaction.additions_count': delta.additions.length,
-          'transaction.removals_count': delta.removals.length,
-          'transaction.store_size_before': store.size,
-        });
+    const beforeHash = await hashStore(store, this.options);
 
-        const beforeHash = await hashStore(store, this.options);
+    const result = await this._executeTransactionWithHooks(
+      store,
+      delta,
+      skipHooks,
+      hookResults,
+      hookErrors,
+      beforeHash
+    );
 
-        const result = await this._executeTransactionWithHooks(
-          store,
-          delta,
-          skipHooks,
-          hookResults,
-          hookErrors,
-          beforeHash
-        );
-
-        span.setAttributes({
-          'transaction.committed': result.receipt.committed,
-          'transaction.hook_results': hookResults.length,
-          'transaction.hook_errors': hookErrors.length,
-          'transaction.store_size_after': store.size,
-        });
-
-        span.setStatus({ code: SpanStatusCode.OK });
-        return result;
-      } catch (error) {
-        span.recordException(error);
-        span.setStatus({
-          code: SpanStatusCode.ERROR,
-          message: error.message,
-        });
-        throw error;
-      } finally {
-        span.end();
-      }
-    });
+    return result;
   }
 
   /**
@@ -697,7 +636,6 @@ export class TransactionManager {
       lockchain: this.lockchainWriter ? this.lockchainWriter.getStats() : null,
       resolution: this.resolutionLayer ? this.resolutionLayer.getStats() : null,
       performance: this.performanceMetrics,
-      observability: this.observability.getPerformanceMetrics(),
     };
   }
 
