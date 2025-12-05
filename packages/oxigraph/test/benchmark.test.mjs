@@ -36,7 +36,7 @@ describe('Oxigraph Benchmarks', () => {
     console.log(`   Duration: ${duration.toFixed(2)}ms`);
     console.log(`   Throughput: ${throughput.toFixed(0)} ops/sec`);
 
-    expect(store.size()).toBe(iterations);
+    expect(store.size).toBe(iterations);
     expect(duration).toBeLessThan(30000); // Should complete in reasonable time
   });
 
@@ -198,7 +198,7 @@ describe('Oxigraph Benchmarks', () => {
     console.log(`   Duration: ${duration.toFixed(2)}ms`);
     console.log(`   Throughput: ${throughput.toFixed(0)} ops/sec`);
 
-    expect(store.size()).toBe(0);
+    expect(store.size).toBe(0);
     expect(duration).toBeLessThan(30000);
   });
 
