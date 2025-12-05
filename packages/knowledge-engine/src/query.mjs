@@ -59,7 +59,11 @@ export async function query(store, sparql, options = {}) {
         // Determine result type and format accordingly
         if (Array.isArray(queryResult)) {
           // SELECT query result (array of bindings)
-          if (queryResult.length > 0 && typeof queryResult[0] === 'object' && !queryResult[0].subject) {
+          if (
+            queryResult.length > 0 &&
+            typeof queryResult[0] === 'object' &&
+            !queryResult[0].subject
+          ) {
             // Already formatted bindings
             result = queryResult;
           } else {
@@ -75,15 +79,13 @@ export async function query(store, sparql, options = {}) {
                   // Handle Map objects from Oxigraph
                   const bindings = {};
                   for (const [key, val] of item.entries()) {
-                    bindings[key] = val && val.value ? val.value : (val && val.toString ? val.toString() : val);
+                    bindings[key] =
+                      val && val.value ? val.value : val && val.toString ? val.toString() : val;
                   }
                   return bindings;
                 } else if (item && typeof item === 'object') {
                   return Object.fromEntries(
-                    Object.entries(item).map(([k, v]) => [
-                      k,
-                      v && v.value ? v.value : v,
-                    ])
+                    Object.entries(item).map(([k, v]) => [k, v && v.value ? v.value : v])
                   );
                 }
                 return item;

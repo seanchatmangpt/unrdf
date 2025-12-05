@@ -94,7 +94,8 @@ export class BrowserQueryExecutor {
             // Handle Map objects from Oxigraph
             const binding = {};
             for (const [key, val] of item.entries()) {
-              binding[key] = val && val.value ? val.value : (val && val.toString ? val.toString() : val);
+              binding[key] =
+                val && val.value ? val.value : val && val.toString ? val.toString() : val;
             }
             return binding;
           } else if (item && typeof item === 'object') {

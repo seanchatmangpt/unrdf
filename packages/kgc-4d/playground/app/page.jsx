@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   UniverseExplorer,
   EventTimeline,
@@ -11,6 +12,7 @@ import {
 } from '../components/index.mjs';
 
 export default function PlaygroundPage() {
+  const router = useRouter();
   const [selectedEntity, setSelectedEntity] = useState('http://example.org/project/alpha');
   const [activeTab, setActiveTab] = useState('explorer');
 
@@ -18,8 +20,17 @@ export default function PlaygroundPage() {
     { id: 'explorer', label: '4D Explorer' },
     { id: 'entities', label: 'Entities' },
     { id: 'shard', label: 'Shard Data' },
+    { id: 'use-cases', label: 'Fortune 500 Use Cases', route: '/use-cases' },
     { id: 'docs', label: 'Documentation' },
   ];
+
+  const handleTabClick = (tab) => {
+    if (tab.route) {
+      router.push(tab.route);
+    } else {
+      setActiveTab(tab.id);
+    }
+  };
 
   return (
     <div className="space-y-8">
@@ -66,7 +77,7 @@ export default function PlaygroundPage() {
         {tabs.map((tab) => (
           <button
             key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
+            onClick={() => handleTabClick(tab)}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
               activeTab === tab.id
                 ? 'bg-universe-500 text-white'

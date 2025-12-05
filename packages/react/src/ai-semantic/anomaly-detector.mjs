@@ -92,7 +92,7 @@ export class AnomalyDetector {
    * @returns {Promise<Object>} Detection results
    */
   async detectAnomalies(store, _options = {}) {
-    return tracer.startActiveSpan('anomaly.detect', async span => {
+    return tracer.startActiveSpan('anomaly.detect', async (span) => {
       const startTime = Date.now();
 
       try {
@@ -130,7 +130,7 @@ export class AnomalyDetector {
 
         // Filter by confidence and limit
         const filtered = anomalies
-          .filter(a => a.confidence >= this.config.minConfidence)
+          .filter((a) => a.confidence >= this.config.minConfidence)
           .sort((a, b) => b.confidence - a.confidence)
           .slice(0, this.config.maxAnomalies);
 
@@ -173,7 +173,7 @@ export class AnomalyDetector {
    * @private
    */
   async _detectStatisticalAnomalies(store) {
-    return tracer.startActiveSpan('anomaly.statistical', async span => {
+    return tracer.startActiveSpan('anomaly.statistical', async (span) => {
       try {
         const anomalies = [];
 
@@ -226,7 +226,7 @@ export class AnomalyDetector {
    * @private
    */
   async _detectMLAnomalies(store) {
-    return tracer.startActiveSpan('anomaly.ml_based', async span => {
+    return tracer.startActiveSpan('anomaly.ml_based', async (span) => {
       try {
         const anomalies = [];
 
@@ -262,7 +262,7 @@ export class AnomalyDetector {
         for (const entity of entities.slice(0, 50)) {
           const avgSim =
             entities
-              .filter(e => e !== entity)
+              .filter((e) => e !== entity)
               .slice(0, 20)
               .reduce(
                 (sum, other) => sum + this.embeddingsManager.computeSimilarity(entity, other),
@@ -301,7 +301,7 @@ export class AnomalyDetector {
    * @private
    */
   async _detectMissingLinks(store) {
-    return tracer.startActiveSpan('anomaly.missing_links', async span => {
+    return tracer.startActiveSpan('anomaly.missing_links', async (span) => {
       try {
         const anomalies = [];
 
@@ -335,7 +335,7 @@ export class AnomalyDetector {
           if (count > 5) {
             // Check if there are entities that should have this predicate but don't
             const subjectsWithPredicate = new Set(
-              relationships.filter(r => r.predicate === predicate).map(r => r.subject)
+              relationships.filter((r) => r.predicate === predicate).map((r) => r.subject)
             );
 
             // This is a simplified heuristic
@@ -370,7 +370,7 @@ export class AnomalyDetector {
    * @private
    */
   async _detectDataQualityIssues(store) {
-    return tracer.startActiveSpan('anomaly.data_quality', async span => {
+    return tracer.startActiveSpan('anomaly.data_quality', async (span) => {
       try {
         const anomalies = [];
 
@@ -456,7 +456,7 @@ export class AnomalyDetector {
    * @private
    */
   async _detectStructuralAnomalies(store) {
-    return tracer.startActiveSpan('anomaly.structural', async span => {
+    return tracer.startActiveSpan('anomaly.structural', async (span) => {
       try {
         const anomalies = [];
 
@@ -465,11 +465,11 @@ export class AnomalyDetector {
 
         if (components.length > 1) {
           // Multiple disconnected components
-          const sizes = components.map(c => c.size).sort((a, b) => b - a);
+          const sizes = components.map((c) => c.size).sort((a, b) => b - a);
           const _mainSize = sizes[0];
           const otherSizes = sizes.slice(1);
 
-          if (otherSizes.some(s => s > 5)) {
+          if (otherSizes.some((s) => s > 5)) {
             anomalies.push({
               type: 'structural_anomaly',
               severity: 'medium',

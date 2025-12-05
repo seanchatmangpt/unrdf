@@ -72,7 +72,7 @@ export class EmbeddingsManager {
    * @returns {Promise<Object>} Embedding results
    */
   async generateEmbeddings(store, options = {}) {
-    return tracer.startActiveSpan('embeddings.generate', async span => {
+    return tracer.startActiveSpan('embeddings.generate', async (span) => {
       const startTime = Date.now();
 
       try {
@@ -195,7 +195,7 @@ export class EmbeddingsManager {
    * @private
    */
   async _trainEmbeddings(triples, algorithm) {
-    return tracer.startActiveSpan('embeddings.train', async span => {
+    return tracer.startActiveSpan('embeddings.train', async (span) => {
       try {
         span.setAttribute('embeddings.algorithm', algorithm);
         span.setAttribute('embeddings.triples_count', triples.length);
@@ -353,7 +353,7 @@ export class EmbeddingsManager {
    * @returns {Array<number>|null} Embedding vector
    */
   getEmbedding(uri, type = 'entity') {
-    return tracer.startActiveSpan('embeddings.get', span => {
+    return tracer.startActiveSpan('embeddings.get', (span) => {
       try {
         span.setAttribute('embeddings.uri', uri);
         span.setAttribute('embeddings.type', type);
@@ -397,7 +397,7 @@ export class EmbeddingsManager {
    * @returns {number} Cosine similarity (-1 to 1)
    */
   computeSimilarity(entity1, entity2) {
-    return tracer.startActiveSpan('embeddings.similarity', span => {
+    return tracer.startActiveSpan('embeddings.similarity', (span) => {
       try {
         const emb1 = this.getEmbedding(entity1);
         const emb2 = this.getEmbedding(entity2);
@@ -433,11 +433,11 @@ export class EmbeddingsManager {
    * @returns {Array<Array<number>>} Embeddings
    */
   batchGetEmbeddings(uris, type = 'entity') {
-    return tracer.startActiveSpan('embeddings.batch_get', span => {
+    return tracer.startActiveSpan('embeddings.batch_get', (span) => {
       try {
         span.setAttribute('embeddings.batch_size', uris.length);
 
-        const embeddings = uris.map(uri => this.getEmbedding(uri, type));
+        const embeddings = uris.map((uri) => this.getEmbedding(uri, type));
 
         span.setAttribute('embeddings.batch_complete', true);
         span.setStatus({ code: SpanStatusCode.OK });
@@ -483,7 +483,7 @@ export class EmbeddingsManager {
    * @private
    */
   _scale(vec, scalar) {
-    return vec.map(val => val * scalar);
+    return vec.map((val) => val * scalar);
   }
 
   /**
@@ -494,7 +494,7 @@ export class EmbeddingsManager {
    */
   _normalize(vec) {
     const norm = this._l2Norm(vec);
-    return norm > 0 ? vec.map(val => val / norm) : vec;
+    return norm > 0 ? vec.map((val) => val / norm) : vec;
   }
 
   /**
