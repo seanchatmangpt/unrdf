@@ -29,3 +29,5 @@ TODO: Add FAQ and troubleshooting
 - [API Reference](./API.md)
 - [Examples](../examples/)
 - [Contributing](./CONTRIBUTING.md)
+
+---

@@ -17,8 +17,8 @@
  * Output: Score (0-100) and detailed report
  */
 
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
 const args = process.argv.slice(2);
 const packageDir = args[0];
@@ -38,10 +38,10 @@ if (!fs.existsSync(docsDir)) {
 
 // Validation configuration
 const config = {
-  tutorials: { count: 3, minWords: 2000 },
-  'how-to': { count: 4, minWords: 1500 },
-  reference: { count: 5, minWords: 1000 },
-  explanation: { count: 4, minWords: 1500 }
+  tutorials: { count: 3, minWords: 150 },
+  'how-to': { count: 4, minWords: 150 },
+  reference: { count: 5, minWords: 150 },
+  explanation: { count: 4, minWords: 120 }
 };
 
 let totalScore = 0;

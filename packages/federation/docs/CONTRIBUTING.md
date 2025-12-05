@@ -29,3 +29,5 @@ pnpm test
 - Keep packages focused
 
 See root [CONTRIBUTING.md](../../CONTRIBUTING.md) for details.
+
+---
