@@ -35,6 +35,11 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -42,23 +47,24 @@ jobs:
           cache: 'pnpm'
           cache-dependency-path: '**/pnpm-lock.yaml'
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8
+      - name: Install root dependencies
+        run: pnpm install --ignore-scripts --frozen-lockfile=false
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      - name: Install React package dependencies
+        run: pnpm install --ignore-scripts --frozen-lockfile=false
 
       - name: Build Next.js application
         run: pnpm run build
         env:
           NEXT_PUBLIC_BASE_PATH: /unrdf
 
+      - name: Verify build output
+        run: ls -la
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: out
+          path: packages/react/out
 
   deploy:
     name: Deploy to GitHub Pages
@@ -83,6 +89,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -90,13 +101,11 @@ jobs:
           cache: 'pnpm'
           cache-dependency-path: '**/pnpm-lock.yaml'
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8
+      - name: Install root dependencies
+        run: pnpm install --ignore-scripts --frozen-lockfile=false
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      - name: Install React package dependencies
+        run: pnpm install --ignore-scripts --frozen-lockfile=false
 
       - name: Lint code
         run: pnpm run lint || true
