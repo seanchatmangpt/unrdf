@@ -5,8 +5,11 @@ export default defineConfig({
     // Use node environment for compatibility with Node.js APIs
     environment: 'node',
 
-    // Test file patterns
-    include: ['test/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
+    // Test file patterns (including generated doctests)
+    include: [
+      'test/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}',
+      'test/doctest/**/*.doctest.test.mjs'
+    ],
     exclude: ['node_modules', 'dist', '.idea', '.git', '.cache'],
 
     // Coverage configuration
@@ -21,6 +24,8 @@ export default defineConfig({
       exclude: [
         'node_modules/',
         'test/',
+        'src/doctest/**',  // Exclude doctest tooling
+        'scripts/**',      // Exclude scripts
         '**/*.config.js',
         '**/*.config.mjs',
         '**/dist/**',

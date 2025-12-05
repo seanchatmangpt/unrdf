@@ -69,6 +69,12 @@ export class GitBackbone {
   /**
    * Persist N-Quads snapshot to Git and return commit hash
    * Pure JS implementation using isomorphic-git
+   *
+   * @example
+   * import { GitBackbone } from './git.mjs';
+   * const git = new GitBackbone('/tmp/kgc-repo');
+   * const sha = await git.commitSnapshot('<s> <p> <o> <g> .', 'Test snapshot');
+   * console.assert(typeof sha === 'string' && sha.length > 0, 'Returns commit hash');
    */
   async commitSnapshot(nquads, message) {
     await this._ensureInit();
