@@ -11,6 +11,12 @@ import { GRAPHS, EVENT_TYPES, PREDICATES } from './constants.mjs';
 /**
  * Freeze the current universe state: dump, hash, commit to Git, record in EventLog
  *
+ * EMPTY UNIVERSE SEMANTICS (GAP-F1 fix):
+ * - Freezing an empty universe (0 quads) is valid and creates a genesis snapshot
+ * - The hash of an empty N-Quads string is deterministic and reproducible
+ * - Can time-travel to before any events using the genesis snapshot as baseline
+ * - Subsequent time-travel fills in events from the genesis snapshot forward
+ *
  * @example
  * import { freezeUniverse } from './freeze.mjs';
  * import { KGCStore } from './store.mjs';
@@ -44,6 +50,18 @@ export async function freezeUniverse(store, gitBackbone) {
              a.object.value > b.object.value ? 1 : 0;
     });
 
+    // Helper: Properly escape N-Quads string literals (GAP-F2 fix)
+    function escapeNQuadsString(str) {
+      return str
+        .replace(/\\/g, '\\\\')      // Backslash first (order matters!)
+        .replace(/"/g, '\\"')        // Quote
+        .replace(/\t/g, '\\t')       // Tab
+        .replace(/\n/g, '\\n')       // Newline
+        .replace(/\r/g, '\\r')       // Carriage return
+        .replace(/\f/g, '\\f')       // Form feed
+        .replace(/\b/g, '\\b');      // Backspace
+    }
+
     // Serialize to N-Quads format
     const nquads = universeQuads.map(q => {
       const s = q.subject.termType === 'NamedNode'
@@ -56,8 +74,8 @@ export async function freezeUniverse(store, gitBackbone) {
       } else if (q.object.termType === 'BlankNode') {
         o = `_:${q.object.value}`;
       } else {
-        // Literal
-        const escaped = q.object.value.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+        // Literal - use proper N-Quads escaping
+        const escaped = escapeNQuadsString(q.object.value);
         if (q.object.datatype && q.object.datatype.value !== 'http://www.w3.org/2001/XMLSchema#string') {
           o = `"${escaped}"^^<${q.object.datatype.value}>`;
         } else if (q.object.language) {
@@ -257,23 +275,43 @@ export async function reconstructState(store, gitBackbone, targetTime) {
       }
     }
 
+    // GAP-F3 fix: Handle missing snapshots gracefully with fallback to empty store + event replay
+    let snapshotTime;
+    let snapshotGitRef;
+    let tempStore;
+
     if (!bestSnapshot) {
-      throw new Error(`No snapshot found before time ${targetTime}`);
+      if (typeof console !== 'undefined' && console.warn) {
+        console.warn(`[KGC Reconstruct] No snapshot found for time ${targetTime}, attempting full event replay from genesis`);
+      }
+
+      // Start from empty store if no snapshot exists
+      const TempStore = store.constructor;
+      tempStore = new TempStore();
+      snapshotTime = 0n;
+      snapshotGitRef = null;
+
+      // Will replay all events below from the beginning
+      bestSnapshot = {
+        subject: null,
+        t_ns: 0n,
+        git_ref: null,
+      };
+    } else {
+      // Load snapshot from Git
+      snapshotTime = bestSnapshot.t_ns;
+      snapshotGitRef = bestSnapshot.git_ref;
+
+      const snapshotNQuads = await gitBackbone.readSnapshot(snapshotGitRef);
+
+      // Create temporary store from snapshot
+      const TempStore = store.constructor;
+      tempStore = new TempStore();
+      await tempStore.load(snapshotNQuads, {
+        format: 'application/n-quads',
+        graph: GRAPHS.UNIVERSE,
+      });
     }
-
-    const snapshotTime = bestSnapshot.t_ns;
-    const snapshotGitRef = bestSnapshot.git_ref;
-
-    // 3. Load snapshot from Git
-    const snapshotNQuads = await gitBackbone.readSnapshot(snapshotGitRef);
-
-    // 4. Create temporary store from snapshot
-    const TempStore = store.constructor;
-    const tempStore = new TempStore();
-    await tempStore.load(snapshotNQuads, {
-      format: 'application/n-quads',
-      graph: GRAPHS.UNIVERSE,
-    });
 
     // 5. Find ALL events between snapshot time and target time (Flaw 2 fix - CRITICAL)
     const allEventTimeQuads = [...store.match(null, tNsPredi, null, eventLogGraph)];
@@ -298,6 +336,8 @@ export async function reconstructState(store, gitBackbone, targetTime) {
     });
 
     // 6. Replay each event's deltas to reconstruct exact state at targetTime
+    // GAP-F4 fix: Track and log skipped events instead of silent failure
+    const skippedEvents = [];
     for (const event of eventsToReplay) {
       const payloadQuads = [...store.match(event.subject, payloadPredi, null, eventLogGraph)];
 
@@ -316,11 +356,29 @@ export async function reconstructState(store, gitBackbone, targetTime) {
               tempStore.delete(quad);
             }
           }
-        } catch {
-          // Payload parsing failed - skip this event (might be SNAPSHOT with no deltas)
+        } catch (err) {
+          // Payload parsing failed - log instead of silent skip
+          skippedEvents.push({
+            eventTime: event.t_ns,
+            reason: err.message,
+          });
+          if (typeof console !== 'undefined' && console.warn) {
+            console.warn(`[KGC Reconstruct] Skipped event at ${toISO(event.t_ns)}: ${err.message}`);
+          }
           continue;
         }
+      } else {
+        // No payload found (e.g., SNAPSHOT events have no deltas)
+        skippedEvents.push({
+          eventTime: event.t_ns,
+          reason: 'No payload (likely SNAPSHOT event)',
+        });
       }
+    }
+
+    // Warn if significant events were skipped
+    if (skippedEvents.length > 0 && typeof console !== 'undefined' && console.warn) {
+      console.warn(`[KGC Reconstruct] Warning: ${skippedEvents.length} event(s) skipped during replay - reconstruction may be incomplete`);
     }
 
     return tempStore;

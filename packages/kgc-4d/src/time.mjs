@@ -4,6 +4,8 @@
  */
 
 let lastTime = 0n;
+let clockJumpDetected = false;  // Track if monotonic clock had to auto-increment
+const CLOCK_JUMP_THRESHOLD = 1_000_000_000_000n;  // 1 second in nanoseconds
 
 /**
  * Get current time in nanoseconds as BigInt
@@ -27,6 +29,15 @@ export function now() {
     current = BigInt(Math.floor(performance.now() * 1_000_000));
   }
 
+  // Detect large time jumps (potential system clock issues)
+  const jump = current - lastTime;
+  if (jump < -CLOCK_JUMP_THRESHOLD || jump > CLOCK_JUMP_THRESHOLD) {
+    clockJumpDetected = true;
+    if (typeof console !== 'undefined' && console.warn) {
+      console.warn(`[KGC Time] Clock jump detected: ${Number(jump / 1_000_000_000n).toFixed(2)}s`);
+    }
+  }
+
   // Enforce monotonic ordering
   if (current <= lastTime) {
     current = lastTime + 1n;
@@ -37,7 +48,27 @@ export function now() {
 }
 
 /**
+ * Check if a clock jump was detected
+ * @returns {boolean}
+ */
+export function hasClockJumpDetected() {
+  return clockJumpDetected;
+}
+
+/**
+ * Reset clock jump detection flag
+ */
+export function resetClockJumpDetection() {
+  clockJumpDetected = false;
+}
+
+/**
  * Convert nanosecond BigInt to ISO 8601 string
+ * WARNING: Truncates to millisecond precision (loses sub-millisecond nanoseconds)
+ * Input: 1000000123456789n (with 123456789 ns = 123.456789 ms)
+ * Output: 1970-01-01T00:00:00.123Z (only 123 ms preserved, 456789 ns lost)
+ *
+ * Use this only for display/logging. For time-travel, compare BigInt timestamps directly.
  *
  * @example
  * import { toISO } from './time.mjs';
@@ -46,12 +77,10 @@ export function now() {
  *
  * @example
  * import { toISO } from './time.mjs';
- * try {
- *   toISO(123);  // Not a BigInt
- *   throw new Error('Should have thrown TypeError');
- * } catch (err) {
- *   console.assert(err instanceof TypeError, 'Throws on non-BigInt');
- * }
+ * const ns = 1000000123456789n;  // 123.456789 milliseconds
+ * const iso = toISO(ns);
+ * console.assert(iso.includes('.123Z'), 'Milliseconds preserved');
+ * console.assert(!iso.includes('456789'), 'Nanoseconds lost');
  */
 export function toISO(t_ns) {
   if (typeof t_ns !== 'bigint') {
@@ -66,6 +95,17 @@ export function toISO(t_ns) {
  * Preserves nanosecond precision from fractional seconds (e.g., .123456789)
  * Standard Date.parse() truncates to milliseconds - this preserves all 9 digits
  *
+ * FRACTIONAL SECONDS SEMANTICS:
+ * - Input ".1" is treated as ".100000000" (100 milliseconds = 100,000,000 nanoseconds)
+ * - Input ".123456789" is treated as 123,456,789 nanoseconds
+ * - Input with no fractional seconds defaults to ".000000000"
+ *
+ * DATE VALIDATION:
+ * - Validates month (1-12), day (1-31 with month-specific limits), hour (0-23), minute/second (0-59)
+ * - Rejects February 31, April 31, etc.
+ * - Accepts leap years correctly (Feb 29 in 2020, 2024, etc.)
+ * - Rejects leap seconds (second = 60)
+ *
  * @example
  * import { fromISO, toISO } from './time.mjs';
  * const iso = '2025-01-15T10:30:00.123456789Z';
@@ -76,10 +116,10 @@ export function toISO(t_ns) {
  * @example
  * import { fromISO } from './time.mjs';
  * try {
- *   fromISO('not-a-date');
+ *   fromISO('2025-02-31T00:00:00Z');  // February 31 doesn't exist
  *   throw new Error('Should have thrown');
  * } catch (err) {
- *   console.assert(err.message.includes('Invalid ISO'), 'Clear error message');
+ *   console.assert(err.message.includes('Invalid ISO'), 'Rejects invalid dates');
  * }
  */
 export function fromISO(iso) {
@@ -105,21 +145,30 @@ export function fromISO(iso) {
   const [, year, month, day, hour, minute, second, frac = '0'] = match;
 
   // Validate component ranges (including leap second detection)
+  const y = parseInt(year, 10);
   const m = parseInt(month, 10);
   const d = parseInt(day, 10);
   const h = parseInt(hour, 10);
   const min = parseInt(minute, 10);
   const s = parseInt(second, 10);
 
+  // Validate month
   if (m < 1 || m > 12) {
-    throw new Error('Invalid ISO date: ' + iso);
+    throw new Error('Invalid ISO date: month must be 1-12, got ' + iso);
   }
-  if (d < 1 || d > 31) {
-    throw new Error('Invalid ISO date: ' + iso);
+
+  // Validate day with month-specific limits (GAP-T1 fix)
+  const daysInMonth = getDaysInMonth(m, y);
+  if (d < 1 || d > daysInMonth) {
+    throw new Error(`Invalid ISO date: day must be 1-${daysInMonth} for month ${m}, got ${d} in ${iso}`);
   }
+
+  // Validate hour
   if (h < 0 || h > 23) {
     throw new Error('Invalid ISO date: ' + iso);
   }
+
+  // Validate minute and second
   if (min < 0 || min > 59) {
     throw new Error('Invalid ISO date: ' + iso);
   }
@@ -152,14 +201,48 @@ export function fromISO(iso) {
 }
 
 /**
+ * Helper: Get days in month, accounting for leap years
+ * @param {number} month - Month number (1-12)
+ * @param {number} year - Year for leap year calculation
+ * @returns {number} Days in that month
+ */
+function getDaysInMonth(month, year) {
+  const daysPerMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+  // Check for leap year: divisible by 400, or (divisible by 4 and not by 100)
+  const isLeap = (year % 400 === 0) || (year % 4 === 0 && year % 100 !== 0);
+
+  if (month === 2 && isLeap) {
+    return 29;
+  }
+
+  return daysPerMonth[month - 1];
+}
+
+/**
  * Add nanoseconds to a BigInt timestamp
+ * GAP-T5 fix: Enforce strict BigInt type for delta to prevent unit confusion
+ *
+ * @example
+ * import { addNanoseconds } from './time.mjs';
+ * const result = addNanoseconds(1000000000n, 500000000n);
+ * console.assert(result === 1500000000n, 'Adds correctly');
+ *
+ * @example
+ * import { addNanoseconds } from './time.mjs';
+ * try {
+ *   addNanoseconds(1000000000n, 500000000);  // Number instead of BigInt
+ *   throw new Error('Should have thrown');
+ * } catch (err) {
+ *   console.assert(err.message.includes('BigInt'), 'Rejects non-BigInt');
+ * }
  */
 export function addNanoseconds(t_ns, delta) {
   if (typeof t_ns !== 'bigint') {
-    throw new TypeError('Expected BigInt for t_ns');
+    throw new TypeError('Expected BigInt for t_ns, got ' + typeof t_ns);
   }
   if (typeof delta !== 'bigint') {
-    delta = BigInt(delta);
+    throw new TypeError('Expected BigInt for delta, got ' + typeof delta + ' - pass 50n not 50 to avoid unit confusion');
   }
   return t_ns + delta;
 }
@@ -209,19 +292,50 @@ export class VectorClock {
 
   /**
    * Merge with another clock (on receive from another node)
-   * Takes max of each component
-   * @param {VectorClock} other
+   * Takes max of each component and increments local counter (causal ordering semantics)
+   * MUTATES this clock and increments local counter
+   *
+   * Semantics: After receiving message with remote clock, we:
+   * 1. Update our view of remote events (max of counters)
+   * 2. Increment our local counter (we're processing the message)
+   *
+   * @param {VectorClock} other - Serialized clock (can be JSON object)
    * @returns {VectorClock} this (for chaining)
+   * @example
+   * import { VectorClock } from './time.mjs';
+   * const vc1 = new VectorClock('node1');
+   * const vc2 = new VectorClock('node2');
+   * vc1.increment();
+   * vc2.increment();
+   *
+   * // Merge incoming clock from node2
+   * vc1.merge(vc2.toJSON());
+   * // Now vc1 knows about node2's events AND has incremented its own counter
    */
   merge(other) {
-    if (!(other instanceof VectorClock)) {
-      throw new TypeError('Can only merge with another VectorClock');
+    // Accept both VectorClock object and JSON serialization
+    const otherCounters = other instanceof VectorClock ? other.counters : other.counters;
+
+    if (!otherCounters) {
+      throw new TypeError('Can only merge with VectorClock or VectorClock JSON');
     }
-    for (const [nodeId, count] of other.counters) {
-      const current = this.counters.get(nodeId) || 0n;
-      this.counters.set(nodeId, count > current ? count : current);
+
+    // Update each counter to max value seen
+    if (other instanceof VectorClock) {
+      for (const [nodeId, count] of other.counters) {
+        const current = this.counters.get(nodeId) || 0n;
+        this.counters.set(nodeId, count > current ? count : current);
+      }
+    } else {
+      // Handle JSON format: otherCounters is Object with string values
+      for (const [nodeId, countStr] of Object.entries(otherCounters)) {
+        const count = BigInt(countStr);
+        const current = this.counters.get(nodeId) || 0n;
+        this.counters.set(nodeId, count > current ? count : current);
+      }
     }
-    // Also increment local counter after merge
+
+    // Increment local counter (semantic: we processed the message)
     return this.increment();
   }
 
