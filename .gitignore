@@ -8,6 +8,9 @@ dist
 *.env*
 .lh/
 .lockchain/
+.next
+out
+.vercel
 
 # Claude Flow generated files
 .claude/settings.local.json
