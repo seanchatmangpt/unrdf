@@ -4,7 +4,7 @@
  * @description Demonstrates query analysis, critical path identification, and optimization
  */
 
-import { createDarkMatterQuerySystem } from '../src/knowledge-engine/dark-matter/index.mjs';
+import { createDarkMatterQuerySystem } from '../packages/knowledge-engine/src/dark-matter/index.mjs';
 
 console.log('\n🌌 Dark Matter 80/20 Query Optimization Example\n');
 

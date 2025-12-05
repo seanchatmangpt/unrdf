@@ -10,7 +10,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import {
   ObservabilityManager,
   createObservabilityManager,
-} from '../../src/knowledge-engine/observability.mjs';
+} from '../../packages/knowledge-engine/observability.mjs';
 import { createStore, dataFactory } from '@unrdf/oxigraph';
 
 const { namedNode: _namedNode, literal: _literal } = dataFactory;

@@ -2,9 +2,9 @@
  * @fileoverview Hook evaluation API endpoint
  */
 
-import { evaluateHook } from '../../../../src/hooks.mjs'
-import { initStore } from '../../../../src/context/index.mjs'
-import { useTurtle } from '../../../../src/composables/use-turtle.mjs'
+import { evaluateHook } from '../../../../packages/hooks/src/hooks/define-hook.mjs'
+import { initStore } from '../../../../packages/composables/src/context/index.mjs'
+import { useTurtle } from '../../../../packages/composables/src/composables/use-turtle.mjs'
 
 /**
  * POST /api/hooks/[id]/evaluate - Evaluate a hook

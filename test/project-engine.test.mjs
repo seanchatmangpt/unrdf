@@ -16,7 +16,7 @@ import {
   inferTemplatesWithDomainBinding,
   getTemplatesByKind,
   serializeTemplates,
-} from '../src/project-engine/index.mjs';
+} from '../packages/project-engine/index.mjs';
 
 const { namedNode, literal } = dataFactory;
 

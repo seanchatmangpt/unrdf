@@ -3,7 +3,7 @@
  * Tests createDarkMatterCore optimizations
  */
 
-import { createDarkMatterCore } from '../../src/knowledge-engine/index.mjs';
+import { createDarkMatterCore } from '../../packages/knowledge-engine/index.mjs';
 
 /**
  *

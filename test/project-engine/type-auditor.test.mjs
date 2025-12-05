@@ -11,7 +11,7 @@ import {
   auditTypeConsistency,
   auditEntityTypes,
   compareTypes,
-} from '../../src/project-engine/type-auditor.mjs';
+} from '../../packages/project-engine/type-auditor.mjs';
 
 async function createTempProject(files) {
   const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), 'type-auditor-test-'));

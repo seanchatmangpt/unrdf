@@ -13,9 +13,9 @@
  * @license MIT
  */
 
-import { initStore } from '../src/context/index.mjs';
-import { useKnowledgeHooks, defineHook } from '../src/composables/use-knowledge-hooks.mjs';
-import { EVENTS } from '../src/engines/event-bus.mjs';
+import { initStore } from '../packages/composables/src/context/index.mjs';
+import { useKnowledgeHooks, defineHook } from '../packages/composables/src/composables/use-knowledge-hooks.mjs';
+import { EVENTS } from '../packages/knowledge-engine/src/engines/event-bus.mjs';
 import { UnrdfDataFactory as DataFactory } from '@unrdf/core/rdf/n3-justified-only';
 
 const { namedNode, literal } = DataFactory; // quad unused

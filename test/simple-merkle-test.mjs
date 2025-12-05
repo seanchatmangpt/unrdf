@@ -2,7 +2,7 @@
  * Simple Merkle verification test
  */
 
-import { LockchainWriter } from '../src/knowledge-engine/lockchain-writer.mjs';
+import { LockchainWriter } from '../packages/knowledge-engine/lockchain-writer.mjs';
 import { existsSync, rmSync, mkdirSync } from 'fs';
 import { join } from 'path';
 

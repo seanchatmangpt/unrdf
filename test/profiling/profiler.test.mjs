@@ -5,11 +5,11 @@
 import { describe, it, beforeEach } from 'node:test';
 import assert from 'node:assert';
 import { trace } from '@opentelemetry/api';
-import { createProfiler, quickProfile } from '../../src/profiling/profiler.mjs';
-import { LatencyProfiler } from '../../src/profiling/latency-profiler.mjs';
-import { MemoryProfiler } from '../../src/profiling/memory-profiler.mjs';
-import { CpuProfiler } from '../../src/profiling/cpu-profiler.mjs';
-import { Reporter } from '../../src/profiling/reporter.mjs';
+import { createProfiler, quickProfile } from '../../packages/profiling/profiler.mjs';
+import { LatencyProfiler } from '../../packages/profiling/latency-profiler.mjs';
+import { MemoryProfiler } from '../../packages/profiling/memory-profiler.mjs';
+import { CpuProfiler } from '../../packages/profiling/cpu-profiler.mjs';
+import { Reporter } from '../../packages/profiling/reporter.mjs';
 
 const tracer = trace.getTracer('profiler-test', '1.0.0');
 

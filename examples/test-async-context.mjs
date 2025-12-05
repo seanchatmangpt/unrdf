@@ -2,7 +2,7 @@
  * @fileoverview Test async context preservation
  */
 
-import { initStore, useStoreContext } from '../src/context/index.mjs';
+import { initStore, useStoreContext } from '../packages/composables/src/context/index.mjs';
 
 async function testAsyncContext() {
   console.log('=== Testing Async Context Preservation ===\n');

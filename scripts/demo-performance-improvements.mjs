@@ -4,9 +4,9 @@
  * @description Demonstrates hook batching and LRU query cache improvements
  */
 
-import { createHookExecutor } from '../src/knowledge-engine/hook-executor.mjs';
-import { createBatchingExecutor } from '../src/knowledge-engine/hook-executor-batching.mjs';
-import { createQueryOptimizer } from '../src/knowledge-engine/query-optimizer.mjs';
+import { createHookExecutor } from '../packages/hooks/src/hooks/hook-executor.mjs';
+import { createBatchingExecutor } from '../packages/hooks/src/hooks/hook-executor-batching.mjs';
+import { createQueryOptimizer } from '../packages/knowledge-engine/src/knowledge-engine/query-optimizer.mjs';
 import { createStore } from '@unrdf/core';
 
 console.log('╔════════════════════════════════════════════════════════════════╗');

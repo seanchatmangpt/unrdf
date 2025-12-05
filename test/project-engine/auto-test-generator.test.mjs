@@ -10,7 +10,7 @@ import {
   generateTestSkeleton,
   scoreTestCoverage,
   generateTestFactory,
-} from '../../src/project-engine/auto-test-generator.mjs';
+} from '../../packages/project-engine/auto-test-generator.mjs';
 
 const { namedNode, literal } = dataFactory;
 
@@ -57,7 +57,7 @@ function createDomainStore(entities) {
 
 const SAMPLE_VITEST_TEST = `
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { User } from '../../src/user.mjs'
+import { User } from '../../packages/user.mjs'
 
 describe('User', () => {
   let user

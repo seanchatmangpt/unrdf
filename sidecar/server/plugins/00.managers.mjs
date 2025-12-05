@@ -8,13 +8,13 @@ import { setManagers } from '../utils/managers.mjs'
 import { createVaultClient } from '../utils/vault-client.mjs'
 
 // Import KGC library managers from parent project
-import { KnowledgeHookManager } from '../../../src/knowledge-engine/knowledge-hook-manager.mjs'
-import { TransactionManager } from '../../../src/knowledge-engine/transaction.mjs'
-import { PolicyPack } from '../../../src/knowledge-engine/policy-pack.mjs'
-import { EffectSandbox } from '../../../src/knowledge-engine/effect-sandbox.mjs'
-import { LockchainWriter } from '../../../src/knowledge-engine/lockchain-writer.mjs'
-import { ResolutionLayer } from '../../../src/knowledge-engine/resolution-layer.mjs'
-import { ObservabilityManager } from '../../../src/knowledge-engine/observability.mjs'
+import { KnowledgeHookManager } from '../../../packages/knowledge-engine/knowledge-hook-manager.mjs'
+import { TransactionManager } from '../../../packages/knowledge-engine/transaction.mjs'
+import { PolicyPack } from '../../../packages/knowledge-engine/policy-pack.mjs'
+import { EffectSandbox } from '../../../packages/knowledge-engine/effect-sandbox.mjs'
+import { LockchainWriter } from '../../../packages/knowledge-engine/lockchain-writer.mjs'
+import { ResolutionLayer } from '../../../packages/knowledge-engine/resolution-layer.mjs'
+import { ObservabilityManager } from '../../../packages/knowledge-engine/observability.mjs'
 
 /**
  * Initialize Vault client and retrieve secrets

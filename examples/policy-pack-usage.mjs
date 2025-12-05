@@ -8,8 +8,8 @@
 import {
   PolicyPackManager,
   createPolicyPackManifest,
-} from '../src/knowledge-engine/policy-pack.mjs';
-import { defineHook } from '../src/knowledge-engine/define-hook.mjs';
+} from '../packages/knowledge-engine/src/policy-pack.mjs';
+import { defineHook } from '../packages/knowledge-engine/src/define-hook.mjs';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 

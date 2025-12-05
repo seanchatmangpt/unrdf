@@ -14,7 +14,7 @@ import {
   DEFAULT_CONFIG,
   HealthStatus,
   MonitorEvents,
-} from '../../../src/knowledge-engine/utils/adaptive-monitor.mjs';
+} from '../../../packages/knowledge-engine/utils/adaptive-monitor.mjs';
 
 describe('AdaptiveMonitor', () => {
   let monitor;

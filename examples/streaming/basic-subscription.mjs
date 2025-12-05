@@ -8,7 +8,7 @@
 import {
   createSubscriptionManager,
   SubscriptionPatternType,
-} from '../../src/knowledge-engine/streaming/index.mjs';
+} from '../../packages/knowledge-engine/streaming/index.mjs';
 
 async function main() {
   // Create subscription manager

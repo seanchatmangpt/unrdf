@@ -4,7 +4,7 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { LockchainWriter } from '../src/knowledge-engine/lockchain-writer.mjs';
+import { LockchainWriter } from '../packages/knowledge-engine/lockchain-writer.mjs';
 import { existsSync, rmSync, mkdirSync } from 'fs';
 import { join } from 'path';
 

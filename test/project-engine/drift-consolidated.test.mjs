@@ -11,7 +11,7 @@ import {
   createStructureSnapshot,
   computeDrift,
   createEmptyBaseline,
-} from '../../src/project-engine/drift-snapshot.mjs';
+} from '../../packages/project-engine/drift-snapshot.mjs';
 
 const { namedNode, literal } = dataFactory;
 

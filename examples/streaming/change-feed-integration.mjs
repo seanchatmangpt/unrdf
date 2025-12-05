@@ -6,11 +6,11 @@
  */
 
 import { createStore } from '@unrdf/oxigraph';
-import { TransactionManager } from '../../src/knowledge-engine/transaction.mjs';
+import { TransactionManager } from '../../packages/knowledge-engine/transaction.mjs';
 import {
   createChangeFeed,
   createChangeFeedHook,
-} from '../../src/knowledge-engine/streaming/index.mjs';
+} from '../../packages/knowledge-engine/streaming/index.mjs';
 
 const { namedNode, literal, quad } = DataFactory;
 

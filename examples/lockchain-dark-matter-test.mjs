@@ -14,7 +14,7 @@
  * 5. Forensic Analysis Support (5% of use cases)
  */
 
-import { createRealLockchainWriter } from '../src/knowledge-engine/real-lockchain-writer.mjs';
+import { createRealLockchainWriter } from '../packages/knowledge-engine/src/real-lockchain-writer.mjs';
 import { randomUUID } from 'crypto';
 import { _writeFile, mkdir } from 'node:fs/promises';
 import { _join } from 'node:path';

@@ -10,7 +10,7 @@ import {
   useHTFFramework,
   _DeltaFamilies,
   _StandardInvariants,
-} from '../src/react-hooks/htf/index.mjs';
+} from '../packages/react-hooks/htf/index.mjs';
 
 // ============================================
 // EXAMPLE: PhD Thesis on Knowledge Graphs

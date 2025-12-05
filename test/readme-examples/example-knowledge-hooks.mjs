@@ -3,7 +3,7 @@
  * Tests hook definition and registration
  */
 
-import { defineHook, registerHook } from '../../src/knowledge-engine/index.mjs';
+import { defineHook, registerHook } from '../../packages/knowledge-engine/index.mjs';
 
 /**
  *

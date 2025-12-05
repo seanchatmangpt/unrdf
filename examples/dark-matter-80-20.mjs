@@ -7,7 +7,7 @@
  * for the KGC JavaScript Sidecar.
  */
 
-import { DarkMatterFactory } from '../src/knowledge-engine/dark-matter-core.mjs';
+import { DarkMatterFactory } from '../packages/knowledge-engine/src/dark-matter-core.mjs';
 import { createStore } from '@unrdf/oxigraph';
 
 /**

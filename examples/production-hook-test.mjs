@@ -4,10 +4,10 @@
  * hash verification, SPARQL/SHACL execution, and transaction integration.
  */
 
-import { KnowledgeHookManager } from '../src/knowledge-engine/knowledge-hook-manager.mjs';
-import { defineHook } from '../src/knowledge-engine/define-hook.mjs';
+import { KnowledgeHookManager } from '../packages/knowledge-engine/src/knowledge-hook-manager.mjs';
+import { defineHook } from '../packages/knowledge-engine/src/define-hook.mjs';
 import { createStore } from '../packages/oxigraph/src/index.mjs';
-import { namedNode, literal, quad } from '../src/rdf/quad-utils.mjs';
+import { namedNode, literal, quad } from '../packages/rdf/quad-utils.mjs';
 import { readFile } from 'fs/promises';
 import { createHash } from 'crypto';
 

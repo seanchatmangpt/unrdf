@@ -6,8 +6,8 @@
  * Demonstrates the test utilities with scenario DSL and fluent assertions.
  */
 
-import { scenario, expect, createTestContext, TestHelpers } from '../src/test-utils/index.mjs';
-import { KnowledgeHookManager } from '../src/knowledge-engine/knowledge-hook-manager.mjs';
+import { scenario, expect, createTestContext, TestHelpers } from '../packages/test-utils/index.mjs';
+import { KnowledgeHookManager } from '../packages/knowledge-engine/src/knowledge-hook-manager.mjs';
 import { createStore } from '@unrdf/oxigraph';
 
 console.log('🧪 Test Utils Demo\n');

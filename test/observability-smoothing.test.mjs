@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { createObservabilityManager } from '../src/knowledge-engine/observability.mjs';
+import { createObservabilityManager } from '../packages/knowledge-engine/observability.mjs';
 
 describe('Observability - smoothing and minSamples', () => {
   it('applies EWMA fallback when samples are below minSamples', async () => {

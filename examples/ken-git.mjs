@@ -17,7 +17,7 @@ import {
   _canonicalize,
   _isIsomorphic,
   TransactionManager,
-} from '../src/knowledge-engine.mjs';
+} from '../packages/knowledge-engine.mjs';
 
 import { UnrdfDataFactory as DataFactory } from '@unrdf/core/rdf/n3-justified-only';
 // import assert from 'assert'; // Unused

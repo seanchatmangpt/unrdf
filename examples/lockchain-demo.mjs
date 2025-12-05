@@ -8,8 +8,8 @@
  */
 
 import { createStore } from '../packages/oxigraph/src/index.mjs';
-import { _createLockchainWriter } from '../src/knowledge-engine/lockchain-writer.mjs';
-import { TransactionManager } from '../src/knowledge-engine/transaction.mjs';
+import { _createLockchainWriter } from '../packages/knowledge-engine/src/lockchain-writer.mjs';
+import { TransactionManager } from '../packages/knowledge-engine/src/transaction.mjs';
 
 console.log('🔗 Lockchain Demo\n');
 

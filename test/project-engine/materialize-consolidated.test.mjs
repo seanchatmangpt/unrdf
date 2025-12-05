@@ -11,11 +11,11 @@ import { createStore, dataFactory } from '@unrdf/oxigraph';
 import { promises as fs } from 'fs';
 import path from 'path';
 import os from 'os';
-import { planMaterialization, validatePlan } from '../../src/project-engine/materialize-plan.mjs';
+import { planMaterialization, validatePlan } from '../../packages/project-engine/materialize-plan.mjs';
 import {
   applyMaterializationPlan,
   previewPlan,
-} from '../../src/project-engine/materialize-apply.mjs';
+} from '../../packages/project-engine/materialize-apply.mjs';
 
 const { namedNode, _literal } = dataFactory;
 

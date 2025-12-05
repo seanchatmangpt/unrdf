@@ -12,7 +12,7 @@ import {
   createCircuitBreaker,
   withCircuitBreaker,
   defaultRegistry,
-} from '../../../src/knowledge-engine/utils/circuit-breaker.mjs';
+} from '../../../packages/knowledge-engine/utils/circuit-breaker.mjs';
 
 describe('CircuitBreaker', () => {
   let breaker;

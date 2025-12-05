@@ -8,7 +8,7 @@
 
 import { describe, it, expect } from 'vitest';
 import { createStore, dataFactory } from '@unrdf/oxigraph';
-import { inferDomainModel, DomainModelLens } from '../../src/project-engine/domain-infer.mjs';
+import { inferDomainModel, DomainModelLens } from '../../packages/project-engine/domain-infer.mjs';
 
 const { namedNode, literal } = dataFactory;
 

@@ -8,7 +8,7 @@
  * - Query optimization techniques
  */
 
-import { initStore, useGraph } from '../src/index.mjs';
+import { initStore, useGraph } from '../packages/core/src/index.mjs';
 
 // Initialize store with sample data
 const runApp = initStore([], {

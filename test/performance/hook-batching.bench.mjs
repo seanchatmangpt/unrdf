@@ -7,8 +7,8 @@
  */
 
 import { describe, it, beforeEach, afterEach } from 'vitest';
-import { createHookExecutor } from '../../src/knowledge-engine/hook-executor.mjs';
-import { createBatchingExecutor } from '../../src/knowledge-engine/hook-executor-batching.mjs';
+import { createHookExecutor } from '../../packages/knowledge-engine/hook-executor.mjs';
+import { createBatchingExecutor } from '../../packages/knowledge-engine/hook-executor-batching.mjs';
 import { trace } from '@opentelemetry/api';
 
 const tracer = trace.getTracer('hook-batching-benchmark');

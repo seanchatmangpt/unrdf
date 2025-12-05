@@ -6,7 +6,8 @@
  */
 
 import { z } from 'zod';
-import { UnrdfDataFactory as DataFactory, createStore } from '@unrdf/core/rdf/n3-justified-only';
+import { UnrdfDataFactory as DataFactory } from '@unrdf/core/rdf/n3-justified-only';
+import { createStore } from '@unrdf/oxigraph'; // TODO: Replace with Oxigraph Store
 import { readdir, readFile } from 'fs/promises';
 import { join, extname } from 'path';
 import { statSync as _statSync } from 'fs';
@@ -53,6 +54,7 @@ const { namedNode, literal, quad } = DataFactory;
 
 const JsComplexityInputSchema = z.object({
   projectRoot: z.string(),
+  baseStore: z.instanceof(Store).optional(),
   excludePatterns: z.array(z.string()).optional(),
   mode: z.enum(['off', 'observe', 'enforce']).default('observe'),
 });

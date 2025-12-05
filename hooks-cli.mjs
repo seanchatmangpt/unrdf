@@ -9,9 +9,9 @@ import {
   evaluateHook, 
   planHook, 
   loadFrontmatterHook
-} from './src/hooks.mjs'
-import { initStore } from './src/context/index.mjs'
-import { useTurtle } from './src/composables/use-turtle.mjs'
+} from './packages/hooks.mjs'
+import { initStore } from './packages/context/index.mjs'
+import { useTurtle } from './packages/composables/use-turtle.mjs'
 import fs from 'node:fs/promises'
 import { resolve } from 'node:path'
 

@@ -7,9 +7,9 @@
  */
 
 import { defineHook, evaluateHook } from 'unrdf/knowledge-engine';
-import { initStore } from '../../src/context/index.mjs'
-import { useTurtle } from '../../src/composables/use-turtle.mjs'
-import { useGraph } from '../../src/composables/use-graph.mjs'
+import { initStore } from '../../packages/composables/src/context/index.mjs'
+import { useTurtle } from '../../packages/composables/src/composables/use-turtle.mjs'
+import { useGraph } from '../../packages/composables/src/composables/use-graph.mjs'
 
 // Sample RDF data
 const sampleData = `

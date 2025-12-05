@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { createHookExecutor } from '../src/knowledge-engine/hook-executor.mjs';
+import { createHookExecutor } from '../packages/knowledge-engine/hook-executor.mjs';
 
 describe('Hook Executor - dependency resolution', () => {
   it('executes hooks respecting meta.dependencies order', async () => {
