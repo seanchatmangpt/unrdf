@@ -29,7 +29,7 @@
 - Ready for submission to ICSE, NeurIPS, PLDI
 
 ### ✅ I want to know if it's PRODUCTION READY
-👉 Start here: **[FMEA-PRODUCTION.md](./FMEA-PRODUCTION.md)**
+👉 Start here: **[reference/FMEA-PRODUCTION.md](./reference/FMEA-PRODUCTION.md)**
 - 28 failure modes identified
 - 24 poka-yoke guards implemented
 - 302 comprehensive tests (100% pass)
@@ -37,48 +37,52 @@
 
 ---
 
-## Documentation Structure
+## Documentation Structure (Diataxis Framework)
 
 ```
-docs/
+docs/ (3 core navigation files)
 ├── README.md                          ← You are here
 ├── INSIGHTS.md                        ← KEY FINDINGS & RESEARCH INNOVATIONS
 ├── BENCHMARKS.md                      ← PERFORMANCE DATA & ANALYSIS
 │
-├── kgc-4d-comprehensive.pdf           ← 107-page peer-review paper
-├── kgc-4d-comprehensive.tex           ← LaTeX source (1,578 lines)
+├── tutorials/                         ← 📚 LEARNING-ORIENTED
+│   ├── DOCTEST-ARCHITECTURE.md        └─ Learn how the test framework works
+│   ├── PATTERN-IMPLEMENTATIONS.md     └─ Learn by implementing patterns
+│   └── REUSABLE-CLIENT-SERVER-PATTERNS.md └─ Client-server hands-on guide
 │
-├── COMPLETION-SUMMARY.md              ← Project metrics (10x expansion, 250/250 tests)
-├── IMPLEMENTATION-SUMMARY.md          ← Technical implementation details
-├── FMEA-PRODUCTION.md                 ← Risk assessment (28 modes, 0 high-risk)
-├── FMEA-KGC4D-LIBRARY.md             ← Library-specific failure analysis
-├── FMEA.md                            ← Foundation failure analysis
+├── how-to/                            ← 🛠️ TASK-ORIENTED (REFERENCE)
+│   ├── API.md                         └─ How to use the API
+│   ├── EXTRACTED-PATTERNS.md          └─ How to find & use patterns (74 examples)
+│   └── IMPLEMENTATION-SUMMARY.md      └─ How to implement features
 │
-├── EXTRACTED-PATTERNS.md              ← 74 use cases, reusable patterns
-├── PATTERN-IMPLEMENTATIONS.md         ← Detailed pattern implementations
-├── REUSABLE-CLIENT-SERVER-PATTERNS.md ← Distributed system patterns
+├── reference/                         ← 📖 INFORMATION-ORIENTED
+│   ├── COMPLETION-SUMMARY.md          └─ Project metrics (250/250 tests, 100/100 OTEL)
+│   ├── FMEA-PRODUCTION.md             └─ Risk assessment (production readiness)
+│   ├── FMEA-KGC4D-LIBRARY.md         └─ Library failure analysis
+│   ├── FMEA.md                        └─ Foundation failure modes
+│   ├── DOCTEST.md                     └─ Testing infrastructure
+│   ├── EXTRACTABLE-LIBRARIES.md       └─ Library patterns reference
+│   ├── FINAL-VERIFICATION.txt         └─ Verification results
+│   └── hdit-references.bib            └─ Bibliography (51 sources)
 │
-├── DOCTEST.md                         ← Test infrastructure overview
-├── DOCTEST-ARCHITECTURE.md            ← Doctest framework architecture
+├── explanation/                       ← 💡 UNDERSTANDING-ORIENTED
+│   ├── kgc-4d-comprehensive.pdf       └─ 107-page academic paper (publication-ready)
+│   ├── kgc-4d-comprehensive.tex       └─ LaTeX source
+│   ├── HDIT-APPLICATION-SUMMARY.md    └─ Understanding HDIT in practice
+│   ├── THESIS-BIGBANG-80-20.md       └─ 80/20 theorem explanation
+│   ├── ARD.md                         └─ Architecture understanding
+│   ├── thesis-advanced-hdit.pdf       └─ Advanced theory
+│   ├── thesis-bigbang-80-20.pdf       └─ Theoretical foundations
+│   └── PRESS-RELEASE.md               └─ Executive overview
 │
-├── HDIT-APPLICATION-SUMMARY.md        ← HDIT applications in practice
-├── THESIS-BIGBANG-80-20.md           ← 80/20 theorem proof
-├── EXTRACTABLE-LIBRARIES.md           ← Library extraction patterns
-├── ARD.md                             ← Architecture Reference Document
-│
-├── PRESS-RELEASE.md                   ← Media/announcement copy
-├── API.md                             ← API reference documentation
-│
-├── insights/                          ← [NEW] Research insights by topic
-├── benchmarks/                        ← [NEW] Performance benchmarks & analysis
-├── hdit-theory/                       ← [NEW] Mathematical theory documents
-├── validation/                        ← [NEW] Testing & verification results
-├── patterns/                          ← [NEW] Extracted patterns library
+├── insights/                          ← Research insights by category
+├── benchmarks/                        ← Performance analysis data
+├── hdit-theory/                       ← Mathematical theorems
+├── validation/                        ← Test results & verification
+├── patterns/                          ← Pattern library
 │
 ├── figures/                           ← TikZ diagrams (9 total)
-├── validated-implementation/          ← FINAL-VERIFICATION.txt
-│
-└── hdit-references.bib               ← Bibliography (51 references)
+└── validated-implementation/          ← Implementation validation
 ```
 
 ---
@@ -86,34 +90,34 @@ docs/
 ## 🎯 By Use Case
 
 ### For Researchers
-1. **Understand theory**: `INSIGHTS.md` → `kgc-4d-comprehensive.pdf`
-2. **See applications**: `EXTRACTED-PATTERNS.md` (74 use cases)
-3. **Study proofs**: `kgc-4d-comprehensive.pdf` sections 2-3
-4. **Check citations**: `hdit-references.bib` (51 sources)
+1. **Understand theory**: `INSIGHTS.md` → `explanation/kgc-4d-comprehensive.pdf`
+2. **See applications**: `how-to/EXTRACTED-PATTERNS.md` (74 use cases)
+3. **Study proofs**: `explanation/kgc-4d-comprehensive.pdf` sections 2-3
+4. **Check citations**: `reference/hdit-references.bib` (51 sources)
 
 ### For Engineers
 1. **Start here**: `BENCHMARKS.md` (performance data)
-2. **Check production readiness**: `FMEA-PRODUCTION.md` (risk assessment)
-3. **Learn patterns**: `PATTERN-IMPLEMENTATIONS.md` (24+ implementations)
-4. **Verify tests**: `COMPLETION-SUMMARY.md` (250/250 pass)
+2. **Check production readiness**: `reference/FMEA-PRODUCTION.md` (risk assessment)
+3. **Learn patterns**: `tutorials/PATTERN-IMPLEMENTATIONS.md` (24+ implementations)
+4. **Verify tests**: `reference/COMPLETION-SUMMARY.md` (250/250 pass)
 
 ### For DevOps/Deployment
 1. **Production guidance**: `BENCHMARKS.md` section 5 (deployment checklist)
-2. **Risk assessment**: `FMEA-PRODUCTION.md` (safety verification)
+2. **Risk assessment**: `reference/FMEA-PRODUCTION.md` (safety verification)
 3. **Performance targets**: `BENCHMARKS.md` section 5.1 (SLAs)
 4. **Optimization path**: `BENCHMARKS.md` section 4 (roadmap)
 
 ### For Product/Business
 1. **Key metrics**: `INSIGHTS.md` (executive summary)
-2. **Impact analysis**: `COMPLETION-SUMMARY.md` (10x expansion proof)
-3. **Market readiness**: `FMEA-PRODUCTION.md` (production verification)
-4. **Academic value**: `kgc-4d-comprehensive.pdf` (publication-ready)
+2. **Impact analysis**: `reference/COMPLETION-SUMMARY.md` (10x expansion proof)
+3. **Market readiness**: `reference/FMEA-PRODUCTION.md` (production verification)
+4. **Academic value**: `explanation/kgc-4d-comprehensive.pdf` (publication-ready)
 
 ### For Academic Submission
-1. **Paper PDF**: `kgc-4d-comprehensive.pdf` (ready to submit)
-2. **Proof verification**: `COMPLETION-SUMMARY.md` (test evidence)
+1. **Paper PDF**: `explanation/kgc-4d-comprehensive.pdf` (ready to submit)
+2. **Proof verification**: `reference/COMPLETION-SUMMARY.md` (test evidence)
 3. **Theory reference**: `INSIGHTS.md` section 4 (academic contributions)
-4. **Citation data**: `hdit-references.bib` (51 references)
+4. **Citation data**: `reference/hdit-references.bib` (51 references)
 
 ---
 
@@ -161,13 +165,13 @@ docs/
 - **Read time**: 30 minutes
 - **Key takeaway**: 1,173x overhead at 10K ops; validation caching = 35% improvement
 
-#### COMPLETION-SUMMARY.md
+#### reference/COMPLETION-SUMMARY.md
 - **What it covers**: Project metrics, test results, OTEL validation
 - **Best for**: QA, project managers, stakeholders
 - **Read time**: 25 minutes
 - **Key takeaway**: 250/250 tests pass, OTEL 100/100, production ready
 
-#### FMEA-PRODUCTION.md
+#### reference/FMEA-PRODUCTION.md
 - **What it covers**: 28 failure modes, 0 high-risk, 24 guards, 302 tests
 - **Best for**: Risk assessment, deployment decisions, compliance
 - **Read time**: 35 minutes
@@ -175,19 +179,19 @@ docs/
 
 ### Theory & Architecture
 
-#### kgc-4d-comprehensive.pdf
+#### explanation/kgc-4d-comprehensive.pdf
 - **What it covers**: 107-page academic paper with theory, implementation, validation
 - **Best for**: Researchers, academic submission, deep technical understanding
 - **Read time**: 3-4 hours (full), 30 minutes (summary)
 - **Key takeaway**: Publication-ready paper consolidating HDIT + event-sourced RDF
 
-#### EXTRACTED-PATTERNS.md
+#### how-to/EXTRACTED-PATTERNS.md
 - **What it covers**: 74 discovered use cases and reusable patterns
 - **Best for**: Architects, product teams, solution designers
 - **Read time**: 45 minutes
 - **Key takeaway**: Hyperdimensional reasoning applies to 74 real-world problems
 
-#### PATTERN-IMPLEMENTATIONS.md
+#### tutorials/PATTERN-IMPLEMENTATIONS.md
 - **What it covers**: 24+ detailed pattern implementations with examples
 - **Best for**: Engineers implementing solutions
 - **Read time**: 60 minutes
@@ -195,13 +199,13 @@ docs/
 
 ### Validation & Testing
 
-#### DOCTEST-ARCHITECTURE.md
+#### tutorials/DOCTEST-ARCHITECTURE.md
 - **What it covers**: Test infrastructure, framework architecture, automation
 - **Best for**: QA engineers, test architects
 - **Read time**: 20 minutes
 - **Key takeaway**: 48 embedded doctests, automatically compiled + executed
 
-#### FINAL-VERIFICATION.txt
+#### reference/FINAL-VERIFICATION.txt
 - **What it covers**: Complete verification results from all test suites
 - **Best for**: Final sign-off, deployment checklist
 - **Read time**: 10 minutes
@@ -242,23 +246,23 @@ docs/
 
 ### "I need to know if this is production-ready"
 1. **Quick**: INSIGHTS.md section 3 (5 minutes)
-2. **Complete**: FMEA-PRODUCTION.md (35 minutes)
-3. **Verification**: COMPLETION-SUMMARY.md phase breakdown (20 minutes)
+2. **Complete**: `reference/FMEA-PRODUCTION.md` (35 minutes)
+3. **Verification**: `reference/COMPLETION-SUMMARY.md` phase breakdown (20 minutes)
 
 ### "I need the business case/metrics"
 1. **Quick**: INSIGHTS.md sections 1-2 (10 minutes)
-2. **Complete**: COMPLETION-SUMMARY.md sections 1-3 (20 minutes)
-3. **Academic**: kgc-4d-comprehensive.pdf introduction (15 minutes)
+2. **Complete**: `reference/COMPLETION-SUMMARY.md` sections 1-3 (20 minutes)
+3. **Academic**: `explanation/kgc-4d-comprehensive.pdf` introduction (15 minutes)
 
 ### "I need reusable patterns for my project"
-1. **Quick**: EXTRACTED-PATTERNS.md (20 minutes)
-2. **Implementation**: PATTERN-IMPLEMENTATIONS.md + REUSABLE-CLIENT-SERVER-PATTERNS.md (45 minutes)
-3. **Theory**: kgc-4d-comprehensive.pdf section on applications (30 minutes)
+1. **Quick**: `how-to/EXTRACTED-PATTERNS.md` (20 minutes)
+2. **Implementation**: `tutorials/PATTERN-IMPLEMENTATIONS.md` + `tutorials/REUSABLE-CLIENT-SERVER-PATTERNS.md` (45 minutes)
+3. **Theory**: `explanation/kgc-4d-comprehensive.pdf` section on applications (30 minutes)
 
 ### "I need to cite this in academic work"
-1. **Citation format**: `hdit-references.bib`
-2. **Paper PDF**: `kgc-4d-comprehensive.pdf` (use as primary citation)
-3. **Supporting evidence**: COMPLETION-SUMMARY.md (verification data)
+1. **Citation format**: `reference/hdit-references.bib`
+2. **Paper PDF**: `explanation/kgc-4d-comprehensive.pdf` (use as primary citation)
+3. **Supporting evidence**: `reference/COMPLETION-SUMMARY.md` (verification data)
 
 ---
 
@@ -339,24 +343,24 @@ Documents are synchronized with implementation. If you find inconsistencies, che
 1. This README.md (10 min)
 2. INSIGHTS.md (20 min)
 3. BENCHMARKS.md sections 1-3 (20 min)
-4. FMEA-PRODUCTION.md executive summary (10 min)
-5. kgc-4d-comprehensive.pdf introduction (20 min)
+4. `reference/FMEA-PRODUCTION.md` executive summary (10 min)
+5. `explanation/kgc-4d-comprehensive.pdf` introduction (20 min)
 
 ### "I need to deploy this" (30-45 minutes)
 1. BENCHMARKS.md section 3-5 (30 min)
-2. FMEA-PRODUCTION.md (15 min, skim for guards)
-3. COMPLETION-SUMMARY.md (skip, already verified)
+2. `reference/FMEA-PRODUCTION.md` (15 min, skim for guards)
+3. `reference/COMPLETION-SUMMARY.md` (skip, already verified)
 
 ### "I'm submitting to a conference" (4-6 hours)
-1. kgc-4d-comprehensive.pdf (3-4 hours)
-2. COMPLETION-SUMMARY.md (verification, 20 min)
-3. FMEA-PRODUCTION.md (production evidence, 20 min)
-4. hdit-references.bib (bibliography, 10 min)
+1. `explanation/kgc-4d-comprehensive.pdf` (3-4 hours)
+2. `reference/COMPLETION-SUMMARY.md` (verification, 20 min)
+3. `reference/FMEA-PRODUCTION.md` (production evidence, 20 min)
+4. `reference/hdit-references.bib` (bibliography, 10 min)
 
 ### "I'm implementing patterns" (1-2 hours)
-1. EXTRACTED-PATTERNS.md (20 min, find your use case)
-2. PATTERN-IMPLEMENTATIONS.md (30-45 min, specific pattern)
-3. kgc-4d-comprehensive.pdf section 4 (theory, 15 min)
+1. `how-to/EXTRACTED-PATTERNS.md` (20 min, find your use case)
+2. `tutorials/PATTERN-IMPLEMENTATIONS.md` (30-45 min, specific pattern)
+3. `explanation/kgc-4d-comprehensive.pdf` section 4 (theory, 15 min)
 
 ---
 
