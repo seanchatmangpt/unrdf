@@ -6,29 +6,71 @@
 import { UnrdfStore } from '@unrdf/core';
 import { dataFactory } from '@unrdf/oxigraph';
 import { GRAPHS, PREDICATES, EVENT_TYPES } from './constants.mjs';
-import { now, toISO } from './time.mjs';
+import { now, toISO, VectorClock } from './time.mjs';
 
 export class KGCStore extends UnrdfStore {
+  /**
+   * @param {Object} options
+   * @param {string} [options.nodeId] - Node ID for vector clock (defaults to random UUID)
+   */
   constructor(options = {}) {
     super(options);
     this.eventCount = 0;
+    // Initialize vector clock with node ID (or generate one)
+    const nodeId = options.nodeId || this._generateNodeId();
+    this.vectorClock = new VectorClock(nodeId);
+  }
+
+  /**
+   * Generate a unique node ID for this store instance
+   * @returns {string}
+   */
+  _generateNodeId() {
+    if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+      return `node-${crypto.randomUUID().slice(0, 8)}`;
+    }
+    try {
+      const crypto = require('crypto');
+      return `node-${crypto.randomUUID().slice(0, 8)}`;
+    } catch {
+      return `node-${Date.now().toString(36)}`;
+    }
   }
 
   /**
    * Atomic append: Add event to log and apply deltas to universe in one transaction
    * Follows ACID semantics via UnrdfStore.transaction()
+   * Includes vector clock for causality tracking and delta storage for time-travel replay
    */
   async appendEvent(eventData = {}, deltas = []) {
     const eventId = this._generateEventId();
     const t_ns = now();
+
+    // Increment vector clock on each event
+    this.vectorClock.increment();
+
+    // Serialize deltas for time-travel replay
+    const serializedDeltas = deltas.map(d => ({
+      type: d.type,
+      subject: d.subject.value,
+      subjectType: d.subject.termType,
+      predicate: d.predicate.value,
+      object: d.object.termType === 'Literal'
+        ? { value: d.object.value, type: 'Literal', datatype: d.object.datatype?.value, language: d.object.language }
+        : { value: d.object.value, type: d.object.termType },
+    }));
 
     // 1. Serialize event to RDF quads for EventLog
     const eventQuads = this._serializeEvent({
       id: eventId,
       t_ns,
       type: eventData.type || 'CREATE',
-      payload: eventData.payload || {},
+      payload: {
+        ...eventData.payload || {},
+        deltas: serializedDeltas, // Store deltas for replay
+      },
       git_ref: eventData.git_ref || null,
+      vector_clock: this.vectorClock.toJSON(), // Include vector clock
     });
 
     // Add all event quads to EventLog named graph
@@ -157,6 +199,17 @@ export class KGCStore extends UnrdfStore {
           subj,
           dataFactory.namedNode(PREDICATES.GIT_REF),
           dataFactory.literal(event.git_ref)
+        )
+      );
+    }
+
+    // vector_clock (for causality tracking)
+    if (event.vector_clock) {
+      quads.push(
+        dataFactory.quad(
+          subj,
+          dataFactory.namedNode(PREDICATES.VECTOR_CLOCK),
+          dataFactory.literal(JSON.stringify(event.vector_clock))
         )
       );
     }

@@ -2,16 +2,47 @@
  * KGC Git Backbone - Pure JavaScript Git using isomorphic-git
  * Works in Node.js and Browser environments
  * NO CLI dependencies - fully isomorphic
+ *
+ * Usage:
+ *   Node.js:   new GitBackbone('/path/to/repo')
+ *   Browser:   new GitBackbone('/repo', lightningFs)  // pass lightning-fs instance
  */
 
 import git from 'isomorphic-git';
-import * as fs from 'fs';
 import { join } from 'path';
 
+// Dynamic fs import for Node.js only (browser will inject fs)
+let nodeFs = null;
+const isNode = typeof window === 'undefined' && typeof process !== 'undefined';
+if (isNode) {
+  try {
+    // Dynamic import for Node.js fs
+    nodeFs = await import('fs');
+  } catch {
+    // Will require injection in browser or if fs unavailable
+  }
+}
+
 export class GitBackbone {
-  constructor(dir = '.') {
+  /**
+   * @param {string} dir - Repository directory path
+   * @param {Object} [fs] - Filesystem adapter (required in browser, uses Node fs if omitted in Node.js)
+   */
+  constructor(dir = '.', fs = null) {
     this.dir = dir;
-    this.fs = fs;
+
+    // Use injected fs, or fall back to Node.js fs
+    if (fs) {
+      this.fs = fs;
+    } else if (nodeFs) {
+      this.fs = nodeFs;
+    } else {
+      throw new Error(
+        'GitBackbone requires a filesystem adapter. In browser, pass lightning-fs instance: ' +
+        'new GitBackbone(dir, new LightningFS("fs"))'
+      );
+    }
+
     this._initialized = false;
   }
 
@@ -23,12 +54,12 @@ export class GitBackbone {
     if (this._initialized) return;
 
     // Create directory if it doesn't exist
-    if (!fs.existsSync(this.dir)) {
-      fs.mkdirSync(this.dir, { recursive: true });
+    if (!this.fs.existsSync(this.dir)) {
+      this.fs.mkdirSync(this.dir, { recursive: true });
     }
 
     // Initialize git repo if needed
-    if (!fs.existsSync(join(this.dir, '.git'))) {
+    if (!this.fs.existsSync(join(this.dir, '.git'))) {
       await git.init({ fs: this.fs, dir: this.dir, defaultBranch: 'main' });
     }
 
@@ -45,7 +76,7 @@ export class GitBackbone {
     // Write snapshot to file
     const filepath = 'snapshot.nq';
     const fullPath = join(this.dir, filepath);
-    fs.writeFileSync(fullPath, nquads, 'utf8');
+    this.fs.writeFileSync(fullPath, nquads, 'utf8');
 
     // Stage file
     await git.add({ fs: this.fs, dir: this.dir, filepath });
