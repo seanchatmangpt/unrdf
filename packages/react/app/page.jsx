@@ -9,6 +9,7 @@ import FMEADashboard from '../components/FMEADashboard';
 import JTBDScenarios from '../components/JTBDScenarios';
 import OperatorCardinality from '../components/OperatorCardinality';
 import GeospatialVisualization from '../components/GeospatialVisualization';
+import KnowledgeGraph from '../components/KnowledgeGraph';
 
 // Dynamic import for 3D component to prevent SSR issues with Three.js
 const EntropyVisualization3D = dynamic(() => import('../components/EntropyVisualization3D'), {
@@ -90,6 +91,7 @@ export default function Dashboard() {
     { id: 'performance', label: 'Performance' },
     { id: 'entropy', label: 'Entropy' },
     { id: 'entropy3d', label: '3D View' },
+    { id: 'knowledge-graph', label: 'Knowledge Graph' },
     { id: 'geospatial', label: 'Geospatial' },
     { id: 'fmea', label: 'FMEA' },
     { id: 'jtbd', label: 'JTBD' },
@@ -158,6 +160,8 @@ export default function Dashboard() {
           {activeTab === 'entropy' && <EntropyCascadeVisualization data={benchmarkData} />}
 
           {activeTab === 'entropy3d' && <EntropyVisualization3D data={benchmarkData} />}
+
+          {activeTab === 'knowledge-graph' && <KnowledgeGraph data={benchmarkData} />}
 
           {activeTab === 'geospatial' && <GeospatialVisualization data={benchmarkData} />}
 
