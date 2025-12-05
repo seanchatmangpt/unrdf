@@ -30,7 +30,7 @@
 
 **Test Command:**
 ```bash
-node src/cli/index.mjs init --root ./playground --verbose --dry-run
+node src/cli/index.mjs init --root ./test-project --verbose --dry-run
 ```
 
 **Results:**
@@ -65,7 +65,7 @@ node src/cli/index.mjs init --root ./playground --verbose --dry-run
 
 **Test Command:**
 ```bash
-node src/cli/index.mjs autonomic --once --root ./playground
+node src/cli/index.mjs autonomic --once --root ./test-project
 ```
 
 **Results:**
@@ -103,7 +103,7 @@ node src/cli/index.mjs autonomic --once --root ./playground
 
 **Test Command:**
 ```bash
-node src/cli/index.mjs autonomic --full --root ./playground
+node src/cli/index.mjs autonomic --full --root ./test-project
 ```
 
 **Results:**
