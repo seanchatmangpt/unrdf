@@ -1409,6 +1409,522 @@ type FrozenSnapshot = {
 
 ---
 
+## Reusable Patterns
+
+Client/server application patterns for building real-time, collaborative KGC applications.
+
+### HookRegistry
+
+Generic validation system for field-level data governance. Maps field identifiers to validation functions that return `{ valid, reason? }`.
+
+#### Constructor
+
+```javascript
+import { HookRegistry } from '@unrdf/kgc-4d';
+
+const registry = new HookRegistry();
+```
+
+#### Methods
+
+##### register(fieldId, hook)
+
+Register a validation hook for a field.
+
+```javascript
+registry.register('budget', {
+  validate: (value) => {
+    if (typeof value !== 'number') {
+      return { valid: false, reason: 'Must be a number' };
+    }
+    if (value > 100000) {
+      return { valid: false, reason: 'Budget exceeds maximum of 100000' };
+    }
+    return { valid: true };
+  }
+});
+
+registry.register('status', {
+  validate: (value) => {
+    const allowed = ['active', 'inactive', 'suspended'];
+    return allowed.includes(value)
+      ? { valid: true }
+      : { valid: false, reason: `Must be one of: ${allowed.join(', ')}` };
+  }
+});
+```
+
+**Parameters:**
+- `fieldId` (string) - Unique field identifier
+- `hook` (object) - Hook definition with validate function
+
+**Throws:**
+- `Error` if hook missing validate function or validate is not a function
+
+##### unregister(fieldId)
+
+Remove a validation hook.
+
+```javascript
+registry.unregister('budget');
+console.log(registry.get('budget'));  // null
+```
+
+**Parameters:**
+- `fieldId` (string) - Field identifier
+
+##### get(fieldId)
+
+Get registered hook for a field.
+
+```javascript
+const hook = registry.get('budget');
+if (hook) {
+  const result = hook.validate(50000);
+  console.log(result);  // { valid: true }
+}
+```
+
+**Parameters:**
+- `fieldId` (string) - Field identifier
+
+**Returns:** object|null - Hook definition or null if not registered
+
+##### listFields()
+
+List all registered field IDs.
+
+```javascript
+registry.register('status', {...});
+registry.register('budget', {...});
+
+console.log(registry.listFields());  // ['status', 'budget']
+```
+
+**Returns:** string[] - Array of registered field IDs
+
+##### validate(fieldId, value)
+
+Validate a single field value.
+
+```javascript
+const result = registry.validate('budget', 75000);
+if (result.valid) {
+  console.log('Budget approved');
+} else {
+  console.error('Validation failed:', result.reason);
+  // Output: "Budget exceeds maximum of 100000"
+}
+```
+
+**Parameters:**
+- `fieldId` (string) - Field identifier
+- `value` (any) - Value to validate
+
+**Returns:** object
+```javascript
+{
+  valid: boolean,
+  reason?: string  // Error reason if invalid
+}
+```
+
+##### validateBatch(values)
+
+Validate multiple field values at once.
+
+```javascript
+const result = registry.validateBatch({
+  status: 'active',
+  budget: 50000,
+  unknown: 'ignored'  // No hook registered = valid by default
+});
+
+if (result.valid) {
+  console.log('All validations passed');
+} else {
+  console.error('Validation errors:', result.errors);
+  // Output: { budget: "Budget exceeds..." }
+}
+```
+
+**Parameters:**
+- `values` (object) - Key-value pairs of fieldId -> value
+
+**Returns:** object
+```javascript
+{
+  valid: boolean,
+  errors?: object  // Map of fieldId -> reason (only if invalid)
+}
+```
+
+##### createValidator()
+
+Create a reusable validator function (useful for form libraries).
+
+```javascript
+const validator = registry.createValidator();
+
+// Use with form validation
+const result = validator({
+  status: 'active',
+  budget: 50000
+});
+
+if (!result.valid) {
+  displayFormErrors(result.errors);
+}
+```
+
+**Returns:** function - `(values) => { valid, errors? }`
+
+---
+
+### SSEClient
+
+Browser-based Server-Sent Events (SSE) client with automatic reconnection, heartbeat validation, and event dispatching.
+
+#### Constructor
+
+```javascript
+import { SSEClient } from '@unrdf/kgc-4d';
+
+const client = new SSEClient('/api/events', {
+  reconnectDelay: 5000,        // Wait 5s before reconnecting
+  heartbeatInterval: 30000,    // Expect heartbeat every 30s
+  heartbeatTimeout: 35000,     // Disconnect if no heartbeat in 35s
+  maxReconnectAttempts: null   // null = infinite retries
+});
+```
+
+**Parameters:**
+- `url` (string) - Event stream endpoint
+- `options` (object) - Configuration:
+  - `reconnectDelay` (number, ms) - Delay before reconnection attempt
+  - `heartbeatInterval` (number, ms) - Expected heartbeat interval
+  - `heartbeatTimeout` (number, ms) - Timeout to detect stale connection
+  - `maxReconnectAttempts` (number|null) - Max retries before giving up (null = infinite)
+
+#### Methods
+
+##### on(eventType, callback)
+
+Register event listener.
+
+```javascript
+client.on('connected', () => {
+  console.log('Connected to event stream');
+});
+
+client.on('message', (data) => {
+  console.log('Received:', data);
+});
+
+client.on('error', (error) => {
+  console.error('Stream error:', error);
+});
+
+client.on('reconnecting', ({ attempt, delay }) => {
+  console.log(`Reconnect attempt ${attempt}, waiting ${delay}ms`);
+});
+```
+
+**Event Types:**
+- `connecting` - Initiating connection
+- `connected` - Connected and ready
+- `connected-event` - Received connected event with data
+- `message` - Generic message received
+- `shard` - Shard update received
+- `delta` - Delta operation received
+- `heartbeat` - Keep-alive received
+- `disconnected` - Connection closed
+- `reconnecting` - Attempting to reconnect
+- `max-reconnect-attempts` - Gave up after max attempts
+- `heartbeat-timeout` - No heartbeat received, disconnecting
+- `error` - Stream error occurred
+
+**Parameters:**
+- `eventType` (string) - Event to listen for
+- `callback` (function) - Handler function
+
+##### off(eventType, callback)
+
+Unregister event listener.
+
+```javascript
+const onMessage = (data) => console.log(data);
+client.on('message', onMessage);
+
+// Later: remove listener
+client.off('message', onMessage);
+```
+
+**Parameters:**
+- `eventType` (string) - Event type
+- `callback` (function) - Handler to remove (must be same function reference)
+
+##### connect()
+
+Establish connection to SSE stream.
+
+```javascript
+client.connect();
+// Emits 'connecting', then 'connected' or 'error'
+```
+
+##### disconnect()
+
+Close connection and cancel reconnection attempts.
+
+```javascript
+client.disconnect();
+// Emits 'disconnected'
+```
+
+##### getStatus()
+
+Check connection status.
+
+```javascript
+const status = client.getStatus();
+console.log(status);
+// {
+//   isConnected: true,
+//   reconnectAttempts: 0,
+//   url: '/api/events'
+// }
+```
+
+**Returns:** object
+```javascript
+{
+  isConnected: boolean,
+  reconnectAttempts: number,
+  url: string
+}
+```
+
+---
+
+### createDeltaSyncReducer
+
+Factory function for creating a delta synchronization reducer and utilities. Handles client-side state management for collaborative, real-time RDF updates with vector clock tracking.
+
+#### Function Signature
+
+```javascript
+import { createDeltaSyncReducer } from '@unrdf/kgc-4d';
+
+const {
+  reducer,
+  initialState,
+  actions,
+  DeltaSyncState,
+  DeltaSyncActions
+} = createDeltaSyncReducer({
+  applyDeltaToQuads: (quads, delta) => {
+    // Custom delta application logic
+    return updatedQuads;
+  }
+});
+```
+
+**Parameters:**
+- `options` (object) - Configuration:
+  - `applyDeltaToQuads` (function) - Custom delta application (optional, uses RDF quads default)
+
+**Returns:** object
+```javascript
+{
+  reducer: function,           // Reducer for useReducer
+  initialState: object,        // Initial state
+  actions: object,             // Action creators
+  DeltaSyncState: object,      // State enum
+  DeltaSyncActions: object     // Action type constants
+}
+```
+
+#### Usage Example
+
+```javascript
+import { createDeltaSyncReducer } from '@unrdf/kgc-4d';
+import { useReducer, useEffect } from 'react';
+
+const { reducer, initialState, actions } = createDeltaSyncReducer();
+
+function SyncComponent() {
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  // Connect when component mounts
+  useEffect(() => {
+    dispatch(actions.connect());
+
+    // Connect via SSE or WebSocket
+    const sse = new SSEClient('/api/sync');
+
+    sse.on('connected', (vectorClock) => {
+      dispatch(actions.connected(vectorClock));
+    });
+
+    sse.on('shard', (shard) => {
+      dispatch(actions.setShard(shard));
+    });
+
+    sse.on('delta', (delta) => {
+      dispatch(actions.applyDelta(delta));
+      dispatch(actions.queueDelta(delta));
+    });
+
+    sse.on('error', (error) => {
+      dispatch(actions.error(error));
+    });
+
+    sse.connect();
+
+    return () => sse.disconnect();
+  }, []);
+
+  return (
+    <div>
+      Connection: {state.connection}
+      Quads: {state.shard?.quads.length || 0}
+      Pending: {state.pendingDeltas.length}
+    </div>
+  );
+}
+```
+
+#### Reducer State Structure
+
+```javascript
+initialState = {
+  connection: 'disconnected',      // DeltaSyncState value
+  shard: null,                     // { quads: [...], vector_clock: {...} }
+  vectorClock: null,               // Current vector clock
+  events: [],                      // Last 100 events
+  pendingDeltas: [],               // Queued deltas awaiting ACK
+  error: null,                     // Last error
+  stats: null                      // Optional statistics
+}
+```
+
+#### Action Creators
+
+```javascript
+// Connection lifecycle
+actions.connect()                          // Initiate connection
+actions.connected(vectorClock)             // Connection established
+actions.disconnect()                       // Close connection
+actions.error(error)                       // Connection error
+
+// Data operations
+actions.setShard(shard)                    // Receive initial shard
+actions.applyDelta(delta)                  // Apply optimistic update
+actions.queueDelta(delta)                  // Queue delta for server
+
+// Server acknowledgment
+actions.deltaAck(deltaId, vectorClock)    // Delta accepted
+actions.deltaReject(deltaId, reason)      // Delta rejected
+
+// Event tracking
+actions.addEvent(event)                    // Add event (keeps last 100)
+```
+
+---
+
+### DeltaSyncState
+
+Enumeration of connection states for delta sync reducer.
+
+```javascript
+import { DeltaSyncState } from '@unrdf/kgc-4d';
+
+console.log(DeltaSyncState.DISCONNECTED);  // 'disconnected'
+console.log(DeltaSyncState.CONNECTING);    // 'connecting'
+console.log(DeltaSyncState.CONNECTED);     // 'connected'
+console.log(DeltaSyncState.SYNCING);       // 'syncing'
+console.log(DeltaSyncState.ERROR);         // 'error'
+```
+
+**Values:**
+- `DISCONNECTED` - Not connected to sync server
+- `CONNECTING` - Connection attempt in progress
+- `CONNECTED` - Connected and ready for operations
+- `SYNCING` - Sending/receiving data
+- `ERROR` - Connection or sync error occurred
+
+**Usage:**
+
+```javascript
+const { reducer, initialState, actions } = createDeltaSyncReducer();
+
+function SyncIndicator({ state }) {
+  const statusMap = {
+    [DeltaSyncState.DISCONNECTED]: '⚪ Offline',
+    [DeltaSyncState.CONNECTING]: '🟡 Connecting...',
+    [DeltaSyncState.CONNECTED]: '🟢 Connected',
+    [DeltaSyncState.SYNCING]: '🔵 Syncing...',
+    [DeltaSyncState.ERROR]: '🔴 Error'
+  };
+
+  return <span>{statusMap[state.connection]}</span>;
+}
+```
+
+---
+
+### DeltaSyncActions
+
+Enumeration of action types for delta sync reducer.
+
+```javascript
+import { DeltaSyncActions } from '@unrdf/kgc-4d';
+
+console.log(DeltaSyncActions.CONNECT);      // 'CONNECT'
+console.log(DeltaSyncActions.CONNECTED);    // 'CONNECTED'
+console.log(DeltaSyncActions.SET_SHARD);    // 'SET_SHARD'
+console.log(DeltaSyncActions.APPLY_DELTA);  // 'APPLY_DELTA'
+```
+
+**Values:**
+- `CONNECT` - Initiate connection
+- `CONNECTED` - Connection established
+- `DISCONNECT` - Close connection
+- `ERROR` - Error occurred
+- `SET_SHARD` - Receive shard snapshot
+- `APPLY_DELTA` - Apply delta (optimistic update)
+- `QUEUE_DELTA` - Queue delta for server
+- `DELTA_ACK` - Server accepted delta
+- `DELTA_REJECT` - Server rejected delta
+- `ADD_EVENT` - Record event (last 100 kept)
+
+**Usage:**
+
+```javascript
+// Direct action dispatch with type constants
+dispatch({
+  type: DeltaSyncActions.APPLY_DELTA,
+  delta: {
+    id: 'delta-1',
+    operations: [
+      {
+        type: 'add',
+        subject: { value: 'http://example.org/alice' },
+        predicate: { value: 'http://example.org/name' },
+        object: { value: 'Alice' }
+      }
+    ]
+  }
+});
+
+// Or using action creators
+const { actions } = createDeltaSyncReducer();
+dispatch(actions.applyDelta(delta));
+```
+
+---
+
 ## Error Handling
 
 KGC 4D throws errors for:
