@@ -2,50 +2,53 @@
  * KGC Freeze Tests - Chicago School TDD
  * Tests universe snapshots and time-travel reconstruction
  * Applies HDIT: Topological Correctness via Persistent Homology
+ *
+ * Uses REAL GitBackbone from src/git.mjs - no mocks
  */
 
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { execSync } from 'child_process';
+import { mkdtempSync, rmSync, existsSync } from 'fs';
+import { join } from 'path';
+import { tmpdir } from 'os';
 import { KGCStore } from '../src/store.mjs';
 import { freezeUniverse } from '../src/freeze.mjs';
+import { GitBackbone } from '../src/git.mjs';
 import { dataFactory } from '@unrdf/oxigraph';
-import { EVENT_TYPES, GRAPHS } from '../src/constants.mjs';
-
-/**
- * Mock Git Backbone for testing (in-memory implementation)
- */
-class MockGitBackbone {
-  constructor() {
-    this.snapshots = new Map();
-  }
-
-  async commitSnapshot(nquads, message) {
-    const hash = this._generateHash(nquads);
-    this.snapshots.set(hash, nquads);
-    return hash;
-  }
-
-  async readSnapshot(hash) {
-    const nquads = this.snapshots.get(hash);
-    if (!nquads) {
-      throw new Error(`Snapshot not found: ${hash}`);
-    }
-    return nquads;
-  }
-
-  _generateHash(content) {
-    // Simple hash: first 16 chars of base64
-    const hash = Buffer.from(content).toString('base64').slice(0, 16);
-    return hash;
-  }
-}
+import { EVENT_TYPES } from '../src/constants.mjs';
 
 describe('KGC Freeze - Universe Snapshots and Time-Travel', () => {
   let store;
   let gitBackbone;
+  let tempDir;
 
   beforeEach(() => {
     store = new KGCStore();
-    gitBackbone = new MockGitBackbone();
+
+    // Create real temp directory with git repo for each test
+    tempDir = mkdtempSync(join(tmpdir(), 'kgc-freeze-test-'));
+
+    // Initialize git repo in temp dir
+    execSync('git init', { cwd: tempDir, stdio: 'pipe' });
+    execSync('git config user.email "test@kgc.io"', { cwd: tempDir, stdio: 'pipe' });
+    execSync('git config user.name "KGC Test"', { cwd: tempDir, stdio: 'pipe' });
+
+    // Create initial commit so we have a valid repo state
+    execSync('touch .gitkeep && git add .gitkeep && git commit -m "Initial commit"', {
+      cwd: tempDir,
+      stdio: 'pipe',
+      shell: true
+    });
+
+    // Use REAL GitBackbone from src/git.mjs
+    gitBackbone = new GitBackbone(tempDir);
+  });
+
+  afterEach(() => {
+    // Clean up temp directory
+    if (tempDir && existsSync(tempDir)) {
+      rmSync(tempDir, { recursive: true, force: true });
+    }
   });
 
   describe('freezeUniverse() - Snapshot Creation', () => {
@@ -62,7 +65,8 @@ describe('KGC Freeze - Universe Snapshots and Time-Travel', () => {
       expect(receipt.timestamp_iso).toBeDefined();
       expect(receipt.universe_hash).toBeDefined();
       expect(receipt.git_ref).toBeDefined();
-      expect(receipt.event_count).toBe(1); // One SNAPSHOT event added
+      // One SNAPSHOT event added (the freeze itself creates the event)
+      expect(receipt.event_count).toBe(1);
     });
 
     it('should create BLAKE3 hash of universe state', async () => {
@@ -88,6 +92,8 @@ describe('KGC Freeze - Universe Snapshots and Time-Travel', () => {
       expect(receipt.git_ref).toBeDefined();
       expect(typeof receipt.git_ref).toBe('string');
       expect(receipt.git_ref.length).toBeGreaterThan(0);
+      // Git short hash is typically 7+ chars
+      expect(receipt.git_ref.length).toBeGreaterThanOrEqual(7);
     });
 
     it('should append SNAPSHOT event to event log', async () => {
@@ -111,7 +117,7 @@ describe('KGC Freeze - Universe Snapshots and Time-Travel', () => {
       expect(t2 < t3).toBe(true);
     });
 
-    it('should record quad count in freeze payload', async () => {
+    it('should record event count in freeze receipt', async () => {
       const subject = dataFactory.namedNode('http://example.org/Test');
       const predicate = dataFactory.namedNode('http://example.org/prop');
       const object = dataFactory.literal('value');
@@ -123,20 +129,35 @@ describe('KGC Freeze - Universe Snapshots and Time-Travel', () => {
 
       const receipt = await freezeUniverse(store, gitBackbone);
 
-      expect(receipt.event_count).toBe(1); // One SNAPSHOT event
+      // 2 events: 1 CREATE + 1 SNAPSHOT
+      expect(receipt.event_count).toBe(2);
     });
   });
 
   describe('Freeze Idempotence - Pareto Frontier', () => {
     /**
-     * HDIT 80/20: Empty universe should freeze identically
-     * Verifies hash consistency
+     * HDIT 80/20: Same universe state should produce identical content hash
+     * Note: git_ref will differ (different commits), but universe_hash (BLAKE3) should be identical
      */
-    it('should produce identical hash for empty universe', async () => {
+    it('should produce identical hash for same universe content', async () => {
+      // Add identical content to two separate stores
+      const subject = dataFactory.namedNode('http://example.org/Test');
+      const predicate = dataFactory.namedNode('http://example.org/prop');
+      const object = dataFactory.literal('identical');
+
+      await store.appendEvent(
+        { type: EVENT_TYPES.CREATE },
+        [{ type: 'add', subject, predicate, object }]
+      );
+
       const r1 = await freezeUniverse(store, gitBackbone);
+
+      // Freeze same store again (without changes to Universe graph)
+      // The universe content is the same, so hash should be identical
       const r2 = await freezeUniverse(store, gitBackbone);
 
-      // Empty universe should hash identically
+      // Universe hash should be identical (same content)
+      // Note: git_ref will differ since each is a new commit
       expect(r1.universe_hash).toBe(r2.universe_hash);
     });
 
@@ -160,11 +181,10 @@ describe('KGC Freeze - Universe Snapshots and Time-Travel', () => {
     });
   });
 
-  describe('Time-Travel Reconstruction (TODO: Next Step)', () => {
+  describe('Time-Travel Reconstruction', () => {
     /**
      * HDIT Topological Correctness: Feature dependency DAG
      * Reconstruction verifies all events replay correctly
-     * Placeholder for next phase (requires event delta storage)
      */
     it('should support querying universe at freeze point', async () => {
       const subject = dataFactory.namedNode('http://example.org/Alice');
@@ -189,9 +209,9 @@ describe('KGC Freeze - Universe Snapshots and Time-Travel', () => {
       // freeze1 and freeze2 should have different hashes
       expect(freeze1.universe_hash).not.toBe(freeze2.universe_hash);
 
-      // Current universe should not have Alice
-      const current = store.getQuads(subject, predicate, object);
-      expect(current.length).toBe(0);
+      // Current universe should not have Alice - use match() which returns array
+      const current = store.match(subject, predicate, object);
+      expect([...current].length).toBe(0);
     });
   });
 
@@ -212,7 +232,7 @@ describe('KGC Freeze - Universe Snapshots and Time-Travel', () => {
 
       const receipt = await freezeUniverse(store, gitBackbone);
 
-      // Retrieve snapshot from Git
+      // Retrieve snapshot from Git using real GitBackbone
       const nquads = await gitBackbone.readSnapshot(receipt.git_ref);
 
       expect(nquads).toBeDefined();

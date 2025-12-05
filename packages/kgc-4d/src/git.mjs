@@ -1,60 +1,58 @@
 /**
  * KGC Git Backbone - Content-addressable file system for snapshots and code
- * Uses Git CLI in Node.js and isomorphic-git in Browser
+ * Uses Git CLI in Node.js for fast, simple operations
+ *
+ * Note: Browser support (isomorphic-git) can be added later as needed
  */
 
 import { execSync } from 'child_process';
+import { writeFileSync } from 'fs';
+import { join } from 'path';
 
 export class GitBackbone {
   constructor(dir = '.') {
     this.dir = dir;
-    this.isNode = typeof process !== 'undefined' && typeof execSync === 'function';
   }
 
   /**
    * Persist N-Quads snapshot to Git and return commit hash
    */
   async commitSnapshot(nquads, message) {
-    if (this.isNode) {
-      return this._commitSnapshotNode(nquads, message);
-    }
-    return this._commitSnapshotBrowser(nquads, message);
-  }
-
-  /**
-   * Read snapshot from Git by commit hash
-   */
-  async readSnapshot(hash) {
-    if (this.isNode) {
-      return this._readSnapshotNode(hash);
-    }
-    return this._readSnapshotBrowser(hash);
-  }
-
-  // ===== Node.js Implementation =====
-
-  /**
-   * Node.js: Use Git CLI for fast, simple operation
-   */
-  _commitSnapshotNode(nquads, message) {
     try {
-      const fs = require('fs');
-      const path = require('path');
 
       // Write snapshot to file
-      const snapshotPath = path.join(this.dir, 'snapshot.nq');
-      fs.writeFileSync(snapshotPath, nquads, 'utf8');
+      const snapshotPath = join(this.dir, 'snapshot.nq');
+      writeFileSync(snapshotPath, nquads, 'utf8');
 
       // Add to git
-      execSync('git add snapshot.nq', { cwd: this.dir });
+      execSync('git add snapshot.nq', { cwd: this.dir, stdio: 'pipe' });
 
-      // Commit
+      // Check if there are staged changes
+      let hasChanges = true;
+      try {
+        execSync('git diff --cached --quiet', { cwd: this.dir, stdio: 'pipe' });
+        hasChanges = false; // If command succeeds, no changes
+      } catch {
+        hasChanges = true; // If command fails, there are changes
+      }
+
+      let result;
       const timestamp = new Date().toISOString();
       const commitMsg = `${message}\n\nSnapshot generated at ${timestamp}`;
-      const result = execSync(`git commit -m "${commitMsg.replace(/"/g, '\\"')}"`, {
-        cwd: this.dir,
-        encoding: 'utf8',
-      });
+
+      if (hasChanges) {
+        // Commit normally
+        result = execSync(`git commit -m "${commitMsg.replace(/"/g, '\\"')}"`, {
+          cwd: this.dir,
+          encoding: 'utf8',
+        });
+      } else {
+        // Allow empty commit when content unchanged (idempotent freezes)
+        result = execSync(`git commit --allow-empty -m "${commitMsg.replace(/"/g, '\\"')}"`, {
+          cwd: this.dir,
+          encoding: 'utf8',
+        });
+      }
 
       // Extract commit hash from output
       // Output format: [main abc123f] message
@@ -72,9 +70,9 @@ export class GitBackbone {
   }
 
   /**
-   * Node.js: Read snapshot from Git by commit hash
+   * Read snapshot from Git by commit hash
    */
-  _readSnapshotNode(hash) {
+  async readSnapshot(hash) {
     try {
       const result = execSync(`git show ${hash}:snapshot.nq`, {
         cwd: this.dir,
@@ -83,60 +81,6 @@ export class GitBackbone {
       return result;
     } catch (error) {
       throw new Error(`Failed to read snapshot ${hash}: ${error.message}`);
-    }
-  }
-
-  // ===== Browser Implementation =====
-
-  /**
-   * Browser: Use isomorphic-git with lightning-fs
-   */
-  async _commitSnapshotBrowser(nquads, message) {
-    const git = (await import('isomorphic-git')).default;
-    const fs = (await import('lightning-fs')).default;
-
-    const lfs = new fs('kgc');
-
-    try {
-      // Write snapshot
-      await lfs.promises.writeFile('/snapshot.nq', nquads, 'utf8');
-
-      // Add to git
-      await git.add({ fs: lfs, dir: '/', filepath: 'snapshot.nq' });
-
-      // Commit
-      const sha = await git.commit({
-        fs: lfs,
-        dir: '/',
-        message,
-        author: { name: 'KGC System', email: 'system@kgc.io' },
-      });
-
-      return sha;
-    } catch (error) {
-      throw new Error(`Browser Git commit failed: ${error.message}`);
-    }
-  }
-
-  /**
-   * Browser: Read snapshot from Git by commit hash
-   */
-  async _readSnapshotBrowser(hash) {
-    const git = (await import('isomorphic-git')).default;
-    const fs = (await import('lightning-fs')).default;
-
-    const lfs = new fs('kgc');
-
-    try {
-      const { object } = await git.readObject({
-        fs: lfs,
-        dir: '/',
-        oid: hash,
-      });
-
-      return new TextDecoder().decode(object);
-    } catch (error) {
-      throw new Error(`Browser Git read failed: ${error.message}`);
     }
   }
 }
