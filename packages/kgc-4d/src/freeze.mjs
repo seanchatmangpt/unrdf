@@ -4,6 +4,7 @@
 
 import { blake3 } from '@noble/hashes/blake3';
 import { bytesToHex } from '@noble/hashes/utils';
+import { dataFactory } from '@unrdf/oxigraph';
 import { now, toISO, fromISO } from './time.mjs';
 import { GRAPHS, EVENT_TYPES, PREDICATES } from './constants.mjs';
 
@@ -12,20 +13,51 @@ import { GRAPHS, EVENT_TYPES, PREDICATES } from './constants.mjs';
  */
 export async function freezeUniverse(store, gitBackbone) {
   try {
-    // 1. Dump kgc:Universe to canonical N-Quads
-    const nquads = await store.dump({
-      graph: GRAPHS.UNIVERSE,
-      format: 'application/n-quads',
+    // 1. Get only Universe graph quads and serialize to N-Quads
+    const universeGraph = dataFactory.namedNode(GRAPHS.UNIVERSE);
+    const universeQuads = [...store.match(null, null, null, universeGraph)];
+
+    // Sort for canonical ordering (deterministic hash)
+    universeQuads.sort((a, b) => {
+      const as = a.subject.value + a.predicate.value + a.object.value;
+      const bs = b.subject.value + b.predicate.value + b.object.value;
+      return as.localeCompare(bs);
     });
+
+    // Serialize to N-Quads format
+    const nquads = universeQuads.map(q => {
+      const s = q.subject.termType === 'NamedNode'
+        ? `<${q.subject.value}>`
+        : `_:${q.subject.value}`;
+      const p = `<${q.predicate.value}>`;
+      let o;
+      if (q.object.termType === 'NamedNode') {
+        o = `<${q.object.value}>`;
+      } else if (q.object.termType === 'BlankNode') {
+        o = `_:${q.object.value}`;
+      } else {
+        // Literal
+        const escaped = q.object.value.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+        if (q.object.datatype && q.object.datatype.value !== 'http://www.w3.org/2001/XMLSchema#string') {
+          o = `"${escaped}"^^<${q.object.datatype.value}>`;
+        } else if (q.object.language) {
+          o = `"${escaped}"@${q.object.language}`;
+        } else {
+          o = `"${escaped}"`;
+        }
+      }
+      const g = `<${q.graph.value}>`;
+      return `${s} ${p} ${o} ${g} .`;
+    }).join('\n');
 
     // 2. Hash the universe state (BLAKE3)
     const universeHash = bytesToHex(blake3(nquads));
 
-    // 3. Commit to Git
-    const timestamp = toISO(now());
+    // 3. Commit to Git (use wall-clock time for message)
+    const wallClockISO = new Date().toISOString();
     const gitRef = await gitBackbone.commitSnapshot(
       nquads,
-      `Universe freeze at ${timestamp}`
+      `Universe freeze at ${wallClockISO}`
     );
 
     // 4. Create SNAPSHOT event and append to log
