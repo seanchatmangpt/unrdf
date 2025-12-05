@@ -641,7 +641,7 @@ docs/reference/benchmarks/
 - [ ] 85% how-to guide coverage
 - [ ] 86% explanation guide coverage
 - [ ] Performance benchmarks published
-- [ ] Interactive playground live
+- [ ] Interactive playground live (REMOVED - feature no longer available)
 
 ### Phase 4 Exit Criteria (2026 Q3)
 
