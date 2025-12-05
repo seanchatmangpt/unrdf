@@ -5,10 +5,6 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  swcMinify: true,
   reactStrictMode: true,
   pageExtensions: ['js', 'jsx', 'mjs', 'mjsx', 'ts', 'tsx', 'mts', 'mtsx'],
 };
