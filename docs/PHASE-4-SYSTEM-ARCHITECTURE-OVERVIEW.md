@@ -106,11 +106,12 @@ Runtime-specific implementations:
   - JS ↔ Erlang bridge
   - Limitations and workarounds
 
-- **04-DUAL-ADAPTERS.md** (4,000 words)
-  - Real backend adapter (WebSocket/HTTP)
-  - Simulated backend adapter (AtomVM)
-  - Adapter interface
-  - Swapping mechanism
+- **04-DUAL-ADAPTERS.md** and **04-DUAL-ADAPTERS-CORRECTED.mjs.md** (4,000+ words)
+  - Real backend adapter (WebSocket to OTP node)
+  - Simulated backend adapter (WebSocket to AtomVM)
+  - **CORRECTED version**: Uses MJS + JSDoc (no TypeScript)
+  - Complete working code examples
+  - Adapter factory pattern
 
 ### 2. Implementation Guides
 
@@ -120,11 +121,13 @@ Runtime-specific implementations:
   - Building both runtimes
   - Testing locally
 
-- **06-SETUP-JS-SIDE.md** (5,000 words)
+- **06-SETUP-JS-SIDE.md** and **06-SETUP-JS-SIDE-CORRECTED.mjs.md** (5,000+ words)
+  - **CORRECTED version**: Uses MJS + JSDoc (no TypeScript)
   - Protocol client interface
-  - Implementing both adapters
-  - Configuration and switching
-  - Type safety
+  - Full project structure setup
+  - Unit tests with Node.js test framework
+  - Integration test runner
+  - Development workflow examples
 
 - **07-INTEGRATION-TESTING.md** (7,000 words)
   - Golden test vectors
@@ -167,15 +170,23 @@ Start with: **01-PROTOCOL-DESIGN.md** + **02-RUNTIME-ARCHITECTURE.md**
 
 Understand the contract-based approach and overall layering.
 
-### For Backend Team
+### For Backend Team (Erlang/OTP)
 Follow: **02-RUNTIME-ARCHITECTURE.md** → **05-SETUP-ERLANG-SIDE.md** → **07-INTEGRATION-TESTING.md**
 
 Set up the Erlang side with proper code split and testing.
 
-### For Frontend Team
-Follow: **04-DUAL-ADAPTERS.md** → **06-SETUP-JS-SIDE.md** → **07-INTEGRATION-TESTING.md**
+### For Frontend Team (JavaScript)
+**IMPORTANT**: Use corrected versions with MJS + JSDoc
 
-Implement dual adapters and ensure local/online equivalence.
+Follow: **04-DUAL-ADAPTERS-CORRECTED.mjs.md** → **06-SETUP-JS-SIDE-CORRECTED.mjs.md** → **07-INTEGRATION-TESTING.md**
+
+Implement dual adapters (RealAdapter for OTP, SimulatedAdapter for AtomVM) and ensure local/online equivalence.
+
+Key standards for JavaScript implementation:
+- Use MJS files (ES modules)
+- Use JSDoc for type hints (NO TypeScript)
+- Pure functions, simple error handling
+- Trust inputs, fail loudly
 
 ### For DevOps/QA
 Focus on: **07-INTEGRATION-TESTING.md** + **08-PROTOCOL-REFERENCE.md**
@@ -183,7 +194,7 @@ Focus on: **07-INTEGRATION-TESTING.md** + **08-PROTOCOL-REFERENCE.md**
 Set up golden tests, fault injection, and real node gating.
 
 ### For New Contributors
-Start with: **01-PROTOCOL-DESIGN.md** (understand contracts), then **09-MIGRATION-GUIDE.md** (understand system)
+Start with: **01-PROTOCOL-DESIGN.md** (understand contracts), then **06-SETUP-JS-SIDE-CORRECTED.mjs.md** (understand implementation patterns)
 
 ---
 
