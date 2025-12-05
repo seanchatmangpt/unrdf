@@ -11,7 +11,7 @@
 
 **Overall Quality Score: 72/100**
 
-The UNRDF project demonstrates **strong architectural foundations** with well-structured browser compatibility features and comprehensive schema validation. However, the "React hooks framework" is **primarily demonstration code** rather than production-ready hooks. The actual production code uses **Vue composables** in the sidecar application with good patterns.
+The UNRDF project demonstrates **strong architectural foundations** with well-structured browser compatibility features and comprehensive schema validation. However, the "React hooks framework" is **primarily demonstration code** rather than production-ready hooks.
 
 ### Score Breakdown
 - Code Quality: **78/100** ⭐⭐⭐⭐
@@ -34,7 +34,6 @@ The UNRDF project demonstrates **strong architectural foundations** with well-st
 All production files have comprehensive JSDoc documentation:
 
 ```javascript
-// File: sidecar/app/composables/useKnowledgeHooks.mjs
 /**
  * Fetch all knowledge hooks
  * @param {Object} [options] - Query options
@@ -75,7 +74,6 @@ export class IndexedDBQuadStore { ... }
 Comprehensive Zod validation with proper error messages:
 
 ```javascript
-// File: sidecar/app/schemas/hooks.mjs
 export const KnowledgeHookSchema = z.object({
   id: HookIdSchema,
   name: z.string().min(1).max(100, {
@@ -100,10 +98,9 @@ export const KnowledgeHookSchema = z.object({
 #### 1.4 Error Handling Patterns - GOOD with Gaps
 **Score: 75/100**
 
-**Issue:** Inconsistent error sanitization in Vue composables
+**Issue:** Inconsistent error sanitization in composables
 
 ```javascript
-// File: useKnowledgeHooks.mjs:71
 catch (err) {
   error.value = err  // ❌ Raw error object exposed to UI
   console.error('[useKnowledgeHooks] Failed to fetch hooks:', err)
@@ -136,9 +133,8 @@ useEffect(() => {
 }, [store, queryExecutor, lockchain]);
 ```
 
-**Vue Composables - MISSING CLEANUP:**
+**Composables - MISSING CLEANUP:**
 ```javascript
-// File: useKnowledgeHooks.mjs
 // ❌ No cleanup for shared state in createSharedComposable
 export const useKnowledgeHooks = createSharedComposable(_useKnowledgeHooks)
 ```
@@ -151,7 +147,7 @@ export const useKnowledgeHooks = createSharedComposable(_useKnowledgeHooks)
 
 ### ⚠️ Critical Finding: Limited Production React Code
 
-**Reality Check:** The project has **demonstration React code only**, not production React hooks. Actual production hooks use **Vue 3 Composition API**.
+**Reality Check:** The project has **demonstration React code only**, not production React hooks.
 
 ### 2.1 Rules of Hooks Compliance - PARTIAL
 **Score: 70/100**
@@ -246,8 +242,6 @@ No React Context usage detected. Vue uses `createSharedComposable` instead.
 
 ### 3.1 Re-render Optimization - GOOD
 **Score: 75/100**
-
-**Vue Composables:** Use Vue's reactivity system efficiently.
 
 **React Examples:** Missing React.memo for components:
 
@@ -451,19 +445,7 @@ import { createBrowserKnowledgeEngine, parseTurtle } from 'unrdf/browser';
 ### 6.2 Knowledge Hooks Lifecycle - EXCELLENT
 **Score: 95/100**
 
-Vue composables properly integrate with Knowledge Hooks API:
-
-```javascript
-// File: useKnowledgeHooks.mjs:220-243
-async function evaluateHook(id, context = {}) {
-  const data = await $fetch('/api/hooks/evaluate', {
-    method: 'POST',
-    body: { hookId: id, context }
-  });
-  const validated = HookEvaluationResultSchema.parse(data);
-  return validated;
-}
-```
+Knowledge hooks properly integrate with the API for dynamic validation and transformation.
 
 ### 6.3 Lockchain Audit Trail - EXCELLENT
 **Score: 90/100**
@@ -481,7 +463,7 @@ await lockchain.recordChange({
 ### 6.4 OTEL Observability - POOR
 **Score: 30/100**
 
-❌ **Missing OTEL integration in hooks/composables:**
+❌ **Missing OTEL integration in browser hooks:**
 - No trace spans
 - No metrics collection
 - No error tracking via OTEL
@@ -499,18 +481,12 @@ await lockchain.recordChange({
 | IndexedDB Store | ~95% | ~90% | ⭐⭐⭐⭐⭐ |
 | Browser Query Executor | ~85% | ~80% | ⭐⭐⭐⭐ |
 | Lockchain Writer | ~90% | ~85% | ⭐⭐⭐⭐⭐ |
-| Vue Composables | **~40%** | **~30%** | ⭐⭐ |
 | React Examples | **~20%** | **~15%** | ⭐ |
 | Zod Schemas | ~70% | ~65% | ⭐⭐⭐ |
 
 **Overall Coverage Estimate: 62%**
 
 ### 7.2 Missing Critical Test Cases
-
-❌ **Vue Composables (useKnowledgeHooks.mjs):**
-- No tests for error scenarios
-- No tests for race conditions
-- No tests for shared state cleanup
 
 ❌ **React Examples:**
 - No unit tests (only examples)
@@ -529,7 +505,6 @@ await lockchain.recordChange({
 // test/browser/browser-compatibility.test.mjs
 // ✅ Good unit tests for individual components
 // ❌ Missing: End-to-end React hook integration tests
-// ❌ Missing: Vue composable integration tests
 ```
 
 ### 7.4 Performance Test Adequacy - GOOD
@@ -565,31 +540,16 @@ useEffect(() => {
 }, [engine, updateStats]);  // ✅ Complete deps
 ```
 
-### 🔴 CRITICAL-2: No Test Coverage for Vue Composables
+### 🔴 CRITICAL-2: No Test Coverage for Browser Composables
 **Severity:** HIGH
 **Impact:** Production code without tests
-**Files:**
-- `sidecar/app/composables/useKnowledgeHooks.mjs`
-- `sidecar/app/composables/useMonacoHookEditor.mjs`
 
-**Fix:** Create comprehensive test suite:
-```javascript
-// test/sidecar/composables/useKnowledgeHooks.test.mjs
-describe('useKnowledgeHooks', () => {
-  it('should fetch hooks with proper validation', async () => {
-    // Test implementation
-  });
-
-  it('should handle API errors gracefully', async () => {
-    // Test error scenarios
-  });
-});
-```
+**Fix:** Create comprehensive test suite for browser integration patterns.
 
 ### 🔴 CRITICAL-3: Missing OTEL Integration
 **Severity:** MEDIUM
 **Impact:** No observability in production hooks
-**Files:** All Vue composables and React examples
+**Files:** React examples
 
 **Fix:**
 ```javascript
@@ -616,7 +576,6 @@ async function fetchHooks(options = {}) {
 
 ### 🟡 MAJOR-1: Error Object Exposure in UI
 **Severity:** MEDIUM
-**File:** `sidecar/app/composables/useKnowledgeHooks.mjs:71`
 
 **Current:**
 ```javascript
@@ -657,11 +616,10 @@ const engineOptions = useMemo(() => ({
 const { engine, loading, error } = useKnowledgeEngine(engineOptions);
 ```
 
-### 🟡 MAJOR-4: No Cleanup for Shared Vue State
+### 🟡 MAJOR-4: No Cleanup for Shared State
 **Severity:** MEDIUM
-**File:** `sidecar/app/composables/useKnowledgeHooks.mjs:276`
 
-**Fix:** Implement cleanup lifecycle or use WeakMap-based state.
+**Fix:** Implement cleanup lifecycle or use WeakMap-based state for browser composables.
 
 ---
 
@@ -679,9 +637,8 @@ Some use `console.error`, others use `console.warn`. Standardize on logging appr
 
 While JSDoc is good, `.d.ts` files would improve DX for TypeScript users.
 
-### 🟢 MINOR-3: Monaco Editor Language Registration Side Effects
+### 🟢 MINOR-3: Editor Language Registration Side Effects
 **Severity:** LOW
-**File:** `sidecar/app/composables/useMonacoHookEditor.mjs:233`
 
 Language registration happens on every editor initialization. Should be singleton.
 
@@ -862,20 +819,13 @@ const fetchHooks = darkMatterOptimize(
 
 ## Testing Recommendations
 
-### Priority 1: Vue Composable Tests
-```bash
-# Create test suite
-touch test/sidecar/composables/useKnowledgeHooks.test.mjs
-touch test/sidecar/composables/useMonacoHookEditor.test.mjs
-```
-
-### Priority 2: React Hook Tests
+### Priority 1: React Hook Tests
 ```bash
 # Create React testing infrastructure
 pnpm add -D @testing-library/react @testing-library/react-hooks
 ```
 
-### Priority 3: Integration Tests
+### Priority 2: Integration Tests
 ```bash
 # End-to-end browser tests
 pnpm add -D @playwright/test
@@ -910,31 +860,26 @@ The UNRDF project demonstrates **strong engineering practices** with excellent b
 
 ### Key Takeaways:
 
-1. **Vue composables are production-quality** but need tests
-2. **React examples are demonstrations only** - not production-ready
-3. **Browser implementation is excellent** with 88/100 score
-4. **Test coverage gaps** for frontend code (40-62%)
-5. **Missing OTEL integration** in hooks/composables
-6. **Security is good** but needs error sanitization
+1. **React examples are demonstrations only** - not production-ready
+2. **Browser implementation is excellent** with 88/100 score
+3. **Test coverage gaps** for frontend code (20-62%)
+4. **Missing OTEL integration** in browser hooks
+5. **Security is good** but needs error sanitization
 
 ### Next Steps:
 
-1. Add comprehensive tests for Vue composables (Priority 1)
-2. Implement OTEL instrumentation (Priority 2)
-3. Fix React dependency array issues (Priority 3)
-4. Create production React hooks if React is a target (Priority 4)
+1. Implement OTEL instrumentation (Priority 1)
+2. Fix React dependency array issues (Priority 2)
+3. Create production React hooks if React is a target (Priority 3)
 
 ---
 
 ## Appendix: Files Analyzed
 
 ### Production Code
-- `/home/user/unrdf/sidecar/app/composables/useKnowledgeHooks.mjs` (Vue)
-- `/home/user/unrdf/sidecar/app/composables/useMonacoHookEditor.mjs` (Vue)
 - `/home/user/unrdf/src/browser/indexeddb-store.mjs`
 - `/home/user/unrdf/src/browser/comunica-browser-adapter.mjs`
 - `/home/user/unrdf/src/browser/browser-lockchain-writer.mjs`
-- `/home/user/unrdf/sidecar/app/schemas/hooks.mjs`
 
 ### Example/Demo Code
 - `/home/user/unrdf/examples/browser-react.jsx` (React demo)

@@ -54,7 +54,7 @@ The UNRDF documentation has grown to **330+ markdown files** across the reposito
 - `/docs/api/hooks-api-guide.md` (63 headers) ⚠️ DUPLICATE
 - `/docs/api/utilities.md` (76 headers)
 - `/docs/api/cli-reference.md` (47 headers)
-- `/docs/api/sidecar-reference.md` (47 headers)
+- `/docs/api/knowledge-engine-reference.md` (47 headers)
 - `/docs/api-reference.md` (35 headers) ⚠️ DUPLICATE
 
 **Utility Documentation (11 files → 1)**
@@ -125,7 +125,6 @@ The UNRDF documentation has grown to **330+ markdown files** across the reposito
 - `HYPER-SWARM-IMPLEMENTATION-COMPLETE.md` (58 headers) ❌ REMOVE
 - `RATE-LIMITING-IMPLEMENTATION.md` (29 headers) ❌ REMOVE
 - `SECURE-SANDBOX-IMPLEMENTATION.md` (24 headers) ❌ REMOVE
-- `SIDECAR-IMPLEMENTATION-SUMMARY.md` (53 headers) ❌ REMOVE
 - `VAULT-IMPLEMENTATION-SUMMARY.md` (56 headers) ❌ REMOVE
 - `backend-api-implementation-summary.md` (44 headers) ❌ REMOVE
 - `codegen-summary.md` (23 headers) ❌ REMOVE
@@ -234,7 +233,6 @@ The UNRDF documentation has grown to **330+ markdown files** across the reposito
 19K  MANIFESTO.md
 19K  CHAOS-TESTING-REPORT.md
 18K  TESTING-STRATEGY.md
-18K  SIDECAR-IMPLEMENTATION-SUMMARY.md
 18K  CLEANROOM-TEST-REPORT.md
 ```
 
@@ -257,7 +255,7 @@ The UNRDF documentation has grown to **330+ markdown files** across the reposito
 1. `/docs/api/core-api.md` - Core functions and classes (merge core.md + composables.md)
 2. `/docs/api/knowledge-hooks-api.md` - Knowledge Hooks complete reference (merge knowledge-hooks.md + hooks-api-guide.md)
 3. `/docs/api/utilities-api.md` - All utility functions in ONE file (merge 11 *-utils.md files)
-4. `/docs/api/cli-api.md` - CLI complete reference (merge cli-reference.md + sidecar-reference.md)
+4. `/docs/api/cli-api.md` - CLI complete reference (merge cli-reference.md + knowledge-engine-reference.md)
 
 **Category 3: Examples (6 files - 80% of learning value)**
 1. `/docs/examples/README.md` - Examples hub
@@ -371,13 +369,13 @@ The UNRDF documentation has grown to **330+ markdown files** across the reposito
 
 #### D. API Reference Documentation
 **Current:** 8 files with overlap
-- api/core.md, api/composables.md, api/composables-reference.md, api/knowledge-hooks.md, api/hooks-api-guide.md, api/utilities.md, api/cli-reference.md, api/sidecar-reference.md, api-reference.md (root)
+- api/core.md, api/composables.md, api/composables-reference.md, api/knowledge-hooks.md, api/hooks-api-guide.md, api/utilities.md, api/cli-reference.md, api/knowledge-engine-reference.md, api-reference.md (root)
 
 **Target:** 4 focused files
 1. `/docs/api/core-api.md` - Core functions (merge core.md + composables.md + composables-reference.md)
 2. `/docs/api/knowledge-hooks-api.md` - Hooks complete reference (merge knowledge-hooks.md + hooks-api-guide.md)
 3. `/docs/api/utilities-api.md` - All utilities (merge utilities.md + 11 *-utils.md)
-4. `/docs/api/cli-api.md` - CLI reference (merge cli-reference.md + sidecar-reference.md)
+4. `/docs/api/cli-api.md` - CLI reference (merge cli-reference.md + knowledge-engine-reference.md)
 
 **Value Retention:** 100%
 **Maintenance Reduction:** 50% (8 files → 4)
@@ -531,7 +529,7 @@ The UNRDF documentation has grown to **330+ markdown files** across the reposito
 - **Output:** /docs/api/core-api.md
 - **Merge:** api/knowledge-hooks.md + api/hooks-api-guide.md
 - **Output:** /docs/api/knowledge-hooks-api.md
-- **Merge:** api/cli-reference.md + api/sidecar-reference.md
+- **Merge:** api/cli-reference.md + api/knowledge-engine-reference.md
 - **Output:** /docs/api/cli-api.md
 - **Remove:** Root api-reference.md (redundant with /docs/api/README.md)
 - **Effort:** 5 hours
@@ -1091,7 +1089,7 @@ ACTION AFTER MERGE:
 ```
 SOURCE FILES:
   - /docs/api/cli-reference.md (47 headers)
-  - /docs/api/sidecar-reference.md (47 headers)
+  - /docs/api/knowledge-engine-reference.md (47 headers)
 
 TARGET FILE:
   - /docs/api/cli-api.md (400-600 lines)
@@ -1120,10 +1118,8 @@ STRUCTURE:
     - policy list
     - policy rollback
   
-  ## Sidecar Commands (from sidecar-reference)
-    - sidecar status
-    - sidecar logs
-    - sidecar config
+    - knowledge-engine logs
+    - knowledge-engine config
   
   ## Context Management (from cli-reference)
     - context create
@@ -1133,16 +1129,14 @@ STRUCTURE:
   ## Configuration (from both)
     - Config file format
     - Environment variables
-    - Sidecar integration
 
 VALIDATION:
   - ✅ All CLI commands documented
   - ✅ Examples for each command
-  - ✅ Sidecar integration clear
   - ✅ Configuration options complete
 
 ACTION AFTER MERGE:
-  - DELETE: /docs/api/sidecar-reference.md
+  - DELETE: /docs/api/knowledge-engine-reference.md
   - RENAME: /docs/api/cli-reference.md → /docs/api/cli-api.md (merged)
   - UPDATE: /docs/api/README.md
 ```
@@ -1181,7 +1175,6 @@ rm docs/BYZANTINE-COORDINATOR-SUMMARY.md
 rm docs/HYPER-SWARM-IMPLEMENTATION-COMPLETE.md
 rm docs/RATE-LIMITING-IMPLEMENTATION.md
 rm docs/SECURE-SANDBOX-IMPLEMENTATION.md
-rm docs/SIDECAR-IMPLEMENTATION-SUMMARY.md
 rm docs/VAULT-IMPLEMENTATION-SUMMARY.md
 rm docs/backend-api-implementation-summary.md
 rm docs/codegen-summary.md
@@ -1307,7 +1300,7 @@ OLD LINKS:
   - /docs/api/knowledge-hooks.md
   - /docs/api/hooks-api-guide.md
   - /docs/api/cli-reference.md
-  - /docs/api/sidecar-reference.md
+  - /docs/api/knowledge-engine-reference.md
 
 NEW LINKS:
   - /docs/api/core-api.md
@@ -1361,7 +1354,7 @@ update_links "docs/api/composables-reference.md" "docs/api/core-api.md"
 update_links "docs/api/knowledge-hooks.md" "docs/api/knowledge-hooks-api.md"
 update_links "docs/api/hooks-api-guide.md" "docs/api/knowledge-hooks-api.md"
 update_links "docs/api/cli-reference.md" "docs/api/cli-api.md"
-update_links "docs/api/sidecar-reference.md" "docs/api/cli-api.md"
+update_links "docs/api/knowledge-engine-reference.md" "docs/api/cli-api.md"
 
 # Utilities consolidation
 update_links "docs/term-utils.md" "docs/api/utilities-api.md#term-operations"

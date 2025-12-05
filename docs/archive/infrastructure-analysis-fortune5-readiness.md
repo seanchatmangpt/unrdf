@@ -1,5 +1,4 @@
 # Infrastructure & DevOps Analysis: Fortune 5 Enterprise Readiness
-## 80/20 Critical Gap Assessment for UNRDF Sidecar Project
 
 **Analysis Date**: 2025-10-01
 **Analyst**: Infrastructure & DevOps Specialist (Hive Mind Swarm)
@@ -14,7 +13,7 @@
 
 **Critical Risk Score**: **7.8/10** (High Risk)
 
-The UNRDF sidecar project contains **solid foundational Kubernetes infrastructure** but lacks **critical enterprise-grade capabilities** required for Fortune 5 deployment. While the Terraform configurations demonstrate good DevOps practices for **E2E testing environments**, they fall dramatically short of enterprise production requirements in **6 critical areas**:
+The UNRDF knowledge-engine project contains **solid foundational Kubernetes infrastructure** but lacks **critical enterprise-grade capabilities** required for Fortune 5 deployment. While the Terraform configurations demonstrate good DevOps practices for **E2E testing environments**, they fall dramatically short of enterprise production requirements in **6 critical areas**:
 
 ### 🚨 Top 20% of Issues (Causing 80% of Enterprise Blockers)
 
@@ -52,7 +51,7 @@ The UNRDF sidecar project contains **solid foundational Kubernetes infrastructur
 terraform {
   backend "s3" {
     bucket         = "company-terraform-state-prod"
-    key            = "kgc-sidecar/terraform.tfstate"
+    key            = "knowledge-engine/terraform.tfstate"
     region         = "us-east-1"
     encrypt        = true
     dynamodb_table = "terraform-state-lock"
@@ -142,16 +141,16 @@ variable "encryption_key" {
 ```hcl
 # Use HashiCorp Vault or AWS Secrets Manager
 data "vault_generic_secret" "api_credentials" {
-  path = "secret/kgc-sidecar/${var.environment}/api"
+  path = "secret/knowledge-engine/${var.environment}/api"
 }
 
-resource "kubernetes_secret" "kgc_sidecar_secrets" {
+resource "kubernetes_secret" "kgc_knowledge-engine_secrets" {
   metadata {
-    name      = "kgc-sidecar-secrets"
-    namespace = kubernetes_namespace.kgc_sidecar.metadata[0].name
+    name      = "knowledge-engine-secrets"
+    namespace = kubernetes_namespace.kgc_metadata[0].name
     annotations = {
       "vault.hashicorp.com/agent-inject" = "true"
-      "vault.hashicorp.com/role"         = "kgc-sidecar"
+      "vault.hashicorp.com/role"         = "knowledge-engine"
       "vault.hashicorp.com/agent-inject-secret-api-key" = "secret/kgc/api"
     }
   }
@@ -164,7 +163,7 @@ resource "kubernetes_secret" "kgc_sidecar_secrets" {
 
 # Automatic secret rotation
 resource "vault_generic_secret_rotation" "api_key" {
-  path          = "secret/kgc-sidecar/api"
+  path          = "secret/knowledge-engine/api"
   rotation_days = 90
   notify_before_days = 14
 }
@@ -187,8 +186,8 @@ resource "vault_generic_secret_rotation" "api_key" {
 ```hcl
 # NO securityContext defined!
 container {
-  name  = "kgc-sidecar"
-  image = "unrdf/kgc-sidecar:${var.image_tag}"
+  name  = "knowledge-engine"
+  image = "unrdf/knowledge-engine:${var.image_tag}"
   # ❌ Missing security context
 }
 ```
@@ -196,8 +195,8 @@ container {
 **Fortune 5 Requirement**:
 ```hcl
 container {
-  name  = "kgc-sidecar"
-  image = "unrdf/kgc-sidecar:${var.image_tag}"
+  name  = "knowledge-engine"
+  image = "unrdf/knowledge-engine:${var.image_tag}"
 
   security_context {
     run_as_non_root             = true
@@ -220,7 +219,7 @@ resource "kubernetes_manifest" "pod_security_standard" {
     apiVersion = "pod-security.kubernetes.io/v1"
     kind       = "PodSecurityPolicy"
     metadata = {
-      name = "kgc-sidecar-restricted"
+      name = "knowledge-engine-restricted"
     }
     spec = {
       privileged               = false
@@ -273,10 +272,10 @@ resource "kubernetes_manifest" "pod_security_standard" {
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:
-  name: kgc-sidecar
+  name: knowledge-engine
 spec:
   hosts:
-  - kgc-sidecar.company.com
+  - knowledge-engine.company.com
   http:
   - match:
     - headers:
@@ -284,27 +283,27 @@ spec:
           exact: "true"
     route:
     - destination:
-        host: kgc-sidecar
+        host: knowledge-engine
         subset: v2
       weight: 10
     - destination:
-        host: kgc-sidecar
+        host: knowledge-engine
         subset: v1
       weight: 90
   - route:
     - destination:
-        host: kgc-sidecar
+        host: knowledge-engine
         subset: v1
 
 ---
 apiVersion: security.istio.io/v1beta1
 kind: PeerAuthentication
 metadata:
-  name: kgc-sidecar-mtls
+  name: knowledge-engine-mtls
 spec:
   selector:
     matchLabels:
-      app: kgc-sidecar
+      app: knowledge-engine
   mtls:
     mode: STRICT  # Enforce mutual TLS
 ```
@@ -324,10 +323,10 @@ spec:
 
 **Fortune 5 Requirement**:
 ```hcl
-resource "kubernetes_resource_quota" "kgc_sidecar_quota" {
+resource "kubernetes_resource_quota" "kgc_knowledge-engine_quota" {
   metadata {
-    name      = "kgc-sidecar-quota"
-    namespace = kubernetes_namespace.kgc_sidecar.metadata[0].name
+    name      = "knowledge-engine-quota"
+    namespace = kubernetes_namespace.kgc_metadata[0].name
   }
   spec {
     hard = {
@@ -342,10 +341,10 @@ resource "kubernetes_resource_quota" "kgc_sidecar_quota" {
   }
 }
 
-resource "kubernetes_limit_range" "kgc_sidecar_limits" {
+resource "kubernetes_limit_range" "kgc_knowledge-engine_limits" {
   metadata {
-    name      = "kgc-sidecar-limits"
-    namespace = kubernetes_namespace.kgc_sidecar.metadata[0].name
+    name      = "knowledge-engine-limits"
+    namespace = kubernetes_namespace.kgc_metadata[0].name
   }
   spec {
     limit {
@@ -389,7 +388,7 @@ resource "kubernetes_limit_range" "kgc_sidecar_limits" {
 - **Supply Chain Attack**: Compromised upstream images
 - **Compliance**: Cannot prove image provenance
 
-**Current State** (test/e2e/testcontainers/Dockerfile.sidecar, line 4):
+**Current State** (test/e2e/testcontainers/Dockerfile.knowledge-engine, line 4):
 ```dockerfile
 FROM node:20-alpine  # ❌ No SHA digest, no scanning
 ```
@@ -420,10 +419,10 @@ WORKDIR /home/appuser/app
 # .github/workflows/ci.yml (MISSING)
 - name: Container Security Scan
   run: |
-    docker build -t kgc-sidecar:${{ github.sha }} .
-    trivy image --severity HIGH,CRITICAL --exit-code 1 kgc-sidecar:${{ github.sha }}
-    grype kgc-sidecar:${{ github.sha }} --fail-on high
-    docker scout cves kgc-sidecar:${{ github.sha }} --exit-code
+    docker build -t knowledge-engine:${{ github.sha }} .
+    trivy image --severity HIGH,CRITICAL --exit-code 1 knowledge-engine:${{ github.sha }}
+    grype knowledge-engine:${{ github.sha }} --fail-on high
+    docker scout cves knowledge-engine:${{ github.sha }} --exit-code
 ```
 
 **Remediation Priority**: **P0 - Immediate**
@@ -501,12 +500,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Build Container
-        run: docker build -t kgc-sidecar:${{ github.sha }} .
+        run: docker build -t knowledge-engine:${{ github.sha }} .
 
       - name: Trivy Scan
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: kgc-sidecar:${{ github.sha }}
+          image-ref: knowledge-engine:${{ github.sha }}
           format: 'sarif'
           output: 'trivy-results.sarif'
           severity: 'CRITICAL,HIGH'
@@ -515,11 +514,11 @@ jobs:
       - name: Grype Scan
         run: |
           curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin
-          grype kgc-sidecar:${{ github.sha }} --fail-on high
+          grype knowledge-engine:${{ github.sha }} --fail-on high
 
       - name: Docker Scout
         run: |
-          docker scout cves kgc-sidecar:${{ github.sha }} --exit-code --only-severity critical,high
+          docker scout cves knowledge-engine:${{ github.sha }} --exit-code --only-severity critical,high
 ```
 
 **Remediation Priority**: **P0 - Immediate**
@@ -629,14 +628,14 @@ resource "helm_release" "velero" {
 
   set {
     name  = "schedules.daily-backup.template.includedNamespaces"
-    value = "{kgc-sidecar}"
+    value = "{knowledge-engine}"
   }
 }
 
 # Automated disaster recovery testing
 resource "kubernetes_cron_job" "dr_test" {
   metadata {
-    name      = "dr-test-kgc-sidecar"
+    name      = "dr-test-knowledge-engine"
     namespace = "velero"
   }
   spec {
@@ -650,7 +649,7 @@ resource "kubernetes_cron_job" "dr_test" {
               image = "velero/velero:v1.12"
               command = ["/bin/sh", "-c"]
               args = [
-                "velero restore create --from-backup daily-kgc-sidecar-backup --namespace=kgc-sidecar-dr-test"
+                "velero restore create --from-backup daily-knowledge-engine-backup --namespace=knowledge-engine-dr-test"
               ]
             }
           }
@@ -705,24 +704,24 @@ module "observability" {
 }
 
 # SLO monitoring
-resource "kubernetes_manifest" "slo_kgc_sidecar" {
+resource "kubernetes_manifest" "slo_kgc_knowledge-engine" {
   manifest = {
     apiVersion = "sloth.slok.dev/v1"
     kind       = "PrometheusServiceLevel"
     metadata = {
-      name      = "kgc-sidecar-slo"
+      name      = "knowledge-engine-slo"
       namespace = "observability"
     }
     spec = {
-      service = "kgc-sidecar"
+      service = "knowledge-engine"
       slos = [
         {
           name = "availability"
           objective = 99.99
           sli = {
             events = {
-              error_query = "sum(rate(http_requests_total{job='kgc-sidecar',code=~'5..'}[5m]))"
-              total_query = "sum(rate(http_requests_total{job='kgc-sidecar'}[5m]))"
+              error_query = "sum(rate(http_requests_total{job='knowledge-engine',code=~'5..'}[5m]))"
+              total_query = "sum(rate(http_requests_total{job='knowledge-engine'}[5m]))"
             }
           }
         }
@@ -776,8 +775,8 @@ resource "kubernetes_manifest" "audit_policy" {
 
 # Export audit logs to SIEM
 resource "aws_cloudwatch_log_subscription_filter" "audit_to_splunk" {
-  name            = "kgc-sidecar-audit-logs"
-  log_group_name  = "/aws/eks/kgc-sidecar/audit"
+  name            = "knowledge-engine-audit-logs"
+  log_group_name  = "/aws/eks/knowledge-engine/audit"
   filter_pattern  = ""
   destination_arn = data.aws_kinesis_stream.splunk.arn
 }
@@ -897,7 +896,7 @@ resource "aws_cloudwatch_log_subscription_filter" "audit_to_splunk" {
 
 ## Conclusion
 
-The UNRDF sidecar project has **solid foundational infrastructure** suitable for **development and E2E testing**, but it **CANNOT be deployed to Fortune 5 production environments** in its current state without addressing **6 critical security and operational gaps**.
+The UNRDF knowledge-engine project has **solid foundational infrastructure** suitable for **development and E2E testing**, but it **CANNOT be deployed to Fortune 5 production environments** in its current state without addressing **6 critical security and operational gaps**.
 
 **Estimated Timeline to Production Readiness**: **6-8 weeks** with dedicated team
 **Risk Level**: **HIGH** - Multiple compliance and security blockers

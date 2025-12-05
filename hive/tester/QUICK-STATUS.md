@@ -41,10 +41,8 @@ Policy packs missing required fields:
 - hooks (array)
 ```
 
-### 3. Sidecar Not Running (LOW - 16% impact)
 ```
-Sidecar unavailable - tests expect it running
-Options: Start sidecar | Mock it | Skip tests
+Options: Start knowledge-engine | Mock it | Skip tests
 ```
 
 ---
@@ -67,7 +65,6 @@ Options: Start sidecar | Mock it | Skip tests
 **Root Causes**:
 - 60% failures: Missing test fixture files
 - 26% failures: Schema validation errors
-- 16% failures: Sidecar dependency
 
 ---
 
@@ -93,7 +90,6 @@ Options: Start sidecar | Mock it | Skip tests
 **Required Actions Before Re-Validation**:
 1. Create 3 missing SPARQL .rq files (fixes 58%)
 2. Update 4 policy JSON files with required schema (fixes 26%)
-3. Handle sidecar dependency in tests (fixes 16%)
 4. Re-run validation
 5. Achieve 60%+ pass rate
 

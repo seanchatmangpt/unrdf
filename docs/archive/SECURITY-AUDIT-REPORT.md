@@ -1,13 +1,10 @@
-# Security Audit Report - KGC Sidecar
 **Date**: 2025-10-01
 **Auditor**: Security Manager Agent
-**Scope**: Comprehensive security validation of KGC Sidecar security features
 
 ---
 
 ## Executive Summary
 
-This security audit evaluated the KGC Sidecar's security implementation across four critical domains: **threat detection**, **sandbox isolation**, **code signing**, and **authentication/authorization**. The system demonstrates **enterprise-grade security** with multiple layers of defense and Byzantine fault-tolerant consensus.
 
 ### Overall Security Rating: **A** (Excellent)
 
@@ -340,7 +337,7 @@ publicKey: z.string()
   role: "admin",  // Primary role
   iat: 1696176000,
   exp: 1696176900,
-  iss: "unrdf-sidecar",
+  iss: "unrdf-knowledge-engine",
   aud: "unrdf-api"
 }
 ```
@@ -714,7 +711,7 @@ Effect Execution
 
 Run security tests:
 ```bash
-npm test -- sidecar/test/security/
+npm test -- knowledge-engine/test/security/
 ```
 
 Expected Results:
@@ -797,7 +794,6 @@ Expected Results:
 
 ## 11. Conclusion
 
-The KGC Sidecar demonstrates **excellent security architecture** with multiple layers of defense:
 
 1. **Threat Detection**: 13 threat patterns with ML-based scoring
 2. **Sandbox Isolation**: V8-level isolation with strict resource limits
@@ -822,7 +818,7 @@ All security features are **well-tested** with 1,800+ lines of comprehensive tes
 
 ```bash
 # Command
-npm test -- sidecar/test/security/
+npm test -- knowledge-engine/test/security/
 
 # Expected Output
 ✓ sandbox-threat-detector.test.mjs (65 tests)

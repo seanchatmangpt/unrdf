@@ -15,7 +15,7 @@ Successfully cleaned up UNRDF CLI by removing 9 stub commands with TODO placehol
 Deleted 9 stub command files with TODO implementations:
 
 **Graph Commands (5 removed):**
-- ❌ `src/cli/commands/graph/list.mjs` - TODO: Integrate with sidecar
+- ❌ `src/cli/commands/graph/list.mjs` - TODO: Integrate with knowledge-engine
 - ❌ `src/cli/commands/graph/get.mjs` - TODO: Fetch graph details
 - ❌ `src/cli/commands/graph/create.mjs` - TODO: Create graph
 - ❌ `src/cli/commands/graph/validate.mjs` - TODO: Validate graph
@@ -134,29 +134,7 @@ unrdf policy validate   - Validate policy syntax
 unrdf policy describe   - Describe policy pack
 ```
 
-#### Sidecar Commands (5)
 ```
-unrdf sidecar status    - Get sidecar status
-unrdf sidecar health    - Check sidecar health
-unrdf sidecar config    - Manage sidecar config
-unrdf sidecar logs      - View sidecar logs
-unrdf sidecar restart   - Restart sidecar
-```
-
-#### Store Commands (4)
-```
-unrdf store import      - Import RDF data (partial TODO)
-unrdf store export      - Export RDF data
-unrdf store query       - SPARQL query store
-unrdf store stats       - Show store statistics
-```
-
-#### Utility Commands (5)
-```
-unrdf plugin list       - List installed plugins
-unrdf plugin install    - Install plugin
-unrdf repl              - Start SPARQL REPL
-unrdf init              - Initialize UNRDF project
 unrdf completion        - Generate shell completions
 ```
 

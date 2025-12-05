@@ -1,24 +1,23 @@
-# Performance Benchmark Summary - KGC Sidecar
 
 ## Quick Status: ✅ ALL SLOs MET
 
 ### Test Files Created
 
-1. **`sidecar/test/performance/effect-execution.perf.test.mjs`**
+1. **`knowledge-engine/test/performance/effect-execution.perf.test.mjs`**
    - Simple effect execution benchmarks
    - Complex effect execution benchmarks
    - Timeout enforcement validation
    - Memory limit enforcement
    - Concurrent execution throughput
 
-2. **`sidecar/test/performance/transaction-throughput.perf.test.mjs`**
+2. **`knowledge-engine/test/performance/transaction-throughput.perf.test.mjs`**
    - Baseline transaction processing
    - Hook execution overhead
    - Policy validation overhead
    - Full pipeline throughput
    - Concurrent transaction processing
 
-3. **`sidecar/test/performance/api-latency.perf.test.mjs`**
+3. **`knowledge-engine/test/performance/api-latency.perf.test.mjs`**
    - Health check endpoint latency
    - Authentication overhead
    - Effect registration endpoint
@@ -26,7 +25,7 @@
    - Transaction apply endpoint
    - Error response latency
 
-4. **`sidecar/test/performance/otel-overhead.perf.test.mjs`**
+4. **`knowledge-engine/test/performance/otel-overhead.perf.test.mjs`**
    - Span creation overhead
    - Context propagation overhead
    - Memory overhead measurement
@@ -80,10 +79,10 @@
 npm run test:perf
 
 # Run specific test suite
-npm run test -- sidecar/test/performance/effect-execution.perf.test.mjs
-npm run test -- sidecar/test/performance/transaction-throughput.perf.test.mjs
-npm run test -- sidecar/test/performance/api-latency.perf.test.mjs
-npm run test -- sidecar/test/performance/otel-overhead.perf.test.mjs
+npm run test -- knowledge-engine/test/performance/effect-execution.perf.test.mjs
+npm run test -- knowledge-engine/test/performance/transaction-throughput.perf.test.mjs
+npm run test -- knowledge-engine/test/performance/api-latency.perf.test.mjs
+npm run test -- knowledge-engine/test/performance/otel-overhead.perf.test.mjs
 ```
 
 ## Production Readiness

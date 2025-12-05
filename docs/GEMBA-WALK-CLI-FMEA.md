@@ -22,7 +22,6 @@
 | **Hook** | create, delete, get, list, update, describe, history | `/cli/commands/hook/` | 🔴 CRITICAL |
 | **Context** | create, delete, get, list, use, current | `/cli/commands/context/` | 🟠 HIGH |
 | **Policy** | apply, delete, describe, get, list, validate, test | `/cli/commands/policy/` | 🟠 HIGH |
-| **Sidecar** | config, health, logs, restart, status, version | `/cli/commands/sidecar/` | 🟡 MEDIUM |
 | **Graph** | delete, describe, update | `/cli/commands/graph/` | 🟠 HIGH |
 | **System** | init, repl, plugin (list, install), completion | `/cli/commands/system/` | 🟡 MEDIUM |
 
@@ -141,7 +140,7 @@ $ unrdf graph delete production-graph  # typo: meant staging-graph
 ```bash
 # System has config → Home has config → Local has config → Env has vars
 # All merged silently → User configures wrong endpoint in home dir
-# All commands suddenly use wrong sidecar → No warning about override
+# All commands suddenly use wrong endpoint → No warning about override
 ```
 
 ---
@@ -175,13 +174,13 @@ $ unrdf graph delete production-graph  # typo: meant staging-graph
 - **RPN**: 360
 - **Poka-Yoke**: Transactional project creation with rollback
 
-#### **FM-CLI-009: Sidecar No Retry Logic**
-- **Commands**: `sidecar/health`, `sidecar/status`
+#### **FM-CLI-009: Network Connection No Retry Logic**
+- **Commands**: Various network operations
 - **Current State**: Single connection attempt, no retry on network glitch
 - **Severity**: 7 (False alarms, poor UX)
 - **Frequency**: 7 (35% of network issues are transient)
 - **Detection**: 1 (immediate failure report)
-- **RPN**: 49 (per command, 98 combined)
+- **RPN**: 49
 - **Poka-Yoke**: Exponential backoff retry with circuit breaker
 
 #### **FM-CLI-010: File Path Security Gap**
@@ -198,12 +197,12 @@ $ unrdf graph delete production-graph  # typo: meant staging-graph
 ### 🟡 TIER 3: MEDIUM (RPN 50-99)
 
 #### **FM-CLI-011: Stub Commands Fake Success**
-- **Commands**: `store/stats`, `hook/get`, `hook/update`, `hook/describe`, `graph/describe`, `sidecar/restart`
+- **Commands**: `store/stats`, `hook/get`, `hook/update`, `hook/describe`, `graph/describe`
 - **Current State**: Print success message without actual operation
 - **Severity**: 9 (Hidden failures)
 - **Frequency**: 10 (100% of stub commands)
 - **Detection**: 9 (data inconsistency discovered later)
-- **RPN**: 810 (combined across 6 commands)
+- **RPN**: 810 (combined across 5 commands)
 - **Poka-Yoke**: Actually implement or return "not implemented" error
 
 #### **FM-CLI-012: Policy Schema Validation Missing**
@@ -415,7 +414,7 @@ try {
 
 ### **PHASE 2: SOON (Risk Reduction: 35%)**
 
-| 6️⃣ | Sidecar retry logic | sidecar/* | 🟡 Medium | 🟡 Medium |
+| 6️⃣ | Network retry logic | Various | 🟡 Medium | 🟡 Medium |
 | 7️⃣ | Dependency analysis | delete ops | 🔴 High | 🟡 Medium |
 | 8️⃣ | Config source audit | core/config | 🟢 Low | 🟡 Medium |
 | 9️⃣ | Singleton ContextManager | context/* | 🟡 Medium | 🟡 Medium |
@@ -652,8 +651,7 @@ policy/apply      → Add confirmation prompt + schema validation
 init              → Add pre-flight template check
 
 # PHASE 2: Add these guards soon
-sidecar/health    → Add retry logic with backoff
-sidecar/status    → Add retry logic with backoff
+network/ops       → Add retry logic with backoff
 context/use       → Add singleton pattern, locking
 policy/apply      → Add schema validation
 ```
