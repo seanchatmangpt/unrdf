@@ -24,7 +24,7 @@ export { useHookRegistry } from './knowledge-hooks/useHookRegistry.mjs';
 export { useHookExecution } from './knowledge-hooks/useHookExecution.mjs';
 
 // Storage
-export { useIndexedDBStore } from './storage/useIndexedDBStore.mjs';
+// useIndexedDBStore removed - use useOfflineStore from './composition/use-offline-store.mjs' instead
 export { useQuadStore } from './storage/useQuadStore.mjs';
 export { useTransaction } from './storage/useTransaction.mjs';
 export { useAuditTrail } from './storage/useAuditTrail.mjs';
