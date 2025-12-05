@@ -18,10 +18,21 @@ export async function freezeUniverse(store, gitBackbone) {
     const universeQuads = [...store.match(null, null, null, universeGraph)];
 
     // Sort for canonical ordering (deterministic hash)
+    // Use RDF spec compliant S-P-O component comparison (NOT localeCompare - varies by env)
     universeQuads.sort((a, b) => {
-      const as = a.subject.value + a.predicate.value + a.object.value;
-      const bs = b.subject.value + b.predicate.value + b.object.value;
-      return as.localeCompare(bs);
+      // Compare subject first
+      const sCompare = a.subject.value < b.subject.value ? -1 :
+                       a.subject.value > b.subject.value ? 1 : 0;
+      if (sCompare !== 0) return sCompare;
+
+      // Then predicate
+      const pCompare = a.predicate.value < b.predicate.value ? -1 :
+                       a.predicate.value > b.predicate.value ? 1 : 0;
+      if (pCompare !== 0) return pCompare;
+
+      // Finally object
+      return a.object.value < b.object.value ? -1 :
+             a.object.value > b.object.value ? 1 : 0;
     });
 
     // Serialize to N-Quads format
@@ -70,6 +81,32 @@ export async function freezeUniverse(store, gitBackbone) {
       },
     }, []);
 
+    // 5. Update latest snapshot pointer in System graph (O(1) lookup optimization - Flaw 6 fix)
+    const systemGraph = dataFactory.namedNode(GRAPHS.SYSTEM);
+    const configSubj = dataFactory.namedNode('http://kgc.io/system/config');
+    const latestSnapshotPred = dataFactory.namedNode('http://kgc.io/latestSnapshot');
+    const latestSnapshotTimePred = dataFactory.namedNode('http://kgc.io/latestSnapshotTime');
+
+    // Remove old pointers
+    const oldSnapshotPointers = [...store.match(configSubj, latestSnapshotPred, null, systemGraph)];
+    const oldTimePointers = [...store.match(configSubj, latestSnapshotTimePred, null, systemGraph)];
+    for (const q of oldSnapshotPointers) store.delete(q);
+    for (const q of oldTimePointers) store.delete(q);
+
+    // Add new pointer to latest snapshot
+    store.add(dataFactory.quad(
+      configSubj,
+      latestSnapshotPred,
+      dataFactory.namedNode(`http://kgc.io/event/${receipt.id}`),
+      systemGraph
+    ));
+    store.add(dataFactory.quad(
+      configSubj,
+      latestSnapshotTimePred,
+      dataFactory.literal(receipt.t_ns, dataFactory.namedNode('http://www.w3.org/2001/XMLSchema#integer')),
+      systemGraph
+    ));
+
     return {
       id: receipt.id,
       t_ns: receipt.t_ns,
@@ -84,47 +121,104 @@ export async function freezeUniverse(store, gitBackbone) {
 }
 
 /**
+ * Helper: Convert serialized delta back to quad
+ * @param {Object} delta - Serialized delta from event payload
+ * @param {string} graphUri - Target graph URI
+ * @returns {Object} RDF quad
+ */
+function deltaToQuad(delta, graphUri) {
+  // Reconstruct subject
+  const subject = delta.subjectType === 'BlankNode'
+    ? dataFactory.blankNode(delta.subject)
+    : dataFactory.namedNode(delta.subject);
+
+  // Reconstruct predicate
+  const predicate = dataFactory.namedNode(delta.predicate);
+
+  // Reconstruct object
+  let object;
+  if (delta.object.type === 'Literal') {
+    if (delta.object.language) {
+      object = dataFactory.literal(delta.object.value, delta.object.language);
+    } else if (delta.object.datatype) {
+      object = dataFactory.literal(delta.object.value, dataFactory.namedNode(delta.object.datatype));
+    } else {
+      object = dataFactory.literal(delta.object.value);
+    }
+  } else if (delta.object.type === 'BlankNode') {
+    object = dataFactory.blankNode(delta.object.value);
+  } else {
+    object = dataFactory.namedNode(delta.object.value);
+  }
+
+  return dataFactory.quad(subject, predicate, object, dataFactory.namedNode(graphUri));
+}
+
+/**
  * Reconstruct universe state at a specific time by loading nearest snapshot and replaying events
+ * Implements FULL nanosecond-precision time travel (Flaw 2 fix)
  */
 export async function reconstructState(store, gitBackbone, targetTime) {
   try {
-    // 1. Find nearest SNAPSHOT event before targetTime
-    // Query all events in EventLog and find SNAPSHOT events
     const eventLogGraph = dataFactory.namedNode(GRAPHS.EVENT_LOG);
+    const systemGraph = dataFactory.namedNode(GRAPHS.SYSTEM);
     const typePredi = dataFactory.namedNode('http://kgc.io/type');
     const tNsPredi = dataFactory.namedNode('http://kgc.io/t_ns');
     const gitRefPredi = dataFactory.namedNode('http://kgc.io/git_ref');
+    const payloadPredi = dataFactory.namedNode(PREDICATES.PAYLOAD);
 
-    // Get all snapshot quads from event log
-    const snapshotQuads = [
-      ...store.match(null, typePredi, dataFactory.literal('SNAPSHOT'), eventLogGraph)
-    ];
+    // 1. Try O(1) lookup via cached snapshot pointer first (Flaw 6 optimization)
+    const configSubj = dataFactory.namedNode('http://kgc.io/system/config');
+    const latestSnapshotPred = dataFactory.namedNode('http://kgc.io/latestSnapshot');
+    const cachedPointers = [...store.match(configSubj, latestSnapshotPred, null, systemGraph)];
 
-    if (snapshotQuads.length === 0) {
-      throw new Error(`No snapshot found before time ${targetTime}`);
-    }
-
-    // Find the snapshot subject with matching time
     let bestSnapshot = null;
     let bestTime = 0n;
 
-    for (const quad of snapshotQuads) {
-      const subject = quad.subject;
-      // Get the t_ns for this event
-      const timeQuads = [...store.match(subject, tNsPredi, null, eventLogGraph)];
-      const gitRefQuads = [...store.match(subject, gitRefPredi, null, eventLogGraph)];
+    if (cachedPointers.length > 0) {
+      // Check if cached snapshot is usable (before target time)
+      const cachedSubject = dataFactory.namedNode(cachedPointers[0].object.value);
+      const cachedTimeQuads = [...store.match(cachedSubject, tNsPredi, null, eventLogGraph)];
+      const cachedGitRefQuads = [...store.match(cachedSubject, gitRefPredi, null, eventLogGraph)];
 
-      if (timeQuads.length > 0 && gitRefQuads.length > 0) {
-        const timeStr = timeQuads[0].object.value;
-        const time = BigInt(timeStr);
-
-        if (time <= targetTime && time > bestTime) {
-          bestTime = time;
+      if (cachedTimeQuads.length > 0 && cachedGitRefQuads.length > 0) {
+        const cachedTime = BigInt(cachedTimeQuads[0].object.value);
+        if (cachedTime <= targetTime) {
+          bestTime = cachedTime;
           bestSnapshot = {
-            subject,
-            t_ns: time,
-            git_ref: gitRefQuads[0].object.value
+            subject: cachedSubject,
+            t_ns: cachedTime,
+            git_ref: cachedGitRefQuads[0].object.value
           };
+        }
+      }
+    }
+
+    // 2. If no cached snapshot or it's after target time, scan for best snapshot
+    if (!bestSnapshot) {
+      const snapshotQuads = [
+        ...store.match(null, typePredi, dataFactory.literal('SNAPSHOT'), eventLogGraph)
+      ];
+
+      if (snapshotQuads.length === 0) {
+        throw new Error(`No snapshot found before time ${targetTime}`);
+      }
+
+      for (const quad of snapshotQuads) {
+        const subject = quad.subject;
+        const timeQuads = [...store.match(subject, tNsPredi, null, eventLogGraph)];
+        const gitRefQuads = [...store.match(subject, gitRefPredi, null, eventLogGraph)];
+
+        if (timeQuads.length > 0 && gitRefQuads.length > 0) {
+          const time = BigInt(timeQuads[0].object.value);
+          if (time <= targetTime && time > bestTime) {
+            bestTime = time;
+            bestSnapshot = {
+              subject,
+              t_ns: time,
+              git_ref: gitRefQuads[0].object.value
+            };
+          }
         }
       }
     }
@@ -136,10 +230,10 @@ export async function reconstructState(store, gitBackbone, targetTime) {
     const snapshotTime = bestSnapshot.t_ns;
     const snapshotGitRef = bestSnapshot.git_ref;
 
-    // 2. Load snapshot from Git
+    // 3. Load snapshot from Git
     const snapshotNQuads = await gitBackbone.readSnapshot(snapshotGitRef);
 
-    // 3. Create temporary store from snapshot
+    // 4. Create temporary store from snapshot
     const TempStore = store.constructor;
     const tempStore = new TempStore();
     await tempStore.load(snapshotNQuads, {
@@ -147,8 +241,54 @@ export async function reconstructState(store, gitBackbone, targetTime) {
       graph: GRAPHS.UNIVERSE,
     });
 
-    // 4. For MVP, return the snapshot state at target time
-    // Full delta replay would require deserializing and applying events (future enhancement)
+    // 5. Find ALL events between snapshot time and target time (Flaw 2 fix - CRITICAL)
+    const allEventTimeQuads = [...store.match(null, tNsPredi, null, eventLogGraph)];
+
+    // Filter events in the replay window: snapshotTime < eventTime <= targetTime
+    const eventsToReplay = [];
+    for (const timeQuad of allEventTimeQuads) {
+      const eventTime = BigInt(timeQuad.object.value);
+      if (eventTime > snapshotTime && eventTime <= targetTime) {
+        eventsToReplay.push({
+          subject: timeQuad.subject,
+          t_ns: eventTime
+        });
+      }
+    }
+
+    // Sort by time (ascending) for correct replay order
+    eventsToReplay.sort((a, b) => {
+      if (a.t_ns < b.t_ns) return -1;
+      if (a.t_ns > b.t_ns) return 1;
+      return 0;
+    });
+
+    // 6. Replay each event's deltas to reconstruct exact state at targetTime
+    for (const event of eventsToReplay) {
+      const payloadQuads = [...store.match(event.subject, payloadPredi, null, eventLogGraph)];
+
+      if (payloadQuads.length > 0) {
+        try {
+          const payload = JSON.parse(payloadQuads[0].object.value);
+          const deltas = payload.deltas || [];
+
+          // Apply each delta to the temporary store
+          for (const delta of deltas) {
+            const quad = deltaToQuad(delta, GRAPHS.UNIVERSE);
+
+            if (delta.type === 'add') {
+              tempStore.add(quad);
+            } else if (delta.type === 'delete') {
+              tempStore.delete(quad);
+            }
+          }
+        } catch {
+          // Payload parsing failed - skip this event (might be SNAPSHOT with no deltas)
+          continue;
+        }
+      }
+    }
+
     return tempStore;
   } catch (error) {
     throw new Error(`Failed to reconstruct state: ${error.message}`);

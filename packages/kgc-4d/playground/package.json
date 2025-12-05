@@ -1,0 +1,49 @@
+{
+  "name": "@unrdf/kgc-4d-playground",
+  "version": "1.0.0",
+  "private": true,
+  "description": "KGC-4D Playground - Shard-Based Architecture Demo with Perfect Client/Server Relationship",
+  "type": "module",
+  "scripts": {
+    "dev": "next dev --port 3001",
+    "build": "next build",
+    "start": "next start --port 3001",
+    "lint": "next lint",
+    "test": "vitest run",
+    "test:watch": "vitest --watch",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:debug": "playwright test --debug",
+    "test:e2e:headed": "playwright test --headed"
+  },
+  "dependencies": {
+    "@unrdf/kgc-4d": "workspace:*",
+    "@unrdf/oxigraph": "workspace:*",
+    "@unrdf/core": "workspace:*",
+    "@unrdf/hooks": "workspace:*",
+    "next": "^15.1.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "ws": "^8.18.0",
+    "zod": "^3.25.76",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^2.5.5",
+    "lucide-react": "^0.468.0",
+    "framer-motion": "^11.15.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.48.2",
+    "@types/node": "^22.10.1",
+    "@types/react": "^19.0.1",
+    "@types/ws": "^8.5.13",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.16",
+    "vitest": "^2.1.8",
+    "eslint": "^9.16.0",
+    "eslint-config-next": "^15.1.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

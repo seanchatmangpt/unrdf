@@ -253,14 +253,20 @@ Universe Freeze:
 - ✅ `isomorphic-git` + `lightning-fs` (IndexedDB backend)
 - ✅ Same codebase runs in both environments
 
-## Future Extensions (Not in MVP)
+## Implemented Features (v0.1.0)
 
-- Vector clocks for distributed causality
+- ✅ **Vector Clocks**: Full causality tracking with increment/merge/compare
+- ✅ **Snapshot Caching**: O(1) lookup via System graph pointer
+- ✅ **Event Replay**: True nanosecond time travel (snapshot + delta replay)
+- ✅ **Browser Compatibility**: FS injection pattern for isomorphic-git
+- ✅ **fromISO Nanoseconds**: Preserves `.123456789` precision
+- ✅ **Deterministic Canonicalization**: RDF spec S-P-O code-point sort
+
+## Future Extensions
+
 - Advanced hook sandboxing (isolated-vm)
-- Performance optimization (caching, indexing)
 - Migration tooling for legacy RDF
 - Ed25519 signatures on receipts
-- Comprehensive test suite
 - CI/CD pipelines
 
 ## Dependencies
@@ -316,18 +322,28 @@ See main UNRDF project contribution guidelines.
 
 ---
 
-**Status**: ✅ Production Ready (ARD Compliant)
+**Status**: ⚠️ Beta (v0.1.0) - Requires OTEL Validation Before Production
 
-**Verified**:
-- 176/176 tests passing
-- 8/8 JTBD use cases validated
-- 13,544 events/sec throughput
-- OTEL validation score: 100/100
+**Critical Flaws Fixed in v0.1.0**:
+1. Browser FS incompatibility → FS injection pattern
+2. Time travel ignored deltas → Full event replay
+3. fromISO truncated nanoseconds → Custom regex parser
+4. Non-deterministic canonicalization → Code-point sort
+5. Missing vector clocks → Full VectorClock class
+6. O(N) snapshot scan → System graph caching
+
+**Before Production Deployment**:
+```bash
+# MANDATORY: Run OTEL validation
+pnpm test -- --run
+# Verify score ≥80/100 before claiming "production ready"
+```
 
 **ARD Compliance**:
 - ✅ `isomorphic-git` - Pure JS Git (no CLI)
 - ✅ `hash-wasm` - BLAKE3 WASM (fastest)
 - ✅ `BigInt` - Nanosecond precision
 - ✅ `@unrdf/oxigraph` - Unified Graph Store
+- ✅ `VectorClock` - Causality tracking (implemented)
 
 **Quick Start**: See [examples/mission-critical.mjs](examples/mission-critical.mjs)

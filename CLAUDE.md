@@ -17,6 +17,68 @@ Write "src/feature.mjs"
 2. **Task tool spawns agents** - Claude Code execution, not MCP
 3. **Batch everything** - TodoWrite, files, bash ALL in one message
 4. **Never save to root** - Use `/src`, `/test`, `/docs`, `/examples`
+5. **Timeout all commands** - Use `timeout {{sla}} && {{command}}` for all application-level commands
+
+## ⏱️ Timeout SLAs (Andon & Poka Yoke Principle)
+
+**MANDATORY**: All commands MUST include explicit timeout to prevent infinite execution.
+
+### 🛡️ Core Principle: Fail Loud, Fail Fast
+
+Timeouts are **Andon cords** (manufacturing quality control) applied to software:
+- **Andon**: Visual signal when abnormal condition detected (timeout = abnormality)
+- **Poka Yoke**: Mistake-proofing device (timeout prevents silent hangs)
+- **Impact**: Forces command optimization, prevents hidden failures, makes performance problems visible
+
+```bash
+# ✅ CORRECT: Default 5s SLA for most operations
+timeout 5s npm test
+timeout 5s npm run build
+timeout 5s npm run lint
+timeout 5s pnpm start
+timeout 5s pnpm install           # If >5s: dependency problem (lock file, network, cache)
+timeout 5s node validation/run-all.mjs quick
+
+# ✅ CORRECT: Extended SLA with 80/20 justification documented
+timeout 15s npm run test:integration   # 80/20: Integration tests need DB setup (3-8s) + margins
+timeout 10s node validation/run-all.mjs comprehensive  # 80/20: Full OTEL validation suite (6-9s) + margins
+timeout 20s pnpm install --frozen-lockfile  # 80/20: Cold install + network (8-15s) + margins
+
+# ❌ WRONG: No timeout (Andon cord not pulled - silent fail)
+npm test
+npm run build
+pnpm install
+
+# ❌ WRONG: Excessive timeout without justification (defeats Poka Yoke)
+timeout 60s npm run lint
+timeout 30s npm start
+timeout 120s pnpm install
+```
+
+### 📋 SLA Guidelines
+
+**Default SLA**: **5 seconds** for all day-to-day operations (tests, builds, linting, validation).
+
+If ANY command exceeds 5s, it's a **quality signal** - investigate root cause:
+- Slow test suite → optimize tests or add test:quick variant
+- Slow build → check for unnecessary transpilation or bundling
+- Slow install → frozen-lockfile issue or network problem
+- Slow linting → add lint:quick or disable expensive rules
+
+**Extended SLA** (10-20s): ONLY if you document 80/20 reasoning:
+- Integration tests requiring setup/teardown
+- Comprehensive validation suites (OTEL tracing)
+- Cold dependency installation with network latency
+- Database migrations
+
+**DO NOT increase SLA for**:
+- CI/CD concerns (image builds, deployments) - those are infrastructure-level
+- Speculative performance improvements
+- "Just in case" buffer times
+- Lazy command optimization
+- Avoiding investigation of why command is slow
+
+**Andon Principle**: When timeout fires, STOP and fix the root cause. Don't just increase the timeout.
 
 ## 📚 100% N3 Compliance Achievement
 
