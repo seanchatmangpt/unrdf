@@ -55,12 +55,6 @@ jobs:
         env:
           NEXT_PUBLIC_BASE_PATH: /unrdf
 
-      - name: Export static site
-        run: |
-          mkdir -p out
-          cp -r .next/static out/
-          cp -r public/* out/ 2>/dev/null || true
-
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
         with:
