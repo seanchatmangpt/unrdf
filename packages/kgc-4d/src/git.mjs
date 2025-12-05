@@ -69,6 +69,8 @@ export class GitBackbone {
   /**
    * Persist N-Quads snapshot to Git and return commit hash
    * Pure JS implementation using isomorphic-git
+   * GAP-G2 fix: Enforce message length limits
+   * GAP-G3 fix: Add timeout for git operations
    *
    * @example
    * import { GitBackbone } from './git.mjs';
@@ -78,6 +80,14 @@ export class GitBackbone {
    */
   async commitSnapshot(nquads, message) {
     await this._ensureInit();
+
+    // GAP-G2 fix: Validate message length (Git convention: first line max 72 chars, total max 100KB)
+    if (typeof message !== 'string' || message.length === 0) {
+      throw new Error('Commit message must be non-empty string');
+    }
+    if (message.length > 100_000) {
+      throw new Error(`Commit message exceeds size limit: ${message.length} > 100KB`);
+    }
 
     // Write snapshot to file
     const filepath = 'snapshot.nq';
@@ -91,36 +101,76 @@ export class GitBackbone {
     const timestamp = new Date().toISOString();
     const commitMsg = `${message}\n\nSnapshot generated at ${timestamp}`;
 
-    // Commit with author info
-    const sha = await git.commit({
-      fs: this.fs,
-      dir: this.dir,
-      message: commitMsg,
-      author: {
-        name: 'KGC System',
-        email: 'kgc@system.local',
-      },
-    });
+    // Validate final message size
+    if (commitMsg.length > 100_000) {
+      throw new Error(`Final commit message exceeds size limit after timestamp addition`);
+    }
 
-    return sha;
+    try {
+      // Commit with author info
+      // GAP-G3 fix: Add timeout for git operations (20 second SLA)
+      const commitPromise = git.commit({
+        fs: this.fs,
+        dir: this.dir,
+        message: commitMsg,
+        author: {
+          name: 'KGC System',
+          email: 'kgc@system.local',
+        },
+      });
+
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Git commit operation timed out after 20s')), 20000)
+      );
+
+      const sha = await Promise.race([commitPromise, timeoutPromise]);
+      return sha;
+    } catch (err) {
+      throw new Error(`Git commit failed: ${err.message}`);
+    }
   }
 
   /**
    * Read snapshot from Git by commit hash
    * Uses isomorphic-git readBlob for pure JS retrieval
+   * GAP-G1 fix: Validate UTF-8 encoding
+   * GAP-G3 fix: Add timeout for git operations
    */
   async readSnapshot(sha) {
     await this._ensureInit();
 
-    // Read the blob content at the given commit
-    const { blob } = await git.readBlob({
-      fs: this.fs,
-      dir: this.dir,
-      oid: sha,
-      filepath: 'snapshot.nq',
-    });
+    try {
+      // Read the blob content at the given commit
+      // GAP-G3 fix: Add timeout (10 second SLA for read)
+      const readPromise = git.readBlob({
+        fs: this.fs,
+        dir: this.dir,
+        oid: sha,
+        filepath: 'snapshot.nq',
+      });
 
-    // Convert Uint8Array to string
-    return new TextDecoder().decode(blob);
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Git read operation timed out after 10s')), 10000)
+      );
+
+      const { blob } = await Promise.race([readPromise, timeoutPromise]);
+
+      // GAP-G1 fix: Validate UTF-8 encoding before use
+      // TextDecoder silently produces invalid strings for bad UTF-8
+      // We validate by attempting to encode/decode round-trip
+      try {
+        const decoded = new TextDecoder('utf-8', { fatal: true }).decode(blob);
+        // Verify round-trip: encode back and compare
+        const reencoded = new TextEncoder().encode(decoded);
+        if (reencoded.length !== blob.length) {
+          throw new Error('UTF-8 validation failed: round-trip size mismatch');
+        }
+        return decoded;
+      } catch (err) {
+        throw new Error(`Invalid UTF-8 encoding in snapshot: ${err.message}`);
+      }
+    } catch (err) {
+      throw new Error(`Git read failed: ${err.message}`);
+    }
   }
 }
