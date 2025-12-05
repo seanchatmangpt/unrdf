@@ -1,112 +1,89 @@
 /**
- * KGC Git Backbone - Content-addressable file system for snapshots and code
- * Uses Git CLI in Node.js for fast, simple operations
- *
- * Note: Browser support (isomorphic-git) can be added later as needed
+ * KGC Git Backbone - Pure JavaScript Git using isomorphic-git
+ * Works in Node.js and Browser environments
+ * NO CLI dependencies - fully isomorphic
  */
 
-import { execSync } from 'child_process';
-import { writeFileSync, mkdirSync, existsSync } from 'fs';
+import git from 'isomorphic-git';
+import * as fs from 'fs';
 import { join } from 'path';
 
 export class GitBackbone {
   constructor(dir = '.') {
     this.dir = dir;
-    this._initializeGit();
+    this.fs = fs;
+    this._initialized = false;
   }
 
   /**
    * Initialize Git repository if it doesn't exist
+   * Uses isomorphic-git pure JS implementation
    */
-  _initializeGit() {
-    try {
-      // Create directory if it doesn't exist
-      if (!existsSync(this.dir)) {
-        mkdirSync(this.dir, { recursive: true });
-      }
+  async _ensureInit() {
+    if (this._initialized) return;
 
-      // Check if .git exists
-      if (!existsSync(join(this.dir, '.git'))) {
-        // Initialize git repo
-        execSync('git init', { cwd: this.dir, stdio: 'pipe' });
-        // Set user config (required for commits)
-        execSync('git config user.email "kgc@system.local"', { cwd: this.dir, stdio: 'pipe' });
-        execSync('git config user.name "KGC System"', { cwd: this.dir, stdio: 'pipe' });
-      }
-    } catch (error) {
-      throw new Error(`Failed to initialize Git repository at ${this.dir}: ${error.message}`);
+    // Create directory if it doesn't exist
+    if (!fs.existsSync(this.dir)) {
+      fs.mkdirSync(this.dir, { recursive: true });
     }
+
+    // Initialize git repo if needed
+    if (!fs.existsSync(join(this.dir, '.git'))) {
+      await git.init({ fs: this.fs, dir: this.dir, defaultBranch: 'main' });
+    }
+
+    this._initialized = true;
   }
 
   /**
    * Persist N-Quads snapshot to Git and return commit hash
+   * Pure JS implementation using isomorphic-git
    */
   async commitSnapshot(nquads, message) {
-    try {
+    await this._ensureInit();
 
-      // Write snapshot to file
-      const snapshotPath = join(this.dir, 'snapshot.nq');
-      writeFileSync(snapshotPath, nquads, 'utf8');
+    // Write snapshot to file
+    const filepath = 'snapshot.nq';
+    const fullPath = join(this.dir, filepath);
+    fs.writeFileSync(fullPath, nquads, 'utf8');
 
-      // Add to git
-      execSync('git add snapshot.nq', { cwd: this.dir, stdio: 'pipe' });
+    // Stage file
+    await git.add({ fs: this.fs, dir: this.dir, filepath });
 
-      // Check if there are staged changes
-      let hasChanges = true;
-      try {
-        execSync('git diff --cached --quiet', { cwd: this.dir, stdio: 'pipe' });
-        hasChanges = false; // If command succeeds, no changes
-      } catch {
-        hasChanges = true; // If command fails, there are changes
-      }
+    // Create timestamp for commit message
+    const timestamp = new Date().toISOString();
+    const commitMsg = `${message}\n\nSnapshot generated at ${timestamp}`;
 
-      const timestamp = new Date().toISOString();
-      const commitMsg = `${message}\n\nSnapshot generated at ${timestamp}`;
+    // Commit with author info
+    const sha = await git.commit({
+      fs: this.fs,
+      dir: this.dir,
+      message: commitMsg,
+      author: {
+        name: 'KGC System',
+        email: 'kgc@system.local',
+      },
+    });
 
-      if (hasChanges) {
-        // Commit normally
-        execSync(`git commit -m "${commitMsg.replace(/"/g, '\\"')}"`, {
-          cwd: this.dir,
-          encoding: 'utf8',
-          stdio: 'pipe',
-        });
-      } else {
-        // Allow empty commit when content unchanged (idempotent freezes)
-        execSync(`git commit --allow-empty -m "${commitMsg.replace(/"/g, '\\"')}"`, {
-          cwd: this.dir,
-          encoding: 'utf8',
-          stdio: 'pipe',
-        });
-      }
-
-      // Use git rev-parse to get the most recent commit hash
-      const hash = execSync('git rev-parse HEAD', {
-        cwd: this.dir,
-        encoding: 'utf8',
-      }).trim();
-
-      if (!hash || hash.length === 0) {
-        throw new Error('Failed to get commit hash from git rev-parse');
-      }
-
-      return hash;
-    } catch (error) {
-      throw new Error(`Git commit failed: ${error.message}`);
-    }
+    return sha;
   }
 
   /**
    * Read snapshot from Git by commit hash
+   * Uses isomorphic-git readBlob for pure JS retrieval
    */
-  async readSnapshot(hash) {
-    try {
-      const result = execSync(`git show ${hash}:snapshot.nq`, {
-        cwd: this.dir,
-        encoding: 'utf8',
-      });
-      return result;
-    } catch (error) {
-      throw new Error(`Failed to read snapshot ${hash}: ${error.message}`);
-    }
+  async readSnapshot(sha) {
+    await this._ensureInit();
+
+    // Read the blob content at the given commit
+    const { blob } = await git.readBlob({
+      fs: this.fs,
+      dir: this.dir,
+      oid: sha,
+      filepath: 'snapshot.nq',
+    });
+
+    // Convert Uint8Array to string
+    return new TextDecoder().decode(blob);
   }
 }
