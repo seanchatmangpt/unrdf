@@ -59,39 +59,95 @@ const receipt = await store.appendEvent(
 
 **Throws:** On guard violations or invalid input
 
-##### querySync(sparql)
+##### queryEventLog(sparql)
 
-Execute SPARQL query synchronously (read-only).
+Query the EventLog graph with SPARQL (async).
 
 ```javascript
-const results = store.querySync(`
-  PREFIX ex: <http://example.org/>
-  SELECT ?person ?name
+const results = await store.queryEventLog(`
+  PREFIX kgc: <http://kgc.io/>
+  SELECT ?eventId ?timestamp ?type
   WHERE {
-    GRAPH <kgc:Universe> {
-      ?person a ex:Person ;
-              ex:name ?name .
-    }
+    ?event a kgc:Event ;
+           kgc:id ?eventId ;
+           kgc:timestamp ?timestamp ;
+           kgc:type ?type .
   }
 `);
 
-// Returns array of bindings
-// Each binding is a Map-like object
+// Returns array of result bindings
 results.forEach(binding => {
-  console.log(binding.get('person'));
-  console.log(binding.get('name'));
+  console.log(binding.get('eventId'));
+  console.log(binding.get('timestamp'));
+  console.log(binding.get('type'));
 });
 ```
 
 **Parameters:**
-- `sparql` - SPARQL query string (SELECT, ASK, CONSTRUCT, DESCRIBE)
+- `sparql` (string) - SPARQL query string (SELECT, ASK, CONSTRUCT, DESCRIBE)
 
-**Returns:** Array of result bindings (for SELECT), boolean (for ASK), or quads (for CONSTRUCT/DESCRIBE)
+**Returns:** Promise resolving to array of result bindings (for SELECT), boolean (for ASK), or quads (for CONSTRUCT/DESCRIBE)
 
 **Notes:**
-- Only reads from store, doesn't modify
-- Queries can target UNIVERSE, EVENT_LOG, or SYSTEM graphs
-- Use `<kgc:Universe>`, `<kgc:EventLog>`, `<kgc:System>` graph names
+- Queries the EventLog graph which contains historical events
+- Use `<kgc:EventLog>` graph name in SPARQL GRAPH clause
+- All events are stored with their mutations and vector clocks
+
+##### queryUniverse(sparql)
+
+Query the Universe graph with SPARQL (async). The Universe graph contains the current RDF state.
+
+```javascript
+const results = await store.queryUniverse(`
+  PREFIX ex: <http://example.org/>
+  SELECT ?subject ?label
+  WHERE {
+    GRAPH <http://kgc.io/Universe> {
+      ?subject rdfs:label ?label .
+    }
+  }
+`);
+
+// Returns array of result bindings
+results.forEach(binding => {
+  console.log('Subject:', binding.get('subject'));
+  console.log('Label:', binding.get('label'));
+});
+```
+
+**Parameters:**
+- `sparql` (string) - SPARQL query string (SELECT, ASK, CONSTRUCT, DESCRIBE)
+
+**Returns:** Promise resolving to array of result bindings (for SELECT), boolean (for ASK), or quads (for CONSTRUCT/DESCRIBE)
+
+**Notes:**
+- Queries the Universe graph which contains current state
+- Use `<http://kgc.io/Universe>` in GRAPH clauses or leave implicit
+- This is where appendEvent mutations are applied
+
+##### getEventCount()
+
+Get the total number of events appended to this store.
+
+```javascript
+const store = new KGCStore();
+
+// Initially zero
+console.log(store.getEventCount());  // 0
+
+// After appending events
+await store.appendEvent({ type: 'CREATE' }, []);
+await store.appendEvent({ type: 'UPDATE' }, []);
+
+console.log(store.getEventCount());  // 2
+```
+
+**Returns:** number - Total event count in this store session
+
+**Notes:**
+- Counter is per-store instance (not persisted across sessions)
+- Increments on each appendEvent call
+- Useful for monitoring store state and audit trails
 
 ##### addQuad(quad)
 
@@ -179,16 +235,6 @@ console.log(nquads);
 - `ref` - Git commit reference
 
 **Returns:** N-Quads string
-
-##### getCommitTime(ref)
-
-Get the commit timestamp.
-
-```javascript
-const timestamp = await git.getCommitTime('abc123...');
-```
-
-**Returns:** Commit timestamp (ISO string)
 
 ---
 
