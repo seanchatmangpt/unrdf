@@ -3,11 +3,11 @@
  * Tests universe snapshots and time-travel reconstruction
  * Applies HDIT: Topological Correctness via Persistent Homology
  *
- * Uses REAL GitBackbone from src/git.mjs - no mocks
+ * Uses REAL GitBackbone from src/git.mjs with isomorphic-git (ARD-mandated)
+ * NO Git CLI - pure JavaScript implementation
  */
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { execSync } from 'child_process';
 import { mkdtempSync, rmSync, existsSync } from 'fs';
 import { join } from 'path';
 import { tmpdir } from 'os';
@@ -25,22 +25,11 @@ describe('KGC Freeze - Universe Snapshots and Time-Travel', () => {
   beforeEach(() => {
     store = new KGCStore();
 
-    // Create real temp directory with git repo for each test
+    // Create temp directory - GitBackbone handles repo init via isomorphic-git
     tempDir = mkdtempSync(join(tmpdir(), 'kgc-freeze-test-'));
 
-    // Initialize git repo in temp dir
-    execSync('git init', { cwd: tempDir, stdio: 'pipe' });
-    execSync('git config user.email "test@kgc.io"', { cwd: tempDir, stdio: 'pipe' });
-    execSync('git config user.name "KGC Test"', { cwd: tempDir, stdio: 'pipe' });
-
-    // Create initial commit so we have a valid repo state
-    execSync('touch .gitkeep && git add .gitkeep && git commit -m "Initial commit"', {
-      cwd: tempDir,
-      stdio: 'pipe',
-      shell: true
-    });
-
-    // Use REAL GitBackbone from src/git.mjs
+    // GitBackbone uses isomorphic-git for pure JS Git operations (ARD-mandated)
+    // No Git CLI needed - _ensureInit() handles repo initialization
     gitBackbone = new GitBackbone(tempDir);
   });
 

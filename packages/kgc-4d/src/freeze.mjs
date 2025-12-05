@@ -1,9 +1,9 @@
 /**
  * KGC Freeze - Universe Snapshot and Time-Travel Replay
+ * Uses hash-wasm for BLAKE3 (ARD-mandated: fastest WASM implementation)
  */
 
-import { blake3 } from '@noble/hashes/blake3';
-import { bytesToHex } from '@noble/hashes/utils';
+import { blake3 } from 'hash-wasm';
 import { dataFactory } from '@unrdf/oxigraph';
 import { now, toISO, fromISO } from './time.mjs';
 import { GRAPHS, EVENT_TYPES, PREDICATES } from './constants.mjs';
@@ -50,8 +50,8 @@ export async function freezeUniverse(store, gitBackbone) {
       return `${s} ${p} ${o} ${g} .`;
     }).join('\n');
 
-    // 2. Hash the universe state (BLAKE3)
-    const universeHash = bytesToHex(blake3(nquads));
+    // 2. Hash the universe state (BLAKE3 via hash-wasm - ARD mandated)
+    const universeHash = await blake3(nquads);
 
     // 3. Commit to Git (use wall-clock time for message)
     const wallClockISO = new Date().toISOString();
@@ -163,8 +163,8 @@ export async function verifyReceipt(receipt, gitBackbone, store) {
     // 1. Load snapshot from Git
     const nquads = await gitBackbone.readSnapshot(receipt.git_ref);
 
-    // 2. Recompute hash
-    const recomputedHash = bytesToHex(blake3(nquads));
+    // 2. Recompute hash (BLAKE3 via hash-wasm - ARD mandated)
+    const recomputedHash = await blake3(nquads);
 
     // 3. Compare hashes
     if (recomputedHash !== receipt.universe_hash) {

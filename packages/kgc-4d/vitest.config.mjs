@@ -30,11 +30,11 @@ export default defineConfig({
     // Global test setup
     globals: true,
 
-    // Timeout for tests
-    testTimeout: 10000,
+    // Timeout for tests - strict 5s max for quick iteration
+    testTimeout: 5000,
 
-    // Increase timeout for slow operations (Git, large queries)
-    hookTimeout: 15000,
+    // Hook timeout - strict 5s max
+    hookTimeout: 5000,
 
     // Reporter configuration
     reporters: ['default'],
