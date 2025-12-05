@@ -1,451 +1,487 @@
+/* eslint-disable no-undef */
 /**
- * @fileoverview IndexedDB-based RDF quad store
+ * @fileoverview IndexedDB Store
  *
- * High-performance quad store using IndexedDB with multiple indexes for fast querying:
- * - SPO index (subject-predicate-object)
- * - POS index (predicate-object-subject)
- * - OSP index (object-subject-predicate)
- * - Graph index
+ * Provides persistent RDF storage in the browser using IndexedDB.
+ * Stores quads with indexed subject, predicate, and object for efficient queries.
  *
- * Supports 10K+ quads with query latency < 200ms.
- *
- * @module browser/indexeddb-store
+ * @module @unrdf/browser/indexeddb-store
  */
 
-const DB_NAME = 'unrdf-quads';
-const DB_VERSION = 1;
-const QUADS_STORE = 'quads';
-const GRAPHS_STORE = 'graphs';
+import { z } from 'zod';
+import { createStore, addQuad, removeQuad } from '@unrdf/core';
 
 /**
- * Generate unique key for quad
- * @private
- * @param {Object} quad - RDF quad
- * @returns {string} Unique key
+ * @typedef {Object} IndexedDBStore
+ * @property {string} dbName - Database name
+ * @property {string} storeName - Object store name
+ * @property {IDBDatabase|null} db - IndexedDB database instance
+ * @property {Object} memoryStore - In-memory N3 store
+ * @property {boolean} isOpen - Connection status
  */
-function quadKey(quad) {
-  return `${quad.subject.value}|${quad.predicate.value}|${quad.object.value}|${quad.graph?.value || 'default'}`;
+
+const IndexedDBStoreSchema = z.object({
+  dbName: z.string().min(1),
+  storeName: z.string().min(1),
+  db: z.any().nullable(),
+  memoryStore: z.any(),
+  isOpen: z.boolean(),
+});
+
+/**
+ * Create an IndexedDB-backed RDF store
+ *
+ * @param {string} dbName - Database name
+ * @param {string} [storeName='quads'] - Object store name
+ * @returns {IndexedDBStore} IndexedDB store instance (not yet opened)
+ *
+ * @example
+ * const store = createIndexedDBStore('myapp-rdf', 'quads');
+ * await openIndexedDBStore(store);
+ */
+export function createIndexedDBStore(dbName, storeName = 'quads') {
+  z.string().min(1).parse(dbName);
+  z.string().min(1).parse(storeName);
+
+  const store = {
+    dbName,
+    storeName,
+    db: null,
+    memoryStore: createStore(),
+    isOpen: false,
+  };
+
+  return IndexedDBStoreSchema.parse(store);
 }
 
 /**
- * IndexedDB-based quad store for RDF data
+ * Open IndexedDB connection and load persisted quads
+ *
+ * @param {IndexedDBStore} store - Store to open
+ * @returns {Promise<IndexedDBStore>} Opened store
  *
  * @example
- * const store = new IndexedDBQuadStore();
- * await store.init();
- *
- * // Add quads
- * await store.addQuad(quad);
- *
- * // Query quads
- * const quads = await store.match({ subject: namedNode('http://example.org/alice') });
+ * const store = createIndexedDBStore('myapp-rdf');
+ * await openIndexedDBStore(store);
  */
-export class IndexedDBQuadStore {
-  /**
-   *
-   */
-  constructor() {
-    this.db = null;
-    this.initPromise = null;
+export async function openIndexedDBStore(store) {
+  IndexedDBStoreSchema.parse(store);
+
+  if (store.isOpen) {
+    return store;
   }
 
-  /**
-   * Initialize IndexedDB database
-   * @returns {Promise<void>}
-   */
-  async init() {
-    if (this.initPromise) return this.initPromise;
-    if (this.db) return;
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(store.dbName, 1);
 
-    this.initPromise = new Promise((resolve, reject) => {
-      const request = indexedDB.open(DB_NAME, DB_VERSION);
+    request.onerror = () => reject(new Error(`Failed to open IndexedDB: ${request.error}`));
 
-      request.onerror = () => reject(request.error);
-      request.onsuccess = () => {
-        this.db = request.result;
-        resolve();
-      };
+    request.onsuccess = async () => {
+      store.db = request.result;
+      store.isOpen = true;
 
-      request.onupgradeneeded = event => {
-        const db = event.target.result;
-
-        // Create quads object store with composite indexes
-        if (!db.objectStoreNames.contains(QUADS_STORE)) {
-          const quadsStore = db.createObjectStore(QUADS_STORE, {
-            keyPath: 'key',
-          });
-
-          // Create indexes for efficient quad pattern matching
-          quadsStore.createIndex('subject', 'subject', { unique: false });
-          quadsStore.createIndex('predicate', 'predicate', { unique: false });
-          quadsStore.createIndex('object', 'object', { unique: false });
-          quadsStore.createIndex('graph', 'graph', { unique: false });
-
-          // Composite indexes for common query patterns
-          quadsStore.createIndex('sp', ['subject', 'predicate'], {
-            unique: false,
-          });
-          quadsStore.createIndex('so', ['subject', 'object'], {
-            unique: false,
-          });
-          quadsStore.createIndex('po', ['predicate', 'object'], {
-            unique: false,
-          });
-          quadsStore.createIndex('spo', ['subject', 'predicate', 'object'], {
-            unique: false,
-          });
-        }
-
-        // Create graphs metadata store
-        if (!db.objectStoreNames.contains(GRAPHS_STORE)) {
-          db.createObjectStore(GRAPHS_STORE, { keyPath: 'graph' });
-        }
-      };
-    });
-
-    return this.initPromise;
-  }
-
-  /**
-   * Ensure database is initialized
-   * @private
-   */
-  async ensureInit() {
-    await this.init();
-  }
-
-  /**
-   * Serialize term to string
-   * @private
-   * @param {Object} term - RDF term
-   * @returns {string} Serialized term
-   */
-  serializeTerm(term) {
-    if (!term) return null;
-
-    if (term.termType === 'NamedNode') {
-      return term.value;
-    } else if (term.termType === 'BlankNode') {
-      return `_:${term.value}`;
-    } else if (term.termType === 'Literal') {
-      let result = `"${term.value}"`;
-      if (term.language) {
-        result += `@${term.language}`;
-      } else if (
-        term.datatype &&
-        term.datatype.value !== 'http://www.w3.org/2001/XMLSchema#string'
-      ) {
-        result += `^^${term.datatype.value}`;
+      // Load all persisted quads into memory
+      const quads = await getQuadsFromDB(store);
+      for (const quad of quads) {
+        addQuad(store.memoryStore, quad);
       }
-      return result;
-    } else if (term.termType === 'DefaultGraph') {
-      return 'default';
-    }
 
-    return term.value;
+      resolve(store);
+    };
+
+    request.onupgradeneeded = event => {
+      const db = event.target.result;
+
+      if (!db.objectStoreNames.contains(store.storeName)) {
+        const objectStore = db.createObjectStore(store.storeName, {
+          keyPath: 'id',
+          autoIncrement: true,
+        });
+
+        // Create indexes for efficient querying
+        objectStore.createIndex('subject', 'subject', { unique: false });
+        objectStore.createIndex('predicate', 'predicate', { unique: false });
+        objectStore.createIndex('object', 'object', { unique: false });
+        objectStore.createIndex('graph', 'graph', { unique: false });
+      }
+    };
+  });
+}
+
+/**
+ * Close IndexedDB connection
+ *
+ * @param {IndexedDBStore} store - Store to close
+ *
+ * @example
+ * await closeIndexedDBStore(store);
+ */
+export function closeIndexedDBStore(store) {
+  IndexedDBStoreSchema.parse(store);
+
+  if (store.db) {
+    store.db.close();
+    store.db = null;
+    store.isOpen = false;
+  }
+}
+
+/**
+ * Add quad to IndexedDB and memory store
+ *
+ * @param {IndexedDBStore} store - Target store
+ * @param {Object} quad - Quad to add
+ * @returns {Promise<void>}
+ *
+ * @example
+ * await addQuadToDB(store, quad(':alice', 'foaf:name', '"Alice"'));
+ */
+export async function addQuadToDB(store, quad) {
+  IndexedDBStoreSchema.parse(store);
+
+  if (!store.isOpen) {
+    throw new Error('Store is not open');
+  }
+
+  // Validate quad structure
+  if (!quad || !quad.subject || !quad.subject.value) {
+    throw new Error('Invalid quad: missing subject');
+  }
+  if (!quad.predicate || !quad.predicate.value) {
+    throw new Error('Invalid quad: missing predicate');
+  }
+  if (!quad.object || quad.object.value === undefined) {
+    throw new Error('Invalid quad: missing object');
+  }
+
+  // Add to memory store
+  addQuad(store.memoryStore, quad);
+
+  // Persist to IndexedDB
+  const transaction = store.db.transaction([store.storeName], 'readwrite');
+  const objectStore = transaction.objectStore(store.storeName);
+
+  const quadData = {
+    subject: quad.subject.value,
+    predicate: quad.predicate.value,
+    object: quad.object.value,
+    graph: quad.graph?.value || '',
+    subjectType: quad.subject.termType || 'NamedNode',
+    objectType: quad.object.termType || 'Literal',
+    objectLanguage: quad.object.language || null,
+    objectDatatype: quad.object.datatype?.value || null,
+  };
+
+  return new Promise((resolve, reject) => {
+    const request = objectStore.add(quadData);
+    request.onsuccess = () => resolve();
+    request.onerror = () => reject(new Error(`Failed to add quad: ${request.error}`));
+  });
+}
+
+/**
+ * Remove quad from IndexedDB and memory store
+ *
+ * @param {IndexedDBStore} store - Target store
+ * @param {Object} quad - Quad to remove
+ * @returns {Promise<void>}
+ *
+ * @example
+ * await removeQuadFromDB(store, quad);
+ */
+export async function removeQuadFromDB(store, quad) {
+  IndexedDBStoreSchema.parse(store);
+
+  if (!store.isOpen) {
+    throw new Error('Store is not open');
+  }
+
+  // Remove from memory store
+  removeQuad(store.memoryStore, quad);
+
+  // Remove from IndexedDB
+  const transaction = store.db.transaction([store.storeName], 'readwrite');
+  const objectStore = transaction.objectStore(store.storeName);
+
+  // Find and delete matching quads
+  const index = objectStore.index('subject');
+  const subjectValue = quad.subject?.value || '';
+  const predicateValue = quad.predicate?.value || '';
+  const objectValue = quad.object?.value || '';
+  const graphValue = quad.graph?.value || '';
+  const request = index.openCursor(IDBKeyRange.only(subjectValue));
+
+  return new Promise((resolve, reject) => {
+    request.onsuccess = event => {
+      const cursor = event.target.result;
+      if (cursor) {
+        const record = cursor.value;
+        if (
+          record.predicate === predicateValue &&
+          record.object === objectValue &&
+          record.graph === graphValue
+        ) {
+          cursor.delete();
+          resolve();
+        } else {
+          cursor.continue();
+        }
+      } else {
+        resolve();
+      }
+    };
+    request.onerror = () => reject(new Error(`Failed to remove quad: ${request.error}`));
+  });
+}
+
+/**
+ * Query quads from IndexedDB
+ *
+ * @param {IndexedDBStore} store - Source store
+ * @param {Object} [filter] - Query filter
+ * @returns {Promise<Array<Object>>} Matching quads
+ *
+ * @example
+ * const quads = await getQuadsFromDB(store, { subject: ':alice' });
+ */
+export async function getQuadsFromDB(store, filter = {}) {
+  IndexedDBStoreSchema.parse(store);
+
+  if (!store.isOpen) {
+    throw new Error('Store is not open');
+  }
+
+  const transaction = store.db.transaction([store.storeName], 'readonly');
+  const objectStore = transaction.objectStore(store.storeName);
+
+  // Use index if available
+  let request;
+  if (filter.subject) {
+    const index = objectStore.index('subject');
+    request = index.openCursor(IDBKeyRange.only(filter.subject));
+  } else if (filter.predicate) {
+    const index = objectStore.index('predicate');
+    request = index.openCursor(IDBKeyRange.only(filter.predicate));
+  } else if (filter.object) {
+    const index = objectStore.index('object');
+    request = index.openCursor(IDBKeyRange.only(filter.object));
+  } else {
+    request = objectStore.openCursor();
+  }
+
+  return new Promise((resolve, reject) => {
+    const quads = [];
+    request.onsuccess = event => {
+      const cursor = event.target.result;
+      if (cursor) {
+        const record = cursor.value;
+
+        // Apply remaining filters
+        let matches = true;
+        if (filter.subject && record.subject !== filter.subject) matches = false;
+        if (filter.predicate && record.predicate !== filter.predicate) matches = false;
+        if (filter.object && record.object !== filter.object) matches = false;
+        if (filter.graph && record.graph !== filter.graph) matches = false;
+
+        if (matches) {
+          // Reconstruct quad (simplified - full reconstruction would use createQuad)
+          quads.push({
+            subject: { value: record.subject, termType: record.subjectType },
+            predicate: { value: record.predicate, termType: 'NamedNode' },
+            object: {
+              value: record.object,
+              termType: record.objectType,
+              language: record.objectLanguage,
+              datatype: record.objectDatatype ? { value: record.objectDatatype } : null,
+            },
+            graph: { value: record.graph, termType: 'DefaultGraph' },
+          });
+        }
+
+        cursor.continue();
+      } else {
+        resolve(quads);
+      }
+    };
+    request.onerror = () => reject(new Error(`Failed to query quads: ${request.error}`));
+  });
+}
+
+/**
+ * Clear all quads from IndexedDB and memory
+ *
+ * @param {IndexedDBStore} store - Store to clear
+ * @returns {Promise<void>}
+ *
+ * @example
+ * await clearIndexedDBStore(store);
+ */
+export async function clearIndexedDBStore(store) {
+  IndexedDBStoreSchema.parse(store);
+
+  if (!store.isOpen) {
+    throw new Error('Store is not open');
+  }
+
+  // Clear memory store
+  store.memoryStore = createStore();
+
+  // Clear IndexedDB
+  const transaction = store.db.transaction([store.storeName], 'readwrite');
+  const objectStore = transaction.objectStore(store.storeName);
+
+  return new Promise((resolve, reject) => {
+    const request = objectStore.clear();
+    request.onsuccess = () => resolve();
+    request.onerror = () => reject(new Error(`Failed to clear store: ${request.error}`));
+  });
+}
+
+/**
+ * IndexedDBStore Class
+ *
+ * Class-based wrapper around IndexedDB store functions.
+ * Provides an object-oriented interface for browser examples.
+ *
+ * @class
+ * @example
+ * const store = new IndexedDBStore({ name: 'myapp', storeName: 'quads' });
+ * await store.open();
+ * await store.add(quad);
+ */
+export class IndexedDBStore {
+  /**
+   * Create IndexedDB store instance
+   *
+   * @param {Object} config - Store configuration
+   * @param {string} config.name - Database name
+   * @param {string} [config.storeName='quads'] - Object store name
+   * @param {number} [config.version] - Database version (unused, for compatibility)
+   */
+  constructor(config) {
+    const { name, storeName = 'quads' } = config;
+    this._store = createIndexedDBStore(name, storeName);
+  }
+
+  /**
+   * Open IndexedDB connection
+   *
+   * @returns {Promise<void>}
+   *
+   * @example
+   * await store.open();
+   */
+  async open() {
+    this._store = await openIndexedDBStore(this._store);
+  }
+
+  /**
+   * Close IndexedDB connection
+   *
+   * @returns {Promise<void>}
+   *
+   * @example
+   * await store.close();
+   */
+  async close() {
+    closeIndexedDBStore(this._store);
   }
 
   /**
    * Add quad to store
+   *
    * @param {Object} quad - RDF quad to add
    * @returns {Promise<void>}
+   *
+   * @example
+   * await store.add(quad(':alice', 'foaf:name', '"Alice"'));
    */
-  async addQuad(quad) {
-    await this.ensureInit();
-
-    const record = {
-      key: quadKey(quad),
-      subject: this.serializeTerm(quad.subject),
-      predicate: this.serializeTerm(quad.predicate),
-      object: this.serializeTerm(quad.object),
-      graph: this.serializeTerm(quad.graph) || 'default',
-      quad: {
-        subject: { termType: quad.subject.termType, value: quad.subject.value },
-        predicate: {
-          termType: quad.predicate.termType,
-          value: quad.predicate.value,
-        },
-        object: {
-          termType: quad.object.termType,
-          value: quad.object.value,
-          language: quad.object.language,
-          datatype: quad.object.datatype ? { value: quad.object.datatype.value } : undefined,
-        },
-        graph: quad.graph ? { termType: quad.graph.termType, value: quad.graph.value } : undefined,
-      },
-    };
-
-    return new Promise((resolve, reject) => {
-      const transaction = this.db.transaction([QUADS_STORE, GRAPHS_STORE], 'readwrite');
-
-      // Add quad
-      transaction.objectStore(QUADS_STORE).put(record);
-
-      // Update graph metadata
-      const graphStore = transaction.objectStore(GRAPHS_STORE);
-      const graphRequest = graphStore.get(record.graph);
-
-      graphRequest.onsuccess = () => {
-        const graphMeta = graphRequest.result || {
-          graph: record.graph,
-          quadCount: 0,
-          lastModified: Date.now(),
-        };
-
-        graphMeta.quadCount += 1;
-        graphMeta.lastModified = Date.now();
-        graphStore.put(graphMeta);
-      };
-
-      transaction.oncomplete = () => resolve();
-      transaction.onerror = () => reject(transaction.error);
-    });
-  }
-
-  /**
-   * Add multiple quads to store
-   * @param {Array<Object>} quads - RDF quads to add
-   * @returns {Promise<void>}
-   */
-  async addQuads(quads) {
-    await this.ensureInit();
-
-    return new Promise((resolve, reject) => {
-      const transaction = this.db.transaction([QUADS_STORE, GRAPHS_STORE], 'readwrite');
-      const quadsStore = transaction.objectStore(QUADS_STORE);
-      const graphsStore = transaction.objectStore(GRAPHS_STORE);
-      const graphCounts = new Map();
-
-      for (const quad of quads) {
-        const record = {
-          key: quadKey(quad),
-          subject: this.serializeTerm(quad.subject),
-          predicate: this.serializeTerm(quad.predicate),
-          object: this.serializeTerm(quad.object),
-          graph: this.serializeTerm(quad.graph) || 'default',
-          quad: {
-            subject: {
-              termType: quad.subject.termType,
-              value: quad.subject.value,
-            },
-            predicate: {
-              termType: quad.predicate.termType,
-              value: quad.predicate.value,
-            },
-            object: {
-              termType: quad.object.termType,
-              value: quad.object.value,
-              language: quad.object.language,
-              datatype: quad.object.datatype ? { value: quad.object.datatype.value } : undefined,
-            },
-            graph: quad.graph
-              ? { termType: quad.graph.termType, value: quad.graph.value }
-              : undefined,
-          },
-        };
-
-        quadsStore.put(record);
-        graphCounts.set(record.graph, (graphCounts.get(record.graph) || 0) + 1);
-      }
-
-      // Update graph metadata
-      for (const [graph, count] of graphCounts) {
-        const graphRequest = graphsStore.get(graph);
-
-        graphRequest.onsuccess = () => {
-          const graphMeta = graphRequest.result || {
-            graph,
-            quadCount: 0,
-            lastModified: Date.now(),
-          };
-
-          graphMeta.quadCount += count;
-          graphMeta.lastModified = Date.now();
-          graphsStore.put(graphMeta);
-        };
-      }
-
-      transaction.oncomplete = () => resolve();
-      transaction.onerror = () => reject(transaction.error);
-    });
+  async add(quad) {
+    return addQuadToDB(this._store, quad);
   }
 
   /**
    * Remove quad from store
+   *
    * @param {Object} quad - RDF quad to remove
-   * @returns {Promise<boolean>} True if removed
+   * @returns {Promise<void>}
+   *
+   * @example
+   * await store.remove(quad);
    */
-  async removeQuad(quad) {
-    await this.ensureInit();
-    const key = quadKey(quad);
-
-    return new Promise((resolve, reject) => {
-      const transaction = this.db.transaction([QUADS_STORE, GRAPHS_STORE], 'readwrite');
-      const quadsStore = transaction.objectStore(QUADS_STORE);
-      const graphsStore = transaction.objectStore(GRAPHS_STORE);
-
-      const getRequest = quadsStore.get(key);
-
-      getRequest.onsuccess = () => {
-        const existing = getRequest.result;
-        if (!existing) {
-          resolve(false);
-          return;
-        }
-
-        quadsStore.delete(key);
-
-        // Update graph metadata
-        const graphRequest = graphsStore.get(existing.graph);
-        graphRequest.onsuccess = () => {
-          const graphMeta = graphRequest.result;
-          if (graphMeta) {
-            graphMeta.quadCount = Math.max(0, graphMeta.quadCount - 1);
-            graphMeta.lastModified = Date.now();
-            graphsStore.put(graphMeta);
-          }
-        };
-      };
-
-      transaction.oncomplete = () => resolve(true);
-      transaction.onerror = () => reject(transaction.error);
-    });
+  async remove(quad) {
+    return removeQuadFromDB(this._store, quad);
   }
 
   /**
-   * Match quads by pattern
-   * @param {Object} pattern - Quad pattern (subject, predicate, object, graph)
+   * Query quads matching pattern
+   *
+   * @param {Object} [subject] - Subject filter
+   * @param {Object} [predicate] - Predicate filter
+   * @param {Object} [object] - Object filter
+   * @param {Object} [graph] - Graph filter
    * @returns {Promise<Array<Object>>} Matching quads
+   *
+   * @example
+   * const quads = await store.match(null, namedNode('foaf:name'), null);
    */
-  async match(pattern = {}) {
-    await this.ensureInit();
-
-    return new Promise((resolve, reject) => {
-      const transaction = this.db.transaction([QUADS_STORE], 'readonly');
-      const store = transaction.objectStore(QUADS_STORE);
-
-      const { subject, predicate, object, graph } = pattern;
-      const subjectStr = subject ? this.serializeTerm(subject) : null;
-      const predicateStr = predicate ? this.serializeTerm(predicate) : null;
-      const objectStr = object ? this.serializeTerm(object) : null;
-      const graphStr = graph ? this.serializeTerm(graph) : null;
-
-      let request;
-
-      // Use most selective index
-      if (subjectStr && predicateStr && objectStr) {
-        request = store.index('spo').getAll([subjectStr, predicateStr, objectStr]);
-      } else if (subjectStr && predicateStr) {
-        request = store.index('sp').getAll([subjectStr, predicateStr]);
-      } else if (subjectStr && objectStr) {
-        request = store.index('so').getAll([subjectStr, objectStr]);
-      } else if (predicateStr && objectStr) {
-        request = store.index('po').getAll([predicateStr, objectStr]);
-      } else if (subjectStr) {
-        request = store.index('subject').getAll(subjectStr);
-      } else if (predicateStr) {
-        request = store.index('predicate').getAll(predicateStr);
-      } else if (objectStr) {
-        request = store.index('object').getAll(objectStr);
-      } else if (graphStr) {
-        request = store.index('graph').getAll(graphStr);
-      } else {
-        request = store.getAll();
-      }
-
-      request.onsuccess = () => {
-        let results = request.result;
-
-        // Filter by graph if specified and not used in index
-        if (graphStr && !request.indexName?.includes('graph')) {
-          results = results.filter(r => r.graph === graphStr);
-        }
-
-        // Map to quad objects
-        const quads = results.map(r => r.quad);
-        resolve(quads);
-      };
-
-      request.onerror = () => reject(request.error);
-    });
-  }
-
-  /**
-   * Get all quads in store
-   * @returns {Promise<Array<Object>>} All quads
-   */
-  async getAllQuads() {
-    return this.match({});
-  }
-
-  /**
-   * Count quads matching pattern
-   * @param {Object} [pattern] - Quad pattern
-   * @returns {Promise<number>} Number of matching quads
-   */
-  async count(pattern = {}) {
-    const quads = await this.match(pattern);
-    return quads.length;
-  }
-
-  /**
-   * Get all graph URIs
-   * @returns {Promise<Array<string>>} Graph URIs
-   */
-  async getGraphs() {
-    await this.ensureInit();
-
-    return new Promise((resolve, reject) => {
-      const transaction = this.db.transaction([GRAPHS_STORE], 'readonly');
-      const request = transaction.objectStore(GRAPHS_STORE).getAllKeys();
-
-      request.onsuccess = () => resolve(request.result);
-      request.onerror = () => reject(request.error);
-    });
+  async match(subject, predicate, object, graph) {
+    const filter = {};
+    if (subject) filter.subject = subject.value;
+    if (predicate) filter.predicate = predicate.value;
+    if (object) filter.object = object.value;
+    if (graph) filter.graph = graph.value;
+    return getQuadsFromDB(this._store, filter);
   }
 
   /**
    * Clear all quads from store
+   *
    * @returns {Promise<void>}
+   *
+   * @example
+   * await store.clear();
    */
   async clear() {
-    await this.ensureInit();
-
-    return new Promise((resolve, reject) => {
-      const transaction = this.db.transaction([QUADS_STORE, GRAPHS_STORE], 'readwrite');
-
-      transaction.objectStore(QUADS_STORE).clear();
-      transaction.objectStore(GRAPHS_STORE).clear();
-
-      transaction.oncomplete = () => resolve();
-      transaction.onerror = () => reject(transaction.error);
-    });
+    return clearIndexedDBStore(this._store);
   }
 
   /**
-   * Get store size (number of quads)
-   * @returns {Promise<number>} Number of quads
+   * Get number of quads in store
+   *
+   * @returns {Promise<number>} Quad count
+   *
+   * @example
+   * const count = await store.size();
    */
   async size() {
-    await this.ensureInit();
-
-    return new Promise((resolve, reject) => {
-      const transaction = this.db.transaction([QUADS_STORE], 'readonly');
-      const request = transaction.objectStore(QUADS_STORE).count();
-
-      request.onsuccess = () => resolve(request.result);
-      request.onerror = () => reject(request.error);
-    });
+    if (!this._store.isOpen) {
+      throw new Error('Store is not open');
+    }
+    return this._store.memoryStore.size;
   }
 
   /**
-   * Close database connection
+   * Check if store is open
+   *
+   * @returns {boolean} True if open
+   *
+   * @example
+   * if (store.isOpen()) { ... }
    */
-  close() {
-    if (this.db) {
-      this.db.close();
-      this.db = null;
-      this.initPromise = null;
-    }
+  isOpen() {
+    return this._store.isOpen;
+  }
+
+  /**
+   * Get underlying IndexedDB database instance
+   *
+   * @returns {IDBDatabase|null} Database instance
+   *
+   * @example
+   * const db = store.db;
+   */
+  get db() {
+    return this._store.db;
   }
 }
