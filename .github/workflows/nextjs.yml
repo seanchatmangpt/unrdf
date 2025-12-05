@@ -63,10 +63,13 @@ jobs:
         env:
           NEXT_PUBLIC_BASE_PATH: /unrdf
 
+      - name: Verify build output
+        run: ls -la
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: out
+          path: packages/react/out
 
   # Deployment job
   deploy:
