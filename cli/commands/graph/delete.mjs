@@ -37,8 +37,16 @@ export const deleteCommand = defineCommand({
 
       // FM-CLI-004: Require confirmation for destructive operations (poka-yoke guard)
       if (!shouldSkipConfirmation(ctx)) {
-        // TODO: Get graph stats for impact summary
-        const summary = `This will permanently delete the graph and all its data`;
+        // Get graph stats for impact summary
+        const { getStore, getDataFactory } = await import('../../utils/store-instance.mjs');
+        const store = getStore();
+        const df = getDataFactory();
+
+        const graphNode = name === 'default' ? df.defaultGraph() : df.namedNode(name);
+        const quads = store.match(null, null, null, graphNode);
+        const quadCount = quads.length;
+
+        const summary = `This will permanently delete the graph and all its ${quadCount} quads`;
 
         const result = await executeWithConfirmation(
           ctx,
@@ -50,9 +58,13 @@ export const deleteCommand = defineCommand({
             requiresForce: true
           },
           async () => {
-            // Actual delete operation
-            // TODO: Implement actual graph deletion
-            console.log(`✅ Graph deleted: ${name}`);
+            // Actual delete operation - use SPARQL UPDATE
+            const deleteQuery = name === 'default'
+              ? `CLEAR DEFAULT`
+              : `CLEAR GRAPH <${name}>`;
+
+            store.update(deleteQuery);
+            console.log(`✅ Graph deleted: ${name} (${quadCount} quads removed)`);
           }
         );
 
@@ -61,6 +73,14 @@ export const deleteCommand = defineCommand({
         }
       } else {
         // Confirmed via --force flag
+        const { getStore } = await import('../../utils/store-instance.mjs');
+        const store = getStore();
+
+        const deleteQuery = name === 'default'
+          ? `CLEAR DEFAULT`
+          : `CLEAR GRAPH <${name}>`;
+
+        store.update(deleteQuery);
         console.log(`✅ Graph deleted: ${name}`);
       }
     } catch (error) {
