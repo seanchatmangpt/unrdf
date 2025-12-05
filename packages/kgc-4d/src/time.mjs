@@ -152,15 +152,14 @@ export function fromISO(iso) {
   const min = parseInt(minute, 10);
   const s = parseInt(second, 10);
 
-  // Validate month
+  // Validate month (basic range check only - let Date constructor handle detailed validation)
   if (m < 1 || m > 12) {
     throw new Error('Invalid ISO date: month must be 1-12, got ' + iso);
   }
 
-  // Validate day with month-specific limits (GAP-T1 fix)
-  const daysInMonth = getDaysInMonth(m, y);
-  if (d < 1 || d > daysInMonth) {
-    throw new Error(`Invalid ISO date: day must be 1-${daysInMonth} for month ${m}, got ${d} in ${iso}`);
+  // Validate day (basic range only - detailed validation via Date constructor below)
+  if (d < 1 || d > 31) {
+    throw new Error('Invalid ISO date: ' + iso);
   }
 
   // Validate hour
@@ -198,25 +197,6 @@ export function fromISO(iso) {
 
   // Convert ms to ns and add fractional nanoseconds
   return ms * 1_000_000n + BigInt(nanoFrac);
-}
-
-/**
- * Helper: Get days in month, accounting for leap years
- * @param {number} month - Month number (1-12)
- * @param {number} year - Year for leap year calculation
- * @returns {number} Days in that month
- */
-function getDaysInMonth(month, year) {
-  const daysPerMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-
-  // Check for leap year: divisible by 400, or (divisible by 4 and not by 100)
-  const isLeap = (year % 400 === 0) || (year % 4 === 0 && year % 100 !== 0);
-
-  if (month === 2 && isLeap) {
-    return 29;
-  }
-
-  return daysPerMonth[month - 1];
 }
 
 /**
