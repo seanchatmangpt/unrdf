@@ -63,7 +63,7 @@ describe('Engine Comparison: Oxigraph vs Current Engine', () => {
     console.log(`  - Current engine uses n3.js Store (JavaScript)`);
     console.log(`  - Expected Oxigraph advantage: 2-5x faster`);
 
-    expect(oxigraphStore.size()).toBe(iterations);
+    expect(oxigraphStore.size).toBe(iterations);
   });
 
   /**
@@ -387,13 +387,13 @@ describe('Engine Comparison: Oxigraph vs Current Engine', () => {
 
     const finalMemory = process.memoryUsage().heapUsed / 1024 / 1024;
     const memoryUsed = finalMemory - initialMemory;
-    const bytesPerTriple = (memoryUsed * 1024 * 1024) / oxigraphStore.size();
+    const bytesPerTriple = (memoryUsed * 1024 * 1024) / oxigraphStore.size;
 
     console.log(`\nOxigraph Memory Analysis:`);
     console.log(`  Initial heap: ${initialMemory.toFixed(1)} MB`);
     console.log(`  Final heap: ${finalMemory.toFixed(1)} MB`);
     console.log(`  Memory used: ${memoryUsed.toFixed(1)} MB`);
-    console.log(`  Triples stored: ${oxigraphStore.size()}`);
+    console.log(`  Triples stored: ${oxigraphStore.size}`);
     console.log(`  Bytes per triple: ${bytesPerTriple.toFixed(0)} bytes`);
 
     console.log(`\nComparison Notes:`);
@@ -402,7 +402,7 @@ describe('Engine Comparison: Oxigraph vs Current Engine', () => {
     console.log(`  - Current engine: n3.js Store with JS object overhead`);
     console.log(`  - Expected Oxigraph advantage: 20-40% less memory`);
 
-    expect(oxigraphStore.size()).toBe(10000);
+    expect(oxigraphStore.size).toBe(10000);
   });
 
   /**
@@ -472,7 +472,7 @@ describe('Engine Comparison: Oxigraph vs Current Engine', () => {
     console.log(`  Avg latency: ${(oxigraphDuration / iterations).toFixed(2)}ms`);
 
     console.log(`\nQuery Complexity:`);
-    console.log(`  - Dataset size: ${oxigraphStore.size()} triples`);
+    console.log(`  - Dataset size: ${oxigraphStore.size} triples`);
     console.log(`  - Patterns: 5 triple patterns`);
     console.log(`  - Filters: 1 complex FILTER`);
     console.log(`  - Aggregates: 1 COUNT aggregate`);

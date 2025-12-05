@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { ErrorSanitizer } from '../src/knowledge-engine/security/error-sanitizer.mjs';
+import { ErrorSanitizer } from '../packages/knowledge-engine/security/error-sanitizer.mjs';
 
 describe('Security - ErrorSanitizer', () => {
   it('redacts credentials and file paths', () => {

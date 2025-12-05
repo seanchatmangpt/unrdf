@@ -8,7 +8,7 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { createSandboxAdapter } from '../../../src/security/sandbox-adapter.mjs';
+import { createSandboxAdapter } from '../../../packages/security/sandbox-adapter.mjs';
 
 describe('Executor Detection', () => {
   let _originalNodeVersion;

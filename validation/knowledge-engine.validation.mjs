@@ -15,7 +15,7 @@
 import {
   createValidationRunner,
   createValidationHelpers,
-} from "../src/validation/index.mjs";
+} from "../packages/validation/index.mjs";
 
 const helpers = createValidationHelpers();
 const runner = createValidationRunner({ verbose: true });

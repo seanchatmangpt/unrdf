@@ -2,8 +2,8 @@
  * @fileoverview Test async context loss during JSON-LD operations
  */
 
-import { RdfEngine } from '../src/engines/rdf-engine.mjs';
-import { initStore, useStoreContext } from '../src/context/index.mjs';
+import { RdfEngine } from '../packages/knowledge-engine/src/engines/rdf-engine.mjs';
+import { initStore, useStoreContext } from '../packages/composables/src/context/index.mjs';
 
 const jsonldData = {
   '@context': {

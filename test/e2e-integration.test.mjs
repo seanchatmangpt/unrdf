@@ -6,7 +6,7 @@
  * This is the ultimate truth test - if it passes here, it works in production.
  */
 
-import { createDarkMatterCore, parseTurtle, defineHook } from '../src/knowledge-engine/index.mjs';
+import { createDarkMatterCore, parseTurtle, defineHook } from '../packages/knowledge-engine/index.mjs';
 import { UnrdfDataFactory } from '../packages/core/src/rdf/n3-justified-only.mjs';
 import { describe, it, expect } from 'vitest';
 

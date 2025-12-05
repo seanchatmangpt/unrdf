@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { createSandboxAdapter } from '../src/security/sandbox-adapter.mjs';
+import { createSandboxAdapter } from '../packages/security/sandbox-adapter.mjs';
 
 const sandbox = createSandboxAdapter({ timeoutMs: 500 });
 

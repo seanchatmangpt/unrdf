@@ -3,8 +3,8 @@
  */
 
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { createFederatedSystem } from '../../src/knowledge-engine/federation/index.mjs';
-import { StoreHealth } from '../../src/knowledge-engine/federation/federation-coordinator.mjs';
+import { createFederatedSystem } from '../../packages/knowledge-engine/federation/index.mjs';
+import { StoreHealth } from '../../packages/knowledge-engine/federation/federation-coordinator.mjs';
 
 describe('Federation Performance Benchmarks', () => {
   let federation;

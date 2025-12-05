@@ -7,7 +7,7 @@ import {
   createDarkMatterCore,
   LockchainWriter,
   DataFactory,
-} from '../../src/knowledge-engine/index.mjs';
+} from '../../packages/knowledge-engine/index.mjs';
 import { mkdirSync, rmSync } from 'fs';
 import { join } from 'path';
 const { namedNode, quad, literal } = DataFactory;

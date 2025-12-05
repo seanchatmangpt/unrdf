@@ -5,11 +5,11 @@
  * Shows connection management, transactions, health checks, and error handling.
  */
 
-import { SidecarClient } from '../src/sidecar/client.mjs';
-import { ConnectionPool } from '../src/sidecar/connection-pool.mjs';
-import { CircuitBreaker } from '../src/sidecar/circuit-breaker.mjs';
-import { RetryStrategy } from '../src/sidecar/retry-strategy.mjs';
-import { HealthCheck } from '../src/sidecar/health-check.mjs';
+import { SidecarClient } from '../packages/sidecar/client.mjs';
+import { ConnectionPool } from '../packages/sidecar/connection-pool.mjs';
+import { CircuitBreaker } from '../packages/sidecar/circuit-breaker.mjs';
+import { RetryStrategy } from '../packages/sidecar/retry-strategy.mjs';
+import { HealthCheck } from '../packages/sidecar/health-check.mjs';
 
 console.log('=== KGC Sidecar Client Examples ===\n');
 

@@ -12,7 +12,7 @@ import {
   getCapabilityMetadata,
   getEnabledCapabilities,
   setCapabilityEnabled,
-} from '../../src/project-engine/capabilities-manifest.mjs';
+} from '../../packages/project-engine/capabilities-manifest.mjs';
 
 describe('Capabilities Manifest', () => {
   describe('CODE_COMPLEXITY_JS constant', () => {

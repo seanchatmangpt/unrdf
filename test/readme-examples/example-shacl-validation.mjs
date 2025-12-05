@@ -7,7 +7,7 @@ import {
   createDarkMatterCore,
   parseTurtle,
   DataFactory,
-} from '../../src/knowledge-engine/index.mjs';
+} from '../../packages/knowledge-engine/index.mjs';
 const { _namedNode, _quad, _literal } = DataFactory;
 
 /**

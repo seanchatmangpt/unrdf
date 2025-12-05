@@ -18,7 +18,7 @@ import {
   getWorstState,
   createAndonSignalManager,
   defaultAndonSignalManager,
-} from '../../../src/knowledge-engine/monitoring/andon-signals.mjs';
+} from '../../../packages/knowledge-engine/monitoring/andon-signals.mjs';
 
 describe('Andon Signals', () => {
   describe('computeSignalState', () => {

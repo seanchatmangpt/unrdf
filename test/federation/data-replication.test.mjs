@@ -9,11 +9,11 @@ import {
   ReplicationTopology,
   ConflictResolution,
   _ReplicationMode,
-} from '../../src/knowledge-engine/federation/data-replication.mjs';
+} from '../../packages/knowledge-engine/federation/data-replication.mjs';
 import {
   createFederationCoordinator,
   StoreHealth,
-} from '../../src/knowledge-engine/federation/federation-coordinator.mjs';
+} from '../../packages/knowledge-engine/federation/federation-coordinator.mjs';
 
 describe('DataReplicationManager', () => {
   let coordinator;

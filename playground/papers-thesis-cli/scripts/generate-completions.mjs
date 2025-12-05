@@ -43,7 +43,7 @@ import {
   SUPPORTED_SHELLS,
   DEFAULT_FILENAMES,
   DEFAULT_PATHS
-} from '../src/cli/completions/index.mjs';
+} from '../packages/cli/completions/index.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

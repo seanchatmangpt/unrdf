@@ -3,7 +3,7 @@
  * Tests creating and querying a social network
  */
 
-import { createDarkMatterCore, parseTurtle } from '../../src/knowledge-engine/index.mjs';
+import { createDarkMatterCore, parseTurtle } from '../../packages/knowledge-engine/index.mjs';
 
 /**
  *

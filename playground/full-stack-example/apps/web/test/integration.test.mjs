@@ -6,9 +6,9 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
-import App from '../src/App.vue'
-import { useStore } from '../src/composables/useStore.mjs'
-import { apiClient } from '../src/api/client.mjs'
+import App from '../packages/App.vue'
+import { useStore } from '../packages/composables/useStore.mjs'
+import { apiClient } from '../packages/api/client.mjs'
 
 describe('Full-Stack Web Integration', () => {
   describe('Vue App Initialization', () => {

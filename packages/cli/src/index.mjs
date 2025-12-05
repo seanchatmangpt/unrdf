@@ -1,41 +1,36 @@
+#!/usr/bin/env node
+
 /**
- * @unrdf/cli
+ * @fileoverview UNRDF CLI - Command-line interface for RDF store management
  *
- * CLI - Command-line Tools for Graph Operations
+ * @description
+ * Provides CLI commands for managing RDF stores including backup, restore,
+ * import, query operations. All commands are instrumented with OpenTelemetry
+ * for observability and monitoring.
  *
- * @module @unrdf/cli
+ * @module cli
+ * @version 2.1.1
+ * @license MIT
  */
 
-// Export all command functions
-export {
-  loadGraph,
-  saveGraph,
-  createCommand,
-  deleteCommand,
-  describeCommand,
-  mergeCommand,
-  graphCommand,
-} from './cli/commands/graph.mjs';
+import { defineCommand, runMain } from 'citty';
+import { storeCommand } from './commands/store.mjs';
+import { initCommand } from './commands/init.mjs';
 
-export {
-  queryCommand,
-  queryFileCommand,
-  formatTable,
-  formatJSON,
-  formatCSV,
-} from './cli/commands/query.mjs';
+/**
+ * Main CLI application
+ */
+const main = defineCommand({
+  meta: {
+    name: 'unrdf',
+    version: '2.1.1',
+    description: 'RDF framework CLI - Project initialization and store management',
+  },
+  subCommands: {
+    init: initCommand,
+    store: storeCommand,
+  },
+});
 
-export {
-  contextCommand,
-  showCommand,
-  addPrefixCommand,
-  removePrefixCommand,
-  normalizeCommand,
-} from './cli/commands/context.mjs';
-
-export {
-  convertCommand,
-  toTurtleCommand,
-  toNTriplesCommand,
-  toJSONCommand,
-} from './cli/commands/convert.mjs';
+// Run the CLI
+runMain(main);

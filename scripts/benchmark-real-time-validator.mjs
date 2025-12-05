@@ -6,7 +6,7 @@
 
 import { createStore } from '@unrdf/core';
 import { dataFactory } from '@unrdf/oxigraph';
-import { RealTimeValidator, ValidationMode } from '../src/knowledge-engine/streaming/real-time-validator.mjs';
+import { RealTimeValidator, ValidationMode } from '../packages/streaming/src/streaming/real-time-validator.mjs';
 
 const { namedNode, literal, quad } = dataFactory;
 

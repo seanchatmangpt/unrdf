@@ -3,7 +3,7 @@
  * Tests parsing and serialization
  */
 
-import { parseTurtle, toJsonLd, toNQuads } from '../../src/knowledge-engine/index.mjs';
+import { parseTurtle, toJsonLd, toNQuads } from '../../packages/knowledge-engine/index.mjs';
 
 /**
  *

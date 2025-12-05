@@ -8,7 +8,7 @@
  */
 
 import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
-import { DarkMatterCore, DarkMatterFactory } from '../src/knowledge-engine/dark-matter-core.mjs';
+import { DarkMatterCore, DarkMatterFactory } from '../packages/knowledge-engine/dark-matter-core.mjs';
 import { createStore } from '@unrdf/oxigraph';
 
 describe('Dark Matter 80/20 Framework', () => {
