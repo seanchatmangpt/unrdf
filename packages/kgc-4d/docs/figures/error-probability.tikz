@@ -1,0 +1,17 @@
+% Error Probability vs Specification Entropy - Simplified
+\begin{tikzpicture}[scale=1.0]
+  % Axes
+  \draw[thick,-] (0,0) -- (8,0) node[right] {$H_{\text{spec}}$ (bits)};
+  \draw[thick,-] (0,0) -- (0,5) node[above] {$P(\text{Error})$ (log)};
+
+  % Exponential decay curve
+  \draw[thick,red]
+    (0.5,4.5) .. controls (1,3.8) and (2,3) .. (3,2) .. controls (4,1.2) and (5,0.5) .. (6,0.1) .. controls (6.5,0.02) and (7,0.001) .. (7.5,0);
+
+  % Mark point at H_spec=8
+  \draw[fill=blue] (5.2,0.35) circle (0.12);
+  \node at (5.2,-0.4) {\small $H_{\text{spec}}=8$};
+
+  % Grid
+  \draw[gray!20,thin] (0,0) grid (8,5);
+\end{tikzpicture}

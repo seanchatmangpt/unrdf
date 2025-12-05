@@ -1,0 +1,50 @@
+% 74 HDIT Applications Across 10 Domains
+\begin{tikzpicture}[>=stealth,node distance=2cm,scale=0.75,transform shape]
+  \tikzset{
+    root/.style={rectangle,draw,fill=red!20,minimum width=2cm,minimum height=0.8cm,font=\bf},
+    domain/.style={rectangle,draw,fill=blue!20,minimum width=1.8cm,minimum height=0.6cm},
+    arrow/.style={->,thick,gray}
+  }
+
+  % Root
+  \node[root] (root) at (0,0) {HDIT\\Applications};
+
+  % 10 Domain nodes
+  \node[domain] (d1) at (-6,2) {Compiler};
+  \node[domain] (d2) at (-4.5,2) {Database};
+  \node[domain] (d3) at (-3,2) {ML/NAS};
+  \node[domain] (d4) at (-1.5,2) {Consensus};
+  \node[domain] (d5) at (0,2) {Crypto};
+  \node[domain] (d6) at (1.5,2) {Robotics};
+  \node[domain] (d7) at (3,2) {NLP};
+  \node[domain] (d8) at (4.5,2) {Vision};
+  \node[domain] (d9) at (6,2) {OS};
+  \node[domain] (d10) at (7.5,2) {Blockchain};
+
+  % Application counts
+  \node at (-6,0.8) {\small 10 apps};
+  \node at (-4.5,0.8) {\small 6 apps};
+  \node at (-3,0.8) {\small 11 apps};
+  \node at (-1.5,0.8) {\small 12 apps};
+  \node at (0,0.8) {\small 5 apps};
+  \node at (1.5,0.8) {\small 10 apps};
+  \node at (3,0.8) {\small 5 apps};
+  \node at (4.5,0.8) {\small 5 apps};
+  \node at (6,0.8) {\small 4 apps};
+  \node at (7.5,0.8) {\small 6 apps};
+
+  % Connections from root to domains
+  \draw[arrow] (root) -- (d1);
+  \draw[arrow] (root) -- (d2);
+  \draw[arrow] (root) -- (d3);
+  \draw[arrow] (root) -- (d4);
+  \draw[arrow] (root) -- (d5);
+  \draw[arrow] (root) -- (d6);
+  \draw[arrow] (root) -- (d7);
+  \draw[arrow] (root) -- (d8);
+  \draw[arrow] (root) -- (d9);
+  \draw[arrow] (root) -- (d10);
+
+  % Summary at bottom
+  \node at (0.75,-1.2) {\small\bf Total: 74 Applications | 10 Domains | 5+ Mathematical Frameworks};
+\end{tikzpicture}
