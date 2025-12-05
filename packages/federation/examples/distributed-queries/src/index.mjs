@@ -3,7 +3,7 @@
  * @description Demonstrates federated query execution, result aggregation, and fault handling
  */
 
-import { createCoordinator } from '../../../src/index.mjs';
+import { createCoordinator } from '@unrdf/federation';
 
 /**
  * Main example: Distributed Queries

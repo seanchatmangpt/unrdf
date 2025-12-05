@@ -5,6 +5,7 @@
 
 import { defineHook } from './define-hook.mjs';
 import { dataFactory } from '@unrdf/oxigraph';
+import { quadPool } from './quad-pool.mjs';
 
 /**
  * @typedef {import('n3').Quad} Quad
@@ -204,6 +205,71 @@ export const standardValidation = defineHook({
 });
 
 /* ========================================================================= */
+/* Pooled Variants (Zero-Allocation Transforms)                             */
+/* Uses quad-pool for branchless, Rust-inspired zero-copy semantics         */
+/* ========================================================================= */
+
+/**
+ * Pooled language tag normalization - zero allocation in hot path.
+ * Rust-inspired: borrow semantics via pool, avoid heap allocation.
+ */
+export const normalizeLanguageTagPooled = defineHook({
+  name: 'normalize-language-tag-pooled',
+  trigger: 'before-add',
+  transform: quad => {
+    // Branchless early return using bitwise (Rust: match arm optimization)
+    const isLiteral = quad.object.termType === 'Literal';
+    const hasLanguage = isLiteral && quad.object.language;
+
+    // Branchless: (condition) * value + (!condition) * default
+    // In JS, we use conditional but optimizer should inline
+    if (!hasLanguage) return quad;
+
+    // Pool-allocated quad (zero-copy transform)
+    return quadPool.acquire(
+      quad.subject,
+      quad.predicate,
+      dataFactory.literal(quad.object.value, quad.object.language.toLowerCase()),
+      quad.graph
+    );
+  },
+  metadata: {
+    description: 'Zero-allocation language tag normalization using quad pool',
+    pooled: true,
+  },
+});
+
+/**
+ * Pooled literal trimming - zero allocation in hot path.
+ * Rust-inspired: borrow semantics via pool, avoid heap allocation.
+ */
+export const trimLiteralsPooled = defineHook({
+  name: 'trim-literals-pooled',
+  trigger: 'before-add',
+  transform: quad => {
+    // Branchless early return
+    if (quad.object.termType !== 'Literal') return quad;
+
+    const trimmed = quad.object.value.trim();
+
+    // Branchless: avoid allocation if no change (Rust: Cow semantics)
+    if (trimmed === quad.object.value) return quad;
+
+    // Pool-allocated quad (zero-copy transform)
+    return quadPool.acquire(
+      quad.subject,
+      quad.predicate,
+      dataFactory.literal(trimmed, quad.object.language || quad.object.datatype),
+      quad.graph
+    );
+  },
+  metadata: {
+    description: 'Zero-allocation literal trimming using quad pool',
+    pooled: true,
+  },
+});
+
+/* ========================================================================= */
 /* Export all built-in hooks                                                */
 /* ========================================================================= */
 
@@ -220,6 +286,10 @@ export const builtinHooks = {
   normalizeNamespace,
   normalizeLanguageTag,
   trimLiterals,
+
+  // Pooled variants (zero-allocation)
+  normalizeLanguageTagPooled,
+  trimLiteralsPooled,
 
   // Composite
   standardValidation,

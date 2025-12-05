@@ -13,8 +13,8 @@ import {
   deleteCommand,
   describeCommand,
   mergeCommand,
-} from '../../src/cli/commands/graph.mjs';
-import { formatTable, formatJSON, formatCSV } from '../../src/cli/commands/query.mjs';
+} from '../src/cli/commands/graph.mjs';
+import { formatTable, formatJSON, formatCSV } from '../src/cli/commands/query.mjs';
 
 const TEST_DIR = path.join(
   process.cwd(),

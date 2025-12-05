@@ -1,0 +1,22 @@
+{
+  "name": "@unrdf/domain",
+  "version": "1.0.0",
+  "description": "Domain models and types for UNRDF",
+  "type": "module",
+  "main": "./src/index.mjs",
+  "exports": {
+    ".": "./src/index.mjs"
+  },
+  "files": [
+    "src"
+  ],
+  "private": true,
+  "keywords": [
+    "rdf",
+    "domain",
+    "models",
+    "types"
+  ],
+  "author": "UNRDF Contributors",
+  "license": "MIT"
+}

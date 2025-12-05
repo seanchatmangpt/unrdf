@@ -1,0 +1,20 @@
+% Concentration of Measure - Simplified
+\begin{tikzpicture}[scale=1.0]
+  \draw[thick,-] (0,0) -- (8,0) node[right] {Distance};
+  \draw[thick,-] (0,0) -- (0,5) node[above] {Probability};
+
+  % D=10 curve (wide)
+  \draw[thick,blue]
+    (1,0.5) .. controls (2,1.8) and (3,2) .. (4,1.8) .. controls (5,1.5) and (6,0.8) .. (7,0.2);
+  \node at (7.5,1.5) {\small $D=10$};
+
+  % D=100 curve (medium)
+  \draw[thick,green]
+    (2.5,0.3) .. controls (3,2.5) and (4,3) .. (4.2,2.8) .. controls (5,2) and (5.5,0.5) .. (6,0.1);
+  \node at (6.5,2.5) {\small $D=100$};
+
+  % D=1000 curve (sharp)
+  \draw[thick,red]
+    (3.5,0.2) .. controls (3.8,4) and (4.2,4.2) .. (4.3,3.8) .. controls (4.5,1.5) and (4.7,0.3) .. (5,0);
+  \node at (5,3.5) {\small $D=1000$};
+\end{tikzpicture}

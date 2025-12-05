@@ -1,363 +1,442 @@
 /**
- * @file SPARQL Query Analyzer - Extract query structure and patterns
- * @module @unrdf/dark-matter/query-analyzer
+ * @file Dark Matter 80/20 Query Analyzer
+ * @module dark-matter/query-analyzer
+ *
+ * @description
+ * Analyzes SPARQL queries to extract patterns, calculate complexity scores,
+ * and identify expensive operations for 80/20 optimization.
  */
 
+import { analyzeSPARQLQuery, extractVariables } from '../../utils/sparql-utils.mjs';
 import { z } from 'zod';
 
 /**
- * Query analysis result schema
+ * Schema for query analysis result
  */
-const AnalysisResultSchema = z.object({
-  type: z.enum(['select', 'construct', 'ask', 'describe', 'unknown']),
+const QueryAnalysisSchema = z.object({
+  queryId: z.string(),
+  query: z.string(),
+  type: z.enum(['SELECT', 'ASK', 'CONSTRUCT', 'DESCRIBE', 'UNKNOWN']),
   patterns: z.array(
     z.object({
-      subject: z.string(),
-      predicate: z.string(),
-      object: z.string(),
-      selectivity: z.number().min(0).max(1),
-    })
-  ),
-  variables: z.array(z.string()),
-  joins: z.array(
-    z.object({
-      variable: z.string(),
-      patterns: z.array(z.number()),
+      type: z.string(),
+      subject: z.string().optional(),
+      predicate: z.string().optional(),
+      object: z.string().optional(),
+      complexity: z.number(),
     })
   ),
   filters: z.array(z.string()),
-  prefixes: z.record(z.string()),
-  estimatedResults: z.number(),
-  criticalPath: z.array(z.number()),
+  joins: z.array(
+    z.object({
+      type: z.string(),
+      variables: z.array(z.string()),
+      estimatedCost: z.number(),
+    })
+  ),
+  aggregations: z.array(z.string()),
+  complexity: z.object({
+    score: z.number(),
+    patternCount: z.number(),
+    filterCount: z.number(),
+    joinCount: z.number(),
+    aggregationCount: z.number(),
+    variableCount: z.number(),
+    estimatedRows: z.number(),
+  }),
+  expensiveOperations: z.array(
+    z.object({
+      type: z.string(),
+      cost: z.number(),
+      reason: z.string(),
+    })
+  ),
+  timestamp: z.number(),
 });
 
 /**
- * Analyze SPARQL query structure
- * @param {string} query - SPARQL query string
- * @returns {Object} Analysis result with patterns, joins, complexity
- *
- * @throws {TypeError} If query is not a string
- *
- * @example
- * const analysis = analyzeSparqlQuery(`
- *   PREFIX foaf: <http://xmlns.com/foaf/0.1/>
- *   SELECT ?name ?email WHERE {
- *     ?person foaf:name ?name .
- *     ?person foaf:mbox ?email .
- *   }
- * `);
- *
- * console.log('Patterns:', analysis.patterns);
- * console.log('Joins:', analysis.joins);
+ * Query Analyzer for Dark Matter 80/20 optimization
  */
-export function analyzeSparqlQuery(query) {
-  if (typeof query !== 'string') {
-    throw new TypeError('analyzeSparqlQuery: query must be a string');
+export class QueryAnalyzer {
+  /**
+   * Create a new query analyzer
+   * @param {Object} [config] - Configuration
+   */
+  constructor(config = {}) {
+    this.config = {
+      complexityThreshold: config.complexityThreshold || 100,
+      expensiveOperationThreshold: config.expensiveOperationThreshold || 50,
+      joinCostMultiplier: config.joinCostMultiplier || 10,
+      filterCostMultiplier: config.filterCostMultiplier || 5,
+      aggregationCostMultiplier: config.aggregationCostMultiplier || 8,
+      ...config,
+    };
+
+    this.stats = {
+      totalAnalyzed: 0,
+      complexQueries: 0,
+      simpleQueries: 0,
+      avgComplexity: 0,
+    };
   }
 
-  // Detect query type
-  const trimmed = query.trim().toUpperCase();
-  let type = 'unknown';
+  /**
+   * Analyze a SPARQL query
+   * @param {string} query - SPARQL query string
+   * @param {string} [queryId] - Optional query identifier
+   * @param {Object} [metadata] - Optional metadata
+   * @returns {Object} Query analysis result
+   */
+  analyze(query, queryId = null, metadata = {}) {
+    const analysis = analyzeSPARQLQuery(query);
+    const patterns = this._extractPatterns(query, analysis);
+    const filters = this._extractFilters(query, analysis);
+    const joins = this._identifyJoins(query, analysis);
+    const aggregations = this._extractAggregations(query);
 
-  if (trimmed.includes('SELECT')) {
-    type = 'select';
-  } else if (trimmed.includes('CONSTRUCT')) {
-    type = 'construct';
-  } else if (trimmed.includes('ASK')) {
-    type = 'ask';
-  } else if (trimmed.includes('DESCRIBE')) {
-    type = 'describe';
-  }
+    // Calculate complexity score
+    const complexity = this._calculateComplexity(patterns, filters, joins, aggregations, analysis);
 
-  // Extract prefixes
-  const prefixes = {};
-  const prefixMatches = query.matchAll(/PREFIX\s+(\w+):\s*<([^>]+)>/gi);
-  for (const match of prefixMatches) {
-    prefixes[match[1]] = match[2];
-  }
-
-  // Extract variables
-  const variables = [];
-  const varMatches = query.match(/\?(\w+)/g);
-  if (varMatches) {
-    const uniqueVars = new Set(varMatches.map(v => v.slice(1)));
-    variables.push(...uniqueVars);
-  }
-
-  // Extract triple patterns from WHERE clause
-  const whereMatch = query.match(/WHERE\s*\{([^}]+)\}/is);
-  const patterns = [];
-
-  if (whereMatch) {
-    const whereClause = whereMatch[1];
-    // Enhanced pattern extraction: subject predicate object
-    // Handles URIs with : and / characters
-    const patternMatches = whereClause.matchAll(
-      /(<?[?:\w/._#-]+>?)\s+(<?[?:\w/._#:-]+>?)\s+(<?[?:\w/._#"@-]+>?)/g
+    // Identify expensive operations
+    const expensiveOperations = this._identifyExpensiveOperations(
+      patterns,
+      filters,
+      joins,
+      aggregations,
+      complexity
     );
 
-    for (const match of patternMatches) {
+    const result = {
+      queryId: queryId || `query-${Date.now()}`,
+      query,
+      type: analysis.type,
+      patterns,
+      filters,
+      joins,
+      aggregations,
+      complexity,
+      expensiveOperations,
+      timestamp: Date.now(),
+      metadata,
+    };
+
+    // Update stats
+    this.stats.totalAnalyzed++;
+    if (complexity.score >= this.config.complexityThreshold) {
+      this.stats.complexQueries++;
+    } else {
+      this.stats.simpleQueries++;
+    }
+
+    // Update average complexity
+    this.stats.avgComplexity =
+      (this.stats.avgComplexity * (this.stats.totalAnalyzed - 1) + complexity.score) /
+      this.stats.totalAnalyzed;
+
+    return QueryAnalysisSchema.parse(result);
+  }
+
+  /**
+   * Extract triple patterns from query
+   * @param {string} query - SPARQL query
+   * @param {Object} analysis - Basic analysis
+   * @returns {Array} Triple patterns
+   * @private
+   */
+  _extractPatterns(query, _analysis) {
+    const patterns = [];
+
+    // Extract WHERE clause
+    const whereMatch = query.match(/WHERE\s*\{([^}]+)\}/is);
+    if (!whereMatch) return patterns;
+
+    const whereClause = whereMatch[1];
+
+    // Simple pattern extraction (s p o .)
+    const triplePattern = /(\??\w+|<[^>]+>)\s+(\??\w+|<[^>]+>)\s+(\??\w+|<[^>]+>|"[^"]*")\s*\./g;
+    let match;
+
+    while ((match = triplePattern.exec(whereClause)) !== null) {
       const [, subject, predicate, object] = match;
 
-      // Skip if this looks like a FILTER or other clause
-      if (subject.toUpperCase() === 'FILTER' || predicate.toUpperCase() === 'FILTER') {
-        continue;
-      }
+      // Calculate pattern complexity
+      let complexity = 1;
 
-      // Calculate selectivity based on specificity
-      // More specific terms (URIs, literals) have higher selectivity
-      const selectivity = calculateSelectivity(subject, predicate, object);
+      // Variable in subject position = join likely
+      if (subject.startsWith('?')) complexity += 5;
+
+      // Variable in predicate position = very expensive
+      if (predicate.startsWith('?')) complexity += 10;
+
+      // Variable in object position = filter likely
+      if (object.startsWith('?')) complexity += 3;
 
       patterns.push({
-        subject: subject.trim(),
-        predicate: predicate.trim(),
-        object: object.trim(),
-        selectivity,
+        type: 'triple',
+        subject,
+        predicate,
+        object,
+        complexity,
       });
     }
+
+    return patterns;
   }
 
-  // Identify joins (shared variables across patterns)
-  const joins = identifyJoins(patterns);
+  /**
+   * Extract FILTER clauses
+   * @param {string} query - SPARQL query
+   * @param {Object} analysis - Basic analysis
+   * @returns {Array} Filters
+   * @private
+   */
+  _extractFilters(query, _analysis) {
+    const filters = [];
+    const filterPattern = /FILTER\s*\(([^)]+)\)/gi;
+    let match;
 
-  // Extract FILTER clauses
-  const filters = [];
-  const filterMatches = query.matchAll(/FILTER\s*\(([^)]+)\)/gi);
-  for (const match of filterMatches) {
-    filters.push(match[1].trim());
+    while ((match = filterPattern.exec(query)) !== null) {
+      filters.push(match[1].trim());
+    }
+
+    return filters;
   }
 
-  // Estimate result count (heuristic-based)
-  const estimatedResults = estimateResultCount(patterns, joins, filters);
+  /**
+   * Identify JOIN operations
+   * @param {string} query - SPARQL query
+   * @param {Object} analysis - Basic analysis
+   * @returns {Array} Joins
+   * @private
+   */
+  _identifyJoins(query, _analysis) {
+    const joins = [];
+    const variables = extractVariables(query);
 
-  // Find critical path (most selective patterns)
-  const criticalPath = findCriticalPath(patterns);
+    // Simple heuristic: if a variable appears multiple times, it's a join
+    const variableCounts = new Map();
 
-  const result = {
-    type,
-    patterns,
-    variables,
-    joins,
-    filters,
-    prefixes,
-    estimatedResults,
-    criticalPath,
-  };
+    for (const variable of variables) {
+      const regex = new RegExp(`\\?${variable}`, 'g');
+      const matches = query.match(regex);
+      variableCounts.set(variable, matches ? matches.length : 0);
+    }
 
-  return AnalysisResultSchema.parse(result);
-}
+    // Identify joins based on shared variables
+    for (const [variable, count] of variableCounts.entries()) {
+      if (count >= 2) {
+        // Estimate join cost based on number of occurrences
+        const estimatedCost = count * this.config.joinCostMultiplier;
 
-/**
- * Calculate selectivity for a triple pattern
- * @param {string} subject - Subject term
- * @param {string} predicate - Predicate term
- * @param {string} object - Object term
- * @returns {number} Selectivity score 0-1
- */
-function calculateSelectivity(subject, predicate, object) {
-  let score = 0;
-
-  // Subject selectivity
-  if (subject.startsWith('<')) {
-    score += 0.4; // URI is specific
-  } else if (!subject.startsWith('?')) {
-    score += 0.3; // Literal/prefixed
-  } else {
-    score += 0.1; // Variable is least specific
-  }
-
-  // Predicate selectivity
-  if (predicate.startsWith('<')) {
-    score += 0.3;
-  } else if (!predicate.startsWith('?')) {
-    score += 0.2;
-  } else {
-    score += 0.05;
-  }
-
-  // Object selectivity
-  if (object.startsWith('<') || object.startsWith('"')) {
-    score += 0.3; // URI or literal
-  } else if (!object.startsWith('?')) {
-    score += 0.2;
-  } else {
-    score += 0.05;
-  }
-
-  return Math.min(score, 1.0);
-}
-
-/**
- * Identify join points (shared variables)
- * @param {Array} patterns - Triple patterns
- * @returns {Array} Join specifications
- */
-function identifyJoins(patterns) {
-  const variableOccurrences = new Map();
-
-  patterns.forEach((pattern, idx) => {
-    [pattern.subject, pattern.predicate, pattern.object].forEach(term => {
-      if (term.startsWith('?')) {
-        if (!variableOccurrences.has(term)) {
-          variableOccurrences.set(term, []);
-        }
-        variableOccurrences.get(term).push(idx);
+        joins.push({
+          type: 'variable-join',
+          variables: [variable],
+          estimatedCost,
+        });
       }
-    });
-  });
+    }
 
-  const joins = [];
-  for (const [variable, patternIndices] of variableOccurrences) {
-    if (patternIndices.length > 1) {
+    // Detect OPTIONAL joins (left outer joins)
+    if (query.includes('OPTIONAL')) {
       joins.push({
-        variable,
-        patterns: patternIndices,
+        type: 'optional-join',
+        variables: [],
+        estimatedCost: 20, // OPTIONAL is typically expensive
       });
     }
+
+    // Detect UNION (union joins)
+    if (query.includes('UNION')) {
+      joins.push({
+        type: 'union',
+        variables: [],
+        estimatedCost: 30, // UNION is very expensive
+      });
+    }
+
+    return joins;
   }
 
-  return joins;
+  /**
+   * Extract aggregation operations
+   * @param {string} query - SPARQL query
+   * @returns {Array} Aggregations
+   * @private
+   */
+  _extractAggregations(query) {
+    const aggregations = [];
+    const aggPattern = /(COUNT|SUM|AVG|MIN|MAX|GROUP_CONCAT|SAMPLE)\s*\(/gi;
+    let match;
+
+    while ((match = aggPattern.exec(query)) !== null) {
+      aggregations.push(match[1].toUpperCase());
+    }
+
+    return aggregations;
+  }
+
+  /**
+   * Calculate query complexity score
+   * @param {Array} patterns - Triple patterns
+   * @param {Array} filters - Filters
+   * @param {Array} joins - Joins
+   * @param {Array} aggregations - Aggregations
+   * @param {Object} analysis - Basic analysis
+   * @returns {Object} Complexity metrics
+   * @private
+   */
+  _calculateComplexity(patterns, filters, joins, aggregations, analysis) {
+    let score = 0;
+
+    // Base cost from patterns
+    const patternCost = patterns.reduce((sum, p) => sum + p.complexity, 0);
+    score += patternCost;
+
+    // Filter cost
+    const filterCost = filters.length * this.config.filterCostMultiplier;
+    score += filterCost;
+
+    // Join cost
+    const joinCost = joins.reduce((sum, j) => sum + j.estimatedCost, 0);
+    score += joinCost;
+
+    // Aggregation cost
+    const aggregationCost = aggregations.length * this.config.aggregationCostMultiplier;
+    score += aggregationCost;
+
+    // Complexity modifiers
+    if (analysis.hasGroupBy) score *= 1.5;
+    if (analysis.hasOrderBy) score *= 1.2;
+    if (analysis.hasDistinct) score *= 1.3;
+
+    // Estimate result rows (used for optimization decisions)
+    let estimatedRows = 100; // Base estimate
+
+    if (joins.length > 0) {
+      estimatedRows *= Math.pow(10, joins.length); // Cartesian product estimation
+    }
+
+    if (filters.length > 0) {
+      estimatedRows /= filters.length * 2; // Filters reduce results
+    }
+
+    return {
+      score: Math.round(score),
+      patternCount: patterns.length,
+      filterCount: filters.length,
+      joinCount: joins.length,
+      aggregationCount: aggregations.length,
+      variableCount: analysis.variables.length,
+      estimatedRows: Math.round(estimatedRows),
+    };
+  }
+
+  /**
+   * Identify expensive operations
+   * @param {Array} patterns - Triple patterns
+   * @param {Array} filters - Filters
+   * @param {Array} joins - Joins
+   * @param {Array} aggregations - Aggregations
+   * @param {Object} complexity - Complexity metrics
+   * @returns {Array} Expensive operations
+   * @private
+   */
+  _identifyExpensiveOperations(patterns, filters, joins, aggregations, complexity) {
+    const expensive = [];
+
+    // Check for expensive patterns
+    for (const pattern of patterns) {
+      if (pattern.complexity >= this.config.expensiveOperationThreshold / 5) {
+        expensive.push({
+          type: 'pattern',
+          cost: pattern.complexity,
+          reason: `High complexity pattern: ${pattern.subject} ${pattern.predicate} ${pattern.object}`,
+        });
+      }
+
+      // Variable predicates are very expensive
+      if (pattern.predicate.startsWith('?')) {
+        expensive.push({
+          type: 'variable-predicate',
+          cost: 100,
+          reason: `Variable predicate ${pattern.predicate} requires full graph scan`,
+        });
+      }
+    }
+
+    // Check for expensive joins
+    for (const join of joins) {
+      if (join.estimatedCost >= this.config.expensiveOperationThreshold) {
+        expensive.push({
+          type: 'join',
+          cost: join.estimatedCost,
+          reason: `${join.type} with cost ${join.estimatedCost}`,
+        });
+      }
+    }
+
+    // UNION is always expensive
+    if (joins.some(j => j.type === 'union')) {
+      expensive.push({
+        type: 'union',
+        cost: 50,
+        reason: 'UNION requires multiple query executions',
+      });
+    }
+
+    // Aggregations without GROUP BY are expensive on large datasets
+    if (aggregations.length > 0 && complexity.estimatedRows > 1000) {
+      expensive.push({
+        type: 'aggregation',
+        cost: aggregations.length * this.config.aggregationCostMultiplier,
+        reason: `${aggregations.length} aggregation(s) on ~${complexity.estimatedRows} rows`,
+      });
+    }
+
+    // Unfiltered queries with high estimated rows
+    if (filters.length === 0 && complexity.estimatedRows > 10000) {
+      expensive.push({
+        type: 'unfiltered',
+        cost: 75,
+        reason: `No filters with estimated ${complexity.estimatedRows} rows`,
+      });
+    }
+
+    return expensive.sort((a, b) => b.cost - a.cost);
+  }
+
+  /**
+   * Get analyzer statistics
+   * @returns {Object} Statistics
+   */
+  getStats() {
+    return {
+      ...this.stats,
+      complexQueryRatio:
+        this.stats.totalAnalyzed > 0 ? this.stats.complexQueries / this.stats.totalAnalyzed : 0,
+    };
+  }
+
+  /**
+   * Reset statistics
+   */
+  resetStats() {
+    this.stats = {
+      totalAnalyzed: 0,
+      complexQueries: 0,
+      simpleQueries: 0,
+      avgComplexity: 0,
+    };
+  }
 }
 
 /**
- * Estimate result count (heuristic)
- * @param {Array} patterns - Triple patterns
- * @param {Array} joins - Join specifications
- * @param {Array} filters - FILTER clauses
- * @returns {number} Estimated result count
+ * Create a query analyzer instance
+ * @param {Object} [config] - Configuration
+ * @returns {QueryAnalyzer} Query analyzer
  */
-function estimateResultCount(patterns, joins, filters) {
-  // Base estimate from pattern selectivity
-  let estimate = 1000;
-
-  if (patterns.length === 0) {
-    return 0;
-  }
-
-  // Reduce by average selectivity
-  const avgSelectivity = patterns.reduce((sum, p) => sum + p.selectivity, 0) / patterns.length;
-  estimate *= avgSelectivity;
-
-  // Joins reduce results (more joins = fewer results)
-  estimate /= Math.pow(joins.length + 1, 0.5);
-
-  // Filters reduce results
-  estimate /= Math.pow(filters.length + 1, 0.3);
-
-  return Math.max(1, Math.round(estimate));
+export function createQueryAnalyzer(config = {}) {
+  return new QueryAnalyzer(config);
 }
 
-/**
- * Find critical path (most selective patterns in execution order)
- * @param {Array} patterns - Triple patterns
- * @returns {Array<number>} Pattern indices in critical path
- */
-function findCriticalPath(patterns) {
-  // Sort patterns by selectivity (descending)
-  const indexed = patterns.map((p, idx) => ({ idx, selectivity: p.selectivity }));
-  indexed.sort((a, b) => b.selectivity - a.selectivity);
-
-  // Take top 20% or at least 1 pattern
-  const criticalCount = Math.max(1, Math.ceil(patterns.length * 0.2));
-  return indexed.slice(0, criticalCount).map(p => p.idx);
-}
-
-/**
- * Estimate query complexity (1-10 scale)
- * @param {string} query - SPARQL query string
- * @returns {number} Complexity score 1-10
- *
- * @throws {TypeError} If query is not a string
- *
- * @example
- * const complexity = estimateComplexity(`SELECT * WHERE { ?s ?p ?o }`);
- * console.log('Complexity:', complexity); // Low complexity
- */
-export function estimateComplexity(query) {
-  if (typeof query !== 'string') {
-    throw new TypeError('estimateComplexity: query must be a string');
-  }
-
-  const analysis = analyzeSparqlQuery(query);
-
-  let score = 1;
-
-  // Pattern count contributes to complexity
-  score += Math.min(analysis.patterns.length * 0.5, 3);
-
-  // Join count increases complexity
-  score += Math.min(analysis.joins.length * 1.0, 3);
-
-  // Filters add complexity
-  score += Math.min(analysis.filters.length * 0.5, 2);
-
-  // Variable count affects complexity
-  score += Math.min(analysis.variables.length * 0.3, 1);
-
-  return Math.min(Math.round(score), 10);
-}
-
-/**
- * Identify bottlenecks in query
- * @param {string} query - SPARQL query string
- * @returns {Array<Object>} Bottleneck descriptions
- *
- * @throws {TypeError} If query is not a string
- *
- * @example
- * const bottlenecks = identifyBottlenecks(query);
- * bottlenecks.forEach(b => console.log(b.type, b.description));
- */
-export function identifyBottlenecks(query) {
-  if (typeof query !== 'string') {
-    throw new TypeError('identifyBottlenecks: query must be a string');
-  }
-
-  const analysis = analyzeSparqlQuery(query);
-  const bottlenecks = [];
-
-  // Too many patterns without specific predicates
-  const lowSelectivityPatterns = analysis.patterns.filter(p => p.selectivity < 0.3);
-  if (lowSelectivityPatterns.length > 3) {
-    bottlenecks.push({
-      type: 'low_selectivity',
-      severity: 'high',
-      description: `${lowSelectivityPatterns.length} patterns with low selectivity (high cardinality)`,
-      recommendation: 'Add more specific predicates or URIs to patterns',
-    });
-  }
-
-  // Many joins can be expensive
-  if (analysis.joins.length > 5) {
-    bottlenecks.push({
-      type: 'many_joins',
-      severity: 'medium',
-      description: `${analysis.joins.length} joins detected`,
-      recommendation: 'Consider breaking query into smaller queries or adding indexes',
-    });
-  }
-
-  // Complex filters can be slow
-  const complexFilters = analysis.filters.filter(f => f.length > 50 || f.includes('REGEX'));
-  if (complexFilters.length > 0) {
-    bottlenecks.push({
-      type: 'complex_filter',
-      severity: 'medium',
-      description: `${complexFilters.length} complex FILTER expressions`,
-      recommendation: 'Move filter logic to WHERE patterns when possible',
-    });
-  }
-
-  // Wildcard object in many patterns
-  const wildcardObjects = analysis.patterns.filter(p => p.object.startsWith('?'));
-  if (wildcardObjects.length / analysis.patterns.length > 0.7) {
-    bottlenecks.push({
-      type: 'many_wildcards',
-      severity: 'low',
-      description: 'High percentage of wildcard objects',
-      recommendation: 'Specify object values when known',
-    });
-  }
-
-  return bottlenecks;
-}
+export default QueryAnalyzer;

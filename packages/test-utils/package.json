@@ -1,0 +1,21 @@
+{
+  "name": "@unrdf/test-utils",
+  "version": "1.0.0",
+  "description": "Testing utilities for UNRDF development",
+  "type": "module",
+  "main": "./src/index.mjs",
+  "exports": {
+    ".": "./src/index.mjs"
+  },
+  "files": [
+    "src"
+  ],
+  "private": true,
+  "keywords": [
+    "rdf",
+    "testing",
+    "utilities"
+  ],
+  "author": "UNRDF Contributors",
+  "license": "MIT"
+}

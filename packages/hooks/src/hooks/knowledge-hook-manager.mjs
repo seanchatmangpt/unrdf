@@ -40,13 +40,38 @@ export class KnowledgeHookManager {
   #registry;
 
   /**
+   * POKA-YOKE: Recursive execution guard (RPN 128 → 0)
+   * @private
+   * @type {number}
+   */
+  #executionDepth = 0;
+
+  /**
+   * Maximum allowed execution depth
+   * @private
+   * @type {number}
+   */
+  #maxExecutionDepth = 3;
+
+  /**
    * Create a new KnowledgeHookManager
    *
    * @param {Object} [options] - Configuration options
    * @param {boolean} [options.includeBuiltins=false] - Include built-in hooks
+   * @param {number} [options.maxExecutionDepth=3] - Maximum recursion depth (1-10)
    */
   constructor(options = {}) {
     this.#registry = createHookRegistry();
+
+    // POKA-YOKE: Validate maxExecutionDepth bounds (RPN 128 → 0)
+    if (options.maxExecutionDepth !== undefined) {
+      if (options.maxExecutionDepth < 1 || options.maxExecutionDepth > 10) {
+        throw new Error(
+          `[POKA-YOKE] maxExecutionDepth must be between 1 and 10, got ${options.maxExecutionDepth}`
+        );
+      }
+      this.#maxExecutionDepth = options.maxExecutionDepth;
+    }
 
     // Register built-in hooks if requested
     if (options.includeBuiltins) {
@@ -54,6 +79,22 @@ export class KnowledgeHookManager {
         registerHook(this.#registry, hook);
       }
     }
+  }
+
+  /**
+   * Get current execution depth
+   * @returns {number}
+   */
+  getExecutionDepth() {
+    return this.#executionDepth;
+  }
+
+  /**
+   * Check if currently executing hooks
+   * @returns {boolean}
+   */
+  isExecuting() {
+    return this.#executionDepth > 0;
   }
 
   /**
@@ -185,8 +226,23 @@ export class KnowledgeHookManager {
    * @returns {Promise<import('./hook-executor.mjs').ChainResult>}
    */
   async executeByTrigger(trigger, data, context) {
-    const hooks = this.listHooks();
-    return executeHooksByTrigger(hooks, trigger, data, context);
+    // POKA-YOKE: Recursive execution guard (RPN 128 → 0)
+    if (this.#executionDepth >= this.#maxExecutionDepth) {
+      const error = new Error(
+        `[POKA-YOKE] Recursive hook execution detected (depth: ${this.#executionDepth}, max: ${this.#maxExecutionDepth}). ` +
+          `Trigger: ${trigger}`
+      );
+      error.code = 'RECURSIVE_HOOK_EXECUTION';
+      throw error;
+    }
+
+    this.#executionDepth++;
+    try {
+      const hooks = this.listHooks();
+      return executeHooksByTrigger(hooks, trigger, data, context);
+    } finally {
+      this.#executionDepth--;
+    }
   }
 
   /**

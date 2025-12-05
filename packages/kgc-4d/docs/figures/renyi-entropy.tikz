@@ -1,0 +1,24 @@
+% Rényi Entropy - Simplified
+\begin{tikzpicture}[scale=1.0]
+  % Axes
+  \draw[thick,-] (0,0) -- (8,0) node[right] {$\alpha$ (order)};
+  \draw[thick,-] (0,0) -- (0,5) node[above] {$D_\alpha(P)$ (bits)};
+
+  % Curve 1: Concentrated
+  \draw[thick,blue]
+    (0.2,3.2) .. controls (2,3.5) and (4,3.3) .. (7,3);
+  \node at (7.2,3.3) {\small Concentrated};
+
+  % Curve 2: Uniform
+  \draw[thick,green]
+    (0.2,3.8) .. controls (2,3.8) and (4,3.7) .. (7,3.6);
+  \node at (7.2,3.9) {\small Uniform};
+
+  % Curve 3: Max-entropy
+  \draw[thick,red]
+    (0.2,4.2) .. controls (2,4.1) and (4,4) .. (7,3.9);
+  \node at (7.2,4.3) {\small Max-Entropy};
+
+  % Grid
+  \draw[gray!20,thin] (0,0) grid (8,5);
+\end{tikzpicture}
