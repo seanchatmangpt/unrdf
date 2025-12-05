@@ -2,6 +2,8 @@
 
 Welcome to UNRDF! This guide will help you understand what UNRDF is and get you started in 5 minutes.
 
+> **New to the UNRDF monorepo?** Start here for users. If you're contributing to UNRDF itself, check [MONOREPO-QUICK-REFERENCE.md](MONOREPO-QUICK-REFERENCE.md) instead.
+
 ## What is UNRDF?
 
 UNRDF is a **knowledge graph platform for JavaScript/Node.js**. It lets you:
@@ -268,11 +270,19 @@ store.addQuad(...);  // Hook fires automatically!
 
 ## Next Steps
 
+### For Users (Using UNRDF)
 1. **Read** [ARCHITECTURE.md](../ARCHITECTURE.md) to understand how pieces fit together
 2. **Explore** [PACKAGES.md](../PACKAGES.md) to see what each package does
 3. **Try** [GETTING-STARTED/QUICK-START.md](GETTING-STARTED/QUICK-START.md) for more examples
 4. **Learn** [GETTING-STARTED/INSTALLATION.md](GETTING-STARTED/INSTALLATION.md) for detailed setup
 5. **Reference** [API-REFERENCE.md](../API-REFERENCE.md) for complete API docs
+
+### For Contributors (Working on UNRDF)
+1. **Quick overview** → [MONOREPO-QUICK-REFERENCE.md](MONOREPO-QUICK-REFERENCE.md) - What are all 17 packages?
+2. **Set up locally** → [LOCAL-DEVELOPMENT.md](LOCAL-DEVELOPMENT.md) - Dev environment, tests, builds
+3. **Understand layout** → [WORKSPACE-STRUCTURE.md](WORKSPACE-STRUCTURE.md) - File structure of packages
+4. **Contribute code** → [PACKAGE-DEVELOPMENT.md](PACKAGE-DEVELOPMENT.md) - How to modify/add packages
+5. **Test properly** → [TESTING-STRATEGY.md](TESTING-STRATEGY.md) - Cross-package testing
 
 ---
 
