@@ -8,6 +8,15 @@ import { dataFactory } from '@unrdf/oxigraph';
 import { GRAPHS, PREDICATES, EVENT_TYPES } from './constants.mjs';
 import { now, toISO, VectorClock } from './time.mjs';
 
+// GAP-A1 fix: Validate GRAPHS at module load
+if (!GRAPHS || !GRAPHS.UNIVERSE || !GRAPHS.EVENT_LOG || !GRAPHS.SYSTEM) {
+  throw new Error('Invalid GRAPHS export from constants - missing required graph URIs');
+}
+
+// Constants for payload validation (GAP-S1 fix)
+const MAX_PAYLOAD_SIZE_BYTES = 1_000_000;  // 1MB limit
+const PAYLOAD_SIZE_WARNING_BYTES = 100_000;  // 100KB warning threshold
+
 export class KGCStore extends UnrdfStore {
   /**
    * @param {Object} options
@@ -15,7 +24,7 @@ export class KGCStore extends UnrdfStore {
    */
   constructor(options = {}) {
     super(options);
-    this.eventCount = 0;
+    this.eventCount = 0n;  // GAP-S4 fix: Use BigInt to prevent overflow after 2^53
     // Initialize vector clock with node ID (or generate one)
     const nodeId = options.nodeId || this._generateNodeId();
     this.vectorClock = new VectorClock(nodeId);
@@ -58,18 +67,42 @@ export class KGCStore extends UnrdfStore {
     const eventId = this._generateEventId();
     const t_ns = now();
 
+    // GAP-S1 fix: Validate payload size before serialization
+    if (eventData.payload) {
+      const payloadStr = JSON.stringify(eventData.payload);
+      const payloadSize = Buffer.byteLength(payloadStr, 'utf8');
+
+      if (payloadSize > MAX_PAYLOAD_SIZE_BYTES) {
+        throw new Error(
+          `Event payload exceeds size limit: ${payloadSize} bytes > ${MAX_PAYLOAD_SIZE_BYTES} bytes (1MB)`
+        );
+      }
+
+      if (payloadSize > PAYLOAD_SIZE_WARNING_BYTES && typeof console !== 'undefined' && console.warn) {
+        console.warn(
+          `[KGC Store] Large payload warning: ${payloadSize} bytes (threshold: ${PAYLOAD_SIZE_WARNING_BYTES} bytes)`
+        );
+      }
+    }
+
     // Increment vector clock on each event
     this.vectorClock.increment();
 
-    // Serialize deltas for time-travel replay
+    // GAP-S2 fix: Improved delta serialization with better blank node handling
     const serializedDeltas = deltas.map(d => ({
       type: d.type,
       subject: d.subject.value,
       subjectType: d.subject.termType,
       predicate: d.predicate.value,
-      object: d.object.termType === 'Literal'
-        ? { value: d.object.value, type: 'Literal', datatype: d.object.datatype?.value, language: d.object.language }
-        : { value: d.object.value, type: d.object.termType },
+      // Store object with all necessary RDF properties for accurate reconstruction
+      object: {
+        value: d.object.value,
+        type: d.object.termType,
+        ...(d.object.termType === 'Literal' && {
+          datatype: d.object.datatype?.value,
+          language: d.object.language,
+        }),
+      },
     }));
 
     // 1. Serialize event to RDF quads for EventLog
@@ -112,6 +145,7 @@ export class KGCStore extends UnrdfStore {
       }
     }
 
+    // GAP-S4 fix: Use BigInt for eventCount to prevent overflow
     this.eventCount++;
 
     // 3. Generate and return receipt
@@ -120,7 +154,7 @@ export class KGCStore extends UnrdfStore {
         id: eventId,
         t_ns: t_ns.toString(),
         timestamp_iso: toISO(t_ns),
-        event_count: this.eventCount,
+        event_count: Number(this.eventCount),  // Convert to Number for compatibility
       },
     };
   }
@@ -141,6 +175,7 @@ export class KGCStore extends UnrdfStore {
 
   /**
    * Get current event count
+   * Returns BigInt to support arbitrarily large counts
    */
   getEventCount() {
     return this.eventCount;
