@@ -20,6 +20,21 @@ const nextConfig = {
       type: 'webassembly/async',
     });
 
+    // CLIENT-SIDE: Provide fallbacks for Node.js modules
+    // Client code uses @unrdf/kgc-4d/client which has no native dependencies
+    if (!isServer) {
+      config.resolve = config.resolve || {};
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        path: false,
+        crypto: false,
+        stream: false,
+        buffer: false,
+        util: false,
+      };
+    }
+
     return config;
   },
 
