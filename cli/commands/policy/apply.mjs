@@ -1,9 +1,10 @@
 /**
- * @file Policy Apply Command
+ * @file Policy Apply Command - with JSON schema validation
  */
 
 import { defineCommand } from 'citty';
 import { readFile } from 'node:fs/promises';
+import { validatePolicyFile, formatPolicySchemaDescription } from '../../utils/policy-schema.mjs';
 
 export const applyCommand = defineCommand({
   meta: {
@@ -26,12 +27,31 @@ export const applyCommand = defineCommand({
     const { file, 'dry-run': dryRun } = ctx.args;
 
     try {
-      const content = await readFile(file, 'utf-8');
-      const policy = JSON.parse(content);
+      // FM-CLI-012: Validate policy file before applying
+      const validation = await validatePolicyFile(file);
+
+      if (!validation.valid) {
+        console.error(`\n❌ ${validation.error}`);
+        if (validation.issues) {
+          console.error('\n📋 Validation Issues:');
+          validation.issues.forEach(issue => {
+            console.error(`   • ${issue.path}: ${issue.message}`);
+          });
+        }
+        if (validation.suggestion) {
+          console.error(`\n📖 ${validation.suggestion}`);
+        }
+        console.error('\n📚 Expected Policy Schema:');
+        console.error(formatPolicySchemaDescription());
+        process.exit(1);
+      }
+
+      const policy = validation.data;
 
       if (dryRun) {
         console.log(`Would apply policy pack: ${policy.name}`);
         console.log(`  Hooks: ${policy.hooks?.length || 0}`);
+        console.log(`  Rules: ${policy.rules?.length || 0}`);
         return;
       }
 

@@ -16,6 +16,7 @@ import { resolve, join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createInterface } from 'node:readline/promises';
 import { stdin as input, stdout as output } from 'node:process';
+import { executeInitTransaction } from '../utils/transactional-init.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const TEMPLATES_DIR = resolve(__dirname, '../../../templates/projects');
@@ -338,15 +339,36 @@ export const initCommand = defineCommand({
       const projectPath = resolve(process.cwd(), projectName);
       console.log(`\n📦 Creating project at ${projectPath}...\n`);
 
-      // Copy template
-      await copyTemplate(templateType, projectPath);
+      // FM-CLI-008: Use transactional init with rollback capability
+      const initResult = await executeInitTransaction(async (txn) => {
+        // Copy template
+        await copyTemplate(templateType, projectPath);
 
-      // Update files
-      await updatePackageJson(projectPath, projectName);
-      await updateConfig(projectPath, baseIRI);
+        // Update files
+        await updatePackageJson(projectPath, projectName);
+        await updateConfig(projectPath, baseIRI);
 
-      // Initialize git
-      await initializeGit(projectPath, initGit);
+        // Initialize git
+        await initializeGit(projectPath, initGit);
+
+        return {
+          projectPath,
+          projectName,
+          templateType
+        };
+      }, { onFailure: 'rollback' });
+
+      if (!initResult.success) {
+        console.error(`\n❌ ${initResult.error}`);
+        if (initResult.rollback) {
+          console.log(`✅ Rolled back ${initResult.rollback.rollbackCount} operations`);
+          if (initResult.rollback.errors.length > 0) {
+            console.warn('⚠️  Errors during rollback:');
+            initResult.rollback.errors.forEach(err => console.warn(`   - ${err}`));
+          }
+        }
+        throw new Error('Project initialization failed and was rolled back');
+      }
 
       // Install dependencies
       if (runInstall) {
