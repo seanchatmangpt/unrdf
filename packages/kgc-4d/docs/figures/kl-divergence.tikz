@@ -1,0 +1,20 @@
+% KL Divergence Surface - Simplified 2D
+\begin{tikzpicture}[scale=1.0]
+  % Axes
+  \draw[thick,-] (0,0) -- (8,0) node[right] {$\theta_1$};
+  \draw[thick,-] (0,0) -- (0,6) node[above] {$\theta_2$};
+
+  % Contour lines (circles centered at (4,3))
+  \draw[gray,thin] (4,3) circle (1.5);
+  \draw[gray,thin] (4,3) circle (2.5);
+  \draw[gray,thin] (4,3) circle (3.5);
+
+  % Minimum point
+  \draw[fill=red] (4,3) circle (0.15);
+  \node at (4.3,3.3) {\small min};
+
+  % Labels
+  \node at (4.2,0.3) {0} (0,0);
+  \node at (0.2,3) {0} (0,0);
+  \node at (4,-0.6) {Information Manifold - KL Divergence};
+\end{tikzpicture}

@@ -1,0 +1,40 @@
+% KGC 4D Event Flow Architecture Diagram
+\begin{tikzpicture}[>=stealth,node distance=1.5cm,scale=0.8,transform shape]
+  \tikzset{
+    box/.style={rectangle,draw,thick,minimum width=1.5cm,minimum height=0.6cm,fill=blue!10},
+    db/.style={cylinder,draw,thick,shape aspect=0.7,minimum height=1cm,fill=green!10},
+    process/.style={rectangle,draw,thick,minimum width=2cm,minimum height=0.8cm,fill=yellow!10,rounded corners},
+    arrow/.style={->,thick,color=darkgray}
+  }
+
+  % Event sources
+  \node[box] (event) at (0,0) {Event};
+
+  % Event log
+  \node[db] (eventlog) at (3,0) {EventLog};
+
+  % Snapshot creation
+  \node[process] (snapshot) at (6,0) {Snapshot};
+
+  % Universe state
+  \node[db] (universe) at (9,0) {Universe};
+
+  % Git backing
+  \node[db] (git) at (9,-2) {Git};
+
+  % Vector clock
+  \node[box] (vclock) at (3,-2) {VectorClock};
+
+  % Connections
+  \draw[arrow] (event) -- (eventlog) node[midway,above] {$t_{ns}$, payload};
+  \draw[arrow] (eventlog) -- (snapshot) node[midway,above] {quads};
+  \draw[arrow] (snapshot) -- (universe) node[midway,above] {delta};
+  \draw[arrow] (snapshot) -- (git) node[midway,right] {hash};
+  \draw[arrow] (vclock) -- (eventlog) node[midway,left] {nodeId, clock};
+
+  % Time travel
+  \draw[<->,dashed,thick,color=red] (eventlog) to[bend left] (universe) node[midway,right,color=red] {time travel};
+
+  % Labels
+  \node at (4.5,-3) {\small\bf KGC 4D: Event Sourcing with Nanosecond Precision};
+\end{tikzpicture}

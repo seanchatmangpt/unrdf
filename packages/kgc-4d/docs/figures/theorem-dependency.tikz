@@ -1,0 +1,38 @@
+% HDIT Theorem Dependency DAG
+\begin{tikzpicture}[>=stealth,node distance=2cm,scale=0.85,transform shape]
+  \tikzset{
+    theorem/.style={rectangle,draw=black,thick,fill=blue!15,minimum width=1.8cm,minimum height=0.6cm},
+    arrow/.style={->,thick,color=darkgray}
+  }
+
+  % Layer 1: Foundation
+  \node[theorem] (spec) at (0,4) {Spec\\Entropy};
+  \node[theorem] (conc) at (3,4) {Concentration\\Measure};
+
+  % Layer 2: Core
+  \node[theorem] (pareto) at (1.5,2.5) {Pareto\\Entropy};
+  \node[theorem] (fisher) at (4.5,2.5) {Fisher\\Optimality};
+
+  % Layer 3: Advanced
+  \node[theorem] (topo) at (3,1) {Topological\\Correctness};
+
+  % Layer 4: Applications
+  \node[theorem] (gpu) at (0,-.5) {GPU\\Acceleration};
+  \node[theorem] (byzant) at (2,-.5) {Byzantine\\FT};
+  \node[theorem] (crypto) at (4,-.5) {Hash\\Security};
+  \node[theorem] (optimal) at (6,-.5) {Optimal\\Dimension};
+
+  % Dependencies
+  \draw[arrow] (spec) -- (pareto);
+  \draw[arrow] (conc) -- (pareto);
+  \draw[arrow] (conc) -- (fisher);
+  \draw[arrow] (pareto) -- (topo);
+  \draw[arrow] (fisher) -- (topo);
+
+  \draw[arrow] (spec) -- (gpu);
+  \draw[arrow] (fisher) -- (byzant);
+  \draw[arrow] (conc) -- (crypto);
+  \draw[arrow] (pareto) -- (optimal);
+
+  \node at (3,-1.8) {\small\bf 10 Theorems with 4-Level Dependency Hierarchy};
+\end{tikzpicture}

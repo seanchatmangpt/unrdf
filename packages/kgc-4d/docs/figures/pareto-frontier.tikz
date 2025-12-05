@@ -1,0 +1,25 @@
+% Pareto Frontier - Simplified
+\begin{tikzpicture}[scale=1.0]
+  % Axes
+  \draw[thick,-] (0,0) -- (8,0) node[right] {Latency (ms)};
+  \draw[thick,-] (0,0) -- (0,6) node[above] {Throughput (ops/s)};
+
+  % Grid
+  \draw[gray!20] (0,0) grid (8,6);
+
+  % Pareto frontier points
+  \foreach \x/\y in {0.5/5.5, 1.5/4.5, 2.5/3.5, 4/2.5, 5.5/1.5, 7/0.8} {
+    \draw[fill=blue,color=blue] (\x,\y) circle (0.12);
+  }
+
+  % Pareto frontier line
+  \draw[thick,blue,color=blue] (0.5,5.5) -- (1.5,4.5) -- (2.5,3.5) -- (4,2.5) -- (5.5,1.5) -- (7,0.8);
+
+  % Dominated points
+  \foreach \x/\y in {3/1.5, 4/1, 6/0.5} {
+    \draw[color=gray] (\x,\y) circle (0.08);
+  }
+
+  % Labels
+  \node at (4,-0.8) {\small Latency-Throughput Trade-off};
+\end{tikzpicture}
