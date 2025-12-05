@@ -194,52 +194,238 @@ const timestamp = await git.getCommitTime('abc123...');
 
 ### VectorClock
 
-Logical clock for tracking causality in distributed systems.
+Logical clock for tracking causality in distributed systems. Each node maintains a counter that increments on local events. On receiving a message from another node, the clock merges (takes max of each component) and increments the local counter.
 
 #### Constructor
 
 ```javascript
-const vc = new VectorClock({ node1: 1, node2: 2 });
+const vc = new VectorClock('node-1');
+
+console.log(vc.nodeId);     // 'node-1'
+console.log(vc.counters);   // Map { 'node-1' => 0n }
 ```
 
 **Parameters:**
-- Object with node IDs as keys and clock values as integers
+- `nodeId` (string) - Unique identifier for this node
 
-#### Methods
+**Throws:**
+- `TypeError` if nodeId is not a non-empty string
 
-##### increment(nodeId)
+#### increment()
 
-Increment the clock for a node.
+Increment the local counter on a local event. Each local operation increments this node's logical clock value.
 
 ```javascript
-vc.increment('node1');
-// Now: { node1: 2, node2: 2 }
+const vc = new VectorClock('alice');
+
+vc.increment();
+console.log(vc.counters.get('alice'));  // 1n
+
+vc.increment();
+console.log(vc.counters.get('alice'));  // 2n
+
+// Returns this for chaining
+vc.increment().increment().increment();
+console.log(vc.counters.get('alice'));  // 5n
 ```
 
-##### merge(other)
+**Returns:** `this` (for method chaining)
 
-Merge two vector clocks.
+#### merge(other)
+
+Merge with a clock from another node. Takes the maximum of each component and increments local counter.
 
 ```javascript
-const vc1 = new VectorClock({ a: 1, b: 2 });
-const vc2 = new VectorClock({ a: 2, b: 1 });
+const vc1 = new VectorClock('node-a');
+vc1.increment();  // { node-a: 1n }
+
+const vc2 = new VectorClock('node-b');
+vc2.increment();
+vc2.increment();  // { node-b: 2n }
 
 vc1.merge(vc2);
-// Result: { a: 2, b: 2 }
+// Result: { node-a: 1n, node-b: 2n, node-a: 2n } (merged and local incremented)
+console.log(vc1.counters.get('node-a'));  // 2n (was 1, merged with nothing, then +1)
+console.log(vc1.counters.get('node-b'));  // 2n (merged from other)
 ```
 
-##### happensBefore(other)
+**Parameters:**
+- `other` (VectorClock) - Another vector clock to merge
 
-Check if this clock happened before another.
+**Returns:** `this` (for method chaining)
+
+**Throws:**
+- `TypeError` if other is not a VectorClock instance
+
+#### compare(other)
+
+Compare this clock with another for causal ordering. Determines the happened-before relationship.
 
 ```javascript
-const vc1 = new VectorClock({ a: 1, b: 1 });
-const vc2 = new VectorClock({ a: 2, b: 2 });
+const vc1 = new VectorClock('alice');
+vc1.increment();           // { alice: 1n }
 
-console.log(vc1.happensBefore(vc2)); // true
+const vc2 = new VectorClock('bob');
+vc2.increment();
+vc2.increment();           // { bob: 2n }
+
+// Merge to establish causality
+vc1.merge(vc2);            // { alice: 2n, bob: 2n }
+
+const vc3 = new VectorClock('alice');
+vc3.increment();
+vc3.increment();
+vc3.increment();           // { alice: 3n }
+vc3.merge(vc1);            // { alice: 3n, bob: 2n }
+
+console.log(vc1.compare(vc3));  // -1 (vc1 happened before vc3)
+console.log(vc3.compare(vc1));  //  1 (vc3 happened after vc1)
+
+const vc4 = new VectorClock('charlie');
+const vc5 = new VectorClock('charlie');
+console.log(vc4.compare(vc5));  //  0 (concurrent - neither before other)
 ```
 
-**Returns:** boolean
+**Parameters:**
+- `other` (VectorClock) - Clock to compare with
+
+**Returns:**
+- `-1` if this happened-before other
+- `0` if concurrent (neither before the other)
+- `1` if this happened-after other
+
+**Throws:**
+- `TypeError` if other is not a VectorClock instance
+
+#### happensBefore(other)
+
+Check if this clock happened-before another clock (causal predecessor).
+
+```javascript
+const vc1 = new VectorClock('node-a');
+vc1.increment();
+
+const vc2 = new VectorClock('node-b');
+vc2.increment().increment();
+
+vc1.merge(vc2);  // Establish causality
+
+console.log(vc1.happensBefore(vc2));  // false (different branches)
+console.log(vc2.happensBefore(vc1));  // false
+console.log(vc1.happensBefore(vc1));  // false (not before itself)
+```
+
+**Parameters:**
+- `other` (VectorClock) - Clock to check against
+
+**Returns:** `boolean` - true if this happened-before other
+
+#### isConcurrentWith(other)
+
+Check if two events are concurrent (neither happened-before the other).
+
+```javascript
+const vc1 = new VectorClock('alice');
+vc1.increment();  // { alice: 1n }
+
+const vc2 = new VectorClock('bob');
+vc2.increment();  // { bob: 1n }
+
+// No merge = no causal relationship = concurrent
+console.log(vc1.isConcurrentWith(vc2));  // true
+
+// After merge, they have causal relationship
+vc1.merge(vc2);
+const vc3 = new VectorClock('alice');
+vc3.increment().increment();
+vc3.merge(vc1);
+
+console.log(vc1.isConcurrentWith(vc3));  // false (established order)
+```
+
+**Parameters:**
+- `other` (VectorClock) - Clock to check against
+
+**Returns:** `boolean` - true if concurrent (compare() === 0)
+
+#### toJSON()
+
+Serialize vector clock to JSON-compatible object. Converts BigInt counters to strings (JSON safe).
+
+```javascript
+const vc = new VectorClock('node-x');
+vc.increment();
+vc.increment();
+
+const json = vc.toJSON();
+console.log(json);
+// {
+//   nodeId: 'node-x',
+//   counters: { 'node-x': '2' }
+// }
+
+// Safe to send over network or store
+JSON.stringify(json);
+```
+
+**Returns:**
+```javascript
+{
+  nodeId: string,
+  counters: { [nodeId]: string }  // BigInt values as strings
+}
+```
+
+#### static fromJSON(json)
+
+Reconstruct vector clock from JSON object.
+
+```javascript
+const json = {
+  nodeId: 'node-x',
+  counters: { 'node-x': '2', 'node-y': '5' }
+};
+
+const vc = VectorClock.fromJSON(json);
+console.log(vc.nodeId);                    // 'node-x'
+console.log(vc.counters.get('node-x'));   // 2n (restored as BigInt)
+console.log(vc.counters.get('node-y'));   // 5n
+
+// Can continue using the clock
+vc.increment();
+console.log(vc.counters.get('node-x'));   // 3n
+```
+
+**Parameters:**
+- `json` - Object with nodeId and counters (from toJSON())
+
+**Returns:** `VectorClock` instance
+
+**Throws:**
+- `Error` if json is invalid or missing nodeId/counters
+
+#### clone()
+
+Create a deep copy of this vector clock.
+
+```javascript
+const vc1 = new VectorClock('node-a');
+vc1.increment().increment();
+
+const vc2 = vc1.clone();
+
+// Modifying clone doesn't affect original
+vc2.increment();
+
+console.log(vc1.counters.get('node-a'));  // 2n (unchanged)
+console.log(vc2.counters.get('node-a'));  // 3n (incremented)
+
+// They are independent objects
+console.log(vc1 === vc2);  // false
+console.log(vc1.compare(vc2));  // 0 (concurrent after clone)
+```
+
+**Returns:** `VectorClock` - Deep copy of this clock
 
 ---
 
@@ -443,6 +629,737 @@ PREDICATES.GIT_REF           // Git reference
 PREDICATES.PAYLOAD           // Event payload
 PREDICATES.VECTOR_CLOCK      // Vector clock
 ```
+
+---
+
+## Guard Functions
+
+KGC 4D implements 32 poka-yoke mistake-proofing guards across 6 subsystems. Guards throw descriptive errors immediately to surface bugs during development.
+
+See [Poka-Yoke Guards Reference](./03-guards.md) for conceptual explanations and FMEA analysis.
+
+### Time Guards (T1-T5)
+
+#### guardMonotonicOrdering(current, lastTime)
+
+Enforce monotonic clock ordering. Prevents clock going backwards due to system clock drift.
+
+```javascript
+import { guardMonotonicOrdering } from '@unrdf/kgc-4d';
+
+const result = guardMonotonicOrdering(100n, 99n);
+// Returns: 100n (forwards, unchanged)
+
+const wrapped = guardMonotonicOrdering(99n, 100n);
+// Returns: 101n (backwards detected, auto-incremented)
+```
+
+**Parameters:**
+- `current` (BigInt) - Current timestamp
+- `lastTime` (BigInt) - Previous timestamp
+
+**Returns:** BigInt (current or auto-incremented)
+
+**Throws:** TypeError if not BigInt
+
+---
+
+#### guardTimeEnvironment()
+
+Validate time environment (Node.js vs browser).
+
+```javascript
+import { guardTimeEnvironment } from '@unrdf/kgc-4d';
+
+const isNode = guardTimeEnvironment();
+// Returns: true if process.hrtime.bigint available
+```
+
+**Parameters:** None
+
+**Returns:** boolean (true if Node.js environment)
+
+**Throws:** Error if no valid time source
+
+---
+
+#### guardISOFormat(iso)
+
+Validate ISO 8601 date format.
+
+```javascript
+import { guardISOFormat } from '@unrdf/kgc-4d';
+
+guardISOFormat('2025-01-15T10:30:00.000Z');
+// Returns: true
+
+guardISOFormat('invalid');
+// Throws: Error with format details
+```
+
+**Parameters:**
+- `iso` (string) - ISO 8601 string
+
+**Returns:** boolean
+
+**Throws:** TypeError or Error if invalid format
+
+---
+
+#### guardBigIntRange(t_ns)
+
+Validate BigInt timestamp within safe range.
+
+```javascript
+import { guardBigIntRange } from '@unrdf/kgc-4d';
+
+guardBigIntRange(1701734400000000000n);
+// Returns: true
+
+guardBigIntRange(-1n);
+// Throws: RangeError
+```
+
+**Parameters:**
+- `t_ns` (BigInt) - Timestamp in nanoseconds
+
+**Returns:** boolean
+
+**Throws:** TypeError or RangeError if out of bounds
+
+---
+
+#### guardBigIntPrecision(t_ns)
+
+Validate BigInt-to-Number precision preservation.
+
+```javascript
+import { guardBigIntPrecision } from '@unrdf/kgc-4d';
+
+guardBigIntPrecision(1701734400000000000n);
+// Returns: true (conversion safe)
+```
+
+**Parameters:**
+- `t_ns` (BigInt) - Timestamp in nanoseconds
+
+**Returns:** boolean
+
+**Throws:** TypeError or RangeError if conversion not finite
+
+---
+
+### Store Guards (S1-S6)
+
+#### guardEventIdGeneration(eventId)
+
+Validate event ID (UUID or fallback format).
+
+```javascript
+import { guardEventIdGeneration } from '@unrdf/kgc-4d';
+
+guardEventIdGeneration('550e8400-e29b-41d4-a716-446655440000');
+// Returns: true (valid UUID)
+
+guardEventIdGeneration('');
+// Throws: Error (empty)
+```
+
+**Parameters:**
+- `eventId` (string) - Event identifier
+
+**Returns:** boolean
+
+**Throws:** TypeError or Error if invalid format
+
+---
+
+#### guardPayloadJSON(payload)
+
+Validate event payload JSON serializability.
+
+```javascript
+import { guardPayloadJSON } from '@unrdf/kgc-4d';
+
+guardPayloadJSON({ userId: '123', action: 'create' });
+// Returns: true
+
+guardPayloadJSON(undefined);
+// Returns: true (null payload allowed)
+```
+
+**Parameters:**
+- `payload` (any) - Event metadata
+
+**Returns:** boolean
+
+**Throws:** Error if not JSON-serializable
+
+---
+
+#### guardQuadStructure(quad)
+
+Validate RDF quad structure.
+
+```javascript
+import { guardQuadStructure } from '@unrdf/kgc-4d';
+
+guardQuadStructure({
+  subject: { value: 'http://example.org/alice' },
+  predicate: { value: 'http://example.org/name' },
+  object: { value: 'Alice' },
+  graph: { value: 'kgc:Universe' }
+});
+// Returns: true
+
+guardQuadStructure({ subject: null });
+// Throws: Error (missing subject.value)
+```
+
+**Parameters:**
+- `quad` (object) - RDF quad with subject, predicate, object, graph
+
+**Returns:** boolean
+
+**Throws:** TypeError or Error if quad malformed
+
+---
+
+#### guardDeltaType(deltaType)
+
+Validate mutation type (add or delete only).
+
+```javascript
+import { guardDeltaType } from '@unrdf/kgc-4d';
+
+guardDeltaType('add');
+// Returns: true
+
+guardDeltaType('update');
+// Throws: Error (not in whitelist)
+```
+
+**Parameters:**
+- `deltaType` (string) - Mutation type
+
+**Returns:** boolean
+
+**Throws:** TypeError or Error if not 'add' or 'delete'
+
+---
+
+#### guardEventCountOverflow(count)
+
+Validate event count doesn't overflow.
+
+```javascript
+import { guardEventCountOverflow } from '@unrdf/kgc-4d';
+
+guardEventCountOverflow(1000);
+// Returns: true
+
+guardEventCountOverflow(-1);
+// Throws: RangeError (negative)
+```
+
+**Parameters:**
+- `count` (number | BigInt) - Event count
+
+**Returns:** boolean
+
+**Throws:** TypeError or RangeError if overflow risk
+
+---
+
+#### guardGraphsExport(graphs)
+
+Validate GRAPHS constant exports.
+
+```javascript
+import { guardGraphsExport } from '@unrdf/kgc-4d';
+import { GRAPHS } from '@unrdf/kgc-4d';
+
+guardGraphsExport(GRAPHS);
+// Returns: true
+```
+
+**Parameters:**
+- `graphs` (object) - GRAPHS export with UNIVERSE, EVENT_LOG, SYSTEM
+
+**Returns:** boolean
+
+**Throws:** TypeError or Error if missing required keys
+
+---
+
+### Git Guards (G1-G6)
+
+#### guardGitRepository(dir)
+
+Validate Git repository directory.
+
+```javascript
+import { guardGitRepository } from '@unrdf/kgc-4d';
+
+guardGitRepository('./repo');
+// Returns: true (if .git exists)
+
+guardGitRepository('');
+// Throws: Error (empty path)
+```
+
+**Parameters:**
+- `dir` (string) - Repository directory path
+
+**Returns:** boolean
+
+**Throws:** TypeError or Error if directory invalid or not a Git repo
+
+---
+
+#### guardSnapshotWrite(snapshotPath)
+
+Validate snapshot file can be written.
+
+```javascript
+import { guardSnapshotWrite } from '@unrdf/kgc-4d';
+
+guardSnapshotWrite('./snapshots/snapshot.nq');
+// Returns: true (if path valid and writable)
+```
+
+**Parameters:**
+- `snapshotPath` (string) - Path where snapshot will be written
+
+**Returns:** boolean
+
+**Throws:** Error if path invalid or not writable
+
+---
+
+#### guardCommitHash(hash)
+
+Validate Git commit hash format.
+
+```javascript
+import { guardCommitHash } from '@unrdf/kgc-4d';
+
+guardCommitHash('abc123def456');
+// Returns: true (valid hex)
+
+guardCommitHash('not-hex');
+// Throws: Error (invalid format)
+```
+
+**Parameters:**
+- `hash` (string) - Git commit hash
+
+**Returns:** boolean
+
+**Throws:** Error if not valid hex format
+
+---
+
+#### guardSnapshotExists(hash)
+
+Validate snapshot exists in Git.
+
+```javascript
+import { guardSnapshotExists } from '@unrdf/kgc-4d';
+
+guardSnapshotExists('abc123def456');
+// Returns: true (or throws if not found)
+```
+
+**Parameters:**
+- `hash` (string) - Git commit hash
+
+**Returns:** boolean
+
+**Throws:** Error if snapshot not found
+
+---
+
+#### guardCommitMessageSafety(message)
+
+Prevent command injection in commit messages.
+
+```javascript
+import { guardCommitMessageSafety } from '@unrdf/kgc-4d';
+
+guardCommitMessageSafety('Snapshot created');
+// Returns: true
+
+guardCommitMessageSafety('$(rm -rf /)');
+// Throws: Error (dangerous characters)
+```
+
+**Parameters:**
+- `message` (string) - Commit message
+
+**Returns:** boolean
+
+**Throws:** Error if dangerous characters detected
+
+---
+
+### Freeze Guards (F1-F5)
+
+#### guardNQuadsEncoding(nquads)
+
+Validate N-Quads UTF-8 encoding.
+
+```javascript
+import { guardNQuadsEncoding } from '@unrdf/kgc-4d';
+
+guardNQuadsEncoding('<http://example.org/s> <http://example.org/p> "o" .');
+// Returns: true (valid UTF-8)
+```
+
+**Parameters:**
+- `nquads` (string) - N-Quads content
+
+**Returns:** boolean
+
+**Throws:** Error if encoding invalid
+
+---
+
+#### guardEmptyUniverseFreeze(quads)
+
+Prevent freezing empty universe.
+
+```javascript
+import { guardEmptyUniverseFreeze } from '@unrdf/kgc-4d';
+
+guardEmptyUniverseFreeze([quad1, quad2]);
+// Returns: true
+
+guardEmptyUniverseFreeze([]);
+// Throws: Error (no quads to freeze)
+```
+
+**Parameters:**
+- `quads` (array) - Quads in universe
+
+**Returns:** boolean
+
+**Throws:** Error if universe empty
+
+---
+
+#### guardBLAKE3Hash(hash)
+
+Validate BLAKE3 hash format.
+
+```javascript
+import { guardBLAKE3Hash } from '@unrdf/kgc-4d';
+
+guardBLAKE3Hash('a1b2c3d4e5f6...');
+// Returns: true (valid hex)
+```
+
+**Parameters:**
+- `hash` (string) - BLAKE3 hash in hex
+
+**Returns:** boolean
+
+**Throws:** Error if not valid hex format
+
+---
+
+#### guardGitRefIntegrity(gitRef)
+
+Validate Git reference integrity.
+
+```javascript
+import { guardGitRefIntegrity } from '@unrdf/kgc-4d';
+
+guardGitRefIntegrity('abc123def456');
+// Returns: true (or throws if corrupted)
+```
+
+**Parameters:**
+- `gitRef` (string) - Git commit reference
+
+**Returns:** boolean
+
+**Throws:** Error if reference corrupted
+
+---
+
+#### guardReceiptSchema(receipt)
+
+Validate snapshot receipt structure.
+
+```javascript
+import { guardReceiptSchema } from '@unrdf/kgc-4d';
+
+guardReceiptSchema({
+  snapshotId: 'uuid',
+  gitRef: 'abc123',
+  hash: 'a1b2c3...',
+  tNs: 1701734400000000000n
+});
+// Returns: true
+```
+
+**Parameters:**
+- `receipt` (object) - Frozen snapshot receipt
+
+**Returns:** boolean
+
+**Throws:** Error if schema invalid
+
+---
+
+### API Guards (A1-A5)
+
+#### guardTimeGap(targetTime, snapshotTime)
+
+Detect time anomalies (target before snapshot).
+
+```javascript
+import { guardTimeGap } from '@unrdf/kgc-4d';
+
+guardTimeGap(1000n, 500n);
+// Returns: true (target after snapshot)
+
+guardTimeGap(500n, 1000n);
+// Throws: Error (target before snapshot)
+```
+
+**Parameters:**
+- `targetTime` (BigInt) - Target reconstruction time
+- `snapshotTime` (BigInt) - Snapshot time
+
+**Returns:** boolean
+
+**Throws:** Error if target before snapshot
+
+---
+
+#### guardArgumentType(value, expectedType, argName)
+
+Type-check function arguments.
+
+```javascript
+import { guardArgumentType } from '@unrdf/kgc-4d';
+
+guardArgumentType(store, 'object', 'store');
+// Returns: true
+
+guardArgumentType('not-a-store', 'object', 'store');
+// Throws: TypeError
+```
+
+**Parameters:**
+- `value` (any) - Value to check
+- `expectedType` (string) - Expected type
+- `argName` (string) - Argument name for error message
+
+**Returns:** boolean
+
+**Throws:** TypeError if type mismatch
+
+---
+
+#### guardNotNull(value, argName)
+
+Prevent null/undefined parameters.
+
+```javascript
+import { guardNotNull } from '@unrdf/kgc-4d';
+
+guardNotNull(store, 'store');
+// Returns: true (if store not null)
+
+guardNotNull(null, 'store');
+// Throws: Error (null not allowed)
+```
+
+**Parameters:**
+- `value` (any) - Value to check
+- `argName` (string) - Parameter name
+
+**Returns:** boolean
+
+**Throws:** Error if null or undefined
+
+---
+
+#### guardArgumentShape(value, expectedShape, argName)
+
+Validate object structure (required keys).
+
+```javascript
+import { guardArgumentShape } from '@unrdf/kgc-4d';
+
+guardArgumentShape(
+  { type: 'CREATE', payload: {} },
+  { type: 'string', payload: 'object' },
+  'eventDesc'
+);
+// Returns: true
+```
+
+**Parameters:**
+- `value` (object) - Object to validate
+- `expectedShape` (object) - Expected shape (key -> type)
+- `argName` (string) - Parameter name
+
+**Returns:** boolean
+
+**Throws:** Error if shape invalid
+
+---
+
+#### guardModuleExports(moduleExports, required)
+
+Verify module exports.
+
+```javascript
+import { guardModuleExports } from '@unrdf/kgc-4d';
+
+guardModuleExports(module.exports, ['KGCStore', 'GitBackbone']);
+// Returns: true (if all exports present)
+```
+
+**Parameters:**
+- `moduleExports` (object) - Module exports
+- `required` (array) - Required export names
+
+**Returns:** boolean
+
+**Throws:** Error if exports missing
+
+---
+
+#### guardPublicAPI(module, expectedExports)
+
+Check API contracts.
+
+```javascript
+import { guardPublicAPI } from '@unrdf/kgc-4d';
+
+guardPublicAPI(kgcModule, ['freezeUniverse', 'reconstructState']);
+// Returns: true (if all functions exported)
+```
+
+**Parameters:**
+- `module` (object) - Module to check
+- `expectedExports` (array) - Expected functions
+
+**Returns:** boolean
+
+**Throws:** Error if API contract broken
+
+---
+
+### Concurrency Guards (C1-C4)
+
+#### guardAtomicWrite(filePath)
+
+Ensure atomic file writes.
+
+```javascript
+import { guardAtomicWrite } from '@unrdf/kgc-4d';
+
+guardAtomicWrite('./snapshot.nq');
+// Returns: true (if write atomic)
+```
+
+**Parameters:**
+- `filePath` (string) - File path
+
+**Returns:** boolean
+
+**Throws:** Error if atomic write not possible
+
+---
+
+#### guardEventIDUniqueness(eventId, existingIds)
+
+Prevent ID collisions in concurrent scenario.
+
+```javascript
+import { guardEventIDUniqueness } from '@unrdf/kgc-4d';
+
+guardEventIDUniqueness('new-id', new Set(['id-1', 'id-2']));
+// Returns: true
+
+guardEventIDUniqueness('id-1', new Set(['id-1', 'id-2']));
+// Throws: Error (duplicate detected)
+```
+
+**Parameters:**
+- `eventId` (string) - New event ID
+- `existingIds` (Set | Array) - Existing IDs
+
+**Returns:** boolean
+
+**Throws:** Error if ID already exists
+
+---
+
+#### guardTimeStateEncapsulation()
+
+Protect time state from external mutation.
+
+```javascript
+import { guardTimeStateEncapsulation } from '@unrdf/kgc-4d';
+
+guardTimeStateEncapsulation();
+// Returns: true (if time state protected)
+```
+
+**Parameters:** None
+
+**Returns:** boolean
+
+**Throws:** Error if time state compromised
+
+---
+
+#### guardEventCountConsistency(memoryCount, storeCount)
+
+Verify event count consistency across layers.
+
+```javascript
+import { guardEventCountConsistency } from '@unrdf/kgc-4d';
+
+guardEventCountConsistency(100, 100);
+// Returns: true (counts match)
+
+guardEventCountConsistency(100, 99);
+// Throws: Error (counts diverged)
+```
+
+**Parameters:**
+- `memoryCount` (number) - Count in memory
+- `storeCount` (number) - Count in store
+
+**Returns:** boolean
+
+**Throws:** Error if counts diverge
+
+---
+
+### allGuards
+
+Collection of all guard functions for testing and validation.
+
+```javascript
+import { allGuards } from '@unrdf/kgc-4d';
+
+console.log(allGuards.length); // 32
+console.log(allGuards.map(g => g.name));
+// [guardMonotonicOrdering, guardTimeEnvironment, ...]
+```
+
+**Type:** Array<Function>
+
+**Contains:** All 32 guard functions indexed and accessible
 
 ---
 
