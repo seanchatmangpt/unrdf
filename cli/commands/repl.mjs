@@ -10,6 +10,7 @@
 import { defineCommand } from 'citty';
 import { createInterface } from 'readline';
 import { createRequire } from 'module';
+import { REPLSession as REPLSessionSafeguards, validateREPLInput } from '../utils/repl-safeguards.mjs';
 
 const require = createRequire(import.meta.url);
 
@@ -168,13 +169,21 @@ class SyntaxHighlighter {
  * REPL Session Manager
  */
 class REPLSession {
-  constructor(ctx) {
+  constructor(ctx, options = {}) {
     this.ctx = ctx;
     this.history = new REPLHistory();
     this.completion = new TabCompletion();
     this.highlighter = new SyntaxHighlighter();
     this.multilineBuffer = [];
     this.inMultilineMode = false;
+
+    // FM-CLI-015: Initialize session safeguards
+    this.safeguards = new REPLSessionSafeguards({
+      maxBufferSize: options.maxBufferSize || 10 * 1024 * 1024,
+      maxQueryTimeout: options.maxQueryTimeout || 30000,
+      maxHistoryLines: options.maxHistoryLines || 1000,
+      maxConsecutiveErrors: options.maxConsecutiveErrors || 10
+    });
   }
 
   async start() {
@@ -214,6 +223,22 @@ class REPLSession {
       return;
     }
 
+    // FM-CLI-015: Check buffer size and validate input
+    const bufferCheck = this.safeguards.addInput(trimmed);
+    if (!bufferCheck.valid) {
+      console.error(`${colors.red}${bufferCheck.error}${colors.reset}`);
+      console.error(`${colors.yellow}${bufferCheck.suggestion}${colors.reset}`);
+      rl.setPrompt(this.getPrompt());
+      rl.prompt();
+      return;
+    }
+
+    // Validate input for dangerous patterns
+    const validation = validateREPLInput(trimmed);
+    if (validation.warning) {
+      console.warn(`${colors.yellow}${validation.warning}${colors.reset}`);
+    }
+
     // Handle multiline input
     if (trimmed.endsWith('\\')) {
       this.multilineBuffer.push(trimmed.slice(0, -1));
@@ -234,7 +259,12 @@ class REPLSession {
       await this.executeQuery(trimmed);
     }
 
-    this.history.add(trimmed);
+    // Show session diagnostics if unhealthy
+    const diagnostics = this.safeguards.getDiagnostics();
+    if (!diagnostics.session_healthy) {
+      console.warn(`${colors.yellow}⚠️  Session status: ${this.safeguards.getStatus()}${colors.reset}`);
+    }
+
     rl.setPrompt(this.getPrompt());
     rl.prompt();
   }
@@ -268,6 +298,11 @@ class REPLSession {
         this.printExamples();
         break;
 
+      // FM-CLI-015: Show session diagnostics
+      case 'status':
+        this.printSessionStatus();
+        break;
+
       case 'exit':
       case 'quit':
         rl.close();
@@ -286,11 +321,22 @@ class REPLSession {
       // Syntax highlight the query
       console.log(this.highlighter.highlight(query));
 
-      // Execute query through store command
-      // Note: This assumes the store query command is available
-      const result = await this.ctx.invoke('store', 'query', { query });
+      // FM-CLI-015: Execute with timeout protection
+      const execResult = await this.safeguards.executeWithTimeout(async () => {
+        // Execute query through store command
+        // Note: This assumes the store query command is available
+        return await this.ctx.invoke('store', 'query', { query });
+      });
 
-      this.printResults(result);
+      if (!execResult.success) {
+        console.log(`${colors.red}Error: ${execResult.error}${colors.reset}`);
+        if (execResult.sessionAbnormal) {
+          console.log(`${colors.red}${execResult.suggestion}${colors.reset}`);
+        }
+        return;
+      }
+
+      this.printResults(execResult.result);
     } catch (error) {
       console.log(`${colors.red}Error: ${error.message}${colors.reset}`);
     }
@@ -327,6 +373,7 @@ class REPLSession {
   ${colors.green}.clear${colors.reset}      Clear screen
   ${colors.green}.namespaces${colors.reset} List available namespaces
   ${colors.green}.examples${colors.reset}   Show example queries
+  ${colors.green}.status${colors.reset}     Show session diagnostics
   ${colors.green}.exit${colors.reset}       Exit REPL
 
 ${colors.bright}Usage:${colors.reset}
@@ -382,6 +429,24 @@ ${colors.cyan}4. Multiline query (use \\ to continue):${colors.reset}
 
   printGoodbye() {
     console.log(`\n${colors.cyan}Goodbye!${colors.reset}\n`);
+  }
+
+  printSessionStatus() {
+    const diag = this.safeguards.getDiagnostics();
+
+    console.log(`\n${colors.bright}Session Diagnostics:${colors.reset}`);
+    console.log(`  ${colors.cyan}Duration:${colors.reset} ${(diag.session_duration_ms / 1000).toFixed(1)}s`);
+    console.log(`  ${colors.cyan}Buffer:${colors.reset} ${(diag.buffer_size_bytes / 1024).toFixed(1)}KB / ${(diag.buffer_limit_bytes / 1024 / 1024).toFixed(0)}MB`);
+    console.log(`  ${colors.cyan}History:${colors.reset} ${diag.history_lines}/${diag.history_limit} lines`);
+    console.log(`  ${colors.cyan}Errors:${colors.reset} ${diag.consecutive_errors}/${diag.error_limit}`);
+    console.log(`  ${colors.cyan}Timeout:${colors.reset} ${diag.timeout_ms}ms`);
+
+    if (diag.session_healthy) {
+      console.log(`  ${colors.green}Status: HEALTHY ✅${colors.reset}\n`);
+    } else {
+      console.log(`  ${colors.red}Status: DEGRADED ⚠️${colors.reset}`);
+      console.log(`  ${colors.yellow}Consider starting a new session${colors.reset}\n`);
+    }
   }
 }
 
