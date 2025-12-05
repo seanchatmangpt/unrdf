@@ -1,0 +1,147 @@
+@startuml UNRDF Streaming - Code Level
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+LAYOUT_WITH_LEGEND()
+
+title @unrdf/streaming - C4 Code Level (Event-driven pub/sub, change feeds, sync protocol)
+
+Package("Change Feed - EventTarget Pattern") {
+  Component(change_feed_class, "class ChangeFeed extends EventTarget", "Core Class", "constructor(store?: UnrdfStore)\n\n📡 CORE METHODS\nsubscribe(callback: (change: ChangeEvent) => void):\n  () => void\n  → Returns unsubscribe function\n  → Registered in WeakMap\n  → Automatic cleanup on GC\n\nemit(event: CustomEvent): void\n  → Dispatch CustomEvent('change')\n  → Notifies all subscribers\n  → detail: {type, quad, timestamp, metadata}\n\ngetHistory(options?: {\n  since?: number (timestamp)\n  until?: number\n  limit?: number\n}): ChangeEvent[]\n  → Returns bounded history from ring buffer\n  → Ring buffer: Fixed size (config)\n  → Circular: Oldest discarded first\n\nreplay(callback: (event) => void):\n  Promise<void>\n  → Synchronous replay of history\n  → Triggers callback for each event\n  → Used for recovery/sync\n\nclear(): void\n  → Empties history\n  → Closes all subscribers\n\n⚙️ INTERNAL STATE\n- subscribers: WeakMap<object, callback>\n- history: RingBuffer<ChangeEvent>\n- version: number (correlation ID)\n\n⚙️ EVENTS\nCustomEvent('change', {\n  detail: {\n    type: 'add'|'remove'|'update'\n    quad: Quad (full RDF quad)\n    timestamp: number (ms since epoch)\n    metadata: {\n      source: string (caller ID)\n      userId: string (optional)\n      transactionId: string (optional)\n      batchId: string (correlation)\n    }\n  }\n})")
+}
+
+Package("Stream Processor - Chainable Operations") {
+  Component(stream_processor_class, "class StreamProcessor", "Chainable Class", "constructor(feed: ChangeFeed)\n\n⛓️ CHAINABLE OPERATIONS (fluent API)\nbatch(size: number | {size, windowMs?}):\n  StreamProcessor\n  → Groups changes into batches\n  → Size: number of changes or window in ms\n  → Returns new StreamProcessor\n  → Can chain: .batch(100).filter(...).map(...)\n\nfilter(predicate: (change) => boolean):\n  StreamProcessor\n  → Filters changes by condition\n  → Skips non-matching changes\n  → Can chain with other operations\n\nmap(transformer: (change) => ChangeEvent):\n  StreamProcessor\n  → Transforms each change\n  → Maps to modified change\n  → Useful for normalization\n\ndebounce(ms: number): StreamProcessor\n  → Delays emission\n  → Waits for more changes\n  → Emits after silence\n  → De-duplicates rapid fires\n\nthrottle(ms: number): StreamProcessor\n  → Rate limiting\n  → Max 1 emission per ms\n  → Smooths bursty input\n\n📌 TERMINAL OPERATIONS\nsubscribe(callback): () => void\n  → Terminal operation\n  → Returns unsubscribe\n  → Starts receiving events\n\nbuild(): Observable\n  → Returns RxJS-like observable\n  → Lazy subscription\n  → Chainable further\n\n⚙️ INTERNAL STATE\n- feed: ChangeFeed (source)\n- operations: Operation[] (pipeline)\n- subscribers: Set<callback>\n- state: {batched, filtered, mapped}")
+}
+
+Package("Sync Protocol - Message Encoding/Decoding") {
+  Component(sync_msg_fn, "createSyncMessage(changes: ChangeEvent[])", "Factory Function", "export function createSyncMessage(\n  changes: ChangeEvent[],\n  options?: SyncOptions\n): SyncMessage\n\noptions: {\n  compress?: boolean (gzip)\n  includeMetadata?: boolean\n  expiry?: number (seconds)\n  algorithm?: 'SHA-256'|'SHA-256-256'|'BLAKE3'\n}\n\nFlow:\n1. Serialize changes to JSON\n2. Compute checksum hash\n3. Add timestamp\n4. Add metadata\n5. Return SyncMessage\n\nReturns: SyncMessage {\n  version: '1.0' (protocol version)\n  changes: ChangeEvent[] (serialized)\n  checksum: string (hex SHA-256)\n  timestamp: number (ms)\n  metadata?: {...}\n  expiry?: number (TTL)\n}\n\nSerialization:\n• Compact JSON format\n• Quad normalization\n• Type preservation\n• Null/undefined safe")
+
+  Component(parse_msg_fn, "parseSyncMessage(message: SyncMessage)", "Factory Function", "export async function parseSyncMessage(\n  message: SyncMessage\n): Promise<ParsedMessage>\n\nValidation:\n1. Check version ('1.0')\n2. Verify checksum\n   → SHA-256(message.changes)\n   → Compare with message.checksum\n   → Throw if mismatch\n3. Check expiry\n   → now > (timestamp + expiry)\n   → Throw if expired\n4. Deserialize changes\n5. Return validated payload\n\nReturns: ParsedMessage {\n  changes: ChangeEvent[] (validated)\n  metadata: {...}\n  valid: boolean\n  checksum: string\n  age: number (ms)\n}\n\nErrors:\n• INVALID_CHECKSUM → Message corrupted\n• EXPIRED → Too old\n• INVALID_FORMAT → Parsing error\n• UNSUPPORTED_VERSION → Protocol mismatch")
+
+  Component(checksum_mod, "Checksum Module", "Hashing", "export function computeChecksum(\n  data: any,\n  algorithm: 'SHA-256'|...\n): string\n  → Hashes data to hex string\n  → Deterministic\n  → Error detection\n\nexport function verifyChecksum(\n  data: any,\n  checksum: string,\n  algorithm: string\n): boolean\n  → Compares computed vs provided\n  → Returns true if match\n  → False if mismatch")
+
+  Component(msg_format, "Message Format", "Interface", "interface SyncMessage {\n  version: '1.0'\n  changes: {\n    type: 'add'|'remove'|'update'\n    quad: {\n      subject: string|{type, value}\n      predicate: string|{type, value}\n      object: string|{type, value, language?, datatype?}\n      graph: string|{type, value}\n    }\n    timestamp: number\n    metadata: {source, userId?, transactionId?}\n  }[]\n  checksum: string (hex)\n  timestamp: number (ms)\n  metadata?: {\n    source: string\n    peerId?: string\n    batchId?: string\n    compression?: string\n  }\n  expiry?: number (seconds, max 24h)\n}\n\nSize:\n• Typical: 500B - 5KB\n• With compression: 50% reduction\n• Max batch: ~1MB (configurable)")
+}
+
+Package("Subscription Management") {
+  Component(sub_mgr_class, "class SubscriptionManager", "Manager Class", "private subscribers: Map<string, Subscription>\nprivate idCounter: number\n\nadd(callback, filter?, metadata?):\n  string (subscription ID)\n  → Generates unique ID\n  → Stores subscription\n  → Returns ID for unsubscribe\n\nremove(id: string): boolean\n  → Unsubscribes\n  → Cleans up resources\n  → Returns true if existed\n\nbroadcast(change: ChangeEvent): void\n  → Notifies all subscribers\n  → Checks filter condition\n  → Calls callback async\n  → Error handling per subscriber\n\ngetSubscriberCount(): number\n  → Returns active subscription count\n\nclear(): void\n  → Removes all subscribers\n  → Cleanup\n\n⚙️ INTERNAL STATE\n- subscribers: Map<string, Subscription>\n- idCounter: number (for unique IDs)")
+}
+
+Package("History & Ring Buffer") {
+  Component(history_mod, "History Manager", "Module", "export class RingBuffer<T> {\n  constructor(capacity: number)\n\n  push(item: T): void\n    → Adds item\n    → Overwrites oldest if full\n    → O(1) insertion\n\n  getAll(): T[]\n    → Returns all items (oldest → newest)\n\n  slice(start, end): T[]\n    → Returns subsequence\n    → Efficient via circular indexing\n\n  getStats(): {\n    count: number\n    capacity: number\n    oldestTimestamp: number\n    newestTimestamp: number\n  }\n}\n\nUsage:\nring = new RingBuffer(10000)\nring.push(changeEvent) → O(1)\nring.getAll() → O(n), n = 10000 max")
+
+  Component(replay, "Replay Function", "Module", "export async function replay(\n  history: ChangeEvent[],\n  callback: (event) => Promise<void>\n): Promise<void>\n\n1. Iterate history (oldest → newest)\n2. Call callback(event)\n3. Await completion\n4. Continue to next\n5. Handle errors\n\nUsage:\n• Recovery: Replay missed changes\n• Sync: Catch up new peer\n• Debug: Re-run scenarios")
+}
+
+Package("Transport Layer") {
+  Component(transport_abstract, "Transport Abstraction", "Module", "export interface Transport {\n  send(message: SyncMessage):\n    Promise<void>\n  on(event: 'message'|'error'|'closed',\n     handler): unsubscribe\n  close(): Promise<void>\n  isConnected(): boolean\n}\n\nImplementations:\n• WebSocket (ws npm)\n• Server-Sent Events (EventSource)\n• HTTP polling\n• Custom (user-defined)")
+
+  Component(websocket_impl, "WebSocket Adapter", "Implementation", "export class WebSocketTransport\n  implements Transport\n\nconstructor(url: string, options?)\n\nsend(message: SyncMessage):\n  Promise<void>\n  → JSON.stringify(message)\n  → ws.send(buffer)\n  → Error handling\n  → Reconnect on failure\n\non(event, handler): unsubscribe\n  → 'message': Receive SyncMessage\n  → 'error': Connection error\n  → 'closed': Disconnected\n  → 'connected': Established\n\nclose(): Promise<void>\n  → Close ws connection\n  → Cleanup\n\nisConnected(): boolean\n  → ws.readyState === OPEN\n\nOptions:\n  url: string\n  reconnect?: boolean\n  reconnectDelay?: number (ms)\n  heartbeat?: number (ms)\n  maxRetries?: number")
+}
+
+' Relationships
+Rel(change_feed_class, stream_processor_class, "consumed by")
+Rel(stream_processor_class, change_feed_class, "subscribes to")
+Rel(sync_msg_fn, checksum_mod, "uses")
+Rel(parse_msg_fn, checksum_mod, "uses")
+Rel(change_feed_class, history_mod, "uses RingBuffer")
+Rel(history_mod, replay, "enables")
+Rel(change_feed_class, sub_mgr_class, "uses")
+Rel(websocket_impl, transport_abstract, "implements")
+
+note right of change_feed_class
+  **EVENT-DRIVEN ARCHITECTURE**
+
+  Extends browser EventTarget
+  Compatible with DOM events API
+
+  Stores full change history
+  Ring buffer: bounded memory
+  Subscribers: WeakMap for GC
+
+  Metadata: Correlation tracking
+  Batch ID: Group related changes
+  Transaction ID: ACID tracking
+end note
+
+note right of stream_processor_class
+  **FUNCTIONAL COMPOSITION**
+
+  Chainable stream operations
+  Similar to RxJS/reactive patterns
+
+  Each operation creates wrapper
+  Late subscription: no pre-processing
+  Lazy evaluation
+
+  Batch: Time or size window
+  Filter: Predicate-based
+  Map: Transformation
+  Debounce: De-duplication
+end note
+
+note right of sync_msg_fn
+  **MESSAGE INTEGRITY**
+
+  SHA-256 checksum on all messages
+  Detects network corruption
+  TTL (expiry) prevents replay
+
+  Serialization: JSON format
+  Quad normalization: Canonical form
+  Compression: Optional gzip
+  Size: Typically 500B-5KB
+end note
+
+note right of websocket_impl
+  **REALTIME TRANSPORT**
+
+  WebSocket for bidirectional
+  Automatic reconnection
+  Heartbeat monitoring
+  Error recovery
+
+  Message handling:
+  → Send: JSON.stringify
+  → Receive: Parse SyncMessage
+  → Error: Reconnect
+end note
+
+note bottom
+  **STREAMING WORKFLOW**
+
+  Store mutation
+    ↓
+  emit('change') event
+    ↓
+  ChangeEvent({type, quad, timestamp, metadata})
+    ↓
+  Subscribers notified
+    ↓
+  StreamProcessor chains:
+    .batch(100)
+    .filter(...)
+    .debounce(100ms)
+    ↓
+  createSyncMessage(changes)
+    ↓
+  Compute SHA-256 checksum
+    ↓
+  Send via WebSocket
+    ↓
+  Peer receives SyncMessage
+    ↓
+  parseSyncMessage()
+    → Verify checksum
+    → Check expiry
+    ↓
+  Apply changes to peer store
+    ↓
+  Peer emits own change events
+    ↓
+  Replication complete
+end note
+
+SHOW_LEGEND()
+
+@enduml

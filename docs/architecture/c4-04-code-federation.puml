@@ -1,0 +1,148 @@
+@startuml UNRDF Federation - Code Level
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+LAYOUT_WITH_LEGEND()
+
+title @unrdf/federation - C4 Code Level (Distributed queries, peer management, result aggregation)
+
+Package("Core Coordinator") {
+  Component(coordinator_class, "class Coordinator", "Main Class", "constructor(config: CoordinatorConfig) {\n  this.peers: Map<string, Peer>\n  this.metrics: Metrics\n  this.config: CoordinatorConfig\n  this.healthMonitor: HealthMonitor\n  this.queryRouter: QueryRouter\n}\n\n✨ PEER MANAGEMENT\naddPeer(id: string, endpoint: string, metadata?):\n  void\n  → Creates Peer object\n  → Adds to registry\n  → Starts health monitoring\n  → Returns peer reference\n\nremovePeer(id: string): void\n  → Removes from registry\n  → Stops health monitoring\n  → Cleans up connections\n\ngetPeer(id: string): Peer|null\n  → Direct lookup\n  → Fast O(1) access\n\ngetAllPeers(): Peer[]\n  → Returns all registered peers\n  → Sorted by status\n\ngetHealthyPeers(): Peer[]\n  → Filters to status='healthy'\n  → Ready for queries\n\n🔍 QUERY EXECUTION\nquery(sparql: string, options?: QueryOptions):\n  Promise<AggregateResult>\n  → Main entry point\n  → Delegates to queryRouter\n  → Executes on selected peers\n  → Aggregates results\n  → Returns combined answer\n\nqueryPeer(id: string, sparql: string):\n  Promise<PeerResult>\n  → Query single peer\n  → Direct execution\n  → Error handling per peer\n\n💊 HEALTH MANAGEMENT\nstartHealthChecks(interval?: number):\n  Promise<void>\n  → Interval: default 60s\n  → Periodic ping to all peers\n  → Updates peer status\n  → Event emission on change\n\nstopHealthChecks(): void\n  → Stops periodic monitoring\n  → Cleans up timers\n\n📊 METRICS & MONITORING\ngetStats(): CoordinatorStats\n  → queries: number (total)\n  → errors: number\n  → avgDuration: number (ms)\n  → peersHealthy: number\n  → peersDegraded: number\n  → peersUnreachable: number\n\ngetPeerStats(id: string): PeerStats\n  → queryCount: number\n  → errorCount: number\n  → avgLatency: number\n  → lastQueryTime: Date\n  → lastError?: Error")
+}
+
+Package("Peer Management & Health") {
+  Component(peer_mgr_class, "class PeerManager", "Manager Class", "private peers: Map<string, Peer>\n\naddPeer(config: PeerConfig): Peer\n  → Creates: {\n      id: string\n      endpoint: string (SPARQL URL)\n      metadata: {tags, capabilities, description}\n      status: 'healthy'|'degraded'|'unreachable'\n      latency: number (ms)\n      errorCount: number\n      lastPing: number (timestamp)\n    }\n  → Returns Peer object\n\ngetPeer(id): Peer|null\n  → Fast lookup via Map\n\nremovePeer(id): void\n  → Deletes from registry\n  → Triggers cleanup\n\nupdatePeerStatus(id, status): void\n  → health: PeerHealth\n  → latency: number\n  → errorCount: number\n  → Emits 'status_change' event")
+
+  Component(health_checker, "class HealthChecker", "Monitor Class", "constructor(manager: PeerManager)\n\ncheck(peer: Peer):\n  Promise<PeerHealth>\n  → Sends ASK query: 'ASK { ?s ?p ?o }'\n  → Measures latency\n  → Status determination:\n      latency < 100ms → 'healthy'\n      latency >= 100ms → 'degraded'\n      timeout/error → 'unreachable'\n  → Updates peer.status\n  → Returns PeerHealth\n\ncheckAll(): Promise<Health[]>\n  → Pings all peers in parallel\n  → Promise.all([check(p1), check(p2), ...])\n  → Aggregates results\n  → Returns status for each peer\n\nmonitor(interval: number):\n  → Periodic checks\n  → setInterval(checkAll, interval)\n  → Handles disconnects\n  → Automatic peer removal (configurable)")
+
+  Component(peer_model, "Peer Interface", "Type Definition", "interface Peer {\n  id: string (unique)\n  endpoint: string\n    (http(s)://host/sparql)\n  metadata: {\n    tags: string[] (categories)\n    capabilities: string[]\n      (e.g., 'SPARQL 1.1', 'Reasoning')\n    description: string\n    contact?: string (email/URL)\n  }\n  status: PeerStatus\n    ('healthy'|'degraded'|'unreachable')\n  health: {\n    latency: number (ms)\n    errorRate: number (0-100%)\n    uptime: number (percentage)\n    lastCheck: number (timestamp)\n  }\n  stats: {\n    queryCount: number\n    errorCount: number\n    avgDuration: number\n  }\n}")
+}
+
+Package("Query Routing & Execution") {
+  Component(query_router, "class QueryRouter", "Routing Class", "selectPeers(strategy: string):\n  Peer[]\n  → Strategies:\n      'broadcast': All healthy peers\n      'selective': Filter by metadata\n      'first-available': Stop at 1st success\n      'round-robin': Load balance\n  → Returns sorted peer list\n\ngetExecutionPlan(query: string):\n  Peer[]\n  → Analyzes SPARQL query\n  → Predicts: SELECT|ASK|CONSTRUCT\n  → Selects optimal peers\n  → Ranks by latency\n  → Returns ordered list\n\noptimizeQuery(query: string):\n  string\n  → Query optimization:\n      pushFilters(): Reduce data transfer\n      pushProjection(): Select only needed\n      reorderPatterns(): Optimal order\n  → Returns optimized SPARQL")
+
+  Component(query_executor, "queryExecutor", "Module", "export async function executeQuery(\n  peers: Peer[],\n  sparql: string,\n  options?: ExecuteOptions\n): Promise<PeerResult[]>\n\nFlow:\n1. For each peer in parallel:\n   a. Construct endpoint URL\n   b. POST to {endpoint}/sparql\n   c. Send SPARQL query (URL-encoded)\n   d. Set timeout (default 30s)\n   e. Handle errors (retry 1x)\n2. Return results array\n\noptions: {\n  timeout: number (ms, default 30000)\n  retries: number (default 1)\n  headers?: {Authorization, Accept}\n  baseIri?: string\n}\n\nReturns: PeerResult[] = [\n  {\n    peerId: string\n    success: boolean\n    data?: Result (SPARQL result)\n    error?: Error\n    duration: number (ms)\n    status: number (HTTP)\n  }\n]")
+
+  Component(sparql_post, "SPARQL Execution", "HTTP Module", "POST {endpoint}/sparql\n\nBody (application/x-www-form-urlencoded):\n  query={SPARQL}\n  &default-graph-uri={uri}\n  &named-graph-uri={uri}\n\nHeaders:\n  Accept: application/sparql-results+json\n       or application/rdf+xml\n       or text/turtle\n\nTimeout: AbortController\n  signal = timeout(ms)\n  fetch(..., {signal})\n  → Automatic cancellation\n\nResult Formats:\n  SELECT: JSON [{bindings}]\n  ASK: JSON {boolean}\n  CONSTRUCT: RDF (Turtle/JSON-LD)\n  DESCRIBE: RDF")
+}
+
+Package("Result Aggregation") {
+  Component(aggregator, "class ResultAggregator", "Aggregation Class", "aggregate(results: PeerResult[],\n          strategy: AggregationStrategy):\n  AggregateResult\n\nStrategies:\n  'UNION': All results + duplicates\n  'INTERSECT': Only common bindings\n  'MERGE': Union - duplicates\n\nFlow:\n1. Filter successful results\n2. Extract bindings from each\n3. Apply strategy:\n   UNION: [r1.bindings, r2.bindings, ...]\n   MERGE: Dedup + combine\n   INTERSECT: Common only\n4. Aggregate errors\n5. Return AggregateResult\n\nreturns: AggregateResult {\n  success: boolean\n  data: {\n    head: {vars: string[]}\n    bindings: {[var]: Term}[]\n  }\n  peersQueried: number\n  peersSuccess: number\n  peersFailure: number\n  duration: number (total ms)\n  errors: {peerId, error}[]\n  stats: {\n    resultCount: number\n    unionSize: number\n    intersectSize: number\n  }\n}")
+
+  Component(dedup, "Deduplication", "Module", "export function deduplicateBindings(\n  bindings: Binding[]\n): Binding[]\n\nCompares binding objects\nRemoves identical results\n\nComparison:\nfor each variable:\n  term1.equals(term2)?\n  → Use RDF.js equals()\n  → Deep equality\n\nUsage:\n  • MERGE strategy\n  • Result consolidation\n  • Eliminates duplicates")
+}
+
+Package("Query Planning & Optimization") {
+  Component(query_planner, "QueryPlanner", "Module", "analyzeQuery(sparql: string):\n  QueryAnalysis\n  → Parses SPARQL\n  → Counts triple patterns\n  → Identifies filters\n  → Detects graph patterns\n\nestimateResultSize(analysis):\n  number\n  → Heuristic estimation\n  → Based on patterns\n  → Predicts data volume\n\nrecommendPeers(analysis, allPeers):\n  Peer[]\n  → Selects peers based on:\n      query complexity\n      peer capabilities\n      latency\n  → Returns ordered list")
+
+  Component(optimizer, "QueryOptimizer", "Module", "pushFilters(sparql): string\n  → Moves FILTER earlier\n  → Reduces intermediate results\n  → FILTER { ... } BEFORE patterns\n\npushProjection(sparql): string\n  → Only SELECT needed vars\n  → Reduces data transfer\n  → Example: SELECT ?s vs SELECT *\n\nreorderTriplePatterns(sparql): string\n  → Most selective first\n  → Reduces join size\n  → Better execution plan")
+}
+
+' Relationships
+Rel(coordinator_class, peer_mgr_class, "delegates peer management to")
+Rel(coordinator_class, query_router, "uses for routing")
+Rel(coordinator_class, aggregator, "aggregates with")
+Rel(peer_mgr_class, health_checker, "uses for monitoring")
+Rel(query_router, query_executor, "executes via")
+Rel(query_executor, sparql_post, "sends via HTTP")
+Rel(aggregator, dedup, "uses")
+Rel(query_router, query_planner, "consults")
+
+note right of coordinator_class
+  **FEDERATION ORCHESTRATOR**
+
+  Central coordination point
+  Manages peers: registry, health, metrics
+  Routes queries: strategy-based selection
+  Aggregates results: merge/union/intersect
+  Monitors health: periodic pings
+  Tracks metrics: throughput, errors, duration
+end note
+
+note right of health_checker
+  **CONTINUOUS MONITORING**
+
+  Heartbeat: SPARQL ASK query
+  Interval: Configurable (60s default)
+  Measurement: Latency + success/failure
+
+  Status determination:
+  • Latency < 100ms → Healthy
+  • Latency >= 100ms → Degraded
+  • Timeout/error → Unreachable
+
+  Automatic remediation:
+  • Remove after N failures
+  • Event emission on change
+  • Metrics tracking
+end note
+
+note right of query_router
+  **INTELLIGENT ROUTING**
+
+  Broadcast: All healthy peers
+  Selective: Filter by metadata (tags)
+  First-available: Fail-over strategy
+  Round-robin: Load balancing
+
+  Optimization:
+  • Query analysis
+  • Peer capability matching
+  • Latency-based ranking
+end note
+
+note right of aggregator
+  **RESULT MERGING**
+
+  UNION: All results combined
+  INTERSECT: Common only
+  MERGE: Deduplicated union
+
+  Deduplication:
+  • RDF.js equals() per term
+  • Exact matching
+  • No duplicates in result
+
+  Error collection:
+  • Tracks which peers failed
+  • Error reasons
+  • Partial success handling
+end note
+
+note bottom
+  **DISTRIBUTED QUERY WORKFLOW**
+
+  User query
+    ↓
+  Coordinator.query(sparql)
+    ↓
+  queryRouter.selectPeers(strategy)
+    → Pick peers to query
+    ↓
+  queryExecutor.execute(peers, sparql)
+    → Parallel HTTP POST to each
+    ↓
+  Each peer executes independently
+    → SPARQL engine runs
+    → Returns results
+    ↓
+  ResultAggregator.aggregate(results)
+    → Merge results
+    → Dedup if needed
+    → Collect errors
+    ↓
+  Return AggregateResult
+    → Combined answer
+    → Error info
+    → Metadata
+
+  Example:
+  SELECT ?s ?o { ?s rdf:type ?o }
+  → Query 3 peers in parallel
+  → Each returns 100 results
+  → Merge: Union = 300 (or fewer if duplicates)
+  → Metrics: 3 peers, 2 success, 1 failed, 250ms total
+end note
+
+SHOW_LEGEND()
+
+@enduml

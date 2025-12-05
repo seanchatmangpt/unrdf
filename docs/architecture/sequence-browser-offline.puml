@@ -1,0 +1,163 @@
+@startuml UNRDF Browser Offline-First Flow
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Sequence.puml
+
+title UNRDF - Browser Offline-First Workflow
+
+actor User
+participant "React\nComponent" as ReactApp
+participant "useKnowledgeEngine\nHook" as Hook
+participant "@unrdf/browser\nIndexedDBStore" as BrowserStore
+participant "IndexedDB\nDatabase" as IDB
+participant "Offline\nQueue" as Queue
+participant "Service\nWorker" as SW
+participant "Server\nAPI" as Server
+
+== ONLINE: NORMAL OPERATION ==
+
+User -> ReactApp: Add new quad\n(offline-capable)
+activate ReactApp
+
+ReactApp -> Hook: store.add(quad)
+activate Hook
+
+Hook -> BrowserStore: add(quad)
+activate BrowserStore
+
+Note over BrowserStore: Memory store\n(fast access)
+
+BrowserStore -> BrowserStore: Transaction:\n1. Validate quad\n2. Serialize for storage\n3. Add to memory\n4. Queue async write to IndexedDB
+
+Note over BrowserStore: Dual store:\nMemory for speed\nIndexedDB for persistence
+
+BrowserStore -> IDB: writeFile(quad)\n(async in background)
+activate IDB
+
+IDB -> IDB: Create transaction\nStore in 'quads' object store\nUpdate indexes (subject, predicate, object, graph)
+deactivate IDB
+
+BrowserStore -> BrowserStore: Emit change event\nCustomEvent('change', {...})
+
+BrowserStore --> Hook: ✓ Success
+deactivate BrowserStore
+
+Hook -> Hook: Component re-renders\n(reactive update)
+
+Hook --> ReactApp: UI updated
+deactivate Hook
+
+ReactApp --> User: ✓ Quad added\n(visual confirmation)
+deactivate ReactApp
+
+Note right of User: Works instantly\n<5ms latency\nNo network needed!
+
+== OFFLINE: QUEUED OPERATIONS ==
+
+Note over ReactApp: Network goes offline\n(Wi-Fi disconnected)
+
+User -> ReactApp: Add more quads\nwhile offline
+activate ReactApp
+
+loop While Offline (5 quads)
+  ReactApp -> BrowserStore: store.add(quad)
+  activate BrowserStore
+
+  BrowserStore -> BrowserStore: Write to memory\nWrite to IndexedDB\nQueue in pendingQuads[]
+
+  BrowserStore -> Queue: Push(quad)
+  activate Queue
+  Note right of Queue: Stored in IndexedDB\npendingQuads collection
+  deactivate Queue
+
+  BrowserStore --> ReactApp: ✓ Success
+  deactivate BrowserStore
+
+  ReactApp -> ReactApp: UI shows:\n"⚠️ Offline (queued)"
+end
+
+Note right of User: All 5 quads queued\nWork continues offline\nNo data lost!
+
+deactivate ReactApp
+
+== RECONNECTION: SYNC BEGINS ==
+
+Note over ReactApp: Network restored\n(Wi-Fi reconnected)
+
+SW -> SW: Service Worker detects\nnavigator.onLine = true
+
+SW -> Queue: Check pendingQuads
+activate Queue
+Queue --> SW: 5 quads in queue
+deactivate Queue
+
+SW -> SW: Create SyncMessage\nWith all 5 pending quads
+
+SW -> Server: POST /sync/quads\nWith SyncMessage\n(includes SHA-256 checksum)
+activate Server
+
+Note over Server: Server receives sync\nVerifies checksum\nApplies all 5 quads\nReturns remote changes (if any)
+
+Server -> Server: For each quad:\n  1. Run hooks (validation)\n  2. Add to server store\n  3. Emit to other peers\n  4. Log to audit trail
+
+Server --> SW: {\n  status: 'success',\n  appliedCount: 5,\n  remoteChanges: [{...}, ...]\n}
+deactivate Server
+
+SW -> Queue: Clear pendingQuads
+activate Queue
+Queue -> Queue: Delete synced quads\nfrom IndexedDB
+deactivate Queue
+
+Note over SW: Sync complete!\nServer & browser in sync
+
+SW -> ReactApp: Notify app\nSync completed
+
+ReactApp -> ReactApp: UI updates:\n"✓ Synced with server"
+
+ReactApp --> User: Sync confirmation
+deactivate ReactApp
+
+== CONFLICT RESOLUTION ==
+
+Note over BrowserStore: If server has changes\nfor same quads:
+
+SW -> Server: GET /sync/delta\nSince last sync timestamp
+activate Server
+
+Server -> Server: Find changes\nsince client's last know state\n(timestamp-based)
+
+Server --> SW: Delta {\n  added: [...],\n  removed: [...],\n  modified: [...]\n}
+deactivate Server
+
+SW -> BrowserStore: Apply delta\nLast-write-wins strategy
+activate BrowserStore
+
+BrowserStore -> BrowserStore: For each delta:\n  timestamp client > timestamp server?\n  → Keep client version\n  → Apply server version
+
+BrowserStore -> BrowserStore: Emit change events\nfor server updates
+
+BrowserStore -> IDB: Update IndexedDB\nwith merged state
+deactivate BrowserStore
+
+ReactApp -> ReactApp: Component re-renders\nWith merged data
+
+Note right of User: Final state:\nClient + Server merged\nNo data loss!\nReady for next sync
+
+== BACKGROUND SYNC ==
+
+Note over SW: Service Worker periodicity\n(even if app closed)
+
+SW -> SW: Background sync scheduled\nEvery 5 minutes\n(if app has pending data)
+
+alt If Pending Data Exists
+  SW -> Server: Send pending quads
+  Server -> Server: Apply changes
+  Server --> SW: Confirmation
+  SW -> Queue: Clear queue
+else No Pending Data
+  SW -> SW: Nothing to sync\nWait for next interval
+end
+
+Note right of User: Background sync ensures\ndata reaches server\neven if user closes tab\n(requires Service Worker)
+
+SHOW_LEGEND()
+
+@enduml

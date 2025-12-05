@@ -1,0 +1,189 @@
+@startuml UNRDF Browser Components
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+LAYOUT_WITH_LEGEND()
+
+title @unrdf/browser - C3 Component Diagram (Browser RDF with IndexedDB, 63 exports)
+
+Container_Boundary(browser_pkg, "@unrdf/browser") {
+
+  ' ============================================
+  ' LAYER 1: PUBLIC API ENTRY POINT
+  ' ============================================
+  Component(index, "index.mjs", "Entry Point", "63 exports:\n• IndexedDB APIs (8)\n• Browser Adapters (8)\n• Utilities (9)\n• Service Worker (4)\n• Knowledge Engine (34)")
+
+  ' ============================================
+  ' LAYER 2: INDEXEDDB STORE (PERSISTENCE)
+  ' ============================================
+  Component(indexeddb_store, "IndexedDBStore", "Class", "Primary browser RDF store\n\nopen(): Promise<void>\nclose(): Promise<void>\nadd(quad): Promise<void>\nremove(quad): Promise<void>\nmatch(s?, p?, o?, g?): Promise<Quad[]>\nclear(): Promise<void>\nsize(): Promise<number>\nisOpen(): boolean\ndb getter → IDBDatabase")
+
+  Component(quad_serialization, "Quad Serialization", "Module", "serializeQuadForStorage(quad)\ndeserializeQuad(data)\nCalculateQuadSize(quad)\n\nNormalizes quads for IndexedDB\nExtractDatatypes/languages")
+
+  ' ============================================
+  ' LAYER 3: BROWSER ADAPTERS & ENVIRONMENT
+  ' ============================================
+  Component(browser_adapters, "Browser Adapters", "Module", "createBrowserRDFStore(config)\ngetStorageAdapter(): 'indexeddb'|'memory'\nisBrowserEnvironment(): boolean\ngetBrowserComunicaAdapter()\nisServiceWorkerSupported(): boolean")
+
+  Component(browser_shims, "Browser Shims", "Module", "Node.js polyfills for browser:\n• path module\n• fs module stub\n• crypto (Web Crypto API)\n• randomUUID()\n• process.env polyfill\n• Worker support")
+
+  Component(storage_quota, "Storage Quota", "Module", "getStorageQuota()\nestimateCapacity()\nisStorageApproachingLimit()\ncheckStorageQuota()\nrequestPersistentStorage()\nformatStorageSize()")
+
+  ' ============================================
+  ' LAYER 4: VIRTUAL FILE SYSTEM
+  ' ============================================
+  Component(indexeddb_fs, "IndexedDBFileSystem", "Class", "POSIX-like file system in browser\n\nreadFile(path): Promise<string>\nwriteFile(path, content): Promise<void>\nmkdir(path): Promise<void>\nreaddir(path): Promise<string[]>\nstat(path): Promise<FileStat>\ndelete(path): Promise<void>\n\nStores: files, metadata")
+
+  Component(fs_adapter, "FS Adapter", "Module", "Converts IndexedDBFileSystem\nto Node.js fs-compatible API\n\nread(file) → fs.readFile()\nwrite(file) → fs.writeFile()\nstat(file) → fs.stat()")
+
+  ' ============================================
+  ' LAYER 5: SERVICE WORKER & SYNC
+  ' ============================================
+  Component(service_worker, "Service Worker", "Module", "registerServiceWorker(config)\ninitOfflineSupport()\nsendMessageToServiceWorker(msg)\nrequestBackgroundSync()\n\nOffline-first sync\nBackground replication")
+
+  Component(offline_sync, "Offline Sync", "Module", "Manages queued operations\nwhile offline\nReplays on reconnect\nConflict resolution")
+
+  ' ============================================
+  ' LAYER 6: KNOWLEDGE ENGINE (browser/)
+  ' ============================================
+  Component(browser_engine, "BrowserHookExecutor", "Class", "execute(hook, event, options?)\nmetrics: {executions, errors,\n          totalDuration, cacheHits}")
+
+  Component(knowledge_hook_mgr, "KnowledgeHookManager", "Class", "register(), execute(), getStats()\nManages hooks in browser context")
+
+  Component(policy_manager, "PolicyPackManager", "Module", "Loads policy packs in browser\nEvaluates policies in client context")
+
+  Component(query_executor, "BrowserQueryExecutor", "Class", "execute(query): Promise<Results>\nstream(query): AsyncIterable<Binding>\n\nSPARQL execution in browser")
+
+  ' ============================================
+  ' LAYER 7: TRANSACTION & INTEGRITY
+  ' ============================================
+  Component(lockchain_writer, "BrowserLockchainWriter", "Class", "write(entry): Promise<void>\nverify(entry): Promise<boolean>\nbatch(entries): Promise<void[]>\n\nCryptographic transaction chain\nsha256/sha3-256/blake3 hashing")
+
+  Component(transaction_support, "Transaction Support", "Module", "Atomic multi-quad operations\nRollback on failure\nJournal-based recovery")
+
+  ' ============================================
+  ' LAYER 8: IMPORT/EXPORT
+  ' ============================================
+  Component(store_io, "Store I/O", "Module", "exportStoreToJSON(store)\nimportStoreFromJSON(json)\n\nPortable store serialization\nData persistence/migration")
+
+  ' ============================================
+  ' EXTERNAL DEPENDENCIES
+  ' ============================================
+  Component(core_dep, "@unrdf/core", "External", "RDF operations, types")
+
+  Component(streaming_dep, "@unrdf/streaming", "External", "Change feeds, sync protocol")
+
+  Component(n3_dep, "N3.js", "External", "RDF parser/writer (streaming)")
+
+  Component(zod_dep, "Zod", "External", "Validation schemas")
+
+  Component(noble_hashes, "@noble/hashes", "External", "sha256, sha3-256, blake3")
+
+  Component(indexeddb_api, "IndexedDB API", "Browser Native", "Persistent key-value storage\nQueries via indexes")
+
+  Component(crypto_api, "Web Crypto API", "Browser Native", "randomUUID(), signatures")
+
+  Component(storage_api, "Storage API", "Browser Native", "localStorage, sessionStorage\nPersistent quota management")
+
+  ' ============================================
+  ' RELATIONSHIPS
+  ' ============================================
+
+  Rel(index, indexeddb_store, "exports")
+  Rel(index, browser_adapters, "exports")
+  Rel(index, storage_quota, "exports")
+  Rel(index, browser_engine, "exports")
+  Rel(index, lockchain_writer, "exports")
+  Rel(index, store_io, "exports")
+
+  Rel(indexeddb_store, indexeddb_api, "uses")
+  Rel(indexeddb_store, quad_serialization, "uses")
+  Rel(indexeddb_store, core_dep, "uses")
+
+  Rel(browser_adapters, browser_shims, "uses")
+  Rel(browser_adapters, indexeddb_store, "returns")
+
+  Rel(indexeddb_fs, indexeddb_api, "uses")
+  Rel(fs_adapter, indexeddb_fs, "wraps")
+
+  Rel(service_worker, offline_sync, "coordinates")
+  Rel(offline_sync, indexeddb_store, "uses")
+
+  Rel(browser_engine, knowledge_hook_mgr, "uses")
+  Rel(browser_engine, indexeddb_store, "accesses")
+
+  Rel(query_executor, core_dep, "uses SPARQL from")
+  Rel(query_executor, indexeddb_store, "queries")
+
+  Rel(lockchain_writer, noble_hashes, "uses")
+  Rel(transaction_support, lockchain_writer, "uses")
+
+  Rel(store_io, core_dep, "uses")
+
+  Rel(storage_quota, crypto_api, "uses")
+  Rel(browser_shims, crypto_api, "uses")
+
+}
+
+note right of indexeddb_store
+  **DUAL STORE PATTERN**
+
+  Memory + IndexedDB persistence
+
+  Indexes (for queries):
+  • subject (STRING)
+  • predicate (STRING)
+  • object (STRING)
+  • graph (STRING)
+
+  Schema:
+  • subjectType: NamedNode|BlankNode
+  • objectType: Literal|NamedNode|BlankNode
+  • objectLanguage: string|null
+  • objectDatatype: {value}|null
+end note
+
+note right of browser_engine
+  **BROWSER KNOWLEDGE HOOKS**
+
+  Transparent policy execution
+  in client-side RDF operations
+
+  Cached evaluation
+  (cacheHits/cacheMisses metrics)
+
+  No network round-trip
+  for policy checks
+end note
+
+note right of lockchain_writer
+  **CRYPTOGRAPHIC INTEGRITY**
+
+  SHA-256 default hashing
+  SHA3-256, Blake3 options
+
+  Chain of custody for quads
+  Verification for each write
+  Batch transaction support
+end note
+
+note bottom of browser_pkg
+  **BROWSER-FIRST DESIGN**
+
+  1. IndexedDB: offline-capable persistence
+  2. Service Workers: background sync
+  3. Virtual FS: file operations in-browser
+  4. Encrypted transactions: integrity verification
+  5. Storage quota aware: graceful degradation
+  6. Zero network required: offline-first
+  7. SPARQL in browser: no server round-trip
+  8. Policy execution: client-side governance
+
+  **Performance:**
+  • Memory store: <1ms queries
+  • IndexedDB: ~10-50ms queries
+  • Sync: batch protocol to reduce network
+end note
+
+SHOW_LEGEND()
+
+@enduml

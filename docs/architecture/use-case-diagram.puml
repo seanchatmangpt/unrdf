@@ -1,0 +1,232 @@
+@startuml UNRDF Use Cases
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_UseCase.puml
+
+left to right direction
+
+title UNRDF - Use Case Diagram (User Roles & Interactions)
+
+' Actors (User Roles)
+actor "RDF Developer" as developer
+actor "Enterprise User" as enterprise
+actor "Data Scientist" as datascientist
+actor "DevOps/SRE" as devops
+actor "System Integrator" as integrator
+
+' System Boundary
+rectangle "UNRDF Platform" {
+
+  ' ============================================
+  ' RDF DEVELOPER USE CASES
+  ' ============================================
+
+  usecase "Create RDF Graph" as UC_Create
+  usecase "Add/Remove Quads\n(Single or Bulk)" as UC_Mutation
+  usecase "Query with SPARQL" as UC_Query
+  usecase "Validate Data\nwith Hooks" as UC_Validate
+  usecase "Convert RDF Formats\n(Turtle/JSON-LD)" as UC_Convert
+  usecase "Debug & Inspect\nGraph Stats" as UC_Debug
+  usecase "Export Graph\nto File" as UC_Export
+
+  developer --> UC_Create: cli/SDK
+  developer --> UC_Mutation: store.add/delete
+  developer --> UC_Query: SPARQL queries
+  developer --> UC_Validate: Hook execution
+  developer --> UC_Convert: format conversion
+  developer --> UC_Debug: getStats()
+  developer --> UC_Export: dump()
+
+  ' ============================================
+  ' ENTERPRISE USER USE CASES
+  ' ============================================
+
+  usecase "Deploy UNRDF\nto Production" as UC_Deploy
+  usecase "Set up Federation\nwith Peers" as UC_Federation
+  usecase "Configure Policies\n& Governance" as UC_Policy
+  usecase "Monitor Performance\nMetrics" as UC_Monitor
+  usecase "Manage User\nPermissions" as UC_Permissions
+  usecase "Set up Backup\n& Recovery" as UC_Backup
+  usecase "Manage Scale\n(Horizontal/Vertical)" as UC_Scale
+
+  enterprise --> UC_Deploy: Kubernetes/Docker
+  enterprise --> UC_Federation: Add peers, configure routing
+  enterprise --> UC_Policy: Define hooks, rule sets
+  enterprise --> UC_Monitor: Metrics, dashboards
+  enterprise --> UC_Permissions: User management
+  enterprise --> UC_Backup: Backup strategy
+  enterprise --> UC_Scale: Infrastructure automation
+
+  ' ============================================
+  ' DATA SCIENTIST USE CASES
+  ' ============================================
+
+  usecase "Analyze RDF Graph\nStructure" as UC_Analysis
+  usecase "Execute SPARQL\nQueries" as UC_SciQuery
+  usecase "Perform Reasoning\n& Inference" as UC_Reasoning
+  usecase "Validate Data\nQuality" as UC_Quality
+  usecase "Merge/Compare\nGraphs" as UC_Merge
+  usecase "Generate\nStatistics" as UC_Stats
+  usecase "Export Results\nfor Analysis" as UC_SciExport
+
+  datascientist --> UC_Analysis: inspect graphs
+  datascientist --> UC_SciQuery: complex SPARQL
+  datascientist --> UC_Reasoning: eye-reasoner integration
+  datascientist --> UC_Quality: quality assessment
+  datascientist --> UC_Merge: graph operations
+  datascientist --> UC_Stats: metrics & profiling
+  datascientist --> UC_SciExport: CSV, JSON export
+
+  ' ============================================
+  ' DEVOPS/SRE USE CASES
+  ' ============================================
+
+  usecase "CI/CD Pipeline\nIntegration" as UC_CICD
+  usecase "Container\nOrchestration" as UC_Container
+  usecase "Health Checks\n& Monitoring" as UC_Health
+  usecase "Auto-scaling\n& Load Balancing" as UC_AutoScale
+  usecase "Observability\n(OTEL/Traces)" as UC_Observability
+  usecase "Disaster\nRecovery" as UC_DR
+  usecase "Database\nMaintenance" as UC_Maintenance
+
+  devops --> UC_CICD: automated tests
+  devops --> UC_Container: K8s deployment
+  devops --> UC_Health: ping health checks
+  devops --> UC_AutoScale: HPA configuration
+  devops --> UC_Observability: traces, metrics
+  devops --> UC_DR: failover, backup
+  devops --> UC_Maintenance: rebalancing, gc
+
+  ' ============================================
+  ' SYSTEM INTEGRATOR USE CASES
+  ' ============================================
+
+  usecase "Integrate with\nExternal Systems" as UC_Integration
+  usecase "Build Custom\nApplications" as UC_Custom
+  usecase "Extend with\nPlugins" as UC_Plugins
+  usecase "Set up Browser\nApps" as UC_BrowserApp
+  usecase "Configure\nMessage Queues" as UC_Queue
+  usecase "API Gateway\nSetup" as UC_APIGateway
+  usecase "Data Migration\nTools" as UC_Migration
+
+  integrator --> UC_Integration: REST APIs, webhooks
+  integrator --> UC_Custom: React/Vue components
+  integrator --> UC_Plugins: custom hooks
+  integrator --> UC_BrowserApp: offline-first apps
+  integrator --> UC_Queue: Kafka, RabbitMQ
+  integrator --> UC_APIGateway: Kong, nginx
+  integrator --> UC_Migration: bulk import tools
+
+  ' ============================================
+  ' CROSS-CUTTING USE CASES (All Users)
+  ' ============================================
+
+  usecase "Real-time\nData Sync" as UC_Sync
+  usecase "Offline-first\nOperations" as UC_Offline
+  usecase "Query\nOptimization" as UC_Optimize
+  usecase "Access Control\n& Security" as UC_Security
+
+  developer --> UC_Sync
+  developer --> UC_Offline
+  developer --> UC_Optimize
+  developer --> UC_Security
+
+  enterprise --> UC_Sync
+  enterprise --> UC_Offline
+  enterprise --> UC_Optimize
+  enterprise --> UC_Security
+
+  datascientist --> UC_Sync
+  datascientist --> UC_Offline
+  datascientist --> UC_Optimize
+  datascientist --> UC_Security
+
+  devops --> UC_Sync
+  devops --> UC_Offline
+  devops --> UC_Optimize
+  devops --> UC_Security
+
+  integrator --> UC_Sync
+  integrator --> UC_Offline
+  integrator --> UC_Optimize
+  integrator --> UC_Security
+}
+
+' Include relationships
+UC_Create ..|> UC_Mutation: extends
+UC_Query ..|> UC_Analysis: extends
+UC_Validate ..|> UC_Quality: extends
+UC_Export ..|> UC_SciExport: extends
+
+UC_Deploy ..|> UC_Container: extends
+UC_Policy ..|> UC_Validate: uses
+UC_Federation ..|> UC_Query: enables
+
+UC_Migration ..|> UC_Integration: uses
+UC_Custom ..|> UC_BrowserApp: specialized
+
+note right of developer
+  **RDF Developer**
+  Focus: Graph operations, queries
+  Tools: CLI, SDKs, APIs
+  Frequency: Daily
+  Output: RDF data, insights
+end note
+
+note right of enterprise
+  **Enterprise User**
+  Focus: Deployment, scaling, governance
+  Tools: Infrastructure, policies, monitoring
+  Frequency: Weekly+
+  Output: Production systems
+end note
+
+note right of datascientist
+  **Data Scientist**
+  Focus: Analysis, reasoning, statistics
+  Tools: SPARQL, Python, notebooks
+  Frequency: Daily
+  Output: Reports, models, insights
+end note
+
+note right of devops
+  **DevOps/SRE**
+  Focus: Infrastructure, reliability
+  Tools: Kubernetes, monitoring, automation
+  Frequency: Continuous
+  Output: Healthy production systems
+end note
+
+note right of integrator
+  **System Integrator**
+  Focus: Custom solutions, extensions
+  Tools: APIs, SDKs, plugins
+  Frequency: Project-based
+  Output: Applications, integrations
+end note
+
+note bottom
+  **Use Case Summary:**
+
+  Local Development: 7 core UCs
+  (developer focus)
+
+  Enterprise Deployment: 7 core UCs
+  (enterprise focus)
+
+  Data Analysis: 7 core UCs
+  (datascientist focus)
+
+  Operations: 7 core UCs
+  (devops focus)
+
+  Custom Solutions: 7 core UCs
+  (integrator focus)
+
+  Cross-cutting: 4 platform UCs
+  (all users)
+
+  **Total: 32 distinct use cases**
+end note
+
+SHOW_LEGEND()
+
+@enduml

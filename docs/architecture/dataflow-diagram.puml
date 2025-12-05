@@ -1,0 +1,184 @@
+@startuml UNRDF Data Flow Diagram
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Process.puml
+
+title UNRDF - Data Flow Diagram (How data moves through the system)
+
+' Data stores
+storage RDF_Files as "RDF Files\n(.ttl, .nt, .nq)" {
+  queue Files [
+    Turtle files
+    N-Triples
+    JSON-LD
+  ]
+}
+
+storage MemoryStore as "Memory Store\n(In-process)" {
+  queue Memory [
+    Loaded quads
+    Cached results
+    Index structures
+  ]
+}
+
+storage OxigraphDB as "Oxigraph DB\n(Persistent)" {
+  queue Disk [
+    Quads (indexed)
+    Graphs
+    Metadata
+  ]
+}
+
+storage IndexedDB_Browser as "Browser IndexedDB\n(Client-side)" {
+  queue BrowserDisk [
+    Quads (serialized)
+    Metadata
+    Pending sync queue
+  ]
+}
+
+' Processing nodes
+process Parse as "Parse RDF\n(Format Detection)" {
+  queue Parsing [
+    Detect format
+    Deserialize
+    Validate
+  ]
+}
+
+process Validation as "Validation &\nTransformation" {
+  queue ValidateProcess [
+    Execute hooks
+    Normalize data
+    Quality checks
+  ]
+}
+
+process Storage as "RDF Storage\n(Oxigraph)" {
+  queue StoreProcess [
+    Index quads
+    Persist to disk
+    Update metadata
+  ]
+}
+
+process SPARQL_Exec as "SPARQL Execution\n(Query)" {
+  queue SPARQLProcess [
+    Parse query
+    Build execution plan
+    Fetch bindings
+    Format results
+  ]
+}
+
+process Federation as "Federation\nCoordinator" {
+  queue FedProcess [
+    Select peers
+    Parallel queries
+    Aggregate results
+    Dedup bindings
+  ]
+}
+
+process Sync as "Change Sync\n(Replication)" {
+  queue SyncProcess [
+    Create batch
+    Compute checksum
+    Serialize message
+    Send to peer
+  ]
+}
+
+process Transform as "Data Transform\n(Convert)" {
+  queue TransformProcess [
+    Source format
+    RDF model
+    Target format
+  ]
+}
+
+' Flows
+
+' Import workflow
+Files --> Parse: Load RDF data
+Parse --> Validation: Parsed quads
+Validation --> Storage: Validated quads
+Storage --> Disk: Persist
+
+' Query workflow
+Memory --> SPARQL_Exec: In-memory quads\n(fast path)
+Disk --> SPARQL_Exec: Persistent quads\n(if not in memory)
+SPARQL_Exec --> Memory: Cache results
+SPARQL_Exec --> Files: Export results\n(SPARQL CONSTRUCT)
+
+' Federation workflow
+SPARQL_Exec --> Federation: Local query + \ndist. flag
+Federation --> Files: Federated results\n(merged)
+
+' Sync workflow
+Disk --> Sync: Change events\nfrom mutations
+Sync --> BrowserDisk: Broadcast to\nbrowser peers
+BrowserDisk --> Sync: Browser changes\nback to server
+
+' Browser workflow
+BrowserDisk --> SPARQL_Exec: Browser queries\n(offline-capable)
+BrowserDisk --> Transform: Export from\nbrowser store
+
+' Validation workflow
+Validation --> Validation: Hooks:\nBefore/After\ntransforms
+
+' Transform workflow
+Memory --> Transform: Select source\nformat
+Disk --> Transform: Or from disk
+Transform --> Files: Write converted\nRDF
+
+' Metrics
+note top of Validation
+  Performance characteristics:
+  • Parsing: 10-100ms per MB
+  • Validation: <1μs per quad (cached)
+  • Storage: <1ms per quad (indexed)
+  • SPARQL: <1ms for typical queries
+  • Federation: 100-500ms (peer latency)
+  • Sync: Bandwidth-limited
+end note
+
+' Data quality
+note bottom of Disk
+  Data at rest:
+  • Indexed by: subject, predicate, object, graph
+  • Format: Oxigraph binary (efficient)
+  • Persistence: Transaction-based
+  • Recovery: WAL (write-ahead log)
+end note
+
+note bottom of BrowserDisk
+  Browser data:
+  • IndexedDB: Durable storage
+  • Serialized: Quad JSON format
+  • Indexes: subject, predicate, object, graph
+  • Sync queue: Pending changes for replication
+  • TTL: Configurable expiry
+end note
+
+' Cache flow
+note left of Memory
+  In-memory caching:
+  • Query results: LRU cache
+  • Hook results: LRU cache (78% hit rate)
+  • Type checking: Pre-computed flags
+  • Performance: <1ms access time
+end note
+
+' Transformation flow
+note right of Transform
+  Format conversions:
+  • Turtle ↔ JSON-LD
+  • N-Triples ↔ RDF/XML
+  • N-Quads ↔ TriG
+  • Bidirectional lossless
+  • Preserves all RDF semantics
+end note
+
+SHOW_LEGEND()
+
+@enduml

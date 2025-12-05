@@ -1,0 +1,157 @@
+@startuml UNRDF Hooks - Code Level
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+LAYOUT_WITH_LEGEND()
+
+title @unrdf/hooks - C4 Code Level (Policy engine, hook execution, 35+ exports)
+
+Package("Core Hook Definition") {
+  Component(define_hook_fn, "defineHook(config)", "Factory Function", "export function defineHook(config: HookConfig): Hook\n\nconfig: {\n  name: string (unique id)\n  trigger: 'before-add'|'after-add'|'on-error'|\n           'on-schedule'|'quality-gate'|\n           'beforeQuery'|'afterQuery'|'effect'\n  validate?: (quad: Quad, ctx?: Context) => boolean\n    → Returns true = allowed\n    → Returns false = blocked\n    → Throws error = error handling\n  transform?: (quad: Quad, ctx?: Context) => Quad\n    → Returns modified quad\n    → Mutates data before storage\n  metadata?: {\n    description?: string\n    author?: string\n    version?: string\n    tags?: string[]\n  }\n  enabled?: boolean (default true)\n  priority?: number (0-100, default 50)\n}\n\nReturns: Hook {\n  name, trigger, validate?, transform?,\n  metadata?, enabled, priority,\n  _hasValidation: boolean [pre-computed]\n  _hasTransformation: boolean [pre-computed]\n}\n\nValidates with HookSchema (Zod)\nEarly error detection")
+
+  Component(hook_interface, "Hook Interface", "TypeScript-like", "interface Hook {\n  name: string\n  trigger: TriggerType (enum)\n  validate?: (quad, ctx?) => boolean\n  transform?: (quad, ctx?) => Quad\n  metadata?: Record<string, any>\n  enabled: boolean\n  priority: number\n  \n  // Pre-computed flags for <1μs checks\n  _hasValidation: boolean\n  _hasTransformation: boolean\n  _isCached: boolean\n}")
+}
+
+Package("Hook Execution (Primary APIs)") {
+  Component(execute_single, "executeHook(hook, quad, options?)", "Function", "export async function executeHook(\n  hook: Hook,\n  quad: Quad,\n  options?: ExecuteOptions\n): Promise<HookResult>\n\noptions: {\n  timeout?: number (ms)\n  captureContext?: boolean\n  onError?: 'throw'|'return'|'warn'\n}\n\nReturns: HookResult {\n  success: boolean\n  value?: Quad (if validation/transform)\n  error?: Error (if failed)\n  duration: number (ms)\n  metadata?: {cached, context}\n}\n\nFlow:\n1. Check _hasValidation flag\n2. If yes: Run validation(quad)\n   → false = return {success: false}\n   → throw = catch and handle\n3. Check _hasTransformation flag\n4. If yes: Run transform(quad)\n   → Returns transformed quad\n5. Return {success: true, value, duration}\n\nCaching: LRU on (hook.name, quad hash)\nMetrics: Updated on every call")
+
+  Component(execute_chain, "executeHookChain(hooks[], quad)", "Function", "export async function executeHookChain(\n  hooks: Hook[],\n  quad: Quad\n): Promise<ChainResult>\n\nSequential execution of hooks\n\nFlow:\n1. Sort by priority (high → low)\n2. For each hook in order:\n   a. Execute executeHook(hook, quad)\n   b. If error: return early (fail-fast)\n   c. If success: use returned quad\n3. Accumulate results\n\nReturns: ChainResult {\n  success: boolean\n  values: Quad[] (one per hook)\n  errors: Error[] (if any)\n  totalDuration: number (ms)\n  stoppedAt?: number (hook index)\n}\n\nOptions:\n• continueOnError: false (default)\n• stopOnFirst: true (default)")
+
+  Component(execute_batch, "executeBatch(hooks[], quads[])", "Function", "export async function executeBatch(\n  hooks: Hook[],\n  quads: Quad[]\n): Promise<BatchResult>\n\nBulk execution (10x faster than serial)\n\nOptimizations:\n1. Result caching: Cache on hook.name\n2. Deduplication: Same hook + quad combo\n3. Parallel: Promise.all() on independent\n4. Early termination: On error threshold\n\nFlow:\n1. Filter hooks by enabled=true\n2. Sort by priority\n3. For each quad:\n   a. Check cache (hit → skip execution)\n   b. executeHook(hook, quad)\n   c. Store result in cache\n4. Aggregate results\n\nReturns: BatchResult {\n  successful: number\n  failed: number\n  skipped: number\n  totalDuration: number (ms)\n  throughput: number (ops/sec)\n  errors: {quad, hook, error}[]\n  results: HookResult[]\n  cacheStats: {hits, misses, ratio}\n}\n\nIdeal for: Bulk imports, validations")
+}
+
+Package("Hook Manager & Lifecycle") {
+  Component(hook_manager_class, "class KnowledgeHookManager", "Manager Class", "export class KnowledgeHookManager {\n  private registry: Map<string, Hook>\n  private metrics: Metrics\n  private recursionGuard: Set<string>\n\n  register(hook: Hook): void\n    → registry.set(hook.name, hook)\n    → Throws if duplicate\n\n  execute(hook: Hook, quad: Quad, opts?):\n    Promise<HookResult>\n    → Delegates to executeHook()\n    → Tracks recursion via Set\n    → Updates metrics\n\n  getStats(): ManagerStats {\n    executions: number\n    errors: number\n    totalDuration: number (ms)\n    avgDuration: number (ms)\n    cacheHits: number\n    cacheMisses: number\n  }\n\n  clear(): void\n    → Clears registry\n    → Resets metrics\n\n  getHooks(trigger?: TriggerType):\n    Hook[]\n    → Returns all or filtered by trigger\n    → Sorted by priority\n\n  unregister(name: string): void\n    → Removes hook from registry\n\n  on(event, handler): unsubscribe\n    → Events: 'execute', 'error', 'success'\n    → Event-driven architecture\n}\n\nRecursion Protection:\n• Maintains Set<string> of active hooks\n• Detects self-referential calls\n• Throws RecursionError if detected")
+
+  Component(hook_scheduler_class, "class HookScheduler", "Scheduler Class", "export class HookScheduler {\n  schedule(hook: Hook, cron: string):\n    Promise<ScheduledHook>\n    → Parses cron expression\n    → Registers with node-cron\n    → Returns handle for unschedule\n\n  unschedule(hookName: string): void\n    → Stops cron job\n    → Cleans up\n\n  getScheduledHooks(): Hook[]\n    → All currently scheduled hooks\n\n  getNextExecution(hookName: string):\n    Date\n    → When will it run next?\n\n  on(event, handler):\n    → 'scheduled', 'executed', 'error'\n    → Cron job lifecycle events\n\n  Cron Support:\n  • Standard cron syntax\n  • 5 fields: minute hour day month dayofweek\n  • Examples:\n    '0 9 * * *' → 9am daily\n    '*/5 * * * *' → Every 5 minutes\n    '0 0 1 * *' → First of month\n  • DST handling: Automatic\n}")
+
+  Component(lifecycle_module, "Lifecycle Triggers", "Enum", "export enum TriggerType {\n  BEFORE_ADD = 'before-add',\n  AFTER_ADD = 'after-add',\n  ON_ERROR = 'on-error',\n  ON_SCHEDULE = 'on-schedule',\n  QUALITY_GATE = 'quality-gate',\n  BEFORE_QUERY = 'beforeQuery',\n  AFTER_QUERY = 'afterQuery',\n  EFFECT = 'effect',\n  CUSTOM = 'custom'\n}\n\nTrigger Timing:\nBEFORE_ADD: Pre-insertion validation\nAFTER_ADD: Post-insertion actions\nON_ERROR: Error handling hooks\nON_SCHEDULE: Time-based triggers\nQUALITY_GATE: Data quality checks\nBEFORE_QUERY: Pre-SPARQL hooks\nAFTER_QUERY: Result transformation"})
+}
+
+Package("Advanced Patterns") {
+  Component(composition, "Hook Composition", "Module", "Combine hooks with logical operators\n\ndefineComposedHook({\n  operator: 'AND'|'OR'|'NOT'|'SEQUENCE'\n  hooks: Hook[]\n}): Hook\n\nOperators:\nAND: All must pass (short-circuit)\nOR: At least one passes\nNOT: Invert boolean result\nSEQUENCE: Execute in order\n\nExample:\nAND: [validateIRI, normalizeLiteral]\n→ Both must succeed\nOR: [checkMain, checkFallback]\n→ Either one succeeds")
+
+  Component(policy_pack, "class PolicyPack", "Bundle Management", "loadPolicyPack(url): Promise<Hook[]>\n  → HTTP GET {url}/manifest.json\n  → Load hooks from pack\n  → Verify signatures\n\nverifySignature(pack): boolean\n  → Public key validation\n  → Tamper detection\n  → Certificate chain checking\n\napplyPolicyPack(hooks): void\n  → Register all hooks\n  → Validate metadata\n  → Check conflicts")
+
+  Component(effect_sandbox, "EffectSandbox", "Isolation", "Isolate hook side effects\n\nwrap(hook): IsolatedHook\n  → Capture console output\n  → Prevent global mutation\n  → Contain errors\n  → Timeout enforcement\n\nUsage:\nconst isolated = sandbox.wrap(hook)\nawait isolated.execute(quad)\n\nBenefits:\n• Prevents mutation escape\n• Timeouts prevent hangs\n• Error isolation")
+}
+
+Package("Performance & Caching") {
+  Component(hook_cache, "Hook Cache", "LRU Cache", "export class HookCache {\n  get(key: string): CachedResult|null\n  set(key: string, value: CachedResult): void\n  delete(key: string): void\n  clear(): void\n  getStats(): CacheStats\n\n  Key format: `${hook.name}:${quadHash}`\n  Hash: SHA256(quad as JSON)\n\n  Invalidation:\n  • TTL-based (configurable)\n  • Manual clear()\n  • Mutation clear (on add/delete)\n\n  Stats:\n  • hits: number\n  • misses: number\n  • size: number (bytes)\n  • hitRate: number (0-1)\n}\n\nTypical: 50-80% hit rate\nNet effect: 10x speedup on batch ops")
+
+  Component(optimization, "Optimization Flags", "Pre-computed", "Per hook:\n_hasValidation: boolean\n  → Set at defineHook time\n  → <1μs to check if skip\n  → true if validate function exists\n\n_hasTransformation: boolean\n  → Set at defineHook time\n  → <1μs to check if skip\n  → true if transform function exists\n\n_isCached: boolean\n  → Result is cacheable\n  → Set at defineHook time\n\nImpact:\n• <1K ops: <50ms total overhead\n• 10K ops: 290ms-5s overhead\n• 100K ops: 7-50s overhead\n  (Zod validation is bottleneck)")
+
+  Component(metrics_module, "Metrics Collection", "Observability", "Per hook:\n• executionCount: number\n• errorCount: number\n• totalDuration: number (ms)\n• avgDuration: number (ms)\n• minDuration: number (ms)\n• maxDuration: number (ms)\n• cacheHits: number\n• cacheMisses: number\n• throughput: number (ops/sec)\n• lastError?: Error\n• lastExecution: Date\n\nGlobal:\n• totalHooks: number\n• totalExecutions: number\n• totalErrors: number\n• totalDuration: number (ms)")
+}
+
+' Relationships
+Rel(define_hook_fn, hook_interface, "returns")
+Rel(execute_single, hook_interface, "takes")
+Rel(execute_chain, execute_single, "calls")
+Rel(execute_batch, execute_single, "calls parallel")
+Rel(hook_manager_class, execute_single, "delegates to")
+Rel(hook_manager_class, hook_cache, "uses")
+Rel(hook_scheduler_class, lifecycle_module, "uses")
+Rel(execute_batch, hook_cache, "checks")
+Rel(execute_single, optimization, "checks flags")
+Rel(hook_manager_class, metrics_module, "updates")
+Rel(policy_pack, hook_manager_class, "registers with")
+Rel(effect_sandbox, execute_single, "wraps")
+
+note right of execute_single
+  **SINGLE HOOK EXECUTION**
+
+  Atomic operation:
+  1. Pre-computed flag check <1μs
+  2. Validation (if _hasValidation)
+  3. Transformation (if _hasTransformation)
+  4. Cache storage
+  5. Metrics update
+
+  Timeout: Configurable (default 5s)
+  Error handling: 3 modes
+  • 'throw': Propagate error
+  • 'return': Return {success: false}
+  • 'warn': Log warning, continue
+end note
+
+note right of execute_batch
+  **BULK EXECUTION OPTIMIZATION**
+
+  10x faster than serial
+
+  Techniques:
+  1. Cache check (avoid execution)
+  2. Parallel execution (Promise.all)
+  3. Deduplication (same input = reuse)
+  4. Early termination (threshold)
+
+  Throughput: 10K quads in <5s
+  Memory: O(cache size)
+end note
+
+note right of hook_manager_class
+  **CENTRALIZED MANAGEMENT**
+
+  Registry: All hooks
+  Metrics: Global stats
+  Recursion Guard: Prevents loops
+  Events: Hook into lifecycle
+
+  Usage:
+  const mgr = new KnowledgeHookManager()
+  mgr.register(myHook)
+  await mgr.execute(myHook, quad)
+  console.log(mgr.getStats())
+end note
+
+note right of optimization
+  **PERFORMANCE OPTIMIZATION**
+
+  Pre-computed flags: <1μs check
+
+  Example:
+  if (!hook._hasValidation) {
+    // Skip validation entirely
+    // Saves 10-100μs per call
+  }
+
+  10K ops:
+  • With flags: 100-200ms overhead
+  • Without flags: 1-5s overhead
+  • Zod validation: 10-20μs (bottleneck)
+end note
+
+note bottom
+  **KNOWLEDGE HOOK ARCHITECTURE**
+
+  Execution Path:
+  defineHook(config)
+    ↓
+  [Zod validation + pre-compute flags]
+    ↓
+  executeHook(hook, quad)
+    ↓
+  [Check flags, validate, transform, cache]
+    ↓
+  Return {success, value, duration}
+
+  **Performance Characteristics:**
+  • <1K ops: <50ms (acceptable)
+  • 10K ops: 290ms-5s (degraded)
+  • 100K ops: 7-50s (unacceptable)
+
+  Bottleneck: Zod schema validation (~10μs)
+  Solution: Cache validation results
+
+  **Typical Use Cases:**
+  1. Data validation (before-add)
+  2. Value normalization (transform)
+  3. Quality checks (quality-gate)
+  4. Policy enforcement (before/after)
+  5. Error handling (on-error)
+  6. Scheduled tasks (on-schedule)
+end note
+
+SHOW_LEGEND()
+
+@enduml

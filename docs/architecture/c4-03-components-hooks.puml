@@ -1,0 +1,203 @@
+@startuml UNRDF Hooks Components
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+LAYOUT_WITH_LEGEND()
+
+title @unrdf/hooks - C3 Component Diagram (Policy & Knowledge Hooks, 35+ exports)
+
+Container_Boundary(hooks_pkg, "@unrdf/hooks") {
+
+  ' ============================================
+  ' LAYER 1: PUBLIC API ENTRY POINT
+  ' ============================================
+  Component(index, "index.mjs", "Entry Point", "defineHook(config)\nexecuteHook(hook, quad, options)\nexecuteHookChain(hooks, quad)\nexecuteBatch(hooks, quads)\nKnowledgeHookManager\nHookScheduler\n+32 more exports")
+
+  ' ============================================
+  ' LAYER 2: HOOK DEFINITION & REGISTRY
+  ' ============================================
+  Component(define_hook, "defineHook()", "Function", "Creates hook configuration\n\nconfig: {\n  name: string\n  trigger: 'before-add'|'after-add'|\n           'on-error'|'on-schedule'|...\n  validate?: (quad) => boolean\n  transform?: (quad) => quad\n  metadata?: {...}\n  enabled?: boolean\n  priority?: number (0-100)\n}\n\nReturns: Hook object\nValidation via Zod")
+
+  Component(hook_schema, "HookSchema", "Zod Schema", "name: string (required)\ntrigger: enum (10+ triggers)\nvalidate: function (optional)\ntransform: function (optional)\npriority: number (default 50)\nenabled: boolean (default true)\nmetadata: Record<string, any>")
+
+  Component(hook_registry, "Hook Registry", "Map<string, Hook>", "register(hook): void\nget(name): Hook\ngetAll(trigger): Hook[]\nunregister(name): void\nupdate(name, config): void")
+
+  ' ============================================
+  ' LAYER 3: HOOK EXECUTION (PRIMARY API)
+  ' ============================================
+  Component(execute_hook, "executeHook()", "Function", "Single hook execution\n\nexecuteHook(hook, quad, options?):\n  → result: {success, value, error,\n             duration, metadata}\n\nOptions:\n  • timeout: ms\n  • captureContext: boolean\n  • onError: 'throw'|'return'|'warn'")
+
+  Component(execute_chain, "executeHookChain()", "Function", "Sequential hook execution\n\nexecuteHookChain(hooks, quad):\n  → result: {success, values[],\n             errors[], totalDuration}\n\nStops on first failure\n(unless configured otherwise)")
+
+  Component(execute_batch, "executeBatch()", "Function", "Bulk execution (10x faster)\n\nexecuteBatch(hooks, quads, options):\n  → results: {successful, failed,\n              totalDuration, throughput}\n\nOptimizations:\n  • Parallel execution\n  • Result caching\n  • Early termination")
+
+  ' ============================================
+  ' LAYER 4: HOOK MANAGER & LIFECYCLE
+  ' ============================================
+  Component(hook_manager, "KnowledgeHookManager", "Class", "register(hook): void\nexecute(hook, quad, options)\ngetStats(): {executions, errors,\n            totalDuration, cacheHits}\nclear(): void\n\nLifecycle management\nRecursion guards\nMetrics collection")
+
+  Component(lifecycle, "Hook Lifecycle", "Module", "before-add: Pre-insertion validation\nafter-add: Post-insertion actions\non-error: Error handling\non-schedule: Cron/interval triggers\nquality-gate: Data quality checks\nbeforeQuery: Pre-SPARQL\nafterQuery: Post-SPARQL")
+
+  ' ============================================
+  ' LAYER 5: HOOK SCHEDULER
+  ' ============================================
+  Component(hook_scheduler, "HookScheduler", "Class", "schedule(hook, cron): Promise\nunschedule(hookName): void\ngetScheduledHooks(): Hook[]\n\nCron-based triggers\nInterval-based triggers\nCleanup on error")
+
+  Component(cron, "Cron Support", "Module", "Parse cron expressions\nCalculate next execution time\nHandle DST transitions")
+
+  ' ============================================
+  ' LAYER 6: BUILTIN HOOKS
+  ' ============================================
+  Component(builtin_hooks, "Builtin Hooks", "Module", "Pre-defined validators:\n\n• validateIRI()\n• normalizeLiteral()\n• checkDuplicates()\n• validateLanguageTag()\n• normalizePrefixes()\n• enforceSchema()\n• checkCardinalityConstraints()")
+
+  ' ============================================
+  ' LAYER 7: ADVANCED PATTERNS
+  ' ============================================
+  Component(hook_composition, "Hook Composition", "Module", "Combine hooks with operators:\n• AND: All must pass\n• OR: At least one passes\n• NOT: Invert result\n• SEQUENCE: Execute in order")
+
+  Component(policy_pack, "PolicyPack", "Class", "Load bundled hooks\n\nloadPolicyPack(url): Promise<Hook[]>\nverifySignature(pack): boolean\napplyPolicyPack(hooks): void")
+
+  Component(effect_sandbox, "Effect Sandbox", "Module", "Isolate hook side effects\nPrevent mutation escapes\nCapture pure computations")
+
+  ' ============================================
+  ' LAYER 8: PERFORMANCE & OPTIMIZATION
+  ' ============================================
+  Component(hook_cache, "Hook Cache", "Module", "LRU cache for hook results\nCache invalidation strategies\nHit/miss metrics\n\nCacheKey: (hook.name, quad hash)")
+
+  Component(optimization, "Optimization", "Module", "Pre-computed flags:\n  _hasValidation: boolean\n  _hasTransformation: boolean\n  _isCached: boolean\n\n<1μs flag checks")
+
+  Component(metrics, "Metrics Collection", "Module", "execution count\nerror count\ntotal duration\ncache hits/misses\nthroughput (ops/sec)\nlatency percentiles")
+
+  ' ============================================
+  ' EXTERNAL DEPENDENCIES
+  ' ============================================
+  Component(core_dep, "@unrdf/core", "External", "Quad interface")
+
+  Component(zod_dep, "Zod", "External", "Schema validation")
+
+  Component(node_cron, "node-cron", "External", "Cron job scheduling")
+
+  ' ============================================
+  ' RELATIONSHIPS
+  ' ============================================
+
+  Rel(index, define_hook, "exports")
+  Rel(index, execute_hook, "exports")
+  Rel(index, execute_chain, "exports")
+  Rel(index, execute_batch, "exports")
+  Rel(index, hook_manager, "exports")
+  Rel(index, hook_scheduler, "exports")
+
+  Rel(define_hook, hook_schema, "uses")
+  Rel(define_hook, hook_registry, "registers to")
+
+  Rel(execute_hook, hook_cache, "uses")
+  Rel(execute_hook, optimization, "uses")
+  Rel(execute_hook, metrics, "updates")
+
+  Rel(execute_chain, execute_hook, "calls")
+
+  Rel(execute_batch, execute_hook, "calls in parallel")
+  Rel(execute_batch, hook_cache, "uses")
+
+  Rel(hook_manager, hook_registry, "manages")
+  Rel(hook_manager, execute_hook, "delegates to")
+
+  Rel(hook_scheduler, cron, "uses")
+  Rel(hook_scheduler, node_cron, "uses")
+
+  Rel(hook_composition, execute_chain, "uses")
+
+  Rel(policy_pack, hook_registry, "populates")
+
+  Rel(effect_sandbox, execute_hook, "isolates")
+
+}
+
+note right of define_hook
+  **HOOK DEFINITION PATTERN**
+
+  Declarative configuration
+  Trigger-based execution
+  Optional validation + transformation
+
+  Zod-validated at definition time
+  Early error detection
+
+  Priority: Execution order (0-100)
+  Enabled: Feature flag support
+end note
+
+note right of execute_hook
+  **SINGLE HOOK EXECUTION**
+
+  Validates quad against hook
+  Transforms if needed
+  Captures errors
+  Records metrics
+
+  Options:
+  • timeout: Prevent hangs
+  • captureContext: Debugging
+  • onError: Error strategy
+end note
+
+note right of execute_batch
+  **BULK EXECUTION (10x FASTER)**
+
+  Parallel execution of hooks
+  Result caching across quads
+  Early termination on errors
+
+  Optimized for:
+  • Bulk imports (1000+ quads)
+  • Validation passes
+  • Quality assurance
+end note
+
+note right of hook_scheduler
+  **SCHEDULED EXECUTION**
+
+  Cron-based triggers
+  Interval-based triggers
+  One-time schedules
+
+  Use cases:
+  • Daily validation runs
+  • Periodic sync checks
+  • Data freshness checks
+end note
+
+note right of optimization
+  **PERFORMANCE OPTIMIZATION**
+
+  Pre-computed flags: <1μs
+  LRU cache: <10μs hit
+  Hook execution: 10-100μs
+
+  <50ms total overhead for <1K ops
+  Degradation for 10K+ ops
+  (Known limitation documented)
+end note
+
+note bottom of hooks_pkg
+  **KNOWLEDGE HOOK FRAMEWORK**
+
+  1. Declarative: defineHook(config)
+  2. Registry: Central hook management
+  3. Execution: Single/chain/batch APIs
+  4. Scheduling: Cron-based automation
+  5. Composition: AND/OR/NOT operators
+  6. Isolation: Effect sandbox
+  7. Caching: Result deduplication
+  8. Metrics: Full observability
+
+  **Typical Flow:**
+  Quad → beforeAdd hook → validate
+  → transform → add to store
+  → afterAdd hooks → metrics
+  → success event
+end note
+
+SHOW_LEGEND()
+
+@enduml

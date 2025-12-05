@@ -1,0 +1,223 @@
+@startuml UNRDF CLI Components
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+LAYOUT_WITH_LEGEND()
+
+title @unrdf/cli - C3 Component Diagram (Command-line tools, 7 main commands)
+
+Container_Boundary(cli_pkg, "@unrdf/cli") {
+
+  ' ============================================
+  ' LAYER 1: ENTRY POINT & CLI FRAMEWORK
+  ' ============================================
+  Component(index, "index.mjs", "Entry Point", "loadGraph(), saveGraph(),\ncommands (graph, query, context, convert)")
+
+  Component(cli_main, "cli.mjs", "Binary Entry", "#!/usr/bin/env node\nMain command: unrdf\nFramework: citty")
+
+  Component(cli_framework, "citty", "External", "CLI framework\ndefineCommand()\nrunMain()\nCommand routing")
+
+  ' ============================================
+  ' LAYER 2: COMMAND REGISTRY & ROUTING
+  ' ============================================
+  Component(command_registry, "Command Registry", "Module", "Main commands:\n• graph → Graph CRUD\n• query → SPARQL execution\n• context → Prefix management\n• convert → Format conversion")
+
+  Component(command_router, "Command Router", "Module", "Parses CLI arguments\nRoutes to subcommand\nHandles --help, --version\nError handling")
+
+  ' ============================================
+  ' LAYER 3: GRAPH COMMANDS
+  ' ============================================
+  Component(graph_cmd, "graph.mjs", "Command Module", "create: Create new graph\ndelete: Remove graph\ndescribe: Graph metadata\nget: Fetch triples\nlist: All graphs\nexport: RDF format\nvalidate: Data quality\nupdate: SPARQL UPDATE")
+
+  Component(graph_store, "Graph Store", "Module", "OxigraphStore initialization\nLoad from file\nQuerying (match/select)\nPersistence to disk")
+
+  Component(graph_io, "Graph I/O", "Module", "readGraphFile(path)\nwriteGraphFile(path, data)\ndetectFormat(filename)\nconvertFormat(source, target)")
+
+  ' ============================================
+  ' LAYER 4: QUERY COMMANDS
+  ' ============================================
+  Component(query_cmd, "query.mjs", "Command Module", "query: Execute SPARQL\nquery-file: Load from file\n\nOutput formats:\n• table (ASCII table)\n• json (JSON results)\n• csv (CSV export)")
+
+  Component(query_executor, "Query Executor", "Module", "parseQuery(sparql)\nexecuteQuery(store, sparql)\nformatResults(results, format)\n\nSUPPORT:\n• SELECT: Table output\n• ASK: Yes/No\n• CONSTRUCT: RDF output\n• DESCRIBE: RDF output")
+
+  Component(output_formatter, "Output Formatter", "Module", "toTable(results): ASCII\ntoJSON(results): JSON\ntoCSV(results): CSV\n\nPagination support\nField filtering")
+
+  ' ============================================
+  ' LAYER 5: CONTEXT COMMANDS
+  ' ============================================
+  Component(context_cmd, "context.mjs", "Command Module", "show: Display prefixes\nadd: Register prefix\nremove: Unregister prefix\nnormalize: Standardize prefixes")
+
+  Component(context_mgr, "Context Manager", "Module", "getContext(): Prefixes\naddPrefix(prefix, namespace)\nremovePrefix(prefix)\nnormalizeIRI(iri)\nexpandPrefix(prefixed)")
+
+  Component(common_prefixes, "Common Prefixes", "Module", "COMMON_VOCABULARIES\nRDF, RDFS, OWL, FOAF, DCTERMS,\nSKOS, XSD, PROV, DCAT, QUDT")
+
+  ' ============================================
+  ' LAYER 6: CONVERSION COMMANDS
+  ' ============================================
+  Component(convert_cmd, "convert.mjs", "Command Module", "to-turtle: → Turtle (.ttl)\nto-ntriples: → N-Triples (.nt)\nto-jsonld: → JSON-LD (.jsonld)\nto-nquads: → N-Quads (.nq)\nfrom-csv: ← CSV import\nfrom-json: ← JSON import")
+
+  Component(format_converter, "Format Converter", "Module", "detect(filename): string\nconvert(data, srcFormat, tgtFormat):\n  → RDF data\n\nFormats supported:\n• text/turtle (.ttl)\n• application/n-triples (.nt)\n• application/ld+json (.jsonld)\n• application/n-quads (.nq)\n• application/rdf+xml (.rdf)")
+
+  Component(csv_importer, "CSV Importer", "Module", "parseCSV(data): Rows\nmapToQuads(rows, mapping): Quad[]\nwriteQuads(store, quads)")
+
+  ' ============================================
+  ' LAYER 7: UTILITIES & VALIDATION
+  ' ============================================
+  Component(validation, "Validation", "Module", "Zod schemas:\n• graphPathSchema\n• formatSchema\n• prefixSchema\n• querySchema")
+
+  Component(error_handler, "Error Handler", "Module", "Colorized error output\nStack traces (debug mode)\nUser-friendly messages\nExit codes (0, 1, 2)")
+
+  Component(logger, "Logger", "Module", "info(), warn(), error(), debug()\nColorized output (chalk)\nProgress bars for long ops")
+
+  ' ============================================
+  ' LAYER 8: FILE OPERATIONS
+  ' ============================================
+  Component(file_ops, "File Operations", "Module", "readFile(path): string\nwriteFile(path, content)\nfileStat(path): Stats\nlistFiles(dir): string[]")
+
+  ' ============================================
+  ' EXTERNAL DEPENDENCIES
+  ' ============================================
+  Component(core_dep, "@unrdf/core", "External", "SPARQL execution,\nRDF operations")
+
+  Component(oxigraph_dep, "@unrdf/oxigraph", "External", "Store implementation")
+
+  Component(n3_dep, "N3.js", "External", "RDF format parsing/writing")
+
+  Component(yaml_dep, "YAML", "External", "Config file support")
+
+  Component(table_dep, "table", "External", "ASCII table formatting")
+
+  Component(chalk_dep, "chalk", "External", "Colorized output")
+
+  Component(zod_dep, "Zod", "External", "Input validation")
+
+  Component(node_fs, "Node.js fs", "External", "File system operations")
+
+  ' ============================================
+  ' RELATIONSHIPS
+  ' ============================================
+
+  Rel(cli_main, command_router, "delegates to")
+  Rel(command_router, command_registry, "consults")
+
+  Rel(command_registry, graph_cmd, "routes to")
+  Rel(command_registry, query_cmd, "routes to")
+  Rel(command_registry, context_cmd, "routes to")
+  Rel(command_registry, convert_cmd, "routes to")
+
+  Rel(graph_cmd, graph_store, "uses")
+  Rel(graph_cmd, graph_io, "uses")
+  Rel(graph_cmd, validation, "validates with")
+
+  Rel(graph_store, core_dep, "uses")
+  Rel(graph_store, oxigraph_dep, "uses")
+
+  Rel(graph_io, n3_dep, "uses")
+  Rel(graph_io, format_converter, "uses")
+
+  Rel(query_cmd, query_executor, "uses")
+  Rel(query_cmd, output_formatter, "uses")
+  Rel(query_executor, core_dep, "uses")
+
+  Rel(output_formatter, table_dep, "uses")
+
+  Rel(context_cmd, context_mgr, "uses")
+  Rel(context_mgr, common_prefixes, "uses")
+
+  Rel(convert_cmd, format_converter, "uses")
+  Rel(convert_cmd, csv_importer, "uses")
+  Rel(format_converter, n3_dep, "uses")
+
+  Rel(file_ops, node_fs, "uses")
+
+  Rel(error_handler, chalk_dep, "uses")
+  Rel(logger, chalk_dep, "uses")
+
+}
+
+note right of command_router
+  **COMMAND ROUTING**
+
+  Arguments: unrdf <command> [subcommand] [options]
+
+  Examples:
+  unrdf graph create --path store.ttl
+  unrdf query "SELECT * {?s ?p ?o}"
+  unrdf context add rdf http://www.w3.org/1999/02/22-rdf-syntax-ns#
+  unrdf convert --from turtle --to jsonld input.ttl
+end note
+
+note right of graph_cmd
+  **GRAPH OPERATIONS**
+
+  create: Initialize OxigraphStore
+  delete: Remove persisted store
+  describe: Triple/triple count
+  get: Triple pattern matching
+  list: All named graphs
+  export: Serialize to format
+  validate: Data quality checks
+  update: SPARQL UPDATE
+end note
+
+note right of query_cmd
+  **SPARQL EXECUTION**
+
+  Supports all 4 query types:
+  • SELECT → Tabular output
+  • ASK → Yes/No answer
+  • CONSTRUCT → RDF output
+  • DESCRIBE → RDF data
+
+  Output formats:
+  • table: Human-readable
+  • json: Machine-readable
+  • csv: Spreadsheet import
+end note
+
+note right of format_converter
+  **FORMAT SUPPORT (6 formats)**
+
+  Input:  TTL, NT, NQ, TRIG,
+          JSONLD, RDF/XML
+  Output: TTL, NT, NQ, TRIG,
+          JSONLD, RDF/XML
+
+  Automatic detection from extension
+  Explicit format override available
+  Error on unsupported format
+end note
+
+note right of logger
+  **USER-FRIENDLY OUTPUT**
+
+  Info: Green ✓
+  Warn: Yellow ⚠️
+  Error: Red ✗
+  Debug: Gray (flag: --debug)
+
+  Progress bars for long operations
+  Estimated time remaining
+  Colorized output for readability
+end note
+
+note bottom of cli_pkg
+  **COMMAND-LINE INTERFACE**
+
+  1. Entry: unrdf <command> [options]
+  2. Routing: citty framework
+  3. Validation: Zod schemas
+  4. Execution: Core + Oxigraph
+  5. Formatting: Multiple output formats
+  6. Errors: User-friendly messages
+  7. Logging: Colorized feedback
+  8. Files: Node.js fs integration
+
+  **Typical Workflow:**
+  $ unrdf graph create --path mystore.ttl
+  $ unrdf query "SELECT ?s {?s a rdfs:Class}"
+  $ unrdf convert --from turtle --to jsonld input.ttl output.json
+end note
+
+SHOW_LEGEND()
+
+@enduml

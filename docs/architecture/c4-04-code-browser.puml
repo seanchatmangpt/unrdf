@@ -1,0 +1,175 @@
+@startuml UNRDF Browser - Code Level
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+LAYOUT_WITH_LEGEND()
+
+title @unrdf/browser - C4 Code Level (IndexedDB store, offline-first, browser adapters)
+
+Package("IndexedDB Store - Persistence") {
+  Component(indexeddb_store_class, "class IndexedDBStore", "Main Store Class", "constructor(config: {\n  name: string (db name)\n  storeName?: string (default: 'quads')\n  version?: number (default: 1)\n})\n\n🔓 LIFECYCLE\nopen(): Promise<void>\n  → Creates IndexedDB database\n  → Creates object stores:\n      'quads': keyPath='id', indexes on\n               subject, predicate, object, graph\n      'metadata': keyPath='path'\n  → Waits for success\n  → Throws on failure\n\nclose(): Promise<void>\n  → Closes database connection\n  → Cleans up resources\n  → Prevents memory leaks\n\nisOpen(): boolean\n  → Checks if db connected\n  → Safe to query\n\n💾 STORE OPERATIONS\nadd(quad: Quad): Promise<void>\n  → Transaction: readwrite\n  → Serializes quad with\n       serializeQuadForStorage()\n  → Stores in 'quads' object store\n  → Updates indexes\n  → Throws DuplicateError if exists\n\nremove(quad: Quad): Promise<void>\n  → Transaction: readwrite\n  → Finds matching quad\n  → Deletes from 'quads'\n  → Updates indexes\n  → Throws NotFoundError if missing\n\n🔍 QUERY OPERATIONS\nmatch(s?: Term, p?: Term, o?: Term, g?: Term):\n  Promise<Quad[]>\n  → Transaction: readonly\n  → Uses IDBKeyRange for efficient filtering\n  → Index-driven queries:\n      if subject: query subject index\n      if predicate: query predicate index\n      else: full scan\n  → Deserializes results\n  → Returns Quad array\n\nhas(quad: Quad): Promise<boolean>\n  → Quick existence check\n  → Returns true if found\n  → O(1) with index\n\nclear(): Promise<void>\n  → Deletes all quads\n  → Transaction: readwrite\n  → Clears indexes\n  → Resets metadata\n\nsize(): Promise<number>\n  → Counts all quads\n  → Transaction: readonly\n  → Uses count() on store\n\n⚙️ INTERNAL STATE\n- db: IDBDatabase (connection)\n- config: {\n    name: string\n    storeName: string\n    version: number\n  }\n- memoryCache?: Set (optional)")
+}
+
+Package("Quad Serialization - Storage Format") {
+  Component(quad_serial, "Quad Serialization", "Module", "export function serializeQuadForStorage(\n  quad: Quad\n): SerializedQuad\n\nNormalizes quad for IndexedDB storage\n\nSerializes to: {\n  id: number (autoincrement)\n  subject: string (IRI or bnode)\n  subjectType: 'NamedNode'|'BlankNode'\n  predicate: string (IRI)\n  object: string (IRI/value)\n  objectType: 'Literal'|'NamedNode'|'BlankNode'\n  objectLanguage: string|null\n  objectDatatype: {\n    value: string\n  }|null\n  graph: string (IRI or default)\n}\n\nInverse:\nexport function deserializeQuad(\n  data: SerializedQuad\n): Quad\n\nReconstructs Quad from storage\n\nUsage:\n• Store: serialize on insert\n• Retrieve: deserialize on query\n• Preserves: All RDF semantics\n• Handles: Language tags, datatypes")
+}
+
+Package("Browser Adapters - Environment Detection") {
+  Component(browser_adapters_mod, "Browser Adapters", "Module", "export function createBrowserRDFStore(\n  config: BrowserStoreConfig\n): Promise<RDFStore>\n\nFactory function creates store based on environment\n\nFlow:\n1. Detect browser capabilities\n   → IndexedDB available?\n   → localStorage available?\n   → Service Workers supported?\n2. Choose storage:\n   config.preferredType='indexeddb' → IndexedDBStore\n   config.preferredType='memory' → MemoryStore\n   fallback: MemoryStore\n3. Initialize store\n4. Return store handle\n\nexport function getStorageAdapter():\n  'indexeddb'|'memory'|'localStorage'\n\nDetects best available adapter\n\nexport function isBrowserEnvironment():\n  boolean\n\nChecks: typeof window !== 'undefined'\n\nexport function isServiceWorkerSupported():\n  boolean\n\nChecks: 'serviceWorker' in navigator")
+
+  Component(browser_shims, "Browser Shims", "Polyfills", "export const browserShims = {\n  fs: {\n    readFile(path): Promise<string>,\n    writeFile(path, data): Promise<void>,\n    stat(path): Promise<Stats>\n  },\n  path: {\n    join(...parts): string,\n    dirname(path): string,\n    basename(path): string\n  },\n  crypto: {\n    randomUUID(): string,\n    getRandomValues(buffer): Uint8Array\n  },\n  process: {\n    env: {NODE_ENV, DEBUG, ...}\n  }\n}\n\nProvides Node.js API in browser\nPrevents import errors\nFallback behavior"})
+}
+
+Package("Virtual File System - IndexedDB FS") {
+  Component(indexeddb_fs_class, "class IndexedDBFileSystem", "Virtual FS", "constructor()\n\n📂 FILE OPERATIONS\nreadFile(path: string): Promise<string>\n  → Looks up in 'files' store\n  → Path as key\n  → Returns content\n  → Throws ENOENT if missing\n\nwriteFile(path: string, content: string):\n  Promise<void>\n  → Creates parent dirs if needed\n  → Stores in 'files' store\n  → Updates 'metadata'\n  → Size tracking\n\nmkdir(path: string): Promise<void>\n  → Creates directory entry\n  → Sets isDirectory=true\n  → Updates parent pointer\n  → Throws EEXIST if exists\n\nreaddir(path: string): Promise<string[]>\n  → Lists files in directory\n  → Queries 'metadata' index\n  → Filters by parentPath\n  → Returns names only\n\nstat(path: string): Promise<FileStat>\n  → Returns: {\n      isDirectory: boolean\n      isFile: boolean\n      size: number (bytes)\n      mtime: number (timestamp)\n      ctime: number\n    }\n\ndelete(path: string): Promise<void>\n  → Removes file or directory\n  → Throws if dir not empty\n  → Updates parent references\n\n⚙️ INTERNAL STRUCTURE\nObject stores:\n  'files': {keyPath: 'path', value: content}\n  'metadata': {\n    keyPath: 'path'\n    indexes: 'parentPath' (for readdir)\n    value: {isDir, size, mtime, ctime}\n  }")
+}
+
+Package("Service Worker & Sync") {
+  Component(service_worker, "Service Worker Module", "Module", "export async function registerServiceWorker(\n  scriptUrl: string,\n  config?: {\n    scope?: string\n    updateViaCache?: boolean\n  }\n): Promise<ServiceWorkerContainer>\n\nRegisters SW for offline support\n\nFlow:\n1. Check support\n2. Register SW script\n3. Wait for installation\n4. Cache API setup\n5. Return registration\n\nexport async function initOfflineSupport():\n  Promise<void>\n\nSets up offline queue\n• Store mutations in queue\n• On reconnect: replay queue\n• Sync via sync-protocol\n\nexport function sendMessageToServiceWorker(\n  message: any\n): Promise<any>\n\nBidirectional communication\nSW → App: postMessage\nApp → SW: sendMessage\n\nexport function requestBackgroundSync(\n  tag: string\n): Promise<void>\n\nTriggers periodic background sync\nRequires ServiceWorkerContainer")
+
+  Component(offline_sync, "Offline Sync Manager", "Module", "Queue mutations while offline\n\nStores:\n  pendingQuads: [Quad]\n  pendingDeletes: [Quad]\n  lastSyncTimestamp: number\n  syncErrors: Error[]\n\nFlow on add():\n1. Add to local store\n2. Add to pendingQuads queue\n3. If online → sync immediately\n4. If offline → queue for later\n\nFlow on reconnect:\n1. Check queue\n2. replay(queue)\n3. sendChanges via sync-protocol\n4. Clear queue\n\nConflict resolution:\n• Last-write-wins\n• Timestamps: our time vs server\n• Custom resolver option")
+}
+
+Package("Transaction Support") {
+  Component(lockchain_writer, "class BrowserLockchainWriter", "Transaction Class", "constructor(config: {\n  storageType: 'indexeddb'|'memory'\n  algorithm: 'sha256'|'sha3-256'|'blake3'\n  batchSize?: number\n})\n\n🔗 CHAIN INTEGRITY\nwrite(entry: {quad, metadata}):\n  Promise<void>\n  → Computes hash of entry\n  → Links to previous hash\n  → Stores in chain\n  → Cryptographic proof\n\nverify(entry): Promise<boolean>\n  → Recomputes hash\n  → Checks chain link\n  → Detects tampering\n  → Returns true if valid\n\nbatch(entries: Entry[]): Promise<void>\n  → Groups entries\n  → Single transaction\n  → All-or-nothing\n  → Rollback on error\n\n⚙️ HASHING\n Algorithm options:\n  • SHA-256 (default)\n  • SHA3-256 (NIST standard)\n  • BLAKE3 (fast, secure)\n\nChain format:\n  Entry = {quad, metadata, hash, prevHash}\n  hash = SHA256(quad + prevHash)")
+
+  Component(transaction_support, "Transaction Support", "Module", "export async function transaction(\n  fn: () => Promise<void>\n): Promise<void>\n\nAtomic multi-operation\n\nFlow:\n1. Start IDBTransaction(readwrite)\n2. Call fn() within transaction\n3. Commit on success\n4. Rollback on error\n5. All-or-nothing semantics\n\nUsage:\nawait store.transaction(async () => {\n  await store.add(quad1)\n  await store.add(quad2)\n  // Atomic: both or neither\n})")
+}
+
+' Relationships
+Rel(indexeddb_store_class, indexeddb_fs_class, "uses for FS")
+Rel(indexeddb_store_class, quad_serial, "uses")
+Rel(browser_adapters_mod, indexeddb_store_class, "creates")
+Rel(indexeddb_fs_class, indexeddb_api, "depends on")
+Rel(service_worker, offline_sync, "coordinates")
+Rel(lockchain_writer, noble_hashes, "uses for hashing")
+Rel(transaction_support, indexeddb_store_class, "enables on")
+
+note right of indexeddb_store_class
+  **OFFLINE-FIRST PERSISTENCE**
+
+  IndexedDB: Persistent browser storage
+  Dual-store pattern:
+  • Memory: Fast access
+  • IndexedDB: Durable storage
+
+  Indexes:
+  • subject (fast pattern queries)
+  • predicate (type queries)
+  • object (value lookups)
+  • graph (named graph ops)
+
+  Transactions:
+  • readonly: Multiple concurrent
+  • readwrite: Serialized exclusive
+  • Autocommit or manual
+
+  Performance:
+  • Memory: <1ms queries
+  • IndexedDB: 10-50ms queries
+end note
+
+note right of quad_serial
+  **STORAGE NORMALIZATION**
+
+  Converts Quad → SerializedQuad
+  Extracts components:
+  • subject: IRI or bnode ID
+  • predicate: IRI
+  • object: value (IRI or literal)
+  • objectLanguage: for strings
+  • objectDatatype: xsd:types
+
+  Indexes on:
+  • subject (string)
+  • predicate (string)
+  • object (string)
+  • graph (string)
+
+  Benefits:
+  • Index-driven queries
+  • Type preservation
+  • Language tags retained
+  • Datatypes preserved
+end note
+
+note right of service_worker
+  **OFFLINE-FIRST ARCHITECTURE**
+
+  Service Worker:
+  • Intercepts network requests
+  • Serves cached responses
+  • Queues mutations
+
+  Offline Sync:
+  • Store mutations locally
+  • Queue in IndexedDB
+  • Replay on reconnect
+  • Conflict resolution
+
+  Background Sync:
+  • Periodic sync in background
+  • Even if user closes tab
+  • Requires SW support
+end note
+
+note right of lockchain_writer
+  **CRYPTOGRAPHIC INTEGRITY**
+
+  Block chain-like chain:
+  Entry = {quad, metadata, hash, prevHash}
+
+  Each write:
+  • Hashes current entry
+  • Links to previous
+  • Creates verifiable chain
+
+  Verification:
+  • Recompute hash
+  • Check chain link
+  • Detect tampering
+  • Ensure sequence
+
+  Use cases:
+  • Audit trails
+  • Immutable logs
+  • Tamper detection
+end note
+
+note bottom
+  **BROWSER-FIRST WORKFLOW**
+
+  Data operations:
+  1. User action (add/delete)
+  2. Update memory store
+  3. Serialize quad
+  4. Store in IndexedDB
+  5. Update all indexes
+  6. Notify subscribers
+  7. Queue for sync if offline
+
+  Query operations:
+  1. User query (SPARQL)
+  2. Check memory first (fast)
+  3. Fall back to IndexedDB
+  4. Use indexes for filtering
+  5. Deserialize results
+  6. Return Quads
+
+  Offline sync:
+  1. App works offline
+  2. Changes queued in IndexedDB
+  3. On reconnect detected
+  4. Replay queued changes
+  5. Create SyncMessage
+  6. Send to server
+  7. Get remote changes back
+  8. Merge/resolve conflicts
+
+  **No server required for reads/writes**
+  **Full SPARQL execution in browser**
+  **Automatic sync on reconnect**
+end note
+
+SHOW_LEGEND()
+
+@enduml

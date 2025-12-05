@@ -1,0 +1,308 @@
+@startuml UNRDF Activity Diagrams
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Activity.puml
+
+title UNRDF - Activity Diagrams (Process Workflows)
+
+' =====================================
+' ACTIVITY 1: DATA IMPORT WORKFLOW
+' =====================================
+
+activity DataImportWorkflow as "Data Import Process" {
+
+  start
+
+  :Load RDF file;
+
+  :Detect format
+  based on extension;
+
+  if (Format valid?) is (No)
+    :Throw error
+    "Unsupported format";
+    stop
+  else (Yes)
+  endif
+
+  :Parse RDF data
+  Deserialize to Quad[];
+
+  note
+    Parse performance:
+    Turtle: 10-50ms/MB
+    JSON-LD: 50-100ms/MB
+    N-Triples: 5-10ms/MB
+  end note
+
+  :Create batch
+  of quads;
+
+  if (Batch size > 10K?) is (Yes)
+    :Split into smaller batches
+    Process separately;
+  else (No)
+  endif
+
+  :Execute hooks
+  For each quad:
+  - Validate
+  - Transform
+  - Quality check;
+
+  note
+    Hook performance:
+    Cached: <1μs
+    Executed: 10-100μs
+    Batch: 10x faster
+  end note
+
+  if (All quads pass validation?) is (No)
+    :Log errors
+    Skip invalid quads;
+  else (Yes)
+  endif
+
+  :Execute transaction
+  Add all validated quads;
+
+  note
+    Transaction:
+    Atomic: all or nothing
+    Indexed: subject/predicate/object/graph
+    Persisted: Oxigraph disk
+  end note
+
+  :Update indexes
+  Build index structures;
+
+  :Emit change events
+  Notify subscribers;
+
+  note
+    Change events:
+    CustomEvent('change')
+    Detail: {type, quad, timestamp, metadata}
+    Subscribers: React, Vue, listeners
+  end note
+
+  :Log metrics
+  Count quads
+  Duration
+  Errors;
+
+  :Display success
+  "N quads imported in Xms";
+
+  stop
+}
+
+' =====================================
+' ACTIVITY 2: FEDERATED QUERY
+' =====================================
+
+activity FederatedQueryWorkflow as "Federated Query Execution" {
+
+  start
+
+  :User enters SPARQL query;
+
+  :Validate SPARQL syntax;
+
+  if (Syntax valid?) is (No)
+    :Display error
+    "SPARQL syntax error";
+    stop
+  else (Yes)
+  endif
+
+  :Check federation flag
+  Is this a distributed query?;
+
+  if (Distributed?) is (No)
+    :Execute local query
+    On Oxigraph only;
+    :Return local results;
+    stop
+  else (Yes)
+  endif
+
+  :Query router
+  Select strategy:
+  - Broadcast (all)
+  - Selective (filter)
+  - First-available;
+
+  :Get healthy peers
+  Filter by status
+  latency < 100ms;
+
+  if (Any peers healthy?) is (No)
+    :Display error
+    "No peers available";
+    stop
+  else (Yes)
+  endif
+
+  :Optimize query
+  - Push filters
+  - Push projection
+  - Reorder patterns;
+
+  note
+    Optimization:
+    Reduces data transfer
+    Minimizes joins
+    Estimates size
+  end note
+
+  :Execute on all peers
+  in parallel
+  Promise.all([q1, q2, ...]);
+
+  note
+    Parallel execution:
+    HTTP POST /sparql
+    Timeout: 30s
+    Retries: 1x
+  end note
+
+  :Collect results
+  from each peer;
+
+  :Aggregate results
+  based on strategy:
+  - UNION: all
+  - INTERSECT: common
+  - MERGE: deduplicated;
+
+  if (Aggregation successful?) is (No)
+    :Log partial failures;
+  else (Yes)
+  endif
+
+  :Dedup bindings
+  Remove identical results;
+
+  note
+    Deduplication:
+    Compare bindings
+    RDF.js equals()
+    O(n log n) sort-based
+  end note
+
+  :Format results
+  table/json/csv;
+
+  :Display results
+  + metadata
+  (peers, duration, errors);
+
+  stop
+}
+
+' =====================================
+' ACTIVITY 3: OFFLINE SYNC WORKFLOW
+' =====================================
+
+activity OfflineSyncWorkflow as "Browser Offline Sync" {
+
+  start
+
+  :User in browser
+  App loaded;
+
+  :Check online status
+  navigator.onLine;
+
+  if (Online?) is (Yes)
+    :Continue normal operation;
+  else (No)
+  endif
+
+  :User performs mutation
+  add/delete/update quad;
+
+  :Update memory store;
+
+  :Write to IndexedDB
+  async;
+
+  :Check network status;
+
+  if (Online?) is (Yes)
+    :Send change immediately
+    POST /sync/quads;
+    :Await server ack;
+  else (No)
+    :Queue in pendingQuads[];
+    :Show "⚠️ Offline (queued)";
+  endif
+
+  :Continue allowing mutations
+  while offline;
+
+  note
+    Offline capabilities:
+    - Write to IndexedDB ✓
+    - Query IndexedDB ✓
+    - Local SPARQL ✓
+    - No network needed ✓
+    - All changes queued ✓
+  end note
+
+  :Network restored
+  Service Worker detects;
+
+  :Check pending queue
+  pendingQuads.length > 0?;
+
+  if (Pending exists?) is (Yes)
+    :Create SyncMessage
+    Include SHA-256 checksum;
+
+    :POST to server
+    /sync/quads;
+
+    :Server validates
+    Applies quads
+    Returns remoteChanges;
+
+    note
+      Sync protocol:
+      Message includes:
+      - version
+      - changes (serialized)
+      - checksum (SHA-256)
+      - timestamp
+      - metadata
+    end note
+
+    :Receive remote changes
+    from server;
+
+    :Merge strategies
+    for conflicts:
+    Last-write-wins
+    (timestamp-based);
+
+    :Apply remote changes
+    to IndexedDB;
+
+    :Emit change events
+    UI re-renders;
+
+    :Clear pendingQuads[];
+
+  else (No)
+  endif
+
+  :Verify sync complete
+  Both sides in sync;
+
+  :Show "✓ Synced";
+
+  stop
+}
+
+SHOW_LEGEND()
+
+@enduml

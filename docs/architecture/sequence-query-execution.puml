@@ -1,0 +1,135 @@
+@startuml UNRDF Query Execution Sequence
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Sequence.puml
+
+title UNRDF - Query Execution Flow (Local & Federated)
+
+actor User
+participant "CLI/App" as App
+participant "@unrdf/core\nUnrdfStore" as Store
+participant "@unrdf/oxigraph\nOxigraphStore" as Oxigraph
+participant "@unrdf/hooks\nHookManager" as Hooks
+participant "@unrdf/federation\nCoordinator" as Federation
+participant "Remote SPARQL\nEndpoints" as RemoteEndpoints
+
+== LOCAL QUERY (Fast Path) ==
+
+User -> App: query("SELECT ?s {?s a foaf:Person}")
+activate App
+
+App -> Store: query(sparql)
+activate Store
+
+Note over Store: Sync SPARQL execution\nDirect to Oxigraph
+
+Store -> Hooks: beforeQuery hook
+activate Hooks
+Hooks -> Hooks: validate query\ntransform if needed
+Hooks --> Store: validated query
+deactivate Hooks
+
+Store -> Oxigraph: query(sparql, options)
+activate Oxigraph
+
+Note over Oxigraph: WASM native execution\n<1ms for typical queries
+
+Oxigraph -> Oxigraph: Parse SPARQL\nCreate execution plan\nExecute SPARQL\nFormat results
+
+Oxigraph --> Store: {bindings: [...]}
+deactivate Oxigraph
+
+Store -> Hooks: afterQuery hook
+activate Hooks
+Hooks -> Hooks: transform results
+Hooks --> Store: transformed
+deactivate Hooks
+
+Store --> App: Array<Binding>
+deactivate Store
+
+App -> App: Format results\nDisplay to user
+
+App --> User: ✓ Query results
+deactivate App
+
+Note right of User: ⏱️ Total time: <10ms
+
+== FEDERATED QUERY (Distributed) ==
+
+User -> App: query("SELECT ?s {?s rdfs:label ?l}", {federated: true})
+activate App
+
+App -> Federation: query(sparql, {strategy: 'broadcast'})
+activate Federation
+
+Note over Federation: Distributed query\nMultiple endpoints in parallel
+
+Federation -> Federation: selectPeers(strategy)\nSort by latency\nFilter by capability
+
+Federation -> Federation: optimizeQuery(sparql)\nPush filters\nReorder patterns
+
+par Parallel Query Execution
+  Federation -> RemoteEndpoints: POST /sparql\nQuery peer 1
+  activate RemoteEndpoints
+  RemoteEndpoints -> RemoteEndpoints: Execute SPARQL
+  RemoteEndpoints --> Federation: {bindings: [...]}
+  deactivate RemoteEndpoints
+
+  Federation -> RemoteEndpoints: POST /sparql\nQuery peer 2
+  activate RemoteEndpoints
+  RemoteEndpoints -> RemoteEndpoints: Execute SPARQL
+  RemoteEndpoints --> Federation: {bindings: [...]}
+  deactivate RemoteEndpoints
+
+  Federation -> RemoteEndpoints: POST /sparql\nQuery peer N
+  activate RemoteEndpoints
+  RemoteEndpoints -> RemoteEndpoints: Execute SPARQL
+  RemoteEndpoints --> Federation: {bindings: [...]}
+  deactivate RemoteEndpoints
+end
+
+Federation -> Federation: aggregateResults()\nMerge/union bindings\nDedup identical results\nCollect errors
+
+Note over Federation: Peer 1: 100 results\nPeer 2: 85 results\nPeer 3: failed\n→ Union: 180 results
+
+Federation --> App: AggregateResult {\n  success: true,\n  peersQueried: 3,\n  peersSuccess: 2,\n  results: [...]
+}
+deactivate Federation
+
+App -> App: Format results\nDisplay with metadata\n(peer info, duration)
+
+App --> User: ✓ Federated results\n+ peer information
+deactivate App
+
+Note right of User: ⏱️ Total time: 100-500ms\n(depends on peer latency)
+
+== ERROR HANDLING ==
+
+User -> App: query("INVALID SPARQL")
+activate App
+
+App -> Store: query(sparql)
+activate Store
+
+alt SPARQL Syntax Error
+  Store -> Oxigraph: query(invalid)
+  Oxigraph --> Store: Error: "Syntax error at position X"
+  Store --> App: Error
+else Query Timeout
+  Store -> Oxigraph: query(complex)
+  Note over Oxigraph: Timeout after 30s
+  Oxigraph --> Store: AbortError
+  Store --> App: Error
+else Hook Validation Failed
+  Store -> Hooks: beforeQuery
+  Hooks --> Store: Error: "Query rejected by policy"
+  Store --> App: Error
+end
+
+App -> App: Catch error\nFormat error message\nDisplay to user
+
+App --> User: ✗ Error: [details]
+deactivate App
+
+SHOW_LEGEND()
+
+@enduml

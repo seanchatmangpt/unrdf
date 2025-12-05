@@ -1,0 +1,128 @@
+@startuml UNRDF Streaming & Sync Workflow
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Sequence.puml
+
+title UNRDF - Real-time Sync & Change Streaming
+
+participant "Peer A\nServer" as PeerA
+participant "@unrdf/streaming\nChangeFeed" as ChangeFeed
+participant "@unrdf/streaming\nSyncProtocol" as SyncProto
+participant "WebSocket\nTransport" as Transport
+participant "Peer B\nServer" as PeerB
+
+== MUTATION & LOCAL CHANGE EVENT ==
+
+PeerA -> PeerA: User adds quad\nawait store.add(quad)
+activate PeerA
+
+Note over PeerA: 1. Update Oxigraph store
+Note over PeerA: 2. Emit change event
+Note over PeerA: 3. Notify subscribers
+
+PeerA -> ChangeFeed: emit(CustomEvent('change', {\n  type: 'add',\n  quad: {...},\n  timestamp: Date.now(),\n  metadata: {source: 'user', userId: '123'}\n}))
+activate ChangeFeed
+
+Note over ChangeFeed: Store in RingBuffer\nNotify all subscribers
+
+ChangeFeed -> ChangeFeed: Subscribers notified\n(React, Vue, etc.)
+Note right of ChangeFeed: Component re-renders\nReactive update
+
+deactivate ChangeFeed
+deactivate PeerA
+
+== STREAM PROCESSOR CHAIN ==
+
+Note over ChangeFeed: Changes accumulate:\n- add quad 1\n- remove quad 2\n- update quad 3
+
+PeerA -> ChangeFeed: subscription = feed.batch(100).debounce(100ms).subscribe(callback)
+activate ChangeFeed
+
+ChangeFeed -> ChangeFeed: Batch: Wait for 100 changes\nor 100ms timeout
+Note right of ChangeFeed: After timeout:\nBatch of 3 changes ready
+
+ChangeFeed -> ChangeFeed: Debounce: Wait for quiet period\nNo new changes for 100ms
+
+ChangeFeed -> ChangeFeed: Callback triggered\nwith batched changes
+
+deactivate ChangeFeed
+
+== SYNC MESSAGE CREATION ==
+
+PeerA -> SyncProto: createSyncMessage([\n  {type:'add', quad: q1, timestamp, metadata},\n  {type:'remove', quad: q2, timestamp, metadata},\n  {type:'update', quad: q3, timestamp, metadata}\n])
+activate SyncProto
+
+Note over SyncProto: 1. Serialize changes to JSON
+Note over SyncProto: 2. Compute SHA-256 checksum
+Note over SyncProto: 3. Add timestamp & metadata
+
+SyncProto -> SyncProto: message = {\n  version: '1.0',\n  changes: [...],\n  checksum: 'a1b2c3d4...',\n  timestamp: 1234567890,\n  metadata: {source: 'PeerA', batchId: 'xyz'}\n}
+
+SyncProto --> PeerA: SyncMessage
+deactivate SyncProto
+
+== WEBSOCKET TRANSMISSION ==
+
+PeerA -> Transport: send(syncMessage)
+activate Transport
+
+Note over Transport: JSON.stringify(message)\nSend over WebSocket
+
+Transport -> Transport: ws.send(buffer)
+
+Transport -> PeerB: WebSocket frame\n{sync data}
+deactivate Transport
+
+== PEER B RECEIVES MESSAGE ==
+
+PeerB -> Transport: Message received\non('message', handler)
+activate Transport
+
+Transport -> SyncProto: parseSyncMessage(rawData)
+activate SyncProto
+
+Note over SyncProto: 1. Verify checksum\n2. Check expiry (TTL)\n3. Deserialize changes
+
+alt Checksum Valid
+  SyncProto -> SyncProto: ✓ Authentic
+  SyncProto -> SyncProto: ✓ Not corrupted
+  SyncProto --> Transport: ParsedMessage {\n    changes: [...],\n    valid: true\n  }
+else Checksum Mismatch
+  SyncProto --> Transport: Error: "INVALID_CHECKSUM"
+  Transport --> PeerB: ✗ Message rejected
+  Note right of PeerB: Log error\nRequest retransmission
+else Expired Message
+  SyncProto --> Transport: Error: "EXPIRED"
+  Transport --> PeerB: ✗ Message rejected
+  Note right of PeerB: Ignore stale data\nContinue normal operation
+end
+
+deactivate SyncProto
+
+Transport --> PeerB: ValidatedMessage
+deactivate Transport
+
+== PEER B APPLIES CHANGES ==
+
+PeerB -> PeerB: For each change in message:\n  type = 'add'|'remove'|'update'
+
+PeerB -> PeerB: Case 'add': store.add(quad)
+Note right of PeerB: Update Oxigraph store\nUpdate indexes\nIncrement version
+
+PeerB -> PeerB: Emit change event\nCustomEvent('change', {...})
+
+PeerB -> ChangeFeed: Subscribers notified\n(React, Vue, etc.)
+
+Note over PeerB: UI automatically updates\nReactive sync complete!
+
+== CONFIRMATION & METRICS ==
+
+PeerB -> Transport: sendAck({\n  batchId: 'xyz',\n  timestamp: Date.now(),\n  status: 'applied'\n})
+
+Transport -> PeerA: Acknowledgment
+
+PeerA -> PeerA: Metrics logged:\n  peersReceived: 1\n  latency: 42ms\n  bytesTransferred: 256\n  batchSize: 3 quads
+
+Note over PeerA: Replication complete!\nPeer A & B synchronized
+
+SHOW_LEGEND()
+
+@enduml

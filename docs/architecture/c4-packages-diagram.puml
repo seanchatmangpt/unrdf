@@ -1,0 +1,133 @@
+@startuml UNRDF Monorepo C4 System Landscape
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_System.puml
+
+LAYOUT_WITH_LEGEND()
+
+title UNRDF Monorepo - Package Architecture (C4 System Landscape)
+
+' Core Foundation Layer
+System(core, "@unrdf/core", "RDF Graph Operations\nSPARQL Execution\nFoundational Substrate") #4A90E2
+
+' High-Performance & Storage Layer
+System(oxigraph, "@unrdf/oxigraph", "Oxigraph SPARQL Engine\nHigh-Performance Store") #357ABD
+System(browser, "@unrdf/browser", "Client-side RDF\nIndexedDB Storage") #357ABD
+System(streaming, "@unrdf/streaming", "Change Feeds\nReal-time Synchronization") #357ABD
+
+' Policy & Knowledge Layer
+System(hooks, "@unrdf/hooks", "Knowledge Hooks\nPolicy Definition\nValidation Framework") #E67E22
+
+System(federation, "@unrdf/federation", "Peer Discovery\nDistributed Query\nExecution") #E67E22
+
+System(knowledge_engine, "@unrdf/knowledge-engine", "Rule Engine\nInference\nPattern Matching") #E67E22
+
+' Framework Integration Layer
+System(composables, "@unrdf/composables", "Vue 3 Composables\nReactive RDF State") #9B59B6
+
+System(react, "unrdf-react", "React Hooks\nNext.js Integration\nBenchmark Dashboard") #9B59B6
+
+' Optimization & Analysis Layer
+System(dark_matter, "@unrdf/dark-matter", "Query Optimization\nPerformance Analysis") #27AE60
+
+' CLI & Tools Layer
+System(cli, "@unrdf/cli", "Command-line Tools\nGraph Operations\nContext Management") #C0392B
+
+' Enforcement & Infrastructure Layer
+System(engine_gateway, "@unrdf/engine-gateway", "Enforcement Layer\nOperation Validation\nOxigraph-first Policy") #8E44AD
+
+System(project_engine, "@unrdf/project-engine", "Self-hosting Tools\nInfrastructure") #8E44AD
+
+' Internal/Dev Utilities Layer
+System(validation, "@unrdf/validation", "OTEL Validation\nObservability Framework\n(PRIVATE)", "#666666") #555555
+
+System(test_utils, "@unrdf/test-utils", "Testing Utilities\nShared Fixtures\n(PRIVATE)", "#666666") #555555
+
+System(domain, "@unrdf/domain", "Domain Models\nShared Types\n(PRIVATE)", "#666666") #555555
+
+' ============================================
+' DEPENDENCIES & RELATIONSHIPS
+' ============================================
+
+' Core dependencies (everything depends on core)
+Rel(oxigraph, core, "depends on")
+Rel(browser, core, "depends on")
+Rel(streaming, core, "depends on")
+Rel(hooks, core, "depends on")
+Rel(federation, core, "depends on")
+Rel(knowledge_engine, core, "depends on")
+Rel(engine_gateway, core, "depends on")
+Rel(project_engine, core, "depends on")
+Rel(dark_matter, core, "depends on")
+Rel(cli, core, "depends on")
+Rel(composables, core, "depends on")
+Rel(react, core, "depends on")
+
+' Cross-layer dependencies
+Rel(streaming, hooks, "depends on")
+Rel(federation, hooks, "depends on")
+
+Rel(browser, streaming, "depends on")
+Rel(composables, streaming, "depends on")
+Rel(composables, browser, "depends on")
+
+Rel(knowledge_engine, streaming, "depends on")
+
+Rel(cli, federation, "depends on")
+Rel(cli, hooks, "depends on")
+Rel(cli, streaming, "depends on")
+
+Rel(engine_gateway, oxigraph, "depends on")
+
+' Internal/Dev dependencies
+Rel(core, test_utils, "uses", "PRIVATE")
+Rel(core, validation, "uses", "PRIVATE")
+Rel(core, domain, "uses", "PRIVATE")
+
+' ============================================
+' LEGEND & NOTES
+' ============================================
+
+note bottom of core
+  **Version**: v5.0.0-alpha.0
+  **Status**: Core Foundation
+  **Key Role**: All packages depend on this
+end note
+
+note bottom of oxigraph
+  **Version**: v5.0.0-alpha.0
+  Native Oxigraph bindings
+  SPARQL execution optimized
+end note
+
+note bottom of browser
+  **Version**: v5.0.0-alpha.0
+  IndexedDB-backed storage
+  Client-side persistence
+end note
+
+note bottom of streaming
+  **Version**: v5.0.0-alpha.0
+  WebSocket-based changes
+  Real-time sync support
+end note
+
+note bottom of hooks
+  **Version**: v5.0.0-alpha.0
+  Zod validation included
+  Performance benchmarks
+end note
+
+note bottom of react
+  **Version**: v4.1.1
+  Requires React 18+, Next.js 14
+  Benchmark dashboard included
+end note
+
+note bottom of validation
+  **Status**: PRIVATE (internal dev)
+  OTEL observability spans
+  Validation framework
+end note
+
+SHOW_LEGEND()
+
+@enduml

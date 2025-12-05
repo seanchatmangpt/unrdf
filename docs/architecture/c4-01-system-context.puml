@@ -1,0 +1,80 @@
+@startuml UNRDF System Context
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+LAYOUT_WITH_LEGEND()
+
+title UNRDF - C1 System Context Diagram
+
+Person(developer, "RDF Developer", "Builds semantic web applications\nwith RDF graphs and SPARQL queries")
+
+Person(enterprise, "Enterprise User", "Deploys production UNRDF systems\nwith federated queries and policies")
+
+Person(datascientist, "Data Scientist", "Analyzes RDF knowledge graphs\nand performs reasoning/inference")
+
+System(unrdf_system, "UNRDF Platform", "Complete RDF toolkit\n- Graph storage\n- SPARQL execution\n- Real-time sync\n- Policy enforcement\n- Federated queries")
+
+System_Ext(browser, "Web Browser", "Client-side RDF operations\nwith IndexedDB persistence\nand offline support")
+
+System_Ext(sparql_endpoints, "SPARQL Endpoints", "External RDF sources\nfor federated queries\n(e.g., DBpedia, Wikidata, custom)")
+
+System_Ext(storage, "External Storage", "File systems, databases\nfor RDF data import/export\n(Turtle, JSON-LD, N-Triples, TriG)")
+
+System_Ext(ai_services, "AI/Reasoning Services", "External knowledge engines\nfor inference and pattern matching\n(eyereasoner, custom reasoners)")
+
+System_Ext(npm_ecosystem, "NPM Ecosystem", "Frontend frameworks\n(React, Vue, Next.js)\nand utilities")
+
+Rel(developer, unrdf_system, "Uses: CLI, SDKs")
+Rel(developer, npm_ecosystem, "Integrates via")
+
+Rel(enterprise, unrdf_system, "Deploys")
+Rel(enterprise, sparql_endpoints, "Federates with")
+
+Rel(datascientist, unrdf_system, "Analyzes graphs\nwith SPARQL/reasoning")
+
+Rel(unrdf_system, browser, "Provides client library\nfor offline-first apps")
+
+Rel(unrdf_system, sparql_endpoints, "Executes distributed queries\nagainst peer endpoints")
+
+Rel(unrdf_system, storage, "Imports/exports RDF data\nin multiple formats")
+
+Rel(unrdf_system, ai_services, "Delegates inference\nand reasoning")
+
+Rel(browser, storage, "Persists via IndexedDB\nand localStorage")
+
+Rel(browser, sparql_endpoints, "Queries external sources\nfrom browser")
+
+note bottom of unrdf_system
+  **Core Capabilities:**
+  • RDF Storage (Oxigraph)
+  • SPARQL Execution (sync)
+  • Change Feeds (WebSocket-based)
+  • Knowledge Hooks (Policy engine)
+  • Federated Queries
+  • Browser Support
+  • Real-time Synchronization
+  • Query Optimization
+  • Rule Engine & Inference
+  • CLI Tools
+end note
+
+note bottom of browser
+  **Browser Features:**
+  • IndexedDB Store
+  • Offline-first
+  • Service Worker support
+  • Virtual File System
+  • React/Vue integration
+  • Real-time sync
+end note
+
+note bottom of sparql_endpoints
+  **Standards Support:**
+  • SPARQL 1.1 Protocol
+  • W3C RDF Standards
+  • Named graphs
+  • Graph federation
+end note
+
+SHOW_LEGEND()
+
+@enduml

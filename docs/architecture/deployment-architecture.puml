@@ -1,0 +1,129 @@
+@startuml UNRDF Deployment Architecture
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Deployment.puml
+
+LAYOUT_WITH_LEGEND()
+
+title UNRDF - Deployment Architecture (Multi-environment)
+
+Deployment_Node(dev, "Developer Machine", "Laptop/Desktop") {
+  Container(dev_cli, "UNRDF CLI", "Node.js binary", "unrdf command-line tool\nLocal graph operations")
+  Container(dev_store, "Local Store", "File system + memory", "store.ttl or store.nq\nDevelopment graph")
+}
+
+Deployment_Node(browser, "Web Browser", "Chrome, Firefox, Safari") {
+  Container(browser_app, "React/Vue App", "JavaScript", "UNRDF React hooks\nClient-side SPARQL")
+  Container(indexeddb, "IndexedDB", "Browser storage", "Persistent RDF graph\nOffline-first data")
+  Container(service_worker, "Service Worker", "Background process", "Offline sync\nBackground replication")
+}
+
+Deployment_Node(nodejs_server, "Node.js Server", "Single machine or cluster") {
+  Container(api_server, "Express/Next.js API", "Node.js", "@unrdf/core + Oxigraph\nSPARQL endpoint")
+  Container(server_store, "RDF Store", "Oxigraph on disk", "Persistent graph database\nIndexed triples")
+  Container(hooks_engine, "@unrdf/hooks", "Policy engine", "Knowledge hooks\nValidation/transformation")
+  Container(streaming_processor, "@unrdf/streaming", "Real-time sync", "Change feeds\nWebSocket server")
+  Container(federation_node, "@unrdf/federation", "Federation", "Peer coordinator\nDistributed queries")
+}
+
+Deployment_Node(cluster, "Kubernetes Cluster", "Cloud platform") {
+  Deployment_Node(pod_1, "Pod 1 (UNRDF Instance)", "Kubernetes Pod") {
+    Container(unrdf_app_1, "UNRDF App", "Docker container", "Core services\nAPI endpoints")
+    Container(store_1, "RDF Store", "Oxigraph", "Persistent volume")
+  }
+  Deployment_Node(pod_2, "Pod 2 (UNRDF Instance)", "Kubernetes Pod") {
+    Container(unrdf_app_2, "UNRDF App", "Docker container", "Core services\nAPI endpoints")
+    Container(store_2, "RDF Store", "Oxigraph", "Persistent volume")
+  }
+  Deployment_Node(pod_n, "Pod N (UNRDF Instance)", "Kubernetes Pod") {
+    Container(unrdf_app_n, "UNRDF App", "Docker container", "Core services\nAPI endpoints")
+    Container(store_n, "RDF Store", "Oxigraph", "Persistent volume")
+  }
+  Container(lb, "Load Balancer", "Kubernetes Service", "Ingress controller\nRoute distribution")
+  Container(shared_cache, "Shared Cache", "Redis", "Query result cache\nSession store")
+}
+
+Deployment_Node(external, "External Services", "Cloud APIs") {
+  System_Ext(sparql_endpoints, "SPARQL Endpoints", "Remote RDF peers\nFederated sources")
+  System_Ext(object_storage, "Object Storage", "S3/Cloud Storage\nRDF file backups")
+  System_Ext(message_queue, "Message Queue", "Kafka/RabbitMQ\nEvent streaming")
+}
+
+Rel(dev_cli, dev_store, "reads/writes")
+Rel(dev_cli, api_server, "queries")
+
+Rel(browser_app, api_server, "HTTP/WebSocket")
+Rel(browser_app, indexeddb, "reads/writes")
+Rel(service_worker, api_server, "sync protocol")
+Rel(service_worker, indexeddb, "queues changes")
+
+Rel(api_server, server_store, "SPARQL queries")
+Rel(hooks_engine, server_store, "validates quads")
+Rel(streaming_processor, server_store, "change events")
+Rel(federation_node, api_server, "peer coordination")
+Rel(federation_node, sparql_endpoints, "distributed queries")
+
+Rel(lb, unrdf_app_1, "routes traffic")
+Rel(lb, unrdf_app_2, "routes traffic")
+Rel(lb, unrdf_app_n, "routes traffic")
+
+Rel(unrdf_app_1, store_1, "queries")
+Rel(unrdf_app_2, store_2, "queries")
+Rel(unrdf_app_n, store_n, "queries")
+
+Rel(shared_cache, unrdf_app_1, "cache layer")
+Rel(shared_cache, unrdf_app_2, "cache layer")
+Rel(shared_cache, unrdf_app_n, "cache layer")
+
+Rel(streaming_processor, message_queue, "events")
+Rel(server_store, object_storage, "backups")
+
+note bottom of dev
+  Development workflow:
+  1. Write SPARQL/RDF locally
+  2. Test with CLI tool
+  3. Push to server
+  4. Deploy to cluster
+end note
+
+note bottom of browser
+  Browser-first architecture:
+  1. Offline-capable IndexedDB store
+  2. Service Worker for sync
+  3. Real-time updates via WebSocket
+  4. Works without connectivity
+end note
+
+note bottom of nodejs_server
+  Single-node deployment:
+  1. Node.js + Express server
+  2. Oxigraph for persistent store
+  3. Hooks for policy enforcement
+  4. Streaming for real-time updates
+  5. Federation for peer queries
+
+  Typical: Development, small deployments
+end note
+
+note bottom of cluster
+  Enterprise deployment:
+  1. Kubernetes orchestration
+  2. Multiple pod replicas
+  3. Load balancing
+  4. Shared cache layer
+  5. Persistent storage
+
+  Typical: Production, high availability
+  Scaling: Horizontal (add pods)
+  Features: Auto-healing, rolling updates
+end note
+
+note bottom of external
+  Integration points:
+  • Federation: Query remote SPARQL
+  • Object storage: Backup/archive
+  • Message queue: Event streaming
+  • Analytics: Export metrics
+end note
+
+SHOW_LEGEND()
+
+@enduml
