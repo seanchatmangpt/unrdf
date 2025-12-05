@@ -89,28 +89,52 @@ export async function freezeUniverse(store, gitBackbone) {
 export async function reconstructState(store, gitBackbone, targetTime) {
   try {
     // 1. Find nearest SNAPSHOT event before targetTime
-    const snapshots = await store.queryEventLog(`
-      PREFIX kgc: <http://kgc.io/>
-      SELECT ?event ?t_ns ?git_ref
-      WHERE {
-        GRAPH <${GRAPHS.EVENT_LOG}> {
-          ?event kgc:type "SNAPSHOT" ;
-                 kgc:t_ns ?t_ns ;
-                 kgc:git_ref ?git_ref .
-          FILTER(?t_ns <= ${targetTime})
-        }
-      }
-      ORDER BY DESC(?t_ns)
-      LIMIT 1
-    `);
+    // Query all events in EventLog and find SNAPSHOT events
+    const eventLogGraph = dataFactory.namedNode(GRAPHS.EVENT_LOG);
+    const typePredi = dataFactory.namedNode('http://kgc.io/type');
+    const tNsPredi = dataFactory.namedNode('http://kgc.io/t_ns');
+    const gitRefPredi = dataFactory.namedNode('http://kgc.io/git_ref');
 
-    if (!snapshots || snapshots.length === 0) {
+    // Get all snapshot quads from event log
+    const snapshotQuads = [
+      ...store.match(null, typePredi, dataFactory.literal('SNAPSHOT'), eventLogGraph)
+    ];
+
+    if (snapshotQuads.length === 0) {
       throw new Error(`No snapshot found before time ${targetTime}`);
     }
 
-    const snapshotResult = snapshots[0];
-    const snapshotTime = BigInt(snapshotResult.t_ns.value);
-    const snapshotGitRef = snapshotResult.git_ref.value;
+    // Find the snapshot subject with matching time
+    let bestSnapshot = null;
+    let bestTime = 0n;
+
+    for (const quad of snapshotQuads) {
+      const subject = quad.subject;
+      // Get the t_ns for this event
+      const timeQuads = [...store.match(subject, tNsPredi, null, eventLogGraph)];
+      const gitRefQuads = [...store.match(subject, gitRefPredi, null, eventLogGraph)];
+
+      if (timeQuads.length > 0 && gitRefQuads.length > 0) {
+        const timeStr = timeQuads[0].object.value;
+        const time = BigInt(timeStr);
+
+        if (time <= targetTime && time > bestTime) {
+          bestTime = time;
+          bestSnapshot = {
+            subject,
+            t_ns: time,
+            git_ref: gitRefQuads[0].object.value
+          };
+        }
+      }
+    }
+
+    if (!bestSnapshot) {
+      throw new Error(`No snapshot found before time ${targetTime}`);
+    }
+
+    const snapshotTime = bestSnapshot.t_ns;
+    const snapshotGitRef = bestSnapshot.git_ref;
 
     // 2. Load snapshot from Git
     const snapshotNQuads = await gitBackbone.readSnapshot(snapshotGitRef);
@@ -123,22 +147,8 @@ export async function reconstructState(store, gitBackbone, targetTime) {
       graph: GRAPHS.UNIVERSE,
     });
 
-    // 4. Replay events between snapshot and target time
-    const events = await store.queryEventLog(`
-      PREFIX kgc: <http://kgc.io/>
-      SELECT ?event ?t_ns ?type
-      WHERE {
-        GRAPH <${GRAPHS.EVENT_LOG}> {
-          ?event kgc:t_ns ?t_ns ;
-                 kgc:type ?type .
-          FILTER(?t_ns > ${snapshotTime} && ?t_ns <= ${targetTime})
-        }
-      }
-      ORDER BY ?t_ns
-    `);
-
-    // Note: Full delta replay would require deserializing events
-    // For MVP, we just return the snapshot (can enhance later)
+    // 4. For MVP, return the snapshot state at target time
+    // Full delta replay would require deserializing and applying events (future enhancement)
     return tempStore;
   } catch (error) {
     throw new Error(`Failed to reconstruct state: ${error.message}`);
