@@ -18,59 +18,57 @@ export class KGCStore extends UnrdfStore {
    * Atomic append: Add event to log and apply deltas to universe in one transaction
    * Follows ACID semantics via UnrdfStore.transaction()
    */
-  async appendEvent(eventData, deltas = []) {
-    return this.transaction((tx) => {
-      const eventId = this._generateEventId();
-      const t_ns = now();
+  async appendEvent(eventData = {}, deltas = []) {
+    const eventId = this._generateEventId();
+    const t_ns = now();
 
-      // 1. Serialize event to RDF quads for EventLog
-      const eventQuads = this._serializeEvent({
-        id: eventId,
-        t_ns,
-        type: eventData.type || 'CREATE',
-        payload: eventData.payload || {},
-        git_ref: eventData.git_ref || null,
-      });
-
-      // Add all event quads to EventLog named graph
-      for (const quad of eventQuads) {
-        const eventLogQuad = dataFactory.quad(
-          quad.subject,
-          quad.predicate,
-          quad.object,
-          dataFactory.namedNode(GRAPHS.EVENT_LOG)
-        );
-        tx.add(eventLogQuad);
-      }
-
-      // 2. Apply deltas to Universe named graph
-      for (const delta of deltas) {
-        const universeQuad = dataFactory.quad(
-          delta.subject,
-          delta.predicate,
-          delta.object,
-          dataFactory.namedNode(GRAPHS.UNIVERSE)
-        );
-
-        if (delta.type === 'add') {
-          tx.add(universeQuad);
-        } else if (delta.type === 'delete') {
-          tx.delete(universeQuad);
-        }
-      }
-
-      this.eventCount++;
-
-      // 3. Generate and return receipt
-      return {
-        receipt: {
-          id: eventId,
-          t_ns: t_ns.toString(),
-          timestamp_iso: toISO(t_ns),
-          event_count: this.eventCount,
-        },
-      };
+    // 1. Serialize event to RDF quads for EventLog
+    const eventQuads = this._serializeEvent({
+      id: eventId,
+      t_ns,
+      type: eventData.type || 'CREATE',
+      payload: eventData.payload || {},
+      git_ref: eventData.git_ref || null,
     });
+
+    // Add all event quads to EventLog named graph
+    for (const quad of eventQuads) {
+      const eventLogQuad = dataFactory.quad(
+        quad.subject,
+        quad.predicate,
+        quad.object,
+        dataFactory.namedNode(GRAPHS.EVENT_LOG)
+      );
+      this.add(eventLogQuad);
+    }
+
+    // 2. Apply deltas to Universe named graph
+    for (const delta of deltas) {
+      const universeQuad = dataFactory.quad(
+        delta.subject,
+        delta.predicate,
+        delta.object,
+        dataFactory.namedNode(GRAPHS.UNIVERSE)
+      );
+
+      if (delta.type === 'add') {
+        this.add(universeQuad);
+      } else if (delta.type === 'delete') {
+        this.delete(universeQuad);
+      }
+    }
+
+    this.eventCount++;
+
+    // 3. Generate and return receipt
+    return {
+      receipt: {
+        id: eventId,
+        t_ns: t_ns.toString(),
+        timestamp_iso: toISO(t_ns),
+        event_count: this.eventCount,
+      },
+    };
   }
 
   /**
@@ -103,9 +101,14 @@ export class KGCStore extends UnrdfStore {
     if (typeof crypto !== 'undefined' && crypto.randomUUID) {
       return crypto.randomUUID();
     }
-    // Node.js fallback
-    const { randomUUID } = await import('crypto');
-    return randomUUID();
+    // Node.js fallback - use require instead of await
+    try {
+      const crypto = require('crypto');
+      return crypto.randomUUID();
+    } catch {
+      // Final fallback: generate pseudo-random UUID
+      return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    }
   }
 
   /**
