@@ -47,8 +47,11 @@ jobs:
           cache: 'pnpm'
           cache-dependency-path: '**/pnpm-lock.yaml'
 
-      - name: Install dependencies
-        run: pnpm install --ignore-scripts
+      - name: Install root dependencies
+        run: pnpm install --ignore-scripts --frozen-lockfile=false
+
+      - name: Install React package dependencies
+        run: pnpm install --ignore-scripts --frozen-lockfile=false
 
       - name: Build Next.js application
         run: pnpm run build
@@ -95,8 +98,11 @@ jobs:
           cache: 'pnpm'
           cache-dependency-path: '**/pnpm-lock.yaml'
 
-      - name: Install dependencies
-        run: pnpm install --ignore-scripts
+      - name: Install root dependencies
+        run: pnpm install --ignore-scripts --frozen-lockfile=false
+
+      - name: Install React package dependencies
+        run: pnpm install --ignore-scripts --frozen-lockfile=false
 
       - name: Lint code
         run: pnpm run lint || true
