@@ -83,13 +83,13 @@ describe('OxigraphStore - Basic Operations', () => {
       const ex = dataFactory.namedNode('http://example.com/');
       const name = dataFactory.namedNode('http://schema.org/name');
 
-      expect(store.size()).toBe(0);
+      expect(store.size).toBe(0);
 
       store.add(dataFactory.triple(ex, name, dataFactory.literal('A')));
-      expect(store.size()).toBe(1);
+      expect(store.size).toBe(1);
 
       store.add(dataFactory.triple(ex, name, dataFactory.literal('B')));
-      expect(store.size()).toBe(2);
+      expect(store.size).toBe(2);
     });
 
     it('should clear the store', () => {
@@ -99,10 +99,10 @@ describe('OxigraphStore - Basic Operations', () => {
       store.add(dataFactory.triple(ex, name, dataFactory.literal('A')));
       store.add(dataFactory.triple(ex, name, dataFactory.literal('B')));
 
-      expect(store.size()).toBe(2);
+      expect(store.size).toBe(2);
 
       store.clear();
-      expect(store.size()).toBe(0);
+      expect(store.size).toBe(0);
     });
   });
 
