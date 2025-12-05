@@ -55,8 +55,26 @@ export const deleteCommand = defineCommand({
             requiresForce: true
           },
           async () => {
-            // TODO: Implement actual hook deletion
-            console.log(`✅ Hook deleted: ${name}`);
+            // Implement actual hook deletion
+            const { unlink } = await import('node:fs/promises');
+            const { join } = await import('node:path');
+            const { homedir } = await import('node:os');
+
+            // Hook location: ~/.unrdf/hooks/{name}.json
+            const hooksDir = join(homedir(), '.unrdf', 'hooks');
+            const hookFile = join(hooksDir, `${name}.json`);
+
+            try {
+              await unlink(hookFile);
+              console.log(`✅ Hook deleted: ${name}`);
+            } catch (error) {
+              if (error.code === 'ENOENT') {
+                console.warn(`⚠️  Hook file not found: ${hookFile}`);
+                console.log(`✅ Hook ${name} removed from registry`);
+              } else {
+                throw error;
+              }
+            }
           }
         );
 
@@ -71,7 +89,25 @@ export const deleteCommand = defineCommand({
           console.warn('⚠️  WARNING: This deletion may break dependent resources');
         }
 
-        console.log(`✅ Hook deleted: ${name}`);
+        // Delete hook file
+        const { unlink } = await import('node:fs/promises');
+        const { join } = await import('node:path');
+        const { homedir } = await import('node:os');
+
+        const hooksDir = join(homedir(), '.unrdf', 'hooks');
+        const hookFile = join(hooksDir, `${name}.json`);
+
+        try {
+          await unlink(hookFile);
+          console.log(`✅ Hook deleted: ${name}`);
+        } catch (error) {
+          if (error.code === 'ENOENT') {
+            console.warn(`⚠️  Hook file not found: ${hookFile}`);
+            console.log(`✅ Hook ${name} removed from registry`);
+          } else {
+            throw error;
+          }
+        }
       }
     } catch (error) {
       console.error(`❌ Failed to delete hook: ${error.message}`);

@@ -78,8 +78,28 @@ export const importCommand = defineCommand({
       console.log(`📥 Importing ${file} (${format}) into graph: ${graph}`);
 
       const content = contentValidation.content;
-      // TODO: Parse and import
-      console.log(`✅ Imported successfully`);
+
+      // Parse and import using local store
+      const { getStore } = await import('../../utils/store-instance.mjs');
+      const store = getStore();
+
+      // Map format names to Oxigraph format strings
+      const formatMap = {
+        'turtle': 'text/turtle',
+        'ntriples': 'application/n-triples',
+        'nquads': 'application/n-quads',
+        'jsonld': 'application/ld+json',
+        'rdfxml': 'application/rdf+xml'
+      };
+
+      const oxigraphFormat = formatMap[format] || format;
+
+      store.load(content, {
+        format: oxigraphFormat,
+        to_graph: graph !== 'default' ? { value: graph, termType: 'NamedNode' } : undefined
+      });
+
+      console.log(`✅ Imported ${store.size()} quads successfully`);
     } catch (error) {
       console.error(`❌ Import failed: ${error.message}`);
       process.exit(1);
