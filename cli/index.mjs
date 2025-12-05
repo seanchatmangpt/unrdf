@@ -64,7 +64,6 @@ const getTelemetryMiddleware = async () => {
 const importGraph = () => import("./commands/graph/index.mjs");
 const importHook = () => import("./commands/hook/index.mjs");
 const importPolicy = () => import("./commands/policy/index.mjs");
-const importSidecar = () => import("./commands/sidecar/index.mjs");
 const importStore = () => import("./commands/store/index.mjs");
 const importContext = () => import("./commands/context/index.mjs");
 
@@ -254,48 +253,6 @@ const main = defineCommand({
           async run(ctx) {
             const policyCommands = await importPolicy();
             return policyCommands.describeCommand.run(ctx);
-          },
-        }),
-      },
-    }),
-
-    // Sidecar resource commands
-    sidecar: defineCommand({
-      meta: { name: "sidecar", description: "Manage KGC sidecar" },
-      subCommands: {
-        status: defineCommand({
-          meta: { name: "status", description: "Get sidecar status" },
-          async run(ctx) {
-            const sidecarCommands = await importSidecar();
-            return sidecarCommands.statusCommand.run(ctx);
-          },
-        }),
-        health: defineCommand({
-          meta: { name: "health", description: "Check sidecar health" },
-          async run(ctx) {
-            const sidecarCommands = await importSidecar();
-            return sidecarCommands.healthCommand.run(ctx);
-          },
-        }),
-        config: defineCommand({
-          meta: { name: "config", description: "Manage sidecar config" },
-          async run(ctx) {
-            const sidecarCommands = await importSidecar();
-            return sidecarCommands.configCommand.run(ctx);
-          },
-        }),
-        logs: defineCommand({
-          meta: { name: "logs", description: "View sidecar logs" },
-          async run(ctx) {
-            const sidecarCommands = await importSidecar();
-            return sidecarCommands.logsCommand.run(ctx);
-          },
-        }),
-        restart: defineCommand({
-          meta: { name: "restart", description: "Restart sidecar" },
-          async run(ctx) {
-            const sidecarCommands = await importSidecar();
-            return sidecarCommands.restartCommand.run(ctx);
           },
         }),
       },
