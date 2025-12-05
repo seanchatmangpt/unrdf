@@ -1,0 +1,204 @@
+@startuml UNRDF Core Components
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+LAYOUT_WITH_LEGEND()
+
+title @unrdf/core - C3 Component Diagram (38 source files, 2000+ lines)
+
+Container_Boundary(core, "@unrdf/core") {
+
+  ' ============================================
+  ' LAYER 1: RDF STORAGE & PERSISTENCE
+  ' ============================================
+  Component(unrdf_store, "UnrdfStore", "Class", "Primary RDF store interface\nquery() [SYNC], add(), delete(),\nbulkAdd(), match(), transaction(),\nupdate(), load(), dump()")
+
+  Component(store_functional, "Functional API", "Legacy", "createStore(), addQuad(),\nremoveQuad(), getQuads(),\ncountQuads() — async wrappers")
+
+  Component(canonicalize, "Canonicalization", "Module", "URDNA2015 canonicalization\ntoNTriples(), sortQuads(),\nisIsomorphic()")
+
+  Component(n3_justified, "N3 Justified Only", "Module", "ONLY N3 import allowed\nStreaming parser/writer")
+
+  Component(n3_migration, "N3 Migration", "Module", "Backward compatibility layer\nfor legacy N3 Store")
+
+  ' ============================================
+  ' LAYER 2: SPARQL EXECUTION (SYNC PRIMARY)
+  ' ============================================
+  Component(executor_sync, "SPARQL Executor Sync", "Class", "PRIMARY: executeQuerySync(),\nexecuteSelectSync(), executeAskSync(),\nexecuteConstructSync(),\nprepareQuerySync()\nDirect Oxigraph execution")
+
+  Component(executor_async, "SPARQL Executor Async", "Deprecated", "Async wrappers: executeQuery(),\nqueryAsync() — for backward compat")
+
+  ' ============================================
+  ' LAYER 3: TERM & QUAD MANIPULATION (23 utils)
+  ' ============================================
+  Component(term_utils, "Term Utils", "Module", "asNamedNode(), asLiteral(),\nasBlankNode(), isNamedNode(),\nisLiteral(), getIRI(), smartLiteral()")
+
+  Component(quad_utils, "Quad Utils", "Module", "quadToJSON(), jsonToQuad(),\nquadsToJSON(), extractSubjects(),\nextractObjects(), extractPredicates()")
+
+  Component(graph_utils, "Graph Query Utils", "Module", "getObjects(), getSubjects(),\nisA(), getTypes(), pluck(),\nindexByPredicate(), findByProperty()")
+
+  Component(sparql_builder, "SPARQL Builder", "Class", "Fluent API: select(), where(),\nfilter(), groupBy(), orderBy(),\nlimit(), build() → SPARQL string")
+
+  Component(namespace_utils, "Namespace Utils", "Module", "NamespaceManager class,\nCOMMON_VOCABULARIES, COMMON_PREFIXES,\nprefix management")
+
+  ' ============================================
+  ' LAYER 4: VALIDATION & QUALITY
+  ' ============================================
+  Component(validation, "Validation Module", "Module", "Zod schemas: QuadSchema, StoreSchema,\nqueryOptionsSchema,\nvalidateQuad(), validateStore()")
+
+  Component(validation_utils, "Validation Utils", "Module", "Extended Zod schemas: IRISchema,\nLiteralSchema, TermSchema,\nQuadJSONSchema")
+
+  Component(quality_assessment, "Quality Assessment", "Class", "QualityAssessment class,\nassessDataQuality(), detectDuplicates(),\nfindMissingProperties(),\nsuggestValueNormalization()")
+
+  ' ============================================
+  ' LAYER 5: ID & NAMESPACE GENERATION
+  ' ============================================
+  Component(id_utils, "ID Utils", "Module", "makeBNodeGenerator(), skolemize(),\ngenerateBNodeId(), generateUUID(),\ngenerateDeterministicBNodeId(),\ncreatHashIRI()")
+
+  ' ============================================
+  ' LAYER 6: DATA TRANSFORMATION
+  ' ============================================
+  Component(transform_utils, "Transform Utils", "Module", "transformStore(), storeToJSONLD(),\nstoreToTurtle(), jsonLdToStore(),\nturtleToStore()")
+
+  Component(merge_utils, "Merge Utils", "Module", "mergeStores(), unionStores(),\nintersectStores(), diffStores(),\ncartesianProduct()")
+
+  Component(io_utils, "I/O Utils", "Module", "readTurtleFile(), writeTurtleFile(),\nreadJSONLDFile(), readNTriplesFile(),\nwriteNTriplesFile()")
+
+  ' ============================================
+  ' LAYER 7: INFRASTRUCTURE & MONITORING
+  ' ============================================
+  Component(debug_utils, "Debug Utils", "Module", "previewQuads(), dumpTurtle(),\ngetStoreStats(), deepInspect(),\nmeasureQuadProcessing(),\nlogMemoryUsage()")
+
+  Component(adaptive_monitor, "Adaptive Monitor", "Class", "MonitorOrchestrator, health checks,\nevent loop monitoring, memory tracking,\ngetStatus(), start(), stop()")
+
+  Component(circuit_breaker, "Circuit Breaker", "Class", "Failure handling: CLOSED, OPEN, HALF_OPEN,\nexecute(fn), CircuitBreakerRegistry")
+
+  Component(performance_optimizer, "Performance Optimizer", "Module", "Query optimization, caching strategies,\nindexing recommendations")
+
+  Component(memory_manager, "Memory Manager", "Module", "Memory pool management,\nGC optimization, allocation tracking")
+
+  Component(store_cache, "Store Cache", "Module", "Query result caching,\ninvalidation strategies,\nLRU cache implementation")
+
+  Component(ring_buffer, "Ring Buffer", "Module", "Circular buffer storage,\nfixed-size efficient operations")
+
+  Component(transaction, "Transaction Manager", "Module", "Transaction support,\natomic operations,\nrollback management")
+
+  ' ============================================
+  ' LAYER 8: CONSTANTS & TYPES
+  ' ============================================
+  Component(constants, "Constants", "Module", "RDF namespaces: RDF, RDFS, OWL,\nXSD, FOAF, DCTERMS, SKOS")
+
+  Component(types, "Type Utilities", "Module", "RDF term creation: createNamedNode(),\ncreateLiteral(), createBlankNode(),\ncreateVariable(), createQuad()")
+
+  Component(ontologies, "Ontologies", "Module", "UNMETRIC vocabulary definitions")
+
+  ' ============================================
+  ' EXTERNAL DEPENDENCIES
+  ' ============================================
+  Component(oxigraph_dep, "Oxigraph Store", "External", "@unrdf/oxigraph wrapper\nNative WASM store")
+
+  Component(zod_dep, "Zod Validation", "External", "Schema validation library")
+
+  Component(n3_dep, "N3.js", "External", "Streaming RDF parser/writer\n(justified-only)")
+
+  Component(rdfjs_dep, "RDF.js", "External", "RDF data model,\nnamespace utilities")
+
+  Component(rdf_canonize_dep, "RDF Canonize", "External", "URDNA2015 canonicalization")
+
+  ' ============================================
+  ' RELATIONSHIPS
+  ' ============================================
+
+  ' UnrdfStore is central hub
+  Rel(unrdf_store, executor_sync, "uses")
+  Rel(unrdf_store, oxigraph_dep, "wraps")
+  Rel(unrdf_store, zod_dep, "validates with")
+
+  ' Executor dependencies
+  Rel(executor_sync, oxigraph_dep, "executes against")
+  Rel(executor_async, executor_sync, "wraps")
+
+  ' Functional API
+  Rel(store_functional, oxigraph_dep, "uses")
+  Rel(store_functional, zod_dep, "validates with")
+
+  ' Canonicalization
+  Rel(canonicalize, rdf_canonize_dep, "uses")
+  Rel(canonicalize, quad_utils, "uses")
+
+  ' N3 modules
+  Rel(n3_justified, n3_dep, "imports")
+  Rel(n3_migration, store_functional, "wraps")
+
+  ' Builder pattern
+  Rel(sparql_builder, namespace_utils, "uses")
+
+  ' Validation flow
+  Rel(validation, zod_dep, "uses")
+  Rel(validation_utils, zod_dep, "uses")
+  Rel(quality_assessment, term_utils, "uses")
+
+  ' Transform utilities
+  Rel(transform_utils, oxigraph_dep, "uses")
+  Rel(transform_utils, term_utils, "uses")
+  Rel(transform_utils, quad_utils, "uses")
+
+  ' Merge utilities
+  Rel(merge_utils, oxigraph_dep, "uses")
+  Rel(merge_utils, term_utils, "uses")
+
+  ' Infrastructure
+  Rel(debug_utils, graph_utils, "uses")
+  Rel(adaptive_monitor, debug_utils, "uses")
+  Rel(store_cache, zod_dep, "validates with")
+
+  ' ID generation
+  Rel(namespace_utils, id_utils, "uses")
+
+  ' Type dependencies
+  Rel(types, oxigraph_dep, "uses dataFactory from")
+  Rel(constants, rdfjs_dep, "uses namespace from")
+
+}
+
+note right of unrdf_store
+  **PRIMARY INTERFACE**
+  v5.0.0-alpha.0
+  Synchronous query() for reactivity
+  Dual-mode: sync & async operations
+  Transparent Oxigraph wrapper
+  Version tracking for computed()
+end note
+
+note right of executor_sync
+  **SPARQL EXECUTION**
+  Direct Oxigraph SPARQL engine
+  <1ms query execution (fast path)
+  Type detection: SELECT/ASK/CONSTRUCT
+  Result formatting by query type
+end note
+
+note right of canonicalize
+  **GRAPH ISOMORPHISM**
+  URDNA2015 standard
+  Deterministic quad ordering
+  Used for deduplication
+end note
+
+note right of quality_assessment
+  **DATA QUALITY**
+  6 assessment dimensions
+  Duplicate detection
+  Missing property analysis
+  Value normalization suggestions
+end note
+
+note right of circuit_breaker
+  **FAILURE HANDLING**
+  3 states: CLOSED/OPEN/HALF_OPEN
+  Prevents cascading failures
+  Circuit registry for management
+end note
+
+SHOW_LEGEND()
+
+@enduml
