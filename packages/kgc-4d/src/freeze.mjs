@@ -275,43 +275,24 @@ export async function reconstructState(store, gitBackbone, targetTime) {
       }
     }
 
-    // GAP-F3 fix: Handle missing snapshots gracefully with fallback to empty store + event replay
-    let snapshotTime;
-    let snapshotGitRef;
-    let tempStore;
-
+    // Fail-fast: Throw if no snapshot found (critical data requirement)
     if (!bestSnapshot) {
-      if (typeof console !== 'undefined' && console.warn) {
-        console.warn(`[KGC Reconstruct] No snapshot found for time ${targetTime}, attempting full event replay from genesis`);
-      }
-
-      // Start from empty store if no snapshot exists
-      const TempStore = store.constructor;
-      tempStore = new TempStore();
-      snapshotTime = 0n;
-      snapshotGitRef = null;
-
-      // Will replay all events below from the beginning
-      bestSnapshot = {
-        subject: null,
-        t_ns: 0n,
-        git_ref: null,
-      };
-    } else {
-      // Load snapshot from Git
-      snapshotTime = bestSnapshot.t_ns;
-      snapshotGitRef = bestSnapshot.git_ref;
-
-      const snapshotNQuads = await gitBackbone.readSnapshot(snapshotGitRef);
-
-      // Create temporary store from snapshot
-      const TempStore = store.constructor;
-      tempStore = new TempStore();
-      await tempStore.load(snapshotNQuads, {
-        format: 'application/n-quads',
-        graph: GRAPHS.UNIVERSE,
-      });
+      throw new Error(`No snapshot found before time ${targetTime} - time-travel requires at least one snapshot`);
     }
+
+    const snapshotTime = bestSnapshot.t_ns;
+    const snapshotGitRef = bestSnapshot.git_ref;
+
+    // 3. Load snapshot from Git
+    const snapshotNQuads = await gitBackbone.readSnapshot(snapshotGitRef);
+
+    // 4. Create temporary store from snapshot
+    const TempStore = store.constructor;
+    const tempStore = new TempStore();
+    await tempStore.load(snapshotNQuads, {
+      format: 'application/n-quads',
+      graph: GRAPHS.UNIVERSE,
+    });
 
     // 5. Find ALL events between snapshot time and target time (Flaw 2 fix - CRITICAL)
     const allEventTimeQuads = [...store.match(null, tNsPredi, null, eventLogGraph)];
