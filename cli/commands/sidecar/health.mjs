@@ -10,6 +10,7 @@
 import { defineCommand } from 'citty';
 import { formatOutput } from '../../formatters/index.mjs';
 import { createSidecarClient } from '../../../sidecar/client.mjs';
+import { retryWithBackoff } from '../../utils/retry-logic.mjs';
 
 /**
  * Format health status with emoji indicators
@@ -68,13 +69,23 @@ export const healthCommand = defineCommand({
 
     const performHealthCheck = async () => {
       try {
-        // Connect to sidecar
-        if (!client.connected) {
-          await client.connect(ctx.args.address);
-        }
+        // FM-CLI-009: Add retry logic for network resilience
+        const healthResponse = await retryWithBackoff(
+          async () => {
+            // Connect to sidecar
+            if (!client.connected) {
+              await client.connect(ctx.args.address);
+            }
 
-        // Get health check response
-        const healthResponse = await client.healthCheck();
+            // Get health check response
+            return await client.healthCheck();
+          },
+          {
+            maxRetries: 3,
+            initialDelay: 300,
+            backoffFactor: 2
+          }
+        );
 
         // Get client metrics
         const clientMetrics = client.getClientMetrics();

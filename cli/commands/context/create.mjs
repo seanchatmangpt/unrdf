@@ -9,6 +9,7 @@
 import { defineCommand } from "citty";
 import { trace, SpanStatusCode } from "@opentelemetry/api";
 import { ContextManager } from "../../core/context.mjs";
+import { getContextManager as getContextLockManager } from "../../utils/context-singleton.mjs";
 
 const tracer = trace.getTracer("unrdf-context-create");
 
@@ -31,11 +32,18 @@ export const createCommand = defineCommand({
   },
   async run(ctx) {
     return await tracer.startActiveSpan("context.create", async (span) => {
+      // FM-CLI-007: Acquire context lock to prevent race conditions
+      const lockManager = getContextLockManager();
+      let lock;
+
       try {
         span.setAttributes({
           "context.name": ctx.args.name,
           "context.sidecar.endpoint": ctx.args.sidecar,
         });
+
+        // Acquire lock before creating context
+        lock = await lockManager.acquireLock(ctx.args.name);
 
         const manager = new ContextManager();
         await manager.init();
@@ -61,6 +69,10 @@ export const createCommand = defineCommand({
         console.error(`Failed to create context: ${error.message}`);
         process.exit(1);
       } finally {
+        // Release lock
+        if (lock) {
+          lock.release();
+        }
         span.end();
       }
     });
