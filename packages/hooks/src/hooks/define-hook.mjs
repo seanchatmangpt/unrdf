@@ -53,19 +53,53 @@ import { z } from 'zod';
 /* ========================================================================= */
 
 export const HookTriggerSchema = z.enum([
+  // Core CRUD (6)
   'before-add',
   'after-add',
   'before-query',
   'after-query',
   'before-remove',
   'after-remove',
+  // Transaction Hooks (4)
+  'before-commit',
+  'after-commit',
+  'before-rollback',
+  'after-rollback',
+  // Error/Event Hooks (5)
+  'on-error',
+  'on-validation-fail',
+  'on-transform',
+  'on-timeout',
+  'on-circuit-open',
+  // Async/IO Hooks (6)
+  'before-fetch',
+  'after-fetch',
+  'before-sync',
+  'after-sync',
+  'before-import',
+  'after-import',
+  // Cron/Time Hooks (4)
+  'on-schedule',
+  'on-interval',
+  'on-idle',
+  'on-startup',
+  // Lean Six Sigma Quality Hooks (8)
+  'quality-gate',
+  'defect-detection',
+  'continuous-improvement',
+  'spc-control',
+  'capability-analysis',
+  'root-cause',
+  'kaizen-event',
+  'audit-trail',
 ]);
 
 export const HookConfigSchema = z.object({
   name: z.string().min(1, 'Hook name is required'),
   trigger: HookTriggerSchema,
-  validate: z.function().args(z.any()).returns(z.boolean()).optional(),
-  transform: z.function().args(z.any()).returns(z.any()).optional(),
+  // Note: No return type enforcement - runtime POKA-YOKE guard handles non-boolean returns
+  validate: z.function().optional(),
+  transform: z.function().optional(),
   metadata: z.record(z.any()).optional(),
 });
 
@@ -110,6 +144,10 @@ export function defineHook(config) {
     validate: validated.validate,
     transform: validated.transform,
     metadata: validated.metadata || {},
+    // Pre-computed flags for sub-1μs execution (skip Zod in hot path)
+    _hasValidation: typeof validated.validate === 'function',
+    _hasTransformation: typeof validated.transform === 'function',
+    _validated: true,
   };
 }
 
@@ -142,22 +180,32 @@ export function getHookMetadata(hook, key) {
 
 /**
  * Check if hook has validation function.
+ * Uses pre-computed flag for sub-1μs execution (no Zod overhead).
  *
  * @param {Hook} hook - Hook instance
  * @returns {boolean} - True if hook has validate function
  */
 export function hasValidation(hook) {
-  const validated = HookSchema.parse(hook);
-  return typeof validated.validate === 'function';
+  // Fast path: use pre-computed flag (set by defineHook)
+  if (hook._validated) {
+    return hook._hasValidation;
+  }
+  // Fallback for non-defineHook'd objects
+  return typeof hook.validate === 'function';
 }
 
 /**
  * Check if hook has transformation function.
+ * Uses pre-computed flag for sub-1μs execution (no Zod overhead).
  *
  * @param {Hook} hook - Hook instance
  * @returns {boolean} - True if hook has transform function
  */
 export function hasTransformation(hook) {
-  const validated = HookSchema.parse(hook);
-  return typeof validated.transform === 'function';
+  // Fast path: use pre-computed flag (set by defineHook)
+  if (hook._validated) {
+    return hook._hasTransformation;
+  }
+  // Fallback for non-defineHook'd objects
+  return typeof hook.transform === 'function';
 }
