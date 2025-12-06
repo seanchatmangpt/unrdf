@@ -133,9 +133,21 @@ Examples:
 function convertLatexToMDX(latexContent, config) {
   let mdx = latexContent
 
-  // Extract title, author, date from LaTeX preamble
-  const titleMatch = mdx.match(/\\title\{([^}]+)\}/)
-  const title = titleMatch ? titleMatch[1] : 'Untitled Paper'
+  // Remove LaTeX comments (lines starting with %)
+  mdx = mdx.replace(/^%.*$/gm, '')
+
+  // Extract title from \title{} or \chapter{}
+  let titleMatch = mdx.match(/\\title\{([^}]+)\}/)
+  if (!titleMatch) {
+    // Try to extract from \chapter{}
+    const chapterMatch = mdx.match(/\\chapter\{\\texorpdfstring\{([^}]+)\}\{([^}]+)\}\}/) ||
+                        mdx.match(/\\chapter\{([^}]+)\}/)
+    if (chapterMatch) {
+      // Use the first argument of \texorpdfstring if present, otherwise the whole match
+      titleMatch = { 1: chapterMatch[1] }
+    }
+  }
+  const title = titleMatch ? titleMatch[1].replace(/\$\\mu\(O\)\$/g, 'μ(O)') : 'Untitled Paper'
 
   const authorMatch = mdx.match(/\\author\{([^}]+)\}/)
   const authors = config.authors.length > 0
@@ -145,8 +157,13 @@ function convertLatexToMDX(latexContent, config) {
   const dateMatch = mdx.match(/\\date\{([^}]+)\}/)
   const date = dateMatch ? dateMatch[1] : new Date().toISOString().split('T')[0]
 
-  // Extract abstract
-  const abstractMatch = mdx.match(/\\begin\{abstract\}([\s\S]*?)\\end\{abstract\}/m)
+  // Extract abstract (or use first section introduction as abstract)
+  let abstractMatch = mdx.match(/\\begin\{abstract\}([\s\S]*?)\\end\{abstract\}/m)
+  if (!abstractMatch) {
+    // Try to extract first paragraph after \section{Introduction}
+    const introMatch = mdx.match(/\\section\{Introduction[^}]*\}\s*([\s\S]{100,500}?)\n\n/)
+    abstractMatch = introMatch ? { 1: introMatch[1].trim() } : null
+  }
   const abstract = abstractMatch
     ? abstractMatch[1].trim().replace(/\n/g, '\n  ')
     : 'Abstract not provided.'
@@ -161,11 +178,23 @@ function convertLatexToMDX(latexContent, config) {
   // Remove abstract environment (already extracted above)
   mdx = mdx.replace(/\\begin\{abstract\}[\s\S]*?\\end\{abstract\}/gm, '')
 
+  // Remove \chapter{} commands (title already extracted)
+  mdx = mdx.replace(/\\chapter\{\\texorpdfstring\{[^}]+\}\{[^}]+\}\}\s*/g, '')
+  mdx = mdx.replace(/\\chapter\{[^}]+\}\s*/g, '')
+
+  // Remove \label{} commands
+  mdx = mdx.replace(/\\label\{[^}]+\}\s*/g, '')
+
   // Convert sections
   mdx = mdx.replace(/\\section\*?\{([^}]+)\}/g, '## $1')
   mdx = mdx.replace(/\\subsection\*?\{([^}]+)\}/g, '### $1')
   mdx = mdx.replace(/\\subsubsection\*?\{([^}]+)\}/g, '#### $1')
   mdx = mdx.replace(/\\paragraph\{([^}]+)\}/g, '##### $1')
+
+  // Convert \begin{quote} ... \end{quote} → blockquote
+  mdx = mdx.replace(/\\begin\{quote\}([\s\S]*?)\\end\{quote\}/g, (_, content) => {
+    return content.trim().split('\n').map(line => '> ' + line.trim()).join('\n')
+  })
 
   // Convert text formatting
   mdx = mdx.replace(/\\textbf\{([^}]+)\}/g, '**$1**')
@@ -217,9 +246,12 @@ function convertLatexToMDX(latexContent, config) {
   mdx = mdx.replace(/\\citep\{([^}]+)\}/g, '[$1](#references)')
   mdx = mdx.replace(/\\citet\{([^}]+)\}/g, '[$1](#references)')
 
-  // Convert references (labels and refs)
-  mdx = mdx.replace(/\\label\{[^}]+\}/g, '') // Remove labels (MDX uses heading anchors)
-  mdx = mdx.replace(/\\ref\{([^}]+)\}/g, '[Section](#$1)') // Convert refs to placeholder
+  // Convert cross-references
+  // Section~\ref{sec:foo} → [Section](#foo)
+  // Chapter~\ref{ch:bar} → [Chapter](#bar)
+  mdx = mdx.replace(/Section~\\ref\{([^}]+)\}/g, '[Section](#$1)')
+  mdx = mdx.replace(/Chapter~\\ref\{([^}]+)\}/g, '[Chapter](#$1)')
+  mdx = mdx.replace(/\\ref\{([^}]+)\}/g, '[Reference](#$1)') // Fallback for plain \ref
 
   // Convert figures
   mdx = mdx.replace(
