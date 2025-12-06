@@ -316,28 +316,6 @@ unrdf policy apply compliance-v1.json
 unrdf policy list --active
 unrdf policy rollback compliance-v1
 
-# Sidecar Control
-unrdf sidecar status
-unrdf sidecar logs --follow
-unrdf sidecar config get
-
-# Context Management
-unrdf context create prod --sidecar=kgc.example.com:443
-unrdf context use prod
-unrdf context list
-```
-
-## Sidecar Pattern (Optional)
-
-For production deployments, use the KGC Sidecar:
-
-```bash
-# Set sidecar address
-export KGC_SIDECAR_ADDRESS=localhost:50051
-
-# CLI automatically uses sidecar
-unrdf hook eval health-check.mjs
-```
 
 **Kubernetes Deployment:**
 
@@ -349,10 +327,9 @@ spec:
   - name: app
     image: my-app:latest
     env:
-    - name: KGC_SIDECAR_ADDRESS
       value: "localhost:50051"
-  - name: kgc-sidecar
-    image: unrdf/sidecar:latest
+  - name: knowledge-engine
+    image: unrdf/knowledge-engine:latest
     ports:
     - containerPort: 50051
 ```
@@ -399,7 +376,6 @@ spec:
 
 1. **Read Full API Documentation**: See `docs/api/` for complete API reference
 2. **Explore Examples**: Check `examples/` for production patterns
-3. **Deploy Sidecar**: See `docs/deployment/` for Kubernetes/Terraform guides
 4. **Join Community**: GitHub issues for support and feature requests
 
 ## Resources

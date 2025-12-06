@@ -35,7 +35,6 @@ Total Lines of Code by Category:
 | src/cli/ | 4 | 2,100 | 3.2% |
 | src/hooks/ | 8 | 4,500 | 6.8% |
 | src/utils/ | 12 | 6,600 | 10.0% |
-| src/sidecar/ | 5 | 2,800 | 4.2% |
 | src/index.mjs | 1 | 67 | 0.1% |
 | src/lite.mjs | 1 | 100 | 0.2% |
 | **TOTAL** | **157** | **65,867** | **100%** |

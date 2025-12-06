@@ -62,7 +62,7 @@ All shells should now complete:
 
 ```bash
 unrdf <TAB>
-# → graph  hook  policy  sidecar  store  context  plugin  completion  repl
+# → graph  hook  policy  store  context  plugin  completion  repl
 
 unrdf graph <TAB>
 # → list  get  create  update  delete  validate  export  describe

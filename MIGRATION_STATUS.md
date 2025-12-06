@@ -52,7 +52,7 @@ Successfully migrated from dual /src + /packages structure to /packages-only mon
 
 #### Remaining in /src: 195 files
 - Primarily knowledge-engine files requiring careful refactoring
-- Some context, engines, security, sidecar modules
+- Some context, engines, security modules
 
 ## File Migration Summary
 

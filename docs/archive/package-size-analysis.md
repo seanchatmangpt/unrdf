@@ -50,7 +50,7 @@
 **Should EXCLUDE:**
 - Internal planning (`UNRDF-PLANNING.md`, `OPERATIONAL-RUNBOOK.md`)
 - Development logs (`KGC-CONVO.md`, `test-results.log`)
-- Architecture research (sidecar, nuxt4, lean-six-sigma)
+- Architecture research (knowledge-engine, nuxt4, lean-six-sigma)
 - Test validation reports
 - Conversation transcripts
 
@@ -77,7 +77,6 @@
  33 KB - UNRDF-PLANNING.md (internal planning)
  29 KB - OPERATIONAL-RUNBOOK.md (internal)
  21 KB - NITRO-PLAYGROUND.md (internal)
- 18 KB - KGC-SIDECAR-*.md (sidecar removed in v3!)
  17 KB - PRODUCTION-SIGN-OFF.md (internal)
  15 KB - ACCEPTANCE-SIGN-OFF.md (internal)
 ```
@@ -92,16 +91,14 @@
 - Internal planning docs
 - Conversation logs
 - Sign-off documents
-- Sidecar docs (removed in v3)
 - Development notes
 
 ### 4. **Examples Directory (552 KB)**
 
-**Problem:** Some examples reference removed features (CLI, sidecar).
+**Problem:** Some examples reference removed features (CLI, knowledge-engine).
 
 **Review Needed:**
 - `examples/legacy-cli/` - CLI removed in v3
-- `examples/sidecar-client-example.mjs` - Sidecar removed in v3
 - `examples/git-knowledge-hooks-integration.mjs` - May be useful
 
 **Recommendation:** ⚠️ Curate to production-relevant examples only
@@ -162,7 +159,7 @@
   "docs/v3.0.0-RELEASE-NOTES.md",
   "examples/*.mjs",
   "!examples/legacy-cli/",
-  "!examples/sidecar-*.mjs"
+  "!examples/knowledge-engine-*.mjs"
 ]
 ```
 
@@ -204,7 +201,7 @@
 
 ### Priority 5: Curate Examples (saves 252 KB)
 - Remove `examples/legacy-cli/` (CLI removed in v3)
-- Remove sidecar examples (sidecar removed in v3)
+- Remove knowledge-engine examples (knowledge-engine removed in v3)
 - Keep production-relevant examples only
 
 ---
@@ -247,7 +244,7 @@
 - Slow installation times (9.7 MB vs typical 1-2 MB)
 - Increased bandwidth costs for users
 - Internal docs exposed publicly
-- Confusion from outdated examples (CLI, sidecar)
+- Confusion from outdated examples (CLI, knowledge-engine)
 - Larger Docker images
 - CI/CD cache inefficiency
 
