@@ -2,26 +2,24 @@
 
 UNRDF documentation site built with Nextra 4.6.1 + Next.js 16.
 
-## ⚠️ Current Status: Waiting for Turbopack Fix
+## ✅ Status: Working (Webpack Mode)
 
-**This package is currently not buildable due to a known bug in Nextra 4.6.1 + Next.js 16 + Turbopack.**
+**This package works with Next.js 16.0.7 using Webpack instead of Turbopack.**
 
-**Issue**: Turbopack cannot resolve `next-mdx-import-source-file` in Nextra's internal code
-**Tracking**: [Nextra Issue #3517](https://github.com/shuding/nextra/issues/3517)
-**Workaround**: Use Docusaurus 3 (in `/apps/docs-site`) until this is fixed
-
-**When Fixed**: This package will provide a Next.js-based documentation alternative with better developer experience.
+**Solution**: Use `next build --webpack` flag to force Webpack mode
+**Reference**: Official Nextra examples use this approach
+**Alternative**: Docusaurus 3 (in `/apps/docs-site`) for production deployment
 
 ## Features
 
 - **Nextra 4.6.1**: Latest version with App Router support
-- **Next.js 16**: Latest Next.js with Webpack (Turbopack disabled due to MDX bugs)
-- **React 19**: Latest React
-- **TypeScript 5.9**: Full type safety
+- **Next.js 16.0.7**: Latest Next.js with Webpack mode (`--webpack` flag)
+- **React 19.2.1**: Latest React
+- **TypeScript 5.9.3**: Full type safety
 - **MDX 3**: Advanced markdown with JSX components
-- **Search**: Built-in full-text search
+- **Search**: Built-in full-text search (codeblocks disabled for performance)
 - **LaTeX**: Math equations support
-- **Code Highlighting**: Syntax highlighting for all languages
+- **Code Highlighting**: Syntax highlighting with copy button
 
 ## Development
 
@@ -61,9 +59,10 @@ packages/nextra/
 
 ### Webpack vs Turbopack
 
-This package uses **Webpack** instead of Turbopack because:
-- Nextra 4.6.1 + Next.js 16 + Turbopack has MDX import bugs
-- Webpack is stable and well-tested with Nextra
+This package uses **Webpack** instead of Turbopack:
+- Next.js 16 defaults to Turbopack, but `--webpack` flag forces Webpack mode
+- Nextra 4.6.1 works correctly with Webpack (official examples use this approach)
+- No theme.config.tsx required in Nextra 4 (configuration moved to next.config.mjs)
 
 ### Port
 
