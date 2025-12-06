@@ -1,4 +1,6 @@
 {
+  "installation": "Installation",
+  "quick-start": "Quick Start",
   "getting-started": "Getting Started",
   "sparql": "SPARQL Tutorial",
   "react-hooks": "React Hooks",
