@@ -11,6 +11,7 @@ dist
 .next
 out
 .vercel
+/nextra/
 
 # Claude Flow generated files
 .claude/settings.local.json

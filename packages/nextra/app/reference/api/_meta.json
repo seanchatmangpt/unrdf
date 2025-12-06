@@ -5,6 +5,7 @@
   "streaming": "@unrdf/streaming",
   "federation": "@unrdf/federation",
   "oxigraph": "@unrdf/oxigraph",
+  "kgn": "@unrdf/kgn",
   "cli": "@unrdf/cli",
   "knowledge-engine": "Knowledge Engine"
 }

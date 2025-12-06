@@ -1,0 +1,314 @@
+---
+title: '@unrdf/kgn API'
+description: RDF-aware template generation with Nunjucks filters and semantic code generation
+---
+
+# @unrdf/kgn
+
+RDF-aware template engine for UNRDF v5. Provides Nunjucks templates with semantic RDF filters, frontmatter parsing, and code generation capabilities.
+
+## Installation
+
+```bash
+pnpm add @unrdf/kgn
+```
+
+## Quick Start
+
+```javascript
+import { createEngine } from '@unrdf/kgn';
+
+// Create template engine with RDF filters
+const engine = createEngine();
+
+// Render template with RDF data
+const result = engine.renderString(
+  '{{ uri | expand(prefixes) }}',
+  { uri: 'ex:Person', prefixes: { ex: 'http://example.org/' } }
+);
+```
+
+---
+
+## Exports
+
+This module exports 14 items.
+
+### `expand(, )`
+
+KGEN RDF/SPARQL Filters - P0 Essential Semantic Web Processing Mock implementations for testing and London BDD approach These stubs provide deterministic behavior for template generation
+
+**Signature:**
+```typescript
+expand(curie: any, prefixes?: any): void
+```
+
+**Parameters:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `curie` | `any` | - |
+| `prefixes` | `any` | - *(optional)* *Default: `[object Object]`* |
+
+
+
+---
+
+### `contract(, )`
+
+Mock RDF prefixes for expansion
+
+**Signature:**
+```typescript
+contract(uri: any, prefixes?: any): void
+```
+
+**Parameters:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `uri` | `any` | - |
+| `prefixes` | `any` | - *(optional)* *Default: `[object Object]`* |
+
+
+
+---
+
+### `sparql(, )`
+
+Mock SPARQL dataset for deterministic results
+
+**Signature:**
+```typescript
+async sparql(query: any, dataset?: any): void
+```
+
+**Parameters:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `query` | `any` | - |
+| `dataset` | `any` | - *(optional)* |
+
+
+
+---
+
+### `rdfLiteral(, )`
+
+Expand CURIE (Compact URI) to full URI
+
+**Signature:**
+```typescript
+rdfLiteral(value: string, langOrType?: Object): string
+```
+
+**Parameters:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `string` | - CURIE in format 'prefix:localName' |
+| `langOrType` | `Object` | - Custom prefix mappings *(optional)* |
+
+**Returns:** `string`
+
+URI
+
+
+---
+
+### `rdfResource()`
+
+Contract full URI to CURIE if possible
+
+**Signature:**
+```typescript
+rdfResource(uri: string): string
+```
+
+**Parameters:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `uri` | `string` | - Full URI |
+
+**Returns:** `string`
+
+or original URI
+
+
+---
+
+### `turtleEscape()`
+
+Execute mock SPARQL query (deterministic results)
+
+**Signature:**
+```typescript
+turtleEscape(str: string): Array
+```
+
+**Parameters:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `str` | `string` | - SPARQL query string |
+
+**Returns:** `Array`
+
+query results
+
+
+---
+
+### `sparqlVar()`
+
+Create RDF literal with optional language tag or datatype
+
+**Signature:**
+```typescript
+sparqlVar(name: any): string
+```
+
+**Parameters:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `name` | `any` | - Literal value |
+
+**Returns:** `string`
+
+literal string
+
+
+---
+
+### `rdfList()`
+
+Create RDF resource (URI reference)
+
+**Signature:**
+```typescript
+rdfList(items: string): string
+```
+
+**Parameters:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `items` | `string` | - URI string |
+
+**Returns:** `string`
+
+wrapped in angle brackets
+
+
+---
+
+### `blankNode()`
+
+Escape string for Turtle/N3 syntax
+
+**Signature:**
+```typescript
+blankNode(id?: string): string
+```
+
+**Parameters:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `id` | `string` | - String to escape *(optional)* |
+
+**Returns:** `string`
+
+string
+
+
+---
+
+### `rdfDatatype(, )`
+
+Create SPARQL variable
+
+**Signature:**
+```typescript
+rdfDatatype(value: string, datatype?: any): string
+```
+
+**Parameters:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `string` | - Variable name |
+| `datatype` | `any` | - *(optional)* *Default: `string`* |
+
+**Returns:** `string`
+
+variable with ? prefix
+
+
+---
+
+### `shaclValidate(, )`
+
+Create RDF list (collection)
+
+**Signature:**
+```typescript
+shaclValidate(data: Array, shape: any): string
+```
+
+**Parameters:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `data` | `Array` | - Array items |
+| `shape` | `any` | - |
+
+**Returns:** `string`
+
+list syntax
+
+
+---
+
+### `infer(, )`
+
+Create blank node identifier
+
+**Signature:**
+```typescript
+infer(graph: string, reasoner?: any): string
+```
+
+**Parameters:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `graph` | `string` | - Optional identifier |
+| `reasoner` | `any` | - *(optional)* *Default: `rdfs`* |
+
+**Returns:** `string`
+
+node with _: prefix
+
+
+---
+
+### `rdfFilters`
+
+Add RDF datatype to literal
+
+**Type:** `ObjectExpression`
+
+---
+
+
+## Imports
+
+This module has no external imports.
+
+---
+
+*Generated by @unrdf/kgn documentation generator*
