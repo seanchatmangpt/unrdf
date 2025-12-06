@@ -35,7 +35,8 @@
     "lint:fix": "eslint src/ --ext .js,.mjs --fix",
     "dev": "nodemon --watch src --exec 'echo @unrdf/kgn dev mode - watching for changes'",
     "typecheck": "echo '@unrdf/kgn - JavaScript validation not configured'",
-    "clean": "rm -rf coverage .nyc_output dist build"
+    "clean": "rm -rf coverage .nyc_output dist build",
+    "docs:generate": "node bin/generate-docs.mjs"
   },
   "dependencies": {
     "@unrdf/core": "workspace:*",
