@@ -81,13 +81,22 @@ function EventItem({ event, index }) {
     });
   };
 
+  // Alt+Click to navigate to forensic view
+  const handleClick = (e) => {
+    if (e.altKey && event.id) {
+      window.location.href = `/visualizations?eventId=${event.id}`;
+    }
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 20 }}
       transition={{ delay: index * 0.05 }}
-      className={`flex items-start gap-3 p-3 rounded-lg ${config.bg} border ${config.border}`}
+      onClick={handleClick}
+      className={`flex items-start gap-3 p-3 rounded-lg ${config.bg} border ${config.border} cursor-pointer hover:ring-2 hover:ring-indigo-500/50 transition-all`}
+      title="Alt+Click to view in Forensic Mode"
     >
       <div className={`p-1.5 rounded-full ${config.bg}`}>
         <Icon className={`w-4 h-4 ${config.color}`} />

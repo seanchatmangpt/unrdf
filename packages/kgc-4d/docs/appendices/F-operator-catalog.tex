@@ -1,0 +1,327 @@
+% Appendix F: μ(O) Operator Catalog
+% Comprehensive reference for all 8 semantic operators
+
+\appendix
+\chapter{μ(O) Operator Catalog}
+\label{ap:operator-catalog}
+
+This appendix provides a comprehensive reference for the 8 semantic operators of the μ(O) Calculus, including formal definitions, implementation semantics, performance characteristics, and real-world examples.
+
+\section{Complete Operator Reference}
+
+\subsection{μ₁: Validate Operator}
+
+\textbf{Purpose}: Schema coherence and structural validation of input quads.
+
+\textbf{Formal Signature}:
+$$\mu_1(\text{quad}, \text{schema}) \rightarrow \{\text{valid}, \text{invalid}, \text{error}\}$$
+
+\textbf{Semantics}:
+\begin{itemize}
+    \item Checks quad subject, predicate, object against Zod schema
+    \item Enforces type constraints (IRI, literal, blank node)
+    \item Validates format (email, URL, date, UUID)
+    \item Returns boolean + error details if invalid
+\end{itemize}
+
+\textbf{Performance}: 10-15 μs (dominated by Zod schema check)
+
+\textbf{Implementation}: Zod schema validation framework
+
+\textbf{Example}:
+\begin{verbatim}
+Input:  quad = { subject: "order:123", predicate: "schema:price",
+                 object: "€50.00" }
+Schema: { object: z.string().regex(/^\$\d+\.\d{2}$/) }
+Output: { valid: false, error: "Price format invalid" }
+\end{verbatim}
+
+\subsection{μ₂: Transform Operator}
+
+\textbf{Purpose}: Normalize and convert quad data to canonical representation.
+
+\textbf{Formal Signature}:
+$$\mu_2(\text{quad}, \text{transformation}) \rightarrow \{\text{quad}, \text{error}\}$$
+
+\textbf{Semantics}:
+\begin{itemize}
+    \item Applies transformations to quad components
+    \item Normalizes units (currency, length, date)
+    \item Converts between ontologies (schema.org ↔ custom)
+    \item Returns transformed quad or error
+\end{itemize}
+
+\textbf{Performance}: 5-10 μs (in-memory transformation)
+
+\textbf{Implementation}: Transformation function composition
+
+\textbf{Example}:
+\begin{verbatim}
+Input:  quad = { object: "50.00 USD" }
+Transform: currency → ISO 4217 code
+Output: quad = { object: "USD:5000" } (cents for precision)
+\end{verbatim}
+
+\subsection{μ₃: Enrich Operator}
+
+\textbf{Purpose}: Add contextual information by joining with external data sources.
+
+\textbf{Formal Signature}:
+$$\mu_3(\text{quad}, \text{context}) \rightarrow \{\text{quad + enrichments}, \text{error}\}$$
+
+\textbf{Semantics}:
+\begin{itemize}
+    \item Fetches related data from store or API
+    \item Adds context as additional quads
+    \item Merges enrichments non-destructively
+    \item Returns original + enriched quads
+\end{itemize}
+
+\textbf{Performance}: 50-200 μs (depends on external call latency)
+
+\textbf{Implementation}: Store join + async API calls with caching
+
+\textbf{Example}:
+\begin{verbatim}
+Input:  quad = { subject: "product:SKU123" }
+Enrich: Fetch inventory count, price, seller info from store
+Output: quad + enrichments = {
+           subject: "product:SKU123",
+           properties: { inventory: 45, price: "$50", seller: "..." }
+        }
+\end{verbatim}
+
+\subsection{μ₄: Filter Operator}
+
+\textbf{Purpose}: Conditional exclusion of quads based on predicates.
+
+\textbf{Formal Signature}:
+$$\mu_4(\text{quad}, \text{predicate}) \rightarrow \{\text{quad}, \text{skip}\}$$
+
+\textbf{Semantics}:
+\begin{itemize}
+    \item Evaluates boolean predicate on quad
+    \item Skips quad if predicate returns false
+    \item Passes through if true
+    \item No transformation or enrichment
+\end{itemize}
+
+\textbf{Performance}: 1-5 μs (pure logic, no I/O)
+
+\textbf{Implementation}: Boolean predicate function
+
+\textbf{Example}:
+\begin{verbatim}
+Input:  quad = { subject: "order:456", property: region = "US" }
+Filter: region == "US" AND price < 10000
+Output: PASS (quad is processed)
+
+Input:  quad = { subject: "order:789", property: region = "NK" }
+Filter: region == "US" AND price < 10000
+Output: SKIP (region not whitelisted)
+\end{verbatim}
+
+\subsection{μ₅: Aggregate Operator}
+
+\textbf{Purpose}: Combine multiple quads into a single aggregated result.
+
+\textbf{Formal Signature}:
+$$\mu_5(\{\text{quad}_1, ..., \text{quad}_n\}, \text{aggregation}) \rightarrow \{\text{aggregated\_quad}, \text{error}\}$$
+
+\textbf{Semantics}:
+\begin{itemize}
+    \item Groups related quads by subject or property
+    \item Applies aggregation function (SUM, COUNT, CONCAT, etc.)
+    \item Returns single aggregated quad
+    \item Preserves provenance metadata
+\end{itemize}
+
+\textbf{Performance}: 5-20 μs (depends on quad count)
+
+\textbf{Implementation}: Hash-based grouping + aggregation functions
+
+\textbf{Example}:
+\begin{verbatim}
+Input:  quads = [
+          { seller: "seller:A", revenue: 1000 },
+          { seller: "seller:A", revenue: 2000 },
+          { seller: "seller:B", revenue: 500 }
+        ]
+Aggregate: GROUP BY seller, SUM(revenue)
+Output: [
+          { seller: "seller:A", total_revenue: 3000 },
+          { seller: "seller:B", total_revenue: 500 }
+        ]
+\end{verbatim}
+
+\subsection{μ₆: Derive Operator}
+
+\textbf{Purpose}: Infer new quads from existing quads using logical rules.
+
+\textbf{Formal Signature}:
+$$\mu_6(\text{quad}, \text{rules}) \rightarrow \{\text{quad + inferred\_quads}, \text{error}\}$$
+
+\textbf{Semantics}:
+\begin{itemize}
+    \item Applies inference rules (Semantic Web, OWL rules)
+    \item Generates new quads based on logical entailment
+    \item Handles transitivity, inverse properties, class hierarchies
+    \item Returns original + derived quads
+\end{itemize}
+
+\textbf{Performance}: 10-50 μs (rule complexity dependent)
+
+\textbf{Implementation}: OWL reasoner or custom rule engine
+
+\textbf{Example}:
+\begin{verbatim}
+Input:  quad = { subject: "person:Alice", relationship: "friend",
+                 object: "person:Bob" }
+Rule:   if X friend Y and Y friend Z, then X canreach Z
+Output: quad + derived = { person: "Alice", canreach: "person:Bob" }
+\end{verbatim}
+
+\subsection{μ₇: Monitor Operator}
+
+\textbf{Purpose}: Emit observability signals (metrics, traces, logs) without modifying quads.
+
+\textbf{Formal Signature}:
+$$\mu_7(\text{quad}) \rightarrow \{\text{OTEL span, quad unchanged}\}$$
+
+\textbf{Semantics}:
+\begin{itemize}
+    \item Records execution metrics (latency, success/failure)
+    \item Emits OTEL spans with quad context
+    \item Logs compliance-relevant events
+    \item Transparent to downstream operators
+\end{itemize}
+
+\textbf{Performance}: 5-15 μs (OTEL span emission)
+
+\textbf{Implementation}: OpenTelemetry SDK
+
+\textbf{Example}:
+\begin{verbatim}
+Input:  quad = { subject: "order:999" }
+Monitor: Emit span("hook.validate", attributes: {
+           subject_type: "order", status: "passed"
+         })
+Output: Same quad, but with OTEL trace context attached
+\end{verbatim}
+
+\subsection{μ₈: Sandbox Operator}
+
+\textbf{Purpose}: Execute effects in isolated, audited, transactional context.
+
+\textbf{Formal Signature}:
+$$\mu_8(\text{quad}, \text{effect}) \rightarrow \{\text{result}, \text{audit\_log}\}$$
+
+\textbf{Semantics}:
+\begin{itemize}
+    \item Creates isolated execution environment
+    \item Runs effect function (e.g., database write, external API call)
+    \item Records all operations in audit log
+    \item Commits atomically or rolls back
+    \item Protects against side effects
+\end{itemize}
+
+\textbf{Performance}: 50-500 μs (depends on effect complexity)
+
+\textbf{Implementation}: Transaction wrapper + audit logging
+
+\textbf{Example}:
+\begin{verbatim}
+Input:  quad = { subject: "order:555" }
+Effect: INSERT INTO orders TABLE VALUES (...)
+Sandbox: Opens transaction, executes, records:
+         { timestamp: "2024-01-01T00:00:00Z", effect: "insert",
+           table: "orders", status: "committed" }
+Output: Result with audit log
+\end{verbatim}
+
+\section{Composition Patterns}
+
+The 8 operators compose in standard patterns across JTBD scenarios:
+
+\subsection{Pattern 1: Validation → Transformation}
+
+\textbf{Use Case}: Input normalization
+
+\textbf{Operators}: $\mu_1$ → $\mu_2$
+
+\textbf{Example}: Validate price format, then transform to canonical currency
+
+\subsection{Pattern 2: Enrichment → Filtering}
+
+\textbf{Use Case}: Context-aware filtering
+
+\textbf{Operators}: $\mu_3$ → $\mu_4$
+
+\textbf{Example}: Enrich with inventory, then filter by availability
+
+\subsection{Pattern 3: Aggregation → Derivation}
+
+\textbf{Use Case}: Aggregate computation
+
+\textbf{Operators}: $\mu_5$ → $\mu_6$
+
+\textbf{Example}: Aggregate seller revenue, then derive commission
+
+\subsection{Pattern 4: All 8 Sequential}
+
+\textbf{Use Case}: Full JTBD workflow
+
+\textbf{Operators}: $\mu_1$ → $\mu_2$ → $\mu_3$ → $\mu_4$ → $\mu_5$ → $\mu_6$ → $\mu_7$ → $\mu_8$
+
+\textbf{Example}: Order fulfillment (validate → transform → enrich → filter → aggregate → derive → monitor → commit)
+
+\section{Performance Reference}
+
+\begin{table}[h]
+\centering
+\caption{Operator Performance Reference (Single Invocation)}
+\label{tab:operator-perf}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Operator} & \textbf{Typical Latency} & \textbf{Bottleneck} & \textbf{Optimization} \\
+\midrule
+$\mu_1$: validate & 10-15 μs & Zod schema parsing & Cache schema \\
+$\mu_2$: transform & 5-10 μs & Data conversion & Batch transforms \\
+$\mu_3$: enrich & 50-200 μs & External I/O & Query caching \\
+$\mu_4$: filter & 1-5 μs & Logic evaluation & JIT compile \\
+$\mu_5$: aggregate & 5-20 μs & Grouping hash & Incremental aggregate \\
+$\mu_6$: derive & 10-50 μs & Rule complexity & Memoize rules \\
+$\mu_7$: monitor & 5-15 μs & OTEL span emit & Async emission \\
+$\mu_8$: sandbox & 50-500 μs & Transaction commit & Connection pool \\
+\midrule
+\textbf{Total (All 8)} & \textbf{0.85 ms} & \textbf{Sandbox + Enrich} & \textbf{Caching stack} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Error Handling}
+
+All operators return standardized error objects:
+
+\begin{verbatim}
+error = {
+  operator: "validate" | "transform" | "enrich" | ...,
+  code: "INVALID_FORMAT" | "EXTERNAL_API_ERROR" | ...,
+  message: "Human-readable description",
+  context: { quad_subject, source_file, line_number },
+  timestamp: ISO8601,
+  retry_safe: true | false
+}
+\end{verbatim}
+
+\textbf{Retry Policies}:
+\begin{itemize}
+    \item $\mu_1$ (validate): NOT retryable (invalid = invalid)
+    \item $\mu_2$ (transform): NOT retryable (logic error)
+    \item $\mu_3$ (enrich): RETRYABLE (external service timeout)
+    \item $\mu_4$ (filter): NOT retryable (logic)
+    \item $\mu_5$ (aggregate): NOT retryable (data error)
+    \item $\mu_6$ (derive): NOT retryable (logic)
+    \item $\mu_7$ (monitor): RETRYABLE (telemetry loss acceptable)
+    \item $\mu_8$ (sandbox): RETRYABLE (transaction rollback)
+\end{itemize}
