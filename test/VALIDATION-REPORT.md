@@ -130,12 +130,6 @@ transaction-manager:  Latency: 0ms  |  Error Rate: 0.00%  |  Throughput: 0 ops  
 - Roundtrip integrity maintained
 - Edge cases (special characters, language tags, datatypes) handled
 
-#### ✅ test/sidecar/client.test.mjs (6/6 passed)
-
-- Client initialization working
-- Connection/disconnection functional
-- Metrics tracking operational
-
 ### Failing Test Suite ❌
 
 #### ❌ test/cli/context.test.mjs (5 failures, 21 passed)
@@ -386,7 +380,6 @@ npm rebuild better-sqlite3
 - `/Users/sac/unrdf/test/cli/context.test.mjs` - ❌ Failing (5 failures)
 - `/Users/sac/unrdf/test/dark-matter-80-20.test.mjs` - ✅ Passing (17 tests)
 - `/Users/sac/unrdf/test/knowledge-engine/parse.test.mjs` - ✅ Passing (32 tests)
-- `/Users/sac/unrdf/test/sidecar/client.test.mjs` - ✅ Passing (6 tests)
 
 ### Output Files
 

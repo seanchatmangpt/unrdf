@@ -27,7 +27,6 @@ Following Agent Validation Protocol:
 | Graph Lifecycle Workflow | ❌ FAIL | Import step: Output pattern mismatch `/Imported \d+ triples?/` |
 | Hook Evaluation Workflow | ❌ FAIL | Hook create: File not found `hooks/health-check.json` |
 | Policy Enforcement | ❌ FAIL | Policy validation: Missing required fields (id, meta, config, hooks) |
-| Sidecar Integration | ❌ FAIL | Sidecar unavailable (timeout) - not running |
 
 **P0 Pass Rate**: 0/4 (0%) ❌
 
@@ -35,9 +34,7 @@ Following Agent Validation Protocol:
 - Graph Lifecycle with Hooks: ❌ FAIL (hook file not found)
 - Hook Veto Scenarios: ❌ FAIL (hook file not found)
 - Policy Violation Detection: ❌ FAIL (validation errors)
-- Sidecar gRPC Communication: ❌ FAIL (sidecar not running)
 - Hook Provenance Tracking: ❌ FAIL (hook file not found)
-- OTEL Trace Validation: ❌ FAIL (sidecar not running)
 - Multi-Graph Operations: ❌ FAIL (import pattern mismatch)
 - Policy Inheritance: ❌ FAIL (validation errors)
 - Concurrent Hook Execution: ❌ FAIL (hook file not found)
@@ -48,7 +45,6 @@ Following Agent Validation Protocol:
 - Graph Error Recovery: ❌ FAIL
 - Hook Timeout Handling: ❌ FAIL
 - Policy Conflict Resolution: ❌ FAIL
-- Sidecar Error Handling: ❌ FAIL
 - Hook Chaining: ❌ FAIL
 - Multi-Policy Stacks: ❌ FAIL
 
@@ -98,13 +94,10 @@ Following Agent Validation Protocol:
 
 **Cause**: Policy pack JSON structure doesn't match expected schema
 
-### 3. Sidecar Not Running (15% of failures)
-**Issue**: Sidecar integration tests fail
 ```
-❌ Sidecar unavailable (timeout). Ensure sidecar is running: unrdf sidecar start
 ```
 
-**Cause**: Tests expect sidecar to be running, but it's not started in cleanroom environment
+**Cause**: Tests expect knowledge-engine to be running, but it's not started in cleanroom environment
 
 ---
 
@@ -164,12 +157,11 @@ Following Agent Validation Protocol:
 - Add required fields: `id`, `meta`, `config`, `hooks`
 - Validate against PolicyPackSchema
 
-### Blocker #3: Sidecar Integration Gap (LOW PRIORITY)
 **Impact**: 3/19 tests failing (16%)
 **Action Required**: Either:
-- Start sidecar in test setup
-- Mock sidecar for cleanroom tests
-- Skip sidecar tests in cleanroom mode
+- Start knowledge-engine in test setup
+- Mock knowledge-engine for cleanroom tests
+- Skip knowledge-engine tests in cleanroom mode
 
 ---
 
@@ -178,7 +170,6 @@ Following Agent Validation Protocol:
 ### Immediate Actions (P0)
 1. **Create SPARQL fixture files** - Will fix 58% of failures
 2. **Fix policy pack schema** - Will fix 26% of failures
-3. **Address sidecar dependency** - Will fix 16% of failures
 
 ### Validation Strategy
 After fixes:
@@ -231,7 +222,6 @@ After fixes:
 **Next Steps**:
 1. Implement fixes for missing SPARQL fixtures
 2. Correct policy pack schema
-3. Address sidecar integration
 4. Re-run validation
 5. Achieve 60%+ pass rate before proceeding
 

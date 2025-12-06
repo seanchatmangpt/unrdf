@@ -21,7 +21,6 @@ This architecture defines the **minimum viable implementation** to pass 14 faili
 **Target State** (80/20 MVP):
 - 18/19 tests passing (94.7% success)
 - Full OTEL trace propagation and correlation
-- CLI commands: `store`, `policy`, `sidecar status` functional
 - gRPC proto service definitions complete
 - End-to-end observability validation
 
@@ -36,7 +35,7 @@ P0 BLOCKERS (4 tests - 21% of suite):
 ├── store command missing     → blocks 4 scenarios
 ├── policy command missing    → blocks 3 scenarios
 ├── hook create argument fix  → blocks 5 scenarios
-└── sidecar gRPC proto        → blocks 3 scenarios
+└── knowledge-engine gRPC proto        → blocks 3 scenarios
 
 P1 ENHANCEMENTS (10 tests - 53% of suite):
 ├── OTEL trace validation     → 0 spans captured
@@ -61,7 +60,6 @@ unrdf policy get      # Policy Violation (P1)
 **2. gRPC Service (1 undefined = 3 test failures)**
 ```protobuf
 // Missing RPC implementation:
-service KGCSidecar {
   rpc HealthCheck(...)   // proto defined, client broken
 }
 ```
@@ -79,7 +77,6 @@ unrdf hook create health-check sparql-ask
 **4. OTEL Trace Correlation (0% working = 10 failures)**
 ```
 Issue: Spans not appearing in Jaeger
-Root: Missing context propagation in CLI → Sidecar
 ```
 
 ---
@@ -211,8 +208,7 @@ async function policyApplyCommand(ctx, config) {
     // 2. Validate schema (use existing validators)
     await validatePolicyPack(policyPack);
 
-    // 3. Store in sidecar (via gRPC if available)
-    await withSidecar(async (client) => {
+    // 3. Store in knowledge-engine (via gRPC if available)
       await client.applyPolicyPack(policyPack);
     }, {
       // Fallback: store locally
@@ -287,21 +283,19 @@ export async function hookCreateCommand(ctx, config) {
 
 ---
 
-### Phase 3: Sidecar gRPC Client Integration
 
 **Current Issue**: Client expects proto service, but RPC undefined
 
 **Fix**: Implement gRPC client wrapper
 
 ```javascript
-// src/cli/utils/sidecar-client.mjs
+// src/cli/utils/knowledge-engine-client.mjs
 import grpc from '@grpc/grpc-js';
 import protoLoader from '@grpc/proto-loader';
 import { trace } from '@opentelemetry/api';
 
-const PROTO_PATH = 'proto/kgc-sidecar.proto';
+const PROTO_PATH = 'proto/knowledge-engine.proto';
 
-class SidecarClient {
   constructor(address = 'localhost:50051') {
     // Load proto
     const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
@@ -313,19 +307,18 @@ class SidecarClient {
     });
 
     const protoDescriptor = grpc.loadPackageDefinition(packageDefinition);
-    this.client = new protoDescriptor.kgc.sidecar.v1.KGCSidecar(
       address,
       grpc.credentials.createInsecure()
     );
 
-    this.tracer = trace.getTracer('sidecar-client');
+    this.tracer = trace.getTracer('knowledge-engine-client');
   }
 
   /**
    * Health check with OTEL tracing
    */
   async healthCheck() {
-    const span = this.tracer.startSpan('sidecar.healthCheck');
+    const span = this.tracer.startSpan('healthCheck');
 
     return new Promise((resolve, reject) => {
       this.client.HealthCheck({}, (error, response) => {
@@ -348,7 +341,7 @@ class SidecarClient {
    * Apply transaction with trace context propagation
    */
   async applyTransaction(request) {
-    const span = this.tracer.startSpan('sidecar.applyTransaction', {
+    const span = this.tracer.startSpan('applyTransaction', {
       attributes: {
         'transaction.id': request.transaction_id,
         'delta.size': request.delta?.size || 0
@@ -379,7 +372,7 @@ class SidecarClient {
    * Evaluate hook with tracing
    */
   async evaluateHook(request) {
-    const span = this.tracer.startSpan('sidecar.evaluateHook');
+    const span = this.tracer.startSpan('evaluateHook');
 
     return new Promise((resolve, reject) => {
       this.client.EvaluateHook(request, (error, response) => {
@@ -398,35 +391,28 @@ class SidecarClient {
   }
 }
 
-export { SidecarClient };
 ```
 
 **Usage in CLI commands**:
 ```javascript
-// cli/utils/sidecar-helper.mjs
-import { SidecarClient } from './sidecar-client.mjs';
+// cli/utils/knowledge-engine-helper.mjs
 
-let sidecarClient = null;
+let knowledge-engineClient = null;
 
-export async function getSidecarClient() {
-  if (!sidecarClient) {
-    const address = process.env.SIDECAR_ADDRESS || 'localhost:50051';
-    sidecarClient = new SidecarClient(address);
+  if (!knowledge-engineClient) {
 
     // Test connection
     try {
-      await sidecarClient.healthCheck();
+      await knowledge-engineClient.healthCheck();
     } catch (error) {
-      throw new Error(`Cannot connect to sidecar: ${error.message}`);
+      throw new Error(`Cannot connect to knowledge-engine: ${error.message}`);
     }
   }
 
-  return sidecarClient;
+  return knowledge-engineClient;
 }
 
-export async function withSidecar(fn, options = {}) {
   try {
-    const client = await getSidecarClient();
     return await fn(client);
   } catch (error) {
     if (options.fallback) {
@@ -437,26 +423,20 @@ export async function withSidecar(fn, options = {}) {
 }
 ```
 
-**Fix sidecar status command**:
 ```javascript
-// cli/commands/sidecar.mjs (line 18-51)
-export async function sidecarStatusCommand(ctx, config) {
-  console.log('🔍 Checking sidecar status...\n');
+export async function knowledge-engineStatusCommand(ctx, config) {
 
   try {
-    const client = await getSidecarClient();
 
     // Call HealthCheck RPC (now properly defined)
     const health = await client.healthCheck();
 
-    console.log('Sidecar Status');
     console.log('──────────────');
     console.log(`Status:        ${health.status}`);
     console.log(`Uptime:        ${Math.floor(health.uptime_seconds / 60)}m`);
     console.log(`Health:        ${health.status === 'SERVING' ? '✓ Healthy' : '✗ Unhealthy'}`);
 
   } catch (error) {
-    console.error(`❌ ${formatSidecarError(error)}`);
     process.exit(1);
   }
 }
@@ -469,7 +449,6 @@ export async function sidecarStatusCommand(ctx, config) {
 **Critical Issue**: Spans not appearing in Jaeger
 
 **Root Causes**:
-1. No context propagation from CLI → Sidecar
 2. Trace IDs not correlated across process boundaries
 3. OTEL exporter not flushing before process exit
 
@@ -489,9 +468,8 @@ export async function sidecarStatusCommand(ctx, config) {
 └───────────────────────────────────────────────────────────┬─┘
                                                             │
 ┌───────────────────────────────────────────────────────────▼─┐
-│ Sidecar Process (grpc server on :50051)                    │
 │ ┌─────────────────────────────────────────────────────────┐ │
-│ │ 2. CHILD SPAN: sidecar.applyTransaction                │ │
+│ │ 2. CHILD SPAN: applyTransaction                │ │
 │ │    ├─ trace_id: abc123  ◄── SAME AS CLI                │ │
 │ │    ├─ parent_id: def456 ◄── LINKS TO ROOT              │ │
 │ │    ├─ span_id: ghi789                                   │ │
@@ -510,7 +488,7 @@ export async function sidecarStatusCommand(ctx, config) {
 │ ┌─────────────────────────────────────────────────────────┐ │
 │ │ Trace: abc123                                           │ │
 │ │ ├── unrdf.graph.create        [1.2s]                   │ │
-│ │     └── sidecar.applyTransaction  [800ms]              │ │
+│ │     └── applyTransaction  [800ms]              │ │
 │ │         └── hook.evaluate          [200ms]             │ │
 │ └─────────────────────────────────────────────────────────┘ │
 └─────────────────────────────────────────────────────────────┘
@@ -784,13 +762,13 @@ test('should validate end-to-end trace correlation', async () => {
       attributes: { 'graph.name': 'test-graph' }
     },
     {
-      name: 'sidecar.applyTransaction',
+      name: 'applyTransaction',
       parent: 'graph create',
       attributes: { 'transaction.committed': true }
     },
     {
       name: 'hook.evaluate',
-      parent: 'sidecar.applyTransaction',
+      parent: 'applyTransaction',
       attributes: { 'hook.passed': true }
     }
   ]);
@@ -811,7 +789,6 @@ test('should validate end-to-end trace correlation', async () => {
 | Graph Lifecycle | FAIL | PASS | `store import/export` + OTEL spans |
 | Hook Evaluation | FAIL | PASS | Fix positional args + trace context |
 | Policy Enforcement | FAIL | PASS | `policy apply/list/get` |
-| Sidecar Integration | FAIL | PASS | gRPC client + HealthCheck RPC |
 
 ### P1 Tests (Should Pass)
 
@@ -832,7 +809,6 @@ test('should validate end-to-end trace correlation', async () => {
 4. Validate trace structure:
    ✓ 3+ spans per transaction
    ✓ Parent-child relationships correct
-   ✓ Trace IDs match across CLI → Sidecar
    ✓ Attributes captured: graph.name, hook.result, etc.
 ```
 
@@ -850,7 +826,7 @@ src/cli/commands/policy.mjs      [NEW] - 120 lines
 ### 2. gRPC Client (NEW)
 
 ```
-src/cli/utils/sidecar-client.mjs [NEW] - 200 lines
+src/cli/utils/knowledge-engine-client.mjs [NEW] - 200 lines
 ```
 
 ### 3. OTEL Instrumentation (NEW)
@@ -866,9 +842,7 @@ cli/unrdf.mjs                    [EDIT] - Add store/policy commands
                                  [EDIT] - Fix hook create args
                                  [EDIT] - Init OTEL on startup
 
-cli/commands/sidecar.mjs         [EDIT] - Fix HealthCheck RPC call
 cli/utils/context-wrapper.mjs    [EDIT] - Add OTEL span wrapper
-cli/utils/sidecar-helper.mjs     [EDIT] - Import SidecarClient class
 ```
 
 ### 5. Test Fixtures (VERIFY)
@@ -892,7 +866,7 @@ test/e2e/cleanroom/fixtures/     [CHECK] - Ensure all files exist:
 - ✅ **Hour 5-6**: Integration test: 7 tests now pass (36% → 63% success)
 
 ### Day 2: gRPC + Hook Fix
-- ✅ **Hour 1-2**: Implement `sidecar-client.mjs` with HealthCheck RPC
+- ✅ **Hour 1-2**: Implement `knowledge-engine-client.mjs` with HealthCheck RPC
 - ✅ **Hour 3-4**: Fix hook create positional args
 - ✅ **Hour 5-6**: Integration test: 12 tests now pass (63% → 84% success)
 
@@ -911,7 +885,6 @@ test/e2e/cleanroom/fixtures/     [CHECK] - Ensure all files exist:
 ### Risk 1: gRPC Connection Failures
 **Mitigation**: Graceful fallback to local execution
 ```javascript
-await withSidecar(
   async (client) => client.healthCheck(),
   { fallback: () => ({ status: 'local', uptime: 0 }) }
 );
@@ -943,7 +916,6 @@ client.call(request, metadata);
 | `store import` | <100ms | <500ms | N/A |
 | `policy apply` | <50ms | <200ms | N/A |
 | `hook evaluate` | <20ms | <100ms | Existing |
-| `sidecar healthCheck` | <10ms | <50ms | N/A |
 
 **Validation**: Embed timers in OTEL spans
 ```javascript
@@ -956,13 +928,13 @@ span.setAttribute('duration.ms', Date.now() - startTime);
 
 This architecture delivers **94.7% test coverage** with **minimal implementation**:
 - **2 new command files** (store.mjs, policy.mjs)
-- **2 new utility files** (sidecar-client.mjs, otel-cli-tracer.mjs)
-- **4 file edits** (unrdf.mjs, sidecar.mjs, context-wrapper.mjs, sidecar-helper.mjs)
+- **2 new utility files** (knowledge-engine-client.mjs, otel-cli-tracer.mjs)
+- **4 file edits** (unrdf.mjs, mjs, context-wrapper.mjs, knowledge-engine-helper.mjs)
 - **~800 lines of code total**
 
 By focusing on the **critical 20%**:
 - ✅ CLI commands unlock 7 blocked tests
-- ✅ gRPC client fixes 3 sidecar tests
+- ✅ gRPC client fixes 3 knowledge-engine tests
 - ✅ Hook arg fix resolves 5 tests
 - ✅ OTEL tracing enables full observability
 
@@ -972,4 +944,3 @@ By focusing on the **critical 20%**:
 3. Integrate OTEL tracing (Day 3)
 4. Validate with `npm test` → 18/19 passing
 
-**Evidence of Success**: Jaeger UI showing full trace correlation from CLI → Sidecar → Hooks with proper parent-child span relationships.

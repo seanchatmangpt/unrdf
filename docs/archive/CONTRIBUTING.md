@@ -1,6 +1,4 @@
-# Contributing to UNRDF KGC Sidecar
 
-Thank you for your interest in contributing to the UNRDF KGC (Knowledge Graph Control) JavaScript Sidecar! This document provides guidelines and information for contributors.
 
 ## Table of Contents
 
@@ -64,7 +62,7 @@ We pledge to make participation in our project a harassment-free experience for 
 ```
 unrdf/
 ├── src/                    # Source code
-│   └── knowledge-engine/   # KGC sidecar core
+│   └── knowledge-engine/   # knowledge engine core
 ├── test/                   # Test suites
 ├── docs/                   # Documentation
 ├── examples/               # Usage examples

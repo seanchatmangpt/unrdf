@@ -1,9 +1,0 @@
-{
-  "name": "schema-validation",
-  "kind": "before",
-  "condition": {
-    "type": "sparql-ask",
-    "query": "# Schema Validation SPARQL Query\n# Validates that subjects have rdf:type predicates\n\nPREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n\nASK {\n  ?s rdf:type ?type .\n}\n"
-  },
-  "effects": []
-}

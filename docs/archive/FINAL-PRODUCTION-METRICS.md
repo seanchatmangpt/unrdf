@@ -50,7 +50,6 @@ Average Test Duration: ~180ms per test
 ```
 
 **High-Impact Failures**:
-1. **Hook Listing** (P0): Sidecar unavailable (timeout)
 2. **Policy Violations** (P1): Pattern matching failures
 3. **Domain Validation** (P1): Undefined return values
 4. **Performance Benchmarks** (P2): p99 latency 659ms (target: <2ms)
@@ -66,7 +65,6 @@ Average Test Duration: ~180ms per test
 | **Jaeger (OTEL)** | ✅ **Running** | http://localhost:16686 accessible |
 | **Redis** | ⚠️ **Optional** | Not available (non-blocking) |
 | **PostgreSQL** | ⚠️ **Optional** | Not running (non-blocking) |
-| **KGC Sidecar** | ❌ **Down** | Timeout errors during hook listing |
 | **File System** | ✅ **Working** | .unrdf structure created |
 
 ### File Persistence Validation
@@ -133,7 +131,6 @@ Total Directory Structure: 11 subdirectories
 | Policy Apply | ✅ PASS | default manifest.json applied |
 | Policy Validate | ✅ PASS | .unrdf-store.nq validated |
 | Hook Create | ✅ PASS | smoke-hook created |
-| Hook List | ❌ FAIL | Sidecar unavailable (timeout) |
 | Graph Create | ⏭️ SKIP | Not executed (prior failure) |
 | Graph Validate | ⏭️ SKIP | Not executed (prior failure) |
 
@@ -144,7 +141,6 @@ Total Directory Structure: 11 subdirectories
 | Scenario | Status | Impact |
 |----------|--------|--------|
 | Import → Query → Validate | ✅ PASS | Core data flow working |
-| Hook Creation & Execution | ❌ FAIL | Sidecar communication broken |
 | Policy Apply → Violation Detection | ⚠️ PARTIAL | Apply works, detection fails |
 | Concurrent Graph Operations | ⏭️ SKIP | Not executed |
 
@@ -167,7 +163,6 @@ Total Directory Structure: 11 subdirectories
 
 ### ❌ FAILING COMPONENTS
 
-- [ ] **KGC Sidecar Communication** (P0 - CRITICAL)
   - Hook listing fails with timeout
   - No inter-process communication
   - Blocks all hook-based operations
@@ -201,7 +196,6 @@ Total Directory Structure: 11 subdirectories
 
 - [~] **E2E Integration** (60% pass rate)
   - Cleanroom scenarios partially working
-  - Sidecar integration broken
   - CLI commands functional but unreliable
 
 ---
@@ -230,11 +224,9 @@ Total Directory Structure: 11 subdirectories
 
 ### P0 Blockers (Must Fix Before Deploy)
 
-1. **KGC Sidecar Communication Failure**
    - **Impact**: All hook operations non-functional
    - **Affected**: Hook listing, evaluation, management
-   - **Root Cause**: Sidecar process not starting or unreachable
-   - **Fix Required**: Implement reliable sidecar startup/health checks
+   - **Fix Required**: Implement reliable knowledge-engine startup/health checks
 
 2. **Hook Evaluation Performance (333x slower)**
    - **Impact**: Unacceptable latency for production workloads
@@ -278,11 +270,9 @@ Total Directory Structure: 11 subdirectories
 
 ### Immediate Actions (Before Next Test Run)
 
-1. **Fix KGC Sidecar**
    ```bash
-   # Implement sidecar startup verification
-   node cli/unrdf.mjs sidecar start --verify
-   node cli/unrdf.mjs sidecar health
+   # Implement knowledge-engine startup verification
+   node cli/unrdf.mjs knowledge-engine start --verify
    ```
 
 2. **Fix Test Parse Errors**
@@ -309,7 +299,6 @@ Total Directory Structure: 11 subdirectories
 
 8. Achieve 80%+ test pass rate (639+ passing tests)
 9. Reduce hook evaluation p99 to <10ms (65x improvement needed)
-10. Implement comprehensive sidecar health monitoring
 11. Add retry logic for transient failures
 
 ---
@@ -356,7 +345,7 @@ Total Directory Structure: 11 subdirectories
 
 ### Before Next Validation Run
 
-1. Fix KGC sidecar startup and health checks
+1. Fix knowledge engine startup and health checks
 2. Resolve test parse errors (security-authorization.test.mjs)
 3. Profile and optimize hook evaluation performance
 4. Fix domain validation undefined returns
@@ -368,7 +357,7 @@ Total Directory Structure: 11 subdirectories
 - [ ] P0 scenarios 100% passing (4/4)
 - [ ] Hook eval p99 <10ms (65x improvement)
 - [ ] Jaeger traces ≥10 collected
-- [ ] KGC sidecar 100% reachable
+- [ ] knowledge engine 100% reachable
 - [ ] Zero parse errors in test files
 
 ### Re-Validation Trigger
@@ -390,7 +379,6 @@ node scripts/generate-production-metrics.mjs
 
 While core functionality (RDF storage, SPARQL queries, policy application) is operational, **critical components are failing**:
 
-1. **KGC Sidecar is unreachable** - blocks all hook operations
 2. **Hook performance is 333x slower than target** - unacceptable latency
 3. **53% test pass rate** - far below 80% target for production confidence
 4. **Zero OTEL traces exported** - no production observability

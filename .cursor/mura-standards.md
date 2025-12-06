@@ -45,7 +45,6 @@
     throw new BusinessError('Operation failed', { cause: error });
   }
   ```
-- **Reference**: `sidecar/server/middleware/02.error-handler.mjs`
 
 #### Testing
 - **Standard**: Minimum 80% test coverage for all modules
@@ -84,7 +83,6 @@
 ## Reference Implementations
 
 ### Error Handling
-- **Reference**: `sidecar/server/middleware/02.error-handler.mjs`
 - **Pattern**: OpenAPI-compliant error responses with OTEL tracing
 
 ### Testing

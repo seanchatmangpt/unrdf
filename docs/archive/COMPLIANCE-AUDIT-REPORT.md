@@ -1,15 +1,12 @@
-# KGC Sidecar Compliance Audit Report
 
 **Date**: 2025-10-01
 **Auditor**: Code Analyst Agent
-**Scope**: Sidecar API endpoints, utilities, middleware, security features
 **Version**: 2.1.1
 
 ---
 
 ## Executive Summary
 
-The KGC Sidecar has undergone a comprehensive code quality and compliance audit covering:
 - **Code Quality**: Architecture, patterns, documentation, maintainability
 - **Security Compliance**: Authentication, authorization, input validation, secret handling
 - **Test Coverage**: Unit tests, integration tests, edge cases
@@ -77,8 +74,8 @@ The KGC Sidecar has undergone a comprehensive code quality and compliance audit 
 **Identified Issues**:
 
 1. **TODO Comments** (2 instances):
-   - `sidecar/server/tasks/policies/refresh-packs.mjs:131`: Missing signature validation
-   - `sidecar/server/utils/otel-context-propagation.mjs:261`: Incomplete span creation
+   - `knowledge-engine/server/tasks/policies/refresh-packs.mjs:131`: Missing signature validation
+   - `knowledge-engine/server/utils/otel-context-propagation.mjs:261`: Incomplete span creation
 
 2. **Hardcoded Credentials** (Development Only):
    - `auth.mjs:389`: Default admin user `admin@unrdf.local` / `admin123`
@@ -142,7 +139,7 @@ The KGC Sidecar has undergone a comprehensive code quality and compliance audit 
 
 **Middleware Coverage**:
 ```javascript
-// File: sidecar/server/middleware/00.auth.mjs
+// File: knowledge-engine/server/middleware/00.auth.mjs
 ✅ Public routes exempted: /api/auth/*, /api/health
 ✅ Token extraction from Authorization header or cookie
 ✅ JWT verification with proper error handling
@@ -153,7 +150,7 @@ The KGC Sidecar has undergone a comprehensive code quality and compliance audit 
 **Gaps Identified**:
 1. **Missing Auth on Query Endpoint**:
    ```javascript
-   // File: sidecar/server/api/query.get.mjs
+   // File: knowledge-engine/server/api/query.get.mjs
    // ⚠️ No explicit authentication check
    // Relies on middleware (should validate event.context.auth)
    ```
@@ -193,7 +190,7 @@ The KGC Sidecar has undergone a comprehensive code quality and compliance audit 
 
 **Middleware Coverage**:
 ```javascript
-// File: sidecar/server/middleware/02.authorization.mjs
+// File: knowledge-engine/server/middleware/02.authorization.mjs
 ✅ Auto-assigns roles from JWT to RBAC engine
 ✅ Path-to-resource mapping
 ✅ Method-to-action mapping
@@ -219,7 +216,7 @@ The KGC Sidecar has undergone a comprehensive code quality and compliance audit 
 **Zod Schema Coverage**:
 
 ```javascript
-// File: sidecar/server/utils/validation.mjs
+// File: knowledge-engine/server/utils/validation.mjs
 ✅ registerHookSchema - Hook registration validation
 ✅ applyTransactionSchema - Transaction delta validation
 ✅ registerPolicySchema - SHACL policy validation
@@ -272,7 +269,7 @@ The KGC Sidecar has undergone a comprehensive code quality and compliance audit 
 **Sandbox Threat Detector**:
 
 ```javascript
-// File: sidecar/server/utils/sandbox-threat-detector.mjs
+// File: knowledge-engine/server/utils/sandbox-threat-detector.mjs
 
 Threat Patterns Detected:
 ✅ Eval/Function (dynamic code execution) - Score: 80
@@ -300,7 +297,7 @@ Threat Patterns Detected:
 **Secure Sandbox (isolated-vm)**:
 
 ```javascript
-// File: sidecar/server/utils/secure-sandbox.mjs
+// File: knowledge-engine/server/utils/secure-sandbox.mjs
 
 ✅ V8 isolate for complete isolation
 ✅ Memory limits enforced (128MB default)
@@ -324,7 +321,7 @@ Threat Patterns Detected:
 **Vault Integration**:
 
 ```javascript
-// File: sidecar/server/utils/vault-client.mjs
+// File: knowledge-engine/server/utils/vault-client.mjs
 
 ✅ HashiCorp Vault client
 ✅ Shamir's Secret Sharing (5 shares, 3 threshold)
@@ -362,7 +359,7 @@ Threat Patterns Detected:
 **mTLS Certificate Validation**:
 
 ```javascript
-// File: sidecar/server/utils/mtls-validator.mjs
+// File: knowledge-engine/server/utils/mtls-validator.mjs
 
 Byzantine Consensus (3-of-5 validators):
 ✅ Validator 1: Certificate expiry check
@@ -381,7 +378,7 @@ Strength Requirements:
 **Security Headers**:
 
 ```javascript
-// File: sidecar/server/utils/security-headers.mjs
+// File: knowledge-engine/server/utils/security-headers.mjs
 
 ✅ Content-Security-Policy
 ✅ Strict-Transport-Security (HSTS)
@@ -405,7 +402,7 @@ Strength Requirements:
 **DDoS Detection**:
 
 ```javascript
-// File: sidecar/server/utils/ddos-detector.mjs
+// File: knowledge-engine/server/utils/ddos-detector.mjs
 
 Time Windows: 10s, 1min, 5min
 
@@ -425,7 +422,7 @@ Auto-Mitigation:
 **Rate Limiting**:
 
 ```javascript
-// File: sidecar/server/middleware/03.rate-limit.mjs
+// File: knowledge-engine/server/middleware/03.rate-limit.mjs
 
 Adaptive Rate Limiting:
 ✅ Per-user: 1000 req/min (authenticated)
@@ -444,7 +441,7 @@ Redis-backed distributed limiting (with memory fallback)
 **Circuit Breaker**:
 
 ```javascript
-// File: sidecar/server/utils/circuit-breaker.mjs
+// File: knowledge-engine/server/utils/circuit-breaker.mjs
 
 ✅ State machine: CLOSED -> OPEN -> HALF_OPEN
 ✅ Failure threshold: 5 failures or 50% error rate
@@ -765,7 +762,7 @@ API Tests:         21% (7 files)
 ### 5.2 High Priority Issues (P1 - Fix in Next Sprint)
 
 1. **Remove Default Admin Credentials**
-   - **Location**: `sidecar/server/utils/auth.mjs:389`
+   - **Location**: `knowledge-engine/server/utils/auth.mjs:389`
    - **Risk**: Credential exposure in production
    - **Recommendation**: Require explicit admin setup on first run
    - **Effort**: 2 hours
@@ -898,7 +895,6 @@ API Tests:         21% (7 files)
 
 ## 8. Conclusion
 
-The KGC Sidecar demonstrates **strong security posture** with comprehensive authentication, authorization, input validation, and threat detection mechanisms. The codebase is well-architected, properly documented, and follows security best practices.
 
 **Key Achievements**:
 - Byzantine consensus for critical operations
@@ -917,7 +913,7 @@ The KGC Sidecar demonstrates **strong security posture** with comprehensive auth
 
 **Overall Grade**: **B+ (87/100)**
 
-The sidecar is production-ready with minor improvements recommended for enhanced security and robustness.
+The knowledge-engine is production-ready with minor improvements recommended for enhanced security and robustness.
 
 ---
 

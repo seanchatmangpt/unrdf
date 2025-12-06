@@ -157,7 +157,7 @@ templates.md → templates/README.md
 | `performance-analysis-summary.md` | Duplicate performance docs |
 | `test-pattern-updates.md` | Temporary test updates |
 | `validation-framework-analysis.md` | Duplicate validation docs |
-| `sidecar-client-usage.md` | Obsolete sidecar client |
+| `old-api-patterns.md` | Obsolete API patterns |
 
 ---
 
@@ -209,7 +209,7 @@ how-to/
 │   ├── use-indexeddb-storage.md (NEW)
 │   ├── offline-first-patterns.md (NEW)
 ├── deployment/
-│   ├── deploy-with-docker.md (from SIDECAR docs)
+│   ├── deploy-with-docker.md
 │   ├── kubernetes-deployment.md (from K8s docs)
 │   ├── terraform-infrastructure.md (from terraform docs)
 └── troubleshooting/
@@ -266,7 +266,6 @@ how-to/
 | `core.md` | `/reference/api/core.md` | Move to reference |
 | `hooks-api-guide.md` | `/reference/api/hooks.md` | Move to reference |
 | `knowledge-hooks.md` | ↑ Same | Duplicate |
-| `sidecar-reference.md` | `/reference/api/sidecar.md` | Move to reference |
 | `utilities.md` | `/reference/api/utilities.md` | Move to reference |
 
 **Recommendation**: Delete `/docs/api/` directory after merge.
@@ -556,15 +555,6 @@ Archive:
 VAULT-IMPLEMENTATION-SUMMARY.md → archive/implementation/
 ```
 
-### Sidecar Docs (2 files) - 🔀 Merge
-
-**Status**: Sidecar docs
-**Action**: Consolidate into main docs
-
-```
-SIDECAR-IMPLEMENTATION-SUMMARY.md → archive/implementation/
-sidecar-client-usage.md → how-to/sidecar/client-usage.md
-```
 
 ### Federation/Streaming Docs (3 files) - 🔀 Organize
 
@@ -796,7 +786,6 @@ engines/README.md → (merge into above)
 
 ```
 validation/CI-GUARDRAILS.md → reference/ci-cd/guardrails.md
-validation/SIDECAR-CI-POLICY.md → reference/ci-cd/sidecar-policy.md
 ```
 
 ---
@@ -916,7 +905,7 @@ package-size-analysis.md
 performance-analysis-summary.md
 test-pattern-updates.md
 validation-framework-analysis.md
-sidecar-client-usage.md (obsolete)
+old-server-integration.md (obsolete)
 ... (23 more)
 ```
 
@@ -1015,8 +1004,7 @@ docs/
 │   │   ├── hooks.md
 │   │   ├── composables.md
 │   │   ├── utilities.md
-│   │   ├── engines.md
-│   │   └── sidecar.md
+│   │   └── engines.md
 │   ├── react-hooks/
 │   │   ├── README.md
 │   │   ├── api.md
@@ -1050,8 +1038,7 @@ docs/
 │   │   ├── quick-reference.md
 │   │   └── signal-matrix.md
 │   └── ci-cd/
-│       ├── guardrails.md
-│       └── sidecar-policy.md
+│       └── guardrails.md
 │
 ├── explanation/                        ← 💡 Understanding-oriented (18 files)
 │   ├── README.md

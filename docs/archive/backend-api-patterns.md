@@ -1,6 +1,6 @@
 # Backend API Production Patterns
 
-This document describes the production-ready patterns implemented in the UNRDF sidecar API.
+This document describes the production-ready patterns implemented in the UNRDF knowledge-engine API.
 
 ## Table of Contents
 
@@ -15,10 +15,10 @@ This document describes the production-ready patterns implemented in the UNRDF s
 
 ## Architecture
 
-The sidecar uses Nitro's file-based routing with H3 event handlers:
+The knowledge-engine uses Nitro's file-based routing with H3 event handlers:
 
 ```
-sidecar/server/
+knowledge-engine/server/
 ├── middleware/          # Global middleware (order: 00, 01, 02, ...)
 ├── api/                 # API endpoints (auto-routed)
 ├── utils/               # Shared utilities
@@ -138,7 +138,7 @@ unrdf_process_memory_bytes{type="rss"} 52428800
 
 ### Traces Endpoint
 ```bash
-GET /api/traces?limit=10&service=unrdf-sidecar
+GET /api/traces?limit=10&service=unrdf-knowledge-engine
 ```
 
 ## Health Checks
@@ -202,7 +202,7 @@ export default defineEventHandler(async (event) => {
 ## Examples
 
 ### Complete Endpoint with All Patterns
-See `/sidecar/server/api/hooks/evaluate.post.mjs` for a complete example demonstrating:
+See `/knowledge-engine/server/api/hooks/evaluate.post.mjs` for a complete example demonstrating:
 1. Request ID tracking
 2. Zod validation
 3. Circuit breaker protection

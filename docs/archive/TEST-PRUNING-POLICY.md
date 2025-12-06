@@ -33,9 +33,7 @@ This document defines the 80/20 test pruning strategy to reduce test execution t
 - `test/dark-matter-80-20.test.mjs` - Core 80/20 validation
 - `test/knowledge-engine/dark-matter/query-optimizer.test.mjs` - Performance optimization
 
-#### 4. Critical Sidecar Tests (P0 - 10% value)
-- `test/sidecar/client.test.mjs` - Core client functionality
-- `test/sidecar/integration.test.mjs` - Basic integration
+- `test/knowledge-engine/integration.test.mjs` - Basic integration
 
 #### 5. Essential Utilities (P0 - 10% value)
 - `test/utils/sparql-utils.test.mjs` - SPARQL utilities
@@ -69,18 +67,17 @@ This document defines the 80/20 test pruning strategy to reduce test execution t
 - `test/e2e/browser-e2e.test.mjs` - Browser tests
 
 #### Security & Chaos Tests
-- `sidecar/test/security/**` - Security tests
-- `sidecar/test/chaos/**` - Chaos engineering tests
-- `sidecar/test/consensus/**` - Consensus tests
+- `knowledge-engine/test/security/**` - Security tests
+- `knowledge-engine/test/chaos/**` - Chaos engineering tests
+- `knowledge-engine/test/consensus/**` - Consensus tests
 
-#### Advanced Sidecar Tests
-- `sidecar/test/performance/**` - Performance tests
-- `sidecar/test/infrastructure/**` - Infrastructure tests
-- `sidecar/test/nuxt/**` - UI component tests
+- `knowledge-engine/test/performance/**` - Performance tests
+- `knowledge-engine/test/infrastructure/**` - Infrastructure tests
+- `knowledge-engine/test/nuxt/**` - UI component tests
 
 #### Hook System Tests (Most)
 - `test/knowledge-engine/hooks/**` - Most hook tests (keep only core)
-- `sidecar/test/e2e/scenarios/**` - Scenario tests
+- `knowledge-engine/test/e2e/scenarios/**` - Scenario tests
 
 #### Enterprise & Demo Tests
 - `enterprise-demo/test/**` - Demo tests
@@ -96,7 +93,7 @@ This document defines the 80/20 test pruning strategy to reduce test execution t
 
 ### Phase 2: Selective Pruning (Week 2)
 1. Keep only core hook tests
-2. Remove advanced sidecar tests
+2. Remove advanced knowledge-engine tests
 3. Remove most CLI v2 tests (keep only essential)
 4. Remove Nuxt and browser tests
 
@@ -135,7 +132,6 @@ This document defines the 80/20 test pruning strategy to reduce test execution t
 ### Medium-Risk Areas (Periodic Testing)
 1. **Hook System** - Advanced features
 2. **Reasoning Engine** - Complex logic
-3. **Sidecar Integration** - Distributed features
 
 ### Low-Risk Areas (Minimal Testing)
 1. **Performance Optimization** - Nice to have
