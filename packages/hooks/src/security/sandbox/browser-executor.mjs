@@ -11,6 +11,7 @@
  * - Async/await support
  */
 
+/* global Worker */
 import { trace } from '@opentelemetry/api';
 
 const tracer = trace.getTracer('browser-executor');

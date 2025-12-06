@@ -78,10 +78,7 @@ export class BatchedTelemetry {
 
     // Schedule batch flush if not already scheduled
     if (!this.flushTimeout) {
-      this.flushTimeout = setTimeout(
-        () => this.flush(),
-        this.flushInterval,
-      );
+      this.flushTimeout = setTimeout(() => this.flush(), this.flushInterval);
     }
   }
 

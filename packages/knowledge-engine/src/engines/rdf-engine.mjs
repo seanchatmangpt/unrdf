@@ -237,7 +237,8 @@ export class RdfEngine {
    * @returns {{conforms: boolean, results: Array<object>}} A validation report.
    */
   validateShacl(dataStore, shapes) {
-    const shapesStore = typeof shapes === 'string' ? createStore(new Parser().parse(shapes)) : shapes;
+    const shapesStore =
+      typeof shapes === 'string' ? createStore(new Parser().parse(shapes)) : shapes;
 
     const validator = new SHACLValidator(rdf.dataset([...shapesStore]));
     const report = validator.validate(rdf.dataset([...dataStore]));

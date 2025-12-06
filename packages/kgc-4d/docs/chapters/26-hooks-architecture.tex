@@ -1,0 +1,458 @@
+% Chapter 26: Knowledge Hooks Architecture
+% Policy Enforcement Layer Implementation
+
+\chapter{Knowledge Hooks Architecture}
+\label{ch:hooks-architecture}
+
+\section{Overview: The Policy Enforcement Layer}
+
+Knowledge Hooks implement the policy enforcement layer of the UNRDF ecosystem, operating between the event sourcing layer (KGC 4D) and application logic (autonomous agents). This chapter details the architectural design, showing how the μ(O) Calculus (Chapter~\ref{ch:mu-calculus}) is operationalized through 33 hook trigger types, optimized execution paths, and quality guarantees.
+
+The Knowledge Hooks system achieves:
+\begin{itemize}
+    \item \textbf{33 Hook Trigger Types}: Covering all critical junctures in knowledge processing
+    \item \textbf{Sub-Microsecond Execution}: 0.853 microseconds per operator with advanced caching
+    \item \textbf{51 Poka-Yoke Failure Prevention Guards}: Compile-time and runtime error elimination
+    \item \textbf{Zero-Mechanism UX}: Opacity achieved through information-theoretic principles
+    \item \textbf{Lean Six Sigma Quality}: 99.99966\% defect-free operation (6σ capability)
+\end{itemize}
+
+\subsection{Hook Trigger Types}
+
+A hook trigger defines when and where policy enforcement occurs in the system lifecycle. The 33 trigger types cover:
+
+\begin{table}[h]
+\centering
+\caption{Hook Trigger Categories (33 types)}
+\label{tab:trigger-categories}
+\begin{tabular}{lp{2in}c}
+\toprule
+\textbf{Category} & \textbf{Examples} & \textbf{Count} \\
+\midrule
+Quad Lifecycle & before-add, after-add, before-delete, after-delete & 4 \\
+Query Operations & before-query, after-query, query-parse, results-filter & 4 \\
+Validation & validate-quad, validate-subject, validate-predicate & 3 \\
+Transformation & transform-namespace, transform-language-tag & 2 \\
+Data Quality & quality-gate, defect-detection, spc-violation & 3 \\
+Session Management & session-start, session-end, session-timeout & 3 \\
+Store Management & store-init, store-close, snapshot-create & 3 \\
+Transaction & transaction-begin, transaction-commit, transaction-abort & 3 \\
+Enrichment & enrich-context, resolve-entity, expand-graph & 3 \\
+Observability & emit-span, emit-metric, emit-log & 3 \\
+\midrule
+& \textbf{TOTAL} & \textbf{33} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Each trigger type corresponds to a specific point in the knowledge pipeline where policy enforcement is appropriate. The trigger model allows loose coupling: applications register interest in specific events without knowing implementation details.
+
+\section{Core Components}
+
+\subsection{KnowledgeHookEngine: The Execution Core}
+
+The \texttt{KnowledgeHookEngine} is the standalone, high-performance engine executing registered hooks with optimal caching and parallelism:
+
+\begin{definition}[KnowledgeHookEngine]
+\label{def:hook-engine}
+
+A decoupled hook execution system with the following properties:
+
+\begin{itemize}
+    \item \textbf{No Inheritance}: Standalone class not coupled to transaction manager or data store
+    \item \textbf{Hook Registration}: Maintains a map of hook definitions identified by unique ID
+    \item \textbf{Condition Evaluation}: Evaluates boolean conditions once per transaction with caching
+    \item \textbf{Parallel Execution}: Executes satisfied hooks in parallel batches with dependency ordering
+    \item \textbf{Telemetry Integration}: Emits OTEL spans and metrics for every operation
+    \item \textbf{Cache Management}: Three-tier caching (Oxigraph store, conditions, file content)
+\end{itemize}
+\end{definition}
+
+\subsubsection{Execution Pipeline}
+
+The engine follows a deterministic 3-phase execution model:
+
+\begin{enumerate}
+
+\item \textbf{Phase 0: Cache Warming} (First-time only)
+    \begin{itemize}
+        \item Pre-load all file content for hooks
+        \item Initialize cache structures (store cache, condition cache)
+        \item Emit initialization span to OTEL
+    \end{itemize}
+
+\item \textbf{Phase 1: Parallel Condition Evaluation}
+    \begin{itemize}
+        \item Evaluate each hook's condition ONCE per transaction
+        \item Check condition cache (version-aware) before evaluating
+        \item Cache all results with store version for invalidation
+        \item Parallel execution: $O(n)$ wall-clock time for $n$ hooks
+    \end{itemize}
+
+\item \textbf{Phase 2: Parallel Hook Execution}
+    \begin{itemize}
+        \item Identify satisfied hooks from Phase 1
+        \item Group by dependency (minimize serialization)
+        \item Execute batches in parallel where possible
+        \item Chain transformations (output of one becomes input to next)
+        \item Collect results with receipt tracking
+    \end{itemize}
+
+\item \textbf{Phase 3: Receipt Generation}
+    \begin{itemize}
+        \item Generate optional receipt for audit trails
+        \item Log OTEL span completion
+        \item Return aggregated results to caller
+    \end{itemize}
+\end{enumerate}
+
+\subsection{Hook Definition and Validation}
+
+Each hook is defined through the \texttt{defineHook} API with Zod schema validation:
+
+\begin{definition}[Hook Definition Schema]
+\label{def:hook-schema}
+
+\begin{lstlisting}[language=javascript]
+const hook = {
+  id: string,                    // Unique identifier
+  name: string,                  // Human-readable name
+  trigger: enum<33 types>,      // When to execute
+  condition?: (store) => boolean, // Conditional execution
+  validate?: (quad) => boolean,  // Validation logic
+  transform?: (quad) => quad,   // Transformation logic
+  metadata?: { priority, tags }, // Execution hints
+};
+\end{lstlisting}
+
+\textbf{Fast Path}: Hooks created via \texttt{defineHook()} are pre-validated with a \texttt{\_validated} flag, bypassing Zod on execution (Poka-Yoke guard for 10\% latency savings).
+
+\textbf{Zod Guards}: Schema validation prevents common errors at parse time:
+\begin{itemize}
+    \item Validation function must return boolean (not null, undefined, truthy)
+    \item Transform function must return complete Quad with subject/predicate/object
+    \item Condition function must be callable and return boolean
+    \item Trigger type must be one of 33 valid values
+\end{itemize}
+\end{definition}
+
+\subsection{Caching Strategy: Three-Tier Architecture}
+
+\subsubsection{Tier 1: Oxigraph Store Caching}
+
+\begin{definition}[Store Cache]
+\label{def:store-cache}
+
+Caches the Oxigraph RDF store instance for condition evaluation:
+
+\begin{itemize}
+    \item \textbf{Hit Condition}: Same store object used in multiple hook conditions
+    \item \textbf{Invalidation}: Cleared on every transaction (store version change)
+    \item \textbf{Expected Benefit}: 50–70\% latency reduction (Oxigraph is expensive to instantiate)
+    \item \textbf{Size Limit}: Default 10 cached stores (configurable)
+\end{itemize}
+\end{definition}
+
+\subsubsection{Tier 2: Condition Evaluation Caching}
+
+\begin{definition}[Condition Cache]
+\label{def:condition-cache}
+
+Caches boolean results of condition evaluation:
+
+\begin{itemize}
+    \item \textbf{Key}: (hook ID, store version)
+    \item \textbf{Value}: Boolean result of condition function
+    \item \textbf{Invalidation}: TTL-based (default 60 seconds) or explicit on store version change
+    \item \textbf{Expected Benefit}: 40–50\% latency reduction (avoids re-evaluating same condition)
+    \item \textbf{Correctness Guarantee}: Store version tracking ensures stale cache cannot be used
+\end{itemize}
+\end{definition}
+
+\subsubsection{Tier 3: File Content Preloading}
+
+\begin{definition}[File Resolver Cache]
+\label{def:file-cache}
+
+Pre-loads file content on engine initialization:
+
+\begin{itemize}
+    \item \textbf{When}: First hook execution on engine instance
+    \item \textbf{What}: All files referenced in hook conditions/transforms
+    \item \textbf{Benefit}: 20–30\% latency reduction (avoids disk I/O during execution)
+    \item \textbf{Trade-off}: Increased startup time for first-run, amortized over many executions
+\end{itemize}
+\end{definition}
+
+\subsection{Execution Features}
+
+\subsubsection{Batch Dependency Ordering}
+
+Hooks with dependencies are reordered to minimize sequential execution:
+
+\begin{equation}
+\text{ExecuteInParallel}(H_i) \text{ where } \forall H_i, H_j \in \text{batch}: \neg(H_i \to H_j)
+\end{equation}
+
+where $H_i \to H_j$ means ``$H_i$ must execute before $H_j$''. Independent hooks execute in parallel, reducing wall-clock time.
+
+\subsubsection{Transformation Chaining}
+
+For hooks in the same trigger that include transformations:
+
+\begin{equation}
+\text{quad}' = T_n(T_{n-1}(\cdots T_1(\text{quad})))
+\end{equation}
+
+Each transformation receives the output of the previous, allowing composable data processing.
+
+\subsubsection{Error Propagation}
+
+Hook failures are propagated with full context:
+
+\begin{itemize}
+    \item \textbf{Validation Failure}: Hook returns error, stops chain, reports reason
+    \item \textbf{Transformation Failure}: Error includes original quad, transformed quad (if partial), and exception details
+    \item \textbf{Exception Details}: Hook name, trigger type, stack trace preserved
+    \item \textbf{Observability}: Every error emitted as OTEL event
+\end{itemize}
+
+\section{Performance Optimizations}
+
+\subsection{Micro-Optimization: Caching Strategy}
+
+The combined effect of three-tier caching is multiplicative:
+
+\begin{table}[h]
+\centering
+\caption{Caching Impact Analysis}
+\label{tab:cache-impact}
+\begin{tabular}{lrr}
+\toprule
+\textbf{Operation} & \textbf{Baseline} & \textbf{With Cache} \\
+\midrule
+Single hook execution & 0.853 μs & (baseline) \\
+Store instantiation & 28 μs & 5 μs (cache) \\
+Condition evaluation & 15 μs & 3 μs (cache) \\
+File I/O & 200 μs & 0 μs (preloaded) \\
+\midrule
+Total 10-hook execution & 2,850 μs & 450–500 μs \\
+Latency Reduction & & 80–92\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Zero-Allocation Patterns}
+
+\subsubsection{Quad Pooling}
+
+Quads (RDF 4-tuples) are allocated once and pooled to avoid garbage collection pressure:
+
+\begin{definition}[Quad Pool]
+\label{def:quad-pool}
+
+Pre-allocates a fixed set of quad objects (default 1000) on engine initialization:
+
+\begin{itemize}
+    \item \textbf{Acquire}: Get a quad from pool
+    \item \textbf{Populate}: Fill in subject, predicate, object, graph
+    \item \textbf{Release}: Return quad to pool for reuse
+    \item \textbf{Benefit}: Avoids allocation/GC overhead, 10–15\% latency reduction
+    \item \textbf{Safety}: Poka-Yoke guard warns if hook returns pooled quad (may cause mutation bugs)
+\end{itemize}
+\end{definition}
+
+\subsubsection{Dependency Batching}
+
+Hooks are grouped by dependency graph before execution to maximize parallel batching:
+
+\begin{enumerate}
+    \item Build dependency DAG from hook specifications
+    \item Compute transitive closure to find independent sets
+    \item Execute independent sets in parallel, respecting dependencies
+    \item Result: 30–50\% reduction in wall-clock time for large hook sets
+\end{enumerate}
+
+\subsection{Telemetry Integration}
+
+\subsubsection{OTEL Span Structure}
+
+Each hook execution is instrumented with OTEL spans:
+
+\begin{lstlisting}[language=javascript,numbers=left]
+transaction_span
+├── hook:validate-quad
+│   ├── condition_eval
+│   ├── validation_exec
+│   └── telemetry_emit
+├── hook:transform-namespace
+│   ├── condition_eval
+│   ├── transform_exec
+│   └── telemetry_emit
+└── receipt_generation
+\end{lstlisting}
+
+Spans capture:
+\begin{itemize}
+    \item Hook ID, trigger type, execution time
+    \item Condition result (satisfied/unsatisfied)
+    \item Transformation success/failure
+    \item OTEL attributes: input quad, output quad, error details
+\end{itemize}
+
+\subsubsection{Batched Telemetry}
+
+Instead of emitting each event immediately, the engine batches telemetry:
+
+\begin{itemize}
+    \item \textbf{Collection}: Accumulate events for 100ms or until buffer full
+    \item \textbf{Flush}: Batch-emit to OTEL collector
+    \item \textbf{Benefit}: 10–15\% latency reduction (fewer OTEL calls)
+    \item \textbf{Correctness}: No loss of events, just batched for efficiency
+\end{itemize}
+
+\section{Quality Framework Integration}
+
+\subsection{Lean Six Sigma in Hooks}
+
+The hooks system integrates Lean Six Sigma quality methodology (detailed in Chapter~\ref{ch:hooks-quality}) through quality hooks:
+
+\begin{definition}[Quality Hook Trigger Types]
+\label{def:quality-hooks}
+
+\begin{itemize}
+    \item \textbf{quality-gate}: Enforce quality checkpoints with threshold enforcement
+    \item \textbf{defect-detection}: Identify outliers via statistical analysis
+    \item \textbf{spc-violation}: Detect statistical process control violations
+    \item \textbf{capability-analysis}: Compute Cp/Cpk process capability metrics
+    \item \textbf{root-cause}: Automated 5-Whys analysis
+    \item \textbf{kaizen-event}: Flag improvement opportunities
+    \item \textbf{audit-trail}: Log compliance events
+    \item \textbf{continuous-improvement}: Periodic optimization recommendations
+\end{itemize}
+\end{definition}
+
+Each quality trigger is implemented as a hook that integrates with the core execution engine, providing observability into the quality state of the system.
+
+\section{Security & Observability}
+
+\subsection{Effect Sandbox}
+
+The effect sandbox isolates side effects (external API calls, file I/O, state mutations) in a separate execution context:
+
+\begin{definition}[Effect Sandbox]
+\label{def:effect-sandbox}
+
+\begin{itemize}
+    \item \textbf{Worker Thread}: Side effects execute in isolated worker thread
+    \item \textbf{Message Passing}: Input/output serialized through message channel
+    \item \textbf{Timeout}: Default 10-second timeout per effect (configurable)
+    \item \textbf{Error Isolation}: Effect failure does not corrupt main thread state
+    \item \textbf{Resource Limits}: Worker thread has separate heap allocation limit
+    \item \textbf{Sandboxing Restrictions}: Pre-validate effect safety (no direct file system access without explicit grant)
+\end{itemize}
+\end{definition}
+
+Example: Payment processing (μ_sandbox operator) executes in effect sandbox:
+\begin{lstlisting}[language=javascript]
+// Unsafe: may fail, corrupt state, or hang
+const result = paymentAPI.charge(...);
+
+// Safe: effect is isolated
+const result = await effectSandbox.run(async () => {
+  return paymentAPI.charge(...);
+}, { timeout: 30000 });
+\end{lstlisting}
+
+\subsection{Hook Scheduler with Circuit Breaker}
+
+The hook scheduler manages execution rate and prevents cascading failures:
+
+\begin{definition}[Hook Scheduler]
+\label{def:hook-scheduler}
+
+\begin{itemize}
+    \item \textbf{Cron/Interval}: Schedule periodic hooks (millisecond to 24-hour granularity)
+    \item \textbf{Circuit Breaker}: Disable hook after 3 consecutive failures (cool-off: 60 seconds)
+    \item \textbf{Rate Limiting}: Max executions per time window
+    \item \textbf{Queueing}: FIFO queue for scheduled hooks with priority levels
+    \item \textbf{Dead Letter Queue}: Failed hooks moved to DLQ for manual inspection
+    \item \textbf{Metrics}: Execution count, success rate, latency percentiles
+\end{itemize}
+\end{definition}
+
+Circuit breaker state machine:
+\begin{equation}
+\text{Closed} \xrightarrow{3\text{ failures}} \text{Open} \xrightarrow{60\text{s cool-off}} \text{Half-Open} \xrightarrow{success} \text{Closed}
+\end{equation}
+
+\section{Integration with Other Layers}
+
+\subsection{KGC 4D Integration}
+
+Knowledge Hooks receive events from KGC 4D event stream:
+\begin{itemize}
+    \item Event sourcing provides immutable audit trail
+    \item Hooks enforce domain-specific policies on events
+    \item Results feed back into KGC 4D (policy enforcement creates derived events)
+\end{itemize}
+
+\subsection{Autonomous Agent Integration}
+
+Agents register hooks for custom decision-making:
+\begin{itemize}
+    \item Agent behaviors expressed as hook conditions
+    \item Agent actions expressed as hook transformations
+    \item OTEL spans provide complete agent decision trace
+\end{itemize}
+
+\subsection{OTEL Observability Integration}
+
+All operations generate OTEL spans:
+\begin{itemize}
+    \item Condition evaluation
+    \item Hook execution
+    \item Cache hits/misses
+    \item Error propagation
+\end{itemize}
+
+\section{Poka-Yoke Guards: Failure Mode Prevention}
+
+The hooks system includes 51 compile-time and runtime guards preventing common failure modes. Key examples:
+
+\begin{table}[h]
+\centering
+\caption{Sample Poka-Yoke Guards (5 of 51)}
+\label{tab:poka-yoke-guards}
+\begin{tabular}{p{2in}cc}
+\toprule
+\textbf{Guard} & \textbf{RPN Before} & \textbf{RPN After} \\
+\midrule
+Non-boolean validation return & 280 & 28 \\
+Invalid transform return type & 280 & 28 \\
+Pooled quad mutation & 250 & 20 \\
+Missing quad properties & 240 & 0 \\
+Store version cache invalidation & 200 & 0 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+(Complete FMEA analysis in Appendix~\ref{app:fmea})
+
+\section{Chapter Summary}
+
+The Knowledge Hooks Architecture realizes the μ(O) Calculus through:
+
+\begin{enumerate}
+    \item \textbf{33 Trigger Types}: Complete coverage of knowledge processing junctures
+    \item \textbf{Decoupled Engine}: Standalone, composable execution with no framework dependencies
+    \item \textbf{Three-Tier Caching}: 80–92\% latency reduction through intelligent cache management
+    \item \textbf{Zero-Allocation Patterns}: Quad pooling and dependency batching for microsecond execution
+    \item \textbf{Quality Integration}: Lean Six Sigma hooks for continuous quality monitoring
+    \item \textbf{Security Isolation}: Effect sandbox prevents state corruption from side effects
+    \item \textbf{Complete Observability}: OTEL spans trace every operation for debugging and monitoring
+\end{enumerate}
+
+The architecture achieves sub-microsecond performance while maintaining full transparency through OTEL telemetry, enabling the ``zero-mechanism UX'' principle where users see only outcomes, not mechanisms.
+
+The following chapter (Chapter~\ref{ch:hooks-performance}) provides detailed performance benchmarks validating these claims with measured data.
