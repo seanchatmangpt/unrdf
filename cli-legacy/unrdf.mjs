@@ -1,1 +1,0 @@
-../src/cli-new.mjs

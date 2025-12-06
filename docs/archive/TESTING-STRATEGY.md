@@ -1,8 +1,6 @@
-# KGC Sidecar Testing Strategy - London BDD
 
 ## Overview
 
-This document describes the comprehensive testing strategy for the KGC Nuxt 4 Sidecar using **London School Test-Driven Development (TDD)** principles with **Behavior-Driven Development (BDD)** scenarios.
 
 ## Testing Philosophy: London School TDD
 
@@ -13,7 +11,6 @@ The London School of TDD (also called "mockist" or "outside-in" TDD) emphasizes:
 3. **Outside-In Development** - Start with acceptance tests, work inward
 4. **Collaboration Testing** - Focus on how objects communicate
 
-### Advantages for KGC Sidecar
 
 - **Clear Contracts**: API routes define contracts with KGC library
 - **Fast Feedback**: Unit tests run without full Nuxt initialization
@@ -59,7 +56,7 @@ The London School of TDD (also called "mockist" or "outside-in" TDD) emphasizes:
 ## Test File Organization
 
 ```
-sidecar/
+knowledge-engine/
 ├── test/
 │   ├── unit/
 │   │   ├── validation.test.mjs       # Zod schema tests
@@ -168,7 +165,6 @@ The E2E tests use Docker Compose with 6 services:
 ├─────────────────────────────────────────────────────────────┤
 │                                                              │
 │  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐  │
-│  │ KGC Sidecar  │───▶│ OTel         │───▶│   Jaeger     │  │
 │  │ Port: 3000   │    │ Collector    │    │   UI 16686   │  │
 │  │ (Nuxt 4)     │    │ OTLP: 4318   │    │ (Traces)     │  │
 │  └──────────────┘    └──────────────┘    └──────────────┘  │
@@ -192,8 +188,7 @@ The E2E tests use Docker Compose with 6 services:
 
 ### Service Configuration
 
-**KGC Sidecar** (Nuxt 4)
-- Built from `./sidecar/` directory
+- Built from `./knowledge-engine/` directory
 - Runs on port 3000
 - Environment: production mode
 - Health check: `GET /api/health`
@@ -229,7 +224,7 @@ The E2E tests use Docker Compose with 6 services:
 
 ```bash
 # Install dependencies
-cd sidecar
+cd knowledge-engine
 pnpm install
 
 # Run all tests
@@ -357,33 +352,11 @@ it('applies transaction and creates trace', async () => {
 
 ## CLI Integration
 
-The UNRDF CLI (`/Users/sac/unrdf/cli/unrdf.mjs`) already includes sidecar commands:
+The UNRDF CLI (`/Users/sac/unrdf/cli/unrdf.mjs`) already includes knowledge-engine commands:
 
 ```bash
-# Existing sidecar commands
-unrdf sidecar status        # Check sidecar status
-unrdf sidecar health        # Health check
-unrdf sidecar metrics       # View metrics
-unrdf sidecar config get    # Get configuration
-unrdf sidecar config set    # Set configuration
-```
-
-**Planned additions**:
-```bash
-# New sidecar commands
-unrdf sidecar start         # Start Nuxt sidecar server
-unrdf sidecar dev           # Start in development mode
-unrdf sidecar build         # Build Nuxt application
-unrdf sidecar test          # Run sidecar tests
-unrdf sidecar testcontainer # Start testcontainer infrastructure
-```
-
-## CI/CD Integration
-
-### GitHub Actions Workflow
-
+# Existing knowledge-engine commands
 ```yaml
-name: KGC Sidecar Tests
 
 on: [push, pull_request]
 
@@ -397,8 +370,8 @@ jobs:
         with:
           node-version: 20
           cache: pnpm
-      - run: cd sidecar && pnpm install
-      - run: cd sidecar && pnpm test:unit
+      - run: cd knowledge-engine && pnpm install
+      - run: cd knowledge-engine && pnpm test:unit
 
   integration-tests:
     runs-on: ubuntu-latest
@@ -409,8 +382,8 @@ jobs:
         with:
           node-version: 20
           cache: pnpm
-      - run: cd sidecar && pnpm install
-      - run: cd sidecar && pnpm test:nuxt
+      - run: cd knowledge-engine && pnpm install
+      - run: cd knowledge-engine && pnpm test:nuxt
 
   e2e-tests:
     runs-on: ubuntu-latest
@@ -424,8 +397,8 @@ jobs:
         with:
           node-version: 20
           cache: pnpm
-      - run: cd sidecar && pnpm install
-      - run: cd sidecar && pnpm test:e2e
+      - run: cd knowledge-engine && pnpm install
+      - run: cd knowledge-engine && pnpm test:e2e
         env:
           CI: true
 ```
@@ -451,7 +424,7 @@ cd test/e2e/testcontainers
 docker compose up
 
 # View logs in real-time
-docker compose logs -f kgc-sidecar
+docker compose logs -f knowledge-engine
 docker compose logs -f otel-collector
 docker compose logs -f jaeger
 

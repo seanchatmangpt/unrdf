@@ -2,13 +2,11 @@
 
 ## Overview
 
-The KGC Sidecar implements HashiCorp Vault integration for secure secrets management with **Shamir's Secret Sharing** for quorum-based unsealing. This ensures no single point of failure for accessing critical secrets.
 
 ## Architecture
 
 ```
 ┌─────────────────┐
-│  KGC Sidecar    │
 │                 │
 │  ┌───────────┐  │
 │  │ Vault     │  │──┐
@@ -146,7 +144,6 @@ docker exec -it kgc-vault vault operator unseal <key-2>
 docker exec -it kgc-vault vault operator unseal <key-3>
 ```
 
-### 4. Configure KGC Sidecar
 
 ```bash
 # Environment variables
@@ -158,8 +155,8 @@ export VAULT_ENABLE_QUORUM=true
 export VAULT_QUORUM_SHARES=5
 export VAULT_QUORUM_THRESHOLD=3
 
-# Start sidecar
-docker compose -f docker-compose.vault.yml up kgc-sidecar
+# Start knowledge-engine
+docker compose -f docker-compose.vault.yml up knowledge-engine
 ```
 
 ## Terraform Integration
@@ -421,8 +418,8 @@ vault token create -policy=kgc-read
 # Update environment variable
 export VAULT_TOKEN=<new-token>
 
-# Restart sidecar
-docker compose -f docker-compose.vault.yml restart kgc-sidecar
+# Restart knowledge-engine
+docker compose -f docker-compose.vault.yml restart knowledge-engine
 ```
 
 ### Secret Not Found

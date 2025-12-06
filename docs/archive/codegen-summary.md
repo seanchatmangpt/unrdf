@@ -6,14 +6,14 @@ Generated 80/20 functional OpenTelemetry dashboard using base templates and MJS/
 ## Generated Components
 
 ### 1. Dashboard Layout
-**File:** `/Users/sac/unrdf/sidecar/app/layouts/dashboard.vue`
+**File:** `/Users/sac/unrdf/knowledge-engine/app/layouts/dashboard.vue`
 - Dark-themed responsive layout
 - Navigation menu with routes: Metrics, Traces, Logs
 - Header and footer structure
 - Slot for page content
 
 ### 2. useOTelMetrics Composable
-**File:** `/Users/sac/unrdf/sidecar/app/composables/useOTelMetrics.mjs`
+**File:** `/Users/sac/unrdf/knowledge-engine/app/composables/useOTelMetrics.mjs`
 - Shared composable pattern using `createSharedComposable`
 - Auto-refresh functionality (configurable interval)
 - Error handling with ref state
@@ -21,7 +21,7 @@ Generated 80/20 functional OpenTelemetry dashboard using base templates and MJS/
 - JSDoc type annotations for Vue Ref types
 
 ### 3. MetricsDashboard Component
-**File:** `/Users/sac/unrdf/sidecar/app/components/observability/MetricsDashboard.vue`
+**File:** `/Users/sac/unrdf/knowledge-engine/app/components/observability/MetricsDashboard.vue`
 - Real-time metrics visualization
 - Four metric cards:
   - Rate Limiting (requests, allowed, blocked, rate)
@@ -33,7 +33,7 @@ Generated 80/20 functional OpenTelemetry dashboard using base templates and MJS/
 - Loading and error states
 
 ### 4. API Metrics Endpoint
-**File:** `/Users/sac/unrdf/sidecar/server/api/otel/metrics.get.mjs`
+**File:** `/Users/sac/unrdf/knowledge-engine/server/api/otel/metrics.get.mjs`
 - GET endpoint at `/api/otel/metrics`
 - Integrates with OTEL metrics from `otel-metrics.mjs`
 - Trace context propagation using `otel-context-propagation.mjs`
@@ -42,7 +42,7 @@ Generated 80/20 functional OpenTelemetry dashboard using base templates and MJS/
 - Cache headers (3-second max-age)
 
 ### 5. Observability Page
-**File:** `/Users/sac/unrdf/sidecar/app/pages/observability.vue`
+**File:** `/Users/sac/unrdf/knowledge-engine/app/pages/observability.vue`
 - Uses dashboard layout
 - Renders MetricsDashboard component
 - SEO metadata with `useHead()`
@@ -81,7 +81,7 @@ Generated 80/20 functional OpenTelemetry dashboard using base templates and MJS/
 
 ## File Organization
 ```
-sidecar/
+knowledge-engine/
 ├── app/
 │   ├── layouts/
 │   │   └── dashboard.vue           (Dashboard layout)

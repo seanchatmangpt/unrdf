@@ -22,7 +22,7 @@ Three complete shell completion implementations:
 - **INSTALLATION.md** - Quick reference guide
 
 **Features**:
-- Tab completion for all CLI resources (graph, hook, policy, sidecar, store, context, plugin, completion, repl)
+- Tab completion for all CLI resources (graph, hook, policy, knowledge-engine, store, context, plugin, completion, repl)
 - Verb completion based on resource type (list, get, create, update, delete, etc.)
 - Flag completion (--help, --version, --config, --format, --json, --yaml, etc.)
 - File path completion for import/export commands

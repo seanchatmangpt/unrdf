@@ -831,7 +831,7 @@ Block_i = {
 - Confidence intervals: 95% CI using t-distribution
 
 **Reproducibility**:
-- Open-source benchmark harness: `github.com/kgc-sidecar/uhft-bench`
+- Open-source benchmark harness: `github.com/knowledge-engine/uhft-bench`
 - Docker container: Reproducible execution environment
 - Hardware specification: Intel Xeon E5-2697v4, Xilinx VU9P FPGA, Solarflare SFN8522 NIC
 
@@ -878,7 +878,6 @@ This chapter provides **certification-ready documentation** for real-time system
 
 5. **Lockchain Provenance**: Cryptographic audit trail enables deterministic replay for regulatory compliance.
 
-**Conclusion**: Knowledge Graph Sidecar (KGC) achieves **hard real-time guarantees** suitable for safety-critical and ultra-low-latency applications.
 
 ---
 

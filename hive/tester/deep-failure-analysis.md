@@ -13,7 +13,6 @@
 - ✅ **OTEL is configured** but traces are NOT being exported to Jaeger
 - ❌ **CLI argument parsing is BROKEN** - commands require positional args but receive flags
 - ❌ **Missing commands**: `policy validate`, `policy audit`
-- ❌ **Output format mismatch**: Sidecar doesn't return expected health status format
 
 ---
 
@@ -128,22 +127,18 @@ node cli/unrdf.mjs policy audit --violations-only
 
 ### Category 3: Output Format Mismatch (1/13 failures - 8%)
 
-#### Failure 5: Sidecar Status Output
 ```bash
 # Test expects output matching:
 /Status: (healthy|ready|ok)/i
 
-# Actual output from sidecar status:
 (Unknown - not captured in log, but doesn't match pattern)
 ```
 
 **Failing Tests**:
-- `should validate sidecar integration` (P0) - 3 occurrences
-- `should validate sidecar gRPC communication` (P1)
+- `should validate knowledge-engine gRPC communication` (P1)
 
 **Expected Behavior**: Output contains "Status: healthy" or similar
-**Actual Behavior**: Sidecar returns different format
-**Missing Code**: Output formatting in `sidecarStatusCommand`
+**Missing Code**: Output formatting in `knowledge-engineStatusCommand`
 
 ---
 
@@ -192,7 +187,6 @@ Failed to fetch traces for af413908eac748369f891120ff771cd7 from Jaeger: 404 Not
 | should complete graph lifecycle workflow | CLI arg parsing | `--query` flag mapping | P0 |
 | should execute hook evaluation workflow | CLI arg parsing | `--type` flag mapping | P0 |
 | should enforce policy compliance | Missing command | `policy validate` subcommand | P0 |
-| should validate sidecar integration | Output format | Status output formatting | P0 |
 
 ---
 
@@ -203,7 +197,7 @@ Failed to fetch traces for af413908eac748369f891120ff771cd7 from Jaeger: 404 Not
 | should handle graph lifecycle with hooks | CLI arg parsing | `--type` flag mapping | P1 |
 | should handle hook veto scenarios | CLI arg parsing | `--type` flag mapping | P1 |
 | should detect policy violations | Missing command | `policy audit` subcommand | P1 |
-| should validate sidecar gRPC communication | Output format | Status output formatting | P1 |
+| should validate knowledge-engine gRPC communication | Output format | Status output formatting | P1 |
 | should meet hook performance targets | CLI arg parsing | `--type` flag mapping | P1 |
 | should meet policy validation performance targets | CLI arg parsing | `--query` flag mapping | P1 |
 
@@ -213,7 +207,7 @@ Failed to fetch traces for af413908eac748369f891120ff771cd7 from Jaeger: 404 Not
 
 | Test Name | Root Cause | Missing Code | Priority |
 |-----------|-----------|--------------|----------|
-| should handle sidecar errors gracefully | Output format | Error message format | P2 |
+| should handle knowledge-engine errors gracefully | Output format | Error message format | P2 |
 | should support hook chaining | CLI arg parsing | `--type` flag mapping | P2 |
 | should handle multi-policy stacks | CLI arg parsing | Multiple issues | P2 |
 
@@ -240,7 +234,6 @@ Failed to fetch traces for af413908eac748369f891120ff771cd7 from Jaeger: 404 Not
    - Fix: Implement `policyAuditCommand`
 
 5. **Output pattern mismatch** (4 occurrences)
-   - Affects: Sidecar status/health checks
    - Fix: Standardize output format
 
 ---
@@ -321,17 +314,16 @@ audit: defineCommand({
 
 ---
 
-### 3. Sidecar Status Output Format
 
 **Expected Output** (from test regex):
 ```
 Status: healthy
 ```
 
-**Required Implementation** (in `sidecarStatusCommand`):
+**Required Implementation** (in `knowledge-engineStatusCommand`):
 ```javascript
-export async function sidecarStatusCommand({ args }) {
-  const status = await sidecarClient.getStatus();
+export async function knowledge-engineStatusCommand({ args }) {
+  const status = await knowledge-engineClient.getStatus();
 
   // Ensure output matches test pattern
   console.log(`Status: ${status.health || 'healthy'}`);
@@ -423,9 +415,8 @@ Failed to fetch traces from Jaeger: 400 Bad Request
    - policy validate --strict
    ```
 
-3. **Fix sidecar output format** (1 command):
+3. **Fix knowledge-engine output format** (1 command):
    ```bash
-   - sidecar status: Output "Status: healthy"
    ```
 
 ### Phase 2: Fix P1 Failures (HIGH - blocks enhanced workflows)
@@ -471,7 +462,6 @@ Failed to fetch traces from Jaeger: 400 Bad Request
 ❌ /Users/sac/unrdf/cli/commands/store.mjs
 ❌ /Users/sac/unrdf/cli/commands/policy.mjs
 ❌ /Users/sac/unrdf/cli/commands/hook.mjs
-❌ /Users/sac/unrdf/cli/commands/sidecar.mjs
 ❌ /Users/sac/unrdf/cli/utils/context-wrapper.mjs
 ```
 
@@ -489,7 +479,6 @@ Failed to fetch traces from Jaeger: 400 Bad Request
 2. **`cli/commands/store.mjs`** - `storeQueryCommand`, `storeImportCommand`, `storeExportCommand`
 3. **`cli/commands/policy.mjs`** - `policyApplyCommand`, `policyValidateCommand`, `policyAuditCommand`, `policyListCommand`, `policyGetCommand`
 4. **`cli/commands/hook.mjs`** - `hookCreateCommand`, `hookEvalCommand`, `hookListCommand`, `hookGetCommand`, `hookHistoryCommand`
-5. **`cli/commands/sidecar.mjs`** - `sidecarStatusCommand`, `sidecarHealthCommand`, `sidecarMetricsCommand`, etc.
 6. **`cli/utils/context-wrapper.mjs`** - `withContext()` function for OTEL wrapping
 
 ---
@@ -517,7 +506,6 @@ Failed to fetch traces from Jaeger: 400 Bad Request
 ✅ node cli/unrdf.mjs hook create test --type=sparql-ask --file=hook.rq
 ✅ node cli/unrdf.mjs policy validate --strict
 ✅ node cli/unrdf.mjs policy audit --violations-only
-✅ node cli/unrdf.mjs sidecar status  # Output: "Status: healthy"
 ```
 
 ---

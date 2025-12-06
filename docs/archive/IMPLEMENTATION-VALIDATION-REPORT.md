@@ -1,4 +1,3 @@
-# 🏛️ UNRDF SIDECAR: FINAL IMPLEMENTATION VALIDATION REPORT
 ## Fortune 5 Enterprise Production Readiness Assessment
 
 **Report Date**: October 2, 2025
@@ -15,7 +14,6 @@
 
 **Overall Enterprise Readiness**: **78.5/100** (Target: >85)
 
-The UNRDF Sidecar has made **substantial progress** toward Fortune 5 enterprise production readiness, with **critical security implementations completed** and **comprehensive testing infrastructure in place**. However, several **blocking issues remain** that must be resolved before full production deployment.
 
 ### Critical Findings Summary
 
@@ -55,9 +53,9 @@ The UNRDF Sidecar has made **substantial progress** toward Fortune 5 enterprise 
 ##### ✅ **Authentication (100% Complete)**
 
 **Implementation Files**:
-- `/Users/sac/unrdf/sidecar/server/utils/auth.mjs` (403 lines)
-- `/Users/sac/unrdf/sidecar/server/middleware/00.auth.mjs` (217 lines)
-- `/Users/sac/unrdf/sidecar/server/api/auth/*.mjs` (4 endpoints)
+- `/Users/sac/unrdf/knowledge-engine/server/utils/auth.mjs` (403 lines)
+- `/Users/sac/unrdf/knowledge-engine/server/middleware/00.auth.mjs` (217 lines)
+- `/Users/sac/unrdf/knowledge-engine/server/api/auth/*.mjs` (4 endpoints)
 
 **Features Verified**:
 - ✅ JWT access tokens (15min expiry)
@@ -80,9 +78,9 @@ The UNRDF Sidecar has made **substantial progress** toward Fortune 5 enterprise 
 ##### ✅ **Authorization & RBAC (100% Complete)**
 
 **Implementation Files**:
-- `/Users/sac/unrdf/sidecar/server/utils/rbac.mjs` (532 lines)
-- `/Users/sac/unrdf/sidecar/server/middleware/02.authorization.mjs`
-- `/Users/sac/unrdf/sidecar/server/policies/default-rbac-policy.mjs`
+- `/Users/sac/unrdf/knowledge-engine/server/utils/rbac.mjs` (532 lines)
+- `/Users/sac/unrdf/knowledge-engine/server/middleware/02.authorization.mjs`
+- `/Users/sac/unrdf/knowledge-engine/server/policies/default-rbac-policy.mjs`
 
 **Features Verified**:
 - ✅ 4 roles: Admin, Agent, Writer, Reader
@@ -102,9 +100,9 @@ The UNRDF Sidecar has made **substantial progress** toward Fortune 5 enterprise 
 ##### ✅ **Secure Sandbox (isolated-vm) (100% Complete)**
 
 **Implementation Files**:
-- `/Users/sac/unrdf/sidecar/server/utils/secure-sandbox.mjs` (308 lines)
-- `/Users/sac/unrdf/sidecar/server/utils/sandbox-threat-detector.mjs`
-- `/Users/sac/unrdf/sidecar/server/api/effects/*.mjs`
+- `/Users/sac/unrdf/knowledge-engine/server/utils/secure-sandbox.mjs` (308 lines)
+- `/Users/sac/unrdf/knowledge-engine/server/utils/sandbox-threat-detector.mjs`
+- `/Users/sac/unrdf/knowledge-engine/server/api/effects/*.mjs`
 
 **Features Verified**:
 - ✅ V8 isolates (separate memory spaces)
@@ -134,8 +132,8 @@ const result = await sandbox.executeEffect('test-effect', 10);
 ##### ✅ **Byzantine Consensus (100% Complete)**
 
 **Implementation Files**:
-- `/Users/sac/unrdf/sidecar/server/utils/auth.mjs` (Byzantine functions)
-- `/Users/sac/unrdf/sidecar/server/api/admin/byzantine-operation.post.mjs`
+- `/Users/sac/unrdf/knowledge-engine/server/utils/auth.mjs` (Byzantine functions)
+- `/Users/sac/unrdf/knowledge-engine/server/api/admin/byzantine-operation.post.mjs`
 
 **Features Verified**:
 - ✅ 5 validators with ECDSA (secp256k1)
@@ -153,9 +151,9 @@ const result = await sandbox.executeEffect('test-effect', 10);
 ##### ✅ **Rate Limiting & DDoS Protection (90% Complete)**
 
 **Implementation Files**:
-- `/Users/sac/unrdf/sidecar/server/utils/rate-limiter.mjs`
-- `/Users/sac/unrdf/sidecar/server/utils/ddos-detector.mjs`
-- `/Users/sac/unrdf/sidecar/server/middleware/03.rate-limit.mjs`
+- `/Users/sac/unrdf/knowledge-engine/server/utils/rate-limiter.mjs`
+- `/Users/sac/unrdf/knowledge-engine/server/utils/ddos-detector.mjs`
+- `/Users/sac/unrdf/knowledge-engine/server/middleware/03.rate-limit.mjs`
 
 **Features Verified**:
 - ✅ Per-user rate limiting (100 req/min)
@@ -173,9 +171,9 @@ const result = await sandbox.executeEffect('test-effect', 10);
 ##### ⚠️ **TLS/mTLS (60% Complete)**
 
 **Implementation Files**:
-- `/Users/sac/unrdf/sidecar/server/middleware/00.https-enforce.mjs`
-- `/Users/sac/unrdf/sidecar/server/middleware/02.mtls-validate.mjs`
-- `/Users/sac/unrdf/sidecar/server/utils/mtls-validator.mjs`
+- `/Users/sac/unrdf/knowledge-engine/server/middleware/00.https-enforce.mjs`
+- `/Users/sac/unrdf/knowledge-engine/server/middleware/02.mtls-validate.mjs`
+- `/Users/sac/unrdf/knowledge-engine/server/utils/mtls-validator.mjs`
 
 **Features Verified**:
 - ✅ HTTPS enforcement middleware implemented
@@ -200,7 +198,7 @@ terraform apply -target=aws_acm_certificate.kgc_cert
 ##### ⚠️ **Vault Integration (70% Complete)**
 
 **Implementation Files**:
-- `/Users/sac/unrdf/sidecar/server/utils/vault-client.mjs`
+- `/Users/sac/unrdf/knowledge-engine/server/utils/vault-client.mjs`
 - `/Users/sac/unrdf/terraform/vault.tf` (202 lines)
 
 **Features Verified**:
@@ -271,7 +269,7 @@ Test Categories:
 **Impact**: Cannot validate production API functionality without Nuxt tests.
 
 **Resolution**:
-1. Create `/Users/sac/unrdf/sidecar/server/utils/otel-metrics.mjs`
+1. Create `/Users/sac/unrdf/knowledge-engine/server/utils/otel-metrics.mjs`
 2. Implement OTEL metrics helpers
 3. Re-run test suite
 
@@ -358,7 +356,7 @@ Test Categories:
 terraform {
   backend "s3" {
     bucket         = "unrdf-terraform-state"
-    key            = "sidecar/terraform.tfstate"
+    key            = "knowledge-engine/terraform.tfstate"
     region         = "us-east-1"
     dynamodb_table = "terraform-locks"
     encrypt        = true
@@ -455,10 +453,10 @@ variable "vault_token" {
 ##### ✅ **OTEL Instrumentation (85% Complete)**
 
 **Implementation Files**:
-- `/Users/sac/unrdf/sidecar/server/plugins/01.telemetry.mjs`
-- `/Users/sac/unrdf/sidecar/server/middleware/01.telemetry.mjs`
-- `/Users/sac/unrdf/sidecar/server/utils/otel-context-propagation.mjs`
-- ⚠️ `/Users/sac/unrdf/sidecar/server/utils/otel-metrics.mjs` - **MISSING**
+- `/Users/sac/unrdf/knowledge-engine/server/plugins/01.telemetry.mjs`
+- `/Users/sac/unrdf/knowledge-engine/server/middleware/01.telemetry.mjs`
+- `/Users/sac/unrdf/knowledge-engine/server/utils/otel-context-propagation.mjs`
+- ⚠️ `/Users/sac/unrdf/knowledge-engine/server/utils/otel-metrics.mjs` - **MISSING**
 
 **Features Verified**:
 - ✅ OTEL SDK initialized
@@ -476,10 +474,10 @@ variable "vault_token" {
 
 **Required Action**:
 ```javascript
-// Create /Users/sac/unrdf/sidecar/server/utils/otel-metrics.mjs
+// Create /Users/sac/unrdf/knowledge-engine/server/utils/otel-metrics.mjs
 import { metrics } from '@opentelemetry/api';
 
-export const meter = metrics.getMeter('unrdf-sidecar');
+export const meter = metrics.getMeter('unrdf-knowledge-engine');
 
 export const requestCounter = meter.createCounter('http_requests_total');
 export const requestDuration = meter.createHistogram('http_request_duration_ms');
@@ -491,7 +489,7 @@ export const rateLimitCounter = meter.createCounter('rate_limit_exceeded_total')
 ##### ✅ **SLO Tracking (75% Complete)**
 
 **Implementation Files**:
-- `/Users/sac/unrdf/sidecar/server/utils/slo-tracker.mjs`
+- `/Users/sac/unrdf/knowledge-engine/server/utils/slo-tracker.mjs`
 
 **Features Verified**:
 - ✅ SLO definitions (availability, latency, error rate)
@@ -507,7 +505,6 @@ export const rateLimitCounter = meter.createCounter('rate_limit_exceeded_total')
 **Features Verified**:
 - ✅ Trace context propagation (W3C Trace Context)
 - ✅ Span creation across services
-- ⚠️ CLI→Sidecar trace correlation not fully validated
 
 **Score**: 70/100
 
@@ -537,8 +534,8 @@ export const rateLimitCounter = meter.createCounter('rate_limit_exceeded_total')
 ##### ✅ **Hook Registration & Execution (90% Complete)**
 
 **Implementation Files**:
-- `/Users/sac/unrdf/sidecar/server/api/hooks/register.post.mjs`
-- `/Users/sac/unrdf/sidecar/server/tasks/hooks/evaluate-periodic.mjs`
+- `/Users/sac/unrdf/knowledge-engine/server/api/hooks/register.post.mjs`
+- `/Users/sac/unrdf/knowledge-engine/server/tasks/hooks/evaluate-periodic.mjs`
 
 **Features Verified**:
 - ✅ Hook registration API
@@ -555,10 +552,10 @@ export const rateLimitCounter = meter.createCounter('rate_limit_exceeded_total')
 ##### ⚠️ **Nitro Tasks (60% Complete)**
 
 **Implementation Files**:
-- `/Users/sac/unrdf/sidecar/server/tasks/hooks/evaluate-periodic.mjs`
-- `/Users/sac/unrdf/sidecar/server/tasks/policies/refresh-packs.mjs`
-- `/Users/sac/unrdf/sidecar/server/tasks/lockchain/archive.mjs`
-- `/Users/sac/unrdf/sidecar/server/tasks/health/self-heal.mjs`
+- `/Users/sac/unrdf/knowledge-engine/server/tasks/hooks/evaluate-periodic.mjs`
+- `/Users/sac/unrdf/knowledge-engine/server/tasks/policies/refresh-packs.mjs`
+- `/Users/sac/unrdf/knowledge-engine/server/tasks/lockchain/archive.mjs`
+- `/Users/sac/unrdf/knowledge-engine/server/tasks/health/self-heal.mjs`
 
 **Features Verified**:
 - ✅ Task files created
@@ -590,8 +587,8 @@ export default defineNuxtConfig({
 ##### ✅ **Circuit Breakers & Resilience (85% Complete)**
 
 **Implementation Files**:
-- `/Users/sac/unrdf/sidecar/server/utils/circuit-breaker.mjs`
-- `/Users/sac/unrdf/sidecar/server/utils/backpressure-manager.mjs`
+- `/Users/sac/unrdf/knowledge-engine/server/utils/circuit-breaker.mjs`
+- `/Users/sac/unrdf/knowledge-engine/server/utils/backpressure-manager.mjs`
 
 **Features Verified**:
 - ✅ Circuit breaker state machine (Closed, Open, Half-Open)
@@ -606,7 +603,7 @@ export default defineNuxtConfig({
 ##### ✅ **Self-Healing (80% Complete)**
 
 **Implementation Files**:
-- `/Users/sac/unrdf/sidecar/server/tasks/health/self-heal.mjs`
+- `/Users/sac/unrdf/knowledge-engine/server/tasks/health/self-heal.mjs`
 
 **Features Verified**:
 - ✅ Health check monitoring
@@ -641,7 +638,7 @@ export default defineNuxtConfig({
 **Severity**: 🔴 CRITICAL
 
 **Resolution**:
-1. Create `/Users/sac/unrdf/sidecar/server/utils/otel-metrics.mjs`
+1. Create `/Users/sac/unrdf/knowledge-engine/server/utils/otel-metrics.mjs`
 2. Implement OTEL metrics helpers
 3. Re-run test suite
 
@@ -834,7 +831,6 @@ export default defineNuxtConfig({
 
 ### **DEPLOYMENT RECOMMENDATION**: ⚠️ **CONDITIONAL PRODUCTION READY**
 
-The UNRDF Sidecar has made **excellent progress** and is **close to production-ready** status. However, **4 critical blockers** must be resolved before full production deployment:
 
 1. 🔴 **Fix missing otel-metrics.mjs** (2 hours)
 2. 🔴 **Enable Nitro tasks** (2 hours)
