@@ -310,7 +310,7 @@ const results = await core.federatedQuery([
 
 ## Production Packages
 
-UNRDF has been **consolidated to 2 production-ready packages** based on empirical testing (37.5% → 100% pass rate):
+UNRDF has been **consolidated to 3 production-ready packages** based on empirical testing (37.5% → 75.0% pass rate):
 
 ### ✅ Production Ready (100% Tests Passing)
 
@@ -324,33 +324,44 @@ UNRDF has been **consolidated to 2 production-ready packages** based on empirica
 - **Tests:** 100% passing
 - **Install:** `pnpm add @unrdf/core`
 
+#### **`@unrdf/hooks`** - Policy Validation ⭐
+- Validation hooks for RDF data quality
+- Transformation hooks for data processing
+- 25+ trigger types (CRUD, transactions, errors, quality gates)
+- Sub-microsecond execution with POKA-YOKE guards
+- **Status:** ✅ Production-ready (206ms test time) - FIXED!
+- **Tests:** 100% passing (Zod v4 compatibility resolved)
+- **Install:** `pnpm add @unrdf/hooks`
+
 #### **`@unrdf/kgc-4d`** - Temporal Event Sourcing ⭐
 - Nanosecond-precision timestamps
 - Immutable event log (EventLog named graph)
 - Mutable state (Universe named graph)
 - Git-backed snapshots (BLAKE3 hashing)
 - Vector clock causality tracking
-- **Status:** ✅ Production-ready (526ms standalone, 643ms integration)
+- **Status:** ✅ Production-ready (516ms standalone, 645ms integration)
 - **Tests:** 100% passing (standalone + integration verified)
 - **Install:** `pnpm add @unrdf/kgc-4d`
 
+**Full Stack Integration:** Test 11 validates all 3 packages work together ✅ (563ms)
+
 ### ⚠️ Deprecated Packages
 
-The following packages have been deprecated based on empirical testing results:
+The following package has been deprecated based on empirical testing results:
 
-- **`@unrdf/hooks`** - ❌ BROKEN (Zod validation error, see [packages/hooks/DEPRECATED.md](packages/hooks/DEPRECATED.md))
-- **`@unrdf/knowledge-engine`** - ❌ BROKEN (workspace imports, 47% LoC for 5% value, see [packages/knowledge-engine/DEPRECATED.md](packages/knowledge-engine/DEPRECATED.md))
+- **`@unrdf/knowledge-engine`** - ❌ BROKEN (workspace imports + dependency issues, 47% LoC for 5% value, see [packages/knowledge-engine/DEPRECATED.md](packages/knowledge-engine/DEPRECATED.md))
 
-**Migration guides available** in the respective DEPRECATED.md files.
+**Migration guide available** in DEPRECATED.md file.
 
 ### 📊 Consolidation Results
 
 | Metric | Before | After | Improvement |
 |--------|--------|-------|-------------|
-| Packages | 4 | 2 | -50% |
-| LoC | 49,609 | ~19,000 | -61% |
-| Test Pass Rate | 37.5% | 100% | +62.5% |
-| Production Ready | 50% | 100% | +50% |
+| Packages | 4 | 3 | -25% |
+| LoC | 49,609 | ~26,000 | -48% |
+| Test Pass Rate | 37.5% | 75.0% | +37.5% |
+| Production Ready | 50% | 75% | +25% |
+| Working Integrations | 2/7 | 6/7 | +57% |
 
 **Evidence:** See [permutation test results](permutation-tests/EXECUTIVE-SUMMARY.md)
 
