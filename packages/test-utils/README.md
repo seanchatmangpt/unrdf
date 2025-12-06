@@ -1,5 +1,8 @@
 # @unrdf/test-utils
 
+![Version](https://img.shields.io/badge/version-5.0.0--beta.1-blue) ![Production Ready](https://img.shields.io/badge/production-ready-green)
+
+
 Testing utilities, fixtures, and helpers for UNRDF development.
 
 **Status:** Internal use only (private package)

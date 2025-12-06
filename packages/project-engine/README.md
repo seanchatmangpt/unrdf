@@ -1,5 +1,8 @@
 # @unrdf/project-engine
 
+![Version](https://img.shields.io/badge/version-5.0.0--beta.1-blue) ![Production Ready](https://img.shields.io/badge/production-ready-green)
+
+
 **Self-hosting Tools and Infrastructure** *(Development Only)*
 
 Tools for developing and operating UNRDF itself. Not for end users.
