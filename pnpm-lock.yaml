@@ -560,7 +560,16 @@ importers:
     devDependencies:
       '@amiceli/vitest-cucumber':
         specifier: ^4.1.1
-        version: 4.7.0(@types/node@24.10.1)(@vitest/browser@4.0.15(vite@7.2.6(@types/node@24.10.1)(jiti@1.21.7)(terser@5.44.1)(yaml@2.8.2))(vitest@4.0.15))(@vitest/ui@4.0.15(vitest@4.0.15))(happy-dom@20.0.11)(jsdom@27.2.0)(terser@5.44.1)
+        version: 4.7.0(@types/node@24.10.1)(@vitest/browser@4.0.15(vite@7.2.6(@types/node@24.10.1)(jiti@1.21.7)(terser@5.44.1)(yaml@2.8.2))(vitest@4.0.15))(@vitest/ui@4.0.15)(happy-dom@20.0.11)(jsdom@27.2.0)(terser@5.44.1)
+      '@babel/parser':
+        specifier: ^7.28.5
+        version: 7.28.5
+      '@babel/traverse':
+        specifier: ^7.28.5
+        version: 7.28.5
+      comment-parser:
+        specifier: ^1.4.1
+        version: 1.4.1
       eslint:
         specifier: ^8.56.0
         version: 8.57.1
@@ -569,7 +578,7 @@ importers:
         version: 3.1.11
       vitest:
         specifier: ^2.1.9
-        version: 2.1.9(@types/node@24.10.1)(@vitest/browser@4.0.15(vite@7.2.6(@types/node@24.10.1)(jiti@1.21.7)(terser@5.44.1)(yaml@2.8.2))(vitest@4.0.15))(@vitest/ui@4.0.15(vitest@4.0.15))(happy-dom@20.0.11)(jsdom@27.2.0)(terser@5.44.1)
+        version: 2.1.9(@types/node@24.10.1)(@vitest/browser@4.0.15(vite@7.2.6(@types/node@24.10.1)(jiti@1.21.7)(terser@5.44.1)(yaml@2.8.2))(vitest@4.0.15))(@vitest/ui@4.0.15)(happy-dom@20.0.11)(jsdom@27.2.0)(terser@5.44.1)
 
   packages/knowledge-engine:
     dependencies:
@@ -9873,12 +9882,12 @@ snapshots:
     dependencies:
       '@algolia/client-common': 5.46.0
 
-  '@amiceli/vitest-cucumber@4.7.0(@types/node@24.10.1)(@vitest/browser@4.0.15(vite@7.2.6(@types/node@24.10.1)(jiti@1.21.7)(terser@5.44.1)(yaml@2.8.2))(vitest@4.0.15))(@vitest/ui@4.0.15(vitest@4.0.15))(happy-dom@20.0.11)(jsdom@27.2.0)(terser@5.44.1)':
+  '@amiceli/vitest-cucumber@4.7.0(@types/node@24.10.1)(@vitest/browser@4.0.15(vite@7.2.6(@types/node@24.10.1)(jiti@1.21.7)(terser@5.44.1)(yaml@2.8.2))(vitest@4.0.15))(@vitest/ui@4.0.15)(happy-dom@20.0.11)(jsdom@27.2.0)(terser@5.44.1)':
     dependencies:
       callsites: 4.2.0
       parsecurrency: 1.1.1
       ts-morph: 25.0.1
-      vitest: 2.1.9(@types/node@24.10.1)(@vitest/browser@4.0.15(vite@7.2.6(@types/node@24.10.1)(jiti@1.21.7)(terser@5.44.1)(yaml@2.8.2))(vitest@4.0.15))(@vitest/ui@4.0.15(vitest@4.0.15))(happy-dom@20.0.11)(jsdom@27.2.0)(terser@5.44.1)
+      vitest: 2.1.9(@types/node@24.10.1)(@vitest/browser@4.0.15(vite@7.2.6(@types/node@24.10.1)(jiti@1.21.7)(terser@5.44.1)(yaml@2.8.2))(vitest@4.0.15))(@vitest/ui@4.0.15)(happy-dom@20.0.11)(jsdom@27.2.0)(terser@5.44.1)
     transitivePeerDependencies:
       - '@edge-runtime/vm'
       - '@types/node'
@@ -15496,7 +15505,7 @@ snapshots:
       eslint: 9.39.1(jiti@1.21.7)
       eslint-import-resolver-node: 0.3.9
       eslint-import-resolver-typescript: 3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.48.1(eslint@9.39.1(jiti@1.21.7))(typescript@5.9.3))(eslint@9.39.1(jiti@1.21.7)))(eslint@9.39.1(jiti@1.21.7))
-      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.48.1(eslint@9.39.1(jiti@1.21.7))(typescript@5.9.3))(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.48.1(eslint@9.39.1(jiti@1.21.7))(typescript@5.9.3))(eslint@9.39.1(jiti@1.21.7)))(eslint@9.39.1(jiti@1.21.7)))(eslint@9.39.1(jiti@1.21.7))
+      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.48.1(eslint@9.39.1(jiti@1.21.7))(typescript@5.9.3))(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.1(jiti@1.21.7))
       eslint-plugin-jsx-a11y: 6.10.2(eslint@9.39.1(jiti@1.21.7))
       eslint-plugin-react: 7.37.5(eslint@9.39.1(jiti@1.21.7))
       eslint-plugin-react-hooks: 7.0.1(eslint@9.39.1(jiti@1.21.7))
@@ -15533,7 +15542,7 @@ snapshots:
       tinyglobby: 0.2.15
       unrs-resolver: 1.11.1
     optionalDependencies:
-      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.48.1(eslint@9.39.1(jiti@1.21.7))(typescript@5.9.3))(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.48.1(eslint@9.39.1(jiti@1.21.7))(typescript@5.9.3))(eslint@9.39.1(jiti@1.21.7)))(eslint@9.39.1(jiti@1.21.7)))(eslint@9.39.1(jiti@1.21.7))
+      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.48.1(eslint@9.39.1(jiti@1.21.7))(typescript@5.9.3))(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.1(jiti@1.21.7))
     transitivePeerDependencies:
       - supports-color
 
@@ -15548,7 +15557,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.48.1(eslint@9.39.1(jiti@1.21.7))(typescript@5.9.3))(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.48.1(eslint@9.39.1(jiti@1.21.7))(typescript@5.9.3))(eslint@9.39.1(jiti@1.21.7)))(eslint@9.39.1(jiti@1.21.7)))(eslint@9.39.1(jiti@1.21.7)):
+  eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.48.1(eslint@9.39.1(jiti@1.21.7))(typescript@5.9.3))(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.1(jiti@1.21.7)):
     dependencies:
       '@rtsao/scc': 1.1.0
       array-includes: 3.1.9
@@ -20551,7 +20560,7 @@ snapshots:
       terser: 5.44.1
       yaml: 2.8.2
 
-  vitest@2.1.9(@types/node@24.10.1)(@vitest/browser@4.0.15(vite@7.2.6(@types/node@24.10.1)(jiti@1.21.7)(terser@5.44.1)(yaml@2.8.2))(vitest@4.0.15))(@vitest/ui@4.0.15(vitest@4.0.15))(happy-dom@20.0.11)(jsdom@27.2.0)(terser@5.44.1):
+  vitest@2.1.9(@types/node@24.10.1)(@vitest/browser@4.0.15(vite@7.2.6(@types/node@24.10.1)(jiti@1.21.7)(terser@5.44.1)(yaml@2.8.2))(vitest@4.0.15))(@vitest/ui@4.0.15)(happy-dom@20.0.11)(jsdom@27.2.0)(terser@5.44.1):
     dependencies:
       '@vitest/expect': 2.1.9
       '@vitest/mocker': 2.1.9(vite@5.4.21(@types/node@24.10.1)(terser@5.44.1))

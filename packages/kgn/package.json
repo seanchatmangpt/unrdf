@@ -47,6 +47,9 @@
   },
   "devDependencies": {
     "@amiceli/vitest-cucumber": "^4.1.1",
+    "@babel/parser": "^7.28.5",
+    "@babel/traverse": "^7.28.5",
+    "comment-parser": "^1.4.1",
     "eslint": "^8.56.0",
     "nodemon": "^3.0.1",
     "vitest": "^2.1.9"
