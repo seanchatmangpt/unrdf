@@ -7,7 +7,7 @@
 
 import { z } from 'zod';
 import { UnrdfDataFactory as DataFactory } from '@unrdf/core/rdf/n3-justified-only';
-import { createStore } from '@unrdf/oxigraph'; // TODO: Replace with Oxigraph Store
+import { createStore, OxigraphStore } from '@unrdf/oxigraph';
 import { readdir, readFile } from 'fs/promises';
 import { join, extname } from 'path';
 import { statSync as _statSync } from 'fs';
@@ -19,7 +19,7 @@ const { namedNode, literal, quad } = DataFactory;
 /**
  * @typedef {Object} JsComplexityInput
  * @property {string} projectRoot - Root directory to analyze
- * @property {Store} [baseStore] - Existing RDF store to merge into
+ * @property {OxigraphStore} [baseStore] - Existing RDF store to merge into
  * @property {string[]} [excludePatterns] - Patterns to exclude from analysis
  * @property {string} [mode] - Analysis mode: off, observe, enforce
  */
@@ -54,7 +54,7 @@ const { namedNode, literal, quad } = DataFactory;
 
 const JsComplexityInputSchema = z.object({
   projectRoot: z.string(),
-  baseStore: z.instanceof(Store).optional(),
+  baseStore: z.instanceof(OxigraphStore).optional(),
   excludePatterns: z.array(z.string()).optional(),
   mode: z.enum(['off', 'observe', 'enforce']).default('observe'),
 });
@@ -78,7 +78,7 @@ const DEFAULT_EXCLUDE_PATTERNS = [
  * Analyze JavaScript/TypeScript code complexity and emit RDF triples
  *
  * @param {JsComplexityInput} input - Analysis input
- * @returns {Promise<{ store: Store, summary: JsComplexitySummary }>}
+ * @returns {Promise<{ store: OxigraphStore, summary: JsComplexitySummary }>}
  */
 export async function analyzeJsComplexity(input) {
   const validated = JsComplexityInputSchema.parse(input);
@@ -261,7 +261,7 @@ function analyzeFileComplexity(content, filePath, projectRoot) {
  * Emit RDF triples for file complexity metrics
  *
  * @private
- * @param {Store} store - RDF store to emit to
+ * @param {OxigraphStore} store - RDF store to emit to
  * @param {FileMetrics} metrics - File metrics
  * @param {string} projectRoot - Project root
  */
