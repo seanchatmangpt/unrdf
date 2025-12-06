@@ -36,16 +36,16 @@
     "client-side"
   ],
   "dependencies": {
-    "@unrdf/core": "workspace:5.0.0-beta.1",
-    "@unrdf/streaming": "workspace:5.0.0-beta.1",
+    "@unrdf/core": "workspace:*",
+    "@unrdf/streaming": "workspace:*",
     "n3": "^1.26.0",
-    "zod": "^3.25.76"
+    "zod": "^4.1.13"
   },
   "devDependencies": {
-    "@types/node": "^20.0.0",
+    "@types/node": "^24.10.1",
     "happy-dom": "^20.0.11",
     "jsdom": "^27.2.0",
-    "vitest": "^1.0.0"
+    "vitest": "^4.0.15"
   },
   "engines": {
     "node": ">=18.0.0"

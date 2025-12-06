@@ -41,22 +41,22 @@
     "linked-data"
   ],
   "dependencies": {
-    "@unrdf/oxigraph": "workspace:5.0.0-beta.1",
-    "@rdfjs/data-model": "^2.0.0",
-    "@rdfjs/namespace": "^2.0.0",
-    "@rdfjs/serializer-jsonld": "^2.0.0",
+    "@rdfjs/data-model": "^2.1.1",
+    "@rdfjs/namespace": "^2.0.1",
+    "@rdfjs/serializer-jsonld": "^2.0.1",
     "@rdfjs/serializer-turtle": "^1.1.5",
-    "@rdfjs/to-ntriples": "^2.0.0",
-    "jsonld": "^8.2.0",
-    "n3": "^1.17.0",
-    "rdf-canonize": "^2.0.0",
-    "rdf-ext": "^2.0.0",
+    "@rdfjs/to-ntriples": "^3.0.1",
+    "@unrdf/oxigraph": "workspace:*",
+    "jsonld": "^9.0.0",
+    "n3": "^1.26.0",
+    "rdf-canonize": "^5.0.0",
+    "rdf-ext": "^2.6.0",
     "rdf-validate-shacl": "^0.6.5",
-    "zod": "^3.22.0"
+    "zod": "^4.1.13"
   },
   "devDependencies": {
-    "@types/node": "^20.0.0",
-    "vitest": "^1.0.0"
+    "@types/node": "^24.10.1",
+    "vitest": "^4.0.15"
   },
   "engines": {
     "node": ">=18.0.0"

@@ -1,0 +1,120 @@
+{
+  "docusaurus-plugin-content-docs": {
+    "default": {
+      "path": "/unrdf/docs",
+      "versions": [
+        {
+          "name": "current",
+          "label": "Next",
+          "isLast": true,
+          "path": "/unrdf/docs",
+          "mainDocId": "guides/introduction",
+          "docs": [
+            {
+              "id": "explanation/architecture/design-patterns",
+              "path": "/unrdf/docs/explanation/architecture/design-patterns",
+              "sidebar": "explanationSidebar"
+            },
+            {
+              "id": "explanation/architecture/overview",
+              "path": "/unrdf/docs/explanation/architecture/overview",
+              "sidebar": "explanationSidebar"
+            },
+            {
+              "id": "explanation/kgc-4d/forensic-ux",
+              "path": "/unrdf/docs/explanation/kgc-4d/forensic-ux",
+              "sidebar": "explanationSidebar"
+            },
+            {
+              "id": "explanation/kgc-4d/multiverse",
+              "path": "/unrdf/docs/explanation/kgc-4d/multiverse",
+              "sidebar": "explanationSidebar"
+            },
+            {
+              "id": "explanation/kgc-4d/overview",
+              "path": "/unrdf/docs/explanation/kgc-4d/overview",
+              "sidebar": "explanationSidebar"
+            },
+            {
+              "id": "explanation/overview",
+              "path": "/unrdf/docs/explanation/overview",
+              "sidebar": "explanationSidebar"
+            },
+            {
+              "id": "guides/getting-started",
+              "path": "/unrdf/docs/guides/getting-started",
+              "sidebar": "guideSidebar"
+            },
+            {
+              "id": "guides/introduction",
+              "path": "/unrdf/docs/guides/introduction",
+              "sidebar": "guideSidebar"
+            },
+            {
+              "id": "guides/quickstart",
+              "path": "/unrdf/docs/guides/quickstart",
+              "sidebar": "guideSidebar"
+            },
+            {
+              "id": "guides/tutorials/advanced-patterns",
+              "path": "/unrdf/docs/guides/tutorials/advanced-patterns",
+              "sidebar": "guideSidebar"
+            },
+            {
+              "id": "guides/tutorials/basic-usage",
+              "path": "/unrdf/docs/guides/tutorials/basic-usage",
+              "sidebar": "guideSidebar"
+            },
+            {
+              "id": "reference/api/browser",
+              "path": "/unrdf/docs/reference/api/browser",
+              "sidebar": "referenceSidebar"
+            },
+            {
+              "id": "reference/api/core",
+              "path": "/unrdf/docs/reference/api/core",
+              "sidebar": "referenceSidebar"
+            },
+            {
+              "id": "reference/api/hooks",
+              "path": "/unrdf/docs/reference/api/hooks",
+              "sidebar": "referenceSidebar"
+            },
+            {
+              "id": "reference/api/kgc-4d",
+              "path": "/unrdf/docs/reference/api/kgc-4d",
+              "sidebar": "referenceSidebar"
+            },
+            {
+              "id": "reference/overview",
+              "path": "/unrdf/docs/reference/overview",
+              "sidebar": "referenceSidebar"
+            }
+          ],
+          "draftIds": [],
+          "sidebars": {
+            "guideSidebar": {
+              "link": {
+                "path": "/unrdf/docs/guides/introduction",
+                "label": "guides/introduction"
+              }
+            },
+            "referenceSidebar": {
+              "link": {
+                "path": "/unrdf/docs/reference/overview",
+                "label": "reference/overview"
+              }
+            },
+            "explanationSidebar": {
+              "link": {
+                "path": "/unrdf/docs/explanation/overview",
+                "label": "explanation/overview"
+              }
+            }
+          }
+        }
+      ],
+      "breadcrumbs": true
+    }
+  }
+}

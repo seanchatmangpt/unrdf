@@ -25,7 +25,6 @@ let jitAvailable = true;
 
 // Test JIT availability once at module load
 try {
-  // eslint-disable-next-line no-new-func
   new Function('return true')();
 } catch {
   jitAvailable = false;
@@ -113,7 +112,6 @@ export function compileHookChain(hooks) {
   `;
 
   try {
-    // eslint-disable-next-line no-new-func
     const compiledFn = new Function('hooks', 'quad', fnBody);
     compiledChains.set(chainKey, compiledFn);
     return compiledFn;
@@ -186,7 +184,6 @@ export function compileValidationOnlyChain(hooks) {
   const fnBody = `return ${checks || 'true'};`;
 
   try {
-    // eslint-disable-next-line no-new-func
     const compiledFn = new Function('hooks', 'quad', fnBody);
 
     // Return wrapper that uses validation hooks only

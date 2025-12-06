@@ -43,12 +43,12 @@
     "validation"
   ],
   "dependencies": {
-    "@unrdf/core": "workspace:5.0.0-beta.1",
-    "zod": "^3.22.0"
+    "@unrdf/core": "workspace:*",
+    "zod": "^4.1.13"
   },
   "devDependencies": {
-    "@types/node": "^20.0.0",
-    "vitest": "^1.0.0"
+    "@types/node": "^24.10.1",
+    "vitest": "^4.0.15"
   },
   "engines": {
     "node": ">=18.0.0"

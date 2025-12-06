@@ -1,0 +1,20 @@
+{
+  "id": "explanation/kgc-4d/multiverse",
+  "title": "Multiverse Reasoning",
+  "description": "Multi-dimensional reasoning patterns.",
+  "source": "@site/docs/explanation/kgc-4d/multiverse.md",
+  "sourceDirName": "explanation/kgc-4d",
+  "slug": "/explanation/kgc-4d/multiverse",
+  "permalink": "/unrdf/docs/explanation/kgc-4d/multiverse",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/seanchatmangpt/unrdf/tree/main/apps/docs-site/docs/explanation/kgc-4d/multiverse.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "explanationSidebar",
+  "previous": {
+    "title": "Forensic UX",
+    "permalink": "/unrdf/docs/explanation/kgc-4d/forensic-ux"
+  }
+}
