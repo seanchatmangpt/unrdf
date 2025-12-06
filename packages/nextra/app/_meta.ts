@@ -19,10 +19,6 @@ export default {
     title: 'Concepts',
     type: 'page',
   },
-  reference: {
-    title: 'API Reference',
-    type: 'page',
-  },
   papers: {
     title: 'Research Papers',
     type: 'page',
