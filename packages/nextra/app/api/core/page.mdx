@@ -1,0 +1,139 @@
+---
+title: '@unrdf/core API'
+description: Core RDF store functionality, quad operations, and validation
+---
+
+import { TypeReference, FunctionAPI } from '../../../components';
+
+# @unrdf/core
+
+Core RDF functionality for UNRDF v5. Provides the foundational triple store, quad operations, and Zod-based validation.
+
+## Installation
+
+```bash
+pnpm add @unrdf/core
+```
+
+## Quick Start
+
+```javascript
+import { createStore, dataFactory } from '@unrdf/core';
+
+// Create a new RDF store
+const store = createStore();
+
+// Create a quad
+const quad = dataFactory.quad(
+  dataFactory.namedNode('http://example.org/subject'),
+  dataFactory.namedNode('http://example.org/predicate'),
+  dataFactory.literal('Object value')
+);
+
+// Add to store
+store.add(quad);
+
+console.log(store.size); // 1
+```
+
+---
+
+## Store API
+
+### createStore()
+
+<FunctionAPI name="createStore" package="@unrdf/core" />
+
+**Usage:**
+
+```javascript
+import { createStore } from '@unrdf/core';
+
+const store = createStore();
+
+// Add quads
+store.add(quad);
+
+// Query
+const results = store.match(null, predicate, null);
+
+// Size
+console.log(store.size);
+```
+
+---
+
+## Data Factory
+
+### dataFactory
+
+The data factory provides methods for creating RDF terms and quads.
+
+**Methods:**
+
+- `namedNode(value)` - Create a named node (IRI)
+- `blankNode(value?)` - Create a blank node
+- `literal(value, languageOrDatatype?)` - Create a literal
+- `quad(subject, predicate, object, graph?)` - Create a quad
+
+**Example:**
+
+```javascript
+import { dataFactory } from '@unrdf/core';
+
+const subject = dataFactory.namedNode('http://example.org/subject');
+const predicate = dataFactory.namedNode('http://example.org/predicate');
+const object = dataFactory.literal('Hello, World!', 'en');
+
+const quad = dataFactory.quad(subject, predicate, object);
+```
+
+---
+
+## Validation
+
+### QuadSchema
+
+<TypeReference schema="QuadSchema" package="@unrdf/core" />
+
+Validates RDF quads at runtime using Zod.
+
+**Usage:**
+
+```javascript
+import { QuadSchema } from '@unrdf/core';
+
+const result = QuadSchema.safeParse(quad);
+
+if (result.success) {
+  console.log('Valid quad:', result.data);
+} else {
+  console.error('Invalid quad:', result.error);
+}
+```
+
+---
+
+## Type Definitions
+
+All types are defined using Zod schemas for runtime validation:
+
+- **QuadSchema** - Quad validation
+- **TermSchema** - RDF term validation
+- **NamedNodeSchema** - Named node validation
+- **LiteralSchema** - Literal validation
+- **BlankNodeSchema** - Blank node validation
+
+---
+
+## Related
+
+- [Guides: Basic Usage](/guides/basic-usage) - Learn core patterns
+- [Examples: Create Quad](/examples/basic/create-quad) - Interactive example
+- [Concepts: RDF Fundamentals](/concepts/rdf-fundamentals) - Deep dive
+
+---
+
+## Source
+
+[View @unrdf/core source on GitHub →](https://github.com/unrdf/unrdf/tree/main/packages/core)
