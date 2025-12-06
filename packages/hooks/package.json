@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/hooks",
-  "version": "5.0.0-alpha.0",
+  "version": "5.0.0-beta.1",
   "description": "UNRDF Knowledge Hooks - Policy Definition and Execution Framework",
   "type": "module",
   "main": "src/index.mjs",
@@ -43,7 +43,7 @@
     "validation"
   ],
   "dependencies": {
-    "@unrdf/core": "workspace:*",
+    "@unrdf/core": "workspace:5.0.0-beta.1",
     "zod": "^3.22.0"
   },
   "devDependencies": {

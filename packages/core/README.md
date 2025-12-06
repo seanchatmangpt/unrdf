@@ -1,5 +1,8 @@
 # @unrdf/core
 
+![Version](https://img.shields.io/badge/version-5.0.0--beta.1-blue) ![Production Ready](https://img.shields.io/badge/production-ready-green)
+
+
 **UNRDF Core - RDF Graph Operations, SPARQL Execution, and Foundational Substrate**
 
 The essential RDF substrate that all UNRDF packages and applications build upon.

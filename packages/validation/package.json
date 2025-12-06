@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/validation",
-  "version": "1.0.0",
+  "version": "5.0.0-beta.1",
   "description": "OTEL validation framework for UNRDF development",
   "type": "module",
   "main": "./src/index.mjs",
