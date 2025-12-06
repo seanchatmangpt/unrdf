@@ -1,0 +1,20 @@
+{
+  "id": "guides/tutorials/advanced-patterns",
+  "title": "Advanced Patterns",
+  "description": "Advanced usage patterns and best practices.",
+  "source": "@site/docs/guides/tutorials/advanced-patterns.md",
+  "sourceDirName": "guides/tutorials",
+  "slug": "/guides/tutorials/advanced-patterns",
+  "permalink": "/unrdf/docs/guides/tutorials/advanced-patterns",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/seanchatmangpt/unrdf/tree/main/apps/docs-site/docs/guides/tutorials/advanced-patterns.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "guideSidebar",
+  "previous": {
+    "title": "Basic Usage Tutorial",
+    "permalink": "/unrdf/docs/guides/tutorials/basic-usage"
+  }
+}

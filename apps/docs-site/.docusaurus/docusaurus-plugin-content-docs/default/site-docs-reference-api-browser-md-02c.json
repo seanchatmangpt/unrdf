@@ -1,0 +1,24 @@
+{
+  "id": "reference/api/browser",
+  "title": "@unrdf/browser API",
+  "description": "Browser-optimized RDF functionality.",
+  "source": "@site/docs/reference/api/browser.md",
+  "sourceDirName": "reference/api",
+  "slug": "/reference/api/browser",
+  "permalink": "/unrdf/docs/reference/api/browser",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/seanchatmangpt/unrdf/tree/main/apps/docs-site/docs/reference/api/browser.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "referenceSidebar",
+  "previous": {
+    "title": "@unrdf/hooks API",
+    "permalink": "/unrdf/docs/reference/api/hooks"
+  },
+  "next": {
+    "title": "@unrdf/kgc-4d API",
+    "permalink": "/unrdf/docs/reference/api/kgc-4d"
+  }
+}

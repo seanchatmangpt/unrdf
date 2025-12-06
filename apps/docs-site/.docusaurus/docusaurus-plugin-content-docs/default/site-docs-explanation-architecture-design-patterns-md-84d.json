@@ -1,0 +1,24 @@
+{
+  "id": "explanation/architecture/design-patterns",
+  "title": "Design Patterns",
+  "description": "74 design patterns used in UNRDF.",
+  "source": "@site/docs/explanation/architecture/design-patterns.md",
+  "sourceDirName": "explanation/architecture",
+  "slug": "/explanation/architecture/design-patterns",
+  "permalink": "/unrdf/docs/explanation/architecture/design-patterns",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/seanchatmangpt/unrdf/tree/main/apps/docs-site/docs/explanation/architecture/design-patterns.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "explanationSidebar",
+  "previous": {
+    "title": "Architecture Overview",
+    "permalink": "/unrdf/docs/explanation/architecture/overview"
+  },
+  "next": {
+    "title": "KGC-4D Overview",
+    "permalink": "/unrdf/docs/explanation/kgc-4d/overview"
+  }
+}

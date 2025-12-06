@@ -1,0 +1,86 @@
+# Getting Started
+
+Get up and running with UNRDF in under 5 minutes.
+
+## Installation
+
+Choose the package that fits your needs:
+
+```bash
+# Core RDF functionality
+pnpm add @unrdf/core
+
+# React hooks (includes core)
+pnpm add @unrdf/hooks
+
+# KGC-4D (includes core)
+pnpm add @unrdf/kgc-4d
+
+# Browser storage
+pnpm add @unrdf/browser
+```
+
+## Your First RDF Store
+
+Create a basic RDF store and add some data:
+
+```typescript
+import { createStore, dataFactory } from '@unrdf/core';
+
+// Create store
+const store = createStore();
+
+// Create data
+const { quad, namedNode, literal } = dataFactory;
+
+store.add(quad(
+  namedNode('http://example.org/alice'),
+  namedNode('http://xmlns.com/foaf/0.1/name'),
+  literal('Alice')
+));
+
+// Query data
+const results = store.match(
+  namedNode('http://example.org/alice'),
+  null,
+  null
+);
+
+for (const quad of results) {
+  console.log(quad.subject.value, quad.predicate.value, quad.object.value);
+}
+```
+
+## Using with React
+
+UNRDF provides 40+ React hooks:
+
+```tsx
+import { useRdfStore, useQuery } from '@unrdf/hooks';
+
+function MyComponent() {
+  const store = useRdfStore();
+  const results = useQuery(store, `
+    SELECT ?name WHERE {
+      ?person foaf:name ?name .
+    }
+  `);
+
+  return (
+    <div>
+      {results.map(binding => (
+        <div key={binding.get('name').value}>
+          {binding.get('name').value}
+        </div>
+      ))}
+    </div>
+  );
+}
+```
+
+## Next Steps
+
+- **Learn SPARQL**: [SPARQL Tutorial](/guides/sparql)
+- **Explore Hooks**: [React Hooks Guide](/guides/react-hooks)
+- **Build Knowledge Graphs**: [KGC-4D Overview](/concepts/kgc-4d/overview)
+- **See Examples**: [Examples](/examples)

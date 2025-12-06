@@ -35,12 +35,12 @@
     "sparql"
   ],
   "dependencies": {
-    "@unrdf/core": "workspace:5.0.0-beta.1",
-    "@unrdf/hooks": "workspace:5.0.0-beta.1"
+    "@unrdf/core": "workspace:*",
+    "@unrdf/hooks": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "^20.0.0",
-    "vitest": "^1.0.0"
+    "@types/node": "^24.10.1",
+    "vitest": "^4.0.15"
   },
   "engines": {
     "node": ">=18.0.0"

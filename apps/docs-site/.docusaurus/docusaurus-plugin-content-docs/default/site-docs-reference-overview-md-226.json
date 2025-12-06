@@ -1,0 +1,20 @@
+{
+  "id": "reference/overview",
+  "title": "API Reference Overview",
+  "description": "Complete API documentation for all UNRDF packages.",
+  "source": "@site/docs/reference/overview.md",
+  "sourceDirName": "reference",
+  "slug": "/reference/overview",
+  "permalink": "/unrdf/docs/reference/overview",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/seanchatmangpt/unrdf/tree/main/apps/docs-site/docs/reference/overview.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "referenceSidebar",
+  "next": {
+    "title": "@unrdf/core API",
+    "permalink": "/unrdf/docs/reference/api/core"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "id": "explanation/overview",
+  "title": "Conceptual Overview",
+  "description": "Deep dive into UNRDF architecture, design patterns, and core concepts.",
+  "source": "@site/docs/explanation/overview.md",
+  "sourceDirName": "explanation",
+  "slug": "/explanation/overview",
+  "permalink": "/unrdf/docs/explanation/overview",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/seanchatmangpt/unrdf/tree/main/apps/docs-site/docs/explanation/overview.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "explanationSidebar",
+  "next": {
+    "title": "Architecture Overview",
+    "permalink": "/unrdf/docs/explanation/architecture/overview"
+  }
+}

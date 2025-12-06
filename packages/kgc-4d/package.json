@@ -23,16 +23,16 @@
     "benchmark": "node test/benchmarks/run-benchmarks.mjs"
   },
   "dependencies": {
-    "@unrdf/core": "workspace:5.0.0-beta.1",
-    "@unrdf/oxigraph": "workspace:5.0.0-beta.1",
+    "@unrdf/core": "workspace:*",
+    "@unrdf/oxigraph": "workspace:*",
     "hash-wasm": "^4.12.0",
     "isomorphic-git": "^1.35.1"
   },
   "devDependencies": {
     "comment-parser": "^1.4.1",
-    "simple-statistics": "^7.8.3",
-    "tinybench": "^2.6.0",
-    "vitest": "^1.0.4"
+    "simple-statistics": "^7.8.8",
+    "tinybench": "^6.0.0",
+    "vitest": "^4.0.15"
   },
   "keywords": [
     "rdf",
