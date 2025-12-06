@@ -4,7 +4,8 @@
   "description": "KGC 4D Datum & Universe Freeze Engine - Nanosecond-precision event logging with Git-backed snapshots",
   "type": "module",
   "exports": {
-    ".": "./src/index.mjs"
+    ".": "./src/index.mjs",
+    "./client": "./src/client.mjs"
   },
   "main": "./src/index.mjs",
   "files": [

@@ -67,10 +67,7 @@ export class StoreCache {
     const sampleStart = Math.min(100, count);
     const sampleEnd = Math.max(count - 100, sampleStart);
 
-    const sample = [
-      ...quads.slice(0, sampleStart),
-      ...quads.slice(sampleEnd),
-    ];
+    const sample = [...quads.slice(0, sampleStart), ...quads.slice(sampleEnd)];
 
     // Hash the string representation of sampled quads
     const sampleStr = sample
