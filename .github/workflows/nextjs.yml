@@ -1,16 +1,16 @@
-# Deploy Next.js μ(O) Calculus Benchmark Dashboard to GitHub Pages
+# Deploy UNRDF Hooks Showcase to GitHub Pages
 #
-# This workflow builds and deploys the React benchmark dashboard from packages/react/
-# Using Next.js 16 with static export (output: 'export') to GitHub Pages.
+# This workflow builds and deploys the hooks showcase from playground/hooks-showcase/
+# Using Next.js 15+ with static export (output: 'export') to GitHub Pages.
 #
-name: Deploy μ(O) Dashboard to Pages
+name: Deploy UNRDF Hooks Showcase to Pages
 
 on:
-  # Runs on pushes targeting the default branch (in packages/react only)
+  # Runs on pushes targeting the default branch (in playground/hooks-showcase only)
   push:
     branches: ["main"]
     paths:
-      - 'packages/react/**'
+      - 'playground/hooks-showcase/**'
       - '.github/workflows/nextjs.yml'
 
   # Allows you to run this workflow manually from the Actions tab
@@ -33,43 +33,33 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: packages/react
+        working-directory: playground/hooks-showcase
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8
-
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: pnpm
-          cache-dependency-path: '**/pnpm-lock.yaml'
 
-      - name: Install root dependencies
-        run: pnpm install --ignore-scripts --frozen-lockfile=false
-
-      - name: Install React package dependencies
-        run: pnpm install --ignore-scripts --frozen-lockfile=false
+      - name: Install dependencies
+        run: npm install
 
       - name: Build with Next.js
-        run: pnpm run build
+        run: npm run build
         env:
           NEXT_PUBLIC_BASE_PATH: /unrdf
 
       - name: Verify build output
-        run: ls -la
+        run: ls -la out/
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: packages/react/out
+          path: playground/hooks-showcase/out
 
   # Deployment job
   deploy:
