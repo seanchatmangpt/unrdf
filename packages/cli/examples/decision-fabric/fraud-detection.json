@@ -1,0 +1,39 @@
+{
+  "features": [
+    {
+      "id": 1,
+      "name": "Transaction Monitoring",
+      "value": 90,
+      "cost": 50,
+      "description": "Real-time transaction stream processing"
+    },
+    {
+      "id": 2,
+      "name": "Alert System",
+      "value": 70,
+      "cost": 30,
+      "description": "Notification system for suspicious activity"
+    },
+    {
+      "id": 3,
+      "name": "ML Model Training",
+      "value": 85,
+      "cost": 200,
+      "description": "Machine learning model for fraud detection"
+    },
+    {
+      "id": 4,
+      "name": "Dashboard",
+      "value": 40,
+      "cost": 150,
+      "description": "Analytics dashboard for fraud metrics"
+    },
+    {
+      "id": 5,
+      "name": "Historical Analysis",
+      "value": 50,
+      "cost": 100,
+      "description": "Retrospective analysis of fraud patterns"
+    }
+  ]
+}

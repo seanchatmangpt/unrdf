@@ -20,6 +20,9 @@ import {
   toNTriplesCommand,
   toJSONCommand,
 } from './commands/convert.mjs';
+import { decisionCommand } from './commands/decision.mjs';
+import { paretoCommand } from './commands/pareto.mjs';
+import { socraticCommand } from './commands/socratic.mjs';
 
 /**
  * Main CLI application
@@ -28,9 +31,10 @@ const main = defineCommand({
   meta: {
     name: 'unrdf',
     version: '5.0.0-alpha.0',
-    description: 'UNRDF CLI - Command-line tools for RDF graph operations',
+    description: 'UNRDF CLI - Command-line tools for RDF graph operations and Hyperdimensional Decision Fabric',
   },
   subCommands: {
+    // RDF Graph Operations
     graph: graphCommand,
     query: queryCommand,
     'query-file': queryFileCommand,
@@ -39,6 +43,11 @@ const main = defineCommand({
     'to-turtle': toTurtleCommand,
     'to-ntriples': toNTriplesCommand,
     'to-json': toJSONCommand,
+
+    // Hyperdimensional Decision Fabric
+    decision: decisionCommand,
+    pareto: paretoCommand,
+    socratic: socraticCommand,
   },
 });
 

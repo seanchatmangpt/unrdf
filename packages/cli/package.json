@@ -39,6 +39,7 @@
   ],
   "dependencies": {
     "@unrdf/core": "workspace:*",
+    "@unrdf/decision-fabric": "workspace:*",
     "@unrdf/federation": "workspace:*",
     "@unrdf/hooks": "workspace:*",
     "@unrdf/streaming": "workspace:*",
@@ -48,6 +49,7 @@
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
+    "citty-test-utils": "^0.1.0",
     "vitest": "^1.0.0"
   },
   "engines": {
