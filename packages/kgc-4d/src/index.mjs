@@ -18,3 +18,55 @@ export {
   DeltaSyncActions,
 } from './core/patterns/delta-sync-reducer.mjs';
 export { SSEClient } from './core/patterns/sse-client.mjs';
+
+// HDIT - Hyperdimensional Information Theory
+// Practical coordinate-based event similarity and visualization
+export {
+  // Coordinate generation
+  coordsForEvent,
+  batchCoordsForEvents,
+  createUniverseContext,
+  // Distance and similarity
+  cosineSimilarity,
+  cosineDistance,
+  euclideanDistance,
+  euclideanDistanceSquared,
+  manhattanDistance,
+  findKNearest,
+  findWithinThreshold,
+  pairwiseDistances,
+  calculateCentroid,
+  normalize,
+  dotProduct,
+  // Guards and validation
+  guardDimension,
+  guardMemory,
+  guardLatency,
+  guardEntityCount,
+  guardCoordinates,
+  guardAll,
+  suggestDimension,
+  guardedOperation,
+  // Visualization and projection
+  projectPCA,
+  projectRandom,
+  normalizeProjection,
+  createVisualizationData,
+  clusterProjection,
+  // Constants
+  D_BROWSER,
+  D_LIGHT,
+  D_MEDIUM,
+  D_NODE_MAX,
+  D_HEAVY,
+  D_DEFAULT,
+  N_BROWSER_MAX,
+  LATENCY_BUDGET_MS,
+  OPS_BUDGET,
+  ONTOLOGY_AXES,
+  ONTOLOGY_DIM,
+  EVENT_TYPE_ENCODING,
+  calculateMemoryFootprint,
+  calculateOpsPerQuery,
+  validateDimension,
+} from './hdit/index.mjs';

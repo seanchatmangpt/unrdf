@@ -1,0 +1,90 @@
+{
+  "name": "@unrdf/kgn",
+  "version": "1.1.0",
+  "description": "Deterministic Nunjucks template system with custom filters and frontmatter support",
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": {
+      "import": "./src/index.js"
+    },
+    "./engine": {
+      "import": "./src/engine/index.js"
+    },
+    "./filters": {
+      "import": "./src/filters/index.js"
+    },
+    "./renderer": {
+      "import": "./src/renderer/index.js"
+    },
+    "./linter": {
+      "import": "./src/linter/index.js"
+    },
+    "./templates/*": "./src/templates/*"
+  },
+  "scripts": {
+    "build": "echo '@unrdf/kgn - ES modules verified'",
+    "build:watch": "nodemon --watch src --exec 'npm run build'",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:cucumber": "vitest --config vitest.cucumber.config.js",
+    "test:cucumber:watch": "vitest --config vitest.cucumber.config.js --watch",
+    "test:all": "npm run test && npm run test:cucumber",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint src/ --ext .js,.mjs",
+    "lint:fix": "eslint src/ --ext .js,.mjs --fix",
+    "dev": "nodemon --watch src --exec 'echo @unrdf/kgn dev mode - watching for changes'",
+    "typecheck": "echo '@unrdf/kgn - JavaScript validation not configured'",
+    "clean": "rm -rf coverage .nyc_output dist build",
+    "docs:generate": "node bin/generate-docs.mjs"
+  },
+  "dependencies": {
+    "@unrdf/core": "workspace:*",
+    "@unrdf/test-utils": "workspace:*",
+    "fs-extra": "^11.3.1",
+    "gray-matter": "^4.0.3",
+    "nunjucks": "^3.2.4",
+    "yaml": "^2.8.1"
+  },
+  "devDependencies": {
+    "@amiceli/vitest-cucumber": "^4.1.1",
+    "@babel/parser": "^7.28.5",
+    "@babel/traverse": "^7.28.5",
+    "comment-parser": "^1.4.1",
+    "eslint": "^8.56.0",
+    "nodemon": "^3.0.1",
+    "vitest": "^2.1.9"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "keywords": [
+    "unrdf",
+    "kgn",
+    "nunjucks",
+    "templates",
+    "deterministic",
+    "frontmatter",
+    "filters",
+    "codegen"
+  ],
+  "author": "UNRDF Project",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/seanchatmangpt/unrdf.git",
+    "directory": "packages/kgn"
+  },
+  "bugs": {
+    "url": "https://github.com/seanchatmangpt/unrdf/issues"
+  },
+  "homepage": "https://github.com/seanchatmangpt/unrdf#readme",
+  "files": [
+    "src/",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}

@@ -1,0 +1,42 @@
+/**
+ * DETERMINISTIC Template Engine - Complete Exports
+ *
+ * 4-Stage Pipeline: plan → render → post → attest
+ * 100% Deterministic guarantees with cryptographic attestation
+ */
+
+export { TemplateEngine } from './template-engine.js';
+export { DeterministicRenderer } from './renderer.js';
+export { DeterministicPipeline } from './pipeline.js';
+
+// Factory for deterministic engine with complete pipeline
+export function createDeterministicEngine(options = {}) {
+  const pipeline = new DeterministicPipeline(options);
+
+  return {
+    pipeline,
+    renderer: pipeline.renderer,
+
+    async render(template, data, opts = {}) {
+      return await pipeline.execute(template, data, opts);
+    },
+
+    async verifyDeterminism(template, data, iterations = 3) {
+      return await pipeline.verifyDeterminism(template, data, iterations);
+    },
+
+    async renderBatch(batch, opts = {}) {
+      return await pipeline.executeBatch(batch, opts);
+    },
+
+    getStats() { return pipeline.getStats(); },
+    resetStats() { pipeline.resetStats(); }
+  };
+}
+
+export default {
+  TemplateEngine,
+  DeterministicRenderer,
+  DeterministicPipeline,
+  createDeterministicEngine
+};
