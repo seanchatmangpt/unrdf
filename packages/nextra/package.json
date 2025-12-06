@@ -6,11 +6,11 @@
   "type": "module",
   "scripts": {
     "dev": "next dev --port 3003",
-    "build": "next build",
+    "build": "next build --webpack",
     "start": "next start --port 3003",
-    "export": "next build && next export",
-    "lint": "echo 'Lint skipped for Next.js 16 (blocked by Turbopack bug)' && exit 0",
-    "lint:fix": "echo 'Lint fix skipped for Next.js 16 (blocked by Turbopack bug)' && exit 0",
+    "export": "next build --webpack && next export",
+    "lint": "echo 'Lint skipped for Nextra (Next.js 16 bug: interprets lint as directory)' && exit 0",
+    "lint:fix": "echo 'Lint fix skipped for Nextra (Next.js 16 bug)' && exit 0",
     "clean": "rm -rf .next out node_modules"
   },
   "dependencies": {
