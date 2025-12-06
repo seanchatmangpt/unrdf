@@ -1,0 +1,471 @@
+---
+icon: ShieldCheckIcon
+---
+
+import { Callout, Steps, Tabs } from 'nextra/components'
+
+# Forensic UX
+
+**User Experience Patterns for Knowledge Construction**
+
+Forensic UX applies principles from forensic science to user experience design in knowledge graph construction. It focuses on creating traceable, auditable, and explainable interfaces that preserve provenance and enable debugging.
+
+<Callout>
+**Core Principle**: Every interaction leaves an immutable, cryptographically-verified trace in the event log.
+</Callout>
+
+## Core Principles
+
+### 1. Traceable Interactions
+
+Every user interaction leaves an immutable trace in the event log:
+
+```javascript
+// User clicks "Add Relationship"
+const event = {
+  type: 'USER_ACTION',
+  action: 'add_relationship',
+  timestamp: 1701734400000000000n, // Nanosecond precision
+  user: 'alice@example.com',
+  context: {
+    from: 'alice',
+    to: 'bob',
+    relationship: 'knows'
+  },
+  // Cryptographic proof
+  signature: '0x...',
+  vectorClock: [5, 3, 7] // Distributed causality
+};
+```
+
+**Mathematical Representation**:
+
+```math
+\text{Trace}(u, a, t) = \langle u, a, t_{ns}, \text{hash}(u, a, t_{ns}) \rangle
+```
+
+Where:
+- $u$ = user identifier
+- $a$ = action performed
+- $t_{ns}$ = nanosecond timestamp
+- $\text{hash}$ = BLAKE3 cryptographic signature
+
+### 2. Non-Repudiation
+
+Users cannot deny actions they've performed:
+
+<Tabs items={['Digital Signature', 'Audit Trail', 'Verification']}>
+<Tabs.Tab>
+```javascript
+// Every action is digitally signed
+const signedEvent = await signWithPrivateKey(event, userPrivateKey);
+
+store.addEvent(signedEvent);
+
+// Later verification
+const isValid = await verifySignature(
+  signedEvent,
+  userPublicKey
+);
+// isValid === true (cryptographically guaranteed)
+```
+</Tabs.Tab>
+<Tabs.Tab>
+```javascript
+// Complete audit trail
+const auditLog = store.getEventsByUser('alice@example.com');
+
+auditLog.forEach(event => {
+  console.log(`${event.timestamp}: ${event.action}`);
+  console.log(`  Verified: ${event.verified}`);
+  console.log(`  Hash: ${event.hash}`);
+});
+
+// Output:
+// 1701734400000000000: add_relationship
+//   Verified: true
+//   Hash: blake3://a3f2...
+```
+</Tabs.Tab>
+<Tabs.Tab>
+```javascript
+// Verify entire chain of custody
+const chainValid = await store.verifyChain({
+  from: startTimestamp,
+  to: endTimestamp,
+  user: 'alice@example.com'
+});
+
+if (!chainValid) {
+  throw new Error('Chain of custody broken!');
+}
+```
+</Tabs.Tab>
+</Tabs>
+
+### 3. Time-Travel Debugging
+
+Users can "rewind" to see how data evolved:
+
+<Steps>
+
+### Navigate to any point in time
+
+```javascript
+// Show state at different points
+const timeline = [
+  { time: '2025-01-01', state: await store.reconstructState(date1) },
+  { time: '2025-06-01', state: await store.reconstructState(date2) },
+  { time: '2025-12-01', state: await store.reconstructState(date3) },
+];
+```
+
+### Compare states side-by-side
+
+```javascript
+// Visual diff between two timestamps
+const diff = await store.diff({
+  from: '2025-01-01',
+  to: '2025-06-01'
+});
+
+diff.added.forEach(quad => {
+  console.log(`+ ${quad.subject} ${quad.predicate} ${quad.object}`);
+});
+
+diff.removed.forEach(quad => {
+  console.log(`- ${quad.subject} ${quad.predicate} ${quad.object}`);
+});
+```
+
+### Replay event sequence
+
+```javascript
+// See exactly what happened
+const events = await store.getEventsBetween(date1, date2);
+
+for (const event of events) {
+  console.log(`${event.user} ${event.action} at ${event.timestamp}`);
+
+  // Apply event step-by-step
+  const stateAfter = await applyEvent(currentState, event);
+  visualize(stateAfter); // Show UI update
+}
+```
+
+</Steps>
+
+<Callout type="info">
+**Temporal Complexity**: Time-travel reconstruction is $O(m \log n)$ where $m$ is events to replay and $n$ is total quads.
+</Callout>
+
+## Mistake-Proofing (Poka-Yoke)
+
+### 24 Built-in Guards
+
+KGC-4D includes 24 mistake-proofing mechanisms inspired by Lean Six Sigma:
+
+| Category | Guard | Prevents |
+|----------|-------|----------|
+| **Type Safety** | Schema validation | Invalid quad structures |
+| **Temporal** | Monotonic time | Clock skew, time travel paradoxes |
+| **Causality** | Vector clock ordering | Distributed race conditions |
+| **Cryptographic** | Hash verification | Data tampering |
+| **Business Logic** | Domain constraints | Illegal state transitions |
+
+#### Example: Monotonic Time Guard
+
+```javascript
+class MonotonicTimeGuard {
+  constructor() {
+    this.lastTimestamp = 0n;
+  }
+
+  validateEvent(event) {
+    if (event.timestamp <= this.lastTimestamp) {
+      throw new Error(
+        `Non-monotonic timestamp: ${event.timestamp} <= ${this.lastTimestamp}`
+      );
+    }
+    this.lastTimestamp = event.timestamp;
+  }
+}
+```
+
+**Why This Matters**: Prevents time-travel paradoxes where events appear out of order.
+
+### FMEA Risk Scores
+
+Each guard has a Failure Mode and Effects Analysis (FMEA) score:
+
+```math
+\text{RPN} = \text{Severity} \times \text{Occurrence} \times \text{Detection}
+```
+
+Where:
+- Severity: 1-10 (impact of failure)
+- Occurrence: 1-10 (frequency of failure)
+- Detection: 1-10 (difficulty of detecting)
+
+**Example Risk Profile**:
+
+| Failure Mode | S | O | D | RPN | Mitigation |
+|--------------|---|---|---|-----|------------|
+| Data tampering | 10 | 2 | 1 | 20 | BLAKE3 hashing |
+| Clock skew | 7 | 5 | 3 | 105 | NTP sync + guards |
+| Race condition | 8 | 6 | 4 | 192 | Vector clocks |
+
+<Callout type="warning">
+**High-Risk Threshold**: Any failure mode with RPN > 100 requires immediate mitigation.
+</Callout>
+
+## UI Patterns
+
+### 1. Explainable Actions
+
+Every UI action shows its effect before committing:
+
+```javascript
+// Before clicking "Delete"
+const preview = await store.previewDelete(selectedQuad);
+
+showConfirmDialog({
+  title: 'Delete Relationship',
+  message: `This will remove: ${preview.affected.length} quads`,
+  preview: preview.affected,
+  onConfirm: async () => {
+    await store.delete(selectedQuad);
+  }
+});
+```
+
+<Callout>
+**Principle**: Never surprise the user. Show consequences before commitment.
+</Callout>
+
+### 2. Undo/Redo with Event Sourcing
+
+Natural undo/redo from event log:
+
+```javascript
+class UndoRedoManager {
+  constructor(store) {
+    this.store = store;
+    this.currentIndex = 0;
+  }
+
+  async undo() {
+    if (this.currentIndex > 0) {
+      this.currentIndex--;
+      const state = await this.store.reconstructState(
+        this.getTimestampAtIndex(this.currentIndex)
+      );
+      this.render(state);
+    }
+  }
+
+  async redo() {
+    if (this.currentIndex < this.store.eventCount - 1) {
+      this.currentIndex++;
+      const state = await this.store.reconstructState(
+        this.getTimestampAtIndex(this.currentIndex)
+      );
+      this.render(state);
+    }
+  }
+}
+```
+
+### 3. Collaborative Editing with Conflict Detection
+
+Show conflicts before they occur:
+
+<Tabs items={['Conflict Detection', 'Resolution UI', 'Vector Clocks']}>
+<Tabs.Tab>
+```javascript
+// Alice and Bob editing simultaneously
+const aliceEvent = {
+  user: 'alice',
+  action: 'update',
+  quad: { subject: 'person:bob', predicate: 'age', object: '30' },
+  vectorClock: [5, 3, 7]
+};
+
+const bobEvent = {
+  user: 'bob',
+  action: 'update',
+  quad: { subject: 'person:bob', predicate: 'age', object: '31' },
+  vectorClock: [4, 4, 7]
+};
+
+// Detect conflict
+const concurrent = !isOrdered(aliceEvent.vectorClock, bobEvent.vectorClock);
+
+if (concurrent) {
+  showConflictResolutionUI([aliceEvent, bobEvent]);
+}
+```
+</Tabs.Tab>
+<Tabs.Tab>
+```javascript
+// Show both versions side-by-side
+function showConflictResolutionUI(conflictingEvents) {
+  return (
+    <ConflictDialog>
+      <h2>Conflicting Changes Detected</h2>
+      {conflictingEvents.map(event => (
+        <ChangePreview key={event.user}>
+          <User>{event.user}</User>
+          <Change>
+            {event.quad.object}
+            <Timestamp>{formatTime(event.timestamp)}</Timestamp>
+          </Change>
+          <button onClick={() => acceptChange(event)}>
+            Accept This
+          </button>
+        </ChangePreview>
+      ))}
+      <button onClick={() => mergeChanges(conflictingEvents)}>
+        Merge Both
+      </button>
+    </ConflictDialog>
+  );
+}
+```
+</Tabs.Tab>
+<Tabs.Tab>
+**Vector Clock Ordering**:
+
+```math
+\vec{V_1} \prec \vec{V_2} \iff \forall i: v_{1,i} \leq v_{2,i} \land \exists j: v_{1,j} < v_{2,j}
+```
+
+If neither $\vec{V_1} \prec \vec{V_2}$ nor $\vec{V_2} \prec \vec{V_1}$, events are **concurrent** (conflicting).
+</Tabs.Tab>
+</Tabs>
+
+## Performance Considerations
+
+### Event Log Growth
+
+As the event log grows, time-travel queries can slow down:
+
+```math
+\text{Query Time} = O(m \log n)
+```
+
+Where $m$ = events to replay, $n$ = total quads.
+
+**Mitigation**: Periodic snapshots reduce replay time:
+
+```javascript
+// Create snapshot every 1000 events
+if (eventCount % 1000 === 0) {
+  await store.createSnapshot({
+    timestamp: Date.now(),
+    hash: await hashCurrentState()
+  });
+}
+
+// Time-travel using nearest snapshot
+const snapshot = await store.getNearestSnapshot(targetTime);
+const eventsToReplay = await store.getEventsSince(snapshot.timestamp);
+const state = applyEvents(snapshot.state, eventsToReplay);
+```
+
+<Callout type="info">
+**Optimal Snapshot Frequency**: $f^* = \sqrt{\frac{|E| \cdot s_e}{s_s}}$ where $|E|$ is event count, $s_e$ is event size, $s_s$ is snapshot size.
+</Callout>
+
+### UI Responsiveness
+
+Long event replays can freeze the UI:
+
+```javascript
+// Use Web Workers for background reconstruction
+const worker = new Worker('time-travel-worker.js');
+
+worker.postMessage({
+  targetTime: '2025-01-01',
+  snapshot: nearestSnapshot
+});
+
+worker.onmessage = (event) => {
+  const reconstructedState = event.data;
+  render(reconstructedState);
+};
+```
+
+## Real-World Example
+
+**Scenario**: Medical records system with full audit trail
+
+<Steps>
+
+### Doctor adds diagnosis
+
+```javascript
+await medicalStore.addQuad({
+  subject: 'patient:12345',
+  predicate: 'diagnosis',
+  object: 'Type 2 Diabetes',
+  graph: 'medical:records',
+  metadata: {
+    doctor: 'dr.smith@hospital.org',
+    timestamp: Date.now(),
+    signature: await signWithDoctorKey(...)
+  }
+});
+```
+
+### Regulator audits 6 months later
+
+```javascript
+// Time-travel to see state at any point
+const stateAt = await medicalStore.reconstructState('2025-06-15');
+
+// Verify chain of custody
+const auditTrail = await medicalStore.getAuditTrail('patient:12345');
+
+auditTrail.forEach(event => {
+  console.log(`${event.timestamp}: ${event.doctor} added ${event.diagnosis}`);
+  console.log(`  Verified: ${event.signatureValid}`);
+});
+```
+
+### Patient disputes diagnosis
+
+```javascript
+// Show complete history with evidence
+const history = await medicalStore.getHistory({
+  subject: 'patient:12345',
+  predicate: 'diagnosis'
+});
+
+// Display timeline with cryptographic proof
+history.forEach(entry => {
+  console.log(`${entry.date}: ${entry.value}`);
+  console.log(`  Added by: ${entry.doctor}`);
+  console.log(`  Hash: ${entry.hash}`);
+  console.log(`  Verified: ${entry.verified ? '✓' : '✗'}`);
+});
+```
+
+</Steps>
+
+<Callout type="info">
+**Result**: Complete transparency, non-repudiation, and regulatory compliance built into the UX.
+</Callout>
+
+## Summary
+
+Forensic UX in KGC-4D provides:
+
+- ✅ **Traceability**: Every action recorded immutably
+- ✅ **Non-Repudiation**: Cryptographic signatures prevent denial
+- ✅ **Time-Travel**: Debug issues by replaying history
+- ✅ **Mistake-Proofing**: 24 guards prevent common errors
+- ✅ **Audit Compliance**: Built-in regulatory trail
+- ✅ **Transparency**: Users see exactly what will happen
+
+**Next**: Explore [Multiverse Reasoning](/concepts/kgc-4d/multiverse) for branching timelines and parallel knowledge graphs.
