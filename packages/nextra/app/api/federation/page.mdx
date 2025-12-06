@@ -1,0 +1,31 @@
+---
+title: '@unrdf/federation API'
+description: Distributed knowledge graph federation
+---
+
+# @unrdf/federation
+
+Federated SPARQL queries across multiple RDF stores and endpoints.
+
+## Installation
+
+```bash
+pnpm add @unrdf/federation
+```
+
+## Quick Start
+
+```javascript
+import { FederatedStore } from '@unrdf/federation';
+
+const federated = new FederatedStore([
+  { url: 'http://dbpedia.org/sparql' },
+  { url: 'http://wikidata.org/sparql' },
+]);
+
+const results = await federated.query('SELECT * WHERE { ?s ?p ?o }');
+```
+
+---
+
+[View @unrdf/federation source →](https://github.com/unrdf/unrdf/tree/main/packages/federation)
