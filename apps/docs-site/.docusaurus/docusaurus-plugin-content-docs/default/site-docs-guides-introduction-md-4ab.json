@@ -1,0 +1,20 @@
+{
+  "id": "guides/introduction",
+  "title": "Introduction",
+  "description": "Welcome to UNRDF - the Universal RDF Framework for Knowledge Graph Construction.",
+  "source": "@site/docs/guides/introduction.md",
+  "sourceDirName": "guides",
+  "slug": "/guides/introduction",
+  "permalink": "/unrdf/docs/guides/introduction",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/seanchatmangpt/unrdf/tree/main/apps/docs-site/docs/guides/introduction.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "guideSidebar",
+  "next": {
+    "title": "Getting Started",
+    "permalink": "/unrdf/docs/guides/getting-started"
+  }
+}

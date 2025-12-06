@@ -37,12 +37,12 @@
   ],
   "dependencies": {
     "oxigraph": "^0.5.2",
-    "zod": "^3.22.0"
+    "zod": "^4.1.13"
   },
   "devDependencies": {
-    "@types/node": "^20.0.0",
-    "@unrdf/core": "workspace:5.0.0-beta.1",
-    "vitest": "^1.0.0"
+    "@types/node": "^24.10.1",
+    "@unrdf/core": "workspace:*",
+    "vitest": "^4.0.15"
   },
   "engines": {
     "node": ">=18.0.0"

@@ -1,0 +1,24 @@
+{
+  "id": "guides/getting-started",
+  "title": "Getting Started",
+  "description": "Get up and running with UNRDF in under 5 minutes.",
+  "source": "@site/docs/guides/getting-started.md",
+  "sourceDirName": "guides",
+  "slug": "/guides/getting-started",
+  "permalink": "/unrdf/docs/guides/getting-started",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/seanchatmangpt/unrdf/tree/main/apps/docs-site/docs/guides/getting-started.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "guideSidebar",
+  "previous": {
+    "title": "Introduction",
+    "permalink": "/unrdf/docs/guides/introduction"
+  },
+  "next": {
+    "title": "Quick Start",
+    "permalink": "/unrdf/docs/guides/quickstart"
+  }
+}

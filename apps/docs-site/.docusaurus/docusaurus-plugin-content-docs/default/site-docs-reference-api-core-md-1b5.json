@@ -1,0 +1,24 @@
+{
+  "id": "reference/api/core",
+  "title": "@unrdf/core API",
+  "description": "Complete API reference for the core package.",
+  "source": "@site/docs/reference/api/core.md",
+  "sourceDirName": "reference/api",
+  "slug": "/reference/api/core",
+  "permalink": "/unrdf/docs/reference/api/core",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/seanchatmangpt/unrdf/tree/main/apps/docs-site/docs/reference/api/core.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "referenceSidebar",
+  "previous": {
+    "title": "API Reference Overview",
+    "permalink": "/unrdf/docs/reference/overview"
+  },
+  "next": {
+    "title": "@unrdf/hooks API",
+    "permalink": "/unrdf/docs/reference/api/hooks"
+  }
+}

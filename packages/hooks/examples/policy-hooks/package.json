@@ -13,11 +13,11 @@
   "dependencies": {
     "@unrdf/core": "workspace:*",
     "@unrdf/hooks": "workspace:*",
-    "n3": "^1.22.3",
-    "zod": "^3.23.8"
+    "n3": "^1.26.0",
+    "zod": "^4.1.13"
   },
   "devDependencies": {
-    "vitest": "^2.1.8"
+    "vitest": "^4.0.15"
   },
   "engines": {
     "node": ">=18.0.0"

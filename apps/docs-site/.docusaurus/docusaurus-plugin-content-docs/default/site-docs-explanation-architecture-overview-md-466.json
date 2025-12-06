@@ -1,0 +1,24 @@
+{
+  "id": "explanation/architecture/overview",
+  "title": "Architecture Overview",
+  "description": "UNRDF system architecture.",
+  "source": "@site/docs/explanation/architecture/overview.md",
+  "sourceDirName": "explanation/architecture",
+  "slug": "/explanation/architecture/overview",
+  "permalink": "/unrdf/docs/explanation/architecture/overview",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/seanchatmangpt/unrdf/tree/main/apps/docs-site/docs/explanation/architecture/overview.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "explanationSidebar",
+  "previous": {
+    "title": "Conceptual Overview",
+    "permalink": "/unrdf/docs/explanation/overview"
+  },
+  "next": {
+    "title": "Design Patterns",
+    "permalink": "/unrdf/docs/explanation/architecture/design-patterns"
+  }
+}

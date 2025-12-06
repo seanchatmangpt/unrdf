@@ -1,0 +1,20 @@
+{
+  "id": "reference/api/kgc-4d",
+  "title": "@unrdf/kgc-4d API",
+  "description": "Knowledge Graph Construction 4D API.",
+  "source": "@site/docs/reference/api/kgc-4d.md",
+  "sourceDirName": "reference/api",
+  "slug": "/reference/api/kgc-4d",
+  "permalink": "/unrdf/docs/reference/api/kgc-4d",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/seanchatmangpt/unrdf/tree/main/apps/docs-site/docs/reference/api/kgc-4d.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "referenceSidebar",
+  "previous": {
+    "title": "@unrdf/browser API",
+    "permalink": "/unrdf/docs/reference/api/browser"
+  }
+}

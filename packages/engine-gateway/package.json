@@ -15,11 +15,11 @@
     "README.md"
   ],
   "dependencies": {
-    "@unrdf/core": "workspace:5.0.0-beta.1",
-    "@unrdf/oxigraph": "workspace:5.0.0-beta.1"
+    "@unrdf/core": "workspace:*",
+    "@unrdf/oxigraph": "workspace:*"
   },
   "devDependencies": {
-    "vitest": "^1.6.0"
+    "vitest": "^4.0.15"
   },
   "scripts": {
     "test": "vitest run"

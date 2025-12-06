@@ -1,0 +1,92 @@
+{
+  "/unrdf/search/-9f9": {
+    "__comp": "1a4e3797",
+    "__context": {
+      "plugin": "c141421f"
+    }
+  },
+  "/unrdf/docs/-8da": {
+    "__comp": "5e95c892",
+    "__context": {
+      "plugin": "aba21aa0"
+    }
+  },
+  "/unrdf/docs/-6da": {
+    "__comp": "a7bd4aaa",
+    "__props": "fb414144"
+  },
+  "/unrdf/docs/-2ee": {
+    "__comp": "a94703ab"
+  },
+  "/unrdf/docs/explanation/architecture/design-patterns/-82f": {
+    "__comp": "17896441",
+    "content": "84df4452"
+  },
+  "/unrdf/docs/explanation/architecture/overview/-671": {
+    "__comp": "17896441",
+    "content": "466f527d"
+  },
+  "/unrdf/docs/explanation/kgc-4d/forensic-ux/-f13": {
+    "__comp": "17896441",
+    "content": "1480754a"
+  },
+  "/unrdf/docs/explanation/kgc-4d/multiverse/-fdc": {
+    "__comp": "17896441",
+    "content": "ea636c1a"
+  },
+  "/unrdf/docs/explanation/kgc-4d/overview/-bbc": {
+    "__comp": "17896441",
+    "content": "606abb77"
+  },
+  "/unrdf/docs/explanation/overview/-b49": {
+    "__comp": "17896441",
+    "content": "84d80a0d"
+  },
+  "/unrdf/docs/guides/getting-started/-770": {
+    "__comp": "17896441",
+    "content": "c9ea0dcf"
+  },
+  "/unrdf/docs/guides/introduction/-fa8": {
+    "__comp": "17896441",
+    "content": "4ab97117"
+  },
+  "/unrdf/docs/guides/quickstart/-10d": {
+    "__comp": "17896441",
+    "content": "91039464"
+  },
+  "/unrdf/docs/guides/tutorials/advanced-patterns/-ac3": {
+    "__comp": "17896441",
+    "content": "0c86c8ac"
+  },
+  "/unrdf/docs/guides/tutorials/basic-usage/-06d": {
+    "__comp": "17896441",
+    "content": "5b052980"
+  },
+  "/unrdf/docs/reference/api/browser/-a3f": {
+    "__comp": "17896441",
+    "content": "02c9837e"
+  },
+  "/unrdf/docs/reference/api/core/-cc4": {
+    "__comp": "17896441",
+    "content": "1b5cc697"
+  },
+  "/unrdf/docs/reference/api/hooks/-b98": {
+    "__comp": "17896441",
+    "content": "37145f9a"
+  },
+  "/unrdf/docs/reference/api/kgc-4d/-01e": {
+    "__comp": "17896441",
+    "content": "c9a49581"
+  },
+  "/unrdf/docs/reference/overview/-e0e": {
+    "__comp": "17896441",
+    "content": "22624bcf"
+  },
+  "/unrdf/-6a1": {
+    "__comp": "1df93b7f",
+    "__context": {
+      "plugin": "a7456010"
+    },
+    "config": "5e9f5e1a"
+  }
+}

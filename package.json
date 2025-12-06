@@ -47,22 +47,22 @@
     "@opentelemetry/sdk-trace-base": "^2.2.0",
     "@opentelemetry/sdk-trace-node": "^2.2.0",
     "@opentelemetry/semantic-conventions": "^1.38.0",
-    "@types/node": "^20.0.0",
+    "@types/node": "^24.10.1",
     "@vitest/browser": "^4.0.15",
-    "@vitest/coverage-v8": "^1.0.0",
-    "@vitest/ui": "^1.0.0",
-    "eslint": "^8.0.0",
-    "eslint-config-prettier": "^9.0.0",
-    "eslint-plugin-jsdoc": "^48.0.0",
+    "@vitest/coverage-v8": "^4.0.15",
+    "@vitest/ui": "^4.0.15",
+    "eslint": "^9.39.1",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-jsdoc": "^61.4.1",
     "jsdom": "^27.2.0",
     "playwright": "^1.57.0",
-    "prettier": "^3.0.0",
-    "vitest": "^1.0.0"
+    "prettier": "^3.7.4",
+    "vitest": "^4.0.15"
   },
   "pnpm": {
     "overrides": {
       "@opentelemetry/api": "^1.7.0",
-      "zod": "^3.22.0"
+      "zod": "^4.1.13"
     }
   },
   "volta": {
@@ -71,6 +71,6 @@
     "pnpm": "8.15.0"
   },
   "dependencies": {
-    "zod": "^3.25.76"
+    "zod": "^4.1.13"
   }
 }
