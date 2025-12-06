@@ -12,6 +12,10 @@
 
 import { useState, useCallback } from 'react';
 
+/**
+ * Hook for 4D time-travel reconstruction
+ * @returns {Object} Time travel utilities
+ */
 export function useTimeTravel() {
   const [reconstructed, setReconstructed] = useState(null);
   const [loading, setLoading] = useState(false);

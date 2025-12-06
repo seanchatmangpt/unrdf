@@ -14,6 +14,12 @@
 import { useMemo } from 'react';
 import { happenedBefore } from '../utils/vector-clock.mjs';
 
+/**
+ * Build causal dependency chain
+ * @param {string} targetEventId - Target event ID
+ * @param {Array} eventLog - Event log
+ * @returns {Array|null} Causal cone
+ */
 export function useCausalCone(targetEventId, eventLog) {
   return useMemo(() => {
     if (!targetEventId || !eventLog || eventLog.length === 0) {

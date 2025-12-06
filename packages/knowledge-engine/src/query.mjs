@@ -29,7 +29,7 @@ const tracer = trace.getTracer('unrdf');
  * `);
  * console.log(results); // Array of binding objects
  */
-export async function query(store, sparql, options = {}) {
+export async function query(store, sparql, _options = {}) {
   if (!store || typeof store.getQuads !== 'function') {
     throw new TypeError('query: store must be a valid Store instance');
   }
@@ -238,7 +238,7 @@ export async function describe(store, sparql, options = {}) {
  *   }
  * `);
  */
-export async function update(store, sparql, options = {}) {
+export async function update(store, sparql, _options = {}) {
   if (!store || typeof store.getQuads !== 'function') {
     throw new TypeError('update: store must be a valid Store instance');
   }

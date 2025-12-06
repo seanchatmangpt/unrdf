@@ -12,8 +12,15 @@
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useShard } from '../lib/client/hooks.mjs';
-import { Search, Download, RefreshCw, Database } from 'lucide-react';
+import { Database } from 'lucide-react';
 
+/**
+ * Quad row component
+ * @param {Object} props - Component props
+ * @param {Object} props.quad - RDF quad
+ * @param {number} props.index - Row index
+ * @returns {JSX.Element} Quad row
+ */
 function QuadRow({ quad, index }) {
   const formatValue = (term) => {
     if (term.termType === 'Literal') {
@@ -26,13 +33,13 @@ function QuadRow({ quad, index }) {
 
   // Alt+Click to navigate to forensic view
   const handleCellClick = (e) => {
-    if (e.altKey) {
+    if (e.altKey && typeof globalThis?.window !== 'undefined') {
       // Navigate to visualizations page with quad context
       const params = new URLSearchParams({
         subject: quad.subject.value,
         predicate: quad.predicate.value,
       });
-      window.location.href = `/visualizations?${params.toString()}`;
+      globalThis.window.location.href = `/visualizations?${params.toString()}`;
     }
   };
 
@@ -58,6 +65,10 @@ function QuadRow({ quad, index }) {
   );
 }
 
+/**
+ * Shard viewer component
+ * @returns {JSX.Element} Shard viewer
+ */
 export function ShardViewer() {
   const { quads, loading, refresh, metadata } = useShard();
   const [search, setSearch] = useState('');
@@ -97,13 +108,15 @@ export function ShardViewer() {
       })
       .join('\n');
 
-    const blob = new Blob([nquads], { type: 'application/n-quads' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'shard.nq';
-    a.click();
-    URL.revokeObjectURL(url);
+    if (typeof globalThis?.document !== 'undefined') {
+      const blob = new Blob([nquads], { type: 'application/n-quads' });
+      const url = URL.createObjectURL(blob);
+      const a = globalThis.document.createElement('a');
+      a.href = url;
+      a.download = 'shard.nq';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
   };
 
   return (

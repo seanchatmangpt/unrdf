@@ -45,7 +45,8 @@
 
 // Core N3 exports - the essential RDF primitives
 export { Parser, Writer, UnrdfDataFactory as DataFactory } from '@unrdf/core/rdf/n3-justified-only';
-export { createStore } from '@unrdf/oxigraph'; // Oxigraph Store implementation
+import { createStore as _createStore } from '@unrdf/oxigraph'; // Oxigraph Store implementation
+export { _createStore as createStore };
 
 /**
  * Parse a Turtle string into a Store (lite version - no OTEL tracing)
@@ -70,10 +71,10 @@ export async function parseTurtle(ttl, baseIRI = 'http://example.org/') {
     throw new TypeError('parseTurtle: baseIRI must be a string');
   }
 
-  const { Parser, Store } = await import('n3');
+  const { Parser } = await import('n3');
   const parser = new Parser({ baseIRI });
   const quads = parser.parse(ttl);
-  return createStore(quads);
+  return _createStore(quads);
 }
 
 /**

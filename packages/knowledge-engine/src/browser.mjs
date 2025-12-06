@@ -532,7 +532,11 @@ export class BrowserFileResolver {
    */
   async calculateFileHash(filePath) {
     // Use Web Crypto API for SHA-256 hash calculation
-    if (typeof window === 'undefined' || !window.crypto || !window.crypto.subtle) {
+    if (
+      typeof globalThis?.window === 'undefined' ||
+      !globalThis?.window?.crypto ||
+      !globalThis?.window?.crypto?.subtle
+    ) {
       // Fallback for environments without Web Crypto API
       return 'fallback-hash-' + Date.now().toString(36);
     }
@@ -553,7 +557,7 @@ export class BrowserFileResolver {
       }
 
       // Calculate SHA-256 hash
-      const hashBuffer = await window.crypto.subtle.digest('SHA-256', content);
+      const hashBuffer = await globalThis.window.crypto.subtle.digest('SHA-256', content);
       const hashArray = Array.from(new Uint8Array(hashBuffer));
       const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 

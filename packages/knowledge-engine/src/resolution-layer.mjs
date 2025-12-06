@@ -8,7 +8,6 @@
  * a single, consolidated Delta.
  */
 
-import { createStore } from '@unrdf/oxigraph'; // Oxigraph Store
 import { randomUUID } from 'crypto';
 import { z } from 'zod';
 
