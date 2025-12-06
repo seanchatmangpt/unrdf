@@ -67,6 +67,9 @@ importers:
       glob:
         specifier: ^13.0.0
         version: 13.0.0
+      globals:
+        specifier: ^15.12.0
+        version: 15.15.0
       jsdom:
         specifier: ^27.2.0
         version: 27.2.0
@@ -128,6 +131,9 @@ importers:
       '@unrdf/hooks':
         specifier: workspace:*
         version: link:../hooks
+      '@unrdf/oxigraph':
+        specifier: workspace:*
+        version: link:../oxigraph
       '@unrdf/streaming':
         specifier: workspace:*
         version: link:../streaming
@@ -5845,6 +5851,10 @@ packages:
 
   globals@14.0.0:
     resolution: {integrity: sha512-oahGvuMGQlPw/ivIYBjVSrWAfWLBeku5tpPE2fOPLi+WHffIWbuh2tCjhyQhTBPMf5E9jDEH4FOmTYgYwbKwtQ==}
+    engines: {node: '>=18'}
+
+  globals@15.15.0:
+    resolution: {integrity: sha512-7ACyT3wmyp3I61S4fG682L0VA2RGD9otkqGJIwNUMF1SWUombIIk+af1unuDYgMm082aHYwD+mzJvv9Iu8dsgg==}
     engines: {node: '>=18'}
 
   globals@16.4.0:
@@ -16165,6 +16175,8 @@ snapshots:
       type-fest: 0.20.2
 
   globals@14.0.0: {}
+
+  globals@15.15.0: {}
 
   globals@16.4.0: {}
 
