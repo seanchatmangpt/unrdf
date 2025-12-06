@@ -63,7 +63,9 @@ try {
   console.log('\n🔍 Querying universe for Person types...');
   const results = await kgcStore.queryUniverse(`
     SELECT ?person WHERE {
-      ?person <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person>
+      GRAPH <http://kgc.io/Universe> {
+        ?person <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person>
+      }
     }
   `);
 
@@ -77,7 +79,9 @@ try {
   console.log('\n📜 Querying event log...');
   const events = await kgcStore.queryEventLog(`
     SELECT ?event ?type WHERE {
-      ?event <http://kgc.io/type> ?type
+      GRAPH <http://kgc.io/EventLog> {
+        ?event <http://kgc.io/type> ?type
+      }
     }
   `);
 

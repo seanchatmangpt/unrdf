@@ -4,7 +4,7 @@
  */
 
 import { Parser, Writer } from '@unrdf/core/rdf/n3-justified-only';
-import { createStore } from '@unrdf/oxigraph'; // TODO: Replace with Oxigraph Store
+import { createStore } from '../../oxigraph/src/index.mjs'; // TODO: Replace with Oxigraph Store
 
 // Dynamic import to avoid top-level await issues
 let basicQuery;

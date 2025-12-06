@@ -45,7 +45,7 @@
 
 // Core N3 exports - the essential RDF primitives
 export { Parser, Writer, UnrdfDataFactory as DataFactory } from '@unrdf/core/rdf/n3-justified-only';
-import { createStore as _createStore } from '@unrdf/oxigraph'; // Oxigraph Store implementation
+import { createStore as _createStore } from '../../oxigraph/src/index.mjs'; // Oxigraph Store implementation
 export { _createStore as createStore };
 
 /**

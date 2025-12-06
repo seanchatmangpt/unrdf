@@ -76,7 +76,11 @@ try {
     SELECT ?name WHERE { ?s <http://xmlns.com/foaf/0.1/name> ?name }
   `);
   const kgcResults = await kgcStore.queryUniverse(`
-    SELECT ?name WHERE { ?s <http://xmlns.com/foaf/0.1/name> ?name }
+    SELECT ?name WHERE {
+      GRAPH <http://kgc.io/Universe> {
+        ?s <http://xmlns.com/foaf/0.1/name> ?name
+      }
+    }
   `);
 
   if (baseResults.length === 1 && kgcResults.length === 1) {

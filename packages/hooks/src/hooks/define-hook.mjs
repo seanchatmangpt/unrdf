@@ -98,17 +98,19 @@ export const HookConfigSchema = z.object({
   name: z.string().min(1, 'Hook name is required'),
   trigger: HookTriggerSchema,
   // Note: No return type enforcement - runtime POKA-YOKE guard handles non-boolean returns
-  validate: z.function().optional(),
-  transform: z.function().optional(),
-  metadata: z.record(z.any()).optional(),
+  // Use z.any() for functions to avoid Zod v4 z.function() issues
+  validate: z.any().optional(),
+  transform: z.any().optional(),
+  metadata: z.any().optional(),
 });
 
 export const HookSchema = z.object({
   name: z.string(),
   trigger: HookTriggerSchema,
-  validate: z.function().optional(),
-  transform: z.function().optional(),
-  metadata: z.record(z.any()).optional(),
+  // Use z.any() for functions to avoid Zod v4 z.function() issues
+  validate: z.any().optional(),
+  transform: z.any().optional(),
+  metadata: z.any().optional(),
 });
 
 /* ========================================================================= */

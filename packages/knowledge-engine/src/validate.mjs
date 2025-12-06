@@ -3,7 +3,7 @@
  * @module validate
  */
 
-import { createStore } from '@unrdf/oxigraph';
+import { createStore } from '../../oxigraph/src/index.mjs';
 import rdf from 'rdf-ext';
 import SHACLValidator from 'rdf-validate-shacl';
 import { trace, SpanStatusCode } from '@opentelemetry/api';

@@ -5,8 +5,8 @@
  */
 
 import { Parser, Writer, UnrdfDataFactory as DataFactory } from '@unrdf/core/rdf/n3-justified-only';
-import { createStore } from '@unrdf/oxigraph'; // TODO: Replace with Oxigraph Store
-import { createStore as createOxigraphStore } from '@unrdf/oxigraph';
+import { createStore } from '../../oxigraph/src/index.mjs'; // TODO: Replace with Oxigraph Store
+import { createStore as createOxigraphStore } from '../../oxigraph/src/index.mjs';
 import rdf from 'rdf-ext';
 import SHACLValidator from 'rdf-validate-shacl';
 import rdfCanonize from 'rdf-canonize';

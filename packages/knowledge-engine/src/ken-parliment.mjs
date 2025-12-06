@@ -4,7 +4,7 @@
  */
 
 import { UnrdfDataFactory as DataFactory } from '@unrdf/core/rdf/n3-justified-only';
-import { createStore } from '@unrdf/oxigraph'; // TODO: Replace with Oxigraph Store
+import { createStore } from '../../oxigraph/src/index.mjs'; // TODO: Replace with Oxigraph Store
 import { TransactionManager, printReceipt } from './knowledge-engine.mjs';
 
 const { namedNode, literal, quad } = DataFactory;

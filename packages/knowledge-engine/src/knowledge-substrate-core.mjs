@@ -15,7 +15,7 @@ import { createPerformanceOptimizer } from './performance-optimizer.mjs';
 import { LockchainWriter } from './lockchain-writer.mjs';
 import { PolicyPackManager } from './policy-pack.mjs';
 import { ResolutionLayer } from './resolution-layer.mjs';
-import { createStore } from '@unrdf/oxigraph';
+import { createStore } from '../../oxigraph/src/index.mjs';
 import { z } from 'zod';
 import crypto from 'node:crypto';
 

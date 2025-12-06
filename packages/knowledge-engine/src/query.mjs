@@ -3,7 +3,7 @@
  * @module query
  */
 
-import { createStore } from '@unrdf/oxigraph';
+import { createStore } from '../../oxigraph/src/index.mjs';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
 
 const tracer = trace.getTracer('unrdf');

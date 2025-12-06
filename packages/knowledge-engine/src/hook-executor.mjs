@@ -11,7 +11,7 @@ import { createConditionEvaluator } from './condition-evaluator.mjs';
 import { createEffectSandbox } from './effect-sandbox.mjs';
 import { createErrorSanitizer } from './security/error-sanitizer.mjs';
 import { createSandboxRestrictions } from './security/sandbox-restrictions.mjs';
-import { createStore } from '@unrdf/oxigraph';
+import { createStore } from '../../oxigraph/src/index.mjs';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
 
 const tracer = trace.getTracer('unrdf');
