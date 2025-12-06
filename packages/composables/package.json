@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/composables",
-  "version": "1.0.0-alpha.0",
+  "version": "5.0.0-beta.1",
   "description": "UNRDF Composables - Vue 3 Composables for Reactive RDF State (Optional Extension)",
   "type": "module",
   "main": "src/index.mjs",
@@ -36,9 +36,9 @@
     "web"
   ],
   "dependencies": {
-    "@unrdf/browser": "workspace:*",
-    "@unrdf/core": "workspace:*",
-    "@unrdf/streaming": "workspace:*",
+    "@unrdf/browser": "workspace:5.0.0-beta.1",
+    "@unrdf/core": "workspace:5.0.0-beta.1",
+    "@unrdf/streaming": "workspace:5.0.0-beta.1",
     "vue": "^3.0.0"
   },
   "peerDependencies": {

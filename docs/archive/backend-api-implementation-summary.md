@@ -10,7 +10,7 @@ Implemented production-ready backend API patterns following the 80/20 principle 
 ## Components Implemented
 
 ### 1. Request ID Tracking Middleware
-**File**: `/Users/sac/unrdf/sidecar/server/middleware/00.request-id.mjs`
+**File**: `/Users/sac/unrdf/knowledge-engine/server/middleware/00.request-id.mjs`
 
 **Features**:
 - Generates unique UUID for each request
@@ -18,10 +18,9 @@ Implemented production-ready backend API patterns following the 80/20 principle 
 - Propagates to OTEL spans for trace correlation
 - Adds to response headers
 
-**Impact**: Enables distributed tracing across CLI → Sidecar → Hooks
 
 ### 2. Request Validation Middleware
-**File**: `/Users/sac/unrdf/sidecar/server/middleware/04.request-validation.mjs`
+**File**: `/Users/sac/unrdf/knowledge-engine/server/middleware/04.request-validation.mjs`
 
 **Features**:
 - Zod-based schema validation
@@ -33,7 +32,7 @@ Implemented production-ready backend API patterns following the 80/20 principle 
 **Impact**: Prevents invalid data from reaching handlers, reduces handler complexity
 
 ### 3. Enhanced Error Handler
-**File**: `/Users/sac/unrdf/sidecar/server/middleware/02.error-handler.mjs` (updated)
+**File**: `/Users/sac/unrdf/knowledge-engine/server/middleware/02.error-handler.mjs` (updated)
 
 **Features**:
 - OpenAPI-compliant error format
@@ -44,7 +43,7 @@ Implemented production-ready backend API patterns following the 80/20 principle 
 **Impact**: Consistent error responses, better debugging with trace correlation
 
 ### 4. Enhanced Response Utilities
-**File**: `/Users/sac/unrdf/sidecar/server/utils/response.mjs` (updated)
+**File**: `/Users/sac/unrdf/knowledge-engine/server/utils/response.mjs` (updated)
 
 **Features**:
 - Request ID in all responses
@@ -55,7 +54,7 @@ Implemented production-ready backend API patterns following the 80/20 principle 
 **Impact**: Standardized response format across all endpoints
 
 ### 5. Prometheus Metrics Endpoint
-**File**: `/Users/sac/unrdf/sidecar/server/api/metrics.get.mjs`
+**File**: `/Users/sac/unrdf/knowledge-engine/server/api/metrics.get.mjs`
 
 **Features**:
 - Circuit breaker metrics (state, failures, health score)
@@ -66,7 +65,7 @@ Implemented production-ready backend API patterns following the 80/20 principle 
 **Impact**: Enables monitoring and alerting via Prometheus/Grafana
 
 ### 6. OTEL Trace Query Endpoint
-**File**: `/Users/sac/unrdf/sidecar/server/api/traces.get.mjs`
+**File**: `/Users/sac/unrdf/knowledge-engine/server/api/traces.get.mjs`
 
 **Features**:
 - Query traces by ID, service
@@ -77,7 +76,7 @@ Implemented production-ready backend API patterns following the 80/20 principle 
 **Impact**: Debug distributed traces, trace correlation
 
 ### 7. Kubernetes Readiness Probe
-**File**: `/Users/sac/unrdf/sidecar/server/api/health/ready.get.mjs`
+**File**: `/Users/sac/unrdf/knowledge-engine/server/api/health/ready.get.mjs`
 
 **Features**:
 - Checks managers initialized
@@ -87,7 +86,7 @@ Implemented production-ready backend API patterns following the 80/20 principle 
 **Impact**: K8s knows when to send traffic to pod
 
 ### 8. Kubernetes Liveness Probe
-**File**: `/Users/sac/unrdf/sidecar/server/api/health/live.get.mjs`
+**File**: `/Users/sac/unrdf/knowledge-engine/server/api/health/live.get.mjs`
 
 **Features**:
 - Checks event loop responsive
@@ -97,7 +96,7 @@ Implemented production-ready backend API patterns following the 80/20 principle 
 **Impact**: K8s knows when to restart pod
 
 ### 9. Example Refactored Endpoint
-**File**: `/Users/sac/unrdf/sidecar/server/api/hooks/evaluate.post.mjs`
+**File**: `/Users/sac/unrdf/knowledge-engine/server/api/hooks/evaluate.post.mjs`
 
 **Demonstrates**:
 - Zod validation
@@ -251,7 +250,7 @@ curl -X POST http://localhost:3000/api/hooks/evaluate \
 
 All implementation validated against:
 - No TypeScript (MJS + JSDoc only)
-- Files in appropriate subdirectories (sidecar/server/)
+- Files in appropriate subdirectories (knowledge-engine/server/)
 - Zod for validation (not TypeScript)
 - OTEL integration
 - Circuit breaker patterns
@@ -260,19 +259,19 @@ All implementation validated against:
 ## Files Created/Modified
 
 ### Created (9 files)
-1. `sidecar/server/middleware/00.request-id.mjs`
-2. `sidecar/server/middleware/04.request-validation.mjs`
-3. `sidecar/server/api/metrics.get.mjs`
-4. `sidecar/server/api/traces.get.mjs`
-5. `sidecar/server/api/health/ready.get.mjs`
-6. `sidecar/server/api/health/live.get.mjs`
-7. `sidecar/server/api/hooks/evaluate.post.mjs`
+1. `knowledge-engine/server/middleware/00.request-id.mjs`
+2. `knowledge-engine/server/middleware/04.request-validation.mjs`
+3. `knowledge-engine/server/api/metrics.get.mjs`
+4. `knowledge-engine/server/api/traces.get.mjs`
+5. `knowledge-engine/server/api/health/ready.get.mjs`
+6. `knowledge-engine/server/api/health/live.get.mjs`
+7. `knowledge-engine/server/api/hooks/evaluate.post.mjs`
 8. `docs/backend-api-patterns.md`
 9. `docs/backend-api-quick-reference.md`
 
 ### Modified (2 files)
-1. `sidecar/server/middleware/02.error-handler.mjs`
-2. `sidecar/server/utils/response.mjs`
+1. `knowledge-engine/server/middleware/02.error-handler.mjs`
+2. `knowledge-engine/server/utils/response.mjs`
 
 ## Status
 

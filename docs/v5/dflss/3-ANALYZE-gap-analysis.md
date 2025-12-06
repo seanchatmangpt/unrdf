@@ -47,8 +47,7 @@ TIER 3 - ADVANCED (Used by 10-20% of Users):
 ├─ Streaming & Real-time Updates                 ❌ In Core (MOVE)
 ├─ Federation & Consensus                        ❌ In Core (MOVE)
 ├─ Advanced Policy Packs (vault, compliance)      ❌ In Core (MOVE)
-├─ Complex Optimization Rules                     ❌ In Core (MOVE)
-└─ Sidecar Process Management                     ❌ In Core (MOVE)
+└─ Complex Optimization Rules                     ❌ In Core (MOVE)
 
 TIER 4 - EXPERIMENTAL (Used by <5% of Users):
 ├─ HTF Framework (Hierarchical Task Framework)    ❌ In Core (MOVE)

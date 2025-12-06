@@ -62,7 +62,7 @@ After installation, use Tab key to complete commands:
 ```bash
 # Complete resources
 unrdf <TAB>
-# → graph  hook  policy  sidecar  store  context  plugin  completion
+# → graph  hook  policy  store  context  plugin  completion
 
 # Complete verbs
 unrdf graph <TAB>
@@ -79,7 +79,6 @@ unrdf graph list --<TAB>
 - `graph` - Manage RDF graphs
 - `hook` - Manage knowledge hooks
 - `policy` - Manage policy packs
-- `sidecar` - Manage KGC sidecar
 - `store` - Manage RDF store
 - `context` - Manage CLI contexts
 - `plugin` - Manage CLI plugins

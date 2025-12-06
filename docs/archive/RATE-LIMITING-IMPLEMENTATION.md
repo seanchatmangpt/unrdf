@@ -2,7 +2,7 @@
 
 ## Overview
 
-Comprehensive adaptive rate limiting system with ML-based DDoS detection and automatic mitigation for the UNRDF sidecar server.
+Comprehensive adaptive rate limiting system with ML-based DDoS detection and automatic mitigation for the UNRDF knowledge-engine server.
 
 ## Components
 
@@ -212,7 +212,7 @@ REDIS_URL=redis://localhost:6379
 ## Integration Example
 
 ```javascript
-// sidecar/server/index.mjs
+// knowledge-engine/server/index.mjs
 import express from 'express';
 import rateLimitMiddleware from './middleware/03.rate-limit.mjs';
 import ddosDetectionMiddleware from './utils/ddos-detector.mjs';
@@ -241,7 +241,7 @@ app.get('/api/admin/rate-limits', adminRateLimits);
 
 **Run Tests:**
 ```bash
-cd sidecar
+cd knowledge-engine
 pnpm test test/rate-limiting-integration.test.mjs
 ```
 

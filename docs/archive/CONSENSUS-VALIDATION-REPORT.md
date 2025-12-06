@@ -1,5 +1,4 @@
 # Consensus Validation Report
-## Byzantine Fault Tolerance Analysis for KGC Sidecar Vault Integration
 
 **Date**: October 1, 2025
 **Component**: HashiCorp Vault Quorum-Based Unsealing
@@ -10,7 +9,6 @@
 
 ## Executive Summary
 
-This report provides a comprehensive validation of the Byzantine fault-tolerant consensus mechanisms implemented in the KGC Sidecar's Vault integration. The system uses Shamir's Secret Sharing for distributed secret management with a (3, 5)-threshold scheme, enabling robust quorum-based unsealing with guaranteed fault tolerance.
 
 ### Key Findings
 
@@ -26,7 +24,7 @@ This report provides a comprehensive validation of the Byzantine fault-tolerant 
 
 ### 1.1 Architecture Overview
 
-The Vault client implementation in `/sidecar/server/utils/vault-client.mjs` provides:
+The Vault client implementation in `/knowledge-engine/server/utils/vault-client.mjs` provides:
 
 ```javascript
 {
@@ -424,7 +422,6 @@ Node 5: ap-northeast  (Share 5)
 
 ### 8.1 Summary
 
-The KGC Sidecar's Vault integration implements a **robust, production-ready consensus mechanism** with the following characteristics:
 
 ✅ **Byzantine Fault Tolerant**: Tolerates up to 2 malicious/failed shares
 ✅ **Cryptographically Secure**: 256-bit information-theoretic security
@@ -456,10 +453,10 @@ The Byzantine fault-tolerant consensus mechanism is **validated and approved** f
 pnpm test:consensus
 
 # Individual test suites
-pnpm vitest sidecar/test/consensus/vault-quorum.test.mjs
-pnpm vitest sidecar/test/consensus/byzantine-fault.test.mjs
-pnpm vitest sidecar/test/consensus/secret-sharing.test.mjs
-pnpm vitest sidecar/test/consensus/consensus-recovery.test.mjs
+pnpm vitest knowledge-engine/test/consensus/vault-quorum.test.mjs
+pnpm vitest knowledge-engine/test/consensus/byzantine-fault.test.mjs
+pnpm vitest knowledge-engine/test/consensus/secret-sharing.test.mjs
+pnpm vitest knowledge-engine/test/consensus/consensus-recovery.test.mjs
 
 # Coverage report
 pnpm test:consensus --coverage

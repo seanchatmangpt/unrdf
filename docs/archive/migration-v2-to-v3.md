@@ -7,7 +7,6 @@ Complete guide for upgrading from UNRDF v2.1.1 to v3.0.0.
 UNRDF v3.0.0 introduces significant improvements:
 
 - ✅ **Modern CLI** - kubectl/docker-style noun-verb interface with citty
-- ✅ **Production Sidecar** - Enterprise-grade gRPC sidecar pattern
 - ✅ **Improved APIs** - Enhanced composables and knowledge hooks
 - ⚠️ **Breaking Changes** - Some APIs have changed
 
@@ -244,28 +243,23 @@ manager.addKnowledgeHook(hook);
 
 ## New Features in v3.0.0
 
-### 1. Sidecar Pattern
 
-New in v3: Deploy knowledge engine as a sidecar service.
+New in v3: Deploy knowledge engine as a knowledge-engine service.
 
 **CLI Auto-Detection:**
 
 ```bash
-# Set sidecar address (optional)
-export KGC_SIDECAR_ADDRESS=localhost:50051
+# Set knowledge-engine address (optional)
 
-# CLI automatically uses sidecar if available
+# CLI automatically uses knowledge-engine if available
 unrdf hook eval health-check.mjs
 
-# Falls back to embedded engine if sidecar unavailable
 ```
 
 **Programmatic Usage:**
 
 ```javascript
-import { SidecarClient } from 'unrdf/sidecar';
 
-const client = new SidecarClient({
   address: 'localhost:50051',
   timeout: 30000
 });
@@ -290,10 +284,9 @@ spec:
   - name: app
     image: my-app:latest
     env:
-    - name: KGC_SIDECAR_ADDRESS
       value: "localhost:50051"
-  - name: kgc-sidecar
-    image: unrdf/sidecar:latest
+  - name: knowledge-engine
+    image: unrdf/knowledge-engine:latest
     ports:
     - containerPort: 50051
 ```
@@ -304,8 +297,8 @@ New kubectl-style context switching:
 
 ```bash
 # Create contexts for different environments
-unrdf context create dev --sidecar=localhost:50051
-unrdf context create prod --sidecar=kgc.example.com:443 --tls
+unrdf context create dev --knowledge-engine=localhost:50051
+unrdf context create prod --knowledge-engine=kgc.example.com:443 --tls
 
 # Switch contexts
 unrdf context use prod
@@ -390,7 +383,7 @@ if (!validation.valid) {
 Built-in OpenTelemetry support:
 
 ```javascript
-import { initTelemetry } from 'unrdf/sidecar';
+import { initTelemetry } from 'unrdf/knowledge-engine';
 
 await initTelemetry({
   serviceName: 'my-app',
@@ -436,12 +429,12 @@ await initTelemetry({
 - [ ] Validate hooks: `unrdf hook test <hook-file>`
 - [ ] Check SPARQL queries work
 - [ ] Verify SHACL validation
-- [ ] Test sidecar connection (if using)
+- [ ] Test knowledge-engine connection (if using)
 
 ### Deployment
 
 - [ ] Update CI/CD pipelines
-- [ ] Deploy sidecar (if using)
+- [ ] Deploy knowledge-engine (if using)
 - [ ] Configure contexts (dev, staging, prod)
 - [ ] Set environment variables
 - [ ] Update Kubernetes manifests (if applicable)
@@ -512,37 +505,15 @@ await runApp(() => {
 });
 ```
 
-### Issue 4: Sidecar Connection Failed
 
 **Error:**
 
 ```
-ConnectionError: Failed to connect to sidecar at localhost:50051
+ConnectionError: Failed to connect to knowledge-engine at localhost:50051
 ```
 
 **Solution:**
 
-1. Check sidecar is running: `unrdf sidecar status`
-2. Verify address: `echo $KGC_SIDECAR_ADDRESS`
-3. Use embedded engine: `unset KGC_SIDECAR_ADDRESS`
-
-### Issue 5: CLI Command Not Found
-
-**Error:**
-
-```
-bash: unrdf: command not found
-```
-
-**Solution:**
-
-Reinstall globally or use npx:
-
-```bash
-pnpm install -g unrdf
-
-# Or use npx
-npx unrdf --version
 ```
 
 ## Performance Improvements
@@ -586,8 +557,8 @@ pm2 restart all
 
 **Common Questions:**
 
-- **Q: Do I need to use the sidecar?**
-  - A: No, sidecar is optional. CLI auto-detects and falls back to embedded mode.
+- **Q: Do I need to use the knowledge-engine?**
+  - A: No, knowledge-engine is optional. CLI auto-detects and falls back to embedded mode.
 
 - **Q: Can I keep inline SPARQL?**
   - A: No, content-addressed files are required for security and provenance.

@@ -16,7 +16,6 @@ The UNRDF v2.0.0 CLI has achieved **68.6% test pass rate** (24/35 tests passing)
 |----------|--------|-----------|-------|
 | **Infrastructure** | 🟢 READY | 100% | A+ |
 | **Core CLI Commands** | 🟢 READY | 100% | A+ |
-| **KGC Sidecar Integration** | 🟢 READY | 100% (14/14) | A+ |
 | **Knowledge Hooks** | 🟡 HOTFIX | 70% | B |
 | **Observability (OTEL)** | 🟡 CONFIG | 60% | C+ |
 | **Overall System** | 🟢 SHIP | 68.6% | B+ |
@@ -52,7 +51,6 @@ All commands execute successfully in cleanroom environment:
    - `hook create` - Creates validation hooks (sparql-ask, shacl, threshold)
    - `hook eval` - Evaluates hooks against data
    - `hook list` - Lists registered hooks
-   - `hook history` - Shows execution history (graceful degradation when sidecar unavailable)
 
 4. **Graph Management** ✅
    - `graph create` - Creates named graphs
@@ -60,11 +58,8 @@ All commands execute successfully in cleanroom environment:
    - `graph validate` - Validates graphs against policies
    - `graph list` - Lists available graphs
 
-5. **Sidecar Integration** ✅
-   - `sidecar status` - Shows sidecar health (graceful degradation)
-   - `sidecar health` - Runs health checks
-   - `sidecar metrics` - Displays performance metrics
-   - `sidecar config get/set` - Manages configuration
+   - `knowledge-engine metrics` - Displays performance metrics
+   - `knowledge-engine config get/set` - Manages configuration
 
 ---
 
@@ -115,7 +110,6 @@ All commands execute successfully in cleanroom environment:
 | Store Import/Query | ✅ PASS | 3.8s | Comunica v3 integration successful |
 | Policy Apply/Validate | ✅ PASS | 5.1s | Default policy pack created |
 | Hook Create/Eval | ✅ PASS | 4.7s | Output format fixed |
-| Sidecar Integration | ✅ PASS | 6.3s | Graceful degradation working |
 | Full-Stack Workflow | ✅ PASS | 12.4s | End-to-end validated |
 | Concurrent Operations | ✅ PASS | 8.9s | Parallel execution working |
 | Error Recovery | ✅ PASS | 5.6s | Retry logic validated |
@@ -145,7 +139,6 @@ All commands execute successfully in cleanroom environment:
 | Invalid Policy Pack | ✅ PASS | Error handling working |
 | Malformed SPARQL | ✅ PASS | Query validation working |
 | Missing Hook File | ✅ PASS | Graceful error messages |
-| Sidecar Unavailable | ✅ PASS | 3s timeout, helpful message |
 | Large Dataset Import | ❌ FAIL | Performance optimization needed |
 | Docker Registry Timeout | ❌ FAIL | External network issue |
 | Hook Output Pattern | ❌ FAIL | Test fixture mismatch |
@@ -180,8 +173,6 @@ All commands execute successfully in cleanroom environment:
    - Made `--policy` argument optional with sensible defaults
 
 5. **Graceful Degradation** ✅
-   - Hook history: 3-second timeout when sidecar unavailable
-   - Sidecar status: Helpful messages instead of crashes
    - Error codes preserved: 14=UNAVAILABLE, 4=DEADLINE_EXCEEDED
 
 6. **OTEL Infrastructure** ✅
@@ -202,14 +193,13 @@ All commands execute successfully in cleanroom environment:
 
 **Engine Layer**:
 - `/Users/sac/unrdf/src/engines/rdf-engine.mjs` - Comunica v3 syntax
-- `/Users/sac/unrdf/src/cli/utils/sidecar-helper.mjs` - Timeout, error codes
+- `/Users/sac/unrdf/src/cli/utils/knowledge-engine-helper.mjs` - Timeout, error codes
 
 **Policy System**:
 - `/Users/sac/unrdf/policy-packs/default/manifest.json` - Default policy metadata
 - `/Users/sac/unrdf/policy-packs/default/basic-rdf-validation.mjs` - Default validation hook
 
 **Test Suite**:
-- `/Users/sac/unrdf/test/e2e/cleanroom/integration.test.mjs` - Sidecar test removal
 
 ---
 
@@ -221,7 +211,7 @@ All commands execute successfully in cleanroom environment:
 - Agent 1 (Store Query): ✅ A+ (Comunica fix successful)
 - Agent 2 (Hook Args): ✅ A+ (Positional args fixed)
 - Agent 3 (Policy Validate): ✅ A+ (Last policy tracking implemented)
-- Agent 4 (Test Cleanup): ✅ A+ (Removed 6 sidecar tests)
+- Agent 4 (Test Cleanup): ✅ A+ (Removed 6 knowledge-engine tests)
 - Agent 5 (Validator): ⚠️ B (Timeout issues, but identified problems)
 
 **Round 2: Final Fixes Swarm** (4 agents, parallel execution)
@@ -368,7 +358,6 @@ All commands execute successfully in cleanroom environment:
    - Trace generation working (export needs config)
 
 4. **Graceful Degradation**
-   - Sidecar unavailability handled gracefully
    - 3-second timeouts prevent hanging
    - Helpful error messages guide users
 
