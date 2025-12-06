@@ -1,0 +1,24 @@
+{
+  "id": "explanation/kgc-4d/overview",
+  "title": "KGC-4D Overview",
+  "description": "Welcome to KGC 4D (Knowledge Graph Composition in 4 Dimensions) - a revolutionary approach to knowledge graph construction combining RDF, event sourcing, and hyperdimensional reasoning.",
+  "source": "@site/docs/explanation/kgc-4d/overview.md",
+  "sourceDirName": "explanation/kgc-4d",
+  "slug": "/explanation/kgc-4d/overview",
+  "permalink": "/unrdf/docs/explanation/kgc-4d/overview",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/seanchatmangpt/unrdf/tree/main/apps/docs-site/docs/explanation/kgc-4d/overview.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "explanationSidebar",
+  "previous": {
+    "title": "Design Patterns",
+    "permalink": "/unrdf/docs/explanation/architecture/design-patterns"
+  },
+  "next": {
+    "title": "Forensic UX",
+    "permalink": "/unrdf/docs/explanation/kgc-4d/forensic-ux"
+  }
+}

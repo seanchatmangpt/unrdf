@@ -6,3 +6,4 @@ packages:
   - 'packages/federation/examples/*'
   - 'packages/streaming/examples/*'
   - 'playground/full-stack-example/apps/*'
+  - 'apps/*'

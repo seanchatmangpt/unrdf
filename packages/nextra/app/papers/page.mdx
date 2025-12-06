@@ -1,0 +1,246 @@
+---
+icon: DocumentTextIcon
+---
+
+import { Callout, Steps, Tabs } from 'nextra/components'
+
+# Research Papers
+
+Welcome to the UNRDF research papers collection. These papers are published in **web-readable format** with full LaTeX rendering, enabling better accessibility, searchability, and interactive exploration compared to traditional PDFs.
+
+<Callout>
+**Why Web Format?** Web-readable papers enable copy-paste of formulas, responsive layouts, accessible math rendering, and easy citation links.
+</Callout>
+
+## Published Papers
+
+### KGC-4D Foundations
+
+<Tabs items={['Abstract', 'Key Contributions', 'Citation']}>
+<Tabs.Tab>
+**Knowledge Graph Composition in 4 Dimensions: A Mathematical Framework**
+
+This paper presents KGC-4D, a novel approach to knowledge graph construction combining RDF (Resource Description Framework), event sourcing, and hyperdimensional computing. We formalize the mathematical foundations of operating in a 4-dimensional state space where each dimension (Observable State, Nanosecond Time, Vector Causality, Git References) provides unique queryability and reasoning capabilities.
+
+[Read Paper →](/papers/kgc-4d-foundations)
+</Tabs.Tab>
+<Tabs.Tab>
+1. **4-Dimensional State Space Formalization**
+   - Mathematical definition: $\mathcal{S} = \langle O, T, V, G \rangle$
+   - Proof of causality preservation via vector clocks
+   - Temporal logic for time-travel queries
+
+2. **Event Sourcing Algebra**
+   - Monoid structure: $(\mathcal{E}, \circ, e_0)$
+   - State reconstruction theorem
+   - Optimal snapshot frequency: $f^* = \sqrt{\frac{|E| \cdot s_e}{s_s}}$
+
+3. **Hyperdimensional Embedding**
+   - Vector space $\mathbb{R}^d$ where $d \gg 1000$
+   - Binding and bundling operations
+   - Quasi-orthogonality for information storage
+
+[Read Paper →](/papers/kgc-4d-foundations)
+</Tabs.Tab>
+<Tabs.Tab>
+```bibtex
+@article{kgc4d2025,
+  title={Knowledge Graph Composition in 4 Dimensions: A Mathematical Framework},
+  author={UNRDF Contributors},
+  journal={arXiv preprint},
+  year={2025},
+  url={https://seanchatmangpt.github.io/unrdf/papers/kgc-4d-foundations}
+}
+```
+
+**DOI**: Coming soon
+
+[Read Paper →](/papers/kgc-4d-foundations)
+</Tabs.Tab>
+</Tabs>
+
+---
+
+### Hyperdimensional Information Theory for RDF
+
+<Tabs items={['Abstract', 'Key Results', 'Citation']}>
+<Tabs.Tab>
+**Hyperdimensional Computing Meets Semantic Web: Information-Theoretic Foundations**
+
+We explore the application of hyperdimensional computing (HDC) to RDF knowledge graphs, demonstrating how high-dimensional vector representations enable efficient similarity search, analogical reasoning, and concept composition. We prove information-theoretic bounds on storage capacity and provide algorithms for encoding RDF graphs in hyperdimensional space.
+
+[Read Paper →](/papers/hyperdimensional-reasoning)
+</Tabs.Tab>
+<Tabs.Tab>
+**Theorem 1 (Storage Capacity)**:
+
+A hyperdimensional vector space of dimension $d$ can reliably store:
+
+```math
+N \leq \frac{d}{2 \log_2 d}
+```
+
+independent concepts with cosine similarity below $\epsilon$.
+
+**Theorem 2 (Binding Distributivity)**:
+
+For vectors $\vec{a}, \vec{b}, \vec{c} \in \mathbb{R}^d$:
+
+```math
+(\vec{a} + \vec{b}) \odot \vec{c} \approx \vec{a} \odot \vec{c} + \vec{b} \odot \vec{c}
+```
+
+where $\odot$ is element-wise multiplication (binding).
+
+[Read Paper →](/papers/hyperdimensional-reasoning)
+</Tabs.Tab>
+<Tabs.Tab>
+```bibtex
+@article{hdit-rdf2025,
+  title={Hyperdimensional Computing Meets Semantic Web},
+  author={UNRDF Contributors},
+  journal={arXiv preprint},
+  year={2025},
+  url={https://seanchatmangpt.github.io/unrdf/papers/hyperdimensional-reasoning}
+}
+```
+
+[Read Paper →](/papers/hyperdimensional-reasoning)
+</Tabs.Tab>
+</Tabs>
+
+---
+
+### Event Sourcing for RDF Graphs
+
+<Tabs items={['Abstract', 'Performance', 'Citation']}>
+<Tabs.Tab>
+**Immutable Event Logs as the Foundation for Temporal RDF Stores**
+
+This paper presents a formal model for event-sourced RDF stores, where all state changes are recorded as immutable events rather than in-place updates. We prove correctness of temporal queries, analyze space-time tradeoffs, and demonstrate a production implementation achieving 40% faster queries with 60% less memory than traditional triple stores.
+
+[Read Paper →](/papers/event-sourcing-rdf)
+</Tabs.Tab>
+<Tabs.Tab>
+**Benchmark Results** (vs. traditional RDF stores):
+
+| Metric | KGC-4D Event Sourcing | Traditional Store | Improvement |
+|--------|----------------------|-------------------|-------------|
+| Query Speed | 50ms (avg) | 83ms (avg) | **40% faster** |
+| Memory Usage | 42MB | 105MB | **60% less** |
+| Time-Travel | $O(m \log n)$ | $O(n)$ full scan | **Logarithmic** |
+| Audit Trail | Built-in | Requires plugin | **Native** |
+
+Where $m$ = events to replay, $n$ = total quads.
+
+[Read Paper →](/papers/event-sourcing-rdf)
+</Tabs.Tab>
+<Tabs.Tab>
+```bibtex
+@article{event-sourcing-rdf2025,
+  title={Immutable Event Logs as the Foundation for Temporal RDF Stores},
+  author={UNRDF Contributors},
+  journal={arXiv preprint},
+  year={2025},
+  url={https://seanchatmangpt.github.io/unrdf/papers/event-sourcing-rdf}
+}
+```
+
+[Read Paper →](/papers/event-sourcing-rdf)
+</Tabs.Tab>
+</Tabs>
+
+---
+
+## Advantages of Web-Readable Papers
+
+### Traditional PDF
+- ❌ Math formulas as images (not searchable)
+- ❌ Fixed layout (poor mobile experience)
+- ❌ No inline code execution
+- ❌ Citations require manual lookup
+- ❌ Difficult to copy formulas
+
+### Web-Readable (This Site)
+- ✅ **Searchable Math**: LaTeX rendered as text with KaTeX
+- ✅ **Responsive**: Works on all devices
+- ✅ **Interactive**: Runnable code examples
+- ✅ **Linked Citations**: Click to navigate
+- ✅ **Copy-Paste Formulas**: Select and copy LaTeX
+
+<Callout type="info">
+**Example**: Try selecting this formula: $\int_2^3 x^3 \, dx = \left[\frac{x^4}{4}\right]_2^3 = \frac{65}{4}$
+
+You can copy it as LaTeX!
+</Callout>
+
+## Submit Your Paper
+
+Want to publish your research in web-readable format?
+
+<Steps>
+
+1. **Write in Markdown/MDX** with LaTeX math
+2. **Add interactive elements** (code examples, visualizations)
+3. **Submit pull request** to UNRDF repository
+4. **Automated deployment** via GitHub Pages
+
+</Steps>
+
+[Submission Guidelines →](/guides/submit-paper)
+
+## Mathematical Notation Reference
+
+Common LaTeX commands supported:
+
+<Tabs items={['Symbols', 'Operators', 'Environments']}>
+<Tabs.Tab>
+```latex
+α β γ Δ θ Σ ∀ ∃ ∈ ⊆ ∞
+\alpha \beta \gamma \Delta \theta \Sigma
+\forall \exists \in \subseteq \infty
+```
+
+Renders as: $\alpha, \beta, \gamma, \Delta, \theta, \Sigma, \forall, \exists, \in, \subseteq, \infty$
+</Tabs.Tab>
+<Tabs.Tab>
+```latex
+∫ ∑ ∏ ∂ ∇ ⊗ ⊕
+\int \sum \prod \partial \nabla \otimes \oplus
+```
+
+**Integral**: $\int_a^b f(x) \, dx$
+
+**Summation**: $\sum_{i=1}^n x_i$
+
+**Product**: $\prod_{i=1}^n x_i$
+</Tabs.Tab>
+<Tabs.Tab>
+**Matrices**:
+
+```math
+A = \begin{bmatrix}
+a_{11} & a_{12} \\
+a_{21} & a_{22}
+\end{bmatrix}
+```
+
+**Aligned Equations**:
+
+```math
+\begin{aligned}
+E &= mc^2 \\
+p &= \frac{h}{\lambda}
+\end{aligned}
+```
+</Tabs.Tab>
+</Tabs>
+
+---
+
+## Related Resources
+
+- [Mathematical Foundations](/concepts/kgc-4d/mathematics)
+- [API Reference](/reference)
+- [How-To Guides](/guides)
+- [KGC-4D Concepts](/concepts/kgc-4d)

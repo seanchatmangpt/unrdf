@@ -38,17 +38,17 @@
     "sparql"
   ],
   "dependencies": {
-    "@unrdf/core": "workspace:5.0.0-beta.1",
-    "@unrdf/federation": "workspace:5.0.0-beta.1",
-    "@unrdf/hooks": "workspace:5.0.0-beta.1",
-    "@unrdf/streaming": "workspace:5.0.0-beta.1",
+    "@unrdf/core": "workspace:*",
+    "@unrdf/federation": "workspace:*",
+    "@unrdf/hooks": "workspace:*",
+    "@unrdf/streaming": "workspace:*",
     "citty": "^0.1.6",
     "table": "^6.9.0",
-    "yaml": "^2.8.1"
+    "yaml": "^2.8.2"
   },
   "devDependencies": {
-    "@types/node": "^20.0.0",
-    "vitest": "^1.0.0"
+    "@types/node": "^24.10.1",
+    "vitest": "^4.0.15"
   },
   "engines": {
     "node": ">=18.0.0"

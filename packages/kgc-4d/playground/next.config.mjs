@@ -2,6 +2,15 @@
 const nextConfig = {
   reactStrictMode: true,
 
+  // Enable static export for GitHub Pages
+  output: 'export',
+
+  // Configure for /unrdf/playground subpath (nested in Nextra site)
+  basePath: process.env.NODE_ENV === 'production' ? '/unrdf/playground' : '',
+  assetPrefix: process.env.NODE_ENV === 'production' ? '/unrdf/playground/' : '',
+  images: { unoptimized: true },
+  trailingSlash: true,
+
   // External packages for server components
   serverExternalPackages: ['@unrdf/oxigraph', 'isomorphic-git'],
 

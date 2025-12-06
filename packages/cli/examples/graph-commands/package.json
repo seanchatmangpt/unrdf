@@ -13,10 +13,10 @@
     "@unrdf/cli": "workspace:*",
     "@unrdf/core": "workspace:*",
     "citty": "^0.1.6",
-    "n3": "^1.23.1",
-    "zod": "^3.24.1"
+    "n3": "^1.26.0",
+    "zod": "^4.1.13"
   },
   "devDependencies": {
-    "vitest": "^2.1.8"
+    "vitest": "^4.0.15"
   }
 }
