@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/domain",
-  "version": "5.0.0-beta.1",
+  "version": "5.0.0-beta.3",
   "description": "Domain models and types for UNRDF",
   "type": "module",
   "main": "./src/index.mjs",
