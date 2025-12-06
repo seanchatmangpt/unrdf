@@ -25,8 +25,7 @@ import { createIndexedDBStore, openIndexedDBStore } from './indexeddb-store.mjs'
 export function isBrowserEnvironment() {
   return (
     typeof window !== 'undefined' &&
-    typeof window.document !== 'undefined' &&
-    typeof indexedDB !== 'undefined'
+    typeof window.document !== 'undefined'
   );
 }
 
