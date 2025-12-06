@@ -1,102 +1,210 @@
-# Welcome to UNRDF
+---
+title: UNRDF v5
+description: RDF Knowledge Graph Substrate Platform
+---
 
-**Universal RDF Framework** - A next-generation toolkit for building knowledge graphs with RDF, event sourcing, and hyperdimensional reasoning.
+# UNRDF v5
 
-## What is UNRDF?
+**RDF Knowledge Graph Substrate Platform**
 
-UNRDF is a comprehensive ecosystem for working with RDF (Resource Description Framework) data in modern JavaScript applications. It combines:
+Production-ready RDF processing with **runtime type safety**, **streaming**, and **Oxigraph WASM** performance.
 
-- **Modern RDF Stack**: Built on Oxigraph (Rust-based WASM triple store)
-- **React Integration**: 40+ React hooks for seamless UI integration
-- **Event Sourcing**: Complete audit trail with time-travel capabilities
-- **Hyperdimensional Reasoning**: KGC-4D for multi-dimensional knowledge composition
-- **Browser & Server**: Isomorphic design works everywhere
+---
 
 ## Quick Start
 
 ```bash
-# Install core package
 pnpm add @unrdf/core
-
-# Or use React hooks
-pnpm add @unrdf/hooks
-
-# Or use KGC-4D
-pnpm add @unrdf/kgc-4d
 ```
 
-## Key Features
+```javascript
+import { createStore, dataFactory } from '@unrdf/core';
 
-### 🚀 Performance
-- WASM-powered Oxigraph for native-speed queries
-- Efficient SPARQL execution
-- Browser and Node.js support
+const store = createStore();
 
-### 🎨 Developer Experience
-- **JSDoc + Zod** for true type safety (today's best practices, not tomorrow's antipatterns)
-- 40+ React hooks for common patterns
-- Runtime validation with Zod schemas
-- Comprehensive error handling
+const quad = dataFactory.quad(
+  dataFactory.namedNode('http://example.org/alice'),
+  dataFactory.namedNode('http://xmlns.com/foaf/0.1/knows'),
+  dataFactory.namedNode('http://example.org/bob')
+);
 
-### 🔍 Production-Ready
-- 250/250 tests passing (100% pass rate)
-- OTEL validation: 100/100 score
-- 0 high-risk failure modes
-- Complete FMEA analysis
+store.add(quad);
+console.log(store.size); // 1
+```
 
-### 📚 Rich Ecosystem
-
-**18 Packages** covering:
-- Core RDF operations
-- React integration
-- Browser storage
-- Federation
-- Streaming updates
-- CLI tools
-- And more...
-
-## Documentation Structure
-
-This documentation is organized into sections:
-
-- **[Getting Started](/guides/getting-started)** - Your first steps with UNRDF
-- **[Guides](/guides)** - Practical tutorials and how-tos
-- **[API Reference](/reference)** - Complete API documentation
-- **[Concepts](/concepts)** - Deep dives into architecture and design
-- **[Examples](/examples)** - Real-world use cases
-
-## Why UNRDF?
-
-Traditional RDF libraries are either:
-- Too low-level (raw triple stores)
-- Too heavy (Java-based)
-- Not React-friendly
-- Missing modern features
-
-UNRDF bridges the gap with:
-
-✅ **Modern JavaScript with JSDoc + Zod**
-✅ **React-first design**
-✅ **Event sourcing built-in**
-✅ **Production-grade quality**
-✅ **Comprehensive documentation**
-
-## Next Steps
-
-Choose your path:
-
-- **New to RDF?** → Start with [Getting Started Guide](/guides/getting-started)
-- **React Developer?** → Check out [React Hooks](/guides/react-hooks)
-- **Need KGC-4D?** → Read [KGC-4D Overview](/concepts/kgc-4d/overview)
-- **Want Examples?** → Browse [Examples](/examples)
-
-## Resources
-
-- **GitHub**: [github.com/seanchatmangpt/unrdf](https://github.com/seanchatmangpt/unrdf)
-- **Packages**: 18 packages in monorepo
-- **Tests**: 250+ passing tests
-- **Coverage**: 80%+ code coverage
+[Get Started →](/guides/installation)
 
 ---
 
-**Status**: Production Ready ✅ | **Version**: 5.0.0-beta.1 | **License**: MIT
+## Features
+
+### 🛡️ Runtime Type Safety
+**Zod schemas** validate all RDF operations at runtime. No silent failures.
+
+```javascript
+import { QuadSchema } from '@unrdf/core';
+
+QuadSchema.parse(quad); // ✅ Runtime validation
+```
+
+### ⚡ Oxigraph Performance
+**WASM-powered** triple store with native performance. 1M+ quads/second.
+
+### 🌊 Stream Processing
+**Transform streams** for processing datasets of any size without memory limits.
+
+```javascript
+import { N3Parser } from '@unrdf/streaming';
+
+readStream.pipe(new N3Parser()).pipe(store);
+```
+
+### ⚛️ React Integration
+**Hooks** for seamless React integration with suspense and concurrent mode.
+
+```javascript
+import { useStore, useQuery } from '@unrdf/hooks';
+```
+
+### 🔗 Federation
+**Distributed queries** across multiple SPARQL endpoints and stores.
+
+```javascript
+import { FederatedStore } from '@unrdf/federation';
+```
+
+### 🧠 Reasoning
+**OWL-RL inference** engine with custom rule support.
+
+```javascript
+import { OWLRLReasoner } from '@unrdf/knowledge-engine';
+```
+
+---
+
+## Architecture
+
+UNRDF v5 follows the **MJS + JSDoc + Zod** paradigm:
+
+- **No TypeScript in source** - Zero build step, direct execution
+- **Zod for validation** - Runtime type safety
+- **JSDoc for hints** - IDE autocomplete and hints
+- **ESM modules** - Modern JavaScript standards
+
+[Learn More →](/concepts/architecture)
+
+---
+
+## Packages
+
+### Core
+- **[@unrdf/core](/api/core)** - RDF store, quads, validation
+- **[@unrdf/oxigraph](/api/oxigraph)** - Oxigraph WASM bindings
+
+### Processing
+- **[@unrdf/streaming](/api/streaming)** - Transform streams for RDF
+- **[@unrdf/federation](/api/federation)** - Distributed queries
+- **[@unrdf/knowledge-engine](/api/knowledge-engine)** - OWL-RL reasoning
+
+### Application
+- **[@unrdf/hooks](/api/hooks)** - React hooks
+- **[@unrdf/cli](/api/cli)** - Command-line tools
+
+[API Reference →](/api)
+
+---
+
+## Examples
+
+### Create a Knowledge Graph
+
+```javascript
+import { createStore, dataFactory } from '@unrdf/core';
+
+const store = createStore();
+const { namedNode, literal, quad } = dataFactory;
+
+// Vocabulary helpers
+const foaf = (t) => namedNode(`http://xmlns.com/foaf/0.1/${t}`);
+const ex = (t) => namedNode(`http://example.org/${t}`);
+
+// Add facts
+store.add(quad(ex('alice'), foaf('name'), literal('Alice')));
+store.add(quad(ex('alice'), foaf('knows'), ex('bob')));
+store.add(quad(ex('bob'), foaf('name'), literal('Bob')));
+
+// Query
+const results = store.match(ex('alice'), foaf('knows'), null);
+
+for (const quad of results) {
+  console.log(quad.object.value); // http://example.org/bob
+}
+```
+
+[More Examples →](/examples)
+
+---
+
+## Documentation
+
+### [Guides](/guides)
+Step-by-step tutorials to get started:
+- [Installation](/guides/installation)
+- [Quick Start](/guides/quick-start)
+
+### [API Reference](/api)
+Complete API documentation for all packages
+
+### [Concepts](/concepts)
+Deep dives into architecture and design:
+- [Architecture](/concepts/architecture)
+- [RDF Fundamentals](/concepts/rdf-fundamentals)
+
+### [Examples](/examples)
+Interactive code playground with executable examples
+
+---
+
+## Why UNRDF?
+
+| Feature | UNRDF v5 | N3.js | rdflib.js |
+|---------|----------|-------|-----------|
+| **Runtime Validation** | ✅ Zod | ❌ | ❌ |
+| **WASM Performance** | ✅ Oxigraph | ❌ | ❌ |
+| **Stream Processing** | ✅ Native | ✅ | ⚠️ Limited |
+| **React Hooks** | ✅ | ❌ | ❌ |
+| **TypeScript** | ✅ JSDoc | ✅ | ⚠️ Partial |
+| **Bundle Size** | 50KB | 120KB | 250KB |
+
+---
+
+## Principles
+
+### 1. **Adversarial PM**
+Question everything. Demand evidence. Measure, don't assume.
+
+### 2. **Big Bang 80/20**
+Single-pass implementation using proven patterns. 20% effort = 80% value.
+
+### 3. **OTEL Validation**
+OpenTelemetry spans are the source of truth. Agent claims require ≥80/100 validation.
+
+[Learn More →](/concepts/kgc-4d)
+
+---
+
+## Community
+
+- **GitHub**: [unrdf/unrdf](https://github.com/unrdf/unrdf)
+- **Issues**: [Report bugs](https://github.com/unrdf/unrdf/issues)
+- **Discussions**: [Ask questions](https://github.com/unrdf/unrdf/discussions)
+
+---
+
+## License
+
+MIT © UNRDF Contributors
+
+---
+
+**Ready to build?** [Get Started →](/guides/installation)

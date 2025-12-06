@@ -1,0 +1,10 @@
+{
+  "page": "API Reference",
+  "core": "@unrdf/core",
+  "hooks": "@unrdf/hooks",
+  "streaming": "@unrdf/streaming",
+  "federation": "@unrdf/federation",
+  "oxigraph": "@unrdf/oxigraph",
+  "cli": "@unrdf/cli",
+  "knowledge-engine": "Knowledge Engine"
+}
