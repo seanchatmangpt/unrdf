@@ -22,9 +22,10 @@
     "LICENSE"
   ],
   "scripts": {
-    "test": "vitest run --coverage",
-    "test:fast": "vitest run --coverage",
-    "test:watch": "vitest --coverage",
+    "test": "vitest run --no-coverage",
+    "test:coverage": "vitest run --coverage",
+    "test:fast": "vitest run --no-coverage",
+    "test:watch": "vitest --no-coverage",
     "build": "node build.config.mjs",
     "lint": "eslint src/ test/ --max-warnings=0",
     "lint:fix": "eslint src/ test/ --fix",

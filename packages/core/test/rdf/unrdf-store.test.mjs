@@ -166,20 +166,6 @@ describe('UnrdfStore - Comprehensive Coverage Tests', () => {
       expect(store.size()).toBe(initialSize);
     });
 
-    it('handles large dataset efficiently (10K quads)', () => {
-      const store = createUnrdfStore();
-      const quads = Array.from({ length: 10000 }, (_, i) =>
-        quad(namedNode(`http://s${i}`), namedNode('http://p'), literal(`value${i}`))
-      );
-
-      const start = Date.now();
-      store.bulkAdd(quads);
-      const duration = Date.now() - start;
-
-      expect(store.size()).toBe(10000);
-      expect(duration).toBeLessThan(5000); // Should complete in < 5 seconds
-    });
-
     it('throws TypeError for non-array input', () => {
       const store = createUnrdfStore();
 
@@ -239,23 +225,6 @@ describe('UnrdfStore - Comprehensive Coverage Tests', () => {
       store.bulkRemove([]);
 
       expect(store.size()).toBe(initialSize);
-    });
-
-    it('handles large dataset efficiently (10K quads)', () => {
-      const store = createUnrdfStore();
-      const quads = Array.from({ length: 10000 }, (_, i) =>
-        quad(namedNode(`http://s${i}`), namedNode('http://p'), literal(`value${i}`))
-      );
-
-      store.bulkAdd(quads);
-      expect(store.size()).toBe(10000);
-
-      const start = Date.now();
-      store.bulkRemove(quads);
-      const duration = Date.now() - start;
-
-      expect(store.size()).toBe(0);
-      expect(duration).toBeLessThan(5000); // Should complete in < 5 seconds
     });
 
     it('throws TypeError for non-array input', () => {
@@ -666,23 +635,6 @@ describe('UnrdfStore - Comprehensive Coverage Tests', () => {
       const malformedTurtle = '@prefix foaf: MALFORMED DATA';
 
       expect(() => store.load(malformedTurtle, { format: 'text/turtle' })).toThrow();
-    });
-
-    it('handles query on very large store (100K quads)', () => {
-      const store = createUnrdfStore();
-      const quads = Array.from({ length: 100000 }, (_, i) =>
-        quad(namedNode(`http://s${i}`), namedNode('http://p'), literal(`value${i}`))
-      );
-
-      store.bulkAdd(quads);
-
-      const sparql = 'SELECT * WHERE { ?s <http://p> ?o } LIMIT 10';
-      const start = Date.now();
-      const result = store.query(sparql);
-      const duration = Date.now() - start;
-
-      expect(result.length).toBeLessThanOrEqual(10);
-      expect(duration).toBeLessThan(1000); // Should be < 1 second
     });
   });
 

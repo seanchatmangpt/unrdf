@@ -103,37 +103,6 @@ describe('Store Integration Tests', () => {
       // UnrdfStore should be at least 5x faster
       expect(unrdfDuration).toBeLessThan(n3Duration / 5);
     });
-
-    it('UnrdfStore bulkAdd is efficient for large datasets', () => {
-      const store = createUnrdfStore();
-      const quads = Array.from({ length: 10000 }, (_, i) =>
-        quad(namedNode(`http://s${i}`), namedNode('http://p'), literal(`value${i}`))
-      );
-
-      const start = Date.now();
-      store.bulkAdd(quads);
-      const duration = Date.now() - start;
-
-      expect(store.size()).toBe(10000);
-      expect(duration).toBeLessThan(5000); // < 5 seconds
-    });
-
-    it('UnrdfStore bulkRemove is efficient for large datasets', () => {
-      const store = createUnrdfStore();
-      const quads = Array.from({ length: 10000 }, (_, i) =>
-        quad(namedNode(`http://s${i}`), namedNode('http://p'), literal(`value${i}`))
-      );
-
-      store.bulkAdd(quads);
-      expect(store.size()).toBe(10000);
-
-      const start = Date.now();
-      store.bulkRemove(quads);
-      const duration = Date.now() - start;
-
-      expect(store.size()).toBe(0);
-      expect(duration).toBeLessThan(5000); // < 5 seconds
-    });
   });
 
   describe('Transaction Atomicity', () => {

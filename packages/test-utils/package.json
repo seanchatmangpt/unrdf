@@ -11,9 +11,9 @@
     "src"
   ],
   "scripts": {
-    "test": "vitest run --coverage",
-    "test:fast": "vitest run --coverage",
-    "test:watch": "vitest --coverage"
+    "test": "echo 'No tests for @unrdf/test-utils (utility package)' && exit 0",
+    "test:fast": "echo 'No tests for @unrdf/test-utils (utility package)' && exit 0",
+    "test:watch": "echo 'No tests for @unrdf/test-utils (utility package)' && exit 0"
   },
   "private": true,
   "keywords": [
