@@ -1,0 +1,129 @@
+---
+name: Word Report Template
+description: Professional Word document report with sections and formatting
+version: 1.0.0
+type: document
+category: office
+outputFormat: docx
+variables:
+  title: Document title
+  author: Document author
+  date: Document date (defaults to current)
+  abstract: Executive summary or abstract
+  sections: Array of section objects with title, content, subsections
+  appendices: Array of appendix sections
+  includeTableOfContents: Include TOC (default: true)
+  includePageNumbers: Include page numbers (default: true)
+  references: Bibliography references
+---
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <w:body>
+    {# Title Page #}
+    <w:p>
+      <w:pPr><w:jc w:val="center"/><w:spacing w:before="240" w:after="240"/></w:pPr>
+      <w:r>
+        <w:rPr><w:b/><w:sz w:val="48"/></w:rPr>
+        <w:t>{{ title }}</w:t>
+      </w:r>
+    </w:p>
+
+    {% if author %}
+    <w:p>
+      <w:pPr><w:jc w:val="center"/></w:pPr>
+      <w:r>
+        <w:rPr><w:sz w:val="24"/></w:rPr>
+        <w:t>{{ author }}</w:t>
+      </w:r>
+    </w:p>
+    {% endif %}
+
+    <w:p>
+      <w:pPr><w:jc w:val="center"/></w:pPr>
+      <w:r>
+        <w:t>{{ date | default(now() | date('MMMM d, yyyy')) }}</w:t>
+      </w:r>
+    </w:p>
+
+    {# Page Break #}
+    <w:p><w:r><w:br w:type="page"/></w:r></w:p>
+
+    {# Table of Contents #}
+    {% if includeTableOfContents %}
+    <w:p>
+      <w:pPr><w:pStyle w:val="Heading1"/></w:pPr>
+      <w:r><w:t>Table of Contents</w:t></w:r>
+    </w:p>
+    <w:p>
+      <w:r><w:fldSimple w:instr="TOC \o &quot;1-3&quot; \h \z \u"/></w:r>
+    </w:p>
+    <w:p><w:r><w:br w:type="page"/></w:r></w:p>
+    {% endif %}
+
+    {# Abstract #}
+    {% if abstract %}
+    <w:p>
+      <w:pPr><w:pStyle w:val="Heading1"/></w:pPr>
+      <w:r><w:t>Abstract</w:t></w:r>
+    </w:p>
+    <w:p>
+      <w:r><w:t>{{ abstract }}</w:t></w:r>
+    </w:p>
+    <w:p><w:r><w:br w:type="page"/></w:r></w:p>
+    {% endif %}
+
+    {# Main Content Sections #}
+    {% for section in sections %}
+    <w:p>
+      <w:pPr><w:pStyle w:val="Heading1"/></w:pPr>
+      <w:r><w:t>{{ loop.index }}. {{ section.title }}</w:t></w:r>
+    </w:p>
+
+    {% if section.content %}
+    <w:p>
+      <w:r><w:t>{{ section.content }}</w:t></w:r>
+    </w:p>
+    {% endif %}
+
+    {% if section.subsections %}
+      {% for subsection in section.subsections %}
+      <w:p>
+        <w:pPr><w:pStyle w:val="Heading2"/></w:pPr>
+        <w:r><w:t>{{ loop.parent.loop.index }}.{{ loop.index }} {{ subsection.title }}</w:t></w:r>
+      </w:p>
+      <w:p>
+        <w:r><w:t>{{ subsection.content }}</w:t></w:r>
+      </w:p>
+      {% endfor %}
+    {% endif %}
+    {% endfor %}
+
+    {# References #}
+    {% if references %}
+    <w:p><w:r><w:br w:type="page"/></w:r></w:p>
+    <w:p>
+      <w:pPr><w:pStyle w:val="Heading1"/></w:pPr>
+      <w:r><w:t>References</w:t></w:r>
+    </w:p>
+    {% for ref in references %}
+    <w:p>
+      <w:r><w:t>[{{ loop.index }}] {{ ref }}</w:t></w:r>
+    </w:p>
+    {% endfor %}
+    {% endif %}
+
+    {# Appendices #}
+    {% if appendices %}
+    {% for appendix in appendices %}
+    <w:p><w:r><w:br w:type="page"/></w:r></w:p>
+    <w:p>
+      <w:pPr><w:pStyle w:val="Heading1"/></w:pPr>
+      <w:r><w:t>Appendix {{ loop.index | alpha | upper }}: {{ appendix.title }}</w:t></w:r>
+    </w:p>
+    <w:p>
+      <w:r><w:t>{{ appendix.content }}</w:t></w:r>
+    </w:p>
+    {% endfor %}
+    {% endif %}
+  </w:body>
+</w:document>

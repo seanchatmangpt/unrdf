@@ -1,0 +1,368 @@
+---
+name: Microsoft Word Document Template
+description: Professional Word document with headers, footers, and structured content
+version: 1.0.0
+type: document
+category: office
+format: docx
+variables:
+  title: Document title
+  author: Document author name
+  company: Company or organization name
+  date: Document date (optional, defaults to current date)
+  sections: Array of document sections with title and content
+  includeHeader: Include document header with title (default: true)
+  includeFooter: Include document footer with page numbers (default: true)
+  pageSize: Page size (default: A4)
+  margins: Page margins configuration
+---
+{
+  "document": {
+    "creator": "{{ author | default('Unknown') }}",
+    "title": "{{ title }}",
+    "subject": "{{ title }}",
+    "keywords": "{{ keywords | join(', ') if keywords else '' }}",
+    "sections": [
+      {
+        "properties": {
+          "page": {
+            "size": {
+              "orientation": "portrait"{% if pageSize == 'letter' %},
+              "width": 612,
+              "height": 792{% else %},
+              "width": 595,
+              "height": 842{% endif %}
+            },
+            "margin": {
+              "top": {{ margins.top | default(1440) }},
+              "right": {{ margins.right | default(1440) }},
+              "bottom": {{ margins.bottom | default(1440) }},
+              "left": {{ margins.left | default(1440) }},
+              "header": {{ margins.header | default(720) }},
+              "footer": {{ margins.footer | default(720) }}
+            }
+          }
+        },
+        {% if includeHeader !== false -%}
+        "headers": {
+          "default": {
+            "options": {},
+            "children": [
+              {
+                "type": "paragraph",
+                "alignment": "center",
+                "children": [
+                  {
+                    "type": "textRun",
+                    "text": "{{ title }}",
+                    "font": {
+                      "name": "Calibri",
+                      "size": 24
+                    },
+                    "bold": true
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {% endif -%}
+        {% if includeFooter !== false -%}
+        "footers": {
+          "default": {
+            "options": {},
+            "children": [
+              {
+                "type": "paragraph",
+                "alignment": "center",
+                "children": [
+                  {
+                    "type": "textRun",
+                    "text": "Page ",
+                    "font": {
+                      "name": "Calibri",
+                      "size": 20
+                    }
+                  },
+                  {
+                    "type": "pageNumber"
+                  },
+                  {
+                    "type": "textRun",
+                    "text": " of ",
+                    "font": {
+                      "name": "Calibri",
+                      "size": 20
+                    }
+                  },
+                  {
+                    "type": "numberOfPages"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {% endif -%}
+        "children": [
+          {
+            "type": "paragraph",
+            "alignment": "center",
+            "spacing": {
+              "after": 400
+            },
+            "children": [
+              {
+                "type": "textRun",
+                "text": "{{ title }}",
+                "font": {
+                  "name": "Calibri",
+                  "size": 32
+                },
+                "bold": true
+              }
+            ]
+          },
+          {% if author or company or date -%}
+          {
+            "type": "paragraph",
+            "alignment": "center",
+            "spacing": {
+              "after": 600
+            },
+            "children": [
+              {% if author -%}
+              {
+                "type": "textRun",
+                "text": "{{ author }}",
+                "font": {
+                  "name": "Calibri",
+                  "size": 24
+                }
+              }{% if company %},
+              {
+                "type": "textRun",
+                "text": "\n{{ company }}",
+                "font": {
+                  "name": "Calibri",
+                  "size": 20
+                }
+              }{% endif %}{% if date %},
+              {
+                "type": "textRun",
+                "text": "\n{{ date | formatDate | default(timestamp | formatDate) }}",
+                "font": {
+                  "name": "Calibri",
+                  "size": 18
+                }
+              }{% endif %}
+              {% endif %}
+            ]
+          },
+          {% endif -%}
+          {% for section in sections %}
+          {
+            "type": "paragraph",
+            "spacing": {
+              "before": 400,
+              "after": 200
+            },
+            "children": [
+              {
+                "type": "textRun",
+                "text": "{{ section.title }}",
+                "font": {
+                  "name": "Calibri",
+                  "size": 28
+                },
+                "bold": true
+              }
+            ]
+          },
+          {% if section.content %}
+            {% if section.content is string %}
+            {
+              "type": "paragraph",
+              "alignment": "justify",
+              "spacing": {
+                "line": 360,
+                "after": 200
+              },
+              "children": [
+                {
+                  "type": "textRun",
+                  "text": "{{ section.content }}",
+                  "font": {
+                    "name": "Calibri",
+                    "size": 22
+                  }
+                }
+              ]
+            },
+            {% else %}
+              {% for paragraph in section.content %}
+              {
+                "type": "paragraph",
+                "alignment": "justify",
+                "spacing": {
+                  "line": 360,
+                  "after": 200
+                },
+                "children": [
+                  {
+                    "type": "textRun",
+                    "text": "{{ paragraph.text if paragraph.text else paragraph }}",
+                    "font": {
+                      "name": "Calibri",
+                      "size": 22
+                    }{% if paragraph.bold %},
+                    "bold": true{% endif %}{% if paragraph.italic %},
+                    "italic": true{% endif %}
+                  }
+                ]
+              },
+              {% endfor %}
+            {% endif %}
+          {% endif %}
+          {% if section.list %}
+          {
+            "type": "paragraph",
+            "children": []
+          },
+          {% for item in section.list %}
+          {
+            "type": "paragraph",
+            "numbering": {
+              "reference": "bullet-points",
+              "level": 0
+            },
+            "children": [
+              {
+                "type": "textRun",
+                "text": "{{ item.text if item.text else item }}",
+                "font": {
+                  "name": "Calibri",
+                  "size": 22
+                }
+              }
+            ]
+          },
+          {% endfor %}
+          {% endif %}
+          {% if section.table %}
+          {
+            "type": "table",
+            "rows": [
+              {
+                "children": [
+                  {% for header in section.table.headers %}
+                  {
+                    "children": [
+                      {
+                        "type": "paragraph",
+                        "children": [
+                          {
+                            "type": "textRun",
+                            "text": "{{ header }}",
+                            "font": {
+                              "name": "Calibri",
+                              "size": 22
+                            },
+                            "bold": true
+                          }
+                        ]
+                      }
+                    ],
+                    "shading": {
+                      "fill": "DDDDDD"
+                    }
+                  }{% if not loop.last %},{% endif %}
+                  {% endfor %}
+                ]
+              },
+              {% for row in section.table.rows %}
+              {
+                "children": [
+                  {% for cell in row %}
+                  {
+                    "children": [
+                      {
+                        "type": "paragraph",
+                        "children": [
+                          {
+                            "type": "textRun",
+                            "text": "{{ cell }}",
+                            "font": {
+                              "name": "Calibri",
+                              "size": 22
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }{% if not loop.last %},{% endif %}
+                  {% endfor %}
+                ]
+              }{% if not loop.last %},{% endif %}
+              {% endfor %}
+            ]
+          },
+          {% endif %}
+          {% endfor %}
+          {% if conclusion %}
+          {
+            "type": "paragraph",
+            "spacing": {
+              "before": 600,
+              "after": 200
+            },
+            "children": [
+              {
+                "type": "textRun",
+                "text": "Conclusion",
+                "font": {
+                  "name": "Calibri",
+                  "size": 28
+                },
+                "bold": true
+              }
+            ]
+          },
+          {
+            "type": "paragraph",
+            "alignment": "justify",
+            "spacing": {
+              "line": 360
+            },
+            "children": [
+              {
+                "type": "textRun",
+                "text": "{{ conclusion }}",
+                "font": {
+                  "name": "Calibri",
+                  "size": 22
+                }
+              }
+            ]
+          }
+          {% endif %}
+        ]
+      }
+    ],
+    "numbering": {
+      "config": [
+        {
+          "reference": "bullet-points",
+          "levels": [
+            {
+              "level": 0,
+              "format": "bullet",
+              "text": "•",
+              "alignment": "left"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
