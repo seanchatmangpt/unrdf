@@ -13,6 +13,7 @@ import { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useEntity, useDelta } from '../lib/client/hooks.mjs';
 import { Save, AlertCircle, CheckCircle, Loader2, Edit3 } from 'lucide-react';
+import { AutonomicCoach } from './visualizations/AutonomicCoach.jsx';
 
 function PropertyEditor({ name, property, onSave, saving }) {
   const [editing, setEditing] = useState(false);
@@ -104,16 +105,56 @@ export function EntityEditor({ entityUri }) {
   const { properties, loading, update } = useEntity(entityUri);
   const { hasPending, lastResult } = useDelta();
   const [saving, setSaving] = useState(false);
+  const [coachingRejection, setCoachingRejection] = useState(null);
 
   const handleSave = useCallback(
     async (predicate, newValue) => {
       setSaving(true);
       const result = await update(predicate, newValue);
       setSaving(false);
+
+      // Phase 3: Show AutonomicCoach on rejection
+      if (!result.success && result.coaching) {
+        setCoachingRejection({
+          reason: result.error,
+          coaching: result.coaching,
+          predicate,
+          attemptedValue: newValue,
+        });
+      }
+
       return result;
     },
     [update]
   );
+
+  const handleCoachRetry = useCallback(
+    async (correctedDelta) => {
+      setCoachingRejection(null);
+      // Auto-retry with corrected value
+      if (correctedDelta && correctedDelta.suggestedValue) {
+        const predicate = coachingRejection.predicate;
+        setSaving(true);
+        const result = await update(predicate, correctedDelta.suggestedValue);
+        setSaving(false);
+
+        // If still rejected, show coach again
+        if (!result.success && result.coaching) {
+          setCoachingRejection({
+            reason: result.error,
+            coaching: result.coaching,
+            predicate,
+            attemptedValue: correctedDelta.suggestedValue,
+          });
+        }
+      }
+    },
+    [update, coachingRejection]
+  );
+
+  const handleCoachDismiss = useCallback(() => {
+    setCoachingRejection(null);
+  }, []);
 
   if (loading && Object.keys(properties).length === 0) {
     return (
@@ -195,6 +236,13 @@ export function EntityEditor({ entityUri }) {
           </ul>
         </div>
       </div>
+
+      {/* Phase 3: AutonomicCoach Modal */}
+      <AutonomicCoach
+        rejection={coachingRejection}
+        onRetry={handleCoachRetry}
+        onDismiss={handleCoachDismiss}
+      />
     </div>
   );
 }

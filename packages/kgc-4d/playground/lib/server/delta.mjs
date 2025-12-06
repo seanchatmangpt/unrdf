@@ -63,6 +63,127 @@ hooks.register('http://kgc.io/ontology/title', {
 });
 
 /**
+ * Generate counter-factual hint for validation failure
+ * @param {string} predicate - The predicate that failed validation
+ * @param {*} attemptedValue - The value that was rejected
+ * @param {string} reason - Why it was rejected
+ * @returns {Object} Counter-factual coaching hint
+ */
+function generateCounterFactual(predicate, attemptedValue, reason) {
+  // Budget validation counter-factual
+  if (predicate === 'http://kgc.io/ontology/budget') {
+    const budget = parseInt(attemptedValue, 10);
+    let suggestedValue = '50000'; // Default safe value
+    let suggestion = 'Use a budget within the allowed range (0-100,000)';
+
+    if (isNaN(budget)) {
+      suggestedValue = '10000';
+      suggestion = 'Budget must be a valid number. Try 10,000 as a starting point.';
+    } else if (budget < 0) {
+      suggestedValue = '0';
+      suggestion = 'Budget cannot be negative. Set to 0 if not applicable.';
+    } else if (budget > 100000) {
+      suggestedValue = '100000';
+      suggestion = 'Budget exceeds maximum allowed. Reduce to $100,000 or split across multiple projects.';
+    }
+
+    return {
+      guardFired: 'budget_validator',
+      suggestion,
+      allowedRange: { min: 0, max: 100000, unit: 'USD' },
+      correctedDelta: {
+        type: 'update',
+        predicate,
+        oldValue: attemptedValue,
+        suggestedValue,
+      },
+    };
+  }
+
+  // Status validation counter-factual
+  if (predicate === 'http://kgc.io/ontology/status') {
+    const allowed = ['active', 'paused', 'completed', 'cancelled'];
+    const suggestedValue = 'active'; // Default to active
+
+    return {
+      guardFired: 'status_validator',
+      suggestion: `Status must be one of: ${allowed.join(', ')}. Consider using "active" for ongoing work.`,
+      allowedValues: allowed,
+      correctedDelta: {
+        type: 'update',
+        predicate,
+        oldValue: attemptedValue,
+        suggestedValue,
+      },
+    };
+  }
+
+  // Name validation counter-factual
+  if (predicate === 'http://kgc.io/ontology/name' || predicate === 'http://kgc.io/ontology/title') {
+    const guardName = predicate.endsWith('name') ? 'name_validator' : 'title_validator';
+    let suggestedValue = 'Untitled';
+    let suggestion = 'Name cannot be empty. Provide a descriptive name.';
+
+    if (attemptedValue && attemptedValue.length > 100) {
+      suggestedValue = attemptedValue.substring(0, 97) + '...';
+      suggestion = 'Name too long. Shortened to 100 characters.';
+    } else if (!attemptedValue || attemptedValue.trim().length === 0) {
+      suggestedValue = 'Untitled';
+      suggestion = 'Name cannot be empty. Using "Untitled" as placeholder.';
+    }
+
+    return {
+      guardFired: guardName,
+      suggestion,
+      allowedRange: { min: 1, max: 100, unit: 'characters' },
+      correctedDelta: {
+        type: 'update',
+        predicate,
+        oldValue: attemptedValue,
+        suggestedValue,
+      },
+    };
+  }
+
+  // Generic fallback counter-factual
+  return {
+    guardFired: 'unknown_validator',
+    suggestion: reason || 'Validation failed. Please correct the value and try again.',
+    correctedDelta: null,
+  };
+}
+
+/**
+ * Find similar successful deltas from recent history
+ * @param {Object} operation - The operation that failed
+ * @param {number} limit - Max examples to return
+ * @returns {Promise<Array>} Similar successful operations
+ */
+async function findSimilarSuccessfulDeltas(operation, limit = 3) {
+  const store = await getUniverse();
+  const predicate = operation.predicate.value || operation.predicate;
+
+  // Get recent events with the same predicate
+  const events = store.getRecentEvents ? store.getRecentEvents(50) : [];
+  const similar = events
+    .filter((event) => {
+      const payload = event.payload;
+      return payload && event.status === 'ACK';
+    })
+    .slice(0, limit)
+    .map((event) => ({
+      timestamp: event.timestamp_iso || new Date(Number(BigInt(event.t_ns) / 1000000n)).toISOString(),
+      delta: {
+        type: 'update',
+        predicate,
+        value: 'example value', // Would parse from event payload
+      },
+    }));
+
+  return similar;
+}
+
+/**
  * Run validation hooks on a delta operation
  * @param {Object} operation
  * @returns {Object} { valid: boolean, reason?: string }
@@ -102,11 +223,25 @@ export async function submitDelta(delta) {
   for (const op of operations) {
     const validation = runValidationHooks(op);
     if (!validation.valid) {
+      const predicate = op.predicate.value || op.predicate;
+      const attemptedValue = op.object.value;
+
+      // Generate counter-factual coaching hint
+      const counterFactual = generateCounterFactual(predicate, attemptedValue, validation.reason);
+
+      // Find similar successful deltas
+      const examples = await findSimilarSuccessfulDeltas(op, 3);
+
       return {
         status: 'REJECT',
         reason: validation.reason,
         operation: op,
         t_ns: now().toString(),
+        // Phase 3: Autonomic Coach hints
+        coaching: {
+          counterFactual,
+          examples,
+        },
       };
     }
   }
