@@ -36,9 +36,8 @@
     "web"
   ],
   "dependencies": {
-    "@unrdf/browser": "workspace:*",
-    "@unrdf/core": "workspace:*",
-    "@unrdf/streaming": "workspace:*",
+    "@unrdf/core": "workspace:5.0.0-beta.1",
+    "@unrdf/streaming": "workspace:5.0.0-beta.1",
     "vue": "^3.5.25"
   },
   "peerDependencies": {

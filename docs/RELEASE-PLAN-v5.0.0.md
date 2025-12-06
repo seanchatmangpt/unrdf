@@ -1,22 +1,22 @@
 # UNRDF v5.0.0 Release Plan
 
-**Status**: 📋 Planning
+**Status**: 🚧 Beta Testing (beta.1 released)
 **Target Release**: Q1 2026
-**Current Version**: 5.0.0-alpha.0
+**Current Version**: 5.0.0-beta.1
 **Release Type**: Major Version (Breaking Changes)
 
 ---
 
 ## Executive Summary
 
-UNRDF v5.0.0 represents a transformational release with **100% Oxigraph compliance**, **40% performance improvements**, and **production-ready architecture**. Based on analysis of the last 25 commits, the project has achieved critical milestones:
+UNRDF v5.0.0 represents a transformational release with **100% Oxigraph compliance** and **production-ready architecture**. Beta.1 has been released with verified milestones:
 
 - ✅ **100% N3 compliance** (851/851 files migrated to Oxigraph)
-- ✅ **Production readiness** (85/100 score, FMEA analysis complete)
+- ✅ **Tests verified**: 190 tests passing (core 166, CLI 24)
+- ✅ **OTEL validation**: 83/100 (5/6 features passing)
 - ✅ **Comprehensive documentation** (160+ files across Phases 2-4)
-- ✅ **Performance gains** (40% faster queries, 60% lower memory)
+- ⚠️ **Performance gains**: 40% faster queries, 60% lower memory (not yet benchmarked)
 - ✅ **Critical CLI commands** (5 stub commands implemented)
-- ✅ **Quality gates** (Guards, OTEL validation, benchmarks)
 
 ---
 
@@ -27,7 +27,7 @@ UNRDF v5.0.0 represents a transformational release with **100% Oxigraph complian
 **Focus**: Validation, bug fixes, version alignment
 
 #### Week 1-2: Version Alignment & Package Sync
-- [ ] Bump all packages to 5.0.0-beta.1
+- [x] Bump all packages to 5.0.0-beta.1 (DONE)
   - [ ] `@unrdf/react`: 4.1.1 → 5.0.0-beta.1
   - [ ] `@unrdf/knowledge-engine`: 2.0.0-alpha.0 → 5.0.0-beta.1
   - [ ] `@unrdf/dark-matter`: 1.0.0-alpha.0 → 5.0.0-beta.1
@@ -254,32 +254,35 @@ All Packages → 5.0.0 (stable)
 
 ## Quality Gates
 
-### Gate 1: Test Coverage ✅
+### Gate 1: Test Coverage ⚠️
 **Target**: 80%+ coverage, 100% pass rate
-**Current**: 330/330 tests passing
+**Current**: 190 tests passing (verified), more exist but untested
 
 **Validation**:
 ```bash
+# Individual test execution (works)
+npx vitest run --no-coverage test/core.test.mjs
+# Recursive test execution (hangs - known issue)
 timeout 60s pnpm test
-# Expected: All tests pass, no flaky tests
 ```
 
-**Status**: ✅ PASSING
+**Status**: ⚠️ PARTIAL (tests work, pnpm -r test hangs)
 
 ---
 
 ### Gate 2: OTEL Validation ✅
 **Target**: Score ≥80/100
-**Current**: Validation framework in place
+**Current**: 83/100 (5/6 features passing)
 
 **Validation**:
 ```bash
-timeout 10s node validation/run-all.mjs comprehensive
-grep "Score:" validation-output.log  # Must be ≥80
-grep "FAILED\|Error" validation-output.log  # Must be empty
+timeout 15s node validation/run-all.mjs comprehensive
+# Result: 83/100 ✅
+# Features: 5/6 passed
+# Failed: knowledge-hooks-api (no spans collected)
 ```
 
-**Status**: ✅ FRAMEWORK READY (needs run verification)
+**Status**: ✅ PASSING (83/100 exceeds ≥80 target)
 
 ---
 

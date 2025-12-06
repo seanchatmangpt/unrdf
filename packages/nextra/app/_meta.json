@@ -1,7 +1,9 @@
 {
   "index": "Introduction",
   "guides": "Guides",
-  "reference": "API Reference",
+  "api": "API Reference",
   "concepts": "Concepts",
-  "examples": "Examples"
+  "examples": "Examples",
+  "papers": "Research Papers",
+  "playground": "Playground"
 }
