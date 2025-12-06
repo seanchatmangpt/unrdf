@@ -1,0 +1,412 @@
+#!/usr/bin/env node
+
+/**
+ * LaTeX to MDX Paper Converter
+ *
+ * Converts academic LaTeX papers to MDX format for Nextra documentation site.
+ *
+ * Usage:
+ *   pnpm convert-paper <input.tex> [options]
+ *
+ * Options:
+ *   --slug <slug>           Output directory name (e.g., 2024-my-paper)
+ *   --authors <names>       Comma-separated author names
+ *   --status <status>       draft|review|published (default: draft)
+ *   --output <dir>          Output directory (default: packages/nextra/app/papers)
+ *   --preserve-latex        Copy LaTeX source to content/papers/latex-source/
+ *   --no-figures            Skip figure extraction
+ *
+ * @see /docs/PAPERS_POLICY.md
+ */
+
+import fs from 'node:fs/promises'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const ROOT_DIR = path.resolve(__dirname, '..')
+
+// ============================================================================
+// Configuration
+// ============================================================================
+
+const DEFAULT_OUTPUT_DIR = path.join(ROOT_DIR, 'packages/nextra/app/papers')
+const DEFAULT_STATUS = 'draft'
+
+// ============================================================================
+// CLI Argument Parsing
+// ============================================================================
+
+function parseArgs() {
+  const args = process.argv.slice(2)
+
+  if (args.length === 0 || args[0] === '--help' || args[0] === '-h') {
+    printUsage()
+    process.exit(0)
+  }
+
+  const config = {
+    input: args[0],
+    slug: null,
+    authors: [],
+    status: DEFAULT_STATUS,
+    outputDir: DEFAULT_OUTPUT_DIR,
+    preserveLatex: false,
+    extractFigures: true
+  }
+
+  for (let i = 1; i < args.length; i++) {
+    switch (args[i]) {
+      case '--slug':
+        config.slug = args[++i]
+        break
+      case '--authors':
+        config.authors = args[++i].split(',').map(a => a.trim())
+        break
+      case '--status':
+        config.status = args[++i]
+        if (!['draft', 'review', 'published', 'archived'].includes(config.status)) {
+          console.error(`Invalid status: ${config.status}`)
+          process.exit(1)
+        }
+        break
+      case '--output':
+        config.outputDir = args[++i]
+        break
+      case '--preserve-latex':
+        config.preserveLatex = true
+        break
+      case '--no-figures':
+        config.extractFigures = false
+        break
+      default:
+        console.error(`Unknown option: ${args[i]}`)
+        printUsage()
+        process.exit(1)
+    }
+  }
+
+  // Validate required fields
+  if (!config.input) {
+    console.error('Error: Input file required')
+    printUsage()
+    process.exit(1)
+  }
+
+  if (!config.slug) {
+    console.error('Error: --slug required (e.g., 2024-my-paper-title)')
+    printUsage()
+    process.exit(1)
+  }
+
+  return config
+}
+
+function printUsage() {
+  console.log(`
+LaTeX to MDX Paper Converter
+
+Usage:
+  pnpm convert-paper <input.tex> [options]
+
+Options:
+  --slug <slug>           Output directory name (e.g., 2024-my-paper)
+  --authors <names>       Comma-separated author names
+  --status <status>       draft|review|published (default: draft)
+  --output <dir>          Output directory (default: packages/nextra/app/papers)
+  --preserve-latex        Copy LaTeX source to content/papers/latex-source/
+  --no-figures            Skip figure extraction
+
+Examples:
+  pnpm convert-paper paper.tex --slug 2024-mu-calculus --authors "Sean Chatman"
+  pnpm convert-paper thesis.tex --slug 2024-kgc-4d --status review --preserve-latex
+`)
+}
+
+// ============================================================================
+// LaTeX Parsing & Conversion
+// ============================================================================
+
+/**
+ * Convert LaTeX content to MDX
+ */
+function convertLatexToMDX(latexContent, config) {
+  let mdx = latexContent
+
+  // Extract title, author, date from LaTeX preamble
+  const titleMatch = mdx.match(/\\title\{([^}]+)\}/)
+  const title = titleMatch ? titleMatch[1] : 'Untitled Paper'
+
+  const authorMatch = mdx.match(/\\author\{([^}]+)\}/)
+  const authors = config.authors.length > 0
+    ? config.authors
+    : (authorMatch ? [authorMatch[1]] : ['Unknown Author'])
+
+  const dateMatch = mdx.match(/\\date\{([^}]+)\}/)
+  const date = dateMatch ? dateMatch[1] : new Date().toISOString().split('T')[0]
+
+  // Extract abstract
+  const abstractMatch = mdx.match(/\\begin\{abstract\}([\s\S]*?)\\end\{abstract\}/m)
+  const abstract = abstractMatch
+    ? abstractMatch[1].trim().replace(/\n/g, '\n  ')
+    : 'Abstract not provided.'
+
+  // Remove LaTeX preamble (everything before \begin{document})
+  mdx = mdx.replace(/^[\s\S]*?\\begin\{document\}/m, '')
+  mdx = mdx.replace(/\\end\{document\}[\s\S]*$/m, '')
+
+  // Remove \maketitle
+  mdx = mdx.replace(/\\maketitle\s*/g, '')
+
+  // Remove abstract environment (already extracted above)
+  mdx = mdx.replace(/\\begin\{abstract\}[\s\S]*?\\end\{abstract\}/gm, '')
+
+  // Convert sections
+  mdx = mdx.replace(/\\section\*?\{([^}]+)\}/g, '## $1')
+  mdx = mdx.replace(/\\subsection\*?\{([^}]+)\}/g, '### $1')
+  mdx = mdx.replace(/\\subsubsection\*?\{([^}]+)\}/g, '#### $1')
+  mdx = mdx.replace(/\\paragraph\{([^}]+)\}/g, '##### $1')
+
+  // Convert text formatting
+  mdx = mdx.replace(/\\textbf\{([^}]+)\}/g, '**$1**')
+  mdx = mdx.replace(/\\textit\{([^}]+)\}/g, '*$1*')
+  mdx = mdx.replace(/\\emph\{([^}]+)\}/g, '*$1*')
+  mdx = mdx.replace(/\\texttt\{([^}]+)\}/g, '`$1`')
+
+  // Convert math - display mode
+  // \[ ... \] → ```math\n...\n```
+  mdx = mdx.replace(/\\\[([\s\S]*?)\\\]/g, (_, math) => {
+    return '```math\n' + math.trim() + '\n```'
+  })
+
+  // $$ ... $$ → ```math\n...\n```
+  mdx = mdx.replace(/\$\$([\s\S]*?)\$\$/g, (_, math) => {
+    return '```math\n' + math.trim() + '\n```'
+  })
+
+  // \begin{equation} ... \end{equation} → ```math\n...\n```
+  mdx = mdx.replace(/\\begin\{equation\*?\}([\s\S]*?)\\end\{equation\*?\}/g, (_, math) => {
+    return '```math\n' + math.trim() + '\n```'
+  })
+
+  // \begin{align} ... \end{align} → ```math\n...\n```
+  mdx = mdx.replace(/\\begin\{align\*?\}([\s\S]*?)\\end\{align\*?\}/g, (_, math) => {
+    return '```math\n' + math.trim() + '\n```'
+  })
+
+  // Math - inline mode ($...$) - leave as is (KaTeX handles it)
+
+  // Convert lists
+  // \begin{enumerate} → ordered list (process first before itemize to avoid conflicts)
+  mdx = mdx.replace(/\\begin\{enumerate\}([\s\S]*?)\\end\{enumerate\}/g, (match, content) => {
+    let counter = 0
+    const converted = content.replace(/^\s*\\item\s+/gm, () => {
+      counter++
+      return `${counter}. `
+    })
+    return converted
+  })
+
+  // \begin{itemize} → unordered list
+  mdx = mdx.replace(/\\begin\{itemize\}([\s\S]*?)\\end\{itemize\}/g, (match, content) => {
+    return content.replace(/^\s*\\item\s+/gm, '- ')
+  })
+
+  // Convert citations (simple version)
+  mdx = mdx.replace(/\\cite\{([^}]+)\}/g, '[$1](#references)')
+  mdx = mdx.replace(/\\citep\{([^}]+)\}/g, '[$1](#references)')
+  mdx = mdx.replace(/\\citet\{([^}]+)\}/g, '[$1](#references)')
+
+  // Convert references (labels and refs)
+  mdx = mdx.replace(/\\label\{[^}]+\}/g, '') // Remove labels (MDX uses heading anchors)
+  mdx = mdx.replace(/\\ref\{([^}]+)\}/g, '[Section](#$1)') // Convert refs to placeholder
+
+  // Convert figures
+  mdx = mdx.replace(
+    /\\begin\{figure\}[\s\S]*?\\includegraphics(?:\[[^\]]*\])?\{([^}]+)\}[\s\S]*?\\caption\{([^}]+)\}[\s\S]*?\\end\{figure\}/g,
+    (_, imagePath, caption) => {
+      const basename = path.basename(imagePath, path.extname(imagePath))
+      return `![${caption}](./figures/${basename}.svg)`
+    }
+  )
+
+  // Convert tables (basic support)
+  // Note: Complex tables require manual fixup
+  mdx = mdx.replace(
+    /\\begin\{table\}[\s\S]*?\\begin\{tabular\}[\s\S]*?\\end\{tabular\}[\s\S]*?\\caption\{([^}]+)\}[\s\S]*?\\end\{table\}/g,
+    '**Table**: $1\n\n(Table conversion requires manual editing)\n'
+  )
+
+  // Convert theorems, definitions, etc. to Callouts
+  mdx = mdx.replace(
+    /\\begin\{theorem\}(?:\[([^\]]+)\])?([\s\S]*?)\\end\{theorem\}/g,
+    (_, label, content) => {
+      const title = label ? `Theorem (${label})` : 'Theorem'
+      return `<Callout type="info" title="${title}">\n${content.trim()}\n</Callout>`
+    }
+  )
+
+  mdx = mdx.replace(
+    /\\begin\{definition\}(?:\[([^\]]+)\])?([\s\S]*?)\\end\{definition\}/g,
+    (_, label, content) => {
+      const title = label ? `Definition (${label})` : 'Definition'
+      return `<Callout type="default" title="${title}">\n${content.trim()}\n</Callout>`
+    }
+  )
+
+  mdx = mdx.replace(
+    /\\begin\{lemma\}(?:\[([^\]]+)\])?([\s\S]*?)\\end\{lemma\}/g,
+    (_, label, content) => {
+      const title = label ? `Lemma (${label})` : 'Lemma'
+      return `<Callout type="info" title="${title}">\n${content.trim()}\n</Callout>`
+    }
+  )
+
+  mdx = mdx.replace(
+    /\\begin\{proof\}([\s\S]*?)\\end\{proof\}/g,
+    (_, content) => {
+      return `<details>\n<summary>**Proof**</summary>\n\n${content.trim()}\n\n</details>`
+    }
+  )
+
+  // Remove common LaTeX commands that don't need conversion
+  mdx = mdx.replace(/\\noindent\s*/g, '')
+  mdx = mdx.replace(/\\newpage\s*/g, '\n\n---\n\n')
+  mdx = mdx.replace(/\\pagebreak\s*/g, '\n\n---\n\n')
+  mdx = mdx.replace(/\\clearpage\s*/g, '\n\n---\n\n')
+  mdx = mdx.replace(/~\\cite/g, ' [') // Non-breaking space before citation
+  mdx = mdx.replace(/~\\ref/g, ' [')  // Non-breaking space before reference
+
+  // Clean up excessive whitespace
+  mdx = mdx.replace(/\n{3,}/g, '\n\n')
+  mdx = mdx.trim()
+
+  // Generate front matter
+  const frontMatter = generateFrontMatter({
+    title,
+    authors,
+    date,
+    status: config.status,
+    abstract,
+    slug: config.slug
+  })
+
+  return frontMatter + '\n\n' + mdx
+}
+
+/**
+ * Generate YAML front matter for MDX
+ */
+function generateFrontMatter({ title, authors, date, status, abstract, slug }) {
+  const today = new Date().toISOString().split('T')[0]
+
+  // Generate citation
+  const firstAuthor = authors[0].split(' ').pop() // Last name
+  const year = date.split('-')[0]
+  const citation = `${firstAuthor}, ${authors[0].split(' ')[0][0]}. (${year}). ${title}. UNRDF Technical Report. https://seanchatmangpt.github.io/unrdf/papers/${slug}`
+
+  return `---
+title: "${title}"
+authors:
+${authors.map(a => `  - ${a}`).join('\n')}
+date: "${date}"
+updated: "${today}"
+status: ${status}
+abstract: |
+  ${abstract.split('\n').join('\n  ')}
+keywords:
+  - RDF
+  - Knowledge Graphs
+  - Semantic Web
+citation: |
+  ${citation}
+---
+
+# ${title}
+
+<div className="text-sm text-gray-600 dark:text-gray-400 mb-8">
+  **Authors**: ${authors.join(', ')} • **Published**: ${date} • **Status**: ${status}
+</div>
+
+## Abstract
+
+${abstract}`
+}
+
+// ============================================================================
+// File Operations
+// ============================================================================
+
+/**
+ * Main conversion function
+ */
+async function convertPaper(config) {
+  console.log('🚀 Starting LaTeX → MDX conversion...')
+  console.log(`   Input: ${config.input}`)
+  console.log(`   Slug: ${config.slug}`)
+  console.log(`   Authors: ${config.authors.join(', ')}`)
+  console.log(`   Status: ${config.status}`)
+  console.log('')
+
+  // Read LaTeX file
+  console.log('📖 Reading LaTeX file...')
+  const latexContent = await fs.readFile(config.input, 'utf-8')
+
+  // Convert to MDX
+  console.log('🔄 Converting LaTeX → MDX...')
+  const mdxContent = convertLatexToMDX(latexContent, config)
+
+  // Create output directory
+  const outputPath = path.join(config.outputDir, config.slug)
+  console.log(`📁 Creating output directory: ${outputPath}`)
+  await fs.mkdir(outputPath, { recursive: true })
+
+  // Create figures directory
+  if (config.extractFigures) {
+    const figuresPath = path.join(outputPath, 'figures')
+    await fs.mkdir(figuresPath, { recursive: true })
+    console.log(`📁 Created figures directory: ${figuresPath}`)
+  }
+
+  // Write MDX file
+  const mdxFilePath = path.join(outputPath, 'page.mdx')
+  await fs.writeFile(mdxFilePath, mdxContent, 'utf-8')
+  console.log(`✅ Written MDX file: ${mdxFilePath}`)
+
+  // Preserve LaTeX source if requested
+  if (config.preserveLatex) {
+    const latexArchiveDir = path.join(ROOT_DIR, 'content/papers/latex-source')
+    await fs.mkdir(latexArchiveDir, { recursive: true })
+    const latexArchivePath = path.join(latexArchiveDir, `${config.slug}.tex`)
+    await fs.copyFile(config.input, latexArchivePath)
+    console.log(`📄 Archived LaTeX source: ${latexArchivePath}`)
+  }
+
+  console.log('')
+  console.log('✨ Conversion complete!')
+  console.log('')
+  console.log('Next steps:')
+  console.log(`1. Review generated MDX: code ${mdxFilePath}`)
+  console.log(`2. Copy figures to: ${path.join(outputPath, 'figures')}`)
+  console.log(`3. Update navigation: packages/nextra/app/papers/_meta.ts`)
+  console.log(`4. Preview: pnpm -C packages/nextra dev`)
+  console.log(`5. Build: pnpm -C packages/nextra build`)
+  console.log('')
+}
+
+// ============================================================================
+// Main
+// ============================================================================
+
+async function main() {
+  try {
+    const config = parseArgs()
+    await convertPaper(config)
+  } catch (error) {
+    console.error('❌ Error:', error.message)
+    console.error(error.stack)
+    process.exit(1)
+  }
+}
+
+main()
