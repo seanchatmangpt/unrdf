@@ -1,19 +1,18 @@
 /**
- * @file Hook Create Command - with type validation poka-yoke guard
- * @module cli-v2/commands/hook/create
+ * @file Hook Create Command - THREE-TIER ARCHITECTURE
+ * @architecture CLI → Domain Service → Package
+ *
+ * Provides full access to hook registration capabilities
  */
 
 import { defineCommand } from 'citty';
-import { writeFile, access } from 'node:fs/promises';
-import { validate, hookCreateSchema } from '../../utils/validation.mjs';
-
-// Valid hook types (poka-yoke guard: FM-CLI-003)
-const VALID_HOOK_TYPES = ['sparql-ask', 'sparql-select', 'shacl', 'custom'];
+import { readFile } from 'node:fs/promises';
+import { getHookService } from '../../domain/index.mjs';
 
 export const createCommand = defineCommand({
   meta: {
     name: 'create',
-    description: 'Create a new knowledge hook'
+    description: 'Register a new knowledge hook'
   },
   args: {
     name: {
@@ -21,79 +20,74 @@ export const createCommand = defineCommand({
       description: 'Hook name',
       required: true
     },
-    type: {
+    trigger: {
       type: 'string',
-      description: `Hook type (${VALID_HOOK_TYPES.join(', ')})`,
+      description: 'Hook trigger event (before-add, after-add, before-delete, etc.)',
       required: true
     },
-    file: {
+    handler: {
       type: 'string',
-      description: 'SPARQL/SHACL file path'
+      description: 'Path to handler function file (JavaScript)'
     },
-    output: {
+    policy: {
       type: 'string',
-      description: 'Output file for hook definition'
+      description: 'Policy name to associate hook with',
+      default: 'default'
     },
     description: {
       type: 'string',
       description: 'Hook description'
+    },
+    enabled: {
+      type: 'boolean',
+      description: 'Enable hook immediately',
+      default: true
     }
   },
   async run(ctx) {
     try {
-      const { name, type, file, output, description } = ctx.args;
+      // PRESENTATION LAYER: Parse CLI arguments
+      const { name, trigger, handler, policy, description, enabled } = ctx.args;
 
-      // FM-CLI-003: Validate hook type with enum (poka-yoke guard)
-      const validated = validate(hookCreateSchema, {
-        name,
-        type,
-        file,
-        description
-      }, 'Hook validation');
-
-      // Validate file if provided
-      if (file) {
-        try {
-          await access(file);
-        } catch (error) {
-          if (error.code === 'ENOENT') {
-            throw new Error(`Hook file not found: ${file}\nFix: Create the file or check the path`);
-          }
-          throw new Error(`Cannot access hook file: ${error.message}`);
-        }
-      }
-
-      const hookDef = {
-        meta: {
-          name,
-          version: '1.0.0',
-          description
-        },
-        when: {
-          kind: validated.type,
-          ref: file ? {
-            uri: `file://${file}`,
-            mediaType: validated.type.startsWith('sparql')
-              ? 'application/sparql-query'
-              : 'text/turtle'
-          } : {}
-        },
-        run: async (event) => {
-          console.log(`Hook ${name} executed`);
-          return { success: true };
-        }
-      };
-
-      if (output) {
-        await writeFile(output, JSON.stringify(hookDef, null, 2));
-        console.log(`✅ Hook created: ${name} (${validated.type})`);
-        console.log(`📄 Definition written to: ${output}`);
+      // Load handler function if file provided
+      let handlerFn;
+      if (handler) {
+        const handlerCode = await readFile(handler, 'utf-8');
+        // Create function from code (simplified - production would use safer eval)
+        handlerFn = new Function('event', 'context', handlerCode);
       } else {
-        console.log(`✅ Hook created: ${name} (${validated.type})`);
-        console.log(JSON.stringify(hookDef, null, 2));
+        // Default handler
+        handlerFn = async (event) => {
+          console.log(`Hook ${name} executed on trigger: ${trigger}`);
+          return { success: true };
+        };
       }
+
+      // DOMAIN LAYER: Register hook via service
+      const service = getHookService();
+      const result = await service.registerHook({
+        name,
+        trigger,
+        handler: handlerFn,
+        meta: {
+          policy,
+          description,
+          createdAt: new Date().toISOString()
+        },
+        enabled
+      });
+
+      // PRESENTATION LAYER: Display results
+      console.log(`✅ Hook registered: ${result.name}`);
+      console.log(`   Trigger: ${trigger}`);
+      console.log(`   Policy: ${policy}`);
+      console.log(`   Enabled: ${enabled ? 'Yes' : 'No'}`);
+      if (description) {
+        console.log(`   Description: ${description}`);
+      }
+
     } catch (error) {
-      console.error(`❌ Hook creation failed: ${error.message}`);
+      console.error(`❌ Failed to register hook: ${error.message}`);
       process.exit(1);
     }
   }

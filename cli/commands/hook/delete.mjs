@@ -1,26 +1,28 @@
 /**
- * @file Hook Delete Command - with dependency analysis poka-yoke guard
+ * @file Hook Delete Command - THREE-TIER ARCHITECTURE
+ * @architecture CLI → Domain Service → Package
+ *
+ * Provides full access to hook unregistration capabilities
  */
 
 import { defineCommand } from 'citty';
 import { executeWithConfirmation, shouldSkipConfirmation } from '../../utils/confirmation.mjs';
-import { analyzeDependencies, formatDependencyAnalysis } from '../../utils/dependency-analyzer.mjs';
-import { validate, hookDeleteSchema } from '../../utils/validation.mjs';
+import { getHookService } from '../../domain/index.mjs';
 
 export const deleteCommand = defineCommand({
   meta: {
     name: 'delete',
-    description: 'Delete a hook'
+    description: 'Unregister a hook'
   },
   args: {
     name: {
       type: 'positional',
-      description: 'Hook name',
+      description: 'Hook name or ID',
       required: true
     },
     force: {
       type: 'boolean',
-      description: 'Skip confirmation (not recommended)',
+      description: 'Skip confirmation',
       default: false
     }
   },
@@ -28,89 +30,46 @@ export const deleteCommand = defineCommand({
     try {
       const { name, force } = ctx.args;
 
-      // Validate input
-      validate(hookDeleteSchema, { name, force }, 'Hook delete');
+      // DOMAIN LAYER: Get hook info for confirmation
+      const service = getHookService();
+      const allHooks = await service.listHooks({});
+      const hook = allHooks.hooks.find(h => h.id === name || h.name === name);
 
-      // FM-CLI-013: Analyze dependencies before deletion
-      console.log(`\n🔍 Analyzing dependencies for hook "${name}"...`);
-      const analysis = await analyzeDependencies('hook', name);
+      if (!hook) {
+        console.error(`❌ Hook not found: ${name}`);
+        console.error(`\n📋 Available hooks:`);
+        allHooks.hooks.forEach(h => {
+          console.error(`   • ${h.id || h.name} (${h.trigger}) - ${h.enabled ? 'enabled' : 'disabled'}`);
+        });
+        process.exit(1);
+      }
 
-      if (!shouldSkipConfirmation(ctx)) {
-        // Show dependency analysis
-        console.log(formatDependencyAnalysis(analysis));
-
-        // Build confirmation message with cascade impact
-        const summary =
-          analysis.dependentCount > 0
-            ? `This hook is referenced by ${analysis.dependentCount} resource(s). Deletion may break dependent policies.`
-            : 'This hook deletion will not affect other resources.';
-
-        const result = await executeWithConfirmation(
+      // PRESENTATION LAYER: Confirmation dialog
+      if (!shouldSkipConfirmation(ctx) && !force) {
+        await executeWithConfirmation(
           ctx,
           {
             action: 'delete',
             resource: 'hook',
-            name,
-            summary,
-            requiresForce: true
+            name: hook.name,
+            summary: `Unregister hook "${hook.name}" (${hook.trigger})`
           },
           async () => {
-            // Implement actual hook deletion
-            const { unlink } = await import('node:fs/promises');
-            const { join } = await import('node:path');
-            const { homedir } = await import('node:os');
-
-            // Hook location: ~/.unrdf/hooks/{name}.json
-            const hooksDir = join(homedir(), '.unrdf', 'hooks');
-            const hookFile = join(hooksDir, `${name}.json`);
-
-            try {
-              await unlink(hookFile);
-              console.log(`✅ Hook deleted: ${name}`);
-            } catch (error) {
-              if (error.code === 'ENOENT') {
-                console.warn(`⚠️  Hook file not found: ${hookFile}`);
-                console.log(`✅ Hook ${name} removed from registry`);
-              } else {
-                throw error;
-              }
-            }
+            // DOMAIN LAYER: Unregister hook
+            const result = await service.unregisterHook(hook.id || hook.name);
+            console.log(`✅ Hook unregistered: ${hook.name}`);
+            console.log(`   Previous state: ${result.wasEnabled ? 'enabled' : 'disabled'}`);
           }
         );
-
-        if (result === null) {
-          process.exit(0);
-        }
       } else {
-        // Show dependency analysis even with --force
-        console.log(formatDependencyAnalysis(analysis));
-
-        if (analysis.cascadeRisk === 'CRITICAL') {
-          console.warn('⚠️  WARNING: This deletion may break dependent resources');
-        }
-
-        // Delete hook file
-        const { unlink } = await import('node:fs/promises');
-        const { join } = await import('node:path');
-        const { homedir } = await import('node:os');
-
-        const hooksDir = join(homedir(), '.unrdf', 'hooks');
-        const hookFile = join(hooksDir, `${name}.json`);
-
-        try {
-          await unlink(hookFile);
-          console.log(`✅ Hook deleted: ${name}`);
-        } catch (error) {
-          if (error.code === 'ENOENT') {
-            console.warn(`⚠️  Hook file not found: ${hookFile}`);
-            console.log(`✅ Hook ${name} removed from registry`);
-          } else {
-            throw error;
-          }
-        }
+        // DOMAIN LAYER: Unregister hook without confirmation
+        const result = await service.unregisterHook(hook.id || hook.name);
+        console.log(`✅ Hook unregistered: ${hook.name}`);
+        console.log(`   Previous state: ${result.wasEnabled ? 'enabled' : 'disabled'}`);
       }
+
     } catch (error) {
-      console.error(`❌ Failed to delete hook: ${error.message}`);
+      console.error(`❌ Failed to unregister hook: ${error.message}`);
       process.exit(1);
     }
   }

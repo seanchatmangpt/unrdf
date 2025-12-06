@@ -1,20 +1,25 @@
 /**
- * @file Hook History Command
- * @module cli-v2/commands/hook/history
+ * @file Hook History Command - TODO
+ *
+ * STATUS: Not yet implemented
+ *
+ * NOTE: Hook execution history requires:
+ * - Persistent storage for hook execution logs
+ * - Integration with @unrdf/kgc-4d for temporal queries
+ * - OTEL tracing infrastructure for execution tracking
  */
 
 import { defineCommand } from 'citty';
-import { formatOutput } from '../../formatters/index.mjs';
 
 export const historyCommand = defineCommand({
   meta: {
     name: 'history',
-    description: 'Show evaluation history for a hook'
+    description: 'Show hook execution history [TODO: Not yet implemented]'
   },
   args: {
     name: {
       type: 'positional',
-      description: 'Hook name',
+      description: 'Hook name or ID',
       required: true
     },
     limit: {
@@ -24,22 +29,19 @@ export const historyCommand = defineCommand({
     },
     output: {
       type: 'string',
-      description: 'Output format',
+      description: 'Output format (json, table)',
       default: 'table'
     }
   },
   async run(ctx) {
-    const { name, limit, output } = ctx.args;
+    const { name } = ctx.args;
 
-    const history = [
-      { timestamp: '2025-10-01T10:00:00Z', fired: true, duration: 123 },
-      { timestamp: '2025-10-01T09:00:00Z', fired: false, duration: 45 }
-    ];
-
-    console.log(`📋 Evaluation History for ${name}:`);
-    console.log(formatOutput(history, output, {
-      columns: ['timestamp', 'fired', 'duration'],
-      headers: ['TIMESTAMP', 'FIRED', 'DURATION (ms)']
-    }));
+    console.error(`❌ Command not yet implemented: hook history`);
+    console.error(`\nThis command requires persistent execution logging infrastructure.`);
+    console.error(`\nFor now, you can:`);
+    console.error(`  • Execute hooks in dry-run mode: unrdf hook execute --dry-run ${name}`);
+    console.error(`  • Test hooks: unrdf hook test ${name} ...`);
+    console.error(`  • View hook details: unrdf hook describe ${name}`);
+    process.exit(1);
   }
 });
