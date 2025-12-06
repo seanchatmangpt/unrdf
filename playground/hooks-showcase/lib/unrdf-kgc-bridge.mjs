@@ -13,7 +13,7 @@
 
 'use client';
 
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, useState, useEffect } from 'react';
 import { useKGC, useShard, useEntity, useEntities, useDelta } from '../../../packages/kgc-4d/playground/lib/client/hooks.mjs';
 
 /**
@@ -185,31 +185,60 @@ export function useChangeFeed(options = {}) {
 }
 
 /**
- * useSPARQLQuery - Execute SPARQL SELECT queries
+ * useSPARQLQuery - Execute SPARQL SELECT queries (NOW WITH REAL BACKEND)
  *
- * Note: This is a simplified implementation
- * Production should send SPARQL to server
+ * Sends SPARQL query to /api/sparql endpoint for server-side execution
  *
  * @param {string} sparql - SPARQL query string
  * @param {Object} options - Query options
  * @returns {Object} Query result
  */
 export function useSPARQLQuery(sparql, options = {}) {
-  const { shard } = useKGC();
+  const [data, setData] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const data = useMemo(() => {
-    // Simplified SPARQL - in production, send to server
-    console.warn('SPARQL execution is simplified for demo');
+  const executeQuery = useCallback(async () => {
+    if (!sparql) return;
 
-    // For demo, return empty results
-    return [];
-  }, [sparql, shard]);
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch('/api/sparql', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          query: sparql,
+          variables: options.variables || {}
+        })
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setData(result.results);
+      } else {
+        setError(new Error(result.error));
+      }
+    } catch (err) {
+      setError(err);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [sparql, options.variables]);
+
+  useEffect(() => {
+    if (options.enabled !== false) {
+      executeQuery();
+    }
+  }, [sparql, executeQuery, options.enabled]);
 
   return {
     data,
-    isLoading: false,
-    error: null,
-    refetch: () => {}
+    isLoading,
+    error,
+    refetch: executeQuery
   };
 }
 

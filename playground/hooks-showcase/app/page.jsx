@@ -6,9 +6,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
-// Demo components for each category
-import { CoreDemo } from "@/components/demos/core-demo";
-import { StreamingDemo } from "@/components/demos/streaming-demo";
+// Demo components for each category - NOW WITH REAL UNRDF HOOKS
+import { CoreDemoNew as CoreDemo } from "@/components/demos/core-demo-new";
+import { StreamingDemoNew as StreamingDemo } from "@/components/demos/streaming-demo-new";
 import { DarkMatterDemo } from "@/components/demos/dark-matter-demo";
 import { FederationDemo } from "@/components/demos/federation-demo";
 import { CompositionDemo } from "@/components/demos/composition-demo";
