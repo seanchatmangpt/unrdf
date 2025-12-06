@@ -36,7 +36,6 @@
     "web"
   ],
   "dependencies": {
-    "@unrdf/browser": "workspace:5.0.0-beta.1",
     "@unrdf/core": "workspace:5.0.0-beta.1",
     "@unrdf/streaming": "workspace:5.0.0-beta.1",
     "vue": "^3.0.0"
