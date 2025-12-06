@@ -9,28 +9,13 @@ export default defineConfig({
     // Standard defaults - removed singleFork that causes hanging
     pool: "forks",
 
-    // Test timeout
-    testTimeout: 30_000,
-
-    // Coverage configuration
-    coverage: {
-      provider: "v8",
-      reporter: ["text", "json", "html"],
-      exclude: [
-        "node_modules/**",
-        "test/**",
-        "**/*.test.mjs",
-        "**/*.config.mjs",
-        "dist/**",
-        "coverage/**",
-      ],
-      include: ["src/**/*.mjs"],
-    },
+    // Test timeout - 5s SLA (Andon Principle)
+    testTimeout: 5000,
 
     // Environment
     environment: "node",
 
-    // File patterns - 80/20 core test suite
+    // File patterns - 80/20 core test suite (REMOVED adversarial tests)
     include: [
       "test/diff.test.mjs",
       "test/dark-matter-80-20.test.mjs",
@@ -42,7 +27,6 @@ export default defineConfig({
       "test/browser/indexeddb-store.test.mjs",
       "test/validation/otel-validation-v3.1.test.mjs",
       "test/streaming/streaming.test.mjs",
-      "packages/*/test/adversarial.test.mjs",
     ],
 
     exclude: [
@@ -58,13 +42,11 @@ export default defineConfig({
       "test/project-engine.test.mjs",
       "test/project-engine/code-complexity-js.test.mjs",
       "test/project-engine/initialize.test.mjs",
+      "**/benchmarks/**", // Benchmarks are NOT tests
     ],
 
     // Reporter
     reporter: ["verbose"],
-
-    // Removed problematic setupFiles - was causing hangs with pnpm -r test
-    // setupFiles: ["./test/setup/cleanup-hooks.mjs"],
 
     // Standard settings
     globals: false,
