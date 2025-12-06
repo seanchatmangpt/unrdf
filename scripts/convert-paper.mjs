@@ -6,15 +6,8 @@
  * Converts academic LaTeX papers to MDX format for Nextra documentation site.
  *
  * Usage:
- *   pnpm convert-paper <input.tex> [options]
- *
- * Options:
- *   --slug <slug>           Output directory name (e.g., 2024-my-paper)
- *   --authors <names>       Comma-separated author names
- *   --status <status>       draft|review|published (default: draft)
- *   --output <dir>          Output directory (default: packages/nextra/app/papers)
- *   --preserve-latex        Copy LaTeX source to content/papers/latex-source/
- *   --no-figures            Skip figure extraction
+ *   pnpm convert-paper <input.tex> [options]           # Single file
+ *   pnpm convert-paper --walk <directory> [options]    # Batch convert directory
  *
  * @see /docs/PAPERS_POLICY.md
  */
@@ -22,6 +15,7 @@
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { defineCommand, runMain } from 'citty'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const ROOT_DIR = path.resolve(__dirname, '..')
@@ -34,93 +28,192 @@ const DEFAULT_OUTPUT_DIR = path.join(ROOT_DIR, 'packages/nextra/app/papers')
 const DEFAULT_STATUS = 'draft'
 
 // ============================================================================
-// CLI Argument Parsing
+// Citty CLI Definition
 // ============================================================================
 
-function parseArgs() {
-  const args = process.argv.slice(2)
+const main = defineCommand({
+  meta: {
+    name: 'convert-paper',
+    version: '2.0.0',
+    description: 'Convert LaTeX papers to MDX for Nextra',
+  },
+  args: {
+    input: {
+      type: 'positional',
+      description: 'Input LaTeX file or directory (with --walk)',
+      required: false,
+    },
+    walk: {
+      type: 'string',
+      description: 'Walk directory and convert all .tex files',
+    },
+    slug: {
+      type: 'string',
+      description: 'Output directory name (e.g., 2024-my-paper)',
+    },
+    authors: {
+      type: 'string',
+      description: 'Comma-separated author names',
+      default: 'Sean Chatman',
+    },
+    status: {
+      type: 'string',
+      description: 'Paper status (draft|review|published|archived)',
+      default: DEFAULT_STATUS,
+    },
+    output: {
+      type: 'string',
+      description: 'Output directory',
+      default: DEFAULT_OUTPUT_DIR,
+    },
+    preserveLatex: {
+      type: 'boolean',
+      description: 'Copy LaTeX source to content/papers/latex-source/',
+      default: false,
+    },
+    noFigures: {
+      type: 'boolean',
+      description: 'Skip figure extraction',
+      default: false,
+    },
+    'auto-slug': {
+      type: 'boolean',
+      description: 'Auto-generate slug from filename (YYYY-filename)',
+      default: false,
+    },
+    verbose: {
+      type: 'boolean',
+      description: 'Verbose output',
+      default: false,
+      alias: 'v',
+    },
+  },
+  async run({ args }) {
+    // Determine mode: single file or walk directory
+    if (args.walk) {
+      await walkAndConvert(args)
+    } else if (args.input) {
+      await convertSingleFile(args)
+    } else {
+      console.error('❌ Error: Either provide an input file or use --walk <directory>')
+      process.exit(1)
+    }
+  },
+})
 
-  if (args.length === 0 || args[0] === '--help' || args[0] === '-h') {
-    printUsage()
-    process.exit(0)
+// ============================================================================
+// Walk & Batch Convert
+// ============================================================================
+
+async function walkAndConvert(args) {
+  const dir = args.walk
+  console.log(`🚶 Walking directory: ${dir}`)
+  console.log('')
+
+  // Find all .tex files
+  const texFiles = await findTexFiles(dir)
+
+  if (texFiles.length === 0) {
+    console.log('❌ No .tex files found in', dir)
+    return
   }
 
-  const config = {
-    input: args[0],
-    slug: null,
-    authors: [],
-    status: DEFAULT_STATUS,
-    outputDir: DEFAULT_OUTPUT_DIR,
-    preserveLatex: false,
-    extractFigures: true
-  }
+  console.log(`📚 Found ${texFiles.length} LaTeX files:`)
+  texFiles.forEach((file, i) => {
+    console.log(`   ${i + 1}. ${path.basename(file)}`)
+  })
+  console.log('')
 
-  for (let i = 1; i < args.length; i++) {
-    switch (args[i]) {
-      case '--slug':
-        config.slug = args[++i]
-        break
-      case '--authors':
-        config.authors = args[++i].split(',').map(a => a.trim())
-        break
-      case '--status':
-        config.status = args[++i]
-        if (!['draft', 'review', 'published', 'archived'].includes(config.status)) {
-          console.error(`Invalid status: ${config.status}`)
-          process.exit(1)
-        }
-        break
-      case '--output':
-        config.outputDir = args[++i]
-        break
-      case '--preserve-latex':
-        config.preserveLatex = true
-        break
-      case '--no-figures':
-        config.extractFigures = false
-        break
-      default:
-        console.error(`Unknown option: ${args[i]}`)
-        printUsage()
-        process.exit(1)
+  // Convert each file
+  let successCount = 0
+  let failCount = 0
+
+  for (const file of texFiles) {
+    try {
+      const slug = args.slug || generateSlug(file, args['auto-slug'])
+      const fileArgs = {
+        ...args,
+        input: file,
+        slug,
+      }
+
+      if (args.verbose) {
+        console.log(`🔄 Converting: ${path.basename(file)} → ${slug}`)
+      }
+
+      await convertPaper(fileArgs)
+      successCount++
+
+      if (!args.verbose) {
+        console.log(`✅ ${successCount}/${texFiles.length} ${slug}`)
+      }
+    } catch (error) {
+      failCount++
+      console.error(`❌ Failed: ${path.basename(file)} - ${error.message}`)
     }
   }
 
-  // Validate required fields
-  if (!config.input) {
-    console.error('Error: Input file required')
-    printUsage()
-    process.exit(1)
+  console.log('')
+  console.log(`✨ Batch conversion complete!`)
+  console.log(`   Success: ${successCount}/${texFiles.length}`)
+  if (failCount > 0) {
+    console.log(`   Failed: ${failCount}/${texFiles.length}`)
   }
-
-  if (!config.slug) {
-    console.error('Error: --slug required (e.g., 2024-my-paper-title)')
-    printUsage()
-    process.exit(1)
-  }
-
-  return config
+  console.log('')
+  console.log('Next steps:')
+  console.log('1. Update navigation: packages/nextra/app/papers/_meta.ts')
+  console.log('2. Preview: pnpm -C packages/nextra dev')
+  console.log('3. Build: pnpm -C packages/nextra build')
+  console.log('')
 }
 
-function printUsage() {
-  console.log(`
-LaTeX to MDX Paper Converter
+async function findTexFiles(dir) {
+  const files = []
+  const entries = await fs.readdir(dir, { withFileTypes: true })
 
-Usage:
-  pnpm convert-paper <input.tex> [options]
+  for (const entry of entries) {
+    const fullPath = path.join(dir, entry.name)
 
-Options:
-  --slug <slug>           Output directory name (e.g., 2024-my-paper)
-  --authors <names>       Comma-separated author names
-  --status <status>       draft|review|published (default: draft)
-  --output <dir>          Output directory (default: packages/nextra/app/papers)
-  --preserve-latex        Copy LaTeX source to content/papers/latex-source/
-  --no-figures            Skip figure extraction
+    if (entry.isDirectory()) {
+      // Recursively search subdirectories
+      const subFiles = await findTexFiles(fullPath)
+      files.push(...subFiles)
+    } else if (entry.isFile() && entry.name.endsWith('.tex')) {
+      files.push(fullPath)
+    }
+  }
 
-Examples:
-  pnpm convert-paper paper.tex --slug 2024-mu-calculus --authors "Sean Chatman"
-  pnpm convert-paper thesis.tex --slug 2024-kgc-4d --status review --preserve-latex
-`)
+  return files.sort()
+}
+
+function generateSlug(filePath, autoSlug) {
+  const basename = path.basename(filePath, '.tex')
+
+  if (autoSlug) {
+    // Auto-generate: 2024-filename
+    const year = new Date().getFullYear()
+    // Remove chapter numbers like "25-" from "25-mu-calculus-theory.tex"
+    const cleanName = basename.replace(/^\d+-/, '')
+    return `${year}-${cleanName}`
+  }
+
+  // Otherwise, user must provide --slug
+  console.error(`❌ Error: --slug required for ${basename} (or use --auto-slug)`)
+  process.exit(1)
+}
+
+// ============================================================================
+// Single File Conversion
+// ============================================================================
+
+async function convertSingleFile(args) {
+  if (!args.slug && !args['auto-slug']) {
+    console.error('❌ Error: --slug required (or use --auto-slug)')
+    process.exit(1)
+  }
+
+  const slug = args.slug || generateSlug(args.input, args['auto-slug'])
+  await convertPaper({ ...args, slug })
 }
 
 // ============================================================================
@@ -373,37 +466,39 @@ ${abstract}`
  * Main conversion function
  */
 async function convertPaper(config) {
-  console.log('🚀 Starting LaTeX → MDX conversion...')
-  console.log(`   Input: ${config.input}`)
-  console.log(`   Slug: ${config.slug}`)
-  console.log(`   Authors: ${config.authors.join(', ')}`)
-  console.log(`   Status: ${config.status}`)
-  console.log('')
+  const verbose = config.verbose
+
+  if (verbose) {
+    console.log('🚀 Starting LaTeX → MDX conversion...')
+    console.log(`   Input: ${config.input}`)
+    console.log(`   Slug: ${config.slug}`)
+    console.log(`   Authors: ${config.authors}`)
+    console.log(`   Status: ${config.status}`)
+    console.log('')
+  }
 
   // Read LaTeX file
-  console.log('📖 Reading LaTeX file...')
   const latexContent = await fs.readFile(config.input, 'utf-8')
 
   // Convert to MDX
-  console.log('🔄 Converting LaTeX → MDX...')
-  const mdxContent = convertLatexToMDX(latexContent, config)
+  const authors = typeof config.authors === 'string'
+    ? config.authors.split(',').map(a => a.trim())
+    : config.authors
+  const mdxContent = convertLatexToMDX(latexContent, { ...config, authors })
 
   // Create output directory
-  const outputPath = path.join(config.outputDir, config.slug)
-  console.log(`📁 Creating output directory: ${outputPath}`)
+  const outputPath = path.join(config.output, config.slug)
   await fs.mkdir(outputPath, { recursive: true })
 
   // Create figures directory
-  if (config.extractFigures) {
+  if (!config.noFigures) {
     const figuresPath = path.join(outputPath, 'figures')
     await fs.mkdir(figuresPath, { recursive: true })
-    console.log(`📁 Created figures directory: ${figuresPath}`)
   }
 
   // Write MDX file
   const mdxFilePath = path.join(outputPath, 'page.mdx')
   await fs.writeFile(mdxFilePath, mdxContent, 'utf-8')
-  console.log(`✅ Written MDX file: ${mdxFilePath}`)
 
   // Preserve LaTeX source if requested
   if (config.preserveLatex) {
@@ -411,34 +506,18 @@ async function convertPaper(config) {
     await fs.mkdir(latexArchiveDir, { recursive: true })
     const latexArchivePath = path.join(latexArchiveDir, `${config.slug}.tex`)
     await fs.copyFile(config.input, latexArchivePath)
-    console.log(`📄 Archived LaTeX source: ${latexArchivePath}`)
   }
 
-  console.log('')
-  console.log('✨ Conversion complete!')
-  console.log('')
-  console.log('Next steps:')
-  console.log(`1. Review generated MDX: code ${mdxFilePath}`)
-  console.log(`2. Copy figures to: ${path.join(outputPath, 'figures')}`)
-  console.log(`3. Update navigation: packages/nextra/app/papers/_meta.ts`)
-  console.log(`4. Preview: pnpm -C packages/nextra dev`)
-  console.log(`5. Build: pnpm -C packages/nextra build`)
-  console.log('')
+  if (verbose) {
+    console.log(`✅ Written MDX file: ${mdxFilePath}`)
+    console.log('')
+    console.log('✨ Conversion complete!')
+    console.log('')
+  }
 }
 
 // ============================================================================
 // Main
 // ============================================================================
 
-async function main() {
-  try {
-    const config = parseArgs()
-    await convertPaper(config)
-  } catch (error) {
-    console.error('❌ Error:', error.message)
-    console.error(error.stack)
-    process.exit(1)
-  }
-}
-
-main()
+runMain(main)
