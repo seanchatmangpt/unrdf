@@ -10,7 +10,10 @@
     "lint": "eslint .",
     "typecheck": "nuxt typecheck",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate"
+    "db:migrate": "drizzle-kit migrate",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest --coverage"
   },
   "dependencies": {
     "@ai-sdk/gateway": "^2.0.15",
@@ -38,9 +41,14 @@
   "devDependencies": {
     "@nuxt/eslint": "^1.10.0",
     "@types/node": "^24.10.1",
+    "@vitest/ui": "^2.1.8",
+    "@vue/test-utils": "^2.4.6",
     "drizzle-kit": "^0.31.7",
     "eslint": "^9.39.1",
+    "happy-dom": "^16.5.0",
+    "msw": "^2.6.8",
     "typescript": "^5.9.3",
+    "vitest": "^2.1.8",
     "vue-tsc": "^3.1.5"
   },
   "packageManager": "pnpm@10.23.0"
