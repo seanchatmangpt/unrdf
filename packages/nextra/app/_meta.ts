@@ -7,6 +7,10 @@ export default {
       layout: 'raw',
     },
   },
+  playground: {
+    title: 'μ(O) Dashboard',
+    type: 'page',
+  },
   guides: {
     title: 'Guides',
     type: 'page',
