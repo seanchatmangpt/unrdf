@@ -5,22 +5,22 @@ export default {
       layout: 'full',
     },
   },
-  '2024-mu-calculus-theory': {
+  '2025-mu-calculus-theory': {
     title: 'μ(O) Calculus: Theoretical Foundations',
   },
-  '2024-hooks-architecture': {
+  '2025-hooks-architecture': {
     title: 'Hooks Architecture Patterns',
   },
-  '2024-hooks-performance': {
+  '2025-hooks-performance': {
     title: 'Hooks Performance Analysis',
   },
-  '2024-hooks-quality': {
+  '2025-hooks-quality': {
     title: 'Hooks Quality & Lean Six Sigma',
   },
-  '2024-hooks-jtbd': {
+  '2025-hooks-jtbd': {
     title: 'Hooks Jobs-to-be-Done Framework',
   },
-  '2024-hooks-ecosystem': {
+  '2025-hooks-ecosystem': {
     title: 'Hooks Ecosystem Integration',
   },
 };
