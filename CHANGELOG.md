@@ -50,16 +50,18 @@
 
 ### Performance Improvements
 
-- ⚡ 40% faster query execution (Oxigraph Rust backend)
-- 💾 60% lower memory usage (zero-copy architecture)
+- ⚡ 40% faster query execution (Oxigraph Rust backend - not benchmarked in beta.1)
+- 💾 60% lower memory usage (zero-copy architecture - not benchmarked in beta.1)
 - 🔧 100% N3 compliance achieved (851/851 files)
 
 ### Quality Gates
 
-- ✅ 330/330 tests passing (zero regressions)
-- ✅ OTEL validation framework complete
-- ✅ Production readiness: 85/100 (FMEA validated)
-- ✅ 100% Oxigraph compliance
+- ✅ 190 tests passing (verified: core 166, CLI 24)
+  - Note: Tests run individually; `pnpm -r test` hangs (known issue)
+- ✅ OTEL validation: 83/100 (5/6 features passing)
+  - knowledge-engine-core, policy-packs, lockchain, transactions, browser ✅
+  - knowledge-hooks-api needs fix (no spans collected)
+- ✅ 100% Oxigraph compliance (851/851 files)
 
 ### Documentation
 
