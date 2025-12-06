@@ -1,4 +1,5 @@
 import React from 'react';
+import 'nextra-theme-docs/style.css';
 import 'katex/dist/katex.min.css';
 
 export const metadata = {
