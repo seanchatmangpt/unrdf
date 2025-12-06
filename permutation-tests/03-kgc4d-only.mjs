@@ -12,7 +12,7 @@ try {
 
   // === IMPORT TEST ===
   console.log('📦 Importing @unrdf/kgc-4d...');
-  const { KGCStore, now, toISO, EVENT_TYPES } = await import('@unrdf/kgc-4d');
+  const { KGCStore, now, toISO, EVENT_TYPES } = await import('../packages/kgc-4d/src/index.mjs');
   console.log('   ✅ Imports successful');
 
   // === TIME TEST ===

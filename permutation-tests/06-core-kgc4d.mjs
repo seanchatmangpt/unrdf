@@ -12,9 +12,9 @@ try {
 
   // === IMPORT TEST ===
   console.log('📦 Importing packages...');
-  const { createStore, dataFactory } = await import('@unrdf/oxigraph');
-  const { executeQuerySync } = await import('@unrdf/core');
-  const { KGCStore, now, toISO, EVENT_TYPES, GitBackbone, freezeUniverse } = await import('@unrdf/kgc-4d');
+  const { createStore, dataFactory } = await import('../packages/oxigraph/src/index.mjs');
+  const { executeQuerySync } = await import('../packages/core/src/index.mjs');
+  const { KGCStore, now, toISO, EVENT_TYPES, GitBackbone, freezeUniverse } = await import('../packages/kgc-4d/src/index.mjs');
   console.log('   ✅ Imports successful');
 
   // === TIME TEST ===

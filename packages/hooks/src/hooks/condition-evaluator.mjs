@@ -11,7 +11,7 @@ import { createFileResolver } from './file-resolver.mjs';
 import { ask, select } from './query.mjs';
 import { validateShacl } from './validate.mjs';
 import { createQueryOptimizer } from './query-optimizer.mjs';
-import { createStore } from '@unrdf/oxigraph';
+import { createStore } from '../../../oxigraph/src/index.mjs';
 
 /**
  * Evaluate a hook condition against a graph.

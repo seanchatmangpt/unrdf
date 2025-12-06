@@ -12,9 +12,9 @@ try {
 
   // === IMPORT TEST ===
   console.log('📦 Importing packages...');
-  const { createStore, dataFactory } = await import('@unrdf/oxigraph');
-  const { executeQuerySync } = await import('@unrdf/core');
-  const { defineHook, executeHook } = await import('@unrdf/hooks');
+  const { createStore, dataFactory } = await import('../packages/oxigraph/src/index.mjs');
+  const { executeQuerySync } = await import('../packages/core/src/index.mjs');
+  const { defineHook, executeHook } = await import('../packages/hooks/src/index.mjs');
   console.log('   ✅ Imports successful');
 
   // === CREATE STORE ===
@@ -46,7 +46,7 @@ try {
 
   // === ADD TO STORE ===
   console.log('\n➕ Adding quad to store...');
-  store.insert(validQuad);
+  store.add(validQuad);
   console.log('   ✅ Quad added to store');
 
   // === QUERY ===

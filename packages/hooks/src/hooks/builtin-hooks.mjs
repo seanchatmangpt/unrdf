@@ -4,7 +4,7 @@
  */
 
 import { defineHook } from './define-hook.mjs';
-import { dataFactory } from '@unrdf/oxigraph';
+import { dataFactory } from '../../../oxigraph/src/index.mjs';
 import { quadPool } from './quad-pool.mjs';
 
 /**

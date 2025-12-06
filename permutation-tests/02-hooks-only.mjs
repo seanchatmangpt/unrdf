@@ -12,7 +12,7 @@ try {
 
   // === IMPORT TEST ===
   console.log('📦 Importing @unrdf/hooks...');
-  const { defineHook, executeHook } = await import('@unrdf/hooks');
+  const { defineHook, executeHook } = await import('../packages/hooks/src/index.mjs');
   console.log('   ✅ Imports successful');
 
   // === DEFINE HOOK TEST ===
@@ -28,7 +28,7 @@ try {
 
   // === EXECUTE HOOK TEST (without store - will likely fail) ===
   console.log('\n▶️  Executing hook...');
-  const { dataFactory } = await import('@unrdf/oxigraph');
+  const { dataFactory } = await import('../packages/oxigraph/src/index.mjs');
   const testQuad = {
     subject: dataFactory.namedNode('http://example.org/test'),
     predicate: dataFactory.namedNode('http://example.org/prop'),
