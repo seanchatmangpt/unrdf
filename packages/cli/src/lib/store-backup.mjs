@@ -17,7 +17,6 @@ import { _pipeline } from 'node:stream/promises';
 import { createGzip } from 'node:zlib';
 import { join, _basename } from 'node:path';
 import { z } from 'zod';
-import { defaultObservabilityManager } from '../knowledge-engine/observability.mjs';
 import { fileExists, ensureDir } from '../utils/io-utils.mjs';
 
 /**
@@ -65,7 +64,6 @@ const BackupResultSchema = z.object({
  */
 export async function backupStore(storePath, options = {}) {
   // Initialize observability
-  await defaultObservabilityManager.initialize();
 
   const transactionId = `backup-${Date.now()}`;
   const _spanContext = defaultObservabilityManager.startTransactionSpan(transactionId, {

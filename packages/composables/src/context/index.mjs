@@ -12,23 +12,11 @@
 import { createContext } from 'unctx';
 import { AsyncLocalStorage } from 'node:async_hooks';
 import { UnrdfDataFactory as DataFactory } from '@unrdf/core/rdf/n3-justified-only';
-import { createStore } from '@unrdf/oxigraph'; // TODO: Replace with Oxigraph Store
+import { createStore } from '@unrdf/oxigraph';
+import { executeQuerySync } from '@unrdf/core';
+import { canonicalize } from '@unrdf/core';
 import crypto from 'node:crypto';
 import * as rdfCanonizeModule from 'rdf-canonize';
-import {
-  query as _keQuery,
-  select as _keSelect,
-  ask as _keAsk,
-  construct as _keConstruct,
-  describe as _keDescribe,
-  update as _keUpdate,
-} from '../knowledge-engine/query.mjs';
-import { _toTurtle, _toNQuads } from '../knowledge-engine/parse.mjs';
-import {
-  canonicalize as _keCanonicalize,
-  isIsomorphic as _keIsomorphic,
-  getCanonicalHash as _getCanonicalHash,
-} from '../knowledge-engine/canonicalize.mjs';
 
 const rdfCanonize = rdfCanonizeModule.default || rdfCanonizeModule;
 

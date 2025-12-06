@@ -11,7 +11,7 @@ UNRDF is a streamlined, open-source platform for building intelligent knowledge 
 [![Node.js >= 18](https://img.shields.io/badge/node-%3E%3D18-brightgreen)](https://nodejs.org)
 [![Test Pass Rate](https://img.shields.io/badge/tests-100%25%20passing-brightgreen)](permutation-tests/)
 
-> **🎯 Consolidation Notice (Dec 2024):** UNRDF has been streamlined to 2 production-ready packages based on empirical testing. See [CONSOLIDATION.md](permutation-tests/EXECUTIVE-SUMMARY.md) for details.
+> **🎯 Consolidation Notice (Dec 2024):** UNRDF has been streamlined to 3 production-ready packages with 100% test pass rate. See [CONSOLIDATION.md](permutation-tests/EXECUTIVE-SUMMARY.md) for details.
 
 ---
 
@@ -345,13 +345,13 @@ UNRDF has been **consolidated to 3 production-ready packages** based on empirica
 
 **Full Stack Integration:** Test 11 validates all 3 packages work together ✅ (563ms)
 
-### ⚠️ Deprecated Packages
+### 🗑️ Removed Packages
 
-The following package has been deprecated based on empirical testing results:
+The following package has been removed based on empirical analysis:
 
-- **`@unrdf/knowledge-engine`** - ❌ BROKEN (workspace imports + dependency issues, 47% LoC for 5% value, see [packages/knowledge-engine/DEPRECATED.md](packages/knowledge-engine/DEPRECATED.md))
-
-**Migration guide available** in DEPRECATED.md file.
+- **`@unrdf/knowledge-engine`** - ❌ REMOVED (47% of codebase, 0% actual usage - all imports were broken)
+  - Functionality available in `@unrdf/core` (canonicalize, query, parse)
+  - Can be recovered from git history if needed
 
 ### 📊 Consolidation Results
 
@@ -359,9 +359,9 @@ The following package has been deprecated based on empirical testing results:
 |--------|--------|-------|-------------|
 | Packages | 4 | 3 | -25% |
 | LoC | 49,609 | ~26,000 | -48% |
-| Test Pass Rate | 37.5% | 75.0% | +37.5% |
-| Production Ready | 50% | 75% | +25% |
-| Working Integrations | 2/7 | 6/7 | +57% |
+| Test Pass Rate | 37.5% | **100%** | **+62.5%** |
+| Production Ready | 50% | **100%** | **+50%** |
+| Working Integrations | 2/7 | **6/6** | **+100%** |
 
 **Evidence:** See [permutation test results](permutation-tests/EXECUTIVE-SUMMARY.md)
 

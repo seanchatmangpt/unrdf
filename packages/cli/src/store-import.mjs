@@ -14,7 +14,6 @@ import { readFile, writeFile, readdir, stat } from 'node:fs/promises';
 import { join } from 'node:path';
 import { z } from 'zod';
 import { OxigraphStore } from '@unrdf/oxigraph';
-import { defaultObservabilityManager } from '../knowledge-engine/observability.mjs';
 import { fileExists, ensureDir, detectRDFFormat } from '../utils/io-utils.mjs';
 
 /**
@@ -70,7 +69,6 @@ const ImportResultSchema = z.object({
  */
 export async function importStore(files, options) {
   // Initialize observability
-  await defaultObservabilityManager.initialize();
 
   const transactionId = `import-${Date.now()}`;
   const _spanContext = defaultObservabilityManager.startTransactionSpan(transactionId, {

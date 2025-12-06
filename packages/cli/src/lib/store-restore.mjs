@@ -15,7 +15,6 @@ import { createReadStream, _createWriteStream } from 'node:fs';
 import { createGunzip } from 'node:zlib';
 import { join } from 'node:path';
 import { z } from 'zod';
-import { defaultObservabilityManager } from '../knowledge-engine/observability.mjs';
 import { fileExists, ensureDir } from '../utils/io-utils.mjs';
 import { promises as fs } from 'node:fs';
 
@@ -64,7 +63,6 @@ const RestoreResultSchema = z.object({
  */
 export async function restoreStore(backupPath, options) {
   // Initialize observability
-  await defaultObservabilityManager.initialize();
 
   const transactionId = `restore-${Date.now()}`;
   const _spanContext = defaultObservabilityManager.startTransactionSpan(transactionId, {
