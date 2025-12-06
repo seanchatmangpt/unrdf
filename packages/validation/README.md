@@ -1,5 +1,8 @@
 # @unrdf/validation
 
+![Version](https://img.shields.io/badge/version-5.0.0--beta.1-blue) ![Production Ready](https://img.shields.io/badge/production-ready-green)
+
+
 OpenTelemetry (OTEL) validation framework and observability tools for UNRDF.
 
 **Status:** Internal use only (private package)

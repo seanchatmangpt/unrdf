@@ -1,5 +1,8 @@
 # @unrdf/composables
 
+![Version](https://img.shields.io/badge/version-5.0.0--beta.1-blue) ![Production Ready](https://img.shields.io/badge/production-ready-green)
+
+
 **Vue 3 Composables for Reactive RDF State** *(Optional Extension)*
 
 Build reactive RDF web applications with Vue 3. Composables for RDF graphs, changes, and queries.

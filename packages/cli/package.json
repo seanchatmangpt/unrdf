@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/cli",
-  "version": "5.0.0-alpha.0",
+  "version": "5.0.0-beta.1",
   "description": "UNRDF CLI - Command-line Tools for Graph Operations and Context Management",
   "type": "module",
   "bin": {
@@ -38,10 +38,10 @@
     "sparql"
   ],
   "dependencies": {
-    "@unrdf/core": "workspace:*",
-    "@unrdf/federation": "workspace:*",
-    "@unrdf/hooks": "workspace:*",
-    "@unrdf/streaming": "workspace:*",
+    "@unrdf/core": "workspace:5.0.0-beta.1",
+    "@unrdf/federation": "workspace:5.0.0-beta.1",
+    "@unrdf/hooks": "workspace:5.0.0-beta.1",
+    "@unrdf/streaming": "workspace:5.0.0-beta.1",
     "citty": "^0.1.6",
     "table": "^6.9.0",
     "yaml": "^2.8.1"

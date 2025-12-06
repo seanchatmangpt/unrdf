@@ -1,5 +1,8 @@
 # @unrdf/cli
 
+![Version](https://img.shields.io/badge/version-5.0.0--beta.1-blue) ![Production Ready](https://img.shields.io/badge/production-ready-green)
+
+
 **Command-line Tools for Graph Operations**
 
 CLI for working with RDF graphs. Create, query, update, and manage graphs from the terminal.

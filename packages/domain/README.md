@@ -1,5 +1,8 @@
 # @unrdf/domain
 
+![Version](https://img.shields.io/badge/version-5.0.0--beta.1-blue) ![Production Ready](https://img.shields.io/badge/production-ready-green)
+
+
 Domain models, type definitions, and shared schemas for UNRDF.
 
 **Status:** Internal use only (private package)
