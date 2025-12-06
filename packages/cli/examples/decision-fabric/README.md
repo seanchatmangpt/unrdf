@@ -68,6 +68,69 @@ unrdf decision "Implement real-time fraud detection" \
 
 ## CLI Commands
 
+### `bb8020` - Complete 11-Step Workflow (NEW!)
+
+**Execute the full Big Bang 80/20 methodology** for single-pass implementation with ≥99.99% correctness.
+
+**11-Step Workflow**:
+0. Pre-validation (Socratic analysis)
+1. Parse specification → feature set
+2. Compute Pareto frontier (80/20)
+3. Hyperdimensional embedding φ: F → H_D
+4. Pattern matching in codebase
+5. Architecture design (info-geometric)
+6. Pseudocode generation
+7. Implementation (pattern library)
+8. Syntax validation
+9. Static analysis
+10. Specification compliance
+11. Deploy to production
+
+**Example**:
+```bash
+# Full end-to-end workflow
+unrdf bb8020 examples/decision-fabric/kgc4d-spec.json
+
+# With custom output directory
+unrdf bb8020 examples/decision-fabric/kgc4d-spec.json \
+  --output ./my-implementation
+
+# JSON output for programmatic processing
+unrdf bb8020 examples/decision-fabric/kgc4d-spec.json \
+  --format json
+```
+
+**Specification Format**:
+```json
+{
+  "name": "Feature Name",
+  "description": "What to build",
+  "statement": "Decision statement for Socratic analysis",
+  "features": [
+    { "id": 1, "name": "Feature 1", "value": 95, "cost": 50 }
+  ]
+}
+```
+
+**Artifacts Generated**:
+- `workflow-result.json` - Complete workflow results
+- `generated-code.mjs` - Implementation code
+- `pseudocode.txt` - Generated pseudocode
+- `architecture.json` - System architecture
+
+**Expected Results** (from thesis validation):
+- Implementation time: 2-3 hours
+- Correctness: ≥99.99%
+- Code reuse: 64.3%
+- Static analysis coverage: 98%
+- Zero defects (for H_spec ≤ 16 bits)
+
+**Exit codes**:
+- 0: Workflow succeeded (all 11 steps passed)
+- 1: Workflow failed (check errors) or high entropy (H_spec > 16 bits)
+
+---
+
 ### `decision` - Strategic Decision Processing
 
 Process strategic decisions through the complete Hyperdimensional Decision Fabric workflow.

@@ -23,6 +23,7 @@ import {
 import { decisionCommand } from './commands/decision.mjs';
 import { paretoCommand } from './commands/pareto.mjs';
 import { socraticCommand } from './commands/socratic.mjs';
+import { bb8020Command } from './commands/bb8020.mjs';
 
 /**
  * Main CLI application
@@ -48,6 +49,7 @@ const main = defineCommand({
     decision: decisionCommand,
     pareto: paretoCommand,
     socratic: socraticCommand,
+    bb8020: bb8020Command, // Complete 11-step workflow
   },
 });
 

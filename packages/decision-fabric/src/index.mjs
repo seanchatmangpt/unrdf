@@ -24,6 +24,7 @@
 export { DecisionEngine, DecisionOutcome, OPERATORS } from './engine.mjs';
 export { ParetoAnalyzer, Feature, createKGC4DExample } from './pareto-analyzer.mjs';
 export { SocraticAgent, Assumption, SocraticChallenge, createExampleAnalysis } from './socratic-agent.mjs';
+export { BB8020Orchestrator, BB8020Result, WorkflowStepResult } from './bb8020-orchestrator.mjs';
 
 /**
  * Create a complete Decision Fabric instance with all components
