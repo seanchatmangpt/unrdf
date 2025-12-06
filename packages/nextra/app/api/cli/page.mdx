@@ -1,0 +1,52 @@
+---
+title: '@unrdf/cli API'
+description: Command-line interface for RDF operations
+---
+
+# @unrdf/cli
+
+Command-line tools for RDF validation, querying, and conversion.
+
+## Installation
+
+```bash
+pnpm add -g @unrdf/cli
+```
+
+## Commands
+
+### query
+
+Execute SPARQL queries:
+
+```bash
+unrdf query data.ttl "SELECT * WHERE { ?s ?p ?o } LIMIT 10"
+```
+
+### validate
+
+Validate RDF syntax:
+
+```bash
+unrdf validate data.ttl
+```
+
+### convert
+
+Convert between RDF formats:
+
+```bash
+unrdf convert data.ttl --to ntriples > output.nt
+```
+
+### repl
+
+Interactive RDF shell:
+
+```bash
+unrdf repl
+```
+
+---
+
+[View @unrdf/cli source →](https://github.com/unrdf/unrdf/tree/main/packages/cli)

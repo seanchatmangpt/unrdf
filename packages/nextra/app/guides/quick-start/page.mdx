@@ -1,0 +1,220 @@
+---
+title: Quick Start
+description: Your first RDF knowledge graph in 5 minutes
+---
+
+import { CodePlayground } from '../../../components';
+
+# Quick Start
+
+Build your first RDF knowledge graph in 5 minutes.
+
+## Step 1: Create a Store
+
+```javascript
+import { createStore } from '@unrdf/core';
+
+const store = createStore();
+```
+
+The store is an in-memory RDF triple store backed by Oxigraph WASM.
+
+---
+
+## Step 2: Create RDF Terms
+
+```javascript
+import { dataFactory } from '@unrdf/core';
+
+// Named nodes (IRIs)
+const alice = dataFactory.namedNode('http://example.org/alice');
+const knows = dataFactory.namedNode('http://xmlns.com/foaf/0.1/knows');
+const bob = dataFactory.namedNode('http://example.org/bob');
+
+// Literals
+const name = dataFactory.literal('Alice', 'en');
+const age = dataFactory.literal(30);
+```
+
+---
+
+## Step 3: Create and Add Quads
+
+```javascript
+const quad1 = dataFactory.quad(alice, knows, bob);
+const quad2 = dataFactory.quad(
+  alice,
+  dataFactory.namedNode('http://xmlns.com/foaf/0.1/name'),
+  name
+);
+
+store.add(quad1);
+store.add(quad2);
+
+console.log(`Store size: ${store.size}`); // 2
+```
+
+---
+
+## Step 4: Query the Store
+
+```javascript
+// Find all quads with alice as subject
+const results = store.match(alice, null, null);
+
+for (const quad of results) {
+  console.log(quad.predicate.value);
+  console.log(quad.object.value);
+}
+```
+
+---
+
+## Interactive Example
+
+Try it yourself! Click "Run" to execute the code:
+
+<CodePlayground runtime="browser" package="@unrdf/core">
+```javascript
+import { createStore, dataFactory } from '@unrdf/core';
+
+const store = createStore();
+
+// Create terms
+const alice = dataFactory.namedNode('http://example.org/alice');
+const knows = dataFactory.namedNode('http://xmlns.com/foaf/0.1/knows');
+const bob = dataFactory.namedNode('http://example.org/bob');
+
+// Create and add quad
+const quad = dataFactory.quad(alice, knows, bob);
+store.add(quad);
+
+console.log(`✅ Added ${store.size} quad(s) to the store`);
+console.log(`Alice knows: ${quad.object.value}`);
+```
+</CodePlayground>
+
+---
+
+## Complete Example
+
+Here's a complete working example:
+
+```javascript
+import { createStore, dataFactory } from '@unrdf/core';
+
+// Create store
+const store = createStore();
+
+// Define vocabulary
+const ex = (term) => dataFactory.namedNode(`http://example.org/${term}`);
+const foaf = (term) => dataFactory.namedNode(`http://xmlns.com/foaf/0.1/${term}`);
+
+// Create people
+const alice = ex('alice');
+const bob = ex('bob');
+const charlie = ex('charlie');
+
+// Add relationships
+store.add(dataFactory.quad(alice, foaf('knows'), bob));
+store.add(dataFactory.quad(alice, foaf('knows'), charlie));
+store.add(dataFactory.quad(bob, foaf('knows'), charlie));
+
+// Add names
+store.add(dataFactory.quad(alice, foaf('name'), dataFactory.literal('Alice')));
+store.add(dataFactory.quad(bob, foaf('name'), dataFactory.literal('Bob')));
+
+// Query: Who does Alice know?
+const aliceKnows = store.match(alice, foaf('knows'), null);
+
+console.log('Alice knows:');
+for (const quad of aliceKnows) {
+  const person = quad.object;
+  const nameQuads = store.match(person, foaf('name'), null);
+
+  for (const nameQuad of nameQuads) {
+    console.log(`- ${nameQuad.object.value}`);
+  }
+}
+```
+
+---
+
+## Next Steps
+
+- **[Basic Usage](/guides/basic-usage)** - Learn core patterns
+- **[API Reference](/api/core)** - Explore the full API
+- **[Examples](/examples)** - More interactive examples
+- **[Concepts](/concepts/rdf-fundamentals)** - Understand RDF deeply
+
+---
+
+## Key Concepts
+
+### Store
+A triple store that holds RDF quads (subject-predicate-object-graph).
+
+### Data Factory
+Factory functions for creating RDF terms (named nodes, literals, blank nodes).
+
+### Quad
+A single RDF statement: `(subject, predicate, object, graph?)`.
+
+### Pattern Matching
+Query quads using `store.match(s?, p?, o?, g?)` where `?` means "any".
+
+---
+
+## Common Patterns
+
+### Importing multiple terms
+
+```javascript
+import { createStore, dataFactory } from '@unrdf/core';
+const { namedNode, literal, quad } = dataFactory;
+```
+
+### Creating vocabularies
+
+```javascript
+const vocab = (prefix) => (term) =>
+  dataFactory.namedNode(`${prefix}${term}`);
+
+const foaf = vocab('http://xmlns.com/foaf/0.1/');
+const schema = vocab('http://schema.org/');
+
+const person = foaf('Person');
+const name = schema('name');
+```
+
+### Bulk operations
+
+```javascript
+const quads = [
+  quad(s1, p1, o1),
+  quad(s2, p2, o2),
+  quad(s3, p3, o3),
+];
+
+quads.forEach((q) => store.add(q));
+```
+
+---
+
+## Validation
+
+All quads are validated at runtime using Zod:
+
+```javascript
+import { QuadSchema } from '@unrdf/core';
+
+const result = QuadSchema.safeParse(quad);
+
+if (!result.success) {
+  console.error('Invalid quad:', result.error);
+}
+```
+
+---
+
+You're ready to build knowledge graphs! 🎉

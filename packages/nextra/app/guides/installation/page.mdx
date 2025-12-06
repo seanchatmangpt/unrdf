@@ -1,0 +1,162 @@
+---
+title: Installation
+description: Get started with UNRDF v5 in 60 seconds
+---
+
+# Installation
+
+Get started with UNRDF v5 in under 60 seconds.
+
+## Prerequisites
+
+- **Node.js**: ≥18.0.0
+- **Package Manager**: pnpm ≥7.0.0 (recommended) or npm ≥8.0.0
+
+## Quick Install
+
+```bash
+# Using pnpm (recommended)
+pnpm add @unrdf/core
+
+# Using npm
+npm install @unrdf/core
+```
+
+## Verify Installation
+
+```javascript
+import { createStore } from '@unrdf/core';
+
+const store = createStore();
+console.log('✅ UNRDF installed successfully!');
+```
+
+---
+
+## Package Selection
+
+UNRDF v5 is modular. Install only what you need:
+
+### Core Functionality
+```bash
+pnpm add @unrdf/core
+```
+**Use for**: Basic RDF operations, quad creation, validation
+
+### React Integration
+```bash
+pnpm add @unrdf/hooks
+```
+**Use for**: React hooks, suspense, state management
+
+### Browser Usage
+```bash
+pnpm add @unrdf/browser
+```
+**Use for**: IndexedDB storage, client-side applications
+
+### Streaming Data
+```bash
+pnpm add @unrdf/streaming
+```
+**Use for**: Large datasets, Transform streams, N3 parsing
+
+### Distributed Graphs
+```bash
+pnpm add @unrdf/federation
+```
+**Use for**: Multi-store queries, SPARQL federation
+
+### Advanced Reasoning
+```bash
+pnpm add @unrdf/knowledge-engine
+```
+**Use for**: OWL-RL reasoning, inference rules
+
+### CLI Tools
+```bash
+pnpm add -g @unrdf/cli
+```
+**Use for**: Command-line operations, REPL, validation
+
+---
+
+## Monorepo Setup
+
+For development or contributing:
+
+```bash
+# Clone repository
+git clone https://github.com/unrdf/unrdf.git
+cd unrdf
+
+# Install dependencies
+pnpm install
+
+# Run tests
+pnpm test
+
+# Build all packages
+pnpm build
+```
+
+---
+
+## TypeScript Configuration
+
+UNRDF uses **JSDoc + Zod** (not TypeScript source), but provides type hints:
+
+```json
+{
+  "compilerOptions": {
+    "checkJs": true,
+    "allowJs": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true
+  }
+}
+```
+
+---
+
+## Next Steps
+
+- **[Quick Start](/guides/quick-start)** - Your first RDF graph in 5 minutes
+- **[Basic Usage](/guides/basic-usage)** - Core patterns and examples
+- **[API Reference](/api)** - Complete API documentation
+
+---
+
+## Troubleshooting
+
+### pnpm not found
+
+```bash
+npm install -g pnpm
+```
+
+### Module not found errors
+
+Ensure you're using Node.js ≥18:
+
+```bash
+node --version  # Should be ≥18.0.0
+```
+
+### ESM import errors
+
+UNRDF uses ESM modules. Ensure `"type": "module"` in your `package.json`:
+
+```json
+{
+  "type": "module"
+}
+```
+
+---
+
+## Support
+
+- **GitHub Issues**: [Report bugs](https://github.com/unrdf/unrdf/issues)
+- **Discussions**: [Ask questions](https://github.com/unrdf/unrdf/discussions)
+- **Documentation**: [Full docs](/)
