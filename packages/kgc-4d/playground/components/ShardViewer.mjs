@@ -24,12 +24,26 @@ function QuadRow({ quad, index }) {
     return term.value.split('/').pop() || term.value;
   };
 
+  // Alt+Click to navigate to forensic view
+  const handleCellClick = (e) => {
+    if (e.altKey) {
+      // Navigate to visualizations page with quad context
+      const params = new URLSearchParams({
+        subject: quad.subject.value,
+        predicate: quad.predicate.value,
+      });
+      window.location.href = `/visualizations?${params.toString()}`;
+    }
+  };
+
   return (
     <motion.tr
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ delay: index * 0.02 }}
-      className="border-b border-slate-800 hover:bg-slate-800/50"
+      onClick={handleCellClick}
+      className="border-b border-slate-800 hover:bg-slate-800/50 cursor-pointer hover:ring-2 hover:ring-indigo-500/30 transition-all"
+      title="Alt+Click to view related events in Forensic Mode"
     >
       <td className="px-3 py-2 text-sm font-mono text-universe-400 truncate max-w-[200px]">
         {formatValue(quad.subject)}

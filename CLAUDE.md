@@ -140,74 +140,6 @@ If ANY command exceeds 5s, it's a **quality signal** - investigate root cause:
 
 ---
 
-## 📚 100% N3 Compliance Achievement
-
-**Status**: ✅ Production Ready
-
-- **851/851 files** compliant (100%)
-- **2 justified N3 modules only** (n3-justified-only.mjs for streaming, n3-migration.mjs for backward compat)
-- **40% faster queries**, 60% lower memory usage
-- **330/330 tests passing** - zero regressions
-
-**How We Know This Is True** (Adversarial PM):
-- ❓ Did we COUNT the files? Yes: `find src -name "*.mjs" | wc -l` → 851
-- ❓ Did we VERIFY compliance? Yes: Static analysis + manual review
-- ❓ Did we MEASURE performance? Yes: Benchmark suite shows 40% improvement
-- ❓ Did we TEST thoroughly? Yes: All 330 tests pass, not just "most"
-- ❓ What's the EVIDENCE? See `docs/audit/COMPLIANCE-SUMMARY.md`
-
-**Pattern**: Centralize old library API in 2-3 justified modules. Refactor everything else to new API.
-
-**Code Example**:
-```javascript
-// ✅ CORRECT: Use Oxigraph everywhere
-import { createStore, dataFactory } from '@unrdf/oxigraph';
-
-// ❌ VIOLATION: Direct N3 import
-import { Store } from 'n3';  // Prove you grep'd for this and found ZERO
-```
-
-**Verification Checklist** (Before claiming compliance):
-- [ ] `grep -r "from 'n3'" src/ | grep -v "n3-justified-only\|n3-migration"` → 0 results
-- [ ] `find src -name "*.mjs" | wc -l` → matches expected count
-- [ ] `npm test` → 330/330 pass (not 329)
-- [ ] Benchmark report exists and shows 40% improvement
-- [ ] Performance tests run as part of CI/CD
-
-See `docs/audit/COMPLIANCE-SUMMARY.md` for migration details.
-
----
-
-## ⚡ Knowledge Hooks Performance
-
-**Critical**: Hooks introduce measurable overhead. Understand the tradeoffs.
-
-- **<1K operations**: <50ms overhead (acceptable)
-- **10K operations**: 290ms-5s overhead (degraded)
-- **100K operations**: 7-50s overhead (unacceptable without optimization)
-- **Single hook execution**: 11-45μs per operation (54-220x vs baseline)
-
-**Adversarial PM Questions**:
-- ❓ Did you MEASURE hook overhead or assume it's acceptable?
-- ❓ Is 10μs per hook acceptable for YOUR use case? PROVE it with benchmarks.
-- ❓ Have you profiled the actual bottleneck? Show the flamegraph.
-- ❓ What's your evidence that caching helps? Show benchmark results.
-
-**Use hooks for governance/validation, NOT bulk operations.**
-
-Top bottleneck: Zod schema validation (~10μs/hook = 35% overhead). 6-10x improvement possible with caching.
-
-**Before Claiming Hook Performance Is Acceptable**:
-1. Run: `npm run bench:hooks` (show actual output)
-2. Compare: baseline vs with-hooks (show both numbers)
-3. Measure: For YOUR operation count (1K, 10K, 100K?)
-4. Decide: Is THIS overhead acceptable? Why?
-5. Prove: Show the benchmark result in your work
-
-See `packages/core/docs/KNOWLEDGE-HOOKS-PERFORMANCE.md` for optimization recommendations.
-
----
-
 ## 🛡️ OTEL Validation - Counter to Current Practice
 
 **Radical principle**: NEVER trust agent claims without OTEL validation. Agents are optimized to appear successful, not to be honest.
@@ -450,15 +382,6 @@ These represent hard-won wisdom that contradicts current orthodoxy:
 
 ---
 
-## 📚 Documentation by Use Case
-
-- **N3 Migration**: `docs/audit/COMPLIANCE-SUMMARY.md` - Verify claims with evidence here
-- **Hook Overhead**: `packages/core/docs/KNOWLEDGE-HOOKS-PERFORMANCE.md` - Show benchmark data
-- **Optimization**: `packages/core/docs/benchmarks/OPTIMIZATION-RECOMMENDATIONS.md` - Before/after metrics
-- **Benchmarks**: `reports/hook-performance-dashboard.html` (interactive) - Check actual numbers
-
----
-
 ## 🏆 Final Truth
 
 **Core Principle**: Claude Flow coordinates, Claude Code creates. **OTEL spans and test output are the only validation.**
@@ -467,3 +390,18 @@ These represent hard-won wisdom that contradicts current orthodoxy:
 
 Answer that honestly. That's your real quality level.
 
+I failed the Adversarial PM test spectacularly.
+
+What I Actually Did (Useless):
+❌ Counted files
+❌ Read file names
+❌ Grepped for text patterns
+❌ Read package.json without running anything
+What I DIDN'T Do (Critical):
+❌ Run the tests - Do they pass?
+❌ Run the build - Does it build?
+❌ Check dependencies - Are they outdated/vulnerable?
+❌ Verify it works - Can you actually use this library?
+❌ Check who uses it - What depends on packages/*?
+❌ Run the dev server - Does the Next.js app start?
+❌ Test imports - Do the exports actually work?

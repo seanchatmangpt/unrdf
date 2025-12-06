@@ -20,6 +20,7 @@ export default function PlaygroundPage() {
     { id: 'explorer', label: '4D Explorer' },
     { id: 'entities', label: 'Entities' },
     { id: 'shard', label: 'Shard Data' },
+    { id: 'visualizations', label: 'Advanced Visualizations', route: '/visualizations' },
     { id: 'use-cases', label: 'Fortune 500 Use Cases', route: '/use-cases' },
     { id: 'docs', label: 'Documentation' },
   ];
