@@ -71,8 +71,6 @@ All files created in: `/Users/sac/unrdf/book/src/api/`
   - `unrdf store import`, `export`, `query`, `stats`
 - **Context Commands:**
   - `unrdf context list`, `create`, `use`, `current`
-- **Sidecar Commands:**
-  - `unrdf sidecar status`, `health`, `restart`
 - **Plugin Commands:**
   - `unrdf plugin list`, `install`
 - **REPL:**

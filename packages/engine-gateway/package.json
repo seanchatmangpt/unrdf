@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/engine-gateway",
-  "version": "0.1.0",
+  "version": "5.0.0-beta.1",
   "description": "μ(O) Engine Gateway - Enforcement layer for Oxigraph-first, N3-minimal RDF processing",
   "type": "module",
   "main": "./src/index.mjs",
@@ -15,8 +15,8 @@
     "README.md"
   ],
   "dependencies": {
-    "@unrdf/core": "workspace:*",
-    "@unrdf/oxigraph": "workspace:*"
+    "@unrdf/core": "workspace:5.0.0-beta.1",
+    "@unrdf/oxigraph": "workspace:5.0.0-beta.1"
   },
   "devDependencies": {
     "vitest": "^1.6.0"

@@ -1,4 +1,3 @@
-# Performance Benchmark Report - KGC Sidecar
 
 **Generated:** 2025-10-01
 **Test Suite Version:** 1.0.0
@@ -6,7 +5,6 @@
 
 ## Executive Summary
 
-This report presents comprehensive performance benchmarking results for the KGC Sidecar's critical execution paths. All Service Level Objectives (SLOs) have been met or exceeded, demonstrating production-ready performance characteristics.
 
 ### Overall SLO Compliance
 
@@ -598,7 +596,7 @@ This report presents comprehensive performance benchmarking results for the KGC 
 ### Horizontal Scalability
 
 - **Effect Execution**: Linear scaling (isolate-per-effect)
-- **Transactions**: Can scale horizontally with multiple sidecar instances
+- **Transactions**: Can scale horizontally with multiple knowledge-engine instances
 - **API Endpoints**: Standard HTTP scaling (load balancer + replicas)
 
 ### Vertical Scalability
@@ -668,7 +666,6 @@ Before production:
 
 ## 8. Conclusion
 
-The KGC Sidecar demonstrates **excellent performance characteristics** across all critical execution paths:
 
 ✅ **Effect Execution**: Fast and memory-efficient
 ✅ **Transaction Processing**: Exceeds throughput SLOs

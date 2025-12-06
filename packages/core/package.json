@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/core",
-  "version": "5.0.0-alpha.0",
+  "version": "5.0.0-beta.1",
   "description": "UNRDF Core - RDF Graph Operations, SPARQL Execution, and Foundational Substrate",
   "type": "module",
   "main": "src/index.mjs",
@@ -41,7 +41,7 @@
     "linked-data"
   ],
   "dependencies": {
-    "@unrdf/oxigraph": "workspace:*",
+    "@unrdf/oxigraph": "workspace:5.0.0-beta.1",
     "@rdfjs/data-model": "^2.0.0",
     "@rdfjs/namespace": "^2.0.0",
     "@rdfjs/serializer-jsonld": "^2.0.0",

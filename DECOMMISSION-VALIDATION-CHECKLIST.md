@@ -103,8 +103,6 @@
 | src/lite.mjs | New | ✅ VALIDATED | KEEP |
 | src/engines/rdf-engine.mjs | New | ✅ VALIDATED | KEEP |
 | src/engines/index.mjs | New | ✅ VALIDATED | KEEP |
-| src/sidecar/client.mjs | New | ✅ VALIDATED | KEEP |
-| src/sidecar/config.mjs | New | ✅ VALIDATED | KEEP |
 | src/utils/* | New | ✅ VALIDATED | KEEP |
 | src/monitoring/* | New | ✅ VALIDATED | KEEP |
 | src/security/* | New | ✅ VALIDATED | KEEP |

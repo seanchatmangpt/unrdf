@@ -5,7 +5,7 @@ import { KGCStore } from '../../src/store.mjs'
 import { GitBackbone } from '../../src/git.mjs'
 
 describe('Doctests: freeze.mjs', () => {
-  test('store example 1 (line 1)', async () => {
+  test('unknown example 1 (line 1)', async () => {
     const store = new KGCStore();
 const git = new GitBackbone('/tmp/freeze-test');
 const result = await freezeUniverse(store, git);

@@ -4,7 +4,10 @@
  *
  * Prevents race conditions and concurrent context modifications
  * FM-CLI-007: Context state race condition
+ * FM-002: Context persistence integration (FIXED)
  */
+
+import { ContextManager as CoreContextManager } from '../core/context.mjs';
 
 /**
  * Global context manager with mutex-style locking
@@ -14,6 +17,23 @@ class ContextManager {
     this.currentContext = null;
     this.contextLock = null;
     this.lockTimeout = 30000; // 30 second lock timeout
+    this.coreManager = null; // Will hold CoreContextManager instance
+    this.initialized = false;
+  }
+
+  /**
+   * Initialize core context manager (lazy)
+   */
+  async ensureInitialized() {
+    if (!this.initialized) {
+      this.coreManager = new CoreContextManager();
+      await this.coreManager.init();
+      this.initialized = true;
+
+      // Load current context from core manager
+      const current = this.coreManager.getCurrentContext();
+      this.currentContext = current?.name || null;
+    }
   }
 
   /**
@@ -68,11 +88,23 @@ class ContextManager {
    * Set current context with locking
    */
   async setContext(contextName) {
+    await this.ensureInitialized();
+
     const lock = await this.acquireLock(contextName);
     try {
-      // TODO: Implement actual context setting
+      // Use core context manager for actual persistence
+      await this.coreManager.useContext(contextName);
+
+      // Verify context was set correctly (POKA-YOKE)
+      const current = this.coreManager.getCurrentContext();
+      if (current?.name !== contextName) {
+        throw new Error(
+          `Context switch verification failed: expected "${contextName}", got "${current?.name || 'none'}"`
+        );
+      }
+
       this.currentContext = contextName;
-      return { success: true, context: contextName };
+      return { success: true, context: contextName, verified: true };
     } finally {
       lock.release();
     }
@@ -81,7 +113,13 @@ class ContextManager {
   /**
    * Get current context
    */
-  getCurrentContext() {
+  async getCurrentContext() {
+    await this.ensureInitialized();
+
+    // Always read from core manager to ensure consistency
+    const current = this.coreManager.getCurrentContext();
+    this.currentContext = current?.name || null;
+
     return this.currentContext;
   }
 
@@ -89,15 +127,28 @@ class ContextManager {
    * Clear context with locking
    */
   async clearContext() {
+    await this.ensureInitialized();
+
     const lockName = this.currentContext || 'default';
     const lock = await this.acquireLock(lockName);
     try {
-      // TODO: Implement actual context clearing
+      // Clear in core manager (saves empty current context)
+      this.coreManager.currentContext = null;
+      await this.coreManager.saveCurrentContext();
+
       this.currentContext = null;
       return { success: true };
     } finally {
       lock.release();
     }
+  }
+
+  /**
+   * Get core context manager for advanced operations
+   */
+  async getCoreManager() {
+    await this.ensureInitialized();
+    return this.coreManager;
   }
 
   /**

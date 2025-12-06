@@ -1,4 +1,3 @@
-# KGC Sidecar Test Validation Results
 
 ## Executive Summary
 
@@ -148,7 +147,7 @@
 - **Status**: ✅ Running
 - **Port**: 3001→3000
 - **Access**: http://localhost:3001
-- **Recommendation**: Manually verify dashboards show KGC sidecar metrics
+- **Recommendation**: Manually verify dashboards show knowledge engine metrics
 
 ---
 
@@ -219,7 +218,7 @@ expected [] to have a length of 1 but got +0
 - `test/e2e/`: 7 files (end-to-end scenarios)
 - `test/utils/`: 6 files (utility functions)
 - `test/browser/`: 4 files (browser integration)
-- `test/sidecar/`: 5 files (KGC sidecar client)
+- `test/knowledge-engine/`: 5 files (knowledge engine client)
 - `test/composables/`: 4 files (reactive composables)
 - Others: 5 files
 
@@ -326,7 +325,6 @@ expected [] to have a length of 1 but got +0
 
 ## Conclusion
 
-The KGC Sidecar test validation reveals a **PARTIAL PASS** status with:
 - ✅ **Core functionality working** (491 tests passing)
 - ⚠️ **Edge case handling needs fixes** (427 tests failing)
 - ✅ **Infrastructure fully operational** (17 Docker containers healthy)

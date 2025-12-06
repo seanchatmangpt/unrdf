@@ -62,7 +62,7 @@ AFTER CLEANUP (39 files, 0 stubs):
         │   ├── history.mjs
         │   └── describe.mjs
         ├── policy/ (6 files) ✅ ALL WORKING
-        ├── sidecar/ (5 files) ✅ ALL WORKING
+        ├── knowledge-engine/ (5 files) ✅ ALL WORKING
         └── store/ (4 files) ✅ ALL WORKING (1 partial TODO)
             ├── import.mjs 🟡 (functional with TODO)
             ├── export.mjs
@@ -129,29 +129,7 @@ unrdf policy validate   # Validate policy syntax
 unrdf policy describe   # Describe policy pack
 ```
 
-#### Sidecar (5)
 ```bash
-unrdf sidecar status    # Get sidecar status
-unrdf sidecar health    # Check sidecar health
-unrdf sidecar config    # Manage sidecar config
-unrdf sidecar logs      # View sidecar logs
-unrdf sidecar restart   # Restart sidecar
-```
-
-#### Store (4)
-```bash
-unrdf store import      # Import RDF data (🟡 partial TODO)
-unrdf store export      # Export RDF data
-unrdf store query       # SPARQL query store
-unrdf store stats       # Show store statistics
-```
-
-#### Utility (5)
-```bash
-unrdf plugin list       # List installed plugins
-unrdf plugin install    # Install plugin
-unrdf repl              # Start SPARQL REPL
-unrdf init              # Initialize UNRDF project
 unrdf completion        # Generate shell completions
 ```
 
@@ -159,7 +137,7 @@ unrdf completion        # Generate shell completions
 
 #### Graph (5 removed)
 ```bash
-unrdf graph list        # ❌ REMOVED - TODO: Integrate with sidecar
+unrdf graph list        # ❌ REMOVED - TODO: Integrate with knowledge-engine
 unrdf graph get         # ❌ REMOVED - TODO: Fetch graph details
 unrdf graph create      # ❌ REMOVED - TODO: Create graph
 unrdf graph validate    # ❌ REMOVED - TODO: Validate graph
@@ -246,7 +224,7 @@ Accuracy: 100%
 **BEFORE:**
 ```bash
 $ unrdf graph list
-# Error: TODO: Integrate with sidecar client
+# Error: TODO: Integrate with knowledge-engine client
 # User confused - command exists but doesn't work
 ```
 

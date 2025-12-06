@@ -62,6 +62,7 @@ for (const binding of results) {
 
 ## 📚 Documentation
 
+### For Users
 | Resource | Purpose |
 |----------|---------|
 | **[START-HERE.md](docs/START-HERE.md)** | New? Read this first for orientation |
@@ -70,6 +71,15 @@ for (const binding of results) {
 | **[GETTING-STARTED/](docs/GETTING-STARTED/)** | Installation & tutorials |
 | **[API-REFERENCE.md](docs/API-REFERENCE.md)** | Complete API documentation |
 | **[EXAMPLES.md](docs/EXAMPLES.md)** | Code examples & sample projects |
+
+### For Contributors (Monorepo)
+| Resource | Purpose |
+|----------|---------|
+| **[MONOREPO-QUICK-REFERENCE.md](docs/MONOREPO-QUICK-REFERENCE.md)** | Quick overview of all 17 packages |
+| **[LOCAL-DEVELOPMENT.md](docs/LOCAL-DEVELOPMENT.md)** | Setup dev environment, run tests & builds |
+| **[WORKSPACE-STRUCTURE.md](docs/WORKSPACE-STRUCTURE.md)** | File layout and naming conventions |
+| **[PACKAGE-DEVELOPMENT.md](docs/PACKAGE-DEVELOPMENT.md)** | Create and modify packages |
+| **[TESTING-STRATEGY.md](docs/TESTING-STRATEGY.md)** | Cross-package testing guide |
 
 ### Quick Links
 - **[Installation](#installation)** - Get up and running
@@ -295,29 +305,36 @@ const results = await core.federatedQuery([
 
 ---
 
-## Packages
+## Monorepo Structure
 
-UNRDF is organized as a monorepo with specialized packages:
+UNRDF is organized as a **17-package monorepo** with clear separation of concerns:
 
-### Essential
-- **`@unrdf/core`** - RDF storage, SPARQL queries, SHACL validation ⭐ START HERE
-- **`@unrdf/oxigraph`** - Rust-based triple store backend
-- **`@unrdf/hooks`** - Knowledge Hooks framework
+### Essential Packages (Start Here)
+- **`@unrdf/core`** - RDF storage, SPARQL queries, SHACL validation ⭐
+- **`@unrdf/oxigraph`** - Rust-based persistent triple store backend
+- **`@unrdf/hooks`** - Knowledge Hooks autonomous behaviors framework
 
 ### Extended Features
-- **`@unrdf/streaming`** - Large graph streaming
-- **`@unrdf/federation`** - Distributed querying
-- **`@unrdf/knowledge-engine`** - Inference and reasoning
-- **`@unrdf/browser`** - Browser runtime support
-- **`@unrdf/project-engine`** - Project/workspace management
-- **`@unrdf/cli`** - Command-line interface
+- **`@unrdf/streaming`** - Large graph streaming & real-time sync
+- **`@unrdf/federation`** - Distributed query execution across stores
+- **`@unrdf/knowledge-engine`** - Inference and semantic reasoning (EYE)
+- **`@unrdf/browser`** - Browser runtime with IndexedDB support
+- **`@unrdf/cli`** - Command-line interface & tools
+- **`@unrdf/react`** - React hooks & component integration
+- **`@unrdf/engine-gateway`** - API gateway & µ(O) enforcement layer
 
-### Utilities
-- **`@unrdf/composables`** - React/Vue composables for RDF
-- **`@unrdf/dark-matter`** - Performance optimization
-- **`@unrdf/engine-gateway`** - API gateway for KG engines
+### Optional/Alpha
+- **`@unrdf/composables`** - Vue 3 composable integration
+- **`@unrdf/dark-matter`** - Query optimization & performance analysis
+- **`@unrdf/project-engine`** - Workspace management (dev tools)
 
-For detailed information on each package, see [PACKAGES.md](docs/PACKAGES.md).
+### Internal Packages
+- **`@unrdf/test-utils`** - Shared testing infrastructure
+- **`@unrdf/validation`** - OTEL validation & compliance checking
+- **`@unrdf/domain`** - Type definitions & schemas (Zod)
+
+For quick reference, see **[MONOREPO-QUICK-REFERENCE.md](docs/MONOREPO-QUICK-REFERENCE.md)**.
+For detailed package documentation, see **[PACKAGES.md](docs/PACKAGES.md)**.
 
 ---
 

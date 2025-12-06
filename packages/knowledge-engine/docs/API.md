@@ -19,3 +19,5 @@ TODO: Document types
 ## Examples
 
 See `examples/` directory for complete examples.
+
+---

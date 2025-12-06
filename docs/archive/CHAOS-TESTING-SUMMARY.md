@@ -2,7 +2,6 @@
 
 **Agent**: Quorum Manager
 **Date**: 2025-01-01
-**Mission**: Validate quorum mechanisms and create chaos tests for KGC Sidecar resilience
 
 ---
 
@@ -383,7 +382,7 @@ it('should open circuit after threshold failures', async () => {
 ## Files Created
 
 ```
-sidecar/test/chaos/
+knowledge-engine/test/chaos/
 ├── vault-partition.chaos.test.mjs       (404 lines, 14 tests)
 ├── task-failure.chaos.test.mjs          (461 lines, 18 tests)
 ├── manager-crash.chaos.test.mjs         (473 lines, 16 tests)
@@ -401,7 +400,7 @@ Total: 5 files, 2,435 lines of code and documentation
 
 ```bash
 # Run all chaos tests
-cd /Users/sac/unrdf/sidecar
+cd /Users/sac/unrdf/knowledge-engine
 npm run test -- test/chaos/
 
 # Run specific test suite
@@ -422,7 +421,7 @@ npm run test -- --coverage test/chaos/
 
 The Quorum Manager agent has successfully:
 
-1. ✅ Analyzed quorum and recovery mechanisms in the sidecar
+1. ✅ Analyzed quorum and recovery mechanisms in the knowledge-engine
 2. ✅ Created 4 comprehensive chaos test files (68 test cases)
 3. ✅ Validated all chaos scenarios (67/68 tests passing)
 4. ✅ Created detailed chaos engineering report with recommendations

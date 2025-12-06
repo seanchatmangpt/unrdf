@@ -2,7 +2,6 @@
 
 **Analysis Date**: 2025-10-02
 **Methodology**: Research Agent Analysis using 80/20 Pareto Principle
-**Context**: UNRDF v3 CLI with Knowledge Engine, Sidecar Client, and OTEL Telemetry
 
 ---
 
@@ -147,11 +146,10 @@ async run(ctx) {
 **Rationale**:
 - **Core functionality**: Users need to create named graphs for organization
 - **No alternative**: No other way to initialize a named graph with metadata
-- **Integration ready**: Sidecar client available (`/src/sidecar/client.mjs`)
 - **Store context ready**: Can create graphs in store context
 - **Implementation**:
-  1. Integrate with sidecar client to create graph remotely (if sidecar configured)
-  2. Fallback to local store context if no sidecar
+  1. Integrate with knowledge-engine client to create graph remotely (if knowledge-engine configured)
+  2. Fallback to local store context if no knowledge-engine
   3. Add graph metadata (baseIri, created timestamp)
   4. OTEL instrumentation
 
@@ -171,7 +169,7 @@ async run(ctx) {
 - **Integration ready**: Knowledge engine has `validateShacl`, `validateShaclMultiple`, `formatValidationReport` (line 29)
 - **Policy Pack system exists**: `PolicyPackManager` available (line 38)
 - **Implementation**:
-  1. Load graph from store/sidecar
+  1. Load graph from store/knowledge-engine
   2. Load policy pack (SHACL shapes)
   3. Execute knowledge-engine validation
   4. Format results with `formatValidationReport`
@@ -191,7 +189,7 @@ async run(ctx) {
 **Rationale for removal**:
 - **High complexity**: Requires atomic snapshot, compression, metadata, version tracking
 - **Alternative sufficient**: `store export` + git provides backup functionality
-- **Niche use case**: Enterprise backup should use database-level tools (pg_dump for sidecar PostgreSQL)
+- **Niche use case**: Enterprise backup should use database-level tools (pg_dump for knowledge-engine PostgreSQL)
 - **Maintenance burden**: Backup format versioning, restore compatibility, incremental backups add complexity
 - **80/20 violation**: 8h effort for medium value → not worth it
 
@@ -352,7 +350,7 @@ console.log(result);
 
 3. **`graph create`** (2h)
    - Files: `/src/cli/commands/graph/create.mjs`
-   - Dependencies: `sidecar/client.mjs`, `context/index.mjs`
+   - Dependencies: `knowledge-engine/client.mjs`, `context/index.mjs`
    - Test: `/test/cli/graph.test.mjs`
 
 ### Phase 2: P1 Commands (Week 2) - 4h
@@ -436,18 +434,15 @@ const report = await validateShacl(dataQuads, shapesQuads);
 const results = await query(sparqlString, options);
 ```
 
-### Pattern 4: Sidecar Client Integration
 ```javascript
-import { createSidecarClient } from '../../../sidecar/index.mjs';
 
 const manager = new ContextManager();
 const currentContext = manager.getCurrentContext();
 
-if (currentContext?.sidecar?.endpoint) {
-  const client = createSidecarClient({
-    baseURL: currentContext.sidecar.endpoint
+if (currentContext?.knowledge-engine?.endpoint) {
+    baseURL: currentContext.endpoint
   });
-  // Use sidecar for remote operations
+  // Use knowledge-engine for remote operations
 }
 ```
 
@@ -505,10 +500,8 @@ grep "span.status.*error" otel-traces.log | wc -l  # Should be 0
 **Rationale**: Centralized store management, async context support, SENDER/READER separation
 **Trade-off**: Slightly more verbose API, but better composability and testability
 
-### AD-002: Sidecar Client for Remote Operations
-**Decision**: Graph operations check for sidecar context and delegate to `SidecarClient` if available
-**Rationale**: Separation of concerns - CLI orchestrates, sidecar handles persistence
-**Trade-off**: Requires sidecar for full functionality, but enables distributed architecture
+**Rationale**: Separation of concerns - CLI orchestrates, knowledge-engine handles persistence
+**Trade-off**: Requires knowledge-engine for full functionality, but enables distributed architecture
 
 ### AD-003: OTEL Instrumentation Mandatory
 **Decision**: Every command must use OpenTelemetry spans for observability

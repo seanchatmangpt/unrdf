@@ -46,7 +46,6 @@ mediated over all rejecting actors:
 
 **Affected Tests:**
 - P0: Graph lifecycle workflow (Step 3/5)
-- P1: Sidecar gRPC communication (Step 2/3)
 - All SPARQL query operations
 
 **Fix Required:** Configure Comunica with proper RDF/JS source context
@@ -130,9 +129,7 @@ ENOENT: no such file or directory, open 'perf-hook'
 
 ---
 
-### 5. Sidecar Health Check Pattern Mismatch
 **Status:** ❌ FAILURE
-**Impact:** MEDIUM - Sidecar integration validation broken
 **Occurrences:** 3 failures
 
 **Error:**
@@ -140,9 +137,7 @@ ENOENT: no such file or directory, open 'perf-hook'
 Step failed: Output does not match expected pattern: /Status: (healthy|ready|ok)/i
 ```
 
-**Root Cause:** Sidecar health endpoint output format doesn't match test expectations
 
-**Fix Required:** Update sidecar health output or test expectations
 
 ---
 
@@ -242,7 +237,6 @@ Jaeger API error: 404 Not Found
 - ❌ Graph lifecycle workflow - **FAILED** (query broken)
 - ❌ Hook evaluation workflow - **FAILED** (hook create broken)
 - ❌ Policy enforcement - **FAILED** (policy validate broken)
-- ❌ Sidecar integration - **FAILED** (health check broken)
 - ⏱️ [Not reached due to timeout]
 
 **P0 Pass Rate:** 0% (0/4 completed tests)
@@ -253,7 +247,6 @@ Jaeger API error: 404 Not Found
 - ❌ Graph lifecycle with hooks - **FAILED** (hook create broken)
 - ❌ Hook veto scenarios - **FAILED** (hook create broken)
 - ❌ Policy violation detection - **FAILED** (audit log format)
-- ❌ Sidecar gRPC communication - **FAILED** (query broken)
 
 **P1 Pass Rate:** 0% (0/4 completed tests)
 
@@ -263,7 +256,6 @@ Jaeger API error: 404 Not Found
 - ✅ Concurrent graph operations - **PASSED** (performance target missed but functional)
 - ❌ Hook performance targets - **FAILED** (hook eval broken)
 - ❌ Policy validation performance - **FAILED** (policy validate broken)
-- ⏱️ Sidecar performance targets - **INCOMPLETE** (timeout)
 - ⏱️ [Additional tests not reached]
 
 **P1 Performance Pass Rate:** ~20% (1/5 attempted, 2 incomplete)
@@ -345,7 +337,6 @@ policy: {
    - Confirm --policy is truly optional
    - Verify default behavior (use last applied pack)
 
-5. **FIX SIDECAR HEALTH (P1 - MEDIUM)**
    - Align health check output format with test expectations
    - OR update test pattern to match actual output
 
@@ -372,7 +363,6 @@ policy: {
 - **Store Query Fix:** 4-8 hours (Comunica configuration research + implementation)
 - **Hook System Fix:** 2-4 hours (file path resolution + testing)
 - **Policy Validate Validation:** 30 minutes (re-run tests)
-- **Sidecar Health Fix:** 1-2 hours (output format alignment)
 - **Performance Optimization:** 4-8 hours (investigate 10s vs 5s target)
 
 **Total Estimated Effort:** 12-23 hours of focused development work
@@ -390,7 +380,6 @@ policy: {
 4. Implement proper Comunica source configuration
 5. Add integration tests for hook file operations
 6. Optimize concurrent operation performance
-7. Fix sidecar health check format
 
 ### Long-term (This Sprint)
 8. Add comprehensive error handling for all CLI commands
