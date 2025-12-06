@@ -52,6 +52,9 @@ importers:
       '@vitest/ui':
         specifier: ^4.0.15
         version: 4.0.15(vitest@4.0.15)
+      citty:
+        specifier: ^0.1.6
+        version: 0.1.6
       eslint:
         specifier: ^9.39.1
         version: 9.39.1(jiti@1.21.7)

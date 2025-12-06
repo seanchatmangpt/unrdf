@@ -8,19 +8,27 @@ export default {
     },
   },
   playground: {
-    title: 'μ(O) Dashboard',
+    title: 'μ(O) Dashboard 🎯',
     type: 'page',
   },
-  guides: {
-    title: 'Guides',
+  tutorials: {
+    title: 'Tutorials 📚',
     type: 'page',
   },
-  concepts: {
-    title: 'Concepts',
+  'how-to': {
+    title: 'How-To Guides 🛠️',
+    type: 'page',
+  },
+  reference: {
+    title: 'Reference 📖',
+    type: 'page',
+  },
+  explanation: {
+    title: 'Explanation 💡',
     type: 'page',
   },
   papers: {
-    title: 'Research Papers',
+    title: 'Research Papers 📄',
     type: 'page',
   },
 };

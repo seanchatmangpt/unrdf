@@ -36,6 +36,7 @@
     "clean": "pnpm -r clean && rm -rf node_modules",
     "dev": "pnpm -r --parallel dev",
     "docs": "pnpm -C packages/core docs",
+    "convert-paper": "node scripts/convert-paper.mjs",
     "precommit": "pnpm lint && pnpm test:fast"
   },
   "devDependencies": {
@@ -51,6 +52,7 @@
     "@vitest/browser": "^4.0.15",
     "@vitest/coverage-v8": "^4.0.15",
     "@vitest/ui": "^4.0.15",
+    "citty": "^0.1.6",
     "eslint": "^9.39.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-jsdoc": "^61.4.1",
