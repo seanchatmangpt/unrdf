@@ -29,8 +29,8 @@ export function serializeQuadForStorage(quad) {
     objectType: quad.object.termType,
     objectLanguage: quad.object.language || null,
     objectDatatype: quad.object.datatype?.value || null,
-    graph: quad.graph.value,
-    graphType: quad.graph.termType,
+    graph: quad.graph?.value || '',
+    graphType: quad.graph?.termType || 'DefaultGraph',
   };
 }
 
