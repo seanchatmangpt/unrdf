@@ -50,9 +50,8 @@ export class ObservabilityManager {
     try {
       // Dynamic import of OpenTelemetry packages
       const { NodeSDK } = await import('@opentelemetry/sdk-node');
-      const { getNodeAutoInstrumentations } = await import(
-        '@opentelemetry/auto-instrumentations-node'
-      );
+      const { getNodeAutoInstrumentations } =
+        await import('@opentelemetry/auto-instrumentations-node');
       const { Resource } = await import('@opentelemetry/resources');
       const { SemanticResourceAttributes } = await import('@opentelemetry/semantic-conventions');
       const { OTLPTraceExporter } = await import('@opentelemetry/exporter-otlp-http');
