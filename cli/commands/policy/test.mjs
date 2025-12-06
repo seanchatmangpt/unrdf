@@ -1,5 +1,12 @@
 /**
- * @file Policy Test Command
+ * @file Policy Test Command - TODO
+ *
+ * STATUS: Not yet implemented
+ *
+ * NOTE: Policy testing requires:
+ * - Hook execution infrastructure
+ * - Test data format specification
+ * - Result aggregation and reporting
  */
 
 import { defineCommand } from 'citty';
@@ -7,7 +14,7 @@ import { defineCommand } from 'citty';
 export const testCommand = defineCommand({
   meta: {
     name: 'test',
-    description: 'Test policy pack against sample data'
+    description: 'Test policy pack against sample data [TODO: Not yet implemented]'
   },
   args: {
     file: {
@@ -21,7 +28,14 @@ export const testCommand = defineCommand({
     }
   },
   async run(ctx) {
-    console.log(`🧪 Testing policy pack: ${ctx.args.file}`);
-    console.log(`✅ All tests passed`);
+    const { file } = ctx.args;
+
+    console.error(`❌ Command not yet implemented: policy test`);
+    console.error(`\nThis command requires hook execution infrastructure.`);
+    console.error(`\nFor now, you can:`);
+    console.error(`  • Validate policy schema: unrdf policy validate ${file}`);
+    console.error(`  • Test individual hooks: unrdf hook test <trigger> --subject ...`);
+    console.error(`  • Apply policy: unrdf policy apply ${file} --dry-run`);
+    process.exit(1);
   }
 });
