@@ -144,7 +144,13 @@ export function KGCProvider({ children, autoConnect = false, query = {} }) {
 
           // Refresh Shard to rollback
           await refreshShard();
-          return { success: false, error: result.reason };
+
+          // Phase 3: Return coaching hints for AutonomicCoach
+          return {
+            success: false,
+            error: result.reason,
+            coaching: result.coaching, // Counter-factual hints from server
+          };
         }
       } catch (error) {
         dispatch(createActions.deltaReject(deltaId, error.message));
