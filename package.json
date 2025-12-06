@@ -36,6 +36,7 @@
     "clean": "pnpm -r clean && rm -rf node_modules",
     "dev": "pnpm -r --parallel dev",
     "docs": "pnpm -C packages/core docs",
+    "convert-paper": "node scripts/convert-paper.mjs",
     "precommit": "pnpm lint && pnpm test:fast"
   },
   "devDependencies": {
