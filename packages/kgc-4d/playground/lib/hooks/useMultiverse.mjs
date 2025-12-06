@@ -14,6 +14,10 @@
 
 import { useState, useCallback } from 'react';
 
+/**
+ * Hook for managing forked realities
+ * @returns {Object} Multiverse utilities
+ */
 export function useMultiverse() {
   const [forks, setForks] = useState([]);
   const [loading, setLoading] = useState(false);

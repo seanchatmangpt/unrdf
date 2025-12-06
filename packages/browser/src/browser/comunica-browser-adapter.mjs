@@ -51,7 +51,7 @@ export class BrowserQueryExecutor {
    * @param {Object} [options] - Query options
    * @returns {Promise<Object>} Query results
    */
-  async query(queryString, options = {}) {
+  async query(queryString, _options = {}) {
     await this.init();
 
     try {

@@ -55,8 +55,9 @@ export function KGCProvider({ children, autoConnect = false, query = {} }) {
       }
 
       // Create new EventSource
-      const eventSource = new EventSource(url);
-      eventSourceRef.current = eventSource;
+      if (typeof globalThis?.EventSource !== 'undefined') {
+        const eventSource = new globalThis.EventSource(url);
+        eventSourceRef.current = eventSource;
 
       eventSource.addEventListener('connected', (e) => {
         const data = JSON.parse(e.data);
@@ -91,9 +92,10 @@ export function KGCProvider({ children, autoConnect = false, query = {} }) {
         }, 5000);
       });
 
-      eventSource.onerror = () => {
-        dispatch(createActions.error('Connection failed'));
-      };
+        eventSource.onerror = () => {
+          dispatch(createActions.error('Connection failed'));
+        };
+      }
     },
     [query]
   );
@@ -112,7 +114,7 @@ export function KGCProvider({ children, autoConnect = false, query = {} }) {
 
   // Submit delta with optimistic update
   const submitDelta = useCallback(
-    async (operations, options = {}) => {
+    async (operations, _options = {}) => {
       const deltaId = crypto.randomUUID();
       const delta = {
         id: deltaId,

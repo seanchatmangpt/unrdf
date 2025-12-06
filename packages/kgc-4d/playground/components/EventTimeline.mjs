@@ -83,8 +83,8 @@ function EventItem({ event, index }) {
 
   // Alt+Click to navigate to forensic view
   const handleClick = (e) => {
-    if (e.altKey && event.id) {
-      window.location.href = `/visualizations?eventId=${event.id}`;
+    if (e.altKey && event.id && typeof globalThis?.window !== 'undefined') {
+      globalThis.window.location.href = `/visualizations?eventId=${event.id}`;
     }
   };
 
