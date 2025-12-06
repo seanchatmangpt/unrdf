@@ -9,7 +9,7 @@ Successfully implemented 80/20 test pruning strategy, reducing test suite from *
 ### Before Pruning
 - **Total Test Files**: 143
   - `test/`: 81 files
-  - `sidecar/test/`: 58 files  
+  - `knowledge-engine/test/`: 58 files  
   - `enterprise-demo/`: 4 files
 - **Estimated Execution Time**: 15-20 minutes
 - **Coverage**: 95%+ (comprehensive)
@@ -44,9 +44,7 @@ Successfully implemented 80/20 test pruning strategy, reducing test suite from *
 ### 🟢 Dark Matter Framework (1 test - 15% value)
 15. `test/dark-matter-80-20.test.mjs` - Core 80/20 validation
 
-### 🟢 Sidecar Core (2 tests - 10% value)
-16. `test/sidecar/client.test.mjs` - Core client functionality
-17. `test/sidecar/integration.test.mjs` - Basic integration
+17. `test/knowledge-engine/integration.test.mjs` - Basic integration
 
 ### 🟢 Essential Utilities (3 tests - 10% value)
 18. `test/composables/use-graph.test.mjs` - Graph composables
@@ -59,7 +57,7 @@ Successfully implemented 80/20 test pruning strategy, reducing test suite from *
 ### 🔴 Performance & Benchmark Tests (Removed)
 - `test/benchmarks/**` - All benchmark tests
 - `test/cli-v2/performance/**` - Performance tests
-- `sidecar/test/performance/**` - Performance tests
+- `knowledge-engine/test/performance/**` - Performance tests
 
 ### 🔴 Complex E2E Tests (Removed)
 - `test/e2e/cleanroom/**` - Complex cleanroom tests
@@ -68,19 +66,18 @@ Successfully implemented 80/20 test pruning strategy, reducing test suite from *
 - `test/e2e/k8s-terraform-testcontainers.test.mjs` - Infrastructure tests
 
 ### 🔴 Security & Chaos Tests (Removed)
-- `sidecar/test/security/**` - Security tests
-- `sidecar/test/chaos/**` - Chaos engineering tests
-- `sidecar/test/consensus/**` - Consensus tests
+- `knowledge-engine/test/security/**` - Security tests
+- `knowledge-engine/test/chaos/**` - Chaos engineering tests
+- `knowledge-engine/test/consensus/**` - Consensus tests
 
-### 🔴 Advanced Sidecar Tests (Removed)
-- `sidecar/test/infrastructure/**` - Infrastructure tests
-- `sidecar/test/nuxt/**` - UI component tests
-- `sidecar/test/e2e/**` - E2E scenario tests
-- `sidecar/test/unit/**` - Unit tests (except core)
+- `knowledge-engine/test/infrastructure/**` - Infrastructure tests
+- `knowledge-engine/test/nuxt/**` - UI component tests
+- `knowledge-engine/test/e2e/**` - E2E scenario tests
+- `knowledge-engine/test/unit/**` - Unit tests (except core)
 
 ### 🔴 Hook System Tests (Most Removed)
 - `test/knowledge-engine/hooks/**` - Most hook tests
-- `sidecar/test/e2e/scenarios/**` - Scenario tests
+- `knowledge-engine/test/e2e/scenarios/**` - Scenario tests
 
 ### 🔴 Enterprise & Demo Tests (Removed)
 - `enterprise-demo/test/**` - Demo tests

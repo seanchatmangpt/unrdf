@@ -9,7 +9,7 @@
 
 ### 2. Core Components Implemented
 
-#### SecureSandbox (`/sidecar/server/utils/secure-sandbox.mjs`)
+#### SecureSandbox (`/knowledge-engine/server/utils/secure-sandbox.mjs`)
 - ✅ V8 isolate-based sandboxing
 - ✅ Memory limits (configurable, default 128MB)
 - ✅ CPU timeout (configurable, default 5 seconds)
@@ -26,7 +26,7 @@
 - ✅ Module system isolation
 - ✅ Catastrophic error handling
 
-#### SandboxThreatDetector (`/sidecar/server/utils/sandbox-threat-detector.mjs`)
+#### SandboxThreatDetector (`/knowledge-engine/server/utils/sandbox-threat-detector.mjs`)
 - ✅ 13 threat pattern types
 - ✅ ML-based scoring (0-100 scale)
 - ✅ Complexity analysis

@@ -65,7 +65,6 @@
 ❌ cli/commands/store.mjs       - Store operations
 ❌ cli/commands/policy.mjs      - Policy management
 ❌ cli/commands/hook.mjs        - Hook management
-❌ cli/commands/sidecar.mjs     - Sidecar integration
 ❌ cli/commands/graph.mjs       - Graph operations
 ❌ cli/commands/core.mjs        - Core commands
 ❌ cli/utils/context-wrapper.mjs - OTEL wrapper
@@ -88,7 +87,6 @@
 - Command implementations (ALL missing)
 - Argument parsing (flags vs positional)
 - Missing subcommands (policy validate/audit)
-- Output format (sidecar status)
 - OTEL trace export (no spans in Jaeger)
 
 ---

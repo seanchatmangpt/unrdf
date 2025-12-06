@@ -44,7 +44,7 @@
 
 **Lines**: 246 lines
 
-### 3. ✅ Created `/sidecar/server/utils/vault-client.mjs`
+### 3. ✅ Created `/knowledge-engine/server/utils/vault-client.mjs`
 **Implementation**:
 - `VaultClient` class with full Vault API integration
 - **Quorum Features**:
@@ -68,7 +68,7 @@
 
 **Lines**: 375 lines
 
-### 4. ✅ Updated `/sidecar/server/plugins/00.managers.mjs`
+### 4. ✅ Updated `/knowledge-engine/server/plugins/00.managers.mjs`
 **Changes**:
 - Added `initializeVaultSecrets()` function
 - Vault client initialization on startup
@@ -92,7 +92,6 @@
    - Health checks
    - IPC_LOCK capability
 
-2. **kgc-sidecar**: KGC Sidecar with Vault integration
    - Port: 3000
    - Vault environment variables
    - Depends on: vault, postgres
@@ -335,7 +334,6 @@ const secrets = await vaultClient.getAllSecrets()
 ### ✅ Operational Requirements
 
 - [x] Health checks for Vault service
-- [x] Health checks for KGC Sidecar
 - [x] Automatic initialization script
 - [x] Manual unsealing procedure documented
 - [x] Secret rotation procedure documented
@@ -363,9 +361,8 @@ docker exec kgc-vault vault status
 # 4. View generated secrets
 docker exec kgc-vault vault kv list kgc/
 
-# 5. Test KGC Sidecar
 curl http://localhost:3000/health
-docker logs kgc-sidecar | grep Vault
+docker logs knowledge-engine | grep Vault
 ```
 
 ### Production Deployment
@@ -398,9 +395,8 @@ terraform apply \
   -var="vault_token=<root-token>" \
   -var="environment=production"
 
-# 7. Start KGC Sidecar
 export VAULT_TOKEN=<app-token>
-docker compose -f docker-compose.vault.yml up -d kgc-sidecar
+docker compose -f docker-compose.vault.yml up -d knowledge-engine
 ```
 
 ---
@@ -435,8 +431,8 @@ docker compose -f docker-compose.vault.yml up -d kgc-sidecar
 
 1. ✅ `/terraform/variables.tf` - Hardcoded secrets REMOVED
 2. ✅ `/terraform/vault.tf` - Vault configuration CREATED
-3. ✅ `/sidecar/server/utils/vault-client.mjs` - Vault client IMPLEMENTED
-4. ✅ `/sidecar/server/plugins/00.managers.mjs` - Integration UPDATED
+3. ✅ `/knowledge-engine/server/utils/vault-client.mjs` - Vault client IMPLEMENTED
+4. ✅ `/knowledge-engine/server/plugins/00.managers.mjs` - Integration UPDATED
 5. ✅ `/docker-compose.vault.yml` - Docker Compose CREATED
 6. ✅ `/scripts/vault-init.sh` - Initialization script CREATED
 7. ✅ `/scripts/vault-config.hcl` - Vault config CREATED
@@ -466,8 +462,8 @@ docker compose -f docker-compose.vault.yml up -d kgc-sidecar
 - **Implementation Summary**: This file
 
 ### Key Files
-- **Vault Client**: `/sidecar/server/utils/vault-client.mjs`
-- **Manager Integration**: `/sidecar/server/plugins/00.managers.mjs`
+- **Vault Client**: `/knowledge-engine/server/utils/vault-client.mjs`
+- **Manager Integration**: `/knowledge-engine/server/plugins/00.managers.mjs`
 - **Terraform Config**: `/terraform/vault.tf`
 - **Docker Compose**: `/docker-compose.vault.yml`
 - **Init Script**: `/scripts/vault-init.sh`

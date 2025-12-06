@@ -14,13 +14,12 @@
 - **14 explicit TODOs** requiring implementation
 - **5 placeholder functions** with empty or stub logic
 - **3 critical incomplete implementations** affecting core functionality
-- **8 skipped tests** (7 sidecar, 1 CLI)
+- **8 skipped tests** (7 knowledge-engine, 1 CLI)
 - **95 files with console.log** (debugging vs production logging unclear)
 
 **Critical Path Impact**:
 - ✅ Core RDF operations: **COMPLETE**
 - ⚠️ CLI v2 commands: **50% INCOMPLETE** (11/~45 commands are stubs)
-- ⚠️ Sidecar integration: **TESTING DISABLED** (7/7 integration tests skipped)
 - ⚠️ Advanced features: **PARTIAL** (isolate execution, optimization placeholders)
 
 ---
@@ -39,12 +38,11 @@
 **Effort**: 8 hours (need SHACL/OWL integration)
 **Priority**: P0 - Blocks graph validation feature
 
-#### 2. `/src/cli-legacy/commands/sidecar.mjs:204`
+#### 2. `/src/cli-legacy/commands/mjs:204`
 ```javascript
 // TODO: Implement config persistence
 ```
 **Impact**: HIGH
-**Location**: Sidecar configuration management
 **Issue**: Config changes lost on restart
 **Effort**: 4 hours (file-based config storage)
 **Priority**: P0 - Blocks production deployments
@@ -91,7 +89,7 @@ await writeFile(output, '# Backup data\n'); // Fake backup!
 
 #### 7. `/src/cli/commands/graph/create.mjs:40`
 ```javascript
-// TODO: Integrate with sidecar client
+// TODO: Integrate with knowledge-engine client
 console.log(`✅ Graph created: ${name}`); // Lies - nothing created!
 ```
 **Impact**: MEDIUM
@@ -220,9 +218,7 @@ async _verifyMerkleRoot(entry) {
 
 ## Category 3: Skipped Tests (8 Found)
 
-### Sidecar Integration Tests (7 skipped)
 
-**File**: `/test/sidecar/client.test.mjs`
 
 ```javascript
 it.skip('should apply transaction', async () => { ... }); // Line 78
@@ -234,9 +230,8 @@ it.skip('should get metrics', async () => { ... });       // Line 144
 it.skip('should create and connect client', async () => { ... }); // Line 182
 ```
 
-**Issue**: Sidecar integration completely untested
 **Reason**: Likely requires external service or mocking infrastructure
-**Impact**: HIGH - No confidence in sidecar functionality
+**Impact**: HIGH - No confidence in knowledge-engine functionality
 **Effort**: 16 hours (setup testcontainers + implement tests)
 **Priority**: P0
 
@@ -310,7 +305,7 @@ Failed Features:
 **Focus Area 1: CLI Commands (24 hours total)**
 1. Implement store backup/restore (10h) - P0
 2. Implement graph create/list/get (8h) - P1
-3. Fix sidecar config persistence (4h) - P0
+3. Fix knowledge-engine config persistence (4h) - P0
 4. Enable validation logic (2h) - P1
 
 **Focus Area 2: Security & Integrity (16 hours total)**
@@ -318,7 +313,6 @@ Failed Features:
 2. Add proper authentication middleware (4h) - P2
 
 **Focus Area 3: Testing (20 hours total)**
-1. Enable sidecar integration tests (16h) - P0
 2. Enable CLI e2e test (4h) - P1
 
 **Total Effort**: 60 hours (1.5 weeks)
@@ -340,7 +334,7 @@ Failed Features:
 ### Immediate Actions (This Sprint)
 
 1. **Fix CLI stubs** (24h) - Blocks user functionality
-2. **Enable sidecar tests** (16h) - No production confidence without tests
+2. **Enable knowledge-engine tests** (16h) - No production confidence without tests
 3. **Fix merkle verification** (12h) - Security critical
 
 ### Next Sprint
@@ -366,10 +360,9 @@ Failed Features:
 /src/cli/commands/store/restore.mjs         # Empty restore
 /src/cli/commands/store/import.mjs          # Empty import
 /src/cli/commands/graph/create.mjs          # Fake creation
-/src/cli-legacy/commands/sidecar.mjs        # No config persistence
+/src/cli-legacy/commands/mjs        # No config persistence
 /src/cli-legacy/commands/graph.mjs          # No validation
 /src/knowledge-engine/lockchain-writer.mjs  # No merkle verification
-/test/sidecar/client.test.mjs               # All tests skipped
 ```
 
 ### Medium-Risk Files (Next Iteration)
@@ -405,7 +398,6 @@ Failed Features:
 
 ### Pattern: Skipped Tests
 **Total**: 8 tests
-**Sidecar**: 7 tests
 **CLI**: 1 test
 
 ### Pattern: Console Logs
@@ -423,9 +415,8 @@ The codebase has **moderate technical debt** with **clear patterns**:
 1. **CLI v2** is ~50% incomplete (stubs with TODOs)
 2. **Core RDF functionality** is solid (complete implementations)
 3. **Advanced features** have placeholders (isolate, optimization)
-4. **Testing** has gaps (sidecar integration disabled)
 5. **Security** has one critical gap (merkle verification)
 
-**Grade**: B- (Production-ready for core RDF, needs work for CLI/sidecar)
+**Grade**: B- (Production-ready for core RDF, needs work for CLI/knowledge-engine)
 
-**Recommendation**: **Focus 60 hours on critical path** (CLI + sidecar + security) to reach production quality.
+**Recommendation**: **Focus 60 hours on critical path** (CLI + knowledge-engine + security) to reach production quality.

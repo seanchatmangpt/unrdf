@@ -1,6 +1,6 @@
 # E2E Tests with Testcontainers
 
-This directory contains end-to-end tests for the KGC JS sidecar using Testcontainers to provide realistic testing environments with containerized services.
+This directory contains end-to-end tests for the knowledge engine using Testcontainers to provide realistic testing environments with containerized services.
 
 ## Overview
 
@@ -101,7 +101,6 @@ pnpm test test/e2e/ --reporter=verbose
 | Redis              | `redis:7-alpine`          | Caching         | 6379       |
 | MinIO              | `minio/minio:latest`      | Object storage  | 9000, 9001 |
 | Apache Jena Fuseki | `stain/jena-fuseki:4.9.0` | SPARQL endpoint | 3030       |
-| Node.js App        | `node:18-alpine`          | KGC sidecar     | 3000       |
 
 ### Configuration
 

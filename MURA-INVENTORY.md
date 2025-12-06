@@ -23,7 +23,6 @@
   - Try/catch blocks
   - Promise rejection patterns
   - Custom error classes (ValidationError, RDFError, HookError)
-  - OpenAPI-compliant error responses (sidecar)
   - Legacy error handler utilities
 - [x] **Async/await patterns** - Inconsistent usage:
   - Some use `.then()` chains
@@ -130,7 +129,6 @@
 ## Step 4: Reference Implementations
 
 ### Error Handling
-- **Reference**: `sidecar/server/middleware/02.error-handler.mjs`
 - Uses OpenAPI-compliant error format
 - Proper error propagation
 - Good error messages
