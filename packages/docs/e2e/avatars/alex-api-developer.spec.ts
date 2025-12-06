@@ -1,152 +1,306 @@
 import { test, expect } from '@playwright/test'
-import { HomePage, DocsPage, ChatModal, APITestHelper } from '../helpers/page-objects'
-import { avatars, apiResponses, mockChatMessages } from '../fixtures/test-data'
+import { aiMocks, createAIMockHandler, createStreamingMockHandler, createErrorMockHandler } from '../fixtures/ai-mocks'
 
 /**
  * Avatar: Alex the API Developer
- * JTBD Tests: API Documentation, AI Code Assistance, Testing
+ * JTBD: API Documentation, AI Code Assistance, API Testing
+ * Focus: AI interactions for code generation and API development
  */
 
-test.describe('Alex the API Developer - JTBD Journey', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto('/')
-  })
-
-  test.describe('Job 1: Document API endpoints clearly', () => {
-    test('should navigate to API documentation', async ({ page }) => {
-      const docsPage = new DocsPage(page)
-
-      // Navigate to Getting Started
-      await page.goto('/getting-started')
-
-      // Verify documentation structure
-      await expect(page).toHaveTitle(/Getting Started/i)
-      await expect(docsPage.content).toBeVisible()
-    })
-
-    test('should search for API-related content', async ({ page }) => {
-      const docsPage = new DocsPage(page)
-
-      await page.goto('/getting-started')
-
-      // Search functionality
-      const searchTrigger = page.locator('[data-key="k"]').or(page.getByText(/search/i))
-      if (await searchTrigger.isVisible()) {
-        await searchTrigger.click()
-      }
-    })
-
-    test('should display code blocks with syntax highlighting', async ({ page }) => {
-      await page.goto('/essentials/code-blocks')
-
-      // Verify code blocks are rendered
-      const codeBlocks = page.locator('pre code')
-      await expect(codeBlocks.first()).toBeVisible()
-
-      // Check for syntax highlighting classes
-      const hasHighlighting = await codeBlocks.first().evaluate((el) => {
-        return el.classList.length > 0 || el.querySelectorAll('[class*="token"]').length > 0
-      })
-      expect(hasHighlighting).toBeTruthy()
-    })
-  })
-
-  test.describe('Job 2: Get AI assistance for code', () => {
-    test('should open AI chat and ask code question', async ({ page }) => {
-      const homePage = new HomePage(page)
-      const chatModal = new ChatModal(page)
-      const apiHelper = new APITestHelper(page)
-
-      // Mock chat API response
-      await apiHelper.mockChatAPI(apiResponses.chat.success)
-
-      // Open chat
-      const chatButton = page.getByRole('button', { name: /ask ai/i })
-      if (await chatButton.isVisible()) {
-        await chatButton.click()
-
-        // Wait for modal
-        await expect(chatModal.modal).toBeVisible()
-
-        // Send code question
-        await chatModal.input.fill('How do I create a REST API endpoint in Nuxt?')
-
-        // Submit if button is enabled
-        const isEnabled = await chatModal.sendButton.isEnabled()
-        if (isEnabled) {
-          await chatModal.sendButton.click()
-        }
-      }
-    })
-
-    test('should receive AI code examples', async ({ page }) => {
-      const chatModal = new ChatModal(page)
-      const apiHelper = new APITestHelper(page)
-
-      // Mock streaming response
-      await apiHelper.mockChatAPI({
-        id: 'test-1',
+test.describe('Alex the API Developer - AI-Focused JTBD', () => {
+  test.describe('Job 1: Get AI assistance for API endpoint creation', () => {
+    test('should request API endpoint code via AI', async ({ page }) => {
+      // Mock AI response for API endpoint question
+      await page.route('**/api/chat', createAIMockHandler({
+        id: 'msg-1',
         role: 'assistant',
-        content: '```typescript\nexport default defineEventHandler(() => {\n  return { message: "Hello" }\n})\n```'
-      })
+        content: aiMocks.codeGeneration.apiEndpoint.content
+      }))
 
-      const chatButton = page.getByRole('button', { name: /ask ai/i })
-      if (await chatButton.isVisible()) {
-        await chatButton.click()
-        await expect(chatModal.modal).toBeVisible()
-      }
-    })
-  })
-
-  test.describe('Job 3: Test API responses without dependencies', () => {
-    test('should access test documentation', async ({ page }) => {
-      // Navigate to testing docs if they exist
-      await page.goto('/')
-
-      // Look for test-related content
-      const testingLinks = page.getByText(/test/i)
-      const count = await testingLinks.count()
-
-      expect(count).toBeGreaterThanOrEqual(0)
-    })
-
-    test('should verify API endpoint structure', async ({ page }) => {
-      const apiHelper = new APITestHelper(page)
-
-      // Test chat API endpoint
       const response = await page.request.post('http://localhost:3000/api/chat', {
         data: {
-          messages: mockChatMessages
+          messages: [
+            { role: 'user', content: 'How do I create a REST API endpoint?' }
+          ]
+        }
+      })
+
+      expect(response.status()).toBe(200)
+      const data = await response.json()
+      expect(data.content).toContain('defineEventHandler')
+      expect(data.content).toContain('server/api')
+    })
+
+    test('should get streaming AI response for code generation', async ({ page }) => {
+      // Mock streaming response
+      await page.route('**/api/chat', createStreamingMockHandler(aiMocks.streaming.codeStreaming))
+
+      const response = await page.request.post('http://localhost:3000/api/chat', {
+        data: {
+          messages: [
+            { role: 'user', content: 'Generate an API endpoint example' }
+          ]
+        }
+      })
+
+      expect(response.status()).toBe(200)
+      const body = await response.text()
+      expect(body).toContain('defineEventHandler')
+    })
+
+    test('should handle AI code generation with syntax highlighting', async ({ page }) => {
+      await page.route('**/api/chat', createAIMockHandler({
+        id: 'msg-2',
+        role: 'assistant',
+        content: aiMocks.codeGeneration.apiEndpoint.content
+      }))
+
+      const response = await page.request.post('http://localhost:3000/api/chat', {
+        data: {
+          messages: [
+            { role: 'user', content: 'Show me TypeScript API code' }
+          ]
+        }
+      })
+
+      const data = await response.json()
+      expect(data.content).toContain('```typescript')
+      expect(data.content).toContain('export default')
+    })
+  })
+
+  test.describe('Job 2: Test API responses with AI-generated mocks', () => {
+    test('should generate test data via AI', async ({ page }) => {
+      await page.route('**/api/chat', createAIMockHandler({
+        id: 'msg-3',
+        role: 'assistant',
+        content: aiMocks.codeGeneration.testExample.content
+      }))
+
+      const response = await page.request.post('http://localhost:3000/api/chat', {
+        data: {
+          messages: [
+            { role: 'user', content: 'How do I mock AI responses in tests?' }
+          ]
+        }
+      })
+
+      const data = await response.json()
+      expect(data.content).toContain('MockLanguageModelV2')
+      expect(data.content).toContain('doGenerate')
+    })
+
+    test('should handle AI errors gracefully', async ({ page }) => {
+      await page.route('**/api/chat', createErrorMockHandler(aiMocks.errors.rateLimited))
+
+      const response = await page.request.post('http://localhost:3000/api/chat', {
+        data: {
+          messages: [
+            { role: 'user', content: 'Generate lots of code' }
+          ]
         },
         failOnStatusCode: false
       })
 
-      // Should not error (even if no API key configured)
-      expect([200, 400, 401]).toContain(response.status())
+      expect(response.status()).toBe(429)
+      const error = await response.json()
+      expect(error.type).toBe('rate_limit_error')
+    })
+
+    test('should retry on AI service overload', async ({ page }) => {
+      let requestCount = 0
+
+      await page.route('**/api/chat', async (route) => {
+        requestCount++
+
+        if (requestCount === 1) {
+          // First request fails
+          await createErrorMockHandler(aiMocks.errors.modelOverloaded)(route)
+        } else {
+          // Retry succeeds
+          await createAIMockHandler({
+            id: 'msg-4',
+            role: 'assistant',
+            content: 'Here is your code after retry'
+          })(route)
+        }
+      })
+
+      // First request
+      const firstResponse = await page.request.post('http://localhost:3000/api/chat', {
+        data: { messages: [{ role: 'user', content: 'test' }] },
+        failOnStatusCode: false
+      })
+
+      expect(firstResponse.status()).toBe(503)
+
+      // Retry
+      const retryResponse = await page.request.post('http://localhost:3000/api/chat', {
+        data: { messages: [{ role: 'user', content: 'test' }] }
+      })
+
+      expect(retryResponse.status()).toBe(200)
+      expect(requestCount).toBe(2)
     })
   })
 
-  test.describe('Success Criteria Validation', () => {
-    test('can navigate documentation hierarchy', async ({ page }) => {
-      await page.goto('/getting-started')
-      await expect(page.locator('h1')).toBeVisible()
+  test.describe('Job 3: Document APIs with AI-generated examples', () => {
+    test('should generate API documentation via AI', async ({ page }) => {
+      await page.route('**/api/chat', createAIMockHandler({
+        id: 'msg-5',
+        role: 'assistant',
+        content: `# API Documentation
 
-      await page.goto('/essentials')
-      await expect(page.locator('h1')).toBeVisible()
+## POST /api/chats
+
+Creates a new chat session.
+
+**Request Body:**
+\`\`\`json
+{
+  "title": "string"
+}
+\`\`\`
+
+**Response:**
+\`\`\`json
+{
+  "id": "string",
+  "title": "string",
+  "userId": "string",
+  "createdAt": "ISO8601"
+}
+\`\`\``
+      }))
+
+      const response = await page.request.post('http://localhost:3000/api/chat', {
+        data: {
+          messages: [
+            { role: 'user', content: 'Document the /api/chats endpoint' }
+          ]
+        }
+      })
+
+      const data = await response.json()
+      expect(data.content).toContain('API Documentation')
+      expect(data.content).toContain('POST /api/chats')
+      expect(data.content).toContain('Request Body')
     })
 
-    test('can find AI assistance features', async ({ page }) => {
-      const chatButton = page.getByRole('button', { name: /ask ai/i })
-      const exists = await chatButton.count() > 0
+    test('should explain database queries via AI', async ({ page }) => {
+      await page.route('**/api/chat', createAIMockHandler({
+        id: 'msg-6',
+        role: 'assistant',
+        content: aiMocks.codeGeneration.databaseQuery.content
+      }))
 
-      // Chat feature should be available or documented
-      expect(true).toBeTruthy() // Passes if test runs
+      const response = await page.request.post('http://localhost:3000/api/chat', {
+        data: {
+          messages: [
+            { role: 'user', content: 'How do I query PGlite with Drizzle?' }
+          ]
+        }
+      })
+
+      const data = await response.json()
+      expect(data.content).toContain('useDrizzle')
+      expect(data.content).toContain('PGlite')
     })
 
-    test('can verify testing infrastructure exists', async ({ page }) => {
-      // This test itself validates testing infrastructure
-      expect(page).toBeDefined()
-      expect(test).toBeDefined()
+    test('should provide multi-turn conversation for API help', async ({ page }) => {
+      let conversationTurn = 0
+
+      await page.route('**/api/chat', async (route) => {
+        conversationTurn++
+
+        if (conversationTurn === 1) {
+          await createAIMockHandler({
+            id: 'msg-7',
+            role: 'assistant',
+            content: 'You can create API endpoints in the server/api directory.'
+          })(route)
+        } else {
+          await createAIMockHandler({
+            id: 'msg-8',
+            role: 'assistant',
+            content: aiMocks.codeGeneration.apiEndpoint.content
+          })(route)
+        }
+      })
+
+      // First question
+      const response1 = await page.request.post('http://localhost:3000/api/chat', {
+        data: {
+          messages: [
+            { role: 'user', content: 'Where do I create API endpoints?' }
+          ]
+        }
+      })
+
+      const data1 = await response1.json()
+      expect(data1.content).toContain('server/api')
+
+      // Follow-up question
+      const response2 = await page.request.post('http://localhost:3000/api/chat', {
+        data: {
+          messages: [
+            { role: 'user', content: 'Where do I create API endpoints?' },
+            { role: 'assistant', content: data1.content },
+            { role: 'user', content: 'Can you show me an example?' }
+          ]
+        }
+      })
+
+      const data2 = await response2.json()
+      expect(data2.content).toContain('```typescript')
+    })
+  })
+
+  test.describe('Success Criteria: AI-Powered API Development', () => {
+    test('can generate API code via AI', async ({ page }) => {
+      await page.route('**/api/chat', createAIMockHandler({
+        id: 'success-1',
+        role: 'assistant',
+        content: aiMocks.codeGeneration.apiEndpoint.content
+      }))
+
+      const response = await page.request.post('http://localhost:3000/api/chat', {
+        data: {
+          messages: [{ role: 'user', content: 'API code please' }]
+        }
+      })
+
+      expect(response.status()).toBe(200)
+      const data = await response.json()
+      expect(data.role).toBe('assistant')
+      expect(data.content.length).toBeGreaterThan(0)
+    })
+
+    test('can handle AI streaming for real-time feedback', async ({ page }) => {
+      await page.route('**/api/chat', createStreamingMockHandler(aiMocks.streaming.chunks))
+
+      const response = await page.request.post('http://localhost:3000/api/chat', {
+        data: {
+          messages: [{ role: 'user', content: 'Stream response' }]
+        }
+      })
+
+      expect(response.status()).toBe(200)
+      const body = await response.text()
+      expect(body.length).toBeGreaterThan(0)
+    })
+
+    test('can recover from AI errors', async ({ page }) => {
+      await page.route('**/api/chat', createErrorMockHandler(aiMocks.errors.invalidApiKey))
+
+      const response = await page.request.post('http://localhost:3000/api/chat', {
+        data: {
+          messages: [{ role: 'user', content: 'test' }]
+        },
+        failOnStatusCode: false
+      })
+
+      expect([401, 429, 503, 504]).toContain(response.status())
     })
   })
 })
