@@ -5,7 +5,8 @@
   "type": "module",
   "exports": {
     ".": "./src/index.mjs",
-    "./client": "./src/client.mjs"
+    "./client": "./src/client.mjs",
+    "./hdit": "./src/hdit/index.mjs"
   },
   "main": "./src/index.mjs",
   "files": [
