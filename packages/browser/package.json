@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/browser",
-  "version": "5.0.0-alpha.0",
+  "version": "5.0.0-beta.1",
   "description": "UNRDF Browser SDK - Client-side RDF with IndexedDB Storage",
   "type": "module",
   "main": "src/index.mjs",
@@ -36,8 +36,8 @@
     "client-side"
   ],
   "dependencies": {
-    "@unrdf/core": "workspace:*",
-    "@unrdf/streaming": "workspace:*",
+    "@unrdf/core": "workspace:5.0.0-beta.1",
+    "@unrdf/streaming": "workspace:5.0.0-beta.1",
     "n3": "^1.26.0",
     "zod": "^3.25.76"
   },

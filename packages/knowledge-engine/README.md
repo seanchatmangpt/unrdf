@@ -1,5 +1,8 @@
 # @unrdf/knowledge-engine
 
+![Version](https://img.shields.io/badge/version-5.0.0--beta.1-blue) ![Production Ready](https://img.shields.io/badge/production-ready-green)
+
+
 **Rule Engine, Inference, and Pattern Matching** *(Optional Extension)*
 
 Apply business rules and inference to RDF data. Includes reasoning engine and pattern matching.

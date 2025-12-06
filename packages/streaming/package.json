@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/streaming",
-  "version": "5.0.0-alpha.0",
+  "version": "5.0.0-beta.1",
   "description": "UNRDF Streaming - Change Feeds and Real-time Synchronization",
   "type": "module",
   "main": "src/index.mjs",
@@ -35,8 +35,8 @@
     "synchronization"
   ],
   "dependencies": {
-    "@unrdf/core": "workspace:*",
-    "@unrdf/hooks": "workspace:*",
+    "@unrdf/core": "workspace:5.0.0-beta.1",
+    "@unrdf/hooks": "workspace:5.0.0-beta.1",
     "ws": "^8.18.3"
   },
   "devDependencies": {

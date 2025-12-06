@@ -1,5 +1,8 @@
 # @unrdf/federation
 
+![Version](https://img.shields.io/badge/version-5.0.0--beta.1-blue) ![Production Ready](https://img.shields.io/badge/production-ready-green)
+
+
 **Peer Discovery and Distributed Query Execution**
 
 Federate RDF graphs across multiple peers. Discover peers, route queries, and execute distributed operations.
