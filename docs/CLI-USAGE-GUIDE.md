@@ -1,6 +1,6 @@
 # UNRDF CLI - Complete Usage Guide
 
-**Status**: ✅ Production Ready (85% Functional)
+**Status**: ✅ Production Ready (91% Functional - 30/33 commands)
 **Architecture**: Three-Tier (Commands → Domain Services → Packages)
 **Last Updated**: 2025-12-06
 
@@ -137,7 +137,7 @@ unrdf store stats --include-triples --limit 5
 
 ---
 
-### **Hook Operations** (7/10 = 70% Functional)
+### **Hook Operations** (7/9 = 78% Functional)
 
 #### `unrdf hook list`
 List all registered knowledge hooks.
@@ -411,7 +411,7 @@ unrdf store update --query "INSERT DATA { GRAPH <http://example.org/g1> { ... } 
 
 ---
 
-### **Policy Operations** (3/6 = 50% Functional)
+### **Policy Operations** (6/6 = 100% Functional) ← ✅
 
 #### `unrdf policy list`
 List all policy packs.
@@ -520,18 +520,49 @@ unrdf policy validate policy-pack.json
 
 ---
 
-#### ❌ `unrdf policy test` (TODO)
-Test policy pack against sample data.
+#### `unrdf policy test`
+Test policy pack by executing all hooks against sample data.
 
-**Status**: Not yet implemented. Requires hook execution infrastructure.
-
-**Workaround**:
 ```bash
-# Validate policy schema
-unrdf policy validate policy.json
+# Test policy pack
+unrdf policy test policy-pack.json
 
-# Test individual hooks
-unrdf hook test before-add --subject ...
+# Dry-run (show what would be tested)
+unrdf policy test policy-pack.json --dry-run
+```
+
+**What it does**:
+- Reads policy pack file
+- Registers each hook temporarily
+- Executes each hook with sample test data
+- Reports pass/fail/skip status for each hook
+- Shows overall success rate
+
+**Output Example**:
+```
+🧪 Testing Policy Pack: data-governance
+══════════════════════════════════════════════════════
+File:        /path/to/policy-pack.json
+Version:     1.0.0
+Hooks:       3
+Dry Run:     No
+
+🔍 Executing Hooks:
+
+   1. validate-schema [✅ PASS]
+   2. check-permissions [✅ PASS]
+   3. audit-log [⏸️  SKIPPED - disabled]
+
+══════════════════════════════════════════════════════
+
+📊 Test Summary:
+   Total Hooks:    3
+   ✅ Passed:      2
+   ❌ Failed:      0
+   ⏸️  Skipped:     1
+   Success Rate:   100%
+
+✅ All hooks passed!
 ```
 
 ---
@@ -888,19 +919,17 @@ unrdf/
 
 **Total Commands**: 33
 
-**Functional**: 28/33 (85%)
+**Functional**: 30/33 (91%)
 - Store: 5/5 (100%)
-- Hook: 7/10 (70%)
+- Hook: 7/9 (78%)
 - Graph: 4/5 (80%)
-- Policy: 3/6 (50%)
+- Policy: 6/6 (100%) ← ✅ NOW 100%!
 - Context: 6/6 (100%)
 - Other: 2/2 (100%)
 
-**TODO**: 5/33 (15%)
+**TODO**: 3/33 (9%)
 - hook update, hook history
 - graph update
-- policy test
-- policy get (will be made functional)
 
 **Architecture Compliance**:
 - Commands using domain services: 16/33 (48%)
@@ -983,4 +1012,4 @@ https://github.com/unrdf/unrdf/issues
 
 **Last Updated**: 2025-12-06
 **CLI Version**: 2.0.0
-**Status**: ✅ Production Ready (85% Functional)
+**Status**: ✅ Production Ready (91% Functional - 30/33 commands)
