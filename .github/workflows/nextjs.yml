@@ -1,16 +1,16 @@
-# Deploy UNRDF Hooks Showcase to GitHub Pages
+# Deploy Nextra Documentation to GitHub Pages
 #
-# This workflow builds and deploys the hooks showcase from playground/hooks-showcase/
-# Using Next.js 15+ with static export (output: 'export') to GitHub Pages.
+# This workflow builds and deploys the Nextra docs from packages/nextra/
+# Using Next.js 16 with Webpack mode and static export to GitHub Pages.
 #
-name: Deploy UNRDF Hooks Showcase to Pages
+name: Deploy Nextra Docs to Pages
 
 on:
-  # Runs on pushes targeting the default branch (in playground/hooks-showcase only)
+  # Runs on pushes targeting the default branch (Nextra docs)
   push:
     branches: ["main"]
     paths:
-      - 'playground/hooks-showcase/**'
+      - 'packages/nextra/**'
       - '.github/workflows/nextjs.yml'
 
   # Allows you to run this workflow manually from the Actions tab
@@ -31,35 +31,39 @@ jobs:
   # Build job
   build:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: playground/hooks-showcase
+    timeout-minutes: 15
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 9
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: "20"
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm install
+        run: pnpm install --frozen-lockfile
 
-      - name: Build with Next.js
-        run: npm run build
+      - name: Build Nextra docs
+        run: pnpm --filter @unrdf/nextra-docs build
         env:
-          NEXT_PUBLIC_BASE_PATH: /unrdf
+          NODE_ENV: production
 
       - name: Verify build output
-        run: ls -la out/
+        run: ls -la packages/nextra/out/
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: playground/hooks-showcase/out
+          path: packages/nextra/out
 
   # Deployment job
   deploy:
