@@ -36,7 +36,7 @@
 3. **Security-Focused** - Merkle verification, sandboxed execution, audit trails
 4. **Observable** - Comprehensive OpenTelemetry instrumentation (62 tests)
 5. **Well-Documented** - 50+ analysis docs, clear API, JSDoc throughout
-6. **Clear Vision** - v3.0 was strategic refocus to core (removed CLI/sidecar)
+6. **Clear Vision** - v3.0 was strategic refocus to core (removed CLI/knowledge-engine)
 
 ### Known Issues
 
@@ -52,7 +52,7 @@
 2. Complete browser compatibility
 3. Update OTEL validation framework
 4. Add performance profiling tools
-5. Prepare ecosystem packages (CLI, sidecar)
+5. Prepare ecosystem packages (CLI, knowledge-engine)
 
 **Estimated Effort:** 20-25 days (4-5 weeks)
 
@@ -80,14 +80,14 @@
 - Isolated-vm sandbox replacement
 - Browser compatibility fixes
 - Performance profiling dashboard
-- CLI/sidecar package design docs
+- CLI/knowledge-engine package design docs
 
 ### Future Roadmap (v3.2.0+)
 
 - Streaming RDF processing
 - Advanced query optimization
 - GraphQL integration
-- Ecosystem packages (@unrdf/cli, @unrdf/sidecar, @unrdf/web, @unrdf/ui)
+- Ecosystem packages (@unrdf/cli, @unrdf/knowledge-engine, @unrdf/web, @unrdf/ui)
 
 ---
 
@@ -125,7 +125,7 @@
 src/
 ├── knowledge-engine/       # 41 core modules (RDF operations)
 ├── cli/                   # CLI commands (experimental)
-├── sidecar/              # gRPC integration (experimental)
+├── knowledge-engine/              # gRPC integration (experimental)
 ├── validation/           # OTEL validation framework
 ├── security/             # Security utilities
 └── ...others
@@ -163,7 +163,7 @@ docs/
 - [ ] Finalize vm2 → isolated-vm strategy
 - [ ] Define browser compatibility scope (Chrome, Firefox, Safari, Edge?)
 - [ ] Decide on performance tooling approach (dashboard vs logs?)
-- [ ] Schedule ecosystem package planning (CLI/sidecar)
+- [ ] Schedule ecosystem package planning (CLI/knowledge-engine)
 - [ ] Assign team roles (security lead, backend engineers, infra)
 
 **During Development:**

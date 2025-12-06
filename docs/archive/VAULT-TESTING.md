@@ -12,7 +12,6 @@ This guide provides comprehensive testing procedures for the Vault integration w
 ```bash
 cd /Users/sac/unrdf
 
-# Start Vault + KGC Sidecar
 docker compose -f docker-compose.vault.yml up -d
 
 # Wait for initialization
@@ -26,7 +25,7 @@ docker compose -f docker-compose.vault.yml ps
 ```
 NAME                IMAGE                          STATUS
 kgc-vault          hashicorp/vault:1.15           healthy
-kgc-sidecar        unrdf-sidecar:latest          healthy
+knowledge-engine        unrdf-knowledge-engine:latest          healthy
 kgc-postgres       postgres:16-alpine             healthy
 kgc-jaeger         jaegertracing/all-in-one:1.52  running
 ```
@@ -65,10 +64,9 @@ docker exec kgc-vault vault kv get kgc/api-credentials
 # rotated_at    2025-10-02T...
 ```
 
-### Verify KGC Sidecar Integration
 ```bash
-# Check sidecar logs for Vault initialization
-docker logs kgc-sidecar 2>&1 | grep -A 5 "Vault"
+# Check knowledge-engine logs for Vault initialization
+docker logs knowledge-engine 2>&1 | grep -A 5 "Vault"
 
 # Expected output:
 # [KGC] Initializing Vault client...
@@ -94,7 +92,6 @@ curl -s http://localhost:8200/v1/sys/health | jq
 #   ...
 # }
 
-# KGC Sidecar health
 curl -s http://localhost:3000/health | jq
 
 # Expected:
@@ -317,17 +314,15 @@ docker exec kgc-vault vault status | grep Sealed
 # Expected: Sealed   false ✅
 ```
 
-### Test KGC Sidecar Recovery
 
 ```bash
-# 1. Restart KGC Sidecar
-docker restart kgc-sidecar
+docker restart knowledge-engine
 
 # 2. Wait for startup
 sleep 10
 
 # 3. Check logs for Vault reconnection
-docker logs kgc-sidecar 2>&1 | grep -A 3 "Vault"
+docker logs knowledge-engine 2>&1 | grep -A 3 "Vault"
 
 # Expected:
 # [KGC] Initializing Vault client...
@@ -346,28 +341,28 @@ curl -s http://localhost:3000/health | jq '.vault'
 # 1. Stop Vault
 docker stop kgc-vault
 
-# 2. Restart sidecar (should fallback to env vars)
-docker restart kgc-sidecar
+# 2. Restart knowledge-engine (should fallback to env vars)
+docker restart knowledge-engine
 
 # 3. Check logs for fallback
-docker logs kgc-sidecar 2>&1 | grep -A 2 "Vault initialization failed"
+docker logs knowledge-engine 2>&1 | grep -A 2 "Vault initialization failed"
 
 # Expected:
 # [KGC] Vault initialization failed: connect ECONNREFUSED
 # [KGC] Falling back to environment variables ✅
 
-# 4. Verify sidecar still functional (degraded mode)
+# 4. Verify knowledge-engine still functional (degraded mode)
 curl -s http://localhost:3000/health
 # Expected: 200 OK (but vault: "disconnected")
 
-# 5. Restart Vault and sidecar
+# 5. Restart Vault and knowledge-engine
 docker start kgc-vault
 sleep 5
-docker restart kgc-sidecar
+docker restart knowledge-engine
 sleep 10
 
 # 6. Verify Vault reconnection
-docker logs kgc-sidecar 2>&1 | tail -n 20 | grep Vault
+docker logs knowledge-engine 2>&1 | tail -n 20 | grep Vault
 # Expected: Vault secrets retrieved successfully ✅
 ```
 
@@ -457,10 +452,7 @@ docker exec kgc-vault vault kv list kgc/ | grep -q "encryption-credentials" || e
 docker exec kgc-vault vault kv list kgc/ | grep -q "database-credentials" || exit 1
 echo "✅ All secrets present"
 
-# Test 4: KGC Sidecar connected
-echo "Test 4: Checking sidecar integration..."
-docker logs kgc-sidecar 2>&1 | grep -q "Vault secrets retrieved successfully" || exit 1
-echo "✅ Sidecar connected to Vault"
+docker logs knowledge-engine 2>&1 | grep -q "Vault secrets retrieved successfully" || exit 1
 
 # Test 5: Secret rotation
 echo "Test 5: Testing secret rotation..."
@@ -552,7 +544,6 @@ docker compose -f docker-compose.vault.yml up -d
 | Secret Rotation | New key != old key | Version increments, key changes |
 | Audit Logging | All access logged | Audit log contains read operations |
 | Policy Enforcement | Read allowed, write denied | App token can read but not write |
-| Fallback Mechanism | Uses env vars when Vault down | Sidecar starts with env vars |
 | Performance | Cache < 1ms, uncached < 20ms | Latency within expected range |
 
 ---
@@ -580,16 +571,15 @@ docker compose -f docker-compose.vault.yml run --rm vault-init
 docker exec kgc-vault vault kv list kgc/
 ```
 
-### If KGC Sidecar Can't Connect
 ```bash
 # Check Vault is accessible
 curl http://localhost:8200/v1/sys/health
 
 # Check environment variables
-docker exec kgc-sidecar env | grep VAULT
+docker exec knowledge-engine env | grep VAULT
 
-# Check sidecar logs for errors
-docker logs kgc-sidecar 2>&1 | grep -i error
+# Check knowledge-engine logs for errors
+docker logs knowledge-engine 2>&1 | grep -i error
 ```
 
 ---
@@ -599,14 +589,12 @@ docker logs kgc-sidecar 2>&1 | grep -i error
 - [ ] Infrastructure starts successfully
 - [ ] Vault is unsealed and initialized
 - [ ] All 3 secrets exist (api, encryption, database)
-- [ ] KGC Sidecar retrieves secrets from Vault
 - [ ] Quorum unsealing works (3-of-5 threshold)
 - [ ] Secret rotation updates version
 - [ ] Secret rollback restores old version
 - [ ] Audit logging captures all access
 - [ ] Read-only policy enforced
 - [ ] Vault restart requires unsealing
-- [ ] KGC Sidecar recovers after restart
 - [ ] Fallback to env vars when Vault unavailable
 - [ ] Performance meets expectations (< 20ms)
 - [ ] Health endpoints respond correctly

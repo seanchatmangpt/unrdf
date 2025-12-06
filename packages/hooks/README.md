@@ -1,5 +1,8 @@
 # @unrdf/hooks
 
+![Version](https://img.shields.io/badge/version-5.0.0--beta.1-blue) ![Production Ready](https://img.shields.io/badge/production-ready-green)
+
+
 **Knowledge Hooks - Policy Definition and Execution Framework**
 
 The policy enforcement layer for UNRDF. Define and execute hooks to enforce rules, validate data, and transform quads.

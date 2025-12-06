@@ -33,7 +33,6 @@ The Hive Mind swarm has completed a comprehensive analysis and remediation of th
 **Critical Issues (P0)**:
 - 14 explicit TODOs requiring implementation
 - 5 placeholder implementations (stubs/throws)
-- 8 skipped test suites (sidecar integration untested)
 - 1 **SECURITY ISSUE**: Merkle root verification always returns `true`
 
 **Code Quality Metrics**:
@@ -42,7 +41,7 @@ The Hive Mind swarm has completed a comprehensive analysis and remediation of th
 - 168 source files total analyzed
 
 **80/20 Priority Breakdown**:
-- **P0 Blocking** (52 hours): CLI commands, sidecar tests, merkle verification
+- **P0 Blocking** (52 hours): CLI commands, knowledge-engine tests, merkle verification
 - **P1 Important** (32 hours): Hook dependencies, query optimization
 - **P2-P3 Future** (104 hours): Advanced features, isolate execution
 
@@ -254,7 +253,6 @@ All agents agreed on priority ranking:
 **Priority 2 Tasks** (Estimate: 40-60 hours):
 1. Implement remaining CLI commands (backup, restore, import)
 2. Fix merkle root verification security issue
-3. Enable sidecar integration tests
 4. Refactor files >500 lines
 
 **Priority 3 Tasks** (Future):

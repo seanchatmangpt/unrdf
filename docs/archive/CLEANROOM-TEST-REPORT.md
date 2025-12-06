@@ -1,4 +1,3 @@
-# KGC Sidecar Cleanroom Test Validation Report
 **Generated**: 2025-10-01
 **Swarm ID**: swarm_1759361372478_advm6xb7g
 **Topology**: Mesh (Adaptive)
@@ -8,7 +7,6 @@
 
 ## Executive Summary
 
-✅ **Sidecar Core Functionality: VALIDATED**
 ⚠️ **E2E Infrastructure: PARTIALLY OPERATIONAL**
 ✅ **Observability Weaver: FUNCTIONAL**
 
@@ -122,7 +120,7 @@
    - Validates `checks.managers`, `checks.telemetry`, `checks.lockchain`
 
 3. ✅ **Returns service name from config**
-   - Service name: `kgc-sidecar`
+   - Service name: `knowledge-engine`
 
 ### Fixes Applied
 
@@ -157,7 +155,6 @@
 
 | Service | Port(s) | Status | Health |
 |---------|---------|--------|--------|
-| **KGC Sidecar** | 3000 | ✅ Running | Healthy |
 | **OTel Collector** | 4317, 4318, 8888, 8889, 13133 | ✅ Running | Healthy |
 | **Jaeger** | 16686, 14250, 14268 | ✅ Running | Healthy |
 | **Prometheus** | 9090 | ✅ Running | Healthy |
@@ -172,7 +169,7 @@
 
 ✅ All 6 configuration files exist and are valid:
 - `docker-compose.yml`
-- `Dockerfile.sidecar` (simplified from Nuxt-specific to generic KGC container)
+- `Dockerfile.knowledge-engine` (simplified from Nuxt-specific to generic KGC container)
 - `otel-collector-config.yaml`
 - `prometheus.yml`
 - `grafana-datasources.yml`
@@ -180,9 +177,9 @@
 
 ### Container Build
 
-**Dockerfile.sidecar** was simplified to use a generic HTTP health server instead of full Nuxt build:
+**Dockerfile.knowledge-engine** was simplified to use a generic HTTP health server instead of full Nuxt build:
 - Health endpoint: `GET /health` or `GET /api/health`
-- Response: `{status: "healthy", service: "kgc-sidecar"}`
+- Response: `{status: "healthy", service: "knowledge-engine"}`
 - Note: This is a stub server for infrastructure testing
 
 ---
@@ -266,14 +263,14 @@
 
 ### Root Cause Analysis
 
-**Primary Blocker**: The testcontainer Dockerfile was intentionally simplified to use a stub HTTP server instead of the full Nuxt sidecar. This means:
+**Primary Blocker**: The testcontainer Dockerfile was intentionally simplified to use a stub HTTP server instead of the full Nuxt  This means:
 
 1. ✅ **Infrastructure works correctly** - All 6 services communicate properly
 2. ✅ **Health checks work** - Stub server responds to `/health`
 3. ❌ **API endpoints not implemented** - Only stub health endpoint exists
 4. ❌ **Nuxt server not running** - Simplified container doesn't run Nuxt
 
-**Design Decision**: The Dockerfile.sidecar was changed from a full Nuxt build to a simple Node HTTP server to validate infrastructure without the complexity of building the full sidecar in Docker.
+**Design Decision**: The Dockerfile.knowledge-engine was changed from a full Nuxt build to a simple Node HTTP server to validate infrastructure without the complexity of building the full knowledge-engine in Docker.
 
 ---
 
@@ -359,7 +356,6 @@
 | Jaeger | jaeger:14269 | ✅ UP | jaeger |
 | Prometheus | localhost:9090 | ✅ UP | prometheus |
 | OTel Collector | otel-collector:8888 | ✅ UP | otel-collector |
-| KGC Sidecar | otel-collector:8889 | ✅ UP | kgc-sidecar-metrics |
 
 #### Available Metrics (Sample)
 
@@ -463,28 +459,25 @@ Receivers → Processors → Exporters
 2. **Integration Tests** - 100% passing, Nuxt environment validated
 3. **Infrastructure** - All 6 services healthy and communicating
 4. **Observability** - Full OTel weaver operational with Jaeger/Prometheus/Grafana
-5. **Core Sidecar Code** - All utilities, validation, errors, responses working
 
 ### What Needs Work ⚠️
 
 1. **E2E API Tests** - Blocked by simplified testcontainer (design choice)
 2. **Health Response Format** - Stub returns different format than expected
 3. **Test Harness** - Remove duplicate infrastructure startup
-4. **Full Nuxt Sidecar** - Not running in testcontainer (simplified for infrastructure validation)
 
 ### Recommendations
 
 #### Immediate (Next 1-2 hours)
 
-1. **Run Nuxt Sidecar Locally**:
    ```bash
-   cd /Users/sac/unrdf/sidecar
+   cd /Users/sac/unrdf/knowledge-engine
    pnpm dev
    # Then manually test API endpoints
    ```
 
 2. **Update E2E Test Strategy**:
-   - Option A: Build full Nuxt sidecar in Docker (2-3 day effort)
+   - Option A: Build full Nuxt knowledge-engine in Docker (2-3 day effort)
    - Option B: Run E2E tests against local Nuxt dev server (15 minutes)
    - Option C: Keep infrastructure tests separate from API tests
 
@@ -495,7 +488,7 @@ Receivers → Processors → Exporters
 #### Short-term (1-2 days)
 
 4. **Complete Nuxt Dockerfile**:
-   - Build full Nuxt sidecar in testcontainer
+   - Build full Nuxt knowledge-engine in testcontainer
    - Fix module resolution paths (`../../../src` → `../../src`)
    - Test full E2E scenarios
 
@@ -541,7 +534,7 @@ The cleanroom test validation using agent swarm coordination has **successfully 
 ⚠️ **E2E Scenarios**: 27% passing due to intentionally simplified testcontainer
 
 **Design Decision Context**:
-The testcontainer Dockerfile was simplified to validate infrastructure (Docker, OTel, Jaeger, Prometheus, Grafana, Gitea) without the complexity of building the full Nuxt sidecar. This was a **strategic trade-off** to:
+The testcontainer Dockerfile was simplified to validate infrastructure (Docker, OTel, Jaeger, Prometheus, Grafana, Gitea) without the complexity of building the full Nuxt  This was a **strategic trade-off** to:
 
 1. **Validate infrastructure rapidly** ✅
 2. **Test observability weaver** ✅
@@ -549,14 +542,13 @@ The testcontainer Dockerfile was simplified to validate infrastructure (Docker, 
 4. **Enable parallel development** ✅
 
 **Next Steps**:
-1. Run Nuxt sidecar locally for API testing
+1. Run Nuxt knowledge-engine locally for API testing
 2. Decide on testcontainer strategy (full Nuxt vs. simplified)
 3. Complete remaining integration tests with mocked managers
 4. Enhance E2E scenarios once API strategy decided
 
 ---
 
-**The KGC Sidecar core implementation is production-ready with comprehensive unit and integration test coverage. The observability infrastructure is fully operational. E2E API testing requires a decision on testcontainer strategy (full Nuxt build vs. local dev server testing).**
 
 ---
 

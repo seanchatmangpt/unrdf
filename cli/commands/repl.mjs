@@ -323,9 +323,10 @@ class REPLSession {
 
       // FM-CLI-015: Execute with timeout protection
       const execResult = await this.safeguards.executeWithTimeout(async () => {
-        // Execute query through store command
-        // Note: This assumes the store query command is available
-        return await this.ctx.invoke('store', 'query', { query });
+        // FM-006 FIX: Use store-instance directly instead of ctx.invoke()
+        const { getStore } = await import('../utils/store-instance.mjs');
+        const store = getStore();
+        return store.query(query);
       });
 
       if (!execResult.success) {

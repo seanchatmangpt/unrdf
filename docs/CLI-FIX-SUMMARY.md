@@ -289,7 +289,7 @@
 ### Commands That Now Work
 ```bash
 # Init command (WORKING)
-node src/cli/index.mjs init --root ./playground --dry-run
+node src/cli/index.mjs init --root ./test-project --dry-run
 
 # Store backup (WORKING)
 node src/cli/index.mjs store backup /tmp/test-rdf-store --output /tmp/backup.tar.gz
@@ -301,7 +301,7 @@ node src/cli/index.mjs store restore /tmp/backup.tar.gz --target /tmp/restore-st
 ### Commands With Issues
 ```bash
 # Autonomic (PARTIAL - init works, MAPEK fails)
-node src/cli/index.mjs autonomic --once --root ./playground
+node src/cli/index.mjs autonomic --once --root ./test-project
 ```
 
 ### Commands That Now Work (After Store Import Fix)

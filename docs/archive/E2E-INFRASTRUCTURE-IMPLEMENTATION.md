@@ -22,7 +22,7 @@ Implemented fully automated E2E test infrastructure using TestContainers with ze
 ## Deliverables
 
 ### 1. Docker Compose Setup Module
-**File**: `/Users/sac/unrdf/sidecar/test/setup/docker-compose-setup.mjs`
+**File**: `/Users/sac/unrdf/knowledge-engine/test/setup/docker-compose-setup.mjs`
 
 **Features**:
 - ✅ Automated Docker Compose orchestration using `dockerode`
@@ -44,8 +44,8 @@ isDockerAvailable()             // Pre-flight check
 
 ### 2. Vitest Global Setup
 **Files**:
-- `/Users/sac/unrdf/sidecar/vitest.config.mjs` (updated)
-- `/Users/sac/unrdf/sidecar/test/setup/e2e-global-setup.mjs` (new)
+- `/Users/sac/unrdf/knowledge-engine/vitest.config.mjs` (updated)
+- `/Users/sac/unrdf/knowledge-engine/test/setup/e2e-global-setup.mjs` (new)
 
 **Configuration**:
 ```javascript
@@ -77,18 +77,17 @@ isDockerAvailable()             // Pre-flight check
    - Cleans networks
 
 ### 3. Docker Infrastructure
-**Directory**: `/Users/sac/unrdf/sidecar/test/e2e/testcontainers/`
+**Directory**: `/Users/sac/unrdf/knowledge-engine/test/e2e/testcontainers/`
 
 **Files Created**:
 - ✅ `docker-compose.yml` - 5 services (KGC, Redis, OTEL, Jaeger, Prometheus)
-- ✅ `Dockerfile.sidecar` - KGC Sidecar build
 - ✅ `otel-collector-config.yaml` - OTLP → Jaeger/Prometheus
 - ✅ `prometheus.yml` - Metrics scraping config
 
 **Services**:
 | Service | Port | Purpose |
 |---------|------|---------|
-| kgc-sidecar | 3000 | Nuxt app with Knowledge Hooks |
+| knowledge-engine | 3000 | Nuxt app with Knowledge Hooks |
 | redis | 6379 | Distributed cache |
 | otel-collector | 4318 | OpenTelemetry aggregation |
 | jaeger | 16686 | Distributed tracing UI |
@@ -96,7 +95,7 @@ isDockerAvailable()             // Pre-flight check
 
 ### 4. Updated E2E Scenario Tests
 
-**File**: `/Users/sac/unrdf/sidecar/test/e2e/scenarios/01-transaction-lifecycle.test.mjs`
+**File**: `/Users/sac/unrdf/knowledge-engine/test/e2e/scenarios/01-transaction-lifecycle.test.mjs`
 
 **Changes**:
 - ✅ Removed manual Docker setup (uses global setup)
@@ -104,7 +103,7 @@ isDockerAvailable()             // Pre-flight check
 - ✅ Fixed unique IDs to prevent collisions
 - ✅ Removed ECONNREFUSED errors
 
-**File**: `/Users/sac/unrdf/sidecar/test/e2e/scenarios/02-policy-governance.test.mjs`
+**File**: `/Users/sac/unrdf/knowledge-engine/test/e2e/scenarios/02-policy-governance.test.mjs`
 
 **Changes**:
 - ✅ Removed manual Docker setup
@@ -112,7 +111,7 @@ isDockerAvailable()             // Pre-flight check
 - ✅ Fixed unique IDs for policies and subjects
 
 ### 5. Performance Benchmarks
-**File**: `/Users/sac/unrdf/sidecar/test/performance/benchmarks.test.mjs`
+**File**: `/Users/sac/unrdf/knowledge-engine/test/performance/benchmarks.test.mjs`
 
 **Benchmarks Implemented**:
 
@@ -142,12 +141,11 @@ isDockerAvailable()             // Pre-flight check
    - Check under load
 
 ### 6. Quick Validation Test
-**File**: `/Users/sac/unrdf/sidecar/test/e2e/quick-validation.test.mjs`
+**File**: `/Users/sac/unrdf/knowledge-engine/test/e2e/quick-validation.test.mjs`
 
 **Purpose**: Validate existing Docker infrastructure
 
 **Tests**:
-- ✅ KGC Sidecar health endpoint
 - ✅ Jaeger UI accessibility
 - ✅ Prometheus health
 - ✅ Simple transaction application
@@ -171,19 +169,19 @@ isDockerAvailable()             // Pre-flight check
 
 ### Run All E2E Tests
 ```bash
-cd /Users/sac/unrdf/sidecar
+cd /Users/sac/unrdf/knowledge-engine
 pnpm test:e2e
 ```
 
 ### Run Performance Benchmarks Only
 ```bash
-cd /Users/sac/unrdf/sidecar
+cd /Users/sac/unrdf/knowledge-engine
 pnpm test:e2e -- test/performance/benchmarks.test.mjs
 ```
 
 ### Run Quick Validation
 ```bash
-cd /Users/sac/unrdf/sidecar
+cd /Users/sac/unrdf/knowledge-engine
 pnpm vitest run test/e2e/quick-validation.test.mjs
 ```
 
@@ -209,7 +207,7 @@ pnpm vitest run test/e2e/quick-validation.test.mjs
 
 ### File Structure
 ```
-sidecar/
+knowledge-engine/
 ├── test/
 │   ├── setup/
 │   │   ├── docker-compose-setup.mjs    (Docker orchestration)
@@ -217,7 +215,7 @@ sidecar/
 │   ├── e2e/
 │   │   ├── testcontainers/
 │   │   │   ├── docker-compose.yml      (5 services)
-│   │   │   ├── Dockerfile.sidecar      (KGC build)
+│   │   │   ├── Dockerfile.knowledge-engine      (KGC build)
 │   │   │   ├── otel-collector-config.yaml
 │   │   │   └── prometheus.yml
 │   │   ├── scenarios/
@@ -299,7 +297,6 @@ jobs:
 ```bash
 $ pnpm vitest run test/e2e/quick-validation.test.mjs
 
-✓ should connect to KGC Sidecar health endpoint
 ✓ should connect to Jaeger UI
 ✓ should connect to Prometheus
 ✓ should apply a simple transaction
@@ -314,7 +311,7 @@ Tests: 5 passed (5)
 
 1. **Execute Full E2E Suite**:
    ```bash
-   cd /Users/sac/unrdf/sidecar
+   cd /Users/sac/unrdf/knowledge-engine
    pnpm test:e2e
    ```
 
@@ -348,20 +345,20 @@ All E2E test infrastructure has been implemented with:
 ## Files Modified/Created
 
 ### Created
-- `/Users/sac/unrdf/sidecar/test/setup/docker-compose-setup.mjs`
-- `/Users/sac/unrdf/sidecar/test/setup/e2e-global-setup.mjs`
-- `/Users/sac/unrdf/sidecar/test/e2e/testcontainers/docker-compose.yml`
-- `/Users/sac/unrdf/sidecar/test/e2e/testcontainers/Dockerfile.sidecar`
-- `/Users/sac/unrdf/sidecar/test/e2e/testcontainers/otel-collector-config.yaml`
-- `/Users/sac/unrdf/sidecar/test/e2e/testcontainers/prometheus.yml`
-- `/Users/sac/unrdf/sidecar/test/performance/benchmarks.test.mjs`
-- `/Users/sac/unrdf/sidecar/test/e2e/quick-validation.test.mjs`
+- `/Users/sac/unrdf/knowledge-engine/test/setup/docker-compose-setup.mjs`
+- `/Users/sac/unrdf/knowledge-engine/test/setup/e2e-global-setup.mjs`
+- `/Users/sac/unrdf/knowledge-engine/test/e2e/testcontainers/docker-compose.yml`
+- `/Users/sac/unrdf/knowledge-engine/test/e2e/testcontainers/Dockerfile.knowledge-engine`
+- `/Users/sac/unrdf/knowledge-engine/test/e2e/testcontainers/otel-collector-config.yaml`
+- `/Users/sac/unrdf/knowledge-engine/test/e2e/testcontainers/prometheus.yml`
+- `/Users/sac/unrdf/knowledge-engine/test/performance/benchmarks.test.mjs`
+- `/Users/sac/unrdf/knowledge-engine/test/e2e/quick-validation.test.mjs`
 
 ### Modified
-- `/Users/sac/unrdf/sidecar/vitest.config.mjs`
-- `/Users/sac/unrdf/sidecar/test/e2e/scenarios/01-transaction-lifecycle.test.mjs`
-- `/Users/sac/unrdf/sidecar/test/e2e/scenarios/02-policy-governance.test.mjs`
-- `/Users/sac/unrdf/sidecar/package.json` (added dockerode, wait-on)
+- `/Users/sac/unrdf/knowledge-engine/vitest.config.mjs`
+- `/Users/sac/unrdf/knowledge-engine/test/e2e/scenarios/01-transaction-lifecycle.test.mjs`
+- `/Users/sac/unrdf/knowledge-engine/test/e2e/scenarios/02-policy-governance.test.mjs`
+- `/Users/sac/unrdf/knowledge-engine/package.json` (added dockerode, wait-on)
 
 ---
 

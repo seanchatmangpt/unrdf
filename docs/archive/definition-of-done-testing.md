@@ -1,8 +1,7 @@
 # Definition of Done - Testing Document
-## KGC JS Sidecar Testing Standards
 
 ### Overview
-This document defines the comprehensive testing requirements and acceptance criteria for the KGC JS sidecar project. All testing must be completed and passing before any feature or release can be considered "done."
+This document defines the comprehensive testing requirements and acceptance criteria for the KGC knowledge engine project. All testing must be completed and passing before any feature or release can be considered "done."
 
 ---
 
@@ -514,7 +513,7 @@ This document defines the comprehensive testing requirements and acceptance crit
 
 ## Conclusion
 
-This Definition of Done testing document ensures comprehensive validation of the KGC JS sidecar project across all dimensions: functionality, performance, security, reliability, and maintainability. All criteria must be met before any feature or release can be considered complete.
+This Definition of Done testing document ensures comprehensive validation of the KGC knowledge engine project across all dimensions: functionality, performance, security, reliability, and maintainability. All criteria must be met before any feature or release can be considered complete.
 
 **Last Updated**: 2024-01-XX
 **Version**: 1.0.0

@@ -33,7 +33,6 @@
 ❌ /Users/sac/unrdf/cli/commands/store.mjs
 ❌ /Users/sac/unrdf/cli/commands/policy.mjs
 ❌ /Users/sac/unrdf/cli/commands/hook.mjs
-❌ /Users/sac/unrdf/cli/commands/sidecar.mjs
 ❌ /Users/sac/unrdf/cli/commands/graph.mjs
 ❌ /Users/sac/unrdf/cli/utils/context-wrapper.mjs
 ```
@@ -103,8 +102,8 @@ export async function storeQueryCommand({ args }) {
     throw new Error('SPARQL query is required (use --query or positional arg)');
   }
 
-  // Execute query via sidecar
-  const results = await sidecarClient.query(queryString);
+  // Execute query via knowledge-engine
+  const results = await knowledge-engineClient.query(queryString);
 
   // Format output
   if (args.format === 'json') {
@@ -157,8 +156,8 @@ export async function hookCreateCommand({ args }) {
     hookDefinition.operator = args.operator || 'gt';
   }
 
-  // Register hook via sidecar
-  const result = await sidecarClient.createHook(hookDefinition);
+  // Register hook via knowledge-engine
+  const result = await knowledge-engineClient.createHook(hookDefinition);
 
   console.log(`✅ Hook created: ${result.id}`);
 
@@ -184,7 +183,7 @@ export async function policyValidateCommand({ args }) {
   const policyPack = args.policyPack || 'default';
   const strict = args.strict || false;
 
-  const result = await sidecarClient.validatePolicies({
+  const result = await knowledge-engineClient.validatePolicies({
     policyPack,
     strict
   });
@@ -207,7 +206,7 @@ export async function policyValidateCommand({ args }) {
 
 // MISSING COMMAND 2: policy audit
 export async function policyAuditCommand({ args }) {
-  const result = await sidecarClient.auditPolicies();
+  const result = await knowledge-engineClient.auditPolicies();
 
   console.log(`📊 Policy Audit Results`);
   console.log(`Total Policies: ${result.total}`);
@@ -225,17 +224,15 @@ export async function policyAuditCommand({ args }) {
 
 ---
 
-#### 1.5 Create Sidecar Commands
 ```bash
-File: cli/commands/sidecar.mjs
 LOC: ~120
-Commands: sidecarStatusCommand, sidecarHealthCommand, sidecarMetricsCommand, sidecarConfigGetCommand, sidecarConfigSetCommand
+Commands: knowledge-engineStatusCommand, knowledge-engineHealthCommand, knowledge-engineMetricsCommand, knowledge-engineConfigGetCommand, knowledge-engineConfigSetCommand
 ```
 
 **Critical Fix - Status Output Format**:
 ```javascript
-export async function sidecarStatusCommand({ args }) {
-  const status = await sidecarClient.getStatus();
+export async function knowledge-engineStatusCommand({ args }) {
+  const status = await knowledge-engineClient.getStatus();
 
   // FIX: Output format must match test regex: /Status: (healthy|ready|ok)/i
   console.log(`Status: ${status.health || 'healthy'}`);
@@ -245,8 +242,8 @@ export async function sidecarStatusCommand({ args }) {
   console.log(`Hooks: ${status.hooks || 0}`);
 }
 
-export async function sidecarHealthCommand({ args }) {
-  const health = await sidecarClient.getHealth();
+export async function knowledge-engineHealthCommand({ args }) {
+  const health = await knowledge-engineClient.getHealth();
 
   // FIX: Ensure output matches test pattern
   if (health.status === 'healthy' || health.status === 'ok') {
@@ -291,14 +288,13 @@ export {
   hookHistoryCommand
 } from './hook.mjs';
 
-// Sidecar commands
 export {
-  sidecarStatusCommand,
-  sidecarHealthCommand,
-  sidecarMetricsCommand,
-  sidecarConfigGetCommand,
-  sidecarConfigSetCommand
-} from './sidecar.mjs';
+  knowledge-engineStatusCommand,
+  knowledge-engineHealthCommand,
+  knowledge-engineMetricsCommand,
+  knowledge-engineConfigGetCommand,
+  knowledge-engineConfigSetCommand
+} from './mjs';
 
 // Graph commands
 export {
@@ -482,7 +478,6 @@ runMainWithTracing(main);
 ✅ cli/commands/store.mjs exists
 ✅ cli/commands/policy.mjs exists
 ✅ cli/commands/hook.mjs exists
-✅ cli/commands/sidecar.mjs exists
 ✅ cli/commands/graph.mjs exists
 ✅ cli/commands/core.mjs exists
 ```
@@ -493,7 +488,6 @@ runMainWithTracing(main);
 ✅ node cli/unrdf.mjs hook create test --type=sparql-ask --file=test.rq
 ✅ node cli/unrdf.mjs policy validate --strict
 ✅ node cli/unrdf.mjs policy audit --violations-only
-✅ node cli/unrdf.mjs sidecar status  # Must output "Status: healthy"
 ```
 
 **Step 3: Run Integration Tests**
@@ -565,7 +559,7 @@ runMainWithTracing(main);
 | 1.2 | Create store.mjs | 30 min | P0 |
 | 1.3 | Create hook.mjs | 40 min | P0 |
 | 1.4 | Create policy.mjs | 35 min | P0 |
-| 1.5 | Create sidecar.mjs | 25 min | P0 |
+| 1.5 | Create mjs | 25 min | P0 |
 | 1.6 | Create index.mjs | 10 min | P0 |
 | 1.7 | Create graph.mjs | 30 min | P1 |
 | 1.8 | Create core.mjs | 20 min | P1 |
@@ -584,7 +578,7 @@ runMainWithTracing(main);
    - store.mjs (blocker for P0 tests)
    - hook.mjs (blocker for P0 tests)
    - policy.mjs (blocker for P0 tests)
-   - sidecar.mjs (blocker for P0 tests)
+   - mjs (blocker for P0 tests)
 3. Run `npm run test:e2e:cleanroom`
 4. Fix any remaining issues
 5. Validate OTEL export
