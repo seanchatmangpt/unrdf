@@ -1,0 +1,165 @@
+---
+title: How to Import Data
+description: Import RDF data from various formats (Turtle, JSON-LD, N-Triples, CSV)
+---
+
+# How to Import Data
+
+Learn how to import data into UNRDF from various sources and formats.
+
+## From Turtle Files
+
+```javascript
+import { createStore } from '@unrdf/oxigraph'
+import { readFile } from 'node:fs/promises'
+
+const store = createStore()
+const ttl = await readFile('./data.ttl', 'utf-8')
+
+store.load(ttl, {
+  format: 'text/turtle',
+  baseIRI: 'http://example.org/'
+})
+
+console.log(`Loaded ${store.size} triples`)
+```
+
+## From JSON-LD
+
+```javascript
+const jsonld = await readFile('./data.jsonld', 'utf-8')
+
+store.load(jsonld, {
+  format: 'application/ld+json'
+})
+```
+
+## From N-Triples
+
+```javascript
+const nt = await readFile('./data.nt', 'utf-8')
+
+store.load(nt, {
+  format: 'application/n-triples'
+})
+```
+
+## From CSV
+
+Convert CSV to RDF:
+
+```javascript
+import { parse } from 'csv-parse/sync'
+import { DataFactory } from '@unrdf/oxigraph'
+
+const { namedNode, literal, quad } = DataFactory
+
+const csv = await readFile('./data.csv', 'utf-8')
+const records = parse(csv, { columns: true })
+
+for (const record of records) {
+  const subject = namedNode(`http://example.org/person/${record.id}`)
+
+  store.add(quad(
+    subject,
+    namedNode('http://xmlns.com/foaf/0.1/name'),
+    literal(record.name)
+  ))
+
+  store.add(quad(
+    subject,
+    namedNode('http://example.org/email'),
+    literal(record.email)
+  ))
+}
+```
+
+## Streaming Large Files
+
+For files larger than memory:
+
+```javascript
+import { createReadStream } from 'node:fs'
+import { pipeline } from 'node:stream/promises'
+import { parseStream } from '@unrdf/streaming'
+
+await pipeline(
+  createReadStream('./large-file.nt'),
+  parseStream({ format: 'n-triples' }),
+  async function* (source) {
+    for await (const quad of source) {
+      store.add(quad)
+
+      if (store.size % 10000 === 0) {
+        console.log(`Loaded ${store.size} triples...`)
+      }
+    }
+  }
+)
+```
+
+## From SPARQL Endpoint
+
+Query remote data:
+
+```javascript
+const endpoint = 'https://dbpedia.org/sparql'
+const query = `
+  CONSTRUCT { ?s ?p ?o } WHERE {
+    ?s ?p ?o .
+    FILTER(STRSTARTS(STR(?s), "http://dbpedia.org/resource/Berlin"))
+  }
+  LIMIT 1000
+`
+
+const response = await fetch(endpoint, {
+  method: 'POST',
+  headers: { 'Accept': 'text/turtle' },
+  body: new URLSearchParams({ query })
+})
+
+const ttl = await response.text()
+store.load(ttl, { format: 'text/turtle' })
+```
+
+## Batch Loading
+
+Load multiple files efficiently:
+
+```javascript
+const files = ['data1.ttl', 'data2.ttl', 'data3.ttl']
+
+await Promise.all(
+  files.map(async (file) => {
+    const content = await readFile(file, 'utf-8')
+    store.load(content, { format: 'text/turtle' })
+  })
+)
+```
+
+## Error Handling
+
+```javascript
+try {
+  store.load(ttl, { format: 'text/turtle' })
+} catch (error) {
+  if (error.name === 'ParseError') {
+    console.error('Invalid Turtle syntax:', error.message)
+  } else {
+    throw error
+  }
+}
+```
+
+## Performance Tips
+
+1. **Use streaming** for files >100MB
+2. **Batch operations** instead of adding one triple at a time
+3. **Validate format** before loading
+4. **Monitor memory** with `process.memoryUsage()`
+
+## Related
+
+- 🛠️ [How-To: Export Results](/how-to/export-results)
+- 📖 [Reference: Streaming API](/reference/api/streaming)
+- 💡 [Explanation: RDF Fundamentals](/explanation/rdf-fundamentals)
