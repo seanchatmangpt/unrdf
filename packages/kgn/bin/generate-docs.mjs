@@ -18,7 +18,7 @@ async function main() {
 
   const rootDir = join(__dirname, '../../..');
   const sourceFile = join(__dirname, '../src/filters/rdf.js');
-  const outputDir = join(rootDir, 'packages/nextra/app/api/kgn');
+  const outputDir = join(rootDir, 'packages/nextra/app/reference/api/kgn');
   const outputFile = join(outputDir, 'page.mdx');
 
   try {
@@ -38,7 +38,7 @@ async function main() {
     await writeFile(outputFile, mdx, 'utf-8');
 
     console.log('\n✅ Documentation generated successfully!');
-    console.log(`\nView at: packages/nextra/app/api/kgn/page.mdx`);
+    console.log(`\nView at: packages/nextra/app/reference/api/kgn/page.mdx`);
 
   } catch (error) {
     console.error('\n❌ Generation failed:', error.message);
