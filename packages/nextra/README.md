@@ -42,7 +42,7 @@ pnpm start
 ```
 packages/nextra/
 ├── app/                    # Next.js App Router
-│   ├── layout.tsx         # Root layout
+│   ├── layout.tsx         # Root layout with theme config
 │   ├── page.mdx           # Landing page
 │   ├── guides/            # Guides section
 │   ├── reference/         # API reference
@@ -51,7 +51,6 @@ packages/nextra/
 ├── components/            # React components
 ├── public/                # Static assets
 ├── next.config.mjs        # Next.js + Nextra config
-├── theme.config.tsx       # Nextra theme config
 └── tsconfig.json          # TypeScript config
 ```
 
@@ -62,7 +61,7 @@ packages/nextra/
 This package uses **Webpack** instead of Turbopack:
 - Next.js 16 defaults to Turbopack, but `--webpack` flag forces Webpack mode
 - Nextra 4.6.1 works correctly with Webpack (official examples use this approach)
-- No theme.config.tsx required in Nextra 4 (configuration moved to next.config.mjs)
+- Theme configuration is passed as props to `<Layout>` component in `app/layout.tsx`
 
 ### Port
 

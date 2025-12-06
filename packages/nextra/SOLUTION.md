@@ -38,7 +38,38 @@ export default withNextra({
 });
 ```
 
-**No theme.config.tsx needed** - Nextra 4 uses App Router configuration instead.
+**app/layout.tsx** (Required - Theme Components):
+```tsx
+import { Footer, Layout, Navbar } from 'nextra-theme-docs';
+import { Head } from 'nextra/components';
+import { getPageMap } from 'nextra/page-map';
+import 'nextra-theme-docs/style.css';
+
+export default async function RootLayout({ children }) {
+  const navbar = <Navbar logo={<strong>UNRDF</strong>} />;
+  const footer = <Footer>MIT {new Date().getFullYear()} © UNRDF</Footer>;
+
+  return (
+    <html lang="en" dir="ltr" suppressHydrationWarning>
+      <Head />
+      <body>
+        <Layout
+          navbar={navbar}
+          footer={footer}
+          pageMap={await getPageMap()}
+          sidebar={{ autoCollapse: true }}
+          darkMode={true}
+          docsRepositoryBase="https://github.com/seanchatmangpt/unrdf"
+        >
+          {children}
+        </Layout>
+      </body>
+    </html>
+  );
+}
+```
+
+**Critical**: The `<Layout>` component from `nextra-theme-docs` is **required** for theme rendering. Without it, you only get unstyled MDX content. Theme configuration is passed as props to `<Layout>`, not via a separate config file.
 
 ## Evidence
 
