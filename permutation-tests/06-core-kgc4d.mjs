@@ -48,7 +48,9 @@ try {
   console.log('\n🔍 Querying universe state...');
   const results = await kgcStore.queryUniverse(`
     SELECT ?name WHERE {
-      ?s <http://xmlns.com/foaf/0.1/name> ?name
+      GRAPH <http://kgc.io/Universe> {
+        ?s <http://xmlns.com/foaf/0.1/name> ?name
+      }
     }
   `);
 

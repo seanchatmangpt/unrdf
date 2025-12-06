@@ -12,7 +12,7 @@ try {
 
   // === IMPORT TEST ===
   console.log('📦 Importing @unrdf/knowledge-engine...');
-  const { reason, canonicalize } = await import('@unrdf/knowledge-engine');
+  const { reason, canonicalize } = await import('../packages/knowledge-engine/src/index.mjs');
   console.log('   ✅ Imports successful');
 
   // === REASON TEST (without store - will likely fail) ===

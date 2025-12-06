@@ -12,10 +12,10 @@ try {
 
   // === IMPORT TEST ===
   console.log('📦 Importing packages...');
-  const { createStore, dataFactory } = await import('@unrdf/oxigraph');
-  const { executeQuerySync } = await import('@unrdf/core');
-  const { defineHook, executeHook } = await import('@unrdf/hooks');
-  const { KGCStore, now, toISO, EVENT_TYPES } = await import('@unrdf/kgc-4d');
+  const { createStore, dataFactory } = await import('../packages/oxigraph/src/index.mjs');
+  const { executeQuerySync } = await import('../packages/core/src/index.mjs');
+  const { defineHook, executeHook } = await import('../packages/hooks/src/index.mjs');
+  const { KGCStore, now, toISO, EVENT_TYPES } = await import('../packages/kgc-4d/src/index.mjs');
   console.log('   ✅ All imports successful');
 
   // === DEFINE VALIDATION HOOK ===
