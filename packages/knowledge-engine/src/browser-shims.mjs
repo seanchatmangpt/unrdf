@@ -10,7 +10,8 @@
 /**
  * Check if we're running in a browser environment
  */
-export const isBrowser = typeof window !== 'undefined' && typeof window.document !== 'undefined';
+export const isBrowser =
+  typeof globalThis?.window !== 'undefined' && typeof globalThis?.window?.document !== 'undefined';
 
 /**
  * Check if we're running in Node.js environment

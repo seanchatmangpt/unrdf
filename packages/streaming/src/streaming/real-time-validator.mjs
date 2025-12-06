@@ -8,7 +8,7 @@
  */
 
 import { EventEmitter } from 'events';
-import { createStore } from '@unrdf/oxigraph';
+import { createStore, OxigraphStore } from '@unrdf/oxigraph';
 import { Parser } from '@unrdf/core/rdf/n3-justified-only'; // JUSTIFIED: N3 Parser for streaming with backpressure
 import { z } from 'zod';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
@@ -111,17 +111,17 @@ export class RealTimeValidator extends EventEmitter {
     if (typeof shapes === 'string') {
       // Parse Turtle string
       return createStore(new Parser().parse(shapes));
-    } else if (shapes instanceof Store) {
+    } else if (shapes instanceof OxigraphStore) {
       return shapes;
     } else {
-      throw new TypeError('Shapes must be a Store or Turtle string');
+      throw new TypeError('Shapes must be an OxigraphStore or Turtle string');
     }
   }
 
   /**
    * Validate a delta change
    * @param {Object} delta - Transaction delta
-   * @param {Store} [store] - Current store state
+   * @param {OxigraphStore} [store] - Current store state
    * @returns {Promise<Object>} Validation result
    */
   async validateDelta(delta, store) {

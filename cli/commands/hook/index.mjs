@@ -8,5 +8,7 @@ export * from './get.mjs';
 export * from './create.mjs';
 export * from './update.mjs';
 export * from './delete.mjs';
-export * from './history.mjs';
 export * from './describe.mjs';
+export * from './execute.mjs';
+export * from './test.mjs';
+export * from './history.mjs';

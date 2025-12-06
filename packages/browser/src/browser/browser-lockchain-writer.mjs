@@ -9,6 +9,8 @@
  * @module browser/browser-lockchain-writer
  */
 
+/* global indexedDB */
+
 import { IndexedDBFileSystem } from './indexeddb-fs.mjs';
 import { _crypto } from './browser-shim.mjs';
 

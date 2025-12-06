@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/project-engine",
-  "version": "1.0.0-alpha.0",
+  "version": "5.0.0-beta.1",
   "description": "UNRDF Project Engine - Self-hosting Tools and Infrastructure (Development Only)",
   "type": "module",
   "main": "src/index.mjs",
@@ -33,7 +33,7 @@
     "infrastructure"
   ],
   "dependencies": {
-    "@unrdf/core": "workspace:*"
+    "@unrdf/core": "workspace:5.0.0-beta.1"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",

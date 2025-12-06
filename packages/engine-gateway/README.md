@@ -1,5 +1,8 @@
 # @unrdf/engine-gateway
 
+![Version](https://img.shields.io/badge/version-5.0.0--beta.1-blue) ![Production Ready](https://img.shields.io/badge/production-ready-green)
+
+
 **μ(O) Engine Gateway** - Enforcement layer for Oxigraph-first, N3-minimal RDF processing.
 
 ## Overview

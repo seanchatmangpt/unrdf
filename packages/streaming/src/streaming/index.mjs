@@ -8,26 +8,44 @@
  * real-time SHACL validation.
  */
 
-export {
+import {
   SubscriptionManager,
   createSubscriptionManager,
   SubscriptionPatternType,
 } from './subscription-manager.mjs';
 
-export { ChangeFeed, createChangeFeed, createChangeFeedHook, ChangeType } from './change-feed.mjs';
+import { ChangeFeed, createChangeFeed, createChangeFeedHook, ChangeType } from './change-feed.mjs';
 
-export {
+import {
   StreamProcessor,
   createStreamProcessor,
   WindowType,
   Aggregators,
 } from './stream-processor.mjs';
 
-export {
+import {
   RealTimeValidator,
   createRealTimeValidator,
   ValidationMode,
 } from './real-time-validator.mjs';
+
+// Re-export all imported items
+export {
+  SubscriptionManager,
+  createSubscriptionManager,
+  SubscriptionPatternType,
+  ChangeFeed,
+  createChangeFeed,
+  createChangeFeedHook,
+  ChangeType,
+  StreamProcessor,
+  createStreamProcessor,
+  WindowType,
+  Aggregators,
+  RealTimeValidator,
+  createRealTimeValidator,
+  ValidationMode,
+};
 
 /**
  * Create a complete streaming pipeline

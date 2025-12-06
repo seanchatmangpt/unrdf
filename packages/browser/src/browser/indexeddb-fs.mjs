@@ -7,6 +7,8 @@
  * @module browser/indexeddb-fs
  */
 
+/* global indexedDB */
+
 const DB_NAME = 'unrdf-fs';
 const DB_VERSION = 1;
 const FILES_STORE = 'files';

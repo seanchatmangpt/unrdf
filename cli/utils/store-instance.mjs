@@ -6,8 +6,8 @@
  * Provides immediate value while keeping implementation simple
  */
 
-import { createStore } from '../../packages/core/src/rdf/unrdf-store.mjs';
-import { OxigraphStore } from '../../packages/oxigraph/src/store.mjs';
+import { createStore } from '@unrdf/core';
+import { OxigraphStore } from '@unrdf/oxigraph';
 
 /**
  * Global store instance (singleton pattern)

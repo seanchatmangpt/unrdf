@@ -83,15 +83,19 @@ export class BrowserLockchainWriter {
     switch (this.config.storageType) {
       case 'localStorage':
         return {
-          get: key => localStorage.getItem(`${this.config.storagePrefix}_${key}`),
-          set: (key, value) => localStorage.setItem(`${this.config.storagePrefix}_${key}`, value),
-          remove: key => localStorage.removeItem(`${this.config.storagePrefix}_${key}`),
+          get: key => globalThis?.localStorage?.getItem(`${this.config.storagePrefix}_${key}`),
+          set: (key, value) =>
+            globalThis?.localStorage?.setItem(`${this.config.storagePrefix}_${key}`, value),
+          remove: key =>
+            globalThis?.localStorage?.removeItem(`${this.config.storagePrefix}_${key}`),
         };
       case 'sessionStorage':
         return {
-          get: key => sessionStorage.getItem(`${this.config.storagePrefix}_${key}`),
-          set: (key, value) => sessionStorage.setItem(`${this.config.storagePrefix}_${key}`, value),
-          remove: key => sessionStorage.removeItem(`${this.config.storagePrefix}_${key}`),
+          get: key => globalThis?.sessionStorage?.getItem(`${this.config.storagePrefix}_${key}`),
+          set: (key, value) =>
+            globalThis?.sessionStorage?.setItem(`${this.config.storagePrefix}_${key}`, value),
+          remove: key =>
+            globalThis?.sessionStorage?.removeItem(`${this.config.storagePrefix}_${key}`),
         };
       case 'indexedDB':
         // Simplified IndexedDB implementation would go here
