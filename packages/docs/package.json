@@ -8,22 +8,37 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "lint": "eslint .",
-    "typecheck": "nuxt typecheck"
+    "typecheck": "nuxt typecheck",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate"
   },
   "dependencies": {
+    "@ai-sdk/gateway": "^2.0.15",
+    "@ai-sdk/vue": "^2.0.101",
+    "@iconify-json/logos": "^1.2.10",
     "@iconify-json/lucide": "^1.2.75",
     "@iconify-json/simple-icons": "^1.2.60",
     "@iconify-json/vscode-icons": "^1.2.36",
     "@nuxt/content": "^3.8.2",
     "@nuxt/image": "^2.0.0",
     "@nuxt/ui": "^4.2.1",
+    "@nuxtjs/mdc": "^0.18.4",
+    "ai": "^5.0.101",
     "better-sqlite3": "^12.4.6",
+    "date-fns": "^4.1.0",
+    "drizzle-orm": "^0.44.7",
     "nuxt": "^4.2.1",
+    "nuxt-auth-utils": "^0.5.25",
+    "nuxt-charts": "0.2.4",
     "nuxt-llms": "0.1.3",
-    "nuxt-og-image": "^5.1.12"
+    "nuxt-og-image": "^5.1.12",
+    "pg": "^8.16.3",
+    "shiki-stream": "^0.1.3"
   },
   "devDependencies": {
     "@nuxt/eslint": "^1.10.0",
+    "@types/node": "^24.10.1",
+    "drizzle-kit": "^0.31.7",
     "eslint": "^9.39.1",
     "typescript": "^5.9.3",
     "vue-tsc": "^3.1.5"

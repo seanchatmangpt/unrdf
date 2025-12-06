@@ -5,6 +5,9 @@ export default defineNuxtConfig({
     '@nuxt/image',
     '@nuxt/ui',
     '@nuxt/content',
+    '@nuxtjs/mdc',
+    'nuxt-auth-utils',
+    'nuxt-charts',
     'nuxt-og-image',
     'nuxt-llms'
   ],
@@ -25,6 +28,19 @@ export default defineNuxtConfig({
     }
   },
 
+  mdc: {
+    headings: {
+      anchorLinks: false
+    },
+    highlight: {
+      shikiEngine: 'javascript'
+    }
+  },
+
+  experimental: {
+    viewTransition: true
+  },
+
   compatibilityDate: '2024-07-11',
 
   nitro: {
@@ -34,6 +50,9 @@ export default defineNuxtConfig({
       ],
       crawlLinks: true,
       autoSubfolderIndex: false
+    },
+    experimental: {
+      openAPI: true
     }
   },
 
