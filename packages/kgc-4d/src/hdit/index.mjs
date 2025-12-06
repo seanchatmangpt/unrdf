@@ -100,3 +100,6 @@ export {
   calculateOpsPerQuery,
   validateDimension,
 } from './constants.mjs';
+
+// Vector Engine Worker (WASM-style performance)
+export { VectorEngineClient } from './vector-engine-client.mjs';
