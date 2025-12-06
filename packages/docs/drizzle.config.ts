@@ -4,7 +4,8 @@ export default defineConfig({
   dialect: 'postgresql',
   schema: './server/database/schema.ts',
   out: './server/database/migrations',
+  driver: 'pglite',
   dbCredentials: {
-    url: process.env.DATABASE_URL!
+    url: process.env.DATABASE_URL || './data/db'
   }
 })
