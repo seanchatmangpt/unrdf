@@ -5,13 +5,22 @@ export default {
       layout: 'full',
     },
   },
-  'kgc-4d-foundations': {
-    title: 'KGC-4D: Mathematical Foundations',
+  '2024-mu-calculus-theory': {
+    title: 'μ(O) Calculus: Theoretical Foundations',
   },
-  'hyperdimensional-reasoning': {
-    title: 'Hyperdimensional Information Theory',
+  '2024-hooks-architecture': {
+    title: 'Hooks Architecture Patterns',
   },
-  'event-sourcing-rdf': {
-    title: 'Event Sourcing for RDF',
+  '2024-hooks-performance': {
+    title: 'Hooks Performance Analysis',
+  },
+  '2024-hooks-quality': {
+    title: 'Hooks Quality & Lean Six Sigma',
+  },
+  '2024-hooks-jtbd': {
+    title: 'Hooks Jobs-to-be-Done Framework',
+  },
+  '2024-hooks-ecosystem': {
+    title: 'Hooks Ecosystem Integration',
   },
 };
