@@ -1,7 +1,7 @@
 {
   "id": "explanation/kgc-4d/overview",
   "title": "KGC-4D Overview",
-  "description": "Knowledge Graph Construction in 4 Dimensions.",
+  "description": "Welcome to KGC 4D (Knowledge Graph Composition in 4 Dimensions) - a revolutionary approach to knowledge graph construction combining RDF, event sourcing, and hyperdimensional reasoning.",
   "source": "@site/docs/explanation/kgc-4d/overview.md",
   "sourceDirName": "explanation/kgc-4d",
   "slug": "/explanation/kgc-4d/overview",
