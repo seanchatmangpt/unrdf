@@ -1,4 +1,10 @@
 import React from 'react';
+import 'katex/dist/katex.min.css';
+
+export const metadata = {
+  title: 'UNRDF Documentation',
+  description: 'Universal RDF Framework - Next-generation knowledge graph toolkit with LaTeX support',
+};
 
 export default function RootLayout({
   children,
@@ -12,8 +18,3 @@ export default function RootLayout({
     </html>
   );
 }
-
-export const metadata = {
-  title: 'UNRDF Documentation',
-  description: 'Universal RDF Framework - Next-generation knowledge graph toolkit',
-};
