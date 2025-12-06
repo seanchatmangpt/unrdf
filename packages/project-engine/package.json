@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/project-engine",
-  "version": "5.0.0-beta.1",
+  "version": "5.0.0-beta.3",
   "description": "UNRDF Project Engine - Self-hosting Tools and Infrastructure (Development Only)",
   "type": "module",
   "main": "src/index.mjs",

@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/composables",
-  "version": "5.0.0-beta.1",
+  "version": "5.0.0-beta.3",
   "description": "UNRDF Composables - Vue 3 Composables for Reactive RDF State (Optional Extension)",
   "type": "module",
   "main": "src/index.mjs",

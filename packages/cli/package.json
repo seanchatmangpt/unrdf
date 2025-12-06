@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/cli",
-  "version": "5.0.0-beta.1",
+  "version": "5.0.0-beta.3",
   "description": "UNRDF CLI - Command-line Tools for Graph Operations and Context Management",
   "type": "module",
   "bin": {
@@ -41,6 +41,7 @@
     "@unrdf/core": "workspace:*",
     "@unrdf/federation": "workspace:*",
     "@unrdf/hooks": "workspace:*",
+    "@unrdf/oxigraph": "workspace:*",
     "@unrdf/streaming": "workspace:*",
     "citty": "^0.1.6",
     "table": "^6.9.0",

@@ -1,6 +1,6 @@
 {
   "name": "unrdf-workspace",
-  "version": "5.0.0-beta.1",
+  "version": "5.0.0-beta.3",
   "description": "UNRDF v5 Monorepo - RDF Knowledge Graph Substrate Platform",
   "private": true,
   "type": "module",
@@ -55,6 +55,7 @@
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-jsdoc": "^61.4.1",
     "glob": "^13.0.0",
+    "globals": "^15.12.0",
     "jsdom": "^27.2.0",
     "playwright": "^1.57.0",
     "prettier": "^3.7.4",

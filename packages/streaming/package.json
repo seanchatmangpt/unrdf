@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/streaming",
-  "version": "5.0.0-beta.1",
+  "version": "5.0.0-beta.3",
   "description": "UNRDF Streaming - Change Feeds and Real-time Synchronization",
   "type": "module",
   "main": "src/index.mjs",
