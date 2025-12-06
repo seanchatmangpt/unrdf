@@ -409,32 +409,21 @@ export class BB8020Orchestrator {
           LIMIT 5
         `;
 
-        try {
-          const results = executeSelectSync(store, sparql);
+        // FAIL FAST - No fallbacks, let SPARQL errors propagate
+        const results = executeSelectSync(store, sparql);
 
-          const matches = results.map(row => ({
-            file: row.file.value,
-            path: row.path.value,
-            similarity: this._calculateSimilarity(feature.name, row.path.value)
-          })).filter(m => m.similarity >= this.config.similarityThreshold);
+        const matches = results.map(row => ({
+          file: row.file.value,
+          path: row.path.value,
+          similarity: this._calculateSimilarity(feature.name, row.path.value)
+        })).filter(m => m.similarity >= this.config.similarityThreshold);
 
-          patterns.push({
-            feature: feature.name,
-            matches,
-            best_match: matches.length > 0 ? matches[0] : null,
-            reuse_percentage: this._calculateReusePercentage(matches)
-          });
-
-        } catch (queryError) {
-          console.warn(`[Step 4] SPARQL query failed for ${feature.name}:`, queryError.message);
-          // Fallback: empty pattern
-          patterns.push({
-            feature: feature.name,
-            matches: [],
-            best_match: null,
-            reuse_percentage: 0
-          });
-        }
+        patterns.push({
+          feature: feature.name,
+          matches,
+          best_match: matches.length > 0 ? matches[0] : null,
+          reuse_percentage: this._calculateReusePercentage(matches)
+        });
       }
 
       // 3. Calculate average reuse
