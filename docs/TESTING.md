@@ -1,44 +1,47 @@
-# Testing Guide - v5.0.0-beta.1
+# Testing Guide - v5.0.0-beta.2
 
 ## Quick Start
 
-**Tests work individually but `pnpm -r test` hangs.** Use per-package execution:
+**Tests work individually but `pnpm -r test` still hangs on core package.** Use per-file execution:
 
 ```bash
-# Core package tests (166 tests)
+# Core package tests (252 tests) - run individually per file
 cd packages/core
-npx vitest run --no-coverage
+npx vitest run --no-coverage test/adversarial.test.mjs
+npx vitest run --no-coverage test/core.test.mjs
+npx vitest run --no-coverage test/rdf/unrdf-store.test.mjs
+npx vitest run --no-coverage test/sparql/executor-sync.test.mjs
+npx vitest run --no-coverage test/sparql/n3-backward-compat.test.mjs
+npx vitest run --no-coverage test/sparql/branch-coverage.test.mjs
+npx vitest run --no-coverage test/integration/store-integration.test.mjs
 
 # CLI package tests (24 tests)
-npx vitest run --no-coverage packages/cli/test/adversarial.test.mjs
-
-# Browser package tests
-npx vitest run --no-coverage packages/browser/test/adversarial.test.mjs
+cd packages/cli
+npx vitest run --no-coverage test/adversarial.test.mjs
 ```
 
 ---
 
 ## Verified Test Status
 
-**Total Verified**: **190 tests passing**
+**Total Verified**: **276 tests passing** (up from 190 in beta.1)
 
-### @unrdf/core (166 tests)
+### @unrdf/core (252 tests)
 - ✅ `test/adversarial.test.mjs`: 16 tests
 - ✅ `test/core.test.mjs`: 26 tests
 - ✅ `test/rdf/unrdf-store.test.mjs`: 58 tests
 - ✅ `test/sparql/executor-sync.test.mjs`: 66 tests
+- ✅ `test/sparql/n3-backward-compat.test.mjs`: 17 tests ⭐ NEW
+- ✅ `test/sparql/branch-coverage.test.mjs`: 41 tests ⭐ NEW
+- ✅ `test/integration/store-integration.test.mjs`: 28 tests ⭐ NEW
 
 ### @unrdf/cli (24 tests)
 - ✅ `test/adversarial.test.mjs`: 24 tests
 
-### Additional Tests (Not Yet Run)
-- `packages/core/test/sparql/n3-backward-compat.test.mjs`
-- `packages/core/test/sparql/branch-coverage.test.mjs`
-- `packages/core/test/integration/store-integration.test.mjs`
-- `packages/core/test/benchmarks/oxigraph-performance.test.mjs`
-- `packages/browser/test/browser.test.mjs` (has failures)
-- `packages/cli/test/cli/cli.test.mjs`
-- `test/**/*.test.mjs` (root test suite)
+### Skipped Tests
+- `packages/core/test/benchmarks/oxigraph-performance.test.mjs` (timeout >60s)
+- `packages/cli/test/cli/cli.test.mjs` (missing @unrdf/oxigraph dependency)
+- `test/**/*.test.mjs` (root test suite - not yet run)
 
 ---
 
@@ -63,11 +66,11 @@ cd packages/core && npx vitest run --no-coverage
 pnpm -r test
 ```
 
-**Status**: Known issue, workaround documented
+**Status**: Partially fixed (beta.2), workaround documented
 
 ---
 
-### Issue 2: Browser Tests Have Failures
+### Issue 2: Browser Package Removed
 
 **Problem**: `packages/browser/test/adversarial.test.mjs` shows 36 failures
 
@@ -246,6 +249,7 @@ jobs:
 
 ---
 
-**Last Updated**: 2025-12-06
-**Status**: 190 tests verified, pnpm -r test hangs (known issue)
+**Last Updated**: 2025-12-06 (beta.2)
+**Status**: 276 tests verified, pnpm -r test partially fixed (core package still hangs)
 **OTEL Score**: 83/100 (5/6 features passing)
+**Changes in Beta.2**: +86 tests, simplified vitest config, documented deprecated features
