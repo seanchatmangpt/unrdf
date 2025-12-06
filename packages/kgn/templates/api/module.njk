@@ -1,12 +1,32 @@
 ---
-name: "Module API Reference Template"
-description: "Generates MDX documentation for a module"
+title: '@unrdf/kgn API'
+description: RDF-aware template generation with Nunjucks filters and semantic code generation
 ---
-# {{ module.name }} API Reference
 
-> **Module**: `{{ module.relativePath }}`
+# @unrdf/kgn
 
-{{ module.description if module.description else "API documentation for " + module.name }}
+RDF-aware template engine for UNRDF v5. Provides Nunjucks templates with semantic RDF filters, frontmatter parsing, and code generation capabilities.
+
+## Installation
+
+```bash
+pnpm add @unrdf/kgn
+```
+
+## Quick Start
+
+```javascript
+import { createEngine } from '@unrdf/kgn';
+
+// Create template engine with RDF filters
+const engine = createEngine();
+
+// Render template with RDF data
+const result = engine.renderString(
+  '{{ "{{" }} uri | expand(prefixes) {{ "}}" }}',
+  { uri: 'ex:Person', prefixes: { ex: 'http://example.org/' } }
+);
+```
 
 ---
 
