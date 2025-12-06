@@ -17,11 +17,11 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: unrdf-sidecar
+  name: unrdf-knowledge-engine
 spec:
   containers:
-  - name: sidecar
-    image: unrdf/sidecar:latest
+  - name: knowledge-engine
+    image: unrdf/knowledge-engine:latest
     ports:
     - containerPort: 3000
     livenessProbe:

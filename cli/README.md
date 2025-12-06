@@ -17,7 +17,6 @@ src/cli-v2/
 │   ├── graph/            # Graph operations
 │   ├── hook/             # Knowledge hook management
 │   ├── policy/           # Policy pack operations
-│   ├── sidecar/          # Sidecar management
 │   ├── store/            # Store operations
 │   └── context/          # Context management
 ├── formatters/            # Output formatters
@@ -79,22 +78,6 @@ unrdf policy validate --dry-run
 unrdf policy test compliance.json --data=./test-data/
 ```
 
-### Sidecar Operations
-```bash
-# Check sidecar status
-unrdf sidecar status
-
-# View logs
-unrdf sidecar logs --follow --tail=100
-
-# Get/set config
-unrdf sidecar config get validation.strictMode
-unrdf sidecar config set validation.strictMode=true
-
-# Health check
-unrdf sidecar health
-```
-
 ### Store Operations
 ```bash
 # Import data
@@ -119,7 +102,7 @@ unrdf store restore backup.nq
 unrdf context list
 
 # Create context
-unrdf context create dev --sidecar=localhost:50051
+unrdf context create dev
 
 # Switch context
 unrdf context use production
@@ -153,7 +136,6 @@ unrdf policy apply pack.json --dry-run
 Monitor resources for changes:
 ```bash
 unrdf hook list --watch
-unrdf sidecar logs --follow
 ```
 
 ### Batch Operations
@@ -188,11 +170,6 @@ Example `unrdf.config.json`:
 ```json
 {
   "baseIRI": "http://example.org/",
-  "sidecar": {
-    "endpoint": "http://localhost:50051",
-    "timeout": 30000,
-    "retries": 3
-  },
   "output": {
     "format": "table",
     "color": true
@@ -206,7 +183,6 @@ Example `unrdf.config.json`:
 ## Environment Variables
 
 - `UNRDF_BASE_IRI` - Default base IRI
-- `UNRDF_SIDECAR_ENDPOINT` - Sidecar endpoint
 - `UNRDF_OUTPUT_FORMAT` - Default output format
 - `UNRDF_TELEMETRY_ENABLED` - Enable telemetry
 - `UNRDF_API_KEY` - API authentication key
@@ -239,7 +215,6 @@ export default {
 ## Integration Points
 
 - **Knowledge Engine**: Full integration with knowledge-engine composables
-- **KGC Sidecar**: gRPC client for sidecar operations
 - **Store Context**: Unified store context system
 - **OpenTelemetry**: Built-in observability and tracing
 

@@ -1,7 +1,6 @@
 # Infrastructure Validation Report
 
 **Generated**: 2025-10-01
-**System**: UNRDF Knowledge Graph Capability (KGC) Sidecar
 **Version**: 1.0.0
 **Architecture Role**: System Architecture Designer
 
@@ -9,7 +8,6 @@
 
 ## Executive Summary
 
-This report validates the advanced infrastructure components of the UNRDF KGC Sidecar, focusing on:
 
 1. **Vault Integration** - HashiCorp Vault with Shamir's Secret Sharing quorum unsealing
 2. **TLS/mTLS Configuration** - TLS 1.3 with mutual authentication
@@ -26,7 +24,7 @@ All infrastructure components demonstrate enterprise-grade security, reliability
 
 ### 1.1 Component Overview
 
-**File**: `sidecar/server/utils/vault-client.mjs`
+**File**: `knowledge-engine/server/utils/vault-client.mjs`
 **Purpose**: Secure secret management with distributed quorum-based unsealing
 
 ### 1.2 Key Features
@@ -68,7 +66,6 @@ All infrastructure components demonstrate enterprise-grade security, reliability
 
 ```mermaid
 graph LR
-    A[KGC Sidecar] --> B[Vault Client]
     B --> C[Vault Server]
     B --> D[Secret Cache]
     B --> E[Token Renewal]
@@ -80,7 +77,7 @@ graph LR
 
 ### 1.5 Test Coverage
 
-**Test File**: `sidecar/test/infrastructure/vault-integration.test.mjs`
+**Test File**: `knowledge-engine/test/infrastructure/vault-integration.test.mjs`
 
 - ✅ Configuration validation (quorum shares/threshold bounds)
 - ✅ Vault initialization with Shamir's Secret Sharing
@@ -108,7 +105,7 @@ graph LR
 
 ### 2.1 Component Overview
 
-**File**: `sidecar/nuxt.config.mjs`
+**File**: `knowledge-engine/nuxt.config.mjs`
 **Purpose**: Enterprise-grade transport security with mutual authentication
 
 ### 2.2 TLS 1.3 Configuration
@@ -154,14 +151,8 @@ graph LR
 ```mermaid
 sequenceDiagram
     participant Client
-    participant Sidecar
     participant CA
 
-    Client->>Sidecar: TLS Handshake + Client Cert
-    Sidecar->>CA: Verify Client Cert
-    CA-->>Sidecar: Cert Valid
-    Sidecar->>Client: TLS 1.3 Encrypted Channel
-    Client->>Sidecar: Authenticated Request
 ```
 
 ### 2.4 Perfect Forward Secrecy (PFS)
@@ -187,7 +178,7 @@ sequenceDiagram
 
 ### 2.6 Test Coverage
 
-**Test File**: `sidecar/test/infrastructure/tls-mtls.test.mjs`
+**Test File**: `knowledge-engine/test/infrastructure/tls-mtls.test.mjs`
 
 - ✅ TLS 1.3 configuration validation
 - ✅ Cipher suite security analysis
@@ -212,8 +203,8 @@ sequenceDiagram
 
 ### 3.1 Component Overview
 
-**Configuration**: `sidecar/nuxt.config.mjs`
-**Task Files**: `sidecar/server/tasks/{hooks,policies,lockchain,health}/`
+**Configuration**: `knowledge-engine/nuxt.config.mjs`
+**Task Files**: `knowledge-engine/server/tasks/{hooks,policies,lockchain,health}/`
 
 ### 3.2 Task Inventory
 
@@ -228,7 +219,7 @@ sequenceDiagram
 
 #### 3.3.1 Hooks Evaluation Task
 
-**File**: `sidecar/server/tasks/hooks/evaluate-periodic.mjs`
+**File**: `knowledge-engine/server/tasks/hooks/evaluate-periodic.mjs`
 
 **Features**:
 - Circuit breaker protection (3 failures → OPEN)
@@ -249,7 +240,7 @@ sequenceDiagram
 
 #### 3.3.2 Policy Refresh Task
 
-**File**: `sidecar/server/tasks/policies/refresh-packs.mjs`
+**File**: `knowledge-engine/server/tasks/policies/refresh-packs.mjs`
 
 **Features**:
 - Cryptographic signature validation
@@ -268,7 +259,7 @@ sequenceDiagram
 
 #### 3.3.3 Lockchain Archive Task
 
-**File**: `sidecar/server/tasks/lockchain/archive.mjs`
+**File**: `knowledge-engine/server/tasks/lockchain/archive.mjs`
 
 **Features**:
 - Archive entries older than 90 days
@@ -288,7 +279,7 @@ sequenceDiagram
 
 #### 3.3.4 SAFLA Self-Healing Task
 
-**File**: `sidecar/server/tasks/health/self-heal.mjs`
+**File**: `knowledge-engine/server/tasks/health/self-heal.mjs`
 
 **Features**:
 - Monitor all circuit breakers
@@ -312,7 +303,7 @@ systemHealth = (
 
 ### 3.4 Test Coverage
 
-**Test File**: `sidecar/test/infrastructure/scheduled-tasks.test.mjs`
+**Test File**: `knowledge-engine/test/infrastructure/scheduled-tasks.test.mjs`
 
 - ✅ Task scheduling configuration
 - ✅ Hooks evaluation with circuit breaker
@@ -367,8 +358,8 @@ graph TD
 
 ### 4.1 Component Overview
 
-**File**: `sidecar/server/utils/otel-context-propagation.mjs`
-**Middleware**: `sidecar/server/middleware/01.telemetry.mjs`
+**File**: `knowledge-engine/server/utils/otel-context-propagation.mjs`
+**Middleware**: `knowledge-engine/server/middleware/01.telemetry.mjs`
 
 ### 4.2 W3C Trace Context Specification
 
@@ -387,18 +378,12 @@ traceparent: 00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01
 ```mermaid
 sequenceDiagram
     participant CLI as CLI Tool
-    participant Sidecar as KGC Sidecar
     participant Hook as Knowledge Hook
     participant OTEL as OTEL Collector
 
     CLI->>CLI: Start Root Span
-    CLI->>Sidecar: HTTP Request + traceparent
-    Sidecar->>Sidecar: Extract Trace Context
-    Sidecar->>Sidecar: Create Child Span
-    Sidecar->>Hook: Execute Hook + tracecontext
     Hook->>Hook: Create Grandchild Span
     Hook->>OTEL: Export Spans
-    Sidecar->>OTEL: Export Spans
     CLI->>OTEL: Export Root Span
     OTEL->>OTEL: Assemble Distributed Trace
 ```
@@ -464,7 +449,7 @@ sequenceDiagram
 
 ### 4.7 Test Coverage
 
-**Test File**: `sidecar/test/infrastructure/otel-propagation.test.mjs`
+**Test File**: `knowledge-engine/test/infrastructure/otel-propagation.test.mjs`
 
 - ✅ Traceparent header parsing (all validation rules)
 - ✅ Traceparent header formatting
@@ -479,7 +464,7 @@ sequenceDiagram
 
 ### 4.8 Middleware Integration
 
-**File**: `sidecar/server/middleware/01.telemetry.mjs`
+**File**: `knowledge-engine/server/middleware/01.telemetry.mjs`
 
 **Execution Flow**:
 1. Extract incoming trace context from HTTP headers
@@ -499,7 +484,7 @@ sequenceDiagram
   'http.target': '/api/hooks/execute',
   'http.user_agent': 'curl/7.88.1',
   'http.status_code': 200,
-  'service.name': 'unrdf-sidecar',
+  'service.name': 'unrdf-knowledge-engine',
   'service.version': '1.0.0',
   'deployment.environment': 'production'
 }
@@ -634,7 +619,6 @@ sequenceDiagram
 
 ### ADR-004: W3C Trace Context for Distributed Tracing
 
-**Context**: Need to trace requests across CLI → Sidecar → Hooks
 
 **Decision**: Implement W3C Trace Context propagation with OTEL
 
@@ -691,15 +675,15 @@ sequenceDiagram
   VAULT_TOKEN=<root-token>
 
   # TLS/mTLS
-  TLS_CERT_PATH=/etc/ssl/certs/kgc-sidecar.crt
-  TLS_KEY_PATH=/etc/ssl/private/kgc-sidecar.key
+  TLS_CERT_PATH=/etc/ssl/certs/knowledge-engine.crt
+  TLS_KEY_PATH=/etc/ssl/private/knowledge-engine.key
   TLS_CA_PATH=/etc/ssl/certs/ca.crt
   MTLS_ENABLED=true
   MTLS_REQUIRE_CLIENT_CERT=true
 
   # OTEL
   OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4318
-  OTEL_SERVICE_NAME=kgc-sidecar
+  OTEL_SERVICE_NAME=knowledge-engine
   KGC_ENABLE_TELEMETRY=true
   ```
 
@@ -732,7 +716,6 @@ sequenceDiagram
 
 ### 8.1 Summary
 
-The UNRDF KGC Sidecar infrastructure demonstrates **production-ready** security, reliability, and observability:
 
 1. **Vault Integration**: Enterprise-grade secret management with quorum unsealing
 2. **TLS/mTLS**: State-of-the-art transport security with mutual authentication

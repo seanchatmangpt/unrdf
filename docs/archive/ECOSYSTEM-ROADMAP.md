@@ -18,7 +18,7 @@ UNRDF is evolving from a monolithic library into an **ecosystem of composable pa
 |---------|--------|---------|-------------|
 | **unrdf** | ✅ Shipped | v3.1.0 (Mar 2026) | Core RDF library |
 | **@unrdf/cli** | 📋 Designed | Q2 2026 | Command-line interface |
-| **@unrdf/sidecar** | 📋 Designed | Q2 2026 | gRPC server |
+| **@unrdf/knowledge-engine** | 📋 Designed | Q2 2026 | gRPC server |
 | **@unrdf/web** | 📋 Planned | Q3 2026 | REST API server |
 | **@unrdf/react** | 📋 Planned | Q3 2026 | React hooks |
 | **@unrdf/vue** | 📋 Planned | Q3 2026 | Vue composables |
@@ -55,14 +55,14 @@ UNRDF is evolving from a monolithic library into an **ecosystem of composable pa
 
 **Milestone:** Beta release May 2026, GA June 2026
 
-#### @unrdf/sidecar v1.0.0
+#### @unrdf/knowledge-engine v1.0.0
 **Status:** 📋 Design in progress
 
 **Features:**
 - gRPC server for remote RDF operations
 - Multi-language client support (Python, Go, Rust)
 - Distributed query execution
-- Cluster mode (multiple sidecar instances)
+- Cluster mode (multiple knowledge-engine instances)
 - Authentication and authorization
 
 **Dependencies:**
@@ -317,7 +317,7 @@ type Subscription {
 ```
 unrdf (core)
 ├── @unrdf/cli
-├── @unrdf/sidecar
+├── @unrdf/knowledge-engine
 ├── @unrdf/web
 │   └── @unrdf/ui (uses web as backend)
 ├── @unrdf/react
@@ -335,7 +335,7 @@ unrdf (core)
 | Package Version | Core Version | Notes |
 |----------------|--------------|-------|
 | @unrdf/cli@1.x | unrdf@^3.1.0 | Requires v3.1+ for browser features |
-| @unrdf/sidecar@1.x | unrdf@^3.1.0 | Requires v3.1+ for isolated-vm |
+| @unrdf/knowledge-engine@1.x | unrdf@^3.1.0 | Requires v3.1+ for isolated-vm |
 | @unrdf/web@1.x | unrdf@^3.1.0 | Compatible with v3.1+ |
 | @unrdf/react@1.x | unrdf@^3.1.0 | Works with v3.0+, optimized for v3.1+ |
 | @unrdf/vue@1.x | unrdf@^3.1.0 | Works with v3.0+, optimized for v3.1+ |
@@ -352,7 +352,7 @@ Some packages will be released together for feature parity:
 
 **Q2 2026 Bundle:**
 - @unrdf/cli@1.0.0
-- @unrdf/sidecar@1.0.0
+- @unrdf/knowledge-engine@1.0.0
 
 **Q3 2026 Bundle:**
 - @unrdf/web@1.0.0
@@ -522,7 +522,7 @@ All packages are currently developed by volunteer contributors.
 **Q2 2026:**
 - ✅ Core library (unrdf@3.1.0) - **Shipped**
 - 📋 CLI package (@unrdf/cli@1.0.0)
-- 📋 gRPC server (@unrdf/sidecar@1.0.0)
+- 📋 gRPC server (@unrdf/knowledge-engine@1.0.0)
 
 **Q3 2026:**
 - 📋 REST API server (@unrdf/web@1.0.0)

@@ -6,7 +6,7 @@ Replaced vm2 with isolated-vm for enhanced security in effect execution. Added M
 
 ## Components
 
-### 1. SecureSandbox (`/sidecar/server/utils/secure-sandbox.mjs`)
+### 1. SecureSandbox (`/knowledge-engine/server/utils/secure-sandbox.mjs`)
 
 **Features:**
 - V8 isolate-based sandboxing (complete isolation from host)
@@ -50,7 +50,7 @@ const memory = await sandbox.getMemoryUsage('effect-id')
 await sandbox.destroyIsolate('effect-id')
 ```
 
-### 2. SandboxThreatDetector (`/sidecar/server/utils/sandbox-threat-detector.mjs`)
+### 2. SandboxThreatDetector (`/knowledge-engine/server/utils/sandbox-threat-detector.mjs`)
 
 **Threat Detection Patterns:**
 
@@ -145,7 +145,7 @@ const analysis = await detector.analyzeCode(code, {
 }
 ```
 
-### 4. Execute Endpoint (`/sidecar/server/api/effects/execute.post.mjs`)
+### 4. Execute Endpoint (`/knowledge-engine/server/api/effects/execute.post.mjs`)
 
 **Features:**
 - Executes effects in isolated-vm
@@ -195,7 +195,7 @@ const analysis = await detector.analyzeCode(code, {
 ### Running Tests
 
 ```bash
-cd /Users/sac/unrdf/sidecar
+cd /Users/sac/unrdf/knowledge-engine
 
 # Run all sandbox tests
 npm run test:unit -- secure-sandbox

@@ -92,10 +92,13 @@ export const queryCommand = defineCommand({
 
       console.log(`🔍 Executing query...`);
 
-      // TODO: Actual SPARQL execution
-      const results = [
-        { subject: 'ex:Alice', predicate: 'foaf:name', object: '"Alice"' }
-      ];
+      // Execute SPARQL query using local store
+      const { getStore } = await import('../../utils/store-instance.mjs');
+      const store = getStore();
+
+      const results = store.query(query, {
+        timeout: ctx.args.timeout
+      });
 
       console.log(formatOutput(results, ctx.args.format));
     } catch (error) {

@@ -108,7 +108,7 @@ All scenarios in the cleanroom suite were reviewed for similar pattern issues:
 - ✅ `hook-evaluation.mjs` - **UPDATED**
 - ✅ `policy-enforcement.mjs` - **UPDATED**
 - ✅ `graph-lifecycle.mjs` - No pattern issues found
-- ✅ `sidecar-integration.mjs` - Currently disabled (gRPC not implemented)
+- ✅ `knowledge-engine-integration.mjs` - Currently disabled (gRPC not implemented)
 
 ### Other Expected Output Patterns Found:
 All other patterns appear flexible and should work correctly:

@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/knowledge-engine",
-  "version": "2.0.0-alpha.0",
+  "version": "5.0.0-beta.1",
   "description": "UNRDF Knowledge Engine - Rule Engine, Inference, and Pattern Matching (Optional Extension)",
   "type": "module",
   "main": "src/index.mjs",
@@ -34,8 +34,8 @@
     "rules"
   ],
   "dependencies": {
-    "@unrdf/core": "workspace:*",
-    "@unrdf/streaming": "workspace:*",
+    "@unrdf/core": "workspace:5.0.0-beta.1",
+    "@unrdf/streaming": "workspace:5.0.0-beta.1",
     "eyereasoner": "^1.0.0"
   },
   "devDependencies": {

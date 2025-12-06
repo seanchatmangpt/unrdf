@@ -1,5 +1,8 @@
 # @unrdf/oxigraph
 
+![Version](https://img.shields.io/badge/version-5.0.0--beta.1-blue) ![Production Ready](https://img.shields.io/badge/production-ready-green)
+
+
 Oxigraph-backed RDF store implementation for UNRDF. This package provides a benchmarking implementation using the [Oxigraph SPARQL engine](https://oxigraph.org/) compiled to WebAssembly for JavaScript.
 
 ## Features

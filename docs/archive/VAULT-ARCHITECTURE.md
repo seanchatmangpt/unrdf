@@ -8,7 +8,6 @@
 └─────────────────────────────────────────────────────────────────────────┘
 
 ┌────────────────────┐     ┌────────────────────┐     ┌────────────────────┐
-│   Terraform        │     │   Docker Compose   │     │   KGC Sidecar      │
 │                    │     │                    │     │                    │
 │  ┌──────────────┐  │     │  ┌──────────────┐  │     │  ┌──────────────┐  │
 │  │ variables.tf │  │     │  │ vault:8200   │  │     │  │ Vault Client │  │
@@ -60,7 +59,6 @@
                                                 Token  Token
         │       │       │       │       │       │       │
         ▼       ▼       ▼       ▼       ▼       ▼       ▼
-   Member A Member B Member C Member D Member E Admin  Sidecar
    (Admin)  (DevOps) (Security)(Backup)(Backup)
 
                         Unsealing Process
@@ -156,7 +154,6 @@
 1. Startup Sequence
 ───────────────────
 
-KGC Sidecar                Vault Client              Vault Server
      │                          │                          │
      │  Initialize              │                          │
      ├─────────────────────────▶│                          │
@@ -354,12 +351,9 @@ Vault: RUNNING ──▶ STOPPED ──▶ STARTING ──▶ SEALED
                                     Vault: UNSEALED ✅
                                                │
                                                ▼
-                                    KGC Sidecar reconnects
 
 
-Scenario 2: KGC Sidecar Crash
 ──────────────────────────────
-Sidecar: RUNNING ──▶ CRASHED ──▶ RESTARTING
                                      │
                                      ▼
                         Initialize Vault Client
@@ -376,12 +370,10 @@ Sidecar: RUNNING ──▶ CRASHED ──▶ RESTARTING
                         Initialize all managers
                                      │
                                      ▼
-                        Sidecar: READY ✅
 
 
 Scenario 3: Vault Unavailable
 ──────────────────────────────
-Sidecar: STARTING ──▶ Vault client init ──▶ Vault: CONNECTION REFUSED
                                                     │
                                                     ▼
                                         Fallback to ENV vars
@@ -395,7 +387,6 @@ Sidecar: STARTING ──▶ Vault client init ──▶ Vault: CONNECTION REFUSE
                                     Initialize managers (degraded mode)
                                                     │
                                                     ▼
-                                        Sidecar: READY (no rotation) ⚠️
 
 
 Scenario 4: Token Expiration
@@ -414,7 +405,6 @@ App Token: VALID ──▶ EXPIRED ──▶ Secret access DENIED
                         Update VAULT_TOKEN env var
                                      │
                                      ▼
-                        Restart KGC Sidecar
                                      │
                                      ▼
                         Token: ACTIVE ✅

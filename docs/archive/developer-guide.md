@@ -88,9 +88,6 @@ Create `.env` file:
 # SPARQL Endpoint
 SPARQL_ENDPOINT=http://localhost:3030/ds/sparql
 
-# KGC Sidecar
-KGC_SIDECAR_HOST=localhost
-KGC_SIDECAR_PORT=50051
 
 # Observability
 OTEL_EXPORTER_JAEGER_ENDPOINT=http://localhost:14268/api/traces
@@ -113,7 +110,6 @@ unrdf/
 │   │   │   ├── graph/       # Graph commands
 │   │   │   ├── hook/        # Hook commands
 │   │   │   ├── policy/      # Policy commands
-│   │   │   ├── sidecar/     # Sidecar commands
 │   │   │   ├── store/       # Store commands
 │   │   │   ├── context/     # Context commands
 │   │   │   └── repl.mjs     # Interactive REPL
@@ -125,7 +121,7 @@ unrdf/
 │   │   └── middleware/      # CLI middleware
 │   ├── knowledge-engine/    # Knowledge Hooks engine
 │   ├── policy-engine/       # Policy Pack engine
-│   ├── kgc-sidecar/         # Kubernetes gRPC sidecar
+│   ├── knowledge-engine/         # Kubernetes gRPC knowledge-engine
 │   └── observability/       # OTEL integration
 ├── test/                    # Vitest tests
 │   ├── knowledge-engine/

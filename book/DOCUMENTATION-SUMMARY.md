@@ -304,7 +304,7 @@ mdbook serve
 ### Long-term
 8. Add interactive examples
 9. Add video tutorials
-10. Create playground environment
+10. Create playground environment (REMOVED - feature no longer available)
 
 ## Files Ready for Publication
 

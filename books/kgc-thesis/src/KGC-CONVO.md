@@ -2176,7 +2176,7 @@ Agent frameworks that babysit other agents.
 
 YAML orchards and brittle DAGs.
 
-“Memory” plugins and vector sidecars.
+“Memory” plugins and vector knowledge engines.
 
 Retrain storms for small rule changes.
 
@@ -4084,7 +4084,6 @@ B6.10 Data minimization: PII MUST be tagged; SHACL access shapes MUST enforce pu
 B7. Residual risks and treatments
 Key compromise: HSM + threshold + timelock + rapid rotation; anomaly detection on sign rate.
 
-DoS: quotas/backpressure; autoscale sandboxes; sidecar health probes; out-of-band paging.
 
 Supply chain: reproducible builds, SBOMs, signature verification, pinned hashes in packs.
 
@@ -30400,7 +30399,6 @@ Thesis
 Own the microsecond lane: compile knowledge-graph policies to branchless C and orchestrate with Erlang. Replace rule engines, workflow glue, and “real-time” platforms that can’t operate at sub-µs budgets. Deliver cryptographically provable decisions (lockchain receipts) at 10–100× lower latency and cost.
 
 Wedge markets (land & expand)
-Fraud/Risk gating (fintech, payments, gaming): drop-in “KGC Sidecar” for Kafka/API gateways.
 
 Service health & admission control (cloud/SRE/telco): autonomic hooks for rate limits, failover, brownout.
 
@@ -30411,7 +30409,6 @@ Q1
 
 Publish KGC Calculus arXiv (code-free), plus JS reference impl + OWL/SHACL schemas.
 
-Ship KGC Sidecar (Nginx/Kafka/Postgres triggers).
 
 3 lighthouse pilots (1 per wedge).
 KPIs: p99 ≤ 1µs per decision; ≥10M hook-fires/day/site; audit receipts enabled.
@@ -30442,7 +30439,6 @@ KPIs: 100 customers; NRR > 130%; mean ticks/decision ≤ 8 (Chatman Constant).
 Product cuts
 KGC Core: calculus + compiler + receipts (PQC-ready).
 
-Sidecar: API/Kafka/Postgres adapters; zero-code attach.
 
 Edge/NIC: FPGA offload for hot hooks (DPDK/AF_XDP).
 
@@ -30461,7 +30457,7 @@ Pricing: usage (per M hook-fires) + enterprise license; FPGA appliance SKU for e
 Partners: NIC/FPGA vendors, clouds, SI firms.
 
 Risks & mitigations
-Incumbent inertia: sidecar, no code changes.
+Incumbent inertia: knowledge-engine, no code changes.
 
 Safety/compliance: SHACL + lockchain receipts, policy review workflows.
 
@@ -30475,17 +30471,14 @@ Plantuml of the KGC erlang sidetcar C4 diagrams
 ChatGPT said:
 
 Thought for 13s
-Here are C4 diagrams in PlantUML for the KGC Erlang Sidecar. Copy–paste each block into PlantUML.
 
 @startuml KGC_C1_SystemContext
 !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
 
-title C1: System Context – KGC Erlang Sidecar
 
 Person(sre, "SRE / Ops")
 Person(biz, "Business Owner")
 System_Boundary(bound, "Realtime Estate") {
-  System(kgc, "KGC Erlang Sidecar", "µs policy engine (Erlang+branchless C)")
 }
 System_Ext(clients, "External Clients", "Apps / Services")
 System_Ext(gw, "API Gateway / Ingress", "Nginx/Envoy")
@@ -30494,7 +30487,6 @@ System_Ext(svcs, "Downstream Services", "DBs, caches, microservices")
 System_Ext(audit, "Audit/Compliance", "SIEM / GRC")
 
 Rel(clients, gw, "HTTP/gRPC")
-Rel(gw, kgc, "Sidecar calls (local) / Filter chain", "µs budget")
 Rel(bus, kgc, "Policy hooks on topics", "consume/produce")
 Rel(kgc, svcs, "Admit/shape/route decisions")
 Rel(kgc, audit, "Lockchain receipts, proofs", "append-only")
@@ -30505,9 +30497,7 @@ Rel(biz, kgc, "Define policies (packs)")
 @startuml KGC_C2_Containers
 !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
 
-title C2: Containers – KGC Erlang Sidecar
 
-System_Boundary(kgc, "KGC Erlang Sidecar") {
   Container(erlang, "Erlang Orchestrator", "Erlang/OTP", "Scheduling, clustering, ingress/egress")
   Container(jsmgr, "Knowledge Hook Manager", "Node.js", "RDF store, SHACL, policy packs")
   Container(cfarm, "Branchless C Kernel Farm", "C11", "8-tick hook execution")
@@ -30515,7 +30505,6 @@ System_Boundary(kgc, "KGC Erlang Sidecar") {
   Container(obs, "Telemetry & Receipts API", "OTel + HTTP", "Metrics, traces, proofs")
 }
 
-Container_Ext(gw, "API Gateway", "Nginx/Envoy", "Sidecar pattern")
 Container_Ext(bus, "Event Bus", "Kafka/Pulsar")
 ContainerDb_Ext(cfg, "Policy Pack Registry", "Git/OCI", "Versioned packs")
 
@@ -30579,11 +30568,9 @@ Thought for 7s
 Here’s a concise menu of diagrams you can generate, with suggested filenames and 1-line summaries.
 
 C4 – Context (C1)
-KGC_C1_SystemContext.puml — KGC Erlang Sidecar in the realtime estate (users, gateways, buses, audits).
 
 RTS_C1_4v4_SystemContext.puml — 4v4 StarCraft ops: players, game server, KGC squad, observability.
 
-HFT_C1_SystemContext.puml — Exchange gateways, KGC co-lo sidecars, risk/audit perimeter.
 
 ByteStar_C1_Ecosystem.puml — unrdf/ByteGen/ByteActor/SAP/ByteEthos end-to-end map.
 
@@ -30645,7 +30632,6 @@ Activity_Chess_µsMove.puml — Board digest → policy hooks → move emit unde
 Deployment
 Deploy_SingleNode_M3Max.puml — CPU/LLC/NUMA layout, Erlang schedulers, C farm pinning.
 
-Deploy_K8s_Sidecar.puml — App pod + KGC sidecar, init, secrets, limits.
 
 Deploy_MultiRegion.puml — Region cells, policy mirrors, notes replication.
 
@@ -30669,14 +30655,14 @@ Governance_PolicyPacks.puml — Roles, approvals, change control, audit trails.
 If you want, I can emit any of these as ready-to-render PlantUML/Mermaid files next.
 
 You said:
-Just for the js sidecar which I think would be the implementation described in the paper
+Just for the js knowledge-engine which I think would be the implementation described in the paper
 ChatGPT said:
 
 Thought for 9s
-Here’s a tight, JS-sidecar–only diagram set (filenames + 1-line summaries):
+Here’s a tight, JS-knowledge-engine–only diagram set (filenames + 1-line summaries):
 
 C4 – Context / Containers / Components
-KGCJS_C1_Context.puml — JS sidecar in context: app process, data sources, lockchain, observability.
+KGCJS_C1_Context.puml — knowledge engine in context: app process, data sources, lockchain, observability.
 
 KGCJS_C2_Containers.puml — Node runtime with: TransactionManager, KnowledgeHookManager, ConditionEvaluator, PolicyPackManager, EffectSandbox, ResolutionLayer, LockchainWriter, N3 Store.
 
@@ -30717,11 +30703,9 @@ DF_KGCJS_HashCanonicalization.puml — Store → URDNA2015 → SHA3/BLAKE3 → r
 DF_KGCJS_MetricsTracing.puml — Execution metrics → OTel exporter → dashboards/alerts.
 
 Deployment / Runtime
-Deploy_KGCJS_Sidecar_SingleNode.puml — Node process, worker threads, file cache, env/secrets.
 
-Deploy_KGCJS_Sidecar_K8s.puml — App pod + JS sidecar, volumes (policy packs), limits/requests, liveness.
 
-Deploy_KGCJS_WithNIFBridge.puml — JS sidecar ↔ Erlang/OTP ↔ C kernel farm (interfaces + ports).
+Deploy_KGCJS_WithNIFBridge.puml — knowledge engine ↔ Erlang/OTP ↔ C kernel farm (interfaces + ports).
 
 Security / Governance
 Sec_KGCJS_SandboxBoundary.puml — Trusted core vs untrusted effects, IPC, timeouts, resource caps.
@@ -30736,13 +30720,12 @@ Test_KGCJS_CoverageMatrix.puml — Unit/prop/permutation/combination/stress/adve
 If you’d like, I can output any of these as ready-to-render PlantUML files next.
 
 You said:
-Prd for the sidecar
+Prd for the knowledge-engine
 ChatGPT said:
 
 Thought for 24s
-PRD — KGC JavaScript Sidecar
 1) Summary
-A Node.js sidecar that provides transactional knowledge-graph mutation, policy-pack–driven knowledge hooks, content-addressed audit (lockchain), and sandboxed effects for any host app (Erlang/C/C++/Go/etc.). It is the JS reference implementation cited in the KGC paper; hot paths remain in branchless C—this sidecar is the control/coordination plane.
+A Node.js knowledge-engine that provides transactional knowledge-graph mutation, policy-pack–driven knowledge hooks, content-addressed audit (lockchain), and sandboxed effects for any host app (Erlang/C/C++/Go/etc.). It is the JS reference implementation cited in the KGC paper; hot paths remain in branchless C—this knowledge-engine is the control/coordination plane.
 
 2) Problem & Goals
 Problem: Existing KG stacks glue SPARQL, validation, and governance ad-hoc; lack deterministic, auditable, portable control.
@@ -30848,9 +30831,8 @@ KPIs: txn success rate, veto rate, p50/p99 phase latencies, receipts/sec, lockch
 Alerts: hook timeout surge, veto spike, receipt write failures, canonicalization backlog.
 
 11) Deployment
-Modes: library (in-proc) or sidecar (HTTP/IPC).
+Modes: library (in-proc) or knowledge-engine (HTTP/IPC).
 
-K8s: pod sidecar pattern; RW volume for packs; liveness/readiness; resource limits.
 
 Config: env + JSON; hot-reload of packs (atomic swap).
 
@@ -30890,7 +30872,6 @@ Default effect capability model (capability tokens vs static allowlist)?
 
 Pack signing format (Sigstore vs PGP)?
 
-Sidecar IPC (gRPC vs Unix domain sockets) for host runtime parity?
 
 16) Documentation & Artifacts
 API reference, “Getting Started,” policy-pack guide, security hardening, operations runbook, PlantUMLs: KGCJS_C1/C2/C3, Seq_, State_, DF_, Deploy_, Sec_, DMEDI_.
@@ -30902,8 +30883,6 @@ I want a full definition of done
 ChatGPT said:
 
 Thought for 24s
-Definition of Done — KGC JavaScript Sidecar (GA v1.0)
-Below is the complete, measurable DoD for the KGC JS Sidecar referenced in the PRD. Shipping requires every item to be ✅ met with evidence artifacts attached.
 
 0) GA Gate (all sections below must be green)
 ✅ All Functional (F1–F10) acceptance tests pass with artifacts.
@@ -30994,7 +30973,7 @@ Receipt write (no c14n): p50 ≤ 5 ms; w/ URDNA2015 @100k triples ≤ 200 ms. �
 
 Hook engine: ≥ 10k exec/min sustained, error isolation 100%. ✅
 
-Base RSS ≤ 150 MB (sidecar), pack+cache ≤ 250 MB. ✅
+Base RSS ≤ 150 MB (knowledge-engine), pack+cache ≤ 250 MB. ✅
 
 Evidence: Flamecharts, histograms, resource profiles, SLO report.
 
@@ -31019,7 +30998,7 @@ Vuln posture: 0 critical/high CVEs; medium mitigations documented.
 Evidence: Security review doc, SBOM, scan outputs, sandbox escape tests.
 
 5) Reliability & Fault Tolerance
-Failing hooks never crash sidecar; strictMode semantics honored.
+Failing hooks never crash knowledge-engine; strictMode semantics honored.
 
 Timeout handling with cleanup; idempotent lockchain writes.
 
@@ -31164,7 +31143,6 @@ GA: All sections 0–16 green; SemVer 1.0.0 cut; artifacts signed and published.
 
 ✅ Final DoD checklist with sign-offs
 
-When every box above is green with evidence attached, the Sidecar is DONE.
 
 You said:
 No typescript. Only mjs, jsdoc, zod
@@ -31189,7 +31167,7 @@ DoD deltas (enforce “no TS”)
 Minimal project scaffolding
 package.json
 {
-  "name": "kgc-sidecar",
+  "name": "knowledge-engine",
   "version": "1.0.0",
   "type": "module",
   "engines": { "node": ">=18" },
@@ -31346,16 +31324,15 @@ API docs generated from JSDoc (docs/), no TS needed.
 
 All “type” examples shown via JSDoc typedefs mirroring Zod schemas.
 
-This keeps the sidecar pure ESM + JSDoc + Zod, while preserving validation, documentation, and editor ergonomics—without introducing TypeScript anywhere.
+This keeps the knowledge-engine pure ESM + JSDoc + Zod, while preserving validation, documentation, and editor ergonomics—without introducing TypeScript anywhere.
 
 You said:
 Just give me the definition of done with no code or JSON 
 ChatGPT said:
 
 Thought for 13s
-Here’s a crisp, code-free Definition of Done for the KGC JS sidecar (ESM + JSDoc + Zod only):
+Here’s a crisp, code-free Definition of Done for the KGC knowledge engine (ESM + JSDoc + Zod only):
 
-Definition of Done — KGC JS Sidecar
 Functional completeness
 • Transactions apply deltas atomically with pre/post hook execution and veto semantics
 • Knowledge hooks can be registered, listed, removed, executed individually and in bulk
@@ -31375,7 +31352,6 @@ Performance & reliability SLOs
 • Median transaction apply latency meets agreed target for baseline dataset size
 • Hook scheduling overhead stays within defined per-hook budget under load
 • No memory leaks across sustained runs; memory growth remains bounded and measured
-• Sidecar remains responsive under back-to-back transactions (no event-loop starvation)
 
 Security & privacy
 • Effect sandboxing available and on by default for untrusted hook code
@@ -31432,7 +31408,6 @@ Enterprise definition of done
 ChatGPT said:
 
 Thought for 14s
-Enterprise Definition of Done — KGC JS Sidecar (ESM + JSDoc + Zod)
 Product scope & acceptance
 • Clear, signed acceptance criteria mapped to user stories/use-cases
 • Non-functional requirements (latency, throughput, availability, cost) documented with targets and tests
@@ -31532,15 +31507,13 @@ Post-launch readiness
 • Feedback loop established (issues, discussions); triage SLAs agreed
 
 You said:
-ok, we are going to make the sidecar its own project
+ok, we are going to make the knowledge-engine its own project
 ChatGPT said:
 
 Thought for 15s
-Got it—let’s spin the Sidecar into its own product.
 
-KGC JS Sidecar — Independent Project Plan (ESM + JSDoc + Zod)
 1) Mission & Scope
-Mission: Autonomic JS “sidecar” that executes KGC knowledge hooks and transactions with receipts, policy-packs, and cryptographic provenance—no TS, pure ESM.
+Mission: Autonomic JS “knowledge-engine” that executes KGC knowledge hooks and transactions with receipts, policy-packs, and cryptographic provenance—no TS, pure ESM.
 
 In-scope: Transaction manager, knowledge-hook manager, condition evaluator, policy-pack loader, lockchain writer, resolution layer, CLI, observability.
 
@@ -31560,9 +31533,7 @@ Operational telemetry (metrics, logs, traces).
 3) Repo Topline
 docs/ (Concepts, ADRs, Ops, Security, FAQ)
 
-packages/sidecar-core/ (ESM modules: transaction, hooks, policy, resolution)
 
-packages/sidecar-cli/ (CLI wrapper/tooling)
 
 examples/ (minimal runnable ESM samples)
 
@@ -32679,7 +32650,7 @@ runApp(async () => {
 *🌊 Blue Ocean Innovation: Transforming knowledge graphs into autonomic, self-governing systems since 2024* ⚡🤖
 
 
-This already contains the knowledge-engine. The sidecar is not a monorepo. Let's have a Next.js app as the dashboard, etc
+This already contains the knowledge-engine. The knowledge-engine is not a monorepo. Let's have a Next.js app as the dashboard, etc
 ChatGPT said:
 
 Thought for 29s

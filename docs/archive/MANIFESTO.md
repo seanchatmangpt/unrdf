@@ -561,7 +561,7 @@ Market Size:       $300B/year (25% conversion rate)
 
 **Ecosystem**:
 - `@unrdf/cli` — CLI tools
-- `@unrdf/sidecar` — gRPC server
+- `@unrdf/knowledge-engine` — gRPC server
 - `@unrdf/web` — REST API
 - `@unrdf/agents` — Swarm coordination
 - `@unrdf/fpga` — Hardware acceleration

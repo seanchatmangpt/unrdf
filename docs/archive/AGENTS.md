@@ -1,8 +1,8 @@
 # Repository Guidelines
 
 ## Project Structure & Module Organization
-- `src/` contains runtime modules: `context/` for store wiring, `composables/` for hook helpers, `knowledge-engine/` + `sidecar/` for orchestration, and `cli-v2/` as the active entrypoint; treat `dist/` as ephemeral output.
-- Tests sit in `test/` (unit/integration) and `sidecar/test/` (gRPC). Shared fixtures live in `test-data/`, with reusable configs in `env/`.
+- `src/` contains runtime modules: `context/` for store wiring, `composables/` for hook helpers, `knowledge-engine/` + `knowledge-engine/` for orchestration, and `cli-v2/` as the active entrypoint; treat `dist/` as ephemeral output.
+- Tests sit in `test/` (unit/integration) and `knowledge-engine/test/` (gRPC). Shared fixtures live in `test-data/`, with reusable configs in `env/`.
 - Supporting assets reside in `docs/`, `examples/`, `policy-packs/`, while deployment automation is under `k8s/` and `terraform/`.
 
 ## Build, Test, and Development Commands
@@ -20,13 +20,12 @@
 - Prefer automated fixes from ESLint/Prettier; justify any rule suppression inline.
 
 ## Testing Guidelines
-- Place specs at `test/**/*.test.mjs`; reserve `*.spec.mjs` for behavior suites. Sidecar tests live in `sidecar/test/`.
 - `pnpm test --coverage` must maintain ≥80% branches/functions/lines/statements as configured in `vitest.config.mjs`.
 - Run `pnpm e2e:setup`, `pnpm e2e:run`, and `pnpm e2e:cleanup` around full-stack trials to release containers.
 - Annotate new fixtures in `test-data/` with provenance notes.
 
 ## Commit & Pull Request Guidelines
-- Use imperative commit subjects that name the surface (`sidecar: harden retry flow`); keep bodies focused on rationale and risk.
+- Use imperative commit subjects that name the surface (`knowledge-engine: harden retry flow`); keep bodies focused on rationale and risk.
 - PRs should outline change, motivation, and validation (`pnpm lint && pnpm test`), plus logs or screenshots for CLI-facing updates.
 - Rebase before requesting review and tag the module owner you affected; reference policy packs or docs when relevant.
 - CI runs `pnpm ci:test`; align your local workflow to avoid failures.
