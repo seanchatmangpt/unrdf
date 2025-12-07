@@ -7,6 +7,24 @@
  * @module service-worker-manager
  */
 
+/** @constant {number} Wait time (ms) for service worker auto-registration */
+const SW_REGISTRATION_WAIT_DELAY_MS = 200;
+
+/** @constant {number} Maximum time (ms) to wait for service worker installation */
+const SW_INSTALLATION_TIMEOUT_MS = 5000;
+
+/** @constant {number} Default timeout (ms) for waiting for Cross-Origin-Isolation */
+const COI_WAIT_DEFAULT_TIMEOUT_MS = 5000;
+
+/** @constant {number} Delay (ms) before reloading page to activate service worker */
+const COI_RELOAD_DELAY_MS = 500;
+
+/** @constant {number} Interval (ms) for polling Cross-Origin-Isolation status */
+const COI_POLL_INTERVAL_MS = 100;
+
+/** @constant {number} Size (bytes) of SharedArrayBuffer for availability test */
+const SHARED_ARRAY_BUFFER_TEST_SIZE = 1;
+
 /**
  * Register the coi-serviceworker
  *
@@ -20,22 +38,46 @@ export async function registerServiceWorker() {
 
   try {
     // Load and register coi-serviceworker
-    const coiScript = await import('coi-serviceworker');
-
     // The coi-serviceworker auto-registers when imported
-    // Just need to ensure it's loaded
+    await import('coi-serviceworker');
     console.log('coi-serviceworker loaded');
 
-    // Check if already registered
-    const registration = await navigator.serviceWorker.getRegistration();
+    // Wait for service worker to be available
+    // coi-serviceworker registers automatically, but we need to wait
+    let registration = await navigator.serviceWorker.getRegistration();
+    
+    // If not registered yet, wait a bit for auto-registration
+    if (!registration) {
+      await new Promise(resolve => setTimeout(resolve, SW_REGISTRATION_WAIT_DELAY_MS));
+      registration = await navigator.serviceWorker.getRegistration();
+    }
 
     if (registration) {
-      console.log('Service Worker already registered:', registration);
+      console.log('Service Worker registered:', registration.scope);
 
-      // Wait for activation if installing
+      // Wait for activation if installing or waiting
       if (registration.installing) {
-        await new Promise((resolve) => {
+        await new Promise((resolve, reject) => {
+          const timeout = setTimeout(() => {
+            reject(new Error('Service worker installation timeout'));
+          }, SW_INSTALLATION_TIMEOUT_MS);
+
           registration.installing.addEventListener('statechange', (e) => {
+            const state = e.target.state;
+            if (state === 'activated') {
+              clearTimeout(timeout);
+              resolve();
+            } else if (state === 'redundant') {
+              clearTimeout(timeout);
+              reject(new Error('Service worker installation failed'));
+            }
+          });
+        });
+      } else if (registration.waiting) {
+        // If waiting, try to activate it
+        registration.waiting.postMessage({ type: 'skipWaiting' });
+        await new Promise((resolve) => {
+          registration.waiting.addEventListener('statechange', (e) => {
             if (e.target.state === 'activated') {
               resolve();
             }
@@ -46,12 +88,8 @@ export async function registerServiceWorker() {
       return true;
     }
 
-    // If not registered, the coi-serviceworker script should handle it
-    // Wait a bit for registration to complete
-    await new Promise(resolve => setTimeout(resolve, 100));
-
-    const newRegistration = await navigator.serviceWorker.getRegistration();
-    return !!newRegistration;
+    console.warn('Service worker registration not found after import');
+    return false;
 
   } catch (error) {
     console.error('Service Worker registration error:', error);
@@ -73,7 +111,7 @@ export function checkCrossOriginIsolation() {
   // Fallback: check SharedArrayBuffer availability
   if (typeof SharedArrayBuffer !== 'undefined') {
     try {
-      new SharedArrayBuffer(1);
+      new SharedArrayBuffer(SHARED_ARRAY_BUFFER_TEST_SIZE);
       return true;
     } catch (e) {
       return false;
@@ -107,7 +145,7 @@ export function getCOIStatus() {
  * @param {number} timeout - Timeout in milliseconds
  * @returns {Promise<boolean>} True if COI is enabled
  */
-export async function waitForCOI(timeout = 5000) {
+export async function waitForCOI(timeout = COI_WAIT_DEFAULT_TIMEOUT_MS) {
   const startTime = Date.now();
 
   while (Date.now() - startTime < timeout) {
@@ -118,12 +156,21 @@ export async function waitForCOI(timeout = 5000) {
     // If service worker is controlling but COI not yet active, reload
     if (navigator.serviceWorker.controller && !checkCrossOriginIsolation()) {
       console.log('Service worker active but COI not enabled, reloading...');
+      // Small delay before reload to ensure service worker is ready
+      await new Promise(resolve => setTimeout(resolve, COI_RELOAD_DELAY_MS));
       window.location.reload();
       return false;
     }
 
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise(resolve => setTimeout(resolve, COI_POLL_INTERVAL_MS));
   }
 
-  return checkCrossOriginIsolation();
+  const isIsolated = checkCrossOriginIsolation();
+  if (!isIsolated && navigator.serviceWorker.controller) {
+    // Last attempt: reload if service worker is controlling
+    console.log('COI timeout, reloading to activate service worker...');
+    window.location.reload();
+  }
+
+  return isIsolated;
 }

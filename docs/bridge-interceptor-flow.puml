@@ -1,0 +1,79 @@
+@startuml Bridge Interceptor Flow
+
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontSize 10
+
+title Bridge Interceptor - Erlang to JavaScript Communication
+
+actor "Erlang Process" as Erlang
+participant "AtomVM Module" as Module
+participant "Bridge Interceptor" as Interceptor
+participant "OTEL Tracer" as Tracer
+participant "KGC4D Bridge" as Bridge
+participant "KGC-4D Store" as Store
+participant "Hook Registry" as Hooks
+
+Erlang -> Module : io:format("KGC4D_BRIDGE:emit_event:Type:Payload")
+Module -> Interceptor : Module.print(text)
+
+activate Interceptor
+Interceptor -> Interceptor : parse bridge command
+
+alt emit_event
+  Interceptor -> Tracer : startActiveSpan('erlang.process.emit_event')
+  activate Tracer
+  Interceptor -> Bridge : emitEvent(type, payload)
+  activate Bridge
+  Bridge -> Store : appendEvent(type, payload)
+  Store --> Bridge : receipt
+  Bridge --> Interceptor : result
+  deactivate Bridge
+  Tracer -> Tracer : setStatus, setAttributes
+  Tracer --> Interceptor : span
+  deactivate Tracer
+  Interceptor -> Module : originalPrint(text)
+end
+
+alt register_hook
+  Interceptor -> Tracer : startActiveSpan('erlang.process.register_hook')
+  activate Tracer
+  Interceptor -> Bridge : registerHook(config)
+  activate Bridge
+  Bridge -> Hooks : registerHook(config)
+  Hooks --> Bridge : success
+  Bridge --> Interceptor : result
+  deactivate Bridge
+  Tracer -> Tracer : setStatus, setAttributes
+  Tracer --> Interceptor : span
+  deactivate Tracer
+  Interceptor -> Module : originalPrint(text)
+end
+
+alt process_intent
+  Interceptor -> Tracer : startActiveSpan('erlang.process.intent')
+  activate Tracer
+  Interceptor -> Bridge : processIntent(id, intent)
+  activate Bridge
+  Bridge -> Hooks : executeHookChain(intent)
+  Hooks --> Bridge : outcome
+  Bridge --> Interceptor : result
+  deactivate Bridge
+  Tracer -> Tracer : setStatus, setAttributes
+  Tracer --> Interceptor : span
+  deactivate Tracer
+  Interceptor -> Module : originalPrint(text)
+end
+
+Interceptor --> Module : wrapped function returns
+deactivate Interceptor
+
+note right of Interceptor
+  **Production Ready:**
+  - Real OTEL spans created
+  - No simulation
+  - Actual KGC-4D integration
+  - Actual hooks execution
+end note
+
+@enduml
+

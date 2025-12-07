@@ -32,6 +32,9 @@ export {
   executePolicyPacks,
   executeLockchainIntegrity,
   executeBrowserCompatibility,
+  executeAtomVMBridge,
+  executeAtomVMRuntime,
+  executeAtomVMErlang,
 } from './otel-span-builder.mjs';
 
 // Metrics collector

@@ -1,0 +1,28 @@
+{
+  "name": "@unrdf/atomvm-playground",
+  "version": "0.1.0",
+  "description": "Production validation playground for AtomVM - validates processes, supervision, KGC-4D integration",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "build:erlang": "node scripts/build.mjs",
+    "build:all": "node scripts/build-all.mjs",
+    "validate:build": "node scripts/validate-build.mjs",
+    "validate": "node src/validation-suite-cli.mjs",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@unrdf/atomvm": "workspace:*",
+    "@unrdf/kgc-4d": "workspace:*",
+    "@unrdf/hooks": "workspace:*",
+    "coi-serviceworker": "^0.1.7"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0",
+    "vitest": "^4.0.15"
+  }
+}
+

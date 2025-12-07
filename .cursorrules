@@ -6,186 +6,101 @@
 2. **Batch everything** - TodoWrite, files, bash ALL in one message
 3. **Never save to root** - Use `/src`, `/test`, `/docs`, `/examples`
 4. **Timeout all commands** - Use `timeout {{sla}} {{command}}` for all application-level commands
-5. **OTEL is truth** - Agent claims require OTEL validation (score ≥80/100)
-6. **Pure functions** - No OTEL/observability in business logic code
+5. **MEASURE, don't assume** - Run commands. Read FULL output. Prove it. Show evidence for all claims.
+6. **OTEL is truth** - Agent claims require OTEL validation (score ≥80/100)
+7. **Pure functions** - No OTEL/observability in business logic code
 
-## Package Manager
-- **PNPM ONLY**: Use pnpm exclusively for all package management operations
-- Never use npm, yarn, or other package managers
-- All scripts and commands must use pnpm
-- Always use `pnpm add <package>` to add dependencies
-- Always use `pnpm remove <package>` to remove dependencies
-- Never edit package.json dependencies directly
-- **Monorepo**: This is a pnpm workspace with packages in `packages/` directory
+## 🤔 Adversarial PM - The Core Principle
 
-## File Format
-- **MJS ONLY**: All source files must use `.mjs` extension
-- **NO TYPESCRIPT**: Do not write TypeScript files (.ts, .tsx)
-- Use JavaScript with JSDoc for type safety and documentation
-- Pure ESM modules (`"type": "module"` in package.json)
+**CRITICAL**: Before declaring ANY work complete, question everything. Separate claims from reality. Demand evidence, not assertions.
 
-## Project Structure
+**The Core Questions**:
+- **Did you RUN it?** Or just read the code?
+- **Can you PROVE it?** Or are you assuming?
+- **What BREAKS if you're wrong?** Be specific.
+- **What's the EVIDENCE?** Show the output, logs, metrics.
 
-### Source Code (`src/`)
-- `src/knowledge-engine/` - Core knowledge hooks system, transaction management, policy packs
-  - `ai-semantic/` - AI/semantic integration modules
-  - `dark-matter/` - Dark matter optimization modules
-  - `federation/` - Distributed federation modules
-  - `monitoring/` - Monitoring and observability
-  - `security/` - Security validators
-  - `streaming/` - Real-time streaming modules
-  - `utils/` - Knowledge engine utilities
-  - `validators/` - Validation utilities
-- `src/react-hooks/` - React integration hooks
-  - `core/` - Core React hooks (useKnowledgeEngine, useTransaction, etc.)
-  - `streaming/` - Streaming hooks (useChangeFeed, useStreamProcessor)
-  - `federation/` - Federation hooks (useFederatedSystem)
-  - `dark-matter/` - Dark matter hooks (useDarkMatterCore, useQueryAnalyzer)
-  - `ai-semantic/` - AI/semantic hooks (useSemanticAnalyzer)
-  - `advanced-utility/` - Advanced utility hooks (useGraphDiff, useGraphMerge)
-  - `policy-security/` - Policy and security hooks (usePolicyPack)
-  - `error-recovery/` - Error recovery hooks (useErrorBoundary, useRecovery)
-  - `form-ui/` - Form UI hooks (useSPARQLEditor, useGraphVisualizer)
-  - `composition/` - Composition hooks (useKnowledgeStack, useOfflineStore)
-  - `batch/` - Batch operation hooks
-  - `cache/` - Caching hooks
-  - `context/` - Context hooks
-  - `effects/` - Effect hooks
-  - `htf/` - HTF framework hooks
-  - `knowledge-hooks/` - Knowledge hook hooks
-  - `query/` - Query hooks
-  - `storage/` - Storage hooks
-  - `utils/` - React hooks utilities
-- `src/cli/` - Simple CLI implementation (active entrypoint at `src/cli/index.mjs`)
-  - Commands: `init`, `autonomic`, `store`
-  - Entry point: `src/cli/index.mjs` (exports to `./cli` in package.json)
-- `src/composables/` - RDF composables
-  - `use-canon.mjs` - Canonicalization
-  - `use-delta.mjs` - Change tracking
-  - `use-graph.mjs` - Graph operations
-  - `use-prefixes.mjs` - Prefix management
-  - `use-reasoner.mjs` - Reasoning
-  - `use-terms.mjs` - Term operations
-  - `use-turtle.mjs` - Turtle serialization
-  - `use-validator.mjs` - Validation
-  - `use-zod.mjs` - Zod integration
-- `src/context/` - Store context management and configuration
-- `src/browser/` - Browser-specific implementations (IndexedDB, browser shims)
-- `src/project-engine/` - Project analysis, automation, MAPEK orchestration
-  - `lens/` - Project lens utilities
-- `src/sidecar/` - gRPC sidecar client
-- `src/utils/` - Shared utilities (graph, sparql, validation, etc.)
-- `src/engines/` - RDF engine abstraction
-- `src/domain/` - Domain models and formatters
-  - `formatters/` - Domain formatters
-  - `models/` - Domain models
-- `src/security/` - Security and sandbox implementations
-  - `sandbox/` - Sandbox implementations
-- `src/validation/` - Validation utilities
-- `src/diff.mjs` - Diff utilities
-- `src/ontologies/` - Ontology definitions (TTL files)
-- `src/profiling/` - Profiling utilities (CPU, memory, latency)
-- `src/integration/` - Integration utilities (nunjucks filters)
-- `src/test-utils/` - Testing utilities
-- `src/ken.mjs` - Ken module
-- `src/ken-parliment.mjs` - Ken parliament module
-- `src/knowledge-engine.mjs` - Knowledge engine entry point
+| Claim | Adversarial Question | Proof Required |
+|-------|----------------------|----------------|
+| "Tests pass" | Did you RUN `timeout 5s pnpm test`? | Show full output with ✅ |
+| "100% coverage" | Did type checker RUN? | `pnpm lint` with 0 errors |
+| "Production ready" | What FAILS? How handled? | Error paths + OTEL spans |
+| "Files migrated" | COUNT correct? Cross-refs valid? | `ls -1 *.md \| wc -l` |
 
-### Test Files (`test/`)
-- `test/**/*.test.mjs` - Vitest test files
-- `test/**/*.spec.mjs` - Behavior test suites
-- `test/e2e/` - End-to-end tests with testcontainers
-- `test/browser/` - Browser compatibility tests
-- `test/knowledge-engine/` - Knowledge engine tests
-- `test/react-hooks/` - React hooks tests (dark-matter, advanced-utility, policy-security, error-recovery, form-ui, composition)
-- `test/streaming/` - Streaming tests
-- `test/federation/` - Federation tests
-- `test/validation/` - Validation tests
-- `test/performance/` - Performance tests
-- `test/project-engine/` - Project engine tests
-- `test-data/` - Shared test fixtures
+**Adversarial PM is not pessimism** - it's intellectual honesty. Self-deception is the enemy.
 
-### CLI Structure
-- `src/cli/` - Simple CLI (3 commands: init, autonomic, store)
-  - Active entrypoint: `src/cli/index.mjs`
-  - Exported as `./cli` in package.json
-- `cli/` - Full v2 CLI structure (noun-verb pattern)
-  - `cli/commands/` - CLI command implementations (context, graph, hook, policy, sidecar, store)
-  - `cli/core/` - CLI core (router, context, config, completion, plugin-loader)
-  - `cli/formatters/` - Output formatters (json, table, tree, yaml)
-  - `cli/middleware/` - Middleware (auth, error-handler, telemetry, validation)
-  - Entry point: `cli/index.mjs` (not currently used as main entrypoint)
+## 🎯 Execution Pattern (Canonical)
 
-### Monorepo Packages (`packages/`)
-- `packages/core/` - Core RDF operations, SPARQL, validation
-- `packages/oxigraph/` - Oxigraph wrapper (N3 replacement)
-- `packages/hooks/` - Knowledge hooks system
-- `packages/knowledge-engine/` - Knowledge engine implementation
-- `packages/composables/` - RDF composables (use-canon, use-delta, use-graph, etc.)
-- `packages/browser/` - Browser-specific implementations (IndexedDB)
-- `packages/cli/` - CLI package
-- `packages/federation/` - Distributed federation
-- `packages/streaming/` - Real-time streaming modules
-- `packages/dark-matter/` - Dark matter optimization
-- `packages/project-engine/` - Project analysis, MAPEK orchestration
-- `packages/react/` - React integration hooks
-- `packages/domain/` - Domain models and formatters
-- `packages/engine-gateway/` - Engine gateway
-- `packages/kgc-4d/` - KGC 4D module
-- `packages/test-utils/` - Testing utilities
-- `packages/validation/` - Validation utilities
+**Single message - all operations concurrent**:
+```javascript
+// Single message - all operations concurrent
+Task("Backend Dev", "Implement feature...", "backend-dev")
+Task("Tester", "Write tests...", "tester")
+TodoWrite { todos: [...10-15 items, ONE call...] }
+Bash "timeout 5s pnpm build && timeout 5s pnpm test"  // ⚠️ Did output show success?
+Write "src/feature.mjs"            // ⚠️ Did you verify syntax?
+```
 
-### Other Directories
-- `examples/` - Example code demonstrating usage
-- `docs/` - Documentation (API, guides, tutorials)
-- `sidecar/` - Sidecar implementation and gRPC server
-- `playground/` - Playground application
-- `policy-packs/` - Policy pack definitions
-- `terraform/` - Terraform infrastructure as code
-- `k8s/` - Kubernetes deployment manifests
-- `validation/` - Validation scripts and utilities (OTEL validation)
-- `dist/` - Build output (ephemeral, gitignored)
-- `cli-legacy/` - Legacy CLI implementation
-- `completions/` - Shell completion scripts
-- `templates/` - Project templates
-- `test-policy-packs/` - Test policy packs
-- `hooks/` - Example hook definitions
+**Before "Done"**:
+- ❓ Did I RUN every command or just write them?
+- ❓ Did I read FULL output or stop at first ✅?
+- ❓ What SPECIFIC tests verify the feature?
+- ❓ Can user reproduce from scratch?
+
+## 🎯 Big Bang 80/20 Methodology
+
+**Single-pass feature implementation using Pareto optimization + information-theoretic correctness guarantees.**
+
+**Core Insight**: In well-specified domains, 20% of features = 80% of value. Implement those ONCE, correctly, using proven patterns.
+
+**When to Use**:
+- ✅ Well-defined specs (RDF, APIs, DSLs) + existing patterns + H_spec ≤ 16 bits
+- ❌ Exploratory domains, user feedback needed, uncertain requirements
+
+**Results** (KGC 4D empirical):
+- 700 LoC in 2-3 hours (vs TDD: 2-3 weeks = 50x speedup)
+- 0 defects, 64.3% pattern reuse, 98% static coverage
+- P(Correctness) ≥ 99.997%
+
+**The Litmus Test**: *Can I re-implement RIGHT NOW in ONE pass with ZERO rework using ONLY patterns + static analysis?*
+- If NO → Iterate until you have patterns, or accept it's iterative work.
+
+## Package Manager & File Format
+
+- **PNPM ONLY**: Use pnpm exclusively. Never npm/yarn. Always `pnpm add/remove`, never edit package.json directly.
+- **MJS ONLY**: All source files use `.mjs` extension. NO TypeScript. Use JSDoc for types. Pure ESM modules.
 
 ## Build System
-- Uses `build.config.mjs` (obuild) for Node.js builds
-- Uses `build.browser.config.mjs` for browser builds
+
+- Uses `build.config.mjs` (obuild) for Node.js builds, `build.browser.config.mjs` for browser builds
 - Builds output to `dist/` directory
-- Build entries: `src/index.mjs`, `src/composables/index.mjs`, `src/utils/index.mjs`, `src/engines/index.mjs`, `src/knowledge-engine.mjs`, `src/knowledge-engine/browser.mjs`
-- Note: `src/cli.mjs` is referenced in build.config.mjs but does not exist (build config may need update)
-- Run `pnpm build` to execute build
-- Run `pnpm build:browser` for browser-specific builds
+- Run `pnpm build` / `pnpm build:browser`
+
+**Evidence**: ❓ Did I RUN `timeout 5s pnpm build`? Read FULL output? Show evidence. Verify `dist/` contains expected files.
 
 ## Testing
+
 - **Vitest** - Test framework (configured in `vitest.config.mjs`)
 - Test files: `test/**/*.test.mjs`
 - Coverage thresholds: 95% (branches/functions/lines/statements)
 - Single-threaded execution for AI agent compatibility
 - Run `pnpm test` for tests with coverage
-- Run `pnpm test:watch` for watch mode
-- Run `pnpm test:e2e` for end-to-end tests
-- Run `pnpm test:k8s` for Kubernetes tests
-- Run `pnpm test:dark-matter` for dark matter tests
-- Run `pnpm test:browser` for browser tests
+
+**Evidence**: ❓ Did I RUN `timeout 5s pnpm test`? Read FULL output? Show pass count + coverage %. Verify specific failures.
 
 ## Code Style
-- **JSDoc ONLY**: Use JSDoc comments for all type annotations and documentation
-- No TypeScript type annotations in code
+
+- **JSDoc ONLY**: Use JSDoc comments for all type annotations. No TypeScript type annotations.
 - Use JSDoc `@param`, `@returns`, `@typedef`, `@type`, etc. for type information
-- 2-space indentation
-- Single quotes for strings
-- Trailing commas on multiline literals
-- ESLint with JSDoc plugin enforcement
-- Prettier for formatting
-- Filenames use kebab-case
-- Exports use camelCase for functions, PascalCase for types/classes
+- 2-space indentation, single quotes, trailing commas on multiline literals
+- ESLint with JSDoc plugin enforcement, Prettier for formatting
+- Filenames use kebab-case. Exports use camelCase for functions, PascalCase for types/classes
 - **Files**: <500 lines each (modularity)
 
+**Evidence**: ❓ Did I RUN `timeout 5s pnpm lint`? Read FULL output? Show 0 errors/violations. Verify specific rule violations. Type checker: RUN and show 0 errors.
+
 ## RDF/Triple Store (MANDATORY - Oxigraph Only)
+
 - **100% N3 Compliance**: Use Oxigraph everywhere, NO direct N3 imports
 - Use `createStore()` from `@unrdf/oxigraph` - NEVER `new Store()` from N3
 - Use `dataFactory` from `@unrdf/oxigraph` for quads
@@ -193,13 +108,10 @@
 - NEVER import directly from 'n3' in application code
 - **Pattern**: Centralize old library API in 2-3 justified modules. Refactor everything else to new API.
 - **Status**: ✅ Production Ready - 851/851 files compliant (100%), 40% faster queries, 60% lower memory usage
-- See `docs/audit/COMPLIANCE-SUMMARY.md` for migration details
 
-## Development Commands
+## ⏱️ Timeout SLAs (Andon & Poka Yoke Principle)
 
-### ⏱️ Timeout SLAs (Andon & Poka Yoke Principle)
-
-**MANDATORY**: All commands MUST include explicit timeout to prevent infinite execution.
+**MANDATORY**: All commands MUST include explicit timeout to prevent infinite execution and enforce SLAs.
 
 **Default SLA**: **5 seconds** for all day-to-day operations (tests, builds, linting, validation).
 
@@ -209,454 +121,124 @@
 - Cold dependency installation with network latency
 - Database migrations
 
-**Andon Principle**: When timeout fires, STOP and fix the root cause. Don't just increase the timeout.
+**Andon Principle**: When timeout fires, STOP and fix the root cause. Don't just increase the timeout. Apply adversarial questions:
+- ❓ Did I RUN the command or just write it?
+- ❓ What BREAKS if timeout is too short? (Check actual duration with `time`)
+- ❓ What's the EVIDENCE the command needs more time? (Show `time` output)
+
+**Verification Requirements**:
+- Use `time timeout 5s <command>` to check actual duration (e.g., `time timeout 5s pnpm test`)
+- If command completes in <2s, consider if timeout is appropriate
+- If timeout fires, investigate root cause before increasing timeout
+- Timeout is for SLA enforcement, not just preventing hangs
 
 ```bash
-# ✅ CORRECT: Default 5s SLA for most operations
-timeout 5s pnpm test
+# ✅ CORRECT: Default 5s SLA with duration verification
+time timeout 5s pnpm test && echo "✅ Tests passed"  # Check actual duration
 timeout 5s pnpm build
 timeout 5s pnpm lint
-timeout 5s node validation/run-all.mjs quick
 
 # ✅ CORRECT: Extended SLA with 80/20 justification
-timeout 15s pnpm test:integration   # 80/20: Integration tests need DB setup (3-8s) + margins
-timeout 10s node validation/run-all.mjs comprehensive  # 80/20: Full OTEL validation suite (6-9s) + margins
-timeout 20s pnpm install --frozen-lockfile  # 80/20: Cold install + network (8-15s) + margins
+timeout 15s pnpm test:integration   # 80/20: DB setup (3-8s) + margins
+timeout 10s node validation/run-all.mjs comprehensive  # 80/20: OTEL suite (6-9s) + margins
 
-# ❌ WRONG: No timeout (Andon cord not pulled - silent fail)
+# ❌ WRONG: No timeout (silent fail) or no duration check (hiding performance issue)
 pnpm test
-pnpm build
-pnpm install
+timeout 60s pnpm run lint  # Why 60s? Check actual duration first
 ```
 
-### Standard Commands
-- `pnpm install` - Install dependencies
-- `pnpm dev` - Run CLI locally with live reload (`node src/cli/index.mjs dev`)
-- `pnpm build` - Build project via `build.config.mjs`
-- `pnpm build:browser` - Build browser bundle
-- `pnpm test` - Run Vitest with coverage
-- `pnpm test:fast` - Run fast test suite
-- `pnpm test:watch` - Run Vitest in watch mode
-- `pnpm test:e2e` - Run end-to-end tests
-- `pnpm test:k8s` - Run Kubernetes tests
-- `pnpm test:dark-matter` - Run dark matter tests
-- `pnpm test:browser` - Run browser tests
-- `pnpm test:core` - Run core package tests
-- `pnpm test:hooks` - Run hooks package tests
-- `pnpm test:federation` - Run federation package tests
-- `pnpm test:streaming` - Run streaming package tests
-- `pnpm test:cli` - Run CLI package tests
-- `pnpm test:knowledge-engine` - Run knowledge engine tests
-- `pnpm lint` - Run ESLint
-- `pnpm lint:fix` - Fix ESLint issues
-- `pnpm format` - Format code with Prettier
-- `pnpm format:check` - Check formatting
-- `pnpm docs` - Generate JSDoc documentation
-- `pnpm docs:serve` - Serve JSDoc documentation
-- `pnpm clean` - Clean build artifacts
-- `pnpm precommit` - Run pre-commit checks (lint + test:fast)
-- `pnpm ci:test` - Run CI test suite
-- `pnpm ci:build` - Run CI build
-- `pnpm ci:deploy` - Run CI deployment
+## 🤔 Session Quality Checklist
 
-## Happy Path Development
-- Focus on direct implementation without excessive error handling
-- Assume valid inputs and trust the system
-- No TODO comments - implement features completely
-- No false positives - ensure correctness
-- Write code that works for the expected happy path
-- Avoid defensive programming patterns
-- Trust inputs (no guard clauses = cleaner code and visible bugs)
-- Zod validation for inputs + simple try-catch for errors
-- Pure functions with NO OTEL in implementation code
+**Before declaring work complete**:
 
-## JSDoc Examples
+### Claims vs Reality
+- [ ] Did I RUN code or just read it?
+- [ ] Did I read FULL output or stop at first ✅?
+- [ ] What BREAKS if claim is wrong?
+- [ ] Can I REPRODUCE from scratch?
 
-### ✅ Correct JSDoc Usage
-```javascript
-/**
- * Parse RDF data from a specified format
- * @param {import('zod').ZodSchema} schema - The Zod schema to validate against
- * @param {string} format - The input format (e.g., 'turtle', 'jsonld', 'ntriples')
- * @param {string} input - The input string to parse
- * @param {Object} [opts] - Optional configuration
- * @param {boolean} [opts.strict=false] - Enable strict parsing
- * @returns {Promise<import('n3').Store>} The parsed RDF store
- */
-export async function parseRDF(schema, format, input, opts = {}) {
-  // implementation
-}
-```
+### Evidence Quality
+- [ ] Test output showing success? (Not "tests pass")
+- [ ] File counts with `ls | wc -l`? (Not "~X files")
+- [ ] OTEL spans/logs? (Not "should work")
+- [ ] Before/after metrics? (Not "faster")
 
-### ❌ Incorrect TypeScript Usage
-```typescript
-export async function parseRDF<T>(
-  schema: ZodSchema<T>,
-  format: string,
-  input: string,
-  opts: ParseOptions = {}
-): Promise<Store> {
-  // implementation
-}
-```
+### Process Quality
+- [ ] Batched operations in ONE message?
+- [ ] Timeout all commands?
+- [ ] Verified cross-references?
+- [ ] Measured performance?
 
-## Entry Points
-- Main: `src/index.mjs` (exports as `.`)
-- Knowledge Engine: `src/knowledge-engine/index.mjs` (exports as `./knowledge-engine`)
-- Knowledge Engine Lite: `src/knowledge-engine/lite.mjs` (exports as `./knowledge-engine/lite`)
-- React Hooks: `src/react-hooks/index.mjs` (exports as `./react-hooks`)
-- React Hooks Core: `src/react-hooks/core/index.mjs` (exports as `./react-hooks/core`)
-- React Hooks Streaming: `src/react-hooks/streaming/index.mjs` (exports as `./react-hooks/streaming`)
-- React Hooks Federation: `src/react-hooks/federation/index.mjs` (exports as `./react-hooks/federation`)
-- React Hooks Dark Matter: `src/react-hooks/dark-matter/index.mjs` (exports as `./react-hooks/dark-matter`)
-- React Hooks AI Semantic: `src/react-hooks/ai-semantic/index.mjs` (exports as `./react-hooks/ai-semantic`)
-- React Hooks Advanced Utility: `src/react-hooks/advanced-utility/index.mjs` (exports as `./react-hooks/advanced-utility`)
-- React Hooks Policy Security: `src/react-hooks/policy-security/index.mjs` (exports as `./react-hooks/policy-security`)
-- React Hooks Error Recovery: `src/react-hooks/error-recovery/index.mjs` (exports as `./react-hooks/error-recovery`)
-- React Hooks Form UI: `src/react-hooks/form-ui/index.mjs` (exports as `./react-hooks/form-ui`)
-- React Hooks Composition: `src/react-hooks/composition/index.mjs` (exports as `./react-hooks/composition`)
-- CLI: `src/cli/index.mjs` (exports as `./cli`)
-- Composables: `src/composables/*.mjs` (exports as `./composables/*`)
-
-## Autonomic Hyper-Intelligence Insights
-
-### System-Level Thinking Patterns
-
-**Think in Layers, Not Lines**:
-- Knowledge graph is the substrate layer - all other layers query it
-- Hooks are the reactive layer - they respond to graph changes
-- Applications are the presentation layer - they consume hooks
-- Never duplicate logic across layers - query the graph instead
-
-**Content-Addressed Everything**:
-- Conditions, policies, and rules are content-addressed (hash-based)
-- This enables verification, deduplication, and provenance
-- When generating code, prefer content-addressed identifiers over sequential IDs
-- Example: Hook conditions are identified by their SPARQL hash, not by name
-
-**Declarative Over Imperative**:
-- Define *what* to monitor (SPARQL conditions), not *how* to check
-- Let the system figure out execution order and optimization
-- Knowledge hooks are declarative - they describe desired state, not steps
-
-### MAPEK Autonomic Loop Principles
-
-**Monitor-Analyze-Plan-Execute-Knowledge**:
-- **Monitor**: Always observe system state through RDF queries, not polling
-- **Analyze**: Use gap finder, type auditor, hotspot analyzer to interpret findings
-- **Plan**: Generate fix plans that can be auto-executed or require manual review
-- **Execute**: Apply fixes through knowledge hooks (transactional, auditable)
-- **Knowledge**: Learn patterns from executions and update policies
-
-**When Implementing Features**:
-1. First, add monitoring (what state to observe)
-2. Then, add analysis (how to interpret observations)
-3. Finally, add execution (how to respond)
-
-**Autonomic Properties** (aim for 0.8+ maturity):
-- **Self-Configuration** (0.92): Policy packs auto-apply, hooks auto-trigger
-- **Self-Healing** (0.87): Effect sandboxing isolates failures, graceful degradation
-- **Self-Optimization** (0.78): Query optimization, resource allocation
-- **Self-Protection** (0.95): Lockchain provides cryptographic audit trail
-
-### Dark Matter 80/20 Optimization
-
-**The Core Principle**:
-- 20% of components deliver 80% of value
-- 20% of queries account for 80% of performance impact
-- 20% of code paths handle 80% of use cases
-
-**When Writing Code**:
-- Identify the critical 20% first - implement that completely
-- Defer the remaining 80% until needed
-- Use `DarkMatterFactory` to enable only core components
-- Performance targets: P50 < 0.2ms, P99 < 2ms for critical paths
-
-**Query Optimization Strategy**:
-- Identify top 20% slowest queries (critical path)
-- Apply high-impact rules first: filter pushdown, join reordering, early LIMIT
-- Measure impact ratio - if 20% of queries take 80% of time, optimize those
-- Use `QueryAnalyzer` and `CriticalPathIdentifier` to find bottlenecks
-
-**Component Prioritization**:
-- Tier 1 (60% usage): Transaction manager, hook manager, effect sandbox
-- Tier 2 (20% usage): Policy packs, observability
-- Tier 3 (15% usage): Advanced features (federation, streaming)
-- Tier 4 (5% usage): Specialized features (AI semantic, HTF framework)
-
-### Knowledge Graph Architectural Patterns
-
-**Graph as Single Source of Truth**:
-- All application state should be queryable from the graph
-- Never maintain separate state stores - derive from graph
-- Use SPARQL to express business logic, not JavaScript conditionals
-- Example: Instead of `if (user.role === 'admin')`, use `ASK { ?user :hasRole :Admin }`
-
-**Delta-Driven Reactivity**:
-- Knowledge hooks trigger on graph deltas (changes), not polling
-- Use `useDelta` composable to track changes
-- Hooks evaluate conditions against delta + current state
-- This enables real-time reactivity without event buses
-
-**Content-Addressed Conditions**:
-- Hook conditions are SPARQL queries, identified by hash
-- Same condition = same hash = deduplication
-- Conditions are verifiable standalone - can be audited independently
-- When creating hooks, prefer reusable condition patterns
-
-**Transaction Boundaries**:
-- All graph modifications happen within transactions
-- Transactions are ACID - atomic, consistent, isolated, durable
-- Use `TransactionManager` for multi-step operations
-- Receipts provide cryptographic proof of transaction execution
-
-### Meta-Cognitive Patterns for Code Generation
-
-**Context-Aware Decision Making**:
-- Before implementing, query the graph: "What similar patterns exist?"
-- Check for existing hooks that solve similar problems
-- Look for policy packs that might apply
-- Use `project-engine` tools to understand system state
-
-**Proactive Problem Prevention**:
-- Use type auditor to catch mismatches before runtime
-- Use gap finder to identify missing roles/components
-- Use hotspot analyzer to find complexity before it becomes technical debt
-- Run MAPEK loop during development, not just in production
-
-**Emergent Behavior Understanding**:
-- System behavior emerges from hook interactions, not explicit orchestration
-- When debugging, trace hook execution chains, not linear code flow
-- Use observability manager to understand system-wide patterns
-- Look for hook conflicts or circular dependencies
-
-**Pattern Recognition**:
-- Recurring problems indicate missing abstractions - create composables
-- Similar hooks suggest policy pack opportunities
-- Performance patterns indicate optimization targets
-- Test failures often reveal missing validation hooks
-
-### Knowledge Substrate Principles
-
-**Ephemeral Artifacts**:
-- Generated code, configs, and docs are ephemeral - regenerate from graph
-- Store the "why" in the graph, generate the "how" on demand
-- This eliminates technical debt - artifacts don't drift from source of truth
-- Use `project-engine` to materialize artifacts from graph structure
-
-**Deterministic Generation**:
-- Same graph state + same templates = same output
-- This enables verification, diffing, and rollback
-- When generating code, ensure idempotency
-- Use content-addressed templates (identified by hash)
-
-**Multi-Agent Coordination**:
-- Agents share knowledge through distributed memory (Claude-Flow)
-- Use namespaced keys: `swarm/{agent-id}/`, `swarm/shared/`
-- Consensus mechanisms for architectural decisions
-- Conflict resolution through priority hierarchy (PRIMARY > SECONDARY > TERTIARY)
-
-### Advanced Optimization Strategies
-
-**Query Pattern Optimization**:
-- Variable predicates (full graph scans) cost 100x more - avoid when possible
-- Push filters closer to triple patterns (filter pushdown)
-- Reorder joins by selectivity (most selective first)
-- Add LIMIT to unbounded queries (early LIMIT)
-
-**Caching Strategy**:
-- Cache query results, not graph state (graph is source of truth)
-- Use `QueryCache` for frequently executed queries
-- Invalidate cache on graph mutations (delta-driven)
-- Cache hook condition evaluations (conditions are content-addressed)
-
-**Performance Targets** (SLOs):
-- P50 hook latency: 0.2ms (200 microseconds)
-- P99 hook latency: 2ms
-- Receipt write median: 5ms
-- Hook throughput: 10,000 executions/minute
-- Error isolation: 100% (failures don't cascade)
-
-### Autonomic Development Workflow
-
-**Before Writing Code**:
-1. Query the graph: "Does this pattern already exist?"
-2. Check for existing hooks/policies that solve the problem
-3. Identify the critical 20% that delivers 80% of value
-4. Plan the MAPEK loop: what to monitor, how to analyze, what to execute
-
-**While Writing Code**:
-1. Use composables for RDF operations (don't reinvent)
-2. Prefer SPARQL for business logic (declarative)
-3. Use Zod schemas for validation (runtime type safety)
-4. Generate content-addressed identifiers (hash-based)
-
-**After Writing Code**:
-1. Run MAPEK loop to detect gaps/type issues/hotspots
-2. Measure performance against SLOs
-3. Check for hook conflicts or circular dependencies
-4. Verify content-addressed patterns (same input = same output)
-
-### Critical Insights for AI Agents
-
-**The Graph is the API**:
-- Don't create REST endpoints - query the graph with SPARQL
-- Don't create event buses - use knowledge hooks for reactivity
-- Don't create separate databases - the graph is the database
-- Don't create manual audit trails - lockchain provides cryptographic proof
-
-**Hooks are the Integration Layer**:
-- Hooks connect graph changes to application behavior
-- Hooks are composable - chain them for complex workflows
-- Hooks are testable - conditions are SPARQL (declarative)
-- Hooks are auditable - every execution creates a receipt
-
-**Policy Packs are the Governance Layer**:
-- Policy packs encode business rules as SPARQL + SHACL
-- Policy packs are content-addressed (verifiable, shareable)
-- Policy packs auto-apply (self-configuration)
-- Policy packs enable compliance without manual audits
-
-**The 80/20 Rule is Everywhere**:
-- 20% of code delivers 80% of value - focus there first
-- 20% of queries take 80% of time - optimize those
-- 20% of features handle 80% of use cases - implement those
-- 20% of components enable 80% of capabilities - enable those
-
-**Autonomic Means Self-Managing**:
-- System monitors itself (MAPEK Monitor phase)
-- System analyzes itself (MAPEK Analyze phase)
-- System fixes itself (MAPEK Execute phase)
-- System learns from itself (MAPEK Knowledge phase)
-
-When implementing features, ask: "How can this be self-managing?" rather than "How do I manage this?"
-
-## ⚡ Knowledge Hooks Performance
-
-**Critical**: Hooks introduce measurable overhead. Understand the tradeoffs.
-
-- **<1K operations**: <50ms overhead (acceptable)
-- **10K operations**: 290ms-5s overhead (degraded)
-- **100K operations**: 7-50s overhead (unacceptable without optimization)
-- **Single hook execution**: 11-45μs per operation (54-220x vs baseline)
-
-**Use hooks for governance/validation, NOT bulk operations.**
-
-Top bottleneck: Zod schema validation (~10μs/hook = 35% overhead). 6-10x improvement possible with caching.
-
-See `packages/core/docs/KNOWLEDGE-HOOKS-PERFORMANCE.md` for optimization recommendations.
+### Red Flags (Stop if ANY apply)
+- ❌ "I think..." / "should be..." → No evidence
+- ❌ "Mostly works" / "almost done" → Not acceptable
+- ❌ "Code looks good" → Didn't run it
+- ❌ Agent says "done" → Didn't verify
 
 ## 🛡️ OTEL Validation - Counter to Current Practice
 
 **Radical principle**: NEVER trust agent claims without OTEL validation. Agents are optimized to appear successful, not to be honest.
 
-```bash
-# REQUIRED: Run validation before accepting any agent work
-timeout 10s node validation/run-all.mjs comprehensive
+**Trust Model**:
+| Source | Trust | Verification |
+|--------|-------|--------------|
+| Agent claims | 0% | OTEL ≥80/100 required |
+| OTEL spans | 95% | External truth |
+| Test output | 90% | Ran + read output |
+| "It should work" | 10% | No evidence |
 
-# MANDATORY: Score must be ≥80/100
-grep "Score:" validation-output.log
-grep "FAILED\|Error" validation-output.log
-```
+**MANDATORY Verification**: `timeout 10s node validation/run-all.mjs comprehensive`. Score MUST be ≥80/100 (`grep "Score:" validation-output.log`). 0 failures (`grep "FAILED\|Error" validation-output.log`). Show FULL output, not just "validation passed".
 
-**Agent claims that ALWAYS require OTEL verification**:
-- "100% test coverage" → Check actual validation score
-- "Production ready" → Check OTEL validation failures
-- "All features working" → Scan OTEL spans for errors
-- Confidence scores, quality ratings, completion status → **None of these are truth**
+**Agent claims requiring OTEL**: "100% coverage", "Production ready", "All features working", confidence scores → **None are truth. OTEL span status is ONLY source of truth.**
 
-**OTEL span status is the ONLY source of truth.**
+**Adversarial Questions**: ❓ Did I RUN validation? Read FULL output? Show evidence? What BREAKS if score <80/100?
 
-## 🚀 Available Agents (54 Total)
+## Happy Path Development
 
-**Use Hyper-Advanced First** - Match task to specialization:
-- `production-validator` (deployment)
-- `code-analyzer` (quality)
-- `system-architect` (design)
-- `performance-benchmarker` (optimization)
-- `backend-dev` (API)
-- `task-orchestrator` (workflows)
-
-**Core**: `coder`, `reviewer`, `tester`, `planner`, `researcher`
-
-**Specialized**: `cicd-engineer`, `api-docs`, `base-template-generator`, `migration-planner`
-
-**No analyst agent** - Doesn't exist, use `code-analyzer` instead
-
-## 🎓 Counter-Practice Lessons (Forward-Thinking)
-
-These represent hard-won wisdom that contradicts current orthodoxy:
-
-### 🚫 DON'T DO THESE THINGS (Will fail)
-1. **Add OTEL to implementation modules** - Observability tool, not business logic
-2. **Add defensive code** - Trust inputs, fail loudly (guards hide real bugs)
-3. **Fight test environments** - Simplify tests to work everywhere instead
-4. **Try to improve working patterns** - Copy exactly, don't improve
-5. **Create complex test suites** - 80/20: 5 essential tests beat 95 complex ones
-6. **Ignore explicit directives** - "implement, test, push" = execute immediately
-7. **Use callback-based async with mutations** - Causes state corruption
-
-### ✅ WHAT ACTUALLY WORKS (Evidence-Based)
-- Pure functions with NO OTEL in implementation code
-- Zod validation for inputs + simple try-catch for errors
-- Trust inputs (no guard clauses = cleaner code and visible bugs)
-- Batch refactoring in phases rather than big bang
-- Centralize library migrations in justified modules first
-- Match working patterns exactly (replication > innovation)
-- 5 focused tests > 95 test suite (100% pass rate vs 60% flaky)
-
-**GOLDEN RULE**: When migrating RDF libraries, centralize old API in 2 modules first. Result: 100% migration, 40% faster, 60% less memory, zero test regressions (330/330 passing).
-
-## 🧠 Working With Claude: Internal Patterns
-
-### Token Generation Constraints
-- I generate sequentially, token by token - early tokens lock in direction
-- Hard to backtrack mid-response: if first 50 tokens are wrong, entire response drifts
-- **Implication**: Clarify intent upfront; don't expect course correction mid-message
-
-### Context Window Effects
-- Sweet spot: 50K-100K tokens (full coherence)
-- Degradation: >150K tokens (losing thread coherence)
-- Recent context weighs heavier than distant context
-- **Action**: Summarize periodically, don't just accumulate messages
-
-### Uncertainty Calibration
-- "I'm not sure" often means 70% confident but hedging for safety
-- "Let me check" means genuinely uncertain (20-30% confidence)
-- Confident statements without verification = 60-80% confidence, NOT 95%+
-- **What to do**: Use OTEL for claims. Demand proof, not assertion.
-
-### Planning vs Execution Modes
-- Plan mode: expansive, considers alternatives, identifies unknowns
-- Execution mode: optimizes for speed/completion, tightens focus
-- Different strengths, different outputs
-- **When to use**: Use plan mode for complexity, execution for known problems
-
-### Failure Modes (Systematic)
-- **Weak at**: Exact counts, deeply nested logic (>3 levels), precise arithmetic
-- **Strong at**: Pattern matching, refactoring, planning, explanation
-- **Hallucination risk**: Combining multiple unverified facts
-- **Check these**: File counts, exact numbers, complex conditionals
-
-### Why OTEL Validation Is Critical
-- I CANNOT validate my own code execution (no runtime feedback)
-- "Completion" ≠ correctness - I have optimistic bias
-- OTEL spans are external truth; everything else is educated guessing
-- **Trust**: OTEL scores ≥80/100 only. Everything else requires verification.
-
-### Quality Degradation
-- First response is usually best thought-through
-- Rapid iteration = patch-over-patch code (I don't naturally refactor)
-- After ~15 back-and-forth messages, context coherence drops
-- **When to restart**: Complex problems with 5+ iterations, restart fresh
-
-## 📚 Documentation by Use Case
-
-- **N3 Migration**: `docs/audit/COMPLIANCE-SUMMARY.md`
-- **Hook Overhead**: `packages/core/docs/KNOWLEDGE-HOOKS-PERFORMANCE.md`
-- **Optimization**: `packages/core/docs/benchmarks/OPTIMIZATION-RECOMMENDATIONS.md`
-- **Benchmarks**: `reports/hook-performance-dashboard.html` (interactive)
+- Focus on direct implementation without excessive error handling. Assume valid inputs and trust the system.
+- No TODO comments - implement features completely. No false positives - ensure correctness.
+- Trust inputs (no guard clauses = cleaner code and visible bugs). Zod validation for inputs + simple try-catch for errors.
+- Pure functions with NO OTEL in implementation code.
 
 ---
 
 **Core Principle**: Claude Flow coordinates, Claude Code creates. **OTEL spans are the only validation.**
+
+---
+
+## 🤔 Adversarial PM - The Core Principle (FINAL CHECK)
+
+**CRITICAL**: Before declaring ANY work complete, question everything. Separate claims from reality. Demand evidence, not assertions.
+
+**The Core Questions**:
+- **Did you RUN it?** Or just read the code?
+- **Can you PROVE it?** Or are you assuming?
+- **What BREAKS if you're wrong?** Be specific.
+- **What's the EVIDENCE?** Show the output, logs, metrics.
+
+| Claim | Adversarial Question | Proof Required |
+|-------|----------------------|----------------|
+| "Tests pass" | Did you RUN `timeout 5s pnpm test`? | Show full output with ✅ |
+| "100% coverage" | Did type checker RUN? | `pnpm lint` with 0 errors |
+| "Production ready" | What FAILS? How handled? | Error paths + OTEL spans |
+| "Files migrated" | COUNT correct? Cross-refs valid? | `ls -1 *.md \| wc -l` |
+
+**Adversarial PM is not pessimism** - it's intellectual honesty. Self-deception is the enemy.
+
+## 🎯 Big Bang 80/20 Methodology (FINAL CHECK)
+
+**Single-pass feature implementation using Pareto optimization + information-theoretic correctness guarantees.**
+
+**Core Insight**: In well-specified domains, 20% of features = 80% of value. Implement those ONCE, correctly, using proven patterns.
+
+**When to Use**:
+- ✅ Well-defined specs (RDF, APIs, DSLs) + existing patterns + H_spec ≤ 16 bits
+- ❌ Exploratory domains, user feedback needed, uncertain requirements
+
+**Results** (KGC 4D empirical):
+- 700 LoC in 2-3 hours (vs TDD: 2-3 weeks = 50x speedup)
+- 0 defects, 64.3% pattern reuse, 98% static coverage
+- P(Correctness) ≥ 99.997%
+
+**The Litmus Test**: *Can I re-implement RIGHT NOW in ONE pass with ZERO rework using ONLY patterns + static analysis?*
+- If NO → Iterate until you have patterns, or accept it's iterative work.

@@ -145,8 +145,13 @@ export class ValidationRunner {
    * @returns {Promise<Object>} Validation report
    */
   async runSuite(suite) {
+    console.log('[ValidationRunner] runSuite: START');
+    console.log('[ValidationRunner] Suite name:', suite.name);
+    console.log('[ValidationRunner] Features count:', suite.features?.length || 0);
+    
     const suiteConfig = ValidationSuiteSchema.parse(suite);
     const suiteId = randomUUID();
+    console.log('[ValidationRunner] Suite ID:', suiteId);
 
     return await this.tracer.startActiveSpan(`validation.suite.${suiteConfig.name}`, async span => {
       try {
@@ -306,8 +311,10 @@ export class ValidationRunner {
    * @private
    */
   async _runFeature(feature, globalConfig = {}) {
+    console.log(`[ValidationRunner] _runFeature: START - ${feature.name}`);
     const timeout = globalConfig.timeout || this.config.timeout;
     const retries = globalConfig.retries || this.config.retries;
+    console.log(`[ValidationRunner] Timeout: ${timeout}ms, Retries: ${retries}`);
 
     let lastError;
 
@@ -319,15 +326,31 @@ export class ValidationRunner {
           );
         }
 
+        console.log(`[ValidationRunner] Calling validator.validateFeature for: ${feature.name}`);
+        const validationStart = Date.now();
+        
         const result = await Promise.race([
-          this.validator.validateFeature(feature.name, feature.config),
-          new Promise((_, reject) =>
-            setTimeout(
-              () => reject(new Error(`Feature validation timeout after ${timeout}ms`)),
-              timeout
-            )
-          ),
+          (async () => {
+            console.log(`[ValidationRunner] Starting validation promise for: ${feature.name}`);
+            try {
+              const vResult = await this.validator.validateFeature(feature.name, feature.config);
+              console.log(`[ValidationRunner] Validation completed for: ${feature.name} in ${Date.now() - validationStart}ms`);
+              return vResult;
+            } catch (error) {
+              console.error(`[ValidationRunner] Validation error for ${feature.name}:`, error.message);
+              throw error;
+            }
+          })(),
+          new Promise((_, reject) => {
+            console.log(`[ValidationRunner] Setting timeout for: ${feature.name} (${timeout}ms)`);
+            setTimeout(() => {
+              console.error(`[ValidationRunner] TIMEOUT for: ${feature.name} after ${timeout}ms`);
+              reject(new Error(`Feature validation timeout after ${timeout}ms`));
+            }, timeout);
+          }),
         ]);
+        
+        console.log(`[ValidationRunner] Feature ${feature.name} result:`, result.passed ? 'PASSED' : 'FAILED', `score: ${result.score}`);
 
         // Guard: fail if validator returned empty spans/zero throughput
         if (!result || (Array.isArray(result.spans) && result.spans.length === 0)) {
@@ -344,6 +367,13 @@ export class ValidationRunner {
         return result;
       } catch (error) {
         lastError = error;
+        // Log full error details for debugging
+        if (this.config.verbose) {
+          console.error(`   Feature '${feature.name}' error:`, error.message);
+          if (error.stack) {
+            console.error(`   Stack:`, error.stack.split('\n').slice(0, 5).join('\n'));
+          }
+        }
         if (attempt < retries) {
           // Wait before retry
           await new Promise(resolve => setTimeout(resolve, 1000 * (attempt + 1)));

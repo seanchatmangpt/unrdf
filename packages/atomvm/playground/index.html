@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AtomVM Playground - Production Validation</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      padding: 40px;
+    }
+
+    h1 {
+      color: #333;
+      margin-bottom: 10px;
+      font-size: 2.5em;
+    }
+
+    .subtitle {
+      color: #666;
+      margin-bottom: 30px;
+      font-size: 1.1em;
+    }
+
+    .module-input {
+      margin-bottom: 20px;
+    }
+
+    .module-input label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #374151;
+    }
+
+    .module-input input {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    .module-input input:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .validation-section {
+      margin-top: 30px;
+    }
+
+    .validation-item {
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      border-left: 4px solid;
+    }
+
+    .validation-item.pending {
+      background: #f3f4f6;
+      border-color: #9ca3af;
+      color: #6b7280;
+    }
+
+    .validation-item.running {
+      background: #fef3c7;
+      border-color: #f59e0b;
+      color: #92400e;
+    }
+
+    .validation-item.pass {
+      background: #d1fae5;
+      border-color: #10b981;
+      color: #065f46;
+    }
+
+    .validation-item.fail {
+      background: #fee2e2;
+      border-color: #ef4444;
+      color: #991b1b;
+    }
+
+    .validation-item h3 {
+      margin-bottom: 5px;
+      font-size: 1.1em;
+    }
+
+    .validation-item .details {
+      font-size: 0.9em;
+      margin-top: 5px;
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+
+    button {
+      background: #667eea;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-weight: 600;
+    }
+
+    button:hover:not(:disabled) {
+      background: #5568d3;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+
+    button:disabled {
+      background: #9ca3af;
+      cursor: not-allowed;
+    }
+
+    .terminal {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      border-radius: 8px;
+      padding: 20px;
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+      font-size: 14px;
+      line-height: 1.6;
+      max-height: 400px;
+      overflow-y: auto;
+      margin-top: 20px;
+    }
+
+    .terminal-line {
+      margin-bottom: 5px;
+    }
+
+    .terminal-line.success {
+      color: #4ade80;
+    }
+
+    .terminal-line.error {
+      color: #f87171;
+    }
+
+    .terminal-line.info {
+      color: #60a5fa;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>⚛️ AtomVM Playground</h1>
+    <p class="subtitle">Production Validation - Processes, Supervision, KGC-4D Integration</p>
+
+    <div class="module-input">
+      <label for="moduleName">Module Name (required):</label>
+      <input type="text" id="moduleName" placeholder="e.g., process-test" />
+    </div>
+
+    <div class="controls">
+      <button id="validateBtn">Run Validation Suite</button>
+      <button id="clearBtn">Clear Results</button>
+    </div>
+
+    <div class="validation-section" id="validationSection">
+      <h2>Validation Results</h2>
+      <div id="validationResults"></div>
+    </div>
+
+    <div class="terminal" id="terminal">
+      <div class="terminal-line info">AtomVM Playground Console</div>
+      <div class="terminal-line info">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
+    </div>
+  </div>
+
+  <script type="module" src="/src/index.mjs"></script>
+</body>
+</html>
+
