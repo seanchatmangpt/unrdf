@@ -1,0 +1,41 @@
+@startuml
+!include C4_Context.puml
+
+title C1 – Fortune-5 Board Decision Fabric (Chair → Erlang → kgn → Board)
+
+Person(chair, "Chairperson", "Initiates and steers strategic decisions.")
+Person(board, "Board Members", "Consume decision bundles, vote, and set direction.")
+
+System_Boundary(decision_fabric, "Board Decision Fabric") {
+
+  System(decision_portal, "Chairperson Browser Portal",
+    "Web Application",
+    "UI the chair uses to trigger and review decisions.")
+
+  System(erlang_edge, "Erlang/AtomVM Gateway",
+    "Erlang on AtomVM/BEAM",
+    "Takes chairperson actions, orchestrates edge knowledge and fast checks.")
+
+  System(worker_cluster, "Decision Workers",
+    "Services / Workers",
+    "Build decision contexts, call kgn, and produce artifacts.")
+
+  System(kgn_service, "@unrdf/kgn Template Service",
+    "Node.js Service",
+    "Deterministic template engine for board decks, memos, and technical annexes.")
+}
+
+System_Ext(core_systems, "Core Enterprise Systems",
+  "ERP, Risk, Finance, Operations, Market Data")
+System_Ext(audit_reg, "Audit & Regulators",
+  "External auditors, regulators, rating agencies")
+
+Rel(chair, decision_portal, "Uses for decision setup and review")
+Rel(decision_portal, erlang_edge, "Sends decision intents, constraints, what-if requests")
+Rel(erlang_edge, worker_cluster, "Dispatches structured tasks, receives fast checks")
+Rel(worker_cluster, kgn_service, "Requests deterministic rendering of board artifacts")
+Rel(worker_cluster, board, "Delivers curated bundles for board review")
+Rel(worker_cluster, core_systems, "Reads live data, writes derived insights")
+Rel(kgn_service, audit_reg, "Exposes provenance / hashes via generated reports, on demand")
+
+@enduml

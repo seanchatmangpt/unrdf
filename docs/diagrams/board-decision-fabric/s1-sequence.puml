@@ -1,0 +1,29 @@
+@startuml
+title S1 – Chair → Erlang → Worker → kgn → Worker → Board
+
+actor Chair
+participant "Chair Portal\n(Browser)" as ChairUI
+participant "Erlang Gateway" as Erl
+participant "Task Queue\n(Erlang)" as Queue
+participant "Decision Worker" as Work
+participant "@unrdf/kgn\nService" as KGN
+participant "Board Portal" as BoardUI
+actor "Board Members" as Board
+
+Chair -> ChairUI: Configure decision\n(meta, constraints, what-if range)
+ChairUI -> Erl: POST /decision_intent\n(JSON payload)
+Erl -> Erl: Validate + route intent
+Erl -> Queue: Enqueue task(decision_id)
+Queue -> Work: Deliver task(decision_id)
+
+Work -> Work: Build context from core data\n+ models (risk, finance, ops)
+Work -> KGN: renderTemplate(ctx)\nfor decks, memos, annexes
+KGN -> Work: Deterministic artifacts Π\n+ determinism metadata
+
+Work -> BoardUI: Publish bundle(decision_id, Π)
+Board -> BoardUI: Open decision bundle
+BoardUI -> Work: Fetch proofs / traces for selected option(s)
+Board -> BoardUI: Submit vote / challenge
+BoardUI -> Erl: POST /decision_feedback\n(vote, challenge, selected scenario)
+
+@enduml
