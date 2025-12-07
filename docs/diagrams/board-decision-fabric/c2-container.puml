@@ -1,0 +1,43 @@
+@startuml
+!include C4_Container.puml
+
+title C2 – Containers: Chair Browser → Erlang → Worker → kgn → Board
+
+Person(chair, "Chairperson")
+Person(board, "Board Members")
+
+System_Boundary(board_stack, "Board Decision Stack") {
+
+  Container(chair_ui, "Chairperson Portal (Browser UI)", "TypeScript / React / Next.js",
+    "Chair initiates decisions, configures constraints, runs scenarios.")
+
+  Container(erlang_gateway, "Erlang Gateway", "Erlang / AtomVM or BEAM",
+    "Validates chair inputs, applies immediate guards, routes work to workers.")
+
+  Container_Boundary(worker_zone, "Decision Worker Zone") {
+
+    Container(decision_worker, "Decision Worker", "Node.js / Worker",
+      "Pulls data from core systems, builds decision contexts.")
+
+    Container(kgn_templates, "@unrdf/kgn Service", "Node.js",
+      "Renders decks, memos, and annexes deterministically from contexts.")
+  }
+
+  Container(board_portal, "Board Portal (Browser UI)", "TypeScript / Next.js",
+    "Board members view decision bundles, proofs, and options.")
+}
+
+System_Ext(core_data, "Core Data Platforms",
+  "DW, Datalake, Risk Engines, Market Feeds")
+
+Rel(chair, chair_ui, "Uses via browser")
+Rel(chair_ui, erlang_gateway, "POST decision_intent\n(what decision, constraints, horizon)")
+Rel(erlang_gateway, decision_worker, "RPC / messages\n(validated decision task)")
+Rel(decision_worker, core_data, "Queries / aggregates\nfinancial, risk, operational data")
+Rel(decision_worker, kgn_templates, "Call renderTemplate(ctx)\n& analysis/lint for determinism")
+Rel(kgn_templates, decision_worker, "Return artifacts Π\n(PPTX, DOCX, LaTeX, JSON summaries)")
+Rel(decision_worker, board_portal, "Publishes decision bundles")
+Rel(board, board_portal, "Reads bundles, interacts\n(voting, comments, what-if)")
+Rel(board_portal, erlang_gateway, "Board what-if / challenge\nfeed back into Erlang guard + worker loop")
+
+@enduml
