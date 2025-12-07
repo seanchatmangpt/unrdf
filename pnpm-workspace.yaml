@@ -1,9 +1,2 @@
 packages:
   - 'packages/*'
-  - 'packages/kgc-4d/playground'
-  - 'packages/cli/examples/*'
-  - 'packages/hooks/examples/*'
-  - 'packages/federation/examples/*'
-  - 'packages/streaming/examples/*'
-  - 'playground/full-stack-example/apps/*'
-  - 'apps/*'

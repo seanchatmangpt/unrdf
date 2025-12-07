@@ -1,9 +1,0 @@
-{
-  "name": "smoke-hook",
-  "kind": "before",
-  "condition": {
-    "type": "sparql-ask",
-    "query": "ASK { ?s ?p ?o }"
-  },
-  "effects": []
-}
