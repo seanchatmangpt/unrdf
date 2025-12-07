@@ -6,7 +6,26 @@
 
 **Separation of Concerns**:
 - **KGC/LLM Swarms**: Plan, reason, select templates, compute context
-- **kgn-templates**: Execute, render, enforce determinism, prove correctness
+- **`@unrdf/kgn`**: Execute, render, enforce determinism, prove correctness
+
+**CRITICAL**: This framework uses **ONLY** the existing `@unrdf/kgn` package APIs.
+**NO direct imports** of Nunjucks or any other template engines.
+
+```javascript
+// ✅ CORRECT: Use @unrdf/kgn APIs
+import {
+  renderTemplate,        // From utils/template-utils.js
+  extractVariables,      // From utils/template-utils.js
+  lintTemplate,          // From utils/template-utils.js
+  createEngine,          // Main export
+  NextJSTemplates,       // Existing Next.js templates
+  OfficeTemplates,       // Existing Office templates
+  LaTeXTemplates         // Existing LaTeX templates
+} from '@unrdf/kgn';
+
+// ❌ WRONG: Do NOT import template engines directly
+// import nunjucks from 'nunjucks';  // NEVER DO THIS
+```
 
 **The 80/20 Law**: 4 template families × 7 canonical jobs = 80% of code generation needs
 
