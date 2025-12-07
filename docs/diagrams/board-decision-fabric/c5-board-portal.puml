@@ -1,0 +1,33 @@
+@startuml
+!include C4_Component.puml
+
+title C5 – Board Portal Components (Bundle Consumption)
+
+Container_Boundary(board_portal, "Board Portal (Next.js)") {
+
+  Component(bundle_view, "BundleView", "React Component",
+    "Displays decision options, metrics, and artifacts.")
+
+  Component(proof_panel, "ProofPanel", "React Component",
+    "Shows hashes, receipts, and lineage for each option.")
+
+  Component(interaction_layer, "InteractionLayer", "React / API Client",
+    "Captures votes, comments, and what-if requests.")
+
+  Component(portal_api, "PortalAPI", "Next.js API Route",
+    "Proxies to Erlang gateway and worker zone.")
+}
+
+Person(board, "Board Members")
+
+System_Ext(worker_cluster, "Decision Workers", "Return bundles")
+System_Ext(erlang_gateway, "Erlang Gateway", "Accepts what-if and queries")
+
+Rel(board, bundle_view, "Views decision bundles")
+Rel(bundle_view, proof_panel, "Opens proof and trace details")
+Rel(bundle_view, portal_api, "Fetch bundles from workers")
+Rel(portal_api, worker_cluster, "Fetch/latest bundle, per decision-id")
+Rel(interaction_layer, portal_api, "Send votes / what-if requests")
+Rel(portal_api, erlang_gateway, "Forward what-if / challenge\nas structured intents")
+
+@enduml
