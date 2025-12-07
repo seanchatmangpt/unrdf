@@ -32,7 +32,7 @@ import { EVENT_TYPES } from '../src/constants.mjs';
  *
  * This is 80% existing code, 20% API organization.
  */
-class AtomVM {
+export class AtomVM {
   constructor(shardId, userName) {
     this.shardId = shardId;
     this.userName = userName;
