@@ -1,6 +1,7 @@
 packages:
   - 'packages/*'
   - 'packages/kgc-4d/playground'
+  - 'packages/atomvm/playground'
   - 'packages/cli/examples/*'
   - 'packages/hooks/examples/*'
   - 'packages/federation/examples/*'
