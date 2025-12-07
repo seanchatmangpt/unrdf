@@ -1,0 +1,36 @@
+@startuml
+!include C4_Component.puml
+
+title C4 – Decision Worker Components (Workers + @unrdf/kgn)
+
+Container_Boundary(worker, "Decision Worker (Node.js)") {
+
+  Component(task_consumer, "TaskConsumer", "Worker",
+    "Reads tasks from Erlang bridge / queue.")
+
+  Component(context_builder, "ContextBuilder", "Worker",
+    "Pulls data from core systems, builds decision context object.")
+
+  Component(risk_eval, "RiskEvaluator", "Worker",
+    "Runs risk/finance models; computes metrics for board options.")
+
+  Component(kgn_client, "kgnClient", "@unrdf/kgn SDK",
+    "Calls renderTemplate / lintTemplate / extractVariables on kgn service.")
+
+  Component(bundle_assembler, "BundleAssembler", "Worker",
+    "Packages artifacts and metadata into a board-ready bundle.")
+}
+
+System_Ext(core_data, "Core Data Systems", "ERP, DWH, Risk engines")
+System_Ext(kgn_service, "kgn Service", "@unrdf/kgn", "Deterministic template rendering")
+
+Rel(task_consumer, context_builder, "Pass decision metadata")
+Rel(context_builder, core_data, "Query / aggregate required data")
+Rel(context_builder, risk_eval, "Provide structured context for modeling")
+Rel(risk_eval, kgn_client, "Provide enriched context (options, metrics)")
+Rel(kgn_client, kgn_service, "Calls renderTemplate(), lintTemplate()")
+Rel(kgn_service, kgn_client, "Returns rendered PPTX/DOCX/LaTeX/JSON")
+Rel(kgn_client, bundle_assembler, "Pass artifacts + determinism info")
+Rel(bundle_assembler, task_consumer, "Return final decision bundle\n(for delivery to board portal)")
+
+@enduml

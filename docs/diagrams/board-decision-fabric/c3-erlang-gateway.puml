@@ -1,0 +1,29 @@
+@startuml
+!include C4_Component.puml
+
+title C3 – Erlang Gateway Components (Chair → Workers)
+
+Container_Boundary(erlang_gateway, "Erlang Gateway (AtomVM / BEAM)") {
+
+  Component(http_front, "HTTP Frontend", "Erlang Cowboy / Custom HTTP",
+    "Accepts requests from chair/board portals, parses JSON payloads.")
+
+  Component(intent_router, "IntentRouter", "Erlang Process",
+    "Classifies requests: new decision, scenario request, update, or query.")
+
+  Component(guard_srv, "GuardServer", "Erlang Process",
+    "Applies fast guards (syntax, basic risk thresholds, authorization).")
+
+  Component(task_queue, "TaskQueue", "Erlang Process + ETS / Mnesia",
+    "Queues validated decision tasks for worker zone.")
+
+  Component(worker_bridge, "WorkerBridge", "Erlang Process",
+    "Bridges Erlang messages to worker cluster (e.g. via NATS/Kafka/gRPC).")
+}
+
+Rel(http_front, intent_router, "Forward parsed decision intents")
+Rel(intent_router, guard_srv, "Ask: is this allowed within envelope?")
+Rel(guard_srv, task_queue, "Enqueue task if allowed")
+Rel(task_queue, worker_bridge, "Deliver tasks for processing")
+Rel(worker_bridge, http_front, "Send fast status / error replies")
+@enduml
