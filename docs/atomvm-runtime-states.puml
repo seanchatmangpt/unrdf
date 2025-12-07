@@ -1,0 +1,45 @@
+@startuml AtomVM Runtime State Machine
+
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontSize 10
+
+title AtomVM Runtime State Machine - Poka-Yoke Design
+
+[*] --> Uninitialized : new AtomVMNodeRuntime()
+
+Uninitialized --> Loading : load()
+Loading --> Ready : WASM loaded successfully
+Loading --> Error : WASM load failed
+
+Ready --> Executing : execute(avmPath)
+Executing --> Ready : execution complete
+Executing --> Error : execution failed
+
+Ready --> Destroyed : destroy()
+Error --> Destroyed : destroy()
+Executing --> Destroyed : destroy()
+
+note right of Uninitialized
+  **Poka-Yoke:**
+  - Cannot execute before load
+  - Cannot load twice
+  - State transitions are explicit
+  - Invalid operations throw errors
+end note
+
+note right of Ready
+  **Production Ready:**
+  - Real WASM execution
+  - OTEL spans for all operations
+  - State tracked in spans
+end note
+
+note right of Error
+  **Fail Fast:**
+  - No graceful degradation
+  - Errors propagate immediately
+  - Error spans created
+end note
+
+@enduml
+

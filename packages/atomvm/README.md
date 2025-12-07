@@ -1,247 +1,179 @@
-# @unrdf/atomvm - Browser-Based AtomVM Runtime
+# @unrdf/atomvm
 
-Run AtomVM (Erlang/BEAM VM) in the browser using WebAssembly and Service Workers.
+Run AtomVM (Erlang/BEAM VM) in the browser and Node.js using WebAssembly.
+
+## Quick Start
+
+### Browser
+
+1. **Build an Erlang module:**
+   ```bash
+   pnpm run build:erlang mymodule
+   ```
+
+2. **Start dev server:**
+   ```bash
+   pnpm dev
+   ```
+
+3. **Open browser with module name:**
+   ```
+   http://localhost:3000?module=mymodule
+   ```
+
+4. **Click "Initialize AtomVM" then "Run Example"**
+
+The page may auto-reload once to enable Cross-Origin-Isolation (required for SharedArrayBuffer).
+
+### Node.js
+
+1. **Build an Erlang module:**
+   ```bash
+   pnpm run build:erlang mymodule
+   ```
+
+2. **Execute the .avm file:**
+   ```bash
+   node src/cli.mjs public/mymodule.avm
+   ```
 
 ## Features
 
-- **Cross-Origin-Isolation**: Uses `coi-serviceworker` to enable SharedArrayBuffer
-- **WebAssembly Support**: Ready for AtomVM WASM module integration
-- **Service Worker Architecture**: Intercepts requests to add COOP/COEP headers
-- **Threading Support**: SharedArrayBuffer enables multi-threaded WASM execution
-- **Beautiful UI**: Modern terminal interface for BEAM code execution
+- **State Machine Design**: Poka-yoke error prevention - invalid operations are impossible
+- **Real AtomVM WASM**: Uses actual AtomVM v0.6.6 compiled to WebAssembly
+- **Dual Runtime**: Works in both browser and Node.js environments
+- **Cross-Origin-Isolation**: Automatic COI setup via service workers
+- **Module-Based**: Explicit module naming (no defaults)
+- **SLA Tracking**: Strict SLA for JS→Erlang→JS roundtrips (<10ms latency, <0.1% error rate)
+- **Poka-Yoke SLA**: Prevents operations that would violate SLA thresholds
 
-## Architecture
+## Installation
 
+```bash
+pnpm install
 ```
-┌─────────────────────────────────────────────────────────┐
-│                     Browser Tab                          │
-│  ┌────────────────────────────────────────────────────┐ │
-│  │           index.html (UI)                          │ │
-│  │  ┌──────────────────────────────────────────────┐ │ │
-│  │  │  src/index.mjs                               │ │ │
-│  │  │  - App orchestration                         │ │ │
-│  │  │  - Event handling                            │ │ │
-│  │  └──────────────────────────────────────────────┘ │ │
-│  │  ┌──────────────────────────────────────────────┐ │ │
-│  │  │  src/service-worker-manager.mjs              │ │ │
-│  │  │  - Register coi-serviceworker                │ │ │
-│  │  │  - Check COI status                          │ │ │
-│  │  └──────────────────────────────────────────────┘ │ │
-│  │  ┌──────────────────────────────────────────────┐ │ │
-│  │  │  src/atomvm-runtime.mjs                      │ │ │
-│  │  │  - Load AtomVM WASM                          │ │ │
-│  │  │  - Execute BEAM bytecode                     │ │ │
-│  │  │  - Manage SharedArrayBuffer                  │ │ │
-│  │  └──────────────────────────────────────────────┘ │ │
-│  └────────────────────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────────┘
-                           │
-                           │ Fetch requests
-                           ▼
-┌─────────────────────────────────────────────────────────┐
-│                  Service Worker                          │
-│  ┌────────────────────────────────────────────────────┐ │
-│  │  coi-serviceworker                                 │ │
-│  │  - Intercepts all requests                         │ │
-│  │  - Adds COOP: same-origin header                   │ │
-│  │  - Adds COEP: require-corp header                  │ │
-│  │  - Enables crossOriginIsolated = true              │ │
-│  └────────────────────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────────┘
-                           │
-                           │ Modified responses
-                           ▼
-              ┌──────────────────────────┐
-              │  SharedArrayBuffer       │
-              │  Available ✓             │
-              └──────────────────────────┘
-                           │
-                           ▼
-              ┌──────────────────────────┐
-              │  AtomVM WASM Module      │
-              │  With threading support  │
-              └──────────────────────────┘
-```
-
-## How It Works
-
-### Cross-Origin-Isolation (COI)
-
-Modern browsers require two HTTP headers to enable SharedArrayBuffer:
-
-1. **Cross-Origin-Opener-Policy (COOP)**: `same-origin`
-2. **Cross-Origin-Embedder-Policy (COEP)**: `require-corp`
-
-These headers ensure the page is isolated from cross-origin resources, preventing timing attacks via SharedArrayBuffer.
-
-### The Service Worker Trick
-
-`coi-serviceworker` is a tiny library that:
-
-1. Registers a service worker that intercepts ALL fetch requests
-2. Adds the COOP and COEP headers to responses
-3. Effectively enables `crossOriginIsolated = true`
-4. Makes SharedArrayBuffer available
-
-This works even when you can't control the server headers (e.g., static hosting).
-
-### Why This Matters for AtomVM
-
-AtomVM compiled to WebAssembly needs:
-- **Threading**: For concurrent BEAM processes
-- **SharedArrayBuffer**: For shared memory between threads
-- **Atomic operations**: For synchronization
-
-Without COI, these features are disabled by browsers for security reasons.
 
 ## Usage
 
-### Development
+### Browser Runtime
 
-```bash
-# Install dependencies
-pnpm install
+The browser runtime requires a module name in the URL:
 
-# Start dev server
-pnpm run dev
-
-# Open http://localhost:3000
+```javascript
+// URL: ?module=mymodule
+// Code automatically:
+// 1. Registers service worker for COI
+// 2. Creates AtomVMRuntime with module name
+// 3. Enables UI controls
 ```
 
-### Production Build
-
-```bash
-# Build for production
-pnpm run build
-
-# Preview production build
-pnpm run preview
-
-# Or serve with Python
-pnpm run serve
-```
-
-### Integrating Real AtomVM WASM
-
-To use the actual AtomVM WebAssembly module:
-
-1. **Build AtomVM for WASM** (from AtomVM source):
-   ```bash
-   emcc -O3 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 \
-        -s PTHREAD_POOL_SIZE=4 \
-        -o atomvm.wasm atomvm.c
-   ```
-
-2. **Place WASM binary** in `public/`:
-   ```bash
-   cp atomvm.wasm packages/atomvm/public/
-   ```
-
-3. **Update `atomvm-runtime.mjs`**:
-   ```javascript
-   async loadWASM() {
-     const response = await fetch('/atomvm.wasm');
-     const wasmBinary = await response.arrayBuffer();
-     this.wasmModule = await WebAssembly.compile(wasmBinary);
-
-     const imports = {
-       env: {
-         // Provide required imports
-       }
-     };
-
-     this.wasmInstance = await WebAssembly.instantiate(
-       this.wasmModule,
-       imports
-     );
-   }
-   ```
-
-## API
-
-### AtomVMRuntime
-
+**API:**
 ```javascript
 import { AtomVMRuntime } from '@unrdf/atomvm';
 
-const runtime = new AtomVMRuntime(terminalUI);
-
-// Load WASM module
+const runtime = new AtomVMRuntime(terminal, 'mymodule');
 await runtime.loadWASM();
-
-// Execute BEAM bytecode
-const result = await runtime.executeBeam(beamBytes);
-
-// Run example
-await runtime.runExample();
-
-// Cleanup
-runtime.destroy();
+await runtime.executeBeam('/mymodule.avm');
 ```
 
-### Service Worker Manager
+### Node.js Runtime
 
 ```javascript
-import {
-  registerServiceWorker,
-  checkCrossOriginIsolation,
-  getCOIStatus
-} from '@unrdf/atomvm/service-worker-manager';
+import { AtomVMNodeRuntime } from '@unrdf/atomvm/src/node-runtime.mjs';
 
-// Register COI service worker
-await registerServiceWorker();
+const runtime = new AtomVMNodeRuntime();
+await runtime.load();
+await runtime.execute('/path/to/file.avm');
+```
 
-// Check if COI is enabled
-const isIsolated = checkCrossOriginIsolation();
+### CLI
 
-// Get detailed status
-const status = getCOIStatus();
+```bash
+# Execute .avm file
+node src/cli.mjs public/mymodule.avm
+```
+
+### Build Scripts
+
+```bash
+# Build Erlang module to .avm
+pnpm run build:erlang mymodule
+
+# Complete workflow (build + instructions)
+pnpm run build:erlang:workflow mymodule
+
+# Clean build artifacts
+pnpm run build:erlang:clean
 ```
 
 ## Browser Compatibility
 
-- **Chrome/Edge**: 92+ (SharedArrayBuffer support)
-- **Firefox**: 95+ (with COI)
-- **Safari**: 15.2+ (with COI)
+- **Chrome/Edge**: 92+ ✅
+- **Firefox**: 95+ ✅
+- **Safari**: 15.2+ ✅
 
-All modern browsers support Service Workers and SharedArrayBuffer with proper headers.
+Requires service worker support and Cross-Origin-Isolation (automatic via coi-serviceworker).
 
-## Security Considerations
+## SLA Requirements
 
-- Service worker runs on same origin only
-- COOP/COEP headers isolate the page
-- No access to cross-origin resources without CORS
-- SharedArrayBuffer only available within isolated context
+**Strict SLA for JS→Erlang→JS Roundtrips**:
+- **Latency**: <10ms per roundtrip (end-to-end)
+- **Error Rate**: <0.1% (1 error per 1000 roundtrips)
 
-## Troubleshooting
+**Poka-Yoke Enforcement**:
+- Operations rejected if error rate would exceed 0.1%
+- Latency warnings logged if >10ms (but allowed - may be transient)
+- SLA metrics tracked in OTEL spans
 
-### SharedArrayBuffer not available
+See [SLA Roundtrip Documentation](../../docs/SLA-ROUNDTRIP.md) for details.
 
-1. Check service worker is registered: DevTools → Application → Service Workers
-2. Verify `crossOriginIsolated = true` in console
-3. Hard reload (Ctrl+Shift+R) to activate service worker
-4. Check for mixed content (HTTPS required for SharedArrayBuffer)
+## Documentation
 
-### Service worker not registering
+Complete documentation is organized using the [Diataxis](https://diataxis.fr/) framework:
 
-1. Ensure you're on `http://localhost` or HTTPS (not `http://0.0.0.0`)
-2. Check browser console for errors
-3. Clear service workers: DevTools → Application → Clear storage
-4. Verify `coi-serviceworker` is installed
+- **[Tutorials](./docs/tutorials/)** - Learn how to use AtomVM in the browser
+- **[How-To Guides](./docs/how-to/)** - Solve specific problems
+- **[Reference](./docs/reference/)** - Complete API documentation
+- **[Explanations](./docs/explanation/)** - Understand the design and architecture
 
-### WASM module fails to load
+Start with: [Getting Started Tutorial](./docs/tutorials/01-getting-started.md)
 
-1. Check WASM file is in `public/` directory
-2. Verify Content-Type: `application/wasm`
-3. Check WASM was compiled with `-s PTHREAD_POOL_SIZE=N`
-4. Ensure SharedArrayBuffer is available
+## Development
 
-## References
+```bash
+# Run tests
+pnpm test
 
-- [AtomVM](https://github.com/atomvm/AtomVM) - Erlang/BEAM VM for embedded devices
-- [coi-serviceworker](https://github.com/gzuidhof/coi-serviceworker) - Cross-Origin-Isolation via Service Worker
-- [WebAssembly Threading](https://emscripten.org/docs/porting/pthreads.html) - Emscripten pthreads guide
-- [SharedArrayBuffer](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SharedArrayBuffer) - MDN documentation
+# Run tests in watch mode
+pnpm test:watch
+
+# Run browser integration tests
+pnpm test:browser
+
+# Run Playwright E2E tests
+pnpm test:playwright
+
+# Build for production
+pnpm build
+
+# Preview production build
+pnpm preview
+```
+
+## Architecture
+
+- **Browser**: Service worker enables COI → SharedArrayBuffer → AtomVM WASM execution
+- **Node.js**: Spawns Node.js process with AtomVM-node-v0.6.6.js
+- **State Machine**: Prevents invalid operations (poka-yoke design)
+- **Module-Based**: Explicit module naming required (no defaults)
+
+See [Architecture Explanation](./docs/explanation/architecture.md) for details.
+
+## Requirements
+
+- **Browser**: Module name in URL (`?module=<name>`)
+- **Node.js**: Node.js 18+, Erlang toolchain for building modules
+- **Build Tools**: `erlc` and `packbeam` in PATH
 
 ## License
 

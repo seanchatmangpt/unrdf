@@ -1,0 +1,91 @@
+@startuml OTEL Span Hierarchy
+
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontSize 10
+
+title OTEL Span Hierarchy - End-to-End Tracing
+
+package "Validation Suite" {
+  [validation.suite.atomvm-playground] as SuiteSpan
+}
+
+package "Feature Validation" {
+  [validation.atomvm-bridge] as BridgeValidation
+  [validation.atomvm-runtime] as RuntimeValidation
+  [validation.atomvm-erlang] as ErlangValidation
+}
+
+package "Feature Execution" {
+  [feature.atomvm-bridge] as BridgeFeature
+  [feature.atomvm-runtime] as RuntimeFeature
+  [feature.atomvm-erlang] as ErlangFeature
+}
+
+package "Execution Functions" {
+  [validation.execute.bridge] as BridgeExec
+  [validation.execute.runtime] as RuntimeExec
+  [validation.execute.erlang] as ErlangExec
+}
+
+package "Bridge Operations" {
+  [bridge.emit_event] as BridgeEmit
+  [bridge.register_hook] as BridgeHook
+  [bridge.process_intent] as BridgeIntent
+}
+
+package "Runtime Operations" {
+  [atomvm.load_wasm] as RuntimeLoad
+  [atomvm.execute_beam] as RuntimeExecute
+  [atomvm.state_transition] as RuntimeState
+}
+
+package "Erlang Process Operations" {
+  [erlang.process.emit_event] as ErlangEmit
+  [erlang.process.register_hook] as ErlangHook
+  [erlang.process.intent] as ErlangIntent
+  [erlang.process.execute] as ErlangExecute
+}
+
+SuiteSpan --> BridgeValidation
+SuiteSpan --> RuntimeValidation
+SuiteSpan --> ErlangValidation
+
+BridgeValidation --> BridgeFeature
+RuntimeValidation --> RuntimeFeature
+ErlangValidation --> ErlangFeature
+
+BridgeFeature --> BridgeExec
+RuntimeFeature --> RuntimeExec
+ErlangFeature --> ErlangExec
+
+BridgeExec --> BridgeEmit
+BridgeExec --> BridgeHook
+BridgeExec --> BridgeIntent
+
+RuntimeExec --> RuntimeLoad
+RuntimeExec --> RuntimeState
+RuntimeExec --> RuntimeExecute
+
+ErlangExec --> ErlangExecute
+ErlangExecute --> ErlangEmit : via bridge interceptor
+ErlangExecute --> ErlangHook : via bridge interceptor
+ErlangExecute --> ErlangIntent : via bridge interceptor
+
+note right of SuiteSpan
+  Root span for entire
+  validation suite
+end note
+
+note right of BridgeEmit
+  Created by bridge interceptor
+  when Erlang emits events
+end note
+
+note right of ErlangEmit
+  Created by bridge interceptor
+  when parsing KGC4D_BRIDGE
+  commands from Erlang
+end note
+
+@enduml
+

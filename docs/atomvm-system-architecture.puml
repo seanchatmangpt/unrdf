@@ -1,0 +1,71 @@
+@startuml AtomVM System Architecture
+
+!define RECTANGLE class
+
+package "Validation Layer" {
+  [ValidationRunner] as Runner
+  [OTELValidator] as Validator
+  [OTELSpanBuilder] as SpanBuilder
+}
+
+package "AtomVM Execution Layer" {
+  [executeAtomVMBridge] as BridgeExec
+  [executeAtomVMRuntime] as RuntimeExec
+  [executeAtomVMErlang] as ErlangExec
+}
+
+package "AtomVM Runtime" {
+  [AtomVMRuntime] as BrowserRuntime
+  [AtomVMNodeRuntime] as NodeRuntime
+}
+
+package "Bridge Layer" {
+  [KGC4DBridge] as Bridge
+  [BridgeInterceptor] as Interceptor
+}
+
+package "OTEL Instrumentation" {
+  [OTEL Tracer] as Tracer
+  [OTEL Span Processor] as SpanProcessor
+  [OTEL Span Collector] as SpanCollector
+}
+
+Runner --> Validator : validates features
+Validator --> SpanBuilder : executes features
+SpanBuilder --> BridgeExec : bridge operations
+SpanBuilder --> RuntimeExec : runtime operations
+SpanBuilder --> ErlangExec : erlang process lifecycle
+
+BridgeExec --> Bridge : emitEvent, registerHook, processIntent
+RuntimeExec --> NodeRuntime : load, execute
+ErlangExec --> NodeRuntime : load, execute
+ErlangExec --> Bridge : getBridge
+
+NodeRuntime --> Tracer : creates OTEL spans
+Bridge --> Tracer : creates OTEL spans
+Interceptor --> Tracer : creates OTEL spans
+
+Tracer --> SpanProcessor : processes spans
+SpanProcessor --> SpanCollector : collects spans
+SpanCollector --> Validator : validates spans
+
+note right of Interceptor
+  Intercepts Module.print/printErr
+  Parses KGC4D_BRIDGE commands
+  Creates real OTEL spans
+end note
+
+note right of Bridge
+  Real KGC-4D integration
+  Real hooks integration
+  Creates OTEL spans for all operations
+end note
+
+note right of NodeRuntime
+  Real AtomVM WASM execution
+  Creates OTEL spans for load/execute
+  State machine (poka-yoke)
+end note
+
+@enduml
+

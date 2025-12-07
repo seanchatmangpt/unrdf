@@ -1,0 +1,77 @@
+@startuml Validation Pipeline
+
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontSize 10
+
+title Validation Pipeline - Production Ready
+
+participant "ValidationRunner" as Runner
+participant "OTELValidator" as Validator
+participant "OTELSpanBuilder" as SpanBuilder
+participant "Feature Executor" as Executor
+participant "OTEL Tracer" as Tracer
+participant "Span Collector" as Collector
+participant "Span Validator" as SpanValidator
+
+Runner -> Validator : validateFeature(feature, config)
+activate Validator
+
+Validator -> Validator : startActiveSpan('validation.{feature}')
+Validator -> Validator : _startSpanCollection(validationId)
+Validator -> Validator : _startMetricCollection(validationId)
+
+Validator -> Executor : _executeFeature(feature, config, validationId)
+activate Executor
+
+Executor -> Tracer : startActiveSpan('feature.{feature}')
+Executor -> SpanBuilder : executeAtomVM*(validator, parentSpan, validationId)
+activate SpanBuilder
+
+SpanBuilder -> Tracer : startActiveSpan('validation.execute.*')
+SpanBuilder -> SpanBuilder : execute real operations
+note right of SpanBuilder
+  **Production Ready:**
+  - Real bridge operations
+  - Real runtime operations
+  - Real Erlang execution
+  - No simulation
+end note
+
+SpanBuilder -> SpanBuilder : create span data objects
+SpanBuilder -> Validator : add to _validationTempSpans
+SpanBuilder --> Executor : return result
+deactivate SpanBuilder
+
+Executor -> Tracer : end span
+Executor --> Validator : return result
+deactivate Executor
+
+Validator -> Validator : collect temp spans
+Validator -> Collector : _collectSpans(validationId)
+activate Collector
+Collector --> Validator : collected spans
+deactivate Collector
+
+Validator -> SpanValidator : _validateSpans(spans, config)
+activate SpanValidator
+SpanValidator -> SpanValidator : check expected spans
+SpanValidator -> SpanValidator : check required attributes
+SpanValidator -> SpanValidator : check error rates
+SpanValidator --> Validator : validation result
+deactivate SpanValidator
+
+Validator -> Validator : calculate score
+Validator -> Validator : end span
+Validator --> Runner : validation result
+deactivate Validator
+
+note right of Validator
+  **Production Ready:**
+  - All spans from real OTEL instrumentation
+  - No simulated spans
+  - Real validation against actual behavior
+  - Fail fast on errors
+end note
+
+@enduml
+

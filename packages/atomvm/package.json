@@ -1,17 +1,31 @@
 {
   "name": "@unrdf/atomvm",
   "version": "0.1.0",
-  "description": "Browser-based AtomVM runtime using service workers for SharedArrayBuffer support",
+  "description": "Run AtomVM (Erlang/BEAM VM) in browser and Node.js using WebAssembly",
   "type": "module",
   "main": "src/index.mjs",
   "exports": {
-    ".": "./src/index.mjs"
+    ".": "./src/index.mjs",
+    "./service-worker-manager": "./src/service-worker-manager.mjs"
   },
   "scripts": {
     "dev": "vite",
+    "dev:full": "echo 'Module name required: pnpm run dev:full <module>' && exit 1",
     "build": "vite build",
     "preview": "vite preview",
-    "serve": "python3 -m http.server 8080 --directory dist"
+    "serve": "python3 -m http.server 8080 --directory dist",
+    "atomvm:node": "node src/cli.mjs",
+    "atomvm:run": "echo 'Module name required: pnpm run atomvm:run <module>' && exit 1",
+    "build:erlang": "node scripts/index.mjs build",
+    "build:erlang:workflow": "node scripts/index.mjs workflow",
+    "build:erlang:clean": "node scripts/index.mjs clean",
+    "test": "vitest run --coverage",
+    "test:watch": "vitest --coverage",
+    "test:ui": "vitest --ui",
+    "test:browser": "vitest run --config vitest.browser.config.mjs",
+    "test:browser:watch": "vitest --config vitest.browser.config.mjs",
+    "test:playwright": "playwright test",
+    "test:playwright:ui": "playwright test --ui"
   },
   "keywords": [
     "atomvm",
@@ -22,9 +36,14 @@
     "service-worker"
   ],
   "dependencies": {
+    "@opentelemetry/api": "^1.8.0",
     "coi-serviceworker": "^0.1.7"
   },
   "devDependencies": {
-    "vite": "^5.0.0"
+    "vite": "^5.0.0",
+    "vitest": "^4.0.15",
+    "jsdom": "^24.0.0",
+    "@playwright/test": "^1.57.0",
+    "@vitest/browser": "^4.0.15"
   }
 }
