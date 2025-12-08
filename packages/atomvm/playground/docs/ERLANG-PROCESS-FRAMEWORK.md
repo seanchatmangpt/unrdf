@@ -1,60 +1,82 @@
-# Erlang-Like Process Framework
+# Erlang-Like Process Framework - Erlang State + JavaScript Callbacks
 
-JavaScript microframework that mirrors Erlang's process model with poka-yoke design.
+**Architecture**: All process state stored in Erlang, JavaScript provides callbacks only.
 
 ## Overview
 
-The framework provides:
-- **Process Model**: Isolated processes with mailboxes
-- **Message Passing**: Asynchronous send/receive
-- **Links**: Bidirectional failure propagation
-- **Monitors**: Unidirectional failure notification
-- **Supervision**: Process trees with restart strategies
-- **Poka-Yoke**: Invalid states and operations are impossible
+The framework provides an Erlang-like process model where:
+- **State Management**: All process state (mailbox, links, monitors) stored in Erlang ETS tables
+- **JavaScript Callbacks**: Init and message handler functions registered in JavaScript, invoked by Erlang via bridge
+- **Thin JS API**: JavaScript API is a thin wrapper that communicates with Erlang via bridge commands
+
+## Architecture
+
+```
+┌─────────────────────────────────────────────────────────┐
+│ JavaScript Layer (Thin API Wrapper)                    │
+│ - spawn(name, initFn, handleFn)                        │
+│ - send(name, message)                                  │
+│ - link(pid1, pid2)                                     │
+│ - monitor(pid)                                          │
+│ - Supervisor class                                      │
+│                                                         │
+│ Callback Registry:                                     │
+│ - Map<callbackId, { initFn, handleFn }>                │
+└─────────────────┬─────────────────────────────────────┘
+                   │ Bridge Commands (bidirectional)
+                   │ JS→Erlang: PROCESS_FRAMEWORK:command:args
+                   │ Erlang→JS: JS_CALLBACK:type:callbackId:pid:args
+┌─────────────────▼─────────────────────────────────────┐
+│ Erlang Layer (State Management)                        │
+│ - process_framework.erl (core implementation)          │
+│ - process_supervisor.erl (supervision)                  │
+│ - ETS tables: mailbox, links, monitors, states        │
+│ - Process registry: name → pid mapping                 │
+│ - Callback registry: callbackId → pid (for routing)   │
+└─────────────────────────────────────────────────────────┘
+```
 
 ## Core Concepts
 
-### Process
+### Process State (Erlang)
 
-A process is an isolated unit of execution with:
-- **Mailbox**: Queue of messages
-- **State Machine**: Prevents invalid operations
-- **Links**: Connected processes (bidirectional)
-- **Monitors**: Watched processes (unidirectional)
+All process state is stored in Erlang ETS tables:
+- **Mailbox**: `process_mailboxes` ETS table `{pid, queue}`
+- **Links**: `process_links` ETS table `{pid, set of linked pids}`
+- **Monitors**: `process_monitors` ETS table `{pid, set of {ref, monitor_pid}}`
+- **States**: `process_states` ETS table `{pid, state}`
+- **Registry**: `process_registry` ETS table `{name, pid}`
 
-### Message Passing
+### JavaScript Callbacks
 
-Processes communicate via asynchronous messages:
-- **Send**: Non-blocking message delivery
-- **Receive**: Blocking message retrieval
-- **Pattern Matching**: Filter messages by type
+JavaScript provides only callback functions:
+- **Init Callback**: Called when process starts
+- **Handle Callback**: Called when process receives a message
 
-### Links
+Callbacks are registered in JavaScript and invoked by Erlang via bridge commands.
 
-Links create bidirectional failure propagation:
-- If process A links to process B, both are linked
-- If A dies, B dies (and vice versa)
-- Used for process groups that should fail together
+### Bridge Communication
 
-### Monitors
+**JavaScript → Erlang**:
+- `PROCESS_FRAMEWORK:spawn:name:callbackId:options` - Spawn process
+- `PROCESS_FRAMEWORK:send:name:message` - Send message
+- `PROCESS_FRAMEWORK:link:pid1:pid2` - Link processes
+- `PROCESS_FRAMEWORK:monitor:pid:monitorPid` - Monitor process
+- `PROCESS_FRAMEWORK:exit:pid:reason` - Exit process
 
-Monitors create unidirectional failure notification:
-- If process A monitors process B, A receives DOWN message when B dies
-- B is not affected by A's death
-- Used for supervision and error handling
+**Erlang → JavaScript**:
+- `JS_CALLBACK:init:callbackId:pid:` - Invoke init callback
+- `JS_CALLBACK:handle:callbackId:pid:message` - Invoke message handler
 
-### Supervision
-
-Supervisors manage child processes:
-- **Restart Strategies**: one_for_one, one_for_all, rest_for_one
-- **Automatic Restart**: Children are restarted on failure
-- **Process Trees**: Hierarchical process organization
+**JavaScript → Erlang (Results)**:
+- `PROCESS_FRAMEWORK:callback_result:callbackId:pid:result` - Callback result
+- `PROCESS_FRAMEWORK:callback_error:callbackId:pid:error` - Callback error
 
 ## API Reference
 
 ### spawn(name, initFn, handleFn, options)
 
-Spawn a new process.
+Spawn a new process. State is stored in Erlang, callbacks are registered in JavaScript.
 
 ```javascript
 import { spawn } from './erlang-process.mjs';
@@ -62,11 +84,11 @@ import { spawn } from './erlang-process.mjs';
 const process = spawn(
   'my_process',
   async () => {
-    // Initialization
+    // Initialization callback (invoked by Erlang)
     return { initialized: true };
   },
   async (message) => {
-    // Message handler
+    // Message handler callback (invoked by Erlang)
     if (message.type === 'ping') {
       return { type: 'pong' };
     }
@@ -80,11 +102,19 @@ const process = spawn(
 **Poka-Yoke**:
 - Validates `name` is non-empty string
 - Validates `initFn` and `handleFn` are functions
-- Prevents duplicate process names
+- Prevents duplicate process names (validated in Erlang)
+
+**Architecture**:
+1. JavaScript registers callbacks in `process-callback-registry.mjs`
+2. JavaScript sends `PROCESS_FRAMEWORK:spawn:name:callbackId:options` to Erlang
+3. Erlang spawns process and stores state in ETS tables
+4. Erlang invokes init callback via `JS_CALLBACK:init:callbackId:pid:`
+5. JavaScript callback executes and returns result
+6. Result routed back to Erlang process via `PROCESS_FRAMEWORK:callback_result:callbackId:pid:result`
 
 ### send(name, message)
 
-Send message to process by name.
+Send message to process by name. Message is stored in Erlang mailbox.
 
 ```javascript
 import { send } from './erlang-process.mjs';
@@ -93,333 +123,240 @@ send('my_process', { type: 'ping', data: 'hello' });
 ```
 
 **Poka-Yoke**:
-- Throws error if process not found
-- Throws error if process is dead
+- Throws error if process not found (validated in Erlang)
+- Throws error if process is dead (validated in Erlang)
+- Throws error if mailbox is full (validated in Erlang)
+
+**Architecture**:
+1. JavaScript sends `PROCESS_FRAMEWORK:send:name:message` to Erlang
+2. Erlang looks up process by name in `process_registry` ETS table
+3. Erlang validates process is alive (checks `process_states` ETS table)
+4. Erlang adds message to mailbox in `process_mailboxes` ETS table
+5. Erlang process receives message and invokes JavaScript handle callback
 
 ### Process Methods
 
 #### process.send(message)
 
-Send message to process.
-
-```javascript
-process.send({ type: 'test', data: 'value' });
-```
-
-**Poka-Yoke**:
-- Throws error if process is dead
-- Throws error if mailbox is full
-
-#### process.receive(timeout)
-
-Receive message (blocking).
-
-```javascript
-const message = await process.receive(5000); // 5s timeout
-```
-
-**Poka-Yoke**:
-- Throws error if process is not running
-- Throws error on timeout
+Send message to process (same as `send(name, message)`).
 
 #### process.link(targetProcess)
 
-Link to another process.
-
-```javascript
-process1.link(process2);
-// Both processes are now linked
-```
+Link to another process. Links are stored in Erlang `process_links` ETS table.
 
 **Poka-Yoke**:
-- Throws error if either process is dead
-- Creates bidirectional link
+- Throws error if either process is dead (validated in Erlang)
+- Creates bidirectional link (both processes linked)
 
 #### process.monitor(targetProcess)
 
-Monitor another process.
-
-```javascript
-const monitorRef = process1.monitor(process2);
-// process1 will receive DOWN message when process2 dies
-```
+Monitor another process. Monitors are stored in Erlang `process_monitors` ETS table.
 
 **Poka-Yoke**:
-- Throws error if target process is dead
+- Throws error if target process is dead (validated in Erlang)
 - Returns monitor reference
 
 #### process.exit(reason)
 
-Exit process.
-
-```javascript
-process.exit('normal');
-```
-
-**Poka-Yoke**:
-- Propagates exit to linked processes
-- Sends DOWN messages to monitoring processes
+Exit process. State updated in Erlang `process_states` ETS table.
 
 #### process.kill()
 
 Kill process (forceful termination).
 
-```javascript
-process.kill();
-```
-
 ### Supervisor
 
-#### new Supervisor(name, strategy)
-
-Create supervisor.
+Supervisor manages child processes. Supervision state stored in Erlang.
 
 ```javascript
 import { Supervisor } from './erlang-process.mjs';
 
 const supervisor = new Supervisor('my_supervisor', 'one_for_one');
-```
 
-**Strategies**:
-- `one_for_one`: Restart only the failed child
-- `one_for_all`: Restart all children when one fails
-- `rest_for_one`: Restart failed child and all children started after it
-
-#### supervisor.startChild(childSpec)
-
-Start child process.
-
-```javascript
 const child = supervisor.startChild({
-  name: 'child_1',
+  name: 'child_process',
   initFn: async () => ({ initialized: true }),
   handleFn: async (message) => {
-    if (message.type === 'crash') {
-      throw new Error('Child crashed');
-    }
+    // Handle message
   },
 });
 ```
 
-**Poka-Yoke**:
-- Validates child spec
-- Prevents duplicate child names
-- Automatically links supervisor to child
+**Restart Strategies**:
+- `one_for_one`: Restart only the failed child
+- `one_for_all`: Restart all children
+- `rest_for_one`: Restart failed child and all children started after it
 
-#### supervisor.terminate()
+**Architecture**:
+- Supervision state stored in Erlang `process_supervisor.erl`
+- Child processes spawned via `process_framework:spawn_process/3`
+- Restart logic handled in Erlang supervisor loop
 
-Terminate supervisor and all children.
+## Poka-Yoke Design
 
-```javascript
-supervisor.terminate();
-```
+### JavaScript Layer
 
-## Usage Patterns
+**Input Validation**:
+- Non-empty strings for process names
+- Functions for callbacks
+- Valid process instances for links/monitors
+
+**State Validation**: None (state is in Erlang)
+
+### Erlang Layer
+
+**State Validation**:
+- Process states: `initialized`, `running`, `waiting`, `terminated`, `error`
+- Mailbox size limits
+- Process existence checks
+- Link/monitor validity checks
+
+**Operation Validation**:
+- Cannot send to dead process
+- Cannot link to dead process
+- Cannot monitor dead process
+- Cannot spawn duplicate names
+
+## Callback Result Routing
+
+**Problem**: When Erlang invokes JavaScript callbacks, results must be routed back to the specific Erlang process waiting for them.
+
+**Solution**:
+1. Erlang registers callback in `callback_registry` ETS table: `{callbackId, pid}`
+2. Erlang sends `JS_CALLBACK:init:callbackId:pid:` or `JS_CALLBACK:handle:callbackId:pid:message`
+3. JavaScript bridge interceptor invokes callback
+4. JavaScript sends result via `PROCESS_FRAMEWORK:callback_result:callbackId:pid:result`
+5. Erlang process loop receives result and routes to waiting process via `callback_registry`
+6. Erlang process receives `{js_callback_result, CallbackId, Result}` message
+7. Erlang unregisters callback from `callback_registry`
+
+## State Storage Details
+
+### Erlang ETS Tables
+
+- `process_registry`: `{name, pid}` - Process name to PID mapping
+- `process_mailboxes`: `{pid, queue}` - Process mailboxes (queue of messages)
+- `process_links`: `{pid, set}` - Process links (set of linked PIDs)
+- `process_monitors`: `{pid, set}` - Process monitors (set of {ref, monitor_pid})
+- `process_monitored_by`: `{pid, set}` - Processes monitoring this process
+- `process_states`: `{pid, state}` - Process states (initialized, running, waiting, terminated, error)
+- `callback_registry`: `{callbackId, pid}` - Callback ID to waiting process PID mapping
+
+### JavaScript State
+
+**Minimal State** (thin wrapper):
+- Process: `{ name, pid, callbackId }`
+- Supervisor: `{ name, strategy, children: Map<name, Process> }`
+
+**No State Storage**:
+- No mailboxes
+- No links
+- No monitors
+- No process states
+
+## Usage Examples
 
 ### Basic Process
 
 ```javascript
-import { spawn } from './erlang-process.mjs';
+import { spawn, send } from './erlang-process.mjs';
 
+// Spawn process
 const process = spawn(
-  'counter',
+  'echo_server',
   async () => {
-    return { count: 0 };
+    console.log('Process initialized');
+    return { ready: true };
   },
   async (message) => {
-    if (message.type === 'increment') {
-      return { count: message.count + 1 };
-    } else if (message.type === 'get') {
-      return { count: message.count };
+    if (message.type === 'echo') {
+      console.log('Echo:', message.data);
+      return { echoed: message.data };
     }
   }
 );
 
-process.send({ type: 'increment', count: 5 });
+// Send message
+send('echo_server', { type: 'echo', data: 'Hello, World!' });
 ```
 
 ### Process Links
 
 ```javascript
-const process1 = spawn('p1', async () => {}, async () => {});
-const process2 = spawn('p2', async () => {}, async () => {});
+import { spawn } from './erlang-process.mjs';
 
-process1.link(process2);
-// If process1 dies, process2 dies (and vice versa)
+const p1 = spawn('process1', async () => ({}), async () => {});
+const p2 = spawn('process2', async () => ({}), async () => {});
+
+// Link processes (state stored in Erlang)
+p1.link(p2);
+
+// If p1 dies, p2 dies (and vice versa)
+p1.kill(); // p2 also dies
 ```
 
-### Process Monitors
+### Supervision
 
 ```javascript
-const process1 = spawn('p1', async () => {}, async (message) => {
-  if (message.type === 'DOWN') {
-    console.log('Process died:', message.pid, message.reason);
-  }
-});
+import { Supervisor } from './erlang-process.mjs';
 
-const process2 = spawn('p2', async () => {}, async () => {});
-
-process1.monitor(process2);
-// process1 will receive DOWN message when process2 dies
-```
-
-### Supervisor Pattern
-
-```javascript
 const supervisor = new Supervisor('app_supervisor', 'one_for_one');
 
-// Start workers
-supervisor.startChild({
-  name: 'worker_1',
+// Start child
+const worker = supervisor.startChild({
+  name: 'worker',
   initFn: async () => ({ initialized: true }),
   handleFn: async (message) => {
-    // Worker logic
-  },
-});
-
-supervisor.startChild({
-  name: 'worker_2',
-  initFn: async () => ({ initialized: true }),
-  handleFn: async (message) => {
-    // Worker logic
-  },
-});
-```
-
-### Process Swarm (Boardroom Story Pattern)
-
-```javascript
-import { spawn } from './erlang-process.mjs';
-import { getBridge } from './kgc4d-bridge.mjs';
-
-const bridge = getBridge();
-const workers = [];
-
-// Spawn swarm of workers
-for (let i = 0; i < 10; i++) {
-  const worker = spawn(
-    `worker_${i}`,
-    async () => ({ initialized: true, index: i }),
-    async (message) => {
-      if (message.type === 'emit_event') {
-        await bridge.emitEvent(message.eventType, message.payload);
-      }
+    if (message.type === 'work') {
+      // Do work
+      return { done: true };
     }
-  );
-  workers.push(worker);
-}
-
-// Send work to workers
-workers.forEach(worker => {
-  worker.send({
-    type: 'emit_event',
-    eventType: 'PROCESS_STARTED',
-    payload: { workerId: worker.name },
-  });
+  },
 });
+
+// If worker crashes, supervisor restarts it automatically
 ```
 
-## Poka-Yoke Design
+## Building Erlang Modules
 
-### State Machine
+Erlang modules must be compiled before use:
 
-Process states:
-- `initialized`: Process created but not started
-- `running`: Process is executing
-- `waiting`: Process is waiting for message
-- `terminated`: Process has exited
-- `error`: Process encountered error
+```bash
+cd packages/atomvm/playground
+pnpm build:erlang process_framework
+pnpm build:erlang process_supervisor
+```
 
-**Invalid Operations**:
-- Cannot send to dead process
-- Cannot link to dead process
-- Cannot monitor dead process
-- Cannot receive in non-running process
+**Requirements**:
+- Erlang installed (via `asdf` or system package manager)
+- `erlc` command available
+- `packbeam` command available
 
-### Input Validation
-
-All inputs are validated:
-- Process names must be non-empty strings
-- Functions must be actual functions
-- Messages must be objects
-- Timeouts must be numbers
-
-### Type Guards
-
-Type guards ensure state consistency:
-- `isRunning()`: Process is running
-- `isAlive()`: Process is alive (running or waiting)
-
-## Error Handling
-
-### Process Errors
-
-If a process handler throws an error:
-1. Process state changes to `error`
-2. Exit reason is set to `error`
-3. Exit is propagated to linked processes
-4. DOWN messages sent to monitoring processes
-
-### Supervisor Restart
-
-If a supervised child crashes:
-1. Supervisor receives notification
-2. Child is restarted based on strategy
-3. Restart count is incremented
-
-## Performance Considerations
-
-- **Mailbox Size**: Default 1000 messages (configurable)
-- **Message Loop**: Checks mailbox every 10ms
-- **Process Overhead**: Minimal (async/await based)
-- **Concurrency**: Limited by JavaScript event loop
+**Output**: `.avm` files in `public/` directory
 
 ## Testing
 
-See `test/erlang-process-stress.mjs` for stress tests:
-- Spawn many processes
-- Send many messages
-- Process links
-- Process monitors
-- Supervisor patterns
-- Poka-yoke validation
+Stress tests validate the framework under load:
 
-## Integration with Roundtrip SLA
-
-The framework integrates with roundtrip SLA tracking:
-
-```javascript
-import { getBridge } from './kgc4d-bridge.mjs';
-import { spawn } from './erlang-process.mjs';
-
-const bridge = getBridge();
-
-const process = spawn(
-  'event_emitter',
-  async () => ({ initialized: true }),
-  async (message) => {
-    if (message.type === 'emit') {
-      // Roundtrip tracked automatically by bridge
-      await bridge.emitEvent(message.eventType, message.payload);
-    }
-  }
-);
+```bash
+cd packages/atomvm/playground
+pnpm test
 ```
 
-Roundtrip SLA metrics are automatically tracked when processes call bridge methods.
+**Note**: Tests use simplified state checks (state is in Erlang, not directly accessible from JavaScript).
 
 ## Limitations
 
-- **Single-threaded**: All processes run in single JavaScript event loop
-- **No true isolation**: Processes share memory (unlike Erlang)
-- **No preemption**: Processes cannot be preempted (cooperative)
-- **Limited scalability**: Not suitable for millions of processes
+1. **State Access**: JavaScript cannot directly access Erlang state (mailbox, links, monitors). State queries would require additional bridge commands.
+
+2. **Callback Routing**: Callback results are routed via ETS table lookups. Timeout handling cleans up stale registrations.
+
+3. **Process Discovery**: Finding processes by state or properties requires Erlang queries (not yet implemented in JS API).
 
 ## Future Enhancements
 
-- Worker threads for true isolation
-- Process groups
-- Global process registry
-- Process migration
-- Hot code reloading
-
+- State query API (get mailbox size, check if process is alive, etc.)
+- Process discovery (list processes by state, find processes by property)
+- Direct Erlang process communication (without JavaScript callbacks)
+- Process groups and namespaces
+- Distributed process registry

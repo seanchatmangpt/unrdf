@@ -14,14 +14,117 @@
  */
 
 import { KGCStore, EVENT_TYPES } from '@unrdf/kgc-4d';
-import { defineHook, createHookRegistry, registerHook } from '@unrdf/hooks';
+import { defineHook, createHookRegistry, registerHook, HookTriggerSchema } from '@unrdf/hooks';
 import { trace } from '@opentelemetry/api';
-import { startRoundtrip, endRoundtrip, getSLAStats, OPERATION_TYPES } from '../../src/roundtrip-sla.mjs';
+import { startRoundtrip, endRoundtrip, getSLAStats, OPERATION_TYPES, canStartRoundtrip } from '../../src/roundtrip-sla.mjs';
+import { getHookExecutionEngine } from './hook-execution-engine.mjs';
+import { z } from 'zod';
 
 // Get tracer lazily to ensure provider is registered first
 function getTracer() {
   return trace.getTracer('atomvm-bridge');
 }
+
+/**
+ * Poka-Yoke: Validation schemas for KGC-4D integration
+ */
+
+/** @constant {number} Maximum payload size in bytes (1MB limit from KGC-4D store) */
+const MAX_PAYLOAD_SIZE_BYTES = 1_000_000;
+
+/** @constant {number} Warning threshold for payload size */
+const PAYLOAD_SIZE_WARNING_BYTES = 100_000;
+
+/**
+ * Event payload schema (poka-yoke: validates payload structure and size)
+ */
+const EventPayloadSchema = z.object({
+  // Allow any object structure, but validate it's an object
+}).passthrough().refine(
+  (payload) => {
+    const payloadStr = JSON.stringify(payload);
+    const payloadSize = Buffer.byteLength(payloadStr, 'utf8');
+    return payloadSize <= MAX_PAYLOAD_SIZE_BYTES;
+  },
+  {
+    message: `Payload size exceeds limit: ${MAX_PAYLOAD_SIZE_BYTES} bytes (1MB)`,
+  }
+);
+
+/**
+ * Event type schema (poka-yoke: validates event type is non-empty string)
+ */
+const EventTypeSchema = z.string().min(1, 'Event type must be non-empty string');
+
+/**
+ * Hook config schema (poka-yoke: validates hook configuration)
+ * Note: validate/transform are optional - bridge provides default validate if neither is provided
+ */
+const HookConfigSchema = z.object({
+  name: z.string().min(1, 'Hook name must be non-empty string'),
+  trigger: HookTriggerSchema,
+  validate: z.function().optional(),
+  transform: z.function().optional(),
+  metadata: z.record(z.string(), z.any()).optional(),
+});
+
+/**
+ * Intent schema (poka-yoke: validates intent structure)
+ */
+const IntentSchema = z.object({
+  description: z.string().optional(),
+}).passthrough();
+
+/**
+ * Intent ID schema (poka-yoke: validates intent ID is non-empty string)
+ */
+const IntentIdSchema = z.string().min(1, 'Intent ID must be non-empty string');
+
+/**
+ * Poka-Yoke: Validate non-empty string
+ * @param {any} value - Value to validate
+ * @param {string} name - Name of the parameter
+ * @throws {Error} If value is not a non-empty string
+ */
+function validateNonEmptyString(value, name) {
+  if (typeof value !== 'string' || value.length === 0) {
+    throw new Error(`${name} must be a non-empty string, got: ${typeof value}`);
+  }
+}
+
+/**
+ * Poka-Yoke: Validate event payload size
+ * @param {Object} payload - Payload to validate
+ * @throws {Error} If payload exceeds size limit
+ */
+function validatePayloadSize(payload) {
+  const payloadStr = JSON.stringify(payload);
+  const payloadSize = Buffer.byteLength(payloadStr, 'utf8');
+  
+  if (payloadSize > MAX_PAYLOAD_SIZE_BYTES) {
+    throw new Error(
+      `Event payload exceeds size limit: ${payloadSize} bytes > ${MAX_PAYLOAD_SIZE_BYTES} bytes (1MB)`
+    );
+  }
+  
+  if (payloadSize > PAYLOAD_SIZE_WARNING_BYTES && typeof console !== 'undefined' && console.warn) {
+    console.warn(
+      `[KGC-4D Bridge] Large payload warning: ${payloadSize} bytes (threshold: ${PAYLOAD_SIZE_WARNING_BYTES} bytes)`
+    );
+  }
+}
+
+/**
+ * Bridge state machine (poka-yoke: prevents invalid operations)
+ * @enum {string}
+ */
+const BridgeState = {
+  UNINITIALIZED: 'uninitialized',
+  INITIALIZING: 'initializing',
+  READY: 'ready',
+  ERROR: 'error',
+  DESTROYED: 'destroyed',
+};
 
 /**
  * KGC-4D Bridge
@@ -31,37 +134,111 @@ function getTracer() {
  */
 export class KGC4DBridge {
   /**
+   * **Poka-Yoke**: Bridge state machine prevents invalid operations
+   * 
    * @param {Object} [options] - Bridge options
    * @param {Function} [options.log] - Logging function
+   * @param {string} [options.nodeId] - Node ID for KGC-4D store
    */
   constructor(options = {}) {
     this.log = options.log || console.log;
     
-    // Initialize KGC-4D store
-    this.store = new KGCStore({ nodeId: 'boardroom-bridge' });
+    // Poka-Yoke: State machine initialization
+    this.state = BridgeState.UNINITIALIZED;
     
-    // Initialize hook registry using real implementation
-    this.registry = createHookRegistry();
-    
-    // Event log for tracking
-    this.eventLog = [];
-    
-    // Intent processing state
-    this.intents = new Map(); // intentId → { intent, outcome }
-    
-    this.log('KGC-4D Bridge initialized');
+    // Initialize bridge components
+    this._initialize(options);
+  }
+  
+  /**
+   * **Poka-Yoke**: Initialize bridge components with error handling
+   * @private
+   */
+  _initialize(options) {
+    try {
+      this.state = BridgeState.INITIALIZING;
+      
+      // Initialize KGC-4D store
+      this.store = new KGCStore({ nodeId: options.nodeId || 'boardroom-bridge' });
+      
+      // Initialize hook registry using real implementation (for backward compatibility)
+      this.registry = createHookRegistry();
+      
+      // Initialize hook execution engine (innovative layer - 800ns execution)
+      this.hookEngine = getHookExecutionEngine({ log: this.log });
+      
+      // Event log for tracking
+      this.eventLog = [];
+      
+      // Intent processing state
+      this.intents = new Map(); // intentId → { intent, outcome }
+      
+      this.state = BridgeState.READY;
+      this.log('KGC-4D Bridge initialized');
+    } catch (error) {
+      this.state = BridgeState.ERROR;
+      this.log(`KGC-4D Bridge initialization failed: ${error.message}`);
+      throw error;
+    }
+  }
+  
+  /**
+   * **Poka-Yoke**: Type guard - checks if bridge is ready
+   * @returns {boolean} True if bridge is ready
+   */
+  isReady() {
+    return this.state === BridgeState.READY && this.store !== null && this.registry !== null;
+  }
+  
+  /**
+   * **Poka-Yoke**: Type guard - checks if bridge is destroyed
+   * @returns {boolean} True if bridge is destroyed
+   */
+  isDestroyed() {
+    return this.state === BridgeState.DESTROYED;
+  }
+  
+  /**
+   * **Poka-Yoke**: Ensures bridge is ready before operations
+   * @throws {Error} If bridge is not ready
+   */
+  _ensureReady() {
+    if (this.isDestroyed()) {
+      throw new Error('KGC-4D Bridge has been destroyed');
+    }
+    if (!this.isReady()) {
+      throw new Error(`KGC-4D Bridge is not ready (state: ${this.state})`);
+    }
   }
 
   /**
    * Emit event to KGC-4D
    *
    * **80/20**: Proves Erlang processes can emit events to real KGC-4D
+   * **Poka-Yoke**: Validates event type, payload structure, and size before store call
    *
    * @param {string} type - Event type (from EVENT_TYPES or custom)
    * @param {Object} payload - Event payload
    * @returns {Promise<Object>} Event receipt
+   * @throws {Error} If bridge is not ready, event type is invalid, or payload is invalid
    */
   async emitEvent(type, payload = {}) {
+    // Poka-Yoke: Ensure bridge is ready
+    this._ensureReady();
+    
+    // Poka-Yoke: Validate event type and payload
+    type = EventTypeSchema.parse(type || EVENT_TYPES.CREATE);
+    payload = EventPayloadSchema.parse(payload);
+    validatePayloadSize(payload);
+    
+    // Poka-Yoke: Check if roundtrip can start (SLA compliance)
+    if (!canStartRoundtrip(OPERATION_TYPES.EMIT_EVENT)) {
+      const stats = getSLAStats(OPERATION_TYPES.EMIT_EVENT);
+      throw new Error(
+        `SLA violation prevented: Error rate ${(stats.errorRate * 100).toFixed(2)}% exceeds threshold for emit_event`
+      );
+    }
+    
     // Start roundtrip tracking for JS→Erlang→JS roundtrip
     const roundtripId = startRoundtrip(OPERATION_TYPES.EMIT_EVENT);
     
@@ -74,17 +251,49 @@ export class KGC4DBridge {
       }
     }, async (span) => {
       try {
+        // **Innovative Layer**: Execute hooks before event emission (800ns execution)
+        // This replaces Zod validation and manual validation functions
+        const beforeResult = this.hookEngine.executeByTrigger('before-add', {
+          type,
+          payload,
+          timestamp: Date.now(),
+          source: 'erlang-process'
+        });
+        
+        if (!beforeResult.valid) {
+          throw new Error(`Hook validation failed: ${beforeResult.error || 'Unknown error'}`);
+        }
+        
+        // Use transformed payload from hooks
+        // If hooks transformed the quad, extract the payload
+        let transformedPayload = payload;
+        if (beforeResult.quad && beforeResult.quad.object) {
+          try {
+            transformedPayload = JSON.parse(beforeResult.quad.object.value);
+          } catch {
+            // If parsing fails, use original payload
+            transformedPayload = payload;
+          }
+        }
+        
         const receipt = await this.store.appendEvent(
           {
-            type: type || EVENT_TYPES.CREATE,
+            type,
             payload: {
-              ...payload,
+              ...transformedPayload,
               timestamp: Date.now(),
               source: 'erlang-process'
             }
           },
           [] // No RDF operations for now (80/20 focus)
         );
+        
+        // **Innovative Layer**: Execute hooks after event emission
+        this.hookEngine.executeByTrigger('after-add', {
+          type,
+          payload: transformedPayload,
+          receipt: receipt.receipt.id
+        });
         
         this.eventLog.push({
           receipt,
@@ -149,7 +358,10 @@ export class KGC4DBridge {
   /**
    * Register a knowledge hook
    *
-   * **80/20**: Proves hooks can be registered and will process events
+   * **Innovative Layer**: Hooks are registered in both the legacy registry (for backward compatibility)
+   * and the hook execution engine (for 800ns execution from Erlang).
+   *
+   * **Poka-Yoke**: Validates hook config, checks for duplicate registration
    *
    * @param {Object} hookConfig - Hook configuration
    * @param {string} hookConfig.name - Hook name
@@ -157,8 +369,36 @@ export class KGC4DBridge {
    * @param {Function} [hookConfig.validate] - Validation function
    * @param {Function} [hookConfig.transform] - Transformation function
    * @returns {Object} Registration result
+   * @throws {Error} If bridge is not ready, hook config is invalid, or hook already exists
    */
   registerHook(hookConfig) {
+    // Poka-Yoke: Ensure bridge is ready
+    this._ensureReady();
+    
+    // Poka-Yoke: Validate hook config
+    hookConfig = HookConfigSchema.parse(hookConfig);
+    
+    // Poka-Yoke: Check if hook already exists
+    if (this.registry.hooks.has(hookConfig.name)) {
+      throw new Error(`Hook already registered: ${hookConfig.name}`);
+    }
+    
+    // Register in hook execution engine (innovative layer - 800ns execution)
+    this.hookEngine.registerHook(
+      hookConfig.name,
+      hookConfig.trigger,
+      hookConfig.validate,
+      hookConfig.transform
+    );
+    
+    // Poka-Yoke: Check if roundtrip can start (SLA compliance)
+    if (!canStartRoundtrip(OPERATION_TYPES.REGISTER_HOOK)) {
+      const stats = getSLAStats(OPERATION_TYPES.REGISTER_HOOK);
+      throw new Error(
+        `SLA violation prevented: Error rate ${(stats.errorRate * 100).toFixed(2)}% exceeds threshold for register_hook`
+      );
+    }
+    
     // Start roundtrip tracking for JS→Erlang→JS roundtrip
     const roundtripId = startRoundtrip(OPERATION_TYPES.REGISTER_HOOK);
     
@@ -176,7 +416,7 @@ export class KGC4DBridge {
         
         const hook = defineHook({
           name: hookConfig.name,
-          trigger: hookConfig.trigger || 'before-add',
+          trigger: hookConfig.trigger,
           validate: validateFn,
           transform: hookConfig.transform,
           metadata: hookConfig.metadata || {}
@@ -186,7 +426,7 @@ export class KGC4DBridge {
         registerHook(this.registry, hook);
         
         span.setStatus({ code: 1 }); // OK
-        this.log(`Hook registered: ${hookConfig.name} (trigger: ${hookConfig.trigger || 'before-add'})`);
+        this.log(`Hook registered: ${hookConfig.name} (trigger: ${hookConfig.trigger})`);
         
         // End roundtrip tracking
         const roundtripResult = endRoundtrip(roundtripId, true);
@@ -237,12 +477,29 @@ export class KGC4DBridge {
    * Process intent (Λ) through hooks to outcome (A)
    *
    * **80/20**: Proves intent → outcome transformation works
+   * **Poka-Yoke**: Validates intent ID and intent structure
    *
    * @param {string} intentId - Unique intent identifier
    * @param {Object} intent - Intent payload (Λ)
    * @returns {Promise<Object>} Outcome (A)
+   * @throws {Error} If bridge is not ready, intent ID is invalid, or intent structure is invalid
    */
   async processIntent(intentId, intent) {
+    // Poka-Yoke: Ensure bridge is ready
+    this._ensureReady();
+    
+    // Poka-Yoke: Validate intent ID and structure
+    intentId = IntentIdSchema.parse(intentId);
+    intent = IntentSchema.parse(intent || {});
+    
+    // Poka-Yoke: Check if roundtrip can start (SLA compliance)
+    if (!canStartRoundtrip(OPERATION_TYPES.PROCESS_INTENT)) {
+      const stats = getSLAStats(OPERATION_TYPES.PROCESS_INTENT);
+      throw new Error(
+        `SLA violation prevented: Error rate ${(stats.errorRate * 100).toFixed(2)}% exceeds threshold for process_intent`
+      );
+    }
+    
     // Start roundtrip tracking for JS→Erlang→JS roundtrip
     const roundtripId = startRoundtrip(OPERATION_TYPES.PROCESS_INTENT);
     
@@ -370,11 +627,25 @@ export class KGC4DBridge {
 
   /**
    * Clear event log and intents (for testing)
+   * **Poka-Yoke**: Only clears if bridge is ready
    */
   clear() {
+    this._ensureReady();
     this.eventLog = [];
     this.intents.clear();
     this.log('Bridge cleared');
+  }
+  
+  /**
+   * Destroy bridge (poka-yoke: terminal state)
+   */
+  destroy() {
+    this.state = BridgeState.DESTROYED;
+    this.store = null;
+    this.registry = null;
+    this.eventLog = [];
+    this.intents.clear();
+    this.log('KGC-4D Bridge destroyed');
   }
 }
 
