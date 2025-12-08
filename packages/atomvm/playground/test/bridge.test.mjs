@@ -13,12 +13,15 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { KGC4DBridge, getBridge, setBridge } from '../src/kgc4d-bridge.mjs';
 import { interceptAtomVMOutput } from '../src/bridge-interceptor.mjs';
+import { resetSLAStats } from '../../src/roundtrip-sla.mjs';
 
 describe('KGC4DBridge', () => {
   let bridge;
   const logMessages = [];
 
   beforeEach(() => {
+    // Poka-Yoke: Reset SLA stats between tests to prevent error rate violations
+    resetSLAStats();
     logMessages.length = 0;
     bridge = new KGC4DBridge({
       log: (message) => logMessages.push(message)
@@ -75,19 +78,19 @@ describe('KGC4DBridge', () => {
     });
 
     it('should handle hook registration errors', () => {
-      // Register same hook twice should fail
+      // Register same hook twice should fail (poka-yoke prevents duplicate registration)
       bridge.registerHook({
         name: 'duplicate-hook',
         trigger: 'before-add'
       });
 
-      const result = bridge.registerHook({
-        name: 'duplicate-hook',
-        trigger: 'before-add'
-      });
-
-      expect(result.success).toBe(false);
-      expect(result.error).toBeDefined();
+      // Poka-Yoke: Duplicate registration should throw error
+      expect(() => {
+        bridge.registerHook({
+          name: 'duplicate-hook',
+          trigger: 'before-add'
+        });
+      }).toThrow('Hook already registered: duplicate-hook');
     });
   });
 

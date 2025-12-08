@@ -36,6 +36,9 @@ init_ets() ->
     %% Process states: pid -> state (initialized, running, waiting, terminated, error)
     ets:new(process_states, [named_table, set, public]),
     
+    %% Callback registry: callbackId -> pid (for routing callback results)
+    ets:new(callback_registry, [named_table, set, public]),
+    
     ok.
 
 %% Spawn a new process
@@ -62,18 +65,9 @@ spawn_process(Name, CallbackId, Options) ->
             ets:insert(process_monitored_by, {Pid, sets:new()}),
             ets:insert(process_states, {Pid, initialized}),
             
-            %% Invoke JavaScript init callback
-            case invoke_js_callback(init, CallbackId, []) of
-                {ok, InitResult} ->
-                    %% Update state to running
-                    ets:insert(process_states, {Pid, running}),
-                    Pid ! {start, InitResult},
-                    {ok, Pid};
-                {error, Reason} ->
-                    ets:insert(process_states, {Pid, error}),
-                    exit(Pid, Reason),
-                    {error, Reason}
-            end;
+            %% Send message to process loop to start initialization
+            Pid ! {start_init, CallbackId},
+            {ok, Pid};
         [_] ->
             {error, {name_exists, Name}}
     end.
@@ -268,4 +262,16 @@ invoke_js_callback(Type, CallbackId, Args) ->
 encode_message([Message]) ->
     %% Simple encoding: convert to string representation
     lists:flatten(io_lib:format("~p", [Message])).
+
+%% Parse result from JavaScript (simple parsing)
+parse_result(ResultStr) ->
+    %% Try to parse as term, fallback to binary
+    try
+        {ok, Tokens, _} = erl_scan:string(ResultStr),
+        {ok, Term} = erl_parse:parse_term(Tokens),
+        Term
+    catch
+        _:_ ->
+            list_to_binary(ResultStr)
+    end.
 

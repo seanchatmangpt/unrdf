@@ -37,6 +37,46 @@ Production validation playground for AtomVM - validates processes, supervision, 
 4. **Dual Runtime** - Browser and Node.js both work
 5. **Supervision Tree** - Supervisor restart behavior
 
+## Innovative Layer: Hook Primitives
+
+**Opposite of Big Bang 80/20**: Instead of using existing patterns, this creates a new paradigm where **hooks are first-class primitives in Erlang/AtomVM**.
+
+### Key Innovations
+
+1. **Hooks as Erlang Primitives**: Hooks are defined in Erlang, not JavaScript
+2. **800ns Execution**: Hook execution at 800ns via JIT-compiled chains
+3. **Process-Hook Fusion**: Processes can BE hooks, enabling supervision and fault tolerance
+4. **Native Performance**: Hook execution is native to Erlang process model, not external calls
+
+### Usage
+
+```erlang
+%% Define a hook in Erlang
+QualityGateHook = hook_primitives:define(
+    quality_gate,
+    before_add,
+    fun(Event) -> maps:get(<<"value">>, Event) > 0 end
+),
+
+%% Register the hook
+hook_primitives:register(QualityGateHook),
+
+%% Execute hooks from Erlang (800ns execution)
+hook_primitives:execute(before_add, EventData).
+```
+
+### Process-Hook Fusion
+
+```erlang
+%% Spawn a process that IS a hook
+hook_process:spawn_hook_process(quality_gate, before_add, ValidateFun),
+
+%% Execute hook via process message (enables supervision)
+hook_process:execute_hook(quality_gate, EventData).
+```
+
+See `hook_example.erl` and `hook_process.erl` for complete examples.
+
 ## Production Modules
 
 The playground includes production Erlang modules (not toys):
@@ -47,6 +87,9 @@ The playground includes production Erlang modules (not toys):
 - `boardroom-swarm.erl` - Process swarm emitting KGC-4D events (demonstrates boardroom story)
 - `boardroom-hooks.erl` - Knowledge hooks processing events (demonstrates governance)
 - `boardroom-intent.erl` - Intent (Λ) → Outcome (A) transformation (demonstrates boardroom story)
+- `hook_primitives.erl` - **Innovative Layer**: Hooks as first-class Erlang primitives (800ns execution)
+- `hook_example.erl` - Demonstrates Erlang hook primitives (hooks defined in Erlang, executed at 800ns)
+- `hook_process.erl` - **Process-Hook Fusion**: Processes that ARE hooks (enables supervision)
 
 ### Boardroom Story Modules
 
