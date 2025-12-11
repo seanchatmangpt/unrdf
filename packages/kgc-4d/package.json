@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/kgc-4d",
-  "version": "5.0.0-beta.3",
+  "version": "5.0.0",
   "description": "KGC 4D Datum & Universe Freeze Engine - Nanosecond-precision event logging with Git-backed snapshots",
   "type": "module",
   "exports": {

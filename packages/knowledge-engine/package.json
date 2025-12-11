@@ -1,11 +1,14 @@
 {
   "name": "@unrdf/knowledge-engine",
-  "version": "5.0.0-beta.3",
+  "version": "5.0.0",
   "description": "UNRDF Knowledge Engine - Rule Engine, Inference, and Pattern Matching (Optional Extension)",
   "type": "module",
   "main": "src/index.mjs",
   "exports": {
-    ".": "./src/index.mjs"
+    ".": "./src/index.mjs",
+    "./query": "./src/query.mjs",
+    "./canonicalize": "./src/canonicalize.mjs",
+    "./parse": "./src/parse.mjs"
   },
   "sideEffects": false,
   "files": [
