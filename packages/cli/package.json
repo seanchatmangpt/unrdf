@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/cli",
-  "version": "5.0.0-beta.3",
+  "version": "5.0.0",
   "description": "UNRDF CLI - Command-line Tools for Graph Operations and Context Management",
   "type": "module",
   "bin": {

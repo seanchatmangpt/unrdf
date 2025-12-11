@@ -22,13 +22,12 @@ import {
   construct as _keConstruct,
   describe as _keDescribe,
   update as _keUpdate,
-} from '../knowledge-engine/query.mjs';
-import { _toTurtle, _toNQuads } from '../knowledge-engine/parse.mjs';
+} from '@unrdf/knowledge-engine/query';
 import {
   canonicalize as _keCanonicalize,
   isIsomorphic as _keIsomorphic,
   getCanonicalHash as _getCanonicalHash,
-} from '../knowledge-engine/canonicalize.mjs';
+} from '@unrdf/knowledge-engine/canonicalize';
 
 const rdfCanonize = rdfCanonizeModule.default || rdfCanonizeModule;
 
