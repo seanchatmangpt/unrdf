@@ -1,0 +1,84 @@
+version: '3.8'
+
+services:
+  atomvm-node1:
+    image: node:18-alpine
+    container_name: atomvm-node1
+    hostname: atomvm-node1
+    networks:
+      - atomvm-cluster
+    command: sh -c "apk add --no-cache erlang && epmd -daemon && sleep 3600"
+    healthcheck:
+      test: ["CMD", "sh", "-c", "epmd -names || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+    restart: always
+
+  atomvm-node2:
+    image: node:18-alpine
+    container_name: atomvm-node2
+    hostname: atomvm-node2
+    networks:
+      - atomvm-cluster
+    command: sh -c "apk add --no-cache erlang && epmd -daemon && sleep 3600"
+    healthcheck:
+      test: ["CMD", "sh", "-c", "epmd -names || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+    restart: always
+
+  atomvm-node3:
+    image: node:18-alpine
+    container_name: atomvm-node3
+    hostname: atomvm-node3
+    networks:
+      - atomvm-cluster
+    command: sh -c "apk add --no-cache erlang && epmd -daemon && sleep 3600"
+    healthcheck:
+      test: ["CMD", "sh", "-c", "epmd -names || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+    restart: always
+
+  atomvm-node4:
+    image: node:18-alpine
+    container_name: atomvm-node4
+    hostname: atomvm-node4
+    networks:
+      - atomvm-cluster
+    command: sh -c "apk add --no-cache erlang && epmd -daemon && sleep 3600"
+    healthcheck:
+      test: ["CMD", "sh", "-c", "epmd -names || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+    restart: always
+
+  atomvm-node5:
+    image: node:18-alpine
+    container_name: atomvm-node5
+    hostname: atomvm-node5
+    networks:
+      - atomvm-cluster
+    command: sh -c "apk add --no-cache erlang && epmd -daemon && sleep 3600"
+    healthcheck:
+      test: ["CMD", "sh", "-c", "epmd -names || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+    restart: always
+
+networks:
+  atomvm-cluster:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.25.0.0/16

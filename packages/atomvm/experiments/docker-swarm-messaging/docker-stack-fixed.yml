@@ -1,0 +1,103 @@
+version: '3.8'
+
+services:
+  atomvm-node:
+    image: node:18-alpine
+    hostname: "atomvm-{{.Task.Slot}}"
+    environment:
+      - ERL_EPMD_PORT=4369
+      - ERLANG_COOKIE=atomvm_secret_cookie
+    command:
+      - sh
+      - -c
+      - |
+        apk add --no-cache erlang
+
+        # Get task slot number for unique naming
+        SLOT=$$(hostname | grep -oE '[0-9]+$$' || echo 1)
+        NODE_NAME="atomvm_node$$SLOT"
+
+        mkdir -p /app
+
+        # Create message handler module
+        cat > /app/msg_handler.erl << 'ERLEOF'
+        -module(msg_handler).
+        -export([start/0, loop/1, send_msg/3, get_msgs/0]).
+
+        start() ->
+            Pid = spawn(?MODULE, loop, [[]]),
+            register(msg_handler, Pid),
+            io:format("Message handler started on ~p~n", [node()]),
+            Pid.
+
+        loop(Messages) ->
+            receive
+                {send, From, Content, Timestamp} ->
+                    Msg = #{from => From, content => Content, ts => Timestamp},
+                    io:format("[RECEIVED] From: ~p, Content: ~p~n", [From, Content]),
+                    loop([Msg | Messages]);
+                {get_messages, Pid} ->
+                    Pid ! {messages, lists:reverse(Messages)},
+                    loop(Messages);
+                {ping, From} ->
+                    From ! {pong, node()},
+                    loop(Messages);
+                stop ->
+                    ok
+            after 300000 ->
+                io:format("Handler alive with ~p messages~n", [length(Messages)]),
+                loop(Messages)
+            end.
+
+        send_msg(TargetNode, Content, From) ->
+            Timestamp = erlang:system_time(millisecond),
+            {msg_handler, TargetNode} ! {send, From, Content, Timestamp},
+            ok.
+
+        get_msgs() ->
+            msg_handler ! {get_messages, self()},
+            receive
+                {messages, Msgs} -> Msgs
+            after 5000 ->
+                []
+            end.
+        ERLEOF
+
+        cd /app && erlc msg_handler.erl
+
+        # Start EPMD explicitly
+        epmd -daemon
+        sleep 2
+
+        # Start Erlang node with short name for overlay network
+        erl -noshell \
+            -sname "$$NODE_NAME" \
+            -setcookie atomvm_secret_cookie \
+            -kernel inet_dist_listen_min 9100 \
+            -kernel inet_dist_listen_max 9200 \
+            -eval "
+              code:add_path(\"/app\"),
+              msg_handler:start(),
+              io:format('Node ~p ready~n', [node()]),
+              io:format('EPMD check: ~p~n', [net_adm:names()]),
+              timer:sleep(infinity).
+            "
+    networks:
+      - atomvm-net
+    deploy:
+      mode: replicated
+      replicas: 3
+      endpoint_mode: dnsrr
+      restart_policy:
+        condition: any
+        delay: 5s
+      placement:
+        max_replicas_per_node: 3
+
+networks:
+  atomvm-net:
+    driver: overlay
+    attachable: true
+    ipam:
+      config:
+        - subnet: 10.20.0.0/16
