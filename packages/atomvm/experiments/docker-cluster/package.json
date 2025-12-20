@@ -1,0 +1,9 @@
+{
+  "name": "atomvm-docker-cluster-experiments",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Real Docker container tests for AtomVM cluster",
+  "dependencies": {
+    "testcontainers": "^10.13.2"
+  }
+}
