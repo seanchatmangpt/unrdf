@@ -45,6 +45,7 @@
   "dependencies": {
     "@unrdf/core": "workspace:*",
     "@unrdf/oxigraph": "workspace:*",
+    "citty": "^0.1.6",
     "zod": "^4.1.13"
   },
   "devDependencies": {
