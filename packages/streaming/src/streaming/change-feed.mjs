@@ -29,7 +29,7 @@ const ChangeEventSchema = z.object({
     graph: z.any().optional(),
   }),
   timestamp: z.number(),
-  metadata: z.record(z.any()).optional(),
+  metadata: z.any().optional(),
 });
 
 /**

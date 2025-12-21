@@ -58,7 +58,19 @@ function formatTable(bindings) {
  * @returns {string} JSON string
  */
 function formatJSON(bindings) {
-  return JSON.stringify(bindings, null, 2);
+  // Convert RDF terms to plain objects for JSON serialization
+  const simplified = bindings.map(binding => {
+    const row = {};
+    for (const [key, term] of Object.entries(binding)) {
+      if (term) {
+        row[key] = { value: term.value, termType: term.termType };
+        if (term.language) row[key].language = term.language;
+        if (term.datatype) row[key].datatype = term.datatype;
+      }
+    }
+    return row;
+  });
+  return JSON.stringify(simplified, null, 2);
 }
 
 /**

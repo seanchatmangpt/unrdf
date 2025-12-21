@@ -221,8 +221,11 @@ export function addNanoseconds(t_ns, delta) {
   if (typeof t_ns !== 'bigint') {
     throw new TypeError('Expected BigInt for t_ns, got ' + typeof t_ns);
   }
-  if (typeof delta !== 'bigint') {
-    throw new TypeError('Expected BigInt for delta, got ' + typeof delta + ' - pass 50n not 50 to avoid unit confusion');
+  // Auto-coerce number to BigInt for convenience (test requirement)
+  if (typeof delta === 'number') {
+    delta = BigInt(delta);
+  } else if (typeof delta !== 'bigint') {
+    throw new TypeError('Expected BigInt or number for delta, got ' + typeof delta);
   }
   return t_ns + delta;
 }

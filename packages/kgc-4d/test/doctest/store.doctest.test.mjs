@@ -8,7 +8,7 @@ describe('Doctests: store.mjs', () => {
 console.assert(store.vectorClock.nodeId.startsWith('node-'), 'Generated node ID has node- prefix');
   });
 
-  test('eventId example 2 (line 54)', async () => {
+  test('eventId example 2 (line 57)', async () => {
     const store = new KGCStore({ nodeId: 'test-node' });
 const receipt = await store.appendEvent({ type: 'CREATE', payload: { label: 'test' } });
 console.assert(receipt.receipt.id, 'Event has ID');

@@ -1,0 +1,77 @@
+graph TD
+    Start([Start: 80/20 Fill Gaps]) --> Scan["📊 Step 1: Scan<br/>Find incomplete capabilities<br/>15 min"]
+
+    Scan --> ScanGate{Found ≥3<br/>gaps?}
+    ScanGate -->|No| ExpandSearch["Expand search<br/>patterns"]
+    ExpandSearch --> Scan
+    ScanGate -->|Yes| Identify
+
+    Identify["📋 Step 2: Identify<br/>Categorize gaps<br/>15 min"] --> IdentifyGate{Gaps properly<br/>categorized?}
+    IdentifyGate -->|No| Recategorize["Review<br/>categorization"]
+    Recategorize --> Identify
+    IdentifyGate -->|Yes| Prioritize
+
+    Prioritize["🎯 Step 3: Prioritize<br/>80/20 selection<br/>10 min"] --> PriorityGate{Top 20% selected?<br/>80% value target?}
+    PriorityGate -->|No| ReconsiderPriority["Review<br/>value framework"]
+    ReconsiderPriority --> Prioritize
+    PriorityGate -->|Yes| Plan
+
+    Plan["📝 Step 4: Plan<br/>Create implementation plan<br/>20 min"] --> PlanGate{Plan complete<br/>& clear?}
+    PlanGate -->|No| RefinePlan["Refine plan"]
+    RefinePlan --> Plan
+    PlanGate -->|Yes| Implement
+
+    Implement["💻 Step 5: Implement<br/>Complete gaps in parallel<br/>90 min"] --> ImplementGate{Quality standards<br/>met?}
+    ImplementGate -->|No| FixQuality["Fix quality<br/>issues"]
+    FixQuality --> Implement
+    ImplementGate -->|Yes| Validate
+
+    Validate["✅ Step 6: Validate<br/>Verify implementations<br/>15 min"] --> ValidateGate{All validations<br/>pass?<br/>0 regressions?}
+    ValidateGate -->|No| FixFailures["Fix failures"]
+    FixFailures --> Validate
+    ValidateGate -->|Yes| NextSteps
+
+    NextSteps["🗺️  Step 7: Next Steps<br/>Plan remaining work<br/>10 min"] --> ContinueGate{Continue with<br/>more gaps?}
+    ContinueGate -->|Yes| Prioritize
+    ContinueGate -->|No| Complete
+
+    Complete([✅ Complete<br/>Report generated]) --> End([Done])
+
+    %% Styling
+    classDef scan fill:#87CEEB,stroke:#333,stroke-width:2px,color:#000
+    classDef identify fill:#87CEEB,stroke:#333,stroke-width:2px,color:#000
+    classDef prioritize fill:#87CEEB,stroke:#333,stroke-width:2px,color:#000
+    classDef plan fill:#FFD700,stroke:#333,stroke-width:2px,color:#000
+    classDef implement fill:#90EE90,stroke:#333,stroke-width:2px,color:#000
+    classDef validate fill:#FFB6C1,stroke:#333,stroke-width:2px,color:#000
+    classDef nextsteps fill:#DDA0DD,stroke:#333,stroke-width:2px,color:#000
+    classDef decision fill:#FFA500,stroke:#333,stroke-width:2px,color:#000
+    classDef fix fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#000
+    classDef success fill:#98FB98,stroke:#333,stroke-width:2px,color:#000
+
+    class Scan scan
+    class Identify identify
+    class Prioritize prioritize
+    class Plan plan
+    class Implement implement
+    class Validate validate
+    class NextSteps nextsteps
+    class ScanGate,IdentifyGate,PriorityGate,PlanGate,ImplementGate,ValidateGate,ContinueGate decision
+    class ExpandSearch,Recategorize,ReconsiderPriority,RefinePlan,FixQuality,FixFailures fix
+    class Complete,End success
+
+subgraph "Quality-First Value Framework"
+    QF["<b>Value = Quality + Consistency + Maintainability</b><br/>- Quality: Prevents defects (40%)<br/>- Consistency: Maintains patterns (30%)<br/>- Maintainability: Enables growth (20%)<br/>- Prevention: Prevents waste (10%)"]
+end
+
+subgraph "Success Criteria"
+    SC["<b>Implementation:</b><br/>✓ 100% type coverage (JSDoc/Zod)<br/>✓ 80%+ test coverage<br/>✓ Complete documentation<br/>✓ 0 linting errors<br/>✓ All error paths tested"]
+end
+
+subgraph "Validation Checks"
+    VC["✓ Functional tests (100% pass)<br/>✓ Integration tests<br/>✓ Edge cases covered<br/>✓ Error paths verified<br/>✓ Performance OK<br/>✓ Code review approved"]
+end
+
+subgraph "Workflow Output"
+    WO["📊 Metrics:<br/>• Gaps completed<br/>• Value delivered (%)<br/>• Quality improvements<br/>• Regressions (target: 0)<br/>📄 Report:<br/>• What was completed<br/>• Remaining gaps<br/>• Next steps<br/>• Recommendations"]
+end

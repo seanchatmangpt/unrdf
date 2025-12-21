@@ -17,6 +17,15 @@ import { constants as fsConstants } from 'node:fs';
 import path from 'node:path';
 
 /**
+ * Validation schema for graph metadata
+ * @type {z.ZodSchema<{baseIri?: string, updatedAt?: string, [key: string]: unknown}>}
+ */
+const graphMetadataSchema = z.object({
+  baseIri: z.string().optional(),
+  updatedAt: z.string().optional(),
+}).strict().passthrough();
+
+/**
  * Validation schema for update command arguments
  */
 const updateArgsSchema = z.object({
@@ -59,12 +68,14 @@ export const updateCommand = defineCommand({
         throw new Error(`Graph not found: ${args.name}`);
       }
 
-      const current = JSON.parse(await readFile(metaPath, 'utf8'));
-      const updated = {
+      const rawMetadata = JSON.parse(await readFile(metaPath, 'utf8'));
+      const current = graphMetadataSchema.parse(rawMetadata);
+
+      const updated = graphMetadataSchema.parse({
         ...current,
         baseIri: args['base-iri'] ?? current.baseIri,
         updatedAt: new Date().toISOString(),
-      };
+      });
 
       const tmpPath = metaPath + '.tmp';
       await writeFile(tmpPath, JSON.stringify(updated, null, 2), 'utf8');

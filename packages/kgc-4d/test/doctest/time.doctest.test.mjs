@@ -39,7 +39,7 @@ console.assert(err.message.includes('BigInt'), 'Rejects non-BigInt');
 }
   });
 
-  test('duration example 5 (line 230)', async () => {
+  test('duration example 5 (line 233)', async () => {
     const vc1 = new VectorClock('node1');
 const vc2 = new VectorClock('node2');
 vc1.increment();

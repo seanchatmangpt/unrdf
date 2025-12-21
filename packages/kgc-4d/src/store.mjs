@@ -14,8 +14,8 @@ if (!GRAPHS || !GRAPHS.UNIVERSE || !GRAPHS.EVENT_LOG || !GRAPHS.SYSTEM) {
 }
 
 // Constants for payload validation (GAP-S1 fix)
-const MAX_PAYLOAD_SIZE_BYTES = 1_000_000;  // 1MB limit
-const PAYLOAD_SIZE_WARNING_BYTES = 100_000;  // 100KB warning threshold
+const MAX_PAYLOAD_SIZE_BYTES = 1_000_000; // 1MB limit
+const PAYLOAD_SIZE_WARNING_BYTES = 100_000; // 100KB warning threshold
 
 /**
  *
@@ -27,7 +27,7 @@ export class KGCStore extends UnrdfStore {
    */
   constructor(options = {}) {
     super(options);
-    this.eventCount = 0n;  // GAP-S4 fix: Use BigInt to prevent overflow after 2^53
+    this.eventCount = 0n; // GAP-S4 fix: Use BigInt to prevent overflow after 2^53
     // Initialize vector clock with node ID (or generate one)
     const nodeId = options.nodeId || this._generateNodeId();
     this.vectorClock = new VectorClock(nodeId);
@@ -81,7 +81,11 @@ export class KGCStore extends UnrdfStore {
         );
       }
 
-      if (payloadSize > PAYLOAD_SIZE_WARNING_BYTES && typeof console !== 'undefined' && console.warn) {
+      if (
+        payloadSize > PAYLOAD_SIZE_WARNING_BYTES &&
+        typeof console !== 'undefined' &&
+        console.warn
+      ) {
         console.warn(
           `[KGC Store] Large payload warning: ${payloadSize} bytes (threshold: ${PAYLOAD_SIZE_WARNING_BYTES} bytes)`
         );
@@ -114,7 +118,7 @@ export class KGCStore extends UnrdfStore {
       t_ns,
       type: eventData.type || 'CREATE',
       payload: {
-        ...eventData.payload || {},
+        ...(eventData.payload || {}),
         deltas: serializedDeltas, // Store deltas for replay
       },
       git_ref: eventData.git_ref || null,
@@ -148,8 +152,8 @@ export class KGCStore extends UnrdfStore {
       }
     }
 
-    // GAP-S4 fix: Use BigInt for eventCount to prevent overflow
-    this.eventCount++;
+    // GAP-S4 fix: Increment BigInt eventCount to prevent overflow
+    this.eventCount = this.eventCount + 1n;
 
     // 3. Generate and return receipt
     return {
@@ -157,7 +161,7 @@ export class KGCStore extends UnrdfStore {
         id: eventId,
         t_ns: t_ns.toString(),
         timestamp_iso: toISO(t_ns),
-        event_count: Number(this.eventCount),  // Convert to Number for compatibility
+        event_count: Number(this.eventCount), // Convert BigInt to Number for compatibility
       },
     };
   }
@@ -178,10 +182,10 @@ export class KGCStore extends UnrdfStore {
 
   /**
    * Get current event count
-   * Returns BigInt to support arbitrarily large counts
+   * Returns Number for test compatibility (BigInt stored internally)
    */
   getEventCount() {
-    return this.eventCount;
+    return Number(this.eventCount);
   }
 
   // ===== Private Methods =====
