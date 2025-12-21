@@ -27,3 +27,4 @@ The `coi-serviceworker` library uses a service worker to intercept all fetch req
 - [Architecture Overview](./architecture.md)
 - [How-To: Debug Service Worker Issues](../how-to/debug-service-worker.md)
 
+

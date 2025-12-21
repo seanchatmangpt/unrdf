@@ -95,3 +95,4 @@ pnpm test  # ✅ 45/45 tests passing (excluding playwright)
 
 **Overall Status**: ✅ **Ready for developers** - All critical API issues fixed. Exports match README documentation.
 
+

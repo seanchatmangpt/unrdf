@@ -1,9 +1,10 @@
 {
   "name": "@unrdf/atomvm",
-  "version": "0.1.0",
+  "version": "5.0.1",
   "description": "Run AtomVM (Erlang/BEAM VM) in browser and Node.js using WebAssembly",
   "type": "module",
   "main": "src/index.mjs",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": "./src/index.mjs",
     "./service-worker-manager": "./src/service-worker-manager.mjs"
@@ -11,7 +12,9 @@
   "scripts": {
     "dev": "vite",
     "dev:full": "echo 'Module name required: pnpm run dev:full <module>' && exit 1",
-    "build": "vite build",
+    "build": "unbuild && tsc --emitDeclarationOnly",
+    "build:types": "tsc --emitDeclarationOnly",
+    "build:vite": "vite build",
     "preview": "vite preview",
     "serve": "python3 -m http.server 8080 --directory dist",
     "atomvm:node": "node src/cli.mjs",
@@ -45,5 +48,19 @@
     "jsdom": "^24.0.0",
     "@playwright/test": "^1.57.0",
     "@vitest/browser": "^4.0.15"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=7.0.0"
+  },
+  "sideEffects": false,
+  "files": [
+    "src/",
+    "dist/",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public"
   }
 }

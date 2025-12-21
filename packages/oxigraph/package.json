@@ -1,9 +1,10 @@
 {
   "name": "@unrdf/oxigraph",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "UNRDF Oxigraph - Graph database benchmarking implementation using Oxigraph SPARQL engine",
   "type": "module",
   "main": "src/index.mjs",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": "./src/index.mjs",
     "./store": "./src/store.mjs",
@@ -20,6 +21,8 @@
     "test:fast": "vitest run --coverage",
     "test:watch": "vitest --coverage",
     "test:bench": "vitest run test/benchmark.test.mjs",
+    "build": "unbuild && tsc --emitDeclarationOnly",
+    "build:types": "tsc --emitDeclarationOnly",
     "lint": "eslint src/ test/ --max-warnings=0",
     "lint:fix": "eslint src/ test/ --fix",
     "format": "prettier --write src/ test/",
@@ -56,5 +59,8 @@
     "url": "https://github.com/unrdf/unrdf/issues"
   },
   "homepage": "https://github.com/unrdf/unrdf#readme",
-  "license": "MIT"
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
 }

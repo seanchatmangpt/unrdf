@@ -74,3 +74,4 @@ The document is formatted for arXiv submission:
 - The "opacity requirement" is presented as a design feature, not a limitation
 - Focus is on capabilities beyond human perception (microsecond-scale operations, exabyte-scale state spaces)
 
+

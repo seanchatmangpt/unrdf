@@ -53,7 +53,7 @@ export function createStreamProcessor(feed) {
       const buffer = [];
       const subscribers = [];
 
-      feed.addEventListener('change', event => {
+      const listener = event => {
         const change = applyOperations(event.detail);
         if (change === null) return;
 
@@ -65,11 +65,24 @@ export function createStreamProcessor(feed) {
             subscriber(batch);
           }
         }
-      });
+      };
+
+      feed.addEventListener('change', listener);
 
       return {
         subscribe(callback) {
           subscribers.push(callback);
+        },
+        unsubscribe(callback) {
+          const index = subscribers.indexOf(callback);
+          if (index !== -1) {
+            subscribers.splice(index, 1);
+          }
+        },
+        destroy() {
+          feed.removeEventListener('change', listener);
+          subscribers.length = 0;
+          buffer.length = 0;
         },
         operations,
       };
@@ -91,7 +104,7 @@ export function createStreamProcessor(feed) {
       let timeout = null;
       let latestChange = null;
 
-      feed.addEventListener('change', event => {
+      const listener = event => {
         const change = applyOperations(event.detail);
         if (change === null) return;
 
@@ -108,11 +121,28 @@ export function createStreamProcessor(feed) {
           timeout = null;
           latestChange = null;
         }, delayMs);
-      });
+      };
+
+      feed.addEventListener('change', listener);
 
       return {
         subscribe(callback) {
           subscribers.push(callback);
+        },
+        unsubscribe(callback) {
+          const index = subscribers.indexOf(callback);
+          if (index !== -1) {
+            subscribers.splice(index, 1);
+          }
+        },
+        destroy() {
+          if (timeout !== null) {
+            clearTimeout(timeout);
+            timeout = null;
+          }
+          feed.removeEventListener('change', listener);
+          subscribers.length = 0;
+          latestChange = null;
         },
         operations,
       };

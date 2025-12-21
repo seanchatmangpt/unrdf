@@ -252,3 +252,4 @@ This ensures logs are visible even if terminal element is not found.
 - [Tutorial: Getting Started](../tutorials/01-getting-started.md)
 - [API Reference](./api.md) - Complete API overview
 
+

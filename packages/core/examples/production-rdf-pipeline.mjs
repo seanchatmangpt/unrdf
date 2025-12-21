@@ -18,7 +18,15 @@
  *   - @unrdf/core package
  */
 
-import { UnrdfStore, executeQuerySync, namedNode, literal, quad, canonicalize, toNTriples } from '../src/index.mjs'
+import {
+  UnrdfStore,
+  executeQuerySync,
+  namedNode,
+  literal,
+  quad,
+  canonicalize,
+  toNTriples,
+} from '../src/index.mjs';
 
 // Sample Turtle RDF data
 const SAMPLE_TURTLE = `
@@ -46,14 +54,14 @@ ex:diana foaf:name "Diana" ;
 ex:eve foaf:name "Eve" ;
        foaf:age 32 ;
        schema:jobTitle "Manager" .
-`
+`;
 
 // Helper to parse Turtle (simplified - real implementation would use n3 parser)
 function parseTurtleSimple(turtle) {
-  const quads = []
+  const quads = [];
 
   // Extract triples (simplified parser for demo)
-  const lines = turtle.split('\n').filter(l => !l.trim().startsWith('@') && l.trim().length > 0)
+  const lines = turtle.split('\n').filter(l => !l.trim().startsWith('@') && l.trim().length > 0);
 
   // For this demo, manually create quads from known structure
   const data = [
@@ -61,63 +69,51 @@ function parseTurtleSimple(turtle) {
     { person: 'bob', name: 'Bob', age: 25 },
     { person: 'charlie', name: 'Charlie', age: 35, jobTitle: 'Engineer' },
     { person: 'diana', name: 'Diana', age: 28, jobTitle: 'Designer' },
-    { person: 'eve', name: 'Eve', age: 32, jobTitle: 'Manager' }
-  ]
+    { person: 'eve', name: 'Eve', age: 32, jobTitle: 'Manager' },
+  ];
 
   data.forEach(d => {
-    const person = namedNode(`http://example.com/${d.person}`)
+    const person = namedNode(`http://example.com/${d.person}`);
 
-    quads.push(quad(
-      person,
-      namedNode('http://xmlns.com/foaf/0.1/name'),
-      literal(d.name)
-    ))
+    quads.push(quad(person, namedNode('http://xmlns.com/foaf/0.1/name'), literal(d.name)));
 
-    quads.push(quad(
-      person,
-      namedNode('http://xmlns.com/foaf/0.1/age'),
-      literal(d.age, namedNode('http://www.w3.org/2001/XMLSchema#integer'))
-    ))
+    quads.push(quad(person, namedNode('http://xmlns.com/foaf/0.1/age'), literal(String(d.age))));
 
     if (d.email) {
-      quads.push(quad(
-        person,
-        namedNode('http://schema.org/email'),
-        literal(d.email)
-      ))
+      quads.push(quad(person, namedNode('http://schema.org/email'), literal(d.email)));
     }
 
     if (d.jobTitle) {
-      quads.push(quad(
-        person,
-        namedNode('http://schema.org/jobTitle'),
-        literal(d.jobTitle)
-      ))
+      quads.push(quad(person, namedNode('http://schema.org/jobTitle'), literal(d.jobTitle)));
     }
-  })
+  });
 
   // Add knows relationships
-  quads.push(quad(
-    namedNode('http://example.com/alice'),
-    namedNode('http://xmlns.com/foaf/0.1/knows'),
-    namedNode('http://example.com/bob')
-  ))
+  quads.push(
+    quad(
+      namedNode('http://example.com/alice'),
+      namedNode('http://xmlns.com/foaf/0.1/knows'),
+      namedNode('http://example.com/bob')
+    )
+  );
 
-  quads.push(quad(
-    namedNode('http://example.com/bob'),
-    namedNode('http://xmlns.com/foaf/0.1/knows'),
-    namedNode('http://example.com/charlie')
-  ))
+  quads.push(
+    quad(
+      namedNode('http://example.com/bob'),
+      namedNode('http://xmlns.com/foaf/0.1/knows'),
+      namedNode('http://example.com/charlie')
+    )
+  );
 
-  return quads
+  return quads;
 }
 
 // Helper for timing
 function time(label, fn) {
-  const start = Date.now()
-  const result = fn()
-  const duration = Date.now() - start
-  return { result, duration }
+  const start = Date.now();
+  const result = fn();
+  const duration = Date.now() - start;
+  return { result, duration };
 }
 
 /**
@@ -125,86 +121,86 @@ function time(label, fn) {
  */
 class ProductionRDFPipeline {
   constructor() {
-    this.store = null
+    this.store = null;
     this.metrics = {
       parseTime: 0,
       queryTime: 0,
       canonicalizeTime: 0,
-      exportTime: 0
-    }
+      exportTime: 0,
+    };
   }
 
   /**
    * Parse Turtle RDF data
    */
   parseTurtle() {
-    console.log('📥 Parsing Turtle RDF data...\\n')
+    console.log('📥 Parsing Turtle RDF data...\\n');
 
     const { result: quads, duration } = time('parse', () => {
-      return parseTurtleSimple(SAMPLE_TURTLE)
-    })
+      return parseTurtleSimple(SAMPLE_TURTLE);
+    });
 
-    this.metrics.parseTime = duration
+    this.metrics.parseTime = duration;
 
-    console.log(`   ✅ Parsed ${quads.length} triples`)
-    console.log(`   Format: text/turtle`)
-    console.log(`   Duration: ${duration}ms\\n`)
+    console.log(`   ✅ Parsed ${quads.length} triples`);
+    console.log(`   Format: text/turtle`);
+    console.log(`   Duration: ${duration}ms\\n`);
 
-    return quads
+    return quads;
   }
 
   /**
    * Create RDF store
    */
   createStore(quads) {
-    console.log('🗄️  Creating RDF store...\\n')
+    console.log('🗄️  Creating RDF store...\\n');
 
-    this.store = new UnrdfStore()
+    this.store = new UnrdfStore();
 
-    quads.forEach(q => this.store.add(q))
+    quads.forEach(q => this.store.add(q));
 
-    console.log(`   ✅ Store created with ${this.store.size} quads`)
-    console.log(`   Type: UnrdfStore (synchronous)\\n`)
+    console.log(`   ✅ Store created with ${this.store.size} quads`);
+    console.log(`   Type: UnrdfStore (synchronous)\\n`);
   }
 
   /**
    * Execute SPARQL SELECT query
    */
   executeSELECT() {
-    console.log('🔍 Executing SPARQL SELECT query...\\n')
+    console.log('🔍 Executing SPARQL SELECT query...\\n');
 
     const sparql = `
       SELECT ?person ?name WHERE {
         ?person <http://xmlns.com/foaf/0.1/name> ?name .
       }
-    `
+    `;
 
     const { result: results, duration } = time('select', () => {
-      return executeQuerySync(this.store, sparql)
-    })
+      return executeQuerySync(this.store, sparql);
+    });
 
-    this.metrics.queryTime += duration
+    this.metrics.queryTime += duration;
 
-    console.log(`   Query: SELECT ?person ?name WHERE { ?person foaf:name ?name }`)
-    console.log(`   ✅ Results: ${results.length} bindings`)
-    console.log(`   Duration: ${duration}ms\\n`)
+    console.log(`   Query: SELECT ?person ?name WHERE { ?person foaf:name ?name }`);
+    console.log(`   ✅ Results: ${results.length} bindings`);
+    console.log(`   Duration: ${duration}ms\\n`);
 
-    console.log('📊 Sample results:')
+    console.log('📊 Sample results:');
     results.slice(0, 3).forEach((binding, i) => {
-      const person = binding.person?.value || 'unknown'
-      const name = binding.name?.value || 'unknown'
-      console.log(`   ${i + 1}. person: ${person}, name: "${name}"`)
-    })
-    console.log()
+      const person = binding.person?.value || 'unknown';
+      const name = binding.name?.value || 'unknown';
+      console.log(`   ${i + 1}. person: ${person}, name: "${name}"`);
+    });
+    console.log();
 
-    return results
+    return results;
   }
 
   /**
    * Execute SPARQL CONSTRUCT query
    */
   executeCONSTRUCT() {
-    console.log('🔨 Executing CONSTRUCT query...\\n')
+    console.log('🔨 Executing CONSTRUCT query...\\n');
 
     const sparql = `
       CONSTRUCT {
@@ -215,128 +211,133 @@ class ProductionRDFPipeline {
         ?person <http://xmlns.com/foaf/0.1/name> ?name .
         ?person <http://xmlns.com/foaf/0.1/age> ?age .
       }
-    `
+    `;
 
     const { result: constructed, duration } = time('construct', () => {
-      return executeQuerySync(this.store, sparql)
-    })
+      return executeQuerySync(this.store, sparql);
+    });
 
-    this.metrics.queryTime += duration
+    this.metrics.queryTime += duration;
 
-    console.log(`   ✅ Constructed: ${constructed.length} triples`)
-    console.log(`   Duration: ${duration}ms\\n`)
+    console.log(`   ✅ Constructed: ${constructed.length} triples`);
+    console.log(`   Duration: ${duration}ms\\n`);
 
-    return constructed
+    return constructed;
   }
 
   /**
    * Execute SPARQL ASK query
    */
   executeASK() {
-    console.log('❓ Executing ASK query...\\n')
+    console.log('❓ Executing ASK query...\\n');
 
     const sparql = `
       ASK {
         ?s <http://xmlns.com/foaf/0.1/name> "Alice" .
       }
-    `
+    `;
 
     const { result: exists, duration } = time('ask', () => {
-      return executeQuerySync(this.store, sparql)
-    })
+      return executeQuerySync(this.store, sparql);
+    });
 
-    this.metrics.queryTime += duration
+    this.metrics.queryTime += duration;
 
-    console.log(`   Query: ASK { ?s foaf:name "Alice" }`)
-    console.log(`   ✅ Result: ${exists}`)
-    console.log(`   Duration: ${duration}ms\\n`)
+    console.log(`   Query: ASK { ?s foaf:name "Alice" }`);
+    console.log(`   ✅ Result: ${exists}`);
+    console.log(`   Duration: ${duration}ms\\n`);
 
-    return exists
+    return exists;
   }
 
   /**
    * Canonicalize RDF
    */
   canonicalizeRDF() {
-    console.log('🔐 Canonicalizing RDF...\\n')
+    console.log('🔐 Canonicalizing RDF...\\n');
 
-    const quads = [...this.store.iterateQuads()]
+    const quads = [...this.store.match()];
 
     const { result: canonical, duration } = time('canonicalize', () => {
-      return canonicalize(quads)
-    })
+      return canonicalize(quads);
+    });
 
-    this.metrics.canonicalizeTime = duration
+    this.metrics.canonicalizeTime = duration;
 
-    const ntriples = toNTriples(canonical)
-    const hash = ntriples.substring(0, 32) // Simplified hash
+    const ntriples = toNTriples(canonical);
+    const ntriplesStr = Array.isArray(ntriples) ? ntriples.join('\n') : String(ntriples);
+    const hash = ntriplesStr.substring(0, 32); // Simplified hash
 
-    console.log(`   ✅ Canonical N-Quads generated`)
-    console.log(`   Hash: c14n-sha256-${hash}...`)
-    console.log(`   Duration: ${duration}ms\\n`)
+    console.log(`   ✅ Canonical N-Quads generated`);
+    console.log(`   Hash: c14n-sha256-${hash}...`);
+    console.log(`   Duration: ${duration}ms\\n`);
 
-    return { canonical, ntriples }
+    return { canonical, ntriples };
   }
 
   /**
    * Export to multiple formats
    */
   exportFormats(quads) {
-    console.log('📤 Exporting to formats...\\n')
+    console.log('📤 Exporting to formats...\\n');
 
     const { duration } = time('export', () => {
       // N-Triples
-      const ntriples = toNTriples(quads)
-      const ntriplesSize = new Blob([ntriples]).size
+      const ntriples = toNTriples(quads);
+      const ntriplesSize = new Blob([ntriples]).size;
 
       // Simplified Turtle (would use serializer in production)
-      const turtle = quads.map(q =>
-        `${q.subject.value} ${q.predicate.value} ${q.object.value} .`
-      ).join('\\n')
+      const turtle = quads
+        .map(q => `${q.subject.value} ${q.predicate.value} ${q.object.value} .`)
+        .join('\\n');
 
       // JSON-LD skeleton
       const jsonld = {
         '@context': {
-          'foaf': 'http://xmlns.com/foaf/0.1/',
-          'schema': 'http://schema.org/'
+          foaf: 'http://xmlns.com/foaf/0.1/',
+          schema: 'http://schema.org/',
         },
-        '@graph': []
-      }
+        '@graph': [],
+      };
 
-      console.log(`   ✅ N-Triples: ${quads.length} triples (${(ntriplesSize / 1024).toFixed(1)} KB)`)
-      console.log(`   ✅ Turtle: ${turtle.split('\\n').length} lines (${(turtle.length / 1024).toFixed(0)} bytes)`)
-      console.log(`   ✅ JSON-LD: Valid JSON-LD document\\n`)
-    })
+      console.log(
+        `   ✅ N-Triples: ${quads.length} triples (${(ntriplesSize / 1024).toFixed(1)} KB)`
+      );
+      console.log(
+        `   ✅ Turtle: ${turtle.split('\\n').length} lines (${(turtle.length / 1024).toFixed(0)} bytes)`
+      );
+      console.log(`   ✅ JSON-LD: Valid JSON-LD document\\n`);
+    });
 
-    this.metrics.exportTime = duration
+    this.metrics.exportTime = duration;
   }
 
   /**
    * Show statistics
    */
   showStatistics() {
-    console.log('═'.repeat(70))
-    console.log('  RESULTS')
-    console.log('═'.repeat(70))
-    console.log()
+    console.log('═'.repeat(70));
+    console.log('  RESULTS');
+    console.log('═'.repeat(70));
+    console.log();
 
-    const totalDuration = Object.values(this.metrics).reduce((a, b) => a + b, 0)
+    const totalDuration = Object.values(this.metrics).reduce((a, b) => a + b, 0);
 
-    console.log('📈 Statistics:')
-    console.log(`   Total triples processed: ${this.store.size}`)
-    console.log(`   SPARQL queries executed: 3`)
-    console.log(`   Formats exported: 3`)
-    console.log(`   Total duration: ${totalDuration}ms`)
-    console.log()
+    console.log('📈 Statistics:');
+    console.log(`   Total triples processed: ${this.store.size}`);
+    console.log(`   SPARQL queries executed: 3`);
+    console.log(`   Formats exported: 3`);
+    console.log(`   Total duration: ${totalDuration}ms`);
+    console.log();
 
-    console.log('⏱️  Performance breakdown:')
-    console.log(`   Parse: ${this.metrics.parseTime}ms`)
-    console.log(`   Query: ${this.metrics.queryTime}ms`)
-    console.log(`   Canonicalize: ${this.metrics.canonicalizeTime}ms`)
-    console.log(`   Export: ${this.metrics.exportTime}ms`)
-    console.log()
+    console.log('⏱️  Performance breakdown:');
+    console.log(`   Parse: ${this.metrics.parseTime}ms`);
+    console.log(`   Query: ${this.metrics.queryTime}ms`);
+    console.log(`   Canonicalize: ${this.metrics.canonicalizeTime}ms`);
+    console.log(`   Export: ${this.metrics.exportTime}ms`);
+    console.log();
 
-    return totalDuration < 100
+    return totalDuration < 100;
   }
 
   /**
@@ -344,49 +345,49 @@ class ProductionRDFPipeline {
    */
   run() {
     try {
-      console.log('═'.repeat(70))
-      console.log('  @unrdf/core Production RDF Pipeline Demo')
-      console.log('  Parse → Query → Transform → Export')
-      console.log('═'.repeat(70))
-      console.log()
+      console.log('═'.repeat(70));
+      console.log('  @unrdf/core Production RDF Pipeline Demo');
+      console.log('  Parse → Query → Transform → Export');
+      console.log('═'.repeat(70));
+      console.log();
 
-      const quads = this.parseTurtle()
-      this.createStore(quads)
+      const quads = this.parseTurtle();
+      this.createStore(quads);
 
-      this.executeSELECT()
-      this.executeCONSTRUCT()
-      this.executeASK()
+      this.executeSELECT();
+      this.executeCONSTRUCT();
+      this.executeASK();
 
-      const { canonical } = this.canonicalizeRDF()
-      this.exportFormats(canonical)
+      const { canonical } = this.canonicalizeRDF();
+      const allQuads = [...this.store.match()];
+      this.exportFormats(allQuads);
 
-      const withinSLA = this.showStatistics()
+      const withinSLA = this.showStatistics();
 
       if (withinSLA) {
-        console.log('✅ RDF PIPELINE VERIFIED')
-        console.log('   ✓ Turtle parsing successful')
-        console.log('   ✓ SPARQL queries working (SELECT, CONSTRUCT, ASK)')
-        console.log('   ✓ RDF canonicalization functional')
-        console.log('   ✓ Multi-format export confirmed')
-        console.log('   ✓ Performance within SLA (<100ms)')
-        return true
+        console.log('✅ RDF PIPELINE VERIFIED');
+        console.log('   ✓ Turtle parsing successful');
+        console.log('   ✓ SPARQL queries working (SELECT, CONSTRUCT, ASK)');
+        console.log('   ✓ RDF canonicalization functional');
+        console.log('   ✓ Multi-format export confirmed');
+        console.log('   ✓ Performance within SLA (<100ms)');
+        return true;
       } else {
-        console.log('⚠️  PERFORMANCE WARNING')
-        console.log('   Pipeline exceeded 100ms SLA')
-        return false
+        console.log('⚠️  PERFORMANCE WARNING');
+        console.log('   Pipeline exceeded 100ms SLA');
+        return false;
       }
-
     } catch (error) {
-      console.error('❌ Error:', error.message)
-      console.error(error.stack)
-      return false
+      console.error('❌ Error:', error.message);
+      console.error(error.stack);
+      return false;
     }
   }
 }
 
 // Execute
-const pipeline = new ProductionRDFPipeline()
-const success = pipeline.run()
+const pipeline = new ProductionRDFPipeline();
+const success = pipeline.run();
 
-console.log()
-process.exit(success ? 0 : 1)
+console.log();
+process.exit(success ? 0 : 1);

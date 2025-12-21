@@ -53,8 +53,16 @@
     "happy-dom": "^16.5.0",
     "msw": "^2.6.8",
     "typescript": "^5.9.3",
-    "vitest": "^2.1.8",
+    "vitest": "^4.0.15",
     "vue-tsc": "^3.1.5"
   },
-  "packageManager": "pnpm@10.23.0"
+  "sideEffects": false,
+  "files": [
+    "src/",
+    "dist/",
+    "README.md",
+    "LICENSE"
+  ],
+  "packageManager": "pnpm@10.23.0",
+  "version": "5.0.1"
 }

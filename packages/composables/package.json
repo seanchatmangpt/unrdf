@@ -1,9 +1,10 @@
 {
   "name": "@unrdf/composables",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "UNRDF Composables - Vue 3 Composables for Reactive RDF State (Optional Extension)",
   "type": "module",
   "main": "src/index.mjs",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": "./src/index.mjs",
     "./graph": "./src/graph.mjs",
@@ -20,7 +21,8 @@
     "test": "vitest run --coverage",
     "test:fast": "vitest run --coverage",
     "test:watch": "vitest --coverage",
-    "build": "node build.config.mjs",
+    "build": "unbuild && tsc --emitDeclarationOnly",
+    "build:types": "tsc --emitDeclarationOnly",
     "lint": "eslint src/ test/ --max-warnings=0",
     "lint:fix": "eslint src/ test/ --fix",
     "format": "prettier --write src/ test/",
@@ -36,8 +38,8 @@
     "web"
   ],
   "dependencies": {
-    "@unrdf/core": "workspace:5.0.0-beta.1",
-    "@unrdf/streaming": "workspace:5.0.0-beta.1",
+    "@unrdf/core": "workspace:*",
+    "@unrdf/streaming": "workspace:*",
     "vue": "^3.5.25"
   },
   "peerDependencies": {
@@ -48,7 +50,8 @@
     "vitest": "^4.0.15"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=18.0.0",
+    "pnpm": ">=7.0.0"
   },
   "repository": {
     "type": "git",
@@ -59,5 +62,8 @@
     "url": "https://github.com/unrdf/unrdf/issues"
   },
   "homepage": "https://github.com/unrdf/unrdf#readme",
-  "license": "MIT"
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
 }

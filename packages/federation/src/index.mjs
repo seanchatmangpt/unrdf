@@ -24,3 +24,23 @@ export {
 
 // Export coordinator types
 export { CoordinatorConfigSchema } from './federation/coordinator.mjs';
+
+// Export health endpoint
+export { createHealthEndpoint } from './federation/health.mjs';
+
+// Export metrics
+export {
+  getMetrics,
+  getMetricsJSON,
+  clearMetrics,
+  resetMetrics,
+  queryCounter,
+  queryDuration,
+  peerGauge,
+  concurrentQueries,
+  errorCounter,
+  recordQuery,
+  recordError,
+  updatePeerMetrics,
+  trackConcurrentQuery,
+} from './federation/metrics.mjs';

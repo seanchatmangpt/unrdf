@@ -83,28 +83,44 @@ export function createSubscriptionManager(storeOrFeed) {
     /**
      * Subscribe to changes
      *
-     * @param {Object} [filter] - Optional filter
-     * @param {*} [filter.subject] - Filter by subject
-     * @param {*} [filter.predicate] - Filter by predicate
-     * @param {*} [filter.object] - Filter by object
-     * @param {*} [filter.graph] - Filter by graph
-     * @param {Function} callback - Callback function to receive changes
+     * @param {Function | Object} callbackOrFilter - Callback function or filter object (for backward compatibility)
+     * @param {Object} [filterOrUndefined] - Filter object (if callback is first arg) or undefined
+     * @param {*} [filterOrUndefined.subject] - Filter by subject
+     * @param {*} [filterOrUndefined.predicate] - Filter by predicate
+     * @param {*} [filterOrUndefined.object] - Filter by object
+     * @param {*} [filterOrUndefined.graph] - Filter by graph
      * @returns {string} Subscription ID
      */
-    subscribe(filter, callback) {
+    subscribe(callbackOrFilter, filterOrUndefined) {
+      // Backward compatibility: Old API is subscribe(callback, filter)
+      let filter = null;
+      let cb = null;
+
+      if (typeof callbackOrFilter === 'function') {
+        // Old API: subscribe(callback) or subscribe(callback, filter)
+        cb = callbackOrFilter;
+        filter = filterOrUndefined || null;
+      } else if (typeof filterOrUndefined === 'function') {
+        // New API: subscribe(filter, callback)
+        filter = callbackOrFilter;
+        cb = filterOrUndefined;
+      } else {
+        throw new TypeError('subscribe requires a callback function');
+      }
+
       const validated = FilterSchema.parse(filter);
       const id = `sub_${nextId++}`;
 
       const listener = event => {
         const change = event.detail;
         if (matchesFilter(change.quad, validated)) {
-          // Pass array of matching quads to callback
-          callback([change.quad]);
+          // Pass the change object itself, not wrapped in array
+          cb(change);
         }
       };
 
       subscriptions.set(id, {
-        callback,
+        callback: cb,
         filter: validated,
         listener,
       });

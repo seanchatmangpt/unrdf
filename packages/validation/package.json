@@ -1,9 +1,10 @@
 {
   "name": "@unrdf/validation",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "OTEL validation framework for UNRDF development",
   "type": "module",
   "main": "./src/index.mjs",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": "./src/index.mjs"
   },
@@ -13,15 +14,22 @@
   "scripts": {
     "test": "echo 'No tests for @unrdf/validation (OTEL validation runs via validation/run-all.mjs)' && exit 0",
     "test:fast": "echo 'No tests for @unrdf/validation (OTEL validation runs via validation/run-all.mjs)' && exit 0",
-    "test:watch": "echo 'No tests for @unrdf/validation (OTEL validation runs via validation/run-all.mjs)' && exit 0"
+    "test:watch": "echo 'No tests for @unrdf/validation (OTEL validation runs via validation/run-all.mjs)' && exit 0",
+    "build": "unbuild && tsc --emitDeclarationOnly",
+    "build:types": "tsc --emitDeclarationOnly"
   },
-  "private": true,
   "keywords": [
     "rdf",
     "validation",
     "otel",
     "observability"
   ],
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=7.0.0"
+  },
+  "sideEffects": false,
   "author": "UNRDF Contributors",
-  "license": "MIT"
+  "license": "MIT",
+  "private": true
 }

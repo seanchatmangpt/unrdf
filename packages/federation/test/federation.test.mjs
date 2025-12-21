@@ -444,3 +444,159 @@ describe('Federation Integration', () => {
     expect(result.results).toHaveLength(3); // 3 unique results
   });
 });
+
+/* ========================================================================= */
+/* Coordinator Lifecycle Tests (COVERAGE GAP)                               */
+/* ========================================================================= */
+
+describe('Coordinator Lifecycle', () => {
+  it('should destroy coordinator and clean up resources', () => {
+    const coordinator = createCoordinator({
+      peers: [{ id: 'peer1', endpoint: 'http://peer1.com/sparql' }],
+    });
+
+    coordinator.startHealthChecks();
+
+    // Destroy should stop health checks
+    coordinator.destroy();
+
+    // After destroy, health check timer should be cleared
+    expect(() => coordinator.destroy()).not.toThrow();
+  });
+
+  it('should handle startHealthChecks called multiple times', () => {
+    const coordinator = createCoordinator({
+      peers: [{ id: 'peer1', endpoint: 'http://peer1.com/sparql' }],
+    });
+
+    coordinator.startHealthChecks();
+    coordinator.startHealthChecks(); // Should not create duplicate timer
+
+    coordinator.stopHealthChecks();
+  });
+
+  it('should handle stopHealthChecks when not started', () => {
+    const coordinator = createCoordinator();
+
+    // Should not throw when stopping without starting
+    expect(() => coordinator.stopHealthChecks()).not.toThrow();
+  });
+
+  it('should clean up on destroy even if not started', () => {
+    const coordinator = createCoordinator();
+
+    // Should handle destroy without health checks started
+    expect(() => coordinator.destroy()).not.toThrow();
+  });
+});
+
+/* ========================================================================= */
+/* Health Check Error Handling (COVERAGE GAP)                               */
+/* ========================================================================= */
+
+describe('Health Check Error Handling', () => {
+  it('should handle health check errors gracefully', async () => {
+    global.fetch = vi.fn().mockRejectedValue(new Error('Network timeout'));
+
+    const coordinator = createCoordinator({
+      peers: [
+        { id: 'peer1', endpoint: 'http://peer1.com/sparql' },
+        { id: 'peer2', endpoint: 'http://peer2.com/sparql' },
+      ],
+    });
+
+    const health = await coordinator.healthCheck();
+
+    expect(health.totalPeers).toBe(2);
+    expect(health.healthyPeers).toBe(0);
+    expect(health.unreachablePeers).toBe(2);
+  });
+
+  it('should track peer status degradation', async () => {
+    global.fetch = createMockFetch({
+      peer1: { ok: false, status: 500, statusText: 'Internal Server Error' },
+    });
+
+    const coordinator = createCoordinator({
+      peers: [{ id: 'peer1', endpoint: 'http://peer1.com/sparql' }],
+    });
+
+    await coordinator.queryPeer('peer1', 'SELECT * WHERE { ?s ?p ?o }');
+
+    const peer = coordinator.getPeer('peer1');
+    expect(peer.status).toBe('degraded');
+  });
+
+  it('should track peer unreachable status', async () => {
+    global.fetch = vi.fn().mockRejectedValue(new Error('Connection refused'));
+
+    const coordinator = createCoordinator({
+      peers: [{ id: 'peer1', endpoint: 'http://peer1.com/sparql' }],
+    });
+
+    await coordinator.queryPeer('peer1', 'SELECT * WHERE { ?s ?p ?o }');
+
+    const peer = coordinator.getPeer('peer1');
+    expect(peer.status).toBe('unreachable');
+  });
+});
+
+/* ========================================================================= */
+/* Consensus Edge Cases (COVERAGE GAP)                                      */
+/* ========================================================================= */
+
+describe('Consensus Edge Cases', () => {
+  it('should handle query with all peers failing', async () => {
+    global.fetch = vi.fn().mockRejectedValue(new Error('All peers down'));
+
+    const coordinator = createCoordinator({
+      peers: [
+        { id: 'peer1', endpoint: 'http://peer1.com/sparql' },
+        { id: 'peer2', endpoint: 'http://peer2.com/sparql' },
+      ],
+    });
+
+    const result = await coordinator.query('SELECT * WHERE { ?s ?p ?o }');
+
+    expect(result.success).toBe(false);
+    expect(result.failureCount).toBe(2);
+    expect(result.successCount).toBe(0);
+  });
+
+  it('should handle partial failures in distributed query', async () => {
+    global.fetch = createMockFetch({
+      peer1: { ok: true, data: { results: { bindings: [{ x: { type: 'literal', value: '1' } }] } } },
+      peer2: { ok: false, status: 500 },
+    });
+
+    const coordinator = createCoordinator({
+      peers: [
+        { id: 'peer1', endpoint: 'http://peer1.com/sparql' },
+        { id: 'peer2', endpoint: 'http://peer2.com/sparql' },
+      ],
+    });
+
+    const result = await coordinator.query('SELECT * WHERE { ?s ?p ?o }');
+
+    expect(result.successCount).toBe(1);
+    expect(result.failureCount).toBe(1);
+  });
+
+  it('should track error rate in stats', async () => {
+    global.fetch = vi.fn()
+      .mockResolvedValueOnce({ ok: true, status: 200, json: async () => ({ results: { bindings: [] } }) })
+      .mockRejectedValueOnce(new Error('Failure'));
+
+    const coordinator = createCoordinator({
+      peers: [{ id: 'peer1', endpoint: 'http://peer1.com/sparql' }],
+    });
+
+    await coordinator.queryPeer('peer1', 'SELECT * WHERE { ?s ?p ?o }');
+    await coordinator.queryPeer('peer1', 'SELECT * WHERE { ?s ?p ?o }');
+
+    const stats = coordinator.getStats();
+    expect(stats.totalQueries).toBe(2);
+    expect(stats.totalErrors).toBe(1);
+    expect(stats.errorRate).toBeCloseTo(0.5);
+  });
+});

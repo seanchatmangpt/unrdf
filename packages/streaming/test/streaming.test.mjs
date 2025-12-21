@@ -111,19 +111,21 @@ describe('@unrdf/streaming', () => {
       expect(typeof manager.unsubscribe).toBe('function');
     });
 
-    it('should subscribe to changes', done => {
-      const quad = {
-        subject: namedNode('http://example.org/s'),
-        predicate: namedNode('http://example.org/p'),
-        object: literal('value'),
-      };
+    it('should subscribe to changes', () => {
+      return new Promise(resolve => {
+        const quad = {
+          subject: namedNode('http://example.org/s'),
+          predicate: namedNode('http://example.org/p'),
+          object: literal('value'),
+        };
 
-      manager.subscribe(change => {
-        expect(change.type).toBe('add');
-        done();
+        manager.subscribe(change => {
+          expect(change.type).toBe('add');
+          resolve();
+        }, {});
+
+        feed.emitChange({ type: 'add', quad });
       });
-
-      feed.emitChange({ type: 'add', quad });
     });
 
     it('should filter by subject', done => {
@@ -158,7 +160,7 @@ describe('@unrdf/streaming', () => {
 
     it('should unsubscribe', () => {
       const callback = vi.fn();
-      const id = manager.subscribe(callback);
+      const id = manager.subscribe(callback, {});
 
       const quad = {
         subject: namedNode('http://example.org/s'),
@@ -175,7 +177,7 @@ describe('@unrdf/streaming', () => {
     });
 
     it('should list subscriptions', () => {
-      const sub1 = manager.subscribe(() => {});
+      const sub1 = manager.subscribe(() => {}, {});
       const sub2 = manager.subscribe(() => {}, { subject: namedNode('http://example.org/s') });
 
       const subs = manager.listSubscriptions();
@@ -375,6 +377,248 @@ describe('@unrdf/streaming', () => {
       expect(merged.changes).toHaveLength(2);
       expect(merged.changes[0].timestamp).toBe(1000);
       expect(merged.changes[1].timestamp).toBe(2000);
+    });
+  });
+
+  /* ========================================================================= */
+  /* Memory Leak Scenarios (COVERAGE GAP)                                     */
+  /* ========================================================================= */
+
+  describe('Memory Leak Prevention', () => {
+    it('should handle 1000+ subscriptions without memory leak', () => {
+      const feed = createChangeFeed();
+      const manager = createSubscriptionManager(feed);
+      const subscriptionIds = [];
+
+      // Create 1000 subscriptions
+      for (let i = 0; i < 1000; i++) {
+        const id = manager.subscribe(() => {}, {});
+        subscriptionIds.push(id);
+      }
+
+      expect(manager.listSubscriptions()).toHaveLength(1000);
+
+      // Unsubscribe all
+      for (const id of subscriptionIds) {
+        manager.unsubscribe(id);
+      }
+
+      expect(manager.listSubscriptions()).toHaveLength(0);
+    });
+
+    it('should properly clean up subscriptions on unsubscribe', () => {
+      const feed = createChangeFeed();
+      const manager = createSubscriptionManager(feed);
+      const callback = vi.fn();
+
+      const id = manager.subscribe(callback, {});
+
+      const quad = {
+        subject: namedNode('http://example.org/s'),
+        predicate: namedNode('http://example.org/p'),
+        object: literal('value'),
+      };
+
+      // Emit before unsubscribe
+      feed.emitChange({ type: 'add', quad });
+      expect(callback).toHaveBeenCalledTimes(1);
+
+      // Unsubscribe
+      manager.unsubscribe(id);
+
+      // Emit after unsubscribe - should not trigger callback
+      feed.emitChange({ type: 'add', quad });
+      expect(callback).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  /* ========================================================================= */
+  /* Backpressure Simulation (COVERAGE GAP)                                   */
+  /* ========================================================================= */
+
+  describe('Backpressure Handling', () => {
+    it('should handle 100+ events/sec without blocking', done => {
+      const feed = createChangeFeed();
+      const processor = createStreamProcessor(feed);
+      let eventCount = 0;
+
+      processor.subscribe(() => {
+        eventCount++;
+        if (eventCount >= 100) {
+          expect(eventCount).toBe(100);
+          done();
+        }
+      });
+
+      const quad = {
+        subject: namedNode('http://example.org/s'),
+        predicate: namedNode('http://example.org/p'),
+        object: literal('value'),
+      };
+
+      // Emit 100 events rapidly
+      for (let i = 0; i < 100; i++) {
+        feed.emitChange({ type: 'add', quad });
+      }
+    });
+
+    it('should debounce rapid events correctly', done => {
+      const feed = createChangeFeed();
+      const processor = createStreamProcessor(feed);
+      const callback = vi.fn();
+
+      processor.debounce(50).subscribe(callback);
+
+      const quad = {
+        subject: namedNode('http://example.org/s'),
+        predicate: namedNode('http://example.org/p'),
+        object: literal('value'),
+      };
+
+      // Rapid fire 20 events
+      for (let i = 0; i < 20; i++) {
+        feed.emitChange({ type: 'add', quad });
+      }
+
+      // Should only trigger once after debounce period
+      setTimeout(() => {
+        expect(callback).toHaveBeenCalledTimes(1);
+        done();
+      }, 100);
+    });
+  });
+
+  /* ========================================================================= */
+  /* Ring Buffer Eviction (COVERAGE GAP)                                      */
+  /* ========================================================================= */
+
+  describe('Ring Buffer Eviction', () => {
+    it('should evict oldest changes when exceeding max history', () => {
+      const feed = createChangeFeed(null, { maxHistorySize: 100 });
+
+      const quad = {
+        subject: namedNode('http://example.org/s'),
+        predicate: namedNode('http://example.org/p'),
+        object: literal('value'),
+      };
+
+      // Add 150 changes (exceeds max of 100)
+      for (let i = 0; i < 150; i++) {
+        feed.emitChange({
+          type: 'add',
+          quad,
+          timestamp: i,
+        });
+      }
+
+      const changes = feed.getChanges();
+
+      // Should only keep last 100
+      expect(changes).toHaveLength(100);
+
+      // Oldest should be timestamp 50 (150 - 100)
+      expect(changes[0].timestamp).toBe(50);
+
+      // Newest should be timestamp 149
+      expect(changes[99].timestamp).toBe(149);
+    });
+
+    it('should maintain ring buffer with getHistory options', () => {
+      const feed = createChangeFeed(null, { maxHistorySize: 50 });
+
+      const quad = {
+        subject: namedNode('http://example.org/s'),
+        predicate: namedNode('http://example.org/p'),
+        object: literal('value'),
+      };
+
+      // Add 100 changes
+      for (let i = 0; i < 100; i++) {
+        feed.emitChange({
+          type: 'add',
+          quad,
+          timestamp: i,
+        });
+      }
+
+      // Query with limit
+      const limited = feed.getHistory({ limit: 10 });
+      expect(limited).toHaveLength(10);
+
+      // Query with since filter
+      const recent = feed.getHistory({ since: 75 });
+      expect(recent.every(c => c.timestamp >= 75)).toBe(true);
+    });
+  });
+
+  /* ========================================================================= */
+  /* Subscription Cleanup (COVERAGE GAP)                                      */
+  /* ========================================================================= */
+
+  describe('Subscription Cleanup', () => {
+    it('should clean up all subscriptions when unsubscribing', () => {
+      const feed = createChangeFeed();
+      const manager = createSubscriptionManager(feed);
+
+      const callback1 = vi.fn();
+      const callback2 = vi.fn();
+      const callback3 = vi.fn();
+
+      const id1 = manager.subscribe(callback1, {});
+      const id2 = manager.subscribe(callback2, {});
+      const id3 = manager.subscribe(callback3, {});
+
+      expect(manager.listSubscriptions()).toHaveLength(3);
+
+      manager.unsubscribe(id1);
+      manager.unsubscribe(id2);
+      manager.unsubscribe(id3);
+
+      expect(manager.listSubscriptions()).toHaveLength(0);
+    });
+
+    it('should handle unsubscribe function from subscribe', () => {
+      const feed = createChangeFeed();
+      const callback = vi.fn();
+
+      const unsubscribe = feed.subscribe(callback);
+
+      const quad = {
+        subject: namedNode('http://example.org/s'),
+        predicate: namedNode('http://example.org/p'),
+        object: literal('value'),
+      };
+
+      feed.emitChange({ type: 'add', quad });
+      expect(callback).toHaveBeenCalledTimes(1);
+
+      unsubscribe();
+
+      feed.emitChange({ type: 'add', quad });
+      expect(callback).toHaveBeenCalledTimes(1);
+    });
+
+    it('should handle removeEventListener cleanup', () => {
+      const feed = createChangeFeed();
+      const callback = vi.fn();
+
+      const handler = event => callback(event.detail);
+
+      feed.addEventListener('change', handler);
+
+      const quad = {
+        subject: namedNode('http://example.org/s'),
+        predicate: namedNode('http://example.org/p'),
+        object: literal('value'),
+      };
+
+      feed.emitChange({ type: 'add', quad });
+      expect(callback).toHaveBeenCalledTimes(1);
+
+      feed.removeEventListener('change', handler);
+
+      feed.emitChange({ type: 'add', quad });
+      expect(callback).toHaveBeenCalledTimes(1);
     });
   });
 });

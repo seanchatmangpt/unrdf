@@ -1,9 +1,10 @@
 {
   "name": "@unrdf/engine-gateway",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "μ(O) Engine Gateway - Enforcement layer for Oxigraph-first, N3-minimal RDF processing",
   "type": "module",
   "main": "./src/index.mjs",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": "./src/index.mjs",
     "./gateway": "./src/gateway.mjs",
@@ -22,6 +23,16 @@
     "vitest": "^4.0.15"
   },
   "scripts": {
-    "test": "vitest run"
+    "test": "vitest run",
+    "build": "unbuild && tsc --emitDeclarationOnly",
+    "build:types": "tsc --emitDeclarationOnly"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=7.0.0"
+  },
+  "sideEffects": false,
+  "publishConfig": {
+    "access": "public"
   }
 }

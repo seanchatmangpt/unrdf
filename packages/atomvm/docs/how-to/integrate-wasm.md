@@ -258,3 +258,4 @@ readResultFromMemory(resultPtr) {
 - [Reference: AtomVM Runtime API](../reference/atomvm-runtime.md) - Complete API
 - [Explanation: Architecture Overview](../explanation/architecture.md) - System design
 
+

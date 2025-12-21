@@ -12,6 +12,7 @@ import { createStore, OxigraphStore } from '@unrdf/oxigraph';
 import { Parser } from '@unrdf/core/rdf/n3-justified-only'; // JUSTIFIED: N3 Parser for streaming with backpressure
 import { z } from 'zod';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
+import { LRUCache } from 'lru-cache';
 import { validateShacl } from '../validate.mjs';
 import { createObservabilityManager } from '../observability.mjs';
 
@@ -75,7 +76,11 @@ export class RealTimeValidator extends EventEmitter {
     super();
     this.config = ValidatorConfigSchema.parse(config);
     this.shapesStore = this._initializeShapes(this.config.shapes);
-    this.validationCache = new Map();
+    this.validationCache = new LRUCache({
+      max: this.config.cacheSize,
+      ttl: 60_000, // 1 minute
+      updateAgeOnGet: true,
+    });
     this.debounceTimer = null;
     this.pendingValidations = [];
     this.isValidating = false;
@@ -324,13 +329,8 @@ export class RealTimeValidator extends EventEmitter {
    * @private
    */
   _addToCache(hash, result) {
+    // LRUCache handles size limit and TTL automatically
     this.validationCache.set(hash, result);
-
-    // Trim cache if it exceeds size
-    if (this.validationCache.size > this.config.cacheSize) {
-      const firstKey = this.validationCache.keys().next().value;
-      this.validationCache.delete(firstKey);
-    }
   }
 
   /**

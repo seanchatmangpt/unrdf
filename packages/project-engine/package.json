@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/project-engine",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "UNRDF Project Engine - Self-hosting Tools and Infrastructure (Development Only)",
   "type": "module",
   "main": "src/index.mjs",
@@ -52,5 +52,7 @@
   },
   "homepage": "https://github.com/unrdf/unrdf#readme",
   "license": "MIT",
-  "private": false
+  "publishConfig": {
+    "access": "public"
+  }
 }
