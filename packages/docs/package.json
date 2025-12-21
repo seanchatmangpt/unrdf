@@ -56,6 +56,14 @@
     "vitest": "^4.0.15",
     "vue-tsc": "^3.1.5"
   },
+  "main": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
   "sideEffects": false,
   "files": [
     "src/",
@@ -63,6 +71,24 @@
     "README.md",
     "LICENSE"
   ],
+  "keywords": [
+    "unrdf",
+    "documentation",
+    "nuxt",
+    "ai",
+    "knowledge-graph"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/unrdf/unrdf.git",
+    "directory": "packages/docs"
+  },
+  "bugs": {
+    "url": "https://github.com/unrdf/unrdf/issues"
+  },
+  "homepage": "https://github.com/unrdf/unrdf#readme",
+  "license": "MIT",
   "packageManager": "pnpm@10.23.0",
-  "version": "5.0.1"
+  "version": "5.0.1",
+  "description": "UNRDF Interactive Documentation with AI-powered search and LLM integration"
 }

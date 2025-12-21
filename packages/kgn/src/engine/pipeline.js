@@ -17,7 +17,13 @@
 
 import { DeterministicRenderer } from './renderer.js';
 
+/**
+ *
+ */
 export class DeterministicPipeline {
+  /**
+   *
+   */
   constructor(options = {}) {
     this.renderer = new DeterministicRenderer(options);
     this.enableValidation = options.enableValidation !== false;

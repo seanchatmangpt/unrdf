@@ -978,6 +978,7 @@ export async function executeAtomVMRuntime(validator, parentSpan, validationId) 
       
       const { AtomVMNodeRuntime } = await import(runtimePath);
       const runtime = new AtomVMNodeRuntime({ log: () => {} });
+      const spans = [];
 
     // Load WASM
     const loadStart = Date.now();

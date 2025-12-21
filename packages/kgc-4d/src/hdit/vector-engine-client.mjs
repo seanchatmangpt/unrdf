@@ -35,6 +35,9 @@ function createWorker(workerURL) {
  * Client wrapper for Vector Engine Worker
  */
 export class VectorEngineClient {
+  /**
+   *
+   */
   constructor(workerURL) {
     this.worker = createWorker(workerURL);
     this.nextId = 0;

@@ -17,7 +17,13 @@ const glob = simpleGlob;
 
 import { ERROR_CODES, DEFAULT_CONFIG } from './constants.js';
 
+/**
+ *
+ */
 export class TargetResolver {
+  /**
+   *
+   */
   constructor(config = {}) {
     this.config = { ...DEFAULT_CONFIG, ...config };
     this.projectRoot = config.projectRoot || process.cwd();
@@ -57,6 +63,9 @@ export class TargetResolver {
    * Private Methods
    */
 
+  /**
+   *
+   */
   async _resolveSingleTarget(targetConfig, variables) {
     let targetPath = targetConfig.to;
 
@@ -97,6 +106,9 @@ export class TargetResolver {
     return target;
   }
 
+  /**
+   *
+   */
   async _resolveGlobTargets(globPattern, targetConfig, variables) {
     // Use glob to find matching files
     const matches = await glob(globPattern, {
@@ -143,6 +155,9 @@ export class TargetResolver {
     return targets;
   }
 
+  /**
+   *
+   */
   _interpolateVariables(template, variables) {
     return template.replace(/\{\{(\w+)\}\}/g, (match, variable) => {
       const value = variables[variable];
@@ -153,10 +168,16 @@ export class TargetResolver {
     });
   }
 
+  /**
+   *
+   */
   _isGlobPattern(path) {
     return /[*?{}\[\]]/.test(path);
   }
 
+  /**
+   *
+   */
   _resolvePath(targetPath) {
     // Convert to absolute path
     if (!targetPath.startsWith('/')) {
@@ -165,6 +186,9 @@ export class TargetResolver {
     return resolve(targetPath);
   }
 
+  /**
+   *
+   */
   _validatePath(resolvedPath) {
     // Security: Prevent path traversal
     if (this.config.preventPathTraversal) {
@@ -183,6 +207,9 @@ export class TargetResolver {
     }
   }
 
+  /**
+   *
+   */
   _applyExclusions(matches, exclusions) {
     const exclusionPatterns = Array.isArray(exclusions) ? exclusions : [exclusions];
 
@@ -201,6 +228,9 @@ export class TargetResolver {
     });
   }
 
+  /**
+   *
+   */
   _matchesGlob(path, pattern) {
     // Simple glob matching - in production, use minimatch or similar
     const regex = pattern
@@ -211,6 +241,9 @@ export class TargetResolver {
     return new RegExp(`^${regex}$`).test(path);
   }
 
+  /**
+   *
+   */
   async _evaluateTargetCondition(target, condition) {
     try {
       // Check if file exists first
@@ -254,6 +287,9 @@ export class TargetResolver {
     }
   }
 
+  /**
+   *
+   */
   async _evaluateComplexCondition(target, content, condition) {
     const { pattern, size, lines, encoding } = condition;
 
@@ -287,6 +323,9 @@ export class TargetResolver {
     return true;
   }
 
+  /**
+   *
+   */
   async _fileExists(filePath) {
     try {
       await fs.access(filePath);
@@ -296,12 +335,18 @@ export class TargetResolver {
     }
   }
 
+  /**
+   *
+   */
   _getFileExtension(filePath) {
     const name = basename(filePath);
     const dotIndex = name.lastIndexOf('.');
     return dotIndex === -1 ? '' : name.slice(dotIndex);
   }
 
+  /**
+   *
+   */
   _detectEncoding(content) {
     // Simple encoding detection - in production use a proper library
     try {

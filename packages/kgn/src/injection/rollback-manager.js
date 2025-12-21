@@ -11,7 +11,13 @@ import { createHash } from 'crypto';
 
 import { ERROR_CODES, CHECKSUM_ALGORITHMS } from './constants.js';
 
+/**
+ *
+ */
 export class RollbackManager {
+  /**
+   *
+   */
   constructor(config = {}) {
     this.config = config;
     this.rollbackHistory = new Map();
@@ -215,6 +221,9 @@ export class RollbackManager {
    * Private Methods
    */
 
+  /**
+   *
+   */
   async _restoreFromBackup(targetPath, backupPath) {
     // Verify backup exists
     try {
@@ -254,6 +263,9 @@ export class RollbackManager {
     }
   }
 
+  /**
+   *
+   */
   async _cleanupTemporaryFiles(operationData) {
     // Clean up any temporary files created during operation
     if (operationData.tempFiles) {
@@ -267,6 +279,9 @@ export class RollbackManager {
     }
   }
 
+  /**
+   *
+   */
   async _releaseLocks(operationData) {
     // Release any locks held by the operation
     if (operationData.locks) {
@@ -280,6 +295,9 @@ export class RollbackManager {
     }
   }
 
+  /**
+   *
+   */
   _getOperationHistory(operationId) {
     // This would normally come from the injection engine's history
     // For now, return a mock structure
@@ -291,10 +309,16 @@ export class RollbackManager {
     };
   }
 
+  /**
+   *
+   */
   _findOperationBackups(operationId) {
     return this.operationBackups.get(operationId) || [];
   }
 
+  /**
+   *
+   */
   async _calculateFileChecksum(filePath, algorithm = CHECKSUM_ALGORITHMS.SHA256) {
     const content = await fs.readFile(filePath);
     const hash = createHash(algorithm);

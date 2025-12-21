@@ -20,7 +20,13 @@ import { createHash } from 'crypto';
 import { glob } from 'glob';
 import consola from 'consola';
 
+/**
+ *
+ */
 export class DeterminismLinter {
+  /**
+   *
+   */
   constructor(config = {}) {
     this.config = {
       // CRITICAL LIMITS (ZERO TOLERANCE)
@@ -403,6 +409,9 @@ export class DeterminismLinter {
     return Math.max(includes, extends_, blocks);
   }
 
+  /**
+   *
+   */
   getLineAndColumn(content, index) {
     const lines = content.substring(0, index).split('\n');
     return {
@@ -411,11 +420,17 @@ export class DeterminismLinter {
     };
   }
 
+  /**
+   *
+   */
   isTemplateFile(filePath) {
     const templateExtensions = ['.njk', '.ejs', '.hbs', '.mustache', '.liquid'];
     return templateExtensions.some(ext => filePath.endsWith(ext));
   }
 
+  /**
+   *
+   */
   isJavaScriptFile(filePath) {
     return filePath.endsWith('.js') || filePath.endsWith('.ts');
   }

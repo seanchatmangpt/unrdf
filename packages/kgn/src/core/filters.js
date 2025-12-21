@@ -12,7 +12,13 @@
 
 import crypto from 'crypto';
 
+/**
+ *
+ */
 export class KGenFilters {
+  /**
+   *
+   */
   constructor(options = {}) {
     this.options = {
       deterministicMode: options.deterministicMode !== false,

@@ -12,7 +12,13 @@
  * ```
  */
 
+/**
+ *
+ */
 export class HookRegistry {
+  /**
+   *
+   */
   constructor() {
     this.hooks = new Map();
   }

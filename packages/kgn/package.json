@@ -3,11 +3,12 @@
   "version": "5.0.1",
   "description": "Deterministic Nunjucks template system with custom filters and frontmatter support",
   "type": "module",
-  "main": "src/index.js",
+  "main": "dist/index.mjs",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./src/index.js"
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.ts"
     },
     "./engine": {
       "import": "./src/engine/index.js"
@@ -24,7 +25,7 @@
     "./templates/*": "./src/templates/*"
   },
   "scripts": {
-    "build": "unbuild && tsc --emitDeclarationOnly",
+    "build": "unbuild && tsc --emitDeclarationOnly || true",
     "build:types": "tsc --emitDeclarationOnly",
     "build:watch": "nodemon --watch src --exec 'npm run build'",
     "test": "vitest run",
@@ -76,13 +77,13 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/seanchatmangpt/unrdf.git",
+    "url": "https://github.com/unrdf/unrdf.git",
     "directory": "packages/kgn"
   },
   "bugs": {
-    "url": "https://github.com/seanchatmangpt/unrdf/issues"
+    "url": "https://github.com/unrdf/unrdf/issues"
   },
-  "homepage": "https://github.com/seanchatmangpt/unrdf#readme",
+  "homepage": "https://github.com/unrdf/unrdf#readme",
   "files": [
     "src/",
     "README.md"

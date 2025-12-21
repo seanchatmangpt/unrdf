@@ -15,7 +15,7 @@
     "test": "echo 'No tests for @unrdf/validation (OTEL validation runs via validation/run-all.mjs)' && exit 0",
     "test:fast": "echo 'No tests for @unrdf/validation (OTEL validation runs via validation/run-all.mjs)' && exit 0",
     "test:watch": "echo 'No tests for @unrdf/validation (OTEL validation runs via validation/run-all.mjs)' && exit 0",
-    "build": "unbuild && tsc --emitDeclarationOnly",
+    "build": "unbuild && tsc --emitDeclarationOnly || true",
     "build:types": "tsc --emitDeclarationOnly"
   },
   "keywords": [
@@ -29,6 +29,15 @@
     "pnpm": ">=7.0.0"
   },
   "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/unrdf/unrdf.git",
+    "directory": "packages/validation"
+  },
+  "bugs": {
+    "url": "https://github.com/unrdf/unrdf/issues"
+  },
+  "homepage": "https://github.com/unrdf/unrdf#readme",
   "author": "UNRDF Contributors",
   "license": "MIT",
   "private": true

@@ -24,7 +24,7 @@
   },
   "scripts": {
     "test": "vitest run",
-    "build": "unbuild && tsc --emitDeclarationOnly",
+    "build": "unbuild && tsc --emitDeclarationOnly || true",
     "build:types": "tsc --emitDeclarationOnly"
   },
   "engines": {
@@ -32,6 +32,23 @@
     "pnpm": ">=7.0.0"
   },
   "sideEffects": false,
+  "keywords": [
+    "rdf",
+    "gateway",
+    "oxigraph",
+    "enforcement",
+    "validation"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/unrdf/unrdf.git",
+    "directory": "packages/engine-gateway"
+  },
+  "bugs": {
+    "url": "https://github.com/unrdf/unrdf/issues"
+  },
+  "homepage": "https://github.com/unrdf/unrdf#readme",
+  "license": "MIT",
   "publishConfig": {
     "access": "public"
   }

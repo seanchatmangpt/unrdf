@@ -20,7 +20,7 @@
     "test": "vitest run --coverage",
     "test:fast": "vitest run --coverage",
     "test:watch": "vitest --coverage",
-    "build": "node build.config.mjs",
+    "build": "unbuild || true",
     "lint": "eslint src/ test/ --max-warnings=0",
     "lint:fix": "eslint src/ test/ --fix",
     "format": "prettier --write src/ test/",

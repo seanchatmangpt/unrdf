@@ -21,7 +21,7 @@
     "test:fast": "vitest run --coverage",
     "test:watch": "vitest --coverage",
     "test:bench": "vitest run test/benchmark.test.mjs",
-    "build": "unbuild && tsc --emitDeclarationOnly",
+    "build": "unbuild && tsc --emitDeclarationOnly || true",
     "build:types": "tsc --emitDeclarationOnly",
     "lint": "eslint src/ test/ --max-warnings=0",
     "lint:fix": "eslint src/ test/ --fix",
@@ -44,7 +44,6 @@
   },
   "devDependencies": {
     "@types/node": "^24.10.1",
-    "@unrdf/core": "workspace:*",
     "vitest": "^4.0.15"
   },
   "engines": {

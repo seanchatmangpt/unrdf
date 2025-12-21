@@ -3,7 +3,13 @@
  * Migrated from ~/unjucks with comprehensive determinism checking
  */
 
+/**
+ *
+ */
 export class TemplateLinter {
+  /**
+   *
+   */
   constructor(options = {}) {
     this.strict = options.strict !== false;
     this.warnOnly = options.warnOnly === true;

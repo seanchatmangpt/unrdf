@@ -27,24 +27,28 @@ describe('@unrdf/streaming', () => {
       expect(typeof feed.addEventListener).toBe('function');
     });
 
-    it('should emit changes', done => {
+    it('should emit changes', async () => {
       const quad = {
         subject: namedNode('http://example.org/s'),
         predicate: namedNode('http://example.org/p'),
         object: literal('value'),
       };
 
-      feed.addEventListener('change', event => {
-        expect(event.detail.type).toBe('add');
-        expect(event.detail.quad).toEqual(quad);
-        expect(event.detail.timestamp).toBeDefined();
-        done();
+      const eventPromise = new Promise((resolve) => {
+        feed.addEventListener('change', event => {
+          expect(event.detail.type).toBe('add');
+          expect(event.detail.quad).toEqual(quad);
+          expect(event.detail.timestamp).toBeDefined();
+          resolve();
+        });
       });
 
       feed.emitChange({
         type: 'add',
         quad,
       });
+
+      await eventPromise;
     });
 
     it('should track changes', () => {
@@ -128,21 +132,23 @@ describe('@unrdf/streaming', () => {
       });
     });
 
-    it('should filter by subject', done => {
+    it('should filter by subject', async () => {
       const subject1 = namedNode('http://example.org/s1');
       const subject2 = namedNode('http://example.org/s2');
       const predicate = namedNode('http://example.org/p');
 
       let callCount = 0;
 
-      manager.subscribe(
-        change => {
-          expect(change.quad.subject).toEqual(subject1);
-          callCount++;
-          if (callCount === 2) done();
-        },
-        { subject: subject1 }
-      );
+      const filterPromise = new Promise((resolve) => {
+        manager.subscribe(
+          change => {
+            expect(change.quad.subject).toEqual(subject1);
+            callCount++;
+            if (callCount === 2) resolve();
+          },
+          { subject: subject1 }
+        );
+      });
 
       feed.emitChange({
         type: 'add',
@@ -156,6 +162,8 @@ describe('@unrdf/streaming', () => {
         type: 'add',
         quad: { subject: subject1, predicate, object: literal('3') },
       });
+
+      await filterPromise;
     });
 
     it('should unsubscribe', () => {
@@ -196,7 +204,7 @@ describe('@unrdf/streaming', () => {
       processor = createStreamProcessor(feed);
     });
 
-    it('should filter changes', done => {
+    it('should filter changes', async () => {
       const quad = {
         subject: namedNode('http://example.org/s'),
         predicate: namedNode('http://example.org/p'),
@@ -205,54 +213,66 @@ describe('@unrdf/streaming', () => {
 
       let callCount = 0;
 
-      processor
-        .filter(c => c.type === 'add')
-        .subscribe(change => {
-          expect(change.type).toBe('add');
-          callCount++;
-          if (callCount === 2) done();
-        });
+      const filterPromise = new Promise((resolve) => {
+        processor
+          .filter(c => c.type === 'add')
+          .subscribe(change => {
+            expect(change.type).toBe('add');
+            callCount++;
+            if (callCount === 2) resolve();
+          });
+      });
 
       feed.emitChange({ type: 'add', quad });
       feed.emitChange({ type: 'remove', quad });
       feed.emitChange({ type: 'add', quad });
+
+      await filterPromise;
     });
 
-    it('should map changes', done => {
+    it('should map changes', async () => {
       const quad = {
         subject: namedNode('http://example.org/s'),
         predicate: namedNode('http://example.org/p'),
         object: literal('value'),
       };
 
-      processor
-        .map(c => ({ ...c, processed: true }))
-        .subscribe(change => {
-          expect(change.processed).toBe(true);
-          done();
-        });
+      const mapPromise = new Promise((resolve) => {
+        processor
+          .map(c => ({ ...c, processed: true }))
+          .subscribe(change => {
+            expect(change.processed).toBe(true);
+            resolve();
+          });
+      });
 
       feed.emitChange({ type: 'add', quad });
+
+      await mapPromise;
     });
 
-    it('should batch changes', done => {
+    it('should batch changes', async () => {
       const quad = {
         subject: namedNode('http://example.org/s'),
         predicate: namedNode('http://example.org/p'),
         object: literal('value'),
       };
 
-      processor.batch(3).subscribe(changes => {
-        expect(changes).toHaveLength(3);
-        done();
+      const batchPromise = new Promise((resolve) => {
+        processor.batch(3).subscribe(changes => {
+          expect(changes).toHaveLength(3);
+          resolve();
+        });
       });
 
       feed.emitChange({ type: 'add', quad });
       feed.emitChange({ type: 'add', quad });
       feed.emitChange({ type: 'add', quad });
+
+      await batchPromise;
     });
 
-    it('should debounce changes', done => {
+    it('should debounce changes', async () => {
       const quad = {
         subject: namedNode('http://example.org/s'),
         predicate: namedNode('http://example.org/p'),
@@ -267,10 +287,8 @@ describe('@unrdf/streaming', () => {
       feed.emitChange({ type: 'add', quad });
       feed.emitChange({ type: 'add', quad });
 
-      setTimeout(() => {
-        expect(callback).toHaveBeenCalledTimes(1);
-        done();
-      }, 150);
+      await new Promise(resolve => setTimeout(resolve, 150));
+      expect(callback).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -437,17 +455,19 @@ describe('@unrdf/streaming', () => {
   /* ========================================================================= */
 
   describe('Backpressure Handling', () => {
-    it('should handle 100+ events/sec without blocking', done => {
+    it('should handle 100+ events/sec without blocking', async () => {
       const feed = createChangeFeed();
       const processor = createStreamProcessor(feed);
       let eventCount = 0;
 
-      processor.subscribe(() => {
-        eventCount++;
-        if (eventCount >= 100) {
-          expect(eventCount).toBe(100);
-          done();
-        }
+      const backpressurePromise = new Promise((resolve) => {
+        processor.subscribe(() => {
+          eventCount++;
+          if (eventCount >= 100) {
+            expect(eventCount).toBe(100);
+            resolve();
+          }
+        });
       });
 
       const quad = {
@@ -460,9 +480,11 @@ describe('@unrdf/streaming', () => {
       for (let i = 0; i < 100; i++) {
         feed.emitChange({ type: 'add', quad });
       }
+
+      await backpressurePromise;
     });
 
-    it('should debounce rapid events correctly', done => {
+    it('should debounce rapid events correctly', async () => {
       const feed = createChangeFeed();
       const processor = createStreamProcessor(feed);
       const callback = vi.fn();
@@ -481,10 +503,8 @@ describe('@unrdf/streaming', () => {
       }
 
       // Should only trigger once after debounce period
-      setTimeout(() => {
-        expect(callback).toHaveBeenCalledTimes(1);
-        done();
-      }, 100);
+      await new Promise(resolve => setTimeout(resolve, 100));
+      expect(callback).toHaveBeenCalledTimes(1);
     });
   });
 

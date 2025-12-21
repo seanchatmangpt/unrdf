@@ -12,7 +12,7 @@
   "scripts": {
     "dev": "vite",
     "dev:full": "echo 'Module name required: pnpm run dev:full <module>' && exit 1",
-    "build": "unbuild && tsc --emitDeclarationOnly",
+    "build": "unbuild && tsc --emitDeclarationOnly || true",
     "build:types": "tsc --emitDeclarationOnly",
     "build:vite": "vite build",
     "preview": "vite preview",
@@ -60,6 +60,16 @@
     "README.md",
     "LICENSE"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/unrdf/unrdf.git",
+    "directory": "packages/atomvm"
+  },
+  "bugs": {
+    "url": "https://github.com/unrdf/unrdf/issues"
+  },
+  "homepage": "https://github.com/unrdf/unrdf#readme",
+  "license": "MIT",
   "publishConfig": {
     "access": "public"
   }

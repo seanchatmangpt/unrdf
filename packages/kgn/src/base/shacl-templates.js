@@ -5,7 +5,13 @@
  * for validating RDF knowledge graphs used in KGEN template generation
  */
 
+/**
+ *
+ */
 export class KGenSHACLTemplates {
+  /**
+   *
+   */
   constructor(options = {}) {
     this.options = {
       deterministicMode: options.deterministicMode !== false,

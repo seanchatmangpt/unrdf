@@ -441,20 +441,35 @@ export class FederationCoordinator extends EventEmitter {
   }
 
   /**
+   * Remove all event listeners
+   * Call this before shutdown to prevent memory leaks
+   * @returns {void}
+   */
+  removeAllListeners() {
+    super.removeAllListeners();
+  }
+
+  /**
    * Shutdown the federation coordinator
    * @returns {Promise<void>}
    */
   async shutdown() {
+    // Emit shutdown event BEFORE cleanup
+    this.emit('shutdown');
+
     if (this.healthCheckTimer) {
       clearInterval(this.healthCheckTimer);
       this.healthCheckTimer = null;
     }
 
     if (this.consensus) {
+      // Remove consensus event listeners first
+      this.consensus.removeAllListeners();
       await this.consensus.shutdown();
     }
 
-    this.emit('shutdown');
+    // Remove all event listeners to prevent memory leaks
+    this.removeAllListeners();
   }
 }
 

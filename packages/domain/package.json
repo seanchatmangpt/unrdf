@@ -13,7 +13,8 @@
   "scripts": {
     "test": "echo 'No tests for @unrdf/domain (type-only package)' && exit 0",
     "test:fast": "echo 'No tests for @unrdf/domain (type-only package)' && exit 0",
-    "test:watch": "echo 'No tests for @unrdf/domain (type-only package)' && exit 0"
+    "test:watch": "echo 'No tests for @unrdf/domain (type-only package)' && exit 0",
+    "build": "echo 'No build for @unrdf/domain (type-only package)' && exit 0"
   },
   "keywords": [
     "rdf",
@@ -26,6 +27,15 @@
     "pnpm": ">=7.0.0"
   },
   "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/unrdf/unrdf.git",
+    "directory": "packages/domain"
+  },
+  "bugs": {
+    "url": "https://github.com/unrdf/unrdf/issues"
+  },
+  "homepage": "https://github.com/unrdf/unrdf#readme",
   "author": "UNRDF Contributors",
   "license": "MIT",
   "private": true

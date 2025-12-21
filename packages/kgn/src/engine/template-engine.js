@@ -150,7 +150,13 @@ class TemplateContextPool {
   }
 }
 
+/**
+ *
+ */
 export class TemplateEngine {
+  /**
+   *
+   */
   constructor(options = {}) {
     this.templatesDir = options.templatesDir || './templates';
     this.enableCache = options.enableCache !== false;
@@ -503,6 +509,9 @@ export class TemplateEngine {
  * Wrapper that provides both basic and inheritance-enabled rendering
  */
 export class EnhancedTemplateEngine extends TemplateEngine {
+  /**
+   *
+   */
   constructor(options = {}) {
     super({
       ...options,

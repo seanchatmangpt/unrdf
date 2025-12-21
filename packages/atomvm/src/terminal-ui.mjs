@@ -10,6 +10,9 @@
  * Terminal UI class
  */
 export class TerminalUI {
+  /**
+   *
+   */
   constructor() {
     this.terminalEl = document.getElementById('terminal');
     this.lines = [];

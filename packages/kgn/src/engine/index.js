@@ -10,6 +10,9 @@ export { DeterministicRenderer } from './renderer.js';
 export { DeterministicPipeline } from './pipeline.js';
 
 // Factory for deterministic engine with complete pipeline
+/**
+ *
+ */
 export function createDeterministicEngine(options = {}) {
   const pipeline = new DeterministicPipeline(options);
 

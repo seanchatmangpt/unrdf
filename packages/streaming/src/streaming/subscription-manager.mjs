@@ -112,10 +112,15 @@ export function createSubscriptionManager(storeOrFeed) {
       const id = `sub_${nextId++}`;
 
       const listener = event => {
-        const change = event.detail;
-        if (matchesFilter(change.quad, validated)) {
-          // Pass the change object itself, not wrapped in array
-          cb(change);
+        try {
+          const change = event.detail;
+          if (matchesFilter(change.quad, validated)) {
+            // Pass the change object itself, not wrapped in array
+            cb(change);
+          }
+        } catch (error) {
+          console.error('[subscription-manager] Listener error:', error);
+          // Don't crash the event loop
         }
       };
 
@@ -165,6 +170,13 @@ export function createSubscriptionManager(storeOrFeed) {
         feed.removeEventListener('change', sub.listener);
       }
       subscriptions.clear();
+    },
+
+    /**
+     * Destroy the subscription manager and cleanup all resources
+     */
+    destroy() {
+      this.clearSubscriptions();
     },
   };
 }

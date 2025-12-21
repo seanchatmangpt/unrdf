@@ -12,7 +12,13 @@
  * ```
  */
 
+/**
+ *
+ */
 export class SSEClient {
+  /**
+   *
+   */
   constructor(url, options = {}) {
     this.url = url;
     this.options = {

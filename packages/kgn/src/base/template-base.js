@@ -9,7 +9,13 @@ import crypto from 'crypto';
 import { KGenTemplateEngine } from '../core/kgen-engine.js';
 import { TemplateInheritanceEngine } from '../inheritance/index.js';
 
+/**
+ *
+ */
 export class KGenTemplateBase {
+  /**
+   *
+   */
   constructor(options = {}) {
     this.options = {
       strictMode: options.strictMode !== false,

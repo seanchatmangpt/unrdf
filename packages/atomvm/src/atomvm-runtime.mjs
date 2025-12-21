@@ -251,9 +251,7 @@ export class AtomVMRuntime {
               this.atomvmModule = window.Module;
               // Poka-yoke: State transition ensures consistency
               this.state = 'Ready';
-              span.setAttribute('runtime.state', this.state);
-              span.setStatus({ code: 1 }); // OK
-              span.end();
+              // Note: span would be from parent startActiveSpan if available
               this.terminal.log('AtomVM WASM module loaded ✓', 'success');
               resolve();
             } else if (attempts >= MODULE_INIT_MAX_ATTEMPTS) {
@@ -272,8 +270,7 @@ export class AtomVMRuntime {
 
         script.onerror = error => {
           this.state = 'Error';
-          span.setStatus({ code: 2, message: error?.message || 'Network error' });
-          span.end();
+          // Note: span would be from parent startActiveSpan if available
           reject(
             new Error(
               `Failed to load AtomVM.js script from ${script.src}: ${error?.message || 'Network error or file not found'}`

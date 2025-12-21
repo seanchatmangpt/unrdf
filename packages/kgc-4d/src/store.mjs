@@ -17,6 +17,9 @@ if (!GRAPHS || !GRAPHS.UNIVERSE || !GRAPHS.EVENT_LOG || !GRAPHS.SYSTEM) {
 const MAX_PAYLOAD_SIZE_BYTES = 1_000_000;  // 1MB limit
 const PAYLOAD_SIZE_WARNING_BYTES = 100_000;  // 100KB warning threshold
 
+/**
+ *
+ */
 export class KGCStore extends UnrdfStore {
   /**
    * @param {Object} options

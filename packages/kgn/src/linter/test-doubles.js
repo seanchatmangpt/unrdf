@@ -19,10 +19,16 @@ import { EventEmitter } from 'events';
  * Replace all time-based nondeterministic functions
  */
 
+/**
+ *
+ */
 export class DeterministicDate extends Date {
   static FIXED_TIMESTAMP = '2025-01-01T00:00:00.000Z';
   static FIXED_TIME_MS = new Date(DeterministicDate.FIXED_TIMESTAMP).getTime();
 
+  /**
+   *
+   */
   constructor(...args) {
     if (args.length === 0) {
       // No arguments = current time -> use fixed time
@@ -36,28 +42,46 @@ export class DeterministicDate extends Date {
     }
   }
 
+  /**
+   *
+   */
   static now() {
     return DeterministicDate.FIXED_TIME_MS;
   }
 
+  /**
+   *
+   */
   static deterministic() {
     return DeterministicDate.FIXED_TIME_MS;
   }
 }
 
+/**
+ *
+ */
 export class MockMath {
   static seed = 0.12345; // Fixed seed for deterministic "random"
 
+  /**
+   *
+   */
   static random() {
     // Linear congruential generator - deterministic pseudorandom
     MockMath.seed = (MockMath.seed * 9301 + 49297) % 233280;
     return MockMath.seed / 233280;
   }
 
+  /**
+   *
+   */
   static resetSeed() {
     MockMath.seed = 0.12345;
   }
 
+  /**
+   *
+   */
   static setSeed(newSeed) {
     MockMath.seed = newSeed;
   }
@@ -76,7 +100,13 @@ export class MockMath {
  * Replace UUID and random ID generation with content-based deterministic IDs
  */
 
+/**
+ *
+ */
 export class DeterministicIdGenerator {
+  /**
+   *
+   */
   constructor(config = {}) {
     this.config = {
       defaultSalt: 'kgen-deterministic',
@@ -87,6 +117,9 @@ export class DeterministicIdGenerator {
     this.counter = 0;
   }
 
+  /**
+   *
+   */
   generateId(content, salt = null) {
     const actualSalt = salt || this.config.defaultSalt;
     const hash = createHash(this.config.hashAlgorithm);
@@ -103,12 +136,18 @@ export class DeterministicIdGenerator {
     return hash.digest('hex').substring(0, this.config.idLength);
   }
 
+  /**
+   *
+   */
   generateUUID(content, salt = null) {
     const hash = this.generateId(content, salt);
     // Format as UUID v4 structure (but deterministic)
     return `${hash.substring(0, 8)}-${hash.substring(8, 12)}-4${hash.substring(12, 15)}-8${hash.substring(15, 18)}-${hash.substring(18, 30)}000000`.substring(0, 36);
   }
 
+  /**
+   *
+   */
   reset() {
     this.counter = 0;
   }
@@ -119,6 +158,9 @@ export class DeterministicIdGenerator {
  * Replace process.env and system information with deterministic alternatives
  */
 
+/**
+ *
+ */
 export class MockProcessEnv {
   static FIXED_ENV = {
     NODE_ENV: 'test',
@@ -130,23 +172,38 @@ export class MockProcessEnv {
     HOST: '0.0.0.0'
   };
 
+  /**
+   *
+   */
   static get(key) {
     return MockProcessEnv.FIXED_ENV[key];
   }
 
+  /**
+   *
+   */
   static set(key, value) {
     MockProcessEnv.FIXED_ENV[key] = value;
   }
 
+  /**
+   *
+   */
   static reset() {
     MockProcessEnv.FIXED_ENV = { ...MockProcessEnv.FIXED_ENV };
   }
 
+  /**
+   *
+   */
   static toObject() {
     return { ...MockProcessEnv.FIXED_ENV };
   }
 }
 
+/**
+ *
+ */
 export class MockOS {
   static FIXED_INFO = {
     hostname: 'test-hostname',
@@ -163,26 +220,44 @@ export class MockOS {
     }
   };
 
+  /**
+   *
+   */
   static hostname() {
     return MockOS.FIXED_INFO.hostname;
   }
 
+  /**
+   *
+   */
   static platform() {
     return MockOS.FIXED_INFO.platform;
   }
 
+  /**
+   *
+   */
   static arch() {
     return MockOS.FIXED_INFO.arch;
   }
 
+  /**
+   *
+   */
   static version() {
     return MockOS.FIXED_INFO.version;
   }
 
+  /**
+   *
+   */
   static tmpdir() {
     return MockOS.FIXED_INFO.tmpdir;
   }
 
+  /**
+   *
+   */
   static userInfo() {
     return { ...MockOS.FIXED_INFO.userInfo };
   }
@@ -193,10 +268,16 @@ export class MockOS {
  * Replace filesystem operations with deterministic alternatives
  */
 
+/**
+ *
+ */
 export class MockFS {
   static sortFiles = true;
   static fixedFiles = new Map();
 
+  /**
+   *
+   */
   static async readdir(path, options = {}) {
     // Simulate async operation
     await new Promise(resolve => setTimeout(resolve, 0));
@@ -210,6 +291,9 @@ export class MockFS {
     return MockFS.sortFiles ? files.sort() : files;
   }
 
+  /**
+   *
+   */
   static async readFile(path, encoding = 'utf8') {
     await new Promise(resolve => setTimeout(resolve, 0));
 
@@ -219,23 +303,38 @@ export class MockFS {
     return content;
   }
 
+  /**
+   *
+   */
   static setFixedFiles(path, files) {
     MockFS.fixedFiles.set(path, files);
   }
 
+  /**
+   *
+   */
   static setFixedContent(path, content) {
     MockFS.fixedFiles.set(`content:${path}`, content);
   }
 
+  /**
+   *
+   */
   static reset() {
     MockFS.fixedFiles.clear();
     MockFS.sortFiles = true;
   }
 }
 
+/**
+ *
+ */
 export class MockGlob {
   static patterns = new Map();
 
+  /**
+   *
+   */
   static async glob(pattern, options = {}) {
     await new Promise(resolve => setTimeout(resolve, 0));
 
@@ -248,10 +347,16 @@ export class MockGlob {
     return matches.sort(); // Always sorted for determinism
   }
 
+  /**
+   *
+   */
   static setFixedMatches(pattern, matches) {
     MockGlob.patterns.set(pattern, matches);
   }
 
+  /**
+   *
+   */
   static reset() {
     MockGlob.patterns.clear();
   }
@@ -262,6 +367,9 @@ export class MockGlob {
  * Replace network operations with deterministic responses
  */
 
+/**
+ *
+ */
 export class MockFetch {
   static responses = new Map();
   static defaultResponse = {
@@ -272,6 +380,9 @@ export class MockFetch {
     text: async () => 'deterministic text response'
   };
 
+  /**
+   *
+   */
   static async fetch(url, options = {}) {
     await new Promise(resolve => setTimeout(resolve, 10)); // Simulate network delay
 
@@ -285,11 +396,17 @@ export class MockFetch {
     };
   }
 
+  /**
+   *
+   */
   static setResponse(method, url, response) {
     const key = `${method} ${url}`;
     MockFetch.responses.set(key, response);
   }
 
+  /**
+   *
+   */
   static reset() {
     MockFetch.responses.clear();
   }
@@ -300,13 +417,22 @@ export class MockFetch {
  * Replace all nondeterministic globals with deterministic alternatives
  */
 
+/**
+ *
+ */
 export class DeterministicTestEnvironment {
+  /**
+   *
+   */
   constructor() {
     this.originalGlobals = {};
     this.idGenerator = new DeterministicIdGenerator();
     this.isActive = false;
   }
 
+  /**
+   *
+   */
   activate() {
     if (this.isActive) return;
 
@@ -340,6 +466,9 @@ export class DeterministicTestEnvironment {
     this.isActive = true;
   }
 
+  /**
+   *
+   */
   deactivate() {
     if (!this.isActive) return;
 
@@ -348,6 +477,9 @@ export class DeterministicTestEnvironment {
     this.isActive = false;
   }
 
+  /**
+   *
+   */
   reset() {
     MockMath.resetSeed();
     MockProcessEnv.reset();
@@ -357,6 +489,9 @@ export class DeterministicTestEnvironment {
     this.idGenerator.reset();
   }
 
+  /**
+   *
+   */
   generateDeterministicData(schema) {
     const data = {};
 
@@ -391,7 +526,13 @@ export class DeterministicTestEnvironment {
  * Behavior-driven development helpers for deterministic testing
  */
 
+/**
+ *
+ */
 export class BDDTestHelpers {
+  /**
+   *
+   */
   static createDeterministicFixture(name, schema) {
     const env = new DeterministicTestEnvironment();
     env.activate();
@@ -403,6 +544,9 @@ export class BDDTestHelpers {
     return fixture;
   }
 
+  /**
+   *
+   */
   static async verifyDeterministicBehavior(testFunction, iterations = 3) {
     const results = [];
     const env = new DeterministicTestEnvironment();
@@ -428,6 +572,9 @@ export class BDDTestHelpers {
     return JSON.parse(firstResult);
   }
 
+  /**
+   *
+   */
   static createMockContext(overrides = {}) {
     return {
       metadata: {
