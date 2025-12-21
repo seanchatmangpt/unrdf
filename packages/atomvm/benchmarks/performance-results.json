@@ -1,0 +1,297 @@
+{
+  "timestamp": "2025-12-21T10:17:31.831Z",
+  "nodeVersion": "v24.11.1",
+  "platform": "darwin",
+  "arch": "arm64",
+  "storeOperations": {
+    "add": {
+      "iterations": 1000,
+      "totalTime": "18.39",
+      "avgTime": "0.0184",
+      "minTime": "0.0116",
+      "maxTime": "0.3736",
+      "p50": "0.0140",
+      "p95": "0.0292",
+      "p99": "0.1224",
+      "throughput": "54383.49",
+      "memoryGrowth": "1.84 MB",
+      "memoryGrowthBytes": 1932776
+    },
+    "match_specific": {
+      "iterations": 1000,
+      "totalTime": "4.45",
+      "avgTime": "0.0045",
+      "minTime": "0.0034",
+      "maxTime": "0.1885",
+      "p50": "0.0038",
+      "p95": "0.0053",
+      "p99": "0.0185",
+      "throughput": "224534.33",
+      "memoryGrowth": "1.26 MB",
+      "memoryGrowthBytes": 1321336
+    },
+    "match_all": {
+      "iterations": 100,
+      "totalTime": "48.82",
+      "avgTime": "0.4882",
+      "minTime": "0.2972",
+      "maxTime": "5.7767",
+      "p50": "0.3695",
+      "p95": "0.9968",
+      "p99": "2.0399",
+      "throughput": "2048.22",
+      "memoryGrowth": "8.03 MB",
+      "memoryGrowthBytes": 8420288
+    },
+    "has": {
+      "iterations": 1000,
+      "totalTime": "5.53",
+      "avgTime": "0.0055",
+      "minTime": "0.0044",
+      "maxTime": "0.1216",
+      "p50": "0.0048",
+      "p95": "0.0066",
+      "p99": "0.0201",
+      "throughput": "180774.82",
+      "memoryGrowth": "2.94 MB",
+      "memoryGrowthBytes": 3081088
+    },
+    "delete": {
+      "iterations": 1000,
+      "totalTime": "131.52",
+      "avgTime": "0.1315",
+      "minTime": "0.0960",
+      "maxTime": "4.7201",
+      "p50": "0.1142",
+      "p95": "0.1689",
+      "p99": "0.4086",
+      "throughput": "7603.35",
+      "memoryGrowth": "16.28 MB",
+      "memoryGrowthBytes": 17073648
+    },
+    "size": {
+      "iterations": 1000,
+      "totalTime": "3642.57",
+      "avgTime": "3.6426",
+      "minTime": "0.4130",
+      "maxTime": "29.4643",
+      "p50": "1.2768",
+      "p95": "18.4007",
+      "p99": "26.3290",
+      "throughput": "274.53",
+      "memoryGrowth": "55.38 MB",
+      "memoryGrowthBytes": 58072416
+    },
+    "match_concurrent_10": {
+      "concurrency": 10,
+      "totalTime": "0.29",
+      "avgTimePerOp": "0.0291",
+      "throughput": "34344.55"
+    },
+    "match_concurrent_100": {
+      "concurrency": 100,
+      "totalTime": "1.59",
+      "avgTimePerOp": "0.0159",
+      "throughput": "62995.46"
+    },
+    "match_concurrent_1000": {
+      "concurrency": 1000,
+      "totalTime": "29.70",
+      "avgTimePerOp": "0.0297",
+      "throughput": "33675.28"
+    }
+  },
+  "scalability": {
+    "creation": {
+      "size_100": {
+        "iterations": 10,
+        "totalTime": "126.49",
+        "avgTime": "12.6489",
+        "minTime": "1.6542",
+        "maxTime": "29.7330",
+        "p50": "1.8562",
+        "p95": "29.7330",
+        "p99": "29.7330",
+        "throughput": "79.06",
+        "memoryGrowth": "973.20 KB",
+        "memoryGrowthBytes": 996552
+      },
+      "size_500": {
+        "iterations": 10,
+        "totalTime": "433.61",
+        "avgTime": "43.3614",
+        "minTime": "8.9931",
+        "maxTime": "66.2940",
+        "p50": "36.9317",
+        "p95": "66.2940",
+        "p99": "66.2940",
+        "throughput": "23.06",
+        "memoryGrowth": "10.76 MB",
+        "memoryGrowthBytes": 11285104
+      },
+      "size_1000": {
+        "iterations": 10,
+        "totalTime": "979.14",
+        "avgTime": "97.9142",
+        "minTime": "69.9682",
+        "maxTime": "156.5788",
+        "p50": "96.4867",
+        "p95": "156.5788",
+        "p99": "156.5788",
+        "throughput": "10.21",
+        "memoryGrowth": "10.06 MB",
+        "memoryGrowthBytes": 10550224
+      },
+      "size_5000": {
+        "iterations": 2,
+        "totalTime": "1177.73",
+        "avgTime": "588.8636",
+        "minTime": "498.1168",
+        "maxTime": "679.6104",
+        "p50": "498.1168",
+        "p95": "679.6104",
+        "p99": "679.6104",
+        "throughput": "1.70",
+        "memoryGrowth": "41.08 MB",
+        "memoryGrowthBytes": 43078024
+      }
+    },
+    "match": {
+      "size_100": {
+        "iterations": 10,
+        "totalTime": "4.51",
+        "avgTime": "0.4507",
+        "minTime": "0.0285",
+        "maxTime": "2.5929",
+        "p50": "0.0413",
+        "p95": "2.5929",
+        "p99": "2.5929",
+        "throughput": "2218.96",
+        "memoryGrowth": "NaN undefined",
+        "memoryGrowthBytes": -1958080
+      },
+      "size_500": {
+        "iterations": 10,
+        "totalTime": "49.62",
+        "avgTime": "4.9616",
+        "minTime": "0.8770",
+        "maxTime": "35.1973",
+        "p50": "1.0210",
+        "p95": "35.1973",
+        "p99": "35.1973",
+        "throughput": "201.55",
+        "memoryGrowth": "916.41 KB",
+        "memoryGrowthBytes": 938400
+      },
+      "size_1000": {
+        "iterations": 10,
+        "totalTime": "89.80",
+        "avgTime": "8.9795",
+        "minTime": "1.9200",
+        "maxTime": "35.0407",
+        "p50": "2.2583",
+        "p95": "35.0407",
+        "p99": "35.0407",
+        "throughput": "111.36",
+        "memoryGrowth": "NaN undefined",
+        "memoryGrowthBytes": -2395224
+      },
+      "size_5000": {
+        "iterations": 2,
+        "totalTime": "213.61",
+        "avgTime": "106.8062",
+        "minTime": "42.2067",
+        "maxTime": "171.4058",
+        "p50": "42.2067",
+        "p95": "171.4058",
+        "p99": "171.4058",
+        "throughput": "9.36",
+        "memoryGrowth": "4.27 MB",
+        "memoryGrowthBytes": 4476192
+      }
+    },
+    "size": {
+      "size_100": {
+        "iterations": 100,
+        "totalTime": "209.87",
+        "avgTime": "2.0987",
+        "minTime": "0.0303",
+        "maxTime": "39.3672",
+        "p50": "0.0428",
+        "p95": "3.0080",
+        "p99": "38.7887",
+        "throughput": "476.48",
+        "memoryGrowth": "260.41 KB",
+        "memoryGrowthBytes": 266656
+      },
+      "size_500": {
+        "iterations": 100,
+        "totalTime": "1191.36",
+        "avgTime": "11.9136",
+        "minTime": "0.9622",
+        "maxTime": "63.4817",
+        "p50": "1.1743",
+        "p95": "48.1074",
+        "p99": "56.0438",
+        "throughput": "83.94",
+        "memoryGrowth": "NaN undefined",
+        "memoryGrowthBytes": -313064
+      },
+      "size_1000": {
+        "iterations": 100,
+        "totalTime": "2702.69",
+        "avgTime": "27.0269",
+        "minTime": "2.0285",
+        "maxTime": "92.8803",
+        "p50": "5.6596",
+        "p95": "84.6172",
+        "p99": "87.1898",
+        "throughput": "37.00",
+        "memoryGrowth": "4.87 MB",
+        "memoryGrowthBytes": 5106592
+      },
+      "size_5000": {
+        "iterations": 10,
+        "totalTime": "1717.60",
+        "avgTime": "171.7597",
+        "minTime": "106.0697",
+        "maxTime": "278.4155",
+        "p50": "151.7500",
+        "p95": "278.4155",
+        "p99": "278.4155",
+        "throughput": "5.82",
+        "memoryGrowth": "6.08 MB",
+        "memoryGrowthBytes": 6375264
+      }
+    }
+  },
+  "io": {
+    "dump_ntriples": {
+      "error": "Dump operation failed: A RDF format supporting datasets was expected, N-Triples found"
+    },
+    "load_ntriples": {
+      "iterations": 10,
+      "totalTime": "3.34",
+      "avgTime": "0.3340",
+      "minTime": "0.0064",
+      "maxTime": "3.1374",
+      "p50": "0.0080",
+      "p95": "3.1374",
+      "p99": "3.1374",
+      "throughput": "2993.94",
+      "memoryGrowth": "NaN undefined",
+      "memoryGrowthBytes": -3194376
+    }
+  },
+  "resourceCleanup": {
+    "initialMemory": "189.38 MB",
+    "finalMemory": "258.17 MB",
+    "memoryDelta": "68.79 MB",
+    "memoryLeakBytes": 72126392,
+    "leakDetected": true
+  },
+  "bottlenecks": {
+    "bottlenecks": [],
+    "count": 0
+  }
+}
