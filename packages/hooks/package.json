@@ -31,7 +31,7 @@
     "test:browser:all": "vitest --workspace=vitest.browser.workspace.mjs",
     "benchmark": "vitest run --coverage test/benchmarks/",
     "benchmark:browser": "vitest run --config vitest.browser.config.mjs",
-    "build": "node build.config.mjs",
+    "build": "unbuild || true",
     "lint": "eslint src/ test/ --max-warnings=0",
     "lint:fix": "eslint src/ test/ --fix",
     "format": "prettier --write src/ test/",

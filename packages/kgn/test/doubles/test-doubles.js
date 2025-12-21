@@ -5,13 +5,22 @@
  * following London School TDD principles with dependency injection.
  */
 
+/**
+ *
+ */
 export class StubTemplateLoader {
+  /**
+   *
+   */
   constructor(templates = {}) {
     this.templates = templates;
     this.loadCount = 0;
     this.lastLoadPath = null;
   }
 
+  /**
+   *
+   */
   async load(templatePath) {
     this.loadCount++;
     this.lastLoadPath = templatePath;
@@ -23,10 +32,16 @@ export class StubTemplateLoader {
     throw new Error(`Template not found: ${templatePath}`);
   }
 
+  /**
+   *
+   */
   addTemplate(path, content) {
     this.templates[path] = content;
   }
 
+  /**
+   *
+   */
   getStats() {
     return {
       loadCount: this.loadCount,
@@ -35,13 +50,22 @@ export class StubTemplateLoader {
     };
   }
 
+  /**
+   *
+   */
   reset() {
     this.loadCount = 0;
     this.lastLoadPath = null;
   }
 }
 
+/**
+ *
+ */
 export class MockIncludeResolver {
+  /**
+   *
+   */
   constructor() {
     this.resolveHistory = [];
     this.resolutionMap = {};
@@ -49,6 +73,9 @@ export class MockIncludeResolver {
     this.failureMessage = 'Resolution failed';
   }
 
+  /**
+   *
+   */
   resolve(includePath, basePath) {
     const call = { includePath, basePath, timestamp: Date.now() };
     this.resolveHistory.push(call);
@@ -65,33 +92,54 @@ export class MockIncludeResolver {
     return `${basePath}/${includePath}`;
   }
 
+  /**
+   *
+   */
   setResolution(includePath, resolvedPath) {
     this.resolutionMap[includePath] = resolvedPath;
   }
 
+  /**
+   *
+   */
   setFailure(shouldFail, message = 'Resolution failed') {
     this.shouldFail = shouldFail;
     this.failureMessage = message;
   }
 
+  /**
+   *
+   */
   getHistory() {
     return [...this.resolveHistory];
   }
 
+  /**
+   *
+   */
   getCallCount() {
     return this.resolveHistory.length;
   }
 
+  /**
+   *
+   */
   wasCalled() {
     return this.resolveHistory.length > 0;
   }
 
+  /**
+   *
+   */
   wasCalledWith(includePath, basePath) {
     return this.resolveHistory.some(call => 
       call.includePath === includePath && call.basePath === basePath
     );
   }
 
+  /**
+   *
+   */
   reset() {
     this.resolveHistory = [];
     this.shouldFail = false;
@@ -99,7 +147,13 @@ export class MockIncludeResolver {
   }
 }
 
+/**
+ *
+ */
 export class FakeRDFDataProvider {
+  /**
+   *
+   */
   constructor() {
     this.data = new Map();
     this.queryHistory = [];
@@ -107,6 +161,9 @@ export class FakeRDFDataProvider {
     this.failureMessage = 'Query failed';
   }
 
+  /**
+   *
+   */
   async query(sparqlQuery) {
     const call = { query: sparqlQuery, timestamp: Date.now() };
     this.queryHistory.push(call);
@@ -120,29 +177,47 @@ export class FakeRDFDataProvider {
     return this.data.get(queryKey) || [];
   }
 
+  /**
+   *
+   */
   setQueryResult(queryKey, result) {
     this.data.set(queryKey, result);
   }
 
+  /**
+   *
+   */
   setFailure(shouldFail, message = 'Query failed') {
     this.shouldFail = shouldFail;
     this.failureMessage = message;
   }
 
+  /**
+   *
+   */
   _extractQueryKey(sparqlQuery) {
     // Extract a simple key from SPARQL query for matching
     const match = sparqlQuery.match(/SELECT\s+\?([a-zA-Z]+)/);
     return match ? match[1] : 'default';
   }
 
+  /**
+   *
+   */
   getQueryHistory() {
     return [...this.queryHistory];
   }
 
+  /**
+   *
+   */
   getQueryCount() {
     return this.queryHistory.length;
   }
 
+  /**
+   *
+   */
   reset() {
     this.data.clear();
     this.queryHistory = [];
@@ -151,7 +226,13 @@ export class FakeRDFDataProvider {
   }
 }
 
+/**
+ *
+ */
 export class SpyRenderer {
+  /**
+   *
+   */
   constructor(realRenderer) {
     this.realRenderer = realRenderer;
     this.calls = {
@@ -162,42 +243,66 @@ export class SpyRenderer {
     };
   }
 
+  /**
+   *
+   */
   async plan(template, data) {
     const call = { template, data, timestamp: Date.now() };
     this.calls.plan.push(call);
     return await this.realRenderer.plan(template, data);
   }
 
+  /**
+   *
+   */
   async render(plan) {
     const call = { plan, timestamp: Date.now() };
     this.calls.render.push(call);
     return await this.realRenderer.render(plan);
   }
 
+  /**
+   *
+   */
   async post(rendered) {
     const call = { rendered, timestamp: Date.now() };
     this.calls.post.push(call);
     return await this.realRenderer.post(rendered);
   }
 
+  /**
+   *
+   */
   async attest(output) {
     const call = { output, timestamp: Date.now() };
     this.calls.attest.push(call);
     return await this.realRenderer.attest(output);
   }
 
+  /**
+   *
+   */
   wasMethodCalled(method) {
     return this.calls[method] && this.calls[method].length > 0;
   }
 
+  /**
+   *
+   */
   getMethodCallCount(method) {
     return this.calls[method] ? this.calls[method].length : 0;
   }
 
+  /**
+   *
+   */
   getMethodCalls(method) {
     return this.calls[method] ? [...this.calls[method]] : [];
   }
 
+  /**
+   *
+   */
   reset() {
     this.calls = {
       plan: [],
@@ -208,7 +313,13 @@ export class SpyRenderer {
   }
 }
 
+/**
+ *
+ */
 export class DeterministicTestData {
+  /**
+   *
+   */
   static getShuffledObjectData() {
     // Create object with shuffled key order for determinism testing
     const data1 = { z: 3, a: 1, m: 2 };
@@ -218,6 +329,9 @@ export class DeterministicTestData {
     return { data1, data2, data3 };
   }
 
+  /**
+   *
+   */
   static getArrayWithObjects() {
     return [
       { id: '2', name: 'Beta', value: 200 },
@@ -226,6 +340,9 @@ export class DeterministicTestData {
     ];
   }
 
+  /**
+   *
+   */
   static getTemplateWithIncludes() {
     return {
       main: `
@@ -239,6 +356,9 @@ export class DeterministicTestData {
     };
   }
 
+  /**
+   *
+   */
   static getComplexNestedData() {
     return {
       project: {
@@ -257,6 +377,9 @@ export class DeterministicTestData {
     };
   }
 
+  /**
+   *
+   */
   static getNonDeterministicData() {
     return {
       timestamp: new Date(),
@@ -266,7 +389,13 @@ export class DeterministicTestData {
   }
 }
 
+/**
+ *
+ */
 export class TestScenarios {
+  /**
+   *
+   */
   static createDeterminismTest(renderer) {
     return {
       template: '{{ items | sort | join(", ") }}',
@@ -277,6 +406,9 @@ export class TestScenarios {
     };
   }
 
+  /**
+   *
+   */
   static createIncludeTest(templateLoader) {
     const templates = DeterministicTestData.getTemplateWithIncludes();
     
@@ -292,6 +424,9 @@ export class TestScenarios {
     };
   }
 
+  /**
+   *
+   */
   static createWhitespaceTest() {
     return {
       template: '  {{ value }}  \r\n\t{{ other }}\t  \r\n',
@@ -301,6 +436,9 @@ export class TestScenarios {
     };
   }
 
+  /**
+   *
+   */
   static createValidationFailureTest() {
     return {
       template: '{{ missing_variable }}',
@@ -310,6 +448,9 @@ export class TestScenarios {
     };
   }
 
+  /**
+   *
+   */
   static createDeepIncludeTest(templateLoader) {
     // Test maximum include depth
     for (let i = 0; i <= 6; i++) {
@@ -329,7 +470,13 @@ export class TestScenarios {
 }
 
 // Test utility functions
+/**
+ *
+ */
 export class TestUtils {
+  /**
+   *
+   */
   static async verifyDeterministicOutput(pipeline, template, data, iterations = 3) {
     const outputs = [];
     const hashes = new Set();
@@ -352,11 +499,14 @@ export class TestUtils {
     };
   }
 
-  static createMinimalRenderer(options = {}) {
+  /**
+   *
+   */
+  static async createMinimalRenderer(options = {}) {
     const stubLoader = new StubTemplateLoader(options.templates || {});
     const mockResolver = new MockIncludeResolver();
     const fakeProvider = new FakeRDFDataProvider();
-    
+
     return {
       renderer: new (await import('../src/engine/renderer.js')).DeterministicRenderer({
         templateLoader: stubLoader,
@@ -372,6 +522,9 @@ export class TestUtils {
     };
   }
 
+  /**
+   *
+   */
   static assertHashConsistency(results) {
     if (results.length < 2) {
       throw new Error('Need at least 2 results for hash comparison');
@@ -388,6 +541,9 @@ export class TestUtils {
     return true;
   }
 
+  /**
+   *
+   */
   static createAttestationVerifier() {
     return {
       verify(attestation, content) {

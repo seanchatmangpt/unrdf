@@ -26,9 +26,3 @@ export const dataFactory = {
  * Re-export types for documentation
  */
 export { OxigraphStore };
-
-export default {
-  createStore,
-  dataFactory,
-  OxigraphStore,
-};

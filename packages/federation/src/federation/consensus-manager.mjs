@@ -558,6 +558,37 @@ export class ConsensusManager extends EventEmitter {
   }
 
   /**
+   * Destroy the consensus manager and clean up resources
+   * More thorough cleanup than shutdown()
+   * @returns {void}
+   */
+  destroy() {
+    if (this.electionTimer) {
+      clearTimeout(this.electionTimer);
+      this.electionTimer = null;
+    }
+
+    if (this.heartbeatTimer) {
+      clearInterval(this.heartbeatTimer);
+      this.heartbeatTimer = null;
+    }
+
+    // Clear all data structures
+    this.peers.clear();
+    this.log.length = 0;
+    this.nextIndex.clear();
+    this.matchIndex.clear();
+
+    // Clear pending vote requests
+    if (this.pendingVoteRequests) {
+      this.pendingVoteRequests.clear();
+    }
+
+    // Remove all event listeners
+    this.removeAllListeners();
+  }
+
+  /**
    * Shutdown the consensus manager
    * @returns {Promise<void>}
    */

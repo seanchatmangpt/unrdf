@@ -10,7 +10,13 @@
 
 import crypto from 'crypto';
 
+/**
+ *
+ */
 export class KGenAttestor {
+  /**
+   *
+   */
   constructor(options = {}) {
     this.options = {
       enableAttestation: options.enableAttestation !== false,

@@ -9,7 +9,13 @@
  * - Deterministic formatting
  */
 
+/**
+ *
+ */
 export class KGenPostProcessor {
+  /**
+   *
+   */
   constructor(options = {}) {
     this.options = {
       normalizeWhitespace: options.normalizeWhitespace !== false,

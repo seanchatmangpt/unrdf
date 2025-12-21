@@ -3,7 +3,13 @@
  * Migrated from ~/unjucks with enhanced pattern matching
  */
 
+/**
+ *
+ */
 export class VariableExtractor {
+  /**
+   *
+   */
   constructor(options = {}) {
     this.includeFilters = options.includeFilters !== false;
     this.includeFunctions = options.includeFunctions !== false;

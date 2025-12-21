@@ -26,14 +26,19 @@ function createMockFetch(responses = {}) {
     // Mock SPARQL endpoint
     if (endpoint.includes('/sparql')) {
       const peerId = Object.keys(responses).find(id => endpoint.includes(id));
-      const response = responses[peerId] || { ok: true, data: [] };
+      const response = responses[peerId];
+
+      // If no match found, check if there's only one response and use that
+      const finalResponse = response ||
+        (Object.keys(responses).length === 1 ? Object.values(responses)[0] : null) ||
+        { ok: true, data: [] };
 
       return {
-        ok: response.ok !== false,
-        status: response.status || 200,
-        statusText: response.statusText || 'OK',
-        json: async () => response.data,
-        text: async () => JSON.stringify(response.data),
+        ok: finalResponse.ok !== false,
+        status: finalResponse.status || 200,
+        statusText: finalResponse.statusText || 'OK',
+        json: async () => finalResponse.data,
+        text: async () => JSON.stringify(finalResponse.data),
       };
     }
 

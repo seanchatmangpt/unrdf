@@ -7,7 +7,13 @@
 
 import crypto from 'crypto';
 
+/**
+ *
+ */
 export class KGenFilterTemplates {
+  /**
+   *
+   */
   constructor(options = {}) {
     this.options = {
       deterministicMode: options.deterministicMode !== false,

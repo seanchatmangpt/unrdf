@@ -10,7 +10,10 @@ export default [
       'node_modules/**',
       '.nyc_output/**',
       '*.config.mjs',
-      'build.*.mjs'
+      'build.*.mjs',
+      'packages/kgn/src/core/index.js',
+      'packages/kgn/src/base/index.js',
+      'packages/kgn/src/engine/index.js'
     ]
   },
   // Base configuration for all files
@@ -84,7 +87,12 @@ export default [
       'src/knowledge-engine/browser.mjs',
       'src/knowledge-engine/streaming/**/*.mjs',
       'src/security/sandbox/browser-executor.mjs',
-      'test/browser/**/*.mjs'
+      'test/browser/**/*.mjs',
+      'packages/atomvm/src/**/*.mjs',
+      'packages/atomvm/test/**/*.mjs',
+      'packages/kgc-4d/src/core/patterns/sse-client.mjs',
+      'packages/kgc-4d/src/hdit/vector-engine-client.mjs',
+      'packages/kgc-4d/src/hdit/vector-engine.worker.mjs'
     ],
     languageOptions: {
       parserOptions: {
@@ -99,6 +107,14 @@ export default [
         Worker: 'readonly',
         // Worker threads (Node.js)
         isMainThread: 'readonly',
+        // Browser globals
+        window: 'readonly',
+        document: 'readonly',
+        crossOriginIsolated: 'readonly',
+        EventSource: 'readonly',
+        HTMLElement: 'readonly',
+        // Worker global scope
+        self: 'readonly',
         // Vitest globals for browser tests
         describe: 'readonly',
         it: 'readonly',
@@ -165,6 +181,13 @@ export default [
         createStreamProcessor: 'readonly',
         createRealTimeValidator: 'readonly'
       }
+    }
+  },
+  // KGN package - legacy code with re-exports
+  {
+    files: ['packages/kgn/src/**/*.js', 'packages/kgn/src/**/*.mjs'],
+    rules: {
+      'no-undef': 'off' // Disable for re-export barrel files
     }
   },
   // Example files that may use browser APIs

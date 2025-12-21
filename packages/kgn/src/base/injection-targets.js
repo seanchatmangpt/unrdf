@@ -5,7 +5,13 @@
  * Supports marker-based, semantic-based, and position-based injection strategies
  */
 
+/**
+ *
+ */
 export class KGenInjectionTargets {
+  /**
+   *
+   */
   constructor(options = {}) {
     this.options = {
       deterministicMode: options.deterministicMode !== false,

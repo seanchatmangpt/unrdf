@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "allowJs": true,
+    "checkJs": false,
+    "outDir": "./dist",
+    "rootDir": "./packages",
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "strict": false,
+    "noImplicitAny": false,
+    "isolatedModules": false,
+    "maxNodeModuleJsDepth": 0
+  },
+  "include": ["packages/*/src/**/*.mjs", "packages/*/src/**/*.js"],
+  "exclude": ["node_modules", "dist", "test", "**/*.test.mjs", "**/*.test.js"]
+}

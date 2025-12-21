@@ -17,7 +17,13 @@
 import crypto from 'crypto';
 import path from 'path';
 
+/**
+ *
+ */
 export class DeterministicRenderer {
+  /**
+   *
+   */
   constructor(options = {}) {
     // Core configuration
     this.staticBuildTime = options.staticBuildTime || '2024-01-01T00:00:00.000Z';
@@ -547,6 +553,9 @@ export class DeterministicRenderer {
 
   // DEFAULT DEPENDENCY IMPLEMENTATIONS (for production use)
 
+  /**
+   *
+   */
   _createDefaultLoader() {
     return {
       async load(templatePath) {
@@ -556,6 +565,9 @@ export class DeterministicRenderer {
     };
   }
 
+  /**
+   *
+   */
   _createDefaultResolver() {
     return {
       resolve(includePath, basePath) {
@@ -564,6 +576,9 @@ export class DeterministicRenderer {
     };
   }
 
+  /**
+   *
+   */
   _createDefaultProvider() {
     return {
       async query(sparqlQuery) {

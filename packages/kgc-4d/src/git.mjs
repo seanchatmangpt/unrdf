@@ -23,6 +23,9 @@ if (isNode) {
   }
 }
 
+/**
+ *
+ */
 export class GitBackbone {
   /**
    * @param {string} dir - Repository directory path

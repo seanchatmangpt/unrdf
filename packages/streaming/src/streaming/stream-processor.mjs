@@ -54,16 +54,24 @@ export function createStreamProcessor(feed) {
       const subscribers = [];
 
       const listener = event => {
-        const change = applyOperations(event.detail);
-        if (change === null) return;
+        try {
+          const change = applyOperations(event.detail);
+          if (change === null) return;
 
-        buffer.push(change);
+          buffer.push(change);
 
-        if (buffer.length >= batchSize) {
-          const batch = buffer.splice(0, batchSize);
-          for (const subscriber of subscribers) {
-            subscriber(batch);
+          if (buffer.length >= batchSize) {
+            const batch = buffer.splice(0, batchSize);
+            for (const subscriber of subscribers) {
+              try {
+                subscriber(batch);
+              } catch (error) {
+                console.error('[stream-processor] Batch subscriber error:', error);
+              }
+            }
           }
+        } catch (error) {
+          console.error('[stream-processor] Batch listener error:', error);
         }
       };
 
@@ -105,22 +113,33 @@ export function createStreamProcessor(feed) {
       let latestChange = null;
 
       const listener = event => {
-        const change = applyOperations(event.detail);
-        if (change === null) return;
+        try {
+          const change = applyOperations(event.detail);
+          if (change === null) return;
 
-        latestChange = change;
+          latestChange = change;
 
-        if (timeout !== null) {
-          clearTimeout(timeout);
-        }
-
-        timeout = setTimeout(() => {
-          for (const subscriber of subscribers) {
-            subscriber(latestChange);
+          if (timeout !== null) {
+            clearTimeout(timeout);
           }
-          timeout = null;
-          latestChange = null;
-        }, delayMs);
+
+          timeout = setTimeout(() => {
+            try {
+              for (const subscriber of subscribers) {
+                try {
+                  subscriber(latestChange);
+                } catch (error) {
+                  console.error('[stream-processor] Debounce subscriber error:', error);
+                }
+              }
+            } finally {
+              timeout = null;
+              latestChange = null;
+            }
+          }, delayMs);
+        } catch (error) {
+          console.error('[stream-processor] Debounce listener error:', error);
+        }
       };
 
       feed.addEventListener('change', listener);
@@ -187,9 +206,13 @@ export function createStreamProcessor(feed) {
      */
     subscribe(callback) {
       feed.addEventListener('change', event => {
-        const change = applyOperations(event.detail);
-        if (change !== null) {
-          callback(change);
+        try {
+          const change = applyOperations(event.detail);
+          if (change !== null) {
+            callback(change);
+          }
+        } catch (error) {
+          console.error('[stream-processor] Subscribe listener error:', error);
         }
       });
     },

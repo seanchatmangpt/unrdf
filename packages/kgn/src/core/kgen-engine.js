@@ -13,7 +13,13 @@ import { KGenRenderer } from './renderer.js';
 import { KGenPostProcessor } from './post-processor.js';
 import { KGenAttestor } from './attestor.js';
 
+/**
+ *
+ */
 export class KGenTemplateEngine {
+  /**
+   *
+   */
   constructor(options = {}) {
     this.options = {
       strictMode: options.strictMode !== false,

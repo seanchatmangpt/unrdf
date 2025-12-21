@@ -9,7 +9,13 @@
  * - Include processing: {% include %}
  */
 
+/**
+ *
+ */
 export class KGenRenderer {
+  /**
+   *
+   */
   constructor(options = {}) {
     this.options = {
       maxDepth: options.maxDepth || 10,

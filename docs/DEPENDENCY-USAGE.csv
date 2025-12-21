@@ -1,0 +1,119 @@
+Package,Dependency,Status,Recommendation
+atomvm,@opentelemetry/api,USED,Keep
+atomvm,coi-serviceworker,USED,Keep
+atomvm,vite,UNUSED,Consider removing
+atomvm,vitest,USED,Keep
+atomvm,jsdom,UNUSED,Consider removing
+atomvm,@playwright/test,USED,Keep
+atomvm,@vitest/browser,UNUSED,Consider removing
+cli,citty,USED,Keep
+cli,table,USED,Keep
+cli,yaml,UNUSED,Consider removing
+cli,@types/node,UNUSED,Consider removing
+cli,vitest,USED,Keep
+composables,vue,USED,Keep
+composables,@types/node,UNUSED,Consider removing
+composables,vitest,USED,Keep
+core,@rdfjs/data-model,UNUSED,Consider removing
+core,@rdfjs/namespace,USED,Keep
+core,@rdfjs/serializer-jsonld,UNUSED,Consider removing
+core,@rdfjs/serializer-turtle,UNUSED,Consider removing
+core,@rdfjs/to-ntriples,UNUSED,Consider removing
+core,jsonld,UNUSED,Consider removing
+core,n3,USED,Keep
+core,rdf-canonize,USED,Keep
+core,rdf-ext,UNUSED,Consider removing
+core,rdf-validate-shacl,UNUSED,Consider removing
+core,zod,USED,Keep
+core,@types/node,UNUSED,Consider removing
+core,vitest,USED,Keep
+dark-matter,typhonjs-escomplex,UNUSED,Consider removing
+dark-matter,@types/node,UNUSED,Consider removing
+dark-matter,vitest,USED,Keep
+docs,@ai-sdk/gateway,UNUSED,Consider removing
+docs,@ai-sdk/vue,UNUSED,Consider removing
+docs,@electric-sql/pglite,UNUSED,Consider removing
+docs,@iconify-json/logos,UNUSED,Consider removing
+docs,@iconify-json/lucide,UNUSED,Consider removing
+docs,@iconify-json/simple-icons,UNUSED,Consider removing
+docs,@iconify-json/vscode-icons,UNUSED,Consider removing
+docs,@nuxt/content,UNUSED,Consider removing
+docs,@nuxt/image,UNUSED,Consider removing
+docs,@nuxt/ui,UNUSED,Consider removing
+docs,@nuxtjs/mdc,UNUSED,Consider removing
+docs,ai,UNUSED,Consider removing
+docs,better-sqlite3,UNUSED,Consider removing
+docs,date-fns,UNUSED,Consider removing
+docs,drizzle-orm,UNUSED,Consider removing
+docs,nuxt,UNUSED,Consider removing
+docs,nuxt-auth-utils,UNUSED,Consider removing
+docs,nuxt-charts,UNUSED,Consider removing
+docs,nuxt-llms,UNUSED,Consider removing
+docs,nuxt-og-image,UNUSED,Consider removing
+docs,shiki-stream,UNUSED,Consider removing
+docs,@nuxt/eslint,UNUSED,Consider removing
+docs,@playwright/test,UNUSED,Consider removing
+docs,@types/node,UNUSED,Consider removing
+docs,@vitest/ui,UNUSED,Consider removing
+docs,@vue/test-utils,UNUSED,Consider removing
+docs,drizzle-kit,UNUSED,Consider removing
+docs,eslint,UNUSED,Consider removing
+docs,happy-dom,UNUSED,Consider removing
+docs,msw,UNUSED,Consider removing
+docs,typescript,UNUSED,Consider removing
+docs,vitest,USED,Keep
+docs,vue-tsc,UNUSED,Consider removing
+engine-gateway,vitest,USED,Keep
+federation,prom-client,USED,Keep
+federation,zod,USED,Keep
+federation,@types/node,UNUSED,Consider removing
+federation,vitest,USED,Keep
+hooks,citty,USED,Keep
+hooks,zod,USED,Keep
+hooks,@types/node,UNUSED,Consider removing
+hooks,vitest,USED,Keep
+kgc-4d,hash-wasm,USED,Keep
+kgc-4d,isomorphic-git,USED,Keep
+kgc-4d,comment-parser,UNUSED,Consider removing
+kgc-4d,simple-statistics,UNUSED,Consider removing
+kgc-4d,tinybench,USED,Keep
+kgc-4d,vitest,USED,Keep
+kgn,fs-extra,UNUSED,Consider removing
+kgn,gray-matter,USED,Keep
+kgn,nunjucks,USED,Keep
+kgn,yaml,USED,Keep
+kgn,@amiceli/vitest-cucumber,UNUSED,Consider removing
+kgn,@babel/parser,USED,Keep
+kgn,@babel/traverse,USED,Keep
+kgn,comment-parser,USED,Keep
+kgn,eslint,UNUSED,Consider removing
+kgn,nodemon,UNUSED,Consider removing
+kgn,vitest,USED,Keep
+knowledge-engine,eyereasoner,USED,Keep
+knowledge-engine,@types/node,UNUSED,Consider removing
+knowledge-engine,vitest,USED,Keep
+nextra,katex,UNUSED,Consider removing
+nextra,next,UNUSED,Consider removing
+nextra,nextra,UNUSED,Consider removing
+nextra,nextra-theme-docs,UNUSED,Consider removing
+nextra,react,UNUSED,Consider removing
+nextra,react-dom,UNUSED,Consider removing
+nextra,zod,UNUSED,Consider removing
+nextra,@types/node,UNUSED,Consider removing
+nextra,@types/react,UNUSED,Consider removing
+nextra,@types/react-dom,UNUSED,Consider removing
+nextra,typescript,UNUSED,Consider removing
+oxigraph,oxigraph,USED,Keep
+oxigraph,zod,UNUSED,Consider removing
+oxigraph,@types/node,UNUSED,Consider removing
+oxigraph,vitest,USED,Keep
+project-engine,@types/node,UNUSED,Consider removing
+project-engine,vitest,USED,Keep
+streaming,@opentelemetry/api,USED,Keep
+streaming,citty,USED,Keep
+streaming,lru-cache,USED,Keep
+streaming,ws,UNUSED,Consider removing
+streaming,zod,USED,Keep
+streaming,@rdfjs/data-model,USED,Keep
+streaming,@types/node,UNUSED,Consider removing
+streaming,vitest,USED,Keep
