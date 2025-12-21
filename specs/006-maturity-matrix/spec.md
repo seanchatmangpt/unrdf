@@ -160,7 +160,37 @@ Each package shall be assessed on:
 
 ---
 
-### 4. Synergistic Capabilities
+### 4. Complete Package Contribution Matrix
+
+**Every package contributes to the overall system.** Based on actual package source code and READMEs:
+
+| # | Package | Actual Role (from source) | Synergy Contribution | Enables When Combined With |
+|---|---------|--------------------------|---------------------|---------------------------|
+| 1 | **atomvm** | **Erlang/BEAM VM in WebAssembly** - Run Erlang modules in browser/Node.js | Functional concurrency, actor model, fault-tolerant execution | core, hooks → Erlang-style fault-tolerant knowledge operations |
+| 2 | **browser** | **Browser Runtime** - IndexedDB persistence, offline-first support | Client-side RDF storage, offline knowledge graphs | composables, streaming → Offline-capable reactive UIs |
+| 3 | **cli** | **Command-line Tools** - Graph operations from terminal | Developer workflows, scripting, automation | test-utils, validation → TDD pipeline |
+| 4 | **composables** | **Vue 3 Composables** - Reactive RDF state for Vue apps | Vue-native reactivity for RDF graphs and queries | browser, streaming → Full Vue knowledge apps |
+| 5 | **core** | **RDF Foundation** - Graph ops, SPARQL via Comunica, canonicalization | **Foundation layer** - all synergies depend on core | ALL packages → Required for all synergies |
+| 6 | **dark-matter** | **Query Optimization** - Performance analysis, 80/20 query optimization | SPARQL query optimization, bottleneck detection | core, engine-gateway → Optimized query routing |
+| 7 | **docs** | **Nuxt UI Documentation** - Documentation site template | Living documentation for knowledge systems | nextra, kgn → Multi-format documentation |
+| 8 | **domain** | **Shared Types & Schemas** - Zod schemas, TypeScript definitions | Type safety across package boundaries | ALL packages → Consistent type contracts |
+| 9 | **engine-gateway** | **μ(O) Gateway** - Oxigraph-first engine selection, N3 boundary enforcement | Operation routing to correct RDF engine | core, oxigraph → Optimized engine dispatch |
+| 10 | **federation** | **Peer Discovery & Distributed Queries** - Multi-peer federation, automatic failover | Distributed query execution, peer mesh | core, streaming → Federated knowledge graphs |
+| 11 | **hooks** | **Policy Framework** - Knowledge hooks, rule enforcement, quad transformation | Event-driven policies, data validation triggers | validation, streaming → Reactive policy enforcement |
+| 12 | **kgc-4d** | **4D Knowledge Graph** - Observable state, nanosecond time, vector causality, Git refs | Time travel, universe freeze, ACID events, cryptographic receipts | core, federation → Distributed temporal knowledge |
+| 13 | **kgn** | **Nunjucks Template Engine** - Deterministic rendering, frontmatter parsing | Template-based knowledge generation, DSL | core, hooks → Declarative knowledge pipelines |
+| 14 | **knowledge-engine** | **Rule Engine** - Inference, reasoning, pattern matching | Business rules, RDF reasoning, pattern detection | federation, kgc-4d → Distributed inference |
+| 15 | **nextra** | **Nextra/Next.js Docs** - Documentation site with App Router | Rich interactive documentation | docs, kgn → Comprehensive doc platform |
+| 16 | **oxigraph** | **Oxigraph WASM Store** - Rust-based SPARQL 1.1 engine in WebAssembly | High-performance SPARQL, RDF format support, benchmarking | core, engine-gateway → Performance-critical operations |
+| 17 | **project-engine** | **Self-Hosting Tools** - Infrastructure for developing UNRDF itself | Monorepo tooling, package coordination | test-utils, cli → Development infrastructure |
+| 18 | **react** | **React Bindings** - React components for RDF (placeholder/early stage) | React-native RDF components | composables, browser → Cross-framework UIs |
+| 19 | **streaming** | **Real-time Change Feeds** - Live synchronization, delta processing | Subscription system, change propagation | federation, hooks → Live federated updates |
+| 20 | **test-utils** | **Testing Infrastructure** - Fixtures, helpers, sample data | Shared test utilities across packages | ALL packages → Consistent test patterns |
+| 21 | **validation** | **OTEL Validation Framework** - OpenTelemetry validation, compliance checking | Observability validation, trace verification | hooks, core → Observable knowledge pipelines |
+
+---
+
+### 5. Synergistic Capabilities
 
 #### **Definition**
 A synergistic capability is a feature or capability that:
@@ -171,81 +201,189 @@ A synergistic capability is a feature or capability that:
 
 #### **Synergy Categories & Examples**
 
-##### **Category A: Real-Time Knowledge Graph (Core + Streaming + Federation)**
+The following 10 synergy categories ensure **all 21 packages** contribute to at least one emergent capability.
+
+##### **Category A: Real-Time Knowledge Graph**
 ```
-Packages: core + streaming + federation
+Packages: core + streaming + federation + domain
 Capability: Live, synchronized knowledge graphs across distributed systems
-Why synergistic:
-  - core: Provides triple store & query foundation
-  - streaming: Adds change detection & subscriptions
-  - federation: Enables multi-node consensus & coordination
+Package contributions:
+  - core: Triple store & query foundation
+  - streaming: Change detection & subscriptions
+  - federation: Multi-node consensus & coordination
+  - domain: Type-safe interfaces for distributed operations
 Emergent value: Real-time collaborative knowledge graphs (impossible individually)
 Use case: Multi-tenant graph databases, collaborative ontology editing
 ```
 
-##### **Category B: Validated Knowledge Ingestion (Core + Validation + Hooks)**
+##### **Category B: Validated Knowledge Ingestion**
 ```
-Packages: core + validation + hooks
-Capability: Automated data validation, transformation, and ingestion
-Why synergistic:
+Packages: core + validation + hooks + engine-gateway
+Capability: Automated data validation, transformation, and API ingestion
+Package contributions:
   - core: Triple store, RDF handling
   - validation: Schema validation, Zod constraints
   - hooks: Event-driven transformations
+  - engine-gateway: API entry point, request routing
 Emergent value: Declarative data pipelines with validation (ETL-like workflows)
 Use case: Data lake ingestion, knowledge base population, schema enforcement
 ```
 
-##### **Category C: Intelligent Routing & Caching (Engine-Gateway + KGC-4D + Streaming)**
+##### **Category C: Intelligent Routing & Caching**
 ```
-Packages: engine-gateway + kgc-4d + streaming
+Packages: engine-gateway + kgc-4d + streaming + core
 Capability: Context-aware request routing with temporal/spatial awareness
-Why synergistic:
+Package contributions:
   - engine-gateway: Request routing & gateway patterns
   - kgc-4d: 4D model (time, space, semantics, provenance)
   - streaming: Real-time cache invalidation
+  - core: Query execution for routing decisions
 Emergent value: Smart routing aware of temporal validity, spatial distribution, semantic context
 Use case: Distributed knowledge systems, geographically distributed APIs, time-aware queries
 ```
 
-##### **Category D: Distributed Inference (Knowledge-Engine + Federation + KGC-4D)**
+##### **Category D: Distributed Inference**
 ```
-Packages: knowledge-engine + federation + kgc-4d
+Packages: knowledge-engine + federation + kgc-4d + core
 Capability: Distributed reasoning with consensus and historical tracking
-Why synergistic:
+Package contributions:
   - knowledge-engine: RDF reasoning, inference rules
   - federation: Consensus, distributed coordination
   - kgc-4d: Temporal tracking, provenance recording
+  - core: Base triple store for reasoning
 Emergent value: Auditable, distributed reasoning with historical justification
 Use case: Regulatory compliance systems, scientific knowledge networks, explainable AI
 ```
 
-##### **Category E: Developer Productivity (CLI + Test-Utils + Composables)**
+##### **Category E: Developer Productivity Suite**
 ```
-Packages: cli + test-utils + composables
-Capability: Complete developer toolkit for UNRDF applications
-Why synergistic:
+Packages: cli + test-utils + composables + validation + oxigraph
+Capability: Complete developer toolkit with TDD and performance validation
+Package contributions:
   - cli: Command-line tooling for operations
   - test-utils: Testing infrastructure & fixtures
   - composables: Vue.js reactive patterns
-Emergent value: Integrated DX with TDD support, automation, rapid prototyping
-Use case: Internal tooling, developer environments, rapid prototyping
+  - validation: Schema validation during development
+  - oxigraph: Performance benchmarking & comparison
+Emergent value: Integrated DX with TDD support, automation, performance guarantees
+Use case: Internal tooling, developer environments, rapid prototyping with quality gates
 ```
 
-##### **Category F: Knowledge Notation & Execution (KGN + Core + KGC-4D)**
+##### **Category F: Knowledge Notation & Execution**
 ```
-Packages: kgn + core + kgc-4d
-Capability: Domain-specific language for knowledge graphs with full execution
-Why synergistic:
+Packages: kgn + core + kgc-4d + knowledge-engine
+Capability: Domain-specific language for knowledge graphs with full execution & reasoning
+Package contributions:
   - kgn: Domain-specific syntax/notation
   - core: Execution engine for parsed notation
   - kgc-4d: 4D model semantics
-Emergent value: Declarative knowledge definition language with full execution
-Use case: Knowledge base declaration, ontology specification, semantic queries
+  - knowledge-engine: Reasoning over declared knowledge
+Emergent value: Declarative knowledge definition language with inference
+Use case: Knowledge base declaration, ontology specification, semantic queries with reasoning
+```
+
+##### **Category G: Full-Stack Reactive Knowledge Applications**
+```
+Packages: browser + react + composables + core + streaming
+Capability: Complete client-side knowledge graph applications with real-time updates
+Package contributions:
+  - browser: Browser runtime environment
+  - react: React component bindings
+  - composables: Vue.js reactive state management
+  - core: Client-side triple store operations
+  - streaming: Real-time subscription handling
+Emergent value: Cross-framework reactive knowledge UIs with live synchronization
+Use case: Knowledge graph browsers, interactive ontology editors, real-time dashboards
+```
+
+##### **Category H: Fault-Tolerant Concurrent Knowledge Systems**
+```
+Packages: atomvm + core + hooks + kgc-4d
+Capability: Erlang-style fault-tolerant, concurrent knowledge processing
+Package contributions:
+  - atomvm: Erlang/BEAM VM in WASM - actor model, supervisors, fault isolation
+  - core: RDF graph operations as Erlang processes
+  - hooks: Policy enforcement via Erlang message passing
+  - kgc-4d: ACID events with cryptographic receipts for recovery
+Emergent value: "Let it crash" knowledge systems that self-heal from failures
+Use case: High-availability knowledge services, crash-resistant data pipelines, telecom-grade systems
+```
+
+##### **Category I: Living Documentation System**
+```
+Packages: docs + nextra + kgn + core + kgc-4d
+Capability: Self-documenting knowledge graphs with interactive exploration
+Package contributions:
+  - docs: Nuxt UI documentation site template
+  - nextra: Nextra 4.6 + Next.js 16 with App Router support
+  - kgn: Nunjucks templating with deterministic rendering for doc generation
+  - core: SPARQL queries embedded in documentation
+  - kgc-4d: Time travel to view documentation at any historical point
+Emergent value: Documentation that queries its own knowledge graph with version history
+Use case: Self-updating API docs, interactive ontology browsers, auditable documentation
+```
+
+##### **Category J: High-Performance Query Pipeline**
+```
+Packages: dark-matter + oxigraph + engine-gateway + core + validation
+Capability: Optimized SPARQL execution with observability
+Package contributions:
+  - dark-matter: 80/20 query optimization, bottleneck detection
+  - oxigraph: Rust/WASM SPARQL 1.1 engine for hot paths
+  - engine-gateway: μ(O) routing - Oxigraph for performance, N3 at boundaries
+  - core: Comunica fallback for complex federated queries
+  - validation: OTEL tracing for query performance monitoring
+Emergent value: Self-optimizing query layer with observability
+Use case: High-throughput SPARQL APIs, query performance monitoring, SLA-bound systems
+```
+
+##### **Category K: Project Orchestration & Quality Assurance**
+```
+Packages: project-engine + test-utils + validation + oxigraph + cli
+Capability: Complete project lifecycle management with quality gates
+Package contributions:
+  - project-engine: Self-hosting infrastructure for UNRDF development
+  - test-utils: Fixtures, helpers, sample RDF data
+  - validation: OTEL compliance checking
+  - oxigraph: Benchmark suite for performance regression testing
+  - cli: Terminal automation for graph operations
+Emergent value: Automated quality assurance across entire knowledge system
+Use case: CI/CD pipelines, monorepo management, release orchestration
 ```
 
 ---
 
-### 5. Use Case Scenarios
+#### **Package Coverage Verification**
+
+All 21 packages appear in at least one synergy category. Every package is essential:
+
+| Package | Synergy Categories | Why Essential |
+|---------|-------------------|---------------|
+| **atomvm** | H (Fault-Tolerant) | Only Erlang/BEAM VM - enables actor model & "let it crash" |
+| **browser** | G (Full-Stack Reactive) | Only IndexedDB/offline support - enables offline-first |
+| **cli** | E (Dev Productivity), K (Project Orchestration) | Only terminal interface - enables automation |
+| **composables** | E (Dev Productivity), G (Full-Stack Reactive) | Only Vue 3 reactivity - enables Vue apps |
+| **core** | A, B, C, D, F, G, H, I, J (9 categories) | **Foundation** - Comunica SPARQL, RDF ops |
+| **dark-matter** | J (High-Performance Query) | Only 80/20 query optimizer - enables query tuning |
+| **docs** | I (Living Documentation) | Only Nuxt UI docs - enables doc sites |
+| **domain** | A (Real-Time Knowledge) | Only Zod schemas - enables type safety |
+| **engine-gateway** | B (Validated Ingestion), C (Intelligent Routing), J (High-Performance) | Only μ(O) gateway - enables engine routing |
+| **federation** | A (Real-Time), D (Distributed Inference) | Only peer discovery - enables distribution |
+| **hooks** | B (Validated Ingestion), H (Fault-Tolerant) | Only policy framework - enables enforcement |
+| **kgc-4d** | C (Routing), D (Inference), H (Fault-Tolerant), I (Docs) | Only 4D model - enables time travel & ACID |
+| **kgn** | F (Notation & Execution), I (Living Documentation) | Only Nunjucks templates - enables DSL |
+| **knowledge-engine** | D (Distributed Inference), F (Notation & Execution) | Only reasoning engine - enables inference |
+| **nextra** | I (Living Documentation) | Only Next.js 16 docs - enables modern docs |
+| **oxigraph** | E (Dev Productivity), J (High-Performance), K (Orchestration) | Only WASM SPARQL - enables performance |
+| **project-engine** | K (Project Orchestration) | Only self-hosting tools - enables development |
+| **react** | G (Full-Stack Reactive) | Only React bindings - enables React apps |
+| **streaming** | A (Real-Time), C (Routing), G (Full-Stack Reactive) | Only change feeds - enables real-time |
+| **test-utils** | E (Dev Productivity), K (Project Orchestration) | Only test fixtures - enables testing |
+| **validation** | B (Validated Ingestion), E (Dev Productivity), J (High-Performance), K (Orchestration) | Only OTEL validation - enables observability |
+
+---
+
+### 6. Use Case Scenarios (All 21 Packages in Action)
 
 #### **Scenario 1: Real-Time Multi-Tenant Knowledge Graph**
 ```
@@ -305,9 +443,108 @@ Synergies:
   - Combination enables regulatory compliance
 ```
 
+#### **Scenario 4: Complete Enterprise Knowledge Platform (ALL 21 Packages)**
+```
+Required Packages: ALL 21 PACKAGES
+User: Large enterprise building comprehensive knowledge management platform
+
+Architecture showing ALL package contributions:
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                        COMPLETE UNRDF PLATFORM                               │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                              │
+│  ┌─────────────────── CLIENT LAYER ───────────────────┐                     │
+│  │  browser (runtime) + react (bindings) +            │                     │
+│  │  composables (reactivity)                          │                     │
+│  │  → Full-stack reactive knowledge UI                │                     │
+│  └────────────────────────────────────────────────────┘                     │
+│                           ↓ ↑                                                │
+│  ┌─────────────────── API LAYER ──────────────────────┐                     │
+│  │  engine-gateway (routing) + streaming (real-time)  │                     │
+│  │  → Smart API with subscriptions                    │                     │
+│  └────────────────────────────────────────────────────┘                     │
+│                           ↓ ↑                                                │
+│  ┌─────────────────── VALIDATION LAYER ───────────────┐                     │
+│  │  validation (schemas) + hooks (transforms)         │                     │
+│  │  → Data quality enforcement                        │                     │
+│  └────────────────────────────────────────────────────┘                     │
+│                           ↓ ↑                                                │
+│  ┌─────────────────── CORE LAYER ─────────────────────┐                     │
+│  │  core (triple store) + domain (types) +            │                     │
+│  │  kgc-4d (4D model) + atomvm (transactions)         │                     │
+│  │  → Foundation with ACID guarantees                 │                     │
+│  └────────────────────────────────────────────────────┘                     │
+│                           ↓ ↑                                                │
+│  ┌─────────────────── INTELLIGENCE LAYER ─────────────┐                     │
+│  │  knowledge-engine (reasoning) + kgn (DSL)          │                     │
+│  │  → Inference & declarative knowledge               │                     │
+│  └────────────────────────────────────────────────────┘                     │
+│                           ↓ ↑                                                │
+│  ┌─────────────────── DISTRIBUTION LAYER ─────────────┐                     │
+│  │  federation (consensus) + dark-matter (system)     │                     │
+│  │  → Multi-node coordination                         │                     │
+│  └────────────────────────────────────────────────────┘                     │
+│                           ↓ ↑                                                │
+│  ┌─────────────────── DOCUMENTATION LAYER ────────────┐                     │
+│  │  docs (structure) + nextra (rendering)             │                     │
+│  │  → Living, queryable documentation                 │                     │
+│  └────────────────────────────────────────────────────┘                     │
+│                           ↓ ↑                                                │
+│  ┌─────────────────── QUALITY LAYER ──────────────────┐                     │
+│  │  test-utils (testing) + oxigraph (benchmarks) +    │                     │
+│  │  cli (automation) + project-engine (orchestration) │                     │
+│  │  → Complete quality assurance                      │                     │
+│  └────────────────────────────────────────────────────┘                     │
+│                                                                              │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+Package Role Summary (All 21 - Accurate):
+  1. atomvm        → Erlang/BEAM VM in WASM - actor model, fault tolerance
+  2. browser       → IndexedDB + offline-first browser runtime
+  3. cli           → Terminal tools for RDF graph operations
+  4. composables   → Vue 3 reactive composables for RDF state
+  5. core          → RDF foundation - Comunica SPARQL, canonicalization
+  6. dark-matter   → 80/20 query optimization, performance analysis
+  7. docs          → Nuxt UI documentation site template
+  8. domain        → Zod schemas, TypeScript type definitions
+  9. engine-gateway → μ(O) gateway - Oxigraph-first engine routing
+ 10. federation    → Peer discovery, distributed query, auto-failover
+ 11. hooks         → Policy framework - rules, validation triggers
+ 12. kgc-4d        → 4D engine - time, vectors, Git refs, ACID events
+ 13. kgn           → Nunjucks templates - deterministic knowledge DSL
+ 14. knowledge-engine → Rule engine - inference, pattern matching
+ 15. nextra        → Nextra 4.6 + Next.js 16 documentation
+ 16. oxigraph      → Rust/WASM SPARQL 1.1, benchmarking suite
+ 17. project-engine → Self-hosting infrastructure for UNRDF dev
+ 18. react         → React component bindings (early stage)
+ 19. streaming     → Real-time change feeds, delta sync
+ 20. test-utils    → Test fixtures, helpers, sample RDF data
+ 21. validation    → OTEL validation framework, compliance checking
+
+Emergent Platform Capabilities (only possible with ALL packages):
+  ✓ Real-time collaborative knowledge editing
+  ✓ ACID-compliant distributed transactions
+  ✓ Cross-framework UI (React + Vue)
+  ✓ Declarative knowledge definition (DSL)
+  ✓ Automated reasoning with provenance
+  ✓ Self-documenting, queryable documentation
+  ✓ Performance-guaranteed CI/CD pipelines
+  ✓ Multi-node federation with consensus
+
+What individual packages CANNOT do alone:
+  ✗ core alone: No real-time, no distribution, no UI
+  ✗ streaming alone: No storage, no validation
+  ✗ federation alone: No query engine, no reasoning
+  ✗ react alone: No knowledge model, no persistence
+  ✗ Any single package: Cannot provide enterprise platform
+
+The synergy multiplier: 21 packages → 10 synergy categories → 1 complete platform
+```
+
 ---
 
-### 6. Success Criteria
+### 7. Success Criteria
 
 #### **Implementation Success**
 - [ ] Maturity assessment completed for all 21 packages
