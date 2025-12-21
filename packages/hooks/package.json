@@ -3,6 +3,9 @@
   "version": "5.0.1",
   "description": "UNRDF Knowledge Hooks - Policy Definition and Execution Framework",
   "type": "module",
+  "bin": {
+    "validate-hooks": "./examples/validate-hooks.mjs"
+  },
   "main": "src/index.mjs",
   "exports": {
     ".": "./src/index.mjs",
@@ -12,6 +15,7 @@
   "sideEffects": false,
   "files": [
     "src/",
+    "examples/",
     "dist/",
     "README.md",
     "LICENSE"
