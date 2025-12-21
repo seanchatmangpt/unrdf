@@ -1,0 +1,407 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://unrdf.org/schemas/maturity-cli",
+  "title": "UNRDF Maturity CLI Contract",
+  "version": "1.0.0",
+  "description": "CLI command specification for package maturity assessment",
+
+  "commands": {
+    "maturity": {
+      "description": "Package maturity assessment and reporting",
+      "usage": "unrdf maturity <subcommand> [options]",
+      "subcommands": {
+        "assess": {
+          "description": "Assess maturity level for a single package or all packages",
+          "usage": "unrdf maturity assess [package] [options]",
+          "arguments": {
+            "package": {
+              "type": "string",
+              "required": false,
+              "description": "Package name (e.g., 'core', 'streaming'). If omitted, assesses all packages.",
+              "pattern": "^[a-z][a-z0-9-]*$"
+            }
+          },
+          "options": {
+            "--format": {
+              "type": "string",
+              "enum": ["json", "ttl", "md", "table"],
+              "default": "table",
+              "description": "Output format"
+            },
+            "--output": {
+              "type": "string",
+              "alias": "-o",
+              "description": "Write output to file instead of stdout"
+            },
+            "--refresh-coverage": {
+              "type": "boolean",
+              "default": false,
+              "description": "Re-run tests to refresh coverage data"
+            },
+            "--verbose": {
+              "type": "boolean",
+              "alias": "-v",
+              "default": false,
+              "description": "Show detailed assessment breakdown"
+            }
+          },
+          "examples": [
+            "unrdf maturity assess core",
+            "unrdf maturity assess --format json",
+            "unrdf maturity assess streaming --refresh-coverage -v"
+          ],
+          "output": {
+            "$ref": "#/definitions/PackageAssessment"
+          }
+        },
+        "report": {
+          "description": "Generate comprehensive maturity report for all 21 packages",
+          "usage": "unrdf maturity report [options]",
+          "options": {
+            "--format": {
+              "type": "string",
+              "enum": ["json", "ttl", "md", "html"],
+              "default": "md",
+              "description": "Report format"
+            },
+            "--output": {
+              "type": "string",
+              "alias": "-o",
+              "description": "Write report to file"
+            },
+            "--include-synergies": {
+              "type": "boolean",
+              "default": true,
+              "description": "Include synergy category analysis"
+            },
+            "--sort-by": {
+              "type": "string",
+              "enum": ["name", "level", "score", "coverage"],
+              "default": "level",
+              "description": "Sort packages by field"
+            }
+          },
+          "examples": [
+            "unrdf maturity report",
+            "unrdf maturity report --format html -o maturity-report.html",
+            "unrdf maturity report --sort-by score --format json"
+          ],
+          "output": {
+            "$ref": "#/definitions/MaturityReport"
+          }
+        },
+        "synergy": {
+          "description": "Explore synergy categories and emergent capabilities",
+          "usage": "unrdf maturity synergy [category] [options]",
+          "arguments": {
+            "category": {
+              "type": "string",
+              "required": false,
+              "enum": ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K"],
+              "description": "Synergy category code. If omitted, lists all categories."
+            }
+          },
+          "options": {
+            "--format": {
+              "type": "string",
+              "enum": ["json", "ttl", "md"],
+              "default": "md",
+              "description": "Output format"
+            },
+            "--show-packages": {
+              "type": "boolean",
+              "default": true,
+              "description": "List packages in each synergy"
+            },
+            "--show-use-cases": {
+              "type": "boolean",
+              "default": false,
+              "description": "Include example use cases"
+            }
+          },
+          "examples": [
+            "unrdf maturity synergy",
+            "unrdf maturity synergy A --show-use-cases",
+            "unrdf maturity synergy --format json"
+          ],
+          "output": {
+            "$ref": "#/definitions/SynergyGuide"
+          }
+        },
+        "compare": {
+          "description": "Compare maturity between packages or over time",
+          "usage": "unrdf maturity compare <packages...> [options]",
+          "arguments": {
+            "packages": {
+              "type": "array",
+              "items": { "type": "string" },
+              "minItems": 2,
+              "required": true,
+              "description": "Two or more package names to compare"
+            }
+          },
+          "options": {
+            "--format": {
+              "type": "string",
+              "enum": ["json", "md", "table"],
+              "default": "table",
+              "description": "Output format"
+            },
+            "--criteria": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": ["coverage", "api", "docs", "tests", "security", "perf"]
+              },
+              "default": ["coverage", "api", "docs"],
+              "description": "Criteria to compare"
+            }
+          },
+          "examples": [
+            "unrdf maturity compare core streaming federation",
+            "unrdf maturity compare hooks validation --criteria coverage tests security"
+          ],
+          "output": {
+            "$ref": "#/definitions/ComparisonResult"
+          }
+        }
+      }
+    }
+  },
+
+  "definitions": {
+    "PackageAssessment": {
+      "type": "object",
+      "required": ["package", "level", "score", "coverage", "timestamp"],
+      "properties": {
+        "package": {
+          "type": "string",
+          "description": "Package name"
+        },
+        "level": {
+          "$ref": "#/definitions/MaturityLevel"
+        },
+        "score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Weighted maturity score"
+        },
+        "coverage": {
+          "$ref": "#/definitions/CoverageMetrics"
+        },
+        "apiStability": {
+          "$ref": "#/definitions/APIStability"
+        },
+        "documentationQuality": {
+          "$ref": "#/definitions/DocQuality"
+        },
+        "testMaturity": {
+          "$ref": "#/definitions/TestMaturity"
+        },
+        "securityStatus": {
+          "$ref": "#/definitions/SecurityStatus"
+        },
+        "performanceStatus": {
+          "$ref": "#/definitions/PerfStatus"
+        },
+        "synergies": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Synergy category codes (A-K)"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Assessment timestamp"
+        }
+      }
+    },
+
+    "MaturityLevel": {
+      "type": "string",
+      "enum": ["L1_Alpha", "L2_Beta", "L3_RC", "L4_Stable", "L5_LTS"],
+      "description": "Maturity level classification"
+    },
+
+    "CoverageMetrics": {
+      "type": "object",
+      "required": ["lines", "branches", "functions", "statements"],
+      "properties": {
+        "lines": { "type": "number", "minimum": 0, "maximum": 100 },
+        "branches": { "type": "number", "minimum": 0, "maximum": 100 },
+        "functions": { "type": "number", "minimum": 0, "maximum": 100 },
+        "statements": { "type": "number", "minimum": 0, "maximum": 100 },
+        "collectedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+
+    "APIStability": {
+      "type": "string",
+      "enum": ["unstable", "stabilizing", "stable", "very_stable", "frozen"]
+    },
+
+    "DocQuality": {
+      "type": "string",
+      "enum": ["minimal", "basic", "good", "excellent", "professional"]
+    },
+
+    "TestMaturity": {
+      "type": "string",
+      "enum": [
+        "unit_only",
+        "unit_integration",
+        "unit_integration_e2e",
+        "unit_integration_e2e_regression",
+        "comprehensive"
+      ]
+    },
+
+    "SecurityStatus": {
+      "type": "string",
+      "enum": ["not_reviewed", "basic_scan", "audit", "penetration_tested", "hardened"]
+    },
+
+    "PerfStatus": {
+      "type": "string",
+      "enum": ["untested", "measured", "optimized", "benchmarked", "sla_bound"]
+    },
+
+    "MaturityReport": {
+      "type": "object",
+      "required": ["packages", "summary", "generatedAt"],
+      "properties": {
+        "packages": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/PackageAssessment" }
+        },
+        "summary": {
+          "type": "object",
+          "properties": {
+            "totalPackages": { "type": "integer" },
+            "averageScore": { "type": "number" },
+            "levelDistribution": {
+              "type": "object",
+              "properties": {
+                "L1_Alpha": { "type": "integer" },
+                "L2_Beta": { "type": "integer" },
+                "L3_RC": { "type": "integer" },
+                "L4_Stable": { "type": "integer" },
+                "L5_LTS": { "type": "integer" }
+              }
+            }
+          }
+        },
+        "synergies": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/SynergyCategory" }
+        },
+        "generatedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+
+    "SynergyCategory": {
+      "type": "object",
+      "required": ["code", "name", "packages", "capability"],
+      "properties": {
+        "code": {
+          "type": "string",
+          "pattern": "^[A-K]$"
+        },
+        "name": { "type": "string" },
+        "packages": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 2
+        },
+        "capability": { "type": "string" },
+        "emergentValue": { "type": "string" },
+        "useCases": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+
+    "SynergyGuide": {
+      "type": "object",
+      "properties": {
+        "categories": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/SynergyCategory" }
+        },
+        "coverageMatrix": {
+          "type": "object",
+          "description": "Package to synergy mapping"
+        }
+      }
+    },
+
+    "ComparisonResult": {
+      "type": "object",
+      "required": ["packages", "criteria", "results"],
+      "properties": {
+        "packages": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "criteria": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "results": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "package": { "type": "string" },
+              "values": { "type": "object" }
+            }
+          }
+        },
+        "winner": {
+          "type": "string",
+          "description": "Package with highest overall score"
+        }
+      }
+    }
+  },
+
+  "integrationPoints": {
+    "otel": {
+      "description": "OpenTelemetry integration for assessment metrics",
+      "spanAttributes": {
+        "maturity.package": "Package name being assessed",
+        "maturity.level": "Computed maturity level (1-5)",
+        "maturity.score": "Weighted maturity score (0-100)",
+        "maturity.coverage.lines": "Line coverage percentage",
+        "maturity.assessment.duration_ms": "Assessment duration in milliseconds"
+      }
+    },
+    "rdf": {
+      "description": "RDF storage integration",
+      "ontologyUri": "https://unrdf.org/ontology/maturity#",
+      "storageTarget": "@unrdf/core Store instance"
+    },
+    "vitest": {
+      "description": "Test coverage collection",
+      "configPath": "vitest.config.unified.mjs",
+      "coveragePath": "packages/{name}/coverage/coverage-summary.json"
+    }
+  },
+
+  "performanceRequirements": {
+    "singlePackageAssessment": {
+      "target": "< 5s",
+      "includes": ["coverage parsing", "metrics collection", "score calculation"]
+    },
+    "fullReport": {
+      "target": "< 30s",
+      "includes": ["all 21 packages", "synergy analysis", "report generation"]
+    },
+    "synergyLookup": {
+      "target": "< 100ms",
+      "includes": ["category query", "package mapping"]
+    }
+  }
+}

@@ -5,17 +5,18 @@
 **CRITICAL**: Before declaring ANY work complete, question everything. Separate claims from reality. Demand evidence, not assertions.
 
 **The Core Questions**:
+
 - **Did you RUN it?** Or just read the code?
 - **Can you PROVE it?** Or are you assuming?
 - **What BREAKS if you're wrong?** Be specific.
 - **What's the EVIDENCE?** Show the output, logs, metrics.
 
-| Claim | Adversarial Question | Proof Required |
-|-------|----------------------|----------------|
-| "Tests pass" | Did you RUN `timeout 5s npm test`? | Show full output with ✅ |
-| "100% coverage" | Did type checker RUN? | `npm run lint` with 0 errors |
-| "Production ready" | What FAILS? How handled? | Error paths + OTEL spans |
-| "Files migrated" | COUNT correct? Cross-refs valid? | `ls -1 *.md \| wc -l` |
+| Claim              | Adversarial Question               | Proof Required               |
+| ------------------ | ---------------------------------- | ---------------------------- |
+| "Tests pass"       | Did you RUN `timeout 5s npm test`? | Show full output with ✅     |
+| "100% coverage"    | Did type checker RUN?              | `npm run lint` with 0 errors |
+| "Production ready" | What FAILS? How handled?           | Error paths + OTEL spans     |
+| "Files migrated"   | COUNT correct? Cross-refs valid?   | `ls -1 *.md \| wc -l`        |
 
 **Adversarial PM is not pessimism** - it's intellectual honesty. Self-deception is the enemy.
 
@@ -33,6 +34,7 @@ Write "src/feature.mjs"            // ⚠️ Did you verify syntax?
 ```
 
 **Before "Done"**:
+
 - ❓ Did I RUN every command or just write them?
 - ❓ Did I read output or assume success?
 - ❓ What SPECIFIC tests verify the feature?
@@ -47,17 +49,20 @@ Write "src/feature.mjs"            // ⚠️ Did you verify syntax?
 **Core Insight**: In well-specified domains, 20% of features = 80% of value. Implement those ONCE, correctly, using proven patterns.
 
 **When to Use**:
+
 - ✅ Well-defined specs (RDF, APIs, DSLs) + existing patterns + H_spec ≤ 16 bits
 - ❌ Exploratory domains, user feedback needed, uncertain requirements
 
 **Results** (KGC 4D empirical):
+
 - 700 LoC in 2-3 hours (vs TDD: 2-3 weeks = 50x speedup)
 - 0 defects, 64.3% pattern reuse, 98% static coverage
 - P(Correctness) ≥ 99.997%
 
 **Full Details**: See [docs/bb80-20-methodology.md](docs/bb80-20-methodology.md)
 
-**The Litmus Test**: *Can I re-implement RIGHT NOW in ONE pass with ZERO rework using ONLY patterns + static analysis?*
+**The Litmus Test**: _Can I re-implement RIGHT NOW in ONE pass with ZERO rework using ONLY patterns + static analysis?_
+
 - If NO → Iterate until you have patterns, or accept it's iterative work.
 
 ---
@@ -121,6 +126,7 @@ grep "FAILED\|Error" validation-output.log  # MUST be 0 results
 **Core**: `coder`, `reviewer`, `tester`, `planner`, `researcher`
 
 **Verification**:
+
 - ❓ Is THIS agent RIGHT for the task? (Match expertise)
 - ❓ Did agent RUN command or just write code?
 - ❓ Did I verify output independently?
@@ -130,6 +136,7 @@ grep "FAILED\|Error" validation-output.log  # MUST be 0 results
 ## 🎓 Counter-Practice Lessons
 
 ### 🚫 DON'T DO (Will fail)
+
 1. Add OTEL to implementation modules (observability ≠ business logic)
 2. Add defensive code (guards hide real bugs)
 3. Try to improve working patterns (copy exactly)
@@ -137,6 +144,7 @@ grep "FAILED\|Error" validation-output.log  # MUST be 0 results
 5. Trust claims without evidence
 
 ### ✅ WHAT WORKS (Evidence-Based)
+
 - Pure functions with NO OTEL in implementation
 - Zod validation + simple try-catch
 - Batch refactoring in phases
@@ -151,33 +159,39 @@ grep "FAILED\|Error" validation-output.log  # MUST be 0 results
 ## 🧠 Working With Claude: Internal Patterns
 
 ### Token Generation
+
 - Sequential generation - early tokens lock direction
 - Hard to backtrack mid-response
 - **Action**: Clarify intent upfront
 
 ### Context Window
+
 - Sweet spot: 50K-100K tokens
 - Degradation: >150K tokens
 - **Action**: Summarize periodically
 
 ### Uncertainty Calibration
+
 - "Not sure" = 70% confident
 - "Let me check" = 20-30% confident
 - Confident ≠ 95%+ (often 60-80%)
 - **Action**: Use OTEL for claims
 
 ### Failure Modes
+
 - **Weak**: Exact counts, nested logic >3 levels
 - **Strong**: Pattern matching, refactoring, planning
 - **Check**: File counts (`ls | wc -l`), exact numbers
 
 ### Why OTEL Critical
+
 - I CANNOT validate my own execution
 - "Completion" ≠ correctness
 - OTEL = external truth
 - **Trust**: OTEL ≥80/100 only
 
 ### Quality Degradation
+
 - First response = best thought-through
 - Rapid iteration = patch-over-patch
 - After ~15 messages = coherence drops
@@ -190,24 +204,28 @@ grep "FAILED\|Error" validation-output.log  # MUST be 0 results
 **Before declaring complete**:
 
 ### Claims vs Reality
+
 - [ ] Did I RUN code or just read it?
 - [ ] Did I read FULL output or stop at first ✅?
 - [ ] What BREAKS if claim is wrong?
 - [ ] Can I REPRODUCE from scratch?
 
 ### Evidence Quality
+
 - [ ] Test output showing success? (Not "tests pass")
 - [ ] File counts with `ls | wc -l`? (Not "~X files")
 - [ ] OTEL spans/logs? (Not "should work")
 - [ ] Before/after metrics? (Not "faster")
 
 ### Process Quality
+
 - [ ] Batched operations in ONE message?
 - [ ] Timeout all commands?
 - [ ] Verified cross-references?
 - [ ] Measured performance?
 
 ### Red Flags (Stop if ANY apply)
+
 - ❌ "I think..." / "should be..." → No evidence
 - ❌ "Mostly works" / "almost done" → Not acceptable
 - ❌ "Code looks good" → Didn't run it
@@ -218,17 +236,20 @@ grep "FAILED\|Error" validation-output.log  # MUST be 0 results
 ## 💻 Code Style Essentials
 
 ### RDF/Triple Store (MANDATORY)
+
 - `createStore()` from `@unrdf/oxigraph` - NEVER `new Store()` from N3
 - `dataFactory` from `@unrdf/oxigraph` for quads
 - Streaming ONLY via `n3-justified-only.mjs`
 - NEVER import `from 'n3'` in app code
 
 **Verification**:
+
 - ❓ Grep `from 'n3'` outside justified modules? (0 results)
 - ❓ Test imports work? (Show execution)
 - ❓ No runtime regressions? (Show tests pass)
 
 ### General
+
 - **Type hints**: 100% coverage (JSDoc) → ❓ RUN type checker (0 errors)
 - **Linting**: 400+ rules → ❓ RUN linter (0 violations)
 - **Testing**: 80%+ coverage, 100% pass → ❓ Check report (show %)
@@ -252,6 +273,15 @@ grep "FAILED\|Error" validation-output.log  # MUST be 0 results
 
 **Core Principle**: Claude Flow coordinates, Claude Code creates. **OTEL spans + test output = ONLY validation.**
 
-**The Adversarial PM Question**: *If someone challenged EVERY claim today, which would survive scrutiny?*
+**The Adversarial PM Question**: _If someone challenged EVERY claim today, which would survive scrutiny?_
 
 Answer honestly. That's your real quality level.
+
+## Active Technologies
+
+- Node.js 18+ with ES modules (MJS + JSDoc, NO TypeScript in src/) + @unrdf/core (RDF storage), @unrdf/cli (CLI commands), @unrdf/validation (OTEL metrics), Vitest (test coverage) (006-maturity-matrix)
+- RDF triples in @unrdf/core with maturity ontology schema (006-maturity-matrix)
+
+## Recent Changes
+
+- 006-maturity-matrix: Added Node.js 18+ with ES modules (MJS + JSDoc, NO TypeScript in src/) + @unrdf/core (RDF storage), @unrdf/cli (CLI commands), @unrdf/validation (OTEL metrics), Vitest (test coverage)
