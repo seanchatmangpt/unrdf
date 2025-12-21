@@ -3,6 +3,7 @@
  * @module federation/coordinator
  */
 
+import { trace } from '@opentelemetry/api';
 import { z } from 'zod';
 import { createPeerManager } from './peer-manager.mjs';
 import {
@@ -10,6 +11,9 @@ import {
   executeFederatedQuery,
   routeQuery,
 } from './distributed-query.mjs';
+import { recordQuery, recordError, updatePeerMetrics, trackConcurrentQuery } from './metrics.mjs';
+
+const tracer = trace.getTracer('@unrdf/federation');
 
 /**
  * @typedef {Object} CoordinatorConfig
@@ -30,6 +34,7 @@ import {
  * @property {function(): Promise} healthCheck - Run health checks on all peers
  * @property {function(): void} startHealthChecks - Start periodic health checks
  * @property {function(): void} stopHealthChecks - Stop periodic health checks
+ * @property {function(): void} destroy - Destroy coordinator and clean up resources
  * @property {function(): Object} getStats - Get federation statistics
  */
 
@@ -43,7 +48,7 @@ export const CoordinatorConfigSchema = z.object({
       z.object({
         id: z.string(),
         endpoint: z.string().url(),
-        metadata: z.record(z.any()).optional(),
+        metadata: z.record(z.string(), z.unknown()).optional(),
       })
     )
     .optional()
@@ -86,15 +91,33 @@ export function createCoordinator(config = {}) {
      * @returns {Promise<Object>} Registered peer information
      */
     async addPeer(id, endpoint, metadata = {}) {
-      const peer = peerManager.registerPeer(id, endpoint, metadata);
+      const span = tracer.startSpan('coordinator.addPeer');
+      try {
+        span.setAttributes({
+          'peer.id': id,
+          'peer.endpoint': endpoint,
+        });
 
-      // Verify peer is reachable
-      const isHealthy = await peerManager.ping(id);
-      if (!isHealthy) {
-        console.warn(`Peer ${id} registered but is not currently reachable`);
+        const peer = peerManager.registerPeer(id, endpoint, metadata);
+
+        // Verify peer is reachable
+        const isHealthy = await peerManager.ping(id);
+        if (!isHealthy) {
+          console.warn(`Peer ${id} registered but is not currently reachable`);
+        }
+
+        span.setAttributes({
+          'peer.healthy': isHealthy,
+          'peer.status': peer.status,
+        });
+
+        return peer;
+      } catch (error) {
+        span.recordException(error);
+        throw error;
+      } finally {
+        span.end();
       }
-
-      return peer;
     },
 
     /**
@@ -104,7 +127,24 @@ export function createCoordinator(config = {}) {
      * @returns {boolean} True if peer was removed
      */
     removePeer(id) {
-      return peerManager.unregisterPeer(id);
+      const span = tracer.startSpan('coordinator.removePeer');
+      try {
+        span.setAttributes({
+          'peer.id': id,
+        });
+
+        const removed = peerManager.unregisterPeer(id);
+        span.setAttributes({
+          'peer.removed': removed,
+        });
+
+        return removed;
+      } catch (error) {
+        span.recordException(error);
+        throw error;
+      } finally {
+        span.end();
+      }
     },
 
     /**
@@ -138,29 +178,45 @@ export function createCoordinator(config = {}) {
      * @returns {Promise<Object>} Aggregated query results
      */
     async query(sparqlQuery, options = {}) {
-      queryCount++;
-
-      const strategy = options.strategy || validatedConfig.strategy;
-      const timeout = options.timeout || validatedConfig.timeout;
-
-      const allPeers = peerManager.listPeers({ status: 'healthy' });
-
-      if (allPeers.length === 0) {
-        errorCount++;
-        return {
-          success: false,
-          results: [],
-          peerResults: [],
-          totalDuration: 0,
-          successCount: 0,
-          failureCount: 0,
-          error: 'No healthy peers available',
-        };
-      }
-
-      const targetPeers = routeQuery(allPeers, sparqlQuery, strategy);
+      const span = tracer.startSpan('coordinator.query');
+      const endConcurrent = trackConcurrentQuery();
 
       try {
+        queryCount++;
+
+        const strategy = options.strategy || validatedConfig.strategy;
+        const timeout = options.timeout || validatedConfig.timeout;
+
+        const allPeers = peerManager.listPeers({ status: 'healthy' });
+
+        span.setAttributes({
+          'query.strategy': strategy,
+          'query.timeout': timeout,
+          'peers.healthy': allPeers.length,
+          'query.length': sparqlQuery.length,
+        });
+
+        if (allPeers.length === 0) {
+          errorCount++;
+          span.setAttributes({
+            'query.error': 'no_healthy_peers',
+          });
+          return {
+            success: false,
+            results: [],
+            peerResults: [],
+            totalDuration: 0,
+            successCount: 0,
+            failureCount: 0,
+            error: 'No healthy peers available',
+          };
+        }
+
+        const targetPeers = routeQuery(allPeers, sparqlQuery, strategy);
+        span.setAttributes({
+          'peers.target': targetPeers.length,
+        });
+
         const result = await executeDistributedQuery(targetPeers, sparqlQuery, {
           timeout,
           format: options.format,
@@ -169,11 +225,46 @@ export function createCoordinator(config = {}) {
 
         if (!result.success) {
           errorCount++;
+          // Record failed queries
+          for (const peerResult of result.peerResults || []) {
+            if (!peerResult.success) {
+              recordError(peerResult.peerId, 'query_failed');
+            }
+          }
+        } else {
+          // Record successful queries
+          for (const peerResult of result.peerResults || []) {
+            if (peerResult.success) {
+              recordQuery(peerResult.peerId, peerResult.duration || 0, strategy);
+            } else {
+              recordError(peerResult.peerId, 'query_failed');
+            }
+          }
         }
+
+        // Update peer metrics
+        updatePeerMetrics(this.getStats());
+
+        span.setAttributes({
+          'query.success': result.success,
+          'query.results': result.results?.length || 0,
+          'query.duration': result.totalDuration || 0,
+          'query.successCount': result.successCount || 0,
+          'query.failureCount': result.failureCount || 0,
+        });
 
         return result;
       } catch (error) {
         errorCount++;
+        span.recordException(error);
+        span.setAttributes({
+          'query.error': error.message,
+        });
+        const targetPeers = peerManager.listPeers({ status: 'healthy' });
+        // Record errors for all target peers
+        for (const peer of targetPeers) {
+          recordError(peer.id, 'execution_error');
+        }
         return {
           success: false,
           results: [],
@@ -183,6 +274,9 @@ export function createCoordinator(config = {}) {
           failureCount: targetPeers.length,
           error: error.message,
         };
+      } finally {
+        endConcurrent();
+        span.end();
       }
     },
 
@@ -195,44 +289,57 @@ export function createCoordinator(config = {}) {
      * @returns {Promise<Object>} Query result
      */
     async queryPeer(peerId, sparqlQuery, options = {}) {
-      queryCount++;
-
-      const peer = peerManager.getPeer(peerId);
-      if (!peer) {
-        errorCount++;
-        return {
-          success: false,
-          data: null,
-          error: `Peer ${peerId} not found`,
-          duration: 0,
-          peerId,
-        };
-      }
+      const endConcurrent = trackConcurrentQuery();
 
       try {
-        const result = await executeFederatedQuery(peer.id, peer.endpoint, sparqlQuery, {
-          timeout: options.timeout || validatedConfig.timeout,
-          format: options.format,
-        });
+        queryCount++;
 
-        if (!result.success) {
+        const peer = peerManager.getPeer(peerId);
+        if (!peer) {
           errorCount++;
-          peerManager.updateStatus(peerId, 'degraded');
-        } else {
-          peerManager.updateStatus(peerId, 'healthy');
+          recordError(peerId, 'peer_not_found');
+          return {
+            success: false,
+            data: null,
+            error: `Peer ${peerId} not found`,
+            duration: 0,
+            peerId,
+          };
         }
 
-        return result;
-      } catch (error) {
-        errorCount++;
-        peerManager.updateStatus(peerId, 'unreachable');
-        return {
-          success: false,
-          data: null,
-          error: error.message,
-          duration: 0,
-          peerId,
-        };
+        try {
+          const result = await executeFederatedQuery(peer.id, peer.endpoint, sparqlQuery, {
+            timeout: options.timeout || validatedConfig.timeout,
+            format: options.format,
+          });
+
+          if (!result.success) {
+            errorCount++;
+            peerManager.updateStatus(peerId, 'degraded');
+            recordError(peerId, 'query_failed');
+          } else {
+            peerManager.updateStatus(peerId, 'healthy');
+            recordQuery(peerId, result.duration || 0, 'direct');
+          }
+
+          // Update peer metrics
+          updatePeerMetrics(this.getStats());
+
+          return result;
+        } catch (error) {
+          errorCount++;
+          peerManager.updateStatus(peerId, 'unreachable');
+          recordError(peerId, 'execution_error');
+          return {
+            success: false,
+            data: null,
+            error: error.message,
+            duration: 0,
+            peerId,
+          };
+        }
+      } finally {
+        endConcurrent();
       }
     },
 
@@ -242,25 +349,48 @@ export function createCoordinator(config = {}) {
      * @returns {Promise<Object>} Health check results
      */
     async healthCheck() {
-      const peers = peerManager.listPeers();
-      const results = await Promise.all(
-        peers.map(async peer => {
-          const isHealthy = await peerManager.ping(peer.id);
-          return {
-            id: peer.id,
-            healthy: isHealthy,
-            status: peer.status,
-          };
-        })
-      );
+      const span = tracer.startSpan('coordinator.healthCheck');
+      try {
+        const peers = peerManager.listPeers();
+        span.setAttributes({
+          'peer.count': peers.length,
+        });
 
-      return {
-        totalPeers: peers.length,
-        healthyPeers: results.filter(r => r.healthy).length,
-        degradedPeers: results.filter(r => r.status === 'degraded').length,
-        unreachablePeers: results.filter(r => r.status === 'unreachable').length,
-        results,
-      };
+        const results = await Promise.all(
+          peers.map(async peer => {
+            const isHealthy = await peerManager.ping(peer.id);
+            return {
+              id: peer.id,
+              healthy: isHealthy,
+              status: peer.status,
+            };
+          })
+        );
+
+        const healthyCount = results.filter(r => r.healthy).length;
+        const degradedCount = results.filter(r => r.status === 'degraded').length;
+        const unreachableCount = results.filter(r => r.status === 'unreachable').length;
+
+        span.setAttributes({
+          'peer.healthy': healthyCount,
+          'peer.degraded': degradedCount,
+          'peer.unreachable': unreachableCount,
+          'error.count': errorCount,
+        });
+
+        return {
+          totalPeers: peers.length,
+          healthyPeers: healthyCount,
+          degradedPeers: degradedCount,
+          unreachablePeers: unreachableCount,
+          results,
+        };
+      } catch (error) {
+        span.recordException(error);
+        throw error;
+      } finally {
+        span.end();
+      }
     },
 
     /**
@@ -274,7 +404,12 @@ export function createCoordinator(config = {}) {
       }
 
       healthCheckTimer = setInterval(async () => {
-        await this.healthCheck();
+        try {
+          await this.healthCheck();
+        } catch (error) {
+          // Don't crash timer loop on health check errors
+          console.error('Health check error:', error.message);
+        }
       }, validatedConfig.healthCheckInterval);
     },
 
@@ -284,6 +419,19 @@ export function createCoordinator(config = {}) {
      * @returns {void}
      */
     stopHealthChecks() {
+      if (healthCheckTimer) {
+        clearInterval(healthCheckTimer);
+        healthCheckTimer = null;
+      }
+    },
+
+    /**
+     * Destroy the coordinator and clean up resources.
+     * Call this when shutting down to prevent memory leaks.
+     *
+     * @returns {void}
+     */
+    destroy() {
       if (healthCheckTimer) {
         clearInterval(healthCheckTimer);
         healthCheckTimer = null;

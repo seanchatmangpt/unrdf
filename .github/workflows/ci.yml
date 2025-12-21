@@ -83,7 +83,49 @@ jobs:
       - name: Run tests
         run: pnpm test
 
+      - name: Run tests with coverage
+        if: matrix.node-version == 18
+        run: pnpm test:coverage
+
+      - name: Enforce coverage threshold
+        if: matrix.node-version == 18
+        run: |
+          echo "Checking coverage threshold..."
+          # Vitest generates coverage/coverage-summary.json
+          if [ -f "coverage/coverage-summary.json" ]; then
+            COVERAGE=$(node -e "
+              const summary = require('./coverage/coverage-summary.json');
+              const total = summary.total;
+              const lines = total.lines.pct;
+              const statements = total.statements.pct;
+              const functions = total.functions.pct;
+              const branches = total.branches.pct;
+              console.log(JSON.stringify({ lines, statements, functions, branches }));
+            ")
+
+            echo "Coverage: $COVERAGE"
+
+            # Extract line coverage (primary metric)
+            LINE_COV=$(echo $COVERAGE | node -e "
+              const data = JSON.parse(require('fs').readFileSync(0, 'utf-8'));
+              console.log(data.lines);
+            ")
+
+            echo "Line Coverage: ${LINE_COV}%"
+
+            # Threshold: 80% minimum
+            if (( $(echo "$LINE_COV < 80" | bc -l) )); then
+              echo "❌ Coverage below threshold: ${LINE_COV}% < 80%"
+              exit 1
+            fi
+
+            echo "✅ Coverage meets threshold: ${LINE_COV}% >= 80%"
+          else
+            echo "⚠️ Coverage report not found, skipping threshold check"
+          fi
+
       - name: Upload coverage reports
+        if: matrix.node-version == 18
         uses: codecov/codecov-action@v4
         with:
           file: ./coverage/lcov.info

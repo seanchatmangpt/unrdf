@@ -305,3 +305,4 @@ dist/
 - [Service Worker Strategy Explanation](./service-worker-strategy.md)
 - [How-To: Integrate Real AtomVM WASM](../how-to/integrate-wasm.md)
 
+

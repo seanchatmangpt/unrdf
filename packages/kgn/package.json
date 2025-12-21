@@ -1,9 +1,10 @@
 {
   "name": "@unrdf/kgn",
-  "version": "1.1.0",
+  "version": "5.0.1",
   "description": "Deterministic Nunjucks template system with custom filters and frontmatter support",
   "type": "module",
   "main": "src/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "import": "./src/index.js"
@@ -23,7 +24,8 @@
     "./templates/*": "./src/templates/*"
   },
   "scripts": {
-    "build": "echo '@unrdf/kgn - ES modules verified'",
+    "build": "unbuild && tsc --emitDeclarationOnly",
+    "build:types": "tsc --emitDeclarationOnly",
     "build:watch": "nodemon --watch src --exec 'npm run build'",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -53,12 +55,13 @@
     "comment-parser": "^1.4.1",
     "eslint": "^8.56.0",
     "nodemon": "^3.0.1",
-    "vitest": "^2.1.9"
+    "vitest": "^4.0.15"
   },
   "engines": {
     "node": ">=18.0.0",
-    "pnpm": ">=8.0.0"
+    "pnpm": ">=7.0.0"
   },
+  "sideEffects": false,
   "keywords": [
     "unrdf",
     "kgn",

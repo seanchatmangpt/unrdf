@@ -68,7 +68,7 @@ const PlanNodeSchema = z.object({
   query: z.string().optional(),
   children: z.array(z.lazy(() => PlanNodeSchema)).default([]),
   estimatedCost: z.number().nonnegative().default(0),
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.string(), z.unknown()).optional(),
 });
 
 /**

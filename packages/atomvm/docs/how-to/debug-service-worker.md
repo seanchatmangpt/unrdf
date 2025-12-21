@@ -240,3 +240,4 @@ After debugging, verify:
 - [Explanation: Service Worker Strategy](../explanation/service-worker-strategy.md) - How it works
 - [Reference: Service Worker Manager API](../reference/service-worker-manager.md) - API docs
 
+

@@ -1,7 +1,6 @@
 {
   "name": "@unrdf/nextra-docs",
-  "version": "1.0.0",
-  "private": true,
+  "version": "5.0.1",
   "description": "UNRDF documentation with Nextra 4 - Developer-focused Next.js documentation",
   "type": "module",
   "scripts": {
@@ -29,6 +28,15 @@
     "typescript": "^5.9.3"
   },
   "engines": {
-    "node": ">=20.0.0"
-  }
+    "node": ">=20.0.0",
+    "pnpm": ">=7.0.0"
+  },
+  "sideEffects": false,
+  "files": [
+    "src/",
+    "dist/",
+    "README.md",
+    "LICENSE"
+  ],
+  "private": true
 }

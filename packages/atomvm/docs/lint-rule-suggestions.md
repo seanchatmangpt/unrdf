@@ -106,3 +106,4 @@ module.exports = {
 - See [Coding Patterns](./coding-patterns.md#named-constants-pattern) for the pattern
 - See [Code Review Checklist](./code-review-checklist.md#magic-numbers) for manual checks
 
+

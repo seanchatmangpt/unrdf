@@ -244,3 +244,4 @@ Errors are logged to console but do not throw exceptions.
 - [How-To: Debug Service Worker Issues](../how-to/debug-service-worker.md)
 - [Explanation: Service Worker Strategy](../explanation/service-worker-strategy.md)
 
+

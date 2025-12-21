@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/domain",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "Domain models and types for UNRDF",
   "type": "module",
   "main": "./src/index.mjs",
@@ -15,13 +15,18 @@
     "test:fast": "echo 'No tests for @unrdf/domain (type-only package)' && exit 0",
     "test:watch": "echo 'No tests for @unrdf/domain (type-only package)' && exit 0"
   },
-  "private": true,
   "keywords": [
     "rdf",
     "domain",
     "models",
     "types"
   ],
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=7.0.0"
+  },
+  "sideEffects": false,
   "author": "UNRDF Contributors",
-  "license": "MIT"
+  "license": "MIT",
+  "private": true
 }

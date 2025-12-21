@@ -1,6 +1,6 @@
 {
   "name": "unrdf-workspace",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "UNRDF v5 Monorepo - RDF Knowledge Graph Substrate Platform",
   "private": true,
   "type": "module",
@@ -21,6 +21,7 @@
     "test": "pnpm -r test",
     "test:fast": "pnpm -r test:fast",
     "test:watch": "pnpm -r test:watch",
+    "test:coverage": "pnpm -r test -- --coverage",
     "test:core": "pnpm -C packages/core test",
     "test:hooks": "pnpm -C packages/hooks test",
     "test:federation": "pnpm -C packages/federation test",
@@ -61,6 +62,8 @@
     "jsdom": "^27.2.0",
     "playwright": "^1.57.0",
     "prettier": "^3.7.4",
+    "typescript": "^5.9.3",
+    "unbuild": "^3.6.1",
     "vitest": "^4.0.15"
   },
   "pnpm": {

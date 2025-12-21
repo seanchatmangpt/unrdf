@@ -147,3 +147,4 @@ if (Object.values(checks).every(v => v === true)) {
 - [How-To: Debug Service Worker Issues](./debug-service-worker.md) - More troubleshooting
 - [Explanation: Cross-Origin-Isolation](../explanation/cross-origin-isolation.md) - Understand why COI is needed
 
+

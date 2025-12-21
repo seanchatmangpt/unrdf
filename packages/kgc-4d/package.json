@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/kgc-4d",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "KGC 4D Datum & Universe Freeze Engine - Nanosecond-precision event logging with Git-backed snapshots",
   "type": "module",
   "exports": {
@@ -9,6 +9,7 @@
     "./hdit": "./src/hdit/index.mjs"
   },
   "main": "./src/index.mjs",
+  "types": "./dist/index.d.ts",
   "files": [
     "src",
     "docs",
@@ -21,7 +22,9 @@
     "test:doctest:watch": "vitest watch test/doctest/",
     "test:all": "npm run test:doctest && npm test",
     "pretest": "node scripts/generate-doctests.mjs",
-    "benchmark": "node test/benchmarks/run-benchmarks.mjs"
+    "benchmark": "node test/benchmarks/run-benchmarks.mjs",
+    "build": "unbuild && tsc --emitDeclarationOnly",
+    "build:types": "tsc --emitDeclarationOnly"
   },
   "dependencies": {
     "@unrdf/core": "workspace:*",
@@ -44,6 +47,14 @@
     "git",
     "nanosecond"
   ],
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=7.0.0"
+  },
+  "sideEffects": false,
   "author": "UNRDF Contributors",
-  "license": "MIT"
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
 }

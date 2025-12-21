@@ -45,7 +45,7 @@ const StoreMetadataSchema = z.object({
   capabilities: z.array(z.string()).default([]),
   priority: z.number().int().min(0).max(100).default(50),
   weight: z.number().min(0).max(1).default(1.0),
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.string(), z.unknown()).optional(),
 });
 
 /**

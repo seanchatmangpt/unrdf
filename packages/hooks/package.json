@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/hooks",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "UNRDF Knowledge Hooks - Policy Definition and Execution Framework",
   "type": "module",
   "main": "src/index.mjs",
@@ -63,5 +63,8 @@
     "url": "https://github.com/unrdf/unrdf/issues"
   },
   "homepage": "https://github.com/unrdf/unrdf#readme",
-  "license": "MIT"
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
 }

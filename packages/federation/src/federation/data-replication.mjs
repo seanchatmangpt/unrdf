@@ -72,7 +72,7 @@ const ChangeOperationSchema = z.object({
   }),
   timestamp: z.number().default(() => Date.now()),
   version: z.record(z.number()).default({}),
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.string(), z.unknown()).optional(),
 });
 
 /**
