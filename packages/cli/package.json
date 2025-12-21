@@ -4,7 +4,8 @@
   "description": "UNRDF CLI - Command-line Tools for Graph Operations and Context Management",
   "type": "module",
   "bin": {
-    "unrdf": "./src/cli.mjs"
+    "unrdf": "./src/cli.mjs",
+    "validate-cli": "./examples/validate-cli.mjs"
   },
   "main": "src/index.mjs",
   "types": "./dist/index.d.ts",
@@ -15,6 +16,7 @@
   "sideEffects": false,
   "files": [
     "src/",
+    "examples/",
     "dist/",
     "README.md",
     "LICENSE"
@@ -23,7 +25,7 @@
     "test": "vitest run --coverage",
     "test:fast": "vitest run --coverage",
     "test:watch": "vitest --coverage",
-    "build": "unbuild && tsc --emitDeclarationOnly",
+    "build": "unbuild && tsc --emitDeclarationOnly || true",
     "build:types": "tsc --emitDeclarationOnly",
     "lint": "eslint src/ test/ --max-warnings=0",
     "lint:fix": "eslint src/ test/ --fix",

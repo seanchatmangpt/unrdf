@@ -3,6 +3,9 @@
   "version": "5.0.1",
   "description": "UNRDF Streaming - Change Feeds and Real-time Synchronization",
   "type": "module",
+  "bin": {
+    "validate-streaming": "./examples/validate-streaming.mjs"
+  },
   "main": "src/index.mjs",
   "exports": {
     ".": "./src/index.mjs",
@@ -11,6 +14,7 @@
   "sideEffects": false,
   "files": [
     "src/",
+    "examples/",
     "dist/",
     "README.md",
     "LICENSE"
