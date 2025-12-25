@@ -59,7 +59,7 @@ export const WorkItemSchema = z.object({
   cancellationReason: CancellationReasonSchema.optional(),
   timeoutMs: z.number().int().positive().max(300000).default(30000),
   retryCount: z.number().int().nonnegative().default(0),
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.string(), z.any()).optional(),
 });
 
 /**
@@ -89,7 +89,7 @@ export const CancellationReceiptSchema = z.object({
   id: z.string(),
   type: z.string(),
   timestamp: z.any(),
-  payload: z.record(z.any()),
+  payload: z.record(z.string(), z.any()),
 });
 
 /**

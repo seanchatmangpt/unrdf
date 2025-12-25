@@ -108,12 +108,12 @@ describe('Zod Schemas', () => {
     expect(() => WorkflowSpecSchema.parse(SIMPLE_WORKFLOW_SPEC)).not.toThrow();
   });
 
-  it('WorkflowSpecSchema allows empty tasks array', () => {
+  it('WorkflowSpecSchema rejects specs without required fields', () => {
     const noTasksSpec = {
       id: 'empty',
       tasks: [],
     };
-    expect(() => WorkflowSpecSchema.parse(noTasksSpec)).not.toThrow();
+    expect(() => WorkflowSpecSchema.parse(noTasksSpec)).toThrow();
   });
 });
 

@@ -133,10 +133,10 @@ export const ResourceSchema = z.object({
  */
 export const WorkflowSpecSchema = z.object({
   id: z.string().min(1).max(255),
-  name: z.string().min(1).max(255).optional(),
+  name: z.string().min(1).max(255),
   version: z.string().regex(/^\d+\.\d+\.\d+$/).optional(),
   description: z.string().max(5000).optional(),
-  tasks: z.array(TaskSchema).optional(),
+  tasks: z.array(TaskSchema).min(1),
   controlFlow: z.array(ControlFlowSchema).optional(),
   resources: z.array(ResourceSchema).optional(),
   inputVariables: z.array(z.string()).optional(),

@@ -17,7 +17,7 @@ import {
   foaf,
   rdf,
   xsd,
-} from './yawl-resources-core.mjs';
+} from './yawl-resources-types.mjs';
 
 const { namedNode, literal, quad, defaultGraph } = dataFactory;
 

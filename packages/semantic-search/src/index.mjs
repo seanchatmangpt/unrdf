@@ -9,9 +9,11 @@
  * - Entity similarity and autocomplete
  */
 
-export { RDFEmbedder } from './embeddings/rdf-embedder.mjs';
-export { SemanticQueryEngine } from './search/semantic-query-engine.mjs';
-export { KnowledgeRecommender } from './discovery/knowledge-recommender.mjs';
+import { RDFEmbedder } from './embeddings/rdf-embedder.mjs';
+import { SemanticQueryEngine } from './search/semantic-query-engine.mjs';
+import { KnowledgeRecommender } from './discovery/knowledge-recommender.mjs';
+
+export { RDFEmbedder, SemanticQueryEngine, KnowledgeRecommender };
 
 export default {
   RDFEmbedder,

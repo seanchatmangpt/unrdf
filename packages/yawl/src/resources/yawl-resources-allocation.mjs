@@ -16,7 +16,7 @@ import {
   yawl,
   rdf,
   xsd,
-} from './yawl-resources-core.mjs';
+} from './yawl-resources-types.mjs';
 import { createAllocationRDF, countActiveAllocations } from './yawl-resources-rdf.mjs';
 import { checkResourceEligibility } from './yawl-resources-eligibility.mjs';
 

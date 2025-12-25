@@ -4,7 +4,7 @@
   "description": "Run AtomVM (Erlang/BEAM VM) in browser and Node.js using WebAssembly",
   "type": "module",
   "main": "src/index.mjs",
-  "types": "./dist/index.d.ts",
+  "types": "./dist/index.d.mts",
   "exports": {
     ".": "./src/index.mjs",
     "./service-worker-manager": "./src/service-worker-manager.mjs"
@@ -12,7 +12,7 @@
   "scripts": {
     "dev": "vite",
     "dev:full": "echo 'Module name required: pnpm run dev:full <module>' && exit 1",
-    "build": "unbuild && tsc --emitDeclarationOnly",
+    "build": "tsc --emitDeclarationOnly",
     "build:types": "tsc --emitDeclarationOnly",
     "build:vite": "vite build",
     "preview": "vite preview",

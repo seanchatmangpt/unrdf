@@ -91,7 +91,7 @@ export const PatternContextSchema = z.object({
   /** Loop condition function */
   loopCondition: z.function().optional(),
   /** Workflow data context */
-  data: z.record(z.unknown()).optional(),
+  data: z.record(z.string(), z.unknown()).optional(),
 });
 
 /**

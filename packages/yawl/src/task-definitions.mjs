@@ -94,8 +94,8 @@ export const TaskInstanceSchema = z.object({
     'inactive',
     'running',
   ]).default('disabled'),
-  inputData: z.record(z.unknown()).default({}),
-  outputData: z.record(z.unknown()).default({}),
+  inputData: z.record(z.string(), z.unknown()).default({}),
+  outputData: z.record(z.string(), z.unknown()).default({}),
   assignedResource: z.string().optional(),
   role: z.string().optional(),
   enabledAt: z.bigint().optional(),
@@ -124,8 +124,8 @@ export const TransitionReceiptSchema = z.object({
     validated: z.boolean().default(true),
   }),
   actor: z.string().optional(),
-  inputData: z.record(z.unknown()).optional(),
-  outputData: z.record(z.unknown()).optional(),
+  inputData: z.record(z.string(), z.unknown()).optional(),
+  outputData: z.record(z.string(), z.unknown()).optional(),
 });
 
 /**
@@ -146,8 +146,8 @@ export const TaskDataSchema = z.object({
     'disabled',
     'active',
   ]).default('inactive'),
-  input: z.record(z.unknown()).optional(),
-  output: z.record(z.unknown()).optional(),
+  input: z.record(z.string(), z.unknown()).optional(),
+  output: z.record(z.string(), z.unknown()).optional(),
   assignedResource: z.string().optional(),
   role: z.string().optional(),
   enabledAt: z.bigint().optional(),

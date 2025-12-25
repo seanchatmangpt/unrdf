@@ -28,8 +28,8 @@ const LegacyReceiptDataSchema = z.object({
   previousReceiptHash: z.string().optional(),
   sparqlQuery: z.string().optional(),
   sparqlResult: z.unknown().optional(),
-  input: z.record(z.unknown()).optional(),
-  output: z.record(z.unknown()).optional(),
+  input: z.record(z.string(), z.unknown()).optional(),
+  output: z.record(z.string(), z.unknown()).optional(),
   downstreamEnabled: z
     .array(
       z.object({

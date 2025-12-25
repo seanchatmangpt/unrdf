@@ -8,7 +8,7 @@
  */
 
 import { dataFactory } from '@unrdf/oxigraph';
-import { YAWL_NS, RDF_NS, FOAF_NS, yawl } from './yawl-resources-core.mjs';
+import { YAWL_NS, RDF_NS, FOAF_NS, yawl } from './yawl-resources-types.mjs';
 
 const { namedNode } = dataFactory;
 
