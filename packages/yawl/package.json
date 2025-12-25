@@ -1,0 +1,59 @@
+{
+  "name": "@unrdf/yawl",
+  "version": "5.0.0",
+  "description": "YAWL (Yet Another Workflow Language) engine with KGC-4D time-travel and receipt verification",
+  "type": "module",
+  "main": "src/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./src/index.mjs",
+    "./api": "./src/api/workflow-api.mjs",
+    "./ontology": "./src/ontology/yawl-ontology.mjs",
+    "./store": "./src/store/yawl-store.mjs",
+    "./types": "./src/types/yawl-types.mjs",
+    "./schemas": "./src/types/yawl-schemas.mjs",
+    "./hooks": "./src/hooks/yawl-hooks.mjs",
+    "./resources": "./src/resources/yawl-resources.mjs",
+    "./cancellation": "./src/cancellation/index.mjs",
+    "./receipt": "./src/receipt.mjs"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "build": "unbuild && tsc --emitDeclarationOnly",
+    "build:types": "tsc --emitDeclarationOnly"
+  },
+  "keywords": [
+    "workflow",
+    "yawl",
+    "van-der-aalst",
+    "petri-net",
+    "bpmn",
+    "rdf",
+    "time-travel"
+  ],
+  "dependencies": {
+    "@unrdf/hooks": "workspace:*",
+    "@unrdf/kgc-4d": "workspace:*",
+    "@unrdf/oxigraph": "workspace:*",
+    "hash-wasm": "^4.11.0",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "vitest": "^4.0.15"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=7.0.0"
+  },
+  "sideEffects": false,
+  "files": [
+    "src/",
+    "dist/",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}
