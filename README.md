@@ -1,6 +1,8 @@
 # UNRDF - RDF Knowledge Graph Platform
 
-**Production-grade RDF knowledge graphs with batteries included.**
+**Research-grade RDF knowledge graphs with batteries included.**
+
+> **Status: Research Prototype** - Architecturally complete, not production-validated. See [Limitations](#limitations) for details.
 
 UNRDF is a comprehensive, open-source platform for building intelligent knowledge graph applications. It combines semantic web standards (RDF, SPARQL, SHACL) with modern JavaScript/TypeScript tooling, autonomous behaviors through Knowledge Hooks, and enterprise-grade features like transactions, streaming, and federation.
 
@@ -75,7 +77,7 @@ for (const binding of results) {
 ### For Contributors (Monorepo)
 | Resource | Purpose |
 |----------|---------|
-| **[MONOREPO-QUICK-REFERENCE.md](docs/MONOREPO-QUICK-REFERENCE.md)** | Quick overview of all 17 packages |
+| **[MONOREPO-QUICK-REFERENCE.md](docs/MONOREPO-QUICK-REFERENCE.md)** | Quick overview of all 20 packages |
 | **[LOCAL-DEVELOPMENT.md](docs/LOCAL-DEVELOPMENT.md)** | Setup dev environment, run tests & builds |
 | **[WORKSPACE-STRUCTURE.md](docs/WORKSPACE-STRUCTURE.md)** | File layout and naming conventions |
 | **[PACKAGE-DEVELOPMENT.md](docs/PACKAGE-DEVELOPMENT.md)** | Create and modify packages |
@@ -307,7 +309,7 @@ const results = await core.federatedQuery([
 
 ## Monorepo Structure
 
-UNRDF is organized as a **17-package monorepo** with clear separation of concerns:
+UNRDF is organized as a **20-package monorepo** with clear separation of concerns:
 
 ### Essential Packages (Start Here)
 - **`@unrdf/core`** - RDF storage, SPARQL queries, SHACL validation ⭐
@@ -642,9 +644,29 @@ How UNRDF compares to alternatives:
 
 ---
 
+## Limitations
+
+**Current Research Prototype Status:**
+
+- **Test Coverage:** KGC-4D: 90.4% pass rate (9 test failures); YAWL: No tests
+- **Performance Claims:** Measured benchmarks show sub-millisecond SPARQL queries and 2,492 receipts/sec (see [BENCHMARK-RESULTS.md](BENCHMARK-RESULTS.md))
+- **Production Readiness:** Architecturally complete, operationally unvalidated
+- **Known Issues:** Event counting and time-travel reconstruction edge cases (see [TEST-RESULTS.md](TEST-RESULTS.md))
+
+**What We Cannot Claim:**
+
+1. Production-grade reliability without comprehensive test coverage
+2. Performance guarantees beyond measured benchmarks
+3. Scalability to 1B+ triples (not tested)
+4. Comparison benchmarks vs Temporal.io, Camunda, Airflow (not performed)
+
+See [PERFORMANCE-VALIDATION.md](PERFORMANCE-VALIDATION.md) for detailed claims vs reality analysis.
+
+---
+
 ## License
 
-MIT © 2024 UNRDF Contributors
+MIT © 2024-2025 UNRDF Contributors
 
 See [LICENSE](LICENSE) for details.
 

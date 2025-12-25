@@ -11,7 +11,7 @@
 
 The preceding sections have presented six capability layers as theoretical projections for the UNRDF 2028 vision. This chapter synthesizes these layers with empirical validation evidence into a unified architecture that demonstrates coherent integration rather than isolated capabilities.
 
-The central thesis of this chapter is that the UNRDF architecture constitutes a **Knowledge Operating System (KOS)** with seven integrated layers, where each layer provides essential services to layers above while consuming services from layers below. This architecture has been validated through production implementations totaling 269,806 lines of code across 32 packages.
+The central thesis of this chapter is that the UNRDF architecture constitutes a **Knowledge Operating System (KOS)** with seven integrated layers, where each layer provides essential services to layers above while consuming services from layers below. This architecture has been validated through production implementations totaling 269,806 lines of code across 20 packages.
 
 ---
 

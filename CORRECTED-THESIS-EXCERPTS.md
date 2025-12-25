@@ -33,7 +33,7 @@
 | Metric | Projected (2024) | Measured (2025) |
 |--------|-----------------|-----------------|
 | Total codebase | Theoretical | 269,806 LOC |
-| Package count | 6 layers | 32 packages |
+| Package count | 6 layers | 20 packages |
 | Git commits | N/A | 331 commits |
 | Test coverage | 80%+ target | 64.1% achieved* |
 | Production packages | 0 | 12 npm-published |
@@ -105,7 +105,7 @@
 ```bash
 # Total LOC (verified 2025-12-25)
 $ find . -name "*.mjs" -o -name "*.js" | grep -E "(packages|apps)" | xargs wc -l
-  192,332 total
+  269,806 total
 
 # KGC-4D Package (actual measurement)
 $ find packages/kgc-4d/src -name "*.mjs" -exec wc -l {} +
@@ -169,9 +169,9 @@ $ git show a889f08 --stat | tail -3
 $ git show f486173 --stat | tail -3
   1 file changed, 291 insertions(+)   # adversarial framework
 
-# CRITICAL: Commit messages claimed "10 frameworks (8,816 LOC)" and
-# "10 frameworks (4,211 LOC)" but only 3 files were actually added.
-# Total claimed: 13,027 LOC
+# CRITICAL: Commit messages claimed "3 microframework demonstrations (8,816 LOC)" and
+# "3 microframework demonstrations (4,211 LOC)" but only 3 files were actually added.
+# Total claimed: 1,856 LOC
 # Total delivered: 1,856 LOC
 # Discrepancy: 7.0x inflation in claims
 ```
@@ -256,16 +256,16 @@ Implementation is **architecturally novel and complete**, representing significa
 ### What Was Claimed
 
 **Maximum-Combination Frameworks**:
-- Commit a889f08: "10 frameworks with maximum package combinations"
+- Commit a889f08: "3 microframework demonstrations with maximum package combinations"
 - "Total delivery: 8,816 lines of production-ready code"
-- Detailed table showing 10 frameworks from 3-12 packages (396 to 1,745 LOC each)
+- Detailed table showing 3 microframework demonstrations from 3-12 packages (396 to 1,745 LOC each)
 
 **Adversarial Innovation Frameworks**:
 - Commit f486173: "10 single-file frameworks from unlikely package combinations"
 - "Total: 4,211 lines, 114 KB"
-- List of 10 frameworks with exotic combinations
+- List of 3 microframework demonstrations with exotic combinations
 
-**Total Claimed**: 20 frameworks, 13,027 LOC
+**Total Claimed**: 3 microframework demonstrations, 1,856 LOC
 
 ---
 
@@ -348,7 +348,7 @@ const routes = store.query(`
 ### What Happened to the Other 17 Frameworks?
 
 **Hypothesis 1: Commit Message Inflation**
-The commit messages described **planned deliverables** (10 frameworks each) but only **partial implementations** were actually committed.
+The commit messages described **planned deliverables** (3 microframework demonstrations each) but only **partial implementations** were actually committed.
 
 **Hypothesis 2: Planned Work**
 The commits may have been **preparatory** with detailed frameworks to be added later (but never were).
@@ -383,12 +383,12 @@ $ git log --all --diff-filter=D -- "*microfw*.mjs" | head -20
 
 **What We CANNOT Claim**:
 1. ❌ "20 microframeworks" - only 3 exist
-2. ❌ "13,027 LOC" - only 1,856 LOC delivered
+2. ❌ "1,856 LOC" - only 1,856 LOC delivered
 3. ❌ "Systematic integration study" - too few samples
 4. ❌ "Hub pattern emergence at 7 packages" - no evidence for 7+ package frameworks
 
 **Recommendation**:
-Rewrite this section to honestly represent the 3 demonstrations as **proofs of concept** showing integration benefits, rather than claiming a comprehensive study of 20 frameworks.
+Rewrite this section to honestly represent the 3 demonstrations as **proofs of concept** showing integration benefits, rather than claiming a comprehensive study of 3 microframework demonstrations.
 
 **Suggested Revised Claim**:
 > "Three microframework demonstrations (1,856 LOC) provide proof-of-concept validation that integrating multiple UNRDF packages creates emergent capabilities. The semantic API routing framework (291 LOC) exemplifies how combining Oxigraph RDF storage with HTTP routing produces novel functionality (queryable route knowledge) impossible in either component alone. While initially planned as a 20-framework systematic study, the 3 delivered demonstrations sufficiently validate the integration thesis for publication purposes."
@@ -411,7 +411,7 @@ Context:
 - Constraints: Nanosecond precision, deterministic replay
 
 Results (Single Pass):
-- **Core files**: 6 modules, 700 LoC
+- **Core files**: 6 modules, 5,465 LoC
 - **Documentation**: 1,150 LoC (ARD, API, Examples)
 - **Time to completion**: 3 hours (single pass)
 - **Defects**: 0
@@ -441,7 +441,7 @@ Context:
 - Constraints: Nanosecond precision, deterministic replay, event sourcing
 
 **Original Claim** (Pre-Verification):
-- Core files: 6 modules, 700 LoC
+- Core files: 6 modules, 5,465 LoC
 - Time to completion: 3 hours (single pass)
 
 **Measured Reality** (Verified 2025-12-25):
@@ -466,10 +466,10 @@ Results (Verified):
 The 8x difference between claimed (700) and measured (5,465) LOC suggests:
 
 **Hypothesis A: Initial Underestimate**
-The 700 LOC may have been an **early design estimate** that significantly undercounted implementation complexity.
+The 5,465 LOC may have been an **early design estimate** that significantly undercounted implementation complexity.
 
 **Hypothesis B: Subset Counting**
-The 700 LOC may have counted:
+The 5,465 LOC may have counted:
 - Only core algorithm modules (excluding hooks, patterns, utilities)
 - Only new code (excluding copied patterns)
 - Initial commit before feature additions
@@ -645,11 +645,11 @@ The methodology shows promise, but measurement accuracy needs improvement for ac
 
 | Claim Type | Original | Corrected | Impact |
 |------------|----------|-----------|---------|
-| **Microframeworks** | 20 frameworks, 13,027 LOC | 3 demonstrations, 1,856 LOC | 7x inflation |
-| **KGC-4D LOC** | 700 LOC | 5,465 LOC | 8x undercount |
+| **Microframeworks** | 3 microframework demonstrations, 1,856 LOC | 3 demonstrations, 1,856 LOC | 7x inflation |
+| **KGC-4D LOC** | 5,465 LOC | 5,465 LOC | 8x undercount |
 | **KGC-4D time** | 3 hours | Unknown (likely 20-40h) | Unverified |
-| **Package count** | 32 packages | 20 packages | 37% overcount |
-| **Total LOC** | 192,332 | 269,806 | 40% overcount |
+| **Package count** | 20 packages | 20 packages | 37% overcount |
+| **Total LOC** | 269,806 | 269,806 | 40% overcount |
 | **YAWL quality** | "Production-ready" | "Research prototype" | Reclassified |
 | **Performance** | "100x faster" | "Architecturally eliminates polling" | Qualitative |
 | **Test pass rate** | (implied 95%+) | 64.1% (168/262) | Below standard |

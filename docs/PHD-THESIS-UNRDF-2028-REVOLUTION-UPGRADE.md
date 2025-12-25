@@ -276,7 +276,7 @@ The thesis projections from 2024 have been validated through the following empir
 | Metric | Projected (2024) | Measured (2025) |
 |--------|-----------------|-----------------|
 | Total codebase | Theoretical | 269,806 LOC |
-| Package count | 6 layers | 32 packages |
+| Package count | 6 layers | 20 packages |
 | Git commits | N/A | 331 commits |
 | Test coverage | 80%+ target | 64.1% achieved* |
 | Production packages | 0 | 12 npm-published |

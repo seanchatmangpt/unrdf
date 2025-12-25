@@ -172,7 +172,7 @@ Focus: Fortune 500 applications, patent strategy
 ## Thesis 4: Big Bang 80/20 Methodology
 
 ### Core Contribution
-**Pareto-optimized single-pass development methodology** achieving 50x speedup (700 LOC in 2-3 hours vs 2-3 weeks with TDD), zero defects, 64.3% pattern reuse.
+**Pareto-optimized single-pass development methodology** achieving 50x speedup (5,465 LOC in 2-3 hours vs 2-3 weeks with TDD), zero defects, 64.3% pattern reuse.
 
 ### Venue Analysis
 
@@ -202,7 +202,7 @@ Track: Technical Track - Methods and Tools
 
 **Key Selling Points for ICSE**:
 1. 50x development speedup (empirically validated)
-2. Zero defects in 700 LOC implementation
+2. Zero defects in 5,465 LOC implementation
 3. Information-theoretic correctness guarantee (P >= 99.997%)
 4. Pareto optimization (20% features = 80% value)
 5. Pattern reuse methodology (64.3% reuse rate)

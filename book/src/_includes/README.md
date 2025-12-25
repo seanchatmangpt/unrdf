@@ -49,4 +49,4 @@ This chapter extends the [base e-commerce example](../_includes/examples/ecommer
 **After consolidation:** ~1,250-1,400 lines (30% reduction)
 **Shared patterns:** ~500 lines in `_includes/`
 
-Total: Maintain 1,700 lines to deliver same 1,808 lines of value.
+Total: Maintain 1,5,465 lines to deliver same 1,808 lines of value.

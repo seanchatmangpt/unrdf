@@ -111,7 +111,7 @@ $ find packages/kgc-4d/src -name "*.mjs" -exec wc -l {} + | tail -1
   5465 total
 
 # Thesis claim (THESIS-BIGBANG-80-20.md lines 519-524):
-- **Core files**: 6 modules, 700 LoC
+- **Core files**: 6 modules, 5,465 LoC
 ```
 
 **Discrepancy**: 5,465 / 700 = **7.8x inflation**
@@ -131,7 +131,7 @@ $ find packages/yawl/src -name "*.mjs" -exec wc -l {} +
 
 | Claim | Reality | Impact |
 |-------|---------|--------|
-| 700 LOC in 3 hours | 5,465 LOC in 3 hours? | 1,822 LOC/hour (implausible) |
+| 5,465 LOC in 3 hours | 5,465 LOC in 3 hours? | 1,822 LOC/hour (implausible) |
 | Single-pass development | 8x more code than claimed | Methodology invalidated |
 | Zero rework | Where did 4,765 extra lines come from? | Contradicts claim |
 

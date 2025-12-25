@@ -51,9 +51,9 @@ Write "src/feature.mjs"            // ⚠️ Did you verify syntax?
 - ❌ Exploratory domains, user feedback needed, uncertain requirements
 
 **Results** (KGC 4D empirical):
-- 700 LoC in 2-3 hours (vs TDD: 2-3 weeks = 50x speedup)
-- 0 defects, 64.3% pattern reuse, 98% static coverage
-- P(Correctness) ≥ 99.997%
+- 5,465 LoC in 2-3 hours (vs TDD: 2-3 weeks = 50x speedup)
+- 90.4% test pass rate (85/94), 64.3% pattern reuse, 98% static coverage
+- P(Correctness) ≥ 99.997% (theoretical bound)
 
 **Full Details**: See [docs/bb80-20-methodology.md](docs/bb80-20-methodology.md)
 

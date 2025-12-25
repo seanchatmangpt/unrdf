@@ -2,8 +2,7 @@
  * @fileoverview Tests for HDIT distance and similarity functions
  */
 
-import { describe, it } from 'node:test';
-import assert from 'node:assert/strict';
+import { describe, it, expect } from 'vitest';
 import {
   cosineSimilarity,
   cosineDistance,
@@ -24,7 +23,7 @@ describe('cosineSimilarity', () => {
     const b = new Float32Array([1, 2, 3, 4]);
 
     const sim = cosineSimilarity(a, b);
-    assert.ok(Math.abs(sim - 1.0) < 0.0001);
+    expect(Math.abs(sim - 1.0) < 0.0001).toBe(true);
   });
 
   it('should return 0 for orthogonal vectors', () => {
@@ -32,7 +31,7 @@ describe('cosineSimilarity', () => {
     const b = new Float32Array([0, 1, 0]);
 
     const sim = cosineSimilarity(a, b);
-    assert.ok(Math.abs(sim) < 0.0001);
+    expect(Math.abs(sim) < 0.0001).toBe(true);
   });
 
   it('should return -1 for opposite vectors', () => {
@@ -40,7 +39,7 @@ describe('cosineSimilarity', () => {
     const b = new Float32Array([-1, -2, -3]);
 
     const sim = cosineSimilarity(a, b);
-    assert.ok(Math.abs(sim - (-1.0)) < 0.0001);
+    expect(Math.abs(sim - (-1.0)) < 0.0001).toBe(true);
   });
 
   it('should be scale-invariant', () => {
@@ -48,14 +47,14 @@ describe('cosineSimilarity', () => {
     const b = new Float32Array([2, 4, 6]); // 2x scaled
 
     const sim = cosineSimilarity(a, b);
-    assert.ok(Math.abs(sim - 1.0) < 0.0001);
+    expect(Math.abs(sim - 1.0) < 0.0001).toBe(true);
   });
 
   it('should throw on dimension mismatch', () => {
     const a = new Float32Array([1, 2, 3]);
     const b = new Float32Array([1, 2]);
 
-    assert.throws(() => cosineSimilarity(a, b), /dimension mismatch/i);
+    expect(() => cosineSimilarity(a, b)).toThrow(/dimension mismatch/i);
   });
 });
 
@@ -65,7 +64,7 @@ describe('cosineDistance', () => {
     const b = new Float32Array([1, 2, 3]);
 
     const dist = cosineDistance(a, b);
-    assert.ok(Math.abs(dist) < 0.0001);
+    expect(Math.abs(dist) < 0.0001).toBe(true);
   });
 
   it('should return 1 for orthogonal vectors', () => {
@@ -73,7 +72,7 @@ describe('cosineDistance', () => {
     const b = new Float32Array([0, 1, 0]);
 
     const dist = cosineDistance(a, b);
-    assert.ok(Math.abs(dist - 1.0) < 0.0001);
+    expect(Math.abs(dist - 1.0) < 0.0001).toBe(true);
   });
 });
 
@@ -83,7 +82,7 @@ describe('euclideanDistance', () => {
     const b = new Float32Array([1, 2, 3]);
 
     const dist = euclideanDistance(a, b);
-    assert.equal(dist, 0);
+    expect(dist).toBe(0);
   });
 
   it('should calculate correct distance', () => {
@@ -91,7 +90,7 @@ describe('euclideanDistance', () => {
     const b = new Float32Array([3, 4, 0]);
 
     const dist = euclideanDistance(a, b);
-    assert.equal(dist, 5); // 3-4-5 triangle
+    expect(dist).toBe(5); // 3-4-5 triangle
   });
 
   it('should be symmetric', () => {
@@ -101,7 +100,7 @@ describe('euclideanDistance', () => {
     const distAB = euclideanDistance(a, b);
     const distBA = euclideanDistance(b, a);
 
-    assert.equal(distAB, distBA);
+    expect(distAB).toBe(distBA);
   });
 });
 
@@ -111,7 +110,7 @@ describe('euclideanDistanceSquared', () => {
     const b = new Float32Array([3, 4, 0]);
 
     const distSq = euclideanDistanceSquared(a, b);
-    assert.equal(distSq, 25); // 5^2
+    expect(distSq).toBe(25); // 5^2
   });
 
   it('should be faster than sqrt version for ranking', () => {
@@ -124,8 +123,8 @@ describe('euclideanDistanceSquared', () => {
     ];
 
     const distances = candidates.map(c => euclideanDistanceSquared(a, c));
-    assert.ok(distances[0] < distances[1]);
-    assert.ok(distances[1] < distances[2]);
+    expect(distances[0] < distances[1]).toBe(true);
+    expect(distances[1] < distances[2]).toBe(true);
   });
 });
 
@@ -135,7 +134,7 @@ describe('manhattanDistance', () => {
     const b = new Float32Array([1, 2, 3]);
 
     const dist = manhattanDistance(a, b);
-    assert.equal(dist, 6); // |1| + |2| + |3|
+    expect(dist).toBe(6); // |1| + |2| + |3|
   });
 
   it('should handle negative differences', () => {
@@ -143,7 +142,7 @@ describe('manhattanDistance', () => {
     const b = new Float32Array([2, 3, 1]);
 
     const dist = manhattanDistance(a, b);
-    assert.equal(dist, 3 + 2 + 4); // 9
+    expect(dist).toBe(3 + 2 + 4); // 9
   });
 });
 
@@ -159,9 +158,9 @@ describe('findKNearest', () => {
 
     const neighbors = findKNearest(query, vectors, 2, 'cosine');
 
-    assert.equal(neighbors.length, 2);
-    assert.equal(neighbors[0].index, 0); // Most similar
-    assert.equal(neighbors[1].index, 1); // Second most
+    expect(neighbors.length).toBe(2);
+    expect(neighbors[0].index).toBe(0); // Most similar
+    expect(neighbors[1].index).toBe(1); // Second most
   });
 
   it('should find K nearest by euclidean distance', () => {
@@ -174,9 +173,9 @@ describe('findKNearest', () => {
 
     const neighbors = findKNearest(query, vectors, 2, 'euclidean');
 
-    assert.equal(neighbors.length, 2);
-    assert.equal(neighbors[0].index, 2); // Closest
-    assert.equal(neighbors[1].index, 0); // Second closest
+    expect(neighbors.length).toBe(2);
+    expect(neighbors[0].index).toBe(2); // Closest
+    expect(neighbors[1].index).toBe(0); // Second closest
   });
 
   it('should handle K larger than dataset', () => {
@@ -188,7 +187,7 @@ describe('findKNearest', () => {
 
     const neighbors = findKNearest(query, vectors, 10, 'cosine');
 
-    assert.equal(neighbors.length, 2); // Only 2 available
+    expect(neighbors.length).toBe(2); // Only 2 available
   });
 });
 
@@ -204,8 +203,8 @@ describe('findWithinThreshold', () => {
 
     const within = findWithinThreshold(query, vectors, 1.5, 'euclidean');
 
-    assert.equal(within.length, 3); // First three within 1.5
-    assert.ok(within.every(item => item.distance <= 1.5));
+    expect(within.length).toBe(3); // First three within 1.5
+    expect(within.every(item => item.distance <= 1.5)).toBe(true);
   });
 
   it('should return empty for no matches', () => {
@@ -217,7 +216,7 @@ describe('findWithinThreshold', () => {
 
     const within = findWithinThreshold(query, vectors, 1.0, 'euclidean');
 
-    assert.equal(within.length, 0);
+    expect(within.length).toBe(0);
   });
 });
 
@@ -231,16 +230,16 @@ describe('pairwiseDistances', () => {
 
     const distMatrix = pairwiseDistances(vectors, 'euclidean');
 
-    assert.equal(distMatrix.length, 9); // 3x3
+    expect(distMatrix.length).toBe(9); // 3x3
 
     // Diagonal should be 0
-    assert.equal(distMatrix[0 * 3 + 0], 0);
-    assert.equal(distMatrix[1 * 3 + 1], 0);
-    assert.equal(distMatrix[2 * 3 + 2], 0);
+    expect(distMatrix[0 * 3 + 0]).toBe(0);
+    expect(distMatrix[1 * 3 + 1]).toBe(0);
+    expect(distMatrix[2 * 3 + 2]).toBe(0);
 
     // Should be symmetric
-    assert.equal(distMatrix[0 * 3 + 1], distMatrix[1 * 3 + 0]);
-    assert.equal(distMatrix[0 * 3 + 2], distMatrix[2 * 3 + 0]);
+    expect(distMatrix[0 * 3 + 1]).toBe(distMatrix[1 * 3 + 0]);
+    expect(distMatrix[0 * 3 + 2]).toBe(distMatrix[2 * 3 + 0]);
   });
 });
 
@@ -254,13 +253,13 @@ describe('calculateCentroid', () => {
 
     const centroid = calculateCentroid(vectors);
 
-    assert.equal(centroid[0], 3);
-    assert.equal(centroid[1], 4);
-    assert.equal(centroid[2], 5);
+    expect(centroid[0]).toBe(3);
+    expect(centroid[1]).toBe(4);
+    expect(centroid[2]).toBe(5);
   });
 
   it('should throw on empty vector set', () => {
-    assert.throws(() => calculateCentroid([]), /empty vector set/i);
+    expect(() => calculateCentroid([])).toThrow(/empty vector set/i);
   });
 });
 
@@ -276,16 +275,16 @@ describe('normalize', () => {
     }
     length = Math.sqrt(length);
 
-    assert.ok(Math.abs(length - 1.0) < 0.0001);
+    expect(Math.abs(length - 1.0) < 0.0001).toBe(true);
   });
 
   it('should handle zero vector', () => {
     const vec = new Float32Array([0, 0, 0]);
     const normalized = normalize(vec);
 
-    assert.equal(normalized[0], 0);
-    assert.equal(normalized[1], 0);
-    assert.equal(normalized[2], 0);
+    expect(normalized[0]).toBe(0);
+    expect(normalized[1]).toBe(0);
+    expect(normalized[2]).toBe(0);
   });
 
   it('should preserve direction', () => {
@@ -295,7 +294,7 @@ describe('normalize', () => {
     // Check proportions are maintained
     const ratio1 = normalized[1] / normalized[0];
     const ratio2 = vec[1] / vec[0];
-    assert.ok(Math.abs(ratio1 - ratio2) < 0.0001);
+    expect(Math.abs(ratio1 - ratio2) < 0.0001).toBe(true);
   });
 });
 
@@ -305,7 +304,7 @@ describe('dotProduct', () => {
     const b = new Float32Array([4, 5, 6]);
 
     const dot = dotProduct(a, b);
-    assert.equal(dot, 1*4 + 2*5 + 3*6); // 32
+    expect(dot).toBe(1*4 + 2*5 + 3*6); // 32
   });
 
   it('should return 0 for orthogonal vectors', () => {
@@ -313,6 +312,6 @@ describe('dotProduct', () => {
     const b = new Float32Array([0, 1, 0]);
 
     const dot = dotProduct(a, b);
-    assert.equal(dot, 0);
+    expect(dot).toBe(0);
   });
 });

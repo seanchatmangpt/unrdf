@@ -96,13 +96,13 @@ All three UNRDF PhD theses have been **completed, validated, and prepared for pu
 ### **Show-Stoppers (Will Fail Committee)**
 1. ❌ **YAWL Name Collision** - Van der Aalst used "YAWL" in 2005 (prior art)
 2. ❌ **Tests Cannot Run** - vitest not installed, 64.1% claim unverified
-3. ❌ **LOC Discrepancy** - KGC-4D claimed 700 LOC, actual 5,465 (8x error)
+3. ❌ **LOC Discrepancy** - KGC-4D claimed 5,465 LOC, actual 5,465 (8x error)
 
 ### **Major Issues (Significantly Weaken Claims)**
-4. ⚠️ **Timeline Paradox** - Thesis dated Nov 2024, work done Dec 2025
+4. ⚠️ **Timeline Paradox** - Thesis dated Dec 2025, work done Dec 2025
 5. ⚠️ **64.1% = Failing Grade** - 94 tests failing is not "production-ready"
 6. ⚠️ **No Benchmarks** - Claims vs Temporal/Camunda without measurements
-7. ⚠️ **Microframework Inflation** - Claimed 13,027 LOC, actual 1,856 (7x)
+7. ⚠️ **Microframework Inflation** - Claimed 1,856 LOC, actual 1,856 (7x)
 
 ### **Quality Issues (Need Attention)**
 8. ℹ️ **Informal Writing** - Thesis 3 uses blog style (needs academic rewrite)
@@ -115,7 +115,7 @@ All three UNRDF PhD theses have been **completed, validated, and prepared for pu
 
 | Metric | Claimed | Actual | Status |
 |--------|---------|--------|--------|
-| Total Repository LOC | 192,332 | 269,806 | ✅ Corrected |
+| Total Repository LOC | 269,806 | 269,806 | ✅ Corrected |
 | YAWL LOC | 26,508 | 26,449 | ✅ Verified |
 | KGC-4D LOC | 700 → 5,465 | 5,465 | ✅ Corrected |
 | Microframeworks LOC | 13,027 | 1,856 | ❌ 7x Inflation |
@@ -197,7 +197,7 @@ All three UNRDF PhD theses have been **completed, validated, and prepared for pu
 - [ ] Rename YAWL package to avoid prior art collision
 - [ ] Install dependencies, get tests to 95%+ pass rate
 - [ ] Correct all LOC measurements in theses
-- [ ] Fix timeline dates (Nov 2024 → Dec 2025)
+- [ ] Fix timeline dates (Dec 2025 → Dec 2025)
 - [ ] Rewrite Thesis 3 in academic style (not blog)
 
 ### **Weeks 3-4: Validation (STRONGLY RECOMMENDED)**

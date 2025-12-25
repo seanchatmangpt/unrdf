@@ -130,6 +130,39 @@ async function main() {
   console.log(`Actual P95: ${stats.p95.toFixed(3)} ms`);
   console.log(`Status: ${stats.p95 < 10 ? 'PASS' : 'FAIL'}`);
   console.log('');
+
+  const throughputPerSec = results.totalReceipts / (totalTime / 1000);
+
+  // Output JSON for summary generator
+  console.log('\n__JSON_RESULTS__');
+  console.log(JSON.stringify({
+    benchmark: 'receipt-generation',
+    timestamp: new Date().toISOString(),
+    results: {
+      meanMs: stats.mean,
+      medianMs: stats.median,
+      p90Ms: stats.p90,
+      p95Ms: stats.p95,
+      p99Ms: stats.p99,
+      p999Ms: stats.p999,
+      maxMs: stats.max,
+      totalReceipts: results.totalReceipts,
+      totalTimeMs: totalTime,
+      throughputPerSec,
+    },
+    claims: {
+      receiptGenerationLt10ms: {
+        target: 10,
+        actualP95: stats.p95,
+        pass: stats.p95 < 10,
+      },
+      receiptThroughputGt100k: {
+        target: 100000,
+        actual: throughputPerSec,
+        pass: throughputPerSec > 100000,
+      },
+    },
+  }, null, 2));
 }
 
 main().catch(console.error);

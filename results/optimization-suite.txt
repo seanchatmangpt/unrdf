@@ -1,0 +1,177 @@
+============================================================
+PERFORMANCE OPTIMIZATION BENCHMARK SUITE
+============================================================
+Mode: QUICK
+Started: 2025-12-25T08:22:07.445Z
+
+============================================================
+BENCHMARK 1: Receipt Generation
+============================================================
+
+Warming up (10 iterations)...
+
+Running baseline (sequential) - 100 receipts...
+
+Running optimized (batch) - 100 receipts in batches of 100...
+
+--- RESULTS ---
+
+  Baseline (Sequential):
+    Mean:    34.30 us
+    Median:  17.08 us
+    P95:     47.35 us
+    P99:     1.37 ms
+    Min/Max: 14.07 us / 1.37 ms
+    Throughput: 27646 ops/sec
+
+  Optimized (Batch):
+    Mean:    16.29 us
+    Median:  16.29 us
+    P95:     16.29 us
+    P99:     16.29 us
+    Min/Max: 16.29 us / 16.29 us
+    Throughput: 60616 ops/sec
+
+  IMPROVEMENT: 119.3% throughput increase
+  Baseline: 27646 receipts/sec
+  Optimized: 60616 receipts/sec
+
+============================================================
+BENCHMARK 2: SPARQL Query Caching
+============================================================
+
+--- Dataset size: 100 entities ---
+
+  Baseline (No Cache):
+    Mean:    1.88 us
+    Median:  1.36 us
+    P95:     4.89 us
+    P99:     4.89 us
+    Min/Max: 1.30 us / 4.89 us
+
+  Optimized (Cached):
+    Mean:    639.50 ns
+    Median:  226.00 ns
+    P95:     3.26 us
+    P99:     3.26 us
+    Min/Max: 162.00 ns / 3.26 us
+  IMPROVEMENT: 66.0% latency reduction
+
+--- Dataset size: 500 entities ---
+
+  Baseline (No Cache):
+    Mean:    1.43 us
+    Median:  1.10 us
+    P95:     5.19 us
+    P99:     5.19 us
+    Min/Max: 1.05 us / 5.19 us
+
+  Optimized (Cached):
+    Mean:    489.15 ns
+    Median:  184.00 ns
+    P95:     3.69 us
+    P99:     3.69 us
+    Min/Max: 163.00 ns / 3.69 us
+  IMPROVEMENT: 65.8% latency reduction
+
+============================================================
+BENCHMARK 3: Hook Policy Compilation
+============================================================
+
+Warming up (100 iterations)...
+
+Running baseline - 1000 quads...
+
+Running optimized (compiled) - 1000 quads...
+
+Running batch validation - 1000 quads in batches of 100...
+
+--- RESULTS ---
+
+  Baseline (Direct):
+    Mean:    2.53 us
+    Median:  411.00 ns
+    P95:     794.00 ns
+    P99:     987.00 ns
+    Min/Max: 364.00 ns / 2.07 ms
+
+  Optimized (Compiled):
+    Mean:    570.82 ns
+    Median:  447.00 ns
+    P95:     868.00 ns
+    P99:     1.07 us
+    Min/Max: 363.00 ns / 23.67 us
+
+  Optimized (Batch):
+    Mean:    817.43 ns
+    Median:  713.44 ns
+    P95:     2.22 us
+    P99:     2.22 us
+    Min/Max: 425.36 ns / 2.22 us
+
+  Compiled: 77.5% improvement
+  Batch: 67.7% improvement
+  Baseline P95: 794.00 ns
+  Compiled P95: 868.00 ns
+
+============================================================
+BENCHMARK 4: Snapshot Caching (Simulated)
+============================================================
+
+Running baseline (no cache) - 20 accesses...
+
+Running optimized (cached) - 20 accesses...
+
+--- RESULTS ---
+
+  Baseline (No Cache):
+    Mean:    69.40 ms
+    Median:  70.25 ms
+    P95:     92.57 ms
+    P99:     92.57 ms
+    Min/Max: 54.19 ms / 92.57 ms
+
+  Optimized (Cached):
+    Mean:    16.41 ms
+    Median:  3.63 us
+    P95:     99.23 ms
+    P99:     99.23 ms
+    Min/Max: 591.00 ns / 99.23 ms
+
+  Cache Hit Rate: 75.0%
+  Baseline Mean: 69.40 ms
+  Cached Mean: 16.41 ms
+  IMPROVEMENT: 76.4% latency reduction
+
+============================================================
+OPTIMIZATION SUMMARY
+============================================================
+
+1. Receipt Generation:
+   Baseline: 27646 receipts/sec
+   Optimized: 60616 receipts/sec
+   Improvement: 119.3%
+
+2. SPARQL Query Caching:
+   Dataset 100: 66.0% latency reduction
+   Dataset 500: 65.8% latency reduction
+
+3. Hook Policy Compilation:
+   Compiled: 77.5% improvement
+   Batch: 67.7% improvement
+   P95 Latency: 868.00 ns
+
+4. Snapshot Caching:
+   Cache Hit Rate: 75.0%
+   Latency Reduction: 76.4%
+
+============================================================
+SUCCESS CRITERIA CHECK
+============================================================
+   [FAIL] Receipt generation >= 80K/sec
+   [PASS] Hook P95 < 500us
+   [PASS] Snapshot cache hit rate > 50%
+
+============================================================
+Completed: 2025-12-25T08:22:08.560Z
+============================================================

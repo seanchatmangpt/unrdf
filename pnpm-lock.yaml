@@ -12,6 +12,9 @@ importers:
 
   .:
     dependencies:
+      hash-wasm:
+        specifier: ^4.12.0
+        version: 4.12.0
       zod:
         specifier: ^4.1.13
         version: 4.1.13
@@ -564,6 +567,40 @@ importers:
         specifier: ^4.0.15
         version: 4.0.15(@opentelemetry/api@1.9.0)(@types/node@24.10.1)(@vitest/ui@4.0.15(vitest@4.0.15))(happy-dom@16.8.1)(jiti@2.6.1)(jsdom@27.2.0)(lightningcss@1.30.2)(msw@2.12.4(@types/node@24.10.1)(typescript@5.9.3))(terser@5.44.1)(yaml@2.8.2)
 
+  packages/integration-tests:
+    dependencies:
+      '@unrdf/core':
+        specifier: workspace:*
+        version: link:../core
+      '@unrdf/federation':
+        specifier: workspace:*
+        version: link:../federation
+      '@unrdf/hooks':
+        specifier: workspace:*
+        version: link:../hooks
+      '@unrdf/kgc-4d':
+        specifier: workspace:*
+        version: link:../kgc-4d
+      '@unrdf/oxigraph':
+        specifier: workspace:*
+        version: link:../oxigraph
+      '@unrdf/streaming':
+        specifier: workspace:*
+        version: link:../streaming
+      '@unrdf/yawl':
+        specifier: workspace:*
+        version: link:../yawl
+      zod:
+        specifier: ^4.1.13
+        version: 4.1.13
+    devDependencies:
+      '@vitest/coverage-v8':
+        specifier: ^4.0.15
+        version: 4.0.15(@vitest/browser@4.0.15(msw@2.12.4(@types/node@24.10.1)(typescript@5.9.3))(vite@7.2.6(@types/node@24.10.1)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(yaml@2.8.2))(vitest@4.0.15))(vitest@4.0.15)
+      vitest:
+        specifier: ^4.0.15
+        version: 4.0.15(@opentelemetry/api@1.9.0)(@types/node@24.10.1)(@vitest/ui@4.0.15(vitest@4.0.15))(happy-dom@16.8.1)(jiti@2.6.1)(jsdom@27.2.0)(lightningcss@1.30.2)(msw@2.12.4(@types/node@24.10.1)(typescript@5.9.3))(terser@5.44.1)(yaml@2.8.2)
+
   packages/kgc-4d:
     dependencies:
       '@unrdf/core':
@@ -797,9 +834,6 @@ importers:
       '@types/node':
         specifier: ^24.10.1
         version: 24.10.1
-      '@unrdf/core':
-        specifier: workspace:*
-        version: link:../core
       vitest:
         specifier: ^4.0.15
         version: 4.0.15(@opentelemetry/api@1.9.0)(@types/node@24.10.1)(@vitest/ui@4.0.15(vitest@4.0.15))(happy-dom@16.8.1)(jiti@2.6.1)(jsdom@27.2.0)(lightningcss@1.30.2)(msw@2.12.4(@types/node@24.10.1)(typescript@5.9.3))(terser@5.44.1)(yaml@2.8.2)

@@ -1,0 +1,122 @@
+======================================================================
+HOOK EXECUTION PERFORMANCE BENCHMARK
+======================================================================
+Definition iterations: 10000
+Execution iterations: 10000
+Batch size: 1000
+
+Running: Hook Definition (simple)...
+  Mean: 2.05 us
+  P95:  4.58 us
+  P99:  8.03 us
+
+Running: Hook Definition (with validation)...
+  Mean: 1.10 us
+  P95:  1.74 us
+  P99:  2.31 us
+
+Running: Single Hook Execution...
+  Mean: 2.60 us
+  P95:  3.73 us
+  P99:  8.18 us
+
+Running: Hook Chain Execution (3 hooks)...
+  Mean: 4.56 us
+  P95:  6.94 us
+  P99:  12.40 us
+
+Running: Hook Registry Operations...
+  Register Mean: 3.37 us
+  Lookup Mean:   1.32 us
+
+Running: Batch Hook Execution...
+  Mean (1000 quads): 1.93 ms
+  Per-quad: 1.93 us
+
+======================================================================
+SUMMARY
+======================================================================
+
+LATENCY BREAKDOWN (microseconds):
+----------------------------------------------------------------------
+Operation                          | Mean    | P95     | P99     | Max
+----------------------------------------------------------------------
+Hook Definition (simple)           |    2.1 |    4.6 |    8.0 |  969.1
+Hook Definition (with validation)  |    1.1 |    1.7 |    2.3 |  435.2
+Single Hook Execution              |    2.6 |    3.7 |    8.2 | 1011.2
+Hook Chain (3 hooks)               |    4.6 |    6.9 |   12.4 | 1618.3
+Registry Register                  |    3.4 |    5.1 |    8.2 | 2669.8
+Registry Lookup                    |    1.3 |    0.6 |    1.0 | 9890.5
+----------------------------------------------------------------------
+
+======================================================================
+CLAIMS VALIDATION
+======================================================================
+
+Claim: Hook execution <1ms
+  Measured P95: 3.7 us (0.004 ms)
+  Target:       1000 us (1.000 ms)
+  Status:       PASS
+
+Claim: Hook chain <1ms
+  Measured P95: 6.9 us (0.007 ms)
+  Target:       1000 us (1.000 ms)
+  Status:       PASS
+
+Throughput: 384672834 hooks/sec
+
+======================================================================
+Benchmark complete
+======================================================================
+
+__JSON_RESULTS__
+{
+  "benchmark": "hook-execution",
+  "timestamp": "2025-12-25T08:18:51.959Z",
+  "results": {
+    "definition": {
+      "meanUs": 2.0511198999999634,
+      "p95Us": 4.580000000032669,
+      "p99Us": 8.031000000016775
+    },
+    "definitionWithValidation": {
+      "meanUs": 1.0954815000002156,
+      "p95Us": 1.7420000000356595,
+      "p99Us": 2.3140000000125838
+    },
+    "execution": {
+      "meanUs": 2.599611699999923,
+      "p95Us": 3.734000000008564,
+      "p99Us": 8.18200000003344
+    },
+    "chainExecution": {
+      "meanUs": 4.563145799999876,
+      "p95Us": 6.939999999985957,
+      "p99Us": 12.400000000013733
+    },
+    "registryRegister": {
+      "meanUs": 3.369782799998853,
+      "p95Us": 5.093999999985499,
+      "p99Us": 8.160999999972773
+    },
+    "registryLookup": {
+      "meanUs": 1.3213545000005638,
+      "p95Us": 0.5700000000388172,
+      "p99Us": 1.046000000087588
+    },
+    "batchPerQuadUs": 1.9338964700000032,
+    "throughputPerSec": 384672834.02364653
+  },
+  "claims": {
+    "hookExecutionLt1ms": {
+      "target": 1000,
+      "actualP95": 3.734000000008564,
+      "pass": true
+    },
+    "hookChainLt1ms": {
+      "target": 1000,
+      "actualP95": 6.939999999985957,
+      "pass": true
+    }
+  }
+}

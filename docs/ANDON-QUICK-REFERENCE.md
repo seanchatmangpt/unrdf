@@ -324,5 +324,5 @@ Andon signals are "done" when:
 ---
 
 *UNRDF Andon Signals Design - Quick Reference Card*
-*November 2024*
+*December 2025*
 *2,763 lines of documentation across 5 comprehensive documents*

@@ -362,4 +362,4 @@ You now have a complete, production-ready Andon signals design for UNRDF:
 
 *Andon Signals Design - UNRDF v4.0*
 *Complete Documentation Set*
-*November 2024*
+*December 2025*

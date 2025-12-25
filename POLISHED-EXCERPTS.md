@@ -232,7 +232,7 @@ Future work should validate this approach across multiple languages and larger p
 ### What We Have
 
 1. ✅ **Novel Architectures**: Hook-native execution, SPARQL control flow, cryptographic receipts
-2. ✅ **Large-Scale Implementation**: 192,332 LOC, 32 packages, functional demos
+2. ✅ **Large-Scale Implementation**: 269,806 LOC, 20 packages, functional demos
 3. ✅ **Theoretical Framework**: Information-theoretic correctness bounds
 4. ✅ **Empirical Validation**: Single-pass feasibility demonstrated
 
@@ -272,9 +272,9 @@ This section assesses the current state of empirical validation for the three th
 
 The empirical work completed to date (December 2025) demonstrates the following:
 
-**Novel Architectural Patterns**: The YAWL implementation (26,449 LOC) and microframework demonstrations (13,027 LOC across 20 frameworks) validate three architectural innovations: hook-native workflow execution, SPARQL-based control flow routing, and cryptographic receipt chains. These patterns represent novel contributions to workflow management and distributed systems architecture.
+**Novel Architectural Patterns**: The YAWL implementation (26,449 LOC) and microframework demonstrations (1,856 LOC across 3 microframework demonstrations) validate three architectural innovations: hook-native workflow execution, SPARQL-based control flow routing, and cryptographic receipt chains. These patterns represent novel contributions to workflow management and distributed systems architecture.
 
-**Large-Scale Implementation Feasibility**: The UNRDF monorepo encompasses 192,332 lines of code across 32 packages, demonstrating that the proposed architecture scales beyond prototype implementations. This includes production-quality code with comprehensive type annotations (JSDoc) and modular package structure.
+**Large-Scale Implementation Feasibility**: The UNRDF monorepo encompasses 269,806 lines of code across 20 packages, demonstrating that the proposed architecture scales beyond prototype implementations. This includes production-quality code with comprehensive type annotations (JSDoc) and modular package structure.
 
 **Information-Theoretic Foundations**: The coupling entropy formalization (Section 4.1.4) and extended correctness bounds (Theorem 4.2) provide a theoretical framework for predicting single-pass implementation success. The YAWL case study provides empirical validation of these bounds within the stated confidence intervals.
 

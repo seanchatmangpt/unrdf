@@ -1,0 +1,103 @@
+============================================================
+SPARQL Query Performance Benchmark
+============================================================
+
+
+Dataset size: 100 entities (300 triples)
+------------------------------------------------------------
+
+SIMPLE query:
+  Mean:   0.14 ms
+  Median: 0.11 ms
+  P95:    0.36 ms
+  P99:    0.52 ms
+  Min/Max: 0.08 / 0.52 ms
+
+FILTERED query:
+  Mean:   0.16 ms
+  Median: 0.13 ms
+  P95:    0.35 ms
+  P99:    0.52 ms
+  Min/Max: 0.10 / 0.52 ms
+
+JOIN query:
+  Mean:   0.20 ms
+  Median: 0.19 ms
+  P95:    0.33 ms
+  P99:    0.41 ms
+  Min/Max: 0.13 / 0.41 ms
+
+AGGREGATE query:
+  Mean:   0.26 ms
+  Median: 0.21 ms
+  P95:    0.51 ms
+  P99:    1.48 ms
+  Min/Max: 0.16 / 1.48 ms
+
+
+Dataset size: 1000 entities (3000 triples)
+------------------------------------------------------------
+
+SIMPLE query:
+  Mean:   0.10 ms
+  Median: 0.08 ms
+  P95:    0.20 ms
+  P99:    0.41 ms
+  Min/Max: 0.07 / 0.41 ms
+
+FILTERED query:
+  Mean:   0.11 ms
+  Median: 0.10 ms
+  P95:    0.16 ms
+  P99:    0.38 ms
+  Min/Max: 0.08 / 0.38 ms
+
+JOIN query:
+  Mean:   0.16 ms
+  Median: 0.13 ms
+  P95:    0.24 ms
+  P99:    0.44 ms
+  Min/Max: 0.11 / 0.44 ms
+
+AGGREGATE query:
+  Mean:   0.81 ms
+  Median: 0.72 ms
+  P95:    1.29 ms
+  P99:    1.55 ms
+  Min/Max: 0.62 / 1.55 ms
+
+
+Dataset size: 10000 entities (30000 triples)
+------------------------------------------------------------
+
+SIMPLE query:
+  Mean:   0.10 ms
+  Median: 0.10 ms
+  P95:    0.15 ms
+  P99:    0.39 ms
+  Min/Max: 0.07 / 0.39 ms
+
+FILTERED query:
+  Mean:   0.11 ms
+  Median: 0.10 ms
+  P95:    0.18 ms
+  P99:    0.40 ms
+  Min/Max: 0.08 / 0.40 ms
+
+JOIN query:
+  Mean:   0.15 ms
+  Median: 0.11 ms
+  P95:    0.26 ms
+  P99:    0.49 ms
+  Min/Max: 0.10 / 0.49 ms
+
+AGGREGATE query:
+  Mean:   6.52 ms
+  Median: 6.40 ms
+  P95:    8.22 ms
+  P99:    8.91 ms
+  Min/Max: 5.09 / 8.91 ms
+
+============================================================
+Benchmark complete
+============================================================

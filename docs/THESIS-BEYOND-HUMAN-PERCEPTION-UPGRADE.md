@@ -64,7 +64,7 @@ The thesis presents five key contributions. This upgrade provides empirical vali
 - YAWL package: 26,449 LOC with KGC-4D integration
 - Production metrics: 0% idle CPU, >100,000 receipts/sec
 
-*Updated Claim*: "The production architecture is validated through the UNRDF monorepo (269,806 LOC, 32 packages), with the YAWL package (26,449 LOC) demonstrating full integration of hooks, KGC-4D, and streaming capabilities."
+*Updated Claim*: "The production architecture is validated through the UNRDF monorepo (269,806 LOC, 20 packages), with the YAWL package (26,449 LOC) demonstrating full integration of hooks, KGC-4D, and streaming capabilities."
 
 **Contribution 5: Swarm-Native Design**
 

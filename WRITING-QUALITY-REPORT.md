@@ -312,7 +312,7 @@ quantitative evidence of the development approach:
 Table 6.5.1 presents repository-scale metrics for the UNRDF monorepo, demonstrating
 production-scale validation of the Beyond Human Perception architectural principles.
 The metrics show that the implementation extends significantly beyond prototype scale,
-encompassing 269,806 LOC across 32 packages.
+encompassing 269,806 LOC across 20 packages.
 
 **Table 6.5.1: UNRDF Monorepo Repository Metrics (December 2025)**
 

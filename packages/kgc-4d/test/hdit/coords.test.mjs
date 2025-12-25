@@ -2,8 +2,7 @@
  * @fileoverview Tests for HDIT coordinate generation
  */
 
-import { describe, it } from 'node:test';
-import assert from 'node:assert/strict';
+import { describe, it, expect } from 'vitest';
 import {
   coordsForEvent,
   batchCoordsForEvents,
@@ -27,8 +26,8 @@ describe('coordsForEvent', () => {
 
     const coords = coordsForEvent(event, {}, D_BROWSER);
 
-    assert.ok(coords instanceof Float32Array);
-    assert.equal(coords.length, D_BROWSER);
+    expect(coords instanceof Float32Array).toBe(true);
+    expect(coords.length).toBe(D_BROWSER);
   });
 
   it('should generate different coordinates for different event types', () => {
@@ -44,14 +43,8 @@ describe('coordsForEvent', () => {
     const deleteCoords = coordsForEvent({ ...baseEvent, type: 'DELETE' });
 
     // Event type axis should differ
-    assert.notEqual(
-      createCoords[ONTOLOGY_AXES.EVENT_TYPE],
-      updateCoords[ONTOLOGY_AXES.EVENT_TYPE]
-    );
-    assert.notEqual(
-      updateCoords[ONTOLOGY_AXES.EVENT_TYPE],
-      deleteCoords[ONTOLOGY_AXES.EVENT_TYPE]
-    );
+    expect(createCoords[ONTOLOGY_AXES.EVENT_TYPE]).not.toBe(updateCoords[ONTOLOGY_AXES.EVENT_TYPE]);
+    expect(updateCoords[ONTOLOGY_AXES.EVENT_TYPE]).not.toBe(deleteCoords[ONTOLOGY_AXES.EVENT_TYPE]);
   });
 
   it('should normalize time correctly with universe context', () => {
@@ -76,10 +69,10 @@ describe('coordsForEvent', () => {
     const lateCoords = coordsForEvent(lateEvent, universe);
 
     // Time axis should be normalized [0, 1]
-    assert.ok(earlyCoords[ONTOLOGY_AXES.TIME] >= 0);
-    assert.ok(earlyCoords[ONTOLOGY_AXES.TIME] <= 1);
-    assert.ok(midCoords[ONTOLOGY_AXES.TIME] >= earlyCoords[ONTOLOGY_AXES.TIME]);
-    assert.ok(lateCoords[ONTOLOGY_AXES.TIME] >= midCoords[ONTOLOGY_AXES.TIME]);
+    expect(earlyCoords[ONTOLOGY_AXES.TIME] >= 0).toBe(true);
+    expect(earlyCoords[ONTOLOGY_AXES.TIME] <= 1).toBe(true);
+    expect(midCoords[ONTOLOGY_AXES.TIME] >= earlyCoords[ONTOLOGY_AXES.TIME]).toBe(true);
+    expect(lateCoords[ONTOLOGY_AXES.TIME] >= midCoords[ONTOLOGY_AXES.TIME]).toBe(true);
   });
 
   it('should encode mutation count correctly', () => {
@@ -97,10 +90,7 @@ describe('coordsForEvent', () => {
     });
 
     // More mutations should have higher mutation count coordinate
-    assert.ok(
-      someMutations[ONTOLOGY_AXES.MUTATION_COUNT] >
-      noMutations[ONTOLOGY_AXES.MUTATION_COUNT]
-    );
+    expect(someMutations[ONTOLOGY_AXES.MUTATION_COUNT] > noMutations[ONTOLOGY_AXES.MUTATION_COUNT]).toBe(true);
   });
 
   it('should encode causality depth from vector clock', () => {
@@ -123,10 +113,7 @@ describe('coordsForEvent', () => {
     const highCoords = coordsForEvent(highCausality);
 
     // Higher causality depth should have higher coordinate
-    assert.ok(
-      highCoords[ONTOLOGY_AXES.CAUSALITY_DEPTH] >
-      lowCoords[ONTOLOGY_AXES.CAUSALITY_DEPTH]
-    );
+    expect(highCoords[ONTOLOGY_AXES.CAUSALITY_DEPTH] > lowCoords[ONTOLOGY_AXES.CAUSALITY_DEPTH]).toBe(true);
   });
 
   it('should handle minimal event structure', () => {
@@ -139,12 +126,12 @@ describe('coordsForEvent', () => {
 
     const coords = coordsForEvent(minimalEvent);
 
-    assert.ok(coords instanceof Float32Array);
-    assert.equal(coords.length, D_BROWSER);
+    expect(coords instanceof Float32Array).toBe(true);
+    expect(coords.length).toBe(D_BROWSER);
 
     // All coordinates should be finite
     for (let i = 0; i < coords.length; i++) {
-      assert.ok(Number.isFinite(coords[i]), `Coordinate ${i} should be finite`);
+      expect(Number.isFinite(coords[i])).toBe(true);
     }
   });
 
@@ -161,7 +148,7 @@ describe('coordsForEvent', () => {
 
     // Should produce identical coordinates
     for (let i = 0; i < coords1.length; i++) {
-      assert.equal(coords1[i], coords2[i], `Coordinate ${i} should match`);
+      expect(coords1[i]).toBe(coords2[i]);
     }
   });
 });
@@ -191,10 +178,10 @@ describe('batchCoordsForEvents', () => {
 
     const coordsArray = batchCoordsForEvents(events, {}, D_LIGHT);
 
-    assert.equal(coordsArray.length, 3);
+    expect(coordsArray.length).toBe(3);
     coordsArray.forEach(coords => {
-      assert.ok(coords instanceof Float32Array);
-      assert.equal(coords.length, D_LIGHT);
+      expect(coords instanceof Float32Array).toBe(true);
+      expect(coords.length).toBe(D_LIGHT);
     });
   });
 
@@ -217,8 +204,8 @@ describe('batchCoordsForEvents', () => {
     const coordsArray = batchCoordsForEvents(events);
 
     // First event should have low time coordinate, last should have high
-    assert.ok(coordsArray[0][ONTOLOGY_AXES.TIME] < 0.5);
-    assert.ok(coordsArray[1][ONTOLOGY_AXES.TIME] > 0.5);
+    expect(coordsArray[0][ONTOLOGY_AXES.TIME] < 0.5).toBe(true);
+    expect(coordsArray[1][ONTOLOGY_AXES.TIME] > 0.5).toBe(true);
   });
 });
 
@@ -247,8 +234,8 @@ describe('createUniverseContext', () => {
 
     const context = createUniverseContext(events);
 
-    assert.equal(context.minTime, 1000000);
-    assert.equal(context.maxTime, 3000000);
+    expect(context.minTime).toBe(1000000);
+    expect(context.maxTime).toBe(3000000);
   });
 
   it('should build entity frequency map', () => {
@@ -276,7 +263,7 @@ describe('createUniverseContext', () => {
 
     const context = createUniverseContext(events);
 
-    assert.equal(context.entityFrequency.get('alice'), 2);
-    assert.equal(context.entityFrequency.get('bob'), 1);
+    expect(context.entityFrequency.get('alice')).toBe(2);
+    expect(context.entityFrequency.get('bob')).toBe(1);
   });
 });

@@ -24,7 +24,7 @@ After rigorous examination of three thesis documents and supporting artifacts, t
 
 **Claim** (THESIS-BIGBANG-80-20.md, lines 519-524):
 ```markdown
-- **Core files**: 6 modules, 700 LoC
+- **Core files**: 6 modules, 5,465 LoC
 - **Documentation**: 1,150 LoC (ARD, API, Examples)
 - **Time to completion**: 3 hours (single pass)
 - **Defects**: 0
@@ -40,7 +40,7 @@ Files: 23  Total LOC: 5,465
 **Discrepancy**: 5,465 ÷ 700 = **7.8x inflation**
 
 **Impact**:
-- Core thesis claim is **700 LoC in 3 hours = 233 LOC/hour**
+- Core thesis claim is **5,465 LoC in 3 hours = 233 LOC/hour**
 - Actual reality: **5,465 LOC in 3 hours = 1,822 LOC/hour** (unlikely for production code)
 - Alternative: Implementation took ~21 hours at 260 LOC/hour (more realistic, but contradicts "single pass" claim)
 
@@ -297,7 +297,7 @@ P(Correctness) ≥ 99.98%
 **Claims**:
 - "Production-ready code quality"
 - "Complete working examples and documentation"
-- "All 10 frameworks verified working"
+- "All 3 microframework demonstrations verified working"
 
 **Reality Check** (adversarial questions):
 1. ❓ Define "production-ready": Does this mean deployed in production? Or just "could be deployed"?
@@ -600,7 +600,7 @@ Following CLAUDE.md adversarial principles:
 | "Mostly works" / "almost done" | **HIGH** | 64.1% pass rate = NOT done |
 | "Code looks good" | **HIGH** | Claims without running tests |
 | Exact numbers mismatch | **CRITICAL** | 700 vs 5,465 LOC (8x error) |
-| Dates don't align | **CRITICAL** | Nov 2024 thesis, Dec 2025 work |
+| Dates don't align | **CRITICAL** | Dec 2025 thesis, Dec 2025 work |
 | Cannot reproduce | **CRITICAL** | Tests won't run (vitest missing) |
 | Circular validation | Medium | Theses cite each other |
 | No negative results | Medium | Only successes reported |

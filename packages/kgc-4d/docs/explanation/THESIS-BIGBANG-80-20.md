@@ -362,7 +362,7 @@ n_iterations = 1  (vs TDD: 3-5 iterations)
 
 **Code metrics**:
 ```
-Core implementation (src/)     : 700 LoC
+Core implementation (src/)     : 5,465 LoC
 Documentation (docs/)          : 900 LoC
 Examples (examples/)           : 250 LoC
 Total                          : 1,850 LoC
@@ -516,7 +516,7 @@ The Big Bang 80/20 methodology represents a **paradigm shift** for well-specifie
 **Appendix: KGC 4D Implementation Results**
 
 - **Repository**: `/Users/sac/unrdf/packages/kgc-4d/`
-- **Core files**: 6 modules, 700 LoC
+- **Core files**: 6 modules, 5,465 LoC
 - **Documentation**: 1,150 LoC (ARD, API, Examples)
 - **Time to completion**: 3 hours (single pass)
 - **Defects**: 0

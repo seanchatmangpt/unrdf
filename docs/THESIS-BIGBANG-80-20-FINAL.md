@@ -496,7 +496,7 @@ n_iterations = 1  (vs TDD: 3-5 iterations)
 
 **Code metrics**:
 ```
-Core implementation (src/)     : 700 LoC
+Core implementation (src/)     : 5,465 LoC
 Documentation (docs/)          : 900 LoC
 Examples (examples/)           : 250 LoC
 Total                          : 1,850 LoC
@@ -941,7 +941,7 @@ The Big Bang 80/20 methodology represents a **paradigm shift** for well-specifie
 ## Appendix A: KGC 4D Implementation Results
 
 - **Repository**: `/packages/kgc-4d/`
-- **Core files**: 6 modules, 700 LoC
+- **Core files**: 6 modules, 5,465 LoC
 - **Documentation**: 1,150 LoC (ARD, API, Examples)
 - **Time to completion**: 3 hours (single pass)
 - **Defects**: 0
@@ -963,21 +963,20 @@ The Big Bang 80/20 methodology represents a **paradigm shift** for well-specifie
 
 ## Appendix C: Microframework Validation (December 2025)
 
-Ten microframeworks were implemented using BB80/20:
+**Correction (Dec 2025)**: Three microframeworks exist (1,856 LOC total), not ten (3,240 LOC) as previously claimed.
 
-| Framework | LOC | Packages | Pattern Reuse | Defects |
-|-----------|-----|----------|---------------|---------|
-| Graph Routing | 291 | 3 | 64% | 0 |
-| Mega-Framework | 850 | 12 | 63% | 0 |
-| Temporal Validator | 245 | 4 | 65% | 0 |
-| Federation Stream | 312 | 5 | 64% | 0 |
-| Hook Orchestrator | 278 | 4 | 64% | 0 |
-| (5 others) | 1,264 | - | 64% avg | 0 |
-| **Total** | 3,240 | - | 64.1% avg | 0 |
+| Framework | LOC | Packages | Pattern Reuse | Test Status |
+|-----------|-----|----------|---------------|-------------|
+| max-combo-mega-framework.mjs | 850 | 12 | 63% (claimed) | No tests |
+| max-combo-graph-routing.mjs | 291 | 3 | 64% (claimed) | No tests |
+| microfw-temporal-validator.mjs | 715 | 4 | 64% (claimed) | No tests |
+| **Total** | **1,856** | - | **~64% (claimed)** | **No tests** |
+
+Note: Pattern reuse percentages are claims, not measurements. Defect status unknown without test coverage.
 
 ---
 
-**Status**: Production Ready (Empirically Validated)
+**Status**: Research Prototype (Test Coverage Required)
 **arXiv**: Pending submission
 **Citation**: "The Big Bang 80/20 Methodology: A Hyperdimensional Information-Theoretic Framework"
 **Original Date**: December 2024

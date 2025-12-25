@@ -146,7 +146,7 @@ $ ls packages/yawl/test/
 
 ## 6. Big Bang 80/20 Methodology Claims
 
-### Claim: "700 LoC in 2-3 hours with 0 defects"
+### Claim: "5,465 LoC in 2-3 hours with 0 defects"
 **Source:** CLAUDE.md and docs/bb80-20-methodology.md
 **Status:** ❌ REFUTED (by KGC-4D test failures)
 

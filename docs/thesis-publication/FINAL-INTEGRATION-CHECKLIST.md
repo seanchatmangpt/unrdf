@@ -179,7 +179,7 @@ pdflatex thesis.tex
 | KGC 4D Blue Ocean | 810 | 27 | COMPLETE | YES (210KB) |
 | Big Bang 80/20 | 1190 | ~35 | COMPLETE | Build required |
 
-**Total**: ~3,700 lines of formal academic content across 4 works.
+**Total**: ~3,5,465 lines of formal academic content across 4 works.
 
 ---
 

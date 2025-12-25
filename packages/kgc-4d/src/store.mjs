@@ -53,8 +53,20 @@ export class KGCStore extends UnrdfStore {
 
   /**
    * Atomic append: Add event to log and apply deltas to universe in one transaction
-   * Follows ACID semantics via UnrdfStore.transaction()
+   * Follows ACID semantics via UnrdfStore.transaction() with proper rollback
    * Includes vector clock for causality tracking and delta storage for time-travel replay
+   *
+   * @param {Object} eventData - Event data (type, payload, git_ref)
+   * @param {string} [eventData.type='CREATE'] - Event type (CREATE, UPDATE, DELETE, SNAPSHOT)
+   * @param {Object} [eventData.payload] - Event payload data
+   * @param {string} [eventData.git_ref] - Git reference for snapshot events
+   * @param {Array<Object>} deltas - Array of delta operations to apply
+   * @param {string} deltas[].type - Delta type ('add' or 'delete')
+   * @param {Object} deltas[].subject - RDF subject term
+   * @param {Object} deltas[].predicate - RDF predicate term
+   * @param {Object} deltas[].object - RDF object term
+   * @returns {Promise<{receipt: Object}>} Receipt with event ID, timestamp, and count
+   * @throws {Error} If payload exceeds size limit or operation fails
    *
    * @example
    * import { KGCStore } from './store.mjs';
@@ -64,6 +76,14 @@ export class KGCStore extends UnrdfStore {
    * console.assert(receipt.receipt.event_count === 1, 'Event count incremented');
    */
   async appendEvent(eventData = {}, deltas = []) {
+    // Input validation
+    if (eventData !== null && typeof eventData !== 'object') {
+      throw new TypeError('appendEvent: eventData must be an object');
+    }
+    if (!Array.isArray(deltas)) {
+      throw new TypeError('appendEvent: deltas must be an array');
+    }
+
     const eventId = this._generateEventId();
     const t_ns = now();
 
@@ -85,78 +105,117 @@ export class KGCStore extends UnrdfStore {
       }
     }
 
-    // Increment vector clock on each event
-    this.vectorClock.increment();
+    // Store state before mutation for rollback
+    const addedQuads = [];
+    const deletedQuads = [];
+    const previousEventCount = this.eventCount;
+    const previousVectorClock = this.vectorClock.clone();
 
-    // GAP-S2 fix: Improved delta serialization with better blank node handling
-    const serializedDeltas = deltas.map(d => ({
-      type: d.type,
-      subject: d.subject.value,
-      subjectType: d.subject.termType,
-      predicate: d.predicate.value,
-      // Store object with all necessary RDF properties for accurate reconstruction
-      object: {
-        value: d.object.value,
-        type: d.object.termType,
-        ...(d.object.termType === 'Literal' && {
-          datatype: d.object.datatype?.value,
-          language: d.object.language,
-        }),
-      },
-    }));
+    try {
+      // Increment vector clock on each event
+      this.vectorClock.increment();
 
-    // 1. Serialize event to RDF quads for EventLog
-    const eventQuads = this._serializeEvent({
-      id: eventId,
-      t_ns,
-      type: eventData.type || 'CREATE',
-      payload: {
-        ...eventData.payload || {},
-        deltas: serializedDeltas, // Store deltas for replay
-      },
-      git_ref: eventData.git_ref || null,
-      vector_clock: this.vectorClock.toJSON(), // Include vector clock
-    });
+      // GAP-S2 fix: Improved delta serialization with better blank node handling
+      const serializedDeltas = deltas.map(d => ({
+        type: d.type,
+        subject: d.subject.value,
+        subjectType: d.subject.termType,
+        predicate: d.predicate.value,
+        // Store object with all necessary RDF properties for accurate reconstruction
+        object: {
+          value: d.object.value,
+          type: d.object.termType,
+          ...(d.object.termType === 'Literal' && {
+            datatype: d.object.datatype?.value,
+            language: d.object.language,
+          }),
+        },
+      }));
 
-    // Add all event quads to EventLog named graph
-    for (const quad of eventQuads) {
-      const eventLogQuad = dataFactory.quad(
-        quad.subject,
-        quad.predicate,
-        quad.object,
-        dataFactory.namedNode(GRAPHS.EVENT_LOG)
-      );
-      this.add(eventLogQuad);
-    }
-
-    // 2. Apply deltas to Universe named graph
-    for (const delta of deltas) {
-      const universeQuad = dataFactory.quad(
-        delta.subject,
-        delta.predicate,
-        delta.object,
-        dataFactory.namedNode(GRAPHS.UNIVERSE)
-      );
-
-      if (delta.type === 'add') {
-        this.add(universeQuad);
-      } else if (delta.type === 'delete') {
-        this.delete(universeQuad);
-      }
-    }
-
-    // GAP-S4 fix: Use BigInt for eventCount to prevent overflow
-    this.eventCount++;
-
-    // 3. Generate and return receipt
-    return {
-      receipt: {
+      // 1. Serialize event to RDF quads for EventLog
+      const eventQuads = this._serializeEvent({
         id: eventId,
-        t_ns: t_ns.toString(),
-        timestamp_iso: toISO(t_ns),
-        event_count: Number(this.eventCount),  // Convert to Number for compatibility
-      },
-    };
+        t_ns,
+        type: eventData.type || 'CREATE',
+        payload: {
+          ...eventData.payload || {},
+          deltas: serializedDeltas, // Store deltas for replay
+        },
+        git_ref: eventData.git_ref || null,
+        vector_clock: this.vectorClock.toJSON(), // Include vector clock
+      });
+
+      // Add all event quads to EventLog named graph (track for rollback)
+      for (const quad of eventQuads) {
+        const eventLogQuad = dataFactory.quad(
+          quad.subject,
+          quad.predicate,
+          quad.object,
+          dataFactory.namedNode(GRAPHS.EVENT_LOG)
+        );
+        this.add(eventLogQuad);
+        addedQuads.push(eventLogQuad);
+      }
+
+      // 2. Apply deltas to Universe named graph (track for rollback)
+      for (const delta of deltas) {
+        const universeQuad = dataFactory.quad(
+          delta.subject,
+          delta.predicate,
+          delta.object,
+          dataFactory.namedNode(GRAPHS.UNIVERSE)
+        );
+
+        if (delta.type === 'add') {
+          this.add(universeQuad);
+          addedQuads.push(universeQuad);
+        } else if (delta.type === 'delete') {
+          this.delete(universeQuad);
+          deletedQuads.push(universeQuad);
+        }
+      }
+
+      // GAP-S4 fix: Use BigInt for eventCount to prevent overflow
+      this.eventCount++;
+
+      // 3. Generate and return receipt
+      return {
+        receipt: {
+          id: eventId,
+          t_ns: t_ns.toString(),
+          timestamp_iso: toISO(t_ns),
+          event_count: Number(this.eventCount),  // Convert to Number for compatibility
+        },
+      };
+    } catch (error) {
+      // ROLLBACK: Undo all changes on failure
+      // Restore event count
+      this.eventCount = previousEventCount;
+
+      // Restore vector clock
+      this.vectorClock = previousVectorClock;
+
+      // Remove added quads
+      for (const quad of addedQuads) {
+        try {
+          this.delete(quad);
+        } catch {
+          // Ignore errors during rollback cleanup
+        }
+      }
+
+      // Re-add deleted quads
+      for (const quad of deletedQuads) {
+        try {
+          this.add(quad);
+        } catch {
+          // Ignore errors during rollback cleanup
+        }
+      }
+
+      // Re-throw with context
+      throw new Error(`appendEvent failed (rolled back): ${error.message}`, { cause: error });
+    }
   }
 
   /**
@@ -175,10 +234,47 @@ export class KGCStore extends UnrdfStore {
 
   /**
    * Get current event count
-   * Returns BigInt to support arbitrarily large counts
+   * Returns Number for API compatibility (internally uses BigInt for overflow protection)
+   *
+   * @returns {number} Current event count
+   * @example
+   * import { KGCStore } from './store.mjs';
+   * const store = new KGCStore();
+   * console.assert(store.getEventCount() === 0, 'Initial count is 0');
+   * await store.appendEvent({ type: 'CREATE' }, []);
+   * console.assert(store.getEventCount() === 1, 'Count incremented');
    */
   getEventCount() {
+    return Number(this.eventCount);
+  }
+
+  /**
+   * Get current event count as BigInt
+   * Use this when you need full precision for very large event counts
+   *
+   * @returns {bigint} Current event count as BigInt
+   */
+  getEventCountBigInt() {
     return this.eventCount;
+  }
+
+  /**
+   * Get event log statistics
+   *
+   * @returns {Object} Statistics about the event log
+   * @example
+   * import { KGCStore } from './store.mjs';
+   * const store = new KGCStore();
+   * await store.appendEvent({ type: 'CREATE' }, []);
+   * const stats = store.getEventLogStats();
+   * console.assert(stats.eventCount === 1, 'Event count is 1');
+   */
+  getEventLogStats() {
+    return {
+      eventCount: Number(this.eventCount),
+      nodeId: this.vectorClock.nodeId,
+      vectorClock: this.vectorClock.toJSON(),
+    };
   }
 
   // ===== Private Methods =====

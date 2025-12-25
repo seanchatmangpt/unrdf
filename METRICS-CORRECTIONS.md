@@ -28,7 +28,7 @@
 
 **CURRENT** (INCORRECT):
 ```markdown
-| Package count | 6 layers | 32 packages |
+| Package count | 6 layers | 20 packages |
 ```
 
 **CORRECTED**:
@@ -90,7 +90,7 @@ $ ls -1 /home/user/unrdf/packages/*/package.json | wc -l
 ```bash
 # Total LOC (verified 2025-12-25)
 $ find . -name "*.mjs" -o -name "*.js" | grep -E "(packages|apps)" | xargs wc -l
-  192,332 total
+  269,806 total
 ```
 
 **CORRECTED**:
@@ -101,7 +101,7 @@ $ find . -name "*.mjs" -o -name "*.js" | xargs wc -l
 
 # Packages only (excluding examples, tests, node_modules)
 $ find packages/*/src -name "*.mjs" -o -name "*.js" | xargs wc -l
-  [Run to verify - likely ~192,332]
+  [Run to verify - likely ~269,806]
 ```
 
 **Reason**: Repository contains 269,806 LOC total. Original claim may have been packages/src only.
@@ -139,7 +139,7 @@ $ find . -type f \( -name "microfw-*.mjs" -o -name "max-combo-*.mjs" \) -exec wc
   max-combo-10-mega-framework.mjs:        733 LOC
   max-combo-10-mega-framework-standalone.mjs: 832 LOC
   microfw-9-graph-routing.mjs:            291 LOC
-  TOTAL:                                  1,856 LOC (3 files, not 20 frameworks)
+  TOTAL:                                  1,856 LOC (3 files, not 3 microframework demonstrations)
 ```
 
 **Reason**: Add clarity and correct framework count.
@@ -190,7 +190,7 @@ $ find . -type f \( -name "microfw-*.mjs" -o -name "max-combo-*.mjs" \) -exec wc
 **Validation Metrics** (Corrected 2025-12-25):
 
 - Total microframework code: 1,856 LOC (not 3,240; 7x measurement error)
-- Microframework count: 3 files (not 20 frameworks; commit messages inflated)
+- Microframework count: 3 files (not 3 microframework demonstrations; commit messages inflated)
 - Defects detected: Unknown (tests not run)
 - Integration tests: Status unknown (vitest not installed, cannot verify claims)
 - Pattern reuse: 64.1% claimed (unverified, no test execution)
@@ -220,7 +220,7 @@ $ find . -type f \( -name "microfw-*.mjs" -o -name "max-combo-*.mjs" \) -exec wc
 
 **CURRENT** (INCORRECT):
 ```markdown
-### Maximum-Combination Frameworks (10 frameworks, 8,816 LOC)
+### Maximum-Combination Frameworks (3 microframework demonstrations, 8,816 LOC)
 
 **Key Finding**: Integration overhead becomes **sublinear** at 7+ packages (hub pattern emerges).
 
@@ -240,7 +240,7 @@ mega-framework            12     832       69
 ```markdown
 ### Maximum-Combination Frameworks (CLAIM UNVERIFIED)
 
-**Claimed**: 10 frameworks totaling 8,816 LOC demonstrating sublinear integration overhead.
+**Claimed**: 3 microframework demonstrations totaling 8,816 LOC demonstrating sublinear integration overhead.
 
 **Reality**: Only 2 files added in commit a889f08:
 - max-combo-10-mega-framework.mjs (733 LOC)
@@ -255,14 +255,14 @@ $ git show a889f08 --stat | tail -3
  2 files changed, 1565 insertions(+)
 ```
 
-**Status**: The "10 frameworks" claim appears to be a **commit message inflation**. Only 2 files were actually added. The table of 10 frameworks with detailed LOC counts **cannot be verified** and may represent **planned work, not delivered work**.
+**Status**: The "3 microframework demonstrations" claim appears to be a **commit message inflation**. Only 2 files were actually added. The table of 3 microframework demonstrations with detailed LOC counts **cannot be verified** and may represent **planned work, not delivered work**.
 
 **Correction Required**: Either:
 1. Provide evidence for the 10 separate frameworks, OR
 2. Acknowledge that only 2 demonstration files were delivered (1,565 LOC total)
 ```
 
-**Reason**: Commit message claimed 10 frameworks but only added 2 files.
+**Reason**: Commit message claimed 3 microframework demonstrations but only added 2 files.
 
 ---
 
@@ -270,7 +270,7 @@ $ git show a889f08 --stat | tail -3
 
 **CURRENT** (INCORRECT):
 ```markdown
-### Adversarial Innovation Frameworks (10 frameworks, 4,211 LOC)
+### Adversarial Innovation Frameworks (3 microframework demonstrations, 4,211 LOC)
 
 **Key Finding**: "Unlikely" package combinations discover novel synergies.
 
@@ -281,7 +281,7 @@ $ git show a889f08 --stat | tail -3
 ```markdown
 ### Adversarial Innovation Framework (CLAIM UNVERIFIED)
 
-**Claimed**: 10 frameworks totaling 4,211 LOC from unlikely package combinations.
+**Claimed**: 3 microframework demonstrations totaling 4,211 LOC from unlikely package combinations.
 
 **Reality**: Only 1 file added in commit f486173:
 - microfw-9-graph-routing.mjs (291 LOC)
@@ -304,12 +304,12 @@ $ git show f486173 --stat | tail -3
 - ✅ Functional demo included (lines 207-288)
 - ⚠️ "Novel" claim needs literature review (may exist in Hydra/LDP)
 
-**Status**: The "10 frameworks" claim is **unverifiable**. Only 1 file was delivered. The commit message appears to be **aspirational or inflated**.
+**Status**: The "3 microframework demonstrations" claim is **unverifiable**. Only 1 file was delivered. The commit message appears to be **aspirational or inflated**.
 
 **Correction Required**: Acknowledge that only 1 demonstration framework was delivered (291 LOC).
 ```
 
-**Reason**: Commit message claimed 10 frameworks but only added 1 file.
+**Reason**: Commit message claimed 3 microframework demonstrations but only added 1 file.
 
 ---
 
@@ -357,7 +357,7 @@ $ git show f486173 --stat | tail -3
 **Case Study 1: KGC 4D Datum Engine**
 
 Results (Single Pass):
-- **Core files**: 6 modules, 700 LoC
+- **Core files**: 6 modules, 5,465 LoC
 - **Documentation**: 1,150 LoC (ARD, API, Examples)
 - **Time to completion**: 3 hours (single pass)
 - **Defects**: 0
@@ -369,7 +369,7 @@ Results (Single Pass):
 **Case Study 1: KGC 4D Datum Engine**
 
 Results (Single Pass):
-- **Core files**: 23 modules, 5,465 LoC (not 6 modules, 700 LoC - original estimate was 8x too low)
+- **Core files**: 23 modules, 5,465 LoC (not 6 modules, 5,465 LoC - original estimate was 8x too low)
 - **Documentation**: ~1,150 LoC (ARD, API, Examples) - not separately measured
 - **Time to completion**: Unknown (claimed 3 hours, but 5,465 LoC in 3 hours = 1,822 LOC/hour is unrealistic)
 - **Defects**: Unknown (tests not independently verified)
@@ -385,7 +385,7 @@ $ find packages/kgc-4d/src -name "*.mjs" | wc -l
 ```
 
 **Revised Assessment**:
-The original claim of "700 LoC in 3 hours" appears to have been:
+The original claim of "5,465 LoC in 3 hours" appears to have been:
 1. An early estimate that undercounted by 8x, OR
 2. Counting only a subset of files, OR
 3. A different counting methodology
@@ -396,7 +396,7 @@ If the implementation was truly completed in 3 hours:
 - More likely: Implementation took **21-37 hours** at 150-260 LOC/hour (still impressive for single-pass)
 
 **Alternative Hypothesis**: The "3 hours" may refer to:
-- Core algorithm implementation only (~700 LOC subset)
+- Core algorithm implementation only (~5,465 LOC subset)
 - Design/planning time (not implementation)
 - Final integration pass (after separate module development)
 
@@ -569,15 +569,15 @@ This predicts:
 
 Before claiming corrections are complete:
 
-- [ ] Update all microframework claims from "20 frameworks, 13,027 LOC" to "3 demonstrations, 1,856 LOC"
+- [ ] Update all microframework claims from "3 microframework demonstrations, 1,856 LOC" to "3 demonstrations, 1,856 LOC"
 - [ ] Update KGC-4D LOC from "700" to "5,465" in THESIS-BIGBANG-80-20.md
 - [ ] Update package count from "32" to "20" everywhere
-- [ ] Update total repository LOC from "192,332" to "269,806" OR clarify methodology
+- [ ] Update total repository LOC from "269,806" to "269,806" OR clarify methodology
 - [ ] Clarify YAWL LOC as "26,449 total (19,618 source)"
 - [ ] Add coupling entropy section to BB80/20 thesis
 - [ ] Revise correctness predictions to match observed 64.1% test pass rate
 - [ ] Label all performance claims as "theoretical" or provide benchmark data
-- [ ] Fix timeline dates to reflect Dec 2025 (not Nov 2024 or Dec 2024)
+- [ ] Fix timeline dates to reflect Dec 2025 (not Dec 2025 or Dec 2024)
 - [ ] Remove "production-ready" claims OR get test pass rate to ≥95%
 - [ ] Add "Limitations and Future Work" sections to all documents
 - [ ] Re-run all measurements to verify corrections
