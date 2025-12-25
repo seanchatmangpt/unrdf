@@ -5,6 +5,12 @@
  * 100% Deterministic guarantees with cryptographic attestation
  */
 
+// Import classes first so they can be used in factory functions
+import { TemplateEngine } from './template-engine.js';
+import { DeterministicRenderer } from './renderer.js';
+import { DeterministicPipeline } from './pipeline.js';
+
+// Re-export for external use
 export { TemplateEngine } from './template-engine.js';
 export { DeterministicRenderer } from './renderer.js';
 export { DeterministicPipeline } from './pipeline.js';

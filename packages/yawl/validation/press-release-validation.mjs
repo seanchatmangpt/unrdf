@@ -113,19 +113,29 @@ class PressReleaseValidator {
     }
 
     try {
-      const { YAWL_SCHEMAS } = this.yawlModule;
-      const hasWorkflowReceiptSchema = !!YAWL_SCHEMAS?.WorkflowReceiptSchema;
+      // Check for complete event recording system
+      const hasAppendEvent = !!this.yawlModule.appendWorkflowEvent;
+      const hasGetAuditTrail = !!this.yawlModule.getWorkflowAuditTrail;
+      const hasEventTypes = !!this.yawlModule.YAWL_EVENT_TYPES;
+      const hasWorkflowReceipt = !!this.yawlModule.createWorkflowReceipt;
+      const hasVerifyReceipt = !!this.yawlModule.verifyWorkflowReceipt;
+
+      // All event lifecycle functions must exist for complete auditability
+      const isCompletelyAuditable = hasAppendEvent && hasGetAuditTrail && hasEventTypes && hasWorkflowReceipt && hasVerifyReceipt;
 
       this.addResult({
         claim: 'Auditable - every change recorded as immutable events',
-        status: hasWorkflowReceiptSchema ? 'PASS' : 'FAIL',
-        evidence: { test: 'Check for receipt schema', result: `Receipt schema exists: ${hasWorkflowReceiptSchema}` },
+        status: isCompletelyAuditable ? 'PASS' : 'FAIL',
+        evidence: {
+          test: 'Check complete event system',
+          result: `appendEvent: ${hasAppendEvent}, auditTrail: ${hasGetAuditTrail}, eventTypes: ${hasEventTypes}, createReceipt: ${hasWorkflowReceipt}, verifyReceipt: ${hasVerifyReceipt}`
+        },
       });
     } catch (error) {
       this.addResult({
         claim: 'Auditable - every change recorded as immutable events',
         status: 'FAIL',
-        evidence: { test: 'Check schemas', result: error.message },
+        evidence: { test: 'Check event system', result: error.message },
       });
     }
   }
@@ -318,20 +328,30 @@ class PressReleaseValidator {
     }
 
     try {
-      const hasCreateKGC4D = !!this.yawlModule.createKGC4DAdapter;
-      const hasCreateSupervisor = !!this.yawlModule.createSupervisorAdapter;
-      const hasCreateHookAdapter = !!this.yawlModule.createHookAdapter;
+      // Check for actual policy pack system exports
+      const hasYAWLPolicyPack = !!this.yawlModule.createYAWLPolicyPack;
+      const hasResourcePolicyPack = !!this.yawlModule.createPolicyPack;
+      const hasTaskEnablementHook = !!this.yawlModule.createTaskEnablementHook;
+      const hasTaskCompletionHook = !!this.yawlModule.createTaskCompletionHook;
+      const hasResourceAllocationHook = !!this.yawlModule.createResourceAllocationHook;
+
+      // Policy-first means declarative hooks for service task integration
+      const isPolicyFirst = hasYAWLPolicyPack && hasResourcePolicyPack &&
+                           (hasTaskEnablementHook || hasTaskCompletionHook || hasResourceAllocationHook);
 
       this.addResult({
         claim: 'Policy-First Integrations - service tasks',
-        status: (hasCreateKGC4D || hasCreateSupervisor || hasCreateHookAdapter) ? 'PASS' : 'FAIL',
-        evidence: { test: 'Check integration adapters', result: `Adapters available: ${hasCreateKGC4D || hasCreateSupervisor || hasCreateHookAdapter}` },
+        status: isPolicyFirst ? 'PASS' : 'FAIL',
+        evidence: {
+          test: 'Check policy pack system',
+          result: `YAWLPolicyPack: ${hasYAWLPolicyPack}, ResourcePolicyPack: ${hasResourcePolicyPack}, EnablementHook: ${hasTaskEnablementHook}, CompletionHook: ${hasTaskCompletionHook}, AllocationHook: ${hasResourceAllocationHook}`
+        },
       });
     } catch (error) {
       this.addResult({
         claim: 'Policy-First Integrations - service tasks',
         status: 'FAIL',
-        evidence: { test: 'Check integrations', result: error.message },
+        evidence: { test: 'Check policy integrations', result: error.message },
       });
     }
   }
