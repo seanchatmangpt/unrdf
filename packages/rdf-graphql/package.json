@@ -1,0 +1,35 @@
+{
+  "name": "@unrdf/rdf-graphql",
+  "version": "1.0.0",
+  "description": "Type-safe GraphQL interface for RDF knowledge graphs with automatic schema generation",
+  "type": "module",
+  "main": "src/adapter.mjs",
+  "exports": {
+    ".": "./src/adapter.mjs",
+    "./schema": "./src/schema-generator.mjs",
+    "./query": "./src/query-builder.mjs",
+    "./resolver": "./src/resolver.mjs"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "test:watch": "node --test --watch test/*.test.mjs",
+    "lint": "eslint src/**/*.mjs test/**/*.mjs"
+  },
+  "keywords": [
+    "rdf",
+    "graphql",
+    "sparql",
+    "ontology",
+    "knowledge-graph",
+    "semantic-web",
+    "type-safe"
+  ],
+  "dependencies": {
+    "graphql": "^16.8.1",
+    "@graphql-tools/schema": "^10.0.2",
+    "@unrdf/oxigraph": "workspace:*",
+    "zod": "^3.22.4"
+  },
+  "author": "UNRDF Team",
+  "license": "MIT"
+}

@@ -1,0 +1,67 @@
+{
+  "name": "@unrdf/ml-versioning",
+  "version": "1.0.0",
+  "description": "ML Model Versioning System using TensorFlow.js and UNRDF KGC-4D time-travel capabilities",
+  "type": "module",
+  "main": "./src/index.mjs",
+  "exports": {
+    ".": "./src/index.mjs",
+    "./version-store": "./src/version-store.mjs",
+    "./examples/image-classifier": "./src/examples/image-classifier.mjs"
+  },
+  "files": [
+    "src/",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "vitest run --no-coverage",
+    "test:coverage": "vitest run --coverage",
+    "test:fast": "vitest run --no-coverage",
+    "test:watch": "vitest --no-coverage",
+    "example": "node src/examples/image-classifier.mjs",
+    "lint": "eslint src/ test/ --max-warnings=0",
+    "lint:fix": "eslint src/ test/ --fix",
+    "format": "prettier --write src/ test/",
+    "format:check": "prettier --check src/ test/",
+    "clean": "rm -rf dist/ coverage/ .ml-models/"
+  },
+  "keywords": [
+    "machine-learning",
+    "tensorflow",
+    "model-versioning",
+    "rdf",
+    "knowledge-graph",
+    "time-travel",
+    "provenance",
+    "cryptographic-proofs"
+  ],
+  "dependencies": {
+    "@tensorflow/tfjs-node": "^4.22.0",
+    "@unrdf/kgc-4d": "workspace:*",
+    "@unrdf/oxigraph": "workspace:*",
+    "@unrdf/core": "workspace:*",
+    "hash-wasm": "^4.12.0",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "vitest": "^4.0.15"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/unrdf/unrdf.git",
+    "directory": "packages/ml-versioning"
+  },
+  "bugs": {
+    "url": "https://github.com/unrdf/unrdf/issues"
+  },
+  "homepage": "https://github.com/unrdf/unrdf#readme",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "name": "@unrdf/yawl-kafka",
+  "version": "1.0.0",
+  "description": "Apache Kafka event streaming integration for YAWL workflows with Avro serialization",
+  "type": "module",
+  "main": "src/index.mjs",
+  "exports": {
+    ".": "./src/index.mjs",
+    "./producer": "./src/producer.mjs",
+    "./consumer": "./src/consumer.mjs",
+    "./schemas": "./src/schemas.mjs"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint src/ test/ --ext .mjs",
+    "lint:fix": "eslint src/ test/ --ext .mjs --fix",
+    "example": "node src/examples/analytics-pipeline.mjs"
+  },
+  "keywords": [
+    "yawl",
+    "kafka",
+    "event-streaming",
+    "avro",
+    "workflow",
+    "analytics"
+  ],
+  "dependencies": {
+    "@unrdf/yawl": "workspace:*",
+    "avsc": "^5.7.7",
+    "kafkajs": "^2.2.4",
+    "zod": "^4.1.13",
+    "zod-to-avro": "^1.1.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.0.0",
+    "vitest": "^4.0.15"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=7.0.0"
+  },
+  "sideEffects": false,
+  "files": [
+    "src/",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}
