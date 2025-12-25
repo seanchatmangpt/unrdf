@@ -46,6 +46,7 @@
     "@nuxt/eslint": "^1.10.0",
     "@playwright/test": "^1.49.1",
     "@types/node": "^24.10.1",
+    "@vitejs/plugin-vue": "^6.0.3",
     "@vitest/ui": "^2.1.8",
     "@vue/test-utils": "^2.4.6",
     "drizzle-kit": "^0.31.7",
