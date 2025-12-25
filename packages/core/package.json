@@ -12,7 +12,10 @@
     "./sparql": "./src/sparql/index.mjs",
     "./types": "./src/types.mjs",
     "./constants": "./src/constants.mjs",
-    "./validation": "./src/validation/index.mjs"
+    "./validation": "./src/validation/index.mjs",
+    "./health": "./src/health.mjs",
+    "./logger": "./src/logger.mjs",
+    "./metrics": "./src/metrics.mjs"
   },
   "sideEffects": false,
   "files": [

@@ -16,13 +16,19 @@ export default defineConfig({
       ],
       exclude: ['**/node_modules/**', '**/dist/**'],
       thresholds: {
-        lines: 70,
-        functions: 70,
-        branches: 70,
-        statements: 70,
+        lines: 80, // Increased from 70% to 80%
+        functions: 80,
+        branches: 80,
+        statements: 80,
       },
     },
     testTimeout: 30000, // 30s timeout for integration tests
     hookTimeout: 10000,
+    // Performance budgets
+    slowTestThreshold: 1000, // Warn if integration test takes >1s
+    // Custom reporters for CI
+    reporters: process.env.CI
+      ? ['default', 'github-actions']
+      : ['default', 'verbose'],
   },
 });
