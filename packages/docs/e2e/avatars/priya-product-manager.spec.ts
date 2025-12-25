@@ -232,7 +232,7 @@ Both cook food, but home kitchen is more convenient for small meals.`
 
       const data = await response.json()
       expect(data.content).toContain('PGlite')
-      expect(data.content).toContain('analogy' || 'Analogy')
+      expect(data.content).toMatch(/analogy|Analogy/)
     })
 
     test('should explain streaming chat architecture', async ({ page }) => {
@@ -326,7 +326,7 @@ That's why PGlite + Vercel free tier is perfect.`
       })
 
       const data2 = await response2.json()
-      expect(data2.content).toContain('creators' || 'Solo')
+      expect(data2.content).toMatch(/creators|Solo/)
     })
   })
 

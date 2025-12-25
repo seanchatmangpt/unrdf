@@ -21,7 +21,7 @@ describe('Testing Infrastructure', () => {
     })
 
     it('should support type checking', () => {
-      const message: { role: string; content: string } = {
+      const message: { role: string, content: string } = {
         role: 'user',
         content: 'Hello'
       }

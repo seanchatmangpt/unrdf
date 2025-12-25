@@ -81,7 +81,11 @@ onMounted(() => {
 </script>
 
 <template>
-  <UDashboardPanel id="chat" class="relative" :ui="{ body: 'p-0 sm:p-0' }">
+  <UDashboardPanel
+    id="chat"
+    class="relative"
+    :ui="{ body: 'p-0 sm:p-0' }"
+  >
     <template #header>
       <DashboardNavbar />
     </template>
@@ -98,8 +102,11 @@ onMounted(() => {
         >
           <template #content="{ message }">
             <div class="*:first:mt-0 *:last:mb-0">
-              <template v-for="(part, index) in message.parts" :key="`${message.id}-${part.type}-${index}${'state' in part ? `-${part.state}` : ''}`">
-                <Reasoning
+              <template
+                v-for="(part, index) in message.parts"
+                :key="`${message.id}-${part.type}-${index}${'state' in part ? `-${part.state}` : ''}`"
+              >
+                <ReasoningDisplay
                   v-if="part.type === 'reasoning'"
                   :text="part.text"
                   :is-streaming="part.state !== 'done'"

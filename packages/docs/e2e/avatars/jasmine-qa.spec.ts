@@ -60,7 +60,7 @@ describe('Chat API', () => {
 
       expect(response.status()).toBe(200)
       const data = await response.json()
-      expect(data.content).toContain('test' || 'Test')
+      expect(data.content).toMatch(/test|Test/)
       expect(data.content).toContain('expect')
     })
 
@@ -114,7 +114,7 @@ test.describe('Chat Feature', () => {
       })
 
       const data = await response.json()
-      expect(data.content).toContain('Playwright' || 'E2E')
+      expect(data.content).toMatch(/Playwright|E2E/)
       expect(data.content).toContain('page.route')
     })
 
@@ -153,7 +153,7 @@ test.describe('Chat Feature', () => {
 
       const data = await response.json()
       expect(data.content).toContain('Mock')
-      expect(data.content).toContain('AI' || 'ai')
+      expect(data.content).toMatch(/AI|ai/)
     })
 
     test('should get route mocking patterns', async ({ page }) => {
@@ -293,8 +293,8 @@ test('should handle rate limit error', async ({ page }) => {
       })
 
       const data = await response.json()
-      expect(data.content).toContain('Coverage' || 'coverage')
-      expect(data.content).toContain('test' || 'Test')
+      expect(data.content).toMatch(/Coverage|coverage/)
+      expect(data.content).toMatch(/test|Test/)
     })
 
     test('should get test improvement suggestions', async ({ page }) => {
@@ -353,8 +353,8 @@ Add axe-core integration for a11y testing`
       })
 
       const data = await response.json()
-      expect(data.content).toContain('Test' || 'test')
-      expect(data.content).toContain('improvement' || 'Improvement')
+      expect(data.content).toMatch(/Test|test/)
+      expect(data.content).toMatch(/improvement|Improvement/)
     })
 
     test('should provide multi-turn testing conversation', async ({ page }) => {

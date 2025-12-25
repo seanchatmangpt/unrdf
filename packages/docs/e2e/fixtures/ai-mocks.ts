@@ -3,6 +3,8 @@
  * Focus on AI SDK interactions, streaming, errors, and tool calls
  */
 
+import type { Route } from '@playwright/test'
+
 export const avatars = {
   alex: {
     name: 'Alex the API Developer',
@@ -369,8 +371,8 @@ This provides instant feedback to users.`
 }
 
 // Mock API route handlers
-export const createAIMockHandler = (response: any) => {
-  return async (route: any) => {
+export const createAIMockHandler = (response: unknown) => {
+  return async (route: Route) => {
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
@@ -379,9 +381,9 @@ export const createAIMockHandler = (response: any) => {
   }
 }
 
-export const createStreamingMockHandler = (chunks: any[]) => {
-  return async (route: any) => {
-    const stream = chunks.map((chunk) => `data: ${JSON.stringify(chunk)}\n\n`).join('')
+export const createStreamingMockHandler = (chunks: unknown[]) => {
+  return async (route: Route) => {
+    const stream = chunks.map(chunk => `data: ${JSON.stringify(chunk)}\n\n`).join('')
 
     await route.fulfill({
       status: 200,
@@ -391,8 +393,8 @@ export const createStreamingMockHandler = (chunks: any[]) => {
   }
 }
 
-export const createErrorMockHandler = (error: any) => {
-  return async (route: any) => {
+export const createErrorMockHandler = (error: { status: number, error: unknown }) => {
+  return async (route: Route) => {
     await route.fulfill({
       status: error.status,
       contentType: 'application/json',

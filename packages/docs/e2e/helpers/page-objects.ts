@@ -1,4 +1,4 @@
-import { Page, Locator } from '@playwright/test'
+import type { Page, Locator } from '@playwright/test'
 
 /**
  * Page Object Models for E2E Tests
@@ -94,7 +94,7 @@ export class APITestHelper {
     this.page = page
   }
 
-  async mockChatAPI(response: any) {
+  async mockChatAPI(response: unknown) {
     await this.page.route('**/api/chat', async (route) => {
       await route.fulfill({
         status: 200,
@@ -104,7 +104,7 @@ export class APITestHelper {
     })
   }
 
-  async mockChatsAPI(chats: any[]) {
+  async mockChatsAPI(chats: unknown[]) {
     await this.page.route('**/api/chats', async (route) => {
       await route.fulfill({
         status: 200,
@@ -114,7 +114,7 @@ export class APITestHelper {
     })
   }
 
-  async interceptAPICall(url: string): Promise<any> {
+  async interceptAPICall(url: string): Promise<unknown> {
     return new Promise((resolve) => {
       this.page.on('response', async (response) => {
         if (response.url().includes(url)) {

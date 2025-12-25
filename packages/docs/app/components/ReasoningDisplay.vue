@@ -20,7 +20,10 @@ function cleanMarkdown(text: string): string {
 </script>
 
 <template>
-  <UCollapsible v-model:open="open" class="flex flex-col gap-1 my-5">
+  <UCollapsible
+    v-model:open="open"
+    class="flex flex-col gap-1 my-5"
+  >
     <UButton
       class="p-0 group"
       color="neutral"
@@ -33,7 +36,10 @@ function cleanMarkdown(text: string): string {
     />
 
     <template #content>
-      <div v-for="(value, index) in cleanMarkdown(text).split('\n').filter(Boolean)" :key="index">
+      <div
+        v-for="(value, index) in cleanMarkdown(text).split('\n').filter(Boolean)"
+        :key="index"
+      >
         <span class="whitespace-pre-wrap text-sm text-muted font-normal">{{ value }}</span>
       </div>
     </template>

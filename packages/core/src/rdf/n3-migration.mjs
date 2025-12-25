@@ -22,8 +22,11 @@
  * ```
  */
 
-import { Store, DataFactory } from 'n3';
+import { N3Store as Store, N3DataFactory } from './n3-justified-only.mjs';
 import { createStore } from '@unrdf/oxigraph';
+
+// Extract DataFactory methods from N3DataFactory
+const { namedNode, literal, blankNode, variable, defaultGraph, quad } = N3DataFactory;
 
 /**
  * Check if a store is an N3.Store instance
@@ -118,7 +121,7 @@ export function ensureOxigraphStore(store) {
  *
  * @deprecated Use @unrdf/oxigraph dataFactory instead
  */
-export const { namedNode, literal, blankNode, variable, defaultGraph, quad } = DataFactory;
+export { namedNode, literal, blankNode, variable, defaultGraph, quad };
 
 /**
  * Create N3.Store for backward compatibility testing

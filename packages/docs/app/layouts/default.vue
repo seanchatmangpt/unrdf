@@ -94,12 +94,21 @@ defineShortcuts({
       class="bg-elevated/50"
     >
       <template #header="{ collapsed }">
-        <NuxtLink to="/" class="flex items-end gap-0.5">
-          <Logo class="h-8 w-auto shrink-0" />
-          <span v-if="!collapsed" class="text-xl font-bold text-highlighted">Chat</span>
+        <NuxtLink
+          to="/"
+          class="flex items-end gap-0.5"
+        >
+          <AppLogo class="h-8 w-auto shrink-0" />
+          <span
+            v-if="!collapsed"
+            class="text-xl font-bold text-highlighted"
+          >Chat</span>
         </NuxtLink>
 
-        <div v-if="!collapsed" class="flex items-center gap-1.5 ms-auto">
+        <div
+          v-if="!collapsed"
+          class="flex items-center gap-1.5 ms-auto"
+        >
           <UDashboardSearchButton collapsed />
           <UDashboardSidebarCollapse />
         </div>
@@ -145,7 +154,10 @@ defineShortcuts({
       </template>
 
       <template #footer="{ collapsed }">
-        <UserMenu v-if="loggedIn" :collapsed="collapsed" />
+        <UserMenu
+          v-if="loggedIn"
+          :collapsed="collapsed"
+        />
         <UButton
           v-else
           :label="collapsed ? '' : 'Login with GitHub'"

@@ -14,7 +14,10 @@ const { messages, input, handleSubmit, isLoading } = useChat({
 </script>
 
 <template>
-  <UModal v-model="isOpen" :ui="{ width: 'sm:max-w-3xl' }">
+  <UModal
+    v-model="isOpen"
+    :ui="{ width: 'sm:max-w-3xl' }"
+  >
     <UChatPalette>
       <UChatMessages :messages="messages">
         <template #message="{ message }">
@@ -25,7 +28,10 @@ const { messages, input, handleSubmit, isLoading } = useChat({
               :ui="{ background: message.role === 'user' ? 'bg-primary-500' : 'bg-gray-500' }"
             />
             <div class="flex-1">
-              <MDC v-if="typeof message.content === 'string'" :value="message.content" />
+              <MDC
+                v-if="typeof message.content === 'string'"
+                :value="message.content"
+              />
               <template v-else>
                 {{ message.content }}
               </template>
