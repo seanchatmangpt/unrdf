@@ -82,7 +82,7 @@ export const CONTROL_FLOW_PATTERNS = {
 export const TaskSchema = z.object({
   id: z.string().min(1).max(255),
   name: z.string().min(1).max(255),
-  type: z.enum(['atomic', 'composite', 'multiple-instance']).default('atomic'),
+  kind: z.enum(['atomic', 'composite', 'multiple-instance']).default('atomic'),
   description: z.string().max(2000).optional(),
   inputVariables: z.array(z.string()).optional(),
   outputVariables: z.array(z.string()).optional(),
@@ -136,7 +136,7 @@ export const WorkflowSpecSchema = z.object({
   name: z.string().min(1).max(255).optional(),
   version: z.string().regex(/^\d+\.\d+\.\d+$/).optional(),
   description: z.string().max(5000).optional(),
-  tasks: z.array(TaskSchema).min(1),
+  tasks: z.array(TaskSchema).optional(),
   controlFlow: z.array(ControlFlowSchema).optional(),
   resources: z.array(ResourceSchema).optional(),
   inputVariables: z.array(z.string()).optional(),

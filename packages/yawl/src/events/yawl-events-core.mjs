@@ -102,7 +102,7 @@ export const ReceiptSchema = z.object({
  * CASE_CREATED event payload schema
  */
 export const CaseCreatedSchema = z.object({
-  caseId: z.string().uuid(),
+  caseId: z.string().min(1),
   specId: z.string().min(1),
   timestamp: z.string(),
   receipt: ReceiptSchema,
@@ -113,8 +113,8 @@ export const CaseCreatedSchema = z.object({
  */
 export const TaskEnabledSchema = z.object({
   taskId: z.string().min(1),
-  caseId: z.string().uuid(),
-  workItemId: z.string().uuid(),
+  caseId: z.string().min(1),
+  workItemId: z.string().min(1),
   enabledAt: z.string(),
   receipt: ReceiptSchema,
 });
@@ -123,7 +123,7 @@ export const TaskEnabledSchema = z.object({
  * TASK_STARTED event payload schema
  */
 export const TaskStartedSchema = z.object({
-  workItemId: z.string().uuid(),
+  workItemId: z.string().min(1),
   startedAt: z.string(),
   receipt: ReceiptSchema,
 });
@@ -132,7 +132,7 @@ export const TaskStartedSchema = z.object({
  * TASK_COMPLETED event payload schema
  */
 export const TaskCompletedSchema = z.object({
-  workItemId: z.string().uuid(),
+  workItemId: z.string().min(1),
   completedAt: z.string(),
   result: z.any(),
   receipt: ReceiptSchema,
@@ -142,7 +142,7 @@ export const TaskCompletedSchema = z.object({
  * TASK_CANCELLED event payload schema
  */
 export const TaskCancelledSchema = z.object({
-  workItemId: z.string().uuid(),
+  workItemId: z.string().min(1),
   cancelledAt: z.string(),
   reason: z.string(),
   receipt: ReceiptSchema,
@@ -152,9 +152,9 @@ export const TaskCancelledSchema = z.object({
  * WORK_ITEM_CREATED event payload schema
  */
 export const WorkItemCreatedSchema = z.object({
-  workItemId: z.string().uuid(),
+  workItemId: z.string().min(1),
   taskId: z.string().min(1),
-  caseId: z.string().uuid(),
+  caseId: z.string().min(1),
   createdAt: z.string(),
 });
 
@@ -162,7 +162,7 @@ export const WorkItemCreatedSchema = z.object({
  * CONTROL_FLOW_EVALUATED event payload schema
  */
 export const ControlFlowEvaluatedSchema = z.object({
-  caseId: z.string().uuid(),
+  caseId: z.string().min(1),
   taskId: z.string().min(1),
   result: z.boolean(),
   timestamp: z.string(),

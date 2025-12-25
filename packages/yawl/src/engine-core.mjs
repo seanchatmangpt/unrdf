@@ -306,7 +306,7 @@ export async function createCase(engine, workflowId, initialData = {}, options =
   if (engine.enableEventLog) {
     await logCaseEvent(engine, YAWL_EVENT_TYPES.CASE_CREATED, {
       caseId,
-      workflowId,
+      specId: workflowId,
       data: initialData,
     });
   }

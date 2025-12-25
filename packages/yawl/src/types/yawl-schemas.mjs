@@ -241,10 +241,10 @@ export const TaskSchema = z.object({
   join: JoinTypeSchema.default('none'),
 
   /** Condition IDs that feed into this task */
-  inputConditions: z.array(z.string().min(1)).min(1),
+  inputConditions: z.array(z.string().min(1)).optional(),
 
   /** Condition IDs produced by this task */
-  outputConditions: z.array(z.string().min(1)).min(1),
+  outputConditions: z.array(z.string().min(1)).optional(),
 
   /** Resource IDs eligible to execute this task */
   resources: z.array(z.string().min(1)).default([]),

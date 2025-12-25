@@ -233,7 +233,7 @@ export default router;`;
 
       const content = 'test content';
 
-      await expect(inject(templateConfig, content, variables = {}))
+      await expect(inject(templateConfig, content, {}))
         .rejects.toThrow(/Unknown injection mode/);
     });
 

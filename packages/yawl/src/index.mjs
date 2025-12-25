@@ -178,8 +178,8 @@ export {
   // Workflow class
   Workflow,
   YawlWorkflow, // Legacy alias
-  // Factory function
-  createWorkflow,
+  // Factory function (aliased to avoid conflict with workflow-api)
+  createWorkflow as createWorkflowClass,
   // RDF integration
   workflowToRDF,
   workflowFromRDF,
@@ -262,9 +262,9 @@ export {
 
 // Event sourcing with KGC-4D time-travel
 export {
-  // Event types and constants
-  YAWL_EVENT_TYPES,
-  YAWL_NS,
+  // Event types and constants (aliased to avoid conflicts with workflow-api)
+  YAWL_EVENT_TYPES as EVENT_TYPES,
+  YAWL_NS as EVENT_NS,
   YAWL_PREDICATES,
 
   // Core event functions
@@ -275,8 +275,8 @@ export {
   getWorkflowAuditTrail,
 
   // High-level workflow functions
-  createCase,
-  enableTask,
+  createCase as createEventCase,
+  enableTask as enableEventTask,
   startWorkItem,
   completeWorkItem,
   recordControlFlowEvaluation,
@@ -427,22 +427,22 @@ export {
 // YAWL PUBLIC WORKFLOW API - High-level workflow interface
 // =============================================================================
 export {
-  // Core Workflow API functions (aliased to avoid conflict with workflow.mjs createWorkflow)
-  createWorkflow as createWorkflowAPI,
-  createCase as createWorkflowCase,
-  enableTask as enableWorkflowTask,
+  // Core Workflow API functions (primary API)
+  createWorkflow,
+  createCase,
+  enableTask,
   startTask,
   completeTask,
   cancelWorkItem,
   replayCase,
 
-  // Workflow API Constants
-  YAWL_NS as WORKFLOW_API_NS,
-  YAWL_EVENT_TYPES as WORKFLOW_API_EVENT_TYPES,
+  // Workflow API Constants (primary exports)
+  YAWL_NS,
+  YAWL_EVENT_TYPES,
   WORK_ITEM_STATUS,
   CONTROL_FLOW_PATTERNS,
 
-  // Workflow API Schemas
+  // Workflow API Schemas (with aliases to avoid conflicts)
   TaskSchema as WorkflowTaskSchema,
   ControlFlowSchema as WorkflowControlFlowSchema,
   ResourceSchema as WorkflowResourceSchema,

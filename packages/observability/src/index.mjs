@@ -17,9 +17,9 @@ export { AlertManager, createAlertManager, AlertSeverity } from './alerts/alert-
  * @param {object} [config.metrics] - Metrics configuration
  * @param {object} [config.grafana] - Grafana configuration
  * @param {object} [config.alerts] - Alert configuration
- * @returns {object} Complete observability stack
+ * @returns {Promise<object>} Complete observability stack
  */
-export function createObservabilityStack(config = {}) {
+export async function createObservabilityStack(config = {}) {
   const { createWorkflowMetrics } = await import('./metrics/workflow-metrics.mjs');
   const { createGrafanaExporter } = await import('./exporters/grafana-exporter.mjs');
   const { createAlertManager } = await import('./alerts/alert-manager.mjs');
@@ -47,10 +47,3 @@ export function createObservabilityStack(config = {}) {
     alerts,
   };
 }
-
-export default {
-  createWorkflowMetrics,
-  createGrafanaExporter,
-  createAlertManager,
-  createObservabilityStack,
-};
