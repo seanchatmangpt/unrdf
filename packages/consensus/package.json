@@ -1,0 +1,59 @@
+{
+  "name": "@unrdf/consensus",
+  "version": "1.0.0",
+  "description": "Production-grade Raft consensus for distributed workflow coordination",
+  "type": "module",
+  "main": "src/index.mjs",
+  "exports": {
+    ".": "./src/index.mjs",
+    "./raft": "./src/raft/raft-coordinator.mjs",
+    "./cluster": "./src/membership/cluster-manager.mjs",
+    "./state": "./src/state/distributed-state-machine.mjs",
+    "./transport": "./src/transport/websocket-transport.mjs"
+  },
+  "scripts": {
+    "test": "vitest run --coverage",
+    "test:watch": "vitest --coverage",
+    "demo": "node examples/consensus-demo.mjs",
+    "demo:3node": "node examples/three-node-cluster.mjs",
+    "demo:failover": "node examples/failover-test.mjs",
+    "lint": "eslint src/ test/ examples/ --max-warnings=0",
+    "lint:fix": "eslint src/ test/ examples/ --fix",
+    "format": "prettier --write src/ test/ examples/",
+    "format:check": "prettier --check src/ test/ examples/"
+  },
+  "keywords": [
+    "raft",
+    "consensus",
+    "distributed",
+    "workflow",
+    "coordination",
+    "fault-tolerance"
+  ],
+  "dependencies": {
+    "@opentelemetry/api": "^1.9.0",
+    "@unrdf/federation": "workspace:*",
+    "msgpackr": "^1.11.8",
+    "ws": "^8.18.3",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "@types/ws": "^8.5.10",
+    "eslint": "^9.0.0",
+    "prettier": "^3.2.5",
+    "vitest": "^4.0.15"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/unrdf/unrdf.git",
+    "directory": "packages/consensus"
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
+}

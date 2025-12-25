@@ -1,0 +1,53 @@
+{
+  "name": "@unrdf/caching",
+  "version": "1.0.0",
+  "description": "Multi-layer caching system for RDF queries with Redis and LRU",
+  "type": "module",
+  "main": "src/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./src/index.mjs",
+    "./layers": "./src/layers/multi-layer-cache.mjs",
+    "./invalidation": "./src/invalidation/dependency-tracker.mjs",
+    "./query": "./src/query/sparql-cache.mjs"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "build": "unbuild",
+    "demo": "node examples/cache-demo.mjs",
+    "benchmark": "node examples/cache-demo.mjs"
+  },
+  "keywords": [
+    "cache",
+    "redis",
+    "lru",
+    "rdf",
+    "sparql",
+    "performance"
+  ],
+  "dependencies": {
+    "@unrdf/oxigraph": "workspace:*",
+    "ioredis": "^5.4.1",
+    "lru-cache": "^11.0.2",
+    "msgpackr": "^1.11.2",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "vitest": "^4.0.15"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=7.0.0"
+  },
+  "sideEffects": false,
+  "files": [
+    "src/",
+    "dist/",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}

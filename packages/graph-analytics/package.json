@@ -1,0 +1,70 @@
+{
+  "name": "@unrdf/graph-analytics",
+  "version": "1.0.0",
+  "description": "Advanced graph analytics for RDF knowledge graphs using graphlib",
+  "type": "module",
+  "main": "src/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./src/index.mjs",
+    "./converter": "./src/converter/rdf-to-graph.mjs",
+    "./centrality": "./src/centrality/pagerank-analyzer.mjs",
+    "./paths": "./src/paths/relationship-finder.mjs",
+    "./clustering": "./src/clustering/community-detector.mjs"
+  },
+  "sideEffects": false,
+  "files": [
+    "src/",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "vitest run --coverage",
+    "test:fast": "vitest run",
+    "test:watch": "vitest --coverage",
+    "build": "unbuild && tsc --emitDeclarationOnly",
+    "build:types": "tsc --emitDeclarationOnly",
+    "lint": "eslint src/ test/ --max-warnings=0",
+    "lint:fix": "eslint src/ test/ --fix",
+    "format": "prettier --write src/ test/",
+    "format:check": "prettier --check src/ test/",
+    "clean": "rm -rf dist/ .nyc_output/ coverage/",
+    "demo": "node examples/graph-analytics-demo.mjs"
+  },
+  "keywords": [
+    "rdf",
+    "graph",
+    "analytics",
+    "pagerank",
+    "centrality",
+    "clustering",
+    "knowledge-graph",
+    "graphlib",
+    "algorithms"
+  ],
+  "dependencies": {
+    "@dagrejs/graphlib": "^2.2.4",
+    "graphlib": "^2.1.8",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "vitest": "^4.0.15"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/unrdf/unrdf.git",
+    "directory": "packages/graph-analytics"
+  },
+  "bugs": {
+    "url": "https://github.com/unrdf/unrdf/issues"
+  },
+  "homepage": "https://github.com/unrdf/unrdf#readme",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
+}

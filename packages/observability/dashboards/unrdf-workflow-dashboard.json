@@ -1,0 +1,304 @@
+{
+  "dashboard": {
+    "id": null,
+    "uid": "unrdf-workflow-dashboard",
+    "title": "UNRDF Workflow Observability Dashboard",
+    "description": "Comprehensive monitoring for UNRDF distributed workflows with Prometheus metrics",
+    "tags": ["unrdf", "workflow", "prometheus", "observability"],
+    "timezone": "browser",
+    "schemaVersion": 38,
+    "version": 1,
+    "refresh": "5s",
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    },
+    "timepicker": {
+      "refresh_intervals": ["5s", "10s", "30s", "1m", "5m", "15m", "30m", "1h"],
+      "time_options": ["5m", "15m", "1h", "6h", "12h", "24h", "2d", "7d", "30d"]
+    },
+    "panels": [
+      {
+        "id": 1,
+        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+        "type": "graph",
+        "title": "Workflow Executions by Status",
+        "datasource": "Prometheus",
+        "targets": [
+          {
+            "expr": "rate(unrdf_workflow_executions_total[5m])",
+            "legendFormat": "{{status}} - {{pattern}}",
+            "refId": "A"
+          }
+        ],
+        "yaxes": [
+          { "format": "ops", "label": "Executions/sec" },
+          { "format": "short" }
+        ],
+        "legend": { "show": true, "alignAsTable": true, "values": true, "current": true, "max": true },
+        "tooltip": { "shared": true, "sort": 2 },
+        "fill": 1,
+        "linewidth": 2
+      },
+      {
+        "id": 2,
+        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+        "type": "stat",
+        "title": "Active Workflows",
+        "datasource": "Prometheus",
+        "targets": [
+          {
+            "expr": "sum(unrdf_workflow_active_workflows)",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "orientation": "auto",
+          "textMode": "value_and_name",
+          "colorMode": "value",
+          "graphMode": "area"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                { "value": 0, "color": "green" },
+                { "value": 50, "color": "yellow" },
+                { "value": 100, "color": "red" }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "id": 3,
+        "gridPos": { "h": 8, "w": 24, "x": 0, "y": 8 },
+        "type": "heatmap",
+        "title": "Workflow Execution Duration Distribution",
+        "datasource": "Prometheus",
+        "targets": [
+          {
+            "expr": "rate(unrdf_workflow_execution_duration_seconds_bucket[5m])",
+            "legendFormat": "{{le}}",
+            "refId": "A"
+          }
+        ],
+        "heatmap": {
+          "colorScheme": "interpolateSpectral"
+        },
+        "dataFormat": "tsbuckets"
+      },
+      {
+        "id": 4,
+        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 16 },
+        "type": "graph",
+        "title": "Task Executions by Type",
+        "datasource": "Prometheus",
+        "targets": [
+          {
+            "expr": "rate(unrdf_workflow_task_executions_total[5m])",
+            "legendFormat": "{{task_type}} - {{status}}",
+            "refId": "A"
+          }
+        ],
+        "yaxes": [
+          { "format": "ops", "label": "Tasks/sec" },
+          { "format": "short" }
+        ],
+        "legend": { "show": true, "alignAsTable": true, "values": true },
+        "stack": true
+      },
+      {
+        "id": 5,
+        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 16 },
+        "type": "graph",
+        "title": "Error Rate by Severity",
+        "datasource": "Prometheus",
+        "targets": [
+          {
+            "expr": "rate(unrdf_workflow_errors_total[5m])",
+            "legendFormat": "{{severity}} - {{error_type}}",
+            "refId": "A"
+          }
+        ],
+        "yaxes": [
+          { "format": "ops", "label": "Errors/sec" },
+          { "format": "short" }
+        ],
+        "alert": {
+          "conditions": [
+            {
+              "evaluator": { "params": [1], "type": "gt" },
+              "operator": { "type": "and" },
+              "query": { "params": ["A", "5m", "now"] },
+              "reducer": { "params": [], "type": "avg" },
+              "type": "query"
+            }
+          ],
+          "executionErrorState": "alerting",
+          "frequency": "60s",
+          "handler": 1,
+          "name": "High Error Rate",
+          "noDataState": "no_data"
+        },
+        "thresholds": [
+          {
+            "value": 1,
+            "colorMode": "critical",
+            "op": "gt",
+            "fill": true,
+            "line": true
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 24 },
+        "type": "graph",
+        "title": "Resource Utilization",
+        "datasource": "Prometheus",
+        "targets": [
+          {
+            "expr": "unrdf_workflow_resource_utilization",
+            "legendFormat": "{{resource_type}} - {{resource_id}}",
+            "refId": "A"
+          }
+        ],
+        "yaxes": [
+          { "format": "percent", "label": "Utilization %", "max": 100, "min": 0 },
+          { "format": "short" }
+        ],
+        "legend": { "show": true, "alignAsTable": true, "values": true, "current": true }
+      },
+      {
+        "id": 7,
+        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 24 },
+        "type": "graph",
+        "title": "Event Store Metrics",
+        "datasource": "Prometheus",
+        "targets": [
+          {
+            "expr": "rate(unrdf_workflow_events_appended_total[5m])",
+            "legendFormat": "{{event_type}} events/sec",
+            "refId": "A"
+          },
+          {
+            "expr": "unrdf_workflow_event_store_size_bytes / 1024 / 1024",
+            "legendFormat": "Store size MB ({{workflow_id}})",
+            "refId": "B"
+          }
+        ],
+        "yaxes": [
+          { "format": "short" },
+          { "format": "decmbytes" }
+        ]
+      },
+      {
+        "id": 8,
+        "gridPos": { "h": 8, "w": 24, "x": 0, "y": 32 },
+        "type": "graph",
+        "title": "Operation Latency Percentiles",
+        "datasource": "Prometheus",
+        "targets": [
+          {
+            "expr": "unrdf_workflow_latency_percentiles{quantile=\"0.5\"}",
+            "legendFormat": "p50 - {{operation}}",
+            "refId": "A"
+          },
+          {
+            "expr": "unrdf_workflow_latency_percentiles{quantile=\"0.9\"}",
+            "legendFormat": "p90 - {{operation}}",
+            "refId": "B"
+          },
+          {
+            "expr": "unrdf_workflow_latency_percentiles{quantile=\"0.99\"}",
+            "legendFormat": "p99 - {{operation}}",
+            "refId": "C"
+          }
+        ],
+        "yaxes": [
+          { "format": "s", "label": "Latency" },
+          { "format": "short" }
+        ],
+        "legend": { "show": true, "alignAsTable": true, "values": true, "current": true, "max": true }
+      },
+      {
+        "id": 9,
+        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 40 },
+        "type": "graph",
+        "title": "Task Queue Depth",
+        "datasource": "Prometheus",
+        "targets": [
+          {
+            "expr": "unrdf_workflow_task_queue_depth",
+            "legendFormat": "{{queue_name}} - {{workflow_id}}",
+            "refId": "A"
+          }
+        ],
+        "yaxes": [
+          { "format": "short", "label": "Queue Depth" },
+          { "format": "short" }
+        ]
+      },
+      {
+        "id": 10,
+        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 40 },
+        "type": "graph",
+        "title": "Policy Evaluations",
+        "datasource": "Prometheus",
+        "targets": [
+          {
+            "expr": "rate(unrdf_workflow_policy_evaluations_total[5m])",
+            "legendFormat": "{{policy_name}} - {{result}}",
+            "refId": "A"
+          }
+        ],
+        "yaxes": [
+          { "format": "ops", "label": "Evaluations/sec" },
+          { "format": "short" }
+        ],
+        "stack": true
+      }
+    ],
+    "templating": {
+      "list": [
+        {
+          "name": "workflow_id",
+          "type": "query",
+          "datasource": "Prometheus",
+          "query": "label_values(unrdf_workflow_executions_total, workflow_id)",
+          "multi": true,
+          "includeAll": true,
+          "refresh": 1,
+          "sort": 1
+        },
+        {
+          "name": "pattern",
+          "type": "query",
+          "datasource": "Prometheus",
+          "query": "label_values(unrdf_workflow_executions_total, pattern)",
+          "multi": true,
+          "includeAll": true,
+          "refresh": 1,
+          "sort": 1
+        }
+      ]
+    },
+    "annotations": {
+      "list": [
+        {
+          "datasource": "Prometheus",
+          "enable": true,
+          "hide": false,
+          "iconColor": "rgba(255, 96, 96, 1)",
+          "name": "Workflow Events",
+          "target": {
+            "expr": "unrdf_workflow_executions_total"
+          }
+        }
+      ]
+    }
+  },
+  "overwrite": true
+}

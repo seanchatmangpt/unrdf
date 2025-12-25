@@ -1,0 +1,81 @@
+{
+  "name": "@unrdf/serverless",
+  "version": "1.0.0",
+  "description": "UNRDF Serverless - One-click AWS deployment for RDF applications",
+  "type": "module",
+  "main": "src/index.mjs",
+  "exports": {
+    ".": "./src/index.mjs",
+    "./cdk": "./src/cdk/index.mjs",
+    "./deploy": "./src/deploy/index.mjs",
+    "./api": "./src/api/index.mjs",
+    "./storage": "./src/storage/index.mjs"
+  },
+  "sideEffects": false,
+  "files": [
+    "src/",
+    "dist/",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "vitest run --no-coverage",
+    "test:coverage": "vitest run --coverage",
+    "test:fast": "vitest run --no-coverage",
+    "test:watch": "vitest --no-coverage",
+    "build": "node build.config.mjs",
+    "lint": "eslint src/ test/ --max-warnings=0",
+    "lint:fix": "eslint src/ test/ --fix",
+    "format": "prettier --write src/ test/",
+    "format:check": "prettier --check src/ test/",
+    "clean": "rm -rf dist/ .nyc_output/ coverage/ cdk.out/",
+    "deploy:demo": "node examples/deploy-demo.mjs",
+    "cdk:synth": "cdk synth",
+    "cdk:deploy": "cdk deploy",
+    "cdk:destroy": "cdk destroy"
+  },
+  "keywords": [
+    "rdf",
+    "serverless",
+    "aws",
+    "lambda",
+    "cdk",
+    "infrastructure",
+    "deployment"
+  ],
+  "dependencies": {
+    "@unrdf/core": "workspace:*",
+    "@unrdf/oxigraph": "workspace:*",
+    "aws-cdk-lib": "^2.165.0",
+    "constructs": "^10.4.2",
+    "esbuild": "^0.24.2",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "@aws-sdk/client-dynamodb": "^3.712.0",
+    "@aws-sdk/client-lambda": "^3.712.0",
+    "@aws-sdk/lib-dynamodb": "^3.712.0",
+    "@types/node": "^24.10.1",
+    "vitest": "^4.0.15"
+  },
+  "peerDependencies": {
+    "@aws-sdk/client-dynamodb": "^3.x",
+    "@aws-sdk/client-lambda": "^3.x"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/unrdf/unrdf.git",
+    "directory": "packages/serverless"
+  },
+  "bugs": {
+    "url": "https://github.com/unrdf/unrdf/issues"
+  },
+  "homepage": "https://github.com/unrdf/unrdf#readme",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
+}
