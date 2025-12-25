@@ -13,6 +13,7 @@
  */
 
 import { toISO, now } from '@unrdf/kgc-4d';
+import { randomUUID } from 'crypto';
 import { YawlCase, CaseStatus } from './case.mjs';
 import { TaskStatus } from './task.mjs';
 import { buildReceipt } from './receipt.mjs';
@@ -80,7 +81,7 @@ class WorkflowEngine extends withQueries(
       throw new Error(`Maximum concurrent cases (${this.maxConcurrentCases}) exceeded`);
     }
 
-    const caseId = `case-${workflow.id}-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+    const caseId = options.caseId || randomUUID();
     const yawlCase = new YawlCase(
       { id: caseId, workflowId, data: initialData },
       workflow
@@ -92,9 +93,9 @@ class WorkflowEngine extends withQueries(
     // Log to KGC-4D if enabled
     if (this.enableEventLog) {
       await this._logCaseEvent(YAWL_EVENT_TYPES.CASE_CREATED, {
-        caseId,
-        workflowId,
-        data: initialData,
+        caseId: yawlCase.id,
+        specId: workflowId,
+        timestamp: toISO(now()),
       });
     }
 
@@ -606,6 +607,34 @@ class WorkflowEngine extends withQueries(
     this._stats.tasksTimedOut++;
 
     return { task, receipt };
+  }
+
+  // ===========================================================================
+  // Backward Compatibility Aliases
+  // ===========================================================================
+
+  /**
+   * Alias for startTask (backward compatibility)
+   * @deprecated Use startTask instead
+   */
+  async startWorkItem(caseId, workItemId, options) {
+    return this.startTask(caseId, workItemId, options);
+  }
+
+  /**
+   * Alias for completeTask (backward compatibility)
+   * @deprecated Use completeTask instead
+   */
+  async completeWorkItem(caseId, workItemId, output, actor) {
+    return this.completeTask(caseId, workItemId, output, actor);
+  }
+
+  /**
+   * Alias for cancelTask (backward compatibility)
+   * @deprecated Use cancelTask instead
+   */
+  async cancelWorkItem(caseId, workItemId, reason, actor) {
+    return this.cancelTask(caseId, workItemId, reason, actor);
   }
 }
 
