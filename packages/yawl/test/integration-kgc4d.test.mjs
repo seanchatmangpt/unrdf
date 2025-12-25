@@ -58,12 +58,14 @@ describe('ADVERSARIAL: YAWL → KGC-4D → YAWL Round-Trip', () => {
     const workflow = new YawlWorkflow({
       id: 'test-workflow',
       name: 'Adversarial Test Workflow',
+      tasks: [
+        { id: 'start', name: 'Start Task' },
+        { id: 'process', name: 'Process Task' },
+      ],
+      flows: [{ from: 'start', to: 'process' }],
+      startTaskId: 'start',
+      endTaskIds: ['process'],
     });
-    workflow.addTask({ id: 'start', name: 'Start Task' });
-    workflow.addTask({ id: 'process', name: 'Process Task' });
-    workflow.addFlow({ from: 'start', to: 'process' });
-    workflow.setStart('start');
-    workflow.setEnd(['process']);
 
     engine.registerWorkflow(workflow);
 
@@ -97,12 +99,14 @@ describe('ADVERSARIAL: YAWL → KGC-4D → YAWL Round-Trip', () => {
     const workflow = new YawlWorkflow({
       id: 'time-travel-test',
       name: 'Time Travel Test',
+      tasks: [
+        { id: 't1', name: 'Task 1' },
+        { id: 't2', name: 'Task 2' },
+      ],
+      flows: [{ from: 't1', to: 't2' }],
+      startTaskId: 't1',
+      endTaskIds: ['t2'],
     });
-    workflow.addTask({ id: 't1', name: 'Task 1' });
-    workflow.addTask({ id: 't2', name: 'Task 2' });
-    workflow.addFlow({ from: 't1', to: 't2' });
-    workflow.setStart('t1');
-    workflow.setEnd(['t2']);
     engine.registerWorkflow(workflow);
 
     // Create case
@@ -155,10 +159,12 @@ describe('ADVERSARIAL: YAWL → KGC-4D → YAWL Round-Trip', () => {
     const workflow = new YawlWorkflow({
       id: 'receipt-test',
       name: 'Receipt Test',
+      tasks: [
+        { id: 'task1', name: 'Task 1' },
+      ],
+      startTaskId: 'task1',
+      endTaskIds: ['task1'],
     });
-    workflow.addTask({ id: 'task1', name: 'Task 1' });
-    workflow.setStart('task1');
-    workflow.setEnd(['task1']);
     engine.registerWorkflow(workflow);
 
     const caseInstance = await engine.createCase('receipt-test');
@@ -186,12 +192,14 @@ describe('ADVERSARIAL: YAWL → KGC-4D → YAWL Round-Trip', () => {
     const workflow = new YawlWorkflow({
       id: 'audit-test',
       name: 'Audit Test',
+      tasks: [
+        { id: 'a', name: 'A' },
+        { id: 'b', name: 'B' },
+      ],
+      flows: [{ from: 'a', to: 'b' }],
+      startTaskId: 'a',
+      endTaskIds: ['b'],
     });
-    workflow.addTask({ id: 'a', name: 'A' });
-    workflow.addTask({ id: 'b', name: 'B' });
-    workflow.addFlow({ from: 'a', to: 'b' });
-    workflow.setStart('a');
-    workflow.setEnd(['b']);
     engine.registerWorkflow(workflow);
 
     const caseInstance = await engine.createCase('audit-test');
@@ -250,10 +258,12 @@ describe('ADVERSARIAL: KGC-4D Offline Failure Scenarios', () => {
     const workflow = new YawlWorkflow({
       id: 'failure-test',
       name: 'Failure Test',
+      tasks: [
+        { id: 'task1', name: 'Task 1' },
+      ],
+      startTaskId: 'task1',
+      endTaskIds: ['task1'],
     });
-    workflow.addTask({ id: 'task1', name: 'Task 1' });
-    workflow.setStart('task1');
-    workflow.setEnd(['task1']);
 
     engine.registerWorkflow(workflow);
 
@@ -339,7 +349,7 @@ describe('ADVERSARIAL: Hook Execution Verification', () => {
     };
 
     const workflow = {
-      id: 'hook-test',
+      id: crypto.randomUUID(),
       name: 'Hook Test',
       version: '1.0.0',
       tasks: [
@@ -374,7 +384,7 @@ describe('ADVERSARIAL: Hook Execution Verification', () => {
     };
 
     const workflow = {
-      id: 'receipt-test',
+      id: crypto.randomUUID(),
       name: 'Receipt Test',
       version: '1.0.0',
       tasks: [{ id: 'task1', kind: 'AtomicTask', inputConditions: ['cond1'] }],
@@ -406,7 +416,7 @@ describe('ADVERSARIAL: Hook Execution Verification', () => {
     };
 
     const workflow = {
-      id: 'error-test',
+      id: crypto.randomUUID(),
       name: 'Error Test',
       version: '1.0.0',
       tasks: [{ id: 'task1', kind: 'AtomicTask' }],
@@ -445,10 +455,12 @@ describe('ADVERSARIAL: Concurrent Case Execution', () => {
     const workflow = new YawlWorkflow({
       id: 'concurrent-workflow',
       name: 'Concurrent Test',
+      tasks: [
+        { id: 'task1', name: 'Task 1' },
+      ],
+      startTaskId: 'task1',
+      endTaskIds: ['task1'],
     });
-    workflow.addTask({ id: 'task1', name: 'Task 1' });
-    workflow.setStart('task1');
-    workflow.setEnd(['task1']);
     engine.registerWorkflow(workflow);
 
     // PROVE: Create multiple cases concurrently

@@ -12,7 +12,8 @@
     "./sparql": "./src/sparql/index.mjs",
     "./types": "./src/types.mjs",
     "./constants": "./src/constants.mjs",
-    "./validation": "./src/validation/index.mjs"
+    "./validation": "./src/validation/index.mjs",
+    "./utils/sparql-utils": "./src/utils/sparql-utils.mjs"
   },
   "sideEffects": false,
   "files": [
