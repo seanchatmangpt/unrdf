@@ -3,7 +3,6 @@ import { createStore, dataFactory } from '../../oxigraph/src/index.mjs';
 import { rdfToGraph } from '../src/converter/rdf-to-graph.mjs';
 import {
   detectCommunitiesLPA,
-  detectCommunitiesModularity,
   findKCore,
   getCommunityStats,
 } from '../src/clustering/community-detector.mjs';

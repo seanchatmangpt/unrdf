@@ -306,10 +306,17 @@ export class Case {
    */
   getTaskDefIdForWorkItem(workItemId) {
     // Work item ID format: {caseId}-{taskDefId}-{timestamp}
-    const parts = workItemId.split('-');
-    if (parts.length >= 2) {
-      // Remove caseId prefix and timestamp suffix
-      return parts.slice(1, -1).join('-');
+    // Case ID may contain dashes, so we use it as a prefix to extract the task ID
+    const caseIdPrefix = `${this.id}-`;
+    if (workItemId.startsWith(caseIdPrefix)) {
+      const remainder = workItemId.substring(caseIdPrefix.length);
+      // remainder is now: {taskDefId}-{timestamp}
+      // Remove the timestamp (last part after last dash)
+      const lastDashIndex = remainder.lastIndexOf('-');
+      if (lastDashIndex !== -1) {
+        return remainder.substring(0, lastDashIndex);
+      }
+      return remainder;
     }
     return workItemId;
   }

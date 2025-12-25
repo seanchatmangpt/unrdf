@@ -150,7 +150,7 @@ export class AlertManager extends EventEmitter {
     this._recordMetricValue(metricName, value);
 
     // Check threshold-based rules
-    for (const [ruleId, rule] of this.rules.entries()) {
+    for (const [_ruleId, rule] of this.rules.entries()) {
       if (!rule.enabled || rule.metric !== metricName) {
         continue;
       }

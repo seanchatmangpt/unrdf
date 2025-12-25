@@ -124,7 +124,6 @@ export function detectCommunitiesModularity(graph, options = {}) {
 
     for (const node of nodes) {
       const currentCommunity = communities.get(node);
-      const nodeDegree = degrees.get(node);
 
       // Calculate modularity gain for each neighbor community
       const neighborCommunities = new Map();

@@ -618,7 +618,7 @@ export async function executeKnowledgeEngineCore(validator, parentSpan, validati
  * @returns {Promise<Object>} Execution result
  */
 export async function executeKnowledgeHooksAPI(validator, parentSpan, validationId) {
-  const { defineHook } = await import('../knowledge-engine/define-hook.mjs');
+  const { defineHook } = await import('../knowledge-engine/index.mjs');
 
   const spans = [];
 
@@ -961,6 +961,7 @@ export async function executeAtomVMRuntime(validator, parentSpan, validationId) 
     },
     kind: 1, // SpanKind.INTERNAL
   }, async (execSpan) => {
+    const spans = [];
     try {
       // Use workspace-relative import path
       const { fileURLToPath } = await import('url');
@@ -969,13 +970,13 @@ export async function executeAtomVMRuntime(validator, parentSpan, validationId) 
       const __dirname = dirname(__filename);
       const rootDir = resolve(__dirname, '../../../');
       const runtimePath = join(rootDir, 'packages/atomvm/src/node-runtime.mjs');
-      
+
       // Verify path exists before importing
       const { existsSync } = await import('fs');
       if (!existsSync(runtimePath)) {
         throw new Error(`Runtime module not found at: ${runtimePath}`);
       }
-      
+
       const { AtomVMNodeRuntime } = await import(runtimePath);
       const runtime = new AtomVMNodeRuntime({ log: () => {} });
 

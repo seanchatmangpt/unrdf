@@ -143,7 +143,7 @@ export function computeDegreeCentrality(graph) {
  * @param {Object} options - Options
  * @returns {Map<string, number>} Node betweenness scores
  */
-export function computeBetweennessCentrality(graph, options = {}) {
+export function computeBetweennessCentrality(graph, _options = {}) {
   const nodes = graph.nodes();
   const betweenness = new Map();
 

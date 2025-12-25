@@ -15,7 +15,7 @@
 import express from 'express';
 import { createWorkflowMetrics } from '../src/metrics/workflow-metrics.mjs';
 import { createGrafanaExporter } from '../src/exporters/grafana-exporter.mjs';
-import { createAlertManager, AlertSeverity } from '../src/alerts/alert-manager.mjs';
+import { createAlertManager } from '../src/alerts/alert-manager.mjs';
 
 /**
  * Simulated workflow execution

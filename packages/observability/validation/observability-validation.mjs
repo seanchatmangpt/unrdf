@@ -96,7 +96,7 @@ class ObservabilityValidator {
       });
 
       let alertFired = false;
-      alerts.on('alert', (alert) => {
+      alerts.on('alert', (_alert) => {
         alertFired = true;
       });
 
@@ -174,7 +174,6 @@ class ObservabilityValidator {
       const hasDashboard = !!dashboard.dashboard;
       const hasTitle = dashboard.dashboard?.title === 'Test Dashboard';
       const hasPanels = dashboard.dashboard?.panels?.length > 0;
-      const hasTemplating = !!dashboard.dashboard?.templating;
 
       const jsonExport = exporter.exportJSON(true);
       const validJSON = !!JSON.parse(jsonExport);
