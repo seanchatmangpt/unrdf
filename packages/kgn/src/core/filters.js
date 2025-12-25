@@ -1,6 +1,8 @@
 /**
- * KGEN Filter System - Deterministic template filters
+ * @file KGEN Filter System - Deterministic template filters
+ * @module @unrdf/kgn/core/filters
  *
+ * @description
  * Implements all v1 Lock specification filters:
  * - Text: upper, lower, trim, replace, split, join, slice
  * - Data: default, unique, sort, groupby, map, sum, count
@@ -12,7 +14,16 @@
 
 import crypto from 'crypto';
 
+/**
+ * KGEN Filters class - Template filter system
+ */
 export class KGenFilters {
+  /**
+   * Create a new KGenFilters instance
+   * @param {Object} [options={}] - Filter configuration options
+   * @param {boolean} [options.deterministicMode=true] - Enable deterministic mode
+   * @param {boolean} [options.strictMode=true] - Enable strict error handling
+   */
   constructor(options = {}) {
     this.options = {
       deterministicMode: options.deterministicMode !== false,
@@ -26,6 +37,12 @@ export class KGenFilters {
 
   /**
    * Register a filter function
+   * @param {string} name - Filter name
+   * @param {Function} filterFunction - Filter implementation
+   * @param {Object} [options={}] - Filter options
+   * @param {boolean} [options.deterministic=true] - Whether filter is deterministic
+   * @param {string} [options.description=''] - Filter description
+   * @param {string} [options.category='custom'] - Filter category
    */
   register(name, filterFunction, options = {}) {
     if (typeof filterFunction !== 'function') {
@@ -42,6 +59,10 @@ export class KGenFilters {
 
   /**
    * Apply filter to value
+   * @param {string} filterName - Name of filter to apply
+   * @param {*} value - Value to filter
+   * @param {...*} args - Additional filter arguments
+   * @returns {*} Filtered value
    */
   apply(filterName, value, ...args) {
     const filter = this.filters.get(filterName);
@@ -70,6 +91,8 @@ export class KGenFilters {
 
   /**
    * Check if filter exists
+   * @param {string} filterName - Filter name to check
+   * @returns {boolean} True if filter exists
    */
   has(filterName) {
     return this.filters.has(filterName);
@@ -77,6 +100,7 @@ export class KGenFilters {
 
   /**
    * Get filter count
+   * @returns {number} Number of registered filters
    */
   getFilterCount() {
     return this.filters.size;
@@ -84,6 +108,7 @@ export class KGenFilters {
 
   /**
    * Register all core filters
+   * Registers text, data, format, RDF, validation, CAS, and utility filters
    */
   registerCoreFilters() {
     this.registerTextFilters();
@@ -97,6 +122,7 @@ export class KGenFilters {
 
   /**
    * Text processing filters
+   * Registers upper, lower, trim, replace, split, join, slice filters
    */
   registerTextFilters() {
     this.register('upper', (str) => String(str || '').toUpperCase(), {
@@ -146,10 +172,27 @@ export class KGenFilters {
       category: 'text',
       description: 'Extract substring by position'
     });
+
+    this.register('truncate', (str, length = 10, suffix = '...') => {
+      const s = String(str || '');
+      if (s.length <= length) return s;
+      return s.slice(0, length) + suffix;
+    }, {
+      category: 'text',
+      description: 'Truncate string to specified length'
+    });
+
+    this.register('reverse', (str) => {
+      return String(str || '').split('').reverse().join('');
+    }, {
+      category: 'text',
+      description: 'Reverse string'
+    });
   }
 
   /**
    * Data processing filters
+   * Registers default, unique, sort, groupby, map, sum, count filters
    */
   registerDataFilters() {
     this.register('default', (value, defaultValue = '') => {
@@ -356,6 +399,7 @@ export class KGenFilters {
 
   /**
    * Validation filters
+   * Registers shaclReport, validate filters
    */
   registerValidationFilters() {
     this.register('shaclReport', (data, shaclShapes = {}) => {
@@ -425,6 +469,7 @@ export class KGenFilters {
 
   /**
    * Utility filters
+   * Registers typeof, length, keys, values, entries, formatDate filters
    */
   registerUtilityFilters() {
     // Non-deterministic filters that throw in deterministic mode
@@ -460,6 +505,93 @@ export class KGenFilters {
       deterministic: false,
       description: 'Generate UUID (non-deterministic)'
     });
+
+    // Date arithmetic filters
+    this.register('dateAdd', (dateStr, amount, unit = 'day') => {
+      const date = new Date(dateStr);
+      switch (unit) {
+        case 'day':
+          date.setDate(date.getDate() + amount);
+          break;
+        case 'month':
+          date.setMonth(date.getMonth() + amount);
+          break;
+        case 'year':
+          date.setFullYear(date.getFullYear() + amount);
+          break;
+        default:
+          throw new Error(`Unknown unit: ${unit}`);
+      }
+      return date.toISOString();
+    }, {
+      category: 'utility',
+      description: 'Add time to date'
+    });
+
+    this.register('dateSub', (dateStr, amount, unit = 'day') => {
+      const date = new Date(dateStr);
+      switch (unit) {
+        case 'day':
+          date.setDate(date.getDate() - amount);
+          break;
+        case 'month':
+          date.setMonth(date.getMonth() - amount);
+          break;
+        case 'year':
+          date.setFullYear(date.getFullYear() - amount);
+          break;
+        default:
+          throw new Error(`Unknown unit: ${unit}`);
+      }
+      return date.toISOString();
+    }, {
+      category: 'utility',
+      description: 'Subtract time from date'
+    });
+
+    // Path utility filters
+    this.register('resolve', (base, relative) => {
+      // Simple path resolution (normalize and join)
+      const baseParts = base.split('/').filter(p => p);
+      const relativeParts = relative.split('/').filter(p => p);
+
+      for (const part of relativeParts) {
+        if (part === '..') {
+          baseParts.pop();
+        } else if (part !== '.') {
+          baseParts.push(part);
+        }
+      }
+
+      return '/' + baseParts.join('/');
+    }, {
+      category: 'utility',
+      description: 'Resolve path'
+    });
+
+    this.register('relative', (from, to) => {
+      // Simple relative path calculation
+      const fromParts = from.split('/').filter(p => p);
+      const toParts = to.split('/').filter(p => p);
+
+      // Find common base
+      let i = 0;
+      while (i < fromParts.length && i < toParts.length && fromParts[i] === toParts[i]) {
+        i++;
+      }
+
+      // Go up from 'from' directory
+      const upCount = fromParts.length - i;
+      const upParts = Array(upCount).fill('..');
+
+      // Then append remaining 'to' parts
+      const remainingParts = toParts.slice(i);
+
+      return [...upParts, ...remainingParts].join('/');
+    }, {
+      category: 'utility',
+      description: 'Calculate relative path'
+    });
   }
 
   /**
@@ -489,6 +621,7 @@ export class KGenFilters {
 
   /**
    * Get filter statistics
+   * @returns {Object} Filter system statistics
    */
   getStats() {
     const categories = {};

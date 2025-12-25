@@ -1,0 +1,33 @@
+{
+  "name": "@unrdf-examples/blockchain-audit",
+  "version": "1.0.0",
+  "description": "Blockchain-verified audit trail using YAWL receipts and cryptographic verification",
+  "type": "module",
+  "main": "src/index.mjs",
+  "scripts": {
+    "start": "node src/audit-trail.mjs",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
+  },
+  "keywords": [
+    "blockchain",
+    "audit",
+    "compliance",
+    "verification",
+    "receipts"
+  ],
+  "dependencies": {
+    "@unrdf/yawl": "workspace:*",
+    "@unrdf/oxigraph": "workspace:*",
+    "@opentelemetry/api": "^1.9.0",
+    "hash-wasm": "^4.11.0",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "vitest": "^4.0.15"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

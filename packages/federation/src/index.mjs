@@ -26,7 +26,8 @@ export {
 export { CoordinatorConfigSchema } from './federation/coordinator.mjs';
 
 // Export health endpoint
-export { createHealthEndpoint } from './federation/health.mjs';
+// TODO: health.mjs not yet implemented - coming in next release
+// export { createHealthEndpoint } from './federation/health.mjs';
 
 // Export metrics
 export {

@@ -1,0 +1,13 @@
+# Benchmark reports (generated)
+reports/*.md
+reports/*.json
+
+# Baselines are committed, but can be regenerated
+# baselines/*.json
+
+# Node modules
+node_modules/
+
+# Coverage
+coverage/
+.nyc_output/

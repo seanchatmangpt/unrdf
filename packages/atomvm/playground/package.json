@@ -16,13 +16,12 @@
   },
   "dependencies": {
     "@unrdf/atomvm": "workspace:*",
-    "@unrdf/kgc-4d": "workspace:*",
     "@unrdf/hooks": "workspace:*",
+    "@unrdf/kgc-4d": "workspace:*",
     "coi-serviceworker": "^0.1.7"
   },
   "devDependencies": {
-    "vite": "^5.0.0",
+    "vite": "^7.3.0",
     "vitest": "^4.0.15"
   }
 }
-

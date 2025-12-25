@@ -53,6 +53,279 @@ import { StreamProcessor, createChangeStream } from '@unrdf/streaming';
 import { defineCliCommand, runCli } from '@unrdf/cli';
 import { ref, reactive } from 'vue';
 
+import { z } from 'zod';
+
+// ============================================================================
+// ZOD VALIDATION SCHEMAS
+// ============================================================================
+
+/**
+ * Workflow task schema
+ */
+const WorkflowTaskSchema = z.object({
+  id: z.string().min(1).max(100),
+  type: z.enum(['automated', 'manual', 'decision']),
+  handler: z.function(),
+});
+
+/**
+ * Workflow flow schema
+ */
+const WorkflowFlowSchema = z.object({
+  from: z.string().min(1),
+  to: z.string().min(1),
+  condition: z.function().optional(),
+});
+
+/**
+ * Workflow definition schema
+ */
+const WorkflowDefinitionSchema = z.object({
+  id: z.string().min(1).max(100).regex(/^[a-z0-9-]+$/, 'Workflow ID must be lowercase alphanumeric with hyphens'),
+  tasks: z.array(WorkflowTaskSchema).min(1, 'Workflow must have at least one task'),
+  flows: z.array(WorkflowFlowSchema),
+});
+
+/**
+ * Hook definition schema
+ */
+const HookDefinitionSchema = z.object({
+  name: z.string().min(1).max(100),
+  trigger: z.string().min(1),
+  handler: z.function(),
+});
+
+/**
+ * Dark execution query schema (prevent code injection)
+ */
+const DarkExecutionQuerySchema = z.string()
+  .min(1, 'Query cannot be empty')
+  .max(5000, 'Query too long (potential DoS)')
+  .refine(
+    (query) => !query.includes('require('),
+    'require() not allowed in dark execution'
+  )
+  .refine(
+    (query) => !query.includes('import('),
+    'import() not allowed in dark execution'
+  )
+  .refine(
+    (query) => !query.includes('process.'),
+    'process access not allowed in dark execution'
+  );
+
+/**
+ * Dark execution context schema
+ */
+const DarkExecutionContextSchema = z.record(z.string(), z.any()).optional().default({});
+
+/**
+ * Temporal query time range schema
+ */
+const TimeRangeSchema = z.object({
+  start: z.number().int().positive('Start time must be positive'),
+  end: z.number().int().positive('End time must be positive'),
+}).refine(
+  (data) => data.end >= data.start,
+  'End time must be >= start time'
+);
+
+/**
+ * SPARQL query schema
+ */
+const SparqlQuerySchema = z.string()
+  .min(1, 'Query cannot be empty')
+  .max(10000, 'Query too long')
+  .refine(
+    (query) => query.toUpperCase().includes('SELECT') || query.toUpperCase().includes('ASK') || query.toUpperCase().includes('CONSTRUCT'),
+    'Query must be SELECT, ASK, or CONSTRUCT'
+  );
+
+/**
+ * Federation node configuration schema
+ */
+const FederationNodeConfigSchema = z.object({
+  id: z.string().min(1).max(100).regex(/^node-[0-9]+$/, 'Node ID must be node-{number}'),
+  peerId: z.string().min(1).max(100),
+  capabilities: z.array(z.enum(['query', 'store', 'validate'])).min(1),
+  rdfStore: z.any(),
+});
+
+/**
+ * Validation data schema
+ */
+const ValidationDataSchema = z.object({
+  subject: z.string().min(1),
+  predicate: z.string().min(1),
+  object: z.string().min(1),
+});
+
+/**
+ * Workflow execution input schema
+ */
+const WorkflowInputSchema = z.record(z.string(), z.any()).optional().default({});
+
+/**
+ * Workflow ID schema
+ */
+const WorkflowIdSchema = z.string()
+  .min(1)
+  .regex(/^[a-z0-9-]+$/, 'Workflow ID must be lowercase alphanumeric with hyphens');
+
+/**
+ * Knowledge pattern schema
+ */
+const KnowledgePatternSchema = z.object({
+  subject: z.string().min(1),
+  predicate: z.string().min(1),
+  confidence: z.number().min(0).max(1),
+  timestamp: z.string().optional(),
+});
+
+/**
+ * Learning model schema
+ */
+const LearningModelSchema = z.object({
+  patterns: z.record(z.string(), z.any()),
+  weights: z.record(z.string(), z.number()),
+});
+
+/**
+ * CLI command schema
+ */
+const CLICommandSchema = z.object({
+  name: z.string().min(1).max(50).regex(/^[a-z-]+$/, 'Command name must be lowercase with hyphens'),
+  description: z.string().min(1).max(200),
+  handler: z.function(),
+});
+
+/**
+ * Bootstrap configuration schema
+ */
+const BootstrapConfigSchema = z.object({
+  maxTriples: z.number().int().positive().optional().default(10000),
+  maxExecutions: z.number().int().positive().optional().default(1000),
+  enableLogging: z.boolean().optional().default(true),
+}).optional().default({});
+
+/**
+ * Execution result schema
+ */
+const ExecutionResultSchema = z.object({
+  result: z.any(),
+  extracted: z.array(z.any()),
+  frozen: z.string().optional(),
+});
+
+/**
+ * Validation result schema
+ */
+const ValidationResultSchema = z.object({
+  consensus: z.boolean(),
+  details: z.array(z.object({
+    node: z.string(),
+    valid: z.boolean(),
+    errors: z.array(z.any()),
+  })),
+});
+
+// ============================================================================
+// VALIDATION HELPER FUNCTIONS
+// ============================================================================
+
+/**
+ * Validate workflow definition
+ * @param {unknown} workflow - Workflow to validate
+ * @returns {object} Validated workflow
+ * @throws {z.ZodError} If validation fails
+ */
+function validateWorkflowDefinition(workflow) {
+  return WorkflowDefinitionSchema.parse(workflow);
+}
+
+/**
+ * Validate hook definition
+ * @param {unknown} hook - Hook to validate
+ * @returns {object} Validated hook
+ * @throws {z.ZodError} If validation fails
+ */
+function validateHookDefinition(hook) {
+  return HookDefinitionSchema.parse(hook);
+}
+
+/**
+ * Validate dark execution parameters
+ * @param {unknown} query - Query to validate
+ * @param {unknown} context - Context to validate
+ * @returns {{query: string, context: object}} Validated parameters
+ * @throws {z.ZodError} If validation fails
+ */
+function validateDarkExecution(query, context) {
+  return {
+    query: DarkExecutionQuerySchema.parse(query),
+    context: DarkExecutionContextSchema.parse(context),
+  };
+}
+
+/**
+ * Validate temporal query parameters
+ * @param {unknown} query - SPARQL query to validate
+ * @param {unknown} timeRange - Time range to validate
+ * @returns {{query: string, timeRange: object}} Validated parameters
+ * @throws {z.ZodError} If validation fails
+ */
+function validateTemporalQuery(query, timeRange) {
+  return {
+    query: SparqlQuerySchema.parse(query),
+    timeRange: TimeRangeSchema.parse(timeRange),
+  };
+}
+
+/**
+ * Validate federation data
+ * @param {unknown} data - Data to validate
+ * @returns {object} Validated data
+ * @throws {z.ZodError} If validation fails
+ */
+function validateFederationData(data) {
+  return ValidationDataSchema.parse(data);
+}
+
+/**
+ * Validate workflow execution parameters
+ * @param {unknown} workflowId - Workflow ID to validate
+ * @param {unknown} input - Input data to validate
+ * @returns {{workflowId: string, input: object}} Validated parameters
+ * @throws {z.ZodError} If validation fails
+ */
+function validateWorkflowExecution(workflowId, input) {
+  return {
+    workflowId: WorkflowIdSchema.parse(workflowId),
+    input: WorkflowInputSchema.parse(input),
+  };
+}
+
+/**
+ * Validate SPARQL query
+ * @param {unknown} query - Query to validate
+ * @returns {string} Validated query
+ * @throws {z.ZodError} If validation fails
+ */
+function validateSparqlQuery(query) {
+  return SparqlQuerySchema.parse(query);
+}
+
+/**
+ * Validate CLI command
+ * @param {unknown} command - Command to validate
+ * @returns {object} Validated command
+ * @throws {z.ZodError} If validation fails
+ */
+function validateCLICommand(command) {
+  return CLICommandSchema.parse(command);
+}
+
+
 // ============================================================================
 // MEGA-FRAMEWORK CORE
 // ============================================================================

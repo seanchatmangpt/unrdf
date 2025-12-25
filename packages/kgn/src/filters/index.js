@@ -118,6 +118,81 @@ export function createCustomFilters(options = {}) {
       return parts.slice(0, -1).join('/');
     },
 
+    // Date arithmetic filters
+    dateAdd: (dateStr, amount, unit = 'day') => {
+      const date = new Date(dateStr);
+      switch (unit) {
+        case 'day':
+          date.setDate(date.getDate() + amount);
+          break;
+        case 'month':
+          date.setMonth(date.getMonth() + amount);
+          break;
+        case 'year':
+          date.setFullYear(date.getFullYear() + amount);
+          break;
+        default:
+          throw new Error(`Unknown unit: ${unit}`);
+      }
+      return date.toISOString();
+    },
+
+    dateSub: (dateStr, amount, unit = 'day') => {
+      const date = new Date(dateStr);
+      switch (unit) {
+        case 'day':
+          date.setDate(date.getDate() - amount);
+          break;
+        case 'month':
+          date.setMonth(date.getMonth() - amount);
+          break;
+        case 'year':
+          date.setFullYear(date.getFullYear() - amount);
+          break;
+        default:
+          throw new Error(`Unknown unit: ${unit}`);
+      }
+      return date.toISOString();
+    },
+
+    // Path utility filters
+    resolve: (base, relative) => {
+      // Simple path resolution (normalize and join)
+      const baseParts = base.split('/').filter(p => p);
+      const relativeParts = relative.split('/').filter(p => p);
+
+      for (const part of relativeParts) {
+        if (part === '..') {
+          baseParts.pop();
+        } else if (part !== '.') {
+          baseParts.push(part);
+        }
+      }
+
+      return '/' + baseParts.join('/');
+    },
+
+    relative: (from, to) => {
+      // Simple relative path calculation
+      const fromParts = from.split('/').filter(p => p);
+      const toParts = to.split('/').filter(p => p);
+
+      // Find common base
+      let i = 0;
+      while (i < fromParts.length && i < toParts.length && fromParts[i] === toParts[i]) {
+        i++;
+      }
+
+      // Go up from 'from' directory
+      const upCount = fromParts.length - i;
+      const upParts = Array(upCount).fill('..');
+
+      // Then append remaining 'to' parts
+      const remainingParts = toParts.slice(i);
+
+      return [...upParts, ...remainingParts].join('/');
+    },
+
     // Code generation helpers
     comment: (text, style = '//') => {
       if (!text) return '';

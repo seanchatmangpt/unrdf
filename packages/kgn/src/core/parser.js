@@ -1,6 +1,8 @@
 /**
- * KGEN Template Parser - Parse template syntax without nunjucks
+ * @file KGEN Template Parser - Parse template syntax without nunjucks
+ * @module @unrdf/kgn/core/parser
  *
+ * @description
  * Supports:
  * - Variables: {{ variable }}
  * - Filters: {{ variable | filter }}
@@ -12,7 +14,17 @@
 
 // Use existing frontmatter parser if available, fallback to basic parsing
 
+/**
+ * KGEN Template Parser class
+ */
 export class KGenParser {
+  /**
+   * Create a new KGenParser instance
+   * @param {Object} [options={}] - Parser configuration options
+   * @param {number} [options.maxDepth=10] - Maximum nesting depth for templates
+   * @param {boolean} [options.enableIncludes=true] - Enable include statement processing
+   * @param {boolean} [options.strictMode=true] - Enable strict syntax validation
+   */
   constructor(options = {}) {
     this.options = {
       maxDepth: options.maxDepth || 10,
@@ -32,6 +44,16 @@ export class KGenParser {
 
   /**
    * Parse template content into structured format
+   * @param {string} template - Template content to parse
+   * @returns {Promise<Object>} Parse result with template structure
+   * @returns {string} return.template - Parsed template content
+   * @returns {Object} return.frontmatter - Extracted frontmatter data
+   * @returns {Array<string>} return.variables - Extracted variable names
+   * @returns {Array<Object>} return.expressions - Extracted expressions
+   * @returns {Array<Object>} return.includes - Include statements
+   * @returns {Array<Object>} return.comments - Template comments
+   * @returns {Object} return.structure - Structural analysis
+   * @throws {Error} When parse error occurs
    */
   async parse(template) {
     try {
@@ -62,6 +84,10 @@ export class KGenParser {
 
   /**
    * Parse frontmatter from template
+   * @param {string} template - Template content with optional frontmatter
+   * @returns {Object} Frontmatter parse result
+   * @returns {Object} return.frontmatter - Parsed frontmatter data
+   * @returns {string} return.content - Template content without frontmatter
    */
   parseFrontmatter(template) {
     const match = template.match(this.patterns.frontmatter);
@@ -96,6 +122,8 @@ export class KGenParser {
 
   /**
    * Basic YAML parser for frontmatter (simplified)
+   * @param {string} yamlContent - YAML content to parse
+   * @returns {Object} Parsed YAML data as JavaScript object
    */
   parseBasicYAML(yamlContent) {
     const result = {};
@@ -134,6 +162,8 @@ export class KGenParser {
 
   /**
    * Extract variables from template content
+   * @param {string} content - Template content to analyze
+   * @returns {Array<string>} Array of required variable names
    */
   extractVariables(content) {
     const variables = new Set();
@@ -175,6 +205,8 @@ export class KGenParser {
 
   /**
    * Extract expressions (conditionals, loops, etc.)
+   * @param {string} content - Template content to analyze
+   * @returns {Array<Object>} Array of expression objects with type, expression, position, raw
    */
   extractExpressions(content) {
     const expressions = [];
@@ -200,6 +232,8 @@ export class KGenParser {
 
   /**
    * Extract include statements
+   * @param {string} content - Template content to analyze
+   * @returns {Array<Object>} Array of include objects with path, position, raw
    */
   extractIncludes(content) {
     const includes = [];
@@ -223,6 +257,8 @@ export class KGenParser {
 
   /**
    * Extract comments
+   * @param {string} content - Template content to analyze
+   * @returns {Array<Object>} Array of comment objects with text, position, raw
    */
   extractComments(content) {
     const comments = [];
@@ -244,6 +280,8 @@ export class KGenParser {
 
   /**
    * Analyze template structure
+   * @param {string} content - Template content to analyze
+   * @returns {Object} Structure analysis with conditionals, loops, includes, blocks, macros, depth counts
    */
   analyzeStructure(content) {
     const expressions = this.extractExpressions(content);
@@ -309,6 +347,8 @@ export class KGenParser {
 
   /**
    * Get expression type from expression string
+   * @param {string} expr - Expression string to classify
+   * @returns {string} Expression type (if, else, elif, endif, for, endfor, include, block, endblock, macro, endmacro, set, unknown)
    */
   getExpressionType(expr) {
     const trimmed = expr.trim().toLowerCase();
@@ -331,6 +371,8 @@ export class KGenParser {
 
   /**
    * Check if variable is a built-in
+   * @param {string} name - Variable name to check
+   * @returns {boolean} True if variable is a built-in
    */
   isBuiltinVariable(name) {
     const builtins = new Set([
@@ -342,6 +384,10 @@ export class KGenParser {
 
   /**
    * Validate template syntax
+   * @param {Object} parseResult - Parse result to validate
+   * @param {Array<Object>} parseResult.expressions - Expressions to validate
+   * @param {Object} parseResult.structure - Structure to validate
+   * @throws {Error} When syntax validation fails
    */
   validateSyntax(parseResult) {
     const { expressions } = parseResult;
@@ -402,6 +448,10 @@ export class KGenParser {
 
   /**
    * Check if template is deterministic
+   * @param {Object} parseResult - Parse result to check
+   * @param {Array<string>} parseResult.variables - Variables to check
+   * @param {Array<Object>} parseResult.expressions - Expressions to check
+   * @returns {Object} Result with deterministic boolean and reasons array
    */
   isDeterministic(parseResult) {
     const { variables, expressions } = parseResult;
@@ -435,6 +485,7 @@ export class KGenParser {
 
   /**
    * Get parser statistics
+   * @returns {Object} Parser configuration and supported patterns
    */
   getStats() {
     return {
