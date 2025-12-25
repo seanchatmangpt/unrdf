@@ -452,4 +452,4 @@ export {
   WorkItemSchema as WorkflowWorkItemSchema,
   EnableTaskOptionsSchema,
   ReceiptSchema as WorkflowReceiptSchema,
-} from './api/workflow-api.mjs';
+} from './api/index.mjs';

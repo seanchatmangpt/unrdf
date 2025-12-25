@@ -836,17 +836,21 @@ export class YawlResourceManager {
     const resourceNode = namedNode(`${YAWL_NS}resource/${resourceId}`);
     const now = new Date();
 
-    // Query for availability schedule
+    // Query for availability schedule with windows stored on blank nodes
     const query = `
       PREFIX yawl: <${YAWL_NS}>
       PREFIX foaf: <${FOAF_NS}>
       PREFIX time: <${TIME_NS}>
       PREFIX xsd: <${XSD_NS}>
 
-      SELECT ?available ?startTime ?endTime WHERE {
+      SELECT ?available ?startTime ?endTime ?windowAvailable WHERE {
         <${resourceNode.value}> foaf:available ?available .
-        OPTIONAL { <${resourceNode.value}> yawl:scheduleStart ?startTime }
-        OPTIONAL { <${resourceNode.value}> yawl:scheduleEnd ?endTime }
+        OPTIONAL {
+          <${resourceNode.value}> yawl:hasAvailabilityWindow ?window .
+          ?window yawl:scheduleStart ?startTime .
+          ?window yawl:scheduleEnd ?endTime .
+          ?window foaf:available ?windowAvailable .
+        }
       }
     `;
 
@@ -873,17 +877,19 @@ export class YawlResourceManager {
         const available = binding.get('available')?.value;
         const startTime = binding.get('startTime')?.value;
         const endTime = binding.get('endTime')?.value;
+        const windowAvailable = binding.get('windowAvailable')?.value;
 
-        // Parse availability
+        // Parse overall availability
         if (available === 'false' || available === '0') {
           isCurrentlyAvailable = false;
         }
 
+        // Add window if present
         if (startTime && endTime) {
           windows.push({
             start: startTime,
             end: endTime,
-            available: available !== 'false' && available !== '0',
+            available: windowAvailable !== 'false' && windowAvailable !== '0',
           });
         }
       }
@@ -895,8 +901,13 @@ export class YawlResourceManager {
         return true;
       });
 
+      // Determine final availability: use overall status if we have windows, or check if any window is available
+      const finalAvailable = filteredWindows.length > 0
+        ? isCurrentlyAvailable
+        : isCurrentlyAvailable;
+
       return {
-        available: isCurrentlyAvailable && filteredWindows.some(w => w.available),
+        available: finalAvailable,
         windows: filteredWindows.length > 0 ? filteredWindows : [{
           start: options.from || now.toISOString(),
           end: options.to || new Date(now.getTime() + 86400000).toISOString(),

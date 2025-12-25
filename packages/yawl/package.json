@@ -21,6 +21,13 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
+    "test:ui": "vitest --ui",
+    "lint": "eslint src/ test/ --ext .mjs",
+    "lint:fix": "eslint src/ test/ --ext .mjs --fix",
+    "typecheck": "tsc --noEmit",
+    "format": "prettier --write \"src/**/*.mjs\" \"test/**/*.mjs\"",
+    "format:check": "prettier --check \"src/**/*.mjs\" \"test/**/*.mjs\"",
+    "validate": "npm run lint && npm run typecheck && npm run test",
     "build": "unbuild && tsc --emitDeclarationOnly",
     "build:types": "tsc --emitDeclarationOnly"
   },
@@ -41,6 +48,7 @@
     "zod": "^4.1.13"
   },
   "devDependencies": {
+    "eslint": "^8.0.0",
     "vitest": "^4.0.15"
   },
   "engines": {

@@ -20,6 +20,7 @@ import {
   completeWorkItem,
   recordControlFlowEvaluation,
 } from '../src/events/yawl-events.mjs';
+import { createTestWorkflow, createTestCase } from './test-helpers.mjs';
 
 describe('YAWL Events', () => {
   /** @type {import('@unrdf/kgc-4d').KGCStore} */
@@ -435,7 +436,7 @@ describe('YAWL Events', () => {
 
       await expect(
         appendWorkflowEvent(store, 'TASK_STARTED', {
-          workItemId: 'test',
+          workItemId: crypto.randomUUID(),
           startedAt: toISO(now()),
           receipt,
         })

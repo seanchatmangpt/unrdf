@@ -22,6 +22,11 @@ import {
   ResourceType,
   YAWL_NS,
 } from '../src/resources/yawl-resources.mjs';
+import {
+  createTestWorkflow,
+  createTestTask,
+  createTestCase,
+} from './test-helpers.mjs';
 
 describe('YawlResourceManager', () => {
   /** @type {YawlResourceManager} */
@@ -311,6 +316,13 @@ describe('YawlResourceManager', () => {
 
       const availability = manager.getAvailability('window-user');
       expect(availability.available).toBe(true);
+      expect(availability.windows).toBeDefined();
+      expect(availability.windows.length).toBe(1);
+      // Edge case fix: Verify window data is preserved
+      // Note: RDF storage may trim trailing zeros from milliseconds, so compare timestamps as dates
+      expect(new Date(availability.windows[0].start).getTime()).toBe(now.getTime());
+      expect(new Date(availability.windows[0].end).getTime()).toBe(later.getTime());
+      expect(availability.windows[0].available).toBe(true);
     });
   });
 

@@ -752,7 +752,7 @@ export async function createWorkflowReceipt(options) {
     afterState,
     decision,
     justification = {},
-    gitRef = null,
+    gitRef,
   } = options;
 
   // Serialize states deterministically
@@ -770,18 +770,18 @@ export async function createWorkflowReceipt(options) {
   // Get current timestamp
   const t_ns = now();
 
-  // Build receipt
+  // Build receipt - only include optional fields if they have values
   const receipt = {
     beforeHash,
     afterHash,
     hash: decisionHash,
     justification: {
-      hookValidated: justification.hookValidated || null,
-      conditionChecked: justification.conditionChecked || null,
-      sparqlQuery: justification.sparqlQuery || null,
-      reasoning: justification.reasoning || null,
+      ...(justification.hookValidated && { hookValidated: justification.hookValidated }),
+      ...(justification.conditionChecked && { conditionChecked: justification.conditionChecked }),
+      ...(justification.sparqlQuery && { sparqlQuery: justification.sparqlQuery }),
+      ...(justification.reasoning && { reasoning: justification.reasoning }),
     },
-    gitRef,
+    ...(gitRef && { gitRef }),
     t_ns: t_ns.toString(),
     timestamp_iso: toISO(t_ns),
   };

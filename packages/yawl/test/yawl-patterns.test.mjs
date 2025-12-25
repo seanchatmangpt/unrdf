@@ -22,6 +22,12 @@ import { mkdtempSync, rmSync, existsSync } from 'fs';
 import { join } from 'path';
 import { tmpdir } from 'os';
 
+// Test helpers
+import {
+  createTestWorkflow as createTestWorkflowSpec,
+  createTestTask
+} from './test-helpers.mjs';
+
 // Core YAWL imports
 import {
   YawlWorkflow,
@@ -71,11 +77,26 @@ try {
  * @returns {YawlWorkflow}
  */
 function createTestWorkflow(config = {}) {
-  return new YawlWorkflow({
+  // Create workflow with minimal required fields
+  // Note: YawlWorkflow schema requires at least 1 task, so we provide a dummy task
+  const spec = {
     id: config.id ?? `test-workflow-${Date.now()}`,
     name: config.name ?? 'Test Workflow',
     version: config.version ?? '1.0.0',
-  });
+    tasks: config.tasks ?? [createTestTask({ id: '_placeholder', name: 'Placeholder' })],
+    ...config
+  };
+
+  const workflow = new YawlWorkflow(spec);
+
+  // Remove placeholder task if no custom tasks were provided
+  if (!config.tasks) {
+    workflow._tasks.delete('_placeholder');
+    workflow._outgoingFlows.delete('_placeholder');
+    workflow._incomingFlows.delete('_placeholder');
+  }
+
+  return workflow;
 }
 
 /**
