@@ -1,0 +1,50 @@
+{
+  "name": "@unrdf/yawl-realtime",
+  "version": "1.0.0",
+  "description": "Real-time collaboration framework for YAWL workflows using Socket.io",
+  "type": "module",
+  "main": "src/index.mjs",
+  "exports": {
+    ".": "./src/index.mjs",
+    "./server": "./src/server.mjs",
+    "./client": "./src/client.mjs"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "dev": "node src/examples/approval-collab.mjs",
+    "lint": "eslint src/ test/ --ext .mjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "yawl",
+    "workflow",
+    "real-time",
+    "collaboration",
+    "socket.io",
+    "crdt",
+    "optimistic-locking"
+  ],
+  "dependencies": {
+    "@unrdf/yawl": "workspace:*",
+    "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.1",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "vitest": "^4.0.15",
+    "eslint": "^8.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=7.0.0"
+  },
+  "sideEffects": false,
+  "files": [
+    "src/",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}

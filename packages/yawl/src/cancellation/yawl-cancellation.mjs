@@ -319,13 +319,7 @@ export class CancellationRegionManager {
    * @returns {CancellationRegion}
    */
   createRegion(options) {
-    // Validate required fields
-    if (!options.name || typeof options.name !== 'string') {
-      throw new Error('Region name is required and must be a string');
-    }
-    if (!Array.isArray(options.taskIds) || options.taskIds.length === 0) {
-      throw new Error('taskIds must be a non-empty array');
-    }
+    this._validateRegionOptions(options);
 
     const region = {
       id: randomUUID(),
@@ -337,26 +331,55 @@ export class CancellationRegionManager {
       active: true,
     };
 
-    // Register region
+    this._registerRegion(region);
+    this._linkToParent(region.id, options.parentRegionId);
+
+    return region;
+  }
+
+  /**
+   * Validate region creation options
+   * @param {Object} options
+   * @private
+   */
+  _validateRegionOptions(options) {
+    if (!options.name || typeof options.name !== 'string') {
+      throw new Error('Region name is required and must be a string');
+    }
+    if (!Array.isArray(options.taskIds) || options.taskIds.length === 0) {
+      throw new Error('taskIds must be a non-empty array');
+    }
+  }
+
+  /**
+   * Register region and map tasks
+   * @param {CancellationRegion} region
+   * @private
+   */
+  _registerRegion(region) {
     this.regions.set(region.id, region);
 
-    // Map tasks to region
     for (const taskId of region.taskIds) {
       if (!this.taskToRegions.has(taskId)) {
         this.taskToRegions.set(taskId, new Set());
       }
       this.taskToRegions.get(taskId).add(region.id);
     }
+  }
 
-    // Link to parent region
-    if (options.parentRegionId) {
-      const parent = this.regions.get(options.parentRegionId);
+  /**
+   * Link region to parent
+   * @param {string} regionId
+   * @param {string} [parentRegionId]
+   * @private
+   */
+  _linkToParent(regionId, parentRegionId) {
+    if (parentRegionId) {
+      const parent = this.regions.get(parentRegionId);
       if (parent) {
-        parent.childRegionIds.push(region.id);
+        parent.childRegionIds.push(regionId);
       }
     }
-
-    return region;
   }
 
   /**
@@ -492,8 +515,17 @@ export class CancellationRegionManager {
     this.regions.clear();
     this.taskToRegions.clear();
 
-    for (const region of data.regions || []) {
-      // Reconstruct region with proper Date object
+    this._importRegions(data.regions || []);
+    this._importTaskMappings(data.taskMappings || {});
+  }
+
+  /**
+   * Import regions array
+   * @param {Array} regions
+   * @private
+   */
+  _importRegions(regions) {
+    for (const region of regions) {
       const parsed = {
         id: region.id,
         name: region.name,
@@ -505,8 +537,15 @@ export class CancellationRegionManager {
       };
       this.regions.set(parsed.id, parsed);
     }
+  }
 
-    for (const [taskId, regionIds] of Object.entries(data.taskMappings || {})) {
+  /**
+   * Import task mappings
+   * @param {Object} taskMappings
+   * @private
+   */
+  _importTaskMappings(taskMappings) {
+    for (const [taskId, regionIds] of Object.entries(taskMappings)) {
       this.taskToRegions.set(taskId, new Set(regionIds));
     }
   }
@@ -537,10 +576,18 @@ export class CancellationReceiptLogger {
    */
   log(type, payload) {
     const receipt = createReceipt(type, payload);
-
     this.receipts.push(receipt);
+    this._indexReceipt(receipt, payload);
+    return receipt;
+  }
 
-    // Index by work item ID
+  /**
+   * Index receipt by work item and task
+   * @param {CancellationReceipt} receipt
+   * @param {Object} payload
+   * @private
+   */
+  _indexReceipt(receipt, payload) {
     if (payload.workItemId) {
       if (!this.receiptsByWorkItem.has(payload.workItemId)) {
         this.receiptsByWorkItem.set(payload.workItemId, []);
@@ -548,15 +595,12 @@ export class CancellationReceiptLogger {
       this.receiptsByWorkItem.get(payload.workItemId).push(receipt);
     }
 
-    // Index by task ID
     if (payload.taskId) {
       if (!this.receiptsByTask.has(payload.taskId)) {
         this.receiptsByTask.set(payload.taskId, []);
       }
       this.receiptsByTask.get(payload.taskId).push(receipt);
     }
-
-    return receipt;
   }
 
   /**
@@ -723,28 +767,36 @@ export class CancellationReceiptLogger {
     this.receiptsByTask.clear();
 
     for (const receipt of data) {
-      // Reconstruct receipt with proper Date object
-      const parsed = {
-        id: receipt.id,
-        type: receipt.type,
-        timestamp: new Date(receipt.timestamp),
-        payload: receipt.payload,
-      };
-      this.receipts.push(parsed);
+      this._importReceipt(receipt);
+    }
+  }
 
-      if (parsed.payload.workItemId) {
-        if (!this.receiptsByWorkItem.has(parsed.payload.workItemId)) {
-          this.receiptsByWorkItem.set(parsed.payload.workItemId, []);
-        }
-        this.receiptsByWorkItem.get(parsed.payload.workItemId).push(parsed);
-      }
+  /**
+   * Import single receipt
+   * @param {Object} receipt
+   * @private
+   */
+  _importReceipt(receipt) {
+    const parsed = {
+      id: receipt.id,
+      type: receipt.type,
+      timestamp: new Date(receipt.timestamp),
+      payload: receipt.payload,
+    };
+    this.receipts.push(parsed);
 
-      if (parsed.payload.taskId) {
-        if (!this.receiptsByTask.has(parsed.payload.taskId)) {
-          this.receiptsByTask.set(parsed.payload.taskId, []);
-        }
-        this.receiptsByTask.get(parsed.payload.taskId).push(parsed);
+    if (parsed.payload.workItemId) {
+      if (!this.receiptsByWorkItem.has(parsed.payload.workItemId)) {
+        this.receiptsByWorkItem.set(parsed.payload.workItemId, []);
       }
+      this.receiptsByWorkItem.get(parsed.payload.workItemId).push(parsed);
+    }
+
+    if (parsed.payload.taskId) {
+      if (!this.receiptsByTask.has(parsed.payload.taskId)) {
+        this.receiptsByTask.set(parsed.payload.taskId, []);
+      }
+      this.receiptsByTask.get(parsed.payload.taskId).push(parsed);
     }
   }
 
@@ -832,20 +884,42 @@ export class YawlCancellationManager {
    * @returns {WorkItem}
    */
   createWorkItem(options) {
-    // Validate required fields
+    this._validateWorkItemOptions(options);
+
+    const workItem = this._buildWorkItem(options);
+    this.workItems.set(workItem.id, workItem);
+    this._indexWorkItem(workItem);
+
+    return workItem;
+  }
+
+  /**
+   * Validate work item creation options
+   * @param {Object} options
+   * @private
+   */
+  _validateWorkItemOptions(options) {
     if (!options.taskId || typeof options.taskId !== 'string') {
       throw new Error('taskId is required and must be a string');
     }
     if (!options.caseId || typeof options.caseId !== 'string') {
       throw new Error('caseId is required and must be a string');
     }
+  }
 
+  /**
+   * Build work item object
+   * @param {Object} options
+   * @returns {WorkItem}
+   * @private
+   */
+  _buildWorkItem(options) {
     const timeoutMs = Math.min(
       options.timeoutMs ?? this.config.defaultTimeout,
       this.config.maxTimeout
     );
 
-    const workItem = {
+    return {
       id: randomUUID(),
       taskId: options.taskId,
       caseId: options.caseId,
@@ -860,22 +934,23 @@ export class YawlCancellationManager {
       retryCount: 0,
       metadata: options.metadata,
     };
+  }
 
-    this.workItems.set(workItem.id, workItem);
-
-    // Index by task
+  /**
+   * Index work item by task and case
+   * @param {WorkItem} workItem
+   * @private
+   */
+  _indexWorkItem(workItem) {
     if (!this.workItemsByTask.has(workItem.taskId)) {
       this.workItemsByTask.set(workItem.taskId, new Set());
     }
     this.workItemsByTask.get(workItem.taskId).add(workItem.id);
 
-    // Index by case
     if (!this.workItemsByCase.has(workItem.caseId)) {
       this.workItemsByCase.set(workItem.caseId, new Set());
     }
     this.workItemsByCase.get(workItem.caseId).add(workItem.id);
-
-    return workItem;
   }
 
   /**
@@ -887,10 +962,8 @@ export class YawlCancellationManager {
     const workItem = this.workItems.get(workItemId);
     if (!workItem || workItem.state !== 'pending') return null;
 
-    // Check circuit breaker
     const breaker = this._getOrCreateCircuitBreaker(workItem.taskId);
     if (!breaker.allowExecution()) {
-      // Task is disabled, cancel immediately
       this.cancelWorkItem(workItemId, 'task_disabled');
       return null;
     }
@@ -910,8 +983,6 @@ export class YawlCancellationManager {
 
     workItem.state = 'executing';
     workItem.startedAt = new Date();
-
-    // Start timeout enforcement
     this._startTimeoutEnforcement(workItemId);
 
     return workItem;
@@ -926,10 +997,8 @@ export class YawlCancellationManager {
     const workItem = this.workItems.get(workItemId);
     if (!workItem || workItem.state !== 'executing') return null;
 
-    // Clear timeout
     this._clearTimeout(workItemId);
 
-    // Record success in circuit breaker
     const breaker = this.circuitBreakers.get(workItem.taskId);
     if (breaker) {
       breaker.recordSuccess();
@@ -950,37 +1019,50 @@ export class YawlCancellationManager {
     const workItem = this.workItems.get(workItemId);
     if (!workItem) return { circuitOpened: false };
 
-    // Clear timeout
     this._clearTimeout(workItemId);
-
     workItem.state = 'failed';
     workItem.completedAt = new Date();
 
-    // Record failure in circuit breaker
     const breaker = this._getOrCreateCircuitBreaker(workItem.taskId);
     const circuitOpened = breaker.recordFailure();
 
     if (circuitOpened) {
-      this.receiptLogger.logCircuitBreakerOpen(workItem.taskId, breaker.failureCount);
-
-      // Cancel all enabled work items for this task
-      this._cancelAllWorkItemsForTask(workItem.taskId, 'circuit_breaker');
-
-      // Invoke callback
-      if (this.config.onCircuitOpen) {
-        try {
-          this.config.onCircuitOpen({
-            taskId: workItem.taskId,
-            failureCount: breaker.failureCount,
-            timestamp: new Date(),
-          });
-        } catch {
-          // Ignore callback errors
-        }
-      }
+      this._handleCircuitOpen(workItem.taskId, breaker);
     }
 
     return { circuitOpened, breakerState: breaker.getState() };
+  }
+
+  /**
+   * Handle circuit breaker opening
+   * @param {string} taskId
+   * @param {TaskCircuitBreaker} breaker
+   * @private
+   */
+  _handleCircuitOpen(taskId, breaker) {
+    this.receiptLogger.logCircuitBreakerOpen(taskId, breaker.failureCount);
+    this._cancelAllWorkItemsForTask(taskId, 'circuit_breaker');
+    this._invokeCircuitOpenCallback(taskId, breaker);
+  }
+
+  /**
+   * Invoke circuit open callback
+   * @param {string} taskId
+   * @param {TaskCircuitBreaker} breaker
+   * @private
+   */
+  _invokeCircuitOpenCallback(taskId, breaker) {
+    if (this.config.onCircuitOpen) {
+      try {
+        this.config.onCircuitOpen({
+          taskId,
+          failureCount: breaker.failureCount,
+          timestamp: new Date(),
+        });
+      } catch {
+        // Ignore callback errors
+      }
+    }
   }
 
   // --------------------------------------------------------------------------
@@ -994,52 +1076,19 @@ export class YawlCancellationManager {
    * @returns {Object} Result with cancelled work items
    */
   cancelWorkItem(workItemId, reason) {
-    const workItem = this.workItems.get(workItemId);
-    if (!workItem) {
-      return { success: false, cancelled: [], reason: 'work_item_not_found' };
+    const validation = this._validateCancellation(workItemId);
+    if (!validation.valid) {
+      return { success: false, cancelled: [], reason: validation.reason };
     }
 
-    if (workItem.state === 'cancelled' || workItem.state === 'completed') {
-      return { success: false, cancelled: [], reason: 'already_terminal' };
-    }
-
-    // Clear timeout
-    this._clearTimeout(workItemId);
-
-    // Mark as cancelled
-    workItem.state = 'cancelled';
-    workItem.cancelledAt = new Date();
-    workItem.cancellationReason = reason;
-
-    // Log receipt
-    this.receiptLogger.logCancelledWorkItem(workItemId, reason, workItem.regionId);
-
-    // Invoke cancellation hooks
-    this._invokeCancellationHooks(workItem, reason);
-
-    // Invoke callback
-    if (this.config.onCancellation) {
-      try {
-        this.config.onCancellation({
-          workItemId,
-          taskId: workItem.taskId,
-          reason,
-          timestamp: new Date(),
-        });
-      } catch {
-        // Ignore callback errors
-      }
-    }
+    const workItem = validation.workItem;
+    this._updateWorkItemCancelled(workItem, reason);
+    this._notifyCancellation(workItem, reason);
 
     const cancelled = [workItemId];
+    const regionCancelled = this._handleRegionCancellation(workItem, workItemId, reason);
+    cancelled.push(...regionCancelled);
 
-    // Cancel region siblings if applicable
-    if (workItem.regionId && reason !== 'region_cancelled') {
-      const regionCancelled = this._cancelRegion(workItem.regionId, workItemId, reason);
-      cancelled.push(...regionCancelled);
-    }
-
-    // Propagate to dependent tasks
     const propagated = this._propagateCancellation(workItem.taskId, reason);
     cancelled.push(...propagated);
 
@@ -1048,6 +1097,86 @@ export class YawlCancellationManager {
     }
 
     return { success: true, cancelled, reason };
+  }
+
+  /**
+   * Validate cancellation request
+   * @param {string} workItemId
+   * @returns {Object}
+   * @private
+   */
+  _validateCancellation(workItemId) {
+    const workItem = this.workItems.get(workItemId);
+    if (!workItem) {
+      return { valid: false, reason: 'work_item_not_found' };
+    }
+
+    if (workItem.state === 'cancelled' || workItem.state === 'completed') {
+      return { valid: false, reason: 'already_terminal' };
+    }
+
+    return { valid: true, workItem };
+  }
+
+  /**
+   * Update work item to cancelled state
+   * @param {WorkItem} workItem
+   * @param {string} reason
+   * @private
+   */
+  _updateWorkItemCancelled(workItem, reason) {
+    this._clearTimeout(workItem.id);
+    workItem.state = 'cancelled';
+    workItem.cancelledAt = new Date();
+    workItem.cancellationReason = reason;
+  }
+
+  /**
+   * Notify about cancellation via logs and callbacks
+   * @param {WorkItem} workItem
+   * @param {string} reason
+   * @private
+   */
+  _notifyCancellation(workItem, reason) {
+    this.receiptLogger.logCancelledWorkItem(workItem.id, reason, workItem.regionId);
+    this._invokeCancellationHooks(workItem, reason);
+    this._invokeCancellationCallback(workItem, reason);
+  }
+
+  /**
+   * Invoke cancellation callback
+   * @param {WorkItem} workItem
+   * @param {string} reason
+   * @private
+   */
+  _invokeCancellationCallback(workItem, reason) {
+    if (this.config.onCancellation) {
+      try {
+        this.config.onCancellation({
+          workItemId: workItem.id,
+          taskId: workItem.taskId,
+          reason,
+          timestamp: new Date(),
+        });
+      } catch {
+        // Ignore callback errors
+      }
+    }
+  }
+
+  /**
+   * Handle region cancellation if applicable
+   * @param {WorkItem} workItem
+   * @param {string} sourceWorkItemId
+   * @param {string} reason
+   * @returns {string[]}
+   * @private
+   */
+  _handleRegionCancellation(workItem, sourceWorkItemId, reason) {
+    if (workItem.regionId && reason !== 'region_cancelled') {
+      return this._cancelRegion(workItem.regionId, sourceWorkItemId, reason);
+    }
+    return [];
   }
 
   /**
@@ -1063,35 +1192,63 @@ export class YawlCancellationManager {
     const region = this.regionManager.getRegion(regionId);
     if (!region || !region.active) return cancelled;
 
-    // Get all tasks in region (including nested)
     const tasksInRegion = this.regionManager.getAllTasksInRegion(regionId);
+    this._cancelTasksInRegion(tasksInRegion, sourceWorkItemId, regionId, cancelled);
+    this._deactivateRegionAndLog(regionId, reason, cancelled);
 
-    for (const taskId of tasksInRegion) {
+    return cancelled;
+  }
+
+  /**
+   * Cancel work items for tasks in region
+   * @param {string[]} taskIds
+   * @param {string} sourceWorkItemId
+   * @param {string} regionId
+   * @param {string[]} cancelled - Output array
+   * @private
+   */
+  _cancelTasksInRegion(taskIds, sourceWorkItemId, regionId, cancelled) {
+    for (const taskId of taskIds) {
       const workItemIds = this.workItemsByTask.get(taskId);
       if (!workItemIds) continue;
 
       for (const wiId of workItemIds) {
         if (wiId === sourceWorkItemId) continue;
-
-        const wi = this.workItems.get(wiId);
-        if (wi && wi.state !== 'cancelled' && wi.state !== 'completed') {
-          // Cancel without recursing back to region
-          this._clearTimeout(wiId);
-          wi.state = 'cancelled';
-          wi.cancelledAt = new Date();
-          wi.cancellationReason = 'region_cancelled';
-          this.receiptLogger.logCancelledWorkItem(wiId, 'region_cancelled', regionId);
-          this._invokeCancellationHooks(wi, 'region_cancelled');
-          cancelled.push(wiId);
-        }
+        this._cancelRegionWorkItem(wiId, regionId, cancelled);
       }
     }
+  }
 
-    // Deactivate region
+  /**
+   * Cancel individual work item in region
+   * @param {string} workItemId
+   * @param {string} regionId
+   * @param {string[]} cancelled - Output array
+   * @private
+   */
+  _cancelRegionWorkItem(workItemId, regionId, cancelled) {
+    const wi = this.workItems.get(workItemId);
+    if (wi && wi.state !== 'cancelled' && wi.state !== 'completed') {
+      this._clearTimeout(workItemId);
+      wi.state = 'cancelled';
+      wi.cancelledAt = new Date();
+      wi.cancellationReason = 'region_cancelled';
+      this.receiptLogger.logCancelledWorkItem(workItemId, 'region_cancelled', regionId);
+      this._invokeCancellationHooks(wi, 'region_cancelled');
+      cancelled.push(workItemId);
+    }
+  }
+
+  /**
+   * Deactivate region and log
+   * @param {string} regionId
+   * @param {string} reason
+   * @param {string[]} cancelled
+   * @private
+   */
+  _deactivateRegionAndLog(regionId, reason, cancelled) {
     this.regionManager.deactivateRegion(regionId);
     this.receiptLogger.logRegionCancelled(regionId, reason, cancelled);
-
-    return cancelled;
   }
 
   /**
@@ -1107,24 +1264,34 @@ export class YawlCancellationManager {
     if (!downstreamTasks) return cancelled;
 
     for (const downstreamTaskId of downstreamTasks) {
-      const workItemIds = this.workItemsByTask.get(downstreamTaskId);
-      if (!workItemIds) continue;
-
-      for (const wiId of workItemIds) {
-        const wi = this.workItems.get(wiId);
-        if (wi && (wi.state === 'pending' || wi.state === 'enabled')) {
-          this._clearTimeout(wiId);
-          wi.state = 'cancelled';
-          wi.cancelledAt = new Date();
-          wi.cancellationReason = 'dependency_failed';
-          this.receiptLogger.logCancelledWorkItem(wiId, 'dependency_failed', wi.regionId);
-          this._invokeCancellationHooks(wi, 'dependency_failed');
-          cancelled.push(wiId);
-        }
-      }
+      this._cancelDownstreamWorkItems(downstreamTaskId, cancelled);
     }
 
     return cancelled;
+  }
+
+  /**
+   * Cancel work items for downstream task
+   * @param {string} taskId
+   * @param {string[]} cancelled - Output array
+   * @private
+   */
+  _cancelDownstreamWorkItems(taskId, cancelled) {
+    const workItemIds = this.workItemsByTask.get(taskId);
+    if (!workItemIds) return;
+
+    for (const wiId of workItemIds) {
+      const wi = this.workItems.get(wiId);
+      if (wi && (wi.state === 'pending' || wi.state === 'enabled')) {
+        this._clearTimeout(wiId);
+        wi.state = 'cancelled';
+        wi.cancelledAt = new Date();
+        wi.cancellationReason = 'dependency_failed';
+        this.receiptLogger.logCancelledWorkItem(wiId, 'dependency_failed', wi.regionId);
+        this._invokeCancellationHooks(wi, 'dependency_failed');
+        cancelled.push(wiId);
+      }
+    }
   }
 
   /**
@@ -1175,15 +1342,37 @@ export class YawlCancellationManager {
     if (!workItem || workItem.state !== 'executing') return;
 
     const durationMs = Date.now() - workItem.startedAt.getTime();
+    this._logTimeout(workItem, durationMs);
+    this._invokeTimeoutCallback(workItem, durationMs);
+    this.cancelWorkItem(workItemId, 'timeout');
+  }
 
-    // Log timeout receipt
-    this.receiptLogger.logTimeoutOccurred(workItemId, workItem.taskId, durationMs, workItem.timeoutMs);
+  /**
+   * Log timeout occurrence
+   * @param {WorkItem} workItem
+   * @param {number} durationMs
+   * @private
+   */
+  _logTimeout(workItem, durationMs) {
+    this.receiptLogger.logTimeoutOccurred(
+      workItem.id,
+      workItem.taskId,
+      durationMs,
+      workItem.timeoutMs
+    );
+  }
 
-    // Invoke callback
+  /**
+   * Invoke timeout callback
+   * @param {WorkItem} workItem
+   * @param {number} durationMs
+   * @private
+   */
+  _invokeTimeoutCallback(workItem, durationMs) {
     if (this.config.onTimeout) {
       try {
         this.config.onTimeout({
-          workItemId,
+          workItemId: workItem.id,
           taskId: workItem.taskId,
           durationMs,
           timeoutMs: workItem.timeoutMs,
@@ -1193,9 +1382,6 @@ export class YawlCancellationManager {
         // Ignore callback errors
       }
     }
-
-    // Cancel work item and region
-    this.cancelWorkItem(workItemId, 'timeout');
   }
 
   /**
@@ -1260,7 +1446,7 @@ export class YawlCancellationManager {
    */
   isTaskEnabled(taskId) {
     const breaker = this.circuitBreakers.get(taskId);
-    if (!breaker) return true; // No breaker = enabled
+    if (!breaker) return true;
     return breaker.allowExecution();
   }
 
@@ -1372,36 +1558,54 @@ export class YawlCancellationManager {
    */
   getStateAtTime(timestamp) {
     const receipts = this.receiptLogger.getReceiptsAtTime(timestamp);
-
-    // Reconstruct state from receipts
-    const cancelledWorkItems = new Set();
-    const openCircuitBreakers = new Set();
-    const cancelledRegions = new Set();
-
-    for (const receipt of receipts) {
-      switch (receipt.type) {
-        case 'CANCELLED_WORK_ITEM':
-          cancelledWorkItems.add(receipt.payload.workItemId);
-          break;
-        case 'CIRCUIT_BREAKER_OPEN':
-          openCircuitBreakers.add(receipt.payload.taskId);
-          break;
-        case 'CIRCUIT_BREAKER_CLOSED':
-          openCircuitBreakers.delete(receipt.payload.taskId);
-          break;
-        case 'REGION_CANCELLED':
-          cancelledRegions.add(receipt.payload.regionId);
-          break;
-      }
-    }
+    const state = this._buildEmptyState();
+    this._processReceipts(receipts, state);
 
     return {
       timestamp,
-      cancelledWorkItems: Array.from(cancelledWorkItems),
-      openCircuitBreakers: Array.from(openCircuitBreakers),
-      cancelledRegions: Array.from(cancelledRegions),
+      cancelledWorkItems: Array.from(state.cancelledWorkItems),
+      openCircuitBreakers: Array.from(state.openCircuitBreakers),
+      cancelledRegions: Array.from(state.cancelledRegions),
       receiptCount: receipts.length,
     };
+  }
+
+  /**
+   * Build empty state structure
+   * @returns {Object}
+   * @private
+   */
+  _buildEmptyState() {
+    return {
+      cancelledWorkItems: new Set(),
+      openCircuitBreakers: new Set(),
+      cancelledRegions: new Set(),
+    };
+  }
+
+  /**
+   * Process receipts to build state
+   * @param {CancellationReceipt[]} receipts
+   * @param {Object} state
+   * @private
+   */
+  _processReceipts(receipts, state) {
+    for (const receipt of receipts) {
+      switch (receipt.type) {
+        case 'CANCELLED_WORK_ITEM':
+          state.cancelledWorkItems.add(receipt.payload.workItemId);
+          break;
+        case 'CIRCUIT_BREAKER_OPEN':
+          state.openCircuitBreakers.add(receipt.payload.taskId);
+          break;
+        case 'CIRCUIT_BREAKER_CLOSED':
+          state.openCircuitBreakers.delete(receipt.payload.taskId);
+          break;
+        case 'REGION_CANCELLED':
+          state.cancelledRegions.add(receipt.payload.regionId);
+          break;
+      }
+    }
   }
 
   // --------------------------------------------------------------------------
@@ -1413,15 +1617,8 @@ export class YawlCancellationManager {
    * @returns {Object}
    */
   getStats() {
-    const workItemsByState = {};
-    for (const wi of this.workItems.values()) {
-      workItemsByState[wi.state] = (workItemsByState[wi.state] || 0) + 1;
-    }
-
-    const circuitBreakerStats = {};
-    for (const [taskId, breaker] of this.circuitBreakers) {
-      circuitBreakerStats[taskId] = breaker.getState();
-    }
+    const workItemsByState = this._computeWorkItemsByState();
+    const circuitBreakerStats = this._computeCircuitBreakerStats();
 
     return {
       workItems: {
@@ -1442,6 +1639,32 @@ export class YawlCancellationManager {
     };
   }
 
+  /**
+   * Compute work items grouped by state
+   * @returns {Object}
+   * @private
+   */
+  _computeWorkItemsByState() {
+    const byState = {};
+    for (const wi of this.workItems.values()) {
+      byState[wi.state] = (byState[wi.state] || 0) + 1;
+    }
+    return byState;
+  }
+
+  /**
+   * Compute circuit breaker statistics
+   * @returns {Object}
+   * @private
+   */
+  _computeCircuitBreakerStats() {
+    const stats = {};
+    for (const [taskId, breaker] of this.circuitBreakers) {
+      stats[taskId] = breaker.getState();
+    }
+    return stats;
+  }
+
   // --------------------------------------------------------------------------
   // CLEANUP
   // --------------------------------------------------------------------------
@@ -1451,14 +1674,12 @@ export class YawlCancellationManager {
    * @param {string} reason
    */
   terminate(reason = 'workflow_terminated') {
-    // Cancel all executing work items
     for (const [id, workItem] of this.workItems) {
       if (workItem.state === 'executing' || workItem.state === 'enabled' || workItem.state === 'pending') {
         this.cancelWorkItem(id, reason);
       }
     }
 
-    // Clear all timeouts
     for (const [id, handle] of this.timeoutHandles) {
       clearTimeout(handle);
     }
@@ -1471,20 +1692,38 @@ export class YawlCancellationManager {
    */
   export() {
     return {
-      workItems: Array.from(this.workItems.values()).map(wi => ({
-        ...wi,
-        createdAt: wi.createdAt.toISOString(),
-        startedAt: wi.startedAt?.toISOString(),
-        completedAt: wi.completedAt?.toISOString(),
-        cancelledAt: wi.cancelledAt?.toISOString(),
-      })),
+      workItems: this._exportWorkItems(),
       regions: this.regionManager.export(),
       receipts: this.receiptLogger.export(),
       dependencies: Object.fromEntries(this.taskDependencies),
-      circuitBreakers: Object.fromEntries(
-        Array.from(this.circuitBreakers.entries()).map(([k, v]) => [k, v.getState()])
-      ),
+      circuitBreakers: this._exportCircuitBreakers(),
     };
+  }
+
+  /**
+   * Export work items with serialized dates
+   * @returns {Array}
+   * @private
+   */
+  _exportWorkItems() {
+    return Array.from(this.workItems.values()).map(wi => ({
+      ...wi,
+      createdAt: wi.createdAt.toISOString(),
+      startedAt: wi.startedAt?.toISOString(),
+      completedAt: wi.completedAt?.toISOString(),
+      cancelledAt: wi.cancelledAt?.toISOString(),
+    }));
+  }
+
+  /**
+   * Export circuit breaker states
+   * @returns {Object}
+   * @private
+   */
+  _exportCircuitBreakers() {
+    return Object.fromEntries(
+      Array.from(this.circuitBreakers.entries()).map(([k, v]) => [k, v.getState()])
+    );
   }
 
   /**

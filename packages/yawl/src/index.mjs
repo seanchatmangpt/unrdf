@@ -345,7 +345,7 @@ export {
   RDF_NS,
   XSD_NS,
   TIME_NS,
-} from './resources/yawl-resources.mjs';
+} from './resources/index.mjs';
 
 // YAWL Core Type System (JSDoc + Zod)
 export {
@@ -452,4 +452,4 @@ export {
   WorkItemSchema as WorkflowWorkItemSchema,
   EnableTaskOptionsSchema,
   ReceiptSchema as WorkflowReceiptSchema,
-} from './api/workflow-api.mjs';
+} from './api/index.mjs';

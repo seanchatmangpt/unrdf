@@ -557,6 +557,67 @@ export function deferredChoice(sourceId, candidateIds) {
 }
 
 // =============================================================================
+// Pattern Application - Internal Helpers
+// =============================================================================
+
+/**
+ * Create error result for pattern application
+ * @param {string} patternName - Pattern name
+ * @param {string[]} errors - Error messages
+ * @returns {Object} Error result
+ */
+function createPatternErrorResult(patternName, errors) {
+  return {
+    success: false,
+    pattern: patternName,
+    flows: [],
+    errors,
+  };
+}
+
+/**
+ * Create success result for pattern application
+ * @param {Object} patternResult - Pattern result from builder
+ * @returns {Object} Success result
+ */
+function createPatternSuccessResult(patternResult) {
+  return {
+    success: true,
+    ...patternResult,
+    errors: [],
+  };
+}
+
+/**
+ * Apply sequence pattern
+ * @param {Object} context - Pattern context
+ * @returns {Object} Pattern result
+ */
+function applySequencePattern(context) {
+  return {
+    success: true,
+    pattern: 'Sequence',
+    flows: [sequence(context.sourceId, context.targetId)],
+    errors: [],
+  };
+}
+
+/**
+ * Apply pattern using builder function
+ * @param {string} patternName - Pattern name
+ * @param {Function} builder - Builder function
+ * @param {any[]} args - Builder arguments
+ * @returns {Object} Pattern result
+ */
+function applyWithBuilder(patternName, builder, args) {
+  try {
+    return createPatternSuccessResult(builder(...args));
+  } catch (error) {
+    return createPatternErrorResult(patternName, [error.message]);
+  }
+}
+
+// =============================================================================
 // Pattern Application
 // =============================================================================
 
@@ -578,108 +639,128 @@ export function applyPattern(pattern, context) {
   const patternDef = typeof pattern === 'string' ? PATTERNS[pattern] : pattern;
 
   if (!patternDef) {
-    return {
-      success: false,
-      pattern: String(pattern),
-      flows: [],
-      errors: [`Unknown pattern: ${pattern}`],
-    };
+    return createPatternErrorResult(String(pattern), [`Unknown pattern: ${pattern}`]);
   }
 
   // Validate context
   const validationResult = validatePatternContext(patternDef, context);
   if (!validationResult.valid) {
-    return {
-      success: false,
-      pattern: patternDef.name,
-      flows: [],
-      errors: validationResult.errors,
-    };
+    return createPatternErrorResult(patternDef.name, validationResult.errors);
   }
 
   // Apply pattern based on type
-  try {
-    switch (patternDef.name) {
-      case 'Sequence':
-        return {
-          success: true,
-          pattern: 'Sequence',
-          flows: [sequence(context.sourceId, context.targetId)],
-          errors: [],
-        };
+  switch (patternDef.name) {
+    case 'Sequence':
+      return applySequencePattern(context);
 
-      case 'ParallelSplit':
-        return {
-          success: true,
-          ...parallelSplit(context.sourceId, context.targetIds),
-          errors: [],
-        };
+    case 'ParallelSplit':
+      return applyWithBuilder('ParallelSplit', parallelSplit, [context.sourceId, context.targetIds]);
 
-      case 'Synchronization':
-        return {
-          success: true,
-          ...synchronization(context.sourceIds, context.targetId),
-          errors: [],
-        };
+    case 'Synchronization':
+      return applyWithBuilder('Synchronization', synchronization, [context.sourceIds, context.targetId]);
 
-      case 'ExclusiveChoice':
-        return {
-          success: true,
-          ...exclusiveChoice(context.sourceId, context.branches),
-          errors: [],
-        };
+    case 'ExclusiveChoice':
+      return applyWithBuilder('ExclusiveChoice', exclusiveChoice, [context.sourceId, context.branches]);
 
-      case 'SimpleMerge':
-        return {
-          success: true,
-          ...simpleMerge(context.sourceIds, context.targetId),
-          errors: [],
-        };
+    case 'SimpleMerge':
+      return applyWithBuilder('SimpleMerge', simpleMerge, [context.sourceIds, context.targetId]);
 
-      case 'MultiChoice':
-        return {
-          success: true,
-          ...multiChoice(context.sourceId, context.branches),
-          errors: [],
-        };
+    case 'MultiChoice':
+      return applyWithBuilder('MultiChoice', multiChoice, [context.sourceId, context.branches]);
 
-      case 'StructuredSyncMerge':
-        return {
-          success: true,
-          ...structuredSyncMerge(context.sourceIds, context.targetId),
-          errors: [],
-        };
+    case 'StructuredSyncMerge':
+      return applyWithBuilder('StructuredSyncMerge', structuredSyncMerge, [context.sourceIds, context.targetId]);
 
-      case 'ArbitraryCycle':
-        return {
-          success: true,
-          ...arbitraryCycle(context.sourceId, context.targetId, context.loopCondition),
-          errors: [],
-        };
+    case 'ArbitraryCycle':
+      return applyWithBuilder('ArbitraryCycle', arbitraryCycle, [context.sourceId, context.targetId, context.loopCondition]);
 
-      case 'DeferredChoice':
-        return {
-          success: true,
-          ...deferredChoice(context.sourceId, context.targetIds),
-          errors: [],
-        };
+    case 'DeferredChoice':
+      return applyWithBuilder('DeferredChoice', deferredChoice, [context.sourceId, context.targetIds]);
 
-      default:
-        return {
-          success: false,
-          pattern: patternDef.name,
-          flows: [],
-          errors: [`Pattern ${patternDef.name} not implemented`],
-        };
-    }
-  } catch (error) {
-    return {
-      success: false,
-      pattern: patternDef.name,
-      flows: [],
-      errors: [error.message],
-    };
+    default:
+      return createPatternErrorResult(patternDef.name, [`Pattern ${patternDef.name} not implemented`]);
   }
+}
+
+// =============================================================================
+// Pattern Validation - Internal Helpers
+// =============================================================================
+
+/**
+ * Validate split type requirements
+ * @param {PatternDefinition} patternDef - Pattern definition
+ * @param {Object} context - Pattern context
+ * @returns {string[]} Error messages
+ */
+function validateSplitTypeRequirements(patternDef, context) {
+  const errors = [];
+
+  if (patternDef.splitType === 'none') {
+    return errors;
+  }
+
+  if (!context.sourceId) {
+    errors.push(`Pattern ${patternDef.name} requires sourceId`);
+  }
+
+  const branchCount = context.targetIds?.length || context.branches?.length || 0;
+  if (branchCount < patternDef.minBranches) {
+    errors.push(
+      `Pattern ${patternDef.name} requires at least ${patternDef.minBranches} branches, got ${branchCount}`
+    );
+  }
+
+  return errors;
+}
+
+/**
+ * Validate join type requirements
+ * @param {PatternDefinition} patternDef - Pattern definition
+ * @param {Object} context - Pattern context
+ * @returns {string[]} Error messages
+ */
+function validateJoinTypeRequirements(patternDef, context) {
+  const errors = [];
+
+  if (patternDef.joinType === 'none') {
+    return errors;
+  }
+
+  if (!context.targetId) {
+    errors.push(`Pattern ${patternDef.name} requires targetId`);
+  }
+
+  const sourceCount = context.sourceIds?.length || 0;
+  if (sourceCount < patternDef.minBranches) {
+    errors.push(
+      `Pattern ${patternDef.name} requires at least ${patternDef.minBranches} source tasks, got ${sourceCount}`
+    );
+  }
+
+  return errors;
+}
+
+/**
+ * Validate sequence pattern requirements
+ * @param {PatternDefinition} patternDef - Pattern definition
+ * @param {Object} context - Pattern context
+ * @returns {string[]} Error messages
+ */
+function validateSequenceRequirements(patternDef, context) {
+  const errors = [];
+
+  if (patternDef.name !== 'Sequence') {
+    return errors;
+  }
+
+  if (!context.sourceId) {
+    errors.push('Sequence pattern requires sourceId');
+  }
+  if (!context.targetId) {
+    errors.push('Sequence pattern requires targetId');
+  }
+
+  return errors;
 }
 
 // =============================================================================
@@ -694,53 +775,16 @@ export function applyPattern(pattern, context) {
  * @returns {PatternValidationResult}
  */
 export function validatePatternContext(patternDef, context) {
-  const errors = [];
-  const warnings = [];
-
-  // Validate based on split type
-  if (patternDef.splitType !== 'none') {
-    if (!context.sourceId) {
-      errors.push(`Pattern ${patternDef.name} requires sourceId`);
-    }
-
-    // Validate branch count for split patterns
-    const branchCount = context.targetIds?.length || context.branches?.length || 0;
-    if (branchCount < patternDef.minBranches) {
-      errors.push(
-        `Pattern ${patternDef.name} requires at least ${patternDef.minBranches} branches, got ${branchCount}`
-      );
-    }
-  }
-
-  // Validate based on join type
-  if (patternDef.joinType !== 'none') {
-    if (!context.targetId) {
-      errors.push(`Pattern ${patternDef.name} requires targetId`);
-    }
-
-    // Validate source count for join patterns
-    const sourceCount = context.sourceIds?.length || 0;
-    if (sourceCount < patternDef.minBranches) {
-      errors.push(
-        `Pattern ${patternDef.name} requires at least ${patternDef.minBranches} source tasks, got ${sourceCount}`
-      );
-    }
-  }
-
-  // Validate sequence pattern
-  if (patternDef.name === 'Sequence') {
-    if (!context.sourceId) {
-      errors.push('Sequence pattern requires sourceId');
-    }
-    if (!context.targetId) {
-      errors.push('Sequence pattern requires targetId');
-    }
-  }
+  const errors = [
+    ...validateSplitTypeRequirements(patternDef, context),
+    ...validateJoinTypeRequirements(patternDef, context),
+    ...validateSequenceRequirements(patternDef, context),
+  ];
 
   return {
     valid: errors.length === 0,
     errors,
-    warnings,
+    warnings: [],
   };
 }
 
@@ -765,6 +809,34 @@ export function validateFlowDef(flowDef) {
 }
 
 /**
+ * Get pattern-specific cardinality requirement
+ * @param {string} patternName - Pattern name
+ * @returns {number} Minimum required count
+ */
+function getPatternMinimumBranches(patternName) {
+  const multibranchPatterns = [
+    'PARALLEL_SPLIT',
+    'SYNCHRONIZATION',
+    'EXCLUSIVE_CHOICE',
+    'SIMPLE_MERGE',
+    'MULTI_CHOICE',
+    'STRUCTURED_SYNC_MERGE',
+    'DEFERRED_CHOICE',
+  ];
+
+  if (multibranchPatterns.includes(patternName)) {
+    return 2;
+  }
+
+  if (patternName === 'SEQUENCE' || patternName === 'ARBITRARY_CYCLE') {
+    const pattern = PATTERNS[patternName];
+    return pattern?.minBranches > 0 ? 1 : 0;
+  }
+
+  return 0;
+}
+
+/**
  * Validate cardinality constraints for a pattern
  *
  * @param {string} patternName - Pattern name
@@ -775,12 +847,11 @@ export function validateFlowDef(flowDef) {
  */
 export function validateCardinality(patternName, config) {
   const errors = [];
-  const warnings = [];
   const pattern = PATTERNS[patternName];
 
   if (!pattern) {
     errors.push(`Unknown pattern: ${patternName}`);
-    return { valid: false, errors, warnings };
+    return { valid: false, errors, warnings: [] };
   }
 
   const count = config.branchCount || config.sourceCount || 0;
@@ -791,29 +862,76 @@ export function validateCardinality(patternName, config) {
     );
   }
 
-  // Specific cardinality checks
-  switch (patternName) {
-    case 'PARALLEL_SPLIT':
-    case 'SYNCHRONIZATION':
-    case 'EXCLUSIVE_CHOICE':
-    case 'SIMPLE_MERGE':
-    case 'MULTI_CHOICE':
-    case 'STRUCTURED_SYNC_MERGE':
-    case 'DEFERRED_CHOICE':
-      if (count < 2) {
-        errors.push(`${patternName} requires at least 2 branches`);
-      }
-      break;
-
-    case 'SEQUENCE':
-    case 'ARBITRARY_CYCLE':
-      if (count < 1 && pattern.minBranches > 0) {
-        errors.push(`${patternName} requires at least 1 branch`);
-      }
-      break;
+  const minRequired = getPatternMinimumBranches(patternName);
+  if (count < minRequired) {
+    errors.push(`${patternName} requires at least ${minRequired} branches`);
   }
 
-  return { valid: errors.length === 0, errors, warnings };
+  return { valid: errors.length === 0, errors, warnings: [] };
+}
+
+/**
+ * Validate split type compatibility
+ * @param {PatternDefinition} pattern - Pattern definition
+ * @param {string} splitType - Split type to validate
+ * @returns {string[]} Warning messages
+ */
+function validateSplitTypeCompatibility(pattern, splitType) {
+  const warnings = [];
+
+  if (pattern.splitType === 'none') {
+    return warnings;
+  }
+
+  if (splitType && splitType !== pattern.splitType && splitType !== 'sequence') {
+    warnings.push(
+      `Pattern ${pattern.name} expects split type '${pattern.splitType}', got '${splitType}'`
+    );
+  }
+
+  return warnings;
+}
+
+/**
+ * Validate join type compatibility
+ * @param {PatternDefinition} pattern - Pattern definition
+ * @param {string} joinType - Join type to validate
+ * @returns {string[]} Warning messages
+ */
+function validateJoinTypeCompatibility(pattern, joinType) {
+  const warnings = [];
+
+  if (pattern.joinType === 'none') {
+    return warnings;
+  }
+
+  if (joinType && joinType !== pattern.joinType && joinType !== 'sequence') {
+    warnings.push(
+      `Pattern ${pattern.name} expects join type '${pattern.joinType}', got '${joinType}'`
+    );
+  }
+
+  return warnings;
+}
+
+/**
+ * Detect common split/join mismatches
+ * @param {string} splitType - Split type
+ * @param {string} joinType - Join type
+ * @returns {string[]} Warning messages
+ */
+function detectSplitJoinMismatches(splitType, joinType) {
+  const warnings = [];
+
+  if (splitType === 'and' && joinType === 'xor') {
+    warnings.push('AND-split with XOR-join may lose tokens (use AND-join for synchronization)');
+  }
+
+  if (splitType === 'or' && joinType === 'and') {
+    warnings.push('OR-split with AND-join may deadlock (use OR-join for structured sync merge)');
+  }
+
+  return warnings;
 }
 
 /**
@@ -826,66 +944,37 @@ export function validateCardinality(patternName, config) {
  * @returns {PatternValidationResult}
  */
 export function validateSplitJoinMatch(config) {
-  const errors = [];
-  const warnings = [];
-
   const { splitType, joinType, patternName } = config;
   const pattern = PATTERNS[patternName];
 
   if (!pattern) {
-    errors.push(`Unknown pattern: ${patternName}`);
-    return { valid: false, errors, warnings };
+    return {
+      valid: false,
+      errors: [`Unknown pattern: ${patternName}`],
+      warnings: [],
+    };
   }
 
-  // Validate split type if pattern requires one
-  if (pattern.splitType !== 'none') {
-    if (splitType && splitType !== pattern.splitType && splitType !== 'sequence') {
-      warnings.push(
-        `Pattern ${patternName} expects split type '${pattern.splitType}', got '${splitType}'`
-      );
-    }
-  }
+  const warnings = [
+    ...validateSplitTypeCompatibility(pattern, splitType),
+    ...validateJoinTypeCompatibility(pattern, joinType),
+    ...detectSplitJoinMismatches(splitType, joinType),
+  ];
 
-  // Validate join type if pattern requires one
-  if (pattern.joinType !== 'none') {
-    if (joinType && joinType !== pattern.joinType && joinType !== 'sequence') {
-      warnings.push(
-        `Pattern ${patternName} expects join type '${pattern.joinType}', got '${joinType}'`
-      );
-    }
-  }
-
-  // Check for common mismatches
-  if (splitType === 'and' && joinType === 'xor') {
-    warnings.push('AND-split with XOR-join may lose tokens (use AND-join for synchronization)');
-  }
-
-  if (splitType === 'or' && joinType === 'and') {
-    warnings.push('OR-split with AND-join may deadlock (use OR-join for structured sync merge)');
-  }
-
-  return { valid: errors.length === 0, errors, warnings };
+  return { valid: true, errors: [], warnings };
 }
 
 /**
- * Detect cycles in a set of flows
- *
+ * Build adjacency graph from flows
  * @param {Array<{from: string, to: string, isCycle?: boolean}>} flows - Flow definitions
- * @param {Object} [options] - Detection options
- * @param {boolean} [options.allowMarkedCycles=true] - Allow flows marked as cycles
- * @returns {{hasCycle: boolean, cycleNodes: string[], allowedCycles: string[][]}}
+ * @param {boolean} allowMarkedCycles - Whether to exclude marked cycles
+ * @returns {{graph: Map<string, string[]>, allowedCycles: string[][]}}
  */
-export function detectCycles(flows, options = {}) {
-  const { allowMarkedCycles = true } = options;
-
-  // Build adjacency list (excluding marked cycles if allowed)
-  /** @type {Map<string, string[]>} */
+function buildFlowGraph(flows, allowMarkedCycles) {
   const graph = new Map();
-  /** @type {string[][]} */
   const allowedCycles = [];
 
   for (const flow of flows) {
-    // Track marked cycles separately
     if (flow.isCycle && allowMarkedCycles) {
       allowedCycles.push([flow.from, flow.to]);
       continue;
@@ -897,12 +986,17 @@ export function detectCycles(flows, options = {}) {
     graph.get(flow.from).push(flow.to);
   }
 
-  // DFS cycle detection
-  /** @type {Set<string>} */
+  return { graph, allowedCycles };
+}
+
+/**
+ * Perform DFS cycle detection
+ * @param {Map<string, string[]>} graph - Adjacency graph
+ * @returns {{hasCycle: boolean, cycleNodes: string[]}}
+ */
+function performCycleDFS(graph) {
   const visited = new Set();
-  /** @type {Set<string>} */
   const recStack = new Set();
-  /** @type {string[]} */
   const cycleNodes = [];
 
   /**
@@ -935,7 +1029,6 @@ export function detectCycles(flows, options = {}) {
     return false;
   }
 
-  // Check all nodes
   let hasCycle = false;
   for (const node of graph.keys()) {
     if (hasCycleDFS(node)) {
@@ -944,9 +1037,26 @@ export function detectCycles(flows, options = {}) {
     }
   }
 
+  return { hasCycle, cycleNodes: hasCycle ? cycleNodes.reverse() : [] };
+}
+
+/**
+ * Detect cycles in a set of flows
+ *
+ * @param {Array<{from: string, to: string, isCycle?: boolean}>} flows - Flow definitions
+ * @param {Object} [options] - Detection options
+ * @param {boolean} [options.allowMarkedCycles=true] - Allow flows marked as cycles
+ * @returns {{hasCycle: boolean, cycleNodes: string[], allowedCycles: string[][]}}
+ */
+export function detectCycles(flows, options = {}) {
+  const { allowMarkedCycles = true } = options;
+
+  const { graph, allowedCycles } = buildFlowGraph(flows, allowMarkedCycles);
+  const { hasCycle, cycleNodes } = performCycleDFS(graph);
+
   return {
     hasCycle,
-    cycleNodes: hasCycle ? cycleNodes.reverse() : [],
+    cycleNodes,
     allowedCycles,
   };
 }

@@ -4,6 +4,7 @@
  */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { createTestWorkflow, createTestTask } from './test-helpers.mjs';
 import {
   createYAWLPolicyPack,
   createTaskEnablementHook,
@@ -53,6 +54,7 @@ const createMockQuad = (taskId, predicate = 'taskState') => ({
   object: { value: 'enabled' },
 });
 
+// Sample workflow defined manually (complex YAWL-specific structure)
 const sampleWorkflow = {
   name: 'approval-workflow',
   version: '1.0.0',
@@ -102,9 +104,6 @@ const sampleWorkflow = {
     { resourceId: 'approver', capacity: 2 },
   ],
   defaultTimeout: 30000,
-  cancellationRegions: {
-    'approval-region': ['approve', 'reject'],
-  },
 };
 
 /* ========================================================================= */
@@ -185,13 +184,16 @@ describe('YAWL Schema Validation', () => {
     });
 
     it('should add default version if missing', () => {
-      const workflow = { name: 'test', tasks: [{ id: 't1', kind: 'AtomicTask' }] };
+      const { id, ...workflow } = createTestWorkflow({
+        name: 'test',
+        tasks: [{ id: 't1', kind: 'AtomicTask' }],
+      });
       const result = YAWLWorkflowSchema.parse(workflow);
       expect(result.version).toBe('1.0.0');
     });
 
     it('should reject workflow without tasks', () => {
-      const workflow = { name: 'test', tasks: [] };
+      const { id, ...workflow } = createTestWorkflow({ name: 'test', tasks: [] });
       expect(() => YAWLWorkflowSchema.parse(workflow)).toThrow();
     });
   });
@@ -286,7 +288,12 @@ describe('SPARQL Query Generators', () => {
 describe('Hook Creation', () => {
   const mockEvaluator = createMockConditionEvaluator();
   const task = { id: 'task1', kind: 'AtomicTask', inputConditions: ['cond1'] };
-  const workflow = { id: crypto.randomUUID(), name: 'test', tasks: [task], controlFlow: [] };
+  const { id, ...workflowBase } = createTestWorkflow({
+    name: 'test',
+    tasks: [task],
+    controlFlow: [],
+  });
+  const workflow = { ...workflowBase, id: 'wf1' };
 
   describe('createTaskEnablementHook', () => {
     it('should create a valid hook definition', () => {
@@ -306,10 +313,11 @@ describe('Hook Creation', () => {
 
   describe('createTaskCompletionHook', () => {
     it('should create a valid hook definition', () => {
-      const workflowWithEdges = {
+      const { id: wfId, ...wfBase } = createTestWorkflow({
         ...workflow,
         controlFlow: [{ source: 'task1', target: 'task2', predicate: 'done' }],
-      };
+      });
+      const workflowWithEdges = { ...wfBase, id: 'wf1' };
       const hook = createTaskCompletionHook(task, workflowWithEdges, mockEvaluator);
       expect(hook.name).toBe('yawl:complete:task1');
       expect(hook.trigger).toBe('after-add');
@@ -329,7 +337,12 @@ describe('Hook Creation', () => {
 
   describe('createTimeoutHook', () => {
     it('should create a timeout hook with default timeout', () => {
-      const hook = createTimeoutHook(task, { ...workflow, defaultTimeout: 30000 });
+      const { id: wfId, ...wfBase } = createTestWorkflow({
+        ...workflow,
+        defaultTimeout: 30000,
+      });
+      const workflowWithTimeout = { ...wfBase, id: 'wf1' };
+      const hook = createTimeoutHook(task, workflowWithTimeout);
       expect(hook.name).toBe('yawl:timeout:task1');
       expect(hook.trigger).toBe('on-timeout');
       expect(hook.metadata.timeout).toBe(30000);
@@ -362,7 +375,12 @@ describe('Async Validators and Routers', () => {
     it('should return valid=true when conditions are satisfied', async () => {
       const evaluator = createMockConditionEvaluator({ satisfied: true });
       const task = { id: 'task1', kind: 'AtomicTask', inputConditions: ['cond1'] };
-      const workflow = { id: crypto.randomUUID(), name: 'test', tasks: [task], controlFlow: [] };
+      const { id, ...workflowBase } = createTestWorkflow({
+        name: 'test',
+        tasks: [task],
+        controlFlow: [],
+      });
+      const workflow = { ...workflowBase, id: 'wf1' };
 
       const validator = createTaskEnablementValidator(task, workflow, evaluator);
       const store = createMockStore();
@@ -378,7 +396,12 @@ describe('Async Validators and Routers', () => {
       evaluator.evaluate = vi.fn().mockResolvedValue(false);
 
       const task = { id: 'task1', kind: 'AtomicTask', inputConditions: ['cond1'] };
-      const workflow = { id: crypto.randomUUID(), name: 'test', tasks: [task], controlFlow: [] };
+      const { id, ...workflowBase } = createTestWorkflow({
+        name: 'test',
+        tasks: [task],
+        controlFlow: [],
+      });
+      const workflow = { ...workflowBase, id: 'wf1' };
 
       const validator = createTaskEnablementValidator(task, workflow, evaluator);
       const store = createMockStore();
@@ -393,7 +416,12 @@ describe('Async Validators and Routers', () => {
       evaluator.evaluate = vi.fn().mockRejectedValue(new Error('Evaluation failed'));
 
       const task = { id: 'task1', kind: 'AtomicTask' };
-      const workflow = { id: crypto.randomUUID(), name: 'test', tasks: [task], controlFlow: [] };
+      const { id, ...workflowBase } = createTestWorkflow({
+        name: 'test',
+        tasks: [task],
+        controlFlow: [],
+      });
+      const workflow = { ...workflowBase, id: 'wf1' };
 
       const validator = createTaskEnablementValidator(task, workflow, evaluator);
       const store = createMockStore();
@@ -409,15 +437,15 @@ describe('Async Validators and Routers', () => {
       const evaluator = createMockConditionEvaluator({ approved: true });
 
       const task = { id: 'review', kind: 'AtomicTask' };
-      const workflow = {
-        id: crypto.randomUUID(),
+      const { id, ...workflowBase } = createTestWorkflow({
         name: 'test',
         tasks: [task],
         controlFlow: [
           { source: 'review', target: 'approve', predicate: 'approved', splitType: 'XOR' },
           { source: 'review', target: 'reject', predicate: '!approved', splitType: 'XOR' },
         ],
-      };
+      });
+      const workflow = { ...workflowBase, id: 'wf1' };
 
       const router = createTaskCompletionRouter(task, workflow, evaluator);
       const store = createMockStore();
@@ -432,15 +460,15 @@ describe('Async Validators and Routers', () => {
       const evaluator = createMockConditionEvaluator();
 
       const task = { id: 'start', kind: 'AtomicTask' };
-      const workflow = {
-        id: crypto.randomUUID(),
+      const { id, ...workflowBase } = createTestWorkflow({
         name: 'test',
         tasks: [task],
         controlFlow: [
           { source: 'start', target: 'task1', predicate: 'true', splitType: 'AND' },
           { source: 'start', target: 'task2', predicate: 'true', splitType: 'AND' },
         ],
-      };
+      });
+      const workflow = { ...workflowBase, id: 'wf1' };
 
       const router = createTaskCompletionRouter(task, workflow, evaluator);
       const store = createMockStore();
@@ -457,15 +485,15 @@ describe('Async Validators and Routers', () => {
       evaluator.evaluate = vi.fn().mockResolvedValue(true);
 
       const task = { id: 'start', kind: 'AtomicTask' };
-      const workflow = {
-        id: crypto.randomUUID(),
+      const { id, ...workflowBase } = createTestWorkflow({
         name: 'test',
         tasks: [task],
         controlFlow: [
           { source: 'start', target: 'task1', predicate: 'cond1', splitType: 'OR' },
           { source: 'start', target: 'task2', predicate: 'cond2', splitType: 'OR' },
         ],
-      };
+      });
+      const workflow = { ...workflowBase, id: 'wf1' };
 
       const router = createTaskCompletionRouter(task, workflow, evaluator);
       const store = createMockStore();
@@ -482,7 +510,12 @@ describe('Async Validators and Routers', () => {
       evaluator.evaluate = vi.fn().mockResolvedValue(true);
 
       const resource = { resourceId: 'r1', capacity: 5 };
-      const workflow = { id: crypto.randomUUID(), name: 'test', tasks: [], controlFlow: [] };
+      const { id, ...workflowBase } = createTestWorkflow({
+        name: 'test',
+        tasks: [],
+        controlFlow: [],
+      });
+      const workflow = { ...workflowBase, id: 'wf1' };
 
       const validator = createResourceAllocationValidator(resource, workflow, evaluator);
       const store = createMockStore();
@@ -497,7 +530,12 @@ describe('Async Validators and Routers', () => {
       evaluator.evaluate = vi.fn().mockResolvedValue(false);
 
       const resource = { resourceId: 'r1', capacity: 5 };
-      const workflow = { id: crypto.randomUUID(), name: 'test', tasks: [], controlFlow: [] };
+      const { id, ...workflowBase } = createTestWorkflow({
+        name: 'test',
+        tasks: [],
+        controlFlow: [],
+      });
+      const workflow = { ...workflowBase, id: 'wf1' };
 
       const validator = createResourceAllocationValidator(resource, workflow, evaluator);
       const store = createMockStore();
@@ -522,7 +560,12 @@ describe('Async Validators and Routers', () => {
         capacity: 5,
         eligibility: 'ASK { ?user a :Reviewer }',
       };
-      const workflow = { id: crypto.randomUUID(), name: 'test', tasks: [], controlFlow: [] };
+      const { id, ...workflowBase } = createTestWorkflow({
+        name: 'test',
+        tasks: [],
+        controlFlow: [],
+      });
+      const workflow = { ...workflowBase, id: 'wf1' };
 
       const validator = createResourceAllocationValidator(resource, workflow, evaluator);
       const store = createMockStore();
@@ -546,7 +589,12 @@ describe('Cancellation Handlers', () => {
         kind: 'AtomicTask',
         cancellationSet: ['reject', 'notify'],
       };
-      const workflow = { id: crypto.randomUUID(), name: 'test', tasks: [task], controlFlow: [] };
+      const { id, ...workflowBase } = createTestWorkflow({
+        name: 'test',
+        tasks: [task],
+        controlFlow: [],
+      });
+      const workflow = { ...workflowBase, id: 'wf1' };
 
       const handler = createCancellationHandler(task, workflow);
       const result = handler(new Error('Task failed'));
@@ -558,15 +606,15 @@ describe('Cancellation Handlers', () => {
 
     it('should include tasks from cancellation regions', () => {
       const task = { id: 'task1', kind: 'AtomicTask' };
-      const workflow = {
-        id: crypto.randomUUID(),
+      const { id, ...workflowBase } = createTestWorkflow({
         name: 'test',
         tasks: [task],
         controlFlow: [],
         cancellationRegions: {
           region1: ['task1', 'task2', 'task3'],
         },
-      };
+      });
+      const workflow = { ...workflowBase, id: 'wf1' };
 
       const handler = createCancellationHandler(task, workflow);
       const result = handler('Cancelled by user');
@@ -578,13 +626,13 @@ describe('Cancellation Handlers', () => {
 
     it('should detect timeout errors in reason', () => {
       const task = { id: 'task1', kind: 'AtomicTask', timeout: 5000 };
-      const workflow = {
-        id: crypto.randomUUID(),
+      const { id, ...workflowBase } = createTestWorkflow({
         name: 'test',
         tasks: [task],
         controlFlow: [],
         defaultTimeout: 30000,
-      };
+      });
+      const workflow = { ...workflowBase, id: 'wf1' };
 
       const handler = createCancellationHandler(task, workflow);
       const result = handler(new Error('Operation timeout after 5000ms'));
@@ -724,7 +772,11 @@ describe('Integration: Complete Workflow Execution', () => {
       if (query.includes('approved') && !query.includes('NOT EXISTS')) {
         return true;
       }
-      return false;
+      if (query.includes('approved')) {
+        return false;
+      }
+      // Default to true for other conditions (like start task enablement)
+      return true;
     });
 
     const policyPack = createYAWLPolicyPack(sampleWorkflow, { conditionEvaluator: evaluator });

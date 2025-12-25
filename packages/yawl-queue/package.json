@@ -1,0 +1,52 @@
+{
+  "name": "@unrdf/yawl-queue",
+  "version": "1.0.0",
+  "description": "Distributed YAWL workflow execution using BullMQ and Redis",
+  "type": "module",
+  "main": "src/adapter.mjs",
+  "exports": {
+    ".": "./src/adapter.mjs",
+    "./adapter": "./src/adapter.mjs",
+    "./examples/data-pipeline": "./src/examples/data-pipeline.mjs"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "example": "node src/examples/data-pipeline.mjs",
+    "lint": "eslint src/ test/ --ext .mjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "yawl",
+    "bullmq",
+    "workflow",
+    "distributed",
+    "queue",
+    "redis",
+    "task-execution"
+  ],
+  "dependencies": {
+    "@unrdf/yawl": "workspace:*",
+    "@unrdf/kgc-4d": "workspace:*",
+    "bullmq": "^5.35.2",
+    "ioredis": "^5.4.2",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "eslint": "^8.0.0",
+    "vitest": "^4.0.15"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=7.0.0"
+  },
+  "sideEffects": false,
+  "files": [
+    "src/",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}
