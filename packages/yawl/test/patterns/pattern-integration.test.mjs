@@ -72,8 +72,8 @@ describe('Integration Tests', () => {
 
       // Step 1: Submit
       const submitItem = yawlCase.getEnabledWorkItems()[0];
-      await engine.startWorkItem(yawlCase.id, submitItem.id, { actor: 'submitter' });
-      const { receipt: submitReceipt } = await engine.completeWorkItem(
+      await engine.startTask(yawlCase.id, submitItem.id, { actor: 'submitter' });
+      const { receipt: submitReceipt } = await engine.completeTask(
         yawlCase.id,
         submitItem.id,
         { description: 'Need new laptop' }
@@ -83,8 +83,8 @@ describe('Integration Tests', () => {
 
       // Step 2: Review (approve)
       const reviewItem = yawlCase.getEnabledWorkItems()[0];
-      await engine.startWorkItem(yawlCase.id, reviewItem.id, { actor: 'reviewer' });
-      const { receipt: reviewReceipt, downstreamEnabled } = await engine.completeWorkItem(
+      await engine.startTask(yawlCase.id, reviewItem.id, { actor: 'reviewer' });
+      const { receipt: reviewReceipt, downstreamEnabled } = await engine.completeTask(
         yawlCase.id,
         reviewItem.id,
         { approved: true, comments: 'Looks good' }
@@ -96,8 +96,8 @@ describe('Integration Tests', () => {
 
       // Step 3: Approve
       const approveItem = yawlCase.getEnabledWorkItems()[0];
-      await engine.startWorkItem(yawlCase.id, approveItem.id);
-      await engine.completeWorkItem(yawlCase.id, approveItem.id);
+      await engine.startTask(yawlCase.id, approveItem.id);
+      await engine.completeTask(yawlCase.id, approveItem.id);
 
       // Assert: Workflow complete
       expect(yawlCase.status).toBe('completed');
@@ -138,10 +138,10 @@ describe('Integration Tests', () => {
       const { case: yawlCase } = await engine.createCase('error-workflow');
 
       const riskyItem = yawlCase.getEnabledWorkItems()[0];
-      await engine.startWorkItem(yawlCase.id, riskyItem.id);
+      await engine.startTask(yawlCase.id, riskyItem.id);
 
       // Simulate failure by cancelling
-      await engine.cancelWorkItem(yawlCase.id, riskyItem.id, 'Task failed');
+      await engine.cancelTask(yawlCase.id, riskyItem.id, 'Task failed');
 
       // Disable circuit breaker for risky task
       await engine.setCircuitBreaker(yawlCase.id, 'risky', false);
@@ -179,21 +179,21 @@ describe('Integration Tests', () => {
 
       // Case 1 starts first
       const work1 = case1.getEnabledWorkItems()[0];
-      const { resource: resource1 } = await engine.startWorkItem(case1.id, work1.id);
+      const { resource: resource1 } = await engine.startTask(case1.id, work1.id);
 
       expect(resource1.id).toBe('sole-specialist');
 
       // Case 2 tries to start - should fail (no resources)
       const work2 = case2.getEnabledWorkItems()[0];
       await expect(
-        engine.startWorkItem(case2.id, work2.id)
+        engine.startTask(case2.id, work2.id)
       ).rejects.toThrow(/No available resources/);
 
       // Case 1 completes - resource released
-      await engine.completeWorkItem(case1.id, work1.id);
+      await engine.completeTask(case1.id, work1.id);
 
       // Now case 2 can start
-      const { resource: resource2 } = await engine.startWorkItem(case2.id, work2.id);
+      const { resource: resource2 } = await engine.startTask(case2.id, work2.id);
       expect(resource2.id).toBe('sole-specialist');
     }, 5000);
   });
@@ -217,10 +217,10 @@ describe('Integration Tests', () => {
 
       // Act & Assert: Measure enableTask
       const workItemA = yawlCase.getEnabledWorkItems()[0];
-      await engine.startWorkItem(yawlCase.id, workItemA.id);
+      await engine.startTask(yawlCase.id, workItemA.id);
 
       const { duration } = await measureTime(async () => {
-        return engine.completeWorkItem(yawlCase.id, workItemA.id);
+        return engine.completeTask(yawlCase.id, workItemA.id);
       });
 
       expect(duration).toBeLessThan(100);

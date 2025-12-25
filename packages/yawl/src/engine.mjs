@@ -396,7 +396,7 @@ export class WorkflowEngine {
     if (this.enableEventLog) {
       await this._logCaseEvent(YAWL_EVENT_TYPES.CASE_CREATED, {
         caseId,
-        workflowId,
+        specId: workflowId,
         data: initialData,
       });
     }
@@ -661,7 +661,7 @@ export class WorkflowEngine {
     }
 
     // Verify task is active
-    if (task.status !== TaskStatus.RUNNING) {
+    if (task.status !== 'running' && task.status !== TaskStatus.ACTIVE) {
       throw new Error(`Task ${workItemId} is not running (status: ${task.status})`);
     }
 

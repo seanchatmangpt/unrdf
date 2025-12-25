@@ -1,5 +1,4 @@
-
-import { createTestWorkflow, createTestEngine, measureTime } from './test-utils.mjs';
+import { createTestWorkflow, createTestEngine, measureTime, sequence } from './test-utils.mjs';
 
 /**
  * YAWL Workflow Patterns Test Suite
@@ -71,8 +70,8 @@ describe('Receipt Tests', () => {
 
       // The receipt building function supports SPARQL
       const workItemA = yawlCase.getEnabledWorkItems()[0];
-      await engine.startWorkItem(yawlCase.id, workItemA.id);
-      await engine.completeWorkItem(yawlCase.id, workItemA.id);
+      await engine.startTask(yawlCase.id, workItemA.id);
+      await engine.completeTask(yawlCase.id, workItemA.id);
 
       // Check that receipts can store SPARQL (even if not all do)
       const receipts = yawlCase.receipts;
@@ -102,8 +101,8 @@ describe('Receipt Tests', () => {
       const { case: yawlCase } = await engine.createCase('actor-receipt-workflow');
       const workItemA = yawlCase.getEnabledWorkItems()[0];
 
-      await engine.startWorkItem(yawlCase.id, workItemA.id, { actor: 'user-123' });
-      await engine.completeWorkItem(yawlCase.id, workItemA.id, {}, 'user-456');
+      await engine.startTask(yawlCase.id, workItemA.id, { actor: 'user-123' });
+      await engine.completeTask(yawlCase.id, workItemA.id, {}, 'user-456');
 
       // Assert
       const receipts = yawlCase.receipts;
@@ -135,12 +134,12 @@ describe('Receipt Tests', () => {
       const { case: yawlCase } = await engine.createCase('chain-workflow');
 
       const workItemA = yawlCase.getEnabledWorkItems()[0];
-      await engine.startWorkItem(yawlCase.id, workItemA.id);
-      await engine.completeWorkItem(yawlCase.id, workItemA.id);
+      await engine.startTask(yawlCase.id, workItemA.id);
+      await engine.completeTask(yawlCase.id, workItemA.id);
 
       const workItemB = yawlCase.getEnabledWorkItems()[0];
-      await engine.startWorkItem(yawlCase.id, workItemB.id);
-      await engine.completeWorkItem(yawlCase.id, workItemB.id);
+      await engine.startTask(yawlCase.id, workItemB.id);
+      await engine.completeTask(yawlCase.id, workItemB.id);
 
       // Verify chain
       const receipts = yawlCase.receipts;

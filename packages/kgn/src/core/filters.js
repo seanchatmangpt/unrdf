@@ -1,6 +1,8 @@
 /**
- * KGEN Filter System - Deterministic template filters
+ * @file KGEN Filter System - Deterministic template filters
+ * @module @unrdf/kgn/core/filters
  *
+ * @description
  * Implements all v1 Lock specification filters:
  * - Text: upper, lower, trim, replace, split, join, slice
  * - Data: default, unique, sort, groupby, map, sum, count
@@ -12,7 +14,16 @@
 
 import crypto from 'crypto';
 
+/**
+ * KGEN Filters class - Template filter system
+ */
 export class KGenFilters {
+  /**
+   * Create a new KGenFilters instance
+   * @param {Object} [options={}] - Filter configuration options
+   * @param {boolean} [options.deterministicMode=true] - Enable deterministic mode
+   * @param {boolean} [options.strictMode=true] - Enable strict error handling
+   */
   constructor(options = {}) {
     this.options = {
       deterministicMode: options.deterministicMode !== false,
@@ -26,6 +37,12 @@ export class KGenFilters {
 
   /**
    * Register a filter function
+   * @param {string} name - Filter name
+   * @param {Function} filterFunction - Filter implementation
+   * @param {Object} [options={}] - Filter options
+   * @param {boolean} [options.deterministic=true] - Whether filter is deterministic
+   * @param {string} [options.description=''] - Filter description
+   * @param {string} [options.category='custom'] - Filter category
    */
   register(name, filterFunction, options = {}) {
     if (typeof filterFunction !== 'function') {
@@ -42,6 +59,10 @@ export class KGenFilters {
 
   /**
    * Apply filter to value
+   * @param {string} filterName - Name of filter to apply
+   * @param {*} value - Value to filter
+   * @param {...*} args - Additional filter arguments
+   * @returns {*} Filtered value
    */
   apply(filterName, value, ...args) {
     const filter = this.filters.get(filterName);
@@ -70,6 +91,8 @@ export class KGenFilters {
 
   /**
    * Check if filter exists
+   * @param {string} filterName - Filter name to check
+   * @returns {boolean} True if filter exists
    */
   has(filterName) {
     return this.filters.has(filterName);
@@ -77,6 +100,7 @@ export class KGenFilters {
 
   /**
    * Get filter count
+   * @returns {number} Number of registered filters
    */
   getFilterCount() {
     return this.filters.size;
@@ -84,6 +108,7 @@ export class KGenFilters {
 
   /**
    * Register all core filters
+   * Registers text, data, format, RDF, validation, CAS, and utility filters
    */
   registerCoreFilters() {
     this.registerTextFilters();
@@ -97,6 +122,7 @@ export class KGenFilters {
 
   /**
    * Text processing filters
+   * Registers upper, lower, trim, replace, split, join, slice filters
    */
   registerTextFilters() {
     this.register('upper', (str) => String(str || '').toUpperCase(), {
@@ -150,6 +176,7 @@ export class KGenFilters {
 
   /**
    * Data processing filters
+   * Registers default, unique, sort, groupby, map, sum, count filters
    */
   registerDataFilters() {
     this.register('default', (value, defaultValue = '') => {
@@ -356,6 +383,7 @@ export class KGenFilters {
 
   /**
    * Validation filters
+   * Registers shaclReport, validate filters
    */
   registerValidationFilters() {
     this.register('shaclReport', (data, shaclShapes = {}) => {
@@ -425,6 +453,7 @@ export class KGenFilters {
 
   /**
    * Utility filters
+   * Registers typeof, length, keys, values, entries, formatDate filters
    */
   registerUtilityFilters() {
     // Non-deterministic filters that throw in deterministic mode
@@ -489,6 +518,7 @@ export class KGenFilters {
 
   /**
    * Get filter statistics
+   * @returns {Object} Filter system statistics
    */
   getStats() {
     const categories = {};

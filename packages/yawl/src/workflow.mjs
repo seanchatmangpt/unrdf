@@ -143,7 +143,7 @@ export const WorkflowSpecSchema = z.object({
   /** Workflow description */
   description: z.string().max(5000).optional(),
   /** Task definitions */
-  tasks: z.array(TaskDefSchema).min(1),
+  tasks: z.array(TaskDefSchema).default([]),
   /** Flow definitions */
   flows: z.array(FlowDefSchema).optional().default([]),
   /** Starting task ID (auto-detected if not specified) */

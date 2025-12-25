@@ -1,4 +1,6 @@
-
+import { mkdtempSync, rmSync } from 'node:fs';
+import { join } from 'node:path';
+import { tmpdir } from 'node:os';
 import { createTestWorkflow, createTestEngine, measureTime } from './test-utils.mjs';
 
 /**
@@ -58,16 +60,16 @@ describe('Time-Travel Tests', () => {
 
       // Complete A
       const workItemA = yawlCase.getEnabledWorkItems()[0];
-      await engine.startWorkItem(yawlCase.id, workItemA.id);
-      await engine.completeWorkItem(yawlCase.id, workItemA.id, { result: 'A' });
+      await engine.startTask(yawlCase.id, workItemA.id);
+      await engine.completeTask(yawlCase.id, workItemA.id, { result: 'A' });
 
       // Create checkpoint after A
       const checkpoint1 = await engine.checkpoint('after-A');
 
       // Complete B
       const workItemB = yawlCase.getEnabledWorkItems()[0];
-      await engine.startWorkItem(yawlCase.id, workItemB.id);
-      await engine.completeWorkItem(yawlCase.id, workItemB.id, { result: 'B' });
+      await engine.startTask(yawlCase.id, workItemB.id);
+      await engine.completeTask(yawlCase.id, workItemB.id, { result: 'B' });
 
       // Create checkpoint after B
       const checkpoint2 = await engine.checkpoint('after-B');
@@ -103,8 +105,8 @@ describe('Time-Travel Tests', () => {
       const { case: yawlCase, receipt: startReceipt } = await engine.createCase('hash-workflow');
 
       const workItemA = yawlCase.getEnabledWorkItems()[0];
-      await engine.startWorkItem(yawlCase.id, workItemA.id);
-      const { receipt: completeAReceipt } = await engine.completeWorkItem(
+      await engine.startTask(yawlCase.id, workItemA.id);
+      const { receipt: completeAReceipt } = await engine.completeTask(
         yawlCase.id,
         workItemA.id
       );
@@ -139,13 +141,13 @@ describe('Time-Travel Tests', () => {
       const work1 = case1.getEnabledWorkItems()[0];
       const work2 = case2.getEnabledWorkItems()[0];
 
-      await engine.startWorkItem(case1.id, work1.id);
-      await engine.completeWorkItem(case1.id, work1.id, { result: 'case1' });
+      await engine.startTask(case1.id, work1.id);
+      await engine.completeTask(case1.id, work1.id, { result: 'case1' });
 
       await engine.checkpoint('case1-done');
 
-      await engine.startWorkItem(case2.id, work2.id);
-      await engine.completeWorkItem(case2.id, work2.id, { result: 'case2' });
+      await engine.startTask(case2.id, work2.id);
+      await engine.completeTask(case2.id, work2.id, { result: 'case2' });
 
       await engine.checkpoint('case2-done');
 
@@ -180,8 +182,8 @@ describe('Time-Travel Tests', () => {
       const { case: yawlCase } = await engine.createCase('partial-workflow');
 
       const workItemA = yawlCase.getEnabledWorkItems()[0];
-      await engine.startWorkItem(yawlCase.id, workItemA.id);
-      const { receipt: enableReceipt } = await engine.completeWorkItem(
+      await engine.startTask(yawlCase.id, workItemA.id);
+      const { receipt: enableReceipt } = await engine.completeTask(
         yawlCase.id,
         workItemA.id
       );

@@ -51,8 +51,8 @@ describe('Cancellation Tests', () => {
 
       // Complete A to spawn B and C
       const workItemA = yawlCase.getEnabledWorkItems()[0];
-      await engine.startWorkItem(yawlCase.id, workItemA.id);
-      await engine.completeWorkItem(yawlCase.id, workItemA.id);
+      await engine.startTask(yawlCase.id, workItemA.id);
+      await engine.completeTask(yawlCase.id, workItemA.id);
 
       // Both B and C should be enabled
       const enabledBC = yawlCase.getEnabledWorkItems();
@@ -60,7 +60,7 @@ describe('Cancellation Tests', () => {
 
       // Cancel only B
       const workItemB = enabledBC.find(w => yawlCase.getTaskDefIdForWorkItem(w.id) === 'B');
-      const { task: cancelledTask, receipt } = await engine.cancelWorkItem(
+      const { task: cancelledTask, receipt } = await engine.cancelTask(
         yawlCase.id,
         workItemB.id,
         'User requested cancellation'
@@ -101,8 +101,8 @@ describe('Cancellation Tests', () => {
 
       // Complete A to spawn B, C, D
       const workItemA = yawlCase.getEnabledWorkItems()[0];
-      await engine.startWorkItem(yawlCase.id, workItemA.id);
-      await engine.completeWorkItem(yawlCase.id, workItemA.id);
+      await engine.startTask(yawlCase.id, workItemA.id);
+      await engine.completeTask(yawlCase.id, workItemA.id);
 
       expect(yawlCase.getEnabledWorkItems().length).toBe(3);
 
@@ -139,7 +139,7 @@ describe('Cancellation Tests', () => {
       // Act
       const { case: yawlCase } = await engine.createCase('timeout-workflow');
       const workItemA = yawlCase.getEnabledWorkItems()[0];
-      await engine.startWorkItem(yawlCase.id, workItemA.id);
+      await engine.startTask(yawlCase.id, workItemA.id);
 
       // Simulate timeout
       const { task, receipt } = await engine.timeoutWorkItem(yawlCase.id, workItemA.id);
@@ -171,8 +171,8 @@ describe('Cancellation Tests', () => {
 
       // Complete A to enable B
       const workItemA = yawlCase.getEnabledWorkItems()[0];
-      await engine.startWorkItem(yawlCase.id, workItemA.id);
-      await engine.completeWorkItem(yawlCase.id, workItemA.id);
+      await engine.startTask(yawlCase.id, workItemA.id);
+      await engine.completeTask(yawlCase.id, workItemA.id);
 
       // B should be enabled
       const workItemB = yawlCase.getEnabledWorkItems()[0];

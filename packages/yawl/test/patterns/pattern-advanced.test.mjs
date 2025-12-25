@@ -33,11 +33,11 @@ import { createTestWorkflow, createTestEngine, measureTime } from './test-utils.
 
       const { case: yawlCase } = await engine.createCase('perf-complete-workflow');
       const workItemA = yawlCase.getEnabledWorkItems()[0];
-      await engine.startWorkItem(yawlCase.id, workItemA.id);
+      await engine.startTask(yawlCase.id, workItemA.id);
 
       // Act & Assert
       const { duration } = await measureTime(async () => {
-        return engine.completeWorkItem(yawlCase.id, workItemA.id, { result: 'done' });
+        return engine.completeTask(yawlCase.id, workItemA.id, { result: 'done' });
       });
 
       expect(duration).toBeLessThan(100);
@@ -54,8 +54,8 @@ import { createTestWorkflow, createTestEngine, measureTime } from './test-utils.
 
       const { case: yawlCase } = await engine.createCase('perf-timetravel-workflow');
       const workItemA = yawlCase.getEnabledWorkItems()[0];
-      await engine.startWorkItem(yawlCase.id, workItemA.id);
-      await engine.completeWorkItem(yawlCase.id, workItemA.id);
+      await engine.startTask(yawlCase.id, workItemA.id);
+      await engine.completeTask(yawlCase.id, workItemA.id);
 
       await engine.checkpoint('test');
 
@@ -103,15 +103,15 @@ describe('Additional Workflow Patterns (WP8-WP20)', () => {
 
     // Complete A to spawn B and C
     const workItemA = yawlCase.getEnabledWorkItems()[0];
-    await engine.startWorkItem(yawlCase.id, workItemA.id);
-    await engine.completeWorkItem(yawlCase.id, workItemA.id);
+    await engine.startTask(yawlCase.id, workItemA.id);
+    await engine.completeTask(yawlCase.id, workItemA.id);
 
     // Complete B - D should be enabled (XOR-join)
     const workItemB = yawlCase.getEnabledWorkItems().find(
       w => yawlCase.getTaskDefIdForWorkItem(w.id) === 'B'
     );
-    await engine.startWorkItem(yawlCase.id, workItemB.id);
-    const { downstreamEnabled } = await engine.completeWorkItem(yawlCase.id, workItemB.id);
+    await engine.startTask(yawlCase.id, workItemB.id);
+    const { downstreamEnabled } = await engine.completeTask(yawlCase.id, workItemB.id);
 
     expect(downstreamEnabled.length).toBe(1);
     expect(downstreamEnabled[0].taskId).toBe('D');
@@ -139,15 +139,15 @@ describe('Additional Workflow Patterns (WP8-WP20)', () => {
     const { case: yawlCase } = await engine.createCase('discriminator-workflow');
 
     const workItemA = yawlCase.getEnabledWorkItems()[0];
-    await engine.startWorkItem(yawlCase.id, workItemA.id);
-    await engine.completeWorkItem(yawlCase.id, workItemA.id);
+    await engine.startTask(yawlCase.id, workItemA.id);
+    await engine.completeTask(yawlCase.id, workItemA.id);
 
     // Complete just B - D should be enabled immediately
     const workItemB = yawlCase.getEnabledWorkItems().find(
       w => yawlCase.getTaskDefIdForWorkItem(w.id) === 'B'
     );
-    await engine.startWorkItem(yawlCase.id, workItemB.id);
-    const { downstreamEnabled } = await engine.completeWorkItem(yawlCase.id, workItemB.id);
+    await engine.startTask(yawlCase.id, workItemB.id);
+    const { downstreamEnabled } = await engine.completeTask(yawlCase.id, workItemB.id);
 
     expect(downstreamEnabled.length).toBe(1);
   }, 5000);
@@ -166,8 +166,8 @@ describe('Additional Workflow Patterns (WP8-WP20)', () => {
     const { case: yawlCase } = await engine.createCase('implicit-term-workflow');
 
     const workItemA = yawlCase.getEnabledWorkItems()[0];
-    await engine.startWorkItem(yawlCase.id, workItemA.id);
-    await engine.completeWorkItem(yawlCase.id, workItemA.id);
+    await engine.startTask(yawlCase.id, workItemA.id);
+    await engine.completeTask(yawlCase.id, workItemA.id);
 
     // Case should be complete (no more work)
     expect(yawlCase.status).toBe('completed');
@@ -188,9 +188,9 @@ describe('Additional Workflow Patterns (WP8-WP20)', () => {
     const { case: yawlCase } = await engine.createCase('cancel-task-workflow');
 
     const workItemA = yawlCase.getEnabledWorkItems()[0];
-    await engine.startWorkItem(yawlCase.id, workItemA.id);
+    await engine.startTask(yawlCase.id, workItemA.id);
 
-    const { task, receipt } = await engine.cancelWorkItem(
+    const { task, receipt } = await engine.cancelTask(
       yawlCase.id,
       workItemA.id,
       'User cancelled'
@@ -220,8 +220,8 @@ describe('Additional Workflow Patterns (WP8-WP20)', () => {
     const { case: yawlCase } = await engine.createCase('cancel-case-workflow');
 
     const workItemA = yawlCase.getEnabledWorkItems()[0];
-    await engine.startWorkItem(yawlCase.id, workItemA.id);
-    await engine.completeWorkItem(yawlCase.id, workItemA.id);
+    await engine.startTask(yawlCase.id, workItemA.id);
+    await engine.completeTask(yawlCase.id, workItemA.id);
 
     expect(yawlCase.getEnabledWorkItems().length).toBe(2);
 

@@ -76,8 +76,8 @@ describe('Van der Aalst Workflow Patterns', () => {
       expect(enabledA.length).toBe(1);
 
       const workItemA = enabledA[0];
-      await engine.startWorkItem(yawlCase.id, workItemA.id);
-      const { receipt: completeAReceipt, downstreamEnabled } = await engine.completeWorkItem(
+      await engine.startTask(yawlCase.id, workItemA.id);
+      const { receipt: completeAReceipt, downstreamEnabled } = await engine.completeTask(
         yawlCase.id,
         workItemA.id,
         { result: 'A done' }
@@ -90,8 +90,8 @@ describe('Van der Aalst Workflow Patterns', () => {
       const enabledB = yawlCase.getEnabledWorkItems();
       expect(enabledB.length).toBe(1);
       const workItemB = enabledB[0];
-      await engine.startWorkItem(yawlCase.id, workItemB.id);
-      const { downstreamEnabled: downstreamFromB } = await engine.completeWorkItem(
+      await engine.startTask(yawlCase.id, workItemB.id);
+      const { downstreamEnabled: downstreamFromB } = await engine.completeTask(
         yawlCase.id,
         workItemB.id,
         { result: 'B done' }
@@ -104,8 +104,8 @@ describe('Van der Aalst Workflow Patterns', () => {
       const enabledC = yawlCase.getEnabledWorkItems();
       expect(enabledC.length).toBe(1);
       const workItemC = enabledC[0];
-      await engine.startWorkItem(yawlCase.id, workItemC.id);
-      await engine.completeWorkItem(yawlCase.id, workItemC.id, { result: 'C done' });
+      await engine.startTask(yawlCase.id, workItemC.id);
+      await engine.completeTask(yawlCase.id, workItemC.id, { result: 'C done' });
 
       // Assert: Case completed
       expect(yawlCase.status).toBe('completed');
@@ -145,8 +145,8 @@ describe('Van der Aalst Workflow Patterns', () => {
 
       // Complete A
       const workItemA = yawlCase.getEnabledWorkItems()[0];
-      await engine.startWorkItem(yawlCase.id, workItemA.id);
-      const { downstreamEnabled } = await engine.completeWorkItem(
+      await engine.startTask(yawlCase.id, workItemA.id);
+      const { downstreamEnabled } = await engine.completeTask(
         yawlCase.id,
         workItemA.id
       );
@@ -186,14 +186,14 @@ describe('Van der Aalst Workflow Patterns', () => {
 
       // Complete A to spawn B and C
       const workItemA = yawlCase.getEnabledWorkItems()[0];
-      await engine.startWorkItem(yawlCase.id, workItemA.id);
-      await engine.completeWorkItem(yawlCase.id, workItemA.id);
+      await engine.startTask(yawlCase.id, workItemA.id);
+      await engine.completeTask(yawlCase.id, workItemA.id);
 
       // Complete B only - D should NOT be enabled yet
       const enabledBC = yawlCase.getEnabledWorkItems();
       const workItemB = enabledBC.find(w => yawlCase.getTaskDefIdForWorkItem(w.id) === 'B');
-      await engine.startWorkItem(yawlCase.id, workItemB.id);
-      const { downstreamEnabled: afterB } = await engine.completeWorkItem(
+      await engine.startTask(yawlCase.id, workItemB.id);
+      const { downstreamEnabled: afterB } = await engine.completeTask(
         yawlCase.id,
         workItemB.id
       );
@@ -205,8 +205,8 @@ describe('Van der Aalst Workflow Patterns', () => {
       const workItemC = yawlCase.getEnabledWorkItems().find(
         w => yawlCase.getTaskDefIdForWorkItem(w.id) === 'C'
       );
-      await engine.startWorkItem(yawlCase.id, workItemC.id);
-      const { downstreamEnabled: afterC } = await engine.completeWorkItem(
+      await engine.startTask(yawlCase.id, workItemC.id);
+      const { downstreamEnabled: afterC } = await engine.completeTask(
         yawlCase.id,
         workItemC.id
       );
@@ -243,8 +243,8 @@ describe('Van der Aalst Workflow Patterns', () => {
       // Act: Test approval path
       const { case: case1 } = await engine.createCase('xor-workflow', { approved: true });
       const workItem1 = case1.getEnabledWorkItems()[0];
-      await engine.startWorkItem(case1.id, workItem1.id);
-      const { downstreamEnabled: enabled1 } = await engine.completeWorkItem(
+      await engine.startTask(case1.id, workItem1.id);
+      const { downstreamEnabled: enabled1 } = await engine.completeTask(
         case1.id,
         workItem1.id,
         { approved: true }
@@ -256,8 +256,8 @@ describe('Van der Aalst Workflow Patterns', () => {
       // Act: Test rejection path
       const { case: case2 } = await engine.createCase('xor-workflow', { approved: false });
       const workItem2 = case2.getEnabledWorkItems()[0];
-      await engine.startWorkItem(case2.id, workItem2.id);
-      const { downstreamEnabled: enabled2 } = await engine.completeWorkItem(
+      await engine.startTask(case2.id, workItem2.id);
+      const { downstreamEnabled: enabled2 } = await engine.completeTask(
         case2.id,
         workItem2.id,
         { approved: false }
@@ -302,14 +302,14 @@ describe('Van der Aalst Workflow Patterns', () => {
       // Act: Take path B
       const { case: yawlCase } = await engine.createCase('merge-workflow', { path: 'B' });
       const workItemStart = yawlCase.getEnabledWorkItems()[0];
-      await engine.startWorkItem(yawlCase.id, workItemStart.id);
-      await engine.completeWorkItem(yawlCase.id, workItemStart.id, { path: 'B' });
+      await engine.startTask(yawlCase.id, workItemStart.id);
+      await engine.completeTask(yawlCase.id, workItemStart.id, { path: 'B' });
 
       const workItemB = yawlCase.getEnabledWorkItems()[0];
       expect(yawlCase.getTaskDefIdForWorkItem(workItemB.id)).toBe('B');
 
-      await engine.startWorkItem(yawlCase.id, workItemB.id);
-      const { downstreamEnabled } = await engine.completeWorkItem(
+      await engine.startTask(yawlCase.id, workItemB.id);
+      const { downstreamEnabled } = await engine.completeTask(
         yawlCase.id,
         workItemB.id
       );
@@ -353,8 +353,8 @@ describe('Van der Aalst Workflow Patterns', () => {
       });
 
       const workItemA = yawlCase.getEnabledWorkItems()[0];
-      await engine.startWorkItem(yawlCase.id, workItemA.id);
-      const { downstreamEnabled } = await engine.completeWorkItem(
+      await engine.startTask(yawlCase.id, workItemA.id);
+      const { downstreamEnabled } = await engine.completeTask(
         yawlCase.id,
         workItemA.id,
         { optionB: true, optionC: true, optionD: false }
@@ -396,16 +396,16 @@ describe('Van der Aalst Workflow Patterns', () => {
       });
 
       const workItemA = yawlCase.getEnabledWorkItems()[0];
-      await engine.startWorkItem(yawlCase.id, workItemA.id);
-      await engine.completeWorkItem(yawlCase.id, workItemA.id, { goB: true, goC: true });
+      await engine.startTask(yawlCase.id, workItemA.id);
+      await engine.completeTask(yawlCase.id, workItemA.id, { goB: true, goC: true });
 
       // Complete B
       const enabledBC = yawlCase.getEnabledWorkItems();
       expect(enabledBC.length).toBe(2);
 
       const workItemB = enabledBC.find(w => yawlCase.getTaskDefIdForWorkItem(w.id) === 'B');
-      await engine.startWorkItem(yawlCase.id, workItemB.id);
-      const { downstreamEnabled: afterB } = await engine.completeWorkItem(
+      await engine.startTask(yawlCase.id, workItemB.id);
+      const { downstreamEnabled: afterB } = await engine.completeTask(
         yawlCase.id,
         workItemB.id
       );
@@ -417,8 +417,8 @@ describe('Van der Aalst Workflow Patterns', () => {
       const workItemC = yawlCase.getEnabledWorkItems().find(
         w => yawlCase.getTaskDefIdForWorkItem(w.id) === 'C'
       );
-      await engine.startWorkItem(yawlCase.id, workItemC.id);
-      const { downstreamEnabled: afterC } = await engine.completeWorkItem(
+      await engine.startTask(yawlCase.id, workItemC.id);
+      const { downstreamEnabled: afterC } = await engine.completeTask(
         yawlCase.id,
         workItemC.id
       );

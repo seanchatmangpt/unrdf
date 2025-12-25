@@ -1,4 +1,4 @@
-
+import { YawlResourcePool } from '../../src/index.mjs';
 import { createTestWorkflow, createTestEngine, measureTime } from './test-utils.mjs';
 
 /**

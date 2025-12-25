@@ -36,7 +36,7 @@ export function createSpanData(name, status, duration, attributes = {}) {
  * @returns {Promise<Object>} Execution result
  */
 export async function executeKnowledgeEngine(validator, parentSpan, validationId) {
-  const { parseTurtle, query, validateShacl } = await import('../knowledge-engine/index.mjs');
+  const { parseTurtle, query, validateShacl } = await import('../../knowledge-engine/src/index.mjs');
 
   const spans = [];
 
@@ -152,7 +152,7 @@ export async function executeKnowledgeEngine(validator, parentSpan, validationId
  * @returns {Promise<Object>} Execution result
  */
 export async function executeCLIParse(validator, parentSpan, validationId) {
-  const { parseTurtle } = await import('../knowledge-engine/index.mjs');
+  const { parseTurtle } = await import('../../knowledge-engine/src/index.mjs');
 
   const spans = [];
   const testTurtle = `
@@ -215,7 +215,7 @@ export async function executeCLIParse(validator, parentSpan, validationId) {
  * @returns {Promise<Object>} Execution result
  */
 export async function executeCLIQuery(validator, parentSpan, validationId) {
-  const { parseTurtle, query } = await import('../knowledge-engine/index.mjs');
+  const { parseTurtle, query } = await import('../../knowledge-engine/src/index.mjs');
 
   const spans = [];
   const testTurtle = `
@@ -281,7 +281,7 @@ export async function executeCLIQuery(validator, parentSpan, validationId) {
  * @returns {Promise<Object>} Execution result
  */
 export async function executeCLIValidate(validator, parentSpan, validationId) {
-  const { parseTurtle, validateShacl } = await import('../knowledge-engine/index.mjs');
+  const { parseTurtle, validateShacl } = await import('../../knowledge-engine/src/index.mjs');
 
   const spans = [];
   const testTurtle = `
@@ -337,7 +337,7 @@ export async function executeCLIValidate(validator, parentSpan, validationId) {
  * @returns {Promise<Object>} Execution result
  */
 export async function executeCLIHook(validator, parentSpan, validationId) {
-  const { parseTurtle, query } = await import('../knowledge-engine/index.mjs');
+  const { parseTurtle, query } = await import('../../knowledge-engine/src/index.mjs');
 
   const spans = [];
   const hookStart = Date.now();
@@ -404,7 +404,7 @@ export async function executeTransactionManager(validator, parentSpan, validatio
   const txId = 'tx-' + randomUUID();
 
   try {
-    const { TransactionManager } = await import('../knowledge-engine/index.mjs');
+    const { TransactionManager } = await import('../../knowledge-engine/src/index.mjs');
 
     const _txManager = new TransactionManager();
 
@@ -480,7 +480,7 @@ export async function executeKnowledgeEngineCore(validator, parentSpan, validati
   const spans = [];
 
   try {
-    const { parseTurtle, query, validateShacl } = await import('../knowledge-engine/index.mjs');
+    const { parseTurtle, query, validateShacl } = await import('../../knowledge-engine/src/index.mjs');
 
     const testTurtle = `
       @prefix ex: <http://example.org/> .
@@ -618,7 +618,7 @@ export async function executeKnowledgeEngineCore(validator, parentSpan, validati
  * @returns {Promise<Object>} Execution result
  */
 export async function executeKnowledgeHooksAPI(validator, parentSpan, validationId) {
-  const { defineHook } = await import('../knowledge-engine/define-hook.mjs');
+  const { defineHook } = await import('../../knowledge-engine/src/define-hook.mjs');
 
   const spans = [];
 

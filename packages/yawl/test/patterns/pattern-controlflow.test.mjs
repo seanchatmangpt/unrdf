@@ -61,8 +61,8 @@ describe('Control Flow Tests', () => {
 
       // Init
       const initItem = yawlCase.getEnabledWorkItems()[0];
-      await engine.startWorkItem(yawlCase.id, initItem.id);
-      await engine.completeWorkItem(yawlCase.id, initItem.id, { count: 0 });
+      await engine.startTask(yawlCase.id, initItem.id);
+      await engine.completeTask(yawlCase.id, initItem.id, { count: 0 });
 
       // Process loop - increment count each iteration
       let loopCount = 0;
@@ -74,14 +74,14 @@ describe('Control Flow Tests', () => {
         const taskDef = yawlCase.getTaskDefIdForWorkItem(task.id);
 
         if (taskDef === 'done') {
-          await engine.startWorkItem(yawlCase.id, task.id);
-          await engine.completeWorkItem(yawlCase.id, task.id);
+          await engine.startTask(yawlCase.id, task.id);
+          await engine.completeTask(yawlCase.id, task.id);
           break;
         }
 
         loopCount++;
-        await engine.startWorkItem(yawlCase.id, task.id);
-        await engine.completeWorkItem(yawlCase.id, task.id, { count: loopCount });
+        await engine.startTask(yawlCase.id, task.id);
+        await engine.completeTask(yawlCase.id, task.id, { count: loopCount });
       }
 
       // Assert: Loop ran 3 times then exited
@@ -120,14 +120,14 @@ describe('Control Flow Tests', () => {
 
       // Execute start
       const startItem = yawlCase.getEnabledWorkItems()[0];
-      await engine.startWorkItem(yawlCase.id, startItem.id);
-      await engine.completeWorkItem(yawlCase.id, startItem.id, { path: 'a', sub: 'b' });
+      await engine.startTask(yawlCase.id, startItem.id);
+      await engine.completeTask(yawlCase.id, startItem.id, { path: 'a', sub: 'b' });
 
       // Execute level1a
       const level1aItem = yawlCase.getEnabledWorkItems()[0];
       expect(yawlCase.getTaskDefIdForWorkItem(level1aItem.id)).toBe('level1a');
-      await engine.startWorkItem(yawlCase.id, level1aItem.id);
-      const { downstreamEnabled } = await engine.completeWorkItem(
+      await engine.startTask(yawlCase.id, level1aItem.id);
+      const { downstreamEnabled } = await engine.completeTask(
         yawlCase.id,
         level1aItem.id,
         { path: 'a', sub: 'b' }
@@ -164,10 +164,10 @@ describe('Control Flow Tests', () => {
 
       // Complete wait with selection
       const waitItem = yawlCase.getEnabledWorkItems()[0];
-      await engine.startWorkItem(yawlCase.id, waitItem.id);
+      await engine.startTask(yawlCase.id, waitItem.id);
 
       // Simulate external trigger selecting optionA
-      const { downstreamEnabled } = await engine.completeWorkItem(
+      const { downstreamEnabled } = await engine.completeTask(
         yawlCase.id,
         waitItem.id,
         { selectedOption: 'optionA' }

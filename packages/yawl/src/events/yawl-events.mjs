@@ -96,7 +96,7 @@ const ReceiptSchema = z.object({
     reasoning: z.string().optional(),
   }),
   /** Git reference from snapshot (if available) */
-  gitRef: z.string().optional(),
+  gitRef: z.string().nullish(),
   /** Nanosecond timestamp */
   t_ns: z.string(),
   /** ISO timestamp for display */
@@ -107,7 +107,7 @@ const ReceiptSchema = z.object({
  * CASE_CREATED event payload schema
  */
 const CaseCreatedSchema = z.object({
-  caseId: z.string().uuid(),
+  caseId: z.string().min(1),
   specId: z.string().min(1),
   timestamp: z.string(),
   receipt: ReceiptSchema,
@@ -118,8 +118,8 @@ const CaseCreatedSchema = z.object({
  */
 const TaskEnabledSchema = z.object({
   taskId: z.string().min(1),
-  caseId: z.string().uuid(),
-  workItemId: z.string().uuid(),
+  caseId: z.string().min(1),
+  workItemId: z.string().min(1),
   enabledAt: z.string(),
   receipt: ReceiptSchema,
 });
@@ -128,7 +128,7 @@ const TaskEnabledSchema = z.object({
  * TASK_STARTED event payload schema
  */
 const TaskStartedSchema = z.object({
-  workItemId: z.string().uuid(),
+  workItemId: z.string().min(1),
   startedAt: z.string(),
   receipt: ReceiptSchema,
 });
@@ -137,7 +137,7 @@ const TaskStartedSchema = z.object({
  * TASK_COMPLETED event payload schema
  */
 const TaskCompletedSchema = z.object({
-  workItemId: z.string().uuid(),
+  workItemId: z.string().min(1),
   completedAt: z.string(),
   result: z.any(),
   receipt: ReceiptSchema,
@@ -147,7 +147,7 @@ const TaskCompletedSchema = z.object({
  * TASK_CANCELLED event payload schema
  */
 const TaskCancelledSchema = z.object({
-  workItemId: z.string().uuid(),
+  workItemId: z.string().min(1),
   cancelledAt: z.string(),
   reason: z.string(),
   receipt: ReceiptSchema,
@@ -157,9 +157,9 @@ const TaskCancelledSchema = z.object({
  * WORK_ITEM_CREATED event payload schema
  */
 const WorkItemCreatedSchema = z.object({
-  workItemId: z.string().uuid(),
+  workItemId: z.string().min(1),
   taskId: z.string().min(1),
-  caseId: z.string().uuid(),
+  caseId: z.string().min(1),
   createdAt: z.string(),
 });
 
@@ -167,7 +167,7 @@ const WorkItemCreatedSchema = z.object({
  * CONTROL_FLOW_EVALUATED event payload schema
  */
 const ControlFlowEvaluatedSchema = z.object({
-  caseId: z.string().uuid(),
+  caseId: z.string().min(1),
   taskId: z.string().min(1),
   result: z.boolean(),
   timestamp: z.string(),

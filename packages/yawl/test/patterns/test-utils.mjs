@@ -75,6 +75,9 @@ function createTestWorkflow(config = {}) {
     id: config.id ?? `test-workflow-${Date.now()}`,
     name: config.name ?? 'Test Workflow',
     version: config.version ?? '1.0.0',
+    tasks: config.tasks ?? [],
+    flows: config.flows ?? [],
+    endpoints: config.endpoints ?? [],
   });
 }
 
@@ -100,6 +103,100 @@ async function measureTime(fn) {
   const result = await fn();
   const duration = performance.now() - start;
   return { result, duration };
+}
+
+// =============================================================================
+// Pattern Builder Functions
+// =============================================================================
+
+/**
+ * Create a sequential flow between two tasks
+ * @param {string} from - Source task ID
+ * @param {string} to - Target task ID
+ * @returns {Object} Flow definition
+ */
+function sequence(from, to) {
+  return { from, to, type: 'sequence' };
+}
+
+/**
+ * Create a parallel split flow
+ * @param {string} from - Source task ID
+ * @param {string[]} to - Target task IDs
+ * @returns {Object} Flow definition
+ */
+function parallelSplit(from, to) {
+  return { from, to, splitType: SPLIT_TYPE.AND };
+}
+
+/**
+ * Create a synchronization (AND-join) flow
+ * @param {string[]} from - Source task IDs
+ * @param {string} to - Target task ID
+ * @returns {Object} Flow definition
+ */
+function synchronization(from, to) {
+  return { from, to, joinType: JOIN_TYPE.AND };
+}
+
+/**
+ * Create an exclusive choice (XOR-split) flow
+ * @param {string} from - Source task ID
+ * @param {string[]} to - Target task IDs with conditions
+ * @returns {Object} Flow definition
+ */
+function exclusiveChoice(from, to) {
+  return { from, to, splitType: SPLIT_TYPE.XOR };
+}
+
+/**
+ * Create a simple merge (XOR-join) flow
+ * @param {string[]} from - Source task IDs
+ * @param {string} to - Target task ID
+ * @returns {Object} Flow definition
+ */
+function simpleMerge(from, to) {
+  return { from, to, joinType: JOIN_TYPE.XOR };
+}
+
+/**
+ * Create a multi-choice (OR-split) flow
+ * @param {string} from - Source task ID
+ * @param {string[]} to - Target task IDs
+ * @returns {Object} Flow definition
+ */
+function multiChoice(from, to) {
+  return { from, to, splitType: SPLIT_TYPE.OR };
+}
+
+/**
+ * Create a structured synchronizing merge (OR-join) flow
+ * @param {string[]} from - Source task IDs
+ * @param {string} to - Target task ID
+ * @returns {Object} Flow definition
+ */
+function structuredSyncMerge(from, to) {
+  return { from, to, joinType: JOIN_TYPE.OR };
+}
+
+/**
+ * Create an arbitrary cycle flow
+ * @param {string} from - Source task ID
+ * @param {string} to - Target task ID (can be earlier in workflow)
+ * @returns {Object} Flow definition
+ */
+function arbitraryCycle(from, to) {
+  return { from, to, type: 'cycle' };
+}
+
+/**
+ * Create a deferred choice flow
+ * @param {string} from - Source task ID
+ * @param {string[]} to - Target task IDs
+ * @returns {Object} Flow definition
+ */
+function deferredChoice(from, to) {
+  return { from, to, type: 'deferred-choice' };
 }
 
 // =============================================================================
