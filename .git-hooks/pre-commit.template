@@ -1,0 +1,35 @@
+#!/bin/bash
+# Pre-commit hook - Quality Gates
+# To install: cp .git-hooks/pre-commit.template .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit
+
+echo "🔍 Running quality gates..."
+
+# Check for forbidden N3 imports
+echo "Checking RDF migration compliance..."
+violations=$(grep -r "from 'n3'" packages/*/src --include="*.mjs" | grep -v justified | grep -v migration | wc -l)
+if [ "$violations" -gt 0 ]; then
+  echo "❌ Found $violations RDF migration violations"
+  grep -r "from 'n3'" packages/*/src --include="*.mjs" | grep -v justified | grep -v migration
+  exit 1
+fi
+
+# Check for N3 Store constructors
+violations=$(grep -r "new Store()" packages/*/src --include="*.mjs" | wc -l)
+if [ "$violations" -gt 0 ]; then
+  echo "❌ Found $violations N3 Store constructor usages"
+  grep -r "new Store()" packages/*/src --include="*.mjs"
+  exit 1
+fi
+
+# Run linter (if available)
+if [ -f "package.json" ] && grep -q "lint" package.json; then
+  echo "Running linter..."
+  npm run lint --silent
+  if [ $? -ne 0 ]; then
+    echo "❌ Linter failed - commit rejected"
+    exit 1
+  fi
+fi
+
+echo "✅ All quality gates passed"
+exit 0
