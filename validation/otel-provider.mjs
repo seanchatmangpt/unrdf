@@ -26,24 +26,26 @@ function validateNonEmptyString(value, name) {
 
 /**
  * Initialize OTEL provider with span processor
- * 
+ *
  * **Poka-yoke**: Input validation prevents invalid validationId, type guards ensure state consistency
- * 
- * @param {string} validationId - Validation ID to track spans (must be non-empty string)
- * @param {Function} onSpanEnd - Callback when span ends (receives span data object)
- * @throws {Error} If validationId is invalid
+ *
+ * @param {string} [validationId] - Optional validation ID to track spans (must be non-empty string if provided)
+ * @param {Function} [onSpanEnd] - Optional callback when span ends (receives span data object)
+ * @throws {Error} If validationId is provided but invalid
  */
 export async function ensureProviderInitialized(validationId, onSpanEnd) {
-  // Poka-yoke: Validate input to prevent invalid state
-  validateNonEmptyString(validationId, 'validationId');
-  
-  if (typeof onSpanEnd !== 'function') {
+  // Poka-yoke: Validate input if provided
+  if (validationId !== undefined) {
+    validateNonEmptyString(validationId, 'validationId');
+  }
+
+  if (onSpanEnd !== undefined && typeof onSpanEnd !== 'function') {
     throw new Error('onSpanEnd must be a function');
   }
-  
+
   // Store callback FIRST, before creating provider
   // This ensures callbacks are registered before spans are created
-  if (onSpanEnd) {
+  if (validationId && onSpanEnd) {
     if (!spanCollectors.has(validationId)) {
       spanCollectors.set(validationId, []);
     }
@@ -221,21 +223,22 @@ function convertReadableSpanToData(span) {
 
 /**
  * Shutdown provider and cleanup
- * 
+ *
  * **Poka-yoke**: Input validation prevents invalid validationId
- * 
- * @param {string} validationId - Validation ID to shutdown (must be non-empty string)
- * @throws {Error} If validationId is invalid
+ *
+ * @param {string} [validationId] - Optional validation ID to shutdown (must be non-empty string if provided)
+ * @throws {Error} If validationId is provided but invalid
  */
 export async function shutdownProvider(validationId) {
-  // Poka-yoke: Validate input
-  validateNonEmptyString(validationId, 'validationId');
-  
-  // Remove callbacks for this validation
-  spanCollectors.delete(validationId);
+  // Poka-yoke: Validate input if provided
+  if (validationId !== undefined) {
+    validateNonEmptyString(validationId, 'validationId');
+    // Remove callbacks for this validation
+    spanCollectors.delete(validationId);
+  }
 
-  // If no more validations, shutdown provider
-  if (spanCollectors.size === 0 && provider) {
+  // If no more validations or no validationId provided, shutdown provider
+  if ((validationId === undefined || spanCollectors.size === 0) && provider) {
     await provider.shutdown();
     provider = null;
   }

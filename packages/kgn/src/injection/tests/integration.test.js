@@ -232,8 +232,9 @@ export default router;`;
       };
 
       const content = 'test content';
+      const variables = {};
 
-      await expect(inject(templateConfig, content, variables = {}))
+      await expect(inject(templateConfig, content, variables))
         .rejects.toThrow(/Unknown injection mode/);
     });
 

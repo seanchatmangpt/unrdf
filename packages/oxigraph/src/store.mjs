@@ -42,6 +42,15 @@ class OxigraphStore {
   }
 
   /**
+   * Delete a quad from the store (compatibility method)
+   * @param {Object} quad - RDF quad to delete
+   * @returns {void}
+   */
+  removeQuad(quad) {
+    return this.delete(quad);
+  }
+
+  /**
    * Check if a quad exists in the store
    * @param {Object} quad - RDF quad to check
    * @returns {boolean}

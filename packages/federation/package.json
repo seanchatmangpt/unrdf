@@ -6,7 +6,8 @@
   "main": "src/index.mjs",
   "exports": {
     ".": "./src/index.mjs",
-    "./coordinator": "./src/coordinator.mjs"
+    "./coordinator": "./src/coordinator.mjs",
+    "./advanced-sparql": "./src/advanced-sparql-federation.mjs"
   },
   "sideEffects": false,
   "files": [
@@ -35,6 +36,8 @@
     "sparql"
   ],
   "dependencies": {
+    "@comunica/query-sparql": "^3.2.4",
+    "@opentelemetry/api": "^1.9.0",
     "@unrdf/core": "workspace:*",
     "@unrdf/hooks": "workspace:*",
     "prom-client": "^15.0.0",

@@ -68,7 +68,7 @@ export const YAWLWorkflowSchema = z.object({
   controlFlow: z.array(ControlFlowSchema).default([]),
   resources: z.array(ResourceConstraintSchema).optional(),
   defaultTimeout: z.number().int().positive().default(30000),
-  cancellationRegions: z.record(z.array(z.string())).optional(),
+  cancellationRegions: z.record(z.string(), z.array(z.string())).optional(),
 });
 
 /**

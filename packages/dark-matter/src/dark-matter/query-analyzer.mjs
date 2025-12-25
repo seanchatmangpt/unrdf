@@ -7,7 +7,7 @@
  * and identify expensive operations for 80/20 optimization.
  */
 
-import { analyzeSPARQLQuery, extractVariables } from '../../utils/sparql-utils.mjs';
+import { analyzeSPARQLQuery, extractVariables } from '@unrdf/core/utils/sparql-utils';
 import { z } from 'zod';
 
 /**

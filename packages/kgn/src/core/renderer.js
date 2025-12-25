@@ -1,6 +1,8 @@
 /**
- * KGEN Template Renderer - Execute template logic without nunjucks
+ * @file KGEN Template Renderer - Execute template logic without nunjucks
+ * @module @unrdf/kgn/core/renderer
  *
+ * @description
  * Handles:
  * - Variable interpolation: {{ variable }}
  * - Filter application: {{ variable | filter }}
@@ -9,7 +11,18 @@
  * - Include processing: {% include %}
  */
 
+/**
+ * KGEN Template Renderer class
+ */
 export class KGenRenderer {
+  /**
+   * Create a new KGenRenderer instance
+   * @param {Object} [options={}] - Renderer configuration options
+   * @param {number} [options.maxDepth=10] - Maximum rendering depth
+   * @param {boolean} [options.enableIncludes=true] - Enable include processing
+   * @param {boolean} [options.strictMode=true] - Enable strict error handling
+   * @param {boolean} [options.deterministicMode=true] - Enable deterministic mode
+   */
   constructor(options = {}) {
     this.options = {
       maxDepth: options.maxDepth || 10,
@@ -31,6 +44,11 @@ export class KGenRenderer {
 
   /**
    * Render template with context
+   * @param {string} template - Template content to render
+   * @param {Object} context - Context data for template variables
+   * @param {Object} [options={}] - Rendering options
+   * @param {Object} options.filters - Filter instance (required)
+   * @returns {Promise<Object>} Render result with content and metadata
    */
   async render(template, context, options = {}) {
     this.renderDepth = 0;
@@ -59,6 +77,11 @@ export class KGenRenderer {
 
   /**
    * Process template content recursively
+   * @param {string} template - Template content
+   * @param {Object} context - Context data
+   * @param {Object} filters - Filter instance
+   * @param {number} [depth=0] - Current recursion depth
+   * @returns {Promise<string>} Processed template content
    */
   async processTemplate(template, context, filters, depth = 0) {
     if (depth > this.options.maxDepth) {
@@ -83,6 +106,8 @@ export class KGenRenderer {
 
   /**
    * Remove template comments
+   * @param {string} template - Template content
+   * @returns {string} Template without comments
    */
   removeComments(template) {
     return template.replace(this.patterns.comment, '');
@@ -90,6 +115,11 @@ export class KGenRenderer {
 
   /**
    * Process template expressions (if, for, etc.)
+   * @param {string} template - Template content
+   * @param {Object} context - Context data
+   * @param {Object} filters - Filter instance
+   * @param {number} depth - Current recursion depth
+   * @returns {Promise<string>} Processed template
    */
   async processExpressions(template, context, filters, depth) {
     let processed = template;
@@ -110,6 +140,11 @@ export class KGenRenderer {
 
   /**
    * Process conditional expressions
+   * @param {string} template - Template content
+   * @param {Object} context - Context data
+   * @param {Object} filters - Filter instance
+   * @param {number} depth - Current recursion depth
+   * @returns {Promise<string>} Processed template with conditionals resolved
    */
   async processConditionals(template, context, filters, depth) {
     const ifPattern = /\{\%\s*if\s+([^%]+)\s*\%\}([\s\S]*?)(\{\%\s*else\s*\%\}([\s\S]*?))?\{\%\s*endif\s*\%\}/g;
@@ -155,6 +190,11 @@ export class KGenRenderer {
 
   /**
    * Process loop expressions
+   * @param {string} template - Template content
+   * @param {Object} context - Context data
+   * @param {Object} filters - Filter instance
+   * @param {number} depth - Current recursion depth
+   * @returns {Promise<string>} Processed template with loops expanded
    */
   async processLoops(template, context, filters, depth) {
     const forPattern = /\{\%\s*for\s+(\w+)\s+in\s+([^%]+)\s*\%\}([\s\S]*?)\{\%\s*endfor\s*\%\}/g;
@@ -235,6 +275,11 @@ export class KGenRenderer {
 
   /**
    * Process include expressions
+   * @param {string} template - Template content
+   * @param {Object} context - Context data
+   * @param {Object} filters - Filter instance
+   * @param {number} depth - Current recursion depth
+   * @returns {Promise<string>} Processed template with includes resolved
    */
   async processIncludes(template, context, filters, depth) {
     const includePattern = /\{\%\s*include\s+['"]([^'"]+)['"]\s*\%\}/g;
@@ -260,6 +305,10 @@ export class KGenRenderer {
 
   /**
    * Process variable interpolations and filters
+   * @param {string} template - Template content
+   * @param {Object} context - Context data
+   * @param {Object} filters - Filter instance
+   * @returns {string} Template with variables interpolated
    */
   processVariables(template, context, filters) {
     return template.replace(this.patterns.variable, (match, expression) => {
@@ -315,6 +364,9 @@ export class KGenRenderer {
 
   /**
    * Evaluate condition expression
+   * @param {string} condition - Condition expression to evaluate
+   * @param {Object} context - Context data
+   * @returns {boolean} Evaluation result
    */
   evaluateCondition(condition, context) {
     // Simple condition evaluation
@@ -341,6 +393,9 @@ export class KGenRenderer {
 
   /**
    * Evaluate expression to get value from context
+   * @param {string} expr - Expression to evaluate
+   * @param {Object} context - Context data
+   * @returns {*} Evaluated value
    */
   evaluateExpression(expr, context) {
     if (!expr) return '';
@@ -377,6 +432,8 @@ export class KGenRenderer {
 
   /**
    * Parse filter arguments from a comma-separated string, respecting quotes
+   * @param {string} argsStr - Arguments string
+   * @returns {Array<string>} Parsed arguments
    */
   parseFilterArguments(argsStr) {
     const args = [];
@@ -412,6 +469,9 @@ export class KGenRenderer {
 
   /**
    * Parse argument value (string, number, or variable reference)
+   * @param {string} arg - Argument to parse
+   * @param {Object} context - Context data
+   * @returns {*} Parsed value
    */
   parseArgument(arg, context) {
     // Handle quoted strings
@@ -435,6 +495,9 @@ export class KGenRenderer {
 
   /**
    * Parse value with context substitution
+   * @param {string} value - Value to parse
+   * @param {Object} context - Context data
+   * @returns {*} Parsed value
    */
   parseValue(value, context) {
     return this.parseArgument(value, context);
@@ -442,6 +505,8 @@ export class KGenRenderer {
 
   /**
    * Check if value is truthy in template context
+   * @param {*} value - Value to check
+   * @returns {boolean} True if value is truthy
    */
   isTruthy(value) {
     if (value === null || value === undefined) return false;
@@ -456,6 +521,7 @@ export class KGenRenderer {
 
   /**
    * Get renderer statistics
+   * @returns {Object} Renderer configuration and statistics
    */
   getStats() {
     return {

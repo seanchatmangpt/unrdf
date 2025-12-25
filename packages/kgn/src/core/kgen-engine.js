@@ -1,6 +1,8 @@
 /**
- * KGEN Native Template Engine - Deterministic template processing without nunjucks
+ * @file KGEN Native Template Engine - Deterministic template processing without nunjucks
+ * @module @unrdf/kgn/core/kgen-engine
  *
+ * @description
  * Pipeline: plan → render → post → attest
  * Supports: Variables {{ var }}, conditionals {% if %}, loops {% for %}, filters {{ var | filter }}
  * Deterministic: All operations produce stable, reproducible output
@@ -13,7 +15,20 @@ import { KGenRenderer } from './renderer.js';
 import { KGenPostProcessor } from './post-processor.js';
 import { KGenAttestor } from './attestor.js';
 
+/**
+ * KGEN Template Engine - Main entry point for template processing
+ */
 export class KGenTemplateEngine {
+  /**
+   * Create a new KGenTemplateEngine instance
+   * @param {Object} [options={}] - Engine configuration options
+   * @param {boolean} [options.strictMode=true] - Enable strict mode validation
+   * @param {boolean} [options.deterministicMode=true] - Enable deterministic mode
+   * @param {string} [options.staticBuildTime='2024-01-01T00:00:00.000Z'] - Static timestamp for deterministic builds
+   * @param {number} [options.maxDepth=10] - Maximum template nesting depth
+   * @param {boolean} [options.enableIncludes=true] - Enable include statements
+   * @param {boolean} [options.enableAttestation=true] - Enable cryptographic attestation
+   */
   constructor(options = {}) {
     this.options = {
       strictMode: options.strictMode !== false,
@@ -38,6 +53,9 @@ export class KGenTemplateEngine {
 
   /**
    * PHASE 1: PLAN - Parse and analyze template
+   * @param {string} template - Template content to plan
+   * @param {Object} [context={}] - Context data for validation
+   * @returns {Promise<Object>} Plan result with parsed template, frontmatter, variables, expressions, includes, complexity, hash
    */
   async plan(template, context = {}) {
     try {
@@ -74,6 +92,9 @@ export class KGenTemplateEngine {
 
   /**
    * PHASE 2: RENDER - Execute template with context
+   * @param {Object} plan - Plan result from plan() phase
+   * @param {Object} [context={}] - Context data for rendering
+   * @returns {Promise<Object>} Render result with success, content, context, metadata
    */
   async render(plan, context = {}) {
     if (!plan.success) {
@@ -122,6 +143,8 @@ export class KGenTemplateEngine {
 
   /**
    * PHASE 3: POST - Post-process rendered content
+   * @param {Object} renderResult - Render result from render() phase
+   * @returns {Promise<Object>} Post-processed result with normalized content
    */
   async post(renderResult) {
     if (!renderResult.success) {
@@ -157,6 +180,8 @@ export class KGenTemplateEngine {
 
   /**
    * PHASE 4: ATTEST - Generate attestation of deterministic output
+   * @param {Object} postResult - Post-processed result from post() phase
+   * @returns {Promise<Object>} Attested result with cryptographic attestation
    */
   async attest(postResult) {
     if (!postResult.success || !this.options.enableAttestation) {
@@ -193,6 +218,9 @@ export class KGenTemplateEngine {
 
   /**
    * Complete pipeline: plan → render → post → attest
+   * @param {string} template - Template content to execute
+   * @param {Object} [context={}] - Context data for rendering
+   * @returns {Promise<Object>} Final result with all pipeline phases complete
    */
   async execute(template, context = {}) {
     const plan = await this.plan(template, context);
@@ -205,6 +233,9 @@ export class KGenTemplateEngine {
 
   /**
    * Simple render method for basic use cases
+   * @param {string} template - Template content to render
+   * @param {Object} [context={}] - Context data for rendering
+   * @returns {Promise<string>} Rendered content as string
    */
   async renderTemplate(template, context = {}) {
     // Use a simplified pipeline without post-processing for simple rendering
@@ -220,6 +251,7 @@ export class KGenTemplateEngine {
 
   /**
    * Register core filters
+   * Registers text, data, and format filters for template use
    */
   registerCoreFilters() {
     // Text filters
@@ -292,6 +324,11 @@ export class KGenTemplateEngine {
 
   /**
    * Calculate template complexity score
+   * @param {Object} parseResult - Parse result from parser
+   * @param {Array} [parseResult.variables=[]] - Variables in template
+   * @param {Array} [parseResult.expressions=[]] - Expressions in template
+   * @param {Array} [parseResult.includes=[]] - Includes in template
+   * @returns {number} Complexity score
    */
   calculateComplexity(parseResult) {
     const { variables = [], expressions = [], includes = [] } = parseResult;
@@ -300,6 +337,10 @@ export class KGenTemplateEngine {
 
   /**
    * Validate context has required variables
+   * @param {Array<string>} variables - Required variable names
+   * @param {Object} context - Context object to validate
+   * @param {Object} frontmatter - Frontmatter data
+   * @throws {Error} When required variables are missing
    */
   validateContext(variables, context, frontmatter) {
     const missing = [];
@@ -325,6 +366,8 @@ export class KGenTemplateEngine {
 
   /**
    * Generate deterministic content hash
+   * @param {string} content - Content to hash
+   * @returns {string} SHA-256 hash as hex string
    */
   hashContent(content) {
     return crypto.createHash('sha256').update(String(content || ''), 'utf8').digest('hex');
@@ -332,6 +375,7 @@ export class KGenTemplateEngine {
 
   /**
    * Get engine statistics
+   * @returns {Object} Engine configuration and statistics
    */
   getStats() {
     return {
@@ -343,6 +387,10 @@ export class KGenTemplateEngine {
 
   /**
    * Verify deterministic behavior across multiple runs
+   * @param {string} template - Template to verify
+   * @param {Object} context - Context for rendering
+   * @param {number} [iterations=3] - Number of iterations to test
+   * @returns {Promise<Object>} Verification result with isDeterministic, iterations, successfulRuns, uniqueOutputs, results
    */
   async verifyDeterminism(template, context, iterations = 3) {
     const results = [];

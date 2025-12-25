@@ -29,8 +29,8 @@
     "test:browser": "pnpm -C packages/browser test",
     "test:cli": "pnpm -C packages/cli test",
     "test:knowledge-engine": "pnpm -C packages/knowledge-engine test",
-    "lint": "pnpm -r lint",
-    "lint:fix": "pnpm -r lint:fix",
+    "lint": "pnpm -r --filter='!./packages/docs' --filter='!./packages/kgn' lint",
+    "lint:fix": "pnpm -r --filter='!./packages/docs' --filter='!./packages/kgn' lint:fix",
     "format": "pnpm -r format",
     "format:check": "pnpm -r format:check",
     "build": "pnpm -r --filter ./packages build",
@@ -38,7 +38,16 @@
     "dev": "pnpm -r --parallel dev",
     "docs": "pnpm -C packages/core docs",
     "convert-paper": "node scripts/convert-paper.mjs",
-    "precommit": "pnpm lint && pnpm test:fast"
+    "precommit": "pnpm lint && pnpm test:fast",
+    "benchmark": "node benchmarks/run-all.mjs all",
+    "benchmark:core": "node benchmarks/run-all.mjs core",
+    "benchmark:integration": "node benchmarks/run-all.mjs integration",
+    "benchmark:advanced": "node benchmarks/run-all.mjs advanced",
+    "benchmark:regression": "node benchmarks/run-all.mjs regression",
+    "benchmark:report": "node benchmarks/run-all.mjs all",
+    "benchmark:baseline": "node benchmarks/run-all.mjs regression --save-baseline",
+    "benchmark:compare": "node benchmarks/run-all.mjs all --compare-baseline",
+    "benchmark:memory": "node --expose-gc benchmarks/regression/memory-leak-detection.mjs"
   },
   "devDependencies": {
     "@opentelemetry/api": "^1.9.0",

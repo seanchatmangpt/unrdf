@@ -8,6 +8,7 @@
   "exports": {
     ".": "./src/index.mjs",
     "./api": "./src/api/workflow-api.mjs",
+    "./graphql-api": "./src/api/graphql-api.mjs",
     "./ontology": "./src/ontology/yawl-ontology.mjs",
     "./store": "./src/store/yawl-store.mjs",
     "./types": "./src/types/yawl-types.mjs",
@@ -15,7 +16,9 @@
     "./hooks": "./src/hooks/yawl-hooks.mjs",
     "./resources": "./src/resources/yawl-resources.mjs",
     "./cancellation": "./src/cancellation/index.mjs",
-    "./receipt": "./src/receipt.mjs"
+    "./receipt": "./src/receipt.mjs",
+    "./blockchain-receipts": "./src/blockchain-receipts.mjs",
+    "./visualization": "./src/visualization/live-workflow-viz.mjs"
   },
   "scripts": {
     "test": "vitest run",
@@ -41,9 +44,14 @@
     "time-travel"
   ],
   "dependencies": {
+    "@graphql-tools/schema": "^10.0.6",
+    "@noble/ed25519": "^2.1.0",
+    "@observablehq/plot": "^0.6.16",
     "@unrdf/hooks": "workspace:*",
     "@unrdf/kgc-4d": "workspace:*",
     "@unrdf/oxigraph": "workspace:*",
+    "d3": "^7.9.0",
+    "graphql": "^16.9.0",
     "hash-wasm": "^4.11.0",
     "zod": "^4.1.13"
   },

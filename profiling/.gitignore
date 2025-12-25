@@ -1,0 +1,9 @@
+# Profiling artifacts
+isolate-*.log
+*.heapprofile
+*.cpuprofile
+cpu-profile.txt
+profiling-output.txt
+
+# Test output
+*.test.log

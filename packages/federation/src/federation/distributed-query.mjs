@@ -70,7 +70,7 @@ export async function executeFederatedQuery(peerId, endpoint, sparqlQuery, optio
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), config.timeout);
 
-    const response = await fetch(`${endpoint}/sparql`, {
+    const response = await fetch(endpoint, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/sparql-query',
