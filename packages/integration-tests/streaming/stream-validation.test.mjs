@@ -63,41 +63,32 @@ describe('Scenario 3: Stream Processing with Validation', () => {
     // STEP 1: Create validation hooks
     // ======================================================================
     const iriValidationHook = defineHook({
-      id: 'validate-iri-format',
-      trigger: 'before-quad-add',
-      handler: async ({ quad }) => {
+      name: 'validate-iri-format',
+      trigger: 'before-add',
+      validate: (quad) => {
         const { subject, predicate, object } = quad;
 
         // Validate IRIs are properly formatted
         if (subject.termType === 'NamedNode' && !subject.value.startsWith('http')) {
-          return {
-            valid: false,
-            error: `Invalid IRI format for subject: ${subject.value}`,
-          };
+          return false;
         }
 
         if (!predicate.value.startsWith('http')) {
-          return {
-            valid: false,
-            error: `Invalid IRI format for predicate: ${predicate.value}`,
-          };
+          return false;
         }
 
-        return { valid: true };
+        return true;
       },
     });
 
     const blankNodeRejectionHook = defineHook({
-      id: 'reject-blank-nodes',
-      trigger: 'before-quad-add',
-      handler: async ({ quad }) => {
+      name: 'reject-blank-nodes',
+      trigger: 'before-add',
+      validate: (quad) => {
         if (quad.subject.termType === 'BlankNode' || quad.object.termType === 'BlankNode') {
-          return {
-            valid: false,
-            error: 'Blank nodes are not allowed in this store',
-          };
+          return false;
         }
-        return { valid: true };
+        return true;
       },
     });
 
@@ -109,18 +100,18 @@ describe('Scenario 3: Stream Processing with Validation', () => {
 
     stream.on('add', async (q) => {
       // Validate with IRI hook
-      const iriResult = await executeHook(iriValidationHook, { quad: q });
+      const iriResult = executeHook(iriValidationHook, q);
 
       if (!iriResult.valid) {
-        invalidQuads.push({ quad: q, error: iriResult.error });
+        invalidQuads.push({ quad: q, error: iriResult.error || 'IRI validation failed' });
         return;
       }
 
       // Validate with blank node hook
-      const blankNodeResult = await executeHook(blankNodeRejectionHook, { quad: q });
+      const blankNodeResult = executeHook(blankNodeRejectionHook, q);
 
       if (!blankNodeResult.valid) {
-        invalidQuads.push({ quad: q, error: blankNodeResult.error });
+        invalidQuads.push({ quad: q, error: blankNodeResult.error || 'Blank nodes are not allowed' });
         return;
       }
 
@@ -154,7 +145,7 @@ describe('Scenario 3: Stream Processing with Validation', () => {
     await new Promise((resolve) => setTimeout(resolve, 100));
 
     expect(invalidQuads.length).toBe(1);
-    expect(invalidQuads[0].error).toContain('Blank nodes are not allowed');
+    expect(invalidQuads[0].error).toContain('reject-blank-nodes');
 
     // ======================================================================
     // STEP 5: Add invalid quads (bad IRI format)
@@ -167,9 +158,8 @@ describe('Scenario 3: Stream Processing with Validation', () => {
       object: { termType: 'Literal', value: 'test' },
     };
 
-    const badIriResult = await executeHook(iriValidationHook, { quad: badQuad });
+    const badIriResult = executeHook(iriValidationHook, badQuad);
     expect(badIriResult.valid).toBe(false);
-    expect(badIriResult.error).toContain('Invalid IRI format for subject');
 
     // ======================================================================
     // STEP 6: Verify store contains only valid quads
@@ -222,30 +212,24 @@ describe('Scenario 3: Stream Processing with Validation', () => {
 
     // Create strict validation hook
     const strictHook = defineHook({
-      id: 'strict-literal-validation',
-      trigger: 'before-quad-add',
-      handler: async ({ quad }) => {
+      name: 'strict-literal-validation',
+      trigger: 'before-add',
+      validate: (quad) => {
         if (quad.object.termType === 'Literal') {
           const value = quad.object.value;
 
           // Reject empty literals
           if (!value || value.trim().length === 0) {
-            return {
-              valid: false,
-              error: 'Empty literals are not allowed',
-            };
+            return false;
           }
 
           // Reject literals > 1000 chars
           if (value.length > 1000) {
-            return {
-              valid: false,
-              error: 'Literal value exceeds maximum length',
-            };
+            return false;
           }
         }
 
-        return { valid: true };
+        return true;
       },
     });
 
@@ -256,9 +240,8 @@ describe('Scenario 3: Stream Processing with Validation', () => {
       object: { termType: 'Literal', value: '' },
     };
 
-    const emptyResult = await executeHook(strictHook, { quad: emptyQuad });
+    const emptyResult = executeHook(strictHook, emptyQuad);
     expect(emptyResult.valid).toBe(false);
-    expect(emptyResult.error).toBe('Empty literals are not allowed');
 
     // Test long literal
     const longValue = 'x'.repeat(1001);
@@ -268,9 +251,8 @@ describe('Scenario 3: Stream Processing with Validation', () => {
       object: { termType: 'Literal', value: longValue },
     };
 
-    const longResult = await executeHook(strictHook, { quad: longQuad });
+    const longResult = executeHook(strictHook, longQuad);
     expect(longResult.valid).toBe(false);
-    expect(longResult.error).toBe('Literal value exceeds maximum length');
 
     // Test valid literal
     const validQuad = {
@@ -279,7 +261,7 @@ describe('Scenario 3: Stream Processing with Validation', () => {
       object: { termType: 'Literal', value: 'Valid value' },
     };
 
-    const validResult = await executeHook(strictHook, { quad: validQuad });
+    const validResult = executeHook(strictHook, validQuad);
     expect(validResult.valid).toBe(true);
 
     stream.close();

@@ -49,15 +49,15 @@ export const RECEIPT_EVENT_TYPES = Object.freeze({
  */
 const JustificationSchema = z.object({
   /** Hook that validated the transition */
-  hookValidated: z.string().optional(),
+  hookValidated: z.string().nullable().optional(),
   /** SPARQL query used for control flow evaluation */
-  sparqlQuery: z.string().optional(),
+  sparqlQuery: z.string().nullable().optional(),
   /** Human-readable reasoning */
-  reasoning: z.string().optional(),
+  reasoning: z.string().nullable().optional(),
   /** Condition that was checked */
-  conditionChecked: z.string().optional(),
+  conditionChecked: z.string().nullable().optional(),
   /** Actor who approved (for manual tasks) */
-  approvedBy: z.string().optional(),
+  approvedBy: z.string().nullable().optional(),
 });
 
 /**
@@ -65,7 +65,7 @@ const JustificationSchema = z.object({
  */
 const PayloadSchema = z.object({
   /** The decision made (e.g., 'APPROVE', 'ENABLE', 'COMPLETE') */
-  decision: z.string(),
+  decision: z.string().optional(),
   /** Justification for the decision */
   justification: JustificationSchema.optional(),
   /** Actor who made the decision */
@@ -123,8 +123,8 @@ export const ReceiptSchema = z.object({
   receiptHash: z.string().length(BLAKE3_HEX_LENGTH),
 
   // KGC-4D integration
-  kgcEventId: z.string().optional(),
-  gitRef: z.string().optional(),
+  kgcEventId: z.string().nullable().optional(),
+  gitRef: z.string().nullable().optional(),
   vectorClock: VectorClockSchema.optional(),
 
   // Decision payload

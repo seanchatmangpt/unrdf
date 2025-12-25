@@ -125,9 +125,17 @@ describe('Scenario 2: Federated Knowledge Query', () => {
     });
 
     expect(projectDetails.length).toBe(2);
-    expect(projectDetails[0].project).toBe('RDF Platform');
-    expect(projectDetails[0].assignee).toBe('Alice Smith');
-    expect(projectDetails[0].role).toBe('Senior Developer');
+
+    // Results may be in any order, so check both projects exist
+    const projectNames = projectDetails.map((p) => p.project);
+    expect(projectNames).toContain('RDF Platform');
+    expect(projectNames).toContain('Web Portal');
+
+    // Find the RDF Platform project and verify details
+    const rdfProject = projectDetails.find((p) => p.project === 'RDF Platform');
+    expect(rdfProject).toBeDefined();
+    expect(rdfProject.assignee).toBe('Alice Smith');
+    expect(rdfProject.role).toBe('Senior Developer');
 
     // ======================================================================
     // STEP 6: Cross-Store Aggregation

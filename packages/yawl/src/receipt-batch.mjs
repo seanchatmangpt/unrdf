@@ -499,6 +499,9 @@ export function resetPool(size = 1000) {
 // Exports
 // =============================================================================
 
+// Named export for parallelHash (needed by tests)
+export { parallelHash };
+
 export default {
   generateReceiptBatch,
   verifyReceiptBatch,

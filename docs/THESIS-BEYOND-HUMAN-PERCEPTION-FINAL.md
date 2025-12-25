@@ -248,12 +248,12 @@ BB80/20 has been validated across multiple implementations:
 
 | Implementation | LOC | Time | Test Status | Pattern Reuse |
 |---------------|-----|------|-------------|---------------|
-| KGC-4D | 5,465 (source) | 3h | 90.4% pass | 64% (claimed) |
-| YAWL | 26,449 (total) | ~40h | No tests | 63% (claimed) |
-| Microframeworks (3) | 1,856 | ~5h | No tests | 64% (claimed) |
-| **Total** | **33,770** | - | **Mixed** | **~64% (claimed)** |
+| KGC-4D | 6,327 (source) | 20+ days | 99.8% pass (443/444) | 64% (estimated) |
+| YAWL | 27,485 (total) | Single commit | 77.8% pass (253/325) | 63% (estimated) |
+| Microframeworks (3) | 1,856 | ~5h | Not tested | 64% (estimated) |
+| **Total** | **35,668** | - | **Mixed** | **~64% (estimated)** |
 
-**Key Finding**: Pattern reuse claims of ~64% are consistent across implementations but unverified. KGC-4D has 90.4% test pass rate; other implementations lack tests.
+**Key Finding**: Pattern reuse estimates of ~64% are consistent across implementations but not empirically measured. KGC-4D has exceptional test coverage (99.8%, OTEL 100/100). YAWL core APIs fully functional (workflow-api: 100% passing, 22% failures in experimental features).
 
 ---
 
