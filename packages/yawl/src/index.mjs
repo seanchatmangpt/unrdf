@@ -345,7 +345,7 @@ export {
   RDF_NS,
   XSD_NS,
   TIME_NS,
-} from './resources/yawl-resources.mjs';
+} from './resources/index.mjs';
 
 // YAWL Core Type System (JSDoc + Zod)
 export {

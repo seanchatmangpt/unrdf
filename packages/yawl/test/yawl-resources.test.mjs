@@ -21,7 +21,7 @@ import {
   createPolicyPack,
   ResourceType,
   YAWL_NS,
-} from '../src/resources/yawl-resources.mjs';
+} from '../src/resources/index.mjs';
 import {
   createTestWorkflow,
   createTestTask,

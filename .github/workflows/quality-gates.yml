@@ -1,0 +1,52 @@
+name: Quality Gates
+
+on:
+  pull_request:
+  push:
+    branches: [main, master]
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 10
+
+      - name: Install dependencies (with timeout)
+        run: timeout 300s pnpm install
+
+      - name: Run linter
+        run: pnpm --filter @unrdf/yawl run lint
+
+      - name: Run tests
+        run: pnpm --filter @unrdf/yawl test
+
+      - name: Check coverage
+        run: pnpm --filter @unrdf/yawl run test:coverage
+
+      - name: Validate RDF migration
+        run: |
+          violations=$(grep -r "from 'n3'" packages/*/src --include="*.mjs" | grep -v justified | grep -v migration | wc -l)
+          if [ "$violations" -gt 0 ]; then
+            echo "Found $violations RDF migration violations"
+            exit 1
+          fi
+
+      - name: Check file sizes
+        run: |
+          large_files=$(find packages/yawl/src -name "*.mjs" -exec wc -l {} + | awk '$1 > 500 {print}' | wc -l)
+          if [ "$large_files" -gt 0 ]; then
+            echo "Found $large_files files over 500 lines"
+            exit 1
+          fi

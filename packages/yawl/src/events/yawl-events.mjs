@@ -242,6 +242,54 @@ function caseGraphUri(caseId) {
 }
 
 // ============================================================================
+// Event Appending - Helper Functions
+// ============================================================================
+
+/**
+ * Validate and normalize event type
+ * @param {string} eventType - Event type to validate
+ * @returns {string} Normalized event type
+ * @throws {Error} If event type is invalid
+ */
+function validateEventType(eventType) {
+  if (!YAWL_EVENT_TYPES[eventType] && !Object.values(YAWL_EVENT_TYPES).includes(eventType)) {
+    throw new Error(`Invalid YAWL event type: ${eventType}`);
+  }
+  return YAWL_EVENT_TYPES[eventType] || eventType;
+}
+
+/**
+ * Validate event payload against schema
+ * @param {string} eventType - Normalized event type
+ * @param {Object} payload - Event payload to validate
+ * @throws {Error} If payload validation fails
+ */
+function validateEventPayload(eventType, payload) {
+  const schema = EventSchemas[eventType];
+  if (schema) {
+    const result = schema.safeParse(payload);
+    if (!result.success) {
+      throw new Error(`Invalid ${eventType} payload: ${result.error.message}`);
+    }
+  }
+}
+
+/**
+ * Extract case ID from event payload
+ * @param {Object} payload - Event payload
+ * @param {Object} options - Event options
+ * @returns {string} Case ID
+ * @throws {Error} If case ID cannot be determined
+ */
+function extractCaseId(payload, options) {
+  const caseId = payload.caseId || (payload.workItemId && options.caseId);
+  if (!caseId) {
+    throw new Error('caseId is required for workflow events');
+  }
+  return caseId;
+}
+
+// ============================================================================
 // Event Appending
 // ============================================================================
 
@@ -270,33 +318,12 @@ function caseGraphUri(caseId) {
  * });
  */
 export async function appendWorkflowEvent(store, eventType, payload, options = {}) {
-  // Validate event type
-  if (!YAWL_EVENT_TYPES[eventType] && !Object.values(YAWL_EVENT_TYPES).includes(eventType)) {
-    throw new Error(`Invalid YAWL event type: ${eventType}`);
-  }
+  const normalizedType = validateEventType(eventType);
+  validateEventPayload(normalizedType, payload);
+  const caseId = extractCaseId(payload, options);
 
-  // Normalize event type to full form
-  const normalizedType = YAWL_EVENT_TYPES[eventType] || eventType;
-
-  // Validate payload against schema
-  const schema = EventSchemas[normalizedType];
-  if (schema) {
-    const result = schema.safeParse(payload);
-    if (!result.success) {
-      throw new Error(`Invalid ${normalizedType} payload: ${result.error.message}`);
-    }
-  }
-
-  // Extract caseId for case-specific graph
-  const caseId = payload.caseId || (payload.workItemId && options.caseId);
-  if (!caseId) {
-    throw new Error('caseId is required for workflow events');
-  }
-
-  // Build deltas for RDF store update
   const deltas = buildEventDeltas(normalizedType, payload, caseId);
 
-  // Append to KGC-4D store
   const { receipt } = await store.appendEvent(
     {
       type: normalizedType,
@@ -321,6 +348,240 @@ export async function appendWorkflowEvent(store, eventType, payload, options = {
   };
 }
 
+// ============================================================================
+// Event Delta Builders - Extracted per Event Type
+// ============================================================================
+
+/**
+ * Build deltas for CASE_CREATED event
+ * @param {Object} payload - Event payload
+ * @param {string} caseId - Case UUID
+ * @param {Object} caseSubject - RDF subject node
+ * @returns {Array<Object>} Delta operations
+ */
+function buildCaseCreatedDeltas(payload, caseId, caseSubject) {
+  return [
+    {
+      type: 'add',
+      subject: caseSubject,
+      predicate: dataFactory.namedNode(YAWL_PREDICATES.SPEC_ID),
+      object: dataFactory.literal(payload.specId),
+    },
+    {
+      type: 'add',
+      subject: caseSubject,
+      predicate: dataFactory.namedNode(YAWL_PREDICATES.STATE),
+      object: dataFactory.literal('active'),
+    },
+    {
+      type: 'add',
+      subject: caseSubject,
+      predicate: dataFactory.namedNode(YAWL_PREDICATES.CREATED_AT),
+      object: dataFactory.literal(payload.timestamp),
+    },
+  ];
+}
+
+/**
+ * Build deltas for TASK_ENABLED event
+ * @param {Object} payload - Event payload
+ * @param {string} caseId - Case UUID
+ * @returns {Array<Object>} Delta operations
+ */
+function buildTaskEnabledDeltas(payload, caseId) {
+  const workItemSubject = dataFactory.namedNode(`${YAWL_NS}workitem/${payload.workItemId}`);
+  return [
+    {
+      type: 'add',
+      subject: workItemSubject,
+      predicate: dataFactory.namedNode(YAWL_PREDICATES.TASK_ID),
+      object: dataFactory.literal(payload.taskId),
+    },
+    {
+      type: 'add',
+      subject: workItemSubject,
+      predicate: dataFactory.namedNode(YAWL_PREDICATES.CASE_ID),
+      object: dataFactory.namedNode(caseGraphUri(caseId)),
+    },
+    {
+      type: 'add',
+      subject: workItemSubject,
+      predicate: dataFactory.namedNode(YAWL_PREDICATES.STATE),
+      object: dataFactory.literal('enabled'),
+    },
+    {
+      type: 'add',
+      subject: workItemSubject,
+      predicate: dataFactory.namedNode(YAWL_PREDICATES.ENABLED_AT),
+      object: dataFactory.literal(payload.enabledAt),
+    },
+  ];
+}
+
+/**
+ * Build deltas for TASK_STARTED event
+ * @param {Object} payload - Event payload
+ * @returns {Array<Object>} Delta operations
+ */
+function buildTaskStartedDeltas(payload) {
+  const workItemSubject = dataFactory.namedNode(`${YAWL_NS}workitem/${payload.workItemId}`);
+  return [
+    {
+      type: 'delete',
+      subject: workItemSubject,
+      predicate: dataFactory.namedNode(YAWL_PREDICATES.STATE),
+      object: dataFactory.literal('enabled'),
+    },
+    {
+      type: 'add',
+      subject: workItemSubject,
+      predicate: dataFactory.namedNode(YAWL_PREDICATES.STATE),
+      object: dataFactory.literal('started'),
+    },
+    {
+      type: 'add',
+      subject: workItemSubject,
+      predicate: dataFactory.namedNode(YAWL_PREDICATES.STARTED_AT),
+      object: dataFactory.literal(payload.startedAt),
+    },
+  ];
+}
+
+/**
+ * Build deltas for TASK_COMPLETED event
+ * @param {Object} payload - Event payload
+ * @returns {Array<Object>} Delta operations
+ */
+function buildTaskCompletedDeltas(payload) {
+  const workItemSubject = dataFactory.namedNode(`${YAWL_NS}workitem/${payload.workItemId}`);
+  const deltas = [
+    {
+      type: 'delete',
+      subject: workItemSubject,
+      predicate: dataFactory.namedNode(YAWL_PREDICATES.STATE),
+      object: dataFactory.literal('started'),
+    },
+    {
+      type: 'add',
+      subject: workItemSubject,
+      predicate: dataFactory.namedNode(YAWL_PREDICATES.STATE),
+      object: dataFactory.literal('completed'),
+    },
+    {
+      type: 'add',
+      subject: workItemSubject,
+      predicate: dataFactory.namedNode(YAWL_PREDICATES.COMPLETED_AT),
+      object: dataFactory.literal(payload.completedAt),
+    },
+  ];
+
+  if (payload.result !== undefined) {
+    deltas.push({
+      type: 'add',
+      subject: workItemSubject,
+      predicate: dataFactory.namedNode(YAWL_PREDICATES.RESULT),
+      object: dataFactory.literal(JSON.stringify(payload.result)),
+    });
+  }
+
+  return deltas;
+}
+
+/**
+ * Build deltas for TASK_CANCELLED event
+ * @param {Object} payload - Event payload
+ * @returns {Array<Object>} Delta operations
+ */
+function buildTaskCancelledDeltas(payload) {
+  const workItemSubject = dataFactory.namedNode(`${YAWL_NS}workitem/${payload.workItemId}`);
+  return [
+    {
+      type: 'add',
+      subject: workItemSubject,
+      predicate: dataFactory.namedNode(YAWL_PREDICATES.STATE),
+      object: dataFactory.literal('cancelled'),
+    },
+    {
+      type: 'add',
+      subject: workItemSubject,
+      predicate: dataFactory.namedNode(YAWL_PREDICATES.CANCELLED_AT),
+      object: dataFactory.literal(payload.cancelledAt),
+    },
+    {
+      type: 'add',
+      subject: workItemSubject,
+      predicate: dataFactory.namedNode(YAWL_PREDICATES.REASON),
+      object: dataFactory.literal(payload.reason),
+    },
+  ];
+}
+
+/**
+ * Build deltas for WORK_ITEM_CREATED event
+ * @param {Object} payload - Event payload
+ * @param {string} caseId - Case UUID
+ * @returns {Array<Object>} Delta operations
+ */
+function buildWorkItemCreatedDeltas(payload, caseId) {
+  const workItemSubject = dataFactory.namedNode(`${YAWL_NS}workitem/${payload.workItemId}`);
+  return [
+    {
+      type: 'add',
+      subject: workItemSubject,
+      predicate: dataFactory.namedNode(YAWL_PREDICATES.TASK_ID),
+      object: dataFactory.literal(payload.taskId),
+    },
+    {
+      type: 'add',
+      subject: workItemSubject,
+      predicate: dataFactory.namedNode(YAWL_PREDICATES.CASE_ID),
+      object: dataFactory.namedNode(caseGraphUri(caseId)),
+    },
+    {
+      type: 'add',
+      subject: workItemSubject,
+      predicate: dataFactory.namedNode(YAWL_PREDICATES.CREATED_AT),
+      object: dataFactory.literal(payload.createdAt),
+    },
+  ];
+}
+
+/**
+ * Build deltas for CONTROL_FLOW_EVALUATED event
+ * @param {Object} payload - Event payload
+ * @param {string} caseId - Case UUID
+ * @returns {Array<Object>} Delta operations
+ */
+function buildControlFlowEvaluatedDeltas(payload, caseId) {
+  const decisionSubject = dataFactory.namedNode(`${YAWL_NS}decision/${generateUUID()}`);
+  return [
+    {
+      type: 'add',
+      subject: decisionSubject,
+      predicate: dataFactory.namedNode(YAWL_PREDICATES.CASE_ID),
+      object: dataFactory.namedNode(caseGraphUri(caseId)),
+    },
+    {
+      type: 'add',
+      subject: decisionSubject,
+      predicate: dataFactory.namedNode(YAWL_PREDICATES.TASK_ID),
+      object: dataFactory.literal(payload.taskId),
+    },
+    {
+      type: 'add',
+      subject: decisionSubject,
+      predicate: dataFactory.namedNode(YAWL_PREDICATES.RESULT),
+      object: dataFactory.literal(String(payload.result)),
+    },
+    {
+      type: 'add',
+      subject: decisionSubject,
+      predicate: dataFactory.namedNode(YAWL_PREDICATES.SPARQL_QUERY),
+      object: dataFactory.literal(payload.sparqlQuery),
+    },
+  ];
+}
+
 /**
  * Build RDF deltas for a workflow event
  * @param {string} eventType - YAWL event type
@@ -329,201 +590,115 @@ export async function appendWorkflowEvent(store, eventType, payload, options = {
  * @returns {Array<Object>} Array of delta operations
  */
 function buildEventDeltas(eventType, payload, caseId) {
-  const deltas = [];
   const caseSubject = dataFactory.namedNode(caseGraphUri(caseId));
 
   switch (eventType) {
-    case YAWL_EVENT_TYPES.CASE_CREATED: {
-      // Add case triple
-      deltas.push({
-        type: 'add',
-        subject: caseSubject,
-        predicate: dataFactory.namedNode(YAWL_PREDICATES.SPEC_ID),
-        object: dataFactory.literal(payload.specId),
-      });
-      deltas.push({
-        type: 'add',
-        subject: caseSubject,
-        predicate: dataFactory.namedNode(YAWL_PREDICATES.STATE),
-        object: dataFactory.literal('active'),
-      });
-      deltas.push({
-        type: 'add',
-        subject: caseSubject,
-        predicate: dataFactory.namedNode(YAWL_PREDICATES.CREATED_AT),
-        object: dataFactory.literal(payload.timestamp),
-      });
-      break;
-    }
+    case YAWL_EVENT_TYPES.CASE_CREATED:
+      return buildCaseCreatedDeltas(payload, caseId, caseSubject);
+    case YAWL_EVENT_TYPES.TASK_ENABLED:
+      return buildTaskEnabledDeltas(payload, caseId);
+    case YAWL_EVENT_TYPES.TASK_STARTED:
+      return buildTaskStartedDeltas(payload);
+    case YAWL_EVENT_TYPES.TASK_COMPLETED:
+      return buildTaskCompletedDeltas(payload);
+    case YAWL_EVENT_TYPES.TASK_CANCELLED:
+      return buildTaskCancelledDeltas(payload);
+    case YAWL_EVENT_TYPES.WORK_ITEM_CREATED:
+      return buildWorkItemCreatedDeltas(payload, caseId);
+    case YAWL_EVENT_TYPES.CONTROL_FLOW_EVALUATED:
+      return buildControlFlowEvaluatedDeltas(payload, caseId);
+    default:
+      return [];
+  }
+}
 
-    case YAWL_EVENT_TYPES.TASK_ENABLED: {
-      const workItemSubject = dataFactory.namedNode(`${YAWL_NS}workitem/${payload.workItemId}`);
-      deltas.push({
-        type: 'add',
-        subject: workItemSubject,
-        predicate: dataFactory.namedNode(YAWL_PREDICATES.TASK_ID),
-        object: dataFactory.literal(payload.taskId),
-      });
-      deltas.push({
-        type: 'add',
-        subject: workItemSubject,
-        predicate: dataFactory.namedNode(YAWL_PREDICATES.CASE_ID),
-        object: dataFactory.namedNode(caseGraphUri(caseId)),
-      });
-      deltas.push({
-        type: 'add',
-        subject: workItemSubject,
-        predicate: dataFactory.namedNode(YAWL_PREDICATES.STATE),
-        object: dataFactory.literal('enabled'),
-      });
-      deltas.push({
-        type: 'add',
-        subject: workItemSubject,
-        predicate: dataFactory.namedNode(YAWL_PREDICATES.ENABLED_AT),
-        object: dataFactory.literal(payload.enabledAt),
-      });
-      break;
-    }
+// ============================================================================
+// Case Reconstruction - Helper Functions
+// ============================================================================
 
-    case YAWL_EVENT_TYPES.TASK_STARTED: {
-      const workItemSubject = dataFactory.namedNode(`${YAWL_NS}workitem/${payload.workItemId}`);
-      // Delete old state
-      deltas.push({
-        type: 'delete',
-        subject: workItemSubject,
-        predicate: dataFactory.namedNode(YAWL_PREDICATES.STATE),
-        object: dataFactory.literal('enabled'),
-      });
-      // Add new state
-      deltas.push({
-        type: 'add',
-        subject: workItemSubject,
-        predicate: dataFactory.namedNode(YAWL_PREDICATES.STATE),
-        object: dataFactory.literal('started'),
-      });
-      deltas.push({
-        type: 'add',
-        subject: workItemSubject,
-        predicate: dataFactory.namedNode(YAWL_PREDICATES.STARTED_AT),
-        object: dataFactory.literal(payload.startedAt),
-      });
-      break;
-    }
+/**
+ * Query events from store up to target time
+ * @param {import('@unrdf/kgc-4d').KGCStore} store - KGC-4D store instance
+ * @param {bigint} targetTime - Target time in nanoseconds
+ * @returns {Array<Object>} Array of time quads
+ */
+function queryEventTimeQuads(store, targetTime) {
+  const eventLogGraph = dataFactory.namedNode(GRAPHS.EVENT_LOG);
+  const tNsPredi = dataFactory.namedNode(PREDICATES.T_NS);
+  return [...store.match(null, tNsPredi, null, eventLogGraph)];
+}
 
-    case YAWL_EVENT_TYPES.TASK_COMPLETED: {
-      const workItemSubject = dataFactory.namedNode(`${YAWL_NS}workitem/${payload.workItemId}`);
-      // Delete old state
-      deltas.push({
-        type: 'delete',
-        subject: workItemSubject,
-        predicate: dataFactory.namedNode(YAWL_PREDICATES.STATE),
-        object: dataFactory.literal('started'),
-      });
-      // Add new state
-      deltas.push({
-        type: 'add',
-        subject: workItemSubject,
-        predicate: dataFactory.namedNode(YAWL_PREDICATES.STATE),
-        object: dataFactory.literal('completed'),
-      });
-      deltas.push({
-        type: 'add',
-        subject: workItemSubject,
-        predicate: dataFactory.namedNode(YAWL_PREDICATES.COMPLETED_AT),
-        object: dataFactory.literal(payload.completedAt),
-      });
-      if (payload.result !== undefined) {
-        deltas.push({
-          type: 'add',
-          subject: workItemSubject,
-          predicate: dataFactory.namedNode(YAWL_PREDICATES.RESULT),
-          object: dataFactory.literal(JSON.stringify(payload.result)),
-        });
+/**
+ * Filter and collect case events from time quads
+ * @param {import('@unrdf/kgc-4d').KGCStore} store - KGC-4D store instance
+ * @param {Array<Object>} timeQuads - Event time quads
+ * @param {string} caseId - Case UUID to filter
+ * @param {bigint} targetTime - Target time in nanoseconds
+ * @returns {Array<Object>} Filtered case events
+ */
+function collectCaseEvents(store, timeQuads, caseId, targetTime) {
+  const eventLogGraph = dataFactory.namedNode(GRAPHS.EVENT_LOG);
+  const payloadPredi = dataFactory.namedNode(PREDICATES.PAYLOAD);
+  const typePredi = dataFactory.namedNode(PREDICATES.TYPE);
+  const caseEvents = [];
+
+  for (const timeQuad of timeQuads) {
+    const eventTime = BigInt(timeQuad.object.value);
+    if (eventTime <= targetTime) {
+      const payloadQuads = [...store.match(timeQuad.subject, payloadPredi, null, eventLogGraph)];
+      const typeQuads = [...store.match(timeQuad.subject, typePredi, null, eventLogGraph)];
+
+      if (payloadQuads.length > 0 && typeQuads.length > 0) {
+        try {
+          const payload = JSON.parse(payloadQuads[0].object.value);
+          const eventType = typeQuads[0].object.value;
+
+          if (payload.yawl_case_id === caseId || payload.caseId === caseId) {
+            caseEvents.push({
+              subject: timeQuad.subject,
+              t_ns: eventTime,
+              type: eventType,
+              payload,
+            });
+          }
+        } catch {
+          continue;
+        }
       }
-      break;
-    }
-
-    case YAWL_EVENT_TYPES.TASK_CANCELLED: {
-      const workItemSubject = dataFactory.namedNode(`${YAWL_NS}workitem/${payload.workItemId}`);
-      // Add cancelled state (keep previous state for audit)
-      deltas.push({
-        type: 'add',
-        subject: workItemSubject,
-        predicate: dataFactory.namedNode(YAWL_PREDICATES.STATE),
-        object: dataFactory.literal('cancelled'),
-      });
-      deltas.push({
-        type: 'add',
-        subject: workItemSubject,
-        predicate: dataFactory.namedNode(YAWL_PREDICATES.CANCELLED_AT),
-        object: dataFactory.literal(payload.cancelledAt),
-      });
-      deltas.push({
-        type: 'add',
-        subject: workItemSubject,
-        predicate: dataFactory.namedNode(YAWL_PREDICATES.REASON),
-        object: dataFactory.literal(payload.reason),
-      });
-      break;
-    }
-
-    case YAWL_EVENT_TYPES.WORK_ITEM_CREATED: {
-      const workItemSubject = dataFactory.namedNode(`${YAWL_NS}workitem/${payload.workItemId}`);
-      deltas.push({
-        type: 'add',
-        subject: workItemSubject,
-        predicate: dataFactory.namedNode(YAWL_PREDICATES.TASK_ID),
-        object: dataFactory.literal(payload.taskId),
-      });
-      deltas.push({
-        type: 'add',
-        subject: workItemSubject,
-        predicate: dataFactory.namedNode(YAWL_PREDICATES.CASE_ID),
-        object: dataFactory.namedNode(caseGraphUri(caseId)),
-      });
-      deltas.push({
-        type: 'add',
-        subject: workItemSubject,
-        predicate: dataFactory.namedNode(YAWL_PREDICATES.CREATED_AT),
-        object: dataFactory.literal(payload.createdAt),
-      });
-      break;
-    }
-
-    case YAWL_EVENT_TYPES.CONTROL_FLOW_EVALUATED: {
-      // Store control flow decision for audit
-      const decisionSubject = dataFactory.namedNode(
-        `${YAWL_NS}decision/${generateUUID()}`
-      );
-      deltas.push({
-        type: 'add',
-        subject: decisionSubject,
-        predicate: dataFactory.namedNode(YAWL_PREDICATES.CASE_ID),
-        object: dataFactory.namedNode(caseGraphUri(caseId)),
-      });
-      deltas.push({
-        type: 'add',
-        subject: decisionSubject,
-        predicate: dataFactory.namedNode(YAWL_PREDICATES.TASK_ID),
-        object: dataFactory.literal(payload.taskId),
-      });
-      deltas.push({
-        type: 'add',
-        subject: decisionSubject,
-        predicate: dataFactory.namedNode(YAWL_PREDICATES.RESULT),
-        object: dataFactory.literal(String(payload.result)),
-      });
-      deltas.push({
-        type: 'add',
-        subject: decisionSubject,
-        predicate: dataFactory.namedNode(YAWL_PREDICATES.SPARQL_QUERY),
-        object: dataFactory.literal(payload.sparqlQuery),
-      });
-      break;
     }
   }
 
-  return deltas;
+  return caseEvents;
+}
+
+/**
+ * Sort events chronologically
+ * @param {Array<Object>} events - Events to sort
+ * @returns {Array<Object>} Sorted events
+ */
+function sortEventsByTime(events) {
+  return events.sort((a, b) => {
+    if (a.t_ns < b.t_ns) return -1;
+    if (a.t_ns > b.t_ns) return 1;
+    return 0;
+  });
+}
+
+/**
+ * Create initial empty case state
+ * @param {string} caseId - Case UUID
+ * @returns {Object} Empty case state
+ */
+function createEmptyCaseState(caseId) {
+  return {
+    caseId,
+    state: null,
+    specId: null,
+    createdAt: null,
+    workItems: {},
+    controlFlowDecisions: [],
+    eventCount: 0,
+  };
 }
 
 // ============================================================================
@@ -554,76 +729,16 @@ export async function reconstructCase(store, gitBackbone, caseId, targetTime) {
     throw new TypeError('targetTime must be BigInt nanoseconds');
   }
 
-  // 1. Get all events for this case up to target time
-  const eventLogGraph = dataFactory.namedNode(GRAPHS.EVENT_LOG);
-  const tNsPredi = dataFactory.namedNode(PREDICATES.T_NS);
-  const payloadPredi = dataFactory.namedNode(PREDICATES.PAYLOAD);
-  const typePredi = dataFactory.namedNode(PREDICATES.TYPE);
+  const allEventTimeQuads = queryEventTimeQuads(store, targetTime);
+  const caseEvents = collectCaseEvents(store, allEventTimeQuads, caseId, targetTime);
+  const sortedEvents = sortEventsByTime(caseEvents);
+  const caseState = createEmptyCaseState(caseId);
 
-  // Query all events
-  const allEventTimeQuads = [...store.match(null, tNsPredi, null, eventLogGraph)];
-
-  // Filter to case events within time range
-  const caseEvents = [];
-  for (const timeQuad of allEventTimeQuads) {
-    const eventTime = BigInt(timeQuad.object.value);
-    if (eventTime <= targetTime) {
-      // Get event payload
-      const payloadQuads = [...store.match(timeQuad.subject, payloadPredi, null, eventLogGraph)];
-      const typeQuads = [...store.match(timeQuad.subject, typePredi, null, eventLogGraph)];
-
-      if (payloadQuads.length > 0 && typeQuads.length > 0) {
-        try {
-          const payload = JSON.parse(payloadQuads[0].object.value);
-          const eventType = typeQuads[0].object.value;
-
-          // Filter to YAWL events for this case
-          if (
-            payload.yawl_case_id === caseId ||
-            payload.caseId === caseId
-          ) {
-            caseEvents.push({
-              subject: timeQuad.subject,
-              t_ns: eventTime,
-              type: eventType,
-              payload,
-            });
-          }
-        } catch {
-          // Skip unparseable events
-          continue;
-        }
-      }
-    }
-  }
-
-  // Sort by time for deterministic replay
-  caseEvents.sort((a, b) => {
-    if (a.t_ns < b.t_ns) return -1;
-    if (a.t_ns > b.t_ns) return 1;
-    return 0;
-  });
-
-  // 2. Initialize empty case state
-  const caseState = {
-    caseId,
-    state: null,
-    specId: null,
-    createdAt: null,
-    workItems: {},
-    controlFlowDecisions: [],
-    eventCount: 0,
-  };
-
-  // 3. Replay events deterministically
-  for (const event of caseEvents) {
+  for (const event of sortedEvents) {
     replayEventToState(caseState, event);
   }
 
-  // 4. Calculate state hash for verification
   const stateHash = await blake3(serializeCaseState(caseState));
-
-  // 5. Calculate work items array from map
   const workItemsArray = Object.values(caseState.workItems);
 
   return {
@@ -641,6 +756,101 @@ export async function reconstructCase(store, gitBackbone, caseId, targetTime) {
   };
 }
 
+// ============================================================================
+// Event Replay - Extracted per Event Type
+// ============================================================================
+
+/**
+ * Replay CASE_CREATED event
+ * @param {Object} caseState - Mutable case state
+ * @param {Object} payload - Event payload
+ */
+function replayCaseCreated(caseState, payload) {
+  caseState.state = 'active';
+  caseState.specId = payload.specId;
+  caseState.createdAt = payload.timestamp;
+}
+
+/**
+ * Replay TASK_ENABLED event
+ * @param {Object} caseState - Mutable case state
+ * @param {Object} payload - Event payload
+ */
+function replayTaskEnabled(caseState, payload) {
+  caseState.workItems[payload.workItemId] = {
+    workItemId: payload.workItemId,
+    taskId: payload.taskId,
+    state: 'enabled',
+    enabledAt: payload.enabledAt,
+  };
+}
+
+/**
+ * Replay TASK_STARTED event
+ * @param {Object} caseState - Mutable case state
+ * @param {Object} payload - Event payload
+ */
+function replayTaskStarted(caseState, payload) {
+  if (caseState.workItems[payload.workItemId]) {
+    caseState.workItems[payload.workItemId].state = 'started';
+    caseState.workItems[payload.workItemId].startedAt = payload.startedAt;
+  }
+}
+
+/**
+ * Replay TASK_COMPLETED event
+ * @param {Object} caseState - Mutable case state
+ * @param {Object} payload - Event payload
+ */
+function replayTaskCompleted(caseState, payload) {
+  if (caseState.workItems[payload.workItemId]) {
+    caseState.workItems[payload.workItemId].state = 'completed';
+    caseState.workItems[payload.workItemId].completedAt = payload.completedAt;
+    caseState.workItems[payload.workItemId].result = payload.result;
+  }
+}
+
+/**
+ * Replay TASK_CANCELLED event
+ * @param {Object} caseState - Mutable case state
+ * @param {Object} payload - Event payload
+ */
+function replayTaskCancelled(caseState, payload) {
+  if (caseState.workItems[payload.workItemId]) {
+    caseState.workItems[payload.workItemId].state = 'cancelled';
+    caseState.workItems[payload.workItemId].cancelledAt = payload.cancelledAt;
+    caseState.workItems[payload.workItemId].reason = payload.reason;
+  }
+}
+
+/**
+ * Replay WORK_ITEM_CREATED event
+ * @param {Object} caseState - Mutable case state
+ * @param {Object} payload - Event payload
+ */
+function replayWorkItemCreated(caseState, payload) {
+  caseState.workItems[payload.workItemId] = {
+    workItemId: payload.workItemId,
+    taskId: payload.taskId,
+    state: 'created',
+    createdAt: payload.createdAt,
+  };
+}
+
+/**
+ * Replay CONTROL_FLOW_EVALUATED event
+ * @param {Object} caseState - Mutable case state
+ * @param {Object} payload - Event payload
+ */
+function replayControlFlowEvaluated(caseState, payload) {
+  caseState.controlFlowDecisions.push({
+    taskId: payload.taskId,
+    result: payload.result,
+    timestamp: payload.timestamp,
+    sparqlQuery: payload.sparqlQuery,
+  });
+}
+
 /**
  * Replay a single event to case state (pure function)
  * @param {Object} caseState - Mutable case state object
@@ -651,69 +861,79 @@ function replayEventToState(caseState, event) {
   caseState.eventCount++;
 
   switch (type) {
-    case YAWL_EVENT_TYPES.CASE_CREATED: {
-      caseState.state = 'active';
-      caseState.specId = payload.specId;
-      caseState.createdAt = payload.timestamp;
+    case YAWL_EVENT_TYPES.CASE_CREATED:
+      replayCaseCreated(caseState, payload);
       break;
-    }
-
-    case YAWL_EVENT_TYPES.TASK_ENABLED: {
-      caseState.workItems[payload.workItemId] = {
-        workItemId: payload.workItemId,
-        taskId: payload.taskId,
-        state: 'enabled',
-        enabledAt: payload.enabledAt,
-      };
+    case YAWL_EVENT_TYPES.TASK_ENABLED:
+      replayTaskEnabled(caseState, payload);
       break;
-    }
-
-    case YAWL_EVENT_TYPES.TASK_STARTED: {
-      if (caseState.workItems[payload.workItemId]) {
-        caseState.workItems[payload.workItemId].state = 'started';
-        caseState.workItems[payload.workItemId].startedAt = payload.startedAt;
-      }
+    case YAWL_EVENT_TYPES.TASK_STARTED:
+      replayTaskStarted(caseState, payload);
       break;
-    }
-
-    case YAWL_EVENT_TYPES.TASK_COMPLETED: {
-      if (caseState.workItems[payload.workItemId]) {
-        caseState.workItems[payload.workItemId].state = 'completed';
-        caseState.workItems[payload.workItemId].completedAt = payload.completedAt;
-        caseState.workItems[payload.workItemId].result = payload.result;
-      }
+    case YAWL_EVENT_TYPES.TASK_COMPLETED:
+      replayTaskCompleted(caseState, payload);
       break;
-    }
-
-    case YAWL_EVENT_TYPES.TASK_CANCELLED: {
-      if (caseState.workItems[payload.workItemId]) {
-        caseState.workItems[payload.workItemId].state = 'cancelled';
-        caseState.workItems[payload.workItemId].cancelledAt = payload.cancelledAt;
-        caseState.workItems[payload.workItemId].reason = payload.reason;
-      }
+    case YAWL_EVENT_TYPES.TASK_CANCELLED:
+      replayTaskCancelled(caseState, payload);
       break;
-    }
-
-    case YAWL_EVENT_TYPES.WORK_ITEM_CREATED: {
-      caseState.workItems[payload.workItemId] = {
-        workItemId: payload.workItemId,
-        taskId: payload.taskId,
-        state: 'created',
-        createdAt: payload.createdAt,
-      };
+    case YAWL_EVENT_TYPES.WORK_ITEM_CREATED:
+      replayWorkItemCreated(caseState, payload);
       break;
-    }
-
-    case YAWL_EVENT_TYPES.CONTROL_FLOW_EVALUATED: {
-      caseState.controlFlowDecisions.push({
-        taskId: payload.taskId,
-        result: payload.result,
-        timestamp: payload.timestamp,
-        sparqlQuery: payload.sparqlQuery,
-      });
+    case YAWL_EVENT_TYPES.CONTROL_FLOW_EVALUATED:
+      replayControlFlowEvaluated(caseState, payload);
       break;
-    }
   }
+}
+
+// ============================================================================
+// Receipt Generation - Helper Functions
+// ============================================================================
+
+/**
+ * Calculate hashes for receipt
+ * @param {Object} beforeState - State before transition
+ * @param {Object} afterState - State after transition
+ * @param {Object} decision - Decision data
+ * @returns {Promise<Object>} Hash object with beforeHash, afterHash, decisionHash
+ */
+async function calculateReceiptHashes(beforeState, afterState, decision) {
+  const beforeSerialized = serializeCaseState(beforeState);
+  const afterSerialized = serializeCaseState(afterState);
+  const decisionSerialized = serializeCaseState(decision);
+
+  const [beforeHash, afterHash, decisionHash] = await Promise.all([
+    blake3(beforeSerialized),
+    blake3(afterSerialized),
+    blake3(decisionSerialized),
+  ]);
+
+  return { beforeHash, afterHash, decisionHash };
+}
+
+/**
+ * Build receipt object from hashes and justification
+ * @param {Object} hashes - Hash object
+ * @param {Object} justification - Justification details
+ * @param {string} [gitRef] - Git reference
+ * @returns {Object} Receipt object
+ */
+function buildReceiptObject(hashes, justification, gitRef) {
+  const t_ns = now();
+
+  return {
+    beforeHash: hashes.beforeHash,
+    afterHash: hashes.afterHash,
+    hash: hashes.decisionHash,
+    justification: {
+      ...(justification.hookValidated && { hookValidated: justification.hookValidated }),
+      ...(justification.conditionChecked && { conditionChecked: justification.conditionChecked }),
+      ...(justification.sparqlQuery && { sparqlQuery: justification.sparqlQuery }),
+      ...(justification.reasoning && { reasoning: justification.reasoning }),
+    },
+    ...(gitRef && { gitRef }),
+    t_ns: t_ns.toString(),
+    timestamp_iso: toISO(t_ns),
+  };
 }
 
 // ============================================================================
@@ -755,38 +975,8 @@ export async function createWorkflowReceipt(options) {
     gitRef,
   } = options;
 
-  // Serialize states deterministically
-  const beforeSerialized = serializeCaseState(beforeState);
-  const afterSerialized = serializeCaseState(afterState);
-  const decisionSerialized = serializeCaseState(decision);
-
-  // Calculate BLAKE3 hashes
-  const [beforeHash, afterHash, decisionHash] = await Promise.all([
-    blake3(beforeSerialized),
-    blake3(afterSerialized),
-    blake3(decisionSerialized),
-  ]);
-
-  // Get current timestamp
-  const t_ns = now();
-
-  // Build receipt - only include optional fields if they have values
-  const receipt = {
-    beforeHash,
-    afterHash,
-    hash: decisionHash,
-    justification: {
-      ...(justification.hookValidated && { hookValidated: justification.hookValidated }),
-      ...(justification.conditionChecked && { conditionChecked: justification.conditionChecked }),
-      ...(justification.sparqlQuery && { sparqlQuery: justification.sparqlQuery }),
-      ...(justification.reasoning && { reasoning: justification.reasoning }),
-    },
-    ...(gitRef && { gitRef }),
-    t_ns: t_ns.toString(),
-    timestamp_iso: toISO(t_ns),
-  };
-
-  // Validate receipt against schema
+  const hashes = await calculateReceiptHashes(beforeState, afterState, decision);
+  const receipt = buildReceiptObject(hashes, justification, gitRef);
   const validated = ReceiptSchema.parse(receipt);
 
   return validated;
@@ -803,29 +993,19 @@ export async function createWorkflowReceipt(options) {
  */
 export async function verifyWorkflowReceipt(receipt, beforeState, afterState, decision) {
   try {
-    // Recalculate hashes
-    const beforeSerialized = serializeCaseState(beforeState);
-    const afterSerialized = serializeCaseState(afterState);
-    const decisionSerialized = serializeCaseState(decision);
+    const hashes = await calculateReceiptHashes(beforeState, afterState, decision);
 
-    const [beforeHash, afterHash, decisionHash] = await Promise.all([
-      blake3(beforeSerialized),
-      blake3(afterSerialized),
-      blake3(decisionSerialized),
-    ]);
-
-    // Verify all hashes match
     const valid =
-      beforeHash === receipt.beforeHash &&
-      afterHash === receipt.afterHash &&
-      decisionHash === receipt.hash;
+      hashes.beforeHash === receipt.beforeHash &&
+      hashes.afterHash === receipt.afterHash &&
+      hashes.decisionHash === receipt.hash;
 
     return {
       valid,
       verified: {
-        beforeHash: beforeHash === receipt.beforeHash,
-        afterHash: afterHash === receipt.afterHash,
-        decisionHash: decisionHash === receipt.hash,
+        beforeHash: hashes.beforeHash === receipt.beforeHash,
+        afterHash: hashes.afterHash === receipt.afterHash,
+        decisionHash: hashes.decisionHash === receipt.hash,
       },
       receipt,
     };
@@ -836,6 +1016,113 @@ export async function verifyWorkflowReceipt(receipt, beforeState, afterState, de
       receipt,
     };
   }
+}
+
+// ============================================================================
+// Audit Trail - Helper Functions
+// ============================================================================
+
+/**
+ * Get RDF predicates for audit trail querying
+ * @returns {Object} Predicate nodes
+ */
+function getAuditTrailPredicates() {
+  return {
+    eventLogGraph: dataFactory.namedNode(GRAPHS.EVENT_LOG),
+    tNsPredi: dataFactory.namedNode(PREDICATES.T_NS),
+    payloadPredi: dataFactory.namedNode(PREDICATES.PAYLOAD),
+    typePredi: dataFactory.namedNode(PREDICATES.TYPE),
+    gitRefPredi: dataFactory.namedNode(PREDICATES.GIT_REF),
+  };
+}
+
+/**
+ * Process a single time quad to extract event data
+ * @param {import('@unrdf/kgc-4d').KGCStore} store - KGC-4D store instance
+ * @param {Object} timeQuad - Time quad to process
+ * @param {string} caseId - Case UUID
+ * @param {Object} predicates - RDF predicates
+ * @returns {Object|null} Event data or null if not a case event
+ */
+function processTimeQuadForEvent(store, timeQuad, caseId, predicates) {
+  const eventTime = BigInt(timeQuad.object.value);
+  const payloadQuads = [...store.match(timeQuad.subject, predicates.payloadPredi, null, predicates.eventLogGraph)];
+  const typeQuads = [...store.match(timeQuad.subject, predicates.typePredi, null, predicates.eventLogGraph)];
+  const gitRefQuads = [...store.match(timeQuad.subject, predicates.gitRefPredi, null, predicates.eventLogGraph)];
+
+  if (payloadQuads.length === 0 || typeQuads.length === 0) {
+    return null;
+  }
+
+  try {
+    const payload = JSON.parse(payloadQuads[0].object.value);
+    const eventType = typeQuads[0].object.value;
+    const gitRef = gitRefQuads.length > 0 ? gitRefQuads[0].object.value : null;
+
+    if (payload.yawl_case_id !== caseId && payload.caseId !== caseId) {
+      return null;
+    }
+
+    return {
+      eventId: timeQuad.subject.value.split('/').pop(),
+      t_ns: eventTime.toString(),
+      timestamp_iso: toISO(eventTime),
+      type: eventType,
+      payload,
+      gitRef,
+    };
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Extract receipts and SPARQL queries from event
+ * @param {Object} event - Event object
+ * @param {Array<Object>} receipts - Receipts array to populate
+ * @param {Array<Object>} sparqlQueries - SPARQL queries array to populate
+ */
+function extractEventMetadata(event, receipts, sparqlQueries) {
+  if (event.payload.receipt) {
+    receipts.push({
+      eventId: event.eventId,
+      ...event.payload.receipt,
+    });
+  }
+
+  if (event.type === YAWL_EVENT_TYPES.CONTROL_FLOW_EVALUATED && event.payload.sparqlQuery) {
+    sparqlQueries.push({
+      eventId: event.eventId,
+      taskId: event.payload.taskId,
+      result: event.payload.result,
+      timestamp: event.payload.timestamp,
+      query: event.payload.sparqlQuery,
+    });
+  }
+}
+
+/**
+ * Collect audit trail events for a case
+ * @param {import('@unrdf/kgc-4d').KGCStore} store - KGC-4D store instance
+ * @param {Array<Object>} timeQuads - Event time quads
+ * @param {string} caseId - Case UUID
+ * @param {Object} predicates - RDF predicates
+ * @returns {Object} Collected events, receipts, and SPARQL queries
+ */
+function collectAuditTrailData(store, timeQuads, caseId, predicates) {
+  const events = [];
+  const receipts = [];
+  const sparqlQueries = [];
+
+  for (const timeQuad of timeQuads) {
+    const event = processTimeQuadForEvent(store, timeQuad, caseId, predicates);
+    if (event) {
+      events.push(event);
+      extractEventMetadata(event, receipts, sparqlQueries);
+    }
+  }
+
+  return { events, receipts, sparqlQueries };
 }
 
 // ============================================================================
@@ -861,77 +1148,10 @@ export async function verifyWorkflowReceipt(receipt, beforeState, afterState, de
  * console.log(audit.sparqlQueries); // Control flow queries
  */
 export async function getWorkflowAuditTrail(store, caseId) {
-  const eventLogGraph = dataFactory.namedNode(GRAPHS.EVENT_LOG);
-  const tNsPredi = dataFactory.namedNode(PREDICATES.T_NS);
-  const payloadPredi = dataFactory.namedNode(PREDICATES.PAYLOAD);
-  const typePredi = dataFactory.namedNode(PREDICATES.TYPE);
-  const gitRefPredi = dataFactory.namedNode(PREDICATES.GIT_REF);
+  const predicates = getAuditTrailPredicates();
+  const allEventTimeQuads = [...store.match(null, predicates.tNsPredi, null, predicates.eventLogGraph)];
+  const { events, receipts, sparqlQueries } = collectAuditTrailData(store, allEventTimeQuads, caseId, predicates);
 
-  // Get all events
-  const allEventTimeQuads = [...store.match(null, tNsPredi, null, eventLogGraph)];
-
-  // Filter and collect case events
-  const events = [];
-  const receipts = [];
-  const sparqlQueries = [];
-
-  for (const timeQuad of allEventTimeQuads) {
-    const eventTime = BigInt(timeQuad.object.value);
-
-    // Get event details
-    const payloadQuads = [...store.match(timeQuad.subject, payloadPredi, null, eventLogGraph)];
-    const typeQuads = [...store.match(timeQuad.subject, typePredi, null, eventLogGraph)];
-    const gitRefQuads = [...store.match(timeQuad.subject, gitRefPredi, null, eventLogGraph)];
-
-    if (payloadQuads.length > 0 && typeQuads.length > 0) {
-      try {
-        const payload = JSON.parse(payloadQuads[0].object.value);
-        const eventType = typeQuads[0].object.value;
-        const gitRef = gitRefQuads.length > 0 ? gitRefQuads[0].object.value : null;
-
-        // Check if this is a YAWL event for this case
-        if (
-          payload.yawl_case_id === caseId ||
-          payload.caseId === caseId
-        ) {
-          const event = {
-            eventId: timeQuad.subject.value.split('/').pop(),
-            t_ns: eventTime.toString(),
-            timestamp_iso: toISO(eventTime),
-            type: eventType,
-            payload,
-            gitRef,
-          };
-
-          events.push(event);
-
-          // Extract receipt if present
-          if (payload.receipt) {
-            receipts.push({
-              eventId: event.eventId,
-              ...payload.receipt,
-            });
-          }
-
-          // Extract SPARQL queries from control flow events
-          if (eventType === YAWL_EVENT_TYPES.CONTROL_FLOW_EVALUATED && payload.sparqlQuery) {
-            sparqlQueries.push({
-              eventId: event.eventId,
-              taskId: payload.taskId,
-              result: payload.result,
-              timestamp: payload.timestamp,
-              query: payload.sparqlQuery,
-            });
-          }
-        }
-      } catch {
-        // Skip unparseable events
-        continue;
-      }
-    }
-  }
-
-  // Sort events chronologically
   events.sort((a, b) => {
     const aTime = BigInt(a.t_ns);
     const bTime = BigInt(b.t_ns);
@@ -940,7 +1160,6 @@ export async function getWorkflowAuditTrail(store, caseId) {
     return 0;
   });
 
-  // Calculate audit trail hash for integrity verification
   const auditHash = await blake3(serializeCaseState({
     caseId,
     events: events.map((e) => ({ id: e.eventId, type: e.type, t_ns: e.t_ns })),

@@ -7,8 +7,8 @@
  * Split into focused modules for better maintainability.
  */
 
-// Export workflow creation functions and utilities
-export {
+// Import workflow creation functions and utilities
+import {
   createWorkflow,
   buildControlFlowGraph,
   findInitialTasks,
@@ -30,8 +30,8 @@ export {
   ReceiptSchema,
 } from './workflow-creation.mjs';
 
-// Export workflow execution functions
-export {
+// Import workflow execution functions
+import {
   enableTask,
   startTask,
   completeTask,
@@ -42,25 +42,69 @@ export {
   EnableTaskOptionsSchema,
 } from './workflow-execution.mjs';
 
-// Export workflow query functions
-export {
+// Import workflow query functions
+import {
   createCase,
   createCaseRDF,
   CaseOptionsSchema,
 } from './workflow-query.mjs';
 
-// Export workflow cancellation functions
-export {
+// Import workflow cancellation functions
+import {
   cancelWorkItem,
 } from './workflow-cancellation.mjs';
 
-// Export workflow time machine functions
-export {
+// Import workflow time machine functions
+import {
   replayCase,
   queryCaseEvents,
   reconstructWorkItemHistory,
   determineHistoricalCaseStatus,
 } from './workflow-timemachine.mjs';
+
+// Export all named exports
+export {
+  // Workflow creation
+  createWorkflow,
+  buildControlFlowGraph,
+  findInitialTasks,
+  createWorkflowRDF,
+  generateId,
+  now,
+  toISO,
+  createHash,
+  createReceipt,
+  YAWL_NS,
+  YAWL_EVENT_TYPES,
+  WORK_ITEM_STATUS,
+  CONTROL_FLOW_PATTERNS,
+  TaskSchema,
+  ControlFlowSchema,
+  ResourceSchema,
+  WorkflowSpecSchema,
+  WorkflowOptionsSchema,
+  ReceiptSchema,
+  // Workflow execution
+  enableTask,
+  startTask,
+  completeTask,
+  evaluateControlFlowAndEnable,
+  evaluateCondition,
+  checkAllPredecessorsComplete,
+  WorkItemSchema,
+  EnableTaskOptionsSchema,
+  // Workflow query
+  createCase,
+  createCaseRDF,
+  CaseOptionsSchema,
+  // Workflow cancellation
+  cancelWorkItem,
+  // Workflow time machine
+  replayCase,
+  queryCaseEvents,
+  reconstructWorkItemHistory,
+  determineHistoricalCaseStatus,
+};
 
 // Default export with all functions
 export default {
