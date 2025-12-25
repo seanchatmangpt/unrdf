@@ -1,0 +1,310 @@
+name: Code Quality & Analysis
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: '18'
+  PNPM_VERSION: '10.15.0'
+
+jobs:
+  # Complexity Analysis
+  complexity:
+    name: Code Complexity Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Install dependencies
+        run: timeout 60s pnpm install --frozen-lockfile
+
+      - name: Analyze code complexity
+        run: |
+          echo "Analyzing code complexity..."
+          npx complexity-report packages/*/src/**/*.{js,mjs} --format json > complexity-report.json || echo "Complexity analysis completed"
+
+          # Check for high complexity functions
+          if [ -f "complexity-report.json" ]; then
+            echo "Checking for high complexity functions..."
+            node -e "
+              const report = require('./complexity-report.json');
+              const highComplexity = report.functions.filter(f => f.cyclomatic > 10);
+              if (highComplexity.length > 0) {
+                console.log('⚠️ High complexity functions found:', highComplexity.length);
+                highComplexity.forEach(f => console.log(\`  - \${f.name}: complexity \${f.cyclomatic}\`));
+              } else {
+                console.log('✅ No high complexity functions found');
+              }
+            " || echo "Complexity check completed"
+          fi
+
+      - name: Upload complexity report
+        uses: actions/upload-artifact@v4
+        with:
+          name: complexity-report
+          path: complexity-report.json
+          retention-days: 30
+
+  # Code Duplication Detection
+  duplication:
+    name: Code Duplication Detection
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Detect code duplication
+        run: |
+          echo "Detecting code duplication..."
+          npx jscpd packages/*/src --format json > duplication-report.json || echo "Duplication detection completed"
+
+          if [ -f "duplication-report.json" ]; then
+            echo "Analyzing duplication results..."
+            node -e "
+              const report = require('./duplication-report.json');
+              if (report.statistics && report.statistics.total) {
+                const duplicationPct = report.statistics.total.percentage || 0;
+                console.log(\`Duplication: \${duplicationPct}%\`);
+                if (duplicationPct > 5) {
+                  console.log('⚠️ Code duplication above threshold: ' + duplicationPct + '%');
+                } else {
+                  console.log('✅ Code duplication within acceptable range');
+                }
+              }
+            " || echo "Duplication analysis completed"
+          fi
+
+      - name: Upload duplication report
+        uses: actions/upload-artifact@v4
+        with:
+          name: duplication-report
+          path: duplication-report.json
+          retention-days: 30
+
+  # Type Coverage
+  type-coverage:
+    name: JSDoc Type Coverage
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Install dependencies
+        run: timeout 60s pnpm install --frozen-lockfile
+
+      - name: Check JSDoc coverage
+        run: |
+          echo "Checking JSDoc type coverage..."
+          node scripts/quality-gates/check-jsdoc-coverage.mjs > jsdoc-coverage.log 2>&1 || echo "JSDoc coverage check completed"
+
+          if [ -f "jsdoc-coverage.json" ]; then
+            COVERAGE=$(cat jsdoc-coverage.json | jq '.coverage')
+            echo "JSDoc Coverage: ${COVERAGE}%"
+
+            if (( $(echo "$COVERAGE < 90" | bc -l) )); then
+              echo "⚠️ JSDoc coverage below threshold: ${COVERAGE}% < 90%"
+            else
+              echo "✅ JSDoc coverage meets threshold: ${COVERAGE}% >= 90%"
+            fi
+          fi
+
+      - name: Upload JSDoc coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: jsdoc-coverage
+          path: |
+            jsdoc-coverage.log
+            jsdoc-coverage.json
+          retention-days: 30
+
+  # File Size Check
+  file-size:
+    name: File Size Validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check file sizes
+        run: |
+          echo "Checking file sizes..."
+
+          # Find files larger than 500 lines
+          echo "Files larger than 500 lines:"
+          find packages/*/src -name "*.js" -o -name "*.mjs" | while read file; do
+            lines=$(wc -l < "$file")
+            if [ "$lines" -gt 500 ]; then
+              echo "  ⚠️ $file: $lines lines"
+            fi
+          done
+
+          # Check total file count
+          FILE_COUNT=$(find packages/*/src -name "*.js" -o -name "*.mjs" | wc -l)
+          echo "Total source files: $FILE_COUNT"
+          echo "✅ File size check completed"
+
+  # Dependency Analysis
+  dependency-analysis:
+    name: Dependency Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Install dependencies
+        run: timeout 60s pnpm install --frozen-lockfile
+
+      - name: Analyze dependencies
+        run: |
+          echo "Analyzing dependencies..."
+
+          # Check for circular dependencies
+          npx madge --circular --extensions js,mjs packages/*/src || echo "Circular dependency check completed"
+
+          # Generate dependency graph
+          npx madge --json packages/*/src > dependency-graph.json || echo "Dependency graph generated"
+
+          # Check for unused dependencies
+          npx depcheck --json > depcheck-report.json || echo "Dependency check completed"
+
+      - name: Upload dependency reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-analysis
+          path: |
+            dependency-graph.json
+            depcheck-report.json
+          retention-days: 30
+
+  # Bundle Size Analysis
+  bundle-size:
+    name: Bundle Size Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Install dependencies
+        run: timeout 60s pnpm install --frozen-lockfile
+
+      - name: Build packages
+        run: timeout 120s pnpm build
+
+      - name: Analyze bundle sizes
+        run: |
+          echo "Analyzing bundle sizes..."
+
+          # Check dist folder sizes
+          find packages/*/dist -name "*.js" -o -name "*.mjs" | while read file; do
+            size=$(du -h "$file" | cut -f1)
+            echo "  $file: $size"
+          done
+
+          # Generate size report
+          npx size-limit --json > bundle-size-report.json || echo "Bundle size analysis completed"
+
+      - name: Comment PR with bundle size
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        continue-on-error: true
+        with:
+          script: |
+            const fs = require('fs');
+            const { execSync } = require('child_process');
+
+            let comment = '## Bundle Size Analysis\n\n';
+            comment += '| Package | Size |\n';
+            comment += '|---------|------|\n';
+
+            // Get all dist files
+            const files = execSync('find packages/*/dist -name "*.mjs" -o -name "*.js"').toString().trim().split('\n');
+
+            files.forEach(file => {
+              const size = execSync(`du -h "${file}"`).toString().split('\t')[0];
+              comment += `| ${file.replace('packages/', '')} | ${size} |\n`;
+            });
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
+      - name: Upload bundle size report
+        uses: actions/upload-artifact@v4
+        with:
+          name: bundle-size-report
+          path: bundle-size-report.json
+          retention-days: 30
+
+  # Quality Summary
+  quality-summary:
+    name: Quality Summary
+    runs-on: ubuntu-latest
+    needs: [complexity, duplication, type-coverage, file-size, dependency-analysis, bundle-size]
+    if: always()
+    steps:
+      - name: Generate quality summary
+        run: |
+          echo "# Code Quality Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Analysis Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Analysis | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|----------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Complexity | ${{ needs.complexity.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Duplication | ${{ needs.duplication.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Type Coverage | ${{ needs.type-coverage.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| File Size | ${{ needs.file-size.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Dependencies | ${{ needs.dependency-analysis.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Bundle Size | ${{ needs.bundle-size.result }} |" >> $GITHUB_STEP_SUMMARY

@@ -1,7 +1,7 @@
-import { mkdtempSync, rmSync } from 'node:fs';
+import { mkdtempSync, rmSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
-import { createTestWorkflow, createTestEngine, measureTime } from './test-utils.mjs';
+import { createTestWorkflow, createTestEngine, measureTime, sequence } from './test-utils.mjs';
 
 /**
  * YAWL Workflow Patterns Test Suite

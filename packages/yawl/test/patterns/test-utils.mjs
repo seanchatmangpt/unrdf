@@ -18,9 +18,9 @@
  */
 
 import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest';
-import { mkdtempSync, rmSync, existsSync } from 'fs';
-import { join } from 'path';
-import { tmpdir } from 'os';
+import { mkdtempSync, rmSync, existsSync } from 'node:fs';
+import { join } from 'node:path';
+import { tmpdir } from 'node:os';
 
 // Core YAWL imports
 import {
@@ -228,4 +228,10 @@ export {
   // Constants
   SPLIT_TYPE,
   JOIN_TYPE,
+  // Node.js stdlib (re-exported for convenience)
+  mkdtempSync,
+  rmSync,
+  existsSync,
+  join,
+  tmpdir,
 };

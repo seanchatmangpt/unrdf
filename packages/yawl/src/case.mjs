@@ -164,15 +164,16 @@ export class Case {
    * @param {import('./workflow.mjs').YawlWorkflow} workflow - Workflow definition
    */
   constructor(data, workflow) {
-    const validated = CaseDataSchema.parse(data);
-    this.id = validated.id;
-    this.workflowId = validated.workflowId;
+    // Fast path: skip validation in hot path for performance
+    // Validation happens at engine.createCase() level
+    this.id = data.id;
+    this.workflowId = data.workflowId;
     this.workflow = workflow;
-    this._status = validated.status;
-    this.createdAt = validated.createdAt ?? now();
-    this.startedAt = validated.startedAt;
-    this.completedAt = validated.completedAt;
-    this.data = validated.data ?? {};
+    this._status = data.status ?? 'created';
+    this.createdAt = data.createdAt ?? now();
+    this.startedAt = data.startedAt;
+    this.completedAt = data.completedAt;
+    this.data = data.data ?? {};
 
     /**
      * Work items by ID

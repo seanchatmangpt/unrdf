@@ -1,5 +1,13 @@
 
-import { createTestWorkflow, createTestEngine, measureTime } from './test-utils.mjs';
+import {
+  createTestWorkflow,
+  createTestEngine,
+  measureTime,
+  SPLIT_TYPE,
+  JOIN_TYPE,
+  sequence,
+  deferredChoice
+} from './test-utils.mjs';
 
 /**
  * YAWL Workflow Patterns Test Suite

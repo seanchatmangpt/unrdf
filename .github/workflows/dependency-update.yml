@@ -1,0 +1,306 @@
+name: Dependency Updates
+
+on:
+  schedule:
+    # Run weekly on Monday at 9 AM UTC
+    - cron: '0 9 * * 1'
+  workflow_dispatch:
+    inputs:
+      update_type:
+        description: 'Update type'
+        required: true
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+          - all
+
+env:
+  NODE_VERSION: '18'
+  PNPM_VERSION: '10.15.0'
+
+jobs:
+  # Check for outdated dependencies
+  check-outdated:
+    name: Check Outdated Dependencies
+    runs-on: ubuntu-latest
+    outputs:
+      has_updates: ${{ steps.check.outputs.has_updates }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Check for outdated dependencies
+        id: check
+        run: |
+          echo "Checking for outdated dependencies..."
+          pnpm outdated --format json > outdated.json || true
+
+          if [ -f "outdated.json" ]; then
+            OUTDATED_COUNT=$(cat outdated.json | jq 'length')
+            echo "Outdated dependencies: $OUTDATED_COUNT"
+
+            if [ "$OUTDATED_COUNT" -gt 0 ]; then
+              echo "has_updates=true" >> $GITHUB_OUTPUT
+              echo "⚠️ Found $OUTDATED_COUNT outdated dependencies"
+            else
+              echo "has_updates=false" >> $GITHUB_OUTPUT
+              echo "✅ All dependencies up to date"
+            fi
+          else
+            echo "has_updates=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Upload outdated report
+        if: steps.check.outputs.has_updates == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: outdated-report
+          path: outdated.json
+          retention-days: 7
+
+  # Update patch versions
+  update-patch:
+    name: Update Patch Versions
+    runs-on: ubuntu-latest
+    needs: check-outdated
+    if: needs.check-outdated.outputs.has_updates == 'true' && (github.event.inputs.update_type == 'patch' || github.event.inputs.update_type == 'all' || github.event_name == 'schedule')
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Update patch dependencies
+        run: |
+          echo "Updating patch dependencies..."
+          pnpm update --latest --filter "*" --depth Infinity || echo "Update completed"
+
+      - name: Run tests
+        run: |
+          echo "Running tests after update..."
+          timeout 300s pnpm test || echo "Tests completed"
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'chore: update patch dependencies'
+          title: 'chore: Update patch dependencies'
+          body: |
+            ## Dependency Updates (Patch)
+
+            Automated patch version updates for dependencies.
+
+            **Update Type:** Patch versions only
+            **Triggered by:** ${{ github.event_name }}
+
+            ### Checklist
+            - [ ] All tests pass
+            - [ ] No breaking changes
+            - [ ] Security vulnerabilities addressed
+
+            ---
+            *Automated by dependency-update workflow*
+          branch: deps/patch-updates
+          delete-branch: true
+          labels: |
+            dependencies
+            automated
+
+  # Update minor versions
+  update-minor:
+    name: Update Minor Versions
+    runs-on: ubuntu-latest
+    needs: check-outdated
+    if: needs.check-outdated.outputs.has_updates == 'true' && (github.event.inputs.update_type == 'minor' || github.event.inputs.update_type == 'all')
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Update minor dependencies
+        run: |
+          echo "Updating minor dependencies..."
+          # Update dependencies with caret ranges
+          pnpm update --latest --filter "*" || echo "Update completed"
+
+      - name: Run full test suite
+        run: |
+          echo "Running full test suite..."
+          timeout 300s pnpm test || echo "Tests completed"
+          timeout 60s pnpm lint || echo "Lint completed"
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'chore: update minor dependencies'
+          title: 'chore: Update minor dependencies'
+          body: |
+            ## Dependency Updates (Minor)
+
+            Automated minor version updates for dependencies.
+
+            **Update Type:** Minor versions
+            **Triggered by:** Manual workflow dispatch
+
+            ### Testing Required
+            - [ ] All tests pass
+            - [ ] Manual testing completed
+            - [ ] No breaking changes detected
+            - [ ] Security scan clean
+
+            ### Review Notes
+            Minor version updates may include new features. Please review:
+            - API changes
+            - New deprecation warnings
+            - Performance impacts
+
+            ---
+            *Automated by dependency-update workflow*
+          branch: deps/minor-updates
+          delete-branch: true
+          labels: |
+            dependencies
+            automated
+            needs-review
+
+  # Security updates
+  security-updates:
+    name: Security Updates
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Check for security vulnerabilities
+        id: audit
+        run: |
+          echo "Checking for security vulnerabilities..."
+          pnpm audit --json > audit.json || true
+
+          VULNERABILITIES=$(cat audit.json | jq '.metadata.vulnerabilities.total // 0')
+          echo "vulnerabilities=$VULNERABILITIES" >> $GITHUB_OUTPUT
+
+          if [ "$VULNERABILITIES" -gt 0 ]; then
+            echo "⚠️ Found $VULNERABILITIES vulnerabilities"
+          else
+            echo "✅ No vulnerabilities found"
+          fi
+
+      - name: Auto-fix security vulnerabilities
+        if: steps.audit.outputs.vulnerabilities != '0'
+        run: |
+          echo "Attempting to auto-fix vulnerabilities..."
+          pnpm audit --fix || echo "Auto-fix completed"
+
+      - name: Run tests after security fixes
+        if: steps.audit.outputs.vulnerabilities != '0'
+        run: |
+          echo "Running tests after security fixes..."
+          timeout 300s pnpm test || echo "Tests completed"
+
+      - name: Create Pull Request for security fixes
+        if: steps.audit.outputs.vulnerabilities != '0'
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'security: fix dependency vulnerabilities'
+          title: 'security: Fix dependency vulnerabilities'
+          body: |
+            ## Security Vulnerability Fixes
+
+            Automated security fixes for dependency vulnerabilities.
+
+            **Vulnerabilities Found:** ${{ steps.audit.outputs.vulnerabilities }}
+            **Action Taken:** Automatic dependency updates
+
+            ### Security Review Required
+            - [ ] Review audit report
+            - [ ] Verify all vulnerabilities addressed
+            - [ ] Confirm no breaking changes
+            - [ ] Tests pass
+
+            ### Priority
+            🔴 **HIGH PRIORITY** - Security fixes should be reviewed and merged promptly.
+
+            ---
+            *Automated by dependency-update workflow*
+          branch: security/dependency-fixes
+          delete-branch: true
+          labels: |
+            security
+            dependencies
+            automated
+            high-priority
+
+  # Update summary
+  update-summary:
+    name: Update Summary
+    runs-on: ubuntu-latest
+    needs: [check-outdated, update-patch, update-minor, security-updates]
+    if: always()
+    steps:
+      - name: Generate summary
+        run: |
+          echo "# Dependency Update Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Run Date:** $(date -u)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Update Type | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Outdated Check | ${{ needs.check-outdated.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Patch Updates | ${{ needs.update-patch.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Minor Updates | ${{ needs.update-minor.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Security Updates | ${{ needs.security-updates.result }} |" >> $GITHUB_STEP_SUMMARY

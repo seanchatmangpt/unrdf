@@ -38,7 +38,16 @@
     "dev": "pnpm -r --parallel dev",
     "docs": "pnpm -C packages/core docs",
     "convert-paper": "node scripts/convert-paper.mjs",
-    "precommit": "pnpm lint && pnpm test:fast"
+    "precommit": "pnpm lint && pnpm test:fast",
+    "benchmark": "node benchmarks/run-all.mjs all",
+    "benchmark:core": "node benchmarks/run-all.mjs core",
+    "benchmark:integration": "node benchmarks/run-all.mjs integration",
+    "benchmark:advanced": "node benchmarks/run-all.mjs advanced",
+    "benchmark:regression": "node benchmarks/run-all.mjs regression",
+    "benchmark:report": "node benchmarks/run-all.mjs all",
+    "benchmark:baseline": "node benchmarks/run-all.mjs regression --save-baseline",
+    "benchmark:compare": "node benchmarks/run-all.mjs all --compare-baseline",
+    "benchmark:memory": "node --expose-gc benchmarks/regression/memory-leak-detection.mjs"
   },
   "devDependencies": {
     "@opentelemetry/api": "^1.9.0",

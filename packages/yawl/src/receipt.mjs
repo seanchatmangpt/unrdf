@@ -124,7 +124,7 @@ export const ReceiptSchema = z.object({
 
   // KGC-4D integration
   kgcEventId: z.string().optional(),
-  gitRef: z.string().optional(),
+  gitRef: z.string().nullish(),
   vectorClock: VectorClockSchema.optional(),
 
   // Decision payload

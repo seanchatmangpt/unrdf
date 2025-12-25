@@ -68,7 +68,7 @@ export function createChangeFeed(store, config = {}) {
   const subscribers = new Set();
 
   // Hook into store if provided
-  if (store) {
+  if (store && typeof store.addQuad === 'function' && typeof store.removeQuad === 'function') {
     const originalAddQuad = store.addQuad.bind(store);
     const originalRemoveQuad = store.removeQuad.bind(store);
 

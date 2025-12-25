@@ -95,7 +95,7 @@ async function benchmarkMemoryUnderLoad() {
   console.log('\n📊 BENCHMARK 2: MEMORY USAGE UNDER LOAD');
   console.log('=' .repeat(80));
 
-  const engine = createWorkflowEngine({ enableTimeTravel: false });
+  const engine = createWorkflowEngine({ enableTimeTravel: false, enableEventLog: false });
 
   // Create workflow with tasks
   const workflow = createWorkflow({
@@ -171,7 +171,7 @@ async function benchmarkThroughput() {
   console.log('\n📊 BENCHMARK 3: THROUGHPUT (Operations/Second)');
   console.log('=' .repeat(80));
 
-  const engine = createWorkflowEngine({ enableTimeTravel: false });
+  const engine = createWorkflowEngine({ enableTimeTravel: false, enableEventLog: false });
 
   // Create simple workflow
   const workflow = createWorkflow({

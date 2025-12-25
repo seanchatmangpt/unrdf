@@ -172,6 +172,22 @@ export class KGenFilters {
       category: 'text',
       description: 'Extract substring by position'
     });
+
+    this.register('truncate', (str, length = 10, suffix = '...') => {
+      const s = String(str || '');
+      if (s.length <= length) return s;
+      return s.slice(0, length) + suffix;
+    }, {
+      category: 'text',
+      description: 'Truncate string to specified length'
+    });
+
+    this.register('reverse', (str) => {
+      return String(str || '').split('').reverse().join('');
+    }, {
+      category: 'text',
+      description: 'Reverse string'
+    });
   }
 
   /**
@@ -488,6 +504,93 @@ export class KGenFilters {
       category: 'utility',
       deterministic: false,
       description: 'Generate UUID (non-deterministic)'
+    });
+
+    // Date arithmetic filters
+    this.register('dateAdd', (dateStr, amount, unit = 'day') => {
+      const date = new Date(dateStr);
+      switch (unit) {
+        case 'day':
+          date.setDate(date.getDate() + amount);
+          break;
+        case 'month':
+          date.setMonth(date.getMonth() + amount);
+          break;
+        case 'year':
+          date.setFullYear(date.getFullYear() + amount);
+          break;
+        default:
+          throw new Error(`Unknown unit: ${unit}`);
+      }
+      return date.toISOString();
+    }, {
+      category: 'utility',
+      description: 'Add time to date'
+    });
+
+    this.register('dateSub', (dateStr, amount, unit = 'day') => {
+      const date = new Date(dateStr);
+      switch (unit) {
+        case 'day':
+          date.setDate(date.getDate() - amount);
+          break;
+        case 'month':
+          date.setMonth(date.getMonth() - amount);
+          break;
+        case 'year':
+          date.setFullYear(date.getFullYear() - amount);
+          break;
+        default:
+          throw new Error(`Unknown unit: ${unit}`);
+      }
+      return date.toISOString();
+    }, {
+      category: 'utility',
+      description: 'Subtract time from date'
+    });
+
+    // Path utility filters
+    this.register('resolve', (base, relative) => {
+      // Simple path resolution (normalize and join)
+      const baseParts = base.split('/').filter(p => p);
+      const relativeParts = relative.split('/').filter(p => p);
+
+      for (const part of relativeParts) {
+        if (part === '..') {
+          baseParts.pop();
+        } else if (part !== '.') {
+          baseParts.push(part);
+        }
+      }
+
+      return '/' + baseParts.join('/');
+    }, {
+      category: 'utility',
+      description: 'Resolve path'
+    });
+
+    this.register('relative', (from, to) => {
+      // Simple relative path calculation
+      const fromParts = from.split('/').filter(p => p);
+      const toParts = to.split('/').filter(p => p);
+
+      // Find common base
+      let i = 0;
+      while (i < fromParts.length && i < toParts.length && fromParts[i] === toParts[i]) {
+        i++;
+      }
+
+      // Go up from 'from' directory
+      const upCount = fromParts.length - i;
+      const upParts = Array(upCount).fill('..');
+
+      // Then append remaining 'to' parts
+      const remainingParts = toParts.slice(i);
+
+      return [...upParts, ...remainingParts].join('/');
+    }, {
+      category: 'utility',
+      description: 'Calculate relative path'
     });
   }
 
