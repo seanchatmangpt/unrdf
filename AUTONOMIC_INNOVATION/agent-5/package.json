@@ -1,0 +1,27 @@
+{
+  "name": "@autonomic-innovation/agent-5",
+  "version": "1.0.0",
+  "description": "Agent 5: Diff as Program - Commutativity & Conflicts",
+  "type": "module",
+  "main": "./src/index.mjs",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
+  },
+  "keywords": [
+    "rdf",
+    "commutativity",
+    "conflict-detection",
+    "capsule",
+    "diff"
+  ],
+  "author": "AUTONOMIC INNOVATION",
+  "license": "MIT",
+  "dependencies": {
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "vitest": "^4.0.15"
+  }
+}

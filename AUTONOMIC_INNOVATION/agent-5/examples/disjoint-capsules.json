@@ -1,0 +1,45 @@
+{
+  "description": "Test Case 1: Disjoint impact sets - can safely reorder",
+  "capsuleA": {
+    "id": "uuid:a1b2c3d4-e5f6-4789-a012-3456789abcde",
+    "add": [
+      {
+        "subject": "http://example.org/alice",
+        "predicate": "http://xmlns.com/foaf/0.1/name",
+        "object": "\"Alice\"",
+        "graph": "http://example.org/graph1"
+      }
+    ],
+    "del": [],
+    "metadata": {
+      "author": "system",
+      "timestamp": "2025-12-26T10:00:00Z"
+    }
+  },
+  "capsuleB": {
+    "id": "uuid:b2c3d4e5-f678-4901-a234-56789abcdef0",
+    "add": [
+      {
+        "subject": "http://example.org/bob",
+        "predicate": "http://xmlns.com/foaf/0.1/name",
+        "object": "\"Bob\"",
+        "graph": "http://example.org/graph1"
+      }
+    ],
+    "del": [],
+    "metadata": {
+      "author": "system",
+      "timestamp": "2025-12-26T10:01:00Z"
+    }
+  },
+  "expectedResult": {
+    "canReorder": true,
+    "reason": "disjoint-impact-sets",
+    "explanation": "Capsule A affects only :alice, Capsule B affects only :bob. No shared resources."
+  },
+  "impactSets": {
+    "capsuleA": ["http://example.org/alice"],
+    "capsuleB": ["http://example.org/bob"],
+    "intersection": []
+  }
+}
