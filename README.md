@@ -12,6 +12,19 @@ UNRDF is a comprehensive, open-source platform for building intelligent knowledg
 
 ---
 
+## 🎯 New to UNRDF? Start Here!
+
+**[Getting Started Guide →](docs/GETTING_STARTED.md)** - Get productive in 15 minutes with hands-on examples!
+
+This progressive guide takes you from zero to building your first knowledge graph application:
+
+- ✅ Install and run your first example (5 min)
+- ✅ Understand core concepts (5 min)
+- ✅ Build a complete application (5 min)
+- ✅ 5 working examples included
+
+---
+
 ## 🚀 Quick Start
 
 ```javascript
@@ -32,11 +45,14 @@ const store = core.parseRdf(`
 `);
 
 // Query with SPARQL
-const results = await core.query(store, `
+const results = await core.query(
+  store,
+  `
   SELECT ?name WHERE {
     ?person <http://xmlns.com/foaf/0.1/name> ?name .
   }
-`);
+`
+);
 
 // Access results
 for (const binding of results) {
@@ -48,6 +64,7 @@ for (const binding of results) {
 ```
 
 **That's it.** `createKnowledgeSubstrateCore()` gives you everything:
+
 - **RDF Storage & Querying** - Triple store with SPARQL support
 - **SHACL Validation** - Automated data validation
 - **Transactions** - ACID operations on graphs
@@ -63,25 +80,28 @@ for (const binding of results) {
 ## 📚 Documentation
 
 ### For Users
-| Resource | Purpose |
-|----------|---------|
-| **[START-HERE.md](docs/START-HERE.md)** | New? Read this first for orientation |
-| **[ARCHITECTURE.md](docs/ARCHITECTURE.md)** | How the system is organized |
-| **[PACKAGES.md](docs/PACKAGES.md)** | Detailed package documentation |
-| **[GETTING-STARTED/](docs/GETTING-STARTED/)** | Installation & tutorials |
-| **[API-REFERENCE.md](docs/API-REFERENCE.md)** | Complete API documentation |
-| **[EXAMPLES.md](docs/EXAMPLES.md)** | Code examples & sample projects |
+
+| Resource                                      | Purpose                              |
+| --------------------------------------------- | ------------------------------------ |
+| **[START-HERE.md](docs/START-HERE.md)**       | New? Read this first for orientation |
+| **[ARCHITECTURE.md](docs/ARCHITECTURE.md)**   | How the system is organized          |
+| **[PACKAGES.md](docs/PACKAGES.md)**           | Detailed package documentation       |
+| **[GETTING-STARTED/](docs/GETTING-STARTED/)** | Installation & tutorials             |
+| **[API-REFERENCE.md](docs/API-REFERENCE.md)** | Complete API documentation           |
+| **[EXAMPLES.md](docs/EXAMPLES.md)**           | Code examples & sample projects      |
 
 ### For Contributors (Monorepo)
-| Resource | Purpose |
-|----------|---------|
-| **[MONOREPO-QUICK-REFERENCE.md](docs/MONOREPO-QUICK-REFERENCE.md)** | Quick overview of all 17 packages |
-| **[LOCAL-DEVELOPMENT.md](docs/LOCAL-DEVELOPMENT.md)** | Setup dev environment, run tests & builds |
-| **[WORKSPACE-STRUCTURE.md](docs/WORKSPACE-STRUCTURE.md)** | File layout and naming conventions |
-| **[PACKAGE-DEVELOPMENT.md](docs/PACKAGE-DEVELOPMENT.md)** | Create and modify packages |
-| **[TESTING-STRATEGY.md](docs/TESTING-STRATEGY.md)** | Cross-package testing guide |
+
+| Resource                                                            | Purpose                                   |
+| ------------------------------------------------------------------- | ----------------------------------------- |
+| **[MONOREPO-QUICK-REFERENCE.md](docs/MONOREPO-QUICK-REFERENCE.md)** | Quick overview of all 17 packages         |
+| **[LOCAL-DEVELOPMENT.md](docs/LOCAL-DEVELOPMENT.md)**               | Setup dev environment, run tests & builds |
+| **[WORKSPACE-STRUCTURE.md](docs/WORKSPACE-STRUCTURE.md)**           | File layout and naming conventions        |
+| **[PACKAGE-DEVELOPMENT.md](docs/PACKAGE-DEVELOPMENT.md)**           | Create and modify packages                |
+| **[TESTING-STRATEGY.md](docs/TESTING-STRATEGY.md)**                 | Cross-package testing guide               |
 
 ### Quick Links
+
 - **[Installation](#installation)** - Get up and running
 - **[Core Concepts](#core-concepts)** - Understand RDF basics
 - **[Use Cases](#use-cases)** - See what you can build
@@ -112,6 +132,7 @@ pnpm add @unrdf/core
 ```
 
 ### Requirements
+
 - **Node.js:** 18.0.0 or higher
 - **Package Manager:** npm 8+, pnpm 7+, or yarn 3.2+
 - **Module Type:** ES Modules (ESM)
@@ -174,7 +195,7 @@ const myHook = defineHook({
     // When someone's status changes, notify their friends
     const friends = queryFriends(event.quad.subject);
     notifyUsers(friends, `Friend updated: ${event.quad.object.value}`);
-  }
+  },
 });
 
 registerHook(myHook);
@@ -185,48 +206,56 @@ registerHook(myHook);
 ## Core Features
 
 ### 1. **RDF Graph Operations**
+
 - Parse multiple RDF formats (Turtle, N-Triples, JSON-LD, RDFa)
 - Store triples in memory or persistent backends
 - Query with SPARQL 1.1
 - Export to any RDF format
 
 ### 2. **SHACL Validation**
+
 - Define shapes for your data
 - Validate graphs against constraints
 - Generate validation reports
 - Automated property validation
 
 ### 3. **Transactions**
+
 - Atomic multi-statement operations
 - Rollback on failure
 - ACID guarantees
 - Isolation levels
 
 ### 4. **Knowledge Hooks**
+
 - React to data changes automatically
 - Define custom business logic
 - Compose behaviors declaratively
 - Streaming event processing
 
 ### 5. **Streaming**
+
 - Process large graphs without memory bloat
 - Pipe-based streaming interface
 - Backpressure handling
 - Composable transformations
 
 ### 6. **Federation**
+
 - Query multiple stores simultaneously
 - Transparent query execution
 - Cross-graph joins
 - Distributed reasoning
 
 ### 7. **Browser Support**
+
 - Run RDF operations in browser
 - Indexeddb backend option
 - Web Worker integration
 - Service Worker ready
 
 ### 8. **CLI Tools**
+
 - Load and query RDF files
 - Validate against SHACL
 - Convert between formats
@@ -237,70 +266,83 @@ registerHook(myHook);
 ## Use Cases
 
 ### 📊 Knowledge Management
+
 Store and query organizational knowledge - people, projects, skills, expertise:
 
 ```javascript
 // Query experts by skill
-const experts = await core.query(store, `
+const experts = await core.query(
+  store,
+  `
   SELECT ?expert ?skill WHERE {
     ?expert a ex:Employee ;
             ex:hasSkill ?skill ;
             ex:experienceLevel "expert" .
   }
-`);
+`
+);
 ```
 
 ### 🔍 Semantic Search
+
 Build intelligent search powered by semantic relationships:
 
 ```javascript
 // Find similar documents by topic
-const similar = await core.query(store, `
+const similar = await core.query(
+  store,
+  `
   SELECT ?doc1 ?doc2 WHERE {
     ?doc1 dct:subject ?topic .
     ?doc2 dct:subject ?topic .
     FILTER (?doc1 != ?doc2)
   }
-`);
+`
+);
 ```
 
 ### 🤖 Reasoning & Inference
+
 Derive new facts from existing data:
 
 ```javascript
 // SPARQL with inference rules
-const results = await core.query(store, `
+const results = await core.query(
+  store,
+  `
   SELECT ?ancestor WHERE {
     ?person ex:parentOf+ ?ancestor .  # transitive closure
   }
-`);
+`
+);
 ```
 
 ### 📋 Policy Management
+
 Define and enforce policies through knowledge graphs:
 
 ```javascript
 // Query policy compliance
-const violations = await core.query(store, `
+const violations = await core.query(
+  store,
+  `
   SELECT ?resource ?violation WHERE {
     ?resource a sec:ProtectedResource ;
               sec:policy ?policy .
     ?policy sec:requires ?requirement .
     FILTER NOT EXISTS { ?resource sec:has ?requirement }
   }
-`);
+`
+);
 ```
 
 ### 🌐 Federated Data Integration
+
 Combine data from multiple sources:
 
 ```javascript
 // Query across databases
-const results = await core.federatedQuery([
-  store1,
-  store2,
-  remoteGraphEndpoint
-], sparqlQuery);
+const results = await core.federatedQuery([store1, store2, remoteGraphEndpoint], sparqlQuery);
 ```
 
 ---
@@ -310,11 +352,13 @@ const results = await core.federatedQuery([
 UNRDF is organized as a **17-package monorepo** with clear separation of concerns:
 
 ### Essential Packages (Start Here)
+
 - **`@unrdf/core`** - RDF storage, SPARQL queries, SHACL validation ⭐
 - **`@unrdf/oxigraph`** - Rust-based persistent triple store backend
 - **`@unrdf/hooks`** - Knowledge Hooks autonomous behaviors framework
 
 ### Extended Features
+
 - **`@unrdf/streaming`** - Large graph streaming & real-time sync
 - **`@unrdf/federation`** - Distributed query execution across stores
 - **`@unrdf/knowledge-engine`** - Inference and semantic reasoning (EYE)
@@ -324,11 +368,13 @@ UNRDF is organized as a **17-package monorepo** with clear separation of concern
 - **`@unrdf/engine-gateway`** - API gateway & µ(O) enforcement layer
 
 ### Optional/Alpha
+
 - **`@unrdf/composables`** - Vue 3 composable integration
 - **`@unrdf/dark-matter`** - Query optimization & performance analysis
 - **`@unrdf/project-engine`** - Workspace management (dev tools)
 
 ### Internal Packages
+
 - **`@unrdf/test-utils`** - Shared testing infrastructure
 - **`@unrdf/validation`** - OTEL validation & compliance checking
 - **`@unrdf/domain`** - Type definitions & schemas (Zod)
@@ -396,7 +442,9 @@ const blogData = `
 const store = core.parseRdf(blogData);
 
 // Query: Find all blog posts with their creators
-const results = await core.query(store, `
+const results = await core.query(
+  store,
+  `
   PREFIX blog: <http://example.org/blog/>
   PREFIX dct: <http://purl.org/dc/terms/>
   PREFIX foaf: <http://xmlns.com/foaf/0.1/>
@@ -407,7 +455,8 @@ const results = await core.query(store, `
           dct:creator ?creator .
     ?creator foaf:name ?author .
   }
-`);
+`
+);
 
 // Display results
 for (const row of results) {
@@ -417,6 +466,7 @@ for (const row of results) {
 ```
 
 More examples:
+
 - [GETTING-STARTED/QUICK-START.md](docs/GETTING-STARTED/QUICK-START.md) - Minimal example
 - [EXAMPLES.md](docs/EXAMPLES.md) - Full example collection
 - [examples/](examples/) - Runnable examples in the repository
@@ -431,7 +481,7 @@ Full TypeScript support with exported type definitions:
 import {
   createKnowledgeSubstrateCore,
   type KnowledgeSubstrate,
-  type SPARQLResult
+  type SPARQLResult,
 } from '@unrdf/core';
 
 const core: KnowledgeSubstrate = await createKnowledgeSubstrateCore();
@@ -455,7 +505,7 @@ const core = await createKnowledgeSubstrateCore({
   // Optional: enable only if needed
   enableFederation: false,
   enableStreaming: false,
-  enableBrowserSupport: false
+  enableBrowserSupport: false,
 });
 ```
 
@@ -483,7 +533,7 @@ UNRDF works in modern browsers:
   import { createKnowledgeSubstrateCore } from 'https://cdn.jsdelivr.net/npm/@unrdf/browser@latest';
 
   const core = await createKnowledgeSubstrateCore({
-    backend: 'indexeddb' // Persistent storage in browser
+    backend: 'indexeddb', // Persistent storage in browser
   });
 
   const store = core.parseRdf(turtleData);
@@ -492,6 +542,7 @@ UNRDF works in modern browsers:
 ```
 
 Supported browsers:
+
 - Chrome/Edge 90+
 - Firefox 88+
 - Safari 14+
@@ -593,6 +644,7 @@ Planned features and improvements:
 ### Common Issues
 
 **Q: "Module not found" error**
+
 ```javascript
 // ❌ Wrong
 import { createKnowledgeSubstrateCore } from 'unrdf';
@@ -602,11 +654,13 @@ import { createKnowledgeSubstrateCore } from '@unrdf/core';
 ```
 
 **Q: SPARQL query returns no results**
+
 - Use [GETTING-STARTED/SPARQL.md](docs/GETTING-STARTED/SPARQL.md) to debug queries
 - Check your prefixes match the data
 - Validate your RDF is correctly parsed
 
 **Q: Browser compatibility issues**
+
 - Ensure you're using `@unrdf/browser` not `@unrdf/core`
 - Check browser support (Chrome 90+, Firefox 88+, Safari 14+)
 
@@ -629,16 +683,16 @@ For more help, see [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) or open an
 
 How UNRDF compares to alternatives:
 
-| Feature | UNRDF | GraphDB | Virtuoso | RDFLib |
-|---------|-------|---------|----------|--------|
-| **Language** | JavaScript/Node | Java | C++ | Python |
-| **SPARQL Support** | ✅ 1.1 | ✅ 1.1 | ✅ 1.1 | ✅ |
-| **Transactions** | ✅ | ✅ | ✅ | ❌ |
-| **Streaming** | ✅ | ✅ | ✅ | ❌ |
-| **Browser Support** | ✅ | ❌ | ❌ | ❌ |
-| **Federation** | ✅ | ✅ | ✅ | ❌ |
-| **In-memory Speed** | Very Fast | Fast | Very Fast | Moderate |
-| **Setup Complexity** | Simple | Complex | Complex | Simple |
+| Feature              | UNRDF           | GraphDB | Virtuoso  | RDFLib   |
+| -------------------- | --------------- | ------- | --------- | -------- |
+| **Language**         | JavaScript/Node | Java    | C++       | Python   |
+| **SPARQL Support**   | ✅ 1.1          | ✅ 1.1  | ✅ 1.1    | ✅       |
+| **Transactions**     | ✅              | ✅      | ✅        | ❌       |
+| **Streaming**        | ✅              | ✅      | ✅        | ❌       |
+| **Browser Support**  | ✅              | ❌      | ❌        | ❌       |
+| **Federation**       | ✅              | ✅      | ✅        | ❌       |
+| **In-memory Speed**  | Very Fast       | Fast    | Very Fast | Moderate |
+| **Setup Complexity** | Simple          | Complex | Complex   | Simple   |
 
 ---
 

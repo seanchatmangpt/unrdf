@@ -12,7 +12,7 @@
 
 import { build } from 'esbuild';
 import { createWriteStream, promises as fs } from 'node:fs';
-import { join, dirname } from 'node:path';
+import { join, dirname as _dirname } from 'node:path';
 import { createGzip } from 'node:zlib';
 import { pipeline } from 'node:stream/promises';
 import { z } from 'zod';

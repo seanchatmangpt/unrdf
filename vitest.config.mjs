@@ -1,13 +1,23 @@
 /**
- * @fileoverview Simplified Vitest configuration for unrdf
- * Standard configuration compatible with pnpm workspace execution
+ * @fileoverview DX-optimized Vitest configuration for unrdf
+ * - Parallel execution with maxConcurrency
+ * - Multiple reporters (verbose + junit for CI)
+ * - Fast test modes via environment variables
  */
 import { defineConfig } from "vitest/config";
 
+const isCI = process.env.CI === "true";
+const isFast = process.env.TEST_MODE === "fast";
+
 export default defineConfig({
   test: {
-    // Standard defaults - removed singleFork that causes hanging
+    // Parallel execution - 2-4x speedup
     pool: "forks",
+    poolOptions: {
+      forks: {
+        maxForks: 10,
+      },
+    },
 
     // Test timeout - 5s SLA (Andon Principle)
     testTimeout: 5000,
@@ -15,7 +25,7 @@ export default defineConfig({
     // Environment
     environment: "node",
 
-    // File patterns - 80/20 core test suite (REMOVED adversarial tests)
+    // File patterns - 80/20 core test suite
     include: [
       "test/diff.test.mjs",
       "test/dark-matter-80-20.test.mjs",
@@ -42,15 +52,44 @@ export default defineConfig({
       "test/project-engine.test.mjs",
       "test/project-engine/code-complexity-js.test.mjs",
       "test/project-engine/initialize.test.mjs",
-      "**/benchmarks/**", // Benchmarks are NOT tests
-    ],
+      "**/benchmarks/**",
+      isFast ? "test/**/*.integration.test.mjs" : null,
+    ].filter(Boolean),
 
-    // Reporter
-    reporter: ["verbose"],
+    // Multi-reporter: verbose for dev, junit for CI
+    reporter: isCI
+      ? ["junit", "default"]
+      : ["verbose"],
+
+    // JUnit output for CI/CD pipelines
+    outputFile: {
+      junit: "./test-results/junit.xml",
+    },
 
     // Standard settings
     globals: false,
     isolate: true,
     passWithNoTests: true,
+
+    // Coverage configuration (when --coverage used)
+    coverage: {
+      provider: "v8",
+      reporter: ["text", "json", "html"],
+      exclude: [
+        "**/node_modules/**",
+        "**/dist/**",
+        "**/*.test.mjs",
+        "**/*.spec.mjs",
+      ],
+    },
+
+    // Watch mode optimization (80/20 DX)
+    watchExclude: [
+      "**/node_modules/**",
+      "**/dist/**",
+      "**/coverage/**",
+      "**/.git/**",
+      "**/test-results/**",
+    ],
   },
 });

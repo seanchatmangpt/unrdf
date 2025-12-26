@@ -1,371 +1,469 @@
 # Getting Started with UNRDF
 
-This tutorial guides you from zero to your first working knowledge graph application. By the end, you'll understand UNRDF's core concepts and have a functional RDF workflow.
+Get productive in 15 minutes with this hands-on guide. By the end, you'll have created your first knowledge graph application with SPARQL queries and validation.
 
-## Prerequisites
+## Table of Contents
 
-Before starting, ensure you have:
+1. [Quick Start (5 minutes)](#quick-start-5-minutes)
+2. [Core Concepts (5 minutes)](#core-concepts-5-minutes)
+3. [Your First Application (5 minutes)](#your-first-application-5-minutes)
+4. [Next Steps](#next-steps)
+5. [Troubleshooting](#troubleshooting)
 
-- **Node.js 18+**: Check with `node --version`
-- **pnpm** (recommended): Install with `npm install -g pnpm`
-- **Basic RDF knowledge**: Familiarity with triples (subject-predicate-object)
+---
 
-## Installation
+## Quick Start (5 minutes)
 
-### Step 1: Create a New Project
+### 1. Install UNRDF
 
 ```bash
-mkdir my-knowledge-app
-cd my-knowledge-app
+# For new projects
+mkdir my-rdf-app && cd my-rdf-app
 pnpm init
+pnpm add @unrdf/core
+
+# For existing projects
+pnpm add @unrdf/core
+
+# Using npm
+npm install @unrdf/core
+
+# Using yarn
+yarn add @unrdf/core
 ```
 
-### Step 2: Install UNRDF
-
-```bash
-pnpm add unrdf
-```
-
-### Step 3: Configure ES Modules
-
-Add `"type": "module"` to your `package.json`:
+Add `"type": "module"` to `package.json`:
 
 ```json
 {
-  "name": "my-knowledge-app",
+  "name": "my-rdf-app",
   "type": "module",
   "dependencies": {
-    "unrdf": "^4.0.0"
+    "@unrdf/core": "^5.0.0"
   }
 }
 ```
 
-## Setting Up Your Development Environment
+### 2. Run Your First Example
 
-### Recommended VS Code Extensions
-
-- **SPARQL** - Syntax highlighting for queries
-- **Turtle** - RDF Turtle format support
-- **ESLint** - Code quality
-
-### Project Structure
-
-```
-my-knowledge-app/
-  data/
-    schema.ttl        # SHACL shapes
-    data.ttl          # RDF data
-  hooks/
-    health-check.rq   # SPARQL queries for hooks
-  src/
-    index.mjs         # Main application
-  package.json
-```
-
-## Your First RDF Document
-
-Create `data/people.ttl`:
-
-```turtle
-@prefix ex: <http://example.org/> .
-@prefix foaf: <http://xmlns.com/foaf/0.1/> .
-@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-
-ex:alice a foaf:Person ;
-    foaf:name "Alice Smith" ;
-    foaf:age 30 ;
-    foaf:knows ex:bob, ex:carol .
-
-ex:bob a foaf:Person ;
-    foaf:name "Bob Jones" ;
-    foaf:age 25 .
-
-ex:carol a foaf:Person ;
-    foaf:name "Carol White" ;
-    foaf:age 35 ;
-    foaf:knows ex:alice .
-```
-
-## Loading and Querying Data
-
-Create `src/index.mjs`:
+Create `hello-rdf.mjs`:
 
 ```javascript
-import { readFileSync } from 'node:fs';
-import { parseTurtle, query, select } from 'unrdf/knowledge-engine';
+import { createStore, namedNode, literal, FOAF } from '@unrdf/core';
 
-// Load Turtle file
-const turtleData = readFileSync('./data/people.ttl', 'utf-8');
+// Create an RDF store
+const store = createStore();
 
-// Parse into N3 Store
-const store = await parseTurtle(turtleData);
+// Add some triples
+store.addQuad(namedNode('http://example.org/Alice'), FOAF.name, literal('Alice Smith'));
 
-console.log(`Loaded ${store.size} triples`);
+store.addQuad(
+  namedNode('http://example.org/Alice'),
+  FOAF.knows,
+  namedNode('http://example.org/Bob')
+);
 
-// Query all people
-const people = await select(store, `
-  PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+// Query the store
+const quads = store.getQuads(namedNode('http://example.org/Alice'), null, null);
 
-  SELECT ?person ?name ?age
-  WHERE {
-    ?person a foaf:Person ;
-            foaf:name ?name .
-    OPTIONAL { ?person foaf:age ?age }
-  }
-  ORDER BY ?name
-`);
+console.log(`Alice has ${quads.length} properties:`);
+for (const quad of quads) {
+  console.log(`  ${quad.predicate.value} -> ${quad.object.value}`);
+}
 
-console.log('People in graph:');
-people.forEach(row => {
-  console.log(`  - ${row.name.value} (age: ${row.age?.value || 'unknown'})`);
+// Output:
+// Alice has 2 properties:
+//   http://xmlns.com/foaf/0.1/name -> Alice Smith
+//   http://xmlns.com/foaf/0.1/knows -> http://example.org/Bob
+```
+
+Run it:
+
+```bash
+node hello-rdf.mjs
+```
+
+You should see:
+
+```
+Alice has 2 properties:
+  http://xmlns.com/foaf/0.1/name -> Alice Smith
+  http://xmlns.com/foaf/0.1/knows -> http://example.org/Bob
+```
+
+### 3. Start Developing
+
+For monorepo contributors:
+
+```bash
+# Clone and install
+git clone https://github.com/unrdf/unrdf.git
+cd unrdf
+pnpm install
+pnpm build
+
+# Start development mode
+pnpm dev
+
+# In another terminal, run tests
+pnpm test:fast
+```
+
+---
+
+## Core Concepts (5 minutes)
+
+### What is UNRDF?
+
+UNRDF is a knowledge graph platform that combines:
+
+- **RDF Triple Store** - Store semantic data as subject-predicate-object triples
+- **SPARQL Queries** - SQL-like queries for graphs
+- **Knowledge Hooks** - Reactive behaviors triggered by data changes
+- **SHACL Validation** - Schema validation for data quality
+- **Real-time Observability** - OpenTelemetry integration
+
+### Key Components
+
+#### 1. @unrdf/core - RDF store and SPARQL
+
+```javascript
+import { createStore, namedNode, literal } from '@unrdf/core';
+
+const store = createStore();
+
+// Add a triple: Alice -> knows -> Bob
+store.addQuad(
+  namedNode('http://example.org/Alice'),
+  namedNode('http://xmlns.com/foaf/0.1/knows'),
+  namedNode('http://example.org/Bob')
+);
+```
+
+#### 2. @unrdf/hooks - Reactive behaviors
+
+```javascript
+import { defineHook } from '@unrdf/hooks';
+
+const hook = defineHook({
+  meta: { name: 'notify-on-new-person' },
+  trigger: 'INSERT',
+  pattern: '?person a foaf:Person .',
+
+  run(event) {
+    console.log(`New person: ${event.quad.subject.value}`);
+  },
 });
 ```
 
-Run with:
-
-```bash
-node src/index.mjs
-```
-
-Expected output:
-
-```
-Loaded 11 triples
-People in graph:
-  - Alice Smith (age: 30)
-  - Bob Jones (age: 25)
-  - Carol White (age: 35)
-```
-
-## Running Your First Query
-
-UNRDF supports all SPARQL 1.1 query forms:
-
-### SELECT Queries
+#### 3. @unrdf/oxigraph - Persistent storage
 
 ```javascript
-import { select } from 'unrdf/knowledge-engine';
+import { createStore } from '@unrdf/oxigraph';
 
+const store = await createStore({
+  path: './my-knowledge-base.db',
+});
+```
+
+### RDF Basics
+
+**Triple**: The fundamental unit of RDF
+
+```
+Subject  -> Predicate -> Object
+Alice    -> knows     -> Bob
+Alice    -> name      -> "Alice Smith"
+Bob      -> age       -> 30
+```
+
+**Quad**: A triple + graph (context)
+
+```javascript
+import { quad, namedNode, literal, defaultGraph } from '@unrdf/core';
+
+const myQuad = quad(
+  namedNode('http://example.org/Alice'), // subject
+  namedNode('http://xmlns.com/foaf/0.1/name'), // predicate
+  literal('Alice Smith'), // object
+  defaultGraph() // graph
+);
+```
+
+**Common Namespaces** (shortcuts for long URIs)
+
+```javascript
+import { FOAF, RDF, RDFS, XSD, OWL } from '@unrdf/core';
+
+// FOAF = http://xmlns.com/foaf/0.1/
+// RDF = http://www.w3.org/1999/02/22-rdf-syntax-ns#
+// RDFS = http://www.w3.org/2000/01/rdf-schema#
+// XSD = http://www.w3.org/2001/XMLSchema#
+
+store.addQuad(
+  namedNode('http://example.org/Alice'),
+  FOAF.name, // Shortcut for http://xmlns.com/foaf/0.1/name
+  literal('Alice Smith')
+);
+```
+
+---
+
+## Your First Application (5 minutes)
+
+Let's build a team directory knowledge graph with SPARQL queries.
+
+### Step 1: Create the Data Model
+
+Create `team-directory.mjs`:
+
+```javascript
+import { createStore, namedNode, literal, executeSelectSync, FOAF, RDF } from '@unrdf/core';
+
+// Create store
+const store = createStore();
+
+// Helper function
+const ex = name => namedNode(`http://example.org/${name}`);
+
+// Add team members
+function addPerson(id, name, email, role) {
+  store.addQuad(ex(id), RDF.type, FOAF.Person);
+  store.addQuad(ex(id), FOAF.name, literal(name));
+  store.addQuad(ex(id), FOAF.mbox, literal(email));
+  store.addQuad(ex(id), ex('role'), literal(role));
+}
+
+addPerson('alice', 'Alice Smith', 'alice@example.com', 'Backend Developer');
+addPerson('bob', 'Bob Johnson', 'bob@example.com', 'Frontend Developer');
+addPerson('carol', 'Carol White', 'carol@example.com', 'DevOps Engineer');
+
+// Add relationships
+store.addQuad(ex('alice'), FOAF.knows, ex('bob'));
+store.addQuad(ex('alice'), FOAF.knows, ex('carol'));
+store.addQuad(ex('bob'), FOAF.knows, ex('carol'));
+
+console.log(`✅ Knowledge graph created with ${store.size} triples\n`);
+```
+
+### Step 2: Query with SPARQL
+
+Add to `team-directory.mjs`:
+
+```javascript
+// Query all team members
+const teamMembers = executeSelectSync(
+  store,
+  `
+  PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+  PREFIX ex: <http://example.org/>
+
+  SELECT ?name ?role ?email WHERE {
+    ?person a foaf:Person ;
+            foaf:name ?name ;
+            foaf:mbox ?email ;
+            ex:role ?role .
+  }
+  ORDER BY ?name
+`
+);
+
+console.log('Team Members:');
+teamMembers.forEach(row => {
+  console.log(`  ${row.get('name').value}`);
+  console.log(`    Role: ${row.get('role').value}`);
+  console.log(`    Email: ${row.get('email').value}\n`);
+});
+
+// Find who Alice knows
+const aliceFriends = store.getQuads(ex('alice'), FOAF.knows, null);
+
+console.log('Alice knows:');
+for (const quad of aliceFriends) {
+  const friend = quad.object;
+  const nameQuads = store.getQuads(friend, FOAF.name, null);
+  if (nameQuads.length > 0) {
+    console.log(`  - ${nameQuads[0].object.value}`);
+  }
+}
+```
+
+### Step 3: Run It
+
+```bash
+node team-directory.mjs
+```
+
+**Expected Output:**
+
+```
+✅ Knowledge graph created with 12 triples
+
+Team Members:
+  Alice Smith
+    Role: Backend Developer
+    Email: alice@example.com
+
+  Bob Johnson
+    Role: Frontend Developer
+    Email: bob@example.com
+
+  Carol White
+    Role: DevOps Engineer
+    Email: carol@example.com
+
+Alice knows:
+  - Bob Johnson
+  - Carol White
+```
+
+### Step 4: Add Advanced Queries
+
+```javascript
 // Find friends of friends
-const foaf = await select(store, `
+const foaf = executeSelectSync(
+  store,
+  `
   PREFIX foaf: <http://xmlns.com/foaf/0.1/>
 
-  SELECT ?person ?friend ?friendOfFriend
-  WHERE {
+  SELECT DISTINCT ?person ?friendOfFriend WHERE {
     ?person foaf:knows ?friend .
     ?friend foaf:knows ?friendOfFriend .
     FILTER(?person != ?friendOfFriend)
   }
-`);
-```
+`
+);
 
-### ASK Queries
-
-```javascript
-import { ask } from 'unrdf/knowledge-engine';
-
-// Check if Alice knows Bob
-const aliceKnowsBob = await ask(store, `
-  PREFIX ex: <http://example.org/>
-  PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-
-  ASK { ex:alice foaf:knows ex:bob }
-`);
-
-console.log(`Alice knows Bob: ${aliceKnowsBob}`); // true
-```
-
-### CONSTRUCT Queries
-
-```javascript
-import { construct } from 'unrdf/knowledge-engine';
-
-// Create a new graph with derived data
-const friendGraph = await construct(store, `
-  PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-  PREFIX ex: <http://example.org/>
-
-  CONSTRUCT {
-    ?person ex:hasFriend ?friend .
-  }
-  WHERE {
-    ?person foaf:knows ?friend .
-  }
-`);
-```
-
-## Adding SHACL Validation
-
-Create `data/schema.ttl`:
-
-```turtle
-@prefix sh: <http://www.w3.org/ns/shacl#> .
-@prefix foaf: <http://xmlns.com/foaf/0.1/> .
-@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-@prefix ex: <http://example.org/> .
-
-ex:PersonShape a sh:NodeShape ;
-    sh:targetClass foaf:Person ;
-    sh:property [
-        sh:path foaf:name ;
-        sh:minCount 1 ;
-        sh:maxCount 1 ;
-        sh:datatype xsd:string ;
-        sh:message "Every person must have exactly one name"
-    ] ;
-    sh:property [
-        sh:path foaf:age ;
-        sh:datatype xsd:integer ;
-        sh:minInclusive 0 ;
-        sh:maxInclusive 150 ;
-        sh:message "Age must be between 0 and 150"
-    ] .
-```
-
-Add validation to your code:
-
-```javascript
-import { validateShacl, formatValidationReport } from 'unrdf/knowledge-engine';
-
-const shapesData = readFileSync('./data/schema.ttl', 'utf-8');
-
-const report = await validateShacl(store, shapesData);
-
-if (report.conforms) {
-  console.log('Data is valid!');
-} else {
-  console.log('Validation errors:');
-  const formatted = formatValidationReport(report);
-  console.log(formatted);
-}
-```
-
-## Common Pitfalls and Solutions
-
-### FMEA-Identified Failure Modes
-
-| Failure Mode | Symptom | Solution |
-|--------------|---------|----------|
-| Missing `type: module` | `ERR_REQUIRE_ESM` | Add to package.json |
-| Wrong import path | `Cannot find module` | Use `unrdf/knowledge-engine` |
-| Async not awaited | Empty results | Add `await` to parse/query |
-| Invalid Turtle | Parse error | Validate syntax online |
-| Missing prefixes | Unknown prefix error | Declare all prefixes |
-
-### Debugging Tips
-
-```javascript
-// Enable debug logging
-process.env.DEBUG = 'unrdf:*';
-
-// Check store contents
-console.log('Store size:', store.size);
-console.log('All quads:', [...store].slice(0, 5));
-
-// Validate Turtle before parsing
-import { parseTurtle } from 'unrdf/knowledge-engine';
-
-try {
-  const store = await parseTurtle(data);
-} catch (error) {
-  console.error('Parse error:', error.message);
-  // Check line number in error
-}
-```
-
-### Performance Tips
-
-```javascript
-// Use streaming for large files
-import { createReadStream } from 'node:fs';
-import { parseTurtle } from 'unrdf/knowledge-engine';
-
-// For files > 10MB, consider chunked processing
-const store = await parseTurtle(largeData, {
-  baseIRI: 'http://example.org/'
+console.log('\nFriends of Friends:');
+foaf.forEach(row => {
+  const personName = store.getQuads(row.get('person'), FOAF.name, null)[0].object.value;
+  const foafName = store.getQuads(row.get('friendOfFriend'), FOAF.name, null)[0].object.value;
+  console.log(`  ${personName} -> ${foafName}`);
 });
-
-// Index frequently-queried predicates
-// UNRDF auto-optimizes common patterns
 ```
+
+---
 
 ## Next Steps
 
-Now that you have the basics working:
+### Learn by Example
 
-1. **Learn Knowledge Hooks**: [Defining Hooks Guide](./guides/defining-hooks.md)
-2. **Explore React Integration**: [React Hooks Guide](./guides/react-integration.md)
-3. **Understand Architecture**: [System Design](./ARCHITECTURE.md)
-4. **Deep Dive SPARQL**: [SPARQL Tutorial](./tutorials/sparql.md)
+UNRDF provides ready-to-run examples in the `examples/` directory:
 
-## Complete Example
+- **[01-hello-rdf.mjs](../examples/01-hello-rdf.mjs)** - Basic RDF operations
+- **[02-sparql-queries.mjs](../examples/02-sparql-queries.mjs)** - SPARQL query patterns
+- **[03-knowledge-hooks.mjs](../examples/03-knowledge-hooks.mjs)** - Reactive behaviors
+- **[04-validation.mjs](../examples/04-validation.mjs)** - SHACL validation
+- **[05-advanced-patterns.mjs](../examples/05-advanced-patterns.mjs)** - Advanced use cases
 
-Here's a full working example combining all concepts:
+Run any example:
+
+```bash
+node examples/01-hello-rdf.mjs
+```
+
+### Common Use Cases
+
+Explore production patterns in the documentation:
+
+- **Knowledge Management** - Build organizational knowledge graphs
+- **Semantic Search** - Implement intelligent search
+- **Policy Enforcement** - Define and enforce business rules
+- **Data Integration** - Combine data from multiple sources
+
+### Development Workflow
+
+For monorepo contributors:
+
+```bash
+# Run tests in watch mode
+pnpm test:watch
+
+# Run fast tests only (< 5s timeout)
+pnpm test:fast
+
+# Lint and fix
+pnpm lint:fix
+
+# Format code
+pnpm format
+
+# Build all packages
+pnpm build
+
+# Run OTEL validation
+node validation/run-all.mjs comprehensive
+```
+
+### Testing Your Applications
 
 ```javascript
-// src/complete-example.mjs
-import { readFileSync } from 'node:fs';
-import {
-  parseTurtle,
-  select,
-  ask,
-  validateShacl,
-  reason,
-  toTurtle
-} from 'unrdf/knowledge-engine';
+import { describe, it, expect } from 'vitest';
+import { createStore, namedNode, literal, FOAF } from '@unrdf/core';
 
-async function main() {
-  // 1. Load data
-  const data = readFileSync('./data/people.ttl', 'utf-8');
-  const store = await parseTurtle(data);
-  console.log(`Loaded ${store.size} triples\n`);
+describe('Team Directory', () => {
+  it('should add and query person data', () => {
+    const store = createStore();
+    const alice = namedNode('http://example.org/alice');
 
-  // 2. Query relationships
-  const relationships = await select(store, `
-    PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-    SELECT ?person ?knows WHERE {
-      ?person foaf:knows ?knows .
-    }
-  `);
-  console.log('Relationships:', relationships.length);
+    store.addQuad(alice, FOAF.name, literal('Alice Smith'));
 
-  // 3. Validate structure
-  const shapes = readFileSync('./data/schema.ttl', 'utf-8');
-  const report = await validateShacl(store, shapes);
-  console.log(`Validation: ${report.conforms ? 'PASSED' : 'FAILED'}\n`);
+    const quads = store.getQuads(alice, FOAF.name, null);
+    expect(quads).toHaveLength(1);
+    expect(quads[0].object.value).toBe('Alice Smith');
+  });
 
-  // 4. Apply reasoning rules
-  const rules = `
-    @prefix foaf: <http://xmlns.com/foaf/0.1/> .
-    @prefix ex: <http://example.org/> .
+  it('should execute SPARQL queries', () => {
+    const store = createStore();
+    store.addQuad(namedNode('http://example.org/alice'), FOAF.name, literal('Alice'));
 
-    { ?a foaf:knows ?b . ?b foaf:knows ?c . }
-    => { ?a ex:mayKnow ?c . } .
-  `;
-  const inferred = await reason(store, rules);
-  console.log(`After reasoning: ${inferred.size} triples`);
+    const results = executeSelectSync(
+      store,
+      `
+      PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+      SELECT ?name WHERE {
+        ?person foaf:name ?name .
+      }
+    `
+    );
 
-  // 5. Check inferred data
-  const mayKnow = await ask(inferred, `
-    PREFIX ex: <http://example.org/>
-    ASK { ex:alice ex:mayKnow ?someone }
-  `);
-  console.log(`Alice may know someone new: ${mayKnow}`);
-
-  // 6. Export result
-  const output = await toTurtle(inferred);
-  console.log('\nInferred graph (first 500 chars):');
-  console.log(output.slice(0, 500) + '...');
-}
-
-main().catch(console.error);
+    expect(results.length).toBe(1);
+    expect(results[0].get('name').value).toBe('Alice');
+  });
+});
 ```
+
+Run tests:
+
+```bash
+pnpm test
+```
+
+---
 
 ## Troubleshooting
 
-### "Cannot find module 'unrdf'"
+### Common Issues
 
-Ensure you're using ES modules:
+#### "Cannot find module '@unrdf/core'"
+
+**Solution:**
+
+```bash
+# Install the package
+pnpm add @unrdf/core
+
+# Verify package.json has "type": "module"
+cat package.json | grep '"type"'
+```
+
+#### "SyntaxError: Cannot use import statement"
+
+**Problem:** Not using ES modules
+
+**Solution:**
+
+Add to `package.json`:
 
 ```json
 {
@@ -373,30 +471,239 @@ Ensure you're using ES modules:
 }
 ```
 
-### "Store is empty after parsing"
+Or use `.mjs` file extension.
 
-Check that you're awaiting the parse:
+#### "Store.match is not a function"
+
+**Problem:** Using wrong API (N3.js instead of UNRDF)
+
+**Solution:**
 
 ```javascript
-// Wrong
-const store = parseTurtle(data);
+// ❌ Wrong
+import { Store } from 'n3';
+const store = new Store();
 
-// Right
-const store = await parseTurtle(data);
+// ✅ Correct
+import { createStore } from '@unrdf/core';
+const store = createStore();
 ```
 
-### "SPARQL query returns no results"
+#### "SPARQL query returns no results"
 
-1. Verify prefixes match your data
-2. Check for typos in IRIs
-3. Log the store size to confirm data loaded
+**Problem:** Prefix mismatch or typo
 
-### "Validation fails unexpectedly"
+**Solution:**
 
-1. Ensure shapes target the correct class
-2. Check datatype constraints match your data
-3. Use `formatValidationReport()` for details
+```javascript
+// Debug: Check what's in the store
+for (const quad of store) {
+  console.log(quad.subject.value, quad.predicate.value, quad.object.value);
+}
+
+// Verify prefixes match your data
+const results = executeSelectSync(
+  store,
+  `
+  SELECT * WHERE { ?s ?p ?o }
+  LIMIT 10
+`
+);
+console.log('Sample results:', results);
+```
+
+Enable debug logging:
+
+```bash
+DEBUG=unrdf:* node your-app.mjs
+```
+
+#### "Tests timing out"
+
+**Problem:** Async operations or slow queries
+
+**Solution:**
+
+```bash
+# Run fast tests only
+pnpm test:fast
+
+# Run specific package
+pnpm -C packages/core test
+```
+
+Increase timeout for specific tests:
+
+```javascript
+it('slow operation', async () => {
+  // ...
+}, 10000); // 10 second timeout
+```
+
+#### "Memory issues with large graphs"
+
+**Problem:** Loading too much data
+
+**Solution:**
+
+Use persistent storage instead of in-memory:
+
+```javascript
+import { createStore } from '@unrdf/oxigraph';
+
+const store = await createStore({
+  path: './my-db.db',
+  // Data stored on disk, not in memory
+});
+```
+
+Or use streaming for large files:
+
+```javascript
+import { createStreamParser } from '@unrdf/streaming';
+import { createReadStream } from 'fs';
+
+const parser = createStreamParser();
+const stream = createReadStream('large-file.ttl');
+
+stream.pipe(parser).on('data', quad => {
+  processQuad(quad);
+});
+```
 
 ---
 
-**Need help?** See [Troubleshooting](./TROUBLESHOOTING.md) or [open an issue](https://github.com/unrdf/unrdf/issues).
+## Get Help
+
+### Documentation
+
+- **[Full Documentation](https://unrdf.dev/docs)** - Complete guides
+- **[API Reference](./API-REFERENCE.md)** - Detailed API
+- **[Architecture Guide](./ARCHITECTURE.md)** - System design
+- **[Packages Overview](./PACKAGES.md)** - All 17 packages
+
+### Community
+
+- **[GitHub Issues](https://github.com/unrdf/unrdf/issues)** - Bug reports
+- **[GitHub Discussions](https://github.com/unrdf/unrdf/discussions)** - Q&A
+- **[Discord Community](https://discord.gg/unrdf)** - Chat
+
+### External Resources
+
+- **[RDF Primer](https://www.w3.org/TR/rdf11-primer/)** - W3C introduction
+- **[SPARQL Tutorial](https://www.w3.org/TR/sparql11-query/)** - Learn SPARQL
+- **[SHACL Specification](https://www.w3.org/TR/shacl/)** - Validation guide
+
+---
+
+## Quick Reference
+
+### Essential Imports
+
+```javascript
+// Core RDF operations
+import {
+  createStore, // Create RDF store
+  namedNode, // Create URI node
+  literal, // Create literal value
+  blankNode, // Create anonymous node
+  quad, // Create quad
+  executeSelectSync, // Execute SPARQL SELECT
+} from '@unrdf/core';
+
+// Common namespaces
+import {
+  RDF, // http://www.w3.org/1999/02/22-rdf-syntax-ns#
+  RDFS, // http://www.w3.org/2000/01/rdf-schema#
+  FOAF, // http://xmlns.com/foaf/0.1/
+  XSD, // http://www.w3.org/2001/XMLSchema#
+  OWL, // http://www.w3.org/2002/07/owl#
+} from '@unrdf/core';
+
+// Knowledge Hooks
+import {
+  defineHook, // Define reactive hook
+  executeHook, // Execute hook manually
+} from '@unrdf/hooks';
+```
+
+### Common Operations
+
+```javascript
+// Create store
+const store = createStore();
+
+// Add triple
+store.addQuad(subject, predicate, object);
+
+// Query (low-level)
+const quads = store.getQuads(subject, predicate, object);
+
+// Remove
+store.removeQuad(quad);
+
+// Count
+const count = store.size;
+
+// SPARQL (high-level)
+const results = executeSelectSync(
+  store,
+  `
+  SELECT ?s ?p ?o WHERE {
+    ?s ?p ?o .
+  }
+  LIMIT 10
+`
+);
+```
+
+### SPARQL Query Types
+
+```javascript
+// SELECT - Get bindings
+const rows = executeSelectSync(
+  store,
+  `
+  SELECT ?name WHERE { ?person foaf:name ?name }
+`
+);
+
+// ASK - Boolean check
+const exists = executeAskSync(
+  store,
+  `
+  ASK { ?person foaf:name "Alice" }
+`
+);
+
+// CONSTRUCT - Create new graph
+const newStore = executeConstructSync(
+  store,
+  `
+  CONSTRUCT { ?p ex:knows ?o }
+  WHERE { ?p foaf:knows ?o }
+`
+);
+```
+
+---
+
+## What's Next?
+
+You're ready to build! Some ideas:
+
+1. **Build a knowledge base** for your domain
+2. **Add semantic search** to your application
+3. **Implement policy enforcement** with hooks
+4. **Integrate UNRDF** into existing apps
+5. **Contribute** to the project
+
+Happy coding!
+
+---
+
+**Need more depth?** Check out:
+
+- [ARCHITECTURE.md](./ARCHITECTURE.md) - System design
+- [PACKAGES.md](./PACKAGES.md) - All 17 packages explained
+- [API-REFERENCE.md](./API-REFERENCE.md) - Complete API docs

@@ -38,6 +38,9 @@ const DeploymentStrategySchema = z.enum(['blue-green', 'canary', 'immediate']).d
  * Manages model versions, deployment, and A/B testing
  */
 export class ModelRegistry {
+  /**
+   *
+   */
   constructor() {
     this.models = new Map(); // version -> { runner, metadata, stats }
     this.activeVersion = null;

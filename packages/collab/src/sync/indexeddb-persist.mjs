@@ -7,7 +7,7 @@
  * @module @unrdf/collab/sync
  */
 
-import * as Y from 'yjs';
+import * as _Y from 'yjs';
 import { IndexeddbPersistence } from 'y-indexeddb';
 import { z } from 'zod';
 

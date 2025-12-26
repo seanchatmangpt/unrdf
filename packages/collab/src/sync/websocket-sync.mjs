@@ -7,7 +7,7 @@
  * @module @unrdf/collab/sync
  */
 
-import * as Y from 'yjs';
+import * as _Y from 'yjs';
 import { WebsocketProvider } from 'y-websocket';
 import { z } from 'zod';
 

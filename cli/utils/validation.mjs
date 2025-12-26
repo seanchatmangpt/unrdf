@@ -4,35 +4,34 @@
  *
  * Provides Zod-based validation schemas for CLI commands
  * Implements poka-yoke guards to catch invalid inputs early
+ *
+ * ENHANCED: Uses enhanced-errors module for better UX
  */
 
 import { z } from 'zod';
+import { enhanceZodError } from '@unrdf/core/utils/enhanced-errors';
 
-/**
- * Custom error formatter for CLI-friendly messages
- */
-function formatZodError(error) {
-  return error.errors
-    .map(err => {
-      const path = err.path.join('.');
-      return `${path || 'argument'}: ${err.message}`;
-    })
-    .join('\n');
-}
 
 /**
  * Safely validate and return errors instead of throwing
+ * Enhanced with better error messages
  */
-export function safeValidate(schema, data) {
+export function safeValidate(schema, data, context = '') {
   const result = schema.safeParse(data);
   if (!result.success) {
+    // Use enhanced error formatting
+    const enhanced = enhanceZodError(result.error, {
+      operation: context || 'CLI validation'
+    });
+
     return {
       valid: false,
       errors: result.error.errors.map(e => ({
         path: e.path.join('.'),
         message: e.message
       })),
-      formatted: formatZodError(result.error)
+      formatted: enhanced.message,
+      enhanced: enhanced
     };
   }
   return {
@@ -43,13 +42,15 @@ export function safeValidate(schema, data) {
 }
 
 /**
- * Throw on validation error with formatted message
+ * Throw on validation error with enhanced formatting
+ * Now throws enhanced errors with actionable fixes
  */
 export function validate(schema, data, context = '') {
-  const result = safeValidate(schema, data);
-  if (!result.valid) {
-    const contextStr = context ? `${context}: ` : '';
-    throw new Error(`${contextStr}${result.formatted}`);
+  const result = schema.safeParse(data);
+  if (!result.success) {
+    throw enhanceZodError(result.error, {
+      operation: context || 'CLI validation'
+    });
   }
   return result.data;
 }

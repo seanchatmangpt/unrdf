@@ -17,9 +17,9 @@ import { Stack, Duration, RemovalPolicy, CfnOutput } from 'aws-cdk-lib';
 import { Runtime, Function as LambdaFunction, Code, LayerVersion } from 'aws-cdk-lib/aws-lambda';
 import { RestApi, LambdaIntegration, Cors, EndpointType } from 'aws-cdk-lib/aws-apigateway';
 import { Table, AttributeType, BillingMode, StreamViewType } from 'aws-cdk-lib/aws-dynamodb';
-import { Distribution, OriginAccessIdentity, ViewerProtocolPolicy } from 'aws-cdk-lib/aws-cloudfront';
+import { Distribution, OriginAccessIdentity as _OriginAccessIdentity, ViewerProtocolPolicy } from 'aws-cdk-lib/aws-cloudfront';
 import { RestApiOrigin } from 'aws-cdk-lib/aws-cloudfront-origins';
-import { Policy, PolicyStatement, Effect } from 'aws-cdk-lib/aws-iam';
+import { Policy as _Policy, PolicyStatement, Effect } from 'aws-cdk-lib/aws-iam';
 import { z } from 'zod';
 
 /**

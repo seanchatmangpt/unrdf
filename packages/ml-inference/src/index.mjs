@@ -7,6 +7,10 @@
  * Provides ONNX model execution, streaming inference, and model management.
  */
 
+import { createONNXRunner as _createONNXRunner } from './runtime/onnx-runner.mjs';
+import { createStreamingInferencePipeline as _createStreamingInferencePipeline } from './pipeline/streaming-inference.mjs';
+import { createModelRegistry as _createModelRegistry } from './registry/model-registry.mjs';
+
 export { ONNXRunner, createONNXRunner } from './runtime/onnx-runner.mjs';
 export {
   StreamingInferencePipeline,
@@ -31,9 +35,9 @@ export { ModelRegistry, createModelRegistry } from './registry/model-registry.mj
 export function createInferenceStack(options = {}) {
   const { runnerOptions = {}, pipelineOptions = {} } = options;
 
-  const registry = createModelRegistry();
-  const runner = createONNXRunner(runnerOptions);
-  const pipeline = createStreamingInferencePipeline(runner, pipelineOptions);
+  const registry = _createModelRegistry();
+  const runner = _createONNXRunner(runnerOptions);
+  const pipeline = _createStreamingInferencePipeline(runner, pipelineOptions);
 
   return {
     runner,

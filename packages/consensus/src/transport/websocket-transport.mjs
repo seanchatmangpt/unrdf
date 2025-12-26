@@ -127,10 +127,10 @@ export class WebSocketTransport extends EventEmitter {
   /**
    * Handle incoming WebSocket connection
    * @param {WebSocket} ws - WebSocket connection
-   * @param {Object} req - HTTP request
+   * @param {Object} _req - HTTP request
    * @private
    */
-  handleConnection(ws, req) {
+  handleConnection(ws, _req) {
     let nodeId = null;
 
     ws.on('message', data => {

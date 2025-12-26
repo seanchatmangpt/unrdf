@@ -258,7 +258,7 @@ export class DynamoDBAdapter {
    * Query by subject
    * @private
    */
-  async #queryBySubject(subject, limit) {
+  async #queryBySubject(_subject, _limit) {
     // Implementation placeholder - requires @aws-sdk/client-dynamodb
     return [];
   }
@@ -267,7 +267,7 @@ export class DynamoDBAdapter {
    * Query by predicate using GSI
    * @private
    */
-  async #queryByPredicate(predicate, limit) {
+  async #queryByPredicate(_predicate, _limit) {
     // Implementation placeholder
     return [];
   }
@@ -276,7 +276,7 @@ export class DynamoDBAdapter {
    * Query by object using GSI
    * @private
    */
-  async #queryByObject(object, limit) {
+  async #queryByObject(_object, _limit) {
     // Implementation placeholder
     return [];
   }
@@ -285,7 +285,7 @@ export class DynamoDBAdapter {
    * Query by subject and predicate
    * @private
    */
-  async #queryBySubjectPredicate(subject, predicate, limit) {
+  async #queryBySubjectPredicate(_subject, _predicate, _limit) {
     // Implementation placeholder
     return [];
   }
@@ -294,7 +294,7 @@ export class DynamoDBAdapter {
    * Scan all triples (expensive!)
    * @private
    */
-  async #scanAll(limit) {
+  async #scanAll(_limit) {
     // Implementation placeholder
     return [];
   }
