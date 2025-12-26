@@ -1,0 +1,70 @@
+=== Testing Documentation Validation ===
+
+Testing Core Helpers...
+
+✅ PASS: createTestStore: Empty store
+✅ PASS: createTestStore: Store with initial data
+✅ PASS: createTestStore: Store with performance metrics
+✅ PASS: createTestWorkflow: Default 3-task workflow
+✅ PASS: createTestWorkflow: Custom workflow
+✅ PASS: mockOTEL: Basic usage
+✅ PASS: waitForCondition: Basic usage
+✅ PASS: measureTime: Basic usage
+
+Testing Data Fixtures...
+
+✅ PASS: sampleRDF.person: Fixture usage
+✅ PASS: sampleWorkflows.approval: Fixture usage
+✅ PASS: performanceFixtures.generateQuads: Generate test data
+
+Testing Test Patterns...
+
+✅ PASS: Test Pattern: Arrange-Act-Assert
+
+Testing Performance Assertions...
+
+✅ PASS: Performance: Process 1000 items under 100ms
+
+Testing Common Patterns...
+
+✅ PASS: Pattern: Testing async operations
+✅ PASS: Pattern: Testing error handling
+✅ PASS: Pattern: Testing concurrent operations
+✅ PASS: Pattern: Store snapshots
+
+Validating Function Signatures...
+
+✅ PASS: Signature: createTestStore
+✅ PASS: Signature: createTestWorkflow
+✅ PASS: Signature: mockOTEL
+✅ PASS: Signature: waitForCondition
+✅ PASS: Signature: measureTime
+✅ PASS: Signature: testBatch
+✅ PASS: Signature: snapshotStore
+✅ PASS: Signature: assertSnapshotsEqual
+✅ PASS: Signature: createQuad
+
+Validating Fixtures...
+
+✅ PASS: Fixture: sampleRDF exists
+✅ PASS: Fixture: sampleWorkflows exists
+✅ PASS: Fixture: sampleCaseData exists
+✅ PASS: Fixture: performanceFixtures exists
+✅ PASS: Fixture: errorScenarios exists
+
+Checking for Undocumented Exports...
+
+
+=== VALIDATION RESULTS ===
+
+Total Tests: 31
+Passed: 31 ✅
+Failed: 0 ❌
+Warnings: 3 ⚠️
+
+=== WARNINGS ===
+⚠️  createQuad is used but not documented in TESTING.md as a helper
+⚠️  sampleHooks exists in fixtures.mjs but is not documented in TESTING.md
+⚠️  sampleQueries exists in fixtures.mjs but is not documented in TESTING.md
+
+=== END OF VALIDATION ===

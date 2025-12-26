@@ -362,24 +362,25 @@ const results = executeSelectSync(store, `
 
 ### Example 1: Load RDF File
 
-**Before (N3.js):**
+**Before (N3.js - OLD APPROACH):**
 ```javascript
-import { Parser } from 'n3';
-import { readFile } from 'fs/promises';
-
-const turtle = await readFile('data.ttl', 'utf-8');
-const parser = new Parser();
-
-const quads = [];
-parser.parse(turtle, (error, quad) => {
-  if (quad) quads.push(quad);
-  else if (error) console.error(error);
-});
-
-// Now use quads...
+// Legacy N3.js approach (not recommended)
+// import { Parser } from 'n3';
+// import { readFile } from 'fs/promises';
+//
+// const turtle = await readFile('data.ttl', 'utf-8');
+// const parser = new Parser();
+//
+// const quads = [];
+// parser.parse(turtle, (error, quad) => {
+//   if (quad) quads.push(quad);
+//   else if (error) console.error(error);
+// });
+//
+// // Now use quads...
 ```
 
-**After (@unrdf/oxigraph):**
+**After (@unrdf/oxigraph - RECOMMENDED):**
 ```javascript
 import { createStore } from '@unrdf/oxigraph';
 import { readFileSync } from 'fs';
@@ -434,21 +435,22 @@ const friendNames = [...results].map(r => r.get('friendName').value);
 
 ### Example 3: Export to Different Format
 
-**Before (N3.js):**
+**Before (N3.js - OLD APPROACH):**
 ```javascript
-import { Writer } from 'n3';
-
-const writer = new Writer({ format: 'N-Triples' });
-for (const quad of store) {
-  writer.addQuad(quad);
-}
-
-writer.end((error, result) => {
-  console.log(result);
-});
+// Legacy N3.js approach (not recommended)
+// import { Writer } from 'n3';
+//
+// const writer = new Writer({ format: 'N-Triples' });
+// for (const quad of store) {
+//   writer.addQuad(quad);
+// }
+//
+// writer.end((error, result) => {
+//   console.log(result);
+// });
 ```
 
-**After (@unrdf/oxigraph):**
+**After (@unrdf/oxigraph - RECOMMENDED):**
 ```javascript
 const ntriples = store.dump({ format: 'ntriples' });
 console.log(ntriples);
@@ -477,28 +479,33 @@ console.log(ntriples);
 
 ### Step 1: Parallel Implementation
 
-Keep N3 while building UNRDF version:
+Keep N3 while building UNRDF version (during migration only):
 
 ```javascript
-// Old code (keep working)
-import { Store as N3Store } from 'n3';
-const n3Store = new N3Store();
+// Migration strategy: Run both implementations side-by-side
+// This is ONLY for the migration period to verify correctness
 
-// New code (build alongside)
+// Import from actual packages installed
 import { createStore } from '@unrdf/oxigraph';
+import { executeSelectSync } from '@unrdf/core';
+
+// New code (build this)
 const oxiStore = createStore();
 
-// Load same data in both
+// Load data
 oxiStore.load(turtleData);
-n3Parser.parse(turtleData, (err, quad) => {
-  if (quad) n3Store.addQuad(quad);
-});
 
-// Compare results
-const n3Results = manualQuery(n3Store);
+// Query with new API
 const oxiResults = executeSelectSync(oxiStore, sparql);
 
-assert.deepEqual(n3Results, oxiResults); // Verify correctness
+// If you still have N3 installed for comparison:
+// import { Store as N3Store } from 'n3';
+// const n3Store = new N3Store();
+// n3Parser.parse(turtleData, (err, quad) => {
+//   if (quad) n3Store.addQuad(quad);
+// });
+// const n3Results = manualQuery(n3Store);
+// assert.deepEqual(n3Results, oxiResults); // Verify correctness
 ```
 
 ---

@@ -231,10 +231,15 @@ export class CSRFTokenManager {
     }
 
     // Constant-time comparison to prevent timing attacks
-    return crypto.timingSafeEqual(
-      Buffer.from(stored.token),
-      Buffer.from(token)
-    );
+    // First check lengths match to avoid timingSafeEqual error
+    const storedBuffer = Buffer.from(stored.token);
+    const tokenBuffer = Buffer.from(token);
+
+    if (storedBuffer.length !== tokenBuffer.length) {
+      return false;
+    }
+
+    return crypto.timingSafeEqual(storedBuffer, tokenBuffer);
   }
 
   /**

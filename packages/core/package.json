@@ -15,7 +15,9 @@
     "./validation": "./src/validation/index.mjs",
     "./health": "./src/health.mjs",
     "./logger": "./src/logger.mjs",
-    "./metrics": "./src/metrics.mjs"
+    "./metrics": "./src/metrics.mjs",
+    "./security": "./src/security.mjs",
+    "./security-schemas": "./src/security-schemas.mjs"
   },
   "sideEffects": false,
   "files": [

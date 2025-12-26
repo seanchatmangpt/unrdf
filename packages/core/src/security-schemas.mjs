@@ -165,11 +165,18 @@ export const PasswordSchema = z.string()
 export const IPAddressSchema = z.string()
   .refine(
     (val) => {
-      // IPv4
-      const ipv4 = /^(\d{1,3}\.){3}\d{1,3}$/;
+      // IPv4 - validate each octet is 0-255
+      const ipv4Parts = val.split('.');
+      if (ipv4Parts.length === 4) {
+        return ipv4Parts.every(part => {
+          const num = parseInt(part, 10);
+          return !isNaN(num) && num >= 0 && num <= 255 && part === String(num);
+        });
+      }
+
       // IPv6
       const ipv6 = /^([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$/;
-      return ipv4.test(val) || ipv6.test(val);
+      return ipv6.test(val);
     },
     { message: 'Invalid IP address' }
   );
@@ -326,7 +333,7 @@ export function validateFields(data, schemas) {
     results[field] = result.success;
 
     if (!result.success) {
-      errors[field] = result.error.errors.map(e => e.message);
+      errors[field] = result.error?.errors?.map(e => e.message) || ['Validation failed'];
     }
   }
 

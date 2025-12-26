@@ -304,14 +304,20 @@ await completeTask(orderCase, 'pay', { transactionId: 'TXN-456' });
 ### Use Case 5: Federation (Query Multiple Stores)
 
 ```javascript
-import { createStore } from '@unrdf/core';
-import { federatedQuery } from '@unrdf/federation';
+import { createStore } from '@unrdf/oxigraph';
+import { executeFederatedQuery } from '@unrdf/federation';
+import { createCoordinator } from '@unrdf/federation';
 
 const store1 = createStore(); // Local data
 const store2 = createStore(); // Remote data
 
+// Create federation coordinator
+const coordinator = createCoordinator({
+  stores: [store1, store2]
+});
+
 // Query across both stores
-const results = await federatedQuery([store1, store2], `
+const results = await executeFederatedQuery(coordinator, `
   SELECT ?name ?skill WHERE {
     ?person foaf:name ?name ;
             ex:skill ?skill .

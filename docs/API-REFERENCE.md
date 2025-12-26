@@ -704,8 +704,8 @@ for (const quad of quads) {
 // ✅ Oxigraph (Rust, fast)
 import { createStore } from '@unrdf/oxigraph';
 
-// ❌ N3 (JS, slow)
-import { Store } from 'n3';
+// For reference: N3 (legacy approach, not recommended)
+// import { Store } from 'n3';
 ```
 
 **Speedup:** 100x for SPARQL queries (see ADR-001)

@@ -39,10 +39,7 @@ npm install @unrdf/core
 Create `knowledge-base.mjs`:
 
 ```javascript
-import { createKnowledgeSubstrateCore } from '@unrdf/core';
-
-// Initialize the core engine
-const core = await createKnowledgeSubstrateCore();
+import { createStore } from '@unrdf/oxigraph';
 
 // Define people and relationships in Turtle format
 const data = `
@@ -76,12 +73,13 @@ const data = `
     foaf:knows ex:Bob .
 `;
 
-// Parse the data into a store
-const store = core.parseRdf(data);
+// Create the store and load data
+const store = createStore();
+store.load(data);
 
 console.log(`Loaded ${store.size} triples into the knowledge graph`);
 
-export { core, store };
+export { store };
 ```
 
 ### Step 3: Create Query Functions
@@ -89,12 +87,13 @@ export { core, store };
 Create `queries.mjs`:
 
 ```javascript
-import { core, store } from './knowledge-base.mjs';
+import { store } from './knowledge-base.mjs';
+import { executeSelectSync } from '@unrdf/core';
 
 /**
  * Find all people in the knowledge graph
  */
-export async function findAllPeople() {
+export function findAllPeople() {
   const sparql = `
     PREFIX foaf: <http://xmlns.com/foaf/0.1/>
 
@@ -108,7 +107,7 @@ export async function findAllPeople() {
     ORDER BY ?name
   `;
 
-  const results = await core.query(store, sparql);
+  const results = executeSelectSync(store, sparql);
 
   console.log('\nAll People:');
   console.log('='.repeat(60));
@@ -123,7 +122,7 @@ export async function findAllPeople() {
 /**
  * Find who knows whom
  */
-export async function findRelationships() {
+export function findRelationships() {
   const sparql = `
     PREFIX foaf: <http://xmlns.com/foaf/0.1/>
 
@@ -136,7 +135,7 @@ export async function findRelationships() {
     ORDER BY ?person1Name
   `;
 
-  const results = await core.query(store, sparql);
+  const results = executeSelectSync(store, sparql);
 
   console.log('\nRelationships:');
   console.log('='.repeat(60));
@@ -150,7 +149,7 @@ export async function findRelationships() {
 /**
  * Find people by job title
  */
-export async function findByJob(jobTitle) {
+export function findByJob(jobTitle) {
   const sparql = `
     PREFIX foaf: <http://xmlns.com/foaf/0.1/>
     PREFIX schema: <https://schema.org/>
@@ -165,7 +164,7 @@ export async function findByJob(jobTitle) {
     }
   `;
 
-  const results = await core.query(store, sparql);
+  const results = executeSelectSync(store, sparql);
 
   console.log(`\nPeople with "${jobTitle}" in their job title:`);
   console.log('='.repeat(60));
@@ -179,7 +178,7 @@ export async function findByJob(jobTitle) {
 /**
  * Find mutual connections
  */
-export async function findMutualConnections() {
+export function findMutualConnections() {
   const sparql = `
     PREFIX foaf: <http://xmlns.com/foaf/0.1/>
 
@@ -193,7 +192,7 @@ export async function findMutualConnections() {
     }
   `;
 
-  const results = await core.query(store, sparql);
+  const results = executeSelectSync(store, sparql);
 
   console.log('\nMutual Connections:');
   console.log('='.repeat(60));
@@ -217,17 +216,17 @@ Create `app.mjs`:
 ```javascript
 import { findAllPeople, findRelationships, findByJob, findMutualConnections } from './queries.mjs';
 
-async function main() {
+function main() {
   console.log('Knowledge Graph Application');
   console.log('='.repeat(60));
 
-  await findAllPeople();
-  await findRelationships();
-  await findByJob('Engineer');
-  await findMutualConnections();
+  findAllPeople();
+  findRelationships();
+  findByJob('Engineer');
+  findMutualConnections();
 }
 
-main().catch(console.error);
+main();
 ```
 
 ### Step 5: Run the Application
@@ -298,9 +297,8 @@ Create `dashboard.mjs`:
 
 ```javascript
 import readline from 'readline';
-import { createKnowledgeSubstrateCore } from '@unrdf/core';
-
-const core = await createKnowledgeSubstrateCore();
+import { createStore } from '@unrdf/oxigraph';
+import { executeSelectSync } from '@unrdf/core';
 
 // Load sample data
 const data = `
@@ -311,7 +309,8 @@ const data = `
   ex:Bob foaf:name "Bob" ; foaf:age 28 .
 `;
 
-const store = core.parseRdf(data);
+const store = createStore();
+store.load(data);
 
 // Create readline interface
 const rl = readline.createInterface({
@@ -352,9 +351,9 @@ function askQuestion(question) {
   });
 }
 
-async function runQuery(sparql) {
+function runQuery(sparql) {
   try {
-    const results = await core.query(store, sparql);
+    const results = executeSelectSync(store, sparql);
     console.log('\nResults:');
     console.log(JSON.stringify([...results], null, 2));
   } catch (error) {
@@ -414,10 +413,10 @@ npm install @unrdf/core @unrdf/hooks
 Create `hooks-demo.mjs`:
 
 ```javascript
-import { createKnowledgeSubstrateCore } from '@unrdf/core';
+import { createStore } from '@unrdf/oxigraph';
+import { namedNode, literal } from '@unrdf/core';
 import { KnowledgeHookManager } from '@unrdf/hooks';
 
-const core = await createKnowledgeSubstrateCore();
 const hookManager = new KnowledgeHookManager();
 
 // Define a hook that logs when new people are added
@@ -460,20 +459,20 @@ hookManager.registerHook(logNewPersonHook);
 hookManager.registerHook(validateAgeHook);
 
 // Create store and add data
-const store = core.createStore();
+const store = createStore();
 
 console.log('Adding Alice...');
-store.addQuad(
-  { value: 'http://example.org/Alice', termType: 'NamedNode' },
-  { value: 'http://xmlns.com/foaf/0.1/name', termType: 'NamedNode' },
-  { value: 'Alice', termType: 'Literal' }
+store.add(
+  namedNode('http://example.org/Alice'),
+  namedNode('http://xmlns.com/foaf/0.1/name'),
+  literal('Alice')
 );
 
 console.log('\nAdding Alice\'s age...');
-store.addQuad(
-  { value: 'http://example.org/Alice', termType: 'NamedNode' },
-  { value: 'http://xmlns.com/foaf/0.1/age', termType: 'NamedNode' },
-  { value: '30', termType: 'Literal', datatype: { value: 'http://www.w3.org/2001/XMLSchema#integer' } }
+store.add(
+  namedNode('http://example.org/Alice'),
+  namedNode('http://xmlns.com/foaf/0.1/age'),
+  literal('30', namedNode('http://www.w3.org/2001/XMLSchema#integer'))
 );
 
 console.log('\n[Demo complete]');
@@ -535,9 +534,7 @@ Create `process-large-dataset.mjs`:
 
 ```javascript
 import { createReadStream } from 'fs';
-import { createKnowledgeSubstrateCore } from '@unrdf/core';
-
-const core = await createKnowledgeSubstrateCore();
+import { createStore } from '@unrdf/oxigraph';
 
 console.log('Processing large dataset...');
 console.time('Processing time');
@@ -553,7 +550,8 @@ for await (const chunk of stream) {
 
   // Process when we have enough data
   if (buffer.length > 10000) {
-    const store = core.parseRdf(buffer);
+    const store = createStore();
+    store.load(buffer);
     tripleCount += store.size;
     buffer = ''; // Clear buffer
 
@@ -566,7 +564,8 @@ for await (const chunk of stream) {
 
 // Process remaining buffer
 if (buffer.length > 0) {
-  const store = core.parseRdf(buffer);
+  const store = createStore();
+  store.load(buffer);
   tripleCount += store.size;
 }
 
@@ -602,18 +601,18 @@ Create `otel-app.mjs`:
 
 ```javascript
 import { trace } from '@opentelemetry/api';
-import { createKnowledgeSubstrateCore } from '@unrdf/core';
+import { createStore } from '@unrdf/oxigraph';
+import { executeSelectSync } from '@unrdf/core';
 
 const tracer = trace.getTracer('unrdf-demo');
 
-async function main() {
+function main() {
   const span = tracer.startSpan('main');
 
   try {
-    const core = await createKnowledgeSubstrateCore();
-
     const parseSpan = tracer.startSpan('parse-rdf', { parent: span });
-    const store = core.parseRdf(`
+    const store = createStore();
+    store.load(`
       @prefix ex: <http://example.org/> .
       ex:Alice ex:knows ex:Bob .
     `);
@@ -621,17 +620,18 @@ async function main() {
     parseSpan.end();
 
     const querySpan = tracer.startSpan('query', { parent: span });
-    const results = await core.query(store, 'SELECT * WHERE { ?s ?p ?o }');
-    querySpan.setAttribute('result.count', results.length);
+    const results = executeSelectSync(store, 'SELECT * WHERE { ?s ?p ?o }');
+    const resultArray = [...results];
+    querySpan.setAttribute('result.count', resultArray.length);
     querySpan.end();
 
-    console.log(`Traced ${store.size} triples and ${results.length} results`);
+    console.log(`Traced ${store.size} triples and ${resultArray.length} results`);
   } finally {
     span.end();
   }
 }
 
-main().catch(console.error);
+main();
 ```
 
 **Congratulations!** You've added observability to your application.
