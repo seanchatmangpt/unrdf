@@ -78,3 +78,47 @@ export {
   validateQuad,
   validateStore,
 } from './validation/index.mjs';
+
+// ============================================================================
+// === Error Handling & Debugging ===
+// ============================================================================
+
+// Error classes and utilities
+export {
+  UnrdfError,
+  ValidationError,
+  ConfigError,
+  QueryError,
+  StoreError,
+  NetworkError,
+  TimeoutError,
+  ParserError,
+  ERROR_CODES,
+  createError,
+  wrapError,
+  assertError,
+} from './errors.mjs';
+
+// Debug utilities
+export {
+  DebugLogger,
+  createDebugger,
+  PerformanceTracker,
+  perfTracker,
+  trace,
+  traceMethod,
+  formatBytes,
+  getSystemInfo,
+  dumpDebugSnapshot,
+} from './debug.mjs';
+
+// Error recovery patterns
+export {
+  retry,
+  CircuitBreaker,
+  fallback,
+  withTimeout,
+  bulkOperation,
+  RateLimiter,
+  withRecovery,
+} from './recovery.mjs';

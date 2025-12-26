@@ -1,616 +1,756 @@
-# API Reference
+# API Reference - Top 20% (80% Usage)
 
-Complete API documentation for UNRDF.
+**This covers the 20% of APIs you'll use 80% of the time.**
 
-## Table of Contents
-
-1. [Core API](#core-api)
-2. [RDF Operations](#rdf-operations)
-3. [SPARQL Queries](#sparql-queries)
-4. [Validation](#validation)
-5. [Knowledge Hooks](#knowledge-hooks)
-6. [Transactions](#transactions)
-7. [Streaming](#streaming)
-8. [Federation](#federation)
+For complete API docs, see package-specific READMEs. This is optimized for **scanning**.
 
 ---
 
-## Core API
+## 📦 @unrdf/core - RDF Operations
 
-### `createKnowledgeSubstrateCore(options?)`
-
-Initialize the main UNRDF interface.
-
-**Parameters:**
-
-| Name | Type | Default | Description |
-|------|------|---------|-------------|
-| `options` | `object` | `{}` | Configuration options |
-| `options.backend` | `'memory' \| 'oxigraph'` | `'memory'` | Storage backend |
-| `options.enableTransactions` | `boolean` | `true` | Enable transaction support |
-| `options.enableHooks` | `boolean` | `true` | Enable Knowledge Hooks |
-| `options.enableValidation` | `boolean` | `true` | Enable SHACL validation |
-
-**Returns:** `Promise<KnowledgeSubstrate>`
-
-**Example:**
+### Store Creation
 
 ```javascript
-import { createKnowledgeSubstrateCore } from '@unrdf/core';
+import { createStore as createOxiStore } from '@unrdf/oxigraph';
 
-const core = await createKnowledgeSubstrateCore({
-  backend: 'oxigraph',
-  enableTransactions: true
+const store = createOxiStore();
+// ✅ In-memory Oxigraph store (FAST, production-ready)
+```
+
+**Why Oxigraph?** 100x faster than N3 for queries. See [adr/001-oxigraph-over-n3.md](adr/001-oxigraph-over-n3.md).
+
+---
+
+### Loading Data
+
+```javascript
+// Turtle format (most common)
+store.load(`
+  @prefix ex: <http://example.org/> .
+  ex:Alice foaf:name "Alice" .
+`);
+
+// From file
+import { readFileSync } from 'fs';
+const ttl = readFileSync('data.ttl', 'utf-8');
+store.load(ttl);
+
+// N-Triples
+store.load('<http://example.org/s> <http://example.org/p> "o" .', { format: 'ntriples' });
+```
+
+**Formats supported:** Turtle, N-Triples, RDF/XML, JSON-LD, N-Quads
+
+---
+
+### Querying with SPARQL
+
+```javascript
+import { executeSelectSync } from '@unrdf/core';
+
+// SELECT query (returns bindings)
+const results = executeSelectSync(store, `
+  PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+  SELECT ?name WHERE {
+    ?person foaf:name ?name .
+  }
+`);
+
+// Iterate results
+for (const row of results) {
+  console.log(row.get('name').value); // "Alice"
+}
+
+// Convert to array
+const names = [...results].map(r => r.get('name').value);
+```
+
+**Query Types:**
+- `executeSelectSync` - Tabular results (most common)
+- `executeAskSync` - Boolean (true/false)
+- `executeConstructSync` - New RDF graph
+
+---
+
+### ASK Queries (Boolean)
+
+```javascript
+import { executeAskSync } from '@unrdf/core';
+
+const exists = executeAskSync(store, `
+  ASK { ?s foaf:name "Alice" }
+`);
+
+console.log(exists); // true or false
+```
+
+**Use case:** Check if data exists before inserting.
+
+---
+
+### CONSTRUCT Queries (Build Graphs)
+
+```javascript
+import { executeConstructSync } from '@unrdf/core';
+
+const graph = executeConstructSync(store, `
+  CONSTRUCT {
+    ?person ex:hasName ?name .
+  } WHERE {
+    ?person foaf:name ?name .
+  }
+`);
+
+// graph is array of quads
+console.log(graph.length); // Number of triples
+```
+
+**Use case:** Transform RDF data to different schema.
+
+---
+
+### Manual Quad Operations
+
+```javascript
+import { namedNode, literal, quad } from '@unrdf/core';
+
+// Create terms
+const alice = namedNode('http://example.org/Alice');
+const name = namedNode('http://xmlns.com/foaf/0.1/name');
+const aliceLit = literal('Alice');
+
+// Create quad
+const q = quad(alice, name, aliceLit);
+
+// Add to store
+store.add(q);
+
+// Remove from store
+store.delete(q);
+
+// Query by pattern
+const matches = store.match(alice, null, null); // All quads with alice as subject
+```
+
+**Use case:** Programmatic triple manipulation (less common than SPARQL).
+
+---
+
+### Common Prefixes
+
+```javascript
+import { FOAF, DCTERMS, RDF, RDFS, OWL, XSD, COMMON_PREFIXES } from '@unrdf/core';
+
+// Use constants
+const person = namedNode(FOAF + 'Person');
+const type = namedNode(RDF + 'type');
+
+// COMMON_PREFIXES for SPARQL
+const query = `
+  ${COMMON_PREFIXES}
+  SELECT ?name WHERE {
+    ?person foaf:name ?name .
+  }
+`;
+```
+
+---
+
+## 📦 @unrdf/kgc-4d - Event Sourcing & Time-Travel
+
+### Initialize Store
+
+```javascript
+import { KGCStore } from '@unrdf/kgc-4d';
+
+const kgc = new KGCStore({
+  gitDir: './kgc-data', // Optional: persist to disk
+  autoCommit: true      // Optional: Git commit every freeze
 });
 ```
 
 ---
 
-## RDF Operations
-
-### `parseRdf(data, options?)`
-
-Parse RDF data in any supported format.
-
-**Parameters:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `data` | `string` | RDF data to parse |
-| `options.format` | `'turtle' \| 'ntriples' \| 'jsonld'` | Format of the data |
-| `options.baseIRI` | `string` | Base IRI for relative references |
-
-**Returns:** `Promise<Store>`
-
-**Example:**
+### Record Events
 
 ```javascript
-const store = await core.parseRdf(`
-  @prefix ex: <http://example.org/> .
-  ex:Alice ex:name "Alice" .
-`, { format: 'turtle' });
+// Basic event
+await kgc.record({
+  type: 'USER_CREATED',
+  subject: 'user:alice',
+  data: { email: 'alice@example.com', role: 'admin' }
+});
+
+// Event with custom timestamp
+await kgc.record({
+  type: 'ORDER_PAID',
+  subject: 'order:12345',
+  data: { amount: 99.99 },
+  timestamp: Date.now() * 1_000_000 // nanoseconds
+});
 ```
 
-### `store.addQuad(subject, predicate, object, graph?)`
+**Timestamp precision:** Nanoseconds (unique ordering guaranteed)
 
-Add a triple (quad) to the store.
+---
 
-**Parameters:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `subject` | `NamedNode \| BlankNode` | Subject of the triple |
-| `predicate` | `NamedNode` | Predicate of the triple |
-| `object` | `Term` | Object of the triple |
-| `graph` | `NamedNode \| DefaultGraph` | Optional graph (default graph if not specified) |
-
-**Returns:** `void`
-
-**Example:**
+### Freeze Universe (Snapshot)
 
 ```javascript
-import { namedNode, literal } from '@rdfjs/data-model';
+import { freezeUniverse } from '@unrdf/kgc-4d';
 
-store.addQuad(
-  namedNode('http://example.org/Alice'),
-  namedNode('http://xmlns.com/foaf/0.1/name'),
-  literal('Alice')
-);
+// Create immutable snapshot
+const snapshot = await freezeUniverse(kgc, {
+  message: 'End of day snapshot',
+  tag: 'EOD-2024-12-25'
+});
+
+console.log(snapshot.commit);    // Git SHA
+console.log(snapshot.timestamp); // Freeze time
+console.log(snapshot.eventCount); // Events in snapshot
 ```
 
-### `store.deleteQuad(subject?, predicate?, object?, graph?)`
+**Use case:** Daily/hourly snapshots, compliance audit points
 
-Remove quads matching the pattern (omit parameters to match any).
+---
 
-**Parameters:** (all optional)
-
-| Name | Type | Description |
-|------|------|-------------|
-| `subject` | `Term` | Subject pattern |
-| `predicate` | `Term` | Predicate pattern |
-| `object` | `Term` | Object pattern |
-| `graph` | `Term` | Graph pattern |
-
-**Returns:** `void`
-
-**Example:**
+### Time-Travel Reconstruction
 
 ```javascript
-// Delete all triples about Alice
-store.deleteQuad(namedNode('http://example.org/Alice'));
+import { reconstructState } from '@unrdf/kgc-4d';
 
-// Delete all triples
-store.deleteQuad();
+// Reconstruct at specific commit
+const pastState = await reconstructState(snapshot.commit);
+
+console.log(pastState.events.length); // All events up to that point
+console.log(pastState.timestamp);     // Snapshot time
+
+// Access events
+pastState.events.forEach(event => {
+  console.log(event.type, event.subject, event.data);
+});
 ```
 
-### `store.match(subject?, predicate?, object?, graph?)`
+**Use case:** Debugging, compliance, "what was state at 2pm yesterday?"
 
-Query quads matching the pattern.
+---
 
-**Returns:** `Quad[]`
-
-**Example:**
+### Query Events
 
 ```javascript
-const quads = store.match(
-  namedNode('http://example.org/Alice'),
-  undefined,
-  undefined
-);
+// All events for a subject
+const userEvents = kgc.queryEvents({ subject: 'user:alice' });
 
-for (const quad of quads) {
-  console.log(quad.predicate.value, quad.object.value);
-}
-```
+// Events by type
+const creations = kgc.queryEvents({ type: 'USER_CREATED' });
 
-### `store.size`
-
-Get the number of quads in the store.
-
-**Returns:** `number`
-
-**Example:**
-
-```javascript
-console.log(`Store contains ${store.size} triples`);
+// Events in time range
+const recentEvents = kgc.queryEvents({
+  after: Date.now() - 3600000, // Last hour
+  before: Date.now()
+});
 ```
 
 ---
 
-## SPARQL Queries
-
-### `core.query(store, sparql, options?)`
-
-Execute a SPARQL SELECT or ASK query.
-
-**Parameters:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `store` | `Store` | RDF store to query |
-| `sparql` | `string` | SPARQL query |
-| `options.timeout` | `number` | Query timeout in milliseconds |
-| `options.limit` | `number` | Maximum results to return |
-
-**Returns:** `Promise<Binding[]>`
-
-**Example:**
+### Verify Receipt (Cryptographic Proof)
 
 ```javascript
-const results = await core.query(store, `
-  PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+import { verifyReceipt } from '@unrdf/kgc-4d';
 
-  SELECT ?name ?email
-  WHERE {
-    ?person a foaf:Person ;
-            foaf:name ?name ;
-            foaf:email ?email .
-  }
-`, { timeout: 5000 });
+// Generate receipt when recording
+const receipt = await kgc.record({
+  type: 'PAYMENT',
+  subject: 'txn:789',
+  data: { amount: 500 },
+  generateReceipt: true
+});
 
-for (const binding of results) {
-  console.log(binding.get('name').value);
-}
+// Later: verify authenticity
+const isValid = verifyReceipt(receipt, kgc);
+console.log(isValid); // true/false
+
+// Receipt contains cryptographic hash chain
+console.log(receipt.hash);      // SHA-256 of event
+console.log(receipt.prevHash);  // Links to previous event
 ```
 
-### SPARQL Binding
-
-Result from SPARQL query.
-
-**Methods:**
-
-| Method | Returns | Description |
-|--------|---------|-------------|
-| `.get(variable)` | `Term \| undefined` | Get binding value |
-| `.has(variable)` | `boolean` | Check if variable is bound |
-| `.toJSON()` | `object` | Convert to JSON |
-
-**Example:**
-
-```javascript
-for (const row of results) {
-  if (row.has('name')) {
-    console.log(row.get('name').value);
-  }
-}
-```
+**Use case:** Tamper-proof audit trails (financial, medical records)
 
 ---
 
-## Validation
+## 📦 @unrdf/hooks - Reactive Knowledge Behaviors
 
-### `core.validateShacl(store, shapes, options?)`
-
-Validate RDF data against SHACL shapes.
-
-**Parameters:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `store` | `Store` | Data to validate |
-| `shapes` | `Store` | SHACL shapes store |
-| `options.focus` | `Term` | Validate specific node |
-
-**Returns:** `Promise<ValidationReport>`
-
-**Example:**
-
-```javascript
-const report = await core.validateShacl(store, shapesStore);
-
-if (report.conforms) {
-  console.log('Data is valid!');
-} else {
-  for (const result of report.results) {
-    console.log(result.message);
-  }
-}
-```
-
-### ValidationReport
-
-Report from SHACL validation.
-
-**Properties:**
-
-| Property | Type | Description |
-|----------|------|-------------|
-| `.conforms` | `boolean` | Whether validation passed |
-| `.results` | `ValidationResult[]` | Validation failures |
-
-**Example:**
-
-```javascript
-if (!report.conforms) {
-  const count = report.results.length;
-  console.log(`Found ${count} validation errors`);
-}
-```
-
----
-
-## Knowledge Hooks
-
-### `defineHook(config)`
-
-Define a Knowledge Hook for reactive behaviors.
-
-**Parameters:**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `config.meta` | `object` | Yes | Hook metadata |
-| `config.meta.name` | `string` | Yes | Unique hook identifier |
-| `config.meta.description` | `string` | No | Human-readable description |
-| `config.trigger` | `'INSERT' \| 'DELETE'` | Yes | When to trigger |
-| `config.pattern` | `string` | No | SPARQL pattern to match |
-| `config.run` | `(event) => void` | Yes | Main hook function |
-| `config.before` | `(event) => boolean` | No | Pre-hook gate |
-| `config.after` | `(result) => void` | No | Post-hook cleanup |
-
-**Returns:** `Hook`
-
-**Example:**
+### Define Hook
 
 ```javascript
 import { defineHook } from '@unrdf/hooks';
 
-const myHook = defineHook({
-  meta: { name: 'log-changes' },
-  trigger: 'INSERT',
-  pattern: '?person foaf:name ?name .',
+const validateAge = defineHook({
+  meta: {
+    name: 'validate-minimum-age',
+    description: 'Ensure age >= 18'
+  },
 
-  run(event) {
-    console.log('New person:', event.quad.object.value);
+  trigger: 'INSERT', // Or 'UPDATE', 'DELETE'
+
+  pattern: '?person <http://example.org/age> ?age .',
+
+  validate(context) {
+    const age = parseInt(context.quad.object.value, 10);
+
+    if (age < 18) {
+      return {
+        passed: false,
+        error: 'Must be 18 or older'
+      };
+    }
+
+    return { passed: true };
   }
 });
 ```
 
-### `registerHook(hook)`
-
-Register a hook to make it active.
-
-**Parameters:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `hook` | `Hook` | Hook to register |
-
-**Returns:** `string` (hook ID)
-
-**Example:**
-
-```javascript
-import { registerHook } from '@unrdf/hooks';
-
-const hookId = registerHook(myHook);
-```
-
-### `unregisterHook(hookId)`
-
-Deactivate a hook.
-
-**Parameters:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `hookId` | `string` | Hook ID from registerHook |
-
-**Returns:** `void`
-
-**Example:**
-
-```javascript
-import { unregisterHook } from '@unrdf/hooks';
-
-unregisterHook(hookId);
-```
+**Trigger types:** `INSERT`, `UPDATE`, `DELETE`, `QUERY`
 
 ---
 
-## Transactions
-
-### `core.beginTransaction()`
-
-Start a transaction for atomic operations.
-
-**Returns:** `Promise<Transaction>`
-
-**Example:**
+### Register & Execute Hook
 
 ```javascript
-const tx = await core.beginTransaction();
+import { registerHook, executeHook } from '@unrdf/hooks';
 
-try {
-  store.addQuad(...);
-  store.addQuad(...);
-  await tx.commit();
-} catch (error) {
-  await tx.rollback();
-}
-```
+// Register globally
+registerHook(validateAge);
 
-### Transaction
-
-Transaction object for atomic operations.
-
-**Methods:**
-
-| Method | Returns | Description |
-|--------|---------|-------------|
-| `.commit()` | `Promise<void>` | Commit changes |
-| `.rollback()` | `Promise<void>` | Undo changes |
-| `.isActive()` | `boolean` | Check if transaction is active |
-
-**Example:**
-
-```javascript
-const tx = await core.beginTransaction();
-
-if (tx.isActive()) {
-  await tx.commit();
-}
-```
-
----
-
-## Streaming
-
-### `createReadStream(store)`
-
-Create a readable stream from an RDF store.
-
-**Parameters:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `store` | `Store` | Store to stream from |
-
-**Returns:** `ReadableStream<Quad>`
-
-**Example:**
-
-```javascript
-import { createReadStream } from '@unrdf/streaming';
-
-const stream = createReadStream(store);
-
-stream.on('data', (quad) => {
-  console.log(quad.subject.value);
+// Execute on quad
+const result = await executeHook(validateAge, {
+  quad: myQuad,
+  trigger: 'INSERT',
+  store: myStore
 });
 
-stream.on('end', () => {
-  console.log('Done streaming');
+if (!result.passed) {
+  console.error(result.error);
+}
+```
+
+---
+
+### Transform Hook (Modify Data)
+
+```javascript
+const normalizeEmail = defineHook({
+  meta: { name: 'normalize-email' },
+  trigger: 'INSERT',
+  pattern: '?person foaf:mbox ?email .',
+
+  transform(context) {
+    const email = context.quad.object.value.toLowerCase();
+
+    return {
+      ...context.quad,
+      object: literal(email)
+    };
+  }
 });
 ```
 
-### `createWriteStream(store)`
+**Use case:** Data normalization, enrichment
 
-Create a writable stream to an RDF store.
+---
 
-**Returns:** `WritableStream<Quad>`
-
-**Example:**
+### Hook Chain (Multiple Hooks)
 
 ```javascript
-import { createWriteStream } from '@unrdf/streaming';
+import { executeHookChain } from '@unrdf/hooks';
 
-const writeStream = createWriteStream(store);
+const hooks = [validateAge, normalizeEmail, logInsertion];
 
-writeStream.write(quad1);
-writeStream.write(quad2);
-writeStream.end();
+const results = await executeHookChain(hooks, {
+  quad: myQuad,
+  trigger: 'INSERT'
+});
+
+// Check if all passed
+const allPassed = results.every(r => r.passed);
 ```
 
 ---
 
-## Federation
-
-### `createFederatedStore(stores)`
-
-Combine multiple stores into a single federated store.
-
-**Parameters:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `stores` | `Store[]` | Stores to federate |
-
-**Returns:** `FederatedStore`
-
-**Example:**
+### Built-in Hooks
 
 ```javascript
-import { createFederatedStore } from '@unrdf/federation';
+import {
+  validateSubjectIRI,
+  validatePredicateIRI,
+  normalizeLanguageTag,
+  trimLiterals,
+  rejectBlankNodes
+} from '@unrdf/hooks';
 
-const fedStore = createFederatedStore([store1, store2, store3]);
+registerHook(validateSubjectIRI); // Ensures subject is valid IRI
+registerHook(trimLiterals);       // Trim whitespace from literals
+```
 
-const results = await core.query(fedStore, sparqlQuery);
+**Available:** IRI validation, language tag normalization, blank node rejection
+
+---
+
+## 📦 @unrdf/yawl - Workflow Engine
+
+### Create Workflow
+
+```javascript
+import { createWorkflow } from '@unrdf/yawl';
+
+const workflow = createWorkflow({
+  id: 'order-fulfillment',
+  name: 'Order Fulfillment Process',
+
+  tasks: [
+    { id: 'validate', name: 'Validate Order', kind: 'atomic' },
+    { id: 'charge', name: 'Charge Payment', kind: 'atomic' },
+    { id: 'ship', name: 'Ship Product', kind: 'atomic' }
+  ],
+
+  flows: [
+    { from: 'validate', to: 'charge' },
+    { from: 'charge', to: 'ship' }
+  ]
+});
+```
+
+**Task kinds:** `atomic`, `composite`, `multiple-instance`, `automated`
+
+---
+
+### Create Case (Workflow Instance)
+
+```javascript
+import { createCase } from '@unrdf/yawl';
+
+const orderCase = await createCase(workflow, {
+  caseId: 'ORD-12345',
+  data: {
+    orderId: '12345',
+    customerId: 'alice',
+    items: [{ sku: 'ABC', qty: 2 }]
+  }
+});
+
+console.log(orderCase.id);     // 'ORD-12345'
+console.log(orderCase.status); // 'active'
 ```
 
 ---
 
-## Data Model
-
-### NamedNode
-
-Represents a URI reference.
-
-**Properties:**
-
-| Property | Type | Description |
-|----------|------|-------------|
-| `.termType` | `'NamedNode'` | Always "NamedNode" |
-| `.value` | `string` | The IRI value |
-
-**Creation:**
+### Task Lifecycle
 
 ```javascript
-import { namedNode } from '@rdfjs/data-model';
+import { enableTask, startTask, completeTask } from '@unrdf/yawl';
 
-const iri = namedNode('http://example.org/Alice');
-console.log(iri.value);  // "http://example.org/Alice"
+// 1. Enable task (ready to execute)
+await enableTask(orderCase, 'validate');
+
+// 2. Start task (assign to worker)
+await startTask(orderCase, 'validate', {
+  assignedTo: 'worker:bob'
+});
+
+// 3. Complete task (mark done + output data)
+await completeTask(orderCase, 'validate', {
+  valid: true,
+  validatedBy: 'worker:bob'
+});
+
+// Next task auto-enabled by control flow
+console.log(orderCase.enabledTasks); // ['charge']
 ```
 
-### Literal
-
-Represents a literal value (string, number, etc.).
-
-**Properties:**
-
-| Property | Type | Description |
-|----------|------|-------------|
-| `.termType` | `'Literal'` | Always "Literal" |
-| `.value` | `string` | The literal value |
-| `.language` | `string` | Language tag (if any) |
-| `.datatype` | `NamedNode` | Data type IRI |
-
-**Creation:**
-
-```javascript
-import { literal } from '@rdfjs/data-model';
-
-const str = literal('Alice');
-const num = literal(42, namedNode('http://www.w3.org/2001/XMLSchema#integer'));
-const lang = literal('Bonjour', 'fr');
-```
-
-### BlankNode
-
-Represents an anonymous node.
-
-**Creation:**
-
-```javascript
-import { blankNode } from '@rdfjs/data-model';
-
-const blank = blankNode();  // _:b1
-const namedBlank = blankNode('x');  // _:x
-```
-
-### Quad
-
-Represents an RDF statement (subject, predicate, object, graph).
-
-**Properties:**
-
-| Property | Type | Description |
-|----------|------|-------------|
-| `.subject` | `Term` | Subject |
-| `.predicate` | `NamedNode` | Predicate |
-| `.object` | `Term` | Object |
-| `.graph` | `Term` | Graph (DefaultGraph if in default graph) |
+**States:** `enabled` → `started` → `completed`
 
 ---
 
-## Utilities
-
-### `toTurtle(store, options?)`
-
-Serialize RDF store to Turtle format.
-
-**Returns:** `Promise<string>`
-
-**Example:**
+### Query Case State
 
 ```javascript
-const turtle = await core.toTurtle(store);
-console.log(turtle);
+// Check case status
+console.log(orderCase.status); // 'active', 'completed', 'failed'
+
+// List completed tasks
+console.log(orderCase.completedTasks); // ['validate', 'charge']
+
+// List enabled tasks (ready to execute)
+console.log(orderCase.enabledTasks); // ['ship']
+
+// Access case data
+console.log(orderCase.data.customerId); // 'alice'
 ```
-
-### `toNTriples(store)`
-
-Serialize to N-Triples format.
-
-**Returns:** `Promise<string>`
-
-### `toJsonLD(store)`
-
-Serialize to JSON-LD format.
-
-**Returns:** `Promise<object>`
 
 ---
 
-## Common Patterns
-
-### Parse and Query
+### Cancel Work Item
 
 ```javascript
-const store = await core.parseRdf(data);
-const results = await core.query(store, sparqlQuery);
+import { cancelWorkItem } from '@unrdf/yawl';
+
+await cancelWorkItem(orderCase, 'ship', {
+  reason: 'Customer cancelled order'
+});
+
+console.log(orderCase.status); // 'cancelled'
 ```
 
-### Validate and Update
+---
+
+### Workflow Patterns (Van der Aalst)
 
 ```javascript
-const report = await core.validateShacl(store, shapes);
-if (report.conforms) {
-  store.addQuad(...);
+import { parallelSplit, synchronization, exclusiveChoice } from '@unrdf/yawl';
+
+// Parallel split: Execute tasks A and B concurrently
+const wf1 = createWorkflow({
+  tasks: [
+    { id: 'start', name: 'Start' },
+    { id: 'taskA', name: 'Task A' },
+    { id: 'taskB', name: 'Task B' },
+    { id: 'end', name: 'End' }
+  ],
+  flows: [
+    { from: 'start', to: 'taskA' },
+    { from: 'start', to: 'taskB' },
+    { from: 'taskA', to: 'end' },
+    { from: 'taskB', to: 'end' }
+  ],
+  splitBehavior: 'AND', // Parallel split
+  joinBehavior: 'AND'   // Synchronization (wait for both)
+});
+
+// Exclusive choice: Either task A OR task B
+const wf2 = createWorkflow({
+  /* ... */
+  splitBehavior: 'XOR', // Exclusive choice
+  joinBehavior: 'XOR'   // Simple merge
+});
+```
+
+**Patterns:** AND (parallel), XOR (exclusive), OR (multi-choice)
+
+---
+
+### Replay Case (Event Sourcing)
+
+```javascript
+import { replayCase } from '@unrdf/yawl';
+
+// Reconstruct case from event log
+const reconstructed = await replayCase(workflow, 'ORD-12345');
+
+console.log(reconstructed.completedTasks); // All tasks completed historically
+```
+
+**Use case:** Audit, debugging, time-travel
+
+---
+
+## 🔍 Common Patterns (Copy-Paste Ready)
+
+### Pattern 1: Load → Query → Export
+
+```javascript
+import { createStore as createOxiStore } from '@unrdf/oxigraph';
+import { executeSelectSync } from '@unrdf/core';
+
+// Load
+const store = createOxiStore();
+store.load(myTurtleData);
+
+// Query
+const results = executeSelectSync(store, mySparql);
+
+// Export as array
+const rows = [...results].map(r => ({
+  name: r.get('name')?.value,
+  age: parseInt(r.get('age')?.value, 10)
+}));
+
+console.log(rows);
+```
+
+---
+
+### Pattern 2: Event Sourcing with Snapshots
+
+```javascript
+import { KGCStore, freezeUniverse, reconstructState } from '@unrdf/kgc-4d';
+
+const kgc = new KGCStore();
+
+// Record events throughout day
+await kgc.record({ type: 'EVENT_1', subject: 'entity:1', data: {} });
+await kgc.record({ type: 'EVENT_2', subject: 'entity:2', data: {} });
+
+// End of day: snapshot
+const snapshot = await freezeUniverse(kgc, { message: 'EOD' });
+
+// Next day: start fresh or time-travel
+const yesterday = await reconstructState(snapshot.commit);
+```
+
+---
+
+### Pattern 3: Hook Pipeline (Validation + Transform)
+
+```javascript
+import { defineHook, executeHookChain } from '@unrdf/hooks';
+
+const validateHook = defineHook({
+  meta: { name: 'validate' },
+  trigger: 'INSERT',
+  pattern: '?s ?p ?o .',
+  validate(ctx) { /* ... */ }
+});
+
+const transformHook = defineHook({
+  meta: { name: 'transform' },
+  trigger: 'INSERT',
+  pattern: '?s ?p ?o .',
+  transform(ctx) { /* ... */ }
+});
+
+// Execute pipeline
+const results = await executeHookChain([validateHook, transformHook], {
+  quad: myQuad,
+  trigger: 'INSERT'
+});
+```
+
+---
+
+### Pattern 4: Workflow with Data Flow
+
+```javascript
+import { createWorkflow, createCase, enableTask, completeTask } from '@unrdf/yawl';
+
+const wf = createWorkflow({
+  id: 'data-flow-example',
+  tasks: [
+    { id: 'input', name: 'Get Input' },
+    { id: 'process', name: 'Process Data' },
+    { id: 'output', name: 'Output Result' }
+  ],
+  flows: [
+    { from: 'input', to: 'process' },
+    { from: 'process', to: 'output' }
+  ]
+});
+
+const wfCase = await createCase(wf, { caseId: 'CASE-1' });
+
+// Task 1: Output data
+await completeTask(wfCase, 'input', { inputValue: 42 });
+
+// Task 2: Access previous task output
+await completeTask(wfCase, 'process', {
+  processedValue: wfCase.data.inputValue * 2
+});
+
+// Task 3: Final output
+await completeTask(wfCase, 'output', {
+  result: wfCase.data.processedValue
+});
+```
+
+---
+
+## 🚀 Performance Tips
+
+### 1. Use Sync APIs Where Possible
+
+```javascript
+// ✅ FASTER (no async overhead)
+const results = executeSelectSync(store, sparql);
+
+// ❌ SLOWER (async overhead)
+const results = await executeSelect(store, sparql);
+```
+
+**When sync is OK:** Node.js, no I/O in query
+
+---
+
+### 2. Batch Operations
+
+```javascript
+import { executeBatch } from '@unrdf/hooks';
+
+// ✅ Batch 1000 quads at once
+const results = await executeBatch(hooks, quads);
+
+// ❌ Loop 1000 times
+for (const quad of quads) {
+  await executeHook(hook, { quad });
 }
 ```
 
-### Transaction with Hooks
+**Speedup:** 10-100x for large datasets
+
+---
+
+### 3. Use Oxigraph, Not N3
 
 ```javascript
-registerHook(myHook);
+// ✅ Oxigraph (Rust, fast)
+import { createStore } from '@unrdf/oxigraph';
 
-const tx = await core.beginTransaction();
-try {
-  store.addQuad(...);  // Hook fires
-  await tx.commit();
-} catch (e) {
-  await tx.rollback();
-}
+// For reference: N3 (legacy approach, not recommended)
+// import { Store } from 'n3';
 ```
 
-### Stream Large File
+**Speedup:** 100x for SPARQL queries (see ADR-001)
+
+---
+
+### 4. Prewarm Hook Cache
 
 ```javascript
-const stream = createReadStream(largeStore);
-stream.pipe(transformStream).pipe(writeStream);
+import { prewarmHookCache } from '@unrdf/hooks';
+
+// Load hooks into JIT cache
+await prewarmHookCache(hooks);
+
+// Now execution is 2-5x faster
 ```
 
 ---
 
-**Need more?** Check [EXAMPLES.md](EXAMPLES.md) for complete working examples.
+### 5. Pool Quads (Zero-Allocation Transforms)
+
+```javascript
+import { createPooledTransform, quadPool } from '@unrdf/hooks';
+
+const pooledHook = createPooledTransform(myTransformHook);
+
+// Reuses quad objects (no GC pressure)
+const result = await executeHook(pooledHook, { quad });
+```
+
+**Use case:** High-throughput streaming (millions of quads/sec)
+
+---
+
+## 📖 Full Documentation
+
+| Package | Full API Docs |
+|---------|---------------|
+| **@unrdf/core** | [packages/core/README.md](../packages/core/README.md) |
+| **@unrdf/kgc-4d** | [packages/kgc-4d/README.md](../packages/kgc-4d/README.md) |
+| **@unrdf/hooks** | [packages/hooks/README.md](../packages/hooks/README.md) |
+| **@unrdf/yawl** | [packages/yawl/README.md](../packages/yawl/README.md) |
+| **@unrdf/oxigraph** | [packages/oxigraph/README.md](../packages/oxigraph/README.md) |
+
+---
+
+**Need migration help?** → [MIGRATION.md](MIGRATION.md)
+**Understand design decisions?** → [adr/](adr/)

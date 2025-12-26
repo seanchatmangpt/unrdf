@@ -3,20 +3,19 @@
  * Validates all 8 primitive operations + higher-level functions
  */
 
-import { describe, it, before, after } from 'node:test';
-import assert from 'node:assert/strict';
+import { describe, it, beforeAll, afterAll, expect } from 'vitest';
 import { VectorEngineClient } from '../../src/hdit/vector-engine-client.mjs';
 
 describe('Vector Engine Worker', () => {
   let client;
   const workerURL = new URL('../../src/hdit/vector-engine.worker.mjs', import.meta.url);
 
-  before(async () => {
+  beforeAll(async () => {
     client = new VectorEngineClient(workerURL);
     await client.waitReady();
   });
 
-  after(() => {
+  afterAll(() => {
     client.terminate();
   });
 
@@ -30,21 +29,21 @@ describe('Vector Engine Worker', () => {
       const b = new Float32Array([2, 3, 4, 5]);
       const result = await client.dot(a, b);
       const expected = 1*2 + 2*3 + 3*4 + 4*5; // 40
-      assert.equal(result, expected);
+      expect(result).toBe(expected);
     });
 
     it('should handle zero vectors', async () => {
       const a = new Float32Array([0, 0, 0, 0]);
       const b = new Float32Array([1, 2, 3, 4]);
       const result = await client.dot(a, b);
-      assert.equal(result, 0);
+      expect(result).toBe(0);
     });
 
     it('should handle orthogonal vectors', async () => {
       const a = new Float32Array([1, 0, 0, 0]);
       const b = new Float32Array([0, 1, 0, 0]);
       const result = await client.dot(a, b);
-      assert.equal(result, 0);
+      expect(result).toBe(0);
     });
 
     it('should work with larger vectors', async () => {
@@ -52,7 +51,7 @@ describe('Vector Engine Worker', () => {
       const a = new Float32Array(size).fill(1);
       const b = new Float32Array(size).fill(2);
       const result = await client.dot(a, b);
-      assert.equal(result, size * 2);
+      expect(result).toBe(size * 2);
     });
   });
 
@@ -64,13 +63,13 @@ describe('Vector Engine Worker', () => {
     it('should calculate squared L2 norm', async () => {
       const a = new Float32Array([3, 4]);
       const result = await client.squaredNorm(a);
-      assert.equal(result, 25); // 3^2 + 4^2
+      expect(result).toBe(25); // 3^2 + 4^2
     });
 
     it('should handle zero vector', async () => {
       const a = new Float32Array([0, 0, 0]);
       const result = await client.squaredNorm(a);
-      assert.equal(result, 0);
+      expect(result).toBe(0);
     });
   });
 
@@ -80,14 +79,14 @@ describe('Vector Engine Worker', () => {
       const b = new Float32Array([4, 6, 8]);
       const result = await client.squaredDistance(a, b);
       const expected = (1-4)**2 + (2-6)**2 + (3-8)**2; // 9 + 16 + 25 = 50
-      assert.equal(result, expected);
+      expect(result).toBe(expected);
     });
 
     it('should return 0 for identical vectors', async () => {
       const a = new Float32Array([1, 2, 3]);
       const b = new Float32Array([1, 2, 3]);
       const result = await client.squaredDistance(a, b);
-      assert.ok(Math.abs(result) < 1e-10);
+      expect(Math.abs(result) < 1e-10).toBe(true);
     });
   });
 
@@ -96,21 +95,21 @@ describe('Vector Engine Worker', () => {
       const a = new Float32Array([1, 0, 0]);
       const b = new Float32Array([1, 0, 0]);
       const result = await client.cosineSimilarity(a, b);
-      assert.ok(Math.abs(result - 1) < 1e-6); // Should be 1
+      expect(Math.abs(result - 1) < 1e-6).toBe(true); // Should be 1
     });
 
     it('should return 0 for orthogonal vectors', async () => {
       const a = new Float32Array([1, 0, 0]);
       const b = new Float32Array([0, 1, 0]);
       const result = await client.cosineSimilarity(a, b);
-      assert.ok(Math.abs(result) < 1e-6);
+      expect(Math.abs(result) < 1e-6).toBe(true);
     });
 
     it('should handle negative correlation', async () => {
       const a = new Float32Array([1, 0, 0]);
       const b = new Float32Array([-1, 0, 0]);
       const result = await client.cosineSimilarity(a, b);
-      assert.ok(Math.abs(result - (-1)) < 1e-6);
+      expect(Math.abs(result - (-1)) < 1e-6).toBe(true);
     });
   });
 
@@ -219,14 +218,14 @@ describe('Vector Engine Worker', () => {
       const b = new Int32Array([0b1100]);
       const result = await client.hammingDistance(a, b);
       // XOR = 0b0011, which has 2 bits set
-      assert.equal(result, 2);
+      expect(result).toBe(2);
     });
 
     it('should return 0 for identical vectors', async () => {
       const a = new Int32Array([0b1010]);
       const b = new Int32Array([0b1010]);
       const result = await client.hammingDistance(a, b);
-      assert.equal(result, 0);
+      expect(result).toBe(0);
     });
   });
 
@@ -243,15 +242,15 @@ describe('Vector Engine Worker', () => {
       ];
       const result = await client.centroid(vectors);
       // Expected: [(1+4+7)/3, (2+5+8)/3, (3+6+9)/3] = [4, 5, 6]
-      assert.ok(Math.abs(result[0] - 4) < 1e-6);
-      assert.ok(Math.abs(result[1] - 5) < 1e-6);
-      assert.ok(Math.abs(result[2] - 6) < 1e-6);
+      expect(Math.abs(result[0] - 4) < 1e-6).toBe(true);
+      expect(Math.abs(result[1] - 5) < 1e-6).toBe(true);
+      expect(Math.abs(result[2] - 6) < 1e-6).toBe(true);
     });
 
     it('should handle single vector', async () => {
       const vectors = [new Float32Array([1, 2, 3])];
       const result = await client.centroid(vectors);
-      assert.deepEqual(result, new Float32Array([1, 2, 3]));
+      expect(result).toEqual(new Float32Array([1, 2, 3]));
     });
   });
 
@@ -267,10 +266,10 @@ describe('Vector Engine Worker', () => {
       const k = 2;
       const result = await client.kNearest(query, candidates, k);
 
-      assert.equal(result.length, k);
-      assert.equal(result[0].index, 0); // Closest
-      assert.equal(result[1].index, 1); // Second closest
-      assert.ok(result[0].distance < result[1].distance);
+      expect(result.length).toBe(k);
+      expect(result[0].index).toBe(0); // Closest
+      expect(result[1].index).toBe(1); // Second closest
+      expect(result[0].distance < result[1].distance).toBe(true);
     });
 
     it('should handle k larger than candidates', async () => {
@@ -282,7 +281,7 @@ describe('Vector Engine Worker', () => {
       const k = 5;
       const result = await client.kNearest(query, candidates, k);
 
-      assert.equal(result.length, 2); // Only 2 candidates available
+      expect(result.length).toBe(2); // Only 2 candidates available
     });
   });
 
@@ -294,7 +293,7 @@ describe('Vector Engine Worker', () => {
     it('should be ready after construction', async () => {
       const testClient = new VectorEngineClient(workerURL);
       await testClient.waitReady();
-      assert.ok(testClient.ready);
+      expect(testClient.ready).toBe(true);
       testClient.terminate();
     });
 
@@ -309,8 +308,8 @@ describe('Vector Engine Worker', () => {
         client.squaredNorm(a),
       ]);
 
-      assert.equal(dot1, dot2);
-      assert.ok(norm1 > 0);
+      expect(dot1).toBe(dot2);
+      expect(norm1 > 0).toBe(true);
     });
   });
 });

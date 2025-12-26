@@ -332,7 +332,7 @@ z.custom((store) => {
 
 ```
 src/project-engine/
-  ├── autonomic-mapek.mjs          (700 lines) - MAPEK 5-phase loop
+  ├── autonomic-mapek.mjs          (5,465 lines) - MAPEK 5-phase loop
   ├── mapek-orchestration.mjs       (450 lines) - All 10 innovations orchestration
   ├── gap-finder.mjs                (310 lines) - Missing role detection
   ├── auto-test-generator.mjs       (740 lines) - Test pattern inference

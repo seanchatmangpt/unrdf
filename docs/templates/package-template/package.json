@@ -1,0 +1,42 @@
+{
+  "name": "@unrdf/package-name",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "One-sentence description of what this package does",
+  "keywords": [
+    "rdf",
+    "unrdf",
+    "semantic-web"
+  ],
+  "homepage": "https://github.com/unrdf/unrdf/tree/main/packages/package-name#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/unrdf/unrdf.git",
+    "directory": "packages/package-name"
+  },
+  "license": "MIT",
+  "author": "UNRDF Contributors",
+  "main": "./src/index.mjs",
+  "exports": {
+    ".": "./src/index.mjs"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:fast": "vitest run --reporter=dot --no-coverage",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "dependencies": {
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "vitest": "^4.0.15"
+  },
+  "peerDependencies": {},
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

@@ -107,10 +107,11 @@ describe('KGC Time Module - HDIT Theory Applied', () => {
       expect(result).toBe(BigInt(1_000_000_500_000));
     });
 
-    it('should coerce numeric delta to BigInt', () => {
+    it('should throw TypeError for non-BigInt delta (GAP-T5 strict type enforcement)', () => {
       const t_ns = BigInt(1_000_000_000_000);
-      const result = addNanoseconds(t_ns, 1000);
-      expect(result).toBe(BigInt(1_000_000_001_000));
+      // GAP-T5 fix: Enforce strict BigInt type for delta to prevent unit confusion
+      expect(() => addNanoseconds(t_ns, 1000)).toThrow(TypeError);
+      expect(() => addNanoseconds(t_ns, '1000')).toThrow(TypeError);
     });
 
     it('should throw TypeError for non-BigInt timestamp', () => {

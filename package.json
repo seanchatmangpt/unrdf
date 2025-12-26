@@ -18,9 +18,11 @@
     "pnpm": ">=7.0.0"
   },
   "scripts": {
+    "prepare": "husky install",
     "test": "pnpm -r test",
     "test:fast": "pnpm -r test:fast",
     "test:watch": "pnpm -r test:watch",
+    "test:watch:pkg": "bash -c './scripts/dev-workflow.sh test:watch \"$@\"' _",
     "test:coverage": "pnpm -r test -- --coverage",
     "test:core": "pnpm -C packages/core test",
     "test:hooks": "pnpm -C packages/hooks test",
@@ -39,6 +41,16 @@
     "docs": "pnpm -C packages/core docs",
     "convert-paper": "node scripts/convert-paper.mjs",
     "precommit": "pnpm lint && pnpm test:fast",
+    "quality": "node scripts/quality-report.mjs",
+    "quality:json": "node scripts/quality-report.mjs --json",
+    "setup-quality": "node scripts/setup-quality.mjs",
+    "bench": "node scripts/bench-all.mjs",
+    "bench:baseline": "node scripts/bench-all.mjs --baseline",
+    "bench:hooks": "node benchmarks/hook-execution-bench.mjs",
+    "bench:receipts": "node benchmarks/receipt-generation-bench.mjs",
+    "bench:sparql": "node benchmarks/sparql-query-bench.mjs",
+    "bench:tasks": "node benchmarks/task-activation-bench.mjs",
+    "bench:workflow": "node benchmarks/workflow-e2e-bench.mjs",
     "benchmark": "node benchmarks/run-all.mjs all",
     "benchmark:core": "node benchmarks/run-all.mjs core",
     "benchmark:integration": "node benchmarks/run-all.mjs integration",
@@ -47,7 +59,27 @@
     "benchmark:report": "node benchmarks/run-all.mjs all",
     "benchmark:baseline": "node benchmarks/run-all.mjs regression --save-baseline",
     "benchmark:compare": "node benchmarks/run-all.mjs all --compare-baseline",
-    "benchmark:memory": "node --expose-gc benchmarks/regression/memory-leak-detection.mjs"
+    "benchmark:memory": "node --expose-gc benchmarks/regression/memory-leak-detection.mjs",
+    "profile:cpu": "node scripts/profile.mjs cpu",
+    "profile:mem": "node scripts/profile.mjs mem",
+    "profile:both": "node scripts/profile.mjs both",
+    "quick-start": "./scripts/quick-start.sh",
+    "validate": "./scripts/dev-workflow.sh validate",
+    "validate:commit": "./scripts/dev-workflow.sh validate:commit",
+    "fix": "./scripts/dev-workflow.sh fix",
+    "new:package": "bash -c './scripts/common-tasks.sh new:package \"$@\"' _",
+    "clean:all": "./scripts/common-tasks.sh clean:all",
+    "update:deps": "./scripts/common-tasks.sh update:deps",
+    "check:health": "./scripts/common-tasks.sh check:health",
+    "list:packages": "./scripts/common-tasks.sh list:packages",
+    "debug:test": "bash -c './scripts/debug-helpers.sh debug:test \"$@\"' _",
+    "trace:otel": "./scripts/debug-helpers.sh trace:otel",
+    "profile:perf": "bash -c './scripts/debug-helpers.sh profile:perf \"$@\"' _",
+    "trace:deps": "bash -c './scripts/debug-helpers.sh trace:deps \"$@\"' _",
+    "analyze:bundle": "bash -c './scripts/debug-helpers.sh analyze:bundle \"$@\"' _",
+    "trace:imports": "bash -c './scripts/debug-helpers.sh trace:imports \"$@\"' _",
+    "check:memory": "./scripts/debug-helpers.sh check:memory",
+    "watch:logs": "bash -c './scripts/debug-helpers.sh watch:logs \"${@:-validation-output.log}\"' _"
   },
   "devDependencies": {
     "@opentelemetry/api": "^1.9.0",
@@ -68,7 +100,9 @@
     "eslint-plugin-jsdoc": "^61.4.1",
     "glob": "^13.0.0",
     "globals": "^15.12.0",
+    "husky": "^9.1.7",
     "jsdom": "^27.2.0",
+    "lint-staged": "^16.2.7",
     "playwright": "^1.57.0",
     "prettier": "^3.7.4",
     "typescript": "^5.9.3",
@@ -87,6 +121,16 @@
     "pnpm": "8.15.0"
   },
   "dependencies": {
+    "hash-wasm": "^4.12.0",
     "zod": "^4.1.13"
+  },
+  "lint-staged": {
+    "*.{mjs,js}": [
+      "eslint --fix --max-warnings=0",
+      "prettier --write"
+    ],
+    "*.{json,md,yml,yaml}": [
+      "prettier --write"
+    ]
   }
 }

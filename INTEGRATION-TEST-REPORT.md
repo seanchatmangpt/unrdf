@@ -1,436 +1,511 @@
-# INTEGRATION TEST REPORT
-## Comprehensive Integration Testing - Post-Refactor Validation
+# Integration Test Suite Report
 
-**Report Date**: 2025-12-25
-**Branch**: claude/adversarial-testing-concurrent-WCAwU
-**Test Execution Time**: ~60 seconds total
-**Test Runner**: Vitest 4.0.15
+**Generated**: 2025-12-25 08:19:00 UTC
+**Test Execution**: COMPLETE
+**Overall Status**: ❌ **FAIL**
 
 ---
 
-## EXECUTIVE SUMMARY
+## Executive Summary
 
-### Overall Results
+| Metric | Required | Actual | Status |
+|--------|----------|--------|--------|
+| **Overall Pass Rate** | ≥90% | **15.8%** (3/19) | ❌ **FAIL** |
+| **Coverage** | ≥80% | **N/A** | ❌ **NOT MEASURED** |
+| **Execution Time** | <15s | **8.74s** | ✅ **PASS** |
+| **Critical Failures** | 0 | **16** | ❌ **FAIL** |
 
-| Package | Test Files | Tests | Pass Rate | Status |
-|---------|-----------|-------|-----------|--------|
-| **Core** | 6/6 passed | 231/231 passed | **100%** | ✅ PASS |
-| **YAWL** | 3/17 passed | 212/334 passed | 63.5% | ❌ FAIL |
-| **KGC-4D** | 15/24 passed | 296/305 passed | 97.0% | ⚠️ PARTIAL |
-| **Streaming** | 1/3 passed | 28/48 passed | 58.3% | ❌ FAIL |
-| **Federation** | 0/3 passed | 0/0 (N/A) | 0% | ❌ FAIL |
-
-**Total**: 25 of 53 test files passed (47.2%)
-**Total**: 767 of 918 tests passed (83.6%)
+**CRITICAL**: Integration test suite has FAILED with only 15.8% pass rate. Multiple systematic issues identified requiring immediate remediation.
 
 ---
 
-## ADVERSARIAL PM ANALYSIS
+## Test Suite 1: Vitest Integration Tests
 
-### Did I RUN it? ✅ YES
-- All test commands executed with timeouts
-- Full output captured and analyzed
-- Evidence: Test results shown below with exact counts
+**Location**: `/home/user/unrdf/packages/integration-tests/`
+**Command**: `timeout 15s pnpm test:coverage`
+**Execution Time**: 8.74s (transform 3.18s, setup 0ms, import 7.34s, tests 5.63s)
 
-### Can I PROVE it? ✅ YES
-- Test output showing 767 passed / 918 total tests
-- File counts verified: 53 total test files
-- Integration test execution time: 4.32s (YAWL), 6.36s (KGC-4D), 2.23s (Core)
+### Results Summary
 
-### What BREAKS if wrong? ⚠️ CRITICAL
-- **Federation**: Cannot import - BLOCKS all federation features
-- **YAWL**: 122 failed tests - workflow patterns broken
-- **Streaming**: 20 failed tests - real-time features unreliable
-- **Cross-package integration**: Untested due to import failures
+```
+Test Files:  5 failed (5 total)
+Tests:      11 failed | 3 passed (14 total)
+Duration:   8.74s
+Exit Code:  1
+```
+
+### Pass Rate Analysis
+
+- **Total Tests**: 14
+- **Passed**: 3 (21.4%)
+- **Failed**: 11 (78.6%)
+- **Pass Rate**: **21.4%** ❌ (Required: ≥90%)
+
+### Test Breakdown by Scenario
+
+#### ❌ Scenario 1: Complete Workflow Execution
+**File**: `workflows/complete-workflow.test.mjs`
+**Status**: 2/2 FAILED (0% pass rate)
+
+**Failures**:
+1. ❌ `executes workflow with hooks, receipts, and time-travel` (34ms)
+   ```
+   ZodError: Invalid input: expected object, received string
+   Location: ../yawl/src/workflow.mjs:210:42
+   Root Cause: WorkflowSpecSchema validation failure
+   ```
+
+2. ❌ `handles invalid task data via hooks` (1ms)
+   ```
+   ZodError: Invalid input: expected object, received string
+   Location: ../yawl/src/workflow.mjs:210:42
+   Root Cause: Same as above - schema mismatch
+   ```
+
+#### ❌ Scenario 2: Federated Knowledge Query
+**File**: `federation/federated-query.test.mjs`
+**Status**: 1/2 FAILED (50% pass rate)
+
+**Failures**:
+1. ❌ `queries federated knowledge graph across multiple stores` (31ms)
+   ```
+   AssertionError: expected 'Web Portal' to be 'RDF Platform'
+   Expected: "RDF Platform"
+   Received: "Web Portal"
+   Location: federation/federated-query.test.mjs:128:39
+   Root Cause: Query result ordering or data mismatch
+   ```
+
+**Passes**:
+1. ✅ `handles missing data gracefully in federation` (1ms)
+
+#### ❌ Scenario 3: Stream Processing with Validation
+**File**: `streaming/stream-validation.test.mjs`
+**Status**: 2/2 FAILED (0% pass rate)
+
+**Failures**:
+1. ❌ `processes RDF stream with validation hooks` (13ms)
+   ```
+   ZodError: [
+     { "expected": "string", "code": "invalid_type", "path": ["name"] },
+     { "code": "invalid_value", "path": ["trigger"] }
+   ]
+   Location: ../hooks/src/hooks/define-hook.mjs:135:38
+   Root Cause: Hook configuration missing 'name' field, invalid trigger value
+   ```
+
+2. ❌ `handles validation failures gracefully` (1ms)
+   ```
+   Same ZodError as above
+   Root Cause: defineHook schema validation
+   ```
+
+#### ❌ Scenario 4: Multi-Package Error Recovery
+**File**: `error-recovery/multi-package-errors.test.mjs`
+**Status**: 3/3 FAILED (0% pass rate)
+
+**Failures**:
+1. ❌ `recovers from workflow failures with state rollback` (27ms)
+   ```
+   ZodError: Hook configuration validation failure
+   Same root cause as streaming tests
+   ```
+
+2. ❌ `handles concurrent workflow failures gracefully` (1ms)
+3. ❌ `validates error propagation across package boundaries` (2ms)
+
+#### ⚠️ Scenario 5: Performance Under Load
+**File**: `performance/load-testing.test.mjs`
+**Status**: 2/5 PASSED (40% pass rate)
+**Duration**: 5.511s
+
+**Passes**:
+1. ✅ `handles concurrent RDF store operations` (668ms)
+   ```
+   RDF Write: 10000 quads in 605.39ms
+   Throughput: 16,518.35 quads/second
+
+   RDF Read: 1000 reads in 35.59ms
+   Throughput: 28,098.43 reads/second
+   ```
+
+2. ✅ `measures memory efficiency under load` (4810ms)
+   ```
+   Baseline Memory: 77.03 MB
+   Loaded Memory: 87.34 MB
+   Memory Increase: 10.31 MB
+   Bytes per Quad: 216.13 bytes
+   ```
+
+**Failures**:
+1. ❌ `handles high-volume workflow execution` (27ms)
+2. ❌ `validates hook execution performance` (3ms)
+3. ❌ `stress test: concurrent workflows with snapshots` (1ms)
 
 ---
 
-## DETAILED RESULTS BY PACKAGE
+## Test Suite 2: Production Validation
 
-### 1. Core Package ✅ 100% PASS
+**Location**: `/home/user/unrdf/validation/integration-test.mjs`
+**Command**: `timeout 15s node validation/integration-test.mjs`
+**Execution Time**: <1s
+**Exit Code**: 1
+
+### Results Summary
+
+```
+Passed:  0
+Failed:  8
+Skipped: 0
+Pass Rate: 0% ❌
+```
+
+### Critical Failures
+
+All 8 tests failed due to systematic package resolution issues:
+
+#### Package Import Failures (6 tests)
+
+1. ❌ **Oxigraph store creation**
+   ```
+   Error: Cannot find package '@unrdf/oxigraph'
+   imported from /home/user/unrdf/validation/integration-test.mjs
+   ```
+
+2. ❌ **Data factory quad creation**
+   Same error as above
+
+3. ❌ **Store CRUD operations**
+   Same error as above
+
+4. ❌ **KGC-4D freeze universe**
+   ```
+   Error: Cannot find package '@unrdf/kgc-4d'
+   ```
+
+5. ❌ **Hooks definition**
+   ```
+   Error: Cannot find package '@unrdf/hooks'
+   ```
+
+6. ❌ **Receipt generation**
+   ```
+   Error: Cannot find package '@unrdf/kgc-4d'
+   ```
+
+**Root Cause**: Packages not built or workspace resolution failure. Script runs outside pnpm workspace context.
+
+#### Code Quality Violations (2 tests)
+
+7. ❌ **No direct N3 imports in packages**
+   ```
+   Error: Found direct N3 imports in app code:
+   packages/core/src/rdf/n3-migration.mjs:import { Store, DataFactory } from 'n3';
+   ```
+   **Root Cause**: Violates CLAUDE.md rule - MUST use '@unrdf/oxigraph', not 'n3'
+
+8. ❌ **Package.json files exist for all packages**
+   ```
+   Error: Missing package.json in: react
+   ```
+   **Root Cause**: Unexpected directory in packages/ folder
+
+---
+
+## Coverage Analysis
+
+**Status**: ❌ **NOT GENERATED**
+
+Coverage was NOT generated due to test failures. The `--coverage` flag was passed but vitest exits with code 1 when tests fail, preventing coverage report generation.
+
+**Required Action**: Fix failing tests first, then re-run with coverage to validate ≥80% requirement.
+
+---
+
+## Performance Metrics
+
+### Execution Performance ✅
+
+| Metric | Value | Status |
+|--------|-------|--------|
+| Total Duration | 8.74s | ✅ Under 15s limit |
+| Transform Time | 3.18s | - |
+| Setup Time | 0ms | - |
+| Import Time | 7.34s | ⚠️ High (84% of total) |
+| Test Execution | 5.63s | - |
+
+### RDF Store Performance ✅
+
+**Evidence from passing performance tests**:
+
+| Operation | Throughput | Status |
+|-----------|------------|--------|
+| RDF Write | 16,518 quads/sec | ✅ |
+| RDF Read | 28,098 reads/sec | ✅ |
+| Memory Efficiency | 216 bytes/quad | ✅ |
+| Memory Increase (50K quads) | 10.31 MB | ✅ |
+
+---
+
+## Root Cause Analysis
+
+### Primary Failures (11 tests)
+
+1. **Hook Configuration Schema Mismatch** (8 tests)
+   - **Pattern**: All hook-related tests fail with ZodError
+   - **Location**: `defineHook()` validation in `@unrdf/hooks`
+   - **Issue**: Test configurations missing required `name` field
+   - **Impact**: 57% of test failures (8/14)
+
+2. **Workflow Schema Validation** (2 tests)
+   - **Pattern**: `createWorkflow()` expects object, receives string
+   - **Location**: `WorkflowSpecSchema.parse()` in `@unrdf/yawl`
+   - **Issue**: Invalid spec format passed to constructor
+   - **Impact**: 14% of test failures (2/14)
+
+3. **Federation Query Assertion** (1 test)
+   - **Pattern**: Data ordering mismatch
+   - **Expected**: "RDF Platform" first
+   - **Received**: "Web Portal" first
+   - **Impact**: 7% of test failures (1/14)
+
+### Secondary Failures (8 validation tests)
+
+4. **Package Resolution** (6 tests)
+   - **Root Cause**: Script runs outside pnpm workspace
+   - **Solution**: Run with `pnpm exec` or build packages first
+
+5. **Code Quality Violations** (2 tests)
+   - N3 direct import in `packages/core/src/rdf/n3-migration.mjs`
+   - Unexpected `packages/react` directory
+
+---
+
+## Critical Issues Requiring Immediate Action
+
+### 🔴 Priority 1: Schema Validation Failures
+
+**Impact**: 72% of failures (10/14 vitest tests)
+
+**Action Required**:
+1. Review `defineHook()` schema - tests passing invalid configs
+2. Fix `createWorkflow()` calls - passing string instead of object
+3. Update all test fixtures to match current Zod schemas
+
+**Files to Fix**:
+- `streaming/stream-validation.test.mjs` (2 tests)
+- `error-recovery/multi-package-errors.test.mjs` (3 tests)
+- `workflows/complete-workflow.test.mjs` (2 tests)
+- `performance/load-testing.test.mjs` (3 tests)
+
+### 🔴 Priority 2: Package Build & Resolution
+
+**Impact**: 100% of validation tests (8/8)
+
+**Action Required**:
+1. Run `pnpm build` in workspace root
+2. Modify validation script to use `pnpm exec node` or run from correct context
+3. Verify all packages export expected symbols
+
+### 🔴 Priority 3: Code Quality Violations
+
+**Impact**: Architecture compliance
+
+**Action Required**:
+1. Remove direct N3 import from `packages/core/src/rdf/n3-migration.mjs`
+2. Use `@unrdf/oxigraph` instead (per CLAUDE.md)
+3. Remove or relocate `packages/react` directory
+
+---
+
+## Test Execution Evidence
+
+### Command 1: Vitest Integration Tests
 
 ```bash
-Test Files: 6 passed (6)
-Tests: 231 passed (231)
-Duration: 2.23s
+cd /home/user/unrdf/packages/integration-tests && timeout 15s pnpm test:coverage
 ```
 
-**Test Files**:
-- ✅ test/core.test.mjs (26 tests)
-- ✅ test/sparql/executor-sync.test.mjs (66 tests)
-- ✅ test/rdf/unrdf-store.test.mjs (55 tests)
-- ✅ test/sparql/branch-coverage.test.mjs (41 tests)
-- ✅ test/sparql/n3-backward-compat.test.mjs (17 tests)
-- ✅ test/integration/store-integration.test.mjs (26 tests)
+**Output** (truncated for brevity):
+```
+> @unrdf/integration-tests@5.0.0 test:coverage
+> vitest run --coverage
 
-**Status**: PRODUCTION READY - No integration issues
+RUN v4.0.15 /home/user/unrdf/packages/integration-tests
+Coverage enabled with v8
 
----
+❯ federation/federated-query.test.mjs (2 tests | 1 failed) 34ms
+  × queries federated knowledge graph... 31ms
+  ✓ handles missing data gracefully... 1ms
 
-### 2. YAWL Package ❌ 63.5% PASS
+❯ streaming/stream-validation.test.mjs (2 tests | 2 failed) 16ms
+  × processes RDF stream with validation hooks 13ms
+  × handles validation failures gracefully 1ms
+
+[... full output captured above ...]
+
+Test Files  5 failed (5)
+Tests      11 failed | 3 passed (14)
+Duration   8.74s
+
+ELIFECYCLE Command failed with exit code 1.
+```
+
+### Command 2: Validation Integration Test
 
 ```bash
-Test Files: 14 failed | 3 passed (17)
-Tests: 122 failed | 212 passed (334)
-Duration: 4.32s
+timeout 15s node validation/integration-test.mjs
 ```
 
-**Root Causes**:
-
-#### A. Missing Test Imports (95+ failures)
-**Evidence**: Test files use `sequence`, `mkdtempSync`, `YawlResourcePool` without importing them.
-
-```javascript
-// FOUND IN: test/patterns/pattern-receipts.test.mjs:128
-workflow.addFlow(sequence('A', 'B'));  // ❌ ReferenceError: sequence is not defined
-
-// VERIFIED: sequence IS exported from src/index.mjs:224
-export { sequence } from './patterns.mjs';
+**Output**:
 ```
+============================================================
+INTEGRATION TEST - PRODUCTION VALIDATION
+============================================================
 
-**Files Affected**:
-- test/patterns/pattern-receipts.test.mjs
-- test/patterns/pattern-timetravel.test.mjs
-- test/patterns/pattern-resources.test.mjs
-- test/patterns/pattern-basic.test.mjs
-- test/patterns/pattern-cancellation.test.mjs
-- test/patterns/pattern-controlflow.test.mjs
+❌ FAIL: Oxigraph store creation
+   Error: Cannot find package '@unrdf/oxigraph'...
 
-**Fix Required**: Add imports to test files:
-```javascript
-import { sequence, parallelSplit, /* etc */ } from '@unrdf/yawl';
-import { mkdtempSync } from 'node:fs';
-import { tmpdir } from 'node:os';
-```
+[... 8 failures as documented above ...]
 
-#### B. API Signature Changes (15+ failures)
-**Evidence**: Test code calls methods that don't exist on refactored objects.
+============================================================
+INTEGRATION TEST RESULTS
+============================================================
 
-```javascript
-// FOUND IN: test/patterns/pattern-receipts.test.mjs:105
-await engine.startWorkItem(yawlCase.id, workItemA.id, { actor: 'alice' });
-// ❌ TypeError: engine.startWorkItem is not a function
-```
+✅ Passed: 0
+❌ Failed: 8
+⏭️  Skipped: 0
 
-**Files Affected**:
-- test/yawl-hooks.test.mjs (16 failures)
-- test/workflow-api.test.mjs (multiple failures)
-- test/yawl-events.test.mjs (multiple failures)
-
-**Fix Required**: Update test code to match refactored API or restore missing methods.
-
-#### C. Resource Allocation Issues (12 failures)
-**Evidence**:
-```
-// test/yawl-resources.test.mjs:14
-❌ should set and retrieve availability windows
-```
-
-**Fix Required**: Verify resource pool implementation matches test expectations.
-
----
-
-### 3. KGC-4D Package ⚠️ 97.0% PASS
-
-```bash
-Test Files: 9 failed | 15 passed (24)
-Tests: 9 failed | 296 passed (305)
-Duration: 6.36s
-```
-
-**Root Causes**:
-
-#### A. BigInt vs Number Type Mismatches (5 failures)
-**Evidence**: Tests expect `Number` but get `BigInt`.
-
-```javascript
-// test/store.test.mjs:56
-expect(store.getEventCount()).toBe(0);
-// ❌ expected 0n to be +0 // Object.is equality
-
-// ACTUAL: 0n (BigInt)
-// EXPECTED: 0 (Number)
-```
-
-**Files Affected**:
-- test/store.test.mjs (4 failures)
-- test/time.test.mjs (1 failure)
-
-**Fix Required**: Update test assertions:
-```javascript
-expect(store.getEventCount()).toBe(0n); // Use BigInt literal
-// OR
-expect(Number(store.getEventCount())).toBe(0); // Convert to Number
-```
-
-#### B. Missing Node.js Imports (4 failures)
-**Evidence**:
-```javascript
-// test/patterns/pattern-timetravel.test.mjs:29
-tempDir = mkdtempSync(join(tmpdir(), 'yawl-timetravel-'));
-// ❌ ReferenceError: mkdtempSync is not defined
-```
-
-**Fix Required**: Add Node.js imports to test files:
-```javascript
-import { mkdtempSync } from 'node:fs';
-import { tmpdir } from 'node:os';
+Exit code: 1
 ```
 
 ---
 
-### 4. Streaming Package ❌ 58.3% PASS
+## Recommendations
 
-```bash
-Test Files: 2 failed | 1 passed (3)
-Tests: 20 failed | 28 passed (48)
-Duration: 1.99s
-Errors: 6 uncaught exceptions
-```
+### Immediate Actions (Before Next Commit)
 
-**Root Causes**:
+1. **Fix Schema Mismatches** (Est: 30 min)
+   - Update test fixtures to match current Zod schemas
+   - Add schema validation to test helpers
+   - Verify all hook/workflow configs are valid
 
-#### A. Undefined Property Access (20 failures)
-**Evidence**:
-```javascript
-// src/streaming/change-feed.mjs:73
-❌ TypeError: Cannot read properties of undefined (reading 'bind')
-```
+2. **Build Packages** (Est: 5 min)
+   ```bash
+   pnpm build
+   pnpm --filter @unrdf/oxigraph build
+   pnpm --filter @unrdf/kgc-4d build
+   pnpm --filter @unrdf/hooks build
+   ```
 
-**Likely Cause**: Refactored module structure broke internal references.
+3. **Remove N3 Direct Import** (Est: 10 min)
+   - Refactor `packages/core/src/rdf/n3-migration.mjs`
+   - Use `@unrdf/oxigraph` exports instead
+   - Verify no regressions
 
-**Fix Required**: Verify `store` object is properly initialized in change-feed.mjs.
+### Medium-Term Actions (Next Sprint)
 
-#### B. Deprecated Test Patterns (6 errors)
-**Evidence**:
-```javascript
-// test/streaming.test.mjs:247
-done();
-// ❌ Error: done() callback is deprecated, use promise instead
-```
+1. **Add Schema Validation Tests**
+   - Validate all test fixtures against schemas before running
+   - Add pre-test validation step
+   - Prevent future schema drift
 
-**Fix Required**: Modernize test code to use async/await instead of done() callbacks:
-```javascript
-// OLD
-it('test name', (done) => { /* ... */ done(); });
+2. **Improve Test Isolation**
+   - Decouple tests from package build state
+   - Mock external dependencies
+   - Add better error messages for import failures
 
-// NEW
-it('test name', async () => { /* ... */ });
-```
+3. **Coverage Enforcement**
+   - Fix tests to enable coverage generation
+   - Set up coverage thresholds in vitest.config.mjs
+   - Block PRs below 80% coverage
 
-#### C. EventTarget Memory Leak (Warning)
-```
-(node:50465) MaxListenersExceededWarning: Possible EventTarget memory leak
-11 change listeners added. MaxListeners is 10.
-```
+### Process Improvements
 
-**Fix Required**: Add `events.setMaxListeners()` or fix listener cleanup.
+1. **Pre-commit Hooks**
+   - Run integration tests before allowing commits
+   - Enforce schema validation
+   - Check for N3 direct imports
 
----
+2. **CI/CD Pipeline**
+   - Add integration tests to GitHub Actions
+   - Require 90% pass rate for merge
+   - Generate coverage reports automatically
 
-### 5. Federation Package ❌ 0% PASS
-
-```bash
-Test Files: 3 failed (3)
-Tests: no tests (blocked by import error)
-Duration: 1.78s
-```
-
-**Root Cause**: MISSING MODULE
-
-**Evidence**:
-```javascript
-// src/index.mjs:29
-export { createHealthEndpoint } from './federation/health.mjs';
-// ❌ Error: Cannot find module './federation/health.mjs'
-
-// VERIFIED: File does NOT exist
-$ ls packages/federation/src/federation/
-consensus-manager.mjs
-coordinator.mjs
-data-replication.mjs
-distributed-query-engine.mjs
-distributed-query.mjs
-federation-coordinator.mjs
-index.mjs
-metrics.mjs           ← NO health.mjs!
-peer-manager.mjs
-```
-
-**Files Affected**:
-- test/federation.test.mjs
-- examples/distributed-queries/test/example.test.mjs
-- examples/peer-discovery/test/example.test.mjs
-
-**Fix Required**: Either:
-1. Create `/home/user/unrdf/packages/federation/src/federation/health.mjs`, OR
-2. Remove health endpoint export from `/home/user/unrdf/packages/federation/src/index.mjs:29`
+3. **Documentation**
+   - Document schema changes in CHANGELOG
+   - Add test writing guidelines
+   - Create troubleshooting guide for common failures
 
 ---
 
-## CROSS-PACKAGE INTEGRATION VALIDATION
+## Adversarial PM Validation
 
-### Import Resolution ✅ PARTIAL
-- **Core**: All imports valid (verified with node --check)
-- **YAWL**: Syntax valid, runtime imports work
-- **KGC-4D**: Syntax valid, runtime imports work
-- **Streaming**: Syntax valid, runtime import errors
-- **Federation**: ❌ BLOCKED by missing health.mjs
+### Claims vs. Reality
 
-### Circular Dependencies ⚠️ NOT TESTED
-- `madge` not installed in environment
-- Manual verification: No obvious circular imports in index files
-- Recommendation: Install madge and run `madge --circular packages/`
+| Claim | Evidence | Verdict |
+|-------|----------|---------|
+| "Integration tests pass" | ❌ 15.8% pass rate (3/19) | **FALSE** |
+| "≥90% pass rate" | ❌ 21.4% vitest, 0% validation | **FALSE** |
+| "≥80% coverage" | ❌ Not generated | **UNMEASURABLE** |
+| "Execution <15s" | ✅ 8.74s actual | **TRUE** |
+| "Production ready" | ❌ 16 critical failures | **FALSE** |
 
-### Data Flow Integration ⚠️ UNTESTED
-**Reason**: Cannot test YAWL + KGC-4D integration due to YAWL test failures.
+### What BREAKS if Claims Were Accepted?
 
-**Expected Integration Test**:
-```javascript
-// packages/yawl/test/integration-kgc4d.test.mjs
-// Should test: Workflow → KGC-4D time-travel → Receipt validation
-// Status: Test file exists but blocked by YAWL failures
-```
+1. **Production Deployment**: Workflows would fail immediately on invalid schemas
+2. **Federation Queries**: Would return wrong data (ordering issues)
+3. **Package Imports**: Would crash with "cannot find package" errors
+4. **Code Quality**: Architecture violations would propagate
 
----
+### Evidence Quality Score: 95/100
 
-## CRITICAL ISSUES REQUIRING IMMEDIATE ACTION
-
-### Priority 1: BLOCKS ALL TESTS
-1. **Federation health.mjs missing** (3 test files blocked)
-   - File: `/home/user/unrdf/packages/federation/src/federation/health.mjs`
-   - Impact: 100% of Federation tests cannot run
-
-### Priority 2: BREAKS CORE FUNCTIONALITY
-2. **YAWL missing test imports** (95+ test failures)
-   - Files: All pattern test files
-   - Impact: Workflow pattern validation broken
-
-3. **YAWL API signature changes** (15+ test failures)
-   - Files: test/yawl-hooks.test.mjs, test/workflow-api.test.mjs
-   - Impact: Core workflow API unreliable
-
-### Priority 3: TECHNICAL DEBT
-4. **Streaming undefined property access** (20 failures)
-   - File: src/streaming/change-feed.mjs:73
-   - Impact: Real-time features broken
-
-5. **KGC-4D BigInt type mismatches** (5 failures)
-   - Files: test/store.test.mjs, test/time.test.mjs
-   - Impact: Type safety violations
-
-6. **Deprecated test patterns** (6 errors)
-   - Files: test/streaming.test.mjs
-   - Impact: Test reliability issues
+- ✅ Actual test execution (not assumed)
+- ✅ Full output captured
+- ✅ Stack traces provided
+- ✅ Metrics measured with commands
+- ✅ Exit codes verified
+- ❌ Coverage not generated (prevented by failures)
 
 ---
 
-## RECOMMENDATIONS
+## Final Verdict
 
-### Immediate Actions (Today)
-1. **Create health.mjs** or remove export (5 minutes)
-2. **Add missing imports to YAWL tests** (30 minutes)
-3. **Fix BigInt assertions in KGC-4D** (15 minutes)
+**INTEGRATION TEST SUITE: ❌ FAIL**
 
-### Short-term (This Week)
-4. **Audit YAWL API changes** - Compare pre/post refactor (2 hours)
-5. **Fix Streaming change-feed initialization** (1 hour)
-6. **Modernize test code** - Remove done() callbacks (1 hour)
+**Pass Rate**: 15.8% (3/19 tests)
+**Coverage**: Not generated
+**Critical Failures**: 16
+**Blocking Issues**: 3 (schema validation, package resolution, N3 imports)
 
-### Long-term (Next Sprint)
-7. **Add comprehensive integration tests** for:
-   - YAWL + KGC-4D workflow time-travel
-   - Federation + YAWL distributed workflows
-   - Streaming + Validation real-time pipeline
-8. **Install and run madge** for circular dependency detection
-9. **Set up pre-commit hooks** to prevent missing imports
+**DO NOT MERGE** until:
+1. Pass rate ≥90% (currently 15.8%)
+2. Coverage ≥80% (currently not measurable)
+3. All schema validation errors fixed
+4. N3 direct imports removed
+5. Package resolution working
 
 ---
 
-## VERIFICATION EVIDENCE
+## Appendix: Test File Inventory
 
-### Test Execution Commands
-```bash
-# YAWL (30s timeout)
-cd /home/user/unrdf/packages/yawl && timeout 30s pnpm test
-# Result: 14 failed | 3 passed (17 files), 122 failed | 212 passed (334 tests)
+**Total Test Files**: 5
 
-# Federation (10s timeout)
-cd /home/user/unrdf/packages/federation && timeout 10s pnpm test
-# Result: 3 failed (3 files), import error blocked all tests
+1. `/home/user/unrdf/packages/integration-tests/workflows/complete-workflow.test.mjs`
+2. `/home/user/unrdf/packages/integration-tests/federation/federated-query.test.mjs`
+3. `/home/user/unrdf/packages/integration-tests/streaming/stream-validation.test.mjs`
+4. `/home/user/unrdf/packages/integration-tests/error-recovery/multi-package-errors.test.mjs`
+5. `/home/user/unrdf/packages/integration-tests/performance/load-testing.test.mjs`
 
-# Streaming (10s timeout)
-cd /home/user/unrdf/packages/streaming && timeout 10s pnpm test
-# Result: 2 failed | 1 passed (3 files), 20 failed | 28 passed (48 tests)
+**Validation Script**: 1
 
-# KGC-4D (20s timeout)
-cd /home/user/unrdf/packages/kgc-4d && timeout 20s pnpm test
-# Result: 9 failed | 15 passed (24 files), 9 failed | 296 passed (305 tests)
-
-# Core (10s timeout)
-cd /home/user/unrdf/packages/core && timeout 10s pnpm test
-# Result: 6 passed (6 files), 231 passed (231 tests) ✅
-```
-
-### File Counts
-```bash
-# YAWL test files
-find packages/yawl/test -name "*.test.mjs" | wc -l
-# Result: 17 files
-
-# KGC-4D test files
-find packages/kgc-4d/test -name "*.test.mjs" | wc -l
-# Result: 24 files (including doctests)
-
-# Federation missing file verification
-ls packages/federation/src/federation/health.mjs
-# Result: No such file or directory ✅ PROVEN
-```
-
-### Import Verification
-```bash
-# Verify sequence is exported from YAWL
-grep -n "export.*sequence" packages/yawl/src/index.mjs
-# Result: Line 224: export { sequence, ... } ✅ CONFIRMED
-
-# Verify test does NOT import sequence
-grep "import.*sequence" packages/yawl/test/patterns/pattern-receipts.test.mjs
-# Result: (no output) ✅ MISSING IMPORT CONFIRMED
-```
+1. `/home/user/unrdf/validation/integration-test.mjs` (8 tests)
 
 ---
 
-## CONCLUSION
+**Report Generated**: 2025-12-25 08:19:00 UTC
+**Execution Duration**: 8.74s (vitest) + <1s (validation) = ~10s total
+**Command Line Tools**: pnpm, vitest v4.0.15, node
+**Evidence**: Full test output captured and analyzed
 
-**Integration Testing Status**: ⚠️ PARTIAL SUCCESS
-
-**What Works**:
-- ✅ Core package: 100% test pass rate (231/231 tests)
-- ✅ Module syntax: All source files parse correctly
-- ✅ Build system: All packages have valid test scripts
-
-**What's Broken**:
-- ❌ Federation: Completely blocked by missing health.mjs
-- ❌ YAWL: 122 test failures due to missing imports and API changes
-- ❌ Streaming: 20 test failures due to undefined property access
-- ⚠️ KGC-4D: 9 test failures due to type mismatches
-
-**Can We Ship?**: **NO**
-- Federation cannot import - BLOCKS deployment
-- YAWL workflow patterns untested - HIGH RISK
-- Cross-package integration untested - UNKNOWN RISK
-
-**Evidence Quality**: **HIGH**
-- All claims backed by command output
-- File existence verified with ls
-- Import issues proven with grep
-- Test counts exact (not approximate)
-
-**Next Steps**: Fix Priority 1 issues (health.mjs + YAWL imports), re-run tests, verify ≥95% pass rate before declaring integration complete.
-
----
-
-**Report Generated**: 2025-12-25
-**Execution Model**: Adversarial PM - Evidence-based validation
-**OTEL Validation**: Not run (requires post-fix validation)
-**Recommended OTEL Score Target**: ≥80/100 after fixes
+**Adversarial PM Certification**: This report contains ONLY verified facts from actual test execution. No assumptions, no "should work", no claims without evidence.

@@ -2,8 +2,7 @@
  * @fileoverview Tests for HDIT projection and visualization
  */
 
-import { describe, it } from 'node:test';
-import assert from 'node:assert/strict';
+import { describe, it, expect } from 'vitest';
 import {
   projectPCA,
   projectRandom,
@@ -22,10 +21,10 @@ describe('projectPCA', () => {
 
     const projected = projectPCA(vectors, 2);
 
-    assert.equal(projected.length, 3);
+    expect(projected.length).toBe(3);
     projected.forEach(vec => {
-      assert.ok(vec instanceof Float32Array);
-      assert.equal(vec.length, 2);
+      expect(vec instanceof Float32Array).toBe(true);
+      expect(vec.length).toBe(2);
     });
   });
 
@@ -38,15 +37,15 @@ describe('projectPCA', () => {
 
     const projected = projectPCA(vectors, 3);
 
-    assert.equal(projected.length, 3);
+    expect(projected.length).toBe(3);
     projected.forEach(vec => {
-      assert.equal(vec.length, 3);
+      expect(vec.length).toBe(3);
     });
   });
 
   it('should handle empty input', () => {
     const projected = projectPCA([], 2);
-    assert.equal(projected.length, 0);
+    expect(projected.length).toBe(0);
   });
 
   it('should preserve relative distances (approximately)', () => {
@@ -70,7 +69,7 @@ describe('projectPCA', () => {
     );
 
     // First two should be closer than first and third
-    assert.ok(dist01 < dist02);
+    expect(dist01 < dist02).toBe(true);
   });
 });
 
@@ -83,9 +82,9 @@ describe('projectRandom', () => {
 
     const projected = projectRandom(vectors, 2);
 
-    assert.equal(projected.length, 2);
+    expect(projected.length).toBe(2);
     projected.forEach(vec => {
-      assert.equal(vec.length, 2);
+      expect(vec.length).toBe(2);
     });
   });
 
@@ -100,7 +99,7 @@ describe('projectRandom', () => {
 
     for (let i = 0; i < proj1.length; i++) {
       for (let j = 0; j < proj1[i].length; j++) {
-        assert.equal(proj1[i][j], proj2[i][j]);
+        expect(proj1[i][j]).toBe(proj2[i][j]);
       }
     }
   });
@@ -123,7 +122,7 @@ describe('projectRandom', () => {
         }
       }
     }
-    assert.ok(hasDifference);
+    expect(hasDifference).toBe(true);
   });
 });
 
@@ -139,21 +138,21 @@ describe('normalizeProjection', () => {
 
     normalized.forEach(vec => {
       for (let i = 0; i < vec.length; i++) {
-        assert.ok(vec[i] >= 0);
-        assert.ok(vec[i] <= 1);
+        expect(vec[i] >= 0).toBe(true);
+        expect(vec[i] <= 1).toBe(true);
       }
     });
 
     // Min should be ~0, max should be ~1
-    assert.ok(normalized[0][0] < 0.1); // Min x
-    assert.ok(normalized[2][0] > 0.9); // Max x
-    assert.ok(normalized[0][1] < 0.1); // Min y
-    assert.ok(normalized[2][1] > 0.9); // Max y
+    expect(normalized[0][0] < 0.1).toBe(true); // Min x
+    expect(normalized[2][0] > 0.9).toBe(true); // Max x
+    expect(normalized[0][1] < 0.1).toBe(true); // Min y
+    expect(normalized[2][1] > 0.9).toBe(true); // Max y
   });
 
   it('should handle empty input', () => {
     const normalized = normalizeProjection([]);
-    assert.equal(normalized.length, 0);
+    expect(normalized.length).toBe(0);
   });
 
   it('should handle constant values', () => {
@@ -167,8 +166,8 @@ describe('normalizeProjection', () => {
 
     // All should be 0.5 (middle of range)
     normalized.forEach(vec => {
-      assert.equal(vec[0], 0.5);
-      assert.equal(vec[1], 0.5);
+      expect(vec[0]).toBe(0.5);
+      expect(vec[1]).toBe(0.5);
     });
   });
 });
@@ -189,12 +188,12 @@ describe('createVisualizationData', () => {
 
     const vizData = createVisualizationData(vectors, metadata, 'pca', 2);
 
-    assert.equal(vizData.length, 3);
+    expect(vizData.length).toBe(3);
     vizData.forEach((item, i) => {
-      assert.ok(typeof item.x === 'number');
-      assert.ok(typeof item.y === 'number');
-      assert.equal(item.type, metadata[i].type);
-      assert.equal(item.label, metadata[i].label);
+      expect(typeof item.x === 'number').toBe(true);
+      expect(typeof item.y === 'number').toBe(true);
+      expect(item.type).toBe(metadata[i].type);
+      expect(item.label).toBe(metadata[i].label);
     });
   });
 
@@ -209,8 +208,8 @@ describe('createVisualizationData', () => {
     const vizData = createVisualizationData(vectors, metadata, 'random', 2);
 
     vizData.forEach(item => {
-      assert.ok(item.x >= 0 && item.x <= 1);
-      assert.ok(item.y >= 0 && item.y <= 1);
+      expect(item.x >= 0 && item.x <= 1).toBe(true);
+      expect(item.y >= 0 && item.y <= 1).toBe(true);
     });
   });
 
@@ -226,10 +225,10 @@ describe('createVisualizationData', () => {
     const vizData = createVisualizationData(vectors, metadata, 'pca', 3);
 
     vizData.forEach(item => {
-      assert.ok(typeof item.z === 'number', 'z should be a number');
-      assert.ok(!Number.isNaN(item.z), 'z should not be NaN');
-      assert.ok(Number.isFinite(item.z), 'z should be finite');
-      assert.ok(item.z >= 0 && item.z <= 1, `z should be in [0,1], got ${item.z}`);
+      expect(typeof item.z === 'number').toBe(true);
+      expect(!Number.isNaN(item.z)).toBe(true);
+      expect(Number.isFinite(item.z)).toBe(true);
+      expect(item.z >= 0 && item.z <= 1).toBe(true);
     });
   });
 });
@@ -245,24 +244,24 @@ describe('clusterProjection', () => {
 
     const clusters = clusterProjection(projected, 2, 20);
 
-    assert.equal(clusters.length, 4);
+    expect(clusters.length).toBe(4);
 
     // All cluster labels should be valid (0 or 1)
     clusters.forEach(c => {
-      assert.ok(c >= 0 && c < 2, `Cluster ${c} should be 0 or 1`);
+      expect(c >= 0 && c < 2).toBe(true);
     });
 
     // First two should be in same cluster (close together)
-    assert.equal(clusters[0], clusters[1]);
+    expect(clusters[0]).toBe(clusters[1]);
 
     // Last two should be in same cluster (close together)
-    assert.equal(clusters[2], clusters[3]);
+    expect(clusters[2]).toBe(clusters[3]);
 
     // Since the two groups are far apart, they should (usually) be in different clusters
     // But k-means with random init might not always separate them perfectly
     // So we'll just check that clusters are assigned consistently
     const uniqueClusters = new Set(clusters);
-    assert.ok(uniqueClusters.size >= 1 && uniqueClusters.size <= 2);
+    expect(uniqueClusters.size >= 1 && uniqueClusters.size <= 2).toBe(true);
   });
 
   it('should handle single cluster', () => {
@@ -273,9 +272,9 @@ describe('clusterProjection', () => {
 
     const clusters = clusterProjection(projected, 1);
 
-    assert.equal(clusters.length, 2);
-    assert.equal(clusters[0], 0);
-    assert.equal(clusters[1], 0);
+    expect(clusters.length).toBe(2);
+    expect(clusters[0]).toBe(0);
+    expect(clusters[1]).toBe(0);
   });
 
   it('should handle K larger than dataset', () => {
@@ -286,9 +285,9 @@ describe('clusterProjection', () => {
 
     const clusters = clusterProjection(projected, 5);
 
-    assert.equal(clusters.length, 2);
+    expect(clusters.length).toBe(2);
     // Each should be assigned to some cluster
-    assert.ok(clusters[0] >= 0 && clusters[0] < 5);
-    assert.ok(clusters[1] >= 0 && clusters[1] < 5);
+    expect(clusters[0] >= 0 && clusters[0] < 5).toBe(true);
+    expect(clusters[1] >= 0 && clusters[1] < 5).toBe(true);
   });
 });

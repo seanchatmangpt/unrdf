@@ -1,0 +1,172 @@
+======================================================================
+WORKFLOW END-TO-END PERFORMANCE BENCHMARK
+======================================================================
+Iterations: 100
+Warmup: 20
+Tasks per workflow: 3
+
+Running: Simple 3-Task Sequential Workflow...
+  Total Workflow Mean: 2.44 ms
+  Total Workflow P95:  4.06 ms
+  Ingest Task Mean:    0.63 ms
+  Transform Task Mean: 0.59 ms
+  Output Task Mean:    0.61 ms
+
+Running: Workflow with RDF Control Flow...
+  Mean: 2.17 ms
+  P95:  3.69 ms
+
+Running: Time-Travel Replay Performance...
+  10 events: 2.82 ms total, 282.2 us/event
+  50 events: 14.32 ms total, 286.4 us/event
+  100 events: 27.02 ms total, 270.2 us/event
+  500 events: 172.79 ms total, 345.6 us/event
+
+Running: Parallel Task Execution...
+  2 parallel tasks: 0.54 ms mean, 0.81 ms P95
+  4 parallel tasks: 1.09 ms mean, 1.53 ms P95
+  8 parallel tasks: 2.10 ms mean, 3.18 ms P95
+  16 parallel tasks: 4.93 ms mean, 5.90 ms P95
+
+======================================================================
+SUMMARY
+======================================================================
+
+3-TASK WORKFLOW LATENCY:
+----------------------------------------------------------------------
+Component                  | Mean (ms) | P95 (ms)  | P99 (ms)
+----------------------------------------------------------------------
+Ingest Task                |     0.627 |     1.381 |     2.440
+Transform Task             |     0.589 |     0.969 |     3.015
+Output Task                |     0.612 |     0.982 |     3.618
+Total Workflow (3 tasks)   |     2.444 |     4.058 |     6.206
+Workflow + RDF             |     2.167 |     3.692 |     4.887
+----------------------------------------------------------------------
+
+======================================================================
+COMPARISON TO TEMPORAL.IO
+======================================================================
+
+Temporal.io typical task latency: ~1-5 ms
+UNRDF task latency (mean):        0.627 ms
+Speedup factor:                   1.6x faster
+
+Temporal.io 3-task workflow: ~5-15 ms
+UNRDF 3-task workflow:       2.44 ms
+Speedup factor:              2.0x faster
+
+======================================================================
+CLAIMS VALIDATION
+======================================================================
+
+Claim: Time-travel replay O(log n)
+  This requires comparing replay times across different event counts.
+  Event count ratio: 50x (10 -> 500)
+  Time ratio:        0.33x
+  Expected (O(log n)): ~2.70x
+  Status: LIKELY SUB-LINEAR (good)
+
+Workflow Throughput: 409 workflows/sec
+Task Throughput: 1227 tasks/sec
+
+======================================================================
+Benchmark complete
+======================================================================
+
+__JSON_RESULTS__
+{
+  "benchmark": "workflow-e2e",
+  "timestamp": "2025-12-25T08:21:01.774Z",
+  "results": {
+    "simpleWorkflow": {
+      "totalMeanMs": 2.4442717200000086,
+      "totalP95Ms": 4.058082999999897,
+      "totalP99Ms": 6.205671000000166,
+      "ingestMeanMs": 0.6272517599999878,
+      "transformMeanMs": 0.588655579999986,
+      "outputMeanMs": 0.6115824999999995
+    },
+    "rdfWorkflow": {
+      "meanMs": 2.1669573800000057,
+      "p95Ms": 3.692355000000134,
+      "p99Ms": 4.887034999999969
+    },
+    "timeTravel": {
+      "appendEvents": [
+        {
+          "eventCount": 10,
+          "totalMs": 2.82219699999996,
+          "perEventUs": 282.219699999996
+        },
+        {
+          "eventCount": 50,
+          "totalMs": 14.320604999999887,
+          "perEventUs": 286.41209999999774
+        },
+        {
+          "eventCount": 100,
+          "totalMs": 27.02375200000006,
+          "perEventUs": 270.2375200000006
+        },
+        {
+          "eventCount": 500,
+          "totalMs": 172.78884199999993,
+          "perEventUs": 345.57768399999986
+        }
+      ],
+      "reconstruct": [
+        {
+          "eventCount": 10,
+          "meanMs": 0.0005246999999826585,
+          "maxMs": 0.001374999999825377
+        },
+        {
+          "eventCount": 50,
+          "meanMs": 0.0004756000000043059,
+          "maxMs": 0.002779999999802385
+        },
+        {
+          "eventCount": 100,
+          "meanMs": 0.0001748000000134198,
+          "maxMs": 0.0004510000001118897
+        },
+        {
+          "eventCount": 500,
+          "meanMs": 0.00017119999993155943,
+          "maxMs": 0.0004960000001119624
+        }
+      ]
+    },
+    "parallelTasks": [
+      {
+        "count": 2,
+        "meanMs": 0.5441742500000101,
+        "p95Ms": 0.8060130000003483
+      },
+      {
+        "count": 4,
+        "meanMs": 1.085247530000015,
+        "p95Ms": 1.526260000000093
+      },
+      {
+        "count": 8,
+        "meanMs": 2.100218179999997,
+        "p95Ms": 3.1819150000001173
+      },
+      {
+        "count": 16,
+        "meanMs": 4.930654620000009,
+        "p95Ms": 5.8959130000002915
+      }
+    ],
+    "throughput": {
+      "workflowsPerSec": 409.119817497212,
+      "tasksPerSec": 1227.3594524916361
+    }
+  },
+  "comparison": {
+    "temporalTaskLatencyMs": 1,
+    "ourTaskLatencyMs": 0.6272517599999878,
+    "speedupFactor": 1.5942561882967365
+  }
+}

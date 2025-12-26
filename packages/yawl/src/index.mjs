@@ -262,9 +262,9 @@ export {
 
 // Event sourcing with KGC-4D time-travel
 export {
-  // Event types and constants
-  YAWL_EVENT_TYPES,
-  YAWL_NS,
+  // Event types and constants (aliased to avoid conflict with workflow-api)
+  YAWL_EVENT_TYPES as EVENTS_YAWL_EVENT_TYPES,
+  YAWL_NS as EVENTS_YAWL_NS,
   YAWL_PREDICATES,
 
   // Core event functions
@@ -274,9 +274,9 @@ export {
   verifyWorkflowReceipt,
   getWorkflowAuditTrail,
 
-  // High-level workflow functions
-  createCase,
-  enableTask,
+  // High-level workflow functions (aliased to avoid conflict with workflow-api)
+  createCase as createEventCase,
+  enableTask as enableEventTask,
   startWorkItem,
   completeWorkItem,
   recordControlFlowEvaluation,
@@ -436,13 +436,13 @@ export {
   cancelWorkItem,
   replayCase,
 
-  // Workflow API Constants
+  // Workflow API Constants (aliased versions for namespacing)
   YAWL_NS as WORKFLOW_API_NS,
   YAWL_EVENT_TYPES as WORKFLOW_API_EVENT_TYPES,
   WORK_ITEM_STATUS,
   CONTROL_FLOW_PATTERNS,
 
-  // Workflow API Schemas
+  // Workflow API Schemas (aliased versions to avoid conflicts)
   TaskSchema as WorkflowTaskSchema,
   ControlFlowSchema as WorkflowControlFlowSchema,
   ResourceSchema as WorkflowResourceSchema,
@@ -452,4 +452,15 @@ export {
   WorkItemSchema as WorkflowWorkItemSchema,
   EnableTaskOptionsSchema,
   ReceiptSchema as WorkflowReceiptSchema,
+} from './api/index.mjs';
+
+// Re-export workflow-api WITHOUT aliases for backward compatibility and test compatibility
+// These are the primary public API exports that tests expect
+export {
+  createWorkflow,
+  createCase,
+  enableTask,
+  YAWL_NS,
+  YAWL_EVENT_TYPES,
+  TaskSchema,
 } from './api/index.mjs';

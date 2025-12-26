@@ -1,0 +1,44 @@
+{
+  "name": "@unrdf/integration-tests",
+  "version": "5.0.0",
+  "description": "Comprehensive integration tests for UNRDF multi-package workflows",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:workflows": "vitest run workflows/",
+    "test:federation": "vitest run federation/",
+    "test:streaming": "vitest run streaming/",
+    "test:error-recovery": "vitest run error-recovery/",
+    "test:performance": "vitest run performance/",
+    "clean": "rm -rf coverage/ .vitest/"
+  },
+  "keywords": [
+    "integration-tests",
+    "unrdf",
+    "workflow",
+    "federation",
+    "streaming",
+    "rdf"
+  ],
+  "dependencies": {
+    "@unrdf/yawl": "workspace:*",
+    "@unrdf/hooks": "workspace:*",
+    "@unrdf/kgc-4d": "workspace:*",
+    "@unrdf/federation": "workspace:*",
+    "@unrdf/streaming": "workspace:*",
+    "@unrdf/oxigraph": "workspace:*",
+    "@unrdf/core": "workspace:*",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "@vitest/coverage-v8": "^4.0.15",
+    "vitest": "^4.0.15"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=7.0.0"
+  }
+}

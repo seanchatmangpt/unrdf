@@ -1,0 +1,292 @@
+# UNRDF Production Alerting Configuration
+# Version: 1.0.0
+# Format: Prometheus Alertmanager-compatible rules
+
+groups:
+  # ========================================
+  # Test Quality Alerts
+  # ========================================
+  - name: test_quality
+    interval: 1m
+    rules:
+      - alert: HighTestFailureRate
+        expr: |
+          (unrdf_test_failures_total / unrdf_test_total) > 0.05
+        for: 5m
+        labels:
+          severity: critical
+          component: testing
+        annotations:
+          summary: "High test failure rate detected"
+          description: "Test failure rate is {{ $value | humanizePercentage }} (threshold: 5%)"
+          runbook: "monitoring/RUNBOOK.md#high-test-failure-rate"
+
+      - alert: TestSuiteDurationIncreased
+        expr: |
+          rate(unrdf_test_duration_seconds[5m]) > 300
+        for: 10m
+        labels:
+          severity: warning
+          component: testing
+        annotations:
+          summary: "Test suite duration increased"
+          description: "Average test duration is {{ $value }}s (threshold: 300s)"
+          runbook: "monitoring/RUNBOOK.md#slow-test-suite"
+
+  # ========================================
+  # OTEL Validation Alerts
+  # ========================================
+  - name: otel_validation
+    interval: 1m
+    rules:
+      - alert: OTELScoreBelowThreshold
+        expr: |
+          unrdf_otel_validation_score < 80
+        for: 5m
+        labels:
+          severity: critical
+          component: observability
+        annotations:
+          summary: "OTEL validation score below threshold"
+          description: "OTEL score is {{ $value }}/100 (threshold: 80/100)"
+          runbook: "monitoring/RUNBOOK.md#otel-score-low"
+
+      - alert: MissingOTELSpans
+        expr: |
+          rate(unrdf_otel_spans_expected_total[5m]) - rate(unrdf_otel_spans_actual_total[5m]) > 0
+        for: 5m
+        labels:
+          severity: warning
+          component: observability
+        annotations:
+          summary: "Missing OTEL spans detected"
+          description: "Expected spans not being generated"
+          runbook: "monitoring/RUNBOOK.md#missing-otel-spans"
+
+  # ========================================
+  # Performance Alerts
+  # ========================================
+  - name: performance
+    interval: 30s
+    rules:
+      - alert: HighP95Latency
+        expr: |
+          histogram_quantile(0.95, rate(unrdf_request_duration_seconds_bucket[5m])) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+          component: performance
+        annotations:
+          summary: "High P95 latency detected"
+          description: "P95 latency is {{ $value }}s (threshold: 100ms)"
+          runbook: "monitoring/RUNBOOK.md#high-latency"
+
+      - alert: HighP99Latency
+        expr: |
+          histogram_quantile(0.99, rate(unrdf_request_duration_seconds_bucket[5m])) > 0.5
+        for: 5m
+        labels:
+          severity: critical
+          component: performance
+        annotations:
+          summary: "High P99 latency detected"
+          description: "P99 latency is {{ $value }}s (threshold: 500ms)"
+          runbook: "monitoring/RUNBOOK.md#high-latency"
+
+      - alert: SlowQueryDetected
+        expr: |
+          rate(unrdf_slow_queries_total[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+          component: performance
+        annotations:
+          summary: "Slow queries detected"
+          description: "{{ $value }} slow queries per second"
+          runbook: "monitoring/RUNBOOK.md#slow-queries"
+
+  # ========================================
+  # Error Rate Alerts
+  # ========================================
+  - name: error_rates
+    interval: 30s
+    rules:
+      - alert: HighErrorRate
+        expr: |
+          rate(unrdf_errors_total[5m]) / rate(unrdf_requests_total[5m]) > 0.01
+        for: 5m
+        labels:
+          severity: critical
+          component: reliability
+        annotations:
+          summary: "High error rate detected"
+          description: "Error rate is {{ $value | humanizePercentage }} (threshold: 1%)"
+          runbook: "monitoring/RUNBOOK.md#high-error-rate"
+
+      - alert: IncreasedErrorRate
+        expr: |
+          rate(unrdf_errors_total[5m]) > 2 * rate(unrdf_errors_total[1h])
+        for: 5m
+        labels:
+          severity: warning
+          component: reliability
+        annotations:
+          summary: "Error rate increased significantly"
+          description: "Current error rate is 2x the hourly average"
+          runbook: "monitoring/RUNBOOK.md#increased-errors"
+
+  # ========================================
+  # Resource Utilization Alerts
+  # ========================================
+  - name: resources
+    interval: 1m
+    rules:
+      - alert: HighMemoryUsage
+        expr: |
+          unrdf_memory_heap_used_bytes / unrdf_memory_heap_total_bytes > 0.85
+        for: 10m
+        labels:
+          severity: warning
+          component: resources
+        annotations:
+          summary: "High memory usage detected"
+          description: "Memory usage is {{ $value | humanizePercentage }} (threshold: 85%)"
+          runbook: "monitoring/RUNBOOK.md#high-memory"
+
+      - alert: MemoryLeak
+        expr: |
+          rate(unrdf_memory_heap_used_bytes[1h]) > 1048576
+        for: 1h
+        labels:
+          severity: critical
+          component: resources
+        annotations:
+          summary: "Potential memory leak detected"
+          description: "Memory increasing by {{ $value | humanize }}B/s"
+          runbook: "monitoring/RUNBOOK.md#memory-leak"
+
+      - alert: HighCPUUsage
+        expr: |
+          rate(process_cpu_seconds_total[5m]) > 0.8
+        for: 10m
+        labels:
+          severity: warning
+          component: resources
+        annotations:
+          summary: "High CPU usage detected"
+          description: "CPU usage is {{ $value | humanizePercentage }} (threshold: 80%)"
+          runbook: "monitoring/RUNBOOK.md#high-cpu"
+
+  # ========================================
+  # Availability Alerts
+  # ========================================
+  - name: availability
+    interval: 30s
+    rules:
+      - alert: ServiceDown
+        expr: |
+          up{job="unrdf"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          component: availability
+        annotations:
+          summary: "Service is down"
+          description: "Service {{ $labels.instance }} is not responding"
+          runbook: "monitoring/RUNBOOK.md#service-down"
+
+      - alert: DependencyUnavailable
+        expr: |
+          unrdf_dependency_status{status!="connected"} == 1
+        for: 5m
+        labels:
+          severity: critical
+          component: dependencies
+        annotations:
+          summary: "Dependency unavailable"
+          description: "Dependency {{ $labels.dependency }} is {{ $labels.status }}"
+          runbook: "monitoring/RUNBOOK.md#dependency-down"
+
+      - alert: HealthCheckFailing
+        expr: |
+          unrdf_health_check_success == 0
+        for: 5m
+        labels:
+          severity: critical
+          component: availability
+        annotations:
+          summary: "Health check failing"
+          description: "Health check {{ $labels.check }} is failing"
+          runbook: "monitoring/RUNBOOK.md#health-check-fail"
+
+  # ========================================
+  # Big Bang 80/20 Methodology Alerts
+  # ========================================
+  - name: bb80_20_methodology
+    interval: 5m
+    rules:
+      - alert: PatternReuseDropped
+        expr: |
+          unrdf_pattern_reuse_ratio < 0.6
+        for: 15m
+        labels:
+          severity: warning
+          component: methodology
+        annotations:
+          summary: "Pattern reuse ratio below target"
+          description: "Pattern reuse is {{ $value | humanizePercentage }} (target: 60%+)"
+          runbook: "monitoring/RUNBOOK.md#low-pattern-reuse"
+
+      - alert: StaticCoverageDropped
+        expr: |
+          unrdf_static_coverage_ratio < 0.95
+        for: 15m
+        labels:
+          severity: warning
+          component: methodology
+        annotations:
+          summary: "Static coverage below target"
+          description: "Static coverage is {{ $value | humanizePercentage }} (target: 95%+)"
+          runbook: "monitoring/RUNBOOK.md#low-static-coverage"
+
+# ========================================
+# Alert Routing Configuration
+# ========================================
+route:
+  receiver: 'default'
+  group_by: ['alertname', 'component']
+  group_wait: 30s
+  group_interval: 5m
+  repeat_interval: 4h
+
+  routes:
+    # Critical alerts - immediate notification
+    - match:
+        severity: critical
+      receiver: 'pagerduty'
+      continue: true
+
+    # Warning alerts - slack notification
+    - match:
+        severity: warning
+      receiver: 'slack'
+
+# ========================================
+# Receivers Configuration
+# ========================================
+receivers:
+  - name: 'default'
+    webhook_configs:
+      - url: 'http://localhost:9090/webhook'
+
+  - name: 'pagerduty'
+    pagerduty_configs:
+      - service_key: '<PAGERDUTY_SERVICE_KEY>'
+        description: '{{ .GroupLabels.alertname }}: {{ .CommonAnnotations.summary }}'
+
+  - name: 'slack'
+    slack_configs:
+      - api_url: '<SLACK_WEBHOOK_URL>'
+        channel: '#unrdf-alerts'
+        title: '{{ .GroupLabels.alertname }}'
+        text: '{{ .CommonAnnotations.description }}'

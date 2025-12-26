@@ -1028,7 +1028,7 @@ SOURCE FILES:
   - /docs/api/hooks-api-guide.md (63 headers)
 
 TARGET FILE:
-  - /docs/api/knowledge-hooks-api.md (500-700 lines)
+  - /docs/api/knowledge-hooks-api.md (500-5,465 lines)
 
 STRUCTURE:
   # Knowledge Hooks API Reference

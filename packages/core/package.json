@@ -13,6 +13,11 @@
     "./types": "./src/types.mjs",
     "./constants": "./src/constants.mjs",
     "./validation": "./src/validation/index.mjs",
+    "./health": "./src/health.mjs",
+    "./logger": "./src/logger.mjs",
+    "./metrics": "./src/metrics.mjs",
+    "./security": "./src/security.mjs",
+    "./security-schemas": "./src/security-schemas.mjs",
     "./utils/sparql-utils": "./src/utils/sparql-utils.mjs"
   },
   "sideEffects": false,
