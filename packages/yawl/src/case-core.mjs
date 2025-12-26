@@ -1,15 +1,11 @@
 /**
- * @file YAWL Case Core - Case class with state management
+ * @file YAWL Case Core - Core data structures and work item management
  * @module @unrdf/yawl/case-core
- *
- * @description
- * Core Case class implementation with constructor, status accessors,
- * work item accessors, event logging, and utility methods.
  */
 
 import { z } from 'zod';
-import { now, toISO } from '@unrdf/kgc-4d';
-import { YawlTask, TaskStatus, TaskStatus_RUNNING } from './task.mjs';
+import { now } from '@unrdf/kgc-4d';
+import { TaskStatus } from './task.mjs';
 
 // =============================================================================
 // Case Status Enum
@@ -39,7 +35,7 @@ export const CaseStatus = Object.freeze({
 // Case Schema
 // =============================================================================
 
-const CaseDataSchema = z.object({
+export const CaseDataSchema = z.object({
   id: z.string().min(1),
   workflowId: z.string().min(1),
   status: z.enum(['created', 'running', 'completed', 'suspended', 'cancelled', 'failed']).default('created'),
@@ -50,20 +46,16 @@ const CaseDataSchema = z.object({
 });
 
 // =============================================================================
-// Case Class
+// Case Core Class
 // =============================================================================
 
 /**
- * Represents a runtime instance of a workflow with Petri net semantics.
- *
- * Implements token-based state tracking where:
- * - Conditions (places) hold tokens
- * - Tasks (transitions) consume and produce tokens
- * - Join semantics determine when tasks can fire
+ * Core Case class with basic functionality.
+ * Extended by lifecycle, state, and RDF modules.
  *
  * @class
  */
-export class Case {
+export class CaseCore {
   /**
    * Create a new Case instance
    * @param {Object} data - Case configuration
@@ -86,7 +78,7 @@ export class Case {
 
     /**
      * Work items by ID
-     * @type {Map<string, YawlTask>}
+     * @type {Map<string, import('./task.mjs').YawlTask>}
      */
     this.workItems = new Map();
 
@@ -132,9 +124,6 @@ export class Case {
      * @type {Array<Object>}
      */
     this.eventLog = [];
-
-    // Initialize marking with input condition tokens
-    this._initializeMarking();
   }
 
   // ===========================================================================
@@ -191,7 +180,7 @@ export class Case {
 
   /**
    * Get all work items in this case
-   * @returns {YawlTask[]} Array of all work items
+   * @returns {import('./task.mjs').YawlTask[]} Array of all work items
    */
   getWorkItems() {
     return [...this.workItems.values()];
@@ -200,7 +189,7 @@ export class Case {
   /**
    * Get a specific work item by ID
    * @param {string} workItemId - Work item identifier
-   * @returns {YawlTask|undefined} Work item or undefined if not found
+   * @returns {import('./task.mjs').YawlTask|undefined} Work item or undefined if not found
    */
   getWorkItem(workItemId) {
     return this.workItems.get(workItemId);
@@ -209,7 +198,7 @@ export class Case {
   /**
    * Get work items filtered by status
    * @param {string} statusFilter - Status to filter by (from TaskStatus)
-   * @returns {YawlTask[]} Array of matching work items
+   * @returns {import('./task.mjs').YawlTask[]} Array of matching work items
    */
   getWorkItemsByStatus(statusFilter) {
     return [...this.workItems.values()].filter(wi => wi.status === statusFilter);
@@ -217,7 +206,7 @@ export class Case {
 
   /**
    * Get enabled work items (ready to be started)
-   * @returns {YawlTask[]} Array of enabled work items
+   * @returns {import('./task.mjs').YawlTask[]} Array of enabled work items
    */
   getEnabledWorkItems() {
     return this.getWorkItemsByStatus(TaskStatus.ENABLED);
@@ -225,15 +214,15 @@ export class Case {
 
   /**
    * Get active work items (currently executing)
-   * @returns {YawlTask[]} Array of running work items
+   * @returns {import('./task.mjs').YawlTask[]} Array of running work items
    */
   getActiveWorkItems() {
-    return this.getWorkItemsByStatus(TaskStatus_RUNNING);
+    return this.getWorkItemsByStatus(TaskStatus.RUNNING);
   }
 
   /**
    * Get running work items (alias for getActiveWorkItems)
-   * @returns {YawlTask[]} Array of running work items
+   * @returns {import('./task.mjs').YawlTask[]} Array of running work items
    */
   getRunningWorkItems() {
     return this.getActiveWorkItems();
@@ -242,62 +231,13 @@ export class Case {
   /**
    * Get work items for a specific task definition
    * @param {string} taskDefId - Task definition ID
-   * @returns {YawlTask[]} Array of work items for this task
+   * @returns {import('./task.mjs').YawlTask[]} Array of work items for this task
    */
   getWorkItemsForTask(taskDefId) {
     const workItemIds = this.workItemsByTask.get(taskDefId);
     if (!workItemIds) return [];
     return [...workItemIds].map(id => this.workItems.get(id)).filter(Boolean);
   }
-
-  // ===========================================================================
-  // Petri Net Marking - Initialization
-  // ===========================================================================
-
-  /**
-   * Initialize marking with tokens in input conditions
-   * @private
-   */
-  _initializeMarking() {
-    // Place initial tokens in the input condition
-    // In YAWL, the start task's input condition gets a token
-    const startTaskId = this.workflow.getStartTaskId();
-    if (startTaskId) {
-      const inputConditionId = `input:${startTaskId}`;
-      this._marking.set(inputConditionId, 1);
-    }
-  }
-
-  // ===========================================================================
-  // Event Log
-  // ===========================================================================
-
-  /**
-   * Append an event to the case event log
-   * @param {Object} eventData - Event data
-   * @private
-   */
-  _appendEvent(eventData) {
-    const timestamp = now();
-    this.eventLog.push({
-      ...eventData,
-      caseId: this.id,
-      timestamp: timestamp.toString(),
-      timestampISO: toISO(timestamp),
-    });
-  }
-
-  /**
-   * Get all events for this case
-   * @returns {Array<Object>} Event log
-   */
-  getEvents() {
-    return [...this.eventLog];
-  }
-
-  // ===========================================================================
-  // Utility Methods
-  // ===========================================================================
 
   /**
    * Get task definition ID from work item ID
@@ -306,106 +246,11 @@ export class Case {
    */
   getTaskDefIdForWorkItem(workItemId) {
     // Work item ID format: {caseId}-{taskDefId}-{timestamp}
-    // Case ID may contain dashes, so we use it as a prefix to extract the task ID
-    const caseIdPrefix = `${this.id}-`;
-    if (workItemId.startsWith(caseIdPrefix)) {
-      const remainder = workItemId.substring(caseIdPrefix.length);
-      // remainder is now: {taskDefId}-{timestamp}
-      // Remove the timestamp (last part after last dash)
-      const lastDashIndex = remainder.lastIndexOf('-');
-      if (lastDashIndex !== -1) {
-        return remainder.substring(0, lastDashIndex);
-      }
-      return remainder;
+    const parts = workItemId.split('-');
+    if (parts.length >= 2) {
+      // Remove caseId prefix and timestamp suffix
+      return parts.slice(1, -1).join('-');
     }
     return workItemId;
   }
-
-  /**
-   * Get current case state (for hashing and receipts)
-   * @returns {Object} State snapshot
-   */
-  getState() {
-    return {
-      id: this.id,
-      workflowId: this.workflowId,
-      status: this._status,
-      data: this.data,
-      workItems: [...this.workItems.values()].map(t => t.toJSON()),
-      completedTasks: [...this.completedTasks],
-      activatedTasks: [...this.activatedTasks],
-      marking: Object.fromEntries(this._marking),
-    };
-  }
-
-  /**
-   * Serialize to JSON
-   * @returns {Object} JSON representation
-   */
-  toJSON() {
-    return {
-      id: this.id,
-      workflowId: this.workflowId,
-      status: this._status,
-      createdAt: this.createdAt?.toString(),
-      startedAt: this.startedAt?.toString(),
-      completedAt: this.completedAt?.toString(),
-      data: this.data,
-      workItems: [...this.workItems.values()].map(t => t.toJSON()),
-      receipts: this.receipts.map(r => r.toJSON()),
-      completedTasks: [...this.completedTasks],
-      activatedTasks: [...this.activatedTasks],
-      circuitBreakers: Object.fromEntries(this.circuitBreakers),
-      marking: Object.fromEntries(this._marking),
-      eventLog: this.eventLog,
-    };
-  }
-
-  /**
-   * Create Case from JSON
-   * @param {Object} json - JSON representation
-   * @param {import('./workflow.mjs').YawlWorkflow} workflow - Workflow definition
-   * @returns {Case} Restored case
-   */
-  static fromJSON(json, workflow) {
-    const caseInstance = new Case({
-      id: json.id,
-      workflowId: json.workflowId,
-      status: json.status,
-      createdAt: json.createdAt ? BigInt(json.createdAt) : undefined,
-      startedAt: json.startedAt ? BigInt(json.startedAt) : undefined,
-      completedAt: json.completedAt ? BigInt(json.completedAt) : undefined,
-      data: json.data,
-    }, workflow);
-
-    // Restore work items
-    for (const wiJson of json.workItems || []) {
-      const task = YawlTask.fromJSON(wiJson);
-      caseInstance.workItems.set(task.id, task);
-
-      const taskDefId = caseInstance.getTaskDefIdForWorkItem(task.id);
-      if (!caseInstance.workItemsByTask.has(taskDefId)) {
-        caseInstance.workItemsByTask.set(taskDefId, new Set());
-      }
-      caseInstance.workItemsByTask.get(taskDefId).add(task.id);
-    }
-
-    // Restore completed/activated tasks
-    caseInstance.completedTasks = new Set(json.completedTasks || []);
-    caseInstance.activatedTasks = new Set(json.activatedTasks || []);
-
-    // Restore circuit breakers
-    caseInstance.circuitBreakers = new Map(Object.entries(json.circuitBreakers || {}));
-
-    // Restore marking
-    caseInstance._marking = new Map(Object.entries(json.marking || {}));
-
-    // Restore event log
-    caseInstance.eventLog = json.eventLog || [];
-
-    return caseInstance;
-  }
 }
-
-// Backwards compatibility alias
-export { Case as YawlCase };

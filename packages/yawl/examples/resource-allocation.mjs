@@ -18,7 +18,7 @@ import {
   createRole,
   createPolicyPack,
   ResourceType,
-} from '../src/resources/yawl-resources.mjs';
+} from '../src/resources/index.mjs';
 
 /* ========================================================================= */
 /* Example: Basic Resource Allocation                                        */

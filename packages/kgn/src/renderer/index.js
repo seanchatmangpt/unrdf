@@ -4,5 +4,5 @@
 
 import { DeterministicRenderer } from './deterministic.js';
 
-export { DeterministicRenderer } from './deterministic.js';
+export { DeterministicRenderer };
 export default { DeterministicRenderer };

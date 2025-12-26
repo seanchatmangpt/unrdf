@@ -1,0 +1,37 @@
+{
+  "name": "@unrdf-examples/distributed-orchestration",
+  "version": "1.0.0",
+  "description": "Production-grade distributed workflow orchestration using YAWL + Federation + Streaming",
+  "type": "module",
+  "main": "src/index.mjs",
+  "scripts": {
+    "start:orchestrator": "node src/orchestrator.mjs",
+    "start:worker": "node src/worker-node.mjs",
+    "start:dashboard": "node src/monitoring-dashboard.mjs",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
+  },
+  "keywords": [
+    "workflow",
+    "orchestration",
+    "distributed",
+    "yawl",
+    "federation"
+  ],
+  "dependencies": {
+    "@unrdf/yawl": "workspace:*",
+    "@unrdf/federation": "workspace:*",
+    "@unrdf/streaming": "workspace:*",
+    "@unrdf/oxigraph": "workspace:*",
+    "@opentelemetry/api": "^1.9.0",
+    "ws": "^8.18.3",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "vitest": "^4.0.15"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

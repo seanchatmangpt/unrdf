@@ -1,0 +1,61 @@
+{
+  "name": "@unrdf/yawl-langchain",
+  "version": "1.0.0",
+  "description": "LangChain integration for YAWL workflow engine - AI-powered workflow orchestration with RDF context",
+  "type": "module",
+  "main": "src/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./src/index.mjs",
+    "./adapter": "./src/adapter.mjs",
+    "./examples": "./examples/code-review-workflow.mjs"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint src/ test/ examples/ --ext .mjs",
+    "lint:fix": "eslint src/ test/ examples/ --ext .mjs --fix",
+    "typecheck": "tsc --noEmit",
+    "format": "prettier --write \"src/**/*.mjs\" \"test/**/*.mjs\" \"examples/**/*.mjs\"",
+    "example:code-review": "node examples/code-review-workflow.mjs",
+    "validate": "npm run lint && npm run typecheck && npm run test"
+  },
+  "keywords": [
+    "yawl",
+    "langchain",
+    "workflow",
+    "ai",
+    "llm",
+    "rdf",
+    "knowledge-graph",
+    "agent-orchestration"
+  ],
+  "dependencies": {
+    "@langchain/core": "^0.3.29",
+    "@langchain/openai": "^0.3.17",
+    "@unrdf/kgc-4d": "workspace:*",
+    "@unrdf/oxigraph": "workspace:*",
+    "@unrdf/yawl": "workspace:*",
+    "langchain": "^0.3.7",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "eslint": "^8.0.0",
+    "vitest": "^4.0.15"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=7.0.0"
+  },
+  "sideEffects": false,
+  "files": [
+    "src/",
+    "examples/",
+    "dist/",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}

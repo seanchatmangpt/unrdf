@@ -1,25 +1,47 @@
-# UNRDF v5 - Complete Package Structure
+# UNRDF Package Structure Standard
 
-Each of the 10 packages in the monorepo now has a complete, production-ready structure.
+**Version**: 1.0.0
+**Status**: Canonical Standard
+**Last Updated**: 2025-12-25
 
-## What Each Package Contains
+## Philosophy
 
-### Directory Structure (Per Package)
+Consistency reduces cognitive load. Every package follows the same structure, making navigation predictable and onboarding instant.
+
+## Standard Directory Layout
 
 ```
-packages/{name}/
-├── src/
-│   └── index.mjs              # Main export (placeholder with TODO)
-├── test/
-│   └── {name}.test.mjs        # Test suite (with TODO placeholders)
-├── docs/
-│   ├── API.md                 # API reference (template)
-│   ├── GUIDE.md               # User guide (template)
-│   └── CONTRIBUTING.md        # Contributor guide (ready to use)
-├── examples/
-│   └── basic.mjs              # Basic example (placeholder)
-├── package.json               # Package configuration
-└── README.md                  # Package-specific README
+package-name/
+├── package.json          # Package manifest with exports map
+├── README.md            # Package overview and quick start
+├── CHANGELOG.md         # Version history (optional)
+├── QUICKSTART-*.md      # Quick start guide (optional)
+├── vitest.config.mjs    # Test configuration
+├── src/                 # Source code (REQUIRED)
+│   ├── index.mjs        # Main entry point with exports
+│   ├── module-1.mjs     # Feature modules
+│   ├── module-2.mjs
+│   └── internal/        # Internal utilities (not exported)
+│       └── helpers.mjs
+├── test/                # Test files (REQUIRED)
+│   ├── module-1.test.mjs
+│   ├── module-2.test.mjs
+│   └── fixtures/        # Test data
+│       └── sample.ttl
+├── docs/                # Detailed documentation (optional)
+│   ├── api.md           # API reference
+│   ├── architecture.md  # Technical design
+│   └── guides/          # How-to guides
+│       └── tutorial.md
+└── examples/            # Working examples (optional)
+    ├── basic-usage/
+    │   ├── README.md
+    │   └── src/
+    │       └── index.mjs
+    └── advanced-usage/
+        ├── README.md
+        └── src/
+            └── index.mjs
 ```
 
 ## All 10 Packages

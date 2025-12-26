@@ -31,15 +31,6 @@ export function createCustomFilters(options = {}) {
 
     // Enhanced deterministic filters that override or augment the base filters
 
-    // Unified reverse filter that handles both strings and arrays
-    reverse: (value) => {
-      if (Array.isArray(value)) {
-        return [...value].reverse();
-      }
-      if (value === null || value === undefined) return '';
-      return String(value).split('').reverse().join('');
-    },
-
     // Deterministic date/time formatting
     formatDate: (date, format = 'YYYY-MM-DD') => {
       if (deterministicMode) {
@@ -128,93 +119,78 @@ export function createCustomFilters(options = {}) {
     },
 
     // Date arithmetic filters
-    dateAdd: (date, amount, unit = 'day') => {
-      try {
-        const d = new Date(date);
-        if (isNaN(d.getTime())) return date;
-
-        switch (unit) {
-          case 'day':
-          case 'days':
-            d.setDate(d.getDate() + amount);
-            break;
-          case 'hour':
-          case 'hours':
-            d.setHours(d.getHours() + amount);
-            break;
-          case 'minute':
-          case 'minutes':
-            d.setMinutes(d.getMinutes() + amount);
-            break;
-          case 'month':
-          case 'months':
-            d.setMonth(d.getMonth() + amount);
-            break;
-          case 'year':
-          case 'years':
-            d.setFullYear(d.getFullYear() + amount);
-            break;
-          default:
-            return date;
-        }
-
-        return d.toISOString();
-      } catch (error) {
-        return date;
+    dateAdd: (dateStr, amount, unit = 'day') => {
+      const date = new Date(dateStr);
+      switch (unit) {
+        case 'day':
+          date.setDate(date.getDate() + amount);
+          break;
+        case 'month':
+          date.setMonth(date.getMonth() + amount);
+          break;
+        case 'year':
+          date.setFullYear(date.getFullYear() + amount);
+          break;
+        default:
+          throw new Error(`Unknown unit: ${unit}`);
       }
+      return date.toISOString();
     },
 
-    dateSub: (date, amount, unit = 'day') => {
-      return allFilters.dateAdd(date, -amount, unit);
+    dateSub: (dateStr, amount, unit = 'day') => {
+      const date = new Date(dateStr);
+      switch (unit) {
+        case 'day':
+          date.setDate(date.getDate() - amount);
+          break;
+        case 'month':
+          date.setMonth(date.getMonth() - amount);
+          break;
+        case 'year':
+          date.setFullYear(date.getFullYear() - amount);
+          break;
+        default:
+          throw new Error(`Unknown unit: ${unit}`);
+      }
+      return date.toISOString();
     },
 
-    // Path resolution filters
-    resolve: (...paths) => {
-      let result = '';
+    // Path utility filters
+    resolve: (base, relative) => {
+      // Simple path resolution (normalize and join)
+      const baseParts = base.split('/').filter(p => p);
+      const relativeParts = relative.split('/').filter(p => p);
 
-      for (const p of paths) {
-        const path = String(p || '');
-        if (path.startsWith('/')) {
-          result = path;
-        } else if (result) {
-          result = result + '/' + path;
-        } else {
-          result = path;
+      for (const part of relativeParts) {
+        if (part === '..') {
+          baseParts.pop();
+        } else if (part !== '.') {
+          baseParts.push(part);
         }
       }
 
-      // Normalize .. and .
-      const parts = result.split('/');
-      const normalized = [];
-
-      for (const part of parts) {
-        if (part === '..' && normalized.length > 0 && normalized[normalized.length - 1] !== '..') {
-          normalized.pop();
-        } else if (part && part !== '.') {
-          normalized.push(part);
-        }
-      }
-
-      return (result.startsWith('/') ? '/' : '') + normalized.join('/');
+      return '/' + baseParts.join('/');
     },
 
     relative: (from, to) => {
-      const fromParts = String(from || '').split('/').filter(p => p);
-      const toParts = String(to || '').split('/').filter(p => p);
+      // Simple relative path calculation
+      const fromParts = from.split('/').filter(p => p);
+      const toParts = to.split('/').filter(p => p);
 
-      // Find common prefix
-      let commonLength = 0;
-      while (commonLength < fromParts.length && commonLength < toParts.length) {
-        if (fromParts[commonLength] !== toParts[commonLength]) break;
-        commonLength++;
+      // Find common base
+      let i = 0;
+      while (i < fromParts.length && i < toParts.length && fromParts[i] === toParts[i]) {
+        i++;
       }
 
-      // Build relative path
-      const upCount = fromParts.length - commonLength;
-      const downPath = toParts.slice(commonLength);
+      // Go up from 'from' directory
+      const upCount = fromParts.length - i;
+      const upParts = Array(upCount).fill('..');
 
-      const relativeParts = Array(upCount).fill('..').concat(downPath);
-      return relativeParts.join('/') || '.';
+      // Then append remaining 'to' parts
+      const remainingParts = toParts.slice(i);
+
+      return [...upParts, ...remainingParts].join('/');
     },
 
     // Code generation helpers

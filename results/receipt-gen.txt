@@ -1,0 +1,65 @@
+============================================================
+Receipt Generation Performance Benchmark
+============================================================
+Iterations: 1000
+
+Warming up (100 iterations)...
+Running receipt generation benchmark (1000 iterations)...
+
+============================================================
+RECEIPT GENERATION LATENCY
+============================================================
+Min:       0.208 ms
+Mean:      0.371 ms
+Median:    0.295 ms
+Stddev:    0.344 ms
+P90:       0.516 ms
+P95:       0.598 ms
+P99:       1.767 ms
+P99.9:     6.708 ms
+Max:       6.708 ms
+
+============================================================
+SUMMARY
+============================================================
+Total receipts generated: 1000
+Total time: 0.45s
+Throughput: 2240 receipts/sec
+
+============================================================
+PERFORMANCE CLAIMS VALIDATION
+============================================================
+Target: <10ms per receipt
+Actual P95: 0.598 ms
+Status: PASS
+
+
+__JSON_RESULTS__
+{
+  "benchmark": "receipt-generation",
+  "timestamp": "2025-12-25T08:18:02.529Z",
+  "results": {
+    "meanMs": 0.37105502400000273,
+    "medianMs": 0.29466200000001663,
+    "p90Ms": 0.5163630000001831,
+    "p95Ms": 0.5982130000002144,
+    "p99Ms": 1.7667720000001736,
+    "p999Ms": 6.707965000000058,
+    "maxMs": 6.707965000000058,
+    "totalReceipts": 1000,
+    "totalTimeMs": 446.4578429999999,
+    "throughputPerSec": 2239.8531365927875
+  },
+  "claims": {
+    "receiptGenerationLt10ms": {
+      "target": 10,
+      "actualP95": 0.5982130000002144,
+      "pass": true
+    },
+    "receiptThroughputGt100k": {
+      "target": 100000,
+      "actual": 2239.8531365927875,
+      "pass": false
+    }
+  }
+}

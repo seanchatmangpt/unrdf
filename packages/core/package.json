@@ -13,7 +13,12 @@
     "./types": "./src/types.mjs",
     "./constants": "./src/constants.mjs",
     "./validation": "./src/validation/index.mjs",
-    "./utils/enhanced-errors": "./src/utils/enhanced-errors.mjs"
+    "./health": "./src/health.mjs",
+    "./logger": "./src/logger.mjs",
+    "./metrics": "./src/metrics.mjs",
+    "./security": "./src/security.mjs",
+    "./security-schemas": "./src/security-schemas.mjs",
+    "./utils/sparql-utils": "./src/utils/sparql-utils.mjs"
   },
   "sideEffects": false,
   "files": [
@@ -28,8 +33,8 @@
     "test:fast": "vitest run --no-coverage",
     "test:watch": "vitest --no-coverage",
     "build": "node build.config.mjs",
-    "lint": "eslint src/ test/ --max-warnings=0 --cache --cache-location .eslintcache --cache-strategy content",
-    "lint:fix": "eslint src/ test/ --fix --cache --cache-location .eslintcache --cache-strategy content",
+    "lint": "eslint src/ test/ --max-warnings=0",
+    "lint:fix": "eslint src/ test/ --fix",
     "format": "prettier --write src/ test/",
     "format:check": "prettier --check src/ test/",
     "clean": "rm -rf dist/ .nyc_output/ coverage/",

@@ -1,0 +1,59 @@
+{
+  "name": "@unrdf/yawl-api",
+  "version": "1.0.0",
+  "description": "High-performance REST API framework that exposes YAWL workflows as RESTful APIs with OpenAPI documentation",
+  "type": "module",
+  "main": "src/server.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./src/server.mjs",
+    "./server": "./src/server.mjs"
+  },
+  "scripts": {
+    "dev": "node src/examples/purchase-order-api.mjs",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint src/ test/ --ext .mjs",
+    "lint:fix": "eslint src/ test/ --ext .mjs --fix",
+    "typecheck": "tsc --noEmit",
+    "validate": "npm run lint && npm run typecheck && npm run test"
+  },
+  "keywords": [
+    "yawl",
+    "workflow",
+    "rest-api",
+    "fastify",
+    "openapi",
+    "swagger",
+    "hateoas",
+    "api-framework"
+  ],
+  "dependencies": {
+    "@unrdf/yawl": "workspace:*",
+    "@unrdf/kgc-4d": "workspace:*",
+    "fastify": "^5.2.0",
+    "@fastify/swagger": "^9.3.0",
+    "@fastify/swagger-ui": "^5.2.0",
+    "@fastify/cors": "^10.0.1",
+    "zod": "^4.1.13",
+    "zod-to-json-schema": "^3.24.1"
+  },
+  "devDependencies": {
+    "eslint": "^8.0.0",
+    "vitest": "^4.0.15"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=7.0.0"
+  },
+  "sideEffects": false,
+  "files": [
+    "src/",
+    "dist/",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}

@@ -1,45 +1,90 @@
 /**
  * YAWL Receipt - BLAKE3 Cryptographic Proof of Workflow Transitions
  *
- * Barrel export for all receipt functionality.
+ * Implements cryptographic receipts for audit trail and verification.
+ * Each receipt chains to the previous, creating an immutable proof chain.
  *
  * @module @unrdf/yawl/receipt
  */
 
-// Core functionality
+// =============================================================================
+// Core Exports
+// =============================================================================
+
 export {
+  // Constants
   BLAKE3_HEX_LENGTH,
   RECEIPT_EVENT_TYPES,
-  ReceiptSchema,
+
+  // Schemas
   JustificationSchema,
   PayloadSchema,
   VectorClockSchema,
+  EventTypeSchema,
+  ReceiptSchema,
   VerificationResultSchema,
+
+  // Utility Functions
   generateUUID,
   deterministicSerialize,
   computeBlake3,
   computeChainHash,
+
+  // Receipt Generation
   generateReceipt,
-  verifyReceipt,
-  verifyChainLink,
 } from './receipt-core.mjs';
 
-// ProofChain
-export { ProofChain } from './receipt-chain.mjs';
+// =============================================================================
+// Verification Exports
+// =============================================================================
 
-// Legacy API
-export { YawlReceipt, buildReceipt } from './receipt-legacy.mjs';
+export {
+  verifyReceipt,
+  verifyChainLink,
+} from './receipt-verification.mjs';
 
-// Default export
-import { generateReceipt, verifyReceipt, verifyChainLink } from './receipt-core.mjs';
-import { ProofChain } from './receipt-chain.mjs';
-import { YawlReceipt, buildReceipt } from './receipt-legacy.mjs';
+// =============================================================================
+// ProofChain Exports
+// =============================================================================
+
+export {
+  ProofChain,
+} from './receipt-proofchain.mjs';
+
+// =============================================================================
+// Serialization Exports (Legacy)
+// =============================================================================
+
+export {
+  YawlReceipt,
+  buildReceipt,
+} from './receipt-serialization.mjs';
+
+// =============================================================================
+// Default Export (Full API)
+// =============================================================================
+
 import {
   RECEIPT_EVENT_TYPES,
   ReceiptSchema,
   JustificationSchema,
   PayloadSchema,
+  generateReceipt,
 } from './receipt-core.mjs';
+
+import {
+  verifyReceipt,
+  verifyChainLink,
+} from './receipt-verification.mjs';
+
+import {
+  ProofChain,
+} from './receipt-proofchain.mjs';
+
+import {
+  YawlReceipt,
+  buildReceipt,
+} from './receipt-serialization.mjs';
 
 export default {
   // Main API

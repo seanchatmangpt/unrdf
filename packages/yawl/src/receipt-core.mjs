@@ -1,5 +1,7 @@
 /**
- * YAWL Receipt Core - Schemas, Utilities, and Core Receipt Functions
+ * YAWL Receipt Core - BLAKE3 Cryptographic Receipt Generation
+ *
+ * Core data structures, schemas, and receipt generation logic.
  *
  * @module @unrdf/yawl/receipt-core
  */
@@ -44,7 +46,7 @@ export const RECEIPT_EVENT_TYPES = Object.freeze({
 /**
  * Justification payload schema - explains why the decision was made
  */
-const JustificationSchema = z.object({
+export const JustificationSchema = z.object({
   /** Hook that validated the transition */
   hookValidated: z.string().optional(),
   /** SPARQL query used for control flow evaluation */
@@ -60,7 +62,7 @@ const JustificationSchema = z.object({
 /**
  * Payload schema - the decision data being receipted
  */
-const PayloadSchema = z.object({
+export const PayloadSchema = z.object({
   /** The decision made (e.g., 'APPROVE', 'ENABLE', 'COMPLETE') */
   decision: z.string(),
   /** Justification for the decision */
@@ -75,7 +77,7 @@ const PayloadSchema = z.object({
  * Vector clock schema for causality tracking
  * Using passthrough to allow flexible VectorClock JSON serialization
  */
-const VectorClockSchema = z.object({
+export const VectorClockSchema = z.object({
   nodeId: z.string().min(1),
   counters: z.record(z.string(), z.string()),
 }).passthrough();
@@ -83,7 +85,7 @@ const VectorClockSchema = z.object({
 /**
  * Event type schema using enum values
  */
-const EventTypeSchema = z.enum([
+export const EventTypeSchema = z.enum([
   'CASE_CREATED',
   'TASK_ENABLED',
   'TASK_STARTED',
@@ -131,7 +133,7 @@ export const ReceiptSchema = z.object({
 /**
  * Verification result schema
  */
-const VerificationResultSchema = z.object({
+export const VerificationResultSchema = z.object({
   valid: z.boolean(),
   error: z.string().optional(),
   checks: z.object({
@@ -140,9 +142,6 @@ const VerificationResultSchema = z.object({
     timestampValid: z.boolean(),
   }).optional(),
 });
-
-// Export for testing/external use
-export { JustificationSchema, PayloadSchema, VectorClockSchema, VerificationResultSchema };
 
 // =============================================================================
 // Type Definitions (JSDoc)
@@ -369,124 +368,4 @@ export async function generateReceipt(event, previousReceipt = null) {
 
   // 7. Validate receipt against schema
   return ReceiptSchema.parse(receipt);
-}
-
-// =============================================================================
-// Receipt Verification
-// =============================================================================
-
-/**
- * Verify a receipt's cryptographic integrity
- *
- * Recomputes hashes and verifies the chain link.
- *
- * @param {Receipt} receipt - Receipt to verify
- * @returns {Promise<VerificationResult>} Verification result
- *
- * @example
- * const result = await verifyReceipt(receipt);
- * if (!result.valid) {
- *   console.error('Receipt verification failed:', result.error);
- * }
- */
-export async function verifyReceipt(receipt) {
-  try {
-    // 1. Recompute payload hash
-    const payloadToHash = {
-      eventType: receipt.eventType,
-      caseId: receipt.caseId,
-      taskId: receipt.taskId,
-      workItemId: receipt.workItemId || null,
-      payload: receipt.payload,
-      t_ns: receipt.t_ns.toString(),
-    };
-    const computedPayloadHash = await computeBlake3(payloadToHash);
-    const payloadHashValid = computedPayloadHash === receipt.payloadHash;
-
-    // 2. Recompute chain hash
-    const computedReceiptHash = await computeChainHash(
-      receipt.previousReceiptHash,
-      receipt.payloadHash
-    );
-    const chainHashValid = computedReceiptHash === receipt.receiptHash;
-
-    // 3. Validate timestamp (must be positive and reasonable)
-    const timestampValid = receipt.t_ns > 0n;
-
-    // 4. Determine overall validity
-    const valid = payloadHashValid && chainHashValid && timestampValid;
-
-    if (!valid) {
-      const errors = [];
-      if (!payloadHashValid) errors.push('payload hash mismatch');
-      if (!chainHashValid) errors.push('chain hash mismatch');
-      if (!timestampValid) errors.push('invalid timestamp');
-
-      return {
-        valid: false,
-        error: `Verification failed: ${errors.join(', ')}`,
-        checks: {
-          payloadHashValid,
-          chainHashValid,
-          timestampValid,
-        },
-      };
-    }
-
-    return {
-      valid: true,
-      checks: {
-        payloadHashValid,
-        chainHashValid,
-        timestampValid,
-      },
-    };
-  } catch (error) {
-    return {
-      valid: false,
-      error: `Verification error: ${error.message}`,
-    };
-  }
-}
-
-/**
- * Verify a receipt chain link
- *
- * @param {Receipt} current - Current receipt
- * @param {Receipt} previous - Previous receipt in chain
- * @returns {Promise<VerificationResult>} Chain verification result
- */
-export async function verifyChainLink(current, previous) {
-  // Verify current receipt independently
-  const currentResult = await verifyReceipt(current);
-  if (!currentResult.valid) {
-    return currentResult;
-  }
-
-  // Verify previous receipt independently
-  const previousResult = await verifyReceipt(previous);
-  if (!previousResult.valid) {
-    return {
-      valid: false,
-      error: `Previous receipt invalid: ${previousResult.error}`,
-    };
-  }
-
-  // Verify chain link
-  if (current.previousReceiptHash !== previous.receiptHash) {
-    return {
-      valid: false,
-      error: `Chain broken: expected ${previous.receiptHash}, got ${current.previousReceiptHash}`,
-    };
-  }
-
-  // Verify temporal ordering
-  if (current.t_ns <= previous.t_ns) {
-    return {
-      valid: false,
-      error: 'Temporal ordering violated: current receipt timestamp not after previous',
-    };
-  }
-
-  return { valid: true };
 }

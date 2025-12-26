@@ -12,7 +12,7 @@ import { tmpdir } from 'os';
 
 import { inject, dryRun, processTemplate, initializeInjection } from '../api.js';
 import { enhanceKgenWithInjection } from '../integration.js';
-import { INJECTION_MODES as _INJECTION_MODES } from '../constants.js';
+import { INJECTION_MODES } from '../constants.js';
 
 describe('KGEN Injection Integration', () => {
   let tempDir;
@@ -137,9 +137,9 @@ export default router;`;
     test('should enhance existing KGEN engine with injection', async () => {
       // Mock KGEN engine
       const mockKgenEngine = {
-        render: async (templatePath, _data) => `Rendered: ${templatePath}`,
-        renderString: async (templateString, _data) => `Rendered: ${templateString}`,
-        getTemplate: async (_templatePath) => ({
+        render: async (templatePath, data) => `Rendered: ${templatePath}`,
+        renderString: async (templateString, data) => `Rendered: ${templateString}`,
+        getTemplate: async (templatePath) => ({
           frontmatter: { inject: true, to: 'src/test.ts', mode: 'append' },
           content: 'test content {{name}}'
         })
@@ -232,8 +232,9 @@ export default router;`;
       };
 
       const content = 'test content';
+      const variables = {};
 
-      await expect(inject(templateConfig, content, {}))
+      await expect(inject(templateConfig, content, variables))
         .rejects.toThrow(/Unknown injection mode/);
     });
 

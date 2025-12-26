@@ -71,13 +71,21 @@ export const sort = (arr, key = null) => {
 };
 
 /**
- * Reverse array
- * @param {any} arr - Input array
- * @returns {Array} Reversed array
+ * Reverse array or string
+ * @param {any} value - Input array or string
+ * @returns {Array|string} Reversed array or string
  */
-export const reverse = (arr) => {
-  if (!Array.isArray(arr)) return arr;
-  return [...arr].reverse();
+export const reverse = (value) => {
+  // Handle strings
+  if (typeof value === 'string') {
+    return value.split('').reverse().join('');
+  }
+  // Handle arrays
+  if (Array.isArray(value)) {
+    return [...value].reverse();
+  }
+  // Return other types unchanged
+  return value;
 };
 
 /**

@@ -1,15 +1,11 @@
 /**
- * @file YAWL Case RDF Integration
+ * @file YAWL Case RDF - RDF serialization and deserialization
  * @module @unrdf/yawl/case-rdf
- *
- * @description
- * RDF serialization and deserialization for YAWL cases.
- * Converts case instances to/from RDF quads using the YAWL ontology.
  */
 
 import { toISO } from '@unrdf/kgc-4d';
 import { dataFactory } from '@unrdf/oxigraph';
-import { YawlTask, TaskStatus, TaskStatus_RUNNING } from './task.mjs';
+import { YawlTask, TaskStatus } from './task.mjs';
 import { CaseStatus } from './case-core.mjs';
 import {
   // Namespaces
@@ -60,6 +56,10 @@ import {
 
 const { quad, namedNode } = dataFactory;
 
+// =============================================================================
+// RDF Status Mappings
+// =============================================================================
+
 /**
  * Map CaseStatus to RDF terms
  * @type {Object<string, import('oxigraph').NamedNode>}
@@ -79,7 +79,7 @@ const CASE_STATUS_RDF_MAP = {
  */
 const WORKITEM_STATUS_RDF_MAP = {
   [TaskStatus.ENABLED]: WorkItem_Enabled,
-  [TaskStatus_RUNNING]: WorkItem_Started,
+  [TaskStatus.RUNNING]: WorkItem_Started,
   [TaskStatus.COMPLETED]: WorkItem_Completed,
   [TaskStatus.CANCELLED]: WorkItem_Cancelled,
 };
@@ -96,7 +96,7 @@ const WORKITEM_STATUS_RDF_MAP = {
  * - Work items with status and task references
  * - Petri net marking (token counts in conditions)
  *
- * @param {import('./case-core.mjs').Case} caseInstance - Case to serialize
+ * @param {import('./case.mjs').Case} caseInstance - Case to serialize
  * @param {import('@unrdf/oxigraph').OxigraphStore} store - RDF store to add quads to
  * @returns {Promise<{quadCount: number, caseUri: import('oxigraph').NamedNode}>}
  *
@@ -208,6 +208,10 @@ export async function caseToRDF(caseInstance, store) {
   return { quadCount, caseUri: caseNode };
 }
 
+// =============================================================================
+// RDF Deserialization
+// =============================================================================
+
 /**
  * Load case state from RDF store.
  *
@@ -217,7 +221,7 @@ export async function caseToRDF(caseInstance, store) {
  * @param {import('@unrdf/oxigraph').OxigraphStore} store - RDF store to read from
  * @param {string} caseId - Case identifier to load
  * @param {import('./workflow.mjs').YawlWorkflow} workflow - Workflow definition
- * @returns {Promise<import('./case-core.mjs').Case|null>} Loaded case or null if not found
+ * @returns {Promise<import('./case.mjs').Case|null>} Loaded case or null if not found
  *
  * @example
  * import { caseFromRDF } from '@unrdf/yawl/case';
@@ -229,7 +233,7 @@ export async function caseToRDF(caseInstance, store) {
  */
 export async function caseFromRDF(store, caseId, workflow) {
   // Import Case class dynamically to avoid circular dependency
-  const { Case } = await import('./case-core.mjs');
+  const { Case } = await import('./case.mjs');
 
   const caseNode = caseUri(caseId);
   const graph = caseGraph(caseId);

@@ -1,0 +1,12 @@
+Metric,Value,Unit,SLA_Limit,Status
+Test_Avg,1381.17,ms,5000,PASS
+Test_Min,1351.16,ms,5000,PASS
+Test_Max,1411.18,ms,5000,PASS
+Import_Avg,105.39,ms,N/A,INFO
+YAWL_Files,10,count,N/A,INFO
+Total_Files,593,count,N/A,INFO
+Changed_24h,593,count,N/A,INFO
+YAWL_Size,0.77,MB,N/A,INFO
+Total_Size,16.73,MB,N/A,INFO
+Memory_Baseline,127.80,MB,N/A,INFO
+Memory_Delta,0.76,MB,N/A,INFO

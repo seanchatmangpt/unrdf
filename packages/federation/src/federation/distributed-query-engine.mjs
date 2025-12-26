@@ -18,7 +18,7 @@
 
 import { z } from 'zod';
 import { trace, SpanStatusCode, metrics } from '@opentelemetry/api';
-import { analyzeSPARQLQuery, _extractVariables } from '../../utils/sparql-utils.mjs';
+import { analyzeSPARQLQuery } from '@unrdf/core/utils/sparql-utils';
 
 const tracer = trace.getTracer('unrdf-federation');
 const meter = metrics.getMeter('unrdf-federation');

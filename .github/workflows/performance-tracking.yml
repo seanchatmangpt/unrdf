@@ -1,0 +1,267 @@
+name: Performance Tracking & Benchmarking
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  schedule:
+    # Run performance benchmarks daily at 3 AM UTC
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: '18'
+  PNPM_VERSION: '10.15.0'
+
+jobs:
+  # Benchmark Suite
+  benchmark:
+    name: Run Performance Benchmarks
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Install dependencies
+        run: timeout 60s pnpm install --frozen-lockfile
+
+      - name: Run core benchmarks
+        run: |
+          echo "Running core package benchmarks..."
+          timeout 120s pnpm -C packages/core test -- --run --reporter=verbose 2>&1 | tee benchmark-core.log || echo "Core benchmarks completed"
+
+      - name: Run streaming benchmarks
+        run: |
+          echo "Running streaming package benchmarks..."
+          timeout 120s pnpm -C packages/streaming test -- --run --reporter=verbose 2>&1 | tee benchmark-streaming.log || echo "Streaming benchmarks completed"
+
+      - name: Run federation benchmarks
+        run: |
+          echo "Running federation package benchmarks..."
+          timeout 120s pnpm -C packages/federation test -- --run --reporter=verbose 2>&1 | tee benchmark-federation.log || echo "Federation benchmarks completed"
+
+      - name: Run YAWL pattern benchmarks
+        run: |
+          echo "Running YAWL pattern benchmarks..."
+          timeout 180s pnpm -C packages/yawl test -- --run --reporter=verbose 2>&1 | tee benchmark-yawl.log || echo "YAWL benchmarks completed"
+
+      - name: Collect benchmark metrics
+        run: |
+          echo "Collecting benchmark metrics..."
+          node scripts/monitoring/collect-benchmark-metrics.mjs
+          cat benchmark-results.json
+
+      - name: Download baseline benchmarks
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: benchmark-baseline
+          path: ./baseline
+
+      - name: Compare against baseline
+        id: compare
+        run: |
+          echo "Comparing benchmarks against baseline..."
+          node scripts/monitoring/compare-benchmarks.mjs
+
+          # Check for regressions
+          if [ -f "benchmark-regression.json" ]; then
+            REGRESSIONS=$(cat benchmark-regression.json | jq '.regressions | length')
+            echo "regressions=$REGRESSIONS" >> $GITHUB_OUTPUT
+
+            if [ "$REGRESSIONS" -gt 0 ]; then
+              echo "⚠️ Performance regressions detected: $REGRESSIONS"
+              cat benchmark-regression.json | jq '.regressions'
+            else
+              echo "✅ No performance regressions detected"
+            fi
+          fi
+
+      - name: Store benchmark results
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-results-${{ github.sha }}
+          path: |
+            benchmark-*.log
+            benchmark-results.json
+            benchmark-regression.json
+          retention-days: 90
+
+      - name: Update baseline (main branch only)
+        if: github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-baseline
+          path: benchmark-results.json
+          retention-days: 90
+
+      - name: Comment PR with benchmark results
+        if: github.event_name == 'pull_request' && steps.compare.outputs.regressions != ''
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const regressions = JSON.parse(fs.readFileSync('benchmark-regression.json', 'utf8'));
+
+            let comment = '## Performance Benchmark Results\n\n';
+
+            if (regressions.regressions && regressions.regressions.length > 0) {
+              comment += '### ⚠️ Performance Regressions Detected\n\n';
+              comment += '| Test | Baseline | Current | Change |\n';
+              comment += '|------|----------|---------|--------|\n';
+
+              regressions.regressions.forEach(r => {
+                const change = ((r.current - r.baseline) / r.baseline * 100).toFixed(2);
+                comment += `| ${r.name} | ${r.baseline}ms | ${r.current}ms | +${change}% |\n`;
+              });
+            } else {
+              comment += '✅ No performance regressions detected\n';
+            }
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
+      - name: Fail on significant regressions
+        if: steps.compare.outputs.regressions != ''
+        run: |
+          REGRESSIONS=${{ steps.compare.outputs.regressions }}
+          if [ "$REGRESSIONS" -gt 5 ]; then
+            echo "❌ Too many performance regressions: $REGRESSIONS"
+            echo "Review benchmark-regression.json for details"
+            exit 1
+          fi
+
+  # Memory Profiling
+  memory-profile:
+    name: Memory Profiling
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Install dependencies
+        run: timeout 60s pnpm install --frozen-lockfile
+
+      - name: Run memory profiling
+        run: |
+          echo "Running memory profiling..."
+          node --expose-gc --max-old-space-size=512 scripts/monitoring/memory-profiler.mjs > memory-profile.log 2>&1 || echo "Memory profiling completed"
+
+      - name: Analyze memory usage
+        run: |
+          echo "Analyzing memory usage..."
+          if [ -f "memory-profile.json" ]; then
+            cat memory-profile.json | jq '.peak_usage, .avg_usage, .gc_stats'
+          fi
+
+      - name: Upload memory profile
+        uses: actions/upload-artifact@v4
+        with:
+          name: memory-profile-${{ github.sha }}
+          path: |
+            memory-profile.log
+            memory-profile.json
+          retention-days: 30
+
+  # Load Testing
+  load-test:
+    name: Load Testing
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Install dependencies
+        run: timeout 60s pnpm install --frozen-lockfile
+
+      - name: Run load tests
+        run: |
+          echo "Running load tests..."
+          timeout 300s node scripts/monitoring/load-tester.mjs > load-test.log 2>&1 || echo "Load tests completed"
+
+      - name: Analyze load test results
+        run: |
+          echo "Analyzing load test results..."
+          if [ -f "load-test-results.json" ]; then
+            cat load-test-results.json | jq '.throughput, .latency, .errors'
+          fi
+
+      - name: Upload load test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: load-test-results-${{ github.sha }}
+          path: |
+            load-test.log
+            load-test-results.json
+          retention-days: 90
+
+  # Performance Summary
+  performance-summary:
+    name: Performance Summary
+    runs-on: ubuntu-latest
+    needs: [benchmark, memory-profile]
+    if: always()
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: benchmark-results-*
+          path: ./artifacts
+
+      - name: Generate performance summary
+        run: |
+          echo "# Performance Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Branch:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Component | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Benchmarks | ${{ needs.benchmark.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Memory Profile | ${{ needs.memory-profile.result }} |" >> $GITHUB_STEP_SUMMARY

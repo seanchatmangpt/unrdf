@@ -8,12 +8,14 @@ A production-ready implementation of Van der Aalst's YAWL workflow patterns with
 
 ## Features
 
-- **20 YAWL Workflow Patterns**: Complete implementation of Van der Aalst's control flow patterns
+- **20 YAWL Workflow Patterns**: Complete implementation of Van der Aalst's control flow patterns (WP1-WP20)
+- **Hook-Native Architecture**: Policy enforcement and validation with declarative SPARQL rules
 - **Event Sourcing**: KGC-4D time-travel with cryptographic receipts for every state transition
 - **RDF-Native**: All workflow state stored as RDF triples with SPARQL queries
-- **Policy Enforcement**: Hooks-based validation with declarative SPARQL rules
+- **Cryptographic Receipts**: BLAKE3 hash chains for tamper-proof audit trails
 - **Resource Management**: Role-based allocation with capability constraints
 - **Cancellation Regions**: Advanced error handling with transactional rollback
+- **Time-Travel & Replay**: Reconstruct workflow state at any point in time
 - **Type-Safe**: Full JSDoc types with Zod runtime validation
 
 ## Installation
@@ -87,6 +89,40 @@ Case started: case-001
 Task completed: receipt-abc123
 Next tasks enabled: ['review']
 ```
+
+## Architecture
+
+### Modular Structure
+
+The package is organized into focused modules:
+
+- **`api/`** - Workflow API (creation, execution, queries, cancellation, time-travel)
+- **`engine/`** - YAWL engine subsystems (core, events, hooks, health, snapshots, queries)
+- **`workflow/`** - Workflow class (core, validation, patterns, RDF)
+- **`case/`** - Case management (core, lifecycle, RDF serialization)
+- **`task/`** - Task execution (lifecycle, state transitions)
+- **`receipt.mjs`** - Cryptographic receipts (BLAKE3 hash chains)
+- **`resources/`** - Resource management (participants, tools, roles, capacity)
+- **`hooks/`** - Policy enforcement hooks (validation, authorization)
+- **`events/`** - Event sourcing (KGC-4D integration)
+- **`cancellation/`** - Cancellation handling (regions, rollback)
+
+### Workflow Patterns
+
+Supports all 20 Van der Aalst patterns:
+
+- **WP1**: Sequence
+- **WP2**: Parallel Split (AND-split)
+- **WP3**: Synchronization (AND-join)
+- **WP4**: Exclusive Choice (XOR-split)
+- **WP5**: Simple Merge (XOR-join)
+- **WP6**: Multi-Choice (OR-split)
+- **WP7**: Structured Synchronizing Merge (OR-join)
+- **WP8-WP20**: Advanced patterns (cancellation, iteration, state-based routing, milestones, etc.)
+
+See [YAWL Patterns Documentation](../../docs/guides/yawl-patterns.md) for detailed examples.
+
+---
 
 ## Core API
 
@@ -359,7 +395,7 @@ See runnable examples in the [examples directory](../../examples/yawl/):
 
 ### Cryptographic Receipts
 
-Every state transition returns a cryptographic receipt with SHA-256 hash chain:
+Every state transition returns a cryptographic receipt with BLAKE3/SHA-256 hash chain:
 
 ```javascript
 const receipt = await completeTask(store, {
@@ -370,7 +406,7 @@ const receipt = await completeTask(store, {
 console.log({
   receipt_id: receipt.receipt_id, // Unique receipt ID
   event_id: receipt.event_id, // Event that triggered transition
-  hash: receipt.hash, // SHA-256 hash
+  hash: receipt.hash, // BLAKE3/SHA-256 hash
   previous_hash: receipt.previous_hash, // Previous receipt hash (chain)
   timestamp: receipt.timestamp, // ISO 8601 timestamp
   decision: receipt.decision, // ACCEPT | REJECT
@@ -529,7 +565,7 @@ Store 100,000+ workflow events with <100MB memory footprint.
 - `@unrdf/kgc-4d` - Event sourcing with time-travel
 - `@unrdf/hooks` - Policy enforcement
 - `zod` - Runtime validation
-- `hash-wasm` - SHA-256 hashing
+- `hash-wasm` - BLAKE3/SHA-256 hashing
 
 ## When to Use @unrdf/yawl
 
@@ -555,6 +591,29 @@ Store 100,000+ workflow events with <100MB memory footprint.
 - **[Event Sourcing](../../docs/guides/yawl-event-sourcing.md)** - Time-travel and receipts
 - **[Resource Management](../../docs/guides/yawl-resources.md)** - Role-based allocation
 - **[API Reference](https://unrdf.dev/docs/yawl)** - Full API documentation
+- **[MIGRATION.md](./MIGRATION.md)** - Migration guide and architecture details
+
+## Development
+
+```bash
+# Install dependencies
+pnpm install
+
+# Run tests
+pnpm test
+
+# Run tests with coverage
+pnpm test:coverage
+
+# Watch mode
+pnpm test:watch
+
+# Run linter
+pnpm lint
+
+# Run full validation
+pnpm validate
+```
 
 ## Testing
 
@@ -568,6 +627,10 @@ pnpm test:watch
 # Coverage report
 pnpm test:coverage
 ```
+
+## Contributing
+
+See [MIGRATION.md](./MIGRATION.md) for architecture details and contribution guidelines.
 
 ## License
 

@@ -31,29 +31,325 @@
  * @module mega-framework-standalone
  */
 
+import { z } from 'zod';
+
+// ============================================================================
+// ZOD VALIDATION SCHEMAS
+// ============================================================================
+
+/**
+ * Workflow task schema
+ */
+const WorkflowTaskSchema = z.object({
+  id: z.string().min(1).max(100),
+  type: z.enum(['automated', 'manual', 'decision']),
+  handler: z.function(),
+});
+
+/**
+ * Workflow flow schema
+ */
+const WorkflowFlowSchema = z.object({
+  from: z.string().min(1),
+  to: z.string().min(1),
+  condition: z.function().optional(),
+});
+
+/**
+ * Workflow definition schema
+ */
+const WorkflowDefinitionSchema = z.object({
+  id: z.string().min(1).max(100).regex(/^[a-z0-9-]+$/, 'Workflow ID must be lowercase alphanumeric with hyphens'),
+  tasks: z.array(WorkflowTaskSchema).min(1, 'Workflow must have at least one task'),
+  flows: z.array(WorkflowFlowSchema),
+});
+
+/**
+ * Hook definition schema
+ */
+const HookDefinitionSchema = z.object({
+  name: z.string().min(1).max(100),
+  trigger: z.string().min(1),
+  handler: z.function(),
+});
+
+/**
+ * Dark execution query schema (prevent code injection)
+ */
+const DarkExecutionQuerySchema = z.string()
+  .min(1, 'Query cannot be empty')
+  .max(5000, 'Query too long (potential DoS)')
+  .refine(
+    (query) => !query.includes('require('),
+    'require() not allowed in dark execution'
+  )
+  .refine(
+    (query) => !query.includes('import('),
+    'import() not allowed in dark execution'
+  )
+  .refine(
+    (query) => !query.includes('process.'),
+    'process access not allowed in dark execution'
+  );
+
+/**
+ * Dark execution context schema
+ */
+const DarkExecutionContextSchema = z.record(z.string(), z.any()).optional().default({});
+
+/**
+ * Temporal query time range schema
+ */
+const TimeRangeSchema = z.object({
+  start: z.number().int().positive('Start time must be positive'),
+  end: z.number().int().positive('End time must be positive'),
+}).refine(
+  (data) => data.end >= data.start,
+  'End time must be >= start time'
+);
+
+/**
+ * SPARQL query schema
+ */
+const SparqlQuerySchema = z.string()
+  .min(1, 'Query cannot be empty')
+  .max(10000, 'Query too long')
+  .refine(
+    (query) => query.toUpperCase().includes('SELECT') || query.toUpperCase().includes('ASK') || query.toUpperCase().includes('CONSTRUCT'),
+    'Query must be SELECT, ASK, or CONSTRUCT'
+  );
+
+/**
+ * Federation node configuration schema
+ */
+const FederationNodeConfigSchema = z.object({
+  id: z.string().min(1).max(100).regex(/^node-[0-9]+$/, 'Node ID must be node-{number}'),
+  peerId: z.string().min(1).max(100),
+  capabilities: z.array(z.enum(['query', 'store', 'validate'])).min(1),
+  rdfStore: z.any(),
+});
+
+/**
+ * Validation data schema
+ */
+const ValidationDataSchema = z.object({
+  subject: z.string().min(1),
+  predicate: z.string().min(1),
+  object: z.string().min(1),
+});
+
+/**
+ * Workflow execution input schema
+ */
+const WorkflowInputSchema = z.record(z.string(), z.any()).optional().default({});
+
+/**
+ * Workflow ID schema
+ */
+const WorkflowIdSchema = z.string()
+  .min(1)
+  .regex(/^[a-z0-9-]+$/, 'Workflow ID must be lowercase alphanumeric with hyphens');
+
+/**
+ * Knowledge pattern schema
+ */
+const KnowledgePatternSchema = z.object({
+  subject: z.string().min(1),
+  predicate: z.string().min(1),
+  confidence: z.number().min(0).max(1),
+  timestamp: z.string().optional(),
+});
+
+/**
+ * Learning model schema
+ */
+const LearningModelSchema = z.object({
+  patterns: z.record(z.string(), z.any()),
+  weights: z.record(z.string(), z.number()),
+});
+
+/**
+ * CLI command schema
+ */
+const CLICommandSchema = z.object({
+  name: z.string().min(1).max(50).regex(/^[a-z-]+$/, 'Command name must be lowercase with hyphens'),
+  description: z.string().min(1).max(200),
+  handler: z.function(),
+});
+
+/**
+ * Bootstrap configuration schema
+ */
+const BootstrapConfigSchema = z.object({
+  maxTriples: z.number().int().positive().optional().default(10000),
+  maxExecutions: z.number().int().positive().optional().default(1000),
+  enableLogging: z.boolean().optional().default(true),
+}).optional().default({});
+
+/**
+ * Execution result schema
+ */
+const ExecutionResultSchema = z.object({
+  result: z.any(),
+  extracted: z.array(z.any()),
+  frozen: z.string().optional(),
+});
+
+/**
+ * Validation result schema
+ */
+const ValidationResultSchema = z.object({
+  consensus: z.boolean(),
+  details: z.array(z.object({
+    node: z.string(),
+    valid: z.boolean(),
+    errors: z.array(z.any()),
+  })),
+});
+
+// ============================================================================
+// VALIDATION HELPER FUNCTIONS
+// ============================================================================
+
+/**
+ * Validate workflow definition
+ * @param {unknown} workflow - Workflow to validate
+ * @returns {object} Validated workflow
+ * @throws {z.ZodError} If validation fails
+ */
+function validateWorkflowDefinition(workflow) {
+  return WorkflowDefinitionSchema.parse(workflow);
+}
+
+/**
+ * Validate hook definition
+ * @param {unknown} hook - Hook to validate
+ * @returns {object} Validated hook
+ * @throws {z.ZodError} If validation fails
+ */
+function validateHookDefinition(hook) {
+  return HookDefinitionSchema.parse(hook);
+}
+
+/**
+ * Validate dark execution parameters
+ * @param {unknown} query - Query to validate
+ * @param {unknown} context - Context to validate
+ * @returns {{query: string, context: object}} Validated parameters
+ * @throws {z.ZodError} If validation fails
+ */
+function validateDarkExecution(query, context) {
+  return {
+    query: DarkExecutionQuerySchema.parse(query),
+    context: DarkExecutionContextSchema.parse(context),
+  };
+}
+
+/**
+ * Validate temporal query parameters
+ * @param {unknown} query - SPARQL query to validate
+ * @param {unknown} timeRange - Time range to validate
+ * @returns {{query: string, timeRange: object}} Validated parameters
+ * @throws {z.ZodError} If validation fails
+ */
+function validateTemporalQuery(query, timeRange) {
+  return {
+    query: SparqlQuerySchema.parse(query),
+    timeRange: TimeRangeSchema.parse(timeRange),
+  };
+}
+
+/**
+ * Validate federation data
+ * @param {unknown} data - Data to validate
+ * @returns {object} Validated data
+ * @throws {z.ZodError} If validation fails
+ */
+function validateFederationData(data) {
+  return ValidationDataSchema.parse(data);
+}
+
+/**
+ * Validate workflow execution parameters
+ * @param {unknown} workflowId - Workflow ID to validate
+ * @param {unknown} input - Input data to validate
+ * @returns {{workflowId: string, input: object}} Validated parameters
+ * @throws {z.ZodError} If validation fails
+ */
+function validateWorkflowExecution(workflowId, input) {
+  return {
+    workflowId: WorkflowIdSchema.parse(workflowId),
+    input: WorkflowInputSchema.parse(input),
+  };
+}
+
+/**
+ * Validate SPARQL query
+ * @param {unknown} query - Query to validate
+ * @returns {string} Validated query
+ * @throws {z.ZodError} If validation fails
+ */
+function validateSparqlQuery(query) {
+  return SparqlQuerySchema.parse(query);
+}
+
+/**
+ * Validate CLI command
+ * @param {unknown} command - Command to validate
+ * @returns {object} Validated command
+ * @throws {z.ZodError} If validation fails
+ */
+function validateCLICommand(command) {
+  return CLICommandSchema.parse(command);
+}
+
 // ============================================================================
 // MOCK IMPLEMENTATIONS (Production would use actual @unrdf/* packages)
 // ============================================================================
 
 // Mock 1: Oxigraph RDF Store
+/**
+ * Mock implementation of Oxigraph RDF store for testing
+ * @class OxigraphStoreMock
+ */
 class OxigraphStoreMock {
+  /**
+   * Create a new mock RDF store
+   */
   constructor() {
     this.quads = [];
   }
 
+  /**
+   * Add a quad to the store
+   * @param {Object} quad - RDF quad to add
+   */
   add(quad) {
     this.quads.push(quad);
   }
 
+  /**
+   * Query the store with SPARQL
+   * @param {string} sparql - SPARQL query string
+   * @returns {Array<Object>} Query results (first 5 quads)
+   */
   query(sparql) {
     return this.quads.slice(0, Math.min(5, this.quads.length));
   }
 
+  /**
+   * Remove a quad from the store
+   * @param {Object} quad - RDF quad to remove
+   */
   remove(quad) {
     this.quads = this.quads.filter(q => q !== quad);
   }
 }
 
+/**
+ * Create a mock RDF store instance
+ * @returns {OxigraphStoreMock} Mock store instance
+ */
 function createStoreMock() {
   return new OxigraphStoreMock();
 }
@@ -65,7 +361,17 @@ const dataFactoryMock = {
 };
 
 // Mock 2: AtomVM Runtime
+/**
+ * Mock implementation of AtomVM runtime for isolated code execution
+ * @class AtomVMRuntimeMock
+ */
 class AtomVMRuntimeMock {
+  /**
+   * Execute code in isolated context
+   * @param {string} code - JavaScript code to execute
+   * @param {Object} context - Execution context variables
+   * @returns {Promise<any>} Execution result
+   */
   async executeIsolated(code, context) {
     // Create a function that evaluates the code with context
     // Remove 'return' if it's already there
@@ -76,7 +382,16 @@ class AtomVMRuntimeMock {
 }
 
 // Mock 3: Knowledge Engine
+/**
+ * Mock implementation of knowledge substrate for pattern extraction
+ * @class KnowledgeSubstrateCoreMock
+ */
 class KnowledgeSubstrateCoreMock {
+  /**
+   * Extract knowledge patterns from execution result
+   * @param {any} result - Execution result to analyze
+   * @returns {Promise<Array<Object>>} Extracted patterns with confidence scores
+   */
   async extractPatterns(result) {
     return [
       { subject: 'pattern-1', predicate: 'type', confidence: 0.85 },
@@ -85,15 +400,32 @@ class KnowledgeSubstrateCoreMock {
   }
 }
 
+/**
+ * Mock implementation of knowledge hook manager
+ * @class KnowledgeHookManagerMock
+ */
 class KnowledgeHookManagerMock {
+  /**
+   * Create a new hook manager
+   */
   constructor() {
     this.hooks = new Map();
   }
 
+  /**
+   * Register a new hook
+   * @param {Object} hook - Hook configuration with name and handler
+   */
   register(hook) {
     this.hooks.set(hook.name, hook);
   }
 
+  /**
+   * Trigger a hook by event name
+   * @param {string} eventName - Event name to trigger
+   * @param {any} data - Data to pass to hook handler
+   * @returns {Promise<any>} Hook handler result
+   */
   async trigger(eventName, data) {
     const hook = this.hooks.get(eventName);
     if (hook) return await hook.handler(data);
@@ -101,6 +433,11 @@ class KnowledgeHookManagerMock {
 }
 
 // Mock 4: Hooks (Policy)
+/**
+ * Define a hook policy configuration
+ * @param {Object} config - Hook policy configuration
+ * @returns {Object} Policy configuration
+ */
 function defineHookPolicyMock(config) {
   return config;
 }
@@ -108,47 +445,103 @@ function defineHookPolicyMock(config) {
 // Mock 5: YAWL Workflow
 const Case_ActiveMock = 'Active';
 
+/**
+ * Mock implementation of YAWL workflow builder
+ * @class WorkflowBuilderMock
+ */
 class WorkflowBuilderMock {
+  /**
+   * Build a workflow instance
+   * @returns {Object} Empty workflow object
+   */
   build() {
     return {};
   }
 }
 
 // Mock 6: KGC-4D Temporal
+/**
+ * Freeze the current state of the universe for temporal queries
+ * @param {Object} store - RDF store instance
+ * @param {string} id - Snapshot identifier
+ * @param {Object} data - Data to freeze
+ * @returns {string} Frozen state identifier
+ */
 function freezeUniverseMock(store, id, data) {
   return `frozen-state-${id}`;
 }
 
+/**
+ * Reconstruct state from a temporal snapshot
+ * @param {Object} kgcStore - KGC-4D store instance
+ * @param {string} id - Snapshot identifier
+ * @returns {Promise<Object>} Reconstructed state
+ */
 async function reconstructStateMock(kgcStore, id) {
   return { id, reconstructed: true };
 }
 
+/**
+ * Get current timestamp
+ * @returns {number} Current timestamp in milliseconds
+ */
 function nowMock() {
   return Date.now();
 }
 
+/**
+ * Convert timestamp to ISO 8601 format
+ * @param {number} timestamp - Timestamp in milliseconds
+ * @returns {string} ISO 8601 formatted date string
+ */
 function toISOMock(timestamp) {
   return new Date(timestamp).toISOString();
 }
 
+/**
+ * Mock implementation of KGC-4D temporal store
+ * @class KGCStoreMock
+ */
 class KGCStoreMock {
+  /**
+   * Create a new KGC store wrapper
+   * @param {Object} store - Base RDF store
+   */
   constructor(store) {
     this.store = store;
   }
 }
 
 // Mock 7: CLI
+/**
+ * Define a CLI command configuration
+ * @param {Object} cmd - Command configuration
+ * @returns {Object} Command configuration
+ */
 function defineCliCommandMock(cmd) {
   return cmd;
 }
 
 // Mock 8: Streaming
+/**
+ * Mock implementation of stream processor
+ * @class StreamProcessorMock
+ */
 class StreamProcessorMock {
+  /**
+   * Create a piped stream with filter function
+   * @param {Function} fn - Filter function
+   * @returns {Object} Stream-like object with event handlers
+   */
   pipe(fn) {
     return { on: () => {} };
   }
 }
 
+/**
+ * Create a mock change stream for RDF quad changes
+ * @returns {Object} Change stream object with watch and emit methods
+ */
 function createChangeStreamMock() {
   return {
     watch: () => ({ on: () => {} }),
@@ -157,15 +550,35 @@ function createChangeStreamMock() {
 }
 
 // Mock 9: Validation
+/**
+ * Validate RDF quads against schema
+ * @param {Array<Object>} quads - RDF quads to validate
+ * @returns {Promise<Array>} Validation errors (empty if valid)
+ */
 async function validateQuadsMock(quads) {
   return [];
 }
 
+/**
+ * Validate data against constraint schema
+ * @param {any} data - Data to validate
+ * @param {Object} schema - Validation schema
+ * @returns {Promise<Object>} Validation result with valid flag and errors
+ */
 async function validateConstraintsMock(data, schema) {
   return { valid: true, errors: [] };
 }
 
 // Mock 10: Federation
+/**
+ * Create a federation node for distributed queries
+ * @param {Object} config - Node configuration
+ * @param {string} config.id - Node identifier
+ * @param {string} config.peerId - Peer identifier
+ * @param {Array<string>} config.capabilities - Node capabilities
+ * @param {Object} config.rdfStore - RDF store instance
+ * @returns {Promise<Object>} Federation node with query and validate methods
+ */
 async function createFederationNodeMock(config) {
   return {
     id: config.id,
@@ -174,7 +587,16 @@ async function createFederationNodeMock(config) {
   };
 }
 
+/**
+ * Mock implementation of federation coordinator
+ * @class FederationCoordinatorMock
+ */
 class FederationCoordinatorMock {
+  /**
+   * Register a node in the federation
+   * @param {Object} node - Federation node to register
+   * @returns {Promise<boolean>} True if registration successful
+   */
   async registerNode(node) {
     return true;
   }
@@ -190,10 +612,20 @@ const DOMAIN_ONTOLOGY = {
 };
 
 // Mock 12: Vue Composables
+/**
+ * Create a reactive reference
+ * @param {any} value - Initial value
+ * @returns {Object} Ref object with value property
+ */
 function refMock(value) {
   return { value };
 }
 
+/**
+ * Create a reactive proxy object
+ * @param {Object} obj - Object to make reactive
+ * @returns {Proxy} Reactive proxy object
+ */
 function reactiveMock(obj) {
   return new Proxy(obj, {
     set(target, key, value) {
@@ -209,8 +641,12 @@ function reactiveMock(obj) {
 
 /**
  * Central Hub: All 12 packages meaningfully integrated
+ * @class MegaFramework
  */
 class MegaFramework {
+  /**
+   * Create a new MegaFramework instance integrating all 12 packages
+   */
   constructor() {
     // 1. Oxigraph: RDF storage layer
     this.store = createStoreMock();
@@ -256,7 +692,9 @@ class MegaFramework {
   }
 
   /**
-   * Phase 1: Define domain ontology (Domain package)
+   * Phase 1: Define domain ontology using Domain package
+   * Creates core RDF concepts and validation rules
+   * @returns {Promise<void>}
    */
   async defineDomainOntology() {
     // 11. Domain: Define vocabulary
@@ -287,7 +725,9 @@ class MegaFramework {
   }
 
   /**
-   * Phase 2: Setup knowledge hooks (Knowledge-Engine + Hooks)
+   * Phase 2: Setup knowledge hooks for pattern extraction and validation
+   * Integrates Knowledge-Engine and Hooks packages
+   * @returns {Promise<void>}
    */
   async setupKnowledgeHooks() {
     // 3 + 4. Knowledge Engine + Hooks: Pattern extraction & validation
@@ -332,7 +772,9 @@ class MegaFramework {
   }
 
   /**
-   * Phase 3: Define workflows (YAWL)
+   * Phase 3: Define YAWL workflow templates
+   * Creates workflow orchestration patterns
+   * @returns {Promise<void>}
    */
   async defineWorkflows() {
     // 5. YAWL: Workflow orchestration
@@ -389,7 +831,9 @@ class MegaFramework {
   }
 
   /**
-   * Phase 4: Setup federation nodes (Federation)
+   * Phase 4: Setup federation nodes for distributed queries
+   * Creates peer-to-peer coordination infrastructure
+   * @returns {Promise<void>}
    */
   async setupFederation() {
     // 10. Federation: Peer-to-peer coordination
@@ -409,7 +853,9 @@ class MegaFramework {
   }
 
   /**
-   * Phase 5: Create streaming pipeline (Streaming)
+   * Phase 5: Create streaming pipeline for real-time change notification
+   * Configures quad and validation event streams
+   * @returns {Promise<void>}
    */
   async setupStreaming() {
     // 8. Streaming: Real-time change notification
@@ -433,7 +879,11 @@ class MegaFramework {
   }
 
   /**
-   * Phase 6: Dark execution engine (AtomVM)
+   * Phase 6: Execute code in isolated VM with knowledge extraction
+   * Uses AtomVM for dark execution and KGC-4D for temporal storage
+   * @param {string} query - JavaScript expression to execute
+   * @param {Object} [context={}] - Execution context variables
+   * @returns {Promise<Object>} Result with vmResult, extracted patterns, and frozen state
    */
   async darkExecute(query, context = {}) {
     const startTime = nowMock();
@@ -467,7 +917,11 @@ class MegaFramework {
   }
 
   /**
-   * Phase 7: Temporal queries (KGC-4D)
+   * Phase 7: Query across temporal snapshots using KGC-4D
+   * Reconstructs state at different points in time
+   * @param {string} query - SPARQL query string
+   * @param {Object} timeRange - Time range with start and end timestamps
+   * @returns {Promise<Array<Object>>} Query results with timestamps and events
    */
   async temporalQuery(query, timeRange) {
     // 6. KGC-4D: Query across snapshots
@@ -489,7 +943,10 @@ class MegaFramework {
   }
 
   /**
-   * Phase 8: Distributed validation (Validation + Federation)
+   * Phase 8: Validate data across federation with consensus
+   * Combines Validation and Federation packages for distributed validation
+   * @param {any} data - Data to validate
+   * @returns {Promise<Object>} Consensus result with validation details from all nodes
    */
   async validateAcrossFederation(data) {
     // 9 + 10. Validation + Federation: Consensus validation
@@ -522,7 +979,9 @@ class MegaFramework {
   }
 
   /**
-   * Phase 9: Learning system (Knowledge-Engine)
+   * Phase 9: Update learning model from execution results
+   * Extracts patterns and updates confidence weights
+   * @param {Object} executionResult - Execution result with extracted patterns
    */
   updateLearningModel(executionResult) {
     // 3. Knowledge Engine: Update learning model
@@ -544,7 +1003,10 @@ class MegaFramework {
   }
 
   /**
-   * Phase 10: Federated query execution (Federation + Oxigraph)
+   * Phase 10: Execute SPARQL query across federated nodes
+   * Combines Oxigraph and Federation for distributed queries
+   * @param {string} sparqlQuery - SPARQL query string
+   * @returns {Promise<Object>} Merged results from all federation sources
    */
   async federatedQuery(sparqlQuery) {
     // 1 + 10. Oxigraph + Federation: Distributed query
@@ -584,7 +1046,12 @@ class MegaFramework {
   }
 
   /**
-   * Phase 11: Execute workflow (YAWL + Learning)
+   * Phase 11: Execute YAWL workflow with learning feedback
+   * Orchestrates tasks using learned handlers and dark execution
+   * @param {string} workflowId - Workflow identifier
+   * @param {Object} input - Workflow input data
+   * @returns {Promise<Object>} Execution result with task results and duration
+   * @throws {Error} If workflow not found
    */
   async executeWorkflowWithLearning(workflowId, input) {
     // 5 + 3. YAWL + Knowledge-Engine: Orchestration with learning
@@ -632,7 +1099,9 @@ class MegaFramework {
   }
 
   /**
-   * Phase 12: CLI interface (CLI)
+   * Phase 12: Create unified CLI command interface
+   * Provides commands for all framework operations
+   * @returns {Promise<Object>} CLI configuration with command definitions
    */
   async cli() {
     // 7. CLI: Command interface
@@ -679,7 +1148,9 @@ class MegaFramework {
   }
 
   /**
-   * Bootstrap the entire system
+   * Bootstrap the entire 12-package integrated system
+   * Initializes all subsystems in correct order
+   * @returns {Promise<void>}
    */
   async bootstrap() {
     console.log('[Mega-Framework] Initializing 12-package integration...\n');
@@ -698,6 +1169,11 @@ class MegaFramework {
 // LARGE WORKING EXAMPLE
 // ============================================================================
 
+/**
+ * Run comprehensive example demonstrating all 12-package integration
+ * Shows knowledge discovery, dark execution, federated queries, validation, and learning
+ * @returns {Promise<void>}
+ */
 async function runExample() {
   const framework = new MegaFramework();
 

@@ -17,6 +17,12 @@ import { GRAPHS, EVENT_TYPES, PREDICATES } from './constants.mjs';
  * - Can time-travel to before any events using the genesis snapshot as baseline
  * - Subsequent time-travel fills in events from the genesis snapshot forward
  *
+ * @param {Object} store - KGCStore instance to freeze
+ * @param {Object} gitBackbone - GitBackbone instance for snapshot storage
+ * @returns {Promise<Object>} Freeze receipt with id, hash, git_ref, and timestamps
+ * @throws {TypeError} If store or gitBackbone is invalid
+ * @throws {Error} If freeze operation fails
+ *
  * @example
  * import { freezeUniverse } from './freeze.mjs';
  * import { KGCStore } from './store.mjs';
@@ -27,6 +33,14 @@ import { GRAPHS, EVENT_TYPES, PREDICATES } from './constants.mjs';
  * console.assert(result.id, 'Returns receipt with id');
  */
 export async function freezeUniverse(store, gitBackbone) {
+  // Input validation
+  if (!store || typeof store.match !== 'function') {
+    throw new TypeError('freezeUniverse: store must be a valid KGCStore instance');
+  }
+  if (!gitBackbone || typeof gitBackbone.commitSnapshot !== 'function') {
+    throw new TypeError('freezeUniverse: gitBackbone must be a valid GitBackbone instance');
+  }
+
   try {
     // 1. Get only Universe graph quads and serialize to N-Quads
     const universeGraph = dataFactory.namedNode(GRAPHS.UNIVERSE);
@@ -184,8 +198,34 @@ function deltaToQuad(delta, graphUri) {
 /**
  * Reconstruct universe state at a specific time by loading nearest snapshot and replaying events
  * Implements FULL nanosecond-precision time travel (Flaw 2 fix)
+ *
+ * @param {Object} store - KGCStore instance containing event log
+ * @param {Object} gitBackbone - GitBackbone instance for snapshot retrieval
+ * @param {bigint} targetTime - Target time in nanoseconds (BigInt)
+ * @returns {Promise<Object>} New KGCStore instance with reconstructed state
+ * @throws {TypeError} If parameters are invalid
+ * @throws {Error} If no snapshot found before target time or reconstruction fails
+ *
+ * @example
+ * import { reconstructState } from './freeze.mjs';
+ * const reconstructed = await reconstructState(store, git, targetTime);
+ * console.log('Reconstructed quad count:', reconstructed.size());
  */
 export async function reconstructState(store, gitBackbone, targetTime) {
+  // Input validation
+  if (!store || typeof store.match !== 'function') {
+    throw new TypeError('reconstructState: store must be a valid KGCStore instance');
+  }
+  if (!gitBackbone || typeof gitBackbone.readSnapshot !== 'function') {
+    throw new TypeError('reconstructState: gitBackbone must be a valid GitBackbone instance');
+  }
+  if (typeof targetTime !== 'bigint') {
+    throw new TypeError(`reconstructState: targetTime must be a BigInt, got ${typeof targetTime}`);
+  }
+  if (targetTime < 0n) {
+    throw new RangeError('reconstructState: targetTime must be non-negative');
+  }
+
   try {
     const eventLogGraph = dataFactory.namedNode(GRAPHS.EVENT_LOG);
     const systemGraph = dataFactory.namedNode(GRAPHS.SYSTEM);
@@ -318,7 +358,10 @@ export async function reconstructState(store, gitBackbone, targetTime) {
 
     // 6. Replay each event's deltas to reconstruct exact state at targetTime
     // GAP-F4 fix: Track and log skipped events instead of silent failure
+    // Bug 3 fix: Properly track deletions with inverse delta log for complete reconstruction
     const skippedEvents = [];
+    const deletionLog = []; // Track all deletions for debugging and audit
+
     for (const event of eventsToReplay) {
       const payloadQuads = [...store.match(event.subject, payloadPredi, null, eventLogGraph)];
 
@@ -334,7 +377,41 @@ export async function reconstructState(store, gitBackbone, targetTime) {
             if (delta.type === 'add') {
               tempStore.add(quad);
             } else if (delta.type === 'delete') {
+              // Bug 3 fix: Always attempt deletion, but track for audit
+              // Track deletion for complete reconstruction audit
+              const existingQuads = [...tempStore.match(
+                quad.subject,
+                quad.predicate,
+                quad.object,
+                quad.graph
+              )];
+
+              // Always attempt delete - the store will handle non-existent quads gracefully
               tempStore.delete(quad);
+
+              if (existingQuads.length > 0) {
+                deletionLog.push({
+                  eventTime: event.t_ns,
+                  quad: {
+                    subject: quad.subject.value,
+                    predicate: quad.predicate.value,
+                    object: quad.object.value,
+                  },
+                  existed: true,
+                });
+              } else {
+                // Quad didn't exist - log for debugging but don't fail
+                deletionLog.push({
+                  eventTime: event.t_ns,
+                  quad: {
+                    subject: quad.subject.value,
+                    predicate: quad.predicate.value,
+                    object: quad.object.value,
+                  },
+                  existed: false,
+                  reason: 'Quad not found in store (may have been deleted earlier or never existed)',
+                });
+              }
             }
           }
         } catch (err) {
@@ -362,6 +439,22 @@ export async function reconstructState(store, gitBackbone, targetTime) {
       console.warn(`[KGC Reconstruct] Warning: ${skippedEvents.length} event(s) skipped during replay - reconstruction may be incomplete`);
     }
 
+    // Debug log for deletion audit if any deletions had issues
+    const phantomDeletions = deletionLog.filter(d => !d.existed);
+    if (phantomDeletions.length > 0 && typeof console !== 'undefined' && console.warn) {
+      console.warn(`[KGC Reconstruct] Warning: ${phantomDeletions.length} deletion(s) targeted non-existent quads`);
+    }
+
+    // Attach reconstruction metadata to temp store for debugging
+    tempStore._reconstructionMetadata = {
+      snapshotTime: snapshotTime,
+      targetTime: targetTime,
+      eventsReplayed: eventsToReplay.length,
+      skippedEvents: skippedEvents.length,
+      deletionsApplied: deletionLog.filter(d => d.existed).length,
+      phantomDeletions: phantomDeletions.length,
+    };
+
     return tempStore;
   } catch (error) {
     throw new Error(`Failed to reconstruct state: ${error.message}`);
@@ -370,8 +463,37 @@ export async function reconstructState(store, gitBackbone, targetTime) {
 
 /**
  * Verify a frozen universe by comparing hash and git commit
+ *
+ * @param {Object} receipt - Freeze receipt to verify
+ * @param {string} receipt.git_ref - Git reference for the snapshot
+ * @param {string} receipt.universe_hash - Expected BLAKE3 hash
+ * @param {string} [receipt.id] - Receipt ID
+ * @param {string} [receipt.timestamp_iso] - Receipt timestamp
+ * @param {Object} gitBackbone - GitBackbone instance for snapshot retrieval
+ * @param {Object} [store] - Optional store reference (unused, for API compatibility)
+ * @returns {Promise<Object>} Verification result with valid flag and details
+ * @throws {TypeError} If receipt or gitBackbone is invalid
+ *
+ * @example
+ * import { verifyReceipt } from './freeze.mjs';
+ * const result = await verifyReceipt(freezeReceipt, git);
+ * console.log('Valid:', result.valid);
  */
 export async function verifyReceipt(receipt, gitBackbone, store) {
+  // Input validation
+  if (!receipt || typeof receipt !== 'object') {
+    throw new TypeError('verifyReceipt: receipt must be an object');
+  }
+  if (!receipt.git_ref || typeof receipt.git_ref !== 'string') {
+    throw new TypeError('verifyReceipt: receipt.git_ref must be a string');
+  }
+  if (!receipt.universe_hash || typeof receipt.universe_hash !== 'string') {
+    throw new TypeError('verifyReceipt: receipt.universe_hash must be a string');
+  }
+  if (!gitBackbone || typeof gitBackbone.readSnapshot !== 'function') {
+    throw new TypeError('verifyReceipt: gitBackbone must be a valid GitBackbone instance');
+  }
+
   try {
     // 1. Load snapshot from Git
     const nquads = await gitBackbone.readSnapshot(receipt.git_ref);

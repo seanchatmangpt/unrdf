@@ -45,6 +45,7 @@ node examples/production-federation.mjs
 - ✅ Performance metrics
 - ✅ Per-peer statistics
 - ✅ Response time tracking
+- ✅ OpenTelemetry integration (metrics, traces, spans)
 
 ## Installation
 
@@ -445,10 +446,36 @@ Complete examples are available in the [examples/](./examples/) directory:
 
 **New to federation?** Start with [QUICKSTART-FEDERATION.md](./QUICKSTART-FEDERATION.md).
 
+## Observability
+
+The federation package includes built-in OpenTelemetry instrumentation for production monitoring:
+
+```javascript
+import { createCoordinator } from '@unrdf/federation'
+
+const coordinator = createCoordinator({
+  peers: [...],
+  observability: {
+    serviceName: 'my-federation',
+    version: '1.0.0'
+  }
+})
+
+// Metrics automatically tracked:
+// - federation.queries (counter)
+// - federation.errors (counter)
+// - federation.query_duration (histogram)
+// - federation.peer_health (up/down counter)
+// - federation.concurrent_queries (gauge)
+```
+
+**Note**: Metrics are exported via `@opentelemetry/api` and can be collected by any OTEL-compatible backend (Prometheus, Jaeger, etc.).
+
 ## Dependencies
 
 - `@unrdf/core` - RDF substrate
 - `@unrdf/hooks` - Policy enforcement
+- `@opentelemetry/api` - Observability instrumentation
 
 ## Browser Compatibility
 

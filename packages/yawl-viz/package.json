@@ -1,0 +1,56 @@
+{
+  "name": "@unrdf/yawl-viz",
+  "version": "1.0.0",
+  "description": "Real-time D3.js visualization for YAWL workflows with Van der Aalst pattern rendering",
+  "type": "module",
+  "main": "src/visualizer.mjs",
+  "exports": {
+    ".": "./src/visualizer.mjs"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint src/ test/ --ext .mjs",
+    "typecheck": "tsc --noEmit",
+    "dev": "vite",
+    "build": "unbuild"
+  },
+  "keywords": [
+    "yawl",
+    "workflow",
+    "visualization",
+    "d3",
+    "van-der-aalst",
+    "petri-net",
+    "real-time"
+  ],
+  "dependencies": {
+    "@unrdf/yawl": "workspace:*",
+    "d3": "^7.9.0",
+    "d3-graphviz": "^5.6.0",
+    "d3-selection": "^3.0.0",
+    "d3-zoom": "^3.0.0",
+    "d3-drag": "^3.0.0",
+    "d3-force": "^3.0.0",
+    "d3-hierarchy": "^3.1.2"
+  },
+  "devDependencies": {
+    "eslint": "^8.0.0",
+    "vitest": "^4.0.15",
+    "vite": "^5.0.0",
+    "jsdom": "^25.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=7.0.0"
+  },
+  "sideEffects": false,
+  "files": [
+    "src/",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}

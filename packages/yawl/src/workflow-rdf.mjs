@@ -1,23 +1,15 @@
 /**
- * @file YAWL Workflow RDF - RDF serialization and deserialization
+ * @file YAWL Workflow - RDF serialization and deserialization
  * @module @unrdf/yawl/workflow-rdf
  *
  * @description
- * RDF integration for YAWL workflows using the YAWL ontology.
- * Provides bidirectional conversion between Workflow instances and RDF triples.
- *
- * @example
- * import { createStore } from '@unrdf/oxigraph';
- * import { workflowToRDF, workflowFromRDF } from '@unrdf/yawl/workflow-rdf';
- *
- * const store = createStore();
- * const workflow = createWorkflow({ ... });
- * const { specUri, quadCount } = workflowToRDF(workflow, store);
- * const loaded = await workflowFromRDF(store, 'workflow-id');
+ * RDF integration for YAWL workflows including:
+ * - Serialization to RDF representation
+ * - Deserialization from RDF stores
+ * - YAWL ontology mapping
  */
 
 import { dataFactory } from '@unrdf/oxigraph';
-import { Workflow } from './workflow-core.mjs';
 import {
   YAWL,
   YAWL_TASK,
@@ -60,7 +52,7 @@ import {
 const { quad, namedNode, literal } = dataFactory;
 
 // =============================================================================
-// RDF Mapping Constants
+// RDF Type Mappings
 // =============================================================================
 
 /**
@@ -120,7 +112,7 @@ const RDF_TO_TASK_KIND = {
 };
 
 // =============================================================================
-// RDF Serialization
+// Serialization
 // =============================================================================
 
 /**
@@ -275,7 +267,7 @@ export function workflowToRDF(workflow, store, options = {}) {
 }
 
 // =============================================================================
-// RDF Deserialization
+// Deserialization
 // =============================================================================
 
 /**
@@ -287,6 +279,7 @@ export function workflowToRDF(workflow, store, options = {}) {
  * @param {string} workflowId - Workflow specification ID
  * @param {Object} [options={}] - Loading options
  * @param {string} [options.graph] - Named graph URI to query
+ * @param {Function} WorkflowClass - Workflow constructor to use
  * @returns {Promise<Workflow|null>} Workflow instance or null if not found
  *
  * @example
@@ -298,7 +291,7 @@ export function workflowToRDF(workflow, store, options = {}) {
  *   console.log(`Loaded workflow with ${workflow.getTasks().length} tasks`);
  * }
  */
-export async function workflowFromRDF(store, workflowId, options = {}) {
+export async function workflowFromRDF(store, workflowId, options = {}, WorkflowClass) {
   const specNode = specUri(workflowId);
   const graphUri = options.graph || `${YAWL}specs/${workflowId}`;
   const graph = namedNode(graphUri);
@@ -426,8 +419,8 @@ export async function workflowFromRDF(store, workflowId, options = {}) {
   const endQuads = store.match(specNode, namedNode(YAWL + 'endTask'), null, null);
   const endTaskIds = endQuads.map(q => q.object.value.replace(YAWL_TASK, ''));
 
-  // Create workflow
-  return new Workflow({
+  // Create workflow using provided class
+  return new WorkflowClass({
     id: workflowId,
     name,
     version,
@@ -438,12 +431,3 @@ export async function workflowFromRDF(store, workflowId, options = {}) {
     endTaskIds,
   });
 }
-
-// =============================================================================
-// Module Exports
-// =============================================================================
-
-export default {
-  workflowToRDF,
-  workflowFromRDF,
-};

@@ -5,7 +5,7 @@
  * deterministic, reusable template components
  */
 
-// Import classes first so they can be used in factory functions
+// Import classes for local use
 import { KGenTemplateBase } from './template-base.js';
 import { KGenMacroTemplates } from './macro-templates.js';
 import { KGenFilterTemplates } from './filter-templates.js';
@@ -20,17 +20,11 @@ export { KGenSHACLTemplates } from './shacl-templates.js';
 export { KGenInjectionTargets } from './injection-targets.js';
 
 // Convenience factory function
-/**
- *
- */
 export function createBaseTemplate(options = {}) {
   return new KGenTemplateBase(options);
 }
 
 // Template system factory
-/**
- *
- */
 export function createTemplateSystem(options = {}) {
   const base = new KGenTemplateBase(options);
   const macros = new KGenMacroTemplates(options);

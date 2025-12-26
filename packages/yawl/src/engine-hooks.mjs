@@ -1,177 +1,117 @@
 /**
- * @file YAWL Engine Hooks - Policy pack integration and KGC-4D logging
+ * @file YAWL Engine Hooks - Policy pack integration and hook execution
  * @module @unrdf/yawl/engine-hooks
+ */
+
+/**
+ * Mixin that adds hook and policy pack capabilities
  *
- * @description
- * Hook and policy functionality:
- * - Policy pack registration and execution
- * - KGC-4D event logging
- * - Circuit breaker state management
- * - Pre/post task hooks
+ * Provides:
+ * - Policy pack registration
+ * - Hook execution (validators, routers, cancellation handlers)
+ * - Policy enforcement during task lifecycle
+ *
+ * @param {class} Base - Base class to extend
+ * @returns {class} Extended class with hook capabilities
  */
+export function withHooks(Base) {
+  return class EngineHooks extends Base {
+    // =========================================================================
+    // Policy Pack Integration
+    // =========================================================================
 
-import { now, toISO } from '@unrdf/kgc-4d';
-import {
-  createWorkflowReceipt,
-  appendWorkflowEvent,
-} from './events/yawl-events.mjs';
-import { ENGINE_EVENTS } from './engine-constants.mjs';
-
-// =============================================================================
-// Policy Pack Integration
-// =============================================================================
-
-/**
- * Register a policy pack for a workflow
- * @param {Object} engine - Engine instance
- * @param {string} workflowId - Workflow ID
- * @param {Object} policyPack - Policy pack from createYAWLPolicyPack
- * @returns {void}
- */
-export function registerPolicyPack(engine, workflowId, policyPack) {
-  if (!engine.workflows.has(workflowId)) {
-    throw new Error(`Workflow ${workflowId} not found`);
-  }
-  engine._policyPacks.set(workflowId, policyPack);
-}
-
-/**
- * Get policy pack for a workflow
- * @param {Object} engine - Engine instance
- * @param {string} workflowId - Workflow ID
- * @returns {Object|undefined} Policy pack if registered
- */
-export function getPolicyPack(engine, workflowId) {
-  return engine._policyPacks.get(workflowId);
-}
-
-// =============================================================================
-// KGC-4D Integration
-// =============================================================================
-
-/**
- * Log a case event to KGC-4D
- * @param {Object} engine - Engine instance
- * @param {string} eventType - Event type
- * @param {Object} payload - Event payload
- */
-export async function logCaseEvent(engine, eventType, payload) {
-  try {
-    const receipt = await createWorkflowReceipt({
-      beforeState: { empty: true },
-      afterState: payload,
-      decision: { action: eventType, ...payload },
-      justification: { reasoning: `Case event: ${eventType}` },
-    });
-
-    await appendWorkflowEvent(engine.store, eventType, {
-      ...payload,
-      timestamp: toISO(now()),
-      receipt,
-    });
-  } catch (error) {
-    console.error(`Failed to log case event ${eventType}:`, error);
-  }
-}
-
-/**
- * Log a task event to KGC-4D
- * @param {Object} engine - Engine instance
- * @param {string} eventType - Event type
- * @param {Object} payload - Event payload
- * @param {string} [caseId] - Case ID for context
- */
-export async function logTaskEvent(engine, eventType, payload, caseId) {
-  try {
-    const receipt = await createWorkflowReceipt({
-      beforeState: payload.beforeState || { workItemId: payload.workItemId },
-      afterState: payload,
-      decision: { action: eventType, ...payload },
-      justification: { reasoning: `Task event: ${eventType}` },
-    });
-
-    await appendWorkflowEvent(
-      engine.store,
-      eventType,
-      {
-        ...payload,
-        receipt,
-      },
-      { caseId }
-    );
-  } catch (error) {
-    console.error(`Failed to log task event ${eventType}:`, error);
-  }
-}
-
-// =============================================================================
-// Circuit Breaker
-// =============================================================================
-
-/**
- * Check if circuit breaker is open
- * @param {Object} engine - Engine instance
- * @param {string} key - Circuit breaker key
- * @returns {boolean}
- */
-export function isCircuitOpen(engine, key) {
-  const breaker = engine._circuitBreakers.get(key);
-  if (!breaker) return false;
-
-  if (breaker.state === 'open') {
-    // Check if reset timeout has passed
-    const elapsed = Number(now() - breaker.openedAt) / 1_000_000;
-    if (elapsed >= engine.circuitBreakerResetTimeout) {
-      breaker.state = 'half-open';
-      return false;
+    /**
+     * Register a policy pack for a workflow
+     * @param {string} workflowId - Workflow ID
+     * @param {Object} policyPack - Policy pack from createYAWLPolicyPack
+     * @returns {void}
+     */
+    registerPolicyPack(workflowId, policyPack) {
+      if (!this.workflows.has(workflowId)) {
+        throw new Error(`Workflow ${workflowId} not found`);
+      }
+      this._policyPacks.set(workflowId, policyPack);
     }
-    return true;
-  }
 
-  return false;
-}
-
-/**
- * Record a circuit breaker failure
- * @param {Object} engine - Engine instance
- * @param {string} key - Circuit breaker key
- */
-export function recordCircuitFailure(engine, key) {
-  let breaker = engine._circuitBreakers.get(key);
-  if (!breaker) {
-    breaker = { failures: 0, state: 'closed', openedAt: null };
-    engine._circuitBreakers.set(key, breaker);
-  }
-
-  breaker.failures++;
-
-  if (breaker.failures >= engine.circuitBreakerThreshold) {
-    breaker.state = 'open';
-    breaker.openedAt = now();
-    engine._stats.circuitBreakerTrips++;
-
-    engine.emit(ENGINE_EVENTS.CIRCUIT_BREAKER_OPEN, {
-      key,
-      failures: breaker.failures,
-    });
-  }
-}
-
-/**
- * Reset circuit breaker on success
- * @param {Object} engine - Engine instance
- * @param {string} key - Circuit breaker key
- */
-export function resetCircuitBreaker(engine, key) {
-  const breaker = engine._circuitBreakers.get(key);
-  if (breaker) {
-    const wasOpen = breaker.state !== 'closed';
-    breaker.failures = 0;
-    breaker.state = 'closed';
-    breaker.openedAt = null;
-
-    if (wasOpen) {
-      engine.emit(ENGINE_EVENTS.CIRCUIT_BREAKER_CLOSE, { key });
+    /**
+     * Get policy pack for a workflow
+     * @param {string} workflowId - Workflow ID
+     * @returns {Object|undefined} Policy pack if registered
+     */
+    getPolicyPack(workflowId) {
+      return this._policyPacks.get(workflowId);
     }
-  }
+
+    // =========================================================================
+    // Hook Execution Helpers
+    // =========================================================================
+
+    /**
+     * Execute pre-enablement validation hook
+     * @param {string} workflowId - Workflow ID
+     * @param {string} taskId - Task ID
+     * @param {Object} context - Execution context
+     * @returns {Promise<{valid: boolean, receipt?: Object}>}
+     * @protected
+     */
+    async _executeValidationHook(workflowId, taskId, context) {
+      const policyPack = this._policyPacks.get(workflowId);
+      if (!policyPack || !policyPack.getValidator) {
+        return { valid: true };
+      }
+
+      const validator = policyPack.getValidator(taskId);
+      if (!validator) {
+        return { valid: true };
+      }
+
+      const validation = await validator(this.store, context);
+      return validation;
+    }
+
+    /**
+     * Execute post-completion routing hook
+     * @param {string} workflowId - Workflow ID
+     * @param {string} taskId - Task ID
+     * @param {Object} context - Execution context
+     * @returns {Promise<Object|null>} Routing result with receipt
+     * @protected
+     */
+    async _executeRoutingHook(workflowId, taskId, context) {
+      const policyPack = this._policyPacks.get(workflowId);
+      if (!policyPack || !policyPack.getRouter) {
+        return null;
+      }
+
+      const router = policyPack.getRouter(taskId);
+      if (!router) {
+        return null;
+      }
+
+      const routing = await router(this.store, context);
+      return routing;
+    }
+
+    /**
+     * Execute cancellation handler hook
+     * @param {string} workflowId - Workflow ID
+     * @param {string} taskId - Task ID
+     * @param {string} reason - Cancellation reason
+     * @param {Object} context - Execution context
+     * @protected
+     */
+    _executeCancellationHook(workflowId, taskId, reason, context) {
+      const policyPack = this._policyPacks.get(workflowId);
+      if (!policyPack || !policyPack.getCancellationHandler) {
+        return;
+      }
+
+      const handler = policyPack.getCancellationHandler(taskId);
+      if (!handler) {
+        return;
+      }
+
+      handler(reason, context);
+    }
+  };
 }
