@@ -1,0 +1,38 @@
+{
+  "name": "@unrdf/lens",
+  "version": "1.0.0",
+  "description": "Bidirectional, deterministic, serializable lens compiler for mapping API payloads to RDF graphs",
+  "type": "module",
+  "main": "./src/index.mjs",
+  "exports": {
+    ".": "./src/index.mjs"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "demo": "node examples/run-demo.mjs",
+    "verify:determinism": "node test/verify-determinism.mjs",
+    "verify:serialization": "node test/verify-serialization.mjs"
+  },
+  "keywords": [
+    "rdf",
+    "lens",
+    "bidirectional",
+    "transformation",
+    "graph",
+    "semantic-web",
+    "linked-data",
+    "deterministic",
+    "skolem"
+  ],
+  "author": "UNRDF Project",
+  "license": "MIT",
+  "dependencies": {
+    "@unrdf/core": "workspace:*",
+    "@unrdf/oxigraph": "workspace:*",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

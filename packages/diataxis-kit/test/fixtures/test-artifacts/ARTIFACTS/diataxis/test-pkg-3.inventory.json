@@ -1,0 +1,97 @@
+{
+  "packageName": "@unrdf/test-pkg-3",
+  "version": "2.1.0",
+  "generatedAt": "2025-01-01T00:00:00.000Z",
+  "confidence": {
+    "tutorials": 0.6,
+    "howtos": 0.7,
+    "reference": 0.8,
+    "explanation": 0.65
+  },
+  "tutorials": [
+    {
+      "id": "tutorial-start",
+      "title": "Start Here",
+      "goal": "Get started",
+      "prerequisites": [],
+      "stepsOutline": [
+        "Install",
+        "Use"
+      ],
+      "confidenceScore": 0.6,
+      "source": [
+        "readme"
+      ]
+    }
+  ],
+  "howtos": [
+    {
+      "id": "howto-config",
+      "title": "Configure",
+      "task": "Configure",
+      "context": "Setup",
+      "steps": [
+        "Edit config"
+      ],
+      "confidenceScore": 0.7,
+      "source": [
+        "readme"
+      ]
+    },
+    {
+      "id": "howto-integrate",
+      "title": "Integrate",
+      "task": "Integrate",
+      "context": "Integration",
+      "steps": [
+        "Setup"
+      ],
+      "confidenceScore": 0.7,
+      "source": [
+        "keywords"
+      ]
+    }
+  ],
+  "reference": {
+    "id": "reference-api",
+    "title": "API Reference",
+    "items": [
+      {
+        "name": "export1",
+        "type": "export",
+        "description": "Export",
+        "example": "import"
+      }
+    ],
+    "confidenceScore": 0.8,
+    "source": [
+      "exports"
+    ]
+  },
+  "explanation": {
+    "id": "explanation-overview",
+    "title": "Understanding Package",
+    "concepts": [
+      "concept"
+    ],
+    "architecture": "Architecture description",
+    "tradeoffs": [
+      "Tradeoff"
+    ],
+    "confidenceScore": 0.65,
+    "source": [
+      "readme"
+    ]
+  },
+  "evidence": {
+    "readmeHeadings": [
+      "Getting Started",
+      "Usage"
+    ],
+    "docsFiles": [],
+    "examplesFiles": [
+      "example.mjs"
+    ],
+    "fingerprint": "ghi789"
+  }
+}

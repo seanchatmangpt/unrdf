@@ -1,0 +1,109 @@
+{
+  "confidence": {
+    "explanation": 0.3,
+    "howtos": 0.5,
+    "reference": 0.2,
+    "tutorials": 0
+  },
+  "evidence": {
+    "docsFiles": [],
+    "examplesFiles": [],
+    "fingerprint": "821011507563081b20acab2baac9a21be6d4b52d4cd605e109f69241d66e319a",
+    "readmeHeadings": [
+      "Features",
+      "Usage",
+      "Examples",
+      "API Reference",
+      "Change Object",
+      "Testing",
+      "Learn More"
+    ]
+  },
+  "explanation": {
+    "architecture": "Demonstrates change feed creation, subscription, history tracking, and replay capabilities in `@unrdf/streaming`.",
+    "concepts": [
+      "core functionality"
+    ],
+    "confidenceScore": 0.3,
+    "id": "explanation-unrdf-streaming-example-change-feeds-explanation",
+    "source": [
+      "readme",
+      "inferred"
+    ],
+    "title": "Understanding @unrdf/streaming-example-change-feeds",
+    "tradeoffs": [
+      "Ease of use vs. advanced configuration options",
+      "Memory usage vs. processing speed",
+      "Bundle size vs. feature completeness"
+    ]
+  },
+  "generatedAt": "2000-01-01T00:00:00.000Z",
+  "howtos": [
+    {
+      "confidenceScore": 0.5,
+      "context": "When you need robust error handling in production",
+      "id": "howto-handle-errors",
+      "source": [
+        "tests"
+      ],
+      "steps": [
+        "Set up try-catch blocks",
+        "Handle common error types",
+        "Log errors appropriately"
+      ],
+      "task": "Implement error handling for @unrdf/streaming-example-change-feeds",
+      "title": "Handle Errors"
+    },
+    {
+      "confidenceScore": 0.4,
+      "context": "When encountering issues during usage",
+      "id": "howto-troubleshoot-common-issues",
+      "source": [
+        "inferred"
+      ],
+      "steps": [
+        "Check configuration",
+        "Review error messages",
+        "Apply fixes"
+      ],
+      "task": "Resolve common problems and errors",
+      "title": "Troubleshoot Common Issues"
+    }
+  ],
+  "packageName": "@unrdf/streaming-example-change-feeds",
+  "reference": {
+    "confidenceScore": 0.5,
+    "id": "reference-unrdf-streaming-example-change-feeds-reference",
+    "items": [
+      {
+        "description": "Reference documentation to be added",
+        "example": null,
+        "name": "unknown",
+        "type": "unknown"
+      }
+    ],
+    "source": [
+      "inferred"
+    ],
+    "title": "@unrdf/streaming-example-change-feeds Reference"
+  },
+  "tutorials": [
+    {
+      "confidenceScore": 0,
+      "goal": "Learn how to set up and use @unrdf/streaming-example-change-feeds in your project",
+      "id": "tutorial-getting-started-with-unrdf-streaming-example-change-feeds",
+      "prerequisites": [],
+      "source": [
+        "inferred"
+      ],
+      "stepsOutline": [
+        "Install the package",
+        "Import required modules",
+        "Create a basic example",
+        "Run and verify output"
+      ],
+      "title": "Getting Started with @unrdf/streaming-example-change-feeds"
+    }
+  ],
+  "version": "1.0.0"
+}

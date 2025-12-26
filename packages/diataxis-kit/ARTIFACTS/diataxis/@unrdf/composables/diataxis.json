@@ -1,0 +1,142 @@
+{
+  "confidence": {
+    "explanation": 1,
+    "howtos": 0.75,
+    "reference": 0.5,
+    "tutorials": 1
+  },
+  "evidence": {
+    "docsFiles": [
+      "API.md",
+      "CONTRIBUTING.md",
+      "GUIDE.md",
+      "README.md",
+      "validation-report.json"
+    ],
+    "examplesFiles": [
+      "basic.mjs"
+    ],
+    "fingerprint": "b5a7e550013c8701467841731369f9142d5bc1b4e7364925f0f1902e06d85fda",
+    "readmeHeadings": [
+      "Installation",
+      "Quick Start",
+      "Features",
+      "Use Cases",
+      "Documentation",
+      "Status",
+      "Depends On",
+      "VOC Usage",
+      "License"
+    ]
+  },
+  "explanation": {
+    "architecture": "![Version](https://img.shields.io/badge/version-5.0.0--beta.1-blue) ![Production Ready](https://img.shields.",
+    "concepts": [
+      "rdf",
+      "vue",
+      "composables",
+      "reactive",
+      "web"
+    ],
+    "confidenceScore": 1,
+    "id": "explanation-unrdf-composables-explanation",
+    "source": [
+      "keywords",
+      "readme",
+      "docs",
+      "inferred"
+    ],
+    "title": "Understanding @unrdf/composables",
+    "tradeoffs": [
+      "Ease of use vs. advanced configuration options",
+      "Memory usage vs. processing speed",
+      "Bundle size vs. feature completeness"
+    ]
+  },
+  "generatedAt": "2000-01-01T00:00:00.000Z",
+  "howtos": [
+    {
+      "confidenceScore": 0.5,
+      "context": "When you need robust error handling in production",
+      "id": "howto-handle-errors",
+      "source": [
+        "tests"
+      ],
+      "steps": [
+        "Set up try-catch blocks",
+        "Handle common error types",
+        "Log errors appropriately"
+      ],
+      "task": "Implement error handling for @unrdf/composables",
+      "title": "Handle Errors"
+    },
+    {
+      "confidenceScore": 0.7,
+      "context": "When working with rdf in your project",
+      "id": "howto-integrate-with-rdf",
+      "source": [
+        "keywords",
+        "inferred"
+      ],
+      "steps": [
+        "Install dependencies",
+        "Set up integration",
+        "Test integration"
+      ],
+      "task": "Connect @unrdf/composables with rdf",
+      "title": "Integrate with rdf"
+    }
+  ],
+  "packageName": "@unrdf/composables",
+  "reference": {
+    "confidenceScore": 1,
+    "id": "reference-unrdf-composables-reference",
+    "items": [
+      {
+        "description": "Export: ./delta",
+        "example": "import from \"./src/delta.mjs\"",
+        "name": "./delta",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./graph",
+        "example": "import from \"./src/graph.mjs\"",
+        "name": "./graph",
+        "type": "export"
+      },
+      {
+        "description": "Export: .",
+        "example": "import from \"./src/index.mjs\"",
+        "name": "@unrdf/composables",
+        "type": "export"
+      }
+    ],
+    "source": [
+      "exports"
+    ],
+    "title": "@unrdf/composables Reference"
+  },
+  "tutorials": [
+    {
+      "confidenceScore": 0.9999999999999999,
+      "goal": "Learn how to set up and use @unrdf/composables in your project",
+      "id": "tutorial-getting-started-with-unrdf-composables",
+      "prerequisites": [
+        "Basic RDF knowledge"
+      ],
+      "source": [
+        "examples",
+        "readme",
+        "keywords"
+      ],
+      "stepsOutline": [
+        "Install the package",
+        "Import required modules",
+        "Create a basic example",
+        "Run and verify output"
+      ],
+      "title": "Getting Started with @unrdf/composables"
+    }
+  ],
+  "version": "5.0.1"
+}

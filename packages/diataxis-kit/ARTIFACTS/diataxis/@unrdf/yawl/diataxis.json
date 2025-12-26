@@ -1,0 +1,223 @@
+{
+  "confidence": {
+    "explanation": 0.7,
+    "howtos": 0.75,
+    "reference": 0.7,
+    "tutorials": 1
+  },
+  "evidence": {
+    "docsFiles": [],
+    "examplesFiles": [
+      "blockchain-receipts-example.mjs",
+      "graphql-api-example.mjs",
+      "resource-allocation.mjs",
+      "visualization-example.mjs"
+    ],
+    "fingerprint": "58362d1d6258de8e84258a14e3c87da540fd91e8cf96a1377d3f47dfe7b824af",
+    "readmeHeadings": [
+      "Features",
+      "Installation",
+      "Quick Start",
+      "Architecture",
+      "Core API",
+      "Common Workflow Patterns",
+      "Error Handling",
+      "Examples",
+      "Advanced Features",
+      "API Reference",
+      "Use Cases",
+      "Performance",
+      "Dependencies",
+      "When to Use @unrdf/yawl",
+      "Documentation",
+      "Development",
+      "Testing",
+      "Contributing",
+      "License"
+    ]
+  },
+  "explanation": {
+    "architecture": "![Version](https://img.shields.io/badge/version-5.0.0-blue) ![Production Ready](https://img.shields.",
+    "concepts": [
+      "workflow",
+      "yawl",
+      "van-der-aalst",
+      "petri-net",
+      "bpmn"
+    ],
+    "confidenceScore": 0.7,
+    "id": "explanation-unrdf-yawl-explanation",
+    "source": [
+      "keywords",
+      "readme"
+    ],
+    "title": "Understanding @unrdf/yawl",
+    "tradeoffs": [
+      "Performance vs. flexibility tradeoffs discussed in README"
+    ]
+  },
+  "generatedAt": "2000-01-01T00:00:00.000Z",
+  "howtos": [
+    {
+      "confidenceScore": 0.5,
+      "context": "When you need robust error handling in production",
+      "id": "howto-handle-errors",
+      "source": [
+        "tests"
+      ],
+      "steps": [
+        "Set up try-catch blocks",
+        "Handle common error types",
+        "Log errors appropriately"
+      ],
+      "task": "Implement error handling for @unrdf/yawl",
+      "title": "Handle Errors"
+    },
+    {
+      "confidenceScore": 0.7,
+      "context": "When working with workflow in your project",
+      "id": "howto-integrate-with-workflow",
+      "source": [
+        "keywords",
+        "inferred"
+      ],
+      "steps": [
+        "Install dependencies",
+        "Set up integration",
+        "Test integration"
+      ],
+      "task": "Connect @unrdf/yawl with workflow",
+      "title": "Integrate with workflow"
+    }
+  ],
+  "packageName": "@unrdf/yawl",
+  "reference": {
+    "confidenceScore": 1,
+    "id": "reference-unrdf-yawl-reference",
+    "items": [
+      {
+        "description": "Export: ./api",
+        "example": "import from \"./src/api/workflow-api.mjs\"",
+        "name": "./api",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./blockchain-receipts",
+        "example": "import from \"./src/blockchain-receipts.mjs\"",
+        "name": "./blockchain-receipts",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./cancellation",
+        "example": "import from \"./src/cancellation/index.mjs\"",
+        "name": "./cancellation",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./graphql-api",
+        "example": "import from \"./src/api/graphql-api.mjs\"",
+        "name": "./graphql-api",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./hooks",
+        "example": "import from \"./src/hooks/yawl-hooks.mjs\"",
+        "name": "./hooks",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./ontology",
+        "example": "import from \"./src/ontology/yawl-ontology.mjs\"",
+        "name": "./ontology",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./receipt",
+        "example": "import from \"./src/receipt.mjs\"",
+        "name": "./receipt",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./resources",
+        "example": "import from \"./src/resources/yawl-resources.mjs\"",
+        "name": "./resources",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./schemas",
+        "example": "import from \"./src/types/yawl-schemas.mjs\"",
+        "name": "./schemas",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./store",
+        "example": "import from \"./src/store/yawl-store.mjs\"",
+        "name": "./store",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./types",
+        "example": "import from \"./src/types/yawl-types.mjs\"",
+        "name": "./types",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./visualization",
+        "example": "import from \"./src/visualization/live-workflow-viz.mjs\"",
+        "name": "./visualization",
+        "type": "export"
+      },
+      {
+        "description": "Export: .",
+        "example": "import from \"./src/index.mjs\"",
+        "name": "@unrdf/yawl",
+        "type": "export"
+      }
+    ],
+    "source": [
+      "exports"
+    ],
+    "title": "@unrdf/yawl Reference"
+  },
+  "tutorials": [
+    {
+      "confidenceScore": 0.8,
+      "goal": "Complete your first practical examples",
+      "id": "tutorial-first-steps",
+      "prerequisites": [
+        "Completed \"Getting Started with @unrdf/yawl\""
+      ],
+      "source": [
+        "examples"
+      ],
+      "stepsOutline": [
+        "Work through blockchain-receipts-example.mjs",
+        "Work through graphql-api-example.mjs",
+        "Work through resource-allocation.mjs",
+        "Work through visualization-example.mjs"
+      ],
+      "title": "First Steps"
+    },
+    {
+      "confidenceScore": 0.9999999999999999,
+      "goal": "Learn how to set up and use @unrdf/yawl in your project",
+      "id": "tutorial-getting-started-with-unrdf-yawl",
+      "prerequisites": [
+        "Basic RDF knowledge"
+      ],
+      "source": [
+        "examples",
+        "readme",
+        "keywords"
+      ],
+      "stepsOutline": [
+        "Install the package",
+        "Import required modules",
+        "Create a basic example",
+        "Run and verify output"
+      ],
+      "title": "Getting Started with @unrdf/yawl"
+    }
+  ],
+  "version": "5.0.0"
+}

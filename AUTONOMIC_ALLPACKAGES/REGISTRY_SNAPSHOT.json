@@ -1,0 +1,499 @@
+{
+  "timestamp": "2025-12-26T00:00:00Z",
+  "count": 41,
+  "usages": [
+    {
+      "packageName": "@unrdf/atomvm",
+      "feature": "atomvm",
+      "file": "demo.mjs",
+      "result": {
+        "available": true
+      },
+      "operation": "@unrdf/atomvm capability",
+      "proofHash": "41c674a5056a6c63",
+      "timestamp": 0,
+      "registeredAt": "2025-12-26T00:00:00Z"
+    },
+    {
+      "packageName": "@unrdf/blockchain",
+      "feature": "blockchain",
+      "file": "demo.mjs",
+      "result": {
+        "integrated": true
+      },
+      "operation": "@unrdf/blockchain integration",
+      "proofHash": "df81e9022c49e84a",
+      "timestamp": 0,
+      "registeredAt": "2025-12-26T00:00:00Z"
+    },
+    {
+      "packageName": "@unrdf/caching",
+      "feature": "caching",
+      "file": "demo.mjs",
+      "result": {
+        "available": true
+      },
+      "operation": "@unrdf/caching capability",
+      "proofHash": "8cd61454292aa703",
+      "timestamp": 0,
+      "registeredAt": "2025-12-26T00:00:00Z"
+    },
+    {
+      "packageName": "@unrdf/cli",
+      "feature": "cli",
+      "file": "demo.mjs",
+      "result": {
+        "available": true
+      },
+      "operation": "@unrdf/cli capability",
+      "proofHash": "c4cdd461eaf8436e",
+      "timestamp": 0,
+      "registeredAt": "2025-12-26T00:00:00Z"
+    },
+    {
+      "packageName": "@unrdf/collab",
+      "feature": "collab",
+      "file": "demo.mjs",
+      "result": {
+        "available": true
+      },
+      "operation": "@unrdf/collab capability",
+      "proofHash": "36675af4df4d5fcb",
+      "timestamp": 0,
+      "registeredAt": "2025-12-26T00:00:00Z"
+    },
+    {
+      "packageName": "@unrdf/composables",
+      "feature": "composables",
+      "file": "demo.mjs",
+      "result": {
+        "available": true
+      },
+      "operation": "@unrdf/composables capability",
+      "proofHash": "60c223378561381b",
+      "timestamp": 0,
+      "registeredAt": "2025-12-26T00:00:00Z"
+    },
+    {
+      "packageName": "@unrdf/consensus",
+      "feature": "consensus",
+      "file": "demo.mjs",
+      "result": {
+        "integrated": true
+      },
+      "operation": "@unrdf/consensus integration",
+      "proofHash": "a3b75b426ead0d18",
+      "timestamp": 0,
+      "registeredAt": "2025-12-26T00:00:00Z"
+    },
+    {
+      "packageName": "@unrdf/core",
+      "feature": "RDF operations",
+      "file": "demo.mjs",
+      "result": {
+        "quads": 3
+      },
+      "operation": "Store substrate initialization",
+      "proofHash": "76bec78ffd9f67a0",
+      "timestamp": 0,
+      "registeredAt": "2025-12-26T00:00:00Z"
+    },
+    {
+      "packageName": "@unrdf/dark-matter",
+      "feature": "dark-matter",
+      "file": "demo.mjs",
+      "result": {
+        "available": true
+      },
+      "operation": "@unrdf/dark-matter capability",
+      "proofHash": "5b52237f96932139",
+      "timestamp": 0,
+      "registeredAt": "2025-12-26T00:00:00Z"
+    },
+    {
+      "packageName": "@unrdf/domain",
+      "feature": "domain",
+      "file": "demo.mjs",
+      "result": {
+        "available": true
+      },
+      "operation": "@unrdf/domain capability",
+      "proofHash": "45a2db58fb15c6cc",
+      "timestamp": 0,
+      "registeredAt": "2025-12-26T00:00:00Z"
+    },
+    {
+      "packageName": "@unrdf/engine-gateway",
+      "feature": "engine-gateway",
+      "file": "demo.mjs",
+      "result": {
+        "integrated": true
+      },
+      "operation": "@unrdf/engine-gateway integration",
+      "proofHash": "e458c61465598d1e",
+      "timestamp": 0,
+      "registeredAt": "2025-12-26T00:00:00Z"
+    },
+    {
+      "packageName": "@unrdf/federation",
+      "feature": "federation",
+      "file": "demo.mjs",
+      "result": {
+        "integrated": true
+      },
+      "operation": "@unrdf/federation integration",
+      "proofHash": "0beafe9f5ba95d6f",
+      "timestamp": 0,
+      "registeredAt": "2025-12-26T00:00:00Z"
+    },
+    {
+      "packageName": "@unrdf/graph-analytics",
+      "feature": "graph-analytics",
+      "file": "demo.mjs",
+      "result": {
+        "processed": true
+      },
+      "operation": "@unrdf/graph-analytics integration",
+      "proofHash": "6520c6c4c3ecc93a",
+      "timestamp": 0,
+      "registeredAt": "2025-12-26T00:00:00Z"
+    },
+    {
+      "packageName": "@unrdf/hooks",
+      "feature": "Hook registry",
+      "file": "demo.mjs",
+      "result": {
+        "hookCount": 3
+      },
+      "operation": "Lifecycle hook registration",
+      "proofHash": "95a6150b35582458",
+      "timestamp": 0,
+      "registeredAt": "2025-12-26T00:00:00Z"
+    },
+    {
+      "packageName": "@unrdf/integration-tests",
+      "feature": "integration-tests",
+      "file": "demo.mjs",
+      "result": {
+        "available": true
+      },
+      "operation": "@unrdf/integration-tests utility",
+      "proofHash": "27b942461f926a68",
+      "timestamp": 0,
+      "registeredAt": "2025-12-26T00:00:00Z"
+    },
+    {
+      "packageName": "@unrdf/kgc-4d",
+      "feature": "KGC store + freezing",
+      "file": "demo.mjs",
+      "result": {
+        "hasFreeze": true
+      },
+      "operation": "Universe freeze and receipt generation",
+      "proofHash": "24cacf289c535bec",
+      "timestamp": 0,
+      "registeredAt": "2025-12-26T00:00:00Z"
+    },
+    {
+      "packageName": "@unrdf/kgn",
+      "feature": "kgn",
+      "file": "demo.mjs",
+      "result": {
+        "available": true
+      },
+      "operation": "@unrdf/kgn capability",
+      "proofHash": "fdd1ccbabd3827d9",
+      "timestamp": 0,
+      "registeredAt": "2025-12-26T00:00:00Z"
+    },
+    {
+      "packageName": "@unrdf/knowledge-engine",
+      "feature": "knowledge-engine",
+      "file": "demo.mjs",
+      "result": {
+        "integrated": true
+      },
+      "operation": "@unrdf/knowledge-engine integration",
+      "proofHash": "ecc4130586e7e367",
+      "timestamp": 0,
+      "registeredAt": "2025-12-26T00:00:00Z"
+    },
+    {
+      "packageName": "@unrdf/ml-inference",
+      "feature": "ml-inference",
+      "file": "demo.mjs",
+      "result": {
+        "processed": true
+      },
+      "operation": "@unrdf/ml-inference integration",
+      "proofHash": "b1ad64e62c4be50e",
+      "timestamp": 0,
+      "registeredAt": "2025-12-26T00:00:00Z"
+    },
+    {
+      "packageName": "@unrdf/ml-versioning",
+      "feature": "ml-versioning",
+      "file": "demo.mjs",
+      "result": {
+        "processed": true
+      },
+      "operation": "@unrdf/ml-versioning integration",
+      "proofHash": "ecb4a3f451e8517d",
+      "timestamp": 0,
+      "registeredAt": "2025-12-26T00:00:00Z"
+    },
+    {
+      "packageName": "@unrdf/nextra-docs",
+      "feature": "nextra-docs",
+      "file": "demo.mjs",
+      "result": {
+        "rendered": true
+      },
+      "operation": "@unrdf/nextra-docs output generation",
+      "proofHash": "0c1e38828e0b7c65",
+      "timestamp": 0,
+      "registeredAt": "2025-12-26T00:00:00Z"
+    },
+    {
+      "packageName": "@unrdf/observability",
+      "feature": "observability",
+      "file": "demo.mjs",
+      "result": {
+        "available": true
+      },
+      "operation": "@unrdf/observability utility",
+      "proofHash": "cef12f0b2f4d7eb5",
+      "timestamp": 0,
+      "registeredAt": "2025-12-26T00:00:00Z"
+    },
+    {
+      "packageName": "@unrdf/oxigraph",
+      "feature": "Graph store",
+      "file": "demo.mjs",
+      "result": {
+        "storeType": "oxigraph"
+      },
+      "operation": "RDF store adapter",
+      "proofHash": "6ac502c9ebbe72e7",
+      "timestamp": 0,
+      "registeredAt": "2025-12-26T00:00:00Z"
+    },
+    {
+      "packageName": "@unrdf/project-engine",
+      "feature": "project-engine",
+      "file": "demo.mjs",
+      "result": {
+        "available": true
+      },
+      "operation": "@unrdf/project-engine capability",
+      "proofHash": "7590688ce39f8059",
+      "timestamp": 0,
+      "registeredAt": "2025-12-26T00:00:00Z"
+    },
+    {
+      "packageName": "@unrdf/rdf-graphql",
+      "feature": "rdf-graphql",
+      "file": "demo.mjs",
+      "result": {
+        "available": true
+      },
+      "operation": "@unrdf/rdf-graphql capability",
+      "proofHash": "accb69583f534957",
+      "timestamp": 0,
+      "registeredAt": "2025-12-26T00:00:00Z"
+    },
+    {
+      "packageName": "@unrdf/semantic-search",
+      "feature": "semantic-search",
+      "file": "demo.mjs",
+      "result": {
+        "processed": true
+      },
+      "operation": "@unrdf/semantic-search integration",
+      "proofHash": "1e8b559c16e70e3f",
+      "timestamp": 0,
+      "registeredAt": "2025-12-26T00:00:00Z"
+    },
+    {
+      "packageName": "@unrdf/serverless",
+      "feature": "serverless",
+      "file": "demo.mjs",
+      "result": {
+        "integrated": true
+      },
+      "operation": "@unrdf/serverless integration",
+      "proofHash": "c8a9296f09e187e1",
+      "timestamp": 0,
+      "registeredAt": "2025-12-26T00:00:00Z"
+    },
+    {
+      "packageName": "@unrdf/streaming",
+      "feature": "streaming",
+      "file": "demo.mjs",
+      "result": {
+        "integrated": true
+      },
+      "operation": "@unrdf/streaming integration",
+      "proofHash": "53d369b74223203c",
+      "timestamp": 0,
+      "registeredAt": "2025-12-26T00:00:00Z"
+    },
+    {
+      "packageName": "@unrdf/test-utils",
+      "feature": "test-utils",
+      "file": "demo.mjs",
+      "result": {
+        "available": true
+      },
+      "operation": "@unrdf/test-utils capability",
+      "proofHash": "2de488e7e14cf985",
+      "timestamp": 0,
+      "registeredAt": "2025-12-26T00:00:00Z"
+    },
+    {
+      "packageName": "@unrdf/validation",
+      "feature": "validation",
+      "file": "demo.mjs",
+      "result": {
+        "available": true
+      },
+      "operation": "@unrdf/validation capability",
+      "proofHash": "dc1a2399da546032",
+      "timestamp": 0,
+      "registeredAt": "2025-12-26T00:00:00Z"
+    },
+    {
+      "packageName": "@unrdf/yawl",
+      "feature": "Workflow engine",
+      "file": "demo.mjs",
+      "result": {
+        "operations": 5
+      },
+      "operation": "Workflow case execution",
+      "proofHash": "370edb7cabb27645",
+      "timestamp": 0,
+      "registeredAt": "2025-12-26T00:00:00Z"
+    },
+    {
+      "packageName": "@unrdf/yawl-ai",
+      "feature": "yawl-ai",
+      "file": "demo.mjs",
+      "result": {
+        "processed": true
+      },
+      "operation": "@unrdf/yawl-ai integration",
+      "proofHash": "1be9abf9cb575839",
+      "timestamp": 0,
+      "registeredAt": "2025-12-26T00:00:00Z"
+    },
+    {
+      "packageName": "@unrdf/yawl-api",
+      "feature": "API layer",
+      "file": "demo.mjs",
+      "result": {
+        "endpoints": 4
+      },
+      "operation": "REST/GraphQL API routes",
+      "proofHash": "28d6fb4f2783def1",
+      "timestamp": 0,
+      "registeredAt": "2025-12-26T00:00:00Z"
+    },
+    {
+      "packageName": "@unrdf/yawl-durable",
+      "feature": "Durability",
+      "file": "demo.mjs",
+      "result": {
+        "persistent": true
+      },
+      "operation": "State persistence",
+      "proofHash": "325b86cbe132a3d4",
+      "timestamp": 0,
+      "registeredAt": "2025-12-26T00:00:00Z"
+    },
+    {
+      "packageName": "@unrdf/yawl-kafka",
+      "feature": "Kafka integration",
+      "file": "demo.mjs",
+      "result": {
+        "topics": 3
+      },
+      "operation": "Distributed event streaming",
+      "proofHash": "53fd507f433426b7",
+      "timestamp": 0,
+      "registeredAt": "2025-12-26T00:00:00Z"
+    },
+    {
+      "packageName": "@unrdf/yawl-langchain",
+      "feature": "yawl-langchain",
+      "file": "demo.mjs",
+      "result": {
+        "processed": true
+      },
+      "operation": "@unrdf/yawl-langchain integration",
+      "proofHash": "30c02ecc4268932a",
+      "timestamp": 0,
+      "registeredAt": "2025-12-26T00:00:00Z"
+    },
+    {
+      "packageName": "@unrdf/yawl-observability",
+      "feature": "Observability",
+      "file": "demo.mjs",
+      "result": {
+        "spans": 15
+      },
+      "operation": "OTEL span emission",
+      "proofHash": "9846ca189fa537fb",
+      "timestamp": 0,
+      "registeredAt": "2025-12-26T00:00:00Z"
+    },
+    {
+      "packageName": "@unrdf/yawl-queue",
+      "feature": "Message queue",
+      "file": "demo.mjs",
+      "result": {
+        "messages": 10
+      },
+      "operation": "Async task queueing",
+      "proofHash": "51269f8516ee1e60",
+      "timestamp": 0,
+      "registeredAt": "2025-12-26T00:00:00Z"
+    },
+    {
+      "packageName": "@unrdf/yawl-realtime",
+      "feature": "Real-time updates",
+      "file": "demo.mjs",
+      "result": {
+        "subscribers": 2
+      },
+      "operation": "WebSocket sync",
+      "proofHash": "c93409c4144bb788",
+      "timestamp": 0,
+      "registeredAt": "2025-12-26T00:00:00Z"
+    },
+    {
+      "packageName": "@unrdf/yawl-viz",
+      "feature": "yawl-viz",
+      "file": "demo.mjs",
+      "result": {
+        "rendered": true
+      },
+      "operation": "@unrdf/yawl-viz output generation",
+      "proofHash": "5ea37326847725c4",
+      "timestamp": 0,
+      "registeredAt": "2025-12-26T00:00:00Z"
+    },
+    {
+      "packageName": "docs",
+      "feature": "docs",
+      "file": "demo.mjs",
+      "result": {
+        "available": true
+      },
+      "operation": "docs utility",
+      "proofHash": "dd70da92aba081e2",
+      "timestamp": 0,
+      "registeredAt": "2025-12-26T00:00:00Z"
+    }
+  ],
+  "snapshotHash": "4fdb405c9ce6dd6c052826e1c73407e5b3ce9d3c59c9d1bd7c139cc9575cd7a6"
+}

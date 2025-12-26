@@ -1,0 +1,68 @@
+{
+  "artifacts": [
+    {
+      "name": "atoms",
+      "phase": "μ2"
+    },
+    {
+      "name": "graph",
+      "phase": "μ3"
+    },
+    {
+      "name": "candidates",
+      "phase": "μ5"
+    },
+    {
+      "name": "baselines",
+      "phase": "μ8"
+    },
+    {
+      "name": "metrics",
+      "phase": "μ8"
+    },
+    {
+      "name": "ranking",
+      "phase": "μ10"
+    },
+    {
+      "name": "promotions",
+      "phase": "μ10"
+    },
+    {
+      "name": "promotion-manifest",
+      "phase": "μ10"
+    }
+  ],
+  "deterministic": true,
+  "hash": "4c31c8129eab4c8a68b029c8a862ea167266ebe68570fb1264ce96cd0df5cca0",
+  "summary": {
+    "atoms": 10,
+    "candidates": 20,
+    "edges": 21,
+    "topPromotion": {
+      "atomDetails": [
+        {
+          "complexity": "moderate",
+          "id": "atom-rdf-store",
+          "name": "RDF Store",
+          "utility": 0.95
+        }
+      ],
+      "atomIds": [
+        "atom-rdf-store"
+      ],
+      "candidateId": "candidate-1",
+      "capabilities": [],
+      "constraintStrength": 1,
+      "id": "promotion-1",
+      "rank": 1,
+      "receiptPointer": "experiments/candidate-1/receipt.json",
+      "runnablePointer": "experiments/candidate-1/run.mjs",
+      "synergy": 0.03465735902799727,
+      "timestamp": "2025-12-26T00:00:00.000Z",
+      "utility": 0.9846573590279972
+    }
+  },
+  "timestamp": "2025-12-26T00:00:00.000Z",
+  "version": "1.0.0"
+}

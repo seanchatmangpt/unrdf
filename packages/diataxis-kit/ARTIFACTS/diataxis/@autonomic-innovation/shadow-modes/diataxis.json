@@ -1,0 +1,120 @@
+{
+  "confidence": {
+    "explanation": 0.7,
+    "howtos": 0.75,
+    "reference": 0.5,
+    "tutorials": 0.1
+  },
+  "evidence": {
+    "docsFiles": [],
+    "examplesFiles": [],
+    "fingerprint": "dd8d4dcf24d6a0cc6b4d37de255a42742f6a74adc0c6fc2f12e87bf099fe2a55",
+    "readmeHeadings": [
+      "Overview",
+      "Implementation",
+      "Key Features",
+      "Usage Examples",
+      "Test Results",
+      "Determinism Guarantees",
+      "Dependencies",
+      "Integration Points",
+      "Running Tests",
+      "Performance Characteristics",
+      "Error Handling",
+      "OTEL Integration",
+      "Success Criteria",
+      "Example Mismatch Report",
+      "Content-Addressable Hash Example"
+    ]
+  },
+  "explanation": {
+    "architecture": "Deterministic shadow modes for running legacy and facade implementations in parallel, with content-addressable mismatch reporting.",
+    "concepts": [
+      "shadow-mode",
+      "migration",
+      "content-addressing",
+      "blake3",
+      "deterministic"
+    ],
+    "confidenceScore": 0.7,
+    "id": "explanation-autonomic-innovation-shadow-modes-explanation",
+    "source": [
+      "keywords",
+      "readme"
+    ],
+    "title": "Understanding @autonomic-innovation/shadow-modes",
+    "tradeoffs": [
+      "Performance vs. flexibility tradeoffs discussed in README"
+    ]
+  },
+  "generatedAt": "2000-01-01T00:00:00.000Z",
+  "howtos": [
+    {
+      "confidenceScore": 0.5,
+      "context": "When you need robust error handling in production",
+      "id": "howto-handle-errors",
+      "source": [
+        "tests"
+      ],
+      "steps": [
+        "Set up try-catch blocks",
+        "Handle common error types",
+        "Log errors appropriately"
+      ],
+      "task": "Implement error handling for @autonomic-innovation/shadow-modes",
+      "title": "Handle Errors"
+    },
+    {
+      "confidenceScore": 0.7,
+      "context": "When working with shadow-mode in your project",
+      "id": "howto-integrate-with-shadow-mode",
+      "source": [
+        "keywords",
+        "inferred"
+      ],
+      "steps": [
+        "Install dependencies",
+        "Set up integration",
+        "Test integration"
+      ],
+      "task": "Connect @autonomic-innovation/shadow-modes with shadow-mode",
+      "title": "Integrate with shadow-mode"
+    }
+  ],
+  "packageName": "@autonomic-innovation/shadow-modes",
+  "reference": {
+    "confidenceScore": 1,
+    "id": "reference-autonomic-innovation-shadow-modes-reference",
+    "items": [
+      {
+        "description": "Export: .",
+        "example": "import from \"./src/index.mjs\"",
+        "name": "@autonomic-innovation/shadow-modes",
+        "type": "export"
+      }
+    ],
+    "source": [
+      "exports"
+    ],
+    "title": "@autonomic-innovation/shadow-modes Reference"
+  },
+  "tutorials": [
+    {
+      "confidenceScore": 0.1,
+      "goal": "Learn how to set up and use @autonomic-innovation/shadow-modes in your project",
+      "id": "tutorial-getting-started-with-autonomic-innovation-shadow-modes",
+      "prerequisites": [],
+      "source": [
+        "keywords"
+      ],
+      "stepsOutline": [
+        "Install the package",
+        "Import required modules",
+        "Create a basic example",
+        "Run and verify output"
+      ],
+      "title": "Getting Started with @autonomic-innovation/shadow-modes"
+    }
+  ],
+  "version": "0.1.0"
+}

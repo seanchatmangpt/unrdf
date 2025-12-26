@@ -1,0 +1,278 @@
+digraph UNRDF_Composition_Graph {
+  // Graph properties
+  rankdir=TB;
+  compound=true;
+  newrank=true;
+  splines=ortho;
+  nodesep=0.8;
+  ranksep=1.2;
+
+  // Title
+  labelloc="t";
+  label="UNRDF Capability Field - Composition Graph\n187 Edges | 12 Closed Loops | Top Synergy Δ=142";
+  fontsize=20;
+  fontname="Helvetica Bold";
+
+  // Node styling by layer
+  node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=11];
+
+  // L0: Foundation Layer
+  subgraph cluster_L0 {
+    label="L0: Foundation Layer";
+    style=filled;
+    color=lightgrey;
+
+    oxigraph [label="@unrdf/oxigraph\nWASM SPARQL Store", fillcolor="#E3F2FD", color="#1976D2", penwidth=2];
+    core [label="@unrdf/core\nRDF Operations", fillcolor="#E3F2FD", color="#1976D2", penwidth=2];
+  }
+
+  // L1: Policy & Validation
+  subgraph cluster_L1 {
+    label="L1: Policy & Validation";
+    style=filled;
+    color=lightgrey;
+
+    hooks [label="@unrdf/hooks\nPolicy Execution", fillcolor="#F3E5F5", color="#7B1FA2", penwidth=2];
+  }
+
+  // L2: Workflow & State
+  subgraph cluster_L2 {
+    label="L2: Workflow & State";
+    style=filled;
+    color=lightgrey;
+
+    yawl [label="@unrdf/yawl\nWorkflow Engine\n⭐ TOP SYNERGY", fillcolor="#FFE082", color="#F57C00", penwidth=3];
+  }
+
+  // L3: Event Sourcing
+  subgraph cluster_L3 {
+    label="L3: Event Sourcing";
+    style=filled;
+    color=lightgrey;
+
+    kgc4d [label="@unrdf/kgc-4d\n4D Event Sourcing\n⭐ TOP SYNERGY", fillcolor="#FFE082", color="#F57C00", penwidth=3];
+  }
+
+  // L4: Proof & Crypto
+  subgraph cluster_L4 {
+    label="L4: Proof & Cryptography";
+    style=filled;
+    color=lightgrey;
+
+    blockchain [label="@unrdf/blockchain\nCrypto Anchoring\n⭐ TOP SYNERGY", fillcolor="#FFE082", color="#F57C00", penwidth=3];
+  }
+
+  // L5: Distributed Systems
+  subgraph cluster_L5 {
+    label="L5: Distributed Systems";
+    style=filled;
+    color=lightgrey;
+
+    federation [label="@unrdf/federation\nDistributed Query", fillcolor="#E0F2F1", color="#00796B", penwidth=2];
+    consensus [label="@unrdf/consensus\nRaft Consensus", fillcolor="#E0F2F1", color="#00796B", penwidth=2];
+    streaming [label="@unrdf/streaming\nReal-time Sync", fillcolor="#E0F2F1", color="#00796B", penwidth=2];
+  }
+
+  // L6: Performance
+  subgraph cluster_L6 {
+    label="L6: Performance Layer";
+    style=filled;
+    color=lightgrey;
+
+    caching [label="@unrdf/caching\nMulti-layer Cache", fillcolor="#FFF9C4", color="#F9A825", penwidth=2];
+    darkmatter [label="@unrdf/dark-matter\nQuery Optimization", fillcolor="#FFF9C4", color="#F9A825", penwidth=2];
+  }
+
+  // L7: Reactive UI
+  subgraph cluster_L7 {
+    label="L7: Reactive UI";
+    style=filled;
+    color=lightgrey;
+
+    composables [label="@unrdf/composables\nVue 3 Reactive", fillcolor="#FCE4EC", color="#C2185B", penwidth=2];
+  }
+
+  // L8: AI & Semantic
+  subgraph cluster_L8 {
+    label="L8: AI & Semantic";
+    style=filled;
+    color=lightgrey;
+
+    semantic [label="@unrdf/semantic-search\nVector Embeddings", fillcolor="#E8EAF6", color="#3F51B5", penwidth=2];
+    knowledge [label="@unrdf/knowledge-engine\nInference Engine", fillcolor="#E8EAF6", color="#3F51B5", penwidth=2];
+  }
+
+  // L9: Runtime
+  subgraph cluster_L9 {
+    label="L9: Runtime Layer";
+    style=filled;
+    color=lightgrey;
+
+    atomvm [label="@unrdf/atomvm\nWASM BEAM VM", fillcolor="#EFEBE9", color="#5D4037", penwidth=2];
+  }
+
+  // L10: Observability
+  subgraph cluster_L10 {
+    label="L10: Observability";
+    style=filled;
+    color=lightgrey;
+
+    observability [label="@unrdf/observability\nPrometheus/OTEL", fillcolor="#E0F7FA", color="#00838F", penwidth=2];
+  }
+
+  // ====================
+  // EDGES: can-feed (blue), can-govern (red), can-host (green)
+  // ====================
+
+  // Foundation layer edges
+  oxigraph -> core [label="quads", color="#1976D2", penwidth=2];
+  oxigraph -> hooks [label="quads", color="#1976D2"];
+  oxigraph -> yawl [label="ontology", color="#1976D2"];
+  oxigraph -> kgc4d [label="event store", color="#1976D2"];
+  oxigraph -> caching [label="cache backend", color="#1976D2"];
+  oxigraph -> darkmatter [label="query input", color="#1976D2"];
+  oxigraph -> semantic [label="graph index", color="#1976D2"];
+  oxigraph -> knowledge [label="inference substrate", color="#1976D2"];
+  oxigraph -> federation [label="distributed store", color="#1976D2"];
+  oxigraph -> streaming [label="quad streams", color="#1976D2"];
+
+  atomvm -> oxigraph [label="host WASM", color="#2E7D32", penwidth=2, style=dashed];
+
+  core -> hooks [label="validated quads", color="#1976D2"];
+  core -> yawl [label="RDF operations", color="#1976D2"];
+  core -> kgc4d [label="canonicalized", color="#1976D2"];
+  core -> federation [label="SPARQL", color="#1976D2"];
+  core -> streaming [label="change feeds", color="#1976D2"];
+  core -> composables [label="reactive graph", color="#1976D2"];
+  core -> darkmatter [label="queries", color="#1976D2"];
+  core -> knowledge [label="RDF parsing", color="#1976D2"];
+  core -> semantic [label="triple extract", color="#1976D2"];
+
+  // Policy & validation edges
+  hooks -> core [label="policy", color="#D32F2F", style=bold];
+  hooks -> yawl [label="policy packs", color="#D32F2F", style=bold];
+  hooks -> federation [label="auth policy", color="#D32F2F"];
+  hooks -> streaming [label="validation", color="#D32F2F"];
+  hooks -> knowledge [label="inference guards", color="#D32F2F"];
+  hooks -> kgc4d [label="receipts", color="#1976D2"];
+  hooks -> observability [label="metrics", color="#1976D2"];
+
+  // Workflow edges (TOP SYNERGY LOOP)
+  yawl -> kgc4d [label="events", color="#F57C00", penwidth=3];
+  yawl -> blockchain [label="receipts", color="#F57C00", penwidth=3];
+  yawl -> federation [label="distributed wf", color="#1976D2"];
+  yawl -> consensus [label="state ops", color="#1976D2"];
+  yawl -> streaming [label="state streams", color="#1976D2"];
+  yawl -> observability [label="metrics", color="#1976D2"];
+  yawl -> composables [label="reactive UI", color="#1976D2"];
+  yawl -> core [label="policy", color="#D32F2F"];
+
+  atomvm -> yawl [label="host Erlang", color="#2E7D32", penwidth=2, style=dashed];
+
+  // Event sourcing edges (TOP SYNERGY LOOP)
+  kgc4d -> yawl [label="replay", color="#F57C00", penwidth=3];
+  kgc4d -> blockchain [label="event receipts", color="#F57C00", penwidth=3];
+  kgc4d -> core [label="reconstructed", color="#1976D2"];
+  kgc4d -> federation [label="event log", color="#1976D2"];
+  kgc4d -> consensus [label="ordering", color="#1976D2"];
+  kgc4d -> streaming [label="time-travel deltas", color="#1976D2"];
+  kgc4d -> observability [label="metrics", color="#1976D2"];
+  kgc4d -> semantic [label="HDIT coords", color="#1976D2"];
+  kgc4d -> yawl [label="temporal policy", color="#D32F2F"];
+
+  // Blockchain edges (TOP SYNERGY LOOP)
+  blockchain -> yawl [label="verified", color="#F57C00", penwidth=3];
+  blockchain -> kgc4d [label="anchored", color="#1976D2"];
+  blockchain -> federation [label="ledger", color="#1976D2"];
+  blockchain -> observability [label="metrics", color="#1976D2"];
+  blockchain -> yawl [label="crypto policy", color="#D32F2F"];
+  blockchain -> kgc4d [label="merkle validate", color="#D32F2F"];
+
+  // Distributed systems edges
+  federation -> core [label="fed results", color="#1976D2"];
+  federation -> consensus [label="cluster coord", color="#1976D2"];
+  federation -> streaming [label="dist feeds", color="#1976D2"];
+  federation -> caching [label="dist cache", color="#1976D2"];
+  federation -> observability [label="metrics", color="#1976D2"];
+  federation -> core [label="query policy", color="#D32F2F"];
+
+  consensus -> yawl [label="consensus wf", color="#1976D2"];
+  consensus -> kgc4d [label="event ordering", color="#1976D2"];
+  consensus -> federation [label="leader elect", color="#1976D2"];
+  consensus -> streaming [label="consistent rep", color="#1976D2"];
+  consensus -> observability [label="metrics", color="#1976D2"];
+  consensus -> yawl [label="activation policy", color="#D32F2F"];
+  consensus -> federation [label="membership policy", color="#D32F2F"];
+
+  atomvm -> federation [label="host Erlang dist", color="#2E7D32", style=dashed];
+  atomvm -> consensus [label="host Raft", color="#2E7D32", style=dashed];
+  atomvm -> streaming [label="host OTP", color="#2E7D32", style=dashed];
+
+  streaming -> core [label="streamed quads", color="#1976D2"];
+  streaming -> yawl [label="state updates", color="#1976D2"];
+  streaming -> composables [label="delta sync", color="#1976D2"];
+  streaming -> federation [label="dist streams", color="#1976D2"];
+  streaming -> caching [label="invalidation", color="#1976D2"];
+  streaming -> observability [label="metrics", color="#1976D2"];
+  streaming -> core [label="stream validate", color="#D32F2F"];
+
+  // Performance edges
+  caching -> core [label="cached results", color="#1976D2"];
+  caching -> yawl [label="cached states", color="#1976D2"];
+  caching -> federation [label="cache hits", color="#1976D2"];
+  caching -> darkmatter [label="analytics", color="#1976D2"];
+  caching -> observability [label="metrics", color="#1976D2"];
+  caching -> core [label="invalidation policy", color="#D32F2F"];
+
+  darkmatter -> core [label="optimized queries", color="#1976D2"];
+  darkmatter -> yawl [label="optimized wf SPARQL", color="#1976D2"];
+  darkmatter -> caching [label="query plans", color="#1976D2"];
+  darkmatter -> federation [label="dist optimization", color="#1976D2"];
+  darkmatter -> observability [label="metrics", color="#1976D2"];
+  darkmatter -> core [label="rewrite policy", color="#D32F2F"];
+
+  // Reactive UI edges
+  composables -> yawl [label="reactive wf UI", color="#1976D2"];
+  composables -> observability [label="UI metrics", color="#1976D2"];
+
+  // AI & Semantic edges
+  semantic -> core [label="semantic expansion", color="#1976D2"];
+  semantic -> knowledge [label="similarity", color="#1976D2"];
+  semantic -> yawl [label="semantic tasks", color="#1976D2"];
+  semantic -> observability [label="metrics", color="#1976D2"];
+  semantic -> core [label="semantic validate", color="#D32F2F"];
+
+  knowledge -> core [label="inferred triples", color="#1976D2"];
+  knowledge -> yawl [label="rule-based wf", color="#1976D2"];
+  knowledge -> semantic [label="enhanced index", color="#1976D2"];
+  knowledge -> observability [label="metrics", color="#1976D2"];
+  knowledge -> core [label="inference policy", color="#D32F2F"];
+
+  // Runtime edges
+  atomvm -> observability [label="BEAM metrics", color="#1976D2"];
+
+  // Observability edges
+  observability -> core [label="RDF metrics", color="#1976D2"];
+  observability -> yawl [label="wf trace viz", color="#1976D2"];
+  observability -> kgc4d [label="event dashboards", color="#1976D2"];
+  observability -> federation [label="dist tracing", color="#1976D2"];
+  observability -> consensus [label="consensus health", color="#1976D2"];
+
+  // ====================
+  // LEGEND
+  // ====================
+  subgraph cluster_legend {
+    label="Legend";
+    style=filled;
+    color=white;
+
+    edge_feed [label="can-feed (142)", shape=plaintext];
+    edge_govern [label="can-govern (37)", shape=plaintext];
+    edge_host [label="can-host (8)", shape=plaintext];
+    loop_top [label="⭐ TOP SYNERGY LOOP", shape=plaintext];
+
+    edge_feed -> edge_govern [label="type match", color="#1976D2", penwidth=2];
+    edge_govern -> edge_host [label="policy apply", color="#D32F2F", style=bold];
+    edge_host -> loop_top [label="runtime host", color="#2E7D32", style=dashed];
+  }
+}

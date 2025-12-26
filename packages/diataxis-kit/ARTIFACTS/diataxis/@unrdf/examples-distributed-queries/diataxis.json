@@ -1,0 +1,114 @@
+{
+  "confidence": {
+    "explanation": 0.3,
+    "howtos": 0.5,
+    "reference": 0.2,
+    "tutorials": 0
+  },
+  "evidence": {
+    "docsFiles": [],
+    "examplesFiles": [],
+    "fingerprint": "73a9a51113f0ca026196a35443cbef88fee0573d147f55108f21f84afb4e7d94",
+    "readmeHeadings": [
+      "Features",
+      "Usage",
+      "Example Code",
+      "Query Strategies",
+      "Result Aggregation",
+      "Fault Handling",
+      "Health Monitoring",
+      "Statistics",
+      "Graph Synchronization",
+      "API Reference",
+      "Learn More",
+      "Testing"
+    ]
+  },
+  "explanation": {
+    "architecture": "This example demonstrates distributed query execution and result aggregation across a federation of SPARQL endpoints.",
+    "concepts": [
+      "core functionality"
+    ],
+    "confidenceScore": 0.3,
+    "id": "explanation-unrdf-examples-distributed-queries-explanation",
+    "source": [
+      "readme",
+      "inferred"
+    ],
+    "title": "Understanding @unrdf/examples-distributed-queries",
+    "tradeoffs": [
+      "Ease of use vs. advanced configuration options",
+      "Memory usage vs. processing speed",
+      "Bundle size vs. feature completeness"
+    ]
+  },
+  "generatedAt": "2000-01-01T00:00:00.000Z",
+  "howtos": [
+    {
+      "confidenceScore": 0.5,
+      "context": "When you need robust error handling in production",
+      "id": "howto-handle-errors",
+      "source": [
+        "tests"
+      ],
+      "steps": [
+        "Set up try-catch blocks",
+        "Handle common error types",
+        "Log errors appropriately"
+      ],
+      "task": "Implement error handling for @unrdf/examples-distributed-queries",
+      "title": "Handle Errors"
+    },
+    {
+      "confidenceScore": 0.4,
+      "context": "When encountering issues during usage",
+      "id": "howto-troubleshoot-common-issues",
+      "source": [
+        "inferred"
+      ],
+      "steps": [
+        "Check configuration",
+        "Review error messages",
+        "Apply fixes"
+      ],
+      "task": "Resolve common problems and errors",
+      "title": "Troubleshoot Common Issues"
+    }
+  ],
+  "packageName": "@unrdf/examples-distributed-queries",
+  "reference": {
+    "confidenceScore": 0.5,
+    "id": "reference-unrdf-examples-distributed-queries-reference",
+    "items": [
+      {
+        "description": "Reference documentation to be added",
+        "example": null,
+        "name": "unknown",
+        "type": "unknown"
+      }
+    ],
+    "source": [
+      "inferred"
+    ],
+    "title": "@unrdf/examples-distributed-queries Reference"
+  },
+  "tutorials": [
+    {
+      "confidenceScore": 0,
+      "goal": "Learn how to set up and use @unrdf/examples-distributed-queries in your project",
+      "id": "tutorial-getting-started-with-unrdf-examples-distributed-queries",
+      "prerequisites": [],
+      "source": [
+        "inferred"
+      ],
+      "stepsOutline": [
+        "Install the package",
+        "Import required modules",
+        "Create a basic example",
+        "Run and verify output"
+      ],
+      "title": "Getting Started with @unrdf/examples-distributed-queries"
+    }
+  ],
+  "version": "1.0.0"
+}
