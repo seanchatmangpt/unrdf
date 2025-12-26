@@ -1,0 +1,265 @@
+{
+  "timestamp": "2025-12-26T07:49:54.615Z",
+  "status": "PASS",
+  "summary": {
+    "inventory": 41,
+    "registered": 41,
+    "missing": 0,
+    "extra": 0,
+    "matchRate": "100.0%"
+  },
+  "details": {
+    "message": "✅ All 41 packages successfully registered",
+    "missingPackages": [],
+    "extraPackages": []
+  },
+  "snapshotHash": "4fdb405c9ce6dd6c052826e1c73407e5b3ce9d3c59c9d1bd7c139cc9575cd7a6",
+  "usages": [
+    {
+      "package": "@unrdf/atomvm",
+      "feature": "atomvm",
+      "operation": "@unrdf/atomvm capability",
+      "proofHash": "41c674a5056a6c63"
+    },
+    {
+      "package": "@unrdf/blockchain",
+      "feature": "blockchain",
+      "operation": "@unrdf/blockchain integration",
+      "proofHash": "df81e9022c49e84a"
+    },
+    {
+      "package": "@unrdf/caching",
+      "feature": "caching",
+      "operation": "@unrdf/caching capability",
+      "proofHash": "8cd61454292aa703"
+    },
+    {
+      "package": "@unrdf/cli",
+      "feature": "cli",
+      "operation": "@unrdf/cli capability",
+      "proofHash": "c4cdd461eaf8436e"
+    },
+    {
+      "package": "@unrdf/collab",
+      "feature": "collab",
+      "operation": "@unrdf/collab capability",
+      "proofHash": "36675af4df4d5fcb"
+    },
+    {
+      "package": "@unrdf/composables",
+      "feature": "composables",
+      "operation": "@unrdf/composables capability",
+      "proofHash": "60c223378561381b"
+    },
+    {
+      "package": "@unrdf/consensus",
+      "feature": "consensus",
+      "operation": "@unrdf/consensus integration",
+      "proofHash": "a3b75b426ead0d18"
+    },
+    {
+      "package": "@unrdf/core",
+      "feature": "RDF operations",
+      "operation": "Store substrate initialization",
+      "proofHash": "76bec78ffd9f67a0"
+    },
+    {
+      "package": "@unrdf/dark-matter",
+      "feature": "dark-matter",
+      "operation": "@unrdf/dark-matter capability",
+      "proofHash": "5b52237f96932139"
+    },
+    {
+      "package": "@unrdf/domain",
+      "feature": "domain",
+      "operation": "@unrdf/domain capability",
+      "proofHash": "45a2db58fb15c6cc"
+    },
+    {
+      "package": "@unrdf/engine-gateway",
+      "feature": "engine-gateway",
+      "operation": "@unrdf/engine-gateway integration",
+      "proofHash": "e458c61465598d1e"
+    },
+    {
+      "package": "@unrdf/federation",
+      "feature": "federation",
+      "operation": "@unrdf/federation integration",
+      "proofHash": "0beafe9f5ba95d6f"
+    },
+    {
+      "package": "@unrdf/graph-analytics",
+      "feature": "graph-analytics",
+      "operation": "@unrdf/graph-analytics integration",
+      "proofHash": "6520c6c4c3ecc93a"
+    },
+    {
+      "package": "@unrdf/hooks",
+      "feature": "Hook registry",
+      "operation": "Lifecycle hook registration",
+      "proofHash": "95a6150b35582458"
+    },
+    {
+      "package": "@unrdf/integration-tests",
+      "feature": "integration-tests",
+      "operation": "@unrdf/integration-tests utility",
+      "proofHash": "27b942461f926a68"
+    },
+    {
+      "package": "@unrdf/kgc-4d",
+      "feature": "KGC store + freezing",
+      "operation": "Universe freeze and receipt generation",
+      "proofHash": "24cacf289c535bec"
+    },
+    {
+      "package": "@unrdf/kgn",
+      "feature": "kgn",
+      "operation": "@unrdf/kgn capability",
+      "proofHash": "fdd1ccbabd3827d9"
+    },
+    {
+      "package": "@unrdf/knowledge-engine",
+      "feature": "knowledge-engine",
+      "operation": "@unrdf/knowledge-engine integration",
+      "proofHash": "ecc4130586e7e367"
+    },
+    {
+      "package": "@unrdf/ml-inference",
+      "feature": "ml-inference",
+      "operation": "@unrdf/ml-inference integration",
+      "proofHash": "b1ad64e62c4be50e"
+    },
+    {
+      "package": "@unrdf/ml-versioning",
+      "feature": "ml-versioning",
+      "operation": "@unrdf/ml-versioning integration",
+      "proofHash": "ecb4a3f451e8517d"
+    },
+    {
+      "package": "@unrdf/nextra-docs",
+      "feature": "nextra-docs",
+      "operation": "@unrdf/nextra-docs output generation",
+      "proofHash": "0c1e38828e0b7c65"
+    },
+    {
+      "package": "@unrdf/observability",
+      "feature": "observability",
+      "operation": "@unrdf/observability utility",
+      "proofHash": "cef12f0b2f4d7eb5"
+    },
+    {
+      "package": "@unrdf/oxigraph",
+      "feature": "Graph store",
+      "operation": "RDF store adapter",
+      "proofHash": "6ac502c9ebbe72e7"
+    },
+    {
+      "package": "@unrdf/project-engine",
+      "feature": "project-engine",
+      "operation": "@unrdf/project-engine capability",
+      "proofHash": "7590688ce39f8059"
+    },
+    {
+      "package": "@unrdf/rdf-graphql",
+      "feature": "rdf-graphql",
+      "operation": "@unrdf/rdf-graphql capability",
+      "proofHash": "accb69583f534957"
+    },
+    {
+      "package": "@unrdf/semantic-search",
+      "feature": "semantic-search",
+      "operation": "@unrdf/semantic-search integration",
+      "proofHash": "1e8b559c16e70e3f"
+    },
+    {
+      "package": "@unrdf/serverless",
+      "feature": "serverless",
+      "operation": "@unrdf/serverless integration",
+      "proofHash": "c8a9296f09e187e1"
+    },
+    {
+      "package": "@unrdf/streaming",
+      "feature": "streaming",
+      "operation": "@unrdf/streaming integration",
+      "proofHash": "53d369b74223203c"
+    },
+    {
+      "package": "@unrdf/test-utils",
+      "feature": "test-utils",
+      "operation": "@unrdf/test-utils capability",
+      "proofHash": "2de488e7e14cf985"
+    },
+    {
+      "package": "@unrdf/validation",
+      "feature": "validation",
+      "operation": "@unrdf/validation capability",
+      "proofHash": "dc1a2399da546032"
+    },
+    {
+      "package": "@unrdf/yawl",
+      "feature": "Workflow engine",
+      "operation": "Workflow case execution",
+      "proofHash": "370edb7cabb27645"
+    },
+    {
+      "package": "@unrdf/yawl-ai",
+      "feature": "yawl-ai",
+      "operation": "@unrdf/yawl-ai integration",
+      "proofHash": "1be9abf9cb575839"
+    },
+    {
+      "package": "@unrdf/yawl-api",
+      "feature": "API layer",
+      "operation": "REST/GraphQL API routes",
+      "proofHash": "28d6fb4f2783def1"
+    },
+    {
+      "package": "@unrdf/yawl-durable",
+      "feature": "Durability",
+      "operation": "State persistence",
+      "proofHash": "325b86cbe132a3d4"
+    },
+    {
+      "package": "@unrdf/yawl-kafka",
+      "feature": "Kafka integration",
+      "operation": "Distributed event streaming",
+      "proofHash": "53fd507f433426b7"
+    },
+    {
+      "package": "@unrdf/yawl-langchain",
+      "feature": "yawl-langchain",
+      "operation": "@unrdf/yawl-langchain integration",
+      "proofHash": "30c02ecc4268932a"
+    },
+    {
+      "package": "@unrdf/yawl-observability",
+      "feature": "Observability",
+      "operation": "OTEL span emission",
+      "proofHash": "9846ca189fa537fb"
+    },
+    {
+      "package": "@unrdf/yawl-queue",
+      "feature": "Message queue",
+      "operation": "Async task queueing",
+      "proofHash": "51269f8516ee1e60"
+    },
+    {
+      "package": "@unrdf/yawl-realtime",
+      "feature": "Real-time updates",
+      "operation": "WebSocket sync",
+      "proofHash": "c93409c4144bb788"
+    },
+    {
+      "package": "@unrdf/yawl-viz",
+      "feature": "yawl-viz",
+      "operation": "@unrdf/yawl-viz output generation",
+      "proofHash": "5ea37326847725c4"
+    },
+    {
+      "package": "docs",
+      "feature": "docs",
+      "operation": "docs utility",
+      "proofHash": "dd70da92aba081e2"
+    }
+  ]
+}

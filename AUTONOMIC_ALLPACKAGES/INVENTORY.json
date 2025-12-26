@@ -1,0 +1,775 @@
+{
+  "timestamp": "2025-12-26T07:43:04.408Z",
+  "count": 41,
+  "packages": [
+    {
+      "name": "@unrdf/atomvm",
+      "dir": "packages/atomvm",
+      "version": "5.0.1",
+      "type": "module",
+      "entryPoint": "src/index.mjs",
+      "hasTests": true,
+      "hasSrc": true,
+      "description": "Run AtomVM (Erlang/BEAM VM) in browser and Node.js using WebAssembly",
+      "keywords": [
+        "atomvm",
+        "erlang",
+        "beam",
+        "wasm",
+        "browser",
+        "service-worker"
+      ],
+      "checksum": "b0f43795147625b3"
+    },
+    {
+      "name": "@unrdf/blockchain",
+      "dir": "packages/blockchain",
+      "version": "1.0.0",
+      "type": "module",
+      "entryPoint": "src/index.mjs",
+      "hasTests": true,
+      "hasSrc": true,
+      "description": "Blockchain integration for UNRDF - Cryptographic receipt anchoring and audit trails",
+      "keywords": [
+        "blockchain",
+        "ethereum",
+        "receipts",
+        "merkle-tree",
+        "audit-trail",
+        "cryptography"
+      ],
+      "checksum": "0136d9196d07e3ff"
+    },
+    {
+      "name": "@unrdf/caching",
+      "dir": "packages/caching",
+      "version": "1.0.0",
+      "type": "module",
+      "entryPoint": "src/index.mjs",
+      "hasTests": false,
+      "hasSrc": true,
+      "description": "Multi-layer caching system for RDF queries with Redis and LRU",
+      "keywords": [
+        "cache",
+        "redis",
+        "lru",
+        "rdf",
+        "sparql",
+        "performance"
+      ],
+      "checksum": "9e88ba2bde28ef48"
+    },
+    {
+      "name": "@unrdf/cli",
+      "dir": "packages/cli",
+      "version": "5.0.1",
+      "type": "module",
+      "entryPoint": "src/index.mjs",
+      "hasTests": true,
+      "hasSrc": true,
+      "description": "UNRDF CLI - Command-line Tools for Graph Operations and Context Management",
+      "keywords": [
+        "rdf",
+        "cli",
+        "command-line",
+        "graph",
+        "sparql"
+      ],
+      "checksum": "209a52692b2509e5"
+    },
+    {
+      "name": "@unrdf/collab",
+      "dir": "packages/collab",
+      "version": "1.0.0",
+      "type": "module",
+      "entryPoint": "src/index.mjs",
+      "hasTests": true,
+      "hasSrc": true,
+      "description": "Real-time collaborative RDF editing using CRDTs (Yjs) with offline-first architecture",
+      "keywords": [
+        "rdf",
+        "crdt",
+        "collaboration",
+        "real-time",
+        "yjs",
+        "offline-first",
+        "semantic-web"
+      ],
+      "checksum": "f4fcf703477663a0"
+    },
+    {
+      "name": "@unrdf/composables",
+      "dir": "packages/composables",
+      "version": "5.0.1",
+      "type": "module",
+      "entryPoint": "src/index.mjs",
+      "hasTests": true,
+      "hasSrc": true,
+      "description": "UNRDF Composables - Vue 3 Composables for Reactive RDF State (Optional Extension)",
+      "keywords": [
+        "rdf",
+        "vue",
+        "composables",
+        "reactive",
+        "web"
+      ],
+      "checksum": "126ff30a51124bdd"
+    },
+    {
+      "name": "@unrdf/consensus",
+      "dir": "packages/consensus",
+      "version": "1.0.0",
+      "type": "module",
+      "entryPoint": "src/index.mjs",
+      "hasTests": true,
+      "hasSrc": true,
+      "description": "Production-grade Raft consensus for distributed workflow coordination",
+      "keywords": [
+        "raft",
+        "consensus",
+        "distributed",
+        "workflow",
+        "coordination",
+        "fault-tolerance"
+      ],
+      "checksum": "853324d13c6a13ce"
+    },
+    {
+      "name": "@unrdf/core",
+      "dir": "packages/core",
+      "version": "5.0.1",
+      "type": "module",
+      "entryPoint": "src/index.mjs",
+      "hasTests": true,
+      "hasSrc": true,
+      "description": "UNRDF Core - RDF Graph Operations, SPARQL Execution, and Foundational Substrate",
+      "keywords": [
+        "rdf",
+        "knowledge-graph",
+        "sparql",
+        "semantic-web",
+        "linked-data"
+      ],
+      "checksum": "6df21775dc396275"
+    },
+    {
+      "name": "@unrdf/dark-matter",
+      "dir": "packages/dark-matter",
+      "version": "5.0.1",
+      "type": "module",
+      "entryPoint": "src/index.mjs",
+      "hasTests": true,
+      "hasSrc": true,
+      "description": "UNRDF Dark Matter - Query Optimization and Performance Analysis (Optional Extension)",
+      "keywords": [
+        "rdf",
+        "optimization",
+        "performance",
+        "sparql",
+        "80-20"
+      ],
+      "checksum": "b797b2da7780c304"
+    },
+    {
+      "name": "@unrdf/domain",
+      "dir": "packages/domain",
+      "version": "5.0.1",
+      "type": "module",
+      "entryPoint": "./src/index.mjs",
+      "hasTests": false,
+      "hasSrc": true,
+      "description": "Domain models and types for UNRDF",
+      "keywords": [
+        "rdf",
+        "domain",
+        "models",
+        "types"
+      ],
+      "checksum": "dec5e966e1aa239a"
+    },
+    {
+      "name": "@unrdf/engine-gateway",
+      "dir": "packages/engine-gateway",
+      "version": "5.0.1",
+      "type": "module",
+      "entryPoint": "./src/index.mjs",
+      "hasTests": true,
+      "hasSrc": true,
+      "description": "μ(O) Engine Gateway - Enforcement layer for Oxigraph-first, N3-minimal RDF processing",
+      "keywords": [],
+      "checksum": "f21b0af13e5fbb61"
+    },
+    {
+      "name": "@unrdf/federation",
+      "dir": "packages/federation",
+      "version": "5.0.1",
+      "type": "module",
+      "entryPoint": "src/index.mjs",
+      "hasTests": true,
+      "hasSrc": true,
+      "description": "UNRDF Federation - Peer Discovery and Distributed Query Execution",
+      "keywords": [
+        "rdf",
+        "federation",
+        "distributed",
+        "peer-to-peer",
+        "sparql"
+      ],
+      "checksum": "29075889eadac2c9"
+    },
+    {
+      "name": "@unrdf/graph-analytics",
+      "dir": "packages/graph-analytics",
+      "version": "1.0.0",
+      "type": "module",
+      "entryPoint": "src/index.mjs",
+      "hasTests": true,
+      "hasSrc": true,
+      "description": "Advanced graph analytics for RDF knowledge graphs using graphlib",
+      "keywords": [
+        "rdf",
+        "graph",
+        "analytics",
+        "pagerank",
+        "centrality",
+        "clustering",
+        "knowledge-graph",
+        "graphlib",
+        "algorithms"
+      ],
+      "checksum": "ff61e917da4b3a3b"
+    },
+    {
+      "name": "@unrdf/hooks",
+      "dir": "packages/hooks",
+      "version": "5.0.1",
+      "type": "module",
+      "entryPoint": "src/index.mjs",
+      "hasTests": true,
+      "hasSrc": true,
+      "description": "UNRDF Knowledge Hooks - Policy Definition and Execution Framework",
+      "keywords": [
+        "rdf",
+        "knowledge-graph",
+        "hooks",
+        "policy",
+        "validation"
+      ],
+      "checksum": "fa2fd142a783305a"
+    },
+    {
+      "name": "@unrdf/integration-tests",
+      "dir": "packages/integration-tests",
+      "version": "5.0.0",
+      "type": "module",
+      "entryPoint": "index.js",
+      "hasTests": false,
+      "hasSrc": false,
+      "description": "Comprehensive integration tests for UNRDF multi-package workflows",
+      "keywords": [
+        "integration-tests",
+        "unrdf",
+        "workflow",
+        "federation",
+        "streaming",
+        "rdf"
+      ],
+      "checksum": "36dbcf6e4470935a"
+    },
+    {
+      "name": "@unrdf/kgc-4d",
+      "dir": "packages/kgc-4d",
+      "version": "5.0.1",
+      "type": "module",
+      "entryPoint": "./src/index.mjs",
+      "hasTests": true,
+      "hasSrc": true,
+      "description": "KGC 4D Datum & Universe Freeze Engine - Nanosecond-precision event logging with Git-backed snapshots",
+      "keywords": [
+        "rdf",
+        "knowledge",
+        "4d",
+        "event-sourcing",
+        "time-travel",
+        "git",
+        "nanosecond"
+      ],
+      "checksum": "e3412943d923b177"
+    },
+    {
+      "name": "@unrdf/kgn",
+      "dir": "packages/kgn",
+      "version": "5.0.1",
+      "type": "module",
+      "entryPoint": "src/index.js",
+      "hasTests": true,
+      "hasSrc": true,
+      "description": "Deterministic Nunjucks template system with custom filters and frontmatter support",
+      "keywords": [
+        "unrdf",
+        "kgn",
+        "nunjucks",
+        "templates",
+        "deterministic",
+        "frontmatter",
+        "filters",
+        "codegen"
+      ],
+      "checksum": "e0f03e724c924f92"
+    },
+    {
+      "name": "@unrdf/knowledge-engine",
+      "dir": "packages/knowledge-engine",
+      "version": "5.0.1",
+      "type": "module",
+      "entryPoint": "src/index.mjs",
+      "hasTests": true,
+      "hasSrc": true,
+      "description": "UNRDF Knowledge Engine - Rule Engine, Inference, and Pattern Matching (Optional Extension)",
+      "keywords": [
+        "rdf",
+        "knowledge-engine",
+        "inference",
+        "reasoning",
+        "rules"
+      ],
+      "checksum": "6c9971b316d344d9"
+    },
+    {
+      "name": "@unrdf/ml-inference",
+      "dir": "packages/ml-inference",
+      "version": "5.0.1",
+      "type": "module",
+      "entryPoint": "src/index.mjs",
+      "hasTests": true,
+      "hasSrc": true,
+      "description": "UNRDF ML Inference - High-performance ONNX model inference pipeline for RDF streams",
+      "keywords": [
+        "rdf",
+        "ml",
+        "onnx",
+        "inference",
+        "streaming",
+        "real-time",
+        "machine-learning"
+      ],
+      "checksum": "9c1d9c61e7543b01"
+    },
+    {
+      "name": "@unrdf/ml-versioning",
+      "dir": "packages/ml-versioning",
+      "version": "1.0.0",
+      "type": "module",
+      "entryPoint": "./src/index.mjs",
+      "hasTests": true,
+      "hasSrc": true,
+      "description": "ML Model Versioning System using TensorFlow.js and UNRDF KGC-4D time-travel capabilities",
+      "keywords": [
+        "machine-learning",
+        "tensorflow",
+        "model-versioning",
+        "rdf",
+        "knowledge-graph",
+        "time-travel",
+        "provenance",
+        "cryptographic-proofs"
+      ],
+      "checksum": "9add2eddd23bae81"
+    },
+    {
+      "name": "@unrdf/nextra-docs",
+      "dir": "packages/nextra",
+      "version": "5.0.1",
+      "type": "module",
+      "entryPoint": "index.js",
+      "hasTests": false,
+      "hasSrc": false,
+      "description": "UNRDF documentation with Nextra 4 - Developer-focused Next.js documentation",
+      "keywords": [],
+      "checksum": "57e3b0289f1a3fcf"
+    },
+    {
+      "name": "@unrdf/observability",
+      "dir": "packages/observability",
+      "version": "1.0.0",
+      "type": "module",
+      "entryPoint": "./src/index.mjs",
+      "hasTests": false,
+      "hasSrc": true,
+      "description": "Innovative Prometheus/Grafana observability dashboard for UNRDF distributed workflows",
+      "keywords": [
+        "prometheus",
+        "grafana",
+        "metrics",
+        "observability",
+        "monitoring",
+        "alerting",
+        "workflow",
+        "distributed-systems"
+      ],
+      "checksum": "cf7b34d19d2f4e55"
+    },
+    {
+      "name": "@unrdf/oxigraph",
+      "dir": "packages/oxigraph",
+      "version": "5.0.1",
+      "type": "module",
+      "entryPoint": "src/index.mjs",
+      "hasTests": true,
+      "hasSrc": true,
+      "description": "UNRDF Oxigraph - Graph database benchmarking implementation using Oxigraph SPARQL engine",
+      "keywords": [
+        "rdf",
+        "sparql",
+        "graph-database",
+        "oxigraph",
+        "knowledge-graph",
+        "benchmark"
+      ],
+      "checksum": "80c948589770cc03"
+    },
+    {
+      "name": "@unrdf/project-engine",
+      "dir": "packages/project-engine",
+      "version": "5.0.1",
+      "type": "module",
+      "entryPoint": "src/index.mjs",
+      "hasTests": true,
+      "hasSrc": true,
+      "description": "UNRDF Project Engine - Self-hosting Tools and Infrastructure (Development Only)",
+      "keywords": [
+        "unrdf",
+        "project-engine",
+        "development",
+        "infrastructure"
+      ],
+      "checksum": "406c6c3a6fcc0d33"
+    },
+    {
+      "name": "@unrdf/rdf-graphql",
+      "dir": "packages/rdf-graphql",
+      "version": "1.0.0",
+      "type": "module",
+      "entryPoint": "src/adapter.mjs",
+      "hasTests": true,
+      "hasSrc": true,
+      "description": "Type-safe GraphQL interface for RDF knowledge graphs with automatic schema generation",
+      "keywords": [
+        "rdf",
+        "graphql",
+        "sparql",
+        "ontology",
+        "knowledge-graph",
+        "semantic-web",
+        "type-safe"
+      ],
+      "checksum": "c533bcbfb37b1b97"
+    },
+    {
+      "name": "@unrdf/semantic-search",
+      "dir": "packages/semantic-search",
+      "version": "1.0.0",
+      "type": "module",
+      "entryPoint": "src/index.mjs",
+      "hasTests": true,
+      "hasSrc": true,
+      "description": "AI-powered semantic search over RDF knowledge graphs using vector embeddings",
+      "keywords": [
+        "rdf",
+        "semantic-search",
+        "vector-embeddings",
+        "knowledge-graph",
+        "ai",
+        "transformers",
+        "sparql",
+        "natural-language"
+      ],
+      "checksum": "df1d37424b7251dd"
+    },
+    {
+      "name": "@unrdf/serverless",
+      "dir": "packages/serverless",
+      "version": "1.0.0",
+      "type": "module",
+      "entryPoint": "src/index.mjs",
+      "hasTests": true,
+      "hasSrc": true,
+      "description": "UNRDF Serverless - One-click AWS deployment for RDF applications",
+      "keywords": [
+        "rdf",
+        "serverless",
+        "aws",
+        "lambda",
+        "cdk",
+        "infrastructure",
+        "deployment"
+      ],
+      "checksum": "26711f200efc87e9"
+    },
+    {
+      "name": "@unrdf/streaming",
+      "dir": "packages/streaming",
+      "version": "5.0.1",
+      "type": "module",
+      "entryPoint": "src/index.mjs",
+      "hasTests": true,
+      "hasSrc": true,
+      "description": "UNRDF Streaming - Change Feeds and Real-time Synchronization",
+      "keywords": [
+        "rdf",
+        "streaming",
+        "real-time",
+        "change-feed",
+        "synchronization"
+      ],
+      "checksum": "326236e3bc869ab7"
+    },
+    {
+      "name": "@unrdf/test-utils",
+      "dir": "packages/test-utils",
+      "version": "5.0.1",
+      "type": "module",
+      "entryPoint": "./src/index.mjs",
+      "hasTests": true,
+      "hasSrc": true,
+      "description": "Testing utilities for UNRDF development",
+      "keywords": [
+        "rdf",
+        "testing",
+        "utilities"
+      ],
+      "checksum": "1a216a8b1602bba7"
+    },
+    {
+      "name": "@unrdf/validation",
+      "dir": "packages/validation",
+      "version": "5.0.1",
+      "type": "module",
+      "entryPoint": "./src/index.mjs",
+      "hasTests": false,
+      "hasSrc": true,
+      "description": "OTEL validation framework for UNRDF development",
+      "keywords": [
+        "rdf",
+        "validation",
+        "otel",
+        "observability"
+      ],
+      "checksum": "c56a8e9ff18465fe"
+    },
+    {
+      "name": "@unrdf/yawl",
+      "dir": "packages/yawl",
+      "version": "5.0.0",
+      "type": "module",
+      "entryPoint": "src/index.mjs",
+      "hasTests": true,
+      "hasSrc": true,
+      "description": "YAWL (Yet Another Workflow Language) engine with KGC-4D time-travel and receipt verification",
+      "keywords": [
+        "workflow",
+        "yawl",
+        "van-der-aalst",
+        "petri-net",
+        "bpmn",
+        "rdf",
+        "time-travel"
+      ],
+      "checksum": "7bcdbead06b0734b"
+    },
+    {
+      "name": "@unrdf/yawl-ai",
+      "dir": "packages/yawl-ai",
+      "version": "1.0.0",
+      "type": "module",
+      "entryPoint": "src/index.mjs",
+      "hasTests": false,
+      "hasSrc": true,
+      "description": "AI-powered workflow optimization using TensorFlow.js and YAWL patterns",
+      "keywords": [
+        "ai",
+        "ml",
+        "tensorflow",
+        "workflow",
+        "yawl",
+        "optimization",
+        "prediction"
+      ],
+      "checksum": "3e55244d9c36fb7c"
+    },
+    {
+      "name": "@unrdf/yawl-api",
+      "dir": "packages/yawl-api",
+      "version": "1.0.0",
+      "type": "module",
+      "entryPoint": "src/server.mjs",
+      "hasTests": true,
+      "hasSrc": true,
+      "description": "High-performance REST API framework that exposes YAWL workflows as RESTful APIs with OpenAPI documentation",
+      "keywords": [
+        "yawl",
+        "workflow",
+        "rest-api",
+        "fastify",
+        "openapi",
+        "swagger",
+        "hateoas",
+        "api-framework"
+      ],
+      "checksum": "5e6c63a7684217f1"
+    },
+    {
+      "name": "@unrdf/yawl-durable",
+      "dir": "packages/yawl-durable",
+      "version": "0.1.0",
+      "type": "module",
+      "entryPoint": "src/engine.mjs",
+      "hasTests": true,
+      "hasSrc": true,
+      "description": "Durable execution framework inspired by Temporal.io using YAWL and KGC-4D",
+      "keywords": [
+        "workflow",
+        "durable-execution",
+        "temporal",
+        "saga",
+        "event-sourcing",
+        "yawl"
+      ],
+      "checksum": "f574b27fa5cff890"
+    },
+    {
+      "name": "@unrdf/yawl-kafka",
+      "dir": "packages/yawl-kafka",
+      "version": "1.0.0",
+      "type": "module",
+      "entryPoint": "src/index.mjs",
+      "hasTests": true,
+      "hasSrc": true,
+      "description": "Apache Kafka event streaming integration for YAWL workflows with Avro serialization",
+      "keywords": [
+        "yawl",
+        "kafka",
+        "event-streaming",
+        "avro",
+        "workflow",
+        "analytics"
+      ],
+      "checksum": "77558eb84886deb0"
+    },
+    {
+      "name": "@unrdf/yawl-langchain",
+      "dir": "packages/yawl-langchain",
+      "version": "1.0.0",
+      "type": "module",
+      "entryPoint": "src/index.mjs",
+      "hasTests": true,
+      "hasSrc": true,
+      "description": "LangChain integration for YAWL workflow engine - AI-powered workflow orchestration with RDF context",
+      "keywords": [
+        "yawl",
+        "langchain",
+        "workflow",
+        "ai",
+        "llm",
+        "rdf",
+        "knowledge-graph",
+        "agent-orchestration"
+      ],
+      "checksum": "8be611d2afe6982f"
+    },
+    {
+      "name": "@unrdf/yawl-observability",
+      "dir": "packages/yawl-observability",
+      "version": "1.0.0",
+      "type": "module",
+      "entryPoint": "src/index.mjs",
+      "hasTests": true,
+      "hasSrc": true,
+      "description": "Workflow observability framework with Prometheus metrics and OpenTelemetry tracing for YAWL",
+      "keywords": [
+        "yawl",
+        "observability",
+        "prometheus",
+        "opentelemetry",
+        "metrics",
+        "tracing",
+        "workflow",
+        "sli",
+        "slo"
+      ],
+      "checksum": "cc0f1d6daf4ac3bb"
+    },
+    {
+      "name": "@unrdf/yawl-queue",
+      "dir": "packages/yawl-queue",
+      "version": "1.0.0",
+      "type": "module",
+      "entryPoint": "src/adapter.mjs",
+      "hasTests": true,
+      "hasSrc": true,
+      "description": "Distributed YAWL workflow execution using BullMQ and Redis",
+      "keywords": [
+        "yawl",
+        "bullmq",
+        "workflow",
+        "distributed",
+        "queue",
+        "redis",
+        "task-execution"
+      ],
+      "checksum": "2730ad8514292820"
+    },
+    {
+      "name": "@unrdf/yawl-realtime",
+      "dir": "packages/yawl-realtime",
+      "version": "1.0.0",
+      "type": "module",
+      "entryPoint": "src/index.mjs",
+      "hasTests": true,
+      "hasSrc": true,
+      "description": "Real-time collaboration framework for YAWL workflows using Socket.io",
+      "keywords": [
+        "yawl",
+        "workflow",
+        "real-time",
+        "collaboration",
+        "socket.io",
+        "crdt",
+        "optimistic-locking"
+      ],
+      "checksum": "aae38bd55355802b"
+    },
+    {
+      "name": "@unrdf/yawl-viz",
+      "dir": "packages/yawl-viz",
+      "version": "1.0.0",
+      "type": "module",
+      "entryPoint": "src/visualizer.mjs",
+      "hasTests": true,
+      "hasSrc": true,
+      "description": "Real-time D3.js visualization for YAWL workflows with Van der Aalst pattern rendering",
+      "keywords": [
+        "yawl",
+        "workflow",
+        "visualization",
+        "d3",
+        "van-der-aalst",
+        "petri-net",
+        "real-time"
+      ],
+      "checksum": "61c163c71f7804bf"
+    },
+    {
+      "name": "docs",
+      "dir": "packages/docs",
+      "version": "5.0.1",
+      "type": "module",
+      "entryPoint": "index.js",
+      "hasTests": true,
+      "hasSrc": false,
+      "description": "",
+      "keywords": [],
+      "checksum": "73380e5e564b8580"
+    }
+  ]
+}
