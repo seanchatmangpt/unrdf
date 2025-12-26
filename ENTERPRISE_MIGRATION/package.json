@@ -1,0 +1,52 @@
+{
+  "name": "enterprise-migration",
+  "version": "1.0.0",
+  "description": "Enterprise migration system for UNRDF substrate platform - 10-agent orchestrated migration from legacy systems",
+  "type": "module",
+  "private": true,
+  "main": "./src/index.mjs",
+  "exports": {
+    ".": "./src/index.mjs",
+    "./control-plane": "./agent-1/control-plane.mjs",
+    "./impact-set": "./agent-6/impact-set.mjs",
+    "./routing-modes": "./agent-7/routing-modes.mjs"
+  },
+  "scripts": {
+    "prove": "node --test test/*.test.mjs",
+    "validate": "node -e \"import('./src/index.mjs').then(m => m.verifyAll().then(r => { console.log(JSON.stringify(r, null, 2)); process.exit(r.allHealthy ? 0 : 1); }))\"",
+    "migrate": "node -e \"import('./src/index.mjs').then(m => m.runMigration().then(r => { console.log(JSON.stringify(r, null, 2)); process.exit(r.success ? 0 : 1); }))\"",
+    "migrate:dry-run": "node -e \"import('./src/index.mjs').then(m => m.runMigration({ dryRun: true }).then(r => { console.log(JSON.stringify(r, null, 2)); process.exit(r.success ? 0 : 1); }))\"",
+    "health": "node -e \"import('./src/index.mjs').then(m => m.getHealth().then(r => { console.log(JSON.stringify(r, null, 2)); process.exit(r.healthy ? 0 : 1); }))\"",
+    "state": "node -e \"import('./src/index.mjs').then(m => m.getState().then(r => console.log(JSON.stringify(r, null, 2))))\"",
+    "phases": "node -e \"import('./src/index.mjs').then(m => console.log(JSON.stringify(m.getPhases(), null, 2)))\"",
+    "quick-start": "node -e \"import('./src/index.mjs').then(m => m.quickStart({ dryRun: true }).then(console.log))\"",
+    "reset": "node -e \"import('./src/index.mjs').then(m => m.reset().then(console.log))\"",
+    "lint": "echo 'Linting not configured - add eslint if needed'",
+    "format": "echo 'Formatting not configured - add prettier if needed'"
+  },
+  "keywords": [
+    "migration",
+    "enterprise",
+    "rdf",
+    "substrate",
+    "unrdf",
+    "orchestration",
+    "shadow-mode",
+    "impact-analysis"
+  ],
+  "author": "UNRDF Team",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=7.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/unrdf/unrdf.git",
+    "directory": "ENTERPRISE_MIGRATION"
+  },
+  "bugs": {
+    "url": "https://github.com/unrdf/unrdf/issues"
+  },
+  "homepage": "https://github.com/unrdf/unrdf/tree/main/ENTERPRISE_MIGRATION#readme"
+}
