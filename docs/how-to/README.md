@@ -10,15 +10,14 @@ These cover 80% of use cases:
 
 ### Parsing & Serialization
 - **[ESSENTIAL]** [How to Parse RDF Formats](./parse-rdf-formats.md) - Turtle, JSON-LD, N-Triples
-- **[ESSENTIAL]** [How to Serialize RDF](./serialize-rdf.md) - Back to Turtle/JSON-LD
 
 ### Querying
-- **[ESSENTIAL]** [How to Execute SPARQL Queries](./execute-sparql-queries.md) - SELECT, CONSTRUCT, ASK
-- **[ESSENTIAL]** [How to Use SPARQL Property Paths](./sparql-property-paths.md) - Path expressions
+- **[ESSENTIAL]** [How to Query with SPARQL](./query-with-sparql.md) - SELECT, CONSTRUCT, ASK queries
+- **[ESSENTIAL]** [How to Optimize Query Performance](./optimize-query-performance.md) - Performance tuning
 
 ### Validation
-- **[ESSENTIAL]** [How to Define SHACL Constraints](./define-shacl-constraints.md) - Shape validation
-- **[ESSENTIAL]** [How to Handle Validation Errors](./handle-validation-errors.md) - Error handling
+- **[ESSENTIAL]** [How to Validate RDF Data](./validate-rdf-data.md) - SHACL validation and error handling
+- **[ESSENTIAL]** [How to Assess Data Quality](./assess-data-quality.md) - Quality metrics and checks
 
 ---
 

@@ -6,17 +6,17 @@
 
 ## Beginner Path (30 minutes)
 
-### 1. [Quick Start Tutorial](./01-quick-start.md) ← START HERE
+### 1. [Quick Start: First Knowledge Hook](./01-first-knowledge-hook.md) ← START HERE
 
-Parse RDF, execute SPARQL queries, serialize data.
+Build your first knowledge hook with RDF, SPARQL, and reactive behaviors.
 
 **Time:** 15 minutes
 **What you'll learn:**
 - Installing UNRDF
-- The 11-line pit of success
+- Creating knowledge hooks
 - Basic SPARQL queries
 
-### 2. [SHACL Validation](./02-shacl-validation.md)
+### 2. [RDF Validation with SHACL](./validation.md)
 
 Validate your data with SHACL shapes.
 
@@ -36,7 +36,7 @@ Most users don't need anything beyond this point.
 
 ## Intermediate Path (1 hour) - Only If You Need Automation
 
-### 3. [Building Your First Knowledge Hook](./02-first-knowledge-hook.md)
+### 3. [Advanced Knowledge Hooks](./04-advanced-hooks.md)
 
 Create hooks that react to data changes automatically.
 
@@ -44,57 +44,49 @@ Create hooks that react to data changes automatically.
 **When you need it:** Autonomous validation, transformation, logging
 **Skip if:** You can validate/transform manually in your code
 
-### 4. [Transactions with Hooks](./03-transactions-with-hooks.md)
+### 4. [RDF Operations & Data Management](./02-rdf-operations.md)
 
-Hook-driven atomic transactions.
+Work with RDF quads, stores, and data operations.
 
 **Time:** 20 minutes
-**When you need it:** Multiple hooks coordinated on changes
-**Skip if:** You don't need Knowledge Hooks
+**When you need it:** Complex data transformations and management
+**Skip if:** Basic SPARQL queries are sufficient
 
 ---
 
 ## Advanced Path (2+ hours) - Specialized Use Cases Only
 
-### 5. [Browser Integration](./03-browser-integration.md)
+### 5. [SPARQL Query Patterns](./sparql.md)
 
-Client-side RDF with IndexedDB.
+Master SPARQL queries and advanced query patterns.
 
 **Time:** 45 minutes
-**When you need it:** Browser-based applications
-**Skip if:** Node.js only
+**When you need it:** Complex queries and data retrieval
+**Skip if:** Basic SELECT queries are sufficient
 
-### 6. [Policy Packs and Governance](./04-policy-packs.md)
+### 6. [Composables & Context Management](./03-composables-context.md)
 
-Declarative access control and validation policies.
+Use Vue-style composables for reactive RDF data.
 
 **Time:** 40 minutes
-**When you need it:** Enterprise governance requirements
-**Skip if:** Basic SHACL is enough
+**When you need it:** Building reactive applications
+**Skip if:** Not using composables pattern
 
-### 7. [Real-time Streaming](./05-real-time-streaming.md)
+### 7. [Creating RDF Documents](./creating-rdf-documents.md)
 
-Change feeds, windowing, reactive pipelines.
+Programmatically build RDF documents and knowledge graphs.
 
 **Time:** 50 minutes
-**When you need it:** Real-time data processing
-**Skip if:** Batch processing is sufficient
+**When you need it:** Generating RDF from application data
+**Skip if:** Working with existing RDF data only
 
-### 8. [Distributed Federation](./06-distributed-federation.md)
+### 8. Browser Integration (Coming Soon)
 
-Multi-node queries, consensus protocols.
+Client-side RDF with IndexedDB. See [How-To: React Integration](../how-to/use-hooks-in-react.md) for current options.
 
-**Time:** 60 minutes
-**When you need it:** Distributed systems
-**Skip if:** Single-node is sufficient
+### 9. Production Deployment (Coming Soon)
 
-### 9. [Production Deployment](./08-production-deployment.md)
-
-Docker, Kubernetes, observability.
-
-**Time:** 90 minutes
-**When you need it:** Production infrastructure
-**Skip if:** Development only
+Docker, Kubernetes, observability. See [Reference Documentation](../reference/README.md) for API details.
 
 ---
 
