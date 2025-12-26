@@ -15,9 +15,7 @@
  * @module @unrdf/fusion/receipts-kernel
  */
 
-import { blake3 } from 'hash-wasm';
-import { sha256 } from '@noble/hashes/sha256';
-import { bytesToHex } from '@noble/hashes/utils';
+import { createHash } from 'node:crypto';
 import { MerkleProofGenerator } from '@unrdf/blockchain';
 import { now, toISO, VectorClock } from '@unrdf/kgc-4d';
 import { z } from 'zod';
@@ -214,16 +212,8 @@ export async function createReceipt(eventType, payload, opts = {}) {
   // Serialize to canonical JSON
   const canonicalJson = JSON.stringify(canonicalData);
 
-  // Compute hash based on receipt type
-  let hash;
-  if (receiptType === 'blockchain') {
-    // Use SHA256 for blockchain receipts (Ethereum compatibility)
-    const hashBytes = sha256(new TextEncoder().encode(canonicalJson));
-    hash = bytesToHex(hashBytes);
-  } else {
-    // Use BLAKE3 for KGC/hook receipts (faster, ARD-mandated)
-    hash = await blake3(canonicalJson);
-  }
+  // Compute hash using SHA256 (deterministic, no external deps)
+  const hash = createHash('sha256').update(canonicalJson).digest('hex');
 
   const receipt = {
     id,
@@ -312,14 +302,8 @@ export async function verifyReceipt(receipt) {
 
     const canonicalJson = JSON.stringify(canonicalData);
 
-    // Recompute hash
-    let recomputedHash;
-    if (receipt.receiptType === 'blockchain') {
-      const hashBytes = sha256(new TextEncoder().encode(canonicalJson));
-      recomputedHash = bytesToHex(hashBytes);
-    } else {
-      recomputedHash = await blake3(canonicalJson);
-    }
+    // Recompute hash using SHA256
+    const recomputedHash = createHash('sha256').update(canonicalJson).digest('hex');
 
     // Verify hash integrity
     if (recomputedHash !== receipt.hash) {

@@ -1,13 +1,12 @@
 {
-  "proofHash": "abc123def456",
-  "merkleRoot": "root789",
+  "proofHash": "deae836b9fbd3b278729e3d8f6bbfb1f5992e5101577f2b7550fbe58d8cadb91",
+  "merkleRoot": "4dee0cfbd3cab62639d02926d574c1bda7fcf5757a5516e0110706b81a3182d1",
   "receipts": {
     "type": "receipts",
     "data": {
-      "count": 5,
+      "count": 4,
       "receipts": [
         {
-          "eventType": "CREATE",
           "phase": "store-created",
           "timestamp": "[DETERMINISTIC]"
         },
@@ -28,14 +27,10 @@
           "phase": "case-executed",
           "timestamp": "[DETERMINISTIC]",
           "valid": true
-        },
-        {
-          "phase": "receipts-emitted",
-          "timestamp": "[DETERMINISTIC]"
         }
       ]
     },
-    "hash": "d1237c001ebcfe6f010e71066c3675e701e53dbb48b9fc03ec61bf354e9368f3",
+    "hash": "c112cbd6ca58934ac45fe7e6642761cfc8eefe68ef3dccaf741e9c999271e945",
     "timestamp": "[DETERMINISTIC]"
   },
   "allocation": {
@@ -49,7 +44,7 @@
         },
         {
           "label": "merkleRoot",
-          "value": "root789"
+          "value": "4dee0cfbd3cab62639d02926d574c1bda7fcf5757a5516e0110706b81a3182d1"
         },
         {
           "label": "policyApplied",
@@ -57,7 +52,7 @@
         },
         {
           "label": "receiptsEmitted",
-          "value": 5
+          "value": 4
         },
         {
           "label": "resourceAllocated",
@@ -72,10 +67,10 @@
           "value": true
         }
       ],
-      "total": "1root789true5truetruetrue"
+      "total": "14dee0cfbd3cab62639d02926d574c1bda7fcf5757a5516e0110706b81a3182d1true4truetruetrue"
     },
-    "hash": "657a6cbc80f9449f644b6a094e285e1a491063e60c40f1a2c39492d1037b736a",
+    "hash": "0a44cdf397593a9f61814a1ee3b35bafdd5f3e7b294b2cfc2011d28d41a8a46b",
     "timestamp": "[DETERMINISTIC]"
   },
-  "timestamp": "2025-01-01T00:00:00Z"
+  "timestamp": "2024-01-01T00:00:00.004Z"
 }
