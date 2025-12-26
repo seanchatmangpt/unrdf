@@ -1,0 +1,23 @@
+{
+  "name": "@autonomic/capsule-ir",
+  "version": "1.0.0",
+  "description": "Portable, content-addressed change programs with deterministic hashing",
+  "type": "module",
+  "main": "index.mjs",
+  "scripts": {
+    "test": "node test.mjs"
+  },
+  "keywords": [
+    "capsule",
+    "ir",
+    "content-addressed",
+    "hashing",
+    "rdf",
+    "change-program"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "zod": "^3.23.8"
+  }
+}
