@@ -1,0 +1,166 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Claude Code Capability Lattice",
+  "version": "1.0.0",
+  "description": "Graph representation of Claude Code primitive capabilities and their compositional relationships",
+
+  "nodes": [
+    {
+      "id": "subagents",
+      "name": "Subagents & Delegation",
+      "category": "execution",
+      "description": "Custom subagents for specialized work roles invoked via delegation tasks",
+      "primitives": ["Task tool", "agent types", "parallel spawning", "stateless execution"],
+      "docRef": "https://docs.anthropic.com/en/docs/claude-code/agents"
+    },
+    {
+      "id": "hooks",
+      "name": "Hooks & Tool Governance",
+      "category": "control",
+      "description": "Shell commands that execute at tool lifecycle points with match rules",
+      "primitives": ["PreToolUse", "PostToolUse", "PreCompact", "Stop", "matchers", "allow/deny/ask"],
+      "docRef": "https://docs.anthropic.com/en/docs/claude-code/hooks"
+    },
+    {
+      "id": "plugins",
+      "name": "Plugins",
+      "category": "extension",
+      "description": "Shareable bundles of commands, agents, hooks, skills, MCP configs, LSP servers",
+      "primitives": ["namespaced routing", "versioning", "bundling", "distribution"],
+      "docRef": "https://docs.anthropic.com/en/docs/claude-code/plugins"
+    },
+    {
+      "id": "slash_commands",
+      "name": "Slash Commands",
+      "category": "control",
+      "description": "Built-in and custom programmable commands with frontmatter and arguments",
+      "primitives": ["project commands", "personal commands", "arguments", "namespacing"],
+      "docRef": "https://docs.anthropic.com/en/docs/claude-code/slash-commands"
+    },
+    {
+      "id": "mcp",
+      "name": "Model Context Protocol",
+      "category": "integration",
+      "description": "External tools and data connection with permissioning",
+      "primitives": ["server config", "tool discovery", "permission rules", "dynamic invocation"],
+      "docRef": "https://docs.anthropic.com/en/docs/claude-code/mcp"
+    },
+    {
+      "id": "programmatic",
+      "name": "Programmatic/Headless Execution",
+      "category": "automation",
+      "description": "Non-interactive execution via CLI with structured outputs",
+      "primitives": ["claude -p", "text/json/stream-json", "session resume", "--allowedTools"],
+      "docRef": "https://docs.anthropic.com/en/docs/agent-sdk"
+    },
+    {
+      "id": "checkpointing",
+      "name": "Checkpointing & Rewind",
+      "category": "safety",
+      "description": "Automatic state checkpoints with conversation/code rewind",
+      "primitives": ["/rewind", "escape shortcut", "code-only rewind", "conversation-only rewind"],
+      "docRef": "https://docs.anthropic.com/en/docs/claude-code/checkpoints"
+    },
+    {
+      "id": "ide_surface",
+      "name": "IDE/VS Code Surface",
+      "category": "interface",
+      "description": "Native extension with diff-and-approval workflow",
+      "primitives": ["plan review", "inline diffs", "@-mentions", "multi-conversation tabs"],
+      "docRef": "https://docs.anthropic.com/en/docs/claude-code/ide"
+    },
+    {
+      "id": "background_tasks",
+      "name": "Background Tasks",
+      "category": "execution",
+      "description": "Long-running work that doesn't block interactive control",
+      "primitives": ["/bashes", "async execution", "output monitoring"],
+      "docRef": "https://docs.anthropic.com/en/docs/claude-code/background"
+    },
+    {
+      "id": "skills",
+      "name": "Agent Skills",
+      "category": "capability",
+      "description": "Model-invoked capabilities based on context",
+      "primitives": ["context triggers", "automatic invocation", "capability injection"],
+      "docRef": "https://docs.anthropic.com/en/docs/claude-code/skills"
+    },
+    {
+      "id": "tool_permissions",
+      "name": "Tool Permission Rules",
+      "category": "control",
+      "description": "Explicit allow/deny patterns for tool usage",
+      "primitives": ["permission patterns", "glob matching", "safety rules"],
+      "docRef": "https://docs.anthropic.com/en/docs/claude-code/permissions"
+    },
+    {
+      "id": "output_formats",
+      "name": "Output Formats",
+      "category": "automation",
+      "description": "Structured output modes for downstream processing",
+      "primitives": ["text", "json", "stream-json", "machine-readable"],
+      "docRef": "https://docs.anthropic.com/en/docs/agent-sdk/output"
+    }
+  ],
+
+  "edges": [],
+
+  "compositions": {
+    "explored": [],
+    "frontier": [
+      {
+        "nodes": ["hooks", "subagents", "programmatic"],
+        "hypothesis": "Parallel execution with enforceable policy and machine-readable outputs",
+        "measurableProperties": ["policy_enforcement", "parallel_throughput", "reproducibility"]
+      },
+      {
+        "nodes": ["checkpointing", "subagents"],
+        "hypothesis": "Aggressive parallel exploration with rapid recovery from bad branches",
+        "measurableProperties": ["recovery_time", "exploration_throughput"]
+      },
+      {
+        "nodes": ["plugins", "mcp", "slash_commands"],
+        "hypothesis": "Portable capability products with external integration",
+        "measurableProperties": ["operator_steps", "reproducibility"]
+      },
+      {
+        "nodes": ["skills", "hooks", "mcp"],
+        "hypothesis": "Automatic capability injection with policy-controlled external access",
+        "measurableProperties": ["policy_strength", "automation_level"]
+      },
+      {
+        "nodes": ["ide_surface", "checkpointing", "background_tasks"],
+        "hypothesis": "Rich interactive development with safety net and async work",
+        "measurableProperties": ["recovery_time", "operator_steps", "parallel_throughput"]
+      }
+    ]
+  },
+
+  "metrics": {
+    "operator_steps": {
+      "description": "Count of keystrokes/commands required",
+      "unit": "count",
+      "direction": "lower_is_better"
+    },
+    "policy_strength": {
+      "description": "Number of forbidden tool paths prevented",
+      "unit": "count",
+      "direction": "higher_is_better"
+    },
+    "recovery_time": {
+      "description": "Time to rewind and restore after failure",
+      "unit": "seconds",
+      "direction": "lower_is_better"
+    },
+    "parallel_throughput": {
+      "description": "Tasks completed per unit time",
+      "unit": "tasks/minute",
+      "direction": "higher_is_better"
+    },
+    "reproducibility": {
+      "description": "Same inputs yield same outputs rate",
+      "unit": "percentage",
+      "direction": "higher_is_better"
+    }
+  }
+}
