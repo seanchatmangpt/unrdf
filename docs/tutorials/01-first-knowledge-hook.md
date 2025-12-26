@@ -21,9 +21,9 @@ Knowledge Hooks are the core of UNRDF's autonomic system. They allow you to moni
 Make sure you have UNRDF installed:
 
 ```bash
-npm install unrdf
-# or
-pnpm add unrdf
+pnpm add @unrdf/core @unrdf/hooks
+# or with npm
+npm install @unrdf/core @unrdf/hooks
 ```
 
 ## Step 1: Understanding the Hook Lifecycle
@@ -41,7 +41,7 @@ This pattern ensures that hooks are testable, composable, and auditable.
 Let's create a simple hook that monitors system health. Create a file `my-first-hook.mjs`:
 
 ```javascript
-import { defineHook } from 'unrdf/knowledge-engine';
+import { defineHook } from '@unrdf/hooks';
 
 const healthCheckHook = defineHook({
   // Metadata: describes the hook
