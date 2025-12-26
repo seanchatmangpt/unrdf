@@ -1,0 +1,75 @@
+{
+  "description": "Test Case 4: Self-conflict - capsule adds and deletes same quad",
+  "capsuleA": {
+    "id": "uuid:78901234-5678-4901-a234-def012345678",
+    "add": [
+      {
+        "subject": "http://example.org/alice",
+        "predicate": "http://xmlns.com/foaf/0.1/name",
+        "object": "\"Alice\"",
+        "graph": "http://example.org/graph1"
+      }
+    ],
+    "del": [
+      {
+        "subject": "http://example.org/alice",
+        "predicate": "http://xmlns.com/foaf/0.1/name",
+        "object": "\"Alice\"",
+        "graph": "http://example.org/graph1"
+      }
+    ],
+    "metadata": {
+      "author": "system",
+      "timestamp": "2025-12-26T10:07:00Z",
+      "note": "Pathological case - capsule contradicts itself"
+    }
+  },
+  "expectedResult": {
+    "canReorder": false,
+    "reason": "self-conflict",
+    "witness": [
+      {
+        "subject": "http://example.org/alice",
+        "predicate": "http://xmlns.com/foaf/0.1/name",
+        "object": "\"Alice\"",
+        "graph": "http://example.org/graph1"
+      }
+    ],
+    "explanation": "Capsule A both adds and deletes the same triple. This is a self-conflicting capsule that depends on application order (add-first vs delete-first)."
+  },
+  "conflictCertificate": {
+    "counterexample": [
+      "<http://example.org/alice> <http://xmlns.com/foaf/0.1/name> \"Alice\" <http://example.org/graph1> ."
+    ],
+    "explanation": "Capsule contains self-conflict: adds and deletes <http://example.org/alice> <http://xmlns.com/foaf/0.1/name> \"Alice\". Application order matters.",
+    "hash": "sha256:[TO_BE_COMPUTED]",
+    "capsuleIds": [
+      "uuid:78901234-5678-4901-a234-def012345678",
+      "uuid:78901234-5678-4901-a234-def012345678"
+    ],
+    "conflictType": "self-conflict",
+    "timestamp": "2025-12-26T10:08:00Z",
+    "metadata": {
+      "minimality": "proven",
+      "witnessSize": 1,
+      "severity": "high",
+      "recommendation": "Reject or resolve before application"
+    }
+  },
+  "deltaAnalysis": {
+    "A_add_intersect_A_del": [
+      {
+        "subject": "http://example.org/alice",
+        "predicate": "http://xmlns.com/foaf/0.1/name",
+        "object": "\"Alice\"",
+        "graph": "http://example.org/graph1"
+      }
+    ],
+    "conflicts": ["self-conflict"]
+  },
+  "notes": [
+    "Self-conflicting capsules indicate data consistency issues",
+    "Should be detected during capsule validation (Agent 3)",
+    "Conflict certificate helps debug source of contradiction"
+  ]
+}

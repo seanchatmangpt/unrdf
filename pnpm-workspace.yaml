@@ -9,3 +9,4 @@ packages:
   - 'playground/full-stack-example/apps/*'
   - 'apps/*'
   - 'examples'
+  - 'AUTONOMIC_INNOVATION/agent-*'

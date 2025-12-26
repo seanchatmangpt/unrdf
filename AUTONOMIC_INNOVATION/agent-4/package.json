@@ -1,0 +1,24 @@
+{
+  "name": "@autonomic-innovation/impact",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Impact set extraction for RDF diffs (capsules)",
+  "main": "./src/index.mjs",
+  "exports": {
+    ".": "./src/index.mjs"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
+  },
+  "dependencies": {
+    "zod": "^4.1.13"
+  },
+  "keywords": [
+    "rdf",
+    "diff",
+    "impact-analysis",
+    "knowledge-graph"
+  ],
+  "author": "",
+  "license": "MIT"
+}

@@ -1,0 +1,77 @@
+{
+  "description": "Test Case 3: Add-Delete conflict - cannot reorder",
+  "capsuleA": {
+    "id": "uuid:e5f67890-1234-4567-a890-bcdef0123456",
+    "add": [
+      {
+        "subject": "http://example.org/alice",
+        "predicate": "http://xmlns.com/foaf/0.1/name",
+        "object": "\"Alice\"",
+        "graph": "http://example.org/graph1"
+      }
+    ],
+    "del": [],
+    "metadata": {
+      "author": "system",
+      "timestamp": "2025-12-26T10:04:00Z"
+    }
+  },
+  "capsuleB": {
+    "id": "uuid:f6789012-3456-4789-a012-cdef01234567",
+    "add": [],
+    "del": [
+      {
+        "subject": "http://example.org/alice",
+        "predicate": "http://xmlns.com/foaf/0.1/name",
+        "object": "\"Alice\"",
+        "graph": "http://example.org/graph1"
+      }
+    ],
+    "metadata": {
+      "author": "system",
+      "timestamp": "2025-12-26T10:05:00Z"
+    }
+  },
+  "expectedResult": {
+    "canReorder": false,
+    "reason": "add-del-conflict",
+    "witness": [
+      {
+        "subject": "http://example.org/alice",
+        "predicate": "http://xmlns.com/foaf/0.1/name",
+        "object": "\"Alice\"",
+        "graph": "http://example.org/graph1"
+      }
+    ],
+    "explanation": "Capsule A adds triple <http://example.org/alice> <foaf:name> \"Alice\", but Capsule B deletes it. Order matters: A→B leaves triple absent, B→A leaves it present."
+  },
+  "conflictCertificate": {
+    "counterexample": [
+      "<http://example.org/alice> <http://xmlns.com/foaf/0.1/name> \"Alice\" <http://example.org/graph1> ."
+    ],
+    "explanation": "Capsule A adds triple <http://example.org/alice> <http://xmlns.com/foaf/0.1/name> \"Alice\", but Capsule B deletes it. Order matters.",
+    "hash": "sha256:[TO_BE_COMPUTED]",
+    "capsuleIds": [
+      "uuid:e5f67890-1234-4567-a890-bcdef0123456",
+      "uuid:f6789012-3456-4789-a012-cdef01234567"
+    ],
+    "conflictType": "add-del-conflict",
+    "timestamp": "2025-12-26T10:06:00Z",
+    "metadata": {
+      "minimality": "proven",
+      "witnessSize": 1
+    }
+  },
+  "deltaAnalysis": {
+    "A_add_intersect_B_del": [
+      {
+        "subject": "http://example.org/alice",
+        "predicate": "http://xmlns.com/foaf/0.1/name",
+        "object": "\"Alice\"",
+        "graph": "http://example.org/graph1"
+      }
+    ],
+    "B_add_intersect_A_del": [],
+    "conflicts": ["add-del-conflict"]
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "name": "@agent-8/store-adapter",
+  "version": "1.0.0",
+  "description": "Agent 8: Store Adapter & Atomic Apply - Atomic RDF store operations with capsule delta application",
+  "type": "module",
+  "main": "./src/index.mjs",
+  "exports": {
+    ".": "./src/index.mjs",
+    "./store": "./src/store.mjs",
+    "./apply": "./src/apply.mjs",
+    "./query": "./src/query.mjs",
+    "./freeze": "./src/freeze.mjs",
+    "./utils": "./src/utils.mjs"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
+  },
+  "dependencies": {
+    "@unrdf/core": "workspace:*",
+    "@unrdf/oxigraph": "workspace:*",
+    "hash-wasm": "^4.12.0",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "vitest": "^4.0.15"
+  },
+  "peerDependencies": {
+    "@unrdf/kgc-4d": "workspace:*"
+  },
+  "peerDependenciesMeta": {
+    "@unrdf/kgc-4d": {
+      "optional": true
+    }
+  },
+  "keywords": [
+    "rdf",
+    "atomic",
+    "store",
+    "capsule",
+    "delta",
+    "receipt",
+    "hash-chain",
+    "autonomic"
+  ],
+  "author": "UNRDF Team",
+  "license": "MIT"
+}
