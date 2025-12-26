@@ -7,6 +7,7 @@ import { z } from 'zod';
 import { promises as fs } from 'fs';
 import path from 'path';
 import { createHash } from 'crypto';
+import { createStore } from '@unrdf/oxigraph';
 import { scanFileSystemToStore } from './fs-scan.mjs';
 import { diffProjectStructure } from './project-diff.mjs';
 
@@ -253,9 +254,8 @@ async function snapshotFileSystem(root) {
     return { store, hash };
   } catch (err) {
     // If directory doesn't exist, return empty store
-    const { Store } = await import('n3');
     return {
-      store: new Store(),
+      store: createStore(),
       hash: 'empty',
     };
   }

@@ -40,7 +40,7 @@ export { ResolutionLayer } from './resolution-layer.mjs';
 
 // Query & Optimization
 export { QueryOptimizer } from './query-optimizer.mjs';
-export { query } from './query.mjs';
+export { query, select, ask, construct, describe, update, getQueryStats } from './query.mjs';
 
 // Utilities
 export { parseTurtle, toTurtle, toNQuads, parseJsonLd, toJsonLd } from './parse.mjs';

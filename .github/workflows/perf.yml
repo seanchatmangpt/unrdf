@@ -1,0 +1,187 @@
+name: Performance Benchmarks
+
+on:
+  pull_request:
+    branches: [ main, develop ]
+  push:
+    branches: [ main ]
+  schedule:
+    # Run daily at 2am UTC to track performance trends
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      update_baseline:
+        description: 'Update performance baseline'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  benchmark:
+    name: Run Performance Benchmarks
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch full history for comparison
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build packages
+        run: pnpm build
+
+      - name: Download baseline
+        id: download-baseline
+        continue-on-error: true
+        run: |
+          # Try to download baseline from main branch
+          git show origin/main:benchmarks/baseline.json > benchmarks/baseline.json 2>/dev/null || true
+          if [ -f benchmarks/baseline.json ]; then
+            echo "baseline_exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "baseline_exists=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Run benchmarks
+        id: run-benchmarks
+        run: |
+          # Run benchmark suite with 10% regression threshold
+          node scripts/bench-all.mjs --threshold 10 --format markdown > benchmark-results.md
+          echo "exit_code=$?" >> $GITHUB_OUTPUT
+
+      - name: Upload benchmark results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: benchmark-results
+          path: |
+            benchmark-results.md
+            benchmarks/baseline.json
+          retention-days: 30
+
+      - name: Comment PR with results
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const results = fs.readFileSync('benchmark-results.md', 'utf8');
+
+            const comment = `## 📊 Performance Benchmark Results\n\n${results}`;
+
+            // Find existing comment
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const existingComment = comments.find(c =>
+              c.user.login === 'github-actions[bot]' &&
+              c.body.includes('Performance Benchmark Results')
+            );
+
+            if (existingComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existingComment.id,
+                body: comment,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: comment,
+              });
+            }
+
+      - name: Update baseline
+        if: |
+          (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+          (github.event_name == 'workflow_dispatch' && github.event.inputs.update_baseline == 'true')
+        run: |
+          node scripts/bench-all.mjs --baseline
+
+      - name: Commit updated baseline
+        if: |
+          (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+          (github.event_name == 'workflow_dispatch' && github.event.inputs.update_baseline == 'true')
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add benchmarks/baseline.json
+          git commit -m "chore: update performance baseline [skip ci]" || exit 0
+          git push
+
+      - name: Check for regressions
+        if: github.event_name == 'pull_request'
+        run: |
+          if [ "${{ steps.run-benchmarks.outputs.exit_code }}" != "0" ]; then
+            echo "::error::Performance regressions detected! See benchmark results for details."
+            exit 1
+          fi
+
+  profile:
+    name: Profile Critical Paths
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build packages
+        run: pnpm build
+
+      - name: Create profiles directory
+        run: mkdir -p profiles
+
+      - name: Profile hook execution
+        run: node scripts/profile.mjs cpu hook-execution
+
+      - name: Profile receipt generation
+        run: node scripts/profile.mjs mem receipt-generation
+
+      - name: Upload profiles
+        uses: actions/upload-artifact@v4
+        with:
+          name: performance-profiles
+          path: profiles/
+          retention-days: 7

@@ -50,10 +50,11 @@ Write "src/feature.mjs"            // ⚠️ Did you verify syntax?
 - ✅ Well-defined specs (RDF, APIs, DSLs) + existing patterns + H_spec ≤ 16 bits
 - ❌ Exploratory domains, user feedback needed, uncertain requirements
 
-**Results** (KGC 4D empirical):
-- 700 LoC in 2-3 hours (vs TDD: 2-3 weeks = 50x speedup)
-- 0 defects, 64.3% pattern reuse, 98% static coverage
-- P(Correctness) ≥ 99.997%
+**Results** (Git-verified empirical):
+- KGC-4D: 6,327 LoC developed over 20+ days (initial: 590 LoC Dec 4, 2025)
+- 99.8% test pass rate (443/444), OTEL validation 100/100
+- Pattern reuse ~64% (estimated, not measured), 98% static coverage
+- P(Correctness): 99.8% measured, 99.997% theoretical bound
 
 **Full Details**: See [docs/bb80-20-methodology.md](docs/bb80-20-methodology.md)
 

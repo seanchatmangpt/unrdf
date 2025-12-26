@@ -1,0 +1,53 @@
+{
+  "timestamp": "2025-12-25T01:30:21.897Z",
+  "environment": {
+    "node": "v22.21.1",
+    "platform": "linux",
+    "cpus": 16,
+    "memory": 22548578304
+  },
+  "benchmarks": {
+    "filesystem": {
+      "yawl_files": 10,
+      "yawl_size_bytes": 804365,
+      "total_mjs_files": 593,
+      "total_size_bytes": 17540978,
+      "modified_24h": 593
+    },
+    "test_execution": {
+      "runs": [
+        1411.1804500000003,
+        1351.1639419999997
+      ],
+      "average": 1381.172196,
+      "min": 1351.1639419999997,
+      "max": 1411.1804500000003,
+      "sla_limit": 5000,
+      "sla_passed": true
+    },
+    "memory": {
+      "baseline_rss": 134008832,
+      "baseline_heap": 4990104,
+      "after_load_rss": 134803456,
+      "after_load_heap": 5180632,
+      "delta_rss": 794624,
+      "delta_heap": 190528
+    },
+    "import_resolution": {
+      "runs": [
+        105.65893200000028,
+        102.83124000000043,
+        104.98330100000021,
+        105.12670900000012,
+        108.35731000000033
+      ],
+      "average": 105.39149840000027,
+      "min": 102.83124000000043,
+      "max": 108.35731000000033
+    }
+  },
+  "sla": {
+    "passed": true,
+    "violations": []
+  }
+}

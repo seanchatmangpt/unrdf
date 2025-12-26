@@ -1,0 +1,32 @@
+{
+  "name": "@unrdf-examples/graphql-gateway",
+  "version": "1.0.0",
+  "description": "GraphQL API gateway for UNRDF workflows with subscriptions",
+  "type": "module",
+  "main": "src/index.mjs",
+  "scripts": {
+    "start": "node src/server.mjs",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
+  },
+  "keywords": [
+    "graphql",
+    "api-gateway",
+    "workflow",
+    "subscriptions"
+  ],
+  "dependencies": {
+    "@unrdf/yawl": "workspace:*",
+    "@unrdf/oxigraph": "workspace:*",
+    "@opentelemetry/api": "^1.9.0",
+    "ws": "^8.18.3",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "vitest": "^4.0.15"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

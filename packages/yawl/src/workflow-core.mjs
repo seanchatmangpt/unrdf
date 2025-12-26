@@ -1,37 +1,119 @@
 /**
- * @file YAWL Workflow Core - Workflow class definition
+ * @file YAWL Workflow - Core class and basic operations
  * @module @unrdf/yawl/workflow-core
  *
  * @description
- * Core Workflow class providing workflow structure management, task/flow queries,
- * and mutation operations. Validation and execution logic are in separate modules.
- *
- * @example
- * import { Workflow } from '@unrdf/yawl/workflow-core';
- *
- * const workflow = new Workflow({
- *   id: 'order-processing',
- *   tasks: [
- *     { id: 'receive', name: 'Receive Order' },
- *     { id: 'process', name: 'Process Order' },
- *   ],
- *   flows: [{ from: 'receive', to: 'process' }],
- * });
+ * Core Workflow class with constructor, initialization, query methods,
+ * and mutation methods. This module provides the foundation for workflow
+ * management without validation or RDF serialization logic.
  */
 
-import { WorkflowSpecSchema } from './workflow-schemas.mjs';
-import { validateTaskDef, validateFlowDef } from './patterns.mjs';
+import { z } from 'zod';
+import { SPLIT_TYPE, JOIN_TYPE, validateTaskDef, validateFlowDef } from './patterns.mjs';
 
 // =============================================================================
-// Workflow Class
+// Zod Schemas for Workflow Validation
+// =============================================================================
+
+/**
+ * Task definition schema for workflow tasks
+ */
+export const TaskDefSchema = z.object({
+  /** Unique task identifier within the workflow */
+  id: z.string().min(1).max(100),
+  /** Human-readable task name */
+  name: z.string().min(1).max(200).optional(),
+  /** Task kind: atomic, composite, multiple, cancellation */
+  kind: z.enum(['atomic', 'composite', 'multiple', 'cancellation']).default('atomic'),
+  /** Outgoing flow semantics */
+  splitType: z.enum(['sequence', 'and', 'xor', 'or']).default('sequence'),
+  /** Incoming flow semantics */
+  joinType: z.enum(['sequence', 'and', 'xor', 'or']).default('sequence'),
+  /** Task IDs in this task's cancellation region */
+  cancellationRegion: z.string().optional(),
+  /** Tasks cancelled when this task completes */
+  cancellationSet: z.array(z.string()).optional(),
+  /** Condition function for task enablement */
+  condition: z.function().optional(),
+  /** Timeout in milliseconds */
+  timeout: z.number().positive().optional(),
+  /** Assigned resource pattern */
+  resource: z.string().optional(),
+  /** Required role */
+  role: z.string().optional(),
+  /** Sub-workflow ID for composite tasks */
+  subNetId: z.string().optional(),
+  /** Task priority (0-100) */
+  priority: z.number().int().min(0).max(100).optional(),
+  /** Task documentation */
+  documentation: z.string().max(2000).optional(),
+});
+
+/**
+ * Flow definition schema for control flow connections
+ */
+export const FlowDefSchema = z.object({
+  /** Source task ID */
+  from: z.string().min(1),
+  /** Target task ID */
+  to: z.string().min(1),
+  /** Condition function for conditional flows */
+  condition: z.function().optional(),
+  /** Evaluation priority for XOR/OR splits (higher = first) */
+  priority: z.number().default(0),
+  /** Whether this is the default flow */
+  isDefault: z.boolean().optional(),
+  /** Flow documentation */
+  documentation: z.string().max(1000).optional(),
+});
+
+/**
+ * Complete workflow specification schema
+ */
+export const WorkflowSpecSchema = z.object({
+  /** Unique workflow identifier */
+  id: z.string().min(1).max(100),
+  /** Human-readable workflow name */
+  name: z.string().min(1).max(200).optional(),
+  /** Semantic version string */
+  version: z.string().regex(/^\d+\.\d+\.\d+$/).default('1.0.0'),
+  /** Workflow description */
+  description: z.string().max(5000).optional(),
+  /** Task definitions */
+  tasks: z.array(TaskDefSchema).min(1),
+  /** Flow definitions */
+  flows: z.array(FlowDefSchema).optional().default([]),
+  /** Starting task ID (auto-detected if not specified) */
+  startTaskId: z.string().optional(),
+  /** Ending task IDs (auto-detected if not specified) */
+  endTaskIds: z.array(z.string()).optional().default([]),
+  /** Cancellation regions mapping region ID to task IDs */
+  cancellationRegions: z.record(z.string(), z.array(z.string())).optional().default({}),
+  /** Workflow author */
+  author: z.string().max(100).optional(),
+  /** Creation timestamp */
+  createdAt: z.date().optional(),
+  /** Modification timestamp */
+  modifiedAt: z.date().optional(),
+});
+
+/**
+ * Validation result type
+ * @typedef {Object} ValidationResult
+ * @property {boolean} valid - Whether validation passed
+ * @property {string[]} errors - List of validation errors
+ * @property {string[]} warnings - List of validation warnings
+ */
+
+// =============================================================================
+// Workflow Class - Core
 // =============================================================================
 
 /**
  * Workflow class - Represents a complete workflow definition
  *
- * Provides methods for querying workflow structure, managing tasks and flows,
- * and accessing control flow semantics. Validation and execution methods
- * are added via workflow-execution.mjs.
+ * Provides methods for querying workflow structure, validating integrity,
+ * and managing control flow semantics.
  *
  * @example
  * const workflow = new Workflow({
@@ -201,6 +283,10 @@ export class Workflow {
    * Get task definition by ID
    * @param {string} taskId - Task identifier
    * @returns {Object|undefined} Task definition or undefined if not found
+   *
+   * @example
+   * const task = workflow.getTask('review');
+   * console.log(task.name); // 'Review Expense'
    */
   getTask(taskId) {
     return this._tasks.get(taskId);
@@ -209,6 +295,10 @@ export class Workflow {
   /**
    * Get all task definitions
    * @returns {Array<Object>} Array of all task definitions
+   *
+   * @example
+   * const tasks = workflow.getTasks();
+   * console.log(`Workflow has ${tasks.length} tasks`);
    */
   getTasks() {
     return Array.from(this._tasks.values());
@@ -226,14 +316,22 @@ export class Workflow {
    * Get downstream tasks (tasks that follow a given task)
    * @param {string} taskId - Source task identifier
    * @returns {Array<Object>} Array of downstream task definitions
+   *
+   * @example
+   * const downstream = workflow.getDownstreamTasks('review');
+   * // Returns [{ id: 'approve', ... }, { id: 'reject', ... }]
    */
   getDownstreamTasks(taskId) {
     const flows = this._outgoingFlows.get(taskId) ?? [];
     const downstream = [];
+
     for (const flow of flows) {
       const task = this._tasks.get(flow.to);
-      if (task) downstream.push(task);
+      if (task) {
+        downstream.push(task);
+      }
     }
+
     return downstream;
   }
 
@@ -241,14 +339,22 @@ export class Workflow {
    * Get upstream tasks (tasks that lead to a given task)
    * @param {string} taskId - Target task identifier
    * @returns {Array<Object>} Array of upstream task definitions
+   *
+   * @example
+   * const upstream = workflow.getUpstreamTasks('approve');
+   * // Returns [{ id: 'review', ... }]
    */
   getUpstreamTasks(taskId) {
     const flows = this._incomingFlows.get(taskId) ?? [];
     const upstream = [];
+
     for (const flow of flows) {
       const task = this._tasks.get(flow.from);
-      if (task) upstream.push(task);
+      if (task) {
+        upstream.push(task);
+      }
     }
+
     return upstream;
   }
 
@@ -278,33 +384,78 @@ export class Workflow {
     return [...this._flows];
   }
 
-  /** Check if task is an initial task (starting point) */
-  isInitialTask(taskId) { return taskId === this._startTaskId; }
+  /**
+   * Check if task is an initial task (starting point)
+   * @param {string} taskId - Task identifier
+   * @returns {boolean} True if task is initial
+   *
+   * @example
+   * if (workflow.isInitialTask('submit')) {
+   *   console.log('This is the starting task');
+   * }
+   */
+  isInitialTask(taskId) {
+    return taskId === this._startTaskId;
+  }
 
-  /** Check if task is a final task (ending point) */
-  isFinalTask(taskId) { return this._endTaskIds.includes(taskId); }
+  /**
+   * Check if task is a final task (ending point)
+   * @param {string} taskId - Task identifier
+   * @returns {boolean} True if task is final
+   */
+  isFinalTask(taskId) {
+    return this._endTaskIds.includes(taskId);
+  }
 
-  /** Get the starting task ID */
-  getStartTaskId() { return this._startTaskId; }
+  /**
+   * Get the starting task ID
+   * @returns {string|undefined} Start task ID
+   */
+  getStartTaskId() {
+    return this._startTaskId;
+  }
 
-  /** Get ending task IDs */
-  getEndTaskIds() { return [...this._endTaskIds]; }
+  /**
+   * Get ending task IDs
+   * @returns {string[]} Array of end task IDs
+   */
+  getEndTaskIds() {
+    return [...this._endTaskIds];
+  }
 
   /**
    * Get cancellation region for a task
    * @param {string} taskId - Task identifier
    * @returns {string[]} Array of task IDs in the cancellation region
+   *
+   * @example
+   * const region = workflow.getCancellationRegion('timeout-task');
+   * // Returns ['task-a', 'task-b', 'task-c']
    */
   getCancellationRegion(taskId) {
     const regionId = this._taskToRegion.get(taskId);
-    return regionId ? this._regionToTasks.get(regionId) ?? [] : [];
+    if (!regionId) {
+      return [];
+    }
+    return this._regionToTasks.get(regionId) ?? [];
   }
 
-  /** Get tasks in a specific cancellation region by region ID */
-  getTasksInRegion(regionId) { return this._regionToTasks.get(regionId) ?? []; }
+  /**
+   * Get tasks in a specific cancellation region by region ID
+   * @param {string} regionId - Region identifier
+   * @returns {string[]} Array of task IDs in the region
+   */
+  getTasksInRegion(regionId) {
+    return this._regionToTasks.get(regionId) ?? [];
+  }
 
-  /** Get all cancellation regions */
-  getCancellationRegions() { return new Map(this._regionToTasks); }
+  /**
+   * Get all cancellation regions
+   * @returns {Map<string, string[]>} Map of region ID to task IDs
+   */
+  getCancellationRegions() {
+    return new Map(this._regionToTasks);
+  }
 
   // ===========================================================================
   // Mutation Methods
@@ -420,6 +571,10 @@ export class Workflow {
     return this;
   }
 
+  // ===========================================================================
+  // Serialization
+  // ===========================================================================
+
   /**
    * Serialize workflow to JSON
    * @returns {Object} JSON representation
@@ -433,8 +588,16 @@ export class Workflow {
       author: this.author,
       startTaskId: this._startTaskId,
       endTaskIds: this._endTaskIds,
-      tasks: this.getTasks().map(task => ({ ...task, condition: undefined })),
-      flows: this._flows.map(flow => ({ ...flow, condition: undefined })),
+      tasks: this.getTasks().map(task => ({
+        ...task,
+        // Remove function references
+        condition: undefined,
+      })),
+      flows: this._flows.map(flow => ({
+        ...flow,
+        // Remove function references
+        condition: undefined,
+      })),
       cancellationRegions: Object.fromEntries(this._regionToTasks),
       locked: this._locked,
       createdAt: this.createdAt?.toISOString(),
@@ -462,13 +625,11 @@ export class Workflow {
       createdAt: json.createdAt ? new Date(json.createdAt) : undefined,
       modifiedAt: json.modifiedAt ? new Date(json.modifiedAt) : undefined,
     });
-    if (json.locked) workflow.lock();
+
+    if (json.locked) {
+      workflow.lock();
+    }
+
     return workflow;
   }
 }
-
-// =============================================================================
-// Module Exports
-// =============================================================================
-
-export default Workflow;

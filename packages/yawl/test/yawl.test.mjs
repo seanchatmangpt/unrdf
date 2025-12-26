@@ -44,6 +44,13 @@ import {
   exportCaseAsTurtle,
 } from '../src/index.mjs';
 
+// Test helpers
+import {
+  createTestWorkflow,
+  createTestTask,
+  createTestCase,
+} from './test-helpers.mjs';
+
 describe('YAWL Ontology', () => {
   describe('Namespace definitions', () => {
     it('should define correct YAWL namespace', () => {
@@ -170,23 +177,25 @@ describe('YAWL Store', () => {
 
   describe('Case operations', () => {
     it('should add a case', () => {
-      const uri = addCase(store, {
+      const testCase = createTestCase({
         id: 'case-123',
         specId: 'expense-approval',
         status: 'active',
         createdAt: new Date('2025-12-24T10:00:00Z'),
       });
 
+      const uri = addCase(store, testCase);
       expect(uri.value).toBe(YAWL_CASE + 'case-123');
     });
 
     it('should get a case', () => {
-      addCase(store, {
+      const testCase = createTestCase({
         id: 'case-456',
         specId: 'leave-request',
         status: 'active',
       });
 
+      addCase(store, testCase);
       const caseData = getCase(store, 'case-456');
 
       expect(caseData).not.toBeNull();
@@ -201,11 +210,13 @@ describe('YAWL Store', () => {
     });
 
     it('should update case status', () => {
-      addCase(store, {
+      const testCase = createTestCase({
         id: 'case-789',
         specId: 'test-spec',
         status: 'active',
       });
+
+      addCase(store, testCase);
 
       const result = updateCaseStatus(store, 'case-789', 'completed');
       expect(result).toBe(true);
@@ -217,11 +228,12 @@ describe('YAWL Store', () => {
 
   describe('Work item operations', () => {
     beforeEach(() => {
-      addCase(store, {
+      const testCase = createTestCase({
         id: 'case-100',
         specId: 'test-workflow',
         status: 'active',
       });
+      addCase(store, testCase);
     });
 
     it('should add a work item', () => {
@@ -298,37 +310,38 @@ describe('YAWL Store', () => {
 
   describe('Workflow specification operations', () => {
     it('should add a workflow specification', () => {
-      const uri = addWorkflowSpec(store, {
+      const workflow = createTestWorkflow({
         id: 'expense-workflow',
         name: 'Expense Approval Process',
         tasks: [
-          {
+          createTestTask({
             id: 'submit',
             name: 'Submit Expense',
             kind: 'manual',
             joinsTo: ['review'],
-          },
-          {
+          }),
+          createTestTask({
             id: 'review',
             name: 'Review Expense',
             kind: 'manual',
             joinBehavior: 'xor',
             splitBehavior: 'xor',
             joinsTo: ['approve', 'reject'],
-          },
-          {
+          }),
+          createTestTask({
             id: 'approve',
             name: 'Approve Expense',
             kind: 'automated',
-          },
-          {
+          }),
+          createTestTask({
             id: 'reject',
             name: 'Reject Expense',
             kind: 'automated',
-          },
+          }),
         ],
       });
 
+      const uri = addWorkflowSpec(store, workflow);
       expect(uri.value).toBe(YAWL + 'spec-expense-workflow');
     });
   });
@@ -342,11 +355,13 @@ describe('YAWL Store', () => {
     });
 
     it('should clear case data', () => {
-      addCase(store, {
+      const testCase = createTestCase({
         id: 'case-to-clear',
         specId: 'test',
         status: 'active',
       });
+
+      addCase(store, testCase);
 
       addWorkItem(store, {
         id: 'work-to-clear',
@@ -363,11 +378,13 @@ describe('YAWL Store', () => {
     });
 
     it('should export case as Turtle', () => {
-      addCase(store, {
+      const testCase = createTestCase({
         id: 'export-case',
         specId: 'test-export',
         status: 'active',
       });
+
+      addCase(store, testCase);
 
       const turtle = exportCaseAsTurtle(store, 'export-case');
 
@@ -385,13 +402,14 @@ describe('YAWL RDF Structure Examples', () => {
   });
 
   it('should create proper Case RDF structure', () => {
-    // Create case as specified in requirements
-    addCase(store, {
+    const testCase = createTestCase({
       id: 'case-123',
       specId: 'workflow-spec-1',
       status: 'active',
       createdAt: new Date('2025-12-24T10:00:00Z'),
     });
+
+    addCase(store, testCase);
 
     // Verify RDF structure
     const caseData = getCase(store, 'case-123');
@@ -403,29 +421,30 @@ describe('YAWL RDF Structure Examples', () => {
   });
 
   it('should create proper Task RDF structure', () => {
-    // Create workflow spec with tasks as specified
-    addWorkflowSpec(store, {
+    const workflow = createTestWorkflow({
       id: 'spec-1',
       name: 'Test Workflow',
       tasks: [
-        {
+        createTestTask({
           id: 'task-1',
           name: 'Approve Expense',
           kind: 'atomic',
           joinsTo: ['task-2', 'task-3'],
-        },
-        {
+        }),
+        createTestTask({
           id: 'task-2',
           name: 'Process Payment',
           kind: 'automated',
-        },
-        {
+        }),
+        createTestTask({
           id: 'task-3',
           name: 'Notify User',
           kind: 'automated',
-        },
+        }),
       ],
     });
+
+    addWorkflowSpec(store, workflow);
 
     // Verify by querying store
     const stats = getStoreStats(store);
@@ -433,13 +452,15 @@ describe('YAWL RDF Structure Examples', () => {
   });
 
   it('should create proper WorkItem RDF structure', () => {
-    addCase(store, {
+    const testCase = createTestCase({
       id: 'case-123',
       specId: 'workflow-spec-1',
       status: 'active',
     });
 
-    // Create work item as specified
+    addCase(store, testCase);
+
+    // Create work item
     addWorkItem(store, {
       id: 'item-1',
       taskId: 'task-1',
@@ -458,18 +479,20 @@ describe('YAWL RDF Structure Examples', () => {
   });
 
   it('should support named graphs for case isolation', () => {
-    // Create two separate cases
-    addCase(store, {
+    const testCaseA = createTestCase({
       id: 'case-A',
       specId: 'spec-1',
       status: 'active',
     });
 
-    addCase(store, {
+    const testCaseB = createTestCase({
       id: 'case-B',
       specId: 'spec-1',
       status: 'active',
     });
+
+    addCase(store, testCaseA);
+    addCase(store, testCaseB);
 
     addWorkItem(store, {
       id: 'work-A1',

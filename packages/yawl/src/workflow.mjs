@@ -1,5 +1,5 @@
 /**
- * @file YAWL Workflow - Workflow definition management (Barrel Export)
+ * @file YAWL Workflow - Complete workflow definition management
  * @module @unrdf/yawl/workflow
  *
  * @description
@@ -10,11 +10,7 @@
  * - RDF integration for serialization/deserialization
  * - Zod schemas for type-safe validation
  *
- * This module aggregates functionality from:
- * - workflow-schemas.mjs: Zod validation schemas
- * - workflow-core.mjs: Workflow class definition
- * - workflow-execution.mjs: Validation and control flow evaluation
- * - workflow-rdf.mjs: RDF serialization/deserialization
+ * This module assembles the complete Workflow class from modular components.
  *
  * @example
  * import { Workflow, createWorkflow, workflowToRDF, workflowFromRDF } from '@unrdf/yawl';
@@ -36,34 +32,158 @@
  * });
  */
 
+import { Workflow as WorkflowCore, WorkflowSpecSchema, TaskDefSchema, FlowDefSchema } from './workflow-core.mjs';
+import * as ValidationMethods from './workflow-validation.mjs';
+import * as PatternMethods from './workflow-patterns.mjs';
+import { workflowToRDF as _workflowToRDF, workflowFromRDF as _workflowFromRDF } from './workflow-rdf.mjs';
+import { SPLIT_TYPE, JOIN_TYPE } from './patterns.mjs';
+
 // =============================================================================
-// Import All Modules
+// Assemble Complete Workflow Class
 // =============================================================================
 
-// Schemas
-export {
-  TaskDefSchema,
-  FlowDefSchema,
-  WorkflowSpecSchema,
-} from './workflow-schemas.mjs';
+/**
+ * Complete Workflow class with all methods
+ */
+export class Workflow extends WorkflowCore {
+  constructor(spec) {
+    super(spec);
+  }
+}
 
-// Core Workflow class
-export { Workflow } from './workflow-core.mjs';
+// Add validation methods to prototype
+Object.assign(Workflow.prototype, {
+  validate: ValidationMethods.validate,
+  isValid: ValidationMethods.isValid,
+  _validateBasicStructure: ValidationMethods._validateBasicStructure,
+  _validateControlFlowIntegrity: ValidationMethods._validateControlFlowIntegrity,
+  _validateSplitJoinConsistency: ValidationMethods._validateSplitJoinConsistency,
+  _validateMatchingSplitJoin: ValidationMethods._validateMatchingSplitJoin,
+  _findConvergencePoint: ValidationMethods._findConvergencePoint,
+  _validateReachability: ValidationMethods._validateReachability,
+  _validateCancellationRegions: ValidationMethods._validateCancellationRegions,
+  _validateNoCycles: ValidationMethods._validateNoCycles,
+});
 
-// Execution: validation and control flow (adds methods to Workflow.prototype)
-export { createWorkflow } from './workflow-execution.mjs';
+// Add pattern methods to prototype
+Object.assign(Workflow.prototype, {
+  evaluateDownstream: PatternMethods.evaluateDownstream,
+  canEnable: PatternMethods.canEnable,
+});
 
-// RDF integration
-export { workflowToRDF, workflowFromRDF } from './workflow-rdf.mjs';
+// =============================================================================
+// Factory Function
+// =============================================================================
 
-// Re-export SPLIT_TYPE and JOIN_TYPE from patterns for convenience
-export { SPLIT_TYPE, JOIN_TYPE } from './patterns.mjs';
+/**
+ * Create a new workflow from specification
+ *
+ * Factory function that validates the specification, builds task index,
+ * constructs control flow graph, and returns a Workflow instance.
+ *
+ * @param {Object} spec - Workflow specification
+ * @param {string} spec.id - Unique workflow identifier
+ * @param {string} [spec.name] - Human-readable name
+ * @param {string} [spec.version='1.0.0'] - Semantic version
+ * @param {Array<Object>} spec.tasks - Task definitions
+ * @param {Array<Object>} [spec.flows=[]] - Flow definitions
+ * @param {Object} [options={}] - Creation options
+ * @param {boolean} [options.validate=true] - Run validation after creation
+ * @param {boolean} [options.strict=false] - Throw on validation errors
+ * @returns {Workflow} Workflow instance
+ *
+ * @example
+ * const workflow = createWorkflow({
+ *   id: 'expense-approval',
+ *   name: 'Expense Approval Process',
+ *   tasks: [
+ *     { id: 'submit', name: 'Submit Expense' },
+ *     { id: 'review', name: 'Review Expense', splitType: 'xor' },
+ *     { id: 'approve', name: 'Approve' },
+ *     { id: 'reject', name: 'Reject' },
+ *   ],
+ *   flows: [
+ *     { from: 'submit', to: 'review' },
+ *     { from: 'review', to: 'approve', condition: ctx => ctx.amount < 1000 },
+ *     { from: 'review', to: 'reject', isDefault: true },
+ *   ],
+ * }, { validate: true, strict: true });
+ */
+export function createWorkflow(spec, options = {}) {
+  const { validate = true, strict = false } = options;
+
+  // Create workflow instance
+  const workflow = new Workflow(spec);
+
+  // Run validation if requested
+  if (validate) {
+    const result = workflow.validate();
+
+    if (!result.valid && strict) {
+      throw new Error(`Workflow validation failed:\n${result.errors.join('\n')}`);
+    }
+
+    // Attach validation result for inspection
+    workflow._validationResult = result;
+  }
+
+  return workflow;
+}
+
+// =============================================================================
+// RDF Integration
+// =============================================================================
+
+/**
+ * Serialize workflow to RDF representation in store
+ *
+ * Creates YAWL RDF representation using yawl-ontology predicates and classes.
+ *
+ * @param {Workflow} workflow - Workflow to serialize
+ * @param {Object} store - RDF store (from @unrdf/oxigraph)
+ * @param {Object} [options={}] - Serialization options
+ * @param {string} [options.graph] - Named graph URI (defaults to spec-based)
+ * @returns {Object} Result with specUri and quad count
+ *
+ * @example
+ * import { createStore } from '@unrdf/oxigraph';
+ * import { createWorkflow, workflowToRDF } from '@unrdf/yawl';
+ *
+ * const store = createStore();
+ * const workflow = createWorkflow({ ... });
+ * const { specUri, quadCount } = workflowToRDF(workflow, store);
+ */
+export function workflowToRDF(workflow, store, options = {}) {
+  return _workflowToRDF(workflow, store, options);
+}
+
+/**
+ * Load workflow from RDF store
+ *
+ * Reconstructs a Workflow instance from its RDF representation.
+ *
+ * @param {Object} store - RDF store (from @unrdf/oxigraph)
+ * @param {string} workflowId - Workflow specification ID
+ * @param {Object} [options={}] - Loading options
+ * @param {string} [options.graph] - Named graph URI to query
+ * @returns {Promise<Workflow|null>} Workflow instance or null if not found
+ *
+ * @example
+ * import { createStore } from '@unrdf/oxigraph';
+ * import { workflowFromRDF } from '@unrdf/yawl';
+ *
+ * const workflow = await workflowFromRDF(store, 'expense-approval');
+ * if (workflow) {
+ *   console.log(`Loaded workflow with ${workflow.getTasks().length} tasks`);
+ * }
+ */
+export async function workflowFromRDF(store, workflowId, options = {}) {
+  return _workflowFromRDF(store, workflowId, options, Workflow);
+}
 
 // =============================================================================
 // Legacy Export (for backward compatibility)
 // =============================================================================
-
-import { Workflow } from './workflow-core.mjs';
 
 /**
  * Legacy YawlWorkflow class (alias for Workflow)
@@ -72,17 +192,18 @@ import { Workflow } from './workflow-core.mjs';
 export const YawlWorkflow = Workflow;
 
 // =============================================================================
-// Default Export
+// Module Exports
 // =============================================================================
 
-import { createWorkflow } from './workflow-execution.mjs';
-import { workflowToRDF, workflowFromRDF } from './workflow-rdf.mjs';
-import {
+export {
+  // Schemas (re-exported from workflow-core)
+  WorkflowSpecSchema,
   TaskDefSchema,
   FlowDefSchema,
-  WorkflowSpecSchema,
-} from './workflow-schemas.mjs';
-import { SPLIT_TYPE, JOIN_TYPE } from './patterns.mjs';
+  // Constants (re-exported from patterns)
+  SPLIT_TYPE,
+  JOIN_TYPE,
+};
 
 export default {
   // Main class
@@ -101,7 +222,7 @@ export default {
   TaskDefSchema,
   FlowDefSchema,
 
-  // Split/Join constants (re-exported for convenience)
+  // Split/Join constants
   SPLIT_TYPE,
   JOIN_TYPE,
 };

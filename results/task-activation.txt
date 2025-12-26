@@ -1,0 +1,96 @@
+======================================================================
+TASK ACTIVATION PERFORMANCE BENCHMARK
+======================================================================
+Iterations: 1000
+Warmup: 100
+
+Running: Basic Task Creation (object only)...
+  Mean: 0.47 us
+  P95:  0.73 us
+
+Running: Task Activation with KGC Store...
+  Mean: 289.12 us
+  P95:  480.50 us
+
+Running: Full Task Activation (RDF deltas + receipt)...
+  Mean: 495.20 us
+  P95:  723.60 us
+
+Running: Task Execution (handler + completion)...
+  Mean: 271.44 us
+  P95:  509.69 us
+
+Running: Workflow Engine Task Enablement...
+  [SKIP] Workflow engine benchmark: Workflow [object Object] not found
+
+======================================================================
+SUMMARY
+======================================================================
+
+LATENCY BREAKDOWN:
+----------------------------------------------------------------------
+Operation                              | Mean      | P95       | P99
+----------------------------------------------------------------------
+Basic Task Creation (object)           |     0.5 us |     0.7 us |     0.9 us
+Task + KGC Store Event                 |   289.1 us |   480.5 us |   936.9 us
+Full Activation (RDF + receipt)        |   495.2 us |   723.6 us |  1311.9 us
+Task Execution (handler + complete)    |   271.4 us |   509.7 us |   782.6 us
+----------------------------------------------------------------------
+
+======================================================================
+CLAIMS VALIDATION
+======================================================================
+
+Claim: Task activation <1ms (no SPARQL)
+  Measured P95: 723.6 us (0.7236 ms)
+  Target:       1000 us (1.000 ms)
+  Status:       PASS
+
+Realistic Assessment:
+  Simple task creation:       0.7 us
+  With event logging:         480.5 us
+  Full RDF + receipt:         723.6 us
+  Task execution (e2e):       509.7 us
+
+Throughput: 2019 task activations/sec
+
+======================================================================
+Benchmark complete
+======================================================================
+
+__JSON_RESULTS__
+{
+  "benchmark": "task-activation",
+  "timestamp": "2025-12-25T08:19:54.905Z",
+  "results": {
+    "basicCreation": {
+      "meanUs": 0.4670690000034483,
+      "p95Us": 0.7279999999809661,
+      "p99Us": 0.910999999859996
+    },
+    "kgcActivation": {
+      "meanUs": 289.1236829999996,
+      "p95Us": 480.49600000013015,
+      "p99Us": 936.9370000001709
+    },
+    "fullActivation": {
+      "meanUs": 495.2043760000038,
+      "p95Us": 723.5960000000432,
+      "p99Us": 1311.8520000002718
+    },
+    "taskExecution": {
+      "meanUs": 271.43560200000184,
+      "p95Us": 509.6929999999702,
+      "p99Us": 782.6059999997597
+    },
+    "workflowEnablement": null,
+    "throughputPerSec": 2019.3682618022592
+  },
+  "claims": {
+    "taskActivationLt1ms": {
+      "targetUs": 1000,
+      "actualP95Us": 723.5960000000432,
+      "pass": true
+    }
+  }
+}

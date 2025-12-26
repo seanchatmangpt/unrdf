@@ -8,7 +8,8 @@
     ".": "./src/index.mjs",
     "./query": "./src/query.mjs",
     "./canonicalize": "./src/canonicalize.mjs",
-    "./parse": "./src/parse.mjs"
+    "./parse": "./src/parse.mjs",
+    "./ai-search": "./src/ai-enhanced-search.mjs"
   },
   "sideEffects": false,
   "files": [
@@ -37,8 +38,11 @@
     "rules"
   ],
   "dependencies": {
+    "@noble/hashes": "^1.5.0",
     "@unrdf/core": "workspace:*",
+    "@unrdf/oxigraph": "workspace:*",
     "@unrdf/streaming": "workspace:*",
+    "@xenova/transformers": "^2.17.2",
     "eyereasoner": "^18.23.0"
   },
   "devDependencies": {

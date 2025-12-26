@@ -1,0 +1,846 @@
+{
+  "hook-execution": {
+    "successfulRuns": 10,
+    "totalRuns": 10,
+    "runs": [
+      {
+        "benchmark": "hook-execution",
+        "timestamp": "2025-12-25T21:18:44.755Z",
+        "results": {
+          "definition": {
+            "meanUs": 1.7691801999998802,
+            "p95Us": 4.9210000000812215,
+            "p99Us": 7.736000000022614
+          },
+          "definitionWithValidation": {
+            "meanUs": 1.372741300000439,
+            "p95Us": 2.457999999933236,
+            "p99Us": 3.1850000000304135
+          },
+          "execution": {
+            "meanUs": 2.56081590000025,
+            "p95Us": 3.609999999980573,
+            "p99Us": 8.014000000002852
+          },
+          "chainExecution": {
+            "meanUs": 5.517560199999809,
+            "p95Us": 6.793000000016036,
+            "p99Us": 15.76999999997497
+          },
+          "registryRegister": {
+            "meanUs": 4.712722799999949,
+            "p95Us": 5.07900000002337,
+            "p99Us": 7.993000000055872
+          },
+          "registryLookup": {
+            "meanUs": 0.34535580000065236,
+            "p95Us": 0.653000000056636,
+            "p99Us": 1.053999999953703
+          },
+          "batchPerQuadUs": 2.0794788399999957,
+          "throughputPerSec": 390500543.2057425
+        },
+        "claims": {
+          "hookExecutionLt1ms": {
+            "target": 1000,
+            "actualP95": 3.609999999980573,
+            "pass": true
+          },
+          "hookChainLt1ms": {
+            "target": 1000,
+            "actualP95": 6.793000000016036,
+            "pass": true
+          }
+        }
+      },
+      {
+        "benchmark": "hook-execution",
+        "timestamp": "2025-12-25T21:18:46.972Z",
+        "results": {
+          "definition": {
+            "meanUs": 2.262424400001032,
+            "p95Us": 4.7660000000178115,
+            "p99Us": 8.37899999999081
+          },
+          "definitionWithValidation": {
+            "meanUs": 1.364042100000313,
+            "p95Us": 2.126000000089334,
+            "p99Us": 2.803000000085376
+          },
+          "execution": {
+            "meanUs": 3.1081516000000304,
+            "p95Us": 4.021999999963555,
+            "p99Us": 10.256000000026688
+          },
+          "chainExecution": {
+            "meanUs": 4.713735400000417,
+            "p95Us": 6.979000000001179,
+            "p99Us": 14.755000000036489
+          },
+          "registryRegister": {
+            "meanUs": 3.6830112000001236,
+            "p95Us": 4.669000000035339,
+            "p99Us": 8.094000000028245
+          },
+          "registryLookup": {
+            "meanUs": 1.4828669999997601,
+            "p95Us": 0.7089999999152496,
+            "p99Us": 1.0640000000421423
+          },
+          "batchPerQuadUs": 2.0325789099999976,
+          "throughputPerSec": 321734628.3881359
+        },
+        "claims": {
+          "hookExecutionLt1ms": {
+            "target": 1000,
+            "actualP95": 4.021999999963555,
+            "pass": true
+          },
+          "hookChainLt1ms": {
+            "target": 1000,
+            "actualP95": 6.979000000001179,
+            "pass": true
+          }
+        }
+      },
+      {
+        "benchmark": "hook-execution",
+        "timestamp": "2025-12-25T21:18:49.227Z",
+        "results": {
+          "definition": {
+            "meanUs": 1.78034230000045,
+            "p95Us": 4.214999999931024,
+            "p99Us": 6.603999999924781
+          },
+          "definitionWithValidation": {
+            "meanUs": 1.3520392999997284,
+            "p95Us": 2.4149999999281135,
+            "p99Us": 2.9170000000249274
+          },
+          "execution": {
+            "meanUs": 2.9214772999997765,
+            "p95Us": 4.765000000020336,
+            "p99Us": 9.776999999985492
+          },
+          "chainExecution": {
+            "meanUs": 4.824308300000485,
+            "p95Us": 7.251999999994041,
+            "p99Us": 14.80099999992035
+          },
+          "registryRegister": {
+            "meanUs": 3.289572000000828,
+            "p95Us": 6.713999999988118,
+            "p99Us": 9.003000000006978
+          },
+          "registryLookup": {
+            "meanUs": 0.3150337999995827,
+            "p95Us": 0.5260000000362197,
+            "p99Us": 0.8820000000469008
+          },
+          "batchPerQuadUs": 2.1391791100000024,
+          "throughputPerSec": 342292579.16879123
+        },
+        "claims": {
+          "hookExecutionLt1ms": {
+            "target": 1000,
+            "actualP95": 4.765000000020336,
+            "pass": true
+          },
+          "hookChainLt1ms": {
+            "target": 1000,
+            "actualP95": 7.251999999994041,
+            "pass": true
+          }
+        }
+      },
+      {
+        "benchmark": "hook-execution",
+        "timestamp": "2025-12-25T21:18:51.666Z",
+        "results": {
+          "definition": {
+            "meanUs": 2.1716926999997668,
+            "p95Us": 4.906000000005406,
+            "p99Us": 9.267000000022563
+          },
+          "definitionWithValidation": {
+            "meanUs": 1.6457354000004785,
+            "p95Us": 2.7380000000221116,
+            "p99Us": 3.417000000013104
+          },
+          "execution": {
+            "meanUs": 2.775359100000014,
+            "p95Us": 3.6579999999730717,
+            "p99Us": 8.350000000064028
+          },
+          "chainExecution": {
+            "meanUs": 5.672977899999943,
+            "p95Us": 7.070999999996275,
+            "p99Us": 17.761999999947875
+          },
+          "registryRegister": {
+            "meanUs": 3.6889691999987235,
+            "p95Us": 6.9910000000845685,
+            "p99Us": 9.779999999977917
+          },
+          "registryLookup": {
+            "meanUs": 0.3771139000008134,
+            "p95Us": 0.7419999999456195,
+            "p99Us": 1.3369999999213178
+          },
+          "batchPerQuadUs": 1.9676762200000033,
+          "throughputPerSec": 360313733.815561
+        },
+        "claims": {
+          "hookExecutionLt1ms": {
+            "target": 1000,
+            "actualP95": 3.6579999999730717,
+            "pass": true
+          },
+          "hookChainLt1ms": {
+            "target": 1000,
+            "actualP95": 7.070999999996275,
+            "pass": true
+          }
+        }
+      },
+      {
+        "benchmark": "hook-execution",
+        "timestamp": "2025-12-25T21:18:53.820Z",
+        "results": {
+          "definition": {
+            "meanUs": 1.9570509000004792,
+            "p95Us": 4.44100000004255,
+            "p99Us": 7.731999999919026
+          },
+          "definitionWithValidation": {
+            "meanUs": 1.044446499999583,
+            "p95Us": 1.7139999999926658,
+            "p99Us": 2.3150000000669024
+          },
+          "execution": {
+            "meanUs": 2.397656600000016,
+            "p95Us": 3.5560000000032232,
+            "p99Us": 7.371000000034655
+          },
+          "chainExecution": {
+            "meanUs": 4.296529999999211,
+            "p95Us": 6.595999999944979,
+            "p99Us": 14.122999999926833
+          },
+          "registryRegister": {
+            "meanUs": 3.364223699999093,
+            "p95Us": 5.475999999930536,
+            "p99Us": 8.02299999998013
+          },
+          "registryLookup": {
+            "meanUs": 0.3493422999996028,
+            "p95Us": 0.6700000000137152,
+            "p99Us": 1.1719999999968422
+          },
+          "batchPerQuadUs": 2.033207449999992,
+          "throughputPerSec": 417073904.5783259
+        },
+        "claims": {
+          "hookExecutionLt1ms": {
+            "target": 1000,
+            "actualP95": 3.5560000000032232,
+            "pass": true
+          },
+          "hookChainLt1ms": {
+            "target": 1000,
+            "actualP95": 6.595999999944979,
+            "pass": true
+          }
+        }
+      },
+      {
+        "benchmark": "hook-execution",
+        "timestamp": "2025-12-25T21:18:55.875Z",
+        "results": {
+          "definition": {
+            "meanUs": 1.9223614000001192,
+            "p95Us": 4.341000000010808,
+            "p99Us": 7.751999999982218
+          },
+          "definitionWithValidation": {
+            "meanUs": 1.1942111000000353,
+            "p95Us": 1.69000000005326,
+            "p99Us": 2.4099999999975807
+          },
+          "execution": {
+            "meanUs": 2.5783489000009694,
+            "p95Us": 3.5980000000108703,
+            "p99Us": 7.480999999984306
+          },
+          "chainExecution": {
+            "meanUs": 4.4870551000000205,
+            "p95Us": 6.767999999965468,
+            "p99Us": 13.908000000014908
+          },
+          "registryRegister": {
+            "meanUs": 3.4360426000002464,
+            "p95Us": 4.906000000005406,
+            "p99Us": 7.890000000088548
+          },
+          "registryLookup": {
+            "meanUs": 1.3844863000005831,
+            "p95Us": 0.5429999999932988,
+            "p99Us": 0.9179999999560096
+          },
+          "batchPerQuadUs": 2.014251159999998,
+          "throughputPerSec": 387845105.05914235
+        },
+        "claims": {
+          "hookExecutionLt1ms": {
+            "target": 1000,
+            "actualP95": 3.5980000000108703,
+            "pass": true
+          },
+          "hookChainLt1ms": {
+            "target": 1000,
+            "actualP95": 6.767999999965468,
+            "pass": true
+          }
+        }
+      },
+      {
+        "benchmark": "hook-execution",
+        "timestamp": "2025-12-25T21:18:58.057Z",
+        "results": {
+          "definition": {
+            "meanUs": 1.9182876000002806,
+            "p95Us": 4.350999999928717,
+            "p99Us": 7.296999999994114
+          },
+          "definitionWithValidation": {
+            "meanUs": 1.1435557999994785,
+            "p95Us": 1.6390000000683358,
+            "p99Us": 2.292000000011285
+          },
+          "execution": {
+            "meanUs": 2.577845699999898,
+            "p95Us": 3.8789999999835345,
+            "p99Us": 8.072999999967578
+          },
+          "chainExecution": {
+            "meanUs": 4.841948500000001,
+            "p95Us": 7.406999999943764,
+            "p99Us": 15.62300000000505
+          },
+          "registryRegister": {
+            "meanUs": 3.071616299999505,
+            "p95Us": 5.621999999902982,
+            "p99Us": 8.098000000018146
+          },
+          "registryLookup": {
+            "meanUs": 1.6001945999997702,
+            "p95Us": 0.5989999999655993,
+            "p99Us": 0.9019999999964057
+          },
+          "batchPerQuadUs": 2.0270434000000046,
+          "throughputPerSec": 387920813.1037632
+        },
+        "claims": {
+          "hookExecutionLt1ms": {
+            "target": 1000,
+            "actualP95": 3.8789999999835345,
+            "pass": true
+          },
+          "hookChainLt1ms": {
+            "target": 1000,
+            "actualP95": 7.406999999943764,
+            "pass": true
+          }
+        }
+      },
+      {
+        "benchmark": "hook-execution",
+        "timestamp": "2025-12-25T21:19:00.348Z",
+        "results": {
+          "definition": {
+            "meanUs": 2.1449459000005047,
+            "p95Us": 4.687999999987369,
+            "p99Us": 8.36000000003878
+          },
+          "definitionWithValidation": {
+            "meanUs": 1.2125080999998659,
+            "p95Us": 1.8659999999499632,
+            "p99Us": 2.3400000000037835
+          },
+          "execution": {
+            "meanUs": 2.7406637000005274,
+            "p95Us": 4.597999999987223,
+            "p99Us": 8.704000000079759
+          },
+          "chainExecution": {
+            "meanUs": 5.972602600000289,
+            "p95Us": 7.049000000051819,
+            "p99Us": 15.65600000003542
+          },
+          "registryRegister": {
+            "meanUs": 3.385379499999817,
+            "p95Us": 4.746000000068307,
+            "p99Us": 7.970000000000255
+          },
+          "registryLookup": {
+            "meanUs": 0.3911830000002851,
+            "p95Us": 0.7699999999886131,
+            "p99Us": 1.2409999999363208
+          },
+          "batchPerQuadUs": 2.0656713200000048,
+          "throughputPerSec": 364875121.3072248
+        },
+        "claims": {
+          "hookExecutionLt1ms": {
+            "target": 1000,
+            "actualP95": 4.597999999987223,
+            "pass": true
+          },
+          "hookChainLt1ms": {
+            "target": 1000,
+            "actualP95": 7.049000000051819,
+            "pass": true
+          }
+        }
+      },
+      {
+        "benchmark": "hook-execution",
+        "timestamp": "2025-12-25T21:19:03.081Z",
+        "results": {
+          "definition": {
+            "meanUs": 1.9873112999991236,
+            "p95Us": 4.695999999967171,
+            "p99Us": 7.954999999810752
+          },
+          "definitionWithValidation": {
+            "meanUs": 1.095137799998747,
+            "p95Us": 1.847999999881722,
+            "p99Us": 2.5820000000749133
+          },
+          "execution": {
+            "meanUs": 2.831151899999168,
+            "p95Us": 3.9329999999608845,
+            "p99Us": 8.904999999913343
+          },
+          "chainExecution": {
+            "meanUs": 5.385485899999753,
+            "p95Us": 7.6730000000679865,
+            "p99Us": 15.951999999970212
+          },
+          "registryRegister": {
+            "meanUs": 3.4986389999982066,
+            "p95Us": 4.5900000000074215,
+            "p99Us": 7.444000000077722
+          },
+          "registryLookup": {
+            "meanUs": 0.5188715000018874,
+            "p95Us": 1.034000000117885,
+            "p99Us": 1.6370000000733853
+          },
+          "batchPerQuadUs": 2.138579560000003,
+          "throughputPerSec": 353213121.48609686
+        },
+        "claims": {
+          "hookExecutionLt1ms": {
+            "target": 1000,
+            "actualP95": 3.9329999999608845,
+            "pass": true
+          },
+          "hookChainLt1ms": {
+            "target": 1000,
+            "actualP95": 7.6730000000679865,
+            "pass": true
+          }
+        }
+      },
+      {
+        "benchmark": "hook-execution",
+        "timestamp": "2025-12-25T21:19:05.657Z",
+        "results": {
+          "definition": {
+            "meanUs": 2.4135109000002783,
+            "p95Us": 5.641999999966174,
+            "p99Us": 10.259000000019114
+          },
+          "definitionWithValidation": {
+            "meanUs": 1.3362455000002569,
+            "p95Us": 2.407999999945787,
+            "p99Us": 3.1289999999444262
+          },
+          "execution": {
+            "meanUs": 2.8403744999997342,
+            "p95Us": 4.115999999839914,
+            "p99Us": 8.861999999908221
+          },
+          "chainExecution": {
+            "meanUs": 5.095645799999852,
+            "p95Us": 7.991000000174608,
+            "p99Us": 15.582999999878666
+          },
+          "registryRegister": {
+            "meanUs": 3.126042200000097,
+            "p95Us": 6.2010000001464505,
+            "p99Us": 9.119000000055166
+          },
+          "registryLookup": {
+            "meanUs": 0.33054440000041724,
+            "p95Us": 0.574000000142405,
+            "p99Us": 0.8640000000923465
+          },
+          "batchPerQuadUs": 2.151061979999986,
+          "throughputPerSec": 352066250.4187717
+        },
+        "claims": {
+          "hookExecutionLt1ms": {
+            "target": 1000,
+            "actualP95": 4.115999999839914,
+            "pass": true
+          },
+          "hookChainLt1ms": {
+            "target": 1000,
+            "actualP95": 7.991000000174608,
+            "pass": true
+          }
+        }
+      }
+    ],
+    "durations": [
+      1198.222539,
+      1219.8721110000001,
+      1261.9303820000005,
+      1421.6369349999995,
+      1165.7886820000003,
+      1046.8317029999998,
+      1179.6706190000004,
+      1290.265762000001,
+      1729.9565599999987,
+      1591.9270800000013
+    ]
+  },
+  "receipt-generation": {
+    "successfulRuns": 10,
+    "totalRuns": 10,
+    "runs": [
+      {
+        "benchmark": "receipt-generation",
+        "timestamp": "2025-12-25T21:19:10.886Z",
+        "results": {
+          "meanMs": 0.33007513199999766,
+          "medianMs": 0.2686419999999998,
+          "p90Ms": 0.4685220000001209,
+          "p95Ms": 0.5436279999998987,
+          "p99Ms": 1.291733000000022,
+          "p999Ms": 5.895481000000018,
+          "maxMs": 5.895481000000018,
+          "totalReceipts": 1000,
+          "totalTimeMs": 399.88947499999995,
+          "throughputPerSec": 2500.690972174249
+        },
+        "claims": {
+          "receiptGenerationLt10ms": {
+            "target": 10,
+            "actualP95": 0.5436279999998987,
+            "pass": true
+          },
+          "receiptThroughputGt100k": {
+            "target": 100000,
+            "actual": 2500.690972174249,
+            "pass": false
+          }
+        }
+      },
+      {
+        "benchmark": "receipt-generation",
+        "timestamp": "2025-12-25T21:19:14.246Z",
+        "results": {
+          "meanMs": 0.34776946300000144,
+          "medianMs": 0.273057000000108,
+          "p90Ms": 0.5113879999998971,
+          "p95Ms": 0.586135000000013,
+          "p99Ms": 1.446346000000176,
+          "p999Ms": 4.9674989999998616,
+          "maxMs": 4.9674989999998616,
+          "totalReceipts": 1000,
+          "totalTimeMs": 415.88705900000014,
+          "throughputPerSec": 2404.4989579731064
+        },
+        "claims": {
+          "receiptGenerationLt10ms": {
+            "target": 10,
+            "actualP95": 0.586135000000013,
+            "pass": true
+          },
+          "receiptThroughputGt100k": {
+            "target": 100000,
+            "actual": 2404.4989579731064,
+            "pass": false
+          }
+        }
+      },
+      {
+        "benchmark": "receipt-generation",
+        "timestamp": "2025-12-25T21:19:16.830Z",
+        "results": {
+          "meanMs": 0.34864802099999564,
+          "medianMs": 0.26718700000014906,
+          "p90Ms": 0.48912099999984093,
+          "p95Ms": 0.5879860000000008,
+          "p99Ms": 1.6661129999999957,
+          "p999Ms": 6.4834749999999985,
+          "maxMs": 6.4834749999999985,
+          "totalReceipts": 1000,
+          "totalTimeMs": 410.98796100000004,
+          "throughputPerSec": 2433.1612964205533
+        },
+        "claims": {
+          "receiptGenerationLt10ms": {
+            "target": 10,
+            "actualP95": 0.5879860000000008,
+            "pass": true
+          },
+          "receiptThroughputGt100k": {
+            "target": 100000,
+            "actual": 2433.1612964205533,
+            "pass": false
+          }
+        }
+      },
+      {
+        "benchmark": "receipt-generation",
+        "timestamp": "2025-12-25T21:19:19.406Z",
+        "results": {
+          "meanMs": 0.3579996089999984,
+          "medianMs": 0.27745500000014545,
+          "p90Ms": 0.5127030000001014,
+          "p95Ms": 0.615329999999858,
+          "p99Ms": 1.5487239999999929,
+          "p999Ms": 7.199182999999948,
+          "maxMs": 7.199182999999948,
+          "totalReceipts": 1000,
+          "totalTimeMs": 424.39938800000004,
+          "throughputPerSec": 2356.271069834813
+        },
+        "claims": {
+          "receiptGenerationLt10ms": {
+            "target": 10,
+            "actualP95": 0.615329999999858,
+            "pass": true
+          },
+          "receiptThroughputGt100k": {
+            "target": 100000,
+            "actual": 2356.271069834813,
+            "pass": false
+          }
+        }
+      },
+      {
+        "benchmark": "receipt-generation",
+        "timestamp": "2025-12-25T21:19:21.828Z",
+        "results": {
+          "meanMs": 0.34909808799999587,
+          "medianMs": 0.27072100000009414,
+          "p90Ms": 0.48163799999997536,
+          "p95Ms": 0.5589950000000954,
+          "p99Ms": 1.504036000000042,
+          "p999Ms": 9.579414000000043,
+          "maxMs": 9.579414000000043,
+          "totalReceipts": 1000,
+          "totalTimeMs": 414.3233849999999,
+          "throughputPerSec": 2413.573638861828
+        },
+        "claims": {
+          "receiptGenerationLt10ms": {
+            "target": 10,
+            "actualP95": 0.5589950000000954,
+            "pass": true
+          },
+          "receiptThroughputGt100k": {
+            "target": 100000,
+            "actual": 2413.573638861828,
+            "pass": false
+          }
+        }
+      },
+      {
+        "benchmark": "receipt-generation",
+        "timestamp": "2025-12-25T21:19:24.169Z",
+        "results": {
+          "meanMs": 0.348064125000001,
+          "medianMs": 0.27037399999994705,
+          "p90Ms": 0.48234199999990324,
+          "p95Ms": 0.5768050000001494,
+          "p99Ms": 1.573949999999968,
+          "p999Ms": 6.742646000000036,
+          "maxMs": 6.742646000000036,
+          "totalReceipts": 1000,
+          "totalTimeMs": 410.5822200000001,
+          "throughputPerSec": 2435.5657680451914
+        },
+        "claims": {
+          "receiptGenerationLt10ms": {
+            "target": 10,
+            "actualP95": 0.5768050000001494,
+            "pass": true
+          },
+          "receiptThroughputGt100k": {
+            "target": 100000,
+            "actual": 2435.5657680451914,
+            "pass": false
+          }
+        }
+      },
+      {
+        "benchmark": "receipt-generation",
+        "timestamp": "2025-12-25T21:19:26.628Z",
+        "results": {
+          "meanMs": 0.34315446300000124,
+          "medianMs": 0.2758719999999357,
+          "p90Ms": 0.4891440000001239,
+          "p95Ms": 0.5720890000000054,
+          "p99Ms": 1.2558639999999741,
+          "p999Ms": 7.384694000000081,
+          "maxMs": 7.384694000000081,
+          "totalReceipts": 1000,
+          "totalTimeMs": 415.6783589999999,
+          "throughputPerSec": 2405.7061868837877
+        },
+        "claims": {
+          "receiptGenerationLt10ms": {
+            "target": 10,
+            "actualP95": 0.5720890000000054,
+            "pass": true
+          },
+          "receiptThroughputGt100k": {
+            "target": 100000,
+            "actual": 2405.7061868837877,
+            "pass": false
+          }
+        }
+      },
+      {
+        "benchmark": "receipt-generation",
+        "timestamp": "2025-12-25T21:19:29.134Z",
+        "results": {
+          "meanMs": 0.3611218859999926,
+          "medianMs": 0.28642899999999827,
+          "p90Ms": 0.5019930000000841,
+          "p95Ms": 0.5791770000000724,
+          "p99Ms": 1.7200579999998808,
+          "p999Ms": 5.971385999999939,
+          "maxMs": 5.971385999999939,
+          "totalReceipts": 1000,
+          "totalTimeMs": 426.06175600000006,
+          "throughputPerSec": 2347.0775912588592
+        },
+        "claims": {
+          "receiptGenerationLt10ms": {
+            "target": 10,
+            "actualP95": 0.5791770000000724,
+            "pass": true
+          },
+          "receiptThroughputGt100k": {
+            "target": 100000,
+            "actual": 2347.0775912588592,
+            "pass": false
+          }
+        }
+      },
+      {
+        "benchmark": "receipt-generation",
+        "timestamp": "2025-12-25T21:19:32.729Z",
+        "results": {
+          "meanMs": 0.37029255099999725,
+          "medianMs": 0.2957770000002711,
+          "p90Ms": 0.5229699999999866,
+          "p95Ms": 0.6102900000000773,
+          "p99Ms": 1.6699260000000322,
+          "p999Ms": 6.251117999999678,
+          "maxMs": 6.251117999999678,
+          "totalReceipts": 1000,
+          "totalTimeMs": 449.3941420000001,
+          "throughputPerSec": 2225.2181471470976
+        },
+        "claims": {
+          "receiptGenerationLt10ms": {
+            "target": 10,
+            "actualP95": 0.6102900000000773,
+            "pass": true
+          },
+          "receiptThroughputGt100k": {
+            "target": 100000,
+            "actual": 2225.2181471470976,
+            "pass": false
+          }
+        }
+      },
+      {
+        "benchmark": "receipt-generation",
+        "timestamp": "2025-12-25T21:19:35.872Z",
+        "results": {
+          "meanMs": 0.36771076399999764,
+          "medianMs": 0.28769099999999526,
+          "p90Ms": 0.49601099999995313,
+          "p95Ms": 0.5972259999998641,
+          "p99Ms": 1.8267510000000584,
+          "p999Ms": 8.122871000000032,
+          "maxMs": 8.122871000000032,
+          "totalReceipts": 1000,
+          "totalTimeMs": 439.7576899999999,
+          "throughputPerSec": 2273.9795636092235
+        },
+        "claims": {
+          "receiptGenerationLt10ms": {
+            "target": 10,
+            "actualP95": 0.5972259999998641,
+            "pass": true
+          },
+          "receiptThroughputGt100k": {
+            "target": 100000,
+            "actual": 2273.9795636092235,
+            "pass": false
+          }
+        }
+      }
+    ],
+    "durations": [
+      4167.217364,
+      2361.6939729999976,
+      1585.5042560000002,
+      1575.9478240000026,
+      1419.8085190000056,
+      1341.938245999998,
+      1457.011738000001,
+      1507.5371200000009,
+      2596.9854140000025,
+      2138.796599000001
+    ]
+  },
+  "optimization-suite": {
+    "successfulRuns": 10,
+    "totalRuns": 10,
+    "runs": [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    "durations": [
+      2492.9162150000047,
+      2517.2519010000033,
+      2400.388651999994,
+      2229.748478999987,
+      2025.8829499999993,
+      2662.0400050000026,
+      2586.0163420000026,
+      2016.859123000002,
+      2563.330992000003,
+      2413.9691500000044
+    ]
+  }
+}

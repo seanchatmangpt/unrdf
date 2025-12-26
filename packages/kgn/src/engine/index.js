@@ -5,20 +5,17 @@
  * 100% Deterministic guarantees with cryptographic attestation
  */
 
-// Import classes first so they can be used in factory functions
-import { TemplateEngine, EnhancedTemplateEngine as _EnhancedTemplateEngine } from './template-engine.js';
+// Import classes for local use
+import { TemplateEngine } from './template-engine.js';
 import { DeterministicRenderer } from './renderer.js';
 import { DeterministicPipeline } from './pipeline.js';
 
 // Re-export for external use
-export { TemplateEngine, EnhancedTemplateEngine } from './template-engine.js';
+export { TemplateEngine } from './template-engine.js';
 export { DeterministicRenderer } from './renderer.js';
 export { DeterministicPipeline } from './pipeline.js';
 
 // Factory for deterministic engine with complete pipeline
-/**
- *
- */
 export function createDeterministicEngine(options = {}) {
   const pipeline = new DeterministicPipeline(options);
 

@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  orchestrator:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - ORCHESTRATOR_PORT=8080
+      - MAX_WORKERS=10
+      - TASK_TIMEOUT=30000
+    command: node src/orchestrator.mjs
+
+  worker1:
+    build: .
+    environment:
+      - NODE_ID=worker-1
+      - ORCHESTRATOR_URL=http://orchestrator:8080
+      - WORKER_CAPACITY=5
+    command: node src/worker-node.mjs
+    depends_on:
+      - orchestrator
+
+  worker2:
+    build: .
+    environment:
+      - NODE_ID=worker-2
+      - ORCHESTRATOR_URL=http://orchestrator:8080
+      - WORKER_CAPACITY=5
+    command: node src/worker-node.mjs
+    depends_on:
+      - orchestrator
+
+  dashboard:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - DASHBOARD_PORT=3000
+      - ORCHESTRATOR_URL=http://orchestrator:8080
+    command: node src/monitoring-dashboard.mjs
+    depends_on:
+      - orchestrator

@@ -3,10 +3,9 @@
  * @module @unrdf/yawl/case
  *
  * @description
- * Barrel export for YAWL case functionality. Combines:
- * - case-core.mjs: Core Case class with state management
- * - case-lifecycle.mjs: Petri net marking and task lifecycle
- * - case-rdf.mjs: RDF serialization/deserialization
+ * Case lifecycle management for YAWL workflow instances.
+ * Implements Petri net marking (token placement) for workflow state tracking.
+ * Integrates with KGC-4D for event sourcing and RDF for semantic representation.
  *
  * @example
  * import { createCase, Case, CaseStatus } from '@unrdf/yawl/case';
@@ -18,24 +17,91 @@
  * workflow.setStart('submit');
  * workflow.setEnd(['approve']);
  *
- * const caseInstance = await createCase(workflow);
+ * const caseInstance = createCase(workflow);
  * console.log(caseInstance.getStatus()); // 'running'
  * console.log(caseInstance.getEnabledWorkItems()); // [{ submit work item }]
  */
 
-// Core class and enums
-import { Case as CaseClass, YawlCase, CaseStatus } from './case-core.mjs';
-
-// Install lifecycle methods on Case prototype
-import { installLifecycleMethods } from './case-lifecycle.mjs';
-installLifecycleMethods(CaseClass);
-
-// Re-export
-export { CaseClass as Case, YawlCase, CaseStatus };
-
-// RDF integration
+import { CaseCore, CaseStatus, CaseDataSchema } from './case-core.mjs';
+import { CaseLifecycleMixin } from './case-lifecycle.mjs';
+import { CaseStateMixin } from './case-state.mjs';
 import { caseToRDF, caseFromRDF } from './case-rdf.mjs';
-export { caseToRDF, caseFromRDF };
+
+// =============================================================================
+// Composed Case Class
+// =============================================================================
+
+/**
+ * Represents a runtime instance of a workflow with Petri net semantics.
+ *
+ * Implements token-based state tracking where:
+ * - Conditions (places) hold tokens
+ * - Tasks (transitions) consume and produce tokens
+ * - Join semantics determine when tasks can fire
+ *
+ * @class
+ */
+export class Case extends CaseCore {
+  constructor(data, workflow) {
+    super(data, workflow);
+    // Initialize marking after construction
+    this._initializeMarking();
+  }
+}
+
+// Apply mixins to Case prototype
+Object.assign(Case.prototype, CaseLifecycleMixin);
+Object.assign(Case.prototype, CaseStateMixin);
+
+/**
+ * Create Case from JSON
+ * @param {Object} json - JSON representation
+ * @param {import('./workflow.mjs').YawlWorkflow} workflow - Workflow definition
+ * @returns {Case} Restored case
+ */
+Case.fromJSON = function(json, workflow) {
+  const { YawlTask } = await import('./task.mjs');
+
+  const caseInstance = new Case({
+    id: json.id,
+    workflowId: json.workflowId,
+    status: json.status,
+    createdAt: json.createdAt ? BigInt(json.createdAt) : undefined,
+    startedAt: json.startedAt ? BigInt(json.startedAt) : undefined,
+    completedAt: json.completedAt ? BigInt(json.completedAt) : undefined,
+    data: json.data,
+  }, workflow);
+
+  // Restore work items
+  for (const wiJson of json.workItems || []) {
+    const task = YawlTask.fromJSON(wiJson);
+    caseInstance.workItems.set(task.id, task);
+
+    const taskDefId = caseInstance.getTaskDefIdForWorkItem(task.id);
+    if (!caseInstance.workItemsByTask.has(taskDefId)) {
+      caseInstance.workItemsByTask.set(taskDefId, new Set());
+    }
+    caseInstance.workItemsByTask.get(taskDefId).add(task.id);
+  }
+
+  // Restore completed/activated tasks
+  caseInstance.completedTasks = new Set(json.completedTasks || []);
+  caseInstance.activatedTasks = new Set(json.activatedTasks || []);
+
+  // Restore circuit breakers
+  caseInstance.circuitBreakers = new Map(Object.entries(json.circuitBreakers || {}));
+
+  // Restore marking
+  caseInstance._marking = new Map(Object.entries(json.marking || {}));
+
+  // Restore event log
+  caseInstance.eventLog = json.eventLog || [];
+
+  return caseInstance;
+};
+
+// Backwards compatibility alias
+export { Case as YawlCase };
 
 // =============================================================================
 // Factory Function
@@ -83,7 +149,7 @@ export async function createCase(workflow, options = {}) {
     throw new Error(`Invalid workflow: ${validation.errors.join(', ')}`);
   }
 
-  const caseInstance = new CaseClass({
+  const caseInstance = new Case({
     id: caseId,
     workflowId: workflow.id,
     data: initialData,
@@ -97,13 +163,23 @@ export async function createCase(workflow, options = {}) {
 }
 
 // =============================================================================
+// Re-exports
+// =============================================================================
+
+// Export enums and schemas
+export { CaseStatus, CaseDataSchema };
+
+// Export RDF functions
+export { caseToRDF, caseFromRDF };
+
+// =============================================================================
 // Default Export
 // =============================================================================
 
 export default {
   // Classes
-  Case: CaseClass,
-  YawlCase: CaseClass,
+  Case,
+  YawlCase: Case,
 
   // Enums
   CaseStatus,

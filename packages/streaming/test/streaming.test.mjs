@@ -27,23 +27,25 @@ describe('@unrdf/streaming', () => {
       expect(typeof feed.addEventListener).toBe('function');
     });
 
-    it('should emit changes', done => {
-      const quad = {
-        subject: namedNode('http://example.org/s'),
-        predicate: namedNode('http://example.org/p'),
-        object: literal('value'),
-      };
+    it('should emit changes', () => {
+      return new Promise(resolve => {
+        const quad = {
+          subject: namedNode('http://example.org/s'),
+          predicate: namedNode('http://example.org/p'),
+          object: literal('value'),
+        };
 
-      feed.addEventListener('change', event => {
-        expect(event.detail.type).toBe('add');
-        expect(event.detail.quad).toEqual(quad);
-        expect(event.detail.timestamp).toBeDefined();
-        done();
-      });
+        feed.addEventListener('change', event => {
+          expect(event.detail.type).toBe('add');
+          expect(event.detail.quad).toEqual(quad);
+          expect(event.detail.timestamp).toBeDefined();
+          resolve();
+        });
 
-      feed.emitChange({
-        type: 'add',
-        quad,
+        feed.emitChange({
+          type: 'add',
+          quad,
+        });
       });
     });
 
@@ -128,33 +130,35 @@ describe('@unrdf/streaming', () => {
       });
     });
 
-    it('should filter by subject', done => {
-      const subject1 = namedNode('http://example.org/s1');
-      const subject2 = namedNode('http://example.org/s2');
-      const predicate = namedNode('http://example.org/p');
+    it('should filter by subject', () => {
+      return new Promise(resolve => {
+        const subject1 = namedNode('http://example.org/s1');
+        const subject2 = namedNode('http://example.org/s2');
+        const predicate = namedNode('http://example.org/p');
 
-      let callCount = 0;
+        let callCount = 0;
 
-      manager.subscribe(
-        change => {
-          expect(change.quad.subject).toEqual(subject1);
-          callCount++;
-          if (callCount === 2) done();
-        },
-        { subject: subject1 }
-      );
+        manager.subscribe(
+          change => {
+            expect(change.quad.subject).toEqual(subject1);
+            callCount++;
+            if (callCount === 2) resolve();
+          },
+          { subject: subject1 }
+        );
 
-      feed.emitChange({
-        type: 'add',
-        quad: { subject: subject1, predicate, object: literal('1') },
-      });
-      feed.emitChange({
-        type: 'add',
-        quad: { subject: subject2, predicate, object: literal('2') },
-      });
-      feed.emitChange({
-        type: 'add',
-        quad: { subject: subject1, predicate, object: literal('3') },
+        feed.emitChange({
+          type: 'add',
+          quad: { subject: subject1, predicate, object: literal('1') },
+        });
+        feed.emitChange({
+          type: 'add',
+          quad: { subject: subject2, predicate, object: literal('2') },
+        });
+        feed.emitChange({
+          type: 'add',
+          quad: { subject: subject1, predicate, object: literal('3') },
+        });
       });
     });
 
@@ -196,81 +200,89 @@ describe('@unrdf/streaming', () => {
       processor = createStreamProcessor(feed);
     });
 
-    it('should filter changes', done => {
-      const quad = {
-        subject: namedNode('http://example.org/s'),
-        predicate: namedNode('http://example.org/p'),
-        object: literal('value'),
-      };
+    it('should filter changes', () => {
+      return new Promise(resolve => {
+        const quad = {
+          subject: namedNode('http://example.org/s'),
+          predicate: namedNode('http://example.org/p'),
+          object: literal('value'),
+        };
 
-      let callCount = 0;
+        let callCount = 0;
 
-      processor
-        .filter(c => c.type === 'add')
-        .subscribe(change => {
-          expect(change.type).toBe('add');
-          callCount++;
-          if (callCount === 2) done();
-        });
+        processor
+          .filter(c => c.type === 'add')
+          .subscribe(change => {
+            expect(change.type).toBe('add');
+            callCount++;
+            if (callCount === 2) resolve();
+          });
 
-      feed.emitChange({ type: 'add', quad });
-      feed.emitChange({ type: 'remove', quad });
-      feed.emitChange({ type: 'add', quad });
-    });
-
-    it('should map changes', done => {
-      const quad = {
-        subject: namedNode('http://example.org/s'),
-        predicate: namedNode('http://example.org/p'),
-        object: literal('value'),
-      };
-
-      processor
-        .map(c => ({ ...c, processed: true }))
-        .subscribe(change => {
-          expect(change.processed).toBe(true);
-          done();
-        });
-
-      feed.emitChange({ type: 'add', quad });
-    });
-
-    it('should batch changes', done => {
-      const quad = {
-        subject: namedNode('http://example.org/s'),
-        predicate: namedNode('http://example.org/p'),
-        object: literal('value'),
-      };
-
-      processor.batch(3).subscribe(changes => {
-        expect(changes).toHaveLength(3);
-        done();
+        feed.emitChange({ type: 'add', quad });
+        feed.emitChange({ type: 'remove', quad });
+        feed.emitChange({ type: 'add', quad });
       });
-
-      feed.emitChange({ type: 'add', quad });
-      feed.emitChange({ type: 'add', quad });
-      feed.emitChange({ type: 'add', quad });
     });
 
-    it('should debounce changes', done => {
-      const quad = {
-        subject: namedNode('http://example.org/s'),
-        predicate: namedNode('http://example.org/p'),
-        object: literal('value'),
-      };
+    it('should map changes', () => {
+      return new Promise(resolve => {
+        const quad = {
+          subject: namedNode('http://example.org/s'),
+          predicate: namedNode('http://example.org/p'),
+          object: literal('value'),
+        };
 
-      const callback = vi.fn();
+        processor
+          .map(c => ({ ...c, processed: true }))
+          .subscribe(change => {
+            expect(change.processed).toBe(true);
+            resolve();
+          });
 
-      processor.debounce(100).subscribe(callback);
+        feed.emitChange({ type: 'add', quad });
+      });
+    });
 
-      feed.emitChange({ type: 'add', quad });
-      feed.emitChange({ type: 'add', quad });
-      feed.emitChange({ type: 'add', quad });
+    it('should batch changes', () => {
+      return new Promise(resolve => {
+        const quad = {
+          subject: namedNode('http://example.org/s'),
+          predicate: namedNode('http://example.org/p'),
+          object: literal('value'),
+        };
 
-      setTimeout(() => {
-        expect(callback).toHaveBeenCalledTimes(1);
-        done();
-      }, 150);
+        processor.batch(3).subscribe(changes => {
+          expect(changes).toHaveLength(3);
+          resolve();
+        });
+
+        feed.emitChange({ type: 'add', quad });
+        feed.emitChange({ type: 'add', quad });
+        feed.emitChange({ type: 'add', quad });
+      });
+    });
+
+    it('should debounce changes', () => {
+      return new Promise(resolve => {
+        const quad = {
+          subject: namedNode('http://example.org/s'),
+          predicate: namedNode('http://example.org/p'),
+          object: literal('value'),
+        };
+
+        const callback = vi.fn();
+
+        processor.debounce(100).subscribe(callback);
+
+        feed.emitChange({ type: 'add', quad });
+        feed.emitChange({ type: 'add', quad });
+        feed.emitChange({ type: 'add', quad });
+
+        setTimeout(() => {
+          expect(callback).toHaveBeenCalledTimes(1);
+          resolve();
+        }, 150);
+      });
     });
   });
 
@@ -437,54 +449,58 @@ describe('@unrdf/streaming', () => {
   /* ========================================================================= */
 
   describe('Backpressure Handling', () => {
-    it('should handle 100+ events/sec without blocking', done => {
-      const feed = createChangeFeed();
-      const processor = createStreamProcessor(feed);
-      let eventCount = 0;
+    it('should handle 100+ events/sec without blocking', () => {
+      return new Promise(resolve => {
+        const feed = createChangeFeed();
+        const processor = createStreamProcessor(feed);
+        let eventCount = 0;
 
-      processor.subscribe(() => {
-        eventCount++;
-        if (eventCount >= 100) {
-          expect(eventCount).toBe(100);
-          done();
+        processor.subscribe(() => {
+          eventCount++;
+          if (eventCount >= 100) {
+            expect(eventCount).toBe(100);
+            resolve();
+          }
+        });
+
+        const quad = {
+          subject: namedNode('http://example.org/s'),
+          predicate: namedNode('http://example.org/p'),
+          object: literal('value'),
+        };
+
+        // Emit 100 events rapidly
+        for (let i = 0; i < 100; i++) {
+          feed.emitChange({ type: 'add', quad });
         }
       });
-
-      const quad = {
-        subject: namedNode('http://example.org/s'),
-        predicate: namedNode('http://example.org/p'),
-        object: literal('value'),
-      };
-
-      // Emit 100 events rapidly
-      for (let i = 0; i < 100; i++) {
-        feed.emitChange({ type: 'add', quad });
-      }
     });
 
-    it('should debounce rapid events correctly', done => {
-      const feed = createChangeFeed();
-      const processor = createStreamProcessor(feed);
-      const callback = vi.fn();
+    it('should debounce rapid events correctly', () => {
+      return new Promise(resolve => {
+        const feed = createChangeFeed();
+        const processor = createStreamProcessor(feed);
+        const callback = vi.fn();
 
-      processor.debounce(50).subscribe(callback);
+        processor.debounce(50).subscribe(callback);
 
-      const quad = {
-        subject: namedNode('http://example.org/s'),
-        predicate: namedNode('http://example.org/p'),
-        object: literal('value'),
-      };
+        const quad = {
+          subject: namedNode('http://example.org/s'),
+          predicate: namedNode('http://example.org/p'),
+          object: literal('value'),
+        };
 
-      // Rapid fire 20 events
-      for (let i = 0; i < 20; i++) {
-        feed.emitChange({ type: 'add', quad });
-      }
+        // Rapid fire 20 events
+        for (let i = 0; i < 20; i++) {
+          feed.emitChange({ type: 'add', quad });
+        }
 
-      // Should only trigger once after debounce period
-      setTimeout(() => {
-        expect(callback).toHaveBeenCalledTimes(1);
-        done();
-      }, 100);
+        // Should only trigger once after debounce period
+        setTimeout(() => {
+          expect(callback).toHaveBeenCalledTimes(1);
+          resolve();
+        }, 100);
+      });
     });
   });
 

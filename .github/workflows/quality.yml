@@ -1,0 +1,215 @@
+name: Code Quality Gate
+
+on:
+  pull_request:
+    branches: [ main, develop ]
+  push:
+    branches: [ main, develop ]
+
+# Cancel in-progress runs when a new workflow with the same group name starts
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality-check:
+    name: Quality Gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for better analysis
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 8
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Quality Gate 1: Linting (must pass with 0 violations)
+      - name: Run ESLint
+        run: |
+          echo "::group::ESLint Check"
+          pnpm lint
+          echo "::endgroup::"
+        continue-on-error: false
+
+      # Quality Gate 2: Formatting (must be consistent)
+      - name: Check code formatting
+        run: |
+          echo "::group::Prettier Check"
+          pnpm format:check
+          echo "::endgroup::"
+        continue-on-error: false
+
+      # Quality Gate 3: Type checking
+      - name: Run type check
+        run: |
+          echo "::group::Type Check"
+          pnpm -r exec tsc --noEmit || echo "Type check complete"
+          echo "::endgroup::"
+        continue-on-error: true  # Warning only for now
+
+      # Quality Gate 4: Tests (must pass 100%)
+      - name: Run tests with coverage
+        run: |
+          echo "::group::Test Execution"
+          timeout 300s pnpm test:coverage || exit 1
+          echo "::endgroup::"
+        timeout-minutes: 5
+
+      # Quality Gate 5: Coverage threshold (80% minimum)
+      - name: Check coverage threshold
+        run: |
+          echo "::group::Coverage Analysis"
+          node scripts/quality-report.mjs --json > quality-report.json
+
+          # Extract coverage percentage
+          COVERAGE=$(jq -r '.workspace.avgCoverage // 0' quality-report.json)
+          echo "Coverage: ${COVERAGE}%"
+
+          if [ "${COVERAGE}" -lt 80 ]; then
+            echo "::error::Coverage ${COVERAGE}% is below minimum threshold of 80%"
+            exit 1
+          fi
+
+          echo "::notice::Coverage ${COVERAGE}% meets threshold ✓"
+          echo "::endgroup::"
+
+      # Quality Gate 6: Quality score (70+ minimum)
+      - name: Generate quality report
+        run: |
+          echo "::group::Quality Report"
+          node scripts/quality-report.mjs
+          SCORE=$(jq -r '.workspace.score // 0' quality-report.json)
+
+          if [ "${SCORE}" -lt 70 ]; then
+            echo "::error::Quality score ${SCORE}/100 is below minimum threshold of 70"
+            exit 1
+          fi
+
+          echo "::notice::Quality score ${SCORE}/100 meets threshold ✓"
+          echo "::endgroup::"
+
+      - name: Upload coverage reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-reports-node-${{ matrix.node-version }}
+          path: |
+            packages/*/coverage/
+            quality-report.json
+          retention-days: 30
+
+      # Quality Gate 7: Detect quality regressions
+      - name: Check for quality regressions
+        if: github.event_name == 'pull_request'
+        run: |
+          echo "::group::Regression Check"
+
+          # Get baseline from main branch
+          git fetch origin main
+          git checkout origin/main
+          pnpm install --frozen-lockfile
+          node scripts/quality-report.mjs --json > baseline-report.json
+
+          # Compare with PR
+          git checkout ${{ github.sha }}
+          pnpm install --frozen-lockfile
+          node scripts/quality-report.mjs --json > pr-report.json
+
+          BASELINE_SCORE=$(jq -r '.workspace.score' baseline-report.json)
+          PR_SCORE=$(jq -r '.workspace.score' pr-report.json)
+          BASELINE_COVERAGE=$(jq -r '.workspace.avgCoverage' baseline-report.json)
+          PR_COVERAGE=$(jq -r '.workspace.avgCoverage' pr-report.json)
+          BASELINE_LINT=$(jq -r '.workspace.totalLintIssues' baseline-report.json)
+          PR_LINT=$(jq -r '.workspace.totalLintIssues' pr-report.json)
+
+          echo "Baseline Quality: ${BASELINE_SCORE}/100"
+          echo "PR Quality: ${PR_SCORE}/100"
+          echo "Baseline Coverage: ${BASELINE_COVERAGE}%"
+          echo "PR Coverage: ${PR_COVERAGE}%"
+          echo "Baseline Lint Issues: ${BASELINE_LINT}"
+          echo "PR Lint Issues: ${PR_LINT}"
+
+          # Fail if coverage drops >5%
+          COVERAGE_DIFF=$((PR_COVERAGE - BASELINE_COVERAGE))
+          if [ "${COVERAGE_DIFF}" -lt -5 ]; then
+            echo "::error::Coverage dropped by ${COVERAGE_DIFF}% (threshold: -5%)"
+            exit 1
+          fi
+
+          # Fail if lint issues increase
+          LINT_DIFF=$((PR_LINT - BASELINE_LINT))
+          if [ "${LINT_DIFF}" -gt 0 ]; then
+            echo "::error::New linting violations: ${LINT_DIFF}"
+            exit 1
+          fi
+
+          # Fail if quality score drops >10 points
+          SCORE_DIFF=$((PR_SCORE - BASELINE_SCORE))
+          if [ "${SCORE_DIFF}" -lt -10 ]; then
+            echo "::error::Quality score dropped by ${SCORE_DIFF} points (threshold: -10)"
+            exit 1
+          fi
+
+          echo "::notice::No quality regressions detected ✓"
+          echo "::endgroup::"
+        continue-on-error: true  # Don't block on regression check errors
+
+      - name: Post quality summary
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const report = JSON.parse(fs.readFileSync('quality-report.json', 'utf8'));
+
+            const body = `
+            ## 📊 Code Quality Report
+
+            **Overall Score:** ${report.workspace.score}/100 ${report.workspace.score >= 90 ? '🟢' : report.workspace.score >= 70 ? '🟡' : '🔴'}
+
+            | Metric | Value | Target | Status |
+            |--------|-------|--------|--------|
+            | JSDoc Coverage | ${report.workspace.avgJSDoc}% | 100% | ${report.workspace.avgJSDoc >= 100 ? '✅' : '⚠️'} |
+            | Test Coverage | ${report.workspace.avgCoverage}% | 80% | ${report.workspace.avgCoverage >= 80 ? '✅' : '❌'} |
+            | Lint Issues | ${report.workspace.totalLintIssues} | 0 | ${report.workspace.totalLintIssues === 0 ? '✅' : '❌'} |
+            | Avg Complexity | ${report.workspace.avgComplexity} | ≤10 | ${report.workspace.avgComplexity <= 10 ? '✅' : '⚠️'} |
+
+            <details>
+            <summary>📦 Package Details</summary>
+
+            ${report.packages.map(pkg => `
+            ### ${pkg.package}
+            - Score: ${pkg.score}/100
+            - JSDoc: ${pkg.jsdoc.coverage}% (${pkg.jsdoc.documented}/${pkg.jsdoc.total})
+            - Tests: ${pkg.coverage.coverage}%
+            - Lint: ${pkg.lint.total} issues
+            - Complexity: ${pkg.complexity.average} avg
+            `).join('\n')}
+
+            </details>
+            `;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            });

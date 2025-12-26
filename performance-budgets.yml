@@ -1,0 +1,64 @@
+# Performance Budgets for UNRDF
+# These budgets enforce performance SLAs and prevent regressions
+#
+# Format:
+#   benchmark-name:
+#     - metric_name: target_value
+#
+# Units:
+#   - *_us = microseconds
+#   - *_ms = milliseconds
+#   - *_sec = seconds
+#   - throughput_* = operations per second
+
+# Hook Execution Performance
+hook-execution:
+  - execution_p95_us: 10          # Hook execution <10μs P95
+  - definition_p95_us: 50         # Hook definition <50μs P95
+  - chainExecution_p95_us: 30     # 3-hook chain <30μs P95
+  - registryLookup_p95_us: 1      # Registry lookup <1μs P95
+  - throughput_min: 100000        # Min 100k hooks/sec
+
+# Receipt Generation Performance
+receipt-generation:
+  - p95_ms: 1                     # Receipt generation <1ms P95
+  - p99_ms: 2                     # Receipt generation <2ms P99
+  - throughput_min: 1000          # Min 1k receipts/sec
+
+# SPARQL Query Performance
+sparql-query:
+  - simple_p95_ms: 10             # Simple queries <10ms P95
+  - filtered_p95_ms: 15           # Filtered queries <15ms P95
+  - join_p95_ms: 20               # Join queries <20ms P95
+  - aggregate_p95_ms: 50          # Aggregate queries <50ms P95
+
+# Task Activation Performance
+task-activation:
+  - activation_p95_ms: 5          # Task activation <5ms P95
+  - queue_p95_ms: 1               # Queue operations <1ms P95
+  - dispatch_p95_us: 500          # Dispatch <500μs P95
+
+# Workflow End-to-End Performance
+workflow-e2e:
+  - simple_workflow_p95_ms: 50    # Simple workflow <50ms P95
+  - complex_workflow_p95_ms: 200  # Complex workflow <200ms P95
+  - throughput_min: 100           # Min 100 workflows/sec
+
+# Test Suite Performance
+test-suite:
+  - total_time_sec: 30            # All tests <30s
+  - unit_tests_sec: 10            # Unit tests <10s
+  - integration_tests_sec: 20     # Integration tests <20s
+
+# Build Performance
+build:
+  - total_time_sec: 60            # Full build <60s
+  - incremental_build_sec: 10     # Incremental <10s
+  - type_check_sec: 15            # Type checking <15s
+
+# Memory Budgets
+memory:
+  - hook_execution_mb: 50         # Hook system <50MB
+  - receipt_generation_mb: 100    # Receipt system <100MB
+  - sparql_query_mb: 200          # SPARQL engine <200MB
+  - test_suite_mb: 500            # Test suite <500MB
