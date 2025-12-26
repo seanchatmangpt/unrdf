@@ -3,7 +3,25 @@
  * Pure functions with atomicity guarantees and rollback support
  */
 
-import { createStore, dataFactory } from './mock-store.mjs';
+import { createMockStore as createStore, MockStore } from '../../test/mocks/mock-store.mjs';
+// Use store.addQuad instead of store.add for compatibility
+const dataFactory = {
+  namedNode: (value) => ({ termType: 'NamedNode', value }),
+  literal: (value, languageOrDatatype) => {
+    if (typeof languageOrDatatype === 'string') {
+      return { termType: 'Literal', value, language: languageOrDatatype };
+    } else if (languageOrDatatype && languageOrDatatype.termType === 'NamedNode') {
+      return { termType: 'Literal', value, datatype: languageOrDatatype };
+    }
+    return { termType: 'Literal', value };
+  },
+  blankNode: (value) => ({ termType: 'BlankNode', value: value || `_:b${Math.random()}` }),
+  quad: (subject, predicate, object, graph) => ({
+    subject, predicate, object,
+    graph: graph || { termType: 'DefaultGraph', value: '' }
+  }),
+  defaultGraph: () => ({ termType: 'DefaultGraph', value: '' }),
+};
 import { now, toISO } from '/home/user/unrdf/packages/kgc-4d/src/time.mjs';
 import { blake3 } from './hash-util.mjs';
 
@@ -22,8 +40,8 @@ import { blake3 } from './hash-util.mjs';
 export function createStoreAdapter(storeImpl) {
   const store = storeImpl || createStore();
 
-  if (!store || typeof store.add !== 'function') {
-    throw new TypeError('createStoreAdapter: store must implement add() method');
+  if (!store || typeof store.addQuad !== 'function') {
+    throw new TypeError('createStoreAdapter: store must implement addQuad() method');
   }
 
   return {
@@ -32,7 +50,7 @@ export function createStoreAdapter(storeImpl) {
      * @param {Object} quad - RDF quad to add
      */
     addQuad(quad) {
-      store.add(quad);
+      store.addQuad(quad);
     },
 
     /**
@@ -40,7 +58,7 @@ export function createStoreAdapter(storeImpl) {
      * @param {Object} quad - RDF quad to delete
      */
     deleteQuad(quad) {
-      store.delete(quad);
+      store.removeQuad(quad);
     },
 
     /**
@@ -52,7 +70,7 @@ export function createStoreAdapter(storeImpl) {
      * @returns {Array<Object>} Array of matching quads
      */
     queryQuads(subject, predicate, object, graph) {
-      return [...store.match(subject, predicate, object, graph)];
+      return store.getQuads(subject, predicate, object, graph);
     },
 
     /**

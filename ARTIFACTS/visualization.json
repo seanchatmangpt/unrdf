@@ -1,0 +1,81 @@
+{
+  "proofHash": "abc123def456",
+  "merkleRoot": "root789",
+  "receipts": {
+    "type": "receipts",
+    "data": {
+      "count": 5,
+      "receipts": [
+        {
+          "eventType": "CREATE",
+          "phase": "store-created",
+          "timestamp": "[DETERMINISTIC]"
+        },
+        {
+          "hookId": "test-validation",
+          "phase": "policy-applied",
+          "timestamp": "[DETERMINISTIC]"
+        },
+        {
+          "allocation": {
+            "cacheL1": 1048576,
+            "cacheL2": 10485760
+          },
+          "phase": "resource-allocated",
+          "timestamp": "[DETERMINISTIC]"
+        },
+        {
+          "phase": "case-executed",
+          "timestamp": "[DETERMINISTIC]",
+          "valid": true
+        },
+        {
+          "phase": "receipts-emitted",
+          "timestamp": "[DETERMINISTIC]"
+        }
+      ]
+    },
+    "hash": "d1237c001ebcfe6f010e71066c3675e701e53dbb48b9fc03ec61bf354e9368f3",
+    "timestamp": "[DETERMINISTIC]"
+  },
+  "allocation": {
+    "type": "allocation",
+    "data": {
+      "type": "bar-chart",
+      "data": [
+        {
+          "label": "caseExecuted",
+          "value": true
+        },
+        {
+          "label": "merkleRoot",
+          "value": "root789"
+        },
+        {
+          "label": "policyApplied",
+          "value": true
+        },
+        {
+          "label": "receiptsEmitted",
+          "value": 5
+        },
+        {
+          "label": "resourceAllocated",
+          "value": true
+        },
+        {
+          "label": "verificationPassed",
+          "value": true
+        },
+        {
+          "label": "workflowCreated",
+          "value": true
+        }
+      ],
+      "total": "1root789true5truetruetrue"
+    },
+    "hash": "657a6cbc80f9449f644b6a094e285e1a491063e60c40f1a2c39492d1037b736a",
+    "timestamp": "[DETERMINISTIC]"
+  },
+  "timestamp": "2025-01-01T00:00:00Z"
+}

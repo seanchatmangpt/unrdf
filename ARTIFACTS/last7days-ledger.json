@@ -1,0 +1,48 @@
+{
+  "$schema": "https://unrdf.org/schemas/ledger/v1",
+  "version": "1.0.0",
+  "timestamp": "2025-12-26T00:00:00.000Z",
+  "proofHash": "",
+  "description": "7-day fusion consolidation ledger - deterministic proof of integration",
+  "scenario": {
+    "workflowCreated": false,
+    "policyApplied": false,
+    "resourceAllocated": false,
+    "caseExecuted": false,
+    "receiptsEmitted": 0,
+    "merkleRoot": "",
+    "verificationPassed": false
+  },
+  "versions": {
+    "fusion": "1.0.0",
+    "kgc-4d": "0.1.0",
+    "oxigraph": "0.4.0-alpha.5",
+    "blockchain": "0.1.0",
+    "hooks": "0.1.0",
+    "caching": "0.1.0"
+  },
+  "hashes": {
+    "packages": {
+      "fusion": "",
+      "kgc-4d": "",
+      "blockchain": "",
+      "hooks": "",
+      "caching": "",
+      "oxigraph": ""
+    },
+    "scenario": "",
+    "ledger": ""
+  },
+  "receipts": [],
+  "notes": [
+    "This ledger will be populated by running: DETERMINISTIC=1 node tools/prove.mjs",
+    "The proof scenario validates:",
+    "  - KGC-4D store creation with time-travel",
+    "  - Policy hook application and validation",
+    "  - Resource allocation via caching system",
+    "  - Test case execution with hook validation",
+    "  - Blockchain receipt emission",
+    "  - Merkle proof generation",
+    "  - Final cryptographic hash verification"
+  ]
+}
