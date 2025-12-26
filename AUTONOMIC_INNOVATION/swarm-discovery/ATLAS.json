@@ -1,0 +1,1550 @@
+{
+  "atoms": [
+    {
+      "complexity": "moderate",
+      "dependencies": [
+        "oxigraph"
+      ],
+      "evidenceHash": "ec1d703b9353d4fc883230ea137531bb270c3016acf1dd47d0154cf07ba58a57",
+      "id": "atom-rdf-store",
+      "implementation": "@unrdf/core + @unrdf/oxigraph",
+      "interface": "createStore() -> { getQuads, addQuad, removeQuad, countQuads, iterateQuads }",
+      "metrics": {
+        "complexity": "moderate",
+        "dependencies": 1,
+        "utility": 0.95
+      },
+      "name": "RDF Store",
+      "proof": {
+        "files": [
+          "packages/core/test/core.test.mjs",
+          "examples/01-hello-rdf.mjs"
+        ],
+        "type": "test+example"
+      },
+      "source": {
+        "file": "packages/core/src/rdf/unrdf-store.mjs",
+        "line": 1
+      },
+      "state": {
+        "lifecycle": "create-use-dispose",
+        "type": "stateful"
+      },
+      "utility": 0.95,
+      "validated": true
+    },
+    {
+      "complexity": "high",
+      "evidenceHash": "97409782f92dbd238e7e3a4c65365955c3bb712d70dfe69d58195650319e9fb1",
+      "id": "atom-sparql-executor",
+      "implementation": "@unrdf/core/sparql",
+      "interface": "executeQuery(sparql, store) -> Promise<any>; executeQuerySync(sparql, store) -> any",
+      "metrics": {
+        "complexity": "high",
+        "dependencies": 0,
+        "utility": 0.92
+      },
+      "name": "SPARQL Executor",
+      "proof": {
+        "files": [
+          "packages/core/test/core.test.mjs",
+          "examples/sparql-query-advanced.mjs"
+        ],
+        "type": "test+example"
+      },
+      "source": {
+        "file": "packages/core/src/sparql/executor.mjs",
+        "line": 1
+      },
+      "state": {
+        "type": "stateless"
+      },
+      "utility": 0.92,
+      "validated": true,
+      "variants": [
+        "sync",
+        "async"
+      ]
+    },
+    {
+      "capabilities": [
+        "validation",
+        "transformation",
+        "policy-enforcement"
+      ],
+      "complexity": "high",
+      "evidenceHash": "46c194bea8301abe1306cd1badcfd5771a77d09b3b8de6aaf67515f2b0752b83",
+      "id": "atom-hook-system",
+      "implementation": "@unrdf/hooks",
+      "interface": "defineHook(config) -> Hook; executeHook(hook, quad, context) -> {passed, result?, error?}",
+      "metrics": {
+        "complexity": "high",
+        "dependencies": 0,
+        "utility": 0.88
+      },
+      "name": "Hook System",
+      "optimization": "JIT compilation + quad pooling",
+      "proof": {
+        "files": [
+          "packages/hooks/test",
+          "examples/define-hook-example.mjs"
+        ],
+        "type": "test+example"
+      },
+      "source": {
+        "file": "packages/hooks/src/hooks/define-hook.mjs",
+        "line": 1
+      },
+      "state": {
+        "registry": "stateful",
+        "type": "stateless"
+      },
+      "utility": 0.88,
+      "validated": true
+    },
+    {
+      "complexity": "high",
+      "evidenceHash": "ac8c1772d500c982393320707dd9b8561545a5c9c64a020dbac844d9af594797",
+      "id": "atom-pattern-matcher",
+      "implementation": "@unrdf/knowledge-engine/pattern-matcher.mjs",
+      "interface": "matchPattern(patternDsl, quads) -> Match[]",
+      "metrics": {
+        "complexity": "high",
+        "dependencies": 0,
+        "utility": 0.85
+      },
+      "name": "Pattern Matcher",
+      "proof": {
+        "files": [
+          "packages/knowledge-engine/test",
+          "packages/knowledge-engine/examples"
+        ],
+        "type": "test+example"
+      },
+      "source": {
+        "file": "packages/knowledge-engine/src/knowledge-engine/pattern-matcher.mjs",
+        "line": 1
+      },
+      "state": {
+        "type": "stateless"
+      },
+      "utility": 0.85,
+      "validated": true
+    },
+    {
+      "complexity": "moderate",
+      "evidenceHash": "9260c3794982d710c440e0015129dcc528a6dfe7e9c44be7aabc7f1659d53d77",
+      "id": "atom-change-feed",
+      "implementation": "@unrdf/streaming/processor.mjs",
+      "interface": "subscribe(graph, handler) -> unsubscribe; getFeed() -> AsyncIterable<Change>",
+      "metrics": {
+        "complexity": "moderate",
+        "dependencies": 0,
+        "utility": 0.82
+      },
+      "name": "Change Feed Processor",
+      "proof": {
+        "files": [
+          "examples/streaming/basic-subscription.mjs",
+          "examples/streaming/change-feed-integration.mjs"
+        ],
+        "type": "example"
+      },
+      "source": {
+        "file": "packages/streaming/src/processor.mjs",
+        "line": 1
+      },
+      "state": {
+        "lifecycle": "subscribe-unsubscribe",
+        "type": "stateful"
+      },
+      "utility": 0.82,
+      "validated": true
+    },
+    {
+      "complexity": "very-high",
+      "evidenceHash": "645977b4e760f49027543bfa6e11f5d82bf3741a49bbe6aa5cda29ba4ba4a610",
+      "id": "atom-federation-coordinator",
+      "implementation": "@unrdf/federation/coordinator.mjs",
+      "interface": "discoverPeers(criteria) -> Peer[]; executeDistributedQuery(sparql, peers) -> results",
+      "metrics": {
+        "complexity": "very-high",
+        "dependencies": 0,
+        "utility": 0.8
+      },
+      "name": "Federation Coordinator",
+      "proof": {
+        "files": [
+          "examples/federation/basic-federation.mjs"
+        ],
+        "type": "example"
+      },
+      "source": {
+        "file": "packages/federation/src/coordinator.mjs",
+        "line": 1
+      },
+      "state": {
+        "type": "stateful"
+      },
+      "utility": 0.8,
+      "validated": true
+    },
+    {
+      "capabilities": [
+        "time-travel",
+        "git-backed-snapshots",
+        "nanosecond-precision"
+      ],
+      "complexity": "very-high",
+      "evidenceHash": "4dc1cc60506175e829b2fe222c6a3cfce734ed1f8db30b23fff91829610c4eca",
+      "id": "atom-event-logger",
+      "implementation": "@unrdf/kgc-4d",
+      "interface": "logEvent(timestamp, data) -> Receipt; getSnapshot(time) -> State",
+      "metrics": {
+        "complexity": "very-high",
+        "dependencies": 0,
+        "utility": 0.9
+      },
+      "name": "Event Logger (KGC-4D)",
+      "proof": {
+        "metrics": {
+          "developmentDays": 20,
+          "linesOfCode": 6327,
+          "testPassRate": 0.998
+        },
+        "type": "test+example"
+      },
+      "source": {
+        "file": "packages/kgc-4d/src/index.mjs",
+        "line": 1
+      },
+      "state": {
+        "persistence": "git",
+        "type": "stateful"
+      },
+      "utility": 0.9,
+      "validated": true
+    },
+    {
+      "complexity": "very-high",
+      "evidenceHash": "d486baba6f735aa14c7dc0c1f52722f9fcb88e728a19c4531711badd50330597",
+      "id": "atom-workflow-engine",
+      "implementation": "@unrdf/yawl",
+      "interface": "createCase(processId) -> Case; executeTask(caseId, taskId) -> TaskResult",
+      "metrics": {
+        "complexity": "very-high",
+        "dependencies": 0,
+        "utility": 0.86
+      },
+      "name": "Workflow Engine (YAWL)",
+      "proof": {
+        "type": "test+example"
+      },
+      "semantics": "Petri nets with BPMN/YAWL",
+      "source": {
+        "file": "packages/yawl/src/case.mjs",
+        "line": 1
+      },
+      "state": {
+        "lifecycle": "create-task-complete",
+        "type": "stateful"
+      },
+      "utility": 0.86,
+      "validated": true
+    },
+    {
+      "complexity": "high",
+      "evidenceHash": "a47577831ca1ee913a7b2c5c2c1a48ba57430531355ed158f84760abaf1032cd",
+      "id": "atom-ml-inference",
+      "implementation": "@unrdf/ml-inference",
+      "interface": "createPipeline(modelPath) -> Pipeline; infer(inputs) -> outputs",
+      "metrics": {
+        "complexity": "high",
+        "dependencies": 0,
+        "utility": 0.75
+      },
+      "name": "ML Inference Pipeline",
+      "proof": {
+        "type": "test"
+      },
+      "source": {
+        "file": "packages/ml-inference/src/pipeline/streaming-inference.mjs",
+        "line": 1
+      },
+      "state": {
+        "lifecycle": "load-infer-unload",
+        "type": "stateful"
+      },
+      "utility": 0.75,
+      "validated": true
+    },
+    {
+      "complexity": "high",
+      "evidenceHash": "7aefc22dc03c1a89904353f3a9331bd24b0f982c6dd6475a86981ee2a49dac99",
+      "id": "atom-graph-analytics",
+      "implementation": "@unrdf/graph-analytics",
+      "interface": "pageRank(graph) -> scores; centrality(graph) -> measures",
+      "metrics": {
+        "complexity": "high",
+        "dependencies": 0,
+        "utility": 0.78
+      },
+      "name": "Graph Analytics",
+      "proof": {
+        "type": "test"
+      },
+      "source": {
+        "file": "packages/graph-analytics/src/centrality/pagerank-analyzer.mjs",
+        "line": 1
+      },
+      "state": {
+        "type": "stateless"
+      },
+      "utility": 0.78,
+      "validated": true
+    }
+  ],
+  "baselines": {
+    "atoms": [
+      {
+        "baselineUtility": 0.95,
+        "complexity": "moderate",
+        "id": "atom-rdf-store",
+        "name": "RDF Store",
+        "proof": {
+          "files": [
+            "packages/core/test/core.test.mjs",
+            "examples/01-hello-rdf.mjs"
+          ],
+          "type": "test+example"
+        }
+      },
+      {
+        "baselineUtility": 0.8700000000000001,
+        "complexity": "high",
+        "id": "atom-sparql-executor",
+        "name": "SPARQL Executor",
+        "proof": {
+          "files": [
+            "packages/core/test/core.test.mjs",
+            "examples/sparql-query-advanced.mjs"
+          ],
+          "type": "test+example"
+        }
+      },
+      {
+        "baselineUtility": 0.89,
+        "complexity": "high",
+        "id": "atom-hook-system",
+        "name": "Hook System",
+        "proof": {
+          "files": [
+            "packages/hooks/test",
+            "examples/define-hook-example.mjs"
+          ],
+          "type": "test+example"
+        }
+      },
+      {
+        "baselineUtility": 0.8,
+        "complexity": "high",
+        "id": "atom-pattern-matcher",
+        "name": "Pattern Matcher",
+        "proof": {
+          "files": [
+            "packages/knowledge-engine/test",
+            "packages/knowledge-engine/examples"
+          ],
+          "type": "test+example"
+        }
+      },
+      {
+        "baselineUtility": 0.82,
+        "complexity": "moderate",
+        "id": "atom-change-feed",
+        "name": "Change Feed Processor",
+        "proof": {
+          "files": [
+            "examples/streaming/basic-subscription.mjs",
+            "examples/streaming/change-feed-integration.mjs"
+          ],
+          "type": "example"
+        }
+      },
+      {
+        "baselineUtility": 0.7000000000000001,
+        "complexity": "very-high",
+        "id": "atom-federation-coordinator",
+        "name": "Federation Coordinator",
+        "proof": {
+          "files": [
+            "examples/federation/basic-federation.mjs"
+          ],
+          "type": "example"
+        }
+      },
+      {
+        "baselineUtility": 0.8099999999999999,
+        "complexity": "very-high",
+        "id": "atom-event-logger",
+        "name": "Event Logger (KGC-4D)",
+        "proof": {
+          "metrics": {
+            "developmentDays": 20,
+            "linesOfCode": 6327,
+            "testPassRate": 0.998
+          },
+          "type": "test+example"
+        }
+      },
+      {
+        "baselineUtility": 0.71,
+        "complexity": "very-high",
+        "id": "atom-workflow-engine",
+        "name": "Workflow Engine (YAWL)",
+        "proof": {
+          "type": "test+example"
+        }
+      },
+      {
+        "baselineUtility": 0.65,
+        "complexity": "high",
+        "id": "atom-ml-inference",
+        "name": "ML Inference Pipeline",
+        "proof": {
+          "type": "test"
+        }
+      },
+      {
+        "baselineUtility": 0.68,
+        "complexity": "high",
+        "id": "atom-graph-analytics",
+        "name": "Graph Analytics",
+        "proof": {
+          "type": "test"
+        }
+      }
+    ],
+    "statistics": {
+      "averageUtility": 0.788,
+      "maxUtility": 0.95,
+      "medianUtility": 0.8049999999999999,
+      "minUtility": 0.65
+    }
+  },
+  "candidates": [
+    {
+      "atoms": [
+        "atom-rdf-store"
+      ],
+      "closed": false,
+      "depth": 0,
+      "heuristic": 0.95,
+      "id": "candidate-1",
+      "score": null,
+      "synergy": 0.76
+    },
+    {
+      "atoms": [
+        "atom-sparql-executor"
+      ],
+      "closed": false,
+      "depth": 0,
+      "heuristic": 0.92,
+      "id": "candidate-2",
+      "score": null,
+      "synergy": 0.92
+    },
+    {
+      "atoms": [
+        "atom-event-logger"
+      ],
+      "closed": false,
+      "depth": 0,
+      "heuristic": 0.9,
+      "id": "candidate-3",
+      "score": null,
+      "synergy": 1.08
+    },
+    {
+      "atoms": [
+        "atom-hook-system"
+      ],
+      "closed": false,
+      "depth": 0,
+      "heuristic": 0.88,
+      "id": "candidate-4",
+      "score": null,
+      "synergy": 0.88
+    },
+    {
+      "atoms": [
+        "atom-workflow-engine"
+      ],
+      "closed": false,
+      "depth": 0,
+      "heuristic": 0.86,
+      "id": "candidate-5",
+      "score": null,
+      "synergy": 1.032
+    },
+    {
+      "atoms": [
+        "atom-pattern-matcher"
+      ],
+      "closed": false,
+      "depth": 0,
+      "heuristic": 0.85,
+      "id": "candidate-6",
+      "score": null,
+      "synergy": 0.85
+    },
+    {
+      "atoms": [
+        "atom-change-feed"
+      ],
+      "closed": false,
+      "depth": 0,
+      "heuristic": 0.82,
+      "id": "candidate-7",
+      "score": null,
+      "synergy": 0.656
+    },
+    {
+      "atoms": [
+        "atom-federation-coordinator"
+      ],
+      "closed": false,
+      "depth": 0,
+      "heuristic": 0.8,
+      "id": "candidate-8",
+      "score": null,
+      "synergy": 0.96
+    },
+    {
+      "atoms": [
+        "atom-event-logger",
+        "atom-workflow-engine"
+      ],
+      "closed": false,
+      "depth": 1,
+      "heuristic": 1.1616000000000002,
+      "id": "candidate-9",
+      "score": null,
+      "synergy": 1.1616000000000002
+    },
+    {
+      "atoms": [
+        "atom-hook-system",
+        "atom-sparql-executor"
+      ],
+      "closed": false,
+      "depth": 1,
+      "heuristic": 0.9900000000000001,
+      "id": "candidate-10",
+      "score": null,
+      "synergy": 0.9900000000000001
+    },
+    {
+      "atoms": [
+        "atom-ml-inference",
+        "atom-workflow-engine"
+      ],
+      "closed": false,
+      "depth": 1,
+      "heuristic": 0.9801000000000001,
+      "id": "candidate-11",
+      "score": null,
+      "synergy": 0.9801000000000001
+    },
+    {
+      "atoms": [
+        "atom-pattern-matcher",
+        "atom-sparql-executor"
+      ],
+      "closed": false,
+      "depth": 1,
+      "heuristic": 0.9735000000000001,
+      "id": "candidate-12",
+      "score": null,
+      "synergy": 0.9735000000000001
+    },
+    {
+      "atoms": [
+        "atom-hook-system",
+        "atom-pattern-matcher"
+      ],
+      "closed": false,
+      "depth": 1,
+      "heuristic": 0.9515,
+      "id": "candidate-13",
+      "score": null,
+      "synergy": 0.9515
+    },
+    {
+      "atoms": [
+        "atom-federation-coordinator",
+        "atom-rdf-store"
+      ],
+      "closed": false,
+      "depth": 1,
+      "heuristic": 0.9460000000000001,
+      "id": "candidate-14",
+      "score": null,
+      "synergy": 0.9460000000000001
+    },
+    {
+      "atoms": [
+        "atom-graph-analytics",
+        "atom-sparql-executor"
+      ],
+      "closed": false,
+      "depth": 1,
+      "heuristic": 0.9350000000000002,
+      "id": "candidate-15",
+      "score": null,
+      "synergy": 0.9350000000000002
+    },
+    {
+      "atoms": [
+        "atom-change-feed",
+        "atom-workflow-engine"
+      ],
+      "closed": false,
+      "depth": 1,
+      "heuristic": 0.9284000000000001,
+      "id": "candidate-16",
+      "score": null,
+      "synergy": 0.9284000000000001
+    },
+    {
+      "atoms": [
+        "atom-rdf-store",
+        "atom-sparql-executor"
+      ],
+      "closed": false,
+      "depth": 1,
+      "heuristic": 0.9240000000000002,
+      "id": "candidate-17",
+      "score": null,
+      "synergy": 0.9240000000000002
+    },
+    {
+      "atoms": [
+        "atom-event-logger",
+        "atom-ml-inference",
+        "atom-workflow-engine"
+      ],
+      "closed": false,
+      "depth": 2,
+      "heuristic": 1.1448,
+      "id": "candidate-18",
+      "score": null,
+      "synergy": 1.1448
+    },
+    {
+      "atoms": [
+        "atom-hook-system",
+        "atom-pattern-matcher",
+        "atom-sparql-executor"
+      ],
+      "closed": true,
+      "depth": 2,
+      "heuristic": 1.0599999999999998,
+      "id": "candidate-19",
+      "score": null,
+      "synergy": 1.0599999999999998
+    },
+    {
+      "atoms": [
+        "atom-change-feed",
+        "atom-federation-coordinator",
+        "atom-workflow-engine"
+      ],
+      "closed": false,
+      "depth": 2,
+      "heuristic": 1.0592,
+      "id": "candidate-20",
+      "score": null,
+      "synergy": 1.0592
+    }
+  ],
+  "deterministic": true,
+  "epoch": "2025-12-26T00:00:00.000Z",
+  "graph": {
+    "edges": [
+      {
+        "from": "atom-rdf-store",
+        "kind": "feed",
+        "reason": "RDF Store output → SPARQL Executor input",
+        "strength": 1,
+        "to": "atom-sparql-executor"
+      },
+      {
+        "from": "atom-rdf-store",
+        "kind": "feed",
+        "reason": "RDF Store output → Hook System input",
+        "strength": 1,
+        "to": "atom-hook-system"
+      },
+      {
+        "from": "atom-rdf-store",
+        "kind": "feed",
+        "reason": "RDF Store output → Pattern Matcher input",
+        "strength": 1,
+        "to": "atom-pattern-matcher"
+      },
+      {
+        "from": "atom-rdf-store",
+        "kind": "feed",
+        "reason": "RDF Store output → Change Feed Processor input",
+        "strength": 1,
+        "to": "atom-change-feed"
+      },
+      {
+        "from": "atom-rdf-store",
+        "kind": "feed",
+        "reason": "RDF Store output → Federation Coordinator input",
+        "strength": 1,
+        "to": "atom-federation-coordinator"
+      },
+      {
+        "from": "atom-rdf-store",
+        "kind": "feed",
+        "reason": "RDF Store output → Graph Analytics input",
+        "strength": 1,
+        "to": "atom-graph-analytics"
+      },
+      {
+        "from": "atom-sparql-executor",
+        "kind": "feed",
+        "reason": "SPARQL Executor output → Hook System input",
+        "strength": 1,
+        "to": "atom-hook-system"
+      },
+      {
+        "from": "atom-sparql-executor",
+        "kind": "feed",
+        "reason": "SPARQL Executor output → Pattern Matcher input",
+        "strength": 1,
+        "to": "atom-pattern-matcher"
+      },
+      {
+        "from": "atom-sparql-executor",
+        "kind": "feed",
+        "reason": "SPARQL Executor output → Graph Analytics input",
+        "strength": 1,
+        "to": "atom-graph-analytics"
+      },
+      {
+        "from": "atom-change-feed",
+        "kind": "feed",
+        "reason": "Change Feed Processor output → Federation Coordinator input",
+        "strength": 1,
+        "to": "atom-federation-coordinator"
+      },
+      {
+        "from": "atom-change-feed",
+        "kind": "feed",
+        "reason": "Change Feed Processor output → Workflow Engine (YAWL) input",
+        "strength": 1,
+        "to": "atom-workflow-engine"
+      },
+      {
+        "from": "atom-event-logger",
+        "kind": "feed",
+        "reason": "Event Logger (KGC-4D) output → Workflow Engine (YAWL) input",
+        "strength": 0.858,
+        "to": "atom-workflow-engine"
+      },
+      {
+        "from": "atom-hook-system",
+        "kind": "govern",
+        "reason": "Hook System governs RDF Store",
+        "strength": 0.8,
+        "to": "atom-rdf-store"
+      },
+      {
+        "from": "atom-hook-system",
+        "kind": "govern",
+        "reason": "Hook System governs SPARQL Executor",
+        "strength": 0.8,
+        "to": "atom-sparql-executor"
+      },
+      {
+        "from": "atom-hook-system",
+        "kind": "govern",
+        "reason": "Hook System governs Pattern Matcher",
+        "strength": 0.8,
+        "to": "atom-pattern-matcher"
+      },
+      {
+        "from": "atom-event-logger",
+        "kind": "govern",
+        "reason": "Event Logger (KGC-4D) governs Workflow Engine (YAWL)",
+        "strength": 0.8,
+        "to": "atom-workflow-engine"
+      },
+      {
+        "from": "atom-rdf-store",
+        "kind": "host",
+        "reason": "RDF Store can host Hook System",
+        "strength": 0.85,
+        "to": "atom-hook-system"
+      },
+      {
+        "from": "atom-rdf-store",
+        "kind": "host",
+        "reason": "RDF Store can host Pattern Matcher",
+        "strength": 0.85,
+        "to": "atom-pattern-matcher"
+      },
+      {
+        "from": "atom-rdf-store",
+        "kind": "host",
+        "reason": "RDF Store can host Change Feed Processor",
+        "strength": 0.85,
+        "to": "atom-change-feed"
+      },
+      {
+        "from": "atom-workflow-engine",
+        "kind": "host",
+        "reason": "Workflow Engine (YAWL) can host ML Inference Pipeline",
+        "strength": 0.85,
+        "to": "atom-ml-inference"
+      },
+      {
+        "from": "atom-rdf-store",
+        "kind": "depends",
+        "reason": "RDF Store depends on oxigraph",
+        "strength": 1,
+        "to": "atom-rdf-store"
+      }
+    ],
+    "statistics": {
+      "averageDegree": 4.2,
+      "edgeCount": 21,
+      "edgesByKind": {
+        "depends": 1,
+        "feed": 12,
+        "govern": 4,
+        "host": 4
+      },
+      "vertexCount": 10
+    },
+    "vertices": [
+      {
+        "complexity": "moderate",
+        "id": "atom-rdf-store",
+        "inDegree": 0,
+        "name": "RDF Store",
+        "outDegree": 0,
+        "utility": 0.95
+      },
+      {
+        "complexity": "high",
+        "id": "atom-sparql-executor",
+        "inDegree": 0,
+        "name": "SPARQL Executor",
+        "outDegree": 0,
+        "utility": 0.92
+      },
+      {
+        "complexity": "high",
+        "id": "atom-hook-system",
+        "inDegree": 0,
+        "name": "Hook System",
+        "outDegree": 0,
+        "utility": 0.88
+      },
+      {
+        "complexity": "high",
+        "id": "atom-pattern-matcher",
+        "inDegree": 0,
+        "name": "Pattern Matcher",
+        "outDegree": 0,
+        "utility": 0.85
+      },
+      {
+        "complexity": "moderate",
+        "id": "atom-change-feed",
+        "inDegree": 0,
+        "name": "Change Feed Processor",
+        "outDegree": 0,
+        "utility": 0.82
+      },
+      {
+        "complexity": "very-high",
+        "id": "atom-federation-coordinator",
+        "inDegree": 0,
+        "name": "Federation Coordinator",
+        "outDegree": 0,
+        "utility": 0.8
+      },
+      {
+        "complexity": "very-high",
+        "id": "atom-event-logger",
+        "inDegree": 0,
+        "name": "Event Logger (KGC-4D)",
+        "outDegree": 0,
+        "utility": 0.9
+      },
+      {
+        "complexity": "very-high",
+        "id": "atom-workflow-engine",
+        "inDegree": 0,
+        "name": "Workflow Engine (YAWL)",
+        "outDegree": 0,
+        "utility": 0.86
+      },
+      {
+        "complexity": "high",
+        "id": "atom-ml-inference",
+        "inDegree": 0,
+        "name": "ML Inference Pipeline",
+        "outDegree": 0,
+        "utility": 0.75
+      },
+      {
+        "complexity": "high",
+        "id": "atom-graph-analytics",
+        "inDegree": 0,
+        "name": "Graph Analytics",
+        "outDegree": 0,
+        "utility": 0.78
+      }
+    ]
+  },
+  "manifest": {
+    "acceptance": {
+      "criteria": [
+        "Each promotion has experiment pointer",
+        "Receipt verifies",
+        "Measured ΔU > 0",
+        "Evidence links for all atoms"
+      ],
+      "verified": false
+    },
+    "discoveryProcess": {
+      "invariants": [
+        "Q1_determinism",
+        "Q2_provenance",
+        "Q3_receipts",
+        "Q4_pokayoke",
+        "Q5_sla_honesty"
+      ],
+      "phases": [
+        "μ1_orchestrator",
+        "μ2_atomization",
+        "μ3_graph",
+        "μ5_search",
+        "μ8_metrics",
+        "μ10_ranking"
+      ]
+    },
+    "promotedCount": 5,
+    "promotions": [
+      {
+        "atomDetails": [
+          {
+            "complexity": "moderate",
+            "id": "atom-rdf-store",
+            "name": "RDF Store",
+            "utility": 0.95
+          }
+        ],
+        "atomIds": [
+          "atom-rdf-store"
+        ],
+        "candidateId": "candidate-1",
+        "capabilities": [],
+        "constraintStrength": 1,
+        "id": "promotion-1",
+        "rank": 1,
+        "receiptPointer": "experiments/candidate-1/receipt.json",
+        "runnablePointer": "experiments/candidate-1/run.mjs",
+        "synergy": 0.03465735902799727,
+        "timestamp": "2025-12-26T00:00:00.000Z",
+        "utility": 0.9846573590279972
+      },
+      {
+        "atomDetails": [
+          {
+            "complexity": "high",
+            "id": "atom-sparql-executor",
+            "name": "SPARQL Executor",
+            "utility": 0.92
+          }
+        ],
+        "atomIds": [
+          "atom-sparql-executor"
+        ],
+        "candidateId": "candidate-2",
+        "capabilities": [],
+        "constraintStrength": 1,
+        "id": "promotion-2",
+        "rank": 2,
+        "receiptPointer": "experiments/candidate-2/receipt.json",
+        "runnablePointer": "experiments/candidate-2/run.mjs",
+        "synergy": 0.03465735902799727,
+        "timestamp": "2025-12-26T00:00:00.000Z",
+        "utility": 0.9046573590279974
+      },
+      {
+        "atomDetails": [
+          {
+            "complexity": "very-high",
+            "id": "atom-event-logger",
+            "name": "Event Logger (KGC-4D)",
+            "utility": 0.9
+          }
+        ],
+        "atomIds": [
+          "atom-event-logger"
+        ],
+        "candidateId": "candidate-3",
+        "capabilities": [
+          "time-travel",
+          "git-backed-snapshots",
+          "nanosecond-precision"
+        ],
+        "constraintStrength": 1,
+        "id": "promotion-3",
+        "rank": 3,
+        "receiptPointer": "experiments/candidate-3/receipt.json",
+        "runnablePointer": "experiments/candidate-3/run.mjs",
+        "synergy": 0.03465735902799727,
+        "timestamp": "2025-12-26T00:00:00.000Z",
+        "utility": 0.8446573590279972
+      },
+      {
+        "atomDetails": [
+          {
+            "complexity": "high",
+            "id": "atom-hook-system",
+            "name": "Hook System",
+            "utility": 0.88
+          }
+        ],
+        "atomIds": [
+          "atom-hook-system"
+        ],
+        "candidateId": "candidate-4",
+        "capabilities": [
+          "validation",
+          "transformation",
+          "policy-enforcement"
+        ],
+        "constraintStrength": 1,
+        "id": "promotion-4",
+        "rank": 4,
+        "receiptPointer": "experiments/candidate-4/receipt.json",
+        "runnablePointer": "experiments/candidate-4/run.mjs",
+        "synergy": 0.03465735902799727,
+        "timestamp": "2025-12-26T00:00:00.000Z",
+        "utility": 0.9246573590279973
+      },
+      {
+        "atomDetails": [
+          {
+            "complexity": "very-high",
+            "id": "atom-workflow-engine",
+            "name": "Workflow Engine (YAWL)",
+            "utility": 0.86
+          }
+        ],
+        "atomIds": [
+          "atom-workflow-engine"
+        ],
+        "candidateId": "candidate-5",
+        "capabilities": [],
+        "constraintStrength": 1,
+        "id": "promotion-5",
+        "rank": 5,
+        "receiptPointer": "experiments/candidate-5/receipt.json",
+        "runnablePointer": "experiments/candidate-5/run.mjs",
+        "synergy": 0.03465735902799727,
+        "timestamp": "2025-12-26T00:00:00.000Z",
+        "utility": 0.7446573590279972
+      }
+    ],
+    "timestamp": "2025-12-26T00:00:00.000Z",
+    "version": "1.0.0"
+  },
+  "metrics": [
+    {
+      "atoms": [
+        "atom-rdf-store"
+      ],
+      "id": "candidate-1",
+      "rank": 1,
+      "score": 0.006931471805599454,
+      "synergy": 0.03465735902799727,
+      "synergy_delta": 0.03465735902799727,
+      "utility": 0.9846573590279972
+    },
+    {
+      "atoms": [
+        "atom-sparql-executor"
+      ],
+      "id": "candidate-2",
+      "rank": 2,
+      "score": 0.006931471805599454,
+      "synergy": 0.03465735902799727,
+      "synergy_delta": 0.03465735902799727,
+      "utility": 0.9046573590279974
+    },
+    {
+      "atoms": [
+        "atom-event-logger"
+      ],
+      "id": "candidate-3",
+      "rank": 3,
+      "score": 0.006931471805599454,
+      "synergy": 0.03465735902799727,
+      "synergy_delta": 0.03465735902799727,
+      "utility": 0.8446573590279972
+    },
+    {
+      "atoms": [
+        "atom-hook-system"
+      ],
+      "id": "candidate-4",
+      "rank": 4,
+      "score": 0.006931471805599454,
+      "synergy": 0.03465735902799727,
+      "synergy_delta": 0.03465735902799727,
+      "utility": 0.9246573590279973
+    },
+    {
+      "atoms": [
+        "atom-workflow-engine"
+      ],
+      "id": "candidate-5",
+      "rank": 5,
+      "score": 0.006931471805599454,
+      "synergy": 0.03465735902799727,
+      "synergy_delta": 0.03465735902799727,
+      "utility": 0.7446573590279972
+    },
+    {
+      "atoms": [
+        "atom-pattern-matcher"
+      ],
+      "id": "candidate-6",
+      "rank": 6,
+      "score": 0.006931471805599454,
+      "synergy": 0.03465735902799727,
+      "synergy_delta": 0.03465735902799727,
+      "utility": 0.8346573590279973
+    },
+    {
+      "atoms": [
+        "atom-change-feed"
+      ],
+      "id": "candidate-7",
+      "rank": 7,
+      "score": 0.006931471805599454,
+      "synergy": 0.03465735902799727,
+      "synergy_delta": 0.03465735902799727,
+      "utility": 0.8546573590279972
+    },
+    {
+      "atoms": [
+        "atom-federation-coordinator"
+      ],
+      "id": "candidate-8",
+      "rank": 8,
+      "score": 0.006931471805599454,
+      "synergy": 0.03465735902799727,
+      "synergy_delta": 0.03465735902799727,
+      "utility": 0.7346573590279973
+    },
+    {
+      "atoms": [
+        "atom-event-logger",
+        "atom-workflow-engine"
+      ],
+      "id": "candidate-9",
+      "rank": 9,
+      "score": -0.1210138771133189,
+      "synergy": -0.6050693855665945,
+      "synergy_delta": -0.6050693855665945,
+      "utility": 0.9149306144334055
+    },
+    {
+      "atoms": [
+        "atom-ml-inference",
+        "atom-workflow-engine"
+      ],
+      "id": "candidate-11",
+      "rank": 10,
+      "score": -0.12501387711331888,
+      "synergy": -0.6250693855665944,
+      "synergy_delta": -0.6250693855665944,
+      "utility": 0.7349306144334055
+    },
+    {
+      "atoms": [
+        "atom-hook-system",
+        "atom-pattern-matcher"
+      ],
+      "id": "candidate-13",
+      "rank": 11,
+      "score": -0.1380138771133189,
+      "synergy": -0.6900693855665945,
+      "synergy_delta": -0.6900693855665945,
+      "utility": 0.9999306144334055
+    },
+    {
+      "atoms": [
+        "atom-change-feed",
+        "atom-workflow-engine"
+      ],
+      "id": "candidate-16",
+      "rank": 12,
+      "score": -0.1420138771133189,
+      "synergy": -0.7100693855665944,
+      "synergy_delta": -0.7100693855665944,
+      "utility": 0.8199306144334054
+    },
+    {
+      "atoms": [
+        "atom-graph-analytics",
+        "atom-sparql-executor"
+      ],
+      "id": "candidate-15",
+      "rank": 13,
+      "score": -0.14401387711331892,
+      "synergy": -0.7200693855665946,
+      "synergy_delta": -0.7200693855665946,
+      "utility": 0.8299306144334057
+    },
+    {
+      "atoms": [
+        "atom-hook-system",
+        "atom-sparql-executor"
+      ],
+      "id": "candidate-10",
+      "rank": 14,
+      "score": -0.14501387711331892,
+      "synergy": -0.7250693855665946,
+      "synergy_delta": -0.7250693855665946,
+      "utility": 1.0349306144334056
+    },
+    {
+      "atoms": [
+        "atom-rdf-store",
+        "atom-sparql-executor"
+      ],
+      "id": "candidate-17",
+      "rank": 15,
+      "score": -0.15101387711331893,
+      "synergy": -0.7550693855665946,
+      "synergy_delta": -0.7550693855665946,
+      "utility": 1.0649306144334054
+    },
+    {
+      "atoms": [
+        "atom-federation-coordinator",
+        "atom-rdf-store"
+      ],
+      "id": "candidate-14",
+      "rank": 16,
+      "score": -0.1540138771133189,
+      "synergy": -0.7700693855665944,
+      "synergy_delta": -0.7700693855665944,
+      "utility": 0.8799306144334055
+    },
+    {
+      "atoms": [
+        "atom-pattern-matcher",
+        "atom-sparql-executor"
+      ],
+      "id": "candidate-12",
+      "rank": 17,
+      "score": -0.15601387711331893,
+      "synergy": -0.7800693855665946,
+      "synergy_delta": -0.7800693855665946,
+      "utility": 0.8899306144334056
+    },
+    {
+      "atoms": [
+        "atom-event-logger",
+        "atom-ml-inference",
+        "atom-workflow-engine"
+      ],
+      "id": "candidate-18",
+      "rank": 18,
+      "score": -0.25547038972213443,
+      "synergy": -1.2773519486106721,
+      "synergy_delta": -1.2773519486106721,
+      "utility": 0.8926480513893278
+    },
+    {
+      "atoms": [
+        "atom-change-feed",
+        "atom-federation-coordinator",
+        "atom-workflow-engine"
+      ],
+      "id": "candidate-20",
+      "rank": 19,
+      "score": -0.28347038972213445,
+      "synergy": -1.4173519486106723,
+      "synergy_delta": -1.4173519486106723,
+      "utility": 0.8126480513893278
+    },
+    {
+      "atoms": [
+        "atom-hook-system",
+        "atom-pattern-matcher",
+        "atom-sparql-executor"
+      ],
+      "id": "candidate-19",
+      "rank": 20,
+      "score": -0.2874703897221344,
+      "synergy": -1.437351948610672,
+      "synergy_delta": -1.437351948610672,
+      "utility": 1.122648051389328
+    }
+  ],
+  "promoted": [
+    {
+      "atomDetails": [
+        {
+          "complexity": "moderate",
+          "id": "atom-rdf-store",
+          "name": "RDF Store",
+          "utility": 0.95
+        }
+      ],
+      "atomIds": [
+        "atom-rdf-store"
+      ],
+      "candidateId": "candidate-1",
+      "capabilities": [],
+      "constraintStrength": 1,
+      "id": "promotion-1",
+      "rank": 1,
+      "receiptPointer": "experiments/candidate-1/receipt.json",
+      "runnablePointer": "experiments/candidate-1/run.mjs",
+      "synergy": 0.03465735902799727,
+      "timestamp": "2025-12-26T00:00:00.000Z",
+      "utility": 0.9846573590279972
+    },
+    {
+      "atomDetails": [
+        {
+          "complexity": "high",
+          "id": "atom-sparql-executor",
+          "name": "SPARQL Executor",
+          "utility": 0.92
+        }
+      ],
+      "atomIds": [
+        "atom-sparql-executor"
+      ],
+      "candidateId": "candidate-2",
+      "capabilities": [],
+      "constraintStrength": 1,
+      "id": "promotion-2",
+      "rank": 2,
+      "receiptPointer": "experiments/candidate-2/receipt.json",
+      "runnablePointer": "experiments/candidate-2/run.mjs",
+      "synergy": 0.03465735902799727,
+      "timestamp": "2025-12-26T00:00:00.000Z",
+      "utility": 0.9046573590279974
+    },
+    {
+      "atomDetails": [
+        {
+          "complexity": "very-high",
+          "id": "atom-event-logger",
+          "name": "Event Logger (KGC-4D)",
+          "utility": 0.9
+        }
+      ],
+      "atomIds": [
+        "atom-event-logger"
+      ],
+      "candidateId": "candidate-3",
+      "capabilities": [
+        "time-travel",
+        "git-backed-snapshots",
+        "nanosecond-precision"
+      ],
+      "constraintStrength": 1,
+      "id": "promotion-3",
+      "rank": 3,
+      "receiptPointer": "experiments/candidate-3/receipt.json",
+      "runnablePointer": "experiments/candidate-3/run.mjs",
+      "synergy": 0.03465735902799727,
+      "timestamp": "2025-12-26T00:00:00.000Z",
+      "utility": 0.8446573590279972
+    },
+    {
+      "atomDetails": [
+        {
+          "complexity": "high",
+          "id": "atom-hook-system",
+          "name": "Hook System",
+          "utility": 0.88
+        }
+      ],
+      "atomIds": [
+        "atom-hook-system"
+      ],
+      "candidateId": "candidate-4",
+      "capabilities": [
+        "validation",
+        "transformation",
+        "policy-enforcement"
+      ],
+      "constraintStrength": 1,
+      "id": "promotion-4",
+      "rank": 4,
+      "receiptPointer": "experiments/candidate-4/receipt.json",
+      "runnablePointer": "experiments/candidate-4/run.mjs",
+      "synergy": 0.03465735902799727,
+      "timestamp": "2025-12-26T00:00:00.000Z",
+      "utility": 0.9246573590279973
+    },
+    {
+      "atomDetails": [
+        {
+          "complexity": "very-high",
+          "id": "atom-workflow-engine",
+          "name": "Workflow Engine (YAWL)",
+          "utility": 0.86
+        }
+      ],
+      "atomIds": [
+        "atom-workflow-engine"
+      ],
+      "candidateId": "candidate-5",
+      "capabilities": [],
+      "constraintStrength": 1,
+      "id": "promotion-5",
+      "rank": 5,
+      "receiptPointer": "experiments/candidate-5/receipt.json",
+      "runnablePointer": "experiments/candidate-5/run.mjs",
+      "synergy": 0.03465735902799727,
+      "timestamp": "2025-12-26T00:00:00.000Z",
+      "utility": 0.7446573590279972
+    }
+  ],
+  "ranked": [
+    {
+      "atoms": [
+        "atom-rdf-store"
+      ],
+      "constraintStrength": 1,
+      "id": "candidate-1",
+      "loopClosureDegree": 0,
+      "rank": 1,
+      "score": 0.006931471805599454,
+      "synergy": 0.03465735902799727,
+      "synergy_delta": 0.03465735902799727,
+      "totalOrder": 1,
+      "utility": 0.9846573590279972
+    },
+    {
+      "atoms": [
+        "atom-sparql-executor"
+      ],
+      "constraintStrength": 1,
+      "id": "candidate-2",
+      "loopClosureDegree": 0,
+      "rank": 2,
+      "score": 0.006931471805599454,
+      "synergy": 0.03465735902799727,
+      "synergy_delta": 0.03465735902799727,
+      "totalOrder": 2,
+      "utility": 0.9046573590279974
+    },
+    {
+      "atoms": [
+        "atom-event-logger"
+      ],
+      "constraintStrength": 1,
+      "id": "candidate-3",
+      "loopClosureDegree": 0,
+      "rank": 3,
+      "score": 0.006931471805599454,
+      "synergy": 0.03465735902799727,
+      "synergy_delta": 0.03465735902799727,
+      "totalOrder": 3,
+      "utility": 0.8446573590279972
+    },
+    {
+      "atoms": [
+        "atom-hook-system"
+      ],
+      "constraintStrength": 1,
+      "id": "candidate-4",
+      "loopClosureDegree": 0,
+      "rank": 4,
+      "score": 0.006931471805599454,
+      "synergy": 0.03465735902799727,
+      "synergy_delta": 0.03465735902799727,
+      "totalOrder": 4,
+      "utility": 0.9246573590279973
+    },
+    {
+      "atoms": [
+        "atom-workflow-engine"
+      ],
+      "constraintStrength": 1,
+      "id": "candidate-5",
+      "loopClosureDegree": 0,
+      "rank": 5,
+      "score": 0.006931471805599454,
+      "synergy": 0.03465735902799727,
+      "synergy_delta": 0.03465735902799727,
+      "totalOrder": 5,
+      "utility": 0.7446573590279972
+    },
+    {
+      "atoms": [
+        "atom-pattern-matcher"
+      ],
+      "constraintStrength": 1,
+      "id": "candidate-6",
+      "loopClosureDegree": 0,
+      "rank": 6,
+      "score": 0.006931471805599454,
+      "synergy": 0.03465735902799727,
+      "synergy_delta": 0.03465735902799727,
+      "totalOrder": 6,
+      "utility": 0.8346573590279973
+    },
+    {
+      "atoms": [
+        "atom-change-feed"
+      ],
+      "constraintStrength": 1,
+      "id": "candidate-7",
+      "loopClosureDegree": 0,
+      "rank": 7,
+      "score": 0.006931471805599454,
+      "synergy": 0.03465735902799727,
+      "synergy_delta": 0.03465735902799727,
+      "totalOrder": 7,
+      "utility": 0.8546573590279972
+    },
+    {
+      "atoms": [
+        "atom-federation-coordinator"
+      ],
+      "constraintStrength": 1,
+      "id": "candidate-8",
+      "loopClosureDegree": 0,
+      "rank": 8,
+      "score": 0.006931471805599454,
+      "synergy": 0.03465735902799727,
+      "synergy_delta": 0.03465735902799727,
+      "totalOrder": 8,
+      "utility": 0.7346573590279973
+    }
+  ]
+}
