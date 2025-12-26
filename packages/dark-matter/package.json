@@ -37,6 +37,7 @@
   ],
   "dependencies": {
     "@unrdf/core": "workspace:*",
+    "@unrdf/oxigraph": "workspace:*",
     "typhonjs-escomplex": "^0.1.0"
   },
   "devDependencies": {

@@ -12,6 +12,7 @@
 
 import { defineCommand } from 'citty';
 import { z } from 'zod';
+import { createStore } from '@unrdf/oxigraph';
 
 /**
  * Validation schema for validate command arguments
@@ -57,12 +58,12 @@ export const validateCommand = defineCommand({
 
       // Integrate with real SHACL validation from knowledge-engine
       const { validateShacl } = await import('../../../knowledge-engine/validate.mjs');
-      const { Store, Parser } = await import('n3');
+      const { Parser } = await import('n3');
       const { promises: fs } = await import('fs');
       const path = await import('path');
 
       // Load graph data - try sidecar first, then fallback to local file
-      let store = new Store();
+      let store = createStore();
       try {
         const { createSidecarClient } = await import('../../../sidecar/client.mjs');
         const client = createSidecarClient();
@@ -75,7 +76,7 @@ export const validateCommand = defineCommand({
         // Convert result to store
         if (result && Array.isArray(result)) {
           for (const quad of result) {
-            store.addQuad(quad);
+            store.add(quad);
           }
         }
       } catch (sidecarError) {
@@ -89,7 +90,10 @@ export const validateCommand = defineCommand({
         ) {
           const content = await fs.readFile(graphPath, 'utf-8');
           const parser = new Parser();
-          store = new Store(parser.parse(content));
+          const quads = parser.parse(content);
+          for (const quad of quads) {
+            store.add(quad);
+          }
         } else {
           throw new Error(`Graph "${args.name}" not found in sidecar or local filesystem`);
         }

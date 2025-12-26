@@ -1,23 +1,22 @@
 /**
  * KGEN Base Templates - Foundation template system
- * 
+ *
  * Exports all base template classes and utilities for building
  * deterministic, reusable template components
  */
 
-// Base template foundation
+// Import classes for local use
+import { KGenTemplateBase } from './template-base.js';
+import { KGenMacroTemplates } from './macro-templates.js';
+import { KGenFilterTemplates } from './filter-templates.js';
+import { KGenSHACLTemplates } from './shacl-templates.js';
+import { KGenInjectionTargets } from './injection-targets.js';
+
+// Re-export for external use
 export { KGenTemplateBase } from './template-base.js';
-
-// Macro system for reusable components
 export { KGenMacroTemplates } from './macro-templates.js';
-
-// Filter system for deterministic data processing
 export { KGenFilterTemplates } from './filter-templates.js';
-
-// SHACL validation templates for RDF knowledge graphs
 export { KGenSHACLTemplates } from './shacl-templates.js';
-
-// Injection targets for code modification
 export { KGenInjectionTargets } from './injection-targets.js';
 
 // Convenience factory function

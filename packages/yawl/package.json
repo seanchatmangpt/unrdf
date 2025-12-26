@@ -8,6 +8,7 @@
   "exports": {
     ".": "./src/index.mjs",
     "./api": "./src/api/workflow-api.mjs",
+    "./graphql-api": "./src/api/graphql-api.mjs",
     "./ontology": "./src/ontology/yawl-ontology.mjs",
     "./store": "./src/store/yawl-store.mjs",
     "./types": "./src/types/yawl-types.mjs",
@@ -15,12 +16,21 @@
     "./hooks": "./src/hooks/yawl-hooks.mjs",
     "./resources": "./src/resources/yawl-resources.mjs",
     "./cancellation": "./src/cancellation/index.mjs",
-    "./receipt": "./src/receipt.mjs"
+    "./receipt": "./src/receipt.mjs",
+    "./blockchain-receipts": "./src/blockchain-receipts.mjs",
+    "./visualization": "./src/visualization/live-workflow-viz.mjs"
   },
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
+    "test:ui": "vitest --ui",
+    "lint": "eslint src/ test/ --ext .mjs",
+    "lint:fix": "eslint src/ test/ --ext .mjs --fix",
+    "typecheck": "tsc --noEmit",
+    "format": "prettier --write \"src/**/*.mjs\" \"test/**/*.mjs\"",
+    "format:check": "prettier --check \"src/**/*.mjs\" \"test/**/*.mjs\"",
+    "validate": "npm run lint && npm run typecheck && npm run test",
     "build": "unbuild && tsc --emitDeclarationOnly",
     "build:types": "tsc --emitDeclarationOnly"
   },
@@ -34,13 +44,19 @@
     "time-travel"
   ],
   "dependencies": {
+    "@graphql-tools/schema": "^10.0.6",
+    "@noble/ed25519": "^2.1.0",
+    "@observablehq/plot": "^0.6.16",
     "@unrdf/hooks": "workspace:*",
     "@unrdf/kgc-4d": "workspace:*",
     "@unrdf/oxigraph": "workspace:*",
+    "d3": "^7.9.0",
+    "graphql": "^16.9.0",
     "hash-wasm": "^4.11.0",
     "zod": "^4.1.13"
   },
   "devDependencies": {
+    "eslint": "^8.0.0",
     "vitest": "^4.0.15"
   },
   "engines": {

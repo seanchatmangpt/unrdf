@@ -11,6 +11,13 @@
  * - Marker-based targeting and rollback capabilities (NEW)
  */
 
+// Import classes/functions for local use
+import { TemplateEngine, EnhancedTemplateEngine } from './engine/template-engine.js';
+import { TemplateInheritanceEngine } from './inheritance/index.js';
+import { enhanceKgenWithInjection } from './injection/integration.js';
+import { initializeInjection } from './injection/api.js';
+
+// Re-export for external use
 export { TemplateEngine, EnhancedTemplateEngine } from './engine/template-engine.js';
 export { TemplateInheritanceEngine } from './inheritance/index.js';
 export { createCustomFilters } from './filters/index.js';

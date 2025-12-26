@@ -1,6 +1,8 @@
 /**
- * KGEN Attestor - Generate cryptographic attestations for deterministic output
+ * @file KGEN Attestor - Generate cryptographic attestations for deterministic output
+ * @module @unrdf/kgn/core/attestor
  *
+ * @description
  * Provides:
  * - Content integrity verification
  * - Deterministic output attestation
@@ -10,7 +12,21 @@
 
 import crypto from 'crypto';
 
+/**
+ * KGEN Attestor class - Cryptographic attestation system
+ */
 export class KGenAttestor {
+  /**
+   * Create a new KGenAttestor instance
+   * @param {Object} [options={}] - Attestor configuration options
+   * @param {boolean} [options.enableAttestation=true] - Enable attestation generation
+   * @param {string} [options.algorithm='sha256'] - Hash algorithm to use
+   * @param {string} [options.attestorId='kgen-templates'] - Attestor identifier
+   * @param {string} [options.version='2.0.0'] - Attestor version
+   * @param {string} [options.staticBuildTime] - Static timestamp for deterministic mode
+   * @param {boolean} [options.deterministicMode=true] - Enable deterministic mode
+   * @param {boolean} [options.includeMetadata=true] - Include additional metadata
+   */
   constructor(options = {}) {
     this.options = {
       enableAttestation: options.enableAttestation !== false,
@@ -26,6 +42,9 @@ export class KGenAttestor {
 
   /**
    * Generate attestation for rendered content
+   * @param {string} content - Content to attest
+   * @param {Object} [context={}] - Context data for attestation
+   * @returns {Promise<Object>} Attestation result
    */
   async attest(content, context = {}) {
     if (!this.options.enableAttestation) {
@@ -61,6 +80,9 @@ export class KGenAttestor {
 
   /**
    * Create complete attestation record
+   * @param {string} content - Content to attest
+   * @param {Object} [context={}] - Context data
+   * @returns {Promise<Object>} Complete attestation record
    */
   async createAttestation(content, context = {}) {
     const contentHash = this.createContentHash(content);
@@ -104,6 +126,9 @@ export class KGenAttestor {
 
   /**
    * Verify attestation integrity
+   * @param {string} content - Content to verify
+   * @param {Object} attestation - Attestation to verify against
+   * @returns {Promise<Object>} Verification result
    */
   async verify(content, attestation) {
     try {
@@ -159,6 +184,10 @@ export class KGenAttestor {
 
   /**
    * Create reproducibility proof
+   * @param {string} content - Content to test reproducibility
+   * @param {Object} context - Context data
+   * @param {number} [iterations=3] - Number of iterations to test
+   * @returns {Promise<Object>} Reproducibility proof
    */
   async createReproducibilityProof(content, context, iterations = 3) {
     const proofs = [];
@@ -194,6 +223,8 @@ export class KGenAttestor {
 
   /**
    * Create audit trail for template execution
+   * @param {Array<Object>} [steps=[]] - Execution steps to audit
+   * @returns {Object} Audit trail record
    */
   createAuditTrail(steps = []) {
     return {
@@ -214,6 +245,9 @@ export class KGenAttestor {
 
   /**
    * Compare two attestations
+   * @param {Object} attestation1 - First attestation
+   * @param {Object} attestation2 - Second attestation
+   * @returns {Object} Comparison result
    */
   compareAttestations(attestation1, attestation2) {
     const differences = [];
@@ -264,6 +298,8 @@ export class KGenAttestor {
 
   /**
    * Create content hash using specified algorithm
+   * @param {string} content - Content to hash
+   * @returns {string} Content hash as hex string
    */
   createContentHash(content) {
     return crypto.createHash(this.options.algorithm)
@@ -273,6 +309,8 @@ export class KGenAttestor {
 
   /**
    * Create signature for attestation data
+   * @param {Object} data - Data to sign
+   * @returns {string} Signature as hex string
    */
   createSignature(data) {
     // Simple signature using hash of data + attestor ID
@@ -284,6 +322,9 @@ export class KGenAttestor {
 
   /**
    * Get additional metadata if enabled
+   * @param {string} content - Content being attested
+   * @param {Object} context - Context data
+   * @returns {Object} Additional metadata
    */
   getAdditionalMetadata(content, context) {
     return {
@@ -306,6 +347,7 @@ export class KGenAttestor {
 
   /**
    * Get deterministic or real timestamp
+   * @returns {string} ISO 8601 timestamp
    */
   getTimestamp() {
     return this.options.deterministicMode ?
@@ -315,6 +357,9 @@ export class KGenAttestor {
 
   /**
    * Export attestation in standard format
+   * @param {Object} attestation - Attestation to export
+   * @param {string} [format='json'] - Export format (json, compact, yaml, base64)
+   * @returns {string} Exported attestation
    */
   exportAttestation(attestation, format = 'json') {
     switch (format.toLowerCase()) {
@@ -340,6 +385,9 @@ export class KGenAttestor {
 
   /**
    * Import attestation from standard format
+   * @param {string} data - Attestation data to import
+   * @param {string} [format='json'] - Import format (json, compact, base64)
+   * @returns {Object} Imported attestation object
    */
   importAttestation(data, format = 'json') {
     try {
@@ -362,6 +410,7 @@ export class KGenAttestor {
 
   /**
    * Get attestor statistics
+   * @returns {Object} Attestor configuration and capabilities
    */
   getStats() {
     return {

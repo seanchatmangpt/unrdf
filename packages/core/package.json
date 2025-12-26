@@ -17,7 +17,8 @@
     "./logger": "./src/logger.mjs",
     "./metrics": "./src/metrics.mjs",
     "./security": "./src/security.mjs",
-    "./security-schemas": "./src/security-schemas.mjs"
+    "./security-schemas": "./src/security-schemas.mjs",
+    "./utils/sparql-utils": "./src/utils/sparql-utils.mjs"
   },
   "sideEffects": false,
   "files": [

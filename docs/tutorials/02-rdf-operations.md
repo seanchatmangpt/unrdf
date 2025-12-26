@@ -21,7 +21,8 @@ UNRDF provides a unified API for working with RDF data. At its core, it uses the
 Let's start by parsing some Turtle/TriG data into a Store:
 
 ```javascript
-import { parseTurtle, toTurtle, Store } from 'unrdf/knowledge-engine';
+import { createStore, dataFactory } from '@unrdf/oxigraph';
+import { executeSelectSync } from '@unrdf/core';
 
 // Sample Turtle data
 const turtleData = `
@@ -55,7 +56,7 @@ console.log(`Parsed ${store.size} triples`);
 Now let's query the data using SPARQL SELECT:
 
 ```javascript
-import { select } from 'unrdf/knowledge-engine';
+import { select } from '@unrdf/knowledge-engine';
 
 // Query all people and their names
 const results = await select(store, `
@@ -92,7 +93,7 @@ results.forEach(row => {
 ASK queries check if a pattern exists:
 
 ```javascript
-import { ask } from 'unrdf/knowledge-engine';
+import { ask } from '@unrdf/knowledge-engine';
 
 // Check if Alice knows Bob
 const aliceKnowsBob = await ask(store, `
@@ -131,7 +132,7 @@ console.log(`Does Bob know Alice? ${bobKnowsAlice}`);
 CONSTRUCT queries create new RDF graphs:
 
 ```javascript
-import { construct } from 'unrdf/knowledge-engine';
+import { construct } from '@unrdf/knowledge-engine';
 
 // Extract just the names into a new graph
 const nameGraph = await construct(store, `
@@ -177,7 +178,7 @@ console.log(serialized);
 **Other serialization formats:**
 
 ```javascript
-import { toNQuads, toJsonLd } from 'unrdf/knowledge-engine';
+import { toNQuads, toJsonLd } from '@unrdf/knowledge-engine';
 
 // N-Quads format
 const nquads = await toNQuads(store);
@@ -191,7 +192,7 @@ const jsonld = await toJsonLd(store);
 Let's combine everything into a practical example:
 
 ```javascript
-import { parseTurtle, select, toTurtle, Store } from 'unrdf/knowledge-engine';
+import { parseTurtle, select, toTurtle } from '@unrdf/knowledge-engine';
 
 async function processUserData() {
   // 1. Load data
@@ -280,7 +281,7 @@ ex:bob a foaf:Person ;
 
 ```javascript
 import { readFile } from 'fs/promises';
-import { parseTurtle } from 'unrdf/knowledge-engine';
+import { parseTurtle } from '@unrdf/knowledge-engine';
 
 const content = await readFile('./data.ttl', 'utf-8');
 const store = await parseTurtle(content);

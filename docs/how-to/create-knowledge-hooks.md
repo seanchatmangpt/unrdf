@@ -11,7 +11,7 @@ Knowledge Hooks are autonomic event-driven functions that execute during the lif
 Every hook has three lifecycle phases:
 
 ```javascript
-import { defineHook, registerHook } from 'unrdf';
+import { defineHook, registerHook } from '@unrdf/knowledge-engine';
 
 const myHook = defineHook({
   // Metadata
@@ -70,7 +70,7 @@ registerHook(myHook);
 Validate data before committing:
 
 ```javascript
-import { defineHook, validateShacl, getValidationErrors } from 'unrdf';
+import { defineHook, validateShacl, getValidationErrors } from '@unrdf/knowledge-engine';
 
 const validationHook = defineHook({
   meta: {
@@ -108,7 +108,7 @@ registerHook(validationHook);
 Log all changes to immutable log:
 
 ```javascript
-import { defineHook, LockchainWriter } from 'unrdf';
+import { defineHook, LockchainWriter } from '@unrdf/knowledge-engine';
 
 const lockchain = new LockchainWriter();
 
@@ -146,7 +146,7 @@ registerHook(auditHook);
 Send alerts on specific patterns:
 
 ```javascript
-import { defineHook, ask } from 'unrdf';
+import { defineHook, ask } from '@unrdf/knowledge-engine';
 
 const notificationHook = defineHook({
   meta: {
@@ -193,7 +193,8 @@ registerHook(notificationHook);
 Automatically derive values:
 
 ```javascript
-import { defineHook, select, DataFactory } from 'unrdf';
+import { defineHook, select } from '@unrdf/knowledge-engine';
+import { dataFactory } from '@unrdf/oxigraph';
 
 const computedHook = defineHook({
   meta: {
@@ -221,10 +222,10 @@ const computedHook = defineHook({
     // Add computed fullName
     persons.forEach(row => {
       const fullName = `${row.firstName.value} ${row.lastName.value}`;
-      const quad = DataFactory.quad(
+      const quad = dataFactory.quad(
         row.person,
-        DataFactory.namedNode('http://schema.org/name'),
-        DataFactory.literal(fullName)
+        dataFactory.namedNode('http://schema.org/name'),
+        dataFactory.literal(fullName)
       );
 
       store.addQuad(quad);
@@ -242,7 +243,7 @@ registerHook(computedHook);
 Chain multiple hooks in sequence:
 
 ```javascript
-import { TransactionManager } from 'unrdf';
+import { TransactionManager } from '@unrdf/knowledge-engine';
 
 const txManager = new TransactionManager();
 
@@ -346,7 +347,7 @@ const anchoredHook = defineHook({
 List and control registered hooks:
 
 ```javascript
-import { getRegisteredHooks, deregisterHook, resetGlobalHookManager } from 'unrdf';
+import { getRegisteredHooks, deregisterHook, resetGlobalHookManager } from '@unrdf/knowledge-engine';
 
 // List all hooks
 const hooks = getRegisteredHooks();
@@ -406,7 +407,8 @@ Test hooks using `evaluateHook` and assertion patterns:
 
 ```javascript
 import { describe, it, expect } from 'vitest';
-import { defineHook, evaluateHook, Store } from 'unrdf';
+import { defineHook, evaluateHook } from '@unrdf/knowledge-engine';
+import { createStore } from '@unrdf/oxigraph';
 
 describe('Knowledge Hook Testing', () => {
   it('should validate payload in before phase', async () => {
@@ -426,7 +428,7 @@ describe('Knowledge Hook Testing', () => {
       }
     });
 
-    const store = new Store();
+    const store = createStore();
 
     // Test 1: Invalid payload cancels
     const result1 = await evaluateHook(hook, store, {
@@ -448,10 +450,11 @@ describe('Knowledge Hook Testing', () => {
       when: { kind: 'transaction' },
 
       async run({ payload }) {
-        const quad = DataFactory.quad(
-          DataFactory.namedNode('http://example.org/item'),
-          DataFactory.namedNode('http://schema.org/name'),
-          DataFactory.literal('Test Item')
+        const { dataFactory } = await import('@unrdf/oxigraph');
+        const quad = dataFactory.quad(
+          dataFactory.namedNode('http://example.org/item'),
+          dataFactory.namedNode('http://schema.org/name'),
+          dataFactory.literal('Test Item')
         );
 
         return {
@@ -461,7 +464,7 @@ describe('Knowledge Hook Testing', () => {
       }
     });
 
-    const store = new Store();
+    const store = createStore();
     const result = await evaluateHook(hook, store);
 
     expect(result.result.itemId).toBe('item');
@@ -486,7 +489,7 @@ describe('Knowledge Hook Testing', () => {
       }
     });
 
-    const store = new Store();
+    const store = createStore();
     await evaluateHook(hook, store);
 
     expect(cleanupRan).toBe(true);
@@ -523,9 +526,14 @@ describe('Hook Composition', () => {
     manager.addHook(hook1);
     manager.addHook(hook2);
 
-    const store = new Store();
+    const store = createStore();
+    const { dataFactory } = await import('@unrdf/oxigraph');
     const delta = {
-      additions: [DataFactory.quad(...)],
+      additions: [dataFactory.quad(
+        dataFactory.namedNode('http://example.org/s'),
+        dataFactory.namedNode('http://example.org/p'),
+        dataFactory.namedNode('http://example.org/o')
+      )],
       removals: []
     };
 
@@ -555,7 +563,7 @@ describe('Hook Error Handling', () => {
       }
     });
 
-    const store = new Store();
+    const store = createStore();
 
     const result = await evaluateHook(hook, store).catch(err => ({
       error: err.message
@@ -583,7 +591,7 @@ describe('Hook Error Handling', () => {
       }
     });
 
-    const store = new Store();
+    const store = createStore();
 
     try {
       await evaluateHook(hook, store);
@@ -610,11 +618,12 @@ describe('Hook Conditions', () => {
       }
     });
 
-    const store = new Store();
-    store.addQuad(DataFactory.quad(
-      DataFactory.namedNode('http://example.org/s'),
-      DataFactory.namedNode('http://example.org/p'),
-      DataFactory.namedNode('http://example.org/o')
+    const { dataFactory } = await import('@unrdf/oxigraph');
+    const store = createStore();
+    store.addQuad(dataFactory.quad(
+      dataFactory.namedNode('http://example.org/s'),
+      dataFactory.namedNode('http://example.org/p'),
+      dataFactory.namedNode('http://example.org/o')
     ));
 
     const result = await evaluateHook(hook, store);
@@ -634,7 +643,7 @@ describe('Hook Conditions', () => {
       }
     });
 
-    const store = new Store(); // Empty store
+    const store = createStore(); // Empty store
 
     const result = await evaluateHook(hook, store);
     expect(result.satisfied).toBe(false);

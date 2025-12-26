@@ -1,0 +1,173 @@
+name: Cache Optimization
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Weekly cache warmup on Sunday at 1 AM UTC
+    - cron: '0 1 * * 0'
+
+env:
+  NODE_VERSION: '18'
+  PNPM_VERSION: '10.15.0'
+
+jobs:
+  # Warm up dependency cache
+  warmup-dependencies:
+    name: Warmup Dependency Cache
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18, 20, 22]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        run: |
+          echo "pnpm_cache_dir=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
+          key: ${{ runner.os }}-pnpm-store-${{ matrix.node-version }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-${{ matrix.node-version }}-
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: timeout 120s pnpm install --frozen-lockfile
+
+      - name: Verify cache
+        run: |
+          echo "Verifying pnpm cache..."
+          pnpm store status
+          echo "✅ Cache warmed up for Node.js ${{ matrix.node-version }}"
+
+  # Warm up build cache
+  warmup-build:
+    name: Warmup Build Cache
+    runs-on: ubuntu-latest
+    needs: warmup-dependencies
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Install dependencies
+        run: timeout 120s pnpm install --frozen-lockfile
+
+      - name: Cache build artifacts
+        uses: actions/cache@v4
+        with:
+          path: |
+            packages/*/dist
+            packages/*/.turbo
+          key: ${{ runner.os }}-build-${{ hashFiles('packages/*/src/**/*.{js,mjs}') }}
+          restore-keys: |
+            ${{ runner.os }}-build-
+
+      - name: Build packages
+        run: timeout 180s pnpm build
+
+      - name: Verify build cache
+        run: |
+          echo "Verifying build cache..."
+          find packages/*/dist -name "*.mjs" -o -name "*.js" | wc -l
+          echo "✅ Build cache warmed up"
+
+  # Clean old caches
+  cleanup-caches:
+    name: Cleanup Old Caches
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Cleanup old caches
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const caches = await github.rest.actions.getActionsCacheList({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              per_page: 100
+            });
+
+            console.log(`Found ${caches.data.total_count} caches`);
+
+            // Delete caches older than 7 days
+            const cutoffDate = new Date();
+            cutoffDate.setDate(cutoffDate.getDate() - 7);
+
+            for (const cache of caches.data.actions_caches) {
+              const cacheDate = new Date(cache.created_at);
+
+              if (cacheDate < cutoffDate) {
+                console.log(`Deleting old cache: ${cache.key} (${cache.created_at})`);
+                await github.rest.actions.deleteActionsCacheById({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  cache_id: cache.id
+                });
+              }
+            }
+
+            console.log('✅ Old caches cleaned up');
+
+  # Cache statistics
+  cache-stats:
+    name: Cache Statistics
+    runs-on: ubuntu-latest
+    needs: [warmup-dependencies, warmup-build]
+    if: always()
+    steps:
+      - name: Generate cache statistics
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const caches = await github.rest.actions.getActionsCacheList({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              per_page: 100
+            });
+
+            console.log('# Cache Statistics\n');
+            console.log(`Total caches: ${caches.data.total_count}`);
+            console.log(`Total size: ${(caches.data.actions_caches.reduce((sum, c) => sum + c.size_in_bytes, 0) / 1024 / 1024).toFixed(2)} MB\n`);
+
+            // Group by key prefix
+            const byType = {};
+            for (const cache of caches.data.actions_caches) {
+              const type = cache.key.split('-')[0];
+              if (!byType[type]) byType[type] = { count: 0, size: 0 };
+              byType[type].count++;
+              byType[type].size += cache.size_in_bytes;
+            }
+
+            console.log('## By Type:\n');
+            for (const [type, stats] of Object.entries(byType)) {
+              console.log(`- ${type}: ${stats.count} caches, ${(stats.size / 1024 / 1024).toFixed(2)} MB`);
+            }

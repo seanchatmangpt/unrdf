@@ -1,0 +1,32 @@
+{
+  "name": "@unrdf-examples/knowledge-rag",
+  "version": "1.0.0",
+  "description": "Knowledge Graph RAG with semantic search and LLM integration",
+  "type": "module",
+  "main": "src/index.mjs",
+  "scripts": {
+    "start": "node src/rag-pipeline.mjs",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
+  },
+  "keywords": [
+    "rag",
+    "knowledge-graph",
+    "semantic-search",
+    "llm",
+    "ai"
+  ],
+  "dependencies": {
+    "@unrdf/oxigraph": "workspace:*",
+    "@unrdf/knowledge-engine": "workspace:*",
+    "@opentelemetry/api": "^1.9.0",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "vitest": "^4.0.15"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

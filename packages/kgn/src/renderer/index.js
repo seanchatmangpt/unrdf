@@ -2,5 +2,7 @@
  * Renderer Module Exports
  */
 
-export { DeterministicRenderer } from './deterministic.js';
+import { DeterministicRenderer } from './deterministic.js';
+
+export { DeterministicRenderer };
 export default { DeterministicRenderer };

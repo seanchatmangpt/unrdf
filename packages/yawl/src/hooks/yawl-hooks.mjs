@@ -68,7 +68,7 @@ export const YAWLWorkflowSchema = z.object({
   controlFlow: z.array(ControlFlowSchema).default([]),
   resources: z.array(ResourceConstraintSchema).optional(),
   defaultTimeout: z.number().int().positive().default(30000),
-  cancellationRegions: z.record(z.array(z.string())).optional(),
+  cancellationRegions: z.record(z.string(), z.array(z.string())).optional(),
 });
 
 /**
@@ -685,54 +685,18 @@ export function createCancellationHandler(task, workflow) {
 /* ========================================================================= */
 
 /**
- * Create YAWL Policy Pack from workflow specification
- *
- * Generates a complete hook pack with:
- * - Task enablement validators
- * - Control flow routers (SPARQL conditions)
- * - Resource allocators
- * - Cancellation handlers
- *
- * @param {Object} workflowSpec - YAWL workflow specification
- * @param {Object} [options] - Policy pack options
- * @param {Object} [options.conditionEvaluator] - Condition evaluator instance
- * @param {number} [options.priority] - Default hook priority (0-100)
- * @param {boolean} [options.strictMode] - Fail fast on errors
- * @returns {Object} PolicyPack ready for HookRegistry
- *
- * @example
- * const workflow = {
- *   name: 'approval-workflow',
- *   tasks: [
- *     { id: 'approve', kind: 'AtomicTask' },
- *     { id: 'reject', kind: 'AtomicTask' },
- *     { id: 'finalize', kind: 'AtomicTask' }
- *   ],
- *   controlFlow: [
- *     { source: 'approve', target: 'finalize', predicate: 'approved' },
- *     { source: 'approve', target: 'reject', predicate: '!approved' }
- *   ]
- * };
- *
- * const policyPack = createYAWLPolicyPack(workflow);
- * hookRegistry.registerPolicyPack(policyPack);
+ * Initialize task-related hooks for a workflow
+ * @param {Object} workflow - Validated workflow specification
+ * @param {Object} conditionEvaluator - Condition evaluator instance
+ * @param {number} priority - Base priority for hooks
+ * @returns {Object} Task hooks data structure
  */
-export function createYAWLPolicyPack(workflowSpec, options = {}) {
-  const workflow = YAWLWorkflowSchema.parse({
-    ...workflowSpec,
-    id: workflowSpec.id || randomUUID(),
-  });
-
-  const { conditionEvaluator = null, priority = 50, strictMode = false } = options;
-
-  // Collect all hooks
+function initializeTaskHooks(workflow, conditionEvaluator, priority) {
   const hooks = [];
   const validators = new Map();
   const routers = new Map();
-  const allocators = new Map();
   const cancellationHandlers = new Map();
 
-  // Create hooks for each task
   for (const task of workflow.tasks) {
     // Task enablement hook
     const enablementHook = createTaskEnablementHook(task, workflow, conditionEvaluator);
@@ -773,7 +737,20 @@ export function createYAWLPolicyPack(workflowSpec, options = {}) {
     cancellationHandlers.set(task.id, createCancellationHandler(task, workflow));
   }
 
-  // Create hooks for each resource
+  return { hooks, validators, routers, cancellationHandlers };
+}
+
+/**
+ * Initialize resource-related hooks for a workflow
+ * @param {Object} workflow - Validated workflow specification
+ * @param {Object} conditionEvaluator - Condition evaluator instance
+ * @param {number} priority - Base priority for hooks
+ * @returns {Object} Resource hooks data structure
+ */
+function initializeResourceHooks(workflow, conditionEvaluator, priority) {
+  const hooks = [];
+  const allocators = new Map();
+
   if (workflow.resources) {
     for (const resource of workflow.resources) {
       const allocationHook = createResourceAllocationHook(resource, workflow, conditionEvaluator);
@@ -790,8 +767,19 @@ export function createYAWLPolicyPack(workflowSpec, options = {}) {
     }
   }
 
-  // Build policy pack manifest
-  const manifest = {
+  return { hooks, allocators };
+}
+
+/**
+ * Build policy pack manifest
+ * @param {Object} workflow - Validated workflow specification
+ * @param {Array} hooks - All hook definitions
+ * @param {number} priority - Default priority
+ * @param {boolean} strictMode - Strict mode flag
+ * @returns {Object} Policy pack manifest
+ */
+function buildPolicyManifest(workflow, hooks, priority, strictMode) {
+  return {
     id: workflow.id,
     meta: {
       name: `yawl:${workflow.name}`,
@@ -812,21 +800,138 @@ export function createYAWLPolicyPack(workflowSpec, options = {}) {
       priority: hook.priority || priority,
     })),
   };
+}
 
+/**
+ * Create enablement validation method
+ * @param {Map} validators - Validators map
+ * @returns {Function} validateEnablement method
+ */
+function createValidateEnablementMethod(validators) {
+  return async function validateEnablement(taskId, store, context = {}) {
+    const validator = validators.get(taskId);
+    if (!validator) {
+      throw new Error(`No validator found for task: ${taskId}`);
+    }
+    return validator(store, context);
+  };
+}
+
+/**
+ * Create completion routing method
+ * @param {Map} routers - Routers map
+ * @param {Object} workflow - Workflow specification
+ * @returns {Function} routeCompletion method
+ */
+function createRouteCompletionMethod(routers, workflow) {
+  return async function routeCompletion(taskId, store, context = {}) {
+    const router = routers.get(taskId);
+    if (!router) {
+      // No outgoing edges - return empty result
+      return {
+        enabledTasks: [],
+        receipt: createReceipt({
+          hookType: 'completion',
+          taskId,
+          workflowId: workflow.id,
+          decision: 'route',
+          justification: {
+            reason: 'No outgoing control flow edges',
+          },
+          enabledTasks: [],
+        }),
+      };
+    }
+    return router(store, context);
+  };
+}
+
+/**
+ * Create allocation validation method
+ * @param {Map} allocators - Allocators map
+ * @returns {Function} validateAllocation method
+ */
+function createValidateAllocationMethod(allocators) {
+  return async function validateAllocation(resourceId, store, context = {}) {
+    const allocator = allocators.get(resourceId);
+    if (!allocator) {
+      throw new Error(`No allocator found for resource: ${resourceId}`);
+    }
+    return allocator(store, context);
+  };
+}
+
+/**
+ * Create cancellation handler method
+ * @param {Map} cancellationHandlers - Cancellation handlers map
+ * @param {Object} workflow - Workflow specification
+ * @returns {Function} handleCancellation method
+ */
+function createHandleCancellationMethod(cancellationHandlers, workflow) {
+  return function handleCancellation(taskId, error, context = {}) {
+    const handler = cancellationHandlers.get(taskId);
+    if (!handler) {
+      return {
+        cancelledTasks: [],
+        receipt: createReceipt({
+          hookType: 'cancellation',
+          taskId,
+          workflowId: workflow.id,
+          decision: 'deny',
+          justification: {
+            reason: 'No cancellation handler defined',
+          },
+          cancelledTasks: [],
+        }),
+      };
+    }
+    return handler(error, context);
+  };
+}
+
+/**
+ * Create workflow statistics getter
+ * @param {Object} workflow - Workflow specification
+ * @param {Array} allHooks - All hook definitions
+ * @param {Map} validators - Validators map
+ * @param {Map} routers - Routers map
+ * @param {Map} allocators - Allocators map
+ * @returns {Function} getStats method
+ */
+function createGetStatsMethod(workflow, allHooks, validators, routers, allocators) {
+  return function getStats() {
+    return {
+      workflowId: workflow.id,
+      workflowName: workflow.name,
+      version: workflow.version,
+      taskCount: workflow.tasks.length,
+      controlFlowEdges: workflow.controlFlow.length,
+      resourceCount: workflow.resources?.length || 0,
+      hookCount: allHooks.length,
+      validatorCount: validators.size,
+      routerCount: routers.size,
+      allocatorCount: allocators.size,
+    };
+  };
+}
+
+/**
+ * Create simple getter methods
+ * @param {Array} allHooks - All hook definitions
+ * @param {Map} validators - Validators map
+ * @param {Map} routers - Routers map
+ * @param {Map} allocators - Allocators map
+ * @param {Map} cancellationHandlers - Cancellation handlers map
+ * @returns {Object} Getter methods
+ */
+function createGetterMethods(allHooks, validators, routers, allocators, cancellationHandlers) {
   return {
-    manifest,
-    hooks,
-    validators,
-    routers,
-    allocators,
-    cancellationHandlers,
-
     /**
      * Get all hooks for registration
      * @returns {Array} Array of hook definitions
      */
     getHooks() {
-      return hooks;
+      return allHooks;
     },
 
     /**
@@ -864,111 +969,110 @@ export function createYAWLPolicyPack(workflowSpec, options = {}) {
     getCancellationHandler(taskId) {
       return cancellationHandlers.get(taskId);
     },
-
-    /**
-     * Execute task enablement check
-     * @param {string} taskId - Task identifier
-     * @param {Object} store - RDF store
-     * @param {Object} context - Execution context
-     * @returns {Promise<Object>} Validation result with receipt
-     */
-    async validateEnablement(taskId, store, context = {}) {
-      const validator = validators.get(taskId);
-      if (!validator) {
-        throw new Error(`No validator found for task: ${taskId}`);
-      }
-      return validator(store, context);
-    },
-
-    /**
-     * Execute control flow routing after task completion
-     * @param {string} taskId - Completed task identifier
-     * @param {Object} store - RDF store
-     * @param {Object} context - Execution context
-     * @returns {Promise<Object>} Routing result with enabled tasks and receipt
-     */
-    async routeCompletion(taskId, store, context = {}) {
-      const router = routers.get(taskId);
-      if (!router) {
-        // No outgoing edges - return empty result
-        return {
-          enabledTasks: [],
-          receipt: createReceipt({
-            hookType: 'completion',
-            taskId,
-            workflowId: workflow.id,
-            decision: 'route',
-            justification: {
-              reason: 'No outgoing control flow edges',
-            },
-            enabledTasks: [],
-          }),
-        };
-      }
-      return router(store, context);
-    },
-
-    /**
-     * Execute resource allocation check
-     * @param {string} resourceId - Resource identifier
-     * @param {Object} store - RDF store
-     * @param {Object} context - Execution context
-     * @returns {Promise<Object>} Allocation result with receipt
-     */
-    async validateAllocation(resourceId, store, context = {}) {
-      const allocator = allocators.get(resourceId);
-      if (!allocator) {
-        throw new Error(`No allocator found for resource: ${resourceId}`);
-      }
-      return allocator(store, context);
-    },
-
-    /**
-     * Handle task cancellation
-     * @param {string} taskId - Failed task identifier
-     * @param {Error|string} error - Error or cancellation reason
-     * @param {Object} context - Execution context
-     * @returns {Object} Cancellation result with affected tasks and receipt
-     */
-    handleCancellation(taskId, error, context = {}) {
-      const handler = cancellationHandlers.get(taskId);
-      if (!handler) {
-        return {
-          cancelledTasks: [],
-          receipt: createReceipt({
-            hookType: 'cancellation',
-            taskId,
-            workflowId: workflow.id,
-            decision: 'deny',
-            justification: {
-              reason: 'No cancellation handler defined',
-            },
-            cancelledTasks: [],
-          }),
-        };
-      }
-      return handler(error, context);
-    },
-
-    /**
-     * Get workflow statistics
-     * @returns {Object} Statistics
-     */
-    getStats() {
-      return {
-        workflowId: workflow.id,
-        workflowName: workflow.name,
-        version: workflow.version,
-        taskCount: workflow.tasks.length,
-        controlFlowEdges: workflow.controlFlow.length,
-        resourceCount: workflow.resources?.length || 0,
-        hookCount: hooks.length,
-        validatorCount: validators.size,
-        routerCount: routers.size,
-        allocatorCount: allocators.size,
-      };
-    },
   };
+}
+
+/**
+ * Create policy pack API object
+ * @param {Object} manifest - Policy pack manifest
+ * @param {Array} allHooks - All hook definitions
+ * @param {Map} validators - Validators map
+ * @param {Map} routers - Routers map
+ * @param {Map} allocators - Allocators map
+ * @param {Map} cancellationHandlers - Cancellation handlers map
+ * @param {Object} workflow - Workflow specification
+ * @returns {Object} Policy pack API
+ */
+function createPolicyPackAPI(
+  manifest,
+  allHooks,
+  validators,
+  routers,
+  allocators,
+  cancellationHandlers,
+  workflow
+) {
+  const getters = createGetterMethods(allHooks, validators, routers, allocators, cancellationHandlers);
+
+  return {
+    manifest,
+    hooks: allHooks,
+    validators,
+    routers,
+    allocators,
+    cancellationHandlers,
+    ...getters,
+    validateEnablement: createValidateEnablementMethod(validators),
+    routeCompletion: createRouteCompletionMethod(routers, workflow),
+    validateAllocation: createValidateAllocationMethod(allocators),
+    handleCancellation: createHandleCancellationMethod(cancellationHandlers, workflow),
+    getStats: createGetStatsMethod(workflow, allHooks, validators, routers, allocators),
+  };
+}
+
+/**
+ * Create YAWL Policy Pack from workflow specification
+ *
+ * Generates a complete hook pack with:
+ * - Task enablement validators
+ * - Control flow routers (SPARQL conditions)
+ * - Resource allocators
+ * - Cancellation handlers
+ *
+ * @param {Object} workflowSpec - YAWL workflow specification
+ * @param {Object} [options] - Policy pack options
+ * @param {Object} [options.conditionEvaluator] - Condition evaluator instance
+ * @param {number} [options.priority] - Default hook priority (0-100)
+ * @param {boolean} [options.strictMode] - Fail fast on errors
+ * @returns {Object} PolicyPack ready for HookRegistry
+ *
+ * @example
+ * const workflow = {
+ *   name: 'approval-workflow',
+ *   tasks: [
+ *     { id: 'approve', kind: 'AtomicTask' },
+ *     { id: 'reject', kind: 'AtomicTask' },
+ *     { id: 'finalize', kind: 'AtomicTask' }
+ *   ],
+ *   controlFlow: [
+ *     { source: 'approve', target: 'finalize', predicate: 'approved' },
+ *     { source: 'approve', target: 'reject', predicate: '!approved' }
+ *   ]
+ * };
+ *
+ * const policyPack = createYAWLPolicyPack(workflow);
+ * hookRegistry.registerPolicyPack(policyPack);
+ */
+export function createYAWLPolicyPack(workflowSpec, options = {}) {
+  const workflow = YAWLWorkflowSchema.parse({
+    ...workflowSpec,
+    id: workflowSpec.id || randomUUID(),
+  });
+
+  const { conditionEvaluator = null, priority = 50, strictMode = false } = options;
+
+  // Initialize task hooks
+  const taskHooksData = initializeTaskHooks(workflow, conditionEvaluator, priority);
+
+  // Initialize resource hooks
+  const resourceHooksData = initializeResourceHooks(workflow, conditionEvaluator, priority);
+
+  // Combine all hooks
+  const allHooks = [...taskHooksData.hooks, ...resourceHooksData.hooks];
+
+  // Build manifest
+  const manifest = buildPolicyManifest(workflow, allHooks, priority, strictMode);
+
+  // Create and return policy pack API
+  return createPolicyPackAPI(
+    manifest,
+    allHooks,
+    taskHooksData.validators,
+    taskHooksData.routers,
+    resourceHooksData.allocators,
+    taskHooksData.cancellationHandlers,
+    workflow
+  );
 }
 
 /* ========================================================================= */

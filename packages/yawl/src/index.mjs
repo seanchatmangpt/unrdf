@@ -345,7 +345,7 @@ export {
   RDF_NS,
   XSD_NS,
   TIME_NS,
-} from './resources/yawl-resources.mjs';
+} from './resources/index.mjs';
 
 // YAWL Core Type System (JSDoc + Zod)
 export {
@@ -452,7 +452,7 @@ export {
   WorkItemSchema as WorkflowWorkItemSchema,
   EnableTaskOptionsSchema,
   ReceiptSchema as WorkflowReceiptSchema,
-} from './api/workflow-api.mjs';
+} from './api/index.mjs';
 
 // Re-export workflow-api WITHOUT aliases for backward compatibility and test compatibility
 // These are the primary public API exports that tests expect
@@ -463,4 +463,4 @@ export {
   YAWL_NS,
   YAWL_EVENT_TYPES,
   TaskSchema,
-} from './api/workflow-api.mjs';
+} from './api/index.mjs';
