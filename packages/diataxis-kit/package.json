@@ -1,0 +1,39 @@
+{
+  "name": "@unrdf/diataxis-kit",
+  "version": "1.0.0",
+  "description": "Diátaxis documentation kit for monorepo package inventory and deterministic doc scaffold generation",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.mjs",
+    "./inventory": "./src/inventory.mjs",
+    "./evidence": "./src/evidence.mjs",
+    "./classify": "./src/classify.mjs",
+    "./scaffold": "./src/scaffold.mjs",
+    "./stable-json": "./src/stable-json.mjs",
+    "./hash": "./src/hash.mjs"
+  },
+  "bin": {
+    "diataxis-run": "./bin/run.mjs",
+    "diataxis-verify": "./bin/verify.mjs",
+    "diataxis-report": "./bin/report.mjs"
+  },
+  "scripts": {
+    "run": "node bin/run.mjs",
+    "verify": "node bin/verify.mjs",
+    "report": "node bin/report.mjs",
+    "test": "node test/determinism.test.mjs && node test/inventory.test.mjs && node test/verify-gate.test.mjs",
+    "test:determinism": "node test/determinism.test.mjs",
+    "test:inventory": "node test/inventory.test.mjs",
+    "test:verify": "node test/verify-gate.test.mjs",
+    "clean": "rm -rf ARTIFACTS OUT"
+  },
+  "keywords": [
+    "diataxis",
+    "documentation",
+    "monorepo",
+    "inventory"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
