@@ -8,7 +8,7 @@
  */
 
 import * as ort from 'onnxruntime-node';
-import { trace, context } from '@opentelemetry/api';
+import { trace, context as _context } from '@opentelemetry/api';
 import { z } from 'zod';
 
 const tracer = trace.getTracer('@unrdf/ml-inference');
@@ -16,7 +16,7 @@ const tracer = trace.getTracer('@unrdf/ml-inference');
 /**
  * Input tensor schema
  */
-const TensorSchema = z.object({
+const _TensorSchema = z.object({
   data: z.instanceof(Float32Array).or(z.array(z.number())),
   dims: z.array(z.number()),
   type: z.enum(['float32', 'int32', 'int64']).default('float32'),

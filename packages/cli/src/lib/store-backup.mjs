@@ -17,7 +17,7 @@ import { _pipeline } from 'node:stream/promises';
 import { createGzip } from 'node:zlib';
 import { join, _basename } from 'node:path';
 import { z } from 'zod';
-import { defaultObservabilityManager } from '../knowledge-engine/observability.mjs';
+import { defaultObservabilityManager } from '@unrdf/knowledge-engine';
 import { fileExists, ensureDir } from '../utils/io-utils.mjs';
 
 /**

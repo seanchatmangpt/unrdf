@@ -8,3 +8,4 @@ packages:
   - 'packages/streaming/examples/*'
   - 'playground/full-stack-example/apps/*'
   - 'apps/*'
+  - 'examples'

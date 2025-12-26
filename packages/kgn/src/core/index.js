@@ -17,6 +17,9 @@ export { KGenPostProcessor } from './post-processor.js';
 export { KGenAttestor } from './attestor.js';
 
 // Convenience factory function
+/**
+ *
+ */
 export function createKGenEngine(options = {}) {
   return new KGenTemplateEngine(options);
 }

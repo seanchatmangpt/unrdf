@@ -12,7 +12,13 @@
 
 import crypto from 'crypto';
 
+/**
+ *
+ */
 export class KGenFilters {
+  /**
+   *
+   */
   constructor(options = {}) {
     this.options = {
       deterministicMode: options.deterministicMode !== false,
@@ -145,6 +151,69 @@ export class KGenFilters {
     }, {
       category: 'text',
       description: 'Extract substring by position'
+    });
+
+    this.register('reverse', (str) => {
+      return String(str || '').split('').reverse().join('');
+    }, {
+      category: 'text',
+      description: 'Reverse a string'
+    });
+
+    this.register('truncate', (str, length = 20, suffix = '...') => {
+      const s = String(str || '');
+      if (s.length <= length) return s;
+      return s.slice(0, length - suffix.length) + suffix;
+    }, {
+      category: 'text',
+      description: 'Truncate string to specified length'
+    });
+
+    this.register('quote', (str, style = 'double') => {
+      const s = String(str || '');
+      return style === 'single' ? `'${s}'` : `"${s}"`;
+    }, {
+      category: 'text',
+      description: 'Wrap string in quotes'
+    });
+
+    this.register('unquote', (str) => {
+      const s = String(str || '');
+      if ((s.startsWith('"') && s.endsWith('"')) || (s.startsWith("'") && s.endsWith("'"))) {
+        return s.slice(1, -1);
+      }
+      return s;
+    }, {
+      category: 'text',
+      description: 'Remove surrounding quotes'
+    });
+
+    this.register('wrap', (str, width = 80) => {
+      const s = String(str || '');
+      const words = s.split(' ');
+      const lines = [];
+      let currentLine = [];
+      let currentLength = 0;
+
+      for (const word of words) {
+        if (currentLength + word.length + currentLine.length > width && currentLine.length > 0) {
+          lines.push(currentLine.join(' '));
+          currentLine = [word];
+          currentLength = word.length;
+        } else {
+          currentLine.push(word);
+          currentLength += word.length;
+        }
+      }
+
+      if (currentLine.length > 0) {
+        lines.push(currentLine.join(' '));
+      }
+
+      return lines.join('\n');
+    }, {
+      category: 'text',
+      description: 'Wrap text at specified width'
     });
   }
 
@@ -358,7 +427,7 @@ export class KGenFilters {
    * Validation filters
    */
   registerValidationFilters() {
-    this.register('shaclReport', (data, shaclShapes = {}) => {
+    this.register('shaclReport', (data, _shaclShapes = {}) => {
       // Simplified SHACL validation for deterministic behavior
       const report = {
         conforms: true,
@@ -427,6 +496,164 @@ export class KGenFilters {
    * Utility filters
    */
   registerUtilityFilters() {
+    // Date filters
+    this.register('dateFormat', (date, format = 'ISO') => {
+      try {
+        const d = new Date(date);
+        if (isNaN(d.getTime())) return String(date);
+
+        if (format === 'ISO') {
+          return d.toISOString();
+        }
+        // Add more format options as needed
+        return d.toISOString();
+      } catch (error) {
+        return String(date);
+      }
+    }, {
+      category: 'utility',
+      description: 'Format date to specified format'
+    });
+
+    this.register('dateAdd', (date, amount, unit = 'day') => {
+      try {
+        const d = new Date(date);
+        if (isNaN(d.getTime())) return date;
+
+        switch (unit) {
+          case 'day':
+          case 'days':
+            d.setDate(d.getDate() + amount);
+            break;
+          case 'hour':
+          case 'hours':
+            d.setHours(d.getHours() + amount);
+            break;
+          case 'minute':
+          case 'minutes':
+            d.setMinutes(d.getMinutes() + amount);
+            break;
+          case 'month':
+          case 'months':
+            d.setMonth(d.getMonth() + amount);
+            break;
+          case 'year':
+          case 'years':
+            d.setFullYear(d.getFullYear() + amount);
+            break;
+          default:
+            return date;
+        }
+
+        return d.toISOString();
+      } catch (error) {
+        return date;
+      }
+    }, {
+      category: 'utility',
+      description: 'Add time to date'
+    });
+
+    this.register('dateSub', (date, amount, unit = 'day') => {
+      return this.apply('dateAdd', date, -amount, unit);
+    }, {
+      category: 'utility',
+      description: 'Subtract time from date'
+    });
+
+    // Path filters
+    this.register('filename', (path) => {
+      const s = String(path || '');
+      const parts = s.split('/');
+      return parts[parts.length - 1] || '';
+    }, {
+      category: 'utility',
+      description: 'Get filename from path'
+    });
+
+    this.register('basename', (path) => {
+      const filename = this.apply('filename', path);
+      const dotIndex = filename.lastIndexOf('.');
+      return dotIndex > 0 ? filename.slice(0, dotIndex) : filename;
+    }, {
+      category: 'utility',
+      description: 'Get basename without extension'
+    });
+
+    this.register('dirname', (path) => {
+      const s = String(path || '');
+      const parts = s.split('/');
+      parts.pop();
+      return parts.join('/') || '/';
+    }, {
+      category: 'utility',
+      description: 'Get directory path'
+    });
+
+    this.register('extname', (path) => {
+      const filename = this.apply('filename', path);
+      const dotIndex = filename.lastIndexOf('.');
+      return dotIndex > 0 ? filename.slice(dotIndex) : '';
+    }, {
+      category: 'utility',
+      description: 'Get file extension'
+    });
+
+    this.register('resolve', (...paths) => {
+      // Simple path resolution - join and normalize
+      let result = '';
+
+      for (const p of paths) {
+        const path = String(p || '');
+        if (path.startsWith('/')) {
+          result = path;
+        } else if (result) {
+          result = result + '/' + path;
+        } else {
+          result = path;
+        }
+      }
+
+      // Normalize .. and .
+      const parts = result.split('/');
+      const normalized = [];
+
+      for (const part of parts) {
+        if (part === '..' && normalized.length > 0 && normalized[normalized.length - 1] !== '..') {
+          normalized.pop();
+        } else if (part && part !== '.') {
+          normalized.push(part);
+        }
+      }
+
+      return (result.startsWith('/') ? '/' : '') + normalized.join('/');
+    }, {
+      category: 'utility',
+      description: 'Resolve path segments'
+    });
+
+    this.register('relative', (from, to) => {
+      const fromParts = String(from || '').split('/').filter(p => p);
+      const toParts = String(to || '').split('/').filter(p => p);
+
+      // Find common prefix
+      let commonLength = 0;
+      while (commonLength < fromParts.length && commonLength < toParts.length) {
+        if (fromParts[commonLength] !== toParts[commonLength]) break;
+        commonLength++;
+      }
+
+      // Build relative path
+      const upCount = fromParts.length - commonLength;
+      const downPath = toParts.slice(commonLength);
+
+      const relativeParts = Array(upCount).fill('..').concat(downPath);
+      return relativeParts.join('/') || '.';
+    }, {
+      category: 'utility',
+      description: 'Get relative path between two paths'
+    });
+
     // Non-deterministic filters that throw in deterministic mode
     this.register('now', () => {
       if (this.options.deterministicMode) {
@@ -494,7 +721,7 @@ export class KGenFilters {
     const categories = {};
     let deterministicCount = 0;
 
-    for (const [name, filter] of this.filters) {
+    for (const [_name, filter] of this.filters) {
       if (!categories[filter.category]) {
         categories[filter.category] = 0;
       }

@@ -5,7 +5,13 @@
 
 import crypto from 'crypto';
 
+/**
+ *
+ */
 export class DeterministicRenderer {
+  /**
+   *
+   */
   constructor(options = {}) {
     this.staticBuildTime = options.staticBuildTime || '2024-01-01T00:00:00.000Z';
     this.blockNonDeterministic = options.blockNonDeterministic !== false;

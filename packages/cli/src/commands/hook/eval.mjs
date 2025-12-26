@@ -13,7 +13,7 @@
 import { defineCommand } from 'citty';
 import { readFile, writeFile } from 'fs/promises';
 import { z } from 'zod';
-import { evaluateHook } from '../../../knowledge-engine/hook-management.mjs';
+import { evaluateHook } from '@unrdf/knowledge-engine';
 import { createStore } from '@unrdf/core';
 import { OxigraphStore } from '@unrdf/oxigraph';
 

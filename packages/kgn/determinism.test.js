@@ -118,8 +118,19 @@ describe('Feature: Deterministic Template Generation', () => {
 
       // Mock deterministic object key processing
       templateEngine.render.mockImplementation((template, data) => {
-        // Simulate sorted object key processing
-        const sortedData = JSON.stringify(data, Object.keys(data).sort());
+        // Simulate sorted object key processing - recursively sort all object keys
+        const sortObjectKeys = (obj) => {
+          if (obj === null || typeof obj !== 'object') return obj;
+          if (Array.isArray(obj)) return obj.map(sortObjectKeys);
+
+          const sorted = {};
+          Object.keys(obj).sort().forEach(key => {
+            sorted[key] = sortObjectKeys(obj[key]);
+          });
+          return sorted;
+        };
+
+        const sortedData = JSON.stringify(sortObjectKeys(data));
         return `Template: ${template}, Data: ${sortedData}`;
       });
 

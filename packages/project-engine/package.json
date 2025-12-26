@@ -33,7 +33,8 @@
     "infrastructure"
   ],
   "dependencies": {
-    "@unrdf/core": "workspace:*"
+    "@unrdf/core": "workspace:*",
+    "@unrdf/knowledge-engine": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^24.10.1",

@@ -6,7 +6,7 @@
  */
 
 // Import classes first so they can be used in factory functions
-import { TemplateEngine, EnhancedTemplateEngine } from './template-engine.js';
+import { TemplateEngine, EnhancedTemplateEngine as _EnhancedTemplateEngine } from './template-engine.js';
 import { DeterministicRenderer } from './renderer.js';
 import { DeterministicPipeline } from './pipeline.js';
 
@@ -16,6 +16,9 @@ export { DeterministicRenderer } from './renderer.js';
 export { DeterministicPipeline } from './pipeline.js';
 
 // Factory for deterministic engine with complete pipeline
+/**
+ *
+ */
 export function createDeterministicEngine(options = {}) {
   const pipeline = new DeterministicPipeline(options);
 

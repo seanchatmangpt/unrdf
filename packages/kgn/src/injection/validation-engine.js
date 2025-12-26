@@ -6,19 +6,25 @@
  */
 
 import { promises as fs } from 'fs';
-import { basename, extname } from 'path';
+import { basename as _basename, extname } from 'path';
 import { createHash } from 'crypto';
 
 import {
   ERROR_CODES,
-  VALIDATION_RULES,
+  VALIDATION_RULES as _VALIDATION_RULES,
   BINARY_PATTERNS,
   CONTENT_PATTERNS,
-  ENCODINGS,
+  ENCODINGS as _ENCODINGS,
   CHECKSUM_ALGORITHMS
 } from './constants.js';
 
+/**
+ *
+ */
 export class ValidationEngine {
+  /**
+   *
+   */
   constructor(config = {}) {
     this.config = config;
     this.validationCache = new Map();
@@ -240,6 +246,9 @@ export class ValidationEngine {
    * Private validation methods
    */
 
+  /**
+   *
+   */
   async _validateExistence(target) {
     try {
       const stats = await fs.stat(target.resolvedPath);
@@ -258,6 +267,9 @@ export class ValidationEngine {
     }
   }
 
+  /**
+   *
+   */
   async _validatePermissions(target) {
     try {
       const stats = await fs.stat(target.resolvedPath);
@@ -274,6 +286,9 @@ export class ValidationEngine {
     }
   }
 
+  /**
+   *
+   */
   async _validateNotBinary(target) {
     try {
       // Read first 1KB to check for binary content
@@ -291,6 +306,9 @@ export class ValidationEngine {
     }
   }
 
+  /**
+   *
+   */
   async _validateSize(target) {
     try {
       const stats = await fs.stat(target.resolvedPath);
@@ -306,6 +324,9 @@ export class ValidationEngine {
     }
   }
 
+  /**
+   *
+   */
   async _validateEncoding(target) {
     try {
       const content = await fs.readFile(target.resolvedPath, 'utf8');
@@ -328,6 +349,9 @@ export class ValidationEngine {
     }
   }
 
+  /**
+   *
+   */
   async _validateSyntax(target) {
     const ext = extname(target.resolvedPath).toLowerCase();
 
@@ -353,6 +377,9 @@ export class ValidationEngine {
     }
   }
 
+  /**
+   *
+   */
   _validateJavaScript(content) {
     try {
       // Basic syntax check - validate without executing
@@ -367,6 +394,9 @@ export class ValidationEngine {
     }
   }
 
+  /**
+   *
+   */
   _validateTypeScript(content) {
     // TypeScript validation would require the TS compiler
     // For now, just check basic syntax patterns
@@ -379,6 +409,9 @@ export class ValidationEngine {
     };
   }
 
+  /**
+   *
+   */
   _validateJSON(content) {
     try {
       JSON.parse(content);
@@ -391,6 +424,9 @@ export class ValidationEngine {
     }
   }
 
+  /**
+   *
+   */
   async _validateContentSyntax(content, target) {
     const ext = extname(target.resolvedPath).toLowerCase();
 
@@ -407,6 +443,9 @@ export class ValidationEngine {
     }
   }
 
+  /**
+   *
+   */
   _validateContentEncoding(content) {
     try {
       // Check if content can be encoded as UTF-8
@@ -420,10 +459,16 @@ export class ValidationEngine {
     }
   }
 
+  /**
+   *
+   */
   _containsBinaryData(content) {
     return BINARY_PATTERNS.some(pattern => pattern.test(content));
   }
 
+  /**
+   *
+   */
   _validateLineEndings(content) {
     const types = [];
 
@@ -437,6 +482,9 @@ export class ValidationEngine {
     };
   }
 
+  /**
+   *
+   */
   _isValidUtf8(str) {
     try {
       return str === Buffer.from(str, 'utf8').toString('utf8');
@@ -445,11 +493,17 @@ export class ValidationEngine {
     }
   }
 
+  /**
+   *
+   */
   _looksLikeCode(filePath) {
     const ext = extname(filePath).toLowerCase();
     return ['.js', '.ts', '.jsx', '.tsx', '.mjs'].includes(ext);
   }
 
+  /**
+   *
+   */
   _findDuplicateStatements(content) {
     const duplicates = [];
     const statements = new Set();
@@ -466,7 +520,10 @@ export class ValidationEngine {
     return duplicates;
   }
 
-  _validateStructure(content, target) {
+  /**
+   *
+   */
+  _validateStructure(content, _target) {
     // Basic structural validation
     const brackets = { '(': 0, '[': 0, '{': 0 };
     const closers = { ')': '(', ']': '[', '}': '{' };
@@ -498,7 +555,10 @@ export class ValidationEngine {
     return { valid: true };
   }
 
-  async _checkNamingConflicts(content, target) {
+  /**
+   *
+   */
+  async _checkNamingConflicts(content, _target) {
     // Simple naming conflict detection
     const conflicts = [];
 
@@ -518,6 +578,9 @@ export class ValidationEngine {
     return conflicts;
   }
 
+  /**
+   *
+   */
   _getCacheKey(target) {
     const hash = createHash(CHECKSUM_ALGORITHMS.SHA256);
     hash.update(target.resolvedPath);
@@ -538,6 +601,9 @@ export class ValidationEngine {
  * Custom validation error
  */
 export class ValidationError extends Error {
+  /**
+   *
+   */
   constructor(message, errors = []) {
     super(message);
     this.name = 'ValidationError';

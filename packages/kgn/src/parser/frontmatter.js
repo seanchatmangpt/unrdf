@@ -6,7 +6,13 @@
 import matter from 'gray-matter';
 import { parse as parseYAML, stringify as stringifyYAML } from 'yaml';
 
+/**
+ *
+ */
 export class FrontmatterParser {
+  /**
+   *
+   */
   constructor(options = {}) {
     this.strict = options.strict !== false;
     this.allowEmpty = options.allowEmpty !== false;

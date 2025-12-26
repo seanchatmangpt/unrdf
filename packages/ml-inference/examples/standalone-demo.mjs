@@ -270,7 +270,7 @@ function demo2BatchedInference(model) {
 
     // Measure batch inference
     const startTime = performance.now();
-    const outputs = model.inferBatch(batch);
+    const _outputs = model.inferBatch(batch);
     const totalTime = performance.now() - startTime;
 
     const throughput = (batchSize / totalTime) * 1000;
@@ -324,9 +324,9 @@ async function demo3StreamingPipeline(model) {
   log('  Backpressure:   Enabled\n', 'green');
 
   // Subscribe to results
-  let totalResults = 0;
+  let _totalResults = 0;
   pipeline.subscribe(batch => {
-    totalResults += batch.length;
+    _totalResults += batch.length;
   });
 
   // Stream data
@@ -465,9 +465,9 @@ async function demo5E2EBenchmark(model) {
       batchSize: scenario.batchSize,
     });
 
-    let processedCount = 0;
+    let _processedCount = 0;
     pipeline.subscribe(batch => {
-      processedCount += batch.length;
+      _processedCount += batch.length;
     });
 
     const startTime = performance.now();
@@ -481,7 +481,7 @@ async function demo5E2EBenchmark(model) {
     await pipeline.flush();
 
     const totalTime = performance.now() - startTime;
-    const metrics = pipeline.getMetrics();
+    const _metrics = pipeline.getMetrics();
     const throughput = (scenario.items / totalTime) * 1000;
     const avgLatency = totalTime / scenario.items;
 

@@ -9,7 +9,13 @@
  * - Deterministic formatting
  */
 
+/**
+ *
+ */
 export class KGenPostProcessor {
+  /**
+   *
+   */
   constructor(options = {}) {
     this.options = {
       normalizeWhitespace: options.normalizeWhitespace !== false,
@@ -183,7 +189,7 @@ export class KGenPostProcessor {
     let hasSpaces = false;
     let hasTabs = false;
 
-    lines.forEach((line, index) => {
+    lines.forEach((line, _index) => {
       const indentMatch = line.match(/^(\s*)/);
       if (indentMatch && indentMatch[1]) {
         if (indentMatch[1].includes(' ')) hasSpaces = true;

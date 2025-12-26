@@ -14,13 +14,19 @@
  * Authority: ZERO TOLERANCE for nondeterminism
  */
 
-import { readFileSync, statSync, readdirSync } from 'fs';
-import { resolve, relative, extname } from 'path';
-import { createHash } from 'crypto';
+import { readFileSync, statSync, readdirSync as _readdirSync } from 'fs';
+import { resolve as _resolve, relative as _relative, extname as _extname } from 'path';
+import { createHash as _createHash } from 'crypto';
 import { glob } from 'glob';
 import consola from 'consola';
 
+/**
+ *
+ */
 export class DeterminismLinter {
+  /**
+   *
+   */
   constructor(config = {}) {
     this.config = {
       // CRITICAL LIMITS (ZERO TOLERANCE)
@@ -206,7 +212,7 @@ export class DeterminismLinter {
    * Scan content for violation patterns
    */
   async scanPatterns(filePath, content, patterns, violations) {
-    const lines = content.split('\n');
+    const _lines = content.split('\n');
 
     for (const patternConfig of patterns) {
       const matches = [...content.matchAll(patternConfig.pattern)];
@@ -250,7 +256,7 @@ export class DeterminismLinter {
     // Check for dynamic includes
     const dynamicIncludes = content.match(/{%\s*include\s+[^'"][^%]*%}/g);
     if (dynamicIncludes) {
-      dynamicIncludes.forEach((include, index) => {
+      dynamicIncludes.forEach((include, _index) => {
         const position = this.getLineAndColumn(content, content.indexOf(include));
         violations.push({
           file: filePath,
@@ -403,6 +409,9 @@ export class DeterminismLinter {
     return Math.max(includes, extends_, blocks);
   }
 
+  /**
+   *
+   */
   getLineAndColumn(content, index) {
     const lines = content.substring(0, index).split('\n');
     return {
@@ -411,11 +420,17 @@ export class DeterminismLinter {
     };
   }
 
+  /**
+   *
+   */
   isTemplateFile(filePath) {
     const templateExtensions = ['.njk', '.ejs', '.hbs', '.mustache', '.liquid'];
     return templateExtensions.some(ext => filePath.endsWith(ext));
   }
 
+  /**
+   *
+   */
   isJavaScriptFile(filePath) {
     return filePath.endsWith('.js') || filePath.endsWith('.ts');
   }

@@ -7,6 +7,14 @@ export default defineConfig({
   test: {
     environment: 'happy-dom',
     globals: true,
+    exclude: [
+      'node_modules/**',
+      'dist/**',
+      '.nuxt/**',
+      'e2e/**',
+      '**/*.config.ts',
+      '**/*.d.ts'
+    ],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],

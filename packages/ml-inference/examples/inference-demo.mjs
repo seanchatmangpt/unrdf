@@ -7,7 +7,7 @@
  */
 
 import * as ort from 'onnxruntime-node';
-import { createONNXRunner } from '../src/runtime/onnx-runner.mjs';
+import { createONNXRunner as _createONNXRunner } from '../src/runtime/onnx-runner.mjs';
 import { createStreamingInferencePipeline } from '../src/pipeline/streaming-inference.mjs';
 import { createModelRegistry } from '../src/registry/model-registry.mjs';
 
@@ -39,7 +39,7 @@ async function createTestModel(inputSize = 10, outputSize = 5) {
   // Create simple model using ONNX Runtime Session builder
   // Model: Linear(10->5) + Sigmoid activation
 
-  const builder = new ort.InferenceSession.SessionBuilder();
+  const _builder = new ort.InferenceSession.SessionBuilder();
 
   // Initialize random weights and bias
   const weights = new Float32Array(inputSize * outputSize);

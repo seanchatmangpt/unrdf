@@ -300,7 +300,7 @@ export class ModelRegistry {
    * @returns {Promise<void>}
    */
   async destroy() {
-    for (const [version, model] of this.models.entries()) {
+    for (const [_version, model] of this.models.entries()) {
       await model.runner.dispose();
     }
     this.models.clear();

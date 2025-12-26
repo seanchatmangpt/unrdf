@@ -31,6 +31,15 @@ export function createCustomFilters(options = {}) {
 
     // Enhanced deterministic filters that override or augment the base filters
 
+    // Unified reverse filter that handles both strings and arrays
+    reverse: (value) => {
+      if (Array.isArray(value)) {
+        return [...value].reverse();
+      }
+      if (value === null || value === undefined) return '';
+      return String(value).split('').reverse().join('');
+    },
+
     // Deterministic date/time formatting
     formatDate: (date, format = 'YYYY-MM-DD') => {
       if (deterministicMode) {
@@ -116,6 +125,96 @@ export function createCustomFilters(options = {}) {
         return winParts.length > 1 ? winParts.slice(0, -1).join('\\') : '';
       }
       return parts.slice(0, -1).join('/');
+    },
+
+    // Date arithmetic filters
+    dateAdd: (date, amount, unit = 'day') => {
+      try {
+        const d = new Date(date);
+        if (isNaN(d.getTime())) return date;
+
+        switch (unit) {
+          case 'day':
+          case 'days':
+            d.setDate(d.getDate() + amount);
+            break;
+          case 'hour':
+          case 'hours':
+            d.setHours(d.getHours() + amount);
+            break;
+          case 'minute':
+          case 'minutes':
+            d.setMinutes(d.getMinutes() + amount);
+            break;
+          case 'month':
+          case 'months':
+            d.setMonth(d.getMonth() + amount);
+            break;
+          case 'year':
+          case 'years':
+            d.setFullYear(d.getFullYear() + amount);
+            break;
+          default:
+            return date;
+        }
+
+        return d.toISOString();
+      } catch (error) {
+        return date;
+      }
+    },
+
+    dateSub: (date, amount, unit = 'day') => {
+      return allFilters.dateAdd(date, -amount, unit);
+    },
+
+    // Path resolution filters
+    resolve: (...paths) => {
+      let result = '';
+
+      for (const p of paths) {
+        const path = String(p || '');
+        if (path.startsWith('/')) {
+          result = path;
+        } else if (result) {
+          result = result + '/' + path;
+        } else {
+          result = path;
+        }
+      }
+
+      // Normalize .. and .
+      const parts = result.split('/');
+      const normalized = [];
+
+      for (const part of parts) {
+        if (part === '..' && normalized.length > 0 && normalized[normalized.length - 1] !== '..') {
+          normalized.pop();
+        } else if (part && part !== '.') {
+          normalized.push(part);
+        }
+      }
+
+      return (result.startsWith('/') ? '/' : '') + normalized.join('/');
+    },
+
+    relative: (from, to) => {
+      const fromParts = String(from || '').split('/').filter(p => p);
+      const toParts = String(to || '').split('/').filter(p => p);
+
+      // Find common prefix
+      let commonLength = 0;
+      while (commonLength < fromParts.length && commonLength < toParts.length) {
+        if (fromParts[commonLength] !== toParts[commonLength]) break;
+        commonLength++;
+      }
+
+      // Build relative path
+      const upCount = fromParts.length - commonLength;
+      const downPath = toParts.slice(commonLength);
+
+      const relativeParts = Array(upCount).fill('..').concat(downPath);
+      return relativeParts.join('/') || '.';
     },
 
     // Code generation helpers

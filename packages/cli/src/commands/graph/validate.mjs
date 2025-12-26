@@ -56,7 +56,7 @@ export const validateCommand = defineCommand({
       console.log(`Validating graph: ${args.name}`);
 
       // Integrate with real SHACL validation from knowledge-engine
-      const { validateShacl } = await import('../../../knowledge-engine/validate.mjs');
+      const { validateShacl } = await import('@unrdf/knowledge-engine');
       const { Store, Parser } = await import('n3');
       const { promises: fs } = await import('fs');
       const path = await import('path');

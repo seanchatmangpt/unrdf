@@ -5,9 +5,15 @@
  * All filter templates are designed to be composable and reusable
  */
 
-import crypto from 'crypto';
+import _crypto from 'crypto';
 
+/**
+ *
+ */
 export class KGenFilterTemplates {
+  /**
+   *
+   */
   constructor(options = {}) {
     this.options = {
       deterministicMode: options.deterministicMode !== false,

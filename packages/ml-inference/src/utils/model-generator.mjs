@@ -7,7 +7,7 @@
  * Creates simple neural network models without external dependencies.
  */
 
-import * as ort from 'onnxruntime-node';
+import * as _ort from 'onnxruntime-node';
 import { writeFile } from 'fs/promises';
 
 /**
@@ -27,7 +27,7 @@ export async function generateSimpleModel(outputPath, inputSize = 10, outputSize
   // For demonstration, we'll create the model proto manually
 
   // ONNX model structure (simplified linear layer)
-  const modelProto = {
+  const _modelProto = {
     irVersion: '8',
     graph: {
       node: [
@@ -116,7 +116,7 @@ export async function generateSimpleModel(outputPath, inputSize = 10, outputSize
  * @param {number} outputSize - Output dimension
  * @returns {Uint8Array} ONNX model bytes
  */
-function createMinimalONNXModel(inputSize, outputSize) {
+function createMinimalONNXModel(_inputSize, _outputSize) {
   // This is a simplified ONNX model structure
   // In production, use proper ONNX model creation tools
 

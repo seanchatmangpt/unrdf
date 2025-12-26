@@ -6,7 +6,7 @@
  */
 
 import { promises as fs } from 'fs';
-import { join, dirname, resolve, relative } from 'path';
+import { join as _join, dirname, resolve as _resolve, relative as _relative } from 'path';
 import { createHash } from 'crypto';
 
 import { TargetResolver } from './target-resolver.js';
@@ -23,7 +23,13 @@ import {
   OPERATION_METADATA
 } from './constants.js';
 
+/**
+ *
+ */
 export class InjectionEngine {
+  /**
+   *
+   */
   constructor(config = {}) {
     this.config = { ...DEFAULT_CONFIG, ...config };
 
@@ -127,6 +133,9 @@ export class InjectionEngine {
    * Private Methods
    */
 
+  /**
+   *
+   */
   _generateOperationId(templateConfig, content) {
     const hash = createHash('sha256');
     hash.update(JSON.stringify(templateConfig, null, 0));
@@ -135,6 +144,9 @@ export class InjectionEngine {
     return `injection-${hash.digest('hex').substring(0, 16)}`;
   }
 
+  /**
+   *
+   */
   async _beginOperation(operationId, templateConfig) {
     this.activeOperations.set(operationId, {
       id: operationId,
@@ -146,6 +158,9 @@ export class InjectionEngine {
     });
   }
 
+  /**
+   *
+   */
   async _validateAllTargets(targets, throwOnError = true) {
     const results = [];
 
@@ -166,6 +181,9 @@ export class InjectionEngine {
     return results;
   }
 
+  /**
+   *
+   */
   async _filterIdempotentTargets(targets, content, variables) {
     const filtered = [];
 
@@ -184,6 +202,9 @@ export class InjectionEngine {
     return filtered;
   }
 
+  /**
+   *
+   */
   async _checkIdempotency(targets, content, variables) {
     const results = [];
 
@@ -197,6 +218,9 @@ export class InjectionEngine {
     return results;
   }
 
+  /**
+   *
+   */
   async _executeAtomicInjection(targets, content, variables, operationId) {
     const operation = this.activeOperations.get(operationId);
     operation.phase = 'executing';
@@ -211,6 +235,9 @@ export class InjectionEngine {
     return await this._executeTransaction(targets, content, variables, operationId);
   }
 
+  /**
+   *
+   */
   async _injectSingleTarget(target, content, variables, operationId) {
     // Read current file content
     const currentContent = await this._readTargetFile(target);
@@ -247,6 +274,9 @@ export class InjectionEngine {
     };
   }
 
+  /**
+   *
+   */
   async _executeTransaction(targets, content, variables, operationId) {
     const transaction = await this.atomicWriter.beginTransaction(operationId);
 
@@ -290,6 +320,9 @@ export class InjectionEngine {
     }
   }
 
+  /**
+   *
+   */
   async _readTargetFile(target) {
     if (target.mode === INJECTION_MODES.CREATE && target.createIfMissing) {
       try {
@@ -309,6 +342,9 @@ export class InjectionEngine {
     return await fs.readFile(target.resolvedPath, 'utf8');
   }
 
+  /**
+   *
+   */
   async _commitOperation(operationId, results) {
     const operation = this.activeOperations.get(operationId);
     operation.phase = 'committed';
@@ -329,6 +365,9 @@ export class InjectionEngine {
     this.activeOperations.delete(operationId);
   }
 
+  /**
+   *
+   */
   async _rollbackOperation(operationId, error) {
     const operation = this.activeOperations.get(operationId);
 
@@ -353,6 +392,9 @@ export class InjectionEngine {
     }
   }
 
+  /**
+   *
+   */
   _wrapError(error, operationId) {
     return new InjectionError(
       error.message,
@@ -367,6 +409,9 @@ export class InjectionEngine {
  * Custom error class for injection operations
  */
 export class InjectionError extends Error {
+  /**
+   *
+   */
   constructor(message, code, operationId, originalError = null) {
     super(message);
     this.name = 'InjectionError';

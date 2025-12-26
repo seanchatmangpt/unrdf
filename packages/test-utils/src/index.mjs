@@ -9,10 +9,10 @@
 
 import { createStore } from '@unrdf/oxigraph'; // TODO: Replace with Oxigraph Store
 import { randomUUID } from 'crypto';
-import { KnowledgeHookManager } from '../knowledge-engine/knowledge-hook-manager.mjs';
-import { _PolicyPackManager } from '../knowledge-engine/policy-pack.mjs';
-import { _createLockchainWriter } from '../knowledge-engine/lockchain-writer.mjs';
-import { _createEffectSandbox } from '../knowledge-engine/effect-sandbox.mjs';
+import { KnowledgeHookManager } from '@unrdf/knowledge-engine';
+import { _PolicyPackManager } from '@unrdf/knowledge-engine';
+import { _createLockchainWriter } from '@unrdf/knowledge-engine';
+import { _createEffectSandbox } from '@unrdf/knowledge-engine';
 import { z } from 'zod';
 
 /**

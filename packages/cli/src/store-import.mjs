@@ -14,8 +14,8 @@ import { readFile, writeFile, readdir, stat } from 'node:fs/promises';
 import { join } from 'node:path';
 import { z } from 'zod';
 import { OxigraphStore } from '@unrdf/oxigraph';
-import { defaultObservabilityManager } from '../knowledge-engine/observability.mjs';
-import { fileExists, ensureDir, detectRDFFormat } from '../utils/io-utils.mjs';
+import { defaultObservabilityManager } from '@unrdf/knowledge-engine';
+import { fileExists, ensureDir, detectRDFFormat } from './utils/io-utils.mjs';
 
 /**
  * Import options schema

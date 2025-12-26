@@ -5,7 +5,13 @@
  * All macros are deterministic and compatible with KGEN template engine
  */
 
+/**
+ *
+ */
 export class KGenMacroTemplates {
+  /**
+   *
+   */
   constructor(options = {}) {
     this.options = {
       deterministicMode: options.deterministicMode !== false,

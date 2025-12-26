@@ -12,7 +12,13 @@
 
 // Use existing frontmatter parser if available, fallback to basic parsing
 
+/**
+ *
+ */
 export class KGenParser {
+  /**
+   *
+   */
   constructor(options = {}) {
     this.options = {
       maxDepth: options.maxDepth || 10,

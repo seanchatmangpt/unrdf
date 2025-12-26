@@ -9,7 +9,13 @@
  * - Include processing: {% include %}
  */
 
+/**
+ *
+ */
 export class KGenRenderer {
+  /**
+   *
+   */
   constructor(options = {}) {
     this.options = {
       maxDepth: options.maxDepth || 10,
@@ -125,7 +131,7 @@ export class KGenRenderer {
 
     for (let i = matches.length - 1; i >= 0; i--) {
       match = matches[i];
-      const [fullMatch, condition, ifContent, elseBlock, elseContent] = match;
+      const [fullMatch, condition, ifContent, _elseBlock, elseContent] = match;
 
       try {
         const conditionResult = this.evaluateCondition(condition.trim(), context);
@@ -236,7 +242,7 @@ export class KGenRenderer {
   /**
    * Process include expressions
    */
-  async processIncludes(template, context, filters, depth) {
+  async processIncludes(template, _context, _filters, _depth) {
     const includePattern = /\{\%\s*include\s+['"]([^'"]+)['"]\s*\%\}/g;
 
     let match;

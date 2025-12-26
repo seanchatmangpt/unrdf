@@ -23,9 +23,9 @@
 import nunjucks from 'nunjucks';
 import crypto from 'crypto';
 import path from 'path';
-import { Worker, isMainThread } from 'worker_threads';
-import { Transform } from 'stream';
-import { performance } from 'perf_hooks';
+import { Worker as _Worker, isMainThread as _isMainThread } from 'worker_threads';
+import { Transform as _Transform } from 'stream';
+import { performance as _performance } from 'perf_hooks';
 import { createCustomFilters } from '../filters/index.js';
 import { FrontmatterParser } from '../parser/frontmatter.js';
 import { VariableExtractor } from '../parser/variables.js';
@@ -150,7 +150,13 @@ class TemplateContextPool {
   }
 }
 
+/**
+ *
+ */
 export class TemplateEngine {
+  /**
+   *
+   */
   constructor(options = {}) {
     this.templatesDir = options.templatesDir || './templates';
     this.enableCache = options.enableCache !== false;
@@ -503,6 +509,9 @@ export class TemplateEngine {
  * Wrapper that provides both basic and inheritance-enabled rendering
  */
 export class EnhancedTemplateEngine extends TemplateEngine {
+  /**
+   *
+   */
   constructor(options = {}) {
     super({
       ...options,

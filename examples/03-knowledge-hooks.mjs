@@ -41,7 +41,7 @@ const notifyHook = defineHook({
     name: 'notify-new-person',
     description: 'Notify when a new person is added'
   },
-  trigger: 'INSERT',
+  trigger: 'after-add',
   pattern: '?person a foaf:Person .',
 
   run(event) {
@@ -68,7 +68,7 @@ store.addQuad(ex('alice'), FOAF.name, literal('Alice Smith'));
 const result1 = executeHook(notifyHook, {
   quad: aliceQuad,
   store,
-  trigger: 'INSERT'
+  trigger: 'after-add'
 });
 
 console.log(`  Hook result: ${result1.allowed ? 'Allowed' : 'Denied'}\n`);
@@ -83,7 +83,7 @@ const validateEmailHook = defineHook({
     name: 'validate-email',
     description: 'Ensure all emails are valid'
   },
-  trigger: 'INSERT',
+  trigger: 'after-add',
   pattern: '?person foaf:mbox ?email .',
 
   run(event) {
@@ -113,7 +113,7 @@ const validEmailQuad = {
 const validResult = executeHook(validateEmailHook, {
   quad: validEmailQuad,
   store,
-  trigger: 'INSERT'
+  trigger: 'after-add'
 });
 
 console.log(`  Result: ${validResult.allowed ? 'Accepted' : 'Rejected'}`);
@@ -128,7 +128,7 @@ const invalidEmailQuad = {
 const invalidResult = executeHook(validateEmailHook, {
   quad: invalidEmailQuad,
   store,
-  trigger: 'INSERT'
+  trigger: 'after-add'
 });
 
 console.log(`  Result: ${invalidResult.allowed ? 'Accepted' : 'Rejected'}`);
@@ -144,7 +144,7 @@ const normalizeNameHook = defineHook({
     name: 'normalize-name',
     description: 'Normalize names to title case'
   },
-  trigger: 'INSERT',
+  trigger: 'after-add',
   pattern: '?person foaf:name ?name .',
 
   run(event) {
@@ -185,7 +185,7 @@ const unnormalizedQuad = {
 const transformResult = executeHook(normalizeNameHook, {
   quad: unnormalizedQuad,
   store,
-  trigger: 'INSERT'
+  trigger: 'after-add'
 });
 
 if (transformResult.transformed) {
@@ -202,7 +202,7 @@ const auditDeleteHook = defineHook({
     name: 'audit-delete',
     description: 'Log all deletions'
   },
-  trigger: 'DELETE',
+  trigger: 'before-remove',
   pattern: '?s ?p ?o .',
 
   run(event) {
@@ -226,7 +226,7 @@ const deleteQuad = {
 executeHook(auditDeleteHook, {
   quad: deleteQuad,
   store,
-  trigger: 'DELETE'
+  trigger: 'before-remove'
 });
 
 console.log();
@@ -239,7 +239,7 @@ console.log('--- 5. Multiple Hooks on Same Event ---');
 const hooks = [
   defineHook({
     meta: { name: 'hook-1' },
-    trigger: 'INSERT',
+    trigger: 'after-add',
     pattern: '?person a foaf:Person .',
     run() {
       console.log('  Hook 1: Validation passed');
@@ -248,7 +248,7 @@ const hooks = [
   }),
   defineHook({
     meta: { name: 'hook-2' },
-    trigger: 'INSERT',
+    trigger: 'after-add',
     pattern: '?person a foaf:Person .',
     run() {
       console.log('  Hook 2: Logging event');
@@ -257,7 +257,7 @@ const hooks = [
   }),
   defineHook({
     meta: { name: 'hook-3' },
-    trigger: 'INSERT',
+    trigger: 'after-add',
     pattern: '?person a foaf:Person .',
     run() {
       console.log('  Hook 3: Sending notification');
@@ -277,7 +277,7 @@ for (const hook of hooks) {
   executeHook(hook, {
     quad: personQuad,
     store,
-    trigger: 'INSERT'
+    trigger: 'after-add'
   });
 }
 

@@ -1,0 +1,15 @@
+{
+  "name": "@unrdf/examples",
+  "version": "5.0.1",
+  "private": true,
+  "type": "module",
+  "description": "UNRDF usage examples",
+  "dependencies": {
+    "@unrdf/core": "workspace:*",
+    "@unrdf/knowledge-engine": "workspace:*",
+    "@unrdf/hooks": "workspace:*"
+  },
+  "scripts": {
+    "test": "echo 'Examples are executable scripts, not tests' && exit 0"
+  }
+}

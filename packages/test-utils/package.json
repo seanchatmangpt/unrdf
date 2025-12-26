@@ -27,5 +27,8 @@
   "sideEffects": false,
   "author": "UNRDF Contributors",
   "license": "MIT",
-  "private": true
+  "private": true,
+  "dependencies": {
+    "@unrdf/knowledge-engine": "workspace:*"
+  }
 }

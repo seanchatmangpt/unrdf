@@ -20,11 +20,17 @@ export { KGenSHACLTemplates } from './shacl-templates.js';
 export { KGenInjectionTargets } from './injection-targets.js';
 
 // Convenience factory function
+/**
+ *
+ */
 export function createBaseTemplate(options = {}) {
   return new KGenTemplateBase(options);
 }
 
 // Template system factory
+/**
+ *
+ */
 export function createTemplateSystem(options = {}) {
   const base = new KGenTemplateBase(options);
   const macros = new KGenMacroTemplates(options);

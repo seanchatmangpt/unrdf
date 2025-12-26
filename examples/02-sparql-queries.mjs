@@ -40,7 +40,7 @@ for (const person of teamData) {
   store.addQuad(ex(person.id), RDF.type, FOAF.Person);
   store.addQuad(ex(person.id), FOAF.name, literal(person.name));
   store.addQuad(ex(person.id), ex('role'), literal(person.role));
-  store.addQuad(ex(person.id), ex('experience'), literal(person.experience));
+  store.addQuad(ex(person.id), ex('experience'), literal(String(person.experience)));
 }
 
 // Add relationships

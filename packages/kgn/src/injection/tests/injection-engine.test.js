@@ -5,13 +5,13 @@
  * atomic operations, idempotency, and error handling.
  */
 
-import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, test, expect, beforeEach, afterEach, vi as _vi } from 'vitest';
 import { promises as fs } from 'fs';
-import { join, dirname } from 'path';
+import { join, dirname as _dirname } from 'path';
 import { tmpdir } from 'os';
 
 import { InjectionEngine } from '../injection-engine.js';
-import { INJECTION_MODES, ERROR_CODES } from '../constants.js';
+import { INJECTION_MODES, ERROR_CODES as _ERROR_CODES } from '../constants.js';
 
 describe('InjectionEngine', () => {
   let tempDir;

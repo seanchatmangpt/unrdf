@@ -4,7 +4,7 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { createONNXRunner } from '../src/runtime/onnx-runner.mjs';
+import { createONNXRunner as _createONNXRunner } from '../src/runtime/onnx-runner.mjs';
 import { createStreamingInferencePipeline } from '../src/pipeline/streaming-inference.mjs';
 import { createModelRegistry } from '../src/registry/model-registry.mjs';
 
@@ -21,7 +21,7 @@ class MockONNXRunner {
     return 5.0;
   }
 
-  async infer(inputs) {
+  async infer(_inputs) {
     if (!this.session) throw new Error('Model not loaded');
     return {
       output: {

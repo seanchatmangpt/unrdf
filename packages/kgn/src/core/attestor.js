@@ -10,7 +10,13 @@
 
 import crypto from 'crypto';
 
+/**
+ *
+ */
 export class KGenAttestor {
+  /**
+   *
+   */
   constructor(options = {}) {
     this.options = {
       enableAttestation: options.enableAttestation !== false,
@@ -285,7 +291,7 @@ export class KGenAttestor {
   /**
    * Get additional metadata if enabled
    */
-  getAdditionalMetadata(content, context) {
+  getAdditionalMetadata(content, _context) {
     return {
       systemInfo: {
         platform: process.platform,

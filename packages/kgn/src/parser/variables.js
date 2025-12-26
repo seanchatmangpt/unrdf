@@ -3,7 +3,13 @@
  * Migrated from ~/unjucks with enhanced pattern matching
  */
 
+/**
+ *
+ */
 export class VariableExtractor {
+  /**
+   *
+   */
   constructor(options = {}) {
     this.includeFilters = options.includeFilters !== false;
     this.includeFunctions = options.includeFunctions !== false;
@@ -67,7 +73,7 @@ export class VariableExtractor {
     let match;
 
     while ((match = forPattern.exec(content)) !== null) {
-      const [, itemVar, indexVar, collection] = match;
+      const [, _itemVar, _indexVar, collection] = match;
       
       // Collection is a variable we need
       const collectionVar = collection.trim().split('.')[0].split('|')[0].trim();

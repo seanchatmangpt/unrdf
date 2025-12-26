@@ -82,6 +82,9 @@ export {
 } from './injection/constants.js';
 
 // Enhanced engine factory with inheritance and injection support
+/**
+ *
+ */
 export function createEngine(options = {}) {
   // Use EnhancedTemplateEngine by default for inheritance support
   const engineClass = options.useBasicEngine ? TemplateEngine : EnhancedTemplateEngine;
@@ -96,11 +99,17 @@ export function createEngine(options = {}) {
 }
 
 // Inheritance-specific engine factory
+/**
+ *
+ */
 export function createInheritanceEngine(options = {}) {
   return new TemplateInheritanceEngine(options);
 }
 
 // Enhanced template engine factory (inheritance + all features)
+/**
+ *
+ */
 export function createEnhancedEngine(options = {}) {
   return new EnhancedTemplateEngine({
     enableInheritance: true,
@@ -111,6 +120,9 @@ export function createEnhancedEngine(options = {}) {
 }
 
 // Injection-specific engine factory
+/**
+ *
+ */
 export function createInjectionEngine(injectionConfig = {}) {
   return initializeInjection(injectionConfig);
 }
