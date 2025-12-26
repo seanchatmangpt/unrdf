@@ -148,7 +148,7 @@ export async function createPolicyRegistry() {
       // Execute SPARQL conditions
       for (const condition of policy.conditions) {
         try {
-          const result = executeAskSync(store, condition.sparql);
+          const result = await executeAsk(store, condition.sparql);
           // ASK queries return { type: 'boolean', value: true/false }
           const passes = result.value === true;
           conditionResults.push(passes);
