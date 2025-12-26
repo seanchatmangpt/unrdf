@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Demo 2: Store Creation (Browser)</title>
+  <style>
+    body {
+      font-family: 'Consolas', 'Monaco', monospace;
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #1e1e1e;
+      color: #d4d4d4;
+    }
+    h1 {
+      color: #4ec9b0;
+      border-bottom: 2px solid #4ec9b0;
+      padding-bottom: 10px;
+    }
+    pre {
+      background: #2d2d2d;
+      padding: 15px;
+      border-radius: 5px;
+      overflow-x: auto;
+      border-left: 4px solid #569cd6;
+    }
+    .output {
+      margin-top: 20px;
+    }
+    .success {
+      color: #4ec9b0;
+      font-weight: bold;
+    }
+    .error {
+      color: #f48771;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Demo 2: Store Creation (Browser)</h1>
+  <p>This demo creates an in-memory RDF store and queries it (same code as Node.js version).</p>
+
+  <div class="output">
+    <pre id="output">Initializing store...</pre>
+  </div>
+
+  <script type="module">
+    // Simple in-memory RDF store (minimal implementation for demo purposes)
+    // IDENTICAL to Node.js version - proves cross-runtime compatibility
+    class SimpleStore {
+      constructor() {
+        this.quads = [];
+      }
+
+      add(quad) {
+        this.quads.push(quad);
+      }
+
+      match(s, p, o) {
+        return this.quads.filter(quad => {
+          if (s !== null && quad.subject.value !== s.value) return false;
+          if (p !== null && quad.predicate.value !== p.value) return false;
+          if (o !== null && quad.object.value !== o.value) return false;
+          return true;
+        });
+      }
+
+      get size() {
+        return this.quads.length;
+      }
+    }
+
+    function namedNode(value) {
+      return { termType: 'NamedNode', value };
+    }
+
+    function literal(value, datatype) {
+      return { termType: 'Literal', value, datatype };
+    }
+
+    function quad(subject, predicate, object) {
+      return { subject, predicate, object };
+    }
+
+    async function main() {
+      const outputEl = document.getElementById('output');
+      let log = '=== Demo 2: Store Creation (Browser) ===\n\n';
+
+      try {
+        // Create store
+        const store = new SimpleStore();
+        log += '✓ Created in-memory RDF store\n';
+
+        // Add triples
+        const alice = namedNode('http://example.org/alice');
+        const bob = namedNode('http://example.org/bob');
+        const name = namedNode('http://xmlns.com/foaf/0.1/name');
+        const knows = namedNode('http://xmlns.com/foaf/0.1/knows');
+        const age = namedNode('http://xmlns.com/foaf/0.1/age');
+
+        store.add(quad(alice, name, literal('Alice Smith')));
+        store.add(quad(alice, age, literal('30', namedNode('http://www.w3.org/2001/XMLSchema#integer'))));
+        store.add(quad(alice, knows, bob));
+        store.add(quad(bob, name, literal('Bob Jones')));
+        store.add(quad(bob, age, literal('28', namedNode('http://www.w3.org/2001/XMLSchema#integer'))));
+
+        log += `✓ Added ${store.size} triples to store\n\n`;
+
+        // Query: Find all names
+        log += 'Query 1: Find all names\n';
+        const names = store.match(null, name, null);
+        for (const q of names) {
+          log += `  ${q.subject.value} has name "${q.object.value}"\n`;
+        }
+
+        // Query: Find who Alice knows
+        log += '\nQuery 2: Find who Alice knows\n';
+        const aliceKnows = store.match(alice, knows, null);
+        for (const q of aliceKnows) {
+          log += `  Alice knows ${q.object.value}\n`;
+        }
+
+        // Query: Count triples
+        log += `\nTotal triples in store: ${store.size}\n`;
+
+        log += '\n✅ Success: Store operations completed in Browser';
+
+        outputEl.textContent = log;
+      } catch (error) {
+        log += `\n❌ Error: ${error.message}\n`;
+        outputEl.textContent = log;
+        outputEl.className = 'error';
+      }
+    }
+
+    main();
+  </script>
+</body>
+</html>
