@@ -1,0 +1,124 @@
+
+=== Proof 2: Audit Trail Reconstruction ===
+
+Conceptual Proof - Demonstrates chained receipt audit trail
+
+Step 1: Creating workflow case...
+  ✅ Receipt 1: CASE_CREATED
+     Receipt ID: receipt-1766790495392-rj3o1kwt6
+     Timestamp: 2025-12-26T23:08:15.392Z
+     Case: loan-application-12345
+     Decision: CREATE
+     Actor: automated-workflow
+     Receipt Hash: 3dabd8eaa662dc0a4f428bd13015f2cf9f8801d327e6b6ef97c1533100057dfb
+     Previous Hash: GENESIS
+
+Step 2: Enabling approval task...
+  ✅ Receipt 2: TASK_ENABLED
+     Receipt ID: receipt-1766790495406-5rb20zzgp
+     Timestamp: 2025-12-26T23:08:15.406Z
+     Task: approve-loan
+     Work Item: wi-001
+     Decision: ENABLE
+     Actor: credit-check-service
+     Receipt Hash: d353cf85d4a70a2f80a618c06ef6a3cbe502ab04dd8a9ea8e9c2cb6b760c808e
+     Previous Hash: 3dabd8eaa662dc0a4f428bd13015f2cf9f8801d327e6b6ef97c1533100057dfb
+
+Step 3: Completing approval task...
+  ✅ Receipt 3: TASK_COMPLETED
+     Receipt ID: receipt-1766790495416-6iob6os2r
+     Timestamp: 2025-12-26T23:08:15.416Z
+     Task: approve-loan
+     Decision: APPROVE
+     Actor: john.smith@bank.com
+     Approved By: john.smith@bank.com
+     Receipt Hash: 8a075857d8dd7afb6956cf91173e84ccf414dd9d8422e05a0e39791aa7db0f36
+     Previous Hash: d353cf85d4a70a2f80a618c06ef6a3cbe502ab04dd8a9ea8e9c2cb6b760c808e
+
+Step 4: Verifying each receipt independently...
+  Receipt 1: ✅ Valid
+  Receipt 2: ✅ Valid
+  Receipt 3: ✅ Valid
+
+Step 5: Verifying chain integrity...
+  Link 1→2: ✅ Valid
+     Receipt 2 previousHash: 3dabd8eaa662dc0a4f428bd13015f2cf9f8801d327e6b6ef97c1533100057dfb
+     Receipt 1 hash:         3dabd8eaa662dc0a4f428bd13015f2cf9f8801d327e6b6ef97c1533100057dfb
+     Match: YES ✅
+  Link 2→3: ✅ Valid
+     Receipt 3 previousHash: d353cf85d4a70a2f80a618c06ef6a3cbe502ab04dd8a9ea8e9c2cb6b760c808e
+     Receipt 2 hash:         d353cf85d4a70a2f80a618c06ef6a3cbe502ab04dd8a9ea8e9c2cb6b760c808e
+     Match: YES ✅
+
+Step 6: Verifying entire chain...
+  ✅ Entire chain verified successfully
+     Chain length: 3 receipts
+     All hashes valid: YES
+     Temporal ordering: Correct
+
+Step 7: Computing Merkle root for batch anchoring...
+  ✅ Merkle root: 67036da6cd1e7a72fa601213e974106c3481cdae21438f936f806a00a1d8deae
+     This root can be anchored on a blockchain for external verification
+
+Step 8: Exporting audit trail...
+  ✅ Audit trail exported:
+     Node ID: audit-node-001
+     Receipt Count: 3
+     First Receipt: 2025-12-26T23:08:15.392Z
+     Last Receipt: 2025-12-26T23:08:15.416Z
+     Merkle Root: 67036da6cd1e7a72fa601213e974106c3481cdae21438f936f806a00a1d8deae
+     Chain Valid: ✅
+     Exported At: 2025-12-26T23:08:15.418Z
+
+Step 9: Reconstructing decision history...
+
+  ╔═══════════════════════════════════════════════════════════════╗
+  ║                    AUDIT TRAIL REPORT                         ║
+  ╠═══════════════════════════════════════════════════════════════╣
+  ║ Case: loan-application-12345                              ║
+  ╠═══════════════════════════════════════════════════════════════╣
+  ║ 1. CASE_CREATED              │ 2025-12-26T23:08:15 ║
+  ║    Decision: CREATE          │ Task: start           ║
+  ║    Receipt Hash: 3dabd8eaa662dc0a...                      ║
+  ╠───────────────────────────────────────────────────────────────╣
+  ║ 2. TASK_ENABLED              │ 2025-12-26T23:08:15 ║
+  ║    Decision: ENABLE          │ Task: approve-loan    ║
+  ║    Receipt Hash: d353cf85d4a70a2f...                      ║
+  ╠───────────────────────────────────────────────────────────────╣
+  ║ 3. TASK_COMPLETED            │ 2025-12-26T23:08:15 ║
+  ║    Decision: APPROVE         │ Task: approve-loan    ║
+  ║    Receipt Hash: 8a075857d8dd7afb...                      ║
+  ╚═══════════════════════════════════════════════════════════════╝
+
+=== Audit Trail Reconstruction Proof Summary ===
+
+✅ PROOF SUCCESSFUL: Complete audit trail reconstructed!
+
+Verification Results:
+  ✅ 3 receipts generated
+  ✅ All receipts independently verified
+  ✅ Chain links verified (2 links)
+  ✅ Chronological ordering confirmed
+  ✅ No gaps or missing receipts
+  ✅ Merkle root computed for batch anchoring
+
+Decision Timeline:
+  1. 2025-12-26T23:08:15.392Z - CASE_CREATED by automated-workflow
+  2. 2025-12-26T23:08:15.406Z - TASK_ENABLED by credit-check-service
+  3. 2025-12-26T23:08:15.416Z - TASK_COMPLETED (APPROVE) by john.smith@bank.com
+
+Key Findings:
+  1. Each decision has cryptographic receipt ✅
+  2. Receipts form immutable chain (hash linking) ✅
+  3. Full provenance: who, what, when, why ✅
+  4. Tamper-evident: any change breaks chain ✅
+  5. Merkle root enables blockchain anchoring ✅
+
+Compliance Benefits:
+  • SOC2: Complete audit logging with timestamps
+  • ISO 27001: Integrity verification via cryptographic hashing
+  • GDPR: Decision provenance with justification
+  • 21 CFR Part 11: Non-repudiation via immutable chain
+
+Conclusion: YAWL receipts provide complete, verifiable audit trails.
+

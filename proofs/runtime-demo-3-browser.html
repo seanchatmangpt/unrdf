@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Demo 3: Hook Execution (Browser)</title>
+  <style>
+    body {
+      font-family: 'Consolas', 'Monaco', monospace;
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #1e1e1e;
+      color: #d4d4d4;
+    }
+    h1 {
+      color: #4ec9b0;
+      border-bottom: 2px solid #4ec9b0;
+      padding-bottom: 10px;
+    }
+    pre {
+      background: #2d2d2d;
+      padding: 15px;
+      border-radius: 5px;
+      overflow-x: auto;
+      border-left: 4px solid #569cd6;
+    }
+    .output {
+      margin-top: 20px;
+    }
+    .success {
+      color: #4ec9b0;
+      font-weight: bold;
+    }
+    .error {
+      color: #f48771;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Demo 3: Hook Execution (Browser)</h1>
+  <p>This demo executes a knowledge hook in the browser.</p>
+
+  <div class="output">
+    <pre id="output">Initializing hook executor...</pre>
+  </div>
+
+  <script type="module">
+    // Minimal hook executor for browser
+    class BrowserHookExecutor {
+      constructor() {
+        this.metrics = {
+          executions: 0,
+          errors: 0,
+          totalDuration: 0,
+        };
+      }
+
+      async execute(hook, event, _options = {}) {
+        const startTime = Date.now();
+        this.metrics.executions++;
+
+        try {
+          let result;
+
+          if (hook.run) {
+            result = await hook.run(event);
+          } else {
+            result = { success: true };
+          }
+
+          const duration = Date.now() - startTime;
+          this.metrics.totalDuration += duration;
+
+          return {
+            success: true,
+            result,
+            duration,
+            timestamp: Date.now(),
+          };
+        } catch (error) {
+          this.metrics.errors++;
+          const duration = Date.now() - startTime;
+          this.metrics.totalDuration += duration;
+
+          return {
+            success: false,
+            error: error.message,
+            duration,
+            timestamp: Date.now(),
+          };
+        }
+      }
+
+      getMetrics() {
+        return { ...this.metrics };
+      }
+    }
+
+    async function main() {
+      const outputEl = document.getElementById('output');
+      let log = '=== Demo 3: Hook Execution (Browser) ===\n\n';
+
+      try {
+        // Create hook executor
+        const executor = new BrowserHookExecutor();
+        log += '✓ Created hook executor\n';
+
+        // Define a sample hook
+        const validationHook = {
+          meta: {
+            name: 'validate-user-data',
+            version: '1.0.0',
+            description: 'Validates user data format',
+          },
+          run: async (event) => {
+            const { user } = event;
+
+            if (!user || !user.name || !user.age) {
+              throw new Error('Invalid user data: missing name or age');
+            }
+
+            if (user.age < 0 || user.age > 150) {
+              throw new Error('Invalid age: must be between 0 and 150');
+            }
+
+            return {
+              valid: true,
+              user,
+              validatedAt: new Date().toISOString(),
+            };
+          },
+        };
+
+        log += `✓ Registered hook: ${validationHook.meta.name}\n\n`;
+
+        // Test 1: Valid user
+        log += 'Test 1: Valid user data\n';
+        const result1 = await executor.execute(validationHook, {
+          user: { name: 'Alice Smith', age: 30 },
+        });
+        log += `  Success: ${result1.success}\n`;
+        log += `  Valid: ${result1.result?.valid}\n`;
+        log += `  Duration: ${result1.duration}ms\n`;
+
+        // Test 2: Invalid user (missing age)
+        log += '\nTest 2: Invalid user data (missing age)\n';
+        const result2 = await executor.execute(validationHook, {
+          user: { name: 'Bob Jones' },
+        });
+        log += `  Success: ${result2.success}\n`;
+        log += `  Error: ${result2.error}\n`;
+        log += `  Duration: ${result2.duration}ms\n`;
+
+        // Test 3: Invalid age
+        log += '\nTest 3: Invalid user data (age out of range)\n';
+        const result3 = await executor.execute(validationHook, {
+          user: { name: 'Charlie Brown', age: 200 },
+        });
+        log += `  Success: ${result3.success}\n`;
+        log += `  Error: ${result3.error}\n`;
+        log += `  Duration: ${result3.duration}ms\n`;
+
+        // Show metrics
+        const metrics = executor.getMetrics();
+        log += '\nMetrics:\n';
+        log += `  Total executions: ${metrics.executions}\n`;
+        log += `  Errors: ${metrics.errors}\n`;
+        log += `  Average duration: ${(metrics.totalDuration / metrics.executions).toFixed(2)}ms\n`;
+
+        log += '\n✅ Success: Hook execution completed in Browser';
+
+        outputEl.textContent = log;
+      } catch (error) {
+        log += `\n❌ Error: ${error.message}\n`;
+        outputEl.textContent = log;
+        outputEl.className = 'error';
+      }
+    }
+
+    main();
+  </script>
+</body>
+</html>
