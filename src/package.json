@@ -1,0 +1,38 @@
+{
+  "name": "@unrdf/governed-substrate",
+  "version": "1.0.0",
+  "description": "Governed Ontology Substrate - Industrial-first, proof-gated RDF universe with admission control",
+  "type": "module",
+  "main": "index.mjs",
+  "bin": {
+    "gos": "cli.mjs"
+  },
+  "scripts": {
+    "test": "node --experimental-vm-modules node_modules/.bin/vitest run",
+    "test:watch": "vitest watch",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint .",
+    "validate": "node cli.mjs validate --help",
+    "dev": "node cli.mjs"
+  },
+  "keywords": [
+    "rdf",
+    "ontology",
+    "governance",
+    "admission-control",
+    "knowledge-graphs",
+    "substrate"
+  ],
+  "author": "UNRDF Contributors",
+  "license": "MIT",
+  "dependencies": {
+    "hash-wasm": "^4.12.0",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "vitest": "^4.0.15"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
