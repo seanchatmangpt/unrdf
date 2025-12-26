@@ -1,0 +1,70 @@
+{
+  "name": "@unrdf/ml-inference",
+  "version": "5.0.1",
+  "description": "UNRDF ML Inference - High-performance ONNX model inference pipeline for RDF streams",
+  "type": "module",
+  "main": "src/index.mjs",
+  "exports": {
+    ".": "./src/index.mjs",
+    "./runtime": "./src/runtime/onnx-runner.mjs",
+    "./pipeline": "./src/pipeline/streaming-inference.mjs",
+    "./registry": "./src/registry/model-registry.mjs"
+  },
+  "sideEffects": false,
+  "files": [
+    "src/",
+    "models/",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "vitest run --coverage",
+    "test:fast": "vitest run",
+    "test:watch": "vitest --coverage",
+    "demo": "node examples/inference-demo.mjs",
+    "demo:metrics": "node examples/inference-demo.mjs --metrics",
+    "lint": "eslint src/ test/ examples/ --max-warnings=0",
+    "lint:fix": "eslint src/ test/ examples/ --fix",
+    "format": "prettier --write src/ test/ examples/",
+    "format:check": "prettier --check src/ test/ examples/",
+    "clean": "rm -rf coverage/ models/*.onnx",
+    "dev": "echo 'Development mode for @unrdf/ml-inference'"
+  },
+  "keywords": [
+    "rdf",
+    "ml",
+    "onnx",
+    "inference",
+    "streaming",
+    "real-time",
+    "machine-learning"
+  ],
+  "dependencies": {
+    "@opentelemetry/api": "^1.9.0",
+    "@unrdf/core": "workspace:*",
+    "@unrdf/streaming": "workspace:*",
+    "@unrdf/oxigraph": "workspace:*",
+    "onnxruntime-node": "^1.20.1",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "vitest": "^4.0.15"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/unrdf/unrdf.git",
+    "directory": "packages/ml-inference"
+  },
+  "bugs": {
+    "url": "https://github.com/unrdf/unrdf/issues"
+  },
+  "homepage": "https://github.com/unrdf/unrdf#readme",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
+}

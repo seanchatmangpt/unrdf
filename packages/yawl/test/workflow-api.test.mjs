@@ -31,9 +31,9 @@ const SIMPLE_WORKFLOW_SPEC = {
   name: 'Simple Sequential Workflow',
   version: '1.0.0',
   tasks: [
-    { id: 'task-1', name: 'First Task', type: 'atomic' },
-    { id: 'task-2', name: 'Second Task', type: 'atomic' },
-    { id: 'task-3', name: 'Third Task', type: 'atomic' },
+    { id: 'task-1', name: 'First Task', kind: 'atomic' },
+    { id: 'task-2', name: 'Second Task', kind: 'atomic' },
+    { id: 'task-3', name: 'Third Task', kind: 'atomic' },
   ],
   controlFlow: [
     { id: 'cf1', type: 'sequence', from: 'task-1', to: 'task-2' },
@@ -49,10 +49,10 @@ const PARALLEL_WORKFLOW_SPEC = {
   name: 'Parallel Workflow',
   version: '1.0.0',
   tasks: [
-    { id: 'start', name: 'Start', type: 'atomic' },
-    { id: 'parallel-a', name: 'Parallel A', type: 'atomic' },
-    { id: 'parallel-b', name: 'Parallel B', type: 'atomic' },
-    { id: 'end', name: 'End', type: 'atomic' },
+    { id: 'start', name: 'Start', kind: 'atomic' },
+    { id: 'parallel-a', name: 'Parallel A', kind: 'atomic' },
+    { id: 'parallel-b', name: 'Parallel B', kind: 'atomic' },
+    { id: 'end', name: 'End', kind: 'atomic' },
   ],
   controlFlow: [
     { id: 'cf1', type: 'and-split', from: 'start', to: ['parallel-a', 'parallel-b'] },
@@ -69,9 +69,9 @@ const CANCELLATION_WORKFLOW_SPEC = {
   name: 'Cancellation Workflow',
   version: '1.0.0',
   tasks: [
-    { id: 'main-task', name: 'Main Task', type: 'atomic', cancellationRegion: 'region-1' },
-    { id: 'timeout-task', name: 'Timeout Task', type: 'atomic', cancellationRegion: 'region-1' },
-    { id: 'cleanup-task', name: 'Cleanup Task', type: 'atomic' },
+    { id: 'main-task', name: 'Main Task', kind: 'atomic', cancellationRegion: 'region-1' },
+    { id: 'timeout-task', name: 'Timeout Task', kind: 'atomic', cancellationRegion: 'region-1' },
+    { id: 'cleanup-task', name: 'Cleanup Task', kind: 'atomic' },
   ],
   controlFlow: [
     { id: 'cf1', type: 'deferred-choice', from: 'main-task', to: 'cleanup-task' },
@@ -91,7 +91,7 @@ describe('Zod Schemas', () => {
     const task = {
       id: 'test-task',
       name: 'Test Task',
-      type: 'atomic',
+      kind: 'atomic',
     };
     expect(() => TaskSchema.parse(task)).not.toThrow();
   });
@@ -108,7 +108,7 @@ describe('Zod Schemas', () => {
     expect(() => WorkflowSpecSchema.parse(SIMPLE_WORKFLOW_SPEC)).not.toThrow();
   });
 
-  it('WorkflowSpecSchema requires at least one task', () => {
+  it('WorkflowSpecSchema rejects specs without required fields', () => {
     const noTasksSpec = {
       id: 'empty',
       tasks: [],

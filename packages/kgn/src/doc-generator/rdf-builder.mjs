@@ -76,7 +76,7 @@ export function buildRDFGraph(parsedFile) {
   triples.push('');
 
   // Exports
-  parsedFile.exports.forEach((exp, idx) => {
+  parsedFile.exports.forEach((exp, _idx) => {
     const exportURI = `${fileURI}#${exp.name}`;
 
     triples.push(`# Export: ${exp.name}`);
@@ -131,7 +131,7 @@ export function buildRDFGraph(parsedFile) {
       }
 
       // Examples
-      exp.examples?.forEach((example, exIdx) => {
+      exp.examples?.forEach((example, _exIdx) => {
         triples.push(`  doc:example ${escapeLiteral(example)} ;`);
       });
 

@@ -30,7 +30,7 @@
     "format": "prettier --write src/ test/",
     "format:check": "prettier --check src/ test/",
     "clean": "rm -rf dist/ .nyc_output/ coverage/",
-    "dev": "node src/cli.mjs"
+    "dev": "unbuild --watch"
   },
   "keywords": [
     "rdf",
@@ -43,7 +43,9 @@
     "@unrdf/core": "workspace:*",
     "@unrdf/federation": "workspace:*",
     "@unrdf/hooks": "workspace:*",
+    "@unrdf/knowledge-engine": "workspace:*",
     "@unrdf/oxigraph": "workspace:*",
+    "@unrdf/project-engine": "workspace:*",
     "@unrdf/streaming": "workspace:*",
     "citty": "^0.1.6",
     "table": "^6.9.0",

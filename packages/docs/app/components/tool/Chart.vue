@@ -56,9 +56,18 @@ const formatValue = (value: string | number | undefined): string => {
 </script>
 
 <template>
-  <div v-if="invocation.state === 'output-available'" class="my-5">
-    <div v-if="invocation.output.title" class="flex items-center gap-2 mb-2">
-      <UIcon name="i-lucide-line-chart" class="size-5 text-primary shrink-0" />
+  <div
+    v-if="invocation.state === 'output-available'"
+    class="my-5"
+  >
+    <div
+      v-if="invocation.output.title"
+      class="flex items-center gap-2 mb-2"
+    >
+      <UIcon
+        name="i-lucide-line-chart"
+        class="size-5 text-primary shrink-0"
+      />
       <div class="min-w-0">
         <h3 class="text-lg font-semibold truncate">
           {{ invocation.output.title }}
@@ -86,7 +95,10 @@ const formatValue = (value: string | number | undefined): string => {
       >
         <template #tooltip="{ values }">
           <div class="bg-muted/50 rounded-sm px-2 py-1 shadow-lg backdrop-blur-sm max-w-xs ring ring-offset-2 ring-offset-(--ui-bg) ring-default border border-default">
-            <div v-if="values && values[invocation.output.xKey]" class="text-sm font-semibold text-highlighted mb-2">
+            <div
+              v-if="values && values[invocation.output.xKey]"
+              class="text-sm font-semibold text-highlighted mb-2"
+            >
               {{ values[invocation.output.xKey] }}
             </div>
             <div class="space-y-1.5">
@@ -113,7 +125,11 @@ const formatValue = (value: string | number | undefined): string => {
     </div>
   </div>
 
-  <div v-else class="rounded-xl px-5 py-4 my-5" :class="color">
+  <div
+    v-else
+    class="rounded-xl px-5 py-4 my-5"
+    :class="color"
+  >
     <div class="flex items-center justify-center h-44">
       <div class="text-center">
         <UIcon

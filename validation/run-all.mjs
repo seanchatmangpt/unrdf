@@ -16,9 +16,9 @@
  */
 
 import { createValidationRunner } from "../packages/validation/src/index.mjs";
-import { ensureProviderInitialized } from "./otel-provider.mjs";
 
-await ensureProviderInitialized();
+// OTEL provider is initialized automatically by OTELValidator for each validation
+// No need to initialize globally here
 const runner = createValidationRunner({ verbose: true });
 
 /**

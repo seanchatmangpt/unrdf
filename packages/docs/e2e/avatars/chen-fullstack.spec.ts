@@ -140,7 +140,7 @@ Implement debouncing on user input`
 
       const data = await response.json()
       expect(data.content).toContain('Streaming')
-      expect(data.content).toContain('toDataStreamResponse' || 'useChat')
+      expect(data.content).toMatch(/toDataStreamResponse|useChat/)
     })
 
     test('should handle AI streaming errors gracefully', async ({ page }) => {
@@ -371,7 +371,7 @@ const body = await readValidatedBody(event, ChatSchema.parse)
       })
 
       const data2 = await response2.json()
-      expect(data2.content).toContain('Zod' || 'validation')
+      expect(data2.content).toMatch(/Zod|validation/)
     })
   })
 

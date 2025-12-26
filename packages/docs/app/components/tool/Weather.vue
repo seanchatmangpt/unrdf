@@ -26,7 +26,10 @@ const message = computed(() => {
 </script>
 
 <template>
-  <div class="rounded-xl px-5 py-4 my-5" :class="color">
+  <div
+    class="rounded-xl px-5 py-4 my-5"
+    :class="color"
+  >
     <template v-if="invocation.state === 'output-available'">
       <div class="flex items-start justify-between mb-3">
         <div class="flex items-baseline">
@@ -56,17 +59,26 @@ const message = computed(() => {
 
         <div class="flex gap-3 text-xs">
           <div class="flex items-center gap-1">
-            <UIcon name="i-lucide-droplets" class="size-3 text-blue-200" />
+            <UIcon
+              name="i-lucide-droplets"
+              class="size-3 text-blue-200"
+            />
             <span>{{ invocation.output.humidity }}%</span>
           </div>
           <div class="flex items-center gap-1">
-            <UIcon name="i-lucide-wind" class="size-3 text-blue-200" />
+            <UIcon
+              name="i-lucide-wind"
+              class="size-3 text-blue-200"
+            />
             <span>{{ invocation.output.windSpeed }} km/h</span>
           </div>
         </div>
       </div>
 
-      <div v-if="invocation.output.dailyForecast.length > 0" class="flex items-center justify-between">
+      <div
+        v-if="invocation.output.dailyForecast.length > 0"
+        class="flex items-center justify-between"
+      >
         <div
           v-for="(forecast, index) in invocation.output.dailyForecast"
           :key="index"
@@ -91,14 +103,20 @@ const message = computed(() => {
         </div>
       </div>
 
-      <div v-else class="flex items-center justify-center py-3">
+      <div
+        v-else
+        class="flex items-center justify-center py-3"
+      >
         <div class="text-xs">
           No forecast available
         </div>
       </div>
     </template>
 
-    <div v-else class="flex items-center justify-center h-44">
+    <div
+      v-else
+      class="flex items-center justify-center h-44"
+    >
       <div class="text-center">
         <UIcon
           :name="icon"

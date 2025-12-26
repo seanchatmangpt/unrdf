@@ -10,7 +10,13 @@ import { createHash } from 'crypto';
 
 import { SKIP_IF_LOGIC, CHECKSUM_ALGORITHMS } from './constants.js';
 
+/**
+ *
+ */
 export class IdempotencyManager {
+  /**
+   *
+   */
   constructor(config = {}) {
     this.config = config;
     this.contentCache = new Map();
@@ -103,6 +109,9 @@ export class IdempotencyManager {
    * Private Methods
    */
 
+  /**
+   *
+   */
   async _evaluateSingleCondition(condition, target, content, variables) {
     // Built-in conditions
     if (condition === 'file_exists') {
@@ -155,6 +164,9 @@ export class IdempotencyManager {
     };
   }
 
+  /**
+   *
+   */
   async _evaluateMultipleConditions(conditions, target, content, variables) {
     const logic = target.skipIfLogic || SKIP_IF_LOGIC.OR;
     const results = [];
@@ -181,6 +193,9 @@ export class IdempotencyManager {
     }
   }
 
+  /**
+   *
+   */
   async _evaluateObjectCondition(conditionObj, target, content, variables) {
     // Complex object-based conditions
     const { pattern, exists, custom, hash } = conditionObj;
@@ -218,12 +233,18 @@ export class IdempotencyManager {
     return { skip: false, reason: 'Invalid object condition' };
   }
 
+  /**
+   *
+   */
   _interpolateVariables(template, variables) {
     return template.replace(/\{\{(\w+)\}\}/g, (match, variable) => {
       return variables[variable] || match;
     });
   }
 
+  /**
+   *
+   */
   async _getFileContent(filePath) {
     const cacheKey = filePath;
 
@@ -244,6 +265,9 @@ export class IdempotencyManager {
     }
   }
 
+  /**
+   *
+   */
   async _fileExists(filePath) {
     try {
       await fs.access(filePath);
@@ -253,6 +277,9 @@ export class IdempotencyManager {
     }
   }
 
+  /**
+   *
+   */
   async _getFileSize(filePath) {
     try {
       const stats = await fs.stat(filePath);
@@ -265,6 +292,9 @@ export class IdempotencyManager {
     }
   }
 
+  /**
+   *
+   */
   async _getLineCount(filePath) {
     try {
       const content = await this._getFileContent(filePath);
@@ -274,6 +304,9 @@ export class IdempotencyManager {
     }
   }
 
+  /**
+   *
+   */
   async _getExistingContentHash(target) {
     try {
       const content = await this._getFileContent(target.resolvedPath);

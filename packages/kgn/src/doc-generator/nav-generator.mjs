@@ -11,7 +11,7 @@
  */
 export function generateNavigation(groupedFiles, options = {}) {
   const {
-    rootTitle = 'API Reference',
+    rootTitle: _rootTitle = 'API Reference',
     includeIndex = true,
   } = options;
 

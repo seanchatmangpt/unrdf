@@ -95,12 +95,19 @@ export const HookTriggerSchema = z.enum([
 ]);
 
 export const HookConfigSchema = z.object({
-  name: z.string().min(1, 'Hook name is required'),
+  name: z.string().min(1, 'Hook name is required').optional(),
   trigger: HookTriggerSchema,
   // Note: No return type enforcement - runtime POKA-YOKE guard handles non-boolean returns
   validate: z.function().optional(),
   transform: z.function().optional(),
   metadata: z.record(z.string(), z.any()).optional(),
+  // Old format compatibility
+  meta: z.object({
+    name: z.string(),
+    description: z.string().optional(),
+  }).optional(),
+  pattern: z.string().optional(),
+  run: z.function().optional(),
 });
 
 export const HookSchema = z.object({
@@ -134,19 +141,28 @@ export const HookSchema = z.object({
 export function defineHook(config) {
   const validated = HookConfigSchema.parse(config);
 
-  if (!validated.validate && !validated.transform) {
-    throw new Error('Hook must define either validate or transform function');
+  // Support old format with meta.name and run()
+  const name = validated.name || validated.meta?.name;
+  const validate = validated.validate;
+  const transform = validated.transform || validated.run;
+  const metadata = validated.metadata || {
+    description: validated.meta?.description,
+    pattern: validated.pattern,
+  };
+
+  if (!validate && !transform) {
+    throw new Error('Hook must define either validate, transform, or run function');
   }
 
   return {
-    name: validated.name,
+    name,
     trigger: validated.trigger,
-    validate: validated.validate,
-    transform: validated.transform,
-    metadata: validated.metadata || {},
+    validate,
+    transform,
+    metadata,
     // Pre-computed flags for sub-1μs execution (skip Zod in hot path)
-    _hasValidation: typeof validated.validate === 'function',
-    _hasTransformation: typeof validated.transform === 'function',
+    _hasValidation: typeof validate === 'function',
+    _hasTransformation: typeof transform === 'function',
     _validated: true,
   };
 }

@@ -1,0 +1,71 @@
+{
+  "name": "@unrdf/collab",
+  "version": "1.0.0",
+  "description": "Real-time collaborative RDF editing using CRDTs (Yjs) with offline-first architecture",
+  "type": "module",
+  "main": "src/index.mjs",
+  "exports": {
+    ".": "./src/index.mjs",
+    "./crdt": "./src/crdt/index.mjs",
+    "./sync": "./src/sync/index.mjs",
+    "./composables": "./src/composables/index.mjs"
+  },
+  "sideEffects": false,
+  "files": [
+    "src/",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "vitest run --no-coverage",
+    "test:coverage": "vitest run --coverage",
+    "test:fast": "vitest run --no-coverage",
+    "test:watch": "vitest --no-coverage",
+    "lint": "eslint src/ test/ examples/ --max-warnings=0",
+    "lint:fix": "eslint src/ test/ examples/ --fix",
+    "format": "prettier --write src/ test/ examples/",
+    "format:check": "prettier --check src/ test/ examples/",
+    "clean": "rm -rf coverage/",
+    "demo:server": "node examples/collab-server.mjs",
+    "demo:client": "node examples/collab-demo.mjs"
+  },
+  "keywords": [
+    "rdf",
+    "crdt",
+    "collaboration",
+    "real-time",
+    "yjs",
+    "offline-first",
+    "semantic-web"
+  ],
+  "dependencies": {
+    "@unrdf/core": "workspace:*",
+    "yjs": "^13.6.18",
+    "y-websocket": "^2.0.4",
+    "y-indexeddb": "^9.0.12",
+    "lib0": "^0.2.97",
+    "zod": "^4.1.13",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "@types/ws": "^8.5.12",
+    "vitest": "^4.0.15"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/unrdf/unrdf.git",
+    "directory": "packages/collab"
+  },
+  "bugs": {
+    "url": "https://github.com/unrdf/unrdf/issues"
+  },
+  "homepage": "https://github.com/unrdf/unrdf#readme",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
+}

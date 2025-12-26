@@ -7,7 +7,13 @@
 
 import { INJECTION_MODES, LINE_ENDINGS } from '../constants.js';
 
+/**
+ *
+ */
 export class InjectionModes {
+  /**
+   *
+   */
   constructor(config = {}) {
     this.config = config;
   }
@@ -241,6 +247,9 @@ export class InjectionModes {
    * Helper Methods
    */
 
+  /**
+   *
+   */
   _normalizeContent(content) {
     if (!content) return '';
 
@@ -253,6 +262,9 @@ export class InjectionModes {
     return content;
   }
 
+  /**
+   *
+   */
   _normalizeInjectionContent(content, variables) {
     // Variable interpolation
     let result = content.replace(/\{\{(\w+)\}\}/g, (match, variable) => {
@@ -267,12 +279,18 @@ export class InjectionModes {
     return result;
   }
 
+  /**
+   *
+   */
   _detectLineEnding(content) {
     if (content.includes('\r\n')) return LINE_ENDINGS.CRLF;
     if (content.includes('\r')) return LINE_ENDINGS.CR;
     return LINE_ENDINGS.LF;
   }
 
+  /**
+   *
+   */
   _findTargetLine(lines, pattern, target) {
     if (target.regex) {
       const flags = target.regexFlags || 'gm';
@@ -284,15 +302,24 @@ export class InjectionModes {
     return lines.findIndex(line => line.includes(pattern));
   }
 
+  /**
+   *
+   */
   _getLineIndentation(line) {
     const match = line.match(/^(\s*)/);
     return match ? match[1] : '';
   }
 
+  /**
+   *
+   */
   _looksLikeImports(content) {
     return /^import\s+.*from\s+['"][^'"]+['"];?\s*$/m.test(content);
   }
 
+  /**
+   *
+   */
   _sortImports(content) {
     const lineEnding = this._detectLineEnding(content);
     const lines = content.split(lineEnding);
@@ -334,6 +361,9 @@ export class InjectionModes {
     return content;
   }
 
+  /**
+   *
+   */
   _extractImportSource(importLine) {
     const match = importLine.match(/from\s+['"]([^'"]+)['"]/);
     return match ? match[1] : '';

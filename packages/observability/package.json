@@ -1,0 +1,43 @@
+{
+  "name": "@unrdf/observability",
+  "version": "1.0.0",
+  "description": "Innovative Prometheus/Grafana observability dashboard for UNRDF distributed workflows",
+  "type": "module",
+  "main": "./src/index.mjs",
+  "exports": {
+    ".": "./src/index.mjs",
+    "./metrics": "./src/metrics/workflow-metrics.mjs",
+    "./exporters": "./src/exporters/grafana-exporter.mjs",
+    "./alerts": "./src/alerts/alert-manager.mjs"
+  },
+  "scripts": {
+    "demo": "node examples/observability-demo.mjs",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint .",
+    "format": "prettier --write ."
+  },
+  "dependencies": {
+    "prom-client": "^15.1.0",
+    "@opentelemetry/api": "^1.9.0",
+    "@opentelemetry/exporter-prometheus": "^0.49.0",
+    "@opentelemetry/sdk-metrics": "^1.21.0",
+    "express": "^4.18.2",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "vitest": "^4.0.15"
+  },
+  "keywords": [
+    "prometheus",
+    "grafana",
+    "metrics",
+    "observability",
+    "monitoring",
+    "alerting",
+    "workflow",
+    "distributed-systems"
+  ],
+  "author": "UNRDF Team",
+  "license": "MIT"
+}

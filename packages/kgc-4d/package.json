@@ -23,7 +23,9 @@
     "test:all": "npm run test:doctest && npm test",
     "pretest": "node scripts/generate-doctests.mjs",
     "benchmark": "node test/benchmarks/run-benchmarks.mjs",
-    "build": "unbuild && tsc --emitDeclarationOnly",
+    "build": "unbuild",
+    "build:dev": "NODE_ENV=development unbuild",
+    "build:prod": "NODE_ENV=production unbuild",
     "build:types": "tsc --emitDeclarationOnly"
   },
   "dependencies": {

@@ -2,12 +2,21 @@
  * Template Inheritance System - Placeholder for future implementation
  */
 
+/**
+ *
+ */
 export class TemplateInheritanceEngine {
+  /**
+   *
+   */
   constructor(options = {}) {
     this.options = options;
   }
 
-  async processTemplate(templatePath, context = {}) {
+  /**
+   *
+   */
+  async processTemplate(templatePath, _context = {}) {
     // Basic implementation for build compatibility
     return {
       templatePath,
@@ -18,6 +27,9 @@ export class TemplateInheritanceEngine {
     };
   }
 
+  /**
+   *
+   */
   getStats() {
     return {
       templatesProcessed: 0,
@@ -28,10 +40,16 @@ export class TemplateInheritanceEngine {
     };
   }
 
+  /**
+   *
+   */
   async clearCache() {
     // No-op for now
   }
 
+  /**
+   *
+   */
   getConfig() {
     return this.options;
   }

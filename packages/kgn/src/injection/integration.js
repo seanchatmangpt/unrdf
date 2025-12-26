@@ -5,7 +5,7 @@
  * Provides seamless injection support for template processing.
  */
 
-import { inject, dryRun, processTemplate, initializeInjection } from './api.js';
+import { inject, dryRun, processTemplate as _processTemplate, initializeInjection } from './api.js';
 import { DEFAULT_CONFIG, INJECTION_MODES } from './constants.js';
 
 /**
@@ -147,7 +147,7 @@ async function processInjectionTemplate(template, data, options, injectionEngine
 /**
  * Render template content (without injection)
  */
-async function renderTemplateContent(content, data, options) {
+async function renderTemplateContent(content, data, _options) {
   // Simple variable interpolation - in production use proper template engine
   return content.replace(/\{\{(\w+)\}\}/g, (match, variable) => {
     return data[variable] || match;
@@ -219,7 +219,7 @@ function parseFrontmatter(text) {
 /**
  * Create injection-aware template loader
  */
-export function createInjectionTemplateLoader(baseLoader, injectionConfig = {}) {
+export function createInjectionTemplateLoader(baseLoader, _injectionConfig = {}) {
   return {
     ...baseLoader,
 

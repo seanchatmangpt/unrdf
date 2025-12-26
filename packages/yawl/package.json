@@ -32,7 +32,9 @@
     "format:check": "prettier --check \"src/**/*.mjs\" \"test/**/*.mjs\"",
     "validate": "npm run lint && npm run typecheck && npm run test",
     "build": "unbuild && tsc --emitDeclarationOnly",
-    "build:types": "tsc --emitDeclarationOnly"
+    "build:types": "tsc --emitDeclarationOnly",
+    "build:prod": "NODE_ENV=production unbuild",
+    "prepublishOnly": "pnpm run build:prod"
   },
   "keywords": [
     "workflow",

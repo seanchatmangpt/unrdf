@@ -117,15 +117,17 @@ function wrapQueryResult(queryResult, queryType) {
         // Format raw Maps from Oxigraph
         rows = queryResult.map(item => {
           const row = {};
+          // Add Map-like .get() method for backward compatibility
+          row.get = function(key) {
+            return this[key];
+          };
           for (const [key, val] of item.entries()) {
             if (val && typeof val === 'object' && 'value' in val) {
-              row[key] = {
-                type: val.termType || 'Literal',
-                value: val.value || val.toString(),
-              };
+              // Keep the original RDF term object for compatibility with getQuads()
+              row[key] = val;
             } else {
               row[key] = {
-                type: 'Literal',
+                termType: 'Literal',
                 value: val,
               };
             }
@@ -135,6 +137,15 @@ function wrapQueryResult(queryResult, queryType) {
       } else {
         // Already formatted (from UnrdfStore) or empty
         rows = Array.isArray(queryResult) ? queryResult : [];
+        // Add .get() method if not already present
+        if (Array.isArray(rows)) {
+          rows = rows.map(row => {
+            if (row && !row.get) {
+              row.get = function(key) { return this[key]; };
+            }
+            return row;
+          });
+        }
       }
 
       rows.type = 'select';

@@ -7,15 +7,13 @@
  * scenario DSL, fluent assertions, and helper functions.
  */
 
-import { createStore } from '@unrdf/oxigraph';
+import { createStore } from '@unrdf/oxigraph'; // TODO: Replace with Oxigraph Store
 import { randomUUID } from 'crypto';
+import { KnowledgeHookManager } from '@unrdf/knowledge-engine';
+import { _PolicyPackManager } from '@unrdf/knowledge-engine';
+import { _createLockchainWriter } from '@unrdf/knowledge-engine';
+import { _createEffectSandbox } from '@unrdf/knowledge-engine';
 import { z } from 'zod';
-
-// NOTE: Legacy imports commented out - these are for internal use only
-// import { KnowledgeHookManager } from '../knowledge-engine/knowledge-hook-manager.mjs';
-// import { _PolicyPackManager } from '../knowledge-engine/policy-pack.mjs';
-// import { _createLockchainWriter } from '../knowledge-engine/lockchain-writer.mjs';
-// import { _createEffectSandbox } from '../knowledge-engine/effect-sandbox.mjs';
 
 /**
  * Schema for test scenario
@@ -641,30 +639,6 @@ export function createTestContext() {
 export function createDefaultTestContext() {
   return new TestContextBuilder()
     .withStore(createStore())
-    // .withManager(new KnowledgeHookManager()) // Commented out - internal use only
+    .withManager(new KnowledgeHookManager())
     .build();
 }
-
-// Export enhanced helpers
-export {
-  createTestStore,
-  createTestWorkflow,
-  mockOTEL,
-  waitForCondition,
-  createQuad,
-  measureTime,
-  testBatch,
-  snapshotStore,
-  assertSnapshotsEqual,
-} from './helpers.mjs';
-
-// Export fixtures
-export {
-  sampleRDF,
-  sampleWorkflows,
-  sampleCaseData,
-  sampleHooks,
-  sampleQueries,
-  performanceFixtures,
-  errorScenarios,
-} from './fixtures.mjs';

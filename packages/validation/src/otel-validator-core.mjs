@@ -225,6 +225,15 @@ export class OTELValidator {
         await new Promise(resolve => setTimeout(resolve, 100));
         console.log(`[OTELValidator] Wait completed`);
 
+        // CRITICAL FIX: Merge synthetic spans from temp storage into spanCollector
+        // Feature executors create synthetic spans and store them in _validationTempSpans
+        // We need to move them into spanCollector before collecting
+        const tempSpans = this._validationTempSpans.get(validationId) || [];
+        if (tempSpans.length > 0) {
+          console.log(`[OTELValidator] Merging ${tempSpans.length} synthetic spans into collector`);
+          tempSpans.forEach(spanData => this._addSpan(validationId, spanData));
+        }
+
         // Collect and analyze spans
         console.log(`[OTELValidator] Collecting spans/metrics for: ${validationId}`);
         const collectedSpans = this._collectSpans(validationId);

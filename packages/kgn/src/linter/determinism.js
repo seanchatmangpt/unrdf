@@ -3,7 +3,13 @@
  * Migrated from ~/unjucks with comprehensive determinism checking
  */
 
+/**
+ *
+ */
 export class TemplateLinter {
+  /**
+   *
+   */
   constructor(options = {}) {
     this.strict = options.strict !== false;
     this.warnOnly = options.warnOnly === true;
@@ -332,7 +338,7 @@ export class TemplateLinter {
     });
 
     // Subtract points for warnings
-    warnings.forEach(warning => {
+    warnings.forEach(_warning => {
       score -= 2;
     });
 
@@ -380,7 +386,7 @@ export class TemplateLinter {
       }
     ];
 
-    fixes.forEach(({ pattern, replacement, description }) => {
+    fixes.forEach(({ pattern, replacement, description: _description }) => {
       const matches = fixed.match(pattern);
       if (matches) {
         fixed = fixed.replace(pattern, replacement);

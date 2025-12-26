@@ -17,7 +17,13 @@
 import crypto from 'crypto';
 import path from 'path';
 
+/**
+ *
+ */
 export class DeterministicRenderer {
+  /**
+   *
+   */
   constructor(options = {}) {
     // Core configuration
     this.staticBuildTime = options.staticBuildTime || '2024-01-01T00:00:00.000Z';
@@ -388,7 +394,7 @@ export class DeterministicRenderer {
   /**
    * Validate data context against template requirements
    */
-  _validateDataContext(data, variables) {
+  _validateDataContext(data, _variables) {
     const validated = { ...data };
     
     // Add deterministic metadata
@@ -479,7 +485,7 @@ export class DeterministicRenderer {
   /**
    * Execute main template rendering
    */
-  async _executeRender(plan, context, includes) {
+  async _executeRender(plan, _context, _includes) {
     // This would integrate with the template engine
     // For now, return processed template content
     return `${plan.structure.template}\n<!-- Rendered deterministically at ${this.staticBuildTime} -->`;
@@ -547,6 +553,9 @@ export class DeterministicRenderer {
 
   // DEFAULT DEPENDENCY IMPLEMENTATIONS (for production use)
 
+  /**
+   *
+   */
   _createDefaultLoader() {
     return {
       async load(templatePath) {
@@ -556,6 +565,9 @@ export class DeterministicRenderer {
     };
   }
 
+  /**
+   *
+   */
   _createDefaultResolver() {
     return {
       resolve(includePath, basePath) {
@@ -564,9 +576,12 @@ export class DeterministicRenderer {
     };
   }
 
+  /**
+   *
+   */
   _createDefaultProvider() {
     return {
-      async query(sparqlQuery) {
+      async query(_sparqlQuery) {
         // Default implementation - could integrate with RDF stores
         return [];
       }

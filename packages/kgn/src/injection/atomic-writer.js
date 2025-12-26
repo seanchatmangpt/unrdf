@@ -10,9 +10,15 @@ import { join, dirname, basename, extname } from 'path';
 import { createHash } from 'crypto';
 import { pipeline } from 'stream/promises';
 
-import { ERROR_CODES, CHECKSUM_ALGORITHMS, LOCK_CONFIG } from './constants.js';
+import { ERROR_CODES as _ERROR_CODES, CHECKSUM_ALGORITHMS, LOCK_CONFIG } from './constants.js';
 
+/**
+ *
+ */
 export class AtomicWriter {
+  /**
+   *
+   */
   constructor(config = {}) {
     this.config = config;
     this.activeLocks = new Map();
@@ -118,6 +124,9 @@ export class AtomicWriter {
    * Private Methods
    */
 
+  /**
+   *
+   */
   async _acquireLock(filePath) {
     const lockId = `${filePath}-${Date.now()}-${Math.random()}`;
     const startTime = Date.now();
@@ -154,6 +163,9 @@ export class AtomicWriter {
     throw new Error(`Failed to acquire lock for ${filePath} within timeout`);
   }
 
+  /**
+   *
+   */
   async _releaseLock(lockId) {
     const lockFile = this.activeLocks.get(lockId);
     if (lockFile) {
@@ -166,6 +178,9 @@ export class AtomicWriter {
     }
   }
 
+  /**
+   *
+   */
   async _createBackup(filePath, operationId) {
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
     const ext = extname(filePath);
@@ -182,6 +197,9 @@ export class AtomicWriter {
     return backupPath;
   }
 
+  /**
+   *
+   */
   async _createTempFile(filePath) {
     const dir = dirname(filePath);
     const base = basename(filePath);
@@ -189,6 +207,9 @@ export class AtomicWriter {
     return join(dir, tempName);
   }
 
+  /**
+   *
+   */
   async _calculateChecksum(filePath, algorithm = CHECKSUM_ALGORITHMS.SHA256) {
     const hash = createHash(algorithm);
     const stream = createReadStream(filePath);

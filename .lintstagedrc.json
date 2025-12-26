@@ -1,0 +1,4 @@
+{
+  "*.{mjs,js}": ["eslint --cache --cache-location .eslintcache --cache-strategy content --fix"],
+  "*.{json,md,yml,yaml}": ["prettier --write"]
+}

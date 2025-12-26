@@ -1,0 +1,43 @@
+{
+  "name": "@unrdf/yawl-ai",
+  "version": "1.0.0",
+  "description": "AI-powered workflow optimization using TensorFlow.js and YAWL patterns",
+  "type": "module",
+  "main": "src/index.mjs",
+  "exports": {
+    ".": "./src/index.mjs",
+    "./predictor": "./src/ml/workflow-predictor.mjs",
+    "./optimizer": "./src/ml/performance-optimizer.mjs",
+    "./anomaly": "./src/ml/anomaly-detector.mjs",
+    "./adapter": "./src/integration/yawl-adapter.mjs"
+  },
+  "scripts": {
+    "demo": "node examples/ai-optimization-demo.mjs",
+    "test": "vitest run"
+  },
+  "keywords": [
+    "ai",
+    "ml",
+    "tensorflow",
+    "workflow",
+    "yawl",
+    "optimization",
+    "prediction"
+  ],
+  "dependencies": {
+    "@tensorflow/tfjs-node": "^4.22.0",
+    "@tensorflow/tfjs-layers": "^4.22.0",
+    "ml-matrix": "^6.11.1",
+    "zod": "^4.1.13"
+  },
+  "optionalDependencies": {
+    "@unrdf/yawl": "workspace:*"
+  },
+  "devDependencies": {
+    "vitest": "^4.0.15"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=7.0.0"
+  }
+}

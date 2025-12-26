@@ -79,7 +79,7 @@ export const contract = (uri, prefixes = {}) => {
  * @param {any} dataset - Mock dataset (ignored in stub)
  * @returns {Array} Mock query results
  */
-export const sparql = async (query, dataset = null) => {
+export const sparql = async (query, _dataset = null) => {
   if (!query || typeof query !== 'string') return [];
 
   // Return mock results for known queries
@@ -227,7 +227,7 @@ export const rdfDatatype = (value, datatype = 'string') => {
  * @param {any} shape - SHACL shape
  * @returns {Object} Mock validation result
  */
-export const shaclValidate = (data, shape) => {
+export const shaclValidate = (_data, _shape) => {
   return {
     conforms: true,
     results: [],
@@ -241,7 +241,7 @@ export const shaclValidate = (data, shape) => {
  * @param {string} reasoner - Reasoner type
  * @returns {any} Original graph (no inference applied)
  */
-export const infer = (graph, reasoner = 'rdfs') => {
+export const infer = (graph, _reasoner = 'rdfs') => {
   return graph; // No-op for stub
 };
 

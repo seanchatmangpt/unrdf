@@ -16,7 +16,7 @@
 import { defineCommand } from 'citty';
 import { resolve } from 'path';
 import { cwd } from 'process';
-import { createProjectInitializationPipeline } from '../../project-engine/initialize.mjs';
+import { createProjectInitializationPipeline } from '@unrdf/project-engine';
 
 /**
  * Format duration in human-readable format

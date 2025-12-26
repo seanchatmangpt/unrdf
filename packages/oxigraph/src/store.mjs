@@ -24,11 +24,28 @@ class OxigraphStore {
 
   /**
    * Add a quad to the store (compatibility method)
-   * @param {Object} quad - RDF quad to add
+   * Supports two call patterns:
+   * 1. addQuad(quadObject)
+   * 2. addQuad(subject, predicate, object, graph?)
+   * @param {Object} quadOrSubject - RDF quad object OR subject term
+   * @param {Object} [predicate] - Predicate term (if using separate args)
+   * @param {Object} [object] - Object term (if using separate args)
+   * @param {Object} [graph] - Graph term (if using separate args)
    * @returns {void}
    */
-  addQuad(quad) {
-    return this.add(quad);
+  addQuad(quadOrSubject, predicate, object, graph) {
+    // If predicate is provided, build quad from separate args
+    if (predicate !== undefined) {
+      const quad = oxigraph.quad(
+        quadOrSubject,
+        predicate,
+        object,
+        graph || oxigraph.defaultGraph()
+      );
+      return this.add(quad);
+    }
+    // Otherwise treat first arg as complete quad object
+    return this.add(quadOrSubject);
   }
 
   /**
@@ -42,12 +59,29 @@ class OxigraphStore {
   }
 
   /**
-   * Delete a quad from the store (compatibility method)
-   * @param {Object} quad - RDF quad to delete
+   * Remove a quad from the store (alias for delete, compatibility method)
+   * Supports two call patterns:
+   * 1. removeQuad(quadObject)
+   * 2. removeQuad(subject, predicate, object, graph?)
+   * @param {Object} quadOrSubject - RDF quad object OR subject term
+   * @param {Object} [predicate] - Predicate term (if using separate args)
+   * @param {Object} [object] - Object term (if using separate args)
+   * @param {Object} [graph] - Graph term (if using separate args)
    * @returns {void}
    */
-  removeQuad(quad) {
-    return this.delete(quad);
+  removeQuad(quadOrSubject, predicate, object, graph) {
+    // If predicate is provided, build quad from separate args
+    if (predicate !== undefined) {
+      const quad = oxigraph.quad(
+        quadOrSubject,
+        predicate,
+        object,
+        graph || oxigraph.defaultGraph()
+      );
+      return this.delete(quad);
+    }
+    // Otherwise treat first arg as complete quad object
+    return this.delete(quadOrSubject);
   }
 
   /**
@@ -61,7 +95,7 @@ class OxigraphStore {
   }
 
   /**
-   * Match quads by pattern
+   * Match quads by pattern (alias: getQuads for compatibility)
    * @param {Object} [subject] - Subject to match
    * @param {Object} [predicate] - Predicate to match
    * @param {Object} [object] - Object to match
@@ -75,6 +109,18 @@ class OxigraphStore {
     } catch (error) {
       throw new Error(`Match operation failed: ${error.message}`);
     }
+  }
+
+  /**
+   * Get quads matching a pattern (alias for match)
+   * @param {Object} [subject] - Subject to match
+   * @param {Object} [predicate] - Predicate to match
+   * @param {Object} [object] - Object to match
+   * @param {Object} [graph] - Graph to match
+   * @returns {Array<Object>} Matching quads
+   */
+  getQuads(subject, predicate, object, graph) {
+    return this.match(subject, predicate, object, graph);
   }
 
   /**

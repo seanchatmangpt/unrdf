@@ -1,0 +1,40 @@
+{
+  "name": "@unrdf/blockchain",
+  "version": "1.0.0",
+  "description": "Blockchain integration for UNRDF - Cryptographic receipt anchoring and audit trails",
+  "type": "module",
+  "main": "src/index.mjs",
+  "exports": {
+    ".": "./src/index.mjs",
+    "./anchoring": "./src/anchoring/receipt-anchorer.mjs",
+    "./contracts": "./src/contracts/workflow-verifier.mjs",
+    "./merkle": "./src/merkle/merkle-proof-generator.mjs"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "demo": "node examples/blockchain-demo.mjs",
+    "demo:full": "node examples/comprehensive-demo.mjs"
+  },
+  "keywords": [
+    "blockchain",
+    "ethereum",
+    "receipts",
+    "merkle-tree",
+    "audit-trail",
+    "cryptography"
+  ],
+  "dependencies": {
+    "@noble/hashes": "^1.3.3",
+    "@unrdf/kgc-4d": "workspace:*",
+    "@unrdf/yawl": "workspace:*",
+    "ethers": "^6.10.0",
+    "merkletreejs": "^0.3.11",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "vitest": "^1.1.0"
+  },
+  "author": "UNRDF Team",
+  "license": "MIT"
+}

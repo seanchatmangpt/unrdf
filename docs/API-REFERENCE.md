@@ -156,6 +156,186 @@ const query = `
 
 ---
 
+## 📦 @unrdf/yawl - Workflow Engine
+
+### Create Workflow
+
+```javascript
+import { createWorkflow } from '@unrdf/yawl';
+
+const workflow = createWorkflow({
+  id: 'order-fulfillment',
+  name: 'Order Fulfillment Process',
+
+  tasks: [
+    { id: 'validate', name: 'Validate Order', kind: 'atomic' },
+    { id: 'charge', name: 'Charge Payment', kind: 'atomic' },
+    { id: 'ship', name: 'Ship Product', kind: 'atomic' }
+  ],
+
+  flows: [
+    { from: 'validate', to: 'charge' },
+    { from: 'charge', to: 'ship' }
+  ]
+});
+```
+
+**Task kinds:** `atomic`, `composite`, `multiple-instance`, `automated`
+
+---
+
+### Create Case (Workflow Instance)
+
+```javascript
+import { createCase } from '@unrdf/yawl';
+
+const orderCase = await createCase(workflow, {
+  caseId: 'ORD-12345',
+  data: {
+    orderId: '12345',
+    customerId: 'alice',
+    items: [{ sku: 'ABC', qty: 2 }]
+  }
+});
+
+console.log(orderCase.id);     // 'ORD-12345'
+console.log(orderCase.status); // 'active'
+```
+
+---
+
+### Task Lifecycle
+
+```javascript
+import { enableTask, startTask, completeTask } from '@unrdf/yawl';
+
+// 1. Enable task (ready to execute)
+await enableTask(orderCase, 'validate');
+
+// 2. Start task (assign to worker)
+await startTask(orderCase, 'validate', {
+  assignedTo: 'worker:bob'
+});
+
+// 3. Complete task (mark done + output data)
+await completeTask(orderCase, 'validate', {
+  valid: true,
+  validatedBy: 'worker:bob'
+});
+
+// Next task auto-enabled by control flow
+console.log(orderCase.enabledTasks); // ['charge']
+```
+
+**States:** `enabled` → `started` → `completed`
+
+---
+
+### Query Case State
+
+```javascript
+// Check case status
+console.log(orderCase.status); // 'active', 'completed', 'failed'
+
+// List completed tasks
+console.log(orderCase.completedTasks); // ['validate', 'charge']
+
+// List enabled tasks (ready to execute)
+console.log(orderCase.enabledTasks); // ['ship']
+
+// Access case data
+console.log(orderCase.data.customerId); // 'alice'
+```
+
+---
+
+### Cancel Work Item
+
+```javascript
+import { cancelWorkItem } from '@unrdf/yawl';
+
+await cancelWorkItem(orderCase, 'ship', {
+  reason: 'Customer cancelled order'
+});
+
+console.log(orderCase.status); // 'cancelled'
+```
+
+---
+
+### Workflow Patterns (Van der Aalst)
+
+```javascript
+import { parallelSplit, synchronization, exclusiveChoice } from '@unrdf/yawl';
+
+// Parallel split: Execute tasks A and B concurrently
+const wf1 = createWorkflow({
+  tasks: [
+    { id: 'start', name: 'Start' },
+    { id: 'taskA', name: 'Task A' },
+    { id: 'taskB', name: 'Task B' },
+    { id: 'end', name: 'End' }
+  ],
+  flows: [
+    { from: 'start', to: 'taskA' },
+    { from: 'start', to: 'taskB' },
+    { from: 'taskA', to: 'end' },
+    { from: 'taskB', to: 'end' }
+  ],
+  splitBehavior: 'AND', // Parallel split
+  joinBehavior: 'AND'   // Synchronization (wait for both)
+});
+
+// Exclusive choice: Either task A OR task B
+const wf2 = createWorkflow({
+  /* ... */
+  splitBehavior: 'XOR', // Exclusive choice
+  joinBehavior: 'XOR'   // Simple merge
+});
+```
+
+**Patterns:** AND (parallel), XOR (exclusive), OR (multi-choice)
+
+---
+
+### Replay Case (Event Sourcing)
+
+```javascript
+import { replayCase } from '@unrdf/yawl';
+
+// Reconstruct case from event log
+const reconstructed = await replayCase(workflow, 'ORD-12345');
+
+console.log(reconstructed.completedTasks); // All tasks completed historically
+```
+
+**Use case:** Audit, debugging, time-travel
+
+---
+
+### Cryptographic Receipts
+
+Every state transition returns a cryptographic receipt:
+
+```javascript
+const receipt = await completeTask(store, {
+  caseId: 'case-123',
+  workItemId: 'wi-456',
+});
+
+console.log({
+  receipt_id: receipt.receipt_id,     // Unique receipt ID
+  hash: receipt.hash,                 // SHA-256 hash
+  previous_hash: receipt.previous_hash, // Previous receipt hash (chain)
+  timestamp: receipt.timestamp,       // ISO 8601 timestamp
+  decision: receipt.decision,         // ACCEPT | REJECT
+  justification: receipt.justification, // Human-readable explanation
+  enabled_tasks: receipt.enabled_tasks, // Next tasks enabled
+});
+```
+
+---
+
 ## 📦 @unrdf/kgc-4d - Event Sourcing & Time-Travel
 
 ### Initialize Store
@@ -168,8 +348,6 @@ const kgc = new KGCStore({
   autoCommit: true      // Optional: Git commit every freeze
 });
 ```
-
----
 
 ### Record Events
 
@@ -397,160 +575,33 @@ registerHook(trimLiterals);       // Trim whitespace from literals
 
 ---
 
-## 📦 @unrdf/yawl - Workflow Engine
+## 📦 @unrdf/oxigraph - High-Performance RDF Store
 
-### Create Workflow
-
-```javascript
-import { createWorkflow } from '@unrdf/yawl';
-
-const workflow = createWorkflow({
-  id: 'order-fulfillment',
-  name: 'Order Fulfillment Process',
-
-  tasks: [
-    { id: 'validate', name: 'Validate Order', kind: 'atomic' },
-    { id: 'charge', name: 'Charge Payment', kind: 'atomic' },
-    { id: 'ship', name: 'Ship Product', kind: 'atomic' }
-  ],
-
-  flows: [
-    { from: 'validate', to: 'charge' },
-    { from: 'charge', to: 'ship' }
-  ]
-});
-```
-
-**Task kinds:** `atomic`, `composite`, `multiple-instance`, `automated`
-
----
-
-### Create Case (Workflow Instance)
+### Create Store
 
 ```javascript
-import { createCase } from '@unrdf/yawl';
+import { createStore } from '@unrdf/oxigraph';
 
-const orderCase = await createCase(workflow, {
-  caseId: 'ORD-12345',
-  data: {
-    orderId: '12345',
-    customerId: 'alice',
-    items: [{ sku: 'ABC', qty: 2 }]
-  }
-});
-
-console.log(orderCase.id);     // 'ORD-12345'
-console.log(orderCase.status); // 'active'
+const store = createStore();
+// Fast, WASM-based RDF triple store
 ```
 
 ---
 
-### Task Lifecycle
+### Load & Query
 
 ```javascript
-import { enableTask, startTask, completeTask } from '@unrdf/yawl';
+// Load Turtle data
+store.load(turtleData, { format: 'text/turtle' });
 
-// 1. Enable task (ready to execute)
-await enableTask(orderCase, 'validate');
+// SPARQL query
+const results = store.query('SELECT ?s WHERE { ?s ?p ?o }');
 
-// 2. Start task (assign to worker)
-await startTask(orderCase, 'validate', {
-  assignedTo: 'worker:bob'
-});
-
-// 3. Complete task (mark done + output data)
-await completeTask(orderCase, 'validate', {
-  valid: true,
-  validatedBy: 'worker:bob'
-});
-
-// Next task auto-enabled by control flow
-console.log(orderCase.enabledTasks); // ['charge']
+// Iterate
+for (const binding of results) {
+  console.log(binding.get('s').value);
+}
 ```
-
-**States:** `enabled` → `started` → `completed`
-
----
-
-### Query Case State
-
-```javascript
-// Check case status
-console.log(orderCase.status); // 'active', 'completed', 'failed'
-
-// List completed tasks
-console.log(orderCase.completedTasks); // ['validate', 'charge']
-
-// List enabled tasks (ready to execute)
-console.log(orderCase.enabledTasks); // ['ship']
-
-// Access case data
-console.log(orderCase.data.customerId); // 'alice'
-```
-
----
-
-### Cancel Work Item
-
-```javascript
-import { cancelWorkItem } from '@unrdf/yawl';
-
-await cancelWorkItem(orderCase, 'ship', {
-  reason: 'Customer cancelled order'
-});
-
-console.log(orderCase.status); // 'cancelled'
-```
-
----
-
-### Workflow Patterns (Van der Aalst)
-
-```javascript
-import { parallelSplit, synchronization, exclusiveChoice } from '@unrdf/yawl';
-
-// Parallel split: Execute tasks A and B concurrently
-const wf1 = createWorkflow({
-  tasks: [
-    { id: 'start', name: 'Start' },
-    { id: 'taskA', name: 'Task A' },
-    { id: 'taskB', name: 'Task B' },
-    { id: 'end', name: 'End' }
-  ],
-  flows: [
-    { from: 'start', to: 'taskA' },
-    { from: 'start', to: 'taskB' },
-    { from: 'taskA', to: 'end' },
-    { from: 'taskB', to: 'end' }
-  ],
-  splitBehavior: 'AND', // Parallel split
-  joinBehavior: 'AND'   // Synchronization (wait for both)
-});
-
-// Exclusive choice: Either task A OR task B
-const wf2 = createWorkflow({
-  /* ... */
-  splitBehavior: 'XOR', // Exclusive choice
-  joinBehavior: 'XOR'   // Simple merge
-});
-```
-
-**Patterns:** AND (parallel), XOR (exclusive), OR (multi-choice)
-
----
-
-### Replay Case (Event Sourcing)
-
-```javascript
-import { replayCase } from '@unrdf/yawl';
-
-// Reconstruct case from event log
-const reconstructed = await replayCase(workflow, 'ORD-12345');
-
-console.log(reconstructed.completedTasks); // All tasks completed historically
-```
-
-**Use case:** Audit, debugging, time-travel
 
 ---
 
@@ -664,6 +715,40 @@ await completeTask(wfCase, 'output', {
 
 ---
 
+### Pattern 5: Zod Validation
+
+All inputs validated with Zod schemas:
+
+```javascript
+import { WorkflowSpecSchema } from '@unrdf/yawl';
+
+// Validate before creating
+const validatedSpec = WorkflowSpecSchema.parse(workflowSpec);
+const receipt = await createWorkflow(store, validatedSpec);
+```
+
+---
+
+### Pattern 6: SPARQL Prefixes
+
+Use consistent namespace prefixes:
+
+```javascript
+const query = `
+  PREFIX yawl: <http://yawl.sourceforge.net/ontology/>
+  PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+  PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+  SELECT ?task ?status
+  WHERE {
+    ?workItem yawl:taskRef ?task ;
+              yawl:status ?status .
+  }
+`;
+```
+
+---
+
 ## 🚀 Performance Tips
 
 ### 1. Use Sync APIs Where Possible
@@ -740,17 +825,128 @@ const result = await executeHook(pooledHook, { quad });
 
 ---
 
+### 6. Batch Load Data
+
+Load data in bulk rather than one triple at a time:
+
+```javascript
+// ✅ Good: Load Turtle in bulk
+store.load(turtleData, { format: 'text/turtle' });
+
+// ❌ Bad: Add triples one by one
+quads.forEach(quad => store.add(quad));
+```
+
+---
+
+### 7. Use SPARQL Efficiently
+
+Index-friendly queries with specific subjects/predicates:
+
+```javascript
+// ✅ Good: Specific subject
+const results = store.query(`
+  SELECT ?name WHERE {
+    <http://example.com/alice> foaf:name ?name
+  }
+`);
+
+// ❌ Less efficient: No constraints
+const results = store.query(`
+  SELECT * WHERE { ?s ?p ?o }
+`);
+```
+
+---
+
+## 🔧 Error Handling
+
+### Validation Errors
+
+```javascript
+import { z } from 'zod';
+
+try {
+  const validated = WorkflowSpecSchema.parse(spec);
+} catch (error) {
+  if (error instanceof z.ZodError) {
+    console.error('Validation failed:', error.errors);
+  }
+}
+```
+
+### SPARQL Errors
+
+```javascript
+try {
+  const results = store.query(sparqlQuery);
+} catch (error) {
+  console.error('SPARQL error:', error.message);
+}
+```
+
+### Receipt Rejection
+
+```javascript
+const receipt = await completeTask(store, options);
+
+if (receipt.decision === 'REJECT') {
+  console.error('Task rejected:', receipt.justification);
+  // Handle rejection
+} else {
+  console.log('Task completed:', receipt.enabled_tasks);
+}
+```
+
+---
+
 ## 📖 Full Documentation
 
 | Package | Full API Docs |
 |---------|---------------|
 | **@unrdf/core** | [packages/core/README.md](../packages/core/README.md) |
+| **@unrdf/yawl** | [packages/yawl/README.md](../packages/yawl/README.md) |
 | **@unrdf/kgc-4d** | [packages/kgc-4d/README.md](../packages/kgc-4d/README.md) |
 | **@unrdf/hooks** | [packages/hooks/README.md](../packages/hooks/README.md) |
-| **@unrdf/yawl** | [packages/yawl/README.md](../packages/yawl/README.md) |
 | **@unrdf/oxigraph** | [packages/oxigraph/README.md](../packages/oxigraph/README.md) |
+
+---
+
+## TypeScript Support
+
+All packages include JSDoc type definitions:
+
+```javascript
+/**
+ * @typedef {Object} WorkflowSpec
+ * @property {string} id - Workflow identifier
+ * @property {string} name - Human-readable name
+ * @property {Task[]} tasks - Task definitions
+ * @property {Flow[]} flow - Control flow
+ */
+
+/**
+ * Create workflow definition
+ * @param {Store} store - RDF store
+ * @param {WorkflowSpec} spec - Workflow specification
+ * @returns {Promise<Receipt>} Creation receipt
+ */
+export async function createWorkflow(store, spec) {
+  // ...
+}
+```
+
+---
+
+## Next Steps
+
+- [Quick Start Guide](./guides/yawl-quickstart.md)
+- [YAWL Examples](../examples/yawl/)
+- [Use Case Guides](./guides/yawl-use-cases.md)
+- [Package READMEs](../packages/)
 
 ---
 
 **Need migration help?** → [MIGRATION.md](MIGRATION.md)
 **Understand design decisions?** → [adr/](adr/)
+**Questions?** See [UNRDF Documentation](https://github.com/unrdf/unrdf) or open an issue.

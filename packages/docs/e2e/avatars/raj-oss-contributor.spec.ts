@@ -63,8 +63,8 @@ Visit http://localhost:3000
 
       expect(response.status()).toBe(200)
       const data = await response.json()
-      expect(data.content).toContain('install' || 'Install')
-      expect(data.content).toContain('npm' || 'pnpm')
+      expect(data.content).toMatch(/install|Install/)
+      expect(data.content).toMatch(/npm|pnpm/)
     })
 
     test('should troubleshoot setup issues via AI', async ({ page }) => {
@@ -116,7 +116,7 @@ chmod 755 .data
       })
 
       const data = await response.json()
-      expect(data.content).toContain('Issue' || 'Error' || 'Solution')
+      expect(data.content).toMatch(/Issue|Error|Solution/)
     })
 
     test('should stream setup guidance', async ({ page }) => {
@@ -208,8 +208,8 @@ Then create PR on GitHub with:
       })
 
       const data = await response.json()
-      expect(data.content).toContain('Contribution' || 'workflow')
-      expect(data.content).toContain('commit' || 'PR')
+      expect(data.content).toMatch(/Contribution|workflow/)
+      expect(data.content).toMatch(/commit|PR/)
     })
 
     test('should get code style guidelines from AI', async ({ page }) => {
@@ -271,8 +271,8 @@ test('should do something', () => {
       })
 
       const data = await response.json()
-      expect(data.content).toContain('Style' || 'style')
-      expect(data.content).toContain('TypeScript' || 'Vue')
+      expect(data.content).toMatch(/Style|style/)
+      expect(data.content).toMatch(/TypeScript|Vue/)
     })
 
     test('should handle contribution query errors', async ({ page }) => {
@@ -310,8 +310,8 @@ test('should do something', () => {
       })
 
       const data = await response.json()
-      expect(data.content).toContain('architecture' || 'Architecture')
-      expect(data.content).toContain('Nuxt' || 'PGlite')
+      expect(data.content).toMatch(/architecture|Architecture/)
+      expect(data.content).toMatch(/Nuxt|PGlite/)
     })
 
     test('should get codebase navigation help', async ({ page }) => {
@@ -375,7 +375,7 @@ packages/docs/
       })
 
       const data = await response.json()
-      expect(data.content).toContain('Directory' || 'server' || 'app')
+      expect(data.content).toMatch(/Directory|server|app/)
     })
 
     test('should provide first contribution suggestions', async ({ page }) => {
@@ -423,7 +423,7 @@ packages/docs/
       })
 
       const data = await response.json()
-      expect(data.content).toContain('contribution' || 'Contribution' || 'first')
+      expect(data.content).toMatch(/contribution|Contribution|first/)
     })
 
     test('should provide multi-turn onboarding conversation', async ({ page }) => {
@@ -461,7 +461,7 @@ Then make a small change, test it, and submit a PR!`
       })
 
       const data1 = await response1.json()
-      expect(data1.content).toContain('Nuxt' || 'docs')
+      expect(data1.content).toMatch(/Nuxt|docs/)
 
       const response2 = await page.request.post('http://localhost:3000/api/chat', {
         data: {
@@ -474,7 +474,7 @@ Then make a small change, test it, and submit a PR!`
       })
 
       const data2 = await response2.json()
-      expect(data2.content).toContain('README' || 'npm' || 'PR')
+      expect(data2.content).toMatch(/README|npm|PR/)
     })
   })
 

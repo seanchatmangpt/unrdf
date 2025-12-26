@@ -4,11 +4,18 @@ import prettierConfig from 'eslint-config-prettier';
 
 export default [
   {
+    // Enable caching for faster incremental linting
+    linterOptions: {
+      reportUnusedDisableDirectives: true,
+    },
+  },
+  {
     ignores: [
       'dist/**',
       'coverage/**',
       'node_modules/**',
       '.nyc_output/**',
+      '.eslintcache',
       '*.config.mjs',
       'build.*.mjs'
     ]

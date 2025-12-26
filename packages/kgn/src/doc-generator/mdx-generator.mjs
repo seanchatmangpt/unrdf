@@ -6,7 +6,7 @@
 import nunjucks from 'nunjucks';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
-import { readFileSync } from 'fs';
+import { readFileSync as _readFileSync } from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

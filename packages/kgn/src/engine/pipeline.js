@@ -17,7 +17,13 @@
 
 import { DeterministicRenderer } from './renderer.js';
 
+/**
+ *
+ */
 export class DeterministicPipeline {
+  /**
+   *
+   */
   constructor(options = {}) {
     this.renderer = new DeterministicRenderer(options);
     this.enableValidation = options.enableValidation !== false;
@@ -348,7 +354,7 @@ export class DeterministicPipeline {
   /**
    * Verify pipeline result integrity
    */
-  async _verifyPipelineResult(attestResult, template, data) {
+  async _verifyPipelineResult(attestResult, _template, _data) {
     const expectedHash = this.renderer._hashContent(attestResult.content);
     const actualHash = attestResult.contentHash;
     

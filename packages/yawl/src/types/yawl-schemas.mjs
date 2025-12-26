@@ -145,8 +145,8 @@ export const ReceiptStateSchema = z.object({
   workItemStatus: WorkItemStatusSchema.optional(),
   enabledTasks: z.array(z.string().min(1)).optional(),
   activeWorkItems: z.array(z.string().uuid()).optional(),
-  caseData: z.record(z.unknown()).optional(),
-  conditionMarking: z.record(z.number().int().nonnegative()).optional(),
+  caseData: z.record(z.string(), z.unknown()).optional(),
+  conditionMarking: z.record(z.string(), z.number().int().nonnegative()).optional(),
 });
 
 /**
@@ -203,7 +203,7 @@ export const CaseSchema = z.object({
   parentCaseId: z.string().uuid().optional(),
 
   /** Case-level variable bindings */
-  caseData: z.record(z.unknown()).optional(),
+  caseData: z.record(z.string(), z.unknown()).optional(),
 
   /** Case creation timestamp */
   createdAt: z.coerce.date(),
@@ -241,10 +241,10 @@ export const TaskSchema = z.object({
   join: JoinTypeSchema.default('none'),
 
   /** Condition IDs that feed into this task */
-  inputConditions: z.array(z.string().min(1)).min(1),
+  inputConditions: z.array(z.string().min(1)).optional(),
 
   /** Condition IDs produced by this task */
-  outputConditions: z.array(z.string().min(1)).min(1),
+  outputConditions: z.array(z.string().min(1)).optional(),
 
   /** Resource IDs eligible to execute this task */
   resources: z.array(z.string().min(1)).default([]),
@@ -262,10 +262,10 @@ export const TaskSchema = z.object({
   cancellationSet: z.array(z.string().min(1)).optional(),
 
   /** Data mappings from case to task */
-  inputMappings: z.record(z.unknown()).optional(),
+  inputMappings: z.record(z.string(), z.unknown()).optional(),
 
   /** Data mappings from task to case */
-  outputMappings: z.record(z.unknown()).optional(),
+  outputMappings: z.record(z.string(), z.unknown()).optional(),
 
   /** Task documentation */
   documentation: z.string().max(2000).optional(),
@@ -318,7 +318,7 @@ export const WorkItemSchema = z.object({
   offeredTo: z.string().min(1).max(100).optional(),
 
   /** Work item data payload */
-  data: z.record(z.unknown()).optional(),
+  data: z.record(z.string(), z.unknown()).optional(),
 
   /** Work item creation timestamp */
   createdAt: z.coerce.date(),
@@ -449,7 +449,7 @@ export const ResourceSchema = z.object({
   position: z.string().min(1).max(100).optional(),
 
   /** Additional attributes */
-  attributes: z.record(z.unknown()).optional(),
+  attributes: z.record(z.string(), z.unknown()).optional(),
 
   /** Last activity timestamp */
   lastActive: z.coerce.date().optional(),
@@ -511,7 +511,7 @@ export const ReceiptSchema = z.object({
   previousReceiptId: z.string().uuid().optional(),
 
   /** Additional context */
-  metadata: z.record(z.unknown()).optional(),
+  metadata: z.record(z.string(), z.unknown()).optional(),
 });
 
 /**
@@ -549,7 +549,7 @@ export const YawlNetSpecSchema = z.object({
   resources: z.array(ResourceSchema).optional(),
 
   /** Net-level variables */
-  dataVariables: z.record(DataVariableSchema).optional(),
+  dataVariables: z.record(z.string(), DataVariableSchema).optional(),
 
   /** Specification author */
   author: z.string().min(1).max(100).optional(),

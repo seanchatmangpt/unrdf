@@ -19,7 +19,7 @@
  * @module @unrdf/core/rdf/n3-justified-only
  */
 
-import { Parser, Writer, StreamParser, StreamWriter, DataFactory } from 'n3';
+import { Parser, Writer, StreamParser, StreamWriter, DataFactory, Store } from 'n3';
 
 /**
  * Streaming RDF parser using N3's SAX-like API
@@ -123,6 +123,18 @@ export const UnrdfDataFactory = {
  * @deprecated Use UnrdfDataFactory instead
  */
 export { DataFactory as N3DataFactory };
+
+/**
+ * N3 Store - ONLY for backward compatibility detection
+ *
+ * **CRITICAL**: DO NOT use Store for new code!
+ * - Use createStore() from @unrdf/oxigraph instead
+ * - This export exists ONLY for n3-migration.mjs to detect N3.Store instances
+ * - Required for instanceof checks in backward compatibility layer
+ *
+ * @deprecated Use @unrdf/oxigraph createStore() for all new code
+ */
+export { Store as N3Store };
 
 /**
  * Re-export Parser and Writer for advanced streaming use cases
