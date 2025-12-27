@@ -1007,6 +1007,31 @@ importers:
         specifier: ^4.0.15
         version: 4.0.15(@opentelemetry/api@1.9.0)(@types/node@24.10.1)(@vitest/ui@4.0.15)(happy-dom@20.0.11)(jiti@2.6.1)(jsdom@27.2.0)(lightningcss@1.30.2)(msw@2.12.4(@types/node@24.10.1)(typescript@5.9.3))(terser@5.44.1)(yaml@2.8.2)
 
+  packages/kgc-claude:
+    dependencies:
+      '@unrdf/core':
+        specifier: workspace:*
+        version: link:../core
+      '@unrdf/kgc-4d':
+        specifier: workspace:*
+        version: link:../kgc-4d
+      '@unrdf/oxigraph':
+        specifier: workspace:*
+        version: link:../oxigraph
+      '@unrdf/yawl':
+        specifier: workspace:*
+        version: link:../yawl
+      hash-wasm:
+        specifier: ^4.12.0
+        version: 4.12.0
+      zod:
+        specifier: ^4.1.13
+        version: 4.2.1
+    devDependencies:
+      vitest:
+        specifier: ^4.0.15
+        version: 4.0.15(@opentelemetry/api@1.9.0)(@types/node@25.0.3)(@vitest/ui@4.0.15)(happy-dom@20.0.11)(jiti@2.6.1)(jsdom@27.2.0)(lightningcss@1.30.2)(msw@2.12.4(@types/node@25.0.3)(typescript@5.9.3))(terser@5.44.1)(yaml@2.8.2)
+
   packages/kgn:
     dependencies:
       '@unrdf/core':
@@ -28169,7 +28194,7 @@ snapshots:
       sirv: 3.0.2
       tinyglobby: 0.2.15
       tinyrainbow: 3.0.3
-      vitest: 4.0.15(@opentelemetry/api@1.9.0)(@types/node@24.10.1)(@vitest/ui@4.0.15)(happy-dom@20.0.11)(jiti@2.6.1)(jsdom@27.2.0)(lightningcss@1.30.2)(msw@2.12.4(@types/node@24.10.1)(typescript@5.9.3))(terser@5.44.1)(yaml@2.8.2)
+      vitest: 4.0.15(@opentelemetry/api@1.9.0)(@types/node@25.0.3)(@vitest/ui@4.0.15)(happy-dom@20.0.11)(jiti@2.6.1)(jsdom@27.2.0)(lightningcss@1.30.2)(msw@2.12.4(@types/node@25.0.3)(typescript@5.9.3))(terser@5.44.1)(yaml@2.8.2)
 
   '@vitest/utils@1.6.1':
     dependencies:
