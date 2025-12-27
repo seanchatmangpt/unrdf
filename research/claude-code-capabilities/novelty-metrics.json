@@ -1,0 +1,134 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Claude Code Novelty Metrics",
+  "version": "1.0.0",
+  "description": "Measurable criteria for determining capability novelty",
+
+  "axisMeasurements": {
+    "operator_steps": {
+      "description": "Reduction in keystrokes/commands required for a workflow",
+      "baseline_measurement": "Count all user inputs for workflow without composition",
+      "composition_measurement": "Count all user inputs for workflow with composition",
+      "novelty_threshold": 0.2,
+      "interpretation": ">=20% reduction indicates productive composition"
+    },
+    "policy_strength": {
+      "description": "Increase in forbidden tool paths that are actively prevented",
+      "baseline_measurement": "Count policy violations possible without composition",
+      "composition_measurement": "Count policy violations prevented by composition",
+      "novelty_threshold": 1,
+      "interpretation": ">=1 additional policy violation prevented indicates value"
+    },
+    "recovery_time": {
+      "description": "Reduction in time to restore working state after failure",
+      "baseline_measurement": "Time from failure detection to working state (manual)",
+      "composition_measurement": "Time from failure detection to working state (with composition)",
+      "novelty_threshold": 0.5,
+      "interpretation": ">=50% reduction indicates productive composition"
+    },
+    "parallel_throughput": {
+      "description": "Increase in tasks completed per unit time",
+      "baseline_measurement": "Tasks completed per minute (sequential)",
+      "composition_measurement": "Tasks completed per minute (parallel composition)",
+      "novelty_threshold": 1.5,
+      "interpretation": ">=1.5x throughput indicates productive composition"
+    },
+    "reproducibility": {
+      "description": "Improvement in same-input-same-output consistency",
+      "baseline_measurement": "Percentage of runs with identical output (without composition)",
+      "composition_measurement": "Percentage of runs with identical output (with composition)",
+      "novelty_threshold": 0.1,
+      "interpretation": ">=10% improvement indicates productive composition"
+    }
+  },
+
+  "compositionResults": [],
+
+  "resultSchema": {
+    "type": "object",
+    "properties": {
+      "composition": {
+        "type": "array",
+        "items": { "type": "string" },
+        "description": "List of capability node IDs in this composition"
+      },
+      "test_date": {
+        "type": "string",
+        "format": "date"
+      },
+      "test_description": {
+        "type": "string"
+      },
+      "baseline_metrics": {
+        "type": "object",
+        "properties": {
+          "operator_steps": { "type": "number" },
+          "policy_violations_possible": { "type": "number" },
+          "recovery_time_seconds": { "type": "number" },
+          "tasks_per_minute": { "type": "number" },
+          "reproducibility_pct": { "type": "number" }
+        }
+      },
+      "composition_metrics": {
+        "type": "object",
+        "properties": {
+          "operator_steps": { "type": "number" },
+          "policy_violations_prevented": { "type": "number" },
+          "recovery_time_seconds": { "type": "number" },
+          "tasks_per_minute": { "type": "number" },
+          "reproducibility_pct": { "type": "number" }
+        }
+      },
+      "deltas": {
+        "type": "object",
+        "properties": {
+          "operator_steps_reduction": { "type": "number" },
+          "policy_strength_increase": { "type": "number" },
+          "recovery_time_reduction": { "type": "number" },
+          "throughput_multiplier": { "type": "number" },
+          "reproducibility_improvement": { "type": "number" }
+        }
+      },
+      "novelty_axes_triggered": {
+        "type": "array",
+        "items": { "type": "string" }
+      },
+      "verdict": {
+        "type": "string",
+        "enum": ["productive", "not_productive", "inconclusive"]
+      },
+      "evidence": {
+        "type": "object",
+        "properties": {
+          "commands_executed": { "type": "array", "items": { "type": "string" } },
+          "output_artifacts": { "type": "array", "items": { "type": "string" } },
+          "screenshots": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "required": ["composition", "test_date", "baseline_metrics", "composition_metrics", "verdict"]
+  },
+
+  "validationRules": [
+    {
+      "rule": "must_run_test",
+      "description": "Composition must be actually executed, not just theorized",
+      "check": "evidence.commands_executed.length > 0"
+    },
+    {
+      "rule": "must_measure_baseline",
+      "description": "Baseline metrics must be measured, not assumed",
+      "check": "baseline_metrics is not null"
+    },
+    {
+      "rule": "must_trigger_axis",
+      "description": "At least one novelty axis must be triggered for productive verdict",
+      "check": "verdict === 'productive' implies novelty_axes_triggered.length > 0"
+    },
+    {
+      "rule": "must_be_reproducible",
+      "description": "Another researcher should be able to reproduce the result",
+      "check": "evidence.commands_executed provides complete reproduction path"
+    }
+  ]
+}
