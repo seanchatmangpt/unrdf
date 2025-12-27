@@ -2,7 +2,7 @@
 title: "Configure unrdf-workspace"
 type: "how-to"
 packageName: "unrdf-workspace"
-version: "5.0.1"
+version: "6.0.0-alpha.1"
 generatedAt: "2000-01-01T00:00:00.000Z"
 confidenceScore: 1
 proof: "96cad1c466698ee2a0e49350b7add64faf5650b6e7eedf7608f9103126793e03"

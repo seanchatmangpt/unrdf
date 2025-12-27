@@ -1,14 +1,18 @@
 {
   "confidence": {
-    "explanation": 0.7,
+    "explanation": 1,
     "howtos": 1,
     "reference": 0.8,
     "tutorials": 0.1
   },
   "evidence": {
-    "docsFiles": [],
+    "docsFiles": [
+      "AGENT-6-DELIVERABLES.md",
+      "latex-diagnostics-design.md",
+      "latex-pdf-building.md"
+    ],
     "examplesFiles": [],
-    "fingerprint": "d5186e978b4c3581325eafa41acd6da817d518a8e21d42f0388f79a8aea86ca6",
+    "fingerprint": "c78f76453c6450d0639a73ac6d6a2f7619fb90958dfd1dc94fa72c4c946bfffb",
     "readmeHeadings": [
       "Overview",
       "Architecture",
@@ -30,11 +34,12 @@
       "deterministic",
       "rdf"
     ],
-    "confidenceScore": 0.7,
+    "confidenceScore": 1,
     "id": "explanation-unrdf-kgc-cli-explanation",
     "source": [
       "keywords",
       "readme",
+      "docs",
       "inferred"
     ],
     "title": "Understanding @unrdf/kgc-cli",
