@@ -59,10 +59,13 @@ export async function parseTurtle(ttl, baseIRI = 'http://example.org/') {
     throw new TypeError('parseTurtle: baseIRI must be a string');
   }
 
-  const { Parser, Store } = await import('n3');
+  const { Parser } = await import('@unrdf/core/rdf/n3-justified-only');
+  const { createStore } = await import('@unrdf/oxigraph');
   const parser = new Parser({ baseIRI });
   const quads = parser.parse(ttl);
-  return new Store(quads);
+  const store = await createStore();
+  store.addQuads(quads);
+  return store;
 }
 
 /**
@@ -85,7 +88,7 @@ export async function toTurtle(store, options = {}) {
     throw new TypeError('toTurtle: store must be a valid Store instance');
   }
 
-  const { Writer } = await import('n3');
+  const { Writer } = await import('@unrdf/core/rdf/n3-justified-only');
   const writer = new Writer({
     format: 'Turtle',
     prefixes: options.prefixes || {},
@@ -124,7 +127,7 @@ export async function toNQuads(store, options = {}) {
     throw new TypeError('toNQuads: store must be a valid Store instance');
   }
 
-  const { Writer } = await import('n3');
+  const { Writer } = await import('@unrdf/core/rdf/n3-justified-only');
   const writer = new Writer({
     format: 'N-Quads',
     ...options,
@@ -159,8 +162,8 @@ export async function toNQuads(store, options = {}) {
  *   { value: 'Alice', language: 'en' }
  * );
  */
-export function createQuad(subject, predicate, object, graph) {
-  const { DataFactory } = require('n3');
+export async function createQuad(subject, predicate, object, graph) {
+  const { DataFactory } = await import('@unrdf/core/rdf/n3-justified-only');
   const { namedNode, literal, quad, defaultGraph } = DataFactory;
 
   const subjectNode = namedNode(subject);

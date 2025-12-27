@@ -269,7 +269,7 @@ export async function useCanon(options = {}) {
       }
       const canonical = await this.canonicalize(unionStore, options);
       // Parse canonical N-Quads back into a Store
-      const { Parser } = await import('n3');
+      const { Parser } = await import('@unrdf/core/rdf/n3-justified-only');
       const parser = new Parser({ format: 'N-Quads' });
       const canonicalStore = await createStore();
       const quads = parser.parse(canonical);

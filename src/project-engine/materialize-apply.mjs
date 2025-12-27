@@ -254,7 +254,6 @@ async function snapshotFileSystem(root) {
     return { store, hash };
   } catch (err) {
     // If directory doesn't exist, return empty store
-    const { Store } = await import('n3');
     return {
       store: await createStore(),
       hash: 'empty',

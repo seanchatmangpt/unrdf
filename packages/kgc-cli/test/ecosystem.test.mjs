@@ -107,8 +107,8 @@ describe('Category 1: Extension Contract Tests', () => {
         it('should have valid argsSchema if defined', () => {
           if (!extension) return;
 
-          for (const [noun, nounData] of Object.entries(extension.nouns)) {
-            for (const [verb, verbData] of Object.entries(nounData.verbs)) {
+          for (const [_noun, nounData] of Object.entries(extension.nouns)) {
+            for (const [_verb, verbData] of Object.entries(nounData.verbs)) {
               if (verbData.argsSchema) {
                 // Should be a Zod schema with .parse method
                 expect(verbData.argsSchema.parse).toBeDefined();
@@ -123,12 +123,12 @@ describe('Category 1: Extension Contract Tests', () => {
 
           // Find first verb with argsSchema
           let testVerb = null;
-          let testNoun = null;
+          let _testNoun = null;
 
-          outer: for (const [noun, nounData] of Object.entries(extension.nouns)) {
+          outer: for (const [_noun, nounData] of Object.entries(extension.nouns)) {
             for (const [verb, verbData] of Object.entries(nounData.verbs)) {
               if (verbData.argsSchema) {
-                testNoun = noun;
+                _testNoun = verb;
                 testVerb = verbData;
                 break outer;
               }
@@ -313,12 +313,12 @@ describe('Category 2: Registry Integration Tests', () => {
       expect(Object.keys(tree.nouns).length).toBeGreaterThan(0);
 
       // Each noun should have verbs
-      for (const [noun, nounData] of Object.entries(tree.nouns)) {
+      for (const [_noun, nounData] of Object.entries(tree.nouns)) {
         expect(nounData.verbs).toBeDefined();
         expect(Object.keys(nounData.verbs).length).toBeGreaterThan(0);
 
         // Each verb should have handler and source
-        for (const [verb, verbData] of Object.entries(nounData.verbs)) {
+        for (const [_verb, verbData] of Object.entries(nounData.verbs)) {
           expect(verbData.handler).toBeDefined();
           expect(typeof verbData.handler).toBe('function');
           expect(verbData._source).toBeDefined();
@@ -381,11 +381,11 @@ describe('Category 3: Handler Execution Tests', () => {
       const tree = registry.buildCommandTree();
 
       // Test at least one handler from each loaded extension
-      for (const [noun, nounData] of Object.entries(tree.nouns)) {
+      for (const [_noun, nounData] of Object.entries(tree.nouns)) {
         const verbs = Object.entries(nounData.verbs);
         if (verbs.length === 0) continue;
 
-        const [verb, verbData] = verbs[0];
+        const [_verb, verbData] = verbs[0];
 
         try {
           // Invoke with empty args (should handle gracefully)
@@ -514,8 +514,8 @@ describe('Category 3: Handler Execution Tests', () => {
         failedExecution: 0
       };
 
-      for (const [noun, nounData] of Object.entries(tree.nouns)) {
-        for (const [verb, verbData] of Object.entries(nounData.verbs)) {
+      for (const [_noun, nounData] of Object.entries(tree.nouns)) {
+        for (const [_verb, verbData] of Object.entries(nounData.verbs)) {
           results.total++;
 
           try {
@@ -944,11 +944,11 @@ describe('Category 7: End-to-End CLI Tests', () => {
 
       const tree = registry.buildCommandTree();
 
-      Object.entries(tree.nouns).forEach(([noun, nounData]) => {
+      Object.entries(tree.nouns).forEach(([_noun, nounData]) => {
         const verbs = Object.keys(nounData.verbs);
 
-        verbs.forEach(verb => {
-          const verbData = nounData.verbs[verb];
+        verbs.forEach(_verb => {
+          const verbData = nounData.verbs[_verb];
 
           // Should have description
           expect(verbData.description || nounData.description).toBeDefined();
@@ -971,8 +971,8 @@ describe('Category 7: End-to-End CLI Tests', () => {
       // Find commands with argsSchema
       let schemasFound = 0;
 
-      Object.entries(tree.nouns).forEach(([noun, nounData]) => {
-        Object.entries(nounData.verbs).forEach(([verb, verbData]) => {
+      Object.entries(tree.nouns).forEach(([_noun, nounData]) => {
+        Object.entries(nounData.verbs).forEach(([_verb, verbData]) => {
           if (verbData.argsSchema) {
             schemasFound++;
 
