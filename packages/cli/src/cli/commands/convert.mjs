@@ -1,207 +1,269 @@
 /**
- * @fileoverview Conversion commands for RDF format conversion
+ * Convert Command - RDF Format Conversion
  *
- * @description
- * CLI commands for converting between RDF formats.
- * Supports Turtle, N-Triples, N-Quads, and JSON-LD.
+ * Convert RDF data between formats:
+ * - Turtle (.ttl)
+ * - N-Triples (.nt)
+ * - N-Quads (.nq)
+ * - JSON-LD (.jsonld)
  *
  * @module cli/commands/convert
  */
 
 import { defineCommand } from 'citty';
-import { z } from 'zod';
-import { loadGraph, saveGraph } from './graph.mjs';
+import { readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { createStore, iterateQuads } from '@unrdf/core';
+import { Parser, Writer } from 'n3';
 
 /**
- * Validation schemas
- */
-const formatSchema = z.enum(['turtle', 'ntriples', 'nquads', 'trig', 'jsonld']);
-
-/**
- * Convert to JSON-LD representation
- * @param {Object} store - N3 Store
- * @returns {Object} JSON-LD object
- */
-function toJSONLD(store) {
-  const quads = store.getQuads();
-  const graph = quads.map(q => ({
-    '@id': q.subject.value,
-    [q.predicate.value]: {
-      '@value': q.object.value,
-      '@type': q.object.datatype?.value,
-    },
-  }));
-
-  return {
-    '@context': {},
-    '@graph': graph,
-  };
-}
-
-/**
- * Convert format command
+ * Main convert command
  */
 export const convertCommand = defineCommand({
   meta: {
     name: 'convert',
-    description: 'Convert RDF graph between formats',
+    description: 'Convert RDF between formats',
   },
   args: {
     input: {
-      type: 'positional',
-      description: 'Input graph file',
+      type: 'string',
+      description: 'Input RDF file',
       required: true,
     },
     output: {
-      type: 'positional',
-      description: 'Output graph file',
+      type: 'string',
+      description: 'Output file',
       required: true,
     },
-    format: {
+    from: {
       type: 'string',
-      description: 'Output format (turtle, ntriples, nquads, jsonld)',
-      alias: 'f',
+      description: 'Input format (turtle, ntriples, nquads) - auto-detected if not specified',
+      required: false,
+    },
+    to: {
+      type: 'string',
+      description: 'Output format (turtle, ntriples, nquads) - auto-detected if not specified',
+      required: false,
     },
   },
-  async run(ctx) {
+  async run({ args }) {
+    const { input, output, from, to } = args;
+
+    if (!existsSync(input)) {
+      console.error(`❌ Input file not found: ${input}`);
+      process.exit(1);
+    }
+
     try {
-      const input = z.string().parse(ctx.args.input);
-      const output = z.string().parse(ctx.args.output);
-      const format = ctx.args.format ? formatSchema.parse(ctx.args.format) : undefined;
+      const inputFormat = from || detectFormat(input);
+      const outputFormat = to || detectFormat(output);
 
-      // Load input graph
-      const store = await loadGraph(input);
+      console.log(`🔄 Converting ${input} (${inputFormat}) -> ${output} (${outputFormat})`);
 
-      // Handle JSON-LD separately
-      if (format === 'jsonld') {
-        const jsonld = toJSONLD(store);
-        const { writeFile } = await import('node:fs/promises');
-        await writeFile(output, JSON.stringify(jsonld, null, 2), 'utf8');
-        console.log(`✅ Converted to JSON-LD: ${output}`);
-        return;
+      // Load data
+      const store = createStore();
+      const content = readFileSync(input, 'utf-8');
+
+      const parser = new Parser({ format: inputFormat });
+      let quadCount = 0;
+
+      await new Promise((resolve, reject) => {
+        parser.parse(content, (error, quad) => {
+          if (error) {
+            reject(error);
+            return;
+          }
+          if (quad) {
+            store.add(quad);
+            quadCount++;
+          } else {
+            resolve();
+          }
+        });
+      });
+
+      console.log(`📊 Loaded ${quadCount} quads`);
+
+      // Write output
+      const writer = new Writer({ format: outputFormat });
+      for (const quad of iterateQuads(store)) {
+        writer.addQuad(quad);
       }
 
-      // Save in target format
-      await saveGraph(store, output, format);
+      writer.end((error, result) => {
+        if (error) {
+          console.error(`❌ Conversion error: ${error.message}`);
+          process.exit(1);
+        }
 
-      const quadCount = store.getQuads().length;
-      console.log(`✅ Converted ${input} -> ${output}`);
-      console.log(`   Format: ${format || 'auto-detect'}`);
-      console.log(`   Triples: ${quadCount}`);
+        writeFileSync(output, result, 'utf-8');
+        console.log(`✅ Converted successfully`);
+        console.log(`📁 Output: ${output}`);
+        console.log(`📊 Quads: ${quadCount}`);
+      });
     } catch (error) {
-      console.error(`❌ Convert failed: ${error.message}`);
-      throw error;
+      console.error(`❌ Conversion error: ${error.message}`);
+      process.exit(1);
     }
   },
 });
 
 /**
- * To Turtle command
+ * Convert to Turtle shorthand
  */
 export const toTurtleCommand = defineCommand({
   meta: {
     name: 'to-turtle',
-    description: 'Convert graph to Turtle format',
+    description: 'Convert RDF to Turtle format',
   },
   args: {
     input: {
-      type: 'positional',
-      description: 'Input graph file',
+      type: 'string',
+      description: 'Input RDF file',
       required: true,
     },
     output: {
-      type: 'positional',
+      type: 'string',
       description: 'Output Turtle file',
-      required: true,
+      required: false,
     },
   },
-  async run(ctx) {
-    try {
-      const input = z.string().parse(ctx.args.input);
-      const output = z.string().parse(ctx.args.output);
+  async run({ args }) {
+    const input = args.input;
+    const output = args.output || input.replace(/\.[^.]+$/, '.ttl');
 
-      const store = await loadGraph(input);
-      await saveGraph(store, output, 'turtle');
-
-      console.log(`✅ Converted to Turtle: ${output}`);
-    } catch (error) {
-      console.error(`❌ To Turtle failed: ${error.message}`);
-      throw error;
-    }
+    await convertCommand.run({
+      args: {
+        input,
+        output,
+        to: 'Turtle',
+      },
+    });
   },
 });
 
 /**
- * To N-Triples command
+ * Convert to N-Triples shorthand
  */
 export const toNTriplesCommand = defineCommand({
   meta: {
     name: 'to-ntriples',
-    description: 'Convert graph to N-Triples format',
+    description: 'Convert RDF to N-Triples format',
   },
   args: {
     input: {
-      type: 'positional',
-      description: 'Input graph file',
+      type: 'string',
+      description: 'Input RDF file',
       required: true,
     },
     output: {
-      type: 'positional',
+      type: 'string',
       description: 'Output N-Triples file',
-      required: true,
+      required: false,
     },
   },
-  async run(ctx) {
-    try {
-      const input = z.string().parse(ctx.args.input);
-      const output = z.string().parse(ctx.args.output);
+  async run({ args }) {
+    const input = args.input;
+    const output = args.output || input.replace(/\.[^.]+$/, '.nt');
 
-      const store = await loadGraph(input);
-      await saveGraph(store, output, 'ntriples');
-
-      console.log(`✅ Converted to N-Triples: ${output}`);
-    } catch (error) {
-      console.error(`❌ To N-Triples failed: ${error.message}`);
-      throw error;
-    }
+    await convertCommand.run({
+      args: {
+        input,
+        output,
+        to: 'N-Triples',
+      },
+    });
   },
 });
 
 /**
- * To JSON command
+ * Convert to JSON shorthand
  */
 export const toJSONCommand = defineCommand({
   meta: {
     name: 'to-json',
-    description: 'Convert graph to JSON-LD',
+    description: 'Convert RDF to JSON representation',
   },
   args: {
     input: {
-      type: 'positional',
-      description: 'Input graph file',
+      type: 'string',
+      description: 'Input RDF file',
       required: true,
     },
     output: {
-      type: 'positional',
+      type: 'string',
       description: 'Output JSON file',
-      required: true,
+      required: false,
     },
   },
-  async run(ctx) {
+  async run({ args }) {
+    const { input, output: outputFile } = args;
+
+    if (!existsSync(input)) {
+      console.error(`❌ Input file not found: ${input}`);
+      process.exit(1);
+    }
+
     try {
-      const input = z.string().parse(ctx.args.input);
-      const output = z.string().parse(ctx.args.output);
+      // Load data
+      const store = createStore();
+      const content = readFileSync(input, 'utf-8');
+      const inputFormat = detectFormat(input);
 
-      const store = await loadGraph(input);
-      const jsonld = toJSONLD(store);
+      const parser = new Parser({ format: inputFormat });
+      const quads = [];
 
-      const { writeFile } = await import('node:fs/promises');
-      await writeFile(output, JSON.stringify(jsonld, null, 2), 'utf8');
+      await new Promise((resolve, reject) => {
+        parser.parse(content, (error, quad) => {
+          if (error) {
+            reject(error);
+            return;
+          }
+          if (quad) {
+            store.add(quad);
+            quads.push({
+              subject: quad.subject.value,
+              predicate: quad.predicate.value,
+              object: quad.object.value,
+              graph: quad.graph ? quad.graph.value : null,
+            });
+          } else {
+            resolve();
+          }
+        });
+      });
 
-      console.log(`✅ Converted to JSON-LD: ${output}`);
+      const jsonOutput = JSON.stringify(quads, null, 2);
+      const output = outputFile || input.replace(/\.[^.]+$/, '.json');
+
+      writeFileSync(output, jsonOutput, 'utf-8');
+
+      console.log(`✅ Converted to JSON`);
+      console.log(`📁 Output: ${output}`);
+      console.log(`📊 Quads: ${quads.length}`);
     } catch (error) {
-      console.error(`❌ To JSON failed: ${error.message}`);
-      throw error;
+      console.error(`❌ Conversion error: ${error.message}`);
+      process.exit(1);
     }
   },
 });
+
+// Helper functions
+
+/**
+ * Detect RDF format from filename
+ */
+function detectFormat(filename) {
+  const ext = filename.split('.').pop().toLowerCase();
+  switch (ext) {
+    case 'ttl':
+      return 'Turtle';
+    case 'nt':
+      return 'N-Triples';
+    case 'nq':
+      return 'N-Quads';
+    case 'jsonld':
+      return 'JSON-LD';
+    default:
+      return 'Turtle';
+  }
+}

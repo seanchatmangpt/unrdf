@@ -36,6 +36,7 @@ Each edge represents a productive composition. The more edges you discover, the 
 ### 1. Orthogonal Capabilities
 
 Each primitive solves a different problem:
+
 - **Subagents**: Parallelism
 - **Hooks**: Policy enforcement
 - **Programmatic**: Automation
@@ -49,17 +50,18 @@ When combined, they address multiple problems simultaneously.
 
 One capability's weakness becomes another's strength:
 
-| Capability | Strength | Weakness |
-|------------|----------|----------|
-| Subagents | Parallel execution | No policy control |
-| Hooks | Policy control | No parallelism |
-| **Combined** | Parallel + Policy | — |
+| Capability   | Strength           | Weakness          |
+| ------------ | ------------------ | ----------------- |
+| Subagents    | Parallel execution | No policy control |
+| Hooks        | Policy control     | No parallelism    |
+| **Combined** | Parallel + Policy  | —                 |
 
 ### 3. Reduced Friction
 
 Each composition eliminates operator steps:
 
 **Without composition:**
+
 ```
 1. Run agent
 2. Check output
@@ -69,6 +71,7 @@ Each composition eliminates operator steps:
 ```
 
 **With composition (hooks + subagents + programmatic):**
+
 ```
 1. Run command (policies enforced, parallel, structured output)
 ```
@@ -96,6 +99,7 @@ The setup investment (learning compositions) pays dividends across all future ta
 **Problem:** Explore 5 areas of a codebase simultaneously without breaking anything.
 
 **Components:**
+
 - Subagents (5 researchers in parallel)
 - Hooks (read-only policy)
 - Checkpointing (safety net)
@@ -107,6 +111,7 @@ The setup investment (learning compositions) pays dividends across all future ta
 **Problem:** Automate code changes with guardrails.
 
 **Components:**
+
 - Programmatic mode (non-interactive)
 - Hooks (validation at each step)
 - Output formats (machine-readable results)
@@ -118,6 +123,7 @@ The setup investment (learning compositions) pays dividends across all future ta
 **Problem:** Share advanced workflows across team.
 
 **Components:**
+
 - Plugins (bundling)
 - Commands (control interface)
 - MCP (external tool access)

@@ -1,0 +1,66 @@
+{#
+  Argument Template
+  =================
+  Thesis argument structure: Claims, Grounds, Proofs.
+  For building and defending scholarly arguments.
+
+  Required Variables:
+  - title: Paper title
+  - author: Author name(s)
+  - abstract: Paper abstract
+
+  Optional Variables:
+  - claims: Central claims content
+  - grounds: Evidence and justification content
+  - proofs: Logical validation content
+  - date: Publication date (defaults to \today)
+  - bibliography: Bibliography file name (defaults to 'references')
+
+  Usage:
+    const context = {
+      title: "The Case for Semantic CLIs",
+      author: "Academic Author",
+      abstract: "This paper argues that...",
+      claims: "We claim that RDF integration...",
+      grounds: "Evidence from industry adoption...",
+      proofs: "Logical demonstration shows..."
+    };
+#}
+\documentclass{article}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{graphicx}
+
+\title{{ '{' }}{{ title | texescape }}{{ '}' }}
+\author{{ '{' }}{{ author | texescape }}{{ '}' }}
+\date{{ '{' }}{% if date %}{{ date | texescape }}{% else %}\today{% endif %}{{ '}' }}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+{{ abstract | texescape }}
+\end{abstract}
+
+% Argument Thesis Structure: Claims, Grounds, Proofs
+% This structure focuses on building and defending scholarly arguments
+
+\section{Claims}
+{% if claims %}{{ claims | texescape }}{% endif %}
+
+The central claims of this argument establish the foundation for scholarly discourse and position-taking within the academic field.
+
+\section{Grounds}
+{% if grounds %}{{ grounds | texescape }}{% endif %}
+
+The grounds provide evidence and justification supporting the claims, drawing from empirical data, theoretical frameworks, and established scholarship.
+
+\section{Proofs}
+{% if proofs %}{{ proofs | texescape }}{% endif %}
+
+The proofs offer logical validation and demonstration of the argument's validity, connecting claims to grounds through rigorous reasoning.
+
+\bibliographystyle{plain}
+\bibliography{{ '{' }}{{ bibliography | default('references') }}{{ '}' }}
+
+\end{document}

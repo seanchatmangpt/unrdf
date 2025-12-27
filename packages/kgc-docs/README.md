@@ -31,6 +31,7 @@ receipts: [receipt-001, receipt-002]
 views: [tutorial, how-to, reference, explanation]
 sources: []
 ---
+
 # My Documentation
 
 \`\`\`kgc:query
@@ -45,6 +46,7 @@ kgc-docs build docs/src docs
 ```
 
 This generates 4 views:
+
 - `docs/tutorials/my-doc.md`
 - `docs/how-to/my-doc.md`
 - `docs/reference/my-doc.md`
@@ -118,10 +120,10 @@ Each generated document includes a proof appendix:
 
 \`\`\`json
 {
-  "merkle_root": "abc123...",
-  "o_hash": "my-doc-001",
-  "receipt_count": 2,
-  "timestamp": "2025-12-27T00:00:00.000Z"
+"merkle_root": "abc123...",
+"o_hash": "my-doc-001",
+"receipt_count": 2,
+"timestamp": "2025-12-27T00:00:00.000Z"
 }
 \`\`\`
 
@@ -138,6 +140,7 @@ The document is cryptographically linked to o_hash `my-doc-001` via Merkle tree.
 ## Test Results
 
 All 41 tests passing:
+
 - ✅ Frontmatter parsing with Zod validation
 - ✅ Fenced block parsing (query, proof, extract, render)
 - ✅ Deterministic AST generation

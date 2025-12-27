@@ -33,9 +33,9 @@ const capsules = [
         line_start: 1,
         line_end: 10,
         content: 'new code',
-        operation: 'replace'
-      }
-    ]
+        operation: 'replace',
+      },
+    ],
   },
   {
     id: 'agent2',
@@ -46,22 +46,22 @@ const capsules = [
         line_start: 5,
         line_end: 15,
         content: 'different code',
-        operation: 'replace'
-      }
-    ]
-  }
+        operation: 'replace',
+      },
+    ],
+  },
 ];
 
 const totalOrder = {
   rules: [],
-  default_rule: { strategy: 'earlier_wins' }
+  default_rule: { strategy: 'earlier_wins' },
 };
 
 const result = mergeCapsules(capsules, totalOrder);
 
-console.log(result.admitted);  // ['agent1']
-console.log(result.denied);    // ['agent2']
-console.log(result.conflict_receipts);  // Detailed conflict information
+console.log(result.admitted); // ['agent1']
+console.log(result.denied); // ['agent2']
+console.log(result.conflict_receipts); // Detailed conflict information
 ```
 
 ## API
@@ -71,10 +71,12 @@ console.log(result.conflict_receipts);  // Detailed conflict information
 Main API for merging capsules with conflict resolution.
 
 **Parameters:**
+
 - `capsules` - Array of capsule objects
 - `totalOrder` - Resolution strategy configuration
 
 **Returns:**
+
 - `admitted` - Array of admitted capsule IDs
 - `denied` - Array of denied capsule IDs
 - `conflict_receipts` - Array of conflict resolution receipts

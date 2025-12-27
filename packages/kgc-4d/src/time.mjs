@@ -1,15 +1,20 @@
 /**
  * KGC Time Module - Nanosecond-precision BigInt timestamps
  * Uses process.hrtime.bigint() in Node.js and performance.now() in Browser
+ * Supports deterministic mode via process.env.DETERMINISTIC='1'
  */
 
 let lastTime = 0n;
 let clockJumpDetected = false;  // Track if monotonic clock had to auto-increment
 const CLOCK_JUMP_THRESHOLD = 1_000_000_000_000n;  // 1 second in nanoseconds
 
+// Deterministic mode: Fixed start time (2024-01-01T00:00:00.000Z)
+const DETERMINISTIC_START = 1704067200000000000n; // Nanoseconds
+
 /**
  * Get current time in nanoseconds as BigInt
  * Ensures monotonic ordering (never goes backwards)
+ * In DETERMINISTIC mode (process.env.DETERMINISTIC='1'), uses fixed start time
  *
  * @example
  * import { now } from './time.mjs';
@@ -21,7 +26,11 @@ const CLOCK_JUMP_THRESHOLD = 1_000_000_000_000n;  // 1 second in nanoseconds
 export function now() {
   let current;
 
-  if (typeof process !== 'undefined' && process.hrtime && typeof process.hrtime.bigint === 'function') {
+  // Check for deterministic mode
+  if (typeof process !== 'undefined' && process.env?.DETERMINISTIC === '1') {
+    // Deterministic: monotonic increment from fixed start time
+    current = lastTime === 0n ? DETERMINISTIC_START : lastTime + 1n;
+  } else if (typeof process !== 'undefined' && process.hrtime && typeof process.hrtime.bigint === 'function') {
     // Node.js: Use nanosecond-precision hrtime
     current = process.hrtime.bigint();
   } else {
@@ -29,12 +38,14 @@ export function now() {
     current = BigInt(Math.floor(performance.now() * 1_000_000));
   }
 
-  // Detect large time jumps (potential system clock issues)
-  const jump = current - lastTime;
-  if (jump < -CLOCK_JUMP_THRESHOLD || jump > CLOCK_JUMP_THRESHOLD) {
-    clockJumpDetected = true;
-    if (typeof console !== 'undefined' && console.warn) {
-      console.warn(`[KGC Time] Clock jump detected: ${Number(jump / 1_000_000_000n).toFixed(2)}s`);
+  // Detect large time jumps (skip in deterministic mode)
+  if (typeof process === 'undefined' || process.env?.DETERMINISTIC !== '1') {
+    const jump = current - lastTime;
+    if (jump < -CLOCK_JUMP_THRESHOLD || jump > CLOCK_JUMP_THRESHOLD) {
+      clockJumpDetected = true;
+      if (typeof console !== 'undefined' && console.warn) {
+        console.warn(`[KGC Time] Clock jump detected: ${Number(jump / 1_000_000_000n).toFixed(2)}s`);
+      }
     }
   }
 

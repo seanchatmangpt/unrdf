@@ -1,0 +1,450 @@
+---
+o_hash: "a3f5b8c2d1e4f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1"
+policy_id: "550e8400-e29b-41d4-a716-446655440000"
+receipts:
+  - "b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5"
+  - "c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6"
+  - "d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7"
+bounds:
+  maxQueries: 50
+  maxRuntime: 3000
+  maxFileScans: 20
+views:
+  - "reference"
+sources:
+  - path: "src/api/user.mjs"
+    lineStart: 1
+    lineEnd: 250
+    hash: "d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7"
+version: "1.0.0"
+createdAt: "2025-12-26T10:00:00Z"
+lastProved: "2025-12-26T14:00:00Z"
+tags:
+  - "api"
+  - "user-management"
+  - "authentication"
+authors:
+  - name: "KGC Extractor"
+    role: "Automated Documentation Generator"
+---
+
+# User API Reference
+
+## Overview
+
+This document provides complete API reference for the User Management module. All APIs require authentication via JWT token in the `Authorization` header.
+
+**Base URL**: `/api/v1/users`
+
+**Authentication**: Required for all endpoints
+
+## Data Extraction
+
+The following block extracts public API exports from the user module source code:
+
+```kgc:extract
+{
+  "receiptId": "b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5",
+  "expectedOutputFormat": "json",
+  "determinismLevel": "lenient",
+  "metadata": {
+    "extractionType": "exports",
+    "fileGlobs": ["src/api/user.mjs"],
+    "includePrivate": false,
+    "includeDocstrings": true,
+    "description": "Extract public user API exports with documentation"
+  }
+}
+---
+{
+  "targetFiles": ["src/api/user.mjs"],
+  "filters": {
+    "visibility": "public",
+    "documented": true
+  }
+}
+```
+
+## API Functions
+
+<!-- kgc:dynamic section="api-functions" receiptId="c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6" -->
+
+### `createUser(userData)`
+
+Creates a new user account with validation and duplicate email checking.
+
+**HTTP Method**: `POST /api/v1/users`
+
+**Parameters:**
+- `userData` (`UserData`): User creation payload
+  - `email` (string, required): User email address (must be valid format)
+  - `name` (string, required): Full name (2-100 characters)
+  - `role` (string, optional): User role, default: "user"
+    - Allowed values: `"user"`, `"admin"`, `"moderator"`
+  - `password` (string, required): Password (minimum 8 characters)
+
+**Returns:**
+- `Promise<User>`: Newly created user object (password excluded)
+
+**Throws:**
+- `ValidationError` (400): Invalid user data format
+- `ConflictError` (409): Email already exists
+- `UnauthorizedError` (401): Invalid or missing authentication token
+
+**Example Request:**
+```javascript
+const response = await fetch('/api/v1/users', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer <token>'
+  },
+  body: JSON.stringify({
+    email: "alice@example.com",
+    name: "Alice Smith",
+    role: "admin",
+    password: "securePassword123"
+  })
+});
+const user = await response.json();
+```
+
+**Example Response:**
+```json
+{
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "email": "alice@example.com",
+  "name": "Alice Smith",
+  "role": "admin",
+  "createdAt": "2025-12-26T10:30:00Z",
+  "updatedAt": "2025-12-26T10:30:00Z"
+}
+```
+
+---
+
+### `getUserById(userId)`
+
+Retrieves user by UUID. Returns null if user not found.
+
+**HTTP Method**: `GET /api/v1/users/:userId`
+
+**Parameters:**
+- `userId` (`string`): User UUID (must be valid UUID v4)
+
+**Returns:**
+- `Promise<User | null>`: User object or null if not found
+
+**Throws:**
+- `ValidationError` (400): Invalid UUID format
+- `UnauthorizedError` (401): Missing or invalid token
+
+**Example Request:**
+```javascript
+const response = await fetch('/api/v1/users/550e8400-e29b-41d4-a716-446655440000', {
+  headers: {
+    'Authorization': 'Bearer <token>'
+  }
+});
+const user = await response.json();
+```
+
+**Example Response:**
+```json
+{
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "email": "alice@example.com",
+  "name": "Alice Smith",
+  "role": "admin",
+  "createdAt": "2025-12-26T10:30:00Z",
+  "updatedAt": "2025-12-26T10:30:00Z"
+}
+```
+
+---
+
+### `updateUser(userId, updates)`
+
+Updates user fields. Only provided fields are updated (partial update).
+
+**HTTP Method**: `PATCH /api/v1/users/:userId`
+
+**Parameters:**
+- `userId` (`string`): User UUID
+- `updates` (`Partial<UserData>`): Fields to update
+  - `name` (string, optional): New name
+  - `email` (string, optional): New email (must be unique)
+  - `role` (string, optional): New role
+
+**Returns:**
+- `Promise<User>`: Updated user object
+
+**Throws:**
+- `NotFoundError` (404): User not found
+- `ValidationError` (400): Invalid update data
+- `ConflictError` (409): Email already taken
+- `PermissionError` (403): Insufficient permissions to update this user
+
+**Example Request:**
+```javascript
+const response = await fetch('/api/v1/users/550e8400-e29b-41d4-a716-446655440000', {
+  method: 'PATCH',
+  headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer <token>'
+  },
+  body: JSON.stringify({
+    name: "Alice Johnson",
+    role: "moderator"
+  })
+});
+const updatedUser = await response.json();
+```
+
+---
+
+### `deleteUser(userId)`
+
+Permanently deletes user account. This action cannot be undone.
+
+**HTTP Method**: `DELETE /api/v1/users/:userId`
+
+**Parameters:**
+- `userId` (`string`): User UUID
+
+**Returns:**
+- `Promise<void>`: No content on success
+
+**Throws:**
+- `NotFoundError` (404): User not found
+- `PermissionError` (403): Insufficient permissions (admin only)
+- `UnauthorizedError` (401): Missing or invalid token
+
+**Example Request:**
+```javascript
+await fetch('/api/v1/users/550e8400-e29b-41d4-a716-446655440000', {
+  method: 'DELETE',
+  headers: {
+    'Authorization': 'Bearer <token>'
+  }
+});
+// No response body, check status code (204 No Content)
+```
+
+---
+
+### `listUsers(options)`
+
+Lists users with pagination and filtering.
+
+**HTTP Method**: `GET /api/v1/users`
+
+**Parameters:**
+- `options` (`ListOptions`, optional): Query parameters
+  - `limit` (number, optional): Results per page (1-100, default: 20)
+  - `offset` (number, optional): Pagination offset (default: 0)
+  - `role` (string, optional): Filter by role
+  - `sortBy` (string, optional): Sort field (name, email, createdAt)
+  - `sortOrder` (string, optional): Sort order (asc, desc)
+
+**Returns:**
+- `Promise<UserList>`: Paginated user list
+  - `users` (User[]): Array of user objects
+  - `total` (number): Total count (for pagination)
+  - `limit` (number): Applied limit
+  - `offset` (number): Applied offset
+
+**Example Request:**
+```javascript
+const response = await fetch('/api/v1/users?limit=10&role=admin&sortBy=name', {
+  headers: {
+    'Authorization': 'Bearer <token>'
+  }
+});
+const { users, total } = await response.json();
+```
+
+<!-- /kgc:dynamic -->
+
+## Type Definitions
+
+### `UserData`
+
+Input type for user creation.
+
+```typescript
+interface UserData {
+  email: string;           // Valid email format
+  name: string;            // 2-100 characters
+  role?: "user" | "admin" | "moderator";  // Default: "user"
+  password: string;        // Minimum 8 characters
+}
+```
+
+### `User`
+
+User object returned by API (excludes sensitive fields).
+
+```typescript
+interface User {
+  id: string;              // UUID v4
+  email: string;
+  name: string;
+  role: "user" | "admin" | "moderator";
+  createdAt: string;       // ISO 8601 timestamp
+  updatedAt: string;       // ISO 8601 timestamp
+}
+```
+
+### `ListOptions`
+
+Pagination and filtering options for list endpoint.
+
+```typescript
+interface ListOptions {
+  limit?: number;          // 1-100, default: 20
+  offset?: number;         // Default: 0
+  role?: "user" | "admin" | "moderator";
+  sortBy?: "name" | "email" | "createdAt";
+  sortOrder?: "asc" | "desc";
+}
+```
+
+### `UserList`
+
+Paginated response from list endpoint.
+
+```typescript
+interface UserList {
+  users: User[];
+  total: number;
+  limit: number;
+  offset: number;
+}
+```
+
+## Error Codes
+
+| Code | Name | Description |
+|------|------|-------------|
+| 400 | ValidationError | Invalid input data format |
+| 401 | UnauthorizedError | Missing or invalid authentication token |
+| 403 | PermissionError | Insufficient permissions for this operation |
+| 404 | NotFoundError | Requested resource not found |
+| 409 | ConflictError | Resource conflict (e.g., duplicate email) |
+| 500 | InternalServerError | Unexpected server error |
+
+## Receipt Verification
+
+The following proof block verifies the extraction and rendering receipts:
+
+```kgc:proof
+{
+  "receiptId": "d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7",
+  "expectedOutputFormat": "json",
+  "determinismLevel": "strict",
+  "metadata": {
+    "proofType": "sequential",
+    "verifyChain": true,
+    "validateSignatures": false,
+    "description": "Verify extraction and rendering receipt chain"
+  }
+}
+---
+{
+  "receiptIds": [
+    "b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5",
+    "c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6"
+  ],
+  "expectedRoot": "e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8"
+}
+```
+
+---
+
+## Appendix: Receipts
+
+### Receipt b4c5d6e7... (kgc:extract)
+
+```json
+{
+  "id": "b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5",
+  "timestamp": "2025-12-26T13:45:00Z",
+  "o_hash": "a3f5b8c2d1e4f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1",
+  "block_type": "kgc:extract",
+  "input_hash": "c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6",
+  "output_hash": "d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7",
+  "decision": "ADMIT",
+  "metadata": {
+    "extractionType": "exports",
+    "filesScanned": 1,
+    "itemsExtracted": 5,
+    "executionTime": 425,
+    "determinismLevel": "lenient"
+  },
+  "dependencies": []
+}
+```
+
+### Receipt c5d6e7f8... (kgc:render)
+
+```json
+{
+  "id": "c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6",
+  "timestamp": "2025-12-26T13:47:30Z",
+  "o_hash": "a3f5b8c2d1e4f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1",
+  "block_type": "kgc:render",
+  "input_hash": "d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7",
+  "output_hash": "e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8",
+  "decision": "ADMIT",
+  "metadata": {
+    "templateName": "api-reference",
+    "itemsRendered": 5,
+    "executionTime": 156,
+    "determinismLevel": "strict"
+  },
+  "dependencies": [
+    "b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5"
+  ]
+}
+```
+
+### Receipt d6e7f8a9... (kgc:proof)
+
+```json
+{
+  "id": "d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7",
+  "timestamp": "2025-12-26T13:50:00Z",
+  "o_hash": "a3f5b8c2d1e4f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1",
+  "block_type": "kgc:proof",
+  "input_hash": "e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8",
+  "output_hash": "f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9",
+  "decision": "ADMIT",
+  "metadata": {
+    "proofType": "sequential",
+    "verifiedCount": 2,
+    "chainDepth": 2,
+    "invalidReceipts": [],
+    "executionTime": 45,
+    "determinismLevel": "strict"
+  },
+  "dependencies": [
+    "b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5",
+    "c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6"
+  ],
+  "merkle_proof": {
+    "siblings": [
+      "c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6"
+    ],
+    "root": "e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8",
+    "index": 0,
+    "totalLeaves": 2
+  }
+}
+```
+
+---
+
+**Generated**: 2025-12-26T14:00:00Z
+**Verified**: All receipts validated successfully
+**Document Hash**: `a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0`

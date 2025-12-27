@@ -11,24 +11,28 @@ This document specifies the comprehensive Zod schemas for the KGC (Knowledge Gra
 ## Design Principles
 
 ### 1. Versioning
+
 - All schemas use semantic versioning (semver)
 - Default version: `1.0.0`
 - Forward compatibility through version-aware parsing
 - Breaking changes increment major version
 
 ### 2. Immutability
+
 - Receipts are append-only, never modified
 - Content-addressable storage via SHA-256 hashing
 - Cryptographic signatures for authenticity
 - Merkle proofs for batch verification
 
 ### 3. Validation
+
 - Strict type checking with Zod
 - Range constraints on all numeric fields
 - Format validation (UUIDs, SHA-256, semver, URLs)
 - Comprehensive error messages
 
 ### 4. Governance
+
 - Actor attribution (who/what/when/why)
 - Resource bounds enforcement
 - Policy-driven access control
@@ -43,6 +47,7 @@ This document specifies the comprehensive Zod schemas for the KGC (Knowledge Gra
 **Purpose:** Versioned, immutable audit records for all runtime events.
 
 **Use Cases:**
+
 - Execution audit trails
 - Cryptographic verification
 - Compliance/regulatory requirements
@@ -87,6 +92,7 @@ This document specifies the comprehensive Zod schemas for the KGC (Knowledge Gra
 ```
 
 **Actions:**
+
 - `execute` - Run a workflow/task
 - `validate` - Validate input/output
 - `commit` - Commit changes to store
@@ -97,6 +103,7 @@ This document specifies the comprehensive Zod schemas for the KGC (Knowledge Gra
 - `fork` - Create new branch
 
 **Actor Format:**
+
 - `agent:<name>` - AI agent
 - `user:<id>` - Human user
 - `system:<component>` - System component
@@ -136,6 +143,7 @@ This document specifies the comprehensive Zod schemas for the KGC (Knowledge Gra
 **Purpose:** Complete execution snapshot (Δ_run) capturing input/output/trace/artifacts.
 
 **Use Cases:**
+
 - Reproducible execution
 - Debugging/replay
 - Result caching
@@ -200,6 +208,7 @@ This document specifies the comprehensive Zod schemas for the KGC (Knowledge Gra
 ```
 
 **Status Values:**
+
 - `pending` - Not yet started
 - `running` - Currently executing
 - `completed` - Finished successfully
@@ -208,6 +217,7 @@ This document specifies the comprehensive Zod schemas for the KGC (Knowledge Gra
 - `timeout` - Exceeded time limit
 
 **Artifact Types:**
+
 - `file` - File on disk
 - `directory` - Directory
 - `url` - Remote resource
@@ -253,6 +263,7 @@ This document specifies the comprehensive Zod schemas for the KGC (Knowledge Gra
 **Purpose:** Atomic tool call records for deterministic replay.
 
 **Use Cases:**
+
 - Execution replay
 - Debugging
 - Performance profiling
@@ -286,6 +297,7 @@ This document specifies the comprehensive Zod schemas for the KGC (Knowledge Gra
 ```
 
 **Status Values:**
+
 - `success` - Completed successfully
 - `error` - Failed with error
 - `timeout` - Exceeded time limit
@@ -316,6 +328,7 @@ This document specifies the comprehensive Zod schemas for the KGC (Knowledge Gra
 **Purpose:** Resource capacity limits enforcing governance constraints.
 
 **Use Cases:**
+
 - Resource exhaustion prevention
 - Quota management
 - Performance guarantees
@@ -350,6 +363,7 @@ This document specifies the comprehensive Zod schemas for the KGC (Knowledge Gra
 ```
 
 **Enforcement Policies:**
+
 - `strict` - Hard limits, reject on violation
 - `soft` - Soft limits, log warnings but allow
 - `monitor` - Monitor only, no enforcement
@@ -380,6 +394,7 @@ This document specifies the comprehensive Zod schemas for the KGC (Knowledge Gra
 **Purpose:** Async task node states for distributed execution.
 
 **Use Cases:**
+
 - Task queue management
 - Distributed execution
 - Dependency resolution
@@ -424,12 +439,14 @@ This document specifies the comprehensive Zod schemas for the KGC (Knowledge Gra
 ```
 
 **State Machine:**
+
 - `queued` → `running` → `succeeded`
 - `queued` → `running` → `failed` (may retry)
 - `queued` → `denied` (policy rejection)
 - Any state → `cancelled` (user/system abort)
 
 **Backoff Strategies:**
+
 - `constant` - Fixed delay
 - `linear` - Linearly increasing delay
 - `exponential` - Exponentially increasing delay
@@ -468,6 +485,7 @@ This document specifies the comprehensive Zod schemas for the KGC (Knowledge Gra
 **Purpose:** Surface definitions for CLI/docs/IDE/API/UI integration.
 
 **Use Cases:**
+
 - Multi-surface UX consistency
 - Auto-generated integrations
 - Policy-driven access control
@@ -605,6 +623,7 @@ This document specifies the comprehensive Zod schemas for the KGC (Knowledge Gra
 **Purpose:** Front matter + fenced block structured documents.
 
 **Use Cases:**
+
 - Literate programming
 - Executable notebooks
 - Semantic documentation
@@ -641,6 +660,7 @@ This document specifies the comprehensive Zod schemas for the KGC (Knowledge Gra
 **Node Types:**
 
 **Heading:**
+
 ```typescript
 {
   type: "heading";
@@ -652,6 +672,7 @@ This document specifies the comprehensive Zod schemas for the KGC (Knowledge Gra
 ```
 
 **Paragraph:**
+
 ```typescript
 {
   type: "paragraph";
@@ -666,6 +687,7 @@ This document specifies the comprehensive Zod schemas for the KGC (Knowledge Gra
 ```
 
 **Fenced Block (Code):**
+
 ```typescript
 {
   type: "fenced-block";
@@ -679,6 +701,7 @@ This document specifies the comprehensive Zod schemas for the KGC (Knowledge Gra
 ```
 
 **List:**
+
 ```typescript
 {
   type: "list";
@@ -689,6 +712,7 @@ This document specifies the comprehensive Zod schemas for the KGC (Knowledge Gra
 ```
 
 **Table:**
+
 ```typescript
 {
   type: "table";
@@ -747,14 +771,16 @@ if (result.success) {
 ```
 
 **Validation Result:**
+
 ```typescript
 {
   success: boolean;
-  data: T | null;            // Validated data (if success)
-  errors: Array<{            // Validation errors (if failure)
-    path: string;            // Field path
-    message: string;         // Error message
-    code: string;            // Error code
+  data: T | null; // Validated data (if success)
+  errors: Array<{
+    // Validation errors (if failure)
+    path: string; // Field path
+    message: string; // Error message
+    code: string; // Error code
   }>;
 }
 ```

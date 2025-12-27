@@ -4,22 +4,19 @@
 
 ## Metadata
 
-| Property | Value |
-|----------|-------|
-| O-Hash | `kgc-example-001` |
-| Policy ID | `policy-example` |
-| Receipts | 2 |
-| Sources | 1 |
+| Property  | Value             |
+| --------- | ----------------- |
+| O-Hash    | `kgc-example-001` |
+| Policy ID | `policy-example`  |
+| Receipts  | 2                 |
+| Sources   | 1                 |
 
 ## Parameters
 
 ### Bounds
 
 ```json
-[
-  "min: 0",
-  "max: 1000"
-]
+["min: 0", "max: 1000"]
 ```
 
 ## Returns
@@ -37,7 +34,6 @@ WHERE {
   FILTER(?predicate = rdf:type)
 }
 ```
-
 
 ---
 

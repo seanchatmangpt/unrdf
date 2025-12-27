@@ -1,0 +1,25 @@
+{
+  "name": "@unrdf/receipts",
+  "version": "1.0.0",
+  "description": "Receipt and provenance system for UNRDF audit trails",
+  "type": "module",
+  "main": "receipt.mjs",
+  "exports": {
+    ".": "./receipt.mjs",
+    "./receipt": "./receipt.mjs",
+    "./receipt-chain": "./receipt-chain.mjs",
+    "./merkle-root": "./merkle-root.mjs",
+    "./receipt-generator": "./receipt-generator.mjs"
+  },
+  "scripts": {
+    "test": "vitest run --no-coverage",
+    "examples": "node examples.mjs"
+  },
+  "dependencies": {
+    "hash-wasm": "^4.12.0",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "vitest": "^4.0.15"
+  }
+}

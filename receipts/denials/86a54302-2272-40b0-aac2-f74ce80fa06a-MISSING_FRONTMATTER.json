@@ -1,0 +1,32 @@
+{
+  "id": "86a54302-2272-40b0-aac2-f74ce80fa06a",
+  "timestamp": "2025-12-26T23:36:41.202Z",
+  "operation": "write",
+  "targetPath": "/tmp/kgc-hooks-test/docs/denied.md",
+  "reasonCode": "MISSING_FRONTMATTER",
+  "message": "Document write denied: Missing frontmatter block",
+  "details": {
+    "errors": ["Missing frontmatter block"],
+    "hasFrontmatter": false,
+    "frontmatter": null
+  },
+  "remediation": {
+    "command": "/kgc:prove",
+    "steps": [
+      "Add valid frontmatter to the document:",
+      "  ---",
+      "  o_hash: <64-char-blake3-hash>",
+      "  policy_id: <policy-identifier>",
+      "  receipts: []",
+      "  ---",
+      "",
+      "Or use /kgc:prove to generate receipts and frontmatter automatically"
+    ],
+    "documentation": "docs/chapter-5-receipts-chaining-verification.md"
+  },
+  "gitContext": {
+    "branch": "claude/kgc-migration-facade-zPbbg",
+    "commit": "de138c3a",
+    "uncommittedChanges": true
+  }
+}

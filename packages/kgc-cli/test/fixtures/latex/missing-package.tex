@@ -1,0 +1,28 @@
+% LaTeX document with intentionally missing package
+% Used to test error handling and diagnostic capabilities
+\documentclass{article}
+
+% This package does NOT exist - should trigger LatexCompileError
+\usepackage{nonexistent-test-package-xyz-12345}
+
+\title{Missing Package Test}
+\author{Test Suite}
+
+\begin{document}
+
+\maketitle
+
+\section{Error Test}
+
+This document should fail to compile because the package
+\texttt{nonexistent-test-package-xyz-12345} does not exist.
+
+The test suite expects:
+\begin{itemize}
+  \item LatexCompileError to be thrown
+  \item missingInputs array to contain the package name
+  \item Log file to be written to cache directory
+  \item Diagnostic information to be captured
+\end{itemize}
+
+\end{document}

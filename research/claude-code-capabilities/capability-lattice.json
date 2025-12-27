@@ -18,7 +18,14 @@
       "name": "Hooks & Tool Governance",
       "category": "control",
       "description": "Shell commands that execute at tool lifecycle points with match rules",
-      "primitives": ["PreToolUse", "PostToolUse", "PreCompact", "Stop", "matchers", "allow/deny/ask"],
+      "primitives": [
+        "PreToolUse",
+        "PostToolUse",
+        "PreCompact",
+        "Stop",
+        "matchers",
+        "allow/deny/ask"
+      ],
       "docRef": "https://docs.anthropic.com/en/docs/claude-code/hooks"
     },
     {

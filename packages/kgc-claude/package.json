@@ -1,0 +1,76 @@
+{
+  "name": "@unrdf/kgc-claude",
+  "version": "5.0.0",
+  "description": "KGC-Claude Substrate - Deterministic run objects, universal checkpoints, bounded autonomy, and multi-agent concurrency for Claude integration",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.mjs",
+    "./run-capsule": "./src/run-capsule.mjs",
+    "./checkpoint": "./src/checkpoint.mjs",
+    "./autonomy-guard": "./src/autonomy-guard.mjs",
+    "./shard-merge": "./src/shard-merge.mjs",
+    "./async-workflow": "./src/async-workflow.mjs",
+    "./projection": "./src/projection.mjs",
+    "./swarm-orchestrator": "./src/swarm-orchestrator.mjs",
+    "./poka-yoke-guards": "./src/poka-yoke-guards.mjs",
+    "./observable-io": "./src/observable-io.mjs",
+    "./info-scheduler": "./src/info-scheduler.mjs",
+    "./drift-detector": "./src/drift-detector.mjs",
+    "./budget-enforcer": "./src/budget-enforcer.mjs",
+    "./agent-harness": "./src/agent-harness.mjs",
+    "./receipt-compositor": "./src/receipt-compositor.mjs",
+    "./mcp-server-builder": "./src/mcp-server-builder.mjs",
+    "./mcp-federation": "./src/mcp-federation.mjs",
+    "./mcp-bridge": "./src/mcp-bridge.mjs",
+    "./capabilities/ide-integration": "./src/capabilities/ide-integration.mjs",
+    "./capabilities/ui-components": "./src/capabilities/ui-components.mjs",
+    "./capabilities/editor-commands": "./src/capabilities/editor-commands.mjs"
+  },
+  "main": "./src/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "src",
+    "demos"
+  ],
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest --watch",
+    "build": "unbuild",
+    "bench:harness": "node benches/workload-harness.mjs",
+    "bench:baseline": "node benches/workload-harness.mjs --baseline",
+    "demo:e2e": "node demos/multi-agent-e2e.mjs",
+    "demo:swarm10": "node demos/swarm-10-agents.mjs",
+    "prove:system": "node scripts/prove-system.mjs"
+  },
+  "dependencies": {
+    "@unrdf/core": "workspace:*",
+    "@unrdf/oxigraph": "workspace:*",
+    "@unrdf/kgc-4d": "workspace:*",
+    "@unrdf/yawl": "workspace:*",
+    "@unrdf/hooks": "workspace:*",
+    "hash-wasm": "^4.12.0",
+    "zod": "^3.24.3"
+  },
+  "devDependencies": {
+    "vitest": "^4.0.15"
+  },
+  "keywords": [
+    "kgc",
+    "claude",
+    "substrate",
+    "run-capsule",
+    "checkpoint",
+    "multi-agent",
+    "bounded-autonomy"
+  ],
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=7.0.0"
+  },
+  "sideEffects": false,
+  "author": "UNRDF Contributors",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
+}

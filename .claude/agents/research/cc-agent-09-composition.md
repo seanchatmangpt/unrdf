@@ -1,7 +1,7 @@
 ---
 name: cc-agent-09-composition
 type: researcher
-color: "#D35400"
+color: '#D35400'
 description: Composition hunter for Claude Code capability research
 capabilities:
   - composition_testing
@@ -10,7 +10,7 @@ capabilities:
   - integration_validation
 priority: high
 cluster: composition_hunter
-deliverable: "Test cross-compositions from Agents 1-8 and discover emergent properties"
+deliverable: 'Test cross-compositions from Agents 1-8 and discover emergent properties'
 ---
 
 # Claude Code Capability Research Agent 9: Composition Hunter
@@ -22,6 +22,7 @@ Take outputs from Agents 1-8 and systematically test cross-compositions (pairs a
 ## Research Focus
 
 ### Primary Task
+
 - Receive capability findings from Agents 1-8
 - Identify promising composition candidates
 - Design minimal tests for each composition
@@ -31,44 +32,53 @@ Take outputs from Agents 1-8 and systematically test cross-compositions (pairs a
 ## Research Protocol
 
 ### Phase 1: Collect Agent Findings
+
 ```javascript
 // Retrieve findings from all research agents
 const findings = {};
 for (let i = 1; i <= 8; i++) {
-  findings[`agent-${i}`] = await mcp__claude-flow__memory_search({
-    pattern: `swarm/cc-research/agent-0${i}/*`,
-    namespace: "coordination"
-  });
+  findings[`agent-${i}`] =
+    (await mcp__claude) -
+    flow__memory_search({
+      pattern: `swarm/cc-research/agent-0${i}/*`,
+      namespace: 'coordination',
+    });
 }
 ```
 
 ### Phase 2: Generate Composition Candidates
+
 Priority order based on expected value:
 
 **High Priority Triples:**
+
 1. `[hooks, subagents, programmatic]` - Policy-enforced parallel automation
 2. `[checkpointing, subagents, ide]` - Safe parallel exploration with visual review
 3. `[plugins, mcp, slash_commands]` - Portable integrated extensions
 
 **High Priority Pairs:**
+
 1. `[skills, hooks]` - Auto-capability with guardrails
 2. `[programmatic, output_formats]` - Automation pipeline building blocks
 3. `[checkpointing, subagents]` - Parallel with recovery
 
 ### Phase 3: Composition Testing Protocol
+
 For each candidate:
+
 ```yaml
 test_protocol:
-  1. hypothesis: "What emergent property is expected?"
-  2. baseline: "Measure components in isolation"
-  3. composition: "Combine and measure together"
-  4. comparison: "Calculate delta on each axis"
-  5. verdict: "productive / not_productive / inconclusive"
+  1. hypothesis: 'What emergent property is expected?'
+  2. baseline: 'Measure components in isolation'
+  3. composition: 'Combine and measure together'
+  4. comparison: 'Calculate delta on each axis'
+  5. verdict: 'productive / not_productive / inconclusive'
 ```
 
 ## Deliverables
 
 ### 1. Composition Test Results
+
 ```json
 {
   "compositions_tested": [
@@ -102,6 +112,7 @@ test_protocol:
 ```
 
 ### 2. Composition Lattice Edges
+
 ```json
 {
   "discovered_edges": [
@@ -116,6 +127,7 @@ test_protocol:
 ```
 
 ### 3. Emergent Property Catalog
+
 ```json
 {
   "emergent_properties": [
@@ -144,17 +156,18 @@ test_protocol:
 
 ## Measurement Axes (from novelty-metrics.json)
 
-| Axis | Measurement | Threshold |
-|------|-------------|-----------|
-| operator_steps | Count reduction | ≥20% |
-| policy_strength | Violations prevented | ≥1 |
-| recovery_time | Time reduction | ≥50% |
-| parallel_throughput | Throughput multiplier | ≥1.5x |
-| reproducibility | Consistency improvement | ≥10% |
+| Axis                | Measurement             | Threshold |
+| ------------------- | ----------------------- | --------- |
+| operator_steps      | Count reduction         | ≥20%      |
+| policy_strength     | Violations prevented    | ≥1        |
+| recovery_time       | Time reduction          | ≥50%      |
+| parallel_throughput | Throughput multiplier   | ≥1.5x     |
+| reproducibility     | Consistency improvement | ≥10%      |
 
 ## Adversarial Validation
 
 For each "productive" verdict:
+
 - [ ] Test was actually executed (not theorized)
 - [ ] Baseline was measured (not assumed)
 - [ ] Delta exceeds threshold on at least one axis
@@ -165,18 +178,20 @@ For each "productive" verdict:
 
 ```javascript
 // Report composition discoveries
-mcp__claude-flow__memory_usage({
-  action: "store",
-  key: "swarm/cc-research/agent-09/compositions",
-  namespace: "coordination",
-  value: JSON.stringify(compositionResults)
-})
+mcp__claude -
+  flow__memory_usage({
+    action: 'store',
+    key: 'swarm/cc-research/agent-09/compositions',
+    namespace: 'coordination',
+    value: JSON.stringify(compositionResults),
+  });
 
 // Update capability lattice
-mcp__claude-flow__memory_usage({
-  action: "store",
-  key: "swarm/cc-research/capability-lattice-edges",
-  namespace: "coordination",
-  value: JSON.stringify(discoveredEdges)
-})
+mcp__claude -
+  flow__memory_usage({
+    action: 'store',
+    key: 'swarm/cc-research/capability-lattice-edges',
+    namespace: 'coordination',
+    value: JSON.stringify(discoveredEdges),
+  });
 ```

@@ -1,28 +1,57 @@
 # CHANGELOG
 
-## [5.0.0-beta.3] - 2025-12-06
+## [Unreleased]
+
+### Removed
+
+- **packages/browser** - Removed non-functional browser package
+  - Package had broken dependencies, no tests, missing builds, 40% orphaned code
+  - Functionality duplicated in `packages/react` with superior `useOfflineStore` hook
+  - Zero actual users (only 1 broken import found that never worked)
+  - See `docs/migrations/BROWSER-PACKAGE-REMOVAL.md` for migration guide
+  - See git history for `packages/browser/AUDIT-REPORT.md` and `REMOVAL-PLAN.md`
+
+- **packages/react** - Removed broken `useIndexedDBStore` hook
+  - Hook had broken import path that never worked in published packages
+  - Use `useOfflineStore` instead (superior offline-first implementation)
+  - Migration: `import { useOfflineStore } from 'unrdf-react'`
+
+- **validation/browser-validation.mjs** - Removed browser package validation
+  - Validated non-functional code (no longer relevant)
+
+### Changed
+
+- **packages/composables** - Removed unused `@unrdf/browser` dependency
+  - Dependency was declared but never imported (dead dependency)
+  - No impact on functionality
+
+## [5.0.0-alpha.0] - 2025-12-03
 
 ### 🔧 Test Infrastructure Improvements
 
 #### Fixed
+
 - **Test Configuration**: Disabled coverage by default in packages/core to improve test execution speed
 - **Test Timeout**: Increased test timeout to 60s to handle large dataset tests (100K quad performance tests)
 - **Dependencies**: Regenerated pnpm-lock.yaml with clean install, resolving duplicate mapping key error
 - **Security**: Verified 0 critical/high vulnerabilities via `pnpm audit --audit-level=high`
 
 #### Changed
+
 - **packages/core/package.json**: Updated test scripts to use `--no-coverage` by default
   - `test` script now runs without coverage for faster execution
   - Added `test:coverage` script for explicit coverage generation
 - **packages/core/vitest.config.mjs**: Added `testTimeout: 60000` (60s) for long-running tests
 
 #### Known Issues
+
 - **pnpm -r test**: Still experiences hanging behavior when running all workspace tests concurrently
   - **Workaround**: Run tests per-package individually (e.g., `cd packages/core && npm test`)
   - Individual package tests complete successfully with all tests passing
   - This will be addressed in a future release
 
 #### Quality Metrics
+
 - Security: 0 critical/high vulnerabilities ✅
 - Dependencies: Clean lockfile with no conflicts ✅
 - Tests: packages/core 252 tests verified (running individually) ✅

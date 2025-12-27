@@ -109,7 +109,7 @@ function createSafeEffect(effectCode, safeGlobals) {
     const require = undefined;
     const module = undefined;
     const exports = undefined;
-    const __dirname = undefined;
+    const _dirname = undefined;
     const __filename = undefined;
     
     // Create effect function

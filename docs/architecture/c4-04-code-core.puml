@@ -1,0 +1,194 @@
+@startuml UNRDF Core - Code Level
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+LAYOUT_WITH_LEGEND()
+
+title @unrdf/core - C4 Code Level (Class definitions, methods, module structure)
+
+Package("src/rdf") {
+  Component(unrdf_store_class, "class UnrdfStore", "Class", "constructor(quads?, options?)\n\nQuery (SYNC):\n+ query(sparql, options?): Array|boolean|Object\n+ queryAsync(sparql, options?): Promise\n\nMutation:\n+ add(quad): void\n+ delete(quad): void\n+ has(quad): boolean\n+ clear(): void\n\nBulk Operations:\n+ bulkAdd(quads): void\n+ bulkRemove(quads): void\n+ transaction(fn): Promise\n\nQuery Operations:\n+ match(s?, p?, o?, g?): Quad[]\n+ update(sparqlUpdate): void\n\nI/O:\n+ load(data, options): void\n+ dump(options): string\n\nUtility:\n+ get size(): number\n+ get version(): number (for reactivity)\n\nInternal:\n- _store: OxigraphStore\n- _version: number")
+
+  Component(store_functional, "Functional API", "Module", "createStore(quads?): OxigraphStore\naddQuad(store, quad): Promise<void>\nremoveQuad(store, quad): Promise<void>\ngetQuads(store, s?, p?, o?): Promise<Quad[]>\ncountQuads(store): Promise<number>\n\nLegacy async wrappers\nBackward compatibility")
+
+  Component(canonicalize_mod, "Canonicalization", "Module", "canonicalize(quads[]): Quad[]\ntoNTriples(quads[]): string\nsortQuads(quads[]): Quad[]\nisIsomorphic(g1, g2): boolean\n\nURDNA2015 algorithm\nGraph comparison")
+
+  Component(n3_justified, "N3 Justified Only", "Module", "ONLY N3 import allowed\nParser: parseN3(data): Promise<Quad[]>\nWriter: serializeN3(quads[]): string\nSerialize to N3 format\nStreaming support")
+}
+
+Package("src/sparql") {
+  Component(executor_sync_class, "Synchronous Executor", "Module", "executeQuerySync(store, sparql, opts): Result\nexecuteSelectSync(store, sparql): Bindings[]\nexecuteAskSync(store, sparql): boolean\nexecuteConstructSync(store, sparql): Quad[]\nprepareQuerySync(sparql): Query\n\nDirect Oxigraph WASM\n<1ms execution\nAll query types")
+
+  Component(executor_async_class, "Async Executor", "Module (Legacy)", "executeQuery(store, sparql): Promise<Result>\nqueryAsync(store, sparql): Promise<Result>\n\nAsync wrappers\nDeprecated in v5\nBackward compat only")
+}
+
+Package("src/utils - Layers") {
+  Component(layer1, "Layer 1: Term Manipulation", "Module group", "term-utils.mjs:\n  asNamedNode(iri): NamedNode\n  asLiteral(value, type?): Literal\n  asBlankNode(id?): BlankNode\n  asString(term): string\n  isNamedNode(term): boolean\n  isLiteral(term): boolean\n  getIRI(term): string\n  smartLiteral(value): Literal\n\nquad-utils.mjs:\n  quadToJSON(quad): Object\n  jsonToQuad(obj): Quad\n  extractSubjects(quads): NamedNode[]\n  extractObjects(quads): Term[]\n  extractPredicates(quads): NamedNode[]")
+
+  Component(layer2, "Layer 2: Graph Query", "Module group", "graph-utils.mjs:\n  getObjects(store, s?, p?, g?): Term[]\n  getSubjects(store, ?, p, o, g?): Term[]\n  isA(store, term, type): boolean\n  getTypes(store, term): NamedNode[]\n  pluck(quads, predicate): Term[]\n  indexByPredicate(quads): Map<p, Quad[]>\n  findByProperty(quads, pred, val): Quad[]")
+
+  Component(layer3, "Layer 3: SPARQL Building", "Module group", "sparql-utils.mjs:\n\nclass SPARQLBuilder {\n  addPrefix(prefix, ns): this\n  select(...vars): this\n  where(s, p, o, g?): this\n  filter(expr): this\n  optional(triple): this\n  groupBy(...vars): this\n  orderBy(...vars): this\n  limit(n): this\n  offset(n): this\n  distinct(): this\n  build(): string\n}\n\nFluent API pattern")
+
+  Component(layer4, "Layer 4: Namespaces & IDs", "Module group", "namespace-utils.mjs:\n  class NamespaceManager {\n    addNamespace(prefix, iri): void\n    getIRI(prefix): string\n    getPrefix(iri): string\n  }\n  COMMON_VOCABULARIES: Map\n  COMMON_PREFIXES: Map\n\nid-utils.mjs:\n  generateUUID(): string\n  generateBNodeId(): string\n  generateDeterministicBNodeId(seed): string\n  createHashIRI(value): NamedNode\n  makeBNodeGenerator(): () => BlankNode\n  skolemize(quad): Quad")
+
+  Component(layer5, "Layer 5: Validation & Quality", "Module group", "validation-utils.mjs:\n  Zod schemas:\n    IRISchema, LiteralSchema\n    NamedNodeSchema, BlankNodeSchema\n    TermSchema, QuadSchema\n  validateQuad(quad): Result\n  validateStore(quads[]): Report\n\nquality-utils.mjs:\n  class QualityAssessment {\n    addDimension(name, score): void\n    getScore(): number\n    getIssues(): string[]\n  }\n  assessDataQuality(quads): Assessment\n  detectDuplicates(quads): Quad[]\n  findMissingProperties(quads, property): Subject[]")
+
+  Component(layer6, "Layer 6: Transformation", "Module group", "transform-utils.mjs:\n  transformStore(store, fn): Store\n  storeToJSONLD(store): Object\n  storeToTurtle(store): string\n  jsonLdToStore(json): Quad[]\n  turtleToStore(ttl): Quad[]\n\nmerge-utils.mjs:\n  mergeStores(stores[]): Store\n  unionStores(g1, g2): Store\n  intersectStores(g1, g2): Store\n  diffStores(g1, g2): {added, removed}\n\nio-utils.mjs:\n  readTurtleFile(path): Quad[]\n  writeTurtleFile(path, quads): void\n  readJSONLDFile(path): Object\n  readNTriplesFile(path): Quad[]")
+
+  Component(layer7, "Layer 7: Infrastructure", "Module group", "debug-utils.mjs:\n  previewQuads(quads, limit): string\n  dumpTurtle(quads): string\n  getStoreStats(store): Stats\n  measureQuadProcessing(fn): Duration\n\nadaptive-monitor.mjs:\n  class AdaptiveMonitor {\n    start(): void\n    getStatus(): Status\n    on(event, handler): void\n  }\n  class MonitorOrchestrator {...}\n\ncircuit-breaker.mjs:\n  class CircuitBreaker {\n    execute(fn): Promise<T>\n    getState(): 'CLOSED'|'OPEN'|'HALF_OPEN'\n  }\n  CircuitBreakerRegistry: Map")
+}
+
+Package("src/validation & constants") {
+  Component(validation_schemas, "Validation Schemas", "Module", "validation/index.mjs:\n\nQuadSchema (Zod)\nStoreSchema\nQueryOptionsSchema\n\nvalidateQuad(quad, schema?): boolean\nvalidateStore(quads): Report")
+
+  Component(constants_mod, "RDF Constants", "Module", "constants.mjs:\n\nRDF, RDFS, OWL, XSD\nFOAF, DCTERMS, SKOS\nCOMMON_PREFIXES\n\nVocabulary definitions")
+
+  Component(types_mod, "Type Utilities", "Module", "types.mjs:\n\ncreateTerm(iri): NamedNode\ncreateLiteral(value, type?): Literal\ncreateBNode(id?): BlankNode\ncreateVariable(name): Variable\ncreateQuad(s, p, o, g?): Quad")
+}
+
+Package("src/index.mjs") {
+  Component(main_export, "Main Export", "Re-export aggregator", "// Primary APIs\nexport { UnrdfStore, createUnrdfStore }\n\n// SPARQL (Sync)\nexport {\n  executeQuerySync,\n  executeSelectSync,\n  executeAskSync,\n  executeConstructSync\n}\n\n// Term Creation\nexport {\n  createTerms, createNamedNode,\n  createLiteral, createBlankNode,\n  createVariable, createQuad\n}\n\n// Constants & Validation\nexport { RDF, RDFS, OWL, XSD, ... }\nexport { QuadSchema, validateQuad, ... }\n\n// Utils (50+ functions)\nexport * from './utils/'\n\n// Legacy APIs (backward compat)\nexport { createStore, addQuad, ... }")
+}
+
+' External systems
+System_Ext(oxigraph, "@unrdf/oxigraph", "Native WASM store\nOxigraphStore wrapper")
+System_Ext(zod, "Zod", "Schema validation library")
+System_Ext(rdf_canon, "rdf-canonize", "URDNA2015 canonicalization")
+System_Ext(rdfjs, "RDF.js", "Standard data model")
+
+' Relationships
+Rel(main_export, unrdf_store_class, "exports")
+Rel(main_export, executor_sync_class, "exports")
+Rel(main_export, layer1, "exports")
+Rel(main_export, layer2, "exports")
+Rel(main_export, layer3, "exports")
+
+Rel(unrdf_store_class, oxigraph, "wraps OxigraphStore")
+Rel(unrdf_store_class, executor_sync_class, "uses for query()")
+
+Rel(executor_sync_class, oxigraph, "executes against")
+
+Rel(layer1, rdfjs, "implements")
+Rel(layer5, zod, "uses")
+Rel(canonicalize_mod, rdf_canon, "uses")
+
+note right of unrdf_store_class
+  **PRIMARY RDF INTERFACE**
+
+  Constructor: new UnrdfStore(quads?, options?)
+  State: _store (OxigraphStore), _version
+
+  Query Execution:
+  • Synchronous: query(sparql) [PRIMARY]
+  • Async wrapper: queryAsync() [Legacy]
+
+  Mutation Pattern:
+  • Single: add(quad), delete(quad)
+  • Bulk: bulkAdd(), bulkRemove()
+  • Atomic: transaction(fn)
+
+  Reactivity:
+  • version property incremented on mutation
+  • Used for Vue computed() tracking
+  • React dependency tracking
+end note
+
+note right of executor_sync_class
+  **SPARQL EXECUTION (SYNC)**
+
+  Direct Oxigraph WASM execution
+  Fast path: <1ms for typical queries
+  Handles all 4 query types
+
+  executeQuerySync():
+  → Detects query type
+  → Formats result appropriately
+  → Returns immediately (sync)
+
+  executeSelectSync():
+  → Array of bindings
+  → Each binding: {?var: Term}
+
+  executeAskSync():
+  → boolean result
+
+  executeConstructSync():
+  → Array of Quads
+end note
+
+note right of layer1
+  **TERM LAYER**
+
+  Type checking:
+  • isNamedNode, isLiteral, isBlankNode
+  • Type-safe conversions
+  • String representations
+
+  Type coercion:
+  • asNamedNode: string → NamedNode
+  • asLiteral: any → Literal (auto-type)
+  • asString: Term → string
+
+  Quad serialization:
+  • quadToJSON: Quad → JSON object
+  • jsonToQuad: JSON → Quad
+  • Preserves all RDF semantics
+end note
+
+note right of layer3
+  **SPARQL BUILDER PATTERN**
+
+  Fluent API for query construction
+  Method chaining: .select().where().filter().build()
+
+  Example:
+  new SPARQLBuilder()
+    .addPrefix('rdf', RDF.namespace)
+    .select('?s', '?p')
+    .where('?s', '?p', '?o')
+    .filter('?p != rdf:type')
+    .limit(100)
+    .build()
+    → SELECT ?s ?p WHERE { ... } LIMIT 100
+end note
+
+note right of layer7
+  **INFRASTRUCTURE LAYER**
+
+  Monitoring:
+  • AdaptiveMonitor: Health checks
+  • CircuitBreaker: Failure isolation
+  • Metrics: Duration, throughput
+
+  Debugging:
+  • previewQuads(): Human readable
+  • dumpTurtle(): Full serialization
+  • getStoreStats(): Size, index info
+  • measureQuadProcessing(): Performance
+
+  All utilities for observability
+end note
+
+note bottom
+  **ARCHITECTURE LAYERS**
+
+  Layer 1: Terms (lowest level)
+  ↓
+  Layer 2: Graph operations on terms
+  ↓
+  Layer 3: SPARQL query building
+  ↓
+  Layer 4: Namespace & ID management
+  ↓
+  Layer 5: Validation & quality checks
+  ↓
+  Layer 6: Data transformation & I/O
+  ↓
+  Layer 7: Infrastructure & monitoring
+  ↑
+  All unified in UnrdfStore class
+  via index.mjs aggregation
+end note
+
+SHOW_LEGEND()
+
+@enduml

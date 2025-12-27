@@ -1,0 +1,337 @@
+================================================================================
+KGC PROBE SPECIFICATION - COMPLETE MANIFEST
+================================================================================
+Date: 2025-12-27
+Status: ✅ IMPLEMENTATION READY
+Methodology: SPARC (Specification Phase)
+Agent: Agent-1 (Specification)
+
+================================================================================
+DELIVERABLES
+================================================================================
+
+1. KGC-PROBE-SPECIFICATION.json (28 KB, 602 lines)
+   ├─ spec_summary (3-5 bullets)
+   ├─ testable_claims (15 claims with evidence requirements)
+   ├─ acceptance_criteria (10 domains, domain-by-domain checklists)
+   ├─ guard_policy_summary (10 forbidden operations + 5 resource limits)
+   ├─ success_metrics (10 metrics with targets and verification)
+   ├─ zod_schema_mapping (FrontmatterSchema, BlockMetadataSchema, ReceiptSchema)
+   └─ implementation_roadmap (3 phases, 3 weeks)
+
+2. KGC-PROBE-SPECIFICATION.md (25 KB, 672 lines)
+   ├─ Executive summary
+   ├─ Problem statement
+   ├─ 10 probe domains (detailed narrative, examples, tests)
+   │  ├─ Domain 1: Frontmatter Parsing & Validation
+   │  ├─ Domain 2: Block Structure & Metadata
+   │  ├─ Domain 3: Receipt Validation & Cryptography
+   │  ├─ Domain 4: Dynamic Section Integrity
+   │  ├─ Domain 5: Determinism & Reproducibility
+   │  ├─ Domain 6: Resource Bounds
+   │  ├─ Domain 7: Receipt Dependency Graph
+   │  ├─ Domain 8: Schema Conformance
+   │  ├─ Domain 9: Content Cross-References
+   │  └─ Domain 10: Error Detection & Reporting
+   ├─ Test checkpoints (3 sprints)
+   ├─ Guard policy + resource limits (detailed)
+   ├─ Success metrics (detailed)
+   ├─ Implementation checklist
+   └─ Conclusion
+
+3. KGC-PROBE-QUICK-REFERENCE.md (15 KB, 384 lines)
+   ├─ 10 domains at a glance (table)
+   ├─ Condensed acceptance criteria (3 checkpoints)
+   ├─ Key claims & evidence (15 claims summary)
+   ├─ Guard policy (condensed)
+   ├─ Success metrics (table)
+   ├─ CLI usage examples
+   ├─ Test organization (file structure)
+   ├─ Implementation phases (3 weeks)
+   ├─ Zod schema reference
+   ├─ Decision tree (how probe works)
+   ├─ Common errors & remediation
+   ├─ Reproducibility guarantee (theorem + proof)
+   ├─ File structure template
+   └─ Completion checklist
+
+4. KGC-PROBE-SPECIFICATION-SUMMARY.md (This file, ~30 KB)
+   ├─ What is the KGC Probe? (core invariant)
+   ├─ Specification artifacts delivered (3 documents)
+   ├─ The 10 probe domains (condensed table)
+   ├─ 15 testable claims (across all domains)
+   ├─ Success metrics (10 metrics table)
+   ├─ Guard policy summary (10 forbidden + 5 limits)
+   ├─ Implementation roadmap (3 weeks, 3 sprints)
+   ├─ Evidence requirements for each domain (with test commands)
+   ├─ File locations (all in /home/user/unrdf/docs/)
+   ├─ How to use these documents (by role)
+   ├─ Key guarantees (4 theorems + proofs)
+   ├─ Next steps (timeline)
+   ├─ Success criteria
+   └─ Q&A cross-references
+
+5. KGC-PROBE-SPECIFICATION-INDEX.md (13 KB, 436 lines)
+   [Pre-existing - CLI Specification Index]
+   ├─ CLI command definitions
+   ├─ Data structures & algorithms
+   ├─ Architecture & design patterns
+   └─ Implementation pseudocode
+
+6. KGC-PROBE-SPECIFICATION-MANIFEST.txt (This file)
+   └─ Complete file manifest with contents
+
+================================================================================
+SPECIFICATION COVERAGE
+================================================================================
+
+Testable Claims:           15 (T-001 through T-015)
+Probe Domains:             10 (Domain 1-10)
+Acceptance Criteria:       100+ (10 per domain, ~10 items each)
+Success Metrics:           10 (with targets, measurements, proofs)
+Guard Policy Items:        15 (10 forbidden + 5 resource limits)
+Implementation Phases:     3 (MVP, Core, Polish)
+Test Checkpoints:          3 (Sprint 1, 2, 3)
+Zod Schemas Defined:       4 (Frontmatter, BlockMetadata, Receipt, + 5 optional)
+Example Test Cases:        100+ (across all 10 domains)
+
+================================================================================
+KEY PROPERTIES
+================================================================================
+
+Core Invariant:
+  scan(doc, T0) ≡ scan(doc, T1)
+  Consequence: Byte-for-byte identical audit reports
+
+Determinism Guarantee:
+  Same world state + same probe version => Identical output
+  Proof: No randomness, no timestamps, no I/O latency affecting output
+
+Cryptographic Integrity:
+  All data validated with SHA-256 + RFC 8785 canonicalization
+  Proof: Every receipt hash verified, every section hashed
+
+Complete Coverage:
+  Probe identifies all sections, blocks, receipts without missing any
+  Proof: Frontmatter declares count; mismatch detected
+
+Error Detection:
+  Detects 99%+ of actual violations with <1% false positive rate
+  Proof: Comprehensive corpus testing + manual verification
+
+Resource Safety:
+  No network I/O, unbounded computation, or state mutation
+  Proof: Guard policy enforced, limits checked, timeout protection
+
+================================================================================
+SUCCESS METRICS TARGETS
+================================================================================
+
+Coverage:         100% (all receipts found)
+Error Accuracy:   <1% FP, 99%+ recall
+Latency:          <100ms p99 latency
+Hash Collision:   0 collisions (across 10,000+ vectors)
+Reproducibility:  100% identical (5 runs same doc)
+Schema Coverage:  100% rules tested
+DAG Validity:     0 cycles detected
+Link Integrity:   99%+ accuracy
+Error Context:    100% have location + remediation
+Throughput:       10+ docs/sec
+
+================================================================================
+IMPLEMENTATION TIMELINE
+================================================================================
+
+Sprint 1 (Week 1): MVP
+  ├─ Frontmatter parser + Zod validation (25 tests)
+  ├─ Block structure parser (30 tests)
+  ├─ CLI: kgc probe scan
+  ├─ 10 test documents
+  └─ Exit: 50 tests PASS, >80% coverage
+
+Sprint 2 (Week 2): Core Verification
+  ├─ Receipt validation + SHA-256 (20 tests)
+  ├─ DAG validator (15 tests)
+  ├─ Dynamic section mapper (15 tests)
+  ├─ Determinism checker (15 tests)
+  ├─ Bounds verifier (10 tests)
+  └─ Exit: 50+ new tests PASS, >90% coverage
+
+Sprint 3 (Week 3): Polish & Validation
+  ├─ Error reporter (20 tests)
+  ├─ Link checker (15 tests)
+  ├─ Schema validator (20 tests)
+  ├─ Performance benchmarks
+  ├─ Reproducibility verification
+  ├─ Error accuracy corpus (100+ docs)
+  └─ Exit: 100% acceptance criteria PASS
+
+================================================================================
+FILE STRUCTURE
+================================================================================
+
+packages/kgc-probe/
+├── src/
+│   ├── probe.frontmatter.mjs
+│   ├── probe.blocks.mjs
+│   ├── probe.receipts.mjs
+│   ├── probe.dag.mjs
+│   ├── probe.dynamic.mjs
+│   ├── probe.determinism.mjs
+│   ├── probe.bounds.mjs
+│   ├── probe.schema.mjs
+│   ├── probe.cross-refs.mjs
+│   ├── probe.error-reporting.mjs
+│   ├── probe.cli.mjs
+│   └── index.mjs
+├── test/
+│   ├── probe/
+│   │   ├── frontmatter.test.mjs (25 tests)
+│   │   ├── blocks.test.mjs (30 tests)
+│   │   ├── receipts.test.mjs (20 tests)
+│   │   ├── dag.test.mjs (15 tests)
+│   │   ├── dynamic.test.mjs (15 tests)
+│   │   ├── determinism.test.mjs (15 tests)
+│   │   ├── bounds.test.mjs (10 tests)
+│   │   ├── schema.test.mjs (20 tests)
+│   │   ├── cross-refs.test.mjs (15 tests)
+│   │   ├── error-reporting.test.mjs (20 tests)
+│   │   ├── integration.test.mjs (10 tests)
+│   │   └── error-accuracy.test.mjs (100+ corpus tests)
+│   └── fixtures/
+│       ├── documents/ (10 test .kgcmd files)
+│       └── receipts/ (20 test receipt files)
+├── docs/
+│   ├── KGC-PROBE-SPECIFICATION.md
+│   ├── KGC-PROBE-QUICK-REFERENCE.md
+│   └── examples/
+│       └── *.kgcmd (example documents)
+├── package.json
+└── README.md
+
+================================================================================
+SPECIFICATION DOCUMENTS LOCATION
+================================================================================
+
+All created in: /home/user/unrdf/docs/
+
+✅ KGC-PROBE-SPECIFICATION.json              28 KB (structured spec)
+✅ KGC-PROBE-SPECIFICATION.md                25 KB (narrative spec)
+✅ KGC-PROBE-QUICK-REFERENCE.md              15 KB (quick lookup)
+✅ KGC-PROBE-SPECIFICATION-SUMMARY.md        30 KB (executive summary)
+✅ KGC-PROBE-SPECIFICATION-INDEX.md          13 KB (CLI spec index - pre-existing)
+✅ KGC-PROBE-SPECIFICATION-MANIFEST.txt      (this file)
+
+Total: ~111 KB of structured specification documentation
+
+================================================================================
+HOW TO USE THESE DOCUMENTS
+================================================================================
+
+For Project Managers:
+  1. Read KGC-PROBE-SPECIFICATION-SUMMARY.md
+  2. Review Quick Reference for domains + phases
+  3. Track progress using implementation checklist
+  4. Report status using metrics table
+
+For Developers:
+  1. Read KGC-PROBE-SPECIFICATION.md (full narrative)
+  2. Use Quick Reference for quick lookups
+  3. Implement domains in order (1→10)
+  4. Reference JSON for detailed schema specifications
+  5. Check test checkpoints at sprint boundaries
+
+For QA / Testing:
+  1. Extract acceptance criteria from JSON
+  2. Map to test cases in each domain
+  3. Create test data corpus (10 documents)
+  4. Validate metrics (error accuracy, latency, coverage)
+  5. Report results against targets
+
+For Architecture Review:
+  1. Review guard policy (10 forbidden operations)
+  2. Validate resource limits (500MB memory, etc.)
+  3. Check determinism guarantee + proofs
+  4. Review Zod schemas + data types
+  5. Approve 3-week implementation roadmap
+
+================================================================================
+NEXT STEPS
+================================================================================
+
+Immediate:
+  [ ] Review specification with team
+  [ ] Approve 10 domains + success metrics
+  [ ] Setup project structure (package.json, test framework)
+  [ ] Assign developers to roles
+
+Sprint 1 (Week 1):
+  [ ] Implement frontmatter parser (25 tests)
+  [ ] Implement block parser (30 tests)
+  [ ] Exit: 50 tests PASS, coverage >80%
+
+Sprint 2 (Week 2):
+  [ ] Implement receipt verification (20 tests)
+  [ ] Implement DAG validation (15 tests)
+  [ ] Implement dynamic sections (15 tests)
+  [ ] Exit: 50+ tests PASS, coverage >90%
+
+Sprint 3 (Week 3):
+  [ ] Implement error reporting (20 tests)
+  [ ] Implement cross-ref checking (15 tests)
+  [ ] Complete schema validation (20 tests)
+  [ ] Exit: 100% criteria PASS
+
+================================================================================
+SUCCESS CRITERIA
+================================================================================
+
+Specification Phase Complete When:
+  ✅ All 15 testable claims understood
+  ✅ All 10 domain acceptance criteria clear
+  ✅ All 10 success metrics measurable
+  ✅ Guard policy approved
+  ✅ Zod schemas defined
+  ✅ Team ready for Sprint 1
+
+Implementation Phase Complete When:
+  ✅ All 200+ unit tests PASS
+  ✅ Code coverage >95%
+  ✅ All 10 metrics achieved (targets met)
+  ✅ Zero false positives on 100-doc corpus
+  ✅ <100ms p99 latency verified
+  ✅ Reproducibility verified (5 runs identical)
+  ✅ Full documentation complete
+
+================================================================================
+DOCUMENT VERSIONING
+================================================================================
+
+Specification Version:  1.0.0
+Date Created:          2025-12-27
+Status:                Implementation Ready
+Methodology:           SPARC (Specification Phase)
+Agent:                 Agent-1 (Specification)
+
+Approval Status:       [ ] Pending team review
+Last Modified:         2025-12-27
+Next Review Date:      When Sprint 1 starts
+
+================================================================================
+CONTACT & REFERENCES
+================================================================================
+
+Related Specifications:
+  - KGC-MARKDOWN-SPECIFICATION.md
+  - KGC-SIDECAR-CLIENT-IMPLEMENTATION.md
+  - CLAUDE.md (project instructions)
+
+Implementation References:
+  - Zod documentation (schema validation)
+  - RFC 8785 (JSON Canonicalization)
+  - SHA-256 specification
+  - Diátaxis framework (documentation types)
+
+================================================================================
+END OF MANIFEST
+================================================================================

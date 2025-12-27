@@ -1,0 +1,173 @@
+@startuml UNRDF Streaming Components
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+LAYOUT_WITH_LEGEND()
+
+title @unrdf/streaming - C3 Component Diagram (Change feeds & real-time sync)
+
+Container_Boundary(streaming_pkg, "@unrdf/streaming") {
+
+  ' ============================================
+  ' LAYER 1: PUBLIC API ENTRY POINT
+  ' ============================================
+  Component(index, "index.mjs", "Entry Point", "createChangeFeed(store?)\ncreateStreamProcessor(feed)\ncreateSyncMessage(changes)\nparseSyncMessage(message)")
+
+  ' ============================================
+  ' LAYER 2: CHANGE FEED (EVENT-DRIVEN PUB/SUB)
+  ' ============================================
+  Component(change_feed, "Change Feed", "Class extends EventTarget", "Quad change event emitter\n\nEvents:\n• CustomEvent('change')\n  detail: {type, quad, timestamp,\n           metadata, batchId}\n\nAPI:\n• subscribe(callback): () => unsubscribe\n• getHistory(options): Quad[]\n• replay(callback): Promise<void>\n• emit(changeEvent): void")
+
+  Component(change_event, "Change Event", "Interface", "type: 'add'|'remove'|'update'\nquad: Quad (RDF quad)\ntimestamp: number (ms)\nmetadata: {source, userId, transactionId?}\nbatchId: string (correlation)")
+
+  ' ============================================
+  ' LAYER 3: STREAM PROCESSOR (CHAINABLE OPS)
+  ' ============================================
+  Component(stream_processor, "StreamProcessor", "Class", "Chainable operations on change feed\n\n.batch(size): StreamProcessor\n  → Groups changes into batches\n\n.filter(predicate): StreamProcessor\n  → Filters changes by condition\n\n.map(transformer): StreamProcessor\n  → Transforms each change\n\n.debounce(ms): StreamProcessor\n  → Delays emission (wait for more)\n\n.subscribe(callback): () => unsubscribe\n  → Terminal operation\n\n.build(): Observable")
+
+  Component(operations, "Stream Operations", "Module", "Batch: Groups by timestamp/size window\nFilter: Predicate-based selection\nMap: Change transformation\nDebounce: Time-based accumulation\nThrottle: Rate limiting")
+
+  ' ============================================
+  ' LAYER 4: SYNCHRONIZATION PROTOCOL
+  ' ============================================
+  Component(sync_protocol, "Sync Protocol", "Module", "Message encoding/decoding\n\ncreateSyncMessage(changes):\n  → {version, changes[], checksum,\n      timestamp, metadata}\n\nparseSyncMessage(message):\n  → Validates checksum\n  → Deserializes changes\n  → Returns validated payload")
+
+  Component(checksum, "Checksum Verification", "Module", "SHA-256 hash of changes\nVerifies message integrity\nDetects corruption/tampering\nErrorOnMismatch strategy")
+
+  Component(message_format, "Message Format", "Interface", "version: '1.0'\nchanges: ChangeEvent[]\nchecksum: string (SHA-256)\ntimestamp: number (ms)\nmetadata: {source, compression?}\nexpiry?: number (TTL in seconds)")
+
+  ' ============================================
+  ' LAYER 5: SUBSCRIPTION MANAGEMENT
+  ' ============================================
+  Component(subscription_mgr, "SubscriptionManager", "Class", "Manages subscribers\n\nsubscribe(callback): unsubscribe fn\ngetSubscriberCount(): number\nbroadcast(change): void\nclear(): void\n\nWeakMap for automatic cleanup")
+
+  Component(subscription, "Subscription", "Interface", "callback: (change: ChangeEvent) => void\nfilter?: (change) => boolean\nmetadata?: {id, priority, tags}")
+
+  ' ============================================
+  ' LAYER 6: HISTORY & REPLAY
+  ' ============================================
+  Component(history, "History Manager", "Module", "Stores change history (ring buffer)\n\ngetHistory(since?, until?)\nreplay(callback, options)\ntruncate(before): void\ngetStats(): {count, size, oldest}:")
+
+  Component(ring_buffer, "Ring Buffer", "Class", "Circular fixed-size buffer\nOldest entries discarded\nEfficient memory usage\nConstant-time insertion")
+
+  ' ============================================
+  ' LAYER 7: TRANSPORT LAYER (MESSAGE PASSING)
+  ' ============================================
+  Component(transport, "Transport Abstraction", "Module", "Pluggable message transport\n\nWebSocket (ws library)\nServer-Sent Events (SSE)\nHTTP polling\nCustom adapters")
+
+  Component(websocket_adapter, "WebSocket Adapter", "Module", "connect(url): Promise<WebSocket>\nsend(message): Promise<void>\non('message', handler)\nclose()\n\nHandles reconnection\nAutomatic retry with backoff")
+
+  ' ============================================
+  ' EXTERNAL DEPENDENCIES
+  ' ============================================
+  Component(core_dep, "@unrdf/core", "External", "Quad interface, RDF types")
+
+  Component(hooks_dep, "@unrdf/hooks", "External", "Hook execution on changes\nPolicy validation")
+
+  Component(ws_dep, "ws library", "External", "WebSocket client/server\nBinary frame support")
+
+  Component(zod_dep, "Zod", "External", "Schema validation")
+
+  ' ============================================
+  ' RELATIONSHIPS
+  ' ============================================
+
+  Rel(index, change_feed, "exports")
+  Rel(index, stream_processor, "exports")
+  Rel(index, sync_protocol, "exports")
+
+  Rel(change_feed, change_event, "emits")
+  Rel(change_feed, subscription_mgr, "uses")
+  Rel(change_feed, history, "uses")
+
+  Rel(stream_processor, change_feed, "consumes")
+  Rel(stream_processor, operations, "uses")
+  Rel(stream_processor, subscription_mgr, "delegates to")
+
+  Rel(sync_protocol, checksum, "uses")
+  Rel(sync_protocol, message_format, "implements")
+  Rel(sync_protocol, zod_dep, "validates with")
+
+  Rel(transport, websocket_adapter, "includes")
+  Rel(websocket_adapter, ws_dep, "uses")
+
+  Rel(history, ring_buffer, "uses")
+
+}
+
+note right of change_feed
+  **EVENT-DRIVEN PUB/SUB**
+
+  Extends browser EventTarget
+  Compatible with DOM events API
+
+  Stores all changes as CustomEvents
+  Subscribers automatically notified
+
+  History enables time-travel debugging
+  Replay for recovery/synchronization
+end note
+
+note right of stream_processor
+  **FUNCTIONAL COMPOSITION**
+
+  Chainable stream operations
+  Similar to RxJS/reactive patterns
+
+  Each operation creates new stream
+  Late subscription: no replay
+
+  All operations preserve metadata
+  Batching reduces network overhead
+end note
+
+note right of sync_protocol
+  **MESSAGE INTEGRITY**
+
+  SHA-256 checksum on all messages
+  Detects network corruption
+
+  Compact binary format option
+  Compression for large payloads
+
+  Message expiry (TTL) prevents
+  replay of stale changes
+end note
+
+note right of history
+  **BOUNDED HISTORY**
+
+  Ring buffer: fixed memory usage
+  Oldest entries discarded first
+
+  Enables replication/recovery
+  Synchronization of lagging peers
+
+  Stats tracking: metrics on
+  change volume and time range
+end note
+
+note bottom of streaming_pkg
+  **REAL-TIME SYNCHRONIZATION**
+
+  1. Event-driven: CustomEvent('change')
+  2. Pub/Sub: Multiple subscribers
+  3. Chainable: Batch/filter/map/debounce
+  4. Integrity: SHA-256 verified
+  5. History: Bounded ring buffer
+  6. Transport: WebSocket-based
+  7. Metadata: Correlation IDs, sources
+  8. Automatic: Subscriber cleanup
+
+  **Typical Flow:**
+  Store mutation → CustomEvent
+  → Subscribers notified
+  → StreamProcessor chains
+  → syncMessage created
+  → Sent via WebSocket
+  → Peer receives → Verifies checksum
+  → Applies changes → Fires own event
+end note
+
+SHOW_LEGEND()
+
+@enduml

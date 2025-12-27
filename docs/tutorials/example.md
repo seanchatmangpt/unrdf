@@ -24,7 +24,6 @@ WHERE {
 }
 ```
 
-
 ---
 
 ## Proof Appendix

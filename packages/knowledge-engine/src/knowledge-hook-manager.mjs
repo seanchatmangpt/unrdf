@@ -12,7 +12,7 @@ import { createHookExecutor } from './hook-executor.mjs';
 import { createConditionEvaluator } from './condition-evaluator.mjs';
 import { PolicyPackManager } from './policy-pack.mjs';
 import { createSecurityValidator } from './security-validator.mjs';
-import { validateManagerConfig, _validateTransactionDelta, validateHookEvent } from './schemas.mjs';
+import { validateManagerConfig, validateTransactionDelta, validateHookEvent } from './schemas.mjs';
 
 /**
  * Knowledge Hook Manager that extends the transaction system with file-based hooks.

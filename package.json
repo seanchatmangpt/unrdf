@@ -1,7 +1,7 @@
 {
   "name": "unrdf-workspace",
-  "version": "5.0.1",
-  "description": "UNRDF v5 Monorepo - RDF Knowledge Graph Substrate Platform",
+  "version": "6.0.0-alpha.1",
+  "description": "UNRDF v6 Monorepo - RDF Knowledge Graph Substrate Platform",
   "private": true,
   "type": "module",
   "repository": {
@@ -102,12 +102,9 @@
     "globals": "^15.12.0",
     "husky": "^9.1.7",
     "jsdom": "^27.2.0",
-    "lint-staged": "^16.2.7",
-    "playwright": "^1.57.0",
-    "prettier": "^3.7.4",
-    "typescript": "^5.9.3",
-    "unbuild": "^3.6.1",
-    "vitest": "^4.0.15"
+    "prettier": "^3.0.0",
+    "tinybench": "^6.0.0",
+    "vitest": "^1.0.0"
   },
   "pnpm": {
     "overrides": {
@@ -121,16 +118,23 @@
     "pnpm": "8.15.0"
   },
   "dependencies": {
-    "hash-wasm": "^4.12.0",
-    "zod": "^4.1.13"
-  },
-  "lint-staged": {
-    "*.{mjs,js}": [
-      "eslint --fix --max-warnings=0",
-      "prettier --write"
-    ],
-    "*.{json,md,yml,yaml}": [
-      "prettier --write"
-    ]
+    "@comunica/query-sparql": "^4.5.0",
+    "@noble/hashes": "^2.0.1",
+    "@opentelemetry/api": "^1.9.0",
+    "@rdfjs/dataset": "^2.0.2",
+    "@unrdf/core": "workspace:*",
+    "@unrdf/oxigraph": "workspace:*",
+    "clownface": "^2.0.3",
+    "fetch": "^1.1.0",
+    "is-online": "^12.0.2",
+    "isomorphic-fetch": "^3.0.0",
+    "lru-cache": "^11.2.4",
+    "n3": "^1.26.0",
+    "oxigraph": "^0.5.2",
+    "rdf-canonize": "^2.0.1",
+    "rdf-ext": "^2.6.0",
+    "rdf-validate-shacl": "^0.6.5",
+    "sparqljs": "^3.7.3",
+    "zod": "^3.25.76"
   }
 }

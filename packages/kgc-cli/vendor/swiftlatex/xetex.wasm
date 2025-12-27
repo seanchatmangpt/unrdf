@@ -1,0 +1,24 @@
+// PLACEHOLDER: SwiftLaTeX XeTeX WASM Binary
+//
+// This is a placeholder file. The actual XeTeX WASM binary is not included
+// in the repository due to size constraints (~15-25 MB).
+//
+// TO USE SWIFTLATEX:
+// 1. Download production WASM binaries from:
+//    https://github.com/SwiftLaTeX/SwiftLaTeX/releases
+//
+// 2. Replace this file with the actual xetex.wasm binary
+//
+// 3. Verify integrity:
+//    sha256sum vendor/swiftlatex/xetex.wasm
+//    (Compare against official checksums)
+//
+// RUNTIME ERROR:
+// If the loader attempts to use this placeholder, it will fail with:
+// "SwiftLaTeX WASM binary not found: vendor/swiftlatex/xetex.wasm"
+//
+// FILE LOCATION: /home/user/unrdf/packages/kgc-cli/vendor/swiftlatex/xetex.wasm
+// EXPECTED SIZE: ~15-25 MB (actual binary)
+// CURRENT SIZE: <1 KB (placeholder)
+//
+// See vendor/swiftlatex/README.md for detailed instructions.

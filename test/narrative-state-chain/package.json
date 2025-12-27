@@ -1,0 +1,33 @@
+{
+  "name": "@unrdf/narrative-state-chain-tests",
+  "version": "1.0.0",
+  "description": "Test suite for Narrative State Chain",
+  "type": "module",
+  "scripts": {
+    "test": "vitest",
+    "test:unit": "vitest run test/narrative-state-chain/unit --reporter=verbose",
+    "test:property": "vitest run test/narrative-state-chain/property --reporter=verbose",
+    "test:integration": "vitest run test/narrative-state-chain/integration --reporter=verbose",
+    "test:determinism": "vitest run test/narrative-state-chain/determinism --reporter=verbose",
+    "test:adversarial": "vitest run test/narrative-state-chain/adversarial --reporter=verbose",
+    "test:all": "vitest run test/narrative-state-chain --reporter=verbose",
+    "test:coverage": "vitest run test/narrative-state-chain --coverage",
+    "test:watch": "vitest watch test/narrative-state-chain"
+  },
+  "keywords": [
+    "narrative-state-chain",
+    "rdf",
+    "testing",
+    "property-based"
+  ],
+  "author": "",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "vitest": "^1.0.0",
+    "fast-check": "^3.13.0",
+    "@vitest/coverage-v8": "^1.0.0"
+  },
+  "dependencies": {
+    "zod": "^3.22.0"
+  }
+}

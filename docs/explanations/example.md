@@ -40,7 +40,6 @@ This concept explains the underlying principles.
 
 Proofs use Merkle trees for efficient verification.
 
-
 ---
 
 ## Proof Appendix

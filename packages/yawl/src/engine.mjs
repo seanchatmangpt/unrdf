@@ -302,8 +302,8 @@ class WorkflowEngine extends withQueries(
     }
 
     // Verify task is active
-    if (task.status !== TaskStatus.RUNNING) {
-      throw new Error(`Task ${workItemId} is not running (status: ${task.status})`);
+    if (task.status !== TaskStatus.ACTIVE) {
+      throw new Error(`Task ${workItemId} is not active (status: ${task.status})`);
     }
 
     // Release resource if allocated

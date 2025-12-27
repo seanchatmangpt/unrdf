@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UNRDF Hooks Runtime</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .header h1 {
+            color: #2563eb;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #666;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .card h2 {
+            margin-bottom: 15px;
+            color: #374151;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .form-group textarea {
+            height: 100px;
+            resize: vertical;
+        }
+        
+        .btn {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 10px;
+        }
+        
+        .btn:hover {
+            background: #1d4ed8;
+        }
+        
+        .btn-secondary {
+            background: #6b7280;
+        }
+        
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+        
+        .btn-danger {
+            background: #dc2626;
+        }
+        
+        .btn-danger:hover {
+            background: #b91c1c;
+        }
+        
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+        
+        .status.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+        
+        .status.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+        
+        .status.info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+        }
+        
+        .result {
+            background: #f9fafb;
+            padding: 15px;
+            border-radius: 4px;
+            border: 1px solid #e5e7eb;
+            margin-top: 15px;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+        }
+        
+        .hook-item {
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .hook-item h3 {
+            margin-bottom: 10px;
+            color: #374151;
+        }
+        
+        .hook-item .meta {
+            color: #6b7280;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔧 UNRDF Hooks Runtime</h1>
+            <p>Manage and execute Knowledge Hooks with real-time evaluation</p>
+        </div>
+        
+        <div class="grid">
+            <!-- Create Hook -->
+            <div class="card">
+                <h2>Create Hook</h2>
+                <form id="createHookForm">
+                    <div class="form-group">
+                        <label for="hookId">Hook ID</label>
+                        <input type="text" id="hookId" placeholder="ex:ServiceHealthMonitor" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="hookName">Name</label>
+                        <input type="text" id="hookName" placeholder="Service Health Monitor">
+                    </div>
+                    <div class="form-group">
+                        <label for="hookSelect">SELECT Query</label>
+                        <textarea id="hookSelect" placeholder="SELECT ?service ?errorRate WHERE { ?service <http://example.org/errorRate> ?errorRate }"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="hookCombine">Combine Logic</label>
+                        <select id="hookCombine">
+                            <option value="AND">AND</option>
+                            <option value="OR">OR</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn">Create Hook</button>
+                </form>
+                <div id="createStatus"></div>
+            </div>
+            
+            <!-- Manage Hooks -->
+            <div class="card">
+                <h2>Manage Hooks</h2>
+                <button onclick="loadHooks()" class="btn">Refresh</button>
+                <button onclick="clearResults()" class="btn btn-secondary">Clear Results</button>
+                <div id="hooksList"></div>
+            </div>
+            
+            <!-- Runtime Status -->
+            <div class="card">
+                <h2>Runtime Status</h2>
+                <button onclick="loadStatus()" class="btn">Refresh Status</button>
+                <button onclick="resetRuntime()" class="btn btn-danger">Reset Runtime</button>
+                <div id="runtimeStatus"></div>
+            </div>
+            
+            <!-- Data Management -->
+            <div class="card">
+                <h2>Data Sources</h2>
+                <form id="createDataForm">
+                    <div class="form-group">
+                        <label for="dataId">Data ID</label>
+                        <input type="text" id="dataId" placeholder="sample-data" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="dataName">Name</label>
+                        <input type="text" id="dataName" placeholder="Sample Data">
+                    </div>
+                    <div class="form-group">
+                        <label for="dataContent">Turtle Content</label>
+                        <textarea id="dataContent" placeholder="@prefix ex: <http://example.org/> .&#10;ex:service1 a ex:Service ;&#10;  ex:errorRate 0.05 ."></textarea>
+                    </div>
+                    <button type="submit" class="btn">Create Data Source</button>
+                </form>
+                <div id="dataStatus"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '/api';
+        const AUTH_REQUIRED = (new URLSearchParams(location.search).get('auth') === '1') || (window.AUTH_REQUIRED === true);
+        let TOKEN = localStorage.getItem('AUTH_TOKEN') || '';
+        
+        // Create Hook
+        document.getElementById('createHookForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const hookData = {
+                id: document.getElementById('hookId').value,
+                name: document.getElementById('hookName').value,
+                select: document.getElementById('hookSelect').value,
+                combine: document.getElementById('hookCombine').value,
+                predicates: [
+                    {
+                        kind: 'THRESHOLD',
+                        spec: {
+                            var: 'errorRate',
+                            op: '>',
+                            value: 0.02
+                        }
+                    }
+                ]
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE}/hooks`, {
+                    method: 'POST',
+                    headers: withAuth({ 'Content-Type': 'application/json' }),
+                    body: JSON.stringify(hookData)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showStatus('createStatus', 'success', `Hook ${result.hook.id} created successfully!`);
+                    loadHooks();
+                } else {
+                    showStatus('createStatus', 'error', result.statusMessage || 'Failed to create hook');
+                }
+            } catch (error) {
+                showStatus('createStatus', 'error', `Error: ${error.message}`);
+            }
+        });
+        
+        // Create Data Source
+        document.getElementById('createDataForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const dataSource = {
+                id: document.getElementById('dataId').value,
+                name: document.getElementById('dataName').value,
+                content: document.getElementById('dataContent').value,
+                format: 'Turtle'
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE}/data`, {
+                    method: 'POST',
+                    headers: withAuth({ 'Content-Type': 'application/json' }),
+                    body: JSON.stringify(dataSource)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showStatus('dataStatus', 'success', `Data source ${result.dataSource.id} created successfully!`);
+                } else {
+                    showStatus('dataStatus', 'error', result.statusMessage || 'Failed to create data source');
+                }
+            } catch (error) {
+                showStatus('dataStatus', 'error', `Error: ${error.message}`);
+            }
+        });
+        
+        // Load Hooks
+        async function loadHooks() {
+            try {
+                const response = await fetch(`${API_BASE}/hooks`, { headers: withAuth({}) });
+                const result = await response.json();
+                
+                const hooksList = document.getElementById('hooksList');
+                hooksList.innerHTML = '';
+                
+                if (result.hooks.length === 0) {
+                    hooksList.innerHTML = '<div class="loading">No hooks found</div>';
+                    return;
+                }
+                
+                result.hooks.forEach(hook => {
+                    const hookDiv = document.createElement('div');
+                    hookDiv.className = 'hook-item';
+                    hookDiv.innerHTML = `
+                        <h3>${hook.id}</h3>
+                        <div class="meta">Predicates: ${hook.predicates} | Combine: ${hook.combine}</div>
+                        <button onclick="evaluateHook('${hook.id}')" class="btn">Evaluate</button>
+                        <button onclick="planHook('${hook.id}')" class="btn btn-secondary">Plan</button>
+                        <button onclick="deleteHook('${hook.id}')" class="btn btn-danger">Delete</button>
+                    `;
+                    hooksList.appendChild(hookDiv);
+                });
+            } catch (error) {
+                console.error('Error loading hooks:', error);
+            }
+        }
+        
+        // Evaluate Hook
+        async function evaluateHook(hookId) {
+            try {
+                const response = await fetch(`${API_BASE}/hooks/${hookId}/evaluate`, {
+                    method: 'POST',
+                    headers: withAuth({ 'Content-Type': 'application/json' }),
+                    body: JSON.stringify({})
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showResult(`Hook ${hookId} Evaluation`, result.result);
+                } else {
+                    showResult(`Hook ${hookId} Error`, result.statusMessage);
+                }
+            } catch (error) {
+                showResult(`Hook ${hookId} Error`, error.message);
+            }
+        }
+        
+        // Plan Hook
+        async function planHook(hookId) {
+            try {
+                const response = await fetch(`${API_BASE}/hooks/${hookId}/plan`, {
+                    method: 'POST',
+                    headers: withAuth({ 'Content-Type': 'application/json' }),
+                    body: JSON.stringify({})
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showResult(`Hook ${hookId} Plan`, result.plan);
+                } else {
+                    showResult(`Hook ${hookId} Error`, result.statusMessage);
+                }
+            } catch (error) {
+                showResult(`Hook ${hookId} Error`, error.message);
+            }
+        }
+        
+        // Delete Hook
+        async function deleteHook(hookId) {
+            if (!confirm(`Delete hook ${hookId}?`)) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}/hooks/${hookId}`, {
+                    method: 'DELETE'
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showStatus('createStatus', 'success', `Hook ${hookId} deleted successfully!`);
+                    loadHooks();
+                } else {
+                    showStatus('createStatus', 'error', result.statusMessage || 'Failed to delete hook');
+                }
+            } catch (error) {
+                showStatus('createStatus', 'error', `Error: ${error.message}`);
+            }
+        }
+        
+        // Load Runtime Status
+        async function loadStatus() {
+            try {
+                const response = await fetch(`${API_BASE}/runtime/status`, { headers: withAuth({}) });
+                const result = await response.json();
+                
+                const statusDiv = document.getElementById('runtimeStatus');
+                statusDiv.innerHTML = `
+                    <div class="status info">
+                        <strong>Status:</strong> ${result.status}<br>
+                        <strong>Uptime:</strong> ${Math.round(result.uptime)}s<br>
+                        <strong>Hooks:</strong> ${result.hooks.total} total, ${result.hooks.evaluations} evaluations<br>
+                        <strong>Data Sources:</strong> ${result.data.total}<br>
+                        <strong>Memory:</strong> ${Math.round(result.memory.heapUsed / 1024 / 1024)}MB
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Error loading status:', error);
+            }
+        }
+        
+        // Clear Results
+        async function clearResults() {
+            try {
+                const response = await fetch(`${API_BASE}/runtime/status`, {
+                    method: 'POST',
+                    headers: withAuth({ 'Content-Type': 'application/json' }),
+                    body: JSON.stringify({ command: 'clear-results' })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showStatus('createStatus', 'success', 'All hook results cleared!');
+                } else {
+                    showStatus('createStatus', 'error', result.statusMessage || 'Failed to clear results');
+                }
+            } catch (error) {
+                showStatus('createStatus', 'error', `Error: ${error.message}`);
+            }
+        }
+        
+        // Reset Runtime
+        async function resetRuntime() {
+            if (!confirm('Reset entire runtime? This will delete all hooks and data sources.')) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}/runtime/status`, {
+                    method: 'POST',
+                    headers: withAuth({ 'Content-Type': 'application/json' }),
+                    body: JSON.stringify({ command: 'reset-runtime' })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showStatus('createStatus', 'success', 'Runtime reset complete!');
+                    loadHooks();
+                } else {
+                    showStatus('createStatus', 'error', result.statusMessage || 'Failed to reset runtime');
+                }
+            } catch (error) {
+                showStatus('createStatus', 'error', `Error: ${error.message}`);
+            }
+        }
+        
+        // Utility Functions
+        function showStatus(elementId, type, message) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<div class="status ${type}">${message}</div>`;
+            setTimeout(() => {
+                element.innerHTML = '';
+            }, 5000);
+        }
+        
+        function showResult(title, data) {
+            const resultDiv = document.createElement('div');
+            resultDiv.className = 'result';
+            resultDiv.innerHTML = `<strong>${title}:</strong>\n${JSON.stringify(data, null, 2)}`;
+            
+            // Find a good place to show the result
+            const container = document.querySelector('.container');
+            const existingResult = container.querySelector('.result');
+            if (existingResult) {
+                existingResult.remove();
+            }
+            container.appendChild(resultDiv);
+        }
+        
+        // Real-time updates via WebSocket (optional)
+        try {
+          const wsUrl = (location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host + '/';
+          const ws = new WebSocket(wsUrl);
+          ws.onopen = () => {
+            // no auth channel on server; this is placeholder for future
+          };
+          ws.onmessage = (e) => {
+            try {
+              const msg = JSON.parse(e.data);
+              if (msg.type === 'runtime:status') {
+                // opportunistically refresh status panel
+                loadStatus();
+              }
+              if (msg.type === 'hook:evaluation') {
+                showResult(`Hook ${msg.hookId} Evaluation`, msg.result);
+              }
+            } catch {}
+          };
+        } catch {}
+
+        // Auth helpers
+        function withAuth(headers) {
+            const h = new Headers(headers || {});
+            if (AUTH_REQUIRED && TOKEN) h.set('Authorization', `Bearer ${TOKEN}`);
+            return h;
+        }
+
+        // Minimal login UI if auth required
+        if (AUTH_REQUIRED) {
+            const header = document.querySelector('.header');
+            const form = document.createElement('div');
+            form.style.marginTop = '10px';
+            form.innerHTML = `
+                <div class="form-group">
+                  <label for="tokenInput">Auth Token</label>
+                  <input type="text" id="tokenInput" placeholder="Paste Bearer token" value="${TOKEN}">
+                </div>
+                <button id="saveTokenBtn" class="btn">Save Token</button>
+            `;
+            header.appendChild(form);
+            document.getElementById('saveTokenBtn').addEventListener('click', () => {
+              TOKEN = document.getElementById('tokenInput').value.trim();
+              localStorage.setItem('AUTH_TOKEN', TOKEN);
+              showStatus('createStatus', 'success', 'Token saved');
+            });
+        }
+
+        // Initialize
+        loadHooks();
+        loadStatus();
+    </script>
+</body>
+</html>

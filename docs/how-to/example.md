@@ -34,7 +34,6 @@ WHERE {
 }
 ```
 
-
 ---
 
 ## Proof Appendix

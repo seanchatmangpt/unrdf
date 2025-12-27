@@ -1,0 +1,714 @@
+% Agent 7 Package Chapters
+% Packages 28-34: KGN, Knowledge Engine, ML Inference, ML Versioning, Nextra Docs, Observability, Oxigraph
+
+% ============================================================================
+\label{pkg:unrdf-kgn}
+\section{\pkg{unrdf-kgn} --- Deterministic Nunjucks Template System}
+
+\begin{pkgmeta}
+Path & \texttt{packages/kgn} \\
+Kind & js \\
+Entrypoints & 6 files \\
+Dependencies & 12 \\
+Blurb & Deterministic Nunjucks template system with custom filters and frontmatter support \\
+\end{pkgmeta}
+
+\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
+
+\(\Oobs\) comprises template source files (\texttt{.njk}, \texttt{.md}), frontmatter metadata (YAML), and context objects. \(\Aout\) consists of rendered output files (source code, documentation, configuration) and injection operation receipts.
+
+The package observes template file modifications, variable context changes, and injection operation requests. Artifacts include deterministically-rendered output, validation reports, and rollback states.
+
+\subsection*{Type Signature \(\SigmaType\)}
+
+Template input schema specifies:
+\begin{itemize}
+  \item Template source path (filesystem or loader)
+  \item Context object (validated via Zod schema)
+  \item Frontmatter structure (YAML key-value pairs)
+  \item Custom filter registry (function name to implementation)
+\end{itemize}
+
+Output signature guarantees deterministic rendering: identical input context produces byte-identical output across executions. Injection operations specify target markers, content placement mode (before, after, replace), and idempotency keys.
+
+\subsection*{Reconciler \(\muRecon\)}
+
+\(\muRecon: \Oobs \to \Aout\) implements Nunjucks template rendering with determinism guarantees:
+\begin{enumerate}
+  \item Parse frontmatter (YAML) from template source
+  \item Validate context against extracted variable requirements
+  \item Execute Nunjucks rendering with custom filters
+  \item Verify output determinism via hash comparison
+  \item Apply injection operations atomically with marker targeting
+\end{enumerate}
+
+The reconciler enforces template inheritance, block composition, and macro expansion while maintaining reproducibility.
+
+\subsection*{Composition \(\PiMerge / \oplusMerge\)}
+
+Templates compose via Nunjucks inheritance (\texttt{\{% extends \%\}}) and includes (\texttt{\{% include \%\}}). \(\PiMerge\) represents sequential template application: base template \(\PiMerge\) child overrides.
+
+\(\oplusMerge\) represents filter composition: multiple custom filters combine to transform template variables. Injection operations compose via atomic markers: operations target distinct markers without interference.
+
+Template packs (NextJS, Office, LaTeX) provide domain-specific compositions validated through integration tests.
+
+\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
+
+\(\GuardH\): Templates must not contain non-deterministic functions (\texttt{Date.now()}, \texttt{Math.random()}). Linter validates templates against determinism rules before rendering.
+
+\(\InvQ\): Rendered output hash must match for identical context inputs. Injection operations preserve idempotency: repeated execution with same key produces identical result. Rollback operations restore exact prior state.
+
+Frontmatter schema validation prevents undefined variable access. Template inheritance depth limited to prevent stack overflow.
+
+\subsection*{Provenance and Receipts}
+
+Each render operation generates receipt containing:
+\begin{itemize}
+  \item Input context hash (BLAKE3)
+  \item Template source hash
+  \item Output content hash
+  \item Nunjucks version
+  \item Custom filter registry snapshot
+\end{itemize}
+
+Injection operations record atomic write receipts with marker positions, content hashes, and rollback pointers. Operation history persists in \texttt{.kgen-history/} directory for audit and time-travel debugging.
+
+\subsection*{Minimal Example}
+
+\begin{lstlisting}[language=JavaScript]
+import { createEngine, inject } from '@unrdf/kgn';
+
+const engine = createEngine({ enableInjection: true });
+
+// Render template
+const output = await engine.render('greeting.njk', {
+  name: 'Alice',
+  timestamp: 1704067200000 // Deterministic
+});
+
+// Atomic injection
+await inject({
+  targetFile: 'src/config.mjs',
+  marker: 'kgen:exports',
+  content: 'export const VERSION = "1.0.0";',
+  mode: 'after'
+});
+\end{lstlisting}
+
+\subsection*{Open Questions}
+
+How to validate template determinism across Nunjucks version upgrades? Can injection markers support graph-based dependency resolution for complex codegen scenarios? What metrics quantify template complexity for maintenance?
+
+% ============================================================================
+\label{pkg:unrdf-knowledge-engine}
+\section{\pkg{unrdf-knowledge-engine} --- Rule Engine and Inference}
+
+\begin{pkgmeta}
+Path & \texttt{packages/knowledge-engine} \\
+Kind & js \\
+Entrypoints & 5 files \\
+Dependencies & 6 \\
+Blurb & Rule engine, inference, and pattern matching with EYE reasoner integration \\
+\end{pkgmeta}
+
+\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
+
+\(\Oobs\) comprises RDF triple streams, SPARQL queries, inference rules (N3 notation), and transaction events. \(\Aout\) consists of inferred triples, query results, canonicalized graphs, and validation reports.
+
+The engine observes hook definitions, policy pack registrations, and transaction lifecycle events. Artifacts include reasoning proofs, SHACL validation outcomes, and optimized query plans.
+
+\subsection*{Type Signature \(\SigmaType\)}
+
+Core type signatures specified via Zod schemas:
+\begin{itemize}
+  \item \texttt{HookDefinition}: condition predicates, effect functions, priorities
+  \item \texttt{PolicyPack}: rule collections, enforcement levels, scopes
+  \item \texttt{Transaction}: isolation levels, rollback points, commit receipts
+  \item \texttt{ReasoningSession}: input graph, rule set, proof depth limit
+\end{itemize}
+
+Query signatures extend SPARQL 1.1 with knowledge substrate patterns: hook invocation, time-travel queries, and substrate-aware optimization hints.
+
+\subsection*{Reconciler \(\muRecon\)}
+
+\(\muRecon: \Oobs \to \Aout\) orchestrates knowledge processing:
+\begin{enumerate}
+  \item Evaluate hook conditions against incoming triples
+  \item Execute hook effects within transaction boundaries
+  \item Apply EYE reasoner for forward-chaining inference
+  \item Validate results against SHACL shapes
+  \item Canonicalize output graphs (RDF Dataset Canonicalization)
+  \item Generate cryptographic hash chains for provenance
+\end{enumerate}
+
+Query reconciliation optimizes SPARQL via index selection, join reordering, and substrate-specific predicate pushdown.
+
+\subsection*{Composition \(\PiMerge / \oplusMerge\)}
+
+Hook composition via priority ordering: hooks execute in ascending priority order. \(\PiMerge\) represents sequential hook application where later hooks observe earlier effects.
+
+Policy packs compose via scope hierarchies: workspace-level \(\oplusMerge\) package-level \(\oplusMerge\) module-level. Conflicts resolved via explicit precedence rules.
+
+Reasoning sessions compose via proof chaining: output of reasoning session \(R_1\) becomes input to \(R_2\).
+
+\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
+
+\(\GuardH\): Hook effects must complete within timeout (default 5s). Reasoning depth limited to prevent infinite loops. SPARQL queries reject recursive subqueries without aggregation limits.
+
+\(\InvQ\): Transactions preserve ACID properties via TransactionManager. Canonicalization produces deterministic output for isomorphic graphs. Hook execution order respects priority invariant.
+
+Policy pack validation ensures no circular dependencies. SHACL shapes must be well-formed (no undefined prefixes, targets).
+
+\subsection*{Provenance and Receipts}
+
+Each reasoning session generates proof tree linking inferred triples to axioms and rules. Canonicalization receipts include:
+\begin{itemize}
+  \item Input graph hash
+  \item Canonical serialization (NQuads)
+  \item Isomorphism group identifiers
+  \item Canonicalization algorithm version
+\end{itemize}
+
+Hook executions record trigger conditions, effect results, and transaction IDs. Query execution plans stored for performance analysis.
+
+\subsection*{Minimal Example}
+
+\begin{lstlisting}[language=JavaScript]
+import { defineHook, reason, canonicalize } from '@unrdf/knowledge-engine';
+
+// Define knowledge hook
+const validateSchema = defineHook({
+  name: 'validate-schema',
+  condition: (triple) => triple.predicate.value === 'rdf:type',
+  effect: async (triple, context) => {
+    const shapes = await context.store.query('SELECT * WHERE { ?s a sh:Shape }');
+    return validateShacl(context.store, shapes);
+  },
+  priority: 100
+});
+
+// Perform reasoning
+const { inferred, proof } = await reason(store, rules);
+
+// Canonicalize for comparison
+const hash = await canonicalize(store);
+\end{lstlisting}
+
+\subsection*{Open Questions}
+
+How to optimize reasoning performance for large rule sets (>10K rules)? Can hook priorities support fractional values for finer-grained ordering? What metrics quantify policy pack complexity and overlap?
+
+% ============================================================================
+\label{pkg:unrdf-ml-inference}
+\section{\pkg{unrdf-ml-inference} --- ONNX ML Inference Pipeline}
+
+\begin{pkgmeta}
+Path & \texttt{packages/ml-inference} \\
+Kind & js \\
+Entrypoints & 4 files \\
+Dependencies & 6 \\
+Blurb & High-performance ONNX model inference pipeline for RDF streams \\
+\end{pkgmeta}
+
+\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
+
+\(\Oobs\) comprises RDF triple streams, ONNX model files, feature extraction queries, and inference configuration. \(\Aout\) consists of prediction triples, confidence scores, model performance metrics, and OTEL traces.
+
+The pipeline observes streaming RDF data, model registry updates, and batch completion events. Artifacts include prediction quads (subject, predicate, object, confidence), latency distributions, and throughput measurements.
+
+\subsection*{Type Signature \(\SigmaType\)}
+
+ONNX runner interface specifies:
+\begin{itemize}
+  \item Model path (filesystem or URL)
+  \item Input tensor specification (shape, dtype)
+  \item Execution providers (CPU, CUDA, TensorRT)
+  \item Session options (optimization level, thread count)
+\end{itemize}
+
+Streaming pipeline signature defines batch size, feature extraction transform, and output RDF mapping schema. Registry interface provides model lookup, versioning, and health checks.
+
+\subsection*{Reconciler \(\muRecon\)}
+
+\(\muRecon: \Oobs \to \Aout\) implements inference pipeline:
+\begin{enumerate}
+  \item Subscribe to RDF stream via \pkg{unrdf-streaming}
+  \item Extract features via SPARQL CONSTRUCT queries
+  \item Batch triples according to batch size configuration
+  \item Convert RDF to tensor representation
+  \item Execute ONNX model inference
+  \item Map predictions back to RDF quads
+  \item Emit prediction stream with provenance metadata
+\end{enumerate}
+
+OpenTelemetry instrumentation captures span timing for each pipeline stage.
+
+\subsection*{Composition \(\PiMerge / \oplusMerge\)}
+
+Multiple models compose via ensemble patterns: predictions from models \(M_1, M_2, \ldots, M_n\) combine via weighted voting or stacking. \(\PiMerge\) represents sequential refinement: initial prediction refined by second-stage model.
+
+Feature extractors compose via SPARQL federation: combine data from multiple RDF stores. Streaming pipelines compose via topic routing: output of pipeline \(P_1\) becomes input to \(P_2\).
+
+\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
+
+\(\GuardH\): Model input tensors must match declared shape. Feature extraction queries must return consistent schema. Inference timeout prevents unbounded execution.
+
+\(\InvQ\): Batch processing preserves RDF quad ordering. Prediction confidence scores normalized to [0, 1]. Model registry maintains version immutability (loaded models cannot be replaced without version increment).
+
+Throughput metrics monitored via Prometheus: alert if latency exceeds 99th percentile threshold.
+
+\subsection*{Provenance and Receipts}
+
+Each prediction quad includes provenance metadata:
+\begin{itemize}
+  \item Model URI and version hash
+  \item Input feature hash
+  \item Inference timestamp (nanosecond precision)
+  \item Execution provider and optimization level
+  \item Confidence score
+\end{itemize}
+
+OTEL traces link predictions to source RDF triples. Model registry receipts include ONNX file hash, input/output signatures, and performance benchmarks.
+
+\subsection*{Minimal Example}
+
+\begin{lstlisting}[language=JavaScript]
+import { createInferenceStack } from '@unrdf/ml-inference';
+import { createRdfStream } from '@unrdf/streaming';
+
+const { runner, pipeline, registry } = createInferenceStack({
+  runnerOptions: { executionProviders: ['cpu'] },
+  pipelineOptions: { batchSize: 32 }
+});
+
+await registry.registerModel('sentiment', './sentiment.onnx');
+
+const stream = createRdfStream(store);
+const predictions = await pipeline.process(stream, {
+  modelId: 'sentiment',
+  featureExtractor: 'SELECT ?text WHERE { ?s :text ?text }'
+});
+
+for await (const quad of predictions) {
+  console.log(quad.subject, quad.predicate, quad.object, quad.graph);
+}
+\end{lstlisting}
+
+\subsection*{Open Questions}
+
+How to optimize tensor conversion for large RDF graphs? Can feature extraction leverage SPARQL query optimization? What strategies handle model versioning in production pipelines?
+
+% ============================================================================
+\label{pkg:unrdf-ml-versioning}
+\section{\pkg{unrdf-ml-versioning} --- ML Model Versioning System}
+
+\begin{pkgmeta}
+Path & \texttt{packages/ml-versioning} \\
+Kind & js \\
+Entrypoints & 3 files \\
+Dependencies & 6 \\
+Blurb & ML model versioning with TensorFlow.js and KGC-4D time-travel \\
+\end{pkgmeta}
+
+\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
+
+\(\Oobs\) comprises TensorFlow.js model instances, training metadata, weight matrices, and lineage relationships. \(\Aout\) consists of RDF representations of model architecture, cryptographic hash chains, time-stamped snapshots, and comparison reports.
+
+The version store observes model save operations, weight updates, and hyperparameter changes. Artifacts include model diffs, lineage graphs, and time-travel queries to historical model states.
+
+\subsection*{Type Signature \(\SigmaType\)}
+
+Version store interface specifies:
+\begin{itemize}
+  \item Model identifier (unique name)
+  \item TensorFlow.js model instance
+  \item Metadata object (hyperparameters, training metrics)
+  \item Parent version references (for lineage)
+\end{itemize}
+
+Comparison operations define diff schema: added/removed layers, weight delta statistics, architecture changes. Time-travel queries specify target timestamp or version hash.
+
+\subsection*{Reconciler \(\muRecon\)}
+
+\(\muRecon: \Oobs \to \Aout\) serializes models to RDF:
+\begin{enumerate}
+  \item Extract model architecture (layers, connections, activations)
+  \item Serialize weight tensors to RDF literals
+  \item Compute BLAKE3 hash of model state
+  \item Record KGC-4D timestamp for version
+  \item Link to parent version via provenance predicates
+  \item Store metadata as RDF properties
+\end{enumerate}
+
+Comparison reconciler computes structural diff and weight distance metrics between versions.
+
+\subsection*{Composition \(\PiMerge / \oplusMerge\)}
+
+Model lineage forms directed acyclic graph: version \(V_n\) derives from parent versions via training, fine-tuning, or architecture modification. \(\PiMerge\) represents sequential refinement: base model \(\PiMerge\) fine-tuned variant.
+
+Ensemble models compose via \(\oplusMerge\): multiple independent versions combine predictions. Time-travel snapshots compose via KGC-4D universe freeze: consistent cross-model state at epoch \(\tauEpoch\).
+
+\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
+
+\(\GuardH\): Model versions immutable after creation. Hash collisions prevented via BLAKE3 cryptographic strength. Lineage graph must be acyclic.
+
+\(\InvQ\): Model retrieval by hash returns identical weights across restores. Time-travel queries return consistent snapshot across all versioned artifacts. Metadata schema validation via Zod prevents malformed records.
+
+Storage backend guarantees atomic writes: partial model saves rejected.
+
+\subsection*{Provenance and Receipts}
+
+Version receipts include:
+\begin{itemize}
+  \item Model architecture hash
+  \item Weight tensor hash (layer-wise and global)
+  \item Parent version hashes
+  \item Training metadata (loss, accuracy, epochs)
+  \item KGC-4D timestamp (nanosecond precision)
+  \item TensorFlow.js version
+\end{itemize}
+
+Lineage graph serialized as RDF using \texttt{prov:wasDerivedFrom} relationships. Comparison receipts record structural and numerical differences.
+
+\subsection*{Minimal Example}
+
+\begin{lstlisting}[language=JavaScript]
+import * as tf from '@tensorflow/tfjs-node';
+import { MLVersionStore } from '@unrdf/ml-versioning';
+
+const versionStore = new MLVersionStore({ storeDir: '.ml-models' });
+
+// Train and version model
+const model = tf.sequential({
+  layers: [tf.layers.dense({ units: 10, activation: 'relu', inputShape: [5] })]
+});
+model.compile({ optimizer: 'adam', loss: 'meanSquaredError' });
+
+const version = await versionStore.saveModel('classifier', model, {
+  hyperparameters: { learningRate: 0.001 },
+  metrics: { accuracy: 0.95 }
+});
+
+// Time-travel to previous version
+const oldVersion = await versionStore.getModelByHash(parentHash);
+const comparison = await versionStore.compareModels(version, oldVersion);
+\end{lstlisting}
+
+\subsection*{Open Questions}
+
+How to optimize storage for large model weight matrices? Can diff algorithms leverage tensor sparsity patterns? What strategies handle model versioning in distributed training scenarios?
+
+% ============================================================================
+\label{pkg:unrdf-nextra-docs}
+\section{\pkg{unrdf-nextra-docs} --- Documentation Site}
+
+\begin{pkgmeta}
+Path & \texttt{packages/nextra} \\
+Kind & docs \\
+Entrypoints & 0 files \\
+Dependencies & 11 \\
+Blurb & UNRDF documentation with Nextra 4 and Next.js \\
+\end{pkgmeta}
+
+\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
+
+\(\Oobs\) comprises Markdown documentation files, React components, configuration files, and navigation structures. \(\Aout\) consists of static HTML pages, optimized JavaScript bundles, search indices, and KaTeX-rendered mathematics.
+
+The documentation system observes MDX file modifications, component imports, and theme customizations. Artifacts include deployable static site, sitemap, and accessibility validation reports.
+
+\subsection*{Type Signature \(\SigmaType\)}
+
+Nextra configuration specifies:
+\begin{itemize}
+  \item Theme configuration (colors, fonts, layout)
+  \item Navigation structure (\texttt{\_meta.json} files)
+  \item MDX component mappings
+  \item Search configuration (Flexsearch options)
+\end{itemize}
+
+Build signature defines output directory, optimization level, and export format (static or server-side rendering).
+
+\subsection*{Reconciler \(\muRecon\)}
+
+\(\muRecon: \Oobs \to \Aout\) implements documentation build pipeline:
+\begin{enumerate}
+  \item Parse MDX files (Markdown + JSX)
+  \item Resolve component imports
+  \item Apply theme transformations
+  \item Render KaTeX mathematics
+  \item Generate navigation structure from \texttt{\_meta.json}
+  \item Build search index
+  \item Optimize static assets (minification, code splitting)
+  \item Export to static HTML
+\end{enumerate}
+
+Development reconciler provides hot-reload for rapid iteration.
+
+\subsection*{Composition \(\PiMerge / \oplusMerge\)}
+
+Documentation sections compose hierarchically: root \(\PiMerge\) category \(\PiMerge\) page. Navigation metadata files merge via filesystem hierarchy.
+
+MDX components compose via React composition: custom components wrap Markdown content. Theme configuration merges with defaults via \(\oplusMerge\).
+
+\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
+
+\(\GuardH\): MDX syntax must be valid. Component imports must resolve. KaTeX expressions must parse successfully. Links must not reference non-existent pages.
+
+\(\InvQ\): Build output deterministic for identical source. Navigation order matches \texttt{\_meta.json} specification. Search index covers all page content.
+
+Accessibility validation ensures WCAG 2.1 AA compliance. Bundle size monitoring prevents excessive JavaScript bloat.
+
+\subsection*{Provenance and Receipts}
+
+Build receipts include:
+\begin{itemize}
+  \item Source file hashes (all MDX files)
+  \item Nextra version
+  \item Next.js version
+  \item Theme configuration hash
+  \item Bundle size metrics
+  \item Accessibility scan results
+\end{itemize}
+
+Deployment receipts record target environment, CDN configuration, and cache invalidation timestamps.
+
+\subsection*{Minimal Example}
+
+\begin{lstlisting}[language=JavaScript]
+// pages/index.mdx
+---
+title: UNRDF Documentation
+---
+
+# Welcome to UNRDF
+
+UNRDF provides RDF processing infrastructure:
+
+$$\muRecon: \Oobs \to \Aout$$
+
+See [Core Concepts](/concepts) for details.
+
+// next.config.js
+import nextra from 'nextra';
+
+const withNextra = nextra({
+  theme: 'nextra-theme-docs',
+  themeConfig: './theme.config.jsx'
+});
+
+export default withNextra();
+\end{lstlisting}
+
+\subsection*{Open Questions}
+
+How to integrate package API documentation automatically? Can search index incorporate RDF knowledge graph for graph queries? What strategies optimize build performance for large documentation sets?
+
+% ============================================================================
+\label{pkg:unrdf-observability}
+\section{\pkg{unrdf-observability} --- Prometheus/Grafana Observability}
+
+\begin{pkgmeta}
+Path & \texttt{packages/observability} \\
+Kind & js \\
+Entrypoints & 4 files \\
+Dependencies & 6 \\
+Blurb & Prometheus/Grafana observability dashboard for distributed workflows \\
+\end{pkgmeta}
+
+\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
+
+\(\Oobs\) comprises workflow execution events, OTEL metric streams, alert rule definitions, and dashboard configurations. \(\Aout\) consists of Prometheus metrics endpoints, Grafana dashboard JSON, alert notifications, and SLI reports.
+
+The observability stack observes workflow lifecycle events (start, complete, error), resource utilization metrics, and custom business metrics. Artifacts include time-series databases, alert history, and dashboard snapshots.
+
+\subsection*{Type Signature \(\SigmaType\)}
+
+Workflow metrics interface specifies:
+\begin{itemize}
+  \item Metric types (Counter, Gauge, Histogram, Summary)
+  \item Label dimensions (workflow ID, status, pattern)
+  \item Recording methods (increment, set, observe)
+  \item Export formats (Prometheus text, JSON)
+\end{itemize}
+
+Alert manager defines threshold rules, evaluation intervals, notification channels, and severity levels. Grafana exporter generates dashboard specifications from metric metadata.
+
+\subsection*{Reconciler \(\muRecon\)}
+
+\(\muRecon: \Oobs \to \Aout\) orchestrates observability pipeline:
+\begin{enumerate}
+  \item Instrument workflow events via \texttt{WorkflowMetrics}
+  \item Aggregate metrics via OpenTelemetry SDK
+  \item Export to Prometheus endpoint (\texttt{/metrics})
+  \item Evaluate alert rules against metric values
+  \item Trigger notifications on threshold violations
+  \item Generate Grafana dashboards from metric registry
+  \item Compute SLI scores (availability, latency, error rate)
+\end{enumerate}
+
+Metrics collection respects sampling rates and aggregation windows for performance.
+
+\subsection*{Composition \(\PiMerge / \oplusMerge\)}
+
+Metrics from multiple workflow instances compose via label aggregation: \texttt{workflow\_duration\_seconds\{workflow\_id="A"\}} \(\oplusMerge\) \texttt{workflow\_duration\_seconds\{workflow\_id="B"\}}.
+
+Alert rules compose hierarchically: workspace-level \(\PiMerge\) package-level \(\PiMerge\) workflow-level. Grafana dashboards compose via panel layout: rows combine panels via \(\oplusMerge\).
+
+\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
+
+\(\GuardH\): Metric recording must not block workflow execution. Alert evaluation must complete within interval. Dashboard queries must not overload Prometheus.
+
+\(\InvQ\): Metrics monotonically increasing for counters. Gauge values reflect current state. Histogram buckets cover expected value range. Alert notifications idempotent (no duplicate notifications within window).
+
+Prometheus scrape interval matches recording granularity. Dashboard refresh rate bounded to prevent excessive load.
+
+\subsection*{Provenance and Receipts}
+
+Metric export receipts include:
+\begin{itemize}
+  \item Metric name and type
+  \item Label cardinality
+  \item Scrape timestamp
+  \item Prometheus version
+  \item Exporter library version
+\end{itemize}
+
+Alert notification receipts record trigger timestamp, threshold value, resolved timestamp, and notification channel. Dashboard generation receipts include metric query hashes and panel configurations.
+
+\subsection*{Minimal Example}
+
+\begin{lstlisting}[language=JavaScript]
+import { createObservabilityStack } from '@unrdf/observability';
+
+const { metrics, grafana, alerts } = await createObservabilityStack({
+  metrics: { prefix: 'unrdf_', port: 9090 },
+  alerts: {
+    rules: [
+      { name: 'high_error_rate', metric: 'error_count', threshold: 10, severity: 'critical' }
+    ]
+  }
+});
+
+// Record workflow metrics
+metrics.recordWorkflowStart('workflow-123', 'data-pipeline');
+// ... execute workflow
+metrics.recordWorkflowComplete('workflow-123', 'success', 1500, 'data-pipeline');
+
+// Generate Grafana dashboard
+const dashboard = await grafana.generateDashboard({
+  title: 'UNRDF Workflows',
+  metrics: ['workflow_duration_seconds', 'workflow_error_total']
+});
+\end{lstlisting}
+
+\subsection*{Open Questions}
+
+How to optimize metric cardinality for high-dimensional workflows? Can alert rules leverage ML anomaly detection? What strategies reduce Grafana query latency for large time ranges?
+
+% ============================================================================
+\label{pkg:unrdf-oxigraph}
+\section{\pkg{unrdf-oxigraph} --- Oxigraph SPARQL Engine Wrapper}
+
+\begin{pkgmeta}
+Path & \texttt{packages/oxigraph} \\
+Kind & js \\
+Entrypoints & 3 files \\
+Dependencies & 2 \\
+Blurb & Graph database implementation using Oxigraph SPARQL engine \\
+\end{pkgmeta}
+
+\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
+
+\(\Oobs\) comprises RDF quads (subject, predicate, object, graph), SPARQL query strings, and transaction operations (add, delete, update). \(\Aout\) consists of query results (bindings, boolean, graph), store snapshots, and performance benchmarks.
+
+The store observes quad insertion/deletion events, SPARQL query execution, and transaction commits. Artifacts include in-memory triple stores, persistent databases, and query execution plans.
+
+\subsection*{Type Signature \(\SigmaType\)}
+
+Store interface specifies RDFJS-compatible API:
+\begin{itemize}
+  \item \texttt{createStore(quads?: Quad[]): OxigraphStore}
+  \item \texttt{add(quad: Quad): void}
+  \item \texttt{delete(quad: Quad): void}
+  \item \texttt{query(sparql: string): AsyncIterable<Binding>}
+  \item \texttt{size: number}
+\end{itemize}
+
+Data factory provides RDF term constructors: \texttt{namedNode}, \texttt{literal}, \texttt{blankNode}, \texttt{quad}. Type signatures validated via Zod schemas for input validation.
+
+\subsection*{Reconciler \(\muRecon\)}
+
+\(\muRecon: \Oobs \to \Aout\) delegates to Oxigraph engine:
+\begin{enumerate}
+  \item Parse RDF input (Turtle, NTriples, RDF/XML)
+  \item Insert quads into Oxigraph store (in-memory or persistent)
+  \item Optimize SPARQL queries via Oxigraph query planner
+  \item Execute queries using Rust-based SPARQL engine
+  \item Stream results back to JavaScript via async iterables
+  \item Maintain index structures (SPO, POS, OSP)
+\end{enumerate}
+
+Transaction reconciliation ensures atomicity via Oxigraph's ACID guarantees.
+
+\subsection*{Composition \(\PiMerge / \oplusMerge\)}
+
+Multiple stores compose via federation: SPARQL SERVICE keyword delegates to remote endpoints. \(\oplusMerge\) represents union: quads from store \(S_1\) \(\oplusMerge\) quads from store \(S_2\).
+
+Query composition via SPARQL algebra: basic graph patterns combine through JOIN, UNION, OPTIONAL. Subqueries nest arbitrarily via \(\PiMerge\).
+
+\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
+
+\(\GuardH\): SPARQL queries must be syntactically valid. Quad terms must conform to RDF specification. Persistent stores require valid file paths with write permissions.
+
+\(\InvQ\): Store size matches quad count. Query results deterministic for identical store state. Transaction isolation prevents dirty reads. Index consistency maintained across mutations.
+
+Benchmark tests enforce performance bounds: insertion rate \(>\) 10K quads/sec, query latency \(<\) 100ms for simple patterns.
+
+\subsection*{Provenance and Receipts}
+
+Store operation receipts include:
+\begin{itemize}
+  \item Quad hash (for additions/deletions)
+  \item Transaction ID
+  \item Timestamp (nanosecond precision)
+  \item Store size before/after
+  \item Oxigraph version
+\end{itemize}
+
+Query execution receipts record SPARQL string hash, result count, execution time, and optimizer decisions. Benchmark receipts include throughput, latency percentiles, and memory usage.
+
+\subsection*{Minimal Example}
+
+\begin{lstlisting}[language=JavaScript]
+import { createStore, dataFactory } from '@unrdf/oxigraph';
+
+const store = createStore();
+const { namedNode, literal, quad } = dataFactory;
+
+// Insert triples
+store.add(quad(
+  namedNode('http://example.org/alice'),
+  namedNode('http://xmlns.com/foaf/0.1/name'),
+  literal('Alice'),
+  namedNode('http://example.org/graph1')
+));
+
+// Query
+const results = store.query(`
+  SELECT ?name WHERE {
+    ?person foaf:name ?name .
+  }
+`);
+
+for await (const binding of results) {
+  console.log(binding.get('name').value);
+}
+\end{lstlisting}
+
+\subsection*{Open Questions}
+
+How to optimize persistent store performance for write-heavy workloads? Can Oxigraph support custom SPARQL functions for KGC-specific operations? What strategies handle schema evolution in versioned RDF stores?
+
+% ============================================================================
+% End of Agent 7 Packages
+% ============================================================================

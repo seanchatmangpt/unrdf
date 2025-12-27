@@ -1,77 +1,261 @@
-# Agent 1: Orchestrator / Integrator
+# Agent 1: Orchestrator & Integrator - Implementation Plan
 
-**Role**: Coordinate all 10 agents, compose outputs into unified public API, ensure determinism
+## Mission
+Create the integration framework that orchestrates Agents 2-10, providing a unified public API for all AUTONOMIC_INNOVATION primitives.
 
 ## Files to Create
 
-### Integration Modules
-- `./AUTONOMIC_INNOVATION/src/index.mjs` - Main public API export
-- `./AUTONOMIC_INNOVATION/RUNBOOK.md` - Runnable commands guide
-- `./AUTONOMIC_INNOVATION/demo.mjs` - Full end-to-end demo
+### 1. Core Integration Files
 
-### Integration Supervision
-- `./AUTONOMIC_INNOVATION/test/integration.test.mjs` - Cross-agent integration tests
-- `./AUTONOMIC_INNOVATION/examples/facade-demo.mjs` - Facade generation example
-- `./AUTONOMIC_INNOVATION/examples/capsule-workflow.mjs` - Capsule planning/apply workflow
+#### `./agent-1/index.mjs`
+**Purpose**: Central orchestration module - imports and re-exports all 9 agent modules
+**Exports**:
+- `AGENT_STATUS` - Integration status enum
+- `VERSION` - Framework version string
+- `getAgentExports(agentId)` - Dynamic agent export retrieval
+- `validateIntegration()` - Check all agents are available
+- Re-exports from all agents (Agent 2-10)
 
-### Shared Utilities
-- `./AUTONOMIC_INNOVATION/src/shared/determinism.mjs` - Determinism enforcement utilities
-- `./AUTONOMIC_INNOVATION/src/shared/canonical-order.mjs` - Canonical ordering functions
-- `./AUTONOMIC_INNOVATION/src/shared/hash-receipt.mjs` - Receipt formatting
+**Integration Hooks**:
+- Dynamic imports with fallback for missing agents
+- Status tracking (AVAILABLE, STUB, ERROR)
+- Circular dependency detection
 
-## Exports to Provide
+#### `./agent-1/constants.mjs`
+**Purpose**: Shared constants across all agents
+**Exports**:
+- `AGENT_IDS` - List of all agent identifiers (AGENT_2...AGENT_10)
+- `AGENT_NAMES` - Human-readable agent names
+- `REQUIRED_EXPORTS` - Map of agentId → required export names
+- `VERSION_INFO` - Semantic version tracking
+
+#### `./agent-1/types.mjs`
+**Purpose**: JSDoc type definitions for integration contracts
+**Exports**:
+- Type definitions for all agent interfaces
+- Integration status types
+- Common data structures (Capsule, Lens, ImpactSet, etc.)
+
+#### `./agent-1/test.mjs`
+**Purpose**: Integration validation tests
+**Tests**:
+- All 9 agent exports are importable
+- Public API completeness
+- No circular dependencies
+- Determinism proof (demo runs twice with hash equality)
+
+### 2. Public API
+
+#### `./src/index.mjs`
+**Purpose**: Single import path for all innovations
+**Exports**: (Organized by agent)
+- **Agent 2 (Capsules)**: `planCapsule`, `applyCapsule`, `verifyCapsule`, `canonicalize`, `hashCapsule`
+- **Agent 3 (Lenses)**: `defineLens`, `compileLens`, `executeLensToGraph`, `executeLensFromGraph`
+- **Agent 4 (Impact Sets)**: `computeImpactSet`
+- **Agent 5 (Commutativity)**: `canReorder`, `conflictCertificate`
+- **Agent 6 (Conventions)**: `compileProfile`, `validateAgainstProfile`, `diagnosticReport`
+- **Agent 7 (Generator)**: `generateFacade`
+- **Agent 8 (Store)**: `atomicApply`, `replayFromReceipt`
+- **Agent 9 (Shadow)**: `shadowWrite`, `shadowRead`, `partialServe`, `mismatchReport`
+- **Agent 10 (Quality)**: `runQualityGates`, `e2eValidate`
+
+### 3. Execution & Documentation
+
+#### `./package.json`
+**Purpose**: Package configuration and scripts
+**Configuration**:
+- `"type": "module"` - ES modules
+- No new dependencies (use workspace packages only)
+**Scripts**:
+- `test` - Run full test suite
+- `test:fast` - Quick integration check
+- `test:determinism` - Prove determinism (two runs → same hash)
+- `demo` - Run master demonstration
+**Dependencies** (from workspace):
+- `@unrdf/core`
+- `@unrdf/oxigraph`
+- `@unrdf/kgc-4d`
+
+#### `./RUNBOOK.md`
+**Purpose**: Copy/paste ready execution commands
+**Sections**:
+- Quick Start (3 commands)
+- Test Suite (`pnpm test:autonomic`)
+- Demo (`pnpm demo:autonomic`)
+- Determinism Validation (`pnpm test:determinism`)
+- Each command with expected output
+
+#### `./demo.mjs`
+**Purpose**: Master demonstration exercising ALL 10 agent primitives
+**Requirements**:
+- Zero external dependencies
+- Runs locally
+- Deterministic output (two runs → identical)
+**Output Sections** (clearly labeled):
+1. Capsule planning & hashing
+2. Lens compilation & application
+3. Diff impact sets
+4. Commutativity checks with witness
+5. Conventions profile validation
+6. Generated façade code
+7. Store atomic apply
+8. Shadow mode mismatches
+9. OTEL-style receipt hashes
+10. Quality gates validation
+
+## Integration Contract
+
+### Agent Exports (Expected from Agents 2-10)
 
 ```javascript
-export { planCapsule, verifyCapsule } from '../agent-2/src/index.mjs';
-export { compileLens, defineLens } from '../agent-3/src/index.mjs';
-export { computeImpactSet } from '../agent-4/src/index.mjs';
-export { canReorder, conflictCertificate } from '../agent-5/src/index.mjs';
-export { compileProfile } from '../agent-6/src/index.mjs';
-export { generateFacade } from '../agent-7/src/index.mjs';
-export { applyCapsule, createAtomicStore } from '../agent-8/src/index.mjs';
-export { shadowWrite, shadowRead, partialServe } from '../agent-9/src/index.mjs';
-export { runQualityGates, validateDeterminism } from '../agent-10/src/index.mjs';
+// Agent 2 (Capsules)
+export { planCapsule, applyCapsule, verifyCapsule, canonicalize, hashCapsule }
+
+// Agent 3 (Lenses)
+export { defineLens, compileLens, executeLensToGraph, executeLensFromGraph }
+
+// Agent 4 (Impact Sets)
+export { computeImpactSet }
+
+// Agent 5 (Commutativity)
+export { canReorder, conflictCertificate }
+
+// Agent 6 (Conventions)
+export { compileProfile, validateAgainstProfile, diagnosticReport }
+
+// Agent 7 (Generator)
+export { generateFacade }
+
+// Agent 8 (Store)
+export { atomicApply, replayFromReceipt }
+
+// Agent 9 (Shadow)
+export { shadowWrite, shadowRead, partialServe, mismatchReport }
+
+// Agent 10 (Quality)
+export { runQualityGates, e2eValidate }
 ```
 
-## Tests to Add
+### Integration Hooks
 
-1. **Integration Test**: All agents working together
-2. **Determinism Audit**: Run demo twice, compare hashes
-3. **Import Verification**: All exports correctly wired
-4. **Cross-Module Types**: JSDoc consistency
+#### Dynamic Import Pattern
+```javascript
+async function loadAgent(agentId) {
+  try {
+    const module = await import(`../agent-${agentId}/index.mjs`);
+    return { status: 'AVAILABLE', exports: module };
+  } catch (err) {
+    return { status: 'STUB', exports: createStub(agentId), error: err.message };
+  }
+}
+```
 
-## Determinism Enforcement
+#### Validation Pattern
+```javascript
+function validateIntegration() {
+  const results = [];
+  for (const agentId of AGENT_IDS) {
+    const agent = getAgentExports(agentId);
+    const requiredExports = REQUIRED_EXPORTS[agentId];
+    const missing = requiredExports.filter(name => !agent[name]);
+    results.push({ agentId, status: agent.status, missing });
+  }
+  return results;
+}
+```
 
-- All file writes use `canonicalSort()` for stable ordering
-- All hashes use `hash-wasm` with deterministic serialization
-- Demo runs twice with output comparison
-- RUNBOOK includes `--deterministic` flag for all tests
+## Run Commands Structure
 
-## Dependencies
+### Test Suite
+```bash
+# Full integration test (timeout: 5s)
+timeout 5s pnpm test:autonomic
 
-- Re-exports from agents 2-10
-- `hash-wasm` for deterministic hashing
-- `@unrdf/kgc-4d` for receipt generation
-- `@unrdf/oxigraph` for store operations
+# Expected output:
+# ✅ Agent 2-10 imports successful
+# ✅ Public API complete (45 primitives)
+# ✅ No circular dependencies
+# ✅ Integration validation passed
+```
 
-## Demo Hook Points
+### Demo
+```bash
+# Master demonstration (timeout: 5s)
+timeout 5s pnpm demo:autonomic
 
-1. Generate Conventions Profile
-2. Create Customer Lens
-3. Define intent operation
-4. Plan Capsule
-5. Apply to store
-6. Compute impact set
-7. Check commutativity with second capsule
-8. Generate façade
-9. Run shadow mode
-10. Verify determinism by re-running
-11. Print all hashes and receipts
+# Expected output:
+# [CAPSULE] Planning: {...}, Hash: abc123...
+# [LENS] Compiled: {...}, Applied: 5 triples
+# [IMPACT] Affected: [uri1, uri2, uri3]
+# [COMMUTE] Can reorder: true, Witness: {...}
+# [CONVENTIONS] Valid: true, Diagnostics: []
+# [GENERATOR] Generated: 150 lines
+# [STORE] Applied: 10 ops, Receipt: def456...
+# [SHADOW] Mismatches: 0
+# [QUALITY] Gates passed: 8/8
+```
+
+### Determinism
+```bash
+# Prove determinism (timeout: 10s)
+timeout 10s pnpm test:determinism
+
+# Expected output:
+# Run 1 hash: abc123...
+# Run 2 hash: abc123...
+# ✅ Determinism verified
+```
+
+## Integration Checklist
+
+- [ ] All 9 agents export an `index.mjs` with clear exports
+- [ ] No file overlap between agents except in `src/` and `test/`
+- [ ] Public API in `./src/index.mjs` is single import path
+- [ ] `RUNBOOK.md` has exact commands (copy/paste ready)
+- [ ] `demo.mjs` covers ALL 10 agent outputs
+- [ ] `package.json` uses only existing workspace deps
+- [ ] Determinism is provable (two runs → same hashes)
+- [ ] All imports use `.mjs` extension
+- [ ] JSDoc type coverage 100%
+- [ ] Zero external network calls in demo
 
 ## Success Criteria
 
-- [ ] All 9 agents submit implementations
-- [ ] Main `index.mjs` exports all public APIs
-- [ ] Demo runs end-to-end with stable hashes
-- [ ] RUNBOOK has exact commands for tests + demo
-- [ ] Two identical runs produce identical hashes
+1. **Importability**: `import * as autonomic from './src/index.mjs'` succeeds
+2. **Completeness**: All 45+ primitives accessible from public API
+3. **Determinism**: `node demo.mjs | sha256sum` produces same hash twice
+4. **Performance**: All tests complete in <5s
+5. **Independence**: Demo runs with zero external dependencies
+
+## Dependency Graph
+
+```
+agent-1/index.mjs
+  ├─> agent-2/index.mjs (Capsules)
+  ├─> agent-3/index.mjs (Lenses)
+  ├─> agent-4/index.mjs (Impact Sets)
+  ├─> agent-5/index.mjs (Commutativity)
+  ├─> agent-6/index.mjs (Conventions)
+  ├─> agent-7/index.mjs (Generator)
+  ├─> agent-8/index.mjs (Store)
+  ├─> agent-9/index.mjs (Shadow)
+  └─> agent-10/index.mjs (Quality)
+
+src/index.mjs
+  └─> agent-1/index.mjs (re-exports all)
+
+demo.mjs
+  └─> src/index.mjs (uses public API)
+
+test.mjs
+  ├─> agent-1/index.mjs (integration validation)
+  └─> demo.mjs (determinism check)
+```
+
+## Notes
+
+- All agents operate independently (no cross-dependencies)
+- Agent 1 is the ONLY integration point
+- Dynamic imports allow partial availability
+- Stubs prevent cascade failures
+- Hash-based determinism proof is non-negotiable

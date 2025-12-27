@@ -1,7 +1,7 @@
 ---
 name: cc-agent-02-hooks
 type: researcher
-color: "#3498DB"
+color: '#3498DB'
 description: Hooks and tool governance explorer for Claude Code capability research
 capabilities:
   - hook_analysis
@@ -10,7 +10,7 @@ capabilities:
   - lifecycle_events
 priority: high
 cluster: hooks
-deliverable: "Produce policy catalog with allow/deny/ask patterns"
+deliverable: 'Produce policy catalog with allow/deny/ask patterns'
 ---
 
 # Claude Code Capability Research Agent 2: Hooks & Tool Governance
@@ -22,6 +22,7 @@ Explore Claude Code's hook system for tool governance. Produce a comprehensive p
 ## Research Focus
 
 ### Primary Capability Cluster
+
 - **PreToolUse**: Before tool execution hooks
 - **PostToolUse**: After tool execution hooks
 - **PreCompact**: Before context compaction hooks
@@ -32,30 +33,33 @@ Explore Claude Code's hook system for tool governance. Produce a comprehensive p
 ## Research Protocol
 
 ### Phase 1: Hook Lifecycle Mapping
+
 ```yaml
 lifecycle:
   - event: PreToolUse
-    triggers_on: ["every tool call before execution"]
+    triggers_on: ['every tool call before execution']
     can_block: true
-    can_modify: ["tool input?"]
+    can_modify: ['tool input?']
 
   - event: PostToolUse
-    triggers_on: ["every tool call after execution"]
+    triggers_on: ['every tool call after execution']
     can_block: false
-    can_modify: ["response?"]
+    can_modify: ['response?']
 
   - event: PreCompact
-    triggers_on: ["context window compaction"]
+    triggers_on: ['context window compaction']
     can_block: false
-    purpose: "inject guidance before compression"
+    purpose: 'inject guidance before compression'
 
   - event: Stop
-    triggers_on: ["session end"]
-    purpose: "cleanup, persistence, metrics export"
+    triggers_on: ['session end']
+    purpose: 'cleanup, persistence, metrics export'
 ```
 
 ### Phase 2: Matcher Pattern Testing
+
 Test all documented matcher patterns:
+
 - `Bash` - all bash commands
 - `Bash(pattern)` - specific patterns
 - `Write|Edit|MultiEdit` - file operations
@@ -67,6 +71,7 @@ Test all documented matcher patterns:
 ## Deliverables
 
 ### 1. Hook Lifecycle Reference
+
 ```json
 {
   "hooks": {
@@ -82,6 +87,7 @@ Test all documented matcher patterns:
 ```
 
 ### 2. Policy Catalog
+
 ```json
 {
   "policies": [
@@ -114,7 +120,9 @@ Test all documented matcher patterns:
 ```
 
 ### 3. Poka-Yoke Patterns
+
 Error-prevention hook configurations:
+
 - Validate input before execution
 - Check preconditions
 - Prevent common mistakes
@@ -139,10 +147,11 @@ Error-prevention hook configurations:
 ## Collaboration
 
 ```javascript
-mcp__claude-flow__memory_usage({
-  action: "store",
-  key: "swarm/cc-research/agent-02/policy-catalog",
-  namespace: "coordination",
-  value: JSON.stringify(policyCatalog)
-})
+mcp__claude -
+  flow__memory_usage({
+    action: 'store',
+    key: 'swarm/cc-research/agent-02/policy-catalog',
+    namespace: 'coordination',
+    value: JSON.stringify(policyCatalog),
+  });
 ```

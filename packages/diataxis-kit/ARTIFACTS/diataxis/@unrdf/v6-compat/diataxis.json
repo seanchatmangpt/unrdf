@@ -1,0 +1,133 @@
+{
+  "confidence": {
+    "explanation": 0.7,
+    "howtos": 0.5,
+    "reference": 0.5,
+    "tutorials": 0.1
+  },
+  "evidence": {
+    "docsFiles": [],
+    "examplesFiles": [],
+    "fingerprint": "076f34c3ebe78f52d2d204dc6fb41e87ade908c953e9530d8a14908f0a558650",
+    "readmeHeadings": [
+      "Features",
+      "Installation",
+      "Usage",
+      "Migration Tracking",
+      "License"
+    ]
+  },
+  "explanation": {
+    "architecture": "**UNRDF v6 Compatibility Layer** - Migration bridge from v5 to v6.",
+    "concepts": [
+      "unrdf",
+      "migration",
+      "compatibility",
+      "v5",
+      "v6"
+    ],
+    "confidenceScore": 0.7,
+    "id": "explanation-unrdf-v6-compat-explanation",
+    "source": [
+      "keywords",
+      "readme",
+      "inferred"
+    ],
+    "title": "Understanding @unrdf/v6-compat",
+    "tradeoffs": [
+      "Ease of use vs. advanced configuration options",
+      "Memory usage vs. processing speed",
+      "Bundle size vs. feature completeness"
+    ]
+  },
+  "generatedAt": "2000-01-01T00:00:00.000Z",
+  "howtos": [
+    {
+      "confidenceScore": 0.7,
+      "context": "When working with unrdf in your project",
+      "id": "howto-integrate-with-unrdf",
+      "source": [
+        "keywords",
+        "inferred"
+      ],
+      "steps": [
+        "Install dependencies",
+        "Set up integration",
+        "Test integration"
+      ],
+      "task": "Connect @unrdf/v6-compat with unrdf",
+      "title": "Integrate with unrdf"
+    },
+    {
+      "confidenceScore": 0.4,
+      "context": "When encountering issues during usage",
+      "id": "howto-troubleshoot-common-issues",
+      "source": [
+        "inferred"
+      ],
+      "steps": [
+        "Check configuration",
+        "Review error messages",
+        "Apply fixes"
+      ],
+      "task": "Resolve common problems and errors",
+      "title": "Troubleshoot Common Issues"
+    }
+  ],
+  "packageName": "@unrdf/v6-compat",
+  "reference": {
+    "confidenceScore": 1,
+    "id": "reference-unrdf-v6-compat-reference",
+    "items": [
+      {
+        "description": "Export: ./adapters",
+        "example": "import from \"./src/adapters.mjs\"",
+        "name": "./adapters",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./lint-rules",
+        "example": "import from \"./src/lint-rules.mjs\"",
+        "name": "./lint-rules",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./schema-generator",
+        "example": "import from \"./src/schema-generator.mjs\"",
+        "name": "./schema-generator",
+        "type": "export"
+      },
+      {
+        "description": "Export: .",
+        "example": "import from \"./src/index.mjs\"",
+        "name": "@unrdf/v6-compat",
+        "type": "export"
+      }
+    ],
+    "source": [
+      "exports"
+    ],
+    "title": "@unrdf/v6-compat Reference"
+  },
+  "tutorials": [
+    {
+      "confidenceScore": 0.1,
+      "goal": "Learn how to set up and use @unrdf/v6-compat in your project",
+      "id": "tutorial-getting-started-with-unrdf-v6-compat",
+      "prerequisites": [
+        "Basic RDF knowledge"
+      ],
+      "source": [
+        "keywords"
+      ],
+      "stepsOutline": [
+        "Install the package",
+        "Import required modules",
+        "Create a basic example",
+        "Run and verify output"
+      ],
+      "title": "Getting Started with @unrdf/v6-compat"
+    }
+  ],
+  "version": "6.0.0-alpha.1"
+}

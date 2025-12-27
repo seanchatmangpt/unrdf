@@ -1,0 +1,38 @@
+# Benchmark results - these are gitignored to avoid repo bloat
+# Only baseline.json is tracked for regression detection
+
+# Results directory
+results/
+*.result.json
+*.result.md
+*.result.html
+
+# OTEL traces
+*.otel.json
+traces/
+otel-traces.log
+
+# Performance profiles
+*.cpuprofile
+*.heapprofile
+*.heapsnapshot
+
+# Temporary benchmark files
+*.benchmark.tmp
+*.perf.tmp
+
+# Node.js
+node_modules/
+.npm
+
+# Editor
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Keep these files
+!baseline.json
+!.gitkeep

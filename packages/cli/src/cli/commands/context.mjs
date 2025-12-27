@@ -1,189 +1,242 @@
 /**
- * @fileoverview Context management commands
+ * Context Command - RDF Context Management
  *
- * @description
- * CLI commands for managing RDF context and prefixes.
- * Supports showing, adding, removing, and normalizing prefixes.
+ * Manage JSON-LD contexts and namespace prefixes
  *
  * @module cli/commands/context
  */
 
 import { defineCommand } from 'citty';
-import { z } from 'zod';
-import { COMMON_PREFIXES } from '@unrdf/core';
-import { loadGraph, saveGraph } from './graph.mjs';
+import { readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { table } from 'table';
 
 /**
- * Validation schemas
+ * Create a new context
  */
-const prefixSchema = z.string().min(1, 'Prefix is required');
-const iriSchema = z.string().url('IRI must be a valid URL');
-
-/**
- * Extract prefixes from graph
- * @param {Object} store - N3 Store
- * @returns {Object} Prefix map
- */
-function extractPrefixes(_store) {
-  // Return common prefixes from store
-  return { ...COMMON_PREFIXES };
-}
-
-/**
- * Show context command
- */
-export const showCommand = defineCommand({
+const createCommand = defineCommand({
   meta: {
-    name: 'show',
-    description: 'Show current RDF context/prefixes',
+    name: 'create',
+    description: 'Create a new JSON-LD context',
   },
   args: {
-    graph: {
-      type: 'positional',
-      description: 'Path to the RDF graph file',
+    name: {
+      type: 'string',
+      description: 'Context name',
       required: true,
     },
+    output: {
+      type: 'string',
+      description: 'Output file path',
+      required: false,
+    },
   },
-  async run(ctx) {
+  async run({ args }) {
+    const contextName = args.name;
+    const outputFile = args.output || `${contextName}-context.jsonld`;
+
     try {
-      const graphPath = z.string().parse(ctx.args.graph);
-      const store = await loadGraph(graphPath);
+      const context = {
+        '@context': {
+          '@vocab': `http://example.org/${contextName}#`,
+          'rdf': 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
+          'rdfs': 'http://www.w3.org/2000/01/rdf-schema#',
+          'xsd': 'http://www.w3.org/2001/XMLSchema#',
+        },
+      };
 
-      const prefixes = extractPrefixes(store);
+      writeFileSync(outputFile, JSON.stringify(context, null, 2), 'utf-8');
 
-      console.log('📋 RDF Prefixes:');
-      Object.entries(prefixes).forEach(([prefix, iri]) => {
-        console.log(`   ${prefix}: ${iri}`);
-      });
+      console.log(`✅ Created context: ${contextName}`);
+      console.log(`📁 File: ${outputFile}`);
     } catch (error) {
-      console.error(`❌ Show context failed: ${error.message}`);
-      throw error;
+      console.error(`❌ Error creating context: ${error.message}`);
+      process.exit(1);
     }
   },
 });
 
 /**
- * Add prefix command
+ * Add prefix to context
  */
-export const addPrefixCommand = defineCommand({
+const addCommand = defineCommand({
   meta: {
     name: 'add',
-    description: 'Add a prefix to the graph context',
+    description: 'Add prefix to context',
   },
   args: {
-    graph: {
-      type: 'positional',
-      description: 'Path to the RDF graph file',
+    file: {
+      type: 'string',
+      description: 'Context file',
       required: true,
     },
     prefix: {
-      type: 'positional',
+      type: 'string',
       description: 'Prefix name',
       required: true,
     },
-    iri: {
-      type: 'positional',
-      description: 'IRI for the prefix',
+    namespace: {
+      type: 'string',
+      description: 'Namespace IRI',
       required: true,
     },
   },
-  async run(ctx) {
+  async run({ args }) {
+    const { file, prefix, namespace } = args;
+
+    if (!existsSync(file)) {
+      console.error(`❌ File not found: ${file}`);
+      process.exit(1);
+    }
+
     try {
-      const graphPath = z.string().parse(ctx.args.graph);
-      const prefix = prefixSchema.parse(ctx.args.prefix);
-      const iri = iriSchema.parse(ctx.args.iri);
+      const content = readFileSync(file, 'utf-8');
+      const context = JSON.parse(content);
 
-      // Load graph
-      const store = await loadGraph(graphPath);
+      if (!context['@context']) {
+        context['@context'] = {};
+      }
 
-      // Save with updated prefixes (Oxigraph handles prefixes internally)
-      await saveGraph(store, graphPath);
+      context['@context'][prefix] = namespace;
 
-      console.log(`✅ Added prefix: ${prefix} -> ${iri}`);
+      writeFileSync(file, JSON.stringify(context, null, 2), 'utf-8');
+
+      console.log(`✅ Added prefix: ${prefix} -> ${namespace}`);
+      console.log(`📁 Updated: ${file}`);
     } catch (error) {
-      console.error(`❌ Add prefix failed: ${error.message}`);
-      throw error;
+      console.error(`❌ Error adding prefix: ${error.message}`);
+      process.exit(1);
     }
   },
 });
 
 /**
- * Remove prefix command
+ * List context prefixes
  */
-export const removePrefixCommand = defineCommand({
+const listCommand = defineCommand({
   meta: {
-    name: 'remove',
-    description: 'Remove a prefix from the graph context',
+    name: 'list',
+    description: 'List context prefixes',
   },
   args: {
-    graph: {
-      type: 'positional',
-      description: 'Path to the RDF graph file',
+    file: {
+      type: 'string',
+      description: 'Context file',
+      required: true,
+    },
+    format: {
+      type: 'string',
+      description: 'Output format (table, json)',
+      default: 'table',
+    },
+  },
+  async run({ args }) {
+    const { file, format } = args;
+
+    if (!existsSync(file)) {
+      console.error(`❌ File not found: ${file}`);
+      process.exit(1);
+    }
+
+    try {
+      const content = readFileSync(file, 'utf-8');
+      const context = JSON.parse(content);
+
+      if (!context['@context']) {
+        console.log('No prefixes found.');
+        return;
+      }
+
+      const prefixes = context['@context'];
+
+      if (format === 'json') {
+        console.log(JSON.stringify(prefixes, null, 2));
+      } else {
+        // Table format
+        const data = Object.entries(prefixes).map(([prefix, namespace]) => [
+          prefix,
+          namespace,
+        ]);
+
+        const tableData = [['Prefix', 'Namespace'], ...data];
+
+        console.log(
+          table(tableData, {
+            header: {
+              alignment: 'center',
+              content: `Context Prefixes (${data.length})`,
+            },
+          })
+        );
+      }
+    } catch (error) {
+      console.error(`❌ Error listing prefixes: ${error.message}`);
+      process.exit(1);
+    }
+  },
+});
+
+/**
+ * Remove prefix from context
+ */
+const removeCommand = defineCommand({
+  meta: {
+    name: 'remove',
+    description: 'Remove prefix from context',
+  },
+  args: {
+    file: {
+      type: 'string',
+      description: 'Context file',
       required: true,
     },
     prefix: {
-      type: 'positional',
+      type: 'string',
       description: 'Prefix name to remove',
       required: true,
     },
   },
-  async run(ctx) {
+  async run({ args }) {
+    const { file, prefix } = args;
+
+    if (!existsSync(file)) {
+      console.error(`❌ File not found: ${file}`);
+      process.exit(1);
+    }
+
     try {
-      const prefix = prefixSchema.parse(ctx.args.prefix);
+      const content = readFileSync(file, 'utf-8');
+      const context = JSON.parse(content);
+
+      if (!context['@context'] || !context['@context'][prefix]) {
+        console.error(`❌ Prefix not found: ${prefix}`);
+        process.exit(1);
+      }
+
+      delete context['@context'][prefix];
+
+      writeFileSync(file, JSON.stringify(context, null, 2), 'utf-8');
 
       console.log(`✅ Removed prefix: ${prefix}`);
-      console.log('   (Prefix removal requires re-serialization)');
+      console.log(`📁 Updated: ${file}`);
     } catch (error) {
-      console.error(`❌ Remove prefix failed: ${error.message}`);
-      throw error;
+      console.error(`❌ Error removing prefix: ${error.message}`);
+      process.exit(1);
     }
   },
 });
 
 /**
- * Normalize context command
- */
-export const normalizeCommand = defineCommand({
-  meta: {
-    name: 'normalize',
-    description: 'Apply standard RDF prefixes to graph',
-  },
-  args: {
-    graph: {
-      type: 'positional',
-      description: 'Path to the RDF graph file',
-      required: true,
-    },
-  },
-  async run(ctx) {
-    try {
-      const graphPath = z.string().parse(ctx.args.graph);
-      const store = await loadGraph(graphPath);
-
-      // Save with standard prefixes (Oxigraph handles normalization)
-      await saveGraph(store, graphPath);
-
-      console.log('✅ Applied standard prefixes');
-      console.log(`   ${Object.keys(COMMON_PREFIXES).length} prefixes added`);
-    } catch (error) {
-      console.error(`❌ Normalize context failed: ${error.message}`);
-      throw error;
-    }
-  },
-});
-
-/**
- * Context command (parent command)
+ * Main context command
  */
 export const contextCommand = defineCommand({
   meta: {
     name: 'context',
-    description: 'Manage RDF context and prefixes',
+    description: 'Manage JSON-LD contexts',
   },
   subCommands: {
-    show: showCommand,
-    add: addPrefixCommand,
-    remove: removePrefixCommand,
-    normalize: normalizeCommand,
+    create: createCommand,
+    add: addCommand,
+    list: listCommand,
+    remove: removeCommand,
   },
 });

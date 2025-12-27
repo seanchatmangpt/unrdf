@@ -1,0 +1,1219 @@
+% Agent 5: Package Documentation Chapters
+% Packages 14-20: dark-matter, diataxis-kit, docs, domain, engine-gateway, federation, fusion
+
+\label{pkg:unrdf-dark-matter}
+\section{\pkg{unrdf-dark-matter} --- Dark Matter}
+
+\begin{pkgmeta}
+Path & \texttt{packages/dark-matter} \\
+Kind & js \\
+Entrypoints & 3 files \\
+Dependencies & 5 \\
+Blurb & Query optimization and performance analysis for SPARQL operations \\
+\end{pkgmeta}
+
+\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
+
+\begin{itemize}
+\item \(\Oobs\): SPARQL query complexity metrics extracted via \texttt{typhonjs-escomplex} AST traversal
+\item Performance bottleneck locations identified in query execution plans
+\item Index utilization patterns from store match operations
+\item \(\Aout\): Optimization suggestions as JSON schema validated by Zod
+\item Index advisor recommendations with benefit scores
+\item Metrics collector output in Prometheus-compatible format
+\end{itemize}
+
+\subsection*{Type Signature \(\SigmaType\)}
+
+\begin{lstlisting}[language=JavaScript]
+// Query analysis
+analyzeSparqlQuery: (query: string) => ComplexityReport
+estimateComplexity: (query: string) => number
+identifyBottlenecks: (query: string, store: Store) => Bottleneck[]
+
+// Optimization
+optimizeQuery: (query: string) => OptimizedQuery
+suggestIndexes: (pattern: Pattern) => IndexSuggestion[]
+explainOptimization: (before: string, after: string) => Explanation
+
+// Performance metrics
+createMetricsCollector: () => MetricsCollector
+recordQuery: (metrics: Metrics, query: string, duration: number) => void
+analyzePerformance: (metrics: Metrics) => PerformanceReport
+getMetrics: (collector: MetricsCollector) => MetricsSnapshot
+\end{lstlisting}
+
+Zod schemas validate complexity reports and optimization artifacts.
+
+\subsection*{Reconciler \(\muRecon\)}
+
+Query optimization reconciliation follows these rules:
+\begin{enumerate}
+\item Parse SPARQL query to AST using internal parser
+\item Traverse AST and compute cyclomatic complexity score
+\item Identify triple patterns with high cardinality estimates
+\item Generate optimized query by reordering patterns (selectivity-first)
+\item Validate optimized query maintains equivalence via test execution
+\end{enumerate}
+
+Index advisor reconciliation:
+\begin{enumerate}
+\item Collect query patterns from metrics history
+\item Group patterns by subject/predicate/object positions
+\item Calculate access frequency and estimated cardinality
+\item Rank index candidates by benefit score (frequency × cardinality reduction)
+\item Filter suggestions below configurable threshold (default: 10\% improvement)
+\end{enumerate}
+
+\subsection*{Composition \(\PiMerge / \oplusMerge\)}
+
+Metrics from multiple collectors compose via aggregation:
+\begin{lstlisting}[language=JavaScript]
+const merged = mergeMetrics([collector1, collector2]);
+// Sums query counts, averages durations, merges unique queries
+\end{lstlisting}
+
+Optimization suggestions compose by pattern union:
+- Subject-based indexes \(\oplus\) predicate-based indexes = composite recommendation
+- Non-conflicting suggestions merge; conflicts trigger warning
+
+\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
+
+\textbf{Guards}:
+\begin{itemize}
+\item Query complexity score \(\leq 100\) (configurable threshold)
+\item Optimization preserves query composition rules (validated via test suite)
+\item Index suggestions reference valid RDF term types only
+\item Metrics timestamps monotonically increase
+\end{itemize}
+
+\textbf{Invariants}:
+\begin{itemize}
+\item Optimized query produces identical bindings to original
+\item Performance metrics collection does not degrade query execution
+\item Index advisor suggestions are deterministic for same input
+\item Bottleneck identification completes in \(O(n \log n)\) where \(n\) = pattern count
+\end{itemize}
+
+\subsection*{Provenance and Receipts}
+
+Query analysis provenance tracked via:
+\begin{itemize}
+\item Input query hash (SHA-256)
+\item Complexity score calculation metadata
+\item Optimization transformation steps
+\item Index suggestion derivation chain
+\end{itemize}
+
+Receipts generated for performance reports:
+\begin{lstlisting}[language=JavaScript]
+const report = analyzePerformance(metrics);
+const receipt = createReceipt({
+  operation: 'analyze_performance',
+  input: hashMetrics(metrics),
+  output: hashReport(report),
+  timestamp: Date.now()
+});
+\end{lstlisting}
+
+\subsection*{Minimal Example}
+
+\begin{lstlisting}[language=JavaScript]
+import {
+  analyzeSparqlQuery,
+  optimizeQuery,
+  createMetricsCollector
+} from '@unrdf/dark-matter';
+
+// Analyze query complexity
+const query = `SELECT * WHERE { ?s ?p ?o . ?o ?p2 ?o2 }`;
+const analysis = analyzeSparqlQuery(query);
+console.log(`Complexity: ${analysis.score}`);
+
+// Optimize query
+const optimized = optimizeQuery(query);
+console.log(`Original: ${query}`);
+console.log(`Optimized: ${optimized.query}`);
+
+// Track performance
+const collector = createMetricsCollector();
+recordQuery(collector, query, 125.3);
+const report = analyzePerformance(collector);
+console.log(`Avg duration: ${report.avgDuration}ms`);
+\end{lstlisting}
+
+\subsection*{Open Questions}
+
+\begin{itemize}
+\item Can optimization preserve SPARQL 1.1 property path composition rules?
+\item How to validate index suggestions against actual store implementations?
+\item Does complexity scoring generalize to SPARQL UPDATE operations?
+\item Can metrics collection integrate with OpenTelemetry spans?
+\end{itemize}
+
+\label{pkg:unrdf-diataxis-kit}
+\section{\pkg{unrdf-diataxis-kit} --- Diataxis Kit}
+
+\begin{pkgmeta}
+Path & \texttt{packages/diataxis-kit} \\
+Kind & js \\
+Entrypoints & 9 files \\
+Dependencies & 0 \\
+Blurb & Monorepo documentation scaffold generator using Diátaxis framework \\
+\end{pkgmeta}
+
+\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
+
+\begin{itemize}
+\item \(\Oobs\): Workspace package discovery via pnpm/yarn/npm workspace configs
+\item Evidence collection from README, docs/, examples/, src/, package.json
+\item Classification confidence scores based on evidence presence
+\item \(\Aout\): \texttt{inventory.json} with 86+ package metadata entries
+\item Per-package \texttt{diataxis.json} files with tutorials/how-tos/reference/explanation
+\item Markdown scaffolds in \texttt{OUT/<package>/\{tutorials,how-to,reference,explanation\}/}
+\item SHA-256 fingerprints for determinism verification
+\end{itemize}
+
+\subsection*{Type Signature \(\SigmaType\)}
+
+\begin{lstlisting}[language=JavaScript]
+// Discovery
+discoverPackages: (workspaceRoot: string) => Promise<Package[]>
+
+// Evidence collection
+collectEvidence: (packageDir: string, pkgJson: Object) => Promise<Evidence>
+
+// Classification
+classifyPackage: (pkg: Package, evidence: Evidence) => DiataxisEntry
+
+// Scaffold generation
+generateScaffold: (entry: DiataxisEntry, outDir: string) => Promise<void>
+
+// Utilities
+stableStringify: (obj: any) => string  // Deterministic JSON
+hashObject: (obj: any) => string      // SHA-256 hash
+\end{lstlisting}
+
+All schemas defined in \texttt{diataxis-schema.mjs} using Zod.
+
+\subsection*{Reconciler \(\muRecon\)}
+
+Documentation classification reconciles evidence to Diátaxis types:
+
+\textbf{Tutorial classification}:
+\begin{enumerate}
+\item Check for \texttt{examples/} directory (weight: 0.3)
+\item Parse README for "Getting Started" section (weight: 0.3)
+\item Inspect keywords for "tutorial", "guide" (weight: 0.1)
+\item Sum weights to compute confidence score \(\in [0, 1]\)
+\end{enumerate}
+
+\textbf{How-to classification}:
+\begin{enumerate}
+\item Extract README sections matching "Usage", "Configuration" (weight: 0.25)
+\item Check \texttt{package.json} bin entries (weight: 0.25)
+\item Scan keywords for task-oriented terms (weight: 0.25)
+\item Detect test files as proxy for common tasks (weight: 0.25)
+\end{enumerate}
+
+\textbf{Reference classification}:
+\begin{enumerate}
+\item Parse \texttt{package.json} exports field (weight: 0.5)
+\item Check bin entries (weight: 0.3)
+\item Find "API" section in README (weight: 0.2)
+\end{enumerate}
+
+\textbf{Explanation classification}:
+\begin{enumerate}
+\item Parse README introduction (weight: 0.3)
+\item Check \texttt{docs/} directory presence (weight: 0.3)
+\item Analyze keywords for concepts (weight: 0.4)
+\end{enumerate}
+
+\subsection*{Composition \(\PiMerge / \oplusMerge\)}
+
+Evidence from multiple sources composes via union:
+\begin{lstlisting}[language=JavaScript]
+const evidence = {
+  readmeHeadings: [...],
+  examplesFiles: [...],
+  docsFiles: [...],
+  // All arrays concatenate
+};
+\end{lstlisting}
+
+Confidence scores compose additively per classification type.
+
+Package inventories merge by name (later packages override earlier):
+\begin{lstlisting}[language=JavaScript]
+const merged = mergeInventories([inv1, inv2]);
+// Packages with same name: inv2 wins
+\end{lstlisting}
+
+\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
+
+\textbf{Guards}:
+\begin{itemize}
+\item Package names must be unique in inventory
+\item Directory paths must exist on filesystem
+\item Confidence scores \(\in [0, 1]\) for all classification types
+\item Evidence fingerprints are valid SHA-256 (64 hex chars)
+\end{itemize}
+
+\textbf{Invariants}:
+\begin{itemize}
+\item Running with \texttt{DETERMINISTIC=1} produces identical hashes across runs
+\item Scaffold generation creates exactly 4 directories per package (tutorials, how-to, reference, explanation)
+\item Evidence collection is idempotent (same inputs → same fingerprint)
+\item Package count in inventory matches discovered workspace packages
+\end{itemize}
+
+\subsection*{Provenance and Receipts}
+
+Deterministic mode ensures reproducible outputs:
+\begin{itemize}
+\item Fixed timestamp: \texttt{2000-01-01T00:00:00.000Z}
+\item Stable JSON key ordering via \texttt{stableStringify}
+\item Lexicographic package sorting
+\item Evidence fingerprint via SHA-256 of sorted evidence fields
+\end{itemize}
+
+Each \texttt{diataxis.json} includes:
+\begin{lstlisting}[language=JSON]
+{
+  "evidence": {
+    "fingerprint": "6f6e066e6135b49a61da8a2e3004973..."
+  }
+}
+\end{lstlisting}
+
+\subsection*{Minimal Example}
+
+\begin{lstlisting}[language=JavaScript]
+import {
+  discoverPackages,
+  collectEvidence,
+  classifyPackage,
+  generateScaffold
+} from '@unrdf/diataxis-kit';
+
+// Discover workspace packages
+const packages = await discoverPackages('/path/to/workspace');
+console.log(`Found ${packages.length} packages`);
+
+// Classify first package
+const pkg = packages[0];
+const pkgJson = JSON.parse(await readFile(`${pkg.dir}/package.json`));
+const evidence = await collectEvidence(pkg.dir, pkgJson);
+const diataxis = await classifyPackage(pkg, evidence);
+
+// Generate scaffold
+await generateScaffold(diataxis, './OUT/@unrdf/core');
+console.log('Scaffold generated');
+\end{lstlisting}
+
+\subsection*{Open Questions}
+
+\begin{itemize}
+\item Can classification confidence be calibrated against manual labels?
+\item How to handle monorepos with mixed JS/TS/Python packages?
+\item Should evidence extraction support languages beyond JavaScript?
+\item Can LLM embeddings improve classification accuracy?
+\end{itemize}
+
+\label{pkg:docs}
+\section{\pkg{docs} --- Documentation Site}
+
+\begin{pkgmeta}
+Path & \texttt{packages/docs} \\
+Kind & docs \\
+Entrypoints & 0 files \\
+Dependencies & 28 \\
+Blurb & Nuxt-based documentation and example showcase for UNRDF ecosystem \\
+\end{pkgmeta}
+
+\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
+
+\begin{itemize}
+\item \(\Oobs\): Markdown content files in \texttt{docs/} directory
+\item Example code in \texttt{docs/examples/*.mjs}
+\item Agent tutorials in \texttt{docs/agents/\{tutorials,how-to,reference\}/}
+\item Package template in \texttt{docs/templates/package-template/}
+\item \(\Aout\): Static site build in \texttt{.output/}
+\item Validated example execution results
+\item Documentation coverage reports
+\end{itemize}
+
+\subsection*{Type Signature \(\SigmaType\)}
+
+This package provides documentation artifacts rather than programmatic APIs. Key executables:
+
+\begin{lstlisting}[language=JavaScript]
+// Example validators
+validate-examples: () => ExampleResult[]
+check-links: () => BrokenLink[]
+measure-coverage: () => CoverageReport
+\end{lstlisting}
+
+Template structure defined in \texttt{package-template/} directory:
+\begin{itemize}
+\item \texttt{src/index.mjs} - Entry point
+\item \texttt{src/validation.mjs} - Zod schemas
+\item \texttt{test/thing.test.mjs} - Vitest tests
+\end{itemize}
+
+\subsection*{Reconciler \(\muRecon\)}
+
+Documentation reconciliation process:
+\begin{enumerate}
+\item Extract frontmatter from markdown files
+\item Validate code examples via \texttt{validate-examples.mjs}
+\item Check internal links point to existing files
+\item Generate coverage report showing documented vs undocumented packages
+\item Aggregate into site build via Nuxt content layer
+\end{enumerate}
+
+Example validation reconciler:
+\begin{enumerate}
+\item Parse \texttt{.mjs} files in \texttt{examples/}
+\item Execute each example in isolated context
+\item Capture stdout/stderr
+\item Validate against expected output
+\item Report pass/fail per example
+\end{enumerate}
+
+\subsection*{Composition \(\PiMerge / \oplusMerge\)}
+
+Documentation sources compose via Nuxt content aggregation:
+\begin{itemize}
+\item Markdown files auto-discovered in \texttt{content/} directory
+\item Examples composed via directory structure
+\item Agent documentation merged from \texttt{agents/} subdirectories
+\end{itemize}
+
+Coverage reports compose by package union:
+\begin{lstlisting}[language=JavaScript]
+const coverage = {
+  documented: packages.filter(hasReadme),
+  undocumented: packages.filter(p => !hasReadme(p))
+};
+\end{lstlisting}
+
+\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
+
+\textbf{Guards}:
+\begin{itemize}
+\item All code examples must execute without errors
+\item Internal links must reference existing files
+\item Markdown frontmatter must include required fields (title, description)
+\item Template files must pass linting rules
+\end{itemize}
+
+\textbf{Invariants}:
+\begin{itemize}
+\item Example execution is deterministic (same inputs → same outputs)
+\item Coverage percentage monotonically increases as packages add READMEs
+\item Link checker reports are idempotent
+\item Site build produces identical output for same content
+\end{itemize}
+
+\subsection*{Provenance and Receipts}
+
+Documentation provenance tracked via:
+\begin{itemize}
+\item Git commit hash of last modification
+\item Example execution timestamps
+\item Validation results with pass/fail status
+\item Coverage report generation timestamp
+\end{itemize}
+
+No receipts generated (documentation is not workflow execution).
+
+\subsection*{Minimal Example}
+
+\begin{lstlisting}[language=JavaScript]
+// docs/examples/basic-usage.mjs
+import { createStore } from '@unrdf/oxigraph';
+
+const store = createStore();
+console.log('Store created');
+
+// Output: Store created
+\end{lstlisting}
+
+Running validators:
+\begin{lstlisting}[language=Bash]
+node docs/tools/validate-examples.mjs
+# Validates all .mjs files in examples/
+
+node docs/tools/check-links.mjs
+# Checks all markdown internal links
+
+node docs/tools/measure-coverage.mjs
+# Reports documentation coverage
+\end{lstlisting}
+
+\subsection*{Open Questions}
+
+\begin{itemize}
+\item Should documentation versioning match package versions?
+\item Can example validation run in CI with deterministic outputs?
+\item How to auto-generate API reference from JSDoc comments?
+\item Should coverage reports include inline code comment density?
+\end{itemize}
+
+\label{pkg:unrdf-domain}
+\section{\pkg{unrdf-domain} --- Domain Models}
+
+\begin{pkgmeta}
+Path & \texttt{packages/domain} \\
+Kind & js \\
+Entrypoints & 1 file \\
+Dependencies & 0 \\
+Blurb & Domain types and models for thesis generation and configuration \\
+\end{pkgmeta}
+
+\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
+
+\begin{itemize}
+\item \(\Oobs\): Domain constants for paper families, thesis types, output formats, shell types
+\item Zod schemas for papers, sections, schedules, thesis configurations
+\item \(\Aout\): Validated domain objects (Paper, Thesis, Config instances)
+\item Formatted output in JSON, YAML, or table formats
+\item Type-safe domain models with runtime validation
+\end{itemize}
+
+\subsection*{Type Signature \(\SigmaType\)}
+
+\begin{lstlisting}[language=JavaScript]
+// Constants
+PAPER_FAMILIES: readonly ['comp', 'math', 'bio', ...]
+THESIS_TYPES: readonly ['phd', 'masters', 'undergrad']
+OUTPUT_FORMATS: readonly ['json', 'yaml', 'table']
+SHELL_TYPES: readonly ['bash', 'zsh', 'fish']
+
+// Zod schemas
+PaperFamilySchema: z.enum([...])
+ThesisTypeSchema: z.enum([...])
+SectionSchema: z.object({ title: z.string(), content: z.string() })
+PaperSchema: z.object({
+  id: z.string(),
+  family: PaperFamilySchema,
+  sections: z.array(SectionSchema)
+})
+ThesisSchema: z.object({
+  type: ThesisTypeSchema,
+  papers: z.array(PaperSchema)
+})
+
+// Models
+Paper: class with validate(), toJSON(), toYAML()
+Thesis: class with validate(), toJSON(), toYAML(), addPaper()
+Config: class with validate(), toJSON()
+
+// Formatters
+formatOutput: (data: any, format: OutputFormat) => string
+getFormatter: (format: OutputFormat) => Formatter
+isValidFormat: (format: string) => boolean
+\end{lstlisting}
+
+\subsection*{Reconciler \(\muRecon\)}
+
+Domain validation reconciliation:
+\begin{enumerate}
+\item Parse input data (JSON/YAML/object)
+\item Apply Zod schema validation
+\item If invalid: throw ZodError with detailed path
+\item If valid: construct domain model instance
+\item Return validated instance
+\end{enumerate}
+
+Format reconciliation:
+\begin{enumerate}
+\item Detect format from extension or explicit parameter
+\item Select appropriate formatter (JSON/YAML/table)
+\item Serialize domain object to target format
+\item Validate output conforms to format spec
+\end{enumerate}
+
+\subsection*{Composition \(\PiMerge / \oplusMerge\)}
+
+Thesis composition via paper aggregation:
+\begin{lstlisting}[language=JavaScript]
+const thesis = new Thesis({ type: 'phd', papers: [] });
+thesis.addPaper(paper1);
+thesis.addPaper(paper2);
+// Papers compose via array concatenation
+\end{lstlisting}
+
+Section composition within papers:
+\begin{lstlisting}[language=JavaScript]
+const paper = new Paper({
+  id: 'p1',
+  family: 'comp',
+  sections: [section1, section2]  // Ordered composition
+});
+\end{lstlisting}
+
+\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
+
+\textbf{Guards}:
+\begin{itemize}
+\item Paper families must be in \texttt{PAPER\_FAMILIES} enum
+\item Thesis types must be in \texttt{THESIS\_TYPES} enum
+\item Output formats must be in \texttt{OUTPUT\_FORMATS} enum
+\item Section content must be non-empty string
+\item Paper IDs must be unique within thesis
+\end{itemize}
+
+\textbf{Invariants}:
+\begin{itemize}
+\item Validated objects never contain invalid enum values
+\item JSON/YAML serialization round-trips correctly: \texttt{parse(serialize(x)) === x}
+\item Formatter selection is deterministic for same format string
+\item Model constructors accept valid data without throwing
+\end{itemize}
+
+\subsection*{Provenance and Receipts}
+
+Domain models track creation metadata:
+\begin{lstlisting}[language=JavaScript]
+const thesis = new Thesis({
+  type: 'phd',
+  papers: [],
+  metadata: {
+    created: Date.now(),
+    version: '1.0.0'
+  }
+});
+\end{lstlisting}
+
+No cryptographic receipts (domain layer is pure data).
+
+\subsection*{Minimal Example}
+
+\begin{lstlisting}[language=JavaScript]
+import {
+  Paper,
+  Thesis,
+  PaperSchema,
+  formatOutput
+} from '@unrdf/domain';
+
+// Create and validate paper
+const paperData = {
+  id: 'p1',
+  family: 'comp',
+  sections: [
+    { title: 'Introduction', content: 'Lorem ipsum...' }
+  ]
+};
+const paper = new Paper(paperData);
+paper.validate();  // Uses PaperSchema internally
+
+// Create thesis
+const thesis = new Thesis({ type: 'phd', papers: [paper] });
+thesis.validate();
+
+// Format output
+console.log(formatOutput(thesis, 'json'));
+console.log(formatOutput(thesis, 'yaml'));
+console.log(formatOutput(thesis, 'table'));
+\end{lstlisting}
+
+\subsection*{Open Questions}
+
+\begin{itemize}
+\item Should domain models support schema evolution/migration?
+\item Can formatters preserve comments in YAML output?
+\item How to validate cross-references between papers?
+\item Should table formatter support nested object rendering?
+\end{itemize}
+
+\label{pkg:unrdf-engine-gateway}
+\section{\pkg{unrdf-engine-gateway} --- Engine Gateway}
+
+\begin{pkgmeta}
+Path & \texttt{packages/engine-gateway} \\
+Kind & js \\
+Entrypoints & 4 files \\
+Dependencies & 3 \\
+Blurb & Enforcement layer for Oxigraph-first, N3-minimal RDF processing \\
+\end{pkgmeta}
+
+\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
+
+\begin{itemize}
+\item \(\Oobs\): RDF operation type detection (query, parse, serialize, etc.)
+\item Engine routing decisions (Oxigraph vs N3)
+\item Justification metadata for N3 usage
+\item \(\Aout\): Routed operation results from appropriate engine
+\item Validation reports for \(\mu(O)\) compliance
+\item Routing metadata with engine selection explanations
+\end{itemize}
+
+The \(\mu(O)\) architecture mandates: \textbf{Oxigraph is authoritative; N3 exists only at 5 justified boundaries}.
+
+\subsection*{Type Signature \(\SigmaType\)}
+
+\begin{lstlisting}[language=JavaScript]
+class EngineGateway {
+  constructor(config: { store: Store, enforce: boolean, verbose: boolean })
+  route(operation: string, ...args: any[]): any
+  getRoutingMetadata(operation: string): RoutingMetadata
+  canRoute(operation: string): boolean
+}
+
+// Operation detection
+detectOperationType(operation: string): 'oxigraph' | 'n3'
+isN3Operation(operation: string): boolean
+isOxigraphOperation(operation: string): boolean
+
+// Validation
+validateN3Usage(operation: string): ValidationResult
+validateOxigraphUsage(operation: string): ValidationResult
+
+// Constants
+N3_ONLY_OPS: ['stream-parse', 'stream-serialize', 'n3-reason',
+              'permissive-parse', 'rdf-transform']
+OXIGRAPH_OPS: ['query', 'update', 'add', 'delete', 'match',
+               'parse', 'serialize', 'clear']
+\end{lstlisting}
+
+\subsection*{Reconciler \(\muRecon\)}
+
+Operation routing reconciliation:
+\begin{enumerate}
+\item Receive operation request with operation type string
+\item Detect engine via \texttt{detectOperationType}
+\item If Oxigraph: route directly to store
+\item If N3:
+  \begin{enumerate}
+    \item Validate operation is in \texttt{N3\_ONLY\_OPS}
+    \item Execute via N3 library
+    \item Re-enter Oxigraph with results (for streaming parse/reason)
+  \end{enumerate}
+\item If \texttt{enforce=true}: throw on \(\mu(O)\) violations
+\item If \texttt{enforce=false}: log warning, allow operation
+\end{enumerate}
+
+Validation reconciliation:
+\begin{enumerate}
+\item Check operation type against allowed lists
+\item If N3 operation: verify justification exists (backpressure, reasoning, permissive parse, transform)
+\item If invalid: construct error message with violation details
+\item Return \texttt{ValidationResult\{ valid: boolean, message: string \}}
+\end{enumerate}
+
+\subsection*{Composition \(\PiMerge / \oplusMerge\)}
+
+Gateway instances do not compose (singleton per store).
+
+Routing metadata composes via union:
+\begin{lstlisting}[language=JavaScript]
+const allMetadata = operations.map(op =>
+  gateway.getRoutingMetadata(op)
+);
+// Array of RoutingMetadata objects
+\end{lstlisting}
+
+\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
+
+\textbf{Guards}:
+\begin{itemize}
+\item N3 operations must be in \texttt{N3\_ONLY\_OPS} set
+\item Oxigraph operations must be in \texttt{OXIGRAPH\_OPS} set
+\item Enforcement mode throws on violations (no silent failures)
+\item N3 streaming operations must re-enter Oxigraph
+\end{itemize}
+
+\textbf{Invariants}:
+\begin{itemize}
+\item Operation routing is deterministic (same operation → same engine)
+\item N3 operations always have justification metadata
+\item Validation results are consistent across calls
+\item Gateway never routes SPARQL queries to N3
+\item Gateway never routes streaming to Oxigraph (lacks backpressure)
+\end{itemize}
+
+\subsection*{Provenance and Receipts}
+
+Routing decisions tracked via metadata:
+\begin{lstlisting}[language=JavaScript]
+{
+  operation: 'stream-parse',
+  engine: 'n3',
+  valid: true,
+  justification: 'Streaming required for backpressure control',
+  reenterOxigraph: true,
+  message: 'Operation "stream-parse" is justified N3 use'
+}
+\end{lstlisting}
+
+No cryptographic receipts (gateway is enforcement layer).
+
+\subsection*{Minimal Example}
+
+\begin{lstlisting}[language=JavaScript]
+import { EngineGateway } from '@unrdf/engine-gateway';
+import { createStore } from '@unrdf/oxigraph';
+
+const store = createStore();
+const gateway = new EngineGateway({ store, enforce: true });
+
+// Route SPARQL query to Oxigraph
+const results = gateway.route('query', `
+  SELECT ?s ?p ?o WHERE { ?s ?p ?o } LIMIT 10
+`);
+
+// Route streaming parse to N3 (justified)
+import { createReadStream } from 'fs';
+const stream = createReadStream('large.ttl');
+await gateway.route('stream-parse', stream);
+
+// Get routing metadata
+const metadata = gateway.getRoutingMetadata('stream-parse');
+console.log(metadata.justification);
+// "Streaming required for backpressure control"
+
+// Violation detection (throws)
+try {
+  gateway.route('query-with-n3', sparql);  // Not allowed
+} catch (e) {
+  console.error(e.message);  // "μ(O) Violation: ..."
+}
+\end{lstlisting}
+
+\subsection*{Open Questions}
+
+\begin{itemize}
+\item Can routing decisions be validated against ontology in RDF?
+\item Should gateway track operation latency per engine?
+\item How to handle new operation types not in current lists?
+\item Can enforcement be graduated (warn → error → block)?
+\end{itemize}
+
+\label{pkg:unrdf-federation}
+\section{\pkg{unrdf-federation} --- Federation}
+
+\begin{pkgmeta}
+Path & \texttt{packages/federation} \\
+Kind & js \\
+Entrypoints & 3 files \\
+Dependencies & 8 \\
+Blurb & Peer discovery and distributed SPARQL query execution \\
+\end{pkgmeta}
+
+\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
+
+\begin{itemize}
+\item \(\Oobs\): Peer endpoint availability (health scores 0-100)
+\item Query execution latency per peer
+\item Result binding counts from distributed queries
+\item Error rates across peer network
+\item \(\Aout\): Aggregated query results from multiple peers
+\item Health check reports (healthy/degraded/unreachable counts)
+\item Federation statistics (query counts, error rates, durations)
+\item OpenTelemetry metrics and traces
+\end{itemize}
+
+\subsection*{Type Signature \(\SigmaType\)}
+
+\begin{lstlisting}[language=JavaScript]
+// Coordinator factory
+createCoordinator(config: CoordinatorConfig): Coordinator
+
+CoordinatorConfig: {
+  peers: PeerConfig[],
+  strategy: 'broadcast' | 'selective' | 'failover',
+  timeout: number,
+  healthCheckInterval?: number,
+  retryAttempts?: number
+}
+
+PeerConfig: {
+  id: string,
+  endpoint: string,
+  metadata?: object
+}
+
+interface Coordinator {
+  addPeer(id: string, endpoint: string, metadata?: object): Promise<void>
+  removePeer(id: string): boolean
+  listPeers(): PeerInfo[]
+  query(sparql: string, options?: QueryOptions): Promise<QueryResult>
+  queryPeer(peerId: string, sparql: string): Promise<PeerQueryResult>
+  healthCheck(): Promise<HealthStatus>
+  getStats(): FederationStats
+}
+
+QueryResult: {
+  success: boolean,
+  results: Binding[],
+  successCount: number,
+  failureCount: number,
+  totalDuration: number,
+  peerResults: PeerQueryResult[]
+}
+\end{lstlisting}
+
+All schemas validated via Zod (\texttt{PeerConfigSchema}, \texttt{QueryResultSchema}).
+
+\subsection*{Reconciler \(\muRecon\)}
+
+Query execution reconciliation by strategy:
+
+\textbf{Broadcast strategy}:
+\begin{enumerate}
+\item Send query to ALL registered peers in parallel
+\item Collect results from each peer (success or failure)
+\item Aggregate bindings: union of all peer results
+\item Return combined result with per-peer metadata
+\end{enumerate}
+
+\textbf{Selective strategy}:
+\begin{enumerate}
+\item Filter peers by health score (only healthy)
+\item Send query to filtered subset in parallel
+\item Aggregate results from responding peers
+\item Skip degraded/unreachable peers
+\end{enumerate}
+
+\textbf{Failover strategy}:
+\begin{enumerate}
+\item Order peers by health score (highest first)
+\item Query first peer
+\item If success: return immediately
+\item If failure: try next peer in order
+\item Continue until success or peer list exhausted
+\end{enumerate}
+
+Health check reconciliation:
+\begin{enumerate}
+\item Send lightweight SPARQL query to each peer (\texttt{ASK \{ ?s ?p ?o \}})
+\item Measure response time
+\item If timeout: mark unreachable (score = 0)
+\item If slow (>5s): mark degraded (score = 50)
+\item If fast (<1s): mark healthy (score = 100)
+\end{enumerate}
+
+\subsection*{Composition \(\PiMerge / \oplusMerge\)}
+
+Query results compose via binding union:
+\begin{lstlisting}[language=JavaScript]
+const aggregated = {
+  results: [...peer1.results, ...peer2.results],  // Union
+  successCount: 2,
+  totalDuration: peer1.duration + peer2.duration
+};
+\end{lstlisting}
+
+Statistics compose additively:
+\begin{lstlisting}[language=JavaScript]
+const stats = {
+  totalQueries: coord1.totalQueries + coord2.totalQueries,
+  totalErrors: coord1.totalErrors + coord2.totalErrors,
+  // Error rate recalculated from totals
+};
+\end{lstlisting}
+
+\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
+
+\textbf{Guards}:
+\begin{itemize}
+\item Peer IDs must be unique within coordinator
+\item Endpoint URLs must be valid HTTP(S) URIs
+\item Query timeout must be positive integer
+\item Health scores \(\in [0, 100]\)
+\item Strategy must be in \texttt{\{broadcast, selective, failover\}}
+\end{itemize}
+
+\textbf{Invariants}:
+\begin{itemize}
+\item Broadcast strategy queries ALL peers (no filtering)
+\item Selective strategy queries ONLY healthy peers
+\item Failover strategy queries AT MOST 1 peer per attempt
+\item Health check interval monotonically increases timestamp
+\item Statistics never decrease (counters only increment)
+\end{itemize}
+
+\subsection*{Provenance and Receipts}
+
+Query provenance tracked via:
+\begin{lstlisting}[language=JavaScript]
+{
+  queryHash: sha256(sparqlQuery),
+  timestamp: Date.now(),
+  strategy: 'broadcast',
+  peersQueried: ['peer1', 'peer2'],
+  successCount: 2,
+  failureCount: 0
+}
+\end{lstlisting}
+
+OpenTelemetry spans capture:
+\begin{itemize}
+\item \texttt{federation.query} span with duration
+\item \texttt{federation.peer\_query} sub-spans per peer
+\item Attributes: strategy, peer count, success rate
+\end{itemize}
+
+\subsection*{Minimal Example}
+
+\begin{lstlisting}[language=JavaScript]
+import { createCoordinator } from '@unrdf/federation';
+
+const coordinator = createCoordinator({
+  peers: [
+    {
+      id: 'dbpedia',
+      endpoint: 'https://dbpedia.org/sparql'
+    },
+    {
+      id: 'wikidata',
+      endpoint: 'https://query.wikidata.org/sparql'
+    }
+  ],
+  strategy: 'broadcast',
+  timeout: 10000
+});
+
+// Execute federated query
+const result = await coordinator.query(`
+  SELECT DISTINCT ?type WHERE {
+    ?s a ?type .
+  } LIMIT 10
+`);
+
+console.log(`Results: ${result.results.length}`);
+console.log(`Success: ${result.successCount}/${result.totalPeers}`);
+
+// Health check
+const health = await coordinator.healthCheck();
+console.log(`Healthy: ${health.healthyPeers}/${health.totalPeers}`);
+
+// Statistics
+const stats = coordinator.getStats();
+console.log(`Error rate: ${(stats.errorRate * 100).toFixed(2)}%`);
+\end{lstlisting}
+
+\subsection*{Open Questions}
+
+\begin{itemize}
+\item Can query planning optimize cross-peer joins?
+\item Should result deduplication use RDF canonicalization?
+\item How to handle schema heterogeneity across peers?
+\item Can peer discovery use DNS-SD or mDNS protocols?
+\end{itemize}
+
+\label{pkg:unrdf-fusion}
+\section{\pkg{unrdf-fusion} --- Fusion}
+
+\begin{pkgmeta}
+Path & \texttt{packages/fusion} \\
+Kind & js \\
+Entrypoints & 1 file \\
+Dependencies & 9 \\
+Blurb & Unified integration layer for KGC-4D, blockchain, hooks, caching subsystems \\
+\end{pkgmeta}
+
+\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
+
+\begin{itemize}
+\item \(\Oobs\): Unified engine creation with subsystem initialization
+\item KGC-4D store operations with time-travel snapshots
+\item Blockchain receipt generation and verification
+\item Policy hook execution and validation
+\item Multi-layer cache hit/miss rates
+\item \(\Aout\): Consolidated engine instance with all subsystems
+\item Proof ledger with Merkle root and receipt chain
+\item Deterministic proof hash (SHA-256)
+\item Combined statistics from all subsystems
+\end{itemize}
+
+\subsection*{Type Signature \(\SigmaType\)}
+
+\begin{lstlisting}[language=JavaScript]
+// Primary API
+createEngine(config?: EngineConfig): Promise<UnifiedEngine>
+
+EngineConfig: {
+  enableCaching?: boolean,      // default: true
+  enableBlockchain?: boolean,   // default: true
+  enableGit?: boolean           // default: false
+}
+
+interface UnifiedEngine {
+  store: OxigraphStore,
+  kgcStore: KGCStore,
+  receipts: { anchorer: ReceiptAnchorer, merkle: MerkleProofGenerator },
+  hookRegistry: HookRegistry,    // Legacy
+  policies: PolicyRegistry,      // New unified
+  resources: CachingSystem,
+  getStats(): EngineStats
+  close(): Promise<void>
+}
+
+// Proof generation
+prove(): Promise<ProofResult>
+
+ProofResult: {
+  success: boolean,
+  hash: string,          // SHA-256 of ledger
+  merkleRoot: string,    // Merkle root of receipts
+  artifacts: Receipt[],
+  ledger: ProofLedger
+}
+\end{lstlisting}
+
+\subsection*{Reconciler \(\muRecon\)}
+
+Engine initialization reconciliation:
+\begin{enumerate}
+\item Create base Oxigraph store via \texttt{createStore()}
+\item Wrap store with KGC-4D layer (if \texttt{enableGit=true})
+\item Initialize blockchain subsystem (if \texttt{enableBlockchain=true})
+\item Create hook registry and policy engine
+\item Configure multi-layer cache (if \texttt{enableCaching=true})
+\item Return unified engine instance with all subsystems
+\end{enumerate}
+
+Proof generation reconciliation (deterministic mode):
+\begin{enumerate}
+\item Fixed start time: \texttt{1704067200000} (2024-01-01T00:00:00Z in ms)
+\item Create receipts for phases: store-created, policy-applied, resource-allocated, case-executed
+\item Compute SHA-256 hash per receipt
+\item Generate Merkle root from receipt hashes
+\item Compute final proof hash from ledger
+\item Return \texttt{ProofResult} with hash, artifacts, ledger
+\end{enumerate}
+
+\subsection*{Composition \(\PiMerge / \oplusMerge\)}
+
+Subsystems compose via delegation:
+\begin{lstlisting}[language=JavaScript]
+const engine = await createEngine();
+// All subsystems available via properties
+engine.kgcStore.logEvent(...);           // Time-travel
+engine.receipts.anchorer.anchor(...);    // Blockchain
+engine.policies.execute(...);            // Policy hooks
+engine.resources.cache.get(...);         // Caching
+\end{lstlisting}
+
+Statistics compose via aggregation:
+\begin{lstlisting}[language=JavaScript]
+const stats = engine.getStats();
+// {
+//   kgc: { events: 42, snapshots: 3 },
+//   cache: { hits: 100, misses: 20 },
+//   hookRegistry: { hooks: 5, executions: 50 },
+//   policies: { rules: 10, violations: 0 }
+// }
+\end{lstlisting}
+
+\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
+
+\textbf{Guards}:
+\begin{itemize}
+\item Configuration booleans default correctly (caching=true, blockchain=true, git=false)
+\item Deterministic mode uses fixed timestamps
+\item Receipt hashes are valid SHA-256 (64 hex chars)
+\item Merkle root computed from non-empty receipt list
+\item Proof hash reproducible across runs with \texttt{DETERMINISTIC=1}
+\end{itemize}
+
+\textbf{Invariants}:
+\begin{itemize}
+\item Engine creation idempotent (same config → equivalent engine)
+\item Proof generation deterministic (same mode → same hash)
+\item Subsystem stats never null (default to empty objects)
+\item Close operation cleanup is idempotent (safe to call multiple times)
+\end{itemize}
+
+\subsection*{Provenance and Receipts}
+
+Proof ledger structure:
+\begin{lstlisting}[language=JSON]
+{
+  "timestamp": "2024-01-01T00:00:00.004Z",
+  "proofHash": "a7f3c9...",
+  "scenario": {
+    "workflowCreated": true,
+    "policyApplied": true,
+    "resourceAllocated": true,
+    "caseExecuted": true,
+    "receiptsEmitted": 4,
+    "merkleRoot": "e8d2a1...",
+    "verificationPassed": true
+  },
+  "receipts": [
+    { "phase": "store-created", "timestamp": 1704067200000 },
+    { "phase": "policy-applied", "timestamp": 1704067200001,
+      "hookId": "test-validation" },
+    { "phase": "resource-allocated", "timestamp": 1704067200002,
+      "allocation": { "cacheL1": 1048576, "cacheL2": 10485760 } },
+    { "phase": "case-executed", "timestamp": 1704067200003,
+      "valid": true }
+  ],
+  "duration": 4
+}
+\end{lstlisting}
+
+Receipt provenance chain:
+\begin{enumerate}
+\item Each receipt hashed independently
+\item Hashes concatenated in order
+\item Merkle root computed from concatenation
+\item Final proof hash includes entire ledger
+\end{enumerate}
+
+\subsection*{Minimal Example}
+
+\begin{lstlisting}[language=JavaScript]
+import { createEngine, prove } from '@unrdf/fusion';
+
+// Create unified engine
+const engine = await createEngine({
+  enableCaching: true,
+  enableBlockchain: true,
+  enableGit: false
+});
+
+// Access subsystems
+const { store, kgcStore, receipts, policies, resources } = engine;
+
+// Use KGC-4D time-travel
+kgcStore.logEvent({ type: 'user-action', data: { ... } });
+const snapshot = await kgcStore.freezeUniverse();
+
+// Use blockchain receipts
+const receipt = await receipts.anchorer.anchor({
+  eventId: 'evt-123',
+  hash: '0xabc...'
+});
+
+// Use policy hooks
+await policies.execute('validate-data', { input: data });
+
+// Get combined statistics
+console.log(engine.getStats());
+
+// Cleanup
+await engine.close();
+
+// Generate deterministic proof
+process.env.DETERMINISTIC = '1';
+const proof = await prove();
+console.log(`Proof hash: ${proof.hash}`);
+console.log(`Merkle root: ${proof.merkleRoot}`);
+console.log(`Verification: ${proof.ledger.scenario.verificationPassed}`);
+\end{lstlisting}
+
+\subsection*{Open Questions}
+
+\begin{itemize}
+\item Can subsystem initialization be parallelized safely?
+\item Should proof ledger be stored in Git via KGC-4D?
+\item How to version the unified API as subsystems evolve?
+\item Can proof verification run via smart contract?
+\end{itemize}

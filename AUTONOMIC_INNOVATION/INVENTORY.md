@@ -1,349 +1,175 @@
-# UNRDF Autonomic Innovation - Package Inventory
+# AUTONOMIC_INNOVATION: KGC/UNRDF Package Inventory
 
 **Generated**: 2025-12-26
-**Total Packages**: 41
-**Active KGC/UNRDF Packages**: 37
+**Mode**: Fully Autonomic, Phase 0 Complete
+**Destination**: `claude/kgc-migration-facade-zPbbg` branch
 
 ---
 
-## Core Packages (Foundation Layer)
+## Core Packages (10 Critical)
 
-### @unrdf/core (v5.0.1)
-- **Import Path**: `@unrdf/core`
-- **Main Export**: `./src/index.mjs`
+### 1. @unrdf/core
+- **Path**: `packages/core/src/index.mjs`
+- **Version**: 5.0.1
 - **Provides**:
-  - RDF graph operations
-  - SPARQL query execution
-  - Data validation (Zod schemas)
-  - Security policies
-  - Health checks & logging
-  - Metrics collection
-  - Types & constants
-- **Key Dependencies**: `n3`, `rdf-canonize`, `@rdfjs/*`, `zod`
-- **Purpose**: Foundational RDF substrate
+  - RDF operations & data model
+  - SPARQL execution engine
+  - Type definitions & validation
+  - Health checks & metrics
+  - Security schemas
+  - Logging utilities
+- **Imports Available**:
+  - `./rdf` - RDF operations
+  - `./sparql` - SPARQL execution
+  - `./validation` - Validation framework
+  - `./types` - Type definitions
 
-### @unrdf/oxigraph (v5.0.1)
-- **Import Path**: `@unrdf/oxigraph`
-- **Main Export**: `./src/index.mjs`
-- **Sub-exports**:
-  - `./store` - Store implementation
-  - `./types` - TypeScript definitions
+### 2. @unrdf/oxigraph
+- **Path**: `packages/oxigraph/src/store.mjs`
+- **Version**: 5.0.1
 - **Provides**:
-  - High-performance SPARQL engine binding (Oxigraph)
-  - RDF store operations
-  - Graph database benchmarking
-- **Key Dependencies**: `oxigraph`, `zod`
-- **Purpose**: Efficient graph storage and querying
+  - Graph store implementation (Oxigraph WASM backend)
+  - SPARQL queries & mutations
+  - Content-addressable storage
+- **Imports Available**:
+  - `./store` - Store interface
+  - `./types` - Type definitions
 
-### @unrdf/knowledge-engine (v5.0.1)
-- **Import Path**: `@unrdf/knowledge-engine`
-- **Main Export**: `./src/index.mjs`
-- **Sub-exports**:
-  - `./query` - Query processing
-  - `./canonicalize` - Canonical forms
-  - `./parse` - Parsing utilities
-  - `./ai-search` - AI-enhanced search
+### 3. @unrdf/kgc-4d
+- **Path**: `packages/kgc-4d/src/index.mjs`
+- **Version**: 5.0.1
 - **Provides**:
-  - Rule engine & inference
-  - Pattern matching
-  - Canonicalization
-  - AI-enhanced semantic search
-  - Transformers integration
-- **Key Dependencies**: `eyereasoner`, `@xenova/transformers`, `@noble/hashes`
-- **Purpose**: Advanced reasoning & pattern discovery
+  - **freeze.mjs** - Universe snapshots, nanosecond timestamps
+  - **guards.mjs** - Change guards & invariant enforcement
+  - **store.mjs** - KGC store adapter
+  - **git.mjs** - Git-backed snapshots
+  - **time.mjs** - Time travel & event log
+  - **snapshot-cache.mjs** - Snapshot caching
+  - **hdit/** - HDIT integration
+- **Imports Available**:
+  - `./` - Main KGC-4D interface
+  - `./client` - Client API
+  - `./hdit` - HDIT integration
 
----
-
-## Time-Domain & Event Sourcing
-
-### @unrdf/kgc-4d (v5.0.1)
-- **Import Path**: `@unrdf/kgc-4d`
-- **Main Export**: `./src/index.mjs`
-- **Sub-exports**:
-  - `./client` - Client interface
-  - `./hdit` - HDIT (hash-based deterministic IT)
-- **Key Modules**:
-  - `freeze.mjs` - Universe freezing
-  - `time.mjs` - Nanosecond precision timing
-  - `snapshot-cache.mjs` - Snapshot caching
-  - `git.mjs` - Git-backed snapshots
-  - `guards.mjs` - Guard validation
-  - `store.mjs` - Store interface
+### 4. @unrdf/hooks
+- **Path**: `packages/hooks/src/index.mjs`
+- **Version**: 5.0.1
 - **Provides**:
-  - Datum & universe freeze engine
-  - Nanosecond-precision event logging
-  - Git-backed snapshots
-  - Deterministic event replay
-  - Receipt generation with parent chains
-- **Key Dependencies**: `hash-wasm`, `isomorphic-git`, `@unrdf/core`, `@unrdf/oxigraph`
-- **Purpose**: 4D event sourcing with time travel
+  - Policy definition framework
+  - Hook execution & chaining
+  - Citty CLI integration
+- **Imports Available**:
+  - `./define` - Hook definition
+  - `./executor` - Hook execution
 
----
-
-## Change Propagation & Streaming
-
-### @unrdf/streaming (v5.0.1)
-- **Import Path**: `@unrdf/streaming`
-- **Main Export**: `./src/index.mjs`
-- **Sub-exports**:
-  - `./processor` - Stream processor
+### 5. @unrdf/streaming
+- **Path**: `packages/streaming/src/index.mjs`
+- **Version**: 5.0.1
 - **Provides**:
-  - Change feed generation
+  - Change feeds & event streams
   - Real-time synchronization
-  - Stream processing
-  - WebSocket integration
-  - LRU caching for efficiency
-- **Key Dependencies**: `ws`, `lru-cache`, `@opentelemetry/api`, `@unrdf/core`, `@unrdf/hooks`, `@unrdf/oxigraph`
-- **Purpose**: Real-time change propagation
+  - WebSocket message brokers
+  - LRU caching
+- **Imports Available**:
+  - `./processor` - Stream processing
 
-### @unrdf/collab (v1.0.0)
-- **Import Path**: `@unrdf/collab`
-- **Main Export**: `./src/index.mjs`
-- **Sub-exports**:
-  - `./crdt` - CRDT implementations
-  - `./sync` - Synchronization
-  - `./composables` - Composable utilities
+### 6. @unrdf/collab
+- **Path**: `packages/collab/src/index.mjs`
+- **Version**: 1.0.0
 - **Provides**:
   - CRDT-based collaboration (Yjs)
   - Offline-first architecture
-  - Real-time editing
-  - IndexedDB persistence
-- **Key Dependencies**: `yjs`, `y-websocket`, `y-indexeddb`, `lib0`, `ws`
-- **Purpose**: Offline-capable collaborative RDF editing
+  - WebSocket sync
+- **Imports Available**:
+  - `./crdt` - CRDT primitives
+  - `./sync` - Sync protocol
+  - `./composables` - Composable utilities
 
----
-
-## Policy & Execution
-
-### @unrdf/hooks (v5.0.1)
-- **Import Path**: `@unrdf/hooks`
-- **Main Export**: `./src/index.mjs`
-- **Sub-exports**:
-  - `./define` - Hook definition
-  - `./executor` - Hook execution
+### 7. @unrdf/consensus
+- **Path**: `packages/consensus/src/index.mjs`
+- **Version**: 1.0.0
 - **Provides**:
-  - Hook policy definition
-  - Hook execution framework
-  - Policy validation (Zod)
-  - CLI integration (citty)
-- **Key Dependencies**: `@unrdf/core`, `@unrdf/oxigraph`, `citty`, `zod`
-- **Purpose**: Event-driven policy execution
+  - Raft consensus algorithm
+  - Cluster management
+  - Distributed state machine
+  - WebSocket transport
+- **Imports Available**:
+  - `./raft` - Raft coordinator
+  - `./cluster` - Cluster manager
+  - `./state` - Distributed state
 
----
-
-## Distributed & Consensus
-
-### @unrdf/federation (v5.0.1)
-- **Import Path**: `@unrdf/federation`
-- **Main Export**: `./src/index.mjs`
-- **Sub-exports**:
-  - `./coordinator` - Query coordination
-  - `./advanced-sparql` - Advanced SPARQL federation
+### 8. @unrdf/federation
+- **Path**: `packages/federation/src/index.mjs`
+- **Version**: 5.0.1
 - **Provides**:
   - Peer discovery
-  - Distributed query execution
-  - SPARQL federation (Comunica)
-  - Metrics collection (Prometheus)
-- **Key Dependencies**: `@comunica/query-sparql`, `prom-client`, `@opentelemetry/api`, `@unrdf/core`, `@unrdf/hooks`
-- **Purpose**: Decentralized query federation
+  - Distributed SPARQL queries
+  - Comunica integration
+  - Advanced federation patterns
+- **Imports Available**:
+  - `./coordinator` - Federation coordinator
+  - `./advanced-sparql` - Advanced patterns
 
-### @unrdf/consensus (v1.0.0)
-- **Import Path**: `@unrdf/consensus`
-- **Main Export**: `./src/index.mjs`
-- **Sub-exports**:
-  - `./raft` - Raft consensus coordinator
-  - `./cluster` - Cluster membership manager
-  - `./state` - Distributed state machine
-  - `./transport` - WebSocket transport
+### 9. @unrdf/blockchain
+- **Path**: `packages/blockchain/src/index.mjs`
+- **Version**: 1.0.0
 - **Provides**:
-  - Production-grade Raft consensus
-  - Cluster membership
-  - Distributed state machine
-  - Fault tolerance
-- **Key Dependencies**: `@unrdf/federation`, `msgpackr`, `ws`, `@opentelemetry/api`
-- **Purpose**: Multi-node coordination via consensus
+  - Cryptographic receipt anchoring
+  - Merkle proof generation
+  - Blockchain verification
+  - Noble hashes & ethers.js
+- **Imports Available**:
+  - `./anchoring` - Receipt anchorer
+  - `./contracts` - Workflow verifier
+  - `./merkle` - Merkle proofs
 
----
-
-## Observability & Validation
-
-### @unrdf/observability (v1.0.0)
-- **Import Path**: `@unrdf/observability`
-- **Main Export**: `./src/index.mjs`
-- **Sub-exports**:
-  - `./metrics` - Workflow metrics
-  - `./exporters` - Grafana exporter
-  - `./alerts` - Alert manager
+### 10. @unrdf/caching
+- **Path**: `packages/caching/src/index.mjs`
+- **Version**: 1.0.0
 - **Provides**:
-  - Prometheus metrics collection
-  - Grafana exporter
-  - OTEL integration
-  - Alert management
-  - Observability dashboard
-- **Key Dependencies**: `prom-client`, `@opentelemetry/*`, `@opentelemetry/sdk-metrics`, `express`
-- **Purpose**: Production observability & alerting
-
-### @unrdf/validation (v5.0.1)
-- **Import Path**: `@unrdf/validation`
-- **Provides**:
-  - OTEL validation framework
-  - Validation orchestration
-  - Quality gate checking
-- **Purpose**: Development-time validation (runs via `validation/run-all.mjs`)
+  - Multi-layer caching (LRU + Redis)
+  - SPARQL query caching
+  - Dependency tracking & invalidation
+- **Imports Available**:
+  - `./layers` - Multi-layer cache
+  - `./invalidation` - Dependency tracker
+  - `./query` - SPARQL cache
 
 ---
 
-## Domain & Specialized Packages
-
-### @unrdf/domain (v5.0.1)
-- **Purpose**: Domain-specific RDF patterns
-
-### @unrdf/caching (v5.0.1)
-- **Purpose**: Caching layer for graph operations
-
-### @unrdf/composables (v5.0.1)
-- **Purpose**: Reusable composition patterns
-
-### @unrdf/ml-inference (v5.0.1)
-- **Purpose**: ML model inference on graphs
-
-### @unrdf/ml-versioning (v5.0.1)
-- **Purpose**: Model versioning & provenance
-
-### @unrdf/semantic-search (v5.0.1)
-- **Purpose**: Semantic search capabilities
-
-### @unrdf/graph-analytics (v5.0.1)
-- **Purpose**: Graph analytics & metrics
-
-### @unrdf/rdf-graphql (v5.0.1)
-- **Purpose**: GraphQL→RDF bridging
+## Observation: Observable State Invariant
+- All packages store observable state O in RDF graphs
+- Projection is computed deterministically: A = μ(O)
+- Idempotence: μ∘μ = μ (enforced by tests)
 
 ---
 
-## Infrastructure Packages
-
-### @unrdf/cli (v5.0.1)
-- **Purpose**: Command-line interface
-
-### @unrdf/engine-gateway (v5.0.1)
-- **Purpose**: API gateway for engine
-
-### @unrdf/serverless (v5.0.1)
-- **Purpose**: Serverless deployment support
-
-### @unrdf/project-engine (v5.0.1)
-- **Purpose**: Project lifecycle management
-
-### @unrdf/atomvm (v5.0.1)
-- **Purpose**: Atomic VM operations
-
-### @unrdf/blockchain (v5.0.1)
-- **Purpose**: Blockchain integration
-
-### @unrdf/dark-matter (v5.0.1)
-- **Purpose**: Advanced graph transformations
+## Available Hashing & Canonicalization
+- **hash-wasm** (v4.12.0) - Workspace dep
+- **rdf-canonize** (v5.0.0) - Available in @unrdf/core
+- **@noble/hashes** (v1.3.3) - Available in @unrdf/blockchain
+- **isomorphic-git** (v1.35.1) - Available in @unrdf/kgc-4d
 
 ---
 
-## Workflow & Queue Packages (YAWL Suite)
-
-### @unrdf/yawl (v5.0.1)
-- **Purpose**: Core workflow orchestration
-
-### @unrdf/yawl-api (v5.0.1)
-- **Purpose**: REST API for workflows
-
-### @unrdf/yawl-queue (v5.0.1)
-- **Purpose**: Message queue handling
-
-### @unrdf/yawl-durable (v5.0.1)
-- **Purpose**: Durable workflow execution
-
-### @unrdf/yawl-kafka (v5.0.1)
-- **Purpose**: Kafka integration
-
-### @unrdf/yawl-langchain (v5.0.1)
-- **Purpose**: LangChain integration
-
-### @unrdf/yawl-observability (v5.0.1)
-- **Purpose**: YAWL-specific observability
-
-### @unrdf/yawl-ai (v5.0.1)
-- **Purpose**: AI-powered workflow generation
-
-### @unrdf/yawl-realtime (v5.0.1)
-- **Purpose**: Real-time workflow updates
-
-### @unrdf/yawl-viz (v5.0.1)
-- **Purpose**: Workflow visualization
+## Determinism Guarantees
+- **Node.js ESM** - All source is `.mjs` (no CommonJS)
+- **Zod v4.1.13** - Validation (workspace override)
+- **Vitest** - Deterministic test runner (no flakes)
+- **Pnpm** - Locked dependency tree
 
 ---
 
-## Test & Documentation
-
-### @unrdf/test-utils (v5.0.1)
-- **Purpose**: Testing utilities & fixtures
-
-### @unrdf/docs (v5.0.1)
-- **Purpose**: Documentation generation
-
-### @unrdf/nextra (v5.0.1)
-- **Purpose**: Next.js documentation framework
+## Execution Environment
+- **Node.js**: ≥18.0.0
+- **Pnpm**: ≥7.0.0
+- **Type**: "module" (ESM only)
+- **Output**: `.mjs` files only
 
 ---
 
-## Critical Import Patterns
-
-### For RDF Store Operations
-```javascript
-import { createStore } from '@unrdf/oxigraph';
-// NOT: from 'n3' (direct use forbidden outside justified modules)
-```
-
-### For Canonicalization & Hashing
-```javascript
-import { freezeUniverse, snapSnapshot } from '@unrdf/kgc-4d';
-import { hashWasm } from 'hash-wasm'; // Root dependency
-```
-
-### For Change Tracking
-```javascript
-import { registerChangeListener } from '@unrdf/streaming';
-```
-
-### For Policy Execution
-```javascript
-import { defineHook, executeHook } from '@unrdf/hooks';
-```
-
-### For Distributed Queries
-```javascript
-import { createFederator } from '@unrdf/federation';
-```
-
-### For Consensus
-```javascript
-import { createRaftCoordinator } from '@unrdf/consensus';
-```
-
----
-
-## Key Guarantees from Existing Packages
-
-1. **Determinism**: @unrdf/kgc-4d provides hash-based determinism via Git snapshots
-2. **Time**: Nanosecond-precision event timestamps
-3. **Provenance**: Receipt chains with parent hashes
-4. **Canonicalization**: `rdf-canonize` integration for stable representations
-5. **Zod Validation**: All inputs validated via Zod schemas
-6. **OTEL Instrumentation**: Built-in tracing via @opentelemetry/*
-7. **Offline Capability**: @unrdf/collab enables offline-first collaboration
-8. **Consensus**: Raft consensus for distributed coordination
-
----
-
-## Autonomic Innovation Foundation
-
-**Status**: Phase 0 Complete
-**Next**: Agent 1 (Orchestrator) creates per-agent submodules and delegates to Agents 2-10
-**Constraint**: All new code MUST use ONLY these packages - no npm additions allowed
+## Next Steps (Phase 1)
+- Agent 1: Create PLAN.md for orchestration & integration
+- Agents 2-10: Create PLAN.md for respective primitives
+- All agents operate concurrently
+- Merge outputs into ./src/ and ./test/

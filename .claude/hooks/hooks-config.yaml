@@ -1,0 +1,207 @@
+# KGC Markdown Hooks Configuration
+# Poka-yoke (error-proofing) rules for Dynamic KGC Markdown
+
+version: 1.0.0
+enabled: true
+
+hooks:
+  # ===========================================================================
+  # On-Write-Docs Hook
+  # ===========================================================================
+  - name: on-write-docs
+    description: Validates frontmatter and receipts when writing to docs/
+    enabled: true
+    module: ./.claude/hooks/on-write-docs-hook.mjs
+
+    triggers:
+      - tool: Write
+        phase: before
+        patterns:
+          - ^/home/user/unrdf/docs/
+          - ^docs/
+          - \.md$
+          - \.kgcmd$
+
+    config:
+      strictMode: true
+      requireOHash: true
+      requirePolicyId: true
+      requireReceipts: false # Allow empty receipts array
+      validateReceiptChain: true
+
+    actions:
+      onDeny:
+        - log: error
+        - writeReceipt: receipts/denials/
+        - notify: user
+
+    remediation:
+      command: /kgc:prove
+      documentation: docs/chapter-5-receipts-chaining-verification.md
+
+  # ===========================================================================
+  # On-Edit-Docs Hook
+  # ===========================================================================
+  - name: on-edit-docs
+    description: Validates o_hash updates when editing docs/ content
+    enabled: true
+    module: ./.claude/hooks/on-edit-docs-hook.mjs
+
+    triggers:
+      - tool: Edit
+        phase: before
+        patterns:
+          - ^/home/user/unrdf/docs/
+          - ^docs/
+          - \.md$
+          - \.kgcmd$
+
+    config:
+      strictMode: true
+      requireHashUpdate: true
+      allowFrontmatterOnlyEdits: true
+      validateNewHash: true
+
+    actions:
+      onDeny:
+        - log: error
+        - writeReceipt: receipts/denials/
+        - notify: user
+
+    remediation:
+      command: /kgc:refresh
+      documentation: docs/chapter-5-receipts-chaining-verification.md
+
+  # ===========================================================================
+  # On-Bounds-Exceeded Hook
+  # ===========================================================================
+  - name: on-bounds-exceeded
+    description: Validates computational bounds before query/proof execution
+    enabled: true
+    module: ./.claude/hooks/on-bounds-exceeded-hook.mjs
+
+    triggers:
+      - operation: kgc:query
+        phase: before
+      - operation: kgc:proof
+        phase: before
+      - operation: kgc:render
+        phase: before
+
+    config:
+      defaultBounds:
+        maxQueries: 100
+        maxRuntime: 5000 # 5 seconds (Andon principle)
+        maxFileScans: 1000
+
+      estimationMode: conservative
+      allowBoundsOverride: true
+      warnThreshold: 0.8 # Warn at 80% of bounds
+
+    actions:
+      onDeny:
+        - log: error
+        - writeReceipt: receipts/denials/
+        - notify: user
+      onWarn:
+        - log: warn
+        - notify: user
+
+    remediation:
+      command: /kgc:refresh
+      documentation: docs/ANDON-SIGNALS-INDEX.md
+
+  # ===========================================================================
+  # On-Non-Determinism Hook
+  # ===========================================================================
+  - name: on-non-determinism
+    description: Validates deterministic output from dynamic blocks
+    enabled: true
+    module: ./.claude/hooks/on-non-determinism-hook.mjs
+
+    triggers:
+      - operation: kgc:query
+        phase: after
+      - operation: kgc:proof
+        phase: after
+      - operation: kgc:render
+        phase: after
+      - operation: kgc:dynamic
+        phase: after
+
+    config:
+      warnOnly: true # By default, only warn for determinism issues
+      strictMode: false
+      checkPatterns: true
+      checkHash: true
+      normalizeOutput: true
+
+    actions:
+      onWarn:
+        - log: warn
+        - writeReceipt: receipts/denials/
+        - notify: user
+      onDeny:
+        - log: error
+        - writeReceipt: receipts/denials/
+        - notify: user
+
+    remediation:
+      documentation: docs/bb80-20-methodology.md
+      steps:
+        - Review output for timestamp patterns
+        - Check for random number generation
+        - Ensure stable ordering (SPARQL ORDER BY)
+        - Verify deterministic JSON serialization
+
+# =============================================================================
+# Global Configuration
+# =============================================================================
+global:
+  logging:
+    level: info
+    format: json
+    destination: .claude/logs/hooks.log
+
+  receipts:
+    directory: receipts/
+    denials: receipts/denials/
+    format: json
+    includeGitContext: true
+
+  performance:
+    maxHookExecutionTime: 1000 # 1 second max per hook
+    timeoutAction: warn
+
+  notifications:
+    enabled: true
+    format: structured
+    includeRemediation: true
+
+# =============================================================================
+# Hook Execution Order
+# =============================================================================
+executionOrder:
+  before:
+    - on-write-docs
+    - on-edit-docs
+    - on-bounds-exceeded
+
+  after:
+    - on-non-determinism
+
+# =============================================================================
+# Exemptions (paths that bypass hooks)
+# =============================================================================
+exemptions:
+  paths:
+    - .claude/
+    - node_modules/
+    - .git/
+    - tests/
+    - benchmarks/
+
+  operations:
+    - Read # Never block reads
+    - Glob # Never block glob
+    - Grep # Never block grep

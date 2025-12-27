@@ -15,38 +15,48 @@ Successfully implemented unified KGC CLI with receipt-based operations, cross-pa
 #### Commands Implemented:
 
 1. **build** - Run all builds and generate artifacts
+
    ```bash
    node tools/kgc.mjs build [--json]
    ```
+
    - Produces receipt chain for all build operations
    - Shows verification status
    - Supports JSON output
 
 2. **verify** - Verify all receipts, freezes, capsules, docs
+
    ```bash
    node tools/kgc.mjs verify [--json]
    ```
+
    - Validates all KGC components
    - Returns overall verification status
 
 3. **freeze** - Freeze universe to snapshot
+
    ```bash
    node tools/kgc.mjs freeze [--reason "reason"] [--json]
    ```
+
    - Creates timestamped freeze snapshot
    - Generates receipt for freeze operation
 
 4. **replay** - Replay capsule by ID, verify output hash
+
    ```bash
    node tools/kgc.mjs replay <capsule-id> [--json]
    ```
+
    - Replays capsule execution
    - Verifies output hash matches
 
 5. **docs** - Documentation operations
+
    ```bash
    node tools/kgc.mjs docs <build|verify|refresh|prove> [--json]
    ```
+
    - build: Generate documentation
    - verify: Verify documentation integrity
    - refresh: Refresh from source
@@ -56,6 +66,7 @@ Successfully implemented unified KGC CLI with receipt-based operations, cross-pa
    ```bash
    node tools/kgc.mjs list <capsules|work-items|snapshots> [--json]
    ```
+
    - Lists specified entity type
    - Supports JSON output
 
@@ -101,6 +112,7 @@ Successfully implemented unified KGC CLI with receipt-based operations, cross-pa
    - Validates receipt chain display
 
 **Test Execution**:
+
 ```bash
 node --test test/integration.test.mjs
 # tests 1
@@ -117,6 +129,7 @@ Created package.json files for three new packages that integrate with existing i
 **Location**: `/home/user/unrdf/packages/kgc-runtime/package.json`
 
 **Exports**:
+
 - `.` - Main entry point
 - `./executor` - Execution runtime
 - `./receipt` - Receipt generation
@@ -130,6 +143,7 @@ Created package.json files for three new packages that integrate with existing i
 **Location**: `/home/user/unrdf/packages/kgc-tools/package.json`
 
 **Exports**:
+
 - `.` - Main entry point
 - `./verify` - Verification utilities
 - `./freeze` - Freeze operations
@@ -146,6 +160,7 @@ Created package.json files for three new packages that integrate with existing i
 **Location**: `/home/user/unrdf/packages/kgc-docs/package.json`
 
 **Exports**:
+
 - `.` - Main entry point (kgc-markdown.mjs)
 - `./parser` - Markdown parser
 - `./renderer` - Documentation renderer
@@ -181,6 +196,7 @@ Created package.json files for three new packages that integrate with existing i
 ### One-Command Verification
 
 ✅ **Complete pipeline**:
+
 ```bash
 pnpm test && node tools/kgc.mjs build && node tools/kgc.mjs verify
 ```
@@ -189,15 +205,15 @@ pnpm test && node tools/kgc.mjs build && node tools/kgc.mjs verify
 
 ### CLI Testing
 
-| Command | Status | Receipt Chain | JSON Output |
-|---------|--------|---------------|-------------|
-| build   | ✅ Pass | ✅ Yes (3 ops) | ✅ Yes |
-| verify  | ✅ Pass | ❌ No         | ✅ Yes |
-| freeze  | ✅ Pass | ✅ Yes (1 op) | ✅ Yes |
-| replay  | ✅ Pass | ❌ No         | ✅ Yes |
-| docs    | ✅ Pass | ✅ Yes (1 op) | ✅ Yes |
-| list    | ✅ Pass | ❌ No         | ✅ Yes |
-| --help  | ✅ Pass | N/A          | N/A |
+| Command | Status  | Receipt Chain  | JSON Output |
+| ------- | ------- | -------------- | ----------- |
+| build   | ✅ Pass | ✅ Yes (3 ops) | ✅ Yes      |
+| verify  | ✅ Pass | ❌ No          | ✅ Yes      |
+| freeze  | ✅ Pass | ✅ Yes (1 op)  | ✅ Yes      |
+| replay  | ✅ Pass | ❌ No          | ✅ Yes      |
+| docs    | ✅ Pass | ✅ Yes (1 op)  | ✅ Yes      |
+| list    | ✅ Pass | ❌ No          | ✅ Yes      |
+| --help  | ✅ Pass | N/A            | N/A         |
 
 ### Integration Tests
 
@@ -327,6 +343,7 @@ All agents' work is now accessible via the unified CLI interface.
 ## Conclusion
 
 ✅ **All requirements met**:
+
 - Unified CLI with all requested commands
 - Receipt-based operations throughout
 - JSON and human-readable output

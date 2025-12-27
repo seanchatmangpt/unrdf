@@ -1,0 +1,70 @@
+{
+  "name": "@unrdf/kgc-cli",
+  "version": "5.0.1",
+  "description": "KGC CLI - Deterministic extension registry for ~40 workspace packages",
+  "type": "module",
+  "bin": {
+    "kgc": "./src/cli.mjs"
+  },
+  "main": "src/index.mjs",
+  "exports": {
+    ".": "./src/index.mjs",
+    "./registry": "./src/lib/registry.mjs",
+    "./manifest": "./src/manifest/extensions.mjs",
+    "./latex": "./src/lib/latex/index.mjs",
+    "./latex/schemas": "./src/lib/latex/schemas.mjs"
+  },
+  "sideEffects": false,
+  "files": [
+    "src/",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "vitest run --coverage",
+    "test:fast": "vitest run --coverage",
+    "test:watch": "vitest --coverage",
+    "benchmark": "node --expose-gc benchmark/performance-mock.mjs",
+    "benchmark:perf": "node --expose-gc benchmark/performance-mock.mjs",
+    "benchmark:prod": "node --expose-gc benchmark/performance.mjs",
+    "lint": "eslint src/ test/ --max-warnings=0",
+    "lint:fix": "eslint src/ test/ --fix",
+    "format": "prettier --write src/ test/",
+    "format:check": "prettier --check src/ test/",
+    "latex:build": "node src/cli.mjs latex build",
+    "latex:diagnose": "node src/cli.mjs latex diagnose",
+    "latex:cache:verify": "node src/cli.mjs latex cache verify",
+    "validate:wasm": "node vendor/swiftlatex/validate-binaries.mjs"
+  },
+  "keywords": [
+    "kgc",
+    "cli",
+    "extension-registry",
+    "deterministic",
+    "rdf"
+  ],
+  "dependencies": {
+    "citty": "^0.1.6",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "vitest": "^4.0.15"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/unrdf/unrdf.git",
+    "directory": "packages/kgc-cli"
+  },
+  "bugs": {
+    "url": "https://github.com/unrdf/unrdf/issues"
+  },
+  "homepage": "https://github.com/unrdf/unrdf#readme",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
+}

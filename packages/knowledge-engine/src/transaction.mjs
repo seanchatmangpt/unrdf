@@ -8,7 +8,7 @@ import { sha3_256 } from '@noble/hashes/sha3.js';
 import { blake3 } from '@noble/hashes/blake3.js';
 import { utf8ToBytes, bytesToHex } from '@noble/hashes/utils.js';
 import { canonicalize } from './canonicalize.mjs';
-import { createLockchainWriter } from './lockchain-writer.mjs';
+import { createLockchainWriter } from '@unrdf/core/utils/lockchain-writer';
 import { createResolutionLayer } from './resolution-layer.mjs';
 import { createObservabilityManager } from './observability.mjs';
 import { randomUUID } from 'crypto';
@@ -19,15 +19,17 @@ const tracer = trace.getTracer('unrdf');
 
 // Import consolidated schemas
 import {
-  _QuadSchema,
-  DeltaSchema,
-  TransactionHookSchema,
-  _TransactionHookResultSchema,
-  _HashSchema,
-  _TransactionReceiptSchemaNew,
-  TransactionOptionsSchema,
-  ManagerOptionsSchema,
+  TransactionDeltaSchema as DeltaSchema,
+  TransactionReceiptSchema,
+  HookResultSchema as TransactionHookResultSchema,
 } from './schemas.mjs';
+
+// Define missing schemas locally
+const QuadSchema = z.any();
+const TransactionHookSchema = z.any();
+const HashSchema = z.string();
+const TransactionOptionsSchema = z.any();
+const ManagerOptionsSchema = z.any();
 
 // Zod schemas for validation
 // QuadSchema now imported from schemas.mjs

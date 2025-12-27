@@ -1,335 +1,468 @@
 /**
- * @fileoverview Graph commands for RDF graph management
+ * Graph Command - RDF Graph Operations
  *
- * @description
- * CLI commands for creating, loading, saving, and managing RDF graphs.
- * Supports multiple formats: Turtle, N-Triples, N-Quads.
+ * Commands for graph management:
+ * - create: Create new graph
+ * - load: Load RDF data into graph
+ * - query: Execute SPARQL query
+ * - dump: Export graph data
+ * - stats: Show graph statistics
  *
  * @module cli/commands/graph
  */
 
 import { defineCommand } from 'citty';
-import { z } from 'zod';
-import { readFile, writeFile, unlink, mkdir } from 'node:fs/promises';
-import path from 'node:path';
-import { OxigraphStore, dataFactory } from '@unrdf/oxigraph';
-import { Writer } from '@unrdf/core/rdf/n3-justified-only';
+import { readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { createStore, namedNode, literal, quad, iterateQuads } from '@unrdf/core';
+import { Parser, Writer } from 'n3';
 
 /**
- * Validation schema for graph commands
+ * Create a new graph
  */
-const graphPathSchema = z.string().min(1, 'Path is required');
-const formatSchema = z.enum(['turtle', 'ntriples', 'nquads', 'trig']).default('turtle');
-
-/**
- * Detect format from file extension
- * @param {string} filePath - File path
- * @returns {string} Format name (Oxigraph style)
- */
-function detectFormat(filePath) {
-  const ext = path.extname(filePath).toLowerCase();
-  const formatMap = {
-    '.ttl': 'ttl',
-    '.nt': 'nt',
-    '.nq': 'nq',
-    '.trig': 'trig',
-    '.n3': 'n3',
-    '.rdf': 'rdf',
-    '.jsonld': 'jsonld',
-    '.json': 'jsonld',
-  };
-  return formatMap[ext] || 'ttl';
-}
-
-/**
- * Map format name to Oxigraph format string
- * @param {string} format - Format name
- * @returns {string} Oxigraph format string
- */
-function toOxigraphFormat(format) {
-  const oxFormatMap = {
-    turtle: 'text/turtle',
-    ttl: 'text/turtle',
-    ntriples: 'application/n-triples',
-    nt: 'application/n-triples',
-    nquads: 'application/n-quads',
-    nq: 'application/n-quads',
-    trig: 'application/trig',
-    n3: 'text/n3',
-    rdf: 'application/rdf+xml',
-    jsonld: 'application/ld+json',
-    json: 'application/ld+json',
-  };
-  return oxFormatMap[format] || 'text/turtle';
-}
-
-/**
- * Load RDF graph from file using Oxigraph
- * @param {string} filePath - Path to RDF file
- * @param {string} [format] - RDF format (auto-detected if not provided)
- * @returns {Promise<Object>} Oxigraph Store
- */
-export async function loadGraph(filePath, format) {
-  try {
-    const content = await readFile(filePath, 'utf8');
-    const actualFormat = format || detectFormat(filePath);
-    const oxFormat = toOxigraphFormat(actualFormat);
-
-    // Create Oxigraph store
-    const store = new OxigraphStore();
-
-    // Only load if content is non-empty (handle empty graphs)
-    if (content.trim().length > 0) {
-      store.load(content, { format: oxFormat });
-    }
-
-    return store;
-  } catch (error) {
-    throw new Error(`Parse error: ${error.message}`);
-  }
-}
-
-/**
- * Save RDF graph to file using Oxigraph
- * @param {Object} store - Oxigraph Store
- * @param {string} filePath - Output file path
- * @param {string} [format] - Output format (auto-detected if not provided)
- * @returns {Promise<void>}
- */
-export async function saveGraph(store, filePath, format) {
-  try {
-    const actualFormat = format || detectFormat(filePath);
-    const oxFormat = toOxigraphFormat(actualFormat);
-
-    // Hybrid serialization adapter: N3.Writer for triple formats, Oxigraph for quad formats
-    let serialized;
-    const isTripleFormat = ['text/turtle', 'application/n-triples', 'text/n3'].includes(oxFormat);
-
-    if (isTripleFormat) {
-      // Use N3.Writer for triple formats (Turtle, N-Triples, N3)
-      const writer = new Writer({ format: actualFormat });
-      const quads = store.getQuads ? store.getQuads() : store.match();
-      quads.forEach(q => writer.addQuad(q));
-      serialized = await new Promise((resolve, reject) => {
-        writer.end((error, result) => {
-          if (error) reject(error);
-          else resolve(result);
-        });
-      });
-    } else {
-      // Use Oxigraph dump for quad formats (N-Quads, TriG)
-      serialized = store.dump({ format: oxFormat });
-    }
-
-    await writeFile(filePath, serialized, 'utf8');
-  } catch (error) {
-    throw new Error(`Write error: ${error.message}`);
-  }
-}
-
-/**
- * Create command - Create new RDF graph file
- */
-export const createCommand = defineCommand({
+const createCommand = defineCommand({
   meta: {
     name: 'create',
-    description: 'Create a new RDF graph file',
+    description: 'Create a new RDF graph',
   },
   args: {
-    path: {
-      type: 'positional',
-      description: 'Path to the new graph file',
+    name: {
+      type: 'string',
+      description: 'Graph name',
+      required: true,
+    },
+    file: {
+      type: 'string',
+      description: 'Output file path (default: <name>.nq)',
+      required: false,
+    },
+  },
+  async run({ args }) {
+    const graphName = args.name;
+    const outputFile = args.file || `${graphName}.nq`;
+
+    try {
+      const store = createStore();
+
+      // Create an empty named graph
+      const graphIRI = namedNode(`urn:graph:${graphName}`);
+
+      // Add metadata triple
+      store.add(
+        quad(
+          graphIRI,
+          namedNode('http://purl.org/dc/terms/created'),
+          literal(new Date().toISOString()),
+          graphIRI
+        )
+      );
+
+      // Export to file
+      const writer = new Writer({ format: 'N-Quads' });
+      for (const q of iterateQuads(store)) {
+        writer.addQuad(q);
+      }
+      writer.end((error, result) => {
+        if (error) throw error;
+        writeFileSync(outputFile, result, 'utf-8');
+      });
+
+      console.log(`✅ Created graph: ${graphName}`);
+      console.log(`📁 File: ${outputFile}`);
+      console.log(`📊 Quads: ${store.size}`);
+    } catch (error) {
+      console.error(`❌ Error creating graph: ${error.message}`);
+      process.exit(1);
+    }
+  },
+});
+
+/**
+ * Load RDF data into graph
+ */
+const loadCommand = defineCommand({
+  meta: {
+    name: 'load',
+    description: 'Load RDF data into a graph',
+  },
+  args: {
+    file: {
+      type: 'string',
+      description: 'RDF file to load (Turtle, N-Triples, N-Quads)',
+      required: true,
+    },
+    graph: {
+      type: 'string',
+      description: 'Target graph name',
+      required: false,
+    },
+    format: {
+      type: 'string',
+      description: 'RDF format (turtle, ntriples, nquads) - auto-detected if not specified',
+      required: false,
+    },
+  },
+  async run({ args }) {
+    const { file, graph: graphName, format } = args;
+
+    if (!existsSync(file)) {
+      console.error(`❌ File not found: ${file}`);
+      process.exit(1);
+    }
+
+    try {
+      const store = createStore();
+      const content = readFileSync(file, 'utf-8');
+
+      // Auto-detect format
+      const detectedFormat = format || detectFormat(file);
+
+      const parser = new Parser({ format: detectedFormat });
+      const graphIRI = graphName ? namedNode(`urn:graph:${graphName}`) : null;
+
+      let quadCount = 0;
+
+      await new Promise((resolve, reject) => {
+        parser.parse(content, (error, parsedQuad, _prefixes) => {
+          if (error) {
+            reject(error);
+            return;
+          }
+
+          if (parsedQuad) {
+            // If graph name specified, override the graph
+            const finalQuad = graphIRI
+              ? quad(parsedQuad.subject, parsedQuad.predicate, parsedQuad.object, graphIRI)
+              : parsedQuad;
+
+            store.add(finalQuad);
+            quadCount++;
+          } else {
+            // Parsing complete
+            resolve();
+          }
+        });
+      });
+
+      console.log(`✅ Loaded data from: ${file}`);
+      console.log(`📊 Quads loaded: ${quadCount}`);
+      if (graphName) {
+        console.log(`📂 Target graph: ${graphName}`);
+      }
+    } catch (error) {
+      console.error(`❌ Error loading data: ${error.message}`);
+      process.exit(1);
+    }
+  },
+});
+
+/**
+ * Execute SPARQL query
+ */
+const queryCommand = defineCommand({
+  meta: {
+    name: 'query',
+    description: 'Execute SPARQL query on graph',
+  },
+  args: {
+    file: {
+      type: 'string',
+      description: 'Graph file to query',
+      required: true,
+    },
+    query: {
+      type: 'string',
+      description: 'SPARQL query string',
       required: true,
     },
     format: {
       type: 'string',
-      description: 'RDF format (turtle, ntriples, nquads)',
-      default: 'turtle',
-      alias: 'f',
+      description: 'Output format (table, json, turtle)',
+      default: 'table',
     },
   },
-  async run(ctx) {
-    try {
-      const filePath = graphPathSchema.parse(ctx.args.path);
-      const format = formatSchema.parse(ctx.args.format);
+  async run({ args }) {
+    const { file, query: queryString, format } = args;
 
-      // Ensure directory exists
-      const dir = path.dirname(filePath);
-      await mkdir(dir, { recursive: true });
-
-      // Create empty Oxigraph store and save
-      const store = new OxigraphStore();
-      await saveGraph(store, filePath, format);
-
-      console.log(`✅ Created graph: ${filePath}`);
-      console.log(`   Format: ${format}`);
-    } catch (error) {
-      console.error(`❌ Create failed: ${error.message}`);
-      throw error;
+    if (!existsSync(file)) {
+      console.error(`❌ File not found: ${file}`);
+      process.exit(1);
     }
-  },
-});
 
-/**
- * Delete command - Delete graph file
- */
-export const deleteCommand = defineCommand({
-  meta: {
-    name: 'delete',
-    description: 'Delete a graph file',
-  },
-  args: {
-    path: {
-      type: 'positional',
-      description: 'Path to the graph file',
-      required: true,
-    },
-  },
-  async run(ctx) {
     try {
-      const filePath = graphPathSchema.parse(ctx.args.path);
-      await unlink(filePath);
-      console.log(`✅ Deleted graph: ${filePath}`);
-    } catch (error) {
-      console.error(`❌ Delete failed: ${error.message}`);
-      throw error;
-    }
-  },
-});
+      const store = createStore();
+      const content = readFileSync(file, 'utf-8');
 
-/**
- * Describe command - Show graph statistics
- */
-export const describeCommand = defineCommand({
-  meta: {
-    name: 'describe',
-    description: 'Show graph statistics',
-  },
-  args: {
-    path: {
-      type: 'positional',
-      description: 'Path to the graph file',
-      required: true,
-    },
-  },
-  async run(ctx) {
-    try {
-      const filePath = graphPathSchema.parse(ctx.args.path);
-      const store = await loadGraph(filePath);
-
-      const quads = store.getQuads();
-      const subjects = new Set();
-      const predicates = new Set();
-      const objects = new Set();
-
-      quads.forEach(q => {
-        subjects.add(q.subject.value);
-        predicates.add(q.predicate.value);
-        objects.add(q.object.value);
+      // Load data
+      const parser = new Parser({ format: detectFormat(file) });
+      await new Promise((resolve, reject) => {
+        parser.parse(content, (error, quad) => {
+          if (error) {
+            reject(error);
+            return;
+          }
+          if (quad) {
+            store.add(quad);
+          } else {
+            resolve();
+          }
+        });
       });
 
-      console.log(`📊 Graph: ${filePath}`);
-      console.log(`   Triples: ${quads.length}`);
-      console.log(`   Subjects: ${subjects.size}`);
-      console.log(`   Predicates: ${predicates.size}`);
-      console.log(`   Objects: ${objects.size}`);
+      // Execute query
+      const results = store.query(queryString);
+
+      // Format output
+      if (format === 'json') {
+        console.log(JSON.stringify(Array.from(results), null, 2));
+      } else if (format === 'table') {
+        formatResultsTable(results);
+      } else {
+        // Default: show quads
+        for (const result of results) {
+          console.log(formatQuad(result));
+        }
+      }
     } catch (error) {
-      console.error(`❌ Describe failed: ${error.message}`);
-      throw error;
+      console.error(`❌ Query error: ${error.message}`);
+      process.exit(1);
     }
   },
 });
 
 /**
- * Merge command - Merge two graphs
+ * Dump graph data
  */
-export const mergeCommand = defineCommand({
+const dumpCommand = defineCommand({
   meta: {
-    name: 'merge',
-    description: 'Merge two RDF graphs',
+    name: 'dump',
+    description: 'Export graph data to file',
   },
   args: {
-    input1: {
-      type: 'positional',
-      description: 'First graph file',
-      required: true,
-    },
-    input2: {
-      type: 'positional',
-      description: 'Second graph file',
+    file: {
+      type: 'string',
+      description: 'Source graph file',
       required: true,
     },
     output: {
-      type: 'positional',
-      description: 'Output graph file',
+      type: 'string',
+      description: 'Output file',
       required: true,
     },
     format: {
       type: 'string',
-      description: 'Output format',
-      alias: 'f',
+      description: 'Output format (turtle, ntriples, nquads)',
+      default: 'turtle',
     },
   },
-  async run(ctx) {
+  async run({ args }) {
+    const { file, output, format } = args;
+
+    if (!existsSync(file)) {
+      console.error(`❌ File not found: ${file}`);
+      process.exit(1);
+    }
+
     try {
-      const input1 = graphPathSchema.parse(ctx.args.input1);
-      const input2 = graphPathSchema.parse(ctx.args.input2);
-      const output = graphPathSchema.parse(ctx.args.output);
+      const store = createStore();
+      const content = readFileSync(file, 'utf-8');
 
-      // Load both graphs
-      const store1 = await loadGraph(input1);
-      const store2 = await loadGraph(input2);
+      // Load data
+      const parser = new Parser({ format: detectFormat(file) });
+      await new Promise((resolve, reject) => {
+        parser.parse(content, (error, quad) => {
+          if (error) {
+            reject(error);
+            return;
+          }
+          if (quad) {
+            store.add(quad);
+          } else {
+            resolve();
+          }
+        });
+      });
 
-      // Merge into new Oxigraph store (default graph only)
-      const mergedStore = new OxigraphStore();
-      const quads1 = store1.getQuads();
-      const quads2 = store2.getQuads();
-
-      // Create quads in default graph using dataFactory
-      for (const q of quads1) {
-        const normalizedQuad = dataFactory.quad(
-          q.subject,
-          q.predicate,
-          q.object,
-          dataFactory.defaultGraph()
-        );
-        mergedStore.add(normalizedQuad);
-      }
-      for (const q of quads2) {
-        const normalizedQuad = dataFactory.quad(
-          q.subject,
-          q.predicate,
-          q.object,
-          dataFactory.defaultGraph()
-        );
-        mergedStore.add(normalizedQuad);
+      // Export with writer
+      const writer = new Writer({ format: formatToMimeType(format) });
+      for (const q of iterateQuads(store)) {
+        writer.addQuad(q);
       }
 
-      // Save merged graph
-      await saveGraph(mergedStore, output, ctx.args.format);
-
-      const totalQuads = mergedStore.getQuads().length;
-      console.log(`✅ Merged graphs to: ${output}`);
-      console.log(`   Total triples: ${totalQuads}`);
+      writer.end((error, result) => {
+        if (error) {
+          console.error(`❌ Export error: ${error.message}`);
+          process.exit(1);
+        }
+        writeFileSync(output, result, 'utf-8');
+        console.log(`✅ Exported to: ${output}`);
+        console.log(`📊 Quads: ${store.size}`);
+        console.log(`📝 Format: ${format}`);
+      });
     } catch (error) {
-      console.error(`❌ Merge failed: ${error.message}`);
-      throw error;
+      console.error(`❌ Export error: ${error.message}`);
+      process.exit(1);
     }
   },
 });
 
 /**
- * Graph command (parent command)
+ * Show graph statistics
+ */
+const statsCommand = defineCommand({
+  meta: {
+    name: 'stats',
+    description: 'Show graph statistics',
+  },
+  args: {
+    file: {
+      type: 'string',
+      description: 'Graph file to analyze',
+      required: true,
+    },
+  },
+  async run({ args }) {
+    const { file } = args;
+
+    if (!existsSync(file)) {
+      console.error(`❌ File not found: ${file}`);
+      process.exit(1);
+    }
+
+    try {
+      const store = createStore();
+      const content = readFileSync(file, 'utf-8');
+
+      // Load data
+      const parser = new Parser({ format: detectFormat(file) });
+      await new Promise((resolve, reject) => {
+        parser.parse(content, (error, quad) => {
+          if (error) {
+            reject(error);
+            return;
+          }
+          if (quad) {
+            store.add(quad);
+          } else {
+            resolve();
+          }
+        });
+      });
+
+      // Calculate statistics
+      const subjects = new Set();
+      const predicates = new Set();
+      const objects = new Set();
+      const graphs = new Set();
+
+      for (const q of iterateQuads(store)) {
+        subjects.add(q.subject.value);
+        predicates.add(q.predicate.value);
+        objects.add(q.object.value);
+        if (q.graph) {
+          graphs.add(q.graph.value);
+        }
+      }
+
+      console.log('\n📊 Graph Statistics');
+      console.log('═'.repeat(50));
+      console.log(`Total Quads:     ${store.size}`);
+      console.log(`Unique Subjects: ${subjects.size}`);
+      console.log(`Unique Predicates: ${predicates.size}`);
+      console.log(`Unique Objects:  ${objects.size}`);
+      console.log(`Named Graphs:    ${graphs.size}`);
+      console.log('═'.repeat(50));
+    } catch (error) {
+      console.error(`❌ Error analyzing graph: ${error.message}`);
+      process.exit(1);
+    }
+  },
+});
+
+/**
+ * Main graph command
  */
 export const graphCommand = defineCommand({
   meta: {
     name: 'graph',
-    description: 'Manage RDF graphs',
+    description: 'RDF graph operations',
   },
   subCommands: {
     create: createCommand,
-    delete: deleteCommand,
-    describe: describeCommand,
-    merge: mergeCommand,
+    load: loadCommand,
+    query: queryCommand,
+    dump: dumpCommand,
+    stats: statsCommand,
   },
 });
+
+// Helper functions
+
+/**
+ * Detect RDF format from file extension
+ */
+function detectFormat(filename) {
+  const ext = filename.split('.').pop().toLowerCase();
+  switch (ext) {
+    case 'ttl':
+      return 'Turtle';
+    case 'nt':
+      return 'N-Triples';
+    case 'nq':
+      return 'N-Quads';
+    case 'jsonld':
+      return 'JSON-LD';
+    case 'rdf':
+    case 'xml':
+      return 'RDF/XML';
+    default:
+      return 'Turtle'; // default
+  }
+}
+
+/**
+ * Convert format name to MIME type
+ */
+function formatToMimeType(format) {
+  switch (format.toLowerCase()) {
+    case 'turtle':
+    case 'ttl':
+      return 'Turtle';
+    case 'ntriples':
+    case 'nt':
+      return 'N-Triples';
+    case 'nquads':
+    case 'nq':
+      return 'N-Quads';
+    default:
+      return 'Turtle';
+  }
+}
+
+/**
+ * Format quad for display
+ */
+function formatQuad(quad) {
+  return `${quad.subject.value} ${quad.predicate.value} ${quad.object.value} ${quad.graph ? quad.graph.value : '.'}`;
+}
+
+/**
+ * Format query results as table
+ */
+function formatResultsTable(results) {
+  const rows = Array.from(results);
+
+  if (rows.length === 0) {
+    console.log('No results');
+    return;
+  }
+
+  console.log('\n📋 Query Results');
+  console.log('─'.repeat(100));
+
+  rows.forEach((row, idx) => {
+    console.log(`${idx + 1}. ${formatQuad(row)}`);
+  });
+
+  console.log('─'.repeat(100));
+  console.log(`Total: ${rows.length} results`);
+}

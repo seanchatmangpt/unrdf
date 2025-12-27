@@ -1,24 +1,69 @@
 /**
- * @unrdf/streaming
- *
- * Streaming - Real-time Change Feeds and Synchronization
- *
+ * @file UNRDF Streaming - Main exports
  * @module @unrdf/streaming
+ *
+ * @description
+ * Real-time RDF streaming, change feeds, and synchronization.
  */
 
-// Export change feed
+// Change Feed
 export { createChangeFeed } from './streaming/change-feed.mjs';
 
-// Export subscription manager
+// Subscription Manager
 export { createSubscriptionManager } from './streaming/subscription-manager.mjs';
 
-// Export stream processor
+// Stream Processor
 export { createStreamProcessor } from './streaming/stream-processor.mjs';
 
-// Export sync protocol
+// Real-time Validator
+export {
+  RealTimeValidator,
+  createRealTimeValidator,
+  ValidationMode,
+} from './streaming/real-time-validator.mjs';
+
+// Sync Protocol
 export {
   createSyncMessage,
   parseSyncMessage,
   calculateChecksum,
   mergeSyncMessages,
-} from './streaming/sync-protocol.mjs';
+  applySyncMessage,
+  createSyncMessageFromFeed,
+} from './sync-protocol.mjs';
+
+// Validation
+export {
+  validateShacl,
+  validateQuad,
+} from './validate.mjs';
+
+// Observability
+export {
+  createObservabilityManager,
+} from './observability.mjs';
+
+// RDF Stream Parser (V6 Features)
+export {
+  RDFStreamParser,
+  createRDFStreamParser,
+  parseRDFStream,
+} from './rdf-stream-parser.mjs';
+
+// Performance Monitor (V6 Features)
+export {
+  PerformanceMonitor,
+  createPerformanceMonitor,
+} from './performance-monitor.mjs';
+
+// Benchmarks
+export {
+  generateSyntheticRDF,
+  createReadableStreamFromString,
+  benchmarkParsingThroughput,
+  benchmarkChangeFeedLatency,
+  benchmarkBackpressure,
+  benchmarkMemoryEfficiency,
+  runComprehensiveBenchmarks,
+  saveBenchmarkResults,
+} from './benchmarks.mjs';

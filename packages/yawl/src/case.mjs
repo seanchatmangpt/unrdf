@@ -57,9 +57,9 @@ Object.assign(Case.prototype, CaseStateMixin);
  * Create Case from JSON
  * @param {Object} json - JSON representation
  * @param {import('./workflow.mjs').YawlWorkflow} workflow - Workflow definition
- * @returns {Case} Restored case
+ * @returns {Promise<Case>} Restored case
  */
-Case.fromJSON = function(json, workflow) {
+Case.fromJSON = async function(json, workflow) {
   const { YawlTask } = await import('./task.mjs');
 
   const caseInstance = new Case({

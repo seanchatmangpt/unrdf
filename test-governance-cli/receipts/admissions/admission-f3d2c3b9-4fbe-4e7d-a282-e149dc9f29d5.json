@@ -1,0 +1,46 @@
+{
+  "id": "f3d2c3b9-4fbe-4e7d-a282-e149dc9f29d5",
+  "type": "admission-receipt",
+  "timestamp": "2025-12-26T22:33:50.554Z",
+  "decision": "allow",
+  "delta": {
+    "path": "/home/user/unrdf/test-governance-cli/overlays/bu/invalid.delta.ttl",
+    "hash": "8376d7632c1c32f90749983b55f61ce238967d6be38f3f27df1b19f21961f03a"
+  },
+  "invariants": [
+    {
+      "name": "Well-Formed RDF",
+      "description": "Delta must contain valid RDF syntax",
+      "satisfied": true,
+      "reason": "Invariant satisfied"
+    },
+    {
+      "name": "Non-Empty Delta",
+      "description": "Delta must contain at least one statement",
+      "satisfied": true,
+      "reason": "Invariant satisfied"
+    },
+    {
+      "name": "No Conflicts",
+      "description": "Delta must not contain conflicting operations",
+      "satisfied": true,
+      "reason": "Invariant satisfied"
+    },
+    {
+      "name": "Valid URIs",
+      "description": "All URIs must be well-formed",
+      "satisfied": true,
+      "reason": "Invariant satisfied"
+    },
+    {
+      "name": "Namespace Consistency",
+      "description": "All prefixes must be declared",
+      "satisfied": true,
+      "reason": "Invariant satisfied"
+    }
+  ],
+  "metadata": {
+    "version": "1.0.0",
+    "generator": "governance-substrate-cli"
+  }
+}

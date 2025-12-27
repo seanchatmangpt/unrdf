@@ -1,0 +1,528 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "KGC Probe Event Schema",
+  "description": "Complete event type definitions for all observability events emitted by @unrdf/kgc-probe",
+  "version": "1.0.0",
+  "generated": "2025-12-27T00:00:00.000Z",
+
+  "event_categories": {
+    "scan_lifecycle": {
+      "description": "Events for overall scan lifecycle",
+      "events": ["scan_start", "scan_complete", "scan_error"]
+    },
+    "agent_execution": {
+      "description": "Events for individual agent execution",
+      "events": ["agent_start", "agent_complete", "agent_error", "agents_complete"]
+    },
+    "guard_validation": {
+      "description": "Events for guard validation",
+      "events": ["guard_start", "guard_complete", "guard_error", "guard_violation"]
+    },
+    "shard_operations": {
+      "description": "Events for shard merging",
+      "events": ["shards_merged", "shard_merge_error"]
+    },
+    "artifact_persistence": {
+      "description": "Events for artifact storage",
+      "events": ["artifact_saved", "artifact_save_error"]
+    }
+  },
+
+  "events": {
+    "scan_start": {
+      "description": "Emitted when a probe scan begins",
+      "category": "scan_lifecycle",
+      "payload": {
+        "type": "object",
+        "required": ["runId", "config"],
+        "properties": {
+          "runId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique identifier for this scan run"
+          },
+          "config": {
+            "type": "object",
+            "description": "Validated probe configuration",
+            "properties": {
+              "universe_id": { "type": "string" },
+              "snapshot_id": { "type": "string" },
+              "agents": { "type": "array", "items": { "type": "string" } },
+              "guards": { "type": "array", "items": { "type": "string" } },
+              "distributed": { "type": "boolean" },
+              "persist": { "type": "boolean" },
+              "timeout_ms": { "type": "number" },
+              "batch_size": { "type": "number" }
+            }
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO8601 timestamp when scan started"
+          }
+        }
+      },
+      "example": {
+        "runId": "550e8400-e29b-41d4-a716-446655440000",
+        "config": {
+          "universe_id": "my-universe",
+          "snapshot_id": "snap_123",
+          "agents": ["completion", "consistency"],
+          "distributed": false,
+          "persist": true
+        },
+        "timestamp": "2025-12-27T10:30:00.000Z"
+      }
+    },
+
+    "scan_complete": {
+      "description": "Emitted when a probe scan completes successfully",
+      "category": "scan_lifecycle",
+      "payload": {
+        "type": "object",
+        "required": ["runId", "status", "executionTime", "observationCount"],
+        "properties": {
+          "runId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["success", "partial"],
+            "description": "Scan completion status"
+          },
+          "executionTime": {
+            "type": "number",
+            "description": "Total execution time in milliseconds"
+          },
+          "observationCount": {
+            "type": "number",
+            "description": "Total observations generated"
+          },
+          "errorCount": {
+            "type": "number",
+            "description": "Number of errors encountered"
+          }
+        }
+      },
+      "example": {
+        "runId": "550e8400-e29b-41d4-a716-446655440000",
+        "status": "success",
+        "executionTime": 1234,
+        "observationCount": 42,
+        "errorCount": 0
+      }
+    },
+
+    "scan_error": {
+      "description": "Emitted when a probe scan fails critically",
+      "category": "scan_lifecycle",
+      "payload": {
+        "type": "object",
+        "required": ["runId", "error"],
+        "properties": {
+          "runId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "error": {
+            "type": "string",
+            "description": "Error message"
+          },
+          "stack": {
+            "type": "string",
+            "description": "Error stack trace (if available)"
+          },
+          "phase": {
+            "type": "string",
+            "enum": ["initialization", "agent_execution", "guard_validation", "shard_merge", "artifact_generation"],
+            "description": "Phase where error occurred"
+          }
+        }
+      },
+      "example": {
+        "runId": "550e8400-e29b-41d4-a716-446655440000",
+        "error": "Storage connection failed",
+        "phase": "initialization"
+      }
+    },
+
+    "agent_start": {
+      "description": "Emitted when an agent begins scanning",
+      "category": "agent_execution",
+      "payload": {
+        "type": "object",
+        "required": ["agentId"],
+        "properties": {
+          "agentId": {
+            "type": "string",
+            "description": "Agent identifier"
+          },
+          "kind": {
+            "type": "string",
+            "description": "Observation kind the agent produces"
+          },
+          "startTime": {
+            "type": "number",
+            "description": "Unix timestamp when agent started"
+          }
+        }
+      },
+      "example": {
+        "agentId": "completion",
+        "kind": "completeness",
+        "startTime": 1703675400000
+      }
+    },
+
+    "agent_complete": {
+      "description": "Emitted when an agent finishes scanning",
+      "category": "agent_execution",
+      "payload": {
+        "type": "object",
+        "required": ["agentId", "observationCount", "latency"],
+        "properties": {
+          "agentId": {
+            "type": "string"
+          },
+          "observationCount": {
+            "type": "number",
+            "description": "Number of observations produced"
+          },
+          "latency": {
+            "type": "number",
+            "description": "Execution time in milliseconds"
+          },
+          "metrics": {
+            "type": "object",
+            "properties": {
+              "avgConfidence": { "type": "number" },
+              "avgCoverage": { "type": "number" }
+            }
+          }
+        }
+      },
+      "example": {
+        "agentId": "completion",
+        "observationCount": 15,
+        "latency": 234,
+        "metrics": {
+          "avgConfidence": 0.92,
+          "avgCoverage": 0.85
+        }
+      }
+    },
+
+    "agent_error": {
+      "description": "Emitted when an agent fails during scanning",
+      "category": "agent_execution",
+      "payload": {
+        "type": "object",
+        "required": ["agentId", "error"],
+        "properties": {
+          "agentId": {
+            "type": "string"
+          },
+          "error": {
+            "type": "string",
+            "description": "Error message"
+          },
+          "recoverable": {
+            "type": "boolean",
+            "description": "Whether scan continues after this error"
+          }
+        }
+      },
+      "example": {
+        "agentId": "conformance",
+        "error": "SHACL validation timed out",
+        "recoverable": true
+      }
+    },
+
+    "agents_complete": {
+      "description": "Emitted when all agents have finished (success or failure)",
+      "category": "agent_execution",
+      "payload": {
+        "type": "object",
+        "required": ["runId", "agentCount", "observationCount"],
+        "properties": {
+          "runId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "agentCount": {
+            "type": "number",
+            "description": "Number of agents executed"
+          },
+          "observationCount": {
+            "type": "number",
+            "description": "Total observations from all agents"
+          },
+          "failedAgents": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "IDs of agents that failed"
+          },
+          "totalLatency": {
+            "type": "number",
+            "description": "Wall-clock time for all agents (parallel)"
+          }
+        }
+      },
+      "example": {
+        "runId": "550e8400-e29b-41d4-a716-446655440000",
+        "agentCount": 10,
+        "observationCount": 42,
+        "failedAgents": [],
+        "totalLatency": 567
+      }
+    },
+
+    "guard_start": {
+      "description": "Emitted when a guard begins validation",
+      "category": "guard_validation",
+      "payload": {
+        "type": "object",
+        "required": ["guardId"],
+        "properties": {
+          "guardId": {
+            "type": "string"
+          },
+          "observationCount": {
+            "type": "number",
+            "description": "Number of observations to validate"
+          }
+        }
+      },
+      "example": {
+        "guardId": "quality_check",
+        "observationCount": 42
+      }
+    },
+
+    "guard_complete": {
+      "description": "Emitted when a guard finishes validation",
+      "category": "guard_validation",
+      "payload": {
+        "type": "object",
+        "required": ["guardId", "violations"],
+        "properties": {
+          "guardId": {
+            "type": "string"
+          },
+          "violations": {
+            "type": "number",
+            "description": "Number of violations found"
+          },
+          "passed": {
+            "type": "boolean",
+            "description": "Whether guard passed (0 critical violations)"
+          }
+        }
+      },
+      "example": {
+        "guardId": "quality_check",
+        "violations": 2,
+        "passed": true
+      }
+    },
+
+    "guard_error": {
+      "description": "Emitted when a guard fails during validation",
+      "category": "guard_validation",
+      "payload": {
+        "type": "object",
+        "required": ["guardId", "error"],
+        "properties": {
+          "guardId": {
+            "type": "string"
+          },
+          "error": {
+            "type": "string"
+          }
+        }
+      },
+      "example": {
+        "guardId": "severity_limit",
+        "error": "Configuration error: critical_limit must be positive"
+      }
+    },
+
+    "guard_violation": {
+      "description": "Emitted for each guard violation detected",
+      "category": "guard_validation",
+      "payload": {
+        "type": "object",
+        "required": ["guardId", "severity", "details"],
+        "properties": {
+          "guardId": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["critical", "warning", "info"]
+          },
+          "details": {
+            "type": "object",
+            "properties": {
+              "message": { "type": "string" },
+              "actual": { "type": ["string", "number", "object"] },
+              "threshold": { "type": ["string", "number", "object"] }
+            }
+          }
+        }
+      },
+      "example": {
+        "guardId": "quality_check",
+        "severity": "warning",
+        "details": {
+          "message": "High count of low-confidence observations",
+          "actual": 55,
+          "threshold": 50
+        }
+      }
+    },
+
+    "shards_merged": {
+      "description": "Emitted when distributed shards are merged",
+      "category": "shard_operations",
+      "payload": {
+        "type": "object",
+        "required": ["shardCount", "shardHash"],
+        "properties": {
+          "shardCount": {
+            "type": "number",
+            "description": "Number of shards merged"
+          },
+          "shardHash": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$",
+            "description": "Blake3 hash of merged shards"
+          },
+          "observationCount": {
+            "type": "number",
+            "description": "Total observations after merge"
+          },
+          "deduplicatedCount": {
+            "type": "number",
+            "description": "Observations removed as duplicates"
+          }
+        }
+      },
+      "example": {
+        "shardCount": 3,
+        "shardHash": "a1b2c3d4e5f6...",
+        "observationCount": 120,
+        "deduplicatedCount": 5
+      }
+    },
+
+    "shard_merge_error": {
+      "description": "Emitted when shard merging fails",
+      "category": "shard_operations",
+      "payload": {
+        "type": "object",
+        "required": ["error"],
+        "properties": {
+          "error": {
+            "type": "string"
+          },
+          "shardsAttempted": {
+            "type": "number"
+          }
+        }
+      },
+      "example": {
+        "error": "Incompatible shard versions",
+        "shardsAttempted": 3
+      }
+    },
+
+    "artifact_saved": {
+      "description": "Emitted when artifact is successfully persisted",
+      "category": "artifact_persistence",
+      "payload": {
+        "type": "object",
+        "required": ["runId", "artifactSize"],
+        "properties": {
+          "runId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "artifactSize": {
+            "type": "number",
+            "description": "Number of observations in artifact"
+          },
+          "storageType": {
+            "type": "string",
+            "enum": ["memory", "file", "database"]
+          },
+          "bytesWritten": {
+            "type": "number",
+            "description": "Bytes written (for file/database)"
+          }
+        }
+      },
+      "example": {
+        "runId": "550e8400-e29b-41d4-a716-446655440000",
+        "artifactSize": 42,
+        "storageType": "file",
+        "bytesWritten": 12345
+      }
+    },
+
+    "artifact_save_error": {
+      "description": "Emitted when artifact persistence fails",
+      "category": "artifact_persistence",
+      "payload": {
+        "type": "object",
+        "required": ["error"],
+        "properties": {
+          "error": {
+            "type": "string"
+          },
+          "storageType": {
+            "type": "string",
+            "enum": ["memory", "file", "database"]
+          },
+          "recoverable": {
+            "type": "boolean",
+            "description": "Whether in-memory artifact is still available"
+          }
+        }
+      },
+      "example": {
+        "error": "Disk full",
+        "storageType": "file",
+        "recoverable": true
+      }
+    }
+  },
+
+  "usage_examples": {
+    "subscribing_to_events": {
+      "description": "How to subscribe to probe events",
+      "code": "const orchestrator = createProbeOrchestrator({ storage });\n\norchestrator.on('scan_start', (data) => {\n  console.log(`Scan ${data.runId} started`);\n});\n\norchestrator.on('agent_complete', (data) => {\n  console.log(`Agent ${data.agentId} found ${data.observationCount} observations`);\n});\n\norchestrator.on('scan_complete', (data) => {\n  console.log(`Scan ${data.runId} completed in ${data.executionTime}ms`);\n});"
+    },
+    "otel_integration": {
+      "description": "How to forward events to OpenTelemetry",
+      "code": "import { trace, SpanKind } from '@opentelemetry/api';\n\nconst tracer = trace.getTracer('kgc-probe');\n\norchestrator.on('scan_start', (data) => {\n  const span = tracer.startSpan('probe.scan', {\n    kind: SpanKind.INTERNAL,\n    attributes: {\n      'probe.run_id': data.runId,\n      'probe.universe_id': data.config.universe_id\n    }\n  });\n  // Store span for later completion\n});\n\norchestrator.on('agent_complete', (data) => {\n  const span = tracer.startSpan(`probe.agent.${data.agentId}`);\n  span.setAttribute('agent.observations', data.observationCount);\n  span.setAttribute('agent.latency_ms', data.latency);\n  span.end();\n});"
+    }
+  },
+
+  "event_flow_diagram": {
+    "description": "Sequence of events during a typical scan",
+    "sequence": [
+      { "event": "scan_start", "phase": "Initialization" },
+      { "event": "agent_start", "phase": "Agent Execution", "note": "Emitted for each agent" },
+      { "event": "agent_complete", "phase": "Agent Execution", "note": "Emitted for each agent" },
+      { "event": "agents_complete", "phase": "Agent Execution" },
+      { "event": "guard_start", "phase": "Guard Validation", "note": "Emitted for each guard" },
+      { "event": "guard_complete", "phase": "Guard Validation", "note": "Emitted for each guard" },
+      { "event": "shards_merged", "phase": "Shard Merge", "note": "Only if distributed=true" },
+      { "event": "artifact_saved", "phase": "Persistence", "note": "Only if persist=true" },
+      { "event": "scan_complete", "phase": "Finalization" }
+    ]
+  }
+}

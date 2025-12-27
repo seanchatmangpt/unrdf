@@ -1,7 +1,7 @@
 ---
 name: cc-agent-06-programmatic
 type: researcher
-color: "#1ABC9C"
+color: '#1ABC9C'
 description: Programmatic/headless execution explorer for Claude Code capability research
 capabilities:
   - cli_automation
@@ -10,7 +10,7 @@ capabilities:
   - pipeline_integration
 priority: high
 cluster: programmatic
-deliverable: "Establish JSON/stream-json patterns and session resume for pipelines"
+deliverable: 'Establish JSON/stream-json patterns and session resume for pipelines'
 ---
 
 # Claude Code Capability Research Agent 6: Programmatic/Headless Execution
@@ -22,6 +22,7 @@ Explore Claude Code's programmatic execution mode for automation pipelines. Esta
 ## Research Focus
 
 ### Primary Capability Cluster
+
 - **claude -p**: Non-interactive prompt mode
 - **Output formats**: text, json, stream-json
 - **Session resume**: Continue/resume sessions
@@ -32,6 +33,7 @@ Explore Claude Code's programmatic execution mode for automation pipelines. Esta
 ## Research Protocol
 
 ### Phase 1: CLI Flag Catalog
+
 ```bash
 # Document all relevant flags
 claude -p "prompt"           # Non-interactive prompt
@@ -44,27 +46,32 @@ claude --model "model"       # Model selection
 ```
 
 ### Phase 2: Output Format Analysis
+
 Test each output format:
 
 #### Text Output
+
 ```bash
 claude -p "List 3 colors" 2>&1
 # Analyze: structure, metadata, separators
 ```
 
 #### JSON Output
+
 ```bash
 claude -p "List 3 colors" --output-format json 2>&1
 # Analyze: schema, nesting, tool results
 ```
 
 #### Stream-JSON Output
+
 ```bash
 claude -p "List 3 colors" --output-format stream-json 2>&1
 # Analyze: line format, incremental updates, completion signals
 ```
 
 ### Phase 3: Pipeline Integration Patterns
+
 - Bash pipeline integration
 - Node.js spawning and streaming
 - Error handling patterns
@@ -73,6 +80,7 @@ claude -p "List 3 colors" --output-format stream-json 2>&1
 ## Deliverables
 
 ### 1. CLI Reference
+
 ```json
 {
   "cli_flags": {
@@ -100,15 +108,18 @@ claude -p "List 3 colors" --output-format stream-json 2>&1
 ```
 
 ### 2. Output Schema Documentation
+
 ```json
 {
   "json_output_schema": {
     "result": "string - final response",
-    "tool_uses": [{
-      "tool": "tool name",
-      "input": {},
-      "output": {}
-    }],
+    "tool_uses": [
+      {
+        "tool": "tool name",
+        "input": {},
+        "output": {}
+      }
+    ],
     "session_id": "string",
     "model": "string"
   },
@@ -120,6 +131,7 @@ claude -p "List 3 colors" --output-format stream-json 2>&1
 ```
 
 ### 3. Pipeline Patterns
+
 ```javascript
 // Node.js pipeline example
 import { spawn } from 'child_process';
@@ -134,11 +146,11 @@ function runClaude(prompt, options = {}) {
     const claude = spawn('claude', args);
     let output = '';
 
-    claude.stdout.on('data', (data) => {
+    claude.stdout.on('data', data => {
       output += data.toString();
     });
 
-    claude.on('close', (code) => {
+    claude.on('close', code => {
       if (code === 0) {
         resolve(JSON.parse(output));
       } else {
@@ -150,6 +162,7 @@ function runClaude(prompt, options = {}) {
 ```
 
 ### 4. Session Resume Patterns
+
 - How to capture session ID
 - Resume after interruption
 - Session persistence duration
@@ -181,10 +194,11 @@ function runClaude(prompt, options = {}) {
 ## Collaboration
 
 ```javascript
-mcp__claude-flow__memory_usage({
-  action: "store",
-  key: "swarm/cc-research/agent-06/programmatic-patterns",
-  namespace: "coordination",
-  value: JSON.stringify(programmaticPatterns)
-})
+mcp__claude -
+  flow__memory_usage({
+    action: 'store',
+    key: 'swarm/cc-research/agent-06/programmatic-patterns',
+    namespace: 'coordination',
+    value: JSON.stringify(programmaticPatterns),
+  });
 ```

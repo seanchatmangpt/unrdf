@@ -1,9 +1,0 @@
-{
-  "name": "pre-1",
-  "kind": "pre",
-  "condition": {
-    "type": "sparql-ask",
-    "query": "# Pre-hook 1 for hook chaining test\n\nPREFIX ex: <http://example.org/>\n\nASK {\n  ?s ex:valid ?value .\n}\n"
-  },
-  "effects": []
-}
