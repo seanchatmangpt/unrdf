@@ -1,0 +1,51 @@
+% LaTeX document with embedded image
+% Tests graphics package and image inclusion
+\documentclass{article}
+\usepackage{graphicx}
+
+\title{Image Inclusion Test}
+\author{Test Suite}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+
+This document tests the inclusion of external graphics files using the
+\texttt{graphicx} package. The compilation pipeline must correctly resolve
+image paths and include them in the final PDF output.
+
+\section{Test Image}
+
+Below is a test diagram included via \texttt{\\includegraphics}:
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.5\textwidth]{diagram.png}
+  \caption{Test diagram (PNG format)}
+  \label{fig:diagram}
+\end{figure}
+
+Figure~\ref{fig:diagram} demonstrates that the LaTeX compilation pipeline
+can successfully process documents with embedded images.
+
+\section{Requirements}
+
+This test validates:
+
+\begin{itemize}
+  \item \texttt{graphicx} package loading
+  \item Image file resolution from VFS
+  \item Figure environment compilation
+  \item Cross-reference to figure labels
+  \item PNG format support
+\end{itemize}
+
+\section{Conclusion}
+
+The successful compilation of this document with the included image confirms
+that the pure JavaScript LaTeX pipeline can handle graphics-heavy documents.
+
+\end{document}

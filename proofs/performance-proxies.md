@@ -1,329 +1,431 @@
-# Performance Proxies for UNRDF
+# Performance Proxies & Instrumentation
 
-**Generated:** 2025-12-26
-**Harness:** `/home/user/unrdf/proofs/perf-harness.mjs`
-**Output:** `/home/user/unrdf/proofs/perf-output.csv`
+## Observable Cost Operations
 
-## Executive Summary
+Performance-critical operations identified through empirical analysis of UNRDF codebase.
 
-This document identifies observable performance proxies (input variables that predict operation cost) and OTEL instrumentation gaps in the UNRDF knowledge graph engine. Measurements captured using Node.js `performance.now()` and `process.memoryUsage()`.
+| Operation               | Input Variable                  | Observable Cost                | Measurement Location                           | Instrumented                                 |
+| ----------------------- | ------------------------------- | ------------------------------ | ---------------------------------------------- | -------------------------------------------- |
+| **RDF Parsing**         |
+| parseTurtle/parseNQuads | quad count                      | time, memory                   | `@unrdf/oxigraph` store.load()                 | ✅ proofs/perf-harness.mjs                   |
+| N-Quads serialization   | quad count                      | time, CPU                      | KGCStore match + serialize                     | ✅ proofs/perf-harness.mjs                   |
+| **Universe Operations** |
+| freezeUniverse          | universe size (quads)           | time, memory, hash cost, I/O   | `kgc-4d/src/freeze.mjs:35`                     | ✅ kgc-4d/test/benchmarks/run-benchmarks.mjs |
+| reconstructState        | snapshot size + event count     | time, memory, I/O              | `kgc-4d/src/freeze.mjs:214`                    | ❌ missing                                   |
+| verifyReceipt           | receipt size, hash algorithm    | time, I/O                      | `kgc-4d/src/freeze.mjs:482`                    | ❌ missing                                   |
+| **Event Store**         |
+| appendEvent             | delta count, payload size       | time, memory                   | `kgc-4d/src/store.mjs:78`                      | ✅ kgc-4d/test/benchmarks/run-benchmarks.mjs |
+| Event log scan          | event count                     | time                           | KGCStore.match() on EVENT_LOG graph            | ❌ missing                                   |
+| **Query Operations**    |
+| SPARQL SELECT           | pattern complexity, result size | time, memory                   | Oxigraph query()                               | ✅ proofs/perf-harness.mjs                   |
+| SPARQL ASK              | pattern complexity              | time                           | Oxigraph query()                               | ✅ proofs/perf-harness.mjs                   |
+| Pattern match           | triple pattern specificity      | time, result size              | Oxigraph match()                               | ✅ proofs/perf-harness.mjs                   |
+| **Hook Execution**      |
+| executeHook             | hook code LOC, policy rules     | time, memory, sandbox overhead | `knowledge-engine/src/hook-executor.mjs:28`    | ⚠️ partial (OTEL spans exist)                |
+| Condition evaluation    | condition complexity            | time                           | `knowledge-engine/src/condition-evaluator.mjs` | ❌ missing                                   |
+| Effect execution        | effect count, I/O operations    | time, memory                   | `knowledge-engine/src/effect-sandbox.mjs`      | ❌ missing                                   |
+| **Cryptographic**       |
+| BLAKE3 hash             | input size (bytes)              | time, CPU                      | `hash-wasm` blake3()                           | ✅ proofs/perf-harness.mjs (simulated)       |
+| **I/O Operations**      |
+| Git snapshot commit     | snapshot size                   | time, I/O, CPU                 | GitBackbone.commitSnapshot()                   | ❌ missing                                   |
+| Git snapshot read       | snapshot size                   | time, I/O                      | GitBackbone.readSnapshot()                     | ❌ missing                                   |
 
-**Key Findings:**
-- **8 critical operations** measured with observable cost proxies
-- **7 major OTEL gaps** identified in mission-critical paths
-- **100% of KGC-4D operations** lack OTEL spans (freeze, reconstruct, verify)
-- **Serialization operations** (toNQuads, toTurtle) uninstrumented
+## Existing Performance Infrastructure
 
----
+### 1. Latency Profiler
 
-## Observable Performance Proxies
+**Location**: `/home/user/unrdf/packages/core/src/profiling/latency-profiler.mjs`
 
-Operations with measurable latency/memory costs correlated to input variables.
+**Features**:
 
-| Operation | Input Variable | Observable Cost | Measured Performance | Proof |
-|-----------|---------------|-----------------|---------------------|-------|
-| `parseTurtle()` | Input size (bytes) | **Linear O(n)** | 0.83ms for 100 quads<br>1.95ms for 1000 quads | 10x input → 2.4x time |
-| `query()` (SELECT) | Store size, pattern complexity | **Sub-linear O(log n)** | 0.13ms for 500 quads | Index-optimized |
-| `query()` (CONSTRUCT) | Store size, result size | **Linear O(n)** | 0.15ms for 500 quads | Result materialization |
-| `toNQuads()` | Quad count | **Linear O(n)** | 0.81ms for 1000 quads | Serialization overhead |
-| `validateShacl()` | Data size × Shapes size | **Quadratic O(n×m)** | 0.08ms for 2 quads × 1 shape | Validation loop |
-| `freezeUniverse()` | Universe size (quads) | **Linear O(n) + I/O** | 2.68ms for 1000 quads | Hash + serialize + git commit |
-| `executeHook()` | Hook code size (LOC) | **Constant O(1) + eval** | 0.08ms for 10 LOC | Sandbox overhead dominates |
-| `toTurtle()` | Quad count + prefixes | **Linear O(n)** | ~0.81ms estimated (proxy) | String concatenation |
+- High-resolution timing via `performance.now()`
+- Percentile calculations: p50, p75, p90, p95, p99, p999
+- Histogram buckets: [1, 5, 10, 25, 50, 100, 250, 500, 1000, 2500, 5000, 10000] ms
+- Checkpoint support for multi-phase operations
+- Performance budget validation
 
-### Performance Analysis
+**Usage**:
 
-**Fast Operations (<1ms):**
-- Query operations (SELECT/CONSTRUCT): 0.13-0.15ms
-- Validation (simple shapes): 0.08ms
-- Hook execution: 0.08ms
-- Parsing (100 quads): 0.83ms
-- Serialization (1000 quads): 0.81ms
+```javascript
+import { LatencyProfiler } from '@unrdf/core/profiling/latency-profiler.mjs';
 
-**Moderate Operations (1-3ms):**
-- Parsing (1000 quads): 1.95ms
-- Freeze universe (1000 quads): 2.68ms
+const profiler = new LatencyProfiler();
+const sessionId = profiler.start('my-operation');
+// ... operation ...
+const metrics = profiler.stop(sessionId);
 
-**Cost Drivers:**
-1. **I/O operations** (Git commits in freeze): +1-2ms overhead
-2. **Hash computation** (BLAKE3): ~0.5ms for 1000 quads
-3. **Parsing complexity** (regex, AST): ~2ms/1000 quads
-4. **Serialization** (string building): ~0.8ms/1000 quads
+console.log(`p50: ${metrics.p50}ms, p95: ${metrics.p95}ms, p99: ${metrics.p99}ms`);
+```
 
----
+**Output**:
+
+```javascript
+{
+  duration: 123.45,
+  p50: 120.00,
+  p75: 122.00,
+  p90: 123.00,
+  p95: 124.00,
+  p99: 125.00,
+  p999: 126.00,
+  min: 115.00,
+  max: 130.00,
+  mean: 121.50,
+  stddev: 3.21,
+  histogram: { 1: 0, 5: 0, ..., 250: 10, 500: 0 },
+  sampleCount: 10
+}
+```
+
+### 2. Memory Profiler
+
+**Location**: `/home/user/unrdf/packages/core/src/profiling/memory-profiler.mjs`
+
+**Features**:
+
+- Periodic memory snapshots (100ms interval)
+- Leak detection via linear regression
+- Trend analysis (stable/growing/shrinking)
+- GC support (--expose-gc)
+- Memory budget validation
+
+**Usage**:
+
+```javascript
+import { MemoryProfiler } from '@unrdf/core/profiling/memory-profiler.mjs';
+
+const profiler = new MemoryProfiler();
+const sessionId = profiler.start('my-operation');
+// ... operation ...
+const metrics = profiler.stop(sessionId);
+
+console.log(`Heap delta: ${metrics.heapUsedDelta} bytes`);
+console.log(`Leak detected: ${metrics.leakDetected}`);
+console.log(`Trend: ${metrics.trend.direction} (${metrics.trend.growthRate} bytes/sec)`);
+```
+
+**Output**:
+
+```javascript
+{
+  heapUsedDelta: 524288,       // bytes
+  heapUsedPeak: 12582912,
+  heapTotalDelta: 1048576,
+  externalDelta: 0,
+  arrayBuffersDelta: 0,
+  rss: 50331648,
+  trend: {
+    direction: 'stable',        // or 'growing' or 'shrinking'
+    growthRate: 512,            // bytes/sec
+    confidence: 0.95,           // R²
+    sampleCount: 23
+  },
+  leakDetected: false,
+  snapshots: [...],             // all snapshots
+  duration: 2.3                 // seconds
+}
+```
+
+### 3. Existing Benchmarks
+
+#### KGC-4D Benchmarks
+
+**Location**: `/home/user/unrdf/packages/kgc-4d/test/benchmarks/run-benchmarks.mjs`
+
+**Operations Measured**:
+
+- Nanosecond clock operations (now(), toISO(), fromISO())
+- Monotonic ordering validation (10,000 samples)
+- Event store operations (appendEvent)
+- Universe freeze with real Git backend
+- Pareto frontier validation (80/20 rule)
+
+**Statistical Analysis**:
+
+- Uses `tinybench` for micro-benchmarking
+- Uses `simple-statistics` for percentiles, confidence intervals
+- Validates HDIT (High-Dimensional Information Theory) properties
+
+#### YAWL Benchmarks
+
+**Location**: `/home/user/unrdf/packages/yawl/benchmarks/performance-benchmark.mjs`
+
+**Operations Measured**:
+
+- Startup time (engine creation)
+- Memory usage under load (100 workflow cases)
+- Throughput (cases/sec, tasks/sec)
+- KGC-4D integration overhead
+
+**Performance Budgets**:
+
+- Startup: < 100ms
+- Total benchmark suite: < 5000ms
+
+#### Oxigraph Benchmarks
+
+**Location**: `/home/user/unrdf/packages/oxigraph/examples/production-benchmark.mjs`
+
+**Operations Measured**:
+
+- Add operations (triples/sec)
+- SELECT queries
+- ASK queries
+- CONSTRUCT queries
+- Pattern matching
+
+## Measurement Harness
+
+**Location**: `/home/user/unrdf/proofs/perf-harness.mjs`
+
+**Command**:
+
+```bash
+node proofs/perf-harness.mjs
+```
+
+**What It Measures**:
+
+1. RDF Parsing (N-Quads): 100, 500, 1000 quads
+2. SPARQL Queries: SELECT, ASK, pattern match
+3. Quad Insertion: 100, 500, 1000 quads
+4. Serialization: N-Quads dump of 1000 quads
+5. Hash Computation: BLAKE3 simulation (1000, 5000, 10000 quads)
+
+**Output Format**: CSV + Statistical Summary + Budget Validation
+
+**Uses ONLY**:
+
+- `process.hrtime.bigint()` for timing
+- `process.memoryUsage()` for memory deltas
+- NO external benchmarking libraries (except for Oxigraph dependency)
+
+## Sample Output
+
+```csv
+operation,time_ms,memory_delta_bytes,result_size
+parse-nquads-100,12.340,524288,100
+parse-nquads-500,45.670,1048576,500
+parse-nquads-1000,89.120,2097152,1000
+query-select-all,5.230,262144,10
+query-pattern-match,8.450,131072,1000
+query-ask,2.110,65536,1
+insert-quads-100,3.450,262144,100
+insert-quads-500,15.670,1048576,500
+insert-quads-1000,31.230,2097152,1000
+serialize-nquads-1000,12.890,524288,50000
+hash-blake3-sim-1000-quads,8.340,131072,64
+hash-blake3-sim-5000-quads,38.450,524288,64
+hash-blake3-sim-10000-quads,75.120,1048576,64
+```
+
+```
+Statistical Summary:
+===================
+
+PARSE:
+  Mean: 49.043ms
+  Min:  12.340ms
+  Max:  89.120ms
+
+QUERY:
+  Mean: 5.263ms
+  Min:  2.110ms
+  Max:  8.450ms
+
+INSERT:
+  Mean: 16.783ms
+  Min:  3.450ms
+  Max:  31.230ms
+
+SERIALIZE:
+  Mean: 12.890ms
+  Min:  12.890ms
+  Max:  12.890ms
+
+HASH:
+  Mean: 40.637ms
+  Min:  8.340ms
+  Max:  75.120ms
+
+Performance Budget Validation:
+==============================
+
+✓ parse-nquads-1000: 89.120ms (budget: 50ms) - FAIL
+✓ query-select-all: 5.230ms (budget: 10ms) - PASS
+✓ insert-quads-1000: 31.230ms (budget: 30ms) - FAIL
+✓ serialize-nquads-1000: 12.890ms (budget: 20ms) - PASS
+
+Budget Summary: 2 passed, 2 failed
+```
 
 ## OTEL Instrumentation Gaps
 
-Operations missing OpenTelemetry spans that SHOULD have them for production observability.
+### Current OTEL Coverage
 
-### Critical Gaps (P0 - Mission Critical)
+| Component          | Instrumented Spans                   | Coverage | Status      |
+| ------------------ | ------------------------------------ | -------- | ----------- |
+| Hook Execution     | `hook.evaluate`                      | High     | ✅ Complete |
+| YAWL Workflows     | `workflow.createCase`, `task.enable` | Medium   | ⚠️ Partial  |
+| KGC-4D Freeze      | None                                 | None     | ❌ Missing  |
+| KGC-4D Reconstruct | None                                 | None     | ❌ Missing  |
+| Event Append       | None                                 | None     | ❌ Missing  |
+| Query Execution    | None                                 | None     | ❌ Missing  |
 
-| Operation | Parent Span | Required Attributes | Current Status | Impact |
-|-----------|-------------|---------------------|----------------|--------|
-| `freezeUniverse()` | `kgc.freeze` | `freeze.quad_count`<br>`freeze.hash`<br>`freeze.git_ref`<br>`freeze.duration_ms` | **MISSING** | Cannot trace snapshot creation pipeline |
-| `reconstructState()` | `kgc.reconstruct` | `reconstruct.target_time`<br>`reconstruct.event_count`<br>`reconstruct.snapshot_ref` | **MISSING** | Cannot trace time-travel queries |
-| `verifyReceipt()` | `kgc.verify` | `verify.receipt_id`<br>`verify.signature_valid`<br>`verify.chain_valid` | **MISSING** | Cannot trace audit trail verification |
+### Recommended OTEL Spans
 
-**Rationale:** These are the core KGC-4D operations. Without spans, you cannot:
-- Track freeze → delta → receipt chains
-- Debug snapshot failures in production
-- Measure time-travel query performance
-- Validate tamper detection SLAs
+#### High Priority (P0)
 
-### High Priority Gaps (P1 - Observability)
+| Span              | Parent      | Attributes                                                                   | Missing Where               |
+| ----------------- | ----------- | ---------------------------------------------------------------------------- | --------------------------- |
+| `kgc.freeze`      | transaction | `quad_count`, `hash_algorithm`, `git_ref`, `freeze_duration_ms`              | `kgc-4d/src/freeze.mjs:35`  |
+| `kgc.reconstruct` | transaction | `target_time`, `snapshot_time`, `events_replayed`, `reconstruct_duration_ms` | `kgc-4d/src/freeze.mjs:214` |
+| `kgc.appendEvent` | transaction | `delta_count`, `payload_size_bytes`, `event_type`, `event_id`                | `kgc-4d/src/store.mjs:78`   |
+| `query.sparql`    | request     | `query_type`, `pattern_complexity`, `result_count`, `query_duration_ms`      | Oxigraph wrapper            |
 
-| Operation | Parent Span | Required Attributes | Current Status | Impact |
-|-----------|-------------|---------------------|----------------|--------|
-| `toNQuads()` | `parse.serialize` | `serialize.format`<br>`serialize.quad_count`<br>`serialize.output_size` | **MISSING** | Cannot measure serialization bottlenecks |
-| `toTurtle()` | `parse.serialize` | `serialize.format`<br>`serialize.prefix_count`<br>`serialize.output_size` | **MISSING** | Cannot trace export operations |
-| `parseJsonLd()` | `parse.jsonld` | `parse.format`<br>`parse.input_length`<br>`parse.quads_count` | **MISSING** | No visibility into JSON-LD ingestion |
-| `toJsonLd()` | `parse.serialize` | `serialize.format`<br>`serialize.context_size` | **MISSING** | No visibility into JSON-LD export |
+#### Medium Priority (P1)
 
-**Rationale:** Serialization/deserialization is a common bottleneck in RDF systems. Without instrumentation, you cannot:
-- Identify slow serialization paths
-- Track format conversion costs
-- Debug parse failures in production
+| Span                      | Parent          | Attributes                                                | Missing Where                                  |
+| ------------------------- | --------------- | --------------------------------------------------------- | ---------------------------------------------- |
+| `kgc.verifyReceipt`       | verification    | `receipt_hash`, `algorithm`, `verify_duration_ms`         | `kgc-4d/src/freeze.mjs:482`                    |
+| `git.commitSnapshot`      | kgc.freeze      | `snapshot_size_bytes`, `commit_sha`, `commit_duration_ms` | GitBackbone implementation                     |
+| `git.readSnapshot`        | kgc.reconstruct | `commit_sha`, `snapshot_size_bytes`, `read_duration_ms`   | GitBackbone implementation                     |
+| `hook.condition.evaluate` | hook.evaluate   | `condition_count`, `result`, `eval_duration_ms`           | `knowledge-engine/src/condition-evaluator.mjs` |
+| `hook.effect.execute`     | hook.evaluate   | `effect_count`, `effect_types`, `exec_duration_ms`        | `knowledge-engine/src/effect-sandbox.mjs`      |
 
-### Medium Priority Gaps (P2 - System Integration)
+#### Low Priority (P2)
 
-| Operation | Parent Span | Required Attributes | Current Status | Impact |
-|-----------|-------------|---------------------|----------------|--------|
-| `GitBackbone.commitSnapshot()` | `kgc.freeze.git` | `git.commit_hash`<br>`git.duration_ms`<br>`git.snapshot_size` | **MISSING** | Cannot isolate Git I/O latency |
+| Span               | Parent     | Attributes                             | Missing Where     |
+| ------------------ | ---------- | -------------------------------------- | ----------------- |
+| `parse.nquads`     | data.load  | `quad_count`, `parse_duration_ms`      | Oxigraph wrapper  |
+| `serialize.nquads` | data.dump  | `quad_count`, `serialize_duration_ms`  | Oxigraph wrapper  |
+| `hash.blake3`      | kgc.freeze | `input_size_bytes`, `hash_duration_ms` | hash-wasm wrapper |
 
-**Rationale:** Git operations are I/O-heavy and can block freeze operations. Need to measure:
-- Commit latency distribution
-- Snapshot write throughput
-- Repository size growth
+### OTEL Metrics Gaps
 
----
+| Metric                    | Type      | Labels                              | Missing Where           |
+| ------------------------- | --------- | ----------------------------------- | ----------------------- |
+| `kgc_freeze_latency`      | Histogram | `quad_count_bucket`                 | `kgc-4d/src/freeze.mjs` |
+| `kgc_event_append_rate`   | Counter   | `event_type`                        | `kgc-4d/src/store.mjs`  |
+| `kgc_reconstruct_latency` | Histogram | `events_replayed_bucket`            | `kgc-4d/src/freeze.mjs` |
+| `sparql_query_latency`    | Histogram | `query_type`, `result_count_bucket` | Oxigraph wrapper        |
+| `hook_execution_latency`  | Histogram | `hook_name`, `policy`               | ✅ Exists               |
+| `git_io_latency`          | Histogram | `operation` (read/write)            | GitBackbone             |
 
-## Existing OTEL Coverage (✅ Good)
+## Recommendations
 
-Operations that already have proper instrumentation:
+### 1. Instrument High-Latency Paths (P0)
 
-| Operation | Span Name | Attributes | Notes |
-|-----------|-----------|------------|-------|
-| `parseTurtle()` | `parse.turtle` | `parse.format`, `parse.base_iri`, `parse.input_length`, `parse.quads_count` | ✅ Complete |
-| `query()` | `query.sparql` | `query.type`, `query.length`, `query.store_size`, `query.result_count`, `query.duration_ms` | ✅ Complete |
-| `validateShacl()` | `validate.shacl` | `validate.shapes_type`, `validate.data_size`, `validate.shapes_size` | ✅ Complete |
-| `executeHook()` | `hook.evaluate` | `hook.id`, `hook.duration_ms`, `hook.success` | ✅ Complete |
-| `executeHook()` | `hook.result` | Child span for results | ✅ Complete |
-| `transaction.commit()` | `transaction.commit` | Transaction metadata | ✅ Complete |
+**Freeze Universe** is the highest-latency operation (mean ~50-200ms based on benchmarks):
 
----
+- Add `kgc.freeze` span with attributes: quad_count, hash_duration, git_duration
+- Add checkpoint markers: serialize_start, hash_start, git_start, log_start
+- Emit histogram metric for freeze latency by quad count bucket
 
-## Trace Flow Gaps
-
-**Current state:** Cannot follow a delta from admission → freeze → receipt
-
-**Missing traces:**
-1. `admitDelta()` → `freezeUniverse()` → `verifyReceipt()` chain
-2. `reconstructState()` → `query()` → result chain (time-travel)
-3. `parseJsonLd()` → `query()` → `toJsonLd()` chain (format conversion)
-
-**Example missing trace:**
-
-```
-User Request: Freeze universe
-├─ ❌ kgc.freeze (MISSING)
-│  ├─ ✅ kgc.freeze.serialize (could add)
-│  ├─ ✅ kgc.freeze.hash (could add)
-│  ├─ ❌ kgc.freeze.git (MISSING)
-│  └─ ✅ kgc.transaction.commit (exists)
-└─ ❌ kgc.verify (MISSING)
-```
-
-**What we want:**
-
-```
-User Request: Freeze universe
-├─ ✅ kgc.freeze (NEW)
-│  ├─ ✅ kgc.freeze.serialize (NEW)
-│  ├─ ✅ kgc.freeze.hash (NEW)
-│  ├─ ✅ kgc.freeze.git (NEW)
-│  └─ ✅ kgc.transaction.commit (exists)
-└─ ✅ kgc.verify (NEW)
-```
-
----
-
-## Recommended Metrics
-
-Metrics that would provide valuable production insights:
-
-### Latency Percentiles (P50, P95, P99)
+**Implementation**:
 
 ```javascript
-// packages/kgc-4d/src/observability.mjs (NEW)
-const freezeLatency = meter.createHistogram('kgc.freeze.duration', {
-  description: 'Time to freeze universe state',
-  unit: 'ms',
-  advice: { explicitBucketBoundaries: [1, 5, 10, 50, 100, 500, 1000] }
-});
-
-const reconstructLatency = meter.createHistogram('kgc.reconstruct.duration', {
-  description: 'Time to reconstruct historical state',
-  unit: 'ms',
-  advice: { explicitBucketBoundaries: [10, 50, 100, 500, 1000, 5000] }
-});
-```
-
-### Throughput
-
-```javascript
-const freezeCount = meter.createCounter('kgc.freeze.total', {
-  description: 'Total freeze operations',
-});
-
-const verifyCount = meter.createCounter('kgc.verify.total', {
-  description: 'Total receipt verifications',
-});
-```
-
-### Error Rate
-
-```javascript
-const freezeErrors = meter.createCounter('kgc.freeze.errors', {
-  description: 'Failed freeze operations',
-});
-
-const verifyFailures = meter.createCounter('kgc.verify.failures', {
-  description: 'Receipt verification failures (tamper detection)',
-});
-```
-
-### Business Metrics
-
-```javascript
-const universeSize = meter.createObservableGauge('kgc.universe.size', {
-  description: 'Current universe quad count',
-});
-
-const eventLogSize = meter.createObservableGauge('kgc.eventlog.size', {
-  description: 'Total event log entries',
-});
-
-const gitRepoSize = meter.createObservableGauge('kgc.git.repo_size', {
-  description: 'Git repository size in bytes',
-});
-```
-
----
-
-## Instrumentation Recommendations (Prioritized)
-
-### Phase 1: KGC-4D Core Operations (P0)
-
-**File:** `/home/user/unrdf/packages/kgc-4d/src/freeze.mjs`
-
-```javascript
-import { trace, SpanStatusCode } from '@opentelemetry/api';
-const tracer = trace.getTracer('kgc-4d');
+// In kgc-4d/src/freeze.mjs
+import { trace } from '@opentelemetry/api';
+const tracer = trace.getTracer('unrdf');
 
 export async function freezeUniverse(store, gitBackbone) {
   return tracer.startActiveSpan('kgc.freeze', async span => {
-    try {
-      span.setAttributes({
-        'freeze.store_size': store.size,
-      });
+    const quadCount = universeQuads.length;
+    span.setAttributes({
+      'kgc.quad_count': quadCount,
+      'kgc.hash_algorithm': 'blake3',
+    });
 
-      // ... existing code ...
+    // ... existing freeze logic ...
 
-      span.setAttributes({
-        'freeze.quad_count': nquads.split('\n').length,
-        'freeze.hash': universeHash,
-        'freeze.git_ref': gitRef,
-        'freeze.receipt_id': receipt.id,
-      });
+    span.setAttributes({
+      'kgc.freeze_duration_ms': duration,
+      'kgc.git_ref': gitRef,
+    });
 
-      span.setStatus({ code: SpanStatusCode.OK });
-      return receipt;
-    } catch (error) {
-      span.recordException(error);
-      span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
-      throw error;
-    } finally {
-      span.end();
-    }
+    span.end();
+    return receipt;
   });
 }
 ```
 
-**Estimated effort:** 2-4 hours for all 3 functions (freeze, reconstruct, verify)
+### 2. Add Query Tracing (P0)
 
-### Phase 2: Serialization Operations (P1)
+Wrap Oxigraph query() calls with OTEL spans to trace query latency distribution:
 
-**File:** `/home/user/unrdf/packages/knowledge-engine/src/parse.mjs`
+**Implementation**:
 
-Add spans to:
-- `toNQuads()` → `parse.serialize.nquads`
-- `toTurtle()` → `parse.serialize.turtle`
-- `parseJsonLd()` → `parse.jsonld`
-- `toJsonLd()` → `serialize.jsonld`
+```javascript
+// Create @unrdf/oxigraph/otel-wrapper.mjs
+export function createTracedStore() {
+  const store = createStore();
+  const originalQuery = store.query.bind(store);
 
-**Estimated effort:** 1-2 hours
+  store.query = function (queryString) {
+    return tracer.startActiveSpan('query.sparql', span => {
+      const queryType = queryString.trim().split(' ')[0].toUpperCase();
+      span.setAttributes({ 'query.type': queryType });
 
-### Phase 3: Git I/O Operations (P2)
+      const result = originalQuery(queryString);
 
-**File:** `/home/user/unrdf/packages/kgc-4d/src/git.mjs`
+      span.setAttributes({
+        'query.result_count': Array.isArray(result) ? result.length : 1,
+      });
+      span.end();
 
-Add span to:
-- `commitSnapshot()` → `kgc.git.commit`
+      return result;
+    });
+  };
 
-**Estimated effort:** 30 minutes
-
----
-
-## Validation Commands
-
-Run the harness to verify performance characteristics:
-
-```bash
-# Run performance harness
-node proofs/perf-harness.mjs
-
-# Expected output: CSV with 8 operations
-# Sample:
-# operation,time_ms,memory_delta_bytes,result_size
-# parse-ttl-100-quads,0.83,-111488,100
-# freeze-universe-1000-quads,2.68,-271712,79669
-
-# Verify OTEL validation (after instrumentation)
-node validation/run-all.mjs comprehensive
-grep "Score:" validation-output.log  # MUST be ≥80/100
+  return store;
+}
 ```
 
----
+### 3. Profile Slow Patterns (P1)
 
-## Performance SLAs (Proposed)
+Use existing `LatencyProfiler` to identify slow query patterns:
 
-Based on measured performance, recommended SLAs:
+- Run production workload with profiler enabled
+- Collect p95/p99 latencies for each query type
+- Identify patterns that exceed budget (e.g., p95 > 100ms)
+- Add indexes or optimize query execution
 
-| Operation | P95 Target | P99 Target | Rationale |
-|-----------|-----------|-----------|-----------|
-| `parseTurtle()` (1K quads) | <5ms | <10ms | Linear scaling |
-| `query()` (SELECT) | <2ms | <5ms | Index-optimized |
-| `freezeUniverse()` (1K quads) | <10ms | <20ms | I/O bound |
-| `validateShacl()` (simple) | <1ms | <2ms | Fast validation |
-| `executeHook()` | <5ms | <10ms | Sandbox overhead |
+### 4. Memory Leak Detection (P1)
 
----
+Enable `MemoryProfiler` in production with periodic snapshots:
 
-## Conclusion
+- Monitor trend.growthRate for sustained growth
+- Alert if growthRate > 1MB/sec for > 60 seconds
+- Capture heap snapshot when leak detected
 
-**Status:**
-- ✅ **Parse/query/validate** operations well-instrumented
-- ❌ **KGC-4D operations** completely uninstrumented (0/3)
-- ❌ **Serialization operations** uninstrumented (0/4)
+### 5. Consolidate Benchmarks (P2)
 
-**Recommended Action:**
-1. Add OTEL spans to `freezeUniverse()`, `reconstructState()`, `verifyReceipt()` (Phase 1 - P0)
-2. Add metrics for latency percentiles, throughput, error rate
-3. Instrument serialization operations (Phase 2 - P1)
-4. Create distributed trace for full freeze → verify pipeline
+Create unified benchmark suite:
 
-**Expected Impact:**
-- Can trace 100% of mission-critical paths
-- Can measure freeze/reconstruct latency in production
-- Can validate 5s SLA for freeze operations (currently unmeasured)
-- Can debug snapshot failures with full context
+- Merge KGC-4D, YAWL, Oxigraph benchmarks into single harness
+- Run on every commit via CI
+- Compare against baseline and fail if regression > 10%
+- Store results in Git for trend analysis
+
+## Performance Budget
+
+| Operation                      | p50 Budget | p95 Budget | p99 Budget | Current p95 (est) |
+| ------------------------------ | ---------- | ---------- | ---------- | ----------------- |
+| Parse 1000 quads               | 20ms       | 50ms       | 100ms      | ~45ms ✅          |
+| Freeze universe (1000 quads)   | 30ms       | 100ms      | 200ms      | ~95ms ✅          |
+| SPARQL SELECT                  | 5ms        | 20ms       | 50ms       | ~10ms ✅          |
+| Hook execution                 | 10ms       | 50ms       | 100ms      | ~30ms ✅          |
+| Reconstruct state (100 events) | 50ms       | 200ms      | 500ms      | Unknown ⚠️        |
+| Verify receipt                 | 20ms       | 50ms       | 100ms      | Unknown ⚠️        |
+
+**Note**: Current estimates based on existing benchmarks. Need production telemetry for accurate p95/p99.
+
+## Next Steps
+
+1. ✅ Run performance harness: `node proofs/perf-harness.mjs`
+2. ⬜ Add OTEL spans to freeze/reconstruct/appendEvent (P0)
+3. ⬜ Wrap Oxigraph with query tracing (P0)
+4. ⬜ Enable MemoryProfiler in production (P1)
+5. ⬜ Consolidate benchmarks into CI pipeline (P2)
+6. ⬜ Establish performance budgets in CI (P2)

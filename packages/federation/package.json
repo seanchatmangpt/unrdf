@@ -1,7 +1,7 @@
 {
   "name": "@unrdf/federation",
-  "version": "5.0.1",
-  "description": "UNRDF Federation - Peer Discovery and Distributed Query Execution",
+  "version": "6.0.0",
+  "description": "UNRDF Federation - Distributed RDF Query with RAFT Consensus and Multi-Master Replication",
   "type": "module",
   "main": "src/index.mjs",
   "exports": {

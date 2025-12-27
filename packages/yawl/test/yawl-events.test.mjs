@@ -158,7 +158,7 @@ describe('YAWL Events', () => {
     it('should store event in KGC-4D store', async () => {
       const result = await createCase(store, 'test-workflow');
 
-      expect(store.getEventCount()).toBe(1n);
+      expect(store.getEventCount()).toBe(1);
       expect(result.eventReceipt.event_count).toBe(1);
     });
   });

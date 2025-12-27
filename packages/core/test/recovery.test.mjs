@@ -67,7 +67,7 @@ describe('Error Recovery Patterns', () => {
 
       await retry(operation, {
         maxAttempts: 4,
-        initialDelay: 50,
+        initialDelay: 5,
         backoffMultiplier: 2,
         onRetry: async (error, attempt, delay) => {
           delays.push(delay);
@@ -77,10 +77,10 @@ describe('Error Recovery Patterns', () => {
       const elapsed = Date.now() - startTime;
 
       expect(delays).toHaveLength(3);
-      expect(delays[0]).toBe(50);
-      expect(delays[1]).toBe(100);
-      expect(delays[2]).toBe(200);
-      expect(elapsed).toBeGreaterThanOrEqual(350); // 50 + 100 + 200
+      expect(delays[0]).toBe(5);
+      expect(delays[1]).toBe(10);
+      expect(delays[2]).toBe(20);
+      expect(elapsed).toBeGreaterThanOrEqual(35); // 5 + 10 + 20
     });
 
     it('should respect max delay', async () => {
@@ -97,8 +97,8 @@ describe('Error Recovery Patterns', () => {
 
       await retry(operation, {
         maxAttempts: 5,
-        initialDelay: 100,
-        maxDelay: 150,
+        initialDelay: 10,
+        maxDelay: 15,
         backoffMultiplier: 2,
         onRetry: async (error, attempt, delay) => {
           delays.push(delay);
@@ -106,10 +106,10 @@ describe('Error Recovery Patterns', () => {
       });
 
       expect(delays).toHaveLength(4);
-      expect(delays[0]).toBe(100);
-      expect(delays[1]).toBe(150); // Capped
-      expect(delays[2]).toBe(150); // Capped
-      expect(delays[3]).toBe(150); // Capped
+      expect(delays[0]).toBe(10);
+      expect(delays[1]).toBe(15); // Capped
+      expect(delays[2]).toBe(15); // Capped
+      expect(delays[3]).toBe(15); // Capped
     });
 
     it('should use custom shouldRetry predicate', async () => {

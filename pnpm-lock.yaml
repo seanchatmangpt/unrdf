@@ -32,6 +32,9 @@ importers:
       '@unrdf/oxigraph':
         specifier: workspace:*
         version: link:packages/oxigraph
+      '@unrdf/v6-compat':
+        specifier: workspace:*
+        version: link:packages/v6-compat
       clownface:
         specifier: ^2.0.3
         version: 2.0.3
@@ -50,9 +53,6 @@ importers:
       lru-cache:
         specifier: ^11.2.4
         version: 11.2.4
-      n3:
-        specifier: ^1.26.0
-        version: 1.26.0
       oxigraph:
         specifier: ^0.5.2
         version: 0.5.3
@@ -1080,6 +1080,43 @@ importers:
       vitest:
         specifier: ^4.0.15
         version: 4.0.16(@opentelemetry/api@1.9.0)(@types/node@25.0.3)(@vitest/ui@4.0.16)(happy-dom@20.0.11)(jiti@2.6.1)(jsdom@27.4.0)(lightningcss@1.30.2)(msw@2.12.6(@types/node@25.0.3)(typescript@5.9.3))(terser@5.44.1)(yaml@2.8.2)
+
+  packages/kgc-probe:
+    dependencies:
+      '@unrdf/hooks':
+        specifier: workspace:*
+        version: link:../hooks
+      '@unrdf/kgc-4d':
+        specifier: workspace:*
+        version: link:../kgc-4d
+      '@unrdf/kgc-substrate':
+        specifier: workspace:*
+        version: link:../kgc-substrate
+      '@unrdf/oxigraph':
+        specifier: workspace:*
+        version: link:../oxigraph
+      '@unrdf/v6-core':
+        specifier: workspace:*
+        version: link:../v6-core
+      '@unrdf/yawl':
+        specifier: workspace:*
+        version: link:../yawl
+      hash-wasm:
+        specifier: ^4.12.0
+        version: 4.12.0
+      zod:
+        specifier: ^4.1.13
+        version: 4.2.1
+    devDependencies:
+      '@types/node':
+        specifier: ^24.10.1
+        version: 24.10.4
+      '@vitest/coverage-v8':
+        specifier: ^4.0.15
+        version: 4.0.16(@vitest/browser@4.0.16(msw@2.12.6(@types/node@24.10.4)(typescript@5.9.3))(vite@7.3.0(@types/node@24.10.4)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(yaml@2.8.2))(vitest@4.0.16))(vitest@4.0.16)
+      vitest:
+        specifier: ^4.0.15
+        version: 4.0.16(@opentelemetry/api@1.9.0)(@types/node@24.10.4)(@vitest/ui@4.0.16)(happy-dom@20.0.11)(jiti@2.6.1)(jsdom@27.4.0)(lightningcss@1.30.2)(msw@2.12.6(@types/node@24.10.4)(typescript@5.9.3))(terser@5.44.1)(yaml@2.8.2)
 
   packages/kgc-runtime:
     dependencies:

@@ -1,0 +1,277 @@
+[
+  {
+    "probeName": "persistence",
+    "timestamp": 1766822999975,
+    "category": "storage",
+    "observation": "Write operation successful",
+    "value": true,
+    "guardDecision": {
+      "path": "/home/user/unrdf/packages/kgc-probe/probe-output/persistence-test.txt",
+      "allowed": true,
+      "reason": "Within config.out directory",
+      "policy": "output-only",
+      "timestamp": 1766822999968
+    },
+    "metadata": {
+      "writeTime": 7,
+      "fileSize": 33
+    }
+  },
+  {
+    "probeName": "persistence",
+    "timestamp": 1766822999978,
+    "category": "storage",
+    "observation": "Read operation and content verification",
+    "value": true,
+    "guardDecision": {
+      "path": "/home/user/unrdf/packages/kgc-probe/probe-output/persistence-test.txt",
+      "allowed": true,
+      "reason": "Within config.out directory",
+      "policy": "output-only",
+      "timestamp": 1766822999968
+    },
+    "metadata": {
+      "readTime": 3,
+      "contentMatches": true
+    }
+  },
+  {
+    "probeName": "persistence",
+    "timestamp": 1766822999978,
+    "category": "filesystem",
+    "observation": "File metadata accessible",
+    "value": true,
+    "guardDecision": {
+      "path": "/home/user/unrdf/packages/kgc-probe/probe-output/persistence-test.txt",
+      "allowed": true,
+      "reason": "Within config.out directory",
+      "policy": "output-only",
+      "timestamp": 1766822999968
+    },
+    "metadata": {
+      "size": 33,
+      "mode": "100644",
+      "created": 0,
+      "modified": 1766822999972
+    }
+  },
+  {
+    "probeName": "persistence",
+    "timestamp": 1766822999979,
+    "category": "filesystem",
+    "observation": "File deletion successful",
+    "value": true,
+    "guardDecision": {
+      "path": "/home/user/unrdf/packages/kgc-probe/probe-output/persistence-test.txt",
+      "allowed": true,
+      "reason": "Within config.out directory",
+      "policy": "output-only",
+      "timestamp": 1766822999968
+    },
+    "metadata": {}
+  },
+  {
+    "probeName": "persistence",
+    "timestamp": 1766822999972,
+    "category": "storage",
+    "observation": "Persistence marker from previous run",
+    "value": false,
+    "guardDecision": {
+      "path": "/home/user/unrdf/packages/kgc-probe/probe-output/.persistence-marker",
+      "allowed": true,
+      "reason": "Within config.out directory",
+      "policy": "output-only",
+      "timestamp": 1766822999969
+    },
+    "metadata": {
+      "previousTimestamp": null,
+      "markerExists": false
+    }
+  },
+  {
+    "probeName": "persistence",
+    "timestamp": 1766822999976,
+    "category": "storage",
+    "observation": "Persistence marker written for next run",
+    "value": true,
+    "guardDecision": {
+      "path": "/home/user/unrdf/packages/kgc-probe/probe-output/.persistence-marker",
+      "allowed": true,
+      "reason": "Within config.out directory",
+      "policy": "output-only",
+      "timestamp": 1766822999969
+    },
+    "metadata": {
+      "currentTimestamp": 1766822999972
+    }
+  },
+  {
+    "probeName": "persistence",
+    "timestamp": 1766823000164,
+    "category": "quota",
+    "observation": "Quota test completed without hitting limit",
+    "value": 104857600,
+    "guardDecision": {
+      "path": "/home/user/unrdf/packages/kgc-probe/probe-output/quota-test.bin",
+      "allowed": true,
+      "reason": "Within config.out directory",
+      "policy": "output-only",
+      "timestamp": 1766822999969
+    },
+    "metadata": {
+      "bytesWritten": 104857600,
+      "quotaReached": false,
+      "quotaError": null,
+      "duration": 194,
+      "throughputMBps": 527.8350515463917
+    }
+  },
+  {
+    "probeName": "persistence",
+    "timestamp": 1766822999974,
+    "category": "permissions",
+    "observation": "Directory creation successful",
+    "value": true,
+    "guardDecision": {
+      "path": "/home/user/unrdf/packages/kgc-probe/probe-output/perm-test-dir",
+      "allowed": true,
+      "reason": "Within config.out directory",
+      "policy": "output-only",
+      "timestamp": 1766822999970
+    },
+    "metadata": {}
+  },
+  {
+    "probeName": "persistence",
+    "timestamp": 1766822999975,
+    "category": "permissions",
+    "observation": "Directory is accessible",
+    "value": true,
+    "guardDecision": {
+      "path": "/home/user/unrdf/packages/kgc-probe/probe-output/perm-test-dir",
+      "allowed": true,
+      "reason": "Within config.out directory",
+      "policy": "output-only",
+      "timestamp": 1766822999970
+    },
+    "metadata": {
+      "mode": "40755"
+    }
+  },
+  {
+    "probeName": "persistence",
+    "timestamp": 1766822999976,
+    "category": "permissions",
+    "observation": "Directory rename successful",
+    "value": true,
+    "guardDecision": {
+      "path": "/home/user/unrdf/packages/kgc-probe/probe-output/perm-test-dir-renamed",
+      "allowed": true,
+      "reason": "Within config.out directory",
+      "policy": "output-only",
+      "timestamp": 1766822999970
+    },
+    "metadata": {}
+  },
+  {
+    "probeName": "persistence",
+    "timestamp": 1766822999978,
+    "category": "permissions",
+    "observation": "Directory deletion successful",
+    "value": true,
+    "guardDecision": {
+      "path": "/home/user/unrdf/packages/kgc-probe/probe-output/perm-test-dir-renamed",
+      "allowed": true,
+      "reason": "Within config.out directory",
+      "policy": "output-only",
+      "timestamp": 1766822999970
+    },
+    "metadata": {}
+  },
+  {
+    "probeName": "persistence",
+    "timestamp": 1766822999977,
+    "category": "filesystem",
+    "observation": "Atomic rename successful",
+    "value": true,
+    "guardDecision": {
+      "path": "/home/user/unrdf/packages/kgc-probe/probe-output/atomic-target.txt",
+      "allowed": true,
+      "reason": "Within config.out directory",
+      "policy": "output-only",
+      "timestamp": 1766822999970
+    },
+    "metadata": {
+      "renameTime": 1
+    }
+  },
+  {
+    "probeName": "persistence",
+    "timestamp": 1766822999980,
+    "category": "filesystem",
+    "observation": "Hard link creation successful",
+    "value": true,
+    "guardDecision": {
+      "path": "/home/user/unrdf/packages/kgc-probe/probe-output/atomic-link.txt",
+      "allowed": true,
+      "reason": "Within config.out directory",
+      "policy": "output-only",
+      "timestamp": 1766822999970
+    },
+    "metadata": {
+      "nlink": 2
+    }
+  },
+  {
+    "probeName": "persistence",
+    "timestamp": 1766822999971,
+    "category": "filesystem",
+    "observation": "System temp directory location",
+    "value": "/tmp",
+    "guardDecision": {
+      "path": "/tmp",
+      "allowed": false,
+      "reason": "System temp directory - read-only observation",
+      "policy": "observe-only",
+      "timestamp": 1766822999971
+    },
+    "metadata": {}
+  },
+  {
+    "probeName": "persistence",
+    "timestamp": 1766822999974,
+    "category": "filesystem",
+    "observation": "System temp directory accessible for reading",
+    "value": true,
+    "guardDecision": {
+      "path": "/tmp",
+      "allowed": false,
+      "reason": "System temp directory - read-only observation",
+      "policy": "observe-only",
+      "timestamp": 1766822999971
+    },
+    "metadata": {
+      "mode": "41777"
+    }
+  },
+  {
+    "probeName": "persistence",
+    "timestamp": 1766822999977,
+    "category": "performance",
+    "observation": "Storage type detection failed",
+    "value": null,
+    "guardDecision": {
+      "path": "/home/user/unrdf/packages/kgc-probe/probe-output/storage-type-test.bin",
+      "allowed": true,
+      "reason": "Within config.out directory",
+      "policy": "output-only",
+      "timestamp": 1766822999972
+    },
+    "metadata": {
+      "error": {
+        "message": "fs.fsync is not a function",
+        "stack": "TypeError: fs.fsync is not a function\n    at probeStorageType (file:///home/user/unrdf/packages/kgc-probe/src/probes/persistence.mjs:670:16)\n    at async Promise.all (index 6)\n    at async probePersistence (file:///home/user/unrdf/packages/kgc-probe/src/probes/persistence.mjs:747:21)\n    at async main (file:///home/user/unrdf/packages/kgc-probe/examples/persistence-example.mjs:28:26)"
+      }
+    }
+  }
+]

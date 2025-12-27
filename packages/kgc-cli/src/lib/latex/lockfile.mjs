@@ -1,95 +1,101 @@
 /**
- * Lockfile Manager (Agent 5)
- * Tracks resolved dependencies and compilation state
+ * @fileoverview Lockfile Manager - Re-exports from cache modules.
+ *
+ * This module provides backward-compatible exports for the enhanced
+ * lockfile system implemented in cache/.
+ *
+ * For new code, prefer importing directly from cache/ modules.
  *
  * @module lib/latex/lockfile
  */
 
-import { promises as fs } from 'node:fs';
-import { join } from 'node:path';
+// Import for local use and re-export
+import {
+  createLockfile,
+  loadLockfile,
+  saveLockfile,
+  addEntry,
+  verifyEntry,
+  verifyAllEntries,
+  getEntry,
+  removeEntry,
+  listEntries,
+  mergeLockfiles,
+  pruneLockfile,
+  createLockEntry,
+  LockEntrySchema,
+  LockfileSchema
+} from './cache/lockfile.mjs';
+
+// Re-export everything
+export {
+  createLockfile,
+  loadLockfile,
+  saveLockfile,
+  addEntry,
+  verifyEntry,
+  verifyAllEntries,
+  getEntry,
+  removeEntry,
+  listEntries,
+  mergeLockfiles,
+  pruneLockfile,
+  createLockEntry,
+  LockEntrySchema,
+  LockfileSchema
+};
+
+export {
+  getCached,
+  setCached,
+  listCached,
+  getCacheStats,
+  clearCache,
+  verifyCached
+} from './cache/store.mjs';
+
+export {
+  exportBundle,
+  importBundle,
+  verifyBundle,
+  listBundle
+} from './cache/bundle.mjs';
 
 /**
- * Lockfile structure
- * @typedef {object} Lockfile
- * @property {string} version - Lockfile format version
- * @property {object} dependencies - Resolved dependencies (name -> { version, hash, path })
- * @property {object} [lastCompilation] - Last successful compilation metadata
+ * Legacy compatibility functions for existing code.
  */
 
-const LOCKFILE_NAME = '.latex-lock.json';
-
 /**
- * Load lockfile from project directory
- * @param {string} projectDir - Project directory path
- * @returns {Promise<Lockfile | null>} Lockfile object or null if not found
- */
-export async function loadLockfile(projectDir) {
-  const lockfilePath = join(projectDir, LOCKFILE_NAME);
-
-  try {
-    const content = await fs.readFile(lockfilePath, 'utf-8');
-    return JSON.parse(content);
-  } catch (error) {
-    if (error.code === 'ENOENT') {
-      return null; // Lockfile doesn't exist
-    }
-    throw error;
-  }
-}
-
-/**
- * Create new empty lockfile
- * @returns {Lockfile} Empty lockfile
- */
-export function createLockfile() {
-  return {
-    version: '1.0.0',
-    dependencies: {},
-    lastCompilation: null,
-  };
-}
-
-/**
- * Update lockfile with newly resolved inputs
- * @param {Lockfile} lockfile - Lockfile object
+ * Update lockfile with newly resolved inputs (legacy).
+ *
+ * @deprecated Use addEntry() directly for each resolved file
+ * @param {Object} lockfile - Lockfile object
  * @param {Map<string, Uint8Array>} resolvedInputs - Resolved files
  */
 export function updateLockfileWithResolved(lockfile, resolvedInputs) {
-  // TODO (Agent 5): Implement detailed dependency tracking
-  // For now, just count resolved inputs
   for (const [path, content] of resolvedInputs) {
-    const name = path.split('/').pop(); // Extract filename
-    lockfile.dependencies[name] = {
-      path,
-      size: content.length,
-      timestamp: new Date().toISOString(),
-    };
+    const name = path.split('/').pop();
+    const entry = createLockEntry({
+      name,
+      content,
+      cachedPath: path
+    });
+    addEntry(lockfile, entry);
   }
 }
 
 /**
- * Update lockfile with successful compilation info
- * @param {Lockfile} lockfile - Lockfile object
- * @param {object} compileInfo - Compilation metadata
+ * Update lockfile with successful compilation info (legacy).
+ *
+ * @deprecated Store compilation metadata separately
+ * @param {Object} lockfile - Lockfile object
+ * @param {Object} compileInfo - Compilation metadata
  */
 export function updateLockfileWithSuccess(lockfile, compileInfo) {
+  // Store as custom field for backward compatibility
   lockfile.lastCompilation = {
     ...compileInfo,
     success: true,
+    timestamp: Date.now()
   };
-}
-
-/**
- * Save lockfile to project directory
- * @param {Lockfile} lockfile - Lockfile object
- * @param {string} projectDir - Project directory path
- * @returns {Promise<void>}
- */
-export async function saveLockfile(lockfile, projectDir) {
-  const lockfilePath = join(projectDir, LOCKFILE_NAME);
-
-  // Deterministic JSON serialization (sorted keys)
-  const json = JSON.stringify(lockfile, Object.keys(lockfile).sort(), 2);
-
-  await fs.writeFile(lockfilePath, json, 'utf-8');
 }

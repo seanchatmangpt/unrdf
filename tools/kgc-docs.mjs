@@ -43,13 +43,67 @@ import { join, dirname, basename, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { glob } from 'glob';
 import { z } from 'zod';
-import { blake3 } from 'hash-wasm';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const WORKSPACE_ROOT = resolve(__dirname, '..');
+
+// =============================================================================
+// Simple glob implementation using native fs
+// =============================================================================
+
+/**
+ * Simple glob pattern matcher
+ * @param {string} pattern - Glob pattern (e.g., "*.json", "**\/*.mjs")
+ * @param {Object} options - Options {cwd, absolute}
+ * @returns {Promise<string[]>} Matching file paths
+ */
+async function glob(pattern, options = {}) {
+  const { cwd = process.cwd(), absolute = false } = options;
+  const results = [];
+
+  async function walk(dir) {
+    const entries = await readdir(dir, { withFileTypes: true });
+
+    for (const entry of entries) {
+      const fullPath = join(dir, entry.name);
+
+      if (entry.isDirectory()) {
+        // Recurse if pattern includes **
+        if (pattern.includes('**') || pattern.includes('/')) {
+          await walk(fullPath);
+        }
+      } else if (entry.isFile()) {
+        // Match pattern
+        const relativePath = relative(cwd, fullPath);
+        if (matchPattern(relativePath, pattern) || matchPattern(entry.name, pattern)) {
+          results.push(absolute ? fullPath : relativePath);
+        }
+      }
+    }
+  }
+
+  /**
+   * Simple pattern matching (supports * wildcard)
+   * @param {string} str - String to test
+   * @param {string} pattern - Pattern with * wildcards
+   * @returns {boolean} Match result
+   */
+  function matchPattern(str, pattern) {
+    // Convert glob pattern to regex
+    const regexPattern = pattern
+      .replace(/\*\*/g, '.*')
+      .replace(/\*/g, '[^/]*')
+      .replace(/\./g, '\\.');
+
+    const regex = new RegExp(`^${regexPattern}$`);
+    return regex.test(str);
+  }
+
+  await walk(cwd);
+  return results;
+}
 
 // =============================================================================
 // Zod Schemas for CLI Validation
@@ -103,6 +157,30 @@ const ManifestCommandSchema = z.object({
   flags: GlobalFlagsSchema,
 });
 
+const ValidateCommandSchema = z.object({
+  command: z.literal('validate'),
+  packagesDir: z.string(),
+  flags: GlobalFlagsSchema,
+});
+
+const GenerateSchemaCommandSchema = z.object({
+  command: z.literal('generate-schema'),
+  packagePath: z.string(),
+  flags: GlobalFlagsSchema,
+});
+
+const CompileLatexCommandSchema = z.object({
+  command: z.literal('compile-latex'),
+  latexPath: z.string(),
+  flags: GlobalFlagsSchema,
+});
+
+const ThesisCommandSchema = z.object({
+  command: z.literal('thesis'),
+  thesisDir: z.string(),
+  flags: GlobalFlagsSchema,
+});
+
 const CommandSchema = z.discriminatedUnion('command', [
   BuildCommandSchema,
   ScanCommandSchema,
@@ -111,6 +189,10 @@ const CommandSchema = z.discriminatedUnion('command', [
   RenderCommandSchema,
   VerifyCommandSchema,
   ManifestCommandSchema,
+  ValidateCommandSchema,
+  GenerateSchemaCommandSchema,
+  CompileLatexCommandSchema,
+  ThesisCommandSchema,
 ]);
 
 // =============================================================================
@@ -257,11 +339,49 @@ function parseArgs(args) {
       break;
     }
 
+    case 'validate': {
+      const packagesDir = positional[0] || 'packages/';
+      cmd = { command: 'validate', packagesDir, flags };
+      break;
+    }
+
+    case 'generate-schema': {
+      if (!positional[0]) {
+        throw new KGCError(
+          'KGC_INVALID_ARGS',
+          'Generate-schema command requires package path',
+          { command: 'generate-schema' },
+          'Usage: kgc-docs generate-schema <package-path>'
+        );
+      }
+      cmd = { command: 'generate-schema', packagePath: positional[0], flags };
+      break;
+    }
+
+    case 'compile-latex': {
+      if (!positional[0]) {
+        throw new KGCError(
+          'KGC_INVALID_ARGS',
+          'Compile-latex command requires LaTeX file path',
+          { command: 'compile-latex' },
+          'Usage: kgc-docs compile-latex <file.tex>'
+        );
+      }
+      cmd = { command: 'compile-latex', latexPath: positional[0], flags };
+      break;
+    }
+
+    case 'thesis': {
+      const thesisDir = positional[0] || 'thesis/';
+      cmd = { command: 'thesis', thesisDir, flags };
+      break;
+    }
+
     default:
       throw new KGCError(
         'KGC_UNKNOWN_COMMAND',
         `Unknown command: ${command}`,
-        { command, availableCommands: ['build', 'scan', 'refresh', 'prove', 'render', 'verify', 'manifest'] },
+        { command, availableCommands: ['build', 'scan', 'refresh', 'prove', 'render', 'verify', 'manifest', 'validate', 'generate-schema', 'compile-latex', 'thesis'] },
         'Run "kgc-docs help" to see available commands'
       );
   }
@@ -297,6 +417,10 @@ COMMANDS:
   render <kgcmd>           Render .kgcmd to .md with receipt validation
   verify <dir>             Dry-run to check determinism violations
   manifest <dir>           Aggregate receipts into manifest with Merkle proofs
+  validate [dir]           Check docs completeness (all public APIs documented)
+  generate-schema <pkg>    Auto-generate reference from JSDoc
+  compile-latex <file>     Deterministic LaTeX→PDF (cache breaking on content change)
+  thesis [dir]             Build thesis document with receipt-driven provenance
 
 GLOBAL FLAGS:
   --verbose, -v            Enable verbose logging
@@ -902,16 +1026,408 @@ async function manifestCommand(cmd) {
 }
 
 // =============================================================================
+// Validate Command
+// =============================================================================
+
+/**
+ * Validate API documentation completeness
+ *
+ * Scans all packages and checks:
+ * 1. All exported functions have JSDoc
+ * 2. All parameters are documented
+ * 3. Return types are specified
+ * 4. Examples are provided (for public APIs)
+ *
+ * @param {Object} cmd - Parsed command
+ * @returns {Promise<Object>} Validation result
+ */
+async function validateCommand(cmd) {
+  const { packagesDir, flags } = cmd;
+  const absDir = resolve(WORKSPACE_ROOT, packagesDir);
+
+  logVerbose(flags, `Validating API documentation in: ${packagesDir}`);
+
+  const packagePaths = await glob('*/package.json', { cwd: absDir, absolute: true });
+  const results = [];
+  let totalExports = 0;
+  let undocumented = 0;
+  let missingExamples = 0;
+
+  for (const pkgPath of packagePaths) {
+    const pkgDir = dirname(pkgPath);
+    const pkg = JSON.parse(await readFile(pkgPath, 'utf-8'));
+
+    // Find all .mjs files in src/
+    const srcDir = join(pkgDir, 'src');
+    try {
+      const srcFiles = await glob('**/*.mjs', { cwd: srcDir, absolute: true });
+
+      for (const file of srcFiles) {
+        const content = await readFile(file, 'utf-8');
+
+        // Simple regex to find exported functions
+        const exportMatches = content.matchAll(/export\s+(async\s+)?function\s+(\w+)/g);
+
+        for (const match of exportMatches) {
+          const funcName = match[2];
+          totalExports++;
+
+          // Check for JSDoc before function
+          const funcIndex = content.indexOf(match[0]);
+          const beforeFunc = content.slice(Math.max(0, funcIndex - 500), funcIndex);
+
+          const hasJSDoc = beforeFunc.includes('/**') && beforeFunc.includes('*/');
+          const hasExample = beforeFunc.includes('@example');
+
+          if (!hasJSDoc) {
+            undocumented++;
+            results.push({
+              package: pkg.name,
+              file: relative(WORKSPACE_ROOT, file),
+              function: funcName,
+              issue: 'missing_jsdoc',
+            });
+          } else if (!hasExample) {
+            missingExamples++;
+            results.push({
+              package: pkg.name,
+              file: relative(WORKSPACE_ROOT, file),
+              function: funcName,
+              issue: 'missing_example',
+            });
+          }
+        }
+      }
+    } catch (err) {
+      // Skip packages without src/
+      logVerbose(flags, `Skipping ${pkg.name}: ${err.message}`);
+    }
+  }
+
+  const coveragePercent = totalExports > 0
+    ? Math.round(((totalExports - undocumented) / totalExports) * 100)
+    : 100;
+
+  const success = undocumented === 0;
+
+  return formatOutput(flags, {
+    success,
+    totalExports,
+    documented: totalExports - undocumented,
+    undocumented,
+    missingExamples,
+    coveragePercent,
+    issues: flags.verbose ? results : results.slice(0, 10),
+  });
+}
+
+// =============================================================================
+// Generate Schema Command
+// =============================================================================
+
+/**
+ * Generate API reference schema from JSDoc
+ *
+ * Parses JSDoc comments and generates structured API reference documentation
+ * in JSON Schema format.
+ *
+ * @param {Object} cmd - Parsed command
+ * @returns {Promise<Object>} Schema generation result
+ */
+async function generateSchemaCommand(cmd) {
+  const { packagePath, flags } = cmd;
+  const absPath = resolve(WORKSPACE_ROOT, packagePath);
+
+  logVerbose(flags, `Generating schema for: ${packagePath}`);
+
+  // Read package.json
+  const pkgJsonPath = join(absPath, 'package.json');
+  const pkg = JSON.parse(await readFile(pkgJsonPath, 'utf-8'));
+
+  const schema = {
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    $id: `https://unrdf.org/schemas/${pkg.name}.json`,
+    title: pkg.description || pkg.name,
+    type: 'object',
+    properties: {},
+    definitions: {},
+  };
+
+  // Parse all source files
+  const srcDir = join(absPath, 'src');
+  const srcFiles = await glob('**/*.mjs', { cwd: srcDir, absolute: true });
+
+  let functionsExtracted = 0;
+
+  for (const file of srcFiles) {
+    const content = await readFile(file, 'utf-8');
+
+    // Extract JSDoc + function definitions
+    const jsdocRegex = /\/\*\*([\s\S]*?)\*\/\s*export\s+(async\s+)?function\s+(\w+)\s*\(([^)]*)\)/g;
+    let match;
+
+    while ((match = jsdocRegex.exec(content)) !== null) {
+      const [, jsdoc, isAsync, funcName, params] = match;
+
+      // Parse JSDoc
+      const descMatch = jsdoc.match(/@description\s+([\s\S]*?)(?=@|$)/);
+      const paramMatches = [...jsdoc.matchAll(/@param\s+\{([^}]+)\}\s+(\w+)\s+-?\s*(.*?)(?=@|$)/g)];
+      const returnMatch = jsdoc.match(/@returns?\s+\{([^}]+)\}\s+(.*?)(?=@|$)/);
+
+      schema.properties[funcName] = {
+        type: 'function',
+        description: descMatch ? descMatch[1].trim() : '',
+        async: !!isAsync,
+        parameters: paramMatches.map(m => ({
+          name: m[2],
+          type: m[1],
+          description: m[3].trim(),
+        })),
+        returns: returnMatch ? {
+          type: returnMatch[1],
+          description: returnMatch[2].trim(),
+        } : undefined,
+      };
+
+      functionsExtracted++;
+    }
+  }
+
+  // Write schema
+  const schemaPath = join(absPath, 'schema.json');
+  await writeFile(schemaPath, JSON.stringify(schema, null, 2));
+
+  // Generate receipt
+  const receipt = {
+    package: pkg.name,
+    schemaPath: relative(WORKSPACE_ROOT, schemaPath),
+    functionsExtracted,
+    schemaHash: await computeHash(JSON.stringify(schema)),
+    generatedAt: flags.deterministic ? '1970-01-01T00:00:00.000Z' : new Date().toISOString(),
+  };
+
+  await writeFile(`${schemaPath}.receipt.json`, JSON.stringify(receipt, null, 2));
+
+  return formatOutput(flags, {
+    success: true,
+    package: pkg.name,
+    functionsExtracted,
+    schemaPath: relative(WORKSPACE_ROOT, schemaPath),
+    schemaHash: receipt.schemaHash,
+  });
+}
+
+// =============================================================================
+// Compile LaTeX Command
+// =============================================================================
+
+/**
+ * Compile LaTeX to PDF deterministically
+ *
+ * Uses pdflatex with deterministic options:
+ * - Fixed SOURCE_DATE_EPOCH for reproducible builds
+ * - No timestamps in PDF metadata
+ * - Cache breaking on content change (BLAKE3 hash)
+ *
+ * @param {Object} cmd - Parsed command
+ * @returns {Promise<Object>} Compilation result
+ */
+async function compileLatexCommand(cmd) {
+  const { latexPath, flags } = cmd;
+  const absPath = resolve(WORKSPACE_ROOT, latexPath);
+
+  logVerbose(flags, `Compiling LaTeX: ${latexPath}`);
+
+  // Read LaTeX source
+  const latexContent = await readFile(absPath, 'utf-8');
+  const contentHash = await computeHash(latexContent);
+
+  // Check if we can skip compilation
+  const pdfPath = absPath.replace(/\.tex$/, '.pdf');
+  const receiptPath = `${pdfPath}.receipt.json`;
+
+  let skipCompilation = false;
+  try {
+    const receipt = JSON.parse(await readFile(receiptPath, 'utf-8'));
+    if (receipt.contentHash === contentHash) {
+      logVerbose(flags, 'Content unchanged, skipping compilation');
+      skipCompilation = true;
+    }
+  } catch {
+    // No receipt, compile
+  }
+
+  if (!skipCompilation) {
+    // Compile with pdflatex
+    const latexDir = dirname(absPath);
+    const latexFile = basename(absPath);
+
+    try {
+      execSync(`pdflatex -interaction=nonstopmode -output-directory="${latexDir}" "${latexFile}"`, {
+        cwd: latexDir,
+        env: {
+          ...process.env,
+          SOURCE_DATE_EPOCH: flags.deterministic ? '0' : Math.floor(Date.now() / 1000).toString(),
+        },
+        timeout: 20000, // 20s timeout for LaTeX compilation
+      });
+
+      logVerbose(flags, `PDF compiled: ${pdfPath}`);
+    } catch (err) {
+      throw new KGCError(
+        'KGC_LATEX_COMPILATION_FAILED',
+        'LaTeX compilation failed',
+        { latexPath, stderr: err.stderr?.toString() },
+        'Check LaTeX syntax and ensure pdflatex is installed'
+      );
+    }
+  }
+
+  // Generate receipt
+  const pdfContent = await readFile(pdfPath);
+  const pdfHash = await computeHash(pdfContent.toString('base64'));
+
+  const receipt = {
+    latexPath: relative(WORKSPACE_ROOT, absPath),
+    pdfPath: relative(WORKSPACE_ROOT, pdfPath),
+    contentHash,
+    pdfHash,
+    compiledAt: flags.deterministic ? '1970-01-01T00:00:00.000Z' : new Date().toISOString(),
+    skipped: skipCompilation,
+  };
+
+  await writeFile(receiptPath, JSON.stringify(receipt, null, 2));
+
+  return formatOutput(flags, {
+    success: true,
+    latexPath: relative(WORKSPACE_ROOT, absPath),
+    pdfPath: relative(WORKSPACE_ROOT, pdfPath),
+    contentHash,
+    pdfHash,
+    skipped: skipCompilation,
+  });
+}
+
+// =============================================================================
+// Thesis Command
+// =============================================================================
+
+/**
+ * Build thesis document with receipt-driven provenance
+ *
+ * Aggregates all thesis chapters, proofs, and benchmarks into a single
+ * document with full provenance chain.
+ *
+ * @param {Object} cmd - Parsed command
+ * @returns {Promise<Object>} Thesis build result
+ */
+async function thesisCommand(cmd) {
+  const { thesisDir, flags } = cmd;
+  const absDir = resolve(WORKSPACE_ROOT, thesisDir);
+
+  logVerbose(flags, `Building thesis from: ${thesisDir}`);
+
+  await mkdir(absDir, { recursive: true });
+
+  // Find all chapters
+  const chapters = await glob('chapter-*.md', { cwd: absDir, absolute: true });
+  chapters.sort(); // Deterministic order
+
+  const thesisContent = [];
+  const receipts = [];
+
+  // Header
+  thesisContent.push('# UNRDF Thesis: Receipt-Driven Knowledge Graph Construction');
+  thesisContent.push('');
+  thesisContent.push('**Generated**: ' + (flags.deterministic ? '1970-01-01T00:00:00.000Z' : new Date().toISOString()));
+  thesisContent.push('');
+  thesisContent.push('---');
+  thesisContent.push('');
+
+  // Table of contents
+  thesisContent.push('## Table of Contents');
+  thesisContent.push('');
+
+  for (let i = 0; i < chapters.length; i++) {
+    const chapter = chapters[i];
+    const content = await readFile(chapter, 'utf-8');
+    const titleMatch = content.match(/^#\s+(.+)$/m);
+    const title = titleMatch ? titleMatch[1] : basename(chapter, '.md');
+
+    thesisContent.push(`${i + 1}. ${title}`);
+  }
+
+  thesisContent.push('');
+  thesisContent.push('---');
+  thesisContent.push('');
+
+  // Chapters
+  for (let i = 0; i < chapters.length; i++) {
+    const chapter = chapters[i];
+    const content = await readFile(chapter, 'utf-8');
+    const contentHash = await computeHash(content);
+
+    thesisContent.push(`\n\n<!-- Chapter ${i + 1}: ${basename(chapter)} -->`);
+    thesisContent.push(content);
+
+    receipts.push({
+      chapter: i + 1,
+      path: relative(WORKSPACE_ROOT, chapter),
+      contentHash,
+    });
+  }
+
+  // Proof appendix
+  thesisContent.push('\n\n---\n');
+  thesisContent.push('## Proof Appendix\n');
+  thesisContent.push('');
+  thesisContent.push('This thesis was generated with full receipt-driven provenance.\n');
+  thesisContent.push('');
+  thesisContent.push('### Chapter Receipts\n');
+  thesisContent.push('');
+  thesisContent.push('```json');
+  thesisContent.push(JSON.stringify(receipts, null, 2));
+  thesisContent.push('```');
+  thesisContent.push('');
+
+  const fullContent = thesisContent.join('\n');
+  const thesisHash = await computeHash(fullContent);
+
+  // Write thesis
+  const thesisPath = join(absDir, 'thesis-complete.md');
+  await writeFile(thesisPath, fullContent);
+
+  // Generate receipt
+  const receipt = {
+    thesisPath: relative(WORKSPACE_ROOT, thesisPath),
+    chapters: receipts.length,
+    contentHash: thesisHash,
+    generatedAt: flags.deterministic ? '1970-01-01T00:00:00.000Z' : new Date().toISOString(),
+  };
+
+  await writeFile(`${thesisPath}.receipt.json`, JSON.stringify(receipt, null, 2));
+
+  return formatOutput(flags, {
+    success: true,
+    thesisPath: relative(WORKSPACE_ROOT, thesisPath),
+    chapters: receipts.length,
+    contentHash: thesisHash,
+  });
+}
+
+// =============================================================================
 // Utilities
 // =============================================================================
 
 /**
- * Compute BLAKE3 hash of content
+ * Compute SHA-256 hash of content
  * @param {string} content - Content to hash
  * @returns {Promise<string>} Hex-encoded hash
  */
 async function computeHash(content) {
-  return await blake3(content);
+  const hash = createHash('sha256');
+  hash.update(content);
+  return hash.digest('hex');
 }
 
 /**
@@ -1035,6 +1551,18 @@ async function main() {
       case 'manifest':
         result = await manifestCommand(cmd);
         break;
+      case 'validate':
+        result = await validateCommand(cmd);
+        break;
+      case 'generate-schema':
+        result = await generateSchemaCommand(cmd);
+        break;
+      case 'compile-latex':
+        result = await compileLatexCommand(cmd);
+        break;
+      case 'thesis':
+        result = await thesisCommand(cmd);
+        break;
     }
 
     process.exit(result.success ? 0 : 1);
@@ -1072,6 +1600,10 @@ export {
   renderCommand,
   verifyCommand,
   manifestCommand,
+  validateCommand,
+  generateSchemaCommand,
+  compileLatexCommand,
+  thesisCommand,
   computeHash,
   computeMerkleRoot,
   KGCError,
