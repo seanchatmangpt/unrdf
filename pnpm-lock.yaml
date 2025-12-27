@@ -132,7 +132,7 @@ importers:
         version: 6.0.0
       vitest:
         specifier: ^1.0.0
-        version: 1.6.1(@types/node@24.10.4)(@vitest/browser@4.0.16)(@vitest/ui@4.0.16)(happy-dom@20.0.11)(jsdom@27.4.0)(lightningcss@1.30.2)(terser@5.44.1)
+        version: 1.6.1(@types/node@24.10.4)(@vitest/browser@4.0.16(msw@2.12.6(@types/node@24.10.4)(typescript@5.9.3))(vite@7.3.0(@types/node@24.10.4)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(yaml@2.8.2))(vitest@1.6.1))(@vitest/ui@4.0.16(vitest@1.6.1))(happy-dom@20.0.11)(jsdom@27.4.0)(lightningcss@1.30.2)(terser@5.44.1)
 
   AUTONOMIC_INNOVATION/agent-2:
     dependencies:
@@ -358,7 +358,7 @@ importers:
     devDependencies:
       vitest:
         specifier: ^1.1.0
-        version: 1.6.1(@types/node@24.10.4)(@vitest/browser@4.0.16)(@vitest/ui@4.0.16)(happy-dom@20.0.11)(jsdom@27.4.0)(lightningcss@1.30.2)(terser@5.44.1)
+        version: 1.6.1(@types/node@24.10.4)(@vitest/browser@4.0.16(msw@2.12.6(@types/node@24.10.4)(typescript@5.9.3))(vite@7.3.0(@types/node@24.10.4)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(yaml@2.8.2))(vitest@1.6.1))(@vitest/ui@4.0.16(vitest@1.6.1))(happy-dom@20.0.11)(jsdom@27.4.0)(lightningcss@1.30.2)(terser@5.44.1)
 
   packages/caching:
     dependencies:
@@ -785,7 +785,7 @@ importers:
     devDependencies:
       vitest:
         specifier: ^1.6.0
-        version: 1.6.1(@types/node@24.10.4)(@vitest/browser@4.0.16)(@vitest/ui@4.0.16)(happy-dom@20.0.11)(jsdom@27.4.0)(lightningcss@1.30.2)(terser@5.44.1)
+        version: 1.6.1(@types/node@24.10.4)(@vitest/browser@4.0.16(msw@2.12.6(@types/node@24.10.4)(typescript@5.9.3))(vite@7.3.0(@types/node@24.10.4)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(yaml@2.8.2))(vitest@1.6.1))(@vitest/ui@4.0.16(vitest@1.6.1))(happy-dom@20.0.11)(jsdom@27.4.0)(lightningcss@1.30.2)(terser@5.44.1)
 
   packages/graph-analytics:
     dependencies:
@@ -1514,6 +1514,77 @@ importers:
       vitest:
         specifier: ^4.0.15
         version: 4.0.16(@opentelemetry/api@1.9.0)(@types/node@24.10.4)(@vitest/ui@4.0.16)(happy-dom@20.0.11)(jiti@2.6.1)(jsdom@27.4.0)(lightningcss@1.30.2)(msw@2.12.6(@types/node@24.10.4)(typescript@5.9.3))(terser@5.44.1)(yaml@2.8.2)
+
+  packages/v6-compat:
+    dependencies:
+      '@unrdf/core':
+        specifier: workspace:*
+        version: link:../core
+      '@unrdf/kgc-4d':
+        specifier: workspace:*
+        version: link:../kgc-4d
+      '@unrdf/oxigraph':
+        specifier: workspace:*
+        version: link:../oxigraph
+      zod:
+        specifier: ^4.1.13
+        version: 4.2.1
+    devDependencies:
+      '@types/node':
+        specifier: ^24.10.1
+        version: 24.10.4
+      eslint:
+        specifier: ^9.39.1
+        version: 9.39.2(jiti@2.6.1)
+      vitest:
+        specifier: ^4.0.15
+        version: 4.0.16(@opentelemetry/api@1.9.0)(@types/node@24.10.4)(@vitest/ui@4.0.16)(happy-dom@20.0.11)(jiti@2.6.1)(jsdom@27.4.0)(lightningcss@1.30.2)(msw@2.12.6(@types/node@24.10.4)(typescript@5.9.3))(terser@5.44.1)(yaml@2.8.2)
+
+  packages/v6-core:
+    dependencies:
+      '@unrdf/blockchain':
+        specifier: workspace:*
+        version: link:../blockchain
+      '@unrdf/core':
+        specifier: workspace:*
+        version: link:../core
+      '@unrdf/hooks':
+        specifier: workspace:*
+        version: link:../hooks
+      '@unrdf/kgc-4d':
+        specifier: workspace:*
+        version: link:../kgc-4d
+      '@unrdf/kgc-cli':
+        specifier: workspace:*
+        version: link:../kgc-cli
+      '@unrdf/kgc-substrate':
+        specifier: workspace:*
+        version: link:../kgc-substrate
+      '@unrdf/oxigraph':
+        specifier: workspace:*
+        version: link:../oxigraph
+      '@unrdf/yawl':
+        specifier: workspace:*
+        version: link:../yawl
+      citty:
+        specifier: ^0.1.5
+        version: 0.1.6
+      hash-wasm:
+        specifier: ^4.11.0
+        version: 4.12.0
+      zod:
+        specifier: ^4.1.13
+        version: 4.2.1
+    devDependencies:
+      '@types/node':
+        specifier: ^20.10.0
+        version: 20.19.27
+      eslint:
+        specifier: ^8.55.0
+        version: 8.57.1
+      typescript:
+        specifier: ^5.3.3
+        version: 5.9.3
 
   packages/validation:
     dependencies:
@@ -28183,7 +28254,7 @@ snapshots:
     dependencies:
       '@jest/fake-timers': 29.7.0
       '@jest/types': 29.6.3
-      '@types/node': 24.10.4
+      '@types/node': 20.19.27
       jest-mock: 29.7.0
 
   '@jest/expect-utils@29.7.0':
@@ -28201,7 +28272,7 @@ snapshots:
     dependencies:
       '@jest/types': 29.6.3
       '@sinonjs/fake-timers': 10.3.0
-      '@types/node': 24.10.4
+      '@types/node': 20.19.27
       jest-message-util: 29.7.0
       jest-mock: 29.7.0
       jest-util: 29.7.0
@@ -30132,11 +30203,11 @@ snapshots:
 
   '@rdfjs/types@1.1.2':
     dependencies:
-      '@types/node': 24.10.4
+      '@types/node': 20.19.27
 
   '@rdfjs/types@2.0.1':
     dependencies:
-      '@types/node': 24.10.4
+      '@types/node': 20.19.27
 
   '@react-aria/focus@3.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
     dependencies:
@@ -31401,11 +31472,11 @@ snapshots:
   '@types/body-parser@1.19.6':
     dependencies:
       '@types/connect': 3.4.38
-      '@types/node': 24.10.4
+      '@types/node': 20.19.27
 
   '@types/bonjour@3.5.13':
     dependencies:
-      '@types/node': 24.10.4
+      '@types/node': 20.19.27
 
   '@types/chai@5.2.3':
     dependencies:
@@ -31415,15 +31486,15 @@ snapshots:
   '@types/connect-history-api-fallback@1.5.4':
     dependencies:
       '@types/express-serve-static-core': 4.19.7
-      '@types/node': 24.10.4
+      '@types/node': 20.19.27
 
   '@types/connect@3.4.38':
     dependencies:
-      '@types/node': 24.10.4
+      '@types/node': 20.19.27
 
   '@types/cors@2.8.19':
     dependencies:
-      '@types/node': 24.10.4
+      '@types/node': 20.19.27
 
   '@types/d3-array@3.2.2': {}
 
@@ -31593,7 +31664,7 @@ snapshots:
 
   '@types/express-serve-static-core@4.19.7':
     dependencies:
-      '@types/node': 24.10.4
+      '@types/node': 20.19.27
       '@types/qs': 6.14.0
       '@types/range-parser': 1.2.7
       '@types/send': 1.2.1
@@ -31627,11 +31698,11 @@ snapshots:
 
   '@types/http-link-header@1.0.7':
     dependencies:
-      '@types/node': 24.10.4
+      '@types/node': 20.19.27
 
   '@types/http-proxy@1.17.17':
     dependencies:
-      '@types/node': 24.10.4
+      '@types/node': 20.19.27
 
   '@types/imurmurhash@0.1.4': {}
 
@@ -31691,7 +31762,7 @@ snapshots:
   '@types/n3@1.26.1':
     dependencies:
       '@rdfjs/types': 2.0.1
-      '@types/node': 24.10.4
+      '@types/node': 20.19.27
 
   '@types/nlcst@2.0.3':
     dependencies:
@@ -31699,12 +31770,12 @@ snapshots:
 
   '@types/node-fetch@2.6.13':
     dependencies:
-      '@types/node': 24.10.4
+      '@types/node': 20.19.27
       form-data: 4.0.5
 
   '@types/node-forge@1.3.14':
     dependencies:
-      '@types/node': 24.10.4
+      '@types/node': 20.19.27
 
   '@types/node@17.0.45': {}
 
@@ -31775,12 +31846,12 @@ snapshots:
 
   '@types/readable-stream@2.3.15':
     dependencies:
-      '@types/node': 24.10.4
+      '@types/node': 20.19.27
       safe-buffer: 5.1.2
 
   '@types/readable-stream@4.0.23':
     dependencies:
-      '@types/node': 24.10.4
+      '@types/node': 20.19.27
 
   '@types/resolve@1.20.2': {}
 
@@ -31790,7 +31861,7 @@ snapshots:
 
   '@types/sax@1.2.7':
     dependencies:
-      '@types/node': 24.10.4
+      '@types/node': 20.19.27
 
   '@types/seedrandom@2.4.34': {}
 
@@ -31799,11 +31870,11 @@ snapshots:
   '@types/send@0.17.6':
     dependencies:
       '@types/mime': 1.3.5
-      '@types/node': 24.10.4
+      '@types/node': 20.19.27
 
   '@types/send@1.2.1':
     dependencies:
-      '@types/node': 24.10.4
+      '@types/node': 20.19.27
 
   '@types/serve-index@1.9.4':
     dependencies:
@@ -31812,12 +31883,12 @@ snapshots:
   '@types/serve-static@1.15.10':
     dependencies:
       '@types/http-errors': 2.0.5
-      '@types/node': 24.10.4
+      '@types/node': 20.19.27
       '@types/send': 0.17.6
 
   '@types/sockjs@0.3.36':
     dependencies:
-      '@types/node': 24.10.4
+      '@types/node': 20.19.27
 
   '@types/spark-md5@3.0.5': {}
 
@@ -32205,7 +32276,7 @@ snapshots:
       pngjs: 7.0.0
       sirv: 3.0.2
       tinyrainbow: 3.0.3
-      vitest: 1.6.1(@types/node@24.10.4)(@vitest/browser@4.0.16)(@vitest/ui@4.0.16)(happy-dom@20.0.11)(jsdom@27.4.0)(lightningcss@1.30.2)(terser@5.44.1)
+      vitest: 1.6.1(@types/node@24.10.4)(@vitest/browser@4.0.16(msw@2.12.6(@types/node@24.10.4)(typescript@5.9.3))(vite@7.3.0(@types/node@24.10.4)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(yaml@2.8.2))(vitest@1.6.1))(@vitest/ui@4.0.16(vitest@1.6.1))(happy-dom@20.0.11)(jsdom@27.4.0)(lightningcss@1.30.2)(terser@5.44.1)
       ws: 8.18.3
     transitivePeerDependencies:
       - bufferutil
@@ -32262,7 +32333,7 @@ snapshots:
       obug: 2.1.1
       std-env: 3.10.0
       tinyrainbow: 3.0.3
-      vitest: 1.6.1(@types/node@24.10.4)(@vitest/browser@4.0.16)(@vitest/ui@4.0.16)(happy-dom@20.0.11)(jsdom@27.4.0)(lightningcss@1.30.2)(terser@5.44.1)
+      vitest: 1.6.1(@types/node@24.10.4)(@vitest/browser@4.0.16(msw@2.12.6(@types/node@24.10.4)(typescript@5.9.3))(vite@7.3.0(@types/node@24.10.4)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(yaml@2.8.2))(vitest@1.6.1))(@vitest/ui@4.0.16(vitest@1.6.1))(happy-dom@20.0.11)(jsdom@27.4.0)(lightningcss@1.30.2)(terser@5.44.1)
     optionalDependencies:
       '@vitest/browser': 4.0.16(msw@2.12.6(@types/node@24.10.4)(typescript@5.9.3))(vite@7.3.0(@types/node@24.10.4)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(yaml@2.8.2))(vitest@1.6.1)
     transitivePeerDependencies:
@@ -32380,7 +32451,7 @@ snapshots:
       sirv: 3.0.2
       tinyglobby: 0.2.15
       tinyrainbow: 3.0.3
-      vitest: 1.6.1(@types/node@24.10.4)(@vitest/browser@4.0.16)(@vitest/ui@4.0.16)(happy-dom@20.0.11)(jsdom@27.4.0)(lightningcss@1.30.2)(terser@5.44.1)
+      vitest: 1.6.1(@types/node@24.10.4)(@vitest/browser@4.0.16(msw@2.12.6(@types/node@24.10.4)(typescript@5.9.3))(vite@7.3.0(@types/node@24.10.4)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(yaml@2.8.2))(vitest@1.6.1))(@vitest/ui@4.0.16(vitest@1.6.1))(happy-dom@20.0.11)(jsdom@27.4.0)(lightningcss@1.30.2)(terser@5.44.1)
 
   '@vitest/ui@4.0.16(vitest@4.0.16)':
     dependencies:
@@ -33682,7 +33753,7 @@ snapshots:
 
   chrome-launcher@1.2.1:
     dependencies:
-      '@types/node': 24.10.4
+      '@types/node': 20.19.27
       escape-string-regexp: 4.0.0
       is-wsl: 2.2.0
       lighthouse-logger: 2.0.2
@@ -34967,7 +35038,7 @@ snapshots:
   engine.io@6.6.5:
     dependencies:
       '@types/cors': 2.8.19
-      '@types/node': 24.10.4
+      '@types/node': 20.19.27
       accepts: 1.3.8
       base64id: 2.0.0
       cookie: 0.7.2
@@ -35779,7 +35850,7 @@ snapshots:
 
   eval@0.1.8:
     dependencies:
-      '@types/node': 24.10.4
+      '@types/node': 20.19.27
       require-like: 0.1.2
 
   event-emitter-promisify@1.1.0: {}
@@ -37799,7 +37870,7 @@ snapshots:
   jest-mock@29.7.0:
     dependencies:
       '@jest/types': 29.6.3
-      '@types/node': 24.10.4
+      '@types/node': 20.19.27
       jest-util: 29.7.0
 
   jest-pnp-resolver@1.2.3(jest-resolve@29.7.0):
@@ -37936,7 +38007,7 @@ snapshots:
 
   jest-worker@27.5.1:
     dependencies:
-      '@types/node': 24.10.4
+      '@types/node': 20.19.27
       merge-stream: 2.0.0
       supports-color: 8.1.1
 
@@ -41545,7 +41616,7 @@ snapshots:
       '@protobufjs/pool': 1.1.0
       '@protobufjs/utf8': 1.1.0
       '@types/long': 4.0.2
-      '@types/node': 24.10.4
+      '@types/node': 20.19.27
       long: 4.0.0
 
   protobufjs@7.5.4:
@@ -41560,7 +41631,7 @@ snapshots:
       '@protobufjs/path': 1.1.2
       '@protobufjs/pool': 1.1.0
       '@protobufjs/utf8': 1.1.0
-      '@types/node': 24.10.4
+      '@types/node': 20.19.27
       long: 5.3.2
 
   protocol-buffers-schema@3.6.0: {}
@@ -44584,7 +44655,7 @@ snapshots:
       - supports-color
       - terser
 
-  vitest@1.6.1(@types/node@24.10.4)(@vitest/browser@4.0.16)(@vitest/ui@4.0.16)(happy-dom@20.0.11)(jsdom@27.4.0)(lightningcss@1.30.2)(terser@5.44.1):
+  vitest@1.6.1(@types/node@24.10.4)(@vitest/browser@4.0.16(msw@2.12.6(@types/node@24.10.4)(typescript@5.9.3))(vite@7.3.0(@types/node@24.10.4)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(yaml@2.8.2))(vitest@1.6.1))(@vitest/ui@4.0.16(vitest@1.6.1))(happy-dom@20.0.11)(jsdom@27.4.0)(lightningcss@1.30.2)(terser@5.44.1):
     dependencies:
       '@vitest/expect': 1.6.1
       '@vitest/runner': 1.6.1

@@ -1,6 +1,6 @@
 {
   "generatedAt": "2000-01-01T00:00:00.000Z",
-  "packageCount": 91,
+  "packageCount": 92,
   "packages": [
     {
       "dir": "/home/user/unrdf/AUTONOMIC_INNOVATION/agent-8",
@@ -265,6 +265,11 @@
     {
       "dir": "/home/user/unrdf/packages/ml-versioning",
       "name": "@unrdf/ml-versioning",
+      "version": "1.0.0"
+    },
+    {
+      "dir": "/home/user/unrdf/test/narrative-state-chain",
+      "name": "@unrdf/narrative-state-chain-tests",
       "version": "1.0.0"
     },
     {

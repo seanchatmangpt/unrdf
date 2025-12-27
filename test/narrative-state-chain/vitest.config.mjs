@@ -4,8 +4,8 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'node',
-    include: ['**/*.{test,spec}.mjs'],
-    exclude: ['node_modules', 'dist', '.idea', '.git', '.cache'],
+    include: ['**/*.{test,spec,unit,integration,property,determinism,adversarial}.mjs'],
+    exclude: ['node_modules', 'dist', '.idea', '.git', '.cache', '**/fixtures/**', '**/helpers/**'],
     testTimeout: 10000,
     hookTimeout: 10000,
     coverage: {
