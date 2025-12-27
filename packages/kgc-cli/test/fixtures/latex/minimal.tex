@@ -1,0 +1,56 @@
+% Minimal LaTeX document for testing
+% No external dependencies, no includes
+\documentclass{article}
+
+\title{Minimal Test Document}
+\author{Test Suite}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+
+This is a minimal \LaTeX{} document used for testing the pure JavaScript
+compilation pipeline. It contains no external dependencies and should compile
+successfully in a single pass.
+
+\subsection{Purpose}
+
+The purpose of this fixture is to verify that:
+
+\begin{itemize}
+  \item The compilation pipeline can process valid \LaTeX{}
+  \item PDF output is generated with correct magic bytes (\texttt{\%PDF-})
+  \item The output is larger than 5KB (non-trivial content)
+  \item No external packages are required
+\end{itemize}
+
+\section{Test Content}
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
+tempor incididunt ut labore et dolore magna aliqua.
+
+\subsection{Mathematical Content}
+
+The quadratic formula is:
+\[
+x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}
+\]
+
+\subsection{Lists}
+
+Numbered list:
+\begin{enumerate}
+  \item First item
+  \item Second item
+  \item Third item
+\end{enumerate}
+
+\section{Conclusion}
+
+This document should compile to a PDF of approximately 5-10KB in size,
+suitable for automated testing.
+
+\end{document}

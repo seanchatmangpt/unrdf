@@ -1,0 +1,17 @@
+# Ignore actual WASM binaries (too large for git)
+# Developers must vendor them manually
+*.wasm.actual
+*.wasm.prod
+
+# But keep placeholder .wasm files
+!xetex.wasm
+!pdftex.wasm
+
+# Ignore checksums for production binaries
+SHA256SUMS
+*.sha256
+
+# Ignore downloaded archives
+*.tar.gz
+*.zip
+swiftlatex-*.tar.gz
