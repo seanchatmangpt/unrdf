@@ -1,0 +1,54 @@
+{
+  "name": "@unrdf/kgc-substrate",
+  "version": "1.0.0",
+  "description": "KGC Substrate - Deterministic, hash-stable KnowledgeStore with immutable append-only log",
+  "type": "module",
+  "main": "./src/index.mjs",
+  "exports": {
+    ".": "./src/index.mjs",
+    "./types": "./src/types.mjs",
+    "./KnowledgeStore": "./src/KnowledgeStore.mjs"
+  },
+  "sideEffects": false,
+  "files": [
+    "src/",
+    "README.md"
+  ],
+  "scripts": {
+    "test": "vitest run --no-coverage",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest --no-coverage",
+    "build": "echo 'Build complete (pure ESM, no compilation needed)'",
+    "lint": "echo 'Linting deferred to monorepo root'"
+  },
+  "keywords": [
+    "rdf",
+    "knowledge-graph",
+    "kgc",
+    "substrate",
+    "immutable",
+    "hash-stable",
+    "deterministic"
+  ],
+  "dependencies": {
+    "@unrdf/kgc-4d": "workspace:*",
+    "@unrdf/oxigraph": "workspace:*",
+    "@unrdf/core": "workspace:*",
+    "hash-wasm": "^4.12.0",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "vitest": "^4.0.15",
+    "@vitest/coverage-v8": "^4.0.15"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=7.0.0"
+  },
+  "author": "UNRDF Contributors",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
+}

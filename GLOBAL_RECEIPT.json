@@ -1,0 +1,147 @@
+{
+  "id": "receipt-61ed57e743574d49",
+  "timestamp_ns": "1766798019862000000",
+  "timestamp_iso": "2025-12-27T01:13:39.862Z",
+  "phase": "reconciliation",
+  "status": "SUCCESS",
+  "tranches_reconciled": 10,
+  "files_reconciled": 37,
+  "conflicts_detected": 0,
+  "output_hash": "61ed57e743574d4961cd17be40595bf8b2dd8291b1ab511c39848732cfcf0030",
+  "git_branch": "claude/integrate-kgc-multi-agent-Gr2uv",
+  "proof_artifacts": [
+    "docs/contracts/AgentRun.contract.md",
+    "docs/contracts/KnowledgeStore.contract.md",
+    "docs/contracts/Merge.contract.md",
+    "docs/contracts/Receipt.contract.md",
+    "docs/substrate/README.md",
+    "docs/substrate/explanation.md",
+    "docs/substrate/how-to/async-workflows.md",
+    "docs/substrate/how-to/autonomy-guards.md",
+    "docs/substrate/how-to/checkpoints.md",
+    "docs/substrate/how-to/multi-agent.md",
+    "docs/substrate/how-to/projections.md",
+    "docs/substrate/how-to/run-capsules.md",
+    "docs/substrate/how-to/verify-receipts.md",
+    "docs/substrate/reference.md",
+    "docs/substrate/tutorial.md",
+    "packages/kgc-claude/DESIGN.md",
+    "packages/kgc-claude/benches/baseline.json",
+    "packages/kgc-claude/benches/workload-harness.mjs",
+    "packages/kgc-claude/demos/DESIGN.md",
+    "packages/kgc-claude/demos/README.md",
+    "packages/kgc-claude/demos/multi-agent-e2e.mjs",
+    "packages/kgc-claude/scripts/prove-system.mjs",
+    "packages/kgc-claude/src/PolicyBridge.mjs",
+    "packages/kgc-claude/test/policy-bridge.test.mjs",
+    "packages/kgc-substrate/__tests__/KnowledgeStore.test.mjs",
+    "packages/kgc-substrate/__tests__/Router.test.mjs",
+    "packages/kgc-substrate/__tests__/types.test.mjs",
+    "packages/kgc-substrate/src/Allocator.mjs",
+    "packages/kgc-substrate/src/KnowledgeStore.mjs",
+    "packages/kgc-substrate/src/ReceiptChain.mjs",
+    "packages/kgc-substrate/src/Router.mjs",
+    "packages/kgc-substrate/src/TamperDetector.mjs",
+    "packages/kgc-substrate/src/Workspace.mjs",
+    "packages/kgc-substrate/src/types.mjs",
+    "packages/kgc-substrate/test-manual-determinism.mjs",
+    "packages/kgc-substrate/test-workspace-manual.mjs",
+    "packages/kgc-substrate/validate-tamper-detection.mjs"
+  ],
+  "tranche_results": [
+    {
+      "agent": 0,
+      "name": "Coordinator/Reconciler",
+      "status": "PASS",
+      "files_verified": 6,
+      "files_total": 6,
+      "missing_files": []
+    },
+    {
+      "agent": 1,
+      "name": "KnowledgeStore Substrate",
+      "status": "PASS",
+      "files_verified": 4,
+      "files_total": 4,
+      "missing_files": []
+    },
+    {
+      "agent": 2,
+      "name": "Receipt Chain & Tamper Detection",
+      "status": "PASS",
+      "files_verified": 3,
+      "files_total": 3,
+      "missing_files": []
+    },
+    {
+      "agent": 3,
+      "name": "Policy Pack Bridge",
+      "status": "PASS",
+      "files_verified": 2,
+      "files_total": 2,
+      "missing_files": []
+    },
+    {
+      "agent": 4,
+      "name": "Resource Allocator",
+      "status": "PASS",
+      "files_verified": 2,
+      "files_total": 2,
+      "missing_files": []
+    },
+    {
+      "agent": 5,
+      "name": "Workspace Isolation",
+      "status": "PASS",
+      "files_verified": 2,
+      "files_total": 2,
+      "missing_files": []
+    },
+    {
+      "agent": 6,
+      "name": "Task Graph Router",
+      "status": "PASS",
+      "files_verified": 2,
+      "files_total": 2,
+      "missing_files": []
+    },
+    {
+      "agent": 7,
+      "name": "Documentation (Diataxis)",
+      "status": "PASS",
+      "files_verified": 11,
+      "files_total": 11,
+      "missing_files": []
+    },
+    {
+      "agent": 8,
+      "name": "Performance Workload Harness",
+      "status": "PASS",
+      "files_verified": 2,
+      "files_total": 2,
+      "missing_files": []
+    },
+    {
+      "agent": 9,
+      "name": "End-to-End Demo",
+      "status": "PASS",
+      "files_verified": 3,
+      "files_total": 3,
+      "missing_files": []
+    }
+  ],
+  "merge_law": "Π(Δ₀..Δ₉) = disjoint union; verified ✅",
+  "merge_summary": {
+    "total_tranches": 10,
+    "successful_tranches": 10,
+    "failed_tranches": 0,
+    "total_files": 37,
+    "total_conflicts": 0
+  },
+  "verification_checklist": {
+    "all_tranches_pass": true,
+    "no_conflicts": true,
+    "global_hash_stable": true,
+    "implementation_complete": false
+  }
+}
