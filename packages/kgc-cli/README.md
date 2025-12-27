@@ -176,6 +176,31 @@ export const overrides = [
 - **policy**: Access control and policies
 - **hook**: Lifecycle hooks
 - **vm**: Virtual machine / WASM execution
+- **latex**: LaTeX to PDF compilation (pure JavaScript, zero dependencies)
+
+## LaTeX to PDF Compilation
+
+**NEW**: Compile LaTeX documents to PDF entirely in JavaScript with zero system dependencies.
+
+```bash
+# Compile a LaTeX document
+kgc latex build --input thesis/main.tex --output dist/thesis.pdf
+```
+
+**Features**:
+- Pure JavaScript (no TeX installation required)
+- WebAssembly TeX engine (XeTeX/PDFLaTeX)
+- Automatic dependency resolution from CTAN
+- Deterministic, reproducible builds with lockfiles
+- Offline support via package caching
+
+**Documentation**: See [docs/latex/](./docs/latex/README.md)
+
+**Quick links**:
+- [Your First PDF Tutorial](./docs/latex/tutorials/first-pdf.md) - 5-minute quickstart
+- [CLI Reference](./docs/latex/reference/cli.md) - Complete command documentation
+- [JavaScript API](./docs/latex/reference/api.md) - Programmatic usage
+- [Architecture](./docs/latex/explanation/architecture.md) - How it works
 
 ## Testing
 
@@ -191,6 +216,9 @@ pnpm test -- manifest.test.mjs
 
 # Smoke/integration tests
 pnpm test -- smoke.test.mjs
+
+# LaTeX pipeline tests
+pnpm test -- latex-build.test.mjs
 ```
 
 ## Implementation Status
