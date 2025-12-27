@@ -213,9 +213,9 @@ export class HookComposer {
           );
 
           // Error hooks can recover from errors
-          if (hookResult.recovered) {
+          if (hookResult.value?.recovered) {
             result.success = true;
-            result.value = hookResult.value;
+            result.value = hookResult.value.value;
             result.recovered = true;
           }
         }

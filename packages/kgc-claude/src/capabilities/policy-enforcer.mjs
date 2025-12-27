@@ -127,33 +127,36 @@ export class PolicyEnforcer {
   enforce(tool, input = {}, context = {}) {
     this.stats.enforcements++;
 
+    // Create cache key - include command if present for accurate caching
+    const cacheKey = input?.command ? `${tool}:${input.command}` : tool;
+
     // Check cache first
-    if (this.allowCache.has(tool)) {
+    if (this.allowCache.has(cacheKey)) {
       this.stats.allows++;
       return this._createResult('allow', 'Cached allow', null);
     }
 
-    if (this.denyCache.has(tool)) {
+    if (this.denyCache.has(cacheKey)) {
       this.stats.denies++;
       return this._createResult('deny', 'Cached deny', null, true);
     }
 
     // Check allowlist
     if (this.policy.allowlist && this._isInList(tool, this.policy.allowlist)) {
-      this.allowCache.add(tool);
+      this.allowCache.add(cacheKey);
       this.stats.allows++;
       return this._createResult('allow', 'In allowlist', null);
     }
 
-    // Check blocklist
-    if (this.policy.blocklist && this._isInList(tool, this.policy.blocklist)) {
-      this.denyCache.add(tool);
+    // Check blocklist - use 'block' action for severe violations
+    if (this.policy.blocklist && this._isInList(tool, this.policy.blocklist, input)) {
+      this.denyCache.add(cacheKey);
       this.stats.denies++;
-      return this._createResult('deny', 'In blocklist', null, true, input);
+      return this._createResult('block', 'In blocklist', null, true, input);
     }
 
     // Evaluate policy rules
-    const matchedRule = this._findMatchingRule(tool);
+    const matchedRule = this._findMatchingRule(tool, input);
 
     if (matchedRule) {
       const action = matchedRule.action;
@@ -161,10 +164,10 @@ export class PolicyEnforcer {
       // Update stats
       if (action === 'allow') {
         this.stats.allows++;
-        this.allowCache.add(tool);
+        this.allowCache.add(cacheKey);
       } else if (action === 'deny' || action === 'block') {
         this.stats.denies++;
-        this.denyCache.add(tool);
+        this.denyCache.add(cacheKey);
       } else if (action === 'ask') {
         this.stats.asks++;
       }
@@ -341,12 +344,12 @@ export class PolicyEnforcer {
    * Find matching rule for tool
    * @private
    */
-  _findMatchingRule(tool) {
+  _findMatchingRule(tool, input = {}) {
     // Rules are already sorted by priority
     for (const rule of this.policy.rules) {
       if (!rule.enabled) continue;
 
-      if (this._matchesPattern(tool, rule.pattern)) {
+      if (this._matchesPattern(tool, rule.pattern, input)) {
         return rule;
       }
     }
@@ -358,11 +361,30 @@ export class PolicyEnforcer {
    * Check if tool matches pattern
    * @private
    */
-  _matchesPattern(tool, pattern) {
+  _matchesPattern(tool, pattern, input = {}) {
     // Exact match
     if (tool === pattern) return true;
 
-    // Wildcard match
+    // Command-based pattern: Bash(git:*) or Bash(rm -rf *) matches Bash with command starting with prefix
+    // Format 1: Bash(git:*) - colon before asterisk
+    // Format 2: Bash(rm -rf *) - space before asterisk
+    const colonMatch = pattern.match(/^(\w+)\(([^:]+):\*\)$/);
+    if (colonMatch) {
+      const [, patternTool, commandPrefix] = colonMatch;
+      if (tool === patternTool && input.command) {
+        return input.command.startsWith(commandPrefix.trim());
+      }
+    }
+
+    const spaceMatch = pattern.match(/^(\w+)\((.+?)\s+\*\)$/);
+    if (spaceMatch) {
+      const [, patternTool, commandPrefix] = spaceMatch;
+      if (tool === patternTool && input.command) {
+        return input.command.startsWith(commandPrefix.trim());
+      }
+    }
+
+    // Wildcard match on tool name
     if (pattern.includes('*')) {
       const regex = new RegExp('^' + pattern.replace(/\*/g, '.*') + '$');
       return regex.test(tool);
@@ -378,8 +400,8 @@ export class PolicyEnforcer {
    * Check if tool is in list
    * @private
    */
-  _isInList(tool, list) {
-    return list.some(pattern => this._matchesPattern(tool, pattern));
+  _isInList(tool, list, input = {}) {
+    return list.some(pattern => this._matchesPattern(tool, pattern, input));
   }
 
   /**
@@ -564,6 +586,7 @@ export function createBlocklistEnforcer(name, blocklist) {
  */
 export function createReadOnlyPolicy() {
   return {
+    id: crypto.randomUUID(),
     name: 'read-only',
     version: '1.0.0',
     defaultAction: 'deny',
@@ -593,6 +616,7 @@ export function createReadOnlyPolicy() {
  */
 export function createSafeDevelopmentPolicy() {
   return {
+    id: crypto.randomUUID(),
     name: 'safe-development',
     version: '1.0.0',
     defaultAction: 'ask',
@@ -629,6 +653,7 @@ export function createSafeDevelopmentPolicy() {
  */
 export function createProductionPolicy() {
   return {
+    id: crypto.randomUUID(),
     name: 'production',
     version: '1.0.0',
     defaultAction: 'deny',

@@ -337,9 +337,21 @@ export class GovernanceEngine {
     // Exact match
     if (toolName === pattern) return true;
 
+    // Colon-based prefix pattern: Bash(rm:*) matches Bash(rm -rf /)
+    // The colon indicates "starts with" for the content inside parens
+    const colonMatch = pattern.match(/^(\w+)\(([^:]+):\*\)$/);
+    if (colonMatch) {
+      const [, patternTool, commandPrefix] = colonMatch;
+      // Match tool(anything starting with prefix...)
+      const regex = new RegExp(`^${patternTool}\\(${commandPrefix.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}.*\\)$`);
+      return regex.test(toolName);
+    }
+
     // Wildcard match (e.g., "Bash(*)" matches "Bash(git status)")
     if (pattern.includes('*')) {
-      const regex = new RegExp('^' + pattern.replace(/\*/g, '.*') + '$');
+      // Escape regex special characters except *
+      const escaped = pattern.replace(/[.+?^${}()|[\]\\]/g, '\\$&');
+      const regex = new RegExp('^' + escaped.replace(/\*/g, '.*') + '$');
       return regex.test(toolName);
     }
 
