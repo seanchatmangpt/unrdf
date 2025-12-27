@@ -1,0 +1,41 @@
+{
+  "name": "@unrdf/projection",
+  "version": "1.0.0",
+  "description": "Documentation as Projection - Deterministic documentation generation from RDF universe",
+  "type": "module",
+  "main": "index.mjs",
+  "exports": {
+    ".": "./index.mjs",
+    "./jsdoc": "./jsdoc-projector.mjs",
+    "./architecture": "./architecture-projector.mjs",
+    "./examples": "./example-projector.mjs",
+    "./guides": "./guide-projector.mjs",
+    "./changelog": "./changelog-projector.mjs",
+    "./diataxis": "./diataxis-renderer.mjs",
+    "./pipeline": "./projection-pipeline.mjs"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest watch"
+  },
+  "keywords": [
+    "documentation",
+    "projection",
+    "rdf",
+    "diataxis",
+    "deterministic",
+    "markdown"
+  ],
+  "author": "UNRDF Contributors",
+  "license": "MIT",
+  "dependencies": {
+    "hash-wasm": "^4.12.0",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "vitest": "^4.0.15"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

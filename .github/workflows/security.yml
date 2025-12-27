@@ -239,7 +239,7 @@ jobs:
           only-severities: critical,high
           exit-code: false
 
-  # Security Best Practices Check
+  # Security Best Practices Check (Legacy grep-based)
   security-checks:
     name: Security Best Practices
     runs-on: ubuntu-latest
@@ -298,11 +298,142 @@ jobs:
 
           echo "✅ Security configuration check completed"
 
+  # Custom Security Invariants Check
+  security-invariants:
+    name: Security Invariants
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run Secret Detection (Q_no_hardcoded_secrets)
+        id: secrets
+        run: |
+          echo "Running custom secret detection..."
+          node src/security/cli.mjs secrets . --json > secrets-report.json || true
+
+          # Check for critical findings
+          CRITICAL=$(cat secrets-report.json | jq '.summary.bySeverity.critical // 0')
+          HIGH=$(cat secrets-report.json | jq '.summary.bySeverity.high // 0')
+
+          echo "critical=$CRITICAL" >> $GITHUB_OUTPUT
+          echo "high=$HIGH" >> $GITHUB_OUTPUT
+
+          if [ "$CRITICAL" -gt 0 ]; then
+            echo "❌ Critical secrets found!"
+            cat secrets-report.json | jq '.findings[] | select(.severity == "critical")'
+          fi
+
+      - name: Run Injection Analysis (Q_no_dangerous_apis)
+        id: injection
+        run: |
+          echo "Running injection vulnerability analysis..."
+          node src/security/cli.mjs injection . --json > injection-report.json || true
+
+          CRITICAL=$(cat injection-report.json | jq '.summary.bySeverity.critical // 0')
+          HIGH=$(cat injection-report.json | jq '.summary.bySeverity.high // 0')
+
+          echo "critical=$CRITICAL" >> $GITHUB_OUTPUT
+          echo "high=$HIGH" >> $GITHUB_OUTPUT
+
+          if [ "$CRITICAL" -gt 0 ]; then
+            echo "❌ Critical injection vulnerabilities found!"
+            cat injection-report.json | jq '.findings[] | select(.severity == "critical")'
+          fi
+
+      - name: Run Full Security Check
+        run: |
+          echo "Running full security invariants check..."
+          node src/security/cli.mjs full-check . --json > full-security-report.json || true
+
+          # Display summary
+          cat full-security-report.json | jq '{
+            passed: .passed,
+            overallScore: .overallScore,
+            invariants: [.invariants[] | {name: .invariant, passed: .passed, severity: .severity}],
+            guards: [.guards[] | {name: .name, triggered: .triggered}]
+          }'
+
+      - name: Generate Security Dashboard
+        run: |
+          echo "Generating security dashboard..."
+          node src/security/cli.mjs dashboard . -f html -o security-dashboard.html || true
+
+      - name: Upload Security Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-invariants-report
+          path: |
+            secrets-report.json
+            injection-report.json
+            full-security-report.json
+            security-dashboard.html
+          retention-days: 30
+
+      - name: Check Security Gate
+        run: |
+          # Fail if critical issues found
+          SECRETS_CRITICAL=${{ steps.secrets.outputs.critical || 0 }}
+          INJECTION_CRITICAL=${{ steps.injection.outputs.critical || 0 }}
+
+          if [ "$SECRETS_CRITICAL" -gt 0 ] || [ "$INJECTION_CRITICAL" -gt 0 ]; then
+            echo "❌ Security gate FAILED - Critical issues detected"
+            echo ""
+            echo "Secrets Critical: $SECRETS_CRITICAL"
+            echo "Injection Critical: $INJECTION_CRITICAL"
+            exit 1
+          fi
+
+          echo "✅ Security gate PASSED"
+
+      - name: Post Security Summary
+        if: always()
+        run: |
+          echo "## Security Invariants Check" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ -f full-security-report.json ]; then
+            PASSED=$(cat full-security-report.json | jq '.passed')
+            SCORE=$(cat full-security-report.json | jq '.overallScore')
+
+            if [ "$PASSED" == "true" ]; then
+              echo "✅ **Status: PASSED**" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "❌ **Status: FAILED**" >> $GITHUB_STEP_SUMMARY
+            fi
+
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Overall Score:** $SCORE/100" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### Invariants" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            cat full-security-report.json | jq -r '.invariants[] | "- " + (if .passed then "✅" else "❌" end) + " " + .invariant' >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### Guards" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            cat full-security-report.json | jq -r '.guards[] | "- " + (if .triggered then "🚨" else "✅" end) + " " + .name' >> $GITHUB_STEP_SUMMARY
+          fi
+
   # Security Summary
   security-summary:
     name: Security Summary
     runs-on: ubuntu-latest
-    needs: [dependency-scan, sast-scan, secrets-scan, license-scan, supply-chain, security-checks]
+    needs: [dependency-scan, sast-scan, secrets-scan, license-scan, supply-chain, security-checks, security-invariants]
     if: always()
     steps:
       - name: Generate security summary
