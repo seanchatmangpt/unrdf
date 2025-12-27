@@ -11,7 +11,6 @@
 import { _randomUUID } from 'crypto';
 import { _z } from 'zod';
 import { ObservabilityConfigSchema, PerformanceMetricsSchema } from './schemas.mjs';
-import { getRuntimeConfig } from '../context/config.mjs';
 
 /**
  * OpenTelemetry observability manager
@@ -38,6 +37,9 @@ export class ObservabilityManager {
     this.activeSpans = new Map();
     this.initialized = false;
     this._lastMetrics = null; // for smoothing fallback
+    this.samplingRate = config.samplingRate ?? 0.1; // Default 10% sampling
+    this.logSamplingRate = config.logSamplingRate ?? 0.01; // Default 1% DEBUG log sampling
+    this._debugLogCounter = 0;
   }
 
   /**
@@ -84,12 +86,17 @@ export class ObservabilityManager {
         exportTimeoutMillis: this.config.exportTimeoutMillis,
       });
 
-      // Initialize SDK
+      // Create sampler for head-based sampling
+      const { TraceIdRatioBasedSampler } = await import('@opentelemetry/sdk-trace-base');
+      const sampler = new TraceIdRatioBasedSampler(this.samplingRate);
+
+      // Initialize SDK with sampling
       const sdk = new NodeSDK({
         resource,
         traceExporter: this.config.enableTracing ? traceExporter : undefined,
         metricReader: this.config.enableMetrics ? metricReader : undefined,
         instrumentations: this.config.enableTracing ? [getNodeAutoInstrumentations()] : [],
+        sampler: this.config.enableTracing ? sampler : undefined,
       });
 
       await sdk.start();
@@ -497,6 +504,35 @@ export class ObservabilityManager {
     if (values.length === 0) return 0;
     const index = Math.ceil(values.length * percentile) - 1;
     return values[Math.max(0, index)];
+  }
+
+  /**
+   * Log with sampling (DEBUG logs sampled, WARN/ERROR always logged)
+   * @param {string} level - Log level (DEBUG, INFO, WARN, ERROR)
+   * @param {string} message - Log message
+   * @param {Object} [context] - Additional context
+   */
+  log(level, message, context = {}) {
+    const upperLevel = level.toUpperCase();
+
+    // Always log WARN and ERROR
+    if (upperLevel === 'WARN' || upperLevel === 'ERROR') {
+      console[upperLevel === 'ERROR' ? 'error' : 'warn'](`[${upperLevel}] ${message}`, context);
+      return;
+    }
+
+    // Sample DEBUG logs
+    if (upperLevel === 'DEBUG') {
+      this._debugLogCounter++;
+      const sampleThreshold = Math.floor(1 / this.logSamplingRate);
+      if (this._debugLogCounter % sampleThreshold === 0) {
+        console.log(`[DEBUG:SAMPLED] ${message}`, context);
+      }
+      return;
+    }
+
+    // INFO and other levels always logged
+    console.log(`[${upperLevel}] ${message}`, context);
   }
 
   /**

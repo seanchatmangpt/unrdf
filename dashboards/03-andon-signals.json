@@ -1,0 +1,173 @@
+{
+  "dashboard": {
+    "id": null,
+    "uid": "unrdf-andon-signals",
+    "title": "UNRDF Andon Signals (Quality Gates)",
+    "tags": ["unrdf", "andon", "quality", "slo"],
+    "timezone": "browser",
+    "schemaVersion": 16,
+    "version": 0,
+    "refresh": "5s",
+    "panels": [
+      {
+        "id": 1,
+        "gridPos": { "h": 10, "w": 8, "x": 0, "y": 0 },
+        "type": "stat",
+        "title": "Overall System State",
+        "targets": [
+          {
+            "expr": "(validation_score >= 80 and rate(kgc_errors_total[5m]) < 0.01 and histogram_quantile(0.95, rate(kgc_transaction_duration_ms_bucket[5m])) < 5000) * 100",
+            "legendFormat": "System Health %"
+          }
+        ],
+        "options": {
+          "colorMode": "background",
+          "graphMode": "area",
+          "orientation": "auto",
+          "textMode": "value_and_name"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                { "value": 0, "color": "red" },
+                { "value": 60, "color": "yellow" },
+                { "value": 80, "color": "green" }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "id": 2,
+        "gridPos": { "h": 10, "w": 8, "x": 8, "y": 0 },
+        "type": "stat",
+        "title": "Error Rate Gate",
+        "targets": [
+          {
+            "expr": "rate(kgc_errors_total{service=\"unrdf-kgc\"}[5m]) * 100",
+            "legendFormat": "Error Rate %"
+          }
+        ],
+        "options": {
+          "colorMode": "background",
+          "graphMode": "area",
+          "orientation": "auto",
+          "textMode": "value"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                { "value": 0, "color": "green" },
+                { "value": 0.5, "color": "yellow" },
+                { "value": 1.0, "color": "red" }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "id": 3,
+        "gridPos": { "h": 10, "w": 8, "x": 16, "y": 0 },
+        "type": "stat",
+        "title": "Latency Gate (P95)",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(kgc_transaction_duration_ms_bucket{service=\"unrdf-kgc\"}[5m]))",
+            "legendFormat": "P95 Latency"
+          }
+        ],
+        "options": {
+          "colorMode": "background",
+          "graphMode": "area",
+          "orientation": "auto",
+          "textMode": "value"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "ms",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                { "value": 0, "color": "green" },
+                { "value": 5000, "color": "yellow" },
+                { "value": 10000, "color": "red" }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "id": 4,
+        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 10 },
+        "type": "graph",
+        "title": "SLO Burn Rate",
+        "targets": [
+          {
+            "expr": "(1 - (sum(rate(kgc_transactions_total{success=\"true\"}[1h])) / sum(rate(kgc_transactions_total[1h])))) / 0.001",
+            "legendFormat": "1h Burn Rate (target: 99.9%)"
+          },
+          {
+            "expr": "(1 - (sum(rate(kgc_transactions_total{success=\"true\"}[6h])) / sum(rate(kgc_transactions_total[6h])))) / 0.001",
+            "legendFormat": "6h Burn Rate"
+          }
+        ],
+        "yaxes": [
+          { "format": "short", "label": "Burn Rate Multiplier" },
+          { "format": "short" }
+        ],
+        "alert": {
+          "conditions": [
+            {
+              "evaluator": { "params": [14.4], "type": "gt" },
+              "operator": { "type": "and" },
+              "query": { "params": ["A", "5m", "now"] },
+              "reducer": { "params": [], "type": "avg" },
+              "type": "query"
+            }
+          ],
+          "name": "High SLO Burn Rate"
+        }
+      },
+      {
+        "id": 5,
+        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 10 },
+        "type": "graph",
+        "title": "Queue Depth (Backpressure)",
+        "targets": [
+          {
+            "expr": "kgc_queue_depth{service=\"unrdf-kgc\"}",
+            "legendFormat": "Queue Depth"
+          }
+        ],
+        "yaxes": [
+          { "format": "short", "label": "Items in Queue" },
+          { "format": "short" }
+        ],
+        "thresholds": [
+          {
+            "value": 100,
+            "colorMode": "critical",
+            "op": "gt",
+            "fill": true,
+            "line": true,
+            "yaxis": "left"
+          },
+          {
+            "value": 1000,
+            "colorMode": "critical",
+            "op": "gt",
+            "fill": true,
+            "line": true,
+            "yaxis": "left"
+          }
+        ]
+      }
+    ]
+  }
+}

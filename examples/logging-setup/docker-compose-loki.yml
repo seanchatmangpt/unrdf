@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  # Loki
+  loki:
+    image: grafana/loki:2.9.0
+    container_name: unrdf-loki
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./loki-config/loki-config.yml:/etc/loki/local-config.yaml:ro
+      - loki_data:/loki
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - unrdf-logging
+
+  # Promtail (log shipper for Loki)
+  promtail:
+    image: grafana/promtail:2.9.0
+    container_name: unrdf-promtail
+    volumes:
+      - ./loki-config/promtail-config.yml:/etc/promtail/config.yml:ro
+      - /var/log:/var/log:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+    command: -config.file=/etc/promtail/config.yml
+    depends_on:
+      - loki
+    networks:
+      - unrdf-logging
+
+  # Grafana
+  grafana:
+    image: grafana/grafana:10.2.0
+    container_name: unrdf-grafana-loki
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana-datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml:ro
+    depends_on:
+      - loki
+    networks:
+      - unrdf-logging
+
+volumes:
+  loki_data:
+    driver: local
+  grafana_data:
+    driver: local
+
+networks:
+  unrdf-logging:
+    driver: bridge

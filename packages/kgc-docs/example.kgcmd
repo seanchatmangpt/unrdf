@@ -1,0 +1,222 @@
+---
+o_hash: example-kgc-doc-001
+policy_id: policy-example-2025
+version: 1.2.3
+author: KGC Documentation Team
+created: 2025-12-01
+updated: 2025-12-27
+status: active
+bounds:
+  - min: 0
+  - max: 100
+receipts:
+  - receipt-example-001
+  - receipt-example-002
+  - receipt-example-003
+views:
+  - tutorial
+  - how-to
+  - reference
+  - explanation
+sources:
+  - https://github.com/unrdf/kgc-docs
+  - ../related/kgc-core.md
+---
+# KGC Documentation Example
+
+This is an example KGC Markdown document showcasing all enhanced features including cross-document references, version tracking, full Markdown AST parsing, executable code blocks, and metadata extraction.
+
+## Cross-Document References
+
+You can reference other documents using standard markdown links:
+- See [KGC Core Concepts](../kgc-core/concepts.md#introduction) for fundamentals
+- Check [API Reference](./api-reference.md#endpoints) for details
+- Learn about [Proof Generation](../proofs/generation.md#merkle-trees)
+
+## Version History
+
+**Current Version**: 1.2.3
+
+### Changelog
+- **1.2.3** (2025-12-27): Added metadata extraction and executable code blocks
+- **1.2.0** (2025-12-20): Implemented full Markdown AST parser
+- **1.1.0** (2025-12-15): Added cross-document reference validation
+- **1.0.0** (2025-12-01): Initial release
+
+## Full Markdown Features
+
+### Paragraphs
+
+This is a regular paragraph demonstrating the enhanced parser. The system now extracts semantic metadata including authors, dates, and status information automatically.
+
+**Author**: KGC Documentation Team
+**Status**: Active
+**Last Updated**: 2025-12-27
+
+### Lists
+
+Unordered list example:
+- Feature 1: Cross-document references
+- Feature 2: Version tracking with semver
+- Feature 3: Full AST parsing
+  - Nested item: Paragraphs
+  - Nested item: Lists
+  - Nested item: Tables
+
+Ordered list example:
+1. Parse YAML frontmatter
+2. Build complete AST
+3. Validate cross-references
+4. Generate Diataxis views
+5. Create proof appendix
+
+### Tables
+
+| Feature | Status | Tests |
+|---------|--------|-------|
+| Cross-refs | ✅ Implemented | 3 |
+| Versions | ✅ Implemented | 2 |
+| Full AST | ✅ Implemented | 4 |
+| Exec Code | ✅ Implemented | 2 |
+| Metadata | ✅ Implemented | 2 |
+
+### Blockquotes
+
+> **Important**: The KGC documentation system now supports full Markdown syntax including blockquotes, which are preserved in the AST for accurate rendering.
+
+> Multi-line blockquotes are also supported.
+> Each line is captured correctly.
+
+### Images
+
+![KGC Architecture Diagram](./images/kgc-architecture.png)
+![Proof Flow](./images/proof-flow.svg)
+
+### Code Blocks
+
+Standard code block:
+```javascript
+function calculateHash(data) {
+  return crypto.createHash('sha256').update(data).digest('hex');
+}
+```
+
+Executable code block:
+```kgc:executable
+// This code will be executed and output captured
+const result = 2 + 2;
+console.log('Result:', result);
+result
+```
+
+## KGC Specialized Blocks
+
+### Query Block
+
+```kgc:query
+PREFIX ex: <http://example.org/>
+SELECT ?person ?name ?email
+WHERE {
+  ?person a ex:Person ;
+          ex:name ?name ;
+          ex:email ?email .
+  FILTER(?status = "active")
+}
+ORDER BY ?name
+LIMIT 100
+```
+
+### Proof Block
+
+```kgc:proof
+{
+  "merkle_root": "a1b2c3d4e5f6",
+  "receipt_hashes": [
+    "receipt-001-hash",
+    "receipt-002-hash",
+    "receipt-003-hash"
+  ],
+  "timestamp": "2025-12-27T00:00:00.000Z"
+}
+```
+
+### Extract Block
+
+```kgc:extract
+{
+  "entity": "ex:Documentation",
+  "properties": ["title", "version", "author", "status"],
+  "filters": {
+    "status": "active",
+    "version": ">=1.0.0"
+  }
+}
+```
+
+### Render Block
+
+```kgc:render
+template: diataxis-tutorial
+variables:
+  title: "Getting Started with KGC"
+  audience: "developers"
+  difficulty: "beginner"
+  duration: "30 minutes"
+```
+
+## Metadata Extraction
+
+The system automatically extracts semantic metadata from document paragraphs:
+- **Authors**: Identified from "Author:" or "By:" patterns
+- **Dates**: Extracted from "Created:", "Updated:", "Date:" patterns
+- **Status**: Found in "Status:" or embedded in text (draft, active, deprecated)
+- **RDF Annotations**: Semantic triples generated for key entities
+
+### Example Metadata
+
+Author: Jane Doe
+Created: 2025-12-01
+Updated: 2025-12-27
+Status: active
+Category: documentation
+Tags: kgc, markdown, proof, diataxis
+
+## Executable Code Demonstrations
+
+### Example 1: Simple Calculation
+
+```kgc:executable
+const a = 10;
+const b = 20;
+const sum = a + b;
+console.log(`Sum: ${sum}`);
+sum
+```
+
+### Example 2: Data Processing
+
+```kgc:executable
+const data = [1, 2, 3, 4, 5];
+const doubled = data.map(x => x * 2);
+console.log('Doubled:', doubled);
+doubled
+```
+
+## Cross-Reference Index
+
+This document references:
+1. [../kgc-core/concepts.md#introduction](../kgc-core/concepts.md#introduction)
+2. [./api-reference.md#endpoints](./api-reference.md#endpoints)
+3. [../proofs/generation.md#merkle-trees](../proofs/generation.md#merkle-trees)
+
+## Summary
+
+This example demonstrates all enhanced features of the KGC Markdown documentation system:
+- ✅ Cross-document references with validation
+- ✅ Version tracking with semver
+- ✅ Full Markdown AST (paragraphs, lists, tables, images, blockquotes, code)
+- ✅ Executable code blocks with output capture
+- ✅ Metadata extraction from text
+- ✅ Maintains YAML frontmatter
+- ✅ Preserves proof appendices
+- ✅ Deterministic rendering

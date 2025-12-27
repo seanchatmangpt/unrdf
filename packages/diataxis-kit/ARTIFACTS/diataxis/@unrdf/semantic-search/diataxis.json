@@ -1,0 +1,143 @@
+{
+  "confidence": {
+    "explanation": 0.7,
+    "howtos": 0.75,
+    "reference": 0.7,
+    "tutorials": 1
+  },
+  "evidence": {
+    "docsFiles": [],
+    "examplesFiles": [
+      "semantic-search-demo.mjs"
+    ],
+    "fingerprint": "aa6035e3be34a96c3ba7e2e56b5b75a363ac00d3126b5d95d6fd7671a3fb400e",
+    "readmeHeadings": [
+      "Features",
+      "Installation",
+      "Quick Start",
+      "Architecture",
+      "Examples",
+      "Performance Benchmarks",
+      "API Reference",
+      "Development",
+      "License",
+      "Links"
+    ]
+  },
+  "explanation": {
+    "architecture": "AI-powered semantic search over RDF knowledge graphs using vector embeddings and transformer models.",
+    "concepts": [
+      "rdf",
+      "semantic-search",
+      "vector-embeddings",
+      "knowledge-graph",
+      "ai"
+    ],
+    "confidenceScore": 0.7,
+    "id": "explanation-unrdf-semantic-search-explanation",
+    "source": [
+      "keywords",
+      "readme",
+      "inferred"
+    ],
+    "title": "Understanding @unrdf/semantic-search",
+    "tradeoffs": [
+      "Ease of use vs. advanced configuration options",
+      "Memory usage vs. processing speed",
+      "Bundle size vs. feature completeness"
+    ]
+  },
+  "generatedAt": "2000-01-01T00:00:00.000Z",
+  "howtos": [
+    {
+      "confidenceScore": 0.5,
+      "context": "When you need robust error handling in production",
+      "id": "howto-handle-errors",
+      "source": [
+        "tests"
+      ],
+      "steps": [
+        "Set up try-catch blocks",
+        "Handle common error types",
+        "Log errors appropriately"
+      ],
+      "task": "Implement error handling for @unrdf/semantic-search",
+      "title": "Handle Errors"
+    },
+    {
+      "confidenceScore": 0.7,
+      "context": "When working with rdf in your project",
+      "id": "howto-integrate-with-rdf",
+      "source": [
+        "keywords",
+        "inferred"
+      ],
+      "steps": [
+        "Install dependencies",
+        "Set up integration",
+        "Test integration"
+      ],
+      "task": "Connect @unrdf/semantic-search with rdf",
+      "title": "Integrate with rdf"
+    }
+  ],
+  "packageName": "@unrdf/semantic-search",
+  "reference": {
+    "confidenceScore": 1,
+    "id": "reference-unrdf-semantic-search-reference",
+    "items": [
+      {
+        "description": "Export: ./discovery",
+        "example": "import from \"./src/discovery/index.mjs\"",
+        "name": "./discovery",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./embeddings",
+        "example": "import from \"./src/embeddings/index.mjs\"",
+        "name": "./embeddings",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./search",
+        "example": "import from \"./src/search/index.mjs\"",
+        "name": "./search",
+        "type": "export"
+      },
+      {
+        "description": "Export: .",
+        "example": "import from \"./src/index.mjs\"",
+        "name": "@unrdf/semantic-search",
+        "type": "export"
+      }
+    ],
+    "source": [
+      "exports"
+    ],
+    "title": "@unrdf/semantic-search Reference"
+  },
+  "tutorials": [
+    {
+      "confidenceScore": 0.9999999999999999,
+      "goal": "Learn how to set up and use @unrdf/semantic-search in your project",
+      "id": "tutorial-getting-started-with-unrdf-semantic-search",
+      "prerequisites": [
+        "Basic RDF knowledge",
+        "Understanding of graph databases"
+      ],
+      "source": [
+        "examples",
+        "readme",
+        "keywords"
+      ],
+      "stepsOutline": [
+        "Install the package",
+        "Import required modules",
+        "Create a basic example",
+        "Run and verify output"
+      ],
+      "title": "Getting Started with @unrdf/semantic-search"
+    }
+  ],
+  "version": "1.0.0"
+}
