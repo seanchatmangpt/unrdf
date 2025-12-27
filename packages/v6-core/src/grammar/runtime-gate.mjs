@@ -162,8 +162,8 @@ export function checkRuntimeComplexity(query, store, options = {}) {
  * }
  */
 export async function wrapWithTimeout(fn, maxMs, context = {}) {
-  const startTime = Date.now();
-  const timestamp = new Date().toISOString();
+  const startTime = context.t_ns ? Number(context.t_ns / 1_000_000n) : Date.now();
+  const timestamp = new Date(startTime).toISOString();
 
   // Create timeout promise
   const timeoutPromise = new Promise((_, reject) => {
@@ -185,7 +185,8 @@ export async function wrapWithTimeout(fn, maxMs, context = {}) {
   // Race execution vs timeout
   try {
     const outcome = await Promise.race([executionPromise, timeoutPromise]);
-    const executionTimeMs = Date.now() - startTime;
+    const endTime = context.t_ns_end ? Number(context.t_ns_end / 1_000_000n) : Date.now();
+    const executionTimeMs = endTime - startTime;
 
     return {
       success: outcome.success,
@@ -200,7 +201,8 @@ export async function wrapWithTimeout(fn, maxMs, context = {}) {
     };
   } catch (error) {
     // Timeout occurred
-    const executionTimeMs = Date.now() - startTime;
+    const endTime = context.t_ns_end ? Number(context.t_ns_end / 1_000_000n) : Date.now();
+    const executionTimeMs = endTime - startTime;
 
     return {
       success: false,

@@ -84,7 +84,7 @@ export class GraphQLAdapter {
    * });
    */
   createEntity(entityType, attributes, context = {}) {
-    const entityId = attributes.id || this._generateUUID();
+    const entityId = attributes.id || this._generateUUID(context);
     const entityUri = `${this.namespace}${entityType}/${entityId}`;
     const typeProperty = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type';
 
@@ -112,10 +112,14 @@ export class GraphQLAdapter {
       });
     }
 
+    // Use provided timestamps or generate (deterministic when context provided)
+    const t_ns = context.t_ns || BigInt(Date.now()) * 1_000_000n;
+    const timestamp_iso = context.timestamp_iso || new Date().toISOString();
+
     const delta = {
-      id: this._generateUUID(),
-      timestamp_iso: new Date().toISOString(),
-      t_ns: BigInt(Date.now()) * 1_000_000n,
+      id: this._generateUUID(context),
+      timestamp_iso,
+      t_ns,
       operations,
       source: {
         package: '@unrdf/graphql',
@@ -168,10 +172,14 @@ export class GraphQLAdapter {
       });
     }
 
+    // Use provided timestamps or generate (deterministic when context provided)
+    const t_ns = context.t_ns || BigInt(Date.now()) * 1_000_000n;
+    const timestamp_iso = context.timestamp_iso || new Date().toISOString();
+
     const delta = {
-      id: this._generateUUID(),
-      timestamp_iso: new Date().toISOString(),
-      t_ns: BigInt(Date.now()) * 1_000_000n,
+      id: this._generateUUID(context),
+      timestamp_iso,
+      t_ns,
       operations,
       source: {
         package: '@unrdf/graphql',
@@ -209,10 +217,14 @@ export class GraphQLAdapter {
       },
     ];
 
+    // Use provided timestamps or generate (deterministic when context provided)
+    const t_ns = context.t_ns || BigInt(Date.now()) * 1_000_000n;
+    const timestamp_iso = context.timestamp_iso || new Date().toISOString();
+
     const delta = {
-      id: this._generateUUID(),
-      timestamp_iso: new Date().toISOString(),
-      t_ns: BigInt(Date.now()) * 1_000_000n,
+      id: this._generateUUID(context),
+      timestamp_iso,
+      t_ns,
       operations,
       source: {
         package: '@unrdf/graphql',
@@ -252,10 +264,15 @@ export class GraphQLAdapter {
   /**
    * Generate UUID (browser/Node.js compatible)
    *
+   * @param {Object} [context={}] - Execution context with uuid/deltaId for determinism
    * @returns {string} UUID v4
    * @private
    */
-  _generateUUID() {
+  _generateUUID(context = {}) {
+    // Use context-provided UUID for determinism if available
+    if (context.uuid) return context.uuid;
+    if (context.deltaId) return context.deltaId;
+
     if (typeof crypto !== 'undefined' && crypto.randomUUID) {
       return crypto.randomUUID();
     }

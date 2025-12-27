@@ -170,6 +170,7 @@
       "ONBOARDING.md",
       "OTEL-VALIDATION-v3.1.0-UPDATE.md",
       "OXIGRAPH_MIGRATION_REPORT.md",
+      "P1-L5-MATURITY-REPORT.md",
       "PACKAGE-DEVELOPMENT.md",
       "PACKAGE-STRUCTURE.md",
       "PACKAGE-STUDY-KGC-HOOKS-CORE.md",
@@ -462,7 +463,7 @@
       "unrdf-profiling-integration.mjs",
       "validate-new-features.mjs"
     ],
-    "fingerprint": "cd0a2ef37f87859c9f8e8aed557fd57f6b0b34fd4b523ad969825d73f94e4a5e",
+    "fingerprint": "d2beb5e6807db2be74d710c9268d1608b34e1a8ed562da6f3c019415df7c2a43",
     "readmeHeadings": [
       "🎯 New to UNRDF? Start Here!",
       "🚀 Quick Start",

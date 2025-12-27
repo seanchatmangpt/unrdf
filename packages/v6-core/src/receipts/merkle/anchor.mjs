@@ -47,15 +47,16 @@ export const ChainConfigSchema = z.object({
  *
  * @param {string} merkleRoot - Merkle root hash to anchor
  * @param {Object} chainConfig - Blockchain configuration
+ * @param {Object} [context={}] - Execution context with t_ns for determinism
  * @returns {Promise<Object>} Anchor receipt
  *
  * @example
  * const anchorReceipt = await anchorToChain(merkleRoot, {
  *   network: 'goerli',
  *   contractAddress: '0x...'
- * });
+ * }, { t_ns: 1234567890000000000n });
  */
-export async function anchorToChain(merkleRoot, chainConfig) {
+export async function anchorToChain(merkleRoot, chainConfig, context = {}) {
   if (!merkleRoot || typeof merkleRoot !== 'string' || merkleRoot.length !== 64) {
     throw new TypeError('anchorToChain: merkleRoot must be a 64-char hex string');
   }
@@ -65,8 +66,9 @@ export async function anchorToChain(merkleRoot, chainConfig) {
   // STUBBED: Generate mock transaction hash
   // In production: const tx = await contract.anchorMerkleRoot(merkleRoot);
   const txHash = '0x' + crypto.randomBytes(32).toString('hex');
-  const blockNumber = Math.floor(Date.now() / 1000) % 1000000; // Mock block number
-  const timestamp = Math.floor(Date.now() / 1000);
+  const timestampMs = context.t_ns ? Number(context.t_ns / 1_000_000n) : Date.now();
+  const timestamp = Math.floor(timestampMs / 1000);
+  const blockNumber = timestamp % 1000000; // Mock block number
 
   console.log(`[STUBBED] Anchoring merkle root ${merkleRoot} to ${config.network}`);
   console.log(`[STUBBED] Transaction hash: ${txHash}`);
@@ -127,15 +129,17 @@ export async function verifyAnchor(merkleRoot, anchorReceipt) {
  * @param {string} root - Merkle root hash
  * @param {string} txHash - Transaction hash
  * @param {Object} [opts={}] - Optional fields
+ * @param {Object} [context={}] - Execution context with t_ns for determinism
  * @returns {Object} Anchor receipt
  */
-export function createAnchorReceipt(root, txHash, opts = {}) {
+export function createAnchorReceipt(root, txHash, opts = {}, context = {}) {
+  const timestampMs = context.t_ns ? Number(context.t_ns / 1_000_000n) : Date.now();
   return AnchorReceiptSchema.parse({
     merkleRoot: root,
     txHash,
     blockNumber: opts.blockNumber || 0,
     network: opts.network || 'localhost',
-    timestamp: opts.timestamp || Math.floor(Date.now() / 1000),
+    timestamp: opts.timestamp || Math.floor(timestampMs / 1000),
     receiptCount: opts.receiptCount || 0,
   });
 }

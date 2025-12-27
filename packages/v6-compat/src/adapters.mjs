@@ -36,7 +36,7 @@ ${hint ? `💡 Hint: ${hint}` : ''}
     process.emit('deprecation', {
       oldAPI,
       newAPI,
-      timestamp: Date.now(),
+      timestamp: hint?.timestamp || Date.now(),
       stack: new Error().stack
     });
   }
@@ -95,23 +95,24 @@ export function wrapWorkflow(workflow) {
 
   // Wrap run() → execute() with receipt
   if (workflow.run) {
-    wrapped.execute = async function execute(task) {
+    wrapped.execute = async function execute(task, options = {}) {
       deprecationWarning(
         'workflow.run(task)',
         'workflow.execute(task) with receipt',
         'Receipts enable replay and verification'
       );
 
-      const startTime = performance.now();
+      const startTime = options.startTime ?? performance.now();
       const result = await workflow.run(task);
-      const endTime = performance.now();
+      const endTime = options.endTime ?? performance.now();
+      const timestamp = options.timestamp ?? Date.now();
 
       // Generate receipt
       const receipt = {
         version: '6.0.0-alpha.1',
         operation: 'workflow.execute',
         task: task?.id || 'unknown',
-        timestamp: Date.now(),
+        timestamp,
         duration: endTime - startTime,
         result: typeof result === 'object' ? JSON.stringify(result) : String(result)
       };
@@ -249,14 +250,15 @@ export function withReceipt(fn, options = {}) {
   }
 
   return async function wrappedWithReceipt(...args) {
-    const startTime = performance.now();
+    const startTime = options.startTime ?? performance.now();
     const result = await fn(...args);
-    const endTime = performance.now();
+    const endTime = options.endTime ?? performance.now();
+    const timestamp = options.timestamp ?? Date.now();
 
     const receipt = {
       version: '6.0.0-alpha.1',
       operation: options.operation || fn.name || 'anonymous',
-      timestamp: Date.now(),
+      timestamp,
       duration: endTime - startTime,
       args: JSON.stringify(args),
       result: typeof result === 'object' ? JSON.stringify(result) : String(result)
@@ -308,9 +310,10 @@ export function validateSchema(schema) {
  * **P0-003 Enhancement**: Static analysis counters
  */
 export class MigrationTracker {
-  constructor() {
+  constructor(options = {}) {
     this.warnings = [];
-    this.start = Date.now();
+    this.start = options.startTime ?? Date.now();
+    this.getNow = options.getNow ?? (() => Date.now());
     this.staticAnalysis = {
       n3Imports: 0,
       dateNowCalls: 0,
@@ -320,11 +323,11 @@ export class MigrationTracker {
     };
   }
 
-  track(oldAPI, newAPI) {
+  track(oldAPI, newAPI, timestamp) {
     this.warnings.push({
       oldAPI,
       newAPI,
-      timestamp: Date.now()
+      timestamp: timestamp ?? this.getNow()
     });
   }
 
@@ -415,7 +418,7 @@ export class MigrationTracker {
 
   report() {
     const unique = [...new Set(this.warnings.map((w) => w.oldAPI))];
-    const elapsed = Date.now() - this.start;
+    const elapsed = this.getNow() - this.start;
 
     return {
       totalWarnings: this.warnings.length,

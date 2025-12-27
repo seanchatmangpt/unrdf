@@ -148,9 +148,14 @@ export const BaseReceiptSchema = z.object({
 
 /**
  * Generate a UUID v4
+ * @param {Object} [context={}] - Execution context with uuid for determinism
  * @returns {string} UUID string
  */
-export function generateUUID() {
+export function generateUUID(context = {}) {
+  // Use context-provided UUID for determinism if available
+  if (context.uuid) return context.uuid;
+  if (context.receiptId) return context.receiptId;
+
   if (typeof crypto !== 'undefined' && crypto.randomUUID) {
     return crypto.randomUUID();
   }

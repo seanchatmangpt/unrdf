@@ -53,6 +53,10 @@ export class ResourceAdapter {
     const allocatedToProperty = `${this.namespace}allocatedTo`;
     const allocatedAtProperty = `${this.namespace}allocatedAt`;
 
+    // Use provided timestamps or generate (deterministic when context provided)
+    const t_ns = context.t_ns || BigInt(Date.now()) * 1_000_000n;
+    const timestamp_iso = context.timestamp_iso || new Date().toISOString();
+
     const operations = [
       {
         op: 'update',
@@ -73,15 +77,15 @@ export class ResourceAdapter {
         op: 'add',
         subject: resourceUri,
         predicate: allocatedAtProperty,
-        object: new Date().toISOString(),
+        object: timestamp_iso,
         graph: this.graphUri,
       },
     ];
 
     const delta = {
-      id: this._generateUUID(),
-      timestamp_iso: new Date().toISOString(),
-      t_ns: BigInt(Date.now()) * 1_000_000n,
+      id: this._generateUUID(context),
+      timestamp_iso,
+      t_ns,
       operations,
       source: {
         package: '@unrdf/resource',
@@ -110,6 +114,10 @@ export class ResourceAdapter {
     const allocatedToProperty = `${this.namespace}allocatedTo`;
     const deallocatedAtProperty = `${this.namespace}deallocatedAt`;
 
+    // Use provided timestamps or generate (deterministic when context provided)
+    const t_ns = context.t_ns || BigInt(Date.now()) * 1_000_000n;
+    const timestamp_iso = context.timestamp_iso || new Date().toISOString();
+
     const operations = [
       {
         op: 'update',
@@ -130,15 +138,15 @@ export class ResourceAdapter {
         op: 'add',
         subject: resourceUri,
         predicate: deallocatedAtProperty,
-        object: new Date().toISOString(),
+        object: timestamp_iso,
         graph: this.graphUri,
       },
     ];
 
     const delta = {
-      id: this._generateUUID(),
-      timestamp_iso: new Date().toISOString(),
-      t_ns: BigInt(Date.now()) * 1_000_000n,
+      id: this._generateUUID(context),
+      timestamp_iso,
+      t_ns,
       operations,
       source: {
         package: '@unrdf/resource',
@@ -170,6 +178,11 @@ export class ResourceAdapter {
     const capabilityUri = `${this.namespace}capability/${capability}`;
     const registeredAtProperty = `${this.namespace}registeredAt`;
 
+    // Use provided timestamps or generate (deterministic when context provided)
+    const context = metadata.context || {};
+    const t_ns = context.t_ns || BigInt(Date.now()) * 1_000_000n;
+    const timestamp_iso = context.timestamp_iso || new Date().toISOString();
+
     const operations = [
       {
         op: 'add',
@@ -182,13 +195,14 @@ export class ResourceAdapter {
         op: 'add',
         subject: capabilityUri,
         predicate: registeredAtProperty,
-        object: new Date().toISOString(),
+        object: timestamp_iso,
         graph: this.graphUri,
       },
     ];
 
-    // Add metadata properties
+    // Add metadata properties (excluding context)
     for (const [key, value] of Object.entries(metadata)) {
+      if (key === 'context') continue;
       operations.push({
         op: 'add',
         subject: capabilityUri,
@@ -199,9 +213,9 @@ export class ResourceAdapter {
     }
 
     const delta = {
-      id: this._generateUUID(),
-      timestamp_iso: new Date().toISOString(),
-      t_ns: BigInt(Date.now()) * 1_000_000n,
+      id: this._generateUUID(context),
+      timestamp_iso,
+      t_ns,
       operations,
       source: {
         package: '@unrdf/resource',
@@ -229,6 +243,10 @@ export class ResourceAdapter {
     const statusProperty = `${this.namespace}status`;
     const updatedAtProperty = `${this.namespace}statusUpdatedAt`;
 
+    // Use provided timestamps or generate (deterministic when context provided)
+    const t_ns = context.t_ns || BigInt(Date.now()) * 1_000_000n;
+    const timestamp_iso = context.timestamp_iso || new Date().toISOString();
+
     const operations = [
       {
         op: 'add',
@@ -241,15 +259,15 @@ export class ResourceAdapter {
         op: 'add',
         subject: resourceUri,
         predicate: updatedAtProperty,
-        object: new Date().toISOString(),
+        object: timestamp_iso,
         graph: this.graphUri,
       },
     ];
 
     const delta = {
-      id: this._generateUUID(),
-      timestamp_iso: new Date().toISOString(),
-      t_ns: BigInt(Date.now()) * 1_000_000n,
+      id: this._generateUUID(context),
+      timestamp_iso,
+      t_ns,
       operations,
       source: {
         package: '@unrdf/resource',
@@ -264,10 +282,15 @@ export class ResourceAdapter {
   /**
    * Generate UUID (browser/Node.js compatible)
    *
+   * @param {Object} [context={}] - Execution context with uuid/deltaId for determinism
    * @returns {string} UUID v4
    * @private
    */
-  _generateUUID() {
+  _generateUUID(context = {}) {
+    // Use context-provided UUID for determinism if available
+    if (context.uuid) return context.uuid;
+    if (context.deltaId) return context.deltaId;
+
     if (typeof crypto !== 'undefined' && crypto.randomUUID) {
       return crypto.randomUUID();
     }

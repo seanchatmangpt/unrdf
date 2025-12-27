@@ -172,11 +172,13 @@ export function getNounVerbMatrix() {
  */
 export function wrapWithReceiptValidation(noun, verb, handler) {
   return async (args, ctx) => {
-    const startTime = Date.now();
+    // Use context timestamp if available for determinism
+    const startTime = ctx?.t_ns ? Number(ctx.t_ns / 1_000_000n) : Date.now();
 
     try {
       const result = await handler(args, ctx);
-      const duration = Date.now() - startTime;
+      const endTime = ctx?.t_ns_end ? Number(ctx.t_ns_end / 1_000_000n) : Date.now();
+      const duration = endTime - startTime;
 
       // Ensure result includes receipt metadata
       return {
@@ -184,20 +186,21 @@ export function wrapWithReceiptValidation(noun, verb, handler) {
         _receipt: {
           noun,
           verb,
-          timestamp: new Date().toISOString(),
+          timestamp: new Date(startTime).toISOString(),
           duration,
           status: 'success'
         }
       };
     } catch (error) {
-      const duration = Date.now() - startTime;
+      const endTime = ctx?.t_ns_end ? Number(ctx.t_ns_end / 1_000_000n) : Date.now();
+      const duration = endTime - startTime;
 
       throw {
         ...error,
         _receipt: {
           noun,
           verb,
-          timestamp: new Date().toISOString(),
+          timestamp: new Date(startTime).toISOString(),
           duration,
           status: 'error',
           error: error.message

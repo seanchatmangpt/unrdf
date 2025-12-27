@@ -106,7 +106,8 @@ const CompileResultSchema = z.object({
  * }
  */
 export function compileGrammar(ast, options = {}) {
-  const startTime = Date.now();
+  const context = options.context || {};
+  const startTime = context.t_ns ? Number(context.t_ns / 1_000_000n) : Date.now();
   const opts = CompileOptionsSchema.parse(options);
 
   // Validate AST
@@ -116,7 +117,8 @@ export function compileGrammar(ast, options = {}) {
       'AST must have type and complexity fields',
       ast,
       startTime,
-      opts
+      opts,
+      context
     );
   }
 
@@ -126,11 +128,12 @@ export function compileGrammar(ast, options = {}) {
   // Check if complexity exceeds bounds
   const rejection = rejectIfTooComplex(ast, bounds, opts);
   if (rejection) {
+    const endTime = context.t_ns_end ? Number(context.t_ns_end / 1_000_000n) : Date.now();
     return {
       ...rejection,
       compileReceipt: {
-        timestamp: new Date().toISOString(),
-        compileTimeMs: Date.now() - startTime,
+        timestamp: new Date(startTime).toISOString(),
+        compileTimeMs: endTime - startTime,
         grammarType: ast.type,
         decision: 'REJECT',
         reason: rejection.reason,
@@ -141,13 +144,14 @@ export function compileGrammar(ast, options = {}) {
   // Compile AST to runtime form
   try {
     const compiled = compileASTToRuntime(ast);
+    const endTime = context.t_ns_end ? Number(context.t_ns_end / 1_000_000n) : Date.now();
 
     return {
       success: true,
       compiled,
       compileReceipt: {
-        timestamp: new Date().toISOString(),
-        compileTimeMs: Date.now() - startTime,
+        timestamp: new Date(startTime).toISOString(),
+        compileTimeMs: endTime - startTime,
         grammarType: ast.type,
         decision: 'ACCEPT',
       },
@@ -159,7 +163,8 @@ export function compileGrammar(ast, options = {}) {
       error.message,
       ast,
       startTime,
-      opts
+      opts,
+      context
     );
   }
 }
@@ -429,20 +434,22 @@ function compileASTToRuntime(ast) {
  * @param {Object} opts - Options
  * @returns {Object} Denial result
  */
-function createDenialResult(reason, message, ast, startTime, opts) {
+function createDenialResult(reason, message, ast, startTime, opts, context = {}) {
+  const endTime = context.t_ns_end ? Number(context.t_ns_end / 1_000_000n) : Date.now();
+  const timestamp = new Date(startTime).toISOString();
   return {
     success: false,
     denial: { reason, message },
     compileReceipt: {
-      timestamp: new Date().toISOString(),
-      compileTimeMs: Date.now() - startTime,
+      timestamp,
+      compileTimeMs: endTime - startTime,
       grammarType: ast?.type || 'unknown',
       decision: 'REJECT',
       reason,
     },
     denialReceipt: opts.emitReceipts !== false ? {
-      timestamp: new Date().toISOString(),
-      merkleProof: generateMerkleProof(JSON.stringify(ast), new Date().toISOString(), { reason }),
+      timestamp,
+      merkleProof: generateMerkleProof(JSON.stringify(ast), timestamp, { reason }),
       deniedInput: JSON.stringify(ast).slice(0, 500),
       reason,
       details: { message },

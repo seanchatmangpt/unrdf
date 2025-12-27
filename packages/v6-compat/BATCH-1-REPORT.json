@@ -1,0 +1,390 @@
+{
+  "timestamp": "2025-12-27T11:11:03.629Z",
+  "batch": 1,
+  "target": 50,
+  "generated": 50,
+  "schemas": [
+    {
+      "source": "/home/user/unrdf/packages/v6-compat/src/adapters.mjs",
+      "schema": "/home/user/unrdf/packages/v6-compat/src/adapters.schema.mjs",
+      "function": "createStore",
+      "params": 1,
+      "returnType": "Promise<Store>"
+    },
+    {
+      "source": "/home/user/unrdf/packages/v6-compat/src/adapters.mjs",
+      "schema": "/home/user/unrdf/packages/v6-compat/src/adapters.schema.mjs",
+      "function": "wrapWorkflow",
+      "params": 1,
+      "returnType": "Object"
+    },
+    {
+      "source": "/home/user/unrdf/packages/v6-compat/src/adapters.mjs",
+      "schema": "/home/user/unrdf/packages/v6-compat/src/adapters.schema.mjs",
+      "function": "wrapFederation",
+      "params": 1,
+      "returnType": "Object"
+    },
+    {
+      "source": "/home/user/unrdf/packages/v6-compat/src/adapters.mjs",
+      "schema": "/home/user/unrdf/packages/v6-compat/src/adapters.schema.mjs",
+      "function": "withReceipt",
+      "params": 2,
+      "returnType": "Function"
+    },
+    {
+      "source": "/home/user/unrdf/packages/v6-compat/src/adapters.mjs",
+      "schema": "/home/user/unrdf/packages/v6-compat/src/adapters.schema.mjs",
+      "function": "validateSchema",
+      "params": 1,
+      "returnType": "Function"
+    },
+    {
+      "source": "/home/user/unrdf/packages/v6-compat/src/schema-generator.mjs",
+      "schema": "/home/user/unrdf/packages/v6-compat/src/schema-generator.schema.mjs",
+      "function": "parseJSDocToZod",
+      "params": 1,
+      "returnType": "string"
+    },
+    {
+      "source": "/home/user/unrdf/packages/v6-compat/src/schema-generator.mjs",
+      "schema": "/home/user/unrdf/packages/v6-compat/src/schema-generator.schema.mjs",
+      "function": "generateSchemaFromFunction",
+      "params": 1,
+      "returnType": "Object"
+    },
+    {
+      "source": "/home/user/unrdf/packages/v6-compat/src/schema-generator.mjs",
+      "schema": "/home/user/unrdf/packages/v6-compat/src/schema-generator.schema.mjs",
+      "function": "generateSchemasForFiles",
+      "params": 2,
+      "returnType": "Promise<Array<{file: string, schema: string, functions: Array"
+    },
+    {
+      "source": "/home/user/unrdf/packages/v6-compat/src/schema-generator.mjs",
+      "schema": "/home/user/unrdf/packages/v6-compat/src/schema-generator.schema.mjs",
+      "function": "validateWithErrors",
+      "params": 2,
+      "returnType": "Object"
+    },
+    {
+      "source": "/home/user/unrdf/packages/v6-compat/src/schema-generator.mjs",
+      "schema": "/home/user/unrdf/packages/v6-compat/src/schema-generator.schema.mjs",
+      "function": "generateTSFromZod",
+      "params": 1,
+      "returnType": "string"
+    },
+    {
+      "source": "/home/user/unrdf/packages/v6-core/src/receipts/with-receipt.mjs",
+      "schema": "/home/user/unrdf/packages/v6-core/src/receipts/with-receipt.schema.mjs",
+      "function": "withReceipt",
+      "params": 2,
+      "returnType": "Function"
+    },
+    {
+      "source": "/home/user/unrdf/packages/v6-core/src/receipts/with-receipt.mjs",
+      "schema": "/home/user/unrdf/packages/v6-core/src/receipts/with-receipt.schema.mjs",
+      "function": "createReceiptChain",
+      "params": 1,
+      "returnType": "Promise<Array<{result: any, receipt: Object"
+    },
+    {
+      "source": "/home/user/unrdf/packages/v6-core/src/receipts/with-receipt.mjs",
+      "schema": "/home/user/unrdf/packages/v6-core/src/receipts/with-receipt.schema.mjs",
+      "function": "verifyIdempotency",
+      "params": 2,
+      "returnType": "Promise<{idempotent: boolean, receipt1: Object, receipt2: Object"
+    },
+    {
+      "source": "/home/user/unrdf/packages/v6-core/src/receipts/base-receipt.mjs",
+      "schema": "/home/user/unrdf/packages/v6-core/src/receipts/base-receipt.schema.mjs",
+      "function": "generateUUID",
+      "params": 0,
+      "returnType": "string"
+    },
+    {
+      "source": "/home/user/unrdf/packages/v6-core/src/receipts/base-receipt.mjs",
+      "schema": "/home/user/unrdf/packages/v6-core/src/receipts/base-receipt.schema.mjs",
+      "function": "deterministicSerialize",
+      "params": 1,
+      "returnType": "string"
+    },
+    {
+      "source": "/home/user/unrdf/packages/v6-core/src/receipts/base-receipt.mjs",
+      "schema": "/home/user/unrdf/packages/v6-core/src/receipts/base-receipt.schema.mjs",
+      "function": "computeBlake3",
+      "params": 1,
+      "returnType": "Promise<string>"
+    },
+    {
+      "source": "/home/user/unrdf/packages/v6-core/src/receipts/base-receipt.mjs",
+      "schema": "/home/user/unrdf/packages/v6-core/src/receipts/base-receipt.schema.mjs",
+      "function": "computeChainHash",
+      "params": 2,
+      "returnType": "Promise<string>"
+    },
+    {
+      "source": "/home/user/unrdf/packages/v6-core/src/receipts/base-receipt.mjs",
+      "schema": "/home/user/unrdf/packages/v6-core/src/receipts/base-receipt.schema.mjs",
+      "function": "verifyBaseReceipt",
+      "params": 1,
+      "returnType": "Promise<{valid: boolean, error?: string, checks?: Object"
+    },
+    {
+      "source": "/home/user/unrdf/packages/core/src/types.mjs",
+      "schema": "/home/user/unrdf/packages/core/src/types.schema.mjs",
+      "function": "createTerms",
+      "params": 1,
+      "returnType": "Object"
+    },
+    {
+      "source": "/home/user/unrdf/packages/core/src/types.mjs",
+      "schema": "/home/user/unrdf/packages/core/src/types.schema.mjs",
+      "function": "createNamedNode",
+      "params": 1,
+      "returnType": "NamedNode"
+    },
+    {
+      "source": "/home/user/unrdf/packages/core/src/types.mjs",
+      "schema": "/home/user/unrdf/packages/core/src/types.schema.mjs",
+      "function": "createLiteral",
+      "params": 3,
+      "returnType": "Literal"
+    },
+    {
+      "source": "/home/user/unrdf/packages/core/src/types.mjs",
+      "schema": "/home/user/unrdf/packages/core/src/types.schema.mjs",
+      "function": "createBlankNode",
+      "params": 1,
+      "returnType": "BlankNode"
+    },
+    {
+      "source": "/home/user/unrdf/packages/core/src/types.mjs",
+      "schema": "/home/user/unrdf/packages/core/src/types.schema.mjs",
+      "function": "createVariable",
+      "params": 1,
+      "returnType": "Variable"
+    },
+    {
+      "source": "/home/user/unrdf/packages/core/src/types.mjs",
+      "schema": "/home/user/unrdf/packages/core/src/types.schema.mjs",
+      "function": "createQuad",
+      "params": 4,
+      "returnType": "Quad"
+    },
+    {
+      "source": "/home/user/unrdf/packages/core/src/security.mjs",
+      "schema": "/home/user/unrdf/packages/core/src/security.schema.mjs",
+      "function": "sanitizeHTML",
+      "params": 1,
+      "returnType": "string"
+    },
+    {
+      "source": "/home/user/unrdf/packages/core/src/security.mjs",
+      "schema": "/home/user/unrdf/packages/core/src/security.schema.mjs",
+      "function": "sanitizeURL",
+      "params": 2,
+      "returnType": "string|null"
+    },
+    {
+      "source": "/home/user/unrdf/packages/core/src/security.mjs",
+      "schema": "/home/user/unrdf/packages/core/src/security.schema.mjs",
+      "function": "isPathSafe",
+      "params": 2,
+      "returnType": "boolean"
+    },
+    {
+      "source": "/home/user/unrdf/packages/core/src/security.mjs",
+      "schema": "/home/user/unrdf/packages/core/src/security.schema.mjs",
+      "function": "generateSecureRandom",
+      "params": 1,
+      "returnType": "string"
+    },
+    {
+      "source": "/home/user/unrdf/packages/core/src/security.mjs",
+      "schema": "/home/user/unrdf/packages/core/src/security.schema.mjs",
+      "function": "hashPassword",
+      "params": 2,
+      "returnType": "Promise<{hash: string, salt: string"
+    },
+    {
+      "source": "/home/user/unrdf/packages/core/src/security.mjs",
+      "schema": "/home/user/unrdf/packages/core/src/security.schema.mjs",
+      "function": "verifyPassword",
+      "params": 3,
+      "returnType": "Promise<boolean>"
+    },
+    {
+      "source": "/home/user/unrdf/packages/core/src/security.mjs",
+      "schema": "/home/user/unrdf/packages/core/src/security.schema.mjs",
+      "function": "getSecurityHeaders",
+      "params": 0,
+      "returnType": "Object"
+    },
+    {
+      "source": "/home/user/unrdf/packages/core/src/security.mjs",
+      "schema": "/home/user/unrdf/packages/core/src/security.schema.mjs",
+      "function": "validateInput",
+      "params": 1,
+      "returnType": "Object"
+    },
+    {
+      "source": "/home/user/unrdf/packages/core/src/security-schemas.mjs",
+      "schema": "/home/user/unrdf/packages/core/src/security-schemas.schema.mjs",
+      "function": "validateInput",
+      "params": 2,
+      "returnType": "Object"
+    },
+    {
+      "source": "/home/user/unrdf/packages/core/src/security-schemas.mjs",
+      "schema": "/home/user/unrdf/packages/core/src/security-schemas.schema.mjs",
+      "function": "validateFields",
+      "params": 2,
+      "returnType": "Object"
+    },
+    {
+      "source": "/home/user/unrdf/packages/core/src/recovery.mjs",
+      "schema": "/home/user/unrdf/packages/core/src/recovery.schema.mjs",
+      "function": "retry",
+      "params": 2,
+      "returnType": "Promise<*>"
+    },
+    {
+      "source": "/home/user/unrdf/packages/core/src/recovery.mjs",
+      "schema": "/home/user/unrdf/packages/core/src/recovery.schema.mjs",
+      "function": "fallback",
+      "params": 2,
+      "returnType": "Promise<*>"
+    },
+    {
+      "source": "/home/user/unrdf/packages/core/src/recovery.mjs",
+      "schema": "/home/user/unrdf/packages/core/src/recovery.schema.mjs",
+      "function": "withTimeout",
+      "params": 3,
+      "returnType": "Promise<*>"
+    },
+    {
+      "source": "/home/user/unrdf/packages/core/src/recovery.mjs",
+      "schema": "/home/user/unrdf/packages/core/src/recovery.schema.mjs",
+      "function": "bulkOperation",
+      "params": 3,
+      "returnType": "Promise<Object>"
+    },
+    {
+      "source": "/home/user/unrdf/packages/core/src/recovery.mjs",
+      "schema": "/home/user/unrdf/packages/core/src/recovery.schema.mjs",
+      "function": "withRecovery",
+      "params": 2,
+      "returnType": "Function"
+    },
+    {
+      "source": "/home/user/unrdf/packages/core/src/n3-justified-receipts.mjs",
+      "schema": "/home/user/unrdf/packages/core/src/n3-justified-receipts.schema.mjs",
+      "function": "testN3Determinism",
+      "params": 2,
+      "returnType": "unknown"
+    },
+    {
+      "source": "/home/user/unrdf/packages/core/src/metrics.mjs",
+      "schema": "/home/user/unrdf/packages/core/src/metrics.schema.mjs",
+      "function": "createMetrics",
+      "params": 1,
+      "returnType": "Object"
+    },
+    {
+      "source": "/home/user/unrdf/packages/core/src/logger.mjs",
+      "schema": "/home/user/unrdf/packages/core/src/logger.schema.mjs",
+      "function": "createLogger",
+      "params": 1,
+      "returnType": "Object"
+    },
+    {
+      "source": "/home/user/unrdf/packages/core/src/logger.mjs",
+      "schema": "/home/user/unrdf/packages/core/src/logger.schema.mjs",
+      "function": "performanceTimer",
+      "params": 0,
+      "returnType": "Object"
+    },
+    {
+      "source": "/home/user/unrdf/packages/core/src/logger.mjs",
+      "schema": "/home/user/unrdf/packages/core/src/logger.schema.mjs",
+      "function": "requestLogger",
+      "params": 1,
+      "returnType": "Function"
+    },
+    {
+      "source": "/home/user/unrdf/packages/core/src/health.mjs",
+      "schema": "/home/user/unrdf/packages/core/src/health.schema.mjs",
+      "function": "createHealthChecks",
+      "params": 1,
+      "returnType": "Object"
+    },
+    {
+      "source": "/home/user/unrdf/packages/core/src/health.mjs",
+      "schema": "/home/user/unrdf/packages/core/src/health.schema.mjs",
+      "function": "createHealthMiddleware",
+      "params": 1,
+      "returnType": "Object"
+    },
+    {
+      "source": "/home/user/unrdf/packages/core/src/health.mjs",
+      "schema": "/home/user/unrdf/packages/core/src/health.schema.mjs",
+      "function": "createUnrdfHealthChecks",
+      "params": 1,
+      "returnType": "Object"
+    },
+    {
+      "source": "/home/user/unrdf/packages/core/src/errors.mjs",
+      "schema": "/home/user/unrdf/packages/core/src/errors.schema.mjs",
+      "function": "createError",
+      "params": 2,
+      "returnType": "UnrdfError"
+    },
+    {
+      "source": "/home/user/unrdf/packages/core/src/errors.mjs",
+      "schema": "/home/user/unrdf/packages/core/src/errors.schema.mjs",
+      "function": "wrapError",
+      "params": 2,
+      "returnType": "UnrdfError"
+    },
+    {
+      "source": "/home/user/unrdf/packages/core/src/errors.mjs",
+      "schema": "/home/user/unrdf/packages/core/src/errors.schema.mjs",
+      "function": "assertError",
+      "params": 3,
+      "returnType": "unknown"
+    }
+  ],
+  "samples": [
+    {
+      "function": "createStore",
+      "source": "adapters.mjs",
+      "params": 1,
+      "returnType": "Promise<Store>"
+    },
+    {
+      "function": "wrapWorkflow",
+      "source": "adapters.mjs",
+      "params": 1,
+      "returnType": "Object"
+    },
+    {
+      "function": "wrapFederation",
+      "source": "adapters.mjs",
+      "params": 1,
+      "returnType": "Object"
+    },
+    {
+      "function": "withReceipt",
+      "source": "adapters.mjs",
+      "params": 2,
+      "returnType": "Function"
+    },
+    {
+      "function": "validateSchema",
+      "source": "adapters.mjs",
+      "params": 1,
+      "returnType": "Function"
+    }
+  ]
+}

@@ -65,9 +65,10 @@ const deltaStore = new Map();
  * Creates and validates a proposed state transition.
  *
  * @param {Object} args - Validated args
+ * @param {Object} [context={}] - Execution context with t_ns for determinism
  * @returns {Promise<Object>} Proposal result
  */
-async function proposeDelta(args) {
+async function proposeDelta(args, context = {}) {
   const { file, delta, description } = args;
 
   let deltaData;
@@ -90,13 +91,15 @@ async function proposeDelta(args) {
   // Validate delta structure
   const validated = DeltaSchema.parse(deltaData);
 
-  // Generate ID
-  const id = `delta-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+  // Generate ID deterministically from context or fallback to timestamp
+  const timestamp = context.t_ns ? Number(context.t_ns / 1_000_000n) : Date.now();
+  const counter = context.counter || Math.floor(Math.random() * 100000);
+  const id = `delta-${timestamp}-${counter.toString(36).padStart(5, '0')}`;
   validated.id = id;
   validated.metadata = {
     ...validated.metadata,
     description,
-    proposedAt: new Date().toISOString(),
+    proposedAt: new Date(timestamp).toISOString(),
     status: 'proposed'
   };
 

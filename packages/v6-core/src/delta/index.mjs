@@ -170,15 +170,18 @@ export function createDelta(op, subject, predicate, object, options = {}) {
     operation.graph = options.graph;
   }
 
+  const context = options.context || {};
+  const t_ns = context.t_ns || BigInt(Date.now()) * 1_000_000n;
+
   const delta = {
-    id: generateUUID(),
-    timestamp_iso: new Date().toISOString(),
-    t_ns: BigInt(Date.now()) * 1_000_000n,
+    id: generateUUID(context),
+    timestamp_iso: new Date(Number(t_ns / 1_000_000n)).toISOString(),
+    t_ns,
     operations: [operation],
     source: {
       package: options.package || '@unrdf/v6-core',
       actor: options.actor,
-      context: options.context,
+      context,
     },
   };
 
@@ -188,10 +191,15 @@ export function createDelta(op, subject, predicate, object, options = {}) {
 /**
  * Generate UUID (browser/Node.js compatible)
  *
+ * @param {Object} [context={}] - Execution context with uuid/deltaId for determinism
  * @returns {string} UUID v4
  * @private
  */
-function generateUUID() {
+function generateUUID(context = {}) {
+  // Use context-provided UUID for determinism if available
+  if (context.uuid) return context.uuid;
+  if (context.deltaId) return context.deltaId;
+
   if (typeof crypto !== 'undefined' && crypto.randomUUID) {
     return crypto.randomUUID();
   }

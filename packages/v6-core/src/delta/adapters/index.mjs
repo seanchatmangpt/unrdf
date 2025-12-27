@@ -36,8 +36,9 @@ export class MemoryAdapter extends DeltaAdapter {
     this.storage = new Map();
   }
 
-  async store(proposal) {
-    const id = proposal.id || `mem-${Date.now()}`;
+  async store(proposal, context = {}) {
+    const timestamp = context.t_ns ? Number(context.t_ns / 1_000_000n) : Date.now();
+    const id = proposal.id || `mem-${timestamp}`;
     this.storage.set(id, proposal);
     return id;
   }

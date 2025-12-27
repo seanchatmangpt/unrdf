@@ -64,6 +64,10 @@ export class WorkflowAdapter {
     const stateProperty = `${this.namespace}state`;
     const timestampProperty = `${this.namespace}stateChangedAt`;
 
+    // Use provided timestamps or generate (deterministic when context provided)
+    const t_ns = context.t_ns || BigInt(Date.now()) * 1_000_000n;
+    const timestamp_iso = context.timestamp_iso || new Date().toISOString();
+
     const operations = [
       {
         op: 'update',
@@ -77,15 +81,15 @@ export class WorkflowAdapter {
         op: 'add',
         subject: taskUri,
         predicate: timestampProperty,
-        object: new Date().toISOString(),
+        object: timestamp_iso,
         graph: this.graphUri,
       },
     ];
 
     const delta = {
-      id: this._generateUUID(),
-      timestamp_iso: new Date().toISOString(),
-      t_ns: BigInt(Date.now()) * 1_000_000n,
+      id: this._generateUUID(context),
+      timestamp_iso,
+      t_ns,
       operations,
       source: {
         package: '@unrdf/yawl',
@@ -121,6 +125,10 @@ export class WorkflowAdapter {
     const stateProperty = `${this.namespace}state`;
     const createdAtProperty = `${this.namespace}createdAt`;
 
+    // Use provided timestamps or generate (deterministic when context provided)
+    const t_ns = context.t_ns || BigInt(Date.now()) * 1_000_000n;
+    const timestamp_iso = context.timestamp_iso || new Date().toISOString();
+
     const operations = [
       {
         op: 'add',
@@ -147,15 +155,15 @@ export class WorkflowAdapter {
         op: 'add',
         subject: workflowUri,
         predicate: createdAtProperty,
-        object: new Date().toISOString(),
+        object: timestamp_iso,
         graph: this.graphUri,
       },
     ];
 
     const delta = {
-      id: this._generateUUID(),
-      timestamp_iso: new Date().toISOString(),
-      t_ns: BigInt(Date.now()) * 1_000_000n,
+      id: this._generateUUID(context),
+      timestamp_iso,
+      t_ns,
       operations,
       source: {
         package: '@unrdf/yawl',
@@ -185,6 +193,10 @@ export class WorkflowAdapter {
     const resourceProperty = `${this.namespace}assignedTo`;
     const assignedAtProperty = `${this.namespace}assignedAt`;
 
+    // Use provided timestamps or generate (deterministic when context provided)
+    const t_ns = context.t_ns || BigInt(Date.now()) * 1_000_000n;
+    const timestamp_iso = context.timestamp_iso || new Date().toISOString();
+
     const operations = [
       {
         op: 'add',
@@ -197,15 +209,15 @@ export class WorkflowAdapter {
         op: 'add',
         subject: taskUri,
         predicate: assignedAtProperty,
-        object: new Date().toISOString(),
+        object: timestamp_iso,
         graph: this.graphUri,
       },
     ];
 
     const delta = {
-      id: this._generateUUID(),
-      timestamp_iso: new Date().toISOString(),
-      t_ns: BigInt(Date.now()) * 1_000_000n,
+      id: this._generateUUID(context),
+      timestamp_iso,
+      t_ns,
       operations,
       source: {
         package: '@unrdf/yawl',
@@ -235,6 +247,10 @@ export class WorkflowAdapter {
     const cancelledAtProperty = `${this.namespace}cancelledAt`;
     const cancelledByProperty = `${this.namespace}cancelledBy`;
 
+    // Use provided timestamps or generate (deterministic when context provided)
+    const t_ns = context.t_ns || BigInt(Date.now()) * 1_000_000n;
+    const timestamp_iso = context.timestamp_iso || new Date().toISOString();
+
     const operations = [];
 
     for (const taskId of taskIds) {
@@ -251,7 +267,7 @@ export class WorkflowAdapter {
           op: 'add',
           subject: taskUri,
           predicate: cancelledAtProperty,
-          object: new Date().toISOString(),
+          object: timestamp_iso,
           graph: this.graphUri,
         },
         {
@@ -265,9 +281,9 @@ export class WorkflowAdapter {
     }
 
     const delta = {
-      id: this._generateUUID(),
-      timestamp_iso: new Date().toISOString(),
-      t_ns: BigInt(Date.now()) * 1_000_000n,
+      id: this._generateUUID(context),
+      timestamp_iso,
+      t_ns,
       operations,
       source: {
         package: '@unrdf/yawl',
@@ -285,7 +301,11 @@ export class WorkflowAdapter {
    * @returns {string} UUID v4
    * @private
    */
-  _generateUUID() {
+  _generateUUID(context = {}) {
+    // Use context-provided UUID for determinism if available
+    if (context.uuid) return context.uuid;
+    if (context.deltaId) return context.deltaId;
+
     if (typeof crypto !== 'undefined' && crypto.randomUUID) {
       return crypto.randomUUID();
     }
