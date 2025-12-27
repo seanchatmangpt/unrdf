@@ -144,6 +144,91 @@ export {
   WORKITEM_TO_HOOK_TRIGGERS,
 } from './PolicyBridge.mjs';
 
+// ============================================================================
+// KGC-SWARM 10-Agent Calculus Implementation
+// ============================================================================
+
+// SwarmOrchestrator - 10-agent coordination (𝔄 ≔ {α₁,…,α₁₀})
+export {
+  SwarmOrchestrator,
+  createSwarm10,
+  AgentConfigSchema as SwarmAgentConfigSchema,
+  BudgetSchema as SwarmBudgetSchema,
+  SwarmConfigSchema,
+  ProbeSchema,
+  ObservationSchema,
+  SwarmReceiptSchema,
+} from './swarm-orchestrator.mjs';
+
+// PokaYokeGuard - Deny-by-construction (Σ_guard, H set)
+export {
+  PokaYokeGuard,
+  ForbiddenOps,
+  createGuard as createPokaYokeGuard,
+  withGuard as withPokaYoke,
+  GuardConfigSchema,
+  ViolationReceiptSchema,
+  CheckResultSchema,
+} from './poka-yoke-guards.mjs';
+
+// ObservableIO - Observable-only I/O (O_vm ⊔ O_bb)
+export {
+  ObservableIO,
+  createObservableIO,
+  withObservable,
+  TraceEntrySchema,
+  VMObservationSchema,
+  ControlledInputSchema,
+} from './observable-io.mjs';
+
+// InfoScheduler - Information-theoretic scheduling (Λ ordering)
+export {
+  InfoScheduler,
+  createScheduler,
+  ProbePrioritySchema,
+  SchedulerStateSchema,
+} from './info-scheduler.mjs';
+
+// DriftDetector - Discovery/Convergence (Δ detection)
+export {
+  DriftDetector,
+  createDriftDetector,
+  ArtifactSnapshotSchema,
+  DriftMeasurementSchema,
+  ConvergenceStateSchema,
+} from './drift-detector.mjs';
+
+// BudgetEnforcer - Resource constraint enforcement (B)
+export {
+  BudgetEnforcer,
+  createBudget,
+  withBudget,
+  BudgetSchema as EnforcerBudgetSchema,
+  BudgetUsageSchema,
+  BudgetCheckSchema,
+  BudgetReceiptSchema,
+} from './budget-enforcer.mjs';
+
+// AgentHarness - Per-agent lifecycle management
+export {
+  AgentHarness,
+  createAgent,
+  createAgents,
+  AgentConfigSchema as AgentHarnessConfigSchema,
+  AgentStateSchema,
+  AgentResultSchema,
+} from './agent-harness.mjs';
+
+// ReceiptCompositor - Merkle-based receipt aggregation
+export {
+  ReceiptCompositor,
+  createCompositor,
+  ReceiptEntrySchema,
+  MerkleNodeSchema,
+  CompositeReceiptSchema,
+  ReceiptChainSchema,
+} from './receipt-compositor.mjs';
+
 /**
  * Create a complete KGC-Claude substrate instance
  *

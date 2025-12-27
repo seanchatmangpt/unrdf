@@ -10,7 +10,15 @@
     "./autonomy-guard": "./src/autonomy-guard.mjs",
     "./shard-merge": "./src/shard-merge.mjs",
     "./async-workflow": "./src/async-workflow.mjs",
-    "./projection": "./src/projection.mjs"
+    "./projection": "./src/projection.mjs",
+    "./swarm-orchestrator": "./src/swarm-orchestrator.mjs",
+    "./poka-yoke-guards": "./src/poka-yoke-guards.mjs",
+    "./observable-io": "./src/observable-io.mjs",
+    "./info-scheduler": "./src/info-scheduler.mjs",
+    "./drift-detector": "./src/drift-detector.mjs",
+    "./budget-enforcer": "./src/budget-enforcer.mjs",
+    "./agent-harness": "./src/agent-harness.mjs",
+    "./receipt-compositor": "./src/receipt-compositor.mjs"
   },
   "main": "./src/index.mjs",
   "types": "./dist/index.d.ts",
@@ -25,6 +33,7 @@
     "bench:harness": "node benches/workload-harness.mjs",
     "bench:baseline": "node benches/workload-harness.mjs --baseline",
     "demo:e2e": "node demos/multi-agent-e2e.mjs",
+    "demo:swarm10": "node demos/swarm-10-agents.mjs",
     "prove:system": "node scripts/prove-system.mjs"
   },
   "dependencies": {
