@@ -50,6 +50,9 @@ export {
   validateDeltaConflict,
 } from './schema.mjs';
 
+// Import validateDelta for internal use in createDelta
+import { validateDelta } from './schema.mjs';
+
 // =============================================================================
 // Gate Exports
 // =============================================================================

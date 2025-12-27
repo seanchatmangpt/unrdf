@@ -13,7 +13,7 @@
 
 import { defineCommand } from 'citty';
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
-import { createStore, namedNode, literal, quad, getQuads, iterateQuads } from '@unrdf/core';
+import { createStore, namedNode, literal, quad, iterateQuads } from '@unrdf/core';
 import { Parser, Writer } from 'n3';
 
 /**
@@ -122,7 +122,7 @@ const loadCommand = defineCommand({
       let quadCount = 0;
 
       await new Promise((resolve, reject) => {
-        parser.parse(content, (error, parsedQuad, prefixes) => {
+        parser.parse(content, (error, parsedQuad, _prefixes) => {
           if (error) {
             reject(error);
             return;

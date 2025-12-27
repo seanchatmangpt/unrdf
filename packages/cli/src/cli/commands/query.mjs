@@ -71,6 +71,17 @@ export const queryCommand = defineCommand({
 
       // Execute query
       const results = store.query(queryString);
+
+      // Detect query type (SELECT returns Maps, CONSTRUCT returns quads, ASK returns boolean)
+      const isSELECT = /^\s*SELECT/i.test(queryString);
+      const isASK = /^\s*ASK/i.test(queryString);
+
+      // Handle ASK queries
+      if (isASK) {
+        console.log(results ? '✅ true' : '❌ false');
+        return;
+      }
+
       const resultArray = Array.from(results);
 
       // Format and display results
@@ -81,14 +92,14 @@ export const queryCommand = defineCommand({
 
       switch (format) {
         case 'json':
-          outputJSON(resultArray);
+          outputJSON(resultArray, isSELECT);
           break;
         case 'csv':
-          outputCSV(resultArray);
+          outputCSV(resultArray, isSELECT);
           break;
         case 'table':
         default:
-          outputTable(resultArray);
+          outputTable(resultArray, isSELECT);
           break;
       }
 
@@ -178,55 +189,118 @@ function detectFormat(filename) {
 /**
  * Output results as table
  */
-function outputTable(results) {
-  const data = results.map((quad, idx) => [
-    idx + 1,
-    shortenIRI(quad.subject.value),
-    shortenIRI(quad.predicate.value),
-    shortenIRI(quad.object.value),
-    quad.graph ? shortenIRI(quad.graph.value) : '-',
-  ]);
+function outputTable(results, isSELECT) {
+  if (isSELECT) {
+    // SELECT results are Maps with variable bindings
+    if (results.length === 0) return;
 
-  const tableData = [
-    ['#', 'Subject', 'Predicate', 'Object', 'Graph'],
-    ...data,
-  ];
+    const firstResult = results[0];
+    const variables = Array.from(firstResult.keys());
 
-  console.log(table(tableData, {
-    header: {
-      alignment: 'center',
-      content: 'Query Results',
-    },
-  }));
+    const data = results.map((binding, idx) => {
+      const row = [idx + 1];
+      for (const variable of variables) {
+        const term = binding.get(variable);
+        row.push(term ? shortenIRI(term.value) : '-');
+      }
+      return row;
+    });
+
+    const tableData = [
+      ['#', ...variables],
+      ...data,
+    ];
+
+    console.log(table(tableData, {
+      header: {
+        alignment: 'center',
+        content: 'Query Results',
+      },
+    }));
+  } else {
+    // CONSTRUCT/DESCRIBE results are quads
+    const data = results.map((quad, idx) => [
+      idx + 1,
+      shortenIRI(quad.subject.value),
+      shortenIRI(quad.predicate.value),
+      shortenIRI(quad.object.value),
+      quad.graph ? shortenIRI(quad.graph.value) : '-',
+    ]);
+
+    const tableData = [
+      ['#', 'Subject', 'Predicate', 'Object', 'Graph'],
+      ...data,
+    ];
+
+    console.log(table(tableData, {
+      header: {
+        alignment: 'center',
+        content: 'Query Results',
+      },
+    }));
+  }
 }
 
 /**
  * Output results as JSON
  */
-function outputJSON(results) {
-  const jsonResults = results.map(quad => ({
-    subject: quad.subject.value,
-    predicate: quad.predicate.value,
-    object: quad.object.value,
-    graph: quad.graph ? quad.graph.value : null,
-  }));
-
-  console.log(JSON.stringify(jsonResults, null, 2));
+function outputJSON(results, isSELECT) {
+  if (isSELECT) {
+    // SELECT results are Maps with variable bindings
+    const jsonResults = results.map(binding => {
+      const obj = {};
+      for (const [variable, term] of binding) {
+        obj[variable] = term ? term.value : null;
+      }
+      return obj;
+    });
+    console.log(JSON.stringify(jsonResults, null, 2));
+  } else {
+    // CONSTRUCT/DESCRIBE results are quads
+    const jsonResults = results.map(quad => ({
+      subject: quad.subject.value,
+      predicate: quad.predicate.value,
+      object: quad.object.value,
+      graph: quad.graph ? quad.graph.value : null,
+    }));
+    console.log(JSON.stringify(jsonResults, null, 2));
+  }
 }
 
 /**
  * Output results as CSV
  */
-function outputCSV(results) {
-  console.log('subject,predicate,object,graph');
-  for (const quad of results) {
-    const parts = [
-      escapeCSV(quad.subject.value),
-      escapeCSV(quad.predicate.value),
-      escapeCSV(quad.object.value),
-      quad.graph ? escapeCSV(quad.graph.value) : '',
-    ];
-    console.log(parts.join(','));
+function outputCSV(results, isSELECT) {
+  if (isSELECT) {
+    // SELECT results are Maps with variable bindings
+    if (results.length === 0) return;
+
+    const firstResult = results[0];
+    const variables = Array.from(firstResult.keys());
+
+    // Header
+    console.log(variables.join(','));
+
+    // Data
+    for (const binding of results) {
+      const parts = variables.map(variable => {
+        const term = binding.get(variable);
+        return term ? escapeCSV(term.value) : '';
+      });
+      console.log(parts.join(','));
+    }
+  } else {
+    // CONSTRUCT/DESCRIBE results are quads
+    console.log('subject,predicate,object,graph');
+    for (const quad of results) {
+      const parts = [
+        escapeCSV(quad.subject.value),
+        escapeCSV(quad.predicate.value),
+        escapeCSV(quad.object.value),
+        quad.graph ? escapeCSV(quad.graph.value) : '',
+      ];
+      console.log(parts.join(','));
+    }
   }
 }
 

@@ -4,7 +4,8 @@
  */
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { Readable } from 'stream';
-import { namedNode, literal } from '@rdfjs/data-model';
+import { dataFactory } from '@unrdf/oxigraph';
+const { namedNode, literal } = dataFactory;
 import {
   createRDFStreamParser,
   parseRDFStream,

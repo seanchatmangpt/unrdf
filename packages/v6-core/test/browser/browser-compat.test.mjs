@@ -43,9 +43,14 @@ test('Browser exports - no CLI/docs modules', async (t) => {
 test('Receipt creation - browser compatible', async (t) => {
   const { createReceipt, verifyReceipt } = await import('../../src/browser.mjs');
 
-  const receipt = await createReceipt({
-    receiptType: 'execution',
-    payload: { task: 'test' },
+  const receipt = await createReceipt('execution', {
+    eventType: 'TASK_COMPLETED',
+    caseId: 'test-case',
+    taskId: 'test-task',
+    payload: {
+      decision: 'COMPLETE',
+      context: { task: 'test' },
+    },
   });
 
   assert.ok(receipt, 'Receipt created');
@@ -63,11 +68,35 @@ test('Receipt creation - browser compatible', async (t) => {
 test('Merkle tree - browser compatible', async (t) => {
   const { createReceipt, buildMerkleTree, getMerkleRoot } = await import('../../src/browser.mjs');
 
-  // Create test receipts
+  // Create test receipts with correct API signature
   const receipts = await Promise.all([
-    createReceipt({ receiptType: 'execution', payload: { id: 1 } }),
-    createReceipt({ receiptType: 'execution', payload: { id: 2 } }),
-    createReceipt({ receiptType: 'execution', payload: { id: 3 } }),
+    createReceipt('execution', {
+      eventType: 'TASK_COMPLETED',
+      caseId: 'test-case-1',
+      taskId: 'task-1',
+      payload: {
+        decision: 'COMPLETE',
+        context: { id: 1 },
+      },
+    }),
+    createReceipt('execution', {
+      eventType: 'TASK_COMPLETED',
+      caseId: 'test-case-2',
+      taskId: 'task-2',
+      payload: {
+        decision: 'COMPLETE',
+        context: { id: 2 },
+      },
+    }),
+    createReceipt('execution', {
+      eventType: 'TASK_COMPLETED',
+      caseId: 'test-case-3',
+      taskId: 'task-3',
+      payload: {
+        decision: 'COMPLETE',
+        context: { id: 3 },
+      },
+    }),
   ]);
 
   // Add hash field (required for merkle tree)

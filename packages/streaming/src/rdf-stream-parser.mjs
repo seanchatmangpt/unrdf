@@ -151,19 +151,22 @@ export class RDFStreamParser extends Transform {
    * @param {Function} callback - Callback
    * @private
    */
-  _flush(callback) {
-    return tracer.startActiveSpan('rdf-stream-parser.flush', async (span) => {
-      try {
-        // Parse all buffered data at once
-        if (this.buffer && this.buffer.trim().length > 0) {
-          try {
-            const inputStr = this.buffer.trim();
+  async _flush(callback) {
+    try {
+      // Parse all buffered data at once
+      if (this.buffer && this.buffer.trim().length > 0) {
+        try {
+          const inputStr = this.buffer.trim();
+
+          // Wait for N3 Parser to complete parsing
+          await new Promise((resolve, reject) => {
             this.parser.parse(inputStr + '\n', (error, quad) => {
               if (error) {
                 this.metrics.errors++;
                 if (this.config.onError) {
                   this.config.onError(error);
                 }
+                // Don't reject, just continue - N3 can emit errors for individual quads
                 return;
               }
 
@@ -181,46 +184,38 @@ export class RDFStreamParser extends Transform {
                 if (this.chunkBuffer.length >= this.config.chunkSize) {
                   this._emitChunk();
                 }
+              } else {
+                // quad === null signals end of parsing
+                resolve();
               }
             });
-          } catch (parseError) {
-            this.metrics.errors++;
-            if (this.config.onError) {
-              this.config.onError(parseError);
-            }
+          });
+        } catch (parseError) {
+          this.metrics.errors++;
+          if (this.config.onError) {
+            this.config.onError(parseError);
           }
         }
-
-        // Emit any remaining quads in chunk buffer
-        if (this.chunkBuffer.length > 0) {
-          this._emitChunk();
-        }
-
-        // Finalize metrics
-        this.metrics.duration = Date.now() - this.startTime;
-
-        // Emit final stats
-        this.push({
-          type: 'complete',
-          metrics: this.metrics,
-        });
-
-        span.setAttributes({
-          'quads.total': this.metrics.quadsProcessed,
-          'chunks.total': this.metrics.chunksEmitted,
-          'duration.ms': this.metrics.duration,
-        });
-
-        span.setStatus({ code: SpanStatusCode.OK });
-        span.end();
-        callback();
-      } catch (error) {
-        span.recordException(error);
-        span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
-        span.end();
-        callback(error);
       }
-    });
+
+      // Emit any remaining quads in chunk buffer
+      if (this.chunkBuffer.length > 0) {
+        this._emitChunk();
+      }
+
+      // Finalize metrics
+      this.metrics.duration = Date.now() - this.startTime;
+
+      // Emit final stats
+      this.push({
+        type: 'complete',
+        metrics: this.metrics,
+      });
+
+      callback();
+    } catch (error) {
+      callback(error);
+    }
   }
 
   /**

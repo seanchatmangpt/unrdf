@@ -2,7 +2,8 @@
  * @vitest-environment node
  */
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { namedNode, literal } from '@rdfjs/data-model';
+import { dataFactory } from '@unrdf/oxigraph';
+const { namedNode, literal } = dataFactory;
 import {
   createChangeFeed,
   createSubscriptionManager,
