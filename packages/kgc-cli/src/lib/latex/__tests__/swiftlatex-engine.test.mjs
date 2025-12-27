@@ -143,7 +143,7 @@ describe('SwiftLaTeX Engine Wrapper', () => {
     it('should parse missing file errors', async () => {
       const { parseMissingInputs } = await import('../swiftlatex-engine.mjs');
 
-      const log = `
+      const _log = `
 ! LaTeX Error: File \`article.cls' not found.
 
 Type X to quit or <RETURN> to proceed,

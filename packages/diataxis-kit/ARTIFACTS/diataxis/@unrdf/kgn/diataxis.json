@@ -1,0 +1,153 @@
+{
+  "confidence": {
+    "explanation": 1,
+    "howtos": 0.75,
+    "reference": 0.7,
+    "tutorials": 0.4
+  },
+  "evidence": {
+    "docsFiles": [
+      "README.md"
+    ],
+    "examplesFiles": [],
+    "fingerprint": "bdd6c56b15fda0a2e312d8b056970f8816a28d271fc3cf82c2bc6e5610ceffb1",
+    "readmeHeadings": [
+      "✅ Migration Status: COMPLETE",
+      "🚀 Quick Start",
+      "📁 Project Structure",
+      "🎯 Key Features",
+      "📋 Template Packs",
+      "🧪 Testing & Validation",
+      "🔒 Deterministic Mode",
+      "📚 API Reference",
+      "🎉 Migration Success"
+    ]
+  },
+  "explanation": {
+    "architecture": "- `nextjs/app-page.",
+    "concepts": [
+      "unrdf",
+      "kgn",
+      "nunjucks",
+      "templates",
+      "deterministic"
+    ],
+    "confidenceScore": 1,
+    "id": "explanation-unrdf-kgn-explanation",
+    "source": [
+      "keywords",
+      "readme",
+      "docs",
+      "inferred"
+    ],
+    "title": "Understanding @unrdf/kgn",
+    "tradeoffs": [
+      "Ease of use vs. advanced configuration options",
+      "Memory usage vs. processing speed",
+      "Bundle size vs. feature completeness"
+    ]
+  },
+  "generatedAt": "2000-01-01T00:00:00.000Z",
+  "howtos": [
+    {
+      "confidenceScore": 0.5,
+      "context": "When you need robust error handling in production",
+      "id": "howto-handle-errors",
+      "source": [
+        "tests"
+      ],
+      "steps": [
+        "Set up try-catch blocks",
+        "Handle common error types",
+        "Log errors appropriately"
+      ],
+      "task": "Implement error handling for @unrdf/kgn",
+      "title": "Handle Errors"
+    },
+    {
+      "confidenceScore": 0.7,
+      "context": "When working with unrdf in your project",
+      "id": "howto-integrate-with-unrdf",
+      "source": [
+        "keywords",
+        "inferred"
+      ],
+      "steps": [
+        "Install dependencies",
+        "Set up integration",
+        "Test integration"
+      ],
+      "task": "Connect @unrdf/kgn with unrdf",
+      "title": "Integrate with unrdf"
+    }
+  ],
+  "packageName": "@unrdf/kgn",
+  "reference": {
+    "confidenceScore": 1,
+    "id": "reference-unrdf-kgn-reference",
+    "items": [
+      {
+        "description": "Export: ./engine",
+        "example": null,
+        "name": "./engine",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./filters",
+        "example": null,
+        "name": "./filters",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./linter",
+        "example": null,
+        "name": "./linter",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./renderer",
+        "example": null,
+        "name": "./renderer",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./templates/*",
+        "example": "import from \"./src/templates/*\"",
+        "name": "./templates/*",
+        "type": "export"
+      },
+      {
+        "description": "Export: .",
+        "example": null,
+        "name": "@unrdf/kgn",
+        "type": "export"
+      }
+    ],
+    "source": [
+      "exports"
+    ],
+    "title": "@unrdf/kgn Reference"
+  },
+  "tutorials": [
+    {
+      "confidenceScore": 0.4,
+      "goal": "Learn how to set up and use @unrdf/kgn in your project",
+      "id": "tutorial-getting-started-with-unrdf-kgn",
+      "prerequisites": [
+        "Basic RDF knowledge"
+      ],
+      "source": [
+        "readme",
+        "keywords"
+      ],
+      "stepsOutline": [
+        "Install the package",
+        "Import required modules",
+        "Create a basic example",
+        "Run and verify output"
+      ],
+      "title": "Getting Started with @unrdf/kgn"
+    }
+  ],
+  "version": "5.0.1"
+}

@@ -94,8 +94,8 @@ describe('Category 1: Extension Contract Tests', () => {
         it('should have handlers for all verbs', () => {
           if (!extension) return;
 
-          for (const [noun, nounData] of Object.entries(extension.nouns)) {
-            for (const [verb, verbData] of Object.entries(nounData.verbs)) {
+          for (const [_noun, nounData] of Object.entries(extension.nouns)) {
+            for (const [_verb, verbData] of Object.entries(nounData.verbs)) {
               expect(verbData.handler).toBeDefined();
               expect(typeof verbData.handler).toBe('function');
               expect(verbData.description).toBeDefined();
@@ -335,7 +335,7 @@ describe('Category 2: Registry Integration Tests', () => {
       // Each command should have a known source
       commands.forEach(cmd => {
         const [noun, verb] = cmd.split(':');
-        const source = registry.getCommandSource(noun, _verb);
+        const source = registry.getCommandSource(noun, verb);
         expect(source).toBeDefined();
         expect(source).toMatch(/@unrdf\//);
       });
