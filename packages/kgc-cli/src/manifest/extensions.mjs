@@ -54,6 +54,13 @@ export const extensions = [
     loadOrder: 12,
     enabled: true
   },
+  // KGC Probe - Automated integrity scanning
+  {
+    id: '@unrdf/kgc-probe',
+    path: '../extensions/kgc-probe.mjs',
+    loadOrder: 13,
+    enabled: true
+  },
 
   // ===== STANDARD PACKAGES (20-99) =====
   // Query layer (oxigraph, federation, knowledge engine, semantic search)

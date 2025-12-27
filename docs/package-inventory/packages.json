@@ -1,0 +1,2696 @@
+[
+  {
+    "name": "@unrdf/atomvm",
+    "dir": "atomvm",
+    "version": "5.0.1",
+    "description": "Run AtomVM (Erlang/BEAM VM) in browser and Node.js using WebAssembly",
+    "exports": {
+      "main": {
+        "default": null,
+        "named": ["AtomVMRuntime", "AtomVMNodeRuntime", "TerminalUI", "App"],
+        "reexports": [
+          "./atomvm-runtime.mjs",
+          "./node-runtime.mjs",
+          "./terminal-ui.mjs",
+          "./app.mjs"
+        ],
+        "stars": []
+      }
+    },
+    "entryPoints": [
+      {
+        "type": "main",
+        "value": "src/index.mjs"
+      },
+      {
+        "type": "exports[.]",
+        "value": "./src/index.mjs"
+      },
+      {
+        "type": "exports[./service-worker-manager]",
+        "value": "./src/service-worker-manager.mjs"
+      }
+    ],
+    "internalDeps": [],
+    "dependencies": {
+      "runtime": ["@opentelemetry/api", "coi-serviceworker"],
+      "dev": ["@playwright/test", "@vitest/browser", "jsdom", "vite", "vitest"],
+      "peer": []
+    },
+    "engines": {
+      "node": ">=18.0.0",
+      "pnpm": ">=7.0.0"
+    },
+    "fileStats": {
+      "count": 10,
+      "totalLines": 1987
+    }
+  },
+  {
+    "name": "@unrdf/blockchain",
+    "dir": "blockchain",
+    "version": "1.0.0",
+    "description": "Blockchain integration for UNRDF - Cryptographic receipt anchoring and audit trails",
+    "exports": {
+      "main": {
+        "default": "anonymous",
+        "named": [
+          "ReceiptAnchorer",
+          "AnchorResultSchema",
+          "VerificationResultSchema",
+          "WorkflowVerifier",
+          "ContractStatsSchema",
+          "estimateGasCosts"
+        ],
+        "reexports": ["./anchoring/receipt-anchorer.mjs", "./contracts/workflow-verifier.mjs"],
+        "stars": []
+      }
+    },
+    "entryPoints": [
+      {
+        "type": "main",
+        "value": "src/index.mjs"
+      },
+      {
+        "type": "exports[.]",
+        "value": "./src/index.mjs"
+      },
+      {
+        "type": "exports[./anchoring]",
+        "value": "./src/anchoring/receipt-anchorer.mjs"
+      },
+      {
+        "type": "exports[./contracts]",
+        "value": "./src/contracts/workflow-verifier.mjs"
+      },
+      {
+        "type": "exports[./merkle]",
+        "value": "./src/merkle/merkle-proof-generator.mjs"
+      }
+    ],
+    "internalDeps": ["@unrdf/kgc-4d", "@unrdf/yawl"],
+    "dependencies": {
+      "runtime": ["@noble/hashes", "@unrdf/kgc-4d", "@unrdf/yawl", "ethers", "merkletreejs", "zod"],
+      "dev": ["vitest"],
+      "peer": []
+    },
+    "engines": {},
+    "fileStats": {
+      "count": 4,
+      "totalLines": 949
+    }
+  },
+  {
+    "name": "@unrdf/caching",
+    "dir": "caching",
+    "version": "1.0.0",
+    "description": "Multi-layer caching system for RDF queries with Redis and LRU",
+    "exports": {
+      "main": {
+        "default": "anonymous",
+        "named": [
+          "MultiLayerCache",
+          "createMultiLayerCache",
+          "DependencyTracker",
+          "createDependencyTracker",
+          "extractQuerySubjects",
+          "SparqlCache",
+          "createSparqlCache",
+          "createCachingSystem"
+        ],
+        "reexports": [
+          "./layers/multi-layer-cache.mjs",
+          "./invalidation/dependency-tracker.mjs",
+          "./query/sparql-cache.mjs"
+        ],
+        "stars": []
+      }
+    },
+    "entryPoints": [
+      {
+        "type": "main",
+        "value": "src/index.mjs"
+      },
+      {
+        "type": "exports[.]",
+        "value": "./src/index.mjs"
+      },
+      {
+        "type": "exports[./layers]",
+        "value": "./src/layers/multi-layer-cache.mjs"
+      },
+      {
+        "type": "exports[./invalidation]",
+        "value": "./src/invalidation/dependency-tracker.mjs"
+      },
+      {
+        "type": "exports[./query]",
+        "value": "./src/query/sparql-cache.mjs"
+      }
+    ],
+    "internalDeps": ["@unrdf/oxigraph"],
+    "dependencies": {
+      "runtime": ["@unrdf/oxigraph", "ioredis", "lru-cache", "msgpackr", "zod"],
+      "dev": ["vitest"],
+      "peer": []
+    },
+    "engines": {
+      "node": ">=18.0.0",
+      "pnpm": ">=7.0.0"
+    },
+    "fileStats": {
+      "count": 4,
+      "totalLines": 1233
+    }
+  },
+  {
+    "name": "@unrdf/cli",
+    "dir": "cli",
+    "version": "5.0.1",
+    "description": "UNRDF CLI - Command-line Tools for Graph Operations and Context Management",
+    "exports": {
+      "main": {
+        "default": null,
+        "named": [],
+        "reexports": [],
+        "stars": []
+      }
+    },
+    "entryPoints": [
+      {
+        "type": "main",
+        "value": "src/index.mjs"
+      },
+      {
+        "type": "exports[.]",
+        "value": "./src/index.mjs"
+      },
+      {
+        "type": "exports[./commands]",
+        "value": "./src/commands/index.mjs"
+      }
+    ],
+    "internalDeps": [
+      "@unrdf/core",
+      "@unrdf/federation",
+      "@unrdf/hooks",
+      "@unrdf/knowledge-engine",
+      "@unrdf/oxigraph",
+      "@unrdf/project-engine",
+      "@unrdf/streaming"
+    ],
+    "dependencies": {
+      "runtime": [
+        "@unrdf/core",
+        "@unrdf/federation",
+        "@unrdf/hooks",
+        "@unrdf/knowledge-engine",
+        "@unrdf/oxigraph",
+        "@unrdf/project-engine",
+        "@unrdf/streaming",
+        "citty",
+        "table",
+        "yaml"
+      ],
+      "dev": ["@types/node", "vitest"],
+      "peer": []
+    },
+    "engines": {
+      "node": ">=18.0.0"
+    },
+    "fileStats": {
+      "count": 33,
+      "totalLines": 5625
+    }
+  },
+  {
+    "name": "@unrdf/collab",
+    "dir": "collab",
+    "version": "1.0.0",
+    "description": "Real-time collaborative RDF editing using CRDTs (Yjs) with offline-first architecture",
+    "exports": {
+      "main": {
+        "default": null,
+        "named": [
+          "CollaborativeRDFGraph",
+          "WebSocketSync",
+          "IndexedDBPersist",
+          "useCollaboration",
+          "usePresence"
+        ],
+        "reexports": ["./crdt/index.mjs", "./sync/index.mjs", "./composables/index.mjs"],
+        "stars": []
+      }
+    },
+    "entryPoints": [
+      {
+        "type": "main",
+        "value": "src/index.mjs"
+      },
+      {
+        "type": "exports[.]",
+        "value": "./src/index.mjs"
+      },
+      {
+        "type": "exports[./crdt]",
+        "value": "./src/crdt/index.mjs"
+      },
+      {
+        "type": "exports[./sync]",
+        "value": "./src/sync/index.mjs"
+      },
+      {
+        "type": "exports[./composables]",
+        "value": "./src/composables/index.mjs"
+      }
+    ],
+    "internalDeps": ["@unrdf/core"],
+    "dependencies": {
+      "runtime": ["@unrdf/core", "yjs", "y-websocket", "y-indexeddb", "lib0", "zod", "ws"],
+      "dev": ["@types/node", "@types/ws", "vitest"],
+      "peer": []
+    },
+    "engines": {
+      "node": ">=18.0.0"
+    },
+    "fileStats": {
+      "count": 16,
+      "totalLines": 2391
+    }
+  },
+  {
+    "name": "@unrdf/composables",
+    "dir": "composables",
+    "version": "5.0.1",
+    "description": "UNRDF Composables - Vue 3 Composables for Reactive RDF State (Optional Extension)",
+    "exports": {
+      "main": {
+        "default": null,
+        "named": [
+          "useGraph",
+          "useQuery",
+          "useDelta",
+          "useTerms",
+          "useSubscription",
+          "useStreaming"
+        ],
+        "reexports": [
+          "./composables/use-graph.mjs",
+          "./composables/use-query.mjs",
+          "./composables/use-delta.mjs",
+          "./composables/use-terms.mjs",
+          "./composables/use-subscription.mjs",
+          "./composables/use-streaming.mjs"
+        ],
+        "stars": []
+      }
+    },
+    "entryPoints": [
+      {
+        "type": "main",
+        "value": "src/index.mjs"
+      },
+      {
+        "type": "exports[.]",
+        "value": "./src/index.mjs"
+      },
+      {
+        "type": "exports[./graph]",
+        "value": "./src/graph.mjs"
+      },
+      {
+        "type": "exports[./delta]",
+        "value": "./src/delta.mjs"
+      }
+    ],
+    "internalDeps": ["@unrdf/core", "@unrdf/streaming"],
+    "dependencies": {
+      "runtime": ["@unrdf/core", "@unrdf/streaming", "vue"],
+      "dev": ["@types/node", "vitest"],
+      "peer": ["vue"]
+    },
+    "engines": {
+      "node": ">=18.0.0",
+      "pnpm": ">=7.0.0"
+    },
+    "fileStats": {
+      "count": 16,
+      "totalLines": 3464
+    }
+  },
+  {
+    "name": "@unrdf/consensus",
+    "dir": "consensus",
+    "version": "1.0.0",
+    "description": "Production-grade Raft consensus for distributed workflow coordination",
+    "exports": {
+      "main": {
+        "default": null,
+        "named": [
+          "RaftCoordinator",
+          "createRaftCoordinator",
+          "ClusterManager",
+          "createClusterManager",
+          "NodeHealth",
+          "WebSocketTransport",
+          "createWebSocketTransport"
+        ],
+        "reexports": [
+          "./raft/raft-coordinator.mjs",
+          "./membership/cluster-manager.mjs",
+          "./transport/websocket-transport.mjs"
+        ],
+        "stars": []
+      }
+    },
+    "entryPoints": [
+      {
+        "type": "main",
+        "value": "src/index.mjs"
+      },
+      {
+        "type": "exports[.]",
+        "value": "./src/index.mjs"
+      },
+      {
+        "type": "exports[./raft]",
+        "value": "./src/raft/raft-coordinator.mjs"
+      },
+      {
+        "type": "exports[./cluster]",
+        "value": "./src/membership/cluster-manager.mjs"
+      },
+      {
+        "type": "exports[./state]",
+        "value": "./src/state/distributed-state-machine.mjs"
+      },
+      {
+        "type": "exports[./transport]",
+        "value": "./src/transport/websocket-transport.mjs"
+      }
+    ],
+    "internalDeps": ["@unrdf/federation"],
+    "dependencies": {
+      "runtime": ["@opentelemetry/api", "@unrdf/federation", "msgpackr", "ws", "zod"],
+      "dev": ["@types/node", "@types/ws", "eslint", "prettier", "vitest"],
+      "peer": []
+    },
+    "engines": {
+      "node": ">=18.0.0"
+    },
+    "fileStats": {
+      "count": 5,
+      "totalLines": 2148
+    }
+  },
+  {
+    "name": "@unrdf/core",
+    "dir": "core",
+    "version": "5.0.1",
+    "description": "UNRDF Core - RDF Graph Operations, SPARQL Execution, and Foundational Substrate",
+    "exports": {
+      "main": {
+        "default": null,
+        "named": [
+          "UnrdfStore",
+          "createStore",
+          "canonicalize",
+          "toNTriples",
+          "sortQuads",
+          "isIsomorphic",
+          "RDF",
+          "RDFS",
+          "OWL",
+          "XSD",
+          "FOAF",
+          "DCTERMS",
+          "SKOS",
+          "COMMON_PREFIXES"
+        ],
+        "reexports": ["./rdf/unrdf-store.mjs", "./rdf/canonicalize.mjs", "./constants.mjs"],
+        "stars": []
+      }
+    },
+    "entryPoints": [
+      {
+        "type": "main",
+        "value": "src/index.mjs"
+      },
+      {
+        "type": "exports[.]",
+        "value": "./src/index.mjs"
+      },
+      {
+        "type": "exports[./rdf]",
+        "value": "./src/rdf/index.mjs"
+      },
+      {
+        "type": "exports[./rdf/minimal-n3-integration]",
+        "value": "./src/rdf/minimal-n3-integration.mjs"
+      },
+      {
+        "type": "exports[./rdf/n3-justified-only]",
+        "value": "./src/rdf/n3-justified-only.mjs"
+      },
+      {
+        "type": "exports[./sparql]",
+        "value": "./src/sparql/index.mjs"
+      },
+      {
+        "type": "exports[./types]",
+        "value": "./src/types.mjs"
+      },
+      {
+        "type": "exports[./constants]",
+        "value": "./src/constants.mjs"
+      },
+      {
+        "type": "exports[./validation]",
+        "value": "./src/validation/index.mjs"
+      },
+      {
+        "type": "exports[./health]",
+        "value": "./src/health.mjs"
+      },
+      {
+        "type": "exports[./logger]",
+        "value": "./src/logger.mjs"
+      },
+      {
+        "type": "exports[./metrics]",
+        "value": "./src/metrics.mjs"
+      },
+      {
+        "type": "exports[./security]",
+        "value": "./src/security.mjs"
+      },
+      {
+        "type": "exports[./security-schemas]",
+        "value": "./src/security-schemas.mjs"
+      },
+      {
+        "type": "exports[./utils/sparql-utils]",
+        "value": "./src/utils/sparql-utils.mjs"
+      }
+    ],
+    "internalDeps": ["@unrdf/oxigraph"],
+    "dependencies": {
+      "runtime": [
+        "@rdfjs/data-model",
+        "@rdfjs/namespace",
+        "@rdfjs/serializer-jsonld",
+        "@rdfjs/serializer-turtle",
+        "@rdfjs/to-ntriples",
+        "@unrdf/oxigraph",
+        "jsonld",
+        "n3",
+        "rdf-canonize",
+        "rdf-ext",
+        "rdf-validate-shacl",
+        "zod"
+      ],
+      "dev": ["@types/node", "vitest"],
+      "peer": []
+    },
+    "engines": {
+      "node": ">=18.0.0"
+    },
+    "fileStats": {
+      "count": 58,
+      "totalLines": 19427
+    }
+  },
+  {
+    "name": "@unrdf/dark-matter",
+    "dir": "dark-matter",
+    "version": "5.0.1",
+    "description": "UNRDF Dark Matter - Query Optimization and Performance Analysis (Optional Extension)",
+    "exports": {
+      "main": {
+        "default": null,
+        "named": ["createQueryOptimizer", "createIndexAdvisor"],
+        "reexports": [],
+        "stars": []
+      }
+    },
+    "entryPoints": [
+      {
+        "type": "main",
+        "value": "src/index.mjs"
+      },
+      {
+        "type": "exports[.]",
+        "value": "./src/index.mjs"
+      },
+      {
+        "type": "exports[./optimizer]",
+        "value": "./src/optimizer.mjs"
+      },
+      {
+        "type": "exports[./analyzer]",
+        "value": "./src/analyzer.mjs"
+      }
+    ],
+    "internalDeps": ["@unrdf/core", "@unrdf/oxigraph"],
+    "dependencies": {
+      "runtime": ["@unrdf/core", "@unrdf/oxigraph", "typhonjs-escomplex"],
+      "dev": ["@types/node", "vitest"],
+      "peer": []
+    },
+    "engines": {
+      "node": ">=18.0.0"
+    },
+    "fileStats": {
+      "count": 9,
+      "totalLines": 3058
+    }
+  },
+  {
+    "name": "@unrdf/diataxis-kit",
+    "dir": "diataxis-kit",
+    "version": "1.0.0",
+    "description": "Diátaxis documentation kit for monorepo package inventory and deterministic doc scaffold generation",
+    "exports": {
+      "main": {
+        "error": "File not found: /home/user/unrdf/packages/diataxis-kit/src/index.mjs"
+      }
+    },
+    "entryPoints": [
+      {
+        "type": "exports[.]",
+        "value": "./src/index.mjs"
+      },
+      {
+        "type": "exports[./inventory]",
+        "value": "./src/inventory.mjs"
+      },
+      {
+        "type": "exports[./evidence]",
+        "value": "./src/evidence.mjs"
+      },
+      {
+        "type": "exports[./classify]",
+        "value": "./src/classify.mjs"
+      },
+      {
+        "type": "exports[./scaffold]",
+        "value": "./src/scaffold.mjs"
+      },
+      {
+        "type": "exports[./stable-json]",
+        "value": "./src/stable-json.mjs"
+      },
+      {
+        "type": "exports[./hash]",
+        "value": "./src/hash.mjs"
+      }
+    ],
+    "internalDeps": [],
+    "dependencies": {
+      "runtime": [],
+      "dev": [],
+      "peer": []
+    },
+    "engines": {
+      "node": ">=18.0.0"
+    },
+    "fileStats": {
+      "count": 9,
+      "totalLines": 2629
+    }
+  },
+  {
+    "name": "docs",
+    "dir": "docs",
+    "version": "5.0.1",
+    "description": "",
+    "exports": {},
+    "entryPoints": [],
+    "internalDeps": [],
+    "dependencies": {
+      "runtime": [
+        "@ai-sdk/gateway",
+        "@ai-sdk/vue",
+        "@electric-sql/pglite",
+        "@iconify-json/logos",
+        "@iconify-json/lucide",
+        "@iconify-json/simple-icons",
+        "@iconify-json/vscode-icons",
+        "@nuxt/content",
+        "@nuxt/image",
+        "@nuxt/ui",
+        "@nuxtjs/mdc",
+        "ai",
+        "better-sqlite3",
+        "date-fns",
+        "drizzle-orm",
+        "nuxt",
+        "nuxt-auth-utils",
+        "nuxt-charts",
+        "nuxt-llms",
+        "nuxt-og-image",
+        "shiki-stream"
+      ],
+      "dev": [
+        "@nuxt/eslint",
+        "@playwright/test",
+        "@types/node",
+        "@vitejs/plugin-vue",
+        "@vitest/ui",
+        "@vue/test-utils",
+        "drizzle-kit",
+        "eslint",
+        "happy-dom",
+        "msw",
+        "typescript",
+        "vitest",
+        "vue-tsc"
+      ],
+      "peer": []
+    },
+    "engines": {},
+    "fileStats": {
+      "count": 0,
+      "totalLines": 0
+    }
+  },
+  {
+    "name": "@unrdf/domain",
+    "dir": "domain",
+    "version": "5.0.1",
+    "description": "Domain models and types for UNRDF",
+    "exports": {
+      "main": {
+        "default": null,
+        "named": ["Paper", "Thesis", "Config"],
+        "reexports": ["./models/index.mjs"],
+        "stars": []
+      }
+    },
+    "entryPoints": [
+      {
+        "type": "main",
+        "value": "./src/index.mjs"
+      },
+      {
+        "type": "exports[.]",
+        "value": "./src/index.mjs"
+      }
+    ],
+    "internalDeps": [],
+    "dependencies": {
+      "runtime": [],
+      "dev": [],
+      "peer": []
+    },
+    "engines": {
+      "node": ">=18.0.0",
+      "pnpm": ">=7.0.0"
+    },
+    "fileStats": {
+      "count": 11,
+      "totalLines": 1704
+    }
+  },
+  {
+    "name": "@unrdf/engine-gateway",
+    "dir": "engine-gateway",
+    "version": "5.0.1",
+    "description": "μ(O) Engine Gateway - Enforcement layer for Oxigraph-first, N3-minimal RDF processing",
+    "exports": {
+      "main": {
+        "default": null,
+        "named": [
+          "EngineGateway",
+          "detectOperationType",
+          "N3_ONLY_OPS",
+          "OXIGRAPH_OPS",
+          "validateN3Usage",
+          "validateOxigraphUsage"
+        ],
+        "reexports": ["./gateway.mjs", "./operation-detector.mjs", "./validators.mjs"],
+        "stars": []
+      }
+    },
+    "entryPoints": [
+      {
+        "type": "main",
+        "value": "./src/index.mjs"
+      },
+      {
+        "type": "exports[.]",
+        "value": "./src/index.mjs"
+      },
+      {
+        "type": "exports[./gateway]",
+        "value": "./src/gateway.mjs"
+      },
+      {
+        "type": "exports[./operation-detector]",
+        "value": "./src/operation-detector.mjs"
+      },
+      {
+        "type": "exports[./validators]",
+        "value": "./src/validators.mjs"
+      }
+    ],
+    "internalDeps": ["@unrdf/core", "@unrdf/oxigraph"],
+    "dependencies": {
+      "runtime": ["@unrdf/core", "@unrdf/oxigraph"],
+      "dev": ["vitest"],
+      "peer": []
+    },
+    "engines": {
+      "node": ">=18.0.0",
+      "pnpm": ">=7.0.0"
+    },
+    "fileStats": {
+      "count": 4,
+      "totalLines": 480
+    }
+  },
+  {
+    "name": "@unrdf/federation",
+    "dir": "federation",
+    "version": "5.0.1",
+    "description": "UNRDF Federation - Peer Discovery and Distributed Query Execution",
+    "exports": {
+      "main": {
+        "default": null,
+        "named": [
+          "createCoordinator",
+          "createPeerManager",
+          "PeerConfigSchema",
+          "PeerInfoSchema",
+          "CoordinatorConfigSchema"
+        ],
+        "reexports": [
+          "./federation/coordinator.mjs",
+          "./federation/peer-manager.mjs",
+          "./federation/coordinator.mjs"
+        ],
+        "stars": []
+      }
+    },
+    "entryPoints": [
+      {
+        "type": "main",
+        "value": "src/index.mjs"
+      },
+      {
+        "type": "exports[.]",
+        "value": "./src/index.mjs"
+      },
+      {
+        "type": "exports[./coordinator]",
+        "value": "./src/coordinator.mjs"
+      },
+      {
+        "type": "exports[./advanced-sparql]",
+        "value": "./src/advanced-sparql-federation.mjs"
+      }
+    ],
+    "internalDeps": ["@unrdf/core", "@unrdf/hooks"],
+    "dependencies": {
+      "runtime": [
+        "@comunica/query-sparql",
+        "@opentelemetry/api",
+        "@unrdf/core",
+        "@unrdf/hooks",
+        "prom-client",
+        "zod"
+      ],
+      "dev": ["@types/node", "vitest"],
+      "peer": []
+    },
+    "engines": {
+      "node": ">=18.0.0"
+    },
+    "fileStats": {
+      "count": 11,
+      "totalLines": 4104
+    }
+  },
+  {
+    "name": "@unrdf/fusion",
+    "dir": "fusion",
+    "version": "1.0.0",
+    "description": "Unified integration layer for 7-day UNRDF innovation - KGC-4D, blockchain, hooks, caching",
+    "exports": {
+      "main": {
+        "default": "anonymous",
+        "named": [
+          "createStore",
+          "dataFactory",
+          "OxigraphStore",
+          "createPolicyRegistry",
+          "createEngine",
+          "prove"
+        ],
+        "reexports": ["@unrdf/oxigraph", "./policy-engine.mjs"],
+        "stars": []
+      }
+    },
+    "entryPoints": [
+      {
+        "type": "exports[.]",
+        "value": "./src/index.mjs"
+      }
+    ],
+    "internalDeps": [
+      "@unrdf/oxigraph",
+      "@unrdf/kgc-4d",
+      "@unrdf/blockchain",
+      "@unrdf/hooks",
+      "@unrdf/caching",
+      "@unrdf/yawl"
+    ],
+    "dependencies": {
+      "runtime": [
+        "@unrdf/oxigraph",
+        "@unrdf/kgc-4d",
+        "@unrdf/blockchain",
+        "@unrdf/hooks",
+        "@unrdf/caching",
+        "@unrdf/yawl",
+        "graphql",
+        "zod"
+      ],
+      "dev": ["vitest"],
+      "peer": []
+    },
+    "engines": {
+      "node": ">=18.0.0"
+    },
+    "fileStats": {
+      "count": 13,
+      "totalLines": 7979
+    }
+  },
+  {
+    "name": "@unrdf/graph-analytics",
+    "dir": "graph-analytics",
+    "version": "1.0.0",
+    "description": "Advanced graph analytics for RDF knowledge graphs using graphlib",
+    "exports": {
+      "main": {
+        "default": null,
+        "named": [],
+        "reexports": [],
+        "stars": []
+      }
+    },
+    "entryPoints": [
+      {
+        "type": "main",
+        "value": "src/index.mjs"
+      },
+      {
+        "type": "exports[.]",
+        "value": "./src/index.mjs"
+      },
+      {
+        "type": "exports[./converter]",
+        "value": "./src/converter/rdf-to-graph.mjs"
+      },
+      {
+        "type": "exports[./centrality]",
+        "value": "./src/centrality/pagerank-analyzer.mjs"
+      },
+      {
+        "type": "exports[./paths]",
+        "value": "./src/paths/relationship-finder.mjs"
+      },
+      {
+        "type": "exports[./clustering]",
+        "value": "./src/clustering/community-detector.mjs"
+      }
+    ],
+    "internalDeps": [],
+    "dependencies": {
+      "runtime": ["@dagrejs/graphlib", "graphlib", "zod"],
+      "dev": ["@types/node", "vitest"],
+      "peer": []
+    },
+    "engines": {
+      "node": ">=18.0.0"
+    },
+    "fileStats": {
+      "count": 5,
+      "totalLines": 993
+    }
+  },
+  {
+    "name": "@unrdf/hooks",
+    "dir": "hooks",
+    "version": "5.0.1",
+    "description": "UNRDF Knowledge Hooks - Policy Definition and Execution Framework",
+    "exports": {
+      "main": {
+        "default": null,
+        "named": [
+          "QuadPool",
+          "quadPool",
+          "createPooledTransform",
+          "isPooledQuad",
+          "KnowledgeHookManager"
+        ],
+        "reexports": ["./hooks/quad-pool.mjs", "./hooks/knowledge-hook-manager.mjs"],
+        "stars": []
+      }
+    },
+    "entryPoints": [
+      {
+        "type": "main",
+        "value": "src/index.mjs"
+      },
+      {
+        "type": "exports[.]",
+        "value": "./src/index.mjs"
+      },
+      {
+        "type": "exports[./define]",
+        "value": "./src/define.mjs"
+      },
+      {
+        "type": "exports[./executor]",
+        "value": "./src/executor.mjs"
+      }
+    ],
+    "internalDeps": ["@unrdf/core", "@unrdf/oxigraph"],
+    "dependencies": {
+      "runtime": ["@unrdf/core", "@unrdf/oxigraph", "citty", "zod"],
+      "dev": ["@types/node", "vitest"],
+      "peer": []
+    },
+    "engines": {
+      "node": ">=18.0.0"
+    },
+    "fileStats": {
+      "count": 31,
+      "totalLines": 9707
+    }
+  },
+  {
+    "name": "@unrdf/integration-tests",
+    "dir": "integration-tests",
+    "version": "5.0.0",
+    "description": "Comprehensive integration tests for UNRDF multi-package workflows",
+    "exports": {},
+    "entryPoints": [],
+    "internalDeps": [
+      "@unrdf/yawl",
+      "@unrdf/hooks",
+      "@unrdf/kgc-4d",
+      "@unrdf/federation",
+      "@unrdf/streaming",
+      "@unrdf/oxigraph",
+      "@unrdf/core"
+    ],
+    "dependencies": {
+      "runtime": [
+        "@unrdf/yawl",
+        "@unrdf/hooks",
+        "@unrdf/kgc-4d",
+        "@unrdf/federation",
+        "@unrdf/streaming",
+        "@unrdf/oxigraph",
+        "@unrdf/core",
+        "zod"
+      ],
+      "dev": ["@vitest/coverage-v8", "vitest"],
+      "peer": []
+    },
+    "engines": {
+      "node": ">=18.0.0",
+      "pnpm": ">=7.0.0"
+    },
+    "fileStats": {
+      "count": 0,
+      "totalLines": 0
+    }
+  },
+  {
+    "name": "@unrdf/kgc-4d",
+    "dir": "kgc-4d",
+    "version": "5.0.1",
+    "description": "KGC 4D Datum & Universe Freeze Engine - Nanosecond-precision event logging with Git-backed snapshots",
+    "exports": {
+      "main": {
+        "default": null,
+        "named": [
+          "KGCStore",
+          "GitBackbone",
+          "freezeUniverse",
+          "reconstructState",
+          "verifyReceipt",
+          "now",
+          "toISO",
+          "fromISO",
+          "addNanoseconds",
+          "duration",
+          "VectorClock",
+          "hasClockJumpDetected",
+          "resetClockJumpDetection",
+          "GRAPHS",
+          "EVENT_TYPES",
+          "PREDICATES",
+          "HookRegistry",
+          "SSEClient"
+        ],
+        "reexports": [
+          "./store.mjs",
+          "./git.mjs",
+          "./freeze.mjs",
+          "./time.mjs",
+          "./constants.mjs",
+          "./core/patterns/hook-registry.mjs",
+          "./core/patterns/sse-client.mjs"
+        ],
+        "stars": []
+      }
+    },
+    "entryPoints": [
+      {
+        "type": "main",
+        "value": "./src/index.mjs"
+      },
+      {
+        "type": "exports[.]",
+        "value": "./src/index.mjs"
+      },
+      {
+        "type": "exports[./client]",
+        "value": "./src/client.mjs"
+      },
+      {
+        "type": "exports[./hdit]",
+        "value": "./src/hdit/index.mjs"
+      }
+    ],
+    "internalDeps": ["@unrdf/core", "@unrdf/oxigraph"],
+    "dependencies": {
+      "runtime": ["@unrdf/core", "@unrdf/oxigraph", "hash-wasm", "isomorphic-git"],
+      "dev": ["comment-parser", "simple-statistics", "tinybench", "vitest"],
+      "peer": []
+    },
+    "engines": {
+      "node": ">=18.0.0",
+      "pnpm": ">=7.0.0"
+    },
+    "fileStats": {
+      "count": 24,
+      "totalLines": 6362
+    }
+  },
+  {
+    "name": "@unrdf/kgc-claude",
+    "dir": "kgc-claude",
+    "version": "5.0.0",
+    "description": "KGC-Claude Substrate - Deterministic run objects, universal checkpoints, bounded autonomy, and multi-agent concurrency for Claude integration",
+    "exports": {
+      "main": {
+        "default": null,
+        "named": [
+          "GRAPHS",
+          "PREDICATES",
+          "RUN_STATUS",
+          "WORK_ITEM_STATUS",
+          "DENIAL_REASONS",
+          "KGC_CLAUDE",
+          "createSubstrate"
+        ],
+        "reexports": ["./constants.mjs"],
+        "stars": []
+      }
+    },
+    "entryPoints": [
+      {
+        "type": "main",
+        "value": "./src/index.mjs"
+      },
+      {
+        "type": "exports[.]",
+        "value": "./src/index.mjs"
+      },
+      {
+        "type": "exports[./run-capsule]",
+        "value": "./src/run-capsule.mjs"
+      },
+      {
+        "type": "exports[./checkpoint]",
+        "value": "./src/checkpoint.mjs"
+      },
+      {
+        "type": "exports[./autonomy-guard]",
+        "value": "./src/autonomy-guard.mjs"
+      },
+      {
+        "type": "exports[./shard-merge]",
+        "value": "./src/shard-merge.mjs"
+      },
+      {
+        "type": "exports[./async-workflow]",
+        "value": "./src/async-workflow.mjs"
+      },
+      {
+        "type": "exports[./projection]",
+        "value": "./src/projection.mjs"
+      }
+    ],
+    "internalDeps": [
+      "@unrdf/core",
+      "@unrdf/oxigraph",
+      "@unrdf/kgc-4d",
+      "@unrdf/yawl",
+      "@unrdf/hooks"
+    ],
+    "dependencies": {
+      "runtime": [
+        "@unrdf/core",
+        "@unrdf/oxigraph",
+        "@unrdf/kgc-4d",
+        "@unrdf/yawl",
+        "@unrdf/hooks",
+        "hash-wasm",
+        "zod"
+      ],
+      "dev": ["vitest"],
+      "peer": []
+    },
+    "engines": {
+      "node": ">=18.0.0",
+      "pnpm": ">=7.0.0"
+    },
+    "fileStats": {
+      "count": 9,
+      "totalLines": 3601
+    }
+  },
+  {
+    "name": "@unrdf/kgc-cli",
+    "dir": "kgc-cli",
+    "version": "5.0.1",
+    "description": "KGC CLI - Deterministic extension registry for ~40 workspace packages",
+    "exports": {
+      "main": {
+        "default": "anonymous",
+        "named": [
+          "Registry",
+          "ExtensionSchema",
+          "createEnvelope",
+          "loadManifest",
+          "extensions",
+          "overrides",
+          "getLoadOrder",
+          "buildCittyTree",
+          "initializeRegistry"
+        ],
+        "reexports": ["./lib/registry.mjs", "./manifest/extensions.mjs", "./cli.mjs"],
+        "stars": []
+      }
+    },
+    "entryPoints": [
+      {
+        "type": "main",
+        "value": "src/index.mjs"
+      },
+      {
+        "type": "exports[.]",
+        "value": "./src/index.mjs"
+      },
+      {
+        "type": "exports[./registry]",
+        "value": "./src/lib/registry.mjs"
+      },
+      {
+        "type": "exports[./manifest]",
+        "value": "./src/manifest/extensions.mjs"
+      },
+      {
+        "type": "exports[./latex]",
+        "value": "./src/lib/latex/index.mjs"
+      },
+      {
+        "type": "exports[./latex/schemas]",
+        "value": "./src/lib/latex/schemas.mjs"
+      }
+    ],
+    "internalDeps": [],
+    "dependencies": {
+      "runtime": ["citty", "zod"],
+      "dev": ["@types/node", "vitest"],
+      "peer": []
+    },
+    "engines": {
+      "node": ">=18.0.0"
+    },
+    "fileStats": {
+      "count": 98,
+      "totalLines": 18190
+    }
+  },
+  {
+    "name": "@unrdf/kgc-substrate",
+    "dir": "kgc-substrate",
+    "version": "1.0.0",
+    "description": "KGC Substrate - Deterministic, hash-stable KnowledgeStore with immutable append-only log",
+    "exports": {
+      "main": {
+        "default": null,
+        "named": ["KnowledgeStore", "ReceiptChain", "TamperDetector"],
+        "reexports": ["./KnowledgeStore.mjs", "./ReceiptChain.mjs", "./TamperDetector.mjs"],
+        "stars": []
+      }
+    },
+    "entryPoints": [
+      {
+        "type": "main",
+        "value": "./src/index.mjs"
+      },
+      {
+        "type": "exports[.]",
+        "value": "./src/index.mjs"
+      },
+      {
+        "type": "exports[./types]",
+        "value": "./src/types.mjs"
+      },
+      {
+        "type": "exports[./KnowledgeStore]",
+        "value": "./src/KnowledgeStore.mjs"
+      }
+    ],
+    "internalDeps": ["@unrdf/kgc-4d", "@unrdf/oxigraph", "@unrdf/core"],
+    "dependencies": {
+      "runtime": ["@unrdf/kgc-4d", "@unrdf/oxigraph", "@unrdf/core", "hash-wasm", "zod"],
+      "dev": ["@types/node", "vitest", "@vitest/coverage-v8"],
+      "peer": []
+    },
+    "engines": {
+      "node": ">=18.0.0",
+      "pnpm": ">=7.0.0"
+    },
+    "fileStats": {
+      "count": 8,
+      "totalLines": 2342
+    }
+  },
+  {
+    "name": "@unrdf/kgn",
+    "dir": "kgn",
+    "version": "5.0.1",
+    "description": "Deterministic Nunjucks template system with custom filters and frontmatter support",
+    "exports": {
+      "main": {
+        "default": null,
+        "named": [
+          "TemplateEngine",
+          "EnhancedTemplateEngine",
+          "TemplateInheritanceEngine",
+          "createCustomFilters",
+          "FrontmatterParser",
+          "VariableExtractor",
+          "TemplateLinter",
+          "DeterministicRenderer",
+          "KGenTemplateBase",
+          "createEngine",
+          "createInheritanceEngine",
+          "createEnhancedEngine",
+          "createInjectionEngine"
+        ],
+        "reexports": [
+          "./engine/template-engine.js",
+          "./inheritance/index.js",
+          "./filters/index.js",
+          "./parser/frontmatter.js",
+          "./parser/variables.js",
+          "./linter/determinism.js",
+          "./renderer/deterministic.js",
+          "./base/template-base.js"
+        ],
+        "stars": []
+      }
+    },
+    "entryPoints": [
+      {
+        "type": "main",
+        "value": "src/index.js"
+      },
+      {
+        "type": "exports[.]",
+        "value": "{\"import\":\"./src/index.js\"}"
+      },
+      {
+        "type": "exports[./engine]",
+        "value": "{\"import\":\"./src/engine/index.js\"}"
+      },
+      {
+        "type": "exports[./filters]",
+        "value": "{\"import\":\"./src/filters/index.js\"}"
+      },
+      {
+        "type": "exports[./renderer]",
+        "value": "{\"import\":\"./src/renderer/index.js\"}"
+      },
+      {
+        "type": "exports[./linter]",
+        "value": "{\"import\":\"./src/linter/index.js\"}"
+      },
+      {
+        "type": "exports[./templates/*]",
+        "value": "./src/templates/*"
+      }
+    ],
+    "internalDeps": ["@unrdf/core", "@unrdf/test-utils"],
+    "dependencies": {
+      "runtime": [
+        "@unrdf/core",
+        "@unrdf/test-utils",
+        "fs-extra",
+        "gray-matter",
+        "nunjucks",
+        "yaml"
+      ],
+      "dev": [
+        "@amiceli/vitest-cucumber",
+        "@babel/parser",
+        "@babel/traverse",
+        "comment-parser",
+        "eslint",
+        "nodemon",
+        "vitest"
+      ],
+      "peer": []
+    },
+    "engines": {
+      "node": ">=18.0.0",
+      "pnpm": ">=7.0.0"
+    },
+    "fileStats": {
+      "count": 58,
+      "totalLines": 18639
+    }
+  },
+  {
+    "name": "@unrdf/knowledge-engine",
+    "dir": "knowledge-engine",
+    "version": "5.0.1",
+    "description": "UNRDF Knowledge Engine - Rule Engine, Inference, and Pattern Matching (Optional Extension)",
+    "exports": {
+      "main": {
+        "default": null,
+        "named": [
+          "KnowledgeHookManager",
+          "TransactionManager",
+          "defineHook",
+          "createHookExecutor",
+          "createConditionEvaluator",
+          "LockchainWriter",
+          "createLockchainWriter",
+          "ResolutionLayer",
+          "QueryOptimizer",
+          "query",
+          "select",
+          "ask",
+          "construct",
+          "describe",
+          "update",
+          "getQueryStats",
+          "parseTurtle",
+          "toTurtle",
+          "toNQuads",
+          "parseJsonLd",
+          "toJsonLd",
+          "EffectSandbox",
+          "PolicyPackManager",
+          "PolicyPack"
+        ],
+        "reexports": [
+          "./knowledge-hook-manager.mjs",
+          "./transaction.mjs",
+          "./define-hook.mjs",
+          "./hook-executor.mjs",
+          "./condition-evaluator.mjs",
+          "@unrdf/core/utils/lockchain-writer",
+          "./resolution-layer.mjs",
+          "./query-optimizer.mjs",
+          "./query.mjs",
+          "./parse.mjs",
+          "./effect-sandbox.mjs",
+          "./policy-pack.mjs"
+        ],
+        "stars": ["./schemas.mjs"]
+      }
+    },
+    "entryPoints": [
+      {
+        "type": "main",
+        "value": "src/index.mjs"
+      },
+      {
+        "type": "exports[.]",
+        "value": "./src/index.mjs"
+      },
+      {
+        "type": "exports[./query]",
+        "value": "./src/query.mjs"
+      },
+      {
+        "type": "exports[./canonicalize]",
+        "value": "./src/canonicalize.mjs"
+      },
+      {
+        "type": "exports[./parse]",
+        "value": "./src/parse.mjs"
+      },
+      {
+        "type": "exports[./ai-search]",
+        "value": "./src/ai-enhanced-search.mjs"
+      }
+    ],
+    "internalDeps": ["@unrdf/core", "@unrdf/oxigraph", "@unrdf/streaming"],
+    "dependencies": {
+      "runtime": [
+        "@noble/hashes",
+        "@unrdf/core",
+        "@unrdf/oxigraph",
+        "@unrdf/streaming",
+        "@xenova/transformers",
+        "eyereasoner"
+      ],
+      "dev": ["@types/node", "vitest"],
+      "peer": []
+    },
+    "engines": {
+      "node": ">=18.0.0"
+    },
+    "fileStats": {
+      "count": 57,
+      "totalLines": 23105
+    }
+  },
+  {
+    "name": "@unrdf/ml-inference",
+    "dir": "ml-inference",
+    "version": "5.0.1",
+    "description": "UNRDF ML Inference - High-performance ONNX model inference pipeline for RDF streams",
+    "exports": {
+      "main": {
+        "default": null,
+        "named": [
+          "ONNXRunner",
+          "createONNXRunner",
+          "ModelRegistry",
+          "createModelRegistry",
+          "createInferenceStack"
+        ],
+        "reexports": ["./runtime/onnx-runner.mjs", "./registry/model-registry.mjs"],
+        "stars": []
+      }
+    },
+    "entryPoints": [
+      {
+        "type": "main",
+        "value": "src/index.mjs"
+      },
+      {
+        "type": "exports[.]",
+        "value": "./src/index.mjs"
+      },
+      {
+        "type": "exports[./runtime]",
+        "value": "./src/runtime/onnx-runner.mjs"
+      },
+      {
+        "type": "exports[./pipeline]",
+        "value": "./src/pipeline/streaming-inference.mjs"
+      },
+      {
+        "type": "exports[./registry]",
+        "value": "./src/registry/model-registry.mjs"
+      }
+    ],
+    "internalDeps": ["@unrdf/core", "@unrdf/streaming", "@unrdf/oxigraph"],
+    "dependencies": {
+      "runtime": [
+        "@opentelemetry/api",
+        "@unrdf/core",
+        "@unrdf/streaming",
+        "@unrdf/oxigraph",
+        "onnxruntime-node",
+        "zod"
+      ],
+      "dev": ["@types/node", "vitest"],
+      "peer": []
+    },
+    "engines": {
+      "node": ">=18.0.0"
+    },
+    "fileStats": {
+      "count": 5,
+      "totalLines": 1169
+    }
+  },
+  {
+    "name": "@unrdf/ml-versioning",
+    "dir": "ml-versioning",
+    "version": "1.0.0",
+    "description": "ML Model Versioning System using TensorFlow.js and UNRDF KGC-4D time-travel capabilities",
+    "exports": {
+      "main": {
+        "default": null,
+        "named": ["MLVersionStore"],
+        "reexports": ["./version-store.mjs"],
+        "stars": []
+      }
+    },
+    "entryPoints": [
+      {
+        "type": "main",
+        "value": "./src/index.mjs"
+      },
+      {
+        "type": "exports[.]",
+        "value": "./src/index.mjs"
+      },
+      {
+        "type": "exports[./version-store]",
+        "value": "./src/version-store.mjs"
+      },
+      {
+        "type": "exports[./examples/image-classifier]",
+        "value": "./src/examples/image-classifier.mjs"
+      }
+    ],
+    "internalDeps": ["@unrdf/kgc-4d", "@unrdf/oxigraph", "@unrdf/core"],
+    "dependencies": {
+      "runtime": [
+        "@tensorflow/tfjs-node",
+        "@unrdf/kgc-4d",
+        "@unrdf/oxigraph",
+        "@unrdf/core",
+        "hash-wasm",
+        "zod"
+      ],
+      "dev": ["@types/node", "vitest"],
+      "peer": []
+    },
+    "engines": {
+      "node": ">=18.0.0"
+    },
+    "fileStats": {
+      "count": 3,
+      "totalLines": 666
+    }
+  },
+  {
+    "name": "@unrdf/nextra-docs",
+    "dir": "nextra",
+    "version": "5.0.1",
+    "description": "UNRDF documentation with Nextra 4 - Developer-focused Next.js documentation",
+    "exports": {},
+    "entryPoints": [],
+    "internalDeps": [],
+    "dependencies": {
+      "runtime": ["katex", "next", "nextra", "nextra-theme-docs", "react", "react-dom", "zod"],
+      "dev": ["@types/node", "@types/react", "@types/react-dom", "typescript"],
+      "peer": []
+    },
+    "engines": {
+      "node": ">=20.0.0",
+      "pnpm": ">=7.0.0"
+    },
+    "fileStats": {
+      "count": 0,
+      "totalLines": 0
+    }
+  },
+  {
+    "name": "@unrdf/observability",
+    "dir": "observability",
+    "version": "1.0.0",
+    "description": "Innovative Prometheus/Grafana observability dashboard for UNRDF distributed workflows",
+    "exports": {
+      "main": {
+        "default": null,
+        "named": [
+          "WorkflowMetrics",
+          "createWorkflowMetrics",
+          "WorkflowStatus",
+          "GrafanaExporter",
+          "createGrafanaExporter",
+          "AlertManager",
+          "createAlertManager",
+          "AlertSeverity",
+          "createObservabilityStack"
+        ],
+        "reexports": [
+          "./metrics/workflow-metrics.mjs",
+          "./exporters/grafana-exporter.mjs",
+          "./alerts/alert-manager.mjs"
+        ],
+        "stars": []
+      }
+    },
+    "entryPoints": [
+      {
+        "type": "main",
+        "value": "./src/index.mjs"
+      },
+      {
+        "type": "exports[.]",
+        "value": "./src/index.mjs"
+      },
+      {
+        "type": "exports[./metrics]",
+        "value": "./src/metrics/workflow-metrics.mjs"
+      },
+      {
+        "type": "exports[./exporters]",
+        "value": "./src/exporters/grafana-exporter.mjs"
+      },
+      {
+        "type": "exports[./alerts]",
+        "value": "./src/alerts/alert-manager.mjs"
+      }
+    ],
+    "internalDeps": [],
+    "dependencies": {
+      "runtime": [
+        "prom-client",
+        "@opentelemetry/api",
+        "@opentelemetry/exporter-prometheus",
+        "@opentelemetry/sdk-metrics",
+        "express",
+        "zod"
+      ],
+      "dev": ["vitest"],
+      "peer": []
+    },
+    "engines": {},
+    "fileStats": {
+      "count": 5,
+      "totalLines": 1371
+    }
+  },
+  {
+    "name": "@unrdf/oxigraph",
+    "dir": "oxigraph",
+    "version": "5.0.1",
+    "description": "UNRDF Oxigraph - Graph database benchmarking implementation using Oxigraph SPARQL engine",
+    "exports": {
+      "main": {
+        "default": "anonymous",
+        "named": ["createStore", "dataFactory", "OxigraphStore"],
+        "reexports": [],
+        "stars": []
+      }
+    },
+    "entryPoints": [
+      {
+        "type": "main",
+        "value": "src/index.mjs"
+      },
+      {
+        "type": "exports[.]",
+        "value": "./src/index.mjs"
+      },
+      {
+        "type": "exports[./store]",
+        "value": "./src/store.mjs"
+      },
+      {
+        "type": "exports[./types]",
+        "value": "./src/types.mjs"
+      }
+    ],
+    "internalDeps": [],
+    "dependencies": {
+      "runtime": ["oxigraph", "zod"],
+      "dev": ["@types/node", "vitest"],
+      "peer": []
+    },
+    "engines": {
+      "node": ">=18.0.0"
+    },
+    "fileStats": {
+      "count": 5,
+      "totalLines": 1381
+    }
+  },
+  {
+    "name": "@unrdf/project-engine",
+    "dir": "project-engine",
+    "version": "5.0.1",
+    "description": "UNRDF Project Engine - Self-hosting Tools and Infrastructure (Development Only)",
+    "exports": {
+      "main": {
+        "default": null,
+        "named": [
+          "scanFileSystemToStore",
+          "buildProjectModelFromFs",
+          "detectStackFromFs",
+          "classifyFiles",
+          "diffProjectStructure",
+          "materializeArtifacts",
+          "ProjectStructureLens",
+          "getProjectEngineConfig",
+          "ProjectEngineConfigSchema",
+          "buildProjectReport",
+          "createProjectInitializationPipeline",
+          "inferDomainModel",
+          "inferDomainModelFromPath",
+          "DomainModelLens",
+          "analyzeHotspots",
+          "scoreFeature",
+          "findMissingRoles",
+          "scoreMissingRole",
+          "deriveLinterRules",
+          "analyzeCodePatterns",
+          "generateESLintConfig",
+          "analyzeJsComplexity",
+          "DocGenerationResultSchema"
+        ],
+        "reexports": [
+          "./fs-scan.mjs",
+          "./project-model.mjs",
+          "./stack-detect.mjs",
+          "./file-roles.mjs",
+          "./project-diff.mjs",
+          "./materialize.mjs",
+          "./lens/project-structure.mjs",
+          "./project-config.mjs",
+          "./project-report.mjs",
+          "./initialize.mjs",
+          "./domain-infer.mjs",
+          "./hotspot-analyzer.mjs",
+          "./gap-finder.mjs",
+          "./stack-linter.mjs",
+          "./code-complexity-js.mjs",
+          "./doc-generator.mjs"
+        ],
+        "stars": []
+      }
+    },
+    "entryPoints": [
+      {
+        "type": "main",
+        "value": "src/index.mjs"
+      },
+      {
+        "type": "exports[.]",
+        "value": "./src/index.mjs"
+      }
+    ],
+    "internalDeps": ["@unrdf/core", "@unrdf/knowledge-engine"],
+    "dependencies": {
+      "runtime": ["@unrdf/core", "@unrdf/knowledge-engine"],
+      "dev": ["@types/node", "vitest"],
+      "peer": []
+    },
+    "engines": {
+      "node": ">=18.0.0"
+    },
+    "fileStats": {
+      "count": 37,
+      "totalLines": 13450
+    }
+  },
+  {
+    "name": "@unrdf/rdf-graphql",
+    "dir": "rdf-graphql",
+    "version": "1.0.0",
+    "description": "Type-safe GraphQL interface for RDF knowledge graphs with automatic schema generation",
+    "exports": {
+      "main": {
+        "default": null,
+        "named": [
+          "RDFGraphQLAdapter",
+          "createAdapter",
+          "RDFSchemaGenerator",
+          "SPARQLQueryBuilder",
+          "RDFResolverFactory"
+        ],
+        "reexports": ["./schema-generator.mjs", "./query-builder.mjs", "./resolver.mjs"],
+        "stars": []
+      }
+    },
+    "entryPoints": [
+      {
+        "type": "main",
+        "value": "src/adapter.mjs"
+      },
+      {
+        "type": "exports[.]",
+        "value": "./src/adapter.mjs"
+      },
+      {
+        "type": "exports[./schema]",
+        "value": "./src/schema-generator.mjs"
+      },
+      {
+        "type": "exports[./query]",
+        "value": "./src/query-builder.mjs"
+      },
+      {
+        "type": "exports[./resolver]",
+        "value": "./src/resolver.mjs"
+      }
+    ],
+    "internalDeps": ["@unrdf/oxigraph"],
+    "dependencies": {
+      "runtime": ["graphql", "@graphql-tools/schema", "@unrdf/oxigraph", "zod"],
+      "dev": [],
+      "peer": []
+    },
+    "engines": {},
+    "fileStats": {
+      "count": 5,
+      "totalLines": 1725
+    }
+  },
+  {
+    "dir": "react",
+    "error": "No package.json",
+    "exports": {
+      "error": "No package.json"
+    }
+  },
+  {
+    "name": "@unrdf/semantic-search",
+    "dir": "semantic-search",
+    "version": "1.0.0",
+    "description": "AI-powered semantic search over RDF knowledge graphs using vector embeddings",
+    "exports": {
+      "main": {
+        "default": "anonymous",
+        "named": ["RDFEmbedder", "SemanticQueryEngine", "KnowledgeRecommender"],
+        "reexports": [],
+        "stars": []
+      }
+    },
+    "entryPoints": [
+      {
+        "type": "main",
+        "value": "src/index.mjs"
+      },
+      {
+        "type": "exports[.]",
+        "value": "./src/index.mjs"
+      },
+      {
+        "type": "exports[./embeddings]",
+        "value": "./src/embeddings/index.mjs"
+      },
+      {
+        "type": "exports[./search]",
+        "value": "./src/search/index.mjs"
+      },
+      {
+        "type": "exports[./discovery]",
+        "value": "./src/discovery/index.mjs"
+      }
+    ],
+    "internalDeps": ["@unrdf/oxigraph"],
+    "dependencies": {
+      "runtime": ["@unrdf/oxigraph", "@xenova/transformers", "vectra", "zod"],
+      "dev": ["@types/node", "vitest"],
+      "peer": []
+    },
+    "engines": {
+      "node": ">=18.0.0"
+    },
+    "fileStats": {
+      "count": 7,
+      "totalLines": 775
+    }
+  },
+  {
+    "name": "@unrdf/serverless",
+    "dir": "serverless",
+    "version": "1.0.0",
+    "description": "UNRDF Serverless - One-click AWS deployment for RDF applications",
+    "exports": {
+      "main": {
+        "default": null,
+        "named": [
+          "UNRDFStack",
+          "createUNRDFStack",
+          "DynamoDBAdapter",
+          "createAdapterFromEnv",
+          "VERSION",
+          "SUPPORTED_REGIONS",
+          "DEFAULT_CONFIG"
+        ],
+        "reexports": ["./cdk/unrdf-stack.mjs", "./storage/dynamodb-adapter.mjs"],
+        "stars": []
+      }
+    },
+    "entryPoints": [
+      {
+        "type": "main",
+        "value": "src/index.mjs"
+      },
+      {
+        "type": "exports[.]",
+        "value": "./src/index.mjs"
+      },
+      {
+        "type": "exports[./cdk]",
+        "value": "./src/cdk/index.mjs"
+      },
+      {
+        "type": "exports[./deploy]",
+        "value": "./src/deploy/index.mjs"
+      },
+      {
+        "type": "exports[./api]",
+        "value": "./src/api/index.mjs"
+      },
+      {
+        "type": "exports[./storage]",
+        "value": "./src/storage/index.mjs"
+      }
+    ],
+    "internalDeps": ["@unrdf/core", "@unrdf/oxigraph"],
+    "dependencies": {
+      "runtime": ["@unrdf/core", "@unrdf/oxigraph", "aws-cdk-lib", "constructs", "esbuild", "zod"],
+      "dev": [
+        "@aws-sdk/client-dynamodb",
+        "@aws-sdk/client-lambda",
+        "@aws-sdk/lib-dynamodb",
+        "@types/node",
+        "vitest"
+      ],
+      "peer": ["@aws-sdk/client-dynamodb", "@aws-sdk/client-lambda"]
+    },
+    "engines": {
+      "node": ">=18.0.0"
+    },
+    "fileStats": {
+      "count": 9,
+      "totalLines": 1517
+    }
+  },
+  {
+    "name": "@unrdf/streaming",
+    "dir": "streaming",
+    "version": "5.0.1",
+    "description": "UNRDF Streaming - Change Feeds and Real-time Synchronization",
+    "exports": {
+      "main": {
+        "default": null,
+        "named": ["createChangeFeed", "createSubscriptionManager", "createStreamProcessor"],
+        "reexports": [
+          "./streaming/change-feed.mjs",
+          "./streaming/subscription-manager.mjs",
+          "./streaming/stream-processor.mjs"
+        ],
+        "stars": []
+      }
+    },
+    "entryPoints": [
+      {
+        "type": "main",
+        "value": "src/index.mjs"
+      },
+      {
+        "type": "exports[.]",
+        "value": "./src/index.mjs"
+      },
+      {
+        "type": "exports[./processor]",
+        "value": "./src/processor.mjs"
+      }
+    ],
+    "internalDeps": ["@unrdf/core", "@unrdf/hooks", "@unrdf/oxigraph"],
+    "dependencies": {
+      "runtime": [
+        "@opentelemetry/api",
+        "@unrdf/core",
+        "@unrdf/hooks",
+        "@unrdf/oxigraph",
+        "citty",
+        "lru-cache",
+        "ws",
+        "zod"
+      ],
+      "dev": ["@rdfjs/data-model", "@types/node", "vitest"],
+      "peer": []
+    },
+    "engines": {
+      "node": ">=18.0.0"
+    },
+    "fileStats": {
+      "count": 9,
+      "totalLines": 1971
+    }
+  },
+  {
+    "name": "@unrdf/test-utils",
+    "dir": "test-utils",
+    "version": "5.0.1",
+    "description": "Testing utilities for UNRDF development",
+    "exports": {
+      "main": {
+        "default": null,
+        "named": [
+          "TestScenario",
+          "FluentAssertions",
+          "TestContextBuilder",
+          "TestHelpers",
+          "scenario",
+          "expect",
+          "createTestContext",
+          "createDefaultTestContext"
+        ],
+        "reexports": [],
+        "stars": []
+      }
+    },
+    "entryPoints": [
+      {
+        "type": "main",
+        "value": "./src/index.mjs"
+      },
+      {
+        "type": "exports[.]",
+        "value": "./src/index.mjs"
+      }
+    ],
+    "internalDeps": ["@unrdf/oxigraph"],
+    "dependencies": {
+      "runtime": ["@unrdf/oxigraph", "@opentelemetry/api", "zod"],
+      "dev": ["vitest"],
+      "peer": []
+    },
+    "engines": {
+      "node": ">=18.0.0",
+      "pnpm": ">=7.0.0"
+    },
+    "fileStats": {
+      "count": 3,
+      "totalLines": 1401
+    }
+  },
+  {
+    "name": "@unrdf/validation",
+    "dir": "validation",
+    "version": "5.0.1",
+    "description": "OTEL validation framework for UNRDF development",
+    "exports": {
+      "main": {
+        "default": null,
+        "named": [
+          "OTELValidator",
+          "createOTELValidator",
+          "defaultOTELValidator",
+          "defaultValidationRunner",
+          "defaultOTELValidator",
+          "defaultValidationHelpers"
+        ],
+        "reexports": [
+          "./otel-validator.mjs",
+          "./validation-runner.mjs",
+          "./otel-validator.mjs",
+          "./validation-helpers.mjs"
+        ],
+        "stars": []
+      }
+    },
+    "entryPoints": [
+      {
+        "type": "main",
+        "value": "./src/index.mjs"
+      },
+      {
+        "type": "exports[.]",
+        "value": "./src/index.mjs"
+      }
+    ],
+    "internalDeps": ["@unrdf/knowledge-engine"],
+    "dependencies": {
+      "runtime": ["@unrdf/knowledge-engine"],
+      "dev": [],
+      "peer": []
+    },
+    "engines": {
+      "node": ">=18.0.0",
+      "pnpm": ">=7.0.0"
+    },
+    "fileStats": {
+      "count": 8,
+      "totalLines": 4064
+    }
+  },
+  {
+    "name": "@unrdf/yawl",
+    "dir": "yawl",
+    "version": "5.0.0",
+    "description": "YAWL (Yet Another Workflow Language) engine with KGC-4D time-travel and receipt verification",
+    "exports": {
+      "main": {
+        "default": null,
+        "named": ["YawlCase", "YawlResourcePool"],
+        "reexports": ["./case.mjs", "./resource.mjs"],
+        "stars": []
+      }
+    },
+    "entryPoints": [
+      {
+        "type": "main",
+        "value": "src/index.mjs"
+      },
+      {
+        "type": "exports[.]",
+        "value": "./src/index.mjs"
+      },
+      {
+        "type": "exports[./api]",
+        "value": "./src/api/workflow-api.mjs"
+      },
+      {
+        "type": "exports[./graphql-api]",
+        "value": "./src/api/graphql-api.mjs"
+      },
+      {
+        "type": "exports[./ontology]",
+        "value": "./src/ontology/yawl-ontology.mjs"
+      },
+      {
+        "type": "exports[./store]",
+        "value": "./src/store/yawl-store.mjs"
+      },
+      {
+        "type": "exports[./types]",
+        "value": "./src/types/yawl-types.mjs"
+      },
+      {
+        "type": "exports[./schemas]",
+        "value": "./src/types/yawl-schemas.mjs"
+      },
+      {
+        "type": "exports[./hooks]",
+        "value": "./src/hooks/yawl-hooks.mjs"
+      },
+      {
+        "type": "exports[./resources]",
+        "value": "./src/resources/yawl-resources.mjs"
+      },
+      {
+        "type": "exports[./cancellation]",
+        "value": "./src/cancellation/index.mjs"
+      },
+      {
+        "type": "exports[./receipt]",
+        "value": "./src/receipt.mjs"
+      },
+      {
+        "type": "exports[./blockchain-receipts]",
+        "value": "./src/blockchain-receipts.mjs"
+      },
+      {
+        "type": "exports[./visualization]",
+        "value": "./src/visualization/live-workflow-viz.mjs"
+      }
+    ],
+    "internalDeps": ["@unrdf/hooks", "@unrdf/kgc-4d", "@unrdf/oxigraph"],
+    "dependencies": {
+      "runtime": [
+        "@graphql-tools/schema",
+        "@noble/ed25519",
+        "@observablehq/plot",
+        "@unrdf/hooks",
+        "@unrdf/kgc-4d",
+        "@unrdf/oxigraph",
+        "d3",
+        "graphql",
+        "hash-wasm",
+        "zod"
+      ],
+      "dev": ["eslint", "vitest"],
+      "peer": []
+    },
+    "engines": {
+      "node": ">=18.0.0",
+      "pnpm": ">=7.0.0"
+    },
+    "fileStats": {
+      "count": 97,
+      "totalLines": 39119
+    }
+  },
+  {
+    "name": "@unrdf/yawl-ai",
+    "dir": "yawl-ai",
+    "version": "1.0.0",
+    "description": "AI-powered workflow optimization using TensorFlow.js and YAWL patterns",
+    "exports": {
+      "main": {
+        "default": "anonymous",
+        "named": ["YAWLMLAdapter", "createAdapter"],
+        "reexports": ["./integration/yawl-adapter.mjs"],
+        "stars": []
+      }
+    },
+    "entryPoints": [
+      {
+        "type": "main",
+        "value": "src/index.mjs"
+      },
+      {
+        "type": "exports[.]",
+        "value": "./src/index.mjs"
+      },
+      {
+        "type": "exports[./predictor]",
+        "value": "./src/ml/workflow-predictor.mjs"
+      },
+      {
+        "type": "exports[./optimizer]",
+        "value": "./src/ml/performance-optimizer.mjs"
+      },
+      {
+        "type": "exports[./anomaly]",
+        "value": "./src/ml/anomaly-detector.mjs"
+      },
+      {
+        "type": "exports[./adapter]",
+        "value": "./src/integration/yawl-adapter.mjs"
+      }
+    ],
+    "internalDeps": [],
+    "dependencies": {
+      "runtime": ["@tensorflow/tfjs-node", "@tensorflow/tfjs-layers", "ml-matrix", "zod"],
+      "dev": ["vitest"],
+      "peer": []
+    },
+    "engines": {
+      "node": ">=18.0.0",
+      "pnpm": ">=7.0.0"
+    },
+    "fileStats": {
+      "count": 5,
+      "totalLines": 1930
+    }
+  },
+  {
+    "name": "@unrdf/yawl-api",
+    "dir": "yawl-api",
+    "version": "1.0.0",
+    "description": "High-performance REST API framework that exposes YAWL workflows as RESTful APIs with OpenAPI documentation",
+    "exports": {
+      "main": {
+        "default": "anonymous",
+        "named": ["YAWLAPIServer", "createYAWLAPIServer"],
+        "reexports": [],
+        "stars": []
+      }
+    },
+    "entryPoints": [
+      {
+        "type": "main",
+        "value": "src/server.mjs"
+      },
+      {
+        "type": "exports[.]",
+        "value": "./src/server.mjs"
+      },
+      {
+        "type": "exports[./server]",
+        "value": "./src/server.mjs"
+      }
+    ],
+    "internalDeps": ["@unrdf/yawl", "@unrdf/kgc-4d"],
+    "dependencies": {
+      "runtime": [
+        "@unrdf/yawl",
+        "@unrdf/kgc-4d",
+        "fastify",
+        "@fastify/swagger",
+        "@fastify/swagger-ui",
+        "@fastify/cors",
+        "zod",
+        "zod-to-json-schema"
+      ],
+      "dev": ["eslint", "vitest"],
+      "peer": []
+    },
+    "engines": {
+      "node": ">=18.0.0",
+      "pnpm": ">=7.0.0"
+    },
+    "fileStats": {
+      "count": 2,
+      "totalLines": 1004
+    }
+  },
+  {
+    "name": "@unrdf/yawl-durable",
+    "dir": "yawl-durable",
+    "version": "0.1.0",
+    "description": "Durable execution framework inspired by Temporal.io using YAWL and KGC-4D",
+    "exports": {
+      "main": {
+        "default": null,
+        "named": ["DurableWorkflowEngine"],
+        "reexports": [],
+        "stars": []
+      }
+    },
+    "entryPoints": [
+      {
+        "type": "main",
+        "value": "src/engine.mjs"
+      },
+      {
+        "type": "exports[.]",
+        "value": "./src/engine.mjs"
+      },
+      {
+        "type": "exports[./saga]",
+        "value": "./src/saga.mjs"
+      },
+      {
+        "type": "exports[./activity]",
+        "value": "./src/activity.mjs"
+      },
+      {
+        "type": "exports[./replay]",
+        "value": "./src/replay.mjs"
+      }
+    ],
+    "internalDeps": ["@unrdf/yawl", "@unrdf/kgc-4d"],
+    "dependencies": {
+      "runtime": ["@unrdf/yawl", "@unrdf/kgc-4d", "hash-wasm", "zod"],
+      "dev": ["@jest/globals", "eslint", "jest"],
+      "peer": []
+    },
+    "engines": {},
+    "fileStats": {
+      "count": 6,
+      "totalLines": 1718
+    }
+  },
+  {
+    "name": "@unrdf/yawl-kafka",
+    "dir": "yawl-kafka",
+    "version": "1.0.0",
+    "description": "Apache Kafka event streaming integration for YAWL workflows with Avro serialization",
+    "exports": {
+      "main": {
+        "default": "anonymous",
+        "named": [],
+        "reexports": [],
+        "stars": []
+      }
+    },
+    "entryPoints": [
+      {
+        "type": "main",
+        "value": "src/index.mjs"
+      },
+      {
+        "type": "exports[.]",
+        "value": "./src/index.mjs"
+      },
+      {
+        "type": "exports[./producer]",
+        "value": "./src/producer.mjs"
+      },
+      {
+        "type": "exports[./consumer]",
+        "value": "./src/consumer.mjs"
+      },
+      {
+        "type": "exports[./schemas]",
+        "value": "./src/schemas.mjs"
+      }
+    ],
+    "internalDeps": ["@unrdf/core"],
+    "dependencies": {
+      "runtime": ["@unrdf/core", "avsc", "kafkajs", "zod"],
+      "dev": ["eslint", "vitest"],
+      "peer": []
+    },
+    "engines": {
+      "node": ">=18.0.0",
+      "pnpm": ">=7.0.0"
+    },
+    "fileStats": {
+      "count": 5,
+      "totalLines": 1565
+    }
+  },
+  {
+    "name": "@unrdf/yawl-langchain",
+    "dir": "yawl-langchain",
+    "version": "1.0.0",
+    "description": "LangChain integration for YAWL workflow engine - AI-powered workflow orchestration with RDF context",
+    "exports": {
+      "main": {
+        "default": null,
+        "named": [],
+        "reexports": [],
+        "stars": []
+      }
+    },
+    "entryPoints": [
+      {
+        "type": "main",
+        "value": "src/index.mjs"
+      },
+      {
+        "type": "exports[.]",
+        "value": "./src/index.mjs"
+      },
+      {
+        "type": "exports[./adapter]",
+        "value": "./src/adapter.mjs"
+      },
+      {
+        "type": "exports[./examples]",
+        "value": "./examples/code-review-workflow.mjs"
+      }
+    ],
+    "internalDeps": ["@unrdf/kgc-4d", "@unrdf/oxigraph", "@unrdf/yawl"],
+    "dependencies": {
+      "runtime": [
+        "@langchain/core",
+        "@langchain/openai",
+        "@unrdf/kgc-4d",
+        "@unrdf/oxigraph",
+        "@unrdf/yawl",
+        "langchain",
+        "zod"
+      ],
+      "dev": ["eslint", "vitest"],
+      "peer": []
+    },
+    "engines": {
+      "node": ">=18.0.0",
+      "pnpm": ">=7.0.0"
+    },
+    "fileStats": {
+      "count": 2,
+      "totalLines": 426
+    }
+  },
+  {
+    "name": "@unrdf/yawl-observability",
+    "dir": "yawl-observability",
+    "version": "1.0.0",
+    "description": "Workflow observability framework with Prometheus metrics and OpenTelemetry tracing for YAWL",
+    "exports": {
+      "main": {
+        "default": null,
+        "named": ["trace", "context", "SpanStatusCode", "SpanKind"],
+        "reexports": ["@opentelemetry/api"],
+        "stars": []
+      }
+    },
+    "entryPoints": [
+      {
+        "type": "main",
+        "value": "src/index.mjs"
+      },
+      {
+        "type": "exports[.]",
+        "value": "./src/index.mjs"
+      },
+      {
+        "type": "exports[./metrics]",
+        "value": "./src/metrics.mjs"
+      },
+      {
+        "type": "exports[./tracing]",
+        "value": "./src/tracing.mjs"
+      },
+      {
+        "type": "exports[./sli]",
+        "value": "./src/sli.mjs"
+      }
+    ],
+    "internalDeps": ["@unrdf/yawl"],
+    "dependencies": {
+      "runtime": [
+        "@opentelemetry/api",
+        "@opentelemetry/sdk-node",
+        "@opentelemetry/sdk-metrics",
+        "@unrdf/yawl",
+        "prom-client",
+        "zod"
+      ],
+      "dev": ["eslint", "vitest"],
+      "peer": []
+    },
+    "engines": {
+      "node": ">=18.0.0",
+      "pnpm": ">=7.0.0"
+    },
+    "fileStats": {
+      "count": 5,
+      "totalLines": 1901
+    }
+  },
+  {
+    "name": "@unrdf/yawl-queue",
+    "dir": "yawl-queue",
+    "version": "1.0.0",
+    "description": "Distributed YAWL workflow execution using BullMQ and Redis",
+    "exports": {
+      "main": {
+        "default": "YAWLQueueAdapter",
+        "named": ["YAWLJobDataSchema", "AdapterConfigSchema", "YAWLQueueAdapter"],
+        "reexports": [],
+        "stars": []
+      }
+    },
+    "entryPoints": [
+      {
+        "type": "main",
+        "value": "src/adapter.mjs"
+      },
+      {
+        "type": "exports[.]",
+        "value": "./src/adapter.mjs"
+      },
+      {
+        "type": "exports[./adapter]",
+        "value": "./src/adapter.mjs"
+      },
+      {
+        "type": "exports[./examples/data-pipeline]",
+        "value": "./src/examples/data-pipeline.mjs"
+      }
+    ],
+    "internalDeps": ["@unrdf/yawl", "@unrdf/kgc-4d"],
+    "dependencies": {
+      "runtime": ["@unrdf/yawl", "@unrdf/kgc-4d", "bullmq", "ioredis", "zod"],
+      "dev": ["eslint", "vitest"],
+      "peer": []
+    },
+    "engines": {
+      "node": ">=18.0.0",
+      "pnpm": ">=7.0.0"
+    },
+    "fileStats": {
+      "count": 2,
+      "totalLines": 913
+    }
+  },
+  {
+    "name": "@unrdf/yawl-realtime",
+    "dir": "yawl-realtime",
+    "version": "1.0.0",
+    "description": "Real-time collaboration framework for YAWL workflows using Socket.io",
+    "exports": {
+      "main": {
+        "default": "anonymous",
+        "named": [],
+        "reexports": [],
+        "stars": []
+      }
+    },
+    "entryPoints": [
+      {
+        "type": "main",
+        "value": "src/index.mjs"
+      },
+      {
+        "type": "exports[.]",
+        "value": "./src/index.mjs"
+      },
+      {
+        "type": "exports[./server]",
+        "value": "./src/server.mjs"
+      },
+      {
+        "type": "exports[./client]",
+        "value": "./src/client.mjs"
+      }
+    ],
+    "internalDeps": ["@unrdf/yawl"],
+    "dependencies": {
+      "runtime": ["@unrdf/yawl", "socket.io", "socket.io-client", "zod"],
+      "dev": ["vitest", "eslint"],
+      "peer": []
+    },
+    "engines": {
+      "node": ">=18.0.0",
+      "pnpm": ">=7.0.0"
+    },
+    "fileStats": {
+      "count": 4,
+      "totalLines": 1418
+    }
+  },
+  {
+    "name": "@unrdf/yawl-viz",
+    "dir": "yawl-viz",
+    "version": "1.0.0",
+    "description": "Real-time D3.js visualization for YAWL workflows with Van der Aalst pattern rendering",
+    "exports": {
+      "main": {
+        "default": "anonymous",
+        "named": ["PATTERN_STYLES", "STATE_COLORS", "YAWLVisualizer", "createVisualizer"],
+        "reexports": [],
+        "stars": []
+      }
+    },
+    "entryPoints": [
+      {
+        "type": "main",
+        "value": "src/visualizer.mjs"
+      },
+      {
+        "type": "exports[.]",
+        "value": "./src/visualizer.mjs"
+      }
+    ],
+    "internalDeps": ["@unrdf/yawl"],
+    "dependencies": {
+      "runtime": [
+        "@unrdf/yawl",
+        "d3",
+        "d3-graphviz",
+        "d3-selection",
+        "d3-zoom",
+        "d3-drag",
+        "d3-force",
+        "d3-hierarchy"
+      ],
+      "dev": ["eslint", "vitest", "vite", "jsdom"],
+      "peer": []
+    },
+    "engines": {
+      "node": ">=18.0.0",
+      "pnpm": ">=7.0.0"
+    },
+    "fileStats": {
+      "count": 1,
+      "totalLines": 746
+    }
+  }
+]

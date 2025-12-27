@@ -1,56 +1,80 @@
 {
   "name": "@unrdf/kgc-probe",
   "version": "1.0.0",
-  "description": "KGC Surface Probe - Runtime capability detection and performance benchmarking for KGC environments",
+  "description": "KGC Probe - Automated knowledge graph integrity scanning with 10 agents and artifact validation",
   "type": "module",
   "main": "./src/index.mjs",
-  "bin": {
-    "kgc": "./bin/kgc.mjs"
-  },
   "exports": {
-    ".": "./src/orchestrator.mjs",
-    "./observation": "./src/observation.mjs",
-    "./receipt": "./src/receipt.mjs",
+    ".": "./src/index.mjs",
+    "./orchestrator": "./src/orchestrator.mjs",
     "./guards": "./src/guards.mjs",
-    "./probes/runtime": "./src/probes/runtime.mjs",
-    "./probes/wasm": "./src/probes/wasm.mjs",
-    "./probes/persistence": "./src/probes/persistence.mjs",
-    "./probes/tooling": "./src/probes/tooling.mjs",
-    "./types": "./src/types.mjs"
+    "./agents": "./src/agents/index.mjs",
+    "./storage": "./src/storage/index.mjs",
+    "./types": "./src/types.mjs",
+    "./artifact": "./src/artifact.mjs",
+    "./cli": "./src/cli.mjs",
+    "./utils": "./src/utils/index.mjs",
+    "./utils/logger": "./src/utils/logger.mjs",
+    "./utils/errors": "./src/utils/errors.mjs"
   },
+  "sideEffects": false,
+  "files": [
+    "src/",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage",
-    "test:tooling": "node --test src/probes/tooling.test.mjs",
-    "verify:guards": "node src/probes/verify-guards.mjs",
-    "verify:execution": "node src/probes/verify-execution.mjs",
-    "probe:wasm": "node bin/probe-wasm.mjs"
+    "test": "vitest run --coverage",
+    "test:fast": "vitest run --coverage",
+    "test:watch": "vitest --coverage",
+    "lint": "eslint src/ test/ --max-warnings=0",
+    "lint:fix": "eslint src/ test/ --fix",
+    "format": "prettier --write src/ test/",
+    "format:check": "prettier --check src/ test/",
+    "build": "echo 'Build complete (pure ESM, no compilation needed)'",
+    "validate": "npm run lint && npm run test"
   },
   "keywords": [
-    "kgc",
+    "rdf",
+    "knowledge-graph",
     "probe",
-    "wasm",
-    "webassembly",
-    "benchmark",
-    "performance",
-    "capability-detection",
-    "runtime"
+    "integrity",
+    "agents",
+    "validation",
+    "kgc",
+    "deterministic",
+    "artifact-verification"
   ],
-  "author": "UNRDF Team",
-  "license": "MIT",
   "dependencies": {
-    "@noble/hashes": "^1.3.3",
-    "zod": "^4.2.1"
+    "@unrdf/kgc-substrate": "workspace:*",
+    "@unrdf/kgc-4d": "workspace:*",
+    "@unrdf/v6-core": "workspace:*",
+    "@unrdf/oxigraph": "workspace:*",
+    "@unrdf/hooks": "workspace:*",
+    "@unrdf/yawl": "workspace:*",
+    "hash-wasm": "^4.12.0",
+    "zod": "^4.1.13"
   },
   "devDependencies": {
-    "vitest": "^4.0.15"
+    "@types/node": "^24.10.1",
+    "vitest": "^4.0.15",
+    "@vitest/coverage-v8": "^4.0.15"
   },
   "engines": {
     "node": ">=18.0.0",
     "pnpm": ">=7.0.0"
   },
-  "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/unrdf/unrdf.git",
+    "directory": "packages/kgc-probe"
+  },
+  "bugs": {
+    "url": "https://github.com/unrdf/unrdf/issues"
+  },
+  "homepage": "https://github.com/unrdf/unrdf#readme",
+  "license": "MIT",
+  "author": "UNRDF Contributors",
   "publishConfig": {
     "access": "public"
   }

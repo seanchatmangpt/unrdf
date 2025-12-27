@@ -1,0 +1,66 @@
+% LaTeX document with cross-references requiring 2 passes
+% Tests multi-pass compilation for reference resolution
+\documentclass{article}
+
+\title{Cross-Reference Test Document}
+\author{Test Suite}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+\label{sec:intro}
+
+This document tests cross-reference resolution which requires multiple
+compilation passes. On the first pass, references appear as ``??'', and
+only on the second pass do they resolve to actual numbers.
+
+See Section~\ref{sec:methodology} for details on the methodology.
+
+\section{Methodology}
+\label{sec:methodology}
+
+As mentioned in Section~\ref{sec:intro}, this document requires two passes.
+The methodology is described in detail below.
+
+Consider Equation~\ref{eq:test} which demonstrates a simple formula.
+
+\begin{equation}
+  \label{eq:test}
+  a^2 + b^2 = c^2
+\end{equation}
+
+\subsection{Test Cases}
+\label{subsec:cases}
+
+The test cases in Subsection~\ref{subsec:cases} verify that all
+references resolve correctly on the second pass.
+
+\section{Results}
+\label{sec:results}
+
+Results are summarized in Section~\ref{sec:results} (self-reference test).
+For background, see Section~\ref{sec:intro}.
+
+\subsection{Forward References}
+
+This subsection tests forward references to Section~\ref{sec:conclusion}
+which appears later in the document.
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+This document validates multi-pass compilation. All references should
+resolve correctly, including:
+
+\begin{itemize}
+  \item Section~\ref{sec:intro}
+  \item Section~\ref{sec:methodology}
+  \item Subsection~\ref{subsec:cases}
+  \item Section~\ref{sec:results}
+  \item Equation~\ref{eq:test}
+\end{itemize}
+
+\end{document}
