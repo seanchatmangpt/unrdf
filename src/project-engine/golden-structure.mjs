@@ -4,7 +4,7 @@
  */
 
 import { promises as _fs } from 'fs';
-import { _Store } from 'n3';
+import { _Store } from '@unrdf/core/rdf/n3-justified-only';
 import { parseTurtle } from '../knowledge-engine/parse.mjs';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
 import { z } from 'zod';

@@ -184,6 +184,10 @@ class WorkflowAnalytics {
 // Main Pipeline
 // =============================================================================
 
+/**
+ * Run the analytics pipeline demo
+ * @returns {Promise<void>}
+ */
 async function runAnalyticsPipeline() {
   console.log('🚀 Starting YAWL-Kafka Real-Time Analytics Pipeline\n');
 

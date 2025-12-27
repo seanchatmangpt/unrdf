@@ -342,7 +342,7 @@ describe('LaTeX Compilation - Determinism', () => {
 // ============================================================================
 
 describe('LaTeX Compilation - Performance', () => {
-  it('should compile minimal.tex in under 5 seconds', async (t) => {
+  it('should compile minimal.tex in under 5 seconds', async (_t) => {
     const inputTexPath = join(FIXTURES_DIR, 'minimal.tex');
     const projectDir = FIXTURES_DIR;
 

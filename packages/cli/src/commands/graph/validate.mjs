@@ -58,7 +58,7 @@ export const validateCommand = defineCommand({
 
       // Integrate with real SHACL validation from knowledge-engine
       const { validateShacl } = await import('../../../knowledge-engine/validate.mjs');
-      const { Parser } = await import('n3');
+      const { Parser } = await import('@unrdf/core/rdf/n3-justified-only');
       const { promises: fs } = await import('fs');
       const path = await import('path');
 

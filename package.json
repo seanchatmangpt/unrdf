@@ -1,6 +1,6 @@
 {
   "name": "unrdf-workspace",
-  "version": "6.0.0-alpha.1",
+  "version": "6.0.0-rc.1",
   "description": "UNRDF v6 Monorepo - RDF Knowledge Graph Substrate Platform",
   "private": true,
   "type": "module",
@@ -90,26 +90,28 @@
     "@opentelemetry/sdk-trace-base": "^2.2.0",
     "@opentelemetry/sdk-trace-node": "^2.2.0",
     "@opentelemetry/semantic-conventions": "^1.38.0",
-    "@types/node": "^24.10.1",
-    "@vitest/browser": "^4.0.15",
-    "@vitest/coverage-v8": "^4.0.15",
-    "@vitest/ui": "^4.0.15",
+    "@types/node": "^25.0.3",
+    "@vitest/browser": "^4.0.16",
+    "@vitest/coverage-v8": "^4.0.16",
+    "@vitest/ui": "^4.0.16",
     "citty": "^0.1.6",
     "eslint": "^9.39.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-jsdoc": "^61.4.1",
     "glob": "^13.0.0",
-    "globals": "^15.12.0",
+    "globals": "^16.5.0",
     "husky": "^9.1.7",
     "jsdom": "^27.2.0",
     "prettier": "^3.0.0",
     "tinybench": "^6.0.0",
-    "vitest": "^1.0.0"
+    "vitest": "^4.0.16"
   },
   "pnpm": {
     "overrides": {
       "@opentelemetry/api": "^1.7.0",
-      "zod": "^4.1.13"
+      "zod": "^4.1.13",
+      "esbuild@<=0.24.2": ">=0.25.0",
+      "@rdfjs/types": "^2.0.1"
     }
   },
   "volta": {
@@ -126,15 +128,16 @@
     "@unrdf/oxigraph": "workspace:*",
     "clownface": "^2.0.3",
     "fetch": "^1.1.0",
+    "hash-wasm": "^4.12.0",
     "is-online": "^12.0.2",
     "isomorphic-fetch": "^3.0.0",
     "lru-cache": "^11.2.4",
-    "n3": "^1.26.0",
     "oxigraph": "^0.5.2",
-    "rdf-canonize": "^2.0.1",
+    "rdf-canonize": "^5.0.0",
     "rdf-ext": "^2.6.0",
     "rdf-validate-shacl": "^0.6.5",
     "sparqljs": "^3.7.3",
-    "zod": "^3.25.76"
+    "zod": "^3.25.76",
+    "@unrdf/v6-compat": "workspace:*"
   }
 }

@@ -5,7 +5,7 @@
  * contributors always reach for the same validation workflow.
  */
 
-import { Parser, Store } from 'n3';
+import { Parser, Store } from '@unrdf/core/rdf/n3-justified-only';
 import { useStoreContext } from '../context/index.mjs';
 
 /**

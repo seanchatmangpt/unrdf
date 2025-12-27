@@ -10,7 +10,7 @@ const extension = {
         start: {
           description: 'Start gateway service',
           argsSchema: z.object({ config: z.string().optional() }),
-          handler: async (args) => ({ running: true, gatewayId: `gw_${Date.now()}` })
+          handler: async (_args) => ({ running: true, gatewayId: `gw_${Date.now()}` })
         },
         route: {
           description: 'Configure gateway routing',

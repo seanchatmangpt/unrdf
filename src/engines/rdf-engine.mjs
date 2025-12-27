@@ -4,7 +4,8 @@
  * @license MIT
  */
 
-import { Parser, Store, Writer, DataFactory } from 'n3';
+import { Parser, Writer, DataFactory } from '@unrdf/core/rdf/n3-justified-only';
+import { createStore } from '@unrdf/oxigraph';
 import { QueryEngine } from '@comunica/query-sparql';
 import rdf from 'rdf-ext';
 import SHACLValidator from 'rdf-validate-shacl';
@@ -26,7 +27,7 @@ export class RdfEngine {
   constructor(options = {}) {
     this.baseIRI = options.baseIRI || 'http://example.org/';
     this.comunicaEngine = new QueryEngine();
-    this.store = new Store();
+    this.store = await createStore();
   }
 
   // =================================================================

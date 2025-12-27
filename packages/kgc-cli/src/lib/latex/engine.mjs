@@ -24,7 +24,7 @@
  * @param {number} params.passes - Number of compilation passes
  * @returns {Promise<CompilationResult>}
  */
-export async function compileWithSwiftLatex({ engine, vfs, entry, cacheDir, passes }) {
+export async function compileWithSwiftLatex({ engine, vfs, entry, cacheDir: _cacheDir, passes: _passes }) {
   // TODO (Agent 3): Implement SwiftLaTeX integration
   // For now, return stub result
 

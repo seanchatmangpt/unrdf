@@ -8,7 +8,7 @@
  * a single, consolidated Delta.
  */
 
-import { _Store } from 'n3';
+import { _Store } from '@unrdf/core/rdf/n3-justified-only';
 import { randomUUID } from 'crypto';
 import { z } from 'zod';
 

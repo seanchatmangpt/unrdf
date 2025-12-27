@@ -3,7 +3,7 @@
  * @module query
  */
 
-import { Store } from 'n3';
+import { createStore } from '@unrdf/oxigraph';
 import { getQueryEngine } from './query-cache.mjs';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
 
@@ -25,7 +25,7 @@ const tracer = trace.getTracer('unrdf');
  * @throws {Error} If query execution fails
  *
  * @example
- * const store = new Store();
+ * const store = await createStore();
  * // ... add quads to store
  *
  * const results = await query(store, `

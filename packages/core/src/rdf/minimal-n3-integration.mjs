@@ -34,7 +34,7 @@ import { createStore } from '@unrdf/oxigraph';
  * const results = store.query('SELECT * WHERE { ?s ?p ?o } LIMIT 10');
  */
 export async function streamParse(stream, options = {}) {
-  const { Parser } = await import('n3');
+  const { Parser } = await import('@unrdf/core/rdf/n3-justified-only');
   const parser = new Parser(options);
   const quads = [];
 
@@ -66,7 +66,7 @@ export async function streamParse(stream, options = {}) {
  * await streamSerialize(store, 'turtle', sink);
  */
 export async function streamSerialize(store, format, sink) {
-  const { Writer } = await import('n3');
+  const { Writer } = await import('@unrdf/core/rdf/n3-justified-only');
   const writer = new Writer({ format });
 
   // Extract quads from Oxigraph (staying in Oxigraph as long as possible)
@@ -106,7 +106,7 @@ export async function streamSerialize(store, format, sink) {
  * // Back in Oxigraph - can query inferred triples
  */
 export async function applyN3Rules(store, rulesTtl) {
-  const { Store, Parser } = await import('n3');
+  const { Store, Parser } = await import('@unrdf/core/rdf/n3-justified-only');
 
   // Convert Oxigraph → N3 (boundary crossing)
   const n3Store = new Store(Array.from(store.dump()));
@@ -152,8 +152,8 @@ function performN3Reasoning(_dataStore, _rulesStore) {
  * const store = parsePermissive(dirtyTurtle, { format: 'turtle' });
  * // N3's permissive parser recovered what it could, now in Oxigraph
  */
-export function parsePermissive(dirtyRdf, options = {}) {
-  const { Parser } = require('n3');
+export async function parsePermissive(dirtyRdf, options = {}) {
+  const { Parser } = await import('@unrdf/core/rdf/n3-justified-only');
   const parser = new Parser({ ...options, strict: false });
 
   try {
@@ -180,8 +180,8 @@ export function parsePermissive(dirtyRdf, options = {}) {
  * };
  * const transformed = transformRdfStructure(store, transform);
  */
-export function transformRdfStructure(store, transformFn) {
-  const { Store } = require('n3');
+export async function transformRdfStructure(store, transformFn) {
+  const { Store } = await import('@unrdf/core/rdf/n3-justified-only');
 
   // Convert Oxigraph → N3 (boundary crossing)
   const n3Store = new Store(Array.from(store.dump()));

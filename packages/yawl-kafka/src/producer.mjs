@@ -20,7 +20,7 @@ import { ENGINE_EVENTS } from '@unrdf/yawl';
  * Map YAWL engine events to Kafka event types
  * @type {Map<string, string>}
  */
-const ENGINE_EVENT_TO_KAFKA_TYPE = new Map([
+const _ENGINE_EVENT_TO_KAFKA_TYPE = new Map([
   [ENGINE_EVENTS.CASE_CREATED, 'YAWL_CASE_CREATED'],
   [ENGINE_EVENTS.TASK_ENABLED, 'YAWL_TASK_ENABLED'],
   [ENGINE_EVENTS.TASK_STARTED, 'YAWL_TASK_STARTED'],

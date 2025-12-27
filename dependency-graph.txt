@@ -1,159 +1,50 @@
-UNRDF Package Dependency Graph
-================================
-Generated: 2025-12-26
+# Current Package Dependency Analysis (54 packages)
 
-LEGEND:
-  → depends on
-  ← depended on by
-  * leaf package (no internal dependencies)
-  [P] private package
+## Core Layer (Foundation)
+- @unrdf/domain (types, schemas)
+- @unrdf/oxigraph (Rust-based triple store)
+- @unrdf/core (RDF operations, SPARQL)
 
-FOUNDATION (No Dependencies)
-============================
-* atomvm
-* diataxis-kit
-* domain [P]
-* graph-analytics
-* observability
-* oxigraph
+## Knowledge Layer
+- @unrdf/hooks (autonomous behaviors)
+- @unrdf/knowledge-engine (inference, reasoning)
+- @unrdf/federation (distributed queries)
 
-LEVEL 1 (Depends only on Foundation)
-=====================================
-core → oxigraph
-  ← cli, collab, composables, dark-matter, engine-gateway, federation,
-     hooks, kgc-4d, knowledge-engine, ml-inference, ml-versioning,
-     project-engine, serverless, streaming, yawl-kafka
+## KGC Layer (Knowledge Graph Capsules)
+- @unrdf/kgc-4d (temporal event sourcing)
+- @unrdf/kgc-substrate (hash-stable store)
+- @unrdf/kgc-claude (Claude integration)
+- @unrdf/kgc-swarm (multi-agent orchestration)
+- @unrdf/kgc-cli (extension registry)
+- @unrdf/kgc-docs (documentation generation)
+- @unrdf/kgc-runtime (governance runtime)
+- @unrdf/kgc-tools (verification utilities)
 
-caching → oxigraph
-rdf-graphql → oxigraph
-semantic-search → oxigraph
-test-utils [P] → oxigraph
+## Infrastructure Layer
+- @unrdf/atomvm (Erlang/BEAM VM integration)
+- @unrdf/consensus (Raft consensus)
+- @unrdf/blockchain (cryptographic receipts)
+- @unrdf/caching (multi-layer cache)
+- @unrdf/observability (OTEL monitoring)
 
-LEVEL 2 (Depends on Level 1)
-=============================
-collab → core
-composables → core, streaming
-dark-matter → core, oxigraph
-engine-gateway → core, oxigraph
-kgc-4d → core, oxigraph
-  ← blockchain, ml-versioning, yawl, yawl-api, yawl-durable, yawl-langchain,
-     yawl-queue
+## Integration Layer
+- @unrdf/fusion (unified integration)
+- @unrdf/engine-gateway (μ(O) enforcement)
+- @unrdf/decision-fabric (intent transformation)
 
-hooks → core, oxigraph
-  ← federation, streaming, yawl, integration-tests [P]
+## Application Layer
+- @unrdf/cli (command-line tools)
+- @unrdf/composables (Vue 3 integration)
+- @unrdf/graph-analytics (advanced analytics)
+- @unrdf/collab (CRDT real-time editing)
+- @unrdf/rdf-graphql (GraphQL support)
 
-kgn → core, test-utils [P]
-ml-inference → core, streaming, oxigraph
-serverless → core, oxigraph
-streaming → core, hooks, oxigraph
-  ← composables, knowledge-engine, ml-inference, integration-tests [P]
+## ML/AI Layer
+- @unrdf/ml-inference (ML integration)
+- @unrdf/ml-versioning (ML model versioning)
 
-LEVEL 3 (Depends on Level 2)
-=============================
-federation → core, hooks
-  ← cli, consensus, integration-tests [P]
-
-knowledge-engine → core, oxigraph, streaming
-  ← cli, project-engine, validation [P]
-
-ml-versioning → kgc-4d, oxigraph, core
-yawl → hooks, kgc-4d, oxigraph
-  ← blockchain, yawl-api, yawl-durable, yawl-langchain, yawl-observability,
-     yawl-queue, yawl-realtime, yawl-viz, integration-tests [P]
-
-LEVEL 4 (Depends on Level 3)
-=============================
-blockchain → kgc-4d, yawl
-consensus → federation
-project-engine → core, knowledge-engine
-validation [P] → knowledge-engine
-
-cli → core, federation, hooks, knowledge-engine, oxigraph, project-engine, streaming
-
-YAWL Extensions (Level 4)
-=========================
-yawl-ai (standalone, optional yawl dependency)
-yawl-api → yawl, kgc-4d
-yawl-durable → yawl, kgc-4d
-yawl-kafka → core
-yawl-langchain → kgc-4d, oxigraph, yawl
-yawl-observability → yawl
-yawl-queue → yawl, kgc-4d
-yawl-realtime → yawl
-yawl-viz → yawl
-
-INTEGRATION/TESTING (Level 5)
-==============================
-integration-tests [P] → yawl, hooks, kgc-4d, federation, streaming, oxigraph, core
-
-DOCUMENTATION (No Code Dependencies)
-====================================
-docs [P]
-nextra-docs [P]
-
-DEPENDENCY CLUSTERS
-===================
-
-Cluster 1: Core RDF Stack
--------------------------
-oxigraph (base)
-  → core
-    → hooks, streaming, kgc-4d, federation, knowledge-engine
-      → yawl (workflow layer)
-        → yawl-* extensions
-
-Cluster 2: YAWL Ecosystem (9 packages)
----------------------------------------
-yawl (core) ← yawl-ai, yawl-api, yawl-durable, yawl-kafka, yawl-langchain,
-               yawl-observability, yawl-queue, yawl-realtime, yawl-viz
-
-Cluster 3: AI/ML Stack
-----------------------
-knowledge-engine (inference)
-ml-inference (ONNX runtime)
-ml-versioning (TensorFlow.js)
-semantic-search (embeddings)
-yawl-ai (workflow optimization)
-
-Cluster 4: Developer Tools
----------------------------
-cli (command-line)
-kgn (templates)
-diataxis-kit (docs)
-project-engine (infrastructure)
-test-utils [P]
-validation [P]
-
-Cluster 5: Infrastructure
---------------------------
-caching (Redis/LRU)
-observability (Prometheus/Grafana)
-serverless (AWS Lambda/CDK)
-blockchain (receipt anchoring)
-consensus (Raft)
-
-MOST DEPENDED-ON PACKAGES
-==========================
-1. oxigraph (14 packages depend on it)
-2. core (13 packages)
-3. kgc-4d (7 packages)
-4. yawl (9 packages via extensions)
-5. hooks (4 packages)
-6. streaming (3 packages)
-
-LEAF PACKAGES (No Internal Dependencies)
-=========================================
-atomvm, diataxis-kit, domain [P], graph-analytics, observability,
-oxigraph, yawl-ai
-
-PRIVATE PACKAGES [P]
-====================
-docs, domain, integration-tests, nextra-docs, test-utils, validation
-
-CRITICAL PATH
-=============
-oxigraph → core → hooks → yawl → yawl-extensions
-                     ↘ streaming → knowledge-engine → cli
-
-This path represents the foundational dependency chain from database
-through core functionality to workflow orchestration and AI capabilities.
+## Tooling Layer
+- @unrdf/diataxis-kit (documentation)
+- @unrdf/kgn (Nunjucks templates)
+- @unrdf/dark-matter (query optimization)
+- @unrdf/project-engine (workspace management)

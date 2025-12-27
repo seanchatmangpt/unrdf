@@ -20,7 +20,7 @@ const extension = {
         paths: {
           description: 'Find shortest paths',
           argsSchema: z.object({ from: z.string(), to: z.string(), graphId: z.string() }),
-          handler: async (args) => ({ path: [], distance: 0 })
+          handler: async (_args) => ({ path: [], distance: 0 })
         }
       }
     }

@@ -59,7 +59,7 @@ describe('Extension Manifest', () => {
       const registry = new Registry({ failOnCollision: false });
       await loadManifest(registry, { failOnMissing: false });
 
-      const enabledCount = extensions.filter(e => e.enabled).length;
+      const _enabledCount = extensions.filter(e => e.enabled).length;
       // May not match exactly due to missing modules, but should load most
       expect(registry.extensions.size).toBeGreaterThan(0);
     });
@@ -120,7 +120,7 @@ describe('Extension Manifest', () => {
       expect(commands.length).toBeGreaterThan(0);
 
       // Should have snapshot commands from kgc-4d if loaded
-      const hasSnapshot = commands.some(c => c.startsWith('snapshot:'));
+      const _hasSnapshot = commands.some(c => c.startsWith('snapshot:'));
       // OK if not all extensions load in test env
     });
   });

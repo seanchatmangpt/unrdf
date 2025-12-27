@@ -9,6 +9,7 @@ import path from 'path';
 import { createHash } from 'crypto';
 import { scanFileSystemToStore } from './fs-scan.mjs';
 import { diffProjectStructure } from './project-diff.mjs';
+import { createStore } from '@unrdf/oxigraph';
 
 /**
  * @typedef {import('./materialize-plan.mjs').MaterializationPlan} MaterializationPlan
@@ -253,9 +254,8 @@ async function snapshotFileSystem(root) {
     return { store, hash };
   } catch (err) {
     // If directory doesn't exist, return empty store
-    const { Store } = await import('n3');
     return {
-      store: new Store(),
+      store: await createStore(),
       hash: 'empty',
     };
   }
