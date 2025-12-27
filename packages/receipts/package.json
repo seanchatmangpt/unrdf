@@ -1,0 +1,58 @@
+{
+  "name": "@unrdf/receipts",
+  "version": "1.0.0",
+  "description": "KGC Receipts - Batch receipt generation with Merkle tree verification for knowledge graph operations",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.mjs",
+    "./batch-receipt-generator": "./src/batch-receipt-generator.mjs",
+    "./merkle-batcher": "./src/merkle-batcher.mjs"
+  },
+  "main": "./src/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "src",
+    "docs"
+  ],
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest --watch",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint src test",
+    "lint:fix": "eslint --fix src test",
+    "build": "unbuild",
+    "build:types": "tsc --emitDeclarationOnly"
+  },
+  "dependencies": {
+    "@unrdf/core": "workspace:*",
+    "@unrdf/oxigraph": "workspace:*",
+    "@unrdf/kgc-4d": "workspace:*",
+    "@unrdf/kgc-multiverse": "workspace:*",
+    "hash-wasm": "^4.12.0",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@vitest/coverage-v8": "^4.0.15",
+    "vitest": "^4.0.15",
+    "eslint": "^9.39.1",
+    "unbuild": "^2.0.0"
+  },
+  "keywords": [
+    "rdf",
+    "knowledge-graph",
+    "receipts",
+    "merkle-tree",
+    "verification",
+    "provenance"
+  ],
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=7.0.0"
+  },
+  "sideEffects": false,
+  "author": "UNRDF Contributors",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
+}
