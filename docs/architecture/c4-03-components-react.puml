@@ -1,0 +1,251 @@
+@startuml UNRDF React Components
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+LAYOUT_WITH_LEGEND()
+
+title unrdf-react - C3 Component Diagram (React hooks & Next.js integration, 80/20 pattern)
+
+Container_Boundary(react_pkg, "unrdf-react") {
+
+  ' ============================================
+  ' LAYER 1: PUBLIC API ENTRY POINT
+  ' ============================================
+  Component(index, "index.mjs", "Main Export", "Tier 1 (60% usage):\n  • useKnowledgeEngine\n  • useChangeFeed\n  • useDarkMatterCore\n  • useQueryAnalyzer\n  • useErrorBoundary\n\nTier 2-4: Other hooks\n\nProviders, Context")
+
+  ' ============================================
+  ' LAYER 2: PROVIDER & CONTEXT
+  ' ============================================
+  Component(providers, "Providers", "Module", "KnowledgeEngineProvider\nConfigProvider\n\nSetup for React tree\nContext initialization")
+
+  Component(knowledge_context, "KnowledgeEngineContext", "React.Context", "Store state\nHooks registry\nMetrics\nError handling")
+
+  Component(context_consumer, "useKnowledgeEngineContext()", "Hook", "Returns context value\nThrows if no provider\nType-safe context access")
+
+  ' ============================================
+  ' TIER 1: CORE HOOKS (60% USAGE)
+  ' ============================================
+  Component(use_knowledge_engine, "useKnowledgeEngine()", "Hook", "Primary hook (40% of usage)\n\nReturns: {\n  store: UnrdfStore\n  query: (sparql) => Promise<Result>\n  add: (quad) => Promise<void>\n  remove: (quad) => Promise<void>\n  execute: (hook) => Promise<any>\n  getStats: () => Stats\n}")
+
+  Component(use_change_feed, "useChangeFeed()", "Hook", "Subscribe to graph changes\n\nReturns: {\n  changes: ChangeEvent[]\n  subscribe: (callback) => unsubscribe\n  history: ChangeEvent[]\n  isLive: boolean\n}")
+
+  Component(use_dark_matter_core, "useDarkMatterCore()", "Hook", "Performance analysis\n\nReturns: {\n  optimize: (query) => OptimizedQuery\n  analyze: (query) => Analysis\n  getMetrics: () => Metrics\n}")
+
+  Component(use_query_analyzer, "useQueryAnalyzer()", "Hook", "SPARQL query analysis\n\nReturns: {\n  analyze: (sparql) => Analysis\n  getComplexity: () => number\n  suggest: () => string[]\n}")
+
+  Component(use_error_boundary, "useErrorBoundary()", "Hook", "Error handling\n\nReturns: {\n  error: Error|null\n  reset: () => void\n  hasError: boolean\n}")
+
+  ' ============================================
+  ' TIER 2: SECONDARY HOOKS (20% USAGE)
+  ' ============================================
+  Component(use_graph_diff, "useGraphDiff()", "Hook", "Compare two graphs\n\nReturns: {\n  diff: {added, removed, modified}\n  apply: (diff) => void\n}")
+
+  Component(use_sparql_editor, "useSPARQLEditor()", "Hook", "SPARQL query builder UI\n\nReturns: {\n  query: string\n  setQuery: (string) => void\n  execute: () => Promise<Result>\n}")
+
+  ' ============================================
+  ' TIER 3: ADVANCED HOOKS (15% USAGE)
+  ' ============================================
+  Component(use_federation, "useFederatedSystem()", "Hook", "Distributed queries\n(federation package)")
+
+  Component(use_stream_processor, "useStreamProcessor()", "Hook", "Change feed processing\n(streaming package)")
+
+  Component(use_optimizer, "useOptimizer()", "Hook", "Query optimization\n(dark-matter package)")
+
+  Component(use_semantic, "useSemanticAnalyzer()", "Hook", "Semantic analysis")
+
+  Component(use_policy, "usePolicyPack()", "Hook", "Policy management\n(hooks package)")
+
+  Component(use_recovery, "useRecovery()", "Hook", "Error recovery strategies")
+
+  ' ============================================
+  ' TIER 4: STUB HOOKS (5% USAGE)
+  ' ============================================
+  Component(tier4_stubs, "Tier 4 (Stubs)", "Module", "19 simplified hooks:\n  • useQuadStore()\n  • useIndexedDBStore()\n  • useAuditTrail()\n  • useTransaction()\n  • useShapeValidation()\n  • useReasoning()\n  • useKnowledgeHook()\n  • useHookManager()\n  • [+11 more stubs]")
+
+  ' ============================================
+  ' CORE UTILITIES
+  ' ============================================
+  Component(core_module, "Core Module", "Module", "Basic store operations\n\nuseStore(): Store access\nuseTriples(s,p,o,g): Quad[]\nuseTerms(): TermUtils\nuseGraphs(): NamedGraphs")
+
+  Component(transaction_support, "Transaction Support", "Module", "useTransaction()\n  Atomic operations\n  Rollback on error")
+
+  Component(module_preloader, "Module Preloader", "Module", "use-module-preloader.mjs\nAsync module loading\n13KB bundle")
+
+  ' ============================================
+  ' NEXTJS INTEGRATION
+  ' ============================================
+  Component(nextjs_integration, "Next.js Integration", "Module", "SSR support\nAPI routes helper\nMiddleware patterns")
+
+  Component(app_router, "App Router", "Module", "Next.js 14 compatibility\nApp directory pattern\nServer/Client components")
+
+  ' ============================================
+  ' EXTERNAL DEPENDENCIES
+  ' ============================================
+  Component(react_dep, "React 18+", "External", "hooks API\nContext API")
+
+  Component(nextjs_dep, "Next.js 14", "External", "App router\nSSR, API routes")
+
+  Component(core_dep, "@unrdf/core", "External", "RDF operations")
+
+  Component(browser_dep, "@unrdf/browser", "External", "Client-side store")
+
+  Component(streaming_dep, "@unrdf/streaming", "External", "Change feeds")
+
+  Component(hooks_dep, "@unrdf/hooks", "External", "Policy engine")
+
+  Component(federation_dep, "@unrdf/federation", "External", "Distributed queries")
+
+  Component(dark_matter_dep, "@unrdf/dark-matter", "External", "Query optimization")
+
+  ' ============================================
+  ' RELATIONSHIPS
+  ' ============================================
+
+  Rel(index, providers, "exports")
+  Rel(index, use_knowledge_engine, "exports")
+  Rel(index, use_change_feed, "exports")
+  Rel(index, tier4_stubs, "exports")
+
+  Rel(providers, knowledge_context, "creates")
+  Rel(context_consumer, knowledge_context, "reads from")
+
+  Rel(use_knowledge_engine, knowledge_context, "uses")
+  Rel(use_knowledge_engine, core_dep, "delegates to")
+
+  Rel(use_change_feed, streaming_dep, "uses")
+  Rel(use_change_feed, knowledge_context, "reads from")
+
+  Rel(use_dark_matter_core, dark_matter_dep, "uses")
+  Rel(use_query_analyzer, core_dep, "uses")
+
+  Rel(use_error_boundary, react_dep, "uses React error handling")
+
+  Rel(use_graph_diff, core_dep, "compares via")
+  Rel(use_sparql_editor, core_dep, "executes via")
+
+  Rel(use_federation, federation_dep, "uses")
+  Rel(use_stream_processor, streaming_dep, "uses")
+  Rel(use_optimizer, dark_matter_dep, "uses")
+  Rel(use_policy, hooks_dep, "uses")
+
+  Rel(core_module, core_dep, "wraps")
+  Rel(transaction_support, core_dep, "uses")
+  Rel(module_preloader, react_dep, "uses")
+
+  Rel(nextjs_integration, nextjs_dep, "integrates with")
+  Rel(app_router, nextjs_dep, "targets")
+
+}
+
+note right of use_knowledge_engine
+  **PRIMARY HOOK (40% usage)**
+
+  Entry point for most apps
+  Provides complete store access
+  Reactive updates via Context
+
+  Usage:
+  const { store, query, add } =
+    useKnowledgeEngine()
+
+  await store.query("SELECT...")
+  await store.add(quad)
+end note
+
+note right of use_change_feed
+  **REAL-TIME UPDATES**
+
+  Subscribe to graph mutations
+  Automatic re-renders on change
+  Supports filtering + history
+
+  Usage:
+  const { changes } = useChangeFeed()
+  // Reactive updates in component
+end note
+
+note right of use_query_analyzer
+  **QUERY OPTIMIZATION**
+
+  Analyze SPARQL complexity
+  Get optimization suggestions
+  Monitor query performance
+
+  Usage:
+  const { analyze } = useQueryAnalyzer()
+  const analysis = analyze(sparql)
+end note
+
+note right of use_error_boundary
+  **ERROR HANDLING**
+
+  Declarative error boundaries
+  Reset on recovery
+  Component isolation
+
+  Usage:
+  const { error, reset } = useErrorBoundary()
+  if (error) return <ErrorUI onReset={reset} />
+end note
+
+note right of tier4_stubs
+  **80/20 PATTERN**
+
+  Tier 1: 60% of real usage
+  Tier 2: 20% advanced
+  Tier 3: 15% specialized
+  Tier 4: 5% stubs
+
+  Stubs provide API surface
+  but limited functionality
+  (for reference/docs)
+end note
+
+note right of nextjs_integration
+  **NEXT.JS 14 SUPPORT**
+
+  App Router compatible
+  Server/Client component boundaries
+  API route helpers
+  SSR-safe patterns
+
+  Requires: next@^14.0.0
+           react@^18.2.0
+end note
+
+note bottom of react_pkg
+  **REACT HOOKS ARCHITECTURE**
+
+  v4.1.1 | React 18+ | Next.js 14
+
+  1. Providers: KnowledgeEngineProvider
+  2. Context: Central state management
+  3. Core Hooks: 5 main (60% usage)
+  4. Advanced: 6 hooks (20% usage)
+  5. Specialized: 6 hooks (15% usage)
+  6. Stubs: 19 simplified (5% usage)
+  7. Next.js: App Router integration
+  8. Benchmarks: Dashboard included
+
+  **Key Pattern:**
+  Context → Hooks → Components
+  Reactive updates on change feed
+
+  **Usage Example:**
+  export default function App() {
+    return (
+      <KnowledgeEngineProvider>
+        <RDFComponent />
+      </KnowledgeEngineProvider>
+    )
+  }
+
+  function RDFComponent() {
+    const { store, query } = useKnowledgeEngine()
+    const { changes } = useChangeFeed()
+    // Reactive RDF operations
+  }
+end note
+
+SHOW_LEGEND()
+
+@enduml

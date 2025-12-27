@@ -1,0 +1,272 @@
+{
+  "version": "1.0.0",
+  "description": "Built-in tool registry for KGC runtime",
+  "tools": [
+    {
+      "name": "Bash",
+      "version": "1.0.0",
+      "description": "Execute bash commands in a sandboxed environment",
+      "schema_in": {
+        "type": "object",
+        "properties": {
+          "command": {
+            "type": "string"
+          },
+          "timeout": {
+            "type": "number"
+          },
+          "cwd": {
+            "type": "string"
+          }
+        },
+        "required": ["command"]
+      },
+      "schema_out": {
+        "type": "object",
+        "properties": {
+          "stdout": {
+            "type": "string"
+          },
+          "stderr": {
+            "type": "string"
+          },
+          "exitCode": {
+            "type": "number"
+          },
+          "duration_ms": {
+            "type": "number"
+          }
+        },
+        "required": ["stdout", "stderr", "exitCode"]
+      },
+      "capabilities": ["command-execution", "shell-access", "system-interaction"]
+    },
+    {
+      "name": "Read",
+      "version": "1.0.0",
+      "description": "Read file contents from filesystem",
+      "schema_in": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "encoding": {
+            "type": "string"
+          },
+          "offset": {
+            "type": "number"
+          },
+          "limit": {
+            "type": "number"
+          }
+        },
+        "required": ["path"]
+      },
+      "schema_out": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "string"
+          },
+          "size": {
+            "type": "number"
+          },
+          "lines": {
+            "type": "number"
+          },
+          "encoding": {
+            "type": "string"
+          }
+        },
+        "required": ["content", "size"]
+      },
+      "capabilities": ["file-read", "filesystem-access"]
+    },
+    {
+      "name": "Write",
+      "version": "1.0.0",
+      "description": "Write content to file",
+      "schema_in": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "encoding": {
+            "type": "string"
+          },
+          "mode": {
+            "type": "string"
+          }
+        },
+        "required": ["path", "content"]
+      },
+      "schema_out": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "bytes_written": {
+            "type": "number"
+          },
+          "created": {
+            "type": "boolean"
+          }
+        },
+        "required": ["path", "bytes_written"]
+      },
+      "capabilities": ["file-write", "filesystem-mutation"]
+    },
+    {
+      "name": "Edit",
+      "version": "1.0.0",
+      "description": "Edit file by replacing old_string with new_string",
+      "schema_in": {
+        "type": "object",
+        "properties": {
+          "file_path": {
+            "type": "string"
+          },
+          "old_string": {
+            "type": "string"
+          },
+          "new_string": {
+            "type": "string"
+          },
+          "replace_all": {
+            "type": "boolean"
+          }
+        },
+        "required": ["file_path", "old_string", "new_string"]
+      },
+      "schema_out": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "replacements": {
+            "type": "number"
+          },
+          "lines_changed": {
+            "type": "number"
+          }
+        },
+        "required": ["path", "replacements"]
+      },
+      "capabilities": ["file-edit", "filesystem-mutation", "pattern-replacement"]
+    },
+    {
+      "name": "Glob",
+      "version": "1.0.0",
+      "description": "Find files matching glob pattern",
+      "schema_in": {
+        "type": "object",
+        "properties": {
+          "pattern": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "ignore": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": ["pattern"]
+      },
+      "schema_out": {
+        "type": "object",
+        "properties": {
+          "files": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "count": {
+            "type": "number"
+          },
+          "pattern": {
+            "type": "string"
+          }
+        },
+        "required": ["files", "count"]
+      },
+      "capabilities": ["file-search", "pattern-matching", "filesystem-query"]
+    },
+    {
+      "name": "Grep",
+      "version": "1.0.0",
+      "description": "Search file contents using regex patterns",
+      "schema_in": {
+        "type": "object",
+        "properties": {
+          "pattern": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "output_mode": {
+            "type": "string"
+          },
+          "glob": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "multiline": {
+            "type": "boolean"
+          },
+          "case_insensitive": {
+            "type": "boolean"
+          }
+        },
+        "required": ["pattern"]
+      },
+      "schema_out": {
+        "type": "object",
+        "properties": {
+          "matches": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "file": {
+                  "type": "string"
+                },
+                "line": {
+                  "type": "number"
+                },
+                "content": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "count": {
+            "type": "number"
+          },
+          "files": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": ["count"]
+      },
+      "capabilities": ["content-search", "pattern-matching", "regex-search", "filesystem-query"]
+    }
+  ]
+}

@@ -1,0 +1,76 @@
+{
+  "name": "@unrdf/react",
+  "version": "5.0.0",
+  "description": "UNRDF React - AI Semantic Analysis Tools for RDF Knowledge Graphs (Optional Extension)",
+  "type": "module",
+  "main": "src/index.mjs",
+  "exports": {
+    ".": "./src/index.mjs",
+    "./ai-semantic": "./src/ai-semantic/index.mjs",
+    "./semantic-analyzer": "./src/ai-semantic/semantic-analyzer.mjs",
+    "./embeddings-manager": "./src/ai-semantic/embeddings-manager.mjs",
+    "./nlp-query-builder": "./src/ai-semantic/nlp-query-builder.mjs",
+    "./anomaly-detector": "./src/ai-semantic/anomaly-detector.mjs"
+  },
+  "sideEffects": false,
+  "files": [
+    "src/",
+    "dist/",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "vitest run --coverage",
+    "test:fast": "vitest run --coverage",
+    "test:watch": "vitest --coverage",
+    "build": "node build.config.mjs",
+    "lint": "eslint src/ --max-warnings=0",
+    "lint:fix": "eslint src/ --fix",
+    "format": "prettier --write src/",
+    "format:check": "prettier --check src/",
+    "clean": "rm -rf dist/ .nyc_output/ coverage/",
+    "dev": "echo 'Development mode for @unrdf/react'"
+  },
+  "keywords": [
+    "rdf",
+    "react",
+    "ai",
+    "semantic",
+    "nlp",
+    "embeddings",
+    "anomaly-detection",
+    "knowledge-graph"
+  ],
+  "dependencies": {
+    "@opentelemetry/api": "^1.9.0",
+    "@unrdf/core": "workspace:*",
+    "@unrdf/oxigraph": "workspace:*",
+    "lru-cache": "^11.1.0",
+    "zod": "^4.1.13"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "vitest": "^4.0.15"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/unrdf/unrdf.git",
+    "directory": "packages/react"
+  },
+  "bugs": {
+    "url": "https://github.com/unrdf/unrdf/issues"
+  },
+  "homepage": "https://github.com/unrdf/unrdf#readme",
+  "license": "MIT"
+}

@@ -4,8 +4,8 @@ type: "explanation"
 packageName: "@unrdf/streaming"
 version: "5.0.1"
 generatedAt: "2000-01-01T00:00:00.000Z"
-confidenceScore: 1
-proof: "eb2ca694cd9b61a5890d30154b5e15c6ca248a6a071337232f7aa710335abc2d"
+confidenceScore: 0.7
+proof: "1969cf7d1de697474096593b18a932b9cadc7ad6e78f94468ac3f2807a275646"
 ---
 
 ## Concepts
@@ -30,17 +30,15 @@ proof: "eb2ca694cd9b61a5890d30154b5e15c6ca248a6a071337232f7aa710335abc2d"
 
 This file was generated from the following evidence sources:
 
-- docs
 - inferred
 - keywords
 - readme
 
 ```json
 {
-  "fingerprintInput": "docs|inferred|keywords|readme|Understanding @unrdf/streaming|1",
-  "hash": "eb2ca694cd9b61a5890d30154b5e15c6ca248a6a071337232f7aa710335abc2d",
+  "fingerprintInput": "inferred|keywords|readme|Understanding @unrdf/streaming|0.7",
+  "hash": "1969cf7d1de697474096593b18a932b9cadc7ad6e78f94468ac3f2807a275646",
   "sources": [
-    "docs",
     "inferred",
     "keywords",
     "readme"

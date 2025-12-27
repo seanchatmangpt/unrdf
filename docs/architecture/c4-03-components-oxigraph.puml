@@ -1,0 +1,124 @@
+@startuml UNRDF Oxigraph Components
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+LAYOUT_WITH_LEGEND()
+
+title @unrdf/oxigraph - C3 Component Diagram (Minimal wrapper, 3 files, 272 lines)
+
+Container_Boundary(oxigraph_pkg, "@unrdf/oxigraph") {
+
+  ' ============================================
+  ' LAYER 1: PUBLIC API ENTRY POINT
+  ' ============================================
+  Component(index, "index.mjs", "Entry Point", "createStore(quads?)\ndataFactory {6 methods}\nOxigraphStore class export")
+
+  ' ============================================
+  ' LAYER 2: CORE WRAPPER CLASS
+  ' ============================================
+  Component(store_class, "OxigraphStore", "Class", "Synchronous wrapper around native store\n\nStore Manipulation:\n• add(quad), delete(quad), has(quad)\n• match(s?, p?, o?, g?), clear()\n\nSPARQL Operations:\n• query(sparql, options?)\n• update(sparqlUpdate, options?)\n\nI/O:\n• load(data, options), dump(options)\n\nUtility:\n• size property, getQuads()")
+
+  ' ============================================
+  ' LAYER 3: TYPE DEFINITIONS
+  ' ============================================
+  Component(types, "types.mjs", "JSDoc Types", "OxigraphStoreOptions\nQueryOptions (baseIri, graphs, format)\nUpdateOptions\nLoadOptions (format required)\nDumpOptions (format required)\nBenchmarkResult")
+
+  ' ============================================
+  ' LAYER 4: NATIVE BINDING WRAPPER
+  ' ============================================
+  Component(native_store, "oxigraph.Store", "Native WASM", "Native Oxigraph compiled in Rust\nto JavaScript via WASM bindings\n\nInternal field: this.store\n\nMethods:\n• add(), delete(), has()\n• match(), clear()\n• query(), update()\n• load(), dump()")
+
+  Component(data_factory, "DataFactory", "Native API", "Factory methods for RDF terms:\n\n• namedNode(iri)\n• blankNode(id?)\n• literal(value, languageOrType?)\n• defaultGraph()\n• quad(s, p, o, g?)\n• triple(s, p, o)")
+
+  ' ============================================
+  ' EXTERNAL DEPENDENCIES
+  ' ============================================
+  Component(oxigraph_npm, "oxigraph npm", "External Package", "v0.5.2+ WASM bindings\nHigh-performance RDF engine\nRust-compiled to WebAssembly")
+
+  Component(zod_dep, "Zod", "External Package", "Schema validation (optional)")
+
+  ' ============================================
+  ' RELATIONSHIPS
+  ' ============================================
+
+  Rel(index, store_class, "exports")
+  Rel(index, data_factory, "re-exports")
+
+  Rel(store_class, native_store, "wraps")
+  Rel(store_class, zod_dep, "validates inputs with")
+
+  Rel(store_class, types, "implements")
+
+  Rel(native_store, oxigraph_npm, "implements")
+  Rel(data_factory, oxigraph_npm, "provides")
+
+  Rel(store_class, data_factory, "uses for term creation")
+
+}
+
+' ============================================
+' EXTERNAL SYSTEMS
+' ============================================
+System_Ext(rdfjs, "RDF.js Spec", "Standard RDF data model\nQuad interface, Term interface")
+
+System_Ext(sparql_spec, "SPARQL 1.1", "Query/Update standard\nResult formats: JSON, XML")
+
+' ============================================
+' KEY ANNOTATIONS
+' ============================================
+
+note right of store_class
+  **WRAPPER PATTERN**
+
+  Internal: this.store (native oxigraph.Store)
+
+  Error Handling:
+  • try-catch wrapping all methods
+  • Standardized error messages
+
+  Compatibility:
+  • addQuad() alias for add()
+  • getQuads() alias for match()
+  • Matches N3 Store API
+
+  Type Conversion:
+  • Converts iterables to Arrays
+  • Handles null inputs safely
+end note
+
+note right of native_store
+  **NATIVE OXIGRAPH**
+
+  Technology: WebAssembly (WASM)
+  Language: Rust compiled to JavaScript
+  Performance: 40% faster queries
+                60% lower memory than N3
+
+  Formats: Turtle, N-Quads, TriG,
+           N-Triples, JSON-LD, RDF/XML
+end note
+
+note right of data_factory
+  **RDF.js COMPATIBLE**
+
+  Standard RDF data model
+  Compatible with @rdfjs libraries
+  Used by all term creation
+  Single responsibility
+end note
+
+note bottom of oxigraph_pkg
+  **DESIGN PRINCIPLES**
+
+  1. Thin wrapper around native bindings
+  2. Zero business logic added
+  3. Error wrapping only
+  4. 272 lines total = minimal surface
+  5. Public API: 14 methods + static
+  6. No caching, no transformation
+  7. 100% pass-through to Oxigraph
+  8. Dependencies: oxigraph + zod (optional)
+end note
+
+SHOW_LEGEND()
+
+@enduml

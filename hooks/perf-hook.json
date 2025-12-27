@@ -1,9 +1,0 @@
-{
-  "name": "perf-hook",
-  "kind": "before",
-  "condition": {
-    "type": "sparql-ask",
-    "query": "# Simple Hook for Performance Testing\n# Just checks if any data exists\n\nPREFIX schema: <http://schema.org/>\n\nASK {\n  ?s ?p ?o .\n}\n"
-  },
-  "effects": []
-}

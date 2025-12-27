@@ -1,0 +1,216 @@
+@startuml UNRDF Containers
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+LAYOUT_WITH_LEGEND()
+
+title UNRDF - C2 Container Diagram (All 17 Packages)
+
+' External Systems
+System_Ext(oxigraph_native, "Oxigraph WASM\n(native bindings)", "High-performance\nRDF storage engine")
+System_Ext(npm_deps, "NPM Dependencies", "Zod, N3, RDF.js, WebSocket,\neye-reasoner, etc.")
+
+' Application Boundary
+System_Boundary(unrdf, "UNRDF Monorepo") {
+
+  ' ==========================================
+  ' CORE RDF FOUNDATION (Blue)
+  ' ==========================================
+  Container(core, "@unrdf/core", "NPM Package", "RDF graph operations, SPARQL execution,\nfoundational substrate (38 source files)")
+
+  ' ==========================================
+  ' TIER 1: STORAGE & SYNC (Dark Blue)
+  ' ==========================================
+  Container(oxigraph, "@unrdf/oxigraph", "NPM Package", "Native Oxigraph wrapper\n(3 files, 272 lines)")
+
+  Container(browser, "@unrdf/browser", "NPM Package", "IndexedDB store, browser adapters,\nService Worker, virtual FS (63 exports)")
+
+  Container(streaming, "@unrdf/streaming", "NPM Package", "Change feeds, sync protocol,\nWebSocket support, event-based")
+
+  ' ==========================================
+  ' TIER 2: POLICY & KNOWLEDGE (Orange)
+  ' ==========================================
+  Container(hooks, "@unrdf/hooks", "NPM Package", "Knowledge hooks, policy definitions,\nvalidation framework (35+ exports)")
+
+  Container(federation, "@unrdf/federation", "NPM Package", "Coordinator, peer discovery,\ndistributed query execution")
+
+  Container(knowledge_engine, "@unrdf/knowledge-engine", "NPM Package", "Rule engine, inference,\npattern matching (eyereasoner)")
+
+  ' ==========================================
+  ' TIER 3: FRAMEWORK INTEGRATION (Purple)
+  ' ==========================================
+  Container(composables, "@unrdf/composables", "NPM Package", "Vue 3 composables,\nreactive RDF state")
+
+  Container(react, "unrdf-react", "NPM Package", "React hooks, Next.js integration,\nbenchmark dashboard (80/20 pattern)")
+
+  ' ==========================================
+  ' TIER 4: OPTIMIZATION & ANALYSIS (Green)
+  ' ==========================================
+  Container(dark_matter, "@unrdf/dark-matter", "NPM Package", "Query optimization,\nperformance analysis")
+
+  ' ==========================================
+  ' TIER 5: CLI & TOOLS (Red)
+  ' ==========================================
+  Container(cli, "@unrdf/cli", "NPM Package", "Command-line tools, graph operations,\ncontext management (7 commands)")
+
+  ' ==========================================
+  ' TIER 6: ENFORCEMENT & INFRASTRUCTURE (Violet)
+  ' ==========================================
+  Container(engine_gateway, "@unrdf/engine-gateway", "NPM Package", "Enforcement layer,\nOxigraph-first policy, operation validation")
+
+  Container(project_engine, "@unrdf/project-engine", "NPM Package", "Self-hosting tools,\ninfrastructure utilities")
+
+  ' ==========================================
+  ' TIER 7: INTERNAL/DEV UTILITIES (Gray)
+  ' ==========================================
+  Container(validation, "@unrdf/validation", "NPM Package (PRIVATE)", "OTEL validation framework,\nobservability spans")
+
+  Container(test_utils, "@unrdf/test-utils", "NPM Package (PRIVATE)", "Testing utilities,\nshared test fixtures")
+
+  Container(domain, "@unrdf/domain", "NPM Package (PRIVATE)", "Domain models,\nshared type definitions")
+}
+
+' ==========================================
+' RELATIONSHIPS & DEPENDENCIES
+' ==========================================
+
+' Core Foundation
+Rel(oxigraph, core, "depends on")
+Rel(browser, core, "depends on")
+Rel(streaming, core, "depends on")
+Rel(hooks, core, "depends on")
+Rel(federation, core, "depends on")
+Rel(knowledge_engine, core, "depends on")
+Rel(engine_gateway, core, "depends on")
+Rel(project_engine, core, "depends on")
+Rel(dark_matter, core, "depends on")
+Rel(cli, core, "depends on")
+Rel(composables, core, "depends on")
+Rel(react, core, "depends on")
+
+' Storage Layer Dependencies
+Rel(browser, streaming, "depends on")
+Rel(composables, streaming, "depends on")
+Rel(composables, browser, "depends on")
+
+' Policy/Knowledge Layer Dependencies
+Rel(streaming, hooks, "depends on")
+Rel(federation, hooks, "depends on")
+Rel(knowledge_engine, streaming, "depends on")
+
+' CLI Dependencies
+Rel(cli, federation, "depends on")
+Rel(cli, hooks, "depends on")
+Rel(cli, streaming, "depends on")
+
+' Enforcement Dependencies
+Rel(engine_gateway, oxigraph, "depends on")
+
+' Internal/Dev Dependencies
+Rel(core, test_utils, "uses (PRIVATE)")
+Rel(core, validation, "uses (PRIVATE)")
+Rel(core, domain, "uses (PRIVATE)")
+
+' External Dependencies
+Rel(oxigraph, oxigraph_native, "wraps")
+Rel(core, npm_deps, "depends on")
+
+' ==========================================
+' CONTAINER STATISTICS & NOTES
+' ==========================================
+
+note bottom of core
+  **v5.0.0-alpha.0 | 38 src files | 2,000+ lines**
+
+  Key Classes: UnrdfStore, SPARQLBuilder, QualityAssessment
+  Key Methods: query(), add(), bulkAdd(), match()
+  Exports: 50+ functions/classes
+
+  Submodules:
+  • rdf/ → store, canonicalize, n3-justified
+  • sparql/ → executor-sync (PRIMARY)
+  • utils/ → 23 utility modules
+  • validation/ → Zod schemas
+end note
+
+note bottom of oxigraph
+  **v5.0.0-alpha.0 | 3 src files | 272 lines**
+
+  Single class: OxigraphStore
+  API: add, delete, query, update, match, clear
+  Pattern: Native WASM wrapper with error handling
+  Formats: Turtle, N-Quads, JSON-LD, RDF/XML
+end note
+
+note bottom of browser
+  **v5.0.0-alpha.0 | Multiple feature modules**
+
+  Key Classes: IndexedDBStore, IndexedDBFileSystem,
+              BrowserHookExecutor, BrowserLockchainWriter
+
+  Features: Offline-first, Service Worker support,
+           Virtual FS, Quota management
+
+  Storage: IndexedDB + Memory dual store
+end note
+
+note bottom of streaming
+  **v5.0.0-alpha.0**
+
+  Key APIs: createChangeFeed(), createStreamProcessor()
+  Message Format: { changes[], checksum, timestamp }
+  Pattern: EventTarget-based pub/sub
+  Transport: Message encoding for WebSocket delivery
+end note
+
+note bottom of hooks
+  **v5.0.0-alpha.0 | 35+ exports**
+
+  Key Classes: KnowledgeHookManager, HookScheduler
+  API: defineHook(), executeHook(), executeBatch()
+  Triggers: before-add, after-add, quality-gate, on-schedule
+  Performance: <1μs per hook check (pre-computed flags)
+end note
+
+note bottom of federation
+  **v5.0.0-alpha.0**
+
+  Key Class: Coordinator
+  API: addPeer(), query(), getStats()
+  Peer Discovery: Manual registration + health checks
+  Query Strategies: broadcast, selective, first-available
+  Result Format: Aggregated with error counts
+end note
+
+note bottom of react
+  **v4.1.1 | 80/20 pattern**
+
+  Tier 1 (60% usage): useKnowledgeEngine, useChangeFeed,
+                      useDarkMatterCore, useQueryAnalyzer
+  Tier 2 (20% usage): useGraphDiff, useSPARQLEditor
+  Tier 3 (15%): Federation, Stream, Optimizer hooks
+  Tier 4 (5%): 19 advanced stubs
+
+  Frameworks: React 18+, Next.js 14
+end note
+
+note bottom of cli
+  **v5.0.0-alpha.0 | 7 main commands**
+
+  Commands: graph, query, context, convert
+  Subcommands: 20+ (CRUD, validation, export)
+  Formats: Turtle, N-Triples, N-Quads, TriG, JSON-LD, RDF/XML
+  Output: table, JSON, CSV
+end note
+
+note bottom of validation
+  **v1.0.0 (PRIVATE)**
+
+  Purpose: OTEL validation framework
+  Role: Observability span-based validation
+  Status: Truth source for agent verification
+  Usage: Mandatory before accepting agent work
+end note
+
+SHOW_LEGEND()
+
+@enduml

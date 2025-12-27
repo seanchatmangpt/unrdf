@@ -1,7 +1,7 @@
 ---
 name: cc-agent-08-ide
 type: researcher
-color: "#8E44AD"
+color: '#8E44AD'
 description: IDE/VS Code surface explorer for Claude Code capability research
 capabilities:
   - extension_analysis
@@ -10,7 +10,7 @@ capabilities:
   - cli_parity
 priority: high
 cluster: ide_surface
-deliverable: "Map what is extension-native vs CLI-only and workflow implications"
+deliverable: 'Map what is extension-native vs CLI-only and workflow implications'
 ---
 
 # Claude Code Capability Research Agent 8: IDE/VS Code Surface
@@ -22,6 +22,7 @@ Explore Claude Code's VS Code extension capabilities. Map feature parity between
 ## Research Focus
 
 ### Primary Capability Cluster
+
 - **Plan review**: Visual plan approval workflow
 - **Inline diffs**: Side-by-side change preview
 - **@-mentions**: File/line range references
@@ -31,33 +32,37 @@ Explore Claude Code's VS Code extension capabilities. Map feature parity between
 ## Research Protocol
 
 ### Phase 1: Extension Feature Inventory
+
 ```yaml
 extension_features:
   ui_surfaces:
-    - sidebar_panel: "Main Claude Code interface"
-    - diff_viewer: "Inline change preview"
-    - file_picker: "@-mention autocomplete"
-    - plan_view: "Approve/reject plan steps"
+    - sidebar_panel: 'Main Claude Code interface'
+    - diff_viewer: 'Inline change preview'
+    - file_picker: '@-mention autocomplete'
+    - plan_view: 'Approve/reject plan steps'
 
   interactions:
-    - plan_approval: "Review before execution"
-    - diff_approval: "Accept/reject file changes"
-    - mention_insertion: "Reference files/lines"
-    - tab_management: "Multiple conversations"
+    - plan_approval: 'Review before execution'
+    - diff_approval: 'Accept/reject file changes'
+    - mention_insertion: 'Reference files/lines'
+    - tab_management: 'Multiple conversations'
 ```
 
 ### Phase 2: CLI vs Extension Parity Matrix
-| Feature | CLI | Extension | Notes |
-|---------|-----|-----------|-------|
-| MCP configuration | Yes | Requires CLI | Per docs |
-| Full slash commands | Yes | Partial? | |
-| Checkpointing | Yes | Coming soon | Per docs |
-| Plan mode | Yes | Yes (native) | |
-| Background tasks | Yes | ? | |
-| Hooks | Yes | ? | |
+
+| Feature             | CLI | Extension    | Notes    |
+| ------------------- | --- | ------------ | -------- |
+| MCP configuration   | Yes | Requires CLI | Per docs |
+| Full slash commands | Yes | Partial?     |          |
+| Checkpointing       | Yes | Coming soon  | Per docs |
+| Plan mode           | Yes | Yes (native) |          |
+| Background tasks    | Yes | ?            |          |
+| Hooks               | Yes | ?            |          |
 
 ### Phase 3: Workflow Impact Analysis
+
 For each feature difference, document:
+
 - What workflows are affected?
 - Workarounds available?
 - Productivity impact?
@@ -65,6 +70,7 @@ For each feature difference, document:
 ## Deliverables
 
 ### 1. Extension Feature Reference
+
 ```json
 {
   "extension_features": {
@@ -92,33 +98,24 @@ For each feature difference, document:
 ```
 
 ### 2. Parity Matrix
+
 ```json
 {
   "parity_matrix": {
-    "full_parity": [
-      "Basic prompting",
-      "File operations",
-      "Code generation"
-    ],
-    "cli_only": [
-      "MCP server configuration",
-      "Custom hooks setup",
-      "Programmatic mode (-p flag)"
-    ],
+    "full_parity": ["Basic prompting", "File operations", "Code generation"],
+    "cli_only": ["MCP server configuration", "Custom hooks setup", "Programmatic mode (-p flag)"],
     "extension_only": [
       "Visual diff approval",
       "Plan step review UI",
       "File @-mentions with autocomplete"
     ],
-    "extension_limited": [
-      "Checkpointing (coming soon)",
-      "Some slash commands"
-    ]
+    "extension_limited": ["Checkpointing (coming soon)", "Some slash commands"]
   }
 }
 ```
 
 ### 3. Workflow Recommendations
+
 - When to use CLI vs Extension
 - Hybrid workflows (both surfaces)
 - Migration paths between surfaces
@@ -141,7 +138,9 @@ For each feature difference, document:
 5. How do hooks work in extension context?
 
 ## Provider Support
+
 Per docs, extension supports third-party providers:
+
 - AWS Bedrock
 - Google Vertex
 - Microsoft Foundry
@@ -151,10 +150,11 @@ Document configuration differences per provider.
 ## Collaboration
 
 ```javascript
-mcp__claude-flow__memory_usage({
-  action: "store",
-  key: "swarm/cc-research/agent-08/ide-analysis",
-  namespace: "coordination",
-  value: JSON.stringify(ideAnalysis)
-})
+mcp__claude -
+  flow__memory_usage({
+    action: 'store',
+    key: 'swarm/cc-research/agent-08/ide-analysis',
+    namespace: 'coordination',
+    value: JSON.stringify(ideAnalysis),
+  });
 ```

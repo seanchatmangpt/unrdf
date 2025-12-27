@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Knowledge Hook Performance Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #333;
+      padding: 20px;
+    }
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .header {
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .header h1 {
+      color: #667eea;
+      font-size: 2.5em;
+      margin-bottom: 10px;
+    }
+    .metadata {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-top: 20px;
+    }
+    .metadata-item {
+      background: #f7fafc;
+      padding: 15px;
+      border-radius: 8px;
+      border-left: 4px solid #667eea;
+    }
+    .metadata-item label {
+      display: block;
+      font-size: 0.85em;
+      color: #718096;
+      margin-bottom: 5px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .metadata-item value {
+      display: block;
+      font-size: 1.2em;
+      font-weight: 600;
+      color: #2d3748;
+    }
+    .summary-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    .stat-card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    .stat-card .value {
+      font-size: 2.5em;
+      font-weight: 700;
+      color: #667eea;
+      margin-bottom: 5px;
+    }
+    .stat-card .label {
+      font-size: 1em;
+      color: #718096;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .stat-card.passed {
+      border-top: 4px solid #48bb78;
+    }
+    .stat-card.failed {
+      border-top: 4px solid #f56565;
+    }
+    .charts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    .chart-container {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .chart-container h3 {
+      color: #667eea;
+      margin-bottom: 15px;
+      font-size: 1.3em;
+    }
+    .chart-wrapper {
+      position: relative;
+      height: 400px;
+    }
+    .table-container {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      overflow-x: auto;
+    }
+    .table-container h2 {
+      color: #667eea;
+      margin-bottom: 15px;
+      font-size: 1.5em;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9em;
+    }
+    thead {
+      background: #667eea;
+      color: white;
+    }
+    th {
+      padding: 12px;
+      text-align: left;
+      font-weight: 600;
+      cursor: pointer;
+      user-select: none;
+    }
+    th:hover {
+      background: #5568d3;
+    }
+    td {
+      padding: 12px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    tbody tr:hover {
+      background: #f7fafc;
+    }
+    .status-badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.85em;
+      font-weight: 600;
+    }
+    .status-badge.pass {
+      background: #c6f6d5;
+      color: #22543d;
+    }
+    .status-badge.fail {
+      background: #fed7d7;
+      color: #742a2a;
+    }
+    .export-btn {
+      background: #667eea;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1em;
+      margin-bottom: 15px;
+      transition: all 0.2s;
+    }
+    .export-btn:hover {
+      background: #5568d3;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🚀 Knowledge Hook Performance Dashboard (80/20 Benchmarks)</h1>
+      <p style="color: #718096; font-size: 1.1em; margin-top: 10px;">
+        Hyper-advanced performance analysis of the 20% metrics driving 80% of impact
+      </p>
+      <div class="metadata">
+        <div class="metadata-item">
+          <label>Generated</label>
+          <value>12/4/2025, 8:33:13 PM</value>
+        </div>
+        <div class="metadata-item">
+          <label>Node Version</label>
+          <value>v22.21.1</value>
+        </div>
+        <div class="metadata-item">
+          <label>Platform</label>
+          <value>linux</value>
+        </div>
+        <div class="metadata-item">
+          <label>Total Benchmarks</label>
+          <value>5</value>
+        </div>
+        <div class="metadata-item">
+          <label>Total Tests</label>
+          <value>15</value>
+        </div>
+      </div>
+    </div>
+
+    <div class="summary-stats">
+      <div class="stat-card passed">
+        <div class="value">0.16ms</div>
+        <div class="label">Mean Latency</div>
+      </div>
+      <div class="stat-card">
+        <div class="value">0.42ms</div>
+        <div class="label">P95 Latency</div>
+      </div>
+      <div class="stat-card">
+        <div class="value">1.07ms</div>
+        <div class="label">P99 Latency</div>
+      </div>
+      <div class="stat-card passed">
+        <div class="value">11/15</div>
+        <div class="label">Tests Passed</div>
+      </div>
+    </div>
+
+    <div class="charts-grid">
+      <div class="chart-container">
+        <h3>📊 Latency by Benchmark (Mean)</h3>
+        <div class="chart-wrapper">
+          <canvas id="latencyChart"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-container">
+        <h3>⚡ Throughput Performance</h3>
+        <div class="chart-wrapper">
+          <canvas id="throughputChart"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-container">
+        <h3>🎯 Latency Distribution (P50/P95/P99)</h3>
+        <div class="chart-wrapper">
+          <canvas id="percentileChart"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-container">
+        <h3>📈 Performance Overhead %</h3>
+        <div class="chart-wrapper">
+          <canvas id="overheadChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-container">
+      <h2>📋 Detailed Benchmark Results</h2>
+      <button class="export-btn" onclick="exportToCSV()">📥 Export to CSV</button>
+      <table>
+        <thead>
+          <tr>
+            <th>Benchmark</th>
+            <th>Scenario</th>
+            <th>Mean Latency (ms)</th>
+            <th>P95 Latency (ms)</th>
+            <th>P99 Latency (ms)</th>
+            <th>Throughput (ops/sec)</th>
+            <th>Overhead %</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="resultsBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    const data = {"metadata":{"timestamp":"2025-12-04T20:33:13.601Z","nodeVersion":"v22.21.1","platform":"linux","iterations":100,"testSizes":[10,100,1000,10000],"generatedFrom":"hyper-advanced-80-20-benchmarks"},"summary":{"totalBenchmarks":5,"meanLatency":0.16,"p95Latency":0.42,"p99Latency":1.07,"totalTests":15,"passedTests":11,"failedTests":4},"hookConfigurations":[{"name":"hook-registration","description":"Performance benchmark for hook-registration","tests":3},{"name":"hook-execution-latency","description":"Performance benchmark for hook-execution-latency","tests":3},{"name":"concurrent-execution","description":"Performance benchmark for concurrent-execution","tests":3},{"name":"memory-footprint","description":"Performance benchmark for memory-footprint","tests":3},{"name":"condition-evaluation","description":"Performance benchmark for condition-evaluation","tests":3}],"results":[{"hookConfig":"hook-registration","scenario":"small","dataSize":10,"latency":{"mean":0.38,"p50":0.19,"p95":1.62,"p99":1.62},"throughput":2119.455028767345,"memory":{"delta":0,"peak":0},"overhead":"428.51","passed":false},{"hookConfig":"hook-registration","scenario":"medium","dataSize":50,"latency":{"mean":0.14,"p50":0.08,"p95":0.11,"p99":3.08},"throughput":6809.233865860888,"memory":{"delta":0,"peak":0},"overhead":"78.46","passed":true},{"hookConfig":"hook-registration","scenario":"large","dataSize":100,"latency":{"mean":0.08,"p50":0.07,"p95":0.15,"p99":0.19},"throughput":11969.41670399122,"memory":{"delta":0,"peak":0},"overhead":"191.27","passed":true},{"hookConfig":"hook-execution-latency","scenario":"simple","dataSize":1000,"latency":{"mean":0.08,"p50":0.06,"p95":0.08,"p99":0.16},"throughput":13168.191742988103,"memory":{"delta":0,"peak":0},"overhead":"110.99","passed":true},{"hookConfig":"hook-execution-latency","scenario":"medium","dataSize":500,"latency":{"mean":0.07,"p50":0.05,"p95":0.1,"p99":0.15},"throughput":14253.60701779187,"memory":{"delta":0,"peak":0},"overhead":"146.29","passed":true},{"hookConfig":"hook-execution-latency","scenario":"complex","dataSize":100,"latency":{"mean":0.22,"p50":0.15,"p95":0.48,"p99":1.24},"throughput":4525.188079260774,"memory":{"delta":0,"peak":0},"overhead":"217.69","passed":true}],"triggerResults":[{"trigger":"simple","latency":{"mean":0.08,"p95":0.08,"p99":0.16},"throughput":13168.191742988103},{"trigger":"medium","latency":{"mean":0.07,"p95":0.1,"p99":0.15},"throughput":14253.60701779187},{"trigger":"complex","latency":{"mean":0.22,"p95":0.48,"p99":1.24},"throughput":4525.188079260774}]};
+    const colors = [
+      'rgba(102, 126, 234, 0.8)',
+      'rgba(118, 75, 162, 0.8)',
+      'rgba(237, 100, 166, 0.8)',
+      'rgba(255, 154, 158, 0.8)',
+      'rgba(255, 198, 93, 0.8)',
+      'rgba(160, 212, 104, 0.8)'
+    ];
+
+    // Group results by benchmark
+    const byBenchmark = {};
+    data.results.forEach(r => {
+      if (!byBenchmark[r.hookConfig]) byBenchmark[r.hookConfig] = [];
+      byBenchmark[r.hookConfig].push(r);
+    });
+
+    // Latency Chart
+    new Chart(document.getElementById('latencyChart'), {
+      type: 'bar',
+      data: {
+        labels: Object.keys(byBenchmark),
+        datasets: [{
+          label: 'Mean Latency (ms)',
+          data: Object.values(byBenchmark).map(results =>
+            (results.reduce((sum, r) => sum + r.latency.mean, 0) / results.length).toFixed(2)
+          ),
+          backgroundColor: colors.slice(0, Object.keys(byBenchmark).length)
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: { y: { beginAtZero: true } }
+      }
+    });
+
+    // Throughput Chart
+    new Chart(document.getElementById('throughputChart'), {
+      type: 'line',
+      data: {
+        labels: Object.keys(byBenchmark),
+        datasets: [{
+          label: 'Throughput (ops/sec)',
+          data: Object.values(byBenchmark).map(results =>
+            (results.reduce((sum, r) => sum + r.throughput, 0) / results.length).toFixed(0)
+          ),
+          borderColor: colors[0],
+          backgroundColor: colors[0].replace('0.8', '0.2'),
+          fill: true,
+          tension: 0.4
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: { y: { beginAtZero: true } }
+      }
+    });
+
+    // Percentile Chart
+    if (data.triggerResults && data.triggerResults.length > 0) {
+      new Chart(document.getElementById('percentileChart'), {
+        type: 'bar',
+        data: {
+          labels: data.triggerResults.map(r => r.trigger),
+          datasets: [
+            {
+              label: 'Mean',
+              data: data.triggerResults.map(r => r.latency.mean),
+              backgroundColor: colors[0]
+            },
+            {
+              label: 'P95',
+              data: data.triggerResults.map(r => r.latency.p95),
+              backgroundColor: colors[1]
+            },
+            {
+              label: 'P99',
+              data: data.triggerResults.map(r => r.latency.p99),
+              backgroundColor: colors[2]
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: { y: { beginAtZero: true } }
+        }
+      });
+    }
+
+    // Overhead Chart
+    new Chart(document.getElementById('overheadChart'), {
+      type: 'bar',
+      data: {
+        labels: Object.keys(byBenchmark),
+        datasets: [{
+          label: 'Overhead %',
+          data: Object.values(byBenchmark).map(results =>
+            (results.reduce((sum, r) => sum + parseFloat(r.overhead), 0) / results.length).toFixed(2)
+          ),
+          backgroundColor: colors.slice(0, Object.keys(byBenchmark).length)
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: { y: { beginAtZero: true } }
+      }
+    });
+
+    // Populate table
+    const tbody = document.getElementById('resultsBody');
+    data.results.forEach(r => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${r.hookConfig}</td>
+        <td>${r.scenario}</td>
+        <td>${r.latency.mean.toFixed(2)}</td>
+        <td>${r.latency.p95.toFixed(2)}</td>
+        <td>${r.latency.p99.toFixed(2)}</td>
+        <td>${r.throughput.toFixed(0)}</td>
+        <td>${r.overhead}%</td>
+        <td><span class="status-badge ${r.passed ? 'pass' : 'fail'}">${r.passed ? '✓ PASS' : '✗ FAIL'}</span></td>
+      `;
+      tbody.appendChild(row);
+    });
+
+    function exportToCSV() {
+      const headers = ['Benchmark', 'Scenario', 'Mean Latency (ms)', 'P95 Latency (ms)', 'P99 Latency (ms)', 'Throughput (ops/sec)', 'Overhead %', 'Status'];
+      const rows = [headers];
+      data.results.forEach(r => {
+        rows.push([
+          r.hookConfig,
+          r.scenario,
+          r.latency.mean,
+          r.latency.p95,
+          r.latency.p99,
+          r.throughput,
+          r.overhead,
+          r.passed ? 'PASS' : 'FAIL'
+        ]);
+      });
+      const csv = rows.map(row => row.join(',')).join('\n');
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'knowledge-hooks-benchmarks.csv';
+      a.click();
+    }
+  </script>
+</body>
+</html>

@@ -7,7 +7,10 @@
   },
   "evidence": {
     "docsFiles": [],
-    "examplesFiles": ["customer-lens.mjs", "run-demo.mjs"],
+    "examplesFiles": [
+      "customer-lens.mjs",
+      "run-demo.mjs"
+    ],
     "fingerprint": "958d0e4a8106461ac7fe2f408a41db5062cae5d89aa37431672e839b24646fde",
     "readmeHeadings": [
       "Mission Accomplished",
@@ -30,10 +33,20 @@
   },
   "explanation": {
     "architecture": "node AUTONOMIC_INNOVATION/agent-3/test-stable-ids.",
-    "concepts": ["rdf", "lens", "bidirectional", "transformation", "graph"],
+    "concepts": [
+      "rdf",
+      "lens",
+      "bidirectional",
+      "transformation",
+      "graph"
+    ],
     "confidenceScore": 0.7,
     "id": "explanation-unrdf-lens-explanation",
-    "source": ["keywords", "readme", "inferred"],
+    "source": [
+      "keywords",
+      "readme",
+      "inferred"
+    ],
     "title": "Understanding @unrdf/lens",
     "tradeoffs": [
       "Ease of use vs. advanced configuration options",
@@ -47,8 +60,14 @@
       "confidenceScore": 0.5,
       "context": "When you need robust error handling in production",
       "id": "howto-handle-errors",
-      "source": ["tests"],
-      "steps": ["Set up try-catch blocks", "Handle common error types", "Log errors appropriately"],
+      "source": [
+        "tests"
+      ],
+      "steps": [
+        "Set up try-catch blocks",
+        "Handle common error types",
+        "Log errors appropriately"
+      ],
       "task": "Implement error handling for @unrdf/lens",
       "title": "Handle Errors"
     },
@@ -56,8 +75,15 @@
       "confidenceScore": 0.7,
       "context": "When working with rdf in your project",
       "id": "howto-integrate-with-rdf",
-      "source": ["keywords", "inferred"],
-      "steps": ["Install dependencies", "Set up integration", "Test integration"],
+      "source": [
+        "keywords",
+        "inferred"
+      ],
+      "steps": [
+        "Install dependencies",
+        "Set up integration",
+        "Test integration"
+      ],
       "task": "Connect @unrdf/lens with rdf",
       "title": "Integrate with rdf"
     }
@@ -74,7 +100,9 @@
         "type": "export"
       }
     ],
-    "source": ["exports"],
+    "source": [
+      "exports"
+    ],
     "title": "@unrdf/lens Reference"
   },
   "tutorials": [
@@ -82,8 +110,14 @@
       "confidenceScore": 0.7,
       "goal": "Learn how to set up and use @unrdf/lens in your project",
       "id": "tutorial-getting-started-with-unrdf-lens",
-      "prerequisites": ["Basic RDF knowledge", "Understanding of graph databases"],
-      "source": ["examples", "keywords"],
+      "prerequisites": [
+        "Basic RDF knowledge",
+        "Understanding of graph databases"
+      ],
+      "source": [
+        "examples",
+        "keywords"
+      ],
       "stepsOutline": [
         "Install the package",
         "Import required modules",

@@ -62,7 +62,7 @@ const BLOCKED_GLOBALS = new Set([
   'import',
   'process',
   'global',
-  '__dirname',
+  '_dirname',
   '__filename',
   'Buffer',
   'clearImmediate',
@@ -122,7 +122,7 @@ export class SandboxRestrictions {
       import: undefined,
       process: undefined,
       global: undefined,
-      __dirname: undefined,
+      _dirname: undefined,
       __filename: undefined,
       Buffer: undefined,
 

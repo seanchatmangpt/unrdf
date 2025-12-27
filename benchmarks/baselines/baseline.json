@@ -1,0 +1,155 @@
+{
+  "benchmarks": {
+    "hook-registration": {
+      "latency-avg": {
+        "target": 1,
+        "unit": "ms",
+        "priority": "P1",
+        "description": "Average time to register a single hook"
+      },
+      "throughput": {
+        "target": 1000,
+        "unit": "ops/sec",
+        "priority": "P1",
+        "description": "Number of hooks registered per second"
+      },
+      "memory-per-1k": {
+        "target": 50,
+        "unit": "MB",
+        "priority": "P1",
+        "description": "Memory consumed by 1000 registered hooks"
+      }
+    },
+    "hook-execution": {
+      "latency-p95": {
+        "target": 50,
+        "unit": "ms",
+        "priority": "P1",
+        "description": "95th percentile execution time"
+      },
+      "latency-p99": {
+        "target": 100,
+        "unit": "ms",
+        "priority": "P1",
+        "description": "99th percentile execution time"
+      },
+      "throughput": {
+        "target": 100,
+        "unit": "ops/sec",
+        "priority": "P1",
+        "description": "Hook executions per second"
+      },
+      "error-rate": {
+        "target": 1,
+        "unit": "%",
+        "priority": "P1",
+        "description": "Percentage of failed hook executions"
+      }
+    },
+    "concurrent-throughput": {
+      "ops-per-sec": {
+        "target": 1000,
+        "unit": "ops/sec",
+        "priority": "P1",
+        "description": "Concurrent hook executions per second"
+      },
+      "latency-avg": {
+        "target": 10,
+        "unit": "ms",
+        "priority": "P1",
+        "description": "Average latency under concurrent load"
+      }
+    },
+    "memory-footprint": {
+      "per-hook": {
+        "target": 5,
+        "unit": "MB",
+        "priority": "P1",
+        "description": "Memory footprint per registered hook"
+      },
+      "leak-rate": {
+        "target": 1,
+        "unit": "%",
+        "priority": "P1",
+        "description": "Memory leak rate after GC"
+      }
+    },
+    "condition-cache": {
+      "hit-rate": {
+        "target": 80,
+        "unit": "%",
+        "priority": "P2",
+        "description": "Percentage of condition evaluations served from cache"
+      },
+      "latency-cached": {
+        "target": 1,
+        "unit": "ms",
+        "priority": "P2",
+        "description": "Latency for cached condition evaluation"
+      },
+      "latency-uncached": {
+        "target": 10,
+        "unit": "ms",
+        "priority": "P2",
+        "description": "Latency for uncached condition evaluation"
+      }
+    },
+    "circuit-breaker": {
+      "trip-rate": {
+        "target": 1,
+        "unit": "%",
+        "priority": "P1",
+        "description": "Percentage of time circuit breaker is tripped"
+      },
+      "recovery-time": {
+        "target": 100,
+        "unit": "ms",
+        "priority": "P2",
+        "description": "Time to recover from circuit breaker trip"
+      },
+      "false-positive-rate": {
+        "target": 5,
+        "unit": "%",
+        "priority": "P2",
+        "description": "Percentage of incorrect circuit breaker trips"
+      }
+    },
+    "validation-overhead": {
+      "latency": {
+        "target": 5,
+        "unit": "ms",
+        "priority": "P2",
+        "description": "Overhead added by validation logic"
+      },
+      "throughput-impact": {
+        "target": 10,
+        "unit": "%",
+        "priority": "P2",
+        "description": "Throughput reduction due to validation"
+      }
+    }
+  },
+  "regressionThresholds": {
+    "critical": {
+      "latency": 20,
+      "throughput": 20,
+      "memory": 30,
+      "description": "Deviation percentage that triggers critical regression alert"
+    },
+    "warning": {
+      "latency": 10,
+      "throughput": 10,
+      "memory": 15,
+      "description": "Deviation percentage that triggers warning"
+    }
+  },
+  "metadata": {
+    "version": "1.0.0",
+    "lastUpdated": "2025-12-04",
+    "environment": {
+      "node": ">=18.0.0",
+      "flags": ["--expose-gc"],
+      "recommended": "node --expose-gc benchmarks/run.mjs"
+    }
+  }
+}

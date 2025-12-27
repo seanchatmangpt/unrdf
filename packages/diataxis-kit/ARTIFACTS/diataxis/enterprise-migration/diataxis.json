@@ -13,10 +13,19 @@
   },
   "explanation": {
     "architecture": "enterprise-migration is a package in the UNRDF ecosystem",
-    "concepts": ["migration", "enterprise", "rdf", "substrate", "unrdf"],
+    "concepts": [
+      "migration",
+      "enterprise",
+      "rdf",
+      "substrate",
+      "unrdf"
+    ],
     "confidenceScore": 0.4,
     "id": "explanation-enterprise-migration-explanation",
-    "source": ["keywords", "inferred"],
+    "source": [
+      "keywords",
+      "inferred"
+    ],
     "title": "Understanding enterprise-migration",
     "tradeoffs": [
       "Ease of use vs. advanced configuration options",
@@ -30,8 +39,15 @@
       "confidenceScore": 0.7,
       "context": "When working with migration in your project",
       "id": "howto-integrate-with-migration",
-      "source": ["keywords", "inferred"],
-      "steps": ["Install dependencies", "Set up integration", "Test integration"],
+      "source": [
+        "keywords",
+        "inferred"
+      ],
+      "steps": [
+        "Install dependencies",
+        "Set up integration",
+        "Test integration"
+      ],
       "task": "Connect enterprise-migration with migration",
       "title": "Integrate with migration"
     },
@@ -39,8 +55,14 @@
       "confidenceScore": 0.4,
       "context": "When encountering issues during usage",
       "id": "howto-troubleshoot-common-issues",
-      "source": ["inferred"],
-      "steps": ["Check configuration", "Review error messages", "Apply fixes"],
+      "source": [
+        "inferred"
+      ],
+      "steps": [
+        "Check configuration",
+        "Review error messages",
+        "Apply fixes"
+      ],
       "task": "Resolve common problems and errors",
       "title": "Troubleshoot Common Issues"
     }
@@ -75,7 +97,9 @@
         "type": "export"
       }
     ],
-    "source": ["exports"],
+    "source": [
+      "exports"
+    ],
     "title": "enterprise-migration Reference"
   },
   "tutorials": [
@@ -83,8 +107,12 @@
       "confidenceScore": 0.1,
       "goal": "Learn how to set up and use enterprise-migration in your project",
       "id": "tutorial-getting-started-with-enterprise-migration",
-      "prerequisites": ["Basic RDF knowledge"],
-      "source": ["keywords"],
+      "prerequisites": [
+        "Basic RDF knowledge"
+      ],
+      "source": [
+        "keywords"
+      ],
       "stepsOutline": [
         "Install the package",
         "Import required modules",

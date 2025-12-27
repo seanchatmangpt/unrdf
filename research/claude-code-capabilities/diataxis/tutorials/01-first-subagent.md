@@ -3,10 +3,12 @@
 Learn how to spawn your first specialized subagent in Claude Code.
 
 ## Prerequisites
+
 - Claude Code CLI installed
 - Basic familiarity with Claude Code interface
 
 ## What You'll Learn
+
 - How to use the Task tool
 - Available agent types
 - Spawning agents for specialized work
@@ -65,6 +67,7 @@ Task("Check tests", "Review test coverage...", "tester")
 ## Step 4: Handle Agent Results
 
 Agents return their findings in a single message. You'll receive:
+
 - Summary of work completed
 - Key findings
 - File references
@@ -77,6 +80,7 @@ Agents return their findings in a single message. You'll receive:
 3. Observe the agent spawn and return results
 
 ## Next Steps
+
 - [Tutorial: Multiple Agent Coordination](./multi-agent.md)
 - [Reference: All Agent Types](../reference/subagent-types.md)
 - [How-to: Parallel Task Execution](../how-to/parallel-execution.md)

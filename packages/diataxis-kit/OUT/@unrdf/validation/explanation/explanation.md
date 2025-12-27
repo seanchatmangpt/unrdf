@@ -4,8 +4,8 @@ type: "explanation"
 packageName: "@unrdf/validation"
 version: "5.0.1"
 generatedAt: "2000-01-01T00:00:00.000Z"
-confidenceScore: 0.7
-proof: "028703ae2a29f977b38a62ce80a8946864c4b5845b5c0d2a8cd5eced5a569c50"
+confidenceScore: 0.4
+proof: "2e989458d26f9e5c2ba5527bf1289e7c2b18cb389091cae881a1e2c6d8e4caa5"
 ---
 
 ## Concepts
@@ -17,7 +17,7 @@ proof: "028703ae2a29f977b38a62ce80a8946864c4b5845b5c0d2a8cd5eced5a569c50"
 
 ## Architecture
 
-![Version](https://img.shields.io/badge/version-5.0.0--beta.1-blue) ![Production Ready](https://img.shields.
+@unrdf/validation is a package in the UNRDF ecosystem
 
 ## Tradeoffs
 
@@ -31,16 +31,14 @@ This file was generated from the following evidence sources:
 
 - inferred
 - keywords
-- readme
 
 ```json
 {
-  "fingerprintInput": "inferred|keywords|readme|Understanding @unrdf/validation|0.7",
-  "hash": "028703ae2a29f977b38a62ce80a8946864c4b5845b5c0d2a8cd5eced5a569c50",
+  "fingerprintInput": "inferred|keywords|Understanding @unrdf/validation|0.4",
+  "hash": "2e989458d26f9e5c2ba5527bf1289e7c2b18cb389091cae881a1e2c6d8e4caa5",
   "sources": [
     "inferred",
-    "keywords",
-    "readme"
+    "keywords"
   ]
 }
 ```

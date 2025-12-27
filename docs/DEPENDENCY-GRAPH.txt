@@ -1,0 +1,89 @@
+================================================================================
+DEPENDENCY GRAPH VISUALIZATION
+================================================================================
+
+Analyzed: 2025-12-26T23:39:34.501Z
+Total Packages: 71
+Total Edges: 113
+Has Cycles: No
+
+--------------------------------------------------------------------------------
+PACKAGES BY DEPENDENTS (Most Critical First)
+--------------------------------------------------------------------------------
+[36] core                      -> [oxigraph]
+[20] oxigraph                 
+[10] hooks                     -> [core, oxigraph]
+[10] kgc-4d                    -> [core, oxigraph]
+[10] yawl                      -> [hooks, kgc-4d, oxigraph]
+[ 7] streaming                 -> [core, hooks, oxigraph]
+[ 6] knowledge-engine          -> [core, oxigraph, streaming]
+[ 4] federation                -> [core, hooks]
+[ 2] cli                       -> [core, federation, hooks, knowledge-engine, oxigraph, project-engine, streaming]
+[ 2] composables               -> [core, streaming]
+[ 2] dark-matter               -> [core, oxigraph]
+[ 1] atomvm                   
+[ 1] project-engine            -> [core, knowledge-engine]
+[ 1] test-utils                -> [oxigraph]
+[ 1] validation                -> [knowledge-engine]
+[ 0] lens                      -> [core, oxigraph]
+[ 0] docs-site                
+[ 0] package-name             
+[ 0] @demo/kgen               
+[ 0] examples                  -> [core, knowledge-engine, hooks]
+[ 0] chaos-cluster            
+[ 0] atomvm-docker-cluster-experiments
+[ 0] docker-swarm-messaging   
+[ 0] atomvm-playground         -> [atomvm, hooks, kgc-4d]
+[ 0] blockchain                -> [kgc-4d, yawl]
+[ 0] caching                   -> [oxigraph]
+[ 0] cli-example-format-conversion -> [cli, core]
+[ 0] cli-example-graph-commands -> [cli, core]
+[ 0] collab                    -> [core]
+[ 0] composables-example-query-integration -> [core, composables]
+[ 0] composables-example-reactive-graphs -> [core, composables]
+[ 0] consensus                 -> [federation]
+[ 0] example-basic-store       -> [core]
+[ 0] example-rdf-parsing       -> [core]
+[ 0] example-sparql-queries    -> [core]
+[ 0] dark-matter-example-index-advisor -> [core, dark-matter]
+[ 0] dark-matter-example-query-optimization -> [core, dark-matter]
+[ 0] diataxis-kit             
+[ 0] docs                     
+[ 0] domain                   
+[ 0] engine-gateway            -> [core, oxigraph]
+[ 0] examples-peer-discovery   -> [core, federation]
+[ 0] graph-analytics          
+[ 0] hooks-example-chains      -> [core, hooks]
+[ 0] hooks-example-policy      -> [core, hooks]
+[ 0] integration-tests         -> [yawl, hooks, kgc-4d, federation, streaming, oxigraph, core]
+[ 0] kgc-4d-playground         -> [core, hooks, kgc-4d, oxigraph, validation]
+[ 0] kgn                       -> [core, test-utils]
+[ 0] knowledge-engine-example-basic-inference -> [core, knowledge-engine]
+[ 0] knowledge-engine-example-sparql-rules -> [core, knowledge-engine]
+[ 0] ml-inference              -> [core, streaming, oxigraph]
+[ 0] ml-versioning             -> [kgc-4d, oxigraph, core]
+[ 0] nextra-docs              
+[ 0] observability            
+[ 0] rdf-graphql               -> [oxigraph]
+[ 0] semantic-search           -> [oxigraph]
+[ 0] serverless                -> [core, oxigraph]
+[ 0] streaming-example-change-feeds -> [core, streaming]
+[ 0] streaming-example-real-time-sync -> [core, streaming]
+[ 0] yawl-ai                   -> [yawl]
+[ 0] yawl-api                  -> [yawl, kgc-4d]
+[ 0] yawl-durable              -> [yawl, kgc-4d]
+[ 0] yawl-kafka                -> [core]
+[ 0] yawl-langchain            -> [kgc-4d, oxigraph, yawl]
+[ 0] yawl-observability        -> [yawl]
+[ 0] yawl-queue                -> [yawl, kgc-4d]
+[ 0] yawl-realtime             -> [yawl]
+[ 0] yawl-viz                  -> [yawl]
+[ 0] governed-substrate       
+[ 0] projection               
+[ 0] receipts                 
+
+--------------------------------------------------------------------------------
+LEGEND
+--------------------------------------------------------------------------------
+[N] = Number of packages that depend on this package
+->  = Dependencies this package has

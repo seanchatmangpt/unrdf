@@ -4,8 +4,8 @@ type: "explanation"
 packageName: "unrdf-hooks-showcase"
 version: "3.1.0"
 generatedAt: "2000-01-01T00:00:00.000Z"
-confidenceScore: 0
-proof: "0cd0565d6adeb62ddcce7d355e9cc45aa64ae886c2b277b4273dc6413f2918ef"
+confidenceScore: 0.3
+proof: "8f1764716f32eab2943d40196f792d4970fc9aa3b06a82ee3baf968bbf18859f"
 ---
 
 ## Concepts
@@ -14,7 +14,7 @@ proof: "0cd0565d6adeb62ddcce7d355e9cc45aa64ae886c2b277b4273dc6413f2918ef"
 
 ## Architecture
 
-unrdf-hooks-showcase is a package in the UNRDF ecosystem
+Interactive Next.js + shadcn/ui demo showcasing all 40 UNRDF React hooks.
 
 ## Tradeoffs
 
@@ -27,13 +27,15 @@ unrdf-hooks-showcase is a package in the UNRDF ecosystem
 This file was generated from the following evidence sources:
 
 - inferred
+- readme
 
 ```json
 {
-  "fingerprintInput": "inferred|Understanding unrdf-hooks-showcase|0",
-  "hash": "0cd0565d6adeb62ddcce7d355e9cc45aa64ae886c2b277b4273dc6413f2918ef",
+  "fingerprintInput": "inferred|readme|Understanding unrdf-hooks-showcase|0.3",
+  "hash": "8f1764716f32eab2943d40196f792d4970fc9aa3b06a82ee3baf968bbf18859f",
   "sources": [
-    "inferred"
+    "inferred",
+    "readme"
   ]
 }
 ```

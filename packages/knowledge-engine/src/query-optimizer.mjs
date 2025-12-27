@@ -11,7 +11,7 @@ import { sha3_256 } from '@noble/hashes/sha3.js';
 import { utf8ToBytes, bytesToHex } from '@noble/hashes/utils.js';
 import { randomUUID } from 'crypto';
 import { z } from 'zod';
-import LRUCache from 'lru-cache';
+import { LRUCache } from 'lru-cache';
 import { trace, metrics, SpanStatusCode } from '@opentelemetry/api';
 
 /**

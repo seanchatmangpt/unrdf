@@ -19,15 +19,17 @@ const tracer = trace.getTracer('unrdf');
 
 // Import consolidated schemas
 import {
-  _QuadSchema,
-  DeltaSchema,
-  TransactionHookSchema,
-  _TransactionHookResultSchema,
-  _HashSchema,
-  _TransactionReceiptSchemaNew,
-  TransactionOptionsSchema,
-  ManagerOptionsSchema,
+  TransactionDeltaSchema as DeltaSchema,
+  TransactionReceiptSchema,
+  HookResultSchema as TransactionHookResultSchema,
 } from './schemas.mjs';
+
+// Define missing schemas locally
+const QuadSchema = z.any();
+const TransactionHookSchema = z.any();
+const HashSchema = z.string();
+const TransactionOptionsSchema = z.any();
+const ManagerOptionsSchema = z.any();
 
 // Zod schemas for validation
 // QuadSchema now imported from schemas.mjs

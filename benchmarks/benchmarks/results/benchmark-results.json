@@ -1,0 +1,255 @@
+{
+  "timestamp": "2025-12-04T20:27:55.269Z",
+  "totalDurationMs": 24887.646511,
+  "summary": {
+    "totalBenchmarks": 5,
+    "totalTests": 15,
+    "passed": 11,
+    "failed": 4,
+    "allPassed": false
+  },
+  "benchmarks": [
+    {
+      "name": "hook-registration",
+      "tests": [
+        {
+          "scale": "small",
+          "hookCount": 10,
+          "totalTimeMs": 4.029893000000129,
+          "latency": {
+            "p50": 0.16681500000004235,
+            "p95": 1.1545269999999164,
+            "p99": 1.1545269999999164,
+            "mean": 0.31406210000002377
+          },
+          "throughputHooksPerSec": 2481.455462961344,
+          "passed": false
+        },
+        {
+          "scale": "medium",
+          "hookCount": 50,
+          "totalTimeMs": 7.206304000000046,
+          "latency": {
+            "p50": 0.07368800000017472,
+            "p95": 0.16003999999998086,
+            "p99": 2.841969000000063,
+            "mean": 0.13681255999996667
+          },
+          "throughputHooksPerSec": 6938.36951646776,
+          "passed": true
+        },
+        {
+          "scale": "large",
+          "hookCount": 100,
+          "totalTimeMs": 7.3821519999999055,
+          "latency": {
+            "p50": 0.05762400000003254,
+            "p95": 0.1334910000000491,
+            "p99": 0.27830999999991946,
+            "mean": 0.07132634000000053
+          },
+          "throughputHooksPerSec": 13546.185448362658,
+          "passed": true
+        }
+      ],
+      "summary": {
+        "totalTests": 3,
+        "passed": 2,
+        "failed": 1
+      },
+      "passed": false
+    },
+    {
+      "name": "hook-execution-latency",
+      "tests": [
+        {
+          "complexity": "simple",
+          "iterations": 1000,
+          "totalTimeMs": 78.09018199999991,
+          "latency": {
+            "p50": 0.06060200000001714,
+            "p95": 0.09228699999994205,
+            "p99": 0.158341000000064,
+            "mean": 0.07722151799999846
+          },
+          "throughputOpsPerSec": 12805.707124616525,
+          "passed": true
+        },
+        {
+          "complexity": "medium",
+          "iterations": 500,
+          "totalTimeMs": 32.13495499999999,
+          "latency": {
+            "p50": 0.04688099999975748,
+            "p95": 0.09737200000017765,
+            "p99": 0.15818399999989197,
+            "mean": 0.06345592800001304
+          },
+          "throughputOpsPerSec": 15559.380742870191,
+          "passed": true
+        },
+        {
+          "complexity": "complex",
+          "iterations": 100,
+          "totalTimeMs": 21.066678000000138,
+          "latency": {
+            "p50": 0.14444300000013754,
+            "p95": 0.410577000000103,
+            "p99": 1.3483870000000024,
+            "mean": 0.2101058600000033
+          },
+          "throughputOpsPerSec": 4746.832889362022,
+          "passed": true
+        }
+      ],
+      "summary": {
+        "totalTests": 3,
+        "passed": 3,
+        "failed": 0
+      },
+      "passed": true
+    },
+    {
+      "name": "concurrent-execution",
+      "tests": [
+        {
+          "concurrencyLevel": "low",
+          "workers": 10,
+          "totalTimeMs": 0.7509230000000571,
+          "successCount": 10,
+          "errorCount": 0,
+          "throughputOpsPerSec": 13316.944613494647,
+          "errorRate": 0,
+          "parallelizationEfficiency": 1331.6944613494647,
+          "passed": true
+        },
+        {
+          "concurrencyLevel": "medium",
+          "workers": 100,
+          "totalTimeMs": 4.596810999999889,
+          "successCount": 100,
+          "errorCount": 0,
+          "throughputOpsPerSec": 21754.211778557445,
+          "errorRate": 0,
+          "parallelizationEfficiency": 217.54211778557445,
+          "passed": true
+        },
+        {
+          "concurrencyLevel": "high",
+          "workers": 1000,
+          "totalTimeMs": 49.86131699999987,
+          "successCount": 1000,
+          "errorCount": 0,
+          "throughputOpsPerSec": 20055.627491748815,
+          "errorRate": 0,
+          "parallelizationEfficiency": 20.055627491748815,
+          "passed": true
+        }
+      ],
+      "summary": {
+        "totalTests": 3,
+        "passed": 3,
+        "failed": 0
+      },
+      "passed": true
+    },
+    {
+      "name": "memory-footprint",
+      "tests": [
+        {
+          "scale": "small",
+          "hookCount": 10,
+          "registrationTimeMs": 0.7839229999999588,
+          "baselineMemoryMB": 26.049270629882812,
+          "peakMemoryMB": 25.979293823242188,
+          "memoryUsedMB": -0.069976806640625,
+          "memoryPerHookMB": -0.0069976806640625,
+          "afterCleanupMemoryMB": 25.937667846679688,
+          "memoryLeakedMB": -0.111602783203125,
+          "passed": true
+        },
+        {
+          "scale": "medium",
+          "hookCount": 50,
+          "registrationTimeMs": 4.295822999999928,
+          "baselineMemoryMB": 25.935928344726562,
+          "peakMemoryMB": 26.137351989746094,
+          "memoryUsedMB": 0.20142364501953125,
+          "memoryPerHookMB": 0.004028472900390625,
+          "afterCleanupMemoryMB": 26.044296264648438,
+          "memoryLeakedMB": 0.108367919921875,
+          "passed": true
+        },
+        {
+          "scale": "large",
+          "hookCount": 100,
+          "registrationTimeMs": 6.736403000000337,
+          "baselineMemoryMB": 26.044700622558594,
+          "peakMemoryMB": 26.247146606445312,
+          "memoryUsedMB": 0.20244598388671875,
+          "memoryPerHookMB": 0.0020244598388671877,
+          "afterCleanupMemoryMB": 26.066688537597656,
+          "memoryLeakedMB": 0.0219879150390625,
+          "passed": true
+        }
+      ],
+      "summary": {
+        "totalTests": 3,
+        "passed": 3,
+        "failed": 0,
+        "gcAvailable": true,
+        "gcWarning": null
+      },
+      "passed": true
+    },
+    {
+      "name": "condition-evaluation",
+      "tests": [
+        {
+          "testCase": "small-graph",
+          "graphSize": 100,
+          "iterations": 1000,
+          "totalTimeMs": 247.89969100000008,
+          "avgLatencyMs": 0.2473827610000044,
+          "throughputOpsPerSec": 4033.889659023414,
+          "cacheHits": 168,
+          "cacheMisses": 832,
+          "cacheHitRate": 0.168,
+          "passed": false
+        },
+        {
+          "testCase": "medium-graph",
+          "graphSize": 1000,
+          "iterations": 500,
+          "totalTimeMs": 3423.6078830000006,
+          "avgLatencyMs": 6.845988572000003,
+          "throughputOpsPerSec": 146.0447624515532,
+          "cacheHits": 0,
+          "cacheMisses": 500,
+          "cacheHitRate": 0,
+          "passed": false
+        },
+        {
+          "testCase": "large-graph",
+          "graphSize": 10000,
+          "iterations": 100,
+          "totalTimeMs": 18729.724179999997,
+          "avgLatencyMs": 187.29485128999994,
+          "throughputOpsPerSec": 5.3391069211143085,
+          "cacheHits": 0,
+          "cacheMisses": 100,
+          "cacheHitRate": 0,
+          "passed": false
+        }
+      ],
+      "summary": {
+        "totalTests": 3,
+        "passed": 0,
+        "failed": 3,
+        "avgThroughputOpsPerSec": 1395.0911761320274,
+        "avgCacheHitRate": 0.056
+      },
+      "passed": false
+    }
+  ]
+}

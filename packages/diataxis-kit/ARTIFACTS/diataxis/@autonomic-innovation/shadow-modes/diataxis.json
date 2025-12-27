@@ -24,10 +24,20 @@
   },
   "explanation": {
     "architecture": "Complete implementation of shadow mode system for safe, reversible migration from legacy to facade systems.",
-    "concepts": ["shadow-mode", "migration", "content-addressing", "blake3", "deterministic"],
+    "concepts": [
+      "shadow-mode",
+      "migration",
+      "content-addressing",
+      "blake3",
+      "deterministic"
+    ],
     "confidenceScore": 0.7,
     "id": "explanation-autonomic-innovation-shadow-modes-explanation",
-    "source": ["keywords", "readme", "inferred"],
+    "source": [
+      "keywords",
+      "readme",
+      "inferred"
+    ],
     "title": "Understanding @autonomic-innovation/shadow-modes",
     "tradeoffs": [
       "Ease of use vs. advanced configuration options",
@@ -41,8 +51,14 @@
       "confidenceScore": 0.5,
       "context": "When you need robust error handling in production",
       "id": "howto-handle-errors",
-      "source": ["tests"],
-      "steps": ["Set up try-catch blocks", "Handle common error types", "Log errors appropriately"],
+      "source": [
+        "tests"
+      ],
+      "steps": [
+        "Set up try-catch blocks",
+        "Handle common error types",
+        "Log errors appropriately"
+      ],
       "task": "Implement error handling for @autonomic-innovation/shadow-modes",
       "title": "Handle Errors"
     },
@@ -50,8 +66,15 @@
       "confidenceScore": 0.7,
       "context": "When working with shadow-mode in your project",
       "id": "howto-integrate-with-shadow-mode",
-      "source": ["keywords", "inferred"],
-      "steps": ["Install dependencies", "Set up integration", "Test integration"],
+      "source": [
+        "keywords",
+        "inferred"
+      ],
+      "steps": [
+        "Install dependencies",
+        "Set up integration",
+        "Test integration"
+      ],
       "task": "Connect @autonomic-innovation/shadow-modes with shadow-mode",
       "title": "Integrate with shadow-mode"
     }
@@ -68,7 +91,9 @@
         "type": "export"
       }
     ],
-    "source": ["exports"],
+    "source": [
+      "exports"
+    ],
     "title": "@autonomic-innovation/shadow-modes Reference"
   },
   "tutorials": [
@@ -77,7 +102,9 @@
       "goal": "Learn how to set up and use @autonomic-innovation/shadow-modes in your project",
       "id": "tutorial-getting-started-with-autonomic-innovation-shadow-modes",
       "prerequisites": [],
-      "source": ["keywords"],
+      "source": [
+        "keywords"
+      ],
       "stepsOutline": [
         "Install the package",
         "Import required modules",

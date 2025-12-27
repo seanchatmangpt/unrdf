@@ -1,31 +1,30 @@
 {
   "confidence": {
-    "explanation": 0.7,
-    "howtos": 0.5,
+    "explanation": 0.4,
+    "howtos": 0.25,
     "reference": 0.5,
     "tutorials": 0.1
   },
   "evidence": {
     "docsFiles": [],
     "examplesFiles": [],
-    "fingerprint": "2abd2f7e8e92184a68f2bacdedebf0267972f783b707c161ae69b5810b20b281",
-    "readmeHeadings": [
-      "Purpose",
-      "Installation",
-      "Usage",
-      "Contents",
-      "Schema Examples",
-      "Constants",
-      "Adding New Domain Types",
-      "See Also"
-    ]
+    "fingerprint": "eb06e6f3d365e2084befa3c74eae7aa6cafe03ddbe0e68e2b1629b261a3a702d",
+    "readmeHeadings": []
   },
   "explanation": {
-    "architecture": "![Version](https://img.shields.io/badge/version-5.0.0--beta.1-blue) ![Production Ready](https://img.shields.",
-    "concepts": ["rdf", "domain", "models", "types"],
-    "confidenceScore": 0.7,
+    "architecture": "@unrdf/domain is a package in the UNRDF ecosystem",
+    "concepts": [
+      "rdf",
+      "domain",
+      "models",
+      "types"
+    ],
+    "confidenceScore": 0.4,
     "id": "explanation-unrdf-domain-explanation",
-    "source": ["keywords", "readme", "inferred"],
+    "source": [
+      "keywords",
+      "inferred"
+    ],
     "title": "Understanding @unrdf/domain",
     "tradeoffs": [
       "Ease of use vs. advanced configuration options",
@@ -39,8 +38,15 @@
       "confidenceScore": 0.7,
       "context": "When working with rdf in your project",
       "id": "howto-integrate-with-rdf",
-      "source": ["keywords", "inferred"],
-      "steps": ["Install dependencies", "Set up integration", "Test integration"],
+      "source": [
+        "keywords",
+        "inferred"
+      ],
+      "steps": [
+        "Install dependencies",
+        "Set up integration",
+        "Test integration"
+      ],
       "task": "Connect @unrdf/domain with rdf",
       "title": "Integrate with rdf"
     },
@@ -48,8 +54,14 @@
       "confidenceScore": 0.4,
       "context": "When encountering issues during usage",
       "id": "howto-troubleshoot-common-issues",
-      "source": ["inferred"],
-      "steps": ["Check configuration", "Review error messages", "Apply fixes"],
+      "source": [
+        "inferred"
+      ],
+      "steps": [
+        "Check configuration",
+        "Review error messages",
+        "Apply fixes"
+      ],
       "task": "Resolve common problems and errors",
       "title": "Troubleshoot Common Issues"
     }
@@ -66,7 +78,9 @@
         "type": "export"
       }
     ],
-    "source": ["exports"],
+    "source": [
+      "exports"
+    ],
     "title": "@unrdf/domain Reference"
   },
   "tutorials": [
@@ -74,8 +88,12 @@
       "confidenceScore": 0.1,
       "goal": "Learn how to set up and use @unrdf/domain in your project",
       "id": "tutorial-getting-started-with-unrdf-domain",
-      "prerequisites": ["Basic RDF knowledge"],
-      "source": ["keywords"],
+      "prerequisites": [
+        "Basic RDF knowledge"
+      ],
+      "source": [
+        "keywords"
+      ],
       "stepsOutline": [
         "Install the package",
         "Import required modules",

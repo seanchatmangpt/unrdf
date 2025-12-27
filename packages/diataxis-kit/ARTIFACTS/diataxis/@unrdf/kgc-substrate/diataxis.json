@@ -6,7 +6,10 @@
     "tutorials": 0.1
   },
   "evidence": {
-    "docsFiles": ["DESIGN.md", "RECEIPT.json"],
+    "docsFiles": [
+      "DESIGN.md",
+      "RECEIPT.json"
+    ],
     "examplesFiles": [],
     "fingerprint": "fec9f186fa04b1c4a6bbf838cf2f8fda62f2f821fc69e677b09f197185f21273",
     "readmeHeadings": [
@@ -30,10 +33,21 @@
   },
   "explanation": {
     "architecture": "Allocate work items to agents using deterministic scheduling.",
-    "concepts": ["rdf", "knowledge-graph", "kgc", "substrate", "immutable"],
+    "concepts": [
+      "rdf",
+      "knowledge-graph",
+      "kgc",
+      "substrate",
+      "immutable"
+    ],
     "confidenceScore": 1,
     "id": "explanation-unrdf-kgc-substrate-explanation",
-    "source": ["keywords", "readme", "docs", "inferred"],
+    "source": [
+      "keywords",
+      "readme",
+      "docs",
+      "inferred"
+    ],
     "title": "Understanding @unrdf/kgc-substrate",
     "tradeoffs": [
       "Ease of use vs. advanced configuration options",
@@ -47,8 +61,15 @@
       "confidenceScore": 0.7,
       "context": "When working with rdf in your project",
       "id": "howto-integrate-with-rdf",
-      "source": ["keywords", "inferred"],
-      "steps": ["Install dependencies", "Set up integration", "Test integration"],
+      "source": [
+        "keywords",
+        "inferred"
+      ],
+      "steps": [
+        "Install dependencies",
+        "Set up integration",
+        "Test integration"
+      ],
       "task": "Connect @unrdf/kgc-substrate with rdf",
       "title": "Integrate with rdf"
     },
@@ -56,8 +77,14 @@
       "confidenceScore": 0.4,
       "context": "When encountering issues during usage",
       "id": "howto-troubleshoot-common-issues",
-      "source": ["inferred"],
-      "steps": ["Check configuration", "Review error messages", "Apply fixes"],
+      "source": [
+        "inferred"
+      ],
+      "steps": [
+        "Check configuration",
+        "Review error messages",
+        "Apply fixes"
+      ],
       "task": "Resolve common problems and errors",
       "title": "Troubleshoot Common Issues"
     }
@@ -86,7 +113,10 @@
         "type": "export"
       }
     ],
-    "source": ["exports", "readme"],
+    "source": [
+      "exports",
+      "readme"
+    ],
     "title": "@unrdf/kgc-substrate Reference"
   },
   "tutorials": [
@@ -94,8 +124,13 @@
       "confidenceScore": 0.1,
       "goal": "Learn how to set up and use @unrdf/kgc-substrate in your project",
       "id": "tutorial-getting-started-with-unrdf-kgc-substrate",
-      "prerequisites": ["Basic RDF knowledge", "Understanding of graph databases"],
-      "source": ["keywords"],
+      "prerequisites": [
+        "Basic RDF knowledge",
+        "Understanding of graph databases"
+      ],
+      "source": [
+        "keywords"
+      ],
       "stepsOutline": [
         "Install the package",
         "Import required modules",

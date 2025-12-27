@@ -11,3 +11,4 @@ packages:
   - 'examples'
   - 'AUTONOMIC_INNOVATION/agent-*'
   - 'exploration/agents/agent-*'
+  - 'benchmarks'

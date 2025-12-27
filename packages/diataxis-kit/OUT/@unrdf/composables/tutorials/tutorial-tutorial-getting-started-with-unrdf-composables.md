@@ -4,8 +4,8 @@ type: "tutorial"
 packageName: "@unrdf/composables"
 version: "5.0.1"
 generatedAt: "2000-01-01T00:00:00.000Z"
-confidenceScore: 0.9999999999999999
-proof: "96d174d1a8dc5f318edb996c6f931caf4b6c8d3f333c6dad65d3ff5a6be98599"
+confidenceScore: 0.1
+proof: "9cf02d3e215c5d0c702a83462c6900b71d10f4f093d98a6a0ebe86639c6a5914"
 ---
 
 ## Overview
@@ -27,18 +27,14 @@ Learn how to set up and use @unrdf/composables in your project
 
 This file was generated from the following evidence sources:
 
-- examples
 - keywords
-- readme
 
 ```json
 {
-  "fingerprintInput": "examples|keywords|readme|Getting Started with @unrdf/composables|0.9999999999999999",
-  "hash": "96d174d1a8dc5f318edb996c6f931caf4b6c8d3f333c6dad65d3ff5a6be98599",
+  "fingerprintInput": "keywords|Getting Started with @unrdf/composables|0.1",
+  "hash": "9cf02d3e215c5d0c702a83462c6900b71d10f4f093d98a6a0ebe86639c6a5914",
   "sources": [
-    "examples",
-    "keywords",
-    "readme"
+    "keywords"
   ]
 }
 ```

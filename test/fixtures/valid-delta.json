@@ -1,0 +1,15 @@
+{
+  "additions": [
+    {
+      "subject": "https://unrdf.org/studios/myProject",
+      "predicate": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+      "object": "https://unrdf.org/studios/Project"
+    },
+    {
+      "subject": "https://unrdf.org/studios/myProject",
+      "predicate": "http://www.w3.org/2000/01/rdf-schema#label",
+      "object": "My Test Project"
+    }
+  ],
+  "deletions": []
+}

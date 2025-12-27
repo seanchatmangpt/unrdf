@@ -29,10 +29,16 @@
   },
   "explanation": {
     "architecture": "Production validation playground for AtomVM - validates processes, supervision, KGC-4D integration.",
-    "concepts": ["core functionality"],
+    "concepts": [
+      "core functionality"
+    ],
     "confidenceScore": 0.6,
     "id": "explanation-unrdf-atomvm-playground-explanation",
-    "source": ["readme", "docs", "inferred"],
+    "source": [
+      "readme",
+      "docs",
+      "inferred"
+    ],
     "title": "Understanding @unrdf/atomvm-playground",
     "tradeoffs": [
       "Ease of use vs. advanced configuration options",
@@ -46,8 +52,14 @@
       "confidenceScore": 0.5,
       "context": "When you need robust error handling in production",
       "id": "howto-handle-errors",
-      "source": ["tests"],
-      "steps": ["Set up try-catch blocks", "Handle common error types", "Log errors appropriately"],
+      "source": [
+        "tests"
+      ],
+      "steps": [
+        "Set up try-catch blocks",
+        "Handle common error types",
+        "Log errors appropriately"
+      ],
       "task": "Implement error handling for @unrdf/atomvm-playground",
       "title": "Handle Errors"
     },
@@ -55,8 +67,14 @@
       "confidenceScore": 0.4,
       "context": "When encountering issues during usage",
       "id": "howto-troubleshoot-common-issues",
-      "source": ["inferred"],
-      "steps": ["Check configuration", "Review error messages", "Apply fixes"],
+      "source": [
+        "inferred"
+      ],
+      "steps": [
+        "Check configuration",
+        "Review error messages",
+        "Apply fixes"
+      ],
       "task": "Resolve common problems and errors",
       "title": "Troubleshoot Common Issues"
     }
@@ -73,7 +91,9 @@
         "type": "unknown"
       }
     ],
-    "source": ["inferred"],
+    "source": [
+      "inferred"
+    ],
     "title": "@unrdf/atomvm-playground Reference"
   },
   "tutorials": [
@@ -82,7 +102,9 @@
       "goal": "Learn how to set up and use @unrdf/atomvm-playground in your project",
       "id": "tutorial-getting-started-with-unrdf-atomvm-playground",
       "prerequisites": [],
-      "source": ["readme"],
+      "source": [
+        "readme"
+      ],
       "stepsOutline": [
         "Install the package",
         "Import required modules",

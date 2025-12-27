@@ -1,0 +1,63 @@
+---
+o_hash: kgc-example-001
+policy_id: policy-example
+bounds:
+  - min: 0
+  - max: 1000
+receipts:
+  - receipt-abc-123
+  - receipt-def-456
+views:
+  - tutorial
+  - how-to
+  - reference
+  - explanation
+sources:
+  - source-rdf-001
+---
+# Knowledge Graph Circuits
+
+KGC enables deterministic, provable knowledge graph operations with cryptographic verification.
+
+## Core Features
+
+- Deterministic AST generation
+- Proof anchoring with Merkle trees
+- Multi-view documentation (Diataxis)
+- Receipt-based verification
+
+## Example Query
+
+```kgc:query
+SELECT ?subject ?predicate ?object
+WHERE {
+  ?subject ?predicate ?object .
+  FILTER(?predicate = rdf:type)
+}
+```
+
+## Proof Structure
+
+```kgc:proof
+{
+  "merkle_root": "generated-at-build-time",
+  "o_hash": "kgc-example-001",
+  "timestamp": "ISO-8601"
+}
+```
+
+## Data Extraction
+
+```kgc:extract
+{
+  "entity": "ex:KnowledgeGraph",
+  "properties": ["nodes", "edges", "schema"]
+}
+```
+
+## Rendering
+
+```kgc:render
+template: kgc-diataxis-full
+views: [tutorial, how-to, reference, explanation]
+```

@@ -20,10 +20,15 @@
   },
   "explanation": {
     "architecture": "[![Nuxt UI](https://img.shields.io/badge/Made%20with-Nuxt%20UI-00DC82?logo=nuxt&labelColor=020420)](https://ui.nuxt.",
-    "concepts": ["core functionality"],
+    "concepts": [
+      "core functionality"
+    ],
     "confidenceScore": 0.3,
     "id": "explanation-docs-explanation",
-    "source": ["readme", "inferred"],
+    "source": [
+      "readme",
+      "inferred"
+    ],
     "title": "Understanding docs",
     "tradeoffs": [
       "Ease of use vs. advanced configuration options",
@@ -37,8 +42,14 @@
       "confidenceScore": 0.4,
       "context": "When encountering issues during usage",
       "id": "howto-troubleshoot-common-issues",
-      "source": ["inferred"],
-      "steps": ["Check configuration", "Review error messages", "Apply fixes"],
+      "source": [
+        "inferred"
+      ],
+      "steps": [
+        "Check configuration",
+        "Review error messages",
+        "Apply fixes"
+      ],
       "task": "Resolve common problems and errors",
       "title": "Troubleshoot Common Issues"
     },
@@ -46,8 +57,14 @@
       "confidenceScore": 0.4,
       "context": "When you need to accomplish common tasks",
       "id": "howto-use-docs",
-      "source": ["inferred"],
-      "steps": ["Import the package", "Initialize with options", "Execute operations"],
+      "source": [
+        "inferred"
+      ],
+      "steps": [
+        "Import the package",
+        "Initialize with options",
+        "Execute operations"
+      ],
       "task": "Perform basic operations with docs",
       "title": "Use docs"
     }
@@ -64,7 +81,9 @@
         "type": "unknown"
       }
     ],
-    "source": ["inferred"],
+    "source": [
+      "inferred"
+    ],
     "title": "docs Reference"
   },
   "tutorials": [
@@ -73,7 +92,9 @@
       "goal": "Learn how to set up and use docs in your project",
       "id": "tutorial-getting-started-with-docs",
       "prerequisites": [],
-      "source": ["readme"],
+      "source": [
+        "readme"
+      ],
       "stepsOutline": [
         "Install the package",
         "Import required modules",

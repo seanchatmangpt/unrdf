@@ -31,12 +31,23 @@
   },
   "explanation": {
     "architecture": "Determines if two RDF capsules can be safely reordered without changing the final graph state.",
-    "concepts": ["rdf", "commutativity", "conflict-detection", "capsule", "diff"],
+    "concepts": [
+      "rdf",
+      "commutativity",
+      "conflict-detection",
+      "capsule",
+      "diff"
+    ],
     "confidenceScore": 0.7,
     "id": "explanation-autonomic-innovation-agent-5-explanation",
-    "source": ["keywords", "readme"],
+    "source": [
+      "keywords",
+      "readme"
+    ],
     "title": "Understanding @autonomic-innovation/agent-5",
-    "tradeoffs": ["Performance vs. flexibility tradeoffs discussed in README"]
+    "tradeoffs": [
+      "Performance vs. flexibility tradeoffs discussed in README"
+    ]
   },
   "generatedAt": "2000-01-01T00:00:00.000Z",
   "howtos": [
@@ -44,8 +55,14 @@
       "confidenceScore": 0.5,
       "context": "When you need robust error handling in production",
       "id": "howto-handle-errors",
-      "source": ["tests"],
-      "steps": ["Set up try-catch blocks", "Handle common error types", "Log errors appropriately"],
+      "source": [
+        "tests"
+      ],
+      "steps": [
+        "Set up try-catch blocks",
+        "Handle common error types",
+        "Log errors appropriately"
+      ],
       "task": "Implement error handling for @autonomic-innovation/agent-5",
       "title": "Handle Errors"
     },
@@ -53,8 +70,15 @@
       "confidenceScore": 0.7,
       "context": "When working with rdf in your project",
       "id": "howto-integrate-with-rdf",
-      "source": ["keywords", "inferred"],
-      "steps": ["Install dependencies", "Set up integration", "Test integration"],
+      "source": [
+        "keywords",
+        "inferred"
+      ],
+      "steps": [
+        "Install dependencies",
+        "Set up integration",
+        "Test integration"
+      ],
       "task": "Connect @autonomic-innovation/agent-5 with rdf",
       "title": "Integrate with rdf"
     }
@@ -71,7 +95,9 @@
         "type": "unknown"
       }
     ],
-    "source": ["inferred"],
+    "source": [
+      "inferred"
+    ],
     "title": "@autonomic-innovation/agent-5 Reference"
   },
   "tutorials": [
@@ -79,8 +105,12 @@
       "confidenceScore": 0.8,
       "goal": "Complete your first practical examples",
       "id": "tutorial-first-steps",
-      "prerequisites": ["Completed \"Getting Started with @autonomic-innovation/agent-5\""],
-      "source": ["examples"],
+      "prerequisites": [
+        "Completed \"Getting Started with @autonomic-innovation/agent-5\""
+      ],
+      "source": [
+        "examples"
+      ],
       "stepsOutline": [
         "Work through add-del-conflict.json",
         "Work through commutative-overlap.json",
@@ -93,8 +123,13 @@
       "confidenceScore": 0.7,
       "goal": "Learn how to set up and use @autonomic-innovation/agent-5 in your project",
       "id": "tutorial-getting-started-with-autonomic-innovation-agent-5",
-      "prerequisites": ["Basic RDF knowledge"],
-      "source": ["examples", "keywords"],
+      "prerequisites": [
+        "Basic RDF knowledge"
+      ],
+      "source": [
+        "examples",
+        "keywords"
+      ],
       "stepsOutline": [
         "Install the package",
         "Import required modules",

@@ -25,6 +25,7 @@ This report documents the systematic exploration of Claude Code's capability sur
 ### Triple: Hooks + Subagents + Programmatic Mode
 
 **Components:**
+
 - Hooks: Tool governance at lifecycle points
 - Subagents: Parallel specialized workers
 - Programmatic: Non-interactive execution
@@ -32,12 +33,14 @@ This report documents the systematic exploration of Claude Code's capability sur
 **Emergent Property:** Parallel execution with enforceable policy and machine-readable outputs
 
 **Evidence Required:**
+
 - [ ] Spawn 3+ subagents with different hook policies
 - [ ] Verify hook enforcement per-agent
 - [ ] Capture structured JSON output from all agents
 - [ ] Measure: policy violations prevented, throughput, output consistency
 
 **Measurement Template:**
+
 ```json
 {
   "composition": ["hooks", "subagents", "programmatic"],
@@ -55,6 +58,7 @@ This report documents the systematic exploration of Claude Code's capability sur
 ### Triple: Checkpointing + Subagents + IDE Surface
 
 **Components:**
+
 - Checkpointing: State snapshots with rewind
 - Subagents: Parallel workers
 - IDE: Rich diff-and-approval workflow
@@ -62,6 +66,7 @@ This report documents the systematic exploration of Claude Code's capability sur
 **Emergent Property:** Aggressive parallel exploration with visual review and rapid recovery
 
 **Evidence Required:**
+
 - [ ] Spawn parallel agents making conflicting changes
 - [ ] Use IDE to visually compare branches
 - [ ] Rewind bad branches while preserving good ones
@@ -70,6 +75,7 @@ This report documents the systematic exploration of Claude Code's capability sur
 ### Triple: Plugins + MCP + Slash Commands
 
 **Components:**
+
 - Plugins: Bundled capability packages
 - MCP: External tool integration
 - Slash Commands: Programmable control
@@ -77,6 +83,7 @@ This report documents the systematic exploration of Claude Code's capability sur
 **Emergent Property:** Portable, shareable capability products with external integration
 
 **Evidence Required:**
+
 - [ ] Create plugin with MCP server config
 - [ ] Add custom slash command invoking MCP tools
 - [ ] Install plugin in fresh environment
@@ -85,12 +92,14 @@ This report documents the systematic exploration of Claude Code's capability sur
 ### Pair: Skills + Hooks
 
 **Components:**
+
 - Skills: Context-triggered capabilities
 - Hooks: Policy enforcement
 
 **Emergent Property:** Automatic capability injection with safety guardrails
 
 **Evidence Required:**
+
 - [ ] Define skill that auto-activates on pattern
 - [ ] Add hook that constrains skill's tool access
 - [ ] Verify skill activates AND hook enforces
@@ -99,16 +108,19 @@ This report documents the systematic exploration of Claude Code's capability sur
 ## Frontier Compositions (Unexplored)
 
 ### Priority 1 (High Expected Value)
+
 1. `[subagents, mcp, output_formats]` - Multi-agent external tool orchestration
 2. `[hooks, checkpointing, programmatic]` - Policy-enforced automated pipelines with rollback
 3. `[skills, plugins, slash_commands]` - Self-installing capability extensions
 
 ### Priority 2 (Medium Expected Value)
+
 4. `[background_tasks, hooks, output_formats]` - Long-running monitored jobs
 5. `[ide_surface, mcp, skills]` - Rich IDE with external data and auto-capabilities
 6. `[tool_permissions, subagents, plugins]` - Sandboxed plugin execution
 
 ### Priority 3 (Speculative)
+
 7. `[checkpointing, mcp, background_tasks]` - Stateful external integrations
 8. `[skills, programmatic, output_formats]` - Autonomous capability discovery
 
@@ -124,6 +136,7 @@ This report documents the systematic exploration of Claude Code's capability sur
 6. **Document**: Record in composition-results.json
 
 ### Adversarial Questions
+
 - Did I RUN the composition or just theorize?
 - Is the emergent property measurably different from sum of parts?
 - Can another researcher reproduce my result?
@@ -131,12 +144,12 @@ This report documents the systematic exploration of Claude Code's capability sur
 
 ## Results Summary
 
-| Composition | Status | Verdict | Key Metric Delta |
-|------------|--------|---------|------------------|
-| hooks+subagents+programmatic | pending | - | - |
-| checkpointing+subagents+ide | pending | - | - |
-| plugins+mcp+slash_commands | pending | - | - |
-| skills+hooks | pending | - | - |
+| Composition                  | Status  | Verdict | Key Metric Delta |
+| ---------------------------- | ------- | ------- | ---------------- |
+| hooks+subagents+programmatic | pending | -       | -                |
+| checkpointing+subagents+ide  | pending | -       | -                |
+| plugins+mcp+slash_commands   | pending | -       | -                |
+| skills+hooks                 | pending | -       | -                |
 
 ## Next Steps
 

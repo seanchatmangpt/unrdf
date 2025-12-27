@@ -13,10 +13,19 @@
   },
   "explanation": {
     "architecture": "@unrdf/kgc-claude is a package in the UNRDF ecosystem",
-    "concepts": ["kgc", "claude", "substrate", "run-capsule", "checkpoint"],
+    "concepts": [
+      "kgc",
+      "claude",
+      "substrate",
+      "run-capsule",
+      "checkpoint"
+    ],
     "confidenceScore": 0.4,
     "id": "explanation-unrdf-kgc-claude-explanation",
-    "source": ["keywords", "inferred"],
+    "source": [
+      "keywords",
+      "inferred"
+    ],
     "title": "Understanding @unrdf/kgc-claude",
     "tradeoffs": [
       "Ease of use vs. advanced configuration options",
@@ -30,8 +39,14 @@
       "confidenceScore": 0.5,
       "context": "When you need robust error handling in production",
       "id": "howto-handle-errors",
-      "source": ["tests"],
-      "steps": ["Set up try-catch blocks", "Handle common error types", "Log errors appropriately"],
+      "source": [
+        "tests"
+      ],
+      "steps": [
+        "Set up try-catch blocks",
+        "Handle common error types",
+        "Log errors appropriately"
+      ],
       "task": "Implement error handling for @unrdf/kgc-claude",
       "title": "Handle Errors"
     },
@@ -39,8 +54,15 @@
       "confidenceScore": 0.7,
       "context": "When working with kgc in your project",
       "id": "howto-integrate-with-kgc",
-      "source": ["keywords", "inferred"],
-      "steps": ["Install dependencies", "Set up integration", "Test integration"],
+      "source": [
+        "keywords",
+        "inferred"
+      ],
+      "steps": [
+        "Install dependencies",
+        "Set up integration",
+        "Test integration"
+      ],
       "task": "Connect @unrdf/kgc-claude with kgc",
       "title": "Integrate with kgc"
     }
@@ -93,7 +115,9 @@
         "type": "export"
       }
     ],
-    "source": ["exports"],
+    "source": [
+      "exports"
+    ],
     "title": "@unrdf/kgc-claude Reference"
   },
   "tutorials": [
@@ -102,7 +126,9 @@
       "goal": "Learn how to set up and use @unrdf/kgc-claude in your project",
       "id": "tutorial-getting-started-with-unrdf-kgc-claude",
       "prerequisites": [],
-      "source": ["keywords"],
+      "source": [
+        "keywords"
+      ],
       "stepsOutline": [
         "Install the package",
         "Import required modules",

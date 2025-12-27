@@ -1,38 +1,20 @@
 {
   "confidence": {
-    "explanation": 1,
-    "howtos": 0.75,
+    "explanation": 0.4,
+    "howtos": 0.25,
     "reference": 0.5,
-    "tutorials": 1
+    "tutorials": 0.4
   },
   "evidence": {
-    "docsFiles": [
-      "API.md",
-      "CONTRIBUTING.md",
-      "GUIDE.md",
-      "README.md",
-      "validation-report.json"
-    ],
+    "docsFiles": [],
     "examplesFiles": [
-      "ai-search-example.mjs",
-      "basic.mjs"
+      "ai-search-example.mjs"
     ],
-    "fingerprint": "1c8040f6fa5df8eac01ae91efbef80bfbad99191dd6f1fe85e4c93aba85ec48e",
-    "readmeHeadings": [
-      "Installation",
-      "📚 Examples",
-      "Quick Start",
-      "Features",
-      "Use Cases",
-      "Documentation",
-      "Status",
-      "Depends On",
-      "VOC Usage",
-      "License"
-    ]
+    "fingerprint": "a8d1c2dfc18a9b1e5281c5183d916e5bacc34d13629c7967bdd8181d21db1377",
+    "readmeHeadings": []
   },
   "explanation": {
-    "architecture": "![Version](https://img.shields.io/badge/version-5.0.0--beta.1-blue) ![Production Ready](https://img.shields.",
+    "architecture": "@unrdf/knowledge-engine is a package in the UNRDF ecosystem",
     "concepts": [
       "rdf",
       "knowledge-engine",
@@ -40,12 +22,10 @@
       "reasoning",
       "rules"
     ],
-    "confidenceScore": 1,
+    "confidenceScore": 0.4,
     "id": "explanation-unrdf-knowledge-engine-explanation",
     "source": [
       "keywords",
-      "readme",
-      "docs",
       "inferred"
     ],
     "title": "Understanding @unrdf/knowledge-engine",
@@ -57,21 +37,6 @@
   },
   "generatedAt": "2000-01-01T00:00:00.000Z",
   "howtos": [
-    {
-      "confidenceScore": 0.5,
-      "context": "When you need robust error handling in production",
-      "id": "howto-handle-errors",
-      "source": [
-        "tests"
-      ],
-      "steps": [
-        "Set up try-catch blocks",
-        "Handle common error types",
-        "Log errors appropriately"
-      ],
-      "task": "Implement error handling for @unrdf/knowledge-engine",
-      "title": "Handle Errors"
-    },
     {
       "confidenceScore": 0.7,
       "context": "When working with rdf in your project",
@@ -87,6 +52,21 @@
       ],
       "task": "Connect @unrdf/knowledge-engine with rdf",
       "title": "Integrate with rdf"
+    },
+    {
+      "confidenceScore": 0.4,
+      "context": "When encountering issues during usage",
+      "id": "howto-troubleshoot-common-issues",
+      "source": [
+        "inferred"
+      ],
+      "steps": [
+        "Check configuration",
+        "Review error messages",
+        "Apply fixes"
+      ],
+      "task": "Resolve common problems and errors",
+      "title": "Troubleshoot Common Issues"
     }
   ],
   "packageName": "@unrdf/knowledge-engine",
@@ -132,7 +112,7 @@
   },
   "tutorials": [
     {
-      "confidenceScore": 0.9999999999999999,
+      "confidenceScore": 0.7,
       "goal": "Learn how to set up and use @unrdf/knowledge-engine in your project",
       "id": "tutorial-getting-started-with-unrdf-knowledge-engine",
       "prerequisites": [
@@ -140,13 +120,13 @@
       ],
       "source": [
         "examples",
-        "readme",
         "keywords"
       ],
       "stepsOutline": [
-        "Installation",
-        "📚 Examples",
-        "VOC Usage"
+        "Install the package",
+        "Import required modules",
+        "Create a basic example",
+        "Run and verify output"
       ],
       "title": "Getting Started with @unrdf/knowledge-engine"
     }

@@ -24,8 +24,8 @@ Generated documentation using the Diátaxis framework.
 
 ### How-To Guides
 
-- [Handle Errors](how-to/howto-howto-handle-errors.md)
 - [Integrate with unrdf](how-to/howto-howto-integrate-with-unrdf.md)
+- [Troubleshoot Common Issues](how-to/howto-howto-troubleshoot-common-issues.md)
 
 ### Reference
 

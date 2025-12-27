@@ -13,10 +13,14 @@
   },
   "explanation": {
     "architecture": "chaos-cluster is a package in the UNRDF ecosystem",
-    "concepts": ["core functionality"],
+    "concepts": [
+      "core functionality"
+    ],
     "confidenceScore": 0,
     "id": "explanation-chaos-cluster-explanation",
-    "source": ["inferred"],
+    "source": [
+      "inferred"
+    ],
     "title": "Understanding chaos-cluster",
     "tradeoffs": [
       "Ease of use vs. advanced configuration options",
@@ -30,8 +34,14 @@
       "confidenceScore": 0.4,
       "context": "When encountering issues during usage",
       "id": "howto-troubleshoot-common-issues",
-      "source": ["inferred"],
-      "steps": ["Check configuration", "Review error messages", "Apply fixes"],
+      "source": [
+        "inferred"
+      ],
+      "steps": [
+        "Check configuration",
+        "Review error messages",
+        "Apply fixes"
+      ],
       "task": "Resolve common problems and errors",
       "title": "Troubleshoot Common Issues"
     },
@@ -39,8 +49,14 @@
       "confidenceScore": 0.4,
       "context": "When you need to accomplish common tasks",
       "id": "howto-use-chaos-cluster",
-      "source": ["inferred"],
-      "steps": ["Import the package", "Initialize with options", "Execute operations"],
+      "source": [
+        "inferred"
+      ],
+      "steps": [
+        "Import the package",
+        "Initialize with options",
+        "Execute operations"
+      ],
       "task": "Perform basic operations with chaos-cluster",
       "title": "Use chaos-cluster"
     }
@@ -57,7 +73,9 @@
         "type": "unknown"
       }
     ],
-    "source": ["inferred"],
+    "source": [
+      "inferred"
+    ],
     "title": "chaos-cluster Reference"
   },
   "tutorials": [
@@ -66,7 +84,9 @@
       "goal": "Learn how to set up and use chaos-cluster in your project",
       "id": "tutorial-getting-started-with-chaos-cluster",
       "prerequisites": [],
-      "source": ["inferred"],
+      "source": [
+        "inferred"
+      ],
       "stepsOutline": [
         "Install the package",
         "Import required modules",

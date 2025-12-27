@@ -1,0 +1,277 @@
+{# Monograph Thesis Template #}
+{# Traditional thesis structure #}
+{# Variables: thesis (object with title, author, institution, chapters) #}
+
+\documentclass[12pt,a4paper,twoside]{report}
+
+% Packages
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{natbib}
+\usepackage[margin=1.25in]{geometry}
+\usepackage{setspace}
+\usepackage{fancyhdr}
+\usepackage{appendix}
+
+% Page setup
+\onehalfspacing
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE,RO]{\thepage}
+\fancyhead[RE]{\leftmark}
+\fancyhead[LO]{\rightmark}
+
+% Document metadata
+\title{ {{- thesis.title | texescape -}} }
+\author{ {{- thesis.author.name | texescape -}} }
+\date{\today}
+
+\begin{document}
+
+% =============================================================================
+% FRONT MATTER
+% =============================================================================
+\frontmatter
+
+% Title Page
+\begin{titlepage}
+    \centering
+    \vspace*{2cm}
+
+    {\LARGE\bfseries {{ thesis.title | texescape }}\par}
+    \vspace{1.5cm}
+
+    {\large A {{ thesis.degree | default('PhD') }} Thesis\par}
+    \vspace{1cm}
+
+    {\large Submitted by\par}
+    {\Large\bfseries {{ thesis.author.name | texescape }}\par}
+    \vspace{1cm}
+
+    {% if thesis.author.institution %}
+    {\large {{ thesis.author.institution | texescape }}\par}
+    {% endif %}
+    {% if thesis.author.department %}
+    {\large {{ thesis.author.department | texescape }}\par}
+    {% endif %}
+
+    \vspace{2cm}
+
+    {% if thesis.supervisor %}
+    {\large Supervised by\par}
+    {\large {{ thesis.supervisor.name | texescape }}\par}
+    {% endif %}
+
+    \vfill
+    {\large \today\par}
+\end{titlepage}
+
+% Declaration
+\chapter*{Declaration}
+I hereby declare that this thesis is my own original work and has not been submitted for any other degree or professional qualification.
+
+\vspace{2cm}
+\noindent Signed: \hrulefill
+
+\noindent Date: \hrulefill
+
+% Abstract
+\chapter*{Abstract}
+{% if thesis.abstract %}
+{{ thesis.abstract | texescape }}
+{% else %}
+% TODO: Write abstract (typically 150-300 words)
+% - Research problem
+% - Methods used
+% - Key findings
+% - Conclusions
+{% endif %}
+
+% Acknowledgements
+\chapter*{Acknowledgements}
+{% if thesis.acknowledgements %}
+{{ thesis.acknowledgements | texescape }}
+{% else %}
+% TODO: Write acknowledgements
+{% endif %}
+
+% Table of Contents
+\tableofcontents
+\listoffigures
+\listoftables
+
+% =============================================================================
+% MAIN MATTER
+% =============================================================================
+\mainmatter
+
+% =============================================================================
+% CHAPTER 1: INTRODUCTION
+% =============================================================================
+\chapter{Introduction}
+\label{chap:introduction}
+
+{% if thesis.chapters and thesis.chapters[0] %}
+{{ thesis.chapters[0].content | texescape }}
+{% else %}
+% TODO: Write introduction chapter
+% - Background and context
+% - Problem statement
+% - Research questions
+% - Thesis structure
+{% endif %}
+
+\section{Background}
+% Provide background context
+
+\section{Problem Statement}
+% Define the research problem
+
+\section{Research Questions}
+% List research questions
+
+\section{Thesis Outline}
+% Describe thesis structure
+
+% =============================================================================
+% CHAPTER 2: LITERATURE REVIEW
+% =============================================================================
+\chapter{Literature Review}
+\label{chap:literature}
+
+{% if thesis.chapters and thesis.chapters[1] %}
+{{ thesis.chapters[1].content | texescape }}
+{% else %}
+% TODO: Write literature review
+% - Theoretical framework
+% - Prior research
+% - Research gaps
+{% endif %}
+
+\section{Theoretical Framework}
+% Establish theoretical foundation
+
+\section{Related Work}
+% Review prior research
+
+\section{Research Gap}
+% Identify gaps in literature
+
+% =============================================================================
+% CHAPTER 3: METHODOLOGY
+% =============================================================================
+\chapter{Methodology}
+\label{chap:methodology}
+
+{% if thesis.chapters and thesis.chapters[2] %}
+{{ thesis.chapters[2].content | texescape }}
+{% else %}
+% TODO: Write methodology chapter
+% - Research design
+% - Data collection
+% - Analysis methods
+% - Validity and reliability
+{% endif %}
+
+\section{Research Design}
+% Describe research design
+
+\section{Data Collection}
+% Explain data collection methods
+
+\section{Data Analysis}
+% Describe analysis procedures
+
+\section{Validity and Reliability}
+% Address validity concerns
+
+% =============================================================================
+% CHAPTER 4: RESULTS
+% =============================================================================
+\chapter{Results}
+\label{chap:results}
+
+{% if thesis.chapters and thesis.chapters[3] %}
+{{ thesis.chapters[3].content | texescape }}
+{% else %}
+% TODO: Write results chapter
+% - Findings
+% - Tables and figures
+% - Statistical analysis
+{% endif %}
+
+\section{Overview of Findings}
+% Summarize key findings
+
+\section{Detailed Results}
+% Present detailed results
+
+% =============================================================================
+% CHAPTER 5: DISCUSSION
+% =============================================================================
+\chapter{Discussion}
+\label{chap:discussion}
+
+{% if thesis.chapters and thesis.chapters[4] %}
+{{ thesis.chapters[4].content | texescape }}
+{% else %}
+% TODO: Write discussion chapter
+% - Interpretation of results
+% - Comparison with literature
+% - Implications
+% - Limitations
+{% endif %}
+
+\section{Interpretation}
+% Interpret findings
+
+\section{Implications}
+% Discuss implications
+
+\section{Limitations}
+% Acknowledge limitations
+
+% =============================================================================
+% CHAPTER 6: CONCLUSION
+% =============================================================================
+\chapter{Conclusion}
+\label{chap:conclusion}
+
+{% if thesis.chapters and thesis.chapters[5] %}
+{{ thesis.chapters[5].content | texescape }}
+{% else %}
+% TODO: Write conclusion chapter
+% - Summary of contributions
+% - Answers to research questions
+% - Future work
+{% endif %}
+
+\section{Summary of Contributions}
+% Summarize contributions
+
+\section{Answers to Research Questions}
+% Address research questions
+
+\section{Future Work}
+% Outline future research directions
+
+% =============================================================================
+% BACK MATTER
+% =============================================================================
+\backmatter
+
+% References
+\bibliographystyle{plainnat}
+% \bibliography{references}
+
+% Appendices
+\begin{appendices}
+\chapter{Supplementary Materials}
+% Add appendices as needed
+\end{appendices}
+
+\end{document}
