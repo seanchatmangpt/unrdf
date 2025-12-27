@@ -228,6 +228,24 @@ importers:
         specifier: workspace:*
         version: link:../packages/knowledge-engine
 
+  exploration/agents/agent-4:
+    dependencies:
+      '@unrdf/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+      '@unrdf/knowledge-engine':
+        specifier: workspace:*
+        version: link:../../../packages/knowledge-engine
+      '@unrdf/oxigraph':
+        specifier: workspace:*
+        version: link:../../../packages/oxigraph
+      rdf-ext:
+        specifier: ^2.6.0
+        version: 2.6.0
+      rdf-validate-shacl:
+        specifier: ^0.6.5
+        version: 0.6.5
+
   packages/atomvm:
     dependencies:
       '@opentelemetry/api':

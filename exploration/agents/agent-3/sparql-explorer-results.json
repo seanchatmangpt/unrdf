@@ -1,0 +1,56 @@
+{
+  "timestamp": "2025-12-27T03:19:02.171Z",
+  "testDataLoaded": 13,
+  "selectQueries": [
+    {
+      "name": "Find all people",
+      "resultCount": 3,
+      "success": true,
+      "description": "SELECT with rdf:type and literal matching"
+    },
+    {
+      "name": "Count people",
+      "resultCount": 1,
+      "rawResult": [{}],
+      "success": true,
+      "description": "SELECT with COUNT aggregate function"
+    },
+    {
+      "name": "Find people over 30",
+      "resultCount": 0,
+      "success": true,
+      "description": "SELECT with FILTER on numeric literal"
+    }
+  ],
+  "constructQueries": [
+    {
+      "name": "Derive friend relationships",
+      "derivedTripleCount": 8,
+      "success": true,
+      "description": "CONSTRUCT creates new triples from foaf:knows pattern"
+    },
+    {
+      "name": "Derive person roles",
+      "derivedTripleCount": 0,
+      "success": true,
+      "description": "CONSTRUCT with FILTER to derive role assignments"
+    },
+    {
+      "name": "Derive mutual connections",
+      "derivedTripleCount": 4,
+      "success": true,
+      "description": "CONSTRUCT with bidirectional pattern matching"
+    }
+  ],
+  "errors": [],
+  "sparqlFeaturesSupported": [
+    "SELECT queries",
+    "rdf:type (a) matching",
+    "COUNT aggregate",
+    "FILTER clause",
+    "CONSTRUCT queries",
+    "ASK queries",
+    "DESCRIBE queries"
+  ],
+  "sparqlFeaturesUnsupported": []
+}

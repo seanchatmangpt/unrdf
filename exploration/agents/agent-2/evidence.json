@@ -1,0 +1,82 @@
+{
+  "quadCount": 1,
+  "beforeCanonical": [
+    {
+      "subject": "http://example.org/bob",
+      "predicate": "http://xmlns.com/foaf/0.1/name",
+      "object": "Bob",
+      "graph": "http://example.org/graph1"
+    },
+    {
+      "subject": "http://example.org/bob",
+      "predicate": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+      "object": "http://xmlns.com/foaf/0.1/Person",
+      "graph": "http://example.org/graph1"
+    },
+    {
+      "subject": "http://example.org/alice",
+      "predicate": "http://xmlns.com/foaf/0.1/knows",
+      "object": "http://example.org/bob",
+      "graph": "http://example.org/graph1"
+    },
+    {
+      "subject": "http://example.org/alice",
+      "predicate": "http://xmlns.com/foaf/0.1/name",
+      "object": "Alice",
+      "graph": "http://example.org/graph1"
+    },
+    {
+      "subject": "http://example.org/alice",
+      "predicate": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+      "object": "http://xmlns.com/foaf/0.1/Person",
+      "graph": "http://example.org/graph1"
+    }
+  ],
+  "afterCanonical": [
+    {
+      "subject": "http://example.org/alice",
+      "predicate": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+      "object": "http://xmlns.com/foaf/0.1/Person",
+      "graph": "http://example.org/graph1"
+    },
+    {
+      "subject": "http://example.org/alice",
+      "predicate": "http://xmlns.com/foaf/0.1/knows",
+      "object": "http://example.org/bob",
+      "graph": "http://example.org/graph1"
+    },
+    {
+      "subject": "http://example.org/alice",
+      "predicate": "http://xmlns.com/foaf/0.1/name",
+      "object": "Alice",
+      "graph": "http://example.org/graph1"
+    },
+    {
+      "subject": "http://example.org/bob",
+      "predicate": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+      "object": "http://xmlns.com/foaf/0.1/Person",
+      "graph": "http://example.org/graph1"
+    },
+    {
+      "subject": "http://example.org/bob",
+      "predicate": "http://xmlns.com/foaf/0.1/name",
+      "object": "Bob",
+      "graph": "http://example.org/graph1"
+    }
+  ],
+  "canonicalHash": "6683ce2716a6e0cf2f87cda37eed4f4a7337b98175569873776f390b18130791",
+  "roundTripHash": "6683ce2716a6e0cf2f87cda37eed4f4a7337b98175569873776f390b18130791",
+  "formatsSupported": ["text/turtle", "application/n-quads"],
+  "formatsTestedCount": 2,
+  "serializationResults": {
+    "application/n-quads": {
+      "success": true,
+      "length": 590,
+      "preview": "<http://example.org/bob> <http://xmlns.com/foaf/0.1/name> \"Bob\" <http://example.org/graph1> .\n<http://example.org/bob> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Pers"
+    }
+  },
+  "errors": [
+    "Turtle serialization: Dump operation failed: A RDF format supporting datasets was expected, Turtle found",
+    "RDF/XML serialization: Dump operation failed: A RDF format supporting datasets was expected, RDF/XML found"
+  ]
+}
