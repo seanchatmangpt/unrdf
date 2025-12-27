@@ -1,0 +1,602 @@
+{
+  "specification": {
+    "version": "1.0.0",
+    "date": "2025-12-27",
+    "agent": "Agent-1 (Specification)",
+    "methodology": "SPARC - Specification Phase",
+    "status": "Implementation-Ready"
+  },
+
+  "spec_summary": [
+    "KGC probe is a verification engine that scans .kgcmd documents and proves: (1) frontmatter valid, (2) receipts exist + verified, (3) dynamic sections hash-match outputs, (4) blocks deterministic, (5) bounds respected",
+    "10 probe domains span document structure validation, receipt cryptography, determinism guarantees, resource bounds enforcement, content integrity, and schema conformance",
+    "Success measured by: 100% document traversal (no missed sections), 0 false-positive/negative errors, <100ms scan latency, 99%+ hash collision resistance, and reproducible verification across runs",
+    "Guard policy forbids: runtime SPARQL execution (scan-only), out-of-bounds file access, modifying documents, network calls, state mutation, or non-deterministic operations",
+    "Zod schemas enforce: 64-char hex hashes, RFC 8785 JSON canonicalization, camelCase field naming, UUID v4 policy_id, and semver versions"
+  ],
+
+  "testable_claims": [
+    {
+      "id": "T-001",
+      "domain": "Determinism",
+      "claim": "Identical world + identical probe version => identical audit report (A=A')",
+      "evidence_required": [
+        "Run `kgc probe scan docs/api-reference.kgcmd` at T0 and T1 with same state",
+        "Hash both outputs: sha256(report_T0) === sha256(report_T1)",
+        "No timestamps, execution times, or random IDs in report"
+      ],
+      "measurement": "Byte-for-byte reproducibility of scan output",
+      "acceptance": "report_T0 === report_T1 (bit-identical JSON)"
+    },
+    {
+      "id": "T-002",
+      "domain": "Receipt Validation",
+      "claim": "Every frontmatter receiptId has matching receipt in store OR error returned",
+      "evidence_required": [
+        "Extract all receiptId from frontmatter",
+        "For each: attempt load from receipts/ directory",
+        "Verify SHA-256(receipt_body) === receipt.id",
+        "Report missing/mismatched receipts"
+      ],
+      "measurement": "Missing receipt count, mismatched hash count",
+      "acceptance": "0 missing receipts, 0 hash mismatches"
+    },
+    {
+      "id": "T-003",
+      "domain": "Hash Integrity",
+      "claim": "Dynamic section content hash matches receipt.output_hash",
+      "evidence_required": [
+        "Extract dynamic section content (between <!-- kgc:dynamic --> markers)",
+        "Compute SHA-256 using RFC 8785 canonicalization",
+        "Load receipt by receiptId",
+        "Compare computed hash === receipt.output_hash"
+      ],
+      "measurement": "Hash mismatch count, canonicalization correctness",
+      "acceptance": "All dynamic sections match their receipts (0 mismatches)"
+    },
+    {
+      "id": "T-004",
+      "domain": "Frontmatter Schema",
+      "claim": "All frontmatter fields satisfy Zod schema constraints",
+      "evidence_required": [
+        "Parse YAML frontmatter",
+        "Validate against KGCMarkdownFrontmatterSchema",
+        "Check field types, regex patterns, ranges",
+        "Return specific field errors"
+      ],
+      "measurement": "Schema violation count, field coverage %",
+      "acceptance": "0 schema violations, 100% required fields present"
+    },
+    {
+      "id": "T-005",
+      "domain": "Block Structure",
+      "claim": "Every executable block has valid metadata JSON + required fields",
+      "evidence_required": [
+        "Scan for \\`\\`\\`kgc:* blocks",
+        "Parse metadata (before ---) as JSON",
+        "Validate receiptId, expectedOutputFormat, determinismLevel",
+        "Check body matches block type format"
+      ],
+      "measurement": "Invalid block count, missing field count",
+      "acceptance": "All blocks parse + validate (0 structure errors)"
+    },
+    {
+      "id": "T-006",
+      "domain": "Resource Bounds",
+      "claim": "Receipt metadata respects frontmatter bounds: maxQueries, maxRuntime, maxFileScans",
+      "evidence_required": [
+        "Load receipt metadata for each block",
+        "Compare: receipt.metadata.resultCount <= bounds.maxQueries",
+        "Compare: receipt.metadata.executionTime <= bounds.maxRuntime",
+        "Compare: receipt.metadata.filesScanned <= bounds.maxFileScans"
+      ],
+      "measurement": "Bounds violation count, utilization %",
+      "acceptance": "0 bounds violations across all receipts"
+    },
+    {
+      "id": "T-007",
+      "domain": "Determinism Level",
+      "claim": "Blocks with determinismLevel='strict' have receipt marked as such + query has ORDER BY",
+      "evidence_required": [
+        "Check block metadata.determinismLevel",
+        "If 'strict': verify receipt.metadata.determinismLevel='strict'",
+        "If block_type='kgc:query': parse query for ORDER BY clause",
+        "Report mismatches"
+      ],
+      "measurement": "Determinism level mismatch count, missing ORDER BY count",
+      "acceptance": "All strict blocks verified deterministic (0 violations)"
+    },
+    {
+      "id": "T-008",
+      "domain": "Receipt Chain",
+      "claim": "No cyclic dependencies; all dependency receipts exist; timestamp ordering correct",
+      "evidence_required": [
+        "Build receipt dependency graph from receipt.dependencies",
+        "Run DAG check (no cycles)",
+        "For each dependency ID: verify exists in store",
+        "Verify dependent.timestamp >= dependency.timestamp"
+      ],
+      "measurement": "Cycle count, missing dependency count, ordering violation count",
+      "acceptance": "0 cycles, 0 missing deps, all timestamps ordered"
+    },
+    {
+      "id": "T-009",
+      "domain": "Universe Consistency",
+      "claim": "All receipts in document use same o_hash value",
+      "evidence_required": [
+        "Extract o_hash from frontmatter",
+        "Load all referenced receipts",
+        "Compare each receipt.o_hash === frontmatter.o_hash",
+        "Report mismatches"
+      ],
+      "measurement": "Universe hash mismatch count",
+      "acceptance": "All receipts use same o_hash (0 mismatches)"
+    },
+    {
+      "id": "T-010",
+      "domain": "Content Coverage",
+      "claim": "All dynamic sections marked with <!-- kgc:dynamic --> have corresponding receipts",
+      "evidence_required": [
+        "Scan for HTML comments: <!-- kgc:dynamic section=* receiptId=* -->",
+        "Extract receiptId from each",
+        "Verify receiptId in frontmatter.receipts array",
+        "Report unmarked or orphaned sections"
+      ],
+      "measurement": "Orphaned section count, unmarked receipt count",
+      "acceptance": "All dynamic sections mapped (0 orphans, 0 unmapped receipts)"
+    },
+    {
+      "id": "T-011",
+      "domain": "Cross-Reference Validity",
+      "claim": "All internal links (e.g., [text](#section)) reference existing headings",
+      "evidence_required": [
+        "Extract all markdown links [text](#anchor)",
+        "Build heading map from ## ### #### sections",
+        "Verify each anchor exists",
+        "Report broken links"
+      ],
+      "measurement": "Broken link count, heading coverage %",
+      "acceptance": "0 broken internal links"
+    },
+    {
+      "id": "T-012",
+      "domain": "Merkle Proof",
+      "claim": "Merkle proofs in receipts (if present) verify: correct siblings hash to root",
+      "evidence_required": [
+        "For each receipt with merkle_proof field",
+        "Compute hash chain: leaf -> siblings -> root",
+        "Verify computed_root === receipt.merkle_proof.root",
+        "Report invalid proofs"
+      ],
+      "measurement": "Invalid merkle proof count",
+      "acceptance": "All merkle proofs valid (0 failures)"
+    },
+    {
+      "id": "T-013",
+      "domain": "Policy Compliance",
+      "claim": "policy_id in frontmatter is valid UUID v4 and references known policy pack",
+      "evidence_required": [
+        "Verify policy_id matches UUID regex ^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+        "Query policy store for policy_id (optional, warn if not found)",
+        "Check policy versioning if applicable"
+      ],
+      "measurement": "Invalid UUID count, unknown policy count",
+      "acceptance": "All policy_ids valid UUIDs (0 format violations)"
+    },
+    {
+      "id": "T-014",
+      "domain": "Version Consistency",
+      "claim": "Document version field is valid semver and monotonically increases across proof runs",
+      "evidence_required": [
+        "Parse version field as semver",
+        "Compare with previous proof version (if exists)",
+        "Verify new_version >= old_version",
+        "Report downgrade violations"
+      ],
+      "measurement": "Invalid semver count, version downgrade count",
+      "acceptance": "All versions valid semver, no downgrades"
+    },
+    {
+      "id": "T-015",
+      "domain": "File Integrity",
+      "claim": "All source files in frontmatter.sources exist + hash matches content",
+      "evidence_required": [
+        "For each source: verify file exists",
+        "Extract source[lineStart:lineEnd]",
+        "Compute SHA-256(source_content)",
+        "Compare with source.hash",
+        "Report missing files/hash mismatches"
+      ],
+      "measurement": "Missing file count, hash mismatch count",
+      "acceptance": "All source files accessible + hashes match (0 failures)"
+    }
+  ],
+
+  "acceptance_criteria": {
+    "domain_1_frontmatter_parsing": {
+      "name": "Frontmatter Parsing & Validation",
+      "tests": [
+        "YAML parses without errors",
+        "o_hash: 64-char hex with regex ^[a-f0-9]{64}$",
+        "policy_id: valid UUID v4",
+        "receipts: array of 64-char hex strings, 0-1000 items",
+        "bounds: maxQueries ∈ [1,10000], maxRuntime ∈ [100,60000], maxFileScans ∈ [1,1000]",
+        "views: non-empty array, each item in [tutorial, how-to, reference, explanation]",
+        "sources: array of objects with path, lineStart, lineEnd, hash; lineEnd >= lineStart",
+        "version: valid semver format",
+        "createdAt, lastProved: valid ISO 8601; lastProved >= createdAt",
+        "authors: optional, each has name (required) + role (optional)"
+      ],
+      "success_condition": "All 10 checks PASS for every document"
+    },
+
+    "domain_2_block_structure": {
+      "name": "Executable Block Validation",
+      "tests": [
+        "Block fence: \\`\\`\\`kgc:query|kgc:proof|kgc:extract|kgc:render```",
+        "Metadata: valid JSON object before --- separator",
+        "receiptId: 64-char hex, present in frontmatter.receipts",
+        "expectedOutputFormat: one of [json, markdown, text]",
+        "determinismLevel: one of [strict, lenient, best-effort]",
+        "Body: format matches block type (JSON for kgc:proof, SPARQL for kgc:query, etc.)",
+        "kgc:query: has queryType, resultBounds, timeout in metadata; ORDER BY if determinismLevel=strict",
+        "kgc:extract: has extractionType, fileGlobs, includePrivate, includeDocstrings",
+        "kgc:render: has templateName, sectionTitle, includeTableOfContents",
+        "kgc:proof: has proofType, verifyChain, validateSignatures"
+      ],
+      "success_condition": "All blocks parse + all checks PASS"
+    },
+
+    "domain_3_receipt_validation": {
+      "name": "Receipt Cryptography & Hashing",
+      "tests": [
+        "Receipt exists in store (file or DB)",
+        "Receipt ID: SHA-256(canonical_receipt_body) matches receipt.id",
+        "Receipt fields: id, timestamp, o_hash, block_type, input_hash, output_hash, decision, metadata present",
+        "decision: one of [ADMIT, REJECT, PARTIAL]",
+        "timestamp: valid ISO 8601",
+        "o_hash: matches frontmatter o_hash",
+        "input_hash: SHA-256(block_metadata + block_body)",
+        "output_hash: SHA-256(generated_content) using RFC 8785 canonicalization",
+        "dependencies: array of receipt IDs; all exist in store",
+        "merkle_proof (if present): siblings + root verify correctly"
+      ],
+      "success_condition": "All receipts ADMIT + hashes valid + no cycles"
+    },
+
+    "domain_4_dynamic_sections": {
+      "name": "Dynamic Content Integrity",
+      "tests": [
+        "Marked with <!-- kgc:dynamic section=* receiptId=* -->",
+        "Closed with <!-- /kgc:dynamic -->",
+        "receiptId in section matches frontmatter.receipts",
+        "Content between markers: SHA-256(content, RFC 8785) === receipt.output_hash",
+        "No manual edits (content matches receipt output exactly)",
+        "All dynamic sections have receipt mapping",
+        "No orphaned receipts (all receipts used)"
+      ],
+      "success_condition": "All dynamic sections hash-match receipts + 1:1 mapping"
+    },
+
+    "domain_5_determinism_guarantees": {
+      "name": "Determinism & Reproducibility",
+      "tests": [
+        "strict blocks: receipt.metadata.determinismLevel = 'strict'",
+        "strict blocks (queries): include ORDER BY clause",
+        "strict blocks (extracts): sorted by file path, line number",
+        "strict blocks (renders): JSON keys sorted before template",
+        "lenient blocks: allow semantic equivalence, not bit-for-bit",
+        "best-effort blocks: document non-deterministic fields in metadata",
+        "Canonical JSON: RFC 8785 (keys sorted, no whitespace, NFC unicode)",
+        "No timestamps/random in output hash computation",
+        "Regeneration of block: produces identical output (bit-for-bit) for strict, semantically equiv for lenient"
+      ],
+      "success_condition": "All strict blocks reproducible; lenient blocks semantically stable"
+    },
+
+    "domain_6_resource_bounds": {
+      "name": "Resource Limit Enforcement",
+      "tests": [
+        "frontmatter.bounds.maxQueries >= receipt.metadata.resultCount",
+        "frontmatter.bounds.maxRuntime >= receipt.metadata.executionTime",
+        "frontmatter.bounds.maxFileScans >= receipt.metadata.filesScanned",
+        "No bounds: warn/error if receipt metadata missing these fields",
+        "Utilization report: resultCount/maxQueries, executionTime/maxRuntime, filesScanned/maxFileScans",
+        "Alert if any utilization > 80% (recommend increasing bounds)"
+      ],
+      "success_condition": "0 bounds violations; all resources within declared limits"
+    },
+
+    "domain_7_receipt_chain": {
+      "name": "Receipt Dependency Graph",
+      "tests": [
+        "Build DAG: nodes=receipts, edges=dependencies",
+        "No cycles: run DFS, report any back-edges",
+        "All dependencies exist: verify each receipt.dependencies[*] in store",
+        "Timestamp ordering: dependent.timestamp >= all_dependencies.timestamp",
+        "Universe consistency: all receipts.o_hash === frontmatter.o_hash",
+        "Decision propagation: if any dependency.decision != ADMIT, mark dependent as tainted",
+        "Merkle roots: if batch receipt, verify merkle_proof siblings hash to root"
+      ],
+      "success_condition": "DAG valid, no cycles, all timestamps ordered, all deps exist"
+    },
+
+    "domain_8_schema_conformance": {
+      "name": "Zod Schema Validation",
+      "tests": [
+        "FrontmatterSchema: all fields type-checked + constrained",
+        "BlockMetadataSchema: receiptId, expectedOutputFormat, determinismLevel",
+        "QueryMetadataSchema: queryType, resultBounds, timeout",
+        "ExtractMetadataSchema: extractionType, fileGlobs, includePrivate",
+        "RenderMetadataSchema: templateName, sectionTitle, includeTableOfContents",
+        "ProofMetadataSchema: proofType, verifyChain, validateSignatures",
+        "ReceiptSchema: all required fields, correct types + ranges",
+        "Validation errors: specific field path + constraint violation"
+      ],
+      "success_condition": "Document + all blocks pass Zod validation (0 schema errors)"
+    },
+
+    "domain_9_content_cross_references": {
+      "name": "Link Integrity & Traceability",
+      "tests": [
+        "Build heading map: H1, H2, H3, H4 with generated IDs",
+        "Scan markdown: extract [text](#anchor) links",
+        "Verify: each anchor exists in heading map",
+        "Source links: <!-- kgc:source-link index=* line=* --> reference valid sources[index]",
+        "Receipt links: <!-- kgc:receipt-link id=* --> reference frontmatter.receipts",
+        "No heading level skips (H2 -> H4 without H3)",
+        "Heading uniqueness: no duplicate IDs within document"
+      ],
+      "success_condition": "All links resolvable, no broken references, proper hierarchy"
+    },
+
+    "domain_10_error_reporting": {
+      "name": "Error Detection & Reporting",
+      "tests": [
+        "Error classification: InvalidFrontmatter, MissingReceipt, MismatchedHash, etc.",
+        "Error location: file path, line number, field name where applicable",
+        "Severity levels: Error (blocks), Warning (caution)",
+        "Error aggregation: collect all errors before reporting (no fail-fast)",
+        "Error output format: structured JSON with path + message + remediation",
+        "False positives: <1% rate across diverse documents",
+        "False negatives: detect 99%+ of actual violations"
+      ],
+      "success_condition": "Errors specific + actionable; no spurious reports; complete coverage"
+    }
+  },
+
+  "guard_policy_summary": {
+    "forbidden_operations": [
+      {
+        "operation": "Execute SPARQL queries",
+        "reason": "Probe is scan-only verification; prevents infinite loops, DoS via complex queries",
+        "enforcement": "If block_type=kgc:query: parse only, do NOT execute; validate syntax only"
+      },
+      {
+        "operation": "Network I/O",
+        "reason": "Prevent DNS resolution attacks, external data fetch side effects",
+        "enforcement": "Block all imports of 'http', 'https', 'fetch', 'net' modules"
+      },
+      {
+        "operation": "File system write",
+        "reason": "Scan-only tool; prevent document mutation, receipt tampering",
+        "enforcement": "Only fs.readFile, fs.stat allowed; block fs.writeFile, fs.appendFile"
+      },
+      {
+        "operation": "Child process execution",
+        "reason": "Prevent arbitrary code execution via shell commands",
+        "enforcement": "Block all 'child_process', 'execSync', 'spawn' operations"
+      },
+      {
+        "operation": "Out-of-bounds file access",
+        "reason": "Enforce path containment (no ../ directory traversal)",
+        "enforcement": "Guard: source.path must NOT contain '..'; receipt path must be within /receipts/"
+      },
+      {
+        "operation": "State mutation",
+        "reason": "Ensure idempotence: scan(doc) + scan(doc) = same result",
+        "enforcement": "No global state modifications; pure functions only"
+      },
+      {
+        "operation": "Non-deterministic operations",
+        "reason": "Proof reproducibility: same input => same output always",
+        "enforcement": "No Math.random(), Date.now(), UUID generation; no random jitter in proof output"
+      },
+      {
+        "operation": "Eval or dynamic code",
+        "reason": "Prevent code injection attacks",
+        "enforcement": "Block eval(), Function(), vm.runInNewContext()"
+      },
+      {
+        "operation": "Dynamic require",
+        "reason": "Prevent loading untrusted modules from document paths",
+        "enforcement": "Only static requires; block require(dynamicString)"
+      },
+      {
+        "operation": "Receipt tampering",
+        "reason": "Proof integrity: receipts are immutable",
+        "enforcement": "Treat receipts as read-only; any mismatch = verification failure"
+      }
+    ],
+    "resource_limits": [
+      {
+        "resource": "Memory",
+        "limit": "500MB per document scan",
+        "enforcement": "Monitor heap usage; abort if exceeded"
+      },
+      {
+        "resource": "File I/O",
+        "limit": "Scan up to 1GB document + 100 receipts",
+        "enforcement": "Check file sizes before read; skip if oversized"
+      },
+      {
+        "resource": "Parsing complexity",
+        "limit": "YAML frontmatter <10KB, JSON blocks <1MB",
+        "enforcement": "Parse with limits; error on oversized payloads"
+      },
+      {
+        "resource": "Receipt chain depth",
+        "limit": "Max 1000 receipts, max 10-level deep dependencies",
+        "enforcement": "Count receipts + max depth; reject cycles"
+      },
+      {
+        "resource": "Concurrent scans",
+        "limit": "Single-threaded; 1 document per probe instance",
+        "enforcement": "No async scanning; sequential processing"
+      }
+    ]
+  },
+
+  "success_metrics": {
+    "metric_1_document_coverage": {
+      "name": "Complete Document Traversal",
+      "definition": "Probe identifies all sections, blocks, and receipts without missing any",
+      "measurement": "% of declared receipts found + verified",
+      "target": "100% (all receipts scanned)",
+      "verification": "frontmatter.receipts.length === scanned_receipt_count",
+      "proof": "Report includes: found_receipt_count, missing_receipt_count, orphaned_section_count"
+    },
+    "metric_2_error_accuracy": {
+      "name": "False Positive / Negative Rate",
+      "definition": "Probe reports real violations only (no spurious errors); detects all actual violations",
+      "measurement": "FP%, FN%",
+      "target": "<1% FP, <1% FN across test corpus",
+      "verification": "Run on 100 diverse .kgcmd documents; compare against ground truth",
+      "proof": "TP count, FP count, FN count, precision, recall metrics"
+    },
+    "metric_3_latency": {
+      "name": "Scan Latency",
+      "definition": "Time to complete full document + receipt verification",
+      "measurement": "Wall-clock time in milliseconds",
+      "target": "<100ms for typical document (5KB frontmatter + 10 blocks + 10 receipts)",
+      "verification": "benchmark('scan_latency', doc)",
+      "proof": "Histogram: p50, p95, p99 latencies; max observed latency"
+    },
+    "metric_4_hash_collision": {
+      "name": "SHA-256 Collision Resistance",
+      "definition": "No two different inputs produce same hash (cryptographic guarantee)",
+      "measurement": "Theoretical: 2^-256; Practical: 0 collisions in test suite",
+      "target": "0 collisions across 10,000+ test vectors",
+      "verification": "Hash all test documents + receipts; verify uniqueness",
+      "proof": "Collision count (must be 0); unique hash count === total vector count"
+    },
+    "metric_5_reproducibility": {
+      "name": "Deterministic Output",
+      "definition": "scan(doc) at T0 === scan(doc) at T1; bit-for-bit identical reports",
+      "measurement": "Hash(report_T0) === Hash(report_T1)",
+      "target": "100% reproducibility",
+      "verification": "Run probe on same document 5 times; hash all reports",
+      "proof": "All 5 report hashes identical; no variation"
+    },
+    "metric_6_schema_coverage": {
+      "name": "Schema Validation Completeness",
+      "definition": "All Zod schema constraints enforced + verified",
+      "measurement": "% of schema rules tested",
+      "target": "100% (every rule has unit test + integration test)",
+      "verification": "Schema validation test suite",
+      "proof": "Test count: X tests cover Y schema rules; 100% coverage"
+    },
+    "metric_7_dag_validity": {
+      "name": "Receipt Dependency Graph Correctness",
+      "definition": "DAG check identifies all cycles; timestamps ordered; all deps exist",
+      "measurement": "Cycle count, ordering violation count, missing dep count",
+      "target": "0 cycles, 0 ordering violations, 0 missing deps",
+      "verification": "Test on synthetic DAGs with known properties (acyclic, cyclic, disconnected)",
+      "proof": "Test results: cycles_detected=0, ordering_errors=0, missing_deps=0"
+    },
+    "metric_8_cross_reference_validation": {
+      "name": "Link Integrity Detection",
+      "definition": "All internal + external links either resolvable or reported as broken",
+      "measurement": "% of links with resolution status",
+      "target": "100% links checked; 99%+ accuracy in broken link detection",
+      "verification": "Scan documents with known broken + valid links",
+      "proof": "broken_link_count match test document expectations"
+    },
+    "metric_9_error_specificity": {
+      "name": "Error Message Quality",
+      "definition": "Errors pinpoint exact location + cause + remediation",
+      "measurement": "% of errors with file:line:field context",
+      "target": "100% errors have context; 95%+ have remediation suggestion",
+      "verification": "Error report inspection + user feedback",
+      "proof": "Sample 50 error messages; all have location, cause, remediation"
+    },
+    "metric_10_throughput": {
+      "name": "Document Scan Throughput",
+      "definition": "Number of documents scanned per second (single-threaded)",
+      "measurement": "Docs/second",
+      "target": "10+ docs/second (100ms per doc avg)",
+      "verification": "Scan 100-document corpus; measure total time",
+      "proof": "Total_time_ms, doc_count, throughput_docs_per_sec"
+    }
+  },
+
+  "zod_schema_mapping": {
+    "FrontmatterSchema": {
+      "o_hash": "z.string().regex(/^[a-f0-9]{64}$/)",
+      "policy_id": "z.string().uuid({ version: 4 })",
+      "receipts": "z.array(z.string().regex(/^[a-f0-9]{64}$/)).min(0).max(1000)",
+      "bounds": "z.object({ maxQueries: z.number().min(1).max(10000), maxRuntime: z.number().min(100).max(60000), maxFileScans: z.number().min(1).max(1000) })",
+      "views": "z.array(z.enum(['tutorial', 'how-to', 'reference', 'explanation'])).min(1).max(4)",
+      "sources": "z.array(z.object({ path: z.string().regex(/^[^.][^/]*.*$/), lineStart: z.number().min(1), lineEnd: z.number().min(1), hash: z.string().regex(/^[a-f0-9]{64}$/) }).strict({ path: 'no ../' })).min(0).max(100)",
+      "version": "z.string().regex(/^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-(.*?))?(?:\\+(.*?))?$/)",
+      "createdAt": "z.string().datetime({ offset: true })",
+      "lastProved": "z.string().datetime({ offset: true }).refine((val) => val >= createdAt, 'must be >= createdAt')",
+      "tags": "z.array(z.string().min(1).max(50)).max(20).optional()",
+      "authors": "z.array(z.object({ name: z.string().min(1), role: z.string().optional() })).optional()"
+    },
+    "BlockMetadataSchema": {
+      "receiptId": "z.string().regex(/^[a-f0-9]{64}$/)",
+      "expectedOutputFormat": "z.enum(['json', 'markdown', 'text'])",
+      "determinismLevel": "z.enum(['strict', 'lenient', 'best-effort'])",
+      "metadata": "z.record(z.any()).describe('Block-type-specific metadata')"
+    },
+    "ReceiptSchema": {
+      "id": "z.string().regex(/^[a-f0-9]{64}$/)",
+      "timestamp": "z.string().datetime({ offset: true })",
+      "o_hash": "z.string().regex(/^[a-f0-9]{64}$/)",
+      "block_type": "z.enum(['kgc:query', 'kgc:proof', 'kgc:extract', 'kgc:render'])",
+      "input_hash": "z.string().regex(/^[a-f0-9]{64}$/)",
+      "output_hash": "z.string().regex(/^[a-f0-9]{64}$/)",
+      "decision": "z.enum(['ADMIT', 'REJECT', 'PARTIAL'])",
+      "metadata": "z.record(z.any()).optional()",
+      "dependencies": "z.array(z.string().regex(/^[a-f0-9]{64}$/)).optional()",
+      "merkle_proof": "z.object({ siblings: z.array(z.string()), root: z.string(), index: z.number(), totalLeaves: z.number() }).optional()"
+    }
+  },
+
+  "implementation_roadmap": {
+    "phase_1_mvp": {
+      "name": "Minimum Viable Product (Weeks 1-2)",
+      "deliverables": [
+        "kgc probe scan: frontmatter parsing + validation",
+        "kgc probe verify: receipt existence + hash checks",
+        "Basic error reporting (JSON output)",
+        "10 unit tests (>80% coverage)"
+      ],
+      "success_criteria": "Tests PASS on 10 representative .kgcmd documents"
+    },
+    "phase_2_core": {
+      "name": "Core Features (Weeks 3-4)",
+      "deliverables": [
+        "Block structure validation (all block types)",
+        "Dynamic section mapping + hashing",
+        "Receipt chain validation (DAG, timestamps)",
+        "Determinism verification (ORDER BY, canonicalization)",
+        "Resource bounds checking",
+        "50+ unit + integration tests (>90% coverage)"
+      ],
+      "success_criteria": "All acceptance criteria PASS; <100ms latency on typical doc"
+    },
+    "phase_3_polish": {
+      "name": "Error Handling & Docs (Week 5)",
+      "deliverables": [
+        "Complete error message suite (all error types)",
+        "Link integrity checks (cross-references)",
+        "Performance tuning + benchmarking",
+        "User documentation + examples",
+        "Comprehensive test suite (100+ tests)"
+      ],
+      "success_criteria": "100% acceptance criteria PASS; zero false positives; documentation complete"
+    }
+  }
+}
