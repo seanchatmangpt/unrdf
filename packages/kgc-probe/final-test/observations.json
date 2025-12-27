@@ -1,0 +1,24 @@
+[
+  {
+    "id": "df17f86f-dbbf-4d19-840e-2e07524f9abb",
+    "category": "file",
+    "severity": "info",
+    "message": "Package structure initialized (stub from Agent 1)",
+    "data": {
+      "packageName": "@unrdf/kgc-probe",
+      "version": "0.1.0"
+    },
+    "metadata": {
+      "agentId": "agent-1-orchestrator",
+      "timestamp": "2025-12-27T09:24:24.618Z",
+      "probeVersion": "0.1.0",
+      "budgetMs": 5000,
+      "actualMs": 0
+    },
+    "tags": [
+      "stub",
+      "initialization"
+    ],
+    "receiptHash": "fd80b8c9c34eeb4026408c4caa9d378c3fe0c901baa580688fb8e66963811a7e"
+  }
+]

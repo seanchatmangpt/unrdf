@@ -1,0 +1,57 @@
+{
+  "name": "@unrdf/kgc-probe",
+  "version": "1.0.0",
+  "description": "KGC Surface Probe - Runtime capability detection and performance benchmarking for KGC environments",
+  "type": "module",
+  "main": "./src/index.mjs",
+  "bin": {
+    "kgc": "./bin/kgc.mjs"
+  },
+  "exports": {
+    ".": "./src/orchestrator.mjs",
+    "./observation": "./src/observation.mjs",
+    "./receipt": "./src/receipt.mjs",
+    "./guards": "./src/guards.mjs",
+    "./probes/runtime": "./src/probes/runtime.mjs",
+    "./probes/wasm": "./src/probes/wasm.mjs",
+    "./probes/persistence": "./src/probes/persistence.mjs",
+    "./probes/tooling": "./src/probes/tooling.mjs",
+    "./types": "./src/types.mjs"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:tooling": "node --test src/probes/tooling.test.mjs",
+    "verify:guards": "node src/probes/verify-guards.mjs",
+    "verify:execution": "node src/probes/verify-execution.mjs",
+    "probe:wasm": "node bin/probe-wasm.mjs"
+  },
+  "keywords": [
+    "kgc",
+    "probe",
+    "wasm",
+    "webassembly",
+    "benchmark",
+    "performance",
+    "capability-detection",
+    "runtime"
+  ],
+  "author": "UNRDF Team",
+  "license": "MIT",
+  "dependencies": {
+    "@noble/hashes": "^1.3.3",
+    "zod": "^4.2.1"
+  },
+  "devDependencies": {
+    "vitest": "^4.0.15"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=7.0.0"
+  },
+  "sideEffects": false,
+  "publishConfig": {
+    "access": "public"
+  }
+}
