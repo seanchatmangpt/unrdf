@@ -1,0 +1,111 @@
+{
+  "confidence": {
+    "explanation": 1,
+    "howtos": 0.75,
+    "reference": 0.5,
+    "tutorials": 1
+  },
+  "evidence": {
+    "docsFiles": [
+      "README.md",
+      "code-review-checklist.md",
+      "coding-patterns.md",
+      "lint-rule-suggestions.md",
+      "poka-yoke-controls.md",
+      "poka-yoke-error-modes.md",
+      "poka-yoke-invariants.md",
+      "poka-yoke-kgc4d-integration.md",
+      "poka-yoke-kgc4d-invariants.md",
+      "poka-yoke-measurement.md",
+      "thesis-README.md",
+      "thesis-beyond-human-perception.tex"
+    ],
+    "examplesFiles": ["production-messaging.mjs"],
+    "fingerprint": "72213ccb7050a9086f2cc801c526179156b282ff2ff177153a50e3dcd035ddc0",
+    "readmeHeadings": [
+      "Quick Start",
+      "Features",
+      "Installation",
+      "Usage",
+      "Browser Compatibility",
+      "SLA Requirements",
+      "Documentation",
+      "Development",
+      "Architecture",
+      "Requirements",
+      "License"
+    ]
+  },
+  "explanation": {
+    "architecture": "Run AtomVM (Erlang/BEAM VM) in the browser and Node.js using WebAssembly.",
+    "concepts": ["atomvm", "erlang", "beam", "wasm", "browser"],
+    "confidenceScore": 1,
+    "id": "explanation-unrdf-atomvm-explanation",
+    "source": ["keywords", "readme", "docs", "inferred"],
+    "title": "Understanding @unrdf/atomvm",
+    "tradeoffs": [
+      "Ease of use vs. advanced configuration options",
+      "Memory usage vs. processing speed",
+      "Bundle size vs. feature completeness"
+    ]
+  },
+  "generatedAt": "2000-01-01T00:00:00.000Z",
+  "howtos": [
+    {
+      "confidenceScore": 0.5,
+      "context": "When you need robust error handling in production",
+      "id": "howto-handle-errors",
+      "source": ["tests"],
+      "steps": ["Set up try-catch blocks", "Handle common error types", "Log errors appropriately"],
+      "task": "Implement error handling for @unrdf/atomvm",
+      "title": "Handle Errors"
+    },
+    {
+      "confidenceScore": 0.7,
+      "context": "When working with atomvm in your project",
+      "id": "howto-integrate-with-atomvm",
+      "source": ["keywords", "inferred"],
+      "steps": ["Install dependencies", "Set up integration", "Test integration"],
+      "task": "Connect @unrdf/atomvm with atomvm",
+      "title": "Integrate with atomvm"
+    }
+  ],
+  "packageName": "@unrdf/atomvm",
+  "reference": {
+    "confidenceScore": 1,
+    "id": "reference-unrdf-atomvm-reference",
+    "items": [
+      {
+        "description": "Export: ./service-worker-manager",
+        "example": "import from \"./src/service-worker-manager.mjs\"",
+        "name": "./service-worker-manager",
+        "type": "export"
+      },
+      {
+        "description": "Export: .",
+        "example": "import from \"./src/index.mjs\"",
+        "name": "@unrdf/atomvm",
+        "type": "export"
+      }
+    ],
+    "source": ["exports"],
+    "title": "@unrdf/atomvm Reference"
+  },
+  "tutorials": [
+    {
+      "confidenceScore": 0.9999999999999999,
+      "goal": "Learn how to set up and use @unrdf/atomvm in your project",
+      "id": "tutorial-getting-started-with-unrdf-atomvm",
+      "prerequisites": [],
+      "source": ["examples", "readme", "keywords"],
+      "stepsOutline": [
+        "Install the package",
+        "Import required modules",
+        "Create a basic example",
+        "Run and verify output"
+      ],
+      "title": "Getting Started with @unrdf/atomvm"
+    }
+  ],
+  "version": "5.0.1"
+}

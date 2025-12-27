@@ -4,8 +4,8 @@ type: "explanation"
 packageName: "@unrdf/diataxis-kit"
 version: "1.0.0"
 generatedAt: "2000-01-01T00:00:00.000Z"
-confidenceScore: 0.4
-proof: "8b90fa07971ef18265f58363f633adb0284d827eb43a9b306ab659997de8b682"
+confidenceScore: 0.7
+proof: "4acbd9a5188fb16afba5377c9a4a34cd42d257fd46b3e95b2c57461113b692cb"
 ---
 
 ## Concepts
@@ -17,28 +17,26 @@ proof: "8b90fa07971ef18265f58363f633adb0284d827eb43a9b306ab659997de8b682"
 
 ## Architecture
 
-@unrdf/diataxis-kit is a package in the UNRDF ecosystem
+Diátaxis documentation kit for monorepo package inventory and deterministic doc scaffold generation. Automatically discovers all workspace packages and generates documentation scaffolds using the Diátaxis framework (Tutorials, How-to Guides, Reference, Explanation).
 
 ## Tradeoffs
 
-- Ease of use vs. advanced configuration options
-- Memory usage vs. processing speed
-- Bundle size vs. feature completeness
+- Performance vs. flexibility tradeoffs discussed in README
 
 ## Proof
 
 This file was generated from the following evidence sources:
 
-- inferred
 - keywords
+- readme
 
 ```json
 {
-  "fingerprintInput": "inferred|keywords|Understanding @unrdf/diataxis-kit|0.4",
-  "hash": "8b90fa07971ef18265f58363f633adb0284d827eb43a9b306ab659997de8b682",
+  "fingerprintInput": "keywords|readme|Understanding @unrdf/diataxis-kit|0.7",
+  "hash": "4acbd9a5188fb16afba5377c9a4a34cd42d257fd46b3e95b2c57461113b692cb",
   "sources": [
-    "inferred",
-    "keywords"
+    "keywords",
+    "readme"
   ]
 }
 ```

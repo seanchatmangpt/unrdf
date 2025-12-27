@@ -128,6 +128,218 @@ export const extensions = [
     path: '../extensions/caching.mjs',
     loadOrder: 51,
     enabled: true
+  },
+  {
+    id: '@unrdf/graph-analytics',
+    path: '../extensions/graph-analytics.mjs',
+    loadOrder: 52,
+    enabled: true
+  },
+
+  // YAWL Extended Ecosystem (60-69)
+  {
+    id: '@unrdf/yawl-api',
+    path: '../extensions/yawl-api.mjs',
+    loadOrder: 60,
+    enabled: true
+  },
+  {
+    id: '@unrdf/yawl-queue',
+    path: '../extensions/yawl-queue.mjs',
+    loadOrder: 61,
+    enabled: true
+  },
+  {
+    id: '@unrdf/yawl-viz',
+    path: '../extensions/yawl-viz.mjs',
+    loadOrder: 62,
+    enabled: true
+  },
+  {
+    id: '@unrdf/yawl-durable',
+    path: '../extensions/yawl-durable.mjs',
+    loadOrder: 63,
+    enabled: true
+  },
+  {
+    id: '@unrdf/yawl-langchain',
+    path: '../extensions/yawl-langchain.mjs',
+    loadOrder: 64,
+    enabled: true
+  },
+  {
+    id: '@unrdf/yawl-realtime',
+    path: '../extensions/yawl-realtime.mjs',
+    loadOrder: 65,
+    enabled: true
+  },
+
+  // KGC Suite Extensions (70-74)
+  {
+    id: '@unrdf/kgc-substrate',
+    path: '../extensions/kgc-substrate.mjs',
+    loadOrder: 70,
+    enabled: true
+  },
+  {
+    id: '@unrdf/kgc-claude',
+    path: '../extensions/kgc-claude.mjs',
+    loadOrder: 71,
+    enabled: true
+  },
+  {
+    id: '@unrdf/kgn',
+    path: '../extensions/kgn.mjs',
+    loadOrder: 72,
+    enabled: true
+  },
+
+  // GraphQL & Domain (75-77)
+  {
+    id: '@unrdf/rdf-graphql',
+    path: '../extensions/rdf-graphql.mjs',
+    loadOrder: 75,
+    enabled: true
+  },
+  {
+    id: '@unrdf/domain',
+    path: '../extensions/domain.mjs',
+    loadOrder: 76,
+    enabled: true
+  },
+  {
+    id: '@unrdf/fusion',
+    path: '../extensions/fusion.mjs',
+    loadOrder: 77,
+    enabled: true
+  },
+
+  // Infrastructure & Platform (80-89)
+  {
+    id: '@unrdf/core',
+    path: '../extensions/core.mjs',
+    loadOrder: 80,
+    enabled: true
+  },
+  {
+    id: '@unrdf/composables',
+    path: '../extensions/composables.mjs',
+    loadOrder: 81,
+    enabled: true
+  },
+  {
+    id: '@unrdf/consensus',
+    path: '../extensions/consensus.mjs',
+    loadOrder: 82,
+    enabled: true
+  },
+  {
+    id: '@unrdf/validation',
+    path: '../extensions/validation.mjs',
+    loadOrder: 83,
+    enabled: true
+  },
+
+  // Developer Tools (90-99)
+  {
+    id: '@unrdf/test-utils',
+    path: '../extensions/test.mjs',
+    loadOrder: 90,
+    enabled: true
+  },
+  {
+    id: '@unrdf/docs',
+    path: '../extensions/docs.mjs',
+    loadOrder: 91,
+    enabled: true
+  },
+  {
+    id: '@unrdf/serverless',
+    path: '../extensions/serverless.mjs',
+    loadOrder: 92,
+    enabled: true
+  },
+  {
+    id: '@unrdf/dark-matter',
+    path: '../extensions/dark-matter.mjs',
+    loadOrder: 93,
+    enabled: true
+  },
+
+  // Additional Extensions (94-99)
+  {
+    id: '@unrdf/atomvm',
+    path: '../extensions/atomvm.mjs',
+    loadOrder: 94,
+    enabled: true
+  },
+  {
+    id: '@unrdf/cli',
+    path: '../extensions/cli.mjs',
+    loadOrder: 95,
+    enabled: true
+  },
+  {
+    id: '@unrdf/collab',
+    path: '../extensions/collab.mjs',
+    loadOrder: 96,
+    enabled: true
+  },
+  {
+    id: '@unrdf/engine-gateway',
+    path: '../extensions/engine-gateway.mjs',
+    loadOrder: 97,
+    enabled: true
+  },
+  {
+    id: '@unrdf/project-engine',
+    path: '../extensions/project-engine.mjs',
+    loadOrder: 98,
+    enabled: true
+  },
+  {
+    id: '@unrdf/yawl-ai',
+    path: '../extensions/yawl-ai.mjs',
+    loadOrder: 99,
+    enabled: true
+  },
+  {
+    id: '@unrdf/yawl-kafka',
+    path: '../extensions/yawl-kafka.mjs',
+    loadOrder: 100,
+    enabled: true
+  },
+
+  // Aliases/Duplicates (101-105)
+  {
+    id: '@unrdf/analytics',
+    path: '../extensions/analytics.mjs',
+    loadOrder: 101,
+    enabled: true
+  },
+  {
+    id: '@unrdf/claude',
+    path: '../extensions/claude.mjs',
+    loadOrder: 102,
+    enabled: true
+  },
+  {
+    id: '@unrdf/deploy',
+    path: '../extensions/deploy.mjs',
+    loadOrder: 103,
+    enabled: true
+  },
+  {
+    id: '@unrdf/graphql',
+    path: '../extensions/graphql.mjs',
+    loadOrder: 104,
+    enabled: true
+  },
+  {
+    id: '@unrdf/substrate',
+    path: '../extensions/substrate.mjs',
+    loadOrder: 105,
+    enabled: true
   }
 ];
 
@@ -143,8 +355,12 @@ export const extensions = [
  * @type {Array<{rule: string, package: string, reason?: string}>}
  */
 export const overrides = [
-  // Example (uncomment if needed):
-  // { rule: "query:advanced", package: "@unrdf/knowledge-engine", reason: "KE has better semantics" }
+  // Collision resolution for noun:verb conflicts
+  {
+    rule: "store:create",
+    package: "@unrdf/oxigraph",
+    reason: "Oxigraph specializes in RDF store operations"
+  }
 ];
 
 /**
