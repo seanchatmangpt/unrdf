@@ -13,7 +13,8 @@
 import { readFile, writeFile, readdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { z } from 'zod';
-import { Store, Parser as N3Parser, Writer as N3Writer } from '@unrdf/core/rdf/n3-justified-only';
+import { Parser as N3Parser, Writer as N3Writer } from '@unrdf/core/rdf/n3-justified-only';
+import { createStore } from '@unrdf/oxigraph';
 import { defaultObservabilityManager } from '../knowledge-engine/observability.mjs';
 import { fileExists, ensureDir, detectRDFFormat } from '../utils/io-utils.mjs';
 

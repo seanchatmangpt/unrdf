@@ -41,3 +41,11 @@ export {
   executeAtomVMRuntime,
   executeAtomVMErlang,
 } from './otel-span-builder.mjs';
+
+// Export metrics collector
+export {
+  MetricsCollector,
+  validateMetrics,
+  defaultMetricsCollector,
+  createMetricsCollector,
+} from './otel-metrics-collector.mjs';

@@ -15,7 +15,7 @@
  */
 
 import { mkdir, writeFile } from 'node:fs/promises';
-import { join, dirname } from 'node:path';
+import { join, dirname as _dirname } from 'node:path';
 import { z } from 'zod';
 
 /**

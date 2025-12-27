@@ -3,7 +3,7 @@
  * @module reason
  */
 
-import { Parser, Store, Writer } from '@unrdf/core/rdf/n3-justified-only';
+import { Parser, N3Store as Store, Writer } from '@unrdf/core/rdf/n3-justified-only';
 
 // Dynamic import to avoid top-level await issues
 let basicQuery;

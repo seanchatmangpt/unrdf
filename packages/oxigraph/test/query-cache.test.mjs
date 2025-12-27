@@ -11,6 +11,7 @@ import {
   analyzeQueryPattern,
   createCachedStore,
 } from '../src/query-cache.mjs';
+import { dataFactory } from '../src/index.mjs';
 
 describe('Query Normalization', () => {
   it('should normalize whitespace', () => {
@@ -168,12 +169,12 @@ describe('CachedQueryStore', () => {
     it('should invalidate cache on add', () => {
       const initialVersion = store.mutationVersion;
 
-      // Mock quad
-      const quad = {
-        subject: { value: 'http://example.org/s' },
-        predicate: { value: 'http://example.org/p' },
-        object: { value: 'value' },
-      };
+      // Create proper quad using oxigraph data factory
+      const quad = dataFactory.quad(
+        dataFactory.namedNode('http://example.org/s'),
+        dataFactory.namedNode('http://example.org/p'),
+        dataFactory.literal('value')
+      );
 
       store.add(quad);
 
@@ -183,11 +184,12 @@ describe('CachedQueryStore', () => {
     it('should invalidate cache on delete', () => {
       const initialVersion = store.mutationVersion;
 
-      const quad = {
-        subject: { value: 'http://example.org/s' },
-        predicate: { value: 'http://example.org/p' },
-        object: { value: 'value' },
-      };
+      // Create proper quad using oxigraph data factory
+      const quad = dataFactory.quad(
+        dataFactory.namedNode('http://example.org/s'),
+        dataFactory.namedNode('http://example.org/p'),
+        dataFactory.literal('value')
+      );
 
       store.delete(quad);
 

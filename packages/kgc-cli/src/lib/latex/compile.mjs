@@ -12,7 +12,7 @@
  */
 
 import { promises as fs } from 'node:fs';
-import { join, dirname, isAbsolute } from 'node:path';
+import { join, dirname as _dirname, isAbsolute } from 'node:path';
 import { createHash } from 'node:crypto';
 
 // ============================================================================
@@ -49,7 +49,7 @@ import {
 // Exports: LatexCompileError, parseMissingInputsFromLog, writeDiagnosticLog
 import {
   LatexCompileError,
-  parseMissingInputsFromLog,
+  parseMissingInputsFromLog as _parseMissingInputsFromLog,
   writeDiagnosticLog,
 } from './diagnostics.mjs';
 
@@ -119,7 +119,7 @@ async function validateInputs({ inputTexPath, projectDir, cacheDir }) {
  * @param {Map<string, Uint8Array>} vfs - Virtual file system
  * @returns {Map<string, Uint8Array>} Sorted VFS
  */
-function sortVFS(vfs) {
+function _sortVFS(vfs) {
   const sorted = new Map();
   const keys = Array.from(vfs.keys()).sort();
   for (const key of keys) {

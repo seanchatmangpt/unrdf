@@ -10,7 +10,7 @@
  * - More efficient quad handling
  */
 
-import { Parser, Writer, Store } from '@unrdf/core/rdf/n3-justified-only';
+import { Parser, Writer, N3Store as Store } from '@unrdf/core/rdf/n3-justified-only';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
 
 const tracer = trace.getTracer('unrdf-optimized');

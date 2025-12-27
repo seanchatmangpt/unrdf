@@ -1,0 +1,158 @@
+{
+  "confidence": {
+    "explanation": 1,
+    "howtos": 1,
+    "reference": 0.8,
+    "tutorials": 0.1
+  },
+  "evidence": {
+    "docsFiles": [
+      "AGENT-6-DELIVERABLES.md",
+      "latex-diagnostics-design.md",
+      "latex-pdf-building.md"
+    ],
+    "examplesFiles": [],
+    "fingerprint": "c78f76453c6450d0639a73ac6d6a2f7619fb90958dfd1dc94fa72c4c946bfffb",
+    "readmeHeadings": [
+      "Overview",
+      "Architecture",
+      "Usage",
+      "Manifest & Discovery",
+      "Core Nouns (v0)",
+      "Testing",
+      "Implementation Status",
+      "Performance",
+      "License"
+    ]
+  },
+  "explanation": {
+    "architecture": "`kgc-cli` provides a deterministic, registry-based architecture for integrating CLI commands from the UNRDF workspace.",
+    "concepts": [
+      "kgc",
+      "cli",
+      "extension-registry",
+      "deterministic",
+      "rdf"
+    ],
+    "confidenceScore": 1,
+    "id": "explanation-unrdf-kgc-cli-explanation",
+    "source": [
+      "keywords",
+      "readme",
+      "docs",
+      "inferred"
+    ],
+    "title": "Understanding @unrdf/kgc-cli",
+    "tradeoffs": [
+      "Ease of use vs. advanced configuration options",
+      "Memory usage vs. processing speed",
+      "Bundle size vs. feature completeness"
+    ]
+  },
+  "generatedAt": "2000-01-01T00:00:00.000Z",
+  "howtos": [
+    {
+      "confidenceScore": 0.5,
+      "context": "When you need robust error handling in production",
+      "id": "howto-handle-errors",
+      "source": [
+        "tests"
+      ],
+      "steps": [
+        "Set up try-catch blocks",
+        "Handle common error types",
+        "Log errors appropriately"
+      ],
+      "task": "Implement error handling for @unrdf/kgc-cli",
+      "title": "Handle Errors"
+    },
+    {
+      "confidenceScore": 0.7,
+      "context": "When working with kgc in your project",
+      "id": "howto-integrate-with-kgc",
+      "source": [
+        "keywords",
+        "inferred"
+      ],
+      "steps": [
+        "Install dependencies",
+        "Set up integration",
+        "Test integration"
+      ],
+      "task": "Connect @unrdf/kgc-cli with kgc",
+      "title": "Integrate with kgc"
+    },
+    {
+      "confidenceScore": 1,
+      "context": "When you need to use the package from the command line",
+      "id": "howto-use-the-cli",
+      "source": [
+        "bin"
+      ],
+      "steps": [
+        "Install package globally or locally",
+        "Run CLI command with options",
+        "Process command output"
+      ],
+      "task": "Execute kgc command-line interface",
+      "title": "Use the CLI"
+    }
+  ],
+  "packageName": "@unrdf/kgc-cli",
+  "reference": {
+    "confidenceScore": 1,
+    "id": "reference-unrdf-kgc-cli-reference",
+    "items": [
+      {
+        "description": "Export: ./manifest",
+        "example": "import from \"./src/manifest/extensions.mjs\"",
+        "name": "./manifest",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./registry",
+        "example": "import from \"./src/lib/registry.mjs\"",
+        "name": "./registry",
+        "type": "export"
+      },
+      {
+        "description": "Export: .",
+        "example": "import from \"./src/index.mjs\"",
+        "name": "@unrdf/kgc-cli",
+        "type": "export"
+      },
+      {
+        "description": "CLI command: kgc",
+        "example": "kgc [options]",
+        "name": "kgc",
+        "type": "bin"
+      }
+    ],
+    "source": [
+      "exports",
+      "bin"
+    ],
+    "title": "@unrdf/kgc-cli Reference"
+  },
+  "tutorials": [
+    {
+      "confidenceScore": 0.1,
+      "goal": "Learn how to set up and use @unrdf/kgc-cli in your project",
+      "id": "tutorial-getting-started-with-unrdf-kgc-cli",
+      "prerequisites": [
+        "Basic RDF knowledge"
+      ],
+      "source": [
+        "keywords"
+      ],
+      "stepsOutline": [
+        "Install the package",
+        "Import required modules",
+        "Create a basic example",
+        "Run and verify output"
+      ],
+      "title": "Getting Started with @unrdf/kgc-cli"
+    }
+  ],
+  "version": "5.0.1"
+}

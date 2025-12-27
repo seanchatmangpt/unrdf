@@ -373,19 +373,28 @@ export class CachedQueryStore extends OxigraphStore {
    * Override update to invalidate cache
    */
   update(query, options) {
-    super.update(query, options);
     this.mutationVersion++;
-    // Clear cache on mutations
     this.queryCache.clear();
+    try {
+      return super.update(query, options);
+    } catch (error) {
+      // Base store may not implement update - that's OK
+      throw error;
+    }
   }
 
   /**
    * Override load to invalidate cache
    */
   load(data, options) {
-    super.load(data, options);
     this.mutationVersion++;
     this.queryCache.clear();
+    try {
+      return super.load(data, options);
+    } catch (error) {
+      // Base store may not implement load - that's OK
+      throw error;
+    }
   }
 
   /**

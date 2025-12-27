@@ -11,7 +11,8 @@
 
 import { createContext } from 'unctx';
 import { AsyncLocalStorage } from 'node:async_hooks';
-import { Store, DataFactory } from '@unrdf/core/rdf/n3-justified-only';
+import { DataFactory } from '@unrdf/core/rdf/n3-justified-only';
+import { createStore } from '@unrdf/oxigraph';
 import crypto from 'node:crypto';
 import * as rdfCanonizeModule from 'rdf-canonize';
 import {

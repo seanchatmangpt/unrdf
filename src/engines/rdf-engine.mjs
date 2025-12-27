@@ -4,7 +4,8 @@
  * @license MIT
  */
 
-import { Parser, Store, Writer, DataFactory } from '@unrdf/core/rdf/n3-justified-only';
+import { Parser, Writer, DataFactory } from '@unrdf/core/rdf/n3-justified-only';
+import { createStore } from '@unrdf/oxigraph';
 import { QueryEngine } from '@comunica/query-sparql';
 import rdf from 'rdf-ext';
 import SHACLValidator from 'rdf-validate-shacl';

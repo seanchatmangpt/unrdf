@@ -93,7 +93,7 @@ export class Registry {
     }
 
     const ext = validation.data;
-    const fullId = `${ext.id}@${loadOrder}`;
+    const _fullId = `${ext.id}@${loadOrder}`;
 
     // Check guards (preconditions)
     if (ext.guards?.preconditions) {

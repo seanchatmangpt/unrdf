@@ -1,0 +1,117 @@
+{
+  "confidence": {
+    "explanation": 0.3,
+    "howtos": 0.25,
+    "reference": 0.2,
+    "tutorials": 0.6
+  },
+  "evidence": {
+    "docsFiles": [],
+    "examplesFiles": [],
+    "fingerprint": "ecbbddc34bfa675588216cf1e45c845f7b28c1eaad99dae33ccc1f7b86471bf1",
+    "readmeHeadings": [
+      "🎯 NEW: 15-Minute Quick Start Guide",
+      "🚀 Quick Navigation",
+      "Beginner Examples (Start Here)",
+      "Intermediate Examples (Only If Needed)",
+      "Advanced Examples (Skip Unless Required)",
+      "Full Feature Showcase (Reference Only)",
+      "Examples by Category",
+      "Quick Start",
+      "Which Example Should I Run?",
+      "Per-Package Documentation",
+      "How to Run Examples",
+      "Learning Path",
+      "Documentation Index",
+      "Need Help?"
+    ]
+  },
+  "explanation": {
+    "architecture": "**Start with #01. Add complexity only if needed.",
+    "concepts": [
+      "core functionality"
+    ],
+    "confidenceScore": 0.3,
+    "id": "explanation-unrdf-examples-explanation",
+    "source": [
+      "readme",
+      "inferred"
+    ],
+    "title": "Understanding @unrdf/examples",
+    "tradeoffs": [
+      "Ease of use vs. advanced configuration options",
+      "Memory usage vs. processing speed",
+      "Bundle size vs. feature completeness"
+    ]
+  },
+  "generatedAt": "2000-01-01T00:00:00.000Z",
+  "howtos": [
+    {
+      "confidenceScore": 0.4,
+      "context": "When encountering issues during usage",
+      "id": "howto-troubleshoot-common-issues",
+      "source": [
+        "inferred"
+      ],
+      "steps": [
+        "Check configuration",
+        "Review error messages",
+        "Apply fixes"
+      ],
+      "task": "Resolve common problems and errors",
+      "title": "Troubleshoot Common Issues"
+    },
+    {
+      "confidenceScore": 0.4,
+      "context": "When you need to accomplish common tasks",
+      "id": "howto-use-unrdf-examples",
+      "source": [
+        "inferred"
+      ],
+      "steps": [
+        "Import the package",
+        "Initialize with options",
+        "Execute operations"
+      ],
+      "task": "Perform basic operations with @unrdf/examples",
+      "title": "Use @unrdf/examples"
+    }
+  ],
+  "packageName": "@unrdf/examples",
+  "reference": {
+    "confidenceScore": 0.5,
+    "id": "reference-unrdf-examples-reference",
+    "items": [
+      {
+        "description": "Reference documentation to be added",
+        "example": null,
+        "name": "unknown",
+        "type": "unknown"
+      }
+    ],
+    "source": [
+      "inferred"
+    ],
+    "title": "@unrdf/examples Reference"
+  },
+  "tutorials": [
+    {
+      "confidenceScore": 0.3,
+      "goal": "Learn how to set up and use @unrdf/examples in your project",
+      "id": "tutorial-getting-started-with-unrdf-examples",
+      "prerequisites": [],
+      "source": [
+        "readme"
+      ],
+      "stepsOutline": [
+        "Beginner Examples (Start Here)",
+        "Intermediate Examples (Only If Needed)",
+        "Advanced Examples (Skip Unless Required)",
+        "Examples by Category",
+        "Which Example Should I Run?"
+      ],
+      "title": "Getting Started with @unrdf/examples"
+    }
+  ],
+  "version": "5.0.1"
+}

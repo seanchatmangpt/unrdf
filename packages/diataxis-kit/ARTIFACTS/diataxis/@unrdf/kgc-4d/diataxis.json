@@ -1,0 +1,187 @@
+{
+  "confidence": {
+    "explanation": 1,
+    "howtos": 0.75,
+    "reference": 0.7,
+    "tutorials": 1
+  },
+  "evidence": {
+    "docsFiles": [
+      "ARCHITECTURE-DEEP-DIVE.md",
+      "BENCHMARKS.md",
+      "BEST-PRACTICES-PATTERNS.md",
+      "BEST-PRACTICES.md",
+      "CHAPTER-STRUCTURES-25-30.md",
+      "DEPLOYMENT-CHECKLIST.md",
+      "DIATAXIS-COVERAGE-REPORT.md",
+      "FAQ.md",
+      "GETTING-STARTED.md",
+      "GLOSSARY.md",
+      "INDEX.md",
+      "INSIGHTS.md",
+      "MIGRATION-GUIDE.md",
+      "QUICK-REFERENCE.md",
+      "README.md",
+      "SUCCESS-METRICS.md",
+      "TROUBLESHOOTING.md",
+      "index.md"
+    ],
+    "examplesFiles": [
+      "ATOMVM-PATTERN.md",
+      "README-SHARD-NATIVE.md",
+      "atomvm-pattern.mjs",
+      "basic-usage.mjs",
+      "local-first-collaboration.mjs",
+      "mission-critical.mjs",
+      "shard-native-discovery.mjs",
+      "worker-performance-demo.mjs"
+    ],
+    "fingerprint": "0b3298d118122ec5d5646ec3754b2949ab148dc3b2f057ccc4092d04e0a50177",
+    "readmeHeadings": [
+      "Features",
+      "Quick Start",
+      "Core Concepts",
+      "API Overview",
+      "Examples",
+      "Architecture",
+      "Performance",
+      "Environment Support",
+      "Implemented Features (v0.1.0)",
+      "Future Extensions",
+      "Dependencies",
+      "Documentation",
+      "Testing",
+      "License",
+      "Contributing"
+    ]
+  },
+  "explanation": {
+    "architecture": "![Version](https://img.shields.io/badge/version-5.0.0--beta.1-blue) ![Production Ready](https://img.shields.",
+    "concepts": [
+      "rdf",
+      "knowledge",
+      "4d",
+      "event-sourcing",
+      "time-travel"
+    ],
+    "confidenceScore": 1,
+    "id": "explanation-unrdf-kgc-4d-explanation",
+    "source": [
+      "keywords",
+      "readme",
+      "docs",
+      "inferred"
+    ],
+    "title": "Understanding @unrdf/kgc-4d",
+    "tradeoffs": [
+      "Ease of use vs. advanced configuration options",
+      "Memory usage vs. processing speed",
+      "Bundle size vs. feature completeness"
+    ]
+  },
+  "generatedAt": "2000-01-01T00:00:00.000Z",
+  "howtos": [
+    {
+      "confidenceScore": 0.5,
+      "context": "When you need robust error handling in production",
+      "id": "howto-handle-errors",
+      "source": [
+        "tests"
+      ],
+      "steps": [
+        "Set up try-catch blocks",
+        "Handle common error types",
+        "Log errors appropriately"
+      ],
+      "task": "Implement error handling for @unrdf/kgc-4d",
+      "title": "Handle Errors"
+    },
+    {
+      "confidenceScore": 0.7,
+      "context": "When working with rdf in your project",
+      "id": "howto-integrate-with-rdf",
+      "source": [
+        "keywords",
+        "inferred"
+      ],
+      "steps": [
+        "Install dependencies",
+        "Set up integration",
+        "Test integration"
+      ],
+      "task": "Connect @unrdf/kgc-4d with rdf",
+      "title": "Integrate with rdf"
+    }
+  ],
+  "packageName": "@unrdf/kgc-4d",
+  "reference": {
+    "confidenceScore": 1,
+    "id": "reference-unrdf-kgc-4d-reference",
+    "items": [
+      {
+        "description": "Export: ./client",
+        "example": "import from \"./src/client.mjs\"",
+        "name": "./client",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./hdit",
+        "example": "import from \"./src/hdit/index.mjs\"",
+        "name": "./hdit",
+        "type": "export"
+      },
+      {
+        "description": "Export: .",
+        "example": "import from \"./src/index.mjs\"",
+        "name": "@unrdf/kgc-4d",
+        "type": "export"
+      }
+    ],
+    "source": [
+      "exports"
+    ],
+    "title": "@unrdf/kgc-4d Reference"
+  },
+  "tutorials": [
+    {
+      "confidenceScore": 0.8,
+      "goal": "Complete your first practical examples",
+      "id": "tutorial-first-steps",
+      "prerequisites": [
+        "Completed \"Getting Started with @unrdf/kgc-4d\""
+      ],
+      "source": [
+        "examples"
+      ],
+      "stepsOutline": [
+        "Work through ATOMVM-PATTERN.md",
+        "Work through README-SHARD-NATIVE.md",
+        "Work through atomvm-pattern.mjs",
+        "Work through basic-usage.mjs",
+        "Work through local-first-collaboration.mjs"
+      ],
+      "title": "First Steps"
+    },
+    {
+      "confidenceScore": 0.9999999999999999,
+      "goal": "Learn how to set up and use @unrdf/kgc-4d in your project",
+      "id": "tutorial-getting-started-with-unrdf-kgc-4d",
+      "prerequisites": [
+        "Basic RDF knowledge"
+      ],
+      "source": [
+        "examples",
+        "readme",
+        "keywords"
+      ],
+      "stepsOutline": [
+        "Install the package",
+        "Import required modules",
+        "Create a basic example",
+        "Run and verify output"
+      ],
+      "title": "Getting Started with @unrdf/kgc-4d"
+    }
+  ],
+  "version": "5.0.1"
+}

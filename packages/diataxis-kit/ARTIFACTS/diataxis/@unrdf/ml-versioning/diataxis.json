@@ -1,0 +1,139 @@
+{
+  "confidence": {
+    "explanation": 0.7,
+    "howtos": 0.75,
+    "reference": 0.7,
+    "tutorials": 0.7
+  },
+  "evidence": {
+    "docsFiles": [],
+    "examplesFiles": [],
+    "fingerprint": "72ab38f3795b589a4713dc651d2b7c7dac260c35e5b8030cbbc2a9884b321205",
+    "readmeHeadings": [
+      "Features",
+      "Installation",
+      "Quick Start",
+      "Core Concepts",
+      "API Reference",
+      "Advanced Usage",
+      "Architecture",
+      "Testing",
+      "Example",
+      "Performance Characteristics",
+      "Use Cases",
+      "Why RDF + KGC-4D?",
+      "Limitations",
+      "Future Roadmap",
+      "Contributing",
+      "License",
+      "Citation",
+      "Acknowledgments"
+    ]
+  },
+  "explanation": {
+    "architecture": "- **RDF-Based Model Storage**: Serialize TensorFlow.",
+    "concepts": [
+      "machine-learning",
+      "tensorflow",
+      "model-versioning",
+      "rdf",
+      "knowledge-graph"
+    ],
+    "confidenceScore": 0.7,
+    "id": "explanation-unrdf-ml-versioning-explanation",
+    "source": [
+      "keywords",
+      "readme"
+    ],
+    "title": "Understanding @unrdf/ml-versioning",
+    "tradeoffs": [
+      "Performance vs. flexibility tradeoffs discussed in README"
+    ]
+  },
+  "generatedAt": "2000-01-01T00:00:00.000Z",
+  "howtos": [
+    {
+      "confidenceScore": 0.5,
+      "context": "When you need robust error handling in production",
+      "id": "howto-handle-errors",
+      "source": [
+        "tests"
+      ],
+      "steps": [
+        "Set up try-catch blocks",
+        "Handle common error types",
+        "Log errors appropriately"
+      ],
+      "task": "Implement error handling for @unrdf/ml-versioning",
+      "title": "Handle Errors"
+    },
+    {
+      "confidenceScore": 0.7,
+      "context": "When working with machine-learning in your project",
+      "id": "howto-integrate-with-machine-learning",
+      "source": [
+        "keywords",
+        "inferred"
+      ],
+      "steps": [
+        "Install dependencies",
+        "Set up integration",
+        "Test integration"
+      ],
+      "task": "Connect @unrdf/ml-versioning with machine-learning",
+      "title": "Integrate with machine-learning"
+    }
+  ],
+  "packageName": "@unrdf/ml-versioning",
+  "reference": {
+    "confidenceScore": 1,
+    "id": "reference-unrdf-ml-versioning-reference",
+    "items": [
+      {
+        "description": "Export: ./examples/image-classifier",
+        "example": "import from \"./src/examples/image-classifier.mjs\"",
+        "name": "./examples/image-classifier",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./version-store",
+        "example": "import from \"./src/version-store.mjs\"",
+        "name": "./version-store",
+        "type": "export"
+      },
+      {
+        "description": "Export: .",
+        "example": "import from \"./src/index.mjs\"",
+        "name": "@unrdf/ml-versioning",
+        "type": "export"
+      }
+    ],
+    "source": [
+      "exports",
+      "readme"
+    ],
+    "title": "@unrdf/ml-versioning Reference"
+  },
+  "tutorials": [
+    {
+      "confidenceScore": 0.4,
+      "goal": "Learn how to set up and use @unrdf/ml-versioning in your project",
+      "id": "tutorial-getting-started-with-unrdf-ml-versioning",
+      "prerequisites": [
+        "Basic RDF knowledge",
+        "Understanding of graph databases"
+      ],
+      "source": [
+        "readme",
+        "keywords"
+      ],
+      "stepsOutline": [
+        "Installation",
+        "Advanced Usage",
+        "Example"
+      ],
+      "title": "Getting Started with @unrdf/ml-versioning"
+    }
+  ],
+  "version": "1.0.0"
+}
