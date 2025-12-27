@@ -23,10 +23,20 @@
   },
   "explanation": {
     "architecture": "`kgc-cli` provides a deterministic, registry-based architecture for integrating CLI commands from the UNRDF workspace.",
-    "concepts": ["kgc", "cli", "extension-registry", "deterministic", "rdf"],
+    "concepts": [
+      "kgc",
+      "cli",
+      "extension-registry",
+      "deterministic",
+      "rdf"
+    ],
     "confidenceScore": 0.7,
     "id": "explanation-unrdf-kgc-cli-explanation",
-    "source": ["keywords", "readme", "inferred"],
+    "source": [
+      "keywords",
+      "readme",
+      "inferred"
+    ],
     "title": "Understanding @unrdf/kgc-cli",
     "tradeoffs": [
       "Ease of use vs. advanced configuration options",
@@ -40,8 +50,14 @@
       "confidenceScore": 0.5,
       "context": "When you need robust error handling in production",
       "id": "howto-handle-errors",
-      "source": ["tests"],
-      "steps": ["Set up try-catch blocks", "Handle common error types", "Log errors appropriately"],
+      "source": [
+        "tests"
+      ],
+      "steps": [
+        "Set up try-catch blocks",
+        "Handle common error types",
+        "Log errors appropriately"
+      ],
       "task": "Implement error handling for @unrdf/kgc-cli",
       "title": "Handle Errors"
     },
@@ -49,8 +65,15 @@
       "confidenceScore": 0.7,
       "context": "When working with kgc in your project",
       "id": "howto-integrate-with-kgc",
-      "source": ["keywords", "inferred"],
-      "steps": ["Install dependencies", "Set up integration", "Test integration"],
+      "source": [
+        "keywords",
+        "inferred"
+      ],
+      "steps": [
+        "Install dependencies",
+        "Set up integration",
+        "Test integration"
+      ],
       "task": "Connect @unrdf/kgc-cli with kgc",
       "title": "Integrate with kgc"
     },
@@ -58,7 +81,9 @@
       "confidenceScore": 1,
       "context": "When you need to use the package from the command line",
       "id": "howto-use-the-cli",
-      "source": ["bin"],
+      "source": [
+        "bin"
+      ],
       "steps": [
         "Install package globally or locally",
         "Run CLI command with options",
@@ -98,7 +123,10 @@
         "type": "bin"
       }
     ],
-    "source": ["exports", "bin"],
+    "source": [
+      "exports",
+      "bin"
+    ],
     "title": "@unrdf/kgc-cli Reference"
   },
   "tutorials": [
@@ -106,8 +134,12 @@
       "confidenceScore": 0.1,
       "goal": "Learn how to set up and use @unrdf/kgc-cli in your project",
       "id": "tutorial-getting-started-with-unrdf-kgc-cli",
-      "prerequisites": ["Basic RDF knowledge"],
-      "source": ["keywords"],
+      "prerequisites": [
+        "Basic RDF knowledge"
+      ],
+      "source": [
+        "keywords"
+      ],
       "stepsOutline": [
         "Install the package",
         "Import required modules",

@@ -13,10 +13,19 @@
   },
   "explanation": {
     "architecture": "@unrdf/projection is a package in the UNRDF ecosystem",
-    "concepts": ["documentation", "projection", "rdf", "diataxis", "deterministic"],
+    "concepts": [
+      "documentation",
+      "projection",
+      "rdf",
+      "diataxis",
+      "deterministic"
+    ],
     "confidenceScore": 0.4,
     "id": "explanation-unrdf-projection-explanation",
-    "source": ["keywords", "inferred"],
+    "source": [
+      "keywords",
+      "inferred"
+    ],
     "title": "Understanding @unrdf/projection",
     "tradeoffs": [
       "Ease of use vs. advanced configuration options",
@@ -30,8 +39,15 @@
       "confidenceScore": 0.7,
       "context": "When working with documentation in your project",
       "id": "howto-integrate-with-documentation",
-      "source": ["keywords", "inferred"],
-      "steps": ["Install dependencies", "Set up integration", "Test integration"],
+      "source": [
+        "keywords",
+        "inferred"
+      ],
+      "steps": [
+        "Install dependencies",
+        "Set up integration",
+        "Test integration"
+      ],
       "task": "Connect @unrdf/projection with documentation",
       "title": "Integrate with documentation"
     },
@@ -39,8 +55,14 @@
       "confidenceScore": 0.4,
       "context": "When encountering issues during usage",
       "id": "howto-troubleshoot-common-issues",
-      "source": ["inferred"],
-      "steps": ["Check configuration", "Review error messages", "Apply fixes"],
+      "source": [
+        "inferred"
+      ],
+      "steps": [
+        "Check configuration",
+        "Review error messages",
+        "Apply fixes"
+      ],
       "task": "Resolve common problems and errors",
       "title": "Troubleshoot Common Issues"
     }
@@ -99,7 +121,9 @@
         "type": "export"
       }
     ],
-    "source": ["exports"],
+    "source": [
+      "exports"
+    ],
     "title": "@unrdf/projection Reference"
   },
   "tutorials": [
@@ -107,8 +131,12 @@
       "confidenceScore": 0.1,
       "goal": "Learn how to set up and use @unrdf/projection in your project",
       "id": "tutorial-getting-started-with-unrdf-projection",
-      "prerequisites": ["Basic RDF knowledge"],
-      "source": ["keywords"],
+      "prerequisites": [
+        "Basic RDF knowledge"
+      ],
+      "source": [
+        "keywords"
+      ],
       "stepsOutline": [
         "Install the package",
         "Import required modules",

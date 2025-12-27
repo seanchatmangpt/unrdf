@@ -14,14 +14,14 @@ console.assert(typeof t1 === 'bigint', 'Returns BigInt');
 console.assert(t1 < t2, 'Monotonic: second call returns larger value');
   });
 
-  test('hasClockJumpDetected example 2 (line 50)', async () => {
+  test('hasClockJumpDetected example 2 (line 61)', async () => {
     const ns = 1000000123456789n;  // 123.456789 milliseconds
 const iso = toISO(ns);
 console.assert(iso.includes('.123Z'), 'Milliseconds preserved');
 console.assert(!iso.includes('456789'), 'Nanoseconds lost');
   });
 
-  test('fromISO example 3 (line 93)', async () => {
+  test('fromISO example 3 (line 104)', async () => {
     try {
 fromISO('2025-02-31T00:00:00Z');  // February 31 doesn't exist
 throw new Error('Should have thrown');
@@ -30,7 +30,7 @@ console.assert(err.message.includes('Invalid ISO'), 'Rejects invalid dates');
 }
   });
 
-  test('addNanoseconds example 4 (line 202)', async () => {
+  test('addNanoseconds example 4 (line 213)', async () => {
     try {
 addNanoseconds(1000000000n, 500000000);  // Number instead of BigInt
 throw new Error('Should have thrown');
@@ -39,7 +39,7 @@ console.assert(err.message.includes('BigInt'), 'Rejects non-BigInt');
 }
   });
 
-  test('duration example 5 (line 230)', async () => {
+  test('duration example 5 (line 241)', async () => {
     const vc1 = new VectorClock('node1');
 const vc2 = new VectorClock('node2');
 vc1.increment();

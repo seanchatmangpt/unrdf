@@ -25,10 +25,20 @@
   },
   "explanation": {
     "architecture": "1.",
-    "concepts": ["capsule", "ir", "content-addressed", "hashing", "rdf"],
+    "concepts": [
+      "capsule",
+      "ir",
+      "content-addressed",
+      "hashing",
+      "rdf"
+    ],
     "confidenceScore": 0.7,
     "id": "explanation-autonomic-capsule-ir-explanation",
-    "source": ["keywords", "readme", "inferred"],
+    "source": [
+      "keywords",
+      "readme",
+      "inferred"
+    ],
     "title": "Understanding @autonomic/capsule-ir",
     "tradeoffs": [
       "Ease of use vs. advanced configuration options",
@@ -42,8 +52,14 @@
       "confidenceScore": 0.5,
       "context": "When you need robust error handling in production",
       "id": "howto-handle-errors",
-      "source": ["tests"],
-      "steps": ["Set up try-catch blocks", "Handle common error types", "Log errors appropriately"],
+      "source": [
+        "tests"
+      ],
+      "steps": [
+        "Set up try-catch blocks",
+        "Handle common error types",
+        "Log errors appropriately"
+      ],
       "task": "Implement error handling for @autonomic/capsule-ir",
       "title": "Handle Errors"
     },
@@ -51,8 +67,15 @@
       "confidenceScore": 0.7,
       "context": "When working with capsule in your project",
       "id": "howto-integrate-with-capsule",
-      "source": ["keywords", "inferred"],
-      "steps": ["Install dependencies", "Set up integration", "Test integration"],
+      "source": [
+        "keywords",
+        "inferred"
+      ],
+      "steps": [
+        "Install dependencies",
+        "Set up integration",
+        "Test integration"
+      ],
       "task": "Connect @autonomic/capsule-ir with capsule",
       "title": "Integrate with capsule"
     }
@@ -69,7 +92,9 @@
         "type": "unknown"
       }
     ],
-    "source": ["inferred"],
+    "source": [
+      "inferred"
+    ],
     "title": "@autonomic/capsule-ir Reference"
   },
   "tutorials": [
@@ -77,8 +102,12 @@
       "confidenceScore": 0.1,
       "goal": "Learn how to set up and use @autonomic/capsule-ir in your project",
       "id": "tutorial-getting-started-with-autonomic-capsule-ir",
-      "prerequisites": ["Basic RDF knowledge"],
-      "source": ["keywords"],
+      "prerequisites": [
+        "Basic RDF knowledge"
+      ],
+      "source": [
+        "keywords"
+      ],
       "stepsOutline": [
         "Install the package",
         "Import required modules",

@@ -6,7 +6,9 @@
     "tutorials": 0.7
   },
   "evidence": {
-    "docsFiles": ["architecture.md"],
+    "docsFiles": [
+      "architecture.md"
+    ],
     "examplesFiles": [],
     "fingerprint": "4c594cdcc7a0e60aa2b188997ac2fa6c84d0c46f180be93cafa51d768b2b068b",
     "readmeHeadings": [
@@ -28,10 +30,21 @@
   },
   "explanation": {
     "architecture": "**Industrial-first, proof-gated RDF universe with admission control, deterministic receipts, and cryptographic provenance.",
-    "concepts": ["rdf", "ontology", "governance", "admission-control", "knowledge-graphs"],
+    "concepts": [
+      "rdf",
+      "ontology",
+      "governance",
+      "admission-control",
+      "knowledge-graphs"
+    ],
     "confidenceScore": 1,
     "id": "explanation-unrdf-governed-substrate-explanation",
-    "source": ["keywords", "readme", "docs", "inferred"],
+    "source": [
+      "keywords",
+      "readme",
+      "docs",
+      "inferred"
+    ],
     "title": "Understanding @unrdf/governed-substrate",
     "tradeoffs": [
       "Ease of use vs. advanced configuration options",
@@ -45,8 +58,15 @@
       "confidenceScore": 0.7,
       "context": "When working with rdf in your project",
       "id": "howto-integrate-with-rdf",
-      "source": ["keywords", "inferred"],
-      "steps": ["Install dependencies", "Set up integration", "Test integration"],
+      "source": [
+        "keywords",
+        "inferred"
+      ],
+      "steps": [
+        "Install dependencies",
+        "Set up integration",
+        "Test integration"
+      ],
       "task": "Connect @unrdf/governed-substrate with rdf",
       "title": "Integrate with rdf"
     },
@@ -54,7 +74,9 @@
       "confidenceScore": 1,
       "context": "When you need to use the package from the command line",
       "id": "howto-use-the-cli",
-      "source": ["bin"],
+      "source": [
+        "bin"
+      ],
       "steps": [
         "Install package globally or locally",
         "Run CLI command with options",
@@ -76,7 +98,9 @@
         "type": "bin"
       }
     ],
-    "source": ["bin"],
+    "source": [
+      "bin"
+    ],
     "title": "@unrdf/governed-substrate Reference"
   },
   "tutorials": [
@@ -84,8 +108,14 @@
       "confidenceScore": 0.4,
       "goal": "Learn how to set up and use @unrdf/governed-substrate in your project",
       "id": "tutorial-getting-started-with-unrdf-governed-substrate",
-      "prerequisites": ["Basic RDF knowledge", "Understanding of graph databases"],
-      "source": ["readme", "keywords"],
+      "prerequisites": [
+        "Basic RDF knowledge",
+        "Understanding of graph databases"
+      ],
+      "source": [
+        "readme",
+        "keywords"
+      ],
       "stepsOutline": [
         "Install the package",
         "Import required modules",

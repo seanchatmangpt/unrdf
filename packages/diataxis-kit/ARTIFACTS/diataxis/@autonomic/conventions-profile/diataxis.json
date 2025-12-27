@@ -7,7 +7,9 @@
   },
   "evidence": {
     "docsFiles": [],
-    "examplesFiles": ["basic-usage.mjs"],
+    "examplesFiles": [
+      "basic-usage.mjs"
+    ],
     "fingerprint": "c620de6b1bccb2a54e42dc65378a51e6f37faaf935bf11862e61ecc84131f832",
     "readmeHeadings": [
       "Overview",
@@ -34,12 +36,23 @@
   },
   "explanation": {
     "architecture": "**Machine-checkable organizational engineering conventions as compilation targets.",
-    "concepts": ["conventions", "code-quality", "validation", "profile", "static-analysis"],
+    "concepts": [
+      "conventions",
+      "code-quality",
+      "validation",
+      "profile",
+      "static-analysis"
+    ],
     "confidenceScore": 0.7,
     "id": "explanation-autonomic-conventions-profile-explanation",
-    "source": ["keywords", "readme"],
+    "source": [
+      "keywords",
+      "readme"
+    ],
     "title": "Understanding @autonomic/conventions-profile",
-    "tradeoffs": ["Performance vs. flexibility tradeoffs discussed in README"]
+    "tradeoffs": [
+      "Performance vs. flexibility tradeoffs discussed in README"
+    ]
   },
   "generatedAt": "2000-01-01T00:00:00.000Z",
   "howtos": [
@@ -47,8 +60,14 @@
       "confidenceScore": 0.5,
       "context": "When you need robust error handling in production",
       "id": "howto-handle-errors",
-      "source": ["tests"],
-      "steps": ["Set up try-catch blocks", "Handle common error types", "Log errors appropriately"],
+      "source": [
+        "tests"
+      ],
+      "steps": [
+        "Set up try-catch blocks",
+        "Handle common error types",
+        "Log errors appropriately"
+      ],
       "task": "Implement error handling for @autonomic/conventions-profile",
       "title": "Handle Errors"
     },
@@ -56,8 +75,15 @@
       "confidenceScore": 0.7,
       "context": "When working with conventions in your project",
       "id": "howto-integrate-with-conventions",
-      "source": ["keywords", "inferred"],
-      "steps": ["Install dependencies", "Set up integration", "Test integration"],
+      "source": [
+        "keywords",
+        "inferred"
+      ],
+      "steps": [
+        "Install dependencies",
+        "Set up integration",
+        "Test integration"
+      ],
       "task": "Connect @autonomic/conventions-profile with conventions",
       "title": "Integrate with conventions"
     }
@@ -74,7 +100,9 @@
         "type": "unknown"
       }
     ],
-    "source": ["inferred"],
+    "source": [
+      "inferred"
+    ],
     "title": "@autonomic/conventions-profile Reference"
   },
   "tutorials": [
@@ -83,7 +111,11 @@
       "goal": "Learn how to set up and use @autonomic/conventions-profile in your project",
       "id": "tutorial-getting-started-with-autonomic-conventions-profile",
       "prerequisites": [],
-      "source": ["examples", "readme", "keywords"],
+      "source": [
+        "examples",
+        "readme",
+        "keywords"
+      ],
       "stepsOutline": [
         "Install the package",
         "Import required modules",

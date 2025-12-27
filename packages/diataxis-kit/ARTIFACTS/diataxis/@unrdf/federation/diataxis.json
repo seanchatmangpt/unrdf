@@ -1,0 +1,146 @@
+{
+  "confidence": {
+    "explanation": 0.7,
+    "howtos": 0.75,
+    "reference": 0.7,
+    "tutorials": 1
+  },
+  "evidence": {
+    "docsFiles": [],
+    "examplesFiles": [
+      "advanced-sparql-example.mjs",
+      "production-federation.mjs"
+    ],
+    "fingerprint": "bdae4d8abd9ccd7ee5fe5fa65f24a38f28eb1f7efb71644bc6392021650ad6e4",
+    "readmeHeadings": [
+      "Quick Start",
+      "Features",
+      "Installation",
+      "Usage",
+      "Architecture",
+      "API Reference",
+      "Use Cases",
+      "Performance Characteristics",
+      "Troubleshooting",
+      "Examples",
+      "Observability",
+      "Dependencies",
+      "Browser Compatibility",
+      "VOC Usage",
+      "Documentation",
+      "Development",
+      "Requirements",
+      "License"
+    ]
+  },
+  "explanation": {
+    "architecture": "![Version](https://img.shields.io/badge/version-5.0.0--beta.1-blue) ![Production Ready](https://img.shields.",
+    "concepts": [
+      "rdf",
+      "federation",
+      "distributed",
+      "peer-to-peer",
+      "sparql"
+    ],
+    "confidenceScore": 0.7,
+    "id": "explanation-unrdf-federation-explanation",
+    "source": [
+      "keywords",
+      "readme",
+      "inferred"
+    ],
+    "title": "Understanding @unrdf/federation",
+    "tradeoffs": [
+      "Ease of use vs. advanced configuration options",
+      "Memory usage vs. processing speed",
+      "Bundle size vs. feature completeness"
+    ]
+  },
+  "generatedAt": "2000-01-01T00:00:00.000Z",
+  "howtos": [
+    {
+      "confidenceScore": 0.5,
+      "context": "When you need robust error handling in production",
+      "id": "howto-handle-errors",
+      "source": [
+        "tests"
+      ],
+      "steps": [
+        "Set up try-catch blocks",
+        "Handle common error types",
+        "Log errors appropriately"
+      ],
+      "task": "Implement error handling for @unrdf/federation",
+      "title": "Handle Errors"
+    },
+    {
+      "confidenceScore": 0.7,
+      "context": "When working with rdf in your project",
+      "id": "howto-integrate-with-rdf",
+      "source": [
+        "keywords",
+        "inferred"
+      ],
+      "steps": [
+        "Install dependencies",
+        "Set up integration",
+        "Test integration"
+      ],
+      "task": "Connect @unrdf/federation with rdf",
+      "title": "Integrate with rdf"
+    }
+  ],
+  "packageName": "@unrdf/federation",
+  "reference": {
+    "confidenceScore": 1,
+    "id": "reference-unrdf-federation-reference",
+    "items": [
+      {
+        "description": "Export: ./advanced-sparql",
+        "example": "import from \"./src/advanced-sparql-federation.mjs\"",
+        "name": "./advanced-sparql",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./coordinator",
+        "example": "import from \"./src/coordinator.mjs\"",
+        "name": "./coordinator",
+        "type": "export"
+      },
+      {
+        "description": "Export: .",
+        "example": "import from \"./src/index.mjs\"",
+        "name": "@unrdf/federation",
+        "type": "export"
+      }
+    ],
+    "source": [
+      "exports"
+    ],
+    "title": "@unrdf/federation Reference"
+  },
+  "tutorials": [
+    {
+      "confidenceScore": 0.9999999999999999,
+      "goal": "Learn how to set up and use @unrdf/federation in your project",
+      "id": "tutorial-getting-started-with-unrdf-federation",
+      "prerequisites": [
+        "Basic RDF knowledge",
+        "Understanding of graph databases"
+      ],
+      "source": [
+        "examples",
+        "readme",
+        "keywords"
+      ],
+      "stepsOutline": [
+        "Installation",
+        "Usage",
+        "Examples",
+        "VOC Usage"
+      ],
+      "title": "Getting Started with @unrdf/federation"
+    }
+  ],
+  "version": "5.0.1"
+}

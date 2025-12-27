@@ -26,10 +26,20 @@
   },
   "explanation": {
     "architecture": "AUTONOMIC_INNOVATION is a fully autonomous, multi-agent system where 10 specialized agents work in parallel to build innovative RDF/graph primitives. Agent 1 (Orchestrator) provides the integration framework, while Agents 2-10 implement specific innovations.",
-    "concepts": ["rdf", "autonomic", "swarm", "graph", "innovation"],
+    "concepts": [
+      "rdf",
+      "autonomic",
+      "swarm",
+      "graph",
+      "innovation"
+    ],
     "confidenceScore": 0.7,
     "id": "explanation-unrdf-autonomic-innovation-explanation",
-    "source": ["keywords", "readme", "inferred"],
+    "source": [
+      "keywords",
+      "readme",
+      "inferred"
+    ],
     "title": "Understanding @unrdf/autonomic-innovation",
     "tradeoffs": [
       "Ease of use vs. advanced configuration options",
@@ -43,8 +53,15 @@
       "confidenceScore": 0.7,
       "context": "When working with rdf in your project",
       "id": "howto-integrate-with-rdf",
-      "source": ["keywords", "inferred"],
-      "steps": ["Install dependencies", "Set up integration", "Test integration"],
+      "source": [
+        "keywords",
+        "inferred"
+      ],
+      "steps": [
+        "Install dependencies",
+        "Set up integration",
+        "Test integration"
+      ],
       "task": "Connect @unrdf/autonomic-innovation with rdf",
       "title": "Integrate with rdf"
     },
@@ -52,8 +69,14 @@
       "confidenceScore": 0.4,
       "context": "When encountering issues during usage",
       "id": "howto-troubleshoot-common-issues",
-      "source": ["inferred"],
-      "steps": ["Check configuration", "Review error messages", "Apply fixes"],
+      "source": [
+        "inferred"
+      ],
+      "steps": [
+        "Check configuration",
+        "Review error messages",
+        "Apply fixes"
+      ],
       "task": "Resolve common problems and errors",
       "title": "Troubleshoot Common Issues"
     }
@@ -70,7 +93,9 @@
         "type": "export"
       }
     ],
-    "source": ["exports"],
+    "source": [
+      "exports"
+    ],
     "title": "@unrdf/autonomic-innovation Reference"
   },
   "tutorials": [
@@ -78,8 +103,14 @@
       "confidenceScore": 0.4,
       "goal": "Learn how to set up and use @unrdf/autonomic-innovation in your project",
       "id": "tutorial-getting-started-with-unrdf-autonomic-innovation",
-      "prerequisites": ["Basic RDF knowledge", "Understanding of graph databases"],
-      "source": ["readme", "keywords"],
+      "prerequisites": [
+        "Basic RDF knowledge",
+        "Understanding of graph databases"
+      ],
+      "source": [
+        "readme",
+        "keywords"
+      ],
       "stepsOutline": [
         "Install the package",
         "Import required modules",

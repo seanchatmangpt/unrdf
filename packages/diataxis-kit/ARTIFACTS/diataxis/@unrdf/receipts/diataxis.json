@@ -25,12 +25,18 @@
   },
   "explanation": {
     "architecture": "Cryptographic audit trails for admissibility decisions, validation runs, and projection operations.",
-    "concepts": ["core functionality"],
+    "concepts": [
+      "core functionality"
+    ],
     "confidenceScore": 0.3,
     "id": "explanation-unrdf-receipts-explanation",
-    "source": ["readme"],
+    "source": [
+      "readme"
+    ],
     "title": "Understanding @unrdf/receipts",
-    "tradeoffs": ["Performance vs. flexibility tradeoffs discussed in README"]
+    "tradeoffs": [
+      "Performance vs. flexibility tradeoffs discussed in README"
+    ]
   },
   "generatedAt": "2000-01-01T00:00:00.000Z",
   "howtos": [
@@ -38,8 +44,14 @@
       "confidenceScore": 0.4,
       "context": "When encountering issues during usage",
       "id": "howto-troubleshoot-common-issues",
-      "source": ["inferred"],
-      "steps": ["Check configuration", "Review error messages", "Apply fixes"],
+      "source": [
+        "inferred"
+      ],
+      "steps": [
+        "Check configuration",
+        "Review error messages",
+        "Apply fixes"
+      ],
       "task": "Resolve common problems and errors",
       "title": "Troubleshoot Common Issues"
     },
@@ -47,8 +59,14 @@
       "confidenceScore": 0.4,
       "context": "When you need to accomplish common tasks",
       "id": "howto-use-unrdf-receipts",
-      "source": ["inferred"],
-      "steps": ["Import the package", "Initialize with options", "Execute operations"],
+      "source": [
+        "inferred"
+      ],
+      "steps": [
+        "Import the package",
+        "Initialize with options",
+        "Execute operations"
+      ],
       "task": "Perform basic operations with @unrdf/receipts",
       "title": "Use @unrdf/receipts"
     }
@@ -89,7 +107,9 @@
         "type": "export"
       }
     ],
-    "source": ["exports"],
+    "source": [
+      "exports"
+    ],
     "title": "@unrdf/receipts Reference"
   },
   "tutorials": [
@@ -98,7 +118,9 @@
       "goal": "Learn how to set up and use @unrdf/receipts in your project",
       "id": "tutorial-getting-started-with-unrdf-receipts",
       "prerequisites": [],
-      "source": ["inferred"],
+      "source": [
+        "inferred"
+      ],
       "stepsOutline": [
         "Install the package",
         "Import required modules",
