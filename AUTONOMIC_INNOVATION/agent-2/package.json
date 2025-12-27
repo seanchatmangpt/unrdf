@@ -1,30 +1,23 @@
 {
-  "name": "@autonomic-innovation/capsule-ir",
-  "version": "0.1.0",
+  "name": "@autonomic/capsule-ir",
+  "version": "1.0.0",
+  "description": "Portable, content-addressed change programs with deterministic hashing",
   "type": "module",
-  "description": "Capsule IR - Content-addressed, deterministic change programs for RDF",
-  "main": "./src/index.mjs",
-  "exports": {
-    ".": "./src/index.mjs"
-  },
+  "main": "index.mjs",
   "scripts": {
-    "test": "node --test test/*.test.mjs",
-    "test:watch": "node --test --watch test/*.test.mjs"
-  },
-  "dependencies": {
-    "@unrdf/kgc-4d": "workspace:*",
-    "@unrdf/oxigraph": "workspace:*",
-    "hash-wasm": "^4.12.0",
-    "zod": "^4.1.13"
+    "test": "node test.mjs"
   },
   "keywords": [
-    "rdf",
     "capsule",
-    "content-addressing",
-    "blake3",
-    "deterministic",
-    "knowledge-graph"
+    "ir",
+    "content-addressed",
+    "hashing",
+    "rdf",
+    "change-program"
   ],
   "author": "",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "zod": "^3.23.8"
+  }
 }
