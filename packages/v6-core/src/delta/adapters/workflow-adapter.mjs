@@ -13,6 +13,7 @@
  */
 
 import { validateDelta } from '../schema.mjs';
+import { createWorkflowAdapterParamsSchema } from './workflow-adapter.schema.mjs';
 
 /**
  * Workflow Delta Adapter
@@ -60,13 +61,16 @@ export class WorkflowAdapter {
    * });
    */
   taskTransition(taskId, fromState, toState, context = {}) {
+    // Extract temporal and random values from context (deterministic when provided)
+    const {
+      t_ns = BigInt(Date.now()) * 1_000_000n,
+      timestamp_iso = new Date().toISOString(),
+      uuid
+    } = context;
+
     const taskUri = `${this.namespace}task/${taskId}`;
     const stateProperty = `${this.namespace}state`;
     const timestampProperty = `${this.namespace}stateChangedAt`;
-
-    // Use provided timestamps or generate (deterministic when context provided)
-    const t_ns = context.t_ns || BigInt(Date.now()) * 1_000_000n;
-    const timestamp_iso = context.timestamp_iso || new Date().toISOString();
 
     const operations = [
       {
@@ -87,7 +91,7 @@ export class WorkflowAdapter {
     ];
 
     const delta = {
-      id: this._generateUUID(context),
+      id: uuid || this._generateUUID({}),
       timestamp_iso,
       t_ns,
       operations,
@@ -119,15 +123,18 @@ export class WorkflowAdapter {
    * const delta = adapter.workflowCreation('wf-123', 'order-processing-v1');
    */
   workflowCreation(workflowId, specId, context = {}) {
+    // Extract temporal and random values from context (deterministic when provided)
+    const {
+      t_ns = BigInt(Date.now()) * 1_000_000n,
+      timestamp_iso = new Date().toISOString(),
+      uuid
+    } = context;
+
     const workflowUri = `${this.namespace}workflow/${workflowId}`;
     const typeProperty = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type';
     const specProperty = `${this.namespace}specification`;
     const stateProperty = `${this.namespace}state`;
     const createdAtProperty = `${this.namespace}createdAt`;
-
-    // Use provided timestamps or generate (deterministic when context provided)
-    const t_ns = context.t_ns || BigInt(Date.now()) * 1_000_000n;
-    const timestamp_iso = context.timestamp_iso || new Date().toISOString();
 
     const operations = [
       {
@@ -161,7 +168,7 @@ export class WorkflowAdapter {
     ];
 
     const delta = {
-      id: this._generateUUID(context),
+      id: uuid || this._generateUUID({}),
       timestamp_iso,
       t_ns,
       operations,
@@ -189,13 +196,16 @@ export class WorkflowAdapter {
    * const delta = adapter.resourceAssignment('task-1', 'agent-42');
    */
   resourceAssignment(taskId, resourceId, context = {}) {
+    // Extract temporal and random values from context (deterministic when provided)
+    const {
+      t_ns = BigInt(Date.now()) * 1_000_000n,
+      timestamp_iso = new Date().toISOString(),
+      uuid
+    } = context;
+
     const taskUri = `${this.namespace}task/${taskId}`;
     const resourceProperty = `${this.namespace}assignedTo`;
     const assignedAtProperty = `${this.namespace}assignedAt`;
-
-    // Use provided timestamps or generate (deterministic when context provided)
-    const t_ns = context.t_ns || BigInt(Date.now()) * 1_000_000n;
-    const timestamp_iso = context.timestamp_iso || new Date().toISOString();
 
     const operations = [
       {
@@ -215,7 +225,7 @@ export class WorkflowAdapter {
     ];
 
     const delta = {
-      id: this._generateUUID(context),
+      id: uuid || this._generateUUID({}),
       timestamp_iso,
       t_ns,
       operations,
@@ -243,13 +253,16 @@ export class WorkflowAdapter {
    * const delta = adapter.cancellationRegion('region-1', ['task-2', 'task-3']);
    */
   cancellationRegion(regionId, taskIds, context = {}) {
+    // Extract temporal and random values from context (deterministic when provided)
+    const {
+      t_ns = BigInt(Date.now()) * 1_000_000n,
+      timestamp_iso = new Date().toISOString(),
+      uuid
+    } = context;
+
     const stateProperty = `${this.namespace}state`;
     const cancelledAtProperty = `${this.namespace}cancelledAt`;
     const cancelledByProperty = `${this.namespace}cancelledBy`;
-
-    // Use provided timestamps or generate (deterministic when context provided)
-    const t_ns = context.t_ns || BigInt(Date.now()) * 1_000_000n;
-    const timestamp_iso = context.timestamp_iso || new Date().toISOString();
 
     const operations = [];
 
@@ -281,7 +294,7 @@ export class WorkflowAdapter {
     }
 
     const delta = {
-      id: this._generateUUID(context),
+      id: uuid || this._generateUUID({}),
       timestamp_iso,
       t_ns,
       operations,
@@ -298,28 +311,32 @@ export class WorkflowAdapter {
   /**
    * Generate UUID (browser/Node.js compatible)
    *
+   * @param {Object} [context={}] - Execution context with uuid/deltaId/random for determinism
    * @returns {string} UUID v4
    * @private
    */
   _generateUUID(context = {}) {
-    // Use context-provided UUID for determinism if available
-    if (context.uuid) return context.uuid;
-    if (context.deltaId) return context.deltaId;
+    const { uuid, deltaId, random = Math.random } = context;
 
-    if (typeof crypto !== 'undefined' && crypto.randomUUID) {
-      return crypto.randomUUID();
+    // Use context-provided UUID for determinism if available
+    if (uuid) return uuid;
+    if (deltaId) return deltaId;
+
+    // Single crypto check and usage
+    const cryptoAPI = typeof crypto !== 'undefined' ? crypto : (() => {
+      try { return require('crypto'); } catch { return null; }
+    })();
+
+    if (cryptoAPI && cryptoAPI.randomUUID) {
+      return cryptoAPI.randomUUID();
     }
-    try {
-      const crypto = require('crypto');
-      return crypto.randomUUID();
-    } catch {
-      // Fallback UUID v4 generation
-      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-        const r = (Math.random() * 16) | 0;
-        const v = c === 'x' ? r : (r & 0x3) | 0x8;
-        return v.toString(16);
-      });
-    }
+
+    // Fallback with context-injectable random
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+      const r = (random() * 16) | 0;
+      const v = c === 'x' ? r : (r & 0x3) | 0x8;
+      return v.toString(16);
+    });
   }
 }
 
@@ -335,5 +352,6 @@ export class WorkflowAdapter {
  * const adapter = createWorkflowAdapter({ namespace: 'http://my.org/wf/' });
  */
 export function createWorkflowAdapter(options = {}) {
-  return new WorkflowAdapter(options);
+  const [validOptions] = createWorkflowAdapterParamsSchema.parse([options]);
+  return new WorkflowAdapter(validOptions);
 }

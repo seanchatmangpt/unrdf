@@ -68,10 +68,142 @@ export const validateSchemaSchema = {
   returns: validateSchemaReturnSchema,
 };
 
+/**
+ * Schema for streamToAsync
+ */
+export const streamToAsyncParamsSchema = z.tuple([z.unknown()]);
+
+export const streamToAsyncReturnSchema = z.unknown();
+
+export const streamToAsyncSchema = {
+  params: streamToAsyncParamsSchema,
+  returns: streamToAsyncReturnSchema,
+};
+
+/**
+ * Schema for MigrationTracker constructor
+ */
+export const MigrationTrackerConstructorParamsSchema = z.tuple([z.object({
+  context: z.object({
+    t_ns: z.bigint().optional()
+  }).optional(),
+  startTime: z.number().optional(),
+  getNow: z.function().optional()
+}).optional()]);
+
+export const MigrationTrackerConstructorReturnSchema = z.instanceof(Object);
+
+export const MigrationTrackerConstructorSchema = {
+  params: MigrationTrackerConstructorParamsSchema,
+  returns: MigrationTrackerConstructorReturnSchema,
+};
+
+/**
+ * Schema for MigrationTracker.track
+ */
+export const MigrationTrackerTrackParamsSchema = z.tuple([
+  z.string(),
+  z.string(),
+  z.number().optional()
+]);
+
+export const MigrationTrackerTrackReturnSchema = z.void();
+
+export const MigrationTrackerTrackSchema = {
+  params: MigrationTrackerTrackParamsSchema,
+  returns: MigrationTrackerTrackReturnSchema,
+};
+
+/**
+ * Schema for MigrationTracker.analyzeSource
+ */
+export const MigrationTrackerAnalyzeSourceParamsSchema = z.tuple([
+  z.string(),
+  z.string().optional()
+]);
+
+export const MigrationTrackerAnalyzeSourceReturnSchema = z.object({
+  file: z.string(),
+  n3Imports: z.number(),
+  dateNowCalls: z.number(),
+  mathRandomCalls: z.number(),
+  workflowRunCalls: z.number(),
+});
+
+export const MigrationTrackerAnalyzeSourceSchema = {
+  params: MigrationTrackerAnalyzeSourceParamsSchema,
+  returns: MigrationTrackerAnalyzeSourceReturnSchema,
+};
+
+/**
+ * Schema for MigrationTracker.scanDirectory
+ */
+export const MigrationTrackerScanDirectoryParamsSchema = z.tuple([z.string()]);
+
+export const MigrationTrackerScanDirectoryReturnSchema = z.promise(z.array(z.object({
+  file: z.string(),
+  n3Imports: z.number(),
+  dateNowCalls: z.number(),
+  mathRandomCalls: z.number(),
+  workflowRunCalls: z.number(),
+})));
+
+export const MigrationTrackerScanDirectorySchema = {
+  params: MigrationTrackerScanDirectoryParamsSchema,
+  returns: MigrationTrackerScanDirectoryReturnSchema,
+};
+
+/**
+ * Schema for MigrationTracker.report
+ */
+export const MigrationTrackerReportParamsSchema = z.tuple([]);
+
+export const MigrationTrackerReportReturnSchema = z.object({
+  totalWarnings: z.number(),
+  uniqueAPIs: z.number(),
+  elapsed: z.number(),
+  warnings: z.array(z.object({
+    oldAPI: z.string(),
+    newAPI: z.string(),
+    timestamp: z.number()
+  })),
+  staticAnalysis: z.object({
+    filesScanned: z.number(),
+    n3Imports: z.number(),
+    dateNowCalls: z.number(),
+    mathRandomCalls: z.number(),
+    workflowRunCalls: z.number(),
+  })
+});
+
+export const MigrationTrackerReportSchema = {
+  params: MigrationTrackerReportParamsSchema,
+  returns: MigrationTrackerReportReturnSchema,
+};
+
+/**
+ * Schema for MigrationTracker.summary
+ */
+export const MigrationTrackerSummaryParamsSchema = z.tuple([]);
+
+export const MigrationTrackerSummaryReturnSchema = z.void();
+
+export const MigrationTrackerSummarySchema = {
+  params: MigrationTrackerSummaryParamsSchema,
+  returns: MigrationTrackerSummaryReturnSchema,
+};
+
 export default {
   createStore: createStoreSchema,
   wrapWorkflow: wrapWorkflowSchema,
   wrapFederation: wrapFederationSchema,
   withReceipt: withReceiptSchema,
-  validateSchema: validateSchemaSchema
+  validateSchema: validateSchemaSchema,
+  streamToAsync: streamToAsyncSchema,
+  MigrationTrackerConstructor: MigrationTrackerConstructorSchema,
+  MigrationTrackerTrack: MigrationTrackerTrackSchema,
+  MigrationTrackerAnalyzeSource: MigrationTrackerAnalyzeSourceSchema,
+  MigrationTrackerScanDirectory: MigrationTrackerScanDirectorySchema,
+  MigrationTrackerReport: MigrationTrackerReportSchema,
+  MigrationTrackerSummary: MigrationTrackerSummarySchema
 };

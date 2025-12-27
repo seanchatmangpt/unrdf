@@ -11,7 +11,7 @@ import { z } from 'zod';
 /**
  * Schema for generateUUID
  */
-export const generateUUIDParamsSchema = z.tuple([]);
+export const generateUUIDParamsSchema = z.tuple([z.unknown().optional()]);
 
 export const generateUUIDReturnSchema = z.string();
 

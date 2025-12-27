@@ -11,6 +11,14 @@
 
 import { createStore as createStoreV6 } from '@unrdf/oxigraph';
 import { z } from 'zod';
+import {
+  createStoreParamsSchema,
+  wrapWorkflowParamsSchema,
+  wrapFederationParamsSchema,
+  withReceiptParamsSchema,
+  validateSchemaParamsSchema,
+  streamToAsyncParamsSchema,
+} from './adapters.schema.mjs';
 
 /**
  * Emit deprecation warning
@@ -18,8 +26,13 @@ import { z } from 'zod';
  * @param {string} oldAPI - Deprecated API name
  * @param {string} newAPI - Replacement API name
  * @param {string} [hint] - Migration hint
+ * @param {Object} [context] - Context with temporal sources (determinism)
  */
-function deprecationWarning(oldAPI, newAPI, hint = '') {
+function deprecationWarning(oldAPI, newAPI, hint = '', context = {}) {
+  const {
+    t_ns = BigInt(Date.now()) * 1_000_000n
+  } = context;
+
   const message = `
 ⚠️  DEPRECATION WARNING: ${oldAPI} is deprecated in UNRDF v6
 →  Use: ${newAPI}
@@ -36,7 +49,7 @@ ${hint ? `💡 Hint: ${hint}` : ''}
     process.emit('deprecation', {
       oldAPI,
       newAPI,
-      timestamp: hint?.timestamp || Date.now(),
+      timestamp: Number(t_ns / 1_000_000n),
       stack: new Error().stack
     });
   }
@@ -62,13 +75,15 @@ ${hint ? `💡 Hint: ${hint}` : ''}
  * const store = await createStore(); // Warns + uses v6 API
  */
 export async function createStore(options = {}) {
+  const [validOptions] = createStoreParamsSchema.parse([options]);
+
   deprecationWarning(
     'new Store() from n3',
     'createStore() from @unrdf/oxigraph',
     'Oxigraph provides 10x faster SPARQL execution'
   );
 
-  return createStoreV6(options);
+  return createStoreV6(validOptions);
 }
 
 /**
@@ -87,25 +102,37 @@ export async function createStore(options = {}) {
  * const { result, receipt } = await wrapped.execute(task);
  */
 export function wrapWorkflow(workflow) {
-  if (!workflow || typeof workflow !== 'object') {
+  const [validWorkflow] = wrapWorkflowParamsSchema.parse([workflow]);
+
+  if (!validWorkflow || typeof validWorkflow !== 'object') {
     throw new Error('wrapWorkflow requires a workflow object');
   }
 
-  const wrapped = Object.create(workflow);
+  const wrapped = Object.create(validWorkflow);
 
   // Wrap run() → execute() with receipt
-  if (workflow.run) {
+  if (validWorkflow.run) {
     wrapped.execute = async function execute(task, options = {}) {
+      const {
+        context = {},
+        startTime = performance.now(),
+        endTime
+      } = options;
+
+      const {
+        t_ns = BigInt(Date.now()) * 1_000_000n
+      } = context;
+
       deprecationWarning(
         'workflow.run(task)',
         'workflow.execute(task) with receipt',
-        'Receipts enable replay and verification'
+        'Receipts enable replay and verification',
+        context
       );
 
-      const startTime = options.startTime ?? performance.now();
-      const result = await workflow.run(task);
-      const endTime = options.endTime ?? performance.now();
-      const timestamp = options.timestamp ?? Date.now();
+      const result = await validWorkflow.run(task);
+      const actualEndTime = endTime ?? performance.now();
+      const timestamp = Number(t_ns / 1_000_000n);
 
       // Generate receipt
       const receipt = {
@@ -113,7 +140,7 @@ export function wrapWorkflow(workflow) {
         operation: 'workflow.execute',
         task: task?.id || 'unknown',
         timestamp,
-        duration: endTime - startTime,
+        duration: actualEndTime - startTime,
         result: typeof result === 'object' ? JSON.stringify(result) : String(result)
       };
 
@@ -127,7 +154,7 @@ export function wrapWorkflow(workflow) {
         'workflow.execute(task)',
         'Use execute() to get receipts'
       );
-      return workflow.run(task);
+      return validWorkflow.run(task);
     };
   }
 
@@ -152,13 +179,15 @@ export function wrapWorkflow(workflow) {
  * const results = await wrapped.querySparql('SELECT * WHERE { ?s ?p ?o }');
  */
 export function wrapFederation(federation) {
-  if (!federation || typeof federation !== 'object') {
+  const [validFederation] = wrapFederationParamsSchema.parse([federation]);
+
+  if (!validFederation || typeof validFederation !== 'object') {
     throw new Error('wrapFederation requires a federation object');
   }
 
-  const wrapped = Object.create(federation);
+  const wrapped = Object.create(validFederation);
 
-  if (federation.query) {
+  if (validFederation.query) {
     wrapped.querySparql = async function querySparql(queryString, options = {}) {
       deprecationWarning(
         'federation.query(string)',
@@ -171,13 +200,13 @@ export function wrapFederation(federation) {
         setTimeout(() => reject(new Error(`Query timeout after ${timeout}ms`)), timeout);
       });
 
-      const queryPromise = federation.query(queryString, options);
+      const queryPromise = validFederation.query(queryString, options);
 
       return Promise.race([queryPromise, timeoutPromise]);
     };
 
     // Keep original for compat
-    wrapped.query = federation.query;
+    wrapped.query = validFederation.query;
   }
 
   return wrapped;
@@ -201,6 +230,8 @@ export function wrapFederation(federation) {
  * }
  */
 export async function* streamToAsync(stream) {
+  const [validStream] = streamToAsyncParamsSchema.parse([stream]);
+
   deprecationWarning(
     'stream.on("data", ...)',
     'for await (const x of stream)',
@@ -211,9 +242,9 @@ export async function* streamToAsync(stream) {
   let done = false;
   let error = null;
 
-  stream.on('data', (data) => queue.push(data));
-  stream.on('end', () => { done = true; });
-  stream.on('error', (err) => { error = err; done = true; });
+  validStream.on('data', (data) => queue.push(data));
+  validStream.on('end', () => { done = true; });
+  validStream.on('error', (err) => { error = err; done = true; });
 
   while (!done || queue.length > 0) {
     if (error) throw error;
@@ -245,19 +276,26 @@ export async function* streamToAsync(stream) {
  * // receipt = { operation: 'processData', timestamp: ..., result: ... }
  */
 export function withReceipt(fn, options = {}) {
-  if (typeof fn !== 'function') {
+  const [validFn, validOptions] = withReceiptParamsSchema.parse([fn, options]);
+
+  if (typeof validFn !== 'function') {
     throw new Error('withReceipt requires a function');
   }
 
   return async function wrappedWithReceipt(...args) {
-    const startTime = options.startTime ?? performance.now();
-    const result = await fn(...args);
-    const endTime = options.endTime ?? performance.now();
-    const timestamp = options.timestamp ?? Date.now();
+    const context = validOptions.context || {};
+    const {
+      t_ns = BigInt(Date.now()) * 1_000_000n
+    } = context;
+
+    const startTime = validOptions.startTime ?? performance.now();
+    const result = await validFn(...args);
+    const endTime = validOptions.endTime ?? performance.now();
+    const timestamp = Number(t_ns / 1_000_000n);
 
     const receipt = {
       version: '6.0.0-alpha.1',
-      operation: options.operation || fn.name || 'anonymous',
+      operation: validOptions.operation || validFn.name || 'anonymous',
       timestamp,
       duration: endTime - startTime,
       args: JSON.stringify(args),
@@ -284,13 +322,15 @@ export function withReceipt(fn, options = {}) {
  * validate({ id: 123 }); // Throws ZodError
  */
 export function validateSchema(schema) {
-  if (!(schema instanceof z.ZodType)) {
+  const [validSchema] = validateSchemaParamsSchema.parse([schema]);
+
+  if (!(validSchema instanceof z.ZodType)) {
     throw new Error('validateSchema requires a Zod schema');
   }
 
   return function validate(data) {
     try {
-      return schema.parse(data);
+      return validSchema.parse(data);
     } catch (error) {
       if (error instanceof z.ZodError) {
         const readable = error.errors.map((e) => {
@@ -311,9 +351,15 @@ export function validateSchema(schema) {
  */
 export class MigrationTracker {
   constructor(options = {}) {
+    const context = options.context || {};
+    const {
+      t_ns = BigInt(Date.now()) * 1_000_000n
+    } = context;
+
     this.warnings = [];
-    this.start = options.startTime ?? Date.now();
-    this.getNow = options.getNow ?? (() => Date.now());
+    this.start = options.startTime ?? Number(t_ns / 1_000_000n);
+    this.getNow = options.getNow ?? (() => Number(BigInt(Date.now()) * 1_000_000n / 1_000_000n));
+    this.context = context;
     this.staticAnalysis = {
       n3Imports: 0,
       dateNowCalls: 0,

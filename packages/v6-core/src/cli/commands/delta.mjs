@@ -119,9 +119,10 @@ async function proposeDelta(args, context = {}) {
  * Applies state transition with admissibility verification.
  *
  * @param {Object} args - Validated args
+ * @param {Object} [context={}] - Execution context with t_ns for determinism
  * @returns {Promise<Object>} Application result
  */
-async function applyDelta(args) {
+async function applyDelta(args, context = {}) {
   const { id, force, dryRun } = args;
 
   const delta = deltaStore.get(id);
@@ -150,18 +151,19 @@ async function applyDelta(args) {
 
   // Apply operations
   const appliedOps = [];
+  const applyTimestamp = context.t_ns ? Number(context.t_ns / 1_000_000n) : Date.now();
   for (const op of delta.operations) {
     // TODO: Actually apply to state store
     appliedOps.push({
       ...op,
       applied: true,
-      timestamp: new Date().toISOString()
+      timestamp: new Date(applyTimestamp).toISOString()
     });
   }
 
   // Update delta status
   delta.metadata.status = 'applied';
-  delta.metadata.appliedAt = new Date().toISOString();
+  delta.metadata.appliedAt = new Date(applyTimestamp).toISOString();
   deltaStore.set(id, delta);
 
   return {

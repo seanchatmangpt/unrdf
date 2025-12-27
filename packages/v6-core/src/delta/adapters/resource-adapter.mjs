@@ -8,6 +8,7 @@
  */
 
 import { validateDelta } from '../schema.mjs';
+import { createResourceAdapterParamsSchema } from './resource-adapter.schema.mjs';
 
 /**
  * Resource Delta Adapter
@@ -48,14 +49,17 @@ export class ResourceAdapter {
    * const delta = adapter.allocate('agent-42', 'task-1', { priority: 'high' });
    */
   allocate(resourceId, taskId, context = {}) {
+    // Extract temporal and random values from context (deterministic when provided)
+    const {
+      t_ns = BigInt(Date.now()) * 1_000_000n,
+      timestamp_iso = new Date().toISOString(),
+      uuid
+    } = context;
+
     const resourceUri = `${this.namespace}${resourceId}`;
     const statusProperty = `${this.namespace}status`;
     const allocatedToProperty = `${this.namespace}allocatedTo`;
     const allocatedAtProperty = `${this.namespace}allocatedAt`;
-
-    // Use provided timestamps or generate (deterministic when context provided)
-    const t_ns = context.t_ns || BigInt(Date.now()) * 1_000_000n;
-    const timestamp_iso = context.timestamp_iso || new Date().toISOString();
 
     const operations = [
       {
@@ -83,7 +87,7 @@ export class ResourceAdapter {
     ];
 
     const delta = {
-      id: this._generateUUID(context),
+      id: uuid || this._generateUUID({}),
       timestamp_iso,
       t_ns,
       operations,
@@ -109,14 +113,17 @@ export class ResourceAdapter {
    * const delta = adapter.deallocate('agent-42', 'task-1');
    */
   deallocate(resourceId, taskId, context = {}) {
+    // Extract temporal and random values from context (deterministic when provided)
+    const {
+      t_ns = BigInt(Date.now()) * 1_000_000n,
+      timestamp_iso = new Date().toISOString(),
+      uuid
+    } = context;
+
     const resourceUri = `${this.namespace}${resourceId}`;
     const statusProperty = `${this.namespace}status`;
     const allocatedToProperty = `${this.namespace}allocatedTo`;
     const deallocatedAtProperty = `${this.namespace}deallocatedAt`;
-
-    // Use provided timestamps or generate (deterministic when context provided)
-    const t_ns = context.t_ns || BigInt(Date.now()) * 1_000_000n;
-    const timestamp_iso = context.timestamp_iso || new Date().toISOString();
 
     const operations = [
       {
@@ -144,7 +151,7 @@ export class ResourceAdapter {
     ];
 
     const delta = {
-      id: this._generateUUID(context),
+      id: uuid || this._generateUUID({}),
       timestamp_iso,
       t_ns,
       operations,
@@ -173,15 +180,18 @@ export class ResourceAdapter {
    * });
    */
   registerCapability(resourceId, capability, metadata = {}) {
+    // Extract temporal and random values from context (deterministic when provided)
+    const context = metadata.context || {};
+    const {
+      t_ns = BigInt(Date.now()) * 1_000_000n,
+      timestamp_iso = new Date().toISOString(),
+      uuid
+    } = context;
+
     const resourceUri = `${this.namespace}${resourceId}`;
     const capabilityProperty = `${this.namespace}capability`;
     const capabilityUri = `${this.namespace}capability/${capability}`;
     const registeredAtProperty = `${this.namespace}registeredAt`;
-
-    // Use provided timestamps or generate (deterministic when context provided)
-    const context = metadata.context || {};
-    const t_ns = context.t_ns || BigInt(Date.now()) * 1_000_000n;
-    const timestamp_iso = context.timestamp_iso || new Date().toISOString();
 
     const operations = [
       {
@@ -213,7 +223,7 @@ export class ResourceAdapter {
     }
 
     const delta = {
-      id: this._generateUUID(context),
+      id: uuid || this._generateUUID({}),
       timestamp_iso,
       t_ns,
       operations,
@@ -239,13 +249,16 @@ export class ResourceAdapter {
    * const delta = adapter.updateAvailability('agent-42', false, { reason: 'maintenance' });
    */
   updateAvailability(resourceId, available, context = {}) {
+    // Extract temporal and random values from context (deterministic when provided)
+    const {
+      t_ns = BigInt(Date.now()) * 1_000_000n,
+      timestamp_iso = new Date().toISOString(),
+      uuid
+    } = context;
+
     const resourceUri = `${this.namespace}${resourceId}`;
     const statusProperty = `${this.namespace}status`;
     const updatedAtProperty = `${this.namespace}statusUpdatedAt`;
-
-    // Use provided timestamps or generate (deterministic when context provided)
-    const t_ns = context.t_ns || BigInt(Date.now()) * 1_000_000n;
-    const timestamp_iso = context.timestamp_iso || new Date().toISOString();
 
     const operations = [
       {
@@ -265,7 +278,7 @@ export class ResourceAdapter {
     ];
 
     const delta = {
-      id: this._generateUUID(context),
+      id: uuid || this._generateUUID({}),
       timestamp_iso,
       t_ns,
       operations,
@@ -282,28 +295,32 @@ export class ResourceAdapter {
   /**
    * Generate UUID (browser/Node.js compatible)
    *
-   * @param {Object} [context={}] - Execution context with uuid/deltaId for determinism
+   * @param {Object} [context={}] - Execution context with uuid/deltaId/random for determinism
    * @returns {string} UUID v4
    * @private
    */
   _generateUUID(context = {}) {
-    // Use context-provided UUID for determinism if available
-    if (context.uuid) return context.uuid;
-    if (context.deltaId) return context.deltaId;
+    const { uuid, deltaId, random = Math.random } = context;
 
-    if (typeof crypto !== 'undefined' && crypto.randomUUID) {
-      return crypto.randomUUID();
+    // Use context-provided UUID for determinism if available
+    if (uuid) return uuid;
+    if (deltaId) return deltaId;
+
+    // Single crypto check and usage
+    const cryptoAPI = typeof crypto !== 'undefined' ? crypto : (() => {
+      try { return require('crypto'); } catch { return null; }
+    })();
+
+    if (cryptoAPI && cryptoAPI.randomUUID) {
+      return cryptoAPI.randomUUID();
     }
-    try {
-      const crypto = require('crypto');
-      return crypto.randomUUID();
-    } catch {
-      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-        const r = (Math.random() * 16) | 0;
-        const v = c === 'x' ? r : (r & 0x3) | 0x8;
-        return v.toString(16);
-      });
-    }
+
+    // Fallback with context-injectable random
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+      const r = (random() * 16) | 0;
+      const v = c === 'x' ? r : (r & 0x3) | 0x8;
+      return v.toString(16);
+    });
   }
 }
 
@@ -317,5 +334,6 @@ export class ResourceAdapter {
  * const adapter = createResourceAdapter({ namespace: 'http://my.org/res/' });
  */
 export function createResourceAdapter(options = {}) {
-  return new ResourceAdapter(options);
+  const [validOptions] = createResourceAdapterParamsSchema.parse([options]);
+  return new ResourceAdapter(validOptions);
 }

@@ -51,7 +51,7 @@ describe('L3: Determinism - 100x Identical Runs (Direct)', () => {
   test('[L3.2-CHAIN] Receipt chain is deterministic (100x runs)', async () => {
     console.log('[L3.2-CHAIN] Testing receipt chain determinism (100 iterations)');
 
-    const { ReceiptChain } = await import('../../src/admission/receipts.mjs');
+    const { ReceiptChain, Receipt } = await import('../../src/admission/receipts.mjs');
 
     const chainHashes = [];
 
@@ -60,7 +60,7 @@ describe('L3: Determinism - 100x Identical Runs (Direct)', () => {
 
       // Add same receipts in same order
       for (let j = 0; j < 5; j++) {
-        chain.append({
+        const receipt = new Receipt({
           id: `urn:receipt:chain:${j}`,
           decision: 'ALLOW',
           deltaHash: `delta-${j}`,
@@ -72,6 +72,7 @@ describe('L3: Determinism - 100x Identical Runs (Direct)', () => {
           violations: [],
           reason: `Receipt ${j}`,
         });
+        chain.addReceipt(receipt);
       }
 
       // Get final receipt hash (last in chain)
@@ -92,7 +93,7 @@ describe('L3: Determinism - 100x Identical Runs (Direct)', () => {
   test('[L3.2-MERKLE] Merkle batching is deterministic (100x runs)', async () => {
     console.log('[L3.2-MERKLE] Testing merkle batch determinism (100 iterations)');
 
-    const { MerkleBatcher } = await import('../../src/admission/receipts.mjs');
+    const { MerkleBatcher, Receipt } = await import('../../src/admission/receipts.mjs');
 
     const merkleRoots = [];
 
@@ -125,7 +126,8 @@ describe('L3: Determinism - 100x Identical Runs (Direct)', () => {
 
     for (let i = 0; i < 100; i++) {
       const batcher = new MerkleBatcher();
-      const root = batcher.batch(receipts);
+      const receiptObjects = receipts.map(r => new Receipt(r));
+      const root = batcher.computeMerkleRoot(receiptObjects);
       merkleRoots.push(root);
     }
 
