@@ -1,0 +1,40 @@
+{
+  "regressions": [],
+  "improvements": [
+    {
+      "workload": "workload2_checkpoints",
+      "baseline_ms": "2.44",
+      "current_ms": "1.78",
+      "delta_ms": "-0.66",
+      "delta_percent": "-27.21",
+      "status": "improvement"
+    },
+    {
+      "workload": "workload3_shardMerge",
+      "baseline_ms": "0.40",
+      "current_ms": "0.33",
+      "delta_ms": "-0.06",
+      "delta_percent": "-15.99",
+      "status": "improvement"
+    },
+    {
+      "workload": "workload4_asyncWorkflow",
+      "baseline_ms": "0.44",
+      "current_ms": "0.37",
+      "delta_ms": "-0.06",
+      "delta_percent": "-14.51",
+      "status": "improvement"
+    }
+  ],
+  "stable": [
+    {
+      "workload": "workload1_runCapsules",
+      "baseline_ms": "14.80",
+      "current_ms": "16.23",
+      "delta_ms": "1.43",
+      "delta_percent": "9.65",
+      "status": "stable"
+    }
+  ],
+  "hasRegressions": false
+}

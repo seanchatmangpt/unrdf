@@ -15,18 +15,24 @@
   "main": "./src/index.mjs",
   "types": "./dist/index.d.ts",
   "files": [
-    "src"
+    "src",
+    "demos"
   ],
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest --watch",
-    "build": "unbuild"
+    "build": "unbuild",
+    "bench:harness": "node benches/workload-harness.mjs",
+    "bench:baseline": "node benches/workload-harness.mjs --baseline",
+    "demo:e2e": "node demos/multi-agent-e2e.mjs",
+    "prove:system": "node scripts/prove-system.mjs"
   },
   "dependencies": {
     "@unrdf/core": "workspace:*",
     "@unrdf/oxigraph": "workspace:*",
     "@unrdf/kgc-4d": "workspace:*",
     "@unrdf/yawl": "workspace:*",
+    "@unrdf/hooks": "workspace:*",
     "hash-wasm": "^4.12.0",
     "zod": "^3.24.3"
   },

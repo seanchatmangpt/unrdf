@@ -133,6 +133,17 @@ export {
   ProjectionResultSchema,
 } from './projection.mjs';
 
+// PolicyBridge - Integration with @unrdf/hooks
+export {
+  loadPolicyPack,
+  evaluateHookCondition,
+  applyPolicy,
+  isDenialReceipt,
+  createPolicyBridge,
+  HOOK_TO_WORKITEM_LIFECYCLE,
+  WORKITEM_TO_HOOK_TRIGGERS,
+} from './PolicyBridge.mjs';
+
 /**
  * Create a complete KGC-Claude substrate instance
  *
