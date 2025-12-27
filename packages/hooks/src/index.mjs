@@ -99,3 +99,65 @@ export {
   QualityGateSchema,
   SPCDataPointSchema,
 } from './hooks/quality-metrics.mjs';
+
+// Policy Packs (Versioned governance units)
+export {
+  PolicyPack,
+  PolicyPackManager,
+  createPolicyPackFromDirectory,
+  createPolicyPackManifest,
+} from './hooks/policy-pack.mjs';
+
+// Knowledge Hook Engine (High-performance executor)
+export { KnowledgeHookEngine } from './hooks/knowledge-hook-engine.mjs';
+
+// Condition Evaluator (SPARQL/SHACL evaluation)
+export {
+  evaluateCondition,
+  createConditionEvaluator,
+  validateCondition,
+} from './hooks/condition-evaluator.mjs';
+
+// File Resolver (Content-addressed file loading)
+export {
+  createFileResolver,
+  resolveFileUri,
+  loadFileWithHash,
+  calculateFileHash,
+} from './hooks/file-resolver.mjs';
+
+// Schemas (Hook validation schemas)
+export {
+  KnowledgeHookSchema,
+  HookMetaSchema,
+  HookConditionSchema,
+  HookEffectSchema,
+  createKnowledgeHook,
+  validateKnowledgeHook,
+  ObservabilityConfigSchema,
+  PerformanceMetricsSchema,
+} from './hooks/schemas.mjs';
+
+// Store Cache (Oxigraph store caching)
+export { StoreCache } from './hooks/store-cache.mjs';
+
+// Condition Cache (Condition result caching)
+export { ConditionCache } from './hooks/condition-cache.mjs';
+
+// Telemetry (Batched OTEL telemetry)
+export { BatchedTelemetry } from './hooks/telemetry.mjs';
+
+// Query utilities (SPARQL execution)
+export { ask, select, construct } from './hooks/query.mjs';
+
+// Validation utilities (SHACL validation)
+export {
+  validateShacl,
+  validateNode,
+  isConforming,
+  getViolations,
+  getWarnings,
+} from './hooks/validate.mjs';
+
+// Query Optimizer
+export { createQueryOptimizer } from './hooks/query-optimizer.mjs';

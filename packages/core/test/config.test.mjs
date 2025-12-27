@@ -2,7 +2,7 @@
  * @file Tests for configuration module
  */
 
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, afterEach } from 'vitest';
 import {
   createConfig,
   parseEnv,

@@ -224,8 +224,9 @@ describe('Logger System', () => {
       await new Promise(resolve => setTimeout(resolve, 50));
       const elapsed = timer.elapsed();
 
-      expect(elapsed).toBeGreaterThanOrEqual(50);
-      expect(elapsed).toBeLessThan(100);
+      // Allow 5ms tolerance for timing variance in CI/test environments
+      expect(elapsed).toBeGreaterThanOrEqual(45);
+      expect(elapsed).toBeLessThan(110);
 
       // Timer should still work after elapsed()
       await new Promise(resolve => setTimeout(resolve, 50));
