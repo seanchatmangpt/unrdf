@@ -1,0 +1,288 @@
+╔════════════════════════════════════════════════════════════════════════════╗
+║              @unrdf/kgc-probe QUICK REFERENCE CARD                         ║
+║                   Keep this handy during implementation                     ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+ARCHITECTURE LAYERS (Bottom-Up Implementation Order)
+════════════════════════════════════════════════════
+
+Layer 1: Schemas (5 modules, 245 LoC)
+  └─ observation.schema.mjs, probe-result.schema.mjs, guard-policy.schema.mjs,
+     merge-config.schema.mjs, receipt-metadata.schema.mjs
+
+Layer 2: Utils (4 modules, 220 LoC)
+  └─ logger.mjs, error-handler.mjs, types.mjs, index.mjs
+
+Layer 3: Guards (6 modules, 430 LoC)
+  └─ observation-guard, result-guard, graph-guard, merge-guard, receipt-guard,
+     index.mjs (GuardComposer)
+
+Layer 4: Storage (5 modules, 530 LoC)
+  └─ namespaces.mjs, triple-generator.mjs, graph-builder.mjs, probe-store.mjs,
+     index.mjs
+
+Layer 5: Probes (11 modules, 1,250 LoC)
+  └─ 10 probes (security, performance, correctness, structure, completeness,
+     consistency, compliance, coverage, mutation, integration) + index.mjs
+
+Layer 6: Receipts (4 modules, 330 LoC)
+  └─ receipt-builder.mjs, merkle-integrator.mjs, verification.mjs, index.mjs
+
+Layer 7: Orchestrator (4 modules, 490 LoC)
+  └─ aggregator.mjs, conflict-resolver.mjs, merge-engine.mjs,
+     probe-orchestrator.mjs
+
+Layer 8: CLI (5 modules, 340 LoC)
+  └─ run-probe.command.mjs, validate-observation.command.mjs,
+     merge-results.command.mjs, export-receipt.command.mjs, index.mjs
+
+Layer 9: Main Entry (1 module, 50 LoC)
+  └─ index.mjs (re-exports all public APIs)
+
+CRITICAL INTEGRATION POINTS
+════════════════════════════
+
+@unrdf/v6-core              └─ extends BaseReceipt, uses merkle/* modules
+@unrdf/kgc-substrate        └─ wraps KnowledgeStore, uses ReceiptChain
+@unrdf/oxigraph             └─ uses dataFactory for RDF terms
+@unrdf/kgc-cli              └─ registerCommand() in cli/*
+@unrdf/hooks (proposed)     └─ GuardPolicy interface
+@unrdf/yawl (optional)      └─ extend WorkflowBuilder
+
+GUARD ENFORCEMENT GATES
+═══════════════════════
+
+Gate 1: observation-guard        Input validation (schema + RDF terms)
+Gate 2: result-guard              Output validation (score, assertions)
+Gate 3: graph-guard               RDF validation (ontology, structure)
+Gate 4: merge-guard               Merge validation (strategy, policy)
+Gate 5: receipt-guard             Receipt validation (signature, merkle)
+
+DATA FLOW (Mermaid in VISUAL_GUIDE.md Section 3)
+═════════════════════════════════════════════════
+
+Observation → observation-guard ✓
+            → probe-orchestrator → 10 probes
+            → result-guard ✓
+            → graph-builder → RDF quads
+            → graph-guard ✓
+            → probe-store (append-only)
+            → merge-engine
+            → merge-guard ✓
+            → receipt-builder + merkle-integrator
+            → receipt-guard ✓
+            → output (JSON receipt)
+
+10 PROBE DOMAINS
+════════════════
+
+1. SecurityProbe         Auth, encryption, secrets, injection attacks
+2. PerformanceProbe      Latency, throughput, memory, CPU
+3. CorrectnessProbe      Logic, invariants
+4. StructureProbe        RDF ontology, term validity
+5. CompletenessProbe     Missing properties, coverage
+6. ConsistencyProbe      Semantic consistency, contradictions
+7. ComplianceProbe       Standards (SPARQL, OWL)
+8. CoverageProbe         Code/test coverage
+9. MutationProbe         Fault injection, mutations
+10. IntegrationProbe     Service integration, dependencies
+
+MERGE STRATEGIES
+════════════════
+
+Consensus    = min(scores)            [AND logic: all must pass]
+Max          = max(scores)            [OR logic: best case]
+Min          = min(scores)            [Safety margin: worst case]
+Weighted Sum = Σ(wi*si) / Σ(wi)       [Balanced: use domain weights]
+
+PERFORMANCE SLA TARGETS
+═══════════════════════
+
+Single probe execution       <500ms
+All 10 probes (parallel)     <2000ms
+Graph building               <200ms
+Merge operation              <300ms
+Receipt generation + sign    <500ms
+Full pipeline (end-to-end)   <5000ms
+
+KEY DESIGN PRINCIPLES (Memorize)
+════════════════════════════════
+
+1. DEFENSE IN DEPTH          5 guards at critical points
+2. IMMUTABLE AUDIT TRAIL     Append-only RDF log (KnowledgeStore)
+3. CRYPTOGRAPHIC CERT        RSA-4096 + merkle chains
+4. SEPARATION OF CONCERNS    Single responsibility per module
+5. EXTENSIBILITY             Add probes/guards without modification
+
+SUCCESS CRITERIA (Must Achieve)
+═══════════════════════════════
+
+Code Quality:
+  ✓ 100% JSDoc type coverage
+  ✓ 0 eslint violations (400+ rules)
+  ✓ 100% test pass rate
+  ✓ ~3,800 LoC implementation
+
+Functionality:
+  ✓ 10 probes scoreable [0.0-1.0]
+  ✓ 5 guards enforcing policies
+  ✓ 4 merge strategies working
+  ✓ Receipt generation + verification
+  ✓ CLI commands functional
+
+Performance:
+  ✓ All operations meet SLA targets
+  ✓ No >5s operations (5-second rule)
+
+Quality (OTEL):
+  ✓ Validation score ≥80/100
+  ✓ All major ops have spans
+  ✓ Metrics for counters/histograms
+
+Integration:
+  ✓ v6-core BaseReceipt extends
+  ✓ KnowledgeStore append-only working
+  ✓ oxigraph dataFactory used
+  ✓ kgc-cli commands registered
+
+DOCUMENTATION FILES (Locations)
+════════════════════════════════
+
+/home/user/unrdf/KGC_PROBE_ARCHITECTURE.md (Main: 53 KB)
+/home/user/unrdf/KGC_PROBE_VISUAL_GUIDE.md (Quick Ref: 29 KB)
+/home/user/unrdf/KGC_PROBE_MODULE_SIGNATURES.md (API: 43 KB)
+/home/user/unrdf/KGC_PROBE_ARCHITECTURE_SUMMARY.md (Executive: 21 KB)
+/home/user/unrdf/KGC_PROBE_ARCHITECTURE_INDEX.md (Navigation: guide)
+
+IMPLEMENTATION CHECKLIST
+════════════════════════
+
+Week 1: Foundation
+  [ ] schemas/ - 5 Zod validators + tests
+  [ ] utils/ - logger, error-handler, types
+  [ ] guards/ - 5 guards + composer + tests
+  [ ] All modules >90% test coverage
+
+Week 2: Storage
+  [ ] storage/ - triple-gen, graph-builder, probe-store
+  [ ] Verify KnowledgeStore integration
+  [ ] All modules >90% test coverage
+
+Week 3: Probes
+  [ ] agents/ - 10 probes + registry
+  [ ] Each probe 120 LoC average
+  [ ] Unit tests for each probe
+
+Week 4: Orchestration & Receipts
+  [ ] orchestrator/ - all 4 modules
+  [ ] receipts/ - all 3 modules
+  [ ] Integration tests across layers
+
+Week 5: CLI
+  [ ] cli/ - 4 commands + registration
+  [ ] Integration with @unrdf/kgc-cli
+  [ ] E2E CLI tests
+
+Week 6: Validation
+  [ ] OTEL instrumentation (≥80/100)
+  [ ] Performance benchmarks (SLA)
+  [ ] Full test coverage (100%)
+  [ ] npm publication ready
+
+QUICK API EXAMPLE
+═════════════════
+
+import KGCProbe, {
+  createProbeOrchestrator,
+  createProbeStore,
+  createReceiptBuilder,
+  ObservationSchema,
+} from '@unrdf/kgc-probe';
+
+// 1. Create store (append-only RDF log)
+const store = await createProbeStore({ nodeId: 'probe-1' });
+
+// 2. Create orchestrator (coordinates all probes)
+const orchestrator = await createProbeOrchestrator({ store });
+
+// 3. Run all 10 probes
+const results = await orchestrator.executeAllProbes(observations);
+
+// 4. Merge results (10 domains → 1 score)
+const merged = await orchestrator.mergeResults(results);
+
+// 5. Build cryptographic receipt
+const receiptBuilder = await createReceiptBuilder();
+const receipt = await receiptBuilder.build(merged);
+
+// 6. Output receipt
+console.log(JSON.stringify(receipt, null, 2));
+
+DEPENDENCY RULE (Critical)
+═══════════════════════════
+
+ALWAYS: Layer N depends ONLY on layers N-1, N-2, ... (NEVER upward)
+
+✓ Correct:   Orchestrator depends on Agents (Layer 7 → Layer 5)
+✗ Wrong:     Agents depend on Orchestrator (circular dependency)
+
+Check with: grep -r "import.*from.*" src/ | validate no upward deps
+
+COMMON PITFALLS (Avoid)
+═══════════════════════
+
+✗ Circular dependencies between modules
+✗ Business logic mixed with OTEL instrumentation
+✗ Guards not throwing on violations
+✗ Merge without conflict detection
+✗ Receipt without RSA-4096 signature
+✗ Missing BLAKE3 snapshot hashing
+✗ Probe timeout >5000ms
+✗ Unhandled errors in catch blocks
+
+QUICK LINKS
+═══════════
+
+Main Architecture:
+  → Read: ARCHITECTURE.md sections 1-5
+  → Follow: module dependency graph (VISUAL_GUIDE.md section 2)
+
+Coding Against API:
+  → Use: MODULE_SIGNATURES.md (all 44 module signatures)
+  → Example: ARCHITECTURE.md section 5 (file specifications)
+
+Data Flow Understanding:
+  → See: VISUAL_GUIDE.md section 3 (Mermaid diagram)
+  → And: ARCHITECTURE.md section 3 (data flow description)
+
+Testing:
+  → Scenarios: VISUAL_GUIDE.md section 10 (integration tests)
+  → Errors: VISUAL_GUIDE.md section 12 (error matrix)
+
+Performance:
+  → Targets: VISUAL_GUIDE.md section 11 (SLA table)
+  → Check: All operations meet target times
+
+OTEL VALIDATION
+════════════════
+
+After implementation, run:
+  node validation/run-all.mjs comprehensive
+
+Must show:
+  Score: ≥80/100
+  FAILED: 0 results
+  Spans: All major operations covered
+  Metrics: Counters + histograms working
+
+═════════════════════════════════════════════════════════════════════════════
+
+Architecture: Ready for Implementation
+Modules: 44 total (~3,800 LoC expected)
+Tests: 100% pass rate target (~5,600 LoC)
+Timeline: 6 weeks
+Status: Architecture Phase COMPLETE
+
+Ready to start Week 1: Foundation (schemas, utils, guards)
+
+═════════════════════════════════════════════════════════════════════════════
