@@ -1,0 +1,77 @@
+% Thesis mini fixture - tests multi-file compilation and cross-references
+\documentclass{article}
+
+% Load preamble (tests \input resolution)
+\input{preamble}
+
+\title{Multi-File Test Document}
+\author{Test Suite}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+\section{Introduction}
+\label{sec:intro}
+
+This document tests multi-file compilation with cross-references and
+includes. It demonstrates the \testmacro{custom macro system} defined
+in \texttt{preamble.tex}.
+
+The \kgc{} system compiles \LaTeX{} using \unrdf{} infrastructure.
+
+\section{Cross-Reference Testing}
+\label{sec:crossref}
+
+This section (\sectionref{sec:crossref}) references the introduction
+(\sectionref{sec:intro}). Cross-references require multiple compilation
+passes to resolve correctly.
+
+\subsection{Equations}
+\label{subsec:eq}
+
+Consider the following equation:
+\begin{equation}
+  E = mc^2
+  \label{eq:einstein}
+\end{equation}
+
+Equation~\ref{eq:einstein} demonstrates mass-energy equivalence.
+
+\subsection{Theorems}
+
+\begin{theorem}[Test Theorem]
+  This is a test theorem using a custom environment.
+\end{theorem}
+
+\section{Multi-Pass Verification}
+\label{sec:multipass}
+
+The following items require multi-pass compilation:
+
+\begin{itemize}
+  \item Table of contents generation
+  \item Cross-reference resolution (e.g., \sectionref{sec:intro})
+  \item Label numbering consistency
+  \item Equation references (e.g., Equation~\ref{eq:einstein})
+\end{itemize}
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+This document validates that the compilation pipeline:
+
+\begin{enumerate}
+  \item Loads files from multiple sources via \textbackslash input
+  \item Executes multiple compilation passes
+  \item Resolves all cross-references correctly
+  \item Generates a complete table of contents
+\end{enumerate}
+
+See \sectionref{sec:intro} for context and \sectionref{sec:crossref}
+for methodology.
+
+\end{document}

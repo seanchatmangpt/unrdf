@@ -1,0 +1,24 @@
+% Minimal preamble for thesis-mini fixture
+% Provides custom macros and document configuration
+
+% Custom commands for testing \input resolution
+\newcommand{\testmacro}[1]{\textbf{#1}}
+\newcommand{\kgc}{\textsc{KGC}}
+\newcommand{\unrdf}{\textsc{unrdf}}
+
+% Custom environments
+\newenvironment{theorem}[1][Theorem]{%
+  \par\medskip\noindent\textbf{#1.}~\itshape%
+}{%
+  \par\medskip%
+}
+
+% Section formatting (minimal)
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{2}
+
+% Testing cross-reference setup
+\makeatletter
+\newcommand{\chapterref}[1]{Chapter~\ref{#1}}
+\newcommand{\sectionref}[1]{Section~\ref{#1}}
+\makeatother

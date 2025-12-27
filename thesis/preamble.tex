@@ -1,0 +1,165 @@
+% preamble.tex - KGC Substrate Notation + Metadata Infrastructure
+% Knowledge Graph Compiler notation for @unrdf ecosystem thesis
+
+% ============================================================================
+% KGC Substrate Notation Macros
+% ============================================================================
+
+% Core substrate operators
+\newcommand{\Oobs}{\mathcal{O}}          % Observable substrate (data source, event stream)
+\newcommand{\Aout}{\mathcal{A}}          % Artifact output (triple store, document, proof)
+\newcommand{\muRecon}{\mu}               % Reconciler function (O → A)
+\newcommand{\SigmaType}{\Sigma}          % Type/schema signature (Zod, JSON-LD context)
+\newcommand{\PiMerge}{\Pi}               % Merge operator (composition, sequential)
+\newcommand{\oplusMerge}{\oplus}         % Merge glue operator (commutative fusion)
+\newcommand{\tauEpoch}{\tau}             % Epoch / time / causality marker
+\newcommand{\GammaGlue}{\Gamma}          % Glue / composition constraint
+\newcommand{\GuardH}{H}                  % Guard (impossibility predicate)
+\newcommand{\InvQ}{Q}                    % Invariant preservation predicate
+\newcommand{\ProvHash}{\mathtt{hash}}    % Provenance hash (content-addressing)
+
+% Package-level identifiers
+\newcommand{\pkg}[1]{\texttt{#1}}        % Package name in monospace
+\newcommand{\pkgver}[2]{\texttt{#1}@\texttt{#2}}  % Package@version
+
+% ============================================================================
+% Metadata Table Environment
+% ============================================================================
+
+% Usage:
+%   \begin{pkgmeta}
+%     \hline
+%     Property & Value \\
+%     \hline
+%     Package & \pkg{@unrdf/core} \\
+%     Version & 1.0.0 \\
+%     ...
+%   \end{pkgmeta}
+
+\newenvironment{pkgmeta}
+  {\begin{table}[h]\centering\begin{tabular}{|l|l|}\hline}
+  {\hline\end{tabular}\caption{Package Metadata}\end{table}}
+
+% ============================================================================
+% RDF-Specific Notation
+% ============================================================================
+
+\newcommand{\triple}[3]{\langle #1, #2, #3 \rangle}  % RDF triple <s, p, o>
+\newcommand{\quad}[4]{\langle #1, #2, #3, #4 \rangle}  % RDF quad <s, p, o, g>
+\newcommand{\store}{\mathcal{S}}                     % Triple store instance
+\newcommand{\query}[1]{\mathtt{SPARQL}(#1)}          % SPARQL query
+\newcommand{\prefix}[2]{\texttt{#1:}#2}              % Namespace prefix
+
+% ============================================================================
+% Compositional Semantics
+% ============================================================================
+
+% Function composition: f ∘ g
+\newcommand{\compose}{\circ}
+
+% Type judgment: x : T
+\newcommand{\oftype}[2]{#1 : #2}
+
+% Entailment: Γ ⊢ Q
+\newcommand{\entails}{\vdash}
+
+% Contradiction (impossibility)
+\newcommand{\impossible}{\bot}
+
+% Tautology (always holds)
+\newcommand{\necessary}{\top}
+
+% ============================================================================
+% Receipt-Based Verification
+% ============================================================================
+
+\newcommand{\receipt}[1]{\textsc{Receipt}(#1)}       % Receipt reference
+\newcommand{\proof}[1]{\textsc{Proof}(#1)}           % Proof reference
+\newcommand{\measure}[1]{\textsc{Measure}(#1)}       % Measurement result
+
+% ============================================================================
+% Standard Packages
+% ============================================================================
+
+\usepackage{amsmath}      % Mathematical typesetting
+\usepackage{amssymb}      % Mathematical symbols
+\usepackage{amsthm}       % Theorem environments
+\usepackage{listings}     % Code listings
+\usepackage{xcolor}       % Color support
+\usepackage{graphicx}     % Graphics inclusion
+\usepackage{booktabs}     % Professional tables
+\usepackage{hyperref}     % Hyperlinks (load last)
+
+% ============================================================================
+% Theorem Environments
+% ============================================================================
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[chapter]
+\newtheorem{property}{Property}[chapter]
+\newtheorem{invariant}{Invariant}[chapter]
+\newtheorem{constraint}{Constraint}[chapter]
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}[chapter]
+\newtheorem{example}{Example}[chapter]
+
+% ============================================================================
+% Code Listing Configuration
+% ============================================================================
+
+\lstdefinestyle{javascript}{
+    language=JavaScript,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{gray}\itshape,
+    stringstyle=\color{red},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    numbersep=5pt,
+    backgroundcolor=\color{white},
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    frame=single,
+    tabsize=2,
+    captionpos=b,
+    breaklines=true,
+    breakatwhitespace=false,
+    escapeinside={(*@}{@*)},
+}
+
+\lstset{style=javascript}
+
+% ============================================================================
+% Hyperref Configuration
+% ============================================================================
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    citecolor=blue,
+    urlcolor=blue,
+    pdftitle={@unrdf Ecosystem: A Compositional Foundation for RDF Processing},
+    pdfauthor={Automated PhD-Thesis Documentation System},
+    pdfsubject={RDF Processing, Knowledge Graphs, Compositional Systems},
+    pdfkeywords={RDF, Oxigraph, Knowledge Graph Compiler, Compositional Semantics}
+}
+
+% ============================================================================
+% Page Layout
+% ============================================================================
+
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\onehalfspacing
+
+% ============================================================================
+% End of preamble.tex
+% ============================================================================

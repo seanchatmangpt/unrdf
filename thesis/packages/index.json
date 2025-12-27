@@ -1,0 +1,1224 @@
+{
+  "generated_at": "2025-12-27T04:04:00.170Z",
+  "packages": [
+    {
+      "id": "unrdf-docs-site",
+      "name": "@unrdf/docs-site",
+      "path": "apps/docs-site",
+      "kind": "docs",
+      "entrypoints": [],
+      "deps": [
+        "clsx",
+        "docusaurus-core",
+        "docusaurus-module-type-aliases",
+        "docusaurus-preset-classic",
+        "docusaurus-tsconfig",
+        "docusaurus-types",
+        "mdx-js-react",
+        "prism-react-renderer",
+        "react",
+        "react-dom",
+        "typescript"
+      ],
+      "blurb": "Unified documentation site for UNRDF ecosystem"
+    },
+    {
+      "id": "unrdf-autonomic-innovation",
+      "name": "@unrdf/autonomic-innovation",
+      "path": "AUTONOMIC_INNOVATION",
+      "kind": "js",
+      "entrypoints": [
+        "AUTONOMIC_INNOVATION/src/index.mjs"
+      ],
+      "deps": [
+        "unrdf-core",
+        "unrdf-kgc-4d",
+        "unrdf-oxigraph"
+      ],
+      "blurb": "AUTONOMIC_INNOVATION - 10 Swarm Agents Building Graph Innovations"
+    },
+    {
+      "id": "unrdf-package-name",
+      "name": "@unrdf/package-name",
+      "path": "docs/templates/package-template",
+      "kind": "js",
+      "entrypoints": [
+        "docs/templates/package-template/src/index.mjs"
+      ],
+      "deps": [
+        "vitest",
+        "zod"
+      ],
+      "blurb": "One-sentence description of what this package does"
+    },
+    {
+      "id": "enterprise-migration",
+      "name": "enterprise-migration",
+      "path": "ENTERPRISE_MIGRATION",
+      "kind": "js",
+      "entrypoints": [
+        "ENTERPRISE_MIGRATION/src/index.mjs",
+        "ENTERPRISE_MIGRATION/agent-1/control-plane.mjs",
+        "ENTERPRISE_MIGRATION/agent-6/impact-set.mjs",
+        "ENTERPRISE_MIGRATION/agent-7/routing-modes.mjs"
+      ],
+      "deps": [],
+      "blurb": "Enterprise migration system for UNRDF substrate platform - 10-agent orchestrated migration from lega..."
+    },
+    {
+      "id": "unrdf-enterprise-demo",
+      "name": "unrdf-enterprise-demo",
+      "path": "enterprise-demo",
+      "kind": "js",
+      "entrypoints": [],
+      "deps": [
+        "citty-test-utils",
+        "eslint",
+        "jsdoc",
+        "opentelemetry-api",
+        "opentelemetry-auto-instrumentations-node",
+        "opentelemetry-exporter-jaeger",
+        "opentelemetry-instrumentation-fs",
+        "opentelemetry-instrumentation-http",
+        "opentelemetry-sdk-node",
+        "opentelemetry-sdk-trace-base",
+        "vitest"
+      ],
+      "blurb": "No description available"
+    },
+    {
+      "id": "unrdf-examples",
+      "name": "@unrdf/examples",
+      "path": "examples",
+      "kind": "js",
+      "entrypoints": [],
+      "deps": [
+        "unrdf-core",
+        "unrdf-hooks",
+        "unrdf-knowledge-engine"
+      ],
+      "blurb": "UNRDF usage examples"
+    },
+    {
+      "id": "unrdf-atomvm",
+      "name": "@unrdf/atomvm",
+      "path": "packages/atomvm",
+      "kind": "js",
+      "entrypoints": [
+        "packages/atomvm/src/index.mjs",
+        "packages/atomvm/src/service-worker-manager.mjs"
+      ],
+      "deps": [
+        "coi-serviceworker",
+        "jsdom",
+        "opentelemetry-api",
+        "playwright-test",
+        "vite",
+        "vitest",
+        "vitest-browser"
+      ],
+      "blurb": "Run AtomVM (Erlang/BEAM VM) in browser and Node."
+    },
+    {
+      "id": "unrdf-blockchain",
+      "name": "@unrdf/blockchain",
+      "path": "packages/blockchain",
+      "kind": "js",
+      "entrypoints": [
+        "packages/blockchain/src/index.mjs",
+        "packages/blockchain/src/anchoring/receipt-anchorer.mjs",
+        "packages/blockchain/src/contracts/workflow-verifier.mjs",
+        "packages/blockchain/src/merkle/merkle-proof-generator.mjs"
+      ],
+      "deps": [
+        "ethers",
+        "merkletreejs",
+        "noble-hashes",
+        "unrdf-kgc-4d",
+        "unrdf-yawl",
+        "vitest",
+        "zod"
+      ],
+      "blurb": "Blockchain integration for UNRDF - Cryptographic receipt anchoring and audit trails"
+    },
+    {
+      "id": "unrdf-caching",
+      "name": "@unrdf/caching",
+      "path": "packages/caching",
+      "kind": "js",
+      "entrypoints": [
+        "packages/caching/src/index.mjs",
+        "packages/caching/src/layers/multi-layer-cache.mjs",
+        "packages/caching/src/invalidation/dependency-tracker.mjs",
+        "packages/caching/src/query/sparql-cache.mjs"
+      ],
+      "deps": [
+        "ioredis",
+        "lru-cache",
+        "msgpackr",
+        "unrdf-oxigraph",
+        "vitest",
+        "zod"
+      ],
+      "blurb": "Multi-layer caching system for RDF queries with Redis and LRU"
+    },
+    {
+      "id": "unrdf-cli",
+      "name": "@unrdf/cli",
+      "path": "packages/cli",
+      "kind": "js",
+      "entrypoints": [
+        "packages/cli/src/index.mjs",
+        "packages/cli/src/cli.mjs",
+        "packages/cli/src/commands/index.mjs"
+      ],
+      "deps": [
+        "citty",
+        "table",
+        "types-node",
+        "unrdf-core",
+        "unrdf-federation",
+        "unrdf-hooks",
+        "unrdf-knowledge-engine",
+        "unrdf-oxigraph",
+        "unrdf-project-engine",
+        "unrdf-streaming",
+        "vitest",
+        "yaml"
+      ],
+      "blurb": "UNRDF CLI - Command-line Tools for Graph Operations and Context Management"
+    },
+    {
+      "id": "unrdf-collab",
+      "name": "@unrdf/collab",
+      "path": "packages/collab",
+      "kind": "js",
+      "entrypoints": [
+        "packages/collab/src/index.mjs",
+        "packages/collab/src/crdt/index.mjs",
+        "packages/collab/src/sync/index.mjs",
+        "packages/collab/src/composables/index.mjs"
+      ],
+      "deps": [
+        "lib0",
+        "types-node",
+        "types-ws",
+        "unrdf-core",
+        "vitest",
+        "ws",
+        "y-indexeddb",
+        "y-websocket",
+        "yjs",
+        "zod"
+      ],
+      "blurb": "Real-time collaborative RDF editing using CRDTs (Yjs) with offline-first architecture"
+    },
+    {
+      "id": "unrdf-composables",
+      "name": "@unrdf/composables",
+      "path": "packages/composables",
+      "kind": "js",
+      "entrypoints": [
+        "packages/composables/src/index.mjs",
+        "packages/composables/src/graph.mjs",
+        "packages/composables/src/delta.mjs"
+      ],
+      "deps": [
+        "types-node",
+        "unrdf-core",
+        "unrdf-streaming",
+        "vitest",
+        "vue"
+      ],
+      "blurb": "UNRDF Composables - Vue 3 Composables for Reactive RDF State (Optional Extension)"
+    },
+    {
+      "id": "unrdf-consensus",
+      "name": "@unrdf/consensus",
+      "path": "packages/consensus",
+      "kind": "js",
+      "entrypoints": [
+        "packages/consensus/src/index.mjs",
+        "packages/consensus/src/raft/raft-coordinator.mjs",
+        "packages/consensus/src/membership/cluster-manager.mjs",
+        "packages/consensus/src/state/distributed-state-machine.mjs",
+        "packages/consensus/src/transport/websocket-transport.mjs"
+      ],
+      "deps": [
+        "eslint",
+        "msgpackr",
+        "opentelemetry-api",
+        "prettier",
+        "types-node",
+        "types-ws",
+        "unrdf-federation",
+        "vitest",
+        "ws",
+        "zod"
+      ],
+      "blurb": "Production-grade Raft consensus for distributed workflow coordination"
+    },
+    {
+      "id": "unrdf-core",
+      "name": "@unrdf/core",
+      "path": "packages/core",
+      "kind": "js",
+      "entrypoints": [
+        "packages/core/src/index.mjs",
+        "packages/core/src/rdf/index.mjs",
+        "packages/core/src/rdf/minimal-n3-integration.mjs",
+        "packages/core/src/rdf/n3-justified-only.mjs",
+        "packages/core/src/sparql/index.mjs",
+        "packages/core/src/types.mjs",
+        "packages/core/src/constants.mjs",
+        "packages/core/src/validation/index.mjs",
+        "packages/core/src/health.mjs",
+        "packages/core/src/logger.mjs",
+        "packages/core/src/metrics.mjs",
+        "packages/core/src/security.mjs",
+        "packages/core/src/security-schemas.mjs",
+        "packages/core/src/utils/sparql-utils.mjs"
+      ],
+      "deps": [
+        "jsonld",
+        "n3",
+        "rdf-canonize",
+        "rdf-ext",
+        "rdf-validate-shacl",
+        "rdfjs-data-model",
+        "rdfjs-namespace",
+        "rdfjs-serializer-jsonld",
+        "rdfjs-serializer-turtle",
+        "rdfjs-to-ntriples",
+        "types-node",
+        "unrdf-oxigraph",
+        "vitest",
+        "zod"
+      ],
+      "blurb": "UNRDF Core - RDF Graph Operations, SPARQL Execution, and Foundational Substrate"
+    },
+    {
+      "id": "unrdf-dark-matter",
+      "name": "@unrdf/dark-matter",
+      "path": "packages/dark-matter",
+      "kind": "js",
+      "entrypoints": [
+        "packages/dark-matter/src/index.mjs",
+        "packages/dark-matter/src/optimizer.mjs",
+        "packages/dark-matter/src/analyzer.mjs"
+      ],
+      "deps": [
+        "types-node",
+        "typhonjs-escomplex",
+        "unrdf-core",
+        "unrdf-oxigraph",
+        "vitest"
+      ],
+      "blurb": "UNRDF Dark Matter - Query Optimization and Performance Analysis (Optional Extension)"
+    },
+    {
+      "id": "unrdf-diataxis-kit",
+      "name": "@unrdf/diataxis-kit",
+      "path": "packages/diataxis-kit",
+      "kind": "js",
+      "entrypoints": [
+        "packages/diataxis-kit/bin/run.mjs",
+        "packages/diataxis-kit/bin/verify.mjs",
+        "packages/diataxis-kit/bin/report.mjs",
+        "packages/diataxis-kit/src/index.mjs",
+        "packages/diataxis-kit/src/inventory.mjs",
+        "packages/diataxis-kit/src/evidence.mjs",
+        "packages/diataxis-kit/src/classify.mjs",
+        "packages/diataxis-kit/src/scaffold.mjs",
+        "packages/diataxis-kit/src/stable-json.mjs",
+        "packages/diataxis-kit/src/hash.mjs"
+      ],
+      "deps": [],
+      "blurb": "Diátaxis documentation kit for monorepo package inventory and deterministic doc scaffold generation"
+    },
+    {
+      "id": "docs",
+      "name": "docs",
+      "path": "packages/docs",
+      "kind": "docs",
+      "entrypoints": [],
+      "deps": [
+        "ai",
+        "ai-sdk-gateway",
+        "ai-sdk-vue",
+        "better-sqlite3",
+        "date-fns",
+        "drizzle-kit",
+        "drizzle-orm",
+        "electric-sql-pglite",
+        "eslint",
+        "happy-dom",
+        "iconify-json-logos",
+        "iconify-json-lucide",
+        "iconify-json-simple-icons",
+        "iconify-json-vscode-icons",
+        "msw",
+        "nuxt",
+        "nuxt-auth-utils",
+        "nuxt-charts",
+        "nuxt-content",
+        "nuxt-eslint",
+        "nuxt-image",
+        "nuxt-llms",
+        "nuxt-og-image",
+        "nuxt-ui",
+        "nuxtjs-mdc",
+        "playwright-test",
+        "shiki-stream",
+        "types-node",
+        "typescript",
+        "vitejs-plugin-vue",
+        "vitest",
+        "vitest-ui",
+        "vue-test-utils",
+        "vue-tsc"
+      ],
+      "blurb": "No description available"
+    },
+    {
+      "id": "unrdf-domain",
+      "name": "@unrdf/domain",
+      "path": "packages/domain",
+      "kind": "js",
+      "entrypoints": [
+        "packages/domain/src/index.mjs"
+      ],
+      "deps": [],
+      "blurb": "Domain models and types for UNRDF"
+    },
+    {
+      "id": "unrdf-engine-gateway",
+      "name": "@unrdf/engine-gateway",
+      "path": "packages/engine-gateway",
+      "kind": "js",
+      "entrypoints": [
+        "packages/engine-gateway/src/index.mjs",
+        "packages/engine-gateway/src/gateway.mjs",
+        "packages/engine-gateway/src/operation-detector.mjs",
+        "packages/engine-gateway/src/validators.mjs"
+      ],
+      "deps": [
+        "unrdf-core",
+        "unrdf-oxigraph",
+        "vitest"
+      ],
+      "blurb": "μ(O) Engine Gateway - Enforcement layer for Oxigraph-first, N3-minimal RDF processing"
+    },
+    {
+      "id": "unrdf-federation",
+      "name": "@unrdf/federation",
+      "path": "packages/federation",
+      "kind": "js",
+      "entrypoints": [
+        "packages/federation/src/index.mjs",
+        "packages/federation/src/coordinator.mjs",
+        "packages/federation/src/advanced-sparql-federation.mjs"
+      ],
+      "deps": [
+        "comunica-query-sparql",
+        "opentelemetry-api",
+        "prom-client",
+        "types-node",
+        "unrdf-core",
+        "unrdf-hooks",
+        "vitest",
+        "zod"
+      ],
+      "blurb": "UNRDF Federation - Peer Discovery and Distributed Query Execution"
+    },
+    {
+      "id": "unrdf-fusion",
+      "name": "@unrdf/fusion",
+      "path": "packages/fusion",
+      "kind": "js",
+      "entrypoints": [
+        "packages/fusion/src/index.mjs"
+      ],
+      "deps": [
+        "graphql",
+        "unrdf-blockchain",
+        "unrdf-caching",
+        "unrdf-hooks",
+        "unrdf-kgc-4d",
+        "unrdf-oxigraph",
+        "unrdf-yawl",
+        "vitest",
+        "zod"
+      ],
+      "blurb": "Unified integration layer for 7-day UNRDF innovation - KGC-4D, blockchain, hooks, caching"
+    },
+    {
+      "id": "unrdf-graph-analytics",
+      "name": "@unrdf/graph-analytics",
+      "path": "packages/graph-analytics",
+      "kind": "js",
+      "entrypoints": [
+        "packages/graph-analytics/src/index.mjs",
+        "packages/graph-analytics/src/converter/rdf-to-graph.mjs",
+        "packages/graph-analytics/src/centrality/pagerank-analyzer.mjs",
+        "packages/graph-analytics/src/paths/relationship-finder.mjs",
+        "packages/graph-analytics/src/clustering/community-detector.mjs"
+      ],
+      "deps": [
+        "dagrejs-graphlib",
+        "graphlib",
+        "types-node",
+        "vitest",
+        "zod"
+      ],
+      "blurb": "Advanced graph analytics for RDF knowledge graphs using graphlib"
+    },
+    {
+      "id": "unrdf-hooks",
+      "name": "@unrdf/hooks",
+      "path": "packages/hooks",
+      "kind": "js",
+      "entrypoints": [
+        "packages/hooks/src/index.mjs",
+        "packages/hooks/src/define.mjs",
+        "packages/hooks/src/executor.mjs"
+      ],
+      "deps": [
+        "citty",
+        "types-node",
+        "unrdf-core",
+        "unrdf-oxigraph",
+        "vitest",
+        "zod"
+      ],
+      "blurb": "UNRDF Knowledge Hooks - Policy Definition and Execution Framework"
+    },
+    {
+      "id": "unrdf-integration-tests",
+      "name": "@unrdf/integration-tests",
+      "path": "packages/integration-tests",
+      "kind": "js",
+      "entrypoints": [],
+      "deps": [
+        "unrdf-core",
+        "unrdf-federation",
+        "unrdf-hooks",
+        "unrdf-kgc-4d",
+        "unrdf-oxigraph",
+        "unrdf-streaming",
+        "unrdf-yawl",
+        "vitest",
+        "vitest-coverage-v8",
+        "zod"
+      ],
+      "blurb": "Comprehensive integration tests for UNRDF multi-package workflows"
+    },
+    {
+      "id": "unrdf-kgc-4d",
+      "name": "@unrdf/kgc-4d",
+      "path": "packages/kgc-4d",
+      "kind": "js",
+      "entrypoints": [
+        "packages/kgc-4d/src/index.mjs",
+        "packages/kgc-4d/src/client.mjs",
+        "packages/kgc-4d/src/hdit/index.mjs"
+      ],
+      "deps": [
+        "comment-parser",
+        "hash-wasm",
+        "isomorphic-git",
+        "simple-statistics",
+        "tinybench",
+        "unrdf-core",
+        "unrdf-oxigraph",
+        "vitest"
+      ],
+      "blurb": "KGC 4D Datum & Universe Freeze Engine - Nanosecond-precision event logging with Git-backed snapshots"
+    },
+    {
+      "id": "unrdf-kgc-claude",
+      "name": "@unrdf/kgc-claude",
+      "path": "packages/kgc-claude",
+      "kind": "js",
+      "entrypoints": [
+        "packages/kgc-claude/src/index.mjs",
+        "packages/kgc-claude/src/run-capsule.mjs",
+        "packages/kgc-claude/src/checkpoint.mjs",
+        "packages/kgc-claude/src/autonomy-guard.mjs",
+        "packages/kgc-claude/src/shard-merge.mjs",
+        "packages/kgc-claude/src/async-workflow.mjs",
+        "packages/kgc-claude/src/projection.mjs"
+      ],
+      "deps": [
+        "hash-wasm",
+        "unrdf-core",
+        "unrdf-hooks",
+        "unrdf-kgc-4d",
+        "unrdf-oxigraph",
+        "unrdf-yawl",
+        "vitest",
+        "zod"
+      ],
+      "blurb": "KGC-Claude Substrate - Deterministic run objects, universal checkpoints, bounded autonomy, and multi..."
+    },
+    {
+      "id": "unrdf-kgc-cli",
+      "name": "@unrdf/kgc-cli",
+      "path": "packages/kgc-cli",
+      "kind": "js",
+      "entrypoints": [
+        "packages/kgc-cli/src/index.mjs",
+        "packages/kgc-cli/src/cli.mjs",
+        "packages/kgc-cli/src/lib/registry.mjs",
+        "packages/kgc-cli/src/manifest/extensions.mjs"
+      ],
+      "deps": [
+        "citty",
+        "types-node",
+        "vitest",
+        "zod"
+      ],
+      "blurb": "KGC CLI - Deterministic extension registry for ~40 workspace packages"
+    },
+    {
+      "id": "unrdf-kgc-substrate",
+      "name": "@unrdf/kgc-substrate",
+      "path": "packages/kgc-substrate",
+      "kind": "js",
+      "entrypoints": [
+        "packages/kgc-substrate/src/index.mjs",
+        "packages/kgc-substrate/src/types.mjs",
+        "packages/kgc-substrate/src/KnowledgeStore.mjs"
+      ],
+      "deps": [
+        "hash-wasm",
+        "types-node",
+        "unrdf-core",
+        "unrdf-kgc-4d",
+        "unrdf-oxigraph",
+        "vitest",
+        "vitest-coverage-v8",
+        "zod"
+      ],
+      "blurb": "KGC Substrate - Deterministic, hash-stable KnowledgeStore with immutable append-only log"
+    },
+    {
+      "id": "unrdf-kgn",
+      "name": "@unrdf/kgn",
+      "path": "packages/kgn",
+      "kind": "js",
+      "entrypoints": [
+        "packages/kgn/src/index.js",
+        "packages/kgn/src/engine/index.js",
+        "packages/kgn/src/filters/index.js",
+        "packages/kgn/src/renderer/index.js",
+        "packages/kgn/src/linter/index.js",
+        "packages/kgn/src/templates/*"
+      ],
+      "deps": [
+        "amiceli-vitest-cucumber",
+        "babel-parser",
+        "babel-traverse",
+        "comment-parser",
+        "eslint",
+        "fs-extra",
+        "gray-matter",
+        "nodemon",
+        "nunjucks",
+        "unrdf-core",
+        "unrdf-test-utils",
+        "vitest",
+        "yaml"
+      ],
+      "blurb": "Deterministic Nunjucks template system with custom filters and frontmatter support"
+    },
+    {
+      "id": "unrdf-knowledge-engine",
+      "name": "@unrdf/knowledge-engine",
+      "path": "packages/knowledge-engine",
+      "kind": "js",
+      "entrypoints": [
+        "packages/knowledge-engine/src/index.mjs",
+        "packages/knowledge-engine/src/query.mjs",
+        "packages/knowledge-engine/src/canonicalize.mjs",
+        "packages/knowledge-engine/src/parse.mjs",
+        "packages/knowledge-engine/src/ai-enhanced-search.mjs"
+      ],
+      "deps": [
+        "eyereasoner",
+        "noble-hashes",
+        "types-node",
+        "unrdf-core",
+        "unrdf-oxigraph",
+        "unrdf-streaming",
+        "vitest",
+        "xenova-transformers"
+      ],
+      "blurb": "UNRDF Knowledge Engine - Rule Engine, Inference, and Pattern Matching (Optional Extension)"
+    },
+    {
+      "id": "unrdf-ml-inference",
+      "name": "@unrdf/ml-inference",
+      "path": "packages/ml-inference",
+      "kind": "js",
+      "entrypoints": [
+        "packages/ml-inference/src/index.mjs",
+        "packages/ml-inference/src/runtime/onnx-runner.mjs",
+        "packages/ml-inference/src/pipeline/streaming-inference.mjs",
+        "packages/ml-inference/src/registry/model-registry.mjs"
+      ],
+      "deps": [
+        "onnxruntime-node",
+        "opentelemetry-api",
+        "types-node",
+        "unrdf-core",
+        "unrdf-oxigraph",
+        "unrdf-streaming",
+        "vitest",
+        "zod"
+      ],
+      "blurb": "UNRDF ML Inference - High-performance ONNX model inference pipeline for RDF streams"
+    },
+    {
+      "id": "unrdf-ml-versioning",
+      "name": "@unrdf/ml-versioning",
+      "path": "packages/ml-versioning",
+      "kind": "js",
+      "entrypoints": [
+        "packages/ml-versioning/src/index.mjs",
+        "packages/ml-versioning/src/version-store.mjs",
+        "packages/ml-versioning/src/examples/image-classifier.mjs"
+      ],
+      "deps": [
+        "hash-wasm",
+        "tensorflow-tfjs-node",
+        "types-node",
+        "unrdf-core",
+        "unrdf-kgc-4d",
+        "unrdf-oxigraph",
+        "vitest",
+        "zod"
+      ],
+      "blurb": "ML Model Versioning System using TensorFlow."
+    },
+    {
+      "id": "unrdf-nextra-docs",
+      "name": "@unrdf/nextra-docs",
+      "path": "packages/nextra",
+      "kind": "docs",
+      "entrypoints": [],
+      "deps": [
+        "katex",
+        "next",
+        "nextra",
+        "nextra-theme-docs",
+        "react",
+        "react-dom",
+        "types-node",
+        "types-react",
+        "types-react-dom",
+        "typescript",
+        "zod"
+      ],
+      "blurb": "UNRDF documentation with Nextra 4 - Developer-focused Next."
+    },
+    {
+      "id": "unrdf-observability",
+      "name": "@unrdf/observability",
+      "path": "packages/observability",
+      "kind": "js",
+      "entrypoints": [
+        "packages/observability/src/index.mjs",
+        "packages/observability/src/metrics/workflow-metrics.mjs",
+        "packages/observability/src/exporters/grafana-exporter.mjs",
+        "packages/observability/src/alerts/alert-manager.mjs"
+      ],
+      "deps": [
+        "express",
+        "opentelemetry-api",
+        "opentelemetry-exporter-prometheus",
+        "opentelemetry-sdk-metrics",
+        "prom-client",
+        "vitest",
+        "zod"
+      ],
+      "blurb": "Innovative Prometheus/Grafana observability dashboard for UNRDF distributed workflows"
+    },
+    {
+      "id": "unrdf-oxigraph",
+      "name": "@unrdf/oxigraph",
+      "path": "packages/oxigraph",
+      "kind": "js",
+      "entrypoints": [
+        "packages/oxigraph/src/index.mjs",
+        "packages/oxigraph/src/store.mjs",
+        "packages/oxigraph/src/types.mjs"
+      ],
+      "deps": [
+        "oxigraph",
+        "types-node",
+        "vitest",
+        "zod"
+      ],
+      "blurb": "UNRDF Oxigraph - Graph database benchmarking implementation using Oxigraph SPARQL engine"
+    },
+    {
+      "id": "unrdf-project-engine",
+      "name": "@unrdf/project-engine",
+      "path": "packages/project-engine",
+      "kind": "js",
+      "entrypoints": [
+        "packages/project-engine/src/index.mjs"
+      ],
+      "deps": [
+        "types-node",
+        "unrdf-core",
+        "unrdf-knowledge-engine",
+        "vitest"
+      ],
+      "blurb": "UNRDF Project Engine - Self-hosting Tools and Infrastructure (Development Only)"
+    },
+    {
+      "id": "unrdf-rdf-graphql",
+      "name": "@unrdf/rdf-graphql",
+      "path": "packages/rdf-graphql",
+      "kind": "js",
+      "entrypoints": [
+        "packages/rdf-graphql/src/adapter.mjs",
+        "packages/rdf-graphql/src/schema-generator.mjs",
+        "packages/rdf-graphql/src/query-builder.mjs",
+        "packages/rdf-graphql/src/resolver.mjs"
+      ],
+      "deps": [
+        "graphql",
+        "graphql-tools-schema",
+        "unrdf-oxigraph",
+        "zod"
+      ],
+      "blurb": "Type-safe GraphQL interface for RDF knowledge graphs with automatic schema generation"
+    },
+    {
+      "id": "unrdf-semantic-search",
+      "name": "@unrdf/semantic-search",
+      "path": "packages/semantic-search",
+      "kind": "js",
+      "entrypoints": [
+        "packages/semantic-search/src/index.mjs",
+        "packages/semantic-search/src/embeddings/index.mjs",
+        "packages/semantic-search/src/search/index.mjs",
+        "packages/semantic-search/src/discovery/index.mjs"
+      ],
+      "deps": [
+        "types-node",
+        "unrdf-oxigraph",
+        "vectra",
+        "vitest",
+        "xenova-transformers",
+        "zod"
+      ],
+      "blurb": "AI-powered semantic search over RDF knowledge graphs using vector embeddings"
+    },
+    {
+      "id": "unrdf-serverless",
+      "name": "@unrdf/serverless",
+      "path": "packages/serverless",
+      "kind": "js",
+      "entrypoints": [
+        "packages/serverless/src/index.mjs",
+        "packages/serverless/src/cdk/index.mjs",
+        "packages/serverless/src/deploy/index.mjs",
+        "packages/serverless/src/api/index.mjs",
+        "packages/serverless/src/storage/index.mjs"
+      ],
+      "deps": [
+        "aws-cdk-lib",
+        "aws-sdk-client-dynamodb",
+        "aws-sdk-client-lambda",
+        "aws-sdk-lib-dynamodb",
+        "constructs",
+        "esbuild",
+        "types-node",
+        "unrdf-core",
+        "unrdf-oxigraph",
+        "vitest",
+        "zod"
+      ],
+      "blurb": "UNRDF Serverless - One-click AWS deployment for RDF applications"
+    },
+    {
+      "id": "unrdf-streaming",
+      "name": "@unrdf/streaming",
+      "path": "packages/streaming",
+      "kind": "js",
+      "entrypoints": [
+        "packages/streaming/src/index.mjs",
+        "packages/streaming/src/processor.mjs"
+      ],
+      "deps": [
+        "citty",
+        "lru-cache",
+        "opentelemetry-api",
+        "rdfjs-data-model",
+        "types-node",
+        "unrdf-core",
+        "unrdf-hooks",
+        "unrdf-oxigraph",
+        "vitest",
+        "ws",
+        "zod"
+      ],
+      "blurb": "UNRDF Streaming - Change Feeds and Real-time Synchronization"
+    },
+    {
+      "id": "unrdf-test-utils",
+      "name": "@unrdf/test-utils",
+      "path": "packages/test-utils",
+      "kind": "js",
+      "entrypoints": [
+        "packages/test-utils/src/index.mjs"
+      ],
+      "deps": [
+        "opentelemetry-api",
+        "unrdf-oxigraph",
+        "vitest",
+        "zod"
+      ],
+      "blurb": "Testing utilities for UNRDF development"
+    },
+    {
+      "id": "unrdf-validation",
+      "name": "@unrdf/validation",
+      "path": "packages/validation",
+      "kind": "js",
+      "entrypoints": [
+        "packages/validation/src/index.mjs"
+      ],
+      "deps": [
+        "unrdf-knowledge-engine"
+      ],
+      "blurb": "OTEL validation framework for UNRDF development"
+    },
+    {
+      "id": "unrdf-yawl",
+      "name": "@unrdf/yawl",
+      "path": "packages/yawl",
+      "kind": "js",
+      "entrypoints": [
+        "packages/yawl/src/index.mjs",
+        "packages/yawl/src/api/workflow-api.mjs",
+        "packages/yawl/src/api/graphql-api.mjs",
+        "packages/yawl/src/ontology/yawl-ontology.mjs",
+        "packages/yawl/src/store/yawl-store.mjs",
+        "packages/yawl/src/types/yawl-types.mjs",
+        "packages/yawl/src/types/yawl-schemas.mjs",
+        "packages/yawl/src/hooks/yawl-hooks.mjs",
+        "packages/yawl/src/resources/yawl-resources.mjs",
+        "packages/yawl/src/cancellation/index.mjs",
+        "packages/yawl/src/receipt.mjs",
+        "packages/yawl/src/blockchain-receipts.mjs",
+        "packages/yawl/src/visualization/live-workflow-viz.mjs"
+      ],
+      "deps": [
+        "d3",
+        "eslint",
+        "graphql",
+        "graphql-tools-schema",
+        "hash-wasm",
+        "noble-ed25519",
+        "observablehq-plot",
+        "unrdf-hooks",
+        "unrdf-kgc-4d",
+        "unrdf-oxigraph",
+        "vitest",
+        "zod"
+      ],
+      "blurb": "YAWL (Yet Another Workflow Language) engine with KGC-4D time-travel and receipt verification"
+    },
+    {
+      "id": "unrdf-yawl-ai",
+      "name": "@unrdf/yawl-ai",
+      "path": "packages/yawl-ai",
+      "kind": "js",
+      "entrypoints": [
+        "packages/yawl-ai/src/index.mjs",
+        "packages/yawl-ai/src/ml/workflow-predictor.mjs",
+        "packages/yawl-ai/src/ml/performance-optimizer.mjs",
+        "packages/yawl-ai/src/ml/anomaly-detector.mjs",
+        "packages/yawl-ai/src/integration/yawl-adapter.mjs"
+      ],
+      "deps": [
+        "ml-matrix",
+        "tensorflow-tfjs-layers",
+        "tensorflow-tfjs-node",
+        "vitest",
+        "zod"
+      ],
+      "blurb": "AI-powered workflow optimization using TensorFlow."
+    },
+    {
+      "id": "unrdf-yawl-api",
+      "name": "@unrdf/yawl-api",
+      "path": "packages/yawl-api",
+      "kind": "js",
+      "entrypoints": [
+        "packages/yawl-api/src/server.mjs"
+      ],
+      "deps": [
+        "eslint",
+        "fastify",
+        "fastify-cors",
+        "fastify-swagger",
+        "fastify-swagger-ui",
+        "unrdf-kgc-4d",
+        "unrdf-yawl",
+        "vitest",
+        "zod",
+        "zod-to-json-schema"
+      ],
+      "blurb": "High-performance REST API framework that exposes YAWL workflows as RESTful APIs with OpenAPI documen..."
+    },
+    {
+      "id": "unrdf-yawl-durable",
+      "name": "@unrdf/yawl-durable",
+      "path": "packages/yawl-durable",
+      "kind": "js",
+      "entrypoints": [
+        "packages/yawl-durable/src/engine.mjs",
+        "packages/yawl-durable/src/saga.mjs",
+        "packages/yawl-durable/src/activity.mjs",
+        "packages/yawl-durable/src/replay.mjs"
+      ],
+      "deps": [
+        "eslint",
+        "hash-wasm",
+        "jest",
+        "jest-globals",
+        "unrdf-kgc-4d",
+        "unrdf-yawl",
+        "zod"
+      ],
+      "blurb": "Durable execution framework inspired by Temporal."
+    },
+    {
+      "id": "unrdf-yawl-kafka",
+      "name": "@unrdf/yawl-kafka",
+      "path": "packages/yawl-kafka",
+      "kind": "js",
+      "entrypoints": [
+        "packages/yawl-kafka/src/index.mjs",
+        "packages/yawl-kafka/src/producer.mjs",
+        "packages/yawl-kafka/src/consumer.mjs",
+        "packages/yawl-kafka/src/schemas.mjs"
+      ],
+      "deps": [
+        "avsc",
+        "eslint",
+        "kafkajs",
+        "unrdf-core",
+        "vitest",
+        "zod"
+      ],
+      "blurb": "Apache Kafka event streaming integration for YAWL workflows with Avro serialization"
+    },
+    {
+      "id": "unrdf-yawl-langchain",
+      "name": "@unrdf/yawl-langchain",
+      "path": "packages/yawl-langchain",
+      "kind": "js",
+      "entrypoints": [
+        "packages/yawl-langchain/src/index.mjs",
+        "packages/yawl-langchain/src/adapter.mjs",
+        "packages/yawl-langchain/examples/code-review-workflow.mjs"
+      ],
+      "deps": [
+        "eslint",
+        "langchain",
+        "langchain-core",
+        "langchain-openai",
+        "unrdf-kgc-4d",
+        "unrdf-oxigraph",
+        "unrdf-yawl",
+        "vitest",
+        "zod"
+      ],
+      "blurb": "LangChain integration for YAWL workflow engine - AI-powered workflow orchestration with RDF context"
+    },
+    {
+      "id": "unrdf-yawl-observability",
+      "name": "@unrdf/yawl-observability",
+      "path": "packages/yawl-observability",
+      "kind": "js",
+      "entrypoints": [
+        "packages/yawl-observability/src/index.mjs",
+        "packages/yawl-observability/src/metrics.mjs",
+        "packages/yawl-observability/src/tracing.mjs",
+        "packages/yawl-observability/src/sli.mjs"
+      ],
+      "deps": [
+        "eslint",
+        "opentelemetry-api",
+        "opentelemetry-sdk-metrics",
+        "opentelemetry-sdk-node",
+        "prom-client",
+        "unrdf-yawl",
+        "vitest",
+        "zod"
+      ],
+      "blurb": "Workflow observability framework with Prometheus metrics and OpenTelemetry tracing for YAWL"
+    },
+    {
+      "id": "unrdf-yawl-queue",
+      "name": "@unrdf/yawl-queue",
+      "path": "packages/yawl-queue",
+      "kind": "js",
+      "entrypoints": [
+        "packages/yawl-queue/src/adapter.mjs",
+        "packages/yawl-queue/src/examples/data-pipeline.mjs"
+      ],
+      "deps": [
+        "bullmq",
+        "eslint",
+        "ioredis",
+        "unrdf-kgc-4d",
+        "unrdf-yawl",
+        "vitest",
+        "zod"
+      ],
+      "blurb": "Distributed YAWL workflow execution using BullMQ and Redis"
+    },
+    {
+      "id": "unrdf-yawl-realtime",
+      "name": "@unrdf/yawl-realtime",
+      "path": "packages/yawl-realtime",
+      "kind": "js",
+      "entrypoints": [
+        "packages/yawl-realtime/src/index.mjs",
+        "packages/yawl-realtime/src/server.mjs",
+        "packages/yawl-realtime/src/client.mjs"
+      ],
+      "deps": [
+        "eslint",
+        "socket.io",
+        "socket.io-client",
+        "unrdf-yawl",
+        "vitest",
+        "zod"
+      ],
+      "blurb": "Real-time collaboration framework for YAWL workflows using Socket."
+    },
+    {
+      "id": "unrdf-yawl-viz",
+      "name": "@unrdf/yawl-viz",
+      "path": "packages/yawl-viz",
+      "kind": "js",
+      "entrypoints": [
+        "packages/yawl-viz/src/visualizer.mjs"
+      ],
+      "deps": [
+        "d3",
+        "d3-drag",
+        "d3-force",
+        "d3-graphviz",
+        "d3-hierarchy",
+        "d3-selection",
+        "d3-zoom",
+        "eslint",
+        "jsdom",
+        "unrdf-yawl",
+        "vite",
+        "vitest"
+      ],
+      "blurb": "Real-time D3."
+    },
+    {
+      "id": "unrdf-hooks-showcase",
+      "name": "unrdf-hooks-showcase",
+      "path": "playground/hooks-showcase",
+      "kind": "js",
+      "entrypoints": [],
+      "deps": [
+        "autoprefixer",
+        "class-variance-authority",
+        "clsx",
+        "eslint",
+        "eslint-config-next",
+        "lucide-react",
+        "next",
+        "postcss",
+        "radix-ui-react-slot",
+        "radix-ui-react-tabs",
+        "react",
+        "react-dom",
+        "tailwind-merge",
+        "tailwindcss",
+        "tailwindcss-animate",
+        "types-node",
+        "types-react",
+        "types-react-dom"
+      ],
+      "blurb": "Interactive showcase of 40+ UNRDF React hooks with real KGC-4D backend"
+    },
+    {
+      "id": "unrdf-analytics-project",
+      "name": "unrdf-analytics-project",
+      "path": "templates/projects/analytics",
+      "kind": "js",
+      "entrypoints": [
+        "templates/projects/analytics/src/index.mjs"
+      ],
+      "deps": [
+        "eslint",
+        "prettier",
+        "unrdf",
+        "vitest"
+      ],
+      "blurb": "UNRDF analytics project for knowledge graph analysis and insights"
+    },
+    {
+      "id": "unrdf-governance-project",
+      "name": "unrdf-governance-project",
+      "path": "templates/projects/governance",
+      "kind": "js",
+      "entrypoints": [
+        "templates/projects/governance/src/index.mjs"
+      ],
+      "deps": [
+        "eslint",
+        "prettier",
+        "unrdf",
+        "vitest"
+      ],
+      "blurb": "UNRDF governance project with policy packs and compliance monitoring"
+    },
+    {
+      "id": "unrdf-starter-project",
+      "name": "unrdf-starter-project",
+      "path": "templates/projects/starter",
+      "kind": "js",
+      "entrypoints": [
+        "templates/projects/starter/src/index.mjs"
+      ],
+      "deps": [
+        "eslint",
+        "prettier",
+        "unrdf",
+        "vitest"
+      ],
+      "blurb": "UNRDF starter project for knowledge graph development"
+    },
+    {
+      "id": "unrdf-vscode",
+      "name": "unrdf-vscode",
+      "path": "vscode-extension",
+      "kind": "js",
+      "entrypoints": [
+        "vscode-extension/extension.js"
+      ],
+      "deps": [
+        "types-vscode",
+        "vsce"
+      ],
+      "blurb": "Syntax highlighting and IntelliSense for UNRDF Knowledge Hooks and Policy Packs"
+    }
+  ]
+}
