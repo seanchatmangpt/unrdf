@@ -4,8 +4,8 @@ type: "explanation"
 packageName: "@unrdf/kgc-cli"
 version: "5.0.1"
 generatedAt: "2000-01-01T00:00:00.000Z"
-confidenceScore: 0.7
-proof: "b2ab63f16d0eefb309d281bbc9bc13ca89ebbe587adc4e0fd2bad35eae3e281c"
+confidenceScore: 1
+proof: "d6255847fa6a226ef6945b500c829257cfa4a9406c3008c02879080411ab61de"
 ---
 
 ## Concepts
@@ -30,15 +30,17 @@ proof: "b2ab63f16d0eefb309d281bbc9bc13ca89ebbe587adc4e0fd2bad35eae3e281c"
 
 This file was generated from the following evidence sources:
 
+- docs
 - inferred
 - keywords
 - readme
 
 ```json
 {
-  "fingerprintInput": "inferred|keywords|readme|Understanding @unrdf/kgc-cli|0.7",
-  "hash": "b2ab63f16d0eefb309d281bbc9bc13ca89ebbe587adc4e0fd2bad35eae3e281c",
+  "fingerprintInput": "docs|inferred|keywords|readme|Understanding @unrdf/kgc-cli|1",
+  "hash": "d6255847fa6a226ef6945b500c829257cfa4a9406c3008c02879080411ab61de",
   "sources": [
+    "docs",
     "inferred",
     "keywords",
     "readme"

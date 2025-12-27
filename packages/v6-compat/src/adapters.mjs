@@ -304,11 +304,20 @@ export function validateSchema(schema) {
 
 /**
  * Migration status tracker
+ *
+ * **P0-003 Enhancement**: Static analysis counters
  */
 export class MigrationTracker {
   constructor() {
     this.warnings = [];
     this.start = Date.now();
+    this.staticAnalysis = {
+      n3Imports: 0,
+      dateNowCalls: 0,
+      mathRandomCalls: 0,
+      workflowRunCalls: 0,
+      filesScanned: 0,
+    };
   }
 
   track(oldAPI, newAPI) {
@@ -319,6 +328,91 @@ export class MigrationTracker {
     });
   }
 
+  /**
+   * Analyze source file for migration issues
+   *
+   * **P0-003**: Static analysis for N3 imports, Date.now(), Math.random()
+   *
+   * @param {string} source - Source code
+   * @param {string} [filePath] - File path for reporting
+   * @returns {Object} Analysis result
+   */
+  analyzeSource(source, filePath = 'unknown') {
+    this.staticAnalysis.filesScanned++;
+
+    const issues = {
+      file: filePath,
+      n3Imports: 0,
+      dateNowCalls: 0,
+      mathRandomCalls: 0,
+      workflowRunCalls: 0,
+    };
+
+    // Count N3 imports
+    const n3ImportMatches = source.match(/from\s+['"]n3['"]/g);
+    if (n3ImportMatches) {
+      issues.n3Imports = n3ImportMatches.length;
+      this.staticAnalysis.n3Imports += n3ImportMatches.length;
+    }
+
+    // Count Date.now() calls
+    const dateNowMatches = source.match(/Date\.now\(\)/g);
+    if (dateNowMatches) {
+      issues.dateNowCalls = dateNowMatches.length;
+      this.staticAnalysis.dateNowCalls += dateNowMatches.length;
+    }
+
+    // Count Math.random() calls
+    const mathRandomMatches = source.match(/Math\.random\(\)/g);
+    if (mathRandomMatches) {
+      issues.mathRandomCalls = mathRandomMatches.length;
+      this.staticAnalysis.mathRandomCalls += mathRandomMatches.length;
+    }
+
+    // Count workflow.run() calls
+    const workflowRunMatches = source.match(/workflow\.run\(/g);
+    if (workflowRunMatches) {
+      issues.workflowRunCalls = workflowRunMatches.length;
+      this.staticAnalysis.workflowRunCalls += workflowRunMatches.length;
+    }
+
+    return issues;
+  }
+
+  /**
+   * Scan directory for migration issues
+   *
+   * @param {string} pattern - Glob pattern
+   * @returns {Promise<Array<Object>>} Issues found
+   */
+  async scanDirectory(pattern) {
+    const { glob } = await import('glob');
+    const { readFile } = await import('fs/promises');
+
+    const files = await glob(pattern, { absolute: true });
+    const results = [];
+
+    for (const file of files) {
+      try {
+        const source = await readFile(file, 'utf-8');
+        const issues = this.analyzeSource(source, file);
+
+        if (
+          issues.n3Imports > 0 ||
+          issues.dateNowCalls > 0 ||
+          issues.mathRandomCalls > 0 ||
+          issues.workflowRunCalls > 0
+        ) {
+          results.push(issues);
+        }
+      } catch (error) {
+        console.warn(`Failed to scan ${file}:`, error.message);
+      }
+    }
+
+    return results;
+  }
+
   report() {
     const unique = [...new Set(this.warnings.map((w) => w.oldAPI))];
     const elapsed = Date.now() - this.start;
@@ -327,7 +421,8 @@ export class MigrationTracker {
       totalWarnings: this.warnings.length,
       uniqueAPIs: unique.length,
       elapsed,
-      warnings: this.warnings
+      warnings: this.warnings,
+      staticAnalysis: this.staticAnalysis,
     };
   }
 
@@ -339,6 +434,14 @@ export class MigrationTracker {
 Total deprecation warnings: ${report.totalWarnings}
 Unique deprecated APIs: ${report.uniqueAPIs}
 Elapsed time: ${report.elapsed}ms
+
+Static Analysis (P0-003):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Files scanned: ${report.staticAnalysis.filesScanned}
+N3 imports: ${report.staticAnalysis.n3Imports}
+Date.now() calls: ${report.staticAnalysis.dateNowCalls}
+Math.random() calls: ${report.staticAnalysis.mathRandomCalls}
+workflow.run() calls: ${report.staticAnalysis.workflowRunCalls}
 
 Top deprecated APIs:
 ${Object.entries(

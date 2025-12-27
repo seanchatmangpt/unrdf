@@ -1,0 +1,32 @@
+P1 L5 MIGRATION - ABSOLUTE FILE PATHS
+========================================
+
+CORE PATTERN LIBRARY
+--------------------
+/home/user/unrdf/packages/v6-core/src/receipt-pattern.mjs
+
+PACKAGE IMPLEMENTATIONS
+-----------------------
+/home/user/unrdf/packages/oxigraph/src/store-receipts.mjs
+/home/user/unrdf/packages/core/src/n3-justified-receipts.mjs
+/home/user/unrdf/packages/v6-core/src/delta/kgc-receipts.mjs
+/home/user/unrdf/packages/federation/src/federation-receipts.mjs
+/home/user/unrdf/packages/yawl/src/yawl-receipts.mjs
+/home/user/unrdf/packages/cli/src/cli-receipts.mjs
+/home/user/unrdf/packages/v6-core/src/grammar/grammar-receipts.mjs
+/home/user/unrdf/packages/validation/src/validation-receipts.mjs
+/home/user/unrdf/packages/streaming/src/streaming-receipts.mjs
+/home/user/unrdf/packages/v6-core/src/receipts/indexing-receipts.mjs
+
+TESTS
+-----
+/home/user/unrdf/packages/oxigraph/test/determinism.test.mjs
+/home/user/unrdf/P1-MASTER-TEST-SUITE.mjs
+
+DOCUMENTATION
+-------------
+/home/user/unrdf/docs/P1-L5-MATURITY-REPORT.md
+/home/user/unrdf/P1-DELIVERABLES-SUMMARY.md
+/home/user/unrdf/P1-FILE-PATHS.txt
+
+TOTAL: 14 files created
