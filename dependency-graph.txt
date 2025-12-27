@@ -1,0 +1,159 @@
+UNRDF Package Dependency Graph
+================================
+Generated: 2025-12-26
+
+LEGEND:
+  → depends on
+  ← depended on by
+  * leaf package (no internal dependencies)
+  [P] private package
+
+FOUNDATION (No Dependencies)
+============================
+* atomvm
+* diataxis-kit
+* domain [P]
+* graph-analytics
+* observability
+* oxigraph
+
+LEVEL 1 (Depends only on Foundation)
+=====================================
+core → oxigraph
+  ← cli, collab, composables, dark-matter, engine-gateway, federation,
+     hooks, kgc-4d, knowledge-engine, ml-inference, ml-versioning,
+     project-engine, serverless, streaming, yawl-kafka
+
+caching → oxigraph
+rdf-graphql → oxigraph
+semantic-search → oxigraph
+test-utils [P] → oxigraph
+
+LEVEL 2 (Depends on Level 1)
+=============================
+collab → core
+composables → core, streaming
+dark-matter → core, oxigraph
+engine-gateway → core, oxigraph
+kgc-4d → core, oxigraph
+  ← blockchain, ml-versioning, yawl, yawl-api, yawl-durable, yawl-langchain,
+     yawl-queue
+
+hooks → core, oxigraph
+  ← federation, streaming, yawl, integration-tests [P]
+
+kgn → core, test-utils [P]
+ml-inference → core, streaming, oxigraph
+serverless → core, oxigraph
+streaming → core, hooks, oxigraph
+  ← composables, knowledge-engine, ml-inference, integration-tests [P]
+
+LEVEL 3 (Depends on Level 2)
+=============================
+federation → core, hooks
+  ← cli, consensus, integration-tests [P]
+
+knowledge-engine → core, oxigraph, streaming
+  ← cli, project-engine, validation [P]
+
+ml-versioning → kgc-4d, oxigraph, core
+yawl → hooks, kgc-4d, oxigraph
+  ← blockchain, yawl-api, yawl-durable, yawl-langchain, yawl-observability,
+     yawl-queue, yawl-realtime, yawl-viz, integration-tests [P]
+
+LEVEL 4 (Depends on Level 3)
+=============================
+blockchain → kgc-4d, yawl
+consensus → federation
+project-engine → core, knowledge-engine
+validation [P] → knowledge-engine
+
+cli → core, federation, hooks, knowledge-engine, oxigraph, project-engine, streaming
+
+YAWL Extensions (Level 4)
+=========================
+yawl-ai (standalone, optional yawl dependency)
+yawl-api → yawl, kgc-4d
+yawl-durable → yawl, kgc-4d
+yawl-kafka → core
+yawl-langchain → kgc-4d, oxigraph, yawl
+yawl-observability → yawl
+yawl-queue → yawl, kgc-4d
+yawl-realtime → yawl
+yawl-viz → yawl
+
+INTEGRATION/TESTING (Level 5)
+==============================
+integration-tests [P] → yawl, hooks, kgc-4d, federation, streaming, oxigraph, core
+
+DOCUMENTATION (No Code Dependencies)
+====================================
+docs [P]
+nextra-docs [P]
+
+DEPENDENCY CLUSTERS
+===================
+
+Cluster 1: Core RDF Stack
+-------------------------
+oxigraph (base)
+  → core
+    → hooks, streaming, kgc-4d, federation, knowledge-engine
+      → yawl (workflow layer)
+        → yawl-* extensions
+
+Cluster 2: YAWL Ecosystem (9 packages)
+---------------------------------------
+yawl (core) ← yawl-ai, yawl-api, yawl-durable, yawl-kafka, yawl-langchain,
+               yawl-observability, yawl-queue, yawl-realtime, yawl-viz
+
+Cluster 3: AI/ML Stack
+----------------------
+knowledge-engine (inference)
+ml-inference (ONNX runtime)
+ml-versioning (TensorFlow.js)
+semantic-search (embeddings)
+yawl-ai (workflow optimization)
+
+Cluster 4: Developer Tools
+---------------------------
+cli (command-line)
+kgn (templates)
+diataxis-kit (docs)
+project-engine (infrastructure)
+test-utils [P]
+validation [P]
+
+Cluster 5: Infrastructure
+--------------------------
+caching (Redis/LRU)
+observability (Prometheus/Grafana)
+serverless (AWS Lambda/CDK)
+blockchain (receipt anchoring)
+consensus (Raft)
+
+MOST DEPENDED-ON PACKAGES
+==========================
+1. oxigraph (14 packages depend on it)
+2. core (13 packages)
+3. kgc-4d (7 packages)
+4. yawl (9 packages via extensions)
+5. hooks (4 packages)
+6. streaming (3 packages)
+
+LEAF PACKAGES (No Internal Dependencies)
+=========================================
+atomvm, diataxis-kit, domain [P], graph-analytics, observability,
+oxigraph, yawl-ai
+
+PRIVATE PACKAGES [P]
+====================
+docs, domain, integration-tests, nextra-docs, test-utils, validation
+
+CRITICAL PATH
+=============
+oxigraph → core → hooks → yawl → yawl-extensions
+                     ↘ streaming → knowledge-engine → cli
+
+This path represents the foundational dependency chain from database
+through core functionality to workflow orchestration and AI capabilities.

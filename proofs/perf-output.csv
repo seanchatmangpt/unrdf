@@ -1,0 +1,9 @@
+operation,time_ms,memory_delta_bytes,result_size
+parse-ttl-100-quads,0.83,-111488,100
+parse-ttl-1000-quads,1.95,288285,1000
+query-simple-select,0.13,85381,10
+query-complex-construct,0.15,110325,500
+serialize-nquads-1000,0.81,16424,79669
+validate-shacl-simple,0.08,3205,0
+freeze-universe-1000-quads,2.68,-271712,79669
+execute-hook-simple,0.08,6589,0
