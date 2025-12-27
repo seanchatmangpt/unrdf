@@ -10,7 +10,7 @@
  * @license MIT
  */
 
-import { Store } from 'n3';
+import { createStore } from '@unrdf/oxigraph';
 import { useStoreContext } from '../context/index.mjs';
 
 /**
@@ -40,7 +40,7 @@ import { useStoreContext } from '../context/index.mjs';
  *
  * @throws {Error} If store context is not initialized
  */
-export function useGraph() {
+export async function useGraph() {
   // Get the store context - now sender-only operations
   const storeContext = useStoreContext();
   const engine = storeContext.engine;
@@ -122,7 +122,7 @@ export function useGraph() {
       if (res.type !== 'construct' && res.type !== 'describe') {
         throw new Error('[useGraph] Query is not a CONSTRUCT/DESCRIBE query');
       }
-      return res.store || new Store();
+      return res.store || await createStore();
     },
 
     /**
@@ -295,7 +295,7 @@ export function useGraph() {
  * @returns {Object} Graph interface
  * @private
  */
-function createTemporaryGraph(store, engine) {
+async function createTemporaryGraph(store, engine) {
   return {
     get store() {
       return store;

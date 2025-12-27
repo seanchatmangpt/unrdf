@@ -10,7 +10,7 @@
  * - More efficient quad handling
  */
 
-import { Parser, Writer, Store } from 'n3';
+import { Parser, Writer, Store } from '@unrdf/core/rdf/n3-justified-only';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
 
 const tracer = trace.getTracer('unrdf-optimized');
@@ -81,7 +81,7 @@ export async function parseTurtleOptimized(ttl, baseIRI = 'http://example.org/',
       const quads = parser.parse(ttl);
 
       // Batch insert quads for better performance
-      const store = new Store();
+      const store = await createStore();
       if (quads.length > batchSize) {
         // Process in batches to reduce memory pressure
         for (let i = 0; i < quads.length; i += batchSize) {

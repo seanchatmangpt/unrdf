@@ -132,12 +132,12 @@
     "is-online": "^12.0.2",
     "isomorphic-fetch": "^3.0.0",
     "lru-cache": "^11.2.4",
-    "n3": "^1.26.0",
     "oxigraph": "^0.5.2",
     "rdf-canonize": "^5.0.0",
     "rdf-ext": "^2.6.0",
     "rdf-validate-shacl": "^0.6.5",
     "sparqljs": "^3.7.3",
-    "zod": "^3.25.76"
+    "zod": "^3.25.76",
+    "@unrdf/v6-compat": "workspace:*"
   }
 }

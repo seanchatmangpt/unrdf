@@ -3,7 +3,7 @@
  * @module canonicalize
  */
 
-import { Writer } from 'n3';
+import { Writer } from '@unrdf/core/rdf/n3-justified-only';
 import rdfCanonize from 'rdf-canonize';
 
 /**
@@ -18,7 +18,7 @@ import rdfCanonize from 'rdf-canonize';
  * @throws {Error} If canonicalization fails
  *
  * @example
- * const store = new Store();
+ * const store = await createStore();
  * // ... add quads to store
  *
  * const canonical = await canonicalize(store);
@@ -94,8 +94,8 @@ export async function canonicalize(store, options = {}) {
  * @throws {Error} If comparison fails
  *
  * @example
- * const store1 = new Store();
- * const store2 = new Store();
+ * const store1 = await createStore();
+ * const store2 = await createStore();
  * // ... add quads to both stores
  *
  * const isomorphic = await isIsomorphic(store1, store2);
@@ -143,7 +143,7 @@ export async function isIsomorphic(storeA, storeB, options = {}) {
  * @throws {Error} If hashing fails
  *
  * @example
- * const store = new Store();
+ * const store = await createStore();
  * // ... add quads to store
  *
  * const hash = await getCanonicalHash(store);

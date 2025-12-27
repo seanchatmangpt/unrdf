@@ -9,11 +9,11 @@
  * @example
  * ```jsx
  * import { useStore } from 'unrdf/react-hooks';
- * import { DataFactory } from 'n3';
+ * import { DataFactory } from '@unrdf/core/rdf/n3-justified-only';
  *
  * const { quad } = DataFactory;
  *
- * function MyComponent() {
+ * async function MyComponent() {
  *   const { store, addQuad, removeQuad, clear, size } = useStore();
  *
  *   const handleAdd = () => {
@@ -30,7 +30,7 @@
  */
 
 import { useState, useCallback, useMemo } from 'react';
-import { Store } from 'n3';
+import { createStore } from '@unrdf/oxigraph';
 
 /**
  * Hook for RDF store management
@@ -38,8 +38,8 @@ import { Store } from 'n3';
  * @param {Store} [initialStore] - Initial RDF store
  * @returns {Object} Store operations and state
  */
-export function useStore(initialStore = null) {
-  const [store, setStore] = useState(() => initialStore || new Store());
+export async function useStore(initialStore = null) {
+  const [store, setStore] = useState(() => initialStore || await createStore());
   const [version, setVersion] = useState(0);
 
   /**
@@ -132,7 +132,7 @@ export function useStore(initialStore = null) {
    */
   const clear = useCallback(() => {
     try {
-      const newStore = new Store();
+      const newStore = await createStore();
       setStore(newStore);
       setVersion(0);
       return true;

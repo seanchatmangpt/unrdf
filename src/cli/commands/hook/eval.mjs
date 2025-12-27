@@ -14,8 +14,8 @@ import { defineCommand } from 'citty';
 import { readFile, writeFile } from 'fs/promises';
 import { z } from 'zod';
 import { evaluateHook } from '../../../knowledge-engine/hook-management.mjs';
-import { Store } from 'n3';
-import { Parser } from 'n3';
+import { createStore } from '@unrdf/oxigraph';
+import { Parser } from '@unrdf/core/rdf/n3-justified-only';
 
 /**
  * Validation schema for eval command arguments
@@ -39,7 +39,7 @@ async function parseRDFFile(filePath, format = 'turtle') {
   const content = await readFile(filePath, 'utf-8');
   const parser = new Parser({ format });
   const quads = parser.parse(content);
-  const store = new Store();
+  const store = await createStore();
   store.addQuads(quads);
   return store;
 }
@@ -149,7 +149,7 @@ export const evalCommand = defineCommand({
       }
 
       // Load data if provided
-      let store = new Store();
+      let store = await createStore();
       if (args.data) {
         try {
           store = await parseRDFFile(args.data);

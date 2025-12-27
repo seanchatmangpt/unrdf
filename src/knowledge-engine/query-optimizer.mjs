@@ -7,7 +7,7 @@
  * to optimize SPARQL and SHACL query performance.
  */
 
-import { Store } from 'n3';
+import { createStore } from '@unrdf/oxigraph';
 import { sha3_256 } from '@noble/hashes/sha3.js';
 import { utf8ToBytes, bytesToHex } from '@noble/hashes/utils.js';
 import { randomUUID } from 'crypto';

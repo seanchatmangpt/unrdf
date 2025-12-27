@@ -10,7 +10,7 @@
  * - Efficient binding conversion
  */
 
-import { Store } from 'n3';
+import { createStore } from '@unrdf/oxigraph';
 import { getQueryEngine } from './query-cache.mjs';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
 import { LRUCache } from 'lru-cache';

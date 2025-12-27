@@ -62,7 +62,7 @@ export const validateCommand = defineCommand({
       const path = await import('path');
 
       // Load graph data - try sidecar first, then fallback to local file
-      let store = new Store();
+      let store = await createStore();
       try {
         const { createSidecarClient } = await import('../../../sidecar/client.mjs');
         const client = createSidecarClient();

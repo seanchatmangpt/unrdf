@@ -3,7 +3,7 @@
  * @module parse
  */
 
-import { Parser, Writer, Store } from 'n3';
+import { Parser, Writer, Store } from '@unrdf/core/rdf/n3-justified-only';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
 
 const tracer = trace.getTracer('unrdf');
@@ -179,7 +179,7 @@ export async function parseJsonLd(jsonld, _options = {}) {
 
     // Convert JSON-LD to RDF quads
     // This is a simplified implementation - in production you would use a proper JSON-LD to RDF converter
-    const store = new Store();
+    const store = await createStore();
 
     // Handle @graph array or single object
     const items = jsonldData['@graph'] || (Array.isArray(jsonldData) ? jsonldData : [jsonldData]);

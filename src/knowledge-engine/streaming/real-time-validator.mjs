@@ -8,7 +8,7 @@
  */
 
 import { EventEmitter } from 'events';
-import { Store, Parser } from 'n3';
+import { Store, Parser } from '@unrdf/core/rdf/n3-justified-only';
 import { z } from 'zod';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
 import { validateShacl } from '../validate.mjs';
@@ -265,7 +265,7 @@ export class RealTimeValidator extends EventEmitter {
     }
 
     // Create a filtered store with only affected subgraphs
-    const filteredStore = new Store();
+    const filteredStore = await createStore();
 
     for (const subject of affectedSubjects) {
       const quads = store.getQuads(subject, null, null, null);
@@ -287,7 +287,7 @@ export class RealTimeValidator extends EventEmitter {
    */
   async _validateDeltaOnly(delta) {
     // Create temporary store with delta changes
-    const tempStore = new Store();
+    const tempStore = await createStore();
 
     for (const quad of delta.additions || []) {
       tempStore.addQuad(quad);
@@ -462,6 +462,6 @@ export class RealTimeValidator extends EventEmitter {
  * @param {Object} config - Validator configuration
  * @returns {RealTimeValidator} Real-time validator
  */
-export function createRealTimeValidator(config = {}) {
+export async function createRealTimeValidator(config = {}) {
   return new RealTimeValidator(config);
 }

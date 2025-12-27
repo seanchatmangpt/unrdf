@@ -154,7 +154,7 @@ export function createDeltaSystem(options = {}) {
  *   { package: '@unrdf/app' }
  * );
  */
-export function createDelta(op, subject, predicate, object, options = {}) {
+export async function createDelta(op, subject, predicate, object, options = {}) {
   const operation = { op, subject, predicate, object };
 
   if (op === 'update') {

@@ -11,7 +11,7 @@
 
 import * as rdfCanonizeModule from 'rdf-canonize';
 import { useStoreContext } from '../context/index.mjs';
-import { Store } from 'n3';
+import { createStore } from '@unrdf/oxigraph';
 
 const rdfCanonize = rdfCanonizeModule.default || rdfCanonizeModule;
 
@@ -39,7 +39,7 @@ const rdfCanonize = rdfCanonizeModule.default || rdfCanonizeModule;
  *
  * @throws {Error} If store context is not initialized
  */
-export function useCanon(options = {}) {
+export async function useCanon(options = {}) {
   const { _timeoutMs = 30_000, _onMetric } = options;
 
   // Get the store context - uses canonicalization methods
@@ -263,7 +263,7 @@ export function useCanon(options = {}) {
     async createCanonicalStore(stores, options = {}) {
       const storeInstances = stores.map(s => s.store || s);
       // Create union by merging all quads into a new store
-      const unionStore = new Store();
+      const unionStore = await createStore();
       for (const store of storeInstances) {
         unionStore.addQuads(store.getQuads());
       }
@@ -271,7 +271,7 @@ export function useCanon(options = {}) {
       // Parse canonical N-Quads back into a Store
       const { Parser } = await import('n3');
       const parser = new Parser({ format: 'N-Quads' });
-      const canonicalStore = new Store();
+      const canonicalStore = await createStore();
       const quads = parser.parse(canonical);
       canonicalStore.addQuads(quads);
 

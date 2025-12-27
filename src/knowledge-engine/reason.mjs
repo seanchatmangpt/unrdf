@@ -3,7 +3,7 @@
  * @module reason
  */
 
-import { Parser, Store, Writer } from 'n3';
+import { Parser, Store, Writer } from '@unrdf/core/rdf/n3-justified-only';
 
 // Dynamic import to avoid top-level await issues
 let basicQuery;
@@ -28,7 +28,7 @@ const loadBasicQuery = async () => {
  * @throws {Error} If reasoning fails
  *
  * @example
- * const dataStore = new Store();
+ * const dataStore = await createStore();
  * // ... add data quads to store
  *
  * const rulesTtl = `
@@ -156,7 +156,7 @@ export async function reasonMultiple(store, rulesList, options = {}) {
  * @returns {Store} Store containing only the newly inferred quads
  *
  * @example
- * const originalStore = new Store();
+ * const originalStore = await createStore();
  * // ... add original quads
  *
  * const reasonedStore = await reason(originalStore, rules);

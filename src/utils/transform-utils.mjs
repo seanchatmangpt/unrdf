@@ -10,7 +10,7 @@
  * @license MIT
  */
 
-import { DataFactory, Store } from 'n3';
+import { DataFactory, Store } from '@unrdf/core/rdf/n3-justified-only';
 import { asNamedNode, asLiteral, _asBlankNode, _getIRI } from './term-utils.mjs';
 import { _quadToJSON, _jsonToQuad } from './quad-utils.mjs';
 
@@ -23,7 +23,7 @@ const { _namedNode, _literal, _blankNode, quad, _defaultGraph } = DataFactory;
  * @returns {import('n3').Store} Transformed store
  */
 export const transformStore = (sourceStore, transformer) => {
-  const targetStore = new Store();
+  const targetStore = await createStore();
 
   for (const sourceQuad of sourceStore) {
     const transformedQuads = transformer(sourceQuad);
@@ -99,7 +99,7 @@ export const storeToJSONLD = (store, options = {}) => {
  * @returns {import('n3').Store} RDF store
  */
 export const jsonLDToStore = jsonld => {
-  const store = new Store();
+  const store = await createStore();
   const graph = jsonld['@graph'] || (Array.isArray(jsonld) ? jsonld : [jsonld]);
 
   for (const node of graph) {
@@ -262,7 +262,7 @@ export const storeToCSV = (store, options = {}) => {
  * @returns {import('n3').Store} RDF store
  */
 export const csvToStore = (csv, _options = {}) => {
-  const store = new Store();
+  const store = await createStore();
   const lines = csv.split('\n').filter(line => line.trim());
 
   if (lines.length < 2) {
@@ -302,7 +302,7 @@ export const csvToStore = (csv, _options = {}) => {
  * @returns {import('n3').Store} Flattened store
  */
 export const flattenStore = (store, _options = {}) => {
-  const flattenedStore = new Store();
+  const flattenedStore = await createStore();
   const visited = new Set();
 
   const flatten = (subject, depth = 0) => {
@@ -394,7 +394,7 @@ export const denormalizeStore = (store, _options = {}) => {
  * @returns {import('n3').Store} RDF store
  */
 export const normalizeData = data => {
-  const store = new Store();
+  const store = await createStore();
 
   for (const obj of data) {
     const subject = asNamedNode(obj['@id']);
@@ -441,7 +441,7 @@ export const normalizeData = data => {
  * @returns {import('n3').Store} Transformed store
  */
 export const transformWithMapping = (sourceStore, mapping) => {
-  const targetStore = new Store();
+  const targetStore = await createStore();
 
   for (const q of sourceStore) {
     const sourcePredicate = q.predicate.value;

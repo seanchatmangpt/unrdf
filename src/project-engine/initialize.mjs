@@ -5,7 +5,7 @@
 
 import { z } from 'zod';
 import { createHash } from 'crypto';
-import { Store, DataFactory } from 'n3';
+import { Store, DataFactory } from '@unrdf/core/rdf/n3-justified-only';
 import { scanFileSystemToStore } from './fs-scan.mjs';
 import { detectStackFromFs } from './stack-detect.mjs';
 import { buildProjectModelFromFs } from './project-model.mjs';
@@ -371,7 +371,7 @@ function executeDomainInferencePhase(projectStore, options) {
 
   try {
     // Create domain store from project store
-    const domainStore = new Store();
+    const domainStore = await createStore();
     const baseIri = `${options.baseIri}domain#`;
 
     // Extract entities from feature names and file patterns

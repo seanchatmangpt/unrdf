@@ -13,7 +13,7 @@
 import { readFile, writeFile, readdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { z } from 'zod';
-import { Store, Parser as N3Parser, Writer as N3Writer } from 'n3';
+import { Store, Parser as N3Parser, Writer as N3Writer } from '@unrdf/core/rdf/n3-justified-only';
 import { defaultObservabilityManager } from '../knowledge-engine/observability.mjs';
 import { fileExists, ensureDir, detectRDFFormat } from '../utils/io-utils.mjs';
 
@@ -183,7 +183,7 @@ async function expandFilePatterns(patterns) {
  * @private
  */
 async function importFiles(files, options) {
-  const store = new Store();
+  const store = await createStore();
   const graphs = new Set();
   const errors = [];
   let filesImported = 0;

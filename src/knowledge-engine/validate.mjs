@@ -3,7 +3,7 @@
  * @module validate
  */
 
-import { Parser, Store } from 'n3';
+import { Parser, Store } from '@unrdf/core/rdf/n3-justified-only';
 import rdf from 'rdf-ext';
 import SHACLValidator from 'rdf-validate-shacl';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
@@ -22,7 +22,7 @@ const tracer = trace.getTracer('unrdf');
  * @throws {Error} If validation fails
  *
  * @example
- * const dataStore = new Store();
+ * const dataStore = await createStore();
  * // ... add data quads to store
  *
  * const shapesTtl = `
@@ -41,7 +41,7 @@ const tracer = trace.getTracer('unrdf');
  * console.log('Conforms:', report.conforms);
  * console.log('Results:', report.results);
  */
-export function validateShacl(store, shapes, options = {}) {
+export async function validateShacl(store, shapes, options = {}) {
   if (!store || typeof store.getQuads !== 'function') {
     throw new TypeError('validateShacl: store must be a valid Store instance');
   }
@@ -147,7 +147,7 @@ export function validateShacl(store, shapes, options = {}) {
  * console.log('Overall conforms:', report.conforms);
  * console.log('Shape-specific results:', report.shapeResults);
  */
-export function validateShaclMultiple(store, shapesList, options = {}) {
+export async function validateShaclMultiple(store, shapesList, options = {}) {
   if (!store || typeof store.getQuads !== 'function') {
     throw new TypeError('validateShaclMultiple: store must be a valid Store instance');
   }
@@ -205,7 +205,7 @@ export function validateShaclMultiple(store, shapesList, options = {}) {
  *   groupBySeverity: true
  * });
  */
-export function formatValidationReport(validationResult, options = {}) {
+export async function formatValidationReport(validationResult, options = {}) {
   if (!validationResult || typeof validationResult !== 'object') {
     throw new TypeError('formatValidationReport: validationResult must be an object');
   }
@@ -261,7 +261,7 @@ export function formatValidationReport(validationResult, options = {}) {
  *   console.log('Validation failed with errors');
  * }
  */
-export function hasValidationErrors(validationResult) {
+export async function hasValidationErrors(validationResult) {
   if (!validationResult || typeof validationResult !== 'object') {
     return false;
   }
@@ -282,7 +282,7 @@ export function hasValidationErrors(validationResult) {
  *   console.log(`Error: ${error.message} at ${error.focusNode}`);
  * });
  */
-export function getValidationErrors(validationResult) {
+export async function getValidationErrors(validationResult) {
   if (!validationResult || typeof validationResult !== 'object') {
     return [];
   }
@@ -303,7 +303,7 @@ export function getValidationErrors(validationResult) {
  *   console.log(`Warning: ${warning.message} at ${warning.focusNode}`);
  * });
  */
-export function getValidationWarnings(validationResult) {
+export async function getValidationWarnings(validationResult) {
   if (!validationResult || typeof validationResult !== 'object') {
     return [];
   }

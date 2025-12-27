@@ -94,7 +94,7 @@ const FederationConfigSchema = z.object({
  * });
  *
  * // Query across federation
- * const results = await coordinator.query('SELECT * WHERE { ?s ?p ?o } LIMIT 10');
+ * const results = await coordinator.query(sparql`'SELECT * WHERE { ?s ?p ?o } LIMIT 10'`);
  */
 export class FederationCoordinator extends EventEmitter {
   /**

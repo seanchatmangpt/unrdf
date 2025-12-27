@@ -140,7 +140,7 @@ describe('SwiftLaTeX Engine Wrapper', () => {
     // Note: These tests verify the error parsing logic without running WASM
     // In production, these patterns would be extracted from real LaTeX logs
 
-    it('should parse missing file errors', () => {
+    it('should parse missing file errors', async () => {
       const { parseMissingInputs } = await import('../swiftlatex-engine.mjs');
 
       const log = `

@@ -4,7 +4,7 @@
  */
 
 import { z } from 'zod';
-import { DataFactory } from 'n3';
+import { DataFactory } from '@unrdf/core/rdf/n3-justified-only';
 import { findMissingRoles } from './gap-finder.mjs';
 import { auditTypeConsistency } from './type-auditor.mjs';
 import { analyzeHotspots } from './hotspot-analyzer.mjs';

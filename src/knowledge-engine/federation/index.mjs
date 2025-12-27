@@ -29,7 +29,7 @@
  * });
  *
  * // Query across federation
- * const results = await federation.query('SELECT * WHERE { ?s ?p ?o } LIMIT 10');
+ * const results = await federation.query(sparql`'SELECT * WHERE { ?s ?p ?o } LIMIT 10'`);
  */
 
 export { ConsensusManager, createConsensusManager, NodeState } from './consensus-manager.mjs';
@@ -83,7 +83,7 @@ import { createDataReplicationManager } from './data-replication.mjs';
  *   endpoint: 'http://store1:3000'
  * });
  *
- * const results = await federation.query('SELECT * WHERE { ?s ?p ?o }');
+ * const results = await federation.query(sparql`'SELECT * WHERE { ?s ?p ?o }'`);
  */
 export async function createFederatedSystem(config = {}) {
   // Create coordinator

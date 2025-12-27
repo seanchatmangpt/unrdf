@@ -10,7 +10,7 @@
  * @license MIT
  */
 
-import { DataFactory } from 'n3';
+import { DataFactory } from '@unrdf/core/rdf/n3-justified-only';
 import { useStoreContext } from '../context/index.mjs';
 
 const { namedNode, literal, blankNode, quad, defaultGraph } = DataFactory;

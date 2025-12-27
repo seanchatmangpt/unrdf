@@ -9,7 +9,7 @@
  * @license MIT
  */
 
-import { _DataFactory, Store } from 'n3';
+import { _DataFactory, Store } from '@unrdf/core/rdf/n3-justified-only';
 import { _asNamedNode, _getIRI } from './term-utils.mjs';
 
 /**
@@ -18,7 +18,7 @@ import { _asNamedNode, _getIRI } from './term-utils.mjs';
  * @returns {import('n3').Store} Merged store
  */
 export const mergeStores = (...stores) => {
-  const mergedStore = new Store();
+  const mergedStore = await createStore();
 
   for (const store of stores) {
     for (const quad of store) {
@@ -46,7 +46,7 @@ export const unionStores = (store1, store2) => {
  * @returns {import('n3').Store} Intersection store
  */
 export const intersectStores = (store1, store2) => {
-  const intersectionStore = new Store();
+  const intersectionStore = await createStore();
   const store2Quads = new Set();
 
   // Create a set of quads from store2 for fast lookup
@@ -71,7 +71,7 @@ export const intersectStores = (store1, store2) => {
  * @returns {import('n3').Store} Difference store
  */
 export const differenceStores = (store1, store2) => {
-  const differenceStore = new Store();
+  const differenceStore = await createStore();
   const store2Quads = new Set();
 
   // Create a set of quads from store2 for fast lookup
@@ -244,7 +244,7 @@ export const mergeStoresWithStrategy = (store1, store2, options = {}) => {
  * @returns {import('n3').Store} Merged store
  */
 export const mergeStoresBySubject = (store1, store2) => {
-  const mergedStore = new Store();
+  const mergedStore = await createStore();
   const subjectQuads = new Map();
 
   // Collect all quads by subject
@@ -281,7 +281,7 @@ export const mergeStoresBySubject = (store1, store2) => {
  * @returns {import('n3').Store} Merged store
  */
 export const mergeStoresByPredicate = (store1, store2) => {
-  const mergedStore = new Store();
+  const mergedStore = await createStore();
   const predicateQuads = new Map();
 
   // Collect all quads by predicate
@@ -317,7 +317,7 @@ export const mergeStoresByPredicate = (store1, store2) => {
  * @returns {import('n3').Store} Deduplicated store
  */
 export const deduplicateStore = store => {
-  const deduplicatedStore = new Store();
+  const deduplicatedStore = await createStore();
   const seenQuads = new Set();
 
   for (const quad of store) {
@@ -403,7 +403,7 @@ export const mergeStoresWithValidation = (store1, store2, options = {}) => {
  * @returns {import('n3').Store} Merged store
  */
 export const mergeStoresByGraph = (store1, store2) => {
-  const mergedStore = new Store();
+  const mergedStore = await createStore();
   const graphQuads = new Map();
 
   // Collect all quads by graph
@@ -440,7 +440,7 @@ export const mergeStoresByGraph = (store1, store2) => {
  * @returns {Object} Merge result with conflict information
  */
 export const mergeStoresWithConflictDetection = (store1, store2) => {
-  const mergedStore = new Store();
+  const mergedStore = await createStore();
   const conflicts = [];
   const subjectPredicateMap = new Map();
 

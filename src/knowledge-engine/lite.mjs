@@ -20,7 +20,7 @@
  * // Minimal import for basic RDF operations
  * import { Store, Parser, Writer, DataFactory, parseTurtle, toTurtle } from 'unrdf/knowledge-engine/lite';
  *
- * const store = new Store();
+ * const store = await createStore();
  * const { namedNode, literal, quad } = DataFactory;
  *
  * store.addQuad(quad(
@@ -34,7 +34,7 @@
  */
 
 // Core N3 exports - the essential RDF primitives
-export { Store, Parser, Writer, DataFactory } from 'n3';
+export { Store, Parser, Writer, DataFactory } from '@unrdf/core/rdf/n3-justified-only';
 
 /**
  * Parse a Turtle string into a Store (lite version - no OTEL tracing)
