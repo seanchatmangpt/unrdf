@@ -1,0 +1,495 @@
+{
+  "version": "6.0.0-alpha.1",
+  "generated": "2025-12-27T06:49:16.837Z",
+  "metadata": {
+    "totalPackages": 49,
+    "totalSourceFiles": 1128,
+    "filesWithZodSchemas": 309,
+    "filesWithExports": 905,
+    "filesWithJSDoc": 646,
+    "filesWithCLI": 32,
+    "filesWithGraphQL": 9,
+    "filesWithRDFVocab": 416
+  },
+  "packages": {
+    "@unrdf/atomvm": {
+      "version": "5.0.1",
+      "exports": [".", "./service-worker-manager"],
+      "schemas": [],
+      "cliNouns": [],
+      "dependencies": [],
+      "hasZod": false,
+      "receiptIntegration": false
+    },
+    "@unrdf/blockchain": {
+      "version": "1.0.0",
+      "exports": [".", "./anchoring", "./contracts", "./merkle"],
+      "schemas": ["ReceiptAnchorSchema", "MerkleProofSchema"],
+      "cliNouns": [],
+      "dependencies": ["@unrdf/kgc-4d", "@unrdf/yawl"],
+      "hasZod": true,
+      "receiptIntegration": true
+    },
+    "@unrdf/caching": {
+      "version": "1.0.0",
+      "exports": [".", "./layers", "./invalidation", "./query"],
+      "schemas": ["CacheConfigSchema", "InvalidationRuleSchema"],
+      "cliNouns": [],
+      "dependencies": ["@unrdf/oxigraph"],
+      "hasZod": true,
+      "receiptIntegration": false
+    },
+    "@unrdf/cli": {
+      "version": "5.0.1",
+      "exports": [".", "./commands"],
+      "schemas": [],
+      "cliNouns": ["graph", "query", "context", "convert", "hook", "store"],
+      "dependencies": ["@unrdf/core", "@unrdf/federation", "@unrdf/hooks", "@unrdf/knowledge-engine", "@unrdf/oxigraph", "@unrdf/project-engine", "@unrdf/streaming"],
+      "hasZod": false,
+      "receiptIntegration": false
+    },
+    "@unrdf/collab": {
+      "version": "1.0.0",
+      "exports": [".", "./crdt", "./sync", "./composables"],
+      "schemas": ["CRDTStateSchema", "SyncMessageSchema"],
+      "cliNouns": [],
+      "dependencies": ["@unrdf/core"],
+      "hasZod": true,
+      "receiptIntegration": false
+    },
+    "@unrdf/composables": {
+      "version": "5.0.1",
+      "exports": [".", "./graph", "./delta"],
+      "schemas": ["DeltaStateSchema", "StreamingStateSchema"],
+      "cliNouns": [],
+      "dependencies": ["@unrdf/core", "@unrdf/streaming"],
+      "hasZod": false,
+      "receiptIntegration": false
+    },
+    "@unrdf/consensus": {
+      "version": "1.0.0",
+      "exports": [".", "./raft", "./cluster", "./state", "./transport"],
+      "schemas": ["NodeMetadataSchema", "ClusterConfigSchema", "StateChangeSchema", "StateMachineConfigSchema", "RaftConfigSchema", "WorkflowCommandSchema", "MessageSchema", "TransportConfigSchema"],
+      "cliNouns": [],
+      "dependencies": ["@unrdf/federation"],
+      "hasZod": true,
+      "receiptIntegration": false
+    },
+    "@unrdf/core": {
+      "version": "5.0.1",
+      "exports": [".", "./rdf", "./rdf/minimal-n3-integration", "./rdf/n3-justified-only", "./sparql", "./types", "./constants", "./validation", "./health", "./logger", "./metrics", "./security", "./security-schemas", "./utils/sparql-utils"],
+      "schemas": ["QuadSchema", "StoreSchema", "QueryOptionsSchema", "DiffTripleSchema", "GraphDiffSchema", "OntologyChangeSchema", "OntologyDiffSchema", "DeltaLikeSchema", "SafeStringSchema", "EmailSchema", "URLSchema", "SPARQLQuerySchema", "NamespaceSchema", "SafeFilePathSchema", "PaginationSchema", "APIKeySchema", "JWTSchema", "UsernameSchema", "PasswordSchema", "IPAddressSchema", "PortSchema", "UUIDSchema"],
+      "cliNouns": [],
+      "dependencies": ["@unrdf/oxigraph"],
+      "hasZod": true,
+      "receiptIntegration": false
+    },
+    "@unrdf/dark-matter": {
+      "version": "5.0.1",
+      "exports": [".", "./optimizer", "./analyzer"],
+      "schemas": [],
+      "cliNouns": [],
+      "dependencies": ["@unrdf/core", "@unrdf/oxigraph"],
+      "hasZod": false,
+      "receiptIntegration": false
+    },
+    "@unrdf/diataxis-kit": {
+      "version": "1.0.0",
+      "exports": [".", "./inventory", "./evidence", "./classify", "./scaffold", "./stable-json", "./hash"],
+      "schemas": ["DiataxisSchema", "EvidenceSchema"],
+      "cliNouns": ["run", "verify", "report"],
+      "dependencies": [],
+      "hasZod": false,
+      "receiptIntegration": true
+    },
+    "@unrdf/domain": {
+      "version": "5.0.1",
+      "exports": ["."],
+      "schemas": ["DomainTypeSchema"],
+      "cliNouns": [],
+      "dependencies": [],
+      "hasZod": false,
+      "receiptIntegration": false
+    },
+    "@unrdf/engine-gateway": {
+      "version": "5.0.1",
+      "exports": [".", "./gateway", "./operation-detector", "./validators"],
+      "schemas": [],
+      "cliNouns": [],
+      "dependencies": ["@unrdf/core", "@unrdf/oxigraph"],
+      "hasZod": false,
+      "receiptIntegration": false
+    },
+    "@unrdf/federation": {
+      "version": "5.0.1",
+      "exports": [".", "./coordinator", "./advanced-sparql"],
+      "schemas": ["FederationConfigSchema", "PeerNodeSchema"],
+      "cliNouns": [],
+      "dependencies": ["@unrdf/core", "@unrdf/hooks"],
+      "hasZod": true,
+      "receiptIntegration": false
+    },
+    "@unrdf/fusion": {
+      "version": "1.0.0",
+      "exports": ["."],
+      "schemas": ["PolicyRuleSchema", "ResourceAllocationSchema"],
+      "cliNouns": [],
+      "dependencies": ["@unrdf/oxigraph", "@unrdf/kgc-4d", "@unrdf/blockchain", "@unrdf/hooks", "@unrdf/caching", "@unrdf/yawl"],
+      "hasZod": true,
+      "receiptIntegration": true
+    },
+    "@unrdf/graph-analytics": {
+      "version": "1.0.0",
+      "exports": [".", "./converter", "./centrality", "./paths", "./clustering"],
+      "schemas": ["GraphConversionSchema", "PageRankConfigSchema"],
+      "cliNouns": [],
+      "dependencies": [],
+      "hasZod": true,
+      "receiptIntegration": false
+    },
+    "@unrdf/hooks": {
+      "version": "5.0.1",
+      "exports": [".", "./define", "./executor"],
+      "schemas": ["HookDefinitionSchema", "PolicySchema"],
+      "cliNouns": [],
+      "dependencies": ["@unrdf/core", "@unrdf/oxigraph"],
+      "hasZod": true,
+      "receiptIntegration": false
+    },
+    "@unrdf/integration-tests": {
+      "version": "5.0.0",
+      "exports": [],
+      "schemas": ["TestFixtureSchema"],
+      "cliNouns": [],
+      "dependencies": ["@unrdf/yawl", "@unrdf/hooks", "@unrdf/kgc-4d", "@unrdf/federation", "@unrdf/streaming", "@unrdf/oxigraph", "@unrdf/core"],
+      "hasZod": true,
+      "receiptIntegration": false
+    },
+    "@unrdf/kgc-4d": {
+      "version": "5.0.1",
+      "exports": [".", "./client", "./hdit"],
+      "schemas": [],
+      "cliNouns": [],
+      "dependencies": ["@unrdf/core", "@unrdf/oxigraph"],
+      "hasZod": false,
+      "receiptIntegration": true
+    },
+    "@unrdf/kgc-claude": {
+      "version": "5.0.0",
+      "exports": [".", "./run-capsule", "./checkpoint", "./autonomy-guard", "./shard-merge", "./async-workflow", "./projection"],
+      "schemas": ["ProjectionConfigSchema", "ProjectionResultSchema", "CheckpointReceiptSchema", "ToolCallSchema", "ArtifactSchema", "DeltaSchema", "RunCapsuleSchema", "WorkItemConstraintSchema", "WorkItemBudgetSchema", "ExecutionReceiptSchema", "WorkItemSchema", "ShardScopeSchema", "AgentShardSchema", "AttributedDeltaSchema", "MergeResultSchema", "BudgetSchema", "UsageSchema", "DenialReceiptSchema"],
+      "cliNouns": [],
+      "dependencies": ["@unrdf/core", "@unrdf/oxigraph", "@unrdf/kgc-4d", "@unrdf/yawl", "@unrdf/hooks"],
+      "hasZod": true,
+      "receiptIntegration": true
+    },
+    "@unrdf/kgc-cli": {
+      "version": "5.0.1",
+      "exports": [".", "./registry", "./manifest"],
+      "schemas": ["ExtensionSchema", "RegistrySchema"],
+      "cliNouns": ["extension", "registry"],
+      "dependencies": [],
+      "hasZod": true,
+      "receiptIntegration": false
+    },
+    "@unrdf/kgc-substrate": {
+      "version": "1.0.0",
+      "exports": [".", "./types", "./KnowledgeStore"],
+      "schemas": ["StorageSnapshotSchema", "QueryPatternSchema", "TripleEntrySchema", "StateCommitmentSchema", "ArtifactSchema", "BlockSchema", "AgentCapacitySchema", "AllocatableWorkItemSchema", "AllocationResultSchema"],
+      "cliNouns": [],
+      "dependencies": ["@unrdf/kgc-4d", "@unrdf/oxigraph", "@unrdf/core"],
+      "hasZod": true,
+      "receiptIntegration": true
+    },
+    "@unrdf/kgn": {
+      "version": "5.0.1",
+      "exports": [".", "./engine", "./filters", "./renderer", "./linter", "./templates/*"],
+      "schemas": [],
+      "cliNouns": [],
+      "dependencies": ["@unrdf/core", "@unrdf/test-utils"],
+      "hasZod": false,
+      "receiptIntegration": false
+    },
+    "@unrdf/knowledge-engine": {
+      "version": "5.0.1",
+      "exports": [".", "./query", "./canonicalize", "./parse", "./ai-search"],
+      "schemas": ["RuleSchema", "InferenceResultSchema"],
+      "cliNouns": [],
+      "dependencies": ["@unrdf/core", "@unrdf/oxigraph", "@unrdf/streaming"],
+      "hasZod": false,
+      "receiptIntegration": false
+    },
+    "@unrdf/ml-inference": {
+      "version": "5.0.1",
+      "exports": [".", "./runtime", "./pipeline", "./registry"],
+      "schemas": ["ModelMetadataSchema", "InferencePipelineSchema"],
+      "cliNouns": [],
+      "dependencies": ["@unrdf/core", "@unrdf/streaming", "@unrdf/oxigraph"],
+      "hasZod": true,
+      "receiptIntegration": false
+    },
+    "@unrdf/ml-versioning": {
+      "version": "1.0.0",
+      "exports": [".", "./version-store", "./examples/image-classifier"],
+      "schemas": ["ModelVersionSchema", "ExperimentSchema"],
+      "cliNouns": [],
+      "dependencies": ["@unrdf/kgc-4d", "@unrdf/oxigraph", "@unrdf/core"],
+      "hasZod": true,
+      "receiptIntegration": true
+    },
+    "@unrdf/nextra-docs": {
+      "version": "5.0.1",
+      "exports": [],
+      "schemas": ["APISchemaMetadata"],
+      "cliNouns": [],
+      "dependencies": [],
+      "hasZod": true,
+      "receiptIntegration": false
+    },
+    "@unrdf/observability": {
+      "version": "1.0.0",
+      "exports": [".", "./metrics", "./exporters", "./alerts"],
+      "schemas": ["MetricConfigSchema", "AlertRuleSchema"],
+      "cliNouns": [],
+      "dependencies": [],
+      "hasZod": true,
+      "receiptIntegration": false
+    },
+    "@unrdf/oxigraph": {
+      "version": "5.0.1",
+      "exports": [".", "./store", "./types"],
+      "schemas": ["QueryCacheConfigSchema"],
+      "cliNouns": [],
+      "dependencies": [],
+      "hasZod": true,
+      "receiptIntegration": false
+    },
+    "@unrdf/project-engine": {
+      "version": "5.0.1",
+      "exports": ["."],
+      "schemas": ["ProjectConfigSchema", "DriftSnapshotSchema"],
+      "cliNouns": [],
+      "dependencies": ["@unrdf/core", "@unrdf/knowledge-engine"],
+      "hasZod": false,
+      "receiptIntegration": false
+    },
+    "@unrdf/rdf-graphql": {
+      "version": "1.0.0",
+      "exports": [".", "./schema", "./query", "./resolver"],
+      "schemas": ["GraphQLMappingSchema"],
+      "cliNouns": [],
+      "dependencies": ["@unrdf/oxigraph"],
+      "hasZod": true,
+      "receiptIntegration": false
+    },
+    "@unrdf/semantic-search": {
+      "version": "1.0.0",
+      "exports": [".", "./embeddings", "./search", "./discovery"],
+      "schemas": ["EmbeddingConfigSchema", "SearchQuerySchema"],
+      "cliNouns": [],
+      "dependencies": ["@unrdf/oxigraph"],
+      "hasZod": true,
+      "receiptIntegration": false
+    },
+    "@unrdf/serverless": {
+      "version": "1.0.0",
+      "exports": [".", "./cdk", "./deploy", "./api", "./storage"],
+      "schemas": ["LambdaConfigSchema", "APIGatewayConfigSchema"],
+      "cliNouns": [],
+      "dependencies": ["@unrdf/core", "@unrdf/oxigraph"],
+      "hasZod": true,
+      "receiptIntegration": false
+    },
+    "@unrdf/streaming": {
+      "version": "5.0.1",
+      "exports": [".", "./processor"],
+      "schemas": ["SyncMessageSchema", "ChangeEventSchema", "ValidationOptionsSchema", "ShaclValidationResultSchema", "ObservabilityConfigSchema"],
+      "cliNouns": [],
+      "dependencies": ["@unrdf/core", "@unrdf/hooks", "@unrdf/oxigraph"],
+      "hasZod": true,
+      "receiptIntegration": false
+    },
+    "@unrdf/test-utils": {
+      "version": "5.0.1",
+      "exports": ["."],
+      "schemas": ["TestFixtureSchema"],
+      "cliNouns": [],
+      "dependencies": ["@unrdf/oxigraph"],
+      "hasZod": true,
+      "receiptIntegration": false
+    },
+    "@unrdf/v6-core": {
+      "version": "6.0.0-alpha.1",
+      "exports": [".", "./receipts", "./delta", "./cli", "./grammar", "./docs"],
+      "schemas": ["V6ReceiptSchema", "DeltaOperationSchema"],
+      "cliNouns": [],
+      "dependencies": ["@unrdf/kgc-substrate", "@unrdf/yawl", "@unrdf/kgc-4d", "@unrdf/oxigraph", "@unrdf/kgc-cli"],
+      "hasZod": true,
+      "receiptIntegration": true
+    },
+    "@unrdf/validation": {
+      "version": "5.0.1",
+      "exports": ["."],
+      "schemas": [],
+      "cliNouns": [],
+      "dependencies": ["@unrdf/knowledge-engine"],
+      "hasZod": false,
+      "receiptIntegration": false
+    },
+    "@unrdf/yawl": {
+      "version": "5.0.0",
+      "exports": [".", "./api", "./graphql-api", "./ontology", "./store", "./types", "./schemas", "./hooks", "./resources", "./cancellation", "./receipt", "./blockchain-receipts", "./visualization"],
+      "schemas": ["CaseStatusSchema", "WorkItemStatusSchema", "TaskKindSchema", "SplitTypeSchema", "JoinTypeSchema", "ResourceTypeSchema", "ReceiptDecisionSchema", "TaskDefSchema", "FlowDefSchema", "PatternContextSchema", "PatternResultSchema", "WorkflowSpecSchema", "TaskDefinitionSchema", "TaskInstanceSchema", "TransitionReceiptSchema", "EngineConfigSchema", "CaseDataSchema", "JustificationSchema", "PayloadSchema", "VectorClockSchema", "EventTypeSchema", "ReceiptSchema", "VerificationResultSchema", "TaskDataSchema"],
+      "cliNouns": [],
+      "dependencies": ["@unrdf/hooks", "@unrdf/kgc-4d", "@unrdf/oxigraph"],
+      "hasZod": true,
+      "receiptIntegration": true
+    },
+    "@unrdf/yawl-ai": {
+      "version": "1.0.0",
+      "exports": [".", "./predictor", "./optimizer", "./anomaly", "./adapter"],
+      "schemas": ["WorkflowExecutionSchema", "AnomalySchema", "WorkflowSequenceSchema", "PredictionResultSchema", "TaskMetricsSchema", "BottleneckSchema", "OptimizationReportSchema", "YAWLEventLogSchema"],
+      "cliNouns": [],
+      "dependencies": [],
+      "hasZod": true,
+      "receiptIntegration": false
+    },
+    "@unrdf/yawl-api": {
+      "version": "1.0.0",
+      "exports": [".", "./server"],
+      "schemas": ["APIRequestSchema", "APIResponseSchema"],
+      "cliNouns": [],
+      "dependencies": ["@unrdf/yawl", "@unrdf/kgc-4d"],
+      "hasZod": true,
+      "receiptIntegration": true
+    },
+    "@unrdf/yawl-durable": {
+      "version": "0.1.0",
+      "exports": [".", "./saga", "./activity", "./replay"],
+      "schemas": ["SagaDefinitionSchema", "ActivitySchema"],
+      "cliNouns": [],
+      "dependencies": ["@unrdf/yawl", "@unrdf/kgc-4d"],
+      "hasZod": true,
+      "receiptIntegration": true
+    },
+    "@unrdf/yawl-kafka": {
+      "version": "1.0.0",
+      "exports": [".", "./producer", "./consumer", "./schemas"],
+      "schemas": ["KafkaMessageSchema", "TopicConfigSchema"],
+      "cliNouns": [],
+      "dependencies": ["@unrdf/core"],
+      "hasZod": true,
+      "receiptIntegration": false
+    },
+    "@unrdf/yawl-langchain": {
+      "version": "1.0.0",
+      "exports": [".", "./adapter", "./examples"],
+      "schemas": ["ChainConfigSchema"],
+      "cliNouns": [],
+      "dependencies": ["@unrdf/kgc-4d", "@unrdf/oxigraph", "@unrdf/yawl"],
+      "hasZod": true,
+      "receiptIntegration": true
+    },
+    "@unrdf/yawl-observability": {
+      "version": "1.0.0",
+      "exports": [".", "./metrics", "./tracing", "./sli"],
+      "schemas": ["WorkflowMetricSchema", "SLIConfigSchema"],
+      "cliNouns": [],
+      "dependencies": ["@unrdf/yawl"],
+      "hasZod": true,
+      "receiptIntegration": false
+    },
+    "@unrdf/yawl-queue": {
+      "version": "1.0.0",
+      "exports": [".", "./adapter", "./examples/data-pipeline"],
+      "schemas": ["QueueConfigSchema"],
+      "cliNouns": [],
+      "dependencies": ["@unrdf/yawl", "@unrdf/kgc-4d"],
+      "hasZod": true,
+      "receiptIntegration": true
+    },
+    "@unrdf/yawl-realtime": {
+      "version": "1.0.0",
+      "exports": [".", "./server", "./client"],
+      "schemas": ["RealtimeEventSchema"],
+      "cliNouns": [],
+      "dependencies": ["@unrdf/yawl"],
+      "hasZod": true,
+      "receiptIntegration": false
+    },
+    "@unrdf/yawl-viz": {
+      "version": "1.0.0",
+      "exports": ["."],
+      "schemas": [],
+      "cliNouns": [],
+      "dependencies": ["@unrdf/yawl"],
+      "hasZod": false,
+      "receiptIntegration": false
+    }
+  },
+  "fragmentationIssues": [
+    {
+      "type": "duplicate_schemas",
+      "severity": "high",
+      "description": "Multiple definitions of same schema with different shapes",
+      "examples": [
+        "SplitTypeSchema defined in yawl/patterns.mjs, yawl/patterns-builders.mjs, yawl/workflow-core.mjs",
+        "JoinTypeSchema defined in yawl/patterns.mjs, yawl/patterns-builders.mjs, yawl/workflow-core.mjs",
+        "TaskDefSchema defined in yawl/patterns.mjs, yawl/patterns-builders.mjs, yawl/workflow-core.mjs",
+        "TaskDefinitionSchema vs TaskDefSchema inconsistency in yawl package"
+      ],
+      "impact": "Type confusion, validation inconsistencies, maintenance burden"
+    },
+    {
+      "type": "missing_zod_validation",
+      "severity": "medium",
+      "description": "Public APIs without Zod schema validation",
+      "packages": [
+        "@unrdf/atomvm",
+        "@unrdf/cli",
+        "@unrdf/composables",
+        "@unrdf/dark-matter",
+        "@unrdf/diataxis-kit",
+        "@unrdf/domain",
+        "@unrdf/engine-gateway",
+        "@unrdf/kgc-4d",
+        "@unrdf/kgn",
+        "@unrdf/knowledge-engine",
+        "@unrdf/project-engine",
+        "@unrdf/validation",
+        "@unrdf/yawl-viz"
+      ],
+      "impact": "Runtime errors, poor developer experience, inconsistent validation"
+    },
+    {
+      "type": "inconsistent_naming",
+      "severity": "medium",
+      "description": "Inconsistent naming conventions across packages",
+      "examples": [
+        "Some packages use '*Schema' suffix, others don't",
+        "Mix of 'Config' vs 'Options' for configuration objects",
+        "Inconsistent use of 'Result' vs 'Response' suffixes"
+      ],
+      "impact": "Cognitive load, harder to learn API surface"
+    },
+    {
+      "type": "receipt_integration_gaps",
+      "severity": "high",
+      "description": "Packages missing receipt emission capabilities",
+      "packagesWithoutReceipts": 38,
+      "packagesWithReceipts": 11,
+      "impact": "Incomplete audit trail, cannot verify operations across all packages"
+    },
+    {
+      "type": "cli_fragmentation",
+      "severity": "low",
+      "description": "Multiple CLI entry points without unified interface",
+      "cliPackages": [
+        "@unrdf/cli (unrdf)",
+        "@unrdf/kgc-cli (kgc)",
+        "@unrdf/diataxis-kit (diataxis-*)"
+      ],
+      "impact": "User confusion, inconsistent CLI experience"
+    }
+  ]
+}
