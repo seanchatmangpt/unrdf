@@ -182,7 +182,9 @@ export function createDelta(op, subject, predicate, object, options = {}) {
     },
   };
 
-  return validateDelta(delta);
+  // Import validateDelta from schema exports
+  const { validateDelta: validate } = await import('./schema.mjs');
+  return validate(delta);
 }
 
 /**

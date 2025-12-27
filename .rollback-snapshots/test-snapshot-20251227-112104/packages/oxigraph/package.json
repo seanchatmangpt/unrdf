@@ -1,0 +1,65 @@
+{
+  "name": "@unrdf/oxigraph",
+  "version": "5.0.1",
+  "description": "UNRDF Oxigraph - Graph database benchmarking implementation using Oxigraph SPARQL engine",
+  "type": "module",
+  "main": "src/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./src/index.mjs",
+    "./store": "./src/store.mjs",
+    "./types": "./src/types.mjs"
+  },
+  "sideEffects": false,
+  "files": [
+    "src/",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "vitest run --coverage",
+    "test:fast": "vitest run --coverage",
+    "test:watch": "vitest --coverage",
+    "test:bench": "vitest run test/benchmark.test.mjs",
+    "build": "unbuild && tsc --emitDeclarationOnly",
+    "build:types": "tsc --emitDeclarationOnly",
+    "lint": "eslint src/ test/ --max-warnings=0",
+    "lint:fix": "eslint src/ test/ --fix",
+    "format": "prettier --write src/ test/",
+    "format:check": "prettier --check src/ test/",
+    "clean": "rm -rf dist/ .nyc_output/ coverage/",
+    "dev": "echo 'Development mode for @unrdf/oxigraph'"
+  },
+  "keywords": [
+    "rdf",
+    "sparql",
+    "graph-database",
+    "oxigraph",
+    "knowledge-graph",
+    "benchmark"
+  ],
+  "dependencies": {
+    "oxigraph": "^0.5.2",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "vitest": "^4.0.15"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/unrdf/unrdf.git",
+    "directory": "packages/oxigraph"
+  },
+  "bugs": {
+    "url": "https://github.com/unrdf/unrdf/issues"
+  },
+  "homepage": "https://github.com/unrdf/unrdf#readme",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
+}

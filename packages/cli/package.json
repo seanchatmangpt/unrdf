@@ -50,9 +50,9 @@
     "yaml": "^2.8.2"
   },
   "devDependencies": {
-    "@types/node": "^20.0.0",
+    "@types/node": "^25.0.3",
     "citty-test-utils": "^0.1.0",
-    "vitest": "^1.0.0"
+    "vitest": "^4.0.16"
   },
   "engines": {
     "node": ">=18.0.0"

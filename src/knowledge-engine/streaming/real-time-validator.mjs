@@ -174,7 +174,7 @@ export class RealTimeValidator extends EventEmitter {
             : (result.results || []).length === 0;
 
         const validationResult = ValidationResultSchema.parse({
-          id: `validation-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          id: `validation-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`,
           timestamp: Date.now(),
           mode: this.config.mode,
           conforms, // FIX: Always set conforms field
