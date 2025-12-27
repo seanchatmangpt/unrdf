@@ -1,0 +1,203 @@
+@startuml UNRDF Federation Components
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+LAYOUT_WITH_LEGEND()
+
+title @unrdf/federation - C3 Component Diagram (Peer discovery & distributed queries)
+
+Container_Boundary(federation_pkg, "@unrdf/federation") {
+
+  ' ============================================
+  ' LAYER 1: PUBLIC API ENTRY POINT
+  ' ============================================
+  Component(index, "index.mjs", "Entry Point", "createCoordinator(config)\naddPeer(), removePeer()\nquery(), queryPeer()\ngetStats(), healthCheck()")
+
+  ' ============================================
+  ' LAYER 2: FEDERATION COORDINATOR (CORE)
+  ' ============================================
+  Component(coordinator, "Coordinator", "Class", "Main federation orchestrator\n\naddPeer(id, endpoint, metadata): void\nremovePeer(id): void\n\nquery(sparql, options?):\n  → Promise<AggregateResults>\n\nqueryPeer(id, sparql):\n  → Promise<PeerResult>\n\nstartHealthChecks(interval): void\nstopHealthChecks(): void\n\ngetStats(): {queries, errors,\n             avgDuration, peers}")
+
+  Component(coordinator_config, "Coordinator Config", "Interface", "peers: PeerConfig[]\nstrategy: 'broadcast'|'selective'|\n          'first-available'|'round-robin'\ntimeout: number (ms, default 30s)\nhealthCheckInterval: number (default 60s)\nresultAggregation: 'merge'|'union'|'intersect'\nerrorHandling: 'fail-fast'|'resilient'")
+
+  ' ============================================
+  ' LAYER 3: PEER MANAGEMENT
+  ' ============================================
+  Component(peer_manager, "PeerManager", "Class", "Manages connected peers\n\naddPeer(config): Peer\ngetPeer(id): Peer\ngetAllPeers(): Peer[]\ngetHealthyPeers(): Peer[]\nremovePeer(id): void\ngetPeerStats(id): Stats")
+
+  Component(peer_registry, "Peer Registry", "Map<string, Peer>", "id → Peer mapping\nIndexing by metadata (tags, capabilities)\nQuick lookup and filtering")
+
+  Component(peer_model, "Peer Model", "Interface", "id: string (unique)\nendpoint: string (SPARQL endpoint URL)\nmetadata: {tags?, capabilities?,\n          description?, contact?}\nstatus: 'healthy'|'degraded'|\n        'unreachable'|'unknown'\nlastPing: number (timestamp)\nlatency: number (ms)\nerrorCount: number")
+
+  ' ============================================
+  ' LAYER 4: HEALTH CHECKING & MONITORING
+  ' ============================================
+  Component(health_check, "Health Checker", "Module", "ping(peer): Promise<boolean>\ngetStatus(peer): PeerStatus\n\nStatus determination:\n• healthy: ping < 100ms, no errors\n• degraded: ping > 100ms OR errors\n• unreachable: timeout or connection fail")
+
+  Component(peer_health, "Peer Health", "Interface", "status: PeerStatus\nlatency: number (ms)\nerrorRate: number (0-100)\nlastCheck: number (timestamp)\nuptime: number (percentage)")
+
+  Component(health_monitor, "Health Monitor", "Class", "Periodic health checks\nStatus change events\nAutomatic peer removal\n(after configurable failures)")
+
+  ' ============================================
+  ' LAYER 5: QUERY EXECUTION & ROUTING
+  ' ============================================
+  Component(query_executor, "Query Executor", "Module", "executeQuery(peers, sparql):\n  → [Promise<Result>]\n\nRouting strategies:\n• broadcast: Query all healthy peers\n• selective: Filter by metadata\n• first-available: Stop at first success\n• round-robin: Load balance")
+
+  Component(query_router, "Query Router", "Module", "selectPeers(strategy): Peer[]\ngetExecutionPlan(query): Peer[]\noptimizeExecution(): void\n\nIntelligent peer selection\nbased on query type and peer capabilities")
+
+  Component(sparql_executor, "SPARQL Executor", "Module", "executeSPARQL(endpoint, query,\n              options): Promise<Result>\n\nHTTP POST to {endpoint}/sparql\nTimeout: configurable (default 30s)\nAbortController for cancellation\nError handling + retry logic")
+
+  ' ============================================
+  ' LAYER 6: RESULT AGGREGATION
+  ' ============================================
+  Component(result_aggregator, "Result Aggregator", "Module", "aggregateResults(results[]):\n  → AggregateResult\n\nMerge strategies:\n• UNION: All results combined\n• INTERSECT: Only common bindings\n• MERGE: Combine with dedup\n\nError handling:\n• includeErrors: boolean\n• failureThreshold: % peers")
+
+  Component(aggregate_result, "Aggregate Result", "Interface", "success: boolean\ndata: {bindings, head, ...}\npeersQueried: number\npeersSuccess: number\npeersFailure: number\nduration: number (total ms)\nerrors: {peerId, error}[]\nstats: {resultCount, unionSize, ...}")
+
+  Component(result_dedup, "Deduplication", "Module", "removeIdenticalBindings()\ncompareResults(binding1, binding2)\nmergeResultSets()\n\nEnsures no duplicate results\nfrom multiple peers")
+
+  ' ============================================
+  ' LAYER 7: DISTRIBUTED QUERY PLANNING
+  ' ============================================
+  Component(query_planner, "Query Planner", "Module", "optimizeDistributedQuery(sparql):\n  → ExecutionPlan\n\nAnalyzes query structure\nRecommends peer selection\nEstimates result size")
+
+  Component(query_optimizer, "Query Optimizer", "Module", "pushFilters(): void\npushProjection(): void\nreorderTriplePatterns(): void\n\nReduces data transfer\nMinimizes redundant processing")
+
+  ' ============================================
+  ' EXTERNAL DEPENDENCIES
+  ' ============================================
+  Component(core_dep, "@unrdf/core", "External", "SPARQL parsing, RDF types")
+
+  Component(hooks_dep, "@unrdf/hooks", "External", "Policy validation on queries")
+
+  Component(streaming_dep, "@unrdf/streaming", "External", "Change replication across peers")
+
+  Component(node_fetch, "node-fetch/fetch", "External", "HTTP client for SPARQL POST")
+
+  ' ============================================
+  ' REMOTE SYSTEMS (Outside federation package)
+  ' ============================================
+  System_Ext(sparql_endpoint_1, "SPARQL Endpoint 1", "Remote {endpoint}/sparql\nRDF peer")
+  System_Ext(sparql_endpoint_2, "SPARQL Endpoint 2", "Remote {endpoint}/sparql\nRDF peer")
+  System_Ext(sparql_endpoint_n, "SPARQL Endpoint N", "Remote {endpoint}/sparql\nRDF peer")
+
+  ' ============================================
+  ' RELATIONSHIPS
+  ' ============================================
+
+  Rel(index, coordinator, "exports")
+
+  Rel(coordinator, peer_manager, "uses")
+  Rel(coordinator, health_monitor, "uses")
+  Rel(coordinator, query_executor, "uses")
+  Rel(coordinator, result_aggregator, "uses")
+
+  Rel(peer_manager, peer_registry, "maintains")
+
+  Rel(health_monitor, health_check, "uses")
+  Rel(health_monitor, peer_manager, "updates peers via")
+
+  Rel(query_executor, query_router, "uses")
+  Rel(query_executor, sparql_executor, "delegates to")
+
+  Rel(query_router, peer_manager, "queries from")
+  Rel(query_router, query_planner, "consults")
+
+  Rel(sparql_executor, node_fetch, "uses")
+  Rel(sparql_executor, sparql_endpoint_1, "executes on")
+  Rel(sparql_executor, sparql_endpoint_2, "executes on")
+  Rel(sparql_executor, sparql_endpoint_n, "executes on")
+
+  Rel(result_aggregator, result_dedup, "uses")
+  Rel(result_aggregator, aggregate_result, "creates")
+
+  Rel(query_planner, query_optimizer, "uses")
+  Rel(query_planner, core_dep, "parses SPARQL with")
+
+}
+
+note right of coordinator
+  **FEDERATION ORCHESTRATOR**
+
+  Central coordination point
+  for distributed queries
+
+  Strategies:
+  • broadcast: All peers
+  • selective: By metadata/tags
+  • first-available: Fail-over
+  • round-robin: Load balancing
+end note
+
+note right of peer_manager
+  **PEER LIFECYCLE**
+
+  Register peers with metadata
+  Track status and latency
+  Remove failed peers
+  Dynamic topology changes
+end note
+
+note right of health_check
+  **PEER HEALTH MONITORING**
+
+  SPARQL ASK query: heartbeat
+  Latency measurement
+  Error rate tracking
+
+  Status criteria:
+  • Healthy: <100ms, no errors
+  • Degraded: >100ms OR errors
+  • Unreachable: timeout/fail
+end note
+
+note right of query_executor
+  **DISTRIBUTED QUERY EXECUTION**
+
+  Intelligent peer selection
+  Parallel execution (Promise.all)
+  Timeout handling (AbortController)
+
+  Resilience:
+  • Fail-over to other peers
+  • Graceful degradation
+  • Error collection
+end note
+
+note right of result_aggregator
+  **RESULT MERGING**
+
+  UNION: All results combined
+  INTERSECT: Common bindings only
+  MERGE: Deduplicated union
+
+  Handles:
+  • Duplicate bindings
+  • Inconsistent results
+  • Partial failures
+  • Error collection
+end note
+
+note bottom of federation_pkg
+  **FEDERATED QUERY ARCHITECTURE**
+
+  1. Peer Management: Register/health/remove
+  2. Health Monitoring: Continuous ping
+  3. Query Planning: Optimize execution
+  4. Distributed Execution: Multiple peers parallel
+  5. Result Aggregation: Merge from all peers
+  6. Deduplication: Remove duplicates
+  7. Error Handling: Resilient to failures
+  8. Monitoring: Query metrics/stats
+
+  **Typical Flow:**
+  User query → Router selects peers
+  → Executor sends to all peers
+  → All execute in parallel
+  → Collector gathers results
+  → Aggregate/merge results
+  → Return combined answer
+end note
+
+SHOW_LEGEND()
+
+@enduml
