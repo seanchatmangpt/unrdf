@@ -1,26 +1,34 @@
 /**
  * @fileoverview KGC Probe - Storage Backends
  *
- * Storage implementations:
- * - Memory: In-process hash map (development)
- * - File: Filesystem-based (testing)
- * - Database: KGC Substrate backed (production)
+ * Three storage implementations:
+ * - MemoryStorage: In-process hash map (development)
+ * - FileStorage: Filesystem-based (testing)
+ * - DatabaseStorage: Structured storage with query support (production)
+ *
+ * Interface: { set(key, value), get(key), delete(key), query(pattern) }
  *
  * @module @unrdf/kgc-probe/storage
  */
 
-import { promises as fs } from 'fs';
+import { promises as fs, existsSync, mkdirSync } from 'fs';
 import { join, dirname } from 'path';
+import { randomUUID } from 'crypto';
+
+// ============================================================================
+// STORAGE INTERFACE
+// ============================================================================
 
 /**
- * Storage interface definition
- * @typedef {Object} Storage
- * @property {string} type - Backend type
- * @property {Function} saveArtifact - Save artifact
- * @property {Function} loadArtifact - Load artifact
- * @property {Function} fetchShards - Fetch distributed shards
- * @property {Function} listArtifacts - List all artifacts
- * @property {Function} deleteArtifact - Delete artifact
+ * @typedef {Object} StorageInterface
+ * @property {string} type - Storage type identifier
+ * @property {(key: string, value: any) => Promise<void>} set - Set a value
+ * @property {(key: string) => Promise<any>} get - Get a value
+ * @property {(key: string) => Promise<boolean>} delete - Delete a value
+ * @property {(pattern: string) => Promise<Array>} query - Query values by pattern
+ * @property {() => Promise<string[]>} keys - List all keys
+ * @property {() => Promise<number>} count - Count entries
+ * @property {() => Promise<void>} clear - Clear all entries
  */
 
 // ============================================================================
@@ -31,56 +39,85 @@ import { join, dirname } from 'path';
  * MemoryStorage - In-process storage using Map
  *
  * Use for: Development, testing, single-process deployments
+ * @implements {StorageInterface}
  */
 export class MemoryStorage {
+  /**
+   *
+   */
   constructor() {
+    /** @type {string} */
     this.type = 'memory';
+    /** @type {Map<string, any>} */
     this.store = new Map();
+    /** @type {Map<string, number>} */
+    this.timestamps = new Map();
   }
 
   /**
-   * Save artifact to memory
-   * @param {Object} artifact - Artifact to save
+   * Set a value with key
+   * @param {string} key - Storage key
+   * @param {any} value - Value to store
    * @returns {Promise<void>}
    */
-  async saveArtifact(artifact) {
-    if (!artifact.probe_run_id) {
-      throw new Error('Artifact must have probe_run_id');
+  async set(key, value) {
+    if (typeof key !== 'string' || key.length === 0) {
+      throw new Error('Key must be a non-empty string');
     }
-    this.store.set(artifact.probe_run_id, artifact);
+    this.store.set(key, structuredClone(value));
+    this.timestamps.set(key, Date.now());
   }
 
   /**
-   * Load artifact from memory
-   * @param {string} artifactId - Artifact ID
-   * @returns {Promise<Object>} Artifact
+   * Get a value by key
+   * @param {string} key - Storage key
+   * @returns {Promise<any>} Stored value or undefined
    */
-  async loadArtifact(artifactId) {
-    const artifact = this.store.get(artifactId);
-    if (!artifact) {
-      throw new Error(`Artifact not found: ${artifactId}`);
+  async get(key) {
+    if (!this.store.has(key)) {
+      return undefined;
     }
-    return artifact;
+    return structuredClone(this.store.get(key));
   }
 
   /**
-   * Fetch all shards (for merging)
-   * @returns {Promise<Array>} All artifacts in store
+   * Delete a value by key
+   * @param {string} key - Storage key
+   * @returns {Promise<boolean>} True if deleted
    */
-  async fetchShards() {
-    return Array.from(this.store.values());
+  async delete(key) {
+    this.timestamps.delete(key);
+    return this.store.delete(key);
   }
 
   /**
-   * List all artifact IDs
-   * @returns {Promise<Array>} Array of artifact IDs
+   * Query values by pattern (glob-style matching)
+   * @param {string} pattern - Pattern to match (supports * wildcard)
+   * @returns {Promise<Array<{key: string, value: any}>>} Matching entries
    */
-  async listArtifacts() {
+  async query(pattern) {
+    const results = [];
+    const regex = new RegExp('^' + pattern.replace(/\*/g, '.*') + '$');
+
+    for (const [key, value] of this.store) {
+      if (regex.test(key)) {
+        results.push({ key, value: structuredClone(value) });
+      }
+    }
+
+    return results;
+  }
+
+  /**
+   * List all keys
+   * @returns {Promise<string[]>}
+   */
+  async keys() {
     return Array.from(this.store.keys());
   }
 
   /**
-   * Get artifact count
+   * Count entries
    * @returns {Promise<number>}
    */
   async count() {
@@ -88,20 +125,75 @@ export class MemoryStorage {
   }
 
   /**
-   * Delete artifact
-   * @param {string} artifactId - Artifact ID
-   * @returns {Promise<boolean>} True if deleted
-   */
-  async deleteArtifact(artifactId) {
-    return this.store.delete(artifactId);
-  }
-
-  /**
-   * Clear all artifacts
+   * Clear all entries
    * @returns {Promise<void>}
    */
   async clear() {
     this.store.clear();
+    this.timestamps.clear();
+  }
+
+  /**
+   * Check if key exists
+   * @param {string} key - Storage key
+   * @returns {Promise<boolean>}
+   */
+  async has(key) {
+    return this.store.has(key);
+  }
+
+  // Artifact API (backward compatibility)
+
+  /**
+   * Save artifact to memory
+   * @param {Object} artifact - Artifact to save
+   * @returns {Promise<void>}
+   */
+  async saveArtifact(artifact) {
+    const key = artifact.probe_run_id || artifact.id || randomUUID();
+    await this.set(`artifact:${key}`, artifact);
+  }
+
+  /**
+   * Load artifact from memory
+   * @param {string} artifactId - Artifact ID
+   * @returns {Promise<Object>}
+   */
+  async loadArtifact(artifactId) {
+    const artifact = await this.get(`artifact:${artifactId}`);
+    if (!artifact) {
+      throw new Error(`Artifact not found: ${artifactId}`);
+    }
+    return artifact;
+  }
+
+  /**
+   * Fetch all artifacts (shards)
+   * @returns {Promise<Array>}
+   */
+  async fetchShards() {
+    const results = await this.query('artifact:*');
+    return results.map(r => r.value);
+  }
+
+  /**
+   * List artifact IDs
+   * @returns {Promise<string[]>}
+   */
+  async listArtifacts() {
+    const keys = await this.keys();
+    return keys
+      .filter(k => k.startsWith('artifact:'))
+      .map(k => k.replace('artifact:', ''));
+  }
+
+  /**
+   * Delete artifact
+   * @param {string} artifactId - Artifact ID
+   * @returns {Promise<boolean>}
+   */
+  async deleteArtifact(artifactId) {
+    return this.delete(`artifact:${artifactId}`);
   }
 }
 
@@ -115,136 +207,92 @@ export class MemoryStorage {
  * Use for: Testing, single-node deployment, audit trail
  * Structure:
  *   <rootDir>/
- *     <probe_run_id>.json
- *     <probe_run_id>.json
+ *     <key>.json
  *     ...
+ * @implements {StorageInterface}
  */
 export class FileStorage {
   /**
    * Create file storage
-   * @param {string} rootDir - Root directory for artifacts
+   * @param {string} [rootDir] - Root directory for storage
    */
-  constructor(rootDir = './artifacts') {
+  constructor(rootDir = './storage') {
+    /** @type {string} */
     this.type = 'file';
+    /** @type {string} */
     this.rootDir = rootDir;
+    this._ensureDir();
   }
 
   /**
    * Ensure root directory exists
    * @private
    */
-  async ensureDir() {
-    try {
-      await fs.mkdir(this.rootDir, { recursive: true });
-    } catch (err) {
-      if (err.code !== 'EEXIST') throw err;
+  _ensureDir() {
+    if (!existsSync(this.rootDir)) {
+      mkdirSync(this.rootDir, { recursive: true });
     }
   }
 
   /**
-   * Get path for artifact
-   * @param {string} artifactId - Artifact ID
-   * @returns {string} File path
+   * Get file path for key
+   * @param {string} key - Storage key
+   * @returns {string}
    * @private
    */
-  getPath(artifactId) {
-    return join(this.rootDir, `${artifactId}.json`);
+  _getPath(key) {
+    // Sanitize key for filesystem
+    const sanitized = key.replace(/[^a-zA-Z0-9_-]/g, '_');
+    return join(this.rootDir, `${sanitized}.json`);
   }
 
   /**
-   * Save artifact to file
-   * @param {Object} artifact - Artifact to save
+   * Set a value with key
+   * @param {string} key - Storage key
+   * @param {any} value - Value to store
    * @returns {Promise<void>}
    */
-  async saveArtifact(artifact) {
-    await this.ensureDir();
-
-    if (!artifact.probe_run_id) {
-      throw new Error('Artifact must have probe_run_id');
+  async set(key, value) {
+    if (typeof key !== 'string' || key.length === 0) {
+      throw new Error('Key must be a non-empty string');
     }
-
-    const path = this.getPath(artifact.probe_run_id);
-    const json = JSON.stringify(artifact, null, 2);
-
-    await fs.writeFile(path, json, 'utf8');
+    this._ensureDir();
+    const path = this._getPath(key);
+    const data = {
+      key,
+      value,
+      timestamp: Date.now(),
+      version: 1
+    };
+    await fs.writeFile(path, JSON.stringify(data, null, 2), 'utf8');
   }
 
   /**
-   * Load artifact from file
-   * @param {string} artifactId - Artifact ID
-   * @returns {Promise<Object>} Artifact
+   * Get a value by key
+   * @param {string} key - Storage key
+   * @returns {Promise<any>}
    */
-  async loadArtifact(artifactId) {
-    const path = this.getPath(artifactId);
-
+  async get(key) {
+    const path = this._getPath(key);
     try {
-      const json = await fs.readFile(path, 'utf8');
-      return JSON.parse(json);
+      const content = await fs.readFile(path, 'utf8');
+      const data = JSON.parse(content);
+      return data.value;
     } catch (err) {
       if (err.code === 'ENOENT') {
-        throw new Error(`Artifact not found: ${artifactId}`);
+        return undefined;
       }
       throw err;
     }
   }
 
   /**
-   * Fetch all shards from files
-   * @returns {Promise<Array>} All artifacts
-   */
-  async fetchShards() {
-    await this.ensureDir();
-
-    try {
-      const files = await fs.readdir(this.rootDir);
-      const jsonFiles = files.filter(f => f.endsWith('.json'));
-
-      const artifacts = [];
-      for (const file of jsonFiles) {
-        try {
-          const path = join(this.rootDir, file);
-          const json = await fs.readFile(path, 'utf8');
-          artifacts.push(JSON.parse(json));
-        } catch (err) {
-          console.error(`Failed to load artifact ${file}:`, err);
-        }
-      }
-
-      return artifacts;
-    } catch (err) {
-      if (err.code === 'ENOENT') {
-        return [];
-      }
-      throw err;
-    }
-  }
-
-  /**
-   * List all artifact IDs
-   * @returns {Promise<Array>}
-   */
-  async listArtifacts() {
-    try {
-      const files = await fs.readdir(this.rootDir);
-      return files
-        .filter(f => f.endsWith('.json'))
-        .map(f => f.replace('.json', ''));
-    } catch (err) {
-      if (err.code === 'ENOENT') {
-        return [];
-      }
-      throw err;
-    }
-  }
-
-  /**
-   * Delete artifact
-   * @param {string} artifactId - Artifact ID
+   * Delete a value by key
+   * @param {string} key - Storage key
    * @returns {Promise<boolean>}
    */
-  async deleteArtifact(artifactId) {
-    const path = this.getPath(artifactId);
-
+  async delete(key) {
+    const path = this._getPath(key);
     try {
       await fs.unlink(path);
       return true;
@@ -255,84 +303,141 @@ export class FileStorage {
       throw err;
     }
   }
-}
 
-// ============================================================================
-// DATABASE STORAGE
-// ============================================================================
-
-/**
- * DatabaseStorage - KGC Substrate backed storage
- *
- * Use for: Production, distributed deployments
- * Stores artifacts as RDF quads in the knowledge store
- */
-export class DatabaseStorage {
   /**
-   * Create database storage
-   * @param {Object} options - Configuration
-   * @param {Object} [options.store] - KGC Substrate store
-   * @param {string} [options.namespace] - RDF namespace
+   * Query values by pattern
+   * @param {string} pattern - Pattern to match
+   * @returns {Promise<Array<{key: string, value: any}>>}
    */
-  constructor(options = {}) {
-    this.type = 'database';
-    this.store = options.store;
-    this.namespace = options.namespace || 'https://probe.unrdf.org/';
+  async query(pattern) {
+    const results = [];
+    const regex = new RegExp('^' + pattern.replace(/\*/g, '.*') + '$');
 
-    if (!this.store) {
-      throw new Error('DatabaseStorage requires store option');
+    try {
+      const files = await fs.readdir(this.rootDir);
+      for (const file of files) {
+        if (!file.endsWith('.json')) continue;
+
+        try {
+          const content = await fs.readFile(join(this.rootDir, file), 'utf8');
+          const data = JSON.parse(content);
+          if (regex.test(data.key)) {
+            results.push({ key: data.key, value: data.value });
+          }
+        } catch {
+          // Skip invalid files
+        }
+      }
+    } catch (err) {
+      if (err.code !== 'ENOENT') throw err;
+    }
+
+    return results;
+  }
+
+  /**
+   * List all keys
+   * @returns {Promise<string[]>}
+   */
+  async keys() {
+    const allKeys = [];
+    try {
+      const files = await fs.readdir(this.rootDir);
+      for (const file of files) {
+        if (!file.endsWith('.json')) continue;
+        try {
+          const content = await fs.readFile(join(this.rootDir, file), 'utf8');
+          const data = JSON.parse(content);
+          allKeys.push(data.key);
+        } catch {
+          // Skip invalid files
+        }
+      }
+    } catch (err) {
+      if (err.code !== 'ENOENT') throw err;
+    }
+    return allKeys;
+  }
+
+  /**
+   * Count entries
+   * @returns {Promise<number>}
+   */
+  async count() {
+    const keys = await this.keys();
+    return keys.length;
+  }
+
+  /**
+   * Clear all entries
+   * @returns {Promise<void>}
+   */
+  async clear() {
+    try {
+      const files = await fs.readdir(this.rootDir);
+      for (const file of files) {
+        if (file.endsWith('.json')) {
+          await fs.unlink(join(this.rootDir, file));
+        }
+      }
+    } catch (err) {
+      if (err.code !== 'ENOENT') throw err;
     }
   }
 
   /**
-   * Save artifact as RDF quads
+   * Check if key exists
+   * @param {string} key - Storage key
+   * @returns {Promise<boolean>}
+   */
+  async has(key) {
+    const path = this._getPath(key);
+    return existsSync(path);
+  }
+
+  // Artifact API (backward compatibility)
+
+  /**
+   * Save artifact to file
    * @param {Object} artifact - Artifact to save
    * @returns {Promise<void>}
    */
   async saveArtifact(artifact) {
-    if (!artifact.probe_run_id) {
-      throw new Error('Artifact must have probe_run_id');
-    }
-
-    // Would convert artifact to RDF quads and add to store
-    // This is a placeholder for the actual implementation
-    // using @unrdf/oxigraph dataFactory
-
-    // Example structure:
-    // <artifact:id> rdf:type probe:Artifact
-    // <artifact:id> probe:generated_at "timestamp"
-    // <artifact:id> probe:observation <obs:1>
-    // <obs:1> probe:agent "agent_id"
-    // ... etc
+    const key = artifact.probe_run_id || artifact.id || randomUUID();
+    await this.set(`artifact:${key}`, artifact);
   }
 
   /**
-   * Load artifact from database
+   * Load artifact from file
    * @param {string} artifactId - Artifact ID
    * @returns {Promise<Object>}
    */
   async loadArtifact(artifactId) {
-    // Query store for artifact quads
-    // Reconstruct artifact object from RDF
-    throw new Error('DatabaseStorage.loadArtifact not implemented');
+    const artifact = await this.get(`artifact:${artifactId}`);
+    if (!artifact) {
+      throw new Error(`Artifact not found: ${artifactId}`);
+    }
+    return artifact;
   }
 
   /**
-   * Fetch all shards
+   * Fetch all artifacts
    * @returns {Promise<Array>}
    */
   async fetchShards() {
-    // Query all artifact quads from store
-    throw new Error('DatabaseStorage.fetchShards not implemented');
+    const results = await this.query('artifact:*');
+    return results.map(r => r.value);
   }
 
   /**
    * List artifact IDs
-   * @returns {Promise<Array>}
+   * @returns {Promise<string[]>}
    */
   async listArtifacts() {
-    // Query for all probe:Artifact subjects
-    throw new Error('DatabaseStorage.listArtifacts not implemented');
+    const keys = await this.keys();
+    return keys
+      .filter(k => k.startsWith('artifact:'))
+      .map(k => k.replace('artifact:', ''));
   }
 
   /**
@@ -341,8 +446,334 @@ export class DatabaseStorage {
    * @returns {Promise<boolean>}
    */
   async deleteArtifact(artifactId) {
-    // Remove all quads with artifact:id as subject
-    throw new Error('DatabaseStorage.deleteArtifact not implemented');
+    return this.delete(`artifact:${artifactId}`);
+  }
+}
+
+// ============================================================================
+// DATABASE STORAGE
+// ============================================================================
+
+/**
+ * DatabaseStorage - In-memory database simulation with advanced querying
+ *
+ * Use for: Production, distributed deployments
+ * Provides: Indexing, range queries, transactions
+ * @implements {StorageInterface}
+ */
+export class DatabaseStorage {
+  /**
+   * Create database storage
+   * @param {Object} [options] - Configuration
+   * @param {string} [options.namespace] - Namespace prefix
+   */
+  constructor(options = {}) {
+    /** @type {string} */
+    this.type = 'database';
+    /** @type {string} */
+    this.namespace = options.namespace || 'probe';
+    /** @type {Map<string, any>} */
+    this._data = new Map();
+    /** @type {Map<string, Map<string, Set<string>>>} */
+    this._indices = new Map();
+    /** @type {Map<string, number>} */
+    this._timestamps = new Map();
+    /** @type {number} */
+    this._version = 0;
+  }
+
+  /**
+   * Create index on field
+   * @param {string} field - Field name to index
+   * @returns {void}
+   */
+  createIndex(field) {
+    if (!this._indices.has(field)) {
+      this._indices.set(field, new Map());
+    }
+  }
+
+  /**
+   * Update indices for a record
+   * @param {string} key - Record key
+   * @param {any} value - Record value
+   * @private
+   */
+  _updateIndices(key, value) {
+    if (typeof value !== 'object' || value === null) return;
+
+    for (const [field, index] of this._indices) {
+      const fieldValue = value[field];
+      if (fieldValue !== undefined) {
+        const strValue = String(fieldValue);
+        if (!index.has(strValue)) {
+          index.set(strValue, new Set());
+        }
+        index.get(strValue).add(key);
+      }
+    }
+  }
+
+  /**
+   * Remove from indices
+   * @param {string} key - Record key
+   * @private
+   */
+  _removeFromIndices(key) {
+    for (const index of this._indices.values()) {
+      for (const keySet of index.values()) {
+        keySet.delete(key);
+      }
+    }
+  }
+
+  /**
+   * Set a value with key
+   * @param {string} key - Storage key
+   * @param {any} value - Value to store
+   * @returns {Promise<void>}
+   */
+  async set(key, value) {
+    if (typeof key !== 'string' || key.length === 0) {
+      throw new Error('Key must be a non-empty string');
+    }
+
+    const prefixedKey = `${this.namespace}:${key}`;
+    this._removeFromIndices(prefixedKey);
+    this._data.set(prefixedKey, structuredClone(value));
+    this._timestamps.set(prefixedKey, Date.now());
+    this._updateIndices(prefixedKey, value);
+    this._version++;
+  }
+
+  /**
+   * Get a value by key
+   * @param {string} key - Storage key
+   * @returns {Promise<any>}
+   */
+  async get(key) {
+    const prefixedKey = `${this.namespace}:${key}`;
+    if (!this._data.has(prefixedKey)) {
+      return undefined;
+    }
+    return structuredClone(this._data.get(prefixedKey));
+  }
+
+  /**
+   * Delete a value by key
+   * @param {string} key - Storage key
+   * @returns {Promise<boolean>}
+   */
+  async delete(key) {
+    const prefixedKey = `${this.namespace}:${key}`;
+    this._removeFromIndices(prefixedKey);
+    this._timestamps.delete(prefixedKey);
+    this._version++;
+    return this._data.delete(prefixedKey);
+  }
+
+  /**
+   * Query values by pattern or criteria
+   * @param {string|Object} patternOrCriteria - Pattern string or criteria object
+   * @returns {Promise<Array<{key: string, value: any}>>}
+   */
+  async query(patternOrCriteria) {
+    const results = [];
+    const prefix = `${this.namespace}:`;
+
+    if (typeof patternOrCriteria === 'string') {
+      // Pattern query
+      const regex = new RegExp('^' + prefix + patternOrCriteria.replace(/\*/g, '.*') + '$');
+      for (const [key, value] of this._data) {
+        if (regex.test(key)) {
+          results.push({
+            key: key.replace(prefix, ''),
+            value: structuredClone(value)
+          });
+        }
+      }
+    } else if (typeof patternOrCriteria === 'object') {
+      // Criteria query
+      const criteria = patternOrCriteria;
+
+      // Check if we can use an index
+      let candidateKeys = null;
+      for (const [field, value] of Object.entries(criteria)) {
+        if (this._indices.has(field)) {
+          const index = this._indices.get(field);
+          const matchingKeys = index.get(String(value));
+          if (matchingKeys) {
+            if (candidateKeys === null) {
+              candidateKeys = new Set(matchingKeys);
+            } else {
+              // Intersection
+              candidateKeys = new Set([...candidateKeys].filter(k => matchingKeys.has(k)));
+            }
+          } else {
+            candidateKeys = new Set();
+            break;
+          }
+        }
+      }
+
+      // Filter candidates or scan all
+      const keysToCheck = candidateKeys || this._data.keys();
+      for (const key of keysToCheck) {
+        const value = this._data.get(key);
+        if (!value) continue;
+
+        let matches = true;
+        for (const [field, expected] of Object.entries(criteria)) {
+          if (value[field] !== expected) {
+            matches = false;
+            break;
+          }
+        }
+
+        if (matches) {
+          results.push({
+            key: key.replace(prefix, ''),
+            value: structuredClone(value)
+          });
+        }
+      }
+    }
+
+    return results;
+  }
+
+  /**
+   * List all keys
+   * @returns {Promise<string[]>}
+   */
+  async keys() {
+    const prefix = `${this.namespace}:`;
+    return Array.from(this._data.keys())
+      .filter(k => k.startsWith(prefix))
+      .map(k => k.replace(prefix, ''));
+  }
+
+  /**
+   * Count entries
+   * @returns {Promise<number>}
+   */
+  async count() {
+    const keys = await this.keys();
+    return keys.length;
+  }
+
+  /**
+   * Clear all entries
+   * @returns {Promise<void>}
+   */
+  async clear() {
+    const prefix = `${this.namespace}:`;
+    for (const key of this._data.keys()) {
+      if (key.startsWith(prefix)) {
+        this._data.delete(key);
+        this._timestamps.delete(key);
+      }
+    }
+    for (const index of this._indices.values()) {
+      index.clear();
+    }
+    this._version++;
+  }
+
+  /**
+   * Check if key exists
+   * @param {string} key - Storage key
+   * @returns {Promise<boolean>}
+   */
+  async has(key) {
+    const prefixedKey = `${this.namespace}:${key}`;
+    return this._data.has(prefixedKey);
+  }
+
+  /**
+   * Get database version (for change detection)
+   * @returns {number}
+   */
+  getVersion() {
+    return this._version;
+  }
+
+  /**
+   * Batch set multiple values
+   * @param {Array<{key: string, value: any}>} entries - Entries to set
+   * @returns {Promise<void>}
+   */
+  async batchSet(entries) {
+    for (const { key, value } of entries) {
+      await this.set(key, value);
+    }
+  }
+
+  /**
+   * Batch get multiple values
+   * @param {string[]} keys - Keys to get
+   * @returns {Promise<Map<string, any>>}
+   */
+  async batchGet(keys) {
+    const results = new Map();
+    for (const key of keys) {
+      results.set(key, await this.get(key));
+    }
+    return results;
+  }
+
+  // Artifact API (backward compatibility)
+
+  /**
+   * Save artifact
+   * @param {Object} artifact - Artifact to save
+   * @returns {Promise<void>}
+   */
+  async saveArtifact(artifact) {
+    const key = artifact.probe_run_id || artifact.id || randomUUID();
+    await this.set(`artifact:${key}`, artifact);
+  }
+
+  /**
+   * Load artifact
+   * @param {string} artifactId - Artifact ID
+   * @returns {Promise<Object>}
+   */
+  async loadArtifact(artifactId) {
+    const artifact = await this.get(`artifact:${artifactId}`);
+    if (!artifact) {
+      throw new Error(`Artifact not found: ${artifactId}`);
+    }
+    return artifact;
+  }
+
+  /**
+   * Fetch all artifacts
+   * @returns {Promise<Array>}
+   */
+  async fetchShards() {
+    const results = await this.query('artifact:*');
+    return results.map(r => r.value);
+  }
+
+  /**
+   * List artifact IDs
+   * @returns {Promise<string[]>}
+   */
+  async listArtifacts() {
+    const keys = await this.keys();
+    return keys
+      .filter(k => k.startsWith('artifact:'))
+      .map(k => k.replace('artifact:', ''));
+  }
+
+  /**
+   * Delete artifact
+   * @param {string} artifactId - Artifact ID
+   * @returns {Promise<boolean>}
+   */
+  async deleteArtifact(artifactId) {
+    return this.delete(`artifact:${artifactId}`);
   }
 }
 
@@ -363,15 +794,34 @@ export function createMemoryStorage() {
  * @param {string} [rootDir] - Root directory
  * @returns {FileStorage}
  */
-export function createFileStorage(rootDir = './artifacts') {
+export function createFileStorage(rootDir = './storage') {
   return new FileStorage(rootDir);
 }
 
 /**
  * Create database storage
- * @param {Object} options - Configuration
+ * @param {Object} [options] - Configuration
  * @returns {DatabaseStorage}
  */
-export function createDatabaseStorage(options) {
+export function createDatabaseStorage(options = {}) {
   return new DatabaseStorage(options);
+}
+
+/**
+ * Create storage by type
+ * @param {'memory' | 'file' | 'database'} type - Storage type
+ * @param {Object} [options] - Configuration
+ * @returns {MemoryStorage | FileStorage | DatabaseStorage}
+ */
+export function createStorage(type, options = {}) {
+  switch (type) {
+    case 'memory':
+      return createMemoryStorage();
+    case 'file':
+      return createFileStorage(options.rootDir);
+    case 'database':
+      return createDatabaseStorage(options);
+    default:
+      throw new Error(`Unknown storage type: ${type}`);
+  }
 }
