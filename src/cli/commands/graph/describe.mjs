@@ -17,7 +17,7 @@ import { z } from 'zod';
  * Validation schema for describe command arguments
  */
 const describeArgsSchema = z.object({
-  name: z.string().optional().default('')
+  name: z.string().optional().default(''),
 });
 
 /**
@@ -26,14 +26,14 @@ const describeArgsSchema = z.object({
 export const describeCommand = defineCommand({
   meta: {
     name: 'describe',
-    description: 'Show detailed information about a graph'
+    description: 'Show detailed information about a graph',
   },
   args: {
     name: {
       type: 'positional',
       description: 'Name of the graph to describe',
-      required: true
-    }
+      required: true,
+    },
   },
   async run(ctx) {
     try {
@@ -48,9 +48,9 @@ export const describeCommand = defineCommand({
         created: '2025-10-01T08:00:00Z',
         updated: '2025-10-01T10:00:00Z',
         namespaces: {
-          'ex': 'http://example.org/',
-          'foaf': 'http://xmlns.com/foaf/0.1/'
-        }
+          ex: 'http://example.org/',
+          foaf: 'http://xmlns.com/foaf/0.1/',
+        },
       };
 
       console.log(`Graph: ${graphInfo.name}`);
@@ -63,10 +63,9 @@ export const describeCommand = defineCommand({
       for (const [prefix, uri] of Object.entries(graphInfo.namespaces)) {
         console.log(`  ${prefix}: ${uri}`);
       }
-
     } catch (error) {
       console.error('❌ Describe failed:', error.message);
       throw error;
     }
-  }
+  },
 });

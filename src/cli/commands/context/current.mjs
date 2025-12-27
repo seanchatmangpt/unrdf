@@ -25,7 +25,7 @@ export const currentCommand = defineCommand({
   },
   args: {},
   async run() {
-    return tracer.startActiveSpan('cli.context.current', async (span) => {
+    return tracer.startActiveSpan('cli.context.current', async span => {
       try {
         const manager = new ContextManager();
         await manager.init();

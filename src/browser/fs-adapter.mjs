@@ -44,6 +44,9 @@ async function initBackend() {
  * const data = await fs.readFile('/data/graph.ttl', 'utf8');
  */
 export class FileSystemAdapter {
+  /**
+   *
+   */
   constructor() {
     this.initialized = false;
   }

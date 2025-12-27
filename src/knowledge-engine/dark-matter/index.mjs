@@ -28,7 +28,7 @@ export class DarkMatterQuerySystem {
     this.config = {
       enableAutoOptimization: config.enableAutoOptimization !== false,
       complexityThreshold: config.complexityThreshold || 100,
-      ...config
+      ...config,
     };
   }
 
@@ -82,11 +82,11 @@ export class DarkMatterQuerySystem {
         estimatedImprovement: {
           before: analysis.complexity.score,
           after: analysis.complexity.score,
-          percentageGain: 0
+          percentageGain: 0,
         },
         timestamp: Date.now(),
         skipped: true,
-        reason: 'Query complexity below threshold'
+        reason: 'Query complexity below threshold',
       };
     }
 
@@ -106,7 +106,7 @@ export class DarkMatterQuerySystem {
     return {
       analysis,
       optimization,
-      shouldOptimize: !optimization.skipped
+      shouldOptimize: !optimization.skipped,
     };
   }
 
@@ -124,7 +124,7 @@ export class DarkMatterQuerySystem {
     // Log execution
     this.logExecution(id, query, executionTime, {
       complexity: analysis.complexity.score,
-      expensiveOps: analysis.expensiveOperations.length
+      expensiveOps: analysis.expensiveOperations.length,
     });
 
     // Auto-optimize if enabled and above threshold
@@ -137,7 +137,7 @@ export class DarkMatterQuerySystem {
       queryId: id,
       analysis,
       optimization,
-      logged: true
+      logged: true,
     };
   }
 
@@ -163,14 +163,14 @@ export class DarkMatterQuerySystem {
         avgExecutionTime: 0,
         p50: 0,
         p90: 0,
-        p99: 0
+        p99: 0,
       };
     }
 
     return {
       analyzer: this.analyzer.getStats(),
       criticalPath: criticalPathMetrics,
-      optimizer: this.optimizer.getStats()
+      optimizer: this.optimizer.getStats(),
     };
   }
 
@@ -238,7 +238,7 @@ export {
   CriticalPathIdentifier,
   createCriticalPathIdentifier,
   DarkMatterOptimizer,
-  createDarkMatterOptimizer
+  createDarkMatterOptimizer,
 };
 
 export default DarkMatterQuerySystem;

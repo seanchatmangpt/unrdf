@@ -1,7 +1,7 @@
 /**
  * @file Browser-compatible Effect Sandbox
  * @module effect-sandbox-browser
- * 
+ *
  * @description
  * Browser-compatible version of the effect sandbox that uses Web Workers
  * instead of Node.js worker threads for secure hook execution.
@@ -16,11 +16,18 @@ import { z } from 'zod';
 const SandboxConfigSchema = z.object({
   type: z.enum(['worker', 'global']).default('worker'), // Only worker mode in browser
   timeout: z.number().int().positive().max(30000).default(5000), // Shorter timeout for browser
-  memoryLimit: z.number().int().positive().max(100 * 1024 * 1024).default(10 * 1024 * 1024), // 10MB default
-  allowedGlobals: z.array(z.string()).default(['console', 'Date', 'Math', 'JSON', 'Array', 'Object']),
+  memoryLimit: z
+    .number()
+    .int()
+    .positive()
+    .max(100 * 1024 * 1024)
+    .default(10 * 1024 * 1024), // 10MB default
+  allowedGlobals: z
+    .array(z.string())
+    .default(['console', 'Date', 'Math', 'JSON', 'Array', 'Object']),
   enableNetwork: z.boolean().default(false),
   enableFileSystem: z.boolean().default(false),
-  strictMode: z.boolean().default(true)
+  strictMode: z.boolean().default(true),
 });
 
 /**
@@ -30,7 +37,7 @@ const SandboxContextSchema = z.object({
   event: z.any(),
   store: z.any(),
   delta: z.any(),
-  metadata: z.record(z.any()).optional()
+  metadata: z.record(z.any()).optional(),
 });
 
 /**
@@ -40,13 +47,16 @@ const SandboxResultSchema = z.object({
   success: z.boolean(),
   result: z.any().optional(),
   error: z.string().optional(),
-  duration: z.number().nonnegative()
+  duration: z.number().nonnegative(),
 });
 
 /**
  * Browser-compatible Effect Sandbox
  */
 export class EffectSandbox {
+  /**
+   *
+   */
   constructor(config = {}) {
     this.config = SandboxConfigSchema.parse(config);
     this.workers = new Map();
@@ -89,7 +99,7 @@ export class EffectSandbox {
 
       const validatedResult = SandboxResultSchema.parse({
         ...result,
-        duration
+        duration,
       });
 
       return validatedResult;
@@ -100,7 +110,7 @@ export class EffectSandbox {
       return {
         success: false,
         error: error.message,
-        duration
+        duration,
       };
     }
   }
@@ -109,11 +119,11 @@ export class EffectSandbox {
    * Execute effect in Web Worker
    * @private
    */
-  async _executeInWorker(effect, context, executionId, options) {
+  async _executeInWorker(effect, context, executionId, _options) {
     const workerScript = this._createWorkerScript(effect);
-    
+
     const worker = new Worker(workerScript, {
-      name: `effect-sandbox-${executionId}`
+      name: `effect-sandbox-${executionId}`,
     });
 
     return new Promise((resolve, reject) => {
@@ -122,10 +132,10 @@ export class EffectSandbox {
         reject(new Error(`Worker execution timeout after ${this.config.timeout}ms`));
       }, this.config.timeout);
 
-      worker.onmessage = (event) => {
+      worker.onmessage = event => {
         clearTimeout(timeout);
         worker.terminate();
-        
+
         if (event.data.error) {
           reject(new Error(event.data.error));
         } else {
@@ -133,7 +143,7 @@ export class EffectSandbox {
         }
       };
 
-      worker.onerror = (error) => {
+      worker.onerror = error => {
         clearTimeout(timeout);
         worker.terminate();
         reject(new Error(`Worker error: ${error.message}`));
@@ -147,15 +157,15 @@ export class EffectSandbox {
    * Execute effect in global scope (not recommended for production)
    * @private
    */
-  async _executeInGlobal(effect, context, executionId, options) {
+  async _executeInGlobal(effect, context, _executionId, _options) {
     return new Promise((resolve, reject) => {
       try {
         const result = effect(context, {
-          emitEvent: (event) => console.log('Event:', event),
-          log: (message) => console.log(message),
+          emitEvent: event => console.log('Event:', event),
+          log: message => console.log(message),
           assert: (condition, message) => {
             if (!condition) throw new Error(message || 'Assertion failed');
-          }
+          },
         });
 
         if (result instanceof Promise) {
@@ -174,16 +184,14 @@ export class EffectSandbox {
    * @private
    */
   _createWorkerScript(effect) {
-    const allowedGlobals = this.config.allowedGlobals.join(', ');
-    
+    const _allowedGlobals = this.config._allowedGlobals.join(', ');
+
     return `
       // Worker script for effect sandbox
       const effect = ${effect.toString()};
       
       // Sandbox globals
-      ${this.config.allowedGlobals.map(global => 
-        `const ${global} = self.${global};`
-      ).join('\n')}
+      ${this.config.allowedGlobals.map(global => `const ${global} = self.${global};`).join('\n')}
       
       // Safe console
       const console = {
@@ -243,7 +251,7 @@ export class EffectSandbox {
       activeWorkers: this.workers.size,
       totalExecutions: this.totalExecutions,
       averageDuration: this.totalExecutions > 0 ? this.totalDuration / this.totalExecutions : 0,
-      config: this.config
+      config: this.config,
     };
   }
 
@@ -256,7 +264,7 @@ export class EffectSandbox {
       worker.terminate();
     }
     this.workers.clear();
-    
+
     this.executionCount = 0;
     this.totalExecutions = 0;
     this.totalDuration = 0;

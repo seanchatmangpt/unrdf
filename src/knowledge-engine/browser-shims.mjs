@@ -1,7 +1,7 @@
 /**
  * @file Browser compatibility shims for Node.js APIs
  * @module browser-shims
- * 
+ *
  * @description
  * Provides browser-compatible polyfills for Node.js APIs used in the knowledge engine.
  * This allows the same codebase to work in both Node.js and browser environments.
@@ -24,15 +24,18 @@ export const isNode = (() => {
 })();
 
 // Random UUID generation - use crypto.randomUUID if available, otherwise fallback
+/**
+ *
+ */
 export function randomUUID() {
   if (typeof crypto !== 'undefined' && crypto.randomUUID) {
     return crypto.randomUUID();
   }
-  
+
   // Fallback UUID generation
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-    const r = Math.random() * 16 | 0;
-    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+    const r = (Math.random() * 16) | 0;
+    const v = c === 'x' ? r : (r & 0x3) | 0x8;
     return v.toString(16);
   });
 }
@@ -41,31 +44,35 @@ export function randomUUID() {
 export const path = {
   join: (...args) => args.filter(Boolean).join('/').replace(/\/+/g, '/'),
   resolve: (...args) => args.filter(Boolean).join('/').replace(/\/+/g, '/'),
-  dirname: (path) => path.replace(/\/$/, '').split('/').slice(0, -1).join('/') || '.',
-  basename: (path) => path.split('/').pop() || '',
-  extname: (path) => {
+  dirname: path => path.replace(/\/$/, '').split('/').slice(0, -1).join('/') || '.',
+  basename: path => path.split('/').pop() || '',
+  extname: path => {
     const ext = path.split('.').pop();
     return ext && ext !== path ? '.' + ext : '';
-  }
+  },
 };
 
 // Process utilities
 export const process = {
   cwd: () => '/',
-  env: isBrowser ? {} : (() => {
-    try {
-      return process.env;
-    } catch {
-      return {};
-    }
-  })(),
-  versions: isBrowser ? {} : (() => {
-    try {
-      return process.versions;
-    } catch {
-      return {};
-    }
-  })()
+  env: isBrowser
+    ? {}
+    : (() => {
+        try {
+          return process.env;
+        } catch {
+          return {};
+        }
+      })(),
+  versions: isBrowser
+    ? {}
+    : (() => {
+        try {
+          return process.versions;
+        } catch {
+          return {};
+        }
+      })(),
 };
 
 // File system operations - browser-compatible (no-ops or memory-based)
@@ -104,7 +111,7 @@ class BrowserFileSystem {
   writeFileSync(path, data, encoding = 'utf8') {
     const content = encoding === 'utf8' ? data : data.toString();
     this.#files.set(path, content);
-    
+
     // Ensure parent directories exist
     const parent = path.dirname(path);
     if (!this.#directories.has(parent) && parent !== path) {
@@ -112,7 +119,7 @@ class BrowserFileSystem {
     }
   }
 
-  mkdirSync(path, options = {}) {
+  mkdirSync(path, _options = {}) {
     if (this.#directories.has(path)) {
       throw new Error(`EEXIST: file already exists, mkdir '${path}'`);
     }
@@ -139,11 +146,21 @@ class BrowserFileSystem {
   }
 }
 
-export const fs = isBrowser ? new BrowserFileSystem() : await import('node:fs').then(m => m.default);
-export const fsPromises = isBrowser ? new BrowserFileSystem() : await import('node:fs/promises').then(m => m.default);
+export const fs = isBrowser
+  ? new BrowserFileSystem()
+  : await import('node:fs').then(m => m.default);
+export const fsPromises = isBrowser
+  ? new BrowserFileSystem()
+  : await import('node:fs/promises').then(m => m.default);
 
 // Worker thread polyfill for browser
+/**
+ *
+ */
 export class BrowserWorker {
+  /**
+   *
+   */
   constructor(source, options = {}) {
     if (typeof source === 'string' && isBrowser) {
       // Convert string to blob URL (browser only)
@@ -158,23 +175,26 @@ export class BrowserWorker {
       // Assume it's a file path
       this.worker = new Worker(source, options);
     }
-    
+
     this.messageHandlers = [];
     this.errorHandlers = [];
     this.exitHandlers = [];
     this.terminated = false;
 
     if (this.worker) {
-      this.worker.onmessage = (event) => {
+      this.worker.onmessage = event => {
         this.messageHandlers.forEach(handler => handler(event.data));
       };
 
-      this.worker.onerror = (error) => {
+      this.worker.onerror = error => {
         this.errorHandlers.forEach(handler => handler(error));
       };
     }
   }
 
+  /**
+   *
+   */
   postMessage(data) {
     if (this.terminated) return;
     if (this.worker) {
@@ -182,6 +202,9 @@ export class BrowserWorker {
     }
   }
 
+  /**
+   *
+   */
   terminate() {
     this.terminated = true;
     if (this.worker) {
@@ -189,6 +212,9 @@ export class BrowserWorker {
     }
   }
 
+  /**
+   *
+   */
   on(event, handler) {
     switch (event) {
       case 'message':
@@ -203,14 +229,20 @@ export class BrowserWorker {
     }
   }
 
+  /**
+   *
+   */
   once(event, handler) {
-    const wrappedHandler = (data) => {
+    const wrappedHandler = data => {
       handler(data);
       this.removeListener(event, wrappedHandler);
     };
     this.on(event, wrappedHandler);
   }
 
+  /**
+   *
+   */
   removeListener(event, handler) {
     switch (event) {
       case 'message':
@@ -226,9 +258,14 @@ export class BrowserWorker {
   }
 }
 
-export const Worker = isBrowser ? BrowserWorker : await import('node:worker_threads').then(m => m.Worker);
+export const Worker = isBrowser
+  ? BrowserWorker
+  : await import('node:worker_threads').then(m => m.Worker);
 
 // Mock child_process.execSync - browser-compatible
+/**
+ *
+ */
 export async function execSync(command, options = {}) {
   if (isBrowser) {
     console.warn(`[Browser] execSync not available in browser: ${command}`);
@@ -242,35 +279,50 @@ export async function execSync(command, options = {}) {
 }
 
 // Hash utilities - use Web Crypto API in browser
+/**
+ *
+ */
 export class BrowserHash {
+  /**
+   *
+   */
   constructor(algorithm = 'SHA-256') {
     this.algorithm = algorithm.toLowerCase().replace(/[^a-z0-9]/g, '');
   }
 
+  /**
+   *
+   */
   update(data) {
     this.data = typeof data === 'string' ? new TextEncoder().encode(data) : new Uint8Array(data);
     return this;
   }
 
+  /**
+   *
+   */
   async digest(encoding = 'hex') {
     const hashBuffer = await crypto.subtle.digest(this.algorithm, this.data);
     const hashArray = new Uint8Array(hashBuffer);
-    
+
     if (encoding === 'hex') {
       return Array.from(hashArray)
         .map(b => b.toString(16).padStart(2, '0'))
         .join('');
     }
-    
+
     return hashArray;
   }
 }
 
+/**
+ *
+ */
 export async function createHash(algorithm) {
   if (isBrowser) {
     return new BrowserHash(algorithm);
   }
-  
+
   const { createHash: nodeCreateHash } = await import('node:crypto');
   return nodeCreateHash(algorithm);
 }
@@ -286,5 +338,5 @@ export default {
   fsPromises,
   Worker: BrowserWorker,
   execSync,
-  createHash
+  createHash,
 };

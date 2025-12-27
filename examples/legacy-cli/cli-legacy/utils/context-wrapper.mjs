@@ -66,7 +66,7 @@ async function initUnrdfDirectory() {
  * @returns {Function} Wrapped command function
  */
 export function withContext(commandFn, commandName = 'command') {
-  return async (ctx) => {
+  return async ctx => {
     try {
       // Initialize .unrdf directory structure early
       await initUnrdfDirectory();
@@ -77,7 +77,9 @@ export function withContext(commandFn, commandName = 'command') {
       const initialQuads = commandName.startsWith('store') ? await loadPersistedStore() : [];
 
       // Initialize store context with persisted data
-      setStoreContext(initialQuads, { baseIRI: config.baseIRI || 'http://example.org/' });
+      setStoreContext(initialQuads, {
+        baseIRI: config.baseIRI || 'http://example.org/',
+      });
 
       await commandFn(ctx, config);
     } catch (error) {
@@ -97,7 +99,7 @@ export function createExecutionContext(ctx, config) {
     args: ctx.args,
     config,
     verbose: ctx.args.verbose || false,
-    debug: ctx.args.debug || false
+    debug: ctx.args.debug || false,
   };
 }
 

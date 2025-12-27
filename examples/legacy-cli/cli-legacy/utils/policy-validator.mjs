@@ -7,7 +7,7 @@
  * with comprehensive OTEL instrumentation and violation reporting.
  */
 
-import { Store } from 'n3';
+import { _Store } from 'n3';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
 import { PolicyPackManager } from '../../knowledge-engine/policy-pack.mjs';
 import { evaluateHook } from './hook-evaluator.mjs';
@@ -22,7 +22,7 @@ const tracer = trace.getTracer('unrdf-policy-validator');
  * @returns {Promise<Object>} Validation report
  */
 export async function validatePolicy(store, policyPackName, options = {}) {
-  return await tracer.startActiveSpan('policy.validate', async (span) => {
+  return await tracer.startActiveSpan('policy.validate', async span => {
     try {
       span.setAttribute('policy.pack', policyPackName);
       span.setAttribute('store.size', store.size);
@@ -53,18 +53,18 @@ export async function validatePolicy(store, policyPackName, options = {}) {
             meta: {
               name: policyData.name || 'applied-policy',
               version: policyData.version || '1.0.0',
-              description: policyData.description || 'Applied policy'
+              description: policyData.description || 'Applied policy',
             },
             config: {
               enabled: true,
               priority: 50,
               strictMode: false,
               timeout: 30000,
-              retries: 1
+              retries: 1,
             },
             hooks: policyData.hooks || [],
             conditions: policyData.conditions || [],
-            resources: policyData.resources || []
+            resources: policyData.resources || [],
           };
 
           // Write temporary manifest
@@ -97,7 +97,7 @@ export async function validatePolicy(store, policyPackName, options = {}) {
             hook: hook.meta?.name || 'unnamed',
             fired: result.fired,
             executionTime: result.executionTime,
-            type: result.type
+            type: result.type,
           });
 
           // In validation, hooks firing = violations detected
@@ -106,14 +106,14 @@ export async function validatePolicy(store, policyPackName, options = {}) {
               hook: hook.meta?.name || 'unnamed',
               severity: hook.meta?.severity || 'warning',
               message: hook.meta?.description || 'Policy violation detected',
-              details: result
+              details: result,
             });
           }
         } catch (error) {
           span.recordException(error);
           hookResults.push({
             hook: hook.meta?.name || 'unnamed',
-            error: error.message
+            error: error.message,
           });
 
           if (options.strict) {
@@ -137,7 +137,7 @@ export async function validatePolicy(store, policyPackName, options = {}) {
         hooksEvaluated: hookResults.length,
         violations,
         hookResults,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
 
       // Log to audit trail
@@ -304,9 +304,9 @@ async function logAuditEntry(validationResult) {
     violations: validationResult.violations.map(v => ({
       hook: v.hook,
       severity: v.severity,
-      message: v.message
+      message: v.message,
     })),
-    executionTime: validationResult.executionTime
+    executionTime: validationResult.executionTime,
   };
 
   // Append as JSONL (one JSON object per line)
@@ -315,5 +315,5 @@ async function logAuditEntry(validationResult) {
 
 export default {
   validatePolicy,
-  formatValidationReport
+  formatValidationReport,
 };

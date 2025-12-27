@@ -110,6 +110,15 @@ for (const binding of results) {
 - **[Packages](#packages)** - All components explained
 - **[Contributing](#contributing)** - Help us improve
 
+### Verification Requirements
+
+All claims in this manifest are verifiable via:
+
+1. **OTEL Validation**: `node validation/run-all.mjs comprehensive`
+2. **SHACL Conformance**: `pnpm test -- --grep "shacl"`
+3. **Performance Benchmarks**: `pnpm test:dark-matter`
+4. **Type Safety**: Zod runtime validation on all inputs
+
 ---
 
 ## Installation

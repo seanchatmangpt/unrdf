@@ -21,7 +21,7 @@ import path from 'node:path';
  */
 const deleteArgsSchema = z.object({
   name: z.string().optional().default(''),
-  force: z.boolean().optional().default(false)
+  force: z.boolean().optional().default(false),
 });
 
 /**
@@ -30,20 +30,20 @@ const deleteArgsSchema = z.object({
 export const deleteCommand = defineCommand({
   meta: {
     name: 'delete',
-    description: 'Delete a graph'
+    description: 'Delete a graph',
   },
   args: {
     name: {
       type: 'positional',
       description: 'Name of the graph to delete',
-      required: true
+      required: true,
     },
     force: {
       type: 'boolean',
       description: 'Skip confirmation prompt',
       default: false,
-      alias: 'f'
-    }
+      alias: 'f',
+    },
   },
   async run(ctx) {
     try {
@@ -51,7 +51,9 @@ export const deleteCommand = defineCommand({
       const args = deleteArgsSchema.parse(ctx.args);
 
       if (!args.force) {
-        console.log(`⚠️  Are you sure you want to delete graph "${args.name}"? (use --force to skip)`);
+        console.log(
+          `⚠️  Are you sure you want to delete graph "${args.name}"? (use --force to skip)`
+        );
         return;
       }
 
@@ -67,10 +69,9 @@ export const deleteCommand = defineCommand({
       await unlink(metaPath);
 
       console.log(`✅ Graph deleted: ${args.name}`);
-
     } catch (error) {
       console.error('❌ Delete failed:', error.message);
       throw error;
     }
-  }
+  },
 });

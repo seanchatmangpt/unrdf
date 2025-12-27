@@ -1,7 +1,7 @@
 /**
  * @file Performance Optimizer for UNRDF
  * @module performance-optimizer
- * 
+ *
  * @description
  * Implements performance optimizations to meet KGC PRD success metrics:
  * - p50 pre-hook pipeline ≤ 200 µs
@@ -31,7 +31,7 @@ const PerformanceConfigSchema = z.object({
   afterHashOnly: z.boolean().default(false), // KGC PRD fast path
   enableProfiling: z.boolean().default(false),
   enableMemoryOptimization: z.boolean().default(true),
-  enableQueryOptimization: z.boolean().default(true)
+  enableQueryOptimization: z.boolean().default(true),
 });
 
 /**
@@ -43,7 +43,7 @@ const PerformanceMetrics = {
   errorRate: 0,
   memoryUsage: [],
   cacheStats: { hits: 0, misses: 0, size: 0 },
-  backpressure: { queueDepth: 0, watermarks: { high: 1000, low: 100 } }
+  backpressure: { queueDepth: 0, watermarks: { high: 1000, low: 100 } },
 };
 
 /**
@@ -61,22 +61,22 @@ export class PerformanceOptimizer {
     this.batchQueue = [];
     this.processingQueue = [];
     this.isProcessing = false;
-    
+
     // Performance tracking
     this.startTime = Date.now();
     this.totalTransactions = 0;
     this.totalHooks = 0;
     this.totalErrors = 0;
-    
+
     // Memory optimization
     this.memoryThreshold = 100 * 1024 * 1024; // 100MB
     this.lastGcTime = Date.now();
     this.gcInterval = 30000; // 30 seconds
-    
+
     // Query optimization
     this.queryCache = new Map();
     this.queryStats = new Map();
-    
+
     // Initialize performance monitoring
     this._initializePerformanceMonitoring();
   }
@@ -104,30 +104,30 @@ export class PerformanceOptimizer {
    */
   async optimizeTransaction(transactionFn, context) {
     const startTime = process.hrtime.bigint();
-    
+
     try {
       // Fast path optimization
       if (this.config.enableFastPath && context.afterHashOnly) {
         return await this._fastPathTransaction(transactionFn, context);
       }
-      
+
       // Batch processing optimization
       if (this.config.enableBatchProcessing && context.batchable) {
         return await this._batchTransaction(transactionFn, context);
       }
-      
+
       // Parallel execution optimization
       if (this.config.enableParallelExecution && context.parallelizable) {
         return await this._parallelTransaction(transactionFn, context);
       }
-      
+
       // Standard execution
       const result = await transactionFn(context);
-      
+
       // Update metrics
       const duration = Number(process.hrtime.bigint() - startTime) / 1000000; // Convert to ms
       this._updateTransactionMetrics(duration, true);
-      
+
       return result;
     } catch (error) {
       const duration = Number(process.hrtime.bigint() - startTime) / 1000000;
@@ -144,7 +144,7 @@ export class PerformanceOptimizer {
    */
   async optimizeHook(hookFn, context) {
     const startTime = process.hrtime.bigint();
-    
+
     try {
       // Check if hook is cached
       if (this.config.enableCaching) {
@@ -156,24 +156,24 @@ export class PerformanceOptimizer {
         }
         this.metrics.cacheStats.misses++;
       }
-      
+
       // Execute hook
       const result = await hookFn(context);
-      
+
       // Cache result if enabled
       if (this.config.enableCaching) {
         const cacheKey = this._generateCacheKey(hookFn, context);
         this.cache.set(cacheKey, {
           result,
           timestamp: Date.now(),
-          ttl: context.cacheTtl || 300000 // 5 minutes default
+          ttl: context.cacheTtl || 300000, // 5 minutes default
         });
       }
-      
+
       // Update metrics
       const duration = Number(process.hrtime.bigint() - startTime) / 1000000;
       this._updateHookMetrics(duration, true);
-      
+
       return result;
     } catch (error) {
       const duration = Number(process.hrtime.bigint() - startTime) / 1000000;
@@ -193,7 +193,7 @@ export class PerformanceOptimizer {
     if (!this.config.enableQueryOptimization) {
       return await queryFn(query, context);
     }
-    
+
     // Check query cache
     const cacheKey = this._hashQuery(query);
     const cached = this.queryCache.get(cacheKey);
@@ -201,26 +201,26 @@ export class PerformanceOptimizer {
       this.metrics.cacheStats.hits++;
       return cached.result;
     }
-    
+
     // Execute query
     const startTime = process.hrtime.bigint();
     const result = await queryFn(query, context);
     const duration = Number(process.hrtime.bigint() - startTime) / 1000000;
-    
+
     // Cache result
     this.queryCache.set(cacheKey, {
       result,
       timestamp: Date.now(),
-      ttl: context.queryCacheTtl || 600000 // 10 minutes default
+      ttl: context.queryCacheTtl || 600000, // 10 minutes default
     });
-    
+
     // Update query stats
     this.queryStats.set(cacheKey, {
       executionCount: (this.queryStats.get(cacheKey)?.executionCount || 0) + 1,
       totalDuration: (this.queryStats.get(cacheKey)?.totalDuration || 0) + duration,
-      lastExecuted: Date.now()
+      lastExecuted: Date.now(),
     });
-    
+
     this.metrics.cacheStats.misses++;
     return result;
   }
@@ -239,9 +239,9 @@ export class PerformanceOptimizer {
       skipCanonicalization: true,
       skipValidation: true,
       skipHooks: false, // Still run hooks but optimize them
-      timeout: Math.min(context.timeout || 2000, 1000) // Max 1s for fast path
+      timeout: Math.min(context.timeout || 2000, 1000), // Max 1s for fast path
     };
-    
+
     return await transactionFn(fastContext);
   }
 
@@ -255,12 +255,12 @@ export class PerformanceOptimizer {
   async _batchTransaction(transactionFn, context) {
     // Add to batch queue
     this.batchQueue.push({ transactionFn, context });
-    
+
     // Process batch if size threshold reached
     if (this.batchQueue.length >= this.config.batchSize) {
       return await this._processBatch();
     }
-    
+
     // Return promise that resolves when batch is processed
     return new Promise((resolve, reject) => {
       const batchId = randomUUID();
@@ -277,20 +277,20 @@ export class PerformanceOptimizer {
     if (this.isProcessing) {
       return; // Already processing
     }
-    
+
     this.isProcessing = true;
     const batch = this.batchQueue.splice(0, this.config.batchSize);
-    
+
     try {
       // Process batch in parallel
       const results = await Promise.all(
         batch.map(({ transactionFn, context }) => transactionFn(context))
       );
-      
+
       // Resolve all pending promises
       this.processingQueue.forEach(({ resolve }) => resolve(results));
       this.processingQueue = [];
-      
+
       return results;
     } catch (error) {
       // Reject all pending promises
@@ -312,12 +312,10 @@ export class PerformanceOptimizer {
   async _parallelTransaction(transactionFn, context) {
     // Split context into parallelizable parts
     const parallelParts = this._splitContext(context);
-    
+
     // Execute parts in parallel
-    const results = await Promise.all(
-      parallelParts.map(part => transactionFn(part))
-    );
-    
+    const results = await Promise.all(parallelParts.map(part => transactionFn(part)));
+
     // Merge results
     return this._mergeResults(results);
   }
@@ -332,20 +330,20 @@ export class PerformanceOptimizer {
     this.metrics.transactionLatency.push({
       timestamp: Date.now(),
       duration,
-      success
+      success,
     });
-    
+
     // Keep only last 1000 measurements
     if (this.metrics.transactionLatency.length > 1000) {
       this.metrics.transactionLatency = this.metrics.transactionLatency.slice(-1000);
     }
-    
+
     this.totalTransactions++;
-    
+
     if (!success) {
       this.totalErrors++;
     }
-    
+
     // Check if we're meeting performance targets
     this._checkPerformanceTargets();
   }
@@ -358,11 +356,11 @@ export class PerformanceOptimizer {
    */
   _updateHookMetrics(duration, success) {
     this.totalHooks++;
-    
+
     if (!success) {
       this.totalErrors++;
     }
-    
+
     // Calculate hook execution rate (per minute)
     const now = Date.now();
     const timeElapsed = (now - this.startTime) / 60000; // minutes
@@ -378,23 +376,28 @@ export class PerformanceOptimizer {
       .filter(l => Date.now() - l.timestamp < 60000) // Last minute
       .map(l => l.duration)
       .sort((a, b) => a - b);
-    
+
     if (recentLatencies.length === 0) return;
-    
+
     const p50 = this._calculatePercentile(recentLatencies, 0.5);
     const p99 = this._calculatePercentile(recentLatencies, 0.99);
-    
+
     // Check KGC PRD targets
-    if (p50 > 0.2) { // 200 µs
+    if (p50 > 0.2) {
+      // 200 µs
       console.warn(`[Performance] p50 latency ${p50.toFixed(3)}ms exceeds target 0.2ms`);
     }
-    
-    if (p99 > 2) { // 2 ms
+
+    if (p99 > 2) {
+      // 2 ms
       console.warn(`[Performance] p99 latency ${p99.toFixed(3)}ms exceeds target 2ms`);
     }
-    
-    if (this.metrics.hookExecutionRate < 10000) { // 10k exec/min
-      console.warn(`[Performance] Hook execution rate ${this.metrics.hookExecutionRate.toFixed(0)}/min below target 10000/min`);
+
+    if (this.metrics.hookExecutionRate < 10000) {
+      // 10k exec/min
+      console.warn(
+        `[Performance] Hook execution rate ${this.metrics.hookExecutionRate.toFixed(0)}/min below target 10000/min`
+      );
     }
   }
 
@@ -434,7 +437,7 @@ export class PerformanceOptimizer {
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
       const char = str.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
+      hash = (hash << 5) - hash + char;
       hash = hash & hash; // Convert to 32-bit integer
     }
     return hash.toString(36);
@@ -471,9 +474,9 @@ export class PerformanceOptimizer {
       rss: memUsage.rss,
       heapUsed: memUsage.heapUsed,
       heapTotal: memUsage.heapTotal,
-      external: memUsage.external
+      external: memUsage.external,
     });
-    
+
     // Keep only last 100 measurements
     if (this.metrics.memoryUsage.length > 100) {
       this.metrics.memoryUsage = this.metrics.memoryUsage.slice(-100);
@@ -487,8 +490,10 @@ export class PerformanceOptimizer {
   _checkMemoryThreshold() {
     const memUsage = process.memoryUsage();
     if (memUsage.heapUsed > this.memoryThreshold) {
-      console.warn(`[Performance] Memory usage ${(memUsage.heapUsed / 1024 / 1024).toFixed(2)}MB exceeds threshold ${(this.memoryThreshold / 1024 / 1024).toFixed(2)}MB`);
-      
+      console.warn(
+        `[Performance] Memory usage ${(memUsage.heapUsed / 1024 / 1024).toFixed(2)}MB exceeds threshold ${(this.memoryThreshold / 1024 / 1024).toFixed(2)}MB`
+      );
+
       // Force garbage collection if available
       if (global.gc) {
         global.gc();
@@ -502,22 +507,22 @@ export class PerformanceOptimizer {
    * @private
    */
   _cleanupCache() {
-    const now = Date.now();
-    
+    const _now = Date._now();
+
     // Cleanup main cache
     for (const [key, value] of this.cache.entries()) {
       if (!this._isCacheValid(value)) {
         this.cache.delete(key);
       }
     }
-    
+
     // Cleanup query cache
     for (const [key, value] of this.queryCache.entries()) {
       if (!this._isCacheValid(value)) {
         this.queryCache.delete(key);
       }
     }
-    
+
     // Limit cache size
     if (this.cache.size > this.config.cacheSize) {
       const entries = Array.from(this.cache.entries());
@@ -538,21 +543,21 @@ export class PerformanceOptimizer {
     if (context.delta && context.delta.additions) {
       const chunkSize = Math.ceil(context.delta.additions.length / this.config.maxConcurrency);
       const chunks = [];
-      
+
       for (let i = 0; i < context.delta.additions.length; i += chunkSize) {
         chunks.push({
           ...context,
           delta: {
             ...context.delta,
             additions: context.delta.additions.slice(i, i + chunkSize),
-            removals: [] // Only process additions in parallel
-          }
+            removals: [], // Only process additions in parallel
+          },
         });
       }
-      
+
       return chunks;
     }
-    
+
     return [context];
   }
 
@@ -567,13 +572,13 @@ export class PerformanceOptimizer {
     if (results.length === 1) {
       return results[0];
     }
-    
+
     const merged = {
       ...results[0],
       hookResults: [],
-      hookErrors: []
+      hookErrors: [],
     };
-    
+
     results.forEach(result => {
       if (result.hookResults) {
         merged.hookResults.push(...result.hookResults);
@@ -582,7 +587,7 @@ export class PerformanceOptimizer {
         merged.hookErrors.push(...result.hookErrors);
       }
     });
-    
+
     return merged;
   }
 
@@ -593,28 +598,28 @@ export class PerformanceOptimizer {
   getMetrics() {
     const now = Date.now();
     const oneMinuteAgo = now - 60000;
-    
+
     // Calculate transaction latency percentiles
     const recentLatencies = this.metrics.transactionLatency
       .filter(l => l.timestamp > oneMinuteAgo)
       .map(l => l.duration)
       .sort((a, b) => a - b);
-    
+
     const p50 = this._calculatePercentile(recentLatencies, 0.5);
     const p95 = this._calculatePercentile(recentLatencies, 0.95);
     const p99 = this._calculatePercentile(recentLatencies, 0.99);
     const max = recentLatencies.length > 0 ? recentLatencies[recentLatencies.length - 1] : 0;
-    
+
     // Calculate error rate
     const errorRate = this.totalTransactions > 0 ? this.totalErrors / this.totalTransactions : 0;
-    
+
     // Get current memory usage
     const currentMemory = process.memoryUsage();
-    
+
     // Calculate cache hit rate
     const totalCacheOps = this.metrics.cacheStats.hits + this.metrics.cacheStats.misses;
     const cacheHitRate = totalCacheOps > 0 ? this.metrics.cacheStats.hits / totalCacheOps : 0;
-    
+
     return PerformanceMetricsSchema.parse({
       transactionLatency: { p50, p95, p99, max },
       hookExecutionRate: this.metrics.hookExecutionRate,
@@ -623,9 +628,9 @@ export class PerformanceOptimizer {
       cacheStats: {
         hitRate: cacheHitRate,
         size: this.cache.size,
-        maxSize: this.config.cacheSize
+        maxSize: this.config.cacheSize,
       },
-      backpressure: this.metrics.backpressure
+      backpressure: this.metrics.backpressure,
     });
   }
 
@@ -648,12 +653,12 @@ export class PerformanceOptimizer {
     if (this.batchQueue.length > 0) {
       await this._processBatch();
     }
-    
+
     // Clear caches
     this.cache.clear();
     this.queryCache.clear();
     this.queryStats.clear();
-    
+
     console.log('[Performance] Optimizer shutdown complete');
   }
 }
@@ -671,5 +676,3 @@ export function createPerformanceOptimizer(config = {}) {
  * Default performance optimizer instance
  */
 export const defaultPerformanceOptimizer = createPerformanceOptimizer();
-
-

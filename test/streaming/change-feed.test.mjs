@@ -2,8 +2,12 @@
  * @file Tests for Change Feed
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { ChangeFeed, ChangeType, createChangeFeedHook } from '../../src/knowledge-engine/streaming/change-feed.mjs';
+import { describe, it, expect, beforeEach, afterEach, _vi } from 'vitest';
+import {
+  ChangeFeed,
+  ChangeType,
+  createChangeFeedHook,
+} from '../../src/knowledge-engine/streaming/change-feed.mjs';
 
 describe('ChangeFeed', () => {
   let feed;
@@ -12,7 +16,7 @@ describe('ChangeFeed', () => {
     feed = new ChangeFeed({
       enableHistory: true,
       historySize: 100,
-      batchMode: false
+      batchMode: false,
     });
     feed.start();
   });
@@ -25,11 +29,11 @@ describe('ChangeFeed', () => {
     it('should record add changes', async () => {
       const delta = {
         additions: [{ subject: 'alice', predicate: 'knows', object: 'bob' }],
-        removals: []
+        removals: [],
       };
 
-      const eventPromise = new Promise((resolve) => {
-        feed.on('change', (change) => {
+      const eventPromise = new Promise(resolve => {
+        feed.on('change', change => {
           expect(change.type).toBe(ChangeType.ADD);
           expect(change.delta.additions).toHaveLength(1);
           resolve();
@@ -44,11 +48,11 @@ describe('ChangeFeed', () => {
     it('should record delete changes', async () => {
       const delta = {
         additions: [],
-        removals: [{ subject: 'alice', predicate: 'knows', object: 'bob' }]
+        removals: [{ subject: 'alice', predicate: 'knows', object: 'bob' }],
       };
 
-      const eventPromise = new Promise((resolve) => {
-        feed.on('change', (change) => {
+      const eventPromise = new Promise(resolve => {
+        feed.on('change', change => {
           expect(change.type).toBe(ChangeType.DELETE);
           expect(change.delta.removals).toHaveLength(1);
           resolve();
@@ -63,11 +67,11 @@ describe('ChangeFeed', () => {
     it('should record update changes', async () => {
       const delta = {
         additions: [{ subject: 'alice', predicate: 'age', object: '31' }],
-        removals: [{ subject: 'alice', predicate: 'age', object: '30' }]
+        removals: [{ subject: 'alice', predicate: 'age', object: '30' }],
       };
 
-      const eventPromise = new Promise((resolve) => {
-        feed.on('change', (change) => {
+      const eventPromise = new Promise(resolve => {
+        feed.on('change', change => {
           expect(change.type).toBe(ChangeType.UPDATE);
           expect(change.delta.additions).toHaveLength(1);
           expect(change.delta.removals).toHaveLength(1);
@@ -83,17 +87,17 @@ describe('ChangeFeed', () => {
     it('should include metadata in changes', async () => {
       const delta = {
         additions: [{ subject: 'alice', predicate: 'knows', object: 'bob' }],
-        removals: []
+        removals: [],
       };
 
       const metadata = {
         actor: 'alice',
         transactionId: 'tx-123',
-        source: 'api'
+        source: 'api',
       };
 
-      const eventPromise = new Promise((resolve) => {
-        feed.on('change', (change) => {
+      const eventPromise = new Promise(resolve => {
+        feed.on('change', change => {
           expect(change.metadata).toEqual(metadata);
           resolve();
         });
@@ -119,7 +123,7 @@ describe('ChangeFeed', () => {
     it('should trim history when exceeding size', () => {
       const smallFeed = new ChangeFeed({
         enableHistory: true,
-        historySize: 2
+        historySize: 2,
       });
       smallFeed.start();
 
@@ -175,12 +179,12 @@ describe('ChangeFeed', () => {
       const batchFeed = new ChangeFeed({
         batchMode: true,
         batchSize: 3,
-        batchInterval: 5000
+        batchInterval: 5000,
       });
       batchFeed.start();
 
-      const eventPromise = new Promise((resolve) => {
-        batchFeed.on('batch', (batch) => {
+      const eventPromise = new Promise(resolve => {
+        batchFeed.on('batch', batch => {
           expect(batch.changes).toHaveLength(3);
           expect(batch.count).toBe(3);
           batchFeed.cleanup();
@@ -199,12 +203,12 @@ describe('ChangeFeed', () => {
       const batchFeed = new ChangeFeed({
         batchMode: true,
         batchSize: 10,
-        batchInterval: 100
+        batchInterval: 100,
       });
       batchFeed.start();
 
-      const eventPromise = new Promise((resolve) => {
-        batchFeed.on('batch', (batch) => {
+      const eventPromise = new Promise(resolve => {
+        batchFeed.on('batch', batch => {
           expect(batch.changes).toHaveLength(2);
           batchFeed.cleanup();
           resolve();
@@ -255,17 +259,17 @@ describe('ChangeFeed', () => {
         {
           delta: {
             additions: [{ subject: 'a', predicate: 'p1', object: 'o1' }],
-            removals: []
+            removals: [],
           },
-          timestamp: 1000
+          timestamp: 1000,
         },
         {
           delta: {
             additions: [{ subject: 'b', predicate: 'p2', object: 'o2' }],
-            removals: [{ subject: 'c', predicate: 'p3', object: 'o3' }]
+            removals: [{ subject: 'c', predicate: 'p3', object: 'o3' }],
           },
-          timestamp: 2000
-        }
+          timestamp: 2000,
+        },
       ];
 
       const compacted = ChangeFeed.compactChanges(changes);
@@ -291,8 +295,8 @@ describe('ChangeFeed', () => {
     it('should record changes via hook', async () => {
       const hook = createChangeFeedHook(feed);
 
-      const eventPromise = new Promise((resolve) => {
-        feed.on('change', (change) => {
+      const eventPromise = new Promise(resolve => {
+        feed.on('change', change => {
           expect(change.metadata.source).toBe('transaction-hook');
           resolve();
         });

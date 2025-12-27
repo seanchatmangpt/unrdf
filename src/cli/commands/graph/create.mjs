@@ -22,7 +22,7 @@ import path from 'node:path';
 const createArgsSchema = z.object({
   name: z.string().optional().default(''),
   'base-iri': z.string().optional().default('http://example.org/'),
-  'dry-run': z.boolean().optional().default(false)
+  'dry-run': z.boolean().optional().default(false),
 });
 
 /**
@@ -31,26 +31,26 @@ const createArgsSchema = z.object({
 export const createCommand = defineCommand({
   meta: {
     name: 'create',
-    description: 'Create a new RDF named graph'
+    description: 'Create a new RDF named graph',
   },
   args: {
     name: {
       type: 'positional',
       description: 'Name of the graph to create',
-      required: true
+      required: true,
     },
     'base-iri': {
       type: 'string',
       description: 'Base IRI for the graph',
       default: 'http://example.org/',
-      alias: 'b'
+      alias: 'b',
     },
     'dry-run': {
       type: 'boolean',
       description: 'Show what would be created without creating',
       default: false,
-      alias: 'd'
-    }
+      alias: 'd',
+    },
   },
   async run(ctx) {
     try {
@@ -82,7 +82,7 @@ export const createCommand = defineCommand({
         name: args.name,
         baseIri: args['base-iri'],
         createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
+        updatedAt: new Date().toISOString(),
       };
 
       // Atomic write via temp file + rename
@@ -92,10 +92,9 @@ export const createCommand = defineCommand({
 
       console.log(`✅ Graph created: ${args.name}`);
       console.log(`   Base IRI: ${args['base-iri']}`);
-
     } catch (error) {
       console.error('❌ Create failed:', error.message);
       throw error;
     }
-  }
+  },
 });

@@ -7,13 +7,13 @@
  * test assertions with span analysis and metric validation.
  */
 
-import { z } from "zod";
-import { trace, metrics } from "@opentelemetry/api";
+import { z } from 'zod';
+import { trace, metrics } from '@opentelemetry/api';
 
 // Validation schemas
-const SpanValidationSchema = z.object({
+const _SpanValidationSchema = z.object({
   name: z.string(),
-  status: z.enum(["ok", "error"]),
+  status: z.enum(['ok', 'error']),
   duration: z.number().min(0),
   attributes: z.record(z.any()),
   events: z
@@ -22,12 +22,12 @@ const SpanValidationSchema = z.object({
         name: z.string(),
         timestamp: z.number(),
         attributes: z.record(z.any()).optional(),
-      }),
+      })
     )
     .optional(),
 });
 
-const MetricValidationSchema = z.object({
+const _MetricValidationSchema = z.object({
   name: z.string(),
   value: z.number(),
   unit: z.string().optional(),
@@ -55,8 +55,8 @@ export class ValidationHelpers {
       ...config,
     };
 
-    this.tracer = trace.getTracer("validation-helpers");
-    this.meter = metrics.getMeter("validation-helpers");
+    this.tracer = trace.getTracer('validation-helpers');
+    this.meter = metrics.getMeter('validation-helpers');
   }
 
   /**
@@ -67,13 +67,13 @@ export class ValidationHelpers {
    * @returns {Object} Assertion result
    */
   assertSpanExists(spans, spanName, expectedAttributes = {}) {
-    const span = spans.find((s) => s.name === spanName);
+    const span = spans.find(s => s.name === spanName);
 
     if (!span) {
       return {
         passed: false,
         message: `Expected span '${spanName}' not found`,
-        actual: spans.map((s) => s.name),
+        actual: spans.map(s => s.name),
         expected: spanName,
       };
     }
@@ -118,7 +118,7 @@ export class ValidationHelpers {
    * @returns {Object} Assertion result
    */
   assertSpanStatus(spans, spanName, expectedStatus) {
-    const span = spans.find((s) => s.name === spanName);
+    const span = spans.find(s => s.name === spanName);
 
     if (!span) {
       return {
@@ -152,7 +152,7 @@ export class ValidationHelpers {
    * @returns {Object} Assertion result
    */
   assertSpanDuration(spans, spanName, maxDuration) {
-    const span = spans.find((s) => s.name === spanName);
+    const span = spans.find(s => s.name === spanName);
 
     if (!span) {
       return {
@@ -184,13 +184,13 @@ export class ValidationHelpers {
    * @returns {Object} Assertion result
    */
   assertNoErrorSpans(spans) {
-    const errorSpans = spans.filter((s) => s.status === "error");
+    const errorSpans = spans.filter(s => s.status === 'error');
 
     if (errorSpans.length > 0) {
       return {
         passed: false,
         message: `Found ${errorSpans.length} error spans`,
-        errorSpans: errorSpans.map((s) => ({
+        errorSpans: errorSpans.map(s => ({
           name: s.name,
           status: s.status,
           attributes: s.attributes,
@@ -200,7 +200,7 @@ export class ValidationHelpers {
 
     return {
       passed: true,
-      message: "No error spans found",
+      message: 'No error spans found',
       totalSpans: spans.length,
     };
   }
@@ -359,7 +359,7 @@ export class ValidationHelpers {
    * @returns {Object} Assertion result
    */
   assertSpanEvent(spans, spanName, eventName, expectedAttributes = {}) {
-    const span = spans.find((s) => s.name === spanName);
+    const span = spans.find(s => s.name === spanName);
 
     if (!span) {
       return {
@@ -377,13 +377,13 @@ export class ValidationHelpers {
       };
     }
 
-    const event = span.events.find((e) => e.name === eventName);
+    const event = span.events.find(e => e.name === eventName);
 
     if (!event) {
       return {
         passed: false,
         message: `Event '${eventName}' not found in span '${spanName}'`,
-        actual: span.events.map((e) => e.name),
+        actual: span.events.map(e => e.name),
         expected: eventName,
       };
     }
@@ -429,7 +429,7 @@ export class ValidationHelpers {
    * @returns {Object} Assertion result
    */
   assertSpanAttribute(spans, spanName, attributeName, expectedValue) {
-    const span = spans.find((s) => s.name === spanName);
+    const span = spans.find(s => s.name === spanName);
 
     if (!span) {
       return {
@@ -472,7 +472,7 @@ export class ValidationHelpers {
    * @param {string} severity - Rule severity ('error', 'warning', 'info')
    * @returns {Object} Validation rule
    */
-  createValidationRule(name, condition, severity = "error") {
+  createValidationRule(name, condition, severity = 'error') {
     return {
       name,
       condition,
@@ -487,7 +487,7 @@ export class ValidationHelpers {
    * @param {string} operator - Comparison operator ('<', '>', '<=', '>=', '==', '!=')
    * @returns {Object} Validation rule
    */
-  createPerformanceRule(metricName, threshold, operator = "<") {
+  createPerformanceRule(metricName, threshold, operator = '<') {
     return this.createValidationRule(
       `performance.${metricName}`,
       (spans, metrics) => {
@@ -495,23 +495,23 @@ export class ValidationHelpers {
         if (value === undefined) return false;
 
         switch (operator) {
-          case "<":
+          case '<':
             return value < threshold;
-          case ">":
+          case '>':
             return value > threshold;
-          case "<=":
+          case '<=':
             return value <= threshold;
-          case ">=":
+          case '>=':
             return value >= threshold;
-          case "==":
+          case '==':
             return value === threshold;
-          case "!=":
+          case '!=':
             return value !== threshold;
           default:
             return false;
         }
       },
-      "error",
+      'error'
     );
   }
 
@@ -524,8 +524,8 @@ export class ValidationHelpers {
   createSpanExistenceRule(spanName, expectedAttributes = {}) {
     return this.createValidationRule(
       `span.exists.${spanName}`,
-      (spans, metrics) => {
-        const span = spans.find((s) => s.name === spanName);
+      (spans, _metrics) => {
+        const span = spans.find(s => s.name === spanName);
         if (!span) return false;
 
         // Check attributes
@@ -537,7 +537,7 @@ export class ValidationHelpers {
 
         return true;
       },
-      "error",
+      'error'
     );
   }
 
@@ -550,11 +550,11 @@ export class ValidationHelpers {
   createSpanStatusRule(spanName, expectedStatus) {
     return this.createValidationRule(
       `span.status.${spanName}`,
-      (spans, metrics) => {
-        const span = spans.find((s) => s.name === spanName);
+      (spans, _metrics) => {
+        const span = spans.find(s => s.name === spanName);
         return span && span.status === expectedStatus;
       },
-      "error",
+      'error'
     );
   }
 }

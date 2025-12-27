@@ -1,5 +1,5 @@
-import { DataFactory } from "n3";
-import { createHash, randomBytes } from "node:crypto";
+import { DataFactory } from 'n3';
+import { createHash, randomBytes } from 'node:crypto';
 
 const { blankNode, namedNode } = DataFactory;
 
@@ -8,7 +8,7 @@ const { blankNode, namedNode } = DataFactory;
  * @param {string} [prefix="bn"] - Prefix for blank node IDs
  * @returns {Function} Function that generates blank nodes
  */
-export const makeBNodeGenerator = (prefix = "bn") => {
+export const makeBNodeGenerator = (prefix = 'bn') => {
   let i = 0;
   return () => blankNode(`${prefix}${i++}`);
 };
@@ -19,7 +19,7 @@ export const makeBNodeGenerator = (prefix = "bn") => {
  * @param {string} [baseIRI="http://example.org/.well-known/genid/"] - Base IRI for skolemization
  * @returns {string} Skolemized IRI
  */
-export const skolemize = (id, baseIRI = "http://example.org/.well-known/genid/") =>
+export const skolemize = (id, baseIRI = 'http://example.org/.well-known/genid/') =>
   `${baseIRI}${id}`;
 
 /**
@@ -29,7 +29,7 @@ export const skolemize = (id, baseIRI = "http://example.org/.well-known/genid/")
  */
 export const generateRandomBNodeId = (length = 16) => {
   const bytes = randomBytes(Math.ceil(length / 2));
-  return bytes.toString("hex").slice(0, Math.max(0, length));
+  return bytes.toString('hex').slice(0, Math.max(0, length));
 };
 
 /**
@@ -39,9 +39,9 @@ export const generateRandomBNodeId = (length = 16) => {
  * @returns {string} Deterministic blank node ID
  */
 export const generateDeterministicBNodeId = (content, length = 16) => {
-  const hash = createHash("sha256");
+  const hash = createHash('sha256');
   hash.update(content);
-  return hash.digest("hex").slice(0, Math.max(0, length));
+  return hash.digest('hex').slice(0, Math.max(0, length));
 };
 
 /**
@@ -68,9 +68,9 @@ export const createDeterministicBlankNode = (content, length = 16) => {
  * @returns {string} UUID v4 string
  */
 export const generateUUID = () => {
-  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
     const r = (Math.random() * 16) | 0;
-    const v = c === "x" ? r : (r & 0x3) | 0x8;
+    const v = c === 'x' ? r : (r & 0x3) | 0x8;
     return v.toString(16);
   });
 };
@@ -80,7 +80,7 @@ export const generateUUID = () => {
  * @param {string} [prefix="id"] - Prefix for the ID
  * @returns {string} Generated ID
  */
-export const generateId = (prefix = "id") => {
+export const generateId = (prefix = 'id') => {
   const uuid = generateUUID();
   return `${prefix}-${uuid}`;
 };
@@ -90,10 +90,10 @@ export const generateId = (prefix = "id") => {
  * @param {string} input - Input string to hash
  * @returns {string} Hash-based ID
  */
-export const generateHashId = (input) => {
-  const hash = createHash("sha256");
+export const generateHashId = input => {
+  const hash = createHash('sha256');
   hash.update(input);
-  return hash.digest("hex");
+  return hash.digest('hex');
 };
 
 /**
@@ -109,7 +109,7 @@ export const generateShortUUID = () => {
  * @param {string} [baseIRI] - Base IRI for the named node
  * @returns {import('n3').NamedNode} Named node with UUID
  */
-export const createUUIDNamedNode = (baseIRI = "http://example.org/id/") => {
+export const createUUIDNamedNode = (baseIRI = 'http://example.org/id/') => {
   return namedNode(`${baseIRI}${generateUUID()}`);
 };
 
@@ -118,7 +118,7 @@ export const createUUIDNamedNode = (baseIRI = "http://example.org/id/") => {
  * @param {string} [baseIRI] - Base IRI for the named node
  * @returns {import('n3').NamedNode} Named node with short UUID
  */
-export const createShortUUIDNamedNode = (baseIRI = "http://example.org/id/") => {
+export const createShortUUIDNamedNode = (baseIRI = 'http://example.org/id/') => {
   return namedNode(`${baseIRI}${generateShortUUID()}`);
 };
 
@@ -127,7 +127,7 @@ export const createShortUUIDNamedNode = (baseIRI = "http://example.org/id/") => 
  * @param {string} [prefix="ts"] - Prefix for the ID
  * @returns {string} Timestamp-based ID
  */
-export const generateTimestampId = (prefix = "ts") => {
+export const generateTimestampId = (prefix = 'ts') => {
   return `${prefix}${Date.now()}`;
 };
 
@@ -136,7 +136,7 @@ export const generateTimestampId = (prefix = "ts") => {
  * @param {string} [prefix="id"] - Prefix for the ID
  * @returns {Function} Function that generates sequential IDs
  */
-export const makeCounterIdGenerator = (prefix = "id") => {
+export const makeCounterIdGenerator = (prefix = 'id') => {
   let counter = 0;
   return () => `${prefix}${counter++}`;
 };
@@ -148,10 +148,14 @@ export const makeCounterIdGenerator = (prefix = "id") => {
  * @param {string} [algorithm="sha256"] - Hash algorithm
  * @returns {string} Hash-based IRI
  */
-export const createHashIRI = (content, baseIRI = "http://example.org/hash/", algorithm = "sha256") => {
+export const createHashIRI = (
+  content,
+  baseIRI = 'http://example.org/hash/',
+  algorithm = 'sha256'
+) => {
   const hash = createHash(algorithm);
   hash.update(content);
-  const hashValue = hash.digest("hex");
+  const hashValue = hash.digest('hex');
   return `${baseIRI}${algorithm}/${hashValue}`;
 };
 
@@ -162,7 +166,11 @@ export const createHashIRI = (content, baseIRI = "http://example.org/hash/", alg
  * @param {string} [algorithm="sha256"] - Hash algorithm
  * @returns {import('n3').NamedNode} Named node with hash-based IRI
  */
-export const createHashNamedNode = (content, baseIRI = "http://example.org/hash/", algorithm = "sha256") => {
+export const createHashNamedNode = (
+  content,
+  baseIRI = 'http://example.org/hash/',
+  algorithm = 'sha256'
+) => {
   return namedNode(createHashIRI(content, baseIRI, algorithm));
 };
 
@@ -173,7 +181,8 @@ export const createHashNamedNode = (content, baseIRI = "http://example.org/hash/
  * @returns {string} Full IRI
  */
 export const createNamespaceId = (namespace, localName) => {
-  const cleanNamespace = namespace.endsWith("/") || namespace.endsWith("#") ? namespace : `${namespace}#`;
+  const cleanNamespace =
+    namespace.endsWith('/') || namespace.endsWith('#') ? namespace : `${namespace}#`;
   return `${cleanNamespace}${localName}`;
 };
 
@@ -192,9 +201,9 @@ export const createNamespaceNamedNode = (namespace, localName) => {
  * @param {string} iri - IRI to extract from
  * @returns {string} Local name
  */
-export const extractLocalName = (iri) => {
-  const hashIndex = iri.lastIndexOf("#");
-  const slashIndex = iri.lastIndexOf("/");
+export const extractLocalName = iri => {
+  const hashIndex = iri.lastIndexOf('#');
+  const slashIndex = iri.lastIndexOf('/');
   const index = Math.max(hashIndex, slashIndex);
   return index >= 0 ? iri.slice(Math.max(0, index + 1)) : iri;
 };
@@ -204,11 +213,11 @@ export const extractLocalName = (iri) => {
  * @param {string} iri - IRI to extract from
  * @returns {string} Namespace
  */
-export const extractNamespace = (iri) => {
-  const hashIndex = iri.lastIndexOf("#");
-  const slashIndex = iri.lastIndexOf("/");
+export const extractNamespace = iri => {
+  const hashIndex = iri.lastIndexOf('#');
+  const slashIndex = iri.lastIndexOf('/');
   const index = Math.max(hashIndex, slashIndex);
-  return index >= 0 ? iri.slice(0, Math.max(0, index + 1)) : "";
+  return index >= 0 ? iri.slice(0, Math.max(0, index + 1)) : '';
 };
 
 /**
@@ -216,8 +225,8 @@ export const extractNamespace = (iri) => {
  * @param {string} iri - IRI to check
  * @returns {boolean} True if it's a blank node identifier
  */
-export const isBlankNodeIRI = (iri) => {
-  return iri.startsWith("_:") || iri.includes(".well-known/genid/");
+export const isBlankNodeIRI = iri => {
+  return iri.startsWith('_:') || iri.includes('.well-known/genid/');
 };
 
 /**
@@ -225,12 +234,12 @@ export const isBlankNodeIRI = (iri) => {
  * @param {string} iri - Blank node IRI
  * @returns {string} Blank node ID
  */
-export const iriToBlankNodeId = (iri) => {
-  if (iri.startsWith("_:")) {
+export const iriToBlankNodeId = iri => {
+  if (iri.startsWith('_:')) {
     return iri.slice(2);
   }
-  if (iri.includes(".well-known/genid/")) {
-    return iri.split(".well-known/genid/")[1];
+  if (iri.includes('.well-known/genid/')) {
+    return iri.split('.well-known/genid/')[1];
   }
   return iri;
 };
@@ -241,7 +250,7 @@ export const iriToBlankNodeId = (iri) => {
  * @param {string} [baseIRI="http://example.org/.well-known/genid/"] - Base IRI
  * @returns {string} Blank node IRI
  */
-export const blankNodeIdToIRI = (id, baseIRI = "http://example.org/.well-known/genid/") => {
+export const blankNodeIdToIRI = (id, baseIRI = 'http://example.org/.well-known/genid/') => {
   return `${baseIRI}${id}`;
 };
 
@@ -251,7 +260,7 @@ export const blankNodeIdToIRI = (id, baseIRI = "http://example.org/.well-known/g
  * @returns {string} Stable ID
  */
 export const generateStableId = (...values) => {
-  const content = values.map(String).join("|");
+  const content = values.map(String).join('|');
   return generateDeterministicBNodeId(content);
 };
 

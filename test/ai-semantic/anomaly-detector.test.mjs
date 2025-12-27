@@ -19,7 +19,7 @@ describe('AnomalyDetector', () => {
       enableStatistical: true,
       enableMLBased: true,
       outlierThreshold: 2.5,
-      minConfidence: 0.5
+      minConfidence: 0.5,
     });
   });
 
@@ -66,7 +66,7 @@ describe('AnomalyDetector', () => {
 
     it('should detect missing links', async () => {
       const alice = namedNode('http://example.org/alice');
-      const bob = namedNode('http://example.org/bob');
+      const _bob = namedNode('http://example.org/_bob');
       const knows = namedNode('http://example.org/knows');
 
       // Create pattern suggesting missing inverse
@@ -117,7 +117,7 @@ describe('AnomalyDetector', () => {
 
     it('should filter anomalies by confidence', async () => {
       const highConfDetector = createAnomalyDetector({
-        minConfidence: 0.9
+        minConfidence: 0.9,
       });
 
       const alice = namedNode('http://example.org/alice');
@@ -171,7 +171,7 @@ describe('AnomalyDetector', () => {
         'data_quality',
         'outlier',
         'inconsistency',
-        'structural_anomaly'
+        'structural_anomaly',
       ];
 
       for (const type of types) {
@@ -202,7 +202,7 @@ describe('AnomalyDetector', () => {
     it('should detect ML-based anomalies when enabled', async () => {
       const mlDetector = createAnomalyDetector({
         enableMLBased: true,
-        enableStatistical: false
+        enableStatistical: false,
       });
 
       // Create sufficient data for ML
@@ -257,7 +257,7 @@ describe('AnomalyDetector', () => {
 
     it('should limit anomalies by maxAnomalies config', async () => {
       const limitedDetector = createAnomalyDetector({
-        maxAnomalies: 5
+        maxAnomalies: 5,
       });
 
       // Create many potential anomalies

@@ -31,7 +31,7 @@ describe('v3.1.0 E2E Feature Integration', () => {
           if (quad.object.value < 0 || quad.object.value > 150) {
             throw new Error('Invalid age value');
           }
-        `
+        `,
       };
 
       // Register hook
@@ -42,13 +42,11 @@ describe('v3.1.0 E2E Feature Integration', () => {
         subject: { value: 'http://example.org/person1' },
         predicate: { value: 'http://example.org/age' },
         object: { value: '200' },
-        graph: { value: 'http://example.org/default' }
+        graph: { value: 'http://example.org/default' },
       };
 
       // Should throw due to hook effect
-      await expect(
-        insertQuad(invalidQuad)
-      ).rejects.toThrow('Invalid age value');
+      await expect(insertQuad(invalidQuad)).rejects.toThrow('Invalid age value');
 
       // Cleanup
       unregisterHook(hook.id);
@@ -63,7 +61,7 @@ describe('v3.1.0 E2E Feature Integration', () => {
         effect: `
           // Transform to uppercase
           quad.object.value = quad.object.value.toUpperCase();
-        `
+        `,
       };
 
       const hook = registerHook(hookDefinition);
@@ -72,7 +70,7 @@ describe('v3.1.0 E2E Feature Integration', () => {
         subject: { value: 'http://example.org/person1' },
         predicate: { value: 'http://example.org/name' },
         object: { value: 'alice' },
-        graph: { value: 'http://example.org/default' }
+        graph: { value: 'http://example.org/default' },
       };
 
       await insertQuad(quad);
@@ -94,7 +92,7 @@ describe('v3.1.0 E2E Feature Integration', () => {
         kind: 'before',
         on: 'insert',
         condition: 'true',
-        effect: 'var leaked = "hook1";' // Use var instead of globalThis for isolation
+        effect: 'var leaked = "hook1";', // Use var instead of globalThis for isolation
       });
 
       const hook2 = registerHook({
@@ -106,14 +104,14 @@ describe('v3.1.0 E2E Feature Integration', () => {
           // In isolated execution, this variable shouldn't exist
           // Our mock creates a new function context for each hook
           var leaked = "hook2";
-        `
+        `,
       });
 
       const quad = {
         subject: { value: 'http://example.org/s' },
         predicate: { value: 'http://example.org/p' },
         object: { value: 'value' },
-        graph: { value: 'http://example.org/g' }
+        graph: { value: 'http://example.org/g' },
       };
 
       // Should not throw - contexts are isolated (each Function() creates new scope)
@@ -144,14 +142,14 @@ describe('v3.1.0 E2E Feature Integration', () => {
           subject: { value: 'http://example.org/alice' },
           predicate: { value: 'http://example.org/name' },
           object: { value: 'Alice' },
-          graph: { value: 'http://example.org/g' }
+          graph: { value: 'http://example.org/g' },
         },
         {
           subject: { value: 'http://example.org/alice' },
           predicate: { value: 'http://example.org/age' },
           object: { value: '30' },
-          graph: { value: 'http://example.org/g' }
-        }
+          graph: { value: 'http://example.org/g' },
+        },
       ];
 
       await store.addQuads(quads);
@@ -176,12 +174,14 @@ describe('v3.1.0 E2E Feature Integration', () => {
       // Concurrent writes
       for (let i = 0; i < 10; i++) {
         operations.push(
-          store.addQuads([{
-            subject: { value: `http://example.org/s${i}` },
-            predicate: { value: 'http://example.org/p' },
-            object: { value: `value${i}` },
-            graph: { value: 'http://example.org/g' }
-          }])
+          store.addQuads([
+            {
+              subject: { value: `http://example.org/s${i}` },
+              predicate: { value: 'http://example.org/p' },
+              object: { value: `value${i}` },
+              graph: { value: 'http://example.org/g' },
+            },
+          ])
         );
       }
 
@@ -195,16 +195,20 @@ describe('v3.1.0 E2E Feature Integration', () => {
       await store.addQuads([
         {
           subject: { value: 'http://example.org/alice' },
-          predicate: { value: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type' },
+          predicate: {
+            value: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type',
+          },
           object: { value: 'http://example.org/Person' },
-          graph: { value: 'http://example.org/g' }
+          graph: { value: 'http://example.org/g' },
         },
         {
           subject: { value: 'http://example.org/bob' },
-          predicate: { value: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type' },
+          predicate: {
+            value: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type',
+          },
           object: { value: 'http://example.org/Person' },
-          graph: { value: 'http://example.org/g' }
-        }
+          graph: { value: 'http://example.org/g' },
+        },
       ]);
 
       const query = `
@@ -240,10 +244,10 @@ describe('v3.1.0 E2E Feature Integration', () => {
                 if (typeQuad.length === 0) {
                   throw new Error('Entity must have rdf:type');
                 }
-              `
-            }
-          }
-        ]
+              `,
+            },
+          },
+        ],
       };
 
       loadPolicyPack(policyPack);
@@ -254,7 +258,7 @@ describe('v3.1.0 E2E Feature Integration', () => {
           subject: { value: 'http://example.org/entity1' },
           predicate: { value: 'http://example.org/name' },
           object: { value: 'Test Entity' },
-          graph: { value: 'http://example.org/g' }
+          graph: { value: 'http://example.org/g' },
         })
       ).rejects.toThrow('Entity must have rdf:type');
     });
@@ -280,12 +284,10 @@ describe('v3.1.0 E2E Feature Integration', () => {
         subject: { value: 'http://example.org/person1' },
         predicate: { value: 'http://example.org/age' },
         object: { value: '200' },
-        graph: { value: 'http://example.org/g' }
+        graph: { value: 'http://example.org/g' },
       };
 
-      await expect(
-        insertQuad(invalidQuad)
-      ).rejects.toThrow(/validation/i);
+      await expect(insertQuad(invalidQuad)).rejects.toThrow(/validation/i);
     });
   });
 
@@ -299,35 +301,39 @@ describe('v3.1.0 E2E Feature Integration', () => {
       const policyPack = {
         name: 'integration-policy',
         version: '1.0.0',
-        policies: [{
-          name: 'sanitize-input',
-          hook: {
-            kind: 'before',
-            on: 'insert',
-            condition: 'true',
-            effect: `
+        policies: [
+          {
+            name: 'sanitize-input',
+            hook: {
+              kind: 'before',
+              on: 'insert',
+              condition: 'true',
+              effect: `
               // Sanitize string values
               if (typeof quad.object.value === 'string') {
                 quad.object.value = quad.object.value.trim().toLowerCase();
               }
-            `
-          }
-        }]
+            `,
+            },
+          },
+        ],
       };
 
       loadPolicyPack(policyPack);
 
       // Insert data
-      await store.addQuads([{
-        subject: { value: 'http://example.org/alice' },
-        predicate: { value: 'http://example.org/name' },
-        object: { value: '  ALICE  ' }, // Should be sanitized
-        graph: { value: 'http://example.org/g' }
-      }]);
+      await store.addQuads([
+        {
+          subject: { value: 'http://example.org/alice' },
+          predicate: { value: 'http://example.org/name' },
+          object: { value: '  ALICE  ' }, // Should be sanitized
+          graph: { value: 'http://example.org/g' },
+        },
+      ]);
 
       // Query data
       const results = await store.getQuads({
-        subject: { value: 'http://example.org/alice' }
+        subject: { value: 'http://example.org/alice' },
       });
 
       // Verify sanitization occurred
@@ -352,33 +358,37 @@ describe('v3.1.0 E2E Feature Integration', () => {
           if (!emailRegex.test(quad.object.value)) {
             throw new Error('Invalid email format');
           }
-        `
+        `,
       });
 
       // 3. Load policy pack
       loadPolicyPack({
         name: 'workflow-policy',
         version: '1.0.0',
-        policies: [{
-          name: 'audit-trail',
-          hook: {
-            kind: 'after',
-            on: 'insert',
-            condition: 'true',
-            effect: `
+        policies: [
+          {
+            name: 'audit-trail',
+            hook: {
+              kind: 'after',
+              on: 'insert',
+              condition: 'true',
+              effect: `
               console.log('Quad inserted:', quad.subject.value);
-            `
-          }
-        }]
+            `,
+            },
+          },
+        ],
       });
 
       // 4. Insert valid data
-      await store.addQuads([{
-        subject: { value: 'http://example.org/user1' },
-        predicate: { value: 'http://example.org/email' },
-        object: { value: 'user@example.com' },
-        graph: { value: 'http://example.org/g' }
-      }]);
+      await store.addQuads([
+        {
+          subject: { value: 'http://example.org/user1' },
+          predicate: { value: 'http://example.org/email' },
+          object: { value: 'user@example.com' },
+          graph: { value: 'http://example.org/g' },
+        },
+      ]);
 
       // 5. Query data
       const results = await store.query(`
@@ -391,12 +401,14 @@ describe('v3.1.0 E2E Feature Integration', () => {
 
       // 6. Attempt invalid insert (should fail)
       await expect(
-        store.addQuads([{
-          subject: { value: 'http://example.org/user2' },
-          predicate: { value: 'http://example.org/email' },
-          object: { value: 'invalid-email' },
-          graph: { value: 'http://example.org/g' }
-        }])
+        store.addQuads([
+          {
+            subject: { value: 'http://example.org/user2' },
+            predicate: { value: 'http://example.org/email' },
+            object: { value: 'invalid-email' },
+            graph: { value: 'http://example.org/g' },
+          },
+        ])
       ).rejects.toThrow('Invalid email format');
 
       // Cleanup
@@ -417,15 +429,17 @@ describe('v3.1.0 E2E Feature Integration', () => {
         kind: 'before',
         on: 'insert',
         condition: 'true',
-        effect: 'return true;'
+        effect: 'return true;',
       });
 
-      await store.addQuads([{
-        subject: { value: 'http://example.org/s' },
-        predicate: { value: 'http://example.org/p' },
-        object: { value: 'value' },
-        graph: { value: 'http://example.org/g' }
-      }]);
+      await store.addQuads([
+        {
+          subject: { value: 'http://example.org/s' },
+          predicate: { value: 'http://example.org/p' },
+          object: { value: 'value' },
+          graph: { value: 'http://example.org/g' },
+        },
+      ]);
 
       const results = await store.query('SELECT * WHERE { ?s ?p ?o }');
 
@@ -460,7 +474,7 @@ function unregisterHook(hookId) {
 
 async function insertQuad(quad) {
   // Apply hooks to validate quad
-  for (const [id, hook] of registeredHooks.entries()) {
+  for (const [_id, hook] of registeredHooks.entries()) {
     if (hook.kind === 'before' && hook.on === 'insert') {
       // Evaluate condition
       try {
@@ -477,7 +491,7 @@ async function insertQuad(quad) {
   }
 
   // Apply policy pack validation
-  for (const [name, pack] of policyPacks.entries()) {
+  for (const [_name, pack] of policyPacks.entries()) {
     for (const policy of pack.policies) {
       if (policy.hook && policy.hook.kind === 'before' && policy.hook.on === 'insert') {
         try {
@@ -510,11 +524,11 @@ async function getQuad(subject, predicate) {
     subject,
     predicate,
     object: { value: 'ALICE' },
-    graph: { value: 'http://example.org/default' }
+    graph: { value: 'http://example.org/default' },
   };
 }
 
-async function createBrowserStore(dbName) {
+async function createBrowserStore(_dbName) {
   // Mock browser store with hooks integration
   const store = {
     quads: new Map(),
@@ -527,7 +541,7 @@ async function createBrowserStore(dbName) {
         await insertQuad(quad);
 
         // Apply policy pack transformations
-        for (const [name, pack] of policyPacks.entries()) {
+        for (const [_name, pack] of policyPacks.entries()) {
           for (const policy of pack.policies) {
             if (policy.hook && policy.hook.kind === 'before' && policy.hook.on === 'insert') {
               try {
@@ -583,9 +597,11 @@ async function createBrowserStore(dbName) {
 
       // COUNT query
       if (sparql.includes('COUNT')) {
-        return [{
-          count: { value: this.quads.size.toString() }
-        }];
+        return [
+          {
+            count: { value: this.quads.size.toString() },
+          },
+        ];
       }
 
       // Email query
@@ -600,9 +616,9 @@ async function createBrowserStore(dbName) {
         name: q.object,
         age: q.object,
         count: { value: this.quads.size.toString() },
-        email: q.object
+        email: q.object,
       }));
-    }
+    },
   };
   return store;
 }

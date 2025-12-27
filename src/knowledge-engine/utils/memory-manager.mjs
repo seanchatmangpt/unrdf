@@ -13,6 +13,9 @@ import { EventEmitter } from 'node:events';
  * Memory Manager - Prevents circular references and unbounded growth
  */
 export class MemoryManager {
+  /**
+   *
+   */
   constructor(config = {}) {
     this.config = {
       maxArraySize: config.maxArraySize || 1000,
@@ -20,7 +23,7 @@ export class MemoryManager {
       enableGCHints: config.enableGCHints !== false,
       gcInterval: config.gcInterval || 60000, // 1 minute
       memoryThreshold: config.memoryThreshold || 0.8, // 80% of heap
-      ...config
+      ...config,
     };
 
     // Use WeakMap for circular reference prevention
@@ -41,7 +44,7 @@ export class MemoryManager {
       mapsManaged: 0,
       emittersManaged: 0,
       gcRuns: 0,
-      lastGC: null
+      lastGC: null,
     };
 
     // Start memory monitoring
@@ -72,7 +75,7 @@ export class MemoryManager {
         }
         target[prop] = value;
         return true;
-      }
+      },
     });
   }
 
@@ -90,7 +93,7 @@ export class MemoryManager {
     return new Proxy(map, {
       get(target, prop) {
         if (prop === 'set') {
-          return function(key, value) {
+          return function (key, value) {
             // Check size limit
             if (target.size >= manager.config.maxMapSize && !target.has(key)) {
               // Remove oldest entry (first entry)
@@ -101,7 +104,7 @@ export class MemoryManager {
           };
         }
         return target[prop];
-      }
+      },
     });
   }
 
@@ -119,7 +122,7 @@ export class MemoryManager {
     this.memoryStats.emittersManaged++;
     this.cleanupRegistry.register(emitter, {
       type: 'emitter',
-      id: Symbol('emitter')
+      id: Symbol('emitter'),
     });
 
     return emitter;
@@ -138,7 +141,7 @@ export class MemoryManager {
     const ref = new WeakRef(obj);
     this.cleanupRegistry.register(obj, {
       type: 'weakref',
-      id: Symbol('weakref')
+      id: Symbol('weakref'),
     });
 
     return ref;
@@ -229,7 +232,7 @@ export class MemoryManager {
       heapUsedMB: Math.round(heapUsed / 1024 / 1024),
       heapTotalMB: Math.round(heapTotal / 1024 / 1024),
       heapUtilization: heapUsed / heapTotal,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
   }
 
@@ -243,7 +246,9 @@ export class MemoryManager {
 
       // Trigger GC if heap usage is above threshold
       if (stats.heapUtilization > this.config.memoryThreshold) {
-        console.warn(`[MemoryManager] Heap usage ${(stats.heapUtilization * 100).toFixed(1)}% exceeds threshold ${(this.config.memoryThreshold * 100).toFixed(1)}%`);
+        console.warn(
+          `[MemoryManager] Heap usage ${(stats.heapUtilization * 100).toFixed(1)}% exceeds threshold ${(this.config.memoryThreshold * 100).toFixed(1)}%`
+        );
 
         if (global.gc) {
           global.gc();
@@ -271,7 +276,7 @@ export class MemoryManager {
    * Finalization callback
    * @private
    */
-  _finalize(heldValue) {
+  _finalize(_heldValue) {
     // Object was garbage collected
     // Nothing to do - cleanup already happened
   }
@@ -290,6 +295,9 @@ export class MemoryManager {
  * Prevents connection leaks and manages resource limits
  */
 export class ConnectionPool {
+  /**
+   *
+   */
   constructor(config = {}) {
     this.config = {
       maxConnections: config.maxConnections || 10,
@@ -299,7 +307,7 @@ export class ConnectionPool {
       createConnection: config.createConnection || (() => Promise.resolve({})),
       destroyConnection: config.destroyConnection || (() => Promise.resolve()),
       validateConnection: config.validateConnection || (() => true),
-      ...config
+      ...config,
     };
 
     this.available = [];
@@ -314,7 +322,7 @@ export class ConnectionPool {
       created: 0,
       destroyed: 0,
       timeouts: 0,
-      errors: 0
+      errors: 0,
     };
   }
 
@@ -456,7 +464,7 @@ export class ConnectionPool {
       available: this.available.length,
       inUse: this.inUse.size,
       total: this.total,
-      pending: this.pendingAcquires.length
+      pending: this.pendingAcquires.length,
     };
   }
 }
@@ -468,7 +476,7 @@ export const globalMemoryManager = new MemoryManager({
   maxArraySize: 1000,
   maxMapSize: 10000,
   enableGCHints: true,
-  gcInterval: 60000
+  gcInterval: 60000,
 });
 
 /**

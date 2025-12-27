@@ -30,12 +30,15 @@ import { join } from 'node:path';
  * Note: Only works in Node.js environment
  */
 export class CpuProfiler {
+  /**
+   *
+   */
   constructor(options = {}) {
     this.options = {
       sampleInterval: 100, // microseconds
       saveProfiles: false,
       profileDir: '.profiles',
-      ...options
+      ...options,
     };
 
     this.activeSessions = new Map();
@@ -81,7 +84,7 @@ export class CpuProfiler {
 
     // Start profiling
     await this.post(inspector, 'Profiler.start', {
-      interval: this.options.sampleInterval
+      interval: this.options.sampleInterval,
     });
 
     const session = {
@@ -89,7 +92,7 @@ export class CpuProfiler {
       operationName,
       startTime: Date.now(),
       inspector,
-      events: []
+      events: [],
     };
 
     this.activeSessions.set(sessionId, session);
@@ -182,7 +185,7 @@ export class CpuProfiler {
           selfTime: 0,
           totalTime: 0,
           hitCount: 0,
-          url: node.callFrame?.url || 'unknown'
+          url: node.callFrame?.url || 'unknown',
         };
 
         current.selfTime += time;
@@ -201,7 +204,7 @@ export class CpuProfiler {
         selfTime: fn.selfTime,
         selfTimePercent: (fn.selfTime / totalTime) * 100,
         hitCount: fn.hitCount,
-        url: fn.url
+        url: fn.url,
       }));
 
     return {
@@ -210,7 +213,7 @@ export class CpuProfiler {
       hotFunctions,
       profile,
       operationName: session.operationName,
-      duration: Date.now() - session.startTime
+      duration: Date.now() - session.startTime,
     };
   }
 
@@ -302,13 +305,12 @@ export class CpuProfiler {
   checkBudget(metrics, budget) {
     const violations = [];
 
-    if (budget.maxTotalTime !== undefined &&
-        metrics.totalTime > budget.maxTotalTime) {
+    if (budget.maxTotalTime !== undefined && metrics.totalTime > budget.maxTotalTime) {
       violations.push({
         metric: 'totalTime',
         actual: metrics.totalTime,
         budget: budget.maxTotalTime,
-        exceeded: metrics.totalTime - budget.maxTotalTime
+        exceeded: metrics.totalTime - budget.maxTotalTime,
       });
     }
 
@@ -320,14 +322,14 @@ export class CpuProfiler {
           actual: maxFunctionTime,
           budget: budget.maxHotFunctionTime,
           exceeded: maxFunctionTime - budget.maxHotFunctionTime,
-          function: metrics.hotFunctions[0].name
+          function: metrics.hotFunctions[0].name,
         });
       }
     }
 
     return {
       passed: violations.length === 0,
-      violations
+      violations,
     };
   }
 }

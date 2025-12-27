@@ -6,11 +6,7 @@
  * Central export for all CLI utility modules.
  */
 
-export {
-  loadConfig,
-  createDefaultConfig,
-  ConfigSchema
-} from './config-loader.mjs';
+export { loadConfig, createDefaultConfig, ConfigSchema } from './config-loader.mjs';
 
 export {
   handleError,
@@ -21,14 +17,14 @@ export {
   ValidationError,
   ConversionError,
   HookError,
-  ConfigError
+  ConfigError,
 } from './error-handler.mjs';
 
 export {
   withContext,
   createExecutionContext,
   validateRequiredArgs,
-  getArg
+  getArg,
 } from './context-wrapper.mjs';
 
 // Hook and Policy utilities
@@ -44,5 +40,5 @@ export {
   getSidecarClient,
   closeSidecarClient,
   isSidecarAvailable,
-  formatSidecarError
+  formatSidecarError,
 } from './sidecar-helper.mjs';

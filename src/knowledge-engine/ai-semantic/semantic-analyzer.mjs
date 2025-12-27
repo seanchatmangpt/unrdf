@@ -10,9 +10,9 @@
  * Integrates with UNRDF's Knowledge Hook system and provides OTEL observability.
  */
 
-import { Store } from 'n3';
+import { _Store } from 'n3';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
-import { query } from '../query.mjs';
+import { _query } from '../query.mjs';
 import { LRUCache } from 'lru-cache';
 import { z } from 'zod';
 
@@ -22,38 +22,51 @@ const tracer = trace.getTracer('unrdf-ai-semantic');
  * Semantic analysis result schema
  */
 const SemanticAnalysisResultSchema = z.object({
-  concepts: z.array(z.object({
-    uri: z.string(),
-    label: z.string().optional(),
-    frequency: z.number(),
-    centrality: z.number(),
-    type: z.string().optional()
-  })),
-  relationships: z.array(z.object({
-    subject: z.string(),
-    predicate: z.string(),
-    object: z.string(),
-    strength: z.number()
-  })),
-  patterns: z.array(z.object({
-    pattern: z.string(),
-    count: z.number(),
-    confidence: z.number()
-  })),
-  suggestions: z.array(z.object({
-    type: z.enum(['missing_inverse', 'missing_subclass', 'inconsistent_domain', 'redundant_property']),
-    description: z.string(),
-    priority: z.enum(['high', 'medium', 'low'])
-  })),
+  concepts: z.array(
+    z.object({
+      uri: z.string(),
+      label: z.string().optional(),
+      frequency: z.number(),
+      centrality: z.number(),
+      type: z.string().optional(),
+    })
+  ),
+  relationships: z.array(
+    z.object({
+      subject: z.string(),
+      predicate: z.string(),
+      object: z.string(),
+      strength: z.number(),
+    })
+  ),
+  patterns: z.array(
+    z.object({
+      pattern: z.string(),
+      count: z.number(),
+      confidence: z.number(),
+    })
+  ),
+  suggestions: z.array(
+    z.object({
+      type: z.enum([
+        'missing_inverse',
+        'missing_subclass',
+        'inconsistent_domain',
+        'redundant_property',
+      ]),
+      description: z.string(),
+      priority: z.enum(['high', 'medium', 'low']),
+    })
+  ),
   statistics: z.object({
     totalTriples: z.number(),
     uniqueSubjects: z.number(),
     uniquePredicates: z.number(),
     uniqueObjects: z.number(),
     avgDegree: z.number(),
-    density: z.number()
+    density: z.number(),
   }),
-  duration: z.number()
+  duration: z.number(),
 });
 
 /**
@@ -63,7 +76,7 @@ const SimilarityResultSchema = z.object({
   similarity: z.number().min(0).max(1),
   method: z.string(),
   commonProperties: z.array(z.string()),
-  commonNeighbors: z.array(z.string())
+  commonNeighbors: z.array(z.string()),
 });
 
 /**
@@ -74,7 +87,7 @@ const SemanticAnalyzerConfigSchema = z.object({
   enableCache: z.boolean().default(true),
   maxConcepts: z.number().default(100),
   minConceptFrequency: z.number().default(2),
-  similarityThreshold: z.number().min(0).max(1).default(0.7)
+  similarityThreshold: z.number().min(0).max(1).default(0.7),
 });
 
 /**
@@ -89,16 +102,14 @@ export class SemanticAnalyzer {
     this.config = SemanticAnalyzerConfigSchema.parse(config);
 
     // LRU cache for analysis results
-    this.cache = this.config.enableCache
-      ? new LRUCache({ max: this.config.cacheSize })
-      : null;
+    this.cache = this.config.enableCache ? new LRUCache({ max: this.config.cacheSize }) : null;
 
     // Statistics
     this.stats = {
       analyses: 0,
       cacheHits: 0,
       cacheMisses: 0,
-      avgDuration: 0
+      avgDuration: 0,
     };
   }
 
@@ -111,13 +122,13 @@ export class SemanticAnalyzer {
    * @returns {Promise<Object>} Analysis results
    */
   async analyze(store, options = {}) {
-    return tracer.startActiveSpan('semantic.analyze', async (span) => {
+    return tracer.startActiveSpan('semantic.analyze', async span => {
       const startTime = Date.now();
 
       try {
         span.setAttributes({
           'semantic.store_size': store.size,
-          'semantic.cache_enabled': this.config.enableCache
+          'semantic.cache_enabled': this.config.enableCache,
         });
 
         // Check cache
@@ -159,7 +170,7 @@ export class SemanticAnalyzer {
           patterns,
           suggestions,
           statistics,
-          duration
+          duration,
         });
 
         // Update cache
@@ -169,11 +180,12 @@ export class SemanticAnalyzer {
 
         // Update stats
         this.stats.analyses++;
-        this.stats.avgDuration = (this.stats.avgDuration * (this.stats.analyses - 1) + duration) / this.stats.analyses;
+        this.stats.avgDuration =
+          (this.stats.avgDuration * (this.stats.analyses - 1) + duration) / this.stats.analyses;
 
         span.setAttributes({
           'semantic.duration_ms': duration,
-          'semantic.analysis_complete': true
+          'semantic.analysis_complete': true,
         });
         span.setStatus({ code: SpanStatusCode.OK });
 
@@ -194,7 +206,7 @@ export class SemanticAnalyzer {
    * @private
    */
   async _extractConcepts(store, maxConcepts) {
-    return tracer.startActiveSpan('semantic.extract_concepts', async (span) => {
+    return tracer.startActiveSpan('semantic.extract_concepts', async span => {
       try {
         const conceptMap = new Map();
 
@@ -206,7 +218,7 @@ export class SemanticAnalyzer {
               uri: subject,
               frequency: 0,
               types: new Set(),
-              labels: new Set()
+              labels: new Set(),
             });
           }
           const concept = conceptMap.get(subject);
@@ -233,7 +245,7 @@ export class SemanticAnalyzer {
             label: data.labels.size > 0 ? Array.from(data.labels)[0] : undefined,
             frequency: data.frequency,
             centrality: centrality.get(uri) || 0,
-            type: data.types.size > 0 ? Array.from(data.types)[0] : undefined
+            type: data.types.size > 0 ? Array.from(data.types)[0] : undefined,
           }))
           .filter(c => c.frequency >= this.config.minConceptFrequency)
           .sort((a, b) => b.centrality - a.centrality);
@@ -291,7 +303,7 @@ export class SemanticAnalyzer {
       const newCentrality = new Map();
 
       for (const uri of conceptMap.keys()) {
-        let rank = (1 - damping);
+        let rank = 1 - damping;
         const incoming = inLinks.get(uri) || [];
 
         for (const source of incoming) {
@@ -320,7 +332,7 @@ export class SemanticAnalyzer {
    * @private
    */
   async _analyzeRelationships(store) {
-    return tracer.startActiveSpan('semantic.analyze_relationships', async (span) => {
+    return tracer.startActiveSpan('semantic.analyze_relationships', async span => {
       try {
         const relationshipMap = new Map();
 
@@ -331,7 +343,7 @@ export class SemanticAnalyzer {
               subject: quad.subject.value,
               predicate: quad.predicate.value,
               object: quad.object.value,
-              count: 0
+              count: 0,
             });
           }
           relationshipMap.get(key).count++;
@@ -345,7 +357,7 @@ export class SemanticAnalyzer {
             subject: r.subject,
             predicate: r.predicate,
             object: r.object,
-            strength: r.count / maxCount
+            strength: r.count / maxCount,
           }))
           .sort((a, b) => b.strength - a.strength)
           .slice(0, 100); // Top 100 relationships
@@ -355,7 +367,10 @@ export class SemanticAnalyzer {
         return relationships;
       } catch (error) {
         span.recordException(error);
-        span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
+        span.setStatus({
+          code: SpanStatusCode.ERROR,
+          message: error.message,
+        });
         throw error;
       }
     });
@@ -368,7 +383,7 @@ export class SemanticAnalyzer {
    * @private
    */
   async _detectPatterns(store) {
-    return tracer.startActiveSpan('semantic.detect_patterns', async (span) => {
+    return tracer.startActiveSpan('semantic.detect_patterns', async span => {
       try {
         const patterns = [];
         const predicateCount = new Map();
@@ -387,7 +402,7 @@ export class SemanticAnalyzer {
             patterns.push({
               pattern: `Common predicate: ${predicate}`,
               count,
-              confidence
+              confidence,
             });
           }
         }
@@ -433,7 +448,7 @@ export class SemanticAnalyzer {
       .map(([type, count]) => ({
         pattern: `Entity type: ${type}`,
         count,
-        confidence: count / Math.max(totalEntities, 1)
+        confidence: count / Math.max(totalEntities, 1),
       }));
   }
 
@@ -446,7 +461,7 @@ export class SemanticAnalyzer {
    * @private
    */
   async _generateSuggestions(store, concepts, relationships) {
-    return tracer.startActiveSpan('semantic.generate_suggestions', async (span) => {
+    return tracer.startActiveSpan('semantic.generate_suggestions', async span => {
       try {
         const suggestions = [];
 
@@ -467,7 +482,10 @@ export class SemanticAnalyzer {
         return suggestions;
       } catch (error) {
         span.recordException(error);
-        span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
+        span.setStatus({
+          code: SpanStatusCode.ERROR,
+          message: error.message,
+        });
         throw error;
       }
     });
@@ -495,7 +513,7 @@ export class SemanticAnalyzer {
         suggestions.push({
           type: 'missing_inverse',
           description: `Consider adding inverse property for ${pred}`,
-          priority: 'medium'
+          priority: 'medium',
         });
       }
     }
@@ -512,7 +530,7 @@ export class SemanticAnalyzer {
   async _checkInconsistentDomains(store) {
     const suggestions = [];
     const RDFS_DOMAIN = 'http://www.w3.org/2000/01/rdf-schema#domain';
-    const RDFS_RANGE = 'http://www.w3.org/2000/01/rdf-schema#range';
+    const _RDFS_RANGE = 'http://www.w3.org/2000/01/rdf-schema#range';
 
     // This is a simplified check - a full implementation would be more comprehensive
     const domainMap = new Map();
@@ -542,7 +560,7 @@ export class SemanticAnalyzer {
    * @returns {Promise<Array>} Suggestions
    * @private
    */
-  async _checkPotentialSubclasses(store, concepts) {
+  async _checkPotentialSubclasses(store, _concepts) {
     const suggestions = [];
     const RDF_TYPE = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type';
 
@@ -565,7 +583,7 @@ export class SemanticAnalyzer {
         suggestions.push({
           type: 'missing_subclass',
           description: `Entity ${entity} has multiple types ${typeArray.join(', ')} - consider adding subclass relationships`,
-          priority: 'low'
+          priority: 'low',
         });
       }
     }
@@ -609,7 +627,7 @@ export class SemanticAnalyzer {
       uniquePredicates,
       uniqueObjects,
       avgDegree,
-      density
+      density,
     };
   }
 
@@ -621,12 +639,12 @@ export class SemanticAnalyzer {
    * @param {Object} [options] - Similarity options
    * @returns {Promise<Object>} Similarity result
    */
-  async computeSimilarity(store, concept1, concept2, options = {}) {
-    return tracer.startActiveSpan('semantic.compute_similarity', async (span) => {
+  async computeSimilarity(store, concept1, concept2, _options = {}) {
+    return tracer.startActiveSpan('semantic.compute_similarity', async span => {
       try {
         span.setAttributes({
           'semantic.concept1': concept1,
-          'semantic.concept2': concept2
+          'semantic.concept2': concept2,
         });
 
         // Get properties for both concepts
@@ -639,39 +657,38 @@ export class SemanticAnalyzer {
 
         // Jaccard similarity on properties
         const commonProps = props1.filter(p => props2.includes(p));
-        const propSimilarity = commonProps.length / Math.max(
-          new Set([...props1, ...props2]).size,
-          1
-        );
+        const propSimilarity =
+          commonProps.length / Math.max(new Set([...props1, ...props2]).size, 1);
 
         // Jaccard similarity on neighbors
         const commonNeighbors = neighbors1.filter(n => neighbors2.includes(n));
-        const neighborSimilarity = commonNeighbors.length / Math.max(
-          new Set([...neighbors1, ...neighbors2]).size,
-          1
-        );
+        const neighborSimilarity =
+          commonNeighbors.length / Math.max(new Set([...neighbors1, ...neighbors2]).size, 1);
 
         // Combined similarity (weighted average)
-        const similarity = (propSimilarity * 0.6) + (neighborSimilarity * 0.4);
+        const similarity = propSimilarity * 0.6 + neighborSimilarity * 0.4;
 
         const result = SimilarityResultSchema.parse({
           similarity,
           method: 'jaccard',
           commonProperties: commonProps,
-          commonNeighbors: commonNeighbors
+          commonNeighbors: commonNeighbors,
         });
 
         span.setAttributes({
           'semantic.similarity_score': similarity,
           'semantic.common_properties': commonProps.length,
-          'semantic.common_neighbors': commonNeighbors.length
+          'semantic.common_neighbors': commonNeighbors.length,
         });
         span.setStatus({ code: SpanStatusCode.OK });
 
         return result;
       } catch (error) {
         span.recordException(error);
-        span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
+        span.setStatus({
+          code: SpanStatusCode.ERROR,
+          message: error.message,
+        });
         throw error;
       }
     });
@@ -722,7 +739,8 @@ export class SemanticAnalyzer {
    */
   _getCacheKey(store) {
     // Simple hash based on size and a sample of quads
-    const sample = Array.from(store).slice(0, 10)
+    const sample = Array.from(store)
+      .slice(0, 10)
       .map(q => `${q.subject.value}|${q.predicate.value}|${q.object.value}`)
       .join('::');
     return `${store.size}:${sample}`;
@@ -745,9 +763,7 @@ export class SemanticAnalyzer {
     return {
       ...this.stats,
       cacheSize: this.cache ? this.cache.size : 0,
-      cacheHitRate: this.stats.analyses > 0
-        ? this.stats.cacheHits / this.stats.analyses
-        : 0
+      cacheHitRate: this.stats.analyses > 0 ? this.stats.cacheHits / this.stats.analyses : 0,
     };
   }
 }

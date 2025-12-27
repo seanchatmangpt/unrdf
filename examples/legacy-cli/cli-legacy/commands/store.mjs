@@ -32,7 +32,7 @@ async function persistStore(store) {
  * @param {Object} config - Configuration
  * @returns {Promise<void>}
  */
-export async function storeImportCommand(ctx, config) {
+export async function storeImportCommand(ctx, _config) {
   const { args } = ctx;
   validateRequiredArgs(args, ['file']);
 
@@ -40,9 +40,9 @@ export async function storeImportCommand(ctx, config) {
   const span = tracer.startSpan('store.import', {
     attributes: {
       'cli.command': 'store import',
-      'file': args.file,
-      'graph': args.graph || 'default'
-    }
+      file: args.file,
+      graph: args.graph || 'default',
+    },
   });
 
   const startTime = Date.now();
@@ -82,7 +82,7 @@ export async function storeImportCommand(ctx, config) {
     span.setAttributes({
       'import.quads': quads.length,
       'import.duration_ms': duration,
-      'import.success': true
+      'import.success': true,
     });
 
     span.end();
@@ -96,7 +96,7 @@ export async function storeImportCommand(ctx, config) {
     span.setAttributes({
       'import.success': false,
       'import.duration_ms': duration,
-      'error.message': error.message
+      'error.message': error.message,
     });
     span.recordException(error);
     span.end();
@@ -114,7 +114,7 @@ export async function storeImportCommand(ctx, config) {
  * @param {Object} config - Configuration
  * @returns {Promise<void>}
  */
-export async function storeExportCommand(ctx, config) {
+export async function storeExportCommand(ctx, _config) {
   const { args } = ctx;
   validateRequiredArgs(args, ['graph']);
 
@@ -122,8 +122,8 @@ export async function storeExportCommand(ctx, config) {
   const span = tracer.startSpan('store.export', {
     attributes: {
       'cli.command': 'store export',
-      'graph': args.graph
-    }
+      graph: args.graph,
+    },
   });
 
   const startTime = Date.now();
@@ -154,7 +154,7 @@ export async function storeExportCommand(ctx, config) {
     span.setAttributes({
       'export.size': serialized.length,
       'export.duration_ms': duration,
-      'export.success': true
+      'export.success': true,
     });
 
     span.end();
@@ -168,7 +168,7 @@ export async function storeExportCommand(ctx, config) {
     span.setAttributes({
       'export.success': false,
       'export.duration_ms': duration,
-      'error.message': error.message
+      'error.message': error.message,
     });
     span.recordException(error);
     span.end();
@@ -186,7 +186,7 @@ export async function storeExportCommand(ctx, config) {
  * @param {Object} config - Configuration
  * @returns {Promise<void>}
  */
-export async function storeQueryCommand(ctx, config) {
+export async function storeQueryCommand(ctx, _config) {
   const { args } = ctx;
 
   // Get SPARQL query from positional argument or --query flag
@@ -204,8 +204,8 @@ export async function storeQueryCommand(ctx, config) {
   const span = tracer.startSpan('store.query', {
     attributes: {
       'cli.command': 'store query',
-      'query.length': sparqlQuery.length
-    }
+      'query.length': sparqlQuery.length,
+    },
   });
 
   const startTime = Date.now();
@@ -225,20 +225,22 @@ export async function storeQueryCommand(ctx, config) {
     // Note: Comunica expects the store directly in sources array, not wrapped in an object
     const queryEngine = new QueryEngine();
     const comunicaContext = {
-      sources: [store.store]
+      sources: [store.store],
     };
 
     // Determine query type
-    const queryType = sparqlQuery.replace(/^PREFIX\s+[^\s]+\s+<[^>]+>\s*/gm, '').trim().toUpperCase().split(/\s+/)[0];
+    const queryType = sparqlQuery
+      .replace(/^PREFIX\s+[^\s]+\s+<[^>]+>\s*/gm, '')
+      .trim()
+      .toUpperCase()
+      .split(/\s+/)[0];
 
     let result;
     if (queryType === 'SELECT') {
       const bindingsStream = await queryEngine.queryBindings(sparqlQuery, comunicaContext);
       const bindings = await bindingsStream.toArray();
       // Convert bindings to simple objects
-      result = bindings.map((b) =>
-        Object.fromEntries([...b].map(([k, v]) => [k.value, v.value]))
-      );
+      result = bindings.map(b => Object.fromEntries([...b].map(([k, v]) => [k.value, v.value])));
     } else if (queryType === 'ASK') {
       result = await queryEngine.queryBoolean(sparqlQuery, comunicaContext);
     } else if (queryType === 'CONSTRUCT') {
@@ -322,7 +324,7 @@ export async function storeQueryCommand(ctx, config) {
       'query.type': queryType.toLowerCase(),
       'query.results': resultCount,
       'query.duration_ms': duration,
-      'query.success': true
+      'query.success': true,
     });
 
     span.end();
@@ -336,7 +338,7 @@ export async function storeQueryCommand(ctx, config) {
     span.setAttributes({
       'query.success': false,
       'query.duration_ms': duration,
-      'error.message': error.message
+      'error.message': error.message,
     });
     span.recordException(error);
     span.end();
@@ -354,5 +356,5 @@ export async function storeQueryCommand(ctx, config) {
 export const storeCommandMeta = {
   name: 'store',
   description: 'Manage RDF store operations',
-  subcommands: ['import', 'export', 'query']
+  subcommands: ['import', 'export', 'query'],
 };

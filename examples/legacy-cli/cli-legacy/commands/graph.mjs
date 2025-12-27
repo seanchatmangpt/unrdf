@@ -10,7 +10,7 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { useStoreContext } from '../../context/index.mjs';
 import { useTurtle } from '../../composables/index.mjs';
 import { validateRequiredArgs, getArg } from '../utils/context-wrapper.mjs';
-import { withSidecar, formatSidecarError } from '../utils/sidecar-helper.mjs';
+import { _withSidecar, _formatSidecarError } from '../utils/sidecar-helper.mjs';
 import { validatePolicy, formatValidationReport } from '../utils/policy-validator.mjs';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
 import { printTraceInfo } from '../utils/otel-tracer.mjs';
@@ -23,7 +23,7 @@ const tracer = trace.getTracer('unrdf-cli-graph');
  * @param {Object} config - Configuration
  * @returns {Promise<void>}
  */
-export async function graphListCommand(ctx, config) {
+export async function graphListCommand(ctx, _config) {
   const { args } = ctx;
 
   console.log('📋 Listing RDF graphs...');
@@ -35,8 +35,8 @@ export async function graphListCommand(ctx, config) {
       {
         name: 'default',
         triples: store.size,
-        updated: new Date().toISOString()
-      }
+        updated: new Date().toISOString(),
+      },
     ];
 
     const format = getArg(args, 'format', 'table');
@@ -64,7 +64,7 @@ export async function graphListCommand(ctx, config) {
  * @param {Object} config - Configuration
  * @returns {Promise<void>}
  */
-export async function graphGetCommand(ctx, config) {
+export async function graphGetCommand(ctx, _config) {
   const { args } = ctx;
   validateRequiredArgs(args, ['name']);
 
@@ -79,7 +79,7 @@ export async function graphGetCommand(ctx, config) {
       predicates: new Set(store.getPredicates()).size,
       objects: new Set(store.getObjects()).size,
       created: new Date().toISOString(),
-      updated: new Date().toISOString()
+      updated: new Date().toISOString(),
     };
 
     console.log(JSON.stringify(graph, null, 2));
@@ -95,7 +95,7 @@ export async function graphGetCommand(ctx, config) {
  * @param {Object} config - Configuration
  * @returns {Promise<void>}
  */
-export async function graphCreateCommand(ctx, config) {
+export async function graphCreateCommand(ctx, _config) {
   const { args } = ctx;
   validateRequiredArgs(args, ['name']);
 
@@ -126,7 +126,7 @@ export async function graphCreateCommand(ctx, config) {
  * @param {Object} config - Configuration
  * @returns {Promise<void>}
  */
-export async function graphDeleteCommand(ctx, config) {
+export async function graphDeleteCommand(ctx, _config) {
   const { args } = ctx;
   validateRequiredArgs(args, ['name']);
 
@@ -165,7 +165,7 @@ export async function graphDeleteCommand(ctx, config) {
  * @param {Object} config - Configuration
  * @returns {Promise<void>}
  */
-export async function graphImportCommand(ctx, config) {
+export async function graphImportCommand(ctx, _config) {
   const { args } = ctx;
   validateRequiredArgs(args, ['file']);
 
@@ -207,14 +207,14 @@ export async function graphImportCommand(ctx, config) {
  * @param {Object} config - Configuration
  * @returns {Promise<void>}
  */
-export async function graphExportCommand(ctx, config) {
+export async function graphExportCommand(ctx, _config) {
   const { args } = ctx;
   validateRequiredArgs(args, ['name']);
 
   console.log(`📤 Exporting graph: ${args.name}`);
 
   try {
-    const store = useStoreContext();
+    const _store = useStoreContext();
     const turtle = await useTurtle();
 
     const serialized = await turtle.serialize();
@@ -237,8 +237,8 @@ export async function graphExportCommand(ctx, config) {
  * @param {Object} config - Configuration
  * @returns {Promise<void>}
  */
-export async function graphValidateCommand(ctx, config) {
-  return await tracer.startActiveSpan('graph.validate', async (span) => {
+export async function graphValidateCommand(ctx, _config) {
+  return await tracer.startActiveSpan('graph.validate', async span => {
     try {
       const { args } = ctx;
       validateRequiredArgs(args, ['name']);
@@ -257,7 +257,7 @@ export async function graphValidateCommand(ctx, config) {
       // Run policy validation
       const result = await validatePolicy(store, args.policyPack || 'default', {
         strict: args.strict || false,
-        basePath: process.cwd()
+        basePath: process.cwd(),
       });
 
       // Format and display results
@@ -270,7 +270,10 @@ export async function graphValidateCommand(ctx, config) {
       } else {
         console.log('❌ Validation FAILED');
         console.log(`   Violations: ${result.violations.length}`);
-        span.setStatus({ code: SpanStatusCode.ERROR, message: `${result.violations.length} violations` });
+        span.setStatus({
+          code: SpanStatusCode.ERROR,
+          message: `${result.violations.length} violations`,
+        });
       }
 
       // Display report
@@ -311,7 +314,7 @@ export async function graphValidateCommand(ctx, config) {
  * @param {Object} config - Configuration
  * @returns {Promise<void>}
  */
-export async function graphStatsCommand(ctx, config) {
+export async function graphStatsCommand(ctx, _config) {
   const { args } = ctx;
   validateRequiredArgs(args, ['name']);
 
@@ -323,7 +326,7 @@ export async function graphStatsCommand(ctx, config) {
       totalTriples: store.size,
       uniqueSubjects: new Set(store.getSubjects()).size,
       uniquePredicates: new Set(store.getPredicates()).size,
-      uniqueObjects: new Set(store.getObjects()).size
+      uniqueObjects: new Set(store.getObjects()).size,
     };
 
     console.log(`Total Triples:     ${stats.totalTriples.toLocaleString()}`);
@@ -360,5 +363,5 @@ export async function graphStatsCommand(ctx, config) {
 export const graphCommandMeta = {
   name: 'graph',
   description: 'Manage RDF graphs',
-  subcommands: ['list', 'get', 'create', 'delete', 'import', 'export', 'validate', 'stats']
+  subcommands: ['list', 'get', 'create', 'delete', 'import', 'export', 'validate', 'stats'],
 };

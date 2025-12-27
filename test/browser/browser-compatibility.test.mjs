@@ -39,7 +39,7 @@ if (typeof globalThis.crypto === 'undefined') {
         return hash.buffer;
       },
     },
-    getRandomValues: (arr) => {
+    getRandomValues: arr => {
       for (let i = 0; i < arr.length; i++) {
         arr[i] = Math.floor(Math.random() * 256);
       }
@@ -165,11 +165,7 @@ describe('Browser Compatibility', () => {
     });
 
     it('should remove quads', async () => {
-      const testQuad = quad(
-        namedNode('s'),
-        namedNode('p'),
-        literal('o')
-      );
+      const testQuad = quad(namedNode('s'), namedNode('p'), literal('o'));
 
       await store.addQuad(testQuad);
       expect(await store.size()).toBe(1);

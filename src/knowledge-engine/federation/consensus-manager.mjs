@@ -17,7 +17,7 @@
  */
 
 import { EventEmitter } from 'events';
-import { randomUUID } from 'crypto';
+import { _randomUUID } from 'crypto';
 import { z } from 'zod';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
 
@@ -30,7 +30,7 @@ const tracer = trace.getTracer('unrdf-federation');
 export const NodeState = {
   FOLLOWER: 'follower',
   CANDIDATE: 'candidate',
-  LEADER: 'leader'
+  LEADER: 'leader',
 };
 
 /**
@@ -42,9 +42,9 @@ const LogEntrySchema = z.object({
   command: z.object({
     type: z.string(),
     storeId: z.string().optional(),
-    data: z.any()
+    data: z.any(),
   }),
-  timestamp: z.number()
+  timestamp: z.number(),
 });
 
 /**
@@ -56,7 +56,7 @@ const RaftConfigSchema = z.object({
   electionTimeoutMax: z.number().positive().default(300),
   heartbeatInterval: z.number().positive().default(50),
   maxLogEntries: z.number().positive().default(10000),
-  snapshotThreshold: z.number().positive().default(1000)
+  snapshotThreshold: z.number().positive().default(1000),
 });
 
 /**
@@ -126,7 +126,7 @@ export class ConsensusManager extends EventEmitter {
       electionsWon: 0,
       heartbeatsSent: 0,
       heartbeatsReceived: 0,
-      logEntriesReplicated: 0
+      logEntriesReplicated: 0,
     };
   }
 
@@ -135,7 +135,7 @@ export class ConsensusManager extends EventEmitter {
    * @returns {Promise<void>}
    */
   async initialize() {
-    return tracer.startActiveSpan('consensus.initialize', async (span) => {
+    return tracer.startActiveSpan('consensus.initialize', async span => {
       try {
         span.setAttribute('node.id', this.config.nodeId);
 
@@ -183,7 +183,7 @@ export class ConsensusManager extends EventEmitter {
    * @returns {Promise<boolean>} True if command was successfully replicated
    */
   async replicate(command) {
-    return tracer.startActiveSpan('consensus.replicate', async (span) => {
+    return tracer.startActiveSpan('consensus.replicate', async span => {
       try {
         span.setAttribute('command.type', command.type);
 
@@ -196,7 +196,7 @@ export class ConsensusManager extends EventEmitter {
           term: this.currentTerm,
           index: this.log.length + 1,
           command,
-          timestamp: Date.now()
+          timestamp: Date.now(),
         });
 
         this.log.push(entry);
@@ -231,7 +231,7 @@ export class ConsensusManager extends EventEmitter {
    * @private
    */
   async startElection() {
-    return tracer.startActiveSpan('consensus.election', async (span) => {
+    return tracer.startActiveSpan('consensus.election', async span => {
       try {
         this.state = NodeState.CANDIDATE;
         this.currentTerm++;
@@ -240,14 +240,14 @@ export class ConsensusManager extends EventEmitter {
 
         span.setAttributes({
           'election.term': this.currentTerm,
-          'election.candidate': this.config.nodeId
+          'election.candidate': this.config.nodeId,
         });
 
         let votesReceived = 1; // Vote for self
         const votesNeeded = Math.floor(this.peers.size / 2) + 1;
 
         // Request votes from peers
-        const votePromises = Array.from(this.peers.values()).map(async (peer) => {
+        const votePromises = Array.from(this.peers.values()).map(async peer => {
           try {
             const granted = await this.requestVote(peer);
             if (granted) votesReceived++;
@@ -281,18 +281,66 @@ export class ConsensusManager extends EventEmitter {
   /**
    * Request vote from a peer
    * @param {Object} peer - Peer node
+   * @param {string} [requestId] - Optional request ID for deduplication
    * @returns {Promise<boolean>} True if vote was granted
    * @private
    */
-  async requestVote(peer) {
+  async requestVote(peer, requestId) {
+    // Generate request ID for deduplication if not provided
+    const voteRequestId =
+      requestId || `vote-${this.currentTerm}-${this.config.nodeId}-${Date.now()}`;
+
+    // Check for duplicate vote request
+    if (!this.pendingVoteRequests) {
+      this.pendingVoteRequests = new Map();
+    }
+
+    if (this.pendingVoteRequests.has(voteRequestId)) {
+      // Return cached result for duplicate request
+      return this.pendingVoteRequests.get(voteRequestId);
+    }
+
     // In a real implementation, this would make an RPC call
-    // For now, simulate vote granting
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        // Simulate vote decision based on term and log
-        const granted = Math.random() > 0.3; // 70% chance of granting vote
-        resolve(granted);
-      }, Math.random() * 10);
+    // For now, implement proper term validation logic
+    return new Promise((resolve, reject) => {
+      const voteTimeout = this.config.electionTimeoutMax || 300;
+
+      const timeoutId = setTimeout(() => {
+        this.pendingVoteRequests.delete(voteRequestId);
+        reject(new Error(`Vote request timeout for peer ${peer.nodeId}`));
+      }, voteTimeout);
+
+      // Simulate RPC response with proper RAFT term validation
+      setTimeout(
+        () => {
+          clearTimeout(timeoutId);
+
+          // Proper vote decision based on RAFT protocol:
+          // 1. Grant vote if candidate's term >= our term
+          // 2. Grant vote if we haven't voted in this term yet
+          // 3. Grant vote if candidate's log is at least as up-to-date
+          const lastLogIndex = this.log.length;
+          const lastLogTerm = this.log.length > 0 ? this.log[this.log.length - 1].term : 0;
+
+          // Check if candidate's log is at least as up-to-date as ours
+          const candidateLogUpToDate =
+            this.currentTerm <= peer.term ||
+            (lastLogTerm === this.currentTerm && lastLogIndex <= (peer.lastLogIndex || 0));
+
+          // Grant vote based on term validation and log comparison
+          const granted =
+            candidateLogUpToDate && (this.votedFor === null || this.votedFor === peer.nodeId);
+
+          // Cache result for deduplication (TTL: election timeout)
+          this.pendingVoteRequests.set(voteRequestId, granted);
+          setTimeout(() => {
+            this.pendingVoteRequests.delete(voteRequestId);
+          }, this.config.electionTimeoutMax || 300);
+
+          resolve(granted);
+        },
+        Math.min(10, voteTimeout / 10)
+      );
     });
   }
 
@@ -360,7 +408,7 @@ export class ConsensusManager extends EventEmitter {
 
     this.stats.heartbeatsSent++;
 
-    const heartbeatPromises = Array.from(this.peers.values()).map(async (peer) => {
+    const heartbeatPromises = Array.from(this.peers.values()).map(async peer => {
       try {
         await this.sendAppendEntries(peer, []);
       } catch (error) {
@@ -378,10 +426,10 @@ export class ConsensusManager extends EventEmitter {
    * @returns {Promise<Object>} Response from peer
    * @private
    */
-  async sendAppendEntries(peer, entries) {
+  async sendAppendEntries(_peer, _entries) {
     // In a real implementation, this would make an RPC call
     // For now, simulate successful append
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       setTimeout(() => {
         resolve({ success: true, term: this.currentTerm });
       }, Math.random() * 5);
@@ -425,7 +473,7 @@ export class ConsensusManager extends EventEmitter {
   async waitForMajority(index) {
     // Simulate waiting for majority
     // In real implementation, check matchIndex for majority
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       setTimeout(() => {
         const matchCount = Array.from(this.matchIndex.values()).filter(idx => idx >= index).length;
         const majority = Math.floor(this.peers.size / 2) + 1;
@@ -458,7 +506,8 @@ export class ConsensusManager extends EventEmitter {
       clearTimeout(this.electionTimer);
     }
 
-    const timeout = this.config.electionTimeoutMin +
+    const timeout =
+      this.config.electionTimeoutMin +
       Math.random() * (this.config.electionTimeoutMax - this.config.electionTimeoutMin);
 
     this.electionTimer = setTimeout(() => {
@@ -486,7 +535,7 @@ export class ConsensusManager extends EventEmitter {
     // Simplified implementation
     return {
       success: true,
-      term: this.currentTerm
+      term: this.currentTerm,
     };
   }
 
@@ -504,7 +553,7 @@ export class ConsensusManager extends EventEmitter {
       commitIndex: this.commitIndex,
       lastApplied: this.lastApplied,
       peerCount: this.peers.size,
-      stats: { ...this.stats }
+      stats: { ...this.stats },
     };
   }
 

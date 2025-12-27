@@ -7,7 +7,7 @@
  */
 
 import { readFile, writeFile } from 'node:fs/promises';
-import { KnowledgeHookManager } from '../../knowledge-engine/knowledge-hook-manager.mjs';
+import { _KnowledgeHookManager } from '../../knowledge-engine/knowledge-hook-manager.mjs';
 import { useStoreContext } from '../../context/index.mjs';
 import { useTurtle } from '../../composables/index.mjs';
 import { validateRequiredArgs, getArg } from '../utils/context-wrapper.mjs';
@@ -24,8 +24,8 @@ const tracer = trace.getTracer('unrdf-cli-hook');
  * @param {Object} config - Configuration
  * @returns {Promise<void>}
  */
-export async function hookEvalCommand(ctx, config) {
-  return await tracer.startActiveSpan('hook.eval', async (span) => {
+export async function hookEvalCommand(ctx, _config) {
+  return await tracer.startActiveSpan('hook.eval', async span => {
     try {
       const { args } = ctx;
       validateRequiredArgs(args, ['hook']);
@@ -60,7 +60,7 @@ export async function hookEvalCommand(ctx, config) {
       // Use local hook evaluator with OTEL spans
       const result = await evaluateHook(hookDef, store, {
         verbose: args.verbose,
-        basePath: process.cwd()
+        basePath: process.cwd(),
       });
 
       // Format output
@@ -113,17 +113,17 @@ export async function hookEvalCommand(ctx, config) {
  * @param {Object} config - Configuration
  * @returns {Promise<void>}
  */
-export async function hookListCommand(ctx, config) {
+export async function hookListCommand(ctx, _config) {
   const { args } = ctx;
 
   console.log('📋 Listing knowledge hooks...');
 
   try {
-    const hooks = await withSidecar(async (client) => {
+    const hooks = await withSidecar(async client => {
       // Query for hooks from sidecar
       const response = await client.queryPolicy({
         policyPack: args.policyPack || 'default',
-        queryType: 'hooks'
+        queryType: 'hooks',
       });
       return response.hooks || [];
     });
@@ -161,7 +161,7 @@ export async function hookListCommand(ctx, config) {
  * @param {Object} config - Configuration
  * @returns {Promise<void>}
  */
-export async function hookCreateCommand(ctx, config) {
+export async function hookCreateCommand(ctx, _config) {
   const { args } = ctx;
 
   // Extract positional arguments: citty provides args._ without command names
@@ -199,7 +199,7 @@ export async function hookCreateCommand(ctx, config) {
     // Provide default queries based on type
     const defaultQueries = {
       'sparql-ask': 'ASK { ?s ?p ?o }',
-      'threshold': 'SELECT (COUNT(?s) AS ?count) WHERE { ?s ?p ?o }'
+      threshold: 'SELECT (COUNT(?s) AS ?count) WHERE { ?s ?p ?o }',
     };
     queryContent = defaultQueries[type] || 'ASK { ?s ?p ?o }';
     console.warn(`⚠️  No --file or --query provided, using default query`);
@@ -215,9 +215,9 @@ export async function hookCreateCommand(ctx, config) {
         kind: args.phase || 'before',
         condition: {
           type: 'sparql-ask',
-          query: queryContent
+          query: queryContent,
         },
-        effects: []
+        effects: [],
       };
       break;
 
@@ -229,9 +229,9 @@ export async function hookCreateCommand(ctx, config) {
           type: 'threshold',
           query: queryContent,
           threshold: args.threshold || 1000,
-          operator: args.operator || 'gt'
+          operator: args.operator || 'gt',
         },
-        effects: []
+        effects: [],
       };
       break;
 
@@ -241,9 +241,9 @@ export async function hookCreateCommand(ctx, config) {
         kind: args.phase || 'before',
         condition: {
           type: 'shacl',
-          shapesFile: args.shapes || args.file || 'shapes.ttl'
+          shapesFile: args.shapes || args.file || 'shapes.ttl',
         },
-        effects: []
+        effects: [],
       };
       break;
 
@@ -308,16 +308,16 @@ export async function hookCreateCommand(ctx, config) {
  * @param {Object} config - Configuration
  * @returns {Promise<void>}
  */
-export async function hookGetCommand(ctx, config) {
+export async function hookGetCommand(ctx, _config) {
   const { args } = ctx;
   validateRequiredArgs(args, ['id']);
 
   try {
-    const hook = await withSidecar(async (client) => {
+    const hook = await withSidecar(async client => {
       const response = await client.queryPolicy({
         policyPack: 'default',
         queryType: 'hook',
-        filters: { hookId: args.id }
+        filters: { hookId: args.id },
       });
       return response.hook;
     });
@@ -340,22 +340,22 @@ export async function hookGetCommand(ctx, config) {
  * @param {Object} config - Configuration
  * @returns {Promise<void>}
  */
-export async function hookHistoryCommand(ctx, config) {
+export async function hookHistoryCommand(ctx, _config) {
   const { args } = ctx;
   validateRequiredArgs(args, ['id']);
 
   console.log(`📜 Hook execution history: ${args.id}`);
 
   try {
-    const history = await withSidecar(async (client) => {
+    const history = await withSidecar(async client => {
       const response = await client.queryPolicy({
         policyPack: 'default',
         queryType: 'history',
         filters: {
           hookId: args.id,
           limit: args.limit || 100,
-          firedOnly: args.firedOnly || false
-        }
+          firedOnly: args.firedOnly || false,
+        },
       });
       return response.history || [];
     });
@@ -384,7 +384,7 @@ export async function hookHistoryCommand(ctx, config) {
       console.log('To enable full hook history tracking:');
       console.log('  - Start the KGC sidecar: npm run sidecar:start');
       console.log('  - Or connect to existing sidecar');
-      process.exit(0);  // Exit with success - unavailable is not an error
+      process.exit(0); // Exit with success - unavailable is not an error
     }
     console.error(`❌ Failed to get history: ${formatSidecarError(error)}`);
     process.exit(1);
@@ -397,5 +397,5 @@ export async function hookHistoryCommand(ctx, config) {
 export const hookCommandMeta = {
   name: 'hook',
   description: 'Manage knowledge hooks',
-  subcommands: ['eval', 'list', 'create', 'get', 'history']
+  subcommands: ['eval', 'list', 'create', 'get', 'history'],
 };

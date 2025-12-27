@@ -25,7 +25,7 @@ export const SubscriptionPatternType = {
   SPARQL_SELECT: 'sparql-select',
   PROPERTY_CHANGE: 'property-change',
   ENTITY_UPDATE: 'entity-update',
-  WILDCARD: 'wildcard'
+  WILDCARD: 'wildcard',
 };
 
 /**
@@ -37,7 +37,7 @@ const SubscriptionConfigSchema = z.object({
     SubscriptionPatternType.SPARQL_SELECT,
     SubscriptionPatternType.PROPERTY_CHANGE,
     SubscriptionPatternType.ENTITY_UPDATE,
-    SubscriptionPatternType.WILDCARD
+    SubscriptionPatternType.WILDCARD,
   ]),
   query: z.string().optional(),
   subject: z.string().optional(),
@@ -45,7 +45,7 @@ const SubscriptionConfigSchema = z.object({
   object: z.string().optional(),
   debounceMs: z.number().min(0).default(100),
   batchSize: z.number().min(1).default(10),
-  timeout: z.number().min(0).default(30000)
+  timeout: z.number().min(0).default(30000),
 });
 
 /**
@@ -55,7 +55,7 @@ const WebSocketMessageSchema = z.object({
   type: z.enum(['subscribe', 'unsubscribe', 'change', 'error', 'ping', 'pong']),
   subscriptionId: z.string().optional(),
   payload: z.any().optional(),
-  timestamp: z.number().optional()
+  timestamp: z.number().optional(),
 });
 
 /**
@@ -68,11 +68,13 @@ const ManagerConfigSchema = z.object({
   heartbeatInterval: z.number().min(1000).default(30000),
   enableCompression: z.boolean().default(true),
   maxSubscriptions: z.number().min(1).default(1000),
-  observability: z.object({
-    serviceName: z.string().default('unrdf-streaming'),
-    enableTracing: z.boolean().default(true),
-    enableMetrics: z.boolean().default(true)
-  }).optional()
+  observability: z
+    .object({
+      serviceName: z.string().default('unrdf-streaming'),
+      enableTracing: z.boolean().default(true),
+      enableMetrics: z.boolean().default(true),
+    })
+    .optional(),
 });
 
 /**
@@ -96,9 +98,7 @@ export class SubscriptionManager extends EventEmitter {
     this.isConnecting = false;
 
     // Observability
-    this.observability = createObservabilityManager(
-      this.config.observability || {}
-    );
+    this.observability = createObservabilityManager(this.config.observability || {});
 
     // Performance metrics
     this.metrics = {
@@ -107,7 +107,7 @@ export class SubscriptionManager extends EventEmitter {
       messagesSent: 0,
       reconnectCount: 0,
       errorCount: 0,
-      latency: []
+      latency: [],
     };
 
     // Initialize observability
@@ -127,11 +127,11 @@ export class SubscriptionManager extends EventEmitter {
       throw new Error('WebSocket URL is required');
     }
 
-    return tracer.startActiveSpan('subscription-manager.connect', async (span) => {
+    return tracer.startActiveSpan('subscription-manager.connect', async span => {
       try {
         span.setAttributes({
           'ws.url': wsUrl,
-          'ws.reconnect_attempts': this.reconnectAttempts
+          'ws.reconnect_attempts': this.reconnectAttempts,
         });
 
         if (this.isConnected || this.isConnecting) {
@@ -156,8 +156,8 @@ export class SubscriptionManager extends EventEmitter {
 
         // Set up event handlers
         this.ws.onopen = () => this._handleOpen();
-        this.ws.onmessage = (event) => this._handleMessage(event);
-        this.ws.onerror = (error) => this._handleError(error);
+        this.ws.onmessage = event => this._handleMessage(event);
+        this.ws.onerror = error => this._handleError(error);
         this.ws.onclose = () => this._handleClose();
 
         // Wait for connection
@@ -173,7 +173,7 @@ export class SubscriptionManager extends EventEmitter {
             resolve();
           };
 
-          const errorHandler = (error) => {
+          const errorHandler = error => {
             clearTimeout(timeout);
             this.ws.removeEventListener('open', openHandler);
             this.ws.removeEventListener('error', errorHandler);
@@ -190,7 +190,7 @@ export class SubscriptionManager extends EventEmitter {
         span.recordException(error);
         span.setStatus({
           code: SpanStatusCode.ERROR,
-          message: error.message
+          message: error.message,
         });
         span.end();
         this.isConnecting = false;
@@ -227,18 +227,16 @@ export class SubscriptionManager extends EventEmitter {
    * @private
    */
   _handleMessage(event) {
-    return tracer.startActiveSpan('subscription-manager.message', (span) => {
+    return tracer.startActiveSpan('subscription-manager.message', span => {
       try {
-        const startTime = Date.now();
-        const data = typeof event.data === 'string'
-          ? JSON.parse(event.data)
-          : event.data;
+        const _startTime = Date.now();
+        const data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
 
         const message = WebSocketMessageSchema.parse(data);
 
         span.setAttributes({
           'ws.message.type': message.type,
-          'ws.message.subscription_id': message.subscriptionId || 'none'
+          'ws.message.subscription_id': message.subscriptionId || 'none',
         });
 
         this.metrics.messagesReceived++;
@@ -273,7 +271,7 @@ export class SubscriptionManager extends EventEmitter {
         span.recordException(error);
         span.setStatus({
           code: SpanStatusCode.ERROR,
-          message: error.message
+          message: error.message,
         });
         span.end();
         this.metrics.errorCount++;
@@ -301,7 +299,7 @@ export class SubscriptionManager extends EventEmitter {
       subscriptionId,
       pattern: subscription.config.pattern,
       data: payload,
-      timestamp: message.timestamp || Date.now()
+      timestamp: message.timestamp || Date.now(),
     });
 
     // Emit subscription-specific event
@@ -328,7 +326,7 @@ export class SubscriptionManager extends EventEmitter {
 
     this.observability.recordError(error, {
       subscriptionId,
-      context: 'subscription-error'
+      context: 'subscription-error',
     });
   }
 
@@ -357,21 +355,61 @@ export class SubscriptionManager extends EventEmitter {
     // Stop heartbeat
     this._stopHeartbeat();
 
-    // Attempt reconnection
+    // Attempt reconnection with exponential backoff and jitter
     if (this.reconnectAttempts < this.config.maxReconnectAttempts) {
       this.reconnectAttempts++;
       this.metrics.reconnectCount++;
 
-      console.log(`[SubscriptionManager] Reconnecting in ${this.config.reconnectInterval}ms (attempt ${this.reconnectAttempts}/${this.config.maxReconnectAttempts})`);
+      // Exponential backoff: baseDelay * 2^attempt + random jitter
+      const baseDelay = this.config.reconnectInterval;
+      const exponentialDelay = baseDelay * Math.pow(2, this.reconnectAttempts - 1);
+      const jitter = Math.random() * baseDelay * 0.5; // Add up to 50% jitter
+      const totalDelay = Math.min(exponentialDelay + jitter, 60000); // Cap at 60 seconds
+
+      console.log(
+        `[SubscriptionManager] Reconnecting in ${Math.round(totalDelay)}ms (attempt ${this.reconnectAttempts}/${this.config.maxReconnectAttempts})`
+      );
 
       this.reconnectTimer = setTimeout(() => {
         this.connect(this.config.url).catch(err => {
           console.error('[SubscriptionManager] Reconnection failed:', err.message);
         });
-      }, this.config.reconnectInterval);
+      }, totalDelay);
     } else {
       console.error('[SubscriptionManager] Max reconnection attempts reached');
       this.emit('max-reconnects');
+      // Emit recoveryAvailable event to signal manual reconnection is possible
+      this.emit('recoveryAvailable', {
+        attempts: this.reconnectAttempts,
+        lastAttemptTime: Date.now(),
+        message: 'Manual reconnection available via reconnect() method',
+      });
+    }
+  }
+
+  /**
+   * Manually trigger reconnection after max attempts exhausted
+   * Resets reconnect counter and initiates fresh connection attempt
+   * @returns {Promise<void>}
+   */
+  async reconnect() {
+    // Clear any existing reconnect timer
+    if (this.reconnectTimer) {
+      clearTimeout(this.reconnectTimer);
+      this.reconnectTimer = null;
+    }
+
+    // Reset reconnect attempts to allow fresh connection cycle
+    this.reconnectAttempts = 0;
+
+    console.log('[SubscriptionManager] Manual reconnection initiated');
+    this.emit('reconnecting', { manual: true });
+
+    try {
+      await this.connect(this.config.url);
+    } catch (error) {
+      console.error('[SubscriptionManager] Manual reconnection failed:', error.message);
+      throw error;
     }
   }
 
@@ -386,7 +424,7 @@ export class SubscriptionManager extends EventEmitter {
       if (this.isConnected && this.ws) {
         this._send({
           type: 'ping',
-          timestamp: Date.now()
+          timestamp: Date.now(),
         });
       }
     }, this.config.heartbeatInterval);
@@ -410,14 +448,14 @@ export class SubscriptionManager extends EventEmitter {
    * @returns {string} Subscription ID
    */
   subscribe(config, callback) {
-    return tracer.startActiveSpan('subscription-manager.subscribe', (span) => {
+    return tracer.startActiveSpan('subscription-manager.subscribe', span => {
       try {
         const validatedConfig = SubscriptionConfigSchema.parse(config);
         const id = validatedConfig.id || randomUUID();
 
         span.setAttributes({
           'subscription.id': id,
-          'subscription.pattern': validatedConfig.pattern
+          'subscription.pattern': validatedConfig.pattern,
         });
 
         // Check subscription limit
@@ -429,7 +467,7 @@ export class SubscriptionManager extends EventEmitter {
         this.subscriptions.set(id, {
           config: validatedConfig,
           active: true,
-          createdAt: Date.now()
+          createdAt: Date.now(),
         });
 
         this.metrics.subscriptionCount++;
@@ -452,7 +490,7 @@ export class SubscriptionManager extends EventEmitter {
         span.recordException(error);
         span.setStatus({
           code: SpanStatusCode.ERROR,
-          message: error.message
+          message: error.message,
         });
         span.end();
         throw error;
@@ -475,9 +513,9 @@ export class SubscriptionManager extends EventEmitter {
         predicate: config.predicate,
         object: config.object,
         debounceMs: config.debounceMs,
-        batchSize: config.batchSize
+        batchSize: config.batchSize,
       },
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
@@ -487,7 +525,7 @@ export class SubscriptionManager extends EventEmitter {
    * @returns {boolean} Success
    */
   unsubscribe(id) {
-    return tracer.startActiveSpan('subscription-manager.unsubscribe', (span) => {
+    return tracer.startActiveSpan('subscription-manager.unsubscribe', span => {
       try {
         span.setAttribute('subscription.id', id);
 
@@ -502,7 +540,7 @@ export class SubscriptionManager extends EventEmitter {
           this._send({
             type: 'unsubscribe',
             subscriptionId: id,
-            timestamp: Date.now()
+            timestamp: Date.now(),
           });
         }
 
@@ -519,7 +557,7 @@ export class SubscriptionManager extends EventEmitter {
         span.recordException(error);
         span.setStatus({
           code: SpanStatusCode.ERROR,
-          message: error.message
+          message: error.message,
         });
         span.end();
         return false;
@@ -567,7 +605,7 @@ export class SubscriptionManager extends EventEmitter {
   getAllSubscriptions() {
     return Array.from(this.subscriptions.entries()).map(([id, sub]) => ({
       id,
-      ...sub
+      ...sub,
     }));
   }
 
@@ -577,13 +615,13 @@ export class SubscriptionManager extends EventEmitter {
    */
   getMetrics() {
     const latencies = this.metrics.latency.slice(-100);
-    const avgLatency = latencies.length > 0
-      ? latencies.reduce((sum, l) => sum + l, 0) / latencies.length
-      : 0;
+    const avgLatency =
+      latencies.length > 0 ? latencies.reduce((sum, l) => sum + l, 0) / latencies.length : 0;
 
-    const p95Latency = latencies.length > 0
-      ? latencies.sort((a, b) => a - b)[Math.floor(latencies.length * 0.95)]
-      : 0;
+    const p95Latency =
+      latencies.length > 0
+        ? latencies.sort((a, b) => a - b)[Math.floor(latencies.length * 0.95)]
+        : 0;
 
     return {
       subscriptionCount: this.subscriptions.size,
@@ -594,7 +632,7 @@ export class SubscriptionManager extends EventEmitter {
       avgLatency,
       p95Latency,
       isConnected: this.isConnected,
-      reconnectAttempts: this.reconnectAttempts
+      reconnectAttempts: this.reconnectAttempts,
     };
   }
 

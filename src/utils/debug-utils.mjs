@@ -1,4 +1,4 @@
-import { inspect } from "node:util";
+import { inspect } from 'node:util';
 
 /**
  * Pretty print first N quads
@@ -7,9 +7,12 @@ import { inspect } from "node:util";
  * @returns {string[]} Array of formatted quad strings
  */
 export const previewQuads = (store, n = 5) =>
-  [...store].slice(0, n).map((q) => 
-    `${q.subject.value} ${q.predicate.value} ${q.object.value}${q.graph.termType === "DefaultGraph" ? "" : ` ${q.graph.value}`}`
-  );
+  [...store]
+    .slice(0, n)
+    .map(
+      q =>
+        `${q.subject.value} ${q.predicate.value} ${q.object.value}${q.graph.termType === 'DefaultGraph' ? '' : ` ${q.graph.value}`}`
+    );
 
 /**
  * Console.log Turtle for inspection
@@ -21,11 +24,11 @@ export const previewQuads = (store, n = 5) =>
 export const dumpTurtle = async (store, engine, prefixes = {}) => {
   try {
     const turtle = await engine.serializeTurtle(store, { prefixes });
-    console.log("=== Turtle Dump ===");
+    console.log('=== Turtle Dump ===');
     console.log(turtle);
-    console.log("==================");
+    console.log('==================');
   } catch (error) {
-    console.error("Failed to dump Turtle:", error.message);
+    console.error('Failed to dump Turtle:', error.message);
   }
 };
 
@@ -45,46 +48,48 @@ export const dumpTurtle = async (store, engine, prefixes = {}) => {
  * console.log(turtle);
  */
 export const debugTurtle = async (store, options = {}) => {
-  const { prefixes = { ex: "http://example.org/" }, maxTriples } = options;
+  const { prefixes = { ex: 'http://example.org/' }, maxTriples } = options;
 
   try {
-    const engine = { serializeTurtle: async (s, opts) => {
-      // Simple turtle serialization for debugging
-      const turtleOptions = {
-        prefixes,
-        format: "text/turtle",
-        ...opts
-      };
+    const engine = {
+      serializeTurtle: async (s, opts) => {
+        // Simple turtle serialization for debugging
+        const _turtleOptions = {
+          prefixes,
+          format: 'text/turtle',
+          ...opts,
+        };
 
-      // For now, return a simple representation
-      // In a real implementation, this would use proper Turtle serialization
-      let turtle = "";
-      const quads = [...store];
-      const limitedQuads = maxTriples ? quads.slice(0, maxTriples) : quads;
+        // For now, return a simple representation
+        // In a real implementation, this would use proper Turtle serialization
+        let turtle = '';
+        const quads = [...store];
+        const limitedQuads = maxTriples ? quads.slice(0, maxTriples) : quads;
 
-      for (const quad of limitedQuads) {
-        const subject = quad.subject.termType === "BlankNode"
-          ? `_:${quad.subject.value}`
-          : `<${quad.subject.value}>`;
-        const predicate = `<${quad.predicate.value}>`;
-        const object = quad.object.termType === "Literal"
-          ? `"${quad.object.value}"`
-          : quad.object.termType === "BlankNode"
-          ? `_:${quad.object.value}`
-          : `<${quad.object.value}>`;
-        const graph = quad.graph.termType === "DefaultGraph"
-          ? ""
-          : ` <${quad.graph.value}>`;
+        for (const quad of limitedQuads) {
+          const subject =
+            quad.subject.termType === 'BlankNode'
+              ? `_:${quad.subject.value}`
+              : `<${quad.subject.value}>`;
+          const predicate = `<${quad.predicate.value}>`;
+          const object =
+            quad.object.termType === 'Literal'
+              ? `"${quad.object.value}"`
+              : quad.object.termType === 'BlankNode'
+                ? `_:${quad.object.value}`
+                : `<${quad.object.value}>`;
+          const graph = quad.graph.termType === 'DefaultGraph' ? '' : ` <${quad.graph.value}>`;
 
-        turtle += `${subject} ${predicate} ${object}${graph} .\n`;
-      }
+          turtle += `${subject} ${predicate} ${object}${graph} .\n`;
+        }
 
-      if (maxTriples && quads.length > maxTriples) {
-        turtle += `# ... ${quads.length - maxTriples} more triples\n`;
-      }
+        if (maxTriples && quads.length > maxTriples) {
+          turtle += `# ... ${quads.length - maxTriples} more triples\n`;
+        }
 
-      return turtle;
-    }};
+        return turtle;
+      },
+    };
 
     return await engine.serializeTurtle(store, { prefixes });
   } catch (error) {
@@ -97,21 +102,21 @@ export const debugTurtle = async (store, options = {}) => {
  * @param {import('n3').Store} store - RDF store to analyze
  * @returns {Object} Store statistics
  */
-export const getStoreStats = (store) => {
+export const getStoreStats = store => {
   const subjects = new Set();
   const predicates = new Set();
   const objects = new Set();
   const graphs = new Set();
-  
+
   for (const q of store) {
     subjects.add(q.subject.value);
     predicates.add(q.predicate.value);
     objects.add(q.object.value);
-    if (q.graph.termType !== "DefaultGraph") {
+    if (q.graph.termType !== 'DefaultGraph') {
       graphs.add(q.graph.value);
     }
   }
-  
+
   return {
     quadCount: store.size,
     subjectCount: subjects.size,
@@ -121,7 +126,7 @@ export const getStoreStats = (store) => {
     subjects: [...subjects],
     predicates: [...predicates],
     objects: [...objects],
-    graphs: [...graphs]
+    graphs: [...graphs],
   };
 };
 
@@ -130,15 +135,15 @@ export const getStoreStats = (store) => {
  * @param {import('n3').Store} store - RDF store to analyze
  * @returns {void}
  */
-export const printStoreStats = (store) => {
+export const printStoreStats = store => {
   const stats = getStoreStats(store);
-  console.log("=== Store Statistics ===");
+  console.log('=== Store Statistics ===');
   console.log(`Quads: ${stats.quadCount}`);
   console.log(`Subjects: ${stats.subjectCount}`);
   console.log(`Predicates: ${stats.predicateCount}`);
   console.log(`Objects: ${stats.objectCount}`);
   console.log(`Graphs: ${stats.graphCount}`);
-  console.log("========================");
+  console.log('========================');
 };
 
 /**
@@ -154,9 +159,9 @@ export const deepInspect = (obj, options = {}) => {
     showHidden: false,
     maxArrayLength: 10,
     maxStringLength: 100,
-    ...options
+    ...options,
   };
-  
+
   return inspect(obj, defaultOptions);
 };
 
@@ -167,10 +172,10 @@ export const deepInspect = (obj, options = {}) => {
  * @param {Object} [options] - Inspection options
  * @returns {void}
  */
-export const logDeep = (obj, label = "Object", options = {}) => {
+export const logDeep = (obj, label = 'Object', options = {}) => {
   console.log(`=== ${label} ===`);
   console.log(deepInspect(obj, options));
-  console.log("==================");
+  console.log('==================');
 };
 
 /**
@@ -179,7 +184,7 @@ export const logDeep = (obj, label = "Object", options = {}) => {
  * @param {string} [label] - Optional label for timing
  * @returns {any} Function result
  */
-export const timeExecution = async (fn, label = "Execution") => {
+export const timeExecution = async (fn, label = 'Execution') => {
   const start = performance.now();
   const result = await fn();
   const end = performance.now();
@@ -192,9 +197,9 @@ export const timeExecution = async (fn, label = "Execution") => {
  * @param {string} [label] - Timer label
  * @returns {Object} Timer object with start/end methods
  */
-export const createTimer = (label = "Timer") => {
+export const createTimer = (label = 'Timer') => {
   let startTime = null;
-  
+
   return {
     start: () => {
       startTime = performance.now();
@@ -210,7 +215,7 @@ export const createTimer = (label = "Timer") => {
       console.log(`${label}: ${duration.toFixed(2)}ms`);
       startTime = null;
       return duration;
-    }
+    },
   };
 };
 
@@ -220,12 +225,12 @@ export const createTimer = (label = "Timer") => {
  */
 export const logMemoryUsage = () => {
   const usage = process.memoryUsage();
-  console.log("=== Memory Usage ===");
+  console.log('=== Memory Usage ===');
   console.log(`RSS: ${(usage.rss / 1024 / 1024).toFixed(2)} MB`);
   console.log(`Heap Used: ${(usage.heapUsed / 1024 / 1024).toFixed(2)} MB`);
   console.log(`Heap Total: ${(usage.heapTotal / 1024 / 1024).toFixed(2)} MB`);
   console.log(`External: ${(usage.external / 1024 / 1024).toFixed(2)} MB`);
-  console.log("===================");
+  console.log('===================');
 };
 
 /**
@@ -233,35 +238,35 @@ export const logMemoryUsage = () => {
  * @param {string} [name] - Logger name
  * @returns {Object} Logger object
  */
-export const createDebugLogger = (name = "DEBUG") => {
+export const createDebugLogger = (name = 'DEBUG') => {
   const levels = {
     ERROR: 0,
     WARN: 1,
     INFO: 2,
     DEBUG: 3,
-    TRACE: 4
+    TRACE: 4,
   };
-  
+
   let currentLevel = levels.INFO;
-  
+
   const log = (level, message, ...args) => {
     if (levels[level] <= currentLevel) {
       const timestamp = new Date().toISOString();
       console.log(`[${timestamp}] [${name}] [${level}] ${message}`, ...args);
     }
   };
-  
+
   return {
-    setLevel: (level) => {
+    setLevel: level => {
       if (levels[level] !== undefined) {
         currentLevel = levels[level];
       }
     },
-    error: (message, ...args) => log("ERROR", message, ...args),
-    warn: (message, ...args) => log("WARN", message, ...args),
-    info: (message, ...args) => log("INFO", message, ...args),
-    debug: (message, ...args) => log("DEBUG", message, ...args),
-    trace: (message, ...args) => log("TRACE", message, ...args)
+    error: (message, ...args) => log('ERROR', message, ...args),
+    warn: (message, ...args) => log('WARN', message, ...args),
+    info: (message, ...args) => log('INFO', message, ...args),
+    debug: (message, ...args) => log('DEBUG', message, ...args),
+    trace: (message, ...args) => log('TRACE', message, ...args),
   };
 };
 
@@ -281,10 +286,10 @@ export const prettyJSON = (obj, indent = 2) => {
  * @param {string} [label] - Optional label
  * @returns {void}
  */
-export const logJSON = (obj, label = "JSON") => {
+export const logJSON = (obj, label = 'JSON') => {
   console.log(`=== ${label} ===`);
   console.log(prettyJSON(obj));
-  console.log("================");
+  console.log('================');
 };
 
 /**
@@ -293,25 +298,26 @@ export const logJSON = (obj, label = "JSON") => {
  * @param {string} [label] - Progress label
  * @returns {Object} Progress tracker
  */
-export const createProgressTracker = (total, label = "Progress") => {
+export const createProgressTracker = (total, label = 'Progress') => {
   let current = 0;
-  
+
   return {
     update: (increment = 1) => {
       current += increment;
       const percentage = ((current / total) * 100).toFixed(1);
-      const bar = "█".repeat(Math.floor(percentage / 2)) + "░".repeat(50 - Math.floor(percentage / 2));
+      const bar =
+        '█'.repeat(Math.floor(percentage / 2)) + '░'.repeat(50 - Math.floor(percentage / 2));
       process.stdout.write(`\r${label}: [${bar}] ${percentage}% (${current}/${total})`);
-      
+
       if (current >= total) {
         console.log(); // New line when complete
       }
     },
     complete: () => {
       current = total;
-      const bar = "█".repeat(50);
+      const bar = '█'.repeat(50);
       console.log(`\r${label}: [${bar}] 100.0% (${total}/${total})`);
-    }
+    },
   };
 };
 
@@ -324,12 +330,12 @@ export const createProgressTracker = (total, label = "Progress") => {
 export const measureQuadProcessing = async (store, processor) => {
   const start = performance.now();
   const startMemory = process.memoryUsage();
-  
+
   const result = await processor(store);
-  
+
   const end = performance.now();
   const endMemory = process.memoryUsage();
-  
+
   return {
     duration: end - start,
     quadCount: store.size,
@@ -337,8 +343,8 @@ export const measureQuadProcessing = async (store, processor) => {
     memoryDelta: {
       rss: endMemory.rss - startMemory.rss,
       heapUsed: endMemory.heapUsed - startMemory.heapUsed,
-      heapTotal: endMemory.heapTotal - startMemory.heapTotal
+      heapTotal: endMemory.heapTotal - startMemory.heapTotal,
     },
-    result
+    result,
   };
 };

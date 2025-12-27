@@ -50,28 +50,36 @@ describe('README Quick Start Example', () => {
 
       mockSystem.executeTransaction.mockResolvedValue({
         success: true,
-        delta: { additions: [aliceNameQuad, aliceKnowsQuad], removals: [] }
+        delta: { additions: [aliceNameQuad, aliceKnowsQuad], removals: [] },
       });
 
       const result = await system.executeTransaction({
         additions: [aliceNameQuad, aliceKnowsQuad],
         removals: [],
-        actor: 'system'
+        actor: 'system',
       });
 
       expect(mockSystem.executeTransaction).toHaveBeenCalledWith({
         additions: expect.arrayContaining([
           expect.objectContaining({
-            subject: expect.objectContaining({ value: 'http://example.org/alice' }),
-            predicate: expect.objectContaining({ value: 'http://xmlns.com/foaf/0.1/name' }),
+            subject: expect.objectContaining({
+              value: 'http://example.org/alice',
+            }),
+            predicate: expect.objectContaining({
+              value: 'http://xmlns.com/foaf/0.1/name',
+            }),
           }),
           expect.objectContaining({
-            subject: expect.objectContaining({ value: 'http://example.org/alice' }),
-            predicate: expect.objectContaining({ value: 'http://xmlns.com/foaf/0.1/knows' }),
+            subject: expect.objectContaining({
+              value: 'http://example.org/alice',
+            }),
+            predicate: expect.objectContaining({
+              value: 'http://xmlns.com/foaf/0.1/knows',
+            }),
           }),
         ]),
         removals: [],
-        actor: 'system'
+        actor: 'system',
       });
 
       expect(result.success).toBe(true);
@@ -81,18 +89,16 @@ describe('README Quick Start Example', () => {
     it('should query data with SPARQL SELECT', async () => {
       const system = await mockCreateDarkMatterCore();
 
-      mockSystem.query.mockResolvedValue([
-        { name: literal('Alice') }
-      ]);
+      mockSystem.query.mockResolvedValue([{ name: literal('Alice') }]);
 
       const results = await system.query({
         query: 'SELECT ?name WHERE { ?person <http://xmlns.com/foaf/0.1/name> ?name }',
-        type: 'sparql-select'
+        type: 'sparql-select',
       });
 
       expect(mockSystem.query).toHaveBeenCalledWith({
         query: expect.stringContaining('SELECT ?name'),
-        type: 'sparql-select'
+        type: 'sparql-select',
       });
 
       expect(results).toHaveLength(1);
@@ -117,7 +123,7 @@ describe('README Quick Start Example', () => {
       // Step 2: Add data
       mockSystem.executeTransaction.mockResolvedValue({
         success: true,
-        delta: { additions: [], removals: [] }
+        delta: { additions: [], removals: [] },
       });
 
       await system.executeTransaction({
@@ -126,10 +132,10 @@ describe('README Quick Start Example', () => {
             namedNode('http://example.org/alice'),
             namedNode('http://xmlns.com/foaf/0.1/name'),
             literal('Alice')
-          )
+          ),
         ],
         removals: [],
-        actor: 'system'
+        actor: 'system',
       });
 
       expect(mockSystem.executeTransaction).toHaveBeenCalled();
@@ -139,7 +145,7 @@ describe('README Quick Start Example', () => {
 
       const results = await system.query({
         query: 'SELECT ?name WHERE { ?person <http://xmlns.com/foaf/0.1/name> ?name }',
-        type: 'sparql-select'
+        type: 'sparql-select',
       });
 
       expect(results).toHaveLength(1);
@@ -162,7 +168,7 @@ describe('README Quick Start Example', () => {
         system.executeTransaction({
           additions: [],
           removals: [],
-          actor: 'system'
+          actor: 'system',
         })
       ).rejects.toThrow('Transaction failed');
     });
@@ -170,14 +176,12 @@ describe('README Quick Start Example', () => {
     it('should handle query failures gracefully', async () => {
       const system = await mockCreateDarkMatterCore();
 
-      mockSystem.query.mockRejectedValue(
-        new Error('SPARQL syntax error')
-      );
+      mockSystem.query.mockRejectedValue(new Error('SPARQL syntax error'));
 
       await expect(
         system.query({
           query: 'INVALID SPARQL',
-          type: 'sparql-select'
+          type: 'sparql-select',
         })
       ).rejects.toThrow('SPARQL syntax error');
     });
@@ -190,13 +194,13 @@ describe('README Quick Start Example', () => {
       await system.executeTransaction({
         additions: [quad(namedNode('ex:s1'), namedNode('ex:p1'), literal('o1'))],
         removals: [],
-        actor: 'user1'
+        actor: 'user1',
       });
 
       await system.executeTransaction({
         additions: [quad(namedNode('ex:s2'), namedNode('ex:p2'), literal('o2'))],
         removals: [],
-        actor: 'user2'
+        actor: 'user2',
       });
 
       expect(mockSystem.executeTransaction).toHaveBeenCalledTimes(2);
@@ -210,13 +214,13 @@ describe('README Quick Start Example', () => {
       await system.executeTransaction({
         additions: [],
         removals: [],
-        actor: 'system'
+        actor: 'system',
       });
 
       expect(mockSystem.executeTransaction).toHaveBeenCalledWith(
         expect.objectContaining({
           additions: [],
-          removals: []
+          removals: [],
         })
       );
     });
@@ -227,14 +231,14 @@ describe('README Quick Start Example', () => {
       const mockResults = [
         { name: literal('Alice') },
         { name: literal('Bob') },
-        { name: literal('Charlie') }
+        { name: literal('Charlie') },
       ];
 
       mockSystem.query.mockResolvedValue(mockResults);
 
       const results = await system.query({
         query: 'SELECT ?name WHERE { ?person <http://xmlns.com/foaf/0.1/name> ?name }',
-        type: 'sparql-select'
+        type: 'sparql-select',
       });
 
       expect(results).toHaveLength(3);

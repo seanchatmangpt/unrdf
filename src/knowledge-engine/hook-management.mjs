@@ -7,8 +7,8 @@
  * These functions wrap the class methods for easier usage.
  */
 
-import { defineHook } from "./define-hook.mjs";
-import { KnowledgeHookManager } from "./knowledge-hook-manager.mjs";
+import { defineHook } from './define-hook.mjs';
+import { KnowledgeHookManager } from './knowledge-hook-manager.mjs';
 
 // Global hook manager instance for standalone functions
 let globalHookManager = null;
@@ -44,8 +44,7 @@ export async function registerHook(hook, options = {}) {
   const manager = getGlobalHookManager(options);
 
   // Validate hook if it's not already validated
-  const validatedHook =
-    typeof hook === "object" && !hook._validated ? defineHook(hook) : hook;
+  const validatedHook = typeof hook === 'object' && !hook._validated ? defineHook(hook) : hook;
 
   return manager.addKnowledgeHook(validatedHook);
 }
@@ -80,8 +79,7 @@ export async function deregisterHook(hookName) {
  */
 export async function evaluateHook(hook, store, context = {}) {
   // Validate hook if needed
-  const validatedHook =
-    typeof hook === "object" && !hook._validated ? defineHook(hook) : hook;
+  const validatedHook = typeof hook === 'object' && !hook._validated ? defineHook(hook) : hook;
 
   // Create a temporary manager for evaluation
   const tempManager = new KnowledgeHookManager({ enableKnowledgeHooks: true });
@@ -102,7 +100,7 @@ export async function evaluateHook(hook, store, context = {}) {
     const conditionResult = await tempManager.conditionEvaluator.isSatisfied(
       validatedHook.when,
       store,
-      context,
+      context
     );
 
     event.result = conditionResult;
@@ -150,4 +148,3 @@ export default {
   getRegisteredHooks,
   resetGlobalHookManager,
 };
-

@@ -68,7 +68,7 @@ export class ContextManager {
    * @returns {Promise<void>}
    */
   async init() {
-    return tracer.startActiveSpan('context.init', async (span) => {
+    return tracer.startActiveSpan('context.init', async span => {
       try {
         // Ensure config directory exists
         if (!existsSync(this.configDir)) {
@@ -98,7 +98,10 @@ export class ContextManager {
           span.setAttribute('context.file.created', true);
         }
 
-        contextOperationCounter.add(1, { operation: 'init', status: 'success' });
+        contextOperationCounter.add(1, {
+          operation: 'init',
+          status: 'success',
+        });
         span.setStatus({ code: 1 }); // OK
       } catch (error) {
         contextErrorCounter.add(1, { operation: 'init' });
@@ -118,7 +121,7 @@ export class ContextManager {
    * @private
    */
   async saveContexts() {
-    return tracer.startActiveSpan('context.save', async (span) => {
+    return tracer.startActiveSpan('context.save', async span => {
       try {
         const config = {
           contexts: Object.fromEntries(this.contexts),
@@ -129,7 +132,10 @@ export class ContextManager {
 
         span.setAttribute('context.count', this.contexts.size);
         span.setAttribute('context.current', this.currentContext || 'none');
-        contextOperationCounter.add(1, { operation: 'save', status: 'success' });
+        contextOperationCounter.add(1, {
+          operation: 'save',
+          status: 'success',
+        });
         span.setStatus({ code: 1 }); // OK
       } catch (error) {
         contextErrorCounter.add(1, { operation: 'save' });
@@ -151,14 +157,17 @@ export class ContextManager {
    * @returns {Promise<Context>}
    */
   async createContext(name, config) {
-    return tracer.startActiveSpan('context.create', async (span) => {
+    return tracer.startActiveSpan('context.create', async span => {
       try {
         span.setAttribute('context.name', name);
 
         if (this.contexts.has(name)) {
           const error = new Error(`Context "${name}" already exists`);
           span.recordException(error);
-          contextErrorCounter.add(1, { operation: 'create', reason: 'already_exists' });
+          contextErrorCounter.add(1, {
+            operation: 'create',
+            reason: 'already_exists',
+          });
           throw error;
         }
 
@@ -173,7 +182,10 @@ export class ContextManager {
         await this.saveContexts();
 
         span.setAttribute('context.sidecar.endpoint', config.sidecar.endpoint);
-        contextOperationCounter.add(1, { operation: 'create', status: 'success' });
+        contextOperationCounter.add(1, {
+          operation: 'create',
+          status: 'success',
+        });
         span.setStatus({ code: 1 }); // OK
 
         return context;
@@ -195,7 +207,7 @@ export class ContextManager {
    * @returns {Context|null}
    */
   getContext(name) {
-    return tracer.startActiveSpan('context.get', (span) => {
+    return tracer.startActiveSpan('context.get', span => {
       try {
         span.setAttribute('context.name', name);
         const context = this.contexts.get(name);
@@ -203,10 +215,16 @@ export class ContextManager {
         if (context) {
           span.setAttribute('context.found', true);
           span.setAttribute('context.sidecar.endpoint', context.sidecar.endpoint);
-          contextOperationCounter.add(1, { operation: 'get', status: 'success' });
+          contextOperationCounter.add(1, {
+            operation: 'get',
+            status: 'success',
+          });
         } else {
           span.setAttribute('context.found', false);
-          contextOperationCounter.add(1, { operation: 'get', status: 'not_found' });
+          contextOperationCounter.add(1, {
+            operation: 'get',
+            status: 'not_found',
+          });
         }
 
         span.setStatus({ code: 1 }); // OK
@@ -228,11 +246,14 @@ export class ContextManager {
    * @returns {Context[]}
    */
   listContexts() {
-    return tracer.startActiveSpan('context.list', (span) => {
+    return tracer.startActiveSpan('context.list', span => {
       try {
         const contexts = Array.from(this.contexts.values());
         span.setAttribute('context.count', contexts.length);
-        contextOperationCounter.add(1, { operation: 'list', status: 'success' });
+        contextOperationCounter.add(1, {
+          operation: 'list',
+          status: 'success',
+        });
         span.setStatus({ code: 1 }); // OK
         return contexts;
       } catch (error) {
@@ -253,7 +274,7 @@ export class ContextManager {
    * @returns {Promise<void>}
    */
   async useContext(name) {
-    return tracer.startActiveSpan('context.use', async (span) => {
+    return tracer.startActiveSpan('context.use', async span => {
       try {
         span.setAttribute('context.name', name);
 
@@ -288,21 +309,27 @@ export class ContextManager {
    * @returns {Promise<void>}
    */
   async deleteContext(name) {
-    return tracer.startActiveSpan('context.delete', async (span) => {
+    return tracer.startActiveSpan('context.delete', async span => {
       try {
         span.setAttribute('context.name', name);
 
         if (!this.contexts.has(name)) {
           const error = new Error(`Context "${name}" does not exist`);
           span.recordException(error);
-          contextErrorCounter.add(1, { operation: 'delete', reason: 'not_found' });
+          contextErrorCounter.add(1, {
+            operation: 'delete',
+            reason: 'not_found',
+          });
           throw error;
         }
 
         if (this.currentContext === name) {
           const error = new Error('Cannot delete current context');
           span.recordException(error);
-          contextErrorCounter.add(1, { operation: 'delete', reason: 'current_context' });
+          contextErrorCounter.add(1, {
+            operation: 'delete',
+            reason: 'current_context',
+          });
           throw error;
         }
 
@@ -310,7 +337,10 @@ export class ContextManager {
         await this.saveContexts();
 
         span.setAttribute('context.deleted', true);
-        contextOperationCounter.add(1, { operation: 'delete', status: 'success' });
+        contextOperationCounter.add(1, {
+          operation: 'delete',
+          status: 'success',
+        });
         span.setStatus({ code: 1 }); // OK
       } catch (error) {
         contextErrorCounter.add(1, { operation: 'delete' });
@@ -329,11 +359,14 @@ export class ContextManager {
    * @returns {Context|null}
    */
   getCurrentContext() {
-    return tracer.startActiveSpan('context.getCurrent', (span) => {
+    return tracer.startActiveSpan('context.getCurrent', span => {
       try {
         if (!this.currentContext) {
           span.setAttribute('context.current', 'none');
-          contextOperationCounter.add(1, { operation: 'getCurrent', status: 'none' });
+          contextOperationCounter.add(1, {
+            operation: 'getCurrent',
+            status: 'none',
+          });
           span.setStatus({ code: 1 }); // OK
           return null;
         }
@@ -343,10 +376,16 @@ export class ContextManager {
 
         if (context) {
           span.setAttribute('context.found', true);
-          contextOperationCounter.add(1, { operation: 'getCurrent', status: 'success' });
+          contextOperationCounter.add(1, {
+            operation: 'getCurrent',
+            status: 'success',
+          });
         } else {
           span.setAttribute('context.found', false);
-          contextOperationCounter.add(1, { operation: 'getCurrent', status: 'not_found' });
+          contextOperationCounter.add(1, {
+            operation: 'getCurrent',
+            status: 'not_found',
+          });
         }
 
         span.setStatus({ code: 1 }); // OK
@@ -371,14 +410,17 @@ export class ContextManager {
    * @returns {Promise<Context>}
    */
   async updateContext(name, updates) {
-    return tracer.startActiveSpan('context.update', async (span) => {
+    return tracer.startActiveSpan('context.update', async span => {
       try {
         span.setAttribute('context.name', name);
 
         if (!this.contexts.has(name)) {
           const error = new Error(`Context "${name}" does not exist`);
           span.recordException(error);
-          contextErrorCounter.add(1, { operation: 'update', reason: 'not_found' });
+          contextErrorCounter.add(1, {
+            operation: 'update',
+            reason: 'not_found',
+          });
           throw error;
         }
 
@@ -395,7 +437,10 @@ export class ContextManager {
         this.contexts.set(name, context);
         await this.saveContexts();
 
-        contextOperationCounter.add(1, { operation: 'update', status: 'success' });
+        contextOperationCounter.add(1, {
+          operation: 'update',
+          status: 'success',
+        });
         span.setStatus({ code: 1 }); // OK
 
         return context;

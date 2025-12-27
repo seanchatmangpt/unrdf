@@ -18,7 +18,7 @@ import { validateRequiredArgs } from '../utils/context-wrapper.mjs';
  * @param {Object} config - Configuration
  * @returns {Promise<void>}
  */
-export async function validateCommand(ctx, config) {
+export async function validateCommand(ctx, _config) {
   const { args } = ctx;
 
   // Validate required arguments
@@ -76,16 +76,16 @@ export const validateCommandMeta = {
     data: {
       type: 'positional',
       description: 'Data file path',
-      required: true
+      required: true,
     },
     shape: {
       type: 'string',
       description: 'SHACL shapes file path',
-      required: true
+      required: true,
     },
     output: {
       type: 'string',
-      description: 'Output file path for validation report'
-    }
-  }
+      description: 'Output file path for validation report',
+    },
+  },
 };

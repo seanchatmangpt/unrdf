@@ -30,7 +30,7 @@ async function storeLastAppliedPolicy(policyName, filePath) {
     const data = {
       name: policyName,
       filePath: filePath,
-      appliedAt: new Date().toISOString()
+      appliedAt: new Date().toISOString(),
     };
     await writeFile(lastPolicyPath, JSON.stringify(data, null, 2), 'utf-8');
   } catch (error) {
@@ -61,15 +61,15 @@ async function getLastAppliedPolicy() {
  * @param {Object} config - Configuration
  * @returns {Promise<void>}
  */
-export async function policyApplyCommand(ctx, config) {
+export async function policyApplyCommand(ctx, _config) {
   const { args } = ctx;
   validateRequiredArgs(args, ['file']);
 
   const span = tracer.startSpan('policy.apply', {
     attributes: {
       'cli.command': 'policy apply',
-      'file': args.file
-    }
+      file: args.file,
+    },
   });
 
   const startTime = Date.now();
@@ -94,18 +94,18 @@ export async function policyApplyCommand(ctx, config) {
         meta: {
           name: policyData.name || 'applied-policy',
           version: policyData.version || '1.0.0',
-          description: policyData.description || 'Applied policy'
+          description: policyData.description || 'Applied policy',
         },
         config: {
           enabled: true,
           priority: 50,
           strictMode: false,
           timeout: 30000,
-          retries: 1
+          retries: 1,
         },
         hooks: policyData.hooks || [],
         conditions: policyData.conditions || [],
-        resources: policyData.resources || []
+        resources: policyData.resources || [],
       };
 
       // Write temporary manifest
@@ -120,7 +120,7 @@ export async function policyApplyCommand(ctx, config) {
 
     span.addEvent('policy.loaded', {
       name: pack.manifest.meta.name,
-      version: pack.manifest.meta.version
+      version: pack.manifest.meta.version,
     });
 
     // Activate policy pack
@@ -141,7 +141,7 @@ export async function policyApplyCommand(ctx, config) {
       'policy.version': stats.version,
       'policy.hooks': stats.hooks.total,
       'policy.duration_ms': duration,
-      'policy.success': true
+      'policy.success': true,
     });
 
     span.end();
@@ -152,7 +152,7 @@ export async function policyApplyCommand(ctx, config) {
     span.setAttributes({
       'policy.success': false,
       'policy.duration_ms': duration,
-      'error.message': error.message
+      'error.message': error.message,
     });
     span.recordException(error);
     span.end();
@@ -170,13 +170,13 @@ export async function policyApplyCommand(ctx, config) {
  * @param {Object} config - Configuration
  * @returns {Promise<void>}
  */
-export async function policyListCommand(ctx, config) {
+export async function policyListCommand(ctx, _config) {
   const { args } = ctx;
 
   const span = tracer.startSpan('policy.list', {
     attributes: {
-      'cli.command': 'policy list'
-    }
+      'cli.command': 'policy list',
+    },
   });
 
   const startTime = Date.now();
@@ -219,7 +219,7 @@ export async function policyListCommand(ctx, config) {
     span.setAttributes({
       'policy.count': packs.length,
       'policy.duration_ms': duration,
-      'policy.success': true
+      'policy.success': true,
     });
 
     span.end();
@@ -230,7 +230,7 @@ export async function policyListCommand(ctx, config) {
     span.setAttributes({
       'policy.success': false,
       'policy.duration_ms': duration,
-      'error.message': error.message
+      'error.message': error.message,
     });
     span.recordException(error);
     span.end();
@@ -248,15 +248,15 @@ export async function policyListCommand(ctx, config) {
  * @param {Object} config - Configuration
  * @returns {Promise<void>}
  */
-export async function policyGetCommand(ctx, config) {
+export async function policyGetCommand(ctx, _config) {
   const { args } = ctx;
   validateRequiredArgs(args, ['id']);
 
   const span = tracer.startSpan('policy.get', {
     attributes: {
       'cli.command': 'policy get',
-      'policy.id': args.id
-    }
+      'policy.id': args.id,
+    },
   });
 
   const startTime = Date.now();
@@ -283,7 +283,7 @@ export async function policyGetCommand(ctx, config) {
       'policy.id': args.id,
       'policy.found': true,
       'policy.duration_ms': duration,
-      'policy.success': true
+      'policy.success': true,
     });
 
     span.end();
@@ -294,7 +294,7 @@ export async function policyGetCommand(ctx, config) {
     span.setAttributes({
       'policy.success': false,
       'policy.duration_ms': duration,
-      'error.message': error.message
+      'error.message': error.message,
     });
     span.recordException(error);
     span.end();
@@ -312,20 +312,22 @@ export async function policyGetCommand(ctx, config) {
  * @param {Object} config - Configuration
  * @returns {Promise<void>}
  */
-export async function policyValidateCommand(ctx, config) {
+export async function policyValidateCommand(ctx, _config) {
   const { args } = ctx;
 
   const span = tracer.startSpan('policy.validate', {
     attributes: {
       'cli.command': 'policy validate',
-      'strict': args.strict || false
-    }
+      strict: args.strict || false,
+    },
   });
 
   const startTime = Date.now();
 
   try {
-    const { validatePolicy, formatValidationReport } = await import('../utils/policy-validator.mjs');
+    const { validatePolicy, formatValidationReport } = await import(
+      '../utils/policy-validator.mjs'
+    );
     const { Store, Parser } = await import('n3');
 
     // Get policy pack name - use last applied if not provided
@@ -340,7 +342,9 @@ export async function policyValidateCommand(ctx, config) {
         console.log(`ℹ️  Using last applied policy: ${policyPackName}`);
       } else {
         console.error('❌ Error: --policy flag is required (no previously applied policy found)');
-        console.log('Usage: unrdf policy validate --policy <pack-name> [--store <file>] [--strict] [--format json|text|markdown]');
+        console.log(
+          'Usage: unrdf policy validate --policy <pack-name> [--store <file>] [--strict] [--format json|text|markdown]'
+        );
         process.exit(1);
       }
     }
@@ -359,7 +363,7 @@ export async function policyValidateCommand(ctx, config) {
 
       span.addEvent('store.loaded', {
         file: storeFile,
-        size: store.size
+        size: store.size,
       });
     } else {
       console.warn('⚠️  No store file provided, validating against empty store');
@@ -367,19 +371,19 @@ export async function policyValidateCommand(ctx, config) {
 
     span.addEvent('validation.starting', {
       policy: policyPackName,
-      storeSize: store.size
+      storeSize: store.size,
     });
 
     // Run validation
     const result = await validatePolicy(store, policyPackName, {
       strict: args.strict || false,
       basePath: process.cwd(),
-      policyFilePath: policyFilePath  // Pass file path for direct loading
+      policyFilePath: policyFilePath, // Pass file path for direct loading
     });
 
     span.addEvent('validation.completed', {
       passed: result.passed,
-      violations: result.violations.length
+      violations: result.violations.length,
     });
 
     // Format and output report
@@ -394,7 +398,7 @@ export async function policyValidateCommand(ctx, config) {
         'validation.passed': false,
         'validation.violations': result.violations.length,
         'validation.duration_ms': duration,
-        'validation.success': true
+        'validation.success': true,
       });
       span.end();
       process.exit(args.strict ? 1 : 0);
@@ -405,7 +409,7 @@ export async function policyValidateCommand(ctx, config) {
       'validation.passed': true,
       'validation.violations': 0,
       'validation.duration_ms': duration,
-      'validation.success': true
+      'validation.success': true,
     });
 
     span.end();
@@ -416,7 +420,7 @@ export async function policyValidateCommand(ctx, config) {
     span.setAttributes({
       'validation.success': false,
       'validation.duration_ms': duration,
-      'error.message': error.message
+      'error.message': error.message,
     });
     span.recordException(error);
     span.end();
@@ -434,14 +438,14 @@ export async function policyValidateCommand(ctx, config) {
  * @param {Object} config - Configuration
  * @returns {Promise<void>}
  */
-export async function policyAuditCommand(ctx, config) {
+export async function policyAuditCommand(ctx, _config) {
   const { args } = ctx;
 
   const span = tracer.startSpan('policy.audit', {
     attributes: {
       'cli.command': 'policy audit',
-      'violations-only': args['violations-only'] || false
-    }
+      'violations-only': args['violations-only'] || false,
+    },
   });
 
   const startTime = Date.now();
@@ -480,7 +484,7 @@ export async function policyAuditCommand(ctx, config) {
       .filter(entry => entry !== null);
 
     span.addEvent('audit.loaded', {
-      entries: auditEntries.length
+      entries: auditEntries.length,
     });
 
     if (auditEntries.length === 0) {
@@ -494,7 +498,7 @@ export async function policyAuditCommand(ctx, config) {
     if (args['violations-only']) {
       filteredEntries = auditEntries.filter(entry => !entry.passed);
       span.addEvent('audit.filtered', {
-        violations: filteredEntries.length
+        violations: filteredEntries.length,
       });
     }
 
@@ -508,7 +512,8 @@ export async function policyAuditCommand(ctx, config) {
       console.log('TIMESTAMP            POLICY                RESULT   VIOLATIONS');
       console.log('───────────────────  ────────────────────  ───────  ──────────');
 
-      for (const entry of filteredEntries.slice(-50)) { // Last 50 entries
+      for (const entry of filteredEntries.slice(-50)) {
+        // Last 50 entries
         const timestamp = new Date(entry.timestamp).toLocaleString().padEnd(19);
         const policy = (entry.policyPack || 'unknown').padEnd(20).substring(0, 20);
         const result = (entry.passed ? '✅ PASS' : '❌ FAIL').padEnd(7);
@@ -517,7 +522,9 @@ export async function policyAuditCommand(ctx, config) {
         console.log(`${timestamp}  ${policy}  ${result}  ${violations}`);
       }
 
-      console.log(`\nShowing ${Math.min(filteredEntries.length, 50)} of ${filteredEntries.length} entries`);
+      console.log(
+        `\nShowing ${Math.min(filteredEntries.length, 50)} of ${filteredEntries.length} entries`
+      );
     }
 
     const duration = Date.now() - startTime;
@@ -525,7 +532,7 @@ export async function policyAuditCommand(ctx, config) {
       'audit.entries': auditEntries.length,
       'audit.displayed': filteredEntries.length,
       'audit.duration_ms': duration,
-      'audit.success': true
+      'audit.success': true,
     });
 
     span.end();
@@ -536,7 +543,7 @@ export async function policyAuditCommand(ctx, config) {
     span.setAttributes({
       'audit.success': false,
       'audit.duration_ms': duration,
-      'error.message': error.message
+      'error.message': error.message,
     });
     span.recordException(error);
     span.end();
@@ -554,5 +561,5 @@ export async function policyAuditCommand(ctx, config) {
 export const policyCommandMeta = {
   name: 'policy',
   description: 'Manage policy packs',
-  subcommands: ['apply', 'list', 'get', 'validate', 'audit']
+  subcommands: ['apply', 'list', 'get', 'validate', 'audit'],
 };

@@ -16,6 +16,9 @@ const METADATA_STORE = 'metadata';
  * IndexedDB-based file system implementation
  */
 export class IndexedDBFileSystem {
+  /**
+   *
+   */
   constructor() {
     this.db = null;
     this.initPromise = this.init();
@@ -38,7 +41,7 @@ export class IndexedDBFileSystem {
         resolve();
       };
 
-      request.onupgradeneeded = (event) => {
+      request.onupgradeneeded = event => {
         const db = event.target.result;
 
         // Create files object store
@@ -48,7 +51,9 @@ export class IndexedDBFileSystem {
 
         // Create metadata object store
         if (!db.objectStoreNames.contains(METADATA_STORE)) {
-          const metaStore = db.createObjectStore(METADATA_STORE, { keyPath: 'path' });
+          const metaStore = db.createObjectStore(METADATA_STORE, {
+            keyPath: 'path',
+          });
           metaStore.createIndex('parentPath', 'parentPath', { unique: false });
         }
       };
@@ -158,7 +163,7 @@ export class IndexedDBFileSystem {
    * @param {string} [encoding='utf8'] - File encoding
    * @returns {Promise<void>}
    */
-  async writeFile(filePath, data, encoding = 'utf8') {
+  async writeFile(filePath, data, _encoding = 'utf8') {
     await this.ensureInit();
     const normalized = this.normalizePath(filePath);
     const parentPath = this.getParentPath(normalized);

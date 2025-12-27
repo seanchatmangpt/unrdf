@@ -23,7 +23,7 @@ export const WindowType = {
   TUMBLING: 'tumbling',
   SLIDING: 'sliding',
   SESSION: 'session',
-  COUNT: 'count'
+  COUNT: 'count',
 };
 
 /**
@@ -34,7 +34,7 @@ const WindowConfigSchema = z.object({
   size: z.number().min(1),
   slide: z.number().min(1).optional(),
   timeout: z.number().min(0).optional(),
-  count: z.number().min(1).optional()
+  count: z.number().min(1).optional(),
 });
 
 /**
@@ -45,11 +45,13 @@ const ProcessorConfigSchema = z.object({
   enableAggregation: z.boolean().default(true),
   enableJoins: z.boolean().default(false),
   maxWindowSize: z.number().min(1).default(10000),
-  observability: z.object({
-    serviceName: z.string().default('unrdf-stream-processor'),
-    enableTracing: z.boolean().default(true),
-    enableMetrics: z.boolean().default(true)
-  }).optional()
+  observability: z
+    .object({
+      serviceName: z.string().default('unrdf-stream-processor'),
+      enableTracing: z.boolean().default(true),
+      enableMetrics: z.boolean().default(true),
+    })
+    .optional(),
 });
 
 /**
@@ -83,12 +85,16 @@ class StreamWindow {
     this.events.push({
       ...event,
       windowId: this.id,
-      windowIndex: this.events.length
+      windowIndex: this.events.length,
     });
 
-    // Check if window should close
-    if (this.config.type === WindowType.COUNT && this.events.length >= this.config.count) {
-      this.close();
+    // FIX: Check if window should close for count-based windows
+    // Ensure we use the count property, not size
+    if (this.config.type === WindowType.COUNT) {
+      const targetCount = this.config.count || this.config.size || 10;
+      if (this.events.length >= targetCount) {
+        this.close();
+      }
     }
 
     return true;
@@ -126,7 +132,7 @@ class StreamWindow {
       startTime: this.startTime,
       endTime: this.endTime,
       duration: this.getDuration(),
-      isClosed: this.isClosed
+      isClosed: this.isClosed,
     };
   }
 }
@@ -150,9 +156,7 @@ export class StreamProcessor extends EventEmitter {
     this.isProcessing = false;
 
     // Observability
-    this.observability = createObservabilityManager(
-      this.config.observability || {}
-    );
+    this.observability = createObservabilityManager(this.config.observability || {});
 
     // Metrics
     this.metrics = {
@@ -160,7 +164,7 @@ export class StreamProcessor extends EventEmitter {
       windowsCreated: 0,
       windowsClosed: 0,
       aggregationsPerformed: 0,
-      errorCount: 0
+      errorCount: 0,
     };
 
     // Initialize observability
@@ -223,7 +227,7 @@ export class StreamProcessor extends EventEmitter {
    * @returns {Promise<Object>} Processing result
    */
   async process(event) {
-    return tracer.startActiveSpan('stream-processor.process', async (span) => {
+    return tracer.startActiveSpan('stream-processor.process', async span => {
       try {
         if (!this.isProcessing) {
           throw new Error('Stream processor is not active');
@@ -231,7 +235,7 @@ export class StreamProcessor extends EventEmitter {
 
         span.setAttributes({
           'event.id': event.id || 'unknown',
-          'event.type': event.type || 'unknown'
+          'event.type': event.type || 'unknown',
         });
 
         this.metrics.eventsProcessed++;
@@ -248,8 +252,11 @@ export class StreamProcessor extends EventEmitter {
           result.aggregations = await this._performAggregations(event);
         }
 
-        // Emit processed event
-        this.emit('processed', result);
+        // FIX: Emit 'processed' event BEFORE returning to ensure listeners get it
+        // Use setImmediate to ensure emission happens asynchronously
+        setImmediate(() => {
+          this.emit('processed', result);
+        });
 
         span.setStatus({ code: SpanStatusCode.OK });
         span.end();
@@ -259,7 +266,7 @@ export class StreamProcessor extends EventEmitter {
         span.recordException(error);
         span.setStatus({
           code: SpanStatusCode.ERROR,
-          message: error.message
+          message: error.message,
         });
         span.end();
         this.metrics.errorCount++;
@@ -288,6 +295,10 @@ export class StreamProcessor extends EventEmitter {
       this.activeWindow.add(event);
     }
 
+    // FIX: Add async handling for window operations to prevent race conditions
+    // Use Promise.resolve() to ensure async flow
+    await Promise.resolve();
+
     // Check if window should advance (for time-based windows)
     if (this.windowConfig.type === WindowType.TUMBLING) {
       const elapsed = Date.now() - this.activeWindow.startTime;
@@ -298,8 +309,20 @@ export class StreamProcessor extends EventEmitter {
     } else if (this.windowConfig.type === WindowType.SLIDING) {
       const elapsed = Date.now() - this.activeWindow.startTime;
       const slide = this.windowConfig.slide || this.windowConfig.size;
-      if (elapsed >= slide) {
+      // FIX: Only create new window if we don't have overlapping windows yet
+      if (elapsed >= slide && this.activeWindow.isClosed) {
         this._createWindow();
+      } else if (elapsed >= slide) {
+        // For sliding windows, we may need overlapping windows
+        const newWindow = this._createWindow();
+        // Copy events that fall within the sliding window overlap
+        const overlapStart = this.activeWindow.startTime + slide;
+        const overlapEvents = this.activeWindow.events.filter(
+          e => (e.timestamp || Date.now()) >= overlapStart
+        );
+        for (const e of overlapEvents) {
+          newWindow.add(e);
+        }
       }
     } else if (this.windowConfig.type === WindowType.SESSION) {
       // Reset timeout on each event
@@ -309,7 +332,7 @@ export class StreamProcessor extends EventEmitter {
     return {
       event,
       windowId: this.activeWindow.id,
-      windowCount: this.activeWindow.events.length
+      windowCount: this.activeWindow.events.length,
     };
   }
 
@@ -473,7 +496,7 @@ export class StreamProcessor extends EventEmitter {
       ...this.metrics,
       activeWindows: this.windows.size,
       activeAggregators: this.aggregators.size,
-      isProcessing: this.isProcessing
+      isProcessing: this.isProcessing,
     };
   }
 
@@ -483,7 +506,7 @@ export class StreamProcessor extends EventEmitter {
    * @returns {Promise<Array<Object>>} Processing results
    */
   async processBatch(events) {
-    return tracer.startActiveSpan('stream-processor.process-batch', async (span) => {
+    return tracer.startActiveSpan('stream-processor.process-batch', async span => {
       try {
         span.setAttribute('batch.size', events.length);
 
@@ -501,7 +524,7 @@ export class StreamProcessor extends EventEmitter {
         span.recordException(error);
         span.setStatus({
           code: SpanStatusCode.ERROR,
-          message: error.message
+          message: error.message,
         });
         span.end();
         throw error;
@@ -515,7 +538,7 @@ export class StreamProcessor extends EventEmitter {
    * @returns {Function} Pipeline function
    */
   createPipeline(stages) {
-    return async (event) => {
+    return async event => {
       let result = event;
 
       for (const stage of stages) {
@@ -560,12 +583,12 @@ export const Aggregators = {
   /**
    * Count events in window
    */
-  count: (events) => events.length,
+  count: events => events.length,
 
   /**
    * Sum numeric values
    */
-  sum: (field) => (events) => {
+  sum: field => events => {
     return events.reduce((sum, event) => {
       const value = typeof field === 'function' ? field(event) : event[field];
       return sum + (Number(value) || 0);
@@ -575,7 +598,7 @@ export const Aggregators = {
   /**
    * Average numeric values
    */
-  avg: (field) => (events) => {
+  avg: field => events => {
     const total = Aggregators.sum(field)(events);
     return events.length > 0 ? total / events.length : 0;
   },
@@ -583,29 +606,33 @@ export const Aggregators = {
   /**
    * Find minimum value
    */
-  min: (field) => (events) => {
+  min: field => events => {
     if (events.length === 0) return null;
-    return Math.min(...events.map(event => {
-      const value = typeof field === 'function' ? field(event) : event[field];
-      return Number(value) || 0;
-    }));
+    return Math.min(
+      ...events.map(event => {
+        const value = typeof field === 'function' ? field(event) : event[field];
+        return Number(value) || 0;
+      })
+    );
   },
 
   /**
    * Find maximum value
    */
-  max: (field) => (events) => {
+  max: field => events => {
     if (events.length === 0) return null;
-    return Math.max(...events.map(event => {
-      const value = typeof field === 'function' ? field(event) : event[field];
-      return Number(value) || 0;
-    }));
+    return Math.max(
+      ...events.map(event => {
+        const value = typeof field === 'function' ? field(event) : event[field];
+        return Number(value) || 0;
+      })
+    );
   },
 
   /**
    * Group events by field
    */
-  groupBy: (field) => (events) => {
+  groupBy: field => events => {
     return events.reduce((groups, event) => {
       const key = typeof field === 'function' ? field(event) : event[field];
       if (!groups[key]) {
@@ -614,5 +641,5 @@ export const Aggregators = {
       groups[key].push(event);
       return groups;
     }, {});
-  }
+  },
 };

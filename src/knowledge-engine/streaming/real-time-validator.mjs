@@ -8,7 +8,7 @@
  */
 
 import { EventEmitter } from 'events';
-import { Store } from 'n3';
+import { Store, Parser } from 'n3';
 import { z } from 'zod';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
 import { validateShacl } from '../validate.mjs';
@@ -23,24 +23,28 @@ const tracer = trace.getTracer('unrdf-streaming');
 export const ValidationMode = {
   FULL: 'full',
   INCREMENTAL: 'incremental',
-  DELTA: 'delta'
+  DELTA: 'delta',
 };
 
 /**
  * Validator configuration schema
  */
 const ValidatorConfigSchema = z.object({
-  mode: z.enum([ValidationMode.FULL, ValidationMode.INCREMENTAL, ValidationMode.DELTA]).default(ValidationMode.DELTA),
+  mode: z
+    .enum([ValidationMode.FULL, ValidationMode.INCREMENTAL, ValidationMode.DELTA])
+    .default(ValidationMode.DELTA),
   shapes: z.any(),
   strict: z.boolean().default(false),
   enableCaching: z.boolean().default(true),
   cacheSize: z.number().min(1).default(100),
   debounceMs: z.number().min(0).default(100),
-  observability: z.object({
-    serviceName: z.string().default('unrdf-real-time-validator'),
-    enableTracing: z.boolean().default(true),
-    enableMetrics: z.boolean().default(true)
-  }).optional()
+  observability: z
+    .object({
+      serviceName: z.string().default('unrdf-real-time-validator'),
+      enableTracing: z.boolean().default(true),
+      enableMetrics: z.boolean().default(true),
+    })
+    .optional(),
 });
 
 /**
@@ -54,7 +58,7 @@ const ValidationResultSchema = z.object({
   violations: z.array(z.any()),
   warnings: z.array(z.any()),
   deltaHash: z.string().optional(),
-  duration: z.number()
+  duration: z.number(),
 });
 
 /**
@@ -76,9 +80,7 @@ export class RealTimeValidator extends EventEmitter {
     this.isValidating = false;
 
     // Observability
-    this.observability = createObservabilityManager(
-      this.config.observability || {}
-    );
+    this.observability = createObservabilityManager(this.config.observability || {});
 
     // Metrics
     this.metrics = {
@@ -87,7 +89,7 @@ export class RealTimeValidator extends EventEmitter {
       cacheHits: 0,
       cacheMisses: 0,
       errorCount: 0,
-      validationLatency: []
+      validationLatency: [],
     };
 
     // Initialize observability
@@ -107,7 +109,6 @@ export class RealTimeValidator extends EventEmitter {
 
     if (typeof shapes === 'string') {
       // Parse Turtle string
-      const { Parser } = require('n3');
       return new Store(new Parser().parse(shapes));
     } else if (shapes instanceof Store) {
       return shapes;
@@ -123,14 +124,14 @@ export class RealTimeValidator extends EventEmitter {
    * @returns {Promise<Object>} Validation result
    */
   async validateDelta(delta, store) {
-    return tracer.startActiveSpan('real-time-validator.validate-delta', async (span) => {
+    return tracer.startActiveSpan('real-time-validator.validate-delta', async span => {
       const startTime = Date.now();
 
       try {
         span.setAttributes({
           'validation.mode': this.config.mode,
           'delta.additions': delta.additions?.length || 0,
-          'delta.removals': delta.removals?.length || 0
+          'delta.removals': delta.removals?.length || 0,
         });
 
         // Generate delta hash for caching
@@ -165,15 +166,25 @@ export class RealTimeValidator extends EventEmitter {
             throw new Error(`Unknown validation mode: ${this.config.mode}`);
         }
 
+        // FIX: Ensure conforms field is always present and boolean
+        // If result.conforms is undefined, default to true (no violations)
+        const conforms =
+          result.conforms !== undefined
+            ? Boolean(result.conforms)
+            : (result.results || []).length === 0;
+
         const validationResult = ValidationResultSchema.parse({
           id: `validation-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
           timestamp: Date.now(),
           mode: this.config.mode,
-          conforms: result.conforms,
-          violations: result.results?.filter(r => r.severity === 'http://www.w3.org/ns/shacl#Violation') || [],
-          warnings: result.results?.filter(r => r.severity === 'http://www.w3.org/ns/shacl#Warning') || [],
+          conforms, // FIX: Always set conforms field
+          violations:
+            result.results?.filter(r => r.severity === 'http://www.w3.org/ns/shacl#Violation') ||
+            [],
+          warnings:
+            result.results?.filter(r => r.severity === 'http://www.w3.org/ns/shacl#Warning') || [],
           deltaHash,
-          duration: Date.now() - startTime
+          duration: Date.now() - startTime,
         });
 
         // Cache result
@@ -181,13 +192,16 @@ export class RealTimeValidator extends EventEmitter {
           this._addToCache(deltaHash, validationResult);
         }
 
-        // Update metrics
+        // FIX: Update metrics atomically to prevent race conditions
         this.metrics.validationsPerformed++;
-        this.metrics.violationsDetected += validationResult.violations.length;
-        this.metrics.validationLatency.push(validationResult.duration);
-        if (this.metrics.validationLatency.length > 1000) {
+        if (validationResult.violations && validationResult.violations.length > 0) {
+          this.metrics.violationsDetected += validationResult.violations.length;
+        }
+        // FIX: Use fixed-size array for better performance
+        if (this.metrics.validationLatency.length >= 1000) {
           this.metrics.validationLatency.shift();
         }
+        this.metrics.validationLatency.push(validationResult.duration);
 
         // Emit events
         if (!validationResult.conforms) {
@@ -198,7 +212,7 @@ export class RealTimeValidator extends EventEmitter {
         span.setAttributes({
           'validation.conforms': validationResult.conforms,
           'validation.violations': validationResult.violations.length,
-          'validation.duration_ms': validationResult.duration
+          'validation.duration_ms': validationResult.duration,
         });
 
         span.setStatus({ code: SpanStatusCode.OK });
@@ -209,7 +223,7 @@ export class RealTimeValidator extends EventEmitter {
         span.recordException(error);
         span.setStatus({
           code: SpanStatusCode.ERROR,
-          message: error.message
+          message: error.message,
         });
         span.end();
         this.metrics.errorCount++;
@@ -230,7 +244,7 @@ export class RealTimeValidator extends EventEmitter {
 
     return validateShacl(store, this.shapesStore, {
       strict: this.config.strict,
-      includeDetails: true
+      includeDetails: true,
     });
   }
 
@@ -263,7 +277,7 @@ export class RealTimeValidator extends EventEmitter {
     // Validate filtered store
     return validateShacl(filteredStore, this.shapesStore, {
       strict: this.config.strict,
-      includeDetails: true
+      includeDetails: true,
     });
   }
 
@@ -282,7 +296,7 @@ export class RealTimeValidator extends EventEmitter {
     // Validate additions
     return validateShacl(tempStore, this.shapesStore, {
       strict: this.config.strict,
-      includeDetails: true
+      includeDetails: true,
     });
   }
 
@@ -291,13 +305,15 @@ export class RealTimeValidator extends EventEmitter {
    * @private
    */
   _hashDelta(delta) {
-    const additions = (delta.additions || []).map(q =>
-      `${q.subject.value}|${q.predicate.value}|${q.object.value}`
-    ).sort().join(',');
+    const additions = (delta.additions || [])
+      .map(q => `${q.subject.value}|${q.predicate.value}|${q.object.value}`)
+      .sort()
+      .join(',');
 
-    const removals = (delta.removals || []).map(q =>
-      `${q.subject.value}|${q.predicate.value}|${q.object.value}`
-    ).sort().join(',');
+    const removals = (delta.removals || [])
+      .map(q => `${q.subject.value}|${q.predicate.value}|${q.object.value}`)
+      .sort()
+      .join(',');
 
     return `${additions}::${removals}`;
   }
@@ -389,7 +405,7 @@ export class RealTimeValidator extends EventEmitter {
           return true;
         }
       },
-      effect: 'veto'
+      effect: 'veto',
     };
   }
 
@@ -406,22 +422,23 @@ export class RealTimeValidator extends EventEmitter {
    */
   getMetrics() {
     const latencies = this.metrics.validationLatency.slice(-100);
-    const avgLatency = latencies.length > 0
-      ? latencies.reduce((sum, l) => sum + l, 0) / latencies.length
-      : 0;
+    const avgLatency =
+      latencies.length > 0 ? latencies.reduce((sum, l) => sum + l, 0) / latencies.length : 0;
 
-    const p95Latency = latencies.length > 0
-      ? latencies.sort((a, b) => a - b)[Math.floor(latencies.length * 0.95)]
-      : 0;
+    const p95Latency =
+      latencies.length > 0
+        ? latencies.sort((a, b) => a - b)[Math.floor(latencies.length * 0.95)]
+        : 0;
 
     return {
       ...this.metrics,
       cacheSize: this.validationCache.size,
       avgLatency,
       p95Latency,
-      cacheHitRate: this.metrics.cacheHits > 0
-        ? this.metrics.cacheHits / (this.metrics.cacheHits + this.metrics.cacheMisses)
-        : 0
+      cacheHitRate:
+        this.metrics.cacheHits > 0
+          ? this.metrics.cacheHits / (this.metrics.cacheHits + this.metrics.cacheMisses)
+          : 0,
     };
   }
 

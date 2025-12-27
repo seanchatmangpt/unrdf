@@ -1,7 +1,7 @@
 /**
  * @file UNRDF Test Utilities
  * @module test-utils
- * 
+ *
  * @description
  * Comprehensive testing utilities for UNRDF knowledge engine with
  * scenario DSL, fluent assertions, and helper functions.
@@ -10,9 +10,9 @@
 import { Store } from 'n3';
 import { randomUUID } from 'crypto';
 import { KnowledgeHookManager } from '../knowledge-engine/knowledge-hook-manager.mjs';
-import { PolicyPackManager } from '../knowledge-engine/policy-pack.mjs';
-import { createLockchainWriter } from '../knowledge-engine/lockchain-writer.mjs';
-import { createEffectSandbox } from '../knowledge-engine/effect-sandbox.mjs';
+import { _PolicyPackManager } from '../knowledge-engine/policy-pack.mjs';
+import { _createLockchainWriter } from '../knowledge-engine/lockchain-writer.mjs';
+import { _createEffectSandbox } from '../knowledge-engine/effect-sandbox.mjs';
 import { z } from 'zod';
 
 /**
@@ -23,23 +23,27 @@ const TestScenarioSchema = z.object({
   description: z.string().optional(),
   setup: z.function().optional().nullable(),
   teardown: z.function().optional().nullable(),
-  steps: z.array(z.object({
-    name: z.string().min(1),
-    action: z.function(),
-    assertions: z.array(z.function()).optional()
-  })).min(1)
+  steps: z
+    .array(
+      z.object({
+        name: z.string().min(1),
+        action: z.function(),
+        assertions: z.array(z.function()).optional(),
+      })
+    )
+    .min(1),
 });
 
 /**
  * Schema for test context
  */
-const TestContextSchema = z.object({
+const _TestContextSchema = z.object({
   store: z.any(), // Store instance
   manager: z.any(), // KnowledgeHookManager instance
   policyPackManager: z.any().optional(), // PolicyPackManager instance
   lockchainWriter: z.any().optional(), // LockchainWriter instance
   sandbox: z.any().optional(), // EffectSandbox instance
-  metadata: z.record(z.any()).optional()
+  metadata: z.record(z.any()).optional(),
 });
 
 /**
@@ -97,14 +101,14 @@ export class TestScenario {
    * @param {Object} [options] - Execution options
    * @returns {Promise<Object>} Execution result
    */
-  async execute(options = {}) {
+  async execute(_options = {}) {
     const result = {
       name: this.name,
       description: this.description,
       success: true,
       steps: [],
       errors: [],
-      duration: 0
+      duration: 0,
     };
 
     const startTime = Date.now();
@@ -117,11 +121,13 @@ export class TestScenario {
           description: this.description,
           setup: this.setup,
           teardown: this.teardown,
-          steps: this.steps
+          steps: this.steps,
         });
       } catch (validationError) {
         if (validationError.issues) {
-          throw new Error(`Invalid scenario: ${validationError.issues.map(e => e.message).join(', ')}`);
+          throw new Error(
+            `Invalid scenario: ${validationError.issues.map(e => e.message).join(', ')}`
+          );
         }
         throw validationError;
       }
@@ -146,7 +152,6 @@ export class TestScenario {
       if (this.teardown) {
         await this.teardown(this.context);
       }
-
     } catch (error) {
       result.success = false;
       result.errors.push(error.message);
@@ -168,7 +173,7 @@ export class TestScenario {
       success: true,
       error: null,
       assertions: step.assertions || [],
-      duration: 0
+      duration: 0,
     };
 
     const startTime = Date.now();
@@ -185,12 +190,12 @@ export class TestScenario {
             const assertionResult = await assertion(this.context, actionResult);
             stepResult.assertions.push({
               success: true,
-              result: assertionResult
+              result: assertionResult,
             });
           } catch (assertionError) {
             stepResult.assertions.push({
               success: false,
-              error: assertionError.message
+              error: assertionError.message,
             });
             stepResult.success = false;
           }
@@ -199,7 +204,6 @@ export class TestScenario {
         // Initialize empty assertions array if not provided
         stepResult.assertions = [];
       }
-
     } catch (error) {
       stepResult.success = false;
       stepResult.error = error.message;
@@ -357,7 +361,9 @@ export class FluentAssertions {
     }
 
     if (expectedValue !== undefined && this.result[property] !== expectedValue) {
-      throw new Error(`Expected property "${property}" to be ${expectedValue}, got ${this.result[property]}`);
+      throw new Error(
+        `Expected property "${property}" to be ${expectedValue}, got ${this.result[property]}`
+      );
     }
     return this;
   }
@@ -399,7 +405,9 @@ export class FluentAssertions {
     }
 
     if (this.result.duration > maxDuration) {
-      throw new Error(`Expected duration to be within ${maxDuration}ms, got ${this.result.duration}ms`);
+      throw new Error(
+        `Expected duration to be within ${maxDuration}ms, got ${this.result.duration}ms`
+      );
     }
     return this;
   }
@@ -415,7 +423,7 @@ export class TestContextBuilder {
   constructor() {
     this.context = {
       store: new Store(),
-      metadata: {}
+      metadata: {},
     };
   }
 
@@ -517,7 +525,7 @@ export const TestHelpers = {
       subject: { value: subject, termType: 'NamedNode' },
       predicate: { value: predicate, termType: 'NamedNode' },
       object: { value: object, termType: 'NamedNode' },
-      graph: graph ? { value: graph, termType: 'NamedNode' } : undefined
+      graph: graph ? { value: graph, termType: 'NamedNode' } : undefined,
     };
   },
 
@@ -528,11 +536,11 @@ export const TestHelpers = {
    * @returns {Object} Transaction delta
    */
   createDelta(additions, removals = []) {
-    return { 
-      additions, 
+    return {
+      additions,
       removals,
       id: randomUUID(),
-      timestamp: new Date()
+      timestamp: new Date(),
     };
   },
 
@@ -549,11 +557,14 @@ export const TestHelpers = {
       meta: {
         name,
         description: options.description || `Test hook ${name}`,
-        version: options.version || '1.0.0'
+        version: options.version || '1.0.0',
       },
-      when: when || { kind: 'sparql-ask', ref: { uri: 'file://test.rq', sha256: 'test' } },
+      when: when || {
+        kind: 'sparql-ask',
+        ref: { uri: 'file://test.rq', sha256: 'test' },
+      },
       run,
-      ...options
+      ...options,
     };
   },
 
@@ -572,21 +583,21 @@ export const TestHelpers = {
         version: options.version || '1.0.0',
         description: options.description || `Test policy pack ${name}`,
         author: options.author || 'test',
-        license: options.license || 'MIT'
+        license: options.license || 'MIT',
       },
       config: {
         enabled: true,
         priority: options.priority || 50,
-        strictMode: options.strictMode || false
+        strictMode: options.strictMode || false,
       },
       hooks: hooks.map(hook => ({
         name: hook.meta.name,
         file: `${hook.meta.name}.mjs`,
         enabled: true,
-        priority: hook.priority || 50
-      }))
+        priority: hook.priority || 50,
+      })),
     };
-  }
+  },
 };
 
 /**

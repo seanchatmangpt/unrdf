@@ -10,8 +10,8 @@
  * @license MIT
  */
 
-import { writeFile, mkdir, access, rm } from 'node:fs/promises';
-import { createReadStream, createWriteStream } from 'node:fs';
+import { writeFile, _mkdir, _access, rm } from 'node:fs/promises';
+import { createReadStream, _createWriteStream } from 'node:fs';
 import { createGunzip } from 'node:zlib';
 import { join } from 'node:path';
 import { z } from 'zod';
@@ -26,7 +26,7 @@ const RestoreOptionsSchema = z.object({
   target: z.string(),
   overwrite: z.boolean().default(false),
   validate: z.boolean().default(true),
-  createBackup: z.boolean().default(true)
+  createBackup: z.boolean().default(true),
 });
 
 /**
@@ -38,7 +38,7 @@ const RestoreResultSchema = z.object({
   graphCount: z.number(),
   filesRestored: z.number(),
   duration: z.number(),
-  validated: z.boolean()
+  validated: z.boolean(),
 });
 
 /**
@@ -67,9 +67,9 @@ export async function restoreStore(backupPath, options) {
   await defaultObservabilityManager.initialize();
 
   const transactionId = `restore-${Date.now()}`;
-  const spanContext = defaultObservabilityManager.startTransactionSpan(transactionId, {
-    'operation': 'store.restore',
-    'backup.path': backupPath
+  const _spanContext = defaultObservabilityManager.startTransactionSpan(transactionId, {
+    operation: 'store.restore',
+    'backup.path': backupPath,
   });
 
   const startTime = Date.now();
@@ -87,13 +87,15 @@ export async function restoreStore(backupPath, options) {
     // Check if target exists
     const targetExists = await fileExists(opts.target);
     if (targetExists && !opts.overwrite) {
-      throw new Error(`Target directory already exists: ${opts.target}. Use --overwrite to replace.`);
+      throw new Error(
+        `Target directory already exists: ${opts.target}. Use --overwrite to replace.`
+      );
     }
 
     // Backup existing store if requested
     if (targetExists && opts.createBackup) {
       console.log('📦 Creating safety backup of existing store...');
-      const safetyBackupPath = `${opts.target}-backup-${Date.now()}.tar.gz`;
+      const _safetyBackupPath = `${opts.target}-backup-${Date.now()}.tar.gz`;
       // We would call backupStore here, but to avoid circular dependency,
       // we'll just rename the directory
       await fs.rename(opts.target, `${opts.target}-pre-restore-${Date.now()}`);
@@ -127,7 +129,7 @@ export async function restoreStore(backupPath, options) {
       graphCount: stats.graphCount,
       filesRestored: stats.filesRestored,
       duration,
-      validated: opts.validate
+      validated: opts.validate,
     });
 
     // End span successfully
@@ -135,15 +137,15 @@ export async function restoreStore(backupPath, options) {
       'restore.quads': stats.quadCount,
       'restore.graphs': stats.graphCount,
       'restore.files': stats.filesRestored,
-      'restore.duration_ms': duration
+      'restore.duration_ms': duration,
     });
 
     return result;
   } catch (error) {
     // Record error
     defaultObservabilityManager.recordError(error, {
-      'operation': 'store.restore',
-      'backup.path': backupPath
+      operation: 'store.restore',
+      'backup.path': backupPath,
     });
 
     // End span with error
@@ -265,6 +267,6 @@ async function restoreFiles(targetPath, backupData) {
   return {
     quadCount,
     graphCount: graphs.size,
-    filesRestored
+    filesRestored,
   };
 }

@@ -31,7 +31,7 @@ export const deleteCommand = defineCommand({
     },
   },
   async run(ctx) {
-    return tracer.startActiveSpan('cli.context.delete', async (span) => {
+    return tracer.startActiveSpan('cli.context.delete', async span => {
       try {
         const { name } = ctx.args;
 

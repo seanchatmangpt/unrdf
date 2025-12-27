@@ -19,21 +19,21 @@ describe('Performance Regression Tests', () => {
       parse: {
         '1k-triples': 500, // ms
         '10k-triples': 3000,
-        '100k-triples': 25000
+        '100k-triples': 25000,
       },
       query: {
         'simple-select': 50,
         'complex-join': 200,
-        'aggregation': 300
+        aggregation: 300,
       },
       validate: {
         'shacl-basic': 100,
-        'shacl-complex': 500
+        'shacl-complex': 500,
       },
       storage: {
         'indexeddb-write-1k': 1000,
-        'indexeddb-read-1k': 500
-      }
+        'indexeddb-read-1k': 500,
+      },
     };
   });
 
@@ -49,7 +49,9 @@ describe('Performance Regression Tests', () => {
       const baseline = performanceBaseline.parse['1k-triples'];
       const regressionThreshold = baseline * 1.1; // Allow 10% regression
 
-      expect(duration, 'Parsing 1K triples should be within baseline').toBeLessThan(regressionThreshold);
+      expect(duration, 'Parsing 1K triples should be within baseline').toBeLessThan(
+        regressionThreshold
+      );
     });
 
     it('should parse 10K triples within baseline (< 3000ms)', () => {
@@ -303,13 +305,11 @@ describe('Performance Regression Tests', () => {
       const operations = {
         parse: measureOperation(() => parseTurtle(generateTurtle(1000))),
         query: measureOperation(() => executeQuery('SELECT * WHERE { ?s ?p ?o } LIMIT 10')),
-        validate: measureOperation(() => validateSHACL(generateTurtle(100), generateBasicShapes()))
+        validate: measureOperation(() => validateSHACL(generateTurtle(100), generateBasicShapes())),
       };
 
       // Identify slowest operation
-      const slowest = Object.entries(operations).reduce((a, b) =>
-        a[1] > b[1] ? a : b
-      );
+      const slowest = Object.entries(operations).reduce((a, b) => (a[1] > b[1] ? a : b));
 
       expect(slowest[0]).toBeDefined();
       expect(slowest[1]).toBeGreaterThan(0);
@@ -369,7 +369,7 @@ function generateQuads(count) {
       subject: { value: `http://example.org/s${i}` },
       predicate: { value: 'http://example.org/p' },
       object: { value: `value${i}` },
-      graph: { value: 'http://example.org/g' }
+      graph: { value: 'http://example.org/g' },
     });
   }
   return quads;
@@ -423,12 +423,12 @@ function parseTurtle(turtle) {
   return quads;
 }
 
-function executeQuery(query) {
+function executeQuery(_query) {
   // Mock query execution
   return [];
 }
 
-function validateSHACL(data, shapes) {
+function validateSHACL(_data, _shapes) {
   // Mock SHACL validation
   return { conforms: true, violations: [] };
 }
@@ -437,7 +437,7 @@ function createTestStore(quadCount) {
   return { quads: generateQuads(quadCount) };
 }
 
-function writeToIndexedDB(quads) {
+function writeToIndexedDB(_quads) {
   // Mock IndexedDB write
   return Promise.resolve();
 }

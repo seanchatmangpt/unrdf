@@ -15,6 +15,8 @@
 
 import { defineCommand, runMain } from 'citty';
 import { storeCommand } from './commands/store.mjs';
+import { initCommand } from './commands/init.mjs';
+import { autonomicCommand } from './commands/autonomic.mjs';
 
 /**
  * Main CLI application
@@ -23,11 +25,13 @@ const main = defineCommand({
   meta: {
     name: 'unrdf',
     version: '2.1.1',
-    description: 'Autonomic RDF framework CLI - Knowledge Hooks, policy packs, and audit trails'
+    description: 'Autonomic RDF framework CLI - Knowledge Hooks, policy packs, and audit trails',
   },
   subCommands: {
-    store: storeCommand
-  }
+    init: initCommand,
+    autonomic: autonomicCommand,
+    store: storeCommand,
+  },
 });
 
 // Run the CLI
