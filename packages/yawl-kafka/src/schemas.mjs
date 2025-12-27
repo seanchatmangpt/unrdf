@@ -258,6 +258,9 @@ export function deserializeEvent(eventType, buffer) {
  * Supports forward and backward compatibility
  */
 export class SchemaRegistry {
+  /**
+   * Create a new Schema Registry
+   */
   constructor() {
     /** @type {Map<string, Map<string, SchemaVersion>>} */
     this.schemas = new Map();

@@ -29,7 +29,7 @@ const TrainingMetricsSchema = z.object({
 
 // RDF Namespaces
 const ML_NS = 'http://ml-versioning.io/ontology#';
-const ML_MODEL_NS = 'http://ml-versioning.io/model/';
+const _ML_MODEL_NS = 'http://ml-versioning.io/model/';
 const ML_VERSION_NS = 'http://ml-versioning.io/version/';
 
 /**

@@ -306,11 +306,19 @@ export function validateSchema(schema) {
  * Migration status tracker
  */
 export class MigrationTracker {
+  /**
+   * Create a new Migration Tracker
+   */
   constructor() {
     this.warnings = [];
     this.start = Date.now();
   }
 
+  /**
+   * Track an API migration
+   * @param {string} oldAPI - Old API name
+   * @param {string} newAPI - New API name
+   */
   track(oldAPI, newAPI) {
     this.warnings.push({
       oldAPI,
@@ -319,6 +327,10 @@ export class MigrationTracker {
     });
   }
 
+  /**
+   * Generate migration report
+   * @returns {Object} Migration report
+   */
   report() {
     const unique = [...new Set(this.warnings.map((w) => w.oldAPI))];
     const elapsed = Date.now() - this.start;
@@ -331,6 +343,9 @@ export class MigrationTracker {
     };
   }
 
+  /**
+   * Print migration summary
+   */
   summary() {
     const report = this.report();
     console.log(`

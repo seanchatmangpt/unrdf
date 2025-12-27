@@ -8,7 +8,7 @@ import assert from 'node:assert/strict';
 import { createAdapter } from '../src/adapter.mjs';
 import { RDFSchemaGenerator } from '../src/schema-generator.mjs';
 import { SPARQLQueryBuilder } from '../src/query-builder.mjs';
-import { YAWL_ONTOLOGY, WORKFLOW_INSTANCES, createWorkflowAdapter } from '../src/examples/workflow-schema.mjs';
+import { YAWL_ONTOLOGY as _YAWL_ONTOLOGY, WORKFLOW_INSTANCES as _WORKFLOW_INSTANCES, createWorkflowAdapter } from '../src/examples/workflow-schema.mjs';
 
 // Test ontology (minimal)
 const TEST_ONTOLOGY = `
