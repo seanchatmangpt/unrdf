@@ -10,3 +10,4 @@ packages:
   - 'apps/*'
   - 'examples'
   - 'AUTONOMIC_INNOVATION/agent-*'
+  - 'exploration/agents/agent-*'
