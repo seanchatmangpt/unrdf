@@ -1,1 +1,0 @@
-# Dark Energy: Productive Abstractions

@@ -1,1 +1,0 @@
-# RDF in Next.js
