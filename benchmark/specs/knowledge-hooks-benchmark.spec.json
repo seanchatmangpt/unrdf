@@ -1,0 +1,840 @@
+{
+  "benchmarkSuite": {
+    "name": "Knowledge Hooks Performance Benchmark Suite",
+    "version": "1.0.0",
+    "description": "Comprehensive performance benchmarking for knowledge hooks with OTEL integration",
+    "principles": "80/20 - Focus on 5 core benchmarks that measure 80% of performance characteristics",
+    "targetFramework": "vitest + tinybench",
+    "otelVersion": "@opentelemetry/api ^1.9.0"
+  },
+
+  "benchmarks": [
+    {
+      "id": "hook-registration",
+      "name": "Hook Registration Benchmark",
+      "description": "Measure speed of registering N hooks to knowledge engine",
+      "category": "registration",
+      "priority": 1,
+      "scenarios": [
+        {
+          "name": "small-batch",
+          "description": "Register 100 hooks sequentially",
+          "parameters": {
+            "hookCount": 100,
+            "complexity": "simple",
+            "concurrency": 1,
+            "warmupRuns": 10,
+            "measurementRuns": 100,
+            "timeout": 5000
+          },
+          "expectedTargets": {
+            "avgLatency": "< 0.5ms per hook",
+            "totalDuration": "< 50ms",
+            "throughput": "> 2000 hooks/sec",
+            "memoryOverhead": "< 5MB",
+            "errorRate": "< 0.01%"
+          }
+        },
+        {
+          "name": "medium-batch",
+          "description": "Register 1000 hooks sequentially",
+          "parameters": {
+            "hookCount": 1000,
+            "complexity": "medium",
+            "concurrency": 1,
+            "warmupRuns": 5,
+            "measurementRuns": 50,
+            "timeout": 10000
+          },
+          "expectedTargets": {
+            "avgLatency": "< 1ms per hook",
+            "p95Latency": "< 2ms per hook",
+            "totalDuration": "< 1000ms",
+            "throughput": "> 1000 hooks/sec",
+            "memoryOverhead": "< 25MB",
+            "errorRate": "< 0.1%"
+          }
+        },
+        {
+          "name": "large-batch",
+          "description": "Register 10000 hooks sequentially",
+          "parameters": {
+            "hookCount": 10000,
+            "complexity": "complex",
+            "concurrency": 1,
+            "warmupRuns": 2,
+            "measurementRuns": 10,
+            "timeout": 30000
+          },
+          "expectedTargets": {
+            "avgLatency": "< 1ms per hook",
+            "p95Latency": "< 3ms per hook",
+            "p99Latency": "< 5ms per hook",
+            "totalDuration": "< 10000ms",
+            "throughput": "> 1000 hooks/sec",
+            "memoryOverhead": "< 100MB",
+            "errorRate": "< 0.1%"
+          }
+        }
+      ],
+      "otelSpans": {
+        "rootSpan": "benchmark.hook-registration",
+        "requiredAttributes": [
+          "benchmark.name",
+          "benchmark.scenario",
+          "benchmark.hookCount",
+          "benchmark.complexity",
+          "benchmark.duration.ms",
+          "benchmark.throughput.ops_per_sec",
+          "benchmark.memory.peak.mb",
+          "benchmark.errorRate"
+        ],
+        "childSpans": [
+          "hook.register",
+          "hook.validate",
+          "memory.measure"
+        ]
+      },
+      "metricsToCollect": [
+        "registration_latency_ms",
+        "registration_throughput_ops_per_sec",
+        "memory_peak_mb",
+        "memory_average_mb",
+        "gc_count",
+        "gc_duration_ms",
+        "error_count",
+        "timeout_count"
+      ]
+    },
+
+    {
+      "id": "hook-execution",
+      "name": "Hook Execution Benchmark",
+      "description": "Measure execution latency of hooks under various conditions",
+      "category": "execution",
+      "priority": 1,
+      "scenarios": [
+        {
+          "name": "simple-hook-execution",
+          "description": "Execute simple hooks 1000 times",
+          "parameters": {
+            "executionCount": 1000,
+            "hookComplexity": "simple",
+            "payloadSize": "small",
+            "concurrency": 1,
+            "warmupRuns": 50,
+            "measurementRuns": 1000,
+            "timeout": 10000
+          },
+          "hookDefinition": {
+            "type": "simple",
+            "operations": ["validate", "log"],
+            "dependencies": [],
+            "avgExecutionTime": "< 1ms"
+          },
+          "expectedTargets": {
+            "p50Latency": "< 1ms",
+            "p95Latency": "< 5ms",
+            "p99Latency": "< 10ms",
+            "maxLatency": "< 50ms",
+            "throughput": "> 1000 ops/sec",
+            "errorRate": "< 0.1%"
+          }
+        },
+        {
+          "name": "medium-hook-execution",
+          "description": "Execute medium complexity hooks with store operations",
+          "parameters": {
+            "executionCount": 1000,
+            "hookComplexity": "medium",
+            "payloadSize": "medium",
+            "storeOperations": true,
+            "concurrency": 1,
+            "warmupRuns": 20,
+            "measurementRuns": 500,
+            "timeout": 15000
+          },
+          "hookDefinition": {
+            "type": "medium",
+            "operations": ["validate", "transform", "store.addQuad", "log"],
+            "dependencies": ["oxigraph-store"],
+            "avgExecutionTime": "< 5ms"
+          },
+          "expectedTargets": {
+            "p50Latency": "< 3ms",
+            "p95Latency": "< 8ms",
+            "p99Latency": "< 15ms",
+            "maxLatency": "< 100ms",
+            "throughput": "> 200 ops/sec",
+            "errorRate": "< 0.1%"
+          }
+        },
+        {
+          "name": "complex-hook-execution",
+          "description": "Execute complex hooks with async operations",
+          "parameters": {
+            "executionCount": 500,
+            "hookComplexity": "complex",
+            "payloadSize": "large",
+            "asyncOperations": true,
+            "storeOperations": true,
+            "concurrency": 1,
+            "warmupRuns": 10,
+            "measurementRuns": 100,
+            "timeout": 30000
+          },
+          "hookDefinition": {
+            "type": "complex",
+            "operations": ["validate", "async-fetch", "transform", "store.transaction", "notify", "log"],
+            "dependencies": ["oxigraph-store", "network"],
+            "avgExecutionTime": "< 20ms"
+          },
+          "expectedTargets": {
+            "p50Latency": "< 10ms",
+            "p95Latency": "< 25ms",
+            "p99Latency": "< 50ms",
+            "maxLatency": "< 200ms",
+            "throughput": "> 50 ops/sec",
+            "errorRate": "< 0.5%"
+          }
+        }
+      ],
+      "otelSpans": {
+        "rootSpan": "benchmark.hook-execution",
+        "requiredAttributes": [
+          "benchmark.name",
+          "benchmark.scenario",
+          "benchmark.executionCount",
+          "benchmark.complexity",
+          "benchmark.latency.p50.ms",
+          "benchmark.latency.p95.ms",
+          "benchmark.latency.p99.ms",
+          "benchmark.throughput.ops_per_sec",
+          "benchmark.errorRate"
+        ],
+        "childSpans": [
+          "hook.execute",
+          "hook.validate",
+          "hook.transform",
+          "store.operation",
+          "latency.measure"
+        ]
+      },
+      "metricsToCollect": [
+        "execution_latency_p50_ms",
+        "execution_latency_p95_ms",
+        "execution_latency_p99_ms",
+        "execution_latency_max_ms",
+        "execution_throughput_ops_per_sec",
+        "execution_error_count",
+        "execution_timeout_count",
+        "store_operation_count",
+        "async_operation_count"
+      ]
+    },
+
+    {
+      "id": "hook-validation",
+      "name": "Hook Validation Benchmark",
+      "description": "Measure validation throughput and accuracy for hook schemas",
+      "category": "validation",
+      "priority": 2,
+      "scenarios": [
+        {
+          "name": "schema-validation-throughput",
+          "description": "Validate 10000 hook schemas with Zod",
+          "parameters": {
+            "validationCount": 10000,
+            "schemaComplexity": "medium",
+            "validSchemaRatio": 0.8,
+            "invalidSchemaRatio": 0.2,
+            "concurrency": 1,
+            "warmupRuns": 100,
+            "measurementRuns": 10000,
+            "timeout": 20000
+          },
+          "validationTypes": [
+            "schema-structure",
+            "type-checking",
+            "constraint-validation",
+            "dependency-validation"
+          ],
+          "expectedTargets": {
+            "throughput": "> 10000 ops/sec",
+            "avgLatency": "< 0.1ms per validation",
+            "p99Latency": "< 1ms",
+            "accuracy": "> 99.9%",
+            "falsePositiveRate": "< 0.01%",
+            "falseNegativeRate": "< 0.01%",
+            "errorRate": "< 0.1%"
+          }
+        },
+        {
+          "name": "runtime-validation-performance",
+          "description": "Validate hook execution payloads at runtime",
+          "parameters": {
+            "validationCount": 5000,
+            "payloadComplexity": "high",
+            "validPayloadRatio": 0.9,
+            "invalidPayloadRatio": 0.1,
+            "concurrency": 1,
+            "warmupRuns": 50,
+            "measurementRuns": 5000,
+            "timeout": 15000
+          },
+          "validationTypes": [
+            "payload-structure",
+            "data-types",
+            "business-rules",
+            "security-constraints"
+          ],
+          "expectedTargets": {
+            "throughput": "> 5000 ops/sec",
+            "avgLatency": "< 0.2ms per validation",
+            "p95Latency": "< 1ms",
+            "p99Latency": "< 2ms",
+            "accuracy": "> 99.5%",
+            "errorRate": "< 0.5%"
+          }
+        }
+      ],
+      "otelSpans": {
+        "rootSpan": "benchmark.hook-validation",
+        "requiredAttributes": [
+          "benchmark.name",
+          "benchmark.scenario",
+          "benchmark.validationCount",
+          "benchmark.schemaComplexity",
+          "benchmark.throughput.ops_per_sec",
+          "benchmark.accuracy",
+          "benchmark.falsePositiveRate",
+          "benchmark.falseNegativeRate"
+        ],
+        "childSpans": [
+          "validation.schema",
+          "validation.runtime",
+          "validation.accuracy.measure"
+        ]
+      },
+      "metricsToCollect": [
+        "validation_throughput_ops_per_sec",
+        "validation_latency_avg_ms",
+        "validation_latency_p95_ms",
+        "validation_latency_p99_ms",
+        "validation_accuracy_percent",
+        "validation_false_positive_count",
+        "validation_false_negative_count",
+        "validation_error_count"
+      ]
+    },
+
+    {
+      "id": "memory-profiling",
+      "name": "Memory Profiling Benchmark",
+      "description": "Measure peak memory usage and GC pressure during operations",
+      "category": "memory",
+      "priority": 2,
+      "scenarios": [
+        {
+          "name": "memory-under-load",
+          "description": "Profile memory with 1000 hooks and 10000 executions",
+          "parameters": {
+            "hookCount": 1000,
+            "executionCount": 10000,
+            "hookComplexity": "medium",
+            "measurementInterval": 100,
+            "gcForceInterval": 1000,
+            "warmupRuns": 5,
+            "measurementRuns": 10,
+            "timeout": 60000
+          },
+          "memoryMeasurements": [
+            "heapUsed",
+            "heapTotal",
+            "external",
+            "arrayBuffers",
+            "rss"
+          ],
+          "expectedTargets": {
+            "peakMemory": "< 50MB per 1000 hooks",
+            "avgMemory": "< 30MB per 1000 hooks",
+            "memoryGrowthRate": "< 1MB per 1000 executions",
+            "gcFrequency": "< 10 GC/sec",
+            "gcPauseDuration": "< 10ms p95",
+            "memoryLeakRate": "< 0.1MB/min"
+          }
+        },
+        {
+          "name": "memory-stress-test",
+          "description": "Stress test with 10000 hooks and 100000 executions",
+          "parameters": {
+            "hookCount": 10000,
+            "executionCount": 100000,
+            "hookComplexity": "simple",
+            "measurementInterval": 1000,
+            "gcForceInterval": 5000,
+            "warmupRuns": 2,
+            "measurementRuns": 5,
+            "timeout": 300000
+          },
+          "memoryMeasurements": [
+            "heapUsed",
+            "heapTotal",
+            "external",
+            "arrayBuffers",
+            "rss"
+          ],
+          "expectedTargets": {
+            "peakMemory": "< 500MB",
+            "avgMemory": "< 300MB",
+            "memoryGrowthRate": "< 5MB per 10000 executions",
+            "gcFrequency": "< 20 GC/sec",
+            "gcPauseDuration": "< 50ms p99",
+            "memoryLeakRate": "< 1MB/min",
+            "oomErrorRate": "< 0.01%"
+          }
+        }
+      ],
+      "otelSpans": {
+        "rootSpan": "benchmark.memory-profiling",
+        "requiredAttributes": [
+          "benchmark.name",
+          "benchmark.scenario",
+          "benchmark.hookCount",
+          "benchmark.executionCount",
+          "benchmark.memory.peak.mb",
+          "benchmark.memory.average.mb",
+          "benchmark.memory.growthRate.mb_per_1k_ops",
+          "benchmark.gc.frequency.per_sec",
+          "benchmark.gc.pauseDuration.p95.ms"
+        ],
+        "childSpans": [
+          "memory.measure",
+          "memory.gc.track",
+          "memory.leak.detect"
+        ]
+      },
+      "metricsToCollect": [
+        "memory_peak_mb",
+        "memory_average_mb",
+        "memory_heap_used_mb",
+        "memory_heap_total_mb",
+        "memory_rss_mb",
+        "memory_growth_rate_mb_per_min",
+        "gc_count",
+        "gc_duration_total_ms",
+        "gc_pause_p50_ms",
+        "gc_pause_p95_ms",
+        "gc_pause_p99_ms",
+        "memory_leak_detected"
+      ]
+    },
+
+    {
+      "id": "concurrent-execution",
+      "name": "Concurrent Hook Execution Benchmark",
+      "description": "Measure throughput with multiple parallel hook executions",
+      "category": "concurrency",
+      "priority": 1,
+      "scenarios": [
+        {
+          "name": "low-concurrency",
+          "description": "Execute hooks with 10 concurrent workers",
+          "parameters": {
+            "concurrencyLevel": 10,
+            "executionsPerWorker": 100,
+            "totalExecutions": 1000,
+            "hookComplexity": "medium",
+            "warmupRuns": 5,
+            "measurementRuns": 50,
+            "timeout": 30000
+          },
+          "concurrencyStrategy": "worker-pool",
+          "expectedTargets": {
+            "totalThroughput": "> 500 ops/sec",
+            "perWorkerThroughput": "> 50 ops/sec",
+            "p50Latency": "< 20ms",
+            "p95Latency": "< 50ms",
+            "p99Latency": "< 100ms",
+            "contentionRate": "< 5%",
+            "errorRate": "< 0.1%"
+          }
+        },
+        {
+          "name": "medium-concurrency",
+          "description": "Execute hooks with 100 concurrent workers",
+          "parameters": {
+            "concurrencyLevel": 100,
+            "executionsPerWorker": 100,
+            "totalExecutions": 10000,
+            "hookComplexity": "medium",
+            "warmupRuns": 2,
+            "measurementRuns": 20,
+            "timeout": 60000
+          },
+          "concurrencyStrategy": "worker-pool",
+          "expectedTargets": {
+            "totalThroughput": "> 2000 ops/sec",
+            "perWorkerThroughput": "> 20 ops/sec",
+            "p50Latency": "< 50ms",
+            "p95Latency": "< 150ms",
+            "p99Latency": "< 300ms",
+            "contentionRate": "< 15%",
+            "errorRate": "< 0.5%"
+          }
+        },
+        {
+          "name": "high-concurrency",
+          "description": "Execute hooks with 1000 concurrent workers (stress test)",
+          "parameters": {
+            "concurrencyLevel": 1000,
+            "executionsPerWorker": 10,
+            "totalExecutions": 10000,
+            "hookComplexity": "simple",
+            "warmupRuns": 1,
+            "measurementRuns": 5,
+            "timeout": 120000
+          },
+          "concurrencyStrategy": "worker-pool",
+          "expectedTargets": {
+            "totalThroughput": "> 1000 ops/sec",
+            "perWorkerThroughput": "> 1 ops/sec",
+            "p50Latency": "< 100ms",
+            "p95Latency": "< 500ms",
+            "p99Latency": "< 1000ms",
+            "contentionRate": "< 30%",
+            "errorRate": "< 2%",
+            "timeoutRate": "< 1%"
+          }
+        }
+      ],
+      "otelSpans": {
+        "rootSpan": "benchmark.concurrent-execution",
+        "requiredAttributes": [
+          "benchmark.name",
+          "benchmark.scenario",
+          "benchmark.concurrencyLevel",
+          "benchmark.totalExecutions",
+          "benchmark.throughput.total.ops_per_sec",
+          "benchmark.throughput.perWorker.ops_per_sec",
+          "benchmark.latency.p95.ms",
+          "benchmark.contentionRate",
+          "benchmark.errorRate"
+        ],
+        "childSpans": [
+          "concurrency.worker.spawn",
+          "concurrency.execution",
+          "concurrency.contention.measure"
+        ]
+      },
+      "metricsToCollect": [
+        "concurrent_throughput_total_ops_per_sec",
+        "concurrent_throughput_per_worker_ops_per_sec",
+        "concurrent_latency_p50_ms",
+        "concurrent_latency_p95_ms",
+        "concurrent_latency_p99_ms",
+        "concurrent_contention_rate",
+        "concurrent_error_count",
+        "concurrent_timeout_count",
+        "concurrent_worker_count"
+      ]
+    }
+  ],
+
+  "globalConfiguration": {
+    "environment": {
+      "nodeVersion": ">= 18.0.0",
+      "runtime": "vitest",
+      "benchmarkLibrary": "tinybench",
+      "otelLibraries": [
+        "@opentelemetry/api",
+        "@opentelemetry/sdk-trace-node",
+        "@opentelemetry/sdk-metrics"
+      ]
+    },
+    "reporting": {
+      "outputFormats": ["json", "markdown", "html"],
+      "outputDirectory": "benchmark/results",
+      "timestampFormat": "ISO8601",
+      "includeSystemInfo": true,
+      "includeGitInfo": true,
+      "compareToBaseline": true,
+      "baselineFile": "benchmark/baseline.json"
+    },
+    "validation": {
+      "enableOtelValidation": true,
+      "requiredSpanStatus": "OK",
+      "requiredSpanAttributes": true,
+      "failOnMissingSpans": true,
+      "failOnRegressionThreshold": 0.2
+    },
+    "execution": {
+      "parallelBenchmarks": false,
+      "isolateEnvironment": true,
+      "clearCacheBetweenRuns": true,
+      "forceGCBetweenRuns": true,
+      "cpuAffinity": false
+    }
+  },
+
+  "otelIntegration": {
+    "traceCollection": {
+      "enabled": true,
+      "exporter": "console",
+      "samplingStrategy": "always",
+      "batchSize": 512,
+      "exportInterval": 5000,
+      "maxQueueSize": 2048
+    },
+    "spanRequirements": {
+      "allBenchmarks": {
+        "rootSpanRequired": true,
+        "childSpansRequired": true,
+        "spanStatusRequired": "OK",
+        "requiredCommonAttributes": [
+          "benchmark.suite.name",
+          "benchmark.suite.version",
+          "benchmark.id",
+          "benchmark.name",
+          "benchmark.category",
+          "benchmark.timestamp",
+          "benchmark.duration.ms",
+          "benchmark.status",
+          "system.hostname",
+          "system.platform",
+          "system.arch",
+          "process.pid",
+          "process.nodeVersion"
+        ]
+      },
+      "performanceSpans": {
+        "latencySpan": {
+          "name": "benchmark.latency.measure",
+          "requiredAttributes": [
+            "latency.p50.ms",
+            "latency.p95.ms",
+            "latency.p99.ms",
+            "latency.max.ms",
+            "latency.min.ms"
+          ]
+        },
+        "throughputSpan": {
+          "name": "benchmark.throughput.measure",
+          "requiredAttributes": [
+            "throughput.ops_per_sec",
+            "throughput.total_ops",
+            "throughput.duration.ms"
+          ]
+        },
+        "memorySpan": {
+          "name": "benchmark.memory.measure",
+          "requiredAttributes": [
+            "memory.peak.mb",
+            "memory.average.mb",
+            "memory.heapUsed.mb",
+            "memory.heapTotal.mb",
+            "memory.rss.mb",
+            "memory.external.mb"
+          ]
+        },
+        "errorSpan": {
+          "name": "benchmark.error.track",
+          "requiredAttributes": [
+            "error.count",
+            "error.rate",
+            "error.types",
+            "timeout.count",
+            "timeout.rate"
+          ]
+        }
+      },
+      "validationSpans": {
+        "benchmarkValidation": {
+          "name": "benchmark.validation",
+          "requiredAttributes": [
+            "validation.status",
+            "validation.score",
+            "validation.targetsMet",
+            "validation.regressionDetected",
+            "validation.baselineComparison"
+          ]
+        }
+      }
+    },
+    "errorTracking": {
+      "enabled": true,
+      "captureStackTraces": true,
+      "recordErrorSpans": true,
+      "errorAttributes": [
+        "error.type",
+        "error.message",
+        "error.stack",
+        "error.benchmark",
+        "error.scenario",
+        "error.timestamp"
+      ]
+    }
+  },
+
+  "baselineTargets": {
+    "summary": "80/20 Principle: Focus on 5 key metrics that represent 80% of performance",
+    "criticalMetrics": {
+      "hookRegistration": {
+        "metric": "Average latency per hook",
+        "target": "< 1ms",
+        "priority": "P1",
+        "reasoning": "Fast registration enables dynamic hook management"
+      },
+      "hookExecution": {
+        "metric": "P99 latency",
+        "target": "< 10ms",
+        "priority": "P1",
+        "reasoning": "Tail latency impacts user experience most"
+      },
+      "memoryEfficiency": {
+        "metric": "Peak memory per 1000 hooks",
+        "target": "< 50MB",
+        "priority": "P1",
+        "reasoning": "Memory overhead must scale linearly"
+      },
+      "validationThroughput": {
+        "metric": "Validations per second",
+        "target": "> 10000 ops/sec",
+        "priority": "P2",
+        "reasoning": "Schema validation is on critical path"
+      },
+      "errorRate": {
+        "metric": "Overall error rate",
+        "target": "< 0.1%",
+        "priority": "P1",
+        "reasoning": "Reliability is non-negotiable for production"
+      }
+    },
+    "detailedTargets": {
+      "registration": {
+        "avgLatency": "< 1ms per hook",
+        "p95Latency": "< 2ms per hook",
+        "p99Latency": "< 5ms per hook",
+        "throughput": "> 1000 hooks/sec",
+        "memoryOverhead": "< 50MB per 1000 hooks"
+      },
+      "execution": {
+        "p50Latency": "< 3ms",
+        "p95Latency": "< 8ms",
+        "p99Latency": "< 10ms",
+        "throughput": "> 100 ops/sec",
+        "errorRate": "< 0.1%"
+      },
+      "validation": {
+        "throughput": "> 10000 ops/sec",
+        "avgLatency": "< 0.1ms",
+        "accuracy": "> 99.9%",
+        "falsePositiveRate": "< 0.01%"
+      },
+      "memory": {
+        "peakMemory": "< 50MB per 1000 hooks",
+        "avgMemory": "< 30MB per 1000 hooks",
+        "gcPauseDuration": "< 10ms p95",
+        "memoryLeakRate": "< 0.1MB/min"
+      },
+      "concurrency": {
+        "throughput": "> 500 ops/sec @ 10 workers",
+        "p95Latency": "< 50ms @ 10 workers",
+        "contentionRate": "< 5% @ 10 workers",
+        "errorRate": "< 0.1%"
+      }
+    },
+    "regressionThresholds": {
+      "latency": {
+        "warning": "+10%",
+        "critical": "+20%"
+      },
+      "throughput": {
+        "warning": "-10%",
+        "critical": "-20%"
+      },
+      "memory": {
+        "warning": "+15%",
+        "critical": "+30%"
+      },
+      "errorRate": {
+        "warning": "+50%",
+        "critical": "+100%"
+      }
+    }
+  },
+
+  "implementationGuidelines": {
+    "benchmarkStructure": {
+      "setupPhase": [
+        "Initialize OTEL tracer and meter",
+        "Create root span for benchmark",
+        "Setup test data and fixtures",
+        "Warm up JIT compiler",
+        "Force initial GC",
+        "Record baseline memory"
+      ],
+      "executionPhase": [
+        "Start measurement span",
+        "Execute warmup runs (discard results)",
+        "Execute measurement runs (collect metrics)",
+        "Record latency percentiles",
+        "Record throughput",
+        "Record memory usage",
+        "Record errors and timeouts"
+      ],
+      "teardownPhase": [
+        "Force GC",
+        "Record final memory",
+        "Close measurement spans",
+        "Validate against baseline",
+        "Export OTEL traces",
+        "Generate report"
+      ]
+    },
+    "bestPractices": [
+      "Use tinybench for accurate microbenchmarking",
+      "Isolate each benchmark in separate process",
+      "Force GC between benchmarks to prevent interference",
+      "Use percentiles (p50, p95, p99) instead of just average",
+      "Measure both hot and cold path performance",
+      "Include regression detection against baseline",
+      "Record full system context (CPU, memory, Node version)",
+      "Export OTEL traces for validation",
+      "Generate human-readable reports with charts"
+    ],
+    "codeExample": {
+      "language": "javascript",
+      "framework": "vitest + tinybench",
+      "sample": "See benchmark/examples/hook-registration.benchmark.mjs"
+    }
+  },
+
+  "validationCriteria": {
+    "benchmarkPassCriteria": {
+      "allTargetsMet": "All baseline targets must be met",
+      "otelSpansValid": "All required OTEL spans must exist with OK status",
+      "noRegressions": "No critical regressions vs baseline (< 20%)",
+      "minSampleSize": "Minimum 100 measurements per scenario",
+      "statisticalSignificance": "p-value < 0.05 for comparisons"
+    },
+    "otelValidationChecks": [
+      "Root span exists for each benchmark",
+      "All required attributes present",
+      "Span status is OK (no errors)",
+      "Child spans present for major operations",
+      "Metrics exported correctly",
+      "Trace sampling is consistent"
+    ],
+    "reportRequirements": [
+      "JSON results file with all metrics",
+      "Markdown summary with pass/fail status",
+      "Comparison table vs baseline",
+      "Charts for latency distribution",
+      "Charts for throughput over time",
+      "Memory profile visualization",
+      "OTEL trace export file",
+      "System information included"
+    ]
+  }
+}

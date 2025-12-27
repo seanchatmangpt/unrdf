@@ -1,403 +1,633 @@
-# UNRDF Comprehensive Benchmark Suite
+# Knowledge Hooks Performance Benchmarks
 
-Quantitative performance analysis for all UNRDF innovations with statistical significance, reproducibility, and regression detection.
+Comprehensive benchmark suite for measuring Knowledge Hooks performance with OpenTelemetry integration.
 
 ## Overview
 
-This benchmark suite provides comprehensive performance testing across all major components of the UNRDF platform:
+This benchmark suite implements the **80/20 principle**: 5 core benchmarks that measure 80% of performance characteristics:
 
-- **Core Performance**: Workflow, engine, and SPARQL operations
-- **Integration**: Federation, streaming, and knowledge engine
-- **Advanced Features**: Blockchain receipts and visualization
-- **Regression Testing**: Baseline comparison and memory leak detection
+1. **Hook Registration** - Measure hook registration speed and memory overhead
+2. **Hook Execution** - Measure execution latency under varying complexity
+3. **Hook Validation** - Measure Zod schema validation throughput
+4. **Memory Profiling** - Measure peak memory usage and GC pressure
+5. **Concurrent Execution** - Measure throughput with parallel workers
 
 ## Quick Start
 
-```bash
-# Run all benchmarks
-pnpm benchmark
-
-# Run specific category
-pnpm benchmark:core
-pnpm benchmark:integration
-pnpm benchmark:advanced
-pnpm benchmark:regression
-
-# Generate reports
-pnpm benchmark:report
-
-# Baseline management
-pnpm benchmark:baseline        # Save current as baseline
-pnpm benchmark:compare         # Compare against baseline
-
-# Memory leak detection
-pnpm benchmark:memory
-```
-
-## Architecture
-
-### Framework (`framework.mjs`)
-
-Core benchmarking utilities providing:
-
-- **Statistical Analysis**
-  - Percentile calculations (P50, P75, P95, P99, P99.9)
-  - Mean, median, standard deviation
-  - Minimum 1000 iterations for significance
-
-- **Performance Measurement**
-  - Throughput (operations/second)
-  - Latency (milliseconds)
-  - Memory usage (RSS, heap, external)
-  - CPU time
-
-- **Reproducibility**
-  - Warmup runs to eliminate JIT effects
-  - GC between benchmarks
-  - Fixed random seeds (optional)
-
-- **Reporting**
-  - Markdown tables
-  - Detailed reports
-  - Comparison reports
-
-### Core Benchmarks
-
-#### Workflow Performance (`core/workflow-performance.mjs`)
-
-Measures workflow creation, validation, and serialization:
-
-- Create simple workflow (5 tasks): ~5,000+ ops/sec
-- Create medium workflow (20 tasks): ~2,500+ ops/sec
-- Create large workflow (100 tasks): ~500+ ops/sec
-- Validate workflow: ~5,000+ ops/sec
-- Serialize to RDF: ~1,000+ ops/sec
-
-#### Engine Performance (`core/engine-performance.mjs`)
-
-Measures YAWL engine operations:
-
-- Engine initialization: ~1,000+ ops/sec
-- Register workflow: ~5,000+ ops/sec
-- Create case: ~5,000+ ops/sec
-- Task execution: ~3,000+ ops/sec
-- Complete workflow: ~1,000+ ops/sec
-
-#### SPARQL Performance (`core/sparql-performance.mjs`)
-
-Measures RDF store operations:
-
-- Store creation: ~1,000+ ops/sec
-- Insert single triple: ~10,000+ ops/sec
-- Insert batch (100 triples): ~1,000+ ops/sec
-- Query (100 triples): ~5,000+ ops/sec
-- Query with filter: ~3,000+ ops/sec
-
-### Integration Benchmarks
-
-#### Federation (`integration/federation-benchmark.mjs`)
-
-Measures distributed query performance:
-
-- Create federated engine (2 endpoints): ~1,000+ ops/sec
-- Query single endpoint: ~3,000+ ops/sec
-- Federated query (2 endpoints): ~2,000+ ops/sec
-- Parallel queries: ~1,000+ ops/sec
-
-#### Streaming (`integration/streaming-benchmark.mjs`)
-
-Measures event streaming:
-
-- Create stream: ~10,000+ ops/sec
-- Push single event: ~100,000+ ops/sec
-- Push and consume: ~50,000+ ops/sec
-- Batch operations: ~1,000+ ops/sec
-- Backpressure handling: ~5,000+ ops/sec
-
-#### Knowledge Engine (`integration/knowledge-engine-benchmark.mjs`)
-
-Measures knowledge graph operations:
-
-- Insert entity: ~5,000+ ops/sec
-- Query by ID (100 entities): ~10,000+ ops/sec
-- Query by ID (1000 entities): ~5,000+ ops/sec
-- Graph traversal (2 hops): ~2,000+ ops/sec
-- Aggregate queries: ~2,000+ ops/sec
-
-### Advanced Benchmarks
-
-#### Blockchain Receipts (`advanced/blockchain-receipt-benchmark.mjs`)
-
-Measures cryptographic operations:
-
-- Create receipt: ~10,000+ ops/sec
-- Generate hash: ~50,000+ ops/sec
-- Generate signature: ~20,000+ ops/sec
-- Verify signature: ~20,000+ ops/sec
-- Merkle tree (10 receipts): ~5,000+ ops/sec
-- Merkle tree (100 receipts): ~1,000+ ops/sec
-
-#### Visualization (`advanced/visualization-benchmark.mjs`)
-
-Measures graph rendering:
-
-- Create graph (100 nodes): ~5,000+ ops/sec
-- Create graph (1000 nodes): ~80+ ops/sec
-- Create graph (10000 nodes): ~2+ ops/sec
-- Force-directed layout (100 nodes): ~7,500+ ops/sec
-- Hierarchical layout (100 nodes): ~7,500+ ops/sec
-- Serialize to JSON (100 nodes): ~5,000+ ops/sec
-
-### Regression Testing
-
-#### Baseline Comparison (`regression/baseline-comparison.mjs`)
-
-Compares current performance against saved baseline:
-
-- Loads baseline from `benchmarks/baselines/baseline.json`
-- Flags regressions >5% in throughput
-- Flags regressions >5% in latency (P95)
-- Flags regressions >10% in memory usage
-- Generates comparison report
-
-**Usage**:
+### Run All Benchmarks
 
 ```bash
-# Save baseline (first run or after improvements)
-pnpm benchmark:baseline
+# Run complete benchmark suite
+node benchmark/examples/hook-registration.benchmark.mjs
 
-# Compare against baseline (CI/CD)
-pnpm benchmark:compare
-
-# Exit code 1 if regressions detected
+# Run with OTEL export
+OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318 \
+  node benchmark/examples/hook-registration.benchmark.mjs
 ```
 
-#### Memory Leak Detection (`regression/memory-leak-detection.mjs`)
-
-Detects memory leaks through controlled testing:
-
-- Monitors memory over time
-- Forces GC at intervals
-- Measures retained memory
-- Calculates growth rate
-- Reports potential leaks
-
-**Usage**:
+### Run Specific Benchmark
 
 ```bash
-# Run with GC exposed for accurate results
-pnpm benchmark:memory
+# Hook Registration Benchmark
+node benchmark/examples/hook-registration.benchmark.mjs
 
-# Or manually
-node --expose-gc benchmarks/regression/memory-leak-detection.mjs
+# Memory Profiling (with GC enabled)
+node --expose-gc benchmark/examples/memory-profiling.benchmark.mjs
 ```
 
-## Metrics
+### Run Tests
 
-### Throughput
+```bash
+# Run validation tests
+pnpm test benchmarks/validation.test.mjs
 
-Operations per second (ops/sec):
+# Run integration tests
+pnpm test benchmarks/integration.test.mjs
 
-- **High**: >10,000 ops/sec
-- **Medium**: 1,000-10,000 ops/sec
-- **Low**: <1,000 ops/sec
+# Run all benchmark tests
+pnpm test benchmarks/
+```
 
-### Latency
+## Installation
 
-Percentiles (milliseconds):
+### Install Dependencies
 
-- **P50 (Median)**: Typical case
-- **P95**: 95% of requests
-- **P99**: 99% of requests
-- **P99.9**: Extreme cases
+```bash
+# Install benchmark dependencies
+pnpm add -D tinybench @opentelemetry/api @opentelemetry/sdk-node
+```
 
-Target latencies:
+### Setup OTEL Collector (Optional)
 
-- **Fast**: P95 < 1ms
-- **Acceptable**: P95 < 10ms
-- **Slow**: P95 > 10ms
+```bash
+# Run OTEL collector for trace export
+docker run -p 4318:4318 otel/opentelemetry-collector:latest
+```
 
-### Memory
+## Running Benchmarks
 
-Memory usage (bytes):
+### Basic Usage
 
-- **RSS**: Resident Set Size (total memory)
-- **Heap Used**: JavaScript heap usage
-- **Heap Total**: Total heap allocated
-- **External**: External memory (buffers, etc.)
+```javascript
+import { runHookRegistrationBenchmark } from './benchmark/examples/hook-registration.benchmark.mjs';
 
-## Reports
+// Run benchmark
+const results = await runHookRegistrationBenchmark();
 
-### Summary Report
+console.log('Results:', results);
+console.log('Status:', results.validation.status);
+console.log('Targets Met:', results.validation.targetsMet, '/', results.validation.targetsTotal);
+```
 
-Quick overview with key metrics:
+### With Custom Configuration
 
-- Location: `benchmarks/reports/benchmark-summary.md`
-- Contains: Tables with throughput, latency, memory
-- Format: Markdown tables
+```javascript
+const BENCHMARK_CONFIG = {
+  id: 'hook-registration',
+  scenario: 'large-batch',
+  parameters: {
+    hookCount: 10000,
+    complexity: 'complex',
+    warmupRuns: 10,
+    measurementRuns: 100,
+    timeout: 30000
+  },
+  expectedTargets: {
+    avgLatency: 1,
+    p95Latency: 5,
+    throughput: 1000,
+    memoryOverhead: 100
+  }
+};
+```
 
-### Detailed Report
+### Enable Garbage Collection
 
-Comprehensive analysis:
+For accurate memory measurements, run benchmarks with GC exposed:
 
-- Location: `benchmarks/reports/benchmark-detailed.md`
-- Contains: All percentiles, statistics, memory
-- Format: Detailed markdown sections
+```bash
+node --expose-gc benchmark/examples/hook-registration.benchmark.mjs
+```
 
-### Comparison Report
+## Interpreting Results
 
-Baseline regression analysis:
+### Result Structure
 
-- Location: `benchmarks/reports/baseline-comparison.md`
-- Contains: Regressions, improvements, unchanged
-- Format: Markdown tables with deltas
+```json
+{
+  "benchmarkId": "hook-registration",
+  "scenario": "medium-batch",
+  "timestamp": "2025-12-04T10:30:00Z",
+  "results": {
+    "totalOps": 1000,
+    "totalDuration": 850.5,
+    "meanLatency": 0.85,
+    "p50Latency": 0.78,
+    "p95Latency": 1.8,
+    "p99Latency": 3.2,
+    "throughput": 1176,
+    "memory": {
+      "baseline": 15.2,
+      "current": 37.7,
+      "overhead": 22.5,
+      "per1kHooks": 22.5
+    }
+  },
+  "validation": {
+    "status": "PASS",
+    "targetsMet": 5,
+    "targetsTotal": 5,
+    "failures": []
+  }
+}
+```
+
+### Key Metrics Explained
+
+#### Latency Metrics
+
+- **Mean Latency**: Average operation time
+- **p50 (Median)**: 50% of operations complete faster
+- **p95**: 95% of operations complete faster (important for SLAs)
+- **p99**: 99% of operations complete faster (tail latency)
+
+#### Throughput Metrics
+
+- **Throughput**: Operations per second
+- **Total Duration**: Total benchmark execution time
+- **Total Ops**: Number of operations measured
+
+#### Memory Metrics
+
+- **Baseline**: Memory usage before benchmark
+- **Current**: Memory usage after benchmark
+- **Overhead**: Memory increase during benchmark
+- **Per 1k Hooks**: Memory used per 1000 hooks (normalized)
+
+### Validation Status
+
+- ✅ **PASS**: All baseline targets met
+- ❌ **FAIL**: One or more targets not met
+
+Check `validation.failures` array for specific metrics that didn't meet targets.
+
+## Baseline Targets
+
+### Hook Registration
+
+| Scenario | Hooks | Avg Latency | p95 Latency | Throughput | Memory |
+|----------|-------|-------------|-------------|------------|--------|
+| Small | 100 | < 0.5ms | < 1ms | > 2000/sec | < 5MB |
+| Medium | 1,000 | < 1ms | < 2ms | > 1000/sec | < 25MB |
+| Large | 10,000 | < 1ms | < 5ms | > 1000/sec | < 100MB |
+
+### Hook Execution
+
+| Complexity | p50 Latency | p99 Latency | Throughput |
+|------------|-------------|-------------|------------|
+| Simple | < 1ms | < 10ms | > 1000/sec |
+| Medium | < 3ms | < 15ms | > 200/sec |
+| Complex | < 10ms | < 50ms | > 50/sec |
+
+### Validation
+
+| Operation | Throughput | Avg Latency | Accuracy |
+|-----------|------------|-------------|----------|
+| Schema | > 10,000/sec | < 0.1ms | > 99.9% |
+| Runtime | > 5,000/sec | < 0.2ms | > 99.5% |
+
+### Memory Profiling
+
+| Test | Peak Memory | GC Pause (p95) | Memory Leak |
+|------|-------------|----------------|-------------|
+| Under Load | < 50MB/1k hooks | < 10ms | < 1MB/min |
+| Stress | < 500MB | < 50ms | < 1MB/min |
+
+### Concurrent Execution
+
+| Workers | Total Throughput | p99 Latency | Contention |
+|---------|------------------|-------------|------------|
+| 10 | > 500/sec | < 100ms | < 5% |
+| 100 | > 2000/sec | < 300ms | < 15% |
+| 1000 | > 1000/sec | < 1000ms | < 30% |
+
+## Regression Detection
+
+### Thresholds
+
+Benchmarks automatically detect performance regressions:
+
+| Metric | Warning | Critical |
+|--------|---------|----------|
+| Latency | +10% | +20% |
+| Throughput | -10% | -20% |
+| Memory | +15% | +30% |
+| Error Rate | +50% | +100% |
+
+### Baseline Comparison
+
+```bash
+# Generate baseline
+node benchmark/examples/hook-registration.benchmark.mjs > baseline.json
+
+# Compare against baseline
+node benchmark/examples/hook-registration.benchmark.mjs --compare baseline.json
+```
 
 ## CI/CD Integration
 
 ### GitHub Actions
 
 ```yaml
-name: Benchmarks
+name: Performance Benchmarks
 
 on:
-  push:
-    branches: [main]
   pull_request:
+    branches: [main]
 
 jobs:
   benchmark:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v2
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
-          node-version: 18
-          cache: pnpm
+          node-version: '20'
+          cache: 'pnpm'
 
       - run: pnpm install
-      - run: pnpm benchmark:compare
+      - run: pnpm test benchmarks/
 
-      # Upload reports as artifacts
-      - uses: actions/upload-artifact@v3
+      - name: Run Benchmarks
+        run: |
+          node --expose-gc benchmark/examples/hook-registration.benchmark.mjs \
+            > benchmark-results.json
+
+      - name: Compare Against Baseline
+        run: |
+          node scripts/compare-benchmarks.mjs \
+            baseline.json \
+            benchmark-results.json
+
+      - name: Comment on PR
+        uses: actions/github-script@v7
         with:
-          name: benchmark-reports
-          path: benchmarks/reports/
+          script: |
+            const results = require('./benchmark-results.json');
+            const comment = `## Benchmark Results
+
+            Status: ${results.validation.status}
+            Targets Met: ${results.validation.targetsMet}/${results.validation.targetsTotal}
+
+            | Metric | Value | Target | Status |
+            |--------|-------|--------|--------|
+            | Mean Latency | ${results.results.meanLatency}ms | < 1ms | ✅ |
+            | p95 Latency | ${results.results.p95Latency}ms | < 2ms | ✅ |
+            | Throughput | ${results.results.throughput}/sec | > 1000/sec | ✅ |
+            `;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
+      - name: Fail on Regression
+        run: |
+          if [ $(jq '.validation.status' benchmark-results.json) == '"FAIL"' ]; then
+            echo "Benchmark regression detected!"
+            exit 1
+          fi
 ```
 
-### Performance Budgets
+## OTEL Integration
 
-Set thresholds in CI:
+### Span Structure
+
+Every benchmark creates:
+
+```
+benchmark.{benchmark-id}          [Root Span]
+  ├─ benchmark.setup              [Setup Phase]
+  ├─ benchmark.warmup             [Warmup Phase]
+  ├─ benchmark.measure            [Measurement Phase]
+  ├─ memory.measure               [Memory Measurement]
+  └─ benchmark.validation         [Validation Phase]
+```
+
+### Required Span Attributes
+
+```javascript
+{
+  "benchmark.suite.name": "Knowledge Hooks Performance Benchmark Suite",
+  "benchmark.suite.version": "1.0.0",
+  "benchmark.id": "hook-registration",
+  "benchmark.name": "Hook Registration Benchmark",
+  "benchmark.timestamp": "2025-12-04T10:30:00Z",
+  "benchmark.latency.mean.ms": 0.85,
+  "benchmark.latency.p50.ms": 0.78,
+  "benchmark.latency.p95.ms": 1.8,
+  "benchmark.latency.p99.ms": 3.2,
+  "benchmark.throughput.ops_per_sec": 1176,
+  "memory.overhead.mb": 22.5,
+  "validation.status": "PASS",
+  "system.platform": "linux",
+  "process.nodeVersion": "v20.10.0"
+}
+```
+
+### Exporting Traces
 
 ```bash
-# Fail if throughput drops >5%
-# Fail if latency increases >5%
-# Fail if memory increases >10%
+# Export to OTLP endpoint
+OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318 \
+OTEL_SERVICE_NAME=knowledge-hooks-benchmark \
+  node benchmark/examples/hook-registration.benchmark.mjs
 
-pnpm benchmark:compare || exit 1
+# Export to file
+OTEL_TRACES_EXPORTER=file \
+OTEL_EXPORTER_FILE_PATH=traces.json \
+  node benchmark/examples/hook-registration.benchmark.mjs
 ```
-
-## Best Practices
-
-### Writing Benchmarks
-
-1. **Statistical Significance**: Minimum 1000 iterations
-2. **Warmup**: At least 100 iterations (10% of total)
-3. **GC Management**: Force GC between benchmarks
-4. **Isolation**: Each benchmark should be independent
-5. **Reproducibility**: Use fixed random seeds when needed
-
-### Interpreting Results
-
-1. **Focus on Percentiles**: P95/P99 more important than mean
-2. **Watch for Variability**: High std dev indicates instability
-3. **Consider Context**: Throughput vs latency tradeoffs
-4. **Memory Trends**: Growing memory = potential leak
-5. **Baseline Comparison**: Track regressions over time
-
-### Performance Optimization
-
-1. **Identify Bottlenecks**: Run detailed benchmarks
-2. **Profile**: Use Node.js profiler for hotspots
-3. **Optimize**: Make targeted improvements
-4. **Measure**: Run benchmarks again
-5. **Compare**: Verify improvements against baseline
 
 ## Troubleshooting
 
-### Benchmarks Too Slow
+### Memory Measurements Inaccurate
 
-- Reduce iterations (but maintain >1000 for significance)
-- Focus on specific categories
-- Use `benchmark:core` instead of `benchmark`
+**Problem**: Memory measurements show inconsistent results
 
-### High Variability
-
-- Ensure no other processes running
-- Disable CPU frequency scaling
-- Use dedicated benchmark machine
-- Increase warmup iterations
-
-### Memory Issues
-
-- Run with `--expose-gc` for accurate measurements
-- Check for memory leaks with `benchmark:memory`
-- Monitor GC activity
-- Reduce iteration count if OOM
-
-### CI/CD Failures
-
-- Check baseline is committed to repo
-- Verify Node.js version matches
-- Ensure clean state (no cached data)
-- Review regression thresholds
-
-## Development
-
-### Adding New Benchmarks
-
-1. Create file in appropriate category directory
-2. Import `suite` from `framework.mjs`
-3. Define benchmarks with config
-4. Add to `run-all.mjs` registry
-5. Run and verify results
-
-Example:
-
-```javascript
-import { suite } from '../framework.mjs';
-
-export const myBenchmarks = suite('My Feature Performance', {
-  'operation name': {
-    fn: () => {
-      // Code to benchmark
-    },
-    iterations: 10000,
-    warmup: 1000
-  }
-});
-```
-
-### Running Individual Benchmarks
+**Solution**: Run with `--expose-gc` flag to enable manual garbage collection:
 
 ```bash
-# Run single benchmark file
-node benchmarks/core/workflow-performance.mjs
-node benchmarks/advanced/visualization-benchmark.mjs
-
-# Run with custom iterations
-node benchmarks/core/workflow-performance.mjs --iterations=5000
+node --expose-gc benchmark/examples/hook-registration.benchmark.mjs
 ```
 
-## License
+### Benchmarks Taking Too Long
 
-Same as UNRDF project.
+**Problem**: Benchmarks exceed timeout
 
-## Contributing
+**Solution**: Reduce measurement runs or increase timeout:
 
-See main UNRDF CONTRIBUTING.md for guidelines.
+```javascript
+const BENCHMARK_CONFIG = {
+  parameters: {
+    measurementRuns: 10, // Reduce from 50
+    timeout: 30000 // Increase to 30s
+  }
+};
+```
+
+### High Variance in Results
+
+**Problem**: Results vary significantly between runs
+
+**Solution**: Increase warmup runs and measurement runs:
+
+```javascript
+const BENCHMARK_CONFIG = {
+  parameters: {
+    warmupRuns: 10, // Increase warmup
+    measurementRuns: 100 // Increase measurements
+  }
+};
+```
+
+### OTEL Spans Not Created
+
+**Problem**: OTEL traces are empty
+
+**Solution**: Ensure OTEL is properly initialized:
+
+```javascript
+import { trace } from '@opentelemetry/api';
+import { NodeTracerProvider } from '@opentelemetry/sdk-trace-node';
+
+const provider = new NodeTracerProvider();
+provider.register();
+
+const tracer = trace.getTracer('benchmark', '1.0.0');
+```
+
+### Regression Detected in CI
+
+**Problem**: CI fails with regression error
+
+**Solution**: Review baseline and update if change is expected:
+
+```bash
+# Regenerate baseline after intentional changes
+node benchmark/examples/hook-registration.benchmark.mjs > baseline.json
+git add baseline.json
+git commit -m "Update benchmark baseline"
+```
+
+## Common Issues
+
+### Issue: `global.gc is not a function`
+
+Run with `--expose-gc` flag.
+
+### Issue: `Cannot find module 'tinybench'`
+
+Install dependencies: `pnpm install`
+
+### Issue: Benchmark hangs
+
+Increase timeout in configuration or reduce number of operations.
+
+### Issue: Out of memory
+
+Reduce `hookCount` or `measurementRuns` in configuration.
+
+## Advanced Usage
+
+### Custom Percentile Calculation
+
+```javascript
+function calculatePercentile(values, percentile) {
+  const sorted = [...values].sort((a, b) => a - b);
+  const index = Math.ceil((percentile / 100) * sorted.length) - 1;
+  return sorted[Math.max(0, index)];
+}
+
+const p50 = calculatePercentile(samples, 50);
+const p95 = calculatePercentile(samples, 95);
+const p99 = calculatePercentile(samples, 99);
+```
+
+### Memory Leak Detection
+
+```javascript
+function detectMemoryLeak(measurements, threshold = 1) {
+  // measurements: array of memory usage over time (MB)
+  const first = measurements[0];
+  const last = measurements[measurements.length - 1];
+  const duration = measurements.length; // minutes
+
+  const growthRate = (last - first) / duration;
+  return growthRate > threshold; // MB per minute
+}
+```
+
+### Baseline Generation
+
+```javascript
+// Generate baseline from multiple runs
+async function generateBaseline(runs = 10) {
+  const results = [];
+
+  for (let i = 0; i < runs; i++) {
+    const result = await runBenchmark();
+    results.push(result);
+  }
+
+  // Calculate statistical baseline
+  return {
+    meanLatency: average(results.map(r => r.meanLatency)),
+    p95Latency: average(results.map(r => r.p95Latency)),
+    throughput: average(results.map(r => r.throughput)),
+    memoryOverhead: average(results.map(r => r.memory.overhead))
+  };
+}
+```
+
+## References
+
+- [Benchmark Specification](../benchmark/specs/BENCHMARK-SPECIFICATION.md)
+- [Example Implementation](../benchmark/examples/hook-registration.benchmark.mjs)
+- [OpenTelemetry Docs](https://opentelemetry.io/docs/instrumentation/js/)
+- [tinybench Documentation](https://github.com/tinylibs/tinybench)
 
 ## Support
 
-- Issues: https://github.com/unrdf/unrdf/issues
-- Discussions: https://github.com/unrdf/unrdf/discussions
+For issues or questions:
+
+- **Issues**: https://github.com/unrdf/unrdf/issues
+- **Discussions**: https://github.com/unrdf/unrdf/discussions
+- **Documentation**: https://unrdf.github.io/docs/benchmarks
+
+---
+
+## Benchmark Infrastructure Utilities
+
+The `/benchmarks/utils/` directory provides reusable utilities for all benchmark implementations:
+
+### Utility Modules
+
+#### 1. OtelCollector (`utils/otel-collector.mjs`)
+
+Lightweight OTEL-compatible span collector for benchmark validation.
+
+```javascript
+import { OtelCollector } from './utils/otel-collector.mjs';
+
+const collector = new OtelCollector('my-benchmark');
+const span = collector.startSpan('operation', { param: 'value' });
+// ... perform operation ...
+collector.endSpan(span, true, { result: 'success' });
+
+const summary = collector.getSummary();
+const validation = collector.validateSpans();
+```
+
+#### 2. PercentileCalculator (`utils/percentile-calculator.mjs`)
+
+Statistical analysis for latency measurements.
+
+```javascript
+import { PercentileCalculator } from './utils/percentile-calculator.mjs';
+
+const calc = new PercentileCalculator();
+measurements.forEach(m => calc.addMeasurement(m));
+
+const stats = calc.getStats();
+console.log(`p50: ${stats.p50}ms, p95: ${stats.p95}ms, p99: ${stats.p99}ms`);
+```
+
+#### 3. MemoryProfiler (`utils/memory-profiler.mjs`)
+
+GC-aware memory measurement and leak detection.
+
+```javascript
+import { MemoryProfiler } from './utils/memory-profiler.mjs';
+
+// Measure operation memory
+const result = await MemoryProfiler.measureMemory(async () => {
+  return await myOperation();
+});
+
+console.log(`Delta: ${MemoryProfiler.formatBytes(result.deltaHeapUsed)}`);
+
+// Detect memory leaks
+const leak = await MemoryProfiler.detectLeak(baseline, cleanup, 0.05);
+if (leak.isLeak) console.warn('Memory leak detected!');
+```
+
+**Requires**: Run with `--expose-gc` for accurate measurements
+
+#### 4. MetricsAggregator (`utils/metrics-aggregator.mjs`)
+
+Results aggregation and regression detection.
+
+```javascript
+import { MetricsAggregator } from './utils/metrics-aggregator.mjs';
+
+const aggregator = MetricsAggregator.loadBaseline('./baselines/baseline.json');
+
+aggregator.recordResult('hook-registration', 'simple', 'latency-avg', 0.8, 'ms');
+aggregator.recordResult('hook-registration', 'simple', 'throughput', 1200, 'ops/sec');
+
+const { regressions, warnings } = aggregator.checkRegressions();
+console.log(aggregator.generateReport());
+aggregator.exportJSON('./results/results.json');
+```
+
+#### 5. Test Fixtures (`utils/test-fixtures.mjs`)
+
+Reusable test data for consistent benchmarking.
+
+```javascript
+import {
+  createSimpleHook,
+  createHookArray,
+  createEvent,
+  createStore
+} from './utils/test-fixtures.mjs';
+
+const hooks = createHookArray(1000, 'bench-hook');
+const event = createEvent('test:event');
+const store = createStore(100);
+```
+
+### Baseline Configuration
+
+Performance targets are defined in `/benchmarks/baselines/baseline.json`:
+
+```json
+{
+  "benchmarks": {
+    "hook-registration": {
+      "latency-avg": { "target": 1, "unit": "ms", "priority": "P1" },
+      "throughput": { "target": 1000, "unit": "ops/sec", "priority": "P1" }
+    }
+  },
+  "regressionThresholds": {
+    "critical": { "latency": 20, "throughput": 20, "memory": 30 },
+    "warning": { "latency": 10, "throughput": 10, "memory": 15 }
+  }
+}
+```
+
+### Verification
+
+Verify all utilities are working:
+
+```bash
+node benchmarks/verify-utils.mjs
+```
+
+---
+
+**Note**: Always run benchmarks in a consistent environment for reliable results. Avoid running other processes during benchmarking.

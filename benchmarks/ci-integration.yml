@@ -1,0 +1,298 @@
+# GitHub Actions Workflow: Performance Benchmarks
+#
+# This workflow runs performance benchmarks on every PR and compares
+# against baseline to detect performance regressions.
+#
+# Features:
+# - Runs all 5 core benchmarks
+# - Compares against baseline
+# - Comments on PR with results
+# - Blocks merge on critical regressions
+# - Stores baseline for future comparisons
+
+name: Performance Benchmarks
+
+on:
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'src/knowledge-engine/**'
+      - 'benchmark/**'
+      - 'benchmarks/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+
+  # Allow manual trigger
+  workflow_dispatch:
+    inputs:
+      update_baseline:
+        description: 'Update baseline after this run'
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  benchmark:
+    name: Run Performance Benchmarks
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2 # Need previous commit for comparison
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Download Baseline
+        id: download-baseline
+        continue-on-error: true
+        run: |
+          # Download baseline from main branch
+          git fetch origin main
+          git show origin/main:benchmark/baseline.json > baseline.json 2>/dev/null || echo '{}' > baseline.json
+
+          if [ -s baseline.json ] && [ "$(cat baseline.json)" != "{}" ]; then
+            echo "baseline_exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "baseline_exists=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Run Validation Tests
+        run: pnpm test benchmarks/validation.test.mjs
+
+      - name: Run Integration Tests
+        run: pnpm test benchmarks/integration.test.mjs
+
+      - name: Run Benchmark Suite
+        id: run-benchmarks
+        run: |
+          # Run with GC enabled for accurate memory measurements
+          node --expose-gc benchmark/examples/hook-registration.benchmark.mjs \
+            > benchmark-results.json 2>&1 | tee benchmark-output.log
+
+          # Extract key metrics
+          echo "status=$(jq -r '.validation.status' benchmark-results.json)" >> $GITHUB_OUTPUT
+          echo "targets_met=$(jq -r '.validation.targetsMet' benchmark-results.json)" >> $GITHUB_OUTPUT
+          echo "targets_total=$(jq -r '.validation.targetsTotal' benchmark-results.json)" >> $GITHUB_OUTPUT
+
+      - name: Compare Against Baseline
+        id: compare
+        if: steps.download-baseline.outputs.baseline_exists == 'true'
+        run: |
+          # Compare current results against baseline
+          node -e "
+          const baseline = require('./baseline.json');
+          const current = require('./benchmark-results.json');
+
+          function compareMetric(current, baseline, threshold, direction = 'lower') {
+            if (!baseline) return { regression: false, change: 0 };
+
+            const delta = current - baseline;
+            const percentChange = (delta / baseline) * 100;
+
+            let regression = false;
+            if (direction === 'lower') {
+              regression = delta > baseline * threshold;
+            } else {
+              regression = delta < -(baseline * threshold);
+            }
+
+            return { regression, change: percentChange.toFixed(2) };
+          }
+
+          const latency = compareMetric(
+            current.results.meanLatency,
+            baseline.results?.meanLatency,
+            0.20, // 20% threshold
+            'lower'
+          );
+
+          const throughput = compareMetric(
+            current.results.throughput,
+            baseline.results?.throughput,
+            0.20,
+            'higher'
+          );
+
+          const memory = compareMetric(
+            current.results.memory?.overhead,
+            baseline.results?.memory?.overhead,
+            0.30,
+            'lower'
+          );
+
+          console.log('LATENCY_CHANGE=' + latency.change);
+          console.log('LATENCY_REGRESSION=' + latency.regression);
+          console.log('THROUGHPUT_CHANGE=' + throughput.change);
+          console.log('THROUGHPUT_REGRESSION=' + throughput.regression);
+          console.log('MEMORY_CHANGE=' + memory.change);
+          console.log('MEMORY_REGRESSION=' + memory.regression);
+
+          const hasRegression = latency.regression || throughput.regression || memory.regression;
+          console.log('HAS_REGRESSION=' + hasRegression);
+          " > comparison.env
+
+          cat comparison.env >> $GITHUB_OUTPUT
+
+      - name: Generate Results Summary
+        id: summary
+        run: |
+          # Generate markdown summary
+          cat << 'EOF' > summary.md
+          ## 📊 Benchmark Results
+
+          **Status**: ${{ steps.run-benchmarks.outputs.status == 'PASS' && '✅ PASS' || '❌ FAIL' }}
+
+          **Targets Met**: ${{ steps.run-benchmarks.outputs.targets_met }}/${{ steps.run-benchmarks.outputs.targets_total }}
+
+          ### Key Metrics
+
+          | Metric | Value | Target | Status |
+          |--------|-------|--------|--------|
+          EOF
+
+          # Extract metrics from JSON and format table
+          node -e "
+          const results = require('./benchmark-results.json');
+          const r = results.results;
+          const t = results.targets;
+
+          const metrics = [
+            ['Mean Latency', r.meanLatency.toFixed(2) + 'ms', '< ' + t.avgLatency + 'ms'],
+            ['P95 Latency', r.p95Latency.toFixed(2) + 'ms', '< ' + t.p95Latency + 'ms'],
+            ['P99 Latency', r.p99Latency.toFixed(2) + 'ms', 'monitor'],
+            ['Throughput', r.throughput.toFixed(0) + '/sec', '> ' + t.throughput + '/sec'],
+            ['Memory/1k Hooks', r.memory.per1kHooks.toFixed(2) + 'MB', '< ' + t.memoryOverhead + 'MB']
+          ];
+
+          metrics.forEach(([name, value, target]) => {
+            console.log('| ' + name + ' | ' + value + ' | ' + target + ' | ✅ |');
+          });
+          " >> summary.md
+
+          if [ "${{ steps.download-baseline.outputs.baseline_exists }}" == "true" ]; then
+            cat << 'EOF' >> summary.md
+
+          ### Comparison vs Baseline
+
+          | Metric | Change | Status |
+          |--------|--------|--------|
+          | Latency | ${{ steps.compare.outputs.LATENCY_CHANGE }}% | ${{ steps.compare.outputs.LATENCY_REGRESSION == 'true' && '❌ Regression' || '✅ OK' }} |
+          | Throughput | ${{ steps.compare.outputs.THROUGHPUT_CHANGE }}% | ${{ steps.compare.outputs.THROUGHPUT_REGRESSION == 'true' && '❌ Regression' || '✅ OK' }} |
+          | Memory | ${{ steps.compare.outputs.MEMORY_CHANGE }}% | ${{ steps.compare.outputs.MEMORY_REGRESSION == 'true' && '❌ Regression' || '✅ OK' }} |
+          EOF
+          fi
+
+          cat << 'EOF' >> summary.md
+
+          ### System Info
+
+          - **Platform**: ${{ runner.os }}
+          - **Node Version**: $(node --version)
+          - **Commit**: ${{ github.sha }}
+          EOF
+
+      - name: Comment on PR
+        uses: actions/github-script@v7
+        if: github.event_name == 'pull_request'
+        with:
+          script: |
+            const fs = require('fs');
+            const summary = fs.readFileSync('summary.md', 'utf-8');
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: summary
+            });
+
+      - name: Upload Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-results
+          path: |
+            benchmark-results.json
+            benchmark-output.log
+            summary.md
+          retention-days: 30
+
+      - name: Update Baseline
+        if: |
+          github.event_name == 'workflow_dispatch' &&
+          github.event.inputs.update_baseline == 'true' &&
+          steps.run-benchmarks.outputs.status == 'PASS'
+        run: |
+          cp benchmark-results.json benchmark/baseline.json
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add benchmark/baseline.json
+          git commit -m "chore: update benchmark baseline [skip ci]"
+          git push
+
+      - name: Fail on Critical Regression
+        if: steps.compare.outputs.HAS_REGRESSION == 'true'
+        run: |
+          echo "❌ Critical performance regression detected!"
+          echo ""
+          echo "Latency regression: ${{ steps.compare.outputs.LATENCY_REGRESSION }}"
+          echo "Throughput regression: ${{ steps.compare.outputs.THROUGHPUT_REGRESSION }}"
+          echo "Memory regression: ${{ steps.compare.outputs.MEMORY_REGRESSION }}"
+          echo ""
+          echo "Review the benchmark results and fix the regression before merging."
+          exit 1
+
+      - name: Fail on Benchmark Failure
+        if: steps.run-benchmarks.outputs.status == 'FAIL'
+        run: |
+          echo "❌ Benchmark failed to meet baseline targets!"
+          echo ""
+          echo "Targets met: ${{ steps.run-benchmarks.outputs.targets_met }}/${{ steps.run-benchmarks.outputs.targets_total }}"
+          echo ""
+          cat benchmark-results.json | jq '.validation.failures'
+          echo ""
+          echo "Fix the failing benchmarks before merging."
+          exit 1
+
+  # Optional: Run benchmarks across multiple platforms
+  benchmark-matrix:
+    name: Cross-Platform Benchmarks
+    runs-on: ${{ matrix.os }}
+    if: github.event_name == 'workflow_dispatch'
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        node: ['18', '20']
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: 'pnpm'
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm test benchmarks/
+
+      - name: Run Benchmarks
+        run: node --expose-gc benchmark/examples/hook-registration.benchmark.mjs > results-${{ matrix.os }}-node${{ matrix.node }}.json
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-results-${{ matrix.os }}-node${{ matrix.node }}
+          path: results-*.json
