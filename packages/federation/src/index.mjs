@@ -1,10 +1,14 @@
 /**
- * @unrdf/federation
+ * @unrdf/federation v6.0.0
  *
- * Federation - Peer Discovery and Distributed Query Execution
+ * Federation - Distributed RDF Query with RAFT Consensus and Multi-Master Replication
  *
  * @module @unrdf/federation
  */
+
+// =============================================================================
+// Core Federation API (v5 + v6)
+// =============================================================================
 
 // Export coordinator factory (primary API)
 export { createCoordinator } from './federation/coordinator.mjs';
@@ -25,23 +29,56 @@ export {
 // Export coordinator types
 export { CoordinatorConfigSchema } from './federation/coordinator.mjs';
 
-// Export health endpoint
-// TODO: health.mjs not yet implemented - coming in next release
-// export { createHealthEndpoint } from './federation/health.mjs';
-
 // Export metrics
 export {
-  getMetrics,
-  getMetricsJSON,
-  clearMetrics,
-  resetMetrics,
-  queryCounter,
-  queryDuration,
-  peerGauge,
-  concurrentQueries,
-  errorCounter,
   recordQuery,
   recordError,
   updatePeerMetrics,
   trackConcurrentQuery,
+  getMetricsState,
+  resetMetrics,
 } from './federation/metrics.mjs';
+
+// =============================================================================
+// V6 Advanced Features
+// =============================================================================
+
+// Export federation coordinator with store management
+export {
+  createFederationCoordinator,
+  FederationCoordinator,
+  StoreHealth,
+} from './federation/federation-coordinator.mjs';
+
+// Export distributed query engine with optimization
+export {
+  createDistributedQueryEngine,
+  DistributedQueryEngine,
+  ExecutionStrategy,
+  PlanNodeType,
+} from './federation/distributed-query-engine.mjs';
+
+// Export RAFT consensus manager
+export {
+  createConsensusManager,
+  ConsensusManager,
+  NodeState,
+} from './federation/consensus-manager.mjs';
+
+// Export data replication manager
+export {
+  createDataReplicationManager,
+  DataReplicationManager,
+  ReplicationTopology,
+  ConflictResolution,
+  ReplicationMode,
+} from './federation/data-replication.mjs';
+
+// Export advanced SPARQL federation with Comunica
+export {
+  createAdvancedFederationEngine,
+  federatedQuery,
+  streamFederatedQuery,
+  AdvancedFederationConfigSchema,
+  QueryExecutionResultSchema,
+} from './advanced-sparql-federation.mjs';

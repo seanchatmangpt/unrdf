@@ -251,10 +251,10 @@ export class YawlTask {
     if (this.status !== TaskStatus.ENABLED) {
       throw new Error(`Cannot start task ${this.id}: current status is ${this.status}`);
     }
-    this.status = 'running';
+    this.status = TaskStatus.ACTIVE;
     this.startedAt = now();
     this.assignedResource = resourceId;
-    this.statusHistory.set(`running:${this.startedAt}`, this.startedAt);
+    this.statusHistory.set(`active:${this.startedAt}`, this.startedAt);
     return this;
   }
 

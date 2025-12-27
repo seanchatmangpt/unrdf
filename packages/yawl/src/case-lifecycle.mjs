@@ -3,6 +3,7 @@
  * @module @unrdf/yawl/case-lifecycle
  */
 
+import { randomUUID } from 'crypto';
 import { now } from '@unrdf/kgc-4d';
 import { YawlTask } from './task.mjs';
 import { buildReceipt } from './receipt.mjs';
@@ -59,8 +60,8 @@ export const CaseLifecycleMixin = {
 
     const beforeState = this.getState();
 
-    // Create task instance
-    const workItemId = `${this.id}-${taskId}-${Date.now()}`;
+    // Create task instance with UUID
+    const workItemId = randomUUID();
     const task = new YawlTask({
       id: workItemId,
       name: taskDef.name ?? taskId,
@@ -207,7 +208,6 @@ export const CaseLifecycleMixin = {
         const enabled = await this.enableTask(nextTaskId, actor);
         downstreamEnabled.push({
           taskId: nextTaskId,
-          workItemId: enabled.task.id,
           enabledAt: enabled.task.enabledAt,
         });
       }

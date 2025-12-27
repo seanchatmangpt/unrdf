@@ -20,9 +20,9 @@
     "LICENSE"
   ],
   "scripts": {
-    "test": "vitest run --coverage",
-    "test:fast": "vitest run --coverage",
-    "test:watch": "vitest --coverage",
+    "test": "vitest run",
+    "test:fast": "vitest run",
+    "test:watch": "vitest",
     "build": "unbuild && tsc --emitDeclarationOnly",
     "build:types": "tsc --emitDeclarationOnly",
     "lint": "eslint src/ test/ --max-warnings=0",
