@@ -1,0 +1,76 @@
+{
+  "timestamp": "2025-12-27T04:20:07.772Z",
+  "pipeline": "store-derive-enforce-render",
+  "steps": {
+    "store": {
+      "input_quads": 5,
+      "canonical_hash": "493c6ff9776876d7323bcc8182c1ff17df2d923e4fcbf7355c88eb196fe007c5",
+      "status": "success",
+      "duration_ms": 16
+    },
+    "derive": {
+      "input_quads": 5,
+      "derived_quads": 3,
+      "sparql_query": "CONSTRUCT { ?person <http://example.org/hasFriend> ?friend . ?friend <http://example.org/isFriendOf> ?person . ?person <http://example.org/isConnected> ?friend . } WHERE { ?person <http://xmlns.com/foaf/0.1/knows> ?friend . }",
+      "derived_hash": "db0bdd5ba8aad6ad518039e9fd3e04fb6772f3272053c18ff9bb64848de28a52",
+      "status": "success",
+      "duration_ms": 22
+    },
+    "enforce": {
+      "input_quads": 3,
+      "allowed": 3,
+      "rejected": 0,
+      "policy": "predicate-whitelist",
+      "receipts": [
+        {
+          "id": "rcpt-1766809207771-hu7lwj",
+          "timestamp": "2025-12-27T04:20:07.771Z",
+          "quad": {
+            "subject": "http://example.org/alice",
+            "predicate": "http://example.org/isConnected",
+            "object": "http://example.org/bob",
+            "graph": "DEFAULT"
+          },
+          "policy": "predicate-whitelist",
+          "result": "allow",
+          "reason": "Predicate in whitelist"
+        },
+        {
+          "id": "rcpt-1766809207772-jr5ba",
+          "timestamp": "2025-12-27T04:20:07.772Z",
+          "quad": {
+            "subject": "http://example.org/bob",
+            "predicate": "http://example.org/isFriendOf",
+            "object": "http://example.org/alice",
+            "graph": "DEFAULT"
+          },
+          "policy": "predicate-whitelist",
+          "result": "allow",
+          "reason": "Predicate in whitelist"
+        },
+        {
+          "id": "rcpt-1766809207772-me6ftf",
+          "timestamp": "2025-12-27T04:20:07.772Z",
+          "quad": {
+            "subject": "http://example.org/alice",
+            "predicate": "http://example.org/hasFriend",
+            "object": "http://example.org/bob",
+            "graph": "DEFAULT"
+          },
+          "policy": "predicate-whitelist",
+          "result": "allow",
+          "reason": "Predicate in whitelist"
+        }
+      ],
+      "status": "success",
+      "duration_ms": 1
+    },
+    "render": {
+      "report_format": "json+console",
+      "output_written": "exploration/substrate-demo/result-report.json",
+      "status": "success",
+      "duration_ms": 0
+    }
+  },
+  "summary": "5 input quads -> 3 derived -> 3 allowed -> JSON report"
+}

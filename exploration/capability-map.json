@@ -1,0 +1,1362 @@
+{
+  "timestamp": "2025-12-27T02:54:56.820Z",
+  "scannerVersion": "1.0.0",
+  "totalPackages": 40,
+  "packages": [
+    {
+      "name": "@unrdf/atomvm",
+      "path": "packages/atomvm",
+      "version": "5.0.1",
+      "description": "Run AtomVM (Erlang/BEAM VM) in browser and Node.js using WebAssembly",
+      "role": ["utility"],
+      "exports": ["src/index.mjs", "src/service-worker-manager.mjs", "{"],
+      "mainExport": "src/index.mjs",
+      "maturity": "mature",
+      "signals": {
+        "hasTests": true,
+        "hasExamples": true,
+        "hasReadme": true,
+        "hasChangeLog": false,
+        "version": "5.0.1"
+      },
+      "examples": "examples",
+      "keywords": ["atomvm", "erlang", "beam", "wasm", "browser", "service-worker"],
+      "dependencies": ["@opentelemetry/api", "coi-serviceworker"],
+      "notes": ["ℹ Standard package structure"]
+    },
+    {
+      "name": "@unrdf/blockchain",
+      "path": "packages/blockchain",
+      "version": "1.0.0",
+      "description": "Blockchain integration for UNRDF - Cryptographic receipt anchoring and audit trails",
+      "role": ["io", "render"],
+      "exports": [
+        "src/index.mjs",
+        "src/anchoring/receipt-anchorer.mjs",
+        "src/contracts/workflow-verifier.mjs",
+        "src/merkle/merkle-proof-generator.mjs",
+        "{"
+      ],
+      "mainExport": "src/index.mjs",
+      "maturity": "mature",
+      "signals": {
+        "hasTests": true,
+        "hasExamples": true,
+        "hasReadme": true,
+        "hasChangeLog": false,
+        "version": "1.0.0"
+      },
+      "examples": "examples",
+      "keywords": [
+        "blockchain",
+        "ethereum",
+        "receipts",
+        "merkle-tree",
+        "audit-trail",
+        "cryptography"
+      ],
+      "dependencies": [
+        "@noble/hashes",
+        "@unrdf/kgc-4d",
+        "@unrdf/yawl",
+        "ethers",
+        "merkletreejs",
+        "zod"
+      ],
+      "notes": ["ℹ Depends on other @unrdf packages"]
+    },
+    {
+      "name": "@unrdf/caching",
+      "path": "packages/caching",
+      "version": "1.0.0",
+      "description": "Multi-layer caching system for RDF queries with Redis and LRU",
+      "role": ["utility"],
+      "exports": [
+        "src/index.mjs",
+        "src/layers/multi-layer-cache.mjs",
+        "src/invalidation/dependency-tracker.mjs",
+        "src/query/sparql-cache.mjs",
+        "{"
+      ],
+      "mainExport": "src/index.mjs",
+      "maturity": "stable",
+      "signals": {
+        "hasTests": false,
+        "hasExamples": true,
+        "hasReadme": true,
+        "hasChangeLog": false,
+        "version": "1.0.0"
+      },
+      "examples": "examples",
+      "keywords": ["cache", "redis", "lru", "rdf", "sparql", "performance"],
+      "dependencies": ["@unrdf/oxigraph", "ioredis", "lru-cache", "msgpackr", "zod"],
+      "notes": ["⚠ No test directory found", "ℹ Depends on other @unrdf packages"]
+    },
+    {
+      "name": "@unrdf/cli",
+      "path": "packages/cli",
+      "version": "5.0.1",
+      "description": "UNRDF CLI - Command-line Tools for Graph Operations and Context Management",
+      "role": ["io", "render"],
+      "exports": ["src/index.mjs", "src/commands/index.mjs"],
+      "mainExport": "src/index.mjs",
+      "maturity": "mature",
+      "signals": {
+        "hasTests": true,
+        "hasExamples": true,
+        "hasReadme": true,
+        "hasChangeLog": true,
+        "version": "5.0.1"
+      },
+      "examples": "examples",
+      "keywords": ["rdf", "cli", "command-line", "graph", "sparql"],
+      "dependencies": [
+        "@unrdf/core",
+        "@unrdf/federation",
+        "@unrdf/hooks",
+        "@unrdf/knowledge-engine",
+        "@unrdf/oxigraph",
+        "@unrdf/project-engine",
+        "@unrdf/streaming",
+        "citty",
+        "table",
+        "yaml"
+      ],
+      "notes": ["ℹ Depends on other @unrdf packages"]
+    },
+    {
+      "name": "@unrdf/collab",
+      "path": "packages/collab",
+      "version": "1.0.0",
+      "description": "Real-time collaborative RDF editing using CRDTs (Yjs) with offline-first architecture",
+      "role": ["utility"],
+      "exports": [
+        "src/index.mjs",
+        "src/crdt/index.mjs",
+        "src/sync/index.mjs",
+        "src/composables/index.mjs",
+        "{"
+      ],
+      "mainExport": "src/index.mjs",
+      "maturity": "mature",
+      "signals": {
+        "hasTests": true,
+        "hasExamples": true,
+        "hasReadme": true,
+        "hasChangeLog": false,
+        "version": "1.0.0"
+      },
+      "examples": "examples",
+      "keywords": [
+        "rdf",
+        "crdt",
+        "collaboration",
+        "real-time",
+        "yjs",
+        "offline-first",
+        "semantic-web"
+      ],
+      "dependencies": ["@unrdf/core", "yjs", "y-websocket", "y-indexeddb", "lib0", "zod", "ws"],
+      "notes": ["ℹ Depends on other @unrdf packages"]
+    },
+    {
+      "name": "@unrdf/composables",
+      "path": "packages/composables",
+      "version": "5.0.1",
+      "description": "UNRDF Composables - Vue 3 Composables for Reactive RDF State (Optional Extension)",
+      "role": ["io"],
+      "exports": ["src/index.mjs", "src/graph.mjs", "src/delta.mjs", "{"],
+      "mainExport": "src/index.mjs",
+      "maturity": "mature",
+      "signals": {
+        "hasTests": true,
+        "hasExamples": true,
+        "hasReadme": true,
+        "hasChangeLog": true,
+        "version": "5.0.1"
+      },
+      "examples": "examples",
+      "keywords": ["rdf", "vue", "composables", "reactive", "web"],
+      "dependencies": ["@unrdf/core", "@unrdf/streaming", "vue"],
+      "notes": ["ℹ Depends on other @unrdf packages"]
+    },
+    {
+      "name": "@unrdf/consensus",
+      "path": "packages/consensus",
+      "version": "1.0.0",
+      "description": "Production-grade Raft consensus for distributed workflow coordination",
+      "role": ["io"],
+      "exports": [
+        "src/index.mjs",
+        "src/raft/raft-coordinator.mjs",
+        "src/membership/cluster-manager.mjs",
+        "src/state/distributed-state-machine.mjs",
+        "src/transport/websocket-transport.mjs",
+        "{"
+      ],
+      "mainExport": "src/index.mjs",
+      "maturity": "mature",
+      "signals": {
+        "hasTests": true,
+        "hasExamples": true,
+        "hasReadme": true,
+        "hasChangeLog": false,
+        "version": "1.0.0"
+      },
+      "examples": "examples",
+      "keywords": [
+        "raft",
+        "consensus",
+        "distributed",
+        "workflow",
+        "coordination",
+        "fault-tolerance"
+      ],
+      "dependencies": ["@opentelemetry/api", "@unrdf/federation", "msgpackr", "ws", "zod"],
+      "notes": ["ℹ Depends on other @unrdf packages"]
+    },
+    {
+      "name": "@unrdf/core",
+      "path": "packages/core",
+      "version": "5.0.1",
+      "description": "UNRDF Core - RDF Graph Operations, SPARQL Execution, and Foundational Substrate",
+      "role": ["io", "render"],
+      "exports": [
+        "src/index.mjs",
+        "src/rdf/index.mjs",
+        "src/rdf/minimal-n3-integration.mjs",
+        "src/rdf/n3-justified-only.mjs",
+        "src/sparql/index.mjs",
+        "src/types.mjs",
+        "src/constants.mjs",
+        "src/validation/index.mjs",
+        "src/health.mjs",
+        "src/logger.mjs"
+      ],
+      "mainExport": "src/index.mjs",
+      "maturity": "mature",
+      "signals": {
+        "hasTests": true,
+        "hasExamples": true,
+        "hasReadme": true,
+        "hasChangeLog": true,
+        "version": "5.0.1"
+      },
+      "examples": "examples",
+      "keywords": ["rdf", "knowledge-graph", "sparql", "semantic-web", "linked-data"],
+      "dependencies": [
+        "@rdfjs/data-model",
+        "@rdfjs/namespace",
+        "@rdfjs/serializer-jsonld",
+        "@rdfjs/serializer-turtle",
+        "@rdfjs/to-ntriples",
+        "@unrdf/oxigraph",
+        "jsonld",
+        "n3",
+        "rdf-canonize",
+        "rdf-ext",
+        "rdf-validate-shacl",
+        "zod"
+      ],
+      "notes": ["ℹ Depends on other @unrdf packages"]
+    },
+    {
+      "name": "@unrdf/dark-matter",
+      "path": "packages/dark-matter",
+      "version": "5.0.1",
+      "description": "UNRDF Dark Matter - Query Optimization and Performance Analysis (Optional Extension)",
+      "role": ["io"],
+      "exports": ["src/index.mjs", "src/optimizer.mjs", "src/analyzer.mjs", "{", "function"],
+      "mainExport": "src/index.mjs",
+      "maturity": "mature",
+      "signals": {
+        "hasTests": true,
+        "hasExamples": true,
+        "hasReadme": true,
+        "hasChangeLog": true,
+        "version": "5.0.1"
+      },
+      "examples": "examples",
+      "keywords": ["rdf", "optimization", "performance", "sparql", "80-20"],
+      "dependencies": ["@unrdf/core", "@unrdf/oxigraph", "typhonjs-escomplex"],
+      "notes": ["ℹ Depends on other @unrdf packages"]
+    },
+    {
+      "name": "@unrdf/diataxis-kit",
+      "path": "packages/diataxis-kit",
+      "version": "1.0.0",
+      "description": "Diátaxis documentation kit for monorepo package inventory and deterministic doc scaffold generation",
+      "role": ["io"],
+      "exports": [
+        "src/index.mjs",
+        "src/inventory.mjs",
+        "src/evidence.mjs",
+        "src/classify.mjs",
+        "src/scaffold.mjs",
+        "src/stable-json.mjs",
+        "src/hash.mjs"
+      ],
+      "mainExport": "src/index.mjs",
+      "maturity": "mature",
+      "signals": {
+        "hasTests": true,
+        "hasExamples": false,
+        "hasReadme": true,
+        "hasChangeLog": false,
+        "version": "1.0.0"
+      },
+      "examples": null,
+      "keywords": ["diataxis", "documentation", "monorepo", "inventory"],
+      "dependencies": [],
+      "notes": ["⚠ No examples directory found", "ℹ No external dependencies (good isolation)"]
+    },
+    {
+      "name": "@unrdf/engine-gateway",
+      "path": "packages/engine-gateway",
+      "version": "5.0.1",
+      "description": "μ(O) Engine Gateway - Enforcement layer for Oxigraph-first, N3-minimal RDF processing",
+      "role": ["store", "derive", "enforce", "render"],
+      "exports": [
+        "src/index.mjs",
+        "src/gateway.mjs",
+        "src/operation-detector.mjs",
+        "src/validators.mjs",
+        "{"
+      ],
+      "mainExport": "./src/index.mjs",
+      "maturity": "mature",
+      "signals": {
+        "hasTests": true,
+        "hasExamples": false,
+        "hasReadme": true,
+        "hasChangeLog": true,
+        "version": "5.0.1"
+      },
+      "examples": null,
+      "keywords": [],
+      "dependencies": ["@unrdf/core", "@unrdf/oxigraph"],
+      "notes": ["⚠ No examples directory found", "ℹ Depends on other @unrdf packages"]
+    },
+    {
+      "name": "@unrdf/federation",
+      "path": "packages/federation",
+      "version": "5.0.1",
+      "description": "UNRDF Federation - Peer Discovery and Distributed Query Execution",
+      "role": ["io"],
+      "exports": [
+        "src/index.mjs",
+        "src/coordinator.mjs",
+        "src/advanced-sparql-federation.mjs",
+        "{"
+      ],
+      "mainExport": "src/index.mjs",
+      "maturity": "mature",
+      "signals": {
+        "hasTests": true,
+        "hasExamples": true,
+        "hasReadme": true,
+        "hasChangeLog": true,
+        "version": "5.0.1"
+      },
+      "examples": "examples",
+      "keywords": ["rdf", "federation", "distributed", "peer-to-peer", "sparql"],
+      "dependencies": [
+        "@comunica/query-sparql",
+        "@opentelemetry/api",
+        "@unrdf/core",
+        "@unrdf/hooks",
+        "prom-client",
+        "zod"
+      ],
+      "notes": ["ℹ Depends on other @unrdf packages"]
+    },
+    {
+      "name": "@unrdf/fusion",
+      "path": "packages/fusion",
+      "version": "1.0.0",
+      "description": "Unified integration layer for 7-day UNRDF innovation - KGC-4D, blockchain, hooks, caching",
+      "role": ["io", "enforce"],
+      "exports": ["src/index.mjs", "{"],
+      "mainExport": "src/index.mjs",
+      "maturity": "mature",
+      "signals": {
+        "hasTests": true,
+        "hasExamples": true,
+        "hasReadme": true,
+        "hasChangeLog": false,
+        "version": "1.0.0"
+      },
+      "examples": "examples",
+      "keywords": [
+        "unrdf",
+        "fusion",
+        "integration",
+        "kgc-4d",
+        "blockchain",
+        "hooks",
+        "caching",
+        "rdf",
+        "knowledge-graph"
+      ],
+      "dependencies": [
+        "@unrdf/oxigraph",
+        "@unrdf/kgc-4d",
+        "@unrdf/blockchain",
+        "@unrdf/hooks",
+        "@unrdf/caching",
+        "@unrdf/yawl",
+        "graphql",
+        "zod"
+      ],
+      "notes": ["ℹ Depends on other @unrdf packages"]
+    },
+    {
+      "name": "@unrdf/graph-analytics",
+      "path": "packages/graph-analytics",
+      "version": "1.0.0",
+      "description": "Advanced graph analytics for RDF knowledge graphs using graphlib",
+      "role": ["derive", "render"],
+      "exports": [
+        "src/index.mjs",
+        "src/converter/rdf-to-graph.mjs",
+        "src/centrality/pagerank-analyzer.mjs",
+        "src/paths/relationship-finder.mjs",
+        "src/clustering/community-detector.mjs",
+        "{"
+      ],
+      "mainExport": "src/index.mjs",
+      "maturity": "mature",
+      "signals": {
+        "hasTests": true,
+        "hasExamples": true,
+        "hasReadme": true,
+        "hasChangeLog": false,
+        "version": "1.0.0"
+      },
+      "examples": "examples",
+      "keywords": [
+        "rdf",
+        "graph",
+        "analytics",
+        "pagerank",
+        "centrality",
+        "clustering",
+        "knowledge-graph",
+        "graphlib",
+        "algorithms"
+      ],
+      "dependencies": ["@dagrejs/graphlib", "graphlib", "zod"],
+      "notes": ["ℹ Standard package structure"]
+    },
+    {
+      "name": "@unrdf/hooks",
+      "path": "packages/hooks",
+      "version": "5.0.1",
+      "description": "UNRDF Knowledge Hooks - Policy Definition and Execution Framework",
+      "role": ["io", "derive", "enforce"],
+      "exports": ["src/index.mjs", "src/define.mjs", "src/executor.mjs", "{"],
+      "mainExport": "src/index.mjs",
+      "maturity": "mature",
+      "signals": {
+        "hasTests": true,
+        "hasExamples": true,
+        "hasReadme": true,
+        "hasChangeLog": true,
+        "version": "5.0.1"
+      },
+      "examples": "examples",
+      "keywords": ["rdf", "knowledge-graph", "hooks", "policy", "validation"],
+      "dependencies": ["@unrdf/core", "@unrdf/oxigraph", "citty", "zod"],
+      "notes": ["ℹ Depends on other @unrdf packages"]
+    },
+    {
+      "name": "@unrdf/kgc-4d",
+      "path": "packages/kgc-4d",
+      "version": "5.0.1",
+      "description": "KGC 4D Datum & Universe Freeze Engine - Nanosecond-precision event logging with Git-backed snapshots",
+      "role": ["io", "derive"],
+      "exports": ["src/index.mjs", "src/client.mjs", "src/hdit/index.mjs", "{"],
+      "mainExport": "./src/index.mjs",
+      "maturity": "mature",
+      "signals": {
+        "hasTests": true,
+        "hasExamples": true,
+        "hasReadme": true,
+        "hasChangeLog": true,
+        "version": "5.0.1"
+      },
+      "examples": "examples",
+      "keywords": ["rdf", "knowledge", "4d", "event-sourcing", "time-travel", "git", "nanosecond"],
+      "dependencies": ["@unrdf/core", "@unrdf/oxigraph", "hash-wasm", "isomorphic-git"],
+      "notes": ["ℹ Depends on other @unrdf packages"]
+    },
+    {
+      "name": "@unrdf/kgc-claude",
+      "path": "packages/kgc-claude",
+      "version": "5.0.0",
+      "description": "KGC-Claude Substrate - Deterministic run objects, universal checkpoints, bounded autonomy, and multi-agent concurrency for Claude integration",
+      "role": ["io"],
+      "exports": [
+        "src/index.mjs",
+        "src/run-capsule.mjs",
+        "src/checkpoint.mjs",
+        "src/autonomy-guard.mjs",
+        "src/shard-merge.mjs",
+        "src/async-workflow.mjs",
+        "src/projection.mjs",
+        "{",
+        "function"
+      ],
+      "mainExport": "./src/index.mjs",
+      "maturity": "stable",
+      "signals": {
+        "hasTests": true,
+        "hasExamples": false,
+        "hasReadme": false,
+        "hasChangeLog": false,
+        "version": "5.0.0"
+      },
+      "examples": null,
+      "keywords": [
+        "kgc",
+        "claude",
+        "substrate",
+        "run-capsule",
+        "checkpoint",
+        "multi-agent",
+        "bounded-autonomy"
+      ],
+      "dependencies": [
+        "@unrdf/core",
+        "@unrdf/oxigraph",
+        "@unrdf/kgc-4d",
+        "@unrdf/yawl",
+        "@unrdf/hooks",
+        "hash-wasm",
+        "zod"
+      ],
+      "notes": [
+        "⚠ No examples directory found",
+        "⚠ No README.md found",
+        "ℹ Depends on other @unrdf packages"
+      ]
+    },
+    {
+      "name": "@unrdf/kgc-cli",
+      "path": "packages/kgc-cli",
+      "version": "5.0.1",
+      "description": "KGC CLI - Deterministic extension registry for ~40 workspace packages",
+      "role": ["io"],
+      "exports": ["src/index.mjs", "src/lib/registry.mjs", "src/manifest/extensions.mjs", "{"],
+      "mainExport": "src/index.mjs",
+      "maturity": "mature",
+      "signals": {
+        "hasTests": true,
+        "hasExamples": false,
+        "hasReadme": true,
+        "hasChangeLog": false,
+        "version": "5.0.1"
+      },
+      "examples": null,
+      "keywords": ["kgc", "cli", "extension-registry", "deterministic", "rdf"],
+      "dependencies": ["citty", "zod"],
+      "notes": ["⚠ No examples directory found"]
+    },
+    {
+      "name": "@unrdf/kgc-substrate",
+      "path": "packages/kgc-substrate",
+      "version": "1.0.0",
+      "description": "KGC Substrate - Deterministic, hash-stable KnowledgeStore with immutable append-only log",
+      "role": ["store", "derive"],
+      "exports": ["src/index.mjs", "src/types.mjs", "src/KnowledgeStore.mjs", "{"],
+      "mainExport": "./src/index.mjs",
+      "maturity": "documented",
+      "signals": {
+        "hasTests": false,
+        "hasExamples": false,
+        "hasReadme": true,
+        "hasChangeLog": false,
+        "version": "1.0.0"
+      },
+      "examples": null,
+      "keywords": [
+        "rdf",
+        "knowledge-graph",
+        "kgc",
+        "substrate",
+        "immutable",
+        "hash-stable",
+        "deterministic"
+      ],
+      "dependencies": ["@unrdf/kgc-4d", "@unrdf/oxigraph", "@unrdf/core", "hash-wasm", "zod"],
+      "notes": [
+        "⚠ No test directory found",
+        "⚠ No examples directory found",
+        "ℹ Depends on other @unrdf packages"
+      ]
+    },
+    {
+      "name": "@unrdf/kgn",
+      "path": "packages/kgn",
+      "version": "5.0.1",
+      "description": "Deterministic Nunjucks template system with custom filters and frontmatter support",
+      "role": ["utility"],
+      "exports": ["src/templates/*"],
+      "mainExport": "src/index.js",
+      "maturity": "mature",
+      "signals": {
+        "hasTests": true,
+        "hasExamples": false,
+        "hasReadme": true,
+        "hasChangeLog": false,
+        "version": "5.0.1"
+      },
+      "examples": null,
+      "keywords": [
+        "unrdf",
+        "kgn",
+        "nunjucks",
+        "templates",
+        "deterministic",
+        "frontmatter",
+        "filters",
+        "codegen"
+      ],
+      "dependencies": [
+        "@unrdf/core",
+        "@unrdf/test-utils",
+        "fs-extra",
+        "gray-matter",
+        "nunjucks",
+        "yaml"
+      ],
+      "notes": ["⚠ No examples directory found", "ℹ Depends on other @unrdf packages"]
+    },
+    {
+      "name": "@unrdf/knowledge-engine",
+      "path": "packages/knowledge-engine",
+      "version": "5.0.1",
+      "description": "UNRDF Knowledge Engine - Rule Engine, Inference, and Pattern Matching (Optional Extension)",
+      "role": ["io", "derive"],
+      "exports": [
+        "src/index.mjs",
+        "src/query.mjs",
+        "src/canonicalize.mjs",
+        "src/parse.mjs",
+        "src/ai-enhanced-search.mjs",
+        "{"
+      ],
+      "mainExport": "src/index.mjs",
+      "maturity": "mature",
+      "signals": {
+        "hasTests": true,
+        "hasExamples": true,
+        "hasReadme": true,
+        "hasChangeLog": true,
+        "version": "5.0.1"
+      },
+      "examples": "examples",
+      "keywords": ["rdf", "knowledge-engine", "inference", "reasoning", "rules"],
+      "dependencies": [
+        "@noble/hashes",
+        "@unrdf/core",
+        "@unrdf/oxigraph",
+        "@unrdf/streaming",
+        "@xenova/transformers",
+        "eyereasoner"
+      ],
+      "notes": ["ℹ Depends on other @unrdf packages"]
+    },
+    {
+      "name": "@unrdf/ml-inference",
+      "path": "packages/ml-inference",
+      "version": "5.0.1",
+      "description": "UNRDF ML Inference - High-performance ONNX model inference pipeline for RDF streams",
+      "role": ["io", "derive"],
+      "exports": [
+        "src/index.mjs",
+        "src/runtime/onnx-runner.mjs",
+        "src/pipeline/streaming-inference.mjs",
+        "src/registry/model-registry.mjs",
+        "{",
+        "function"
+      ],
+      "mainExport": "src/index.mjs",
+      "maturity": "mature",
+      "signals": {
+        "hasTests": true,
+        "hasExamples": true,
+        "hasReadme": true,
+        "hasChangeLog": false,
+        "version": "5.0.1"
+      },
+      "examples": "examples",
+      "keywords": ["rdf", "ml", "onnx", "inference", "streaming", "real-time", "machine-learning"],
+      "dependencies": [
+        "@opentelemetry/api",
+        "@unrdf/core",
+        "@unrdf/streaming",
+        "@unrdf/oxigraph",
+        "onnxruntime-node",
+        "zod"
+      ],
+      "notes": ["ℹ Depends on other @unrdf packages"]
+    },
+    {
+      "name": "@unrdf/ml-versioning",
+      "path": "packages/ml-versioning",
+      "version": "1.0.0",
+      "description": "ML Model Versioning System using TensorFlow.js and UNRDF KGC-4D time-travel capabilities",
+      "role": ["io"],
+      "exports": [
+        "src/index.mjs",
+        "src/version-store.mjs",
+        "src/examples/image-classifier.mjs",
+        "{"
+      ],
+      "mainExport": "./src/index.mjs",
+      "maturity": "mature",
+      "signals": {
+        "hasTests": true,
+        "hasExamples": false,
+        "hasReadme": true,
+        "hasChangeLog": false,
+        "version": "1.0.0"
+      },
+      "examples": null,
+      "keywords": [
+        "machine-learning",
+        "tensorflow",
+        "model-versioning",
+        "rdf",
+        "knowledge-graph",
+        "time-travel",
+        "provenance",
+        "cryptographic-proofs"
+      ],
+      "dependencies": [
+        "@tensorflow/tfjs-node",
+        "@unrdf/kgc-4d",
+        "@unrdf/oxigraph",
+        "@unrdf/core",
+        "hash-wasm",
+        "zod"
+      ],
+      "notes": ["⚠ No examples directory found", "ℹ Depends on other @unrdf packages"]
+    },
+    {
+      "name": "@unrdf/observability",
+      "path": "packages/observability",
+      "version": "1.0.0",
+      "description": "Innovative Prometheus/Grafana observability dashboard for UNRDF distributed workflows",
+      "role": ["utility"],
+      "exports": [
+        "src/index.mjs",
+        "src/metrics/workflow-metrics.mjs",
+        "src/exporters/grafana-exporter.mjs",
+        "src/alerts/alert-manager.mjs",
+        "{"
+      ],
+      "mainExport": "./src/index.mjs",
+      "maturity": "stable",
+      "signals": {
+        "hasTests": false,
+        "hasExamples": true,
+        "hasReadme": true,
+        "hasChangeLog": false,
+        "version": "1.0.0"
+      },
+      "examples": "examples",
+      "keywords": [
+        "prometheus",
+        "grafana",
+        "metrics",
+        "observability",
+        "monitoring",
+        "alerting",
+        "workflow",
+        "distributed-systems"
+      ],
+      "dependencies": [
+        "prom-client",
+        "@opentelemetry/api",
+        "@opentelemetry/exporter-prometheus",
+        "@opentelemetry/sdk-metrics",
+        "express",
+        "zod"
+      ],
+      "notes": ["⚠ No test directory found"]
+    },
+    {
+      "name": "@unrdf/oxigraph",
+      "path": "packages/oxigraph",
+      "version": "5.0.1",
+      "description": "UNRDF Oxigraph - Graph database benchmarking implementation using Oxigraph SPARQL engine",
+      "role": ["store", "io", "derive", "render"],
+      "exports": ["src/index.mjs", "src/store.mjs", "src/types.mjs", "function", "const"],
+      "mainExport": "src/index.mjs",
+      "maturity": "mature",
+      "signals": {
+        "hasTests": true,
+        "hasExamples": true,
+        "hasReadme": true,
+        "hasChangeLog": true,
+        "version": "5.0.1"
+      },
+      "examples": "examples",
+      "keywords": ["rdf", "sparql", "graph-database", "oxigraph", "knowledge-graph", "benchmark"],
+      "dependencies": ["oxigraph", "zod"],
+      "notes": ["ℹ Standard package structure"]
+    },
+    {
+      "name": "@unrdf/project-engine",
+      "path": "packages/project-engine",
+      "version": "5.0.1",
+      "description": "UNRDF Project Engine - Self-hosting Tools and Infrastructure (Development Only)",
+      "role": ["derive"],
+      "exports": ["src/index.mjs", "{"],
+      "mainExport": "src/index.mjs",
+      "maturity": "mature",
+      "signals": {
+        "hasTests": true,
+        "hasExamples": true,
+        "hasReadme": true,
+        "hasChangeLog": true,
+        "version": "5.0.1"
+      },
+      "examples": "examples",
+      "keywords": ["unrdf", "project-engine", "development", "infrastructure"],
+      "dependencies": ["@unrdf/core", "@unrdf/knowledge-engine"],
+      "notes": ["ℹ Depends on other @unrdf packages"]
+    },
+    {
+      "name": "@unrdf/rdf-graphql",
+      "path": "packages/rdf-graphql",
+      "version": "1.0.0",
+      "description": "Type-safe GraphQL interface for RDF knowledge graphs with automatic schema generation",
+      "role": ["io", "derive", "render"],
+      "exports": [
+        "src/adapter.mjs",
+        "src/schema-generator.mjs",
+        "src/query-builder.mjs",
+        "src/resolver.mjs"
+      ],
+      "mainExport": "src/adapter.mjs",
+      "maturity": "mature",
+      "signals": {
+        "hasTests": true,
+        "hasExamples": false,
+        "hasReadme": true,
+        "hasChangeLog": false,
+        "version": "1.0.0"
+      },
+      "examples": null,
+      "keywords": [
+        "rdf",
+        "graphql",
+        "sparql",
+        "ontology",
+        "knowledge-graph",
+        "semantic-web",
+        "type-safe"
+      ],
+      "dependencies": ["graphql", "@graphql-tools/schema", "@unrdf/oxigraph", "zod"],
+      "notes": ["⚠ No examples directory found", "ℹ Depends on other @unrdf packages"]
+    },
+    {
+      "name": "@unrdf/semantic-search",
+      "path": "packages/semantic-search",
+      "version": "1.0.0",
+      "description": "AI-powered semantic search over RDF knowledge graphs using vector embeddings",
+      "role": ["derive", "render"],
+      "exports": [
+        "src/index.mjs",
+        "src/embeddings/index.mjs",
+        "src/search/index.mjs",
+        "src/discovery/index.mjs"
+      ],
+      "mainExport": "src/index.mjs",
+      "maturity": "mature",
+      "signals": {
+        "hasTests": true,
+        "hasExamples": true,
+        "hasReadme": true,
+        "hasChangeLog": false,
+        "version": "1.0.0"
+      },
+      "examples": "examples",
+      "keywords": [
+        "rdf",
+        "semantic-search",
+        "vector-embeddings",
+        "knowledge-graph",
+        "ai",
+        "transformers",
+        "sparql",
+        "natural-language"
+      ],
+      "dependencies": ["@unrdf/oxigraph", "@xenova/transformers", "vectra", "zod"],
+      "notes": ["ℹ Depends on other @unrdf packages"]
+    },
+    {
+      "name": "@unrdf/serverless",
+      "path": "packages/serverless",
+      "version": "1.0.0",
+      "description": "UNRDF Serverless - One-click AWS deployment for RDF applications",
+      "role": ["io"],
+      "exports": [
+        "src/index.mjs",
+        "src/cdk/index.mjs",
+        "src/deploy/index.mjs",
+        "src/api/index.mjs",
+        "src/storage/index.mjs",
+        "{",
+        "const"
+      ],
+      "mainExport": "src/index.mjs",
+      "maturity": "mature",
+      "signals": {
+        "hasTests": true,
+        "hasExamples": true,
+        "hasReadme": true,
+        "hasChangeLog": false,
+        "version": "1.0.0"
+      },
+      "examples": "examples",
+      "keywords": ["rdf", "serverless", "aws", "lambda", "cdk", "infrastructure", "deployment"],
+      "dependencies": [
+        "@unrdf/core",
+        "@unrdf/oxigraph",
+        "aws-cdk-lib",
+        "constructs",
+        "esbuild",
+        "zod"
+      ],
+      "notes": ["ℹ Depends on other @unrdf packages"]
+    },
+    {
+      "name": "@unrdf/streaming",
+      "path": "packages/streaming",
+      "version": "5.0.1",
+      "description": "UNRDF Streaming - Change Feeds and Real-time Synchronization",
+      "role": ["io"],
+      "exports": ["src/index.mjs", "src/processor.mjs", "{"],
+      "mainExport": "src/index.mjs",
+      "maturity": "mature",
+      "signals": {
+        "hasTests": true,
+        "hasExamples": true,
+        "hasReadme": true,
+        "hasChangeLog": true,
+        "version": "5.0.1"
+      },
+      "examples": "examples",
+      "keywords": ["rdf", "streaming", "real-time", "change-feed", "synchronization"],
+      "dependencies": [
+        "@opentelemetry/api",
+        "@unrdf/core",
+        "@unrdf/hooks",
+        "@unrdf/oxigraph",
+        "citty",
+        "lru-cache",
+        "ws",
+        "zod"
+      ],
+      "notes": ["ℹ Depends on other @unrdf packages"]
+    },
+    {
+      "name": "@unrdf/yawl",
+      "path": "packages/yawl",
+      "version": "5.0.0",
+      "description": "YAWL (Yet Another Workflow Language) engine with KGC-4D time-travel and receipt verification",
+      "role": ["io", "derive"],
+      "exports": [
+        "src/index.mjs",
+        "src/api/workflow-api.mjs",
+        "src/api/graphql-api.mjs",
+        "src/ontology/yawl-ontology.mjs",
+        "src/store/yawl-store.mjs",
+        "src/types/yawl-types.mjs",
+        "src/types/yawl-schemas.mjs",
+        "src/hooks/yawl-hooks.mjs",
+        "src/resources/yawl-resources.mjs",
+        "src/cancellation/index.mjs"
+      ],
+      "mainExport": "src/index.mjs",
+      "maturity": "mature",
+      "signals": {
+        "hasTests": true,
+        "hasExamples": true,
+        "hasReadme": true,
+        "hasChangeLog": false,
+        "version": "5.0.0"
+      },
+      "examples": "examples",
+      "keywords": ["workflow", "yawl", "van-der-aalst", "petri-net", "bpmn", "rdf", "time-travel"],
+      "dependencies": [
+        "@graphql-tools/schema",
+        "@noble/ed25519",
+        "@observablehq/plot",
+        "@unrdf/hooks",
+        "@unrdf/kgc-4d",
+        "@unrdf/oxigraph",
+        "d3",
+        "graphql",
+        "hash-wasm",
+        "zod"
+      ],
+      "notes": ["ℹ Depends on other @unrdf packages"]
+    },
+    {
+      "name": "@unrdf/yawl-ai",
+      "path": "packages/yawl-ai",
+      "version": "1.0.0",
+      "description": "AI-powered workflow optimization using TensorFlow.js and YAWL patterns",
+      "role": ["io"],
+      "exports": [
+        "src/index.mjs",
+        "src/ml/workflow-predictor.mjs",
+        "src/ml/performance-optimizer.mjs",
+        "src/ml/anomaly-detector.mjs",
+        "src/integration/yawl-adapter.mjs",
+        "{"
+      ],
+      "mainExport": "src/index.mjs",
+      "maturity": "stable",
+      "signals": {
+        "hasTests": false,
+        "hasExamples": true,
+        "hasReadme": true,
+        "hasChangeLog": false,
+        "version": "1.0.0"
+      },
+      "examples": "examples",
+      "keywords": ["ai", "ml", "tensorflow", "workflow", "yawl", "optimization", "prediction"],
+      "dependencies": ["@tensorflow/tfjs-node", "@tensorflow/tfjs-layers", "ml-matrix", "zod"],
+      "notes": ["⚠ No test directory found"]
+    },
+    {
+      "name": "@unrdf/yawl-api",
+      "path": "packages/yawl-api",
+      "version": "1.0.0",
+      "description": "High-performance REST API framework that exposes YAWL workflows as RESTful APIs with OpenAPI documentation",
+      "role": ["io"],
+      "exports": ["src/server.mjs"],
+      "mainExport": "src/server.mjs",
+      "maturity": "mature",
+      "signals": {
+        "hasTests": true,
+        "hasExamples": false,
+        "hasReadme": true,
+        "hasChangeLog": false,
+        "version": "1.0.0"
+      },
+      "examples": null,
+      "keywords": [
+        "yawl",
+        "workflow",
+        "rest-api",
+        "fastify",
+        "openapi",
+        "swagger",
+        "hateoas",
+        "api-framework"
+      ],
+      "dependencies": [
+        "@unrdf/yawl",
+        "@unrdf/kgc-4d",
+        "fastify",
+        "@fastify/swagger",
+        "@fastify/swagger-ui",
+        "@fastify/cors",
+        "zod",
+        "zod-to-json-schema"
+      ],
+      "notes": ["⚠ No examples directory found", "ℹ Depends on other @unrdf packages"]
+    },
+    {
+      "name": "@unrdf/yawl-durable",
+      "path": "packages/yawl-durable",
+      "version": "0.1.0",
+      "description": "Durable execution framework inspired by Temporal.io using YAWL and KGC-4D",
+      "role": ["io"],
+      "exports": ["src/engine.mjs", "src/saga.mjs", "src/activity.mjs", "src/replay.mjs"],
+      "mainExport": "src/engine.mjs",
+      "maturity": "mature",
+      "signals": {
+        "hasTests": true,
+        "hasExamples": false,
+        "hasReadme": true,
+        "hasChangeLog": false,
+        "version": "0.1.0"
+      },
+      "examples": null,
+      "keywords": ["workflow", "durable-execution", "temporal", "saga", "event-sourcing", "yawl"],
+      "dependencies": ["@unrdf/yawl", "@unrdf/kgc-4d", "hash-wasm", "zod"],
+      "notes": ["⚠ No examples directory found", "ℹ Depends on other @unrdf packages"]
+    },
+    {
+      "name": "@unrdf/yawl-kafka",
+      "path": "packages/yawl-kafka",
+      "version": "1.0.0",
+      "description": "Apache Kafka event streaming integration for YAWL workflows with Avro serialization",
+      "role": ["io"],
+      "exports": ["src/index.mjs", "src/producer.mjs", "src/consumer.mjs", "src/schemas.mjs", "{"],
+      "mainExport": "src/index.mjs",
+      "maturity": "mature",
+      "signals": {
+        "hasTests": true,
+        "hasExamples": false,
+        "hasReadme": true,
+        "hasChangeLog": false,
+        "version": "1.0.0"
+      },
+      "examples": null,
+      "keywords": ["yawl", "kafka", "event-streaming", "avro", "workflow", "analytics"],
+      "dependencies": ["@unrdf/core", "avsc", "kafkajs", "zod"],
+      "notes": ["⚠ No examples directory found", "ℹ Depends on other @unrdf packages"]
+    },
+    {
+      "name": "@unrdf/yawl-langchain",
+      "path": "packages/yawl-langchain",
+      "version": "1.0.0",
+      "description": "LangChain integration for YAWL workflow engine - AI-powered workflow orchestration with RDF context",
+      "role": ["io", "derive"],
+      "exports": ["src/index.mjs", "src/adapter.mjs", "examples/code-review-workflow.mjs", "{"],
+      "mainExport": "src/index.mjs",
+      "maturity": "mature",
+      "signals": {
+        "hasTests": true,
+        "hasExamples": true,
+        "hasReadme": true,
+        "hasChangeLog": false,
+        "version": "1.0.0"
+      },
+      "examples": "examples",
+      "keywords": [
+        "yawl",
+        "langchain",
+        "workflow",
+        "ai",
+        "llm",
+        "rdf",
+        "knowledge-graph",
+        "agent-orchestration"
+      ],
+      "dependencies": [
+        "@langchain/core",
+        "@langchain/openai",
+        "@unrdf/kgc-4d",
+        "@unrdf/oxigraph",
+        "@unrdf/yawl",
+        "langchain",
+        "zod"
+      ],
+      "notes": ["ℹ Depends on other @unrdf packages"]
+    },
+    {
+      "name": "@unrdf/yawl-observability",
+      "path": "packages/yawl-observability",
+      "version": "1.0.0",
+      "description": "Workflow observability framework with Prometheus metrics and OpenTelemetry tracing for YAWL",
+      "role": ["utility"],
+      "exports": ["src/index.mjs", "src/metrics.mjs", "src/tracing.mjs", "src/sli.mjs", "{"],
+      "mainExport": "src/index.mjs",
+      "maturity": "mature",
+      "signals": {
+        "hasTests": true,
+        "hasExamples": false,
+        "hasReadme": true,
+        "hasChangeLog": false,
+        "version": "1.0.0"
+      },
+      "examples": null,
+      "keywords": [
+        "yawl",
+        "observability",
+        "prometheus",
+        "opentelemetry",
+        "metrics",
+        "tracing",
+        "workflow",
+        "sli",
+        "slo"
+      ],
+      "dependencies": [
+        "@opentelemetry/api",
+        "@opentelemetry/sdk-node",
+        "@opentelemetry/sdk-metrics",
+        "@unrdf/yawl",
+        "prom-client",
+        "zod"
+      ],
+      "notes": ["⚠ No examples directory found", "ℹ Depends on other @unrdf packages"]
+    },
+    {
+      "name": "@unrdf/yawl-queue",
+      "path": "packages/yawl-queue",
+      "version": "1.0.0",
+      "description": "Distributed YAWL workflow execution using BullMQ and Redis",
+      "role": ["io"],
+      "exports": ["src/adapter.mjs", "src/examples/data-pipeline.mjs"],
+      "mainExport": "src/adapter.mjs",
+      "maturity": "mature",
+      "signals": {
+        "hasTests": true,
+        "hasExamples": false,
+        "hasReadme": true,
+        "hasChangeLog": false,
+        "version": "1.0.0"
+      },
+      "examples": null,
+      "keywords": ["yawl", "bullmq", "workflow", "distributed", "queue", "redis", "task-execution"],
+      "dependencies": ["@unrdf/yawl", "@unrdf/kgc-4d", "bullmq", "ioredis", "zod"],
+      "notes": ["⚠ No examples directory found", "ℹ Depends on other @unrdf packages"]
+    },
+    {
+      "name": "@unrdf/yawl-realtime",
+      "path": "packages/yawl-realtime",
+      "version": "1.0.0",
+      "description": "Real-time collaboration framework for YAWL workflows using Socket.io",
+      "role": ["io"],
+      "exports": ["src/index.mjs", "src/server.mjs", "src/client.mjs", "{"],
+      "mainExport": "src/index.mjs",
+      "maturity": "mature",
+      "signals": {
+        "hasTests": true,
+        "hasExamples": false,
+        "hasReadme": true,
+        "hasChangeLog": false,
+        "version": "1.0.0"
+      },
+      "examples": null,
+      "keywords": [
+        "yawl",
+        "workflow",
+        "real-time",
+        "collaboration",
+        "socket.io",
+        "crdt",
+        "optimistic-locking"
+      ],
+      "dependencies": ["@unrdf/yawl", "socket.io", "socket.io-client", "zod"],
+      "notes": ["⚠ No examples directory found", "ℹ Depends on other @unrdf packages"]
+    },
+    {
+      "name": "@unrdf/yawl-viz",
+      "path": "packages/yawl-viz",
+      "version": "1.0.0",
+      "description": "Real-time D3.js visualization for YAWL workflows with Van der Aalst pattern rendering",
+      "role": ["io", "render"],
+      "exports": ["src/visualizer.mjs"],
+      "mainExport": "src/visualizer.mjs",
+      "maturity": "mature",
+      "signals": {
+        "hasTests": true,
+        "hasExamples": false,
+        "hasReadme": true,
+        "hasChangeLog": false,
+        "version": "1.0.0"
+      },
+      "examples": null,
+      "keywords": [
+        "yawl",
+        "workflow",
+        "visualization",
+        "d3",
+        "van-der-aalst",
+        "petri-net",
+        "real-time"
+      ],
+      "dependencies": [
+        "@unrdf/yawl",
+        "d3",
+        "d3-graphviz",
+        "d3-selection",
+        "d3-zoom",
+        "d3-drag",
+        "d3-force",
+        "d3-hierarchy"
+      ],
+      "notes": ["⚠ No examples directory found", "ℹ Depends on other @unrdf packages"]
+    }
+  ],
+  "roles_mapping": {
+    "utility": [
+      "@unrdf/atomvm",
+      "@unrdf/caching",
+      "@unrdf/collab",
+      "@unrdf/kgn",
+      "@unrdf/observability",
+      "@unrdf/yawl-observability"
+    ],
+    "io": [
+      "@unrdf/blockchain",
+      "@unrdf/cli",
+      "@unrdf/composables",
+      "@unrdf/consensus",
+      "@unrdf/core",
+      "@unrdf/dark-matter",
+      "@unrdf/diataxis-kit",
+      "@unrdf/federation",
+      "@unrdf/fusion",
+      "@unrdf/hooks",
+      "@unrdf/kgc-4d",
+      "@unrdf/kgc-claude",
+      "@unrdf/kgc-cli",
+      "@unrdf/knowledge-engine",
+      "@unrdf/ml-inference",
+      "@unrdf/ml-versioning",
+      "@unrdf/oxigraph",
+      "@unrdf/rdf-graphql",
+      "@unrdf/serverless",
+      "@unrdf/streaming",
+      "@unrdf/yawl",
+      "@unrdf/yawl-ai",
+      "@unrdf/yawl-api",
+      "@unrdf/yawl-durable",
+      "@unrdf/yawl-kafka",
+      "@unrdf/yawl-langchain",
+      "@unrdf/yawl-queue",
+      "@unrdf/yawl-realtime",
+      "@unrdf/yawl-viz"
+    ],
+    "render": [
+      "@unrdf/blockchain",
+      "@unrdf/cli",
+      "@unrdf/core",
+      "@unrdf/engine-gateway",
+      "@unrdf/graph-analytics",
+      "@unrdf/oxigraph",
+      "@unrdf/rdf-graphql",
+      "@unrdf/semantic-search",
+      "@unrdf/yawl-viz"
+    ],
+    "store": ["@unrdf/engine-gateway", "@unrdf/kgc-substrate", "@unrdf/oxigraph"],
+    "derive": [
+      "@unrdf/engine-gateway",
+      "@unrdf/graph-analytics",
+      "@unrdf/hooks",
+      "@unrdf/kgc-4d",
+      "@unrdf/kgc-substrate",
+      "@unrdf/knowledge-engine",
+      "@unrdf/ml-inference",
+      "@unrdf/oxigraph",
+      "@unrdf/project-engine",
+      "@unrdf/rdf-graphql",
+      "@unrdf/semantic-search",
+      "@unrdf/yawl",
+      "@unrdf/yawl-langchain"
+    ],
+    "enforce": ["@unrdf/engine-gateway", "@unrdf/fusion", "@unrdf/hooks"]
+  },
+  "role_descriptions": {
+    "store": "RDF triple/quad storage and querying",
+    "io": "Input/Output, serialization, streaming, and synchronization",
+    "derive": "Derivation, inference, reasoning, and knowledge processing",
+    "enforce": "Enforcement, validation, policy execution, and access control",
+    "render": "Visualization, rendering, and UI components",
+    "core": "Core utilities and foundational infrastructure",
+    "utility": "General utility functions"
+  }
+}
