@@ -1,0 +1,1035 @@
+% agent_6_packages.tex
+% Agent 6 Documentation: Packages 21-27
+% Graph Analytics, Hooks, Integration Tests, KGC-4D, KGC-Claude, KGC-CLI, KGC-Substrate
+
+\label{pkg:unrdf-graph-analytics}
+\section{\pkg{unrdf-graph-analytics} --- Graph Analytics}
+
+\begin{pkgmeta}
+Path & \texttt{packages/graph-analytics} \\
+Kind & js \\
+Entrypoints & 5 files \\
+Dependencies & 3 (graphlib, dagrejs-graphlib, zod) \\
+Blurb & Advanced graph analytics for RDF knowledge graphs using graphlib \\
+\end{pkgmeta}
+
+\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
+
+\begin{align*}
+\Oobs &= \store \times \texttt{Options} \\
+\Aout &= \texttt{Graph} \times \texttt{Metrics} \times \texttt{Communities}
+\end{align*}
+
+The observable is a triple store \(\store\) containing RDF quads. The artifact is a directed graph structure from \pkg{graphlib} enriched with analytics results: centrality scores, path structures, and community assignments.
+
+Core transformations:
+\begin{itemize}
+\item \texttt{rdfToGraph}: \(\store \to \texttt{Graph}\) --- Convert RDF store to graphlib instance
+\item \texttt{computePageRank}: \(\texttt{Graph} \to \texttt{NodeScores}\) --- Compute PageRank centrality
+\item \texttt{findShortestPath}: \(\texttt{Graph} \times \texttt{URI} \times \texttt{URI} \to \texttt{Path}\)
+\item \texttt{detectCommunitiesLPA}: \(\texttt{Graph} \to \texttt{Communities}\) --- Label propagation algorithm
+\end{itemize}
+
+\subsection*{Type Signature \(\SigmaType\)}
+
+Zod schemas enforce graph structure:
+\begin{lstlisting}
+const GraphStatsSchema = z.object({
+  nodeCount: z.number().int().nonnegative(),
+  edgeCount: z.number().int().nonnegative(),
+  density: z.number().min(0).max(1),
+  avgDegree: z.number().nonnegative()
+});
+
+const PathSchema = z.object({
+  path: z.array(z.string()),
+  distance: z.number().nonnegative(),
+  found: z.boolean()
+});
+\end{lstlisting}
+
+\subsection*{Reconciler \(\muRecon\)}
+
+\[\muRecon: \Oobs \to \Aout = \texttt{rdfToGraph} \compose \texttt{analyzeGraph}\]
+
+The reconciler extracts subject-predicate-object relationships from RDF quads and maps them to graph edges. Node identifiers are URI strings, edge labels are predicate URIs. Graph operations (centrality, paths, clustering) execute on the graphlib structure.
+
+Determinism guarantee: Given identical \(\store\) contents and options, \(\muRecon\) produces identical graph structure and metrics (modulo label propagation randomization seed).
+
+\subsection*{Composition \(\PiMerge / \oplusMerge\)}
+
+Sequential composition for analytics pipeline:
+\[\PiMerge = \texttt{rdfToGraph} \compose \texttt{computePageRank} \compose \texttt{getTopNodes}\]
+
+Commutative merge for graph union:
+\[G_1 \oplusMerge G_2 = \texttt{mergeGraphs}(G_1, G_2)\]
+
+Graph union combines node sets and edge sets. PageRank scores are not compositional across graph unions (requires recomputation on merged graph).
+
+\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
+
+Guards:
+\begin{itemize}
+\item \(\GuardH_{\text{cycle}}\): Prevent path finding on graphs with negative weight cycles
+\item \(\GuardH_{\text{size}}\): Reject graphs exceeding 100K nodes for community detection
+\item \(\GuardH_{\text{connected}}\): Warn when computing betweenness centrality on disconnected graphs
+\end{itemize}
+
+Invariants:
+\begin{itemize}
+\item \(\InvQ_{\text{degree}}\): Sum of in-degrees equals sum of out-degrees (directed graph)
+\item \(\InvQ_{\text{pagerank}}\): PageRank scores sum to 1.0 (within numerical tolerance)
+\item \(\InvQ_{\text{partition}}\): Community detection produces disjoint node sets
+\end{itemize}
+
+\subsection*{Provenance and Receipts}
+
+No cryptographic receipts. Provenance tracked via:
+\begin{itemize}
+\item Graph statistics (\texttt{nodeCount}, \texttt{edgeCount}) serve as fingerprints
+\item Algorithm parameters (damping factor, max iterations) logged in result metadata
+\item SPARQL query used for RDF-to-graph conversion included in trace
+\end{itemize}
+
+Future: Content-address graph structures with \(\ProvHash(\texttt{nodes} \cup \texttt{edges})\).
+
+\subsection*{Minimal Example}
+
+\begin{lstlisting}
+import { createStore } from '@unrdf/oxigraph';
+import { rdfToGraph, computePageRank, getTopNodes }
+  from '@unrdf/graph-analytics';
+
+const store = createStore();
+// Assume store populated with RDF triples
+
+const graph = rdfToGraph(store);
+const pagerank = computePageRank(graph, {
+  dampingFactor: 0.85,
+  maxIterations: 100
+});
+const top10 = getTopNodes(pagerank, 10);
+
+console.log('Most important entities:', top10);
+\end{lstlisting}
+
+\subsection*{Open Questions}
+
+\begin{enumerate}
+\item How to make PageRank compositional over graph unions?
+\item Deterministic community detection (remove LPA randomization)?
+\item Streaming graph analytics for large RDF datasets (>1M triples)?
+\item Integration with SHACL shapes for graph validation constraints?
+\end{enumerate}
+
+% ============================================================================
+
+\label{pkg:unrdf-hooks}
+\section{\pkg{unrdf-hooks} --- Knowledge Hooks}
+
+\begin{pkgmeta}
+Path & \texttt{packages/hooks} \\
+Kind & js \\
+Entrypoints & 3 files \\
+Dependencies & 6 (citty, unrdf-core, unrdf-oxigraph, zod) \\
+Blurb & UNRDF Knowledge Hooks - Policy Definition and Execution Framework \\
+\end{pkgmeta}
+
+\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
+
+\begin{align*}
+\Oobs &= \quad{\texttt{subject}, \texttt{predicate}, \texttt{object}, \texttt{graph}} \\
+\Aout &= \texttt{HookResult} = \{\texttt{allowed}, \texttt{transformed}, \texttt{receipt}\}
+\end{align*}
+
+The observable is an RDF quad awaiting admission to the store. The artifact is a hook execution result containing:
+\begin{itemize}
+\item \texttt{allowed}: Boolean admission decision
+\item \texttt{transformed}: Modified quad (if transformation hook)
+\item \texttt{receipt}: Execution trace with timestamps and rule IDs
+\end{itemize}
+
+\subsection*{Type Signature \(\SigmaType\)}
+
+Hook definition schema:
+\begin{lstlisting}
+const HookSchema = z.object({
+  id: z.string(),
+  trigger: z.enum(['before-write', 'after-write', 'before-delete']),
+  validate: z.function().args(QuadSchema).returns(z.boolean()).optional(),
+  transform: z.function().args(QuadSchema).returns(QuadSchema).optional(),
+  priority: z.number().int().nonnegative().default(100)
+});
+
+const HookResultSchema = z.object({
+  allowed: z.boolean(),
+  transformed: QuadSchema.optional(),
+  receipt: ReceiptSchema
+});
+\end{lstlisting}
+
+\subsection*{Reconciler \(\muRecon\)}
+
+\[\muRecon: \Oobs \times \texttt{Hook[]} \to \Aout\]
+
+The reconciler executes hook chain sequentially:
+\begin{lstlisting}
+async function executeHookChain(quad, hooks) {
+  let current = quad;
+  for (const hook of hooks.sort(byPriority)) {
+    if (hook.validate && !await hook.validate(current)) {
+      return { allowed: false, receipt: denial(hook.id) };
+    }
+    if (hook.transform) {
+      current = await hook.transform(current);
+    }
+  }
+  return { allowed: true, transformed: current, receipt: approval() };
+}
+\end{lstlisting}
+
+Optimization: Hook chain compiler generates JIT-optimized function for repeated execution (caches validation-only chains, uses quad pooling for zero-allocation transforms).
+
+\subsection*{Composition \(\PiMerge / \oplusMerge\)}
+
+Sequential hook composition (order matters):
+\[\PiMerge(h_1, h_2) = h_2 \compose h_1\]
+
+Hook priorities determine execution order. Lower priority number executes first.
+
+Commutative merge for independent hooks (validation-only, no state):
+\[h_1 \oplusMerge h_2 \iff \texttt{independent}(h_1, h_2)\]
+
+\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
+
+Guards:
+\begin{itemize}
+\item \(\GuardH_{\text{cycle}}\): Detect infinite loops in hook chains (max depth 100)
+\item \(\GuardH_{\text{timeout}}\): Abort hook execution exceeding 5 seconds
+\item \(\GuardH_{\text{sandbox}}\): Prevent hooks from modifying store directly (isolation)
+\end{itemize}
+
+Invariants:
+\begin{itemize}
+\item \(\InvQ_{\text{quad}}\): Transformation preserves quad structure (4-tuple)
+\item \(\InvQ_{\text{receipt}}\): Every hook execution produces receipt (audit trail)
+\item \(\InvQ_{\text{deny}}\): Validation failure halts chain immediately (fail-fast)
+\end{itemize}
+
+Built-in hooks enforce RDF well-formedness:
+\begin{itemize}
+\item \texttt{validateIRIFormat}: Reject malformed URIs
+\item \texttt{rejectBlankNodes}: Enforce named-node-only policy
+\item \texttt{validateLanguageTag}: Check BCP47 compliance for literals
+\end{itemize}
+
+\subsection*{Provenance and Receipts}
+
+Hook execution receipt:
+\begin{lstlisting}
+{
+  "hookId": "validate-pii",
+  "timestamp": 1733314560123456789n,
+  "quad": "<s, p, o, g>",
+  "result": "denied",
+  "reason": "PII without consent",
+  "hash": "blake3_hash_of_input"
+}
+\end{lstlisting}
+
+Receipts stored in \texttt{kgc:HookLog} graph for audit queries:
+\begin{lstlisting}
+SELECT ?hook ?quad ?result WHERE {
+  GRAPH <http://kgc.io/HookLog> {
+    ?execution kgc:hook ?hook ;
+               kgc:quad ?quad ;
+               kgc:result ?result .
+  }
+}
+\end{lstlisting}
+
+\subsection*{Minimal Example}
+
+\begin{lstlisting}
+import { defineHook, executeHook } from '@unrdf/hooks';
+import { dataFactory } from '@unrdf/oxigraph';
+
+defineHook('reject-blank-nodes', {
+  trigger: 'before-write',
+  async validate(quad) {
+    return quad.subject.termType !== 'BlankNode' &&
+           quad.object.termType !== 'BlankNode';
+  }
+});
+
+const quad = dataFactory.quad(
+  dataFactory.namedNode('http://example.org/Alice'),
+  dataFactory.namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+  dataFactory.namedNode('http://example.org/Person')
+);
+
+const result = await executeHook('reject-blank-nodes', quad);
+console.log(result.allowed); // true
+\end{lstlisting}
+
+\subsection*{Open Questions}
+
+\begin{enumerate}
+\item How to verify hook non-interference (commutative validation hooks)?
+\item Formal proof that transformation chains preserve RDF composition rules?
+\item Distributed hook execution across federated stores?
+\item SHACL-to-hook compilation for automated policy generation?
+\end{enumerate}
+
+% ============================================================================
+
+\label{pkg:unrdf-integration-tests}
+\section{\pkg{unrdf-integration-tests} --- Integration Tests}
+
+\begin{pkgmeta}
+Path & \texttt{packages/integration-tests} \\
+Kind & js \\
+Entrypoints & 0 (test-only package) \\
+Dependencies & 9 (vitest, unrdf-core, unrdf-federation, unrdf-hooks, unrdf-kgc-4d, unrdf-yawl, zod) \\
+Blurb & Comprehensive integration tests for UNRDF multi-package workflows \\
+\end{pkgmeta}
+
+\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
+
+\begin{align*}
+\Oobs &= \texttt{TestSuite} \times \texttt{Fixtures} \\
+\Aout &= \texttt{TestResults} = \{\texttt{passed}, \texttt{failed}, \texttt{coverage}\}
+\end{align*}
+
+The observable is a collection of test specifications describing multi-package interactions. The artifact is a test execution report with pass/fail counts, error traces, and coverage metrics.
+
+\subsection*{Type Signature \(\SigmaType\)}
+
+Test suite schema:
+\begin{lstlisting}
+const TestSuiteSchema = z.object({
+  name: z.string(),
+  tests: z.array(z.object({
+    description: z.string(),
+    setup: z.function(),
+    execute: z.function(),
+    assert: z.function(),
+    teardown: z.function().optional()
+  })),
+  timeout: z.number().default(5000)
+});
+\end{lstlisting}
+
+\subsection*{Reconciler \(\muRecon\)}
+
+\[\muRecon: \texttt{TestSuite} \to \texttt{TestResults}\]
+
+Test runner executes suite sequentially, capturing pass/fail and coverage data. Integration tests verify cross-package contracts:
+\begin{itemize}
+\item \texttt{workflows/}: YAWL workflows with KGC-4D event logging
+\item \texttt{federation/}: Distributed query execution with hooks
+\item \texttt{streaming/}: Real-time change feeds with store synchronization
+\item \texttt{error-recovery/}: Failure modes and rollback composition rules
+\item \texttt{performance/}: Latency budgets and throughput targets
+\end{itemize}
+
+\subsection*{Composition \(\PiMerge / \oplusMerge\)}
+
+Test suites compose sequentially:
+\[\PiMerge(\texttt{suite}_1, \texttt{suite}_2) = \texttt{concatenate}(\texttt{suite}_1, \texttt{suite}_2)\]
+
+Independent test suites can execute in parallel:
+\[\texttt{suite}_1 \oplusMerge \texttt{suite}_2 \iff \neg\texttt{sharedState}(\texttt{suite}_1, \texttt{suite}_2)\]
+
+\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
+
+Guards:
+\begin{itemize}
+\item \(\GuardH_{\text{timeout}}\): Abort tests exceeding 5-second budget (default)
+\item \(\GuardH_{\text{isolation}}\): Prevent test state leakage between suites
+\item \(\GuardH_{\text{coverage}}\): Fail CI if coverage drops below 80\%
+\end{itemize}
+
+Invariants:
+\begin{itemize}
+\item \(\InvQ_{\text{idempotent}}\): Tests produce same result on repeated execution
+\item \(\InvQ_{\text{cleanup}}\): Teardown restores pre-test state (no side effects)
+\item \(\InvQ_{\text{deterministic}}\): No flaky tests (100\% pass rate required)
+\end{itemize}
+
+\subsection*{Provenance and Receipts}
+
+Test execution receipt:
+\begin{lstlisting}
+{
+  "suite": "workflows/yawl-kgc-integration",
+  "timestamp": "2024-12-04T15:16:00.123Z",
+  "passed": 42,
+  "failed": 0,
+  "coverage": 87.3,
+  "duration_ms": 2345
+}
+\end{lstlisting}
+
+OTEL spans track test execution for performance regression detection.
+
+\subsection*{Minimal Example}
+
+\begin{lstlisting}
+import { describe, it, expect } from 'vitest';
+import { KGCStore } from '@unrdf/kgc-4d';
+import { defineHook, executeHook } from '@unrdf/hooks';
+
+describe('KGC-4D + Hooks Integration', () => {
+  it('hooks execute on event append', async () => {
+    const store = new KGCStore();
+    defineHook('log-events', {
+      trigger: 'after-write',
+      async validate(quad) { return true; }
+    });
+
+    const receipt = await store.appendEvent({ type: 'TEST' }, []);
+    expect(receipt).toBeDefined();
+    expect(receipt.receipt.timestamp_iso).toMatch(/^\d{4}-\d{2}-\d{2}T/);
+  });
+});
+\end{lstlisting}
+
+\subsection*{Open Questions}
+
+\begin{enumerate}
+\item How to test distributed failure modes (network partitions)?
+\item Property-based testing for multi-package invariants?
+\item Mutation testing to verify test suite completeness?
+\item Automated test generation from type signatures?
+\end{enumerate}
+
+% ============================================================================
+
+\label{pkg:unrdf-kgc-4d}
+\section{\pkg{unrdf-kgc-4d} --- KGC 4D Datum Engine}
+
+\begin{pkgmeta}
+Path & \texttt{packages/kgc-4d} \\
+Kind & js \\
+Entrypoints & 3 files \\
+Dependencies & 7 (comment-parser, hash-wasm, isomorphic-git, simple-statistics, tinybench, unrdf-core, unrdf-oxigraph) \\
+Blurb & KGC 4D Datum \& Universe Freeze Engine - Nanosecond-precision event logging with Git-backed snapshots \\
+\end{pkgmeta}
+
+\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
+
+\begin{align*}
+\Oobs &= \texttt{Event} \times \texttt{Deltas} \times \tauEpoch \\
+\Aout &= \texttt{Receipt} \times \texttt{UniverseHash} \times \texttt{GitRef}
+\end{align*}
+
+The observable is an event payload with RDF deltas (additions/deletions) timestamped at nanosecond precision. The artifact is a cryptographic receipt containing universe hash and Git commit reference.
+
+Four dimensions:
+\begin{enumerate}
+\item \textbf{Observable State} (\(\Oobs\)): RDF quads in \texttt{kgc:Universe} graph
+\item \textbf{Time} (\(\tauEpoch\)): BigInt nanoseconds (monotonic, immutable)
+\item \textbf{Causality}: Vector clocks for distributed event ordering
+\item \textbf{Provenance}: Git references to frozen snapshots
+\end{enumerate}
+
+\subsection*{Type Signature \(\SigmaType\)}
+
+Event schema:
+\begin{lstlisting}
+const EventSchema = z.object({
+  type: z.enum(['CREATE', 'UPDATE', 'DELETE', 'SNAPSHOT']),
+  payload: z.record(z.any()),
+  timestamp_ns: z.bigint(),
+  vector_clock: VectorClockSchema.optional()
+});
+
+const ReceiptSchema = z.object({
+  id: z.string().uuid(),
+  t_ns: z.bigint(),
+  timestamp_iso: z.string().datetime(),
+  universe_hash: z.string(),
+  git_ref: z.string().optional(),
+  event_count: z.number().int().nonnegative(),
+  nquad_count: z.number().int().nonnegative()
+});
+\end{lstlisting}
+
+\subsection*{Reconciler \(\muRecon\)}
+
+\[\muRecon_{\text{freeze}}: \Oobs_t \to (\Aout_{\text{snapshot}}, \texttt{GitCommit})\]
+
+Freeze operation:
+\begin{enumerate}
+\item Serialize \texttt{kgc:Universe} to N-Quads (deterministic S-P-O-G sort)
+\item Compute BLAKE3 hash: \(\ProvHash(\texttt{nquads})\)
+\item Commit to Git: \texttt{isomorphic-git.commit(nquads)}
+\item Record receipt event in \texttt{kgc:EventLog}
+\end{enumerate}
+
+Reconstruction (time-travel):
+\[\muRecon_{\text{reconstruct}}: \tauEpoch \to \Oobs_{\tauEpoch}\]
+
+\begin{enumerate}
+\item Find latest snapshot before \(\tauEpoch\): \(\texttt{snapshot}_{\text{max}(t < \tauEpoch)}\)
+\item Load snapshot from Git: \texttt{git.readSnapshot(snapshot.git\_ref)}
+\item Replay events: \(\forall e \in \texttt{EventLog} \mid e.t\_ns > \texttt{snapshot.t\_ns} \land e.t\_ns \leq \tauEpoch\)
+\item Apply deltas: \(\Oobs_{\tauEpoch} = \texttt{snapshot} \oplusMerge \sum \texttt{deltas}\)
+\end{enumerate}
+
+\subsection*{Composition \(\PiMerge / \oplusMerge\)}
+
+Event composition (sequential, causal):
+\[\PiMerge(e_1, e_2) \iff e_1.t\_ns < e_2.t\_ns\]
+
+Delta merge (commutative for independent quads):
+\[\Delta_1 \oplusMerge \Delta_2 = \{\texttt{adds}: \Delta_1.\texttt{adds} \cup \Delta_2.\texttt{adds}, \texttt{deletes}: \Delta_1.\texttt{deletes} \cup \Delta_2.\texttt{deletes}\}\]
+
+Conflict resolution for concurrent deltas uses last-writer-wins with vector clock comparison.
+
+\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
+
+Guards:
+\begin{itemize}
+\item \(\GuardH_{\text{monotonic}}\): Reject events with \(t\_ns \leq \texttt{lastTime}\)
+\item \(\GuardH_{\text{clock-jump}}\): Detect time anomalies (system clock rollback)
+\item \(\GuardH_{\text{hash}}\): Abort freeze if BLAKE3 hash computation fails
+\end{itemize}
+
+Invariants:
+\begin{itemize}
+\item \(\InvQ_{\text{append-only}}\): EventLog immutable (no updates or deletes)
+\item \(\InvQ_{\text{reconstruct}}\): \(\muRecon_{\text{reconstruct}}(t)\) deterministic
+\item \(\InvQ_{\text{hash-stable}}\): \(\ProvHash(\Oobs_t) = \texttt{receipt}_t.\texttt{universe\_hash}\)
+\end{itemize}
+
+\subsection*{Provenance and Receipts}
+
+Freeze receipt example:
+\begin{lstlisting}
+{
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "t_ns": "1733314560123456789",
+  "timestamp_iso": "2024-12-04T15:16:00.123456789Z",
+  "universe_hash": "blake3:a3f8d...",
+  "git_ref": "abc123def456",
+  "event_count": 42,
+  "nquad_count": 156
+}
+\end{lstlisting}
+
+Verification:
+\begin{lstlisting}
+const verified = await verifyReceipt(receipt, gitBackbone, store);
+// Fetches Git commit, recomputes hash, compares
+\end{lstlisting}
+
+\subsection*{Minimal Example}
+
+\begin{lstlisting}
+import { KGCStore, GitBackbone, freezeUniverse, reconstructState }
+  from '@unrdf/kgc-4d';
+
+const store = new KGCStore();
+const git = new GitBackbone('./repo');
+
+// Append event
+const receipt = await store.appendEvent(
+  { type: 'CREATE', payload: { entity: 'Alice' } },
+  [{ type: 'add', subject: 'ex:Alice', predicate: 'rdf:type',
+     object: 'ex:Person' }]
+);
+
+// Freeze universe
+const frozen = await freezeUniverse(store, git);
+console.log(`Frozen at ${frozen.timestamp_iso}, hash: ${frozen.universe_hash}`);
+
+// Time-travel
+const pastStore = await reconstructState(store, git, frozen.t_ns);
+// pastStore contains state from frozen time
+\end{lstlisting}
+
+\subsection*{Open Questions}
+
+\begin{enumerate}
+\item How to optimize reconstruction for large event logs (>1M events)?
+\item Distributed consensus for vector clock synchronization?
+\item Incremental snapshots (delta compression) to reduce Git storage?
+\item CRDT integration for offline-first event merging?
+\end{enumerate}
+
+% ============================================================================
+
+\label{pkg:unrdf-kgc-claude}
+\section{\pkg{unrdf-kgc-claude} --- KGC-Claude Substrate}
+
+\begin{pkgmeta}
+Path & \texttt{packages/kgc-claude} \\
+Kind & js \\
+Entrypoints & 7 files \\
+Dependencies & 8 (hash-wasm, unrdf-core, unrdf-hooks, unrdf-kgc-4d, unrdf-oxigraph, unrdf-yawl, zod) \\
+Blurb & KGC-Claude Substrate - Deterministic run objects, universal checkpoints, bounded autonomy, and multi-agent concurrency \\
+\end{pkgmeta}
+
+\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
+
+\begin{align*}
+\Oobs &= \texttt{RunCapsule} \times \texttt{ToolCalls} \times \texttt{Budget} \\
+\Aout &= \texttt{Checkpoint} \times \texttt{Receipt} \times \texttt{DenialProof}
+\end{align*}
+
+The observable is a Claude run capsule containing normalized tool traces and autonomy budget constraints. The artifact is a checkpoint with cryptographic receipt proving execution state.
+
+Core innovations:
+\begin{enumerate}
+\item \textbf{Run Capsules}: First-class \(\Delta_{\text{run}}\) objects with admission control
+\item \textbf{Checkpoints}: Universal freeze/thaw across CLI/IDE/MCP surfaces
+\item \textbf{Autonomy Guards}: Explicit budget enforcement with denial receipts
+\item \textbf{Shard Merge}: Multi-agent concurrency with deterministic conflict resolution
+\item \textbf{Async Workflows}: WorkItem primitives with state transitions
+\item \textbf{Projections}: Surface-specific views (\(\Pi_{\text{ui}}\), \(\Pi_{\text{cli}}\))
+\end{enumerate}
+
+\subsection*{Type Signature \(\SigmaType\)}
+
+Run capsule schema:
+\begin{lstlisting}
+const RunCapsuleSchema = z.object({
+  id: z.string().uuid(),
+  timestamp_ns: z.bigint(),
+  tool_calls: z.array(z.object({
+    name: z.string(),
+    input: z.record(z.any()),
+    output: z.any().optional(),
+    duration_ms: z.number().nonnegative()
+  })),
+  artifacts: z.record(z.string()),
+  status: z.enum(['pending', 'executing', 'completed', 'denied'])
+});
+
+const BudgetSchema = z.object({
+  max_tokens: z.number().int().positive(),
+  max_duration_ms: z.number().int().positive(),
+  max_tool_calls: z.number().int().positive()
+});
+\end{lstlisting}
+
+\subsection*{Reconciler \(\muRecon\)}
+
+\[\muRecon_{\text{capsule}}: \texttt{RunCapsule} \to (\texttt{Admitted} \lor \texttt{Denied})\]
+
+Admission control:
+\begin{lstlisting}
+function checkAdmission(capsule, budget, history) {
+  // preserve(Q): Check invariant preservation
+  if (!preservesInvariant(capsule)) {
+    return deny('INVARIANT_VIOLATION');
+  }
+
+  // Delta_run not in H: Check no duplicate
+  if (history.has(capsule.id)) {
+    return deny('DUPLICATE_RUN');
+  }
+
+  // Budget check
+  if (capsule.tool_calls.length > budget.max_tool_calls) {
+    return deny('BUDGET_EXCEEDED');
+  }
+
+  return admit();
+}
+\end{lstlisting}
+
+Checkpoint reconciler:
+\[\muRecon_{\text{checkpoint}}: \Oobs_t \to (\texttt{Snapshot}, \texttt{Receipt}_t, \ProvHash(\muRecon(\Oobs_t)))\]
+
+\subsection*{Composition \(\PiMerge / \oplusMerge\)}
+
+Shard merge (multi-agent):
+\[\Delta_1 \oplusMerge \Delta_2 = \muRecon(\Oobs \sqcup \Delta_1 \sqcup \Delta_2)\]
+
+Merge law \(\Lambda\) resolves conflicts:
+\begin{itemize}
+\item Disjoint scopes: Union
+\item Overlapping scopes: Last-writer-wins by timestamp
+\item Contradiction: Deny both, escalate to human
+\end{itemize}
+
+Sequential checkpoint composition:
+\[\PiMerge(\texttt{checkpoint}_1, \texttt{checkpoint}_2) = \texttt{checkpoint}_2 \mid \texttt{drift}(\texttt{checkpoint}_1, \texttt{checkpoint}_2) < \epsilon\]
+
+\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
+
+Guards:
+\begin{itemize}
+\item \(\GuardH_{\text{budget}}\): Enforce token/time/tool-call limits
+\item \(\GuardH_{\text{scope}}\): Prevent agents from modifying overlapping shards
+\item \(\GuardH_{\text{checkpoint}}\): Verify checkpoint hash before thaw
+\end{itemize}
+
+Invariants:
+\begin{itemize}
+\item \(\InvQ_{\text{deterministic}}\): Run capsule produces same result on replay
+\item \(\InvQ_{\text{receipt}}\): Every checkpoint has cryptographic receipt
+\item \(\InvQ_{\text{portable}}\): Checkpoints restore across CLI/IDE/MCP
+\end{itemize}
+
+\subsection*{Provenance and Receipts}
+
+Checkpoint receipt:
+\begin{lstlisting}
+{
+  "id": "checkpoint-abc123",
+  "timestamp_ns": 1733314560123456789n,
+  "run_capsules": ["run-1", "run-2", "run-3"],
+  "state_hash": "blake3:...",
+  "git_ref": "def456",
+  "drift_from_previous": 0.002
+}
+\end{lstlisting}
+
+Denial receipt:
+\begin{lstlisting}
+{
+  "run_id": "run-xyz",
+  "reason": "BUDGET_EXCEEDED",
+  "details": { "max_tool_calls": 100, "actual": 142 },
+  "timestamp_ns": 1733314560987654321n
+}
+\end{lstlisting}
+
+\subsection*{Minimal Example}
+
+\begin{lstlisting}
+import { KGCStore, GitBackbone } from '@unrdf/kgc-4d';
+import { createSubstrate } from '@unrdf/kgc-claude';
+
+const store = new KGCStore();
+const git = new GitBackbone('./repo');
+const substrate = createSubstrate(store, git, {
+  budget: { max_tokens: 10000, max_duration_ms: 30000, max_tool_calls: 100 }
+});
+
+// Create guarded run
+const run = substrate.createRun();
+run.addToolCall({ name: 'Read', input: { file: 'foo.txt' } });
+
+const check = await substrate.guard.check(run.getMetrics());
+if (check.allowed) {
+  const capsule = await run.seal();
+  await substrate.persist(capsule);
+  await substrate.checkpoint();
+}
+\end{lstlisting}
+
+\subsection*{Open Questions}
+
+\begin{enumerate}
+\item How to prove shard merge commutativity for complex conflict laws?
+\item Formal verification of checkpoint portability across surfaces?
+\item Optimal budget allocation for multi-agent systems?
+\item CRDT-based shard merge (avoid central reconciler)?
+\end{enumerate}
+
+% ============================================================================
+
+\label{pkg:unrdf-kgc-cli}
+\section{\pkg{unrdf-kgc-cli} --- KGC CLI}
+
+\begin{pkgmeta}
+Path & \texttt{packages/kgc-cli} \\
+Kind & js \\
+Entrypoints & 4 files \\
+Dependencies & 4 (citty, types-node, vitest, zod) \\
+Blurb & KGC CLI - Deterministic extension registry for ~40 workspace packages \\
+\end{pkgmeta}
+
+\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
+
+\begin{align*}
+\Oobs &= \texttt{ExtensionManifest} \times \texttt{Overrides} \\
+\Aout &= \texttt{CittyCommandTree} \times \texttt{LoadOrder}
+\end{align*}
+
+The observable is an extension manifest declaring 47 CLI extensions with dependencies and load constraints. The artifact is a Citty command tree with deterministic load order.
+
+\subsection*{Type Signature \(\SigmaType\)}
+
+Extension schema:
+\begin{lstlisting}
+const ExtensionSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  package: z.string(),
+  depends: z.array(z.string()).default([]),
+  priority: z.number().int().default(100),
+  commands: z.array(z.object({
+    name: z.string(),
+    description: z.string(),
+    handler: z.function()
+  }))
+});
+\end{lstlisting}
+
+\subsection*{Reconciler \(\muRecon\)}
+
+\[\muRecon_{\text{registry}}: \texttt{ExtensionManifest} \to \texttt{CittyTree}\]
+
+Load order computation (topological sort):
+\begin{lstlisting}
+function getLoadOrder(extensions) {
+  const graph = buildDependencyGraph(extensions);
+  const sorted = topologicalSort(graph);
+
+  // Deterministic: stable sort by priority, then lexicographic ID
+  return sorted.sort((a, b) =>
+    a.priority !== b.priority ? a.priority - b.priority : a.id.localeCompare(b.id)
+  );
+}
+\end{lstlisting}
+
+Registry initialization:
+\begin{lstlisting}
+function initializeRegistry() {
+  const order = getLoadOrder(extensions);
+  for (const ext of order) {
+    registry.register(ext);
+  }
+  return buildCittyTree(registry);
+}
+\end{lstlisting}
+
+\subsection*{Composition \(\PiMerge / \oplusMerge\)}
+
+Extension composition (sequential by load order):
+\[\PiMerge(\texttt{ext}_1, \texttt{ext}_2) = \texttt{ext}_2 \mid \texttt{ext}_1 \in \texttt{depends}(\texttt{ext}_2)\]
+
+Command merge (commutative for disjoint namespaces):
+\[\texttt{cmd}_1 \oplusMerge \texttt{cmd}_2 \iff \texttt{namespace}(\texttt{cmd}_1) \cap \texttt{namespace}(\texttt{cmd}_2) = \emptyset\]
+
+\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
+
+Guards:
+\begin{itemize}
+\item \(\GuardH_{\text{cycle}}\): Reject extension graphs with dependency cycles
+\item \(\GuardH_{\text{namespace}}\): Prevent command name collisions
+\item \(\GuardH_{\text{load}}\): Abort if extension fails to load
+\end{itemize}
+
+Invariants:
+\begin{itemize}
+\item \(\InvQ_{\text{order}}\): Load order deterministic (idempotent)
+\item \(\InvQ_{\text{dependencies}}\): Extensions load after dependencies
+\item \(\InvQ_{\text{envelope}}\): All extensions wrapped in envelope with metadata
+\end{itemize}
+
+\subsection*{Provenance and Receipts}
+
+Extension envelope:
+\begin{lstlisting}
+{
+  "id": "unrdf-kgc-4d-ext",
+  "version": "5.0.0",
+  "loaded_at": "2024-12-04T15:16:00.123Z",
+  "checksum": "blake3:...",
+  "dependencies_resolved": ["unrdf-core", "unrdf-oxigraph"]
+}
+\end{lstlisting}
+
+Registry state hash:
+\[\ProvHash(\texttt{registry}) = \texttt{BLAKE3}(\texttt{sorted}(\texttt{extensions.map}(e \to e.\texttt{id} + e.\texttt{version})))\]
+
+\subsection*{Minimal Example}
+
+\begin{lstlisting}
+import { Registry, loadManifest, initializeRegistry } from '@unrdf/kgc-cli';
+
+const manifest = loadManifest();
+console.log(`Loaded ${manifest.extensions.length} extensions`);
+
+const registry = initializeRegistry();
+const tree = buildCittyTree(registry);
+
+// CLI entrypoint
+tree.run();
+\end{lstlisting}
+
+\subsection*{Open Questions}
+
+\begin{enumerate}
+\item How to verify extension isolation (no side effects on registry)?
+\item Dynamic extension loading (hot-reload without restart)?
+\item Extension versioning constraints (semver compatibility)?
+\item Distributed extension registry (package federation)?
+\end{enumerate}
+
+% ============================================================================
+
+\label{pkg:unrdf-kgc-substrate}
+\section{\pkg{unrdf-kgc-substrate} --- KGC Substrate}
+
+\begin{pkgmeta}
+Path & \texttt{packages/kgc-substrate} \\
+Kind & js \\
+Entrypoints & 3 files \\
+Dependencies & 7 (hash-wasm, types-node, unrdf-core, unrdf-kgc-4d, unrdf-oxigraph, vitest, zod) \\
+Blurb & KGC Substrate - Deterministic, hash-stable KnowledgeStore with immutable append-only log \\
+\end{pkgmeta}
+
+\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
+
+\begin{align*}
+\Oobs &= \texttt{TripleEntry} \times \tauEpoch \\
+\Aout &= \texttt{Receipt} \times \texttt{StateCommitment} \times \texttt{TamperProof}
+\end{align*}
+
+The observable is an RDF triple entry with append-only composition rules. The artifact is a receipt with state commitment hash and tamper-detection proof.
+
+Core components:
+\begin{enumerate}
+\item \textbf{KnowledgeStore}: Hash-stable triple store with deterministic serialization
+\item \textbf{ReceiptChain}: Merkle-chained receipts for append-only log
+\item \textbf{TamperDetector}: Cryptographic verification of receipt integrity
+\end{enumerate}
+
+\subsection*{Type Signature \(\SigmaType\)}
+
+Triple entry schema:
+\begin{lstlisting}
+const TripleEntrySchema = z.object({
+  subject: z.string(),
+  predicate: z.string(),
+  object: z.string(),
+  timestamp_ns: z.bigint(),
+  operation: z.enum(['add', 'delete'])
+});
+
+const StateCommitmentSchema = z.object({
+  root_hash: z.string(),
+  triple_count: z.number().int().nonnegative(),
+  timestamp_ns: z.bigint(),
+  previous_hash: z.string().optional()
+});
+\end{lstlisting}
+
+\subsection*{Reconciler \(\muRecon\)}
+
+\[\muRecon_{\text{append}}: \texttt{TripleEntry} \to (\texttt{Receipt}, \texttt{NewState})\]
+
+Append operation:
+\begin{lstlisting}
+async function append(store, entry) {
+  // 1. Validate entry
+  const validated = TripleEntrySchema.parse(entry);
+
+  // 2. Compute state commitment
+  const prevState = await store.getStateCommitment();
+  const newState = computeStateCommitment(prevState, validated);
+
+  // 3. Create receipt
+  const receipt = {
+    id: uuid(),
+    timestamp_ns: validated.timestamp_ns,
+    entry_hash: hash(validated),
+    state_hash: newState.root_hash,
+    previous_receipt: prevState.receipt_id
+  };
+
+  // 4. Merkle chain
+  receipts.append(receipt);
+
+  return { receipt, state: newState };
+}
+\end{lstlisting}
+
+\subsection*{Composition \(\PiMerge / \oplusMerge\)}
+
+Receipt chain composition (sequential, causal):
+\[\PiMerge(r_1, r_2) = r_2 \mid r_2.\texttt{previous\_receipt} = r_1.\texttt{id}\]
+
+State commitment merge (deterministic):
+\[\texttt{state}_1 \oplusMerge \texttt{state}_2 = \ProvHash(\texttt{sorted}(\texttt{state}_1.\texttt{triples} \cup \texttt{state}_2.\texttt{triples}))\]
+
+\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
+
+Guards:
+\begin{itemize}
+\item \(\GuardH_{\text{hash}}\): Reject entries with invalid hash
+\item \(\GuardH_{\text{monotonic}}\): Reject entries with \(t\_ns \leq \texttt{lastTimestamp}\)
+\item \(\GuardH_{\text{tamper}}\): Abort on receipt chain break
+\end{itemize}
+
+Invariants:
+\begin{itemize}
+\item \(\InvQ_{\text{append-only}}\): No updates or deletes to receipt chain
+\item \(\InvQ_{\text{hash-stable}}\): Same triple set produces same state hash
+\item \(\InvQ_{\text{chain}}\): Every receipt links to previous receipt (DAG)
+\end{itemize}
+
+\subsection*{Provenance and Receipts}
+
+Receipt example:
+\begin{lstlisting}
+{
+  "id": "receipt-abc123",
+  "timestamp_ns": 1733314560123456789n,
+  "entry_hash": "blake3:entry...",
+  "state_hash": "blake3:state...",
+  "previous_receipt": "receipt-xyz789",
+  "merkle_proof": ["hash1", "hash2", "hash3"]
+}
+\end{lstlisting}
+
+Tamper detection:
+\begin{lstlisting}
+const detector = new TamperDetector(receiptChain);
+const result = await detector.verify();
+
+if (!result.valid) {
+  console.error('Tamper detected:', result.violations);
+  // violations: [{ receipt_id, expected_hash, actual_hash }]
+}
+\end{lstlisting}
+
+\subsection*{Minimal Example}
+
+\begin{lstlisting}
+import { KnowledgeStore, ReceiptChain, TamperDetector }
+  from '@unrdf/kgc-substrate';
+
+const store = new KnowledgeStore();
+const receipts = new ReceiptChain();
+
+// Append triple
+const entry = {
+  subject: 'ex:Alice',
+  predicate: 'rdf:type',
+  object: 'ex:Person',
+  timestamp_ns: BigInt(Date.now()) * 1000000n,
+  operation: 'add'
+};
+
+const { receipt, state } = await store.append(entry);
+receipts.append(receipt);
+
+console.log(`State hash: ${state.root_hash}`);
+
+// Verify integrity
+const detector = new TamperDetector(receipts);
+const valid = await detector.verify();
+console.log(`Chain valid: ${valid}`);
+\end{lstlisting}
+
+\subsection*{Open Questions}
+
+\begin{enumerate}
+\item How to optimize Merkle proof verification for large chains?
+\item Distributed receipt chain (multi-node consensus)?
+\item Pruning strategies for append-only log (retention policies)?
+\item Integration with blockchain anchoring for external verification?
+\end{enumerate}
+
+% ============================================================================
+% End of agent_6_packages.tex
+% ============================================================================

@@ -1,0 +1,419 @@
+% Agent 3 Package Chapters
+% Packages 0-6: Documentation, Innovation, Templates, and Migration
+
+\label{pkg:unrdf-docs-site}
+\section{\pkg{unrdf-docs-site} --- Unified Documentation Site}
+
+\begin{pkgmeta}
+Path & \texttt{apps/docs-site} \\
+Kind & docs \\
+Entrypoints & 0 files \\
+Dependencies & 21 \\
+Blurb & Unified documentation site for UNRDF ecosystem \\
+\end{pkgmeta}
+
+\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
+This package produces static HTML documentation artifacts via Docusaurus compilation, making the entire UNRDF ecosystem queryable through browser-based search. The observable substrate includes rendered Markdown documentation, API references, and interactive examples that serve as human-readable proofs of package capabilities.
+
+\subsection*{Type Signature \(\SigmaType\)}
+\begin{itemize}
+\item \texttt{DocusaurusConfig} --- Configuration object for site structure
+\item \texttt{MDXComponents} --- React components for enhanced markdown rendering
+\item \texttt{DocMetadata} --- Frontmatter schema for documentation pages
+\item \texttt{NavigationTree} --- Hierarchical structure of documentation paths
+\item \texttt{SearchIndex} --- Indexed content for client-side search
+\end{itemize}
+
+\subsection*{Reconciler \(\muRecon\)}
+The reconciliation algorithm processes Markdown files through MDX compilation, transforming documentation source into React component trees. Build-time reconciliation validates cross-references between documentation pages, ensuring all package paths and API references resolve correctly. The Docusaurus plugin system acts as a document-to-HTML reconciler with hot-reload support during development.
+
+\subsection*{Composition \(\PiMerge / \oplusMerge\)}
+Composes with all UNRDF packages as their documentation target. Input: Markdown files from \texttt{packages/*/README.md} and \texttt{docs/**/*.md}. Output: Static HTML site with navigation, search, and versioning. The composition boundary is enforced through Docusaurus configuration, which declares dependencies on documentation source files but not on package implementations.
+
+\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
+\textbf{Guards}: Prevents broken links through static analysis of markdown cross-references. TypeScript compilation ensures JSX components in MDX files are type-safe.
+
+\textbf{Invariants}: All published documentation versions remain immutable. Documentation builds are reproducible given the same source tree. Navigation structure preserves topological ordering of package dependencies.
+
+\subsection*{Provenance and Receipts}
+Documentation builds include git commit hashes in the footer, linking rendered content to exact source states. Static asset hashes enable CDN cache invalidation. Build logs from \texttt{pnpm build} provide reproducible compilation evidence.
+
+\subsection*{Minimal Example}
+Build and serve documentation:
+\begin{verbatim}
+cd /home/user/unrdf/apps/docs-site
+pnpm install
+pnpm run build
+pnpm run serve
+# Open http://localhost:3002
+\end{verbatim}
+
+\subsection*{Open Questions}
+\begin{itemize}
+\item How to generate API documentation directly from JSDoc in \texttt{packages/*/src/**/*.mjs} without manual duplication?
+\item Should documentation versions be anchored to blockchain receipts for tamper-proof historical records?
+\item Can search indexing incorporate RDF knowledge graphs to enable knowledge-focused documentation queries?
+\end{itemize}
+
+% ============================================================================
+
+\label{pkg:unrdf-autonomic-innovation}
+\section{\pkg{unrdf-autonomic-innovation} --- 10-Agent Swarm Innovation}
+
+\begin{pkgmeta}
+Path & \texttt{AUTONOMIC\_INNOVATION} \\
+Kind & js \\
+Entrypoints & 1 file \\
+Dependencies & 3 (peer) \\
+Blurb & AUTONOMIC\_INNOVATION - 10 Swarm Agents Building Graph Innovations \\
+\end{pkgmeta}
+
+\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
+Produces a coordination substrate where 10 specialized agents emit RDF graphs representing architectural decisions, migration patterns, lens transformations, and proof certificates. Each agent's output becomes observable state that subsequent agents can query and compose. Artifacts include deterministic test suites, quality reports (JSON with scores \(\geq 80/100\)), and E2E scenario validations.
+
+\subsection*{Type Signature \(\SigmaType\)}
+\begin{itemize}
+\item \texttt{AgentManifest} --- Zod schema defining agent responsibilities and output contracts
+\item \texttt{SwarmState} --- Composite state of all 10 agents' RDF graphs
+\item \texttt{QualityGate} --- Validation predicate returning boolean with evidence trace
+\item \texttt{DeterminismReport} --- Hash-based equality proof for reproducible builds
+\item \texttt{E2EScenario} --- Test case with inputs, expected outputs, and oracle functions
+\end{itemize}
+
+\subsection*{Reconciler \(\muRecon\)}
+The swarm reconciler executes agents in topological order based on dependency constraints. Agent 1 defines control plane schemas. Agents 2-9 produce specialized artifacts (capsules, lenses, impact sets, shadow execution). Agent 10 validates all outputs through determinism checks and quality scoring. Reconciliation fails if any agent's hash differs across runs or if quality gates report \textless 80/100.
+
+\subsection*{Composition \(\PiMerge / \oplusMerge\)}
+Composes with \texttt{@unrdf/core}, \texttt{@unrdf/oxigraph}, and \texttt{@unrdf/kgc-4d} as peer dependencies. Each agent reads from shared RDF store and writes to isolated named graphs. Merge operation uses quad-level conflict detection: agents must produce disjoint triple sets or explicitly declare commutative merge strategies. Output composition uses JSON merging for quality reports.
+
+\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
+\textbf{Guards}: Prevents non-deterministic agent execution through hash verification. Timeout guards (\texttt{timeout 5s}) ensure agents complete within bounded time. Zod schemas prevent invalid state transitions.
+
+\textbf{Invariants}: Agent outputs are idempotent (re-running produces identical hashes). Swarm state is append-only. Quality scores are monotonic (improvements only). All agent artifacts have provenance (git commit + timestamp).
+
+\subsection*{Provenance and Receipts}
+Each agent emits cryptographic receipts using \texttt{@unrdf/kgc-4d} for time-stamped event logs. Agent 10's quality report includes SHA-256 hashes of all intermediate artifacts. Test runner at \texttt{AUTONOMIC\_INNOVATION/test-runner.mjs} produces determinism proof by running agents twice and comparing hashes.
+
+\subsection*{Minimal Example}
+Run autonomous swarm demo:
+\begin{verbatim}
+cd /home/user/unrdf/AUTONOMIC_INNOVATION
+node demo.mjs
+# Output: 10 agents execute, emit RDF, quality report printed
+\end{verbatim}
+Example from \texttt{AUTONOMIC\_INNOVATION/demo.mjs}
+
+\subsection*{Open Questions}
+\begin{itemize}
+\item How to scale swarm coordination beyond 10 agents while preserving determinism guarantees?
+\item Can agent outputs be verified in parallel to reduce total validation time below 5 seconds?
+\item Should swarm state snapshots be stored as KGC-4D universe freezes for time-travel debugging?
+\end{itemize}
+
+% ============================================================================
+
+\label{pkg:unrdf-package-name}
+\section{\pkg{unrdf-package-name} --- Package Template}
+
+\begin{pkgmeta}
+Path & \texttt{docs/templates/package-template} \\
+Kind & js \\
+Entrypoints & 1 file \\
+Dependencies & 2 \\
+Blurb & One-sentence description of what this package does \\
+\end{pkgmeta}
+
+\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
+This template produces scaffolding for new UNRDF packages, emitting directory structure, configuration files, and boilerplate code. Observable artifacts include \texttt{package.json}, \texttt{src/index.mjs}, \texttt{test/index.test.mjs}, and linting configurations. The template ensures all packages share identical project structure and tooling conventions.
+
+\subsection*{Type Signature \(\SigmaType\)}
+\begin{itemize}
+\item \texttt{PackageMetadata} --- Zod schema for \texttt{package.json} required fields
+\item \texttt{TestSuite} --- Vitest configuration and example test cases
+\item \texttt{LintConfig} --- ESLint and Prettier configurations
+\item \texttt{ScriptTargets} --- Standard npm scripts (\texttt{test}, \texttt{lint}, \texttt{format})
+\end{itemize}
+
+\subsection*{Reconciler \(\muRecon\)}
+Template reconciliation substitutes package-specific values (name, description, author) into template files. File tree reconciliation ensures required directories (\texttt{src/}, \texttt{test/}) exist. Dependency reconciliation installs Vitest and Zod as baseline requirements. The reconciler validates that generated packages pass linting and empty test suites succeed.
+
+\subsection*{Composition \(\PiMerge / \oplusMerge\)}
+Composes with workspace package manager (pnpm) to register new packages in monorepo. Input: Package name and description strings. Output: Fully initialized package directory with passing tests. Composition boundary enforced through workspace protocol (\texttt{workspace:*}) for internal dependencies.
+
+\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
+\textbf{Guards}: Prevents packages with invalid names (must match \texttt{@unrdf/*}). Ensures \texttt{package.json} includes \texttt{type: "module"}. Zod validation prevents missing required metadata fields.
+
+\textbf{Invariants}: All generated packages use ESM syntax. Vitest is the only test framework. Zod is present for schema validation. Scripts \texttt{test}, \texttt{lint}, and \texttt{format} exist.
+
+\subsection*{Provenance and Receipts}
+Template generation records timestamp and operator. Generated \texttt{package.json} includes version \texttt{1.0.0} as initial state. Git history provides audit trail of template evolution.
+
+\subsection*{Minimal Example}
+Create new package from template:
+\begin{verbatim}
+cp -r /home/user/unrdf/docs/templates/package-template \
+      /home/user/unrdf/packages/my-new-package
+cd /home/user/unrdf/packages/my-new-package
+# Edit package.json to set name and description
+pnpm test  # Should pass with 0 tests
+\end{verbatim}
+
+\subsection*{Open Questions}
+\begin{itemize}
+\item Should template include KGC-4D integration by default for automatic receipt generation?
+\item How to version template itself when breaking changes to project structure occur?
+\item Can template validation be automated through CI to prevent drift from canonical structure?
+\end{itemize}
+
+% ============================================================================
+
+\label{pkg:enterprise-migration}
+\section{\pkg{enterprise-migration} --- Enterprise Migration Orchestration}
+
+\begin{pkgmeta}
+Path & \texttt{ENTERPRISE\_MIGRATION} \\
+Kind & js \\
+Entrypoints & 4 files \\
+Dependencies & 0 \\
+Blurb & Enterprise migration system for UNRDF substrate platform - 10-agent orchestrated migration \\
+\end{pkgmeta}
+
+\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
+Produces a complete migration substrate supporting shadow-mode execution, impact analysis, and rollback capabilities. Observable outputs include migration phase reports (JSON), mismatch ledgers (RDF), routing mode configurations, and cryptographic receipts for all state transitions. The system emits health checks, state snapshots, and provenance chains for audit compliance.
+
+\subsection*{Type Signature \(\SigmaType\)}
+\begin{itemize}
+\item \texttt{MigrationPhase} --- Enum of states: \texttt{shadow | canary | full | rollback}
+\item \texttt{ControlPlane} --- Central coordinator exported from \texttt{agent-1/control-plane.mjs}
+\item \texttt{ImpactSet} --- Triple dependency graph from \texttt{agent-6/impact-set.mjs}
+\item \texttt{RoutingMode} --- Decision logic from \texttt{agent-7/routing-modes.mjs}
+\item \texttt{HealthReport} --- Boolean \texttt{healthy} with diagnostic details
+\item \texttt{MigrationReceipt} --- Cryptographic proof of phase transition
+\end{itemize}
+
+\subsection*{Reconciler \(\muRecon\)}
+The migration reconciler coordinates 10 agents to execute phased rollouts. Agent 1 provides control plane. Agent 2 generates contract lockfiles. Agent 3 defines ID mapping rules. Agent 4 compiles bidirectional lenses. Agent 5 produces tamper-proof capsules. Agent 6 computes impact sets. Agent 7 implements shadow execution. Agent 8 generates adapter facades. Agent 9 provides substrate store abstraction. Agent 10 validates end-to-end scenarios. Reconciliation uses Zod schemas to validate state transitions between phases.
+
+\subsection*{Composition \(\PiMerge / \oplusMerge\)}
+Composes with legacy systems through adapter facade pattern. Input: Legacy API calls. Output: UNRDF substrate operations with dual-write shadow mode. Merge conflicts detected through mismatch ledger (Agent 7), which logs discrepancies as RDF triples for offline analysis. Rollback router enables instant fallback to legacy system if quality gates fail.
+
+\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
+\textbf{Guards}: Prevents direct migration to production (must pass shadow + canary phases). Impact set analysis prevents unbounded cascading updates. Timeout guards ensure migration phases complete within SLA windows. Zod validation prevents invalid routing mode transitions.
+
+\textbf{Invariants}: Shadow mode never mutates production state. Rollback is always available (no destructive migrations). All phase transitions emit receipts. Health endpoint always responds within 100ms. Migration state is append-only.
+
+\subsection*{Provenance and Receipts}
+Every migration action (phase transition, shadow execution, rollback) generates cryptographic receipts with timestamps and operator IDs. Mismatch ledger provides tamper-evident audit trail. Proof reports at \texttt{agent-10/proof-report.mjs} validate receipt chains. Receipt anchoring to blockchain planned but not yet implemented.
+
+\subsection*{Minimal Example}
+Run migration in dry-run mode:
+\begin{verbatim}
+cd /home/user/unrdf/ENTERPRISE_MIGRATION
+node -e "import('./src/index.mjs').then(m => \
+  m.runMigration({ dryRun: true }).then(r => \
+  console.log(JSON.stringify(r, null, 2))))"
+\end{verbatim}
+Example demonstrates shadow mode execution without state mutation.
+
+\subsection*{Open Questions}
+\begin{itemize}
+\item How to extend shadow mode to support percentage-based traffic splitting for gradual rollout?
+\item Can impact set analysis be computed incrementally to reduce phase transition latency?
+\item Should migration receipts be anchored to blockchain for regulatory compliance guarantees?
+\end{itemize}
+
+% ============================================================================
+
+\label{pkg:unrdf-enterprise-demo}
+\section{\pkg{unrdf-enterprise-demo} --- Enterprise Demo Environment}
+
+\begin{pkgmeta}
+Path & \texttt{enterprise-demo} \\
+Kind & js \\
+Entrypoints & 0 files \\
+Dependencies & 10 \\
+Blurb & No description available \\
+\end{pkgmeta}
+
+\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
+Produces an instrumented demo environment showcasing UNRDF capabilities with OpenTelemetry observability. Observable artifacts include OTEL traces exported to Jaeger, test execution reports, and JSDoc-generated API documentation. The package demonstrates integration patterns between core UNRDF packages and enterprise monitoring infrastructure.
+
+\subsection*{Type Signature \(\SigmaType\)}
+\begin{itemize}
+\item \texttt{OTELConfig} --- OpenTelemetry SDK configuration for Node.js
+\item \texttt{TracingContext} --- Active span and trace ID propagation
+\item \texttt{MetricsRegistry} --- Prometheus-compatible metric exporters
+\item \texttt{JaegerExporter} --- Configuration for Jaeger backend
+\item \texttt{InstrumentationConfig} --- Auto-instrumentation for HTTP and file system
+\end{itemize}
+
+\subsection*{Reconciler \(\muRecon\)}
+Demo reconciliation initializes OTEL SDK with Jaeger exporter, configures auto-instrumentation for HTTP and filesystem operations, and binds trace propagation to demo application lifecycle. The reconciler ensures all demo operations emit spans with consistent naming conventions and attributes conforming to OpenTelemetry specification.
+
+\subsection*{Composition \(\PiMerge / \oplusMerge\)}
+Composes with \texttt{@opentelemetry/*} packages to provide observability layer. Input: Demo application code. Output: Instrumented execution traces. Composition uses dependency injection to wrap demo operations with tracing spans. Merge operation aggregates metrics from multiple demo scenarios into unified Prometheus endpoint.
+
+\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
+\textbf{Guards}: Prevents demo execution without OTEL SDK initialization. ESLint rules enforce consistent use of tracing APIs. Citty test utilities validate command-line interface contracts.
+
+\textbf{Invariants}: All demo operations produce traces. Jaeger exporter connection succeeds or fails fast. Demo state is ephemeral (no persistent storage). Test suite passes with 100\% success rate.
+
+\subsection*{Provenance and Receipts}
+OTEL traces provide distributed request provenance. Trace IDs link demo operations to Jaeger UI for replay. Test execution logs from Vitest serve as verification receipts. JSDoc output proves API surface area.
+
+\subsection*{Minimal Example}
+Run demo with OTEL tracing:
+\begin{verbatim}
+cd /home/user/unrdf/enterprise-demo
+pnpm install
+# Configure Jaeger endpoint in environment
+export JAEGER_ENDPOINT=http://localhost:14268/api/traces
+pnpm test
+# View traces at http://localhost:16686
+\end{verbatim}
+
+\subsection*{Open Questions}
+\begin{itemize}
+\item Should demo environment include pre-configured Grafana dashboards for metric visualization?
+\item How to package demo as Docker Compose stack for one-command deployment?
+\item Can demo traces be replayed against different UNRDF versions for regression testing?
+\end{itemize}
+
+% ============================================================================
+
+\label{pkg:unrdf-examples}
+\section{\pkg{unrdf-examples} --- Usage Examples Collection}
+
+\begin{pkgmeta}
+Path & \texttt{examples} \\
+Kind & js \\
+Entrypoints & 0 files \\
+Dependencies & 3 \\
+Blurb & UNRDF usage examples \\
+\end{pkgmeta}
+
+\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
+Produces executable demonstration scripts showcasing UNRDF patterns across core packages. Observable outputs include console logs from example runs, intermediate RDF graphs, and verification results. Examples serve as integration tests, documentation supplements, and onboarding materials. Each example file is a complete, standalone demonstration.
+
+\subsection*{Type Signature \(\SigmaType\)}
+\begin{itemize}
+\item \texttt{ExampleScript} --- Executable \texttt{.mjs} file with imports, setup, and assertions
+\item \texttt{DemoGraph} --- Sample RDF triples for knowledge hook demonstrations
+\item \texttt{YAWLWorkflow} --- Workflow definitions from \texttt{examples/yawl/*.mjs}
+\item \texttt{StreamingPipeline} --- Change feed processors from \texttt{examples/streaming/*.mjs}
+\item \texttt{FederationQuery} --- Distributed SPARQL from \texttt{examples/federation/*.mjs}
+\end{itemize}
+
+\subsection*{Reconciler \(\muRecon\)}
+Example reconciliation verifies that all scripts execute successfully within timeout bounds (typically 5 seconds). The reconciler ensures examples import only from published \texttt{@unrdf/*} packages, not internal development paths. Verification checks that console output matches expected patterns and that no uncaught exceptions occur.
+
+\subsection*{Composition \(\PiMerge / \oplusMerge\)}
+Composes with \texttt{@unrdf/core}, \texttt{@unrdf/knowledge-engine}, and \texttt{@unrdf/hooks} via workspace dependencies. Examples demonstrate composition patterns:
+\begin{itemize}
+\item RDF parsing + SPARQL querying (\texttt{01-minimal-parse-query.mjs})
+\item Knowledge hook definition + execution (\texttt{03-knowledge-hooks.mjs})
+\item YAWL workflow orchestration (\texttt{yawl/01-simple-sequential.mjs})
+\item Real-time streaming (\texttt{streaming/basic-subscription.mjs})
+\end{itemize}
+Merge operation combines example outputs for regression test suites.
+
+\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
+\textbf{Guards}: Prevents examples from mutating shared state (must use in-memory stores). Timeout guards ensure examples complete quickly. ESM-only imports prevent CommonJS leakage.
+
+\textbf{Invariants}: All examples are idempotent (re-running produces same output). Examples use deterministic data (no random generation). Scripts exit with code 0 on success. No external service dependencies.
+
+\subsection*{Provenance and Receipts}
+Example execution logs serve as verification receipts. Git history tracks evolution of demonstration patterns. Comments in example files reference specific package versions and API contracts.
+
+\subsection*{Minimal Example}
+Run basic RDF parsing example:
+\begin{verbatim}
+cd /home/user/unrdf/examples
+node 01-minimal-parse-query.mjs
+# Output: Parsed triples and SPARQL query results
+\end{verbatim}
+From \texttt{examples/01-minimal-parse-query.mjs}
+
+Additional examples:
+\begin{itemize}
+\item Knowledge Hooks: \texttt{examples/03-knowledge-hooks.mjs}
+\item YAWL Workflows: \texttt{examples/yawl/01-simple-sequential.mjs}
+\item Streaming: \texttt{examples/streaming/basic-subscription.mjs}
+\item Federation: \texttt{examples/federation/basic-federation.mjs}
+\item Blockchain: \texttt{examples/blockchain-audit/src/index.mjs}
+\end{itemize}
+
+\subsection*{Open Questions}
+\begin{itemize}
+\item Should examples be executable in browser via WebAssembly-compiled Oxigraph?
+\item How to version examples independently from package implementations?
+\item Can example outputs be verified against golden files for regression testing?
+\end{itemize}
+
+% ============================================================================
+
+\label{pkg:unrdf-atomvm}
+\section{\pkg{unrdf-atomvm} --- AtomVM Browser Runtime}
+
+\begin{pkgmeta}
+Path & \texttt{packages/atomvm} \\
+Kind & js \\
+Entrypoints & 2 files \\
+Dependencies & 9 \\
+Blurb & Run AtomVM (Erlang/BEAM VM) in browser and Node.js \\
+\end{pkgmeta}
+
+\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
+Produces a WebAssembly-based runtime for executing Erlang/Elixir bytecode in browser contexts and Node.js. Observable artifacts include compiled BEAM modules, service worker configurations for Cross-Origin Isolation, and OTEL traces from BEAM execution. The package enables distributed RDF processing using Erlang's actor model within JavaScript environments.
+
+\subsection*{Type Signature \(\SigmaType\)}
+\begin{itemize}
+\item \texttt{AtomVMInstance} --- Initialized WASM VM with BEAM bytecode loader
+\item \texttt{ServiceWorkerConfig} --- COI headers and WASM module paths
+\item \texttt{BEAMModule} --- Compiled Erlang bytecode with exported functions
+\item \texttt{ActorMessage} --- Erlang-style message passing protocol
+\item \texttt{VMMetrics} --- Heap size, message queue depth, process count
+\end{itemize}
+
+\subsection*{Reconciler \(\muRecon\)}
+Runtime reconciliation loads WASM binary, initializes BEAM VM memory, and establishes message passing channels between JavaScript and Erlang processes. Service worker reconciliation configures Cross-Origin Isolation headers required for \texttt{SharedArrayBuffer}. The build reconciler compiles Erlang source (\texttt{.erl}) to BEAM bytecode (\texttt{.beam}) using scripts at \texttt{packages/atomvm/scripts/index.mjs}.
+
+\subsection*{Composition \(\PiMerge / \oplusMerge\)}
+Composes with browser security model via service workers. Input: Erlang source code and RDF graphs. Output: Distributed actor computations over knowledge graphs. The package merges Erlang's supervision trees with RDF triple stores, enabling fault-tolerant graph processing. Playwright tests validate browser integration at \texttt{packages/atomvm/test:playwright}.
+
+\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
+\textbf{Guards}: Prevents WASM execution without Cross-Origin Isolation. Service worker manager ensures COI headers before loading SharedArrayBuffer. TypeScript definitions prevent type mismatches at WASM boundary.
+
+\textbf{Invariants}: BEAM VM state is isolated per instance. Actor message passing preserves FIFO ordering. Service worker registration succeeds before WASM load. Erlang process crashes are caught and logged.
+
+\subsection*{Provenance and Receipts}
+OTEL tracing records WASM module loads, BEAM process spawns, and message passing events. Build scripts generate deterministic BEAM bytecode (same source produces identical hashes). Vitest coverage reports verify runtime correctness. Playwright traces provide browser execution provenance.
+
+\subsection*{Minimal Example}
+Run AtomVM in Node.js:
+\begin{verbatim}
+cd /home/user/unrdf/packages/atomvm
+node src/cli.mjs <module-name>
+# Loads BEAM module and executes exported functions
+\end{verbatim}
+
+Browser example with service worker:
+\begin{verbatim}
+cd /home/user/unrdf/packages/atomvm
+pnpm run dev
+# Opens Vite dev server with COI-enabled service worker
+# Navigate to http://localhost:5173
+\end{verbatim}
+
+Example workflow compilation:
+\begin{verbatim}
+pnpm run build:erlang:workflow
+# Compiles Erlang workflow modules to BEAM bytecode
+\end{verbatim}
+
+\subsection*{Open Questions}
+\begin{itemize}
+\item Can AtomVM integrate with YAWL workflows to enable Erlang-based workflow steps?
+\item How to persist BEAM process state across page reloads using IndexedDB?
+\item Should BEAM bytecode be stored in RDF graphs for introspectable executable knowledge?
+\end{itemize}

@@ -1,0 +1,1423 @@
+% =============================================================================
+% Agent 10: Package Author - Chapters for Packages 49-56
+% =============================================================================
+% This file contains LaTeX chapters for 8 packages:
+% 1. unrdf-yawl-queue (49)
+% 2. unrdf-yawl-realtime (50)
+% 3. unrdf-yawl-viz (51)
+% 4. unrdf-hooks-showcase (52)
+% 5. unrdf-analytics-project (53)
+% 6. unrdf-governance-project (54)
+% 7. unrdf-starter-project (55)
+% 8. unrdf-vscode (56)
+% =============================================================================
+
+% =============================================================================
+% Package 49: unrdf-yawl-queue
+% =============================================================================
+
+\label{pkg:unrdf-yawl-queue}
+\section{\pkg{unrdf-yawl-queue} --- Distributed YAWL Queue Execution}
+
+\begin{pkgmeta}
+Path & \texttt{packages/yawl-queue} \\
+Kind & js \\
+Entrypoints & 2 files \\
+Dependencies & 6 \\
+Blurb & Distributed YAWL workflow execution using BullMQ and Redis \\
+\end{pkgmeta}
+
+\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
+
+The observable \(\Oobs\) for \pkg{unrdf-yawl-queue} is the distributed execution state of YAWL workflow tasks across multiple worker processes. The artifact \(\Aout\) is the set of BullMQ job records in Redis with their associated YAWL receipts.
+
+Observable structure:
+\begin{itemize}
+  \item Queue state: \texttt{jobCounts} (waiting, active, completed, failed)
+  \item Worker pool: Map of \texttt{workerId} to Worker instance
+  \item Job-to-case mapping: \texttt{jobId} \(\mapsto\) \texttt{\{caseId, workItemId, taskId\}}
+  \item Receipt storage: \texttt{caseId} \(\mapsto\) \texttt{receipts[]}
+\end{itemize}
+
+Artifact encoding in Redis:
+\begin{itemize}
+  \item Workflow metadata: \texttt{yawl:workflow:\{workflowId\}} contains registration timestamp and task count
+  \item Job data validated by \texttt{YAWLJobDataSchema} (Zod)
+  \item Actions: \texttt{\{enable, start, complete, cancel\}}
+\end{itemize}
+
+\subsection*{Type Signature \(\SigmaType\)}
+
+The type signature \(\SigmaType\) for the adapter constructor:
+\[
+\SigmaType(\texttt{YAWLQueueAdapter}) = \texttt{AdapterConfigSchema} \to \texttt{YAWLQueueAdapter}
+\]
+
+where \texttt{AdapterConfigSchema} validates:
+\begin{itemize}
+  \item \texttt{redis}: Connection options (host, port, password, db)
+  \item \texttt{queueName}: String, default \texttt{"yawl-workflows"}
+  \item \texttt{defaultJobOptions}: Retry attempts (default 3), backoff strategy (exponential/fixed), removal policies
+  \item \texttt{engineConfig}: YAWL engine configuration
+\end{itemize}
+
+Task execution type:
+\[
+\texttt{executeCase}: (\texttt{workflowId}, \texttt{initialData}, \texttt{options}) \to \texttt{Promise<\{caseId, jobId\}>}
+\]
+
+\subsection*{Reconciler \(\muRecon\)}
+
+The reconciler \(\muRecon\) maintains consistency between YAWL engine state and distributed queue state through:
+
+\begin{enumerate}
+  \item \textbf{Event synchronization}: YAWL engine events trigger job creation
+    \begin{itemize}
+      \item \texttt{TASK\_ENABLED} \(\Rightarrow\) Queue \texttt{enable} action
+      \item Task completion \(\Rightarrow\) Queue downstream enabled tasks
+    \end{itemize}
+
+  \item \textbf{Receipt chaining}: Each job stores parent receipt hash for causality verification
+
+  \item \textbf{Lock mapping}: \texttt{jobMapping} tracks active work items to prevent duplicate execution
+
+  \item \textbf{Retry policy}: Respects YAWL cancellation regions for retry limits
+    \begin{itemize}
+      \item Tasks in cancellation region apply custom retry logic
+      \item Default: \texttt{attemptsMade < maxAttempts} (3)
+    \end{itemize}
+\end{enumerate}
+
+Reconciler invariant: For case \(c\) with job \(j\), if \(j\) completes successfully, then engine state for \(c\) reflects task completion before queueing downstream tasks.
+
+\subsection*{Composition \(\PiMerge / \oplusMerge\)}
+
+Composition operator \(\PiMerge\) chains multiple YAWL tasks through distributed queue:
+
+\[
+\texttt{task}_1 \PiMerge \texttt{task}_2 = \texttt{complete}(\texttt{task}_1) \Rightarrow \texttt{queue}(\texttt{task}_2)
+\]
+
+The merge operator \(\oplusMerge\) combines worker outputs:
+\begin{itemize}
+  \item Worker pool: \(w_1 \oplusMerge w_2 \oplusMerge \cdots \oplusMerge w_n\) processes jobs concurrently
+  \item Result aggregation: Receipt chains from all workers merge into case receipt log
+\end{itemize}
+
+Parallel split example (AND-split):
+\[
+\texttt{validate} \xrightarrow{\text{split}} \{\texttt{transform-1}, \texttt{transform-2}, \texttt{transform-3}\}
+\]
+All downstream tasks queued simultaneously, joined at \texttt{aggregate} task.
+
+\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
+
+\textbf{Guards:}
+\begin{enumerate}
+  \item \texttt{AdapterConfigSchema.parse(config)} validates configuration before Redis connection
+  \item \texttt{YAWLJobDataSchema.parse(job.data)} validates job structure before processing
+  \item Lock ownership: Worker verifies \texttt{lock.userId === userId} before task completion
+  \item Receipt verification: Optional \texttt{expectedReceiptHash} check prevents stale operations
+\end{enumerate}
+
+\textbf{Invariants:}
+\begin{enumerate}
+  \item \(\InvQ_1\): For all jobs \(j\), if \(j.action = \text{complete}\), then corresponding work item exists in engine
+  \item \(\InvQ_2\): Receipt chain continuity: Each receipt references parent via hash linkage
+  \item \(\InvQ_3\): Worker isolation: No two workers process same \texttt{workItemId} simultaneously
+  \item \(\InvQ_4\): Case consistency: Engine case state advances monotonically with successful job completions
+\end{enumerate}
+
+Testable invariant check: Query Redis and engine state, verify \texttt{jobMapping} entries match active work items.
+
+\subsection*{Provenance and Receipts}
+
+Receipt generation occurs at four action points:
+\begin{enumerate}
+  \item \textbf{Enable}: \texttt{engine.enableTask} generates receipt, stored via \texttt{\_storeReceipt}
+  \item \textbf{Start}: \texttt{engine.startTask} generates receipt with actor metadata
+  \item \textbf{Complete}: \texttt{engine.completeTask} generates receipt with output hash
+  \item \textbf{Cancel}: \texttt{engine.cancelTask} generates receipt with reason
+\end{enumerate}
+
+Provenance chain structure:
+\begin{itemize}
+  \item Job metadata: \texttt{\{caseId, workflowId, taskId, workItemId, action, timestamp\}}
+  \item Receipt storage: \texttt{Map<caseId, receipts[]>} accumulates full execution history
+  \item BullMQ events: \texttt{completed}, \texttt{failed} events logged with job ID and return value
+\end{itemize}
+
+Verification: Run \texttt{adapter.getCaseStatus(caseId)}, check \texttt{receipts} count equals sum of all task state transitions.
+
+\subsection*{Minimal Example}
+
+\begin{lstlisting}[language=JavaScript]
+import { YAWLQueueAdapter } from '@unrdf/yawl-queue';
+import { createWorkflow } from '@unrdf/yawl';
+
+// Create adapter with Redis connection
+const adapter = new YAWLQueueAdapter({
+  redis: { host: 'localhost', port: 6379 },
+  queueName: 'demo-queue',
+  defaultJobOptions: { attempts: 3 }
+});
+
+// Define workflow
+const workflow = createWorkflow({
+  id: 'approval',
+  tasks: [
+    { id: 'submit', kind: 'AtomicTask' },
+    { id: 'review', kind: 'AtomicTask' },
+    { id: 'approve', kind: 'AtomicTask' }
+  ],
+  flows: [
+    { from: 'submit', to: 'review' },
+    { from: 'review', to: 'approve' }
+  ]
+});
+
+// Register workflow
+await adapter.registerWorkflow(workflow);
+
+// Create workers
+const worker = adapter.createWorker({
+  concurrency: 2,
+  taskHandler: async (job, task) => {
+    console.log(`Processing: ${task.taskDefId}`);
+    return { processed: true };
+  }
+});
+
+// Execute case
+const { caseId } = await adapter.executeCase('approval', {
+  requestId: 'REQ-001'
+});
+
+// Check status
+const status = await adapter.getCaseStatus(caseId);
+console.log(`Receipts: ${status.receipts}`);
+
+// Cleanup
+await adapter.close();
+\end{lstlisting}
+
+Expected output: 3 receipts (submit, review, approve) with monotonic timestamp progression.
+
+\subsection*{Open Questions}
+
+\begin{enumerate}
+  \item \textbf{Cancellation region composition rules}: How should retry policies differ between tasks inside vs. outside cancellation regions? Current implementation uses simple attempt count; consider exponential backoff based on region depth.
+
+  \item \textbf{Dead letter queue}: Failed jobs after max retries should move to DLQ for manual inspection. Implementation: Configure BullMQ \texttt{removeOnFail: false} and add DLQ listener.
+
+  \item \textbf{Distributed case coordination}: When multiple workers process different tasks for same case, how to synchronize shared case data? Consider using Redis pub/sub for case-level events.
+
+  \item \textbf{Receipt anchoring}: Should receipts be periodically anchored to blockchain for tamper-evidence? Integrate with \pkg{unrdf-blockchain} package.
+
+  \item \textbf{Performance optimization}: Job priority and delay are extracted from task metadata, but not validated. Add Zod schema for task options: \texttt{TaskOptionsSchema = z.object(\{priority: z.number(), delay: z.number()\})\}.
+\end{enumerate}
+
+% =============================================================================
+% Package 50: unrdf-yawl-realtime
+% =============================================================================
+
+\label{pkg:unrdf-yawl-realtime}
+\section{\pkg{unrdf-yawl-realtime} --- Real-time Collaborative Workflows}
+
+\begin{pkgmeta}
+Path & \texttt{packages/yawl-realtime} \\
+Kind & js \\
+Entrypoints & 3 files \\
+Dependencies & 5 \\
+Blurb & Real-time collaboration framework for YAWL workflows using Socket.io \\
+\end{pkgmeta}
+
+\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
+
+The observable \(\Oobs\) is the distributed state of collaborative workflow execution across multiple connected clients. The artifact \(\Aout\) is the consistent global view of case state maintained by CRDT-inspired merge composition rules.
+
+Observable components:
+\begin{itemize}
+  \item \textbf{Lock state}: \texttt{OptimisticLockManager.locks} maps \texttt{workItemId} to \texttt{\{userId, timestamp, receiptHash\}}
+  \item \textbf{Case state}: \texttt{StateSyncManager.caseStates} maps \texttt{caseId} to \texttt{\{data, workItems, lastUpdated, receiptHash\}}
+  \item \textbf{Client registry}: \texttt{Map<socketId, \{userId, socket\}>}
+  \item \textbf{Lamport clocks}: Per-case logical timestamps for event ordering
+\end{itemize}
+
+Artifact properties:
+\begin{itemize}
+  \item Last-Write-Wins (LWW) for scalar values
+  \item Add-Wins Set for work items
+  \item Receipt chain for causality verification
+\end{itemize}
+
+\subsection*{Type Signature \(\SigmaType\)}
+
+Server constructor signature:
+\[
+\SigmaType(\texttt{YAWLRealtimeServer}) = (\texttt{WorkflowEngine}, \texttt{ServerOptions}) \to \texttt{Server}
+\]
+
+where \texttt{ServerOptions} validates:
+\begin{itemize}
+  \item \texttt{port}: Number (default 3000)
+  \item \texttt{corsOptions}: Object with \texttt{origin} and \texttt{methods}
+\end{itemize}
+
+Lock acquisition signature:
+\[
+\texttt{acquire}: (\texttt{workItemId}, \texttt{caseId}, \texttt{userId}, \texttt{timestamp}, \texttt{receiptHash}?) \to \texttt{\{success, lock?, conflict?\}}
+\]
+
+State merge signature:
+\[
+\texttt{mergeState}: (\texttt{caseId}, \texttt{update}, \texttt{receiptHash}) \to \texttt{\{merged, conflicts[]\}}
+\]
+
+\subsection*{Reconciler \(\muRecon\)}
+
+The reconciler \(\muRecon\) ensures eventual consistency across distributed clients through:
+
+\begin{enumerate}
+  \item \textbf{Lamport timestamps}: Conflict resolution via logical clocks
+    \[
+    L_{\text{next}} = \max(L_{\text{current}}, L_{\text{received}}) + 1
+    \]
+
+  \item \textbf{Optimistic locking}: First claim with highest timestamp wins
+    \begin{itemize}
+      \item If \texttt{timestamp} \(>\) \texttt{existing.timestamp}, grant lock to new claimant
+      \item Broadcast \texttt{task:locked} event to notify other clients
+    \end{itemize}
+
+  \item \textbf{CRDT merge}: State updates use deterministic merge operators
+    \begin{itemize}
+      \item LWW-Register for \texttt{case.data} fields
+      \item G-Set (grow-only) composition rules for \texttt{workItems}
+    \end{itemize}
+
+  \item \textbf{Receipt verification}: Clients send \texttt{expectedReceiptHash}, server validates against \texttt{caseState.receiptHash}
+\end{enumerate}
+
+Reconciler guarantees eventual consistency: All clients observing same event sequence converge to identical state.
+
+\subsection*{Composition \(\PiMerge / \oplusMerge\)}
+
+Client-server message composition:
+\[
+\texttt{client} \xrightarrow{\texttt{task:claim}} \texttt{server} \xrightarrow{\texttt{task:locked}} \texttt{broadcast}
+\]
+
+State merge composition:
+\[
+s_1 \oplusMerge s_2 = \{data: s_1.data \cup s_2.data, workItems: s_1.workItems \cup s_2.workItems\}
+\]
+
+where \(\cup\) applies LWW for scalar fields and set union for work items.
+
+Event pipeline:
+\[
+\texttt{engine.on}(\texttt{event}) \Rightarrow \texttt{io.emit}(\texttt{yawl:event}) \Rightarrow \texttt{syncManager.mergeState}()
+\]
+
+\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
+
+\textbf{Guards:}
+\begin{enumerate}
+  \item \texttt{TaskClaimSchema.parse(data)}: Validates claim requests before lock acquisition
+  \item \texttt{TaskCompleteSchema.parse(data)}: Validates completion requests
+  \item Lock ownership: \texttt{lock.userId === userId} before allowing completion
+  \item Receipt chain: \texttt{verifyReceiptChain(caseId, expectedHash)} prevents stale updates
+\end{enumerate}
+
+\textbf{Invariants:}
+\begin{enumerate}
+  \item \(\InvQ_1\): \textbf{Lock uniqueness}: For all \texttt{workItemId}, at most one lock exists
+  \item \(\InvQ_2\): \textbf{Lamport causality}: For events \(e_1, e_2\) on same case, if \(e_1 \to e_2\) then \(L(e_1) < L(e_2)\)
+  \item \(\InvQ_3\): \textbf{Receipt monotonicity}: Receipt chain length increases with each state update
+  \item \(\InvQ_4\): \textbf{Conflict resolution determinism}: Given same event order, all clients compute identical merged state
+\end{enumerate}
+
+\subsection*{Provenance and Receipts}
+
+Receipt integration with YAWL engine:
+\begin{enumerate}
+  \item \textbf{Task start}: \texttt{engine.startTask} generates receipt with \texttt{\{actor: userId\}}
+  \item \textbf{Task completion}: \texttt{engine.completeTask} generates receipt with output hash
+  \item \textbf{State sync}: Receipt hash stored in \texttt{caseState.receiptHash}
+  \item \textbf{Chain tracking}: \texttt{receiptChains} maps \texttt{caseId} to \texttt{[\{hash, timestamp\}]}
+\end{enumerate}
+
+Conflict detection via receipts:
+\begin{itemize}
+  \item Client sends \texttt{expectedReceiptHash} with claim
+  \item Server compares against \texttt{caseState.receiptHash}
+  \item Mismatch indicates concurrent modification, return conflict error
+\end{itemize}
+
+\subsection*{Minimal Example}
+
+\begin{lstlisting}[language=JavaScript]
+// Server setup
+import { createWorkflowEngine } from '@unrdf/yawl';
+import { YAWLRealtimeServer } from '@unrdf/yawl-realtime/server';
+
+const engine = createWorkflowEngine();
+const server = new YAWLRealtimeServer(engine, { port: 3000 });
+await server.start();
+
+// Client 1: Claim task
+import { YAWLRealtimeClient } from '@unrdf/yawl-realtime/client';
+
+const client1 = new YAWLRealtimeClient({
+  serverUrl: 'http://localhost:3000',
+  userId: 'alice'
+});
+
+await client1.connect();
+
+client1.on('task:claimed', (result) => {
+  if (result.success) {
+    console.log('Task claimed by Alice');
+    // Complete task after processing
+    client1.completeTask(result.workItemId, { approved: true });
+  }
+});
+
+await client1.claimTask('case-001', 'review-task');
+
+// Client 2: Attempt concurrent claim (should fail)
+const client2 = new YAWLRealtimeClient({
+  serverUrl: 'http://localhost:3000',
+  userId: 'bob'
+});
+
+await client2.connect();
+
+client2.on('task:claimed', (result) => {
+  if (!result.success) {
+    console.log('Claim denied:', result.conflict.currentOwner);
+    // Wait for task:unlocked event
+  }
+});
+
+await client2.claimTask('case-001', 'review-task');
+\end{lstlisting}
+
+Expected behavior: Alice's claim succeeds, Bob's claim fails with conflict indicating Alice holds lock.
+
+\subsection*{Open Questions}
+
+\begin{enumerate}
+  \item \textbf{Orphaned locks}: Currently logged but not auto-released on disconnect. Implement grace period (e.g., 30s) before force-releasing disconnected client locks?
+
+  \item \textbf{Conflict resolution UI}: When multiple users claim task concurrently, how to surface conflict to end users? Consider returning full conflict history with \texttt{\{previousOwner, timestamp, resolution\}} array.
+
+  \item \textbf{State snapshot compression}: Receipt chains grow unbounded. Implement periodic compaction: Replace chain with Merkle root after \(n\) receipts.
+
+  \item \textbf{Byzantine fault tolerance}: Current Lamport clocks assume honest clients. Add signature verification for timestamps to prevent malicious clock manipulation.
+
+  \item \textbf{Multi-room isolation}: All clients see all events. Add Socket.io rooms per \texttt{caseId} for scalability: \texttt{socket.join(`case:\${caseId}`)}.
+\end{enumerate}
+
+% =============================================================================
+% Package 51: unrdf-yawl-viz
+% =============================================================================
+
+\label{pkg:unrdf-yawl-viz}
+\section{\pkg{unrdf-yawl-viz} --- Real-time D3.js Workflow Visualization}
+
+\begin{pkgmeta}
+Path & \texttt{packages/yawl-viz} \\
+Kind & js \\
+Entrypoints & 1 file \\
+Dependencies & 11 \\
+Blurb & Real-time D3.js visualization for YAWL workflows with pattern encoding \\
+\end{pkgmeta}
+
+\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
+
+The observable \(\Oobs\) is the visual representation of workflow structure and runtime state in SVG. The artifact \(\Aout\) is the force-directed graph layout with Van der Aalst pattern encoding.
+
+Observable structure:
+\begin{itemize}
+  \item \textbf{Nodes}: \texttt{[\{id, label, type, pattern, taskDef, x, y\}]}
+  \item \textbf{Links}: \texttt{[\{source, target, id\}]}
+  \item \textbf{Task states}: \texttt{Map<taskId, state>} where state \(\in\) \{\texttt{ENABLED, RUNNING, COMPLETED, CANCELLED, FAILED, IDLE}\}
+  \item \textbf{D3 simulation}: Force-directed layout with collision detection
+\end{itemize}
+
+Artifact rendering:
+\begin{itemize}
+  \item Pattern visual encoding: \texttt{PATTERN\_STYLES} maps pattern to \texttt{\{fill, stroke, shape, label\}}
+  \item State colors: \texttt{STATE\_COLORS} maps runtime state to highlight color
+  \item Interactive elements: Zoom/pan via \texttt{d3.zoom()}, drag via \texttt{d3.drag()}
+\end{itemize}
+
+\subsection*{Type Signature \(\SigmaType\)}
+
+Constructor signature:
+\[
+\SigmaType(\texttt{YAWLVisualizer}) = \texttt{VisualizerConfig} \to \texttt{YAWLVisualizer}
+\]
+
+where \texttt{VisualizerConfig} contains:
+\begin{itemize}
+  \item \texttt{engine}: \texttt{WorkflowEngine} instance
+  \item \texttt{container}: \texttt{HTMLElement} for SVG rendering
+  \item \texttt{width}: Number (default 1200)
+  \item \texttt{height}: Number (default 800)
+  \item \texttt{autoSubscribe}: Boolean (default true)
+\end{itemize}
+
+Render signature:
+\[
+\texttt{renderWorkflow}: \texttt{workflowId} \to \texttt{\{nodes[], links[]\}}
+\]
+
+Pattern detection signature:
+\[
+\texttt{\_detectPattern}: (\texttt{taskDef}, \texttt{workflow}) \to \texttt{PatternType}
+\]
+
+where \texttt{PatternType} \(\in\) \{\texttt{SEQUENCE, PARALLEL\_SPLIT, SYNCHRONIZATION, EXCLUSIVE\_CHOICE, SIMPLE\_MERGE, MULTI\_CHOICE, STRUCTURED\_SYNC\_MERGE}\}.
+
+\subsection*{Reconciler \(\muRecon\)}
+
+The reconciler \(\muRecon\) synchronizes visual state with workflow engine state:
+
+\begin{enumerate}
+  \item \textbf{Event subscription}: Auto-subscribe to engine events
+    \begin{itemize}
+      \item \texttt{task:enabled} \(\Rightarrow\) Update \texttt{taskStates}, set color to \texttt{STATE\_COLORS.ENABLED}
+      \item \texttt{task:started} \(\Rightarrow\) Set color to \texttt{STATE\_COLORS.RUNNING}
+      \item \texttt{task:completed} \(\Rightarrow\) Set color to \texttt{STATE\_COLORS.COMPLETED}
+    \end{itemize}
+
+  \item \textbf{Visual update}: \texttt{\_updateVisualization()} applies state colors
+    \begin{itemize}
+      \item Select nodes where \texttt{d.type === 'task'}
+      \item Transition fill color over 300ms
+    \end{itemize}
+
+  \item \textbf{Case drill-down}: \texttt{renderCase(caseId)} extracts work item states
+    \begin{itemize}
+      \item Map \texttt{caseInstance.workItems} to \texttt{taskStates}
+      \item Trigger visual update
+    \end{itemize}
+\end{enumerate}
+
+Reconciler invariant: Visual state reflects latest engine event within 300ms transition duration.
+
+\subsection*{Composition \(\PiMerge / \oplusMerge\)}
+
+Graph composition from workflow definition:
+\[
+\texttt{workflow} \xrightarrow{\texttt{\_workflowToGraph}} \{\texttt{nodes}, \texttt{links}\} \xrightarrow{\texttt{\_renderGraph}} \texttt{SVG}
+\]
+
+Node composition includes start/end sentinels:
+\[
+\texttt{nodes} = \{\texttt{start}\} \cup \{\texttt{task}_1, \ldots, \texttt{task}_n\} \cup \{\texttt{end}\}
+\]
+
+Link composition from flows:
+\[
+\texttt{links} = \{(\texttt{start}, \texttt{startTaskId})\} \cup \bigcup_{\texttt{from} \to \texttt{to}} \{(\texttt{from}, \texttt{to})\} \cup \bigcup_{\texttt{endTaskId}} \{(\texttt{endTaskId}, \texttt{end})\}
+\]
+
+Force simulation composition:
+\[
+\texttt{simulation} = \texttt{link\_force} \oplusMerge \texttt{charge\_force} \oplusMerge \texttt{center\_force} \oplusMerge \texttt{collision\_force}
+\]
+
+\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
+
+\textbf{Guards:}
+\begin{enumerate}
+  \item Workflow existence: \texttt{engine.workflows.get(workflowId)} must return valid workflow
+  \item Case existence: \texttt{engine.cases.get(caseId)} must return valid case for \texttt{renderCase}
+  \item Container validation: \texttt{config.container} must be valid \texttt{HTMLElement}
+  \item Event type filtering: Only subscribe to known \texttt{eventTypes} array
+\end{enumerate}
+
+\textbf{Invariants:}
+\begin{enumerate}
+  \item \(\InvQ_1\): \textbf{Graph connectedness}: For all tasks, path exists from \texttt{start} to task and from task to \texttt{end}
+  \item \(\InvQ_2\): \textbf{Pattern consistency}: Detected pattern matches \texttt{splitType} and \texttt{joinType} combination
+  \item \(\InvQ_3\): \textbf{State color mapping}: For all tasks with state \(s\), node fill equals \texttt{STATE\_COLORS[s]}
+  \item \(\InvQ_4\): \textbf{Event handling monotonicity}: Task state never regresses (COMPLETED \(\not\to\) ENABLED)
+\end{enumerate}
+
+\subsection*{Provenance and Receipts}
+
+Visualization does not generate receipts but consumes them for state updates:
+
+\begin{enumerate}
+  \item \textbf{Event provenance}: Each YAWL engine event contains \texttt{\{type, caseId, taskId, workItemId, timestamp\}}
+  \item \textbf{State updates}: \texttt{\_handleEvent} updates \texttt{taskStates} based on event type
+  \item \textbf{Visual audit trail}: State color transitions provide visual log of execution history
+\end{enumerate}
+
+Provenance query: Given case ID, extract all task state transitions from \texttt{taskStates} map history.
+
+\subsection*{Minimal Example}
+
+\begin{lstlisting}[language=JavaScript]
+import { YAWLVisualizer } from '@unrdf/yawl-viz';
+import { createWorkflowEngine, createWorkflow } from '@unrdf/yawl';
+
+// Create engine and workflow
+const engine = createWorkflowEngine();
+const workflow = createWorkflow({
+  id: 'approval',
+  tasks: [
+    { id: 'submit', splitType: 'sequence', joinType: 'sequence' },
+    { id: 'review', splitType: 'xor', joinType: 'sequence' },
+    { id: 'approve', splitType: 'sequence', joinType: 'sequence' },
+    { id: 'reject', splitType: 'sequence', joinType: 'sequence' }
+  ],
+  flows: [
+    { from: 'submit', to: 'review' },
+    { from: 'review', to: 'approve' },
+    { from: 'review', to: 'reject' }
+  ]
+});
+
+engine.registerWorkflow(workflow);
+
+// Initialize visualizer
+const viz = new YAWLVisualizer({
+  engine,
+  container: document.getElementById('workflow-canvas'),
+  width: 1200,
+  height: 800
+});
+
+// Render workflow
+viz.renderWorkflow('approval');
+
+// Execute case and observe live updates
+const { case: instance } = await engine.createCase('approval', {});
+await engine.startTask(instance.id, 'submit-work-item', { actor: 'alice' });
+// Visual update: submit node turns green (RUNNING)
+
+await engine.completeTask(instance.id, 'submit-work-item', {}, 'alice');
+// Visual update: submit node turns light green (COMPLETED)
+// review node turns yellow (ENABLED)
+\end{lstlisting}
+
+Expected rendering: Diamond shape for \texttt{review} (EXCLUSIVE\_CHOICE pattern), rectangles for other tasks.
+
+\subsection*{Open Questions}
+
+\begin{enumerate}
+  \item \textbf{Hierarchical layout}: Force simulation may produce tangled graphs for complex workflows. Consider using \texttt{d3-hierarchy} with Sugiyama layout for clearer layering.
+
+  \item \textbf{Animation smoothness}: State color transitions at 300ms may feel abrupt for rapid task completions. Add easing function: \texttt{.ease(d3.easeCubicInOut)}.
+
+  \item \textbf{Pattern label placement}: Pattern badges at fixed offset (-35px) overlap for small nodes. Implement dynamic positioning based on node size.
+
+  \item \textbf{Memory leaks}: Event subscriptions in \texttt{eventHandlers} array must be cleaned up. Verify \texttt{destroy()} calls all unsubscribe functions.
+
+  \item \textbf{Case comparison view}: How to visualize multiple case instances on same workflow? Consider opacity-based layering or side-by-side panels.
+\end{enumerate}
+
+% =============================================================================
+% Package 52: unrdf-hooks-showcase
+% =============================================================================
+
+\label{pkg:unrdf-hooks-showcase}
+\section{\pkg{unrdf-hooks-showcase} --- Interactive React Hooks Showcase}
+
+\begin{pkgmeta}
+Path & \texttt{playground/hooks-showcase} \\
+Kind & js \\
+Entrypoints & 0 files \\
+Dependencies & 18 \\
+Blurb & Interactive showcase of 40+ UNRDF React hooks with real KGC-4D backend \\
+\end{pkgmeta}
+
+\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
+
+The observable \(\Oobs\) is the live demonstration environment for React hooks integration with UNRDF graph operations. The artifact \(\Aout\) is the Next.js 16 application with Radix UI components.
+
+Observable components:
+\begin{itemize}
+  \item \textbf{Hook catalog}: 40+ React hooks for RDF operations
+  \item \textbf{Live code examples}: Interactive demonstrations with real graph backend
+  \item \textbf{UI framework}: Next.js 16 with React 19.2.1, Radix UI Tabs/Slots, Tailwind CSS
+  \item \textbf{KGC-4D integration}: Real-time graph state management
+\end{itemize}
+
+Artifact structure:
+\begin{itemize}
+  \item Build output: Next.js static export
+  \item Component library: Radix UI primitives with \texttt{class-variance-authority}
+  \item Styling: Tailwind CSS with \texttt{tailwindcss-animate}
+\end{itemize}
+
+\subsection*{Type Signature \(\SigmaType\)}
+
+React hook type signatures (inferred from UNRDF ecosystem):
+
+\[
+\texttt{useGraph}: () \to \{\texttt{store}, \texttt{query}, \texttt{update}\}
+\]
+
+\[
+\texttt{useSPARQL}: (\texttt{query}: \text{string}) \to \{\texttt{data}, \texttt{loading}, \texttt{error}\}
+\]
+
+\[
+\texttt{useTriple}: (\texttt{subject}, \texttt{predicate}, \texttt{object}) \to \{\texttt{quads}, \texttt{add}, \texttt{remove}\}
+\]
+
+\[
+\texttt{useKGC4D}: () \to \{\texttt{freeze}, \texttt{snapshot}, \texttt{revert}\}
+\]
+
+Application scripts:
+\begin{itemize}
+  \item \texttt{dev}: Launch Next.js dev server
+  \item \texttt{build}: Production build
+  \item \texttt{start}: Serve production build
+  \item \texttt{export}: Static site generation
+\end{itemize}
+
+\subsection*{Reconciler \(\muRecon\)}
+
+The reconciler \(\muRecon\) maintains consistency between React component state and UNRDF graph state:
+
+\begin{enumerate}
+  \item \textbf{Reactive queries}: Hooks re-execute SPARQL queries when dependencies change
+  \item \textbf{Optimistic updates}: Local state updates before server confirmation
+  \item \textbf{KGC-4D snapshots}: Time-travel debugging via snapshot/revert
+  \item \textbf{Suspension}: React 19 Suspense integration for async data fetching
+\end{enumerate}
+
+Reconciler pattern (pseudo-code):
+\begin{lstlisting}[language=JavaScript]
+function useSPARQL(query) {
+  const [data, setData] = useState(null);
+  const store = useStoreContext();
+
+  useEffect(() => {
+    const results = store.query(query);
+    setData(results);
+  }, [query, store.version]); // Re-run when store updates
+
+  return data;
+}
+\end{lstlisting}
+
+\subsection*{Composition \(\PiMerge / \oplusMerge\)}
+
+Hook composition patterns:
+
+\[
+\texttt{useGraph} \PiMerge \texttt{useSPARQL} = \text{Query composition with shared store context}
+\]
+
+\[
+\texttt{useTriple} \oplusMerge \texttt{useKGC4D} = \text{Triple operations with automatic snapshot generation}
+\]
+
+Component composition:
+\begin{itemize}
+  \item Radix Tabs: Organize hook examples into categories
+  \item Code highlighting: Display hook usage with syntax highlighting
+  \item Live execution: Run examples against real KGC-4D backend
+\end{itemize}
+
+\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
+
+\textbf{Guards:}
+\begin{enumerate}
+  \item React version: \texttt{engines.node >= 18.0.0} enforced in \texttt{package.json}
+  \item Next.js 16 compatibility: React 19.2.1 required
+  \item Lint skipped: Explicit skip for playground environment (see \texttt{.eslintrc.json})
+\end{enumerate}
+
+\textbf{Invariants:}
+\begin{enumerate}
+  \item \(\InvQ_1\): All hook examples execute without runtime errors
+  \item \(\InvQ_2\): KGC-4D backend maintains graph consistency across hook operations
+  \item \(\InvQ_3\): Static export produces valid HTML/CSS/JS bundle
+\end{enumerate}
+
+\subsection*{Provenance and Receipts}
+
+Hook operation provenance:
+\begin{itemize}
+  \item Each graph mutation via hooks generates KGC-4D event log
+  \item Snapshot IDs link React state to specific graph versions
+  \item Time-travel: Revert to previous graph state via \texttt{useKGC4D().revert(snapshotId)}
+\end{itemize}
+
+\subsection*{Minimal Example}
+
+\begin{lstlisting}[language=JavaScript]
+// Example hook usage in showcase
+import { useGraph, useSPARQL } from 'unrdf/hooks';
+
+function PersonList() {
+  const query = `
+    PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+    SELECT ?name WHERE {
+      ?person a foaf:Person ;
+              foaf:name ?name .
+    }
+  `;
+
+  const { data, loading } = useSPARQL(query);
+
+  if (loading) return <div>Loading...</div>;
+
+  return (
+    <ul>
+      {data.map(row => <li key={row.name}>{row.name}</li>)}
+    </ul>
+  );
+}
+\end{lstlisting}
+
+Testable claim: Run \texttt{npm run build && npm run export}, verify output in \texttt{out/} directory.
+
+\subsection*{Open Questions}
+
+\begin{enumerate}
+  \item \textbf{Hook catalog documentation}: Where is the list of 40+ hooks defined? Create manifest file: \texttt{hooks-manifest.json}.
+
+  \item \textbf{Backend integration}: How does Next.js app connect to KGC-4D backend? Add API routes or client-side library?
+
+  \item \textbf{Testing strategy}: No test files found. Add Vitest for hook unit tests and Playwright for E2E.
+
+  \item \textbf{Deployment target}: Static export suggests JAMstack deployment. Document hosting options (Vercel, Netlify, GitHub Pages).
+\end{enumerate}
+
+% =============================================================================
+% Package 53: unrdf-analytics-project
+% =============================================================================
+
+\label{pkg:unrdf-analytics-project}
+\section{\pkg{unrdf-analytics-project} --- Analytics Project Template}
+
+\begin{pkgmeta}
+Path & \texttt{templates/projects/analytics} \\
+Kind & js \\
+Entrypoints & 1 file \\
+Dependencies & 4 \\
+Blurb & UNRDF analytics project for knowledge graph analysis and insights \\
+\end{pkgmeta}
+
+\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
+
+The observable \(\Oobs\) is the project template for graph analytics workflows. The artifact \(\Aout\) is the scaffolded project structure with analytics-specific tooling.
+
+Template structure:
+\begin{itemize}
+  \item \textbf{Entry point}: \texttt{src/index.mjs} (inferred, file not found)
+  \item \textbf{Dependencies}: \texttt{unrdf} (core library), \texttt{eslint}, \texttt{prettier}, \texttt{vitest}
+  \item \textbf{Purpose}: Knowledge graph analysis and insights generation
+\end{itemize}
+
+Inferred capabilities:
+\begin{itemize}
+  \item SPARQL aggregation queries
+  \item Graph metrics computation (centrality, clustering coefficient)
+  \item Time-series analysis over temporal graphs
+  \item Export to visualization formats (JSON, CSV)
+\end{itemize}
+
+\subsection*{Type Signature \(\SigmaType\)}
+
+Template initialization signature (inferred):
+\[
+\texttt{initAnalyticsProject}: (\texttt{name}: \text{string}, \texttt{options}: \text{Object}) \to \texttt{ProjectStructure}
+\]
+
+Analytics workflow signature:
+\[
+\texttt{analyzeGraph}: (\texttt{graph}: \text{Store}, \texttt{metrics}: \text{string[]}) \to \texttt{AnalysisResults}
+\]
+
+where \texttt{metrics} includes:
+\begin{itemize}
+  \item \texttt{degree-distribution}
+  \item \texttt{connected-components}
+  \item \texttt{pagerank}
+  \item \texttt{clustering-coefficient}
+\end{itemize}
+
+\subsection*{Reconciler \(\muRecon\)}
+
+The reconciler \(\muRecon\) ensures analysis results reflect current graph state:
+
+\begin{enumerate}
+  \item \textbf{Incremental updates}: Re-compute metrics when graph changes
+  \item \textbf{Cache invalidation}: Store intermediate results, invalidate on mutation
+  \item \textbf{Batch processing}: Group SPARQL queries for efficiency
+\end{enumerate}
+
+\subsection*{Composition \(\PiMerge / \oplusMerge\)}
+
+Analytics pipeline composition:
+\[
+\texttt{loadData} \PiMerge \texttt{computeMetrics} \PiMerge \texttt{exportResults}
+\]
+
+Metric combination:
+\[
+\texttt{metrics}_{\text{combined}} = \texttt{pagerank} \oplusMerge \texttt{clustering} \oplusMerge \texttt{centrality}
+\]
+
+\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
+
+\textbf{Guards:}
+\begin{enumerate}
+  \item Graph non-empty: Verify \texttt{store.size > 0} before analysis
+  \item Metric validity: Check \texttt{metrics} array contains known metric names
+\end{enumerate}
+
+\textbf{Invariants:}
+\begin{enumerate}
+  \item \(\InvQ_1\): Analysis results deterministic for identical graph state
+  \item \(\InvQ_2\): Metrics normalized to [0, 1] range where applicable
+\end{enumerate}
+
+\subsection*{Provenance and Receipts}
+
+Analysis provenance:
+\begin{itemize}
+  \item Input graph snapshot hash
+  \item Metric computation timestamps
+  \item Tool versions (UNRDF, analytics algorithms)
+\end{itemize}
+
+\subsection*{Minimal Example}
+
+\begin{lstlisting}[language=JavaScript]
+// Inferred analytics workflow
+import { initStore } from 'unrdf';
+import { computePageRank } from 'unrdf/analytics';
+
+const store = initStore();
+// Load graph data...
+
+const pagerank = await computePageRank(store, {
+  dampingFactor: 0.85,
+  iterations: 100
+});
+
+console.table(pagerank.topNodes(10));
+\end{lstlisting}
+
+\subsection*{Open Questions}
+
+\begin{enumerate}
+  \item \textbf{Missing implementation}: No \texttt{src/index.mjs} file found. Create reference implementation with SPARQL aggregate examples.
+
+  \item \textbf{Analytics library}: Does UNRDF include built-in analytics functions? If not, integrate \pkg{unrdf-graph-analytics}.
+
+  \item \textbf{Template CLI}: How to scaffold new analytics projects? Add \texttt{unrdf create analytics <name>} command.
+\end{enumerate}
+
+% =============================================================================
+% Package 54: unrdf-governance-project
+% =============================================================================
+
+\label{pkg:unrdf-governance-project}
+\section{\pkg{unrdf-governance-project} --- Governance Project Template}
+
+\begin{pkgmeta}
+Path & \texttt{templates/projects/governance} \\
+Kind & js \\
+Entrypoints & 1 file \\
+Dependencies & 4 \\
+Blurb & UNRDF governance project with policy packs and compliance monitoring \\
+\end{pkgmeta}
+
+\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
+
+The observable \(\Oobs\) is the policy enforcement framework for knowledge graphs. The artifact \(\Aout\) is the policy pack definitions with validation and remediation logic.
+
+Template structure:
+\begin{itemize}
+  \item \textbf{Policy packs}: Collections of validation rules
+  \item \textbf{Compliance monitoring}: Continuous SHACL validation
+  \item \textbf{Remediation workflows}: Automated fixes for policy violations
+\end{itemize}
+
+Inferred capabilities:
+\begin{itemize}
+  \item SHACL shape validation
+  \item Hook-based policy enforcement
+  \item Audit trail generation
+  \item Violation reporting
+\end{itemize}
+
+\subsection*{Type Signature \(\SigmaType\)}
+
+Policy pack signature:
+\[
+\texttt{PolicyPack} = \{\texttt{name}: \text{string}, \texttt{rules}: \texttt{Rule}[], \texttt{severity}: \text{Enum}\}
+\]
+
+\[
+\texttt{Rule} = \{\texttt{validate}: \texttt{ValidationFn}, \texttt{remediate}: \texttt{RemediationFn}\}
+\]
+
+\[
+\texttt{ValidationFn}: (\texttt{graph}: \text{Store}) \to \texttt{Violation}[]
+\]
+
+\[
+\texttt{RemediationFn}: (\texttt{violation}: \text{Violation}) \to \texttt{UpdateOp}[]
+\]
+
+\subsection*{Reconciler \(\muRecon\)}
+
+The reconciler \(\muRecon\) maintains policy compliance:
+
+\begin{enumerate}
+  \item \textbf{Pre-commit validation}: Run policy pack before graph mutations
+  \item \textbf{Post-commit auditing}: Log policy check results
+  \item \textbf{Auto-remediation}: Apply fixes for low-severity violations
+  \item \textbf{Manual review}: Flag high-severity violations for human review
+\end{enumerate}
+
+Reconciler loop:
+\begin{lstlisting}[language=JavaScript]
+async function enforcePolicy(graph, policyPack) {
+  const violations = await policyPack.validate(graph);
+
+  for (const violation of violations) {
+    if (violation.severity === 'low') {
+      await policyPack.remediate(violation);
+    } else {
+      await createReviewTicket(violation);
+    }
+  }
+}
+\end{lstlisting}
+
+\subsection*{Composition \(\PiMerge / \oplusMerge\)}
+
+Policy composition:
+\[
+\texttt{policy}_1 \oplusMerge \texttt{policy}_2 = \texttt{all rules from both packs}
+\]
+
+Validation pipeline:
+\[
+\texttt{preCommit} \PiMerge \texttt{validate} \PiMerge \texttt{remediate} \PiMerge \texttt{postCommit}
+\]
+
+\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
+
+\textbf{Guards:}
+\begin{enumerate}
+  \item Policy pack schema: Validate against \texttt{PolicyPackSchema} (Zod)
+  \item SHACL shape validity: Parse shapes before validation
+\end{enumerate}
+
+\textbf{Invariants:}
+\begin{enumerate}
+  \item \(\InvQ_1\): After remediation, re-validation produces zero violations
+  \item \(\InvQ_2\): Policy checks are idempotent
+\end{enumerate}
+
+\subsection*{Provenance and Receipts}
+
+Policy enforcement provenance:
+\begin{itemize}
+  \item Validation run ID
+  \item Policy pack version
+  \item Violation details (rule ID, graph location, severity)
+  \item Remediation actions (if applied)
+\end{itemize}
+
+\subsection*{Minimal Example}
+
+\begin{lstlisting}[language=JavaScript]
+// Inferred governance workflow
+import { definePolicyPack } from 'unrdf/governance';
+
+const dataQualityPolicy = definePolicyPack({
+  name: 'Data Quality',
+  rules: [
+    {
+      name: 'Required labels',
+      validate: async (graph) => {
+        const query = `
+          SELECT ?s WHERE {
+            ?s a ?type .
+            FILTER NOT EXISTS { ?s rdfs:label ?label }
+          }
+        `;
+        const results = await graph.query(query);
+        return results.map(r => ({
+          subject: r.s,
+          message: 'Missing rdfs:label'
+        }));
+      },
+      remediate: async (violation) => {
+        // Add default label
+        return [{
+          type: 'add',
+          quad: quad(
+            violation.subject,
+            namedNode('http://www.w3.org/2000/01/rdf-schema#label'),
+            literal('Unlabeled resource')
+          )
+        }];
+      }
+    }
+  ]
+});
+
+await dataQualityPolicy.enforce(myGraph);
+\end{lstlisting}
+
+\subsection*{Open Questions}
+
+\begin{enumerate}
+  \item \textbf{Missing implementation}: No \texttt{src/index.mjs} file found. Create reference policy pack examples.
+
+  \item \textbf{SHACL integration}: Link to \pkg{unrdf-core} SHACL validation utilities.
+
+  \item \textbf{CI/CD integration}: How to run policy checks in GitHub Actions? Add workflow template.
+\end{enumerate}
+
+% =============================================================================
+% Package 55: unrdf-starter-project
+% =============================================================================
+
+\label{pkg:unrdf-starter-project}
+\section{\pkg{unrdf-starter-project} --- Starter Project Template}
+
+\begin{pkgmeta}
+Path & \texttt{templates/projects/starter} \\
+Kind & js \\
+Entrypoints & 1 file \\
+Dependencies & 4 \\
+Blurb & UNRDF starter project for knowledge graph development \\
+\end{pkgmeta}
+
+\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
+
+The observable \(\Oobs\) is the minimal working UNRDF application. The artifact \(\Aout\) is the scaffolded project with sample data and queries.
+
+Project structure (from \texttt{src/index.mjs}):
+\begin{itemize}
+  \item \textbf{Initialization}: \texttt{initStore([], \{baseIRI\})}
+  \item \textbf{Data loading}: Read Turtle from \texttt{data/sample.ttl}
+  \item \textbf{SPARQL query}: SELECT all persons with names
+  \item \textbf{Output}: Console table of query results
+\end{itemize}
+
+Composable hooks used:
+\begin{itemize}
+  \item \texttt{useStoreContext()}: Access graph store
+  \item \texttt{useTurtle()}: Parse Turtle syntax
+  \item \texttt{useGraph()}: Execute SPARQL queries
+\end{itemize}
+
+\subsection*{Type Signature \(\SigmaType\)}
+
+Application entry signature:
+\[
+\texttt{runApp}: (\texttt{callback}: () \to \texttt{Promise<void>}) \to \texttt{Promise<void>}
+\]
+
+Hook signatures:
+\[
+\texttt{useStoreContext}: () \to \texttt{Store}
+\]
+
+\[
+\texttt{useTurtle}: () \to \texttt{Promise<\{parse: (ttl: string) \to Quad[]\}>}
+\]
+
+\[
+\texttt{useGraph}: () \to \{\texttt{select}: (query: \text{string}) \to \texttt{Results}\}
+\]
+
+\subsection*{Reconciler \(\muRecon\)}
+
+The reconciler \(\muRecon\) initializes store context and manages lifecycle:
+
+\begin{enumerate}
+  \item \textbf{Store initialization}: \texttt{initStore} creates in-memory graph
+  \item \textbf{Context provision}: \texttt{runApp} callback has access to composable hooks
+  \item \textbf{Data population}: \texttt{store.add(...quads)} loads sample data
+  \item \textbf{Query execution}: \texttt{graph.select(query)} returns bindings
+\end{enumerate}
+
+Lifecycle:
+\begin{lstlisting}[language=JavaScript]
+const runApp = initStore(plugins, config);
+await runApp(async () => {
+  // Store context active here
+  const store = useStoreContext();
+  // ... use store
+});
+// Store context disposed
+\end{lstlisting}
+
+\subsection*{Composition \(\PiMerge / \oplusMerge\)}
+
+Hook composition:
+\[
+\texttt{useStoreContext} \PiMerge \texttt{useTurtle} \PiMerge \texttt{useGraph} = \text{Full RDF workflow}
+\]
+
+Data pipeline:
+\[
+\texttt{readFile} \PiMerge \texttt{parse} \PiMerge \texttt{store.add} \PiMerge \texttt{query}
+\]
+
+\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
+
+\textbf{Guards:}
+\begin{enumerate}
+  \item File existence: \texttt{readFile} throws if \texttt{data/sample.ttl} missing
+  \item Turtle syntax: Parser throws on invalid syntax
+  \item SPARQL syntax: \texttt{graph.select} validates query before execution
+\end{enumerate}
+
+\textbf{Invariants:}
+\begin{enumerate}
+  \item \(\InvQ_1\): After \texttt{store.add(quads)}, \texttt{store.size === quads.length}
+  \item \(\InvQ_2\): Query results match graph state at execution time
+\end{enumerate}
+
+\subsection*{Provenance and Receipts}
+
+Starter project does not generate receipts explicitly, but:
+\begin{itemize}
+  \item Data loaded from \texttt{data/sample.ttl} (file provenance)
+  \item Query results reflect graph version at query time
+  \item Console output provides execution trace
+\end{itemize}
+
+\subsection*{Minimal Example}
+
+Full starter code from \texttt{src/index.mjs}:
+\begin{lstlisting}[language=JavaScript]
+import { initStore } from 'unrdf';
+import { useStoreContext, useTurtle, useGraph } from 'unrdf/composables';
+
+const runApp = initStore([], { baseIRI: 'http://example.org/' });
+
+await runApp(async () => {
+  const store = useStoreContext();
+  const turtle = await useTurtle();
+  const graph = useGraph();
+
+  // Load sample data
+  const data = await readFile('data/sample.ttl', 'utf-8');
+  const quads = await turtle.parse(data);
+  store.add(...quads);
+
+  // Query
+  const results = await graph.select(`
+    PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+    SELECT ?person ?name WHERE {
+      ?person a foaf:Person ; foaf:name ?name .
+    }
+  `);
+
+  console.table(results);
+});
+\end{lstlisting}
+
+Testable claim: Run \texttt{node src/index.mjs}, verify console output contains table with person names.
+
+\subsection*{Open Questions}
+
+\begin{enumerate}
+  \item \textbf{Sample data}: Where is \texttt{data/sample.ttl}? Create example with 3-5 person triples.
+
+  \item \textbf{Error handling}: Script uses \texttt{try/catch} with \texttt{process.exit(1)}. Consider adding \texttt{--help} flag for usage info.
+
+  \item \textbf{Template expansion}: Add directories for \texttt{src/hooks/}, \texttt{test/}, \texttt{data/} in template scaffold.
+\end{enumerate}
+
+% =============================================================================
+% Package 56: unrdf-vscode
+% =============================================================================
+
+\label{pkg:unrdf-vscode}
+\section{\pkg{unrdf-vscode} --- VS Code Extension}
+
+\begin{pkgmeta}
+Path & \texttt{vscode-extension} \\
+Kind & js \\
+Entrypoints & 1 file \\
+Dependencies & 2 \\
+Blurb & Syntax highlighting and IntelliSense for UNRDF Knowledge Hooks and Policy Packs \\
+\end{pkgmeta}
+
+\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
+
+The observable \(\Oobs\) is the editor integration for UNRDF development. The artifact \(\Aout\) is the VS Code extension package (VSIX).
+
+Extension capabilities (from \texttt{extension.js}):
+\begin{itemize}
+  \item \textbf{Commands}:
+    \begin{itemize}
+      \item \texttt{unrdf.validateHook}: Run hook validation
+      \item \texttt{unrdf.evaluateHook}: Execute hook with test data
+      \item \texttt{unrdf.applyPolicy}: Apply policy pack to graph
+      \item \texttt{unrdf.querySPARQL}: Execute SPARQL query from editor
+    \end{itemize}
+
+  \item \textbf{Language features}:
+    \begin{itemize}
+      \item Document formatting for \texttt{.hook} files
+      \item Hover provider for hook functions (\texttt{defineHook}, \texttt{chainHooks}, \texttt{definePolicy})
+      \item Validation on save (configurable)
+    \end{itemize}
+
+  \item \textbf{Output panel}: Display command results and errors
+\end{itemize}
+
+\subsection*{Type Signature \(\SigmaType\)}
+
+Activation signature:
+\[
+\texttt{activate}: (\texttt{context}: \texttt{vscode.ExtensionContext}) \to \texttt{void}
+\]
+
+Command handler signature:
+\[
+\texttt{CommandHandler}: (\texttt{editor}: \texttt{vscode.TextEditor}) \to \texttt{Promise<void>}
+\]
+
+Hover provider signature:
+\[
+\texttt{provideHover}: (\texttt{document}, \texttt{position}) \to \texttt{vscode.Hover} \mid \texttt{null}
+\]
+
+Configuration schema:
+\begin{itemize}
+  \item \texttt{unrdf.cli.path}: String (default \texttt{"unrdf"})
+  \item \texttt{unrdf.validation.onSave}: Boolean
+  \item \texttt{unrdf.sparql.endpoint}: String
+\end{itemize}
+
+\subsection*{Reconciler \(\muRecon\)}
+
+The reconciler \(\muRecon\) synchronizes editor state with UNRDF CLI:
+
+\begin{enumerate}
+  \item \textbf{File save trigger}: \texttt{onDidSaveTextDocument} invokes validation
+  \item \textbf{CLI invocation}: Commands spawn child process with \texttt{execAsync}
+  \item \textbf{Output capture}: \texttt{stdout}/\texttt{stderr} streamed to output panel
+  \item \textbf{Error reporting}: \texttt{vscode.window.showErrorMessage} displays failures
+\end{enumerate}
+
+Command execution flow:
+\begin{lstlisting}[language=JavaScript]
+async function validateHook() {
+  const filePath = editor.document.uri.fsPath;
+  const cliPath = config.get('cli.path', 'unrdf');
+
+  const { stdout, stderr } = await execAsync(
+    `${cliPath} hook validate ${filePath}`
+  );
+
+  if (stderr) {
+    vscode.window.showErrorMessage(`Validation failed: ${stderr}`);
+  } else {
+    vscode.window.showInformationMessage('Hook validation passed!');
+  }
+}
+\end{lstlisting}
+
+\subsection*{Composition \(\PiMerge / \oplusMerge\)}
+
+Command composition:
+\[
+\texttt{edit} \PiMerge \texttt{save} \PiMerge \texttt{validate} \PiMerge \texttt{display\_results}
+\]
+
+Hover documentation composition:
+\[
+\texttt{getWordAtPosition} \PiMerge \texttt{getHookDocumentation} \PiMerge \texttt{renderMarkdown}
+\]
+
+\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
+
+\textbf{Guards:}
+\begin{enumerate}
+  \item Active editor check: \texttt{if (!editor) showErrorMessage('No active editor')}
+  \item Language ID filter: Only process \texttt{.hook} files for validation
+  \item CLI availability: Commands fail gracefully if \texttt{unrdf} not in PATH
+  \item Output channel singleton: \texttt{getOutputChannel()} creates once
+\end{enumerate}
+
+\textbf{Invariants:}
+\begin{enumerate}
+  \item \(\InvQ_1\): Command handlers never throw unhandled exceptions (all wrapped in try/catch)
+  \item \(\InvQ_2\): Output panel displays chronological log of all command executions
+  \item \(\InvQ_3\): Hover documentation matches UNRDF CLI \texttt{--help} output
+\end{enumerate}
+
+\subsection*{Provenance and Receipts}
+
+Extension does not generate receipts but provides audit trail:
+\begin{itemize}
+  \item Command execution log in output panel
+  \item Validation results with timestamps
+  \item CLI invocation strings for reproducibility
+\end{itemize}
+
+\subsection*{Minimal Example}
+
+Extension usage workflow:
+\begin{enumerate}
+  \item Install extension: \texttt{code --install-extension unrdf-vscode-x.x.x.vsix}
+  \item Open hook file: \texttt{policies/data-quality.hook}
+  \item Run command: \texttt{Cmd+Shift+P} \(\to\) \texttt{UNRDF: Validate Hook}
+  \item View results: Check output panel for validation status
+\end{enumerate}
+
+Hover documentation example:
+\begin{lstlisting}[language=JavaScript]
+// Hover over "defineHook" to see:
+/**
+ * defineHook(options)
+ *
+ * Define a new knowledge hook with triggers and execution logic.
+ *
+ * ```javascript
+ * defineHook({
+ *   name: string,
+ *   description: string,
+ *   triggers: {...},
+ *   execute: async (context) => {...}
+ * })
+ * ```
+ */
+\end{lstlisting}
+
+\subsection*{Open Questions}
+
+\begin{enumerate}
+  \item \textbf{Language server}: Current implementation uses basic hover provider. Consider full Language Server Protocol (LSP) for autocomplete, go-to-definition, refactoring.
+
+  \item \textbf{Syntax highlighting}: Where is \texttt{.hook} language grammar defined? Add \texttt{syntaxes/hook.tmLanguage.json} for TextMate tokenization.
+
+  \item \textbf{Extension testing}: No tests found. Add \texttt{src/test/extension.test.js} with \texttt{@vscode/test-electron}.
+
+  \item \textbf{Marketplace publishing}: Document publish workflow: \texttt{vsce package} \(\to\) \texttt{vsce publish}.
+
+  \item \textbf{Configuration UI}: Add \texttt{package.json} contribution points for settings UI in VS Code preferences.
+\end{enumerate}
+
+% =============================================================================
+% End of Agent 10 Package Chapters
+% =============================================================================

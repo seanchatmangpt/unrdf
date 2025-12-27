@@ -1,0 +1,2053 @@
+% Agent 4 Package Documentation
+% Packages 7-13: blockchain, caching, cli, collab, composables, consensus, core
+% Generated: 2025-12-27
+
+% =============================================================================
+% PACKAGE 1: unrdf-blockchain
+% =============================================================================
+
+\label{pkg:unrdf-blockchain}
+\section{\pkg{unrdf-blockchain} --- Blockchain Integration}
+
+\begin{pkgmeta}
+Path & \texttt{packages/blockchain} \\
+Kind & JavaScript \\
+Entrypoints & 4 files \\
+Dependencies & 7 (ethers, merkletreejs, noble-hashes, unrdf-kgc-4d, unrdf-yawl, vitest, zod) \\
+Blurb & Blockchain integration for UNRDF - Cryptographic receipt anchoring and audit trails \\
+\end{pkgmeta}
+
+\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
+
+\(\Oobs\): Receipt streams from \pkg{@unrdf/kgc-4d} and \pkg{@unrdf/yawl} workflow execution events, each containing hash commitments \(\ProvHash(R)\) where \(R\) represents workflow state at timestamp \(\tauEpoch\).
+
+\(\Aout\): Blockchain transactions containing:
+\begin{itemize}
+\item Ethereum transaction hashes anchoring receipt commitments
+\item Merkle tree roots enabling batch verification
+\item Smart contract state transitions with gas consumption metrics
+\item Verification proofs mapping \(\ProvHash(R) \to \text{BlockNumber} \times \text{Timestamp}\)
+\end{itemize}
+
+The reconciler \(\muRecon: \Oobs_{\text{receipts}} \to \Aout_{\text{blockchain}}\) ensures that workflow execution history becomes immutable through cryptographic anchoring. Once anchored, receipt hash \(h\) satisfies \(\GuardH_{\text{tamper}}\): modification of historical receipt contradicts blockchain consensus.
+
+\subsection*{Type Signature \(\SigmaType\)}
+
+From \texttt{packages/blockchain/src/anchoring/receipt-anchorer.mjs}:
+
+\begin{lstlisting}[style=javascript]
+// Zod schemas defining type boundaries
+const AnchorResultSchema = z.object({
+  txHash: z.string(),           // Transaction identifier
+  blockNumber: z.number(),      // Block height
+  gasUsed: z.bigint(),          // Execution cost
+  gasPrice: z.bigint(),         // Wei per gas unit
+  costETH: z.string(),          // Total cost in Ether
+  receiptHash: z.string(),      // Anchored commitment
+  timestamp: z.number(),        // Unix epoch
+});
+
+const VerificationResultSchema = z.object({
+  isAnchored: z.boolean(),
+  blockNumber: z.number().optional(),
+  txHash: z.string().optional(),
+  timestamp: z.number().optional(),
+});
+\end{lstlisting}
+
+Type signature: \(\SigmaType_{\text{blockchain}} = (\text{Receipt} \to \text{TxHash}) \times (\text{TxHash} \to \text{VerificationProof})\)
+
+From \texttt{packages/blockchain/src/merkle/merkle-proof-generator.mjs}:
+
+\begin{lstlisting}[style=javascript]
+const MerkleProofSchema = z.object({
+  leaf: z.string(),             // Leaf node hash
+  root: z.string(),             // Merkle root
+  proof: z.array(z.string()),   // Sibling path hashes
+  index: z.number(),            // Leaf position
+  verified: z.boolean(),        // Proof validity
+});
+\end{lstlisting}
+
+Merkle composition enables \(O(\log n)\) verification cost versus \(O(n)\) individual anchoring.
+
+\subsection*{Reconciler \(\muRecon\)}
+
+The core anchoring algorithm from \texttt{ReceiptAnchorer}:
+
+\begin{lstlisting}[style=javascript]
+async anchorReceipt(receipt) {
+  // Hash computation: H(receipt) -> bytes32
+  const hash = sha256(JSON.stringify(receipt));
+  const hashHex = '0x' + bytesToHex(hash);
+
+  // Blockchain state transition
+  const tx = await this.contract.anchorReceipt(hashHex);
+  const txReceipt = await tx.wait();
+
+  // Artifact construction
+  return {
+    txHash: txReceipt.hash,
+    blockNumber: txReceipt.blockNumber,
+    gasUsed: txReceipt.gasUsed,
+    receiptHash: hashHex,
+    timestamp: Date.now()
+  };
+}
+\end{lstlisting}
+
+Batch reconciler for Merkle tree optimization:
+
+\begin{lstlisting}[style=javascript]
+async anchorBatch(receipts) {
+  const leaves = receipts.map(r => sha256(JSON.stringify(r)));
+  const merkleTree = new MerkleTree(leaves, sha256);
+  const root = merkleTree.getRoot();
+
+  const tx = await this.contract.anchorMerkleRoot(
+    '0x' + root.toString('hex'),
+    receipts.length
+  );
+
+  return { root, tx, proofs: merkleTree };
+}
+\end{lstlisting}
+
+Gas cost reduction: Batch anchoring \(n\) receipts costs \(\approx 50k + 20k\) gas versus \(n \times 70k\) for individual anchoring.
+
+\subsection*{Composition \(\PiMerge / \oplusMerge\)}
+
+Sequential composition with \pkg{@unrdf/kgc-4d}:
+\[
+\text{KGC-4D}_{\text{receipt}} \circ \muRecon_{\text{anchor}} : \text{WorkflowEvent} \to \text{BlockchainProof}
+\]
+
+Parallel composition with \pkg{@unrdf/yawl}:
+\[
+\text{YAWLEngine} \oplusMerge \text{BlockchainAnchorer} : \text{ExecutionGraph} \to (\Aout_{\text{workflow}} \times \Aout_{\text{immutable}})
+\]
+
+The package exports three composable primitives:
+\begin{itemize}
+\item \texttt{ReceiptAnchorer}: Ethereum transaction submission
+\item \texttt{MerkleProofGenerator}: Batch verification proofs
+\item \texttt{WorkflowVerifier}: Smart contract interface
+\end{itemize}
+
+Integration path: \texttt{packages/blockchain/examples/comprehensive-demo.mjs} demonstrates composition with workflow engine.
+
+\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
+
+\textbf{Guard} (Impossibility):
+\[
+\GuardH_{\text{rewrite-history}} : \neg \exists h, t_1, t_2 . (\text{anchored}(h, t_1) \land \text{modified}(h, t_2) \land t_2 > t_1)
+\]
+
+Once receipt hash \(h\) is anchored at timestamp \(t_1\), it becomes computationally infeasible to modify the historical record while maintaining blockchain consensus. This guard holds under standard cryptographic assumptions (SHA-256 collision resistance, Ethereum consensus finality).
+
+\textbf{Invariant} (Preservation):
+\[
+\InvQ_{\text{verifiable}} : \forall r \in \text{Receipts} . \text{anchored}(r) \Rightarrow \exists \pi . \text{verify}(\pi, r) = \text{true}
+\]
+
+Every anchored receipt \(r\) admits a verification proof \(\pi\) that can be independently validated against blockchain state. Merkle proofs preserve this property while reducing verification cost from \(O(n)\) block scans to \(O(\log n)\) hash operations.
+
+\textbf{Gas Cost Bounds}:
+\begin{itemize}
+\item Individual anchor: \(\leq 70,000\) gas
+\item Batch anchor (\(n\) receipts): \(\leq 50,000 + 20,000 \cdot \lceil \log_2 n \rceil\) gas
+\item Verification: \(O(1)\) contract storage read
+\end{itemize}
+
+\subsection*{Provenance and Receipts}
+
+Every blockchain transaction produces deterministic provenance:
+\begin{itemize}
+\item Transaction hash \(\ProvHash(\text{tx})\) computed from signed transaction data
+\item Block number provides temporal ordering within chain history
+\item Event logs emit \texttt{ReceiptAnchored(bytes32 indexed receiptHash, uint256 blockNumber, uint256 timestamp)}
+\end{itemize}
+
+Verification workflow:
+\begin{enumerate}
+\item Compute \(h = \text{SHA-256}(\text{receipt})\)
+\item Query contract: \texttt{verifyReceipt(h)} \(\to\) (isAnchored, blockNumber, txHash)
+\item If Merkle batched: verify inclusion proof against stored root
+\end{enumerate}
+
+Replay capability: Given receipt \(r\) and proof \(\pi\), any observer can verify anchoring without trusting the anchoring party.
+
+\subsection*{Minimal Example}
+
+File: \texttt{packages/blockchain/examples/blockchain-demo.mjs}
+
+\begin{lstlisting}[style=javascript]
+import { ReceiptAnchorer } from '@unrdf/blockchain';
+
+const anchorer = new ReceiptAnchorer({
+  provider: 'http://localhost:8545',
+  privateKey: process.env.PRIVATE_KEY,
+  contractAddress: '0x...'
+});
+
+const receipt = {
+  workflowId: 'wf-123',
+  state: 'completed',
+  timestamp: Date.now()
+};
+
+const result = await anchorer.anchorReceipt(receipt);
+console.log(`Anchored at block ${result.blockNumber}`);
+
+// Later: verify
+const proof = await anchorer.verifyReceipt(result.receiptHash);
+console.log(`Verified: ${proof.isAnchored}`);
+\end{lstlisting}
+
+\subsection*{Open Questions}
+
+\begin{enumerate}
+\item \textbf{Cross-chain anchoring}: Can Merkle roots be synchronized across multiple chains (Ethereum, Polygon, Arbitrum) to reduce cost while maintaining verification guarantees?
+\item \textbf{Gas cost optimization}: What is optimal batch size \(n^*\) that minimizes \(\text{cost}(n) / n\) considering transaction latency and failure probability?
+\item \textbf{Finality guarantees}: How do blockchain reorganization probabilities affect receipt anchoring SLAs? What confirmation depth \(k\) ensures \(P(\text{reorg}) < 10^{-9}\)?
+\item \textbf{Smart contract upgradability}: How can contract upgrade mechanisms preserve historical verification proofs without breaking \(\InvQ_{\text{verifiable}}\)?
+\end{enumerate}
+
+% =============================================================================
+% PACKAGE 2: unrdf-caching
+% =============================================================================
+
+\label{pkg:unrdf-caching}
+\section{\pkg{unrdf-caching} --- Multi-Layer Query Cache}
+
+\begin{pkgmeta}
+Path & \texttt{packages/caching} \\
+Kind & JavaScript \\
+Entrypoints & 4 files \\
+Dependencies & 6 (ioredis, lru-cache, msgpackr, unrdf-oxigraph, vitest, zod) \\
+Blurb & Multi-layer caching system for RDF queries with Redis and LRU \\
+\end{pkgmeta}
+
+\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
+
+\(\Oobs\): SPARQL query executions against \pkg{@unrdf/oxigraph} store, producing result bindings \(\mathcal{B} = \{ \sigma_1, \ldots, \sigma_n \}\) where each \(\sigma_i : \text{Var} \to \text{Term}\). Query arrival follows temporal pattern \(Q(\tauEpoch)\) with locality properties exploitable for caching.
+
+\(\Aout\): Three-tier cache hierarchy:
+\begin{itemize}
+\item \textbf{L1}: In-process LRU cache (nanosecond latency, limited to process memory)
+\item \textbf{L2}: Redis distributed cache (millisecond latency, shared across cluster)
+\item \textbf{L3}: Oxigraph persistent store (disk-bound latency, authoritative source)
+\end{itemize}
+
+Cache key generation: \(\text{key}(Q) = \text{SHA-256}(\text{normalize}(Q))\) ensures syntactically equivalent queries hit same cache entry.
+
+\subsection*{Type Signature \(\SigmaType\)}
+
+From \texttt{packages/caching/src/layers/multi-layer-cache.mjs}:
+
+\begin{lstlisting}[style=javascript]
+const CacheConfigSchema = z.object({
+  store: z.any(),                    // OxigraphStore
+  redisUrl: z.string().default('redis://localhost:6379'),
+  l1MaxSize: z.number().default(1000),      // LRU capacity
+  l1TtlMs: z.number().default(60000),       // 1 minute
+  l2TtlSeconds: z.number().default(300),    // 5 minutes
+  enableL2: z.boolean().default(true),
+  keyPrefix: z.string().default('unrdf:cache:'),
+});
+
+// Cache statistics tracking
+type CacheStats = {
+  l1Hits: number,
+  l1Misses: number,
+  l2Hits: number,
+  l2Misses: number,
+  l3Hits: number,
+  l3Misses: number,
+  sets: number,
+  deletes: number,
+  l1Size: number
+};
+\end{lstlisting}
+
+Type signature: \(\SigmaType_{\text{cache}} = (\text{QueryKey} \to \text{Option}[\text{Bindings}]) \times \text{Stats}\)
+
+From \texttt{packages/caching/src/invalidation/dependency-tracker.mjs}:
+
+\begin{lstlisting}[style=javascript]
+// Subject-based dependency tracking
+class DependencyTracker {
+  async track(queryKey, subjects) {
+    // subject -> Set<queryKey> mapping
+    for (const subject of subjects) {
+      this.dependencies.set(subject,
+        (this.dependencies.get(subject) || new Set())
+          .add(queryKey)
+      );
+    }
+  }
+
+  async invalidateSubject(subject) {
+    const affected = this.dependencies.get(subject) || new Set();
+    for (const key of affected) {
+      await this.cache.delete(key);
+    }
+  }
+}
+\end{lstlisting}
+
+\subsection*{Reconciler \(\muRecon\)}
+
+The multi-layer cache reconciler implements waterfall lookup with write-through propagation:
+
+\begin{lstlisting}[style=javascript]
+async get(key) {
+  // L1 lookup (in-memory)
+  let value = this.l1.get(key);
+  if (value !== undefined) {
+    this.stats.l1Hits++;
+    return value;
+  }
+  this.stats.l1Misses++;
+
+  // L2 lookup (Redis)
+  if (this.l2) {
+    const packed = await this.l2.get(this.config.keyPrefix + key);
+    if (packed) {
+      value = unpack(Buffer.from(packed, 'base64'));
+      this.l1.set(key, value);  // Populate L1
+      this.stats.l2Hits++;
+      return value;
+    }
+    this.stats.l2Misses++;
+  }
+
+  // L3 miss - caller must populate
+  this.stats.l3Misses++;
+  return undefined;
+}
+
+async set(key, value, ttl) {
+  // Write-through to all layers
+  this.l1.set(key, value);
+  if (this.l2) {
+    const packed = pack(value).toString('base64');
+    await this.l2.setex(
+      this.config.keyPrefix + key,
+      ttl || this.config.l2TtlSeconds,
+      packed
+    );
+  }
+  this.stats.sets++;
+}
+\end{lstlisting}
+
+Composition with SPARQL execution from \texttt{packages/caching/src/query/sparql-cache.mjs}:
+
+\begin{lstlisting}[style=javascript]
+async query(sparql) {
+  const key = this.generateKey(sparql);
+
+  // Check cache
+  let results = await this.cache.get(key);
+  if (results) return results;
+
+  // Execute against store
+  results = await this.store.query(sparql);
+
+  // Track dependencies
+  const subjects = extractQuerySubjects(sparql);
+  await this.tracker.track(key, subjects);
+
+  // Populate cache
+  await this.cache.set(key, results);
+
+  return results;
+}
+\end{lstlisting}
+
+\subsection*{Composition \(\PiMerge / \oplusMerge\)}
+
+Sequential composition with store operations:
+\[
+\muRecon_{\text{cache}} \circ \text{Store}_{\text{query}} : \text{SPARQL} \to \text{Bindings}
+\]
+
+where \(\muRecon_{\text{cache}}\) intercepts all queries and applies memoization.
+
+Parallel composition with update tracking:
+\[
+\text{CacheLayer} \oplusMerge \text{DependencyTracker} : (\text{Read} \times \text{Write}) \to (\text{Bindings} \times \text{Invalidation})
+\]
+
+Write operations trigger dependency-based invalidation:
+\begin{lstlisting}[style=javascript]
+// When quad is added/removed
+await tracker.invalidateSubject(quad.subject.value);
+// All queries mentioning this subject evicted
+\end{lstlisting}
+
+\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
+
+\textbf{Guard} (Impossibility):
+\[
+\GuardH_{\text{stale-read}} : \neg \exists Q, t_1, t_2 . (\text{cached}(Q, R, t_1) \land \text{updated}(\store, t_2) \land t_2 > t_1 \land \text{read}(Q) = R)
+\]
+
+Cannot serve stale cached results after store updates affecting query dependencies. Dependency tracking ensures invalidation propagates before next read.
+
+\textbf{Invariant} (Freshness):
+\[
+\InvQ_{\text{eventual}} : \forall Q . \text{read}(Q, t) = \begin{cases}
+\text{cached}(Q) & \text{if } \nexists u . (\text{update}(u) \land \text{affects}(u, Q) \land \tauEpoch(u) > \tauEpoch(\text{cached})) \\
+\text{store}(Q) & \text{otherwise}
+\end{cases}
+\]
+
+Cache results equal store results modulo in-flight invalidations. Bounded staleness window: \(\Delta t \leq \text{TTL}_{\text{min}}\).
+
+\textbf{Performance bounds}:
+\begin{itemize}
+\item L1 hit latency: \(< 100\)ns
+\item L2 hit latency: \(< 5\)ms (Redis network round-trip)
+\item L3 latency: \(> 50\)ms (Oxigraph disk query)
+\item Hit rate target: L1 \(\geq 80\%\), L2 \(\geq 95\%\) cumulative
+\end{itemize}
+
+\subsection*{Provenance and Receipts}
+
+Cache statistics provide operational observability:
+\begin{lstlisting}[style=javascript]
+const stats = caching.getStats();
+// { l1Hits: 8234, l1Misses: 1234, l2Hits: 987, ... }
+\end{lstlisting}
+
+Each cache layer maintains:
+\begin{itemize}
+\item Hit/miss counters for effectiveness measurement
+\item Current size for capacity monitoring
+\item TTL expiration tracking for freshness guarantees
+\end{itemize}
+
+Dependency tracking maintains provenance: \(\text{query} \to \text{subjects}\) mapping enables impact analysis for updates.
+
+\subsection*{Minimal Example}
+
+File: \texttt{packages/caching/examples/cache-demo.mjs}
+
+\begin{lstlisting}[style=javascript]
+import { createCachingSystem } from '@unrdf/caching';
+import { createStore } from '@unrdf/oxigraph';
+
+const store = createStore();
+const caching = await createCachingSystem({
+  store,
+  redisUrl: 'redis://localhost:6379',
+  l1MaxSize: 1000,
+  l2TtlSeconds: 300
+});
+
+// First query - cache miss, hits store
+const results1 = await caching.sparqlCache.query(
+  'SELECT ?s ?o WHERE { ?s <p> ?o }'
+);
+
+// Second query - cache hit, no store access
+const results2 = await caching.sparqlCache.query(
+  'SELECT ?s ?o WHERE { ?s <p> ?o }'
+);
+
+// Update triggers invalidation
+await store.add(quad(
+  namedNode('http://ex.org/s1'),
+  namedNode('p'),
+  literal('new')
+));
+await caching.tracker.invalidateSubject('http://ex.org/s1');
+
+console.log(caching.getStats());
+// { l1Hits: 1, l1Misses: 1, l2Hits: 0, ... }
+\end{lstlisting}
+
+\subsection*{Open Questions}
+
+\begin{enumerate}
+\item \textbf{Optimal TTL}: What cache expiration times minimize staleness probability while maximizing hit rate under realistic update patterns?
+\item \textbf{Dependency precision}: Subject-based tracking over-invalidates. Can predicate-object patterns reduce false evictions while maintaining bounded overhead?
+\item \textbf{Adaptive sizing}: How should L1 capacity adjust dynamically based on hit rate curves and memory pressure?
+\item \textbf{Distributed invalidation}: When Redis pub/sub broadcasts invalidations, what consistency guarantees hold across cluster nodes?
+\end{enumerate}
+
+% =============================================================================
+% PACKAGE 3: unrdf-cli
+% =============================================================================
+
+\label{pkg:unrdf-cli}
+\section{\pkg{unrdf-cli} --- Command-Line Interface}
+
+\begin{pkgmeta}
+Path & \texttt{packages/cli} \\
+Kind & JavaScript \\
+Entrypoints & 3 files \\
+Dependencies & 12 (citty, table, unrdf-core, unrdf-federation, unrdf-hooks, unrdf-knowledge-engine, unrdf-oxigraph, unrdf-project-engine, unrdf-streaming, vitest, yaml) \\
+Blurb & UNRDF CLI - Command-line Tools for Graph Operations and Context Management \\
+\end{pkgmeta}
+
+\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
+
+\(\Oobs\): User commands from terminal input, configuration files (\texttt{.unrdf.yaml}), and filesystem state (RDF files, store directories). Input stream \(\Oobs_{\text{cmd}} = \langle \text{command}, \text{args}, \text{env} \rangle\) at discrete invocations.
+
+\(\Aout\): Terminal output (formatted tables, status messages), filesystem mutations (initialized projects, backup archives, imported triples), and store state transitions. Each command produces:
+\begin{itemize}
+\item Exit code: \(0\) (success) or \(> 0\) (failure)
+\item Stdout: Human-readable results or machine-parseable JSON
+\item Side effects: Modified \(\store\) or filesystem
+\end{itemize}
+
+The CLI acts as shell integration layer: \(\muRecon_{\text{cli}} : \text{Command} \to (\Aout_{\text{terminal}} \times \Aout_{\text{filesystem}})\).
+
+\subsection*{Type Signature \(\SigmaType\)}
+
+From \texttt{packages/cli/src/cli.mjs}:
+
+\begin{lstlisting}[style=javascript]
+import { defineCommand, runMain } from 'citty';
+
+const main = defineCommand({
+  meta: {
+    name: 'unrdf',
+    version: '2.1.1',
+    description: 'RDF framework CLI - Project initialization and store management',
+  },
+  subCommands: {
+    init: initCommand,      // Project scaffolding
+    store: storeCommand,    // Store operations
+  },
+});
+\end{lstlisting}
+
+Type signature: \(\SigmaType_{\text{cli}} = \text{Command} \times \text{Args} \to \text{ExitCode} \times \text{Output}\)
+
+From \texttt{packages/cli/src/commands/store.mjs}:
+
+\begin{lstlisting}[style=javascript]
+const storeCommand = defineCommand({
+  meta: {
+    name: 'store',
+    description: 'RDF store operations',
+  },
+  subCommands: {
+    backup: backupCommand,    // Export store snapshot
+    restore: restoreCommand,  // Import store snapshot
+    query: queryCommand,      // Execute SPARQL
+    import: importCommand,    // Load RDF files
+  },
+});
+\end{lstlisting}
+
+Each subcommand follows pattern:
+\begin{lstlisting}[style=javascript]
+async run({ args }) {
+  // Parse + validate arguments
+  const config = parseConfig(args);
+
+  // Execute operation
+  const result = await executeOperation(config);
+
+  // Format output
+  console.log(formatResult(result));
+
+  return { success: true };
+}
+\end{lstlisting}
+
+\subsection*{Reconciler \(\muRecon\)}
+
+Command dispatch reconciler:
+
+\begin{lstlisting}[style=javascript]
+// Store initialization
+async init({ args }) {
+  const projectDir = args.dir || process.cwd();
+
+  // Scaffold directory structure
+  await mkdir(path.join(projectDir, '.unrdf'));
+  await mkdir(path.join(projectDir, 'data'));
+
+  // Generate config
+  const config = {
+    storePath: '.unrdf/store',
+    backupDir: '.unrdf/backups',
+    hooks: []
+  };
+
+  await writeFile(
+    path.join(projectDir, '.unrdf.yaml'),
+    yaml.stringify(config)
+  );
+
+  console.log(`Initialized UNRDF project in ${projectDir}`);
+}
+\end{lstlisting}
+
+Store operations reconciler:
+
+\begin{lstlisting}[style=javascript]
+// Backup store to archive
+async backup({ args }) {
+  const store = await openStore(args.storePath);
+  const backupPath = args.output || `backup-${Date.now()}.nq`;
+
+  // Export all quads in N-Quads format
+  const quads = store.match();
+  const writer = new Writer({ format: 'N-Quads' });
+
+  for (const quad of quads) {
+    writer.addQuad(quad);
+  }
+
+  writer.end((error, result) => {
+    writeFileSync(backupPath, result);
+    console.log(`Backup saved to ${backupPath}`);
+  });
+}
+\end{lstlisting}
+
+Query execution with formatted output:
+
+\begin{lstlisting}[style=javascript]
+async query({ args }) {
+  const store = await openStore(args.storePath);
+  const results = await store.query(args.query);
+
+  if (args.format === 'json') {
+    console.log(JSON.stringify(results, null, 2));
+  } else {
+    // Pretty-print as table
+    const table = new Table({
+      head: Object.keys(results[0] || {}),
+      colWidths: [30, 50]
+    });
+
+    for (const row of results) {
+      table.push(Object.values(row));
+    }
+
+    console.log(table.toString());
+  }
+}
+\end{lstlisting}
+
+\subsection*{Composition \(\PiMerge / \oplusMerge\)}
+
+Sequential composition with core packages:
+\[
+\text{CLI}_{\text{parse}} \circ \pkg{@unrdf/core}_{\text{execute}} \circ \text{CLI}_{\text{format}} : \text{UserInput} \to \text{TerminalOutput}
+\]
+
+Parallel composition with multiple subsystems:
+\[
+\text{CLI} = \text{Store} \oplusMerge \text{Hooks} \oplusMerge \text{Federation} \oplusMerge \text{Streaming}
+\]
+
+Each subcommand integrates different packages:
+\begin{itemize}
+\item \texttt{store}: Uses \pkg{@unrdf/core} and \pkg{@unrdf/oxigraph}
+\item \texttt{init}: Uses \pkg{@unrdf/project-engine}
+\item \texttt{hooks}: Uses \pkg{@unrdf/hooks}
+\item \texttt{federate}: Uses \pkg{@unrdf/federation}
+\end{itemize}
+
+Binary composition: \(\text{package.json}\) declares \texttt{"bin": \{ "unrdf": "./src/cli.mjs" \}}\), making CLI available as \texttt{unrdf} command after installation.
+
+\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
+
+\textbf{Guard} (Impossibility):
+\[
+\GuardH_{\text{data-loss}} : \neg \exists \text{cmd} . (\text{destructive}(\text{cmd}) \land \neg \text{confirmed}(\text{cmd}))
+\]
+
+Destructive operations (restore, clear) require explicit confirmation flag or interactive prompt. Cannot accidentally delete store without user intent.
+
+\textbf{Invariant} (Idempotency):
+\[
+\InvQ_{\text{safe-retry}} : \forall \text{cmd} \in \{\text{backup}, \text{export}, \text{query}\} . (\text{cmd}; \text{cmd}) \equiv \text{cmd}
+\]
+
+Read-only operations are idempotent and safe to retry. Backup generates unique filenames preventing overwrites.
+
+\textbf{Output format stability}:
+\begin{itemize}
+\item JSON mode: Parseable by downstream tools, schema-stable across versions
+\item Table mode: Human-optimized, may change formatting for readability
+\item Exit codes: 0 = success, 1 = user error, 2 = system error (POSIX convention)
+\end{itemize}
+
+\subsection*{Provenance and Receipts}
+
+Every CLI invocation produces audit trail:
+\begin{lstlisting}[style=javascript]
+// Backup command generates manifest
+{
+  "timestamp": "2025-12-27T10:30:00Z",
+  "command": "unrdf store backup",
+  "storePath": ".unrdf/store",
+  "quadCount": 15234,
+  "outputFile": "backup-1735295400.nq",
+  "checksum": "sha256:abc123..."
+}
+\end{lstlisting}
+
+Store operations are observable via:
+\begin{itemize}
+\item Verbose logging (\texttt{--verbose} flag)
+\item OTEL tracing integration (if configured)
+\item Git-compatible backup format (N-Quads are diff-friendly)
+\end{itemize}
+
+\subsection*{Minimal Example}
+
+\begin{lstlisting}[style=javascript]
+// Initialize new UNRDF project
+$ unrdf init --dir ./my-project
+
+// Import RDF data
+$ cd my-project
+$ unrdf store import --file data.ttl
+
+// Query the store
+$ unrdf store query "SELECT * WHERE { ?s ?p ?o } LIMIT 10"
+
+// Backup store
+$ unrdf store backup --output snapshot.nq
+
+// Restore from backup
+$ unrdf store restore --input snapshot.nq
+\end{lstlisting}
+
+Configuration file \texttt{.unrdf.yaml}:
+\begin{lstlisting}[language=yaml]
+storePath: .unrdf/store
+backupDir: .unrdf/backups
+hooks:
+  - name: validate-on-import
+    trigger: post-import
+    command: npm run validate
+\end{lstlisting}
+
+\subsection*{Open Questions}
+
+\begin{enumerate}
+\item \textbf{Plugin architecture}: How can third-party packages extend CLI with custom commands while maintaining type safety and error handling consistency?
+\item \textbf{Streaming operations}: For large imports/exports, how should progress reporting balance responsiveness versus performance overhead?
+\item \textbf{Multi-store management}: What UX patterns best support switching between multiple named stores within single project?
+\item \textbf{Shell completions}: Can command completions be generated from Citty command definitions to support Bash/Zsh/Fish?
+\end{enumerate}
+
+% =============================================================================
+% PACKAGE 4: unrdf-collab
+% =============================================================================
+
+\label{pkg:unrdf-collab}
+\section{\pkg{unrdf-collab} --- Real-Time Collaboration}
+
+\begin{pkgmeta}
+Path & \texttt{packages/collab} \\
+Kind & JavaScript \\
+Entrypoints & 4 files \\
+Dependencies & 10 (lib0, unrdf-core, vitest, ws, y-indexeddb, y-websocket, yjs, zod) \\
+Blurb & Real-time collaborative RDF editing using CRDTs (Yjs) with offline-first architecture \\
+\end{pkgmeta}
+
+\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
+
+\(\Oobs\): Concurrent edit operations from multiple clients modifying shared RDF graph. Each client generates local operations \(op_i(\tauEpoch_i)\) with partial causal ordering. Network conditions introduce delivery delays and partitions.
+
+\(\Aout\): Converged RDF graph state satisfying eventual consistency. After message quiescence, all replicas reach identical state \(\store^* = \lim_{\tauEpoch \to \infty} \store(\tauEpoch)\) regardless of operation arrival order.
+
+The reconciler \(\muRecon_{\text{CRDT}}\) implements conflict-free replicated data type composition rules, ensuring:
+\[
+\forall i, j . \text{deliver}(\{op_i, op_j\}) = \text{deliver}(\{op_j, op_i\})
+\]
+
+\subsection*{Type Signature \(\SigmaType\)}
+
+From \texttt{packages/collab/src/crdt/index.mjs}:
+
+\begin{lstlisting}[style=javascript]
+import * as Y from 'yjs';
+
+class CollaborativeRDFGraph {
+  constructor() {
+    this.ydoc = new Y.Doc();
+
+    // Shared types for RDF components
+    this.triples = this.ydoc.getArray('triples');
+    this.metadata = this.ydoc.getMap('metadata');
+  }
+
+  addTriple(subject, predicate, object) {
+    // CRDT operation: append to shared array
+    this.triples.push([{
+      subject,
+      predicate,
+      object,
+      timestamp: Date.now(),
+      clientId: this.ydoc.clientID
+    }]);
+  }
+
+  getTriples() {
+    return this.triples.toArray();
+  }
+}
+\end{lstlisting}
+
+Type signature: \(\SigmaType_{\text{collab}} = \text{YDoc} \times (\text{Op} \to \text{YDoc}') \times (\text{YDoc} \to \text{RDFGraph})\)
+
+From \texttt{packages/collab/src/sync/index.mjs}:
+
+\begin{lstlisting}[style=javascript]
+import { WebsocketProvider } from 'y-websocket';
+import { IndexeddbPersistence } from 'y-indexeddb';
+
+// WebSocket synchronization
+class WebSocketSync {
+  constructor(ydoc, room, url = 'ws://localhost:1234') {
+    this.provider = new WebsocketProvider(url, room, ydoc);
+
+    this.provider.on('status', event => {
+      console.log(event.status); // 'connected' | 'disconnected'
+    });
+  }
+}
+
+// IndexedDB persistence (offline-first)
+class IndexedDBPersist {
+  constructor(ydoc, name) {
+    this.persistence = new IndexeddbPersistence(name, ydoc);
+
+    this.persistence.on('synced', () => {
+      console.log('Local state loaded from IndexedDB');
+    });
+  }
+}
+\end{lstlisting}
+
+\subsection*{Reconciler \(\muRecon\)}
+
+CRDT merge reconciler based on Yjs operational transformation:
+
+\begin{lstlisting}[style=javascript]
+// Automatic conflict resolution
+ydoc.on('update', (update, origin) => {
+  // Encode update as binary delta
+  const delta = Y.encodeStateAsUpdate(ydoc);
+
+  // Broadcast to peers
+  if (origin !== 'remote') {
+    wsProvider.send(delta);
+  }
+
+  // Persist locally
+  indexedDB.storeUpdate(delta);
+});
+
+// Receive remote updates
+wsProvider.on('message', (delta) => {
+  // Apply update with automatic merge
+  Y.applyUpdate(ydoc, delta, 'remote');
+
+  // CRDT guarantees convergence
+  const mergedState = ydoc.getArray('triples');
+});
+\end{lstlisting}
+
+RDF-specific reconciliation handles triple conflicts:
+
+\begin{lstlisting}[style=javascript]
+function reconcileTriples(localTriples, remoteTriples) {
+  // Union merge: combine all triples
+  const merged = new Set();
+
+  for (const t of [...localTriples, ...remoteTriples]) {
+    const key = `${t.subject}|${t.predicate}|${t.object}`;
+    merged.add(key);
+  }
+
+  // CRDT ensures deterministic ordering
+  return Array.from(merged).sort();
+}
+\end{lstlisting}
+
+Presence awareness for collaborative UX:
+
+\begin{lstlisting}[style=javascript]
+import { Awareness } from 'y-protocols/awareness';
+
+const awareness = wsProvider.awareness;
+
+// Broadcast cursor position
+awareness.setLocalStateField('cursor', {
+  subject: 'http://example.org/resource1',
+  timestamp: Date.now()
+});
+
+// Observe other users
+awareness.on('change', changes => {
+  changes.added.forEach(clientId => {
+    const state = awareness.getStates().get(clientId);
+    console.log(`User ${clientId} editing ${state.cursor.subject}`);
+  });
+});
+\end{lstlisting}
+
+\subsection*{Composition \(\PiMerge / \oplusMerge\)}
+
+Parallel composition of sync and persistence:
+\[
+\text{WebSocketSync} \oplusMerge \text{IndexedDBPersist} : \text{YDoc} \to (\text{NetworkSync} \times \text{LocalBackup})
+\]
+
+Both layers observe same document, providing redundancy: network failure falls back to local persistence.
+
+Sequential composition with RDF core:
+\[
+\text{CollabGraph}_{\text{CRDT}} \circ \muRecon_{\text{to-RDF}} : \text{YArray} \to \text{RDFGraph}
+\]
+
+Conversion to standard RDF representation:
+
+\begin{lstlisting}[style=javascript]
+function toRDFStore(collabGraph) {
+  const store = createStore();
+
+  for (const { subject, predicate, object } of collabGraph.getTriples()) {
+    store.add(quad(
+      namedNode(subject),
+      namedNode(predicate),
+      literal(object)
+    ));
+  }
+
+  return store;
+}
+\end{lstlisting}
+
+\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
+
+\textbf{Guard} (Impossibility):
+\[
+\GuardH_{\text{split-brain}} : \neg \exists t, s_1, s_2 . (\text{converged}(t) \land s_1 \neq s_2 \land \text{state}(c_1, t) = s_1 \land \text{state}(c_2, t) = s_2)
+\]
+
+After network partition heals and all messages are delivered, replicas cannot diverge. CRDT merge function is commutative, associative, and idempotent.
+
+\textbf{Invariant} (Eventual Consistency):
+\[
+\InvQ_{\text{convergence}} : \lim_{\tauEpoch \to \infty} (\text{quiescent}(\tauEpoch) \Rightarrow \forall i, j . \store_i(\tauEpoch) = \store_j(\tauEpoch))
+\]
+
+Given finite update streams, all replicas eventually reach identical state. Convergence time bounded by maximum message delay.
+
+\textbf{Offline tolerance}:
+\begin{itemize}
+\item Local edits during network partition accumulate in IndexedDB
+\item Reconnection triggers synchronization of accumulated updates
+\item No data loss even with prolonged disconnection
+\end{itemize}
+
+\subsection*{Provenance and Receipts}
+
+Yjs provides built-in operation history:
+\begin{lstlisting}[style=javascript]
+// Retrieve full update history
+const history = Y.encodeStateAsUpdate(ydoc);
+
+// Compute document hash for verification
+import { sha256 } from '@noble/hashes/sha256';
+const docHash = sha256(history);
+
+// Export receipt
+const receipt = {
+  documentId: ydoc.guid,
+  clientId: ydoc.clientID,
+  stateVector: Y.encodeStateVector(ydoc),
+  hash: bytesToHex(docHash),
+  timestamp: Date.now()
+};
+\end{lstlisting}
+
+Each update carries provenance:
+\begin{itemize}
+\item Client ID: Originating replica
+\item Clock vector: Causal dependencies
+\item Operation type: Insert, delete, update
+\item Timestamp: Local wall-clock time (not consensus)
+\end{itemize}
+
+\subsection*{Minimal Example}
+
+File: \texttt{packages/collab/examples/collab-demo.mjs}
+
+\begin{lstlisting}[style=javascript]
+import { CollaborativeRDFGraph, WebSocketSync, IndexedDBPersist }
+  from '@unrdf/collab';
+
+// Create collaborative document
+const collab = new CollaborativeRDFGraph();
+
+// Enable offline persistence
+const persist = new IndexedDBPersist(collab.ydoc, 'my-graph');
+
+// Connect to sync server
+const sync = new WebSocketSync(
+  collab.ydoc,
+  'room-123',
+  'ws://localhost:1234'
+);
+
+// Add triple (syncs automatically)
+collab.addTriple(
+  'http://example.org/alice',
+  'http://xmlns.com/foaf/0.1/knows',
+  'http://example.org/bob'
+);
+
+// Observe changes from other clients
+collab.ydoc.on('update', () => {
+  console.log('Graph updated:', collab.getTriples());
+});
+\end{lstlisting}
+
+\subsection*{Open Questions}
+
+\begin{enumerate}
+\item \textbf{Garbage collection}: How should tombstones for deleted triples be compacted while preserving causality for late-joining replicas?
+\item \textbf{Access control}: Can fine-grained permissions (read/write per predicate) be enforced in CRDT model without breaking commutativity?
+\item \textbf{SPARQL synchronization}: What subset of SPARQL UPDATE operations can be represented as commutative CRDT operations?
+\item \textbf{Scalability}: At what graph size (\(n\) triples) does Yjs synchronization latency exceed acceptable bounds for real-time interaction?
+\end{enumerate}
+
+% =============================================================================
+% PACKAGE 5: unrdf-composables
+% =============================================================================
+
+\label{pkg:unrdf-composables}
+\section{\pkg{unrdf-composables} --- Vue 3 Integration}
+
+\begin{pkgmeta}
+Path & \texttt{packages/composables} \\
+Kind & JavaScript \\
+Entrypoints & 2 files \\
+Dependencies & 5 (unrdf-core, unrdf-streaming, vitest, vue) \\
+Blurb & UNRDF Composables - Vue 3 Composables for Reactive RDF State (Optional Extension) \\
+\end{pkgmeta}
+
+\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
+
+\(\Oobs\): Vue component lifecycle and user interactions triggering reactive updates. Observable includes:
+\begin{itemize}
+\item Graph mutations (add/remove triples)
+\item SPARQL query executions with parameter changes
+\item Streaming updates from \pkg{@unrdf/streaming}
+\end{itemize}
+
+\(\Aout\): Reactive Vue references (\texttt{Ref<T>}) that automatically re-render components when underlying RDF data changes. Composition API enables fine-grained reactivity: only components depending on changed triples re-execute.
+
+Type signature: \(\muRecon_{\text{composable}} : \text{RDFOperation} \to \text{Ref}[\text{State}]\)
+
+\subsection*{Type Signature \(\SigmaType\)}
+
+From \texttt{packages/composables/src/index.mjs}:
+
+\begin{lstlisting}[style=javascript]
+// Composable exports
+export { useGraph } from './composables/use-graph.mjs';
+export { useQuery } from './composables/use-query.mjs';
+export { useDelta } from './composables/use-delta.mjs';
+export { useTerms } from './composables/use-terms.mjs';
+export { useSubscription } from './composables/use-subscription.mjs';
+export { useStreaming } from './composables/use-streaming.mjs';
+\end{lstlisting}
+
+Core composable types:
+
+\begin{lstlisting}[style=javascript]
+// useGraph composable
+import { ref, computed } from 'vue';
+
+function useGraph(initialStore) {
+  const store = ref(initialStore);
+  const quadCount = computed(() => store.value.size);
+
+  const addQuad = (quad) => {
+    store.value = store.value.add(quad);
+  };
+
+  const removeQuad = (quad) => {
+    store.value = store.value.delete(quad);
+  };
+
+  return { store, quadCount, addQuad, removeQuad };
+}
+
+// useQuery composable
+function useQuery(store, sparql, options = {}) {
+  const results = ref([]);
+  const loading = ref(false);
+  const error = ref(null);
+
+  const execute = async () => {
+    loading.value = true;
+    error.value = null;
+
+    try {
+      results.value = await store.value.query(sparql);
+    } catch (e) {
+      error.value = e;
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  return { results, loading, error, execute };
+}
+\end{lstlisting}
+
+Type signature: \(\SigmaType_{\text{vue}} = \text{Component} \to (\text{Ref}[\store] \times \text{Ref}[\text{Results}] \times \text{Actions})\)
+
+\subsection*{Reconciler \(\muRecon\)}
+
+Delta tracking reconciler from \texttt{useDelta}:
+
+\begin{lstlisting}[style=javascript]
+import { ref, watch } from 'vue';
+
+function useDelta(store) {
+  const history = ref([]);
+  const currentIndex = ref(-1);
+
+  const addDelta = (delta) => {
+    // Truncate future history on new change
+    history.value = history.value.slice(0, currentIndex.value + 1);
+    history.value.push(delta);
+    currentIndex.value++;
+  };
+
+  const undo = () => {
+    if (currentIndex.value < 0) return;
+
+    const delta = history.value[currentIndex.value];
+    applyInverse(store, delta);
+    currentIndex.value--;
+  };
+
+  const redo = () => {
+    if (currentIndex.value >= history.value.length - 1) return;
+
+    currentIndex.value++;
+    const delta = history.value[currentIndex.value];
+    applyDelta(store, delta);
+  };
+
+  const canUndo = computed(() => currentIndex.value >= 0);
+  const canRedo = computed(() => currentIndex.value < history.value.length - 1);
+
+  return { undo, redo, canUndo, canRedo, history };
+}
+\end{lstlisting}
+
+Streaming integration reconciler:
+
+\begin{lstlisting}[style=javascript]
+import { ref, onUnmounted } from 'vue';
+
+function useStreaming(streamUrl) {
+  const quads = ref([]);
+  const connected = ref(false);
+
+  let ws;
+
+  const connect = () => {
+    ws = new WebSocket(streamUrl);
+
+    ws.onopen = () => {
+      connected.value = true;
+    };
+
+    ws.onmessage = (event) => {
+      const quad = parseQuad(event.data);
+      quads.value.push(quad);
+    };
+
+    ws.onclose = () => {
+      connected.value = false;
+    };
+  };
+
+  // Cleanup on component unmount
+  onUnmounted(() => {
+    if (ws) ws.close();
+  });
+
+  return { quads, connected, connect };
+}
+\end{lstlisting}
+
+\subsection*{Composition \(\PiMerge / \oplusMerge\)}
+
+Sequential composition with core packages:
+\[
+\pkg{@unrdf/core}_{\text{store}} \circ \muRecon_{\text{reactive}} \circ \text{Vue}_{\text{render}} : \text{Interaction} \to \text{DOM}
+\]
+
+Parallel composition of multiple composables within component:
+
+\begin{lstlisting}[style=javascript]
+<script setup>
+import { useGraph, useQuery, useDelta } from '@unrdf/composables';
+
+const { store, addQuad } = useGraph(initialStore);
+const { results, execute } = useQuery(store, 'SELECT * WHERE { ?s ?p ?o }');
+const { undo, redo, canUndo, canRedo } = useDelta(store);
+
+// All composables share same reactive store
+</script>
+\end{lstlisting}
+
+Composition operator:
+\[
+\text{useGraph} \oplusMerge \text{useQuery} \oplusMerge \text{useDelta} : \store \to (\text{Ref}[\store] \times \text{Ref}[\text{Results}] \times \text{History})
+\]
+
+\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
+
+\textbf{Guard} (Impossibility):
+\[
+\GuardH_{\text{stale-ui}} : \neg \exists t . (\text{changed}(\store, t) \land \neg \text{re-render}(\text{components}, t + \epsilon))
+\]
+
+Vue reactivity system guarantees that store changes trigger component re-renders within single tick. Cannot observe stale state in UI after mutation.
+
+\textbf{Invariant} (Reactivity):
+\[
+\InvQ_{\text{consistency}} : \forall c . (\text{depends}(c, \store) \Rightarrow (\text{update}(\store) \Rightarrow \text{update}(c)))
+\]
+
+Every component depending on reactive store receives updates when store mutates. Vue's dependency tracking ensures minimal re-render set.
+
+\textbf{Performance characteristics}:
+\begin{itemize}
+\item Reactivity overhead: \(O(1)\) per tracked reference
+\item Re-render granularity: Component-level (not application-level)
+\item Memory: Linear in number of reactive dependencies
+\end{itemize}
+
+\subsection*{Provenance and Receipts}
+
+Delta history provides operation provenance:
+\begin{lstlisting}[style=javascript]
+const { history } = useDelta(store);
+
+// Inspect operation history
+history.value.forEach((delta, idx) => {
+  console.log(`Op ${idx}: ${delta.type} at ${delta.timestamp}`);
+});
+
+// Generate receipt from delta sequence
+const receipt = {
+  operations: history.value.map(d => ({
+    type: d.type,
+    quad: d.quad,
+    timestamp: d.timestamp
+  })),
+  finalState: store.value.size,
+  hash: computeHash(history.value)
+};
+\end{lstlisting}
+
+Each delta records:
+\begin{itemize}
+\item Operation type (add/remove)
+\item Affected quad
+\item Timestamp
+\item Optional metadata (user, session)
+\end{itemize}
+
+\subsection*{Minimal Example}
+
+\begin{lstlisting}[style=javascript]
+<template>
+  <div>
+    <h1>RDF Graph Editor</h1>
+    <p>Quad count: {{ quadCount }}</p>
+
+    <button @click="execute">Run Query</button>
+    <button @click="undo" :disabled="!canUndo">Undo</button>
+    <button @click="redo" :disabled="!canRedo">Redo</button>
+
+    <ul>
+      <li v-for="result in results" :key="result.subject">
+        {{ result.subject }} - {{ result.predicate }} - {{ result.object }}
+      </li>
+    </ul>
+  </div>
+</template>
+
+<script setup>
+import { useGraph, useQuery, useDelta } from '@unrdf/composables';
+import { createStore } from '@unrdf/core';
+
+const initialStore = createStore();
+const { store, quadCount, addQuad } = useGraph(initialStore);
+
+const { results, execute } = useQuery(
+  store,
+  'SELECT ?s ?p ?o WHERE { ?s ?p ?o }'
+);
+
+const { undo, redo, canUndo, canRedo } = useDelta(store);
+
+// Add some data
+addQuad(quad(
+  namedNode('http://example.org/alice'),
+  namedNode('http://xmlns.com/foaf/0.1/name'),
+  literal('Alice')
+));
+</script>
+\end{lstlisting}
+
+\subsection*{Open Questions}
+
+\begin{enumerate}
+\item \textbf{Virtual scrolling}: For queries returning 10k+ results, how can reactive lists efficiently render only visible rows without breaking reactivity?
+\item \textbf{Computed queries}: Can SPARQL query results be cached and only re-computed when dependent triples change (fine-grained invalidation)?
+\item \textbf{SSR compatibility}: How should composables degrade when used in server-side rendering context where store access must be async?
+\item \textbf{Concurrent edits}: If multiple components mutate store simultaneously, what happens to undo/redo history linearization?
+\end{enumerate}
+
+% =============================================================================
+% PACKAGE 6: unrdf-consensus
+% =============================================================================
+
+\label{pkg:unrdf-consensus}
+\section{\pkg{unrdf-consensus} --- Distributed Consensus}
+
+\begin{pkgmeta}
+Path & \texttt{packages/consensus} \\
+Kind & JavaScript \\
+Entrypoints & 5 files \\
+Dependencies & 10 (eslint, msgpackr, opentelemetry-api, prettier, unrdf-federation, vitest, ws, zod) \\
+Blurb & Production-grade Raft consensus for distributed workflow coordination \\
+\end{pkgmeta}
+
+\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
+
+\(\Oobs\): Distributed cluster of \(n\) nodes executing workflow operations with network partitions, message delays, and node failures. Observable stream includes:
+\begin{itemize}
+\item Client commands: \(\langle \text{START\_WORKFLOW}, \text{wf-id}, \text{data} \rangle\)
+\item Node heartbeats: \(\langle \text{node-id}, \tauEpoch, \text{health} \rangle\)
+\item Election timeouts: Stochastic events triggering leader election
+\end{itemize}
+
+\(\Aout\): Linearizable log of committed operations with single elected leader. Raft guarantees:
+\begin{itemize}
+\item Leader election: At most one leader per term
+\item Log replication: Committed entries appear in identical order on all nodes
+\item State machine safety: Applied operations produce consistent state
+\end{itemize}
+
+Type signature: \(\muRecon_{\text{raft}} : \text{Command} \times \text{ClusterState} \to \text{CommittedLog} \times \text{LeaderState}\)
+
+\subsection*{Type Signature \(\SigmaType\)}
+
+From \texttt{packages/consensus/src/raft/raft-coordinator.mjs}:
+
+\begin{lstlisting}[style=javascript]
+const RaftConfigSchema = z.object({
+  nodeId: z.string(),
+  port: z.number().int().positive(),
+  host: z.string().default('localhost'),
+  electionTimeoutMin: z.number().positive().default(150),   // ms
+  electionTimeoutMax: z.number().positive().default(300),   // ms
+  heartbeatInterval: z.number().positive().default(50),     // ms
+  snapshotThreshold: z.number().positive().default(1000),   // entries
+});
+
+const RaftState = {
+  FOLLOWER: 'follower',
+  CANDIDATE: 'candidate',
+  LEADER: 'leader',
+};
+
+const WorkflowCommandSchema = z.object({
+  type: z.enum([
+    'START_WORKFLOW',
+    'STOP_WORKFLOW',
+    'UPDATE_STATE',
+    'REGISTER_NODE',
+    'DEREGISTER_NODE'
+  ]),
+  workflowId: z.string().optional(),
+  nodeId: z.string().optional(),
+  data: z.any(),
+  timestamp: z.number().default(() => Date.now()),
+});
+\end{lstlisting}
+
+Type signature: \(\SigmaType_{\text{raft}} = \text{NodeState} \times \text{Log} \times \text{Term} \times \text{VotedFor}\)
+
+From \texttt{packages/consensus/src/state/distributed-state-machine.mjs}:
+
+\begin{lstlisting}[style=javascript]
+class DistributedStateMachine {
+  constructor({ nodeId }) {
+    this.state = new Map();         // Key-value state
+    this.lastApplied = 0;           // Last applied log index
+    this.commitIndex = 0;           // Last committed index
+  }
+
+  async apply(operation) {
+    const { type, key, value } = operation;
+
+    switch (type) {
+      case 'SET':
+        this.state.set(key, value);
+        break;
+      case 'DELETE':
+        this.state.delete(key);
+        break;
+      case 'INCREMENT':
+        this.state.set(key, (this.state.get(key) || 0) + 1);
+        break;
+    }
+
+    this.lastApplied++;
+    return this.state.get(key);
+  }
+}
+\end{lstlisting}
+
+\subsection*{Reconciler \(\muRecon\)}
+
+Leader election reconciler:
+
+\begin{lstlisting}[style=javascript]
+class RaftCoordinator extends EventEmitter {
+  async startElection() {
+    this.state = RaftState.CANDIDATE;
+    this.currentTerm++;
+    this.votedFor = this.nodeId;
+
+    let votesReceived = 1; // Vote for self
+
+    // Request votes from peers
+    for (const peer of this.peers.values()) {
+      const response = await this.requestVote(peer, {
+        term: this.currentTerm,
+        candidateId: this.nodeId,
+        lastLogIndex: this.log.length - 1,
+        lastLogTerm: this.log[this.log.length - 1]?.term || 0
+      });
+
+      if (response.voteGranted) {
+        votesReceived++;
+      }
+
+      // Majority achieved
+      if (votesReceived > this.peers.size / 2) {
+        this.becomeLeader();
+        return;
+      }
+    }
+
+    // Election failed, restart timeout
+    this.resetElectionTimeout();
+  }
+
+  becomeLeader() {
+    this.state = RaftState.LEADER;
+    this.emit('leader_elected', { leaderId: this.nodeId });
+
+    // Start sending heartbeats
+    this.heartbeatTimer = setInterval(
+      () => this.sendHeartbeats(),
+      this.config.heartbeatInterval
+    );
+  }
+}
+\end{lstlisting}
+
+Log replication reconciler:
+
+\begin{lstlisting}[style=javascript]
+async replicateCommand(command) {
+  if (this.state !== RaftState.LEADER) {
+    throw new Error('Not leader');
+  }
+
+  // Append to local log
+  const entry = {
+    term: this.currentTerm,
+    index: this.log.length,
+    command,
+    timestamp: Date.now()
+  };
+  this.log.push(entry);
+
+  // Replicate to followers
+  let replicationCount = 1; // Self
+
+  for (const peer of this.peers.values()) {
+    const response = await this.appendEntries(peer, {
+      term: this.currentTerm,
+      leaderId: this.nodeId,
+      prevLogIndex: entry.index - 1,
+      prevLogTerm: this.log[entry.index - 1]?.term || 0,
+      entries: [entry],
+      leaderCommit: this.commitIndex
+    });
+
+    if (response.success) {
+      replicationCount++;
+    }
+  }
+
+  // Commit if majority replicated
+  if (replicationCount > this.peers.size / 2) {
+    this.commitIndex = entry.index;
+    await this.applyCommittedEntries();
+  }
+
+  return { committed: this.commitIndex >= entry.index };
+}
+\end{lstlisting}
+
+\subsection*{Composition \(\PiMerge / \oplusMerge\)}
+
+Sequential composition with federation:
+\[
+\pkg{@unrdf/federation}_{\text{discovery}} \circ \muRecon_{\text{raft}} : \text{PeerList} \to \text{ConsensusCluster}
+\]
+
+Federation discovers peer nodes, Raft coordinates consensus among them.
+
+Parallel composition of subsystems:
+\[
+\text{RaftCoordinator} \oplusMerge \text{ClusterManager} \oplusMerge \text{StateMachine} \oplusMerge \text{Transport}
+\]
+
+Each component operates independently:
+\begin{itemize}
+\item \texttt{RaftCoordinator}: Election and log replication logic
+\item \texttt{ClusterManager}: Membership tracking and health monitoring
+\item \texttt{StateMachine}: Operation application and state queries
+\item \texttt{WebSocketTransport}: Network communication layer
+\end{itemize}
+
+Integration with workflow engine:
+
+\begin{lstlisting}[style=javascript]
+import { createRaftCoordinator } from '@unrdf/consensus';
+import { WorkflowEngine } from '@unrdf/yawl';
+
+const raft = createRaftCoordinator({ nodeId: 'node-1', port: 8080 });
+await raft.initialize();
+
+// Coordinate workflow operations
+await raft.replicateCommand({
+  type: 'START_WORKFLOW',
+  workflowId: 'wf-123',
+  data: { name: 'Data Pipeline' }
+});
+\end{lstlisting}
+
+\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
+
+\textbf{Guard} (Impossibility):
+\[
+\GuardH_{\text{split-brain}} : \neg \exists t, l_1, l_2 . (l_1 \neq l_2 \land \text{leader}(l_1, t) \land \text{leader}(l_2, t))
+\]
+
+Raft guarantees at most one leader per term. Election safety property ensures no two nodes believe they are leader for same term.
+
+\textbf{Invariant} (Log Matching):
+\[
+\InvQ_{\text{log-match}} : \forall i, j, k . (\text{log}_i[k] = \text{log}_j[k] \Rightarrow \forall m < k . \text{log}_i[m] = \text{log}_j[m])
+\]
+
+If logs contain same entry at index \(k\), all preceding entries are identical. This enables safe log repair during recovery.
+
+\textbf{Invariant} (State Machine Safety):
+\[
+\InvQ_{\text{state-safety}} : \forall i, j . (\text{applied}(i, k) \land \text{applied}(j, k) \Rightarrow \text{state}_i = \text{state}_j)
+\]
+
+If two nodes apply same log prefix, their state machines reach identical state.
+
+\textbf{Timing bounds}:
+\begin{itemize}
+\item Election timeout: \([150, 300]\)ms (randomized to prevent split votes)
+\item Heartbeat interval: \(50\)ms (must be \(\ll\) election timeout)
+\item Commit latency: \(< 100\)ms for 3-node cluster with \(< 10\)ms RTT
+\end{itemize}
+
+\subsection*{Provenance and Receipts}
+
+Every committed entry carries provenance:
+\begin{lstlisting}[style=javascript]
+{
+  term: 5,                    // Leader term
+  index: 42,                  // Log position
+  command: { ... },           // Operation
+  timestamp: 1735295400000,   // Submission time
+  committedAt: 1735295400123, // Commit time
+  leaderId: 'node-1'          // Committing leader
+}
+\end{lstlisting}
+
+OTEL tracing integration:
+
+\begin{lstlisting}[style=javascript]
+const span = tracer.startSpan('raft.replicate_command');
+span.setAttribute('command.type', command.type);
+span.setAttribute('term', this.currentTerm);
+span.setAttribute('log.index', entry.index);
+
+try {
+  await this.replicateCommand(command);
+  span.setStatus({ code: SpanStatusCode.OK });
+} catch (error) {
+  span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
+  throw error;
+} finally {
+  span.end();
+}
+\end{lstlisting}
+
+\subsection*{Minimal Example}
+
+File: \texttt{packages/consensus/examples/three-node-cluster.mjs}
+
+\begin{lstlisting}[style=javascript]
+import { createRaftCoordinator, createClusterManager } from '@unrdf/consensus';
+
+// Start three nodes
+const nodes = [
+  { id: 'node-1', port: 8080 },
+  { id: 'node-2', port: 8081 },
+  { id: 'node-3', port: 8082 }
+];
+
+for (const { id, port } of nodes) {
+  const raft = createRaftCoordinator({ nodeId: id, port });
+  await raft.initialize();
+
+  // Register peers
+  for (const peer of nodes) {
+    if (peer.id !== id) {
+      raft.addPeer(peer.id, 'localhost', peer.port);
+    }
+  }
+
+  raft.on('leader_elected', ({ leaderId }) => {
+    console.log(`${id}: New leader is ${leaderId}`);
+  });
+}
+
+// Submit command to any node (will forward to leader)
+await nodes[0].replicateCommand({
+  type: 'START_WORKFLOW',
+  workflowId: 'wf-123',
+  data: { name: 'Test Workflow' }
+});
+\end{lstlisting}
+
+\subsection*{Open Questions}
+
+\begin{enumerate}
+\item \textbf{Dynamic membership}: How can nodes join/leave cluster without service interruption? What joint consensus protocol enables safe reconfiguration?
+\item \textbf{Snapshot compaction}: When log grows beyond threshold, what strategy balances snapshot size versus incremental update cost?
+\item \textbf{Read optimization}: Can linearizable reads be served from followers using lease mechanism, or must all reads consult leader?
+\item \textbf{Multi-Raft}: For horizontal scaling, can multiple Raft groups partition workflow space while maintaining cross-group coordination?
+\end{enumerate}
+
+% =============================================================================
+% PACKAGE 7: unrdf-core
+% =============================================================================
+
+\label{pkg:unrdf-core}
+\section{\pkg{unrdf-core} --- RDF Substrate Foundation}
+
+\begin{pkgmeta}
+Path & \texttt{packages/core} \\
+Kind & JavaScript \\
+Entrypoints & 14 files \\
+Dependencies & 14 (jsonld, n3, rdf-canonize, rdf-ext, rdf-validate-shacl, rdfjs-data-model, rdfjs-namespace, rdfjs-serializer-jsonld, rdfjs-serializer-turtle, rdfjs-to-ntriples, unrdf-oxigraph, vitest, zod) \\
+Blurb & UNRDF Core - RDF Graph Operations, SPARQL Execution, and Foundational Substrate \\
+\end{pkgmeta}
+
+\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
+
+\(\Oobs\): Raw RDF data from diverse sources (Turtle files, JSON-LD documents, SPARQL endpoints, streaming quad feeds). Observable includes:
+\begin{itemize}
+\item Serialized RDF: Text streams in various formats (Turtle, N-Triples, JSON-LD, RDF/XML)
+\item SPARQL queries: Query strings with variable bindings
+\item Quad operations: Add, remove, match patterns
+\end{itemize}
+
+\(\Aout\): Unified RDF graph representation (\(\store\)) with SPARQL query engine. Artifacts include:
+\begin{itemize}
+\item In-memory quad collections: \(\{\quad{s}{p}{o}{g}, \ldots\}\)
+\item Query results: Bindings \(\{\sigma_1, \ldots, \sigma_n\}\) or boolean answers
+\item Canonical serializations: Normalized N-Quads with deterministic ordering
+\end{itemize}
+
+The reconciler \(\muRecon_{\text{core}} : \Oobs_{\text{RDF}} \to \Aout_{\store}\) provides substrate for all UNRDF packages.
+
+\subsection*{Type Signature \(\SigmaType\)}
+
+From \texttt{packages/core/src/index.mjs}:
+
+\begin{lstlisting}[style=javascript]
+// Synchronous store API (NEW - Primary)
+export { UnrdfStore, createUnrdfStore } from './rdf/unrdf-store.mjs';
+
+export {
+  executeQuerySync,
+  executeSelectSync,
+  executeAskSync,
+  executeConstructSync,
+  prepareQuerySync,
+} from './sparql/executor-sync.mjs';
+
+// Async APIs (Backward compatibility)
+export {
+  createStore,
+  addQuad,
+  removeQuad,
+  getQuads,
+  iterateQuads,
+  countQuads,
+  namedNode,
+  literal,
+  blankNode,
+  variable,
+  defaultGraph,
+  quad,
+} from './rdf/store.mjs';
+
+export {
+  canonicalize,
+  toNTriples,
+  sortQuads,
+  isIsomorphic
+} from './rdf/canonicalize.mjs';
+\end{lstlisting}
+
+Type signature (synchronous API):
+\[
+\SigmaType_{\text{core}} = (\store \times \text{Quad}) \to \store' \quad \times \quad (\store \times \text{SPARQL}) \to \text{Bindings}
+\]
+
+From \texttt{packages/core/src/types.mjs}:
+
+\begin{lstlisting}[style=javascript]
+import { dataFactory } from '@unrdf/oxigraph';
+
+const { namedNode, literal, blankNode, variable, defaultGraph, quad }
+  = dataFactory;
+
+function createTerms(data) {
+  const terms = {};
+
+  for (const [key, value] of Object.entries(data)) {
+    if (typeof value === 'string') {
+      if (value.startsWith('http://') || value.startsWith('https://')) {
+        terms[key] = namedNode(value);
+      } else {
+        terms[key] = literal(value);
+      }
+    } else if (typeof value === 'number') {
+      if (Number.isInteger(value)) {
+        terms[key] = literal(
+          value.toString(),
+          namedNode('http://www.w3.org/2001/XMLSchema#integer')
+        );
+      } else {
+        terms[key] = literal(
+          value.toString(),
+          namedNode('http://www.w3.org/2001/XMLSchema#double')
+        );
+      }
+    }
+  }
+
+  return terms;
+}
+\end{lstlisting}
+
+\subsection*{Reconciler \(\muRecon\)}
+
+Store creation and quad operations:
+
+\begin{lstlisting}[style=javascript]
+import { createStore, addQuad, quad, namedNode, literal } from '@unrdf/core';
+
+// Create empty store
+const store = createStore();
+
+// Add quad: reconcile RDF assertion into store
+const triple = quad(
+  namedNode('http://example.org/alice'),
+  namedNode('http://xmlns.com/foaf/0.1/name'),
+  literal('Alice')
+);
+
+const updatedStore = addQuad(store, triple);
+// Store now contains: <http://example.org/alice> foaf:name "Alice" .
+\end{lstlisting}
+
+SPARQL query reconciler:
+
+\begin{lstlisting}[style=javascript]
+import { executeQuery } from '@unrdf/core';
+
+const sparql = `
+  PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+  SELECT ?person ?name WHERE {
+    ?person foaf:name ?name .
+  }
+`;
+
+const results = await executeQuery(store, sparql);
+// Results: [{ person: NamedNode(...), name: Literal("Alice") }]
+\end{lstlisting}
+
+Canonicalization reconciler (deterministic serialization):
+
+\begin{lstlisting}[style=javascript]
+import { canonicalize, isIsomorphic } from '@unrdf/core';
+
+// Two graphs with different blank node labels
+const graph1 = parseGraph(`
+  _:b1 foaf:name "Alice" .
+  _:b1 foaf:knows _:b2 .
+  _:b2 foaf:name "Bob" .
+`);
+
+const graph2 = parseGraph(`
+  _:x foaf:name "Alice" .
+  _:x foaf:knows _:y .
+  _:y foaf:name "Bob" .
+`);
+
+// Canonicalization produces identical N-Quads
+const canonical1 = await canonicalize(graph1);
+const canonical2 = await canonicalize(graph2);
+
+console.log(canonical1 === canonical2); // true
+
+// Graph isomorphism checking
+console.log(isIsomorphic(graph1, graph2)); // true
+\end{lstlisting}
+
+\subsection*{Composition \(\PiMerge / \oplusMerge\)}
+
+Core substrate enables composition across all packages:
+
+\begin{lstlisting}[style=javascript]
+// Sequential composition: parse -> store -> query
+const compose = (f, g) => (x) => g(f(x));
+
+const pipeline = compose(
+  parseRDF,           // String -> Quads
+  createStoreFrom,    // Quads -> Store
+  queryStore          // Store -> Results
+);
+
+const results = pipeline(turtleString);
+\end{lstlisting}
+
+Parallel composition with multiple formats:
+
+\begin{lstlisting}[style=javascript]
+import { parseTurtle, parseJSONLD, parseNTriples } from '@unrdf/core';
+
+// Merge multiple sources
+const store = createStore();
+
+const sources = [
+  parseTurtle(turtleData),
+  parseJSONLD(jsonldData),
+  parseNTriples(ntriplesData)
+];
+
+for (const quads of await Promise.all(sources)) {
+  for (const quad of quads) {
+    store.add(quad);
+  }
+}
+\end{lstlisting}
+
+Foundation for all UNRDF packages:
+
+\[
+\begin{aligned}
+\pkg{@unrdf/caching} &: \text{Core}_{\store} \to \text{CachedStore} \\
+\pkg{@unrdf/streaming} &: \text{Core}_{\store} \to \text{StreamingStore} \\
+\pkg{@unrdf/hooks} &: \text{Core}_{\store} \to \text{PolicyStore} \\
+\pkg{@unrdf/federation} &: \text{Core}_{\store}^n \to \text{FederatedStore}
+\end{aligned}
+\]
+
+\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
+
+\textbf{Guard} (Impossibility):
+\[
+\GuardH_{\text{invalid-rdf}} : \neg \exists q . (\text{malformed}(q) \land \text{added}(q, \store))
+\]
+
+Zod validation prevents invalid quads from entering store:
+
+\begin{lstlisting}[style=javascript]
+const QuadSchema = z.object({
+  subject: z.union([NamedNodeSchema, BlankNodeSchema]),
+  predicate: NamedNodeSchema,
+  object: z.union([NamedNodeSchema, BlankNodeSchema, LiteralSchema]),
+  graph: z.union([NamedNodeSchema, BlankNodeSchema, DefaultGraphSchema])
+});
+
+function validateQuad(quad) {
+  return QuadSchema.parse(quad);
+}
+\end{lstlisting}
+
+\textbf{Invariant} (RDF Semantics):
+\[
+\InvQ_{\text{rdf-valid}} : \forall \store . (\text{valid-rdf}(\store) \land \text{add}(q, \store) \Rightarrow \text{valid-rdf}(\store'))
+\]
+
+All operations preserve RDF well-formedness. Store cannot transition to invalid state.
+
+\textbf{Invariant} (Canonicalization):
+\[
+\InvQ_{\text{deterministic}} : \forall g_1, g_2 . (\text{isomorphic}(g_1, g_2) \Rightarrow \text{canonicalize}(g_1) = \text{canonicalize}(g_2))
+\]
+
+Canonical form uniquely identifies isomorphism class. Enables content-addressed storage and cryptographic verification.
+
+\textbf{Performance bounds}:
+\begin{itemize}
+\item Quad add/remove: \(O(1)\) amortized (Oxigraph hash map)
+\item SPARQL query: \(O(n \cdot m)\) worst-case for \(n\) triples, \(m\) patterns
+\item Canonicalization: \(O(n \log n)\) for \(n\) triples (RDF Dataset Normalization)
+\end{itemize}
+
+\subsection*{Provenance and Receipts}
+
+Store operations produce audit trail:
+
+\begin{lstlisting}[style=javascript]
+import { UnrdfStore } from '@unrdf/core';
+
+const store = new UnrdfStore();
+
+// Track operations
+store.on('quad:added', ({ quad, timestamp }) => {
+  console.log(`Added at ${timestamp}:`, quad);
+});
+
+store.on('quad:removed', ({ quad, timestamp }) => {
+  console.log(`Removed at ${timestamp}:`, quad);
+});
+
+// Generate receipt
+const receipt = {
+  operations: store.getHistory(),
+  finalState: {
+    size: store.size,
+    hash: await canonicalHash(store)
+  },
+  timestamp: Date.now()
+};
+\end{lstlisting}
+
+Canonical hash enables content verification:
+
+\begin{lstlisting}[style=javascript]
+import { canonicalize } from '@unrdf/core';
+import { sha256 } from '@noble/hashes/sha256';
+
+async function canonicalHash(store) {
+  const canonical = await canonicalize(store);
+  const hash = sha256(canonical);
+  return bytesToHex(hash);
+}
+
+// Verify store integrity
+const hash1 = await canonicalHash(store);
+// ... operations ...
+const hash2 = await canonicalHash(store);
+
+if (hash1 !== hash2) {
+  console.log('Store modified');
+}
+\end{lstlisting}
+
+\subsection*{Minimal Example}
+
+\begin{lstlisting}[style=javascript]
+import {
+  createStore,
+  addQuad,
+  quad,
+  namedNode,
+  literal,
+  executeQuery
+} from '@unrdf/core';
+
+// Create store and add data
+const store = createStore();
+
+const alice = namedNode('http://example.org/alice');
+const bob = namedNode('http://example.org/bob');
+const knows = namedNode('http://xmlns.com/foaf/0.1/knows');
+const name = namedNode('http://xmlns.com/foaf/0.1/name');
+
+addQuad(store, quad(alice, name, literal('Alice')));
+addQuad(store, quad(bob, name, literal('Bob')));
+addQuad(store, quad(alice, knows, bob));
+
+// Query
+const results = await executeQuery(store, `
+  PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+  SELECT ?person ?friend WHERE {
+    ?person foaf:knows ?friend .
+    ?person foaf:name "Alice" .
+  }
+`);
+
+console.log(results);
+// [{ person: NamedNode('...alice'), friend: NamedNode('...bob') }]
+
+// Canonicalize
+import { canonicalize } from '@unrdf/core';
+const canonical = await canonicalize(store);
+console.log(canonical);
+// Deterministic N-Quads representation
+\end{lstlisting}
+
+\subsection*{Open Questions}
+
+\begin{enumerate}
+\item \textbf{Streaming SPARQL}: Can query results be streamed incrementally for large result sets without buffering entire bindings array?
+\item \textbf{Incremental canonicalization}: When small delta applied to large graph, can canonical form be updated incrementally versus full recomputation?
+\item \textbf{Schema validation}: How should SHACL constraint violations be surfaced to applications? As exceptions, warnings, or validation reports?
+\item \textbf{Quad versioning}: Can store track temporal evolution of triples to enable time-travel queries ("show state at timestamp T")?
+\end{enumerate}
+
+% =============================================================================
+% END OF AGENT 4 PACKAGE DOCUMENTATION
+% =============================================================================
