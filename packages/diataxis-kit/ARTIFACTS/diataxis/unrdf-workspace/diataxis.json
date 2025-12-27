@@ -395,6 +395,7 @@
       "v5-substrate-refactoring-roadmap.md",
       "v5-substrate-voc-analysis.md",
       "v5-voc-to-implementation.md",
+      "v6.0.0-RELEASE-NOTES.md",
       "validation-framework-analysis.md",
       "validation-pipeline.puml",
       "validation-report-ultrathink-gap-fill.md",
@@ -463,7 +464,7 @@
       "unrdf-profiling-integration.mjs",
       "validate-new-features.mjs"
     ],
-    "fingerprint": "7b72e9e17503036af4864a4e60d2d60a86f87bd8adbf4fdde571cb9c35ee5c4b",
+    "fingerprint": "c741df20c23dc033a290df0d2942374ab3ec55235a97e1f7ac94ea1427c0f2be",
     "readmeHeadings": [
       "🎯 New to UNRDF? Start Here!",
       "🚀 Quick Start",
