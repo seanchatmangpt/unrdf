@@ -1,0 +1,46 @@
+{
+  "name": "unrdf-playground",
+  "version": "1.0.0",
+  "description": "Playground for UNRDF - Opinionated composable framework for RDF knowledge operations",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "node --watch examples/basic-usage.mjs",
+    "examples": "node examples/basic-usage.mjs",
+    "sparql": "node examples/sparql-queries.mjs",
+    "validation": "node examples/validation.mjs",
+    "reasoning": "node examples/reasoning.mjs",
+    "turtle": "node examples/turtle-parsing.mjs",
+    "zod": "node examples/zod-integration.mjs",
+    "cli-test": "node examples/cli-testing.mjs",
+    "cli-scenarios": "node examples/cli-scenarios.mjs",
+    "hooks": "node examples/hooks-runtime.mjs",
+    "server": "nitro dev",
+    "nitro:dev": "nitro dev",
+    "nitro:build": "nitro build",
+    "nitro:preview": "nitro preview",
+    "test": "vitest run --config vitest.config.mjs",
+    "test:watch": "vitest --config vitest.config.mjs --watch",
+    "test:ui": "vitest --config vitest.config.mjs --ui",
+    "test:integration": "vitest run --config test/integration.config.mjs",
+    "test:integration:watch": "vitest --config test/integration.config.mjs --watch",
+    "test:integration:coverage": "vitest run --config test/integration.config.mjs --coverage",
+    "test:integration:ui": "vitest --config test/integration.config.mjs --ui"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "citty-test-utils": "^0.5.1",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "nitro": "^2.2.28",
+    "unrdf": "file:../",
+    "vitest": "^3.2.4",
+    "ws": "^8.18.3"
+  },
+  "devDependencies": {
+    "@vitest/ui": "^3.2.4"
+  },
+  "packageManager": "pnpm@10.15.0"
+}
