@@ -110,6 +110,51 @@ export {
   STATE_COLORS,
 } from './visualizer.mjs';
 
+// KGC Diataxis Documentation Projection
+export {
+  projectToTutorial,
+  projectToHowTo,
+  projectToReference,
+  projectToExplanation,
+  projectToAllViews,
+  unifyFrontmatter,
+  diataxisProjectionMatrix,
+  validateProjection,
+  serializeProjection,
+  parseSourceDoc,
+} from './kgc-docs-diataxis.mjs';
+
+// KGC Markdown Renderer - deterministic JSON-to-markdown
+export {
+  renderKGCDocument,
+  renderSection,
+  renderExecutableBlock,
+  renderProofAppendix,
+  renderFrontmatter,
+  renderTable,
+  renderCodeBlock,
+  renderLinks,
+  canonicalizeMarkdown,
+  hashMarkdown,
+} from './kgc-markdown-renderer.mjs';
+
+// KGC Documentation Proof Appendix - verification and provenance
+export {
+  generateProofAppendix,
+  formatReceiptTable,
+  formatMerkleTree,
+  formatVerificationInstructions,
+  formatHashValues,
+  insertProofAppendix,
+  renderProofAsJSON,
+  updateProofTimestamp,
+  extractProofFromDocument,
+  computeDocumentHash,
+  validateProofIntegrity,
+  ProofAppendixSchema,
+  ReceiptSummarySchema,
+} from './kgc-docs-proof-appendix.mjs';
+
 /**
  * Create unified engine with all subsystems
  * @param {Object} [config={}] - Configuration

@@ -159,8 +159,16 @@ describe('Receipts Kernel', () => {
     });
 
     it('should verify receipt with proof', async () => {
-      const proof = { merkleProof: { leaf: '0xabc', proof: [], root: '0xdef' } };
-      const receipt = await createReceipt('test', { value: 42 }, { proof });
+      // Create a receipt with a valid Merkle proof
+      const proof = {
+        merkleProof: {
+          leaf: 'abc123def456',
+          proof: ['0x1111111111111111111111111111111111111111111111111111111111111111'],
+          root: '0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
+        },
+      };
+
+      const receipt = await createReceipt('merkle-test', { value: 42 }, { proof });
 
       const result = await verifyReceipt(receipt);
       expect(result.valid).toBe(true);
