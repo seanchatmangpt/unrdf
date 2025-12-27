@@ -1,36 +1,13 @@
 /**
- * VFS Collection (Agent 2)
- * Collects project files into virtual file system
+ * VFS (Virtual File System) - Main export
+ *
+ * Re-exports all VFS utilities from the vfs/ submodule.
+ * Use this for backward compatibility or import directly from vfs/index.mjs
  *
  * @module lib/latex/vfs
  */
 
-import { promises as fs } from 'node:fs';
-import { join, relative } from 'node:path';
+export * from './vfs/index.mjs';
 
-/**
- * Collect all project files into VFS
- * @param {string} projectDir - Absolute path to project directory
- * @returns {Promise<Map<string, Uint8Array>>} VFS map (path -> content)
- */
-export async function collectProjectFiles(projectDir) {
-  // TODO (Agent 2): Implement recursive file collection
-  // For now, return minimal VFS for testing
-  const vfs = new Map();
-
-  // Stub implementation: only collect .tex files in root
-  try {
-    const entries = await fs.readdir(projectDir, { withFileTypes: true });
-    for (const entry of entries) {
-      if (entry.isFile() && entry.name.endsWith('.tex')) {
-        const fullPath = join(projectDir, entry.name);
-        const content = await fs.readFile(fullPath);
-        vfs.set(entry.name, new Uint8Array(content));
-      }
-    }
-  } catch (error) {
-    console.warn(`VFS collection warning: ${error.message}`);
-  }
-
-  return vfs;
-}
+// Alias for backward compatibility
+export { packDirectory as collectProjectFiles } from './vfs/pack.mjs';
