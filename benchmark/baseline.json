@@ -1,0 +1,163 @@
+{
+  "version": "1.0.0",
+  "createdAt": "2025-12-04T00:00:00.000Z",
+  "description": "Baseline performance targets for Knowledge Hooks benchmarks",
+  "system": {
+    "platform": "linux",
+    "arch": "x64",
+    "nodeVersion": "v20.10.0",
+    "cpuModel": "To be recorded on first run",
+    "cpuCores": 0,
+    "totalMemoryMB": 0
+  },
+  "benchmarks": {
+    "hook-registration": {
+      "small-batch": {
+        "avgLatency": 0.5,
+        "p95Latency": 1.0,
+        "p99Latency": 2.0,
+        "throughput": 2000,
+        "memoryOverhead": 5,
+        "errorRate": 0.01
+      },
+      "medium-batch": {
+        "avgLatency": 1.0,
+        "p95Latency": 2.0,
+        "p99Latency": 5.0,
+        "throughput": 1000,
+        "memoryOverhead": 25,
+        "errorRate": 0.1
+      },
+      "large-batch": {
+        "avgLatency": 1.0,
+        "p95Latency": 3.0,
+        "p99Latency": 5.0,
+        "throughput": 1000,
+        "memoryOverhead": 100,
+        "errorRate": 0.1
+      }
+    },
+    "hook-execution": {
+      "simple-hook-execution": {
+        "p50Latency": 1.0,
+        "p95Latency": 5.0,
+        "p99Latency": 10.0,
+        "maxLatency": 50.0,
+        "throughput": 1000,
+        "errorRate": 0.1
+      },
+      "medium-hook-execution": {
+        "p50Latency": 3.0,
+        "p95Latency": 8.0,
+        "p99Latency": 15.0,
+        "maxLatency": 100.0,
+        "throughput": 200,
+        "errorRate": 0.1
+      },
+      "complex-hook-execution": {
+        "p50Latency": 10.0,
+        "p95Latency": 25.0,
+        "p99Latency": 50.0,
+        "maxLatency": 200.0,
+        "throughput": 50,
+        "errorRate": 0.5
+      }
+    },
+    "hook-validation": {
+      "schema-validation-throughput": {
+        "throughput": 10000,
+        "avgLatency": 0.1,
+        "p99Latency": 1.0,
+        "accuracy": 99.9,
+        "falsePositiveRate": 0.01,
+        "falseNegativeRate": 0.01,
+        "errorRate": 0.1
+      },
+      "runtime-validation-performance": {
+        "throughput": 5000,
+        "avgLatency": 0.2,
+        "p95Latency": 1.0,
+        "p99Latency": 2.0,
+        "accuracy": 99.5,
+        "errorRate": 0.5
+      }
+    },
+    "memory-profiling": {
+      "memory-under-load": {
+        "peakMemory": 50,
+        "avgMemory": 30,
+        "memoryGrowthRate": 1,
+        "gcFrequency": 10,
+        "gcPauseDuration": 10,
+        "memoryLeakRate": 0.1
+      },
+      "memory-stress-test": {
+        "peakMemory": 500,
+        "avgMemory": 300,
+        "memoryGrowthRate": 5,
+        "gcFrequency": 20,
+        "gcPauseDuration": 50,
+        "memoryLeakRate": 1,
+        "oomErrorRate": 0.01
+      }
+    },
+    "concurrent-execution": {
+      "low-concurrency": {
+        "totalThroughput": 500,
+        "perWorkerThroughput": 50,
+        "p50Latency": 20,
+        "p95Latency": 50,
+        "p99Latency": 100,
+        "contentionRate": 5,
+        "errorRate": 0.1
+      },
+      "medium-concurrency": {
+        "totalThroughput": 2000,
+        "perWorkerThroughput": 20,
+        "p50Latency": 50,
+        "p95Latency": 150,
+        "p99Latency": 300,
+        "contentionRate": 15,
+        "errorRate": 0.5
+      },
+      "high-concurrency": {
+        "totalThroughput": 1000,
+        "perWorkerThroughput": 1,
+        "p50Latency": 100,
+        "p95Latency": 500,
+        "p99Latency": 1000,
+        "contentionRate": 30,
+        "errorRate": 2,
+        "timeoutRate": 1
+      }
+    }
+  },
+  "regressionThresholds": {
+    "latency": {
+      "warning": 0.10,
+      "critical": 0.20
+    },
+    "throughput": {
+      "warning": -0.10,
+      "critical": -0.20
+    },
+    "memory": {
+      "warning": 0.15,
+      "critical": 0.30
+    },
+    "errorRate": {
+      "warning": 0.50,
+      "critical": 1.00
+    }
+  },
+  "notes": [
+    "This baseline file defines target performance metrics for all benchmark scenarios",
+    "Actual baseline values should be recorded from a clean run on the target system",
+    "Run `npm run benchmark -- --create-baseline` to generate system-specific baselines",
+    "Regression thresholds are percentages (0.10 = 10% degradation)",
+    "All latency values are in milliseconds",
+    "All memory values are in megabytes",
+    "All throughput values are in operations per second",
+    "Error rates are percentages (0.1 = 0.1% error rate)"
+  ]
+}

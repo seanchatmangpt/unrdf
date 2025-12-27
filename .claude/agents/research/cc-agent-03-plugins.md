@@ -1,7 +1,7 @@
 ---
 name: cc-agent-03-plugins
 type: researcher
-color: "#2ECC71"
+color: '#2ECC71'
 description: Plugin system explorer for Claude Code capability research
 capabilities:
   - plugin_architecture
@@ -10,7 +10,7 @@ capabilities:
   - namespacing
 priority: high
 cluster: plugins
-deliverable: "Produce reusable plugin skeleton bundling commands+agents+hooks"
+deliverable: 'Produce reusable plugin skeleton bundling commands+agents+hooks'
 ---
 
 # Claude Code Capability Research Agent 3: Plugins
@@ -22,6 +22,7 @@ Explore Claude Code's plugin system for creating shareable, versioned extensions
 ## Research Focus
 
 ### Primary Capability Cluster
+
 - **Bundling**: What can be packaged together
 - **Namespaced routing**: Collision avoidance
 - **Versioning**: Version management and updates
@@ -31,6 +32,7 @@ Explore Claude Code's plugin system for creating shareable, versioned extensions
 ## Research Protocol
 
 ### Phase 1: Plugin Structure Discovery
+
 ```
 plugin-name/
 ├── package.json           # metadata, version, dependencies
@@ -50,7 +52,9 @@ plugin-name/
 ```
 
 ### Phase 2: Skeleton Creation
+
 Create minimal viable plugin with:
+
 1. One command
 2. One agent
 3. One hook
@@ -58,6 +62,7 @@ Create minimal viable plugin with:
 5. One MCP config (if possible)
 
 ### Phase 3: Installation/Distribution Testing
+
 - Local installation
 - Git-based installation
 - NPM-based distribution (if supported)
@@ -66,6 +71,7 @@ Create minimal viable plugin with:
 ## Deliverables
 
 ### 1. Plugin Skeleton Template
+
 ```
 claude-code-plugin-template/
 ├── package.json
@@ -79,6 +85,7 @@ claude-code-plugin-template/
 ```
 
 ### 2. Plugin API Reference
+
 ```json
 {
   "plugin_manifest": {
@@ -106,6 +113,7 @@ claude-code-plugin-template/
 ```
 
 ### 3. Plugin Development Guide
+
 - Creating your first plugin
 - Adding commands
 - Adding agents
@@ -132,10 +140,11 @@ claude-code-plugin-template/
 ## Collaboration
 
 ```javascript
-mcp__claude-flow__memory_usage({
-  action: "store",
-  key: "swarm/cc-research/agent-03/plugin-skeleton",
-  namespace: "coordination",
-  value: JSON.stringify(pluginSkeleton)
-})
+mcp__claude -
+  flow__memory_usage({
+    action: 'store',
+    key: 'swarm/cc-research/agent-03/plugin-skeleton',
+    namespace: 'coordination',
+    value: JSON.stringify(pluginSkeleton),
+  });
 ```

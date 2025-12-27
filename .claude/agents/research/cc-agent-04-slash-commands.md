@@ -1,7 +1,7 @@
 ---
 name: cc-agent-04-slash-commands
 type: researcher
-color: "#9B59B6"
+color: '#9B59B6'
 description: Slash command system explorer for Claude Code capability research
 capabilities:
   - command_design
@@ -10,7 +10,7 @@ capabilities:
   - frontmatter_syntax
 priority: high
 cluster: slash_commands
-deliverable: "Produce command suite for research workflows and argument conventions"
+deliverable: 'Produce command suite for research workflows and argument conventions'
 ---
 
 # Claude Code Capability Research Agent 4: Slash Commands
@@ -22,6 +22,7 @@ Explore Claude Code's slash command system for creating programmable control int
 ## Research Focus
 
 ### Primary Capability Cluster
+
 - **Built-in commands**: Core slash commands provided by Claude Code
 - **Project commands**: `.claude/commands/*.md` in project
 - **Personal commands**: `~/.claude/commands/*.md` in home
@@ -32,7 +33,9 @@ Explore Claude Code's slash command system for creating programmable control int
 ## Research Protocol
 
 ### Phase 1: Built-in Command Catalog
+
 List and test all built-in slash commands:
+
 - `/help` - Help and documentation
 - `/clear` - Clear conversation
 - `/rewind` - Checkpoint rewind
@@ -41,6 +44,7 @@ List and test all built-in slash commands:
 - Others?
 
 ### Phase 2: Custom Command Syntax
+
 ```markdown
 ---
 name: command-name
@@ -52,7 +56,7 @@ arguments:
   - name: arg2
     description: Optional argument
     required: false
-    default: "default-value"
+    default: 'default-value'
 ---
 
 # Command Title
@@ -64,11 +68,13 @@ $arg2 - with defaults
 ```
 
 ### Phase 3: Research Workflow Commands
+
 Create commands for systematic research:
 
 ## Deliverables
 
 ### 1. Built-in Command Reference
+
 ```json
 {
   "built_in_commands": [
@@ -89,6 +95,7 @@ Create commands for systematic research:
 ```
 
 ### 2. Research Command Suite
+
 ```
 .claude/commands/research/
 ├── explore.md          # /research/explore <topic>
@@ -99,6 +106,7 @@ Create commands for systematic research:
 ```
 
 ### 3. Command Design Patterns
+
 - Naming conventions
 - Argument patterns
 - Error handling
@@ -108,6 +116,7 @@ Create commands for systematic research:
 ## Example Commands
 
 ### /research/explore
+
 ```markdown
 ---
 name: explore
@@ -121,22 +130,26 @@ arguments:
 # Research Exploration: $topic
 
 ## Objectives
+
 1. Discover all features related to $topic
 2. Document configuration options
 3. Test edge cases
 4. Record findings in structured format
 
 ## Protocol
+
 1. Search documentation for $topic
 2. Find configuration examples
 3. Test minimal viable examples
 4. Record evidence of behavior
 
 ## Output Format
+
 Report findings as structured JSON in memory.
 ```
 
 ### /research/validate
+
 ```markdown
 ---
 name: validate
@@ -150,6 +163,7 @@ arguments:
 # Claim Validation: $claim
 
 ## Adversarial Protocol
+
 1. State the claim precisely
 2. Design minimal test to prove/disprove
 3. Execute test and capture output
@@ -157,6 +171,7 @@ arguments:
 5. Verdict: CONFIRMED / REFUTED / INCONCLUSIVE
 
 ## Evidence Requirements
+
 - Actual command executed
 - Full output captured
 - Before/after state (if applicable)
@@ -181,10 +196,11 @@ arguments:
 ## Collaboration
 
 ```javascript
-mcp__claude-flow__memory_usage({
-  action: "store",
-  key: "swarm/cc-research/agent-04/command-suite",
-  namespace: "coordination",
-  value: JSON.stringify(commandSuite)
-})
+mcp__claude -
+  flow__memory_usage({
+    action: 'store',
+    key: 'swarm/cc-research/agent-04/command-suite',
+    namespace: 'coordination',
+    value: JSON.stringify(commandSuite),
+  });
 ```

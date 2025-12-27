@@ -1,0 +1,175 @@
+@startuml UNRDF CLI - Code Level
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+LAYOUT_WITH_LEGEND()
+
+title @unrdf/cli - C4 Code Level (Command routing, graph operations, SPARQL execution, format conversion)
+
+Package("CLI Entry & Framework") {
+  Component(cli_binary, "cli.mjs (Binary)", "Entry Point", "#!/usr/bin/env node\n\nexport async function main() {\n  try {\n    // Parse process.argv\n    const { command, subcommand, args } = parse()\n\n    // Route to handler\n    const result = await router.execute(\n      command, subcommand, args\n    )\n\n    // Output results\n    logger.info(result)\n  } catch (error) {\n    errorHandler.handle(error)\n    process.exit(1)\n  }\n}\n\nif (require.main === module) {\n  main()\n}\n\nUsage:\n$ unrdf graph create --path store.ttl\n$ unrdf query 'SELECT * { ?s ?p ?o }'\n$ unrdf context add rdf http://www.w3.org/1999/02/22-rdf-syntax-ns#")
+
+  Component(command_router, "Command Router", "Module", "export function createRouter() {\n  return {\n    execute(\n      command: string,\n      subcommand?: string,\n      args?: Record<string, any>\n    ): Promise<any> {\n      // Route to handler\n      const handler = commands[command]\n      return handler(subcommand, args)\n    },\n\n    register(name: string, fn): void\n    getHelp(): string\n  }\n}\n\nCommands registered:\n  'graph' → graphCommand()\n  'query' → queryCommand()\n  'context' → contextCommand()\n  'convert' → convertCommand()\n\nSubcommands:\n  graph:\n    create, delete, describe, get,\n    list, export, validate, update\n  query:\n    execute, from-file\n  context:\n    show, add, remove, normalize\n  convert:\n    to-turtle, to-ntriples,\n    to-jsonld, to-nquads"})
+
+  Component(citty_framework, "citty Framework", "External", "define command structures\nparseArgs()\nrunMain()\n\nHandles:\n• Help generation\n• Flag parsing\n• Error messages\n• Command routing")
+}
+
+Package("Graph Commands") {
+  Component(graph_create, "create subcommand", "Handler", "unrdf graph create --path store.ttl\n\nFlow:\n1. Validate path (Zod schema)\n2. Check file doesn't exist\n3. Initialize OxigraphStore\n4. Persist to file (empty store)\n5. Output: 'Graph created at store.ttl'\n\nError handling:\n• EEXIST: File exists\n• EACCES: Permission denied\n• EINVAL: Invalid path")
+
+  Component(graph_crud, "CRUD Operations", "Module", "create(path): Promise<void>\n  → new OxigraphStore()\n  → write(path, empty)\n\ndelete(path): Promise<void>\n  → Verify file exists\n  → Unlink file\n  → Verify deletion\n\ndescribe(path): Promise<string>\n  → Open store\n  → Count quads\n  → List graphs\n  → Output summary\n\nget(path, s?, p?, o?): Promise<Quad[]>\n  → Open store\n  → query.match(s, p, o)\n  → Serialize to format\n  → Output to stdout\n\nlist(): Promise<void>\n  → List all graph files in dir\n  → Output table\n\nexport(path, format): Promise<string>\n  → Open store\n  → store.dump({format})\n  → Return serialized")
+
+  Component(graph_update, "update subcommand", "Handler", "unrdf graph update --path store.ttl\n  --sparql 'DELETE { ?s ?p ?o } WHERE { ... }'\n\nFlow:\n1. Load store from file\n2. Parse SPARQL UPDATE\n3. Execute update\n4. Persist changes\n5. Verify transaction\n\nSupports:\n  DELETE, INSERT, DELETE + INSERT\n  WHERE clauses\n  SPARQL UPDATE 1.1")
+}
+
+Package("Query Execution") {
+  Component(query_handler, "query Handler", "Module", "unrdf query 'SELECT ?s { ?s a rdfs:Class }'\n      --output table|json|csv\n\nFlow:\n1. Parse SPARQL query\n2. Detect query type:\n   SELECT → query.execute()\n   ASK → query.executeAsk()\n   CONSTRUCT → query.executeConstruct()\n   DESCRIBE → query.executeDescribe()\n3. Open store (current dir)\n4. Execute query\n5. Format results\n6. Output to stdout\n\nOptions:\n  --output: table|json|csv (default: table)\n  --format: ttl|nt|jsonld (for CONSTRUCT)\n  --limit: rows to display\n  --offset: skip rows")
+
+  Component(query_executor, "Query Executor", "Module", "executeSelect(store, query):\n  Promise<Binding[]>\n  → Returns SELECT results\n  → Array of {var: Term}\n  → Supports pagination\n\nexecuteAsk(store, query):\n  Promise<boolean>\n  → Returns yes/no\n\nexecuteConstruct(store, query):\n  Promise<Quad[]>\n  → Returns RDF data\n  → Can serialize to format\n\nexecuteDescribe(store, query):\n  Promise<Quad[]>\n  → Returns RDF description")
+
+  Component(output_formatter, "Output Formatter", "Module", "export function formatResults(\n  results: any,\n  format: 'table'|'json'|'csv'\n): string\n\nTable format:\n  Aligns columns\n  Auto-width\n  ASCII box drawing\n  Example:\n  ┌──────────────┬──────────┐\n  │ ?s           │ ?p       │\n  ├──────────────┼──────────┤\n  │ ex:Alice     │ ex:knows │\n  │ ex:Bob       │ ex:knows │\n  └──────────────┴──────────┘\n\nJSON format:\n  {\n    head: { vars: ['?s', '?p'] },\n    results: {\n      bindings: [{...}, {...}]\n    }\n  }\n\nCSV format:\n  ?s,?p\n  ex:Alice,ex:knows\n  ex:Bob,ex:knows")
+}
+
+Package("Context Management - Prefixes") {
+  Component(context_cmd, "context Handler", "Module", "unrdf context show\n  → Display all prefixes\n  → Format: PREFIX prefix <IRI>\n\nunrdf context add rdf \\n  http://www.w3.org/1999/02/22-rdf-syntax-ns#\n  → Add prefix to store\n  → Persists in ~/.unrdf/prefixes.json\n\nunrdf context remove rdf\n  → Remove prefix\n\nunrdf context normalize\n  → Standardize all prefixes\n  → Apply common vocabularies")
+
+  Component(prefix_storage, "Prefix Storage", "Module", "Home directory: ~/.unrdf/\n\nStore file: prefixes.json\n{\n  'rdf': 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',\n  'rdfs': '...',\n  'owl': '...',\n  'foaf': '...'\n}\n\nLoad on startup\nUpdate on add/remove\nUse in command expansion")
+
+  Component(common_prefixes_mod, "Common Prefixes", "Module", "Builtin vocabularies:\n  rdf, rdfs, owl, xsd\n  foaf, dcterms, skos\n  prov, dcat, qudt\n  vcard, time, geo\n  and more...\n\nUsage:\n  RDF.namespace → stored prefix\n  ex:Alice → expanded to iri\n  iri → shortened with prefix")
+}
+
+Package("Format Conversion") {
+  Component(convert_cmd, "convert Handler", "Module", "unrdf convert input.ttl output.json\n  --from turtle\n  --to jsonld\n\nFlow:\n1. Detect/validate source format\n2. Load RDF from file\n3. Parse to Quad[]\n4. Serialize to target format\n5. Write output file\n\nSupported:\n  Input: turtle, nt, nq, trig, jsonld, rdf\n  Output: turtle, nt, nq, trig, jsonld, rdf")
+
+  Component(format_detector, "Format Detector", "Module", "detectFormat(filename): string\n  → .ttl → text/turtle\n  → .nt → application/n-triples\n  → .nq → application/n-quads\n  → .jsonld → application/ld+json\n  → .trig → application/trig\n  → .rdf → application/rdf+xml\n\nMagic numbers (file content):\n  Starts with {\n    → JSON-LD\n  Starts with <rdf:RDF>\n    → RDF/XML\n  Starts with @prefix\n    → Turtle")
+
+  Component(converter, "Format Converter", "Module", "convert(\n  data: string,\n  srcFormat: string,\n  tgtFormat: string\n): Promise<string>\n\nFlow:\n1. Parse source\n   → Use N3 parser or Oxigraph\n2. Validate quads\n3. Serialize to target\n   → Use N3 writer or Oxigraph\n4. Return string\n\nHandles:\n  • Namespace normalization\n  • Language tag preservation\n  • Datatype conversion\n  • Bnode handling")
+
+  Component(csv_import, "CSV Import", "Module", "importCSV(\n  csvPath: string,\n  mapping: {\n    subjectCol: number\n    predicateCol: number\n    objectCol: number\n  }\n): Promise<Quad[]>\n\nFlow:\n1. Parse CSV\n2. For each row:\n   a. Extract subject (column N)\n   b. Extract predicate\n   c. Extract object\n   d. Create quad\n3. Return Quad[]\n\nUsage:\n  unrdf convert data.csv --to turtle\n         --subject 0 --predicate 1 --object 2")
+}
+
+Package("Validation & Error Handling") {
+  Component(validation_schemas, "Validation Schemas", "Zod", "graphPathSchema:\n  type: string\n  must exist\n  must be .ttl or valid RDF\n\nformatSchema:\n  enum: 'turtle'|'nt'|'nq'|'trig'|\n        'jsonld'|'rdf'\n\nprefixSchema:\n  name: string (prefix)\n  iri: string (namespace)\n\nquerySchema:\n  sparql: string (valid SPARQL)\n  baseIri?: string")
+
+  Component(error_handler, "Error Handler", "Module", "export function handleError(error: Error) {\n  if (error instanceof ValidationError) {\n    logger.error('Invalid input:', error.message)\n  } else if (error instanceof FileError) {\n    logger.error('File error:', error.message)\n  } else if (error instanceof SPARQLError) {\n    logger.error('SPARQL syntax error:', error.message)\n  } else {\n    logger.error('Unexpected error:', error.stack)\n  }\n  process.exit(1)\n}\n\nColorized output:\n  ✗ Error message (red)\n  ⚠️  Warning (yellow)\n  ℹ️  Info (blue)\n  ✓ Success (green)")
+
+  Component(logger, "Logger", "Module", "info(message): void\nwarn(message): void\nerror(message): void\ndebug(message): void (if --debug)\n\nUsage:\n  logger.info('Graph created')\n  logger.error('Failed to parse SPARQL')\n\nColors (chalk):\n  Red: errors\n  Yellow: warnings\n  Green: success\n  Gray: debug")
+}
+
+' Relationships
+Rel(cli_binary, command_router, "delegates to")
+Rel(command_router, graph_create, "routes")
+Rel(command_router, query_handler, "routes")
+Rel(command_router, context_cmd, "routes")
+Rel(command_router, convert_cmd, "routes")
+Rel(graph_crud, core_dep, "uses")
+Rel(query_executor, core_dep, "uses")
+Rel(output_formatter, table_dep, "uses")
+Rel(converter, format_detector, "uses")
+Rel(validation_schemas, zod_dep, "uses")
+
+note right of cli_binary
+  **COMMAND-LINE ENTRY**
+
+  Binary: unrdf
+  Framework: citty
+
+  Typical usage:
+  $ unrdf <command> [subcommand] [options]
+
+  Examples:
+  $ unrdf graph create --path store.ttl
+  $ unrdf query "SELECT * { ?s ?p ?o }"
+  $ unrdf context show
+  $ unrdf convert input.ttl output.json
+end note
+
+note right of command_router
+  **COMMAND ROUTING**
+
+  Routes based on:
+  1. Command (graph, query, context, convert)
+  2. Subcommand (create, add, etc.)
+  3. Arguments (--path, --output, etc.)
+
+  Each command:
+  • Has dedicated handler
+  • Validates inputs
+  • Executes operation
+  • Formats output
+  • Returns to user
+end note
+
+note right of query_handler
+  **SPARQL EXECUTION**
+
+  Supports all 4 query types
+  Multiple output formats
+  Pagination support
+
+  Typical flow:
+  1. User enters query
+  2. Open current store (default store.ttl)
+  3. Execute via Oxigraph
+  4. Format results (table/json/csv)
+  5. Print to stdout
+end note
+
+note right of context_cmd
+  **PREFIX MANAGEMENT**
+
+  User's prefixes stored locally
+  Persists across sessions
+  Builtin vocabularies available
+
+  Usage:
+  $ unrdf context add ex http://example.com/
+  $ unrdf context show
+  → Displays all defined prefixes
+end note
+
+note right of converter
+  **FORMAT CONVERSION**
+
+  6 RDF formats supported
+  Automatic detection
+  Explicit override option
+
+  Example workflow:
+  1. User has input.ttl
+  2. Wants output.json
+  3. System detects Turtle → JSON-LD
+  4. Parses triples
+  5. Serializes to JSON-LD
+  6. Writes output
+end note
+
+note bottom
+  **CLI COMMAND WORKFLOW**
+
+  User types:
+  $ unrdf graph create --path mystore.ttl
+
+  Processing:
+  1. Parse args (citty framework)
+  2. Route to 'graph' command
+  3. Extract subcommand: 'create'
+  4. Extract flags: {path: 'mystore.ttl'}
+  5. Validate with Zod schema
+  6. Execute graphCreate(path)
+  7. Handle errors
+  8. Format output (colors, alignment)
+  9. Print to stdout
+  10. Exit with code 0/1
+
+  **Typical Workflow:**
+  Create → Add data → Query → Export
+
+  $ unrdf graph create --path store.ttl
+  $ unrdf query "SELECT ?s { ?s a foaf:Person }"
+  $ unrdf convert store.ttl output.json
+  $ unrdf context show
+end note
+
+SHOW_LEGEND()
+
+@enduml

@@ -3,10 +3,12 @@
 Learn how to create custom slash commands in Claude Code.
 
 ## Prerequisites
+
 - Claude Code CLI installed
 - Project directory with `.claude/` folder
 
 ## What You'll Learn
+
 - Slash command file structure
 - Frontmatter syntax
 - Argument passing
@@ -35,6 +37,7 @@ Say hello to the user in a friendly way. Introduce yourself and ask how you can 
 ## Step 3: Test Your Command
 
 In Claude Code:
+
 ```
 /greet
 ```
@@ -63,6 +66,7 @@ arguments:
 Review the file at `$file` with a focus on $focus aspects.
 
 ## Review Checklist
+
 - [ ] Code follows project conventions
 - [ ] No obvious bugs or issues
 - [ ] Error handling is appropriate
@@ -78,6 +82,7 @@ Provide specific feedback with line numbers.
 ```
 
 Arguments are substituted:
+
 - `$file` → `src/auth.js`
 - `$focus` → `security`
 
@@ -110,7 +115,7 @@ arguments:
   - name: pattern
     description: File pattern to match
     required: false
-    default: "*"
+    default: '*'
 ---
 
 # Run Tests: $area
@@ -118,6 +123,7 @@ arguments:
 Execute $area tests matching pattern "$pattern".
 
 ## Steps
+
 1. Identify test files matching the pattern
 2. Run the appropriate test command
 3. Report results with pass/fail counts
@@ -129,6 +135,7 @@ Use `npm test` or the project's configured test runner.
 ## Built-in Commands Reference
 
 Common built-in commands:
+
 - `/help` - Show help
 - `/clear` - Clear conversation
 - `/rewind` - Checkpoint rewind
@@ -141,6 +148,7 @@ Common built-in commands:
 3. Add an argument and test `/hello YourName`
 
 ## Next Steps
+
 - [Tutorial: Command Workflows](./command-workflows.md)
 - [Reference: Command Syntax](../reference/slash-commands.md)
 - [How-to: Build Workflow Commands](../how-to/command-workflows.md)

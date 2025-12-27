@@ -1,0 +1,42 @@
+{
+  "name": "@unrdf/decision-fabric",
+  "version": "0.1.0",
+  "description": "Hyperdimensional Decision Fabric - Intent-to-Outcome transformation engine using μ-operators",
+  "type": "module",
+  "main": "./src/index.mjs",
+  "exports": {
+    ".": "./src/index.mjs",
+    "./engine": "./src/engine.mjs",
+    "./operators": "./src/operators.mjs",
+    "./socratic": "./src/socratic-agent.mjs",
+    "./pareto": "./src/pareto-analyzer.mjs"
+  },
+  "scripts": {
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "test:watch": "npm test -- --watch",
+    "lint": "eslint src/"
+  },
+  "keywords": [
+    "rdf",
+    "knowledge-graph",
+    "decision-support",
+    "hyperdimensional",
+    "mu-operators",
+    "pareto-optimization",
+    "socratic-ai"
+  ],
+  "dependencies": {
+    "@unrdf/core": "workspace:*",
+    "@unrdf/hooks": "workspace:*",
+    "@unrdf/kgc-4d": "workspace:*",
+    "@unrdf/knowledge-engine": "workspace:*",
+    "@unrdf/oxigraph": "workspace:*",
+    "@unrdf/streaming": "workspace:*",
+    "@unrdf/validation": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "eslint": "^8.0.0",
+    "jest": "^29.0.0"
+  }
+}

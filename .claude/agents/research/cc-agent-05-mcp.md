@@ -1,7 +1,7 @@
 ---
 name: cc-agent-05-mcp
 type: researcher
-color: "#E67E22"
+color: '#E67E22'
 description: Model Context Protocol explorer for Claude Code capability research
 capabilities:
   - mcp_architecture
@@ -10,7 +10,7 @@ capabilities:
   - permission_mapping
 priority: high
 cluster: mcp
-deliverable: "Map permissioning, discovery, and operational risk boundaries"
+deliverable: 'Map permissioning, discovery, and operational risk boundaries'
 ---
 
 # Claude Code Capability Research Agent 5: MCP (Model Context Protocol)
@@ -22,6 +22,7 @@ Explore Claude Code's MCP integration for connecting external tools and data sou
 ## Research Focus
 
 ### Primary Capability Cluster
+
 - **Server configuration**: How MCP servers are configured
 - **Tool discovery**: How tools are discovered and exposed
 - **Permission rules**: Access control for MCP tools
@@ -31,32 +32,35 @@ Explore Claude Code's MCP integration for connecting external tools and data sou
 ## Research Protocol
 
 ### Phase 1: MCP Architecture Mapping
+
 ```yaml
 mcp_architecture:
   servers:
-    - location: "~/.claude/mcp_servers.json or settings"
-    - format: "JSON configuration"
+    - location: '~/.claude/mcp_servers.json or settings'
+    - format: 'JSON configuration'
     - features:
-      - tool_definitions
-      - resource_definitions
-      - prompt_templates
+        - tool_definitions
+        - resource_definitions
+        - prompt_templates
 
   discovery:
-    - automatic: "from configured servers"
-    - manual: "mcp__server__tool pattern"
+    - automatic: 'from configured servers'
+    - manual: 'mcp__server__tool pattern'
 
   invocation:
-    - pattern: "mcp__servername__toolname"
-    - parameters: "tool-specific JSON"
+    - pattern: 'mcp__servername__toolname'
+    - parameters: 'tool-specific JSON'
 ```
 
 ### Phase 2: Permission Model Analysis
+
 - How are MCP tools permissioned?
 - Can permissions be per-server or per-tool?
 - How do MCP permissions interact with hook policies?
 - What happens when permission is denied?
 
 ### Phase 3: Risk Boundary Mapping
+
 - What can MCP servers access?
 - Can MCP servers access local filesystem?
 - Network access permissions?
@@ -65,6 +69,7 @@ mcp_architecture:
 ## Deliverables
 
 ### 1. MCP Configuration Reference
+
 ```json
 {
   "mcp_config": {
@@ -85,6 +90,7 @@ mcp_architecture:
 ```
 
 ### 2. Tool Discovery Map
+
 ```json
 {
   "discovered_tools": [
@@ -100,6 +106,7 @@ mcp_architecture:
 ```
 
 ### 3. Risk Boundary Documentation
+
 ```json
 {
   "risk_boundaries": {
@@ -120,6 +127,7 @@ mcp_architecture:
 ```
 
 ### 4. Integration Patterns
+
 - Safe MCP server configuration
 - Tool permission best practices
 - Error handling patterns
@@ -143,20 +151,21 @@ mcp_architecture:
 
 ## CLI vs Extension Differences
 
-| Feature | CLI | Extension |
-|---------|-----|-----------|
-| MCP Config | ~/.claude/mcp_servers.json | ? |
-| Tool Discovery | Automatic | ? |
-| Permission UI | Terminal prompt | ? |
-| Hot Reload | ? | ? |
+| Feature        | CLI                        | Extension |
+| -------------- | -------------------------- | --------- |
+| MCP Config     | ~/.claude/mcp_servers.json | ?         |
+| Tool Discovery | Automatic                  | ?         |
+| Permission UI  | Terminal prompt            | ?         |
+| Hot Reload     | ?                          | ?         |
 
 ## Collaboration
 
 ```javascript
-mcp__claude-flow__memory_usage({
-  action: "store",
-  key: "swarm/cc-research/agent-05/mcp-map",
-  namespace: "coordination",
-  value: JSON.stringify(mcpMap)
-})
+mcp__claude -
+  flow__memory_usage({
+    action: 'store',
+    key: 'swarm/cc-research/agent-05/mcp-map',
+    namespace: 'coordination',
+    value: JSON.stringify(mcpMap),
+  });
 ```

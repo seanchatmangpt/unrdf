@@ -3,10 +3,12 @@
 Learn how to create hooks that govern tool usage in Claude Code.
 
 ## Prerequisites
+
 - Claude Code CLI installed
 - Access to `.claude/settings.json`
 
 ## What You'll Learn
+
 - Hook lifecycle events
 - Creating hook configurations
 - Allow/deny/ask patterns
@@ -71,6 +73,7 @@ Block dangerous commands:
 ```
 
 The hook:
+
 1. Receives tool input as JSON on stdin
 2. Extracts the command using jq
 3. Checks for dangerous pattern
@@ -108,27 +111,26 @@ Track all tool usage:
 ## Common Patterns
 
 ### Allow List
+
 ```json
 {
   "permissions": {
-    "allow": [
-      "Bash(git:*)",
-      "Bash(npm:*)",
-      "Read",
-      "Write"
-    ]
+    "allow": ["Bash(git:*)", "Bash(npm:*)", "Read", "Write"]
   }
 }
 ```
 
 ### Validation Hook
+
 ```json
 {
   "matcher": "Write",
-  "hooks": [{
-    "type": "command",
-    "command": "cat | jq -r '.tool_input.file_path' | grep -E '\\.(env|secret)' && exit 1 || exit 0"
-  }]
+  "hooks": [
+    {
+      "type": "command",
+      "command": "cat | jq -r '.tool_input.file_path' | grep -E '\\.(env|secret)' && exit 1 || exit 0"
+    }
+  ]
 }
 ```
 
@@ -139,6 +141,7 @@ Track all tool usage:
 3. Check `~/.claude/tool-usage.log` for entries
 
 ## Next Steps
+
 - [Tutorial: Policy Enforcement](./policy-enforcement.md)
 - [Reference: Hook Configuration](../reference/hook-lifecycle.md)
 - [How-to: Create Safety Guardrails](../how-to/policy-enforcement.md)

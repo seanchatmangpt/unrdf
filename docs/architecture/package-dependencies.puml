@@ -1,0 +1,197 @@
+@startuml UNRDF Package Dependencies
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Deployment.puml
+
+title UNRDF - Package Dependencies Graph (Import Map)
+
+' Core foundation
+package Core {
+  component core_module as "@unrdf/core\n(38 files, 2000+ lines)" #4A90E2
+}
+
+' External NPM dependencies
+package "External Dependencies" {
+  component oxigraph_npm as "oxigraph npm\n(native WASM)" #357ABD
+  component zod_npm as "zod\n(validation)" #9B59B6
+  component n3_npm as "n3\n(RDF parser)" #E67E22
+  component rdfjs_npm as "@rdfjs/*\n(standards)" #27AE60
+}
+
+' Storage & Sync
+package "Storage & Real-time" {
+  component oxigraph_pkg as "@unrdf/oxigraph" #357ABD
+  component browser_pkg as "@unrdf/browser" #357ABD
+  component streaming_pkg as "@unrdf/streaming" #357ABD
+}
+
+' Policy & Knowledge
+package "Policy & Knowledge" {
+  component hooks_pkg as "@unrdf/hooks" #E67E22
+  component federation_pkg as "@unrdf/federation" #E67E22
+  component knowledge_engine_pkg as "@unrdf/knowledge-engine" #E67E22
+}
+
+' Frameworks
+package "Framework Integration" {
+  component composables_pkg as "@unrdf/composables\n(Vue 3)" #9B59B6
+  component react_pkg as "unrdf-react\n(React/Next.js)" #9B59B6
+}
+
+' Tools
+package "Tools & Infrastructure" {
+  component cli_pkg as "@unrdf/cli" #C0392B
+  component dark_matter_pkg as "@unrdf/dark-matter" #27AE60
+  component engine_gateway_pkg as "@unrdf/engine-gateway" #8E44AD
+  component project_engine_pkg as "@unrdf/project-engine" #8E44AD
+}
+
+' Internal/Dev
+package "Internal/Dev (Private)" {
+  component validation_pkg as "@unrdf/validation\n(OTEL)" #555555
+  component test_utils_pkg as "@unrdf/test-utils" #555555
+  component domain_pkg as "@unrdf/domain" #555555
+}
+
+' Dependencies from core
+core_module --> oxigraph_npm: "uses native\nWASM bindings"
+core_module --> zod_npm: "uses for\nvalidation"
+core_module --> n3_npm: "uses only in\nn3-justified-only.mjs\n(streaming)"
+core_module --> rdfjs_npm: "implements\nstandards"
+
+' Storage packages depend on core
+oxigraph_pkg --> core_module: "extends with\nwrapper"
+oxigraph_pkg --> oxigraph_npm: "wraps native\nbindings"
+
+browser_pkg --> core_module: "RDF operations"
+browser_pkg --> streaming_pkg: "change feeds"
+
+streaming_pkg --> core_module: "RDF types"
+streaming_pkg --> zod_npm: "validation"
+
+' Policy/Knowledge depend on core
+hooks_pkg --> core_module: "RDF operations"
+hooks_pkg --> zod_npm: "schema validation"
+
+federation_pkg --> core_module: "SPARQL execution"
+federation_pkg --> hooks_pkg: "query validation"
+
+knowledge_engine_pkg --> core_module: "RDF substrate"
+knowledge_engine_pkg --> streaming_pkg: "change feeds"
+
+' Frameworks depend on storage
+composables_pkg --> browser_pkg: "store access"
+composables_pkg --> core_module: "RDF types"
+composables_pkg --> streaming_pkg: "reactive updates"
+
+react_pkg --> core_module: "RDF operations"
+react_pkg --> browser_pkg: "client store"
+react_pkg --> streaming_pkg: "change feeds"
+react_pkg --> hooks_pkg: "policy engine"
+react_pkg --> federation_pkg: "distributed queries"
+react_pkg --> dark_matter_pkg: "optimization"
+
+' Tools depend on core + others
+cli_pkg --> core_module: "SPARQL execution"
+cli_pkg --> federation_pkg: "peer queries"
+cli_pkg --> streaming_pkg: "change feeds"
+cli_pkg --> hooks_pkg: "policy enforcement"
+
+dark_matter_pkg --> core_module: "query optimization"
+
+engine_gateway_pkg --> core_module: "RDF validation"
+engine_gateway_pkg --> oxigraph_pkg: "enforces\nOxigraph-first"
+
+project_engine_pkg --> core_module: "infrastructure"
+
+' Internal/Dev used by core and others
+core_module -.-> validation_pkg: "uses for\nOTEL spans\n(internal)"
+core_module -.-> test_utils_pkg: "uses in tests"
+core_module -.-> domain_pkg: "shared types"
+
+hooks_pkg -.-> validation_pkg: "metrics"
+streaming_pkg -.-> validation_pkg: "observability"
+federation_pkg -.-> validation_pkg: "observability"
+
+' Cross-package dependencies
+hooks_pkg --> zod_npm: "pre-computed\nflags"
+federation_pkg --> oxigraph_npm: "result handling"
+
+' Annotations
+note right of core_module
+  **FOUNDATION LAYER**
+  All packages depend on core
+  Core exports:
+  • UnrdfStore class
+  • SPARQL execution
+  • Term utilities (50+)
+  • Constants & types
+  • Validation schemas
+end note
+
+note right of oxigraph_npm
+  **NATIVE WASM BINDING**
+  High-performance
+  Rust → JavaScript
+  40% faster than N3
+  60% lower memory
+end note
+
+note right of streaming_pkg
+  **REAL-TIME SYNC**
+  Change feeds
+  Event-driven pub/sub
+  WebSocket transport
+  SHA-256 checksums
+end note
+
+note right of hooks_pkg
+  **POLICY GOVERNANCE**
+  Transparent validation
+  <1μs pre-computed checks
+  LRU caching (78% hit rate)
+  Batch execution (10x faster)
+end note
+
+note right of react_pkg
+  **FRAMEWORK INTEGRATION**
+  React hooks (80/20 pattern)
+  Next.js 14 compatible
+  Reactive updates
+  Offline-first support
+end note
+
+note right of federation_pkg
+  **DISTRIBUTED EXECUTION**
+  Multi-peer coordination
+  Parallel query execution
+  Result aggregation
+  Intelligent routing
+end note
+
+note bottom
+  **DEPENDENCY LAYERS**
+
+  Layer 1: Core (foundation)
+  ↓
+  Layer 2: Storage, Streaming, Hooks
+  ↓
+  Layer 3: Federation, Knowledge Engine, Dark Matter
+  ↓
+  Layer 4: CLI, Frameworks (React, Vue)
+  ↓
+  Layer 5: Internal utilities (private)
+
+  **Import Restrictions:**
+  • Core: ✓ May import anything
+  • Storage: ✓ Only core + external
+  • Frameworks: ✓ May import core + storage + policy
+  • CLI: ✓ May import any public package
+
+  **Compile-time checks:**
+  • No circular dependencies ✓
+  • All imports resolvable ✓
+  • Private packages hidden ✓
+end note
+
+SHOW_LEGEND()
+
+@enduml

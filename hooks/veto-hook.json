@@ -1,9 +1,0 @@
-{
-  "name": "veto-hook",
-  "kind": "before",
-  "condition": {
-    "type": "sparql-ask",
-    "query": "# Veto Hook SPARQL Query\n# Checks for invalid data patterns that should block transactions\n\nPREFIX ex: <http://example.org/>\n\nASK {\n  ?s ex:invalid ?value .\n}\n"
-  },
-  "effects": []
-}

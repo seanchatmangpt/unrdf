@@ -15,6 +15,7 @@ Configure hooks with matchers and policy rules in `.claude/settings.json`.
 ### Step 1: Define Your Policy
 
 Decide what to:
+
 - **Allow**: Operations that should always work
 - **Deny**: Operations that should never happen
 - **Ask**: Operations that need confirmation
@@ -50,11 +51,7 @@ Edit `.claude/settings.json`:
       "Glob",
       "Grep"
     ],
-    "deny": [
-      "Bash(rm -rf *)",
-      "Bash(chmod 777 *)",
-      "Bash(curl * | bash)"
-    ]
+    "deny": ["Bash(rm -rf *)", "Bash(chmod 777 *)", "Bash(curl * | bash)"]
   }
 }
 ```
@@ -84,6 +81,7 @@ For complex policies, use hooks:
 ### Step 4: Create Validation Script
 
 `validate-command.sh`:
+
 ```bash
 #!/bin/bash
 # Read tool input from stdin
@@ -123,50 +121,52 @@ claude -p "Run rm -rf /"    # ✗ (blocked by policy)
 ## Policy Patterns
 
 ### Safe File Operations
+
 ```json
 {
   "permissions": {
-    "allow": [
-      "Write(src/**)",
-      "Write(test/**)",
-      "Edit(src/**)",
-      "Edit(test/**)"
-    ],
-    "deny": [
-      "Write(.env*)",
-      "Write(**/secrets/**)",
-      "Write(**/.git/**)"
-    ]
+    "allow": ["Write(src/**)", "Write(test/**)", "Edit(src/**)", "Edit(test/**)"],
+    "deny": ["Write(.env*)", "Write(**/secrets/**)", "Write(**/.git/**)"]
   }
 }
 ```
 
 ### Network Restrictions
+
 ```json
 {
   "hooks": {
-    "PreToolUse": [{
-      "matcher": "Bash",
-      "hooks": [{
-        "type": "command",
-        "command": "cat | jq -r '.tool_input.command' | grep -qE 'curl|wget|nc' && exit 1 || exit 0"
-      }]
-    }]
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cat | jq -r '.tool_input.command' | grep -qE 'curl|wget|nc' && exit 1 || exit 0"
+          }
+        ]
+      }
+    ]
   }
 }
 ```
 
 ### Audit Logging
+
 ```json
 {
   "hooks": {
-    "PostToolUse": [{
-      "matcher": "*",
-      "hooks": [{
-        "type": "command",
-        "command": "cat | jq '{tool: .tool_name, input: .tool_input, time: now}' >> ~/.claude/audit.jsonl"
-      }]
-    }]
+    "PostToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cat | jq '{tool: .tool_name, input: .tool_input, time: now}' >> ~/.claude/audit.jsonl"
+          }
+        ]
+      }
+    ]
   }
 }
 ```
@@ -174,6 +174,7 @@ claude -p "Run rm -rf /"    # ✗ (blocked by policy)
 ## Measuring Policy Effectiveness
 
 Track:
+
 - Blocked operations count
 - False positive rate
 - Coverage of attack vectors

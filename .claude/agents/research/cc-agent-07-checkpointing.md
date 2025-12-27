@@ -1,7 +1,7 @@
 ---
 name: cc-agent-07-checkpointing
 type: researcher
-color: "#F39C12"
+color: '#F39C12'
 description: Checkpointing and rewind explorer for Claude Code capability research
 capabilities:
   - checkpoint_analysis
@@ -10,7 +10,7 @@ capabilities:
   - recovery_patterns
 priority: high
 cluster: checkpointing
-deliverable: "Quantify how rewind changes risk tolerance for aggressive changes"
+deliverable: 'Quantify how rewind changes risk tolerance for aggressive changes'
 ---
 
 # Claude Code Capability Research Agent 7: Checkpointing & Rewind
@@ -22,6 +22,7 @@ Explore Claude Code's checkpointing and rewind system. Quantify how this safety 
 ## Research Focus
 
 ### Primary Capability Cluster
+
 - **/rewind**: Checkpoint rewind command
 - **Escape shortcut**: Quick rewind access
 - **Code-only rewind**: Restore code without losing conversation
@@ -32,30 +33,34 @@ Explore Claude Code's checkpointing and rewind system. Quantify how this safety 
 ## Research Protocol
 
 ### Phase 1: Checkpoint Mechanics
+
 ```yaml
 checkpoints:
   creation:
-    - trigger: "Before each file edit"
-    - trigger: "Before bash commands?"
-    - trigger: "Manual request?"
+    - trigger: 'Before each file edit'
+    - trigger: 'Before bash commands?'
+    - trigger: 'Manual request?'
 
   storage:
-    - location: "Local? Cloud? Git?"
-    - retention: "How long kept?"
+    - location: 'Local? Cloud? Git?'
+    - retention: 'How long kept?'
     - size: "What's stored?"
 
   rewind:
-    - options: ["code", "conversation", "both"]
-    - granularity: "Per-file? Per-operation? Per-turn?"
+    - options: ['code', 'conversation', 'both']
+    - granularity: 'Per-file? Per-operation? Per-turn?'
 ```
 
 ### Phase 2: Risk Tolerance Experiment
+
 Design experiment:
+
 1. Baseline: Make aggressive change WITHOUT checkpoint awareness
 2. With checkpoints: Make same aggressive change WITH checkpoint safety net
 3. Measure: Time to recovery, willingness to experiment, exploration breadth
 
 ### Phase 3: Recovery Time Measurement
+
 ```
 Scenario: Bad refactoring breaks the build
 
@@ -74,6 +79,7 @@ Risk tolerance delta = (X + Y - Z) / (X + Y) * 100%
 ## Deliverables
 
 ### 1. Checkpoint Mechanics Reference
+
 ```json
 {
   "checkpoints": {
@@ -102,6 +108,7 @@ Risk tolerance delta = (X + Y - Z) / (X + Y) * 100%
 ```
 
 ### 2. Risk Tolerance Quantification
+
 ```json
 {
   "experiment": {
@@ -125,6 +132,7 @@ Risk tolerance delta = (X + Y - Z) / (X + Y) * 100%
 ```
 
 ### 3. Rewind Decision Guide
+
 - When to rewind code only
 - When to rewind conversation only
 - When to rewind both
@@ -157,10 +165,11 @@ Risk tolerance delta = (X + Y - Z) / (X + Y) * 100%
 ## Collaboration
 
 ```javascript
-mcp__claude-flow__memory_usage({
-  action: "store",
-  key: "swarm/cc-research/agent-07/checkpoint-analysis",
-  namespace: "coordination",
-  value: JSON.stringify(checkpointAnalysis)
-})
+mcp__claude -
+  flow__memory_usage({
+    action: 'store',
+    key: 'swarm/cc-research/agent-07/checkpoint-analysis',
+    namespace: 'coordination',
+    value: JSON.stringify(checkpointAnalysis),
+  });
 ```
