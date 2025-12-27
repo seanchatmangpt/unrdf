@@ -11,6 +11,7 @@
 
 import { _DataFactory, Store } from '@unrdf/core/rdf/n3-justified-only';
 import { _asNamedNode, _getIRI } from './term-utils.mjs';
+import { createStore } from '@unrdf/oxigraph';
 
 /**
  * Merge multiple stores into one

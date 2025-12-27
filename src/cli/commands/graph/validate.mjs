@@ -12,6 +12,7 @@
 
 import { defineCommand } from 'citty';
 import { z } from 'zod';
+import { createStore } from '@unrdf/oxigraph';
 
 /**
  * Validation schema for validate command arguments

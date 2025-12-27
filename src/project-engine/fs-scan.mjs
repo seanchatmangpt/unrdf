@@ -8,6 +8,7 @@ import path from 'path';
 import { Store, DataFactory } from '@unrdf/core/rdf/n3-justified-only';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
 import { z } from 'zod';
+import { createStore } from '@unrdf/oxigraph';
 
 const tracer = trace.getTracer('unrdf/fs-scan');
 const { namedNode, literal } = DataFactory;

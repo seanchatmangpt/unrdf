@@ -13,6 +13,7 @@
 import { DataFactory, Store } from '@unrdf/core/rdf/n3-justified-only';
 import { asNamedNode, asLiteral, _asBlankNode, _getIRI } from './term-utils.mjs';
 import { _quadToJSON, _jsonToQuad } from './quad-utils.mjs';
+import { createStore } from '@unrdf/oxigraph';
 
 const { _namedNode, _literal, _blankNode, quad, _defaultGraph } = DataFactory;
 

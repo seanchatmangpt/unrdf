@@ -10,6 +10,7 @@ import { scanFileSystemToStore } from './fs-scan.mjs';
 import { detectStackFromFs } from './stack-detect.mjs';
 import { buildProjectModelFromFs } from './project-model.mjs';
 import { classifyFiles } from './file-roles.mjs';
+import { createStore } from '@unrdf/oxigraph';
 
 const { namedNode, literal } = DataFactory;
 

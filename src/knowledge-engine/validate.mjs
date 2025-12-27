@@ -7,6 +7,7 @@ import { Parser, N3Store as Store } from '@unrdf/core/rdf/n3-justified-only';
 import rdf from 'rdf-ext';
 import SHACLValidator from 'rdf-validate-shacl';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
+import { createStore } from '@unrdf/oxigraph';
 
 const tracer = trace.getTracer('unrdf');
 

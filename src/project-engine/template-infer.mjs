@@ -5,6 +5,7 @@
 
 import { Store, DataFactory } from '@unrdf/core/rdf/n3-justified-only';
 import { z } from 'zod';
+import { createStore } from '@unrdf/oxigraph';
 
 const { namedNode, literal } = DataFactory;
 

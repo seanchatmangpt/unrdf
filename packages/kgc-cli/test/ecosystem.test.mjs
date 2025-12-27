@@ -14,7 +14,7 @@
  * Target: 45 extensions (scalable test design)
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { Registry, ExtensionSchema, createEnvelope } from '../src/lib/registry.mjs';
 import { extensions, loadManifest, getLoadOrder } from '../src/manifest/extensions.mjs';
 import { z } from 'zod';
@@ -335,7 +335,7 @@ describe('Category 2: Registry Integration Tests', () => {
       // Each command should have a known source
       commands.forEach(cmd => {
         const [noun, verb] = cmd.split(':');
-        const source = registry.getCommandSource(noun, verb);
+        const source = registry.getCommandSource(noun, _verb);
         expect(source).toBeDefined();
         expect(source).toMatch(/@unrdf\//);
       });
@@ -356,7 +356,7 @@ describe('Category 2: Registry Integration Tests', () => {
       const orders = extensions.map(e => e.loadOrder);
 
       // Check if all unique OR if we have collision rules
-      const uniqueOrders = new Set(orders);
+      const _uniqueOrders = new Set(orders);
 
       // If duplicates exist, we should have override rules (tested in manifest)
       // For now, just verify orders are defined

@@ -12,6 +12,7 @@
 
 import { Parser, Writer, N3Store as Store } from '@unrdf/core/rdf/n3-justified-only';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
+import { createStore } from '@unrdf/oxigraph';
 
 const tracer = trace.getTracer('unrdf-optimized');
 
@@ -81,15 +82,15 @@ export async function parseTurtleOptimized(ttl, baseIRI = 'http://example.org/',
       const quads = parser.parse(ttl);
 
       // Batch insert quads for better performance
-      const store = await createStore();
+      const store = new Store();
       if (quads.length > batchSize) {
         // Process in batches to reduce memory pressure
         for (let i = 0; i < quads.length; i += batchSize) {
           const batch = quads.slice(i, i + batchSize);
-          store.addQuads(batch);
+          batch.forEach(quad => store.addQuad(quad));
         }
       } else {
-        store.addQuads(quads);
+        quads.forEach(quad => store.addQuad(quad));
       }
 
       span.setAttribute('parse.quads_count', store.size);

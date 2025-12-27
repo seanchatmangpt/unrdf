@@ -28,7 +28,7 @@ export const ExtensionSchema = z.object({
         z.object({
           description: z.string(),
           handler: z.function().describe('Handler function (args) => Promise<any>'),
-          argsSchema: z.custom((val) => true).optional().describe('Zod schema for args validation'),
+          argsSchema: z.custom((_val) => true).optional().describe('Zod schema for args validation'),
           meta: z.record(z.any()).optional().describe('Command metadata')
         })
       )
@@ -93,7 +93,8 @@ export class Registry {
     }
 
     const ext = validation.data;
-    const _fullId = `${ext.id}@${loadOrder}`;
+    const fullId = `${ext.id}@${loadOrder}`;
+    void fullId; // Used for internal tracking, suppress lint warning
 
     // Check guards (preconditions)
     if (ext.guards?.preconditions) {

@@ -9,6 +9,7 @@ import path from 'path';
 import { createHash } from 'crypto';
 import { scanFileSystemToStore } from './fs-scan.mjs';
 import { diffProjectStructure } from './project-diff.mjs';
+import { createStore } from '@unrdf/oxigraph';
 
 /**
  * @typedef {import('./materialize-plan.mjs').MaterializationPlan} MaterializationPlan

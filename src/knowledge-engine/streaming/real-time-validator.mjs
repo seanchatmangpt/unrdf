@@ -13,6 +13,7 @@ import { z } from 'zod';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
 import { validateShacl } from '../validate.mjs';
 import { createObservabilityManager } from '../observability.mjs';
+import { createStore } from '@unrdf/oxigraph';
 
 const tracer = trace.getTracer('unrdf-streaming');
 

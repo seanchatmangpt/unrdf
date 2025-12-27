@@ -4,6 +4,7 @@
  */
 
 import { Parser, N3Store as Store, Writer } from '@unrdf/core/rdf/n3-justified-only';
+import { createStore } from '@unrdf/oxigraph';
 
 // Dynamic import to avoid top-level await issues
 let basicQuery;

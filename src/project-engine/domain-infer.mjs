@@ -7,6 +7,7 @@ import { promises as fs } from 'fs';
 import path from 'path';
 import { Store, DataFactory } from '@unrdf/core/rdf/n3-justified-only';
 import { z } from 'zod';
+import { createStore } from '@unrdf/oxigraph';
 
 const { namedNode, literal } = DataFactory;
 
