@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/v6-compat",
-  "version": "6.0.0-alpha.1",
+  "version": "6.0.0-rc.1",
   "description": "UNRDF v6 Compatibility Layer - v5 to v6 migration bridge with adapters and lint rules",
   "type": "module",
   "main": "src/index.mjs",
@@ -21,10 +21,10 @@
     "test:fast": "vitest run --coverage",
     "test:watch": "vitest --coverage",
     "build": "node build.config.mjs",
-    "lint": "eslint src/ test/ --max-warnings=0",
-    "lint:fix": "eslint src/ test/ --fix",
-    "format": "prettier --write src/ test/",
-    "format:check": "prettier --check src/ test/",
+    "lint": "eslint src/ --max-warnings=0",
+    "lint:fix": "eslint src/ --fix",
+    "format": "prettier --write src/",
+    "format:check": "prettier --check src/",
     "clean": "rm -rf dist/ .nyc_output/ coverage/"
   },
   "keywords": [

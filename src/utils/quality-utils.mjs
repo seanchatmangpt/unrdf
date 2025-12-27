@@ -9,7 +9,7 @@
  * @license MIT
  */
 
-import { DataFactory, Store } from 'n3';
+import { DataFactory, Store } from '@unrdf/core/rdf/n3-justified-only';
 import { _asNamedNode, _getIRI, _isNamedNode, _isLiteral, _isBlankNode } from './term-utils.mjs';
 import { _getVocabularyStats, validateNamespaces } from './namespace-utils.mjs';
 

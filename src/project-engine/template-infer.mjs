@@ -3,8 +3,9 @@
  * @module project-engine/template-infer
  */
 
-import { Store, DataFactory } from 'n3';
+import { Store, DataFactory } from '@unrdf/core/rdf/n3-justified-only';
 import { z } from 'zod';
+import { createStore } from '@unrdf/oxigraph';
 
 const { namedNode, literal } = DataFactory;
 
@@ -213,7 +214,7 @@ const FILE_FAMILY_PATTERNS = [
  * @param {string} str
  * @returns {string}
  */
-function capitalize(str) {
+async function capitalize(str) {
   if (!str) return '';
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
@@ -223,7 +224,7 @@ function capitalize(str) {
  * @param {string} str
  * @returns {string}
  */
-function _toKebabCase(str) {
+async function _toKebabCase(str) {
   return str.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
 }
 
@@ -232,7 +233,7 @@ function _toKebabCase(str) {
  * @param {Store} fsStore
  * @returns {string[]}
  */
-function extractFilePathsFromStore(fsStore) {
+async function extractFilePathsFromStore(fsStore) {
   const paths = [];
 
   // Validate fsStore has getQuads method
@@ -259,7 +260,7 @@ function extractFilePathsFromStore(fsStore) {
  * @param {string[]} paths
  * @returns {Map<string, {pattern: Object, matches: Array<{path: string, match: RegExpMatchArray, vars: Object}>}>}
  */
-function groupFilesByFamily(paths) {
+async function groupFilesByFamily(paths) {
   const groups = new Map();
 
   for (const pattern of FILE_FAMILY_PATTERNS) {
@@ -291,7 +292,7 @@ function groupFilesByFamily(paths) {
  * @param {Array<{path: string, match: RegExpMatchArray, vars: Object}>} matches
  * @returns {string[]}
  */
-function extractInvariants(matches) {
+async function extractInvariants(matches) {
   if (matches.length < 2) return [];
 
   const invariants = [];
@@ -335,7 +336,7 @@ function extractInvariants(matches) {
  * @param {string[]} strings
  * @returns {string}
  */
-function findCommonPrefix(strings) {
+async function findCommonPrefix(strings) {
   if (strings.length === 0) return '';
   if (strings.length === 1) return strings[0];
 
@@ -353,7 +354,7 @@ function findCommonPrefix(strings) {
  * @param {string[]} names
  * @returns {string|null}
  */
-function detectNamingPattern(names) {
+async function detectNamingPattern(names) {
   const patterns = {
     PascalCase: /^[A-Z][a-zA-Z0-9]*$/,
     camelCase: /^[a-z][a-zA-Z0-9]*$/,
@@ -376,7 +377,7 @@ function detectNamingPattern(names) {
  * @param {string} pattern
  * @returns {string[]}
  */
-function extractVariablesFromPattern(pattern) {
+async function extractVariablesFromPattern(pattern) {
   const matches = pattern.match(/\{\{(\w+)\}\}/g) || [];
   return matches.map(m => m.replace(/\{\{|\}\}/g, ''));
 }
@@ -387,7 +388,7 @@ function extractVariablesFromPattern(pattern) {
  * @param {number} index
  * @returns {string}
  */
-function generateTemplateId(kind, index) {
+async function generateTemplateId(kind, index) {
   return `${kind}Template${index > 0 ? index + 1 : ''}`;
 }
 
@@ -400,7 +401,7 @@ function generateTemplateId(kind, index) {
  * @param {Store} store
  * @param {Object} template
  */
-function addTemplateToStore(store, template) {
+async function addTemplateToStore(store, template) {
   const templateIri = namedNode(`${NS.gen}${template.id}`);
 
   // rdf:type gen:Template
@@ -464,14 +465,14 @@ function addTemplateToStore(store, template) {
  * // gen:UserViewTemplate rdf:type gen:Template
  * // gen:UserViewTemplate gen:outputPattern "src/features/{{entity}}/{{Entity}}Page.tsx"
  */
-export function inferTemplatesFromProject(fsStore, domainStore, stackProfile) {
+export async function inferTemplatesFromProject(fsStore, domainStore, stackProfile) {
   const validated = InferOptionsSchema.parse({
     fsStore,
     domainStore,
     stackProfile,
   });
 
-  const store = new Store();
+  const store = await createStore();
   const summary = {
     templateCount: 0,
     byKind: {},
@@ -533,7 +534,7 @@ export function inferTemplatesFromProject(fsStore, domainStore, stackProfile) {
  * @param {Object} [stackProfile] - Optional stack detection info
  * @returns {{store: Store, summary: {templateCount: number, byKind: Record<string, number>, boundEntities: number}}}
  */
-export function inferTemplatesWithDomainBinding(fsStore, domainStore, stackProfile) {
+export async function inferTemplatesWithDomainBinding(fsStore, domainStore, stackProfile) {
   const { store, summary } = inferTemplatesFromProject(fsStore, domainStore, stackProfile);
 
   let boundEntities = 0;
@@ -600,7 +601,7 @@ export function inferTemplatesWithDomainBinding(fsStore, domainStore, stackProfi
  * @param {string} kind - Template kind (Component, Page, Test, etc.)
  * @returns {Array<{iri: string, outputPattern: string, variantCount: number}>}
  */
-export function getTemplatesByKind(store, kind) {
+export async function getTemplatesByKind(store, kind) {
   const templates = [];
 
   const templateQuads = store.getQuads(null, namedNode(`${NS.gen}templateKind`), literal(kind));
@@ -632,7 +633,7 @@ export function getTemplatesByKind(store, kind) {
  * @param {Store} store - Template store
  * @returns {Object[]}
  */
-export function serializeTemplates(store) {
+export async function serializeTemplates(store) {
   const templates = [];
 
   const templateQuads = store.getQuads(

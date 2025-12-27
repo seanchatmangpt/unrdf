@@ -102,7 +102,7 @@ export function generateSchemaFromFunction(fnSource) {
   if (paramMatch) {
     const paramList = paramMatch[1].split(',').map((p) => p.trim());
     for (const param of paramList) {
-      const [name, type] = param.split(':').map((s) => s.trim());
+      const [_name, type] = param.split(':').map((s) => s.trim());
       const zodType = TS_TO_ZOD[type] || 'z.unknown()';
       params.push(zodType);
     }
@@ -211,7 +211,7 @@ export function validateWithErrors(schema, data) {
  * //   age?: number;
  * // }
  */
-export function generateTSFromZod(schema) {
+export function generateTSFromZod(_schema) {
   // Placeholder - production version should walk Zod schema AST
   return '// TypeScript generation not implemented yet';
 }

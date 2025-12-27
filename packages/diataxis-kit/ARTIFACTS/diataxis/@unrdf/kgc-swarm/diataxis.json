@@ -1,0 +1,185 @@
+{
+  "confidence": {
+    "explanation": 1,
+    "howtos": 0.75,
+    "reference": 0.7,
+    "tutorials": 1
+  },
+  "evidence": {
+    "docsFiles": [
+      "consensus-architecture.md"
+    ],
+    "examplesFiles": [
+      "convergence-demo.mjs",
+      "orchestrator-demo.mjs",
+      "template-integration.mjs"
+    ],
+    "fingerprint": "2a5e9d66c68f060d3fdf8e215a47e492516d289dd7c1b5324de1b7d8c67e2fd2",
+    "readmeHeadings": [
+      "Overview",
+      "Components",
+      "Quick Start (Template Integration)",
+      "Usage (Token Orchestration)",
+      "Token Generation",
+      "API",
+      "Template Integration Features",
+      "Documentation",
+      "Integration Benefits",
+      "Dependencies",
+      "License"
+    ]
+  },
+  "explanation": {
+    "architecture": "- `emit(σ, κ)`: Generate token sequence G(σ, κ) → t₁...",
+    "concepts": [
+      "kgc",
+      "swarm",
+      "multi-agent",
+      "template",
+      "orchestration"
+    ],
+    "confidenceScore": 1,
+    "id": "explanation-unrdf-kgc-swarm-explanation",
+    "source": [
+      "keywords",
+      "readme",
+      "docs",
+      "inferred"
+    ],
+    "title": "Understanding @unrdf/kgc-swarm",
+    "tradeoffs": [
+      "Ease of use vs. advanced configuration options",
+      "Memory usage vs. processing speed",
+      "Bundle size vs. feature completeness"
+    ]
+  },
+  "generatedAt": "2000-01-01T00:00:00.000Z",
+  "howtos": [
+    {
+      "confidenceScore": 0.5,
+      "context": "When you need robust error handling in production",
+      "id": "howto-handle-errors",
+      "source": [
+        "tests"
+      ],
+      "steps": [
+        "Set up try-catch blocks",
+        "Handle common error types",
+        "Log errors appropriately"
+      ],
+      "task": "Implement error handling for @unrdf/kgc-swarm",
+      "title": "Handle Errors"
+    },
+    {
+      "confidenceScore": 0.7,
+      "context": "When working with kgc in your project",
+      "id": "howto-integrate-with-kgc",
+      "source": [
+        "keywords",
+        "inferred"
+      ],
+      "steps": [
+        "Install dependencies",
+        "Set up integration",
+        "Test integration"
+      ],
+      "task": "Connect @unrdf/kgc-swarm with kgc",
+      "title": "Integrate with kgc"
+    }
+  ],
+  "packageName": "@unrdf/kgc-swarm",
+  "reference": {
+    "confidenceScore": 1,
+    "id": "reference-unrdf-kgc-swarm-reference",
+    "items": [
+      {
+        "description": "Export: ./compressor",
+        "example": "import from \"./src/compressor.mjs\"",
+        "name": "./compressor",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./guardian",
+        "example": "import from \"./src/guardian.mjs\"",
+        "name": "./guardian",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./guards",
+        "example": "import from \"./src/guards.mjs\"",
+        "name": "./guards",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./orchestrator",
+        "example": "import from \"./src/orchestrator.mjs\"",
+        "name": "./orchestrator",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./token-generator",
+        "example": "import from \"./src/token-generator.mjs\"",
+        "name": "./token-generator",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./tracker",
+        "example": "import from \"./src/tracker.mjs\"",
+        "name": "./tracker",
+        "type": "export"
+      },
+      {
+        "description": "Export: .",
+        "example": "import from \"./src/index.mjs\"",
+        "name": "@unrdf/kgc-swarm",
+        "type": "export"
+      }
+    ],
+    "source": [
+      "exports",
+      "readme"
+    ],
+    "title": "@unrdf/kgc-swarm Reference"
+  },
+  "tutorials": [
+    {
+      "confidenceScore": 0.8,
+      "goal": "Complete your first practical examples",
+      "id": "tutorial-first-steps",
+      "prerequisites": [
+        "Completed \"Getting Started with @unrdf/kgc-swarm\""
+      ],
+      "source": [
+        "examples"
+      ],
+      "stepsOutline": [
+        "Work through convergence-demo.mjs",
+        "Work through orchestrator-demo.mjs",
+        "Work through template-integration.mjs"
+      ],
+      "title": "First Steps"
+    },
+    {
+      "confidenceScore": 0.9999999999999999,
+      "goal": "Learn how to set up and use @unrdf/kgc-swarm in your project",
+      "id": "tutorial-getting-started-with-unrdf-kgc-swarm",
+      "prerequisites": [
+        "Basic RDF knowledge",
+        "Understanding of graph databases"
+      ],
+      "source": [
+        "examples",
+        "readme",
+        "keywords"
+      ],
+      "stepsOutline": [
+        "Install the package",
+        "Import required modules",
+        "Create a basic example",
+        "Run and verify output"
+      ],
+      "title": "Getting Started with @unrdf/kgc-swarm"
+    }
+  ],
+  "version": "1.0.0"
+}

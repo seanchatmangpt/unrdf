@@ -4,10 +4,11 @@
  */
 
 import { createHash } from 'crypto';
-import { Store, DataFactory } from 'n3';
+import { Store, DataFactory } from '@unrdf/core/rdf/n3-justified-only';
 import { z } from 'zod';
 import { diffGraphFromStores, _summarizeChangesByKind } from '../diff.mjs';
 import { ProjectStructureLens } from './lens/project-structure.mjs';
+import { createStore } from '@unrdf/oxigraph';
 
 const { namedNode, literal } = DataFactory;
 
@@ -61,7 +62,7 @@ const DriftResultSchema = z.object({
  * @param {string} [options.baseIri] - Base IRI for snapshot resources
  * @returns {{snapshotStore: Store, receipt: {hash: string, createdAt: string, summary: Object}}}
  */
-export function createStructureSnapshot(fsStore, domainStore, options = {}) {
+export async function createStructureSnapshot(fsStore, domainStore, options = {}) {
   const validated = CreateSnapshotOptionsSchema.parse({
     fsStore,
     domainStore,
@@ -69,7 +70,7 @@ export function createStructureSnapshot(fsStore, domainStore, options = {}) {
   });
 
   const { baseIri, templateMappings = {} } = validated;
-  const snapshotStore = new Store();
+  const snapshotStore = await createStore();
   const createdAt = new Date().toISOString();
 
   // Summary counters
@@ -191,7 +192,7 @@ export function createStructureSnapshot(fsStore, domainStore, options = {}) {
  * @param {Store} baselineSnapshot - Baseline snapshot to compare against
  * @returns {{ontologyDiff: Object, summary: string[], driftSeverity: 'none'|'minor'|'major'}}
  */
-export function computeDrift(currentSnapshot, baselineSnapshot) {
+export async function computeDrift(currentSnapshot, baselineSnapshot) {
   // Compute graph-level diff
   const graphDiff = diffGraphFromStores(baselineSnapshot, currentSnapshot);
 
@@ -243,7 +244,7 @@ export function computeDrift(currentSnapshot, baselineSnapshot) {
  * @param {Store} baselineSnapshot - Baseline snapshot
  * @returns {string[]}
  */
-function generateDriftSummary(graphDiff, changes, currentSnapshot, baselineSnapshot) {
+async function generateDriftSummary(graphDiff, changes, currentSnapshot, baselineSnapshot) {
   const summary = [];
 
   // Group changes by kind
@@ -320,7 +321,7 @@ function generateDriftSummary(graphDiff, changes, currentSnapshot, baselineSnaps
  * @param {Store} baselineSnapshot
  * @returns {string[]}
  */
-function detectMissingTests(graphDiff, changes, currentSnapshot, baselineSnapshot) {
+async function detectMissingTests(graphDiff, changes, currentSnapshot, baselineSnapshot) {
   const messages = [];
 
   // Get features in current snapshot
@@ -390,7 +391,7 @@ function detectMissingTests(graphDiff, changes, currentSnapshot, baselineSnapsho
  * @param {Store} currentSnapshot
  * @returns {string[]}
  */
-function detectUnmatchedPatterns(graphDiff, changes, currentSnapshot) {
+async function detectUnmatchedPatterns(graphDiff, changes, currentSnapshot) {
   const messages = [];
 
   // Find files without roles
@@ -453,7 +454,7 @@ function detectUnmatchedPatterns(graphDiff, changes, currentSnapshot) {
  * @param {Store} baselineSnapshot
  * @returns {string[]}
  */
-function detectCoverageGaps(graphDiff, changes, currentSnapshot, baselineSnapshot) {
+async function detectCoverageGaps(graphDiff, changes, currentSnapshot, baselineSnapshot) {
   const messages = [];
 
   // Find domain entities in current snapshot
@@ -506,7 +507,7 @@ function detectCoverageGaps(graphDiff, changes, currentSnapshot, baselineSnapsho
  * @param {Store} baselineSnapshot
  * @returns {string[]}
  */
-function detectTestCoverageChanges(currentSnapshot, baselineSnapshot) {
+async function detectTestCoverageChanges(currentSnapshot, baselineSnapshot) {
   const messages = [];
 
   // Count tests in baseline
@@ -557,7 +558,7 @@ function detectTestCoverageChanges(currentSnapshot, baselineSnapshot) {
  * @param {Store} store
  * @returns {boolean}
  */
-function checkEntityHasViews(entityIri, store) {
+async function checkEntityHasViews(entityIri, store) {
   const entityName = extractNameFromIri(entityIri).toLowerCase();
 
   // Look for view/component files containing entity name
@@ -587,7 +588,7 @@ function checkEntityHasViews(entityIri, store) {
  * @param {Store} store
  * @returns {boolean}
  */
-function checkEntityHasApis(entityIri, store) {
+async function checkEntityHasApis(entityIri, store) {
   const entityName = extractNameFromIri(entityIri).toLowerCase();
 
   // Look for API/route files containing entity name
@@ -621,7 +622,7 @@ function checkEntityHasApis(entityIri, store) {
  * @param {Object[]} changes
  * @returns {'none'|'minor'|'major'}
  */
-function computeDriftSeverity(graphDiff, changes) {
+async function computeDriftSeverity(graphDiff, changes) {
   const totalTripleChanges = graphDiff.added.length + graphDiff.removed.length;
 
   // No changes = no drift
@@ -672,7 +673,7 @@ function computeDriftSeverity(graphDiff, changes) {
  * @param {string} timestamp
  * @returns {string}
  */
-function computeSnapshotHash(store, timestamp) {
+async function computeSnapshotHash(store, timestamp) {
   const hash = createHash('sha256');
 
   // Hash store size and timestamp
@@ -698,7 +699,7 @@ function computeSnapshotHash(store, timestamp) {
  * @param {string} iri
  * @returns {string}
  */
-function extractNameFromIri(iri) {
+async function extractNameFromIri(iri) {
   if (!iri) return 'unknown';
 
   // Try hash fragment
@@ -721,8 +722,8 @@ function extractNameFromIri(iri) {
  *
  * @returns {Store}
  */
-export function createEmptyBaseline() {
-  return new Store();
+export async function createEmptyBaseline() {
+  return await createStore();
 }
 
 /**
@@ -732,7 +733,7 @@ export function createEmptyBaseline() {
  * @param {Object} receipt
  * @returns {string}
  */
-export function serializeSnapshot(snapshotStore, receipt) {
+export async function serializeSnapshot(snapshotStore, receipt) {
   const quads = snapshotStore.getQuads(null, null, null, null);
   const serialized = {
     version: '1.0.0',
@@ -752,9 +753,9 @@ export function serializeSnapshot(snapshotStore, receipt) {
  * @param {string} json
  * @returns {{snapshotStore: Store, receipt: Object}}
  */
-export function deserializeSnapshot(json) {
+export async function deserializeSnapshot(json) {
   const data = JSON.parse(json);
-  const store = new Store();
+  const store = await createStore();
 
   for (const q of data.quads) {
     store.addQuad(

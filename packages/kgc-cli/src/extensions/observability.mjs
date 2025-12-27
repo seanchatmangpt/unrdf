@@ -1,4 +1,5 @@
-import { z } from 'zod';
+// Observability extension placeholder - z imported for future use
+import { z as _z } from 'zod';
 
 const extension = {
   id: '@unrdf/observability',

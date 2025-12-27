@@ -7,9 +7,12 @@
  * to prevent malicious code execution and system access.
  */
 
-import { Worker, isMainThread, parentPort, workerData } from 'worker_threads';
-import { join } from 'path';
+import { Worker } from 'worker_threads';
+import { join, dirname } from 'path';
 import { randomUUID } from 'crypto';
+import { fileURLToPath } from 'url';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 import { z } from 'zod';
 
 /**
@@ -224,7 +227,7 @@ export class EffectSandbox {
         reject(new Error(`Worker execution timeout after ${this.config.timeout}ms`));
       }, this.config.timeout);
 
-      const worker = new Worker(join(_dirname, 'effect-sandbox-worker.mjs'), {
+      const worker = new Worker(join(__dirname, 'effect-sandbox-worker.mjs'), {
         workerData: {
           effect: effect.toString(),
           context,

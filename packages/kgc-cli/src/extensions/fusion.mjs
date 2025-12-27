@@ -21,7 +21,7 @@ const IntegrateSchema = z.object({
   mapping: z.record(z.any()).optional().describe('Data mapping configuration')
 });
 
-const TransformSchema = z.object({
+const _TransformSchema = z.object({
   graphId: z.string().describe('Graph to transform'),
   transformation: z.string().describe('Transformation specification'),
   output: z.string().optional().describe('Output graph ID')
@@ -93,7 +93,7 @@ const extension = {
           argsSchema: z.object({
             mapping: z.record(z.any()).describe('Mapping configuration')
           }),
-          handler: async (args) => {
+          handler: async (_args) => {
             return {
               valid: true,
               errors: [],

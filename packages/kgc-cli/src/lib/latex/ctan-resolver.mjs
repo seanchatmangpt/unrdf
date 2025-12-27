@@ -115,7 +115,7 @@ const DEFAULT_CTAN_MIRROR = 'https://mirrors.ctan.org';
  * CTAN package search URL (for package discovery)
  * @type {string}
  */
-const CTAN_API_URL = 'https://ctan.org/json/2.0/package';
+const _CTAN_API_URL = 'https://ctan.org/json/2.0/package';
 
 /**
  * Common LaTeX package locations on CTAN

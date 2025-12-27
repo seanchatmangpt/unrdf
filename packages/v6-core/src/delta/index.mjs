@@ -157,7 +157,7 @@ export function createDeltaSystem(options = {}) {
  *   { package: '@unrdf/app' }
  * );
  */
-export function createDelta(op, subject, predicate, object, options = {}) {
+export async function createDelta(op, subject, predicate, object, options = {}) {
   const operation = { op, subject, predicate, object };
 
   if (op === 'update') {
@@ -185,7 +185,9 @@ export function createDelta(op, subject, predicate, object, options = {}) {
     },
   };
 
-  return validateDelta(delta);
+  // Import validateDelta from schema exports
+  const { validateDelta: validate } = await import('./schema.mjs');
+  return validate(delta);
 }
 
 /**

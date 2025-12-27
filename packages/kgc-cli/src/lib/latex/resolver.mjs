@@ -11,7 +11,7 @@
  * @param {string} cacheDir - Cache directory for downloads
  * @returns {Promise<Map<string, Uint8Array>>} Resolved files (VFS path -> content)
  */
-export async function resolveMissingInputs(missingInputs, cacheDir) {
+export async function resolveMissingInputs(missingInputs, _cacheDir) {
   // TODO (Agent 4): Implement CTAN package resolution
   // For now, return empty map (no packages resolved)
 

@@ -33,7 +33,7 @@
     "zod": "^4.2.1"
   },
   "devDependencies": {
-    "vitest": "^1.6.0"
+    "vitest": "^4.0.16"
   },
   "scripts": {
     "prove": "DETERMINISTIC=1 node ../../tools/prove.mjs",

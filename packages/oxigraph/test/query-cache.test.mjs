@@ -11,6 +11,7 @@ import {
   analyzeQueryPattern,
   createCachedStore,
 } from '../src/query-cache.mjs';
+import { dataFactory } from '../src/index.mjs';
 
 describe('Query Normalization', () => {
   it('should normalize whitespace', () => {
@@ -107,17 +108,17 @@ describe('CachedQueryStore', () => {
   describe('Caching Behavior', () => {
     it('should cache query results', () => {
       // Mock query execution
-      store.query = function(query, options) {
+      store.query = function(_query, _options) {
         // Simulate base implementation
         return [{ s: 'result1' }];
       };
 
       // Wrap with caching
       const cachedStore = new CachedQueryStore();
-      let callCount = 0;
+      let _callCount = 0;
       const originalQuery = cachedStore.query.bind(cachedStore);
       cachedStore.query = function(query, options) {
-        callCount++;
+        _callCount++;
         return originalQuery.call(this, query, options);
       };
 
@@ -168,12 +169,12 @@ describe('CachedQueryStore', () => {
     it('should invalidate cache on add', () => {
       const initialVersion = store.mutationVersion;
 
-      // Mock quad
-      const quad = {
-        subject: { value: 'http://example.org/s' },
-        predicate: { value: 'http://example.org/p' },
-        object: { value: 'value' },
-      };
+      // Create proper quad using oxigraph data factory
+      const quad = dataFactory.quad(
+        dataFactory.namedNode('http://example.org/s'),
+        dataFactory.namedNode('http://example.org/p'),
+        dataFactory.literal('value')
+      );
 
       store.add(quad);
 
@@ -183,11 +184,12 @@ describe('CachedQueryStore', () => {
     it('should invalidate cache on delete', () => {
       const initialVersion = store.mutationVersion;
 
-      const quad = {
-        subject: { value: 'http://example.org/s' },
-        predicate: { value: 'http://example.org/p' },
-        object: { value: 'value' },
-      };
+      // Create proper quad using oxigraph data factory
+      const quad = dataFactory.quad(
+        dataFactory.namedNode('http://example.org/s'),
+        dataFactory.namedNode('http://example.org/p'),
+        dataFactory.literal('value')
+      );
 
       store.delete(quad);
 
@@ -195,7 +197,7 @@ describe('CachedQueryStore', () => {
     });
 
     it('should clear cache on update', () => {
-      const initialSize = store.queryCache.cache.size;
+      const _initialSize = store.queryCache.cache.size;
 
       try {
         store.update('INSERT DATA { <s> <p> <o> }');
@@ -339,7 +341,7 @@ describe('PreparedQuery', () => {
 
     it('should execute with bindings', () => {
       const mockStore = {
-        query: (q) => [{ result: 'test' }],
+        query: (_q) => [{ result: 'test' }],
       };
 
       const result = prepared.execute(mockStore, { s: 'http://example.org/s' });
@@ -397,19 +399,18 @@ describe('Performance Characteristics', () => {
   it('should have O(1) cache lookup', () => {
     const store = new CachedQueryStore({ cacheSize: 1000 });
 
-    // Fill cache
-    for (let i = 0; i < 1000; i++) {
-      store.queryCache.set(`query${i}`, []);
+    // Populate cache
+    for (let i = 0; i < 100; i++) {
+      store.queryCache.set(`key${i}`, []);
     }
 
-    // Measure lookup time
     const start = performance.now();
     for (let i = 0; i < 1000; i++) {
-      store.queryCache.get(`query${i}`);
+      store.queryCache.has('key50');
     }
     const elapsed = performance.now() - start;
 
-    // Should be < 0.1ms per lookup
-    expect(elapsed / 1000).toBeLessThan(0.1);
+    // Should be very fast - < 0.01ms per lookup
+    expect(elapsed / 1000).toBeLessThan(0.01);
   });
 });

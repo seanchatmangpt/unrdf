@@ -335,6 +335,7 @@
       "merge-utils.md",
       "migration-guide.md",
       "migration-v2-to-v3.md",
+      "monitoring-implementation.md",
       "namespace-utils.md",
       "onboarding-guide.md",
       "orchestration-analysis.md",
@@ -394,6 +395,7 @@
       "v5-substrate-refactoring-roadmap.md",
       "v5-substrate-voc-analysis.md",
       "v5-voc-to-implementation.md",
+      "v6.0.0-RELEASE-NOTES.md",
       "validation-framework-analysis.md",
       "validation-pipeline.puml",
       "validation-report-ultrathink-gap-fill.md",
@@ -462,7 +464,7 @@
       "unrdf-profiling-integration.mjs",
       "validate-new-features.mjs"
     ],
-    "fingerprint": "cd0a2ef37f87859c9f8e8aed557fd57f6b0b34fd4b523ad969825d73f94e4a5e",
+    "fingerprint": "c741df20c23dc033a290df0d2942374ab3ec55235a97e1f7ac94ea1427c0f2be",
     "readmeHeadings": [
       "🎯 New to UNRDF? Start Here!",
       "🚀 Quick Start",
@@ -595,5 +597,5 @@
       "title": "Getting Started with unrdf-workspace"
     }
   ],
-  "version": "6.0.0-alpha.1"
+  "version": "6.0.0-rc.1"
 }

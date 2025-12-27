@@ -4,14 +4,14 @@
  */
 
 import { useState, useCallback, useMemo } from 'react';
-import { Store } from 'n3';
+import { createStore } from '@unrdf/oxigraph';
 
 /**
  *
  */
-export function useQuadStore(initialQuads = []) {
+export async function useQuadStore(initialQuads = []) {
   const [store] = useState(() => {
-    const s = new Store();
+    const s = await createStore();
     if (initialQuads.length > 0) s.addQuads(initialQuads);
     return s;
   });

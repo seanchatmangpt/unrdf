@@ -7,7 +7,7 @@
  * scenario DSL, fluent assertions, and helper functions.
  */
 
-import { Store } from 'n3';
+import { createStore } from '@unrdf/oxigraph';
 import { randomUUID } from 'crypto';
 import { KnowledgeHookManager } from '../knowledge-engine/knowledge-hook-manager.mjs';
 import { _PolicyPackManager } from '../knowledge-engine/policy-pack.mjs';
@@ -422,7 +422,7 @@ export class TestContextBuilder {
    */
   constructor() {
     this.context = {
-      store: new Store(),
+      store: await createStore(),
       metadata: {},
     };
   }
@@ -606,7 +606,7 @@ export const TestHelpers = {
  * @param {string} [description] - Scenario description
  * @returns {TestScenario} Test scenario
  */
-export function scenario(name, description = '') {
+export async function scenario(name, description = '') {
   return new TestScenario(name, description);
 }
 
@@ -616,7 +616,7 @@ export function scenario(name, description = '') {
  * @param {any} result - Action result
  * @returns {FluentAssertions} Fluent assertions
  */
-export function expect(context, result) {
+export async function expect(context, result) {
   return new FluentAssertions(context, result);
 }
 
@@ -624,7 +624,7 @@ export function expect(context, result) {
  * Create a test context builder
  * @returns {TestContextBuilder} Test context builder
  */
-export function createTestContext() {
+export async function createTestContext() {
   return new TestContextBuilder();
 }
 
@@ -632,9 +632,9 @@ export function createTestContext() {
  * Create a default test context
  * @returns {Object} Default test context
  */
-export function createDefaultTestContext() {
+export async function createDefaultTestContext() {
   return new TestContextBuilder()
-    .withStore(new Store())
+    .withStore(await createStore())
     .withManager(new KnowledgeHookManager())
     .build();
 }

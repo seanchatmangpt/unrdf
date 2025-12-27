@@ -40,22 +40,3 @@ export {
   serializeEvent,
   deserializeEvent,
 } from './schemas.mjs';
-
-// Default export
-export default {
-  producer: {
-    YAWLKafkaProducer,
-    createYAWLKafkaProducer,
-  },
-  consumer: {
-    YAWLKafkaConsumer,
-    createYAWLKafkaConsumer,
-  },
-  schemas: {
-    SchemaRegistry,
-    getAvroType,
-    getAvroSchema,
-    serializeEvent,
-    deserializeEvent,
-  },
-};

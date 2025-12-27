@@ -234,7 +234,7 @@ export function useOfflineStore(config = {}) {
       const timestamp = Date.now();
       const quadsWithIds = newQuads.map((q, i) => ({
         ...q,
-        id: `${timestamp}-${i}-${Math.random().toString(36).substr(2, 9)}`,
+        id: `${timestamp}-${i}-${Math.random().toString(36).slice(2, 11)}`,
         _localOnly: true,
         _createdAt: timestamp,
       }));
@@ -251,7 +251,7 @@ export function useOfflineStore(config = {}) {
 
       // Add to sync queue
       const queueItem = {
-        id: `sync-${timestamp}-${Math.random().toString(36).substr(2, 9)}`,
+        id: `sync-${timestamp}-${Math.random().toString(36).slice(2, 11)}`,
         operation: 'insert',
         quads: quadsWithIds,
         timestamp,
@@ -315,7 +315,7 @@ export function useOfflineStore(config = {}) {
 
       // Add to sync queue
       const queueItem = {
-        id: `sync-${timestamp}-${Math.random().toString(36).substr(2, 9)}`,
+        id: `sync-${timestamp}-${Math.random().toString(36).slice(2, 11)}`,
         operation: 'delete',
         quads: toDelete,
         timestamp,

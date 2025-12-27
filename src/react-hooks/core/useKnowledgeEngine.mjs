@@ -10,7 +10,7 @@
  * ```jsx
  * import { useKnowledgeEngine } from 'unrdf/react-hooks';
  *
- * function MyComponent() {
+ * async function MyComponent() {
  *   const { engine, store, query, loading, error } = useKnowledgeEngine({
  *     enableKnowledgeHooks: true,
  *     enableObservability: true
@@ -31,7 +31,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { z } from 'zod';
 import { KnowledgeHookManager } from '../../knowledge-engine/knowledge-hook-manager.mjs';
-import { Store } from 'n3';
+import { createStore } from '@unrdf/oxigraph';
 
 /**
  * Zod schema for URL validation (endpoints)
@@ -123,7 +123,7 @@ const UseKnowledgeEngineOptionsSchema = z
  * @param {UseKnowledgeEngineOptions} [options={}] - Configuration options
  * @returns {UseKnowledgeEngineResult} Hook result with engine instance and operations
  */
-export function useKnowledgeEngine(options = {}) {
+export async function useKnowledgeEngine(options = {}) {
   // Validate options with Zod schema to prevent XSS/injection
   const validatedOptions = UseKnowledgeEngineOptionsSchema.parse(options);
 
@@ -139,7 +139,7 @@ export function useKnowledgeEngine(options = {}) {
 
   // State
   const [engine, setEngine] = useState(null);
-  const [store, setStore] = useState(initialStore || new Store());
+  const [store, setStore] = useState(initialStore || await createStore());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [stats, setStats] = useState({});
@@ -256,7 +256,7 @@ export function useKnowledgeEngine(options = {}) {
       engineRef.current = null;
     }
     setEngine(null);
-    setStore(initialStore || new Store());
+    setStore(initialStore || await createStore());
     await initialize();
   }, [initialize, initialStore]);
 

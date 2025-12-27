@@ -7,9 +7,9 @@
  * governance units that can be activated/deactivated as cohesive sets.
  */
 
-import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync } from 'fs';
-import { join, dirname, basename, extname } from 'path';
-import { createKnowledgeHook, validateKnowledgeHook } from './schemas.mjs';
+import { readFileSync, writeFileSync as _writeFileSync, existsSync, mkdirSync as _mkdirSync, readdirSync } from 'fs';
+import { join, dirname, basename as _basename, extname as _extname } from 'path';
+import { createKnowledgeHook as _createKnowledgeHook, validateKnowledgeHook } from './schemas.mjs';
 import { z } from 'zod';
 import { randomUUID } from 'crypto';
 

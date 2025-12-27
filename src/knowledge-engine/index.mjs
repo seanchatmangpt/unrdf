@@ -90,7 +90,7 @@ export {
 } from './observability.mjs';
 
 // N3 Re-exports (as documented in README)
-export { Store, Parser, Writer, DataFactory } from 'n3';
+export { Store, Parser, Writer, DataFactory } from '@unrdf/core/rdf/n3-justified-only';
 
 // Consolidated Schemas (single source of truth)
 export * from './schemas.mjs';

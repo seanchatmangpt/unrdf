@@ -11,7 +11,8 @@
 
 import { createContext } from 'unctx';
 import { AsyncLocalStorage } from 'node:async_hooks';
-import { Store, DataFactory } from 'n3';
+import { DataFactory } from '@unrdf/core/rdf/n3-justified-only';
+import { createStore } from '@unrdf/oxigraph';
 import crypto from 'node:crypto';
 import * as rdfCanonizeModule from 'rdf-canonize';
 import {
@@ -79,7 +80,7 @@ export const useStoreContext = storeContext.use;
  * @param {Object} [options] - Store options
  * @returns {StoreContext} Store context
  */
-export function createStoreContext(initialQuads = [], options = {}) {
+export async function createStoreContext(initialQuads = [], options = {}) {
   // Input validation
   if (!Array.isArray(initialQuads)) {
     throw new TypeError('[createStoreContext] initialQuads must be an array');
@@ -89,7 +90,7 @@ export function createStoreContext(initialQuads = [], options = {}) {
     throw new TypeError('[createStoreContext] options must be an object');
   }
 
-  const store = new Store();
+  const store = await createStore();
   const prefixRegistry = new Map();
 
   // Add initial quads to the engine's store
@@ -453,7 +454,7 @@ export function createStoreContext(initialQuads = [], options = {}) {
  *   // All composables will use the same store
  * });
  */
-export function initStore(initialQuads = [], options = {}) {
+export async function initStore(initialQuads = [], options = {}) {
   const context = createStoreContext(initialQuads, options);
 
   return fn => {
@@ -469,7 +470,7 @@ export function initStore(initialQuads = [], options = {}) {
  * @param {Object} [options] - Store options
  * @returns {StoreContext} The created context
  */
-export function setStoreContext(initialQuads = [], options = {}) {
+export async function setStoreContext(initialQuads = [], options = {}) {
   const context = createStoreContext(initialQuads, options);
   storeContext.set(context);
   return context;
