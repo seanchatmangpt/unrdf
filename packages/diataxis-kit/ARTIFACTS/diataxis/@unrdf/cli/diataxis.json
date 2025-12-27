@@ -1,0 +1,101 @@
+{
+  "confidence": {
+    "explanation": 1,
+    "howtos": 0.75,
+    "reference": 0.8,
+    "tutorials": 1
+  },
+  "evidence": {
+    "docsFiles": ["API.md", "CONTRIBUTING.md", "GUIDE.md", "README.md", "validation-report.json"],
+    "examplesFiles": ["basic.mjs", "validate-cli.mjs"],
+    "fingerprint": "34f32263ad1df5e62aaad2c9f06dc45f107cd88423319d7ce6a10c25495cdf93",
+    "readmeHeadings": [
+      "Installation",
+      "📚 Examples",
+      "Quick Start",
+      "Features",
+      "Commands",
+      "Documentation",
+      "Depends On",
+      "VOC Usage",
+      "License"
+    ]
+  },
+  "explanation": {
+    "architecture": "![Version](https://img.shields.io/badge/version-5.0.0--beta.1-blue) ![Production Ready](https://img.shields.",
+    "concepts": ["rdf", "cli", "command-line", "graph", "sparql"],
+    "confidenceScore": 1,
+    "id": "explanation-unrdf-cli-explanation",
+    "source": ["keywords", "readme", "docs", "inferred"],
+    "title": "Understanding @unrdf/cli",
+    "tradeoffs": [
+      "Ease of use vs. advanced configuration options",
+      "Memory usage vs. processing speed",
+      "Bundle size vs. feature completeness"
+    ]
+  },
+  "generatedAt": "2000-01-01T00:00:00.000Z",
+  "howtos": [
+    {
+      "confidenceScore": 0.7,
+      "context": "When working with rdf in your project",
+      "id": "howto-integrate-with-rdf",
+      "source": ["keywords", "inferred"],
+      "steps": ["Install dependencies", "Set up integration", "Test integration"],
+      "task": "Connect @unrdf/cli with rdf",
+      "title": "Integrate with rdf"
+    },
+    {
+      "confidenceScore": 1,
+      "context": "When you need to use the package from the command line",
+      "id": "howto-use-the-cli",
+      "source": ["bin"],
+      "steps": [
+        "Install package globally or locally",
+        "Run CLI command with options",
+        "Process command output"
+      ],
+      "task": "Execute unrdf command-line interface",
+      "title": "Use the CLI"
+    }
+  ],
+  "packageName": "@unrdf/cli",
+  "reference": {
+    "confidenceScore": 1,
+    "id": "reference-unrdf-cli-reference",
+    "items": [
+      {
+        "description": "Export: ./commands",
+        "example": "import from \"./src/commands/index.mjs\"",
+        "name": "./commands",
+        "type": "export"
+      },
+      {
+        "description": "Export: .",
+        "example": "import from \"./src/index.mjs\"",
+        "name": "@unrdf/cli",
+        "type": "export"
+      },
+      {
+        "description": "CLI command: unrdf",
+        "example": "unrdf [options]",
+        "name": "unrdf",
+        "type": "bin"
+      }
+    ],
+    "source": ["exports", "bin"],
+    "title": "@unrdf/cli Reference"
+  },
+  "tutorials": [
+    {
+      "confidenceScore": 0.9999999999999999,
+      "goal": "Learn how to set up and use @unrdf/cli in your project",
+      "id": "tutorial-getting-started-with-unrdf-cli",
+      "prerequisites": ["Basic RDF knowledge", "Understanding of graph databases"],
+      "source": ["examples", "readme", "keywords"],
+      "stepsOutline": ["Installation", "📚 Examples", "VOC Usage"],
+      "title": "Getting Started with @unrdf/cli"
+    }
+  ],
+  "version": "5.0.1"
+}

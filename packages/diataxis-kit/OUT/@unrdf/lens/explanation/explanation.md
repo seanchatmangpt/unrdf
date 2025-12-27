@@ -18,7 +18,7 @@ proof: "1421903c76a9a4d8a2a9e0eb0e4d70abf9e0fdc0b7e658ac2a838bc886d012a3"
 
 ## Architecture
 
-- **lens.
+node AUTONOMIC_INNOVATION/agent-3/test-stable-ids.
 
 ## Tradeoffs
 

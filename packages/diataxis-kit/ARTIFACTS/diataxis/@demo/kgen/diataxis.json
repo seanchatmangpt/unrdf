@@ -1,0 +1,84 @@
+{
+  "confidence": {
+    "explanation": 0,
+    "howtos": 0.25,
+    "reference": 0.3,
+    "tutorials": 0
+  },
+  "evidence": {
+    "docsFiles": [],
+    "examplesFiles": [],
+    "fingerprint": "eb06e6f3d365e2084befa3c74eae7aa6cafe03ddbe0e68e2b1629b261a3a702d",
+    "readmeHeadings": []
+  },
+  "explanation": {
+    "architecture": "@demo/kgen is a package in the UNRDF ecosystem",
+    "concepts": ["core functionality"],
+    "confidenceScore": 0,
+    "id": "explanation-demo-kgen-explanation",
+    "source": ["inferred"],
+    "title": "Understanding @demo/kgen",
+    "tradeoffs": [
+      "Ease of use vs. advanced configuration options",
+      "Memory usage vs. processing speed",
+      "Bundle size vs. feature completeness"
+    ]
+  },
+  "generatedAt": "2000-01-01T00:00:00.000Z",
+  "howtos": [
+    {
+      "confidenceScore": 0.4,
+      "context": "When encountering issues during usage",
+      "id": "howto-troubleshoot-common-issues",
+      "source": ["inferred"],
+      "steps": ["Check configuration", "Review error messages", "Apply fixes"],
+      "task": "Resolve common problems and errors",
+      "title": "Troubleshoot Common Issues"
+    },
+    {
+      "confidenceScore": 1,
+      "context": "When you need to use the package from the command line",
+      "id": "howto-use-the-cli",
+      "source": ["bin"],
+      "steps": [
+        "Install package globally or locally",
+        "Run CLI command with options",
+        "Process command output"
+      ],
+      "task": "Execute kgen command-line interface",
+      "title": "Use the CLI"
+    }
+  ],
+  "packageName": "@demo/kgen",
+  "reference": {
+    "confidenceScore": 0.8,
+    "id": "reference-demo-kgen-reference",
+    "items": [
+      {
+        "description": "CLI command: kgen",
+        "example": "kgen [options]",
+        "name": "kgen",
+        "type": "bin"
+      }
+    ],
+    "source": ["bin"],
+    "title": "@demo/kgen Reference"
+  },
+  "tutorials": [
+    {
+      "confidenceScore": 0,
+      "goal": "Learn how to set up and use @demo/kgen in your project",
+      "id": "tutorial-getting-started-with-demo-kgen",
+      "prerequisites": [],
+      "source": ["inferred"],
+      "stepsOutline": [
+        "Install the package",
+        "Import required modules",
+        "Create a basic example",
+        "Run and verify output"
+      ],
+      "title": "Getting Started with @demo/kgen"
+    }
+  ],
+  "version": "1.0.0"
+}
