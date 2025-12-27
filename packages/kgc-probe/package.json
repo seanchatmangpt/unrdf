@@ -1,0 +1,81 @@
+{
+  "name": "@unrdf/kgc-probe",
+  "version": "1.0.0",
+  "description": "KGC Probe - Automated knowledge graph integrity scanning with 10 agents and artifact validation",
+  "type": "module",
+  "main": "./src/index.mjs",
+  "exports": {
+    ".": "./src/index.mjs",
+    "./orchestrator": "./src/orchestrator.mjs",
+    "./guards": "./src/guards.mjs",
+    "./agents": "./src/agents/index.mjs",
+    "./storage": "./src/storage/index.mjs",
+    "./types": "./src/types.mjs",
+    "./artifact": "./src/artifact.mjs",
+    "./cli": "./src/cli.mjs",
+    "./utils": "./src/utils/index.mjs",
+    "./utils/logger": "./src/utils/logger.mjs",
+    "./utils/errors": "./src/utils/errors.mjs"
+  },
+  "sideEffects": false,
+  "files": [
+    "src/",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "vitest run --coverage",
+    "test:fast": "vitest run --coverage",
+    "test:watch": "vitest --coverage",
+    "lint": "eslint src/ test/ --max-warnings=0",
+    "lint:fix": "eslint src/ test/ --fix",
+    "format": "prettier --write src/ test/",
+    "format:check": "prettier --check src/ test/",
+    "build": "echo 'Build complete (pure ESM, no compilation needed)'",
+    "validate": "npm run lint && npm run test"
+  },
+  "keywords": [
+    "rdf",
+    "knowledge-graph",
+    "probe",
+    "integrity",
+    "agents",
+    "validation",
+    "kgc",
+    "deterministic",
+    "artifact-verification"
+  ],
+  "dependencies": {
+    "@unrdf/kgc-substrate": "workspace:*",
+    "@unrdf/kgc-4d": "workspace:*",
+    "@unrdf/v6-core": "workspace:*",
+    "@unrdf/oxigraph": "workspace:*",
+    "@unrdf/hooks": "workspace:*",
+    "@unrdf/yawl": "workspace:*",
+    "hash-wasm": "^4.12.0",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "vitest": "^4.0.15",
+    "@vitest/coverage-v8": "^4.0.15"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=7.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/unrdf/unrdf.git",
+    "directory": "packages/kgc-probe"
+  },
+  "bugs": {
+    "url": "https://github.com/unrdf/unrdf/issues"
+  },
+  "homepage": "https://github.com/unrdf/unrdf#readme",
+  "license": "MIT",
+  "author": "UNRDF Contributors",
+  "publishConfig": {
+    "access": "public"
+  }
+}

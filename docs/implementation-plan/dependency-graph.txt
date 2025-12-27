@@ -1,0 +1,275 @@
+================================================================================
+                    KGC PROBE DEPENDENCY GRAPH
+                    Agent Coordination Matrix
+================================================================================
+
+LEGEND:
+  [M#] = Milestone number
+  --> = Sequential dependency (must complete before next)
+  ==> = Parallel execution possible
+  (A#) = Assigned Agent number
+  {...} = Files/modules in scope
+
+================================================================================
+LAYER 0: FOUNDATION (No Dependencies)
+================================================================================
+
++-------------------+     +-------------------+
+|  M1: CORE INFRA   |     |  M1b: CLI PREP    |
+|  (Agent-1)        |     |  (Agent-5)        |
+|                   |     |                   |
+|  {schemas/}       |     |  {cli/scaffolds}  |
+|  - observation    |     |  - index.mjs      |
+|  - probe-result   |     |  - command stubs  |
+|  - guard-policy   |     |                   |
+|  - merge-config   |     |                   |
+|  - receipt-meta   |     |                   |
+|                   |     |                   |
+|  {utils/}         |     |                   |
+|  - logger         |     |                   |
+|  - error-handler  |     |                   |
+|  - types          |     |                   |
++-------------------+     +-------------------+
+         |                         |
+         +-----------+-------------+
+                     |
+                     v
+================================================================================
+LAYER 1: STORAGE (Depends on: M1)
+================================================================================
+
++-----------------------------------------------+
+|              M2: RDF STORAGE LAYER            |
+|              (Agent-4)                        |
+|                                               |
+|  REQUIRES FROM M1:                            |
+|  - schemas/observation.schema.mjs             |
+|  - schemas/probe-result.schema.mjs            |
+|  - utils/logger.mjs                           |
+|  - utils/error-handler.mjs                    |
+|                                               |
+|  CREATES:                                     |
+|  {storage/}                                   |
+|  - probe-store.mjs     (wraps KnowledgeStore) |
+|  - graph-builder.mjs   (RDF construction)     |
+|  - triple-generator.mjs(Quad generation)      |
+|  - namespaces.mjs      (RDF namespaces)       |
+|                                               |
+|  EXTERNAL DEPS:                               |
+|  - @unrdf/oxigraph     (createStore, dataFactory)
+|  - @unrdf/kgc-substrate(KnowledgeStore)       |
++-----------------------------------------------+
+                     |
+                     v
+================================================================================
+LAYER 2: AGENTS (Depends on: M2)
+================================================================================
+
++-----------------------------------------------+
+|             M3: 10 AGENT SHARDS               |
+|             (Agent-4, Parallel Execution)     |
+|                                               |
+|  REQUIRES FROM M2:                            |
+|  - storage/probe-store.mjs                    |
+|  - storage/triple-generator.mjs               |
+|  - storage/namespaces.mjs                     |
+|                                               |
+|  PARALLEL EXECUTION (10 sub-tasks):           |
+|                                               |
+|  +----------+  +----------+  +----------+     |
+|  | security |  |performanc|  |correctnes|     |
+|  | probe    |  |e probe   |  |s probe   |     |
+|  +----------+  +----------+  +----------+     |
+|       |             |             |           |
+|  +----------+  +----------+  +----------+     |
+|  | structure|  |completene|  |consistenc|     |
+|  | probe    |  |ss probe  |  |y probe   |     |
+|  +----------+  +----------+  +----------+     |
+|       |             |             |           |
+|  +----------+  +----------+  +----------+     |
+|  |compliance|  | coverage |  | mutation |     |
+|  | probe    |  | probe    |  | probe    |     |
+|  +----------+  +----------+  +----------+     |
+|                     |                         |
+|              +----------+                     |
+|              |integration|                    |
+|              | probe     |                    |
+|              +----------+                     |
++-----------------------------------------------+
+                     |
+                     v
+================================================================================
+LAYER 3: ORCHESTRATION (Depends on: M3)
+================================================================================
+
++-----------------------------------------------+
+|         M4: ORCHESTRATOR + RECEIPTS           |
+|         (Agent-4)                             |
+|                                               |
+|  REQUIRES FROM M3:                            |
+|  - All 10 agent implementations               |
+|  - agents/index.mjs (registry)                |
+|                                               |
+|  CREATES:                                     |
+|  {orchestrator/}                              |
+|  - probe-orchestrator.mjs                     |
+|  - merge-engine.mjs                           |
+|  - conflict-resolver.mjs                      |
+|  - aggregator.mjs                             |
+|                                               |
+|  {receipts/}                                  |
+|  - receipt-builder.mjs                        |
+|  - merkle-integrator.mjs                      |
+|  - verification.mjs                           |
+|                                               |
+|  EXTERNAL DEPS:                               |
+|  - @unrdf/v6-core (BaseReceipt)               |
+|  - @unrdf/kgc-substrate (ReceiptChain)        |
++-----------------------------------------------+
+                     |
+                     v
+================================================================================
+LAYER 4: CLI (Depends on: M4)
+================================================================================
+
++-----------------------------------------------+
+|              M5: CLI COMMANDS                 |
+|              (Agent-5)                        |
+|                                               |
+|  REQUIRES FROM M4:                            |
+|  - orchestrator/probe-orchestrator.mjs        |
+|  - receipts/receipt-builder.mjs               |
+|  - receipts/verification.mjs                  |
+|                                               |
+|  CREATES:                                     |
+|  {cli/}                                       |
+|  - run-probe.command.mjs                      |
+|  - validate-observation.command.mjs           |
+|  - merge-results.command.mjs                  |
+|  - export-receipt.command.mjs                 |
+|                                               |
+|  EXTERNAL DEPS:                               |
+|  - @unrdf/kgc-cli (registerCommand)           |
++-----------------------------------------------+
+                     |
+                     v
+================================================================================
+LAYER 5: QUALITY ASSURANCE (Depends on: M5)
+================================================================================
+
++-------------------+     +-------------------+
+|   M6: TESTS       | --> |   M7: QUALITY     |
+|   (Agent-6)       |     |   (Agent-7)       |
+|                   |     |                   |
+| - Unit tests      |     | - Linting         |
+| - Integration     |     | - Type checking   |
+| - E2E tests       |     | - Complexity      |
+| - Fixtures        |     | - Duplication     |
++-------------------+     +-------------------+
+         |                         |
+         +-----------+-------------+
+                     |
+                     v
+================================================================================
+LAYER 6: VALIDATION (Depends on: M7)
+================================================================================
+
++-------------------+     +-------------------+     +-------------------+
+|  M8: VALIDATION   | --> |   M9: REVIEW      | --> | M10: BENCHMARKS   |
+|  (Agent-8)        |     |   (Agent-9)       |     |   (Agent-10)      |
+|                   |     |                   |     |                   |
+| - OTEL validation |     | - Code review     |     | - Performance     |
+| - Performance     |     | - Guard policy    |     | - Memory          |
+| - Memory          |     | - Documentation   |     | - Throughput      |
+| - Error accuracy  |     | - Integration     |     | - Latency         |
++-------------------+     +-------------------+     +-------------------+
+                                                            |
+                                                            v
+                                                    +---------------+
+                                                    |   COMPLETE    |
+                                                    +---------------+
+
+================================================================================
+CROSS-CUTTING DEPENDENCIES
+================================================================================
+
+All Modules Depend On:
+  +-------------------------------------------------------+
+  |  @unrdf/core         - Base utilities                 |
+  |  @unrdf/oxigraph     - RDF store, dataFactory         |
+  |  zod                 - Runtime validation             |
+  +-------------------------------------------------------+
+
+Storage Layer Depends On:
+  +-------------------------------------------------------+
+  |  @unrdf/kgc-substrate - KnowledgeStore                |
+  +-------------------------------------------------------+
+
+Receipts Layer Depends On:
+  +-------------------------------------------------------+
+  |  @unrdf/v6-core      - BaseReceipt, merkle/*          |
+  |  @unrdf/kgc-substrate - ReceiptChain                  |
+  +-------------------------------------------------------+
+
+CLI Layer Depends On:
+  +-------------------------------------------------------+
+  |  @unrdf/kgc-cli      - Command registration           |
+  +-------------------------------------------------------+
+
+================================================================================
+AGENT ASSIGNMENT SUMMARY
+================================================================================
+
+Agent-1 (Infrastructure):
+  - M1: schemas/, utils/
+
+Agent-4 (Core Development):
+  - M2: storage layer
+  - M3: 10 agent implementations
+  - M4: orchestrator + receipts
+
+Agent-5 (CLI):
+  - M1b: CLI prep/scaffolding
+  - M5: CLI commands
+
+Agent-6 (Testing):
+  - M6: All test files
+
+Agent-7 (Quality):
+  - M7: Linting, type checking
+
+Agent-8 (Validation):
+  - M8: OTEL, benchmarks
+
+Agent-9 (Review):
+  - M9: Code review
+
+Agent-10 (Performance):
+  - M10: Final benchmarks
+
+================================================================================
+PARALLEL EXECUTION WINDOWS
+================================================================================
+
+Window 1 (Hours 0-16):
+  Agent-1: M1 schemas/utils
+  Agent-5: M1b CLI scaffolding
+
+Window 2 (Hours 16-36):
+  Agent-4: M2 storage layer
+
+Window 3 (Hours 36-76):
+  Agent-4: M3 all 10 agents (parallel sub-tasks)
+
+Window 4 (Hours 76-100):
+  Agent-4: M4 orchestrator + receipts
+
+Window 5 (Hours 100-116):
+  Agent-5: M5 CLI commands
+
+Window 6 (Hours 116-180):
+  Agent-6/7/8/9/10: M6-M10 (some parallelization)
+
+================================================================================
+END OF DEPENDENCY GRAPH
+================================================================================

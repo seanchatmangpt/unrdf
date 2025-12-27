@@ -1,0 +1,240 @@
+{
+  "generatedAt": "2025-12-27T09:55:00.000Z",
+  "agent": "Agent-7 (code-analyzer)",
+  "summary": {
+    "totalFiles": 395,
+    "totalLoC": 92655,
+    "jsdocCoverage": 0.87,
+    "n3Violations": 69,
+    "securityVulnerabilities": 3,
+    "deepNestingFiles": 242,
+    "consoleUsage": 1313,
+    "qualityScore": 62
+  },
+  "modules": {
+    "src/knowledge-engine": {
+      "files": 52,
+      "largestFile": "schemas.mjs",
+      "largestFileLoC": 1063,
+      "n3Violations": 15,
+      "consoleUsage": 156,
+      "deepNesting": true,
+      "issues": [
+        "Heavy N3 dependency",
+        "Complex query optimizer (1052 LoC)",
+        "Multiple files exceed 500 LoC"
+      ],
+      "qualityScore": 55
+    },
+    "src/composables": {
+      "files": 9,
+      "largestFile": "use-graph.mjs",
+      "largestFileLoC": 450,
+      "n3Violations": 8,
+      "consoleUsage": 47,
+      "deepNesting": true,
+      "issues": [
+        "All composables import directly from N3",
+        "Should use oxigraph wrapper"
+      ],
+      "qualityScore": 68
+    },
+    "src/cli": {
+      "files": 23,
+      "largestFile": "cli.mjs",
+      "largestFileLoC": 742,
+      "n3Violations": 3,
+      "consoleUsage": 189,
+      "deepNesting": true,
+      "issues": [
+        "High console.log usage",
+        "Some N3 imports"
+      ],
+      "qualityScore": 65
+    },
+    "src/receipts": {
+      "files": 8,
+      "largestFile": "receipt-standard.mjs",
+      "largestFileLoC": 1148,
+      "n3Violations": 0,
+      "consoleUsage": 71,
+      "deepNesting": true,
+      "issues": [
+        "Largest file in codebase (1148 LoC)",
+        "Consider splitting by receipt type"
+      ],
+      "qualityScore": 72
+    },
+    "src/measurement": {
+      "files": 10,
+      "largestFile": "capacity-computer.mjs",
+      "largestFileLoC": 988,
+      "n3Violations": 0,
+      "consoleUsage": 12,
+      "deepNesting": true,
+      "issues": [
+        "Several large files (avg 900 LoC)",
+        "Good documentation"
+      ],
+      "qualityScore": 75
+    },
+    "src/project-engine": {
+      "files": 25,
+      "largestFile": "domain-infer.mjs",
+      "largestFileLoC": 965,
+      "n3Violations": 12,
+      "consoleUsage": 35,
+      "deepNesting": true,
+      "issues": [
+        "Multiple N3 imports",
+        "Large domain-infer.mjs"
+      ],
+      "qualityScore": 62
+    },
+    "src/universe": {
+      "files": 12,
+      "largestFile": "monorepo-universe.mjs",
+      "largestFileLoC": 1019,
+      "n3Violations": 0,
+      "consoleUsage": 52,
+      "deepNesting": true,
+      "issues": [
+        "Large monorepo-universe.mjs"
+      ],
+      "qualityScore": 70
+    },
+    "src/security": {
+      "files": 11,
+      "largestFile": "secret-detector.mjs",
+      "largestFileLoC": 480,
+      "n3Violations": 0,
+      "consoleUsage": 38,
+      "deepNesting": true,
+      "issues": [
+        "Good security tools in place"
+      ],
+      "qualityScore": 80
+    },
+    "src/validation": {
+      "files": 15,
+      "largestFile": "production-validator.mjs",
+      "largestFileLoC": 620,
+      "n3Violations": 0,
+      "consoleUsage": 95,
+      "deepNesting": true,
+      "issues": [
+        "High console usage for validation output"
+      ],
+      "qualityScore": 72
+    },
+    "src/react-hooks": {
+      "files": 65,
+      "largestFile": "htf-core.mjs",
+      "largestFileLoC": 550,
+      "n3Violations": 8,
+      "consoleUsage": 125,
+      "deepNesting": true,
+      "issues": [
+        "Some N3 imports in hooks",
+        "Good composable patterns"
+      ],
+      "qualityScore": 68
+    },
+    "src/browser": {
+      "files": 7,
+      "largestFile": "indexeddb-store.mjs",
+      "largestFileLoC": 420,
+      "n3Violations": 0,
+      "consoleUsage": 28,
+      "deepNesting": true,
+      "issues": [
+        "Browser shims well-implemented"
+      ],
+      "qualityScore": 75
+    },
+    "src/utils": {
+      "files": 12,
+      "largestFile": "sparql-utils.mjs",
+      "largestFileLoC": 380,
+      "n3Violations": 7,
+      "consoleUsage": 85,
+      "deepNesting": true,
+      "issues": [
+        "N3 imports in utility files"
+      ],
+      "qualityScore": 65
+    }
+  },
+  "filesBySize": {
+    "over1000": 4,
+    "over800": 8,
+    "over500": 20,
+    "over300": 65,
+    "under300": 310
+  },
+  "securityFindings": {
+    "vulnerabilities": [
+      {
+        "package": "esbuild",
+        "severity": "moderate",
+        "advisory": "GHSA-67mh-4wv8-2f99",
+        "paths": [
+          "packages__cli>vitest>vite>esbuild",
+          "packages__docs>drizzle-kit>@esbuild-kit/esm-loader>@esbuild-kit/core-utils>esbuild",
+          "packages__serverless>esbuild"
+        ]
+      }
+    ],
+    "newFunctionUsage": [
+      "src/knowledge-engine/effect-sandbox-worker.mjs:102",
+      "src/security/sandbox/worker-executor-runtime.mjs:45",
+      "src/security/sandbox/browser-executor.mjs:89"
+    ],
+    "execUsage": [
+      "src/knowledge-engine/lockchain-writer.mjs (git operations)",
+      "src/security/dependency-auditor.mjs (pnpm audit)",
+      "src/validation/checks/test-check.mjs (spawn for tests)"
+    ]
+  },
+  "n3ViolationFiles": {
+    "src/knowledge-engine": [
+      "src/knowledge-engine/lite.mjs",
+      "src/knowledge-engine/validate.mjs",
+      "src/knowledge-engine/condition-evaluator.mjs",
+      "src/knowledge-engine/knowledge-substrate-core.mjs",
+      "src/knowledge-engine/dark-matter-core.mjs",
+      "src/knowledge-engine/canonicalize.mjs",
+      "src/knowledge-engine/knowledge-hook-manager.mjs",
+      "src/knowledge-engine/index.mjs",
+      "src/knowledge-engine/hook-executor.mjs",
+      "src/knowledge-engine/transaction.mjs",
+      "src/knowledge-engine/parse.mjs",
+      "src/knowledge-engine/query-optimizer.mjs",
+      "src/knowledge-engine/reason.mjs",
+      "src/knowledge-engine/resolution-layer.mjs",
+      "src/knowledge-engine/query.mjs"
+    ],
+    "src/composables": [
+      "src/composables/use-graph.mjs",
+      "src/composables/use-validator.mjs",
+      "src/composables/use-reasoner.mjs",
+      "src/composables/use-terms.mjs",
+      "src/composables/use-delta.mjs",
+      "src/composables/use-canon.mjs"
+    ],
+    "src/project-engine": [
+      "src/project-engine/template-infer.mjs",
+      "src/project-engine/stack-linter.mjs",
+      "src/project-engine/stack-detect.mjs",
+      "src/project-engine/refactoring-guide.mjs",
+      "src/project-engine/golden-structure.mjs",
+      "src/project-engine/doc-drift-checker.mjs",
+      "src/project-engine/api-contract-validator.mjs",
+      "src/project-engine/gap-finder.mjs",
+      "src/project-engine/drift-snapshot.mjs",
+      "src/project-engine/project-report.mjs",
+      "src/project-engine/domain-infer.mjs",
+      "src/project-engine/fs-scan.mjs"
+    ]
+  }
+}
