@@ -1,0 +1,73 @@
+{
+  "name": "@unrdf/v6-core",
+  "version": "6.0.0-alpha.1",
+  "description": "UNRDF v6 Core - ΔGate control plane, unified receipts, and delta contracts",
+  "type": "module",
+  "main": "./src/index.mjs",
+  "exports": {
+    ".": "./src/index.mjs",
+    "./deltagate": "./src/deltagate.mjs",
+    "./schemas": "./src/schemas.mjs",
+    "./receipts": "./src/receipts.mjs",
+    "./cli": "./src/cli/index.mjs",
+    "./cli/nouns": "./src/cli/nouns.mjs",
+    "./cli/verbs": "./src/cli/verbs.mjs",
+    "./cli/spine": "./src/cli/spine.mjs",
+    "./cli/commands/receipt": "./src/cli/commands/receipt.mjs",
+    "./cli/commands/delta": "./src/cli/commands/delta.mjs"
+  },
+  "scripts": {
+    "test": "node --test test/**/*.test.mjs",
+    "lint": "eslint src/**/*.mjs",
+    "type-check": "tsc --noEmit --allowJs --checkJs src/**/*.mjs",
+    "build": "echo 'No build step for ESM'",
+    "dev": "node --watch src/index.mjs"
+  },
+  "keywords": [
+    "unrdf",
+    "v6",
+    "deltagate",
+    "control-plane",
+    "receipts",
+    "delta",
+    "deterministic",
+    "provenance"
+  ],
+  "author": "UNRDF Contributors",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@unrdf/kgc-substrate": "workspace:*",
+    "@unrdf/yawl": "workspace:*",
+    "@unrdf/kgc-cli": "workspace:*",
+    "@unrdf/kgc-4d": "workspace:*",
+    "@unrdf/hooks": "workspace:*",
+    "@unrdf/oxigraph": "workspace:*",
+    "@unrdf/blockchain": "workspace:*",
+    "citty": "^0.1.5",
+    "zod": "^3.22.4",
+    "hash-wasm": "^4.11.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "eslint": "^8.55.0",
+    "typescript": "^5.3.3"
+  },
+  "peerDependencies": {
+    "@unrdf/core": "workspace:*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/seanchatmangpt/unrdf.git",
+    "directory": "packages/v6-core"
+  },
+  "bugs": {
+    "url": "https://github.com/seanchatmangpt/unrdf/issues"
+  },
+  "homepage": "https://github.com/seanchatmangpt/unrdf/tree/main/packages/v6-core#readme",
+  "publishConfig": {
+    "access": "public"
+  }
+}
