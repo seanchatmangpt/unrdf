@@ -40,20 +40,19 @@
     "sparql"
   ],
   "dependencies": {
-    "@unrdf/core": "workspace:*",
-    "@unrdf/federation": "workspace:*",
-    "@unrdf/hooks": "workspace:*",
-    "@unrdf/knowledge-engine": "workspace:*",
-    "@unrdf/oxigraph": "workspace:*",
-    "@unrdf/project-engine": "workspace:*",
-    "@unrdf/streaming": "workspace:*",
+    "@unrdf/core": "workspace:5.0.0-beta.1",
+    "@unrdf/decision-fabric": "workspace:5.0.0-beta.1",
+    "@unrdf/federation": "workspace:5.0.0-beta.1",
+    "@unrdf/hooks": "workspace:5.0.0-beta.1",
+    "@unrdf/streaming": "workspace:5.0.0-beta.1",
     "citty": "^0.1.6",
     "table": "^6.9.0",
     "yaml": "^2.8.2"
   },
   "devDependencies": {
-    "@types/node": "^24.10.1",
-    "vitest": "^4.0.15"
+    "@types/node": "^20.0.0",
+    "citty-test-utils": "^0.1.0",
+    "vitest": "^1.0.0"
   },
   "engines": {
     "node": ">=18.0.0"
