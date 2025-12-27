@@ -1,6 +1,6 @@
 {
   "generatedAt": "2000-01-01T00:00:00.000Z",
-  "packageCount": 89,
+  "packageCount": 92,
   "packages": [
     {
       "dir": "/home/user/unrdf/AUTONOMIC_INNOVATION/agent-8",
@@ -268,6 +268,11 @@
       "version": "1.0.0"
     },
     {
+      "dir": "/home/user/unrdf/test/narrative-state-chain",
+      "name": "@unrdf/narrative-state-chain-tests",
+      "version": "1.0.0"
+    },
+    {
       "dir": "/home/user/unrdf/packages/nextra",
       "name": "@unrdf/nextra-docs",
       "version": "5.0.1"
@@ -336,6 +341,16 @@
       "dir": "/home/user/unrdf/packages/test-utils",
       "name": "@unrdf/test-utils",
       "version": "5.0.1"
+    },
+    {
+      "dir": "/home/user/unrdf/packages/v6-compat",
+      "name": "@unrdf/v6-compat",
+      "version": "6.0.0-alpha.1"
+    },
+    {
+      "dir": "/home/user/unrdf/packages/v6-core",
+      "name": "@unrdf/v6-core",
+      "version": "6.0.0-alpha.1"
     },
     {
       "dir": "/home/user/unrdf/packages/validation",
@@ -445,7 +460,7 @@
     {
       "dir": "/home/user/unrdf",
       "name": "unrdf-workspace",
-      "version": "5.0.1"
+      "version": "6.0.0-alpha.1"
     }
   ]
 }
