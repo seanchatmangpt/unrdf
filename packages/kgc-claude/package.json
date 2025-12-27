@@ -18,7 +18,13 @@
     "./drift-detector": "./src/drift-detector.mjs",
     "./budget-enforcer": "./src/budget-enforcer.mjs",
     "./agent-harness": "./src/agent-harness.mjs",
-    "./receipt-compositor": "./src/receipt-compositor.mjs"
+    "./receipt-compositor": "./src/receipt-compositor.mjs",
+    "./mcp-server-builder": "./src/mcp-server-builder.mjs",
+    "./mcp-federation": "./src/mcp-federation.mjs",
+    "./mcp-bridge": "./src/mcp-bridge.mjs",
+    "./capabilities/ide-integration": "./src/capabilities/ide-integration.mjs",
+    "./capabilities/ui-components": "./src/capabilities/ui-components.mjs",
+    "./capabilities/editor-commands": "./src/capabilities/editor-commands.mjs"
   },
   "main": "./src/index.mjs",
   "types": "./dist/index.d.ts",

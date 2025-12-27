@@ -229,6 +229,48 @@ export {
   ReceiptChainSchema,
 } from './receipt-compositor.mjs';
 
+// ============================================================================
+// Hyper-Advanced Delegation Capabilities (Agent 1: α₁)
+// ============================================================================
+
+// HierarchicalDelegation - Multi-level agent hierarchies
+export {
+  HierarchicalDelegator,
+  createHierarchicalDelegator,
+  create3LevelHierarchy,
+  DelegationLevelSchema,
+  AggregationStrategySchema,
+  FailurePropagationSchema,
+  HierarchyNodeSchema,
+  DelegationPolicySchema,
+  DelegationResultSchema,
+} from './hierarchical-delegation.mjs';
+
+// AgentSwarmPatterns - Advanced coordination primitives
+export {
+  AgentSwarmPatterns,
+  createSwarmPatterns,
+  executeFanOutFanIn,
+  executePipeline,
+  executeConsensus,
+  PatternTypeSchema,
+  ConsensusStrategySchema,
+  PatternConfigSchema,
+  PatternResultSchema,
+} from './agent-swarm-patterns.mjs';
+
+// DelegationOptimizer - Smart task routing
+export {
+  DelegationOptimizer,
+  createDelegationOptimizer,
+  createOptimizerWithAgents,
+  TaskSchema as OptimizerTaskSchema,
+  AgentCapabilitySchema,
+  AssignmentSchema,
+  SchedulingStrategySchema,
+  OptimizerConfigSchema,
+} from './delegation-optimizer.mjs';
+
 /**
  * Create a complete KGC-Claude substrate instance
  *
