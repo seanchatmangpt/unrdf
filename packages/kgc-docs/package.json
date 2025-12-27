@@ -1,0 +1,40 @@
+{
+  "name": "@unrdf/kgc-docs",
+  "version": "1.0.0",
+  "description": "KGC Markdown parser and dynamic documentation generator with proof anchoring",
+  "type": "module",
+  "exports": {
+    ".": "./src/kgc-markdown.mjs",
+    "./parser": "./src/parser.mjs",
+    "./renderer": "./src/renderer.mjs",
+    "./proof": "./src/proof.mjs"
+  },
+  "bin": {
+    "kgc-docs": "./bin/kgc-docs.mjs"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "build": "node bin/kgc-docs.mjs build",
+    "verify": "node bin/kgc-docs.mjs verify",
+    "refresh": "node bin/kgc-docs.mjs refresh",
+    "prove": "node bin/kgc-docs.mjs prove"
+  },
+  "keywords": [
+    "kgc",
+    "markdown",
+    "documentation",
+    "diataxis",
+    "proof",
+    "merkle"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "vitest": "^4.0.15"
+  }
+}

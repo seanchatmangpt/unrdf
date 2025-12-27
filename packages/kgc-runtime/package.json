@@ -1,0 +1,36 @@
+{
+  "name": "@unrdf/kgc-runtime",
+  "version": "1.0.0",
+  "description": "KGC governance runtime with comprehensive Zod schemas and work item system",
+  "type": "module",
+  "main": "./src/index.mjs",
+  "exports": {
+    ".": "./src/index.mjs",
+    "./schemas": "./src/schemas.mjs",
+    "./work-item": "./src/work-item.mjs"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
+  },
+  "keywords": [
+    "kgc",
+    "governance",
+    "runtime",
+    "schemas",
+    "zod",
+    "validation",
+    "work-item",
+    "async"
+  ],
+  "author": "UNRDF Team",
+  "license": "MIT",
+  "dependencies": {
+    "@unrdf/oxigraph": "workspace:*",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "vitest": "^4.0.15"
+  }
+}
