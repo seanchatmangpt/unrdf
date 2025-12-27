@@ -1,0 +1,43 @@
+{
+  "name": "@unrdf/fusion",
+  "version": "1.0.0",
+  "description": "Unified integration layer for 7-day UNRDF innovation - KGC-4D, blockchain, hooks, caching",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.mjs"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "unrdf",
+    "fusion",
+    "integration",
+    "kgc-4d",
+    "blockchain",
+    "hooks",
+    "caching",
+    "rdf",
+    "knowledge-graph"
+  ],
+  "author": "UNRDF Team",
+  "license": "MIT",
+  "dependencies": {
+    "@unrdf/oxigraph": "workspace:*",
+    "@unrdf/kgc-4d": "workspace:*",
+    "@unrdf/blockchain": "workspace:*",
+    "@unrdf/hooks": "workspace:*",
+    "@unrdf/caching": "workspace:*",
+    "@unrdf/yawl": "workspace:*",
+    "graphql": "^16.8.1",
+    "zod": "^4.2.1"
+  },
+  "devDependencies": {
+    "vitest": "^1.6.0"
+  },
+  "scripts": {
+    "prove": "DETERMINISTIC=1 node ../../tools/prove.mjs",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  }
+}

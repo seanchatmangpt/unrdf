@@ -35,7 +35,7 @@ export {
 } from './knowledge-substrate-core.mjs';
 
 // Storage & Persistence
-export { LockchainWriter, createLockchainWriter } from './lockchain-writer.mjs';
+export { LockchainWriter, createLockchainWriter } from '@unrdf/core/utils/lockchain-writer';
 export { ResolutionLayer } from './resolution-layer.mjs';
 
 // Query & Optimization

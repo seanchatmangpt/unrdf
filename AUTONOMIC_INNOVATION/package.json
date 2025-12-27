@@ -1,0 +1,36 @@
+{
+  "name": "@unrdf/autonomic-innovation",
+  "version": "0.1.0",
+  "description": "AUTONOMIC_INNOVATION - 10 Swarm Agents Building Graph Innovations",
+  "type": "module",
+  "main": "./src/index.mjs",
+  "exports": {
+    ".": "./src/index.mjs"
+  },
+  "scripts": {
+    "test": "node test-runner.mjs",
+    "test:fast": "timeout 5s node test-runner.mjs",
+    "test:agent-10": "node --test agent-10/test.mjs",
+    "test:e2e": "node --test agent-10/e2e-test.mjs",
+    "test:determinism": "node --test agent-10/determinism-test.mjs",
+    "test:quality": "node -e \"import('./agent-10/quality-report.mjs').then(m => m.generateQualityReport().then(r => console.log(JSON.stringify(r, null, 2))))\"",
+    "demo": "node demo.mjs",
+    "demo:autonomic": "node demo.mjs",
+    "test:autonomic": "timeout 5s node test-runner.mjs"
+  },
+  "keywords": [
+    "rdf",
+    "autonomic",
+    "swarm",
+    "graph",
+    "innovation"
+  ],
+  "author": "AUTONOMIC_INNOVATION Swarm",
+  "license": "MIT",
+  "dependencies": {},
+  "peerDependencies": {
+    "@unrdf/core": "*",
+    "@unrdf/oxigraph": "*",
+    "@unrdf/kgc-4d": "*"
+  }
+}

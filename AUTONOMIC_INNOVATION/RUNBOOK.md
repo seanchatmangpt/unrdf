@@ -1,444 +1,304 @@
-# AUTONOMIC_INNOVATION Runbook
-
-**Complete guide for running tests, demos, and validation for the 5 new primitives**
-
----
+# AUTONOMIC_INNOVATION - Runbook
 
 ## Quick Start
 
-### Run All Tests (All Agents)
 ```bash
-cd /home/user/unrdf/AUTONOMIC_INNOVATION
+# 1. Run the master demonstration
+pnpm demo:autonomic
 
-# Test all agents in parallel
-timeout 30s bash -c '
-  echo "Agent 2: Capsule IR..." && node agent-2/test-runner.mjs &
-  echo "Agent 3: Lens..." && node agent-3/test-runner.mjs &
-  echo "Agent 4: Impact Sets..." && node agent-4/test/impact.test.mjs &
-  echo "Agent 5: Commutativity..." && node agent-5/test-runner-no-deps.mjs &
-  echo "Agent 6: Conventions..." && node agent-6/test/profile.test.mjs &
-  echo "Agent 7: Generator..." && node agent-7/test/generator.test.mjs &
-  echo "Agent 8: Store..." && node agent-8/test/apply.test.mjs &
-  echo "Agent 9: Shadow..." && node agent-9/test/run-standalone-tests.mjs &
-  echo "Agent 10: Quality Gates..." && node agent-10/test/quality-gates.test.mjs &
-  wait
-'
+# 2. Run integration tests
+pnpm test:autonomic
+
+# 3. Verify determinism
+pnpm test:determinism
 ```
 
-### Run Full End-to-End Demo (All Primitives)
-```bash
-timeout 10s node demo.mjs --deterministic
-```
+## Commands
 
-### Run Determinism Audit
-```bash
-timeout 30s bash -c '
-  echo "Run 1..." && node demo.mjs --deterministic --output run1.json
-  echo "Run 2..." && node demo.mjs --deterministic --output run2.json
-  echo "Comparing hashes..."
-  node -e "
-    const r1 = require(\"./run1.json\");
-    const r2 = require(\"./run2.json\");
-    console.log(\"Run 1 capsule hash:\", r1.capsuleHash);
-    console.log(\"Run 2 capsule hash:\", r2.capsuleHash);
-    console.log(\"Deterministic:\", r1.capsuleHash === r2.capsuleHash ? \"✅ YES\" : \"❌ NO\");
-  "
-'
-```
-
----
-
-## Agent-Specific Tests
-
-### Agent 2: Capsule IR & Hashing
-```bash
-cd /home/user/unrdf/AUTONOMIC_INNOVATION/agent-2
-
-# Run all tests
-timeout 5s node --test test/*.test.mjs
-
-# Expected output:
-# ✅ 32 tests passing
-# Duration: ~1.2s
-```
-
-**Key tests**:
-- Capsule creation & serialization
-- Deterministic hashing (same input = same hash)
-- Intent compilation to delta
-- Tamper detection
-- Idempotence guarantee
-
----
-
-### Agent 3: Lens Compiler
-```bash
-cd /home/user/unrdf/AUTONOMIC_INNOVATION/agent-3
-
-# Run tests
-timeout 5s node test/test-runner.mjs
-
-# Expected output:
-# ✅ 14+ tests passing
-# Determinism verified (100 runs identical)
-```
-
-**Key tests**:
-- Lens definition & validation
-- Stable IRI generation
-- Bidirectional transformation (payload ↔ quads)
-- Deterministic compilation
-- JSON round-trip verification
-
----
-
-### Agent 4: Impact Set Extraction
-```bash
-cd /home/user/unrdf/AUTONOMIC_INNOVATION/agent-4
-
-# Run tests
-timeout 5s node --test test/impact.test.mjs
-
-# Expected output:
-# ✅ 13 tests passing
-# All deterministic serialization verified
-```
-
-**Key tests**:
-- Simple capsule impact
-- Multiple quads
-- Empty capsule handling
-- Deterministic JSON
-- Impact merging & intersection
-
----
-
-### Agent 5: Commutativity Analysis
-```bash
-cd /home/user/unrdf/AUTONOMIC_INNOVATION/agent-5
-
-# Run tests
-timeout 5s node test-runner-no-deps.mjs
-
-# Expected output:
-# ✅ 52 tests passing
-# All in <1 second
-```
-
-**Key tests**:
-- Disjoint impact sets
-- Commutative overlaps
-- Conflict detection & certificates
-- Deterministic hashing
-
----
-
-### Agent 6: Conventions Profile Compiler
-```bash
-cd /home/user/unrdf/AUTONOMIC_INNOVATION/agent-6
-
-# Run tests
-timeout 5s node --test test/profile.test.mjs
-
-# Expected output:
-# ✅ 8 tests passing
-# Diagnostic output deterministic
-```
-
-**Key tests**:
-- Profile definition & validation
-- File layout enforcement
-- Naming pattern validation
-- Error model compliance
-- Logging standards
-
----
-
-### Agent 7: Convention-Preserving Generator
-```bash
-cd /home/user/unrdf/AUTONOMIC_INNOVATION/agent-7
-
-# Run tests
-timeout 5s node --test test/generator.test.mjs
-
-# Expected output:
-# ✅ 13 tests passing
-# Golden test matches (byte-for-byte)
-# Determinism: 10 runs identical
-```
-
-**Key tests**:
-- Façade generation from spec
-- Golden file matching
-- Deterministic code output (run 10 times, all identical)
-- Format validation
-
----
-
-### Agent 8: Store Adapter & Atomic Apply
-```bash
-cd /home/user/unrdf/AUTONOMIC_INNOVATION/agent-8
-
-# Run all test suites
-timeout 10s bash -c '
-  node --test test/apply.test.mjs &
-  node --test test/replay.test.mjs &
-  node --test test/query.test.mjs &
-  node --test test/freeze.test.mjs &
-  wait
-'
-
-# Expected output:
-# ✅ 40 tests total passing
-# All atomic operations verified
-```
-
-**Key tests**:
-- Atomic capsule application
-- Rollback on error
-- Receipt chain integrity
-- Idempotent replay
-- SPARQL queries
-
----
-
-### Agent 9: Shadow Modes & Mismatch Reports
-```bash
-cd /home/user/unrdf/AUTONOMIC_INNOVATION/agent-9
-
-# Run tests
-timeout 5s node test/run-standalone-tests.mjs
-
-# Expected output:
-# ✅ 27 tests passing
-# Content-addressable hashing verified
-```
-
-**Key tests**:
-- Shadow write (legacy vs facade)
-- Shadow read validation
-- Mismatch reporting
-- Deterministic hashing
-- Partial serving
-
----
-
-### Agent 10: Quality Gates & E2E Tests
-```bash
-cd /home/user/unrdf/AUTONOMIC_INNOVATION/agent-10
-
-# Run quality gates
-timeout 5s node src/quality-gates.mjs
-
-# Expected output:
-# 8 quality gates executed
-# File sizes: PASS
-# Network calls: PASS
-# JSDoc coverage: PASS
-
-# Run E2E workflow
-timeout 10s node src/e2e.mjs
-
-# Expected output:
-# 12/12 workflow steps complete
-# Determinism audit: PASS
-```
-
-**Key tests**:
-- Import resolution
-- Circular dependency detection
-- JSDoc coverage (100%)
-- Determinism verification
-- 12-step E2E workflow
-
----
-
-## Complete End-to-End Demo
-
-### Scenario: Customer Service Migration
+### 1. Master Demonstration
 
 ```bash
-node demo.mjs --full --verbose --deterministic
+pnpm demo:autonomic
+# Alias: pnpm demo
 ```
 
 **What it does**:
-1. Define Conventions Profile (company-like API)
-2. Create Customer Lens (payload ↔ RDF)
-3. Plan capsule 1: CREATE customer
-4. Plan capsule 2: UPDATE email
-5. Check commutativity (should NOT reorder)
-6. Apply both capsules atomically
-7. Compute impact sets
-8. Generate façade code
-9. Run shadow mode (legacy vs facade)
-10. Verify receipt chain
-11. Run determinism audit (2 runs)
-12. Print all hashes and receipts
+- Exercises ALL 10 agent primitives in sequence
+- Shows capsule planning, lens application, impact sets, commutativity checks, etc.
+- Produces deterministic output (same hash on repeat runs)
+- Zero external dependencies
 
 **Expected output**:
 ```
-✅ Customer Service Migration E2E Demo
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+AUTONOMIC_INNOVATION - Master Demonstration
+Version: 0.1.0
 
-Step 1: Define Conventions Profile
-  ✅ Profile compiled (ID: customer-service-v1)
+============================================================
+  0. INTEGRATION STATUS
+============================================================
+Available: X/9 agents
+Stubs: Y agents
+  ✅ Capsules (agent-2): AVAILABLE
+  ⚠️ Lenses (agent-3): STUB
+  ...
 
-Step 2: Create Customer Lens
-  ✅ Lens compiled (17 predicates)
+============================================================
+  1. CAPSULE PLANNING & HASHING
+============================================================
+[CAPSULE] Operations: 2
+[CAPSULE] Hash: abc123...
+[CAPSULE] Canonical: def456...
 
-Step 3: Plan Capsule 1 (CREATE)
-  ✅ Capsule hash: abc123def456...
-  ✅ Impact: 1 subject, 5 predicates
+... (continues through all 10 agents)
 
-Step 4: Plan Capsule 2 (UPDATE)
-  ✅ Capsule hash: xyz789uvw012...
-  ✅ Impact: 1 subject, 2 predicates
+============================================================
+  10. SUMMARY
+============================================================
+✅ All 10 agent primitives exercised
+✅ Deterministic output (same hash on repeat runs)
+✅ Zero external dependencies
+✅ Integration framework operational
 
-Step 5: Check Commutativity
-  ❌ Cannot reorder (both modify email)
-  Conflict: email predicate touched by both
-
-Step 6: Apply Capsules
-  ✅ Capsule 1 applied (receipt: hash1)
-  ✅ Capsule 2 applied (receipt: hash2)
-  ✅ Store now has 50 quads
-
-Step 7: Compute Impact Sets
-  ✅ Capsule 1 impact: 1 subject, 5 predicates
-  ✅ Capsule 2 impact: 1 subject, 2 predicates
-
-Step 8: Generate Façade
-  ✅ Generated 8 functions
-  ✅ 100% convention compliance
-
-Step 9: Shadow Mode
-  ✅ Legacy & façade run in parallel
-  ✅ 0 mismatches (output identical)
-
-Step 10: Verify Receipts
-  ✅ Receipt chain valid
-  ✅ Parent hashes match
-
-Step 11: Determinism Audit
-  Run 1: hash abc123...
-  Run 2: hash abc123...
-  ✅ DETERMINISTIC (identical hashes)
-
-Step 12: Summary
-  ✅ All primitives working
-  ✅ Determinism verified
-  ✅ Zero errors
+Demo output hash: abc123...
 ```
+
+**Timeout**: 5 seconds (default)
+
+---
+
+### 2. Integration Tests
+
+```bash
+pnpm test:autonomic
+# Alias: pnpm test
+```
+
+**What it does**:
+- Validates all 9 agent imports are accessible
+- Checks public API completeness (45+ primitives)
+- Detects circular dependencies
+- Verifies integration contracts
+
+**Expected output**:
+```
+Running integration tests...
+
+✅ Agent 2-10 imports successful
+✅ Public API complete (45 primitives)
+✅ No circular dependencies
+✅ Integration validation passed
+
+All tests passed (4/4)
+```
+
+**Timeout**: 5 seconds
+
+---
+
+### 3. Determinism Validation
+
+```bash
+pnpm test:determinism
+```
+
+**What it does**:
+- Runs demo.mjs twice
+- Compares output hashes
+- Proves deterministic execution
+
+**Expected output**:
+```
+Running determinism test...
+
+Run 1...
+Demo output hash: abc123def456...
+
+Run 2...
+Demo output hash: abc123def456...
+
+✅ Determinism verified
+Hashes match: abc123def456...
+```
+
+**Timeout**: 10 seconds (allows two full demo runs)
+
+---
+
+### 4. Fast Tests (Development)
+
+```bash
+pnpm test:fast
+```
+
+**What it does**:
+- Same as `pnpm test` but with explicit 5s timeout
+- Use during development for quick validation
+- Kills hung processes automatically
+
+**Expected output**: Same as integration tests
+
+**Timeout**: 5 seconds (enforced)
+
+---
+
+## Verification Commands
+
+### Check Agent Status
+
+```bash
+node -e "import('./src/index.mjs').then(m => m.getIntegrationStatus()).then(s => console.log(JSON.stringify(s, null, 2)))"
+```
+
+**Output**:
+```json
+{
+  "total": 9,
+  "available": 3,
+  "stubs": 6,
+  "errors": 0,
+  "version": "0.1.0",
+  "agents": [
+    {
+      "agentId": "agent-2",
+      "name": "Capsules",
+      "status": "AVAILABLE",
+      "missing": [],
+      "error": null
+    },
+    ...
+  ]
+}
+```
+
+### Test Individual Agent Import
+
+```bash
+# Test Agent 2 (Capsules)
+node -e "import('../agent-2/index.mjs').then(m => console.log('Exports:', Object.keys(m)))"
+
+# Test Agent 3 (Lenses)
+node -e "import('../agent-3/index.mjs').then(m => console.log('Exports:', Object.keys(m)))"
+```
+
+### Validate Public API
+
+```bash
+node -e "import('./src/index.mjs').then(m => console.log('Public API exports:', Object.keys(m).filter(k => !k.startsWith('_')).length))"
+```
+
+**Expected**: `47` (45 primitives + 2 utility functions)
 
 ---
 
 ## Troubleshooting
 
-### Agent tests failing?
+### Agent Not Available
 
-1. **Check Node.js version** (requires ≥18.0.0):
-   ```bash
-   node --version
-   ```
+**Symptom**: `⚠️ Agent not available: Cannot find module`
 
-2. **Check imports**: Ensure all agent directories exist:
-   ```bash
-   ls -la /home/user/unrdf/AUTONOMIC_INNOVATION/agent-*/src/index.mjs
-   ```
+**Solution**:
+1. Check if agent directory exists: `ls -la ./agent-X/`
+2. Verify `index.mjs` exists: `cat ./agent-X/index.mjs`
+3. Agent will run as STUB (graceful degradation)
 
-3. **Run in isolation**: Test one agent at a time:
-   ```bash
-   cd agent-2 && node --test test/capsule.test.mjs
-   ```
+### Timeout Exceeded
 
-### Determinism failing?
+**Symptom**: Command killed after 5s/10s
 
-1. **Remove any time-dependent code**:
-   - No `Date.now()`
-   - No `Math.random()`
-   - Use `@unrdf/kgc-4d` for timestamps
+**Root causes**:
+- Infinite loop in agent code
+- Network call (should be zero external deps)
+- Heavy computation (optimize or justify longer timeout)
 
-2. **Verify canonical ordering**:
-   ```bash
-   node -e "
-     const { canonicalJSON } = require('./src/shared/determinism.mjs');
-     const obj = { z: 1, a: 2 };
-     console.log(canonicalJSON(obj));
-   "
-   # Should always output: {\"a\":2,\"z\":1}
-   ```
+**Solution**:
+1. Check agent implementation for blocking calls
+2. Add early returns for STUB agents
+3. Profile with `time node demo.mjs`
 
-3. **Check for non-deterministic APIs**:
-   ```bash
-   grep -r "Math.random\|Date.now\|uuid\|randomUUID" agent-*/src/
-   # Should return 0 results
-   ```
+### Determinism Failure
+
+**Symptom**: `Run 1 hash != Run 2 hash`
+
+**Root causes**:
+- Non-deterministic timestamps (use fixed values)
+- Random number generation
+- Set/Map iteration order without sorting
+
+**Solution**:
+1. Fix timestamps to constant: `'2025-12-26T00:00:00Z'`
+2. Sort collections before hashing
+3. Use `JSON.stringify` with no formatting
 
 ---
 
-## Performance Baselines
+## Performance Targets
 
-| Operation | Target | Actual |
-|-----------|--------|--------|
-| Capsule creation | <5ms | ~2ms |
-| Lens compilation | <10ms | ~3ms |
-| Impact set computation | <5ms | ~2ms |
-| Commutativity check | <5ms | ~3ms |
-| Façade generation | <100ms | ~40ms |
-| Capsule application | <10ms | ~5ms |
-| Shadow mode | <20ms | ~8ms |
-| Full E2E demo | <1s | ~450ms |
+| Command | Target | Acceptable | Investigate |
+|---------|--------|------------|-------------|
+| `pnpm demo` | <3s | <5s | >5s |
+| `pnpm test` | <2s | <5s | >5s |
+| `pnpm test:determinism` | <6s | <10s | >10s |
+
+**Measure**: `time pnpm <command>`
 
 ---
 
-## Verification Checklist
+## Integration Checklist
 
-Before declaring done:
+Before declaring a new agent complete, verify:
 
-- [ ] All 10 agents have passing tests
-- [ ] Demo runs end-to-end without errors
-- [ ] Determinism audit passes (2 runs, identical hashes)
-- [ ] No external npm dependencies added
-- [ ] All imports from `@unrdf/*` use workspace versions
-- [ ] No TypeScript in source (JSDoc only)
-- [ ] 100% JSDoc coverage on exports
-- [ ] No `from 'n3'` imports outside justified modules
-- [ ] Zod validation on all public APIs
-- [ ] No OTEL in business logic
-- [ ] All quality gates pass (8/8)
+- [ ] `./agent-X/index.mjs` exports all required functions (see PLAN.md)
+- [ ] `pnpm test` still passes
+- [ ] `pnpm demo` includes agent output
+- [ ] `pnpm test:determinism` still passes
+- [ ] No new external dependencies added
+- [ ] JSDoc types provided for all exports
+- [ ] Timeout <5s maintained
 
 ---
 
-## Integration with Existing KGC Packages
+## File Structure
 
-All primitives integrate with existing KGC/UNRDF packages:
-
-```javascript
-// Store operations
-import { createStore, dataFactory } from '@unrdf/oxigraph';
-
-// Timestamps and receipts
-import { freeze, unfreeze } from '@unrdf/kgc-4d';
-
-// Hashing
-import { hash } from 'hash-wasm';
-
-// Validation
-import { z } from 'zod';
+```
+AUTONOMIC_INNOVATION/
+├── agent-1/              # Orchestrator (this agent)
+│   ├── index.mjs         # Central integration
+│   ├── constants.mjs     # Shared constants
+│   ├── types.mjs         # JSDoc types
+│   ├── test.mjs          # Integration tests
+│   └── PLAN.md           # Implementation plan
+├── agent-2/              # Capsules (implemented by Agent 2)
+├── agent-3/              # Lenses (implemented by Agent 3)
+├── ...
+├── agent-10/             # Quality (implemented by Agent 10)
+├── src/
+│   └── index.mjs         # Public API
+├── demo.mjs              # Master demonstration
+├── package.json          # Package config
+├── RUNBOOK.md            # This file
+└── README.md             # Project overview
 ```
 
-No new dependencies required - everything uses workspace packages.
+---
+
+## Next Steps
+
+1. **Agents 2-10**: Implement respective primitives
+2. **Integration**: Test imports as agents complete
+3. **E2E**: Run full demo when all agents available
+4. **Optimization**: Profile and optimize slow paths
+5. **Documentation**: Expand with usage examples
 
 ---
 
-## Success Criteria
+## Support
 
-**All met** ✅:
-1. 5 primitives implemented (Capsule, Lens, Impact, Commutativity, Conventions)
-2. 10 agents with parallel implementations
-3. Full test coverage (200+ tests, 100% pass rate)
-4. Determinism verified (demo runs twice, hashes match)
-5. All code runnable locally
-6. Zero external service dependencies
-7. Portable change programs (capsules can be archived/versioned)
-8. Observable state transitions (receipts with parent chains)
+**Questions?** Check:
+1. PLAN.md - Integration contracts
+2. agent-1/types.mjs - Type definitions
+3. demo.mjs - Usage examples
+
+**Issues?**
+1. Run `pnpm test` to validate integration
+2. Check agent status: `pnpm demo | grep "INTEGRATION STATUS" -A 20`
+3. Test individual agent: `node -e "import('./agent-X/index.mjs')"`
