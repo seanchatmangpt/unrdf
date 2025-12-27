@@ -56,6 +56,8 @@
       "CONTRIBUTING.md",
       "DEBUGGING.md",
       "DEFINITION-OF-DONE.md",
+      "DEPENDENCY-ANALYSIS.md",
+      "DEPENDENCY-GRAPH.txt",
       "DEPRECATED.md",
       "DFLSS_QUALITY.md",
       "DIATAXIS-3-LEVELS-DEEP.md",
@@ -79,10 +81,12 @@
       "DIATAXIS-PRODUCTION-STRATEGIC-PLAN.md",
       "DIATAXIS-STREAMING-ROADMAP.md",
       "DIATAXIS_360.md",
+      "DIMENSION-CERTIFICATE-SPEC.md",
       "DOC-AUDIT-DIATAXIS-MAP.md",
       "DOCUMENTATION-GAP-ANALYSIS.md",
       "DOCUMENTATION-IMPROVEMENT-ROADMAP.md",
       "DOCUMENTATION-INDEX.md",
+      "DOCUMENTATION-PROJECTION.md",
       "DOCUMENTATION_REVIEW.md",
       "DX-UX-ARCHITECTURE-SUMMARY.md",
       "DX-UX-ARCHITECTURE.md",
@@ -107,14 +111,18 @@
       "INIT-PIPELINE.md",
       "KGN-SWARM-JTBD-2030.md",
       "LOCAL-DEVELOPMENT.md",
+      "MEASUREMENT-DASHBOARD-DESIGN.md",
       "MERGE-CHANGELOG.md",
       "MIGRATION.md",
+      "MONOREPO-GOVERNANCE.md",
       "MONOREPO-MIGRATION.md",
       "MONOREPO-QUICK-REFERENCE.md",
       "MONOREPO-SETUP.md",
       "MONOREPO-STRUCTURE.md",
+      "MONOREPO-UNIVERSE-MODEL.md",
       "MONOREPO-VALIDATION-CHECKLIST.md",
       "MONOREPO-VISUALS.md",
+      "MULTI-PACKAGE-WORKFLOWS.md",
       "NEXT-STEPS-RECOMMENDATIONS.md",
       "NODE-COMPATIBILITY-VALIDATION.md",
       "NPM-PUBLISH-VALIDATION-v4.0.0.md",
@@ -151,6 +159,7 @@
       "POSITIONING-ANALYSIS.md",
       "POST_REFACTORING_ACTION_PLAN.md",
       "PRODUCTION-BEST-PRACTICES-DIATAXIS-REPORT.md",
+      "PRODUCTION-READINESS.md",
       "PRODUCTION_VALIDATION_REPORT.md",
       "PROJECT-ENGINE-CAPABILITIES.md",
       "QUALITY_GATES_V5.md",
@@ -159,14 +168,17 @@
       "REACT-HOOKS-GUIDE.md",
       "README-DIAGRAMS.md",
       "README.md",
+      "RECEIPT-STANDARD.md",
       "REFACTORING_SUMMARY.md",
       "RELATED-WORK-CHAPTER.md",
       "RELEASE-PLAN-v5.0.0.md",
+      "SECURITY-POLICY.md",
       "SESSION-SUMMARY-MAPEK-COMPLETION.md",
       "SLA-ROUNDTRIP.md",
       "START-HERE.md",
       "STUB-IMPLEMENTATION-SUMMARY.md",
       "STUBS-IMPLEMENTATION-80-20.md",
+      "SYSTEM-HEALTH-METRICS.md",
       "TEST-STRATEGY.md",
       "TESTING-STRATEGY.md",
       "TESTING.md",
@@ -211,6 +223,11 @@
       "bb80-20-methodology.md",
       "bridge-interceptor-flow.puml",
       "complete-system-overview.puml",
+      "composition-graph-README.md",
+      "composition-graph-SUMMARY.md",
+      "composition-graph-analysis-CORRECTIONS.md",
+      "composition-graph-analysis.md",
+      "composition-graph.dot",
       "developer-workflow.md",
       "diff-implementation-summary.md",
       "diff-module-integration.md",
@@ -308,7 +325,7 @@
       "unrdf-profiling-integration.mjs",
       "validate-new-features.mjs"
     ],
-    "fingerprint": "b4b6bf88c745297368ea1af1665d556634f6684f8770addc991bcb503c1a31dc",
+    "fingerprint": "8db9b4e798289064f2ffd3b2feb1a78bfe2f163e83440858d7ce61bf7f72d028",
     "readmeHeadings": [
       "🎯 New to UNRDF? Start Here!",
       "🚀 Quick Start",
@@ -340,19 +357,12 @@
   },
   "explanation": {
     "architecture": "**Research-grade RDF knowledge graphs with batteries included.",
-    "concepts": [
-      "core functionality"
-    ],
+    "concepts": ["core functionality"],
     "confidenceScore": 0.6,
     "id": "explanation-unrdf-workspace-explanation",
-    "source": [
-      "readme",
-      "docs"
-    ],
+    "source": ["readme", "docs"],
     "title": "Understanding unrdf-workspace",
-    "tradeoffs": [
-      "Performance vs. flexibility tradeoffs discussed in README"
-    ]
+    "tradeoffs": ["Performance vs. flexibility tradeoffs discussed in README"]
   },
   "generatedAt": "2000-01-01T00:00:00.000Z",
   "howtos": [
@@ -360,9 +370,7 @@
       "confidenceScore": 1,
       "context": "When you need to customize package behavior",
       "id": "howto-configure-unrdf-workspace",
-      "source": [
-        "readme"
-      ],
+      "source": ["readme"],
       "steps": [
         "Create configuration file",
         "Define configuration options",
@@ -375,14 +383,8 @@
       "confidenceScore": 0.5,
       "context": "When you need robust error handling in production",
       "id": "howto-handle-errors",
-      "source": [
-        "tests"
-      ],
-      "steps": [
-        "Set up try-catch blocks",
-        "Handle common error types",
-        "Log errors appropriately"
-      ],
+      "source": ["tests"],
+      "steps": ["Set up try-catch blocks", "Handle common error types", "Log errors appropriately"],
       "task": "Implement error handling for unrdf-workspace",
       "title": "Handle Errors"
     }
@@ -399,9 +401,7 @@
         "type": "unknown"
       }
     ],
-    "source": [
-      "inferred"
-    ],
+    "source": ["inferred"],
     "title": "unrdf-workspace Reference"
   },
   "tutorials": [
@@ -409,12 +409,8 @@
       "confidenceScore": 0.8,
       "goal": "Complete your first practical examples",
       "id": "tutorial-first-steps",
-      "prerequisites": [
-        "Completed \"Getting Started with unrdf-workspace\""
-      ],
-      "source": [
-        "examples"
-      ],
+      "prerequisites": ["Completed \"Getting Started with unrdf-workspace\""],
+      "source": ["examples"],
       "stepsOutline": [
         "Work through 01-hello-rdf.mjs",
         "Work through 01-minimal-parse-query.mjs",
@@ -429,15 +425,8 @@
       "goal": "Learn how to set up and use unrdf-workspace in your project",
       "id": "tutorial-getting-started-with-unrdf-workspace",
       "prerequisites": [],
-      "source": [
-        "examples",
-        "readme"
-      ],
-      "stepsOutline": [
-        "Installation",
-        "Examples",
-        "CLI Usage"
-      ],
+      "source": ["examples", "readme"],
+      "stepsOutline": ["Installation", "Examples", "CLI Usage"],
       "title": "Getting Started with unrdf-workspace"
     }
   ],

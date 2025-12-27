@@ -1,36 +1,39 @@
 {
   "confidence": {
-    "explanation": 0.4,
+    "explanation": 0.7,
     "howtos": 0.75,
-    "reference": 0.8,
-    "tutorials": 0.1
+    "reference": 1,
+    "tutorials": 0.7
   },
   "evidence": {
     "docsFiles": [],
     "examplesFiles": [],
-    "fingerprint": "eb06e6f3d365e2084befa3c74eae7aa6cafe03ddbe0e68e2b1629b261a3a702d",
-    "readmeHeadings": []
+    "fingerprint": "410a70a81597362404956b27666aad623a9f8d5e00c11394a1d7beff88cd96b5",
+    "readmeHeadings": [
+      "Features",
+      "Quick Start",
+      "File Structure",
+      "How It Works",
+      "Determinism",
+      "Testing",
+      "Package Exports",
+      "CLI Tools",
+      "Example Output",
+      "Implementation Details",
+      "Constraints",
+      "Performance",
+      "Future Improvements",
+      "License"
+    ]
   },
   "explanation": {
-    "architecture": "@unrdf/diataxis-kit is a package in the UNRDF ecosystem",
-    "concepts": [
-      "diataxis",
-      "documentation",
-      "monorepo",
-      "inventory"
-    ],
-    "confidenceScore": 0.4,
+    "architecture": "Diátaxis documentation kit for monorepo package inventory and deterministic doc scaffold generation. Automatically discovers all workspace packages and generates documentation scaffolds using the Diátaxis framework (Tutorials, How-to Guides, Reference, Explanation).",
+    "concepts": ["diataxis", "documentation", "monorepo", "inventory"],
+    "confidenceScore": 0.7,
     "id": "explanation-unrdf-diataxis-kit-explanation",
-    "source": [
-      "keywords",
-      "inferred"
-    ],
+    "source": ["keywords", "readme"],
     "title": "Understanding @unrdf/diataxis-kit",
-    "tradeoffs": [
-      "Ease of use vs. advanced configuration options",
-      "Memory usage vs. processing speed",
-      "Bundle size vs. feature completeness"
-    ]
+    "tradeoffs": ["Performance vs. flexibility tradeoffs discussed in README"]
   },
   "generatedAt": "2000-01-01T00:00:00.000Z",
   "howtos": [
@@ -38,14 +41,8 @@
       "confidenceScore": 0.5,
       "context": "When you need robust error handling in production",
       "id": "howto-handle-errors",
-      "source": [
-        "tests"
-      ],
-      "steps": [
-        "Set up try-catch blocks",
-        "Handle common error types",
-        "Log errors appropriately"
-      ],
+      "source": ["tests"],
+      "steps": ["Set up try-catch blocks", "Handle common error types", "Log errors appropriately"],
       "task": "Implement error handling for @unrdf/diataxis-kit",
       "title": "Handle Errors"
     },
@@ -53,15 +50,8 @@
       "confidenceScore": 0.7,
       "context": "When working with diataxis in your project",
       "id": "howto-integrate-with-diataxis",
-      "source": [
-        "keywords",
-        "inferred"
-      ],
-      "steps": [
-        "Install dependencies",
-        "Set up integration",
-        "Test integration"
-      ],
+      "source": ["keywords", "inferred"],
+      "steps": ["Install dependencies", "Set up integration", "Test integration"],
       "task": "Connect @unrdf/diataxis-kit with diataxis",
       "title": "Integrate with diataxis"
     },
@@ -69,9 +59,7 @@
       "confidenceScore": 1,
       "context": "When you need to use the package from the command line",
       "id": "howto-use-the-cli",
-      "source": [
-        "bin"
-      ],
+      "source": ["bin"],
       "steps": [
         "Install package globally or locally",
         "Run CLI command with options",
@@ -147,21 +135,16 @@
         "type": "bin"
       }
     ],
-    "source": [
-      "exports",
-      "bin"
-    ],
+    "source": ["exports", "bin"],
     "title": "@unrdf/diataxis-kit Reference"
   },
   "tutorials": [
     {
-      "confidenceScore": 0.1,
+      "confidenceScore": 0.4,
       "goal": "Learn how to set up and use @unrdf/diataxis-kit in your project",
       "id": "tutorial-getting-started-with-unrdf-diataxis-kit",
       "prerequisites": [],
-      "source": [
-        "keywords"
-      ],
+      "source": ["readme", "keywords"],
       "stepsOutline": [
         "Install the package",
         "Import required modules",
