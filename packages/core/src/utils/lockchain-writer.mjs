@@ -20,6 +20,18 @@ import { randomUUID } from 'crypto';
 import { z } from 'zod';
 
 /**
+ * Safely escape shell argument - prevents command injection
+ * @param {string} str - String to escape
+ * @returns {string} Escaped string safe for shell
+ * @private
+ */
+function escapeShellArg(str) {
+  if (typeof str !== 'string') throw new TypeError('Argument must be a string');
+  // Single quote escaping: replace ' with '\'' (end quote, escaped quote, start quote)
+  return `'${str.replace(/'/g, "'\\''")}'`;
+}
+
+/**
  * Schema for lockchain entry
  */
 const LockchainEntrySchema = z.object({
@@ -36,6 +48,32 @@ const LockchainEntrySchema = z.object({
   gitCommit: z.string().optional(),
   gitRef: z.string().optional(),
 });
+
+/**
+ * Schema for validating git commit hash (40 hex chars SHA-1)
+ */
+const GitCommitHashSchema = z.string()
+  .regex(/^[a-f0-9]{40}$/, 'Invalid git commit hash - must be 40 hex characters');
+
+/**
+ * Schema for validating file paths - prevent path traversal and special chars
+ */
+const SafeFilePathSchema = z.string()
+  .refine(
+    (p) => !p.includes('\0') && !p.includes('\n') && !p.includes('\r'),
+    'File path contains invalid control characters'
+  )
+  .refine(
+    (p) => !p.startsWith('-'),
+    'File path cannot start with dash (could be interpreted as flag)'
+  );
+
+/**
+ * Schema for validating commit messages - prevent injection
+ */
+const SafeCommitMessageSchema = z.string()
+  .min(1, 'Commit message cannot be empty')
+  .max(1000, 'Commit message too long');
 
 /**
  * Schema for lockchain configuration
@@ -450,9 +488,14 @@ export class LockchainWriter {
    * @private
    */
   async _gitAdd(filePath) {
-    execSync(`git add "${filePath}"`, {
+    // Validate file path to prevent command injection
+    const validatedPath = SafeFilePathSchema.parse(filePath);
+    // Use escaped argument to prevent shell injection
+    const cmd = `git add ${escapeShellArg(validatedPath)}`;
+    execSync(cmd, {
       cwd: this.config.gitRepo,
       stdio: 'pipe',
+      shell: '/bin/sh',
     });
   }
 
@@ -464,12 +507,17 @@ export class LockchainWriter {
    * @private
    */
   async _gitCommit(message, metadata = {}) {
-    const commitMessage = `${message}\n\nMetadata: ${JSON.stringify(metadata)}`;
+    // Validate message to prevent command injection
+    const validatedMessage = SafeCommitMessageSchema.parse(message);
+    const commitMessage = `${validatedMessage}\n\nMetadata: ${JSON.stringify(metadata)}`;
 
-    const output = execSync(`git commit -m "${commitMessage}"`, {
+    // Use escaped argument to prevent shell injection
+    const cmd = `git commit -m ${escapeShellArg(commitMessage)}`;
+    const output = execSync(cmd, {
       cwd: this.config.gitRepo,
       stdio: 'pipe',
       encoding: 'utf8',
+      shell: '/bin/sh',
     });
 
     // Extract commit hash from output
@@ -518,9 +566,14 @@ export class LockchainWriter {
    */
   async _verifyGitCommit(commitHash) {
     try {
-      execSync(`git cat-file -t ${commitHash}`, {
+      // Validate commit hash to prevent command injection
+      const validatedHash = GitCommitHashSchema.parse(commitHash);
+      // Use escaped argument to prevent shell injection
+      const cmd = `git cat-file -t ${escapeShellArg(validatedHash)}`;
+      execSync(cmd, {
         cwd: this.config.gitRepo,
         stdio: 'pipe',
+        shell: '/bin/sh',
       });
       return true;
     } catch (error) {
