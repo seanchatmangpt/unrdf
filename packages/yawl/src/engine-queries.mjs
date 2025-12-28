@@ -4,6 +4,7 @@
  */
 
 import { CaseStatus } from './case.mjs';
+import { EngineError } from '../errors.mjs';
 
 /**
  * Mixin that adds query and search capabilities

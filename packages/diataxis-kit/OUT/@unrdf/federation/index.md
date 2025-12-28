@@ -1,7 +1,7 @@
 ---
 title: "@unrdf/federation Documentation"
 packageName: "@unrdf/federation"
-version: "5.0.1"
+version: "6.0.0"
 generatedAt: "2000-01-01T00:00:00.000Z"
 ---
 
@@ -11,7 +11,7 @@ Generated documentation using the Diátaxis framework.
 
 ## Quick Stats
 
-- **Tutorials**: 2
+- **Tutorials**: 1
 - **How-To Guides**: 2
 - **Reference**: Available
 - **Explanation**: Available
@@ -20,7 +20,6 @@ Generated documentation using the Diátaxis framework.
 
 ### Tutorials
 
-- [First Steps](tutorials/tutorial-tutorial-first-steps.md)
 - [Getting Started with @unrdf/federation](tutorials/tutorial-tutorial-getting-started-with-unrdf-federation.md)
 
 ### How-To Guides

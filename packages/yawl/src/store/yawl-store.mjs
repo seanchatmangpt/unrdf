@@ -7,6 +7,7 @@
  *
  * @example
  * import { createYawlStore, addCase, getCase, queryWorkItems } from '@unrdf/yawl/store';
+import { StorageError } from '../../errors.mjs';
  *
  * const store = createYawlStore();
  * addCase(store, {

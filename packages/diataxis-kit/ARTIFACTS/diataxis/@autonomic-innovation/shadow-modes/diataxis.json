@@ -8,27 +8,22 @@
   "evidence": {
     "docsFiles": [],
     "examplesFiles": [],
-    "fingerprint": "dd8d4dcf24d6a0cc6b4d37de255a42742f6a74adc0c6fc2f12e87bf099fe2a55",
+    "fingerprint": "44cdcb57ec4f396d320564a90dc4dc155550e44a92a6755ce8babc288fe3d7fd",
     "readmeHeadings": [
-      "Overview",
-      "Implementation",
-      "Key Features",
-      "Usage Examples",
+      "Execution Summary",
+      "Deliverables",
       "Test Results",
-      "Determinism Guarantees",
-      "Dependencies",
-      "Integration Points",
-      "Running Tests",
-      "Performance Characteristics",
-      "Error Handling",
-      "OTEL Integration",
-      "Success Criteria",
-      "Example Mismatch Report",
-      "Content-Addressable Hash Example"
+      "Usage Examples",
+      "Running the System",
+      "Migration Phases",
+      "Key Features",
+      "Performance",
+      "Files",
+      "Validation"
     ]
   },
   "explanation": {
-    "architecture": "Deterministic shadow modes for running legacy and facade implementations in parallel, with content-addressable mismatch reporting.",
+    "architecture": "Complete implementation of shadow mode system for safe, reversible migration from legacy to facade systems.",
     "concepts": [
       "shadow-mode",
       "migration",
@@ -40,11 +35,14 @@
     "id": "explanation-autonomic-innovation-shadow-modes-explanation",
     "source": [
       "keywords",
-      "readme"
+      "readme",
+      "inferred"
     ],
     "title": "Understanding @autonomic-innovation/shadow-modes",
     "tradeoffs": [
-      "Performance vs. flexibility tradeoffs discussed in README"
+      "Ease of use vs. advanced configuration options",
+      "Memory usage vs. processing speed",
+      "Bundle size vs. feature completeness"
     ]
   },
   "generatedAt": "2000-01-01T00:00:00.000Z",

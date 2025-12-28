@@ -1,23 +1,16 @@
 {
   "confidence": {
-    "explanation": 1,
+    "explanation": 0.7,
     "howtos": 0.75,
     "reference": 0.7,
     "tutorials": 1
   },
   "evidence": {
-    "docsFiles": [
-      "API.md",
-      "CONTRIBUTING.md",
-      "GUIDE.md",
-      "README.md",
-      "validation-report.json"
-    ],
+    "docsFiles": [],
     "examplesFiles": [
-      "basic.mjs",
       "validate-streaming.mjs"
     ],
-    "fingerprint": "6b57c82c756cb5ebbe2735d9da5ad55b6756cde93d2d1173c84f08137d750c41",
+    "fingerprint": "9506f600f32f13e04495b479fa3fb62c54cb6768120a2568c851b0d91a013dab",
     "readmeHeadings": [
       "Installation",
       "📚 Examples",
@@ -40,12 +33,11 @@
       "change-feed",
       "synchronization"
     ],
-    "confidenceScore": 1,
+    "confidenceScore": 0.7,
     "id": "explanation-unrdf-streaming-explanation",
     "source": [
       "keywords",
       "readme",
-      "docs",
       "inferred"
     ],
     "title": "Understanding @unrdf/streaming",

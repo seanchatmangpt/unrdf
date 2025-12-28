@@ -4,8 +4,8 @@ type: "explanation"
 packageName: "@unrdf/cli"
 version: "5.0.1"
 generatedAt: "2000-01-01T00:00:00.000Z"
-confidenceScore: 1
-proof: "b84b964663ddefa6ed8774cbac167d7aa4938f2c26af180b3b5e269c32e82dd7"
+confidenceScore: 0.4
+proof: "c626079e69af832736a38b4a6c48a113592ad7ba9ffd6d80c1192670b87d6731"
 ---
 
 ## Concepts
@@ -18,7 +18,7 @@ proof: "b84b964663ddefa6ed8774cbac167d7aa4938f2c26af180b3b5e269c32e82dd7"
 
 ## Architecture
 
-![Version](https://img.shields.io/badge/version-5.0.0--beta.1-blue) ![Production Ready](https://img.shields.
+@unrdf/cli is a package in the UNRDF ecosystem
 
 ## Tradeoffs
 
@@ -30,20 +30,16 @@ proof: "b84b964663ddefa6ed8774cbac167d7aa4938f2c26af180b3b5e269c32e82dd7"
 
 This file was generated from the following evidence sources:
 
-- docs
 - inferred
 - keywords
-- readme
 
 ```json
 {
-  "fingerprintInput": "docs|inferred|keywords|readme|Understanding @unrdf/cli|1",
-  "hash": "b84b964663ddefa6ed8774cbac167d7aa4938f2c26af180b3b5e269c32e82dd7",
+  "fingerprintInput": "inferred|keywords|Understanding @unrdf/cli|0.4",
+  "hash": "c626079e69af832736a38b4a6c48a113592ad7ba9ffd6d80c1192670b87d6731",
   "sources": [
-    "docs",
     "inferred",
-    "keywords",
-    "readme"
+    "keywords"
   ]
 }
 ```

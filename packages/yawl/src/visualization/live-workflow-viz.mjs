@@ -13,6 +13,7 @@ import { z } from 'zod';
 import * as d3 from 'd3';
 import * as Plot from '@observablehq/plot';
 import { YAWL_EVENT_TYPES } from '../events/yawl-events.mjs';
+import { WorkflowError } from '../../errors.mjs';
 
 // =============================================================================
 // Configuration Schemas

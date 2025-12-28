@@ -2,7 +2,7 @@
 title: "@unrdf/federation Reference"
 type: "reference"
 packageName: "@unrdf/federation"
-version: "5.0.1"
+version: "6.0.0"
 generatedAt: "2000-01-01T00:00:00.000Z"
 confidenceScore: 1
 proof: "848927e346bc06d149d8b8263971fe11c47260367adea54fcb11c1faa8315858"

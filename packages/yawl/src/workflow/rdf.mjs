@@ -11,6 +11,7 @@
  *
  * @example
  * import { createStore } from '@unrdf/oxigraph';
+import { WorkflowError } from '../../errors.mjs';
  * import { Workflow } from '@unrdf/yawl/workflow';
  * import { workflowToRDF, workflowFromRDF } from '@unrdf/yawl/workflow/rdf';
  *

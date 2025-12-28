@@ -12,7 +12,7 @@ Generated documentation using the Diátaxis framework.
 ## Quick Stats
 
 - **Tutorials**: 1
-- **How-To Guides**: 2
+- **How-To Guides**: 3
 - **Reference**: Available
 - **Explanation**: Available
 
@@ -24,6 +24,7 @@ Generated documentation using the Diátaxis framework.
 
 ### How-To Guides
 
+- [Handle Errors](how-to/howto-howto-handle-errors.md)
 - [Integrate with rdf](how-to/howto-howto-integrate-with-rdf.md)
 - [Use the CLI](how-to/howto-howto-use-the-cli.md)
 

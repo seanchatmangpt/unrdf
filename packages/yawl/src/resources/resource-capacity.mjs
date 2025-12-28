@@ -165,7 +165,8 @@ export function getCapacityStatus(store, resourceId, dataFactory) {
 
   // Calculate available and utilization
   const available = maxCapacity === -1 ? -1 : Math.max(0, maxCapacity - currentAllocations);
-  const utilizationPercent = maxCapacity === -1 ? 0 : Math.round((currentAllocations / maxCapacity) * 100);
+  // Fix: Handle capacity=0 to avoid NaN (0/0 = NaN)
+  const utilizationPercent = maxCapacity === -1 ? 0 : maxCapacity === 0 ? 100 : Math.round((currentAllocations / maxCapacity) * 100);
 
   return CapacityStatusSchema.parse({
     current: currentAllocations,

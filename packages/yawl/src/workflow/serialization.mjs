@@ -11,6 +11,7 @@
  *
  * @example
  * import { workflowToJSON } from '@unrdf/yawl/workflow/serialization';
+import { WorkflowError } from '../../errors.mjs';
  *
  * const json = workflowToJSON(workflow);
  */

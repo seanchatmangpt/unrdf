@@ -15,6 +15,7 @@ import {
   createReceipt,
 } from './workflow-creation.mjs';
 import { WorkItemSchema } from './workflow-execution.mjs';
+import { WorkflowError } from '../../errors.mjs';
 
 // ============================================================================
 // Core Cancellation Functions

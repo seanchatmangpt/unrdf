@@ -14,6 +14,7 @@ import { graphql } from 'graphql';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { YAWL_GRAPHQL_SCHEMA } from './graphql-schema.mjs';
 import { createResolvers } from './graphql-resolvers.mjs';
+import { YAWLError } from '../../errors.mjs';
 
 // =============================================================================
 // Configuration Schema

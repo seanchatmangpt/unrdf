@@ -13,6 +13,7 @@ import { blake3 } from 'hash-wasm';
 import { now } from '@unrdf/kgc-4d';
 import { TaskStatus } from './task-core.mjs';
 import { validateTransition, computeStateHash } from './task-validation.mjs';
+import { TaskExecutionError, ReceiptError } from './errors.mjs';
 
 // =============================================================================
 // Receipt Generation
@@ -28,46 +29,53 @@ import { validateTransition, computeStateHash } from './task-validation.mjs';
  * @returns {Promise<Object>} Receipt object
  */
 export async function generateReceipt(taskInstance, action, beforeStatus, beforeHash, justification = {}) {
-  const afterHash = await computeStateHash(taskInstance);
+  try {
+    const afterHash = await computeStateHash(taskInstance);
 
-  const receipt = {
-    id: `receipt-${taskInstance.id}-${action}-${Date.now()}`,
-    taskInstanceId: taskInstance.id,
-    caseId: taskInstance.caseId,
-    action,
-    timestamp: now(),
-    beforeStatus,
-    afterStatus: taskInstance.status,
-    beforeHash,
-    afterHash,
-    previousReceiptHash: taskInstance._lastReceiptHash,
-    justification: {
-      hookId: justification.hookId,
-      reason: justification.reason ?? `Transition ${action} executed`,
-      validated: justification.validated ?? true,
-    },
-    actor: justification.actor,
-    inputData: action === 'start' ? taskInstance.inputData : undefined,
-    outputData: action === 'complete' ? taskInstance.outputData : undefined,
-  };
+    const receipt = {
+      id: `receipt-${taskInstance.id}-${action}-${Date.now()}`,
+      taskInstanceId: taskInstance.id,
+      caseId: taskInstance.caseId,
+      action,
+      timestamp: now(),
+      beforeStatus,
+      afterStatus: taskInstance.status,
+      beforeHash,
+      afterHash,
+      previousReceiptHash: taskInstance._lastReceiptHash,
+      justification: {
+        hookId: justification.hookId,
+        reason: justification.reason ?? `Transition ${action} executed`,
+        validated: justification.validated ?? true,
+      },
+      actor: justification.actor,
+      inputData: action === 'start' ? taskInstance.inputData : undefined,
+      outputData: action === 'complete' ? taskInstance.outputData : undefined,
+    };
 
-  // Compute receipt hash for chaining
-  const receiptHash = await blake3(JSON.stringify({
-    id: receipt.id,
-    taskInstanceId: receipt.taskInstanceId,
-    caseId: receipt.caseId,
-    action: receipt.action,
-    timestamp: receipt.timestamp.toString(),
-    beforeHash: receipt.beforeHash,
-    afterHash: receipt.afterHash,
-    previousReceiptHash: receipt.previousReceiptHash,
-  }));
+    // Compute receipt hash for chaining
+    const receiptHash = await blake3(JSON.stringify({
+      id: receipt.id,
+      taskInstanceId: receipt.taskInstanceId,
+      caseId: receipt.caseId,
+      action: receipt.action,
+      timestamp: receipt.timestamp.toString(),
+      beforeHash: receipt.beforeHash,
+      afterHash: receipt.afterHash,
+      previousReceiptHash: receipt.previousReceiptHash,
+    }));
 
-  receipt.hash = receiptHash;
-  taskInstance._lastReceiptHash = receiptHash;
-  taskInstance.receipts.push(receipt);
+    receipt.hash = receiptHash;
+    taskInstance._lastReceiptHash = receiptHash;
+    taskInstance.receipts.push(receipt);
 
-  return receipt;
+    return receipt;
+  } catch (err) {
+    throw new ReceiptError('Failed to generate receipt', {
+      cause: err,
+      context: { taskInstanceId: taskInstance?.id, action },
+    });
+  }
 }
 
 // =============================================================================
@@ -82,36 +90,50 @@ export async function generateReceipt(taskInstance, action, beforeStatus, before
  * @returns {Promise<{task: import('./task-core.mjs').TaskInstance, receipt: Object}>}
  */
 export async function enableTask(taskInstance, options = {}) {
-  const validation = validateTransition(taskInstance.status, TaskStatus.ENABLED);
-  if (!validation.valid) {
-    throw new Error(`Cannot enable task ${taskInstance.id}: ${validation.reason}`);
+  try {
+    const validation = validateTransition(taskInstance.status, TaskStatus.ENABLED);
+    if (!validation.valid) {
+      throw new TaskExecutionError(`Cannot enable task ${taskInstance.id}: ${validation.reason}`, {
+        context: { taskId: taskInstance.id, currentStatus: taskInstance.status },
+      });
+    }
+
+    // Validate pre-conditions from task definition
+    const preCheck = await taskInstance.taskDefinition.validatePreCondition({
+      taskInstance,
+      inputData: taskInstance.inputData,
+    });
+    if (!preCheck.valid) {
+      throw new TaskExecutionError(`Cannot enable task ${taskInstance.id}: ${preCheck.reason}`, {
+        context: { taskId: taskInstance.id, preCheckReason: preCheck.reason },
+      });
+    }
+
+    const beforeStatus = taskInstance.status;
+    const beforeHash = await computeStateHash(taskInstance);
+
+    taskInstance.status = TaskStatus.ENABLED;
+    taskInstance.enabledAt = now();
+    taskInstance.statusHistory.set(`enabled:${taskInstance.enabledAt}`, {
+      status: TaskStatus.ENABLED,
+      timestamp: taskInstance.enabledAt,
+    });
+
+    const receipt = await generateReceipt(taskInstance, 'enable', beforeStatus, beforeHash, {
+      ...options.justification,
+      reason: options.justification?.reason ?? 'Task enabled - pre-conditions satisfied',
+    });
+
+    return { task: taskInstance, receipt };
+  } catch (err) {
+    if (err instanceof TaskExecutionError || err instanceof ReceiptError) {
+      throw err;
+    }
+    throw new TaskExecutionError('Failed to enable task', {
+      cause: err,
+      context: { taskId: taskInstance?.id },
+    });
   }
-
-  // Validate pre-conditions from task definition
-  const preCheck = await taskInstance.taskDefinition.validatePreCondition({
-    taskInstance,
-    inputData: taskInstance.inputData,
-  });
-  if (!preCheck.valid) {
-    throw new Error(`Cannot enable task ${taskInstance.id}: ${preCheck.reason}`);
-  }
-
-  const beforeStatus = taskInstance.status;
-  const beforeHash = await computeStateHash(taskInstance);
-
-  taskInstance.status = TaskStatus.ENABLED;
-  taskInstance.enabledAt = now();
-  taskInstance.statusHistory.set(`enabled:${taskInstance.enabledAt}`, {
-    status: TaskStatus.ENABLED,
-    timestamp: taskInstance.enabledAt,
-  });
-
-  const receipt = await generateReceipt(taskInstance, 'enable', beforeStatus, beforeHash, {
-    ...options.justification,
-    reason: options.justification?.reason ?? 'Task enabled - pre-conditions satisfied',
-  });
-
-  return { task: taskInstance, receipt };
 }
 
 /**
@@ -121,26 +143,38 @@ export async function enableTask(taskInstance, options = {}) {
  * @returns {Promise<{task: import('./task-core.mjs').TaskInstance, receipt: Object}>}
  */
 export async function disableTask(taskInstance, options = {}) {
-  const validation = validateTransition(taskInstance.status, TaskStatus.DISABLED);
-  if (!validation.valid) {
-    throw new Error(`Cannot disable task ${taskInstance.id}: ${validation.reason}`);
+  try {
+    const validation = validateTransition(taskInstance.status, TaskStatus.DISABLED);
+    if (!validation.valid) {
+      throw new TaskExecutionError(`Cannot disable task ${taskInstance.id}: ${validation.reason}`, {
+        context: { taskId: taskInstance.id, currentStatus: taskInstance.status },
+      });
+    }
+
+    const beforeStatus = taskInstance.status;
+    const beforeHash = await computeStateHash(taskInstance);
+
+    taskInstance.status = TaskStatus.DISABLED;
+    taskInstance.statusHistory.set(`disabled:${now()}`, {
+      status: TaskStatus.DISABLED,
+      timestamp: now(),
+    });
+
+    const receipt = await generateReceipt(taskInstance, 'disable', beforeStatus, beforeHash, {
+      ...options.justification,
+      reason: options.justification?.reason ?? 'Task disabled',
+    });
+
+    return { task: taskInstance, receipt };
+  } catch (err) {
+    if (err instanceof TaskExecutionError || err instanceof ReceiptError) {
+      throw err;
+    }
+    throw new TaskExecutionError('Failed to disable task', {
+      cause: err,
+      context: { taskId: taskInstance?.id },
+    });
   }
-
-  const beforeStatus = taskInstance.status;
-  const beforeHash = await computeStateHash(taskInstance);
-
-  taskInstance.status = TaskStatus.DISABLED;
-  taskInstance.statusHistory.set(`disabled:${now()}`, {
-    status: TaskStatus.DISABLED,
-    timestamp: now(),
-  });
-
-  const receipt = await generateReceipt(taskInstance, 'disable', beforeStatus, beforeHash, {
-    ...options.justification,
-    reason: options.justification?.reason ?? 'Task disabled',
-  });
-
-  return { task: taskInstance, receipt };
 }
 
 /**
@@ -151,32 +185,44 @@ export async function disableTask(taskInstance, options = {}) {
  * @returns {Promise<{task: import('./task-core.mjs').TaskInstance, receipt: Object}>}
  */
 export async function startTask(taskInstance, resourceId, options = {}) {
-  const validation = validateTransition(taskInstance.status, TaskStatus.ACTIVE);
-  if (!validation.valid) {
-    throw new Error(`Cannot start task ${taskInstance.id}: ${validation.reason}`);
+  try {
+    const validation = validateTransition(taskInstance.status, TaskStatus.ACTIVE);
+    if (!validation.valid) {
+      throw new TaskExecutionError(`Cannot start task ${taskInstance.id}: ${validation.reason}`, {
+        context: { taskId: taskInstance.id, currentStatus: taskInstance.status },
+      });
+    }
+
+    const beforeStatus = taskInstance.status;
+    const beforeHash = await computeStateHash(taskInstance);
+
+    taskInstance.status = TaskStatus.ACTIVE;
+    taskInstance.startedAt = now();
+    if (resourceId) {
+      taskInstance.assignedResource = resourceId;
+    }
+    taskInstance.statusHistory.set(`active:${taskInstance.startedAt}`, {
+      status: TaskStatus.ACTIVE,
+      timestamp: taskInstance.startedAt,
+      resource: resourceId,
+    });
+
+    const receipt = await generateReceipt(taskInstance, 'start', beforeStatus, beforeHash, {
+      ...options.justification,
+      reason: options.justification?.reason ?? `Task started by ${resourceId ?? 'system'}`,
+      actor: resourceId,
+    });
+
+    return { task: taskInstance, receipt };
+  } catch (err) {
+    if (err instanceof TaskExecutionError || err instanceof ReceiptError) {
+      throw err;
+    }
+    throw new TaskExecutionError('Failed to start task', {
+      cause: err,
+      context: { taskId: taskInstance?.id, resourceId },
+    });
   }
-
-  const beforeStatus = taskInstance.status;
-  const beforeHash = await computeStateHash(taskInstance);
-
-  taskInstance.status = TaskStatus.ACTIVE;
-  taskInstance.startedAt = now();
-  if (resourceId) {
-    taskInstance.assignedResource = resourceId;
-  }
-  taskInstance.statusHistory.set(`active:${taskInstance.startedAt}`, {
-    status: TaskStatus.ACTIVE,
-    timestamp: taskInstance.startedAt,
-    resource: resourceId,
-  });
-
-  const receipt = await generateReceipt(taskInstance, 'start', beforeStatus, beforeHash, {
-    ...options.justification,
-    reason: options.justification?.reason ?? `Task started by ${resourceId ?? 'system'}`,
-    actor: resourceId,
-  });
-
-  return { task: taskInstance, receipt };
 }
 
 /**
@@ -187,39 +233,53 @@ export async function startTask(taskInstance, resourceId, options = {}) {
  * @returns {Promise<{task: import('./task-core.mjs').TaskInstance, receipt: Object}>}
  */
 export async function completeTask(taskInstance, outputData = {}, options = {}) {
-  const validation = validateTransition(taskInstance.status, TaskStatus.COMPLETED);
-  if (!validation.valid) {
-    throw new Error(`Cannot complete task ${taskInstance.id}: ${validation.reason}`);
+  try {
+    const validation = validateTransition(taskInstance.status, TaskStatus.COMPLETED);
+    if (!validation.valid) {
+      throw new TaskExecutionError(`Cannot complete task ${taskInstance.id}: ${validation.reason}`, {
+        context: { taskId: taskInstance.id, currentStatus: taskInstance.status },
+      });
+    }
+
+    // Validate post-conditions from task definition
+    const postCheck = await taskInstance.taskDefinition.validatePostCondition({
+      taskInstance,
+      inputData: taskInstance.inputData,
+      outputData,
+    });
+    if (!postCheck.valid) {
+      throw new TaskExecutionError(`Cannot complete task ${taskInstance.id}: ${postCheck.reason}`, {
+        context: { taskId: taskInstance.id, postCheckReason: postCheck.reason },
+      });
+    }
+
+    const beforeStatus = taskInstance.status;
+    const beforeHash = await computeStateHash(taskInstance);
+
+    taskInstance.status = TaskStatus.COMPLETED;
+    taskInstance.completedAt = now();
+    taskInstance.outputData = outputData;
+    taskInstance.statusHistory.set(`completed:${taskInstance.completedAt}`, {
+      status: TaskStatus.COMPLETED,
+      timestamp: taskInstance.completedAt,
+      outputData,
+    });
+
+    const receipt = await generateReceipt(taskInstance, 'complete', beforeStatus, beforeHash, {
+      ...options.justification,
+      reason: options.justification?.reason ?? 'Task completed - post-conditions satisfied',
+    });
+
+    return { task: taskInstance, receipt };
+  } catch (err) {
+    if (err instanceof TaskExecutionError || err instanceof ReceiptError) {
+      throw err;
+    }
+    throw new TaskExecutionError('Failed to complete task', {
+      cause: err,
+      context: { taskId: taskInstance?.id },
+    });
   }
-
-  // Validate post-conditions from task definition
-  const postCheck = await taskInstance.taskDefinition.validatePostCondition({
-    taskInstance,
-    inputData: taskInstance.inputData,
-    outputData,
-  });
-  if (!postCheck.valid) {
-    throw new Error(`Cannot complete task ${taskInstance.id}: ${postCheck.reason}`);
-  }
-
-  const beforeStatus = taskInstance.status;
-  const beforeHash = await computeStateHash(taskInstance);
-
-  taskInstance.status = TaskStatus.COMPLETED;
-  taskInstance.completedAt = now();
-  taskInstance.outputData = outputData;
-  taskInstance.statusHistory.set(`completed:${taskInstance.completedAt}`, {
-    status: TaskStatus.COMPLETED,
-    timestamp: taskInstance.completedAt,
-    outputData,
-  });
-
-  const receipt = await generateReceipt(taskInstance, 'complete', beforeStatus, beforeHash, {
-    ...options.justification,
-    reason: options.justification?.reason ?? 'Task completed - post-conditions satisfied',
-  });
-
-  return { task: taskInstance, receipt };
 }
 
 /**
@@ -230,29 +290,41 @@ export async function completeTask(taskInstance, outputData = {}, options = {}) 
  * @returns {Promise<{task: import('./task-core.mjs').TaskInstance, receipt: Object}>}
  */
 export async function cancelTask(taskInstance, reason, options = {}) {
-  const validation = validateTransition(taskInstance.status, TaskStatus.CANCELLED);
-  if (!validation.valid) {
-    throw new Error(`Cannot cancel task ${taskInstance.id}: ${validation.reason}`);
+  try {
+    const validation = validateTransition(taskInstance.status, TaskStatus.CANCELLED);
+    if (!validation.valid) {
+      throw new TaskExecutionError(`Cannot cancel task ${taskInstance.id}: ${validation.reason}`, {
+        context: { taskId: taskInstance.id, currentStatus: taskInstance.status },
+      });
+    }
+
+    const beforeStatus = taskInstance.status;
+    const beforeHash = await computeStateHash(taskInstance);
+
+    taskInstance.status = TaskStatus.CANCELLED;
+    taskInstance.completedAt = now();
+    taskInstance.outputData = { cancelled: true, reason };
+    taskInstance.statusHistory.set(`cancelled:${taskInstance.completedAt}`, {
+      status: TaskStatus.CANCELLED,
+      timestamp: taskInstance.completedAt,
+      reason,
+    });
+
+    const receipt = await generateReceipt(taskInstance, 'cancel', beforeStatus, beforeHash, {
+      ...options.justification,
+      reason: options.justification?.reason ?? `Task cancelled: ${reason ?? 'no reason provided'}`,
+    });
+
+    return { task: taskInstance, receipt };
+  } catch (err) {
+    if (err instanceof TaskExecutionError || err instanceof ReceiptError) {
+      throw err;
+    }
+    throw new TaskExecutionError('Failed to cancel task', {
+      cause: err,
+      context: { taskId: taskInstance?.id, reason },
+    });
   }
-
-  const beforeStatus = taskInstance.status;
-  const beforeHash = await computeStateHash(taskInstance);
-
-  taskInstance.status = TaskStatus.CANCELLED;
-  taskInstance.completedAt = now();
-  taskInstance.outputData = { cancelled: true, reason };
-  taskInstance.statusHistory.set(`cancelled:${taskInstance.completedAt}`, {
-    status: TaskStatus.CANCELLED,
-    timestamp: taskInstance.completedAt,
-    reason,
-  });
-
-  const receipt = await generateReceipt(taskInstance, 'cancel', beforeStatus, beforeHash, {
-    ...options.justification,
-    reason: options.justification?.reason ?? `Task cancelled: ${reason ?? 'no reason provided'}`,
-  });
-
-  return { task: taskInstance, receipt };
 }
 
 /**
@@ -263,34 +335,46 @@ export async function cancelTask(taskInstance, reason, options = {}) {
  * @returns {Promise<{task: import('./task-core.mjs').TaskInstance, receipt: Object}>}
  */
 export async function failTask(taskInstance, error, options = {}) {
-  const validation = validateTransition(taskInstance.status, TaskStatus.FAILED);
-  if (!validation.valid) {
-    throw new Error(`Cannot fail task ${taskInstance.id}: ${validation.reason}`);
+  try {
+    const validation = validateTransition(taskInstance.status, TaskStatus.FAILED);
+    if (!validation.valid) {
+      throw new TaskExecutionError(`Cannot fail task ${taskInstance.id}: ${validation.reason}`, {
+        context: { taskId: taskInstance.id, currentStatus: taskInstance.status },
+      });
+    }
+
+    const beforeStatus = taskInstance.status;
+    const beforeHash = await computeStateHash(taskInstance);
+
+    const errorMessage = error instanceof Error ? error.message : error;
+    taskInstance.status = TaskStatus.FAILED;
+    taskInstance.completedAt = now();
+    taskInstance.outputData = {
+      failed: true,
+      error: errorMessage,
+      stack: error instanceof Error ? error.stack : undefined,
+    };
+    taskInstance.statusHistory.set(`failed:${taskInstance.completedAt}`, {
+      status: TaskStatus.FAILED,
+      timestamp: taskInstance.completedAt,
+      error: errorMessage,
+    });
+
+    const receipt = await generateReceipt(taskInstance, 'fail', beforeStatus, beforeHash, {
+      ...options.justification,
+      reason: options.justification?.reason ?? `Task failed: ${errorMessage}`,
+    });
+
+    return { task: taskInstance, receipt };
+  } catch (err) {
+    if (err instanceof TaskExecutionError || err instanceof ReceiptError) {
+      throw err;
+    }
+    throw new TaskExecutionError('Failed to fail task', {
+      cause: err,
+      context: { taskId: taskInstance?.id, error: error?.message || error },
+    });
   }
-
-  const beforeStatus = taskInstance.status;
-  const beforeHash = await computeStateHash(taskInstance);
-
-  const errorMessage = error instanceof Error ? error.message : error;
-  taskInstance.status = TaskStatus.FAILED;
-  taskInstance.completedAt = now();
-  taskInstance.outputData = {
-    failed: true,
-    error: errorMessage,
-    stack: error instanceof Error ? error.stack : undefined,
-  };
-  taskInstance.statusHistory.set(`failed:${taskInstance.completedAt}`, {
-    status: TaskStatus.FAILED,
-    timestamp: taskInstance.completedAt,
-    error: errorMessage,
-  });
-
-  const receipt = await generateReceipt(taskInstance, 'fail', beforeStatus, beforeHash, {
-    ...options.justification,
-    reason: options.justification?.reason ?? `Task failed: ${errorMessage}`,
-  });
-
-  return { task: taskInstance, receipt };
 }
 
 /**
@@ -300,32 +384,44 @@ export async function failTask(taskInstance, error, options = {}) {
  * @returns {Promise<{task: import('./task-core.mjs').TaskInstance, receipt: Object}>}
  */
 export async function timeoutTask(taskInstance, options = {}) {
-  const validation = validateTransition(taskInstance.status, TaskStatus.TIMEOUT);
-  if (!validation.valid) {
-    throw new Error(`Cannot timeout task ${taskInstance.id}: ${validation.reason}`);
+  try {
+    const validation = validateTransition(taskInstance.status, TaskStatus.TIMEOUT);
+    if (!validation.valid) {
+      throw new TaskExecutionError(`Cannot timeout task ${taskInstance.id}: ${validation.reason}`, {
+        context: { taskId: taskInstance.id, currentStatus: taskInstance.status },
+      });
+    }
+
+    const beforeStatus = taskInstance.status;
+    const beforeHash = await computeStateHash(taskInstance);
+
+    taskInstance.status = TaskStatus.TIMEOUT;
+    taskInstance.completedAt = now();
+    taskInstance.outputData = {
+      timedOut: true,
+      timeout: taskInstance.timeout,
+      duration: taskInstance.getDuration()?.toString(),
+    };
+    taskInstance.statusHistory.set(`timeout:${taskInstance.completedAt}`, {
+      status: TaskStatus.TIMEOUT,
+      timestamp: taskInstance.completedAt,
+    });
+
+    const receipt = await generateReceipt(taskInstance, 'timeout', beforeStatus, beforeHash, {
+      ...options.justification,
+      reason: options.justification?.reason ?? `Task timed out after ${taskInstance.timeout}ms`,
+    });
+
+    return { task: taskInstance, receipt };
+  } catch (err) {
+    if (err instanceof TaskExecutionError || err instanceof ReceiptError) {
+      throw err;
+    }
+    throw new TaskExecutionError('Failed to timeout task', {
+      cause: err,
+      context: { taskId: taskInstance?.id },
+    });
   }
-
-  const beforeStatus = taskInstance.status;
-  const beforeHash = await computeStateHash(taskInstance);
-
-  taskInstance.status = TaskStatus.TIMEOUT;
-  taskInstance.completedAt = now();
-  taskInstance.outputData = {
-    timedOut: true,
-    timeout: taskInstance.timeout,
-    duration: taskInstance.getDuration()?.toString(),
-  };
-  taskInstance.statusHistory.set(`timeout:${taskInstance.completedAt}`, {
-    status: TaskStatus.TIMEOUT,
-    timestamp: taskInstance.completedAt,
-  });
-
-  const receipt = await generateReceipt(taskInstance, 'timeout', beforeStatus, beforeHash, {
-    ...options.justification,
-    reason: options.justification?.reason ?? `Task timed out after ${taskInstance.timeout}ms`,
-  });
-
-  return { task: taskInstance, receipt };
 }
 
 // =============================================================================

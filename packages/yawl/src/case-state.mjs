@@ -5,6 +5,7 @@
 
 import { now, toISO } from '@unrdf/kgc-4d';
 import { YawlTask, TaskStatus } from './task.mjs';
+import { WorkflowError } from '../errors.mjs';
 
 // =============================================================================
 // Case State Methods

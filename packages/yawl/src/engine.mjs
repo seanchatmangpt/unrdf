@@ -18,6 +18,7 @@ import { YawlCase, CaseStatus } from './case.mjs';
 import { TaskStatus } from './task.mjs';
 import { buildReceipt } from './receipt.mjs';
 import { YAWL_EVENT_TYPES } from './events/yawl-events.mjs';
+import { EngineError } from '../errors.mjs';
 
 // Import core and mixins
 import {

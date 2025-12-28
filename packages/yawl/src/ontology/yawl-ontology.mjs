@@ -8,6 +8,7 @@
  * @example
  * // Import namespaces and terms
  * import { YAWL, YAWL_CASE, YAWL_TASK, YAWL_WORK, rdfType } from '@unrdf/yawl/ontology';
+import { YAWLError } from '../../errors.mjs';
  *
  * // Create a workflow case quad
  * const caseQuad = quad(

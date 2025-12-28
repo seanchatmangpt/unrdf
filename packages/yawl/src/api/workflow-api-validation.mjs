@@ -10,6 +10,7 @@
 
 import { z } from 'zod';
 import { blake3 } from 'hash-wasm';
+import { randomUUID } from 'crypto';
 
 // ============================================================================
 // YAWL Namespace Constants
@@ -222,10 +223,9 @@ export function generateId() {
   if (typeof crypto !== 'undefined' && crypto.randomUUID) {
     return crypto.randomUUID();
   }
-  // Node.js fallback
+  // Node.js ESM fallback
   try {
-    const cryptoModule = require('crypto');
-    return cryptoModule.randomUUID();
+    return randomUUID();
   } catch {
     return `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
   }

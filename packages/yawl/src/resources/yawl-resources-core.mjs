@@ -13,6 +13,7 @@
  */
 
 import { createStore } from '@unrdf/oxigraph';
+import { ResourceError, StorageError } from '../errors.mjs';
 import {
   storePolicyPackRDF,
   countActiveAllocations,
@@ -136,9 +137,16 @@ export class YawlResourceManager {
    * @throws {z.ZodError} If policy pack is invalid
    */
   registerPolicyPack(policyPack) {
-    const validated = PolicyPackSchema.parse(policyPack);
-    this.#policyPacks.set(validated.id, validated);
-    storePolicyPackRDF(this.#store, validated);
+    try {
+      const validated = PolicyPackSchema.parse(policyPack);
+      this.#policyPacks.set(validated.id, validated);
+      storePolicyPackRDF(this.#store, validated);
+    } catch (err) {
+      throw new ResourceError('Failed to register policy pack', {
+        cause: err,
+        context: { policyPackId: policyPack?.id },
+      });
+    }
   }
 
   /**
@@ -182,24 +190,44 @@ export class YawlResourceManager {
    * Allocate a resource to a work item
    */
   async allocateResource(workItem, resource, options = {}) {
-    const state = { allocationCounter: this.#allocationCounter };
-    const receipt = await performResourceAllocation(
-      this.#store,
-      workItem,
-      resource,
-      options,
-      Array.from(this.#policyPacks.values()).sort((a, b) => (b.priority || 0) - (a.priority || 0)),
-      state
-    );
-    this.#allocationCounter = state.allocationCounter;
-    return receipt;
+    try {
+      const state = { allocationCounter: this.#allocationCounter };
+      const receipt = await performResourceAllocation(
+        this.#store,
+        workItem,
+        resource,
+        options,
+        Array.from(this.#policyPacks.values()).sort((a, b) => (b.priority || 0) - (a.priority || 0)),
+        state
+      );
+      this.#allocationCounter = state.allocationCounter;
+      return receipt;
+    } catch (err) {
+      if (err instanceof ResourceError) {
+        throw err;
+      }
+      throw new ResourceError('Failed to allocate resource', {
+        cause: err,
+        context: { workItem: workItem?.id, resource: resource?.id },
+      });
+    }
   }
 
   /**
    * Deallocate a resource from a work item
    */
   deallocateResource(allocationId) {
-    return performResourceDeallocation(this.#store, allocationId);
+    try {
+      return performResourceDeallocation(this.#store, allocationId);
+    } catch (err) {
+      if (err instanceof ResourceError) {
+        throw err;
+      }
+      throw new ResourceError('Failed to deallocate resource', {
+        cause: err,
+        context: { allocationId },
+      });
+    }
   }
 
   /**
@@ -235,22 +263,36 @@ export class YawlResourceManager {
    * Get eligible resources for a task in a case
    */
   async getEligibleResources(taskId, caseId, options = {}) {
-    return findEligibleResourcesInPacks(
-      this.listPolicyPacks(),
-      taskId,
-      caseId,
-      options,
-      this.#checkCapacity.bind(this),
-      this.#checkEligibility.bind(this),
-      this.getAvailability.bind(this)
-    );
+    try {
+      return findEligibleResourcesInPacks(
+        this.listPolicyPacks(),
+        taskId,
+        caseId,
+        options,
+        this.#checkCapacity.bind(this),
+        this.#checkEligibility.bind(this),
+        this.getAvailability.bind(this)
+      );
+    } catch (err) {
+      throw new ResourceError('Failed to find eligible resources', {
+        cause: err,
+        context: { taskId, caseId },
+      });
+    }
   }
 
   /**
    * Query RDF store for matching resources
    */
   queryResources(resourceType) {
-    return queryResourcesByType(this.#store, resourceType);
+    try {
+      return queryResourcesByType(this.#store, resourceType);
+    } catch (err) {
+      throw new StorageError('Failed to query resources', {
+        cause: err,
+        context: { resourceType },
+      });
+    }
   }
 
   /* ----------------------------------------------------------------------- */
@@ -261,14 +303,28 @@ export class YawlResourceManager {
    * Get current capacity status for a resource
    */
   getCapacityStatus(resourceId) {
-    return getResourceCapacityStatus(this.#store, resourceId, this.#countActiveAllocations.bind(this));
+    try {
+      return getResourceCapacityStatus(this.#store, resourceId, this.#countActiveAllocations.bind(this));
+    } catch (err) {
+      throw new ResourceError('Failed to get capacity status', {
+        cause: err,
+        context: { resourceId },
+      });
+    }
   }
 
   /**
    * Get all active allocations
    */
   getActiveAllocations(filter = {}) {
-    return getActiveAllocationsFromStore(this.#store, filter);
+    try {
+      return getActiveAllocationsFromStore(this.#store, filter);
+    } catch (err) {
+      throw new StorageError('Failed to get active allocations', {
+        cause: err,
+        context: { filter },
+      });
+    }
   }
 
   /* ----------------------------------------------------------------------- */
@@ -368,7 +424,14 @@ export class YawlResourceManager {
    * @returns {*} Query results
    */
   query(sparqlQuery) {
-    return this.#store.query(sparqlQuery);
+    try {
+      return this.#store.query(sparqlQuery);
+    } catch (err) {
+      throw new StorageError('SPARQL query failed', {
+        cause: err,
+        context: { query: sparqlQuery },
+      });
+    }
   }
 }
 

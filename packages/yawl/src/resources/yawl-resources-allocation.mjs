@@ -8,6 +8,7 @@
  */
 
 import { dataFactory } from '@unrdf/oxigraph';
+import { ResourceError, StorageError } from '../errors.mjs';
 import {
   YAWL_NS,
   WorkItemSchema,
@@ -30,18 +31,25 @@ const { namedNode, literal, quad, defaultGraph } = dataFactory;
  * @returns {{ allowed: boolean, current: number, max: number }}
  */
 export function checkResourceCapacity(store, resource) {
-  if (resource.capacity === -1) {
-    return { allowed: true, current: 0, max: -1 };
+  try {
+    if (resource.capacity === -1) {
+      return { allowed: true, current: 0, max: -1 };
+    }
+
+    const resourceNode = namedNode(`${YAWL_NS}resource/${resource.id}`);
+    const activeAllocations = countActiveAllocations(store, resourceNode);
+
+    return {
+      allowed: activeAllocations < resource.capacity,
+      current: activeAllocations,
+      max: resource.capacity,
+    };
+  } catch (err) {
+    throw new ResourceError('Failed to check resource capacity', {
+      cause: err,
+      context: { resourceId: resource?.id },
+    });
   }
-
-  const resourceNode = namedNode(`${YAWL_NS}resource/${resource.id}`);
-  const activeAllocations = countActiveAllocations(store, resourceNode);
-
-  return {
-    allowed: activeAllocations < resource.capacity,
-    current: activeAllocations,
-    max: resource.capacity,
-  };
 }
 
 /**
@@ -76,54 +84,66 @@ export function findMatchingPolicyPackForResource(policyPacks, resource) {
  * @returns {Promise<any>} Allocation receipt
  */
 export async function performResourceAllocation(store, workItem, resource, options, policyPacks, state) {
-  const validatedWorkItem = WorkItemSchema.parse(workItem);
-  const validatedResource = ResourceSchema.parse(resource);
+  try {
+    const validatedWorkItem = WorkItemSchema.parse(workItem);
+    const validatedResource = ResourceSchema.parse(resource);
 
-  const capacityCheck = checkResourceCapacity(store, validatedResource);
-  if (!capacityCheck.allowed) {
-    throw new Error(
-      `Capacity exceeded for resource ${validatedResource.id}: ` +
-      `${capacityCheck.current}/${capacityCheck.max}`
-    );
+    const capacityCheck = checkResourceCapacity(store, validatedResource);
+    if (!capacityCheck.allowed) {
+      throw new ResourceError(
+        `Capacity exceeded for resource ${validatedResource.id}: ` +
+        `${capacityCheck.current}/${capacityCheck.max}`,
+        { context: { resourceId: validatedResource.id, capacityCheck } }
+      );
+    }
+
+    const eligibilityCheck = await checkResourceEligibility(store, validatedResource, validatedWorkItem);
+    if (!eligibilityCheck.eligible) {
+      throw new ResourceError(
+        `Resource ${validatedResource.id} not eligible: ${eligibilityCheck.reason}`,
+        { context: { resourceId: validatedResource.id, workItemId: validatedWorkItem.id } }
+      );
+    }
+
+    let policyPackId = options.policyPackId;
+    if (!policyPackId) {
+      const matchingPack = findMatchingPolicyPackForResource(policyPacks, validatedResource);
+      policyPackId = matchingPack?.id;
+    }
+
+    state.allocationCounter++;
+    const allocationId = `alloc-${Date.now()}-${state.allocationCounter}`;
+    createAllocationRDF(store, allocationId, validatedWorkItem, validatedResource, options.duration);
+
+    const now = new Date();
+    const receipt = {
+      id: allocationId,
+      workItemId: validatedWorkItem.id,
+      resourceId: validatedResource.id,
+      resourceType: validatedResource.type,
+      allocatedAt: now.toISOString(),
+      expiresAt: options.duration
+        ? new Date(now.getTime() + options.duration).toISOString()
+        : undefined,
+      proof: {
+        capacityCheck: true,
+        eligibilityCheck: true,
+        policyPackId,
+        sparqlResult: eligibilityCheck.sparqlResult,
+      },
+    };
+
+    AllocationReceiptSchema.parse(receipt);
+    return receipt;
+  } catch (err) {
+    if (err instanceof ResourceError) {
+      throw err;
+    }
+    throw new ResourceError('Resource allocation failed', {
+      cause: err,
+      context: { workItem: workItem?.id, resource: resource?.id },
+    });
   }
-
-  const eligibilityCheck = await checkResourceEligibility(store, validatedResource, validatedWorkItem);
-  if (!eligibilityCheck.eligible) {
-    throw new Error(
-      `Resource ${validatedResource.id} not eligible: ${eligibilityCheck.reason}`
-    );
-  }
-
-  let policyPackId = options.policyPackId;
-  if (!policyPackId) {
-    const matchingPack = findMatchingPolicyPackForResource(policyPacks, validatedResource);
-    policyPackId = matchingPack?.id;
-  }
-
-  state.allocationCounter++;
-  const allocationId = `alloc-${Date.now()}-${state.allocationCounter}`;
-  createAllocationRDF(store, allocationId, validatedWorkItem, validatedResource, options.duration);
-
-  const now = new Date();
-  const receipt = {
-    id: allocationId,
-    workItemId: validatedWorkItem.id,
-    resourceId: validatedResource.id,
-    resourceType: validatedResource.type,
-    allocatedAt: now.toISOString(),
-    expiresAt: options.duration
-      ? new Date(now.getTime() + options.duration).toISOString()
-      : undefined,
-    proof: {
-      capacityCheck: true,
-      eligibilityCheck: true,
-      policyPackId,
-      sparqlResult: eligibilityCheck.sparqlResult,
-    },
-  };
-
-  AllocationReceiptSchema.parse(receipt);
-  return receipt;
 }
 
 /**
@@ -134,21 +154,28 @@ export async function performResourceAllocation(store, workItem, resource, optio
  * @returns {boolean} Success status
  */
 export function performResourceDeallocation(store, allocationId) {
-  const allocationNode = namedNode(`${YAWL_NS}allocation/${allocationId}`);
+  try {
+    const allocationNode = namedNode(`${YAWL_NS}allocation/${allocationId}`);
 
-  const allocations = store.match(allocationNode, rdf('type'), yawl('Allocation'), null);
-  if (!Array.from(allocations).length) {
-    return false;
+    const allocations = store.match(allocationNode, rdf('type'), yawl('Allocation'), null);
+    if (!Array.from(allocations).length) {
+      return false;
+    }
+
+    store.add(quad(allocationNode, yawl('status'), literal('deallocated'), defaultGraph()));
+
+    store.add(quad(
+      allocationNode,
+      yawl('deallocatedAt'),
+      literal(new Date().toISOString(), namedNode(xsd('dateTime'))),
+      defaultGraph()
+    ));
+
+    return true;
+  } catch (err) {
+    throw new ResourceError('Resource deallocation failed', {
+      cause: err,
+      context: { allocationId },
+    });
   }
-
-  store.add(quad(allocationNode, yawl('status'), literal('deallocated'), defaultGraph()));
-
-  store.add(quad(
-    allocationNode,
-    yawl('deallocatedAt'),
-    literal(new Date().toISOString(), namedNode(xsd('dateTime'))),
-    defaultGraph()
-  ));
-
-  return true;
 }

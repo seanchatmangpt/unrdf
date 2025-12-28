@@ -5,6 +5,7 @@
 
 import { now } from '@unrdf/kgc-4d';
 import { TaskDefinition, TaskStatus } from './task-definitions.mjs';
+import { TaskExecutionError } from '../errors.mjs';
 
 /**
  * Represents a runtime task instance in a workflow case

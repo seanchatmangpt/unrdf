@@ -18,12 +18,13 @@
       "poka-yoke-kgc4d-invariants.md",
       "poka-yoke-measurement.md",
       "thesis-README.md",
-      "thesis-beyond-human-perception.tex"
+      "thesis-beyond-human-perception.tex",
+      "wasm-integration.md"
     ],
     "examplesFiles": [
       "production-messaging.mjs"
     ],
-    "fingerprint": "72213ccb7050a9086f2cc801c526179156b282ff2ff177153a50e3dcd035ddc0",
+    "fingerprint": "b7b9abb3fe3cb252300dca3c71745cc94625b74871d6e91470c6b73559ba3084",
     "readmeHeadings": [
       "Quick Start",
       "Features",

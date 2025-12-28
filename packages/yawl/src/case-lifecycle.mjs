@@ -8,6 +8,7 @@ import { now } from '@unrdf/kgc-4d';
 import { YawlTask } from './task.mjs';
 import { buildReceipt } from './receipt.mjs';
 import { CaseStatus } from './case-core.mjs';
+import { WorkflowError } from '../errors.mjs';
 
 // =============================================================================
 // Case Lifecycle Methods

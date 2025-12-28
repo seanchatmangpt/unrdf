@@ -9,6 +9,7 @@
 import { blake3 } from 'hash-wasm';
 import { z } from 'zod';
 import { now, toISO } from '@unrdf/kgc-4d';
+import { ReceiptError } from '../errors.mjs';
 
 // =============================================================================
 // Legacy YawlReceipt Class (Backward Compatibility)

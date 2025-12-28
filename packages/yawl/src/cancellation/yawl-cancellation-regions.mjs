@@ -9,6 +9,7 @@
 
 import { z } from 'zod';
 import { randomUUID } from 'crypto';
+import { CancellationError } from '../../errors.mjs';
 
 // ============================================================================
 // SCHEMAS

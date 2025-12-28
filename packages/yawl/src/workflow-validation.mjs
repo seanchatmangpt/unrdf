@@ -13,6 +13,7 @@
  */
 
 import { SPLIT_TYPE, JOIN_TYPE } from './patterns.mjs';
+import { WorkflowError } from '../errors.mjs';
 
 /**
  * Validate workflow structure and integrity

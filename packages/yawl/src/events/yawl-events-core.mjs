@@ -11,6 +11,7 @@
 import { z } from 'zod';
 import { dataFactory } from '@unrdf/oxigraph';
 import { GRAPHS, PREDICATES } from '@unrdf/kgc-4d';
+import { YAWLError } from '../../errors.mjs';
 
 // ============================================================================
 // YAWL Event Types

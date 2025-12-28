@@ -13,6 +13,7 @@
  *
  * @example
  * import { validateWorkflow } from '@unrdf/yawl/workflow/validation';
+import { WorkflowError } from '../../errors.mjs';
  *
  * const result = validateWorkflow(workflowInstance);
  * if (!result.valid) {

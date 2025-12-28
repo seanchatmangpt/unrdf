@@ -10,6 +10,7 @@
 
 import { z } from 'zod';
 import { SPLIT_TYPE, JOIN_TYPE, validateTaskDef, validateFlowDef } from './patterns.mjs';
+import { WorkflowError } from '../errors.mjs';
 
 // =============================================================================
 // Zod Schemas for Workflow Validation

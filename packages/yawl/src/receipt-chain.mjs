@@ -7,6 +7,7 @@
 import { blake3 } from 'hash-wasm';
 import { now, toISO, VectorClock } from '@unrdf/kgc-4d';
 import { BLAKE3_HEX_LENGTH, verifyReceipt, verifyChainLink } from './receipt-core.mjs';
+import { ReceiptError } from '../errors.mjs';
 
 // =============================================================================
 // ProofChain Class

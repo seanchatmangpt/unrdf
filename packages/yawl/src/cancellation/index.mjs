@@ -39,4 +39,5 @@ export { YawlCancellationManager, createCancellationManager } from './manager.mj
 
 // Re-export default manager factory as default
 import { createCancellationManager } from './manager.mjs';
+import { CancellationError } from '../../errors.mjs';
 export default createCancellationManager;

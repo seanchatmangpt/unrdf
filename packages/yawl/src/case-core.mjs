@@ -6,6 +6,7 @@
 import { z } from 'zod';
 import { now } from '@unrdf/kgc-4d';
 import { TaskStatus } from './task.mjs';
+import { WorkflowError } from '../errors.mjs';
 
 // =============================================================================
 // Case Status Enum

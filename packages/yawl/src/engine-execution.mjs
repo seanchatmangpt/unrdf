@@ -17,6 +17,7 @@ import { CaseStatus } from './case.mjs';
 import { buildReceipt } from './receipt.mjs';
 import { ENGINE_EVENTS } from './engine-constants.mjs';
 import { appendEvent } from './engine-core.mjs';
+import { EngineError } from '../errors.mjs';
 import {
   isCircuitOpen,
   recordCircuitFailure,

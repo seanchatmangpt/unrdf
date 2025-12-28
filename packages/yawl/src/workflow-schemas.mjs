@@ -8,6 +8,7 @@
  *
  * @example
  * import { TaskDefSchema, FlowDefSchema, WorkflowSpecSchema } from '@unrdf/yawl/workflow-schemas';
+import { WorkflowError } from '../errors.mjs';
  *
  * const taskDef = TaskDefSchema.parse({
  *   id: 'review',

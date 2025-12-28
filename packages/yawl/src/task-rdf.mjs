@@ -13,6 +13,7 @@ import { z } from 'zod';
 import { blake3 } from 'hash-wasm';
 import { now } from '@unrdf/kgc-4d';
 import { TaskStatus, TaskInstance, TaskDefinition } from './task-core.mjs';
+import { TaskExecutionError } from '../errors.mjs';
 
 // =============================================================================
 // Serialization Methods

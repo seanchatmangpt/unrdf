@@ -3,6 +3,7 @@
  */
 
 import { z } from 'zod';
+import { ResourceError } from '../errors.mjs';
 
 // =============================================================================
 // Resource Schemas

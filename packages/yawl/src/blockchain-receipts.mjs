@@ -14,6 +14,7 @@ import { getPublicKey, sign, verify } from '@noble/ed25519';
 import { blake3 } from 'hash-wasm';
 import { createReceipt, verifyReceipt, ReceiptSchema } from './receipt.mjs';
 import { now, toISO } from '@unrdf/kgc-4d';
+import { ReceiptError } from '../errors.mjs';
 
 // =============================================================================
 // Configuration Schemas

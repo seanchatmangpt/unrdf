@@ -2,7 +2,7 @@
 title: "Understanding @unrdf/core"
 type: "explanation"
 packageName: "@unrdf/core"
-version: "5.0.1"
+version: "6.0.0-alpha.1"
 generatedAt: "2000-01-01T00:00:00.000Z"
 confidenceScore: 1
 proof: "37aa44f2c4d8a22e40bb4663e1a075723fc75c2f6e81277fa943e30fb0affc59"

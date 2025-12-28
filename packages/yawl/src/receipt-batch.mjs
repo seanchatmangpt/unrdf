@@ -16,6 +16,7 @@ import { blake3 } from 'hash-wasm';
 import { z } from 'zod';
 import { now, toISO, VectorClock } from '@unrdf/kgc-4d';
 import { RECEIPT_EVENT_TYPES, ReceiptSchema } from './receipt.mjs';
+import { ReceiptError } from '../errors.mjs';
 
 // =============================================================================
 // Constants

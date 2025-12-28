@@ -9,6 +9,7 @@
  *
  * @example
  * import { createCase, Case, CaseStatus } from '@unrdf/yawl/case';
+import { WorkflowError } from '../errors.mjs';
  * import { YawlWorkflow } from '@unrdf/yawl/workflow';
  *
  * const workflow = new YawlWorkflow({ id: 'expense-approval' });

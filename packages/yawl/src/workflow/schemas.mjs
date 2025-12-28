@@ -12,6 +12,7 @@
  *
  * @example
  * import { WorkflowSpecSchema } from '@unrdf/yawl/workflow/schemas';
+import { WorkflowError } from '../../errors.mjs';
  *
  * const validated = WorkflowSpecSchema.parse({
  *   id: 'my-workflow',

@@ -10,6 +10,7 @@
  */
 
 import { dataFactory } from '@unrdf/oxigraph';
+import { WorkflowError } from '../errors.mjs';
 import {
   YAWL,
   YAWL_TASK,
@@ -135,17 +136,18 @@ const RDF_TO_TASK_KIND = {
  * const { specUri, quadCount } = workflowToRDF(workflow, store);
  */
 export function workflowToRDF(workflow, store, options = {}) {
-  const specNode = specUri(workflow.id);
-  const graphUri = options.graph || `${YAWL}specs/${workflow.id}`;
-  const graph = namedNode(graphUri);
+  try {
+    const specNode = specUri(workflow.id);
+    const graphUri = options.graph || `${YAWL}specs/${workflow.id}`;
+    const graph = namedNode(graphUri);
 
-  let quadCount = 0;
+    let quadCount = 0;
 
-  // Helper to add quad and count
-  const addQuad = (s, p, o, g = graph) => {
-    store.add(quad(s, p, o, g));
-    quadCount++;
-  };
+    // Helper to add quad and count
+    const addQuad = (s, p, o, g = graph) => {
+      store.add(quad(s, p, o, g));
+      quadCount++;
+    };
 
   // Add workflow spec type
   addQuad(specNode, rdfType, WorkflowSpec);
@@ -259,11 +261,17 @@ export function workflowToRDF(workflow, store, options = {}) {
     addQuad(specNode, namedNode(YAWL + 'endTask'), taskUri(endTaskId));
   }
 
-  return {
-    specUri: specNode.value,
-    graph: graphUri,
-    quadCount,
-  };
+    return {
+      specUri: specNode.value,
+      graph: graphUri,
+      quadCount,
+    };
+  } catch (err) {
+    throw new WorkflowError('Failed to serialize workflow to RDF', {
+      cause: err,
+      context: { workflowId: workflow?.id },
+    });
+  }
 }
 
 // =============================================================================
@@ -292,19 +300,20 @@ export function workflowToRDF(workflow, store, options = {}) {
  * }
  */
 export async function workflowFromRDF(store, workflowId, options = {}, WorkflowClass) {
-  const specNode = specUri(workflowId);
-  const graphUri = options.graph || `${YAWL}specs/${workflowId}`;
-  const graph = namedNode(graphUri);
+  try {
+    const specNode = specUri(workflowId);
+    const graphUri = options.graph || `${YAWL}specs/${workflowId}`;
+    const graph = namedNode(graphUri);
 
-  // Check if workflow exists
-  const typeQuads = store.match(specNode, rdfType, WorkflowSpec, graph);
-  if (typeQuads.length === 0) {
-    // Try without graph constraint
-    const allTypeQuads = store.match(specNode, rdfType, WorkflowSpec, null);
-    if (allTypeQuads.length === 0) {
-      return null;
+    // Check if workflow exists
+    const typeQuads = store.match(specNode, rdfType, WorkflowSpec, graph);
+    if (typeQuads.length === 0) {
+      // Try without graph constraint
+      const allTypeQuads = store.match(specNode, rdfType, WorkflowSpec, null);
+      if (allTypeQuads.length === 0) {
+        return null;
+      }
     }
-  }
 
   // Get workflow name
   const labelQuads = store.match(specNode, rdfsLabel, null, null);

@@ -14,6 +14,7 @@
  *
  * @example
  * import { addTask, addFlow } from '@unrdf/yawl/workflow/mutations';
+import { WorkflowError } from '../../errors.mjs';
  *
  * addTask(workflow, { id: 'new-task', name: 'New Task' });
  * addFlow(workflow, { from: 'task-a', to: 'new-task' });

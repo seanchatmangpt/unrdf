@@ -6,6 +6,7 @@
 
 import { now } from '@unrdf/kgc-4d';
 import { TaskStatus, TaskDataSchema } from './task-definitions.mjs';
+import { TaskExecutionError } from '../errors.mjs';
 
 /**
  * Legacy YawlTask class for backwards compatibility

@@ -8,6 +8,7 @@
  */
 
 import { z } from 'zod';
+import { WorkflowError } from '../../errors.mjs';
 import {
   YAWL_NS,
   YAWL_EVENT_TYPES,

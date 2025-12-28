@@ -15,6 +15,7 @@
  *
  * @example
  * import { Workflow, createWorkflow, workflowToRDF, workflowFromRDF } from '@unrdf/yawl/workflow';
+import { WorkflowError } from '../../errors.mjs';
  *
  * const workflow = createWorkflow({
  *   id: 'expense-approval',

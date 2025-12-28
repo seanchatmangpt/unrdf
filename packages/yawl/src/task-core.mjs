@@ -12,6 +12,7 @@
 
 import { z } from 'zod';
 import { now } from '@unrdf/kgc-4d';
+import { TaskExecutionError } from '../errors.mjs';
 
 // =============================================================================
 // Task Status Enum

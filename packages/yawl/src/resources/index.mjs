@@ -150,12 +150,14 @@ export class YawlResourceManager {
   #policyPacks;
   #resourcePools;
   #allocationCounter;
+  #allocationLocks; // Mutex for concurrent allocation protection
 
   constructor(options = {}) {
     this.#store = options.store || createStore();
     this.#policyPacks = new Map();
     this.#resourcePools = new Map();
     this.#allocationCounter = 0;
+    this.#allocationLocks = new Map(); // Track in-progress allocations per resource
   }
 
   /* ----------------------------------------------------------------------- */
@@ -245,16 +247,31 @@ export class YawlResourceManager {
     const validatedWorkItem = WorkItemSchema.parse(workItem);
     const validatedResource = ResourceSchema.parse(resource);
 
-    // Check capacity
-    const resourceNode = namedNode(`${YAWL_NS}resource/${validatedResource.id}`);
-    const capacityCheck = checkResourceCapacity(this.#store, resourceNode, validatedResource.capacity);
-
-    if (!capacityCheck.allowed) {
-      throw new Error(
-        `Capacity exceeded for resource ${validatedResource.id}: ` +
-        `${capacityCheck.current}/${capacityCheck.max}`
-      );
+    // Acquire lock for this resource to prevent race conditions
+    const resourceId = validatedResource.id;
+    if (!this.#allocationLocks.has(resourceId)) {
+      this.#allocationLocks.set(resourceId, Promise.resolve());
     }
+
+    // Wait for previous allocations to complete, then proceed atomically
+    const previousLock = this.#allocationLocks.get(resourceId);
+    let resolveLock;
+    const currentLock = new Promise(resolve => { resolveLock = resolve; });
+    this.#allocationLocks.set(resourceId, previousLock.then(() => currentLock));
+
+    try {
+      await previousLock;
+
+      // Check capacity (now under lock - atomic with allocation creation)
+      const resourceNode = namedNode(`${YAWL_NS}resource/${validatedResource.id}`);
+      const capacityCheck = checkResourceCapacity(this.#store, resourceNode, validatedResource.capacity);
+
+      if (!capacityCheck.allowed) {
+        throw new Error(
+          `Capacity exceeded for resource ${validatedResource.id}: ` +
+          `${capacityCheck.current}/${capacityCheck.max}`
+        );
+      }
 
     // Check eligibility
     const eligibilityCheck = await this.#checkEligibility(validatedResource, validatedWorkItem);
@@ -292,6 +309,10 @@ export class YawlResourceManager {
 
     AllocationReceiptSchema.parse(receipt);
     return receipt;
+    } finally {
+      // Release lock
+      resolveLock();
+    }
   }
 
   deallocateResource(allocationId) {

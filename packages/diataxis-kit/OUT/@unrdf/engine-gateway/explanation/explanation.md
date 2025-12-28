@@ -4,8 +4,8 @@ type: "explanation"
 packageName: "@unrdf/engine-gateway"
 version: "5.0.1"
 generatedAt: "2000-01-01T00:00:00.000Z"
-confidenceScore: 0.6
-proof: "89f80a30ee3725dcdb841cf796642d354da2399b4755b2ded2fd9435340434bd"
+confidenceScore: 0
+proof: "4e2cfc35dc47435a7b3557c1d1f15a5e8ff25d4bc4543f58f5cdb1f56bc21d0d"
 ---
 
 ## Concepts
@@ -14,7 +14,7 @@ proof: "89f80a30ee3725dcdb841cf796642d354da2399b4755b2ded2fd9435340434bd"
 
 ## Architecture
 
-![Version](https://img.shields.io/badge/version-5.0.0--beta.1-blue) ![Production Ready](https://img.shields.
+@unrdf/engine-gateway is a package in the UNRDF ecosystem
 
 ## Tradeoffs
 
@@ -26,18 +26,14 @@ proof: "89f80a30ee3725dcdb841cf796642d354da2399b4755b2ded2fd9435340434bd"
 
 This file was generated from the following evidence sources:
 
-- docs
 - inferred
-- readme
 
 ```json
 {
-  "fingerprintInput": "docs|inferred|readme|Understanding @unrdf/engine-gateway|0.6",
-  "hash": "89f80a30ee3725dcdb841cf796642d354da2399b4755b2ded2fd9435340434bd",
+  "fingerprintInput": "inferred|Understanding @unrdf/engine-gateway|0",
+  "hash": "4e2cfc35dc47435a7b3557c1d1f15a5e8ff25d4bc4543f58f5cdb1f56bc21d0d",
   "sources": [
-    "docs",
-    "inferred",
-    "readme"
+    "inferred"
   ]
 }
 ```
