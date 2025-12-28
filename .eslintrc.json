@@ -1,0 +1,167 @@
+{
+  "env": {
+    "es2022": true,
+    "node": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 2022,
+    "sourceType": "module"
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:jsdoc/recommended",
+    "prettier"
+  ],
+  "plugins": ["jsdoc"],
+  "rules": {
+    "complexity": ["error", 10],
+    "max-depth": ["error", 3],
+    "max-nested-callbacks": ["error", 3],
+    "max-params": ["error", 4],
+    "max-lines-per-function": [
+      "error",
+      {
+        "max": 50,
+        "skipBlankLines": true,
+        "skipComments": true
+      }
+    ],
+    "max-lines": [
+      "error",
+      {
+        "max": 500,
+        "skipBlankLines": true,
+        "skipComments": true
+      }
+    ],
+    "max-statements": ["error", 20],
+    "max-classes-per-file": ["error", 1],
+    "camelcase": [
+      "error",
+      {
+        "properties": "never"
+      }
+    ],
+    "id-length": [
+      "error",
+      {
+        "min": 2,
+        "exceptions": ["x", "y", "z", "i", "j", "k", "id", "tx", "_"]
+      }
+    ],
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": [
+          {
+            "group": ["n3"],
+            "message": "Use @unrdf/oxigraph instead. N3 imports only allowed in @unrdf/core/rdf/n3-justified-only.mjs. See CLAUDE.md section 3.2"
+          }
+        ]
+      }
+    ],
+    "no-console": [
+      "error",
+      {
+        "allow": ["warn", "error"]
+      }
+    ],
+    "no-debugger": "error",
+    "no-var": "error",
+    "prefer-const": "error",
+    "prefer-arrow-callback": "error",
+    "no-implicit-globals": "error",
+    "no-eval": "error",
+    "no-implied-eval": "error",
+    "no-new-func": "error",
+    "jsdoc/require-jsdoc": [
+      "error",
+      {
+        "require": {
+          "FunctionDeclaration": true,
+          "ClassDeclaration": true,
+          "MethodDefinition": true
+        },
+        "publicOnly": true,
+        "exemptEmptyFunctions": true,
+        "exemptEmptyConstructors": true,
+        "contexts": [
+          "ExportNamedDeclaration > FunctionDeclaration",
+          "ExportDefaultDeclaration > FunctionDeclaration"
+        ]
+      }
+    ],
+    "jsdoc/require-param": "error",
+    "jsdoc/require-param-type": "error",
+    "jsdoc/require-returns": "error",
+    "jsdoc/require-returns-type": "error",
+    "jsdoc/require-example": [
+      "warn",
+      {
+        "exemptedBy": ["private", "internal"],
+        "contexts": [
+          "ExportNamedDeclaration > FunctionDeclaration"
+        ]
+      }
+    ],
+    "jsdoc/check-types": "error",
+    "jsdoc/no-undefined-types": "error",
+    "jsdoc/require-description": [
+      "warn",
+      {
+        "contexts": [
+          "FunctionDeclaration",
+          "ClassDeclaration"
+        ]
+      }
+    ],
+    "jsdoc/require-file-overview": [
+      "error",
+      {
+        "tags": {
+          "file": {
+            "mustExist": true,
+            "preventDuplicates": true
+          },
+          "module": {
+            "mustExist": true,
+            "preventDuplicates": true
+          }
+        }
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": ["*.test.mjs", "*.spec.mjs"],
+      "rules": {
+        "max-lines-per-function": ["warn", { "max": 100 }],
+        "max-lines": ["warn", { "max": 800 }],
+        "jsdoc/require-jsdoc": "off",
+        "jsdoc/require-example": "off",
+        "no-console": "off"
+      }
+    },
+    {
+      "files": ["*.config.mjs", "vitest.config.mjs", "next.config.mjs"],
+      "rules": {
+        "max-lines": "off",
+        "jsdoc/require-jsdoc": "off",
+        "jsdoc/require-file-overview": "off"
+      }
+    },
+    {
+      "files": ["scripts/**/*.mjs", "benchmarks/**/*.mjs"],
+      "rules": {
+        "no-console": "off",
+        "jsdoc/require-example": "off"
+      }
+    },
+    {
+      "files": ["packages/cli/src/**/*.mjs"],
+      "rules": {
+        "no-console": "off"
+      }
+    }
+  ]
+}

@@ -1,5 +1,6 @@
+#!/usr/bin/env node
 /**
- * Proof 1: Receipt Tamper Detection
+ * Proof 1: Receipt Generation + Tamper Detection
  *
  * Demonstrates that KGC-4D freeze receipts detect ANY modification to universe data.
  *
@@ -11,10 +12,6 @@
  * 5. Attempt verification → SHOULD FAIL (hash mismatch)
  *
  * Expected: ✅ Receipt generated, ❌ Verification failed after tampering
- *
- * NOTE: This is a conceptual proof demonstrating the pattern.
- *       For full execution, run: pnpm install && node proofs/receipt-tamper-detection.mjs
- *       For conceptual understanding, see the annotated pseudocode below.
  */
 
 import crypto from 'crypto';
@@ -32,15 +29,13 @@ function computeHash(data) {
  */
 async function main() {
   console.log('\n=== Proof 1: Receipt Tamper Detection ===\n');
-  console.log('Conceptual Proof - Demonstrates hash-based tamper detection\n');
+  console.log('Demonstrates hash-based tamper detection\n');
 
   // Step 1: Create original universe state
   console.log('Step 1: Creating RDF data in universe...');
 
-  const originalNQuads = `
-<http://example.org/Alice> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://example.org/Person> <http://kgc.io/universe> .
-<http://example.org/Alice> <http://xmlns.com/foaf/0.1/name> "Alice" <http://kgc.io/universe> .
-`.trim();
+  const originalNQuads = `<http://example.org/Alice> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://example.org/Person> <http://kgc.io/universe> .
+<http://example.org/Alice> <http://xmlns.com/foaf/0.1/name> "Alice" <http://kgc.io/universe> .`;
 
   console.log('  ✓ Created 2 quads:');
   console.log('     - Alice rdf:type Person');
@@ -87,10 +82,8 @@ async function main() {
   console.log('Step 4: TAMPERING with universe data...');
   console.log('  ⚠️  Modifying Alice\'s name from "Alice" to "TAMPERED"');
 
-  const tamperedNQuads = `
-<http://example.org/Alice> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://example.org/Person> <http://kgc.io/universe> .
-<http://example.org/Alice> <http://xmlns.com/foaf/0.1/name> "TAMPERED" <http://kgc.io/universe> .
-`.trim();
+  const tamperedNQuads = `<http://example.org/Alice> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://example.org/Person> <http://kgc.io/universe> .
+<http://example.org/Alice> <http://xmlns.com/foaf/0.1/name> "TAMPERED" <http://kgc.io/universe> .`;
 
   console.log('  ✓ Universe modified (1 quad changed)\n');
 
