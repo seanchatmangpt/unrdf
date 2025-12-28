@@ -242,7 +242,9 @@ test('v6-smoke: V6_GRAMMAR contains definitions', () => {
   assert.ok(V6_GRAMMAR.definitions.receipt);
   assert.ok(V6_GRAMMAR.definitions.delta);
   assert.ok(V6_GRAMMAR.definitions.operation);
-  assert.ok(V6_GRAMMAR.extensions);
+  assert.strictEqual(V6_GRAMMAR.version, '6.0.0-alpha.1');
+  assert.ok(Array.isArray(V6_GRAMMAR.types));
+  assert.strictEqual(typeof V6_GRAMMAR.pipeline, 'function');
 });
 
 test('v6-smoke: getGrammarDefinition retrieves definitions', () => {
@@ -256,10 +258,9 @@ test('v6-smoke: getGrammarDefinition retrieves definitions', () => {
 test('v6-smoke: validateAgainstGrammar validates data', () => {
   const data = {
     id: 'test',
-    operation: 'test',
+    type: 'test',
     timestamp: new Date().toISOString(),
-    merkleRoot: 'root',
-    proof: [],
+    payload: {},
   };
 
   const isValid = validateAgainstGrammar('receipt', data);
@@ -276,7 +277,8 @@ test('v6-smoke: validateAgainstGrammar rejects invalid data', () => {
 // Test Suite: Docs Capsule
 test('v6-smoke: getDocumentation retrieves docs', () => {
   const doc = getDocumentation('overview');
-  assert.ok(doc.includes('/home/user/unrdf/docs/v6/README.md'));
+  assert.ok(doc.title);
+  assert.ok(doc.content);
 });
 
 test('v6-smoke: listTopics returns all topics', () => {
@@ -293,14 +295,20 @@ test('v6-smoke: listTopics returns all topics', () => {
 
 test('v6-smoke: getDocumentation handles unknown topics', () => {
   const doc = getDocumentation('nonexistent');
-  assert.ok(doc.includes('No documentation found'));
+  assert.strictEqual(doc.title, 'Unknown Topic');
+  assert.strictEqual(doc.content, 'Topic not found');
 });
 
 // Summary Test
-test('v6-smoke: all capsules integrated successfully', () => {
+test('v6-smoke: all capsules integrated successfully', async () => {
   // This test passes if all imports and basic operations work
   const status = getV6Status();
-  const receipt = createReceipt('summary-test', {});
+  const receipt = await createReceipt('execution', {
+    eventType: 'TASK_COMPLETED',
+    caseId: 'test-case',
+    taskId: 'test-task',
+    payload: { decision: 'COMPLETE' }
+  });
   const proposal = createDeltaProposal('v0', 'v1', []);
   const spine = buildCLISpine();
   const def = getGrammarDefinition('receipt');

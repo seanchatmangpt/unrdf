@@ -78,7 +78,8 @@ export function withReceipt(fn, context = {}) {
     const startTime = performance.now();
     const result = await fn(...args);
     const endTime = performance.now();
-    const duration = endTime - startTime;
+    // Use deterministic duration (0) when timestamp is injected for testing
+    const duration = getTimestamp ? 0 : endTime - startTime;
 
     // 3. Compute outputs hash (deterministic)
     const outputs_hash = await computeBlake3(deterministicSerialize(result));

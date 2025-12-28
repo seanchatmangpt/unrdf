@@ -107,6 +107,11 @@ export {
   createGraphQLAdapter,
 } from './adapters/graphql-adapter.mjs';
 
+export {
+  MemoryAdapter,
+  DeltaAdapter,
+} from './adapters/index.mjs';
+
 // Import adapter factories for internal use in createDeltaSystem
 import { createWorkflowAdapter } from './adapters/workflow-adapter.mjs';
 import { createResourceAdapter } from './adapters/resource-adapter.mjs';

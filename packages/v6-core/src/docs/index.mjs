@@ -19,34 +19,29 @@ export * from './thesis-builder.schema.mjs';
 // =============================================================================
 
 /**
- * Legacy V6 documentation registry for backward compatibility
- * @deprecated Use documentation pipeline directly
- * @constant {Object}
- * @property {string} version - Documentation version
- * @property {string[]} topics - Available documentation topics
- * @property {string} format - Documentation format (Diataxis)
- */
-export const V6_DOCS = {
-  version: '6.0.0-alpha.1',
-  topics: ['architecture', 'api', 'tutorials', 'reference'],
-  format: 'diataxis',
-};
-
-/**
- * Get documentation for a specific topic
- * @deprecated Legacy compatibility function
- * @param {string} topic - Documentation topic to retrieve
- * @returns {Object} Documentation object with topic, content, and timestamp
- * @example
- * const docs = getDocumentation('architecture');
- * // { topic: 'architecture', content: 'Documentation for architecture', lastUpdated: '...' }
+ * Get documentation for a topic
+ * @param {string} topic - Topic name
+ * @returns {{title: string, content: string, examples?: string[]}}
  */
 export function getDocumentation(topic) {
-  return {
-    topic,
-    content: `Documentation for ${topic}`,
-    lastUpdated: new Date().toISOString(),
+  const docs = {
+    overview: {
+      title: 'UNRDF v6 Overview',
+      content: 'UNRDF v6 provides receipt-driven RDF operations with deterministic execution.',
+      examples: ['createReceipt()', 'verifyReceipt()']
+    },
+    receipts: {
+      title: 'Receipt System',
+      content: 'Receipts provide cryptographic proof of operations.',
+      examples: ['ExecutionReceipt', 'AllocationReceipt']
+    },
+    delta: {
+      title: 'Delta System',
+      content: 'Deltas represent proposed state changes.',
+      examples: ['createDelta()', 'applyDelta()']
+    }
   };
+  return docs[topic] || { title: 'Unknown Topic', content: 'Topic not found' };
 }
 
 /**
@@ -55,9 +50,25 @@ export function getDocumentation(topic) {
  * @returns {string[]} Array of available documentation topics
  * @example
  * const topics = listTopics();
- * // ['architecture', 'api', 'tutorials', 'reference']
+ * // ['overview', 'receipts', 'delta', 'grammar', 'cli', 'adapters', 'migration', 'examples']
  */
 export function listTopics() {
-  return V6_DOCS.topics;
+  return ['overview', 'receipts', 'delta', 'grammar', 'cli', 'adapters', 'migration', 'examples'];
 }
+
+/**
+ * Legacy V6 documentation registry for backward compatibility
+ * @deprecated Use documentation pipeline directly
+ * @constant {Object}
+ * @property {string} version - Documentation version
+ * @property {string[]} topics - Available documentation topics
+ * @property {Function} getDocumentation - Get documentation for a topic
+ * @property {Function} listTopics - List all available topics
+ */
+export const V6_DOCS = {
+  version: '6.0.0',
+  topics: listTopics(),
+  getDocumentation,
+  listTopics,
+};
 

@@ -136,19 +136,22 @@ export async function createReceipt(type, event, previousReceipt = null) {
     throw new Error(`Invalid receipt type: ${type}. Must be one of: ${Object.values(RECEIPT_TYPES).join(', ')}`);
   }
 
-  // 1. Generate receipt ID and timestamp
+  // 1. Extract internal fields (not part of payload)
+  const { _deterministicId, _timestampProvider, ...eventData } = event;
+
+  // 2. Generate receipt ID and timestamp
   // Support deterministic ID for testing (via event._deterministicId)
-  const id = event._deterministicId || generateUUID();
-  const t_ns = event._timestampProvider ? event._timestampProvider() : now();
+  const id = _deterministicId || generateUUID();
+  const t_ns = _timestampProvider ? _timestampProvider() : now();
   const timestamp_iso = toISO(t_ns);
 
-  // 2. Build receipt payload (type-specific fields + base fields)
+  // 3. Build receipt payload (type-specific fields + base fields)
   const receiptData = {
     id,
     receiptType: type,
     t_ns,
     timestamp_iso,
-    ...event,
+    ...eventData,
     // Preserve optional fields
     attestation: event.attestation,
     vectorClock: event.vectorClock,
@@ -156,17 +159,17 @@ export async function createReceipt(type, event, previousReceipt = null) {
     kgcEventId: event.kgcEventId,
   };
 
-  // 3. Compute payload hash (exclude hash fields)
+  // 4. Compute payload hash (exclude hash fields)
   const payloadToHash = { ...receiptData };
   const payloadHash = await computeBlake3(payloadToHash);
 
-  // 4. Get previous receipt hash for chain
+  // 5. Get previous receipt hash for chain
   const previousHash = previousReceipt ? previousReceipt.receiptHash : null;
 
-  // 5. Compute chained receipt hash
+  // 6. Compute chained receipt hash
   const receiptHash = await computeChainHash(previousHash, payloadHash);
 
-  // 6. Build complete receipt
+  // 7. Build complete receipt
   const receipt = {
     ...receiptData,
     previousHash,
@@ -174,7 +177,7 @@ export async function createReceipt(type, event, previousReceipt = null) {
     receiptHash,
   };
 
-  // 7. Validate against appropriate schema
+  // 8. Validate against appropriate schema
   let schema;
   switch (type) {
     case RECEIPT_TYPES.EXECUTION:
