@@ -9,7 +9,7 @@
  */
 
 import { resolveMissingInputs, augmentVfsWithResolvedPackages } from './resolve.mjs';
-import { buildCtanUrls, extractPackageName, getPackageMetadata } from './ctan-map.mjs';
+import { buildCtanUrls, extractPackageName as _extractPackageName, getPackageMetadata } from './ctan-map.mjs';
 
 // ============================================================================
 // EXAMPLE 1: Production Usage (CTAN with retry)
@@ -136,7 +136,7 @@ async function compileIntegrationExample(
 
   // Step 3: Update lockfile (Agent 5's job)
   if (lockfile) {
-    for (const [vfsPath, content] of resolved.entries()) {
+    for (const [vfsPath, _content] of resolved.entries()) {
       const inputName = vfsPath.split('/').pop();
       // recordResolvedInput(lockfile, { inputName, hash, ... });
       console.log(`  → Lockfile updated: ${inputName}`);

@@ -17,7 +17,7 @@ import { executePassLoop, needsMultiplePass, getRecommendedPasses } from './pass
  */
 function createMockCompile(results) {
   let callCount = 0;
-  return async (pass) => {
+  return async (_pass) => {
     const result = results[callCount] || results[results.length - 1];
     callCount++;
     return result;
@@ -277,7 +277,7 @@ describe('Pass Loop - Maximum passes', () => {
 describe('Pass Loop - Missing input resolution', () => {
   it('should resolve missing inputs and retry', async () => {
     let compileCount = 0;
-    const compile = async (pass) => {
+    const compile = async (_pass) => {
       compileCount++;
       if (compileCount === 1) {
         return failureResult(['fancyhdr.sty']);
@@ -345,10 +345,10 @@ describe('Pass Loop - Missing input resolution', () => {
     const compile = createMockCompile([failureResult(['nonexistent.sty'])]);
 
     const vfs = new Map();
-    let resolveAttempts = 0;
+    let _resolveAttempts = 0;
 
     const onResolve = async () => {
-      resolveAttempts++;
+      _resolveAttempts++;
       throw new Error('Package not found');
     };
 
