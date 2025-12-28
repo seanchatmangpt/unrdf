@@ -79,7 +79,11 @@
     "analyze:bundle": "bash -c './scripts/debug-helpers.sh analyze:bundle \"$@\"' _",
     "trace:imports": "bash -c './scripts/debug-helpers.sh trace:imports \"$@\"' _",
     "check:memory": "./scripts/debug-helpers.sh check:memory",
-    "watch:logs": "bash -c './scripts/debug-helpers.sh watch:logs \"${@:-validation-output.log}\"' _"
+    "watch:logs": "bash -c './scripts/debug-helpers.sh watch:logs \"${@:-validation-output.log}\"' _",
+    "validate:readme": "node scripts/readme-validation/run-all.mjs",
+    "validate:readme:examples": "node scripts/readme-validation/extract-examples.mjs",
+    "validate:readme:links": "node scripts/readme-validation/check-links.mjs",
+    "validate:readme:api": "node scripts/readme-validation/validate-api-coverage.mjs"
   },
   "devDependencies": {
     "@opentelemetry/api": "^1.9.0",
