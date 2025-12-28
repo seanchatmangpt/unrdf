@@ -20,6 +20,14 @@ import {
   toISO,
   createReceipt,
 } from './workflow-api-validation.mjs';
+import {
+  tracer,
+  workflowsCreatedCounter,
+  casesCreatedCounter,
+  workflowCreationHistogram,
+  caseCreationHistogram,
+  activeCasesGauge,
+} from '../otel.mjs';
 
 // ============================================================================
 // Core API Functions
@@ -59,19 +67,31 @@ import {
  * });
  */
 export async function createWorkflow(spec, options = {}) {
-  // Validate options
-  const validOptions = WorkflowOptionsSchema.parse(options);
+  const span = tracer.startSpan('workflow.create');
+  const startTime = Date.now();
 
-  // Validate spec structure if requested
-  let validSpec;
-  if (validOptions?.validateSpec !== false) {
-    validSpec = WorkflowSpecSchema.parse(spec);
-  } else {
-    validSpec = spec;
-  }
+  try {
+    // Validate options
+    const validOptions = WorkflowOptionsSchema.parse(options);
 
-  const t_ns = now();
-  const workflowId = validSpec.id;
+    // Validate spec structure if requested
+    let validSpec;
+    if (validOptions?.validateSpec !== false) {
+      validSpec = WorkflowSpecSchema.parse(spec);
+    } else {
+      validSpec = spec;
+    }
+
+    const t_ns = now();
+    const workflowId = validSpec.id;
+
+    span.setAttributes({
+      'workflow.id': workflowId,
+      'workflow.name': validSpec.name || workflowId,
+      'workflow.taskCount': validSpec.tasks.length,
+      'workflow.controlFlowCount': validSpec.controlFlow?.length || 0,
+      'workflow.resourceCount': validSpec.resources?.length || 0,
+    });
 
   // Build task index for O(1) lookup
   const taskIndex = new Map();
@@ -119,45 +139,60 @@ export async function createWorkflow(spec, options = {}) {
     });
   }
 
-  // Return workflow object with methods
-  return {
-    id: workflowId,
-    name: validSpec.name || workflowId,
-    version: validSpec.version || '1.0.0',
-    spec: validSpec,
-    taskIndex,
-    controlFlowGraph,
-    initialTasks,
-    cancellationRegions,
-    createdAt: toISO(t_ns),
-    t_ns: t_ns.toString(),
-    receipt,
-    _store: validOptions?.store,
-    _gitBackbone: validOptions?.gitBackbone,
-    _hookRegistry: validOptions?.hookRegistry,
-    _policyPacks: validOptions?.policyPacks || [],
+    // Return workflow object with methods
+    const workflow = {
+      id: workflowId,
+      name: validSpec.name || workflowId,
+      version: validSpec.version || '1.0.0',
+      spec: validSpec,
+      taskIndex,
+      controlFlowGraph,
+      initialTasks,
+      cancellationRegions,
+      createdAt: toISO(t_ns),
+      t_ns: t_ns.toString(),
+      receipt,
+      _store: validOptions?.store,
+      _gitBackbone: validOptions?.gitBackbone,
+      _hookRegistry: validOptions?.hookRegistry,
+      _policyPacks: validOptions?.policyPacks || [],
 
-    getTask(taskId) {
-      return taskIndex.get(taskId) || null;
-    },
-    getTasks() {
-      return Array.from(taskIndex.values());
-    },
-    getDownstreamTasks(taskId) {
-      const edges = controlFlowGraph.outgoing.get(taskId) || [];
-      return edges.map((edge) => taskIndex.get(edge.to)).filter((task) => task !== undefined);
-    },
-    getUpstreamTasks(taskId) {
-      const edges = controlFlowGraph.incoming.get(taskId) || [];
-      return edges.map((edge) => taskIndex.get(edge.from)).filter((task) => task !== undefined);
-    },
-    isInitialTask(taskId) {
-      return initialTasks.includes(taskId);
-    },
-    getCancellationRegion(regionId) {
-      return cancellationRegions[regionId] || [];
-    },
-  };
+      getTask(taskId) {
+        return taskIndex.get(taskId) || null;
+      },
+      getTasks() {
+        return Array.from(taskIndex.values());
+      },
+      getDownstreamTasks(taskId) {
+        const edges = controlFlowGraph.outgoing.get(taskId) || [];
+        return edges.map((edge) => taskIndex.get(edge.to)).filter((task) => task !== undefined);
+      },
+      getUpstreamTasks(taskId) {
+        const edges = controlFlowGraph.incoming.get(taskId) || [];
+        return edges.map((edge) => taskIndex.get(edge.from)).filter((task) => task !== undefined);
+      },
+      isInitialTask(taskId) {
+        return initialTasks.includes(taskId);
+      },
+      getCancellationRegion(regionId) {
+        return cancellationRegions[regionId] || [];
+      },
+    };
+
+    // Record metrics
+    const duration = Date.now() - startTime;
+    workflowsCreatedCounter.add(1, { 'workflow.id': workflowId });
+    workflowCreationHistogram.record(duration, { 'workflow.id': workflowId });
+
+    span.setStatus({ code: 1 }); // OK
+    return workflow;
+  } catch (error) {
+    span.recordException(error);
+    span.setStatus({ code: 2, message: error.message }); // ERROR
+    throw error;
+  } finally {
+    span.end();
+  }
 }
 
 /**
@@ -183,11 +218,21 @@ export async function createWorkflow(spec, options = {}) {
  * });
  */
 export async function createCase(workflow, options = {}) {
-  // Validate options
-  const validOptions = CaseOptionsSchema.parse(options);
+  const span = tracer.startSpan('case.create');
+  const startTime = Date.now();
 
-  const t_ns = now();
-  const caseId = validOptions?.caseId || generateId();
+  try {
+    // Validate options
+    const validOptions = CaseOptionsSchema.parse(options);
+
+    const t_ns = now();
+    const caseId = validOptions?.caseId || generateId();
+
+    span.setAttributes({
+      'case.id': caseId,
+      'workflow.id': workflow.id,
+      'case.priority': validOptions?.priority || 50,
+    });
 
   // Initialize work items for all tasks
   const workItems = new Map();
@@ -245,42 +290,62 @@ export async function createCase(workflow, options = {}) {
     });
   }
 
-  // Return case object
-  return {
-    caseId,
-    workflowId: workflow.id,
-    status: 'active',
-    workItems,
-    variables: validOptions?.initialVariables || {},
-    priority: validOptions?.priority || 50,
-    deadline: validOptions?.deadline,
-    parent: validOptions?.parent,
-    createdAt: toISO(t_ns),
-    t_ns: t_ns.toString(),
-    receipt,
-    _workflow: workflow,
+    // Return case object
+    const caseObj = {
+      caseId,
+      workflowId: workflow.id,
+      status: 'active',
+      workItems,
+      variables: validOptions?.initialVariables || {},
+      priority: validOptions?.priority || 50,
+      deadline: validOptions?.deadline,
+      parent: validOptions?.parent,
+      createdAt: toISO(t_ns),
+      t_ns: t_ns.toString(),
+      receipt,
+      _workflow: workflow,
 
-    getWorkItem(taskId) {
-      return workItems.get(taskId) || null;
-    },
-    getWorkItems() {
-      return Array.from(workItems.values());
-    },
-    getWorkItemsByStatus(status) {
-      return Array.from(workItems.values()).filter((wi) => wi.status === status);
-    },
-    isComplete() {
-      return Array.from(workItems.values()).every(
-        (wi) => wi.status === WORK_ITEM_STATUS.COMPLETED || wi.status === WORK_ITEM_STATUS.CANCELLED
-      );
-    },
-    getEnabledWorkItems() {
-      return Array.from(workItems.values()).filter((wi) => wi.status === WORK_ITEM_STATUS.ENABLED);
-    },
-    getActiveWorkItems() {
-      return Array.from(workItems.values()).filter((wi) => wi.status === WORK_ITEM_STATUS.ACTIVE);
-    },
-  };
+      getWorkItem(taskId) {
+        return workItems.get(taskId) || null;
+      },
+      getWorkItems() {
+        return Array.from(workItems.values());
+      },
+      getWorkItemsByStatus(status) {
+        return Array.from(workItems.values()).filter((wi) => wi.status === status);
+      },
+      isComplete() {
+        return Array.from(workItems.values()).every(
+          (wi) => wi.status === WORK_ITEM_STATUS.COMPLETED || wi.status === WORK_ITEM_STATUS.CANCELLED
+        );
+      },
+      getEnabledWorkItems() {
+        return Array.from(workItems.values()).filter((wi) => wi.status === WORK_ITEM_STATUS.ENABLED);
+      },
+      getActiveWorkItems() {
+        return Array.from(workItems.values()).filter((wi) => wi.status === WORK_ITEM_STATUS.ACTIVE);
+      },
+    };
+
+    // Record metrics
+    const duration = Date.now() - startTime;
+    casesCreatedCounter.add(1, { 'case.id': caseId, 'workflow.id': workflow.id });
+    caseCreationHistogram.record(duration, { 'case.id': caseId });
+    activeCasesGauge.add(1, { 'workflow.id': workflow.id });
+
+    span.setAttributes({
+      'case.workItemCount': workItems.size,
+      'case.enabledTaskCount': enabledWorkItems.length,
+    });
+    span.setStatus({ code: 1 }); // OK
+    return caseObj;
+  } catch (error) {
+    span.recordException(error);
+    span.setStatus({ code: 2, message: error.message }); // ERROR
+    throw error;
+  } finally {
+    span.end();
+  }
 }
 
 // ============================================================================

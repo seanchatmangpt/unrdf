@@ -16,6 +16,7 @@ import {
   toISO,
   createReceipt,
 } from './workflow-creation.mjs';
+import { safeEvaluate } from './safe-expression-evaluator.mjs';
 
 // ============================================================================
 // Zod Schemas
@@ -441,18 +442,9 @@ export function evaluateCondition(condition, result, variables) {
     if (evalCondition === 'true') return true;
     if (evalCondition === 'false') return false;
 
-    // For safety, only evaluate if it matches safe patterns
-    const safePattern =
-      /^[\s\d\w"'.\-+*/%<>=!&|()[\],{}:]+$/;
-    if (!safePattern.test(evalCondition)) {
-      console.warn(`Unsafe condition pattern: ${condition}`);
-      return true; // Default to true for unsafe patterns
-    }
-
-    // Use Function constructor for sandboxed evaluation
-    // eslint-disable-next-line no-new-func
-    const evaluator = new Function('return ' + evalCondition);
-    return Boolean(evaluator());
+    // Use safe expression evaluator (no eval or new Function)
+    // Supports: ==, !=, >, <, >=, <=, &&, ||
+    return Boolean(safeEvaluate(evalCondition));
   } catch {
     // Default to true on evaluation error
     return true;

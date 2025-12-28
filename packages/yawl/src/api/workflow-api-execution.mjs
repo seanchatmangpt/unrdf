@@ -17,6 +17,13 @@ import {
   toISO,
   createReceipt,
 } from './workflow-api-validation.mjs';
+import {
+  tracer,
+  tasksCompletedCounter,
+  taskCompletionHistogram,
+} from '../otel.mjs';
+import { safeEvaluate } from './safe-expression-evaluator.mjs';
+import { WorkflowError } from '../../errors.mjs';
 
 // ============================================================================
 // Task Lifecycle Functions
@@ -113,18 +120,28 @@ export async function enableTask(workItem, options = {}) {
  * @returns {Promise<Object>} Receipt with work item
  */
 export async function startTask(workItem, options = {}) {
-  // Validate work item (creates a validated copy for checks)
-  const validWorkItem = WorkItemSchema.parse(workItem);
+  const span = tracer.startSpan('task.start');
+  const opStartTime = Date.now();
 
-  // Check current status
-  if (validWorkItem.status !== WORK_ITEM_STATUS.ENABLED) {
-    throw new Error(
-      `Cannot start work item ${validWorkItem.id}: status is ${validWorkItem.status}, expected ${WORK_ITEM_STATUS.ENABLED}`
-    );
-  }
+  try {
+    // Validate work item (creates a validated copy for checks)
+    const validWorkItem = WorkItemSchema.parse(workItem);
 
-  const t_ns = now();
-  const startTime = toISO(t_ns);
+    // Check current status
+    if (validWorkItem.status !== WORK_ITEM_STATUS.ENABLED) {
+      throw new Error(
+        `Cannot start work item ${validWorkItem.id}: status is ${validWorkItem.status}, expected ${WORK_ITEM_STATUS.ENABLED}`
+      );
+    }
+
+    span.setAttributes({
+      'workItem.id': validWorkItem.id,
+      'task.id': validWorkItem.taskId,
+      'case.id': validWorkItem.caseId,
+    });
+
+    const t_ns = now();
+    const startTime = toISO(t_ns);
 
   // Execute pre-execution hooks if registry provided
   let hookResults = [];
@@ -164,12 +181,20 @@ export async function startTask(workItem, options = {}) {
     eventReceipt = receipt;
   }
 
-  const receipt = await createReceipt(YAWL_EVENT_TYPES.TASK_STARTED, {
-    workItemId: workItem.id, taskId: workItem.taskId, caseId: workItem.caseId,
-    startTime, eventId: eventReceipt?.id
-  }, { hookResults });
+    const receipt = await createReceipt(YAWL_EVENT_TYPES.TASK_STARTED, {
+      workItemId: workItem.id, taskId: workItem.taskId, caseId: workItem.caseId,
+      startTime, eventId: eventReceipt?.id
+    }, { hookResults });
 
-  return { workItem, receipt };
+    span.setStatus({ code: 1 }); // OK
+    return { workItem, receipt };
+  } catch (error) {
+    span.recordException(error);
+    span.setStatus({ code: 2, message: error.message }); // ERROR
+    throw error;
+  } finally {
+    span.end();
+  }
 }
 
 /**
@@ -180,18 +205,28 @@ export async function startTask(workItem, options = {}) {
  * @returns {Promise<Object>} Receipt with downstream enabled tasks
  */
 export async function completeTask(workItem, result, options = {}) {
-  // Validate work item (creates a validated copy for checks)
-  const validWorkItem = WorkItemSchema.parse(workItem);
+  const span = tracer.startSpan('task.complete');
+  const startTime = Date.now();
 
-  // Check current status
-  if (validWorkItem.status !== WORK_ITEM_STATUS.ACTIVE) {
-    throw new Error(
-      `Cannot complete work item ${validWorkItem.id}: status is ${validWorkItem.status}, expected ${WORK_ITEM_STATUS.ACTIVE}`
-    );
-  }
+  try {
+    // Validate work item (creates a validated copy for checks)
+    const validWorkItem = WorkItemSchema.parse(workItem);
 
-  const t_ns = now();
-  const endTime = toISO(t_ns);
+    // Check current status
+    if (validWorkItem.status !== WORK_ITEM_STATUS.ACTIVE) {
+      throw new Error(
+        `Cannot complete work item ${validWorkItem.id}: status is ${validWorkItem.status}, expected ${WORK_ITEM_STATUS.ACTIVE}`
+      );
+    }
+
+    span.setAttributes({
+      'workItem.id': validWorkItem.id,
+      'task.id': validWorkItem.taskId,
+      'case.id': validWorkItem.caseId,
+    });
+
+    const t_ns = now();
+    const endTime = toISO(t_ns);
 
   // Update work item status (mutate original for in-place updates)
   workItem.status = WORK_ITEM_STATUS.COMPLETED;
@@ -219,12 +254,29 @@ export async function completeTask(workItem, result, options = {}) {
     eventReceipt = receipt;
   }
 
-  const receipt = await createReceipt(YAWL_EVENT_TYPES.TASK_COMPLETED, {
-    workItemId: workItem.id, taskId: workItem.taskId, caseId: workItem.caseId, endTime,
-    enabledDownstreamTasks: enabledDownstreamTasks.map((t) => t.taskId), eventId: eventReceipt?.id
-  }, { conditionsMet: enabledDownstreamTasks.map((t) => `flow_to_${t.taskId}`) });
+    const receipt = await createReceipt(YAWL_EVENT_TYPES.TASK_COMPLETED, {
+      workItemId: workItem.id, taskId: workItem.taskId, caseId: workItem.caseId, endTime,
+      enabledDownstreamTasks: enabledDownstreamTasks.map((t) => t.taskId), eventId: eventReceipt?.id
+    }, { conditionsMet: enabledDownstreamTasks.map((t) => `flow_to_${t.taskId}`) });
 
-  return { workItem, enabledDownstreamTasks, receipt };
+    // Record metrics
+    const duration = Date.now() - startTime;
+    tasksCompletedCounter.add(1, { 'task.id': workItem.taskId, 'case.id': workItem.caseId });
+    taskCompletionHistogram.record(duration, { 'task.id': workItem.taskId });
+
+    span.setAttributes({
+      'task.duration_ms': duration,
+      'task.downstreamCount': enabledDownstreamTasks.length,
+    });
+    span.setStatus({ code: 1 }); // OK
+    return { workItem, enabledDownstreamTasks, receipt };
+  } catch (error) {
+    span.recordException(error);
+    span.setStatus({ code: 2, message: error.message }); // ERROR
+    throw error;
+  } finally {
+    span.end();
+  }
 }
 
 /**
@@ -385,18 +437,9 @@ export function evaluateCondition(condition, result, variables) {
     if (evalCondition === 'true') return true;
     if (evalCondition === 'false') return false;
 
-    // For safety, only evaluate if it matches safe patterns
-    const safePattern =
-      /^[\s\d\w"'.\-+*/%<>=!&|()[\],{}:]+$/;
-    if (!safePattern.test(evalCondition)) {
-      console.warn(`Unsafe condition pattern: ${condition}`);
-      return true; // Default to true for unsafe patterns
-    }
-
-    // Use Function constructor for sandboxed evaluation
-    // eslint-disable-next-line no-new-func
-    const evaluator = new Function('return ' + evalCondition);
-    return Boolean(evaluator());
+    // Use safe expression evaluator (no eval or new Function)
+    // Supports: ==, !=, >, <, >=, <=, &&, ||
+    return Boolean(safeEvaluate(evalCondition));
   } catch {
     // Default to true on evaluation error
     return true;

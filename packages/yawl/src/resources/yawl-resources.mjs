@@ -15,6 +15,12 @@
 
 import { createStore, dataFactory } from '@unrdf/oxigraph';
 import { z } from 'zod';
+import {
+  tracer,
+  resourcesAllocatedCounter,
+  resourceAllocationHistogram,
+  resourcesAvailableGauge,
+} from '../otel.mjs';
 
 const { namedNode, literal, quad, blankNode, defaultGraph } = dataFactory;
 
@@ -389,68 +395,98 @@ export class YawlResourceManager {
    * console.log(receipt.proof.capacityCheck); // true
    */
   async allocateResource(workItem, resource, options = {}) {
-    // Validate inputs
-    const validatedWorkItem = WorkItemSchema.parse(workItem);
-    const validatedResource = ResourceSchema.parse(resource);
+    const span = tracer.startSpan('resource.allocate');
+    const startTime = Date.now();
 
-    // Step 1: Check capacity
-    const capacityCheck = this.#checkCapacity(validatedResource);
-    if (!capacityCheck.allowed) {
-      throw new Error(
-        `Capacity exceeded for resource ${validatedResource.id}: ` +
-        `${capacityCheck.current}/${capacityCheck.max}`
+    try {
+      // Validate inputs
+      const validatedWorkItem = WorkItemSchema.parse(workItem);
+      const validatedResource = ResourceSchema.parse(resource);
+
+      span.setAttributes({
+        'resource.id': validatedResource.id,
+        'resource.type': validatedResource.type,
+        'workItem.id': validatedWorkItem.id,
+        'resource.capacity': validatedResource.capacity,
+      });
+
+      // Step 1: Check capacity
+      const capacityCheck = this.#checkCapacity(validatedResource);
+      if (!capacityCheck.allowed) {
+        throw new Error(
+          `Capacity exceeded for resource ${validatedResource.id}: ` +
+          `${capacityCheck.current}/${capacityCheck.max}`
+        );
+      }
+
+      // Step 2: Check eligibility (SPARQL conditions)
+      const eligibilityCheck = await this.#checkEligibility(
+        validatedResource,
+        validatedWorkItem
       );
-    }
+      if (!eligibilityCheck.eligible) {
+        throw new Error(
+          `Resource ${validatedResource.id} not eligible: ${eligibilityCheck.reason}`
+        );
+      }
 
-    // Step 2: Check eligibility (SPARQL conditions)
-    const eligibilityCheck = await this.#checkEligibility(
-      validatedResource,
-      validatedWorkItem
-    );
-    if (!eligibilityCheck.eligible) {
-      throw new Error(
-        `Resource ${validatedResource.id} not eligible: ${eligibilityCheck.reason}`
+      // Step 3: Get policy pack if specified
+      let policyPackId = options.policyPackId;
+      if (!policyPackId) {
+        // Find first matching policy pack by priority
+        const matchingPack = this.#findMatchingPolicyPack(validatedResource);
+        policyPackId = matchingPack?.id;
+      }
+
+      // Step 4: Create allocation in RDF
+      const allocationId = this.#createAllocation(
+        validatedWorkItem,
+        validatedResource,
+        options.duration
       );
+
+      // Step 5: Create and return receipt
+      const now = new Date();
+      const receipt = {
+        id: allocationId,
+        workItemId: validatedWorkItem.id,
+        resourceId: validatedResource.id,
+        resourceType: validatedResource.type,
+        allocatedAt: now.toISOString(),
+        expiresAt: options.duration
+          ? new Date(now.getTime() + options.duration).toISOString()
+          : undefined,
+        proof: {
+          capacityCheck: true,
+          eligibilityCheck: true,
+          policyPackId,
+          sparqlResult: eligibilityCheck.sparqlResult,
+        },
+      };
+
+      // Validate receipt
+      AllocationReceiptSchema.parse(receipt);
+
+      // Record metrics
+      const duration = Date.now() - startTime;
+      resourcesAllocatedCounter.add(1, { 'resource.id': validatedResource.id, 'resource.type': validatedResource.type });
+      resourceAllocationHistogram.record(duration, { 'resource.id': validatedResource.id });
+      resourcesAvailableGauge.add(-1, { 'resource.type': validatedResource.type });
+
+      span.setAttributes({
+        'allocation.id': allocationId,
+        'allocation.duration_ms': duration,
+        'allocation.policyPackId': policyPackId || 'none',
+      });
+      span.setStatus({ code: 1 }); // OK
+      return receipt;
+    } catch (error) {
+      span.recordException(error);
+      span.setStatus({ code: 2, message: error.message }); // ERROR
+      throw error;
+    } finally {
+      span.end();
     }
-
-    // Step 3: Get policy pack if specified
-    let policyPackId = options.policyPackId;
-    if (!policyPackId) {
-      // Find first matching policy pack by priority
-      const matchingPack = this.#findMatchingPolicyPack(validatedResource);
-      policyPackId = matchingPack?.id;
-    }
-
-    // Step 4: Create allocation in RDF
-    const allocationId = this.#createAllocation(
-      validatedWorkItem,
-      validatedResource,
-      options.duration
-    );
-
-    // Step 5: Create and return receipt
-    const now = new Date();
-    const receipt = {
-      id: allocationId,
-      workItemId: validatedWorkItem.id,
-      resourceId: validatedResource.id,
-      resourceType: validatedResource.type,
-      allocatedAt: now.toISOString(),
-      expiresAt: options.duration
-        ? new Date(now.getTime() + options.duration).toISOString()
-        : undefined,
-      proof: {
-        capacityCheck: true,
-        eligibilityCheck: true,
-        policyPackId,
-        sparqlResult: eligibilityCheck.sparqlResult,
-      },
-    };
-
-    // Validate receipt
-    AllocationReceiptSchema.parse(receipt);
-
-    return receipt;
   }
 
   /**

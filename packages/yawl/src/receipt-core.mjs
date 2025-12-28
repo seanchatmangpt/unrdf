@@ -9,6 +9,11 @@
 import { blake3 } from 'hash-wasm';
 import { z } from 'zod';
 import { now, toISO } from '@unrdf/kgc-4d';
+import {
+  tracer,
+  receiptsGeneratedCounter,
+  receiptGenerationHistogram,
+} from './otel.mjs';
 
 // =============================================================================
 // Constants
@@ -321,51 +326,83 @@ export async function computeChainHash(previousHash, payloadHash) {
  * console.log(r2.previousReceiptHash === r1.receiptHash); // true
  */
 export async function generateReceipt(event, previousReceipt = null) {
-  // 1. Generate receipt ID and timestamp
-  const id = generateUUID();
-  const t_ns = now();
-  const timestamp_iso = toISO(t_ns);
+  const span = tracer.startSpan('receipt.generate');
+  const startTime = Date.now();
 
-  // 2. Validate event type
-  if (!Object.values(RECEIPT_EVENT_TYPES).includes(event.eventType)) {
-    throw new Error(`Invalid event type: ${event.eventType}`);
+  try {
+    // 1. Generate receipt ID and timestamp
+    const id = generateUUID();
+    const t_ns = now();
+    const timestamp_iso = toISO(t_ns);
+
+    span.setAttributes({
+      'receipt.id': id,
+      'receipt.eventType': event.eventType,
+      'receipt.caseId': event.caseId,
+      'receipt.taskId': event.taskId,
+      'receipt.chained': previousReceipt !== null,
+    });
+
+    // 2. Validate event type
+    if (!Object.values(RECEIPT_EVENT_TYPES).includes(event.eventType)) {
+      throw new Error(`Invalid event type: ${event.eventType}`);
+    }
+
+    // 3. Serialize payload deterministically and compute hash
+    const payloadToHash = {
+      eventType: event.eventType,
+      caseId: event.caseId,
+      taskId: event.taskId,
+      workItemId: event.workItemId || null,
+      payload: event.payload,
+      t_ns: t_ns.toString(),
+    };
+    const payloadHash = await computeBlake3(payloadToHash);
+
+    // 4. Get previous receipt hash for chain
+    const previousReceiptHash = previousReceipt ? previousReceipt.receiptHash : null;
+
+    // 5. Compute chained receipt hash
+    const receiptHash = await computeChainHash(previousReceiptHash, payloadHash);
+
+    // 6. Build complete receipt
+    const receipt = {
+      id,
+      eventType: event.eventType,
+      t_ns,
+      timestamp_iso,
+      caseId: event.caseId,
+      taskId: event.taskId,
+      workItemId: event.workItemId || undefined,
+      previousReceiptHash,
+      payloadHash,
+      receiptHash,
+      kgcEventId: event.kgcEventId || undefined,
+      gitRef: event.gitRef || undefined,
+      vectorClock: event.vectorClock || undefined,
+      payload: event.payload,
+    };
+
+    // 7. Validate receipt against schema
+    const validatedReceipt = ReceiptSchema.parse(receipt);
+
+    // Record metrics
+    const duration = Date.now() - startTime;
+    receiptsGeneratedCounter.add(1, { 'receipt.eventType': event.eventType });
+    receiptGenerationHistogram.record(duration, { 'receipt.eventType': event.eventType });
+
+    span.setAttributes({
+      'receipt.duration_ms': duration,
+      'receipt.payloadHash': payloadHash.substring(0, 16),
+      'receipt.receiptHash': receiptHash.substring(0, 16),
+    });
+    span.setStatus({ code: 1 }); // OK
+    return validatedReceipt;
+  } catch (error) {
+    span.recordException(error);
+    span.setStatus({ code: 2, message: error.message }); // ERROR
+    throw error;
+  } finally {
+    span.end();
   }
-
-  // 3. Serialize payload deterministically and compute hash
-  const payloadToHash = {
-    eventType: event.eventType,
-    caseId: event.caseId,
-    taskId: event.taskId,
-    workItemId: event.workItemId || null,
-    payload: event.payload,
-    t_ns: t_ns.toString(),
-  };
-  const payloadHash = await computeBlake3(payloadToHash);
-
-  // 4. Get previous receipt hash for chain
-  const previousReceiptHash = previousReceipt ? previousReceipt.receiptHash : null;
-
-  // 5. Compute chained receipt hash
-  const receiptHash = await computeChainHash(previousReceiptHash, payloadHash);
-
-  // 6. Build complete receipt
-  const receipt = {
-    id,
-    eventType: event.eventType,
-    t_ns,
-    timestamp_iso,
-    caseId: event.caseId,
-    taskId: event.taskId,
-    workItemId: event.workItemId || undefined,
-    previousReceiptHash,
-    payloadHash,
-    receiptHash,
-    kgcEventId: event.kgcEventId || undefined,
-    gitRef: event.gitRef || undefined,
-    vectorClock: event.vectorClock || undefined,
-    payload: event.payload,
-  };
-
-  // 7. Validate receipt against schema
-  return ReceiptSchema.parse(receipt);
 }
