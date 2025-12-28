@@ -1,0 +1,42 @@
+{
+  "timestamp": "2025-12-28T02:45:00.000Z",
+  "benchmark_run_id": "example-v6-pass",
+  "description": "Example v6.0.0 benchmark results - within baseline",
+  "metrics": {
+    "universe_creation_10k": {
+      "value": 10.8,
+      "unit": "seconds",
+      "notes": "Slightly slower than baseline (10.5s) but within 5% tolerance"
+    },
+    "morphism_composition_p95": {
+      "value": 4.1,
+      "unit": "ms",
+      "notes": "Slightly faster than baseline (4.2ms)"
+    },
+    "receipt_generation_throughput": {
+      "value": 420,
+      "unit": "operations/sec",
+      "notes": "Slightly slower than baseline (425 ops/sec) but within 5% tolerance"
+    },
+    "sparql_query_throughput": {
+      "value": 92,
+      "unit": "queries/sec",
+      "notes": "Slightly slower than baseline (95 ops/sec) but within 5% tolerance"
+    },
+    "memory_per_1k_quads": {
+      "value": 7.9,
+      "unit": "MB",
+      "notes": "Slightly higher than baseline (7.8 MB) but within 5% tolerance"
+    },
+    "cold_start_latency": {
+      "value": 188,
+      "unit": "ms",
+      "notes": "Slightly higher than baseline (185ms) but within 5% tolerance"
+    },
+    "error_rate": {
+      "value": 0.09,
+      "unit": "percent",
+      "notes": "Slightly higher than baseline (0.08%) but within tolerance"
+    }
+  }
+}
