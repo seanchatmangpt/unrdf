@@ -30,6 +30,14 @@ export { QueryCache, createQueryCache } from './query-cache.mjs';
 // Oxigraph RDF store integration
 export { OxigraphBridge, BRIDGE_OPERATIONS } from './oxigraph-bridge.mjs';
 
+// Oxigraph Integration - Real @unrdf/oxigraph integration
+export {
+  createOxigraphStore,
+  createOxigraphBridge,
+  createIntegratedStore,
+  dataFactory,
+} from './oxigraph-integration.mjs';
+
 // RDF Validation Framework
 export {
   RDFValidator,

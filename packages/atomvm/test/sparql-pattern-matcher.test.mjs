@@ -263,6 +263,105 @@ describe('SPARQLPatternMatcher', () => {
     });
   });
 
+  describe('compileQueryToBeam - Full Query Compilation', () => {
+    it('should compile simple single-pattern query', () => {
+      const query = 'SELECT ?person WHERE { ?person a foaf:Person }';
+      const beam = matcher.compileQueryToBeam(query);
+
+      expect(beam).toContain('Person');
+      expect(beam).toContain('<- Store');
+      expect(beam).toContain(FOAF + 'Person');
+      expect(beam).toContain(RDF + 'type');
+    });
+
+    it('should compile JOIN pattern with shared variable', () => {
+      const query = 'SELECT ?name WHERE { ?person a foaf:Person . ?person foaf:name ?name }';
+      const beam = matcher.compileQueryToBeam(query);
+
+      // Should have two pattern matches
+      expect((beam.match(/<- Store/g) || []).length).toBe(2);
+
+      // Should have JOIN guard (Person0 =:= Person1)
+      expect(beam).toContain('=:=');
+
+      // Should return Name variable
+      expect(beam).toMatch(/\[.*Name.*\|\|/);
+    });
+
+    it('should compile multi-variable result', () => {
+      const query = 'SELECT ?person ?name WHERE { ?person foaf:name ?name }';
+      const beam = matcher.compileQueryToBeam(query);
+
+      // Should return tuple {Person, Name}
+      expect(beam).toContain('{');
+      expect(beam).toContain('Person');
+      expect(beam).toContain('Name');
+    });
+
+    it('should compile query with FILTER', () => {
+      const query = 'SELECT ?person ?age WHERE { ?person foaf:age ?age . FILTER(?age > "25") }';
+      const beam = matcher.compileQueryToBeam(query);
+
+      // Should have is_integer guard
+      expect(beam).toContain('is_integer');
+
+      // Should have comparison guard
+      expect(beam).toContain('> 25');
+    });
+
+    it('should compile query with equality FILTER', () => {
+      const query = 'SELECT ?s WHERE { ?s foaf:name ?name . FILTER(?name = "Alice") }';
+      const beam = matcher.compileQueryToBeam(query);
+
+      expect(beam).toContain('=:=');
+      expect(beam).toContain('Alice');
+    });
+
+    it('should compile query with prefixed names', () => {
+      const query = 'SELECT ?s WHERE { ?s rdf:type foaf:Person }';
+      const beam = matcher.compileQueryToBeam(query);
+
+      expect(beam).toContain(RDF + 'type');
+      expect(beam).toContain(FOAF + 'Person');
+    });
+
+    it('should compile SELECT * query', () => {
+      const query = 'SELECT * WHERE { ?s ?p ?o }';
+      const beam = matcher.compileQueryToBeam(query);
+
+      expect(beam).toContain('S0');
+      expect(beam).toContain('P0');
+      expect(beam).toContain('O0');
+      expect(beam).toContain('<- Store');
+    });
+
+    it('should throw on invalid query', () => {
+      expect(() => matcher.compileQueryToBeam('NOT VALID')).toThrow('Failed to parse');
+    });
+
+    it('should compile complex multi-pattern query', () => {
+      const query = `
+        SELECT ?person ?friend ?friendName WHERE {
+          ?person a foaf:Person .
+          ?person foaf:knows ?friend .
+          ?friend foaf:name ?friendName
+        }
+      `;
+      const beam = matcher.compileQueryToBeam(query);
+
+      // Should have 3 patterns
+      expect((beam.match(/<- Store/g) || []).length).toBe(3);
+
+      // Should have JOIN guards for shared variables
+      expect(beam).toContain('=:=');
+
+      // Should return all three variables
+      expect(beam).toContain('Person');
+      expect(beam).toContain('Friend');
+      expect(beam).toContain('Friendname');
+    });
+  });
+
   describe('Cache Management', () => {
     it('should clear cache', () => {
       matcher._queryCache.set('test', { results: [], timestamp: Date.now() });
