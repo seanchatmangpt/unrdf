@@ -40,6 +40,9 @@
   ],
   "dependencies": {
     "@opentelemetry/api": "^1.8.0",
+    "@unrdf/core": "workspace:*",
+    "@unrdf/oxigraph": "workspace:*",
+    "@unrdf/streaming": "workspace:*",
     "coi-serviceworker": "^0.1.7"
   },
   "devDependencies": {
