@@ -37,7 +37,7 @@ export const noN3Imports = {
           context.report({
             node,
             messageId: 'noN3Import',
-            fix(fixer) {
+            fix(_fixer) {
               // Suggest replacement (won't auto-fix, requires manual review)
               return null;
             }

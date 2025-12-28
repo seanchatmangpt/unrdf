@@ -189,8 +189,8 @@ describe('LaTeX Lockfile', () => {
 
       // Keys should be alphabetically sorted in JSON
       const resolvedInputsStart = lines.findIndex(l => l.includes('"resolvedInputs"'));
-      const firstKey = lines[resolvedInputsStart + 2]; // First input key
-      const secondKey = lines.findIndex((l, i) => i > resolvedInputsStart + 2 && l.includes('"'));
+      const _firstKey = lines[resolvedInputsStart + 2]; // First input key
+      const _secondKey = lines.findIndex((l, i) => i > resolvedInputsStart + 2 && l.includes('"'));
 
       assert.ok(raw.includes('"a.tex"'));
       assert.ok(raw.includes('"m.tex"'));

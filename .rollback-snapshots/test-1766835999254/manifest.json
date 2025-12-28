@@ -1,0 +1,26 @@
+{
+  "name": "test-1766835999254",
+  "timestamp": "2025-12-27T11:46:41.052Z",
+  "git": {
+    "branch": "claude/kgc-swarm-agents-K9Ab0",
+    "commit": "7f54d29d92ff1fcc0bbed605cc3e00b16908c10a",
+    "shortCommit": "7f54d29d",
+    "status": " M .claude-flow/metrics/performance.json\n M .claude-flow/metrics/task-metrics.json\n M .swarm/memory.db\n M dependency-graph.txt\n M eslint.config.mjs\n M package.json\n M packages/cli/package.json\n M packages/cli/test/cli/decision-fabric.test.mjs\n M packages/diataxis-kit/ARTIFACTS/diataxis/@unrdf/kgc-cli/diataxis.json\n M packages/diataxis-kit/ARTIFACTS/diataxis/inventory.json\n M packages/diataxis-kit/ARTIFACTS/diataxis/unrdf-workspace/diataxis.json\n M packages/diataxis-kit/OUT/@unrdf/kgc-cli/explanation/explanation.md\n M packages/diataxis-kit/OUT/unrdf-workspace/explanation/explanation.md\n M packages/diataxis-kit/OUT/unrdf-workspace/how-to/howto-howto-configure-unrdf-workspace.md\n M packages/diataxis-kit/OUT/unrdf-workspace/how-to/howto-howto-handle-errors.md\n M packages/diataxis-kit/OUT/unrdf-workspace/index.md\n M packages/diataxis-kit/OUT/unrdf-workspace/reference/reference.md\n M packages/diataxis-kit/OUT/unrdf-workspace/tutorials/tutorial-tutorial-first-steps.md\n M packages/diataxis-kit/OUT/unrdf-workspace/tutorials/tutorial-tutorial-getting-started-with-unrdf-workspace.md\n M packages/docs/package.json\n M packages/fusion/package.json\n M packages/kgn/package.json\n M pnpm-lock.yaml\n M src/knowledge-engine/hook-executor.mjs\n M src/knowledge-engine/query-optimizer.mjs\n M src/knowledge-engine/streaming/real-time-validator.mjs\n M src/react-hooks/advanced-utility/use-observability-manager.mjs\n M src/react-hooks/composition/use-offline-store.mjs\n M src/security/sandbox/browser-executor.mjs\n M src/security/sandbox/isolated-vm-executor.mjs\n?? .rollback-snapshots/\n?? benchmarks/v6-optimized-benchmark.mjs\n?? benchmarks/v6-performance-benchmark.mjs\n?? docs/v6.0.0-RELEASE-NOTES.md\n?? docs/v6/ADVANCED-PATTERNS.md\n?? docs/v6/API-REFERENCE.md\n?? docs/v6/ARCHITECTURE.md\n?? docs/v6/BREAKING-CHANGES.md\n?? docs/v6/CORE-CONCEPTS.md\n?? docs/v6/DEPENDENCIES.md\n?? docs/v6/DEPLOYMENT-CHECKLIST.md\n?? docs/v6/MIGRATION-GUIDE.md\n?? docs/v6/MIGRATION_DELIVERABLES_SUMMARY.md\n?? docs/v6/MIGRATION_GUIDE.md\n?? docs/v6/MODERNIZATION.md\n?? docs/v6/PERFORMANCE.md\n?? docs/v6/QUICK-START.md\n?? docs/v6/ROLLBACK-COMMANDS.md\n?? docs/v6/ROLLBACK-QUICK-REFERENCE.md\n?? docs/v6/ROLLBACK-SUMMARY.md\n?? docs/v6/ROLLBACK.md\n?? docs/v6/SUMMARY.md\n?? docs/v6/TEST_REPORT.md\n?? docs/v6/TROUBLESHOOTING.md\n?? docs/v6/V6_MIGRATION_STRATEGY.md\n?? docs/v6/VALIDATION_REPORT.md\n?? packages/diataxis-kit/ARTIFACTS/diataxis/@unrdf/kgc-swarm/\n?? packages/diataxis-kit/ARTIFACTS/diataxis/@unrdf/v6-compat/\n?? packages/diataxis-kit/ARTIFACTS/diataxis/@unrdf/v6-core/\n?? packages/diataxis-kit/OUT/@unrdf/kgc-swarm/\n?? packages/diataxis-kit/OUT/@unrdf/v6-compat/\n?? packages/diataxis-kit/OUT/@unrdf/v6-core/\n?? rollback-report.json\n?? scripts/migrate-to-v6.mjs\n?? scripts/test-rollback-system.mjs\n?? scripts/v6-rollback.mjs\n?? scripts/v6-snapshot.mjs\n?? scripts/validate-rollback.mjs\n?? scripts/validate-v6-migration.mjs\n?? scripts/validate-v6.mjs\n?? src/knowledge-engine/parse-optimized.mjs\n?? src/knowledge-engine/query-optimized.mjs\n?? test/v6/\n",
+    "tags": [],
+    "remotes": "origin\thttp://local_proxy@127.0.0.1:18960/git/seanchatmangpt/unrdf (fetch)\norigin\thttp://local_proxy@127.0.0.1:18960/git/seanchatmangpt/unrdf (push)"
+  },
+  "environment": {
+    "nodeVersion": "v22.21.1",
+    "platform": "linux",
+    "arch": "x64",
+    "timestamp": "2025-12-27T11:46:41.050Z",
+    "snapshotName": "test-1766835999254"
+  },
+  "files": [
+    "package.json",
+    "packages/core/package.json",
+    "packages/oxigraph/package.json",
+    "packages/hooks/package.json",
+    "packages/federation/package.json"
+  ]
+}

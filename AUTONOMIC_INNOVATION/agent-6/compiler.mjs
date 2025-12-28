@@ -14,11 +14,16 @@ import { ConventionsProfileSchema, CompiledProfileSchema, ValidationResultSchema
  * @throws {Error} If profile is invalid
  */
 export function compileProfile(profileObj) {
+  // Validate input is an object
+  if (!profileObj || typeof profileObj !== 'object' || Array.isArray(profileObj)) {
+    throw new Error('Invalid profile: Input must be a valid profile object');
+  }
+
   // Validate against schema
   const parseResult = ConventionsProfileSchema.safeParse(profileObj);
 
   if (!parseResult.success) {
-    const errors = parseResult.error.issues.map(e => `${e.path.join('.')}: ${e.message}`).join(', ');
+    const errors = parseResult.error?.errors?.map(e => `${e.path.join('.')}: ${e.message}`).join(', ') || 'Unknown validation error';
     throw new Error(`Invalid profile: ${errors}`);
   }
 

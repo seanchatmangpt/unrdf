@@ -1,4 +1,4 @@
-import { DataFactory } from 'n3';
+import { DataFactory } from '@unrdf/core/rdf/n3-justified-only';
 import { asNamedNode, asLiteral, _isNamedNode, _isLiteral, _isBlankNode } from './term-utils.mjs';
 
 const { quad } = DataFactory;

@@ -11,15 +11,6 @@
 
 import { createStore as createStoreV6 } from '@unrdf/oxigraph';
 import { z } from 'zod';
-import { deterministicSerialize } from '@unrdf/v6-core/receipts';
-import {
-  createStoreParamsSchema,
-  wrapWorkflowParamsSchema,
-  wrapFederationParamsSchema,
-  withReceiptParamsSchema,
-  validateSchemaParamsSchema,
-  streamToAsyncParamsSchema,
-} from './adapters.schema.mjs';
 
 /**
  * Emit deprecation warning
@@ -27,13 +18,8 @@ import {
  * @param {string} oldAPI - Deprecated API name
  * @param {string} newAPI - Replacement API name
  * @param {string} [hint] - Migration hint
- * @param {Object} [context] - Context with temporal sources (determinism)
  */
-function deprecationWarning(oldAPI, newAPI, hint = '', context = {}) {
-  const {
-    t_ns = BigInt(Date.now()) * 1_000_000n
-  } = context;
-
+function deprecationWarning(oldAPI, newAPI, hint = '') {
   const message = `
 ⚠️  DEPRECATION WARNING: ${oldAPI} is deprecated in UNRDF v6
 →  Use: ${newAPI}
@@ -50,7 +36,7 @@ ${hint ? `💡 Hint: ${hint}` : ''}
     process.emit('deprecation', {
       oldAPI,
       newAPI,
-      timestamp: Number(t_ns / 1_000_000n),
+      timestamp: Date.now(),
       stack: new Error().stack
     });
   }
@@ -76,15 +62,13 @@ ${hint ? `💡 Hint: ${hint}` : ''}
  * const store = await createStore(); // Warns + uses v6 API
  */
 export async function createStore(options = {}) {
-  const [validOptions] = createStoreParamsSchema.parse([options]);
-
   deprecationWarning(
     'new Store() from n3',
     'createStore() from @unrdf/oxigraph',
     'Oxigraph provides 10x faster SPARQL execution'
   );
 
-  return createStoreV6(validOptions);
+  return createStoreV6(options);
 }
 
 /**
@@ -103,45 +87,32 @@ export async function createStore(options = {}) {
  * const { result, receipt } = await wrapped.execute(task);
  */
 export function wrapWorkflow(workflow) {
-  const [validWorkflow] = wrapWorkflowParamsSchema.parse([workflow]);
-
-  if (!validWorkflow || typeof validWorkflow !== 'object') {
+  if (!workflow || typeof workflow !== 'object') {
     throw new Error('wrapWorkflow requires a workflow object');
   }
 
-  const wrapped = Object.create(validWorkflow);
+  const wrapped = Object.create(workflow);
 
   // Wrap run() → execute() with receipt
-  if (validWorkflow.run) {
-    wrapped.execute = async function execute(task, options = {}) {
-      const {
-        context = {},
-        startTime = performance.now(),
-        endTime
-      } = options;
-
-      const {
-        t_ns = BigInt(Date.now()) * 1_000_000n
-      } = context;
-
+  if (workflow.run) {
+    wrapped.execute = async function execute(task) {
       deprecationWarning(
         'workflow.run(task)',
         'workflow.execute(task) with receipt',
-        'Receipts enable replay and verification',
-        context
+        'Receipts enable replay and verification'
       );
 
-      const result = await validWorkflow.run(task);
-      const actualEndTime = endTime ?? performance.now();
-      const timestamp = Number(t_ns / 1_000_000n);
+      const startTime = performance.now();
+      const result = await workflow.run(task);
+      const endTime = performance.now();
 
       // Generate receipt
       const receipt = {
         version: '6.0.0-alpha.1',
         operation: 'workflow.execute',
         task: task?.id || 'unknown',
-        timestamp,
-        duration: actualEndTime - startTime,
+        timestamp: Date.now(),
+        duration: endTime - startTime,
         result: typeof result === 'object' ? JSON.stringify(result) : String(result)
       };
 
@@ -155,7 +126,7 @@ export function wrapWorkflow(workflow) {
         'workflow.execute(task)',
         'Use execute() to get receipts'
       );
-      return validWorkflow.run(task);
+      return workflow.run(task);
     };
   }
 
@@ -180,15 +151,13 @@ export function wrapWorkflow(workflow) {
  * const results = await wrapped.querySparql('SELECT * WHERE { ?s ?p ?o }');
  */
 export function wrapFederation(federation) {
-  const [validFederation] = wrapFederationParamsSchema.parse([federation]);
-
-  if (!validFederation || typeof validFederation !== 'object') {
+  if (!federation || typeof federation !== 'object') {
     throw new Error('wrapFederation requires a federation object');
   }
 
-  const wrapped = Object.create(validFederation);
+  const wrapped = Object.create(federation);
 
-  if (validFederation.query) {
+  if (federation.query) {
     wrapped.querySparql = async function querySparql(queryString, options = {}) {
       deprecationWarning(
         'federation.query(string)',
@@ -201,13 +170,13 @@ export function wrapFederation(federation) {
         setTimeout(() => reject(new Error(`Query timeout after ${timeout}ms`)), timeout);
       });
 
-      const queryPromise = validFederation.query(queryString, options);
+      const queryPromise = federation.query(queryString, options);
 
       return Promise.race([queryPromise, timeoutPromise]);
     };
 
     // Keep original for compat
-    wrapped.query = validFederation.query;
+    wrapped.query = federation.query;
   }
 
   return wrapped;
@@ -231,8 +200,6 @@ export function wrapFederation(federation) {
  * }
  */
 export async function* streamToAsync(stream) {
-  const [validStream] = streamToAsyncParamsSchema.parse([stream]);
-
   deprecationWarning(
     'stream.on("data", ...)',
     'for await (const x of stream)',
@@ -243,9 +210,9 @@ export async function* streamToAsync(stream) {
   let done = false;
   let error = null;
 
-  validStream.on('data', (data) => queue.push(data));
-  validStream.on('end', () => { done = true; });
-  validStream.on('error', (err) => { error = err; done = true; });
+  stream.on('data', (data) => queue.push(data));
+  stream.on('end', () => { done = true; });
+  stream.on('error', (err) => { error = err; done = true; });
 
   while (!done || queue.length > 0) {
     if (error) throw error;
@@ -261,69 +228,38 @@ export async function* streamToAsync(stream) {
 /**
  * Receipt generation wrapper for arbitrary functions
  *
- * DETERMINISM REQUIREMENTS:
- * - Pass context.t_ns for deterministic timestamps
- * - Pass context.startTime/endTime for deterministic duration
- * - Same inputs MUST produce identical receipt hashes
- *
  * @param {Function} fn - Function to wrap
  * @param {Object} options - Receipt options
- * @param {Object} [options.context] - Context with t_ns for determinism
- * @param {bigint} [options.context.t_ns] - Nanosecond timestamp (REQUIRED for determinism)
- * @param {number} [options.startTime] - Start time override
- * @param {number} [options.endTime] - End time override
- * @param {string} [options.operation] - Operation name
  * @returns {Function} Wrapped function with receipt
  *
  * @example
  * import { withReceipt } from '@unrdf/v6-compat/adapters';
  *
- * // NON-DETERMINISTIC (uses Date.now())
  * const processData = withReceipt(
  *   (data) => data.map(x => x * 2),
  *   { operation: 'processData' }
  * );
  *
- * // DETERMINISTIC (context with t_ns)
- * const processDataDeterministic = withReceipt(
- *   (data) => data.map(x => x * 2),
- *   {
- *     operation: 'processData',
- *     context: { t_ns: 1234567890000000000n },
- *     startTime: 100,
- *     endTime: 200
- *   }
- * );
- *
- * const { result, receipt } = await processDataDeterministic([1, 2, 3]);
- * // receipt = { operation: 'processData', timestamp: 1234567890000, duration: 100, ... }
+ * const { result, receipt } = await processData([1, 2, 3]);
+ * // receipt = { operation: 'processData', timestamp: ..., result: ... }
  */
 export function withReceipt(fn, options = {}) {
-  const [validFn, validOptions] = withReceiptParamsSchema.parse([fn, options]);
-
-  if (typeof validFn !== 'function') {
+  if (typeof fn !== 'function') {
     throw new Error('withReceipt requires a function');
   }
 
   return async function wrappedWithReceipt(...args) {
-    const context = validOptions.context || {};
-    const {
-      t_ns = BigInt(Date.now()) * 1_000_000n
-    } = context;
+    const startTime = performance.now();
+    const result = await fn(...args);
+    const endTime = performance.now();
 
-    const startTime = validOptions.startTime ?? performance.now();
-    const result = await validFn(...args);
-    const endTime = validOptions.endTime ?? performance.now();
-    const timestamp = Number(t_ns / 1_000_000n);
-
-    // DETERMINISM FIX: Use deterministicSerialize for canonical JSON
     const receipt = {
       version: '6.0.0-alpha.1',
-      operation: validOptions.operation || validFn.name || 'anonymous',
-      timestamp,
+      operation: options.operation || fn.name || 'anonymous',
+      timestamp: Date.now(),
       duration: endTime - startTime,
-      args: deterministicSerialize(args),
-      result: deterministicSerialize(result)
+      args: JSON.stringify(args),
+      result: typeof result === 'object' ? JSON.stringify(result) : String(result)
     };
 
     return { result, receipt };
@@ -346,15 +282,13 @@ export function withReceipt(fn, options = {}) {
  * validate({ id: 123 }); // Throws ZodError
  */
 export function validateSchema(schema) {
-  const [validSchema] = validateSchemaParamsSchema.parse([schema]);
-
-  if (!(validSchema instanceof z.ZodType)) {
+  if (!(schema instanceof z.ZodType)) {
     throw new Error('validateSchema requires a Zod schema');
   }
 
   return function validate(data) {
     try {
-      return validSchema.parse(data);
+      return schema.parse(data);
     } catch (error) {
       if (error instanceof z.ZodError) {
         const readable = error.errors.map((e) => {
@@ -370,135 +304,48 @@ export function validateSchema(schema) {
 
 /**
  * Migration status tracker
- *
- * **P0-003 Enhancement**: Static analysis counters
  */
 export class MigrationTracker {
-  constructor(options = {}) {
-    const context = options.context || {};
-    const {
-      t_ns = BigInt(Date.now()) * 1_000_000n
-    } = context;
-
+  /**
+   * Create a new Migration Tracker
+   */
+  constructor() {
     this.warnings = [];
-    this.start = options.startTime ?? Number(t_ns / 1_000_000n);
-    this.getNow = options.getNow ?? (() => Number(BigInt(Date.now()) * 1_000_000n / 1_000_000n));
-    this.context = context;
-    this.staticAnalysis = {
-      n3Imports: 0,
-      dateNowCalls: 0,
-      mathRandomCalls: 0,
-      workflowRunCalls: 0,
-      filesScanned: 0,
-    };
+    this.start = Date.now();
   }
 
-  track(oldAPI, newAPI, timestamp) {
+  /**
+   * Track an API migration
+   * @param {string} oldAPI - Old API name
+   * @param {string} newAPI - New API name
+   */
+  track(oldAPI, newAPI) {
     this.warnings.push({
       oldAPI,
       newAPI,
-      timestamp: timestamp ?? this.getNow()
+      timestamp: Date.now()
     });
   }
 
   /**
-   * Analyze source file for migration issues
-   *
-   * **P0-003**: Static analysis for N3 imports, Date.now(), Math.random()
-   *
-   * @param {string} source - Source code
-   * @param {string} [filePath] - File path for reporting
-   * @returns {Object} Analysis result
+   * Generate migration report
+   * @returns {Object} Migration report
    */
-  analyzeSource(source, filePath = 'unknown') {
-    this.staticAnalysis.filesScanned++;
-
-    const issues = {
-      file: filePath,
-      n3Imports: 0,
-      dateNowCalls: 0,
-      mathRandomCalls: 0,
-      workflowRunCalls: 0,
-    };
-
-    // Count N3 imports
-    const n3ImportMatches = source.match(/from\s+['"]n3['"]/g);
-    if (n3ImportMatches) {
-      issues.n3Imports = n3ImportMatches.length;
-      this.staticAnalysis.n3Imports += n3ImportMatches.length;
-    }
-
-    // Count Date.now() calls
-    const dateNowMatches = source.match(/Date\.now\(\)/g);
-    if (dateNowMatches) {
-      issues.dateNowCalls = dateNowMatches.length;
-      this.staticAnalysis.dateNowCalls += dateNowMatches.length;
-    }
-
-    // Count Math.random() calls
-    const mathRandomMatches = source.match(/Math\.random\(\)/g);
-    if (mathRandomMatches) {
-      issues.mathRandomCalls = mathRandomMatches.length;
-      this.staticAnalysis.mathRandomCalls += mathRandomMatches.length;
-    }
-
-    // Count workflow.run() calls
-    const workflowRunMatches = source.match(/workflow\.run\(/g);
-    if (workflowRunMatches) {
-      issues.workflowRunCalls = workflowRunMatches.length;
-      this.staticAnalysis.workflowRunCalls += workflowRunMatches.length;
-    }
-
-    return issues;
-  }
-
-  /**
-   * Scan directory for migration issues
-   *
-   * @param {string} pattern - Glob pattern
-   * @returns {Promise<Array<Object>>} Issues found
-   */
-  async scanDirectory(pattern) {
-    const { glob } = await import('glob');
-    const { readFile } = await import('fs/promises');
-
-    const files = await glob(pattern, { absolute: true });
-    const results = [];
-
-    for (const file of files) {
-      try {
-        const source = await readFile(file, 'utf-8');
-        const issues = this.analyzeSource(source, file);
-
-        if (
-          issues.n3Imports > 0 ||
-          issues.dateNowCalls > 0 ||
-          issues.mathRandomCalls > 0 ||
-          issues.workflowRunCalls > 0
-        ) {
-          results.push(issues);
-        }
-      } catch (error) {
-        console.warn(`Failed to scan ${file}:`, error.message);
-      }
-    }
-
-    return results;
-  }
-
   report() {
     const unique = [...new Set(this.warnings.map((w) => w.oldAPI))];
-    const elapsed = this.getNow() - this.start;
+    const elapsed = Date.now() - this.start;
 
     return {
       totalWarnings: this.warnings.length,
       uniqueAPIs: unique.length,
       elapsed,
-      warnings: this.warnings,
-      staticAnalysis: this.staticAnalysis,
+      warnings: this.warnings
     };
   }
 
+  /**
+   * Print migration summary
+   */
   summary() {
     const report = this.report();
     console.log(`
@@ -507,14 +354,6 @@ export class MigrationTracker {
 Total deprecation warnings: ${report.totalWarnings}
 Unique deprecated APIs: ${report.uniqueAPIs}
 Elapsed time: ${report.elapsed}ms
-
-Static Analysis (P0-003):
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Files scanned: ${report.staticAnalysis.filesScanned}
-N3 imports: ${report.staticAnalysis.n3Imports}
-Date.now() calls: ${report.staticAnalysis.dateNowCalls}
-Math.random() calls: ${report.staticAnalysis.mathRandomCalls}
-workflow.run() calls: ${report.staticAnalysis.workflowRunCalls}
 
 Top deprecated APIs:
 ${Object.entries(

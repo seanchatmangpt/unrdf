@@ -138,7 +138,7 @@ export class IsolatedVmExecutor {
   async run(code, context = {}, options = {}) {
     return tracer.startActiveSpan('security.isolate.execute', async span => {
       const startTime = Date.now();
-      const executionId = `exec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      const executionId = `exec_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
 
       try {
         span.setAttributes({

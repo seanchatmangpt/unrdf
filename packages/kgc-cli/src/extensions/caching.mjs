@@ -10,7 +10,7 @@ const extension = {
         clear: {
           description: 'Clear cache',
           argsSchema: z.object({ key: z.string().optional() }),
-          handler: async (args) => ({ cleared: true })
+          handler: async (_args) => ({ cleared: true })
         }
       }
     }

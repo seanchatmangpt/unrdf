@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/yawl",
-  "version": "5.0.0",
+  "version": "6.0.0",
   "description": "YAWL (Yet Another Workflow Language) engine with KGC-4D time-travel and receipt verification",
   "type": "module",
   "main": "src/index.mjs",
@@ -25,8 +25,8 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:ui": "vitest --ui",
-    "lint": "eslint src/ test/ --ext .mjs",
-    "lint:fix": "eslint src/ test/ --ext .mjs --fix",
+    "lint": "eslint src/ test/ --max-warnings=0",
+    "lint:fix": "eslint src/ test/ --fix",
     "typecheck": "tsc --noEmit",
     "format": "prettier --write \"src/**/*.mjs\" \"test/**/*.mjs\"",
     "format:check": "prettier --check \"src/**/*.mjs\" \"test/**/*.mjs\"",

@@ -31,6 +31,10 @@ export {
   EXAMPLE_UPGRADE_PLAN
 } from './dependency-upgrade.mjs';
 
+export {
+  runParallelAgentExample
+} from './parallel-agent-execution.mjs';
+
 /**
  * All available example workflows
  */
@@ -52,6 +56,12 @@ export const AVAILABLE_EXAMPLES = {
     description: 'Upgrading shared dependency with version pinning',
     file: 'dependency-upgrade.mjs',
     runner: 'runDependencyUpgrade'
+  },
+  'parallel-agent-execution': {
+    name: 'Parallel Agent Execution',
+    description: 'KGC-SWARM parallel orchestration with 10+ concurrent agents',
+    file: 'parallel-agent-execution.mjs',
+    runner: 'runParallelAgentExample'
   }
 };
 
@@ -66,7 +76,8 @@ export async function runExample(name, options = {}) {
   const examples = {
     'core-breaking-change': () => import('./core-breaking-change.mjs').then(m => m.runCoreBreakingChange(options)),
     'feature-spanning-packages': () => import('./feature-spanning-packages.mjs').then(m => m.runFeatureSpanningPackages(options)),
-    'dependency-upgrade': () => import('./dependency-upgrade.mjs').then(m => m.runDependencyUpgrade(options))
+    'dependency-upgrade': () => import('./dependency-upgrade.mjs').then(m => m.runDependencyUpgrade(options)),
+    'parallel-agent-execution': () => import('./parallel-agent-execution.mjs').then(m => m.runParallelAgentExample(options))
   };
 
   const runner = examples[name];

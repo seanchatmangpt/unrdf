@@ -4,7 +4,7 @@
  */
 
 import { useCallback } from 'react';
-import { DataFactory } from 'n3';
+import { DataFactory } from '@unrdf/core/rdf/n3-justified-only';
 
 const { quad, namedNode, literal, blankNode, defaultGraph, variable } = DataFactory;
 

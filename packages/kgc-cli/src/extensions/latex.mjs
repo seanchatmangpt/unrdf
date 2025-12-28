@@ -21,7 +21,7 @@ const BuildSchema = z.object({
 });
 
 /** Args schema for cache management */
-const CacheClearSchema = z.object({
+const _CacheClearSchema = z.object({
   cacheDir: z.string().optional().default('.kgc/cache/latex').describe('Cache directory to clear')
 });
 

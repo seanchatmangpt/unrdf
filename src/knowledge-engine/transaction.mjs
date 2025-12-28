@@ -3,7 +3,7 @@
  * @module transaction
  */
 
-import { Store } from 'n3';
+import { createStore } from '@unrdf/oxigraph';
 import { sha3_256 } from '@noble/hashes/sha3.js';
 import { blake3 } from '@noble/hashes/blake3.js';
 import { utf8ToBytes, bytesToHex } from '@noble/hashes/utils.js';

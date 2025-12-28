@@ -1,0 +1,665 @@
+{
+  "summary": {
+    "totalBenchmarks": 25,
+    "executionTimeMs": 1505.8722050000001,
+    "stableCount": 9,
+    "totalCount": 25,
+    "avgVariance": 52.395711518752584,
+    "timestamp": "2025-12-27T08:29:34.769Z"
+  },
+  "varianceAnalysis": [
+    {
+      "observation": "JSON.parse throughput (1KB payload)",
+      "mean": 0.0045530999999868985,
+      "stddev": 0.0017281768109672511,
+      "variancePercent": 37.956047769041405,
+      "stableScore": "⚠️"
+    },
+    {
+      "observation": "JSON.parse throughput (10KB payload)",
+      "mean": 0.03774099999999407,
+      "stddev": 0.004927005114660944,
+      "variancePercent": 13.054781576168406,
+      "stableScore": "✅"
+    },
+    {
+      "observation": "JSON.parse throughput (100KB payload)",
+      "mean": 0.4822287999999844,
+      "stddev": 0.1813366149324572,
+      "variancePercent": 37.60385421452702,
+      "stableScore": "⚠️"
+    },
+    {
+      "observation": "JSON.stringify throughput (1KB payload)",
+      "mean": 0.0024303999999801817,
+      "stddev": 0.000489247217688921,
+      "variancePercent": 20.130316725350166,
+      "stableScore": "⚠️"
+    },
+    {
+      "observation": "JSON.stringify throughput (10KB payload)",
+      "mean": 0.022347700000011628,
+      "stddev": 0.0006124307389378682,
+      "variancePercent": 2.740464293585244,
+      "stableScore": "✅"
+    },
+    {
+      "observation": "JSON.stringify throughput (100KB payload)",
+      "mean": 0.30845399999998335,
+      "stddev": 0.04579025152367166,
+      "variancePercent": 14.845082742864133,
+      "stableScore": "✅"
+    },
+    {
+      "observation": "BLAKE3 hashing throughput (1KB data)",
+      "mean": 0.27756989999996906,
+      "stddev": 0.040013868874302215,
+      "variancePercent": 14.41578098861104,
+      "stableScore": "✅"
+    },
+    {
+      "observation": "BLAKE3 hashing throughput (10KB data)",
+      "mean": 1.2711620000000152,
+      "stddev": 0.16159293602133976,
+      "variancePercent": 12.712222047334473,
+      "stableScore": "✅"
+    },
+    {
+      "observation": "BLAKE3 hashing throughput (100KB data)",
+      "mean": 3.3320997000000148,
+      "stddev": 0.26358531011993047,
+      "variancePercent": 7.910486895693106,
+      "stableScore": "✅"
+    },
+    {
+      "observation": "Streaming throughput (64KB buffer)",
+      "mean": 0.36445779999999106,
+      "stddev": 0.2888956564300826,
+      "variancePercent": 79.26724477568861,
+      "stableScore": "⚠️"
+    },
+    {
+      "observation": "File read throughput (1KB file)",
+      "mean": 2.3217435000000024,
+      "stddev": 1.3483554059403744,
+      "variancePercent": 58.07512354144087,
+      "stableScore": "⚠️"
+    },
+    {
+      "observation": "File read throughput (10KB file)",
+      "mean": 3.345286699999974,
+      "stddev": 1.8513086056119663,
+      "variancePercent": 55.34080548647685,
+      "stableScore": "⚠️"
+    },
+    {
+      "observation": "File read throughput (100KB file)",
+      "mean": 3.8498449000000163,
+      "stddev": 1.725052333438146,
+      "variancePercent": 44.80835925203477,
+      "stableScore": "⚠️"
+    },
+    {
+      "observation": "File write throughput (1KB file)",
+      "mean": 19.724284799999985,
+      "stddev": 9.206044322832614,
+      "variancePercent": 46.67365339823435,
+      "stableScore": "⚠️"
+    },
+    {
+      "observation": "File write throughput (10KB file)",
+      "mean": 17.091094100000056,
+      "stddev": 3.0849940361347374,
+      "variancePercent": 18.050301625422136,
+      "stableScore": "✅"
+    },
+    {
+      "observation": "File write throughput (100KB file)",
+      "mean": 14.901493399999936,
+      "stddev": 3.9812419189902704,
+      "variancePercent": 26.717066619579803,
+      "stableScore": "⚠️"
+    },
+    {
+      "observation": "Buffer allocation (1KB)",
+      "mean": 0.0021336999999675755,
+      "stddev": 0.002559564847757583,
+      "variancePercent": 119.9589842900351,
+      "stableScore": "⚠️"
+    },
+    {
+      "observation": "Buffer copy (1KB)",
+      "mean": 0.0019595999999864945,
+      "stddev": 0.0012536628892540966,
+      "variancePercent": 63.975448523307655,
+      "stableScore": "⚠️"
+    },
+    {
+      "observation": "Buffer allocation (10KB)",
+      "mean": 0.018438099999980296,
+      "stddev": 0.04001775353628744,
+      "variancePercent": 217.0383799650192,
+      "stableScore": "⚠️"
+    },
+    {
+      "observation": "Buffer copy (10KB)",
+      "mean": 0.0008777999999892927,
+      "stddev": 0.00012898123891270482,
+      "variancePercent": 14.693693200532937,
+      "stableScore": "✅"
+    },
+    {
+      "observation": "Buffer allocation (100KB)",
+      "mean": 0.02279410000003281,
+      "stddev": 0.019461889571442407,
+      "variancePercent": 85.38125906008305,
+      "stableScore": "⚠️"
+    },
+    {
+      "observation": "Buffer copy (100KB)",
+      "mean": 0.0030680000000302245,
+      "stddev": 0.00010998363513367643,
+      "variancePercent": 3.5848642481288433,
+      "stableScore": "✅"
+    },
+    {
+      "observation": "String concatenation (10KB)",
+      "mean": 0.0006316999999171457,
+      "stddev": 0.0006145689627473554,
+      "variancePercent": 97.28810556086161,
+      "stableScore": "⚠️"
+    },
+    {
+      "observation": "String slice (10KB)",
+      "mean": 0.0008039000000735541,
+      "stddev": 0.0007733932311243482,
+      "variancePercent": 96.20515375713215,
+      "stableScore": "⚠️"
+    },
+    {
+      "observation": "String regex match (10KB)",
+      "mean": 0.011496599999986756,
+      "stddev": 0.013964380531872987,
+      "variancePercent": 121.46530741166148,
+      "stableScore": "⚠️"
+    }
+  ],
+  "observations": [
+    {
+      "probeName": "performance",
+      "timestamp": 1766824173265,
+      "category": "performance",
+      "observation": "JSON.parse throughput (1KB payload)",
+      "value": 219630.58136278085,
+      "metadata": {
+        "operation": "json.parse",
+        "payloadSize": "1KB",
+        "unit": "ops/sec",
+        "mean_ms": 0.0045530999999868985,
+        "median_ms": 0.004333500000001322,
+        "min_ms": 0.002690999999970245,
+        "max_ms": 0.007060999999964679,
+        "p95_ms": 0.007060999999964679,
+        "p99_ms": 0.007060999999964679,
+        "stddev_ms": 0.0017281768109672511,
+        "variance_percent": 37.956047769041405
+      }
+    },
+    {
+      "probeName": "performance",
+      "timestamp": 1766824173271,
+      "category": "performance",
+      "observation": "JSON.parse throughput (10KB payload)",
+      "value": 26496.383243691398,
+      "metadata": {
+        "operation": "json.parse",
+        "payloadSize": "10KB",
+        "unit": "ops/sec",
+        "mean_ms": 0.03774099999999407,
+        "median_ms": 0.03599500000001399,
+        "min_ms": 0.033684999999991305,
+        "max_ms": 0.04842299999995703,
+        "p95_ms": 0.04842299999995703,
+        "p99_ms": 0.04842299999995703,
+        "stddev_ms": 0.004927005114660944,
+        "variance_percent": 13.054781576168406
+      }
+    },
+    {
+      "probeName": "performance",
+      "timestamp": 1766824173584,
+      "category": "performance",
+      "observation": "JSON.parse throughput (100KB payload)",
+      "value": 2073.704432418869,
+      "metadata": {
+        "operation": "json.parse",
+        "payloadSize": "100KB",
+        "unit": "ops/sec",
+        "mean_ms": 0.4822287999999844,
+        "median_ms": 0.4261639999999147,
+        "min_ms": 0.38978000000008706,
+        "max_ms": 1.0230530000000044,
+        "p95_ms": 1.0230530000000044,
+        "p99_ms": 1.0230530000000044,
+        "stddev_ms": 0.1813366149324572,
+        "variance_percent": 37.60385421452702
+      }
+    },
+    {
+      "probeName": "performance",
+      "timestamp": 1766824173585,
+      "category": "performance",
+      "observation": "JSON.stringify throughput (1KB payload)",
+      "value": 411454.9045458173,
+      "metadata": {
+        "operation": "json.stringify",
+        "payloadSize": "1KB",
+        "unit": "ops/sec",
+        "mean_ms": 0.0024303999999801817,
+        "median_ms": 0.0022695000000112486,
+        "p95_ms": 0.0037330000000110886,
+        "p99_ms": 0.0037330000000110886,
+        "stddev_ms": 0.000489247217688921
+      }
+    },
+    {
+      "probeName": "performance",
+      "timestamp": 1766824173588,
+      "category": "performance",
+      "observation": "JSON.stringify throughput (10KB payload)",
+      "value": 44747.33417754309,
+      "metadata": {
+        "operation": "json.stringify",
+        "payloadSize": "10KB",
+        "unit": "ops/sec",
+        "mean_ms": 0.022347700000011628,
+        "median_ms": 0.022418500000014774,
+        "p95_ms": 0.023270000000024993,
+        "p99_ms": 0.023270000000024993,
+        "stddev_ms": 0.0006124307389378682
+      }
+    },
+    {
+      "probeName": "performance",
+      "timestamp": 1766824173879,
+      "category": "performance",
+      "observation": "JSON.stringify throughput (100KB payload)",
+      "value": 3241.974492144871,
+      "metadata": {
+        "operation": "json.stringify",
+        "payloadSize": "100KB",
+        "unit": "ops/sec",
+        "mean_ms": 0.30845399999998335,
+        "median_ms": 0.2954589999999939,
+        "p95_ms": 0.4437040000000252,
+        "p99_ms": 0.4437040000000252,
+        "stddev_ms": 0.04579025152367166
+      }
+    },
+    {
+      "probeName": "performance",
+      "timestamp": 1766824173884,
+      "category": "performance",
+      "observation": "BLAKE3 hashing throughput (1KB data)",
+      "value": 3.5182579235000224,
+      "metadata": {
+        "operation": "hash.blake3",
+        "dataSize": "1KB",
+        "unit": "MB/sec",
+        "mean_ms": 0.27756989999996906,
+        "median_ms": 0.2735829999999737,
+        "p95_ms": 0.3386450000000423,
+        "p99_ms": 0.3386450000000423,
+        "stddev_ms": 0.040013868874302215
+      }
+    },
+    {
+      "probeName": "performance",
+      "timestamp": 1766824173899,
+      "category": "performance",
+      "observation": "BLAKE3 hashing throughput (10KB data)",
+      "value": 7.682439374367612,
+      "metadata": {
+        "operation": "hash.blake3",
+        "dataSize": "10KB",
+        "unit": "MB/sec",
+        "mean_ms": 1.2711620000000152,
+        "median_ms": 1.2321715000000495,
+        "p95_ms": 1.5792849999999135,
+        "p99_ms": 1.5792849999999135,
+        "stddev_ms": 0.16159293602133976
+      }
+    },
+    {
+      "probeName": "performance",
+      "timestamp": 1766824173946,
+      "category": "performance",
+      "observation": "BLAKE3 hashing throughput (100KB data)",
+      "value": 29.307721494647826,
+      "metadata": {
+        "operation": "hash.blake3",
+        "dataSize": "100KB",
+        "unit": "MB/sec",
+        "mean_ms": 3.3320997000000148,
+        "median_ms": 3.2539639999999963,
+        "p95_ms": 3.863753000000088,
+        "p99_ms": 3.863753000000088,
+        "stddev_ms": 0.26358531011993047
+      }
+    },
+    {
+      "probeName": "performance",
+      "timestamp": 1766824173956,
+      "category": "performance",
+      "observation": "Streaming throughput (64KB buffer)",
+      "value": 171.48761804522096,
+      "metadata": {
+        "operation": "stream.throughput",
+        "bufferSize": "64KB",
+        "unit": "MB/sec",
+        "mean_ms": 0.36445779999999106,
+        "median_ms": 0.23641150000003108,
+        "p95_ms": 1.094383999999991,
+        "p99_ms": 1.094383999999991,
+        "stddev_ms": 0.2888956564300826
+      }
+    },
+    {
+      "probeName": "performance",
+      "timestamp": 1766824174001,
+      "category": "performance",
+      "observation": "File read throughput (1KB file)",
+      "value": 0.4206160155073112,
+      "guardDecision": {
+        "path": "/home/user/unrdf/packages/kgc-probe/probe-output/perf-test",
+        "allowed": true,
+        "reason": "Within config.out directory",
+        "policy": "output-only",
+        "timestamp": 1766824173956
+      },
+      "metadata": {
+        "operation": "file.read",
+        "fileSize": "1KB",
+        "unit": "MB/sec",
+        "mean_ms": 2.3217435000000024,
+        "median_ms": 3.1990935000000036,
+        "p95_ms": 3.688966000000164,
+        "p99_ms": 3.688966000000164,
+        "stddev_ms": 1.3483554059403744
+      }
+    },
+    {
+      "probeName": "performance",
+      "timestamp": 1766824174063,
+      "category": "performance",
+      "observation": "File read throughput (10KB file)",
+      "value": 2.9192191509325873,
+      "guardDecision": {
+        "path": "/home/user/unrdf/packages/kgc-probe/probe-output/perf-test",
+        "allowed": true,
+        "reason": "Within config.out directory",
+        "policy": "output-only",
+        "timestamp": 1766824174002
+      },
+      "metadata": {
+        "operation": "file.read",
+        "fileSize": "10KB",
+        "unit": "MB/sec",
+        "mean_ms": 3.345286699999974,
+        "median_ms": 4.0098974999999655,
+        "p95_ms": 5.80319899999995,
+        "p99_ms": 5.80319899999995,
+        "stddev_ms": 1.8513086056119663
+      }
+    },
+    {
+      "probeName": "performance",
+      "timestamp": 1766824174126,
+      "category": "performance",
+      "observation": "File read throughput (100KB file)",
+      "value": 25.366281639034234,
+      "guardDecision": {
+        "path": "/home/user/unrdf/packages/kgc-probe/probe-output/perf-test",
+        "allowed": true,
+        "reason": "Within config.out directory",
+        "policy": "output-only",
+        "timestamp": 1766824174063
+      },
+      "metadata": {
+        "operation": "file.read",
+        "fileSize": "100KB",
+        "unit": "MB/sec",
+        "mean_ms": 3.8498449000000163,
+        "median_ms": 4.020972999999913,
+        "p95_ms": 6.475822999999991,
+        "p99_ms": 6.475822999999991,
+        "stddev_ms": 1.725052333438146
+      }
+    },
+    {
+      "probeName": "performance",
+      "timestamp": 1766824174368,
+      "category": "performance",
+      "observation": "File write throughput (1KB file)",
+      "value": 0.04951066717511606,
+      "guardDecision": {
+        "path": "/home/user/unrdf/packages/kgc-probe/probe-output/perf-test",
+        "allowed": true,
+        "reason": "Within config.out directory",
+        "policy": "output-only",
+        "timestamp": 1766824174126
+      },
+      "metadata": {
+        "operation": "file.write",
+        "fileSize": "1KB",
+        "unit": "MB/sec",
+        "mean_ms": 19.724284799999985,
+        "median_ms": 17.443620499999952,
+        "p95_ms": 36.92505499999993,
+        "p99_ms": 36.92505499999993,
+        "stddev_ms": 9.206044322832614
+      }
+    },
+    {
+      "probeName": "performance",
+      "timestamp": 1766824174574,
+      "category": "performance",
+      "observation": "File write throughput (10KB file)",
+      "value": 0.5713867668659064,
+      "guardDecision": {
+        "path": "/home/user/unrdf/packages/kgc-probe/probe-output/perf-test",
+        "allowed": true,
+        "reason": "Within config.out directory",
+        "policy": "output-only",
+        "timestamp": 1766824174368
+      },
+      "metadata": {
+        "operation": "file.write",
+        "fileSize": "10KB",
+        "unit": "MB/sec",
+        "mean_ms": 17.091094100000056,
+        "median_ms": 18.25217500000008,
+        "p95_ms": 21.773346000000174,
+        "p99_ms": 21.773346000000174,
+        "stddev_ms": 3.0849940361347374
+      }
+    },
+    {
+      "probeName": "performance",
+      "timestamp": 1766824174763,
+      "category": "performance",
+      "observation": "File write throughput (100KB file)",
+      "value": 6.553453897446307,
+      "guardDecision": {
+        "path": "/home/user/unrdf/packages/kgc-probe/probe-output/perf-test",
+        "allowed": true,
+        "reason": "Within config.out directory",
+        "policy": "output-only",
+        "timestamp": 1766824174575
+      },
+      "metadata": {
+        "operation": "file.write",
+        "fileSize": "100KB",
+        "unit": "MB/sec",
+        "mean_ms": 14.901493399999936,
+        "median_ms": 15.762411499999985,
+        "p95_ms": 19.956007999999883,
+        "p99_ms": 19.956007999999883,
+        "stddev_ms": 3.9812419189902704
+      }
+    },
+    {
+      "probeName": "performance",
+      "timestamp": 1766824174763,
+      "category": "performance",
+      "observation": "Buffer allocation (1KB)",
+      "value": 468669.44744584354,
+      "metadata": {
+        "operation": "buffer.allocation",
+        "bufferSize": "1KB",
+        "unit": "ops/sec",
+        "mean_ms": 0.0021336999999675755,
+        "median_ms": 0.0008060000000114087,
+        "p95_ms": 0.007947999999942112,
+        "p99_ms": 0.007947999999942112,
+        "stddev_ms": 0.002559564847757583
+      }
+    },
+    {
+      "probeName": "performance",
+      "timestamp": 1766824174763,
+      "category": "performance",
+      "observation": "Buffer copy (1KB)",
+      "value": 498.34787712121374,
+      "metadata": {
+        "operation": "buffer.copy",
+        "bufferSize": "1KB",
+        "unit": "MB/sec",
+        "mean_ms": 0.0019595999999864945,
+        "median_ms": 0.001423000000158936,
+        "p95_ms": 0.0050449999998818384,
+        "p99_ms": 0.0050449999998818384,
+        "stddev_ms": 0.0012536628892540966
+      }
+    },
+    {
+      "probeName": "performance",
+      "timestamp": 1766824174764,
+      "category": "performance",
+      "observation": "Buffer allocation (10KB)",
+      "value": 54235.52318303235,
+      "metadata": {
+        "operation": "buffer.allocation",
+        "bufferSize": "10KB",
+        "unit": "ops/sec",
+        "mean_ms": 0.018438099999980296,
+        "median_ms": 0.0037869999998747517,
+        "p95_ms": 0.1379660000000058,
+        "p99_ms": 0.1379660000000058,
+        "stddev_ms": 0.04001775353628744
+      }
+    },
+    {
+      "probeName": "performance",
+      "timestamp": 1766824174764,
+      "category": "performance",
+      "observation": "Buffer copy (10KB)",
+      "value": 11125.113921302254,
+      "metadata": {
+        "operation": "buffer.copy",
+        "bufferSize": "10KB",
+        "unit": "MB/sec",
+        "mean_ms": 0.0008777999999892927,
+        "median_ms": 0.0008249999999634383,
+        "p95_ms": 0.0012349999999514694,
+        "p99_ms": 0.0012349999999514694,
+        "stddev_ms": 0.00012898123891270482
+      }
+    },
+    {
+      "probeName": "performance",
+      "timestamp": 1766824174764,
+      "category": "performance",
+      "observation": "Buffer allocation (100KB)",
+      "value": 43871.001706518815,
+      "metadata": {
+        "operation": "buffer.allocation",
+        "bufferSize": "100KB",
+        "unit": "ops/sec",
+        "mean_ms": 0.02279410000003281,
+        "median_ms": 0.01860850000002756,
+        "p95_ms": 0.048974999999927604,
+        "p99_ms": 0.048974999999927604,
+        "stddev_ms": 0.019461889571442407
+      }
+    },
+    {
+      "probeName": "performance",
+      "timestamp": 1766824174765,
+      "category": "performance",
+      "observation": "Buffer copy (100KB)",
+      "value": 31830.58996057299,
+      "metadata": {
+        "operation": "buffer.copy",
+        "bufferSize": "100KB",
+        "unit": "MB/sec",
+        "mean_ms": 0.0030680000000302245,
+        "median_ms": 0.0030350000000680666,
+        "p95_ms": 0.003390999999965061,
+        "p99_ms": 0.003390999999965061,
+        "stddev_ms": 0.00010998363513367643
+      }
+    },
+    {
+      "probeName": "performance",
+      "timestamp": 1766824174765,
+      "category": "performance",
+      "observation": "String concatenation (10KB)",
+      "value": 1583029.9194731056,
+      "metadata": {
+        "operation": "string.concat",
+        "stringSize": "10KB",
+        "unit": "ops/sec",
+        "mean_ms": 0.0006316999999171457,
+        "median_ms": 0.00040249999983643647,
+        "p95_ms": 0.0023979999998573476,
+        "p99_ms": 0.0023979999998573476,
+        "stddev_ms": 0.0006145689627473554
+      }
+    },
+    {
+      "probeName": "performance",
+      "timestamp": 1766824174765,
+      "category": "performance",
+      "observation": "String slice (10KB)",
+      "value": 1243935.812798238,
+      "metadata": {
+        "operation": "string.slice",
+        "stringSize": "10KB",
+        "unit": "ops/sec",
+        "mean_ms": 0.0008039000000735541,
+        "median_ms": 0.0004560000000992659,
+        "p95_ms": 0.0029449999999542342,
+        "p99_ms": 0.0029449999999542342,
+        "stddev_ms": 0.0007733932311243482
+      }
+    },
+    {
+      "probeName": "performance",
+      "timestamp": 1766824174765,
+      "category": "performance",
+      "observation": "String regex match (10KB)",
+      "value": 86982.23822705426,
+      "metadata": {
+        "operation": "string.regex",
+        "stringSize": "10KB",
+        "unit": "ops/sec",
+        "mean_ms": 0.011496599999986756,
+        "median_ms": 0.006674500000031003,
+        "p95_ms": 0.05336399999987407,
+        "p99_ms": 0.05336399999987407,
+        "stddev_ms": 0.013964380531872987
+      }
+    }
+  ]
+}

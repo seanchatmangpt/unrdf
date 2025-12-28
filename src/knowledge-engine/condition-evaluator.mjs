@@ -11,7 +11,7 @@ import { createFileResolver } from './file-resolver.mjs';
 import { ask, select } from './query.mjs';
 import { validateShacl } from './validate.mjs';
 import { createQueryOptimizer } from './query-optimizer.mjs';
-import { Store } from 'n3';
+import { createStore } from '@unrdf/oxigraph';
 
 /**
  * Evaluate a hook condition against a graph.
@@ -480,7 +480,7 @@ async function evaluateDelta(condition, graph, resolver, env, options) {
   let baselineHash = null;
   if (baseline) {
     try {
-      const baselineStore = new Store();
+      const baselineStore = await createStore();
       // Load baseline data
       baselineHash = await hashStore(baselineStore);
     } catch (error) {

@@ -90,6 +90,51 @@ export {
   WorkflowResultSchema
 } from './workflow-orchestrator.mjs';
 
+// Parallel Orchestration - Worker Pool
+export {
+  WorkerPool,
+  createWorkerPool,
+  WorkerStatus,
+  WorkerSchema,
+  PoolConfigSchema
+} from './worker-pool.mjs';
+
+// Parallel Orchestration - Task Queue
+export {
+  TaskQueue,
+  createTaskQueue,
+  TaskPriority,
+  TaskStatus,
+  TaskSchema,
+  QueueConfigSchema
+} from './task-queue.mjs';
+
+// Parallel Orchestration - Agent Router
+export {
+  AgentRouter,
+  createAgentRouter,
+  AgentRole,
+  RoutingStrategy,
+  AgentRegistrationSchema
+} from './agent-router.mjs';
+
+// Parallel Orchestration - Circuit Breaker
+export {
+  CircuitBreaker,
+  createCircuitBreaker,
+  withCircuitBreaker,
+  CircuitState,
+  CircuitBreakerConfigSchema
+} from './circuit-breaker.mjs';
+
+// Parallel Orchestration - Main Orchestrator
+export {
+  ParallelOrchestrator,
+  createParallelOrchestrator,
+  ObservableUpdateSchema,
+  ParallelOrchestratorConfigSchema
+} from './parallel-orchestrator.mjs';
+
 /**
  * Default workflow stages
  */
@@ -156,7 +201,46 @@ export const VERSION = '1.0.0';
 export const MODULE_INFO = {
   name: '@unrdf/orchestration',
   version: VERSION,
-  description: 'Multi-package atomic change orchestration',
+  description: 'Multi-package atomic change orchestration with parallel agent execution',
   author: 'UNRDF Contributors',
   license: 'MIT'
 };
+
+// Import factory for parallel orchestrator
+import { createParallelOrchestrator as _createParallelOrchestrator } from './parallel-orchestrator.mjs';
+
+/**
+ * Create a parallel orchestration system
+ *
+ * @param {Object} [config] - Configuration
+ * @returns {ParallelOrchestrator} Parallel orchestrator
+ *
+ * @example
+ * import { createParallelOrchestrationSystem, AgentRole } from '@unrdf/orchestration';
+ *
+ * const system = createParallelOrchestrationSystem({
+ *   workerPool: { minWorkers: 2, maxWorkers: 10 },
+ *   taskQueue: { maxSize: 1000 }
+ * });
+ *
+ * await system.start();
+ *
+ * system.registerAgent({
+ *   agentId: 'observer-1',
+ *   role: AgentRole.OBSERVER,
+ *   capabilities: ['observe', 'compress']
+ * });
+ *
+ * const observable = system.submit({
+ *   type: 'observe-task',
+ *   capabilities: ['observe'],
+ *   payload: { data: [...] }
+ * });
+ *
+ * observable.on('complete', (result) => {
+ *   console.log('Complete:', result);
+ * });
+ */
+export function createParallelOrchestrationSystem(config = {}) {
+  return _createParallelOrchestrator(config);
+}

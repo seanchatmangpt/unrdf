@@ -43,7 +43,7 @@ import { mergeStores } from './rdf-utils.mjs';
  * const merged = universe.merge();
  *
  * // Query across all partitions
- * const results = universe.query('SELECT * WHERE { ?s ?p ?o }');
+ * const results = universe.query(sparql`'SELECT * WHERE { ?s ?p ?o }'`);
  * ```
  */
 export class Universe {

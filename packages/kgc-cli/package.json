@@ -10,7 +10,9 @@
   "exports": {
     ".": "./src/index.mjs",
     "./registry": "./src/lib/registry.mjs",
-    "./manifest": "./src/manifest/extensions.mjs"
+    "./manifest": "./src/manifest/extensions.mjs",
+    "./latex": "./src/lib/latex/index.mjs",
+    "./latex/schemas": "./src/lib/latex/schemas.mjs"
   },
   "sideEffects": false,
   "files": [
@@ -28,7 +30,11 @@
     "lint": "eslint src/ test/ --max-warnings=0",
     "lint:fix": "eslint src/ test/ --fix",
     "format": "prettier --write src/ test/",
-    "format:check": "prettier --check src/ test/"
+    "format:check": "prettier --check src/ test/",
+    "latex:build": "node src/cli.mjs latex build",
+    "latex:diagnose": "node src/cli.mjs latex diagnose",
+    "latex:cache:verify": "node src/cli.mjs latex cache verify",
+    "validate:wasm": "node vendor/swiftlatex/validate-binaries.mjs"
   },
   "keywords": [
     "kgc",

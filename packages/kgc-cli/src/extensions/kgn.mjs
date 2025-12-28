@@ -20,7 +20,7 @@ const ParseSchema = z.object({
   extractFrontmatter: z.boolean().optional().default(true)
 });
 
-const LintSchema = z.object({
+const _LintSchema = z.object({
   templatePath: z.string().describe('Path to template file'),
   strict: z.boolean().optional().default(false)
 });
@@ -55,7 +55,7 @@ const extension = {
           argsSchema: z.object({
             template: z.string().describe('Template content or path')
           }),
-          handler: async (args) => {
+          handler: async (_args) => {
             return {
               valid: true,
               errors: [],
@@ -88,7 +88,7 @@ const extension = {
             data: z.record(z.any()).describe('Data to serialize'),
             includeFrontmatter: z.boolean().optional().default(true)
           }),
-          handler: async (args) => {
+          handler: async (_args) => {
             return {
               output: '',
               format: 'kgn',

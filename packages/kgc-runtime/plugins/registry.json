@@ -1,0 +1,35 @@
+{
+  "name": "KGC Plugin Registry",
+  "version": "1.0.0",
+  "description": "Official registry for KGC Runtime plugins",
+  "updated": "2024-12-27",
+  "plugins": [
+    {
+      "name": "example-receipt",
+      "version": "1.0.0",
+      "description": "Example custom receipt plugin",
+      "author": "UNRDF Team",
+      "license": "MIT",
+      "entryPoint": "./example-plugin.mjs",
+      "capabilities": [
+        "receipt:generate",
+        "receipt:validate",
+        "custom:example"
+      ],
+      "api_version": "5.0.1",
+      "repository": "https://github.com/unrdf/kgc-plugins",
+      "tags": ["receipt", "example"],
+      "verified": true
+    }
+  ],
+  "categories": {
+    "receipt": "Custom receipt types and validation",
+    "schema": "Schema validation and transformation",
+    "tools": "Tool registry extensions",
+    "governance": "Governance policy plugins"
+  },
+  "metadata": {
+    "total_plugins": 1,
+    "last_updated": "2024-12-27T00:00:00Z"
+  }
+}

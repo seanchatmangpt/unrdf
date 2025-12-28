@@ -1,0 +1,73 @@
+{
+  "name": "@unrdf/kgc-swarm",
+  "version": "1.0.0",
+  "description": "Multi-agent template orchestration with cryptographic receipts - KGC planning meets kgn rendering",
+  "type": "module",
+  "main": "src/index.mjs",
+  "exports": {
+    ".": "./src/index.mjs",
+    "./guards": "./src/guards.mjs",
+    "./orchestrator": "./src/orchestrator.mjs",
+    "./token-generator": "./src/token-generator.mjs",
+    "./compressor": "./src/compressor.mjs",
+    "./tracker": "./src/tracker.mjs",
+    "./guardian": "./src/guardian.mjs"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint src test",
+    "lint:fix": "eslint src test --fix",
+    "example": "node examples/template-integration.mjs"
+  },
+  "dependencies": {
+    "@unrdf/core": "workspace:*",
+    "@unrdf/oxigraph": "workspace:*",
+    "@unrdf/kgc-substrate": "workspace:*",
+    "@unrdf/kgn": "workspace:*",
+    "@unrdf/knowledge-engine": "workspace:*",
+    "@unrdf/kgc-4d": "workspace:*",
+    "hash-wasm": "^4.11.0",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "vitest": "^4.0.15",
+    "eslint": "^9.18.0",
+    "typescript": "^5.7.2",
+    "fast-check": "^3.15.0"
+  },
+  "keywords": [
+    "kgc",
+    "swarm",
+    "multi-agent",
+    "template",
+    "orchestration",
+    "receipts",
+    "deterministic",
+    "code-generation",
+    "rdf",
+    "knowledge-graph",
+    "agents",
+    "guards",
+    "poka-yoke",
+    "security"
+  ],
+  "files": [
+    "src",
+    "examples",
+    "README.md",
+    "INTEGRATION.md",
+    "MIGRATION.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/unrdf/unrdf.git",
+    "directory": "packages/kgc-swarm"
+  },
+  "author": "UNRDF Contributors",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

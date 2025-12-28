@@ -13,14 +13,15 @@ import {
   TransactionManager,
 } from './knowledge-engine.mjs';
 
-import { DataFactory, Store } from 'n3';
+import { DataFactory } from '@unrdf/core/rdf/n3-justified-only';
+import { createStore } from '@unrdf/oxigraph';
 import { faker } from '@faker-js/faker';
 import assert from 'assert';
 
 const { namedNode, literal, quad } = DataFactory;
 
 async function generatePeople(count) {
-  const store = new Store();
+  const store = await createStore();
   const ex = 'http://example.org/';
 
   for (let i = 0; i < count; i++) {

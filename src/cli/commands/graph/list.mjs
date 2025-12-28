@@ -112,7 +112,7 @@ export const listCommand = defineCommand({
       } catch (sidecarError) {
         // Sidecar not available - try local store approach
         try {
-          const { _Store } = await import('n3');
+          const { _Store } = await import('@unrdf/core/rdf/n3-justified-only');
           const { promises: fs } = await import('fs');
           const path = await import('path');
 

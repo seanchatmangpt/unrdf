@@ -5,8 +5,9 @@
 
 import { promises as fs } from 'fs';
 import path from 'path';
-import { Store, DataFactory } from 'n3';
+import { Store, DataFactory } from '@unrdf/core/rdf/n3-justified-only';
 import { z } from 'zod';
+import { createStore } from '@unrdf/oxigraph';
 
 const { namedNode, literal } = DataFactory;
 
@@ -792,7 +793,7 @@ export async function inferDomainModel(options) {
   // Detect or use provided stack profile
   const stackProfile = validated.stackProfile || (await detectStackProfile(fsStore, projectRoot));
 
-  const store = new Store();
+  const store = await createStore();
   const allEntities = [];
 
   // Get file paths from fsStore

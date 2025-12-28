@@ -1,0 +1,11 @@
+{
+  "timestamp": "2025-12-27T11:46:41.994Z",
+  "success": false,
+  "duration": "0.87s",
+  "snapshot": "unknown",
+  "packageVersions": {
+    "root": "6.0.0-alpha.1",
+    "core": "5.0.1"
+  },
+  "validation": false
+}

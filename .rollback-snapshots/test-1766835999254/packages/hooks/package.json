@@ -1,0 +1,71 @@
+{
+  "name": "@unrdf/hooks",
+  "version": "5.0.1",
+  "description": "UNRDF Knowledge Hooks - Policy Definition and Execution Framework",
+  "type": "module",
+  "main": "src/index.mjs",
+  "exports": {
+    ".": "./src/index.mjs",
+    "./define": "./src/define.mjs",
+    "./executor": "./src/executor.mjs"
+  },
+  "sideEffects": false,
+  "files": [
+    "src/",
+    "dist/",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "vitest run --coverage",
+    "test:fast": "vitest run --coverage",
+    "test:watch": "vitest --coverage",
+    "test:browser": "vitest --config vitest.browser.config.mjs",
+    "test:browser:chromium": "vitest --config vitest.browser.config.mjs --browser.name=chromium",
+    "test:browser:firefox": "vitest --config vitest.browser.config.mjs --browser.name=firefox",
+    "test:browser:webkit": "vitest --config vitest.browser.config.mjs --browser.name=webkit",
+    "test:browser:all": "vitest --workspace=vitest.browser.workspace.mjs",
+    "benchmark": "vitest run --coverage test/benchmarks/",
+    "benchmark:browser": "vitest run --config vitest.browser.config.mjs",
+    "build": "node build.config.mjs",
+    "lint": "eslint src/ test/ --max-warnings=0",
+    "lint:fix": "eslint src/ test/ --fix",
+    "format": "prettier --write src/ test/",
+    "format:check": "prettier --check src/ test/",
+    "clean": "rm -rf dist/ .nyc_output/ coverage/",
+    "dev": "echo 'Development mode for @unrdf/hooks'"
+  },
+  "keywords": [
+    "rdf",
+    "knowledge-graph",
+    "hooks",
+    "policy",
+    "validation"
+  ],
+  "dependencies": {
+    "@unrdf/core": "workspace:*",
+    "@unrdf/oxigraph": "workspace:*",
+    "citty": "^0.1.6",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "vitest": "^4.0.15"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/unrdf/unrdf.git",
+    "directory": "packages/hooks"
+  },
+  "bugs": {
+    "url": "https://github.com/unrdf/unrdf/issues"
+  },
+  "homepage": "https://github.com/unrdf/unrdf#readme",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
+}

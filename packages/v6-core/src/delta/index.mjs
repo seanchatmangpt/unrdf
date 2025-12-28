@@ -50,6 +50,9 @@ export {
   validateDeltaConflict,
 } from './schema.mjs';
 
+// Import validateDelta for internal use in createDelta
+import { validateDelta } from './schema.mjs';
+
 // =============================================================================
 // Gate Exports
 // =============================================================================
@@ -154,7 +157,7 @@ export function createDeltaSystem(options = {}) {
  *   { package: '@unrdf/app' }
  * );
  */
-export function createDelta(op, subject, predicate, object, options = {}) {
+export async function createDelta(op, subject, predicate, object, options = {}) {
   const operation = { op, subject, predicate, object };
 
   if (op === 'update') {
@@ -185,7 +188,9 @@ export function createDelta(op, subject, predicate, object, options = {}) {
     },
   };
 
-  return validateDelta(delta);
+  // Import validateDelta from schema exports
+  const { validateDelta: validate } = await import('./schema.mjs');
+  return validate(delta);
 }
 
 /**
@@ -203,16 +208,12 @@ function generateUUID(context = {}) {
   if (typeof crypto !== 'undefined' && crypto.randomUUID) {
     return crypto.randomUUID();
   }
-  try {
-    const crypto = require('crypto');
-    return crypto.randomUUID();
-  } catch {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-      const r = (Math.random() * 16) | 0;
-      const v = c === 'x' ? r : (r & 0x3) | 0x8;
-      return v.toString(16);
-    });
-  }
+  // Fallback for older environments (browser/Node.js compatible)
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0;
+    const v = c === 'x' ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
 }
 
 // =============================================================================

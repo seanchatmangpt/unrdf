@@ -23,10 +23,10 @@ import {
 } from '../../src/receipts/index.mjs';
 
 import {
-  createDeltaProposal,
-  applyDelta,
-  DeltaProposalSchema,
-  adapters,
+  createDelta,
+  createDeltaSystem,
+  DeltaSchema,
+  DeltaGate,
 } from '../../src/delta/index.mjs';
 
 import {

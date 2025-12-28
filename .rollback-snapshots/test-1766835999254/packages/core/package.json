@@ -1,0 +1,84 @@
+{
+  "name": "@unrdf/core",
+  "version": "5.0.1",
+  "description": "UNRDF Core - RDF Graph Operations, SPARQL Execution, and Foundational Substrate",
+  "type": "module",
+  "main": "src/index.mjs",
+  "exports": {
+    ".": "./src/index.mjs",
+    "./rdf": "./src/rdf/index.mjs",
+    "./rdf/minimal-n3-integration": "./src/rdf/minimal-n3-integration.mjs",
+    "./rdf/n3-justified-only": "./src/rdf/n3-justified-only.mjs",
+    "./sparql": "./src/sparql/index.mjs",
+    "./types": "./src/types.mjs",
+    "./constants": "./src/constants.mjs",
+    "./validation": "./src/validation/index.mjs",
+    "./health": "./src/health.mjs",
+    "./logger": "./src/logger.mjs",
+    "./metrics": "./src/metrics.mjs",
+    "./security": "./src/security.mjs",
+    "./security-schemas": "./src/security-schemas.mjs",
+    "./utils/sparql-utils": "./src/utils/sparql-utils.mjs"
+  },
+  "sideEffects": false,
+  "files": [
+    "src/",
+    "dist/",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "vitest run --no-coverage",
+    "test:coverage": "vitest run --coverage",
+    "test:fast": "vitest run --no-coverage",
+    "test:watch": "vitest --no-coverage",
+    "build": "node build.config.mjs",
+    "lint": "eslint src/ test/ --max-warnings=0",
+    "lint:fix": "eslint src/ test/ --fix",
+    "format": "prettier --write src/ test/",
+    "format:check": "prettier --check src/ test/",
+    "clean": "rm -rf dist/ .nyc_output/ coverage/",
+    "dev": "echo 'Development mode for @unrdf/core'"
+  },
+  "keywords": [
+    "rdf",
+    "knowledge-graph",
+    "sparql",
+    "semantic-web",
+    "linked-data"
+  ],
+  "dependencies": {
+    "@rdfjs/data-model": "^2.1.1",
+    "@rdfjs/namespace": "^2.0.1",
+    "@rdfjs/serializer-jsonld": "^2.0.1",
+    "@rdfjs/serializer-turtle": "^1.1.5",
+    "@rdfjs/to-ntriples": "^3.0.1",
+    "@unrdf/oxigraph": "workspace:*",
+    "jsonld": "^9.0.0",
+    "n3": "^1.26.0",
+    "rdf-canonize": "^5.0.0",
+    "rdf-ext": "^2.6.0",
+    "rdf-validate-shacl": "^0.6.5",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "vitest": "^4.0.15"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/unrdf/unrdf.git",
+    "directory": "packages/core"
+  },
+  "bugs": {
+    "url": "https://github.com/unrdf/unrdf/issues"
+  },
+  "homepage": "https://github.com/unrdf/unrdf#readme",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
+}

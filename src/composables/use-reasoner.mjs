@@ -9,7 +9,7 @@
  * @license MIT
  */
 
-import { _Store } from 'n3';
+import { _Store } from '@unrdf/core/rdf/n3-justified-only';
 import { useStoreContext } from '../context/index.mjs';
 
 /**
