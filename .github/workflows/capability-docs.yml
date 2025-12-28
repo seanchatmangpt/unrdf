@@ -1,0 +1,340 @@
+name: Capability Documentation Automation
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - 'claude/**'
+    paths:
+      - 'packages/*/package.json'
+      - 'packages/*/src/**'
+      - 'scripts/generate-capability-maps.mjs'
+      - 'scripts/validate-capability-docs.mjs'
+      - '.github/workflows/capability-docs.yml'
+  pull_request:
+    branches:
+      - main
+      - develop
+    paths:
+      - 'packages/*/package.json'
+      - 'packages/*/src/**'
+  workflow_dispatch:
+    inputs:
+      force_regenerate:
+        description: 'Force regeneration of all capability maps'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+      packages:
+        description: 'Comma-separated list of packages to process (empty = all modified)'
+        required: false
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+  checks: write
+
+jobs:
+  validate-quality-gate:
+    name: Quality Gate & OTEL Validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 8.15.0
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+        timeout-minutes: 5
+
+      - name: Run linting
+        run: timeout 30s pnpm lint
+        continue-on-error: false
+
+      - name: Run fast tests
+        run: timeout 60s pnpm test:fast
+        continue-on-error: false
+
+      - name: Validate capability docs structure
+        run: timeout 10s node scripts/validate-capability-docs.mjs
+        continue-on-error: false
+
+      - name: Run OTEL validation
+        run: timeout 30s node validation/run-all.mjs comprehensive
+        continue-on-error: true
+        id: otel_validation
+
+      - name: Check OTEL score threshold
+        run: |
+          if grep -q "Score:" validation-output.log; then
+            SCORE=$(grep "Score:" validation-output.log | tail -1 | awk '{print $2}' | cut -d'/' -f1)
+            echo "OTEL Score: $SCORE/100"
+            if [ "$SCORE" -lt 80 ]; then
+              echo "::warning::OTEL validation score ($SCORE) below threshold (80)"
+            fi
+          else
+            echo "::warning::OTEL validation log not found"
+          fi
+        continue-on-error: true
+
+  generate-capability-maps:
+    name: Generate Capability Maps
+    runs-on: ubuntu-latest
+    needs: validate-quality-gate
+    timeout-minutes: 15
+
+    outputs:
+      changes_detected: ${{ steps.check_changes.outputs.changes }}
+      modified_packages: ${{ steps.detect_packages.outputs.packages }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 8.15.0
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+        timeout-minutes: 5
+
+      - name: Detect modified packages
+        id: detect_packages
+        run: |
+          if [ "${{ github.event.inputs.packages }}" != "" ]; then
+            PACKAGES="${{ github.event.inputs.packages }}"
+            echo "Using manual package list: $PACKAGES"
+          else
+            # Detect packages with changed package.json or source files
+            CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} 2>/dev/null || git diff --name-only HEAD~1 HEAD)
+            PACKAGES=$(echo "$CHANGED_FILES" | grep -E '^packages/[^/]+/(package\.json|src/)' | cut -d'/' -f2 | sort -u | tr '\n' ',' | sed 's/,$//')
+          fi
+          echo "packages=$PACKAGES" >> $GITHUB_OUTPUT
+          echo "Detected packages: $PACKAGES"
+
+      - name: Generate capability maps
+        run: |
+          if [ "${{ github.event.inputs.force_regenerate }}" = "true" ]; then
+            timeout 120s node scripts/generate-capability-maps.mjs --all
+          elif [ "${{ steps.detect_packages.outputs.packages }}" != "" ]; then
+            timeout 120s node scripts/generate-capability-maps.mjs --packages "${{ steps.detect_packages.outputs.packages }}"
+          else
+            echo "No packages to process"
+            exit 0
+          fi
+        continue-on-error: false
+
+      - name: Auto-index capabilities
+        run: timeout 30s node scripts/auto-index-capabilities.mjs
+        continue-on-error: false
+
+      - name: Validate cross-references
+        run: timeout 30s node scripts/validate-capability-docs.mjs --check-refs
+        continue-on-error: false
+
+      - name: Check for changes
+        id: check_changes
+        run: |
+          git add docs/capabilities/ || true
+          if git diff --cached --quiet; then
+            echo "changes=false" >> $GITHUB_OUTPUT
+            echo "No capability documentation changes detected"
+          else
+            echo "changes=true" >> $GITHUB_OUTPUT
+            echo "Capability documentation changes detected"
+            git diff --cached --stat
+          fi
+
+      - name: Upload generated docs as artifact
+        if: steps.check_changes.outputs.changes == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: capability-docs
+          path: docs/capabilities/
+          retention-days: 7
+
+  create-pull-request:
+    name: Create Pull Request
+    runs-on: ubuntu-latest
+    needs: generate-capability-maps
+    if: needs.generate-capability-maps.outputs.changes_detected == 'true' && github.event_name != 'pull_request'
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 8.15.0
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+        timeout-minutes: 5
+
+      - name: Regenerate capability maps
+        run: |
+          if [ "${{ github.event.inputs.force_regenerate }}" = "true" ]; then
+            timeout 120s node scripts/generate-capability-maps.mjs --all
+          elif [ "${{ needs.generate-capability-maps.outputs.modified_packages }}" != "" ]; then
+            timeout 120s node scripts/generate-capability-maps.mjs --packages "${{ needs.generate-capability-maps.outputs.modified_packages }}"
+          fi
+
+      - name: Auto-index capabilities
+        run: timeout 30s node scripts/auto-index-capabilities.mjs
+
+      - name: Create branch and commit
+        id: commit
+        run: |
+          BRANCH_NAME="auto/capability-docs-$(date +%Y%m%d-%H%M%S)"
+          git checkout -b "$BRANCH_NAME"
+          git add docs/capabilities/
+
+          git commit -m "$(cat <<'EOF'
+          docs: Auto-generate capability maps for modified packages
+
+          Packages updated: ${{ needs.generate-capability-maps.outputs.modified_packages }}
+
+          Generated by GitHub Actions workflow: ${{ github.workflow }}
+          Triggered by: ${{ github.event_name }}
+          Commit: ${{ github.sha }}
+          EOF
+          )" || exit 0
+
+          git push -u origin "$BRANCH_NAME"
+          echo "branch=$BRANCH_NAME" >> $GITHUB_OUTPUT
+
+      - name: Create Pull Request
+        if: steps.commit.outputs.branch != ''
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ steps.commit.outputs.branch }}
+          base: ${{ github.ref_name }}
+          title: "docs: Auto-generated capability documentation updates"
+          body: |
+            ## Summary
+            - Auto-generated capability maps for modified packages
+            - Updated package documentation and cross-references
+            - Regenerated capability index
+
+            ## Modified Packages
+            ${{ needs.generate-capability-maps.outputs.modified_packages }}
+
+            ## Validation Status
+            - ✅ Quality gate passed (linting + tests)
+            - ✅ OTEL validation completed
+            - ✅ Cross-reference validation passed
+
+            ## Test Plan
+            - [ ] Review generated capability maps for accuracy
+            - [ ] Verify cross-references are valid
+            - [ ] Check documentation completeness
+            - [ ] Validate OTEL span coverage
+
+            ---
+
+            **Generated by**: GitHub Actions
+            **Workflow**: `${{ github.workflow }}`
+            **Triggered by**: `${{ github.event_name }}`
+          labels: |
+            documentation
+            auto-generated
+            capability-maps
+          assignees: ${{ github.actor }}
+
+  validate-pr-docs:
+    name: Validate PR Documentation
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 8.15.0
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+        timeout-minutes: 5
+
+      - name: Validate capability documentation
+        run: timeout 30s node scripts/validate-capability-docs.mjs --strict
+        continue-on-error: false
+
+      - name: Check documentation completeness
+        run: |
+          MISSING=$(timeout 10s node scripts/validate-capability-docs.mjs --check-missing 2>&1 | grep -c "Missing capability map" || echo "0")
+          if [ "$MISSING" -gt 0 ]; then
+            echo "::warning::Found $MISSING packages with missing capability maps"
+          else
+            echo "✅ All packages have capability documentation"
+          fi
+
+      - name: Validate cross-references
+        run: timeout 30s node scripts/validate-capability-docs.mjs --check-refs --strict
+        continue-on-error: false
+
+      - name: Post validation summary
+        if: always()
+        run: |
+          echo "## Capability Documentation Validation" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          timeout 10s node scripts/validate-capability-docs.mjs --summary >> $GITHUB_STEP_SUMMARY

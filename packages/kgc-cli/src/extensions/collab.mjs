@@ -20,7 +20,7 @@ const extension = {
         sync: {
           description: 'Synchronize session state',
           argsSchema: z.object({ sessionId: z.string() }),
-          handler: async (args) => ({ synced: true, changes: 0 })
+          handler: async (_args) => ({ synced: true, changes: 0 })
         }
       }
     }

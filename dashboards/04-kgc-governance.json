@@ -1,0 +1,125 @@
+{
+  "dashboard": {
+    "id": null,
+    "uid": "unrdf-kgc-governance",
+    "title": "UNRDF KGC Governance Metrics",
+    "tags": ["unrdf", "kgc", "governance", "receipts"],
+    "timezone": "browser",
+    "schemaVersion": 16,
+    "version": 0,
+    "refresh": "10s",
+    "panels": [
+      {
+        "id": 1,
+        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+        "type": "graph",
+        "title": "Transaction Receipt Generation",
+        "targets": [
+          {
+            "expr": "rate(kgc_transactions_total{service=\"unrdf-kgc\"}[5m])",
+            "legendFormat": "Receipts/min"
+          },
+          {
+            "expr": "rate(kgc_transactions_total{service=\"unrdf-kgc\",success=\"true\"}[5m])",
+            "legendFormat": "Successful Receipts/min"
+          }
+        ],
+        "yaxes": [
+          { "format": "short", "label": "Rate" },
+          { "format": "short" }
+        ]
+      },
+      {
+        "id": 2,
+        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+        "type": "graph",
+        "title": "Hook Execution (Capsules)",
+        "targets": [
+          {
+            "expr": "rate(kgc_hooks_executed_total{service=\"unrdf-kgc\"}[5m])",
+            "legendFormat": "Hooks/min"
+          },
+          {
+            "expr": "histogram_quantile(0.95, rate(kgc_hook_duration_ms_bucket{service=\"unrdf-kgc\"}[5m]))",
+            "legendFormat": "P95 Hook Latency (ms)"
+          }
+        ],
+        "yaxes": [
+          { "format": "short", "label": "Count/Latency" },
+          { "format": "short" }
+        ]
+      },
+      {
+        "id": 3,
+        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+        "type": "graph",
+        "title": "Cache Performance (Bounds)",
+        "targets": [
+          {
+            "expr": "rate(kgc_cache_hits_total{service=\"unrdf-kgc\"}[5m])",
+            "legendFormat": "Cache Hits/min"
+          },
+          {
+            "expr": "rate(kgc_cache_misses_total{service=\"unrdf-kgc\"}[5m])",
+            "legendFormat": "Cache Misses/min"
+          },
+          {
+            "expr": "rate(kgc_cache_hits_total{service=\"unrdf-kgc\"}[5m]) / (rate(kgc_cache_hits_total{service=\"unrdf-kgc\"}[5m]) + rate(kgc_cache_misses_total{service=\"unrdf-kgc\"}[5m])) * 100",
+            "legendFormat": "Cache Hit Rate %"
+          }
+        ],
+        "yaxes": [
+          { "format": "short", "label": "Rate / %" },
+          { "format": "short" }
+        ]
+      },
+      {
+        "id": 4,
+        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+        "type": "graph",
+        "title": "Knowledge Graph Size",
+        "targets": [
+          {
+            "expr": "kgc_triples_count{service=\"unrdf-kgc\"}",
+            "legendFormat": "Total Triples"
+          },
+          {
+            "expr": "kgc_quads_count{service=\"unrdf-kgc\"}",
+            "legendFormat": "Total Quads"
+          }
+        ],
+        "yaxes": [
+          { "format": "short", "label": "Count" },
+          { "format": "short" }
+        ]
+      },
+      {
+        "id": 5,
+        "gridPos": { "h": 6, "w": 24, "x": 0, "y": 16 },
+        "type": "table",
+        "title": "Active Governance Receipts",
+        "targets": [
+          {
+            "expr": "kgc_active_receipts{service=\"unrdf-kgc\"}",
+            "format": "table",
+            "instant": true
+          }
+        ],
+        "transformations": [
+          {
+            "id": "organize",
+            "options": {
+              "excludeByName": {},
+              "indexByName": {},
+              "renameByName": {
+                "transaction_id": "Transaction ID",
+                "timestamp": "Timestamp",
+                "status": "Status"
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

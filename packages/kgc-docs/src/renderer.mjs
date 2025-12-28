@@ -8,6 +8,82 @@
 import { generateProofTree } from './proof.mjs';
 
 /**
+ * Render AST block to markdown
+ * @param {object} block - AST block
+ * @returns {string} Rendered markdown
+ */
+function renderBlock(block) {
+  switch (block.type) {
+    case 'heading':
+      return `${'#'.repeat(block.level)} ${block.content}\n\n`;
+
+    case 'paragraph':
+      return `${block.content}\n\n`;
+
+    case 'list':
+      return renderList(block);
+
+    case 'table':
+      return renderTable(block);
+
+    case 'blockquote':
+      return `> ${block.content.split('\n').join('\n> ')}\n\n`;
+
+    case 'image':
+      return `![${block.alt}](${block.src})\n\n`;
+
+    case 'code':
+      if (block.executable) {
+        return `\`\`\`${block.language}\n${block.content}\n\`\`\`\n\n`;
+      }
+      return `\`\`\`${block.language}\n${block.content}\n\`\`\`\n\n`;
+
+    case 'query':
+      return `\`\`\`sparql\n${block.content}\n\`\`\`\n\n`;
+
+    case 'proof':
+    case 'extract':
+    case 'render':
+      return `\`\`\`kgc:${block.type}\n${block.content}\n\`\`\`\n\n`;
+
+    default:
+      return '';
+  }
+}
+
+/**
+ * Render list block
+ * @param {object} list - List block
+ * @returns {string} Rendered markdown list
+ */
+function renderList(list) {
+  let output = '';
+  for (let i = 0; i < list.items.length; i++) {
+    const item = list.items[i];
+    const prefix = list.ordered ? `${i + 1}. ` : '- ';
+    const indent = ' '.repeat(item.indent || 0);
+    output += `${indent}${prefix}${item.content}\n`;
+  }
+  return output + '\n';
+}
+
+/**
+ * Render table block
+ * @param {object} table - Table block
+ * @returns {string} Rendered markdown table
+ */
+function renderTable(table) {
+  let output = '| ' + table.headers.join(' | ') + ' |\n';
+  output += '|' + table.headers.map(() => '---').join('|') + '|\n';
+
+  for (const row of table.rows) {
+    output += '| ' + row.join(' | ') + ' |\n';
+  }
+
+  return output + '\n';
+}
+
+/**
  * Render tutorial view (learning-oriented)
  * @param {object} ast - KGC AST
  * @returns {string} Tutorial markdown
@@ -17,6 +93,10 @@ export function renderTutorial(ast) {
 
   let output = `# ${getMainHeading(blocks)} - Tutorial\n\n`;
   output += `> **Learning Path**: Get started with ${getMainHeading(blocks)}\n\n`;
+
+  if (frontmatter.version) {
+    output += `**Version**: ${frontmatter.version}\n\n`;
+  }
 
   output += `## Getting Started\n\n`;
   output += `This tutorial will help you learn the fundamentals step by step.\n\n`;
@@ -29,6 +109,15 @@ export function renderTutorial(ast) {
     }
   }
   output += `\n`;
+
+  // Add paragraphs
+  const paragraphs = blocks.filter((b) => b.type === 'paragraph');
+  if (paragraphs.length > 0) {
+    output += `## Overview\n\n`;
+    paragraphs.slice(0, 2).forEach((p) => {
+      output += `${p.content}\n\n`;
+    });
+  }
 
   // Add query examples if present
   const queryBlocks = blocks.filter((b) => b.type === 'query');

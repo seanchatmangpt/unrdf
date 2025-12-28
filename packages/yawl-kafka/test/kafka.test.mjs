@@ -4,7 +4,7 @@
  * Tests for Kafka producer, consumer, and Avro serialization.
  */
 
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import {
   serializeEvent,
   deserializeEvent,

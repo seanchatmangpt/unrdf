@@ -377,8 +377,8 @@ export function shardMerge(capsules, totalOrder) {
       validatedCapsules
     );
 
-    // Mark denied capsules
-    if (resolution.denied) {
+    // For merge_all strategy, don't deny any capsules - just emit receipts
+    if (rule.strategy !== 'merge_all' && resolution.denied) {
       resolution.denied.forEach((id) => denied_capsules.add(id));
     }
 
@@ -392,10 +392,11 @@ export function shardMerge(capsules, totalOrder) {
     conflict_receipts.push(receipt);
   }
 
-  // Build merged state with only admitted capsules
+  // Build merged state
   const merged_state = {};
   for (const capsule of validatedCapsules) {
-    if (!denied_capsules.has(capsule.id)) {
+    // For merge_all, include all capsules; otherwise only admitted
+    if (validatedOrder.default_rule.strategy === 'merge_all' || !denied_capsules.has(capsule.id)) {
       merged_state[capsule.id] = {
         file_edits: capsule.file_edits,
         metadata: capsule.metadata,

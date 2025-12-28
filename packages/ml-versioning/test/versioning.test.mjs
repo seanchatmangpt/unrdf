@@ -161,7 +161,7 @@ describe('MLVersionStore', () => {
         { accuracy: 0.8 }
       );
 
-      const receipt2 = await versionStore.saveVersion(
+      const _receipt2 = await versionStore.saveVersion(
         model,
         { name: 'tamper-test', version: 'v2' },
         { accuracy: 0.9 }

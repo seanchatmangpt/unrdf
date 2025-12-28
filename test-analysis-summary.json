@@ -1,0 +1,45 @@
+{
+  "timestamp": "2025-12-27T11:15:00Z",
+  "totalTestFiles": 385,
+  "totalTestLines": 66292,
+  "packagesWithTests": 64,
+  "testResults": {
+    "core": {
+      "passed": 437,
+      "failed": 2,
+      "total": 439,
+      "passRate": "99.5%",
+      "failures": [
+        "logger.test.mjs: timing assertion (flaky)",
+        "n3-backward-compat.test.mjs: result format mismatch"
+      ]
+    },
+    "kgc4d": {
+      "passed": 443,
+      "failed": 0,
+      "skipped": 1,
+      "total": 444,
+      "passRate": "100%",
+      "otelScore": "100/100"
+    },
+    "v6Core": {
+      "passed": 17,
+      "failed": 4,
+      "total": 21,
+      "passRate": "81%",
+      "failures": [
+        "DeltaProposalSchema export missing",
+        "v6-smoke.test.mjs import errors"
+      ]
+    }
+  },
+  "infrastructure": {
+    "testRunners": ["vitest v4.0.16", "node:test"],
+    "coverageIssues": [
+      "vitest/node parseAstAsync export missing",
+      "coverage-v8 incompatibility with vitest 4"
+    ],
+    "benchmarkFiles": 38,
+    "benchmarkStatus": "Import errors - needs package build"
+  }
+}

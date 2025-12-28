@@ -100,6 +100,18 @@
     "id": "reference-unrdf-kgc-docs-reference",
     "items": [
       {
+        "description": "Export: ./changelog-generator",
+        "example": "import from \"./src/changelog-generator.mjs\"",
+        "name": "./changelog-generator",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./executor",
+        "example": "import from \"./src/executor.mjs\"",
+        "name": "./executor",
+        "type": "export"
+      },
+      {
         "description": "Export: ./parser",
         "example": "import from \"./src/parser.mjs\"",
         "name": "./parser",
@@ -109,6 +121,12 @@
         "description": "Export: ./proof",
         "example": "import from \"./src/proof.mjs\"",
         "name": "./proof",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./reference-validator",
+        "example": "import from \"./src/reference-validator.mjs\"",
+        "name": "./reference-validator",
         "type": "export"
       },
       {

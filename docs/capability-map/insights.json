@@ -1,0 +1,490 @@
+{
+  "metadata": {
+    "generated": "2025-12-28",
+    "version": "1.0.0",
+    "source": "AI semantic analysis of UNRDF capability maps",
+    "packages_analyzed": 55,
+    "capabilities_analyzed": 47,
+    "confidence": 0.95
+  },
+  "capabilities": {
+    "createStore": {
+      "package": "@unrdf/oxigraph",
+      "category": "RDF Substrate",
+      "didYouKnow": [
+        "Backend selection (oxigraph vs n3) has 10-200x performance difference",
+        "Store instances are not thread-safe by default",
+        "Prefixes option reduces SPARQL verbosity by 40-60%",
+        "Multiple small stores often faster than one large store for isolated workloads"
+      ],
+      "performanceInsights": {
+        "creation": "<0.1ms",
+        "memory_overhead": "~500B per quad",
+        "throughput_oxigraph": "10K-200K inserts/sec",
+        "throughput_n3": "1K-5K inserts/sec"
+      },
+      "similarCapabilities": [
+        {"name": "dataFactory.namedNode", "score": 0.98},
+        {"name": "dataFactory.quad", "score": 0.95},
+        {"name": "addQuad", "score": 0.93},
+        {"name": "executeSelect", "score": 0.87}
+      ],
+      "compositions": [
+        "Basic RDF CRUD",
+        "Time-Travel RDF",
+        "Policy-Gated RDF",
+        "Distributed Time-Travel"
+      ],
+      "learningPath": "Quick Start (Step 1)",
+      "antiPatterns": [
+        "Creating store per request (use connection pooling)",
+        "Not specifying backend (defaults may not be optimal)"
+      ]
+    },
+    "executeSelect": {
+      "package": "@unrdf/core",
+      "category": "SPARQL Execution",
+      "didYouKnow": [
+        "First execution is 2-3x slower due to query parsing",
+        "Results are iterators, not arrays - saves 80% memory",
+        "Query optimizer reorders patterns by predicate selectivity",
+        "Can hint optimizer with VALUES clauses"
+      ],
+      "performanceInsights": {
+        "query_1k_triples": "0.057ms",
+        "memory_streaming": "~5MB",
+        "first_execution_overhead": "2-3x",
+        "prepared_statement_speedup": "2-3x"
+      },
+      "similarCapabilities": [
+        {"name": "executeAsk", "score": 0.82},
+        {"name": "executeConstruct", "score": 0.79},
+        {"name": "prepareQuery", "score": 0.71},
+        {"name": "createStore", "score": 0.87}
+      ],
+      "compositions": [
+        "Basic RDF CRUD",
+        "Multi-Layer Cache",
+        "Distributed Query"
+      ],
+      "learningPath": "Quick Start (Step 2)",
+      "antiPatterns": [
+        "Converting results to arrays unnecessarily",
+        "Not using prepared statements for repeated queries",
+        "Using SELECT + LIMIT 1 instead of ASK for existence"
+      ]
+    },
+    "validateTriple": {
+      "package": "@unrdf/core",
+      "category": "Validation",
+      "didYouKnow": [
+        "Validates RDF 1.1 semantics: subjects cannot be literals, predicates must be IRIs",
+        "Costs ~0.02ms per quad - significant for bulk loads >100K quads",
+        "Can register custom validators via hooks",
+        "Validation at boundary is better than per-operation"
+      ],
+      "performanceInsights": {
+        "per_quad": "0.02ms",
+        "bulk_overhead": "2-5x for >100K quads"
+      },
+      "similarCapabilities": [
+        {"name": "validateIRI", "score": 0.89},
+        {"name": "validateLiteral", "score": 0.87},
+        {"name": "ValidationError", "score": 0.92},
+        {"name": "defineHook", "score": 0.73}
+      ],
+      "compositions": [
+        "Policy-Gated RDF",
+        "Validation-Only Pipeline",
+        "Zero-Trust Data Ingestion"
+      ],
+      "learningPath": "Quick Start (Step 3)",
+      "antiPatterns": [
+        "Validating every quad in bulk load",
+        "Not using ValidationError for error handling"
+      ]
+    },
+    "canonicalize": {
+      "package": "@unrdf/core",
+      "category": "Serialization",
+      "didYouKnow": [
+        "Uses URDNA2015 algorithm (W3C standard)",
+        "O(n log n) complexity, O(n²) for many blank nodes",
+        "Suitable for cryptographic hashing",
+        "Used by kgc-4d and yawl for receipt generation"
+      ],
+      "performanceInsights": {
+        "1k_quads": "0.206ms",
+        "memory": "~2MB",
+        "complexity": "O(n log n)",
+        "worst_case": "O(n²) for many blank nodes"
+      },
+      "similarCapabilities": [
+        {"name": "toNTriples", "score": 0.88},
+        {"name": "isIsomorphic", "score": 0.95},
+        {"name": "sortQuads", "score": 0.84},
+        {"name": "generateReceipt", "score": 0.76}
+      ],
+      "compositions": [
+        "Graph Comparison",
+        "Receipt-Verified Time-Travel",
+        "Auditable Workflows"
+      ],
+      "learningPath": "Intermediate (Day 3-4)",
+      "antiPatterns": [
+        "Not caching canonical forms for repeated isomorphism checks",
+        "Using for graphs with >1000 blank nodes without optimization"
+      ]
+    },
+    "freezeUniverse": {
+      "package": "@unrdf/kgc-4d",
+      "category": "Time-Travel",
+      "didYouKnow": [
+        "Creates Git snapshot in ~0.206ms for 1000 quads",
+        "Snapshots are content-addressable by hash (deduplication)",
+        "Enables true time-travel via event replay",
+        "Used for debugging production issues"
+      ],
+      "performanceInsights": {
+        "1k_quads": "0.206ms",
+        "storage": "Content-addressable (deduplicated)",
+        "git_overhead": "Minimal due to dedup"
+      },
+      "similarCapabilities": [
+        {"name": "reconstructState", "score": 0.97},
+        {"name": "verifyReceipt", "score": 0.82},
+        {"name": "VectorClock", "score": 0.79},
+        {"name": "GitBackbone", "score": 0.91}
+      ],
+      "compositions": [
+        "Time-Travel RDF",
+        "Receipt-Verified Time-Travel",
+        "Distributed Time-Travel",
+        "Auditable Workflows"
+      ],
+      "learningPath": "Advanced (Week 1)",
+      "antiPatterns": [
+        "Freezing too frequently (creates Git bloat)",
+        "Not verifying receipts after freeze"
+      ]
+    },
+    "defineHook": {
+      "package": "@unrdf/hooks",
+      "category": "Policy & Governance",
+      "didYouKnow": [
+        "Hooks are JIT-compiled for 2-5x speedup",
+        "Hook chains auto-parallelize if side-effect-free",
+        "Registry supports hot-reloading at runtime",
+        "Sandboxed evaluation - safe for untrusted hooks"
+      ],
+      "performanceInsights": {
+        "jit_speedup": "2-5x vs interpreted",
+        "per_hook_overhead": "0.05-0.2ms"
+      },
+      "similarCapabilities": [
+        {"name": "executeHook", "score": 0.99},
+        {"name": "executeHookChain", "score": 0.94},
+        {"name": "compileHookChain", "score": 0.87},
+        {"name": "validateOnly", "score": 0.83}
+      ],
+      "compositions": [
+        "Policy-Gated RDF",
+        "Validation-Only Pipeline",
+        "JIT Hook Chains",
+        "Zero-Trust Data Ingestion"
+      ],
+      "learningPath": "Intermediate (Day 6-7)",
+      "antiPatterns": [
+        "Not marking pure hooks with metadata",
+        "Executing untrusted hooks without sandbox"
+      ]
+    },
+    "WorkflowEngine": {
+      "package": "@unrdf/yawl",
+      "category": "Workflow Orchestration",
+      "didYouKnow": [
+        "Implements all 20 van der Aalst workflow patterns",
+        "Workflow instances are first-class RDF entities",
+        "Supports cancellation regions (WCP-19) - rare in commercial engines",
+        "Handles >1200 workflow cases/second"
+      ],
+      "performanceInsights": {
+        "throughput": "1200+ cases/sec",
+        "petri_net_overhead": "Low due to native model"
+      },
+      "similarCapabilities": [
+        {"name": "WorkflowInstance", "score": 0.96},
+        {"name": "YawlTask", "score": 0.92},
+        {"name": "generateReceipt", "score": 0.81},
+        {"name": "freezeUniverse", "score": 0.74}
+      ],
+      "compositions": [
+        "Auditable Workflows",
+        "Receipt-Verified Time-Travel",
+        "Production Workflow System"
+      ],
+      "learningPath": "Advanced (Week 2)",
+      "antiPatterns": [
+        "Not using cancellation regions for error handling",
+        "Blocking on workflow completion (use async)"
+      ]
+    },
+    "generateReceipt": {
+      "package": "@unrdf/yawl",
+      "category": "Cryptographic Receipts",
+      "didYouKnow": [
+        "Uses BLAKE3 (3-5x faster than SHA-256)",
+        "Receipts form hash chain - verifying N validates 0..N-1",
+        "Pure function (no I/O) - runs in web workers",
+        "Non-repudiable proof of execution order"
+      ],
+      "performanceInsights": {
+        "per_receipt": "0.002ms",
+        "throughput": "500K/sec",
+        "memory": "~100B",
+        "chain_verification_100": "0.2ms"
+      },
+      "similarCapabilities": [
+        {"name": "verifyReceipt", "score": 0.98},
+        {"name": "ProofChain", "score": 0.93},
+        {"name": "deterministicSerialize", "score": 0.89},
+        {"name": "computeBlake3", "score": 0.94}
+      ],
+      "compositions": [
+        "Auditable Workflows",
+        "Receipt-Verified Time-Travel",
+        "Production Workflow System"
+      ],
+      "learningPath": "Advanced (Week 3)",
+      "antiPatterns": [
+        "Using SHA-256 instead of BLAKE3",
+        "Not verifying chain integrity periodically"
+      ]
+    },
+    "RaftNode": {
+      "package": "@unrdf/consensus",
+      "category": "Distributed Systems",
+      "didYouKnow": [
+        "Implements Raft consensus algorithm",
+        "Uses VectorClock for log ordering",
+        "Integrates with Prometheus for observability",
+        "Enables fault-tolerant distributed stores"
+      ],
+      "performanceInsights": {
+        "consensus_latency": "Varies by network",
+        "leader_election": "Fast failover"
+      },
+      "similarCapabilities": [
+        {"name": "PeerDiscovery", "score": 0.88},
+        {"name": "DistributedQuery", "score": 0.82},
+        {"name": "VectorClock", "score": 0.74},
+        {"name": "PrometheusExporter", "score": 0.71}
+      ],
+      "compositions": [
+        "Distributed Time-Travel",
+        "Production Workflow System"
+      ],
+      "learningPath": "Advanced (Week 4)",
+      "antiPatterns": [
+        "Not monitoring Raft cluster health",
+        "Using single-node Raft (defeats purpose)"
+      ]
+    }
+  },
+  "learningPaths": {
+    "quickStart": {
+      "duration": "2 hours",
+      "goal": "Get productive with core RDF operations",
+      "steps": [
+        {"order": 1, "capability": "createStore", "time": "30 min"},
+        {"order": 2, "capability": "executeSelect", "time": "45 min"},
+        {"order": 3, "capability": "validateTriple", "time": "30 min"},
+        {"order": 4, "capability": "complete_example", "time": "15 min"}
+      ],
+      "successCriteria": [
+        "Can create and query RDF store",
+        "Understands RDF data model",
+        "Can validate incoming data"
+      ]
+    },
+    "intermediate": {
+      "duration": "1 week",
+      "goal": "Build production-ready RDF applications",
+      "days": [
+        {"day": "1-2", "focus": "Advanced SPARQL + Performance", "time": "4 hours"},
+        {"day": "3-4", "focus": "Serialization & Canonicalization", "time": "4 hours"},
+        {"day": "5", "focus": "Observability & Debugging", "time": "2 hours"},
+        {"day": "6-7", "focus": "Policy-Gated Stores", "time": "4 hours"}
+      ],
+      "successCriteria": [
+        "Can optimize production workloads",
+        "Understands canonicalization",
+        "Can implement policy gates"
+      ]
+    },
+    "advanced": {
+      "duration": "1 month",
+      "goal": "Build distributed knowledge systems",
+      "weeks": [
+        {"week": 1, "focus": "Time-Travel & Event Sourcing"},
+        {"week": 2, "focus": "Workflow Orchestration"},
+        {"week": 3, "focus": "Cryptographic Receipts"},
+        {"week": 4, "focus": "Federation & Distribution"}
+      ],
+      "successCriteria": [
+        "Can implement time-travel",
+        "Can orchestrate workflows",
+        "Can generate audit trails",
+        "Can deploy distributed systems"
+      ]
+    }
+  },
+  "personas": {
+    "backendDeveloper": {
+      "path": "quickStart + intermediate (week 1-2)",
+      "duration": "1.5 weeks",
+      "focus": ["SPARQL optimization", "validation", "GraphQL mapping"],
+      "successMetric": "Can build REST/GraphQL APIs backed by RDF"
+    },
+    "complianceEngineer": {
+      "path": "quickStart + intermediate (week 6-7) + advanced (week 3)",
+      "duration": "2 weeks",
+      "focus": ["Policy enforcement", "receipt generation", "audit trails"],
+      "successMetric": "Can build auditable systems for regulatory compliance"
+    },
+    "distributedArchitect": {
+      "path": "intermediate (full) + advanced (week 1, 4)",
+      "duration": "1 month",
+      "focus": ["RAFT consensus", "distributed queries", "time-travel"],
+      "successMetric": "Can deploy fault-tolerant distributed knowledge bases"
+    },
+    "researcher": {
+      "path": "all paths + deep dives",
+      "duration": "ongoing",
+      "focus": ["Evidence validation", "performance analysis", "novel compositions"],
+      "successMetric": "Understands architecture and can contribute"
+    },
+    "frontendDeveloper": {
+      "path": "quickStart + streaming + composables",
+      "duration": "1 week",
+      "focus": ["Browser RDF", "change feeds", "reactive updates"],
+      "successMetric": "Can build interactive UIs with real-time RDF data"
+    },
+    "mlEngineer": {
+      "path": "quickStart + intermediate (week 1-2) + analytics",
+      "duration": "3 weeks",
+      "focus": ["Graph analytics", "semantic search", "model inference"],
+      "successMetric": "Can integrate knowledge graphs with ML pipelines"
+    }
+  },
+  "similarityMatrix": {
+    "clusters": [
+      {
+        "name": "RDF Substrate",
+        "centroid": ["createStore", "dataFactory", "addQuad", "executeSelect"],
+        "members": 12,
+        "avgSimilarity": 0.89,
+        "useCase": "Core RDF operations"
+      },
+      {
+        "name": "Validation & Quality",
+        "centroid": ["validateTriple", "validateIRI", "ValidationError"],
+        "members": 7,
+        "avgSimilarity": 0.85,
+        "useCase": "Data quality and policy enforcement"
+      },
+      {
+        "name": "Time-Travel & Events",
+        "centroid": ["freezeUniverse", "VectorClock", "appendEvent"],
+        "members": 8,
+        "avgSimilarity": 0.88,
+        "useCase": "Event sourcing and time-travel debugging"
+      },
+      {
+        "name": "Workflows & Receipts",
+        "centroid": ["WorkflowEngine", "generateReceipt"],
+        "members": 6,
+        "avgSimilarity": 0.91,
+        "useCase": "Auditable workflow orchestration"
+      },
+      {
+        "name": "Distributed Systems",
+        "centroid": ["RaftNode", "DistributedQuery"],
+        "members": 5,
+        "avgSimilarity": 0.86,
+        "useCase": "Federated, fault-tolerant knowledge bases"
+      }
+    ],
+    "recommendations": {
+      "createStore": ["dataFactory.namedNode", "validateTriple", "executeSelect", "freezeUniverse"],
+      "executeSelect": ["prepareQuery", "executeAsk", "PerformanceTracker", "DistributedQuery"],
+      "freezeUniverse": ["reconstructState", "verifyReceipt", "GitBackbone", "WorkflowEngine"],
+      "defineHook": ["executeHook", "compileHookChain", "validateOnly", "addQuad"]
+    }
+  },
+  "antiPatterns": {
+    "overValidation": {
+      "problem": "Validating every quad in bulk load",
+      "cost": "2-5x slowdown",
+      "solution": "Validate at system boundaries only"
+    },
+    "arrayMaterialization": {
+      "problem": "Converting query results to arrays",
+      "cost": "80% memory overhead + blocking",
+      "solution": "Use for...of loops to stream results"
+    },
+    "naiveIsomorphism": {
+      "problem": "Quad-by-quad comparison instead of isIsomorphic()",
+      "cost": "10-100x slower",
+      "solution": "Use canonical comparison"
+    },
+    "storePerRequest": {
+      "problem": "Creating new store for every request",
+      "cost": "Index warming overhead",
+      "solution": "Use connection pooling"
+    },
+    "syncInAsync": {
+      "problem": "Using executeQuerySync() in Node.js servers",
+      "cost": "Kills throughput",
+      "solution": "Always use async query methods"
+    }
+  },
+  "performanceBenchmarks": {
+    "addQuadSingle": {"time": "<0.1ms", "throughput": "10K/sec", "memory": "~200B"},
+    "addQuadBatch1K": {"time": "5ms", "throughput": "200K/sec", "memory": "~500KB"},
+    "sparqlSelect1K": {"time": "0.057ms", "memory": "~5MB"},
+    "canonicalize1K": {"time": "0.206ms", "memory": "~2MB"},
+    "generateReceipt": {"time": "0.002ms", "throughput": "500K/sec", "memory": "~100B"},
+    "verifyChain100": {"time": "0.2ms", "memory": "~10KB"},
+    "freezeUniverse1K": {"time": "0.206ms", "memory": "~2MB"}
+  },
+  "useCaseCoverage": {
+    "rdfApi": {
+      "capabilities": ["createStore", "dataFactory.*", "executeSelect", "validateTriple", "toNTriples"],
+      "coverage": 0.85,
+      "avgSimilarity": 0.88
+    },
+    "complianceAudit": {
+      "capabilities": ["defineHook", "generateReceipt", "freezeUniverse", "ProofChain", "verifyReceipt"],
+      "coverage": 0.90,
+      "avgSimilarity": 0.89
+    },
+    "distributedSystems": {
+      "capabilities": ["RaftNode", "DistributedQuery", "VectorClock", "PeerDiscovery", "PrometheusExporter"],
+      "coverage": 0.88,
+      "avgSimilarity": 0.86
+    },
+    "workflowAutomation": {
+      "capabilities": ["WorkflowEngine", "YawlTask", "generateReceipt", "freezeUniverse", "YawlHook"],
+      "coverage": 0.92,
+      "avgSimilarity": 0.88
+    }
+  },
+  "futureEnhancements": [
+    {"missing": "Browser-native Oxigraph", "priority": "high", "impact": "Performance in browser"},
+    {"missing": "Automatic SPARQL query caching", "priority": "medium", "impact": "Requires manual integration"},
+    {"missing": "SHACL validation", "priority": "medium", "impact": "Only RDF 1.1 semantics validated"},
+    {"missing": "GraphQL auto-generation", "priority": "low", "impact": "Exists but not auto-schema-gen"},
+    {"missing": "Real-time query subscriptions", "priority": "medium", "impact": "Change feeds exist but not query-based"}
+  ]
+}

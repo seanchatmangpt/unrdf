@@ -9,7 +9,7 @@
  * @license MIT
  */
 
-import { DataFactory } from 'n3';
+import { DataFactory } from '@unrdf/core/rdf/n3-justified-only';
 import { _asNamedNode } from './term-utils.mjs';
 import { createNamespaceId } from './id-utils.mjs';
 

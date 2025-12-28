@@ -3,7 +3,7 @@
  * @module project-engine/stack-detect
  */
 
-import { DataFactory } from 'n3';
+import { DataFactory } from '@unrdf/core/rdf/n3-justified-only';
 import { z } from 'zod';
 
 const { namedNode } = DataFactory;

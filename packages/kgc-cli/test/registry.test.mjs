@@ -294,7 +294,7 @@ describe('Registry', () => {
       }).toThrow();
     });
 
-    it('should validate Zod schemas when present', () => {
+    it('should validate Zod schemas when present', async () => {
       const { z } = await import('zod');
 
       const ext = {

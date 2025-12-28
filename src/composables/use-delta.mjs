@@ -9,7 +9,7 @@
  * @license MIT
  */
 
-import { Store } from 'n3';
+import { createStore } from '@unrdf/oxigraph';
 import { useStoreContext } from '../context/index.mjs';
 
 /**
@@ -34,7 +34,7 @@ import { useStoreContext } from '../context/index.mjs';
  *   delta.apply(result);
  * });
  */
-export function useDelta(options = {}) {
+export async function useDelta(options = {}) {
   const { deterministic = true } = options;
   const storeContext = useStoreContext();
   const engine = storeContext.engine;
@@ -55,8 +55,8 @@ export function useDelta(options = {}) {
       const contextStore = storeContext.store;
 
       // Calculate differences
-      const added = new Store();
-      const removed = new Store();
+      const added = await createStore();
+      const removed = await createStore();
 
       // Find quads in new data but not in context (added)
       for (const quad of newStore) {
@@ -243,8 +243,8 @@ export function useDelta(options = {}) {
      */
     merge(...changeSets) {
       const merged = {
-        added: new Store(),
-        removed: new Store(),
+        added: await createStore(),
+        removed: await createStore(),
       };
 
       for (const changes of changeSets) {
@@ -285,8 +285,8 @@ export function useDelta(options = {}) {
       const { added, removed } = changes;
 
       return {
-        added: removed || new Store(),
-        removed: added || new Store(),
+        added: removed || await createStore(),
+        removed: added || await createStore(),
       };
     },
 

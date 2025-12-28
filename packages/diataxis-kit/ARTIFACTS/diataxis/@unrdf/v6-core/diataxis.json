@@ -85,6 +85,18 @@
     "id": "reference-unrdf-v6-core-reference",
     "items": [
       {
+        "description": "Export: ./browser",
+        "example": "import from \"./src/browser.mjs\"",
+        "name": "./browser",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./browser/receipt-store",
+        "example": "import from \"./src/browser/receipt-store.mjs\"",
+        "name": "./browser/receipt-store",
+        "type": "export"
+      },
+      {
         "description": "Export: ./cli",
         "example": "import from \"./src/cli/index.mjs\"",
         "name": "./cli",
@@ -121,15 +133,51 @@
         "type": "export"
       },
       {
+        "description": "Export: ./delta",
+        "example": "import from \"./src/delta/index.mjs\"",
+        "name": "./delta",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./delta/gate",
+        "example": "import from \"./src/delta/gate.mjs\"",
+        "name": "./delta/gate",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./delta/schema",
+        "example": "import from \"./src/delta/schema.mjs\"",
+        "name": "./delta/schema",
+        "type": "export"
+      },
+      {
         "description": "Export: ./deltagate",
         "example": "import from \"./src/deltagate.mjs\"",
         "name": "./deltagate",
         "type": "export"
       },
       {
+        "description": "Export: ./grammar",
+        "example": "import from \"./src/grammar/index.mjs\"",
+        "name": "./grammar",
+        "type": "export"
+      },
+      {
         "description": "Export: ./receipts",
         "example": "import from \"./src/receipts.mjs\"",
         "name": "./receipts",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./receipts/base-receipt",
+        "example": "import from \"./src/receipts/base-receipt.mjs\"",
+        "name": "./receipts/base-receipt",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./receipts/merkle",
+        "example": "import from \"./src/receipts/merkle/tree.mjs\"",
+        "name": "./receipts/merkle",
         "type": "export"
       },
       {
@@ -171,5 +219,5 @@
       "title": "Getting Started with @unrdf/v6-core"
     }
   ],
-  "version": "6.0.0-alpha.1"
+  "version": "6.0.0-rc.1"
 }

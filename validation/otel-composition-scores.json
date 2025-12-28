@@ -1,0 +1,379 @@
+{
+  "timestamp": "2025-12-28T04:11:01.101Z",
+  "totalCompositions": 32,
+  "testedCompositions": 18,
+  "compositions": [
+    {
+      "id": "C25",
+      "name": "Workflow Engine + Workflow Patterns + Hook System",
+      "atoms": [
+        "A35",
+        "A37",
+        "A47"
+      ],
+      "status": "passed",
+      "score": 10,
+      "spansFound": [],
+      "spansMissing": [
+        "workflow.execute",
+        "workflow.pattern",
+        "hook.execute"
+      ],
+      "performance": {
+        "duration": 82
+      },
+      "errors": []
+    },
+    {
+      "id": "C01",
+      "name": "Sync RDF Store + Query",
+      "atoms": [
+        "A01",
+        "A02"
+      ],
+      "status": "failed",
+      "score": 0,
+      "spansFound": [],
+      "spansMissing": [
+        "rdf.store.create",
+        "sparql.execute.sync"
+      ],
+      "performance": {
+        "duration": 102
+      },
+      "errors": []
+    },
+    {
+      "id": "C02",
+      "name": "Async RDF Store + Query",
+      "atoms": [
+        "A01",
+        "A03"
+      ],
+      "status": "partial",
+      "score": 0,
+      "spansFound": [],
+      "spansMissing": [
+        "rdf.store.create",
+        "sparql.execute.async"
+      ],
+      "performance": {
+        "duration": 65
+      },
+      "errors": []
+    },
+    {
+      "id": "C03",
+      "name": "Async Store + SPARQL + Oxigraph",
+      "atoms": [
+        "A01",
+        "A03",
+        "A05"
+      ],
+      "status": "partial",
+      "score": 0,
+      "spansFound": [],
+      "spansMissing": [
+        "rdf.store.create",
+        "sparql.execute",
+        "oxigraph.query"
+      ],
+      "performance": {
+        "duration": 78
+      },
+      "errors": []
+    },
+    {
+      "id": "C04",
+      "name": "RDF Canonicalization + Store",
+      "atoms": [
+        "A04",
+        "A01"
+      ],
+      "status": "partial",
+      "score": 0,
+      "spansFound": [],
+      "spansMissing": [
+        "rdf.canonicalize",
+        "rdf.store.create",
+        "kgc.freeze"
+      ],
+      "performance": {
+        "duration": 104
+      },
+      "errors": []
+    },
+    {
+      "id": "C07",
+      "name": "SPARQL + Query Optimizer",
+      "atoms": [
+        "A02",
+        "A46"
+      ],
+      "status": "partial",
+      "score": 0,
+      "spansFound": [],
+      "spansMissing": [
+        "sparql.execute",
+        "query.optimize"
+      ],
+      "performance": {
+        "duration": 28
+      },
+      "errors": []
+    },
+    {
+      "id": "C09",
+      "name": "Async SPARQL + OTEL Validation",
+      "atoms": [
+        "A03",
+        "A09"
+      ],
+      "status": "failed",
+      "score": 0,
+      "spansFound": [],
+      "spansMissing": [
+        "sparql.execute.async",
+        "otel.validate"
+      ],
+      "performance": {
+        "duration": 114
+      },
+      "errors": []
+    },
+    {
+      "id": "C10",
+      "name": "Receipt Anchorer + Merkle Proof",
+      "atoms": [
+        "A10",
+        "A11"
+      ],
+      "status": "partial",
+      "score": 0,
+      "spansFound": [],
+      "spansMissing": [
+        "receipt.anchor",
+        "merkle.proof"
+      ],
+      "performance": {
+        "duration": 108
+      },
+      "errors": []
+    },
+    {
+      "id": "C12",
+      "name": "RDF Store + Multi-Layer Cache + SPARQL Cache",
+      "atoms": [
+        "A01",
+        "A22",
+        "A24"
+      ],
+      "status": "partial",
+      "score": 0,
+      "spansFound": [],
+      "spansMissing": [
+        "rdf.store.create",
+        "cache.l1",
+        "cache.l2",
+        "sparql.cache"
+      ],
+      "performance": {
+        "duration": 25
+      },
+      "errors": []
+    },
+    {
+      "id": "C16",
+      "name": "Change Feed + CRDT + WebSocket Sync",
+      "atoms": [
+        "A06",
+        "A43",
+        "A44"
+      ],
+      "status": "partial",
+      "score": 0,
+      "spansFound": [],
+      "spansMissing": [
+        "change.feed",
+        "crdt.merge",
+        "websocket.sync"
+      ],
+      "performance": {
+        "duration": 108
+      },
+      "errors": []
+    },
+    {
+      "id": "C17",
+      "name": "Freeze Universe + Git Backbone + Sync Protocol",
+      "atoms": [
+        "A18",
+        "A21",
+        "A08"
+      ],
+      "status": "failed",
+      "score": 0,
+      "spansFound": [],
+      "spansMissing": [
+        "kgc.freeze",
+        "git.commit",
+        "sync.protocol"
+      ],
+      "performance": {
+        "duration": 100
+      },
+      "errors": []
+    },
+    {
+      "id": "C18",
+      "name": "Freeze Universe + Git Backbone + Canonicalize",
+      "atoms": [
+        "A18",
+        "A21",
+        "A04"
+      ],
+      "status": "failed",
+      "score": 0,
+      "spansFound": [],
+      "spansMissing": [
+        "kgc.freeze",
+        "git.commit",
+        "rdf.canonicalize"
+      ],
+      "performance": {
+        "duration": 95
+      },
+      "errors": []
+    },
+    {
+      "id": "C20",
+      "name": "RDF to Graph + PageRank + Community Detector",
+      "atoms": [
+        "A25",
+        "A26",
+        "A28"
+      ],
+      "status": "partial",
+      "score": 0,
+      "spansFound": [],
+      "spansMissing": [
+        "rdf.to.graph",
+        "pagerank",
+        "community.detect"
+      ],
+      "performance": {
+        "duration": 120
+      },
+      "errors": []
+    },
+    {
+      "id": "C21",
+      "name": "RDF to Graph + Relationship Finder + PageRank",
+      "atoms": [
+        "A25",
+        "A27",
+        "A26"
+      ],
+      "status": "partial",
+      "score": 0,
+      "spansFound": [],
+      "spansMissing": [
+        "rdf.to.graph",
+        "path.find",
+        "pagerank"
+      ],
+      "performance": {
+        "duration": 106
+      },
+      "errors": []
+    },
+    {
+      "id": "C26",
+      "name": "Workflow Engine + RDF Store + Workflow Receipt",
+      "atoms": [
+        "A35",
+        "A38",
+        "A36"
+      ],
+      "status": "partial",
+      "score": 0,
+      "spansFound": [],
+      "spansMissing": [
+        "workflow.execute",
+        "rdf.store",
+        "workflow.receipt"
+      ],
+      "performance": {
+        "duration": 94
+      },
+      "errors": []
+    },
+    {
+      "id": "C27",
+      "name": "Workflow Engine + Durable Workflow + Receipt",
+      "atoms": [
+        "A35",
+        "A39",
+        "A36"
+      ],
+      "status": "partial",
+      "score": 0,
+      "spansFound": [],
+      "spansMissing": [
+        "workflow.execute",
+        "durable.snapshot",
+        "workflow.receipt"
+      ],
+      "performance": {
+        "duration": 106
+      },
+      "errors": []
+    },
+    {
+      "id": "C29",
+      "name": "CRDT Graph + WebSocket Sync",
+      "atoms": [
+        "A43",
+        "A44"
+      ],
+      "status": "partial",
+      "score": 0,
+      "spansFound": [],
+      "spansMissing": [
+        "crdt.merge",
+        "websocket.sync"
+      ],
+      "performance": {
+        "duration": 107
+      },
+      "errors": []
+    },
+    {
+      "id": "C31",
+      "name": "GraphQL Adapter + RDF Store",
+      "atoms": [
+        "A45",
+        "A01"
+      ],
+      "status": "partial",
+      "score": 0,
+      "spansFound": [],
+      "spansMissing": [
+        "graphql.resolve",
+        "rdf.store.query"
+      ],
+      "performance": {
+        "duration": 122
+      },
+      "errors": []
+    }
+  ],
+  "summary": {
+    "averageScore": 1,
+    "passed": 1,
+    "failed": 4,
+    "partial": 13,
+    "totalSpansExpected": 48,
+    "totalSpansFound": 0
+  }
+}

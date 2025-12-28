@@ -36,7 +36,7 @@ export function useObservabilityManager(_config = {}) {
   const activeTracesRef = useRef(new Map());
 
   const startTrace = useCallback(operation => {
-    const traceId = `trace-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const traceId = `trace-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
     const trace = {
       id: traceId,
       operation,

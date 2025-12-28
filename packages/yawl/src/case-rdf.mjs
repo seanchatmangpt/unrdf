@@ -79,7 +79,7 @@ const CASE_STATUS_RDF_MAP = {
  */
 const WORKITEM_STATUS_RDF_MAP = {
   [TaskStatus.ENABLED]: WorkItem_Enabled,
-  [TaskStatus.RUNNING]: WorkItem_Started,
+  [TaskStatus.ACTIVE]: WorkItem_Started,
   [TaskStatus.COMPLETED]: WorkItem_Completed,
   [TaskStatus.CANCELLED]: WorkItem_Cancelled,
 };

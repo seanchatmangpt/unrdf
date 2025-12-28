@@ -5,7 +5,7 @@
 
 import { z } from 'zod';
 import { createHash } from 'crypto';
-import { DataFactory } from 'n3';
+import { DataFactory } from '@unrdf/core/rdf/n3-justified-only';
 
 const { namedNode } = DataFactory;
 

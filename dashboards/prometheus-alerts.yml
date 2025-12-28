@@ -1,0 +1,188 @@
+groups:
+  - name: unrdf_slo_alerts
+    interval: 30s
+    rules:
+      # SLO Burn Rate Alerts (Multi-Window)
+      - alert: HighErrorBurnRate1h
+        expr: |
+          (
+            sum(rate(kgc_transactions_total{success="false"}[1h]))
+            /
+            sum(rate(kgc_transactions_total[1h]))
+          ) > (14.4 * 0.001)
+        for: 2m
+        labels:
+          severity: critical
+          component: kgc
+        annotations:
+          summary: "High error burn rate detected (1h window)"
+          description: "Error rate is {{ $value | humanizePercentage }} over 1h window, consuming error budget 14.4x faster than sustainable rate. SLO at risk."
+
+      - alert: HighErrorBurnRate6h
+        expr: |
+          (
+            sum(rate(kgc_transactions_total{success="false"}[6h]))
+            /
+            sum(rate(kgc_transactions_total[6h]))
+          ) > (6 * 0.001)
+        for: 15m
+        labels:
+          severity: warning
+          component: kgc
+        annotations:
+          summary: "Elevated error burn rate (6h window)"
+          description: "Error rate is {{ $value | humanizePercentage }} over 6h window, consuming error budget 6x faster than sustainable."
+
+      # Latency Spike Alerts
+      - alert: LatencySpikeP95
+        expr: |
+          histogram_quantile(0.95,
+            rate(kgc_transaction_duration_ms_bucket[5m])
+          ) > 5000
+        for: 5m
+        labels:
+          severity: warning
+          component: kgc
+        annotations:
+          summary: "P95 latency spike detected"
+          description: "P95 transaction latency is {{ $value | humanizeDuration }} (threshold: 5s)"
+
+      - alert: LatencySpikeP99
+        expr: |
+          histogram_quantile(0.99,
+            rate(kgc_transaction_duration_ms_bucket[5m])
+          ) > 10000
+        for: 2m
+        labels:
+          severity: critical
+          component: kgc
+        annotations:
+          summary: "Critical P99 latency spike"
+          description: "P99 transaction latency is {{ $value | humanizeDuration }} (threshold: 10s)"
+
+      # Error Rate Spike
+      - alert: ErrorRateSpike
+        expr: |
+          rate(kgc_errors_total[5m]) > 0.01
+        for: 2m
+        labels:
+          severity: warning
+          component: kgc
+        annotations:
+          summary: "Error rate spike detected"
+          description: "Error rate is {{ $value }} errors/sec (threshold: 0.01/sec)"
+
+      # Validation Score Drop
+      - alert: ValidationScoreLow
+        expr: validation_score < 80
+        for: 5m
+        labels:
+          severity: critical
+          component: validation
+        annotations:
+          summary: "Validation score below threshold"
+          description: "OTEL validation score is {{ $value }} (threshold: 80/100). Quality gate failing."
+
+      # Throughput Drop (Anomaly)
+      - alert: ThroughputDrop
+        expr: |
+          (
+            rate(kgc_transactions_total[5m])
+            /
+            avg_over_time(rate(kgc_transactions_total[5m])[1h:5m])
+          ) < 0.5
+        for: 10m
+        labels:
+          severity: warning
+          component: kgc
+        annotations:
+          summary: "Transaction throughput dropped significantly"
+          description: "Current throughput is {{ $value | humanizePercentage }} of 1h average. Possible degradation."
+
+      # Memory Pressure
+      - alert: MemoryPressureHigh
+        expr: |
+          (
+            kgc_memory_usage_bytes
+            /
+            kgc_memory_limit_bytes
+          ) > 0.85
+        for: 5m
+        labels:
+          severity: warning
+          component: kgc
+        annotations:
+          summary: "High memory pressure"
+          description: "Memory usage is {{ $value | humanizePercentage }} of limit"
+
+      # Queue Backpressure
+      - alert: QueueBackpressureHigh
+        expr: kgc_queue_depth > 1000
+        for: 2m
+        labels:
+          severity: warning
+          component: kgc
+        annotations:
+          summary: "High queue backpressure"
+          description: "Queue depth is {{ $value }} items (high watermark: 1000)"
+
+      - alert: QueueBackpressureCritical
+        expr: kgc_queue_depth > 5000
+        for: 1m
+        labels:
+          severity: critical
+          component: kgc
+        annotations:
+          summary: "Critical queue backpressure"
+          description: "Queue depth is {{ $value }} items. System may be overloaded."
+
+      # Cache Degradation
+      - alert: CacheHitRateLow
+        expr: |
+          (
+            rate(kgc_cache_hits_total[5m])
+            /
+            (rate(kgc_cache_hits_total[5m]) + rate(kgc_cache_misses_total[5m]))
+          ) < 0.5
+        for: 10m
+        labels:
+          severity: warning
+          component: kgc
+        annotations:
+          summary: "Cache hit rate degraded"
+          description: "Cache hit rate is {{ $value | humanizePercentage }} (threshold: 50%)"
+
+      # Service Down
+      - alert: ServiceDown
+        expr: up{service=~"unrdf.*"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          component: infrastructure
+        annotations:
+          summary: "UNRDF service is down"
+          description: "Service {{ $labels.service }} is not responding to health checks"
+
+  - name: unrdf_anomaly_alerts
+    interval: 30s
+    rules:
+      # Z-Score Anomaly Detection (integrated with anomaly-detector.mjs)
+      - alert: AnomalyDetectedLatency
+        expr: anomaly_zscore{metric="transaction_latency"} > 3.0
+        for: 1m
+        labels:
+          severity: warning
+          component: anomaly_detection
+        annotations:
+          summary: "Statistical anomaly in transaction latency"
+          description: "Latency anomaly detected with z-score {{ $value }} (threshold: 3σ)"
+
+      - alert: AnomalyDetectedThroughput
+        expr: anomaly_zscore{metric="throughput"} < -3.0
+        for: 2m
+        labels:
+          severity: warning
+          component: anomaly_detection
+        annotations:
+          summary: "Statistical anomaly in throughput"
+          description: "Throughput anomaly detected with z-score {{ $value }} (threshold: -3σ)"

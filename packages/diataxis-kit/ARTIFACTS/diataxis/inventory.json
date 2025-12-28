@@ -1,6 +1,6 @@
 {
   "generatedAt": "2000-01-01T00:00:00.000Z",
-  "packageCount": 93,
+  "packageCount": 121,
   "packages": [
     {
       "dir": "/home/user/unrdf/AUTONOMIC_INNOVATION/agent-8",
@@ -108,9 +108,34 @@
       "version": "1.0.0"
     },
     {
-      "dir": "/home/user/unrdf/packages/core",
+      "dir": "/home/user/unrdf/.rollback-snapshots/test-1766835191953/packages/core",
       "name": "@unrdf/core",
       "version": "5.0.1"
+    },
+    {
+      "dir": "/home/user/unrdf/.rollback-snapshots/test-1766835652082/packages/core",
+      "name": "@unrdf/core",
+      "version": "5.0.1"
+    },
+    {
+      "dir": "/home/user/unrdf/.rollback-snapshots/test-1766835999254/packages/core",
+      "name": "@unrdf/core",
+      "version": "5.0.1"
+    },
+    {
+      "dir": "/home/user/unrdf/.rollback-snapshots/test-snapshot-20251227-112104/packages/core",
+      "name": "@unrdf/core",
+      "version": "5.0.1"
+    },
+    {
+      "dir": "/home/user/unrdf/.rollback-snapshots/v5-stable-baseline/packages/core",
+      "name": "@unrdf/core",
+      "version": "5.0.1"
+    },
+    {
+      "dir": "/home/user/unrdf/packages/core",
+      "name": "@unrdf/core",
+      "version": "6.0.0-alpha.1"
     },
     {
       "dir": "/home/user/unrdf/packages/dark-matter",
@@ -163,9 +188,34 @@
       "version": "5.0.1"
     },
     {
-      "dir": "/home/user/unrdf/packages/federation",
+      "dir": "/home/user/unrdf/.rollback-snapshots/test-1766835191953/packages/federation",
       "name": "@unrdf/federation",
       "version": "5.0.1"
+    },
+    {
+      "dir": "/home/user/unrdf/.rollback-snapshots/test-1766835652082/packages/federation",
+      "name": "@unrdf/federation",
+      "version": "5.0.1"
+    },
+    {
+      "dir": "/home/user/unrdf/.rollback-snapshots/test-1766835999254/packages/federation",
+      "name": "@unrdf/federation",
+      "version": "5.0.1"
+    },
+    {
+      "dir": "/home/user/unrdf/.rollback-snapshots/test-snapshot-20251227-112104/packages/federation",
+      "name": "@unrdf/federation",
+      "version": "5.0.1"
+    },
+    {
+      "dir": "/home/user/unrdf/.rollback-snapshots/v5-stable-baseline/packages/federation",
+      "name": "@unrdf/federation",
+      "version": "5.0.1"
+    },
+    {
+      "dir": "/home/user/unrdf/packages/federation",
+      "name": "@unrdf/federation",
+      "version": "6.0.0"
     },
     {
       "dir": "/home/user/unrdf/packages/fusion",
@@ -181,6 +231,31 @@
       "dir": "/home/user/unrdf/packages/graph-analytics",
       "name": "@unrdf/graph-analytics",
       "version": "1.0.0"
+    },
+    {
+      "dir": "/home/user/unrdf/.rollback-snapshots/test-1766835191953/packages/hooks",
+      "name": "@unrdf/hooks",
+      "version": "5.0.1"
+    },
+    {
+      "dir": "/home/user/unrdf/.rollback-snapshots/test-1766835652082/packages/hooks",
+      "name": "@unrdf/hooks",
+      "version": "5.0.1"
+    },
+    {
+      "dir": "/home/user/unrdf/.rollback-snapshots/test-1766835999254/packages/hooks",
+      "name": "@unrdf/hooks",
+      "version": "5.0.1"
+    },
+    {
+      "dir": "/home/user/unrdf/.rollback-snapshots/test-snapshot-20251227-112104/packages/hooks",
+      "name": "@unrdf/hooks",
+      "version": "5.0.1"
+    },
+    {
+      "dir": "/home/user/unrdf/.rollback-snapshots/v5-stable-baseline/packages/hooks",
+      "name": "@unrdf/hooks",
+      "version": "5.0.1"
     },
     {
       "dir": "/home/user/unrdf/packages/hooks",
@@ -233,6 +308,11 @@
       "version": "1.0.0"
     },
     {
+      "dir": "/home/user/unrdf/packages/kgc-probe",
+      "name": "@unrdf/kgc-probe",
+      "version": "1.0.0"
+    },
+    {
       "dir": "/home/user/unrdf/packages/kgc-runtime",
       "name": "@unrdf/kgc-runtime",
       "version": "1.0.0"
@@ -240,6 +320,11 @@
     {
       "dir": "/home/user/unrdf/packages/kgc-substrate",
       "name": "@unrdf/kgc-substrate",
+      "version": "1.0.0"
+    },
+    {
+      "dir": "/home/user/unrdf/packages/kgc-swarm",
+      "name": "@unrdf/kgc-swarm",
       "version": "1.0.0"
     },
     {
@@ -273,6 +358,11 @@
       "version": "1.0.0"
     },
     {
+      "dir": "/home/user/unrdf/test/narrative-state-chain",
+      "name": "@unrdf/narrative-state-chain-tests",
+      "version": "1.0.0"
+    },
+    {
       "dir": "/home/user/unrdf/packages/nextra",
       "name": "@unrdf/nextra-docs",
       "version": "5.0.1"
@@ -281,6 +371,31 @@
       "dir": "/home/user/unrdf/packages/observability",
       "name": "@unrdf/observability",
       "version": "1.0.0"
+    },
+    {
+      "dir": "/home/user/unrdf/.rollback-snapshots/test-1766835191953/packages/oxigraph",
+      "name": "@unrdf/oxigraph",
+      "version": "5.0.1"
+    },
+    {
+      "dir": "/home/user/unrdf/.rollback-snapshots/test-1766835652082/packages/oxigraph",
+      "name": "@unrdf/oxigraph",
+      "version": "5.0.1"
+    },
+    {
+      "dir": "/home/user/unrdf/.rollback-snapshots/test-1766835999254/packages/oxigraph",
+      "name": "@unrdf/oxigraph",
+      "version": "5.0.1"
+    },
+    {
+      "dir": "/home/user/unrdf/.rollback-snapshots/test-snapshot-20251227-112104/packages/oxigraph",
+      "name": "@unrdf/oxigraph",
+      "version": "5.0.1"
+    },
+    {
+      "dir": "/home/user/unrdf/.rollback-snapshots/v5-stable-baseline/packages/oxigraph",
+      "name": "@unrdf/oxigraph",
+      "version": "5.0.1"
     },
     {
       "dir": "/home/user/unrdf/packages/oxigraph",
@@ -350,12 +465,12 @@
     {
       "dir": "/home/user/unrdf/packages/v6-compat",
       "name": "@unrdf/v6-compat",
-      "version": "6.0.0-alpha.1"
+      "version": "6.0.0-rc.1"
     },
     {
       "dir": "/home/user/unrdf/packages/v6-core",
       "name": "@unrdf/v6-core",
-      "version": "6.0.0-alpha.1"
+      "version": "6.0.0-rc.1"
     },
     {
       "dir": "/home/user/unrdf/packages/validation",
@@ -365,7 +480,7 @@
     {
       "dir": "/home/user/unrdf/packages/yawl",
       "name": "@unrdf/yawl",
-      "version": "5.0.0"
+      "version": "6.0.0"
     },
     {
       "dir": "/home/user/unrdf/packages/yawl-ai",
@@ -463,9 +578,34 @@
       "version": "1.0.0"
     },
     {
-      "dir": "/home/user/unrdf",
+      "dir": "/home/user/unrdf/.rollback-snapshots/test-1766835191953",
       "name": "unrdf-workspace",
       "version": "6.0.0-alpha.1"
+    },
+    {
+      "dir": "/home/user/unrdf/.rollback-snapshots/test-1766835652082",
+      "name": "unrdf-workspace",
+      "version": "6.0.0-alpha.1"
+    },
+    {
+      "dir": "/home/user/unrdf/.rollback-snapshots/test-1766835999254",
+      "name": "unrdf-workspace",
+      "version": "6.0.0-alpha.1"
+    },
+    {
+      "dir": "/home/user/unrdf/.rollback-snapshots/test-snapshot-20251227-112104",
+      "name": "unrdf-workspace",
+      "version": "6.0.0-alpha.1"
+    },
+    {
+      "dir": "/home/user/unrdf/.rollback-snapshots/v5-stable-baseline",
+      "name": "unrdf-workspace",
+      "version": "6.0.0-alpha.1"
+    },
+    {
+      "dir": "/home/user/unrdf",
+      "name": "unrdf-workspace",
+      "version": "6.0.0-rc.1"
     }
   ]
 }

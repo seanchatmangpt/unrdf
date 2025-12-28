@@ -12,6 +12,7 @@
 
 import { defineCommand } from 'citty';
 import { z } from 'zod';
+import { createStore } from '@unrdf/oxigraph';
 
 /**
  * Validation schema for validate command arguments
@@ -57,12 +58,12 @@ export const validateCommand = defineCommand({
 
       // Integrate with real SHACL validation from knowledge-engine
       const { validateShacl } = await import('../../../knowledge-engine/validate.mjs');
-      const { Store, Parser } = await import('n3');
+      const { Parser } = await import('@unrdf/core/rdf/n3-justified-only');
       const { promises: fs } = await import('fs');
       const path = await import('path');
 
       // Load graph data - try sidecar first, then fallback to local file
-      let store = new Store();
+      let store = await createStore();
       try {
         const { createSidecarClient } = await import('../../../sidecar/client.mjs');
         const client = createSidecarClient();

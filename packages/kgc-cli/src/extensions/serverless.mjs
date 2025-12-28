@@ -10,7 +10,7 @@ const extension = {
         deploy: {
           description: 'Deploy serverless function',
           argsSchema: z.object({ name: z.string(), runtime: z.string(), code: z.string() }),
-          handler: async (args) => ({ deployed: true, functionId: `fn_${Date.now()}` })
+          handler: async (_args) => ({ deployed: true, functionId: `fn_${Date.now()}` })
         },
         invoke: {
           description: 'Invoke serverless function',

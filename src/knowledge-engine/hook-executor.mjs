@@ -11,7 +11,7 @@ import { createConditionEvaluator } from './condition-evaluator.mjs';
 import { createEffectSandbox } from './effect-sandbox.mjs';
 import { createErrorSanitizer } from './security/error-sanitizer.mjs';
 import { createSandboxRestrictions } from './security/sandbox-restrictions.mjs';
-import { Store } from 'n3';
+import { createStore } from '@unrdf/oxigraph';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
 
 const tracer = trace.getTracer('unrdf');
@@ -43,7 +43,7 @@ export async function executeHook(hook, event, options = {}) {
   } = options;
 
   const startTime = Date.now();
-  const executionId = `hook-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  const executionId = `hook-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
 
   try {
     // Set up timeout
@@ -230,14 +230,14 @@ async function _executeHookPhases(
       const evaluator = createConditionEvaluator({ basePath, strictMode });
       conditionResult = await evaluator.evaluate(
         hook.when,
-        currentEvent.context?.graph || new Store(),
+        currentEvent.context?.graph || await createStore(),
         currentEvent.context?.env || {}
       );
 
       // Check if condition is satisfied
       const isSatisfied = await evaluator.isSatisfied(
         hook.when,
-        currentEvent.context?.graph || new Store(),
+        currentEvent.context?.graph || await createStore(),
         currentEvent.context?.env || {}
       );
 

@@ -1122,6 +1122,184 @@ export function validateKGCMarkdown(ast) {
 }
 
 // =============================================================================
+// Plugin System Schemas
+// =============================================================================
+
+/**
+ * Plugin manifest schema
+ *
+ * Defines plugin metadata, capabilities, and API requirements:
+ * - Name and version (semver)
+ * - Entry point and dependencies
+ * - Required capabilities
+ * - API version compatibility
+ *
+ * @example
+ * {
+ *   name: 'custom-receipt',
+ *   version: '1.0.0',
+ *   description: 'Custom receipt type plugin',
+ *   entryPoint: './plugin.mjs',
+ *   capabilities: ['custom-receipt', 'receipt:validate'],
+ *   api_version: '5.0.1',
+ *   author: 'Plugin Developer',
+ *   license: 'MIT'
+ * }
+ *
+ * @constant
+ * @type {z.ZodObject}
+ */
+export const PluginManifestSchema = z.object({
+  /** Plugin name (unique identifier) */
+  name: z.string().min(1).max(100).regex(/^[a-z0-9-]+$/),
+  /** Plugin version (semver) */
+  version: SemanticVersionSchema,
+  /** Plugin description */
+  description: z.string().max(500).optional(),
+  /** Entry point module path */
+  entryPoint: z.string().min(1),
+  /** Required capabilities */
+  capabilities: z.array(z.string()).default([]),
+  /** Required API version */
+  api_version: SemanticVersionSchema,
+  /** Plugin author */
+  author: z.string().optional(),
+  /** Plugin license */
+  license: z.string().optional(),
+  /** Dependencies (other plugins) */
+  dependencies: z.record(z.string(), z.string()).optional(),
+  /** Plugin metadata */
+  metadata: z.record(z.string(), z.any()).optional(),
+});
+
+/**
+ * Plugin state schema
+ *
+ * Tracks plugin lifecycle state:
+ * - registered: Plugin manifest registered
+ * - loaded: Plugin code loaded into memory
+ * - executing: Plugin actively executing
+ * - unloaded: Plugin unloaded from memory
+ * - failed: Plugin failed to load/execute
+ *
+ * @constant
+ * @type {z.ZodEnum}
+ */
+export const PluginStateSchema = z.enum([
+  'registered',
+  'loaded',
+  'executing',
+  'unloaded',
+  'failed',
+]);
+
+/**
+ * Plugin capability schema
+ *
+ * Defines capability format: "category:action"
+ *
+ * Examples:
+ * - receipt:generate
+ * - receipt:validate
+ * - schema:validate
+ * - custom:my-action
+ *
+ * @constant
+ * @type {z.ZodString}
+ */
+export const PluginCapabilitySchema = z
+  .string()
+  .regex(/^[a-z_-]+:[a-z_-]+$/, 'Must be format "category:action"');
+
+/**
+ * Plugin receipt schema
+ *
+ * Extended receipt schema for plugin-generated receipts
+ * Includes plugin metadata and custom receipt types
+ *
+ * @example
+ * {
+ *   version: '1.0.0',
+ *   id: '550e8400-e29b-41d4-a716-446655440000',
+ *   timestamp: 1703001600000,
+ *   runId: 'run-001',
+ *   actor: 'plugin:custom-receipt@1.0.0',
+ *   action: 'custom_action',
+ *   payload: { customData: 'value' },
+ *   result: { success: true },
+ *   pluginMetadata: {
+ *     pluginName: 'custom-receipt',
+ *     pluginVersion: '1.0.0',
+ *     receiptType: 'custom'
+ *   }
+ * }
+ *
+ * @constant
+ * @type {z.ZodObject}
+ */
+export const PluginReceiptSchema = ReceiptSchema.extend({
+  /** Plugin-specific metadata */
+  pluginMetadata: z
+    .object({
+      pluginName: z.string(),
+      pluginVersion: SemanticVersionSchema,
+      receiptType: z.string().default('standard'),
+      customFields: z.record(z.string(), z.any()).optional(),
+    })
+    .optional(),
+});
+
+/**
+ * Validate a plugin manifest
+ * @param {any} manifest - The manifest to validate
+ * @returns {Object} Validation result { success, data, errors }
+ */
+export function validatePluginManifest(manifest) {
+  try {
+    const validated = PluginManifestSchema.parse(manifest);
+    return { success: true, data: validated, errors: [] };
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return {
+        success: false,
+        data: null,
+        errors: (error.issues || error.errors || []).map(err => ({
+          path: err.path?.join('.') || 'unknown',
+          message: err.message || 'Unknown error',
+          code: err.code || 'unknown',
+        })),
+      };
+    }
+    throw error;
+  }
+}
+
+/**
+ * Validate a plugin receipt
+ * @param {any} receipt - The receipt to validate
+ * @returns {Object} Validation result { success, data, errors }
+ */
+export function validatePluginReceipt(receipt) {
+  try {
+    const validated = PluginReceiptSchema.parse(receipt);
+    return { success: true, data: validated, errors: [] };
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return {
+        success: false,
+        data: null,
+        errors: (error.issues || error.errors || []).map(err => ({
+          path: err.path?.join('.') || 'unknown',
+          message: err.message || 'Unknown error',
+          code: err.code || 'unknown',
+        })),
+      };
+    }
+    throw error;
+  }
+}
+
+// =============================================================================
 // Module Exports
 // =============================================================================
 
@@ -1134,6 +1312,10 @@ export default {
   WorkItemSchema,
   ProjectionManifestSchema,
   KGCMarkdownSchema,
+  PluginManifestSchema,
+  PluginStateSchema,
+  PluginCapabilitySchema,
+  PluginReceiptSchema,
 
   // Validation functions
   validateReceipt,
@@ -1143,4 +1325,6 @@ export default {
   validateWorkItem,
   validateProjectionManifest,
   validateKGCMarkdown,
+  validatePluginManifest,
+  validatePluginReceipt,
 };

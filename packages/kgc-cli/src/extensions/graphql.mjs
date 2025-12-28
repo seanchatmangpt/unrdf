@@ -51,7 +51,7 @@ const extension = {
           argsSchema: z.object({
             schema: z.string().describe('GraphQL SDL schema')
           }),
-          handler: async (args) => {
+          handler: async (_args) => {
             return {
               valid: true,
               errors: [],
@@ -69,7 +69,7 @@ const extension = {
         execute: {
           description: 'Execute GraphQL query against RDF store',
           argsSchema: QuerySchema,
-          handler: async (args) => {
+          handler: async (_args) => {
             return {
               data: {},
               errors: [],

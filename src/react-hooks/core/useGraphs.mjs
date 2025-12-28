@@ -30,7 +30,7 @@
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useKnowledgeEngineContext } from '../context/useKnowledgeEngineContext.mjs';
-import { DataFactory } from 'n3';
+import { DataFactory } from '@unrdf/core/rdf/n3-justified-only';
 
 const { defaultGraph, namedNode } = DataFactory;
 

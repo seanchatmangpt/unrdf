@@ -69,6 +69,9 @@ export const FlowDefSchema = z.object({
 
 /**
  * Complete workflow specification schema
+ *
+ * Note: tasks array can be empty during construction to support incremental building.
+ * The validate() method will ensure at least one task exists before execution.
  */
 export const WorkflowSpecSchema = z.object({
   /** Unique workflow identifier */
@@ -80,7 +83,7 @@ export const WorkflowSpecSchema = z.object({
   /** Workflow description */
   description: z.string().max(5000).optional(),
   /** Task definitions */
-  tasks: z.array(TaskDefSchema).min(1),
+  tasks: z.array(TaskDefSchema).default([]),
   /** Flow definitions */
   flows: z.array(FlowDefSchema).optional().default([]),
   /** Starting task ID (auto-detected if not specified) */

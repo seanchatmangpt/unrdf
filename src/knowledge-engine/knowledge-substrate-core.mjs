@@ -15,7 +15,7 @@ import { createPerformanceOptimizer } from './performance-optimizer.mjs';
 import { LockchainWriter } from './lockchain-writer.mjs';
 import { PolicyPackManager } from './policy-pack.mjs';
 import { ResolutionLayer } from './resolution-layer.mjs';
-import { Store } from 'n3';
+import { createStore } from '@unrdf/oxigraph';
 import { z } from 'zod';
 import crypto from 'node:crypto';
 
@@ -84,7 +84,7 @@ export class KnowledgeSubstrateCore {
     this.initialized = false;
 
     // Create internal RDF store
-    this.store = new Store();
+    this.store = await createStore();
   }
 
   /**

@@ -2,7 +2,7 @@
  * Policy Compiler Tests
  * Tests for JIT compilation, caching, and optimized execution
  */
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import {
   PolicyPatterns,
   compilePolicy,

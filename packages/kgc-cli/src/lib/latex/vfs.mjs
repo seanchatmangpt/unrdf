@@ -6,7 +6,7 @@
  */
 
 import { promises as fs } from 'node:fs';
-import { join, relative } from 'node:path';
+import { join, relative as _relative } from 'node:path';
 
 /**
  * Collect all project files into VFS

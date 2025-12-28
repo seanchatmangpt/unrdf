@@ -217,7 +217,7 @@ export class CaseCore {
    * @returns {import('./task.mjs').YawlTask[]} Array of running work items
    */
   getActiveWorkItems() {
-    return this.getWorkItemsByStatus(TaskStatus.RUNNING);
+    return this.getWorkItemsByStatus(TaskStatus.ACTIVE);
   }
 
   /**

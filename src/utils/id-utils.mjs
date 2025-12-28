@@ -1,4 +1,4 @@
-import { DataFactory } from 'n3';
+import { DataFactory } from '@unrdf/core/rdf/n3-justified-only';
 import { createHash, randomBytes } from 'node:crypto';
 
 const { blankNode, namedNode } = DataFactory;
