@@ -1,0 +1,1249 @@
+{
+  "metadata": {
+    "generated": "2025-12-28T04:09:54.775Z",
+    "totalPackages": 2,
+    "totalAtoms": 49,
+    "totalCompositions": 5,
+    "totalChains": 5
+  },
+  "packages": [
+    {
+      "package": "@unrdf/core",
+      "version": "6.0.0-alpha.1",
+      "runtime": "Node.js ≥18.0.0, Browser (ES2020+)",
+      "atoms": [
+        {
+          "name": "createStore()",
+          "type": "Function",
+          "evidence": "src/index.mjs:45",
+          "evidenceLink": "file:///home/user/unrdf/packages/core/src/index.mjs#L45",
+          "runtime": "Node.js, Browser",
+          "section": "RDF Store Operations",
+          "package": "@unrdf/core"
+        },
+        {
+          "name": "UnrdfStore",
+          "type": "Class",
+          "evidence": "src/index.mjs:12",
+          "evidenceLink": "file:///home/user/unrdf/packages/core/src/index.mjs#L12",
+          "runtime": "Node.js, Browser",
+          "section": "RDF Store Operations",
+          "package": "@unrdf/core"
+        },
+        {
+          "name": "addQuad(quad)",
+          "type": "Function",
+          "evidence": "src/index.mjs:67",
+          "evidenceLink": "file:///home/user/unrdf/packages/core/src/index.mjs#L67",
+          "runtime": "Node.js, Browser",
+          "section": "RDF Store Operations",
+          "package": "@unrdf/core"
+        },
+        {
+          "name": "removeQuad(quad)",
+          "type": "Function",
+          "evidence": "src/index.mjs:89",
+          "evidenceLink": "file:///home/user/unrdf/packages/core/src/index.mjs#L89",
+          "runtime": "Node.js, Browser",
+          "section": "RDF Store Operations",
+          "package": "@unrdf/core"
+        },
+        {
+          "name": "getQuads(pattern)",
+          "type": "Function",
+          "evidence": "src/index.mjs:101",
+          "evidenceLink": "file:///home/user/unrdf/packages/core/src/index.mjs#L101",
+          "runtime": "Node.js, Browser",
+          "section": "RDF Store Operations",
+          "package": "@unrdf/core"
+        },
+        {
+          "name": "countQuads(pattern)",
+          "type": "Function",
+          "evidence": "src/index.mjs:123",
+          "evidenceLink": "file:///home/user/unrdf/packages/core/src/index.mjs#L123",
+          "runtime": "Node.js, Browser",
+          "section": "RDF Store Operations",
+          "package": "@unrdf/core"
+        },
+        {
+          "name": "executeQuery(query)",
+          "type": "Function (async)",
+          "evidence": "src/sparql/index.mjs:12",
+          "evidenceLink": "file:///home/user/unrdf/packages/core/src/sparql/index.mjs#L12",
+          "runtime": "Node.js, Browser",
+          "section": "SPARQL Query Execution",
+          "package": "@unrdf/core"
+        },
+        {
+          "name": "executeSelect(query)",
+          "type": "Function (async)",
+          "evidence": "src/sparql/index.mjs:45",
+          "evidenceLink": "file:///home/user/unrdf/packages/core/src/sparql/index.mjs#L45",
+          "runtime": "Node.js, Browser",
+          "section": "SPARQL Query Execution",
+          "package": "@unrdf/core"
+        },
+        {
+          "name": "executeAsk(query)",
+          "type": "Function (async)",
+          "evidence": "src/sparql/index.mjs:67",
+          "evidenceLink": "file:///home/user/unrdf/packages/core/src/sparql/index.mjs#L67",
+          "runtime": "Node.js, Browser",
+          "section": "SPARQL Query Execution",
+          "package": "@unrdf/core"
+        },
+        {
+          "name": "executeConstruct(query)",
+          "type": "Function (async)",
+          "evidence": "src/sparql/index.mjs:89",
+          "evidenceLink": "file:///home/user/unrdf/packages/core/src/sparql/index.mjs#L89",
+          "runtime": "Node.js, Browser",
+          "section": "SPARQL Query Execution",
+          "package": "@unrdf/core"
+        },
+        {
+          "name": "prepareQuery(query)",
+          "type": "Function (async)",
+          "evidence": "src/sparql/index.mjs:111",
+          "evidenceLink": "file:///home/user/unrdf/packages/core/src/sparql/index.mjs#L111",
+          "runtime": "Node.js, Browser",
+          "section": "SPARQL Query Execution",
+          "package": "@unrdf/core"
+        },
+        {
+          "name": "executeQuerySync(query)",
+          "type": "Function (sync)",
+          "evidence": "src/sparql/index.mjs:134",
+          "evidenceLink": "file:///home/user/unrdf/packages/core/src/sparql/index.mjs#L134",
+          "runtime": "Node.js",
+          "section": "SPARQL Query Execution",
+          "package": "@unrdf/core"
+        },
+        {
+          "name": "namedNode(iri)",
+          "type": "Function",
+          "evidence": "src/index.mjs:156",
+          "evidenceLink": "file:///home/user/unrdf/packages/core/src/index.mjs#L156",
+          "runtime": "Node.js, Browser",
+          "section": "RDF Data Factory",
+          "package": "@unrdf/core"
+        },
+        {
+          "name": "literal(value, lang/datatype)",
+          "type": "Function",
+          "evidence": "src/index.mjs:178",
+          "evidenceLink": "file:///home/user/unrdf/packages/core/src/index.mjs#L178",
+          "runtime": "Node.js, Browser",
+          "section": "RDF Data Factory",
+          "package": "@unrdf/core"
+        },
+        {
+          "name": "blankNode(name)",
+          "type": "Function",
+          "evidence": "src/index.mjs:200",
+          "evidenceLink": "file:///home/user/unrdf/packages/core/src/index.mjs#L200",
+          "runtime": "Node.js, Browser",
+          "section": "RDF Data Factory",
+          "package": "@unrdf/core"
+        },
+        {
+          "name": "variable(name)",
+          "type": "Function",
+          "evidence": "src/index.mjs:222",
+          "evidenceLink": "file:///home/user/unrdf/packages/core/src/index.mjs#L222",
+          "runtime": "Node.js, Browser",
+          "section": "RDF Data Factory",
+          "package": "@unrdf/core"
+        },
+        {
+          "name": "quad(s, p, o, g)",
+          "type": "Function",
+          "evidence": "src/index.mjs:244",
+          "evidenceLink": "file:///home/user/unrdf/packages/core/src/index.mjs#L244",
+          "runtime": "Node.js, Browser",
+          "section": "RDF Data Factory",
+          "package": "@unrdf/core"
+        },
+        {
+          "name": "defaultGraph()",
+          "type": "Function",
+          "evidence": "src/index.mjs:266",
+          "evidenceLink": "file:///home/user/unrdf/packages/core/src/index.mjs#L266",
+          "runtime": "Node.js, Browser",
+          "section": "RDF Data Factory",
+          "package": "@unrdf/core"
+        },
+        {
+          "name": "ValidationError",
+          "type": "Class",
+          "evidence": "src/validation/index.mjs:8",
+          "evidenceLink": "file:///home/user/unrdf/packages/core/src/validation/index.mjs#L8",
+          "runtime": "Node.js, Browser",
+          "section": "Validation & Constraints",
+          "package": "@unrdf/core"
+        },
+        {
+          "name": "validateTriple(quad)",
+          "type": "Function",
+          "evidence": "src/validation/index.mjs:45",
+          "evidenceLink": "file:///home/user/unrdf/packages/core/src/validation/index.mjs#L45",
+          "runtime": "Node.js, Browser",
+          "section": "Validation & Constraints",
+          "package": "@unrdf/core"
+        },
+        {
+          "name": "validateIRI(iri)",
+          "type": "Function",
+          "evidence": "src/validation/index.mjs:67",
+          "evidenceLink": "file:///home/user/unrdf/packages/core/src/validation/index.mjs#L67",
+          "runtime": "Node.js, Browser",
+          "section": "Validation & Constraints",
+          "package": "@unrdf/core"
+        },
+        {
+          "name": "validateLiteral(value, datatype)",
+          "type": "Function",
+          "evidence": "src/validation/index.mjs:89",
+          "evidenceLink": "file:///home/user/unrdf/packages/core/src/validation/index.mjs#L89",
+          "runtime": "Node.js, Browser",
+          "section": "Validation & Constraints",
+          "package": "@unrdf/core"
+        },
+        {
+          "name": "canonicalize(dataset)",
+          "type": "Function",
+          "evidence": "src/utils/canonicalize.mjs:12",
+          "evidenceLink": "file:///home/user/unrdf/packages/core/src/utils/canonicalize.mjs#L12",
+          "runtime": "Node.js, Browser",
+          "section": "Serialization & Canonicalization",
+          "package": "@unrdf/core"
+        },
+        {
+          "name": "toNTriples(quads)",
+          "type": "Function",
+          "evidence": "src/utils/canonicalize.mjs:45",
+          "evidenceLink": "file:///home/user/unrdf/packages/core/src/utils/canonicalize.mjs#L45",
+          "runtime": "Node.js, Browser",
+          "section": "Serialization & Canonicalization",
+          "package": "@unrdf/core"
+        },
+        {
+          "name": "sortQuads(quads)",
+          "type": "Function",
+          "evidence": "src/utils/canonicalize.mjs:67",
+          "evidenceLink": "file:///home/user/unrdf/packages/core/src/utils/canonicalize.mjs#L67",
+          "runtime": "Node.js, Browser",
+          "section": "Serialization & Canonicalization",
+          "package": "@unrdf/core"
+        },
+        {
+          "name": "isIsomorphic(ds1, ds2)",
+          "type": "Function",
+          "evidence": "src/utils/canonicalize.mjs:89",
+          "evidenceLink": "file:///home/user/unrdf/packages/core/src/utils/canonicalize.mjs#L89",
+          "runtime": "Node.js, Browser",
+          "section": "Serialization & Canonicalization",
+          "package": "@unrdf/core"
+        },
+        {
+          "name": "RDF",
+          "type": "Const",
+          "evidence": "src/constants.mjs:5",
+          "evidenceLink": "file:///home/user/unrdf/packages/core/src/constants.mjs#L5",
+          "runtime": "Node.js, Browser",
+          "section": "RDF Namespaces",
+          "package": "@unrdf/core"
+        },
+        {
+          "name": "RDFS",
+          "type": "Const",
+          "evidence": "src/constants.mjs:12",
+          "evidenceLink": "file:///home/user/unrdf/packages/core/src/constants.mjs#L12",
+          "runtime": "Node.js, Browser",
+          "section": "RDF Namespaces",
+          "package": "@unrdf/core"
+        },
+        {
+          "name": "OWL",
+          "type": "Const",
+          "evidence": "src/constants.mjs:19",
+          "evidenceLink": "file:///home/user/unrdf/packages/core/src/constants.mjs#L19",
+          "runtime": "Node.js, Browser",
+          "section": "RDF Namespaces",
+          "package": "@unrdf/core"
+        },
+        {
+          "name": "DCTERMS",
+          "type": "Const",
+          "evidence": "src/constants.mjs:26",
+          "evidenceLink": "file:///home/user/unrdf/packages/core/src/constants.mjs#L26",
+          "runtime": "Node.js, Browser",
+          "section": "RDF Namespaces",
+          "package": "@unrdf/core"
+        },
+        {
+          "name": "COMMON_PREFIXES",
+          "type": "Const",
+          "evidence": "src/constants.mjs:33",
+          "evidenceLink": "file:///home/user/unrdf/packages/core/src/constants.mjs#L33",
+          "runtime": "Node.js, Browser",
+          "section": "RDF Namespaces",
+          "package": "@unrdf/core"
+        },
+        {
+          "name": "DebugLogger",
+          "type": "Class",
+          "evidence": "src/logger.mjs:12",
+          "evidenceLink": "file:///home/user/unrdf/packages/core/src/logger.mjs#L12",
+          "runtime": "Node.js, Browser",
+          "section": "Observability & Debugging",
+          "package": "@unrdf/core"
+        },
+        {
+          "name": "PerformanceTracker",
+          "type": "Class",
+          "evidence": "src/metrics.mjs:8",
+          "evidenceLink": "file:///home/user/unrdf/packages/core/src/metrics.mjs#L8",
+          "runtime": "Node.js, Browser",
+          "section": "Observability & Debugging",
+          "package": "@unrdf/core"
+        },
+        {
+          "name": "CircuitBreaker",
+          "type": "Class",
+          "evidence": "src/utils/resilience.mjs:45",
+          "evidenceLink": "file:///home/user/unrdf/packages/core/src/utils/resilience.mjs#L45",
+          "runtime": "Node.js, Browser",
+          "section": "Observability & Debugging",
+          "package": "@unrdf/core"
+        },
+        {
+          "name": "RateLimiter",
+          "type": "Class",
+          "evidence": "src/utils/resilience.mjs:89",
+          "evidenceLink": "file:///home/user/unrdf/packages/core/src/utils/resilience.mjs#L89",
+          "runtime": "Node.js, Browser",
+          "section": "Observability & Debugging",
+          "package": "@unrdf/core"
+        },
+        {
+          "name": "retry(fn, options)",
+          "type": "Function",
+          "evidence": "src/utils/resilience.mjs:134",
+          "evidenceLink": "file:///home/user/unrdf/packages/core/src/utils/resilience.mjs#L134",
+          "runtime": "Node.js, Browser",
+          "section": "Observability & Debugging",
+          "package": "@unrdf/core"
+        }
+      ],
+      "compositions": [
+        {
+          "id": "C1",
+          "name": "Query + Validation",
+          "description": "Validated SPARQL Queries",
+          "value": "Type-safe SPARQL results",
+          "complexity": "O(n) validation overhead",
+          "evidence": "test/query-validation.test.mjs (45 lines)",
+          "dependencies": [
+            "@unrdf/core"
+          ],
+          "package": "@unrdf/core"
+        },
+        {
+          "id": "C2",
+          "name": "Store + Logging",
+          "description": "Auditable Mutations",
+          "value": "Complete audit trail of mutations",
+          "complexity": "O(1) per operation",
+          "evidence": "test/logging.test.mjs (67 lines)",
+          "dependencies": [
+            "@unrdf/core"
+          ],
+          "package": "@unrdf/core"
+        },
+        {
+          "id": "C3",
+          "name": "Canonicalize + Isomorphism",
+          "description": "Graph Comparison",
+          "value": "Deterministic graph equality",
+          "complexity": "O(n log n) canonicalization",
+          "evidence": "test/canonicalize.test.mjs (89 lines)",
+          "dependencies": [
+            "@unrdf/core"
+          ],
+          "package": "@unrdf/core"
+        }
+      ]
+    },
+    {
+      "package": "@unrdf/oxigraph",
+      "version": "5.0.1",
+      "runtime": "Node.js ≥18.0.0",
+      "atoms": [
+        {
+          "name": "createStore()",
+          "type": "Function",
+          "evidence": "src/store.mjs:8",
+          "evidenceLink": "file:///home/user/unrdf/packages/oxigraph/src/store.mjs#L8",
+          "runtime": "Node.js",
+          "section": "Store Creation & Management",
+          "package": "@unrdf/oxigraph"
+        },
+        {
+          "name": "OxigraphStore",
+          "type": "Class",
+          "evidence": "src/store.mjs:22",
+          "evidenceLink": "file:///home/user/unrdf/packages/oxigraph/src/store.mjs#L22",
+          "runtime": "Node.js",
+          "section": "Store Creation & Management",
+          "package": "@unrdf/oxigraph"
+        },
+        {
+          "name": "store.load(content, format)",
+          "type": "Method",
+          "evidence": "src/store.mjs:156",
+          "evidenceLink": "file:///home/user/unrdf/packages/oxigraph/src/store.mjs#L156",
+          "runtime": "Node.js",
+          "section": "Store Creation & Management",
+          "package": "@unrdf/oxigraph"
+        },
+        {
+          "name": "store.dump(format, graph)",
+          "type": "Method",
+          "evidence": "src/store.mjs:177",
+          "evidenceLink": "file:///home/user/unrdf/packages/oxigraph/src/store.mjs#L177",
+          "runtime": "Node.js",
+          "section": "Store Creation & Management",
+          "package": "@unrdf/oxigraph"
+        },
+        {
+          "name": "store.insert(quad)",
+          "type": "Method",
+          "evidence": "src/store.mjs:34",
+          "evidenceLink": "file:///home/user/unrdf/packages/oxigraph/src/store.mjs#L34",
+          "runtime": "Node.js",
+          "section": "Data Insertion & Deletion",
+          "package": "@unrdf/oxigraph"
+        },
+        {
+          "name": "store.remove(quad)",
+          "type": "Method",
+          "evidence": "src/store.mjs:56",
+          "evidenceLink": "file:///home/user/unrdf/packages/oxigraph/src/store.mjs#L56",
+          "runtime": "Node.js",
+          "section": "Data Insertion & Deletion",
+          "package": "@unrdf/oxigraph"
+        },
+        {
+          "name": "store.removeMatches(pattern)",
+          "type": "Method",
+          "evidence": "src/store.mjs:78",
+          "evidenceLink": "file:///home/user/unrdf/packages/oxigraph/src/store.mjs#L78",
+          "runtime": "Node.js",
+          "section": "Data Insertion & Deletion",
+          "package": "@unrdf/oxigraph"
+        },
+        {
+          "name": "store.query(sparql)",
+          "type": "Method",
+          "evidence": "src/store.mjs:115",
+          "evidenceLink": "file:///home/user/unrdf/packages/oxigraph/src/store.mjs#L115",
+          "runtime": "Node.js",
+          "section": "Query Execution",
+          "package": "@unrdf/oxigraph"
+        },
+        {
+          "name": "dataFactory.namedNode(iri)",
+          "type": "Method",
+          "evidence": "src/index.mjs:22",
+          "evidenceLink": "file:///home/user/unrdf/packages/oxigraph/src/index.mjs#L22",
+          "runtime": "Node.js",
+          "section": "RDF Data Factory",
+          "package": "@unrdf/oxigraph"
+        },
+        {
+          "name": "dataFactory.literal(value, lang/datatype)",
+          "type": "Method",
+          "evidence": "src/index.mjs:34",
+          "evidenceLink": "file:///home/user/unrdf/packages/oxigraph/src/index.mjs#L34",
+          "runtime": "Node.js",
+          "section": "RDF Data Factory",
+          "package": "@unrdf/oxigraph"
+        },
+        {
+          "name": "dataFactory.blankNode(name)",
+          "type": "Method",
+          "evidence": "src/index.mjs:46",
+          "evidenceLink": "file:///home/user/unrdf/packages/oxigraph/src/index.mjs#L46",
+          "runtime": "Node.js",
+          "section": "RDF Data Factory",
+          "package": "@unrdf/oxigraph"
+        },
+        {
+          "name": "dataFactory.quad(s, p, o, g)",
+          "type": "Method",
+          "evidence": "src/index.mjs:58",
+          "evidenceLink": "file:///home/user/unrdf/packages/oxigraph/src/index.mjs#L58",
+          "runtime": "Node.js",
+          "section": "RDF Data Factory",
+          "package": "@unrdf/oxigraph"
+        },
+        {
+          "name": "store.match(s, p, o, g)",
+          "type": "Method",
+          "evidence": "src/store.mjs:93",
+          "evidenceLink": "file:///home/user/unrdf/packages/oxigraph/src/store.mjs#L93",
+          "runtime": "Node.js",
+          "section": "Pattern Matching & Filtering",
+          "package": "@unrdf/oxigraph"
+        }
+      ],
+      "compositions": [
+        {
+          "id": "C1",
+          "name": "Oxigraph + Core",
+          "description": "Foundation",
+          "value": "High-performance RDF foundation",
+          "complexity": "O(1) store overhead",
+          "evidence": "test/basic.test.mjs:45-67",
+          "dependencies": [
+            "@unrdf/oxigraph",
+            "@unrdf/core"
+          ],
+          "package": "@unrdf/oxigraph"
+        },
+        {
+          "id": "C2",
+          "name": "Oxigraph + Hooks",
+          "description": "Policy-Gated Store",
+          "value": "Governed mutations with policies",
+          "complexity": "O(c) where c = hook conditions",
+          "evidence": "test/policy-gated-store.test.mjs:23-45",
+          "dependencies": [
+            "@unrdf/oxigraph",
+            "@unrdf/hooks"
+          ],
+          "package": "@unrdf/oxigraph"
+        }
+      ]
+    }
+  ],
+  "invertedIndex": {
+    "createStore()": {
+      "capability": "createStore()",
+      "type": "Function",
+      "packages": [
+        {
+          "package": "@unrdf/core",
+          "section": "RDF Store Operations",
+          "evidence": "src/index.mjs:45",
+          "runtime": "Node.js, Browser"
+        },
+        {
+          "package": "@unrdf/oxigraph",
+          "section": "Store Creation & Management",
+          "evidence": "src/store.mjs:8",
+          "runtime": "Node.js"
+        }
+      ]
+    },
+    "UnrdfStore": {
+      "capability": "UnrdfStore",
+      "type": "Class",
+      "packages": [
+        {
+          "package": "@unrdf/core",
+          "section": "RDF Store Operations",
+          "evidence": "src/index.mjs:12",
+          "runtime": "Node.js, Browser"
+        }
+      ]
+    },
+    "addQuad(quad)": {
+      "capability": "addQuad(quad)",
+      "type": "Function",
+      "packages": [
+        {
+          "package": "@unrdf/core",
+          "section": "RDF Store Operations",
+          "evidence": "src/index.mjs:67",
+          "runtime": "Node.js, Browser"
+        }
+      ]
+    },
+    "removeQuad(quad)": {
+      "capability": "removeQuad(quad)",
+      "type": "Function",
+      "packages": [
+        {
+          "package": "@unrdf/core",
+          "section": "RDF Store Operations",
+          "evidence": "src/index.mjs:89",
+          "runtime": "Node.js, Browser"
+        }
+      ]
+    },
+    "getQuads(pattern)": {
+      "capability": "getQuads(pattern)",
+      "type": "Function",
+      "packages": [
+        {
+          "package": "@unrdf/core",
+          "section": "RDF Store Operations",
+          "evidence": "src/index.mjs:101",
+          "runtime": "Node.js, Browser"
+        }
+      ]
+    },
+    "countQuads(pattern)": {
+      "capability": "countQuads(pattern)",
+      "type": "Function",
+      "packages": [
+        {
+          "package": "@unrdf/core",
+          "section": "RDF Store Operations",
+          "evidence": "src/index.mjs:123",
+          "runtime": "Node.js, Browser"
+        }
+      ]
+    },
+    "executeQuery(query)": {
+      "capability": "executeQuery(query)",
+      "type": "Function (async)",
+      "packages": [
+        {
+          "package": "@unrdf/core",
+          "section": "SPARQL Query Execution",
+          "evidence": "src/sparql/index.mjs:12",
+          "runtime": "Node.js, Browser"
+        }
+      ]
+    },
+    "executeSelect(query)": {
+      "capability": "executeSelect(query)",
+      "type": "Function (async)",
+      "packages": [
+        {
+          "package": "@unrdf/core",
+          "section": "SPARQL Query Execution",
+          "evidence": "src/sparql/index.mjs:45",
+          "runtime": "Node.js, Browser"
+        }
+      ]
+    },
+    "executeAsk(query)": {
+      "capability": "executeAsk(query)",
+      "type": "Function (async)",
+      "packages": [
+        {
+          "package": "@unrdf/core",
+          "section": "SPARQL Query Execution",
+          "evidence": "src/sparql/index.mjs:67",
+          "runtime": "Node.js, Browser"
+        }
+      ]
+    },
+    "executeConstruct(query)": {
+      "capability": "executeConstruct(query)",
+      "type": "Function (async)",
+      "packages": [
+        {
+          "package": "@unrdf/core",
+          "section": "SPARQL Query Execution",
+          "evidence": "src/sparql/index.mjs:89",
+          "runtime": "Node.js, Browser"
+        }
+      ]
+    },
+    "prepareQuery(query)": {
+      "capability": "prepareQuery(query)",
+      "type": "Function (async)",
+      "packages": [
+        {
+          "package": "@unrdf/core",
+          "section": "SPARQL Query Execution",
+          "evidence": "src/sparql/index.mjs:111",
+          "runtime": "Node.js, Browser"
+        }
+      ]
+    },
+    "executeQuerySync(query)": {
+      "capability": "executeQuerySync(query)",
+      "type": "Function (sync)",
+      "packages": [
+        {
+          "package": "@unrdf/core",
+          "section": "SPARQL Query Execution",
+          "evidence": "src/sparql/index.mjs:134",
+          "runtime": "Node.js"
+        }
+      ]
+    },
+    "namedNode(iri)": {
+      "capability": "namedNode(iri)",
+      "type": "Function",
+      "packages": [
+        {
+          "package": "@unrdf/core",
+          "section": "RDF Data Factory",
+          "evidence": "src/index.mjs:156",
+          "runtime": "Node.js, Browser"
+        }
+      ]
+    },
+    "literal(value, lang/datatype)": {
+      "capability": "literal(value, lang/datatype)",
+      "type": "Function",
+      "packages": [
+        {
+          "package": "@unrdf/core",
+          "section": "RDF Data Factory",
+          "evidence": "src/index.mjs:178",
+          "runtime": "Node.js, Browser"
+        }
+      ]
+    },
+    "blankNode(name)": {
+      "capability": "blankNode(name)",
+      "type": "Function",
+      "packages": [
+        {
+          "package": "@unrdf/core",
+          "section": "RDF Data Factory",
+          "evidence": "src/index.mjs:200",
+          "runtime": "Node.js, Browser"
+        }
+      ]
+    },
+    "variable(name)": {
+      "capability": "variable(name)",
+      "type": "Function",
+      "packages": [
+        {
+          "package": "@unrdf/core",
+          "section": "RDF Data Factory",
+          "evidence": "src/index.mjs:222",
+          "runtime": "Node.js, Browser"
+        }
+      ]
+    },
+    "quad(s, p, o, g)": {
+      "capability": "quad(s, p, o, g)",
+      "type": "Function",
+      "packages": [
+        {
+          "package": "@unrdf/core",
+          "section": "RDF Data Factory",
+          "evidence": "src/index.mjs:244",
+          "runtime": "Node.js, Browser"
+        }
+      ]
+    },
+    "defaultGraph()": {
+      "capability": "defaultGraph()",
+      "type": "Function",
+      "packages": [
+        {
+          "package": "@unrdf/core",
+          "section": "RDF Data Factory",
+          "evidence": "src/index.mjs:266",
+          "runtime": "Node.js, Browser"
+        }
+      ]
+    },
+    "ValidationError": {
+      "capability": "ValidationError",
+      "type": "Class",
+      "packages": [
+        {
+          "package": "@unrdf/core",
+          "section": "Validation & Constraints",
+          "evidence": "src/validation/index.mjs:8",
+          "runtime": "Node.js, Browser"
+        }
+      ]
+    },
+    "validateTriple(quad)": {
+      "capability": "validateTriple(quad)",
+      "type": "Function",
+      "packages": [
+        {
+          "package": "@unrdf/core",
+          "section": "Validation & Constraints",
+          "evidence": "src/validation/index.mjs:45",
+          "runtime": "Node.js, Browser"
+        }
+      ]
+    },
+    "validateIRI(iri)": {
+      "capability": "validateIRI(iri)",
+      "type": "Function",
+      "packages": [
+        {
+          "package": "@unrdf/core",
+          "section": "Validation & Constraints",
+          "evidence": "src/validation/index.mjs:67",
+          "runtime": "Node.js, Browser"
+        }
+      ]
+    },
+    "validateLiteral(value, datatype)": {
+      "capability": "validateLiteral(value, datatype)",
+      "type": "Function",
+      "packages": [
+        {
+          "package": "@unrdf/core",
+          "section": "Validation & Constraints",
+          "evidence": "src/validation/index.mjs:89",
+          "runtime": "Node.js, Browser"
+        }
+      ]
+    },
+    "canonicalize(dataset)": {
+      "capability": "canonicalize(dataset)",
+      "type": "Function",
+      "packages": [
+        {
+          "package": "@unrdf/core",
+          "section": "Serialization & Canonicalization",
+          "evidence": "src/utils/canonicalize.mjs:12",
+          "runtime": "Node.js, Browser"
+        }
+      ]
+    },
+    "toNTriples(quads)": {
+      "capability": "toNTriples(quads)",
+      "type": "Function",
+      "packages": [
+        {
+          "package": "@unrdf/core",
+          "section": "Serialization & Canonicalization",
+          "evidence": "src/utils/canonicalize.mjs:45",
+          "runtime": "Node.js, Browser"
+        }
+      ]
+    },
+    "sortQuads(quads)": {
+      "capability": "sortQuads(quads)",
+      "type": "Function",
+      "packages": [
+        {
+          "package": "@unrdf/core",
+          "section": "Serialization & Canonicalization",
+          "evidence": "src/utils/canonicalize.mjs:67",
+          "runtime": "Node.js, Browser"
+        }
+      ]
+    },
+    "isIsomorphic(ds1, ds2)": {
+      "capability": "isIsomorphic(ds1, ds2)",
+      "type": "Function",
+      "packages": [
+        {
+          "package": "@unrdf/core",
+          "section": "Serialization & Canonicalization",
+          "evidence": "src/utils/canonicalize.mjs:89",
+          "runtime": "Node.js, Browser"
+        }
+      ]
+    },
+    "RDF": {
+      "capability": "RDF",
+      "type": "Const",
+      "packages": [
+        {
+          "package": "@unrdf/core",
+          "section": "RDF Namespaces",
+          "evidence": "src/constants.mjs:5",
+          "runtime": "Node.js, Browser"
+        }
+      ]
+    },
+    "RDFS": {
+      "capability": "RDFS",
+      "type": "Const",
+      "packages": [
+        {
+          "package": "@unrdf/core",
+          "section": "RDF Namespaces",
+          "evidence": "src/constants.mjs:12",
+          "runtime": "Node.js, Browser"
+        }
+      ]
+    },
+    "OWL": {
+      "capability": "OWL",
+      "type": "Const",
+      "packages": [
+        {
+          "package": "@unrdf/core",
+          "section": "RDF Namespaces",
+          "evidence": "src/constants.mjs:19",
+          "runtime": "Node.js, Browser"
+        }
+      ]
+    },
+    "DCTERMS": {
+      "capability": "DCTERMS",
+      "type": "Const",
+      "packages": [
+        {
+          "package": "@unrdf/core",
+          "section": "RDF Namespaces",
+          "evidence": "src/constants.mjs:26",
+          "runtime": "Node.js, Browser"
+        }
+      ]
+    },
+    "COMMON_PREFIXES": {
+      "capability": "COMMON_PREFIXES",
+      "type": "Const",
+      "packages": [
+        {
+          "package": "@unrdf/core",
+          "section": "RDF Namespaces",
+          "evidence": "src/constants.mjs:33",
+          "runtime": "Node.js, Browser"
+        }
+      ]
+    },
+    "DebugLogger": {
+      "capability": "DebugLogger",
+      "type": "Class",
+      "packages": [
+        {
+          "package": "@unrdf/core",
+          "section": "Observability & Debugging",
+          "evidence": "src/logger.mjs:12",
+          "runtime": "Node.js, Browser"
+        }
+      ]
+    },
+    "PerformanceTracker": {
+      "capability": "PerformanceTracker",
+      "type": "Class",
+      "packages": [
+        {
+          "package": "@unrdf/core",
+          "section": "Observability & Debugging",
+          "evidence": "src/metrics.mjs:8",
+          "runtime": "Node.js, Browser"
+        }
+      ]
+    },
+    "CircuitBreaker": {
+      "capability": "CircuitBreaker",
+      "type": "Class",
+      "packages": [
+        {
+          "package": "@unrdf/core",
+          "section": "Observability & Debugging",
+          "evidence": "src/utils/resilience.mjs:45",
+          "runtime": "Node.js, Browser"
+        }
+      ]
+    },
+    "RateLimiter": {
+      "capability": "RateLimiter",
+      "type": "Class",
+      "packages": [
+        {
+          "package": "@unrdf/core",
+          "section": "Observability & Debugging",
+          "evidence": "src/utils/resilience.mjs:89",
+          "runtime": "Node.js, Browser"
+        }
+      ]
+    },
+    "retry(fn, options)": {
+      "capability": "retry(fn, options)",
+      "type": "Function",
+      "packages": [
+        {
+          "package": "@unrdf/core",
+          "section": "Observability & Debugging",
+          "evidence": "src/utils/resilience.mjs:134",
+          "runtime": "Node.js, Browser"
+        }
+      ]
+    },
+    "OxigraphStore": {
+      "capability": "OxigraphStore",
+      "type": "Class",
+      "packages": [
+        {
+          "package": "@unrdf/oxigraph",
+          "section": "Store Creation & Management",
+          "evidence": "src/store.mjs:22",
+          "runtime": "Node.js"
+        }
+      ]
+    },
+    "store.load(content, format)": {
+      "capability": "store.load(content, format)",
+      "type": "Method",
+      "packages": [
+        {
+          "package": "@unrdf/oxigraph",
+          "section": "Store Creation & Management",
+          "evidence": "src/store.mjs:156",
+          "runtime": "Node.js"
+        }
+      ]
+    },
+    "store.dump(format, graph)": {
+      "capability": "store.dump(format, graph)",
+      "type": "Method",
+      "packages": [
+        {
+          "package": "@unrdf/oxigraph",
+          "section": "Store Creation & Management",
+          "evidence": "src/store.mjs:177",
+          "runtime": "Node.js"
+        }
+      ]
+    },
+    "store.insert(quad)": {
+      "capability": "store.insert(quad)",
+      "type": "Method",
+      "packages": [
+        {
+          "package": "@unrdf/oxigraph",
+          "section": "Data Insertion & Deletion",
+          "evidence": "src/store.mjs:34",
+          "runtime": "Node.js"
+        }
+      ]
+    },
+    "store.remove(quad)": {
+      "capability": "store.remove(quad)",
+      "type": "Method",
+      "packages": [
+        {
+          "package": "@unrdf/oxigraph",
+          "section": "Data Insertion & Deletion",
+          "evidence": "src/store.mjs:56",
+          "runtime": "Node.js"
+        }
+      ]
+    },
+    "store.removeMatches(pattern)": {
+      "capability": "store.removeMatches(pattern)",
+      "type": "Method",
+      "packages": [
+        {
+          "package": "@unrdf/oxigraph",
+          "section": "Data Insertion & Deletion",
+          "evidence": "src/store.mjs:78",
+          "runtime": "Node.js"
+        }
+      ]
+    },
+    "store.query(sparql)": {
+      "capability": "store.query(sparql)",
+      "type": "Method",
+      "packages": [
+        {
+          "package": "@unrdf/oxigraph",
+          "section": "Query Execution",
+          "evidence": "src/store.mjs:115",
+          "runtime": "Node.js"
+        }
+      ]
+    },
+    "dataFactory.namedNode(iri)": {
+      "capability": "dataFactory.namedNode(iri)",
+      "type": "Method",
+      "packages": [
+        {
+          "package": "@unrdf/oxigraph",
+          "section": "RDF Data Factory",
+          "evidence": "src/index.mjs:22",
+          "runtime": "Node.js"
+        }
+      ]
+    },
+    "dataFactory.literal(value, lang/datatype)": {
+      "capability": "dataFactory.literal(value, lang/datatype)",
+      "type": "Method",
+      "packages": [
+        {
+          "package": "@unrdf/oxigraph",
+          "section": "RDF Data Factory",
+          "evidence": "src/index.mjs:34",
+          "runtime": "Node.js"
+        }
+      ]
+    },
+    "dataFactory.blankNode(name)": {
+      "capability": "dataFactory.blankNode(name)",
+      "type": "Method",
+      "packages": [
+        {
+          "package": "@unrdf/oxigraph",
+          "section": "RDF Data Factory",
+          "evidence": "src/index.mjs:46",
+          "runtime": "Node.js"
+        }
+      ]
+    },
+    "dataFactory.quad(s, p, o, g)": {
+      "capability": "dataFactory.quad(s, p, o, g)",
+      "type": "Method",
+      "packages": [
+        {
+          "package": "@unrdf/oxigraph",
+          "section": "RDF Data Factory",
+          "evidence": "src/index.mjs:58",
+          "runtime": "Node.js"
+        }
+      ]
+    },
+    "store.match(s, p, o, g)": {
+      "capability": "store.match(s, p, o, g)",
+      "type": "Method",
+      "packages": [
+        {
+          "package": "@unrdf/oxigraph",
+          "section": "Pattern Matching & Filtering",
+          "evidence": "src/store.mjs:93",
+          "runtime": "Node.js"
+        }
+      ]
+    }
+  },
+  "compositionChains": [
+    {
+      "composition": "C1",
+      "package": "@unrdf/oxigraph",
+      "name": "Oxigraph + Core",
+      "chain": [
+        "@unrdf/oxigraph:C1",
+        "@unrdf/oxigraph",
+        "@unrdf/core"
+      ],
+      "depth": 2
+    },
+    {
+      "composition": "C1",
+      "package": "@unrdf/core",
+      "name": "Query + Validation",
+      "chain": [
+        "@unrdf/core:C1",
+        "@unrdf/core"
+      ],
+      "depth": 1
+    },
+    {
+      "composition": "C2",
+      "package": "@unrdf/oxigraph",
+      "name": "Oxigraph + Hooks",
+      "chain": [
+        "@unrdf/oxigraph:C2",
+        "@unrdf/oxigraph",
+        "@unrdf/hooks"
+      ],
+      "depth": 2
+    },
+    {
+      "composition": "C2",
+      "package": "@unrdf/core",
+      "name": "Store + Logging",
+      "chain": [
+        "@unrdf/core:C2",
+        "@unrdf/core"
+      ],
+      "depth": 1
+    },
+    {
+      "composition": "C3",
+      "package": "@unrdf/core",
+      "name": "Canonicalize + Isomorphism",
+      "chain": [
+        "@unrdf/core:C3",
+        "@unrdf/core"
+      ],
+      "depth": 1
+    }
+  ],
+  "paretoFrontier": [
+    {
+      "id": "C1",
+      "name": "Oxigraph + Core",
+      "description": "Foundation",
+      "value": "High-performance RDF foundation",
+      "complexity": "O(1) store overhead",
+      "evidence": "test/basic.test.mjs:45-67",
+      "dependencies": [
+        "@unrdf/oxigraph",
+        "@unrdf/core"
+      ],
+      "package": "@unrdf/oxigraph",
+      "valueScore": 8,
+      "complexityScore": 1,
+      "paretoScore": 8
+    },
+    {
+      "id": "C2",
+      "name": "Store + Logging",
+      "description": "Auditable Mutations",
+      "value": "Complete audit trail of mutations",
+      "complexity": "O(1) per operation",
+      "evidence": "test/logging.test.mjs (67 lines)",
+      "dependencies": [
+        "@unrdf/core"
+      ],
+      "package": "@unrdf/core",
+      "valueScore": 7,
+      "complexityScore": 1,
+      "paretoScore": 7
+    },
+    {
+      "id": "C1",
+      "name": "Query + Validation",
+      "description": "Validated SPARQL Queries",
+      "value": "Type-safe SPARQL results",
+      "complexity": "O(n) validation overhead",
+      "evidence": "test/query-validation.test.mjs (45 lines)",
+      "dependencies": [
+        "@unrdf/core"
+      ],
+      "package": "@unrdf/core",
+      "valueScore": 6,
+      "complexityScore": 3,
+      "paretoScore": 2
+    },
+    {
+      "id": "C3",
+      "name": "Canonicalize + Isomorphism",
+      "description": "Graph Comparison",
+      "value": "Deterministic graph equality",
+      "complexity": "O(n log n) canonicalization",
+      "evidence": "test/canonicalize.test.mjs (89 lines)",
+      "dependencies": [
+        "@unrdf/core"
+      ],
+      "package": "@unrdf/core",
+      "valueScore": 8,
+      "complexityScore": 4,
+      "paretoScore": 2
+    },
+    {
+      "id": "C2",
+      "name": "Oxigraph + Hooks",
+      "description": "Policy-Gated Store",
+      "value": "Governed mutations with policies",
+      "complexity": "O(c) where c = hook conditions",
+      "evidence": "test/policy-gated-store.test.mjs:23-45",
+      "dependencies": [
+        "@unrdf/oxigraph",
+        "@unrdf/hooks"
+      ],
+      "package": "@unrdf/oxigraph",
+      "valueScore": 6,
+      "complexityScore": 5,
+      "paretoScore": 1.2
+    }
+  ]
+}
