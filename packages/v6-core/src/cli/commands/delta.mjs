@@ -9,7 +9,7 @@
  */
 
 import { z } from 'zod';
-import { createV6Extension } from '../spine.mjs';
+import { getDefaultStore, readDeltaFromFile } from '../../delta/store.mjs';
 
 /**
  * Delta structure schema.
@@ -54,10 +54,10 @@ const ExportArgsSchema = z.object({
 });
 
 /**
- * In-memory delta store (for demo).
- * TODO: Replace with persistent storage.
+ * Delta store instance.
+ * Uses in-memory storage by default, can be replaced with persistent adapter.
  */
-const deltaStore = new Map();
+const deltaStore = getDefaultStore();
 
 /**
  * Propose a delta.
@@ -74,14 +74,8 @@ async function proposeDelta(args, context = {}) {
   let deltaData;
 
   if (file) {
-    // TODO: Read from file system
-    deltaData = {
-      from: 'state-hash-1',
-      to: 'state-hash-2',
-      operations: [
-        { type: 'add', subject: 'ex:Subject', predicate: 'ex:prop', object: 'value' }
-      ]
-    };
+    // Read from file system
+    deltaData = await readDeltaFromFile(file);
   } else if (delta) {
     deltaData = JSON.parse(delta);
   } else {
@@ -104,7 +98,7 @@ async function proposeDelta(args, context = {}) {
   };
 
   // Store
-  deltaStore.set(id, validated);
+  await deltaStore.store(id, validated);
 
   return {
     proposed: true,
@@ -125,7 +119,7 @@ async function proposeDelta(args, context = {}) {
 async function applyDelta(args, context = {}) {
   const { id, force, dryRun } = args;
 
-  const delta = deltaStore.get(id);
+  const delta = await deltaStore.get(id);
   if (!delta) {
     throw new Error(`Delta not found: ${id}`);
   }
@@ -149,22 +143,21 @@ async function applyDelta(args, context = {}) {
     };
   }
 
-  // Apply operations
-  const appliedOps = [];
+  // Apply operations to state store
   const applyTimestamp = context.t_ns ? Number(context.t_ns / 1_000_000n) : Date.now();
-  for (const op of delta.operations) {
-    // TODO: Actually apply to state store
-    appliedOps.push({
-      ...op,
-      applied: true,
-      timestamp: new Date(applyTimestamp).toISOString()
-    });
-  }
+  const applyResult = await deltaStore.applyOperations(delta.operations);
+
+  const appliedOps = delta.operations.map(op => ({
+    ...op,
+    applied: true,
+    timestamp: new Date(applyTimestamp).toISOString()
+  }));
 
   // Update delta status
-  delta.metadata.status = 'applied';
-  delta.metadata.appliedAt = new Date(applyTimestamp).toISOString();
-  deltaStore.set(id, delta);
+  await deltaStore.markApplied(id, {
+    appliedAt: new Date(applyTimestamp).toISOString(),
+    stateHashAfter: applyResult.stateHash || delta.to
+  });
 
   return {
     applied: true,
@@ -186,7 +179,7 @@ async function applyDelta(args, context = {}) {
 async function verifyDelta(args) {
   const { id, against } = args;
 
-  const delta = deltaStore.get(id);
+  const delta = await deltaStore.get(id);
   if (!delta) {
     throw new Error(`Delta not found: ${id}`);
   }
@@ -194,10 +187,11 @@ async function verifyDelta(args) {
   // Verify operations were applied
   const verifications = [];
   for (const op of delta.operations) {
-    // TODO: Check actual state
+    // Check actual state via store
+    const verified = await deltaStore.verifyOperation(op);
     verifications.push({
       operation: op,
-      verified: true,
+      verified,
       method: 'state-comparison'
     });
   }
@@ -225,7 +219,7 @@ async function verifyDelta(args) {
 async function exportDelta(args) {
   const { id, format } = args;
 
-  const delta = deltaStore.get(id);
+  const delta = await deltaStore.get(id);
   if (!delta) {
     throw new Error(`Delta not found: ${id}`);
   }
@@ -283,11 +277,11 @@ async function exportDelta(args) {
 async function checkAdmissibility(delta) {
   const reasons = [];
 
-  // Check: from state exists
-  // TODO: Check actual state store
-  const fromStateExists = true;
+  // Check: from state exists in state store
+  const currentStateHash = await deltaStore.getCurrentStateHash();
+  const fromStateExists = !currentStateHash || currentStateHash === delta.from;
   if (!fromStateExists) {
-    reasons.push('Source state does not exist');
+    reasons.push(`Source state mismatch: expected ${delta.from}, got ${currentStateHash}`);
   }
 
   // Check: no conflicting deltas
@@ -317,34 +311,40 @@ async function checkAdmissibility(delta) {
 /**
  * Delta extension for V6 CLI.
  */
-export const deltaExtension = createV6Extension({
+export const deltaExtension = {
   id: '@unrdf/v6-core/delta',
   nouns: {
     delta: {
+      description: 'Δ (change carrier) operations - admissible state transitions',
       verbs: {
         propose: {
           description: 'Propose a state change delta',
           handler: proposeDelta,
-          argsSchema: ProposeArgsSchema
+          argsSchema: ProposeArgsSchema,
+          meta: {}
         },
         apply: {
           description: 'Apply delta with admissibility check',
           handler: applyDelta,
-          argsSchema: ApplyArgsSchema
+          argsSchema: ApplyArgsSchema,
+          meta: {}
         },
         verify: {
           description: 'Verify delta was applied correctly',
           handler: verifyDelta,
-          argsSchema: VerifyArgsSchema
+          argsSchema: VerifyArgsSchema,
+          meta: {}
         },
         export: {
           description: 'Export delta to format',
           handler: exportDelta,
-          argsSchema: ExportArgsSchema
+          argsSchema: ExportArgsSchema,
+          meta: {}
         }
       }
     }
-  }
-});
+  },
+  priority: 100
+};
 
 export default deltaExtension;

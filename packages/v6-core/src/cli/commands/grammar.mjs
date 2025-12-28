@@ -264,3 +264,85 @@ export const grammarCommands = {
   validate: grammarValidateCommand,
   complexity: grammarComplexityCommand,
 };
+
+/**
+ * Grammar extension for V6 CLI.
+ */
+import { z } from 'zod';
+
+const CompileArgsSchema = z.object({
+  file: z.string().describe('Grammar file path'),
+  type: z.enum(['sparql', 'shacl', 'n3', 'owl', 'shex']).optional(),
+  strict: z.boolean().optional().default(true),
+  output: z.string().optional()
+});
+
+const ValidateArgsSchema = z.object({
+  file: z.string().describe('Grammar file path'),
+  type: z.enum(['sparql', 'shacl', 'n3', 'owl', 'shex']).optional()
+});
+
+const ParseArgsSchema = z.object({
+  file: z.string().describe('Grammar file path'),
+  type: z.enum(['sparql', 'shacl', 'n3', 'owl', 'shex']).optional()
+});
+
+export const grammarExtension = {
+  id: '@unrdf/v6-core/grammar',
+  nouns: {
+    grammar: {
+      description: 'SPARQL/SHACL/N3/OWL grammar operations',
+      verbs: {
+        compile: {
+          description: 'Compile grammar with complexity bounds checking',
+          handler: async (args) => {
+            await grammarCompileCommand(args.file, args);
+            return { compiled: true };
+          },
+          argsSchema: CompileArgsSchema,
+          meta: {}
+        },
+        validate: {
+          description: 'Validate grammar syntax',
+          handler: async (args) => {
+            await grammarValidateCommand(args.file, args);
+            return { valid: true };
+          },
+          argsSchema: ValidateArgsSchema,
+          meta: {}
+        },
+        parse: {
+          description: 'Parse grammar and show AST',
+          handler: async (args) => {
+            const { readFile } = await import('fs/promises');
+            const input = await readFile(args.file, 'utf-8');
+            const grammarType = args.type || detectGrammarType(args.file, input);
+            const parseResult = parseGrammar(input, grammarType);
+            return {
+              parsed: parseResult.success,
+              grammarType,
+              complexity: parseResult.complexity
+            };
+          },
+          argsSchema: ParseArgsSchema,
+          meta: {}
+        },
+        export: {
+          description: 'Export grammar analysis',
+          handler: async (args) => {
+            await grammarComplexityCommand(args.file, args);
+            return { exported: true };
+          },
+          argsSchema: z.object({
+            file: z.string(),
+            type: z.enum(['sparql', 'shacl', 'n3', 'owl', 'shex']).optional()
+          }),
+          meta: {}
+        }
+      }
+    }
+  },
+  priority: 100
+};
+
+export default grammarExtension;

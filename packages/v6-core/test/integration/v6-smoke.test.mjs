@@ -27,6 +27,10 @@ import {
   createDeltaSystem,
   DeltaSchema,
   DeltaGate,
+  createDeltaProposal,
+  applyDelta,
+  DeltaProposalSchema,
+  adapters,
 } from '../../src/delta/index.mjs';
 
 import {
@@ -80,35 +84,57 @@ test('v6-smoke: isFeatureEnabled works correctly', () => {
 });
 
 // Test Suite: Receipts Capsule
-test('v6-smoke: createReceipt works', () => {
-  const receipt = createReceipt('test-operation', { foo: 'bar' });
+test('v6-smoke: createReceipt works', async () => {
+  const receipt = await createReceipt('execution', {
+    eventType: 'TASK_COMPLETED',
+    caseId: 'case-123',
+    taskId: 'approval-task',
+    payload: { decision: 'APPROVE', notes: 'Test approval' },
+  });
 
   assert.ok(receipt.id);
-  assert.strictEqual(receipt.operation, 'test-operation');
-  assert.ok(receipt.timestamp);
-  assert.ok(receipt.merkleRoot);
-  assert.ok(Array.isArray(receipt.proof));
-  assert.strictEqual(receipt.metadata.foo, 'bar');
+  assert.strictEqual(receipt.receiptType, 'execution');
+  assert.strictEqual(receipt.eventType, 'TASK_COMPLETED');
+  assert.ok(receipt.t_ns);
+  assert.ok(receipt.timestamp_iso);
+  assert.ok(receipt.payloadHash);
+  assert.ok(receipt.receiptHash);
 });
 
-test('v6-smoke: verifyReceipt validates correctly', () => {
-  const receipt = createReceipt('test-op', {});
-  const isValid = verifyReceipt(receipt);
+test('v6-smoke: verifyReceipt validates correctly', async () => {
+  const receipt = await createReceipt('execution', {
+    eventType: 'TASK_COMPLETED',
+    caseId: 'case-456',
+    taskId: 'test-task',
+    payload: {},
+  });
 
-  assert.strictEqual(isValid, true);
+  const result = await verifyReceipt(receipt);
+  assert.strictEqual(result.valid, true);
+  assert.ok(!result.error);
 });
 
-test('v6-smoke: ReceiptSchema validates receipts', () => {
-  const receipt = {
-    id: 'test-1',
-    operation: 'test',
-    timestamp: new Date().toISOString(),
-    merkleRoot: 'root',
-    proof: ['proof1'],
-  };
+test('v6-smoke: ReceiptSchema validates receipts', async () => {
+  const receipt = await createReceipt('allocation', {
+    eventType: 'RESOURCE_ALLOCATED',
+    resourceId: 'res-001',
+    poolId: 'pool-main',
+    allocationPeriod: {
+      start: '2025-01-01T00:00:00Z',
+      end: '2025-01-02T00:00:00Z',
+    },
+    capacity: {
+      total: 100,
+      available: 80,
+      allocated: 20,
+      unit: 'hours',
+    },
+    payload: { action: 'ALLOCATE' },
+  });
 
   const parsed = ReceiptSchema.parse(receipt);
   assert.ok(parsed);
+  assert.strictEqual(parsed.receiptType, 'allocation');
 });
 
 test('v6-smoke: MerkleTree creates trees', () => {

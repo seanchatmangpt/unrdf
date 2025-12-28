@@ -144,3 +144,84 @@ async function findPackages(pattern) {
   return dirs;
 }
 
+/**
+ * Thesis extension for V6 CLI.
+ */
+import { z } from 'zod';
+
+const BuildArgsSchema = z.object({
+  output: z.string().optional().default('./thesis'),
+  packages: z.string().optional().default('packages/*'),
+  pdf: z.boolean().optional().default(false)
+});
+
+const RenderArgsSchema = z.object({
+  ontology: z.string().describe('Path to .ttl ontology'),
+  output: z.string().optional().default('./rendered-docs')
+});
+
+const ExportArgsSchema = z.object({
+  format: z.enum(['pdf', 'latex', 'html']).optional().default('pdf'),
+  input: z.string().optional().default('./thesis'),
+  output: z.string().optional()
+});
+
+const ValidateArgsSchema = z.object({
+  input: z.string().optional().default('./thesis')
+});
+
+export const thesisExtension = {
+  id: '@unrdf/v6-core/thesis',
+  nouns: {
+    thesis: {
+      description: 'Documentation and LaTeX thesis operations',
+      verbs: {
+        render: {
+          description: 'Render documentation from ontology',
+          handler: async (args) => {
+            await thesisRender(args);
+            return { rendered: true };
+          },
+          argsSchema: RenderArgsSchema,
+          meta: {}
+        },
+        compile: {
+          description: 'Build thesis from package documentation',
+          handler: async (args) => {
+            await thesisBuild(args);
+            return { compiled: true };
+          },
+          argsSchema: BuildArgsSchema,
+          meta: {}
+        },
+        validate: {
+          description: 'Validate thesis structure',
+          handler: async (args) => {
+            // Validate thesis directory structure
+            const { existsSync } = await import('fs');
+            const exists = existsSync(args.input);
+            return {
+              valid: exists,
+              path: args.input
+            };
+          },
+          argsSchema: ValidateArgsSchema,
+          meta: {}
+        },
+        export: {
+          description: 'Export thesis to format',
+          handler: async (args) => {
+            await thesisExport(args);
+            return { exported: true };
+          },
+          argsSchema: ExportArgsSchema,
+          meta: {}
+        }
+      }
+    }
+  },
+  priority: 100
+};
+
+export default thesisExtension;
+

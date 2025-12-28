@@ -59,6 +59,9 @@ import { validateDelta } from './schema.mjs';
 
 export { DeltaGate } from './gate.mjs';
 
+// Import DeltaGate for internal use in createDeltaSystem
+import { DeltaGate } from './gate.mjs';
+
 // =============================================================================
 // Reconciliation Exports
 // =============================================================================
@@ -70,6 +73,20 @@ export {
   strictResolver,
   customResolver,
 } from './reconcile.mjs';
+
+// =============================================================================
+// Store Exports
+// =============================================================================
+
+export {
+  DeltaStore,
+  createDeltaStore,
+  readDeltaFromFile,
+  getDefaultStore,
+  resetDefaultStore,
+  DeltaStatus,
+  StoredDeltaSchema,
+} from './store.mjs';
 
 // =============================================================================
 // Adapter Exports
@@ -89,6 +106,11 @@ export {
   GraphQLAdapter,
   createGraphQLAdapter,
 } from './adapters/graphql-adapter.mjs';
+
+// Import adapter factories for internal use in createDeltaSystem
+import { createWorkflowAdapter } from './adapters/workflow-adapter.mjs';
+import { createResourceAdapter } from './adapters/resource-adapter.mjs';
+import { createGraphQLAdapter } from './adapters/graphql-adapter.mjs';
 
 // =============================================================================
 // Convenience Factory Functions
@@ -157,7 +179,7 @@ export function createDeltaSystem(options = {}) {
  *   { package: '@unrdf/app' }
  * );
  */
-export async function createDelta(op, subject, predicate, object, options = {}) {
+export function createDelta(op, subject, predicate, object, options = {}) {
   const operation = { op, subject, predicate, object };
 
   if (op === 'update') {
@@ -188,9 +210,8 @@ export async function createDelta(op, subject, predicate, object, options = {}) 
     },
   };
 
-  // Import validateDelta from schema exports
-  const { validateDelta: validate } = await import('./schema.mjs');
-  return validate(delta);
+  // Use already-imported validateDelta from top of file
+  return validateDelta(delta);
 }
 
 /**

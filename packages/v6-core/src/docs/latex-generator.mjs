@@ -4,8 +4,13 @@
  */
 
 import { writeFile, mkdir } from 'node:fs/promises';
-import { join, dirname } from 'node:path';
+import { join } from 'node:path';
 import { createHash } from 'node:crypto';
+import {
+  WasmLatexInputSchema,
+  WasmLatexOutputSchema,
+  LatexCompilerOptionsSchema
+} from './latex-generator.schema.mjs';
 
 /**
  * @typedef {Object} LatexOutput
@@ -62,22 +67,143 @@ export async function generateLatex(diataxisDocs, outputDir) {
 }
 
 /**
- * Compile LaTeX to PDF (stubbed for WASM engine)
+ * Compile LaTeX source to PDF using WASM engine (STUB)
+ * @param {string} source - LaTeX source code
+ * @param {Object} [options] - Compilation options
+ * @param {string} [options.engine='pdflatex'] - LaTeX engine to use
+ * @param {number} [options.passes=2] - Number of compilation passes
+ * @param {boolean} [options.shellEscape=false] - Enable shell escape
+ * @param {string} [options.interaction='nonstopmode'] - Interaction mode
+ * @param {number} [options.timeout=30000] - Compilation timeout in ms
+ * @returns {Promise<Object>} WASM compilation result
+ * @throws {Error} If validation fails
+ * @example
+ * const result = await compileLatexWithWasm('\\documentclass{article}...');
+ * if (result.success) {
+ *   console.log('PDF size:', result.pdfBytes.length);
+ * }
+ */
+export async function compileLatexWithWasm(source, options = {}) {
+  const startTime = Date.now();
+
+  // Validate input
+  const input = WasmLatexInputSchema.parse({
+    source,
+    mainFile: 'main.tex',
+    options: LatexCompilerOptionsSchema.parse(options)
+  });
+
+  // STUB: WASM LaTeX compilation not yet implemented
+  console.warn('[LaTeX WASM] Compilation stub called - WASM engine not yet integrated');
+  console.log('[LaTeX WASM] Engine:', input.options.engine);
+  console.log('[LaTeX WASM] Source size:', source.length, 'bytes');
+  console.log('[LaTeX WASM] Timeout:', input.options.timeout, 'ms');
+
+  // TODO: Integrate WASM LaTeX compiler (e.g., texlive.js, swiftlatex)
+  // Expected integration:
+  // 1. Initialize WASM module
+  // 2. Load LaTeX source and additional files
+  // 3. Run LaTeX engine in WASM sandbox
+  // 4. Extract PDF bytes from WASM memory
+  // 5. Parse log output for errors/warnings
+
+  const compilationTime = Date.now() - startTime;
+
+  // Return mock output for now
+  const output = {
+    success: false,
+    pdfBytes: null,
+    logOutput: 'STUB: WASM LaTeX engine not yet integrated\nExpected output: PDF compilation',
+    warnings: ['WASM compilation not implemented'],
+    errors: [],
+    compilationTime,
+    wasmEngineVersion: 'stub-0.0.0'
+  };
+
+  return WasmLatexOutputSchema.parse(output);
+}
+
+/**
+ * Compile LaTeX file to PDF (STUB for WASM engine)
  * @param {string} texFile - Path to .tex file
  * @param {Object} [options={}] - Compilation options
+ * @param {string} [options.engine='pdflatex'] - LaTeX engine to use
+ * @param {number} [options.passes=2] - Number of compilation passes
+ * @param {number} [options.timeout=30000] - Compilation timeout in ms
  * @returns {Promise<string>} Path to generated PDF
+ * @example
+ * const pdfPath = await compileToPDF('./thesis.tex', { engine: 'xelatex' });
  */
 export async function compileToPDF(texFile, options = {}) {
+  const startTime = Date.now();
+
+  // Validate options
+  const validatedOptions = LatexCompilerOptionsSchema.parse(options);
+
   // STUB: Will be implemented with WASM LaTeX compiler
   const pdfPath = texFile.replace(/\.tex$/, '.pdf');
-  
+  const logPath = texFile.replace(/\.tex$/, '.log');
+
   console.warn('[LaTeX] PDF compilation not yet implemented (WASM engine pending)');
-  console.log('[LaTeX] Expected output: ' + pdfPath);
   console.log('[LaTeX] Input: ' + texFile);
-  
+  console.log('[LaTeX] Expected output: ' + pdfPath);
+  console.log('[LaTeX] Engine:', validatedOptions.engine);
+  console.log('[LaTeX] Passes:', validatedOptions.passes);
+
   // TODO: Integrate WASM LaTeX compiler
-  
+  // Future implementation will:
+  // 1. Read .tex file
+  // 2. Call compileLatexWithWasm() with source
+  // 3. Write PDF bytes to pdfPath
+  // 4. Write log output to logPath
+  // 5. Return compilation result with stats
+
+  // Stub result object (for future use)
+  // const result = {
+  //   pdfPath,
+  //   success: false,
+  //   logPath,
+  //   errors: [],
+  //   warnings: ['PDF compilation stub - WASM engine not integrated'],
+  //   stats: {
+  //     compilationTime: Date.now() - startTime
+  //   }
+  // };
+
   return pdfPath;
+}
+
+/**
+ * Initialize WASM LaTeX engine (STUB)
+ * @param {Object} [config] - Engine configuration
+ * @param {string} [config.enginePath] - Path to WASM engine binary
+ * @param {number} [config.memorySize=268435456] - WASM memory size in bytes (default 256MB)
+ * @returns {Promise<Object>} Engine instance
+ * @throws {Error} If initialization fails
+ * @example
+ * const engine = await initWasmLatexEngine({ memorySize: 512 * 1024 * 1024 });
+ */
+export async function initWasmLatexEngine(config = {}) {
+  const { enginePath, memorySize = 268435456 } = config;
+
+  console.warn('[LaTeX WASM] Engine initialization stub called');
+  console.log('[LaTeX WASM] Engine path:', enginePath || 'default');
+  console.log('[LaTeX WASM] Memory size:', memorySize, 'bytes');
+
+  // TODO: Initialize WASM LaTeX engine
+  // Expected implementation:
+  // 1. Load WASM binary from enginePath or CDN
+  // 2. Allocate WASM memory
+  // 3. Initialize LaTeX filesystem in WASM
+  // 4. Load LaTeX packages and fonts
+  // 5. Return engine instance with compile() method
+
+  return {
+    version: 'stub-0.0.0',
+    initialized: false,
+    memorySize,
+    compile: compileLatexWithWasm
+  };
 }
 
 /**

@@ -4,6 +4,9 @@
   "description": "UNRDF v6 Core - ΔGate control plane, unified receipts, and delta contracts",
   "type": "module",
   "main": "./src/index.mjs",
+  "bin": {
+    "v6-cli": "./src/cli/index.mjs"
+  },
   "exports": {
     ".": "./src/index.mjs",
     "./browser": "./src/browser.mjs",

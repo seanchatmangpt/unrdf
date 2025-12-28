@@ -420,7 +420,7 @@ test('Regression - serialization format unchanged', () => {
 
 test('Regression - hash algorithm unchanged (SHA-256)', () => {
   const data = { test: 'value' };
-  const hash = computeHash(JSON.stringify(data));
+  const hash = computeHash(data);
 
   // SHA-256 produces 64 hex characters
   assert.strictEqual(hash.length, 64);

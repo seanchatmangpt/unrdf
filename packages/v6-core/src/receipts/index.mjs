@@ -57,6 +57,24 @@ import VerificationReceiptSchema, {
 } from './verification-receipt.mjs';
 
 // =============================================================================
+// Union Schema for All Receipt Types
+// =============================================================================
+
+import { z } from 'zod';
+
+/**
+ * Unified Receipt Schema - Discriminated union of all receipt types
+ *
+ * Validates any receipt type based on the `receiptType` discriminator field.
+ */
+export const ReceiptSchema = z.discriminatedUnion('receiptType', [
+  ExecutionReceiptSchema,
+  AllocationReceiptSchema,
+  CompileReceiptSchema,
+  VerificationReceiptSchema,
+]);
+
+// =============================================================================
 // Unified Receipt Factory
 // =============================================================================
 
@@ -282,6 +300,7 @@ export {
 };
 
 // Schemas
+// Note: ReceiptSchema is already exported above as const declaration (line 70)
 export {
   BaseReceiptSchema,
   ReceiptTypeSchema,

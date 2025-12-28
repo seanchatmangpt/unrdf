@@ -32,10 +32,10 @@ describe('withReceipt Determinism (L3 Maturity)', () => {
       // Create wrapped function
       const wrappedFn = withReceipt(testFn, options);
 
-      // WHEN: Execute multiple times
-      const { receipt: receipt1 } = await wrappedFn(...testData);
-      const { receipt: receipt2 } = await wrappedFn(...testData);
-      const { receipt: receipt3 } = await wrappedFn(...testData);
+      // WHEN: Execute multiple times (pass array as single argument)
+      const { receipt: receipt1 } = await wrappedFn(testData);
+      const { receipt: receipt2 } = await wrappedFn(testData);
+      const { receipt: receipt3 } = await wrappedFn(testData);
 
       // THEN: All receipts should be IDENTICAL
       expect(receipt1).toEqual(receipt2);
@@ -76,8 +76,8 @@ describe('withReceipt Determinism (L3 Maturity)', () => {
       });
 
       // WHEN: Execute with different contexts
-      const { receipt: receipt1 } = await wrappedFn1(...testData);
-      const { receipt: receipt2 } = await wrappedFn2(...testData);
+      const { receipt: receipt1 } = await wrappedFn1(testData[0]);
+      const { receipt: receipt2 } = await wrappedFn2(testData[0]);
 
       // THEN: Receipts should be DIFFERENT (different timestamps)
       expect(receipt1.timestamp).not.toBe(receipt2.timestamp);
@@ -121,8 +121,8 @@ describe('withReceipt Determinism (L3 Maturity)', () => {
       const wrappedFn = withReceipt(testFn, options);
 
       // WHEN: Execute multiple times
-      const { receipt: receipt1 } = await wrappedFn(...testData);
-      const { receipt: receipt2 } = await wrappedFn(...testData);
+      const { receipt: receipt1 } = await wrappedFn(testData);
+      const { receipt: receipt2 } = await wrappedFn(testData);
 
       // THEN: Hashes MUST be identical
       const hash1 = await computeBlake3(receipt1);
