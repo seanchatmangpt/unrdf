@@ -1,0 +1,157 @@
+{
+  "timestamp": "2025-12-28T00:02:18.460Z",
+  "stats": {
+    "total": 12,
+    "bySection": {
+      "unknown": 12
+    },
+    "byCategory": {
+      "example": 12
+    },
+    "syntaxErrors": [
+      {
+        "section": "unknown",
+        "index": 0,
+        "error": "Cannot use import statement outside a module"
+      },
+      {
+        "section": "unknown",
+        "index": 1,
+        "error": "await is only valid in async functions and the top level bodies of modules"
+      },
+      {
+        "section": "unknown",
+        "index": 3,
+        "error": "await is only valid in async functions and the top level bodies of modules"
+      },
+      {
+        "section": "unknown",
+        "index": 4,
+        "error": "await is only valid in async functions and the top level bodies of modules"
+      },
+      {
+        "section": "unknown",
+        "index": 5,
+        "error": "await is only valid in async functions and the top level bodies of modules"
+      },
+      {
+        "section": "unknown",
+        "index": 6,
+        "error": "await is only valid in async functions and the top level bodies of modules"
+      },
+      {
+        "section": "unknown",
+        "index": 7,
+        "error": "await is only valid in async functions and the top level bodies of modules"
+      },
+      {
+        "section": "unknown",
+        "index": 8,
+        "error": "Cannot use import statement outside a module"
+      },
+      {
+        "section": "unknown",
+        "index": 9,
+        "error": "Cannot use import statement outside a module"
+      },
+      {
+        "section": "unknown",
+        "index": 10,
+        "error": "await is only valid in async functions and the top level bodies of modules"
+      },
+      {
+        "section": "unknown",
+        "index": 11,
+        "error": "Cannot use import statement outside a module"
+      }
+    ],
+    "valid": 1,
+    "invalid": 11
+  },
+  "blocks": [
+    {
+      "section": "unknown",
+      "index": 0,
+      "language": "javascript",
+      "category": "example",
+      "lines": 33
+    },
+    {
+      "section": "unknown",
+      "index": 1,
+      "language": "javascript",
+      "category": "example",
+      "lines": 8
+    },
+    {
+      "section": "unknown",
+      "index": 2,
+      "language": "javascript",
+      "category": "example",
+      "lines": 13
+    },
+    {
+      "section": "unknown",
+      "index": 3,
+      "language": "javascript",
+      "category": "example",
+      "lines": 11
+    },
+    {
+      "section": "unknown",
+      "index": 4,
+      "language": "javascript",
+      "category": "example",
+      "lines": 11
+    },
+    {
+      "section": "unknown",
+      "index": 5,
+      "language": "javascript",
+      "category": "example",
+      "lines": 9
+    },
+    {
+      "section": "unknown",
+      "index": 6,
+      "language": "javascript",
+      "category": "example",
+      "lines": 12
+    },
+    {
+      "section": "unknown",
+      "index": 7,
+      "language": "javascript",
+      "category": "example",
+      "lines": 2
+    },
+    {
+      "section": "unknown",
+      "index": 8,
+      "language": "javascript",
+      "category": "example",
+      "lines": 44
+    },
+    {
+      "section": "unknown",
+      "index": 9,
+      "language": "typescript",
+      "category": "example",
+      "lines": 8
+    },
+    {
+      "section": "unknown",
+      "index": 10,
+      "language": "javascript",
+      "category": "example",
+      "lines": 12
+    },
+    {
+      "section": "unknown",
+      "index": 11,
+      "language": "javascript",
+      "category": "example",
+      "lines": 5
+    }
+  ]
+}
