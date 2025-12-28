@@ -15,7 +15,7 @@ import {
   MigrationTracker,
 } from '../src/adapters.mjs';
 import { z } from 'zod';
-import { computeBlake3 } from '@unrdf/v6-core/receipts';
+import { computeBlake3 } from '@unrdf/v6-core/receipts/base-receipt';
 
 describe('P0-003: v6-compat Integration', () => {
   describe('Adapters', () => {

@@ -373,8 +373,10 @@ export function validateWithErrors(schema, data) {
   const result = schema.safeParse(data);
 
   if (!result.success) {
-    const errors = result.error.errors.map((e) => ({
-      path: e.path.join('.'),
+    // In Zod v4, errors are in .issues instead of .errors
+    const errorList = result.error?.issues || result.error?.errors || [];
+    const errors = errorList.map((e) => ({
+      path: Array.isArray(e.path) ? e.path.join('.') : String(e.path || ''),
       message: e.message,
       code: e.code
     }));
@@ -382,7 +384,9 @@ export function validateWithErrors(schema, data) {
     return {
       success: false,
       errors,
-      summary: errors.map((e) => `${e.path}: ${e.message}`).join('; ')
+      summary: errors.length > 0
+        ? errors.map((e) => `${e.path}: ${e.message}`).join('; ')
+        : 'Validation failed'
     };
   }
 

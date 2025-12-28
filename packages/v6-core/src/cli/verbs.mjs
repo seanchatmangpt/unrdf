@@ -18,7 +18,7 @@ export const VerbSchema = z.object({
   requiresAuth: z.boolean().default(false).describe('Requires authentication'),
   sideEffects: z.enum(['none', 'read', 'write', 'mutate']).describe('Side effect category'),
   applicableNouns: z.array(z.string()).describe('Nouns this verb can operate on'),
-  argsSchema: z.custom((val) => true).optional().describe('Zod schema for arguments')
+  argsSchema: z.custom(() => true).optional().describe('Zod schema for arguments')
 });
 
 /**

@@ -1,0 +1,50 @@
+{
+  "$schema": "https://modelcontextprotocol.io/schemas/mcp.json",
+  "_comment": "Copy this file to .mcp.json and add your credentials",
+  "mcpServers": {
+    "claude-flow": {
+      "type": "npx",
+      "package": "claude-flow@alpha",
+      "args": ["mcp"],
+      "description": "Claude Flow orchestration and swarm coordination",
+      "env": {
+        "CLAUDE_FLOW_AUTO_COMMIT": "false",
+        "CLAUDE_FLOW_AUTO_PUSH": "false",
+        "CLAUDE_FLOW_HOOKS_ENABLED": "true"
+      }
+    },
+    "filesystem": {
+      "type": "npx",
+      "package": "@anthropic-ai/mcp-server-filesystem",
+      "args": [
+        "--allowed-dir", "/path/to/unrdf",
+        "--allowed-dir", "/tmp"
+      ],
+      "description": "File system access for UNRDF project"
+    },
+    "github": {
+      "type": "npx",
+      "package": "@anthropic-ai/mcp-server-github",
+      "env": {
+        "GITHUB_TOKEN": "YOUR_GITHUB_TOKEN_HERE"
+      },
+      "description": "GitHub API integration for PRs, issues, actions"
+    },
+    "memory": {
+      "type": "npx",
+      "package": "@anthropic-ai/mcp-server-memory",
+      "args": ["--store-path", ".claude/memory.json"],
+      "description": "Persistent memory for cross-session context"
+    },
+    "sequential-thinking": {
+      "type": "npx",
+      "package": "@anthropic-ai/mcp-server-sequential-thinking",
+      "description": "Enhanced reasoning for complex problems"
+    }
+  },
+  "settings": {
+    "defaultServer": "claude-flow",
+    "timeout": 30000,
+    "retries": 3
+  }
+}

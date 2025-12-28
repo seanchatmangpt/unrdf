@@ -63,9 +63,9 @@ const CompileOptionsSchema = z.object({
 }).passthrough();
 
 /**
- * Compile result schema
+ * Compile result schema (exported for type inference)
  */
-const CompileResultSchema = z.object({
+export const CompileResultSchema = z.object({
   success: z.boolean(),
   compiled: z.any().optional(),
   denial: z.any().optional(),

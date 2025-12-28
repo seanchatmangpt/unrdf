@@ -44,7 +44,7 @@ export function buildV6Spine(registry) {
       continue;
     }
 
-    for (const [verb, verbData] of Object.entries(nounData.verbs)) {
+    for (const [verb, _verbData] of Object.entries(nounData.verbs)) {
       if (!isValidCombination(noun, verb)) {
         validationErrors.push({
           type: 'INVALID_COMBINATION',

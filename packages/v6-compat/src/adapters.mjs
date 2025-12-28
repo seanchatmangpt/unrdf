@@ -226,6 +226,32 @@ export async function* streamToAsync(stream) {
 }
 
 /**
+ * Deterministic JSON serialization
+ * Sorts object keys alphabetically and handles BigInt
+ *
+ * @param {*} obj - Object to serialize
+ * @returns {string} Deterministic JSON string
+ */
+function deterministicSerialize(obj) {
+  return JSON.stringify(obj, (key, value) => {
+    // Handle BigInt
+    if (typeof value === 'bigint') {
+      return `BIGINT:${value.toString()}`;
+    }
+    // Sort object keys
+    if (value && typeof value === 'object' && !Array.isArray(value)) {
+      return Object.keys(value)
+        .sort()
+        .reduce((sorted, k) => {
+          sorted[k] = value[k];
+          return sorted;
+        }, {});
+    }
+    return value;
+  });
+}
+
+/**
  * Receipt generation wrapper for arbitrary functions
  *
  * @param {Function} fn - Function to wrap
@@ -249,17 +275,22 @@ export function withReceipt(fn, options = {}) {
   }
 
   return async function wrappedWithReceipt(...args) {
-    const startTime = performance.now();
+    const startTime = options.startTime !== undefined ? options.startTime : performance.now();
     const result = await fn(...args);
-    const endTime = performance.now();
+    const endTime = options.endTime !== undefined ? options.endTime : performance.now();
+
+    // Use context.t_ns if provided for determinism, otherwise Date.now()
+    const timestamp = options.context?.t_ns
+      ? Number(options.context.t_ns / 1000000n) // Convert nanoseconds to milliseconds
+      : Date.now();
 
     const receipt = {
       version: '6.0.0-alpha.1',
       operation: options.operation || fn.name || 'anonymous',
-      timestamp: Date.now(),
+      timestamp,
       duration: endTime - startTime,
-      args: JSON.stringify(args),
-      result: typeof result === 'object' ? JSON.stringify(result) : String(result)
+      args: deterministicSerialize(args),
+      result: typeof result === 'object' ? deterministicSerialize(result) : String(result)
     };
 
     return { result, receipt };
@@ -312,6 +343,13 @@ export class MigrationTracker {
   constructor() {
     this.warnings = [];
     this.start = Date.now();
+    this.staticAnalysis = {
+      filesScanned: 0,
+      n3Imports: 0,
+      dateNowCalls: 0,
+      mathRandomCalls: 0,
+      workflowRunCalls: 0,
+    };
   }
 
   /**
@@ -328,6 +366,80 @@ export class MigrationTracker {
   }
 
   /**
+   * Analyze source code for migration issues
+   * @param {string} source - Source code to analyze
+   * @param {string} filename - Filename for tracking
+   * @returns {Object} Analysis results
+   */
+  analyzeSource(source, filename) {
+    this.staticAnalysis.filesScanned++;
+
+    const issues = {
+      n3Imports: 0,
+      dateNowCalls: 0,
+      mathRandomCalls: 0,
+      workflowRunCalls: 0,
+      file: filename,
+    };
+
+    // Count N3 imports
+    const n3ImportMatches = source.match(/from\s+['"]n3['"]/g);
+    if (n3ImportMatches) {
+      issues.n3Imports = n3ImportMatches.length;
+      this.staticAnalysis.n3Imports += n3ImportMatches.length;
+    }
+
+    // Count Date.now() calls
+    const dateNowMatches = source.match(/Date\.now\(\)/g);
+    if (dateNowMatches) {
+      issues.dateNowCalls = dateNowMatches.length;
+      this.staticAnalysis.dateNowCalls += dateNowMatches.length;
+    }
+
+    // Count Math.random() calls
+    const mathRandomMatches = source.match(/Math\.random\(\)/g);
+    if (mathRandomMatches) {
+      issues.mathRandomCalls = mathRandomMatches.length;
+      this.staticAnalysis.mathRandomCalls += mathRandomMatches.length;
+    }
+
+    // Count workflow.run() calls
+    const workflowRunMatches = source.match(/workflow\.run\(/g);
+    if (workflowRunMatches) {
+      issues.workflowRunCalls = workflowRunMatches.length;
+      this.staticAnalysis.workflowRunCalls += workflowRunMatches.length;
+    }
+
+    return issues;
+  }
+
+  /**
+   * Scan directory for migration issues
+   * @param {string} globPattern - Glob pattern for files to scan
+   * @returns {Promise<Array>} Array of analysis results
+   */
+  async scanDirectory(globPattern) {
+    const { glob } = await import('glob');
+    const { readFile } = await import('fs/promises');
+
+    const files = await glob(globPattern);
+    const results = [];
+
+    for (const file of files) {
+      try {
+        const source = await readFile(file, 'utf-8');
+        const issues = this.analyzeSource(source, file);
+        results.push(issues);
+      } catch (error) {
+        // Skip files that can't be read
+        console.warn(`Warning: Could not read ${file}: ${error.message}`);
+      }
+    }
+
+    return results;
+  }
+
+  /**
    * Generate migration report
    * @returns {Object} Migration report
    */
@@ -339,7 +451,8 @@ export class MigrationTracker {
       totalWarnings: this.warnings.length,
       uniqueAPIs: unique.length,
       elapsed,
-      warnings: this.warnings
+      warnings: this.warnings,
+      staticAnalysis: this.staticAnalysis,
     };
   }
 

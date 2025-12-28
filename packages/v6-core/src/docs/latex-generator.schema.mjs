@@ -32,6 +32,59 @@ export const compileToPDFSchema = {
   returns: compileToPDFReturnSchema,
 };
 
+/**
+ * LaTeX compiler options schema
+ */
+export const LatexCompilerOptionsSchema = z.object({
+  engine: z.enum(['pdflatex', 'xelatex', 'lualatex']).default('pdflatex'),
+  passes: z.number().min(1).max(5).default(2),
+  shellEscape: z.boolean().default(false),
+  interaction: z.enum(['batchmode', 'nonstopmode', 'scrollmode', 'errorstopmode']).default('nonstopmode'),
+  outputFormat: z.enum(['pdf', 'dvi']).default('pdf'),
+  halt_on_error: z.boolean().default(true),
+  synctex: z.boolean().default(false),
+  timeout: z.number().min(1000).max(300000).default(30000), // 30s default
+}).strict();
+
+/**
+ * WASM LaTeX compilation input schema
+ */
+export const WasmLatexInputSchema = z.object({
+  source: z.string().min(1),
+  mainFile: z.string().default('main.tex'),
+  additionalFiles: z.record(z.string(), z.string()).optional(),
+  options: LatexCompilerOptionsSchema.optional(),
+}).strict();
+
+/**
+ * WASM LaTeX compilation output schema
+ */
+export const WasmLatexOutputSchema = z.object({
+  success: z.boolean(),
+  pdfBytes: z.instanceof(Uint8Array).nullable(),
+  logOutput: z.string(),
+  warnings: z.array(z.string()),
+  errors: z.array(z.string()),
+  compilationTime: z.number().nonnegative(),
+  wasmEngineVersion: z.string().optional(),
+}).strict();
+
+/**
+ * LaTeX file compilation result schema
+ */
+export const LatexCompilationResultSchema = z.object({
+  pdfPath: z.string(),
+  success: z.boolean(),
+  logPath: z.string().optional(),
+  errors: z.array(z.string()).default([]),
+  warnings: z.array(z.string()).default([]),
+  stats: z.object({
+    pages: z.number().nonnegative().optional(),
+    fileSize: z.number().nonnegative().optional(),
+    compilationTime: z.number().nonnegative(),
+  }).strict(),
+}).strict();
+
 export default {
   generateLatex: generateLatexSchema,
   compileToPDF: compileToPDFSchema

@@ -1,0 +1,55 @@
+{
+  "$schema": "https://claude.ai/schemas/settings.json",
+  "_comment": "Copy this file to settings.local.json and customize for your local environment",
+
+  "env": {
+    "GITHUB_TOKEN": "your-github-token-here",
+    "OPENAI_API_KEY": "optional-for-embeddings",
+    "NODE_ENV": "development",
+    "LOG_LEVEL": "debug"
+  },
+
+  "permissions": {
+    "allow": [
+      "Bash(npm *)",
+      "Bash(pnpm *)",
+      "Bash(node *)",
+      "Bash(git *)",
+      "Bash(docker *)",
+      "Bash(curl *)",
+      "Read",
+      "Write",
+      "Edit"
+    ],
+    "deny": []
+  },
+
+  "model": {
+    "default": "sonnet",
+    "planning": "opus",
+    "quick": "haiku"
+  },
+
+  "local": {
+    "editor": "code",
+    "terminal": "default",
+    "browser": "default"
+  },
+
+  "notifications": {
+    "onComplete": true,
+    "onError": true,
+    "sound": false
+  },
+
+  "telemetry": {
+    "enabled": false
+  },
+
+  "_instructions": [
+    "1. Copy this file to settings.local.json",
+    "2. Add your GITHUB_TOKEN for GitHub integration",
+    "3. Customize permissions as needed",
+    "4. settings.local.json is gitignored - safe for secrets"
+  ]
+}

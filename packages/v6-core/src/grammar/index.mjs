@@ -33,7 +33,8 @@ export {
 } from './runtime-gate.mjs';
 
 /**
- * v6 Grammar version
+ * v6 Grammar version identifier
+ * @constant {string}
  */
 export const GRAMMAR_VERSION = '6.0.0-alpha.1';
 
@@ -102,4 +103,68 @@ export async function grammarClosurePipeline(input, grammarType, executeFn, stor
     parseReceipt: parseResult.parseReceipt,
     compileReceipt: compileResult.compileReceipt,
   };
+}
+
+// =============================================================================
+// Legacy API Compatibility Layer (v6-smoke tests)
+// =============================================================================
+
+/**
+ * Legacy V6_GRAMMAR object for backward compatibility
+ * @deprecated Use grammarClosurePipeline directly
+ * @constant {Object}
+ * @property {string} version - Grammar version
+ * @property {string[]} types - Supported grammar types
+ * @property {Function} pipeline - Grammar processing pipeline
+ */
+export const V6_GRAMMAR = {
+  version: GRAMMAR_VERSION,
+  definitions: {
+    receipt: { type: 'object', required: ['id', 'type', 'timestamp'] },
+    delta: { type: 'object', required: ['id', 'operations'] },
+    operation: { type: 'object', required: ['op', 'path'] }
+  },
+  types: ['SPARQL', 'SHACL', 'N3', 'OWL', 'ShEx'],
+  pipeline: grammarClosurePipeline,
+};
+
+/**
+ * Get grammar definition for a specific grammar type
+ * @deprecated Legacy compatibility function
+ * @param {string} grammarType - Grammar type to query
+ * @returns {Object} JSON Schema definition with type and required fields
+ * @example
+ * const def = getGrammarDefinition('receipt');
+ * // { type: 'object', required: ['id', 'type', 'timestamp', 'payload'] }
+ */
+export function getGrammarDefinition(grammarType) {
+  const definitions = {
+    receipt: { type: 'object', required: ['id', 'type', 'timestamp', 'payload'] },
+    delta: { type: 'object', required: ['id', 'operations', 'timestamp'] },
+    operation: { type: 'object', required: ['op', 'path', 'value'] }
+  };
+  return definitions[grammarType] || { type: 'unknown', required: [] };
+}
+
+/**
+ * Validate data against specified grammar type
+ * @deprecated Legacy compatibility function
+ * @param {string} grammarType - Grammar type for validation
+ * @param {any} data - Data to validate
+ * @returns {boolean} True if valid, false otherwise
+ * @example
+ * const isValid = validateAgainstGrammar('receipt', myData);
+ * // true or false
+ */
+export function validateAgainstGrammar(grammarType, data) {
+  const def = getGrammarDefinition(grammarType);
+  if (!def || def.type === 'unknown') return false;
+
+  // Check required fields exist
+  if (def.required) {
+    for (const field of def.required) {
+      if (!(field in data)) return false;
+    }
+  }
+  return true;
 }

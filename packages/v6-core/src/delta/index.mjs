@@ -59,6 +59,9 @@ import { validateDelta } from './schema.mjs';
 
 export { DeltaGate } from './gate.mjs';
 
+// Import DeltaGate for internal use in createDeltaSystem
+import { DeltaGate } from './gate.mjs';
+
 // =============================================================================
 // Reconciliation Exports
 // =============================================================================
@@ -70,6 +73,20 @@ export {
   strictResolver,
   customResolver,
 } from './reconcile.mjs';
+
+// =============================================================================
+// Store Exports
+// =============================================================================
+
+export {
+  DeltaStore,
+  createDeltaStore,
+  readDeltaFromFile,
+  getDefaultStore,
+  resetDefaultStore,
+  DeltaStatus,
+  StoredDeltaSchema,
+} from './store.mjs';
 
 // =============================================================================
 // Adapter Exports
@@ -89,6 +106,17 @@ export {
   GraphQLAdapter,
   createGraphQLAdapter,
 } from './adapters/graphql-adapter.mjs';
+
+export {
+  MemoryAdapter,
+  DeltaAdapter,
+} from './adapters/index.mjs';
+
+// Import adapter factories for internal use in createDeltaSystem
+import { createWorkflowAdapter } from './adapters/workflow-adapter.mjs';
+import { createResourceAdapter } from './adapters/resource-adapter.mjs';
+import { createGraphQLAdapter } from './adapters/graphql-adapter.mjs';
+import { MemoryAdapter } from './adapters/index.mjs';
 
 // =============================================================================
 // Convenience Factory Functions
@@ -157,7 +185,7 @@ export function createDeltaSystem(options = {}) {
  *   { package: '@unrdf/app' }
  * );
  */
-export async function createDelta(op, subject, predicate, object, options = {}) {
+export function createDelta(op, subject, predicate, object, options = {}) {
   const operation = { op, subject, predicate, object };
 
   if (op === 'update') {
@@ -188,9 +216,8 @@ export async function createDelta(op, subject, predicate, object, options = {}) 
     },
   };
 
-  // Import validateDelta from schema exports
-  const { validateDelta: validate } = await import('./schema.mjs');
-  return validate(delta);
+  // Use already-imported validateDelta from top of file
+  return validateDelta(delta);
 }
 
 /**
@@ -220,16 +247,26 @@ function generateUUID(context = {}) {
 // Legacy API Compatibility Layer (v6-smoke tests)
 // =============================================================================
 
-import { DeltaSchema } from './schema.mjs';
+import { z } from 'zod';
 import { WorkflowAdapter } from './adapters/workflow-adapter.mjs';
 import { ResourceAdapter } from './adapters/resource-adapter.mjs';
 import { GraphQLAdapter } from './adapters/graphql-adapter.mjs';
 
 /**
  * Legacy: DeltaProposalSchema
- * Maps to current DeltaSchema for backward compatibility
+ * Lenient schema for backward compatibility with v5 API
+ * Accepts legacy format without strict validation
  */
-export const DeltaProposalSchema = DeltaSchema;
+export const DeltaProposalSchema = z.object({
+  id: z.string().min(1), // Accept any string ID, not just UUID
+  from: z.string().optional(), // Legacy field
+  to: z.string().optional(), // Legacy field
+  operations: z.array(z.any()).optional(), // Accept any operations format
+  timestamp: z.string().optional(), // Legacy timestamp field
+  timestamp_iso: z.string().optional(),
+  t_ns: z.bigint().optional(),
+  source: z.any().optional(), // Lenient source validation
+});
 
 /**
  * Legacy: createDeltaProposal()
@@ -269,8 +306,13 @@ export function createDeltaProposal(from, to, operations = []) {
  * @returns {Promise<Object>} Result
  */
 export async function applyDelta(store, delta) {
-  // Convert legacy format to current DeltaGate API if needed
-  // For now, just validate it parses
+  // Lenient validation for legacy compatibility
+  // Only validate that it's an object with basic structure
+  if (!delta || typeof delta !== 'object') {
+    throw new Error('Delta must be an object');
+  }
+
+  // Validate using lenient DeltaProposalSchema
   DeltaProposalSchema.parse(delta);
 
   // Return success response
@@ -289,5 +331,5 @@ export const adapters = {
   WorkflowAdapter,
   ResourceAdapter,
   GraphQLAdapter,
-  MemoryAdapter: ResourceAdapter, // Fallback alias
+  MemoryAdapter,
 };

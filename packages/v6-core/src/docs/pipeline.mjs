@@ -4,7 +4,7 @@
  */
 
 import { readdir, readFile, writeFile, mkdir } from 'node:fs/promises';
-import { join, resolve, dirname, basename } from 'node:path';
+import { join, dirname } from 'node:path';
 import { existsSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 

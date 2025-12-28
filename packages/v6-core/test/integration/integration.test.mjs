@@ -19,8 +19,20 @@ function generateUUID() {
   return crypto.randomUUID();
 }
 
+/**
+ * BigInt-safe JSON stringify with replacer
+ * Converts BigInt values to strings for JSON serialization
+ * @param {*} data - Data to stringify
+ * @returns {string} JSON string
+ */
+function safeStringify(data) {
+  return JSON.stringify(data, (key, value) =>
+    typeof value === 'bigint' ? value.toString() : value
+  );
+}
+
 function computeHash(data) {
-  return crypto.createHash('sha256').update(JSON.stringify(data)).digest('hex');
+  return crypto.createHash('sha256').update(safeStringify(data)).digest('hex');
 }
 
 // ============================================================================

@@ -10,7 +10,6 @@
 
 import { z } from 'zod';
 import { createHash } from 'crypto';
-import { COMPLEXITY_BOUNDS } from './compiler.mjs';
 
 /**
  * Runtime bounds (from CLAUDE.md and GRAMMAR_MATRIX.md)
@@ -46,7 +45,7 @@ export const RUNTIME_BOUNDS = {
 /**
  * Runtime check result schema
  */
-const RuntimeCheckResultSchema = z.object({
+export const RuntimeCheckResultSchema = z.object({
   allowed: z.boolean(),
   reason: z.string().optional(),
   bounds: z.object({
@@ -62,7 +61,7 @@ const RuntimeCheckResultSchema = z.object({
 /**
  * Execution result schema
  */
-const ExecutionResultSchema = z.object({
+export const ExecutionResultSchema = z.object({
   success: z.boolean(),
   result: z.any().optional(),
   error: z.string().optional(),
@@ -93,7 +92,7 @@ const ExecutionResultSchema = z.object({
  *   console.error('Runtime denied:', check.reason);
  * }
  */
-export function checkRuntimeComplexity(query, store, options = {}) {
+export function checkRuntimeComplexity(query, store, _options = {}) {
   const timestamp = new Date().toISOString();
 
   // Validate inputs

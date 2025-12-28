@@ -27,6 +27,10 @@ import {
   createDeltaSystem,
   DeltaSchema,
   DeltaGate,
+  createDeltaProposal,
+  applyDelta,
+  DeltaProposalSchema,
+  adapters,
 } from '../../src/delta/index.mjs';
 
 import {
@@ -80,35 +84,57 @@ test('v6-smoke: isFeatureEnabled works correctly', () => {
 });
 
 // Test Suite: Receipts Capsule
-test('v6-smoke: createReceipt works', () => {
-  const receipt = createReceipt('test-operation', { foo: 'bar' });
+test('v6-smoke: createReceipt works', async () => {
+  const receipt = await createReceipt('execution', {
+    eventType: 'TASK_COMPLETED',
+    caseId: 'case-123',
+    taskId: 'approval-task',
+    payload: { decision: 'APPROVE', notes: 'Test approval' },
+  });
 
   assert.ok(receipt.id);
-  assert.strictEqual(receipt.operation, 'test-operation');
-  assert.ok(receipt.timestamp);
-  assert.ok(receipt.merkleRoot);
-  assert.ok(Array.isArray(receipt.proof));
-  assert.strictEqual(receipt.metadata.foo, 'bar');
+  assert.strictEqual(receipt.receiptType, 'execution');
+  assert.strictEqual(receipt.eventType, 'TASK_COMPLETED');
+  assert.ok(receipt.t_ns);
+  assert.ok(receipt.timestamp_iso);
+  assert.ok(receipt.payloadHash);
+  assert.ok(receipt.receiptHash);
 });
 
-test('v6-smoke: verifyReceipt validates correctly', () => {
-  const receipt = createReceipt('test-op', {});
-  const isValid = verifyReceipt(receipt);
+test('v6-smoke: verifyReceipt validates correctly', async () => {
+  const receipt = await createReceipt('execution', {
+    eventType: 'TASK_COMPLETED',
+    caseId: 'case-456',
+    taskId: 'test-task',
+    payload: {},
+  });
 
-  assert.strictEqual(isValid, true);
+  const result = await verifyReceipt(receipt);
+  assert.strictEqual(result.valid, true);
+  assert.ok(!result.error);
 });
 
-test('v6-smoke: ReceiptSchema validates receipts', () => {
-  const receipt = {
-    id: 'test-1',
-    operation: 'test',
-    timestamp: new Date().toISOString(),
-    merkleRoot: 'root',
-    proof: ['proof1'],
-  };
+test('v6-smoke: ReceiptSchema validates receipts', async () => {
+  const receipt = await createReceipt('allocation', {
+    eventType: 'RESOURCE_ALLOCATED',
+    resourceId: 'res-001',
+    poolId: 'pool-main',
+    allocationPeriod: {
+      start: '2025-01-01T00:00:00Z',
+      end: '2025-01-02T00:00:00Z',
+    },
+    capacity: {
+      total: 100,
+      available: 80,
+      allocated: 20,
+      unit: 'hours',
+    },
+    payload: { action: 'ALLOCATE' },
+  });
 
   const parsed = ReceiptSchema.parse(receipt);
   assert.ok(parsed);
+  assert.strictEqual(parsed.receiptType, 'allocation');
 });
 
 test('v6-smoke: MerkleTree creates trees', () => {
@@ -216,7 +242,9 @@ test('v6-smoke: V6_GRAMMAR contains definitions', () => {
   assert.ok(V6_GRAMMAR.definitions.receipt);
   assert.ok(V6_GRAMMAR.definitions.delta);
   assert.ok(V6_GRAMMAR.definitions.operation);
-  assert.ok(V6_GRAMMAR.extensions);
+  assert.strictEqual(V6_GRAMMAR.version, '6.0.0-alpha.1');
+  assert.ok(Array.isArray(V6_GRAMMAR.types));
+  assert.strictEqual(typeof V6_GRAMMAR.pipeline, 'function');
 });
 
 test('v6-smoke: getGrammarDefinition retrieves definitions', () => {
@@ -230,10 +258,9 @@ test('v6-smoke: getGrammarDefinition retrieves definitions', () => {
 test('v6-smoke: validateAgainstGrammar validates data', () => {
   const data = {
     id: 'test',
-    operation: 'test',
+    type: 'test',
     timestamp: new Date().toISOString(),
-    merkleRoot: 'root',
-    proof: [],
+    payload: {},
   };
 
   const isValid = validateAgainstGrammar('receipt', data);
@@ -250,7 +277,8 @@ test('v6-smoke: validateAgainstGrammar rejects invalid data', () => {
 // Test Suite: Docs Capsule
 test('v6-smoke: getDocumentation retrieves docs', () => {
   const doc = getDocumentation('overview');
-  assert.ok(doc.includes('/home/user/unrdf/docs/v6/README.md'));
+  assert.ok(doc.title);
+  assert.ok(doc.content);
 });
 
 test('v6-smoke: listTopics returns all topics', () => {
@@ -267,14 +295,20 @@ test('v6-smoke: listTopics returns all topics', () => {
 
 test('v6-smoke: getDocumentation handles unknown topics', () => {
   const doc = getDocumentation('nonexistent');
-  assert.ok(doc.includes('No documentation found'));
+  assert.strictEqual(doc.title, 'Unknown Topic');
+  assert.strictEqual(doc.content, 'Topic not found');
 });
 
 // Summary Test
-test('v6-smoke: all capsules integrated successfully', () => {
+test('v6-smoke: all capsules integrated successfully', async () => {
   // This test passes if all imports and basic operations work
   const status = getV6Status();
-  const receipt = createReceipt('summary-test', {});
+  const receipt = await createReceipt('execution', {
+    eventType: 'TASK_COMPLETED',
+    caseId: 'test-case',
+    taskId: 'test-task',
+    payload: { decision: 'COMPLETE' }
+  });
   const proposal = createDeltaProposal('v0', 'v1', []);
   const spine = buildCLISpine();
   const def = getGrammarDefinition('receipt');

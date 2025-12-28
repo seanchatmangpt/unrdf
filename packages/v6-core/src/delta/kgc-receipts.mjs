@@ -50,17 +50,19 @@ export const DeltaResultSchema = z.object({
  * Pure function: Generate delta
  *
  * @param {Object} delta - Delta specification
- * @returns {Object} Delta result with merkle proof
+ * @returns {Promise<Object>} Delta result with merkle proof
  */
-function generateDeltaImpl(delta) {
+async function generateDeltaImpl(delta) {
   const validated = DeltaSchema.parse(delta);
 
-  // Generate delta hash
-  const deltaHash = blake3Hash(canonicalize(validated));
+  // Generate delta hash using BLAKE3
+  const deltaHash = await blake3Hash(canonicalize(validated));
 
-  // Generate merkle tree for changes
-  const leaves = validated.changes.map(change => blake3Hash(canonicalize(change)));
-  const merkleRoot = leaves.length > 0 ? blake3Hash(canonicalize(leaves)) : deltaHash;
+  // Generate merkle tree for changes using BLAKE3
+  const leaves = await Promise.all(
+    validated.changes.map(change => blake3Hash(canonicalize(change)))
+  );
+  const merkleRoot = leaves.length > 0 ? await blake3Hash(canonicalize(leaves)) : deltaHash;
 
   return {
     deltaId: `delta-${deltaHash.slice(0, 16)}`,

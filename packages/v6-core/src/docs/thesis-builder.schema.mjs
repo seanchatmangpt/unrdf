@@ -44,6 +44,51 @@ export const exportThesisSchema = {
   returns: exportThesisReturnSchema,
 };
 
+/**
+ * SPARQL CONSTRUCT query schema
+ */
+export const SparqlConstructQuerySchema = z.object({
+  query: z.string().min(1),
+  prefixes: z.record(z.string(), z.string()).default({}),
+  outputFormat: z.enum(['turtle', 'ntriples', 'jsonld', 'rdfxml']).default('turtle'),
+}).strict();
+
+/**
+ * Ontology rendering configuration schema
+ */
+export const OntologyRenderConfigSchema = z.object({
+  ontologyPath: z.string().min(1),
+  outputDir: z.string().min(1),
+  queries: z.array(SparqlConstructQuerySchema).optional(),
+  templateDir: z.string().optional(),
+  generateDiataxis: z.boolean().default(true),
+}).strict();
+
+/**
+ * Ontology rendering result schema
+ */
+export const OntologyRenderResultSchema = z.object({
+  status: z.enum(['success', 'partial', 'not_implemented', 'error']),
+  ontologyPath: z.string(),
+  outputDir: z.string(),
+  generatedDocs: z.array(z.object({
+    path: z.string(),
+    type: z.enum(['tutorial', 'howto', 'reference', 'explanation']),
+    sourceQuery: z.string().optional(),
+  })).default([]),
+  errors: z.array(z.string()).default([]),
+  warnings: z.array(z.string()).default([]),
+}).strict();
+
+/**
+ * Documentation template schema
+ */
+export const DocTemplateSchema = z.object({
+  type: z.enum(['tutorial', 'howto', 'reference', 'explanation']),
+  templatePath: z.string().optional(),
+  queryBinding: z.record(z.string(), z.string()),
+}).strict();
+
 export default {
   buildThesis: buildThesisSchema,
   renderFromOntology: renderFromOntologySchema,
