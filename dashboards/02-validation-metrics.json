@@ -1,0 +1,111 @@
+{
+  "dashboard": {
+    "id": null,
+    "uid": "unrdf-validation-metrics",
+    "title": "UNRDF Validation Metrics",
+    "tags": ["unrdf", "validation", "otel"],
+    "timezone": "browser",
+    "schemaVersion": 16,
+    "version": 0,
+    "refresh": "10s",
+    "panels": [
+      {
+        "id": 1,
+        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+        "type": "graph",
+        "title": "Validation Score",
+        "targets": [
+          {
+            "expr": "validation_score{service=\"unrdf-validation\"}",
+            "legendFormat": "Score (out of 100)"
+          }
+        ],
+        "yaxes": [
+          { "format": "short", "label": "Score", "min": 0, "max": 100 },
+          { "format": "short" }
+        ],
+        "alert": {
+          "conditions": [
+            {
+              "evaluator": { "params": [80], "type": "lt" },
+              "operator": { "type": "and" },
+              "query": { "params": ["A", "5m", "now"] },
+              "reducer": { "params": [], "type": "avg" },
+              "type": "query"
+            }
+          ],
+          "name": "Validation Score Below Threshold"
+        }
+      },
+      {
+        "id": 2,
+        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+        "type": "graph",
+        "title": "Validation Latency",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.50, rate(validation_duration_ms_bucket[5m]))",
+            "legendFormat": "P50"
+          },
+          {
+            "expr": "histogram_quantile(0.95, rate(validation_duration_ms_bucket[5m]))",
+            "legendFormat": "P95"
+          },
+          {
+            "expr": "histogram_quantile(0.99, rate(validation_duration_ms_bucket[5m]))",
+            "legendFormat": "P99"
+          }
+        ],
+        "yaxes": [
+          { "format": "ms", "label": "Latency" },
+          { "format": "short" }
+        ]
+      },
+      {
+        "id": 3,
+        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+        "type": "graph",
+        "title": "Validation Errors",
+        "targets": [
+          {
+            "expr": "rate(validation_errors_total{service=\"unrdf-validation\"}[5m])",
+            "legendFormat": "Error Rate (errors/min)"
+          }
+        ],
+        "yaxes": [
+          { "format": "short", "label": "Errors/min" },
+          { "format": "short" }
+        ]
+      },
+      {
+        "id": 4,
+        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+        "type": "graph",
+        "title": "Validation Throughput",
+        "targets": [
+          {
+            "expr": "rate(validation_runs_total{service=\"unrdf-validation\"}[5m])",
+            "legendFormat": "Validations/min"
+          }
+        ],
+        "yaxes": [
+          { "format": "short", "label": "Throughput" },
+          { "format": "short" }
+        ]
+      },
+      {
+        "id": 5,
+        "gridPos": { "h": 6, "w": 24, "x": 0, "y": 16 },
+        "type": "table",
+        "title": "Recent Validation Results",
+        "targets": [
+          {
+            "expr": "validation_result{service=\"unrdf-validation\"}",
+            "format": "table",
+            "instant": true
+          }
+        ]
+      }
+    ]
+  }
+}

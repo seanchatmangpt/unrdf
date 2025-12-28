@@ -1,35 +1,57 @@
 {
   "confidence": {
-    "explanation": 0,
-    "howtos": 0,
+    "explanation": 0.3,
+    "howtos": 0.25,
     "reference": 0,
     "tutorials": 0
   },
   "evidence": {
     "docsFiles": [],
     "examplesFiles": [],
-    "fingerprint": "eb06e6f3d365e2084befa3c74eae7aa6cafe03ddbe0e68e2b1629b261a3a702d",
-    "readmeHeadings": []
+    "fingerprint": "4508d9fbce72e3e75414ff5eede649c60f0280c2c5b5b24634afb2ceaae36e3e",
+    "readmeHeadings": [
+      "✅ Status: Working (Webpack Mode)",
+      "Features",
+      "Development",
+      "Structure",
+      "Key Configuration",
+      "Advantages over Docusaurus",
+      "Deployment",
+      "Learn More"
+    ]
   },
   "explanation": {
-    "architecture": "@unrdf/nextra-docs is a package in the UNRDF ecosystem",
+    "architecture": "UNRDF documentation site built with Nextra 4.6.1 + Next.js 16.",
     "concepts": [
       "core functionality"
     ],
-    "confidenceScore": 0,
+    "confidenceScore": 0.3,
     "id": "explanation-unrdf-nextra-docs-explanation",
     "source": [
-      "inferred"
+      "readme"
     ],
     "title": "Understanding @unrdf/nextra-docs",
     "tradeoffs": [
-      "Ease of use vs. advanced configuration options",
-      "Memory usage vs. processing speed",
-      "Bundle size vs. feature completeness"
+      "Performance vs. flexibility tradeoffs discussed in README"
     ]
   },
   "generatedAt": "2000-01-01T00:00:00.000Z",
   "howtos": [
+    {
+      "confidenceScore": 1,
+      "context": "When you need to customize package behavior",
+      "id": "howto-configure-unrdf-nextra-docs",
+      "source": [
+        "readme"
+      ],
+      "steps": [
+        "Create configuration file",
+        "Define configuration options",
+        "Apply configuration to package"
+      ],
+      "task": "Set up custom configuration for @unrdf/nextra-docs",
+      "title": "Configure @unrdf/nextra-docs"
+    },
     {
       "confidenceScore": 0.4,
       "context": "When encountering issues during usage",
@@ -44,21 +66,6 @@
       ],
       "task": "Resolve common problems and errors",
       "title": "Troubleshoot Common Issues"
-    },
-    {
-      "confidenceScore": 0.4,
-      "context": "When you need to accomplish common tasks",
-      "id": "howto-use-unrdf-nextra-docs",
-      "source": [
-        "inferred"
-      ],
-      "steps": [
-        "Import the package",
-        "Initialize with options",
-        "Execute operations"
-      ],
-      "task": "Perform basic operations with @unrdf/nextra-docs",
-      "title": "Use @unrdf/nextra-docs"
     }
   ],
   "packageName": "@unrdf/nextra-docs",

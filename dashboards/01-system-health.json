@@ -1,0 +1,115 @@
+{
+  "dashboard": {
+    "id": null,
+    "uid": "unrdf-system-health",
+    "title": "UNRDF System Health",
+    "tags": ["unrdf", "system", "health"],
+    "timezone": "browser",
+    "schemaVersion": 16,
+    "version": 0,
+    "refresh": "5s",
+    "panels": [
+      {
+        "id": 1,
+        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+        "type": "graph",
+        "title": "System Uptime",
+        "targets": [
+          {
+            "expr": "process_uptime_seconds{service=\"unrdf-kgc\"}",
+            "legendFormat": "Uptime (seconds)"
+          }
+        ],
+        "yaxes": [
+          { "format": "s", "label": "Uptime" },
+          { "format": "short" }
+        ]
+      },
+      {
+        "id": 2,
+        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+        "type": "graph",
+        "title": "Memory Usage",
+        "targets": [
+          {
+            "expr": "kgc_memory_usage_bytes{service=\"unrdf-kgc\"}",
+            "legendFormat": "Memory (bytes)"
+          },
+          {
+            "expr": "process_resident_memory_bytes{service=\"unrdf-kgc\"}",
+            "legendFormat": "RSS (bytes)"
+          }
+        ],
+        "yaxes": [
+          { "format": "bytes", "label": "Memory" },
+          { "format": "short" }
+        ]
+      },
+      {
+        "id": 3,
+        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+        "type": "graph",
+        "title": "CPU Usage",
+        "targets": [
+          {
+            "expr": "rate(process_cpu_seconds_total{service=\"unrdf-kgc\"}[1m])",
+            "legendFormat": "CPU %"
+          }
+        ],
+        "yaxes": [
+          { "format": "percent", "label": "CPU", "max": 100 },
+          { "format": "short" }
+        ]
+      },
+      {
+        "id": 4,
+        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+        "type": "graph",
+        "title": "Garbage Collection",
+        "targets": [
+          {
+            "expr": "rate(nodejs_gc_duration_seconds_sum{service=\"unrdf-kgc\"}[1m])",
+            "legendFormat": "GC Time (s/min)"
+          },
+          {
+            "expr": "rate(nodejs_gc_runs_total{service=\"unrdf-kgc\"}[1m])",
+            "legendFormat": "GC Runs/min"
+          }
+        ],
+        "yaxes": [
+          { "format": "short", "label": "GC Activity" },
+          { "format": "short" }
+        ]
+      },
+      {
+        "id": 5,
+        "gridPos": { "h": 6, "w": 24, "x": 0, "y": 16 },
+        "type": "stat",
+        "title": "Health Status",
+        "targets": [
+          {
+            "expr": "up{service=\"unrdf-kgc\"}",
+            "legendFormat": "Service Status"
+          }
+        ],
+        "options": {
+          "colorMode": "background",
+          "graphMode": "none",
+          "orientation": "horizontal",
+          "textMode": "auto"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                { "value": 0, "color": "red" },
+                { "value": 1, "color": "green" }
+              ]
+            }
+          }
+        }
+      }
+    ]
+  }
+}

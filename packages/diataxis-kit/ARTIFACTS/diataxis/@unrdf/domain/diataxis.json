@@ -1,28 +1,38 @@
 {
   "confidence": {
-    "explanation": 0.4,
-    "howtos": 0.25,
+    "explanation": 0.7,
+    "howtos": 0.5,
     "reference": 0.5,
     "tutorials": 0.1
   },
   "evidence": {
     "docsFiles": [],
     "examplesFiles": [],
-    "fingerprint": "eb06e6f3d365e2084befa3c74eae7aa6cafe03ddbe0e68e2b1629b261a3a702d",
-    "readmeHeadings": []
+    "fingerprint": "2abd2f7e8e92184a68f2bacdedebf0267972f783b707c161ae69b5810b20b281",
+    "readmeHeadings": [
+      "Purpose",
+      "Installation",
+      "Usage",
+      "Contents",
+      "Schema Examples",
+      "Constants",
+      "Adding New Domain Types",
+      "See Also"
+    ]
   },
   "explanation": {
-    "architecture": "@unrdf/domain is a package in the UNRDF ecosystem",
+    "architecture": "![Version](https://img.shields.io/badge/version-5.0.0--beta.1-blue) ![Production Ready](https://img.shields.",
     "concepts": [
       "rdf",
       "domain",
       "models",
       "types"
     ],
-    "confidenceScore": 0.4,
+    "confidenceScore": 0.7,
     "id": "explanation-unrdf-domain-explanation",
     "source": [
       "keywords",
+      "readme",
       "inferred"
     ],
     "title": "Understanding @unrdf/domain",

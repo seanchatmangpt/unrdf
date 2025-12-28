@@ -1,33 +1,24 @@
 {
   "confidence": {
-    "explanation": 0.3,
+    "explanation": 0,
     "howtos": 0,
     "reference": 0,
-    "tutorials": 0.6
+    "tutorials": 0
   },
   "evidence": {
     "docsFiles": [],
     "examplesFiles": [],
-    "fingerprint": "9ddd97948578c08d48f7f280ec2af17984e2fc431cffeda7b9568c634c71c6fd",
-    "readmeHeadings": [
-      "Quick Start",
-      "Features",
-      "Hook Categories",
-      "Tech Stack",
-      "Structure",
-      "Development",
-      "License"
-    ]
+    "fingerprint": "eb06e6f3d365e2084befa3c74eae7aa6cafe03ddbe0e68e2b1629b261a3a702d",
+    "readmeHeadings": []
   },
   "explanation": {
-    "architecture": "Interactive Next.js + shadcn/ui demo showcasing all 40 UNRDF React hooks.",
+    "architecture": "unrdf-hooks-showcase is a package in the UNRDF ecosystem",
     "concepts": [
       "core functionality"
     ],
-    "confidenceScore": 0.3,
+    "confidenceScore": 0,
     "id": "explanation-unrdf-hooks-showcase-explanation",
     "source": [
-      "readme",
       "inferred"
     ],
     "title": "Understanding unrdf-hooks-showcase",
@@ -89,12 +80,12 @@
   },
   "tutorials": [
     {
-      "confidenceScore": 0.3,
+      "confidenceScore": 0,
       "goal": "Learn how to set up and use unrdf-hooks-showcase in your project",
       "id": "tutorial-getting-started-with-unrdf-hooks-showcase",
       "prerequisites": [],
       "source": [
-        "readme"
+        "inferred"
       ],
       "stepsOutline": [
         "Install the package",

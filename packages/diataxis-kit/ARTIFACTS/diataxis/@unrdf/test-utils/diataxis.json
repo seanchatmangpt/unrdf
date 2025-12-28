@@ -1,27 +1,34 @@
 {
   "confidence": {
-    "explanation": 0.4,
-    "howtos": 0.5,
+    "explanation": 0.7,
+    "howtos": 0.75,
     "reference": 0.5,
     "tutorials": 0.1
   },
   "evidence": {
     "docsFiles": [],
     "examplesFiles": [],
-    "fingerprint": "eb06e6f3d365e2084befa3c74eae7aa6cafe03ddbe0e68e2b1629b261a3a702d",
-    "readmeHeadings": []
+    "fingerprint": "8c27b6622afa16072bf27627a7ffd3b268aea4a25ca72fe626136af969586bc4",
+    "readmeHeadings": [
+      "Purpose",
+      "Installation",
+      "Usage",
+      "Contents",
+      "See Also"
+    ]
   },
   "explanation": {
-    "architecture": "@unrdf/test-utils is a package in the UNRDF ecosystem",
+    "architecture": "![Version](https://img.shields.io/badge/version-5.0.0--beta.1-blue) ![Production Ready](https://img.shields.",
     "concepts": [
       "rdf",
       "testing",
       "utilities"
     ],
-    "confidenceScore": 0.4,
+    "confidenceScore": 0.7,
     "id": "explanation-unrdf-test-utils-explanation",
     "source": [
       "keywords",
+      "readme",
       "inferred"
     ],
     "title": "Understanding @unrdf/test-utils",

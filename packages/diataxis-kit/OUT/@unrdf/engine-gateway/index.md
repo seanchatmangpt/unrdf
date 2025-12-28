@@ -24,8 +24,8 @@ Generated documentation using the Diátaxis framework.
 
 ### How-To Guides
 
-- [Troubleshoot Common Issues](how-to/howto-howto-troubleshoot-common-issues.md)
-- [Use @unrdf/engine-gateway](how-to/howto-howto-use-unrdf-engine-gateway.md)
+- [Configure @unrdf/engine-gateway](how-to/howto-howto-configure-unrdf-engine-gateway.md)
+- [Handle Errors](how-to/howto-howto-handle-errors.md)
 
 ### Reference
 

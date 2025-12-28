@@ -11,7 +11,7 @@ Generated documentation using the Diátaxis framework.
 
 ## Quick Stats
 
-- **Tutorials**: 1
+- **Tutorials**: 2
 - **How-To Guides**: 2
 - **Reference**: Available
 - **Explanation**: Available
@@ -20,6 +20,7 @@ Generated documentation using the Diátaxis framework.
 
 ### Tutorials
 
+- [First Steps](tutorials/tutorial-tutorial-first-steps.md)
 - [Getting Started with @unrdf/federation](tutorials/tutorial-tutorial-getting-started-with-unrdf-federation.md)
 
 ### How-To Guides

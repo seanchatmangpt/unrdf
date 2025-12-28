@@ -12,6 +12,12 @@ import { promises as fs } from 'fs';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import {
+  compressFile,
+  readCompressed,
+  computeDelta,
+  applyDelta,
+} from './storage-optimization.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -22,6 +28,11 @@ const __dirname = dirname(__filename);
  * @property {number} file_count - Number of files in snapshot
  * @property {number} total_bytes - Total bytes in snapshot
  * @property {string} created_at - ISO 8601 timestamp
+ * @property {boolean} [compressed] - Whether snapshot is compressed
+ * @property {number} [original_size] - Original size before compression
+ * @property {number} [compressed_size] - Size after compression
+ * @property {boolean} [incremental] - Whether snapshot is incremental
+ * @property {string} [base_snapshot] - Base snapshot timestamp for incremental
  */
 
 /** @typedef {Object} UniverseState
@@ -92,6 +103,8 @@ function canonicalizeState(state) {
  * @param {Object} [options] - Freeze options
  * @param {string} [options.snapshotDir] - Custom snapshot directory
  * @param {boolean} [options.useGit=false] - Use Git backbone if available
+ * @param {boolean} [options.compress=true] - Compress snapshot with gzip
+ * @param {boolean} [options.incremental=false] - Create incremental snapshot
  * @returns {Promise<SnapshotManifest>} Snapshot manifest with hash and metadata
  * @throws {TypeError} If O is not an object
  * @throws {Error} If freeze operation fails
@@ -123,25 +136,88 @@ export async function freezeUniverse(O, options = {}) {
     const snapshotPath = path.join(snapshotDir, timestamp_ns.toString());
     await fs.mkdir(snapshotPath, { recursive: true });
 
-    // 5. Write state file
-    const statePath = path.join(snapshotPath, 'state.json');
-    await fs.writeFile(statePath, canonical_state, 'utf-8');
+    // 5. Handle incremental snapshots
+    let stateToWrite = canonical_state;
+    let isIncremental = false;
+    let baseSnapshot = null;
 
-    // 6. Create manifest
-    const stats = await fs.stat(statePath);
+    if (options.incremental) {
+      // Get previous snapshot for delta computation
+      const snapshots = await getSnapshotList({ snapshotDir });
+      if (snapshots.length > 0) {
+        const prevSnapshot = snapshots[0];
+        const prevStatePath = path.join(
+          prevSnapshot.path,
+          prevSnapshot.manifest.compressed ? 'state.json.gz' : 'state.json'
+        );
+
+        try {
+          let prevState;
+          if (prevSnapshot.manifest.compressed) {
+            prevState = await readCompressed(prevStatePath);
+          } else {
+            prevState = await fs.readFile(prevStatePath, 'utf-8');
+          }
+
+          const prevObj = JSON.parse(prevState);
+          const currObj = JSON.parse(canonical_state);
+          const delta = computeDelta(prevObj, currObj);
+
+          // Only use delta if it's significantly smaller
+          const deltaStr = JSON.stringify(delta);
+          if (deltaStr.length < canonical_state.length * 0.5) {
+            stateToWrite = deltaStr;
+            isIncremental = true;
+            baseSnapshot = prevSnapshot.manifest.timestamp_ns;
+          }
+        } catch {
+          // Fall back to full snapshot if delta fails
+        }
+      }
+    }
+
+    // 6. Write state file
+    const statePath = path.join(snapshotPath, 'state.json');
+    await fs.writeFile(statePath, stateToWrite, 'utf-8');
+
+    // 7. Compress if requested (default: true)
+    const shouldCompress = options.compress !== false;
+    let finalSize = 0;
+    let originalSize = 0;
+    let compressed = false;
+
+    if (shouldCompress) {
+      const compressedPath = statePath + '.gz';
+      const compressionResult = await compressFile(statePath, compressedPath);
+      originalSize = compressionResult.original_size;
+      finalSize = compressionResult.compressed_size;
+      compressed = true;
+
+      // Remove uncompressed file
+      await fs.unlink(statePath);
+    } else {
+      const stats = await fs.stat(statePath);
+      finalSize = stats.size;
+      originalSize = stats.size;
+    }
+
+    // 8. Create manifest
     const manifest = {
       timestamp_ns: timestamp_ns.toString(),
       o_hash,
       file_count: 1,
-      total_bytes: stats.size,
+      total_bytes: finalSize,
       created_at: new Date().toISOString(),
+      compressed,
+      ...(compressed && { original_size: originalSize, compressed_size: finalSize }),
+      ...(isIncremental && { incremental: true, base_snapshot: baseSnapshot }),
     };
 
-    // 7. Write manifest
+    // 9. Write manifest
     const manifestPath = path.join(snapshotPath, 'manifest.json');
     await fs.writeFile(manifestPath, JSON.stringify(manifest, null, 2), 'utf-8');
 
-    // 8. Optional: Git commit if requested
+    // 10. Optional: Git commit if requested
     if (options.useGit) {
       try {
         const gitDir = path.resolve(snapshotDir, '../../..');
@@ -215,15 +291,33 @@ export async function verifyFreeze(snapshot, options = {}) {
   }
 
   try {
-    // 1. Load state file
+    // 1. Load manifest to check compression
     const snapshotDir = options.snapshotDir || getSnapshotDir();
-    const statePath = path.join(snapshotDir, timestamp_ns, 'state.json');
-    const stateData = await fs.readFile(statePath, 'utf-8');
+    const manifestPath = path.join(snapshotDir, timestamp_ns, 'manifest.json');
+    let manifest;
+    try {
+      const manifestData = await fs.readFile(manifestPath, 'utf-8');
+      manifest = JSON.parse(manifestData);
+    } catch {
+      manifest = { compressed: false };
+    }
 
-    // 2. Recompute hash
+    // 2. Load state file (handle compression)
+    const isCompressed = manifest.compressed === true;
+    const stateFileName = isCompressed ? 'state.json.gz' : 'state.json';
+    const statePath = path.join(snapshotDir, timestamp_ns, stateFileName);
+
+    let stateData;
+    if (isCompressed) {
+      stateData = await readCompressed(statePath);
+    } else {
+      stateData = await fs.readFile(statePath, 'utf-8');
+    }
+
+    // 3. Recompute hash
     const recomputed_hash = await blake3(stateData);
 
-    // 3. Compare hashes
+    // 4. Compare hashes
     return recomputed_hash === expected_hash;
   } catch (error) {
     throw new Error(`Failed to verify snapshot: ${error.message}`);
@@ -309,24 +403,48 @@ export async function reconstructTo(t_ns, options = {}) {
       throw new Error(`Snapshot integrity check failed for ${bestSnapshot.manifest.timestamp_ns}`);
     }
 
-    // 4. Load and deserialize state
+    // 4. Load and deserialize state (handle compression and incremental)
     const snapshotDir = options.snapshotDir || getSnapshotDir();
-    const statePath = path.join(snapshotDir, bestSnapshot.manifest.timestamp_ns, 'state.json');
-    const stateData = await fs.readFile(statePath, 'utf-8');
+    const isCompressed = bestSnapshot.manifest.compressed === true;
+    const stateFileName = isCompressed ? 'state.json.gz' : 'state.json';
+    const statePath = path.join(
+      snapshotDir,
+      bestSnapshot.manifest.timestamp_ns,
+      stateFileName
+    );
 
-    // Revive BigInt values
-    const state = JSON.parse(stateData, (key, value) => {
-      if (typeof value === 'string' && value.endsWith('n')) {
-        try {
-          return BigInt(value.slice(0, -1));
-        } catch {
-          return value;
+    let stateData;
+    if (isCompressed) {
+      stateData = await readCompressed(statePath);
+    } else {
+      stateData = await fs.readFile(statePath, 'utf-8');
+    }
+
+    // 5. Handle incremental snapshots
+    let finalState;
+    if (bestSnapshot.manifest.incremental && bestSnapshot.manifest.base_snapshot) {
+      // Reconstruct from base + delta
+      const delta = JSON.parse(stateData);
+      const baseState = await reconstructTo(
+        BigInt(bestSnapshot.manifest.base_snapshot),
+        options
+      );
+      finalState = applyDelta(baseState, delta);
+    } else {
+      // Revive BigInt values
+      finalState = JSON.parse(stateData, (key, value) => {
+        if (typeof value === 'string' && value.endsWith('n')) {
+          try {
+            return BigInt(value.slice(0, -1));
+          } catch {
+            return value;
+          }
         }
-      }
-      return value;
-    });
+        return value;
+      });
+    }
 
-    return state;
+    return finalState;
   } catch (error) {
     throw new Error(`Failed to reconstruct state: ${error.message}`);
   }

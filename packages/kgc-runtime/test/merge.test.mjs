@@ -530,4 +530,136 @@ describe('Integration Tests', () => {
     expect(result.denied).toEqual([]);
     expect(result.conflict_receipts).toEqual([]);
   });
+
+  describe('merge_all strategy', () => {
+    it('should admit all capsules in 2-way conflict with merge_all', () => {
+      const totalOrder = {
+        rules: [],
+        default_rule: { strategy: 'merge_all' },
+      };
+
+      const capsules = [
+        createCapsule('c1', 'hash_b', [
+          createFileEdit('file.js', 1, 10, 'content1'),
+        ]),
+        createCapsule('c2', 'hash_a', [
+          createFileEdit('file.js', 5, 15, 'content2'),
+        ]),
+      ];
+
+      const result = mergeCapsules(capsules, totalOrder);
+
+      // Both capsules should be admitted
+      expect(result.admitted).toEqual(['c1', 'c2']);
+      expect(result.denied).toEqual([]);
+
+      // Should still emit conflict receipt as notice
+      expect(result.conflict_receipts).toHaveLength(1);
+      expect(result.conflict_receipts[0].resolution_rule).toBe('merge_all');
+
+      // Merged state should contain both capsules
+      expect(Object.keys(result.merged_state)).toHaveLength(2);
+      expect(result.merged_state.c1).toBeDefined();
+      expect(result.merged_state.c2).toBeDefined();
+    });
+
+    it('should admit all capsules in 3-way conflict with merge_all', () => {
+      const totalOrder = {
+        rules: [],
+        default_rule: { strategy: 'merge_all' },
+      };
+
+      const capsules = [
+        createCapsule('c1', 'hash_c', [
+          createFileEdit('file.js', 1, 10, 'content1'),
+        ]),
+        createCapsule('c2', 'hash_a', [
+          createFileEdit('file.js', 5, 15, 'content2'),
+        ]),
+        createCapsule('c3', 'hash_b', [
+          createFileEdit('file.js', 7, 20, 'content3'),
+        ]),
+      ];
+
+      const result = mergeCapsules(capsules, totalOrder);
+
+      // All three capsules should be admitted
+      expect(result.admitted).toEqual(['c1', 'c2', 'c3']);
+      expect(result.denied).toEqual([]);
+
+      // Should emit conflict receipt
+      expect(result.conflict_receipts).toHaveLength(1);
+      expect(result.conflict_receipts[0].capsules_involved).toHaveLength(3);
+
+      // All capsules in merged state
+      expect(Object.keys(result.merged_state)).toHaveLength(3);
+    });
+
+    it('should emit multiple conflict receipts for multiple conflicts with merge_all', () => {
+      const totalOrder = {
+        rules: [],
+        default_rule: { strategy: 'merge_all' },
+      };
+
+      const capsules = [
+        createCapsule('c1', 'hash_a', [
+          createFileEdit('file1.js', 1, 10, 'content1'),
+          createFileEdit('file2.js', 1, 10, 'content2'),
+        ]),
+        createCapsule('c2', 'hash_b', [
+          createFileEdit('file1.js', 5, 15, 'content3'),
+          createFileEdit('file2.js', 5, 15, 'content4'),
+        ]),
+      ];
+
+      const result = mergeCapsules(capsules, totalOrder);
+
+      // Both admitted
+      expect(result.admitted).toEqual(['c1', 'c2']);
+      expect(result.denied).toEqual([]);
+
+      // Two conflict receipts (one per file)
+      expect(result.conflict_receipts).toHaveLength(2);
+
+      // All in merged state
+      expect(Object.keys(result.merged_state)).toHaveLength(2);
+    });
+
+    it('should handle merge_all with partial conflicts (some files overlap, some don\'t)', () => {
+      const totalOrder = {
+        rules: [],
+        default_rule: { strategy: 'merge_all' },
+      };
+
+      const capsules = [
+        createCapsule('c1', 'hash_a', [
+          createFileEdit('file1.js', 1, 10, 'content1'),
+          createFileEdit('file2.js', 1, 10, 'content2'),
+        ]),
+        createCapsule('c2', 'hash_b', [
+          createFileEdit('file1.js', 5, 15, 'content3'), // Conflicts with c1
+          createFileEdit('file3.js', 1, 10, 'content4'), // No conflict
+        ]),
+        createCapsule('c3', 'hash_c', [
+          createFileEdit('file4.js', 1, 10, 'content5'), // No conflict
+        ]),
+      ];
+
+      const result = mergeCapsules(capsules, totalOrder);
+
+      // All admitted
+      expect(result.admitted).toEqual(['c1', 'c2', 'c3']);
+      expect(result.denied).toEqual([]);
+
+      // Only one conflict (file1.js between c1 and c2)
+      expect(result.conflict_receipts).toHaveLength(1);
+      expect(result.conflict_receipts[0].file_path).toBe('file1.js');
+
+      // All in merged state
+      expect(Object.keys(result.merged_state)).toHaveLength(3);
+      expect(result.merged_state.c1.file_edits).toHaveLength(2);
+      expect(result.merged_state.c2.file_edits).toHaveLength(2);
+      expect(result.merged_state.c3.file_edits).toHaveLength(1);
+    });
+  });
 });

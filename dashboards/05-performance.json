@@ -1,0 +1,148 @@
+{
+  "dashboard": {
+    "id": null,
+    "uid": "unrdf-performance",
+    "title": "UNRDF Performance Metrics",
+    "tags": ["unrdf", "performance", "latency", "throughput"],
+    "timezone": "browser",
+    "schemaVersion": 16,
+    "version": 0,
+    "refresh": "5s",
+    "panels": [
+      {
+        "id": 1,
+        "gridPos": { "h": 10, "w": 12, "x": 0, "y": 0 },
+        "type": "graph",
+        "title": "Transaction Latency Percentiles",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.50, rate(kgc_transaction_duration_ms_bucket{service=\"unrdf-kgc\"}[5m]))",
+            "legendFormat": "P50"
+          },
+          {
+            "expr": "histogram_quantile(0.75, rate(kgc_transaction_duration_ms_bucket{service=\"unrdf-kgc\"}[5m]))",
+            "legendFormat": "P75"
+          },
+          {
+            "expr": "histogram_quantile(0.90, rate(kgc_transaction_duration_ms_bucket{service=\"unrdf-kgc\"}[5m]))",
+            "legendFormat": "P90"
+          },
+          {
+            "expr": "histogram_quantile(0.95, rate(kgc_transaction_duration_ms_bucket{service=\"unrdf-kgc\"}[5m]))",
+            "legendFormat": "P95"
+          },
+          {
+            "expr": "histogram_quantile(0.99, rate(kgc_transaction_duration_ms_bucket{service=\"unrdf-kgc\"}[5m]))",
+            "legendFormat": "P99"
+          }
+        ],
+        "yaxes": [
+          { "format": "ms", "label": "Latency" },
+          { "format": "short" }
+        ]
+      },
+      {
+        "id": 2,
+        "gridPos": { "h": 10, "w": 12, "x": 12, "y": 0 },
+        "type": "graph",
+        "title": "Throughput (Transactions/sec)",
+        "targets": [
+          {
+            "expr": "rate(kgc_transactions_total{service=\"unrdf-kgc\"}[1m])",
+            "legendFormat": "Total TPS"
+          },
+          {
+            "expr": "rate(kgc_transactions_total{service=\"unrdf-kgc\",success=\"true\"}[1m])",
+            "legendFormat": "Successful TPS"
+          },
+          {
+            "expr": "rate(kgc_transactions_total{service=\"unrdf-kgc\",success=\"false\"}[1m])",
+            "legendFormat": "Failed TPS"
+          }
+        ],
+        "yaxes": [
+          { "format": "short", "label": "Transactions/sec" },
+          { "format": "short" }
+        ]
+      },
+      {
+        "id": 3,
+        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 10 },
+        "type": "graph",
+        "title": "Hook Latency Percentiles",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.50, rate(kgc_hook_duration_ms_bucket{service=\"unrdf-kgc\"}[5m]))",
+            "legendFormat": "P50"
+          },
+          {
+            "expr": "histogram_quantile(0.95, rate(kgc_hook_duration_ms_bucket{service=\"unrdf-kgc\"}[5m]))",
+            "legendFormat": "P95"
+          },
+          {
+            "expr": "histogram_quantile(0.99, rate(kgc_hook_duration_ms_bucket{service=\"unrdf-kgc\"}[5m]))",
+            "legendFormat": "P99"
+          }
+        ],
+        "yaxes": [
+          { "format": "ms", "label": "Latency" },
+          { "format": "short" }
+        ]
+      },
+      {
+        "id": 4,
+        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 10 },
+        "type": "graph",
+        "title": "Query Performance",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(sparql_query_duration_ms_bucket{service=\"unrdf-kgc\"}[5m]))",
+            "legendFormat": "P95 SPARQL Query Latency"
+          },
+          {
+            "expr": "rate(sparql_queries_total{service=\"unrdf-kgc\"}[1m])",
+            "legendFormat": "Queries/sec"
+          }
+        ],
+        "yaxes": [
+          { "format": "ms", "label": "Latency / Rate" },
+          { "format": "short" }
+        ]
+      },
+      {
+        "id": 5,
+        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 18 },
+        "type": "heatmap",
+        "title": "Transaction Latency Heatmap",
+        "targets": [
+          {
+            "expr": "rate(kgc_transaction_duration_ms_bucket{service=\"unrdf-kgc\"}[5m])",
+            "format": "heatmap",
+            "legendFormat": "{{le}}"
+          }
+        ],
+        "dataFormat": "tsbuckets",
+        "yAxis": {
+          "format": "ms",
+          "logBase": 2
+        }
+      },
+      {
+        "id": 6,
+        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 18 },
+        "type": "graph",
+        "title": "Request Rate by Operation",
+        "targets": [
+          {
+            "expr": "rate(kgc_operations_total{service=\"unrdf-kgc\"}[5m])",
+            "legendFormat": "{{operation}}"
+          }
+        ],
+        "yaxes": [
+          { "format": "ops", "label": "Operations/sec" },
+          { "format": "short" }
+        ]
+      }
+    ]
+  }
+}

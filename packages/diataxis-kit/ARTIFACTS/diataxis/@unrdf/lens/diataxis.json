@@ -2,7 +2,7 @@
   "confidence": {
     "explanation": 0.7,
     "howtos": 0.75,
-    "reference": 0.7,
+    "reference": 0.5,
     "tutorials": 0.4
   },
   "evidence": {
@@ -11,28 +11,26 @@
       "customer-lens.mjs",
       "run-demo.mjs"
     ],
-    "fingerprint": "958d0e4a8106461ac7fe2f408a41db5062cae5d89aa37431672e839b24646fde",
+    "fingerprint": "b456429dba23cf1f635d6635e580acf21582fae1262bdb3ce6288c445be27b62",
     "readmeHeadings": [
-      "Mission Accomplished",
-      "Architecture",
-      "Test Results",
-      "Performance Metrics",
-      "Core Components",
-      "API Reference",
-      "Dependencies",
-      "Installation & Usage",
-      "Determinism Guarantees",
-      "Round-Trip Fidelity",
-      "API Stability",
-      "Performance Characteristics",
-      "Next Steps (Agent 4+)",
-      "File Manifest",
-      "Success Criteria: ✅ ALL MET",
-      "Conclusion"
+      "✅ Implementation Status",
+      "📦 Modules",
+      "🧪 Test Results (Standalone)",
+      "🎯 Key Features Implemented",
+      "📊 Architecture Highlights",
+      "🔧 Dependencies",
+      "📖 Usage Example",
+      "🎓 Design Decisions",
+      "🚧 Known Limitations",
+      "🔗 Integration Points",
+      "📝 File Sizes",
+      "🏆 Adversarial PM Verification",
+      "🎯 Next Steps",
+      "📄 License"
     ]
   },
   "explanation": {
-    "architecture": "node AUTONOMIC_INNOVATION/agent-3/test-stable-ids.",
+    "architecture": "- **lens.",
     "concepts": [
       "rdf",
       "lens",

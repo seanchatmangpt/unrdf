@@ -4,8 +4,8 @@ type: "explanation"
 packageName: "@unrdf/federation"
 version: "5.0.1"
 generatedAt: "2000-01-01T00:00:00.000Z"
-confidenceScore: 0.7
-proof: "0bb125c395a4d08042a668eaf1af42a8e539efdc743d05bd7e0ae9d897ee4cc1"
+confidenceScore: 1
+proof: "cfc96fc1cae56026092ee37c35da48003fdd0221d77aa87340b251b1c751b02c"
 ---
 
 ## Concepts
@@ -30,15 +30,17 @@ proof: "0bb125c395a4d08042a668eaf1af42a8e539efdc743d05bd7e0ae9d897ee4cc1"
 
 This file was generated from the following evidence sources:
 
+- docs
 - inferred
 - keywords
 - readme
 
 ```json
 {
-  "fingerprintInput": "inferred|keywords|readme|Understanding @unrdf/federation|0.7",
-  "hash": "0bb125c395a4d08042a668eaf1af42a8e539efdc743d05bd7e0ae9d897ee4cc1",
+  "fingerprintInput": "docs|inferred|keywords|readme|Understanding @unrdf/federation|1",
+  "hash": "cfc96fc1cae56026092ee37c35da48003fdd0221d77aa87340b251b1c751b02c",
   "sources": [
+    "docs",
     "inferred",
     "keywords",
     "readme"

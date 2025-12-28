@@ -1,0 +1,614 @@
+{
+  "analysis_timestamp": "2025-12-27T00:00:00Z",
+  "analyzer": "Agent 1 (KGC Runtime Planner)",
+  "modules": [
+    {
+      "name": "schemas.mjs",
+      "path": "/home/user/unrdf/packages/kgc-runtime/src/schemas.mjs",
+      "line_count": 1147,
+      "capabilities_count": 14,
+      "implemented": [
+        "ReceiptSchema - versioned audit records (lines 110-175)",
+        "ToolTraceEntrySchema - atomic tool call records (lines 205-242)",
+        "RunCapsuleSchema - complete execution snapshot (lines 300-400)",
+        "BoundsSchema - resource capacity limits with warnings (lines 441-481)",
+        "WorkItemSchema - async task node states (lines 526-581)",
+        "ProjectionManifestSchema - multi-surface definitions (lines 634-776)",
+        "KGCMarkdownSchema - structured markdown AST (lines 857-943)",
+        "7 validation helper functions (lines 954-1122)",
+        "Cryptographic anchoring with merkle proofs (lines 156-162)",
+        "Semantic versioning validation (lines 47-49)",
+        "Actor identification schema (lines 70-72)",
+        "SHA-256 hash schema (lines 61-64)",
+        "Discriminated union AST nodes (line 874)",
+        "Recursive lazy schema support (line 851)"
+      ],
+      "gaps": [
+        "Schema versioning/migration utilities",
+        "Schema composition and extension helpers",
+        "JSON-LD context generation from schemas",
+        "RDF triple mapping utilities",
+        "Auto-generation of TypeScript .d.ts types",
+        "Schema diff and comparison tools",
+        "Schema documentation generator",
+        "Schema registry/catalog system",
+        "Cross-schema validation rules",
+        "Schema performance profiling"
+      ],
+      "advanced_patterns": [
+        "Discriminated unions for polymorphic AST (line 874)",
+        "Recursive lazy schemas for tree structures (line 851)",
+        "Custom validation with z.custom() (line 41)",
+        "Chained schema transformations with .default()",
+        "Blockchain-style receipt linking (lines 146-147)"
+      ],
+      "critical_paths": [
+        "Schema parse() calls in validation helpers (lines 956, 981, etc.)",
+        "Recursive AST node validation (line 851)",
+        "Complex discriminated union parsing (line 874)"
+      ],
+      "completeness_percent": 75,
+      "evidence": {
+        "total_exports": 13,
+        "validation_functions": 7,
+        "schema_types": 7,
+        "comprehensive_examples": true
+      }
+    },
+    {
+      "name": "admission-gate.mjs",
+      "path": "/home/user/unrdf/packages/kgc-runtime/src/admission-gate.mjs",
+      "line_count": 415,
+      "capabilities_count": 11,
+      "implemented": [
+        "AdmissionGate class with receipt chaining (lines 87-414)",
+        "admit() - delta admission with bounds/predicates (lines 122-169)",
+        "BLAKE3 cryptographic hashing (line 243)",
+        "Forbidden operation detection (lines 129-134)",
+        "Bounds enforcement (lines 137-140)",
+        "Predicate validation (lines 143-157)",
+        "Preserve(Q) invariant checking (lines 160-165, 206-218)",
+        "verifyChain() - receipt integrity verification (lines 275-313)",
+        "computeMerkleRoot() - bottom-up merkle tree (lines 325-355)",
+        "batchAnchor() - deterministic batch operations (lines 368-397)",
+        "Receipt chain linkage verification (lines 298-310)"
+      ],
+      "gaps": [
+        "Predicate composition (AND/OR/NOT logical operators)",
+        "Predicate priority/execution ordering",
+        "Partial batch admission (some admit, some deny)",
+        "Configurable retry policies for denied operations",
+        "Admission quotas and rate limiting",
+        "Async predicate evaluation support",
+        "Predicate versioning and migration",
+        "Admission audit trail querying (SPARQL)",
+        "Time-based admission windows",
+        "Multi-tenant admission policies"
+      ],
+      "advanced_patterns": [
+        "Merkle tree bottom-up construction (lines 334-354)",
+        "Deterministic batch sorting by operation type (line 374)",
+        "Preserve(Q) state tracking with timestamps (lines 209-217)",
+        "Receipt hash computation excluding hash field (lines 234-243)",
+        "Parent receipt chain linking (lines 227, 302)"
+      ],
+      "critical_paths": [
+        "BLAKE3 hash computation (async, line 243)",
+        "Merkle root computation for large batches (lines 334-354)",
+        "Receipt chain verification loops (lines 281-310)",
+        "Predicate check iterations (lines 143-157)"
+      ],
+      "completeness_percent": 70,
+      "evidence": {
+        "class_methods": 7,
+        "receipt_chain_validated": true,
+        "merkle_tree_implemented": true,
+        "batch_operations": true
+      }
+    },
+    {
+      "name": "bounds.mjs",
+      "path": "/home/user/unrdf/packages/kgc-runtime/src/bounds.mjs",
+      "line_count": 290,
+      "capabilities_count": 8,
+      "implemented": [
+        "BoundsChecker class with usage tracking (lines 50-172)",
+        "canExecute() - operation bounds checking (lines 86-125)",
+        "recordOperation() - usage accumulation (lines 139-157)",
+        "getUsage() - current statistics (lines 169-171)",
+        "enforceBounds() - standalone enforcement with receipts (lines 201-289)",
+        "5 bound types: files, bytes, ops, runtime, rewrites (lines 13-18)",
+        "Receipt generation on violation (lines 218-272)",
+        "Parent receipt chaining support (lines 211-213)"
+      ],
+      "gaps": [
+        "Dynamic bound adjustment based on load",
+        "Bound inheritance and composition",
+        "Percentage-based thresholds (warning at 80%)",
+        "Time-based bounds (ops/minute rate limiting)",
+        "Resource prediction/estimation",
+        "Bound violation callbacks/hooks",
+        "Bound profiles (dev/test/prod presets)",
+        "Multi-dimensional bounds (files AND bytes combined)",
+        "Bound exemptions/overrides mechanism",
+        "Historical usage analytics"
+      ],
+      "advanced_patterns": [
+        "Separation of checking (canExecute) vs recording (recordOperation)",
+        "Receipt generation on deny with violation details (lines 218-272)",
+        "Bound priority determination (lines 276-281)",
+        "UUID-based receipt IDs (line 206)"
+      ],
+      "critical_paths": [
+        "All bounds checks (inline conditionals, lines 90-122)",
+        "Usage accumulation (lines 142-156)"
+      ],
+      "completeness_percent": 60,
+      "evidence": {
+        "bounds_types": 5,
+        "checking_implemented": true,
+        "recording_implemented": true,
+        "receipt_generation": true
+      }
+    },
+    {
+      "name": "capsule.mjs",
+      "path": "/home/user/unrdf/packages/kgc-runtime/src/capsule.mjs",
+      "line_count": 411,
+      "capabilities_count": 10,
+      "implemented": [
+        "RunCapsule class with canonical representation (lines 47-235)",
+        "_canonicalize() - deterministic data normalization (lines 88-118)",
+        "Unicode NFC normalization (line 95)",
+        "Recursive key sorting (lines 104-114)",
+        "_computeHash() - BLAKE3 hash computation (lines 126-146)",
+        "FNV-1a sync hash fallback (lines 156-178)",
+        "computeBlake3Hash() - async proper hash (lines 187-196)",
+        "JSON serialization/deserialization (lines 203-234)",
+        "storeCapsule() - filesystem persistence with manifest (lines 248-289)",
+        "listCapsules() - enumerate stored capsules (lines 378-410)"
+      ],
+      "gaps": [
+        "Actual replay implementation (lines 317-327 are stubs)",
+        "Incremental/streaming hash computation for large capsules",
+        "Capsule compression (gzip/brotli)",
+        "Content-addressable deduplication",
+        "Capsule garbage collection and pruning",
+        "Capsule search and indexing (by hash, time, etc.)",
+        "Capsule diff computation between versions",
+        "Partial capsule loading (lazy deserialization)",
+        "Distributed capsule storage (S3, IPFS)",
+        "Capsule integrity verification on load"
+      ],
+      "advanced_patterns": [
+        "Unicode normalization (NFC) for determinism (line 95)",
+        "Locale-independent key sorting (line 107)",
+        "Manifest update with deduplication (lines 275-284)",
+        "Dual hash strategy (sync fallback + async proper) (lines 156-196)"
+      ],
+      "critical_paths": [
+        "BLAKE3 hash computation (async, line 192)",
+        "Canonicalization recursion (lines 88-118, could be O(n) for large objects)",
+        "File I/O for capsule storage (lines 258-259)"
+      ],
+      "completeness_percent": 50,
+      "evidence": {
+        "class_methods": 5,
+        "replay_stubbed": true,
+        "storage_basic": true,
+        "manifest_tracking": true
+      }
+    },
+    {
+      "name": "freeze-restore.mjs",
+      "path": "/home/user/unrdf/packages/kgc-runtime/src/freeze-restore.mjs",
+      "line_count": 404,
+      "capabilities_count": 9,
+      "implemented": [
+        "freezeUniverse() - snapshot creation with BLAKE3 (lines 105-168)",
+        "verifyFreeze() - integrity verification (lines 189-231)",
+        "reconstructTo() - time-based state reconstruction (lines 255-333)",
+        "getSnapshotList() - sorted snapshot enumeration (lines 351-403)",
+        "canonicalizeState() - deterministic serialization (lines 53-80)",
+        "Nanosecond precision timestamps (line 113)",
+        "BigInt JSON serialization (lines 71-77, 318-327)",
+        "Recursive key sorting (lines 55-68)",
+        "Optional Git backbone support (stubbed, lines 145-162)"
+      ],
+      "gaps": [
+        "Git operations are stubbed (lines 145-162)",
+        "Incremental snapshots (always full state)",
+        "Snapshot compression (gzip/lz4)",
+        "Snapshot pruning/expiration policies",
+        "Snapshot metadata indexing for fast queries",
+        "Snapshot streaming for large states (>1GB)",
+        "Parallel snapshot creation",
+        "Snapshot encryption at rest",
+        "Snapshot replication/distribution",
+        "Delta encoding between snapshots"
+      ],
+      "advanced_patterns": [
+        "BigInt timestamp handling with string serialization (lines 71-77)",
+        "Recursive key sorting for determinism (lines 55-68)",
+        "Snapshot directory structure (timestamp-based, lines 123-124)",
+        "JSON reviver for BigInt deserialization (lines 318-327)",
+        "Exact vs. best-match snapshot selection (lines 285-298)"
+      ],
+      "critical_paths": [
+        "BLAKE3 hash computation (async, line 119)",
+        "File I/O for large snapshots (lines 128, 221)",
+        "Snapshot list sorting (lines 387-396, could be slow with many snapshots)",
+        "State canonicalization recursion (lines 55-68)"
+      ],
+      "completeness_percent": 65,
+      "evidence": {
+        "freeze_implemented": true,
+        "restore_implemented": true,
+        "verification_implemented": true,
+        "git_stubbed": true
+      }
+    },
+    {
+      "name": "merge.mjs",
+      "path": "/home/user/unrdf/packages/kgc-runtime/src/merge.mjs",
+      "line_count": 472,
+      "capabilities_count": 12,
+      "implemented": [
+        "ConflictDetector class (lines 129-231)",
+        "rangesOverlap() - line range overlap detection (lines 138-140)",
+        "detectConflicts() - find all overlapping edits (lines 146-203)",
+        "createReceipt() - conflict receipt generation (lines 213-230)",
+        "ConflictResolver class (lines 240-336)",
+        "earlierWins() - o_hash based resolution (lines 247-260)",
+        "laterWins() - inverse o_hash resolution (lines 283-296)",
+        "lexicographic() - ID-based resolution (lines 267-276)",
+        "resolveConflict() - strategy dispatcher (lines 306-335)",
+        "shardMerge() - deterministic merge with receipts (lines 348-407)",
+        "mergeCapsules() - main API with admit/deny lists (lines 419-460)",
+        "File-grouped conflict detection (lines 152-165)"
+      ],
+      "gaps": [
+        "merge_all strategy is stubbed (no actual merging, lines 319-325)",
+        "3-way merge support (base + two branches)",
+        "Semantic conflict detection (only line-based)",
+        "Interactive conflict resolution",
+        "Conflict visualization/diff rendering",
+        "Undo/rollback for merges",
+        "Merge preview/dry-run mode",
+        "Custom resolution strategies (plugin system)",
+        "File-type specific resolvers (JS, JSON, etc.)",
+        "Merge metrics and statistics"
+      ],
+      "advanced_patterns": [
+        "Discriminated union for resolution strategies (line 309)",
+        "File-grouped conflict detection (lines 152-165)",
+        "Nested loop conflict detection (lines 168-199)",
+        "Conflict receipt with line range tracking (lines 220-228)",
+        "Deterministic denied capsule tracking (lines 371-383)"
+      ],
+      "critical_paths": [
+        "Conflict detection loops (O(n²) for edits in same file, lines 168-199)",
+        "Receipt generation for each conflict (lines 386-392)",
+        "Denied capsule set operations (lines 382, 437)"
+      ],
+      "completeness_percent": 55,
+      "evidence": {
+        "strategies_implemented": 3,
+        "merge_all_stubbed": true,
+        "conflict_detection": true,
+        "receipt_generation": true
+      }
+    },
+    {
+      "name": "work-item.mjs",
+      "path": "/home/user/unrdf/packages/kgc-runtime/src/work-item.mjs",
+      "line_count": 450,
+      "capabilities_count": 13,
+      "implemented": [
+        "WorkItemExecutor class with RDF store (lines 91-449)",
+        "enqueueWorkItem() - create work item (lines 127-156)",
+        "pollWorkItem() - get status (lines 168-177)",
+        "transitionWorkItem() - state machine transitions (lines 189-229)",
+        "finalizeWorkItem() - completion with receipt (lines 242-262)",
+        "addReceipt() - append-only logging (lines 273-288)",
+        "getExecutionOrder() - deterministic priority queue (lines 300-315)",
+        "queryWorkItems() - SPARQL queries (lines 332-334)",
+        "_persistWorkItem() - RDF triple store sync (lines 342-448)",
+        "State transition validation (lines 199-210)",
+        "Terminal state detection (lines 23-27)",
+        "Nanosecond timestamps (line 62)",
+        "Dual storage (Map + RDF store, line 98)"
+      ],
+      "gaps": [
+        "Automatic retry on failure (no retry logic)",
+        "Work item dependencies (DAG execution)",
+        "Timeout enforcement (bounds.timeout not used)",
+        "Progress tracking (0-100% completion)",
+        "Work item cancellation",
+        "Work stealing for load balancing",
+        "Dead letter queue for failed items",
+        "Work item archival/cleanup",
+        "Backpressure and throttling",
+        "Batch enqueue/poll operations"
+      ],
+      "advanced_patterns": [
+        "State transition validation with VALID_TRANSITIONS map (lines 206-210)",
+        "Dual storage strategy (Map for speed + RDF for persistence, line 98)",
+        "Deterministic priority queue with BigInt comparison (lines 305-312)",
+        "Deep copy on poll to prevent mutations (line 176)",
+        "Timestamp-based state tracking (lines 216-222)"
+      ],
+      "critical_paths": [
+        "RDF quad deletion/insertion in _persistWorkItem (lines 349-447)",
+        "Priority sorting with BigInt comparison (lines 305-312)",
+        "State transition validation (lines 206-210)"
+      ],
+      "completeness_percent": 60,
+      "evidence": {
+        "state_machine": true,
+        "rdf_persistence": true,
+        "priority_queue": true,
+        "dependencies_missing": true
+      }
+    },
+    {
+      "name": "tool-registry.mjs",
+      "path": "/home/user/unrdf/packages/kgc-runtime/src/tool-registry.mjs",
+      "line_count": 273,
+      "capabilities_count": 11,
+      "implemented": [
+        "ToolRegistry class (lines 27-263)",
+        "registerTool() - add tool manifest (lines 71-100)",
+        "loadFromFile() - JSON registry loading (lines 51-64)",
+        "convertToZodSchema() - schema definition to Zod (lines 108-158)",
+        "getTool() - get latest version (lines 165-167)",
+        "getToolVersion() - get specific version (lines 175-179)",
+        "getAllTools() - list all tools (lines 185-187)",
+        "getAllVersions() - list all versions of tool (lines 194-198)",
+        "getToolsByCapability() - capability queries (lines 205-209)",
+        "validateOutput() - output schema validation (lines 229-241)",
+        "getStats() - registry statistics (lines 247-262)"
+      ],
+      "gaps": [
+        "Tool dependency resolution",
+        "Tool versioning conflicts detection",
+        "Tool execution sandboxing",
+        "Tool performance tracking/metrics",
+        "Tool deprecation warnings",
+        "Tool discovery/auto-registration",
+        "Tool documentation generation from manifests",
+        "Tool schema evolution/migration",
+        "Tool compatibility matrix",
+        "Input validation (only output validation exists)"
+      ],
+      "advanced_patterns": [
+        "JSON schema to Zod conversion (lines 108-158)",
+        "Multi-version storage with Map<string, Map<string, Object>> (lines 96-99)",
+        "Recursive schema conversion (lines 108-158)",
+        "Optional field handling based on required array (lines 123-128)"
+      ],
+      "critical_paths": [
+        "Schema conversion recursion (lines 108-158)",
+        "Capability filtering (getAllTools().filter, line 206)",
+        "Schema validation (parse, line 236)"
+      ],
+      "completeness_percent": 50,
+      "evidence": {
+        "registry_methods": 11,
+        "versioning": true,
+        "capability_queries": true,
+        "input_validation_missing": true
+      }
+    },
+    {
+      "name": "receipt.mjs",
+      "path": "/home/user/unrdf/packages/kgc-runtime/src/receipt.mjs",
+      "line_count": 116,
+      "capabilities_count": 5,
+      "implemented": [
+        "generateReceipt() - create receipt with BLAKE3 hash (lines 35-61)",
+        "verifyReceiptHash() - integrity check (lines 68-83)",
+        "verifyReceiptChain() - chain validation (lines 90-115)",
+        "Receipt chaining with parent hashes (lines 45, 106)",
+        "Deterministic JSON serialization (zero whitespace, line 46)"
+      ],
+      "gaps": [
+        "Receipt storage/persistence layer",
+        "Receipt querying (by operation, timestamp, etc.)",
+        "Receipt indexing for fast lookup",
+        "Batch receipt generation",
+        "Receipt compression",
+        "Receipt encryption",
+        "Receipt streaming for large chains",
+        "Receipt expiration/TTL",
+        "Receipt revocation mechanism",
+        "Receipt metadata search/filtering"
+      ],
+      "advanced_patterns": [
+        "Deterministic JSON with null whitespace (line 46)",
+        "Chain linkage validation (lines 103-107)",
+        "Object destructuring for hash exclusion (line 69)",
+        "Receipt ID with timestamp and operation (line 37)"
+      ],
+      "critical_paths": [
+        "BLAKE3 hash computation (async, lines 48, 80)",
+        "Chain verification loops (lines 93-109)"
+      ],
+      "completeness_percent": 40,
+      "evidence": {
+        "generation": true,
+        "verification": true,
+        "chaining": true,
+        "storage_missing": true,
+        "querying_missing": true
+      }
+    }
+  ],
+  "total_capabilities": 93,
+  "overall_completeness": 58,
+  "recommended_additions": [
+    "Schema migration and versioning tooling for schemas.mjs",
+    "Predicate composition (AND/OR/NOT) for admission-gate.mjs",
+    "Actual replay implementation for capsule.mjs (currently stubbed)",
+    "Git integration completion for freeze-restore.mjs",
+    "merge_all strategy implementation for merge.mjs",
+    "Work item dependency DAG execution for work-item.mjs",
+    "Input validation for tool-registry.mjs",
+    "Receipt storage and querying layer for receipt.mjs",
+    "Incremental snapshots and delta encoding",
+    "Distributed storage backends (S3, IPFS)",
+    "SPARQL query optimization for work items",
+    "Compression for capsules and snapshots",
+    "Advanced conflict resolution strategies (3-way merge)",
+    "Resource prediction and dynamic bound adjustment",
+    "Tool performance metrics and monitoring"
+  ],
+  "composition_opportunities": [
+    {
+      "modules": ["admission-gate.mjs", "bounds.mjs"],
+      "opportunity": "Integrate BoundsChecker into AdmissionGate predicates",
+      "benefit": "Unified bounds enforcement with cryptographic receipts"
+    },
+    {
+      "modules": ["capsule.mjs", "freeze-restore.mjs"],
+      "opportunity": "Use RunCapsule for snapshot artifacts",
+      "benefit": "Deterministic replay from snapshot + capsule"
+    },
+    {
+      "modules": ["work-item.mjs", "tool-registry.mjs"],
+      "opportunity": "Validate work item payloads against tool schemas",
+      "benefit": "Type-safe work item execution"
+    },
+    {
+      "modules": ["receipt.mjs", "admission-gate.mjs"],
+      "opportunity": "Unify receipt generation (two different implementations)",
+      "benefit": "Single receipt format across runtime"
+    },
+    {
+      "modules": ["merge.mjs", "capsule.mjs"],
+      "opportunity": "Merge capsules instead of generic file edits",
+      "benefit": "Full deterministic multi-agent merge with replay"
+    },
+    {
+      "modules": ["schemas.mjs", "tool-registry.mjs"],
+      "opportunity": "Auto-generate tool schemas from Zod schemas",
+      "benefit": "Single source of truth for validation"
+    },
+    {
+      "modules": ["work-item.mjs", "bounds.mjs"],
+      "opportunity": "Enforce bounds on work item execution",
+      "benefit": "Resource-bounded async task execution"
+    },
+    {
+      "modules": ["freeze-restore.mjs", "receipt.mjs"],
+      "opportunity": "Generate receipts for freeze/restore operations",
+      "benefit": "Verifiable snapshot audit trail"
+    }
+  ],
+  "performance_hotspots": [
+    {
+      "module": "admission-gate.mjs",
+      "location": "lines 334-354",
+      "issue": "Merkle tree O(n log n) for large batches",
+      "mitigation": "Parallel hash computation or incremental merkle tree"
+    },
+    {
+      "module": "merge.mjs",
+      "location": "lines 168-199",
+      "issue": "O(n²) conflict detection for edits in same file",
+      "mitigation": "Interval tree or R-tree for range overlap queries"
+    },
+    {
+      "module": "work-item.mjs",
+      "location": "lines 349-447",
+      "issue": "RDF quad deletion/insertion inefficiency",
+      "mitigation": "Batch operations or transactional updates"
+    },
+    {
+      "module": "freeze-restore.mjs",
+      "location": "lines 55-68, 387-396",
+      "issue": "Recursive canonicalization and snapshot sorting",
+      "mitigation": "Streaming canonicalization or indexed snapshots"
+    },
+    {
+      "module": "capsule.mjs",
+      "location": "lines 88-118",
+      "issue": "Deep recursion in canonicalize for large objects",
+      "mitigation": "Iterative canonicalization with stack"
+    }
+  ],
+  "critical_dependencies": [
+    {
+      "library": "hash-wasm (blake3)",
+      "used_by": ["admission-gate.mjs", "capsule.mjs", "freeze-restore.mjs", "receipt.mjs"],
+      "risk": "Async-only, no sync variant available",
+      "mitigation": "FNV-1a fallback in capsule.mjs (lines 156-178)"
+    },
+    {
+      "library": "zod",
+      "used_by": "all modules",
+      "risk": "Schema validation overhead",
+      "mitigation": "Cache parsed schemas or use .passthrough() sparingly"
+    },
+    {
+      "library": "@unrdf/oxigraph",
+      "used_by": ["work-item.mjs"],
+      "risk": "RDF store performance for large datasets",
+      "mitigation": "Dual storage with Map (line 98)"
+    }
+  ],
+  "design_patterns_observed": [
+    "Pure functions with Zod validation",
+    "BLAKE3 for deterministic hashing",
+    "Receipt chaining (blockchain-style)",
+    "State machines with validation",
+    "Dual storage (memory + persistent)",
+    "Canonical data representation",
+    "Multi-version registry",
+    "Strategy pattern for conflict resolution",
+    "Builder pattern for schemas",
+    "Factory pattern for capsule/receipt creation"
+  ],
+  "test_coverage_notes": {
+    "schemas.mjs": "Validation helpers suggest testable contracts",
+    "admission-gate.mjs": "Merkle and chain verification are testable",
+    "bounds.mjs": "BoundsChecker has clear test boundaries",
+    "capsule.mjs": "Replay is stubbed - needs integration tests",
+    "freeze-restore.mjs": "Snapshot verification is testable",
+    "merge.mjs": "Conflict detection has deterministic outputs",
+    "work-item.mjs": "State machine transitions are testable",
+    "tool-registry.mjs": "Schema conversion needs edge case tests",
+    "receipt.mjs": "Hash verification is testable"
+  },
+  "summary": {
+    "strengths": [
+      "Comprehensive Zod schemas with validation",
+      "BLAKE3 cryptographic integrity throughout",
+      "Receipt-based audit trail design",
+      "Deterministic operations (canonical representation)",
+      "Multi-version support in tool registry",
+      "State machine rigor in work items"
+    ],
+    "weaknesses": [
+      "Replay implementation stubbed (capsule.mjs)",
+      "Git integration incomplete (freeze-restore.mjs)",
+      "merge_all strategy not implemented (merge.mjs)",
+      "No storage/querying for receipts (receipt.mjs)",
+      "Missing input validation (tool-registry.mjs)",
+      "No dependency DAG for work items (work-item.mjs)",
+      "Performance hotspots in conflict detection and merkle trees"
+    ],
+    "next_priorities": [
+      "Implement capsule replay (high priority - core feature)",
+      "Unify receipt generation across modules",
+      "Implement merge_all strategy",
+      "Add work item dependency DAG",
+      "Optimize conflict detection (interval trees)",
+      "Add receipt storage layer",
+      "Complete Git integration",
+      "Add compression for snapshots/capsules",
+      "Implement incremental snapshots",
+      "Add tool input validation"
+    ]
+  }
+}

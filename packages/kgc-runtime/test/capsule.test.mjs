@@ -232,14 +232,15 @@ describe('RunCapsule', () => {
       };
 
       const capsule = new RunCapsule(data);
-      const storagePath = await storeCapsule(capsule, TEST_CAPSULE_DIR);
+      const result = await storeCapsule(capsule, TEST_CAPSULE_DIR);
 
       const expectedPath = join(
         TEST_CAPSULE_DIR,
         `${capsule.capsule_hash}.json`
       );
-      expect(storagePath).toBe(expectedPath);
-      expect(existsSync(storagePath)).toBe(true);
+      expect(result.path).toBe(expectedPath);
+      expect(result.deduplicated).toBe(false);
+      expect(existsSync(result.path)).toBe(true);
     });
 
     it('should create manifest entry', async () => {
@@ -297,7 +298,7 @@ describe('RunCapsule', () => {
       const files = readdirSync(TEST_CAPSULE_DIR).filter((f) =>
         f.endsWith('.json')
       );
-      expect(files.length).toBeGreaterThanOrEqual(2); // 2 capsules + manifest
+      expect(files.length).toBeGreaterThanOrEqual(3); // 2 capsules + manifest + index
     });
   });
 
@@ -398,6 +399,147 @@ describe('RunCapsule', () => {
 
       expect(receipt.tool_traces_executed).toBe(2);
       expect(receipt.edits_applied).toBe(0);
+    });
+
+    it('should compute proper output hash from snapshot', async () => {
+      const data = {
+        inputs: { task: 'hash_test' },
+        tool_trace: [],
+        edits: [
+          { file: 'test.txt', old: 'a', new: 'b' },
+        ],
+        artifacts: [],
+        bounds: { start: 1000, end: 2000 },
+        o_hash_before: 'before',
+        o_hash_after: 'after',
+        receipts: [],
+      };
+
+      const capsule = new RunCapsule(data);
+      const o_snapshot = { files: { 'test.txt': 'abc' } };
+
+      const { result, receipt } = await replayCapsule(capsule, o_snapshot);
+
+      expect(receipt.output_hash).toBeDefined();
+      expect(receipt.output_hash).toMatch(/^[a-f0-9]{64}$/);
+      expect(receipt.expected_hash).toBe('after');
+    });
+
+    it('should handle snapshot with files correctly', async () => {
+      const data = {
+        inputs: { task: 'file_edit' },
+        tool_trace: [],
+        edits: [
+          { file: 'code.js', old: 'foo', new: 'bar' },
+        ],
+        artifacts: [],
+        bounds: { start: 1000, end: 2000 },
+        o_hash_before: 'start',
+        o_hash_after: 'end',
+        receipts: [],
+      };
+
+      const capsule = new RunCapsule(data);
+      const o_snapshot = { files: { 'code.js': 'function foo() {}' } };
+
+      const { result, receipt } = await replayCapsule(capsule, o_snapshot);
+
+      expect(receipt.edits_applied).toBe(1);
+      expect(receipt.verified).toBeDefined();
+    });
+
+    it('should continue on edit errors', async () => {
+      const data = {
+        inputs: { task: 'partial_edits' },
+        tool_trace: [],
+        edits: [
+          { invalid: 'edit1' }, // Missing required fields
+          { file: 'valid.txt', old: 'x', new: 'y' },
+        ],
+        artifacts: [],
+        bounds: { start: 1000, end: 2000 },
+        o_hash_before: 'start',
+        o_hash_after: 'end',
+        receipts: [],
+      };
+
+      const capsule = new RunCapsule(data);
+      const o_snapshot = { files: { 'valid.txt': 'xyz' } };
+
+      const { result, receipt } = await replayCapsule(capsule, o_snapshot);
+
+      // Should apply the valid edit
+      expect(receipt.edits_applied).toBeGreaterThanOrEqual(1);
+    });
+
+    it('should handle tool traces with validation', async () => {
+      const data = {
+        inputs: { task: 'tool_validation' },
+        tool_trace: [
+          { tool: 'bash', command: 'ls', output: 'file.txt' },
+          { tool: 'read', file: 'data.json' },
+          { invalid_trace: true }, // Invalid trace
+        ],
+        edits: [],
+        artifacts: [],
+        bounds: { start: 1000, end: 2000 },
+        o_hash_before: 'initial',
+        o_hash_after: 'final',
+        receipts: [],
+      };
+
+      const capsule = new RunCapsule(data);
+      const o_snapshot = { state: 'ready' };
+
+      const { result, receipt } = await replayCapsule(capsule, o_snapshot);
+
+      // Should execute valid tool traces
+      expect(receipt.tool_traces_executed).toBe(2);
+    });
+
+    it('should clone snapshot without mutation', async () => {
+      const data = {
+        inputs: { task: 'immutable_test' },
+        tool_trace: [],
+        edits: [
+          { file: 'test.txt', old: 'original', new: 'modified' },
+        ],
+        artifacts: [],
+        bounds: { start: 1000, end: 2000 },
+        o_hash_before: 'before',
+        o_hash_after: 'after',
+        receipts: [],
+      };
+
+      const capsule = new RunCapsule(data);
+      const originalSnapshot = { files: { 'test.txt': 'original content' } };
+      const snapshotCopy = JSON.parse(JSON.stringify(originalSnapshot));
+
+      await replayCapsule(capsule, originalSnapshot);
+
+      // Original snapshot should be unchanged
+      expect(originalSnapshot).toEqual(snapshotCopy);
+    });
+
+    it('should include replay duration in receipt', async () => {
+      const data = {
+        inputs: { task: 'timing_test' },
+        tool_trace: [],
+        edits: [],
+        artifacts: [],
+        bounds: { start: 1000, end: 2000 },
+        o_hash_before: 'start',
+        o_hash_after: 'end',
+        receipts: [],
+      };
+
+      const capsule = new RunCapsule(data);
+      const o_snapshot = {};
+
+      const { result, receipt } = await replayCapsule(capsule, o_snapshot);
+
+      expect(receipt.replay_duration_ms).toBeDefined();
+      expect(receipt.replay_duration_ms).toBeGreaterThanOrEqual(0);
     });
   });
 

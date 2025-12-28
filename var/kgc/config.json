@@ -1,0 +1,8 @@
+{
+  "max-files": 2000,
+  "max-bytes": 104857600,
+  "max-ops": 10000,
+  "max-time": 3600,
+  "receipt-format": "json",
+  "verification-level": "strict"
+}
