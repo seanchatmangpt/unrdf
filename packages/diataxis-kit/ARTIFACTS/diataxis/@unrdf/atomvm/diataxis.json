@@ -7,11 +7,14 @@
   },
   "evidence": {
     "docsFiles": [
+      "ARCHITECTURE.md",
       "README.md",
       "code-review-checklist.md",
       "coding-patterns.md",
       "integration-test-guide.md",
+      "js-beam-bridge-patterns.md",
       "lint-rule-suggestions.md",
+      "poka-yoke-analysis.md",
       "poka-yoke-controls.md",
       "poka-yoke-error-modes.md",
       "poka-yoke-invariants.md",
@@ -23,12 +26,16 @@
       "wasm-integration.md"
     ],
     "examplesFiles": [
+      "README.md",
+      "demo-message-passing.mjs",
+      "demo-sparql-pattern.mjs",
       "demo-triple-roundtrip.mjs",
       "policy-hot-reload-demo.mjs",
       "production-messaging.mjs",
+      "sparql-beam-compilation-demo.mjs",
       "sparql-to-beam-demo.mjs"
     ],
-    "fingerprint": "af4a072e8403ec476724e2db95e0ef58f1b089dc2f6c8021a1690e59b3194621",
+    "fingerprint": "931c2a43f882059f2a95715b0b28b48e15a781ecd2e5e1461eea4d12deddbe59",
     "readmeHeadings": [
       "Quick Start",
       "Features",
@@ -136,10 +143,11 @@
         "examples"
       ],
       "stepsOutline": [
+        "Work through README.md",
+        "Work through demo-message-passing.mjs",
+        "Work through demo-sparql-pattern.mjs",
         "Work through demo-triple-roundtrip.mjs",
-        "Work through policy-hot-reload-demo.mjs",
-        "Work through production-messaging.mjs",
-        "Work through sparql-to-beam-demo.mjs"
+        "Work through policy-hot-reload-demo.mjs"
       ],
       "title": "First Steps"
     },
