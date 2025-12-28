@@ -35,7 +35,7 @@
     "lint:fix": "pnpm -r --filter='!./packages/docs' --filter='!./packages/kgn' lint:fix",
     "format": "pnpm -r format",
     "format:check": "pnpm -r format:check",
-    "build": "pnpm -r --filter ./packages build",
+    "build": "pnpm -r --filter './packages/*' build",
     "clean": "pnpm -r clean && rm -rf node_modules",
     "dev": "pnpm -r --parallel dev",
     "docs": "pnpm -C packages/core docs",

@@ -11,6 +11,7 @@
 
 import { createStore as createStoreV6 } from '@unrdf/oxigraph';
 import { z } from 'zod';
+import { deterministicSerialize } from '@unrdf/v6-core/receipts';
 import {
   createStoreParamsSchema,
   wrapWorkflowParamsSchema,
@@ -260,20 +261,42 @@ export async function* streamToAsync(stream) {
 /**
  * Receipt generation wrapper for arbitrary functions
  *
+ * DETERMINISM REQUIREMENTS:
+ * - Pass context.t_ns for deterministic timestamps
+ * - Pass context.startTime/endTime for deterministic duration
+ * - Same inputs MUST produce identical receipt hashes
+ *
  * @param {Function} fn - Function to wrap
  * @param {Object} options - Receipt options
+ * @param {Object} [options.context] - Context with t_ns for determinism
+ * @param {bigint} [options.context.t_ns] - Nanosecond timestamp (REQUIRED for determinism)
+ * @param {number} [options.startTime] - Start time override
+ * @param {number} [options.endTime] - End time override
+ * @param {string} [options.operation] - Operation name
  * @returns {Function} Wrapped function with receipt
  *
  * @example
  * import { withReceipt } from '@unrdf/v6-compat/adapters';
  *
+ * // NON-DETERMINISTIC (uses Date.now())
  * const processData = withReceipt(
  *   (data) => data.map(x => x * 2),
  *   { operation: 'processData' }
  * );
  *
- * const { result, receipt } = await processData([1, 2, 3]);
- * // receipt = { operation: 'processData', timestamp: ..., result: ... }
+ * // DETERMINISTIC (context with t_ns)
+ * const processDataDeterministic = withReceipt(
+ *   (data) => data.map(x => x * 2),
+ *   {
+ *     operation: 'processData',
+ *     context: { t_ns: 1234567890000000000n },
+ *     startTime: 100,
+ *     endTime: 200
+ *   }
+ * );
+ *
+ * const { result, receipt } = await processDataDeterministic([1, 2, 3]);
+ * // receipt = { operation: 'processData', timestamp: 1234567890000, duration: 100, ... }
  */
 export function withReceipt(fn, options = {}) {
   const [validFn, validOptions] = withReceiptParamsSchema.parse([fn, options]);
@@ -293,13 +316,14 @@ export function withReceipt(fn, options = {}) {
     const endTime = validOptions.endTime ?? performance.now();
     const timestamp = Number(t_ns / 1_000_000n);
 
+    // DETERMINISM FIX: Use deterministicSerialize for canonical JSON
     const receipt = {
       version: '6.0.0-alpha.1',
       operation: validOptions.operation || validFn.name || 'anonymous',
       timestamp,
       duration: endTime - startTime,
-      args: JSON.stringify(args),
-      result: typeof result === 'object' ? JSON.stringify(result) : String(result)
+      args: deterministicSerialize(args),
+      result: deterministicSerialize(result)
     };
 
     return { result, receipt };

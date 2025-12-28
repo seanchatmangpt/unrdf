@@ -40,6 +40,7 @@
     "@unrdf/core": "workspace:*",
     "@unrdf/kgc-4d": "workspace:*",
     "@unrdf/oxigraph": "workspace:*",
+    "@unrdf/v6-core": "workspace:*",
     "zod": "^4.1.13"
   },
   "devDependencies": {

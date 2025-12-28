@@ -8,7 +8,7 @@
     ".": "./src/index.mjs",
     "./deltagate": "./src/deltagate.mjs",
     "./schemas": "./src/schemas.mjs",
-    "./receipts": "./src/receipts.mjs",
+    "./receipts": "./src/receipts/index.mjs",
     "./cli": "./src/cli/index.mjs",
     "./cli/nouns": "./src/cli/nouns.mjs",
     "./cli/verbs": "./src/cli/verbs.mjs",

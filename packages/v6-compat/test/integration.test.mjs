@@ -15,6 +15,7 @@ import {
   MigrationTracker,
 } from '../src/adapters.mjs';
 import { z } from 'zod';
+import { computeBlake3 } from '@unrdf/v6-core/receipts';
 
 describe('P0-003: v6-compat Integration', () => {
   describe('Adapters', () => {
@@ -176,6 +177,89 @@ describe('P0-003: v6-compat Integration', () => {
       const report = tracker.report();
       expect(report.staticAnalysis.n3Imports).toBe(1);
       expect(report.staticAnalysis.dateNowCalls).toBe(1);
+    });
+  });
+
+  describe('withReceipt Determinism (L3 Maturity)', () => {
+    it('produces identical hashes on multiple runs with same context', async () => {
+      // GIVEN: Same function, same input, same context
+      const testFn = (data) => data.map((x) => x * 2);
+      const testData = [1, 2, 3];
+      const context = {
+        t_ns: 1234567890000000000n, // Fixed timestamp
+      };
+      const options = {
+        operation: 'testOperation',
+        context,
+        startTime: 100,
+        endTime: 200,
+      };
+
+      // Create wrapped function
+      const wrappedFn = withReceipt(testFn, options);
+
+      // WHEN: Execute multiple times (pass array as single argument)
+      const { receipt: receipt1 } = await wrappedFn(testData);
+      const { receipt: receipt2 } = await wrappedFn(testData);
+      const { receipt: receipt3 } = await wrappedFn(testData);
+
+      // THEN: All receipts should be IDENTICAL
+      expect(receipt1).toEqual(receipt2);
+      expect(receipt2).toEqual(receipt3);
+
+      // Verify key fields are identical
+      expect(receipt1.timestamp).toBe(receipt2.timestamp);
+      expect(receipt1.duration).toBe(receipt2.duration);
+      expect(receipt1.args).toBe(receipt2.args);
+      expect(receipt1.result).toBe(receipt2.result);
+    });
+
+    it('second execution produces identical receipt when context is fixed', async () => {
+      // GIVEN: Idempotent function with fixed context
+      const processData = withReceipt(
+        (data) => data.map((x) => x * 2),
+        {
+          operation: 'processData',
+          context: { t_ns: 7777777777777777777n },
+          startTime: 10,
+          endTime: 20,
+        }
+      );
+
+      // WHEN: Execute twice
+      const firstRun = await processData([10, 20, 30]);
+      const secondRun = await processData([10, 20, 30]);
+
+      // THEN: Results and receipts MUST be identical
+      expect(firstRun.result).toEqual(secondRun.result);
+      expect(firstRun.receipt).toEqual(secondRun.receipt);
+      expect(firstRun.receipt.timestamp).toBe(secondRun.receipt.timestamp);
+    });
+
+    it('serializes arguments deterministically regardless of property order', async () => {
+      // GIVEN: Function that accepts object arguments
+      const testFn = (obj) => obj.a + obj.b;
+
+      const context = { t_ns: 9999999999999999999n };
+      const options = {
+        operation: 'sumOp',
+        context,
+        startTime: 0,
+        endTime: 1,
+      };
+
+      const wrappedFn = withReceipt(testFn, options);
+
+      // WHEN: Pass objects with same data but different property definition order
+      const obj1 = { a: 1, b: 2 };
+      const obj2 = { b: 2, a: 1 }; // Same data, different order
+
+      const { receipt: receipt1 } = await wrappedFn(obj1);
+      const { receipt: receipt2 } = await wrappedFn(obj2);
+
+      // THEN: Args should be IDENTICAL (deterministic serialization)
+      expect(receipt1.args).toBe(receipt2.args);
+      expect(receipt1.result).toBe(receipt2.result);
     });
   });
 });

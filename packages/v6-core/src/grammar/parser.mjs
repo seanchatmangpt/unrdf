@@ -177,6 +177,7 @@ function parseSPARQL(input) {
   };
 
   const complexity = estimateSPARQLComplexity(ast);
+  ast.complexity = complexity; // Attach complexity to AST
 
   return {
     success: true,
@@ -203,6 +204,7 @@ function parseSHACL(input) {
   };
 
   const complexity = estimateSHACLComplexity(ast);
+  ast.complexity = complexity; // Attach complexity to AST
 
   return {
     success: true,
@@ -229,6 +231,7 @@ function parseN3(input) {
   };
 
   const complexity = estimateN3Complexity(ast);
+  ast.complexity = complexity; // Attach complexity to AST
 
   return {
     success: true,
@@ -255,6 +258,7 @@ function parseOWL(input) {
   };
 
   const complexity = estimateOWLComplexity(ast);
+  ast.complexity = complexity; // Attach complexity to AST
 
   return {
     success: true,
@@ -280,6 +284,7 @@ function parseShEx(input) {
   };
 
   const complexity = estimateShExComplexity(ast);
+  ast.complexity = complexity; // Attach complexity to AST
 
   return {
     success: true,

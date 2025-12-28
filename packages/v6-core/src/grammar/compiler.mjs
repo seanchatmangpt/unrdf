@@ -57,10 +57,10 @@ export const COMPLEXITY_BOUNDS = {
  * Compile options schema
  */
 const CompileOptionsSchema = z.object({
-  strict: z.boolean().optional().default(true),
-  customBounds: z.record(z.any()).optional(),
-  emitReceipts: z.boolean().optional().default(true),
-}).optional();
+  strict: z.boolean().default(true),
+  customBounds: z.any().optional(),
+  emitReceipts: z.boolean().default(true),
+}).passthrough();
 
 /**
  * Compile result schema
