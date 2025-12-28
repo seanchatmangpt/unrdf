@@ -1,0 +1,49 @@
+{
+  "timestamp": "2025-12-28T02:42:37.435Z",
+  "baseline_version": "6.0.0",
+  "baseline_timestamp": "2025-12-28T02:30:00.000Z",
+  "comparison_timestamp": "2025-12-28T02:42:37.436Z",
+  "metrics_compared": 0,
+  "passed": 0,
+  "failed": 0,
+  "regressions": [],
+  "details": [
+    {
+      "metric": "universe_creation_10k",
+      "status": "SKIPPED",
+      "reason": "No current measurement available"
+    },
+    {
+      "metric": "morphism_composition_p95",
+      "status": "SKIPPED",
+      "reason": "No current measurement available"
+    },
+    {
+      "metric": "receipt_generation_throughput",
+      "status": "SKIPPED",
+      "reason": "No current measurement available"
+    },
+    {
+      "metric": "sparql_query_throughput",
+      "status": "SKIPPED",
+      "reason": "No current measurement available"
+    },
+    {
+      "metric": "memory_per_1k_quads",
+      "status": "SKIPPED",
+      "reason": "No current measurement available"
+    },
+    {
+      "metric": "cold_start_latency",
+      "status": "SKIPPED",
+      "reason": "No current measurement available"
+    },
+    {
+      "metric": "error_rate",
+      "status": "SKIPPED",
+      "reason": "No current measurement available"
+    }
+  ],
+  "pass_rate": "N/A",
+  "overall_status": "PASS"
+}

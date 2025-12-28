@@ -1,0 +1,42 @@
+{
+  "timestamp": "2025-12-28T02:50:00.000Z",
+  "benchmark_run_id": "example-v6-fail-regression",
+  "description": "Example v6.0.0 benchmark results - WITH REGRESSIONS (for testing detection)",
+  "metrics": {
+    "universe_creation_10k": {
+      "value": 12.5,
+      "unit": "seconds",
+      "notes": "Slower than baseline (10.5s) - 19% regression, exceeds 10% tolerance"
+    },
+    "morphism_composition_p95": {
+      "value": 5.2,
+      "unit": "ms",
+      "notes": "Slower than baseline (4.2ms) - 23.8% regression, exceeds 10% tolerance"
+    },
+    "receipt_generation_throughput": {
+      "value": 380,
+      "unit": "operations/sec",
+      "notes": "Lower than baseline (425 ops/sec) - 10.6% regression, exceeds 10% tolerance"
+    },
+    "sparql_query_throughput": {
+      "value": 93,
+      "unit": "queries/sec",
+      "notes": "Slightly lower than baseline (95 ops/sec) but within 5% tolerance"
+    },
+    "memory_per_1k_quads": {
+      "value": 9.2,
+      "unit": "MB",
+      "notes": "Higher than baseline (7.8 MB) - 18% regression, exceeds 15% tolerance"
+    },
+    "cold_start_latency": {
+      "value": 250,
+      "unit": "ms",
+      "notes": "Much higher than baseline (185ms) - 35% regression, exceeds 15% tolerance"
+    },
+    "error_rate": {
+      "value": 0.15,
+      "unit": "percent",
+      "notes": "Higher than baseline (0.08%) - 87.5% increase"
+    }
+  }
+}

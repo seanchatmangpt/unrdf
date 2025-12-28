@@ -1,0 +1,1794 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "UNRDF API Reference",
+    "version": "6.0.0",
+    "description": "Complete API reference for all UNRDF packages - RDF processing, SPARQL execution, workflow orchestration, and knowledge graph management",
+    "contact": {
+      "name": "UNRDF Team",
+      "url": "https://github.com/seanchatmangpt/unrdf"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api.unrdf.io",
+      "description": "Production API server"
+    },
+    {
+      "url": "http://localhost:3000",
+      "description": "Local development server"
+    }
+  ],
+  "tags": [
+    {
+      "name": "RDF & Storage",
+      "description": "RDF & Storage packages and APIs"
+    },
+    {
+      "name": "Governance & Policy",
+      "description": "Governance & Policy packages and APIs"
+    },
+    {
+      "name": "Temporal & Events",
+      "description": "Temporal & Events packages and APIs"
+    },
+    {
+      "name": "Streaming & Distribution",
+      "description": "Streaming & Distribution packages and APIs"
+    },
+    {
+      "name": "Workflow & Orchestration",
+      "description": "Workflow & Orchestration packages and APIs"
+    },
+    {
+      "name": "AI & ML",
+      "description": "AI & ML packages and APIs"
+    },
+    {
+      "name": "Infrastructure & Tools",
+      "description": "Infrastructure & Tools packages and APIs"
+    }
+  ],
+  "paths": {
+    "/packages/atomvm": {
+      "get": {
+        "tags": [
+          "Infrastructure & Tools"
+        ],
+        "summary": "Get @unrdf/atomvm package information",
+        "description": "Run AtomVM (Erlang/BEAM VM) in browser and Node.js using WebAssembly",
+        "operationId": "getatomvm",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/atomvm"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Package not found"
+          }
+        }
+      }
+    },
+    "/packages/blockchain": {
+      "get": {
+        "tags": [
+          "Temporal & Events"
+        ],
+        "summary": "Get @unrdf/blockchain package information",
+        "description": "Blockchain integration for UNRDF - Cryptographic receipt anchoring and audit trails",
+        "operationId": "getblockchain",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/blockchain"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Package not found"
+          }
+        }
+      }
+    },
+    "/packages/caching": {
+      "get": {
+        "tags": [
+          "RDF & Storage"
+        ],
+        "summary": "Get @unrdf/caching package information",
+        "description": "Multi-layer caching system for RDF queries with Redis and LRU",
+        "operationId": "getcaching",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/caching"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Package not found"
+          }
+        }
+      }
+    },
+    "/packages/cli": {
+      "get": {
+        "tags": [
+          "Infrastructure & Tools"
+        ],
+        "summary": "Get @unrdf/cli package information",
+        "description": "UNRDF CLI - Command-line Tools for Graph Operations and Context Management",
+        "operationId": "getcli",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/cli"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Package not found"
+          }
+        }
+      }
+    },
+    "/packages/collab": {
+      "get": {
+        "tags": [
+          "RDF & Storage"
+        ],
+        "summary": "Get @unrdf/collab package information",
+        "description": "Real-time collaborative RDF editing using CRDTs (Yjs) with offline-first architecture",
+        "operationId": "getcollab",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/collab"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Package not found"
+          }
+        }
+      }
+    },
+    "/packages/composables": {
+      "get": {
+        "tags": [
+          "Infrastructure & Tools"
+        ],
+        "summary": "Get @unrdf/composables package information",
+        "description": "UNRDF Composables - Vue 3 Composables for Reactive RDF State (Optional Extension)",
+        "operationId": "getcomposables",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/composables"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Package not found"
+          }
+        }
+      }
+    },
+    "/packages/consensus": {
+      "get": {
+        "tags": [
+          "Streaming & Distribution"
+        ],
+        "summary": "Get @unrdf/consensus package information",
+        "description": "Production-grade Raft consensus for distributed workflow coordination",
+        "operationId": "getconsensus",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/consensus"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Package not found"
+          }
+        }
+      }
+    },
+    "/packages/core": {
+      "get": {
+        "tags": [
+          "RDF & Storage"
+        ],
+        "summary": "Get @unrdf/core package information",
+        "description": "UNRDF Core - RDF Graph Operations, SPARQL Execution, and Foundational Substrate",
+        "operationId": "getcore",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/core"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Package not found"
+          }
+        }
+      }
+    },
+    "/packages/dark-matter": {
+      "get": {
+        "tags": [
+          "Infrastructure & Tools"
+        ],
+        "summary": "Get @unrdf/dark-matter package information",
+        "description": "UNRDF Dark Matter - Query Optimization and Performance Analysis (Optional Extension)",
+        "operationId": "getdark_matter",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dark_matter"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Package not found"
+          }
+        }
+      }
+    },
+    "/packages/diataxis-kit": {
+      "get": {
+        "tags": [
+          "Infrastructure & Tools"
+        ],
+        "summary": "Get @unrdf/diataxis-kit package information",
+        "description": "Diátaxis documentation kit for monorepo package inventory and deterministic doc scaffold generation",
+        "operationId": "getdiataxis_kit",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/diataxis_kit"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Package not found"
+          }
+        }
+      }
+    },
+    "/packages/engine-gateway": {
+      "get": {
+        "tags": [
+          "Governance & Policy"
+        ],
+        "summary": "Get @unrdf/engine-gateway package information",
+        "description": "μ(O) Engine Gateway - Enforcement layer for Oxigraph-first, N3-minimal RDF processing",
+        "operationId": "getengine_gateway",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/engine_gateway"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Package not found"
+          }
+        }
+      }
+    },
+    "/packages/federation": {
+      "get": {
+        "tags": [
+          "Streaming & Distribution"
+        ],
+        "summary": "Get @unrdf/federation package information",
+        "description": "UNRDF Federation - Peer Discovery and Distributed Query Execution",
+        "operationId": "getfederation",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/federation"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Package not found"
+          }
+        }
+      }
+    },
+    "/packages/fusion": {
+      "get": {
+        "tags": [
+          "Infrastructure & Tools"
+        ],
+        "summary": "Get @unrdf/fusion package information",
+        "description": "Unified integration layer for 7-day UNRDF innovation - KGC-4D, blockchain, hooks, caching",
+        "operationId": "getfusion",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fusion"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Package not found"
+          }
+        }
+      }
+    },
+    "/packages/graph-analytics": {
+      "get": {
+        "tags": [
+          "RDF & Storage"
+        ],
+        "summary": "Get @unrdf/graph-analytics package information",
+        "description": "Advanced graph analytics for RDF knowledge graphs using graphlib",
+        "operationId": "getgraph_analytics",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/graph_analytics"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Package not found"
+          }
+        }
+      }
+    },
+    "/packages/hooks": {
+      "get": {
+        "tags": [
+          "Governance & Policy"
+        ],
+        "summary": "Get @unrdf/hooks package information",
+        "description": "UNRDF Knowledge Hooks - Policy Definition and Execution Framework",
+        "operationId": "gethooks",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/hooks"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Package not found"
+          }
+        }
+      }
+    },
+    "/packages/kgc-4d": {
+      "get": {
+        "tags": [
+          "Temporal & Events"
+        ],
+        "summary": "Get @unrdf/kgc-4d package information",
+        "description": "KGC 4D Datum & Universe Freeze Engine - Nanosecond-precision event logging with Git-backed snapshots",
+        "operationId": "getkgc_4d",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/kgc_4d"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Package not found"
+          }
+        }
+      }
+    },
+    "/packages/kgc-claude": {
+      "get": {
+        "tags": [
+          "Temporal & Events"
+        ],
+        "summary": "Get @unrdf/kgc-claude package information",
+        "description": "KGC-Claude Substrate - Deterministic run objects, universal checkpoints, bounded autonomy, and multi-agent concurrency for Claude integration",
+        "operationId": "getkgc_claude",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/kgc_claude"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Package not found"
+          }
+        }
+      }
+    },
+    "/packages/kgc-cli": {
+      "get": {
+        "tags": [
+          "Infrastructure & Tools"
+        ],
+        "summary": "Get @unrdf/kgc-cli package information",
+        "description": "KGC CLI - Deterministic extension registry for ~40 workspace packages",
+        "operationId": "getkgc_cli",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/kgc_cli"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Package not found"
+          }
+        }
+      }
+    },
+    "/packages/kgc-substrate": {
+      "get": {
+        "tags": [
+          "Temporal & Events"
+        ],
+        "summary": "Get @unrdf/kgc-substrate package information",
+        "description": "KGC Substrate - Deterministic, hash-stable KnowledgeStore with immutable append-only log",
+        "operationId": "getkgc_substrate",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/kgc_substrate"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Package not found"
+          }
+        }
+      }
+    },
+    "/packages/kgn": {
+      "get": {
+        "tags": [
+          "Infrastructure & Tools"
+        ],
+        "summary": "Get @unrdf/kgn package information",
+        "description": "Deterministic Nunjucks template system with custom filters and frontmatter support",
+        "operationId": "getkgn",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/kgn"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Package not found"
+          }
+        }
+      }
+    },
+    "/packages/knowledge-engine": {
+      "get": {
+        "tags": [
+          "AI & ML"
+        ],
+        "summary": "Get @unrdf/knowledge-engine package information",
+        "description": "UNRDF Knowledge Engine - Rule Engine, Inference, and Pattern Matching (Optional Extension)",
+        "operationId": "getknowledge_engine",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/knowledge_engine"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Package not found"
+          }
+        }
+      }
+    },
+    "/packages/ml-inference": {
+      "get": {
+        "tags": [
+          "AI & ML"
+        ],
+        "summary": "Get @unrdf/ml-inference package information",
+        "description": "UNRDF ML Inference - High-performance ONNX model inference pipeline for RDF streams",
+        "operationId": "getml_inference",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ml_inference"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Package not found"
+          }
+        }
+      }
+    },
+    "/packages/ml-versioning": {
+      "get": {
+        "tags": [
+          "AI & ML"
+        ],
+        "summary": "Get @unrdf/ml-versioning package information",
+        "description": "ML Model Versioning System using TensorFlow.js and UNRDF KGC-4D time-travel capabilities",
+        "operationId": "getml_versioning",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ml_versioning"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Package not found"
+          }
+        }
+      }
+    },
+    "/packages/observability": {
+      "get": {
+        "tags": [
+          "Infrastructure & Tools"
+        ],
+        "summary": "Get @unrdf/observability package information",
+        "description": "Innovative Prometheus/Grafana observability dashboard for UNRDF distributed workflows",
+        "operationId": "getobservability",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/observability"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Package not found"
+          }
+        }
+      }
+    },
+    "/packages/oxigraph": {
+      "get": {
+        "tags": [
+          "RDF & Storage"
+        ],
+        "summary": "Get @unrdf/oxigraph package information",
+        "description": "UNRDF Oxigraph - Graph database benchmarking implementation using Oxigraph SPARQL engine",
+        "operationId": "getoxigraph",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/oxigraph"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Package not found"
+          }
+        }
+      }
+    },
+    "/packages/project-engine": {
+      "get": {
+        "tags": [
+          "Infrastructure & Tools"
+        ],
+        "summary": "Get @unrdf/project-engine package information",
+        "description": "UNRDF Project Engine - Self-hosting Tools and Infrastructure (Development Only)",
+        "operationId": "getproject_engine",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/project_engine"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Package not found"
+          }
+        }
+      }
+    },
+    "/packages/rdf-graphql": {
+      "get": {
+        "tags": [
+          "RDF & Storage"
+        ],
+        "summary": "Get @unrdf/rdf-graphql package information",
+        "description": "Type-safe GraphQL interface for RDF knowledge graphs with automatic schema generation",
+        "operationId": "getrdf_graphql",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/rdf_graphql"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Package not found"
+          }
+        }
+      }
+    },
+    "/packages/semantic-search": {
+      "get": {
+        "tags": [
+          "RDF & Storage"
+        ],
+        "summary": "Get @unrdf/semantic-search package information",
+        "description": "AI-powered semantic search over RDF knowledge graphs using vector embeddings",
+        "operationId": "getsemantic_search",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/semantic_search"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Package not found"
+          }
+        }
+      }
+    },
+    "/packages/serverless": {
+      "get": {
+        "tags": [
+          "Infrastructure & Tools"
+        ],
+        "summary": "Get @unrdf/serverless package information",
+        "description": "UNRDF Serverless - One-click AWS deployment for RDF applications",
+        "operationId": "getserverless",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/serverless"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Package not found"
+          }
+        }
+      }
+    },
+    "/packages/streaming": {
+      "get": {
+        "tags": [
+          "Streaming & Distribution"
+        ],
+        "summary": "Get @unrdf/streaming package information",
+        "description": "UNRDF Streaming - Change Feeds and Real-time Synchronization",
+        "operationId": "getstreaming",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/streaming"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Package not found"
+          }
+        }
+      }
+    },
+    "/packages/yawl": {
+      "get": {
+        "tags": [
+          "Workflow & Orchestration"
+        ],
+        "summary": "Get @unrdf/yawl package information",
+        "description": "YAWL (Yet Another Workflow Language) engine with KGC-4D time-travel and receipt verification",
+        "operationId": "getyawl",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/yawl"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Package not found"
+          }
+        }
+      }
+    },
+    "/packages/yawl-ai": {
+      "get": {
+        "tags": [
+          "Workflow & Orchestration"
+        ],
+        "summary": "Get @unrdf/yawl-ai package information",
+        "description": "AI-powered workflow optimization using TensorFlow.js and YAWL patterns",
+        "operationId": "getyawl_ai",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/yawl_ai"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Package not found"
+          }
+        }
+      }
+    },
+    "/packages/yawl-api": {
+      "get": {
+        "tags": [
+          "Workflow & Orchestration"
+        ],
+        "summary": "Get @unrdf/yawl-api package information",
+        "description": "High-performance REST API framework that exposes YAWL workflows as RESTful APIs with OpenAPI documentation",
+        "operationId": "getyawl_api",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/yawl_api"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Package not found"
+          }
+        }
+      }
+    },
+    "/packages/yawl-durable": {
+      "get": {
+        "tags": [
+          "Workflow & Orchestration"
+        ],
+        "summary": "Get @unrdf/yawl-durable package information",
+        "description": "Durable execution framework inspired by Temporal.io using YAWL and KGC-4D",
+        "operationId": "getyawl_durable",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/yawl_durable"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Package not found"
+          }
+        }
+      }
+    },
+    "/packages/yawl-kafka": {
+      "get": {
+        "tags": [
+          "Streaming & Distribution"
+        ],
+        "summary": "Get @unrdf/yawl-kafka package information",
+        "description": "Apache Kafka event streaming integration for YAWL workflows with Avro serialization",
+        "operationId": "getyawl_kafka",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/yawl_kafka"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Package not found"
+          }
+        }
+      }
+    },
+    "/packages/yawl-langchain": {
+      "get": {
+        "tags": [
+          "Workflow & Orchestration"
+        ],
+        "summary": "Get @unrdf/yawl-langchain package information",
+        "description": "LangChain integration for YAWL workflow engine - AI-powered workflow orchestration with RDF context",
+        "operationId": "getyawl_langchain",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/yawl_langchain"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Package not found"
+          }
+        }
+      }
+    },
+    "/packages/yawl-observability": {
+      "get": {
+        "tags": [
+          "Workflow & Orchestration"
+        ],
+        "summary": "Get @unrdf/yawl-observability package information",
+        "description": "Workflow observability framework with Prometheus metrics and OpenTelemetry tracing for YAWL",
+        "operationId": "getyawl_observability",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/yawl_observability"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Package not found"
+          }
+        }
+      }
+    },
+    "/packages/yawl-queue": {
+      "get": {
+        "tags": [
+          "Streaming & Distribution"
+        ],
+        "summary": "Get @unrdf/yawl-queue package information",
+        "description": "Distributed YAWL workflow execution using BullMQ and Redis",
+        "operationId": "getyawl_queue",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/yawl_queue"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Package not found"
+          }
+        }
+      }
+    },
+    "/packages/yawl-realtime": {
+      "get": {
+        "tags": [
+          "Workflow & Orchestration"
+        ],
+        "summary": "Get @unrdf/yawl-realtime package information",
+        "description": "Real-time collaboration framework for YAWL workflows using Socket.io",
+        "operationId": "getyawl_realtime",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/yawl_realtime"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Package not found"
+          }
+        }
+      }
+    },
+    "/packages/yawl-viz": {
+      "get": {
+        "tags": [
+          "Workflow & Orchestration"
+        ],
+        "summary": "Get @unrdf/yawl-viz package information",
+        "description": "Real-time D3.js visualization for YAWL workflows with Van der Aalst pattern rendering",
+        "operationId": "getyawl_viz",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/yawl_viz"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Package not found"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "atomvm": {
+        "type": "object",
+        "description": "Run AtomVM (Erlang/BEAM VM) in browser and Node.js using WebAssembly",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "@unrdf/atomvm"
+          },
+          "version": {
+            "type": "string",
+            "example": "5.0.1"
+          },
+          "description": {
+            "type": "string",
+            "example": "Run AtomVM (Erlang/BEAM VM) in browser and Node.js using WebAssembly"
+          }
+        }
+      },
+      "blockchain": {
+        "type": "object",
+        "description": "Blockchain integration for UNRDF - Cryptographic receipt anchoring and audit trails",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "@unrdf/blockchain"
+          },
+          "version": {
+            "type": "string",
+            "example": "1.0.0"
+          },
+          "description": {
+            "type": "string",
+            "example": "Blockchain integration for UNRDF - Cryptographic receipt anchoring and audit trails"
+          }
+        }
+      },
+      "caching": {
+        "type": "object",
+        "description": "Multi-layer caching system for RDF queries with Redis and LRU",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "@unrdf/caching"
+          },
+          "version": {
+            "type": "string",
+            "example": "1.0.0"
+          },
+          "description": {
+            "type": "string",
+            "example": "Multi-layer caching system for RDF queries with Redis and LRU"
+          }
+        }
+      },
+      "cli": {
+        "type": "object",
+        "description": "UNRDF CLI - Command-line Tools for Graph Operations and Context Management",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "@unrdf/cli"
+          },
+          "version": {
+            "type": "string",
+            "example": "5.0.1"
+          },
+          "description": {
+            "type": "string",
+            "example": "UNRDF CLI - Command-line Tools for Graph Operations and Context Management"
+          }
+        }
+      },
+      "collab": {
+        "type": "object",
+        "description": "Real-time collaborative RDF editing using CRDTs (Yjs) with offline-first architecture",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "@unrdf/collab"
+          },
+          "version": {
+            "type": "string",
+            "example": "1.0.0"
+          },
+          "description": {
+            "type": "string",
+            "example": "Real-time collaborative RDF editing using CRDTs (Yjs) with offline-first architecture"
+          }
+        }
+      },
+      "composables": {
+        "type": "object",
+        "description": "UNRDF Composables - Vue 3 Composables for Reactive RDF State (Optional Extension)",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "@unrdf/composables"
+          },
+          "version": {
+            "type": "string",
+            "example": "5.0.1"
+          },
+          "description": {
+            "type": "string",
+            "example": "UNRDF Composables - Vue 3 Composables for Reactive RDF State (Optional Extension)"
+          }
+        }
+      },
+      "consensus": {
+        "type": "object",
+        "description": "Production-grade Raft consensus for distributed workflow coordination",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "@unrdf/consensus"
+          },
+          "version": {
+            "type": "string",
+            "example": "1.0.0"
+          },
+          "description": {
+            "type": "string",
+            "example": "Production-grade Raft consensus for distributed workflow coordination"
+          }
+        }
+      },
+      "core": {
+        "type": "object",
+        "description": "UNRDF Core - RDF Graph Operations, SPARQL Execution, and Foundational Substrate",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "@unrdf/core"
+          },
+          "version": {
+            "type": "string",
+            "example": "5.0.1"
+          },
+          "description": {
+            "type": "string",
+            "example": "UNRDF Core - RDF Graph Operations, SPARQL Execution, and Foundational Substrate"
+          }
+        }
+      },
+      "dark_matter": {
+        "type": "object",
+        "description": "UNRDF Dark Matter - Query Optimization and Performance Analysis (Optional Extension)",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "@unrdf/dark-matter"
+          },
+          "version": {
+            "type": "string",
+            "example": "5.0.1"
+          },
+          "description": {
+            "type": "string",
+            "example": "UNRDF Dark Matter - Query Optimization and Performance Analysis (Optional Extension)"
+          }
+        }
+      },
+      "diataxis_kit": {
+        "type": "object",
+        "description": "Diátaxis documentation kit for monorepo package inventory and deterministic doc scaffold generation",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "@unrdf/diataxis-kit"
+          },
+          "version": {
+            "type": "string",
+            "example": "1.0.0"
+          },
+          "description": {
+            "type": "string",
+            "example": "Diátaxis documentation kit for monorepo package inventory and deterministic doc scaffold generation"
+          }
+        }
+      },
+      "engine_gateway": {
+        "type": "object",
+        "description": "μ(O) Engine Gateway - Enforcement layer for Oxigraph-first, N3-minimal RDF processing",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "@unrdf/engine-gateway"
+          },
+          "version": {
+            "type": "string",
+            "example": "5.0.1"
+          },
+          "description": {
+            "type": "string",
+            "example": "μ(O) Engine Gateway - Enforcement layer for Oxigraph-first, N3-minimal RDF processing"
+          }
+        }
+      },
+      "federation": {
+        "type": "object",
+        "description": "UNRDF Federation - Peer Discovery and Distributed Query Execution",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "@unrdf/federation"
+          },
+          "version": {
+            "type": "string",
+            "example": "5.0.1"
+          },
+          "description": {
+            "type": "string",
+            "example": "UNRDF Federation - Peer Discovery and Distributed Query Execution"
+          }
+        }
+      },
+      "fusion": {
+        "type": "object",
+        "description": "Unified integration layer for 7-day UNRDF innovation - KGC-4D, blockchain, hooks, caching",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "@unrdf/fusion"
+          },
+          "version": {
+            "type": "string",
+            "example": "1.0.0"
+          },
+          "description": {
+            "type": "string",
+            "example": "Unified integration layer for 7-day UNRDF innovation - KGC-4D, blockchain, hooks, caching"
+          }
+        }
+      },
+      "graph_analytics": {
+        "type": "object",
+        "description": "Advanced graph analytics for RDF knowledge graphs using graphlib",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "@unrdf/graph-analytics"
+          },
+          "version": {
+            "type": "string",
+            "example": "1.0.0"
+          },
+          "description": {
+            "type": "string",
+            "example": "Advanced graph analytics for RDF knowledge graphs using graphlib"
+          }
+        }
+      },
+      "hooks": {
+        "type": "object",
+        "description": "UNRDF Knowledge Hooks - Policy Definition and Execution Framework",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "@unrdf/hooks"
+          },
+          "version": {
+            "type": "string",
+            "example": "5.0.1"
+          },
+          "description": {
+            "type": "string",
+            "example": "UNRDF Knowledge Hooks - Policy Definition and Execution Framework"
+          }
+        }
+      },
+      "kgc_4d": {
+        "type": "object",
+        "description": "KGC 4D Datum & Universe Freeze Engine - Nanosecond-precision event logging with Git-backed snapshots",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "@unrdf/kgc-4d"
+          },
+          "version": {
+            "type": "string",
+            "example": "5.0.1"
+          },
+          "description": {
+            "type": "string",
+            "example": "KGC 4D Datum & Universe Freeze Engine - Nanosecond-precision event logging with Git-backed snapshots"
+          }
+        }
+      },
+      "kgc_claude": {
+        "type": "object",
+        "description": "KGC-Claude Substrate - Deterministic run objects, universal checkpoints, bounded autonomy, and multi-agent concurrency for Claude integration",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "@unrdf/kgc-claude"
+          },
+          "version": {
+            "type": "string",
+            "example": "5.0.0"
+          },
+          "description": {
+            "type": "string",
+            "example": "KGC-Claude Substrate - Deterministic run objects, universal checkpoints, bounded autonomy, and multi-agent concurrency for Claude integration"
+          }
+        }
+      },
+      "kgc_cli": {
+        "type": "object",
+        "description": "KGC CLI - Deterministic extension registry for ~40 workspace packages",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "@unrdf/kgc-cli"
+          },
+          "version": {
+            "type": "string",
+            "example": "5.0.1"
+          },
+          "description": {
+            "type": "string",
+            "example": "KGC CLI - Deterministic extension registry for ~40 workspace packages"
+          }
+        }
+      },
+      "kgc_substrate": {
+        "type": "object",
+        "description": "KGC Substrate - Deterministic, hash-stable KnowledgeStore with immutable append-only log",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "@unrdf/kgc-substrate"
+          },
+          "version": {
+            "type": "string",
+            "example": "1.0.0"
+          },
+          "description": {
+            "type": "string",
+            "example": "KGC Substrate - Deterministic, hash-stable KnowledgeStore with immutable append-only log"
+          }
+        }
+      },
+      "kgn": {
+        "type": "object",
+        "description": "Deterministic Nunjucks template system with custom filters and frontmatter support",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "@unrdf/kgn"
+          },
+          "version": {
+            "type": "string",
+            "example": "5.0.1"
+          },
+          "description": {
+            "type": "string",
+            "example": "Deterministic Nunjucks template system with custom filters and frontmatter support"
+          }
+        }
+      },
+      "knowledge_engine": {
+        "type": "object",
+        "description": "UNRDF Knowledge Engine - Rule Engine, Inference, and Pattern Matching (Optional Extension)",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "@unrdf/knowledge-engine"
+          },
+          "version": {
+            "type": "string",
+            "example": "5.0.1"
+          },
+          "description": {
+            "type": "string",
+            "example": "UNRDF Knowledge Engine - Rule Engine, Inference, and Pattern Matching (Optional Extension)"
+          }
+        }
+      },
+      "ml_inference": {
+        "type": "object",
+        "description": "UNRDF ML Inference - High-performance ONNX model inference pipeline for RDF streams",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "@unrdf/ml-inference"
+          },
+          "version": {
+            "type": "string",
+            "example": "5.0.1"
+          },
+          "description": {
+            "type": "string",
+            "example": "UNRDF ML Inference - High-performance ONNX model inference pipeline for RDF streams"
+          }
+        }
+      },
+      "ml_versioning": {
+        "type": "object",
+        "description": "ML Model Versioning System using TensorFlow.js and UNRDF KGC-4D time-travel capabilities",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "@unrdf/ml-versioning"
+          },
+          "version": {
+            "type": "string",
+            "example": "1.0.0"
+          },
+          "description": {
+            "type": "string",
+            "example": "ML Model Versioning System using TensorFlow.js and UNRDF KGC-4D time-travel capabilities"
+          }
+        }
+      },
+      "observability": {
+        "type": "object",
+        "description": "Innovative Prometheus/Grafana observability dashboard for UNRDF distributed workflows",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "@unrdf/observability"
+          },
+          "version": {
+            "type": "string",
+            "example": "1.0.0"
+          },
+          "description": {
+            "type": "string",
+            "example": "Innovative Prometheus/Grafana observability dashboard for UNRDF distributed workflows"
+          }
+        }
+      },
+      "oxigraph": {
+        "type": "object",
+        "description": "UNRDF Oxigraph - Graph database benchmarking implementation using Oxigraph SPARQL engine",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "@unrdf/oxigraph"
+          },
+          "version": {
+            "type": "string",
+            "example": "5.0.1"
+          },
+          "description": {
+            "type": "string",
+            "example": "UNRDF Oxigraph - Graph database benchmarking implementation using Oxigraph SPARQL engine"
+          }
+        }
+      },
+      "project_engine": {
+        "type": "object",
+        "description": "UNRDF Project Engine - Self-hosting Tools and Infrastructure (Development Only)",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "@unrdf/project-engine"
+          },
+          "version": {
+            "type": "string",
+            "example": "5.0.1"
+          },
+          "description": {
+            "type": "string",
+            "example": "UNRDF Project Engine - Self-hosting Tools and Infrastructure (Development Only)"
+          }
+        }
+      },
+      "rdf_graphql": {
+        "type": "object",
+        "description": "Type-safe GraphQL interface for RDF knowledge graphs with automatic schema generation",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "@unrdf/rdf-graphql"
+          },
+          "version": {
+            "type": "string",
+            "example": "1.0.0"
+          },
+          "description": {
+            "type": "string",
+            "example": "Type-safe GraphQL interface for RDF knowledge graphs with automatic schema generation"
+          }
+        }
+      },
+      "semantic_search": {
+        "type": "object",
+        "description": "AI-powered semantic search over RDF knowledge graphs using vector embeddings",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "@unrdf/semantic-search"
+          },
+          "version": {
+            "type": "string",
+            "example": "1.0.0"
+          },
+          "description": {
+            "type": "string",
+            "example": "AI-powered semantic search over RDF knowledge graphs using vector embeddings"
+          }
+        }
+      },
+      "serverless": {
+        "type": "object",
+        "description": "UNRDF Serverless - One-click AWS deployment for RDF applications",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "@unrdf/serverless"
+          },
+          "version": {
+            "type": "string",
+            "example": "1.0.0"
+          },
+          "description": {
+            "type": "string",
+            "example": "UNRDF Serverless - One-click AWS deployment for RDF applications"
+          }
+        }
+      },
+      "streaming": {
+        "type": "object",
+        "description": "UNRDF Streaming - Change Feeds and Real-time Synchronization",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "@unrdf/streaming"
+          },
+          "version": {
+            "type": "string",
+            "example": "5.0.1"
+          },
+          "description": {
+            "type": "string",
+            "example": "UNRDF Streaming - Change Feeds and Real-time Synchronization"
+          }
+        }
+      },
+      "yawl": {
+        "type": "object",
+        "description": "YAWL (Yet Another Workflow Language) engine with KGC-4D time-travel and receipt verification",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "@unrdf/yawl"
+          },
+          "version": {
+            "type": "string",
+            "example": "5.0.0"
+          },
+          "description": {
+            "type": "string",
+            "example": "YAWL (Yet Another Workflow Language) engine with KGC-4D time-travel and receipt verification"
+          }
+        }
+      },
+      "yawl_ai": {
+        "type": "object",
+        "description": "AI-powered workflow optimization using TensorFlow.js and YAWL patterns",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "@unrdf/yawl-ai"
+          },
+          "version": {
+            "type": "string",
+            "example": "1.0.0"
+          },
+          "description": {
+            "type": "string",
+            "example": "AI-powered workflow optimization using TensorFlow.js and YAWL patterns"
+          }
+        }
+      },
+      "yawl_api": {
+        "type": "object",
+        "description": "High-performance REST API framework that exposes YAWL workflows as RESTful APIs with OpenAPI documentation",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "@unrdf/yawl-api"
+          },
+          "version": {
+            "type": "string",
+            "example": "1.0.0"
+          },
+          "description": {
+            "type": "string",
+            "example": "High-performance REST API framework that exposes YAWL workflows as RESTful APIs with OpenAPI documentation"
+          }
+        }
+      },
+      "yawl_durable": {
+        "type": "object",
+        "description": "Durable execution framework inspired by Temporal.io using YAWL and KGC-4D",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "@unrdf/yawl-durable"
+          },
+          "version": {
+            "type": "string",
+            "example": "0.1.0"
+          },
+          "description": {
+            "type": "string",
+            "example": "Durable execution framework inspired by Temporal.io using YAWL and KGC-4D"
+          }
+        }
+      },
+      "yawl_kafka": {
+        "type": "object",
+        "description": "Apache Kafka event streaming integration for YAWL workflows with Avro serialization",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "@unrdf/yawl-kafka"
+          },
+          "version": {
+            "type": "string",
+            "example": "1.0.0"
+          },
+          "description": {
+            "type": "string",
+            "example": "Apache Kafka event streaming integration for YAWL workflows with Avro serialization"
+          }
+        }
+      },
+      "yawl_langchain": {
+        "type": "object",
+        "description": "LangChain integration for YAWL workflow engine - AI-powered workflow orchestration with RDF context",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "@unrdf/yawl-langchain"
+          },
+          "version": {
+            "type": "string",
+            "example": "1.0.0"
+          },
+          "description": {
+            "type": "string",
+            "example": "LangChain integration for YAWL workflow engine - AI-powered workflow orchestration with RDF context"
+          }
+        }
+      },
+      "yawl_observability": {
+        "type": "object",
+        "description": "Workflow observability framework with Prometheus metrics and OpenTelemetry tracing for YAWL",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "@unrdf/yawl-observability"
+          },
+          "version": {
+            "type": "string",
+            "example": "1.0.0"
+          },
+          "description": {
+            "type": "string",
+            "example": "Workflow observability framework with Prometheus metrics and OpenTelemetry tracing for YAWL"
+          }
+        }
+      },
+      "yawl_queue": {
+        "type": "object",
+        "description": "Distributed YAWL workflow execution using BullMQ and Redis",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "@unrdf/yawl-queue"
+          },
+          "version": {
+            "type": "string",
+            "example": "1.0.0"
+          },
+          "description": {
+            "type": "string",
+            "example": "Distributed YAWL workflow execution using BullMQ and Redis"
+          }
+        }
+      },
+      "yawl_realtime": {
+        "type": "object",
+        "description": "Real-time collaboration framework for YAWL workflows using Socket.io",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "@unrdf/yawl-realtime"
+          },
+          "version": {
+            "type": "string",
+            "example": "1.0.0"
+          },
+          "description": {
+            "type": "string",
+            "example": "Real-time collaboration framework for YAWL workflows using Socket.io"
+          }
+        }
+      },
+      "yawl_viz": {
+        "type": "object",
+        "description": "Real-time D3.js visualization for YAWL workflows with Van der Aalst pattern rendering",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "@unrdf/yawl-viz"
+          },
+          "version": {
+            "type": "string",
+            "example": "1.0.0"
+          },
+          "description": {
+            "type": "string",
+            "example": "Real-time D3.js visualization for YAWL workflows with Van der Aalst pattern rendering"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      },
+      "apiKey": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    }
+  }
+}
