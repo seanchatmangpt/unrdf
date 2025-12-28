@@ -18,7 +18,7 @@ export function compileProfile(profileObj) {
   const parseResult = ConventionsProfileSchema.safeParse(profileObj);
 
   if (!parseResult.success) {
-    const errors = parseResult.error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join(', ');
+    const errors = parseResult.error.issues.map(e => `${e.path.join('.')}: ${e.message}`).join(', ');
     throw new Error(`Invalid profile: ${errors}`);
   }
 
