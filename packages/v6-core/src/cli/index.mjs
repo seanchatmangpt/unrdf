@@ -276,8 +276,16 @@ export * from './verbs.mjs';
 // =============================================================================
 
 /**
- * Legacy: V6_COMMANDS object
- * Stub object for backward compatibility
+ * Legacy V6 commands registry for backward compatibility
+ * @deprecated Use CLI extensions directly via buildV6CittyTree
+ * @constant {Object}
+ * @property {Object} receipt:create - Create a new receipt command
+ * @property {Object} receipt:verify - Verify a receipt command
+ * @property {Object} receipt:chain - Create a receipt chain command
+ * @property {Object} delta:propose - Propose a delta command
+ * @property {Object} delta:apply - Apply a delta command
+ * @property {Object} grammar:compile - Compile grammar command
+ * @property {Object} grammar:validate - Validate against grammar command
  */
 export const V6_COMMANDS = {
   'receipt:create': { description: 'Create a new receipt' },
@@ -287,6 +295,8 @@ export const V6_COMMANDS = {
   'delta:apply': { description: 'Apply a delta' },
   'grammar:compile': { description: 'Compile grammar' },
   'grammar:validate': { description: 'Validate against grammar' },
+  'grammar:show': { description: 'Show grammar definition' },
+  'v6:status': { description: 'Show v6 status' },
 };
 
 /**

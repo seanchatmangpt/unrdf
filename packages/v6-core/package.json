@@ -59,7 +59,8 @@
     "@unrdf/blockchain": "workspace:*",
     "citty": "^0.1.5",
     "zod": "^3.22.4",
-    "hash-wasm": "^4.11.0"
+    "hash-wasm": "^4.11.0",
+    "mustache": "^4.2.0"
   },
   "devDependencies": {
     "@types/node": "^20.10.0",

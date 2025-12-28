@@ -70,7 +70,7 @@ export const JustificationSchema = z.object({
  */
 export const ExecutionPayloadSchema = z.object({
   /** The decision made (e.g., 'APPROVE', 'ENABLE', 'COMPLETE') */
-  decision: z.string(),
+  decision: z.string().optional(),
   /** Justification for the decision */
   justification: JustificationSchema.optional(),
   /** Actor who made the decision */

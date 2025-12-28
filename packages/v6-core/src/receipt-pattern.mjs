@@ -11,7 +11,7 @@
  */
 
 import { z } from 'zod';
-import { createHash } from 'crypto';
+import { blake3 } from 'hash-wasm';
 
 /**
  * Deterministic Context Schema
@@ -100,17 +100,19 @@ export const ReceiptProfileSchema = z.object({
 
 /**
  * BLAKE3 Hash Utility
- * Uses SHA-256 as fallback (BLAKE3 not in Node.js crypto by default)
- * In production, use @noble/hashes/blake3 for actual BLAKE3
+ * Provides deterministic, cryptographically secure hashing using BLAKE3.
+ * BLAKE3 is faster than SHA-256 and provides better security properties.
  *
- * @param {string} data - Data to hash
- * @returns {string} Hex-encoded hash (64 chars)
+ * @param {string|object} data - Data to hash (will be stringified if object)
+ * @returns {Promise<string>} Hex-encoded BLAKE3 hash (64 characters)
+ *
+ * @example
+ * const hash = await blake3Hash('test data');
+ * console.log(hash); // 64-character hex string
  */
-export function blake3Hash(data) {
-  // Using SHA-256 as deterministic placeholder
-  // TODO: Replace with actual BLAKE3 when @noble/hashes/blake3 available
-  const hash = createHash('sha256').update(data).digest('hex');
-  return hash;
+export async function blake3Hash(data) {
+  const serialized = typeof data === 'string' ? data : JSON.stringify(data);
+  return await blake3(serialized);
 }
 
 /**
@@ -123,6 +125,7 @@ export function blake3Hash(data) {
 export function canonicalize(obj) {
   if (obj === null) return 'null';
   if (obj === undefined) return '';
+  if (typeof obj === 'bigint') return `"${obj.toString()}"`;
   if (typeof obj !== 'object') return JSON.stringify(obj);
 
   if (Array.isArray(obj)) {
@@ -136,15 +139,19 @@ export function canonicalize(obj) {
 
 /**
  * Generate deterministic UUID from content hash
- * Not a true UUID, but deterministic identifier from hash
+ * Creates a valid UUID v4 format from a hash string
  *
- * @param {string} contentHash - Hash to derive UUID from
- * @returns {string} UUID v4 format string
+ * @param {string} contentHash - Hash to derive UUID from (min 32 hex chars)
+ * @returns {string} Valid UUID v4 format string
  */
 export function deterministicUUID(contentHash) {
   // Take first 32 hex chars and format as UUID v4
   const hex = contentHash.slice(0, 32);
-  return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-4${hex.slice(13, 16)}-${hex.slice(16, 20)}-${hex.slice(20, 32)}`;
+
+  // Set version 4 (0100xxxx) and variant 10xxxxxx for RFC 4122 compliance
+  const variant = (parseInt(hex.slice(16, 18), 16) & 0x3f | 0x80).toString(16).padStart(2, '0');
+
+  return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-4${hex.slice(12, 15)}-${variant}${hex.slice(18, 20)}-${hex.slice(20, 32)}`;
 }
 
 /**
@@ -207,8 +214,8 @@ export function withReceipt(fn, options = {}) {
       duration_ms: endTime - startTime,
     };
 
-    // Hash payload
-    const payloadHash = blake3Hash(canonicalize(payload));
+    // Hash payload (await BLAKE3)
+    const payloadHash = await blake3Hash(canonicalize(payload));
 
     // Build receipt
     const receiptData = {
@@ -228,9 +235,9 @@ export function withReceipt(fn, options = {}) {
       payload,
     };
 
-    // Hash receipt (excluding receiptHash field itself)
+    // Hash receipt (excluding receiptHash field itself, await BLAKE3)
     const receiptForHashing = { ...receiptData, receiptHash: undefined };
-    receiptData.receiptHash = blake3Hash(canonicalize(receiptForHashing));
+    receiptData.receiptHash = await blake3Hash(canonicalize(receiptForHashing));
 
     // Validate receipt schema
     const receipt = ReceiptProfileSchema.parse(receiptData);

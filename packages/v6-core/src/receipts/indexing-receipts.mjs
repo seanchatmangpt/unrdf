@@ -36,13 +36,13 @@ export const IndexResultSchema = z.object({
  * Pure function: Create index
  *
  * @param {Object} config - Index configuration
- * @returns {Object} Index result
+ * @returns {Promise<Object>} Index result
  */
-function createIndexImpl(config) {
+async function createIndexImpl(config) {
   const validated = IndexConfigSchema.parse(config);
 
-  // Generate index hash
-  const indexHash = blake3Hash(canonicalize(validated));
+  // Generate index hash using BLAKE3
+  const indexHash = await blake3Hash(canonicalize(validated));
   const indexId = `idx-${indexHash.slice(0, 16)}`;
 
   return {

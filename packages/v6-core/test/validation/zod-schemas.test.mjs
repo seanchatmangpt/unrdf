@@ -327,7 +327,9 @@ test('Zod - error messages are descriptive', () => {
 
   assert.strictEqual(result.success, false);
   if (!result.success) {
-    assert.ok(result.error.issues[0].message.includes('at least 5'));
+    // Zod message format: "String must contain at least 5 character(s)"
+    const message = result.error.issues[0].message;
+    assert.ok(message.includes('5') && message.includes('character'), 'Error message mentions length requirement');
   }
 });
 

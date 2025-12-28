@@ -20,60 +20,134 @@ let mockDB = {
 if (typeof indexedDB === 'undefined') {
   global.indexedDB = {
     open: (dbName, version) => {
-      return {
-        result: {
-          objectStoreNames: {
-            contains: (name) => true,
-          },
-          transaction: (stores, mode) => {
-            const getStore = (storeName) => ({
-              get: (key) => ({
-                result: mockDB[storeName === 'receipts' ? 'receipts' : 'merkleTrees'].get(key),
-                onerror: null,
-                onsuccess: null,
-              }),
-              put: (obj) => ({
-                result: mockDB[storeName === 'receipts' ? 'receipts' : 'merkleTrees'].set(obj.id, obj),
-                onerror: null,
-                onsuccess: null,
-              }),
-              getAll: () => ({
-                result: Array.from(mockDB[storeName === 'receipts' ? 'receipts' : 'merkleTrees'].values()),
-                onerror: null,
-                onsuccess: null,
-              }),
-              clear: () => ({
-                onerror: null,
-                oncomplete: null,
-              }),
-              index: (name) => ({
-                get: (val) => ({
-                  result: Array.from(mockDB.receipts.values()).find(r => r[name] === val),
-                  onerror: null,
-                  onsuccess: null,
-                }),
-                getAll: () => ({
-                  result: Array.from(mockDB.receipts.values()),
-                  onerror: null,
-                  onsuccess: null,
-                }),
-              }),
-            });
+      const db = {
+        objectStoreNames: {
+          contains: (name) => true,
+        },
+        transaction: (stores, mode) => {
+          const storeArray = Array.isArray(stores) ? stores : [stores];
+          const getStore = (storeName) => {
+            const mapKey = storeName === 'receipts' ? 'receipts' : 'merkleTrees';
 
             return {
-              objectStore: getStore,
-              onerror: null,
-              oncomplete: null,
+              get: (key) => {
+                const request = {
+                  result: mockDB[mapKey].get(key),
+                  error: null,
+                  onerror: null,
+                  onsuccess: null,
+                };
+                queueMicrotask(() => {
+                  if (request.onsuccess) request.onsuccess();
+                });
+                return request;
+              },
+              put: (obj) => {
+                const request = {
+                  result: undefined,
+                  error: null,
+                  onerror: null,
+                  onsuccess: null,
+                };
+                mockDB[mapKey].set(obj.id, obj);
+                queueMicrotask(() => {
+                  if (request.onsuccess) request.onsuccess();
+                });
+                return request;
+              },
+              getAll: (range) => {
+                const request = {
+                  result: Array.from(mockDB[mapKey].values()),
+                  error: null,
+                  onerror: null,
+                  onsuccess: null,
+                };
+                queueMicrotask(() => {
+                  if (request.onsuccess) request.onsuccess();
+                });
+                return request;
+              },
+              clear: () => {
+                const request = {
+                  error: null,
+                  onerror: null,
+                  onsuccess: null,
+                };
+                mockDB[mapKey].clear();
+                queueMicrotask(() => {
+                  if (request.onsuccess) request.onsuccess();
+                });
+                return request;
+              },
+              index: (name) => ({
+                get: (val) => {
+                  const request = {
+                    result: Array.from(mockDB.receipts.values()).find(r => r[name] === val),
+                    error: null,
+                    onerror: null,
+                    onsuccess: null,
+                  };
+                  queueMicrotask(() => {
+                    if (request.onsuccess) request.onsuccess();
+                  });
+                  return request;
+                },
+                getAll: (range) => {
+                  const request = {
+                    result: Array.from(mockDB.receipts.values()),
+                    error: null,
+                    onerror: null,
+                    onsuccess: null,
+                  };
+                  queueMicrotask(() => {
+                    if (request.onsuccess) request.onsuccess();
+                  });
+                  return request;
+                },
+              }),
             };
-          },
-          close: () => {},
+          };
+
+          const tx = {
+            objectStore: getStore,
+            error: null,
+            onerror: null,
+            oncomplete: null,
+          };
+
+          // Trigger oncomplete after microtask queue
+          queueMicrotask(() => {
+            if (tx.oncomplete) tx.oncomplete();
+          });
+
+          return tx;
         },
+        close: () => {},
+      };
+
+      const request = {
+        result: db,
         error: null,
         onerror: null,
         onsuccess: null,
         onupgradeneeded: null,
       };
+
+      // Trigger onsuccess asynchronously
+      queueMicrotask(() => {
+        if (request.onsuccess) request.onsuccess();
+      });
+
+      return request;
     },
+  };
+
+  // Mock IDBKeyRange
+  global.IDBKeyRange = {
+    only: (value) => ({ only: value }),
+    lowerBound: (lower, open) => ({ lower, lowerOpen: open }),
+    upperBound: (upper, open) => ({ upper, upperOpen: open }),
+    bound: (lower, upper, lowerOpen, upperOpen) => ({ lower, upper, lowerOpen, upperOpen }),
   };
 }
 
@@ -85,27 +159,34 @@ test('BrowserReceiptStore - create and init', async (t) => {
   // Note: In real browser environment, this would actually open IndexedDB
   // For Node.js tests, we're using mocks
   await store.init();
+  // Wait for microtasks to complete
+  await new Promise(resolve => setImmediate(resolve));
   assert.ok(store.db, 'DB initialized');
 });
 
 test('BrowserReceiptStore - save and retrieve receipt', async (t) => {
   const store = new BrowserReceiptStore({ dbName: 'test-receipts-2' });
   await store.init();
+  await new Promise(resolve => setImmediate(resolve));
 
-  const receipt = await createReceipt({
-    receiptType: 'execution',
-    payload: { task: 'test-task' },
+  const receipt = await createReceipt('execution', {
+    eventType: 'TASK_COMPLETED',
+    caseId: 'case-123',
+    taskId: 'task-456',
+    payload: { result: 'success', data: { value: 42 } },
   });
 
-  // Note: In mock environment, this tests the logic
-  // In real browser, this would test IndexedDB operations
-  try {
-    await store.saveReceipt(receipt);
-    console.log('✅ Receipt saved successfully');
-  } catch (error) {
-    // Expected in mock environment
-    console.log('⚠️ Save failed (expected in mock environment):', error.message);
-  }
+  // Save receipt
+  await store.saveReceipt(receipt);
+  await new Promise(resolve => setImmediate(resolve));
+  assert.ok(true, 'Receipt saved successfully');
+
+  // Retrieve receipt
+  const retrieved = await store.getReceipt(receipt.id);
+  await new Promise(resolve => setImmediate(resolve));
+  assert.ok(retrieved, 'Receipt retrieved');
+  assert.strictEqual(retrieved.id, receipt.id, 'Receipt ID matches');
+  assert.strictEqual(retrieved.receiptType, 'execution', 'Receipt type matches');
 });
 
 test('BrowserReceiptStore - handles errors gracefully', async (t) => {
@@ -113,7 +194,10 @@ test('BrowserReceiptStore - handles errors gracefully', async (t) => {
 
   // Should throw error when not initialized
   await assert.rejects(
-    async () => await store.saveReceipt({}),
+    async () => {
+      await store.saveReceipt({});
+      await new Promise(resolve => setImmediate(resolve));
+    },
     /Store not initialized/,
     'Throws error when not initialized'
   );

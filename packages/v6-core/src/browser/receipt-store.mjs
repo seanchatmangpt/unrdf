@@ -10,6 +10,8 @@
  * @module @unrdf/v6-core/browser/receipt-store
  */
 
+/* global indexedDB, IDBKeyRange */
+
 import { verifyBaseReceipt } from '../receipts/base-receipt.mjs';
 import { buildMerkleTree, getProofPath, verifyInclusion } from '../receipts/merkle/tree.mjs';
 

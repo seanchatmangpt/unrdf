@@ -36,9 +36,9 @@ export const ParsedGrammarSchema = z.object({
  * Pure function: Parse grammar
  *
  * @param {Object} grammar - Grammar source
- * @returns {Object} Parsed grammar with version hash
+ * @returns {Promise<Object>} Parsed grammar with version hash
  */
-function parseGrammarImpl(grammar) {
+async function parseGrammarImpl(grammar) {
   const validated = GrammarSchema.parse(grammar);
 
   // Simulate grammar parsing (deterministic)
@@ -47,8 +47,8 @@ function parseGrammarImpl(grammar) {
     rules: validated.rules || [],
   };
 
-  // Generate version hash from grammar source
-  const versionHash = blake3Hash(canonicalize({ source: validated.source, version: validated.version }));
+  // Generate version hash from grammar source using BLAKE3
+  const versionHash = await blake3Hash(canonicalize({ source: validated.source, version: validated.version }));
 
   return {
     ast,

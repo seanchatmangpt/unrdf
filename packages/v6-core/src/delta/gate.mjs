@@ -217,11 +217,11 @@ export class DeltaGate {
    *
    * Strategy: delta-wins (new value replaces old value)
    *
-   * @param {Object} conflict - Conflict to resolve
+   * @param {Object} _conflict - Conflict to resolve
    * @returns {string} Resolution strategy
    * @private
    */
-  _defaultConflictResolver(conflict) {
+  _defaultConflictResolver(_conflict) {
     return 'delta-wins';
   }
 

@@ -33,7 +33,8 @@ export {
 } from './runtime-gate.mjs';
 
 /**
- * v6 Grammar version
+ * v6 Grammar version identifier
+ * @constant {string}
  */
 export const GRAMMAR_VERSION = '6.0.0-alpha.1';
 
@@ -109,7 +110,12 @@ export async function grammarClosurePipeline(input, grammarType, executeFn, stor
 // =============================================================================
 
 /**
- * Legacy: V6_GRAMMAR object
+ * Legacy V6_GRAMMAR object for backward compatibility
+ * @deprecated Use grammarClosurePipeline directly
+ * @constant {Object}
+ * @property {string} version - Grammar version
+ * @property {string[]} types - Supported grammar types
+ * @property {Function} pipeline - Grammar processing pipeline
  */
 export const V6_GRAMMAR = {
   version: GRAMMAR_VERSION,
@@ -118,7 +124,13 @@ export const V6_GRAMMAR = {
 };
 
 /**
- * Legacy: getGrammarDefinition()
+ * Get grammar definition for a specific grammar type
+ * @deprecated Legacy compatibility function
+ * @param {string} grammarType - Grammar type to query
+ * @returns {Object} Grammar definition with type, version, and support status
+ * @example
+ * const def = getGrammarDefinition('SPARQL');
+ * // { type: 'SPARQL', version: '6.0.0-alpha.1', supported: true }
  */
 export function getGrammarDefinition(grammarType) {
   return {
@@ -129,7 +141,14 @@ export function getGrammarDefinition(grammarType) {
 }
 
 /**
- * Legacy: validateAgainstGrammar()
+ * Validate data against specified grammar type
+ * @deprecated Legacy compatibility function - always returns valid
+ * @param {any} data - Data to validate
+ * @param {string} grammarType - Grammar type for validation
+ * @returns {Promise<Object>} Validation result with status, type, and timestamp
+ * @example
+ * const result = await validateAgainstGrammar(myData, 'SPARQL');
+ * // { valid: true, grammarType: 'SPARQL', timestamp: '2025-01-01T00:00:00.000Z' }
  */
 export async function validateAgainstGrammar(data, grammarType) {
   return {

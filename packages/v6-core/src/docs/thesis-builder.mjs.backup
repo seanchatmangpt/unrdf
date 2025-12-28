@@ -14,7 +14,7 @@ import {
   DocTemplateSchema
 } from './thesis-builder.schema.mjs';
 import { createStore } from '@unrdf/oxigraph';
-import * as TemplateRenderer from './template-renderer.mjs';
+import Mustache from 'mustache';
 
 /**
  * @typedef {Object} ThesisConfig
@@ -352,7 +352,7 @@ export async function loadOntology(ontologyPath) {
 }
 
 /**
- * Render documentation from ontology via SPARQL CONSTRUCT
+ * Render documentation from ontology via SPARQL CONSTRUCT (STUB)
  * @param {string} ontologyPath - Path to .ttl ontology
  * @param {string} outputDir - Output directory for generated docs
  * @param {Object} [config] - Rendering configuration
@@ -374,245 +374,66 @@ export async function renderFromOntology(ontologyPath, outputDir, config = {}) {
     ...config
   });
 
+  console.warn('[Thesis] CONSTRUCT rendering not yet implemented');
+  console.log('[Thesis] Ontology:', validated.ontologyPath);
+  console.log('[Thesis] Output:', validated.outputDir);
+  console.log('[Thesis] Diataxis:', validated.generateDiataxis);
+  console.log('[Thesis] Custom queries:', validated.queries?.length || 0);
+
   await mkdir(outputDir, { recursive: true });
 
-  const generatedDocs = [];
-  const errors = [];
-  const warnings = [];
+  // TODO: Implement SPARQL CONSTRUCT queries to generate docs from ontology
+  // Expected implementation:
+  // 1. Load ontology with loadOntology()
+  // 2. Execute CONSTRUCT queries or use default class/property queries
+  // 3. Transform RDF results to documentation using templates
+  // 4. Organize into Diataxis structure if enabled
+  // 5. Write markdown files to outputDir
+  // 6. Return manifest of generated docs
 
-  try {
-    // 1. Load ontology
-    const store = await loadOntology(validated.ontologyPath);
-
-    // 2. Find all classes in ontology
-    const classQuery = `
-      PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-      PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-      PREFIX owl: <http://www.w3.org/2002/07/owl#>
-
-      SELECT DISTINCT ?class
-      WHERE {
-        { ?class rdf:type owl:Class }
-        UNION
-        { ?class rdf:type rdfs:Class }
-      }
-    `;
-
-    const classes = store.query(classQuery);
-
-    // 3. Generate docs for each class
-    for (const row of classes) {
-      const classUri = row.get('class')?.value;
-      if (!classUri) continue;
-
-      try {
-        // Determine doc type based on Diataxis structure
-        const docType = validated.generateDiataxis ? 'reference' : 'docs';
-        const doc = await generateDocFromClass(store, classUri, docType);
-
-        // Write markdown file
-        const docPath = join(outputDir, doc.path);
-        await mkdir(join(outputDir, docType), { recursive: true });
-        await writeFile(docPath, doc.content, 'utf-8');
-
-        generatedDocs.push({
-          path: doc.path,
-          classUri,
-          type: docType,
-          size: doc.content.length
-        });
-      } catch (error) {
-        errors.push({
-          classUri,
-          error: error.message
-        });
-      }
-    }
-
-    // 4. Execute custom CONSTRUCT queries if provided
-    if (validated.queries && validated.queries.length > 0) {
-      for (const queryConfig of validated.queries) {
-        try {
-          const result = await executeSparqlConstruct(store, queryConfig.query, {
-            outputFormat: queryConfig.outputFormat || 'turtle'
-          });
-
-          const filename = queryConfig.name || `construct-${generatedDocs.length}.ttl`;
-          const filePath = join(outputDir, filename);
-          await writeFile(filePath, result, 'utf-8');
-
-          generatedDocs.push({
-            path: filename,
-            type: 'construct-result',
-            size: result.length
-          });
-        } catch (error) {
-          errors.push({
-            query: queryConfig.query.substring(0, 100),
-            error: error.message
-          });
-        }
-      }
-    }
-
-    const result = {
-      status: 'success',
-      ontologyPath: validated.ontologyPath,
-      outputDir: validated.outputDir,
-      generatedDocs,
-      errors,
-      warnings,
-      stats: {
-        totalDocs: generatedDocs.length,
-        totalErrors: errors.length,
-        totalClasses: classes.length
-      }
-    };
-
-    return OntologyRenderResultSchema.parse(result);
-  } catch (error) {
-    errors.push({
-      stage: 'initialization',
-      error: error.message
-    });
-
-    const result = {
-      status: 'error',
-      ontologyPath: validated.ontologyPath,
-      outputDir: validated.outputDir,
-      generatedDocs,
-      errors,
-      warnings
-    };
-
-    return OntologyRenderResultSchema.parse(result);
-  }
-}
-
-/**
- * Apply documentation template to RDF data
- * @param {Object} template - Documentation template
- * @param {Object} rdfData - RDF data from CONSTRUCT query or SPARQL results
- * @returns {Promise<string>} Generated markdown content
- * @example
- * const markdown = await applyDocTemplate({
- *   type: 'reference',
- *   name: 'MyClass',
- *   template: '# {{title}}\n{{description}}'
- * }, { title: 'Example', description: 'An example class' });
- */
-export async function applyDocTemplate(template, rdfData) {
-  const validated = DocTemplateSchema.parse(template);
-
-  try {
-    // Prepare template data from RDF bindings
-    const templateData = {
-      type: validated.type,
-      name: validated.name,
-      generated: true,
-      timestamp: new Date().toISOString(),
-      ...rdfData
-    };
-
-    // Use template string or load from file
-    let templateString = validated.template;
-
-    // If template is a path, load it
-    if (validated.template && validated.template.endsWith('.md')) {
-      try {
-        templateString = await readFile(validated.template, 'utf-8');
-      } catch (error) {
-        // Fall back to default template if file not found
-        templateString = getDefaultTemplate(validated.type);
-      }
-    } else if (!templateString) {
-      // Use default template for type
-      templateString = getDefaultTemplate(validated.type);
-    }
-
-    // Render template with Mustache
-    const renderedContent = TemplateRenderer.render(templateString, templateData);
-
-    // Add frontmatter if not already present
-    if (!renderedContent.startsWith('---')) {
-      const frontmatter = `---
-type: ${validated.type}
-name: ${validated.name}
-generated: true
-timestamp: ${templateData.timestamp}
----
-
-`;
-      return frontmatter + renderedContent;
-    }
-
-    return renderedContent;
-  } catch (error) {
-    throw new Error(`Failed to apply template: ${error.message}`);
-  }
-}
-
-/**
- * Get default template for doc type
- * @param {string} type - Documentation type
- * @returns {string} Default template string
- */
-function getDefaultTemplate(type) {
-  const templates = {
-    reference: `# {{name}}
-
-{{#uri}}**URI**: \`{{uri}}\`{{/uri}}
-
-## Description
-
-{{description}}
-
-{{#properties}}
-### Properties
-
-{{#properties}}
-- **{{name}}**: {{description}}
-{{/properties}}
-{{/properties}}`,
-
-    tutorial: `# {{name}}
-
-{{description}}
-
-## Prerequisites
-
-{{#prerequisites}}
-- {{.}}
-{{/prerequisites}}
-
-## Steps
-
-{{#steps}}
-{{step}}. {{description}}
-{{/steps}}`,
-
-    howto: `# How to {{name}}
-
-{{description}}
-
-## Steps
-
-{{#steps}}
-{{step}}. {{description}}
-{{/steps}}`,
-
-    explanation: `# {{name}}
-
-{{description}}
-
-{{#sections}}
-## {{title}}
-
-{{content}}
-{{/sections}}`
+  const result = {
+    status: 'not_implemented',
+    ontologyPath: validated.ontologyPath,
+    outputDir: validated.outputDir,
+    generatedDocs: [],
+    errors: [],
+    warnings: ['SPARQL CONSTRUCT integration not yet implemented']
   };
 
-  return templates[type] || `# {{name}}\n\n{{description}}`;
+  return OntologyRenderResultSchema.parse(result);
+}
+
+/**
+ * Apply documentation template to RDF data (STUB)
+ * @param {Object} template - Documentation template
+ * @param {Object} _rdfData - RDF data from CONSTRUCT query (unused in stub)
+ * @returns {Promise<string>} Generated markdown content
+ * @example
+ * const markdown = await applyDocTemplate(template, {});
+ */
+export async function applyDocTemplate(template, _rdfData) {
+  const validated = DocTemplateSchema.parse(template);
+
+  console.warn('[Template] Application stub called');
+  console.log('[Template] Type:', validated.type);
+
+  // TODO: Implement template application
+  // Expected implementation:
+  // 1. Load template file or use default
+  // 2. Extract bindings from RDF data
+  // 3. Apply Handlebars/Mustache template engine
+  // 4. Generate markdown with proper frontmatter
+  // 5. Return formatted content
+
+  return `---
+type: ${validated.type}
+generated: true
+---
+
+# STUB: Template Application
+
+Template application not yet implemented.
+`;
 }
 
 /**
@@ -637,8 +458,8 @@ export async function exportThesis(thesisDir, format, outputPath) {
       return await compileToPDF(texFile);
       
     case 'html':
-      // Generate basic HTML export (placeholder for full HTML rendering)
-      console.log('[Thesis] Generating basic HTML export...');
+      // STUB: HTML export not yet implemented
+      console.warn('[Thesis] HTML export not yet implemented');
       return outputPath;
       
     default:

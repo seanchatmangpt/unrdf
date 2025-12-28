@@ -132,7 +132,6 @@ async function detectConflict(store, op) {
     }
   } else if (op.op === 'delete') {
     // Conflict if triple doesn't exist
-    const objectTerm = dataFactory.literal(objectUri);
     const hasExact = [...existing].some(quad => quad.object.value === objectUri);
 
     if (!hasExact) {
@@ -225,10 +224,10 @@ async function applyOperation(store, op, conflicts) {
  *
  * Strategy: delta-wins (new value always replaces old value)
  *
- * @param {Object} conflict - Conflict to resolve
+ * @param {Object} _conflict - Conflict to resolve
  * @returns {string} Resolution strategy
  */
-export function defaultConflictResolver(conflict) {
+export function defaultConflictResolver(_conflict) {
   return 'delta-wins';
 }
 
@@ -244,7 +243,7 @@ export function defaultConflictResolver(conflict) {
  * const result = await reconcile(store, delta, resolver);
  */
 export function currentWinsResolver() {
-  return (conflict) => 'current-wins';
+  return (_conflict) => 'current-wins';
 }
 
 /**
@@ -259,7 +258,7 @@ export function currentWinsResolver() {
  * const result = await reconcile(store, delta, resolver);
  */
 export function strictResolver() {
-  return (conflict) => 'reject';
+  return (_conflict) => 'reject';
 }
 
 /**

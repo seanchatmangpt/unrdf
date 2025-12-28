@@ -19,7 +19,12 @@ export * from './thesis-builder.schema.mjs';
 // =============================================================================
 
 /**
- * Legacy: V6_DOCS object
+ * Legacy V6 documentation registry for backward compatibility
+ * @deprecated Use documentation pipeline directly
+ * @constant {Object}
+ * @property {string} version - Documentation version
+ * @property {string[]} topics - Available documentation topics
+ * @property {string} format - Documentation format (Diataxis)
  */
 export const V6_DOCS = {
   version: '6.0.0-alpha.1',
@@ -28,7 +33,13 @@ export const V6_DOCS = {
 };
 
 /**
- * Legacy: getDocumentation()
+ * Get documentation for a specific topic
+ * @deprecated Legacy compatibility function
+ * @param {string} topic - Documentation topic to retrieve
+ * @returns {Object} Documentation object with topic, content, and timestamp
+ * @example
+ * const docs = getDocumentation('architecture');
+ * // { topic: 'architecture', content: 'Documentation for architecture', lastUpdated: '...' }
  */
 export function getDocumentation(topic) {
   return {
@@ -39,7 +50,12 @@ export function getDocumentation(topic) {
 }
 
 /**
- * Legacy: listTopics()
+ * List all available documentation topics
+ * @deprecated Legacy compatibility function
+ * @returns {string[]} Array of available documentation topics
+ * @example
+ * const topics = listTopics();
+ * // ['architecture', 'api', 'tutorials', 'reference']
  */
 export function listTopics() {
   return V6_DOCS.topics;
