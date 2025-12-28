@@ -16,14 +16,22 @@ This reference documentation provides technical details for @unrdf/v6-core.
 
 | Name | Type | Description |
 |------|------|-------------|
+| ./browser | export | Export: ./browser |
+| ./browser/receipt-store | export | Export: ./browser/receipt-store |
 | ./cli | export | Export: ./cli |
 | ./cli/commands/delta | export | Export: ./cli/commands/delta |
 | ./cli/commands/receipt | export | Export: ./cli/commands/receipt |
 | ./cli/nouns | export | Export: ./cli/nouns |
 | ./cli/spine | export | Export: ./cli/spine |
 | ./cli/verbs | export | Export: ./cli/verbs |
+| ./delta | export | Export: ./delta |
+| ./delta/gate | export | Export: ./delta/gate |
+| ./delta/schema | export | Export: ./delta/schema |
 | ./deltagate | export | Export: ./deltagate |
+| ./grammar | export | Export: ./grammar |
 | ./receipts | export | Export: ./receipts |
+| ./receipts/base-receipt | export | Export: ./receipts/base-receipt |
+| ./receipts/merkle | export | Export: ./receipts/merkle |
 | ./schemas | export | Export: ./schemas |
 | @unrdf/v6-core | export | Export: . |
 

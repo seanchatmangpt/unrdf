@@ -1,24 +1,17 @@
 {
   "confidence": {
-    "explanation": 1,
+    "explanation": 0.7,
     "howtos": 0.75,
     "reference": 0.7,
     "tutorials": 1
   },
   "evidence": {
-    "docsFiles": [
-      "API.md",
-      "CONTRIBUTING.md",
-      "GUIDE.md",
-      "README.md",
-      "validation-report.json"
-    ],
+    "docsFiles": [],
     "examplesFiles": [
       "advanced-sparql-example.mjs",
-      "basic.mjs",
       "production-federation.mjs"
     ],
-    "fingerprint": "569dd47682b1f61edb070c958924e3eaee73cfd736b442b8c954aba79f8af8dc",
+    "fingerprint": "bdae4d8abd9ccd7ee5fe5fa65f24a38f28eb1f7efb71644bc6392021650ad6e4",
     "readmeHeadings": [
       "Quick Start",
       "Features",
@@ -49,12 +42,11 @@
       "peer-to-peer",
       "sparql"
     ],
-    "confidenceScore": 1,
+    "confidenceScore": 0.7,
     "id": "explanation-unrdf-federation-explanation",
     "source": [
       "keywords",
       "readme",
-      "docs",
       "inferred"
     ],
     "title": "Understanding @unrdf/federation",
@@ -129,23 +121,6 @@
   },
   "tutorials": [
     {
-      "confidenceScore": 0.8,
-      "goal": "Complete your first practical examples",
-      "id": "tutorial-first-steps",
-      "prerequisites": [
-        "Completed \"Getting Started with @unrdf/federation\""
-      ],
-      "source": [
-        "examples"
-      ],
-      "stepsOutline": [
-        "Work through advanced-sparql-example.mjs",
-        "Work through basic.mjs",
-        "Work through production-federation.mjs"
-      ],
-      "title": "First Steps"
-    },
-    {
       "confidenceScore": 0.9999999999999999,
       "goal": "Learn how to set up and use @unrdf/federation in your project",
       "id": "tutorial-getting-started-with-unrdf-federation",
@@ -167,5 +142,5 @@
       "title": "Getting Started with @unrdf/federation"
     }
   ],
-  "version": "5.0.1"
+  "version": "6.0.0"
 }

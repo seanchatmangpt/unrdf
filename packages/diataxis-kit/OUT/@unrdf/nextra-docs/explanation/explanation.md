@@ -4,8 +4,8 @@ type: "explanation"
 packageName: "@unrdf/nextra-docs"
 version: "5.0.1"
 generatedAt: "2000-01-01T00:00:00.000Z"
-confidenceScore: 0.3
-proof: "f34a8f08f97949322a04b991afe0ca47f12b2787408da56a4e531aee88ad1860"
+confidenceScore: 0
+proof: "03ecf64c1e75420ee785268fc513d5aaa042ba7914ff3f9a0dff542b7474c105"
 ---
 
 ## Concepts
@@ -14,24 +14,26 @@ proof: "f34a8f08f97949322a04b991afe0ca47f12b2787408da56a4e531aee88ad1860"
 
 ## Architecture
 
-UNRDF documentation site built with Nextra 4.6.1 + Next.js 16.
+@unrdf/nextra-docs is a package in the UNRDF ecosystem
 
 ## Tradeoffs
 
-- Performance vs. flexibility tradeoffs discussed in README
+- Ease of use vs. advanced configuration options
+- Memory usage vs. processing speed
+- Bundle size vs. feature completeness
 
 ## Proof
 
 This file was generated from the following evidence sources:
 
-- readme
+- inferred
 
 ```json
 {
-  "fingerprintInput": "readme|Understanding @unrdf/nextra-docs|0.3",
-  "hash": "f34a8f08f97949322a04b991afe0ca47f12b2787408da56a4e531aee88ad1860",
+  "fingerprintInput": "inferred|Understanding @unrdf/nextra-docs|0",
+  "hash": "03ecf64c1e75420ee785268fc513d5aaa042ba7914ff3f9a0dff542b7474c105",
   "sources": [
-    "readme"
+    "inferred"
   ]
 }
 ```

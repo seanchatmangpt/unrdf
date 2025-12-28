@@ -9,9 +9,10 @@
     "docsFiles": [],
     "examplesFiles": [
       "collab-demo.mjs",
-      "collab-server.mjs"
+      "collab-server.mjs",
+      "demo-multi-replica.mjs"
     ],
-    "fingerprint": "30f03253321f9d5f00200f9a1a16a0090776c212a3f6465e4f5e7f20302c0a75",
+    "fingerprint": "d133ab7183bbad4964b8a8bccb69431919fca935204f1e0a71b8927c37a8796e",
     "readmeHeadings": [
       "Features",
       "Installation",
@@ -119,6 +120,23 @@
     "title": "@unrdf/collab Reference"
   },
   "tutorials": [
+    {
+      "confidenceScore": 0.8,
+      "goal": "Complete your first practical examples",
+      "id": "tutorial-first-steps",
+      "prerequisites": [
+        "Completed \"Getting Started with @unrdf/collab\""
+      ],
+      "source": [
+        "examples"
+      ],
+      "stepsOutline": [
+        "Work through collab-demo.mjs",
+        "Work through collab-server.mjs",
+        "Work through demo-multi-replica.mjs"
+      ],
+      "title": "First Steps"
+    },
     {
       "confidenceScore": 0.9999999999999999,
       "goal": "Learn how to set up and use @unrdf/collab in your project",

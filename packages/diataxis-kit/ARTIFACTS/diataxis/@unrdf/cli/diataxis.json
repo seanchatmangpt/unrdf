@@ -1,37 +1,20 @@
 {
   "confidence": {
-    "explanation": 1,
-    "howtos": 0.75,
+    "explanation": 0.4,
+    "howtos": 0.5,
     "reference": 0.8,
-    "tutorials": 1
+    "tutorials": 0.4
   },
   "evidence": {
-    "docsFiles": [
-      "API.md",
-      "CONTRIBUTING.md",
-      "GUIDE.md",
-      "README.md",
-      "validation-report.json"
-    ],
+    "docsFiles": [],
     "examplesFiles": [
-      "basic.mjs",
       "validate-cli.mjs"
     ],
-    "fingerprint": "34f32263ad1df5e62aaad2c9f06dc45f107cd88423319d7ce6a10c25495cdf93",
-    "readmeHeadings": [
-      "Installation",
-      "📚 Examples",
-      "Quick Start",
-      "Features",
-      "Commands",
-      "Documentation",
-      "Depends On",
-      "VOC Usage",
-      "License"
-    ]
+    "fingerprint": "64b2fce5225425fb4945b4710fc9a35e14650b023a07aae7705c04095132a37d",
+    "readmeHeadings": []
   },
   "explanation": {
-    "architecture": "![Version](https://img.shields.io/badge/version-5.0.0--beta.1-blue) ![Production Ready](https://img.shields.",
+    "architecture": "@unrdf/cli is a package in the UNRDF ecosystem",
     "concepts": [
       "rdf",
       "cli",
@@ -39,12 +22,10 @@
       "graph",
       "sparql"
     ],
-    "confidenceScore": 1,
+    "confidenceScore": 0.4,
     "id": "explanation-unrdf-cli-explanation",
     "source": [
       "keywords",
-      "readme",
-      "docs",
       "inferred"
     ],
     "title": "Understanding @unrdf/cli",
@@ -120,7 +101,7 @@
   },
   "tutorials": [
     {
-      "confidenceScore": 0.9999999999999999,
+      "confidenceScore": 0.7,
       "goal": "Learn how to set up and use @unrdf/cli in your project",
       "id": "tutorial-getting-started-with-unrdf-cli",
       "prerequisites": [
@@ -129,13 +110,13 @@
       ],
       "source": [
         "examples",
-        "readme",
         "keywords"
       ],
       "stepsOutline": [
-        "Installation",
-        "📚 Examples",
-        "VOC Usage"
+        "Install the package",
+        "Import required modules",
+        "Create a basic example",
+        "Run and verify output"
       ],
       "title": "Getting Started with @unrdf/cli"
     }

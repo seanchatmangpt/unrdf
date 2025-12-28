@@ -2,7 +2,7 @@
 title: "@unrdf/core Reference"
 type: "reference"
 packageName: "@unrdf/core"
-version: "5.0.1"
+version: "6.0.0-alpha.1"
 generatedAt: "2000-01-01T00:00:00.000Z"
 confidenceScore: 1
 proof: "0400083bb78dc55def50ed87c8c2b29aa01d5b18c0c39eb0abd62ccd0803109d"

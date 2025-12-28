@@ -18,7 +18,7 @@ proof: "60bc526be94190f4b776039b6f29d31e01fe514f7ff803ddb97fe40ed66568eb"
 
 ## Architecture
 
-![Version](https://img.shields.io/badge/version-5.0.0--beta.1-blue) ![Production Ready](https://img.shields.
+![Version](https://img.shields.io/badge/version-5.0.0--beta.1-blue) ![Production Ready](https://img.shields.io/badge/production-ready-green) ![Tests](https://img.shields.io/badge/tests-176%2F176-brightgreen) ![Coverage](https://img.shields.io/badge/test%20coverage-99.
 
 ## Tradeoffs
 

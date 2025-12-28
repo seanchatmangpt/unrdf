@@ -12,13 +12,14 @@
       "latex-pdf-building.md"
     ],
     "examplesFiles": [],
-    "fingerprint": "c78f76453c6450d0639a73ac6d6a2f7619fb90958dfd1dc94fa72c4c946bfffb",
+    "fingerprint": "a8259724b0daf90a224367c543b9585329397adb587ceab6ebe821071595cb8f",
     "readmeHeadings": [
       "Overview",
       "Architecture",
       "Usage",
       "Manifest & Discovery",
       "Core Nouns (v0)",
+      "LaTeX to PDF Compilation",
       "Testing",
       "Implementation Status",
       "Performance",
@@ -103,6 +104,18 @@
     "confidenceScore": 1,
     "id": "reference-unrdf-kgc-cli-reference",
     "items": [
+      {
+        "description": "Export: ./latex",
+        "example": "import from \"./src/lib/latex/index.mjs\"",
+        "name": "./latex",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./latex/schemas",
+        "example": "import from \"./src/lib/latex/schemas.mjs\"",
+        "name": "./latex/schemas",
+        "type": "export"
+      },
       {
         "description": "Export: ./manifest",
         "example": "import from \"./src/manifest/extensions.mjs\"",

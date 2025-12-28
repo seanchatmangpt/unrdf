@@ -4,8 +4,8 @@ type: "explanation"
 packageName: "@unrdf/dark-matter"
 version: "5.0.1"
 generatedAt: "2000-01-01T00:00:00.000Z"
-confidenceScore: 1
-proof: "ffe514b5bd0dd1275afaf181dc8b2edd680dda240ccf3a796b790bd229335144"
+confidenceScore: 0.4
+proof: "afc96f1bc1bde910fffb51820a57110283ab21d274c9de7c1eede54026aade5d"
 ---
 
 ## Concepts
@@ -18,7 +18,7 @@ proof: "ffe514b5bd0dd1275afaf181dc8b2edd680dda240ccf3a796b790bd229335144"
 
 ## Architecture
 
-![Version](https://img.shields.io/badge/version-5.0.0--beta.1-blue) ![Production Ready](https://img.shields.
+@unrdf/dark-matter is a package in the UNRDF ecosystem
 
 ## Tradeoffs
 
@@ -30,20 +30,16 @@ proof: "ffe514b5bd0dd1275afaf181dc8b2edd680dda240ccf3a796b790bd229335144"
 
 This file was generated from the following evidence sources:
 
-- docs
 - inferred
 - keywords
-- readme
 
 ```json
 {
-  "fingerprintInput": "docs|inferred|keywords|readme|Understanding @unrdf/dark-matter|1",
-  "hash": "ffe514b5bd0dd1275afaf181dc8b2edd680dda240ccf3a796b790bd229335144",
+  "fingerprintInput": "inferred|keywords|Understanding @unrdf/dark-matter|0.4",
+  "hash": "afc96f1bc1bde910fffb51820a57110283ab21d274c9de7c1eede54026aade5d",
   "sources": [
-    "docs",
     "inferred",
-    "keywords",
-    "readme"
+    "keywords"
   ]
 }
 ```

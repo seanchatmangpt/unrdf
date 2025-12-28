@@ -4,8 +4,8 @@ type: "tutorial"
 packageName: "@unrdf/dark-matter"
 version: "5.0.1"
 generatedAt: "2000-01-01T00:00:00.000Z"
-confidenceScore: 0.9999999999999999
-proof: "b580179d7054d91e2ce268ca2df8596e0cadd85d37156518fdec81a58aafded6"
+confidenceScore: 0.1
+proof: "503ca4cac5cdd999dcd8010117f56f2a8926eca78a17e78ad46ffd5a4d6c5656"
 ---
 
 ## Overview
@@ -19,26 +19,23 @@ Learn how to set up and use @unrdf/dark-matter in your project
 
 ## Steps
 
-1. Installation
-2. 📚 Examples
-3. VOC Usage
+1. Install the package
+2. Import required modules
+3. Create a basic example
+4. Run and verify output
 
 ## Proof
 
 This file was generated from the following evidence sources:
 
-- examples
 - keywords
-- readme
 
 ```json
 {
-  "fingerprintInput": "examples|keywords|readme|Getting Started with @unrdf/dark-matter|0.9999999999999999",
-  "hash": "b580179d7054d91e2ce268ca2df8596e0cadd85d37156518fdec81a58aafded6",
+  "fingerprintInput": "keywords|Getting Started with @unrdf/dark-matter|0.1",
+  "hash": "503ca4cac5cdd999dcd8010117f56f2a8926eca78a17e78ad46ffd5a4d6c5656",
   "sources": [
-    "examples",
-    "keywords",
-    "readme"
+    "keywords"
   ]
 }
 ```

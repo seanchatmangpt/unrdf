@@ -73,6 +73,12 @@
     "id": "reference-unrdf-kgc-claude-reference",
     "items": [
       {
+        "description": "Export: ./agent-harness",
+        "example": "import from \"./src/agent-harness.mjs\"",
+        "name": "./agent-harness",
+        "type": "export"
+      },
+      {
         "description": "Export: ./async-workflow",
         "example": "import from \"./src/async-workflow.mjs\"",
         "name": "./async-workflow",
@@ -85,15 +91,87 @@
         "type": "export"
       },
       {
+        "description": "Export: ./budget-enforcer",
+        "example": "import from \"./src/budget-enforcer.mjs\"",
+        "name": "./budget-enforcer",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./capabilities/editor-commands",
+        "example": "import from \"./src/capabilities/editor-commands.mjs\"",
+        "name": "./capabilities/editor-commands",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./capabilities/ide-integration",
+        "example": "import from \"./src/capabilities/ide-integration.mjs\"",
+        "name": "./capabilities/ide-integration",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./capabilities/ui-components",
+        "example": "import from \"./src/capabilities/ui-components.mjs\"",
+        "name": "./capabilities/ui-components",
+        "type": "export"
+      },
+      {
         "description": "Export: ./checkpoint",
         "example": "import from \"./src/checkpoint.mjs\"",
         "name": "./checkpoint",
         "type": "export"
       },
       {
+        "description": "Export: ./drift-detector",
+        "example": "import from \"./src/drift-detector.mjs\"",
+        "name": "./drift-detector",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./info-scheduler",
+        "example": "import from \"./src/info-scheduler.mjs\"",
+        "name": "./info-scheduler",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./mcp-bridge",
+        "example": "import from \"./src/mcp-bridge.mjs\"",
+        "name": "./mcp-bridge",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./mcp-federation",
+        "example": "import from \"./src/mcp-federation.mjs\"",
+        "name": "./mcp-federation",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./mcp-server-builder",
+        "example": "import from \"./src/mcp-server-builder.mjs\"",
+        "name": "./mcp-server-builder",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./observable-io",
+        "example": "import from \"./src/observable-io.mjs\"",
+        "name": "./observable-io",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./poka-yoke-guards",
+        "example": "import from \"./src/poka-yoke-guards.mjs\"",
+        "name": "./poka-yoke-guards",
+        "type": "export"
+      },
+      {
         "description": "Export: ./projection",
         "example": "import from \"./src/projection.mjs\"",
         "name": "./projection",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./receipt-compositor",
+        "example": "import from \"./src/receipt-compositor.mjs\"",
+        "name": "./receipt-compositor",
         "type": "export"
       },
       {
@@ -106,6 +184,12 @@
         "description": "Export: ./shard-merge",
         "example": "import from \"./src/shard-merge.mjs\"",
         "name": "./shard-merge",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./swarm-orchestrator",
+        "example": "import from \"./src/swarm-orchestrator.mjs\"",
+        "name": "./swarm-orchestrator",
         "type": "export"
       },
       {
