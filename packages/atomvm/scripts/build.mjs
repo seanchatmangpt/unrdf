@@ -8,6 +8,24 @@ import { writeFileSync, readFileSync, existsSync, mkdirSync, statSync } from 'fs
 import { join, resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { execSync } from 'child_process';
+import { z } from 'zod';
+
+/**
+ * Safely escape shell argument - prevents command injection
+ * @param {string} str - String to escape
+ * @returns {string} Escaped string safe for shell
+ */
+function escapeShellArg(str) {
+  if (typeof str !== 'string') throw new TypeError('Argument must be a string');
+  // Single quote escaping: replace ' with '\'' (end quote, escaped quote, start quote)
+  return `'${str.replace(/'/g, "'\\''")}'`;
+}
+
+/**
+ * Schema for validating module names - alphanumeric with underscores
+ */
+const SafeModuleNameSchema = z.string()
+  .regex(/^[a-zA-Z][a-zA-Z0-9_]*$/, 'Module name must start with letter and contain only alphanumeric chars and underscores');
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -23,7 +41,9 @@ export async function buildModule(moduleName) {
   if (!moduleName) {
     throw new Error('moduleName is required');
   }
-  console.log(`Building Erlang module: ${moduleName}`);
+  // Validate module name to prevent injection attacks
+  const validatedModuleName = SafeModuleNameSchema.parse(moduleName);
+  console.log(`Building Erlang module: ${validatedModuleName}`);
 
   // Ensure directories exist
   if (!existsSync(srcDir)) {
@@ -45,11 +65,13 @@ export async function buildModule(moduleName) {
   }
 
   // Step 2: Compile to BEAM
-  const beamFile = join(srcDir, `${moduleName}.beam`);
-  console.log(`Compiling ${moduleName}.erl to ${moduleName}.beam...`);
-  
+  const beamFile = join(srcDir, `${validatedModuleName}.beam`);
+  console.log(`Compiling ${validatedModuleName}.erl to ${validatedModuleName}.beam...`);
+
   try {
-    execSync(`erlc -o ${srcDir} ${erlFile}`, { stdio: 'inherit' });
+    // Use escaped arguments to prevent shell injection
+    const cmd = `erlc -o ${escapeShellArg(srcDir)} ${escapeShellArg(erlFile)}`;
+    execSync(cmd, { stdio: 'inherit', shell: '/bin/sh' });
   } catch (error) {
     throw new Error(`erlc command failed: ${error.message}`);
   }
@@ -68,11 +90,13 @@ export async function buildModule(moduleName) {
   console.log(`✓ Compiled to ${moduleName}.beam`);
 
   // Step 3: Package to .avm using packbeam
-  const avmFile = join(publicDir, `${moduleName}.avm`);
-  console.log(`Packaging ${moduleName}.beam to ${moduleName}.avm...`);
+  const avmFile = join(publicDir, `${validatedModuleName}.avm`);
+  console.log(`Packaging ${validatedModuleName}.beam to ${validatedModuleName}.avm...`);
 
   try {
-    execSync(`packbeam -o ${avmFile} ${beamFile}`, { stdio: 'inherit' });
+    // Use escaped arguments to prevent shell injection
+    const cmd = `packbeam -o ${escapeShellArg(avmFile)} ${escapeShellArg(beamFile)}`;
+    execSync(cmd, { stdio: 'inherit', shell: '/bin/sh' });
   } catch (error) {
     throw new Error(`packbeam command failed: ${error.message}`);
   }
