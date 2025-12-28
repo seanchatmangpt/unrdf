@@ -1,7 +1,7 @@
 ---
 title: "@unrdf/v6-compat Documentation"
 packageName: "@unrdf/v6-compat"
-version: "6.0.0-rc.1"
+version: "6.0.0-alpha.1"
 generatedAt: "2000-01-01T00:00:00.000Z"
 ---
 

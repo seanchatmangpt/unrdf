@@ -1,6 +1,6 @@
 {
   "generatedAt": "2000-01-01T00:00:00.000Z",
-  "packageCount": 119,
+  "packageCount": 121,
   "packages": [
     {
       "dir": "/home/user/unrdf/AUTONOMIC_INNOVATION/agent-8",
@@ -275,7 +275,7 @@
     {
       "dir": "/home/user/unrdf/packages/integration-tests",
       "name": "@unrdf/integration-tests",
-      "version": "5.0.0"
+      "version": "5.1.0"
     },
     {
       "dir": "/home/user/unrdf/packages/kgc-4d",
@@ -300,6 +300,11 @@
     {
       "dir": "/home/user/unrdf/packages/kgc-docs",
       "name": "@unrdf/kgc-docs",
+      "version": "1.0.0"
+    },
+    {
+      "dir": "/home/user/unrdf/packages/kgc-multiverse",
+      "name": "@unrdf/kgc-multiverse",
       "version": "1.0.0"
     },
     {
@@ -421,6 +426,11 @@
       "dir": "/home/user/unrdf/packages/react",
       "name": "@unrdf/react",
       "version": "5.0.0"
+    },
+    {
+      "dir": "/home/user/unrdf/packages/receipts",
+      "name": "@unrdf/receipts",
+      "version": "1.0.0"
     },
     {
       "dir": "/home/user/unrdf/src/receipts",

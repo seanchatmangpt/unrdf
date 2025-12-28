@@ -2,7 +2,7 @@
 title: "Getting Started with @unrdf/v6-compat"
 type: "tutorial"
 packageName: "@unrdf/v6-compat"
-version: "6.0.0-rc.1"
+version: "6.0.0-alpha.1"
 generatedAt: "2000-01-01T00:00:00.000Z"
 confidenceScore: 0.1
 proof: "2d9f5e64e1008fb0dd3d0dc6bd12bae1d58b7de8071f528986fbbfa12dd5aa81"

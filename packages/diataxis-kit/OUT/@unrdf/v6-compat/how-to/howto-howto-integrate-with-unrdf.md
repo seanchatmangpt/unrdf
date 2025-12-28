@@ -2,7 +2,7 @@
 title: "Integrate with unrdf"
 type: "how-to"
 packageName: "@unrdf/v6-compat"
-version: "6.0.0-rc.1"
+version: "6.0.0-alpha.1"
 generatedAt: "2000-01-01T00:00:00.000Z"
 confidenceScore: 0.7
 proof: "1f028e9c5dda4cbb3aaf85a6a406f5dd1420a0df30a4c50e8749e990b5fcfc18"

@@ -27,10 +27,10 @@
     "architecture": "Comprehensive integration tests for multi-package workflows across the UNRDF ecosystem.",
     "concepts": [
       "integration-tests",
+      "adversarial-tests",
       "unrdf",
       "workflow",
-      "federation",
-      "streaming"
+      "federation"
     ],
     "confidenceScore": 0.7,
     "id": "explanation-unrdf-integration-tests-explanation",
@@ -117,5 +117,5 @@
       "title": "Getting Started with @unrdf/integration-tests"
     }
   ],
-  "version": "5.0.0"
+  "version": "5.1.0"
 }

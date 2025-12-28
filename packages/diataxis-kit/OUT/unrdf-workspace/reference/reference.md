@@ -2,7 +2,7 @@
 title: "unrdf-workspace Reference"
 type: "reference"
 packageName: "unrdf-workspace"
-version: "6.0.0-rc.1"
+version: "6.0.0-alpha.1"
 generatedAt: "2000-01-01T00:00:00.000Z"
 confidenceScore: 0.5
 proof: "98a7313c88fcc9bfb5385b7ab4f46b70f06894934697274f6f634917546b1e1f"
